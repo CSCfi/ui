@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html dir="ltr" lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=5.0">
+  <title>Stencil Component Starter</title>
+
+  <script type="module" src="/build/cscwebcomponents.esm.js"></script>
+  <script nomodule src="/build/cscwebcomponents.js"></script>
+  <link href="https://fonts.googleapis.com/css?family=Open+Sans&display=swap" rel="stylesheet">
+  <style>
+      body {
+        font-family: 'Open Sans', sans;
+      }
+  </style>
+</head>
+<body>
+  <c-container>
+    <c-row>
+      <c-col>
+        <c-card style="padding: 12px 32px">
+
+          <c-row>
+            <c-tab icon="storage" label="Allas">Object storage environment for storing, sharing and analyzing data</c-tab>
+            <c-tab icon="server" label="cPouta">Virtual machines for web services & software development</c-tab>
+            <c-tab icon="code" active label="Rahti">Web services & software development with easy application deployment</c-tab>
+            <c-tab icon="cpu" label="Puhti">Core based supercomputing environment </c-tab>
+          </c-row>
+          <c-row>
+            <c-col>
+              <c-title>Instances</c-title>
+            </c-col>
+          </c-row>
+
+          Select flavour
+          <c-row>
+            <c-col>
+              <c-toggle fit>Standard</c-toggle>
+            </c-col>
+            <c-col>
+              <c-toggle fit active>HPC</c-toggle>
+            </c-col>
+            <c-col>
+              <c-toggle fit>I/O</c-toggle>
+            </c-col>
+            <c-col>
+              <c-toggle fit>GPU</c-toggle>
+            </c-col>
+          </c-row>
+          Choose size
+          <c-row>
+            <c-col>
+              <c-toggle fit subtitle="80 GB storage" description="1 GB RAM | 1 CPU">Tiny</c-toggle>
+            </c-col>
+            <c-col>
+              <c-toggle fit subtitle="100 GB storage" description="2 GB RAM | 2 CPU">Small</c-toggle>
+            </c-col>
+            <c-col>
+              <c-toggle fit subtitle="500 GB storage" description="4 GB RAM | 3 CPU" active>Medium</c-toggle>
+            </c-col>
+            <c-col>
+              <c-toggle fit subtitle="2 TB storage" description="8 GB RAM | 4 CPU">Large</c-toggle>
+            </c-col>
+          </c-row>
+
+          <c-row>
+            <c-col>
+              <c-text-field number name="cores" label="Number of CPU cores" value="0"></c-text-field>
+            </c-col>
+            <c-col>
+              <c-text-field number name="gpus" label="Number of GPUs" value="0"></c-text-field>
+            </c-col>
+          </c-row>
+
+          <c-row>
+            <c-col>
+              <c-text-field number name="runningtime" label="Running time" value="0"></c-text-field>
+            </c-col>
+            <c-col>
+              <c-select label="Units" name="units" value="mins">
+                <div value="hrs">Hours</div>
+                <div value="mins">Minutes</div>
+              </c-select>
+            </c-col>
+          </c-row>
+
+          <c-row>
+            <c-spacer></c-spacer>
+            <c-button color="green" fixed icon="plus">Add to estimates</c-button>
+          </c-row>
+        </c-card>
+      </c-col>
+    </c-row>
+
+    <c-row>
+      <c-col>
+        <c-card>
+
+          <c-row>
+            <c-col>
+              <c-title>What next?</c-title>
+            </c-col>
+          </c-row>
+
+          <c-row>
+            <c-spacer></c-spacer>
+            <c-button color="blue" icon="plus">Add another service</c-button>
+          </c-row>
+
+        </c-card>
+      </c-col>
+
+      <c-col>
+        <c-card>
+          <c-row>
+            <c-spacer></c-spacer>
+            <c-button color="blue" disabled icon="plus">Disabled</c-button>
+          </c-row>
+        </c-card>
+      </c-col>
+    </c-row>
+
+    <c-row>
+      <c-button color="green">Add another service</c-button>
+      <c-spacer></c-spacer>
+      <c-button color="purple" icon="minus">Remove</c-button>
+      <c-button color="pink" fixed>Fixed button width</c-button>
+      <c-button color="green" no-radius icon="plus">No radius</c-button>
+      <c-button color="dark-blue" no-radius icon="edit">Modify</c-button>
+    </c-row>
+  </c-container>
+</body>
+</html>

@@ -1,0 +1,66 @@
+:host {
+  display: block;
+}
+
+.c-select-wrapper {
+  background: #EEF2F8;
+  align-items: stretch;
+  min-height: 44px;
+  margin-top: 4px;
+  display: flex;
+  flex: 1 1 auto;
+  border: 2px transparent solid;
+  cursor: pointer;
+}
+
+.c-select-wrapper-active {
+  background: #D0DCED;
+}
+
+.c-select-current {
+  margin-top: 3px;
+  outline: none;
+  font-size: 14px;
+  display: inline-block;
+  background-color: transparent;
+  border-style: none;
+  flex: 1 1 auto;
+  line-height: 20px;
+  padding: 8px 18px;
+  user-select: none;
+}
+
+.c-select-icon {
+  line-height: 20px;
+  padding: 8px 24px;
+  margin-top: 3px;
+  transition: all 0.25s;
+}
+
+.rotated {
+  transform: rotate(180deg);
+}
+
+.c-menu-parent {
+  position: relative;
+}
+
+.c-menu {
+  position: absolute;
+  background-color: #ffffff;
+  min-width: 160px;
+  box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+  z-index: 1;
+  cursor: pointer;
+  user-select: none;
+}
+
+.c-menu div {
+  padding: 14px;
+  transition: all 0.5s;
+  font-size: 14px;
+}
+
+.c-menu div:HOVER {
+  background: #EEF2F8;
+}

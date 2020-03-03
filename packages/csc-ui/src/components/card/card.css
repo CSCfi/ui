@@ -1,0 +1,15 @@
+:host {
+  display: block;
+  max-width: 100%;
+  outline: none;
+  padding-left: 16px;
+  padding-right: 16px;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  text-decoration: none;
+  transition-property: box-shadow,opacity;
+  overflow-wrap: break-word;
+  position: relative;
+  white-space: normal;
+  border: 1px #012F5F solid;
+}

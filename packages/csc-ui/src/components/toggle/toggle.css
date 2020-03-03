@@ -1,0 +1,91 @@
+:host {
+  display: block;
+}
+
+.fixed {
+  min-width: 220px;
+}
+
+.fit {
+  width: 100% !important;
+}
+
+.pink {
+  border-color: #e91e63 !important;
+}
+
+.blue {
+  border-color: #025B96 !important;
+}
+
+.dark-blue {
+  border-color: #012F5F !important;
+}
+
+.green {
+  border-color: #008675 !important;
+}
+
+.purple {
+  border-color: #9c27b0 !important;
+}
+.pink.active {
+  background-color: #e91e63 !important;
+  border-color: #e91e63 !important;
+}
+
+.blue.active {
+  background-color: #025B96 !important;
+  border-color: #025B96 !important;
+}
+
+.dark-blue.active {
+  background-color: #012F5F !important;
+  border-color: #012F5F !important;
+}
+
+.green.active {
+  background-color: #008675 !important;
+  border-color: #008675 !important;
+}
+
+.purple.active {
+  background-color: #9c27b0 !important;
+  border-color: #9c27b0 !important;
+}
+
+.c-toggle {
+  border-color: #008675;
+  border-style: solid;
+  border-width: 2px;
+  cursor: pointer;
+  outline: none;
+  color: #025B96;
+  text-decoration: none;
+  display: inline-block;
+  text-align: center;
+  font-size: 16px;
+  user-select: none;
+}
+
+.c-toggle-subtitle {
+  font-size: 12px;
+}
+
+.c-toggle-description {
+  font-size: 12px;
+}
+
+.active {
+  color: #ffffff !important;
+}
+
+.c-toggle-disabled {
+  background: #E8E8E8;
+  color: #8C8C8C;
+  cursor: default !important;
+}
+
+.c-toggle-padding {
+  padding: 12px 30px;
+}

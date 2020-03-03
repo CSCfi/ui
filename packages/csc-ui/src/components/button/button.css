@@ -1,0 +1,76 @@
+:host {
+  display: inline-block;
+}
+
+.csc-button svg {
+  margin-right: 16px;
+  font-size: 10px;
+  margin-left: -8px;
+  margin-bottom: -2px;
+}
+
+.csc-button.border-radius {
+  border-radius: 4px;
+}
+
+.fixed {
+  min-width: 220px;
+}
+
+.pink {
+  background-color: #e91e63 !important;
+}
+
+.blue {
+  background-color: #025B96 !important;
+}
+
+.dark-blue {
+  background-color: #012F5F !important;
+}
+
+.green {
+  background-color: #008675 !important;
+}
+
+.purple {
+  background-color: #9c27b0 !important;
+}
+
+.csc-button {
+  background-color: #008675;
+  cursor: pointer;
+  border: none;
+  outline: none;
+  color: white;
+  margin: 4px;
+  text-decoration: none;
+  display: inline-block;
+  text-align: center;
+  font-size: 14px;
+  user-select: none;
+}
+
+.csc-button-disabled {
+  background: #E8E8E8;
+  color: #8C8C8C;
+  cursor: default !important;
+}
+
+.csc-button-padding {
+  padding: 16px 30px;
+}
+
+.ripple {
+  transition: background 0.5s;
+  background-position: center;
+}
+
+.ripple:hover {
+  background: rgba(255,255,255,0.1) radial-gradient(circle, transparent 1%, rgba(255,255,255,0.15) 1%) center/15000%;
+}
+.ripple:active {
+  background-color: rgba(255,255,255,0.25);
+  background-size: 100%;
+  transition: background 0s;
+}
