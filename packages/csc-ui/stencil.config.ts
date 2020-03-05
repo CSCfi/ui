@@ -4,8 +4,7 @@ export const config: Config = {
   namespace: 'cscwebcomponents',
   outputTargets: [
     {
-      type: 'dist',
-      esmLoaderPath: '../loader'
+      type: 'dist'
     },
     {
       type: 'docs-readme'
