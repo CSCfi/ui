@@ -1,0 +1,14 @@
+:host {
+  display: block;
+}
+
+:host {
+  display:block;
+  padding: 14px;
+  transition: background-color 0.5s;
+  font-size: 14px;
+}
+
+:host(:HOVER) {
+  background-color: #EEF2F8;
+}
