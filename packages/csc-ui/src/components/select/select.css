@@ -30,11 +30,27 @@
   user-select: none;
 }
 
+.c-select-dense .c-select-current {
+  margin-top: 0;
+}
+
 .c-select-icon {
   line-height: 20px;
   padding: 8px 24px;
   margin-top: 3px;
   transition: all 0.25s;
+}
+
+.c-select-dense {
+  min-height: 36px;
+}
+
+.c-select-dense .c-select-icon {
+  padding: 4px 24px;
+}
+
+span.dense-label {
+  font-size: 12px;
 }
 
 .rotated {
@@ -43,24 +59,26 @@
 
 .c-menu-parent {
   position: relative;
+  width: 100%;
 }
 
 .c-menu {
   position: absolute;
   background-color: #ffffff;
-  min-width: 160px;
+  min-width: 100%;
   box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
   z-index: 1;
   cursor: pointer;
   user-select: none;
 }
 
-.c-menu div {
+.c-menu option {
+  display:block;
   padding: 14px;
   transition: all 0.5s;
   font-size: 14px;
 }
 
-.c-menu div:HOVER {
+.c-menu option:HOVER {
   background: #EEF2F8;
 }

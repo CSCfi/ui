@@ -8,7 +8,7 @@ import { mdiPlus, mdiMinus, mdiAccount, mdiPencil, mdiFileCode, mdiServerSecurit
 })
 export class Tab {
   @Prop() disabled: boolean;
-  @Prop() color: string = 'blue';
+  @Prop() color: string;
   @Prop() active: boolean;
   @Prop() noRadius: boolean;
   @Prop() icon: string;
@@ -63,7 +63,7 @@ export class Tab {
               </c-row>
             </div>
           </div>
-          <div class={this.active ? 'c-tab-button-description c-tab-button-description-active' : 'c-tab-button-description'}>
+          <div class={this.active ? `c-tab-button-description c-tab-button-description-active ${this.color}` : `c-tab-button-description ${this.color}`}>
             <slot></slot>
           </div>
         </div>

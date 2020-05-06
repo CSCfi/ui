@@ -19,12 +19,15 @@
     <c-row>
       <c-col>
         <c-card style="padding: 12px 32px">
-
           <c-row>
-            <c-tab icon="storage" label="Tab1">Lorem ipsum dolor sit amet, consectetur adipiscing elit.</c-tab>
-            <c-tab icon="server" label="Tab2">Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</c-tab>
-            <c-tab icon="code" active label="Tab3">Ut enim ad minim veniam, quis nostrud exercitation ullamco.</c-tab>
-            <c-tab icon="cpu" label="Tab4">Duis aute irure dolor in reprehenderit in voluptate velit esse cillum</c-tab>
+            <c-tab active>SERVICES</c-tab>
+            <c-tab>ESTIMATIONS</c-tab>
+          </c-row>
+          <c-row style="justify-content: space-between;margin-top:16px;">
+            <c-tab-button icon="storage" color="purple" label="Tab1">Lorem ipsum dolor sit amet, consectetur adipiscing elit.</c-tab-button>
+            <c-tab-button icon="server" color="blue" label="Tab2">Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</c-tab-button>
+            <c-tab-button icon="code" active label="Tab3">Ut enim ad minim veniam, quis nostrud exercitation ullamco.</c-tab-button>
+            <c-tab-button icon="cpu" label="Tab4">Duis aute irure dolor in reprehenderit in voluptate velit esse cillum</c-tab-button>
           </c-row>
           <c-row>
             <c-col>
@@ -33,7 +36,7 @@
           </c-row>
 
           Select flavour
-          <c-row>
+          <c-row class="no-wrap">
             <c-col>
               <c-toggle fit>Standard</c-toggle>
             </c-col>
@@ -50,10 +53,10 @@
           Choose size
           <c-row>
             <c-col>
-              <c-toggle fit subtitle="80 GB storage" description="1 GB RAM | 1 CPU">Tiny</c-toggle>
+              <c-toggle fit color="purple" subtitle="80 GB storage" description="1 GB RAM | 1 CPU">Tiny</c-toggle>
             </c-col>
             <c-col>
-              <c-toggle fit subtitle="100 GB storage" description="2 GB RAM | 2 CPU">Small</c-toggle>
+              <c-toggle fit color="pink" subtitle="100 GB storage" description="2 GB RAM | 2 CPU">Small</c-toggle>
             </c-col>
             <c-col>
               <c-toggle fit subtitle="500 GB storage" description="4 GB RAM | 3 CPU" active>Medium</c-toggle>
@@ -65,28 +68,39 @@
 
           <c-row>
             <c-col>
-              <c-text-field number name="cores" label="Number of CPU cores" value="0"></c-text-field>
+              <c-text-field number dense name="cores" label="Number of CPU cores" value="0"></c-text-field>
             </c-col>
             <c-col>
-              <c-text-field number name="gpus" label="Number of GPUs" value="0"></c-text-field>
+              <c-text-field number min="2" max="4" step="0.1" name="gpus" label="Number of GPUs" value="0"></c-text-field>
             </c-col>
           </c-row>
 
           <c-row>
             <c-col>
-              <c-text-field number name="runningtime" label="Running time" value="0"></c-text-field>
+              <c-text-field dense number disabled name="runningtime" label="Running time" value="0"></c-text-field>
             </c-col>
             <c-col>
-              <c-select label="Units" name="units" value="mins">
-                <div value="hrs">Hours</div>
-                <div value="mins">Minutes</div>
+              <c-select label="Units" name="units" dense value="mins">
+                <c-option value="hrs" label="Hours">Hours</c-option>
+                <c-option value="mins" label="Minutes">Minutes</option>
               </c-select>
+            </c-col>
+          </c-row>
+          <c-row>
+            <c-col>
+              <c-text-field number disabled name="runningtime" label="Running time" value="0"></c-text-field>
+            </c-col>
+            <c-col>
+              <c-autocomplete label="Units" name="units" value="mins" query="Minutes" dense>
+                <c-option value="hrs" label="Hours" tabindex="0" dense>Hours</c-option>
+                <c-option value="mins" label="Minutes" tabindex="0">Minutes</c-option>
+              </c-autocomplete>
             </c-col>
           </c-row>
 
           <c-row>
             <c-spacer></c-spacer>
-            <c-button color="green" fixed icon="plus">Add to estimates</c-button>
+            <c-button color="green" full-width-mobile fixed icon="plus">Add to estimates</c-button>
           </c-row>
         </c-card>
       </c-col>
@@ -121,12 +135,13 @@
     </c-row>
 
     <c-row>
-      <c-button color="green">Add another service</c-button>
+      <c-button color="green" full-width-mobile>Add another service</c-button>
       <c-spacer></c-spacer>
       <c-button color="purple" icon="minus">Remove</c-button>
       <c-button color="pink" fixed>Fixed button width</c-button>
       <c-button color="green" no-radius icon="plus">No radius</c-button>
-      <c-button color="dark-blue" no-radius icon="edit">Modify</c-button>
+      <c-button color="dark-blue" no-radius outlined disabled icon="edit">disabled</c-button>
+      <c-button color="dark-blue" no-radius outlined icon="edit">Modify</c-button>
     </c-row>
   </c-container>
 </body>

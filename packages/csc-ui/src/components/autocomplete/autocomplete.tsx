@@ -11,6 +11,7 @@ export class Autocomplete {
   @Prop() name: string;
   @Prop({ mutable: true }) query: any = null;
   @Prop({ mutable: true }) value: any = null;
+  @Prop() dense: boolean;
   @Element() host: HTMLElement;
   @State() menuVisible: boolean = false;
 
@@ -35,11 +36,14 @@ export class Autocomplete {
   }
 
   render() {
+    let classes = 'c-autocomplete-wrapper'
+    if (this.menuVisible) classes = `${classes} c-autocomplete-wrapper-active`;
+    if (this.dense) classes = `${classes} c-autocomplete-dense`;
     return (
       <Host>
-        { this.label }
+        <span>{ this.label }</span>
         <div class="c-autocomplete">
-          <div class={ this.menuVisible ? 'c-autocomplete-wrapper c-autocomplete-wrapper-active' : 'c-autocomplete-wrapper'} onClick={() => this.showMenu()}>
+          <div class={ classes } onClick={() => this.showMenu()}>
             <c-row class="no-wrap">
               <div class="c-autocomplete-current">
                 <input value={this.query} onInput={(event) => this.handleChange(event)}/>

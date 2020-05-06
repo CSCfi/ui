@@ -1,4 +1,4 @@
-import { Component, Prop, h } from '@stencil/core';
+import { Component, Prop, h, Host } from '@stencil/core';
 import { mdiPlus, mdiMinus, mdiAccount, mdiPencil } from '@mdi/js';
 
 @Component({
@@ -10,6 +10,8 @@ export class Button {
   @Prop() color: string;
   @Prop() fixed: boolean;
   @Prop() noRadius: boolean;
+  @Prop() outlined: boolean;
+  @Prop() fullWidthMobile: boolean;
   @Prop() disabled: boolean;
   @Prop() icon: string;
   
@@ -29,25 +31,30 @@ export class Button {
       };
       selectedIcon = icons[this.icon];
       svg = (
-        <svg width="16" height="16" fill={this.disabled ? '#8C8C8C' : '#ffffff'} viewBox="0 0 22 22">
+        <svg width="16" height="16" viewBox="0 0 22 22">
           <path d={ selectedIcon } />
         </svg>
       );
     }
     let classes;
     if (this.disabled) {
-      classes = `csc-button csc-button-disabled ${this.fixed ? 'fixed' : ''} ${radius}`;
+      classes = `csc-button csc-button-disabled ${this.fixed ? 'fixed' : ''} ${radius} ${this.fullWidthMobile ? 'full-width-mobile' : ''}`;
     } else {
-      classes = `csc-button ${this.color} ${this.fixed ? 'fixed' : ''} ${radius}`;
+      classes = `csc-button ${this.color} ${this.fixed ? 'fixed' : ''} ${radius} ${this.fullWidthMobile ? 'full-width-mobile' : ''}`;
+    }
+    if (this.outlined) {
+      classes = `${classes} outlined`;
     }
 
     return (
-      <div class={classes}>
-        <div class={this.disabled ? 'csc-button-padding' : 'ripple csc-button-padding'}>
-          { svg }
-          <slot></slot>
+      <Host class={this.fullWidthMobile ? 'full-width' : ''}>
+        <div class={classes}>
+          <div class={this.disabled ? 'csc-button-padding' : 'ripple csc-button-padding'}>
+            { svg }
+            <slot></slot>
+          </div>
         </div>
-      </div>
+      </Host>
     );
   }
 

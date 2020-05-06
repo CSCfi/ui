@@ -8,10 +8,11 @@ import { Component, Host, h, Prop } from '@stencil/core';
 export class Option {
   @Prop() label: string;
   @Prop() value: string;
+  @Prop() dense: boolean;
 
   render() {
     return (
-      <Host>
+      <Host class={this.dense ? 'dense' : ''}>
         <slot></slot>
       </Host>
     );

@@ -6,7 +6,7 @@ import { Component, Prop, h } from '@stencil/core';
   shadow: true
 })
 export class Button {
-  @Prop() color: string = 'blue';
+  @Prop() color: string;
   @Prop() fixed: boolean;
   @Prop() fit: boolean;
   @Prop() active: boolean;

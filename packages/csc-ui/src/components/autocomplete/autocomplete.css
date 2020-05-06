@@ -17,6 +17,10 @@
   background: #D0DCED;
 }
 
+.c-autocomplete-wrapper:focus-within {
+  border: 2px #006778 solid;
+}
+
 .c-autocomplete-current {
   margin-top: 3px;
   outline: none;
@@ -41,6 +45,26 @@
   transform: rotate(180deg);
 }
 
+.c-autocomplete-dense {
+  min-height: 36px;
+}
+
+.c-autocomplete-dense input {
+  padding: 0;
+}
+
+.c-autocomplete-dense .c-autocomplete-current {
+  margin-top: 0;
+}
+
+.c-autocomplete-dense .c-autocomplete-icon {
+  padding: 4px 24px;
+}
+
+span.dense-label {
+  font-size: 12px;
+}
+
 .c-menu-overlay {
   background: rgba(0,0,0,0.2);
   position: fixed;
@@ -55,7 +79,7 @@
 .c-menu {
   position: absolute;
   background-color: #ffffff;
-  min-width: 160px;
+  min-width: 100%;
   box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
   z-index: 1;
   cursor: pointer;

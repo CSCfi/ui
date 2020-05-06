@@ -7,12 +7,17 @@
 
 ## Properties
 
-| Property | Attribute | Description | Type      | Default     |
-| -------- | --------- | ----------- | --------- | ----------- |
-| `label`  | `label`   |             | `string`  | `undefined` |
-| `name`   | `name`    |             | `string`  | `undefined` |
-| `number` | `number`  |             | `boolean` | `undefined` |
-| `value`  | `value`   |             | `string`  | `undefined` |
+| Property   | Attribute  | Description | Type      | Default     |
+| ---------- | ---------- | ----------- | --------- | ----------- |
+| `dense`    | `dense`    |             | `boolean` | `undefined` |
+| `disabled` | `disabled` |             | `boolean` | `undefined` |
+| `label`    | `label`    |             | `string`  | `undefined` |
+| `max`      | `max`      |             | `number`  | `null`      |
+| `min`      | `min`      |             | `number`  | `null`      |
+| `name`     | `name`     |             | `string`  | `undefined` |
+| `number`   | `number`   |             | `boolean` | `undefined` |
+| `step`     | `step`     |             | `number`  | `null`      |
+| `value`    | `value`    |             | `string`  | `undefined` |
 
 
 ----------------------------------------------

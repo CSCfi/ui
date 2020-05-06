@@ -7,10 +7,11 @@
 
 ## Properties
 
-| Property | Attribute | Description | Type     | Default     |
-| -------- | --------- | ----------- | -------- | ----------- |
-| `label`  | `label`   |             | `string` | `undefined` |
-| `value`  | `value`   |             | `string` | `undefined` |
+| Property | Attribute | Description | Type      | Default     |
+| -------- | --------- | ----------- | --------- | ----------- |
+| `dense`  | `dense`   |             | `boolean` | `undefined` |
+| `label`  | `label`   |             | `string`  | `undefined` |
+| `value`  | `value`   |             | `string`  | `undefined` |
 
 
 ----------------------------------------------

@@ -12,3 +12,7 @@
 :host(:HOVER) {
   background-color: #EEF2F8;
 }
+
+:host(.dense) {
+  padding: 10px 14px;
+}

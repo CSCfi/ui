@@ -1,6 +1,11 @@
 :host {
   display: inline-block;
 }
+@media (max-width: 767px) {
+  :host(.full-width) {
+    flex-grow: 1 !important;
+  }
+}
 
 .csc-button svg {
   margin-right: 16px;
@@ -12,38 +17,31 @@
 .csc-button.border-radius {
   border-radius: 4px;
 }
+@media (max-width: 767px) {
+  .full-width-mobile {
+    max-width: 100% !important;
+    width: 100% !important;
+    margin: 0 !important;
+  }
+
+  .full-width-mobile .csc-button-padding {
+    padding: 24px 38px;
+  }
+}
 
 .fixed {
-  min-width: 220px;
+  min-width: 160px;
 }
 
-.pink {
-  background-color: #e91e63 !important;
-}
 
-.blue {
-  background-color: #025B96 !important;
-}
-
-.dark-blue {
-  background-color: #012F5F !important;
-}
-
-.green {
-  background-color: #008675 !important;
-}
-
-.purple {
-  background-color: #9c27b0 !important;
-}
 
 .csc-button {
-  background-color: #008675;
+  background-color: #006778;
   cursor: pointer;
-  border: none;
+  box-shadow: inset 0px 0px 0px 2px #006778;
   outline: none;
   color: white;
-  margin: 4px;
+  margin: 0;
   text-decoration: none;
   display: inline-block;
   text-align: center;
@@ -51,10 +49,111 @@
   user-select: none;
 }
 
+.csc-button svg {
+  fill: #FFF;
+} 
+
+.csc-button.outlined svg {
+  fill: #006778;
+}
+
+.outlined:HOVER {
+  background-color: rgba(0, 104, 122, 0.1) !important;
+}
+
+.pink {
+  background-color: rgb(233, 30, 99) !important;
+  box-shadow: inset 0px 0px 0px 2px rgb(233, 30, 99);
+}
+.pink.outlined:HOVER {
+  background-color: rgba(233, 30, 99, 0.1) !important;
+}
+
+.blue {
+  background-color: #025B96 !important;
+  box-shadow: inset 0px 0px 0px 2px rgb(2, 91, 150);
+}
+.blue.outlined:HOVER {
+  background-color: rgba(2, 91, 150, 0.1) !important;
+}
+
+.dark-blue {
+  background-color: rgb(1, 47, 95) !important;
+  box-shadow: inset 0px 0px 0px 2px rgb(1, 47, 95);
+}
+.dark-blue.outlined:HOVER {
+  background-color: rgba(1, 47, 95, 0.1) !important;
+}
+
+.green {
+  background-color: rgb(0, 134, 117) !important;
+  box-shadow: inset 0px 0px 0px 2px rgb(0, 134, 117);
+}
+.green.outlined:HOVER {
+  background-color: rgba(0, 134, 117, 0.1) !important;
+}
+
+.purple {
+  background-color: rgb(156, 39, 176) !important;
+  box-shadow: inset 0px 0px 0px 2px rgb(156, 39, 176);
+}
+.purple.outlined:HOVER {
+  background-color: rgba(156, 39, 176, 0.1) !important;
+}
+
+.pink.outlined {
+  color: #e91e63 !important;
+}
+.pink.outlined svg {
+  fill: #e91e63 !important;
+}
+.blue.outlined {
+  color: #025B96 !important;
+}
+.blue.outlined svg {
+  fill: #e91e63 !important;
+}
+.dark-blue.outlined {
+  color: #012F5F !important;
+}
+.dark-blue.outlined svg {
+  fill: #012F5F !important;
+}
+.green.outlined  {
+  color: #008675 !important;
+}
+.green.outlined svg {
+  fill: #008675 !important;
+}
+.purple.outlined {
+  color: #9c27b0 !important;
+}
+.purple.outlined svg {
+  fill: #9c27b0 !important;
+}
+.outlined {
+  background-color: transparent !important;
+  transition: background 0.5s;
+  color: #006778;
+}
+
 .csc-button-disabled {
   background: #E8E8E8;
   color: #8C8C8C;
+  box-shadow: inset 0px 0px 0px 2px #E8E8E8;
   cursor: default !important;
+}
+
+.outlined.csc-button-disabled svg {
+  fill: #8C8C8C !important;
+}
+
+.csc-button-disabled.outlined:HOVER {
+  background-color: transparent !important;
+}
+
+.csc-button-disabled svg {
+  fill: #8C8C8C;
 }
 
 .csc-button-padding {

@@ -12,6 +12,16 @@
   border: 2px transparent solid;
 }
 
+
+
+.text-field-dense {
+  min-height: 36px;
+}
+
+label.dense-label {
+  font-size: 12px;
+}
+
 .text-field-wrapper:focus-within {
   border: 2px #006778 solid;
 }
@@ -27,4 +37,8 @@
   max-width: 100%;
   min-width: 0;
   width: 100%;
+}
+
+.text-field-wrapper.text-field-disabled input, .label-disabled {
+  color: #93979D;
 }

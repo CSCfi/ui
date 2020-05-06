@@ -7,11 +7,12 @@
 
 ## Properties
 
-| Property | Attribute | Description | Type     | Default     |
-| -------- | --------- | ----------- | -------- | ----------- |
-| `label`  | `label`   |             | `string` | `undefined` |
-| `name`   | `name`    |             | `string` | `undefined` |
-| `value`  | `value`   |             | `any`    | `null`      |
+| Property | Attribute | Description | Type      | Default     |
+| -------- | --------- | ----------- | --------- | ----------- |
+| `dense`  | `dense`   |             | `boolean` | `undefined` |
+| `label`  | `label`   |             | `string`  | `undefined` |
+| `name`   | `name`    |             | `string`  | `undefined` |
+| `value`  | `value`   |             | `any`     | `null`      |
 
 
 ## Dependencies

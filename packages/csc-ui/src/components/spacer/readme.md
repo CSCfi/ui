@@ -9,12 +9,12 @@
 
 ### Used by
 
- - [c-tab](../tab)
+ - [c-tab-button](../tab-button)
 
 ### Graph
 ```mermaid
 graph TD;
-  c-tab --> c-spacer
+  c-tab-button --> c-spacer
   style c-spacer fill:#f9f,stroke:#333,stroke-width:4px
 ```
 

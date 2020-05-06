@@ -10,34 +10,48 @@
   border-radius: 4px;
 }
 
-.pink {
+.c-tab-button.pink {
   background-color: #e91e63 !important;
 }
+.pink.c-tab-button-description {
+  color: #e91e63 !important;
+}
 
-.blue {
+.c-tab-button.blue {
   background-color: #025B96 !important;
 }
+.blue.c-tab-button-description {
+  color: #025B96 !important;
+}
 
-.dark-blue {
+.c-tab-button.dark-blue {
   background-color: #012F5F !important;
 }
-
-.green {
-  background-color: #008675 !important;
+.dark-blue.c-tab-button-description {
+  color: #012F5F !important;
 }
 
-.purple {
+.c-tab-button.green {
+  background-color: #008675 !important;
+}
+.c-tab-button.green.c-tab-button-description {
+  color: #008675 !important;
+}
+
+.c-tab-button.purple {
   background-color: #9c27b0 !important;
+}
+.purple.c-tab-button-description {
+  color: #9c27b0 !important;
 }
 
 .c-tab-button-wrapper {
   width: 100%;
   max-width: 220px;
-  margin: 8px;
 }
 
 .c-tab-button {
-  background-color: #008675;
+  background-color: #006778;
   width: 100%;
   margin-bottom: 8px;
   line-height: 38px;
@@ -67,10 +81,12 @@
 }
 
 .c-tab-button-description {
-  font-size: 15px;
+  font-size: 14px;
   user-select: none;
   text-align: center;
-  color: #025B96;
+  padding-left: 10px;
+  padding-right: 10px;
+  color: #006778;
   height: 70px;
   border-bottom: 4px transparent solid;
 }

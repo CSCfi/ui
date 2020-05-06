@@ -10,7 +10,7 @@
 | Property      | Attribute     | Description | Type      | Default     |
 | ------------- | ------------- | ----------- | --------- | ----------- |
 | `active`      | `active`      |             | `boolean` | `undefined` |
-| `color`       | `color`       |             | `string`  | `'blue'`    |
+| `color`       | `color`       |             | `string`  | `undefined` |
 | `description` | `description` |             | `string`  | `undefined` |
 | `fit`         | `fit`         |             | `boolean` | `undefined` |
 | `fixed`       | `fixed`       |             | `boolean` | `undefined` |

@@ -10,24 +10,42 @@ import { HTMLStencilElement, JSXBase } from '@stencil/core/internal';
 
 
 export namespace Components {
+  interface CAutocomplete {
+    'dense': boolean;
+    'label': string;
+    'name': string;
+    'query': any;
+    'value': any;
+  }
   interface CButton {
     'color': string;
     'disabled': boolean;
     'fixed': boolean;
+    'fullWidthMobile': boolean;
     'icon': string;
     'noRadius': boolean;
+    'outlined': boolean;
   }
   interface CCard {}
   interface CCol {}
   interface CContainer {}
+  interface COption {
+    'dense': boolean;
+    'label': string;
+    'value': string;
+  }
   interface CRow {}
   interface CSelect {
+    'dense': boolean;
     'label': string;
     'name': string;
     'value': any;
   }
   interface CSpacer {}
   interface CTab {
+    'active': boolean;
+  }
+  interface CTabButton {
     'active': boolean;
     'color': string;
     'disabled': boolean;
@@ -36,9 +54,14 @@ export namespace Components {
     'noRadius': boolean;
   }
   interface CTextField {
+    'dense': boolean;
+    'disabled': boolean;
     'label': string;
+    'max': number;
+    'min': number;
     'name': string;
     'number': boolean;
+    'step': number;
     'value': string;
   }
   interface CTitle {}
@@ -54,6 +77,12 @@ export namespace Components {
 
 declare global {
 
+
+  interface HTMLCAutocompleteElement extends Components.CAutocomplete, HTMLStencilElement {}
+  var HTMLCAutocompleteElement: {
+    prototype: HTMLCAutocompleteElement;
+    new (): HTMLCAutocompleteElement;
+  };
 
   interface HTMLCButtonElement extends Components.CButton, HTMLStencilElement {}
   var HTMLCButtonElement: {
@@ -77,6 +106,12 @@ declare global {
   var HTMLCContainerElement: {
     prototype: HTMLCContainerElement;
     new (): HTMLCContainerElement;
+  };
+
+  interface HTMLCOptionElement extends Components.COption, HTMLStencilElement {}
+  var HTMLCOptionElement: {
+    prototype: HTMLCOptionElement;
+    new (): HTMLCOptionElement;
   };
 
   interface HTMLCRowElement extends Components.CRow, HTMLStencilElement {}
@@ -103,6 +138,12 @@ declare global {
     new (): HTMLCTabElement;
   };
 
+  interface HTMLCTabButtonElement extends Components.CTabButton, HTMLStencilElement {}
+  var HTMLCTabButtonElement: {
+    prototype: HTMLCTabButtonElement;
+    new (): HTMLCTabButtonElement;
+  };
+
   interface HTMLCTextFieldElement extends Components.CTextField, HTMLStencilElement {}
   var HTMLCTextFieldElement: {
     prototype: HTMLCTextFieldElement;
@@ -121,14 +162,17 @@ declare global {
     new (): HTMLCToggleElement;
   };
   interface HTMLElementTagNameMap {
+    'c-autocomplete': HTMLCAutocompleteElement;
     'c-button': HTMLCButtonElement;
     'c-card': HTMLCCardElement;
     'c-col': HTMLCColElement;
     'c-container': HTMLCContainerElement;
+    'c-option': HTMLCOptionElement;
     'c-row': HTMLCRowElement;
     'c-select': HTMLCSelectElement;
     'c-spacer': HTMLCSpacerElement;
     'c-tab': HTMLCTabElement;
+    'c-tab-button': HTMLCTabButtonElement;
     'c-text-field': HTMLCTextFieldElement;
     'c-title': HTMLCTitleElement;
     'c-toggle': HTMLCToggleElement;
@@ -136,24 +180,42 @@ declare global {
 }
 
 declare namespace LocalJSX {
+  interface CAutocomplete {
+    'dense'?: boolean;
+    'label'?: string;
+    'name'?: string;
+    'query'?: any;
+    'value'?: any;
+  }
   interface CButton {
     'color'?: string;
     'disabled'?: boolean;
     'fixed'?: boolean;
+    'fullWidthMobile'?: boolean;
     'icon'?: string;
     'noRadius'?: boolean;
+    'outlined'?: boolean;
   }
   interface CCard {}
   interface CCol {}
   interface CContainer {}
+  interface COption {
+    'dense'?: boolean;
+    'label'?: string;
+    'value'?: string;
+  }
   interface CRow {}
   interface CSelect {
+    'dense'?: boolean;
     'label'?: string;
     'name'?: string;
     'value'?: any;
   }
   interface CSpacer {}
   interface CTab {
+    'active'?: boolean;
+  }
+  interface CTabButton {
     'active'?: boolean;
     'color'?: string;
     'disabled'?: boolean;
@@ -162,9 +224,14 @@ declare namespace LocalJSX {
     'noRadius'?: boolean;
   }
   interface CTextField {
+    'dense'?: boolean;
+    'disabled'?: boolean;
     'label'?: string;
+    'max'?: number;
+    'min'?: number;
     'name'?: string;
     'number'?: boolean;
+    'step'?: number;
     'value'?: string;
   }
   interface CTitle {}
@@ -178,14 +245,17 @@ declare namespace LocalJSX {
   }
 
   interface IntrinsicElements {
+    'c-autocomplete': CAutocomplete;
     'c-button': CButton;
     'c-card': CCard;
     'c-col': CCol;
     'c-container': CContainer;
+    'c-option': COption;
     'c-row': CRow;
     'c-select': CSelect;
     'c-spacer': CSpacer;
     'c-tab': CTab;
+    'c-tab-button': CTabButton;
     'c-text-field': CTextField;
     'c-title': CTitle;
     'c-toggle': CToggle;
@@ -198,14 +268,17 @@ export { LocalJSX as JSX };
 declare module "@stencil/core" {
   export namespace JSX {
     interface IntrinsicElements {
+      'c-autocomplete': LocalJSX.CAutocomplete & JSXBase.HTMLAttributes<HTMLCAutocompleteElement>;
       'c-button': LocalJSX.CButton & JSXBase.HTMLAttributes<HTMLCButtonElement>;
       'c-card': LocalJSX.CCard & JSXBase.HTMLAttributes<HTMLCCardElement>;
       'c-col': LocalJSX.CCol & JSXBase.HTMLAttributes<HTMLCColElement>;
       'c-container': LocalJSX.CContainer & JSXBase.HTMLAttributes<HTMLCContainerElement>;
+      'c-option': LocalJSX.COption & JSXBase.HTMLAttributes<HTMLCOptionElement>;
       'c-row': LocalJSX.CRow & JSXBase.HTMLAttributes<HTMLCRowElement>;
       'c-select': LocalJSX.CSelect & JSXBase.HTMLAttributes<HTMLCSelectElement>;
       'c-spacer': LocalJSX.CSpacer & JSXBase.HTMLAttributes<HTMLCSpacerElement>;
       'c-tab': LocalJSX.CTab & JSXBase.HTMLAttributes<HTMLCTabElement>;
+      'c-tab-button': LocalJSX.CTabButton & JSXBase.HTMLAttributes<HTMLCTabButtonElement>;
       'c-text-field': LocalJSX.CTextField & JSXBase.HTMLAttributes<HTMLCTextFieldElement>;
       'c-title': LocalJSX.CTitle & JSXBase.HTMLAttributes<HTMLCTitleElement>;
       'c-toggle': LocalJSX.CToggle & JSXBase.HTMLAttributes<HTMLCToggleElement>;
