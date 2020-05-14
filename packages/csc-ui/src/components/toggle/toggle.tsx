@@ -29,7 +29,7 @@ export class Button {
     }
 
     return (
-      <div class={classes}>
+      <div class={classes} tabindex="0" role="button">
         <div class="c-toggle-padding">
           <slot></slot>
           { subtitle }

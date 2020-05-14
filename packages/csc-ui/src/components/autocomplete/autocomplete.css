@@ -81,6 +81,8 @@ span.dense-label {
   background-color: #ffffff;
   min-width: 100%;
   box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+  padding-left: 0;
+  margin: 0;
   z-index: 1;
   cursor: pointer;
   user-select: none;
@@ -96,4 +98,17 @@ span.dense-label {
   max-width: 100%;
   min-width: 0;
   width: 100%;
+}
+
+.c-menu li {
+  display:block;
+  padding: 14px;
+  transition: background-color 0.5s;
+  font-size: 14px;
+}
+.c-menu li.dense {
+  padding: 10px 14px;
+}
+.c-menu li:HOVER {
+  background-color: #EEF2F8;
 }

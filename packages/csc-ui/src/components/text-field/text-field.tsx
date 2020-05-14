@@ -29,9 +29,9 @@ export class TextField {
     }
     return (
       <Host>
-        <label class={ labelClasses } htmlFor={ this.name }>{ this.label }</label>
+        <label id="c-text-label" class={ labelClasses } htmlFor={ this.name }>{ this.label }</label>
         <div class={ classes }>
-          <input name={this.name} disabled={this.disabled} type={this.number ? 'number' : 'text'} min={this.min} max={this.max} step={this.step} value={this.value} onInput={(event) => this.handleChange(event)}/>
+          <input name={this.name} aria-labelledby="c-text-label" disabled={this.disabled} type={this.number ? 'number' : 'text'} min={this.min} max={this.max} step={this.step} value={this.value} onInput={(event) => this.handleChange(event)}/>
         </div>
       </Host>
     );

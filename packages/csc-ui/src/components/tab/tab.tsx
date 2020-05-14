@@ -10,7 +10,7 @@ export class Tab {
 
   render() {
     return (
-      <Host>
+      <Host tabindex="0" role="button">
         <div class={ this.active ? 'c-tab active' : 'c-tab' }>
           <slot></slot>
         </div>

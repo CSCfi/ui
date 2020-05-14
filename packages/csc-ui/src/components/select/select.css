@@ -13,6 +13,11 @@
   cursor: pointer;
 }
 
+.c-select-wrapper:focus-within {
+  border: 2px #006778 solid;
+  outline: none;
+}
+
 .c-select-wrapper-active {
   background: #D0DCED;
 }
@@ -72,13 +77,15 @@ span.dense-label {
   user-select: none;
 }
 
-.c-menu option {
+.c-menu li {
   display:block;
   padding: 14px;
-  transition: all 0.5s;
+  transition: background-color 0.5s;
   font-size: 14px;
 }
-
-.c-menu option:HOVER {
-  background: #EEF2F8;
+.c-menu li.dense {
+  padding: 10px 14px;
+}
+.c-menu li:HOVER {
+  background-color: #EEF2F8;
 }

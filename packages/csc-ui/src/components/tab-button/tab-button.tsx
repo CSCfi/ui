@@ -53,7 +53,7 @@ export class Tab {
     subClasses = `${subClasses} c-tab-button-padding`;
 
     return (
-        <div class="c-tab-button-wrapper" style={{ 'width': '500px;' }}>
+        <div class="c-tab-button-wrapper" tabindex="0" role="button" style={{ 'width': '500px;' }}>
           <div class={classes}>
             <div class={subClasses}>
               <c-row>

@@ -5,6 +5,11 @@
   user-select: none;
 }
 
+:host(:focus) {
+  outline: none;
+  background: #f0f0f0;
+}
+
 .c-tab {
   transition: all 0.5s ease;
   display: block;

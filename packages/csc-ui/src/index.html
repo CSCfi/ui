@@ -81,8 +81,6 @@
             </c-col>
             <c-col>
               <c-select label="Units" name="units" dense value="mins">
-                <c-option value="hrs" label="Hours">Hours</c-option>
-                <c-option value="mins" label="Minutes">Minutes</option>
               </c-select>
             </c-col>
           </c-row>
@@ -91,10 +89,7 @@
               <c-text-field number disabled name="runningtime" label="Running time" value="0"></c-text-field>
             </c-col>
             <c-col>
-              <c-autocomplete label="Units" name="units" value="mins" query="Minutes" dense>
-                <c-option value="hrs" label="Hours" tabindex="0" dense>Hours</c-option>
-                <c-option value="mins" label="Minutes" tabindex="0">Minutes</c-option>
-              </c-autocomplete>
+              <c-autocomplete label="Units" name="units" value="default1" query="Default 1" dense></c-autocomplete>
             </c-col>
           </c-row>
 

@@ -47,7 +47,7 @@ export class Button {
     }
 
     return (
-      <Host class={this.fullWidthMobile ? 'full-width' : ''}>
+      <Host class={this.fullWidthMobile ? 'full-width' : ''} tabindex="0" role="button">
         <div class={classes}>
           <div class={this.disabled ? 'csc-button-padding' : 'ripple csc-button-padding'}>
             { svg }

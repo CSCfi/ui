@@ -50,6 +50,11 @@
   max-width: 220px;
 }
 
+.c-tab-button-wrapper:focus {
+  outline: none;
+  background: #f0f0f0;
+}
+
 .c-tab-button {
   background-color: #006778;
   width: 100%;

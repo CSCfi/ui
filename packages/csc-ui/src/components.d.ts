@@ -12,6 +12,7 @@ import { HTMLStencilElement, JSXBase } from '@stencil/core/internal';
 export namespace Components {
   interface CAutocomplete {
     'dense': boolean;
+    'items': any[];
     'label': string;
     'name': string;
     'query': any;
@@ -37,6 +38,7 @@ export namespace Components {
   interface CRow {}
   interface CSelect {
     'dense': boolean;
+    'items': any[];
     'label': string;
     'name': string;
     'value': any;
@@ -182,8 +184,10 @@ declare global {
 declare namespace LocalJSX {
   interface CAutocomplete {
     'dense'?: boolean;
+    'items'?: any[];
     'label'?: string;
     'name'?: string;
+    'onChangeValue'?: (event: CustomEvent<any>) => void;
     'query'?: any;
     'value'?: any;
   }
@@ -207,8 +211,10 @@ declare namespace LocalJSX {
   interface CRow {}
   interface CSelect {
     'dense'?: boolean;
+    'items'?: any[];
     'label'?: string;
     'name'?: string;
+    'onChangeValue'?: (event: CustomEvent<any>) => void;
     'value'?: any;
   }
   interface CSpacer {}
