@@ -12,6 +12,7 @@ export class Autocomplete {
   @Prop({ mutable: true }) query: any = null;
   @Prop({ mutable: true }) value: any = null;
   @Prop() dense: boolean;
+  @Prop() required: boolean = null;
   @Prop() items: any[] = [
     { name: 'Default 1', value: 'default1' },
     { name: 'Default 2', value: 'default2' },
@@ -124,6 +125,7 @@ export class Autocomplete {
       <Host>
         <label id="c-autocomplete-label">
           { this.label }
+          { this.required ? <span class="required"> *</span> : '' }
         </label>
         <div class="c-autocomplete">
           <div

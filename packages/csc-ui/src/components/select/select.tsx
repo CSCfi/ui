@@ -10,6 +10,7 @@ export class Select {
   @Prop() label: string;
   @Prop() dense: boolean;
   @Prop() name: string;
+  @Prop() required: boolean = null;
   @Prop({ mutable: true }) value: any = null;
   @Element() host: HTMLElement;
   @State() menuVisible: boolean = false;
@@ -116,6 +117,7 @@ export class Select {
       <Host>
         <label id="c-select-label">
           { this.label }
+          { this.required ? <span class="required"> *</span> : '' }
         </label>
         <div class="c-selections">
           <div

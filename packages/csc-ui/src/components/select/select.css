@@ -58,6 +58,10 @@ span.dense-label {
   font-size: 12px;
 }
 
+label span.required {
+  color: #E71D32;
+}
+
 .rotated {
   transform: rotate(180deg);
 }

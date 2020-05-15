@@ -65,6 +65,10 @@ span.dense-label {
   font-size: 12px;
 }
 
+label span.required {
+  color: #E71D32;
+}
+
 .c-menu-overlay {
   background: rgba(0,0,0,0.2);
   position: fixed;

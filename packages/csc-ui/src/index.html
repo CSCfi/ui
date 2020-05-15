@@ -71,16 +71,16 @@
               <c-text-field number dense name="cores" label="Number of CPU cores" value="0"></c-text-field>
             </c-col>
             <c-col>
-              <c-text-field number min="2" max="4" step="0.1" name="gpus" label="Number of GPUs" value="0"></c-text-field>
+              <c-text-field number min="2" max="4" step="0.1" required name="gpus" label="Number of GPUs" value="0"></c-text-field>
             </c-col>
           </c-row>
 
           <c-row>
             <c-col>
-              <c-text-field dense number disabled name="runningtime" label="Running time" value="0"></c-text-field>
+              <c-text-field dense number required name="runningtime" label="Running time" value="0"></c-text-field>
             </c-col>
             <c-col>
-              <c-select label="Units" name="units" dense value="mins">
+              <c-select label="Units" required name="units" dense value="mins">
               </c-select>
             </c-col>
           </c-row>
@@ -89,7 +89,7 @@
               <c-text-field number disabled name="runningtime" label="Running time" value="0"></c-text-field>
             </c-col>
             <c-col>
-              <c-autocomplete label="Units" name="units" value="default1" query="Default 1" dense></c-autocomplete>
+              <c-autocomplete label="Units" required name="units" value="default1" query="Default 1" dense></c-autocomplete>
             </c-col>
           </c-row>
 

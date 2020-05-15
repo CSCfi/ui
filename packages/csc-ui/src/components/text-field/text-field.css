@@ -22,6 +22,14 @@ label.dense-label {
   font-size: 12px;
 }
 
+label span.required {
+  color: #E71D32;
+}
+
+.text-field-wrapper.required-border {
+  border-bottom: 2px #E71D32 solid;
+}
+
 .text-field-wrapper:focus-within {
   border: 2px #006778 solid;
 }

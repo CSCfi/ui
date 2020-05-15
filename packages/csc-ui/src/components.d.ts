@@ -16,6 +16,7 @@ export namespace Components {
     'label': string;
     'name': string;
     'query': any;
+    'required': boolean;
     'value': any;
   }
   interface CButton {
@@ -41,6 +42,7 @@ export namespace Components {
     'items': any[];
     'label': string;
     'name': string;
+    'required': boolean;
     'value': any;
   }
   interface CSpacer {}
@@ -63,6 +65,7 @@ export namespace Components {
     'min': number;
     'name': string;
     'number': boolean;
+    'required': boolean;
     'step': number;
     'value': string;
   }
@@ -189,6 +192,7 @@ declare namespace LocalJSX {
     'name'?: string;
     'onChangeValue'?: (event: CustomEvent<any>) => void;
     'query'?: any;
+    'required'?: boolean;
     'value'?: any;
   }
   interface CButton {
@@ -215,6 +219,7 @@ declare namespace LocalJSX {
     'label'?: string;
     'name'?: string;
     'onChangeValue'?: (event: CustomEvent<any>) => void;
+    'required'?: boolean;
     'value'?: any;
   }
   interface CSpacer {}
@@ -237,6 +242,7 @@ declare namespace LocalJSX {
     'min'?: number;
     'name'?: string;
     'number'?: boolean;
+    'required'?: boolean;
     'step'?: number;
     'value'?: string;
   }
