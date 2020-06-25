@@ -11,6 +11,11 @@
   <style>
       body {
         font-family: 'Open Sans', sans;
+        background: #f0f0f0;
+      }
+      h1 {
+        color: #777;
+        font-size: 24px;
       }
   </style>
 </head>
@@ -18,7 +23,177 @@
   <c-container>
     <c-row>
       <c-col>
-        <c-card style="padding: 12px 32px">
+        <h1>CSC UI - Web Component Library</h1>
+        <c-card shadow style="padding: 12px 32px">
+          <c-row>
+            <c-col>
+              <c-title>Buttons</c-title>
+            </c-col>
+          </c-row>
+          <c-row>
+            <c-col>
+              Regular buttons
+            </c-col>
+          </c-row>
+          <c-row>
+            <c-col>
+              <c-button color="blue" fixed>Button</c-button>
+            </c-col>
+            <c-col>
+              <c-button color="green" icon="edit" fixed>Icon</c-button>
+            </c-col>
+            <c-col>
+              <c-button color="green" disabled icon="plus" fixed>Disabled</c-button>
+            </c-col>
+            <c-col>
+              <c-button outlined icon="edit" fixed>Outlined</c-button>
+            </c-col>
+            <c-col>
+              <c-button color="blue" dense>Dense</c-button>
+            </c-col>
+          </c-row>
+          <c-row>
+            <c-col>
+              Buttons with no radius
+            </c-col>
+          </c-row>
+          <c-row>
+            <c-col>
+              <c-button color="purple" fixed no-radius>Button</c-button>
+            </c-col>
+            <c-col>
+              <c-button color="dark-blue" icon="edit" fixed no-radius>Icon</c-button>
+            </c-col>
+            <c-col>
+              <c-button color="green" disabled icon="plus" fixed no-radius>Disabled</c-button>
+            </c-col>
+            <c-col>
+              <c-button color="pink" outlined icon="edit" fixed no-radius>Outlined</c-button>
+            </c-col>
+            <c-col>
+              <c-button color="blue" no-radius dense>Dense</c-button>
+            </c-col>
+          </c-row>
+          <c-row>
+            <c-col>
+              <c-button color="pink" no-radius fit>Fit</c-button>
+            </c-col>
+          </c-row>
+        </c-card>
+        <br><br>
+        <c-card shadow style="padding: 12px 32px">
+          <c-row>
+            <c-col>
+              <c-title>Toggle</c-title>
+            </c-col>
+          </c-row>
+          <c-row>
+            <c-col>
+              Toggle buttons
+            </c-col>
+          </c-row>
+
+          <c-row class="no-wrap">
+            <c-col>
+              <c-toggle fit>Default</c-toggle>
+            </c-col>
+            <c-col>
+              <c-toggle fit active>Active</c-toggle>
+            </c-col>
+            <c-col>
+              <c-toggle fit color="pink">Pink</c-toggle>
+            </c-col>
+            <c-col>
+              <c-toggle fit color="blue">Blue</c-toggle>
+            </c-col>
+          </c-row>
+          Toggle with description
+          <c-row>
+            <c-col>
+              <c-toggle fit subtitle="Subtitle example" description="Description | 123">Default</c-toggle>
+            </c-col>
+            <c-col>
+              <c-toggle fit color="pink" subtitle="Another example" description="Description | 321">Pink</c-toggle>
+            </c-col>
+            <c-col>
+              <c-toggle fit subtitle="Third example" description="Another toggle" active>Active</c-toggle>
+            </c-col>
+            <c-col>
+              <c-toggle fit color="pink" subtitle="Fourth example" description="Fourth description" active>Active pink</c-toggle>
+            </c-col>
+          </c-row>
+        </c-card>
+        <br><br>
+        <c-card shadow style="padding: 12px 32px">
+          <c-row>
+            <c-col>
+              <c-title>Input fields</c-title>
+            </c-col>
+          </c-row>
+
+          <c-row>
+            <c-col>
+              <c-text-field number name="name1" label="Number input" value="25"></c-text-field>
+            </c-col>
+            <c-col>
+              <c-text-field name="name2" label="Text input (required)" required value=""></c-text-field>
+            </c-col>
+            <c-col>
+              <c-text-field name="name3" label="Text input (disabled)" disabled value="Example"></c-text-field>
+            </c-col>
+          </c-row>
+
+          <c-row>
+            <c-col>
+              <c-text-field dense number name="name1" label="Number input (dense)" value="25"></c-text-field>
+            </c-col>
+            <c-col>
+              <c-text-field dense name="name2" label="Text input (dense, required)" required value=""></c-text-field>
+            </c-col>
+            <c-col>
+              <c-text-field dense name="name2" label="Text input (dense, disabled)" disabled value="Example"></c-text-field>
+            </c-col>
+          </c-row>
+
+        </c-card>
+        <br><br>
+        <c-card shadow style="padding: 12px 32px">
+          <c-row>
+            <c-col>
+              <c-title>Select & Autocomplete</c-title>
+            </c-col>
+          </c-row>
+          
+          <c-row>
+            <c-col>
+              <c-select label="Select" name="units" value=""></c-select>
+            </c-col>
+            <c-col>
+              <c-select label="Select (required)" required name="units" value=""></c-select>
+            </c-col>
+            <c-col>
+              <c-autocomplete label="Autocomplete" name="units" value="default1" query="Default 1"></c-autocomplete>
+            </c-col>
+          </c-row>
+          <c-row>
+            <c-col>
+              <c-select dense label="Select (dense)" name="units" value=""></c-select>
+            </c-col>
+            <c-col>
+              <c-select dense label="Select (dense, required)" required name="units" value=""></c-select>
+            </c-col>
+            <c-col>
+              <c-autocomplete dense label="Autocomplete (dense)" name="units" value="default1" query="Default 1"></c-autocomplete>
+            </c-col>
+          </c-row>
+        </c-card>
+        <br><br>
+        <c-card shadow style="padding: 12px 32px">
+          <c-row>
+            <c-col>
+              <c-title>Tabs & Tab buttons</c-title>
+            </c-col>
+          </c-row>
           <c-row>
             <c-tab active>SERVICES</c-tab>
             <c-tab>ESTIMATIONS</c-tab>
@@ -29,114 +204,8 @@
             <c-tab-button icon="code" active label="Tab3">Ut enim ad minim veniam, quis nostrud exercitation ullamco.</c-tab-button>
             <c-tab-button icon="cpu" label="Tab4">Duis aute irure dolor in reprehenderit in voluptate velit esse cillum</c-tab-button>
           </c-row>
-          <c-row>
-            <c-col>
-              <c-title>Instances</c-title>
-            </c-col>
-          </c-row>
-
-          Select flavour
-          <c-row class="no-wrap">
-            <c-col>
-              <c-toggle fit>Standard</c-toggle>
-            </c-col>
-            <c-col>
-              <c-toggle fit active>HPC</c-toggle>
-            </c-col>
-            <c-col>
-              <c-toggle fit>I/O</c-toggle>
-            </c-col>
-            <c-col>
-              <c-toggle fit>GPU</c-toggle>
-            </c-col>
-          </c-row>
-          Choose size
-          <c-row>
-            <c-col>
-              <c-toggle fit color="purple" subtitle="80 GB storage" description="1 GB RAM | 1 CPU">Tiny</c-toggle>
-            </c-col>
-            <c-col>
-              <c-toggle fit color="pink" subtitle="100 GB storage" description="2 GB RAM | 2 CPU">Small</c-toggle>
-            </c-col>
-            <c-col>
-              <c-toggle fit subtitle="500 GB storage" description="4 GB RAM | 3 CPU" active>Medium</c-toggle>
-            </c-col>
-            <c-col>
-              <c-toggle fit subtitle="2 TB storage" description="8 GB RAM | 4 CPU">Large</c-toggle>
-            </c-col>
-          </c-row>
-
-          <c-row>
-            <c-col>
-              <c-text-field number dense name="cores" label="Number of CPU cores" value="0"></c-text-field>
-            </c-col>
-            <c-col>
-              <c-text-field number min="2" max="4" step="0.1" required name="gpus" label="Number of GPUs" value="0"></c-text-field>
-            </c-col>
-          </c-row>
-
-          <c-row>
-            <c-col>
-              <c-text-field dense number required name="runningtime" label="Running time" value="0"></c-text-field>
-            </c-col>
-            <c-col>
-              <c-select label="Units" required name="units" dense value="mins">
-              </c-select>
-            </c-col>
-          </c-row>
-          <c-row>
-            <c-col>
-              <c-text-field number disabled name="runningtime" label="Running time" value="0"></c-text-field>
-            </c-col>
-            <c-col>
-              <c-autocomplete label="Units" required name="units" value="default1" query="Default 1" dense></c-autocomplete>
-            </c-col>
-          </c-row>
-
-          <c-row>
-            <c-spacer></c-spacer>
-            <c-button color="green" full-width-mobile fixed icon="plus">Add to estimates</c-button>
-          </c-row>
         </c-card>
       </c-col>
-    </c-row>
-
-    <c-row>
-      <c-col>
-        <c-card>
-
-          <c-row>
-            <c-col>
-              <c-title>What next?</c-title>
-            </c-col>
-          </c-row>
-
-          <c-row>
-            <c-spacer></c-spacer>
-            <c-button color="blue" icon="plus">Add another service</c-button>
-          </c-row>
-
-        </c-card>
-      </c-col>
-
-      <c-col>
-        <c-card>
-          <c-row>
-            <c-spacer></c-spacer>
-            <c-button color="blue" disabled icon="plus">Disabled</c-button>
-          </c-row>
-        </c-card>
-      </c-col>
-    </c-row>
-
-    <c-row>
-      <c-button color="green" full-width-mobile>Add another service</c-button>
-      <c-spacer></c-spacer>
-      <c-button color="purple" icon="minus">Remove</c-button>
-      <c-button color="pink" fixed>Fixed button width</c-button>
-      <c-button color="green" no-radius icon="plus">No radius</c-button>
-      <c-button color="dark-blue" no-radius outlined disabled icon="edit">disabled</c-button>
-      <c-button color="dark-blue" no-radius outlined icon="edit">Modify</c-button>
     </c-row>
   </c-container>
 </body>

@@ -1,4 +1,4 @@
-import { Component, Host, h } from '@stencil/core';
+import { Component, Host, h, Prop } from '@stencil/core';
 
 @Component({
   tag: 'c-card',
@@ -6,10 +6,10 @@ import { Component, Host, h } from '@stencil/core';
   shadow: true
 })
 export class Card {
-
+  @Prop() shadow: boolean = undefined;
   render() {
     return (
-      <Host>
+      <Host class={ this.shadow ? 'shadow' : ''}>
         <slot></slot>
       </Host>
     );

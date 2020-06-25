@@ -13,3 +13,9 @@
   white-space: normal;
   border: 1px #012F5F solid;
 }
+
+:host(.shadow) {
+  background: #FFF;
+  border: 1px transparent solid;
+  box-shadow: 0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23);
+}

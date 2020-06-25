@@ -93,3 +93,8 @@ label span.required {
 .c-menu li:HOVER {
   background-color: #EEF2F8;
 }
+
+.c-menu li.active {
+  background-color: #006778;
+  color: #fff;
+}

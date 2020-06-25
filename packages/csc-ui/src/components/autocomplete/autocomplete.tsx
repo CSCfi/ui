@@ -1,4 +1,4 @@
-import { Component, Element, Host, Prop, State, h, Listen, Event, EventEmitter } from '@stencil/core';
+import { Component, Element, Host, Prop, State, h, Listen, Event, EventEmitter, Watch } from '@stencil/core';
 import { mdiChevronDown } from '@mdi/js';
 
 @Component({
@@ -21,7 +21,16 @@ export class Autocomplete {
 
   @Event() changeValue: EventEmitter;
   valueChangedHandler(item: any) {
+    function isItem(element) {
+      return element === item;
+    }
+    this.currentIndex = this.items.findIndex(isItem);
     this.changeValue.emit(item);
+  }
+
+  @Watch('items')
+  watchHandler() {
+    this.currentIndex = null;
   }
 
   @Element() host: HTMLElement;
@@ -29,38 +38,49 @@ export class Autocomplete {
   @State() currentIndex: number = null;
   @Listen('keydown')
   handleKeyDown(ev: any){
+    if (ev.key === 'Tab') {
+      this.menuVisible = false;
+    }
+
     if (ev.key === 'ArrowDown') {
-      this.menuVisible = true;
-      const selectedId = ev.path[0].id;
-      this.currentIndex = this.items.findIndex(i => i.value === selectedId.replace('item_', ''));
-      if (this.currentIndex == null) {
-        this.currentIndex = 0;
-      } else if (this.currentIndex + 1 < this.items.length){
-        this.currentIndex = this.currentIndex + 1;
-      }
-      const currentItem = this.items[this.currentIndex];
-      if (currentItem && currentItem.ref) {
-        currentItem.ref.focus();
+      ev.preventDefault();
+      if (this.menuVisible === false) {
+        this.menuVisible = true;
+      } else {
+        if (this.currentIndex === null) {
+          this.currentIndex = 0;
+        } else if (this.currentIndex + 1 < this.items.length){
+          this.currentIndex = this.currentIndex + 1;
+        }
       }
     }
 
     if (ev.key === 'ArrowUp') {
+      ev.preventDefault();
       this.menuVisible = true;
-      const selectedId = ev.path[0].id;
-      this.currentIndex = this.items.findIndex(i => i.value === selectedId.replace('item_', ''));
       if (this.currentIndex !== null && this.currentIndex > 0){
         this.currentIndex = this.currentIndex - 1;
-        this.items[this.currentIndex].ref.focus();
+      } else if (this.currentIndex === 0){
+        this.currentIndex = null;
+      }
+    }
+    if (ev.keyCode === 32) {
+      if (this.menuVisible === false) {
+        this.menuVisible = true;
+      }
+    }
+
+    if (ev.key === 'Escape') {
+      if (this.menuVisible === true) {
+        this.menuVisible = false;
+        this.currentIndex = null;
       }
     }
 
     if (ev.key === 'Enter') {
-      const selectedId = ev.path[0].id;
-      if (selectedId.includes('item_')) {
-        const selectedItem = this.items.find(i => i.value === selectedId.replace('item_', ''));
+      if (this.currentIndex !== null) {
+        const selectedItem = this.items[this.currentIndex];
         this.select(selectedItem);
-        this.menuVisible = false;
-        this.current.focus();
       }
     }
   }
@@ -104,12 +124,15 @@ export class Autocomplete {
       classes = 'dense';
     }
 
+    if (this.items[this.currentIndex] === item) {
+      classes = `${classes} active`;
+    }
+
     return (
       <li
         id={'item_' + item.value}
         ref={el => item.ref = el as HTMLElement}
         onClick={() => this.select(item)}
-        tabindex="0"
         class={classes}
       >
         {item.name}

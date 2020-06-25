@@ -16,6 +16,7 @@
 | `min`      | `min`      |             | `number`  | `null`      |
 | `name`     | `name`     |             | `string`  | `undefined` |
 | `number`   | `number`   |             | `boolean` | `undefined` |
+| `required` | `required` |             | `boolean` | `null`      |
 | `step`     | `step`     |             | `number`  | `null`      |
 | `value`    | `value`    |             | `string`  | `undefined` |
 

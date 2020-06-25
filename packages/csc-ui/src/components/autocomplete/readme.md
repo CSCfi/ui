@@ -7,14 +7,15 @@
 
 ## Properties
 
-| Property | Attribute | Description | Type      | Default                                                                                                                                           |
-| -------- | --------- | ----------- | --------- | ------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `dense`  | `dense`   |             | `boolean` | `undefined`                                                                                                                                       |
-| `items`  | --        |             | `any[]`   | `[     { name: 'Default 1', value: 'default1' },     { name: 'Default 2', value: 'default2' },     { name: 'Default 3', value: 'default3' },   ]` |
-| `label`  | `label`   |             | `string`  | `undefined`                                                                                                                                       |
-| `name`   | `name`    |             | `string`  | `undefined`                                                                                                                                       |
-| `query`  | `query`   |             | `any`     | `null`                                                                                                                                            |
-| `value`  | `value`   |             | `any`     | `null`                                                                                                                                            |
+| Property   | Attribute  | Description | Type      | Default                                                                                                                                           |
+| ---------- | ---------- | ----------- | --------- | ------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `dense`    | `dense`    |             | `boolean` | `undefined`                                                                                                                                       |
+| `items`    | --         |             | `any[]`   | `[     { name: 'Default 1', value: 'default1' },     { name: 'Default 2', value: 'default2' },     { name: 'Default 3', value: 'default3' },   ]` |
+| `label`    | `label`    |             | `string`  | `undefined`                                                                                                                                       |
+| `name`     | `name`     |             | `string`  | `undefined`                                                                                                                                       |
+| `query`    | `query`    |             | `any`     | `null`                                                                                                                                            |
+| `required` | `required` |             | `boolean` | `null`                                                                                                                                            |
+| `value`    | `value`    |             | `any`     | `null`                                                                                                                                            |
 
 
 ## Events

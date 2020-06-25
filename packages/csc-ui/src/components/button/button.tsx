@@ -9,6 +9,8 @@ import { mdiPlus, mdiMinus, mdiAccount, mdiPencil } from '@mdi/js';
 export class Button {
   @Prop() color: string;
   @Prop() fixed: boolean;
+  @Prop() dense: boolean;
+  @Prop() fit: boolean;
   @Prop() noRadius: boolean;
   @Prop() outlined: boolean;
   @Prop() fullWidthMobile: boolean;
@@ -38,18 +40,31 @@ export class Button {
     }
     let classes;
     if (this.disabled) {
-      classes = `csc-button csc-button-disabled ${this.fixed ? 'fixed' : ''} ${radius} ${this.fullWidthMobile ? 'full-width-mobile' : ''}`;
+      classes = `csc-button csc-button-disabled ${this.fit ? 'fit' : ''} ${this.fixed ? 'fixed' : ''} ${radius} ${this.fullWidthMobile ? 'full-width-mobile' : ''}`;
     } else {
-      classes = `csc-button ${this.color} ${this.fixed ? 'fixed' : ''} ${radius} ${this.fullWidthMobile ? 'full-width-mobile' : ''}`;
+      classes = `csc-button ${this.color} ${this.fit ? 'fit' : ''} ${this.fixed ? 'fixed' : ''} ${radius} ${this.fullWidthMobile ? 'full-width-mobile' : ''}`;
     }
     if (this.outlined) {
       classes = `${classes} outlined`;
     }
 
+    let padding = 'csc-button-padding';
+    if (this.dense) {
+      padding = 'dense';
+    }
+    if (!this.disabled) {
+      padding = `${padding} ripple`;
+    }
+
+    let hostClasses = this.fullWidthMobile ? 'full-width' : '';
+    if (this.fit) {
+      hostClasses = 'fit';
+    }
+
     return (
-      <Host class={this.fullWidthMobile ? 'full-width' : ''} tabindex="0" role="button">
+      <Host class={hostClasses} tabindex="0" role="button">
         <div class={classes}>
-          <div class={this.disabled ? 'csc-button-padding' : 'ripple csc-button-padding'}>
+          <div class={padding}>
             { svg }
             <slot></slot>
           </div>
