@@ -69,6 +69,7 @@ export namespace Components {
         "min": number;
         "name": string;
         "number": boolean;
+        "readonly": boolean;
         "required": boolean;
         "step": number;
         "value": string;
@@ -252,6 +253,7 @@ declare namespace LocalJSX {
         "min"?: number;
         "name"?: string;
         "number"?: boolean;
+        "readonly"?: boolean;
         "required"?: boolean;
         "step"?: number;
         "value"?: string;

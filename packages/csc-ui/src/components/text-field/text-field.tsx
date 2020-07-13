@@ -8,6 +8,7 @@ import { Component, Prop, Host, h } from '@stencil/core';
 export class TextField {
   @Prop() number: boolean;
   @Prop() disabled: boolean;
+  @Prop() readonly: boolean;
   @Prop() dense: boolean;
   @Prop() required: boolean = null;
   @Prop() label: string;
@@ -35,7 +36,7 @@ export class TextField {
       <Host>
         <label id="c-text-label" class={ labelClasses } htmlFor={ this.name }>{ this.label }{ this.required ? <span class="required"> *</span> : '' }</label>
         <div class={ classes }>
-          <input name={this.name} aria-labelledby="c-text-label" disabled={this.disabled} type={this.number ? 'number' : 'text'} min={this.min} max={this.max} step={this.step} value={this.value} onInput={(event) => this.handleChange(event)}/>
+          <input name={this.name} aria-labelledby="c-text-label" disabled={this.disabled} readonly={this.readonly} type={this.number ? 'number' : 'text'} min={this.min} max={this.max} step={this.step} value={this.value} onInput={(event) => this.handleChange(event)}/>
         </div>
       </Host>
     );
