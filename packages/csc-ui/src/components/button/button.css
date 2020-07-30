@@ -12,7 +12,7 @@
   width: 100%;
 }
 
-.csc-button svg {
+.csc-button svg.button-icon {
   margin-right: 16px;
   font-size: 10px;
   margin-left: -8px;
@@ -42,9 +42,11 @@
 
 .csc-button {
   background-color: #006778;
+  position: relative;
   cursor: pointer;
   box-shadow: inset 0px 0px 0px 2px #006778;
   outline: none;
+  transition: color 0.5s;
   color: white;
   margin: 0;
   text-decoration: none;
@@ -106,35 +108,62 @@
   background-color: rgba(156, 39, 176, 0.1) !important;
 }
 
+.spinner__circle {
+  animation: 3s ease-in-out infinite both circle-animation;
+  display: block;
+  fill: transparent;
+  stroke: #fff;
+  stroke-linecap: round;
+  stroke-dasharray: 283;
+  stroke-dashoffset: 280;
+  stroke-width: 10px;
+  transform-origin: 50% 50%;
+}
+
 .pink.outlined {
-  color: #e91e63 !important;
+  color: #e91e63;
 }
 .pink.outlined svg {
-  fill: #e91e63 !important;
+  fill: #e91e63;
+}
+.pink.outlined .spinner__circle {
+  stroke: #e91e63;
 }
 .blue.outlined {
-  color: #025B96 !important;
+  color: #025B96;
 }
 .blue.outlined svg {
-  fill: #e91e63 !important;
+  fill: #025B96;
+}
+.blue.outlined .spinner__circle {
+  stroke: #025B96;
 }
 .dark-blue.outlined {
-  color: #012F5F !important;
+  color: #012F5F;
 }
 .dark-blue.outlined svg {
-  fill: #012F5F !important;
+  fill: #012F5F;
+}
+.dark-blue.outlined .spinner__circle {
+  stroke: #012F5F;
 }
 .green.outlined  {
-  color: #008675 !important;
+  color: #008675;
 }
 .green.outlined svg {
-  fill: #008675 !important;
+  fill: #008675;
+}
+.green.outlined .spinner__circle {
+  stroke: #008675;
 }
 .purple.outlined {
-  color: #9c27b0 !important;
+  color: #9c27b0;
 }
 .purple.outlined svg {
-  fill: #9c27b0 !important;
+  fill: #9c27b0;
+}
+.purple.outlined .spinner__circle {
+  stroke: #9c27b0;
 }
 .outlined {
   background-color: transparent !important;
@@ -185,4 +214,63 @@
 
 .fit {
   width: 100%;
+}
+
+.hide-text {
+  color: transparent !important;
+}
+
+.hide-text svg, .hide-text .outlined.csc-button svg {
+  fill: transparent !important;
+}
+
+.spinner_wrapper {
+  width: 100%;
+  position: absolute;
+  height: 100%;
+  padding-top: 12px;
+}
+
+.spinner_wrapper.dense_spinner {
+  padding-top: 8px;
+}
+
+.spinner {
+  animation: 2s linear infinite svg-animation;
+  max-width: 30px;
+  position: relative;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.spinner_wrapper.dense_spinner .spinner{
+  max-width: 24px;
+}
+
+@keyframes svg-animation {
+  0% {
+    transform: rotateZ(0deg);
+  }
+  100% {
+    transform: rotateZ(360deg)
+  }
+}
+
+@keyframes circle-animation {
+  0%,
+  25% {
+    stroke-dashoffset: 280;
+    transform: rotate(0);
+  }
+  
+  50%,
+  75% {
+    stroke-dashoffset: 75;
+    transform: rotate(45deg);
+  }
+  
+  100% {
+    stroke-dashoffset: 280;
+    transform: rotate(360deg);
+  }
 }

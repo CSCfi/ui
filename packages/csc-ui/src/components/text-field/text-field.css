@@ -34,7 +34,7 @@ label span.required {
   border: 2px #006778 solid;
 }
 
-.text-field-wrapper input {
+.text-field-wrapper input, .text-field-wrapper textarea {
   outline: none;
   font-size: 14px;
   background-color: transparent;
@@ -47,6 +47,6 @@ label span.required {
   width: 100%;
 }
 
-.text-field-wrapper.text-field-disabled input, .label-disabled {
+.text-field-wrapper.text-field-disabled input, .text-field-wrapper.text-field-disabled textarea, .label-disabled {
   color: #93979D;
 }

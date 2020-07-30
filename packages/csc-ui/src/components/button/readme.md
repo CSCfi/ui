@@ -16,6 +16,7 @@
 | `fixed`           | `fixed`             |             | `boolean` | `undefined` |
 | `fullWidthMobile` | `full-width-mobile` |             | `boolean` | `undefined` |
 | `icon`            | `icon`              |             | `string`  | `undefined` |
+| `loading`         | `loading`           |             | `boolean` | `undefined` |
 | `noRadius`        | `no-radius`         |             | `boolean` | `undefined` |
 | `outlined`        | `outlined`          |             | `boolean` | `undefined` |
 

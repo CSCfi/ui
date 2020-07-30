@@ -17,7 +17,7 @@ export class Select {
   @State() currentIndex: number = null;
   @Prop() items: any[] = [
     { name: 'Default 1', value: 'default1' },
-    { name: 'Default 2', value: 'default2' },
+    { name: 'Second 2', value: 'default2' },
     { name: 'Default 3', value: 'default3' },
   ];
 
@@ -32,6 +32,21 @@ export class Select {
 
   @Listen('keydown', { capture: true })
   handleKeyDown(ev: any){
+    const letterNumber = /^[0-9a-zA-Z]+$/;
+    if (ev.key.match(letterNumber) && ev.key.length === 1) {
+      if ((Date.now() - this.lastKeyPressTime) > 3000 || this.searchString.length > 2) {
+        this.searchString = ev.key;
+      } else {
+        this.searchString = `${this.searchString}${ev.key}`;
+      }
+      this.lastKeyPressTime = Date.now();
+      const selectedItem = this.items.find(i => i.name.toLowerCase().includes(this.searchString));
+      if (selectedItem) {
+        this.value = selectedItem;
+        this.valueChangedHandler(selectedItem);
+      }
+    }
+
     if (ev.key === 'Tab') {
       this.menuVisible = false;
     }
@@ -104,6 +119,8 @@ export class Select {
   }
 
   current = null;
+  lastKeyPressTime = null;
+  searchString = '';
 
   showMenu() {
     if (this.menuVisible) {

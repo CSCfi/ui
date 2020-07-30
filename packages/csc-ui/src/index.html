@@ -40,6 +40,9 @@
               <c-button color="blue" fixed>Button</c-button>
             </c-col>
             <c-col>
+              <c-button color="blue" fixed loading>Loading</c-button>
+            </c-col>
+            <c-col>
               <c-button color="green" icon="edit" fixed>Icon</c-button>
             </c-col>
             <c-col>
@@ -50,6 +53,9 @@
             </c-col>
             <c-col>
               <c-button color="blue" dense>Dense</c-button>
+            </c-col>
+            <c-col>
+              <c-button color="blue" dense loading>Dense</c-button>
             </c-col>
           </c-row>
           <c-row>
@@ -68,7 +74,7 @@
               <c-button color="green" disabled icon="plus" fixed no-radius>Disabled</c-button>
             </c-col>
             <c-col>
-              <c-button color="pink" outlined icon="edit" fixed no-radius>Outlined</c-button>
+              <c-button color="pink" outlined icon="edit" loading fixed no-radius>Outlined</c-button>
             </c-col>
             <c-col>
               <c-button color="blue" no-radius dense>Dense</c-button>
@@ -76,12 +82,13 @@
           </c-row>
           <c-row>
             <c-col>
-              <c-button color="pink" no-radius fit>Fit</c-button>
+              <c-button color="pink" title="Fit!" no-radius fit>Fit</c-button>
             </c-col>
           </c-row>
         </c-card>
         <br><br>
         <c-card shadow style="padding: 12px 32px">
+          <c-loader></c-loader>
           <c-row>
             <c-col>
               <c-title>Toggle</c-title>
@@ -136,10 +143,15 @@
               <c-text-field number name="name1" label="Number input" value="25"></c-text-field>
             </c-col>
             <c-col>
-              <c-text-field name="name2" label="Text input (required)" required value=""></c-text-field>
+              <c-text-field name="name2" label="Text input (required)" placeholder="This is a placeholder" required value=""></c-text-field>
             </c-col>
             <c-col>
               <c-text-field name="name3" label="Text input (disabled)" disabled value="Example"></c-text-field>
+            </c-col>
+          </c-row>
+          <c-row>
+            <c-col>
+              <c-text-field rows=3 required name="name4" label="Textarea" value="textarea text"></c-text-field>
             </c-col>
           </c-row>
 

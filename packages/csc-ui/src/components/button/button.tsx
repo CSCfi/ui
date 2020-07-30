@@ -16,8 +16,13 @@ export class Button {
   @Prop() fullWidthMobile: boolean;
   @Prop() disabled: boolean;
   @Prop() icon: string;
+  @Prop() loading: boolean;
   
   render() {
+    const SPINNER_SMALL = (<svg class="spinner" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+    <circle class="spinner__circle" cx="50" cy="50" r="45"/>
+  </svg>);
+
     let selectedIcon = null;
     let svg = '';
     let radius = 'border-radius';
@@ -33,7 +38,7 @@ export class Button {
       };
       selectedIcon = icons[this.icon];
       svg = (
-        <svg width="16" height="16" viewBox="0 0 22 22">
+        <svg class="button-icon" width="16" height="16" viewBox="0 0 22 22">
           <path d={ selectedIcon } />
         </svg>
       );
@@ -56,6 +61,10 @@ export class Button {
       padding = `${padding} ripple`;
     }
 
+    if (this.loading) {
+      padding = `${padding} hide-text`;
+    }
+
     let hostClasses = this.fullWidthMobile ? 'full-width' : '';
     if (this.fit) {
       hostClasses = 'fit';
@@ -64,6 +73,9 @@ export class Button {
     return (
       <Host class={hostClasses} tabindex="0" role="button">
         <div class={classes}>
+          { this.loading ? (<div class={ this.dense ? 'spinner_wrapper dense_spinner' : 'spinner_wrapper'}>
+            { SPINNER_SMALL }
+          </div>) : '' }
           <div class={padding}>
             { svg }
             <slot></slot>

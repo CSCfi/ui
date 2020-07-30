@@ -16,6 +16,8 @@ export class TextField {
   @Prop() step: number = null;
   @Prop() min: number = null;
   @Prop() max: number = null;
+  @Prop() rows: number = 1;
+  @Prop() placeholder: string;
   @Prop({ mutable: true }) value: string;
 
   handleChange(event) {
@@ -32,11 +34,14 @@ export class TextField {
       classes = `${classes} text-field-disabled`;
       labelClasses = 'label-disabled';
     }
+    const textInput = <input name={this.name} aria-labelledby="c-text-label" disabled={this.disabled} readonly={this.readonly} type={this.number ? 'number' : 'text'} min={this.min} max={this.max} step={this.step} placeholder={this.placeholder} value={this.value} onInput={(event) => this.handleChange(event)}/>;
+    const textArea = <textarea name={this.name} rows={this.rows} aria-labelledby="c-text-label" disabled={this.disabled} placeholder={this.placeholder} readonly={this.readonly} onInput={(event) => this.handleChange(event)}>{this.value}</textarea>;
+    
     return (
       <Host>
         <label id="c-text-label" class={ labelClasses } htmlFor={ this.name }>{ this.label }{ this.required ? <span class="required"> *</span> : '' }</label>
         <div class={ classes }>
-          <input name={this.name} aria-labelledby="c-text-label" disabled={this.disabled} readonly={this.readonly} type={this.number ? 'number' : 'text'} min={this.min} max={this.max} step={this.step} value={this.value} onInput={(event) => this.handleChange(event)}/>
+          { this.rows > 1 ? textArea : textInput }
         </div>
       </Host>
     );

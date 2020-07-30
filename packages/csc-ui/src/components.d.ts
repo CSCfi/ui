@@ -23,6 +23,7 @@ export namespace Components {
         "fixed": boolean;
         "fullWidthMobile": boolean;
         "icon": string;
+        "loading": boolean;
         "noRadius": boolean;
         "outlined": boolean;
     }
@@ -32,6 +33,8 @@ export namespace Components {
     interface CCol {
     }
     interface CContainer {
+    }
+    interface CLoader {
     }
     interface COption {
         "dense": boolean;
@@ -69,8 +72,10 @@ export namespace Components {
         "min": number;
         "name": string;
         "number": boolean;
+        "placeholder": string;
         "readonly": boolean;
         "required": boolean;
+        "rows": number;
         "step": number;
         "value": string;
     }
@@ -115,6 +120,12 @@ declare global {
     var HTMLCContainerElement: {
         prototype: HTMLCContainerElement;
         new (): HTMLCContainerElement;
+    };
+    interface HTMLCLoaderElement extends Components.CLoader, HTMLStencilElement {
+    }
+    var HTMLCLoaderElement: {
+        prototype: HTMLCLoaderElement;
+        new (): HTMLCLoaderElement;
     };
     interface HTMLCOptionElement extends Components.COption, HTMLStencilElement {
     }
@@ -176,6 +187,7 @@ declare global {
         "c-card": HTMLCCardElement;
         "c-col": HTMLCColElement;
         "c-container": HTMLCContainerElement;
+        "c-loader": HTMLCLoaderElement;
         "c-option": HTMLCOptionElement;
         "c-row": HTMLCRowElement;
         "c-select": HTMLCSelectElement;
@@ -206,6 +218,7 @@ declare namespace LocalJSX {
         "fixed"?: boolean;
         "fullWidthMobile"?: boolean;
         "icon"?: string;
+        "loading"?: boolean;
         "noRadius"?: boolean;
         "outlined"?: boolean;
     }
@@ -215,6 +228,8 @@ declare namespace LocalJSX {
     interface CCol {
     }
     interface CContainer {
+    }
+    interface CLoader {
     }
     interface COption {
         "dense"?: boolean;
@@ -253,8 +268,10 @@ declare namespace LocalJSX {
         "min"?: number;
         "name"?: string;
         "number"?: boolean;
+        "placeholder"?: string;
         "readonly"?: boolean;
         "required"?: boolean;
+        "rows"?: number;
         "step"?: number;
         "value"?: string;
     }
@@ -274,6 +291,7 @@ declare namespace LocalJSX {
         "c-card": CCard;
         "c-col": CCol;
         "c-container": CContainer;
+        "c-loader": CLoader;
         "c-option": COption;
         "c-row": CRow;
         "c-select": CSelect;
@@ -294,6 +312,7 @@ declare module "@stencil/core" {
             "c-card": LocalJSX.CCard & JSXBase.HTMLAttributes<HTMLCCardElement>;
             "c-col": LocalJSX.CCol & JSXBase.HTMLAttributes<HTMLCColElement>;
             "c-container": LocalJSX.CContainer & JSXBase.HTMLAttributes<HTMLCContainerElement>;
+            "c-loader": LocalJSX.CLoader & JSXBase.HTMLAttributes<HTMLCLoaderElement>;
             "c-option": LocalJSX.COption & JSXBase.HTMLAttributes<HTMLCOptionElement>;
             "c-row": LocalJSX.CRow & JSXBase.HTMLAttributes<HTMLCRowElement>;
             "c-select": LocalJSX.CSelect & JSXBase.HTMLAttributes<HTMLCSelectElement>;
