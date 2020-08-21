@@ -46,6 +46,7 @@ export namespace Components {
     interface CSelect {
         "dense": boolean;
         "items": any[];
+        "itemsPerPage": number;
         "label": string;
         "name": string;
         "required": boolean;
@@ -241,6 +242,7 @@ declare namespace LocalJSX {
     interface CSelect {
         "dense"?: boolean;
         "items"?: any[];
+        "itemsPerPage"?: number;
         "label"?: string;
         "name"?: string;
         "onChangeValue"?: (event: CustomEvent<any>) => void;

@@ -11,6 +11,7 @@ export class Select {
   @Prop() dense: boolean;
   @Prop() name: string;
   @Prop() required: boolean = null;
+  @Prop() itemsPerPage: number;
   @Prop({ mutable: true }) value: any = null;
   @Element() host: HTMLElement;
   @State() menuVisible: boolean = false;
@@ -28,6 +29,13 @@ export class Select {
     }
     this.currentIndex = this.items.findIndex(isItem);
     this.changeValue.emit(item);
+    // item.ref.scrollIntoView();
+  }
+
+  scrollToElement() {
+    if (this.items.length > this.itemsPerPage) {
+      this.items[this.currentIndex].ref.scrollIntoView();
+    }
   }
 
   @Listen('keydown', { capture: true })
@@ -41,9 +49,17 @@ export class Select {
       }
       this.lastKeyPressTime = Date.now();
       const selectedItem = this.items.find(i => i.name.toLowerCase().includes(this.searchString));
+      function isItem(element) {
+        return element === selectedItem;
+      }
       if (selectedItem) {
-        this.value = selectedItem;
-        this.valueChangedHandler(selectedItem);
+        if (this.menuVisible) {
+          this.currentIndex = this.items.findIndex(isItem);
+          this.scrollToElement();
+        } else {
+          this.value = selectedItem;
+          this.valueChangedHandler(selectedItem);
+        }
       }
     }
 
@@ -83,6 +99,9 @@ export class Select {
         } else if (this.currentIndex + 1 < this.items.length){
           this.currentIndex = this.currentIndex + 1;
         }
+        if (this.menuVisible) {
+          this.scrollToElement();
+        }
       }
     }
 
@@ -91,6 +110,9 @@ export class Select {
       this.menuVisible = true;
       if (this.currentIndex !== null && this.currentIndex > 0){
         this.currentIndex = this.currentIndex - 1;
+        if (this.menuVisible) {
+          this.scrollToElement();
+        }
       } else if (this.currentIndex === 0){
         this.currentIndex = null;
       }
@@ -171,6 +193,13 @@ export class Select {
     let classes = 'c-select-wrapper';
     if (this.menuVisible) classes = `${classes} c-select-wrapper-active`;
     if (this.dense) classes = `${classes} c-select-dense`;
+    let itemsPerPageStyle = {};
+    if (this.itemsPerPage && this.itemsPerPage > 0 && this.items.length > this.itemsPerPage) {
+      itemsPerPageStyle = {
+        'max-height': (47 * this.itemsPerPage) + 'px',
+        'overflow-y': 'scroll'
+      };
+    }
     return (
       <Host>
         <label id="c-select-label">
@@ -207,7 +236,7 @@ export class Select {
             name={ this.name }
           />
           <div class="c-menu-parent" aria-expanded={this.menuVisible}>
-            { this.menuVisible ? <div class="c-menu">
+            { this.menuVisible ? <div class="c-menu" style={itemsPerPageStyle}>
               {this.items.map(item => this.getListItem(item))}
             </div> : ''}
           </div>
