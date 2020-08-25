@@ -16,11 +16,7 @@ export class Select {
   @Element() host: HTMLElement;
   @State() menuVisible: boolean = false;
   @State() currentIndex: number = null;
-  @Prop() items: any[] = [
-    { name: 'Default 1', value: 'default1' },
-    { name: 'Second 2', value: 'default2' },
-    { name: 'Default 3', value: 'default3' },
-  ];
+  @Prop() items: any[] = [];
 
   @Event() changeValue: EventEmitter;
   valueChangedHandler(item: any) {
@@ -177,9 +173,11 @@ export class Select {
       classes = `${classes} active`;
     }
 
+    const itemId = item.value.replace(/[^a-zA-Z0-9-_]/g, '');
+
     return (
       <li
-        id={'item_' + item.value}
+        id={'item_' + itemId}
         ref={el => item.ref = el as HTMLElement}
         onClick={() => this.select(item)}
         class={classes}
@@ -216,9 +214,7 @@ export class Select {
             aria-labelledby="c-select-label"
           >
             <c-row>
-              <div class="c-select-current">
-                { this.value.name }
-              </div>
+              { this.items.length === 0 ? <div class='c-menu-no-items'>Loading items</div> : <div class="c-select-current">{ this.value.name }</div> }
               <svg
                 width="22"
                 height="22"
@@ -238,7 +234,7 @@ export class Select {
           <div class="c-menu-parent" aria-expanded={this.menuVisible}>
             { this.menuVisible ? <div class="c-menu" style={itemsPerPageStyle}>
               {this.items.map(item => this.getListItem(item))}
-            </div> : ''}
+            </div> : '' }
           </div>
         </div>
       </Host>
