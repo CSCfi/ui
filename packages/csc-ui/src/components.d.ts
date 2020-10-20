@@ -17,6 +17,7 @@ export namespace Components {
     }
     interface CButton {
         "color": string;
+        "colorCode": string;
         "dense": boolean;
         "disabled": boolean;
         "fit": boolean;
@@ -28,11 +29,25 @@ export namespace Components {
         "outlined": boolean;
     }
     interface CCard {
-        "shadow": boolean;
+        "color": string;
+        "elevation": number;
+        "ma": number;
+        "mx": number;
+        "my": number;
+        "noRadius": boolean;
+        "pa": number;
+        "px": number;
+        "py": number;
+    }
+    interface CCheckbox {
+        "checked": boolean;
+        "color": string;
+        "label": string;
     }
     interface CCol {
     }
     interface CContainer {
+        "width": number;
     }
     interface CLoader {
     }
@@ -40,6 +55,12 @@ export namespace Components {
         "dense": boolean;
         "label": string;
         "value": string;
+    }
+    interface CRadio {
+        "color": string;
+        "items": any[];
+        "label": string;
+        "selected": object;
     }
     interface CRow {
     }
@@ -49,7 +70,9 @@ export namespace Components {
         "itemsPerPage": number;
         "label": string;
         "name": string;
+        "placeholder": string;
         "required": boolean;
+        "showNone": boolean;
         "value": any;
     }
     interface CSpacer {
@@ -78,6 +101,8 @@ export namespace Components {
         "required": boolean;
         "rows": number;
         "step": number;
+        "valid": boolean;
+        "validateOnBlur": boolean;
         "value": string;
     }
     interface CTitle {
@@ -110,6 +135,12 @@ declare global {
         prototype: HTMLCCardElement;
         new (): HTMLCCardElement;
     };
+    interface HTMLCCheckboxElement extends Components.CCheckbox, HTMLStencilElement {
+    }
+    var HTMLCCheckboxElement: {
+        prototype: HTMLCCheckboxElement;
+        new (): HTMLCCheckboxElement;
+    };
     interface HTMLCColElement extends Components.CCol, HTMLStencilElement {
     }
     var HTMLCColElement: {
@@ -133,6 +164,12 @@ declare global {
     var HTMLCOptionElement: {
         prototype: HTMLCOptionElement;
         new (): HTMLCOptionElement;
+    };
+    interface HTMLCRadioElement extends Components.CRadio, HTMLStencilElement {
+    }
+    var HTMLCRadioElement: {
+        prototype: HTMLCRadioElement;
+        new (): HTMLCRadioElement;
     };
     interface HTMLCRowElement extends Components.CRow, HTMLStencilElement {
     }
@@ -186,10 +223,12 @@ declare global {
         "c-autocomplete": HTMLCAutocompleteElement;
         "c-button": HTMLCButtonElement;
         "c-card": HTMLCCardElement;
+        "c-checkbox": HTMLCCheckboxElement;
         "c-col": HTMLCColElement;
         "c-container": HTMLCContainerElement;
         "c-loader": HTMLCLoaderElement;
         "c-option": HTMLCOptionElement;
+        "c-radio": HTMLCRadioElement;
         "c-row": HTMLCRowElement;
         "c-select": HTMLCSelectElement;
         "c-spacer": HTMLCSpacerElement;
@@ -213,6 +252,7 @@ declare namespace LocalJSX {
     }
     interface CButton {
         "color"?: string;
+        "colorCode"?: string;
         "dense"?: boolean;
         "disabled"?: boolean;
         "fit"?: boolean;
@@ -224,11 +264,26 @@ declare namespace LocalJSX {
         "outlined"?: boolean;
     }
     interface CCard {
-        "shadow"?: boolean;
+        "color"?: string;
+        "elevation"?: number;
+        "ma"?: number;
+        "mx"?: number;
+        "my"?: number;
+        "noRadius"?: boolean;
+        "pa"?: number;
+        "px"?: number;
+        "py"?: number;
+    }
+    interface CCheckbox {
+        "checked"?: boolean;
+        "color"?: string;
+        "label"?: string;
+        "onChangeValue"?: (event: CustomEvent<any>) => void;
     }
     interface CCol {
     }
     interface CContainer {
+        "width"?: number;
     }
     interface CLoader {
     }
@@ -236,6 +291,13 @@ declare namespace LocalJSX {
         "dense"?: boolean;
         "label"?: string;
         "value"?: string;
+    }
+    interface CRadio {
+        "color"?: string;
+        "items"?: any[];
+        "label"?: string;
+        "onChangeValue"?: (event: CustomEvent<any>) => void;
+        "selected"?: object;
     }
     interface CRow {
     }
@@ -246,7 +308,9 @@ declare namespace LocalJSX {
         "label"?: string;
         "name"?: string;
         "onChangeValue"?: (event: CustomEvent<any>) => void;
+        "placeholder"?: string;
         "required"?: boolean;
+        "showNone"?: boolean;
         "value"?: any;
     }
     interface CSpacer {
@@ -275,6 +339,8 @@ declare namespace LocalJSX {
         "required"?: boolean;
         "rows"?: number;
         "step"?: number;
+        "valid"?: boolean;
+        "validateOnBlur"?: boolean;
         "value"?: string;
     }
     interface CTitle {
@@ -291,10 +357,12 @@ declare namespace LocalJSX {
         "c-autocomplete": CAutocomplete;
         "c-button": CButton;
         "c-card": CCard;
+        "c-checkbox": CCheckbox;
         "c-col": CCol;
         "c-container": CContainer;
         "c-loader": CLoader;
         "c-option": COption;
+        "c-radio": CRadio;
         "c-row": CRow;
         "c-select": CSelect;
         "c-spacer": CSpacer;
@@ -312,10 +380,12 @@ declare module "@stencil/core" {
             "c-autocomplete": LocalJSX.CAutocomplete & JSXBase.HTMLAttributes<HTMLCAutocompleteElement>;
             "c-button": LocalJSX.CButton & JSXBase.HTMLAttributes<HTMLCButtonElement>;
             "c-card": LocalJSX.CCard & JSXBase.HTMLAttributes<HTMLCCardElement>;
+            "c-checkbox": LocalJSX.CCheckbox & JSXBase.HTMLAttributes<HTMLCCheckboxElement>;
             "c-col": LocalJSX.CCol & JSXBase.HTMLAttributes<HTMLCColElement>;
             "c-container": LocalJSX.CContainer & JSXBase.HTMLAttributes<HTMLCContainerElement>;
             "c-loader": LocalJSX.CLoader & JSXBase.HTMLAttributes<HTMLCLoaderElement>;
             "c-option": LocalJSX.COption & JSXBase.HTMLAttributes<HTMLCOptionElement>;
+            "c-radio": LocalJSX.CRadio & JSXBase.HTMLAttributes<HTMLCRadioElement>;
             "c-row": LocalJSX.CRow & JSXBase.HTMLAttributes<HTMLCRowElement>;
             "c-select": LocalJSX.CSelect & JSXBase.HTMLAttributes<HTMLCSelectElement>;
             "c-spacer": LocalJSX.CSpacer & JSXBase.HTMLAttributes<HTMLCSpacerElement>;

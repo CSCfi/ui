@@ -9,7 +9,8 @@
 
 | Property          | Attribute           | Description | Type      | Default     |
 | ----------------- | ------------------- | ----------- | --------- | ----------- |
-| `color`           | `color`             |             | `string`  | `undefined` |
+| `color`           | `color`             |             | `string`  | `''`        |
+| `colorCode`       | `color-code`        |             | `string`  | `''`        |
 | `dense`           | `dense`             |             | `boolean` | `undefined` |
 | `disabled`        | `disabled`          |             | `boolean` | `undefined` |
 | `fit`             | `fit`               |             | `boolean` | `undefined` |

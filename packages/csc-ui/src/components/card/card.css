@@ -1,21 +1,34 @@
+@import "../../global/app.css"; 
+
 :host {
   display: block;
-  max-width: 100%;
-  outline: none;
-  padding-left: 16px;
-  padding-right: 16px;
-  padding-top: 8px;
-  padding-bottom: 8px;
-  text-decoration: none;
-  transition-property: box-shadow,opacity;
-  overflow-wrap: break-word;
-  position: relative;
-  white-space: normal;
-  border: 1px #012F5F solid;
+  border-radius: 6px;
 }
 
-:host(.shadow) {
-  background: #FFF;
-  border: 1px transparent solid;
+:host(.no-radius) {
+  border-radius: 0;
+}
+
+:host(.elevation-0) {
+  box-shadow: none;
+}
+
+:host(.elevation-1) {
+  box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
+}
+:host(.elevation-2) {
   box-shadow: 0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23);
+}
+:host(.elevation-3) {
+  box-shadow: 0 10px 20px rgba(0,0,0,0.19), 0 6px 6px rgba(0,0,0,0.23);
+}
+:host(.elevation-4) {
+  box-shadow: 0 14px 28px rgba(0,0,0,0.25), 0 10px 10px rgba(0,0,0,0.22);
+}
+:host(.elevation-5) {
+  box-shadow: 0 19px 38px rgba(0,0,0,0.30), 0 15px 12px rgba(0,0,0,0.22);
+}
+
+:host(.csc-bg-color) {
+  background: var(--current-color);
 }

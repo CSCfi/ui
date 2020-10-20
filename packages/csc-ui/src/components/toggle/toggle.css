@@ -1,3 +1,5 @@
+@import "../../global/app.css"; 
+
 :host {
   display: block;
 }
@@ -11,79 +13,15 @@
 }
 
 .c-toggle:not(.active):HOVER {
-  background-color: rgba(0, 103, 120, 0.1);
-}
-
-.pink {
-  border-color: #e91e63 !important;
-  color: #e91e63 !important;
-}
-.pink:not(.active):HOVER {
-  background-color: rgba(233, 30, 99, 0.1) !important;
-}
-.blue {
-  border-color: rgb(2, 91, 150) !important;
-  color: rgb(2, 91, 150) !important;
-}
-.blue:not(.active):HOVER {
-  background-color: rgba(2, 91, 150, 0.1) !important;
-}
-.dark-blue {
-  border-color: rgb(1, 47, 95) !important;
-  color: rgb(1, 47, 95) !important;
-}
-.dark-blue:not(.active):HOVER {
-  background-color: rgba(1, 47, 95, 0.1) !important;
-}
-.green {
-  border-color: rgb(0, 134, 117) !important;
-  color: rgb(0, 134, 117) !important;
-}
-.green:not(.active):HOVER {
-  background-color: rgba(0, 134, 117, 0.1) !important;
-}
-.purple {
-  border-color: rgb(155, 39, 176) !important;
-  color: rgb(155, 39, 176) !important;
-}
-.purple:not(.active):HOVER {
-  background-color: rgba(155, 39, 176, 0.1) !important;
-}
-.active {
-  background-color: #006778 !important;
-  border-color: #006778 !important;
-}
-.pink.active {
-  background-color: #e91e63 !important;
-  border-color: #e91e63 !important;
-}
-
-.blue.active {
-  background-color: #025B96 !important;
-  border-color: #025B96 !important;
-}
-
-.dark-blue.active {
-  background-color: #012F5F !important;
-  border-color: #012F5F !important;
-}
-
-.green.active {
-  background-color: #008675 !important;
-  border-color: #008675 !important;
-}
-
-.purple.active {
-  background-color: #9c27b0 !important;
-  border-color: #9c27b0 !important;
+  background-color: var(--current-hover-color);
 }
 
 .c-toggle {
-  border-color: #006778;
+  border-color: var(--current-color);
   border-style: solid;
   border-width: 2px;
   cursor: pointer;
-  color: #006778;
+  color: var(--current-color);
   text-decoration: none;
   display: inline-block;
   text-align: center;
@@ -102,6 +40,8 @@
 
 .active {
   color: #ffffff !important;
+  background-color: var(--current-color) !important;
+  border-color: var(--current-color) !important;
 }
 
 .c-toggle-disabled {

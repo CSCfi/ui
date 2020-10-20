@@ -2,6 +2,14 @@
   display: block;
 }
 
+.c-selections {
+  outline: none;
+}
+
+.c-selections:focus .c-select-wrapper {
+  border: 2px #006778 solid;
+}
+
 .c-select-wrapper {
   background: #EEF2F8;
   align-items: stretch;
@@ -22,6 +30,10 @@
   background: #D0DCED;
 }
 
+.c-select-wrapper.required-border {
+  border-bottom: 2px #E71D32 solid;
+}
+
 .c-select-current {
   margin-top: 3px;
   outline: none;
@@ -35,8 +47,19 @@
   user-select: none;
 }
 
+.c-select-row {
+  display: flex;
+  flex: 1 1 auto;
+  margin-right: -12px;
+  margin-left: -12px;
+}
+
 .c-select-dense .c-select-current {
   margin-top: 0;
+}
+
+.c-select-current span {
+  color: #777;
 }
 
 .c-select-icon {
@@ -97,4 +120,8 @@ label span.required {
 .c-menu li.active {
   background-color: #006778;
   color: #fff;
+}
+
+.c-menu li.none {
+  color: rgba(0,0,0,0.5);
 }

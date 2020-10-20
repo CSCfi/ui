@@ -8,217 +8,531 @@
   <script type="module" src="/build/cscwebcomponents.esm.js"></script>
   <script nomodule src="/build/cscwebcomponents.js"></script>
   <link href="https://fonts.googleapis.com/css?family=Open+Sans&display=swap" rel="stylesheet">
-  <style>
-      body {
-        font-family: 'Open Sans', sans;
-        background: #f0f0f0;
-      }
-      h1 {
-        color: #777;
-        font-size: 24px;
-      }
+  <style type="text/css">
+    body {
+      font-family: 'Open Sans', sans;
+    }
+
+    table {
+      margin-top: 20px;
+      margin-bottom: 20px;
+      background:#f5f5f5;
+      padding: 10px;
+    }
+    th, td {
+      padding-right: 40px;
+      font-size: 14px;
+    }
+    th {
+      text-align: left;
+      color: #005588;
+    }
+
+    .pad {
+      padding: 1em 2em;
+      margin: 2em 0;
+    }
+
+    .def-pad {
+      padding: 1em 1em;
+    }
+
+    .card-color {
+      padding: 12px;
+      margin: 0;
+      color: #FFF;
+    }
+
+    .black-text {
+      color: #000;
+    }
   </style>
 </head>
 <body>
   <c-container>
-    <c-row>
-      <c-col>
-        <h1>CSC UI - Web Component Library</h1>
-        <c-card shadow style="padding: 12px 32px">
-          <c-row>
-            <c-col>
-              <c-title>Buttons</c-title>
-            </c-col>
-          </c-row>
-          <c-row>
-            <c-col>
-              Regular buttons
-            </c-col>
-          </c-row>
-          <c-row>
-            <c-col>
-              <c-button color="blue" fixed>Button</c-button>
-            </c-col>
-            <c-col>
-              <c-button color="blue" fixed loading>Loading</c-button>
-            </c-col>
-            <c-col>
-              <c-button color="green" icon="edit" fixed>Icon</c-button>
-            </c-col>
-            <c-col>
-              <c-button color="green" disabled icon="plus" fixed>Disabled</c-button>
-            </c-col>
-            <c-col>
-              <c-button outlined icon="edit" fixed>Outlined</c-button>
-            </c-col>
-            <c-col>
-              <c-button color="blue" dense>Dense</c-button>
-            </c-col>
-            <c-col>
-              <c-button color="blue" dense loading>Dense</c-button>
-            </c-col>
-          </c-row>
-          <c-row>
-            <c-col>
-              Buttons with no radius
-            </c-col>
-          </c-row>
-          <c-row>
-            <c-col>
-              <c-button color="purple" fixed no-radius>Button</c-button>
-            </c-col>
-            <c-col>
-              <c-button color="dark-blue" icon="edit" fixed no-radius>Icon</c-button>
-            </c-col>
-            <c-col>
-              <c-button color="green" disabled icon="plus" fixed no-radius>Disabled</c-button>
-            </c-col>
-            <c-col>
-              <c-button color="pink" outlined icon="edit" loading fixed no-radius>Outlined</c-button>
-            </c-col>
-            <c-col>
-              <c-button color="blue" no-radius dense>Dense</c-button>
-            </c-col>
-          </c-row>
-          <c-row>
-            <c-col>
-              <c-button color="pink" title="Fit!" no-radius fit>Fit</c-button>
-            </c-col>
-          </c-row>
-        </c-card>
-        <br><br>
-        <c-card shadow style="padding: 12px 32px">
-          <c-loader></c-loader>
-          <c-row>
-            <c-col>
-              <c-title>Toggle</c-title>
-            </c-col>
-          </c-row>
-          <c-row>
-            <c-col>
-              Toggle buttons
-            </c-col>
-          </c-row>
+    <c-card pa="6" my="5">
+      <c-title>CSC UI - Web Component Library</c-title>
+      <table>
+        <tr><th>Installation unpkg</th></tr>
+        <tr><td>Add following script before closing body tag:</td></tr><tr><td><code>&lt;script src="https://unpkg.com/csc-ui@0.0.63/dist/cscwebcomponents/cscwebcomponents.js"&gt;&lt;/script&gt;</code></td></tr>
+      </table>
+      <table>
+        <tr><th>Installation npm</th></tr>
+        <tr><td><code>npm install csc-ui</code></td></tr>
+        <tr><td>Note! Your framework might need some extra configuration to enable custom elements etc. See: https://stenciljs.com/docs/overview</td></tr>
+      </table>
+    </c-card>
 
-          <c-row class="no-wrap">
-            <c-col>
-              <c-toggle fit>Default</c-toggle>
-            </c-col>
-            <c-col>
-              <c-toggle fit active>Active</c-toggle>
-            </c-col>
-            <c-col>
-              <c-toggle fit color="pink">Pink</c-toggle>
-            </c-col>
-            <c-col>
-              <c-toggle fit color="blue">Blue</c-toggle>
-            </c-col>
-          </c-row>
-          Toggle with description
-          <c-row>
-            <c-col>
-              <c-toggle fit subtitle="Subtitle example" description="Description | 123">Default</c-toggle>
-            </c-col>
-            <c-col>
-              <c-toggle fit color="pink" subtitle="Another example" description="Description | 321">Pink</c-toggle>
-            </c-col>
-            <c-col>
-              <c-toggle fit subtitle="Third example" description="Another toggle" active>Active</c-toggle>
-            </c-col>
-            <c-col>
-              <c-toggle fit color="pink" subtitle="Fourth example" description="Fourth description" active>Active pink</c-toggle>
-            </c-col>
-          </c-row>
-        </c-card>
-        <br><br>
-        <c-card shadow style="padding: 12px 32px">
-          <c-row>
-            <c-col>
-              <c-title>Input fields</c-title>
-            </c-col>
-          </c-row>
+    <c-card pa="6" my="5">
+      <c-title>Colors</c-title>
+      <table>
+        <tr><th>Example usage</th></tr>
+        <tr><td><code>Use these color codes as the color attribute of a csc-ui component</code></td></tr>
+        <tr><td><code>&lt;c-button outlined color="blue"&gt;Button text&lt;/c-button&gt;</code></td></tr>
+      </table>
+      <c-row>
+        <c-col>
+          <c-card elevation="0" color="primary"><p class="card-color">primary / green</p></c-button>
+        </c-col>
+        <c-col>
+          <c-card elevation="0" color="secondary"><p class="card-color">secondary</p></c-button>
+        </c-col>
+        <c-col>
+          <c-card elevation="0" color="tertiary"><p class="card-color">tertiary</p></c-button>
+        </c-col>
+        <c-col>
+          <c-card elevation="0" color="dark-blue"><p class="card-color">dark-blue</p></c-button>
+        </c-col>
+        <c-col>
+          <c-card elevation="0" color="blue"><p class="card-color">blue</p></c-button>
+        </c-col>
+        <c-col>
+          <c-card elevation="0" color="red"><p class="card-color">red</p></c-button>
+        </c-col>
+      </c-row>
+      <c-row>
+        <c-col>
+          <c-card elevation="0" color="alt-green"><p class="card-color">alt-green</p></c-button>
+          </c-col>
+        <c-col>
+          <c-card elevation="0" color="light-green"><p class="card-color">light-green</p></c-button>
+        </c-col>
+        <c-col>
+          <c-card elevation="0" color="grey"><p class="card-color">grey</p></c-button>
+        </c-col>
+        <c-col>
+          <c-card elevation="0" color="light-grey"><p class="card-color">light-grey</p></c-button>
+        </c-col>
+        <c-col>
+          <c-card elevation="0" color="light-grey-blue"><p class="card-color black-text">light-grey-blue</p></c-button>
+        </c-col>
+        <c-col>
+          <c-card elevation="0" color="yellow"><p class="card-color">yellow</p></c-button>
+        </c-col>
+      </c-row>
+      <table>
+        <tr><th>Opacity</th></tr>
+        <tr><td><code>Add class alpha-90 - alpha-10 to adjust opacity</code></td></tr>
+        <tr><td><code>&lt;c-button outlined color="blue" class="alpha-50"&gt;Button text&lt;/c-button&gt;</code></td></tr>
+      </table>
+      <c-row>
+        <c-col>
+          <c-card elevation="0" color="primary"><p class="card-color">100%</p></c-button>
+        </c-col>
+        <c-col>
+          <c-card elevation="0" class="alpha-90" color="primary"><p class="card-color">90%</p></c-button>
+        </c-col>
+        <c-col>
+          <c-card elevation="0" class="alpha-80" color="primary"><p class="card-color">80%</p></c-button>
+        </c-col>
+        <c-col>
+          <c-card elevation="0" class="alpha-70" color="primary"><p class="card-color">70%</p></c-button>
+        </c-col>
+        <c-col>
+          <c-card elevation="0" class="alpha-60" color="primary"><p class="card-color">60%</p></c-button>
+        </c-col>
+        <c-col>
+          <c-card elevation="0" class="alpha-50" color="primary"><p class="card-color">50%</p></c-button>
+        </c-col>
+        <c-col>
+          <c-card elevation="0" class="alpha-40" color="primary"><p class="card-color">40%</p></c-button>
+        </c-col>
+        <c-col>
+          <c-card elevation="0" class="alpha-30" color="primary"><p class="card-color">30%</p></c-button>
+        </c-col>
+        <c-col>
+          <c-card elevation="0" class="alpha-20" color="primary"><p class="card-color">20%</p></c-button>
+        </c-col>
+        <c-col>
+          <c-card elevation="0" class="alpha-10" color="primary"><p class="card-color">10%</p></c-button>
+        </c-col>
+      </c-row>
+      <c-row>
+        <c-col>
+          <c-card elevation="0" color="secondary"><p class="card-color">100%</p></c-button>
+        </c-col>
+        <c-col>
+          <c-card elevation="0" class="alpha-90" color="secondary"><p class="card-color">90%</p></c-button>
+        </c-col>
+        <c-col>
+          <c-card elevation="0" class="alpha-80" color="secondary"><p class="card-color">80%</p></c-button>
+        </c-col>
+        <c-col>
+          <c-card elevation="0" class="alpha-70" color="secondary"><p class="card-color">70%</p></c-button>
+        </c-col>
+        <c-col>
+          <c-card elevation="0" class="alpha-60" color="secondary"><p class="card-color">60%</p></c-button>
+        </c-col>
+        <c-col>
+          <c-card elevation="0" class="alpha-50" color="secondary"><p class="card-color">50%</p></c-button>
+        </c-col>
+        <c-col>
+          <c-card elevation="0" class="alpha-40" color="secondary"><p class="card-color">40%</p></c-button>
+        </c-col>
+        <c-col>
+          <c-card elevation="0" class="alpha-30" color="secondary"><p class="card-color">30%</p></c-button>
+        </c-col>
+        <c-col>
+          <c-card elevation="0" class="alpha-20" color="secondary"><p class="card-color">20%</p></c-button>
+        </c-col>
+        <c-col>
+          <c-card elevation="0" class="alpha-10" color="secondary"><p class="card-color">10%</p></c-button>
+        </c-col>
+      </c-row>
+    </c-card>
 
-          <c-row>
-            <c-col>
-              <c-text-field number name="name1" label="Number input" value="25"></c-text-field>
-            </c-col>
-            <c-col>
-              <c-text-field name="name2" label="Text input (required)" placeholder="This is a placeholder" required value=""></c-text-field>
-            </c-col>
-            <c-col>
-              <c-text-field name="name3" label="Text input (disabled)" disabled value="Example"></c-text-field>
-            </c-col>
-          </c-row>
-          <c-row>
-            <c-col>
-              <c-text-field rows=3 required name="name4" label="Textarea" value="textarea text"></c-text-field>
-            </c-col>
-          </c-row>
+    <c-card pa="6" my="5">
+      <c-title>Card <code>&lt;c-card&gt;</code></c-title>
+      <table>
+        <tr><th>Attribute</th><th>Type</th><th>Description</th></tr>
+        <tr><td>color</td><td>(string)</td><td>Card background color</td></tr>
+        <tr><td>pa</td><td>(number)</td><td>Card padding x 4 px</td></tr>
+        <tr><td>px</td><td>(number)</td><td>Card vertical padding x 4 px</td></tr>
+        <tr><td>py</td><td>(number)</td><td>Card horizontal padding x 4 px</td></tr>
+        <tr><td>ma</td><td>(number)</td><td>Card margin x 4 px</td></tr>
+        <tr><td>mx</td><td>(number)</td><td>Card vertical margin x 4 px</td></tr>
+        <tr><td>my</td><td>(number)</td><td>Card horizontal margin x 4 px</td></tr>
+        <tr><td>elevation</td><td>(number)</td><td>Card shadow distance</td></tr>
+        <tr><td>no-radius</td><td>(boolean)</td><td>Remove radius from corners</td></tr>
+      </table>
+      <table>
+        <tr><th>Example usage</th></tr>
+        <tr><td><code>&lt;c-card pa="4"&gt;Card content&lt;/c-card&gt;</code></td></tr>
+      </table>
+      <c-title>Examples</c-title>
+      <c-row>
+        <c-col>
+          <c-card pa="4">
+            <c-title>Card title</c-title>
+            <p>Text</p>
+          </c-card>
+        </c-col>
+        <c-col>
+          <c-card pa="4" elevation="3" no-radius>
+            <c-title>A card with</c-title>
+            <p>...no border radius</p>
+          </c-card>
+        </c-col>
+        <c-col>
+          <c-card pa="4" elevation="5">
+            <c-title>Another card</c-title>
+            <p>...with more elevation!</p>
+          </c-card>
+        </c-col>
+      </c-row>
+    </c-card>
 
-          <c-row>
-            <c-col>
-              <c-text-field dense number name="name1" label="Number input (dense)" value="25"></c-text-field>
-            </c-col>
-            <c-col>
-              <c-text-field dense name="name2" label="Text input (dense, required)" required value=""></c-text-field>
-            </c-col>
-            <c-col>
-              <c-text-field dense name="name2" label="Text input (dense, readonly)" readonly value="Example"></c-text-field>
-            </c-col>
-          </c-row>
+    <c-card pa="6" my="5">
+      <c-title>Button <code>&lt;c-button&gt;</code></c-title>
+      <table>
+        <tr><th>Attribute</th><th>Type</th><th>Description</th></tr>
+        <tr><td>no-radius</td><td>(boolean)</td><td>Remove radius from corners</td></tr>
+        <tr><td>loading</td><td>(boolean)</td><td>Show spinning loading indicator</td></tr>
+        <tr><td>disabled</td><td>(boolean)</td><td>Disabled button</td></tr>
+        <tr><td>color</td><td>(string)</td><td>Button color</td></tr>
+        <tr><td>fit</td><td>(boolean)</td><td>Fit button width to container</td></tr>
+        <tr><td>outlined</td><td>(boolean)</td><td>Outlined style</td></tr>
+        <tr><td>dense</td><td>(boolean)</td><td>Smaller button with less padding</td></tr>
+      </table>
+      <table>
+        <tr><th>Example usage</th></tr>
+        <tr><td><code>&lt;c-button outlined color="blue"&gt;Button text&lt;/c-button&gt;</code></td></tr>
+      </table>
+      <c-title>Examples</c-title>
+      <c-row>
+        <c-col>
+          <c-button no-radius>Primary button</c-button>
+        </c-col>
+        <c-col>
+          <c-button outlined no-radius>Secondary</c-button>
+        </c-col>
+        <c-col>
+          <c-button color="blue">Blue</c-button>
+        </c-col>
+        <c-col>
+          <c-button loading color="blue">Loading</c-button>
+        </c-col>
+        <c-col>
+          <c-button outlined>Outlined</c-button>
+        </c-col>
+      </c-row>
+      <c-row>
+        <c-col>
+          <c-button color="blue" dense>Dense</c-button>
+        </c-col>
+        <c-col>
+          <c-button color="red" loading no-radius dense>Loading</c-button>
+        </c-col>
+        <c-col>
+          <c-button color="secondary" no-radius>Purple</c-button>
+        </c-col>
+        <c-col>
+          <c-button color="blue" disabled>Disabled</c-button>
+        </c-col>
+        <c-col>
+          <c-button fit dense>Dense + fit</c-button>
+        </c-col>
+      </c-row>
+    </c-card>
+    <c-card pa="6" my="5">
+      <c-title>Text field <code>&lt;c-text-field&gt;</code></c-title>
+      <table>
+        <tr><th>Attribute</th><th>Type</th><th>Description</th></tr>
+        <tr><td>label</td><td>(string)</td><td>Label of text field</td></tr>
+        <tr><td>rows</td><td>(integer)</td><td>Number of rows in text field</td></tr>
+        <tr><td>required</td><td>(boolean)</td><td>Asterisk + validation if empty</td></tr>
+        <tr><td>valid</td><td>(boolean)</td><td>Bind to custom validation property</td></tr>
+        <tr><td>placeholder</td><td>(string)</td><td>Placeholder text</td></tr>
+        <tr><td>dense</td><td>(boolean)</td><td>Decreased height</td></tr>
+        <tr><td>readonly</td><td>(boolean)</td><td>Read only text field</td></tr>
+        <tr><td>disabled</td><td>(boolean)</td><td>Disabled text field</td></tr>
+        <tr><td>number</td><td>(boolean)</td><td>number type field</td></tr>
+      </table>
+      <table>
+        <tr><th>Example usage</th></tr>
+        <tr><td><code>&lt;c-text-field label="Label" rows="2" required&gt;&lt;/c-text-field&gt;</code></td></tr>
+      </table>
+      <c-title>Examples</c-title>
+      <c-row>
+        <c-col>
+          <c-text-field label="Default" value=""></c-text-field>
+        </c-col>
+        <c-col>
+          <c-text-field label="Number" number value="1000"></c-text-field>
+        </c-col>
+      </c-row>
+      <c-row>
+        <c-col>
+          <c-text-field label="Placeholder + Required" placeholder="Placeholder text" required value=""></c-text-field>
+        </c-col>
+        <c-col>
+          <c-text-field label="Disabled" disabled value="This is disabled"></c-text-field>
+        </c-col>
+      </c-row>
+      <c-row>
+        <c-col>
+          <c-text-field label="Dense + Readonly" readonly dense value="This is dense and read only!"></c-text-field>
+          <c-text-field label="Dense + Number" number readonly dense value="20" style="margin-top:14px;"></c-text-field>
+        </c-col>
+        <c-col>
+          <c-text-field label="Text area (5 rows)" rows="5" value="More than 1 row changes field type to a text-area"></c-text-field>
+        </c-col>
+      </c-row>
+    </c-card>
+    
+    <c-card pa="6" my="5">
+      <c-title>Dropdown menu <code>&lt;c-select&gt;</code></c-title>
+      <table>
+        <tr><th>Attribute</th><th>Type</th><th>Description</th></tr>
+        <tr><td>label</td><td>(string)</td><td>Label of dropdown</td></tr>
+        <tr><td>dense</td><td>(boolean)</td><td>Decreased height</td></tr>
+        <tr><td>required</td><td>(boolean)</td><td>Asterisk + validation if empty</td></tr>
+        <tr><td>placeholder</td><td>(string)</td><td>Placeholder text</td></tr>
+        <tr><td>value</td><td>(object)</td><td>Selected item value</td></tr>
+        <tr><td>items</td><td>(array)</td><td>Array of items with name and value properties</td></tr>
+        <tr><td>items-per-page</td><td>(number)</td><td>Max items before adding scrollbars</td></tr>
+      </table>
+      <table>
+        <tr><th>Example usage</th></tr>
+        <tr><td><code>&lt;c-select label="Select" name="units" placeholder="test" value="" items-per-page="4"&gt;&lt;/c-select&gt;</code></td></tr>
+      </table>
+      <c-title>Examples</c-title>
+      <c-row>
+        <c-col>
+          <c-select label="Select" name="units" placeholder="placeholder" value="" items-per-page="4"></c-select>
+        </c-col>
+        <c-col>
+          <c-select label="Select (required)" required name="units" value=""></c-select>
+        </c-col>
+        <c-col>
+          <c-select dense label="Select (dense, required)" required name="units" value=""></c-select>
+        </c-col>
+      </c-row>
+    </c-card>
 
-        </c-card>
-        <br><br>
-        <c-card shadow style="padding: 12px 32px">
-          <c-row>
-            <c-col>
-              <c-title>Select & Autocomplete</c-title>
-            </c-col>
-          </c-row>
-          
-          <c-row>
-            <c-col>
-              <c-select label="Select" name="units" value="" items-per-page="4"></c-select>
-            </c-col>
-            <c-col>
-              <c-select label="Select (required)" required name="units" value=""></c-select>
-            </c-col>
-            <c-col>
-              <c-autocomplete label="Autocomplete" name="units" value="default1" query="Default 1"></c-autocomplete>
-            </c-col>
-          </c-row>
-          <c-row>
-            <c-col>
-              <c-select dense label="Select (dense)" name="units" value=""></c-select>
-            </c-col>
-            <c-col>
-              <c-select dense label="Select (dense, required)" required name="units" value=""></c-select>
-            </c-col>
-            <c-col>
-              <c-autocomplete dense label="Autocomplete (dense)" name="units" value="default1" query="Default 1"></c-autocomplete>
-            </c-col>
-          </c-row>
-        </c-card>
-        <br><br>
-        <c-card shadow style="padding: 12px 32px">
-          <c-row>
-            <c-col>
-              <c-title>Tabs & Tab buttons</c-title>
-            </c-col>
-          </c-row>
-          <c-row>
-            <c-tab active>SERVICES</c-tab>
-            <c-tab>ESTIMATIONS</c-tab>
-          </c-row>
-          <c-row style="justify-content: space-between;margin-top:16px;">
-            <c-tab-button icon="storage" color="purple" label="Tab1">Lorem ipsum dolor sit amet, consectetur adipiscing elit.</c-tab-button>
-            <c-tab-button icon="server" color="blue" label="Tab2">Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</c-tab-button>
-            <c-tab-button icon="code" active label="Tab3">Ut enim ad minim veniam, quis nostrud exercitation ullamco.</c-tab-button>
-            <c-tab-button icon="cpu" label="Tab4">Duis aute irure dolor in reprehenderit in voluptate velit esse cillum</c-tab-button>
-          </c-row>
-        </c-card>
-      </c-col>
-    </c-row>
+    <c-card pa="6" my="5">
+      <c-title>Autocomplete menu <code>&lt;c-autocomplete&gt;</code></c-title>
+      <table>
+        <tr><th>Attribute</th><th>Type</th><th>Description</th></tr>
+        <tr><td>label</td><td>(string)</td><td>Label of autocomplete</td></tr>
+        <tr><td>query</td><td>(string)</td><td>Query string for external filtering</td></tr>
+        <tr><td>value</td><td>(object)</td><td>Selected item value</td></tr>
+        <tr><td>items</td><td>(array)</td><td>Array of items with name and value properties</td></tr>
+      </table>
+      <table>
+        <tr><th>Example usage</th></tr>
+        <tr><td><code>&lt;c-autocomplete label="Label" value="default1" query="Default 1" items="items" required&gt;&lt;/c-autocomplete&gt;</code></td></tr>
+      </table>
+      <c-title>Examples</c-title>
+      <c-row>
+        <c-col>
+          <c-autocomplete label="Autocomplete" name="units" value="default1" query="Default 1"></c-autocomplete>
+        </c-col>
+        <c-col>
+          <c-autocomplete dense label="Autocomplete (dense)" name="units" value="default1" query="Default 1"></c-autocomplete>
+        </c-col>
+      </c-row>
+    </c-card>
+
+    <c-card pa="6" my="5">
+      <c-title>Radio button group <code>&lt;c-radio&gt;</code></c-title>
+      <table>
+        <tr><th>Attribute</th><th>Type</th><th>Description</th></tr>
+        <tr><td>label</td><td>(string)</td><td>Label for radio group</td></tr>
+        <tr><td>items</td><td>(array)</td><td>Array of items with label and value properties</td></tr>
+        <tr><td>selected</td><td>(object)</td><td>Selected item from items array</td></tr>
+        <tr><td>color</td><td>(string)</td><td>Radio button color</td></tr>
+      </table>
+      <table>
+        <tr><th>Example usage</th></tr>
+        <tr><td><code>&lt;c-radio label="Label" items="array" selected="item"&gt;&lt;/c-radio&gt;</code></td></tr>
+      </table>
+      <c-title>Examples</c-title>
+      <c-row>
+        <c-col>
+          <c-radio id="radio1" label="Default (primary)"></c-radio>
+        </c-col>
+        <c-col>
+          <c-radio id="radio2" label="Blue" color="blue"></c-radio>
+        </c-col>
+        <c-col>
+          <c-radio id="radio3" label="Secondary" color="secondary"></c-radio>
+        </c-col>
+        <c-col>
+          <c-radio id="radio3" label="Light-green" color="light-green"></c-radio>
+        </c-col>
+      </c-row>
+    </c-card>
+
+    <c-card pa="6" my="5">
+      <c-title>Checkbox <code>&lt;c-checkbox&gt;</code></c-title>
+      <table>
+        <tr><th>Attribute</th><th>Type</th><th>Description</th></tr>
+        <tr><td>label</td><td>(string)</td><td>Label for checkbox</td></tr>
+        <tr><td>checked</td><td>(boolean)</td><td>Checkbox selected</td></tr>
+        <tr><td>color</td><td>(string)</td><td>Checkbox color</td></tr>
+      </table>
+      <table>
+        <tr><th>Example usage</th></tr>
+        <tr><td><code>&lt;c-checkbox label="Label" checked="booleanValue"&gt;&lt;/c-checkbox&gt;</code></td></tr>
+      </table>
+      <c-title>Examples</c-title>
+      <c-row>
+        <c-col>
+          <c-checkbox label="Default"></c-checkbox>
+        </c-col>
+        <c-col>
+          <c-checkbox label="Checked" checked></c-checkbox>
+        </c-col>
+        <c-col>
+          <c-checkbox label="Blue" color="blue" checked></c-checkbox>
+        </c-col>
+        <c-col>
+          <c-checkbox label="Yellow" color="yellow" checked></c-checkbox>
+        </c-col>
+        <c-col>
+          <c-checkbox label="Red" color="red" checked></c-checkbox>
+        </c-col>
+        <c-col>
+          <c-checkbox label="Alt-green" color="alt-green" checked></c-checkbox>
+        </c-col>
+        <c-col>
+          <c-checkbox label="Purple" color="purple" checked></c-checkbox>
+        </c-col>
+      </c-row>
+    </c-card>
+
+    <c-card pa="6" my="5">
+      <c-title>Tabs <code>&lt;c-tab&gt;</code></c-title>
+      <table>
+        <tr><th>Attribute</th><th>Type</th><th>Description</th></tr>
+        <tr><td>active</td><td>(boolean)</td><td>Active tab</td></tr>
+      </table>
+      <table>
+        <tr><th>Example usage</th></tr>
+        <tr><td><code>&lt;c-tab active="booleanValue"&gt;Tab text&lt;/c-tab&gt;</code></td></tr>
+      </table>
+      <c-title>Examples</c-title>
+      <c-row>
+        <c-tab active>Tab 1</c-tab>
+        <c-tab>Tab 2</c-tab>
+        <c-tab>Tab 3</c-tab>
+      </c-row>
+    </c-card>
+
+    <c-card pa="6" my="5">
+      <c-title>Tab buttons <code>&lt;c-tab-button&gt;</code></c-title>
+      <table>
+        <tr><th>Attribute</th><th>Type</th><th>Description</th></tr>
+        <tr><td>label</td><td>(string)</td><td>Tab button label</td></tr>
+        <tr><td>color</td><td>(string)</td><td>Tab button color</td></tr>
+        <tr><td>icon</td><td>(string)</td><td>Tab button icon</td></tr>
+        <tr><td>active</td><td>(boolean)</td><td>Active tab button</td></tr>
+      </table>
+      <table>
+        <tr><th>Example usage</th></tr>
+        <tr><td><code>&lt;c-tab-button icon="storage" label="Label"&gt;Description text&lt;/c-tab-button&gt;</code></td></tr>
+      </table>
+      <c-title>Examples</c-title>
+      <c-row>
+        <c-col>
+          <c-tab-button icon="storage" label="Default">Lorem ipsum dolor sit amet, consectetur adipiscing elit.</c-tab-button>
+        </c-col>
+        <c-col>
+          <c-tab-button icon="server" color="blue" no-radius label="No radius">Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</c-tab-button>
+        </c-col>
+        <c-col>
+          <c-tab-button icon="code" active label="Active">Ut enim ad minim veniam, quis nostrud exercitation ullamco.</c-tab-button>
+        </c-col>
+      </c-row>
+    </c-card>
+
+    <c-card pa="6" my="5">
+      <c-title>Toggle buttons <code>&lt;c-toggle&gt;</code></c-title>
+      <table>
+        <tr><th>Attribute</th><th>Type</th><th>Description</th></tr>
+        <tr><td>subtitle</td><td>(string)</td><td>Optional additional text</td></tr>
+        <tr><td>description</td><td>(string)</td><td>Optional additional text</td></tr>
+        <tr><td>fit</td><td>(boolean)</td><td>Fit to container</td></tr>
+        <tr><td>color</td><td>(string)</td><td>Toggle button color</td></tr>
+        <tr><td>active</td><td>(boolean)</td><td>Active toggle button</td></tr>
+      </table>
+      <table>
+        <tr><th>Example usage</th></tr>
+        <tr><td><code>&lt;c-toggle&gt;Button text&lt;/c-toggle&gt;</code></td></tr>
+        <tr><td><code>&lt;c-toggle active fit color="pink"&gt;Button text&lt;/c-toggle&gt;</code></td></tr>
+        <tr><td><code>&lt;c-toggle subtitle="Subtitle" description="Description"&gt;Button text&lt;/c-toggle&gt;</code></td></tr>
+      </table>
+      <c-title>Examples</c-title>
+      <c-row class="no-wrap">
+        <c-col>
+          <c-toggle fit>Default</c-toggle>
+        </c-col>
+        <c-col>
+          <c-toggle fit active>Active</c-toggle>
+        </c-col>
+        <c-col>
+          <c-toggle fit color="red">Red</c-toggle>
+        </c-col>
+        <c-col>
+          <c-toggle fit color="blue">Blue</c-toggle>
+        </c-col>
+      </c-row>
+      <c-row>
+        <c-col>
+          <c-toggle fit subtitle="Subtitle example" description="Description | 123">Default</c-toggle>
+        </c-col>
+        <c-col>
+          <c-toggle fit color="blue" subtitle="Another example" description="Description | 321">Blue</c-toggle>
+        </c-col>
+        <c-col>
+          <c-toggle fit color="secondary" subtitle="Third example" description="Another toggle" active>Active</c-toggle>
+        </c-col>
+        <c-col>
+          <c-toggle fit color="red" subtitle="Fourth example" description="Fourth description" active>Active red</c-toggle>
+        </c-col>
+      </c-row>
+    </c-card>
   </c-container>
 </body>
 </html>

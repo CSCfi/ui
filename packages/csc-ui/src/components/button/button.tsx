@@ -7,7 +7,8 @@ import { mdiPlus, mdiMinus, mdiAccount, mdiPencil } from '@mdi/js';
   shadow: true
 })
 export class Button {
-  @Prop() color: string;
+  @Prop() color: string = '';
+  @Prop() colorCode: string = '';
   @Prop() fixed: boolean;
   @Prop() dense: boolean;
   @Prop() fit: boolean;
@@ -47,7 +48,7 @@ export class Button {
     if (this.disabled) {
       classes = `csc-button csc-button-disabled ${this.fit ? 'fit' : ''} ${this.fixed ? 'fixed' : ''} ${radius} ${this.fullWidthMobile ? 'full-width-mobile' : ''}`;
     } else {
-      classes = `csc-button ${this.color} ${this.fit ? 'fit' : ''} ${this.fixed ? 'fixed' : ''} ${radius} ${this.fullWidthMobile ? 'full-width-mobile' : ''}`;
+      classes = `csc-button csc-bg-color ${this.color} ${this.fit ? 'fit' : ''} ${this.fixed ? 'fixed' : ''} ${radius} ${this.fullWidthMobile ? 'full-width-mobile' : ''}`;
     }
     if (this.outlined) {
       classes = `${classes} outlined`;
@@ -70,9 +71,14 @@ export class Button {
       hostClasses = 'fit';
     }
 
+    let style = {};
+    if (this.colorCode) {
+      style = { 'background-color': this.colorCode, 'box-shadow': `${this.colorCode} 0px 0px 0px 2px inset` };
+    }
+
     return (
       <Host class={hostClasses} tabindex="0" role="button">
-        <div class={classes}>
+        <div class={classes} style={style}>
           { this.loading ? (<div class={ this.dense ? 'spinner_wrapper dense_spinner' : 'spinner_wrapper'}>
             { SPINNER_SMALL }
           </div>) : '' }

@@ -11,7 +11,9 @@ export class Select {
   @Prop() dense: boolean;
   @Prop() name: string;
   @Prop() required: boolean = null;
+  @Prop() showNone: boolean = null;
   @Prop() itemsPerPage: number;
+  @Prop() placeholder = '';
   @Prop({ mutable: true }) value: any = null;
   @Element() host: HTMLElement;
   @State() menuVisible: boolean = false;
@@ -44,7 +46,8 @@ export class Select {
         this.searchString = `${this.searchString}${ev.key}`;
       }
       this.lastKeyPressTime = Date.now();
-      const selectedItem = this.items.find(i => i.name.toLowerCase().includes(this.searchString));
+      console.warn('blob');
+      const selectedItem = this.items.find(i => i.name.toLowerCase().startsWith(this.searchString));
       function isItem(element) {
         return element === selectedItem;
       }
@@ -147,21 +150,27 @@ export class Select {
     this.menuVisible = !this.menuVisible;
   }
 
+  hideMenu() {
+    // this.currentIndex = null;
+    this.menuVisible = false;
+  }
+
   select(item) {
     this.value = item;
     this.valueChangedHandler(item);
     this.menuVisible = false;
   }
 
-  componentDidLoad() {
-    const _this = this;
-    window.addEventListener("click", function(event: any) {
-      if (!event.target.matches('c-select')) {
-        _this.menuVisible = false;
-        _this.currentIndex = null;
-      }
-    });
-  }
+  // componentDidLoad() {
+  //   const _this = this;
+  //   window.addEventListener("click", function(event: any) {
+  //     if (!event.target.matches('c-select')) {
+  //       _this.menuVisible = false;
+  //       _this.currentIndex = null;
+  //     }
+  //     console.warn(event);
+  //   });
+  // }
 
   getListItem = (item)=> {
     let classes = '';
@@ -173,7 +182,14 @@ export class Select {
       classes = `${classes} active`;
     }
 
-    const itemId = item.value.replace(/[^a-zA-Z0-9-_]/g, '');
+    if (item.value === null) {
+      classes = `${classes} none`;
+    }
+
+    let itemId = 'none';
+    if (item.value) {
+      itemId = item.value.replace(/[^a-zA-Z0-9-_]/g, '');
+    }
 
     return (
       <li
@@ -191,6 +207,9 @@ export class Select {
     let classes = 'c-select-wrapper';
     if (this.menuVisible) classes = `${classes} c-select-wrapper-active`;
     if (this.dense) classes = `${classes} c-select-dense`;
+    if ((this.required && !this.value)) {
+      classes = `${classes} required-border`;
+    }
     let itemsPerPageStyle = {};
     if (this.itemsPerPage && this.itemsPerPage > 0 && this.items.length > this.itemsPerPage) {
       itemsPerPageStyle = {
@@ -204,17 +223,21 @@ export class Select {
           { this.label }
           { this.required ? <span class="required"> *</span> : '' }
         </label>
-        <div class="c-selections">
+        <div
+          class="c-selections"
+          tabindex="0"
+          role="button"
+          onBlur={() => this.hideMenu()}
+          aria-labelledby="c-select-label"
+        >
           <div
             class={ classes }
             onClick={() => this.showMenu()}
             ref={el => this.current = el as HTMLElement}
-            tabindex="0"
-            role="button"
-            aria-labelledby="c-select-label"
+            
           >
-            <c-row>
-              { this.items.length === 0 ? <div class='c-menu-no-items'>Loading items</div> : <div class="c-select-current">{ this.value.name }</div> }
+            <div class="c-select-row">
+              { this.items.length === 0 ? <div class='c-select-current'>No items</div> : <div class="c-select-current">{ (this.value && this.value.name) ? this.value.name : <span>{this.placeholder}</span> }</div> }
               <svg
                 width="22"
                 height="22"
@@ -224,15 +247,16 @@ export class Select {
               >
                 <path d={ mdiChevronDown } />
               </svg>
-            </c-row>
+            </div>
           </div>
           <input
             type="hidden"
-            value={ this.value.value }
+            value={ this.value ? this.value.value : null }
             name={ this.name }
           />
           <div class="c-menu-parent" aria-expanded={this.menuVisible}>
             { this.menuVisible ? <div class="c-menu" style={itemsPerPageStyle}>
+              { this.showNone ? this.getListItem({ name: 'None', value: null }) : null }
               {this.items.map(item => this.getListItem(item))}
             </div> : '' }
           </div>

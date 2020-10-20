@@ -1,6 +1,10 @@
+@import "../../global/app.css"; 
+
 :host {
   display: inline-block;
 }
+
+
 @media (max-width: 767px) {
   :host(.full-width) {
     flex-grow: 1 !important;
@@ -41,10 +45,10 @@
 
 
 .csc-button {
-  background-color: #006778;
+  background-color: var(--current-color);
   position: relative;
   cursor: pointer;
-  box-shadow: inset 0px 0px 0px 2px #006778;
+  box-shadow: none;
   outline: none;
   transition: color 0.5s;
   color: white;
@@ -60,52 +64,16 @@
   fill: #FFF;
 } 
 
+.csc-button.outlined {
+  box-shadow: inset 0px 0px 0px 2px var(--current-color);
+}
+
 .csc-button.outlined svg {
-  fill: #006778;
+  fill: var(--current-color);
 }
 
 .outlined:HOVER {
   background-color: rgba(0, 104, 122, 0.1) !important;
-}
-
-.pink {
-  background-color: rgb(233, 30, 99) !important;
-  box-shadow: inset 0px 0px 0px 2px rgb(233, 30, 99);
-}
-.pink.outlined:HOVER {
-  background-color: rgba(233, 30, 99, 0.1) !important;
-}
-
-.blue {
-  background-color: #025B96 !important;
-  box-shadow: inset 0px 0px 0px 2px rgb(2, 91, 150);
-}
-.blue.outlined:HOVER {
-  background-color: rgba(2, 91, 150, 0.1) !important;
-}
-
-.dark-blue {
-  background-color: rgb(1, 47, 95) !important;
-  box-shadow: inset 0px 0px 0px 2px rgb(1, 47, 95);
-}
-.dark-blue.outlined:HOVER {
-  background-color: rgba(1, 47, 95, 0.1) !important;
-}
-
-.green {
-  background-color: rgb(0, 134, 117) !important;
-  box-shadow: inset 0px 0px 0px 2px rgb(0, 134, 117);
-}
-.green.outlined:HOVER {
-  background-color: rgba(0, 134, 117, 0.1) !important;
-}
-
-.purple {
-  background-color: rgb(156, 39, 176) !important;
-  box-shadow: inset 0px 0px 0px 2px rgb(156, 39, 176);
-}
-.purple.outlined:HOVER {
-  background-color: rgba(156, 39, 176, 0.1) !important;
 }
 
 .spinner__circle {
@@ -120,55 +88,18 @@
   transform-origin: 50% 50%;
 }
 
-.pink.outlined {
-  color: #e91e63;
+.outlined .spinner__circle {
+  stroke: var(--current-color) !important;
 }
-.pink.outlined svg {
-  fill: #e91e63;
+
+.outlined svg {
+  fill: var(--current-color);
 }
-.pink.outlined .spinner__circle {
-  stroke: #e91e63;
-}
-.blue.outlined {
-  color: #025B96;
-}
-.blue.outlined svg {
-  fill: #025B96;
-}
-.blue.outlined .spinner__circle {
-  stroke: #025B96;
-}
-.dark-blue.outlined {
-  color: #012F5F;
-}
-.dark-blue.outlined svg {
-  fill: #012F5F;
-}
-.dark-blue.outlined .spinner__circle {
-  stroke: #012F5F;
-}
-.green.outlined  {
-  color: #008675;
-}
-.green.outlined svg {
-  fill: #008675;
-}
-.green.outlined .spinner__circle {
-  stroke: #008675;
-}
-.purple.outlined {
-  color: #9c27b0;
-}
-.purple.outlined svg {
-  fill: #9c27b0;
-}
-.purple.outlined .spinner__circle {
-  stroke: #9c27b0;
-}
+
 .outlined {
   background-color: transparent !important;
   transition: background 0.5s;
-  color: #006778;
+  color: var(--current-color);
 }
 
 .csc-button-disabled {
@@ -191,7 +122,7 @@
 }
 
 .csc-button-padding {
-  padding: 16px 30px;
+  padding: 14px 30px;
 }
 
 .ripple {

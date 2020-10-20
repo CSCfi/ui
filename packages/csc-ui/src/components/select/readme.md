@@ -14,7 +14,9 @@
 | `itemsPerPage` | `items-per-page` |             | `number`  | `undefined` |
 | `label`        | `label`          |             | `string`  | `undefined` |
 | `name`         | `name`           |             | `string`  | `undefined` |
+| `placeholder`  | `placeholder`    |             | `string`  | `''`        |
 | `required`     | `required`       |             | `boolean` | `null`      |
+| `showNone`     | `show-none`      |             | `boolean` | `null`      |
 | `value`        | `value`          |             | `any`     | `null`      |
 
 
@@ -24,19 +26,6 @@
 | ------------- | ----------- | ------------------ |
 | `changeValue` |             | `CustomEvent<any>` |
 
-
-## Dependencies
-
-### Depends on
-
-- [c-row](../row)
-
-### Graph
-```mermaid
-graph TD;
-  c-select --> c-row
-  style c-select fill:#f9f,stroke:#333,stroke-width:4px
-```
 
 ----------------------------------------------
 

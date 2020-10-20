@@ -14,7 +14,7 @@ export class Button {
   @Prop() description: string;
 
   render() {
-    let classes = `c-toggle ${this.color} ${this.fixed ? 'fixed' : ''} ${this.fit ? 'fit' : ''}`;
+    let classes = `c-toggle csc-bg-color ${this.color} ${this.fixed ? 'fixed' : ''} ${this.fit ? 'fit' : ''}`;
     if (this.active) {
       classes = `${classes} active`;
     }

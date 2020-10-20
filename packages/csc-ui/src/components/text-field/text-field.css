@@ -12,7 +12,11 @@
   border: 2px transparent solid;
 }
 
-
+textarea {
+  font-family: inherit;
+  font-size: inherit;
+  overflow-x: hidden;
+}
 
 .text-field-dense {
   min-height: 36px;
