@@ -28,6 +28,10 @@
   --csc-grey-hover: rgba(89, 89, 89, 0.1);
   --csc-light-grey: rgba(210, 211, 213, var(--a, 1));
   --csc-light-grey-hover: rgba(210, 211, 213, 0.1);
+  --csc-white: rgba(255, 255, 255, var(--a, 1));
+  --csc-white-hover: rgba(255, 255, 255, 0.1);
+  --csc-black: rgba(0, 0, 0, var(--a, 1));
+  --csc-black-hover: rgba(0, 0, 0, 0.1);
 
   --current-color: var(--csc-primary);
   --current-hover-color: var(--csc-primary-hover);
@@ -66,6 +70,16 @@
 
 :host(.alpha-10) {
   --a: 0.1;
+}
+
+.csc-bg-color.white, :host(.csc-bg-color.white) {
+  --current-color: var(--csc-white);
+  --current-hover-color: var(--csc-white-hover);
+}
+
+.csc-bg-color.black, :host(.csc-bg-color.black) {
+  --current-color: var(--csc-black);
+  --current-hover-color: var(--csc-black-hover);
 }
 
 .csc-bg-color.primary, :host(.csc-bg-color.primary) {

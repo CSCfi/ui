@@ -7,9 +7,18 @@
 
 ## Properties
 
-| Property | Attribute | Description | Type      | Default     |
-| -------- | --------- | ----------- | --------- | ----------- |
-| `shadow` | `shadow`  |             | `boolean` | `undefined` |
+| Property    | Attribute   | Description | Type      | Default     |
+| ----------- | ----------- | ----------- | --------- | ----------- |
+| `color`     | `color`     |             | `string`  | `''`        |
+| `dark`      | `dark`      |             | `boolean` | `undefined` |
+| `elevation` | `elevation` |             | `number`  | `1`         |
+| `ma`        | `ma`        |             | `number`  | `0`         |
+| `mx`        | `mx`        |             | `number`  | `0`         |
+| `my`        | `my`        |             | `number`  | `0`         |
+| `noRadius`  | `no-radius` |             | `boolean` | `undefined` |
+| `pa`        | `pa`        |             | `number`  | `0`         |
+| `px`        | `px`        |             | `number`  | `0`         |
+| `py`        | `py`        |             | `number`  | `0`         |
 
 
 ----------------------------------------------

@@ -15,11 +15,12 @@ export class Card {
   @Prop() mx: number = 0;
   @Prop() elevation: number = 1;
   @Prop() noRadius: boolean;
+  @Prop() dark: boolean;
 
   render() {
-    let classes = `elevation-${this.elevation}`;
+    let classes = `elevation-${this.elevation} ${this.dark ? 'dark' : ''}`;
     if (this.color !== '') {
-      classes = `csc-bg-color ${this.color}`;
+      classes = `${classes} csc-bg-color ${this.color}`;
     }
     if (this.noRadius) {
       classes = `${classes} no-radius`;

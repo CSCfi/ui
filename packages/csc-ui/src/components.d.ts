@@ -30,6 +30,7 @@ export namespace Components {
     }
     interface CCard {
         "color": string;
+        "dark": boolean;
         "elevation": number;
         "ma": number;
         "mx": number;
@@ -265,6 +266,7 @@ declare namespace LocalJSX {
     }
     interface CCard {
         "color"?: string;
+        "dark"?: boolean;
         "elevation"?: number;
         "ma"?: number;
         "mx"?: number;
