@@ -14,7 +14,6 @@
   background: #EEF2F8;
   align-items: stretch;
   min-height: 44px;
-  margin-top: 4px;
   display: flex;
   flex: 1 1 auto;
   border: 2px transparent solid;
@@ -47,6 +46,10 @@
   user-select: none;
 }
 
+.c-select-dense .c-select-current {
+  line-height: 16px;
+}
+
 .c-select-row {
   display: flex;
   flex: 1 1 auto;
@@ -70,11 +73,15 @@
 }
 
 .c-select-dense {
-  min-height: 36px;
+  min-height: 34px;
 }
 
 .c-select-dense .c-select-icon {
   padding: 4px 24px;
+}
+
+label {
+  margin-bottom: 4px;
 }
 
 span.dense-label {
@@ -99,7 +106,7 @@ label span.required {
   background-color: #ffffff;
   min-width: 100%;
   box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
-  z-index: 1;
+  z-index: 5;
   cursor: pointer;
   user-select: none;
 }

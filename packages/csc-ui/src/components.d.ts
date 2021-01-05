@@ -336,6 +336,7 @@ declare namespace LocalJSX {
         "min"?: number;
         "name"?: string;
         "number"?: boolean;
+        "onChangeValue"?: (event: CustomEvent<any>) => void;
         "placeholder"?: string;
         "readonly"?: boolean;
         "required"?: boolean;

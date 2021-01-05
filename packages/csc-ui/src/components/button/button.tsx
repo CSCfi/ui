@@ -1,4 +1,4 @@
-import { Component, Prop, h, Host } from '@stencil/core';
+import { Component, Prop, h } from '@stencil/core';
 import { mdiPlus, mdiMinus, mdiAccount, mdiPencil } from '@mdi/js';
 
 @Component({
@@ -15,7 +15,8 @@ export class Button {
   @Prop() noRadius: boolean;
   @Prop() outlined: boolean;
   @Prop() fullWidthMobile: boolean;
-  @Prop() disabled: boolean;
+  @Prop({ reflectToAttr: true })
+    disabled: boolean;
   @Prop() icon: string;
   @Prop() loading: boolean;
   
@@ -77,7 +78,7 @@ export class Button {
     }
 
     return (
-      <Host class={hostClasses} tabindex="0" role="button">
+      <button class={hostClasses} tabindex="0" role="button" disabled={this.disabled}>
         <div class={classes} style={style}>
           { this.loading ? (<div class={ this.dense ? 'spinner_wrapper dense_spinner' : 'spinner_wrapper'}>
             { SPINNER_SMALL }
@@ -87,7 +88,7 @@ export class Button {
             <slot></slot>
           </div>
         </div>
-      </Host>
+      </button>
     );
   }
 

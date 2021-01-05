@@ -2,11 +2,14 @@
   display: block;
 }
 
+label {
+  margin-bottom: 4px;
+}
+
 .c-autocomplete-wrapper {
   background: #EEF2F8;
   align-items: stretch;
   min-height: 44px;
-  margin-top: 4px;
   display: flex;
   flex: 1 1 auto;
   border: 2px transparent solid;
@@ -46,7 +49,7 @@
 }
 
 .c-autocomplete-dense {
-  min-height: 36px;
+  min-height: 34px;
 }
 
 .c-autocomplete-dense input {
@@ -87,7 +90,7 @@ label span.required {
   box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
   padding-left: 0;
   margin: 0;
-  z-index: 1;
+  z-index: 5;
   cursor: pointer;
   user-select: none;
 }
@@ -102,6 +105,14 @@ label span.required {
   max-width: 100%;
   min-width: 0;
   width: 100%;
+}
+
+.c-autocomplete-dense .c-autocomplete-current input {
+  line-height: 16px;
+}
+
+.c-autocomplete-dense .c-autocomplete-current {
+  line-height: 16px;
 }
 
 .c-menu li {
