@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=5.0">
-  <title>Stencil Component Starter</title>
+  <title>CSC UI</title>
 
   <script type="module" src="/build/cscwebcomponents.esm.js"></script>
   <script nomodule src="/build/cscwebcomponents.js"></script>
@@ -54,7 +54,7 @@
       <c-title>CSC UI - Web Component Library</c-title>
       <table>
         <tr><th>Installation unpkg</th></tr>
-        <tr><td>Add following script before closing body tag:</td></tr><tr><td><code>&lt;script src="https://unpkg.com/csc-ui@0.0.69/dist/cscwebcomponents/cscwebcomponents.js"&gt;&lt;/script&gt;</code></td></tr>
+        <tr><td>Add following script before closing body tag:</td></tr><tr><td><code>&lt;script src="https://unpkg.com/csc-ui@0.1.2/dist/cscwebcomponents/cscwebcomponents.js"&gt;&lt;/script&gt;</code></td></tr>
       </table>
       <table>
         <tr><th>Installation npm</th></tr>
@@ -241,10 +241,10 @@
       <c-title>Examples</c-title>
       <c-row>
         <c-col>
-          <c-button no-radius>Primary button</c-button>
+          <c-button>Primary button</c-button>
         </c-col>
         <c-col>
-          <c-button outlined no-radius>Secondary</c-button>
+          <c-button outlined>Secondary</c-button>
         </c-col>
         <c-col>
           <c-button color="blue">Blue</c-button>
@@ -283,10 +283,10 @@
         <tr><td>required</td><td>(boolean)</td><td>Asterisk + validation if empty</td></tr>
         <tr><td>valid</td><td>(boolean)</td><td>Bind to custom validation property</td></tr>
         <tr><td>placeholder</td><td>(string)</td><td>Placeholder text</td></tr>
-        <tr><td>dense</td><td>(boolean)</td><td>Decreased height</td></tr>
         <tr><td>readonly</td><td>(boolean)</td><td>Read only text field</td></tr>
         <tr><td>disabled</td><td>(boolean)</td><td>Disabled text field</td></tr>
         <tr><td>number</td><td>(boolean)</td><td>number type field</td></tr>
+        <tr><td>changeValue</td><td>(event)</td><td>Emits changed value in $event.target.value</td></tr>
       </table>
       <table>
         <tr><th>Example usage</th></tr>
@@ -294,28 +294,36 @@
       </table>
       <c-title>Examples</c-title>
       <c-row>
-        <c-col>
-          <c-text-field label="Default" value=""></c-text-field>
+        <c-col style="padding:24px;">
+          <c-text-field label="Example label" value="" validation="Custom validation message!" required></c-text-field>
         </c-col>
-        <c-col>
-          <c-text-field label="Number" number value="1000"></c-text-field>
+        <c-col style="padding:24px;">
+          <c-text-field label="Example label" value="readonly" readonly></c-text-field>
+        </c-col>
+        <c-col style="padding:24px;">
+          <c-text-field></c-text-field>
+        </c-col>
+        <c-col style="padding:24px;">
+          <c-text-field label="Number has the longest label" number value="1000"></c-text-field>
         </c-col>
       </c-row>
       <c-row>
-        <c-col>
-          <c-text-field label="Placeholder + Required" placeholder="Placeholder text" required value=""></c-text-field>
-        </c-col>
-        <c-col>
+        <c-col style="padding:24px;">
           <c-text-field label="Disabled" disabled value="This is disabled"></c-text-field>
         </c-col>
+        <c-col style="padding:24px;">
+          <c-text-field label="Your name" required value="" validate-on-blur="true"></c-text-field>
+        </c-col>
+        <c-col style="padding:24px;">
+          <c-button color="primary">Submit</c-button>
+        </c-col>
       </c-row>
       <c-row>
-        <c-col>
-          <c-text-field label="Dense + Readonly" readonly dense value="This is dense and read only!"></c-text-field>
-          <c-text-field label="Dense + Number" number readonly dense value="20" style="margin-top:14px;"></c-text-field>
-        </c-col>
-        <c-col>
+        <c-col style="padding:24px;">
           <c-text-field label="Text area (5 rows)" rows="5" value="More than 1 row changes field type to a text-area"></c-text-field>
+        </c-col>
+        <c-col style="padding:24px;">
+          <c-text-field label="Text area (5 rows) + required" required rows="5" value="" valid="false" validation="Custom text for validation"></c-text-field>
         </c-col>
       </c-row>
     </c-card>
@@ -342,7 +350,10 @@
           <c-select label="Select" name="units" placeholder="placeholder" value="" items-per-page="4"></c-select>
         </c-col>
         <c-col>
-          <c-select label="Select (required)" required name="units" value=""></c-select>
+          <c-select label="Select (required)" required name="units" value="" validate-on-blur="true"></c-select>
+        </c-col>
+        <c-col>
+          <c-select required name="units" value="" validate-on-blur="true"></c-select>
         </c-col>
         <c-col>
           <c-select dense label="Select (dense, required)" required name="units" value=""></c-select>
@@ -369,7 +380,7 @@
           <c-autocomplete label="Autocomplete" name="units" value="default1" query="Default 1"></c-autocomplete>
         </c-col>
         <c-col>
-          <c-autocomplete dense label="Autocomplete (dense)" name="units" value="default1" query="Default 1"></c-autocomplete>
+          <c-autocomplete dense name="units" value="default1" query="Default 1"></c-autocomplete>
         </c-col>
       </c-row>
     </c-card>
@@ -454,9 +465,28 @@
       </table>
       <c-title>Examples</c-title>
       <c-row>
-        <c-tab active>Tab 1</c-tab>
-        <c-tab>Tab 2</c-tab>
-        <c-tab>Tab 3</c-tab>
+        <c-tab active fit>Tab 1</c-tab>
+        <c-tab fit>Tab 2</c-tab>
+        <c-tab fit>Tab 3</c-tab>
+        <c-tab fit>Tab 4</c-tab>
+        <c-tab fit>Tab 5</c-tab>
+      </c-row>
+    </c-card>
+
+    <c-card pa="6" my="5">
+      <c-title>Tags <code>&lt;c-tag&gt;</code></c-title>
+      <table>
+        <tr><th>Attribute</th><th>Type</th><th>Description</th></tr>
+      </table>
+      <table>
+        <tr><th>Example usage</th></tr>
+        <tr><td><code>&lt;c-tag&gt;Tab text&lt;/c-tab&gt;</code></td></tr>
+      </table>
+      <c-title style="margin-bottom: 8px;">Examples</c-title>
+      <c-row>
+        <c-tag style="margin-right: 4px;">Web browser</c-tag>
+        <c-tag style="margin-right: 4px;">Compute</c-tag>
+        <c-tag style="margin-right: 4px;">Active data</c-tag>
       </c-row>
     </c-card>
 

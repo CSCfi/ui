@@ -74,6 +74,8 @@ export namespace Components {
         "placeholder": string;
         "required": boolean;
         "showNone": boolean;
+        "validate": boolean;
+        "validateOnBlur": boolean;
         "value": any;
     }
     interface CSpacer {
@@ -89,8 +91,11 @@ export namespace Components {
         "label": string;
         "noRadius": boolean;
     }
+    interface CTag {
+        "active": boolean;
+        "fit": boolean;
+    }
     interface CTextField {
-        "dense": boolean;
         "disabled": boolean;
         "label": string;
         "max": number;
@@ -103,7 +108,9 @@ export namespace Components {
         "rows": number;
         "step": number;
         "valid": boolean;
+        "validate": boolean;
         "validateOnBlur": boolean;
+        "validation": string;
         "value": string;
     }
     interface CTitle {
@@ -202,6 +209,12 @@ declare global {
         prototype: HTMLCTabButtonElement;
         new (): HTMLCTabButtonElement;
     };
+    interface HTMLCTagElement extends Components.CTag, HTMLStencilElement {
+    }
+    var HTMLCTagElement: {
+        prototype: HTMLCTagElement;
+        new (): HTMLCTagElement;
+    };
     interface HTMLCTextFieldElement extends Components.CTextField, HTMLStencilElement {
     }
     var HTMLCTextFieldElement: {
@@ -235,6 +248,7 @@ declare global {
         "c-spacer": HTMLCSpacerElement;
         "c-tab": HTMLCTabElement;
         "c-tab-button": HTMLCTabButtonElement;
+        "c-tag": HTMLCTagElement;
         "c-text-field": HTMLCTextFieldElement;
         "c-title": HTMLCTitleElement;
         "c-toggle": HTMLCToggleElement;
@@ -313,6 +327,8 @@ declare namespace LocalJSX {
         "placeholder"?: string;
         "required"?: boolean;
         "showNone"?: boolean;
+        "validate"?: boolean;
+        "validateOnBlur"?: boolean;
         "value"?: any;
     }
     interface CSpacer {
@@ -328,8 +344,11 @@ declare namespace LocalJSX {
         "label"?: string;
         "noRadius"?: boolean;
     }
+    interface CTag {
+        "active"?: boolean;
+        "fit"?: boolean;
+    }
     interface CTextField {
-        "dense"?: boolean;
         "disabled"?: boolean;
         "label"?: string;
         "max"?: number;
@@ -343,7 +362,9 @@ declare namespace LocalJSX {
         "rows"?: number;
         "step"?: number;
         "valid"?: boolean;
+        "validate"?: boolean;
         "validateOnBlur"?: boolean;
+        "validation"?: string;
         "value"?: string;
     }
     interface CTitle {
@@ -371,6 +392,7 @@ declare namespace LocalJSX {
         "c-spacer": CSpacer;
         "c-tab": CTab;
         "c-tab-button": CTabButton;
+        "c-tag": CTag;
         "c-text-field": CTextField;
         "c-title": CTitle;
         "c-toggle": CToggle;
@@ -394,6 +416,7 @@ declare module "@stencil/core" {
             "c-spacer": LocalJSX.CSpacer & JSXBase.HTMLAttributes<HTMLCSpacerElement>;
             "c-tab": LocalJSX.CTab & JSXBase.HTMLAttributes<HTMLCTabElement>;
             "c-tab-button": LocalJSX.CTabButton & JSXBase.HTMLAttributes<HTMLCTabButtonElement>;
+            "c-tag": LocalJSX.CTag & JSXBase.HTMLAttributes<HTMLCTagElement>;
             "c-text-field": LocalJSX.CTextField & JSXBase.HTMLAttributes<HTMLCTextFieldElement>;
             "c-title": LocalJSX.CTitle & JSXBase.HTMLAttributes<HTMLCTitleElement>;
             "c-toggle": LocalJSX.CToggle & JSXBase.HTMLAttributes<HTMLCToggleElement>;

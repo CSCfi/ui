@@ -36,6 +36,8 @@ export class Autocomplete {
   @Element() host: HTMLElement;
   @State() menuVisible: boolean = false;
   @State() currentIndex: number = null;
+  outerWrapperClasses = ['outer-wrapper'];
+  validationClasses = ['validation-message'];
   @Listen('keydown')
   handleKeyDown(ev: any){
     if (ev.key === 'Tab') {
@@ -81,11 +83,13 @@ export class Autocomplete {
       if (this.currentIndex !== null) {
         const selectedItem = this.items[this.currentIndex];
         this.select(selectedItem);
+        this.menuVisible = false;
       }
     }
   }
 
   current = null;
+  validationIcon = <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="#E71D32" width="18px" height="18px"><path d="M0 0h24v24H0z" fill="none"/><path d="M12 2C6.47 2 2 6.47 2 12s4.47 10 10 10 10-4.47 10-10S17.53 2 12 2zm5 13.59L15.59 17 12 13.41 8.41 17 7 15.59 10.59 12 7 8.41 8.41 7 12 10.59 15.59 7 17 8.41 13.41 12 17 15.59z"/></svg>;
 
   showMenu() {
     if (this.menuVisible) {
@@ -103,7 +107,7 @@ export class Autocomplete {
     this.query = item.name;
     this.value = item;
     this.valueChangedHandler(item);
-    this.menuVisible = false;
+    // this.menuVisible = false;
   }
 
   componentDidLoad() {
@@ -141,12 +145,31 @@ export class Autocomplete {
   };
 
   render() {
+    let borderLabel = 'border-label';
+    if (this.query !== '') {
+      borderLabel += ' value-set';
+    }
+
+    if (this.required && !this.value) {
+      this.outerWrapperClasses.push('required');
+      this.validationClasses.push('show');
+    } else {
+      this.outerWrapperClasses = this.outerWrapperClasses.filter(c => c !== 'required');
+      this.validationClasses = this.validationClasses.filter(c => c !== 'show');
+    }
+
+
     let classes = 'c-autocomplete-wrapper'
     if (this.menuVisible) classes = `${classes} c-autocomplete-wrapper-active`;
     if (this.dense) classes = `${classes} c-autocomplete-dense`;
+    const labelBlock = (<div class={borderLabel}>
+      <label class="top-span" htmlFor={ this.name }>{ this.label }{ this.required ? '*' : '' }</label>
+      <label class="hidden">{ this.label }{ this.required ? '*' : '' }</label>
+    </div>);
+
     return (
       <Host>
-        <label id="c-autocomplete-label">
+        {/* <label id="c-autocomplete-label">
           { this.label }
           { this.required ? <span class="required"> *</span> : '' }
         </label>
@@ -189,7 +212,58 @@ export class Autocomplete {
               {this.items.map(item => this.getListItem(item))}
             </ul> : ''}
           </div>
+        </div> */}
+        <div
+          class={this.outerWrapperClasses.join(' ')}
+          tabindex="0"
+          onClick={() => this.showMenu()}
+          role="button"
+          aria-labelledby="c-select-label"
+        >
+          <div
+            class="full-width"
+            role="button"
+            aria-labelledby="c-autocomplete-label"
+          >
+            <c-row class="no-wrap">
+              <div class="c-autocomplete-current">
+                <input
+                  value={this.query}
+                  ref={el => this.current = el as HTMLElement}
+                  aria-autocomplete="list"
+                  aria-controls="c-menu-parent"
+                  aria-haspopup="true"
+                  onInput={(event) => this.handleChange(event)}
+                />
+              </div>
+              <svg
+                width="22"
+                height="22"
+                fill="#222"
+                viewBox="0 0 24 24"
+                class={ this.menuVisible ? 'c-autocomplete-icon rotated' : 'c-autocomplete-icon'}
+              >
+                <path d={ mdiChevronDown } />
+              </svg>
+            </c-row>
+          </div>
+          <input
+            type="hidden"
+            value={ this.value.value }
+            name={ this.name }
+          />
+          <div id="c-menu-parent" class="c-menu-parent" aria-expanded={this.menuVisible}>
+            { this.menuVisible ? <ul class="c-menu">
+              {this.items.map(item => this.getListItem(item))}
+            </ul> : ''}
+          </div>
+          <div class="border-wrapper">
+            <div class="border-left"></div>
+            { this.label ? labelBlock : null }
+            <div class="border-right"></div>
+          </div>
         </div>
+        <div class={this.validationClasses.join(' ')}>{this.validationIcon} Required field</div>
       </Host>
     );
   }

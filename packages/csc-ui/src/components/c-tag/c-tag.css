@@ -3,38 +3,33 @@
   cursor: pointer;
   user-select: none;
   min-width: 100px;
+}
+
+:host(.fit) {
   flex-grow: 1;
 }
 
 :host(:focus) {
   outline: none;
 }
-:host(:focus:not(:focus-visible)) {
-}
 :host(:focus-visible) { /* Some even *more* exciting button focus styles */ 
   outline: 1px black solid;
 }
 
-.c-tab {
+.c-tag {
   transition: all 0.5s ease;
   display: block;
-  height: 50px;
-  line-height: 50px;
-  color: #006778;
+  height: 44px;
+  border-radius: 32px;
+  padding-left: 28px;
+  padding-right: 28px;
+  line-height: 44px;
+  background: #006778;
+  color: #fff;
   font-weight: 600;
   text-align: center;
-  border-bottom: 3px transparent solid;
 }
 
-.c-tab:HOVER {
-  background: #D8E8EA;
-}
-
-.c-tab.active {
-  color: #006778;
-  border-bottom: 3px #006778 solid;
-}
-
-.c-tab.active:HOVER {
-  background: transparent !important;
+.c-tag:HOVER {
+  background: #50978D;
 }
