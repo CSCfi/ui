@@ -7,10 +7,10 @@
 
   <script type="module" src="/build/cscwebcomponents.esm.js"></script>
   <script nomodule src="/build/cscwebcomponents.js"></script>
-  <link href="https://fonts.googleapis.com/css?family=Open+Sans&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://use.typekit.net/taa8tnj.css" />
   <style type="text/css">
     body {
-      font-family: 'Open Sans', sans;
+      font-family: "proxima-nova", sans-serif;
     }
 
     table {
@@ -487,6 +487,30 @@
         <c-tag style="margin-right: 4px;">Web browser</c-tag>
         <c-tag style="margin-right: 4px;">Compute</c-tag>
         <c-tag style="margin-right: 4px;">Active data</c-tag>
+      </c-row>
+    </c-card>
+  
+    <c-card pa="6" my="5">
+      <c-title>Progress bars <code>&lt;c-tag&gt;</code></c-title>
+      <table>
+        <tr><th>Attribute</th><th>Type</th><th>Description</th></tr>
+        <tr><td>value</td><td>(number)</td><td>Value 1-100</td></tr>
+      </table>
+      <table>
+        <tr><th>Example usage</th></tr>
+        <tr><td><code>&lt;c-progressbar value="70"&gt;&lt;/c-tab&gt;</code></td></tr>
+      </table>
+      <c-title style="margin-bottom: 8px;">Examples</c-title>
+      <c-row>
+        <c-col>
+          <c-progressbar value="5"></c-progressbar>
+        </c-col>
+        <c-col>
+          <c-progressbar value="50"></c-progressbar>
+        </c-col>
+        <c-col>
+          <c-progressbar value="90"></c-progressbar>
+        </c-col>
       </c-row>
     </c-card>
 

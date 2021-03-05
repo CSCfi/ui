@@ -57,6 +57,10 @@ export namespace Components {
         "label": string;
         "value": string;
     }
+    interface CProgressbar {
+        "color": string;
+        "value": number;
+    }
     interface CRadio {
         "color": string;
         "items": any[];
@@ -173,6 +177,12 @@ declare global {
         prototype: HTMLCOptionElement;
         new (): HTMLCOptionElement;
     };
+    interface HTMLCProgressbarElement extends Components.CProgressbar, HTMLStencilElement {
+    }
+    var HTMLCProgressbarElement: {
+        prototype: HTMLCProgressbarElement;
+        new (): HTMLCProgressbarElement;
+    };
     interface HTMLCRadioElement extends Components.CRadio, HTMLStencilElement {
     }
     var HTMLCRadioElement: {
@@ -242,6 +252,7 @@ declare global {
         "c-container": HTMLCContainerElement;
         "c-loader": HTMLCLoaderElement;
         "c-option": HTMLCOptionElement;
+        "c-progressbar": HTMLCProgressbarElement;
         "c-radio": HTMLCRadioElement;
         "c-row": HTMLCRowElement;
         "c-select": HTMLCSelectElement;
@@ -307,6 +318,10 @@ declare namespace LocalJSX {
         "dense"?: boolean;
         "label"?: string;
         "value"?: string;
+    }
+    interface CProgressbar {
+        "color"?: string;
+        "value"?: number;
     }
     interface CRadio {
         "color"?: string;
@@ -386,6 +401,7 @@ declare namespace LocalJSX {
         "c-container": CContainer;
         "c-loader": CLoader;
         "c-option": COption;
+        "c-progressbar": CProgressbar;
         "c-radio": CRadio;
         "c-row": CRow;
         "c-select": CSelect;
@@ -410,6 +426,7 @@ declare module "@stencil/core" {
             "c-container": LocalJSX.CContainer & JSXBase.HTMLAttributes<HTMLCContainerElement>;
             "c-loader": LocalJSX.CLoader & JSXBase.HTMLAttributes<HTMLCLoaderElement>;
             "c-option": LocalJSX.COption & JSXBase.HTMLAttributes<HTMLCOptionElement>;
+            "c-progressbar": LocalJSX.CProgressbar & JSXBase.HTMLAttributes<HTMLCProgressbarElement>;
             "c-radio": LocalJSX.CRadio & JSXBase.HTMLAttributes<HTMLCRadioElement>;
             "c-row": LocalJSX.CRow & JSXBase.HTMLAttributes<HTMLCRowElement>;
             "c-select": LocalJSX.CSelect & JSXBase.HTMLAttributes<HTMLCSelectElement>;

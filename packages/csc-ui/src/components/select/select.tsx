@@ -26,11 +26,7 @@ export class Select {
   @Element() host: HTMLElement;
   @State() menuVisible: boolean = false;
   @State() currentIndex: number = null;
-  @Prop() items: any[] = [
-    { name: 'Default 1', value: 'default1' },
-    { name: 'Default 2', value: 'default2' },
-    { name: 'Default 3', value: 'default3' },
-  ];
+  @Prop() items: any[] = [];
   outerWrapperClasses = ['outer-wrapper'];
   validationClasses = ['validation-message'];
 
