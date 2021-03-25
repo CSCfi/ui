@@ -50,7 +50,7 @@
 </head>
 <body>
   <c-container>
-    <c-card pa="6" my="5">
+    <c-card pa="6" my="5" style="position:relative;">
       <c-title>CSC UI - Web Component Library</c-title>
       <table>
         <tr><th>Installation unpkg</th></tr>
@@ -61,9 +61,18 @@
         <tr><td><code>npm install csc-ui</code></td></tr>
         <tr><td>Note! Your framework might need some extra configuration to enable custom elements etc. See: https://stenciljs.com/docs/overview</td></tr>
       </table>
+      <c-notification></c-notification>
     </c-card>
 
     <c-card pa="6" my="5">
+      <c-consent>
+        <p style="flex:1;margin-top:0 !important;margin-bottom:0 !important; margin-right: 20px;">
+          Our website uses cookies to ensure you get the best experience on our website. 
+          Our website may also includes third party cookies. <a href="https://google.com">Read more</a>
+        </p>
+        <c-button>Refuse</c-button>
+        <c-button>Approve</c-button>
+      </c-consent>
       <c-title>Colors</c-title>
       <table>
         <tr><th>Example usage</th></tr>
@@ -244,33 +253,27 @@
           <c-button>Primary button</c-button>
         </c-col>
         <c-col>
-          <c-button outlined>Secondary</c-button>
+          <c-button loading>Loading</c-button>
         </c-col>
         <c-col>
-          <c-button color="blue">Blue</c-button>
+          <c-button disabled>Disabled</c-button>
         </c-col>
         <c-col>
-          <c-button loading color="blue">Loading</c-button>
-        </c-col>
-        <c-col>
-          <c-button outlined>Outlined</c-button>
+          <c-button fit>Fit</c-button>
         </c-col>
       </c-row>
       <c-row>
         <c-col>
-          <c-button color="blue" dense>Dense</c-button>
+          <c-button outlined>Outlined</c-button>
         </c-col>
         <c-col>
-          <c-button color="red" loading no-radius dense>Loading</c-button>
+          <c-button outlined loading>Outlined</c-button>
         </c-col>
         <c-col>
-          <c-button color="secondary" no-radius>Purple</c-button>
+          <c-button disabled outlined>Disabled</c-button>
         </c-col>
         <c-col>
-          <c-button color="blue" disabled>Disabled</c-button>
-        </c-col>
-        <c-col>
-          <c-button fit dense>Dense + fit</c-button>
+          <c-button secondary>Secondary</c-button>
         </c-col>
       </c-row>
     </c-card>

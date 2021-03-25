@@ -16,17 +16,15 @@ export namespace Components {
         "value": any;
     }
     interface CButton {
-        "color": string;
-        "colorCode": string;
         "dense": boolean;
         "disabled": boolean;
         "fit": boolean;
         "fixed": boolean;
-        "fullWidthMobile": boolean;
         "icon": string;
         "loading": boolean;
         "noRadius": boolean;
         "outlined": boolean;
+        "secondary": boolean;
     }
     interface CCard {
         "color": string;
@@ -47,10 +45,16 @@ export namespace Components {
     }
     interface CCol {
     }
+    interface CConsent {
+    }
     interface CContainer {
         "width": number;
     }
     interface CLoader {
+    }
+    interface CNotification {
+        "notification": any;
+        "position": string;
     }
     interface COption {
         "dense": boolean;
@@ -159,6 +163,12 @@ declare global {
         prototype: HTMLCColElement;
         new (): HTMLCColElement;
     };
+    interface HTMLCConsentElement extends Components.CConsent, HTMLStencilElement {
+    }
+    var HTMLCConsentElement: {
+        prototype: HTMLCConsentElement;
+        new (): HTMLCConsentElement;
+    };
     interface HTMLCContainerElement extends Components.CContainer, HTMLStencilElement {
     }
     var HTMLCContainerElement: {
@@ -170,6 +180,12 @@ declare global {
     var HTMLCLoaderElement: {
         prototype: HTMLCLoaderElement;
         new (): HTMLCLoaderElement;
+    };
+    interface HTMLCNotificationElement extends Components.CNotification, HTMLStencilElement {
+    }
+    var HTMLCNotificationElement: {
+        prototype: HTMLCNotificationElement;
+        new (): HTMLCNotificationElement;
     };
     interface HTMLCOptionElement extends Components.COption, HTMLStencilElement {
     }
@@ -249,8 +265,10 @@ declare global {
         "c-card": HTMLCCardElement;
         "c-checkbox": HTMLCCheckboxElement;
         "c-col": HTMLCColElement;
+        "c-consent": HTMLCConsentElement;
         "c-container": HTMLCContainerElement;
         "c-loader": HTMLCLoaderElement;
+        "c-notification": HTMLCNotificationElement;
         "c-option": HTMLCOptionElement;
         "c-progressbar": HTMLCProgressbarElement;
         "c-radio": HTMLCRadioElement;
@@ -277,17 +295,15 @@ declare namespace LocalJSX {
         "value"?: any;
     }
     interface CButton {
-        "color"?: string;
-        "colorCode"?: string;
         "dense"?: boolean;
         "disabled"?: boolean;
         "fit"?: boolean;
         "fixed"?: boolean;
-        "fullWidthMobile"?: boolean;
         "icon"?: string;
         "loading"?: boolean;
         "noRadius"?: boolean;
         "outlined"?: boolean;
+        "secondary"?: boolean;
     }
     interface CCard {
         "color"?: string;
@@ -309,10 +325,16 @@ declare namespace LocalJSX {
     }
     interface CCol {
     }
+    interface CConsent {
+    }
     interface CContainer {
         "width"?: number;
     }
     interface CLoader {
+    }
+    interface CNotification {
+        "notification"?: any;
+        "position"?: string;
     }
     interface COption {
         "dense"?: boolean;
@@ -398,8 +420,10 @@ declare namespace LocalJSX {
         "c-card": CCard;
         "c-checkbox": CCheckbox;
         "c-col": CCol;
+        "c-consent": CConsent;
         "c-container": CContainer;
         "c-loader": CLoader;
+        "c-notification": CNotification;
         "c-option": COption;
         "c-progressbar": CProgressbar;
         "c-radio": CRadio;
@@ -423,8 +447,10 @@ declare module "@stencil/core" {
             "c-card": LocalJSX.CCard & JSXBase.HTMLAttributes<HTMLCCardElement>;
             "c-checkbox": LocalJSX.CCheckbox & JSXBase.HTMLAttributes<HTMLCCheckboxElement>;
             "c-col": LocalJSX.CCol & JSXBase.HTMLAttributes<HTMLCColElement>;
+            "c-consent": LocalJSX.CConsent & JSXBase.HTMLAttributes<HTMLCConsentElement>;
             "c-container": LocalJSX.CContainer & JSXBase.HTMLAttributes<HTMLCContainerElement>;
             "c-loader": LocalJSX.CLoader & JSXBase.HTMLAttributes<HTMLCLoaderElement>;
+            "c-notification": LocalJSX.CNotification & JSXBase.HTMLAttributes<HTMLCNotificationElement>;
             "c-option": LocalJSX.COption & JSXBase.HTMLAttributes<HTMLCOptionElement>;
             "c-progressbar": LocalJSX.CProgressbar & JSXBase.HTMLAttributes<HTMLCProgressbarElement>;
             "c-radio": LocalJSX.CRadio & JSXBase.HTMLAttributes<HTMLCRadioElement>;

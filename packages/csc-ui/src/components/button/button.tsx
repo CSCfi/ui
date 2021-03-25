@@ -7,15 +7,13 @@ import { mdiPlus, mdiMinus, mdiAccount, mdiPencil } from '@mdi/js';
   shadow: true
 })
 export class Button {
-  @Prop() color: string = '';
-  @Prop() colorCode: string = '';
   @Prop() fixed: boolean;
   @Prop() dense: boolean;
   @Prop() fit: boolean;
   @Prop() noRadius: boolean;
   @Prop() outlined: boolean;
-  @Prop() fullWidthMobile: boolean;
-  @Prop({ reflectToAttr: true })
+  @Prop() secondary: boolean;
+  @Prop({ reflect: true })
     disabled: boolean;
   @Prop() icon: string;
   @Prop() loading: boolean;
@@ -26,6 +24,7 @@ export class Button {
   </svg>);
 
     let selectedIcon = null;
+    const secondary = this.secondary ? 'secondary ' : '';
     let svg = '';
     let radius = 'border-radius';
     if (this.noRadius) {
@@ -47,9 +46,9 @@ export class Button {
     }
     let classes;
     if (this.disabled) {
-      classes = `csc-button csc-button-disabled ${this.fit ? 'fit' : ''} ${this.fixed ? 'fixed' : ''} ${radius} ${this.fullWidthMobile ? 'full-width-mobile' : ''}`;
+      classes = `csc-button csc-button-disabled ${this.fit ? 'fit' : ''} ${this.fixed ? 'fixed' : ''} ${radius}`;
     } else {
-      classes = `csc-button csc-bg-color ${this.color} ${this.fit ? 'fit' : ''} ${this.fixed ? 'fixed' : ''} ${radius} ${this.fullWidthMobile ? 'full-width-mobile' : ''}`;
+      classes = `csc-button csc-bg-color ${secondary}${this.fit ? 'fit' : ''} ${this.fixed ? 'fixed' : ''} ${radius}`;
     }
     if (this.outlined) {
       classes = `${classes} outlined`;
@@ -67,19 +66,14 @@ export class Button {
       padding = `${padding} hide-text`;
     }
 
-    let hostClasses = this.fullWidthMobile ? 'full-width' : '';
+    let hostClasses = '';
     if (this.fit) {
       hostClasses = 'fit';
     }
 
-    let style = {};
-    if (this.colorCode) {
-      style = { 'background-color': this.colorCode, 'box-shadow': `${this.colorCode} 0px 0px 0px 2px inset` };
-    }
-
     return (
       <button class={hostClasses} tabindex="0" role="button" disabled={this.disabled}>
-        <div class={classes} style={style}>
+        <div class={classes}>
           { this.loading ? (<div class={ this.dense ? 'spinner_wrapper dense_spinner' : 'spinner_wrapper'}>
             { SPINNER_SMALL }
           </div>) : '' }

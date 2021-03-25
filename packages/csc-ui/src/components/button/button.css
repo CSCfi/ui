@@ -7,6 +7,16 @@ button {
   background: transparent;
 }
 
+button:focus {
+  outline: none;
+}
+button:focus:not(:focus-visible) {
+}
+button:focus-visible { /* Some even *more* exciting button focus styles */ 
+  outline: 1px black solid;
+  outline-offset: 2px;
+}
+
 
 @media (max-width: 767px) {
   button.full-width {
@@ -53,15 +63,20 @@ button.fit {
   cursor: pointer;
   box-shadow: none;
   outline: none;
-  transition: color 0.5s;
+  transition: all 0.3s;
   color: white;
   margin: 0;
   text-decoration: none;
   display: inline-block;
   text-align: center;
   font-size: 16px;
+  font-weight: 700;
   line-height: 18px;
   user-select: none;
+}
+
+.csc-button:HOVER {
+  background-color: #50978D;
 }
 
 .csc-button svg {
@@ -77,7 +92,17 @@ button.fit {
 }
 
 .outlined:HOVER {
-  background-color: rgba(0, 104, 122, 0.1) !important;
+  background-color: #D8E8EA !important;
+}
+
+.secondary {
+  background-color: #D0DCED !important;
+  color: #025B96;
+}
+
+.secondary:HOVER {
+  background-color: #025B96 !important;
+  color: #FFFFFF;
 }
 
 .spinner__circle {
@@ -107,7 +132,7 @@ button.fit {
 }
 
 .csc-button-disabled {
-  background: #E8E8E8;
+  background: #E8E8E8 !important;
   color: #8C8C8C;
   box-shadow: inset 0px 0px 0px 2px #E8E8E8;
   cursor: default !important;
@@ -119,6 +144,11 @@ button.fit {
 
 .csc-button-disabled.outlined:HOVER {
   background-color: transparent !important;
+}
+
+.csc-button-disabled.outlined {
+  background-color: transparent !important;
+  box-shadow: inset 0px 0px 0px 2px #8C8C8C;
 }
 
 .csc-button-disabled svg {
@@ -135,7 +165,7 @@ button.fit {
 }
 
 .ripple:hover {
-  background: rgba(255,255,255,0.1) radial-gradient(circle, transparent 1%, rgba(255,255,255,0.15) 1%) center/15000%;
+  background: rgba(255,255,255,0.0) radial-gradient(circle, transparent 1%, rgba(255,255,255,0.15) 1%) center/15000%;
 }
 .ripple:active {
   background-color: rgba(255,255,255,0.25);
@@ -162,7 +192,7 @@ button.fit {
 .spinner_wrapper {
   width: 100%;
   position: absolute;
-  padding-top: 9px;
+  padding-top: 7px;
 }
 
 .spinner_wrapper.dense_spinner {

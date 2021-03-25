@@ -26,17 +26,21 @@ export class Select {
   @Element() host: HTMLElement;
   @State() menuVisible: boolean = false;
   @State() currentIndex: number = null;
-  @Prop() items: any[] = [];
+  @Prop() items: any[] = [
+    { name: 'Default 1', value: 'default1' },
+    { name: 'Default 2', value: 'default2' },
+    { name: 'Default 3', value: 'default3' },
+  ];
   outerWrapperClasses = ['outer-wrapper'];
   validationClasses = ['validation-message'];
 
   @Event() changeValue: EventEmitter;
   valueChangedHandler(item: any) {
     function isItem(element) {
-      return element === item;
+      return element.value === item.value;
     }
     this.currentIndex = this.items.findIndex(isItem);
-    this.changeValue.emit(item);
+    this.changeValue.emit({ name: item.name, value: item.value });
     // item.ref.scrollIntoView();
   }
 

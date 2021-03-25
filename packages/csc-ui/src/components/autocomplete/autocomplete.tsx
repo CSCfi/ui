@@ -25,7 +25,7 @@ export class Autocomplete {
       return element === item;
     }
     this.currentIndex = this.items.findIndex(isItem);
-    this.changeValue.emit(item);
+    this.changeValue.emit({ name: item.name, value: item.value });
   }
 
   @Watch('items')
