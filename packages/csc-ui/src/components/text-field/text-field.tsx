@@ -22,6 +22,7 @@ export class TextField {
   @Prop() validateOnBlur: boolean = false;
   @Prop() label: string;
   @Prop() name: string;
+  @Prop() type: string;
   @Prop() step: number = null;
   @Prop() min: number = null;
   @Prop() max: number = null;
@@ -80,8 +81,15 @@ export class TextField {
       <label class="hidden">{ this.label }{ this.required ? '*' : '' }</label>
     </div>);
 
+    let type = 'text';
+    if (this.number) {
+      type = 'number';
+    }
+    if (this.type) {
+      type = this.type;
+    }
 
-    const textInput = <input name={this.name} onBlur={() => this.setBlur()} aria-labelledby="c-text-label" disabled={this.disabled} readonly={this.readonly} type={this.number ? 'number' : 'text'} min={this.min} max={this.max} step={this.step} placeholder={this.placeholder} value={this.value} onInput={(event) => this.handleChange(event)} onChange={(event) => this.handleChange(event)}/>;
+    const textInput = <input name={this.name} onBlur={() => this.setBlur()} aria-labelledby="c-text-label" disabled={this.disabled} readonly={this.readonly} type={type} min={this.min} max={this.max} step={this.step} placeholder={this.placeholder} value={this.value} onInput={(event) => this.handleChange(event)} onChange={(event) => this.handleChange(event)}/>;
     const textArea = <textarea name={this.name} onBlur={() => this.setBlur()} rows={this.rows} aria-labelledby="c-text-label" disabled={this.disabled} placeholder={this.placeholder} readonly={this.readonly} onInput={(event) => this.handleChange(event)} value={this.value}></textarea>;
     return (
       <Host>

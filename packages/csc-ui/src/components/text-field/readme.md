@@ -20,6 +20,7 @@
 | `required`       | `required`         |             | `boolean` | `null`             |
 | `rows`           | `rows`             |             | `number`  | `1`                |
 | `step`           | `step`             |             | `number`  | `null`             |
+| `type`           | `type`             |             | `string`  | `undefined`        |
 | `valid`          | `valid`            |             | `boolean` | `true`             |
 | `validate`       | `validate`         |             | `boolean` | `false`            |
 | `validateOnBlur` | `validate-on-blur` |             | `boolean` | `false`            |

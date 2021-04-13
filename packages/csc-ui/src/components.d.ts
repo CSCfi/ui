@@ -115,6 +115,7 @@ export namespace Components {
         "required": boolean;
         "rows": number;
         "step": number;
+        "type": string;
         "valid": boolean;
         "validate": boolean;
         "validateOnBlur": boolean;
@@ -398,6 +399,7 @@ declare namespace LocalJSX {
         "required"?: boolean;
         "rows"?: number;
         "step"?: number;
+        "type"?: string;
         "valid"?: boolean;
         "validate"?: boolean;
         "validateOnBlur"?: boolean;
