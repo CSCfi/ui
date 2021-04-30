@@ -32,7 +32,7 @@ export class TextField {
   outerWrapperClasses = ['outer-wrapper'];
   validationClasses = ['validation-message'];
   @Event() changeValue: EventEmitter;
-  @State() tick = {}
+  @State() tick = '';
   blurred = false;
 
   setBlur() {
@@ -44,6 +44,7 @@ export class TextField {
 
   handleChange(event) {
     this.value = event.target.value;
+    this.tick = '';
     this.changeValue.emit(event.target.value);
   }
 
@@ -57,7 +58,7 @@ export class TextField {
       this.outerWrapperClasses.push('required');
       this.validationClasses.push('show');
       if (forceUpdate) {
-        this.tick = {};
+        this.tick = 'force';
       }
     }
   }
@@ -65,7 +66,9 @@ export class TextField {
   validationIcon = <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="#E71D32" width="18px" height="18px"><path d="M0 0h24v24H0z" fill="none"/><path d="M12 2C6.47 2 2 6.47 2 12s4.47 10 10 10 10-4.47 10-10S17.53 2 12 2zm5 13.59L15.59 17 12 13.41 8.41 17 7 15.59 10.59 12 7 8.41 8.41 7 12 10.59 15.59 7 17 8.41 13.41 12 17 15.59z"/></svg>;
 
   render() {
-    this.runValidate();
+    if (this.tick !== 'force') { // already externally validated when forced to render
+      this.runValidate();
+    }
     if (this.disabled) {
       this.outerWrapperClasses.push('disabled');
     } else {
