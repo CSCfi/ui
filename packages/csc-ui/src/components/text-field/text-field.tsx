@@ -10,7 +10,7 @@ export class TextField {
   @Watch('validate')
   validateChange(newValue: boolean) {
     if (newValue) {
-      this.runValidate(true);
+      this.runValidate(true, true);
     }
   }
   @Prop() number: boolean;
@@ -47,11 +47,11 @@ export class TextField {
     this.changeValue.emit(event.target.value);
   }
 
-  runValidate(forceUpdate = false) {
+  runValidate(forceUpdate = false, extValidate = false) {
     this.outerWrapperClasses = this.outerWrapperClasses.filter(c => c !== 'required');
     this.validationClasses = this.validationClasses.filter(c => c !== 'show');
     if (
-      (this.blurred || !this.validateOnBlur) &&
+      (this.blurred || !this.validateOnBlur || extValidate) &&
       ((this.required && !this.value) || !this.valid)
     ) {
       this.outerWrapperClasses.push('required');
