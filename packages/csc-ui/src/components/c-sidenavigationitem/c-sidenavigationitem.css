@@ -1,0 +1,29 @@
+:host {
+  cursor: pointer;
+  display: block;
+  color: #595959;
+  font-weight: 400;
+  height: 42px;
+  line-height: 42px;
+  margin-top: 4px;
+  margin-bottom: 4px;
+  padding-left: 16px;
+  border-radius: 4px;
+  transition: background-color 0.2s ease-in;
+  display: flex;
+  align-items: center;;
+}
+
+:host(:HOVER) {
+  background-color: #D8E8EA66;
+}
+
+:host(.active) {
+  background-color: #D8E8EA;
+  color: #006778;
+}
+
+::slotted(span) {
+  margin-right: 8px;
+  font-size: 20px;
+}

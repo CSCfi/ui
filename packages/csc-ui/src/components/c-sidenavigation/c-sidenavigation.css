@@ -1,0 +1,25 @@
+:host {
+  display: block;
+  background: #FFF;
+  z-index: 999;
+  min-width: 260px;
+  position: relative;
+  padding: 8px 8px;
+  transition: transform 0.3s ease;
+  box-shadow: rgb(0 0 0 / 15%) 0px 10px 20px, rgb(0 0 0 / 20%) 0px 5px 5px;
+}
+:host > div {
+  min-width: 260px;
+  position: fixed;
+}
+
+
+@media (max-width: 1280px) {
+  :host(.hideMenu) {
+    transform: translateX(-100%);
+  }
+  :host {
+    position: fixed;
+    height: 100%;
+  }
+}

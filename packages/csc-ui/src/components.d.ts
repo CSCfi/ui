@@ -52,6 +52,8 @@ export namespace Components {
     }
     interface CLoader {
     }
+    interface CNavigationbutton {
+    }
     interface CNotification {
         "notification": any;
         "position": string;
@@ -85,6 +87,11 @@ export namespace Components {
         "validate": boolean;
         "validateOnBlur": boolean;
         "value": any;
+    }
+    interface CSidenavigation {
+    }
+    interface CSidenavigationitem {
+        "active": boolean;
     }
     interface CSpacer {
     }
@@ -131,6 +138,8 @@ export namespace Components {
         "fit": boolean;
         "fixed": boolean;
         "subtitle": string;
+    }
+    interface CToolbar {
     }
 }
 declare global {
@@ -182,6 +191,12 @@ declare global {
         prototype: HTMLCLoaderElement;
         new (): HTMLCLoaderElement;
     };
+    interface HTMLCNavigationbuttonElement extends Components.CNavigationbutton, HTMLStencilElement {
+    }
+    var HTMLCNavigationbuttonElement: {
+        prototype: HTMLCNavigationbuttonElement;
+        new (): HTMLCNavigationbuttonElement;
+    };
     interface HTMLCNotificationElement extends Components.CNotification, HTMLStencilElement {
     }
     var HTMLCNotificationElement: {
@@ -217,6 +232,18 @@ declare global {
     var HTMLCSelectElement: {
         prototype: HTMLCSelectElement;
         new (): HTMLCSelectElement;
+    };
+    interface HTMLCSidenavigationElement extends Components.CSidenavigation, HTMLStencilElement {
+    }
+    var HTMLCSidenavigationElement: {
+        prototype: HTMLCSidenavigationElement;
+        new (): HTMLCSidenavigationElement;
+    };
+    interface HTMLCSidenavigationitemElement extends Components.CSidenavigationitem, HTMLStencilElement {
+    }
+    var HTMLCSidenavigationitemElement: {
+        prototype: HTMLCSidenavigationitemElement;
+        new (): HTMLCSidenavigationitemElement;
     };
     interface HTMLCSpacerElement extends Components.CSpacer, HTMLStencilElement {
     }
@@ -260,6 +287,12 @@ declare global {
         prototype: HTMLCToggleElement;
         new (): HTMLCToggleElement;
     };
+    interface HTMLCToolbarElement extends Components.CToolbar, HTMLStencilElement {
+    }
+    var HTMLCToolbarElement: {
+        prototype: HTMLCToolbarElement;
+        new (): HTMLCToolbarElement;
+    };
     interface HTMLElementTagNameMap {
         "c-autocomplete": HTMLCAutocompleteElement;
         "c-button": HTMLCButtonElement;
@@ -269,12 +302,15 @@ declare global {
         "c-consent": HTMLCConsentElement;
         "c-container": HTMLCContainerElement;
         "c-loader": HTMLCLoaderElement;
+        "c-navigationbutton": HTMLCNavigationbuttonElement;
         "c-notification": HTMLCNotificationElement;
         "c-option": HTMLCOptionElement;
         "c-progressbar": HTMLCProgressbarElement;
         "c-radio": HTMLCRadioElement;
         "c-row": HTMLCRowElement;
         "c-select": HTMLCSelectElement;
+        "c-sidenavigation": HTMLCSidenavigationElement;
+        "c-sidenavigationitem": HTMLCSidenavigationitemElement;
         "c-spacer": HTMLCSpacerElement;
         "c-tab": HTMLCTabElement;
         "c-tab-button": HTMLCTabButtonElement;
@@ -282,6 +318,7 @@ declare global {
         "c-text-field": HTMLCTextFieldElement;
         "c-title": HTMLCTitleElement;
         "c-toggle": HTMLCToggleElement;
+        "c-toolbar": HTMLCToolbarElement;
     }
 }
 declare namespace LocalJSX {
@@ -333,6 +370,8 @@ declare namespace LocalJSX {
     }
     interface CLoader {
     }
+    interface CNavigationbutton {
+    }
     interface CNotification {
         "notification"?: any;
         "position"?: string;
@@ -368,6 +407,11 @@ declare namespace LocalJSX {
         "validate"?: boolean;
         "validateOnBlur"?: boolean;
         "value"?: any;
+    }
+    interface CSidenavigation {
+    }
+    interface CSidenavigationitem {
+        "active"?: boolean;
     }
     interface CSpacer {
     }
@@ -416,6 +460,8 @@ declare namespace LocalJSX {
         "fixed"?: boolean;
         "subtitle"?: string;
     }
+    interface CToolbar {
+    }
     interface IntrinsicElements {
         "c-autocomplete": CAutocomplete;
         "c-button": CButton;
@@ -425,12 +471,15 @@ declare namespace LocalJSX {
         "c-consent": CConsent;
         "c-container": CContainer;
         "c-loader": CLoader;
+        "c-navigationbutton": CNavigationbutton;
         "c-notification": CNotification;
         "c-option": COption;
         "c-progressbar": CProgressbar;
         "c-radio": CRadio;
         "c-row": CRow;
         "c-select": CSelect;
+        "c-sidenavigation": CSidenavigation;
+        "c-sidenavigationitem": CSidenavigationitem;
         "c-spacer": CSpacer;
         "c-tab": CTab;
         "c-tab-button": CTabButton;
@@ -438,6 +487,7 @@ declare namespace LocalJSX {
         "c-text-field": CTextField;
         "c-title": CTitle;
         "c-toggle": CToggle;
+        "c-toolbar": CToolbar;
     }
 }
 export { LocalJSX as JSX };
@@ -452,12 +502,15 @@ declare module "@stencil/core" {
             "c-consent": LocalJSX.CConsent & JSXBase.HTMLAttributes<HTMLCConsentElement>;
             "c-container": LocalJSX.CContainer & JSXBase.HTMLAttributes<HTMLCContainerElement>;
             "c-loader": LocalJSX.CLoader & JSXBase.HTMLAttributes<HTMLCLoaderElement>;
+            "c-navigationbutton": LocalJSX.CNavigationbutton & JSXBase.HTMLAttributes<HTMLCNavigationbuttonElement>;
             "c-notification": LocalJSX.CNotification & JSXBase.HTMLAttributes<HTMLCNotificationElement>;
             "c-option": LocalJSX.COption & JSXBase.HTMLAttributes<HTMLCOptionElement>;
             "c-progressbar": LocalJSX.CProgressbar & JSXBase.HTMLAttributes<HTMLCProgressbarElement>;
             "c-radio": LocalJSX.CRadio & JSXBase.HTMLAttributes<HTMLCRadioElement>;
             "c-row": LocalJSX.CRow & JSXBase.HTMLAttributes<HTMLCRowElement>;
             "c-select": LocalJSX.CSelect & JSXBase.HTMLAttributes<HTMLCSelectElement>;
+            "c-sidenavigation": LocalJSX.CSidenavigation & JSXBase.HTMLAttributes<HTMLCSidenavigationElement>;
+            "c-sidenavigationitem": LocalJSX.CSidenavigationitem & JSXBase.HTMLAttributes<HTMLCSidenavigationitemElement>;
             "c-spacer": LocalJSX.CSpacer & JSXBase.HTMLAttributes<HTMLCSpacerElement>;
             "c-tab": LocalJSX.CTab & JSXBase.HTMLAttributes<HTMLCTabElement>;
             "c-tab-button": LocalJSX.CTabButton & JSXBase.HTMLAttributes<HTMLCTabButtonElement>;
@@ -465,6 +518,7 @@ declare module "@stencil/core" {
             "c-text-field": LocalJSX.CTextField & JSXBase.HTMLAttributes<HTMLCTextFieldElement>;
             "c-title": LocalJSX.CTitle & JSXBase.HTMLAttributes<HTMLCTitleElement>;
             "c-toggle": LocalJSX.CToggle & JSXBase.HTMLAttributes<HTMLCToggleElement>;
+            "c-toolbar": LocalJSX.CToolbar & JSXBase.HTMLAttributes<HTMLCToolbarElement>;
         }
     }
 }
