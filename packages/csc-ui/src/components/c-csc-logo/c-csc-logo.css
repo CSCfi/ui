@@ -1,0 +1,11 @@
+:host {
+  display: block;
+  width: 60px;
+  margin-top: 4px;
+}
+
+svg .cls-1{fill:none;}
+svg .cls-2{clip-path:url(#clip-path);}
+svg .cls-3{fill:#5e6a71;}
+svg .cls-4{fill:#006778;}
+svg .cls-5{fill:#830051;}

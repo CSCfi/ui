@@ -1,15 +1,16 @@
 .c-toolbar {
-  display: block;
-  background: #002F5F;
-  color: #FFF;
+  color: #595959;
   height: 60px;
+  background: #FFF;
   display: flex;
+  column-gap: 12px;
   align-items: center;
   padding-left: 16px;
   padding-right: 16px;
   position: fixed;
   width: calc(100% - 32px);
   z-index: 1000;
+  box-shadow: 2px 4px 10px #00000029;
 }
 
 .spacer {

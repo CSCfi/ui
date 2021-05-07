@@ -50,6 +50,8 @@ export namespace Components {
     interface CContainer {
         "width": number;
     }
+    interface CCscLogo {
+    }
     interface CLoader {
     }
     interface CNavigationbutton {
@@ -89,6 +91,7 @@ export namespace Components {
         "value": any;
     }
     interface CSidenavigation {
+        "mobile": boolean;
     }
     interface CSidenavigationitem {
         "active": boolean;
@@ -184,6 +187,12 @@ declare global {
     var HTMLCContainerElement: {
         prototype: HTMLCContainerElement;
         new (): HTMLCContainerElement;
+    };
+    interface HTMLCCscLogoElement extends Components.CCscLogo, HTMLStencilElement {
+    }
+    var HTMLCCscLogoElement: {
+        prototype: HTMLCCscLogoElement;
+        new (): HTMLCCscLogoElement;
     };
     interface HTMLCLoaderElement extends Components.CLoader, HTMLStencilElement {
     }
@@ -301,6 +310,7 @@ declare global {
         "c-col": HTMLCColElement;
         "c-consent": HTMLCConsentElement;
         "c-container": HTMLCContainerElement;
+        "c-csc-logo": HTMLCCscLogoElement;
         "c-loader": HTMLCLoaderElement;
         "c-navigationbutton": HTMLCNavigationbuttonElement;
         "c-notification": HTMLCNotificationElement;
@@ -368,6 +378,8 @@ declare namespace LocalJSX {
     interface CContainer {
         "width"?: number;
     }
+    interface CCscLogo {
+    }
     interface CLoader {
     }
     interface CNavigationbutton {
@@ -409,6 +421,7 @@ declare namespace LocalJSX {
         "value"?: any;
     }
     interface CSidenavigation {
+        "mobile"?: boolean;
     }
     interface CSidenavigationitem {
         "active"?: boolean;
@@ -470,6 +483,7 @@ declare namespace LocalJSX {
         "c-col": CCol;
         "c-consent": CConsent;
         "c-container": CContainer;
+        "c-csc-logo": CCscLogo;
         "c-loader": CLoader;
         "c-navigationbutton": CNavigationbutton;
         "c-notification": CNotification;
@@ -501,6 +515,7 @@ declare module "@stencil/core" {
             "c-col": LocalJSX.CCol & JSXBase.HTMLAttributes<HTMLCColElement>;
             "c-consent": LocalJSX.CConsent & JSXBase.HTMLAttributes<HTMLCConsentElement>;
             "c-container": LocalJSX.CContainer & JSXBase.HTMLAttributes<HTMLCContainerElement>;
+            "c-csc-logo": LocalJSX.CCscLogo & JSXBase.HTMLAttributes<HTMLCCscLogoElement>;
             "c-loader": LocalJSX.CLoader & JSXBase.HTMLAttributes<HTMLCLoaderElement>;
             "c-navigationbutton": LocalJSX.CNavigationbutton & JSXBase.HTMLAttributes<HTMLCNavigationbuttonElement>;
             "c-notification": LocalJSX.CNotification & JSXBase.HTMLAttributes<HTMLCNotificationElement>;

@@ -1,25 +1,75 @@
-:host {
-  display: block;
-  background: #FFF;
+:host(.desktop) {
+  flex-grow: 1;
+  display: flex;
+  flex-shrink: 2;
+  flex-basis: 260px;
+  max-width: 320px;
+}
+
+.c-sidenavigation {
+  display: flex;
+  flex-flow: column wrap;
+  background: #006778;
+  width: 100%;
   z-index: 999;
-  min-width: 260px;
   position: relative;
-  padding: 8px 8px;
+  padding: 24px 0px 24px 24px;
   transition: transform 0.3s ease;
-  box-shadow: rgb(0 0 0 / 15%) 0px 10px 20px, rgb(0 0 0 / 20%) 0px 5px 5px;
+  height: 100%
 }
-:host > div {
-  min-width: 260px;
+.c-sidenavigation > div {
+  width: 100%;
+  /* position: fixed; */
+  display: flex;
+  height: 100%;
+  flex-flow: column wrap;
+}
+
+.vertical-spacer {
+  flex: 1;
+}
+
+/* .c-sidenavigation.hideMenu {
+  transform: translateX(-100%);
+} */
+
+.mobile.c-sidenavigation.hideMenu {
+  transform: translateX(100%);
+}
+.mobile.c-sidenavigation {
+  max-width: 260px;
+  transform: translateX(0%);
   position: fixed;
+  right:0;
+  /* height: 100%; */
+}
+.mobile.c-sidenavigation {
+  /* height: calc(100% - 0px); */
+  height: 100%;
 }
 
+.c-overlay {
+  background: rgba(0,0,0,0.5);
+  position: fixed;
+  z-index: 998;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+}
 
-@media (max-width: 1280px) {
-  :host(.hideMenu) {
-    transform: translateX(-100%);
+@keyframes fadeIn {
+  0% {
+    background: rgba(0,0,0,0);
   }
-  :host {
-    position: fixed;
-    height: 100%;
+  100% {
+    background: rgba(0,0,0,0.5);
   }
+}
+
+.c-fadeIn {
+  z-index: 997;
+  animation-name: fadeIn;
+  animation-duration: 0.5s;
+  animation-iteration-count: 1;
 }
