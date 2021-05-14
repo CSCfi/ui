@@ -11,6 +11,7 @@ export class Title {
     return (
       <Host>
         <slot></slot>
+        <div class="title-underline"></div>
       </Host>
     );
   }
