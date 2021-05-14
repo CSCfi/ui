@@ -62,6 +62,7 @@ textarea {
 .outer-wrapper {
   position: relative;
   display:flex;
+  align-items: center;
   min-height: 44px;
 }
 
@@ -104,6 +105,7 @@ textarea {
 
 .shadow {
   box-shadow: 2px 4px 10px #00000029;
+  border-radius: 4px;
 }
 
 .border-left {
