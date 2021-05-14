@@ -14,7 +14,7 @@
 }
 
 ::slotted(*) {
-  display: flex;
+  display: flex !important;
   align-items: center;
   justify-content: center;
   color: #595959;
@@ -62,6 +62,7 @@ textarea {
 .outer-wrapper {
   position: relative;
   display:flex;
+  min-height: 44px;
 }
 
 .outer-wrapper input, .outer-wrapper textarea {
