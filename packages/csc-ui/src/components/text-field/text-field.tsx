@@ -16,6 +16,7 @@ export class TextField {
   @Prop() number: boolean;
   @Prop() disabled: boolean;
   @Prop() readonly: boolean;
+  @Prop() shadow: boolean;
   @Prop() valid: boolean = true;
   @Prop() validation: string = 'Required field';
   @Prop() required: boolean = null;
@@ -34,6 +35,8 @@ export class TextField {
   @Event() changeValue: EventEmitter;
   @State() tick = '';
   blurred = false;
+  inputReference?: HTMLInputElement;
+  textAreaReference?: HTMLTextAreaElement;
 
   setBlur() {
     this.blurred = true;
@@ -60,6 +63,14 @@ export class TextField {
       if (forceUpdate) {
         this.tick = 'force';
       }
+    }
+  }
+
+  focus() {
+    if (this.rows > 1) {
+      this.textAreaReference.focus();
+    } else {
+      this.inputReference.focus();
     }
   }
 
@@ -91,13 +102,18 @@ export class TextField {
     if (this.type) {
       type = this.type;
     }
+    if (this.shadow) {
+      this.outerWrapperClasses.push('shadow');
+    }
 
-    const textInput = <input name={this.name} onBlur={() => this.setBlur()} aria-labelledby="c-text-label" disabled={this.disabled} readonly={this.readonly} type={type} min={this.min} max={this.max} step={this.step} placeholder={this.placeholder} value={this.value} onInput={(event) => this.handleChange(event)} onChange={(event) => this.handleChange(event)}/>;
-    const textArea = <textarea name={this.name} onBlur={() => this.setBlur()} rows={this.rows} aria-labelledby="c-text-label" disabled={this.disabled} placeholder={this.placeholder} readonly={this.readonly} onInput={(event) => this.handleChange(event)} value={this.value}></textarea>;
+    const textInput = <input ref={el => this.inputReference = el as HTMLInputElement} name={this.name} onBlur={() => this.setBlur()} aria-labelledby="c-text-label" disabled={this.disabled} readonly={this.readonly} type={type} min={this.min} max={this.max} step={this.step} placeholder={this.placeholder} value={this.value} onInput={(event) => this.handleChange(event)} onChange={(event) => this.handleChange(event)}/>;
+    const textArea = <textarea ref={el => this.textAreaReference = el as HTMLTextAreaElement} name={this.name} onBlur={() => this.setBlur()} rows={this.rows} aria-labelledby="c-text-label" disabled={this.disabled} placeholder={this.placeholder} readonly={this.readonly} onInput={(event) => this.handleChange(event)} value={this.value}></textarea>;
     return (
-      <Host>
+      <Host onClick={() => this.focus()}>
         <div class={this.outerWrapperClasses.join(' ')}>
+          <slot name="pre"></slot>
           { this.rows > 1 ? textArea : textInput }
+          <slot name="post"></slot>
           <div class="border-wrapper">
             <div class="border-left"></div>
             { this.label ? labelBlock : null }

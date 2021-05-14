@@ -52,6 +52,9 @@ export namespace Components {
     }
     interface CCscLogo {
     }
+    interface CLink {
+        "href": string;
+    }
     interface CLoader {
     }
     interface CNavigationbutton {
@@ -85,6 +88,7 @@ export namespace Components {
         "name": string;
         "placeholder": string;
         "required": boolean;
+        "shadow": boolean;
         "showNone": boolean;
         "validate": boolean;
         "validateOnBlur": boolean;
@@ -124,6 +128,7 @@ export namespace Components {
         "readonly": boolean;
         "required": boolean;
         "rows": number;
+        "shadow": boolean;
         "step": number;
         "type": string;
         "valid": boolean;
@@ -193,6 +198,12 @@ declare global {
     var HTMLCCscLogoElement: {
         prototype: HTMLCCscLogoElement;
         new (): HTMLCCscLogoElement;
+    };
+    interface HTMLCLinkElement extends Components.CLink, HTMLStencilElement {
+    }
+    var HTMLCLinkElement: {
+        prototype: HTMLCLinkElement;
+        new (): HTMLCLinkElement;
     };
     interface HTMLCLoaderElement extends Components.CLoader, HTMLStencilElement {
     }
@@ -311,6 +322,7 @@ declare global {
         "c-consent": HTMLCConsentElement;
         "c-container": HTMLCContainerElement;
         "c-csc-logo": HTMLCCscLogoElement;
+        "c-link": HTMLCLinkElement;
         "c-loader": HTMLCLoaderElement;
         "c-navigationbutton": HTMLCNavigationbuttonElement;
         "c-notification": HTMLCNotificationElement;
@@ -380,6 +392,9 @@ declare namespace LocalJSX {
     }
     interface CCscLogo {
     }
+    interface CLink {
+        "href"?: string;
+    }
     interface CLoader {
     }
     interface CNavigationbutton {
@@ -415,6 +430,7 @@ declare namespace LocalJSX {
         "onChangeValue"?: (event: CustomEvent<any>) => void;
         "placeholder"?: string;
         "required"?: boolean;
+        "shadow"?: boolean;
         "showNone"?: boolean;
         "validate"?: boolean;
         "validateOnBlur"?: boolean;
@@ -455,6 +471,7 @@ declare namespace LocalJSX {
         "readonly"?: boolean;
         "required"?: boolean;
         "rows"?: number;
+        "shadow"?: boolean;
         "step"?: number;
         "type"?: string;
         "valid"?: boolean;
@@ -484,6 +501,7 @@ declare namespace LocalJSX {
         "c-consent": CConsent;
         "c-container": CContainer;
         "c-csc-logo": CCscLogo;
+        "c-link": CLink;
         "c-loader": CLoader;
         "c-navigationbutton": CNavigationbutton;
         "c-notification": CNotification;
@@ -516,6 +534,7 @@ declare module "@stencil/core" {
             "c-consent": LocalJSX.CConsent & JSXBase.HTMLAttributes<HTMLCConsentElement>;
             "c-container": LocalJSX.CContainer & JSXBase.HTMLAttributes<HTMLCContainerElement>;
             "c-csc-logo": LocalJSX.CCscLogo & JSXBase.HTMLAttributes<HTMLCCscLogoElement>;
+            "c-link": LocalJSX.CLink & JSXBase.HTMLAttributes<HTMLCLinkElement>;
             "c-loader": LocalJSX.CLoader & JSXBase.HTMLAttributes<HTMLCLoaderElement>;
             "c-navigationbutton": LocalJSX.CNavigationbutton & JSXBase.HTMLAttributes<HTMLCNavigationbuttonElement>;
             "c-notification": LocalJSX.CNotification & JSXBase.HTMLAttributes<HTMLCNotificationElement>;

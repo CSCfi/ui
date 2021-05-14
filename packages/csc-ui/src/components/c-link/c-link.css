@@ -1,0 +1,7 @@
+:host {
+  display: block;
+  cursor: pointer;
+  color: #006778;
+  font-size: 16px;
+  font-weight: bold;
+}

@@ -16,6 +16,7 @@ export class Select {
   }
   @Prop() label: string;
   @Prop() dense: boolean;
+  @Prop() shadow: boolean;
   @Prop() name: string;
   @Prop() required: boolean = null;
   @Prop() showNone: boolean = null;
@@ -237,6 +238,10 @@ export class Select {
       <label class="hidden">{ this.label }{ this.required ? '*' : '' }</label>
     </div>);
 
+    if (this.shadow) {
+      this.outerWrapperClasses.push('shadow');
+    }
+    
     return (
       <Host>
         <div

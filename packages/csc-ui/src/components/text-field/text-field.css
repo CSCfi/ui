@@ -2,6 +2,27 @@
 
 :host {
   display: block;
+  cursor: text;
+}
+
+::slotted(*[slot="pre"]) {
+  padding-left: 16px;
+}
+
+::slotted(*[slot="post"]) {
+  padding-right: 16px;
+}
+
+::slotted(*) {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #595959;
+  font-size: 16px;
+}
+
+::placeholder {
+  color: #595959;
 }
 
 .text-field-wrapper {
@@ -63,6 +84,10 @@ textarea {
   caret-color: var(--current-color);
 }
 
+.outer-wrapper.shadow input, .outer-wrapper.shadow textarea {
+  padding: 0px 0px 0px 14px;
+}
+
 .outer-wrapper.disabled input, .outer-wrapper.disabled label {
   color: #93979D;
 }
@@ -70,6 +95,14 @@ textarea {
 .outer-wrapper.disabled input, .outer-wrapper.disabled textarea {
   -webkit-text-fill-color: #93979D;
   opacity: 1;
+}
+
+.shadow .border-left, .shadow .border-right, .shadow .border-label {
+  border-color: transparent !important;
+}
+
+.shadow {
+  box-shadow: 2px 4px 10px #00000029;
 }
 
 .border-left {

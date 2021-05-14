@@ -35,6 +35,14 @@
   border-bottom: 2px #E71D32 solid;
 }
 
+.shadow .border-left, .shadow .border-right, .shadow .border-label {
+  border-color: transparent !important;
+}
+
+.shadow {
+  box-shadow: 2px 4px 10px #00000029;
+}
+
 .c-select-current {
   margin-top: 5px;
   outline: none;
