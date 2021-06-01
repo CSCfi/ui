@@ -60,7 +60,7 @@
     <!-- <c-button secondary>Logout</c-button> -->
   </c-toolbar>
   <c-row style="margin:0" class="no-wrap">
-    <c-sidenavigation>
+    <c-sidenavigation id="sidenav">
       <c-sidenavigationitem active><span class="mdi mdi-home"></span>Nav items 1</c-sidenavigationitem>
       <c-sidenavigationitem><span class="mdi mdi-car-emergency"></span>Nav items 2</c-sidenavigationitem>
       <c-sidenavigationitem><span class="mdi mdi-barley"></span>Add Gluten</c-sidenavigationitem>
@@ -76,6 +76,18 @@
         <c-button>Refuse</c-button>
         <c-button>Approve</c-button>
       </c-consent> -->
+      <c-modal id="modal">
+        <c-card pa="4" color="light-green-blue">
+          <p style="text-align: center;">
+            <span class="mdi mdi-progress-wrench" style="font-size: 120px;color:#006778;"></span>
+          </p>
+          <c-title class="center">Maintenance break</c-title>
+          <p style="text-align: center;margin: 40px;">
+            We will have a maintenance break on <b>28.5.-30.5.2021</b><br>
+            and our services will be unavailable during this period.
+          </p>
+        </c-card>
+      </c-modal>
       <c-card pa="6" my="5" style="position:relative;" color="white">
         <c-title>CSC UI - Web Component Library</c-title>
         <table>
@@ -320,9 +332,8 @@
             <c-text-field label="Example label" value="" validation="Custom validation message!" required></c-text-field>
           </c-col>
           <c-col style="padding:24px;">
-            <c-text-field placeholder="Search Term" value="shadow" shadow>
-              <span slot="pre">$</span>
-              <span slot="post">euroa</span>
+            <c-text-field placeholder="Search Term" value="shadow" shadow label="What ever">
+              <span slot="post">€</span>
             </c-text-field>
           </c-col>
           <c-col style="padding:24px;">
@@ -381,10 +392,11 @@
             <c-select label="Select (required)" required name="units" value="" validate-on-blur="true"></c-select>
           </c-col>
           <c-col>
-            <c-select required name="units" value=""  shadow></c-select>
+            <c-select required name="units" value="" label-right shadow label="Project selection">
+            </c-select>
           </c-col>
           <c-col>
-            <c-select dense label="Select (dense, required)" required name="units" value=""></c-select>
+            <c-select dense label="Select (dense, required)" label-right required name="units" value=""></c-select>
           </c-col>
         </c-row>
       </c-card>
@@ -617,5 +629,14 @@
       </c-card>
     </c-container>
   </c-row>
+  <script>
+    const modalElement = document.querySelector('#modal');
+    modalElement.value = true;
+    setTimeout(() => {
+      modalElement.value = false;
+    }, 4000);
+    const sidenav = document.querySelector('#sidenav');
+    sidenav.mobile = true;
+  </script>
 </body>
 </html>

@@ -105,6 +105,7 @@ textarea {
 
 .shadow {
   box-shadow: 2px 4px 10px #00000029;
+  background: #FFF;
   border-radius: 4px;
 }
 

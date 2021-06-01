@@ -2,7 +2,6 @@
   display: block;
   cursor: pointer;
   user-select: none;
-  min-width: 100px;
   flex-grow: 1;
 }
 

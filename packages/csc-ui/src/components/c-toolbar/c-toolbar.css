@@ -9,7 +9,7 @@
   padding-right: 16px;
   position: fixed;
   width: calc(100% - 32px);
-  z-index: 1000;
+  z-index: 9;
   box-shadow: 2px 4px 10px #00000029;
 }
 

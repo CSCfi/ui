@@ -11,7 +11,7 @@
   flex-flow: column wrap;
   background: #006778;
   width: 100%;
-  z-index: 999;
+  z-index: 8;
   position: relative;
   padding: 24px 0px 24px 24px;
   transition: transform 0.3s ease;
@@ -45,7 +45,8 @@
 }
 .mobile.c-sidenavigation {
   /* height: calc(100% - 0px); */
-  height: 100%;
+  z-index: 999;
+  height: calc(100% - 100px);
 }
 
 .c-overlay {

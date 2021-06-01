@@ -17,6 +17,7 @@ export class Select {
   @Prop() label: string;
   @Prop() dense: boolean;
   @Prop() shadow: boolean;
+  @Prop() labelRight: boolean;
   @Prop() name: string;
   @Prop() required: boolean = null;
   @Prop() showNone: boolean = null;
@@ -230,6 +231,7 @@ export class Select {
     let borderLabel = 'border-label';
     if (this.value !== '' || this.placeholder) {
       borderLabel += ' value-set';
+      this.outerWrapperClasses.push('value-set');
     }
     this.runValidate();
 
@@ -240,6 +242,9 @@ export class Select {
 
     if (this.shadow) {
       this.outerWrapperClasses.push('shadow');
+    }
+    if (this.labelRight) {
+      this.outerWrapperClasses.push('label-right');
     }
     
     return (
@@ -257,7 +262,9 @@ export class Select {
             class="full-width"
           >
             <div class="c-select-row">
+              <slot name="pre"></slot>
               { this.items.length === 0 ? <div class='c-select-current c-menu-no-items'></div> : <div class="c-select-current">{ (this.value && this.value.name) ? this.value.name : <span>{this.placeholder}</span> }</div> }
+              <slot name="post"></slot>
               <svg
                 width="22"
                 height="22"

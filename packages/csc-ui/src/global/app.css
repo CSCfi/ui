@@ -24,6 +24,8 @@
   --csc-alt-green-hover: rgba(0, 134, 117, 0.1);
   --csc-light-green: rgba(201, 226, 174, var(--a, 1));
   --csc-light-green-hover: rgba(201, 226, 174, 0.1);
+  --csc-light-green-blue: rgba(204, 244, 240, var(--a, 1));
+  --csc-light-green-blue-hover: rgba(204, 244, 240, 0.1);
   --csc-grey: rgba(89, 89, 89, var(--a, 1));
   --csc-grey-hover: rgba(89, 89, 89, 0.1);
   --csc-light-grey: rgba(210, 211, 213, var(--a, 1));
@@ -145,6 +147,11 @@
 .csc-bg-color.light-green, :host(.csc-bg-color.light-green) {
   --current-color: var(--csc-light-green);
   --current-hover-color: var(--csc-light-green-hover);
+}
+
+.csc-bg-color.light-green-blue, :host(.csc-bg-color.light-green-blue) {
+  --current-color: var(--csc-light-green-blue);
+  --current-hover-color: var(--csc-light-green-blue-hover);
 }
 
 .csc-bg-color.grey, :host(.csc-bg-color.grey) {

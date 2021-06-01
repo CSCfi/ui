@@ -4,6 +4,22 @@
   display: block;
 }
 
+::slotted(*[slot="pre"]) {
+  padding-left: 16px;
+}
+
+::slotted(*[slot="post"]) {
+  padding-right: 16px;
+}
+
+::slotted(*) {
+  display: flex !important;
+  align-items: center;
+  justify-content: center;
+  color: #595959;
+  font-size: 16px;
+}
+
 .c-selections {
   outline: none;
 }
@@ -41,6 +57,8 @@
 
 .shadow {
   box-shadow: 2px 4px 10px #00000029;
+  background: #fff;
+  border-radius: 4px;
 }
 
 .c-select-current {
@@ -167,6 +185,14 @@ label span.required {
   width: 12px;
 }
 
+.label-right:focus-within .border-left, .label-right.value-set .border-left {
+  width: 100%;
+}
+
+.label-right:focus-within .border-right, .label-right.value-set .border-right {
+  width: 12px;
+}
+
 .border-label {
   border-top: 1px #6F6F6F solid;
   border-bottom: 1px #6F6F6F solid;
@@ -273,6 +299,19 @@ label.hidden {
   transform-origin: left;
   max-width: 125%;
   margin-left: 0 !important;
+}
+
+.border-label.label-right {
+  margin-left: unset !important;
+  margin-right: 0;
+  padding-left: unset !important;
+  padding-right: 2px;
+}
+
+.shadow .border-label.value-set .top-span,
+.shadow.outer-wrapper:focus-within label.top-span 
+{
+  margin-top: -22px;
 }
 
 .outer-wrapper:focus-within label.top-span {

@@ -19,6 +19,7 @@
 | `readonly`       | `readonly`         |             | `boolean` | `undefined`        |
 | `required`       | `required`         |             | `boolean` | `null`             |
 | `rows`           | `rows`             |             | `number`  | `1`                |
+| `shadow`         | `shadow`           |             | `boolean` | `undefined`        |
 | `step`           | `step`             |             | `number`  | `null`             |
 | `type`           | `type`             |             | `string`  | `undefined`        |
 | `valid`          | `valid`            |             | `boolean` | `true`             |

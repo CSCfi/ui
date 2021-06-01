@@ -57,6 +57,9 @@ export namespace Components {
     }
     interface CLoader {
     }
+    interface CModal {
+        "value": boolean;
+    }
     interface CNavigationbutton {
     }
     interface CNotification {
@@ -85,6 +88,7 @@ export namespace Components {
         "items": any[];
         "itemsPerPage": number;
         "label": string;
+        "labelRight": boolean;
         "name": string;
         "placeholder": string;
         "required": boolean;
@@ -211,6 +215,12 @@ declare global {
         prototype: HTMLCLoaderElement;
         new (): HTMLCLoaderElement;
     };
+    interface HTMLCModalElement extends Components.CModal, HTMLStencilElement {
+    }
+    var HTMLCModalElement: {
+        prototype: HTMLCModalElement;
+        new (): HTMLCModalElement;
+    };
     interface HTMLCNavigationbuttonElement extends Components.CNavigationbutton, HTMLStencilElement {
     }
     var HTMLCNavigationbuttonElement: {
@@ -324,6 +334,7 @@ declare global {
         "c-csc-logo": HTMLCCscLogoElement;
         "c-link": HTMLCLinkElement;
         "c-loader": HTMLCLoaderElement;
+        "c-modal": HTMLCModalElement;
         "c-navigationbutton": HTMLCNavigationbuttonElement;
         "c-notification": HTMLCNotificationElement;
         "c-option": HTMLCOptionElement;
@@ -397,6 +408,9 @@ declare namespace LocalJSX {
     }
     interface CLoader {
     }
+    interface CModal {
+        "value"?: boolean;
+    }
     interface CNavigationbutton {
     }
     interface CNotification {
@@ -426,6 +440,7 @@ declare namespace LocalJSX {
         "items"?: any[];
         "itemsPerPage"?: number;
         "label"?: string;
+        "labelRight"?: boolean;
         "name"?: string;
         "onChangeValue"?: (event: CustomEvent<any>) => void;
         "placeholder"?: string;
@@ -503,6 +518,7 @@ declare namespace LocalJSX {
         "c-csc-logo": CCscLogo;
         "c-link": CLink;
         "c-loader": CLoader;
+        "c-modal": CModal;
         "c-navigationbutton": CNavigationbutton;
         "c-notification": CNotification;
         "c-option": COption;
@@ -536,6 +552,7 @@ declare module "@stencil/core" {
             "c-csc-logo": LocalJSX.CCscLogo & JSXBase.HTMLAttributes<HTMLCCscLogoElement>;
             "c-link": LocalJSX.CLink & JSXBase.HTMLAttributes<HTMLCLinkElement>;
             "c-loader": LocalJSX.CLoader & JSXBase.HTMLAttributes<HTMLCLoaderElement>;
+            "c-modal": LocalJSX.CModal & JSXBase.HTMLAttributes<HTMLCModalElement>;
             "c-navigationbutton": LocalJSX.CNavigationbutton & JSXBase.HTMLAttributes<HTMLCNavigationbuttonElement>;
             "c-notification": LocalJSX.CNotification & JSXBase.HTMLAttributes<HTMLCNotificationElement>;
             "c-option": LocalJSX.COption & JSXBase.HTMLAttributes<HTMLCOptionElement>;
