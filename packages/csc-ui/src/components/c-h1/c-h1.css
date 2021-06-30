@@ -1,0 +1,6 @@
+@import "../../global/app.css"; 
+
+h1 {
+  font-size: 35px;
+  color: var(--csc-primary);
+}

@@ -54,10 +54,9 @@
 <body>
   <c-toolbar>
     <c-csc-logo></c-csc-logo>
-    My CSC
+    Application name
     <c-spacer></c-spacer>
     <c-navigationbutton></c-navigationbutton>
-    <!-- <c-button secondary>Logout</c-button> -->
   </c-toolbar>
   <c-row style="margin:0" class="no-wrap">
     <c-sidenavigation id="sidenav">
@@ -68,27 +67,18 @@
       <c-sidenavigationitem slot="bottom"><span class="mdi mdi-logout"></span>Logout</c-sidenavigationitem>
     </c-sidenavigation>
     <c-container style="position: relative;">
-      <!-- <c-consent>
-        <p style="flex:1;margin-top:0 !important;margin-bottom:0 !important; margin-right: 20px;">
-          Our website uses cookies to ensure you get the best experience on our website. 
-          Our website may also includes third party cookies. <a href="https://google.com">Read more</a>
-        </p>
-        <c-button>Refuse</c-button>
-        <c-button>Approve</c-button>
-      </c-consent> -->
-      <c-modal id="modal">
-        <c-card pa="4" color="light-green-blue">
-          <p style="text-align: center;">
-            <span class="mdi mdi-progress-wrench" style="font-size: 120px;color:#006778;"></span>
-          </p>
-          <c-title class="center">Maintenance break</c-title>
-          <p style="text-align: center;margin: 40px;">
-            We will have a maintenance break on <b>28.5.-30.5.2021</b><br>
-            and our services will be unavailable during this period.
-          </p>
-        </c-card>
-      </c-modal>
-      <c-card pa="6" my="5" style="position:relative;" color="white">
+      <c-card pa="6" my="5" color="white" background="puhti" style="max-width: 900px;">
+        <div style="display: flex; row-gap: 16px;width:360px;flex-direction: column;margin-left: 84px;margin-bottom: 84px;">
+          <c-h1>Service title login</c-h1>
+          <c-text-field label="Username"></c-text-field>
+          <c-text-field label="Password" type="password"></c-text-field>
+          <c-row class="no-margin" style="column-gap: 16px;align-items: center;">
+            <c-button>Login</c-button>
+            <c-link>Forgot password?</c-link>
+          </c-row>
+        </div>
+      </c-card>
+      <c-card pa="6" my="5" color="white" style="position:relative;">
         <c-title>CSC UI - Web Component Library</c-title>
         <table>
           <tr><th>Installation unpkg</th></tr>

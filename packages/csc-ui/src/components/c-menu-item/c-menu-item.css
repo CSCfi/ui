@@ -1,0 +1,24 @@
+:host {
+  display: flex;
+  height: 42px;
+  align-items: center;
+  padding-left: 8px;
+  padding-right: 8px;
+  column-gap: 12px;
+  font-size: 14px;
+  background: #fff;
+  cursor: pointer;
+}
+
+:host * {
+  white-space: nowrap;
+}
+
+:host(:HOVER) {
+  background: #D8E8EA;
+  color: #006778;
+}
+
+:host(.active) {
+  background: #D8E8EA;
+}

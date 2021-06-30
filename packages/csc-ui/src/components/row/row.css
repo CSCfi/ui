@@ -9,3 +9,8 @@
 :host(.no-wrap) {
   flex-wrap: nowrap !important;
 }
+
+:host(.no-margin) {
+  margin-left: 0;
+  margin-right: 0;
+}

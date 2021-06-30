@@ -1,12 +1,14 @@
-import { Component, Host, h, Prop } from '@stencil/core';
+import { Component, Host, h, Prop, getAssetPath } from '@stencil/core';
 
 @Component({
   tag: 'c-card',
   styleUrl: 'card.css',
-  shadow: true
+  shadow: true,
+  assetsDirs: ['assets']
 })
 export class Card {
   @Prop() color: string = '';
+  @Prop() background: string = '';
   @Prop() pa: number = 0;
   @Prop() ma: number = 0;
   @Prop() py: number = 0;
@@ -17,6 +19,11 @@ export class Card {
   @Prop() noRadius: boolean;
   @Prop() dark: boolean;
 
+  allowedBackgrounds = [
+    'puhti',
+    'mahti',
+    'allas',
+  ];
   render() {
     let classes = `elevation-${this.elevation} ${this.dark ? 'dark' : ''}`;
     if (this.color !== '') {
@@ -53,6 +60,12 @@ export class Card {
 
     if (this.ma > 0) {
       style['margin'] = `${this.ma * 4}px`;
+    }
+
+    if (this.allowedBackgrounds.includes(this.background)) {
+      style['background-image'] = `url(${getAssetPath(`./assets/${this.background}.gif`)}`;
+      style['background-size'] = 'cover';
+      style['background-position-y'] = 'bottom';
     }
 
 

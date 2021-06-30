@@ -320,6 +320,11 @@ label.hidden {
   padding-top: 0px !important;
   margin-left: 0 !important;
 }
+
+.outer-wrapper.label-right:focus-within label.top-span  {
+  padding-left: 3px !important;
+}
+
 .outer-wrapper.required:focus-within label.top-span {
   /* padding-left: 3px !important; */
 }

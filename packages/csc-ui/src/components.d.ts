@@ -27,6 +27,7 @@ export namespace Components {
         "secondary": boolean;
     }
     interface CCard {
+        "background": string;
         "color": string;
         "dark": boolean;
         "elevation": number;
@@ -52,10 +53,19 @@ export namespace Components {
     }
     interface CCscLogo {
     }
+    interface CH1 {
+    }
     interface CLink {
         "href": string;
     }
     interface CLoader {
+    }
+    interface CMenu {
+        "items": any[];
+        "simple": boolean;
+    }
+    interface CMenuItem {
+        "active": boolean;
     }
     interface CModal {
         "value": boolean;
@@ -203,6 +213,12 @@ declare global {
         prototype: HTMLCCscLogoElement;
         new (): HTMLCCscLogoElement;
     };
+    interface HTMLCH1Element extends Components.CH1, HTMLStencilElement {
+    }
+    var HTMLCH1Element: {
+        prototype: HTMLCH1Element;
+        new (): HTMLCH1Element;
+    };
     interface HTMLCLinkElement extends Components.CLink, HTMLStencilElement {
     }
     var HTMLCLinkElement: {
@@ -214,6 +230,18 @@ declare global {
     var HTMLCLoaderElement: {
         prototype: HTMLCLoaderElement;
         new (): HTMLCLoaderElement;
+    };
+    interface HTMLCMenuElement extends Components.CMenu, HTMLStencilElement {
+    }
+    var HTMLCMenuElement: {
+        prototype: HTMLCMenuElement;
+        new (): HTMLCMenuElement;
+    };
+    interface HTMLCMenuItemElement extends Components.CMenuItem, HTMLStencilElement {
+    }
+    var HTMLCMenuItemElement: {
+        prototype: HTMLCMenuItemElement;
+        new (): HTMLCMenuItemElement;
     };
     interface HTMLCModalElement extends Components.CModal, HTMLStencilElement {
     }
@@ -332,8 +360,11 @@ declare global {
         "c-consent": HTMLCConsentElement;
         "c-container": HTMLCContainerElement;
         "c-csc-logo": HTMLCCscLogoElement;
+        "c-h1": HTMLCH1Element;
         "c-link": HTMLCLinkElement;
         "c-loader": HTMLCLoaderElement;
+        "c-menu": HTMLCMenuElement;
+        "c-menu-item": HTMLCMenuItemElement;
         "c-modal": HTMLCModalElement;
         "c-navigationbutton": HTMLCNavigationbuttonElement;
         "c-notification": HTMLCNotificationElement;
@@ -377,6 +408,7 @@ declare namespace LocalJSX {
         "secondary"?: boolean;
     }
     interface CCard {
+        "background"?: string;
         "color"?: string;
         "dark"?: boolean;
         "elevation"?: number;
@@ -403,10 +435,19 @@ declare namespace LocalJSX {
     }
     interface CCscLogo {
     }
+    interface CH1 {
+    }
     interface CLink {
         "href"?: string;
     }
     interface CLoader {
+    }
+    interface CMenu {
+        "items"?: any[];
+        "simple"?: boolean;
+    }
+    interface CMenuItem {
+        "active"?: boolean;
     }
     interface CModal {
         "value"?: boolean;
@@ -516,8 +557,11 @@ declare namespace LocalJSX {
         "c-consent": CConsent;
         "c-container": CContainer;
         "c-csc-logo": CCscLogo;
+        "c-h1": CH1;
         "c-link": CLink;
         "c-loader": CLoader;
+        "c-menu": CMenu;
+        "c-menu-item": CMenuItem;
         "c-modal": CModal;
         "c-navigationbutton": CNavigationbutton;
         "c-notification": CNotification;
@@ -550,8 +594,11 @@ declare module "@stencil/core" {
             "c-consent": LocalJSX.CConsent & JSXBase.HTMLAttributes<HTMLCConsentElement>;
             "c-container": LocalJSX.CContainer & JSXBase.HTMLAttributes<HTMLCContainerElement>;
             "c-csc-logo": LocalJSX.CCscLogo & JSXBase.HTMLAttributes<HTMLCCscLogoElement>;
+            "c-h1": LocalJSX.CH1 & JSXBase.HTMLAttributes<HTMLCH1Element>;
             "c-link": LocalJSX.CLink & JSXBase.HTMLAttributes<HTMLCLinkElement>;
             "c-loader": LocalJSX.CLoader & JSXBase.HTMLAttributes<HTMLCLoaderElement>;
+            "c-menu": LocalJSX.CMenu & JSXBase.HTMLAttributes<HTMLCMenuElement>;
+            "c-menu-item": LocalJSX.CMenuItem & JSXBase.HTMLAttributes<HTMLCMenuItemElement>;
             "c-modal": LocalJSX.CModal & JSXBase.HTMLAttributes<HTMLCModalElement>;
             "c-navigationbutton": LocalJSX.CNavigationbutton & JSXBase.HTMLAttributes<HTMLCNavigationbuttonElement>;
             "c-notification": LocalJSX.CNotification & JSXBase.HTMLAttributes<HTMLCNotificationElement>;
