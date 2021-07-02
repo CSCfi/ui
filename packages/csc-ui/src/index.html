@@ -59,12 +59,38 @@
     <c-navigationbutton></c-navigationbutton>
   </c-toolbar>
   <c-row style="margin:0" class="no-wrap">
+
     <c-sidenavigation id="sidenav">
-      <c-sidenavigationitem active><span class="mdi mdi-home"></span>Nav items 1</c-sidenavigationitem>
-      <c-sidenavigationitem><span class="mdi mdi-car-emergency"></span>Nav items 2</c-sidenavigationitem>
-      <c-sidenavigationitem><span class="mdi mdi-barley"></span>Add Gluten</c-sidenavigationitem>
-      <c-sidenavigationitem><span class="mdi mdi-cat"></span>Feed the cat</c-sidenavigationitem>
-      <c-sidenavigationitem slot="bottom"><span class="mdi mdi-logout"></span>Logout</c-sidenavigationitem>
+      <c-sidenavigationitem id="first" active sub-items onClick="selectMenuItem('#first')">
+        <div slot="main">
+          <span class="mdi mdi-home"></span> Nav items 1  
+        </div>
+        <div slot="subnavitem"><c-subnavigationitem id="firstsub" onClick="selectSubMenuItem('#firstsub')">jotain</c-subnavigationitem></div>
+      </c-sidenavigationitem>
+      <c-sidenavigationitem id="second" sub-items onClick="selectMenuItem('#second')">
+        <div slot="main">
+          <span class="mdi mdi-car-emergency"></span>&nbsp Nav items 2
+        </div>
+        <div slot="subnavitem"> 
+          <c-subnavigationitem id="secondsub" onClick="selectSubMenuItem('#secondsub')">eka</c-subnavigationitem>
+          <c-subnavigationitem id="thirdsub" onClick="selectSubMenuItem('#thirdsub')">toka</c-subnavigationitem>
+        </div>
+      </c-sidenavigationitem>
+      <c-sidenavigationitem id="third" onClick="selectMenuItem('#third')">
+        <div slot="main">
+          <span class="mdi mdi-barley"></span> Add Gluten
+        </div>
+      </c-sidenavigationitem>
+      <c-sidenavigationitem id="fourth" onClick="selectMenuItem('#fourth')">
+        <div slot="main">
+          <span class="mdi mdi-cat"></span> Feed the cat
+        </div>
+      </c-sidenavigationitem>
+      <c-sidenavigationitem slot="bottom">
+        <div slot="main">
+          <span class="mdi mdi-logout"></span>Logout
+        </div>
+      </c-sidenavigationitem>
     </c-sidenavigation>
     <c-container style="position: relative;">
       <c-card pa="6" my="5" color="white" background="puhti" style="max-width: 900px;">
@@ -80,6 +106,7 @@
       </c-card>
       <c-card pa="6" my="5" color="white" style="position:relative;">
         <c-title>CSC UI - Web Component Library</c-title>
+        <c-link href="https://www.google.com">linkki googleen</c-link>
         <table>
           <tr><th>Installation unpkg</th></tr>
           <tr><td>Add following script before closing body tag:</td></tr><tr><td><code>&lt;script src="https://unpkg.com/csc-ui@0.1.2/dist/cscwebcomponents/cscwebcomponents.js"&gt;&lt;/script&gt;</code></td></tr>
@@ -90,6 +117,7 @@
           <tr><td>Note! Your framework might need some extra configuration to enable custom elements etc. See: https://stenciljs.com/docs/overview</td></tr>
         </table>
         <c-notification></c-notification>
+        <c-paginationrow items-total="140" page-number="1" items-per-page="2"></c-paginationrow>
       </c-card>
   
       <c-card color="white" pa="6" my="5">
@@ -99,7 +127,6 @@
           <tr><td><code>Use these color codes as the color attribute of a csc-ui component</code></td></tr>
           <tr><td><code>&lt;c-button outlined color="blue"&gt;Button text&lt;/c-button&gt;</code></td></tr>
         </table>
-        <c-link href="https://www.google.com">linkii</c-link>
         <c-row>
           <c-col>
             <c-card elevation="0" no-radius color="primary"><p class="card-color">primary / green</p></c-button>
@@ -620,13 +647,50 @@
     </c-container>
   </c-row>
   <script>
-    const modalElement = document.querySelector('#modal');
-    modalElement.value = true;
-    setTimeout(() => {
-      modalElement.value = false;
-    }, 4000);
-    const sidenav = document.querySelector('#sidenav');
-    sidenav.mobile = true;
+    // const modalElement = document.querySelector('#modal');
+    // modalElement.value = true;
+    // setTimeout(() => {
+    //   modalElement.value = false;
+    // }, 4000);
+    // var sidenav = document.querySelector('#sidenav');
+    // sidenav.mobile = true;
+
+    function resetSelection() {
+      var menuItems = [
+        '#first',
+        '#second',
+        '#third',
+        '#fourth'
+      ];
+      menuItems.forEach(element => {
+        var menuitem = document.querySelector(element);
+        menuitem.active = false;      
+      });
+    }
+
+    function resetSubMenuSelection() {
+      var submenuitems = [
+        '#firstsub',
+        '#secondsub',
+        '#thirdsub',
+      ];
+      submenuitems.forEach(element => {
+        var submenuitem = document.querySelector(element);
+        submenuitem.active = false;      
+      });
+    }
+
+    function selectMenuItem(id) {
+      resetSelection();
+      var menuitem = document.querySelector(id);
+      menuitem.active = true;
+    }
+
+    function selectSubMenuItem(id) {
+      resetSubMenuSelection();
+      var subMenuItem = document.querySelector(id);
+      subMenuItem.active = true;
+    }
   </script>
 </body>
 </html>

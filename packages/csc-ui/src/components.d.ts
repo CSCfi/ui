@@ -62,10 +62,13 @@ export namespace Components {
     }
     interface CMenu {
         "items": any[];
+        "nohover": boolean;
         "simple": boolean;
+        "small": boolean;
     }
     interface CMenuItem {
         "active": boolean;
+        "small": boolean;
     }
     interface CModal {
         "value": boolean;
@@ -80,6 +83,12 @@ export namespace Components {
         "dense": boolean;
         "label": string;
         "value": string;
+    }
+    interface CPaginationrow {
+        "items": any[];
+        "itemsPerPage": number;
+        "itemsTotal": number;
+        "pageNumber": number;
     }
     interface CProgressbar {
         "color": string;
@@ -109,12 +118,19 @@ export namespace Components {
         "value": any;
     }
     interface CSidenavigation {
+        "menuVisible": boolean;
         "mobile": boolean;
     }
     interface CSidenavigationitem {
         "active": boolean;
+        "href": string;
+        "subItems": boolean;
     }
     interface CSpacer {
+    }
+    interface CSubnavigationitem {
+        "active": boolean;
+        "href": string;
     }
     interface CTab {
         "active": boolean;
@@ -267,6 +283,12 @@ declare global {
         prototype: HTMLCOptionElement;
         new (): HTMLCOptionElement;
     };
+    interface HTMLCPaginationrowElement extends Components.CPaginationrow, HTMLStencilElement {
+    }
+    var HTMLCPaginationrowElement: {
+        prototype: HTMLCPaginationrowElement;
+        new (): HTMLCPaginationrowElement;
+    };
     interface HTMLCProgressbarElement extends Components.CProgressbar, HTMLStencilElement {
     }
     var HTMLCProgressbarElement: {
@@ -308,6 +330,12 @@ declare global {
     var HTMLCSpacerElement: {
         prototype: HTMLCSpacerElement;
         new (): HTMLCSpacerElement;
+    };
+    interface HTMLCSubnavigationitemElement extends Components.CSubnavigationitem, HTMLStencilElement {
+    }
+    var HTMLCSubnavigationitemElement: {
+        prototype: HTMLCSubnavigationitemElement;
+        new (): HTMLCSubnavigationitemElement;
     };
     interface HTMLCTabElement extends Components.CTab, HTMLStencilElement {
     }
@@ -369,6 +397,7 @@ declare global {
         "c-navigationbutton": HTMLCNavigationbuttonElement;
         "c-notification": HTMLCNotificationElement;
         "c-option": HTMLCOptionElement;
+        "c-paginationrow": HTMLCPaginationrowElement;
         "c-progressbar": HTMLCProgressbarElement;
         "c-radio": HTMLCRadioElement;
         "c-row": HTMLCRowElement;
@@ -376,6 +405,7 @@ declare global {
         "c-sidenavigation": HTMLCSidenavigationElement;
         "c-sidenavigationitem": HTMLCSidenavigationitemElement;
         "c-spacer": HTMLCSpacerElement;
+        "c-subnavigationitem": HTMLCSubnavigationitemElement;
         "c-tab": HTMLCTabElement;
         "c-tab-button": HTMLCTabButtonElement;
         "c-tag": HTMLCTagElement;
@@ -444,10 +474,13 @@ declare namespace LocalJSX {
     }
     interface CMenu {
         "items"?: any[];
+        "nohover"?: boolean;
         "simple"?: boolean;
+        "small"?: boolean;
     }
     interface CMenuItem {
         "active"?: boolean;
+        "small"?: boolean;
     }
     interface CModal {
         "value"?: boolean;
@@ -462,6 +495,12 @@ declare namespace LocalJSX {
         "dense"?: boolean;
         "label"?: string;
         "value"?: string;
+    }
+    interface CPaginationrow {
+        "items"?: any[];
+        "itemsPerPage"?: number;
+        "itemsTotal"?: number;
+        "pageNumber"?: number;
     }
     interface CProgressbar {
         "color"?: string;
@@ -493,12 +532,19 @@ declare namespace LocalJSX {
         "value"?: any;
     }
     interface CSidenavigation {
+        "menuVisible"?: boolean;
         "mobile"?: boolean;
     }
     interface CSidenavigationitem {
         "active"?: boolean;
+        "href"?: string;
+        "subItems"?: boolean;
     }
     interface CSpacer {
+    }
+    interface CSubnavigationitem {
+        "active"?: boolean;
+        "href"?: string;
     }
     interface CTab {
         "active"?: boolean;
@@ -566,6 +612,7 @@ declare namespace LocalJSX {
         "c-navigationbutton": CNavigationbutton;
         "c-notification": CNotification;
         "c-option": COption;
+        "c-paginationrow": CPaginationrow;
         "c-progressbar": CProgressbar;
         "c-radio": CRadio;
         "c-row": CRow;
@@ -573,6 +620,7 @@ declare namespace LocalJSX {
         "c-sidenavigation": CSidenavigation;
         "c-sidenavigationitem": CSidenavigationitem;
         "c-spacer": CSpacer;
+        "c-subnavigationitem": CSubnavigationitem;
         "c-tab": CTab;
         "c-tab-button": CTabButton;
         "c-tag": CTag;
@@ -603,6 +651,7 @@ declare module "@stencil/core" {
             "c-navigationbutton": LocalJSX.CNavigationbutton & JSXBase.HTMLAttributes<HTMLCNavigationbuttonElement>;
             "c-notification": LocalJSX.CNotification & JSXBase.HTMLAttributes<HTMLCNotificationElement>;
             "c-option": LocalJSX.COption & JSXBase.HTMLAttributes<HTMLCOptionElement>;
+            "c-paginationrow": LocalJSX.CPaginationrow & JSXBase.HTMLAttributes<HTMLCPaginationrowElement>;
             "c-progressbar": LocalJSX.CProgressbar & JSXBase.HTMLAttributes<HTMLCProgressbarElement>;
             "c-radio": LocalJSX.CRadio & JSXBase.HTMLAttributes<HTMLCRadioElement>;
             "c-row": LocalJSX.CRow & JSXBase.HTMLAttributes<HTMLCRowElement>;
@@ -610,6 +659,7 @@ declare module "@stencil/core" {
             "c-sidenavigation": LocalJSX.CSidenavigation & JSXBase.HTMLAttributes<HTMLCSidenavigationElement>;
             "c-sidenavigationitem": LocalJSX.CSidenavigationitem & JSXBase.HTMLAttributes<HTMLCSidenavigationitemElement>;
             "c-spacer": LocalJSX.CSpacer & JSXBase.HTMLAttributes<HTMLCSpacerElement>;
+            "c-subnavigationitem": LocalJSX.CSubnavigationitem & JSXBase.HTMLAttributes<HTMLCSubnavigationitemElement>;
             "c-tab": LocalJSX.CTab & JSXBase.HTMLAttributes<HTMLCTabElement>;
             "c-tab-button": LocalJSX.CTabButton & JSXBase.HTMLAttributes<HTMLCTabButtonElement>;
             "c-tag": LocalJSX.CTag & JSXBase.HTMLAttributes<HTMLCTagElement>;

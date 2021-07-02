@@ -40,6 +40,10 @@
   border-bottom-right-radius: 0;
 }
 
+:host(.nohover:HOVER) {
+  background: transparent;
+}
+
 :host(.simple-host) {
   background: transparent !important;
 }
@@ -73,6 +77,12 @@ svg fill {
   display: flex;
   column-gap: 8px;
 }
+
+.small ::slotted(*[slot="activator"]){
+  font-size: 12px;
+  column-gap: 0px;
+}
+
 
 .full-width {
   width: 100%;

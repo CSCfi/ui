@@ -7,10 +7,15 @@ import { Component, Host, h, Prop } from '@stencil/core';
 })
 export class CMenuItem {
   @Prop() active: boolean = false;
+  @Prop() small: boolean = false;
 
   render() {
+    let classes = this.active ? 'active' : '';
+    if (this.small) {
+      classes = `${classes} small`;
+    }
     return (
-      <Host class={ this.active ? 'active' : '' }>
+      <Host class={classes}>
         <slot></slot>
       </Host>
     );

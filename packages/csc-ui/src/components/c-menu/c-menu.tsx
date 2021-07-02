@@ -12,6 +12,8 @@ export class CMenu {
   @State() currentIndex: number = null;
   @State() menuVisible: boolean = false;
   @Prop() simple: boolean = false;
+  @Prop() small: boolean = false;
+  @Prop() nohover: boolean = false;
   @Prop() items: any[] = [
     // { name: 'Default 1', action: () => alert('action') },
   ];
@@ -70,7 +72,7 @@ export class CMenu {
 
   getListItem = (item) => {
     return (
-      <c-menu-item onClick={item.action} active={this.items[this.currentIndex] === item}>
+      <c-menu-item onClick={item.action} active={this.items[this.currentIndex] === item} small={this.small}>
         {item.name}
       </c-menu-item>
     );
@@ -85,6 +87,12 @@ export class CMenu {
     }
     if (this.simple) {
       hostClasses.push('simple-host');
+    }
+    if (this.small) {
+      hostClasses.push('small');
+    }
+    if (this.nohover) {
+      hostClasses.push('nohover');
     }
     return (
       <Host
@@ -101,11 +109,11 @@ export class CMenu {
             ref={el => this.current = el as HTMLElement}
             class="full-width"
           >
-            <div class="c-select-row">
+            <div class={ this.small ? 'c-select-row small' : 'c-select-row'}>
               <slot name="activator"></slot>
               <svg
-                width="22"
-                height="22"
+                width={ this.small ? '16' : '22' }
+                height={ this.small ? '16' : '22' }
                 viewBox="0 0 24 24"
                 class={ this.menuVisible ? 'c-select-icon rotated' : 'c-select-icon'}
               >

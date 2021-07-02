@@ -1,4 +1,4 @@
-import { Component, Host, h, State, Prop } from '@stencil/core';
+import { Component, Host, h, Prop } from '@stencil/core';
 
 @Component({
   tag: 'c-sidenavigation',
@@ -7,12 +7,13 @@ import { Component, Host, h, State, Prop } from '@stencil/core';
 })
 export class CSidenavigation {
   @Prop() mobile: boolean;
-  @State() menuVisible: boolean = false;
+  @Prop({ mutable: true }) menuVisible: boolean = false;
   componentDidLoad() {
     const _this = this;
 
     window.addEventListener("click", function(event: any) {
-      if (event.target.matches('c-navigationbutton') || event.target.matches('c-sidenavigation') || event.target.matches('c-sidenavigationitem')) {
+      console.warn(event.target);
+      if (event.target.matches('c-navigationbutton') || event.target.matches('c-sidenavigation')) {
         _this.menuVisible = !_this.menuVisible;
       }
     });
