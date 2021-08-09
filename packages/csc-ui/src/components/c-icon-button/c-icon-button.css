@@ -1,0 +1,46 @@
+@import "../../global/app.css"; 
+
+:host {
+  display: block;
+}
+
+.icon-button {
+  color:rgb(89, 89, 89);
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  transition: all 0.3s ease;
+  border-radius: 50%;
+  margin: 4px;
+  cursor: pointer;
+  position: relative;
+}
+
+.icon-button-badge {
+  background: #FF5800;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 16px;
+  height: 16px;
+  color: #FFF;
+  position: absolute;
+  right: -6px;
+  font-size: 12px;
+  border: 2px #fff solid;
+  top: -4px;
+}
+
+.icon-button:HOVER {
+  background: #f0f0f0;
+  color: var(--csc-primary);
+}
+
+svg {
+  width:24px;
+  height:24px;
+}

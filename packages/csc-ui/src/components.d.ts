@@ -55,6 +55,10 @@ export namespace Components {
     }
     interface CH1 {
     }
+    interface CIconButton {
+        "badge": string;
+        "icon": string;
+    }
     interface CLink {
         "href": string;
     }
@@ -235,6 +239,12 @@ declare global {
         prototype: HTMLCH1Element;
         new (): HTMLCH1Element;
     };
+    interface HTMLCIconButtonElement extends Components.CIconButton, HTMLStencilElement {
+    }
+    var HTMLCIconButtonElement: {
+        prototype: HTMLCIconButtonElement;
+        new (): HTMLCIconButtonElement;
+    };
     interface HTMLCLinkElement extends Components.CLink, HTMLStencilElement {
     }
     var HTMLCLinkElement: {
@@ -389,6 +399,7 @@ declare global {
         "c-container": HTMLCContainerElement;
         "c-csc-logo": HTMLCCscLogoElement;
         "c-h1": HTMLCH1Element;
+        "c-icon-button": HTMLCIconButtonElement;
         "c-link": HTMLCLinkElement;
         "c-loader": HTMLCLoaderElement;
         "c-menu": HTMLCMenuElement;
@@ -466,6 +477,10 @@ declare namespace LocalJSX {
     interface CCscLogo {
     }
     interface CH1 {
+    }
+    interface CIconButton {
+        "badge"?: string;
+        "icon"?: string;
     }
     interface CLink {
         "href"?: string;
@@ -604,6 +619,7 @@ declare namespace LocalJSX {
         "c-container": CContainer;
         "c-csc-logo": CCscLogo;
         "c-h1": CH1;
+        "c-icon-button": CIconButton;
         "c-link": CLink;
         "c-loader": CLoader;
         "c-menu": CMenu;
@@ -643,6 +659,7 @@ declare module "@stencil/core" {
             "c-container": LocalJSX.CContainer & JSXBase.HTMLAttributes<HTMLCContainerElement>;
             "c-csc-logo": LocalJSX.CCscLogo & JSXBase.HTMLAttributes<HTMLCCscLogoElement>;
             "c-h1": LocalJSX.CH1 & JSXBase.HTMLAttributes<HTMLCH1Element>;
+            "c-icon-button": LocalJSX.CIconButton & JSXBase.HTMLAttributes<HTMLCIconButtonElement>;
             "c-link": LocalJSX.CLink & JSXBase.HTMLAttributes<HTMLCLinkElement>;
             "c-loader": LocalJSX.CLoader & JSXBase.HTMLAttributes<HTMLCLoaderElement>;
             "c-menu": LocalJSX.CMenu & JSXBase.HTMLAttributes<HTMLCMenuElement>;
