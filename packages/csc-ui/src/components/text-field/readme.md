@@ -10,6 +10,7 @@
 | Property         | Attribute          | Description | Type      | Default            |
 | ---------------- | ------------------ | ----------- | --------- | ------------------ |
 | `disabled`       | `disabled`         |             | `boolean` | `undefined`        |
+| `form`           | `form`             |             | `boolean` | `undefined`        |
 | `label`          | `label`            |             | `string`  | `undefined`        |
 | `max`            | `max`              |             | `number`  | `null`             |
 | `min`            | `min`              |             | `number`  | `null`             |
