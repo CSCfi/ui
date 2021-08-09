@@ -61,6 +61,7 @@ export namespace Components {
     }
     interface CLink {
         "href": string;
+        "underline": boolean;
     }
     interface CLoader {
     }
@@ -153,6 +154,7 @@ export namespace Components {
     }
     interface CTextField {
         "disabled": boolean;
+        "form": boolean;
         "label": string;
         "max": number;
         "min": number;
@@ -484,6 +486,7 @@ declare namespace LocalJSX {
     }
     interface CLink {
         "href"?: string;
+        "underline"?: boolean;
     }
     interface CLoader {
     }
@@ -578,6 +581,7 @@ declare namespace LocalJSX {
     }
     interface CTextField {
         "disabled"?: boolean;
+        "form"?: boolean;
         "label"?: string;
         "max"?: number;
         "min"?: number;

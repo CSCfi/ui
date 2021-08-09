@@ -1,4 +1,4 @@
-import { Component, Prop, Host, h, EventEmitter, Event, State, Watch } from '@stencil/core';
+import { Component, Prop, Host, h, EventEmitter, Event, State, Watch, Element } from '@stencil/core';
 
 @Component({
   tag: 'c-text-field',
@@ -30,6 +30,7 @@ export class TextField {
   @Prop() rows: number = 1;
   @Prop() placeholder: string;
   @Prop({ mutable: true }) value: string;
+  @Prop() form: boolean;
   outerWrapperClasses = ['outer-wrapper'];
   validationClasses = ['validation-message'];
   @Event() changeValue: EventEmitter;
@@ -37,6 +38,8 @@ export class TextField {
   blurred = false;
   inputReference?: HTMLInputElement;
   textAreaReference?: HTMLTextAreaElement;
+
+  @Element() hiddenEl!: HTMLInputElement;
 
   setBlur() {
     this.blurred = true;
@@ -106,6 +109,10 @@ export class TextField {
       this.outerWrapperClasses.push('shadow');
     }
 
+    if (this.form) {
+      this.renderInputOutsideShadowRoot(this.hiddenEl, this.name, this.value);
+    }
+    
     const textInput = <input ref={el => this.inputReference = el as HTMLInputElement} name={this.name} onBlur={() => this.setBlur()} aria-labelledby="c-text-label" disabled={this.disabled} readonly={this.readonly} type={type} min={this.min} max={this.max} step={this.step} placeholder={this.placeholder} value={this.value} onInput={(event) => this.handleChange(event)} onChange={(event) => this.handleChange(event)}/>;
     const textArea = <textarea ref={el => this.textAreaReference = el as HTMLTextAreaElement} name={this.name} onBlur={() => this.setBlur()} rows={this.rows} aria-labelledby="c-text-label" disabled={this.disabled} placeholder={this.placeholder} readonly={this.readonly} onInput={(event) => this.handleChange(event)} value={this.value}></textarea>;
     return (
@@ -123,6 +130,18 @@ export class TextField {
         <div class={this.validationClasses.join(' ')}>{this.validationIcon} {this.validation}</div>
       </Host>
     );
+  }
+
+  private renderInputOutsideShadowRoot(container: HTMLElement, name: string, value: string | null) {
+    let input = container.querySelector("input.hidden-input") as HTMLInputElement | null;
+    if (!input) {            
+      input = container.ownerDocument.createElement("input");            
+      input.type = "hidden";            
+      input.classList.add("hidden-input");            
+      container.appendChild(input);        
+    }        
+    input.name = name;
+    input.value = value || "";
   }
 
 }

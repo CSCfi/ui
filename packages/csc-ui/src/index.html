@@ -94,15 +94,16 @@
     </c-sidenavigation>
     <c-container style="position: relative;">
       <c-card pa="6" my="5" color="white" background="puhti" style="max-width: 900px;">
-        <div style="display: flex; row-gap: 16px;width:360px;flex-direction: column;margin-left: 84px;margin-bottom: 84px;">
+        <form style="display: flex; row-gap: 16px;width:360px;flex-direction: column;margin-top: 52px; margin-left: 84px;margin-bottom: 114px;">
           <c-h1>Service title login</c-h1>
-          <c-text-field label="Username"></c-text-field>
-          <c-text-field label="Password" type="password"></c-text-field>
-          <c-row class="no-margin" style="column-gap: 16px;align-items: center;">
-            <c-button>Login</c-button>
-            <c-link>Forgot password?</c-link>
+          <c-text-field label="Username" form></c-text-field>
+          <c-text-field label="Password" type="password" form></c-text-field>
+          <c-row class="no-margin" style="column-gap: 48px;align-items: center;">
+            <c-button style="flex-grow: 1;" fit>Login</c-button>
+            <c-link underline>Forgot password?</c-link>
           </c-row>
-        </div>
+          <c-link style="margin-top: 32px;" underline>Create an account</c-link>
+        </form>
       </c-card>
       <c-card pa="6" my="5" color="white" style="position:relative;">
         <c-title>CSC UI - Web Component Library</c-title>
