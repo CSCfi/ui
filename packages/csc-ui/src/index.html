@@ -93,6 +93,78 @@
       </c-sidenavigationitem>
     </c-sidenavigation>
     <c-container style="position: relative;">
+      <c-card pa="6" my="5" color="white" style="max-width: 900px;">
+        <c-accordion-item
+          heading="LUMI"
+          icon="disabled"
+        >
+          <h4>LUMI Supercomputer</h4>
+          <p class="mb-3">
+            General-purpose computing cluster intended for all kinds of applications.
+            A large collection of scientific software and development tools are available on the system.
+          </p>
+          <c-row class="align-center no-margin">
+            <c-checkbox></c-checkbox>
+            <div class="label-flex">
+              I have read and accepted the
+              <c-link href="#" target="_blank">
+                LUMI Terms and Conditions
+              </c-link>
+            </div>
+          </c-row>
+          <c-row>
+            <c-spacer></c-spacer>
+            <c-button>Apply</c-button>
+          </c-row>
+        </c-accordion-item>
+        <c-accordion-item
+          heading="Mahti"
+          icon="pending"
+        >
+          <h4>Mahti Supercomputer</h4>
+          <p class="mb-3">
+            General-purpose computing cluster intended for all kinds of applications.
+            A large collection of scientific software and development tools are available on the system.
+          </p>
+          <c-row class="align-center no-margin">
+            <c-checkbox></c-checkbox>
+            <div class="label-flex">
+              I have read and accepted the
+              <c-link href="#" target="_blank">
+                LUMI Terms and Conditions
+              </c-link>
+            </div>
+          </c-row>
+          <c-row>
+            <c-spacer></c-spacer>
+            <c-button>Apply</c-button>
+          </c-row>
+        </c-accordion-item>
+        <c-accordion-item
+          heading="Puhti"
+          icon="bell"
+        >
+          <h4>Puhti Supercomputer</h4>
+          <p class="mb-3">
+            General-purpose computing cluster intended for all kinds of applications.
+            A large collection of scientific software and development tools are available on the system.
+          </p>
+          <c-row class="align-center no-margin">
+            <c-checkbox></c-checkbox>
+            <div class="label-flex">
+              I have read and accepted the
+              <c-link href="#" target="_blank">
+                LUMI Terms and Conditions
+              </c-link>
+            </div>
+          </c-row>
+          <c-row>
+            <c-spacer></c-spacer>
+            <c-button>Apply</c-button>
+          </c-row>
+        </c-accordion-item>
+      </c-card>
+
       <c-card pa="6" my="5" color="white" background="puhti" style="max-width: 900px;">
         <form style="display: flex; row-gap: 16px;width:360px;flex-direction: column;margin-top: 52px; margin-left: 84px;margin-bottom: 114px;">
           <c-h1>Service title login</c-h1>
@@ -124,6 +196,7 @@
       <c-card color="white" pa="6" my="5">
         <c-title>Colors</c-title>
         <c-icon-button icon="help"></c-icon-button>
+        <c-icon-button icon="account"></c-icon-button>
         <c-icon-button icon="trash"></c-icon-button>
         <c-icon-button icon="envelope" badge="4"></c-icon-button>
         <table>
@@ -543,11 +616,12 @@
           <tr><th>Example usage</th></tr>
           <tr><td><code>&lt;c-tag&gt;Tab text&lt;/c-tab&gt;</code></td></tr>
         </table>
-        <c-title style="margin-bottom: 8px;">Examples</c-title>
+        <c-title style="margin-bottom: 14px;">Examples</c-title>
         <c-row>
-          <c-tag style="margin-right: 4px;">Web browser</c-tag>
-          <c-tag style="margin-right: 4px;">Compute</c-tag>
-          <c-tag style="margin-right: 4px;">Active data</c-tag>
+          <c-tag>Web browser</c-tag>
+          <c-tag>Compute</c-tag>
+          <c-tag closeable>Closeable</c-tag>
+          <c-tag active closeable>Closeable and active</c-tag>
         </c-row>
       </c-card>
     
@@ -695,6 +769,8 @@
       var subMenuItem = document.querySelector(id);
       subMenuItem.active = true;
     }
+    var modal = document.querySelector('#modal');
+    modal.value = true;
   </script>
 </body>
 </html>

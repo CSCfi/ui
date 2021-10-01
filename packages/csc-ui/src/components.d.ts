@@ -6,6 +6,11 @@
  */
 import { HTMLStencilElement, JSXBase } from "@stencil/core/internal";
 export namespace Components {
+    interface CAccordionItem {
+        "heading": string;
+        "icon": string;
+        "value": boolean;
+    }
     interface CAutocomplete {
         "dense": boolean;
         "items": any[];
@@ -150,6 +155,7 @@ export namespace Components {
     }
     interface CTag {
         "active": boolean;
+        "closeable": boolean;
         "fit": boolean;
     }
     interface CTextField {
@@ -187,6 +193,12 @@ export namespace Components {
     }
 }
 declare global {
+    interface HTMLCAccordionItemElement extends Components.CAccordionItem, HTMLStencilElement {
+    }
+    var HTMLCAccordionItemElement: {
+        prototype: HTMLCAccordionItemElement;
+        new (): HTMLCAccordionItemElement;
+    };
     interface HTMLCAutocompleteElement extends Components.CAutocomplete, HTMLStencilElement {
     }
     var HTMLCAutocompleteElement: {
@@ -392,6 +404,7 @@ declare global {
         new (): HTMLCToolbarElement;
     };
     interface HTMLElementTagNameMap {
+        "c-accordion-item": HTMLCAccordionItemElement;
         "c-autocomplete": HTMLCAutocompleteElement;
         "c-button": HTMLCButtonElement;
         "c-card": HTMLCCardElement;
@@ -429,6 +442,12 @@ declare global {
     }
 }
 declare namespace LocalJSX {
+    interface CAccordionItem {
+        "heading"?: string;
+        "icon"?: string;
+        "onChangeValue"?: (event: CustomEvent<any>) => void;
+        "value"?: boolean;
+    }
     interface CAutocomplete {
         "dense"?: boolean;
         "items"?: any[];
@@ -577,6 +596,7 @@ declare namespace LocalJSX {
     }
     interface CTag {
         "active"?: boolean;
+        "closeable"?: boolean;
         "fit"?: boolean;
     }
     interface CTextField {
@@ -614,6 +634,7 @@ declare namespace LocalJSX {
     interface CToolbar {
     }
     interface IntrinsicElements {
+        "c-accordion-item": CAccordionItem;
         "c-autocomplete": CAutocomplete;
         "c-button": CButton;
         "c-card": CCard;
@@ -654,6 +675,7 @@ export { LocalJSX as JSX };
 declare module "@stencil/core" {
     export namespace JSX {
         interface IntrinsicElements {
+            "c-accordion-item": LocalJSX.CAccordionItem & JSXBase.HTMLAttributes<HTMLCAccordionItemElement>;
             "c-autocomplete": LocalJSX.CAutocomplete & JSXBase.HTMLAttributes<HTMLCAutocompleteElement>;
             "c-button": LocalJSX.CButton & JSXBase.HTMLAttributes<HTMLCButtonElement>;
             "c-card": LocalJSX.CCard & JSXBase.HTMLAttributes<HTMLCCardElement>;

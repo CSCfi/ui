@@ -12,7 +12,6 @@ export class CSidenavigation {
     const _this = this;
 
     window.addEventListener("click", function(event: any) {
-      console.warn(event.target);
       if (event.target.matches('c-navigationbutton') || event.target.matches('c-sidenavigation')) {
         _this.menuVisible = !_this.menuVisible;
       }

@@ -7,10 +7,11 @@
 
 ## Properties
 
-| Property | Attribute | Description | Type      | Default     |
-| -------- | --------- | ----------- | --------- | ----------- |
-| `active` | `active`  |             | `boolean` | `undefined` |
-| `fit`    | `fit`     |             | `boolean` | `undefined` |
+| Property    | Attribute   | Description | Type      | Default     |
+| ----------- | ----------- | ----------- | --------- | ----------- |
+| `active`    | `active`    |             | `boolean` | `undefined` |
+| `closeable` | `closeable` |             | `boolean` | `undefined` |
+| `fit`       | `fit`       |             | `boolean` | `undefined` |
 
 
 ----------------------------------------------

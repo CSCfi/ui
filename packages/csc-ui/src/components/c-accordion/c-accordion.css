@@ -1,0 +1,61 @@
+:host {
+  display: block;
+  margin-bottom: 8px;
+}
+
+.accordion-header {
+  height: 46px;
+  user-select: none;
+  background: #D8E8EA;
+  display: flex;
+  justify-content: space-between;
+  column-gap: 8px;
+  align-items: center;
+  padding-left: 12px;
+  padding-right: 12px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.accordion-header h4 {
+  margin-top: 0;
+  margin-bottom: 0;
+  font-weight: 500;
+  font-size: 16px;
+  line-height: 19px;
+  color: #006778;
+}
+
+.accordion-content {
+  padding: 32px;
+}
+
+.accordion-content-wrapper {
+  overflow: hidden;
+  transition: max-height 0.2s ease-out;
+  max-height: 800px;
+}
+
+.hidden {
+  max-height: 0;
+}
+
+.label-flex {
+  flex: 1;
+}
+
+c-row {
+  align-items: center;
+}
+
+svg {
+  width: 24px;
+  height: 24px;
+}
+
+::slotted(h4) {
+  font-size: 22px;
+  color: #515151;
+  margin-top: 0;
+  margin-bottom: 8px;
+}

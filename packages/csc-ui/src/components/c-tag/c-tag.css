@@ -1,11 +1,12 @@
 :host {
-  display: block;
+  display: inline-block;
   cursor: pointer;
   user-select: none;
-  min-width: 100px;
+  margin: 2px;
 }
 
 :host(.fit) {
+  display: block;
   flex-grow: 1;
 }
 
@@ -16,20 +17,47 @@
   outline: 1px black solid;
 }
 
+svg {
+  width: 14px;
+  height: 14px;
+  margin-right: -6px;
+}
+
+.row {
+  display: flex;
+  align-items: center;
+  column-gap: 6px;
+}
+
 .c-tag {
-  transition: all 0.5s ease;
+  transition: all 0.2s ease;
   display: block;
-  height: 44px;
-  border-radius: 32px;
-  padding-left: 28px;
-  padding-right: 28px;
-  line-height: 44px;
-  background: #006778;
-  color: #fff;
-  font-weight: 600;
+  height: 30px;
+  border-radius: 30px;
+  padding-left: 20px;
+  padding-right: 20px;
+  line-height: 30px;
+  background: transparent;
+  color: #006778;
+  box-shadow: inset 0px 0px 0px 1.3px #006778;
+  font-weight: 400;
+  font-size: 14px;
   text-align: center;
 }
 
+.active.c-tag {
+  background: #006778;
+  color: #fff; 
+}
+
 .c-tag:HOVER {
+  background: #D8E8EA;
+  color: #006778;
+  box-shadow: inset 0px 0px 0px 1px #006778;
+}
+
+.c-tag.active:HOVER {
   background: #50978D;
+  color: #fff; 
+  box-shadow: none;
 }
