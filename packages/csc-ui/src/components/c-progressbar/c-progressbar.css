@@ -20,6 +20,7 @@
 
 .c-progress-bar-percentage {
   font-size: 14px;
-  width: 36px;
+  width: 44px;
+  white-space: nowrap;
   margin-left: 6px;
 }

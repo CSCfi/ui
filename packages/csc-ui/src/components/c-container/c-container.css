@@ -4,3 +4,7 @@
   margin-right: auto;
   max-width: 1200px;
 }
+
+:host(.padding) {
+  padding: 24px;
+}

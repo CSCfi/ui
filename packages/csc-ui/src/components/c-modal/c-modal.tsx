@@ -16,7 +16,7 @@ export class CModal {
         </div>
         <div class="c-overlay c-fadeIn"></div>
       </Host>
-    ) : <Host></Host>;
+    ) : '';
   }
 
 }

@@ -4,6 +4,7 @@
   flex-shrink: 2;
   flex-basis: 260px;
   max-width: 320px;
+  background: #006778;
 }
 
 .c-sidenavigation {
@@ -15,14 +16,13 @@
   position: relative;
   padding: 24px 0px 24px 24px;
   transition: transform 0.3s ease;
-  height: 100%
 }
 .c-sidenavigation > div {
   width: 100%;
   /* position: fixed; */
   display: flex;
   height: 100%;
-  flex-flow: column wrap;
+  flex-flow: column nowrap;
 }
 
 .vertical-spacer {

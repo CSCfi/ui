@@ -17,6 +17,7 @@ export class TextField {
   @Prop() disabled: boolean;
   @Prop() readonly: boolean;
   @Prop() shadow: boolean;
+  @Prop() autofocus: boolean;
   @Prop() valid: boolean = true;
   @Prop() validation: string = 'Required field';
   @Prop() required: boolean = null;
@@ -41,6 +42,14 @@ export class TextField {
 
   @Element() hiddenEl!: HTMLInputElement;
 
+  componentDidLoad() {
+    if (this.autofocus) {
+      setTimeout(() => {
+        this.focus();
+      }, 500);
+    }
+  }
+  
   setBlur() {
     this.blurred = true;
     if (this.validateOnBlur) {

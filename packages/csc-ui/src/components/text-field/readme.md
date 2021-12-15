@@ -9,6 +9,7 @@
 
 | Property         | Attribute          | Description | Type      | Default            |
 | ---------------- | ------------------ | ----------- | --------- | ------------------ |
+| `autofocus`      | `autofocus`        |             | `boolean` | `undefined`        |
 | `disabled`       | `disabled`         |             | `boolean` | `undefined`        |
 | `form`           | `form`             |             | `boolean` | `undefined`        |
 | `label`          | `label`            |             | `string`  | `undefined`        |

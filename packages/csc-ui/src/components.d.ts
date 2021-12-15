@@ -58,6 +58,8 @@ export namespace Components {
     }
     interface CCscLogo {
     }
+    interface CFlex {
+    }
     interface CH1 {
     }
     interface CIconButton {
@@ -66,9 +68,12 @@ export namespace Components {
     }
     interface CLink {
         "href": string;
+        "target": string;
         "underline": boolean;
     }
     interface CLoader {
+    }
+    interface CMain {
     }
     interface CMenu {
         "items": any[];
@@ -159,6 +164,7 @@ export namespace Components {
         "fit": boolean;
     }
     interface CTextField {
+        "autofocus": boolean;
         "disabled": boolean;
         "form": boolean;
         "label": string;
@@ -247,6 +253,12 @@ declare global {
         prototype: HTMLCCscLogoElement;
         new (): HTMLCCscLogoElement;
     };
+    interface HTMLCFlexElement extends Components.CFlex, HTMLStencilElement {
+    }
+    var HTMLCFlexElement: {
+        prototype: HTMLCFlexElement;
+        new (): HTMLCFlexElement;
+    };
     interface HTMLCH1Element extends Components.CH1, HTMLStencilElement {
     }
     var HTMLCH1Element: {
@@ -270,6 +282,12 @@ declare global {
     var HTMLCLoaderElement: {
         prototype: HTMLCLoaderElement;
         new (): HTMLCLoaderElement;
+    };
+    interface HTMLCMainElement extends Components.CMain, HTMLStencilElement {
+    }
+    var HTMLCMainElement: {
+        prototype: HTMLCMainElement;
+        new (): HTMLCMainElement;
     };
     interface HTMLCMenuElement extends Components.CMenu, HTMLStencilElement {
     }
@@ -413,10 +431,12 @@ declare global {
         "c-consent": HTMLCConsentElement;
         "c-container": HTMLCContainerElement;
         "c-csc-logo": HTMLCCscLogoElement;
+        "c-flex": HTMLCFlexElement;
         "c-h1": HTMLCH1Element;
         "c-icon-button": HTMLCIconButtonElement;
         "c-link": HTMLCLinkElement;
         "c-loader": HTMLCLoaderElement;
+        "c-main": HTMLCMainElement;
         "c-menu": HTMLCMenuElement;
         "c-menu-item": HTMLCMenuItemElement;
         "c-modal": HTMLCModalElement;
@@ -497,6 +517,8 @@ declare namespace LocalJSX {
     }
     interface CCscLogo {
     }
+    interface CFlex {
+    }
     interface CH1 {
     }
     interface CIconButton {
@@ -505,9 +527,12 @@ declare namespace LocalJSX {
     }
     interface CLink {
         "href"?: string;
+        "target"?: string;
         "underline"?: boolean;
     }
     interface CLoader {
+    }
+    interface CMain {
     }
     interface CMenu {
         "items"?: any[];
@@ -600,6 +625,7 @@ declare namespace LocalJSX {
         "fit"?: boolean;
     }
     interface CTextField {
+        "autofocus"?: boolean;
         "disabled"?: boolean;
         "form"?: boolean;
         "label"?: string;
@@ -643,10 +669,12 @@ declare namespace LocalJSX {
         "c-consent": CConsent;
         "c-container": CContainer;
         "c-csc-logo": CCscLogo;
+        "c-flex": CFlex;
         "c-h1": CH1;
         "c-icon-button": CIconButton;
         "c-link": CLink;
         "c-loader": CLoader;
+        "c-main": CMain;
         "c-menu": CMenu;
         "c-menu-item": CMenuItem;
         "c-modal": CModal;
@@ -684,10 +712,12 @@ declare module "@stencil/core" {
             "c-consent": LocalJSX.CConsent & JSXBase.HTMLAttributes<HTMLCConsentElement>;
             "c-container": LocalJSX.CContainer & JSXBase.HTMLAttributes<HTMLCContainerElement>;
             "c-csc-logo": LocalJSX.CCscLogo & JSXBase.HTMLAttributes<HTMLCCscLogoElement>;
+            "c-flex": LocalJSX.CFlex & JSXBase.HTMLAttributes<HTMLCFlexElement>;
             "c-h1": LocalJSX.CH1 & JSXBase.HTMLAttributes<HTMLCH1Element>;
             "c-icon-button": LocalJSX.CIconButton & JSXBase.HTMLAttributes<HTMLCIconButtonElement>;
             "c-link": LocalJSX.CLink & JSXBase.HTMLAttributes<HTMLCLinkElement>;
             "c-loader": LocalJSX.CLoader & JSXBase.HTMLAttributes<HTMLCLoaderElement>;
+            "c-main": LocalJSX.CMain & JSXBase.HTMLAttributes<HTMLCMainElement>;
             "c-menu": LocalJSX.CMenu & JSXBase.HTMLAttributes<HTMLCMenuElement>;
             "c-menu-item": LocalJSX.CMenuItem & JSXBase.HTMLAttributes<HTMLCMenuItemElement>;
             "c-modal": LocalJSX.CModal & JSXBase.HTMLAttributes<HTMLCModalElement>;
