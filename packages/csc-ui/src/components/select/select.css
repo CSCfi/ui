@@ -144,6 +144,10 @@ label span.required {
   overflow: hidden;
 }
 
+.c-menu.c-menu-hide {
+  display: none;
+}
+
 .c-menu li {
   display:block;
   padding: 14px;

@@ -13,6 +13,7 @@ export class TextField {
       this.runValidate(true, true);
     }
   }
+  @Prop({ attribute: 'id' }) hostId: string;
   @Prop() number: boolean;
   @Prop() disabled: boolean;
   @Prop() readonly: boolean;
@@ -122,8 +123,8 @@ export class TextField {
       this.renderInputOutsideShadowRoot(this.hiddenEl, this.name, this.value);
     }
     
-    const textInput = <input ref={el => this.inputReference = el as HTMLInputElement} name={this.name} onBlur={() => this.setBlur()} aria-labelledby="c-text-label" disabled={this.disabled} readonly={this.readonly} type={type} min={this.min} max={this.max} step={this.step} placeholder={this.placeholder} value={this.value} onInput={(event) => this.handleChange(event)} onChange={(event) => this.handleChange(event)}/>;
-    const textArea = <textarea ref={el => this.textAreaReference = el as HTMLTextAreaElement} name={this.name} onBlur={() => this.setBlur()} rows={this.rows} aria-labelledby="c-text-label" disabled={this.disabled} placeholder={this.placeholder} readonly={this.readonly} onInput={(event) => this.handleChange(event)} value={this.value}></textarea>;
+    const textInput = <input id={this.hostId} ref={el => this.inputReference = el as HTMLInputElement} name={this.name} onBlur={() => this.setBlur()} aria-labelledby="c-text-label" disabled={this.disabled} readonly={this.readonly} type={type} min={this.min} max={this.max} step={this.step} placeholder={this.placeholder} value={this.value} onInput={(event) => this.handleChange(event)} onChange={(event) => this.handleChange(event)}/>;
+    const textArea = <textarea id={this.hostId} ref={el => this.textAreaReference = el as HTMLTextAreaElement} name={this.name} onBlur={() => this.setBlur()} rows={this.rows} aria-labelledby="c-text-label" disabled={this.disabled} placeholder={this.placeholder} readonly={this.readonly} onInput={(event) => this.handleChange(event)} value={this.value}></textarea>;
     return (
       <Host onClick={() => this.focus()}>
         <div class={this.outerWrapperClasses.join(' ')}>

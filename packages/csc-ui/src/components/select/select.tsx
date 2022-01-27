@@ -8,6 +8,7 @@ import { mdiChevronDown } from '@mdi/js';
 })
 export class Select {
   @Prop() validate: boolean = false;
+  @Prop({ attribute: 'id' }) hostId: string;
   @Watch('validate')
   validateChange(newValue: boolean) {
     if (newValue) {
@@ -250,6 +251,7 @@ export class Select {
     return (
       <Host>
         <div
+          id={this.hostId}
           class={this.outerWrapperClasses.join(' ')}
           tabindex="0"
           role="button"
@@ -283,10 +285,10 @@ export class Select {
             name={ this.name }
           />
           <div class="c-menu-parent" aria-expanded={this.menuVisible}>
-            { this.menuVisible ? <div class="c-menu" style={itemsPerPageStyle}>
+            { <div style={itemsPerPageStyle} class={this.menuVisible ? 'c-menu' : 'c-menu c-menu-hide'}>
               { this.showNone ? this.getListItem({ name: 'None', value: null }) : null }
               {this.items.map(item => this.getListItem(item))}
-            </div> : '' }
+            </div> }
           </div>
           <div class="border-wrapper">
             <div class="border-left"></div>

@@ -1,18 +1,17 @@
-import { Component, Host, h, Prop } from '@stencil/core';
+import { Component, Host, h, Prop } from "@stencil/core";
 
 @Component({
-  tag: 'c-container',
-  styleUrl: 'c-container.css',
+  tag: "c-container",
+  styleUrl: "c-container.css",
   shadow: true,
 })
 export class CContainer {
   @Prop() width: number;
 
-
   render() {
-    let style = {}
+    let style = {};
     if (this.width > 0) {
-      style = { 'width': `${this.width}px` };
+      style = { "max-width": `${this.width}px` };
     }
 
     return (
@@ -21,5 +20,4 @@ export class CContainer {
       </Host>
     );
   }
-
 }

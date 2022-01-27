@@ -25,6 +25,7 @@ export namespace Components {
         "disabled": boolean;
         "fit": boolean;
         "fixed": boolean;
+        "hostId": string;
         "icon": string;
         "loading": boolean;
         "noRadius": boolean;
@@ -64,7 +65,9 @@ export namespace Components {
     }
     interface CIconButton {
         "badge": string;
+        "disabled": boolean;
         "icon": string;
+        "outlined": boolean;
     }
     interface CLink {
         "href": string;
@@ -119,6 +122,7 @@ export namespace Components {
     }
     interface CSelect {
         "dense": boolean;
+        "hostId": string;
         "items": any[];
         "itemsPerPage": number;
         "label": string;
@@ -149,14 +153,15 @@ export namespace Components {
     }
     interface CTab {
         "active": boolean;
+        "hostId": string;
     }
     interface CTabButton {
         "active": boolean;
         "color": string;
         "disabled": boolean;
+        "hostId": string;
         "icon": string;
         "label": string;
-        "noRadius": boolean;
     }
     interface CTag {
         "active": boolean;
@@ -167,6 +172,7 @@ export namespace Components {
         "autofocus": boolean;
         "disabled": boolean;
         "form": boolean;
+        "hostId": string;
         "label": string;
         "max": number;
         "min": number;
@@ -483,6 +489,7 @@ declare namespace LocalJSX {
         "disabled"?: boolean;
         "fit"?: boolean;
         "fixed"?: boolean;
+        "hostId"?: string;
         "icon"?: string;
         "loading"?: boolean;
         "noRadius"?: boolean;
@@ -523,7 +530,9 @@ declare namespace LocalJSX {
     }
     interface CIconButton {
         "badge"?: string;
+        "disabled"?: boolean;
         "icon"?: string;
+        "outlined"?: boolean;
     }
     interface CLink {
         "href"?: string;
@@ -579,6 +588,7 @@ declare namespace LocalJSX {
     }
     interface CSelect {
         "dense"?: boolean;
+        "hostId"?: string;
         "items"?: any[];
         "itemsPerPage"?: number;
         "label"?: string;
@@ -610,14 +620,15 @@ declare namespace LocalJSX {
     }
     interface CTab {
         "active"?: boolean;
+        "hostId"?: string;
     }
     interface CTabButton {
         "active"?: boolean;
         "color"?: string;
         "disabled"?: boolean;
+        "hostId"?: string;
         "icon"?: string;
         "label"?: string;
-        "noRadius"?: boolean;
     }
     interface CTag {
         "active"?: boolean;
@@ -628,6 +639,7 @@ declare namespace LocalJSX {
         "autofocus"?: boolean;
         "disabled"?: boolean;
         "form"?: boolean;
+        "hostId"?: string;
         "label"?: string;
         "max"?: number;
         "min"?: number;

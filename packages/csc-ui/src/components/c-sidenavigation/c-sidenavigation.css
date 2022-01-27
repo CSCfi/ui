@@ -1,3 +1,22 @@
+:host::-webkit-scrollbar {
+  width: 12px;
+  background: #D8E8EA;
+}
+:host::-webkit-scrollbar-track {
+  border-radius: 10px;
+}
+:host::-webkit-scrollbar-thumb {
+  background: rgba(0,0,0,0.3); 
+  border-radius: 10px;
+  border: solid 3px #D8E8EA;
+}
+
+:host(.autoheight) {
+  height: calc(100vh - 60px);
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
 :host(.desktop) {
   flex-grow: 1;
   display: flex;
@@ -21,7 +40,7 @@
   width: 100%;
   /* position: fixed; */
   display: flex;
-  height: 100%;
+  flex: 1;
   flex-flow: column nowrap;
 }
 

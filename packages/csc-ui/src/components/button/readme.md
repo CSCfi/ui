@@ -13,6 +13,7 @@
 | `disabled`  | `disabled`  |             | `boolean` | `undefined` |
 | `fit`       | `fit`       |             | `boolean` | `undefined` |
 | `fixed`     | `fixed`     |             | `boolean` | `undefined` |
+| `hostId`    | `id`        |             | `string`  | `undefined` |
 | `icon`      | `icon`      |             | `string`  | `undefined` |
 | `loading`   | `loading`   |             | `boolean` | `undefined` |
 | `noRadius`  | `no-radius` |             | `boolean` | `undefined` |

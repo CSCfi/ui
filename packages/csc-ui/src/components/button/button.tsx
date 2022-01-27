@@ -16,6 +16,7 @@ export class Button {
   @Prop({ reflect: true })
     disabled: boolean;
   @Prop() icon: string;
+  @Prop({ attribute: 'id' }) hostId: string;
   @Prop() loading: boolean;
   
   render() {
@@ -72,7 +73,7 @@ export class Button {
     }
 
     return (
-      <button class={hostClasses} tabindex="0" role="button" disabled={this.disabled}>
+      <button id={this.hostId} class={hostClasses} tabindex="0" role="button" disabled={this.disabled}>
         <div class={classes}>
           { this.loading ? (<div class={ this.dense ? 'spinner_wrapper dense_spinner' : 'spinner_wrapper'}>
             { SPINNER_SMALL }

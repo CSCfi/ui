@@ -7,14 +7,14 @@
 
 ## Properties
 
-| Property   | Attribute   | Description | Type      | Default     |
-| ---------- | ----------- | ----------- | --------- | ----------- |
-| `active`   | `active`    |             | `boolean` | `undefined` |
-| `color`    | `color`     |             | `string`  | `undefined` |
-| `disabled` | `disabled`  |             | `boolean` | `undefined` |
-| `icon`     | `icon`      |             | `string`  | `undefined` |
-| `label`    | `label`     |             | `string`  | `undefined` |
-| `noRadius` | `no-radius` |             | `boolean` | `undefined` |
+| Property   | Attribute  | Description | Type      | Default     |
+| ---------- | ---------- | ----------- | --------- | ----------- |
+| `active`   | `active`   |             | `boolean` | `undefined` |
+| `color`    | `color`    |             | `string`  | `undefined` |
+| `disabled` | `disabled` |             | `boolean` | `undefined` |
+| `hostId`   | `id`       |             | `string`  | `undefined` |
+| `icon`     | `icon`     |             | `string`  | `undefined` |
+| `label`    | `label`    |             | `string`  | `undefined` |
 
 
 ## Dependencies

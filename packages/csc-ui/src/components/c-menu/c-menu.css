@@ -9,21 +9,22 @@
 
 :host(:focus) {
   outline: none;
-  background: #D8E8EA50;
+  background: #d8e8ea50;
 }
 
 :host(:focus:not(:focus-visible)) {
 }
-:host(:focus-visible) { /* Some even *more* exciting button focus styles */ 
-  background: #D8E8EA;
+:host(:focus-visible) {
+  /* Some even *more* exciting button focus styles */
+  background: #d8e8ea;
   border-top-left-radius: 4px;
   border-top-right-radius: 4px;
   border-bottom-left-radius: 4px;
   border-bottom-right-radius: 4px;
 }
 
-:host(:HOVER) {
-  background: #D8E8EA;
+:host(:hover) {
+  background: #d8e8ea;
   color: #006778;
   border-top-left-radius: 4px;
   border-top-right-radius: 4px;
@@ -31,8 +32,9 @@
   border-bottom-right-radius: 4px;
 }
 
-:host(.active), :host(:focus-visible.active) {
-  background: #D8E8EA;
+:host(.active),
+:host(:focus-visible.active) {
+  background: #d8e8ea;
   color: #006778;
   border-top-left-radius: 4px;
   border-top-right-radius: 4px;
@@ -40,7 +42,7 @@
   border-bottom-right-radius: 0;
 }
 
-:host(.nohover:HOVER) {
+:host(.nohover:hover) {
   background: transparent;
 }
 
@@ -52,7 +54,8 @@ svg fill {
   fill: #595959;
 }
 
-:host(.active) svg, :host(:hover) svg {
+:host(.active) svg,
+:host(:hover) svg {
   fill: #006778;
 }
 
@@ -78,11 +81,10 @@ svg fill {
   column-gap: 8px;
 }
 
-.small ::slotted(*[slot="activator"]){
+.small ::slotted(*[slot="activator"]) {
   font-size: 12px;
   column-gap: 0px;
 }
-
 
 .full-width {
   width: 100%;
@@ -96,6 +98,7 @@ svg fill {
   position: absolute;
   min-width: 100%;
   right: 0;
+  z-index: 3;
   background: #fff;
   border-top-left-radius: 0;
   border-top-right-radius: 0;

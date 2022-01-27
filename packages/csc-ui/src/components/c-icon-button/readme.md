@@ -7,10 +7,12 @@
 
 ## Properties
 
-| Property | Attribute | Description | Type     | Default     |
-| -------- | --------- | ----------- | -------- | ----------- |
-| `badge`  | `badge`   |             | `string` | `undefined` |
-| `icon`   | `icon`    |             | `string` | `undefined` |
+| Property   | Attribute  | Description | Type      | Default     |
+| ---------- | ---------- | ----------- | --------- | ----------- |
+| `badge`    | `badge`    |             | `string`  | `undefined` |
+| `disabled` | `disabled` |             | `boolean` | `undefined` |
+| `icon`     | `icon`     |             | `string`  | `undefined` |
+| `outlined` | `outlined` |             | `boolean` | `undefined` |
 
 
 ----------------------------------------------

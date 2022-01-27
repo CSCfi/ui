@@ -12,6 +12,7 @@
 | `autofocus`      | `autofocus`        |             | `boolean` | `undefined`        |
 | `disabled`       | `disabled`         |             | `boolean` | `undefined`        |
 | `form`           | `form`             |             | `boolean` | `undefined`        |
+| `hostId`         | `id`               |             | `string`  | `undefined`        |
 | `label`          | `label`            |             | `string`  | `undefined`        |
 | `max`            | `max`              |             | `number`  | `null`             |
 | `min`            | `min`              |             | `number`  | `null`             |

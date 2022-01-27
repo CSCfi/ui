@@ -1,16 +1,30 @@
-@import "../../global/app.css"; 
+@import "../../global/app.css";
 
-:host {
-  display: block;
+button {
+  display: inline-block;
+  border: none;
+  padding: 0;
+  background: transparent;
 }
 
-.icon-button {
-  color:rgb(89, 89, 89);
+button:focus {
+  outline: none;
+}
+
+button:focus-visible {
+  /* Some even *more* exciting button focus styles */
+  outline: 1px black solid;
+  outline-offset: 2px;
+}
+
+::slotted(*) {
+  color: var(--current-color);
+}
+
+button {
+  color: rgb(89, 89, 89);
   width: 32px;
   height: 32px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
   background: transparent;
   transition: all 0.3s ease;
   border-radius: 50%;
@@ -19,15 +33,27 @@
   position: relative;
 }
 
+button.outlined {
+  box-shadow: inset 0px 0px 0px 2px var(--current-color);
+}
+
+.disabled ::slotted(*) {
+  color: #8c8c8c;
+}
+
+button.outlined.disabled {
+  box-shadow: inset 0px 0px 0px 2px #acacac;
+}
+
 .icon-button-badge {
-  background: #FF5800;
+  background: #ff5800;
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
   min-width: 16px;
   height: 16px;
-  color: #FFF;
+  color: #fff;
   position: absolute;
   right: -6px;
   font-size: 12px;
@@ -35,12 +61,47 @@
   top: -4px;
 }
 
-.icon-button:HOVER {
-  background: #f0f0f0;
+.disabled .icon-button-badge {
+  background: #acacac;
+}
+
+button:hover {
+  background: #d8e8ea;
   color: var(--csc-primary);
 }
 
+button.disabled:hover {
+  background: transparent;
+}
+
 svg {
-  width:24px;
-  height:24px;
+  width: 24px;
+  height: 24px;
+}
+
+.innerContainer {
+  top: 0;
+  bottom: 0;
+  right: 0;
+  left: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.ripple {
+  transition: background 0.5s;
+  background-position: center;
+  position: absolute;
+}
+
+.ripple:hover {
+  background: rgba(255, 255, 255, 0)
+    radial-gradient(circle, transparent 1%, rgba(255, 255, 255, 0.15) 1%)
+    center/15000%;
+}
+.ripple:active {
+  background-color: rgba(255, 255, 255, 0.25);
+  background-size: 100%;
+  transition: background 0s;
 }

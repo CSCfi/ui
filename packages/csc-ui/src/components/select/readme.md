@@ -10,6 +10,7 @@
 | Property         | Attribute          | Description | Type      | Default                                                                                                                                           |
 | ---------------- | ------------------ | ----------- | --------- | ------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `dense`          | `dense`            |             | `boolean` | `undefined`                                                                                                                                       |
+| `hostId`         | `id`               |             | `string`  | `undefined`                                                                                                                                       |
 | `items`          | --                 |             | `any[]`   | `[     { name: 'Default 1', value: 'default1' },     { name: 'Default 2', value: 'default2' },     { name: 'Default 3', value: 'default3' },   ]` |
 | `itemsPerPage`   | `items-per-page`   |             | `number`  | `undefined`                                                                                                                                       |
 | `label`          | `label`            |             | `string`  | `undefined`                                                                                                                                       |

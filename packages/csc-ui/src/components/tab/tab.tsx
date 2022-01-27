@@ -7,11 +7,12 @@ import { Component, h, Host, Prop } from '@stencil/core';
 })
 export class Tab {
   @Prop() active: boolean;
+  @Prop({ attribute: 'id' }) hostId: string;
 
   render() {
     return (
       <Host tabindex="0" role="button">
-        <div class={ this.active ? 'c-tab active' : 'c-tab' }>
+        <div id={this.hostId} class={ this.active ? 'c-tab active' : 'c-tab' }>
           <slot></slot>
         </div>
       </Host>

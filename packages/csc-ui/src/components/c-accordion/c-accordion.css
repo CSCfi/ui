@@ -1,3 +1,5 @@
+@import "../../global/app.css";
+
 :host {
   display: block;
   margin-bottom: 8px;
@@ -6,7 +8,7 @@
 .accordion-header {
   height: 46px;
   user-select: none;
-  background: #D8E8EA;
+  background: #d8e8ea;
   display: flex;
   justify-content: space-between;
   column-gap: 8px;
@@ -17,17 +19,25 @@
   cursor: pointer;
 }
 
+.accordion-header:focus {
+  outline: none;
+}
+
+.accordion-header:focus-visible {
+  outline: 2px black solid;
+  outline-offset: 2px;
+}
+
 .accordion-header h4 {
   margin-top: 0;
   margin-bottom: 0;
   font-weight: 500;
   font-size: 16px;
-  line-height: 19px;
   color: #006778;
 }
 
 .accordion-content {
-  padding: 32px;
+  padding: 16px;
 }
 
 .accordion-content-wrapper {
@@ -48,9 +58,23 @@ c-row {
   align-items: center;
 }
 
+.icon-wrapper {
+  height: 24px;
+  font-size: 24px;
+  color: var(--current-color);
+  display: flex;
+  align-items: center;
+}
+
+.icon-wrapper > * {
+  height: 24px;
+  display: flex;
+  align-items: center;
+}
+
 svg {
   width: 24px;
-  height: 24px;
+  height: 24px !important;
 }
 
 ::slotted(h4) {
@@ -58,4 +82,5 @@ svg {
   color: #515151;
   margin-top: 0;
   margin-bottom: 8px;
+  line-height: 1;
 }

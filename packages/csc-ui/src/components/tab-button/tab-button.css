@@ -2,12 +2,21 @@
   display: inline-block;
 }
 
-.c-tab-button svg {
-  margin-right: 16px;
+.c-tab-button .icon-wrapper {
+  display: flex;
+  align-items: center;
 }
 
-.c-tab-button.border-radius {
-  border-radius: 4px;
+.c-tab-button .icon-wrapper > * {
+  margin-right: 16px;
+  color: rgba(255, 255, 255, 0.4);
+  font-size: 38px;
+  display: flex;
+  align-items: center;
+}
+
+.c-tab-button-disabled .icon-wrapper > * {
+  color: #8c8c8c;
 }
 
 .c-tab-button.pink {
@@ -18,17 +27,17 @@
 }
 
 .c-tab-button.blue {
-  background-color: #025B96 !important;
+  background-color: #025b96 !important;
 }
 .blue.c-tab-button-description {
-  color: #025B96 !important;
+  color: #025b96 !important;
 }
 
 .c-tab-button.dark-blue {
-  background-color: #012F5F !important;
+  background-color: #012f5f !important;
 }
 .dark-blue.c-tab-button-description {
-  color: #012F5F !important;
+  color: #012f5f !important;
 }
 
 .c-tab-button.green {
@@ -56,6 +65,7 @@
 }
 
 .c-tab-button {
+  border-radius: 4px;
   background-color: #006778;
   width: 100%;
   margin-bottom: 8px;
@@ -72,8 +82,8 @@
 }
 
 .c-tab-button-disabled {
-  background: #E8E8E8;
-  color: #8C8C8C;
+  background: #e8e8e8;
+  color: #8c8c8c;
   cursor: default !important;
 }
 
@@ -106,10 +116,12 @@
 }
 
 .ripple:hover {
-  background: rgba(255,255,255,0.1) radial-gradient(circle, transparent 1%, rgba(255,255,255,0.15) 1%) center/15000%;
+  background: rgba(255, 255, 255, 0.1)
+    radial-gradient(circle, transparent 1%, rgba(255, 255, 255, 0.15) 1%)
+    center/15000%;
 }
 .ripple:active {
-  background-color: rgba(255,255,255,0.25);
+  background-color: rgba(255, 255, 255, 0.25);
   background-size: 100%;
   transition: background 0s;
 }
