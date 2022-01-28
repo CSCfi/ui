@@ -66,8 +66,10 @@ export namespace Components {
     interface CIconButton {
         "badge": string;
         "disabled": boolean;
+        "ghost": boolean;
         "icon": string;
         "outlined": boolean;
+        "text": boolean;
     }
     interface CLink {
         "href": string;
@@ -531,8 +533,10 @@ declare namespace LocalJSX {
     interface CIconButton {
         "badge"?: string;
         "disabled"?: boolean;
+        "ghost"?: boolean;
         "icon"?: string;
         "outlined"?: boolean;
+        "text"?: boolean;
     }
     interface CLink {
         "href"?: string;

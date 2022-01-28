@@ -113,13 +113,17 @@ export class CAccordion {
               : "accordion-content-wrapper hidden"
           }
         >
-          <div
-            class="accordion-content"
-            role="region"
-            aria-labelledby={`c-accordion-${this.uniqueId}`}
-          >
-            <slot></slot>
-          </div>
+          {this.value ? (
+            <div
+              class="accordion-content"
+              role="region"
+              aria-labelledby={`c-accordion-${this.uniqueId}`}
+            >
+              <slot></slot>
+            </div>
+          ) : (
+            ""
+          )}
         </div>
       </Host>
     );

@@ -1,4 +1,4 @@
-@import "../../global/app.css"; 
+@import "../../global/app.css";
 
 button {
   display: inline-block;
@@ -12,11 +12,11 @@ button:focus {
 }
 button:focus:not(:focus-visible) {
 }
-button:focus-visible { /* Some even *more* exciting button focus styles */ 
+button:focus-visible {
+  /* Some even *more* exciting button focus styles */
   outline: 1px black solid;
   outline-offset: 2px;
 }
-
 
 @media (max-width: 767px) {
   button.full-width {
@@ -55,8 +55,6 @@ button.fit {
   min-width: 160px;
 }
 
-
-
 .csc-button {
   background-color: var(--current-color);
   position: relative;
@@ -75,13 +73,13 @@ button.fit {
   user-select: none;
 }
 
-.csc-button:HOVER {
-  background-color: #50978D;
+.csc-button:hover {
+  background-color: var(--csc-primary-hover);
 }
 
 .csc-button svg {
-  fill: #FFF;
-} 
+  fill: #fff;
+}
 
 .csc-button.outlined {
   box-shadow: inset 0px 0px 0px 2px var(--current-color);
@@ -91,18 +89,18 @@ button.fit {
   fill: var(--current-color);
 }
 
-.outlined:HOVER {
-  background-color: #D8E8EA !important;
+.outlined:hover {
+  background-color: #d8e8ea !important;
 }
 
 .secondary {
-  background-color: #D0DCED !important;
-  color: #025B96;
+  background-color: #d0dced !important;
+  color: #025b96;
 }
 
-.secondary:HOVER {
-  background-color: #025B96 !important;
-  color: #FFFFFF;
+.secondary:hover {
+  background-color: #025b96 !important;
+  color: #ffffff;
 }
 
 .spinner__circle {
@@ -132,27 +130,27 @@ button.fit {
 }
 
 .csc-button-disabled {
-  background: #E8E8E8 !important;
-  color: #8C8C8C;
-  box-shadow: inset 0px 0px 0px 2px #E8E8E8;
+  background: #e8e8e8 !important;
+  color: #8c8c8c;
+  box-shadow: inset 0px 0px 0px 2px #e8e8e8;
   cursor: default !important;
 }
 
 .outlined.csc-button-disabled svg {
-  fill: #8C8C8C !important;
+  fill: #8c8c8c !important;
 }
 
-.csc-button-disabled.outlined:HOVER {
+.csc-button-disabled.outlined:hover {
   background-color: transparent !important;
 }
 
 .csc-button-disabled.outlined {
   background-color: transparent !important;
-  box-shadow: inset 0px 0px 0px 2px #8C8C8C;
+  box-shadow: inset 0px 0px 0px 2px #8c8c8c;
 }
 
 .csc-button-disabled svg {
-  fill: #8C8C8C;
+  fill: #8c8c8c;
 }
 
 .csc-button-padding {
@@ -165,10 +163,12 @@ button.fit {
 }
 
 .ripple:hover {
-  background: rgba(255,255,255,0.0) radial-gradient(circle, transparent 1%, rgba(255,255,255,0.15) 1%) center/15000%;
+  background: rgba(255, 255, 255, 0)
+    radial-gradient(circle, transparent 1%, rgba(255, 255, 255, 0.15) 1%)
+    center/15000%;
 }
 .ripple:active {
-  background-color: rgba(255,255,255,0.25);
+  background-color: rgba(255, 255, 255, 0.25);
   background-size: 100%;
   transition: background 0s;
 }
@@ -185,7 +185,8 @@ button.fit {
   color: transparent !important;
 }
 
-.hide-text svg, .hide-text .outlined.csc-button svg {
+.hide-text svg,
+.hide-text .outlined.csc-button svg {
   fill: transparent !important;
 }
 
@@ -207,7 +208,7 @@ button.fit {
   margin-right: auto;
 }
 
-.spinner_wrapper.dense_spinner .spinner{
+.spinner_wrapper.dense_spinner .spinner {
   max-width: 24px;
 }
 
@@ -216,7 +217,7 @@ button.fit {
     transform: rotateZ(0deg);
   }
   100% {
-    transform: rotateZ(360deg)
+    transform: rotateZ(360deg);
   }
 }
 
@@ -226,13 +227,13 @@ button.fit {
     stroke-dashoffset: 280;
     transform: rotate(0);
   }
-  
+
   50%,
   75% {
     stroke-dashoffset: 75;
     transform: rotate(45deg);
   }
-  
+
   100% {
     stroke-dashoffset: 280;
     transform: rotate(360deg);
