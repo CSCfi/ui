@@ -28,7 +28,7 @@
 | `valid`          | `valid`            |             | `boolean` | `true`             |
 | `validate`       | `validate`         |             | `boolean` | `false`            |
 | `validateOnBlur` | `validate-on-blur` |             | `boolean` | `false`            |
-| `validation`     | `validation`       |             | `string`  | `'Required field'` |
+| `validation`     | `validation`       |             | `string`  | `"Required field"` |
 | `value`          | `value`            |             | `string`  | `undefined`        |
 
 

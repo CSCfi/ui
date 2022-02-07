@@ -1,4 +1,4 @@
-@import "../../global/app.css"; 
+@import "../../global/app.css";
 
 :host {
   display: block;
@@ -6,11 +6,11 @@
 }
 
 ::slotted(*[slot="pre"]) {
-  padding-left: 16px;
+  padding-left: 0;
 }
 
 ::slotted(*[slot="post"]) {
-  padding-right: 16px;
+  padding-right: 0;
 }
 
 ::slotted(*) {
@@ -61,12 +61,13 @@ textarea {
 
 .outer-wrapper {
   position: relative;
-  display:flex;
+  display: flex;
   align-items: center;
   min-height: 44px;
 }
 
-.outer-wrapper input, .outer-wrapper textarea {
+.outer-wrapper input,
+.outer-wrapper textarea {
   font-family: inherit;
   position: relative;
   margin-top: 10px;
@@ -86,40 +87,45 @@ textarea {
   caret-color: var(--current-color);
 }
 
-.outer-wrapper.shadow input, .outer-wrapper.shadow textarea {
+.outer-wrapper.shadow input,
+.outer-wrapper.shadow textarea {
   padding: 0px 0px 0px 14px;
 }
 
-.outer-wrapper.disabled input, .outer-wrapper.disabled label {
-  color: #93979D;
+.outer-wrapper.disabled input,
+.outer-wrapper.disabled label {
+  color: #93979d;
 }
 
-.outer-wrapper.disabled input, .outer-wrapper.disabled textarea {
-  -webkit-text-fill-color: #93979D;
+.outer-wrapper.disabled input,
+.outer-wrapper.disabled textarea {
+  -webkit-text-fill-color: #93979d;
   opacity: 1;
 }
 
-.shadow .border-left, .shadow .border-right, .shadow .border-label {
+.shadow .border-left,
+.shadow .border-right,
+.shadow .border-label {
   border-color: transparent !important;
 }
 
 .shadow {
   box-shadow: 2px 4px 10px #00000029;
-  background: #FFF;
+  background: #fff;
   border-radius: 4px;
 }
 
 .border-left {
   border-top-left-radius: 4px;
   border-bottom-left-radius: 4px;
-  border: 1px #6F6F6F solid;
+  border: 1px #6f6f6f solid;
   border-right: none;
   width: 12px;
 }
 
 .border-label {
-  border-top: 1px #6F6F6F solid;
-  border-bottom: 1px #6F6F6F solid;
+  border-top: 1px #6f6f6f solid;
+  border-bottom: 1px #6f6f6f solid;
 }
 
 .outer-wrapper:focus-within .border-label {
@@ -138,11 +144,11 @@ textarea {
 }
 
 .outer-wrapper:focus-within label {
-  padding-left:3px;
+  padding-left: 3px;
   transform: scale(0.75);
   max-width: 125%;
   transform-origin: left;
-  padding-right:3px;
+  padding-right: 3px;
 }
 
 .border-label label.top-span {
@@ -156,18 +162,20 @@ textarea {
   max-width: 100%;
 }
 
-.outer-wrapper.required .border-wrapper div, .outer-wrapper.required:focus-within .border-wrapper div {
-  border-color: #E71D32;
+.outer-wrapper.required .border-wrapper div,
+.outer-wrapper.required:focus-within .border-wrapper div {
+  border-color: #e71d32;
   border-width: 2px !important;
 }
 
-.outer-wrapper.required label, .outer-wrapper.required:focus-within label {
-  color: #E71D32;
+.outer-wrapper.required label,
+.outer-wrapper.required:focus-within label {
+  color: #e71d32;
 }
 
 .validation-message {
   display: flex;
-  height:0;
+  height: 0;
   align-items: center;
   font-size: 14px;
   font-weight: 500;
@@ -178,10 +186,10 @@ textarea {
 }
 
 .border-wrapper {
-  position:absolute;
-  width:100%;
-  height:100%;
-  display:flex;
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  display: flex;
 }
 
 .validation-message svg {
@@ -197,23 +205,23 @@ textarea {
 label.hidden {
   opacity: 0;
   white-space: nowrap;
-  padding-left:3px;
-  padding-right:3px;
-  max-width: calc(100% / .75);
-  font-size: .75rem;
+  padding-left: 3px;
+  padding-right: 3px;
+  max-width: calc(100% / 0.75);
+  font-size: 0.75rem;
 }
 
 .top-span {
-  position:absolute;
+  position: absolute;
   margin-top: 11px;
   margin-left: 5px;
   font-size: 16px;
-  color: rgba(0,0,0,0.75);
+  color: rgba(0, 0, 0, 0.75);
 }
 
 .border-label.value-set label {
-  padding-left:3px;
-  padding-right:3px;
+  padding-left: 3px;
+  padding-right: 3px;
 }
 
 .border-label.value-set .top-span {
@@ -239,11 +247,10 @@ label.hidden {
   border-width: 2px;
 }
 
-
 .border-right {
   border-top-right-radius: 4px;
   border-bottom-right-radius: 4px;
-  border: 1px #6F6F6F solid;
+  border: 1px #6f6f6f solid;
   border-left: none;
   width: 100%;
 }
