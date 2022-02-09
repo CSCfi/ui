@@ -71,7 +71,7 @@ export class TextField {
   handleChange(event) {
     this.value = event.target.value;
     this.tick = '';
-    // this.changeValue.emit(event.target.value);
+    this.changeValue.emit(event.target.value);
   }
 
   runValidate(forceUpdate = false, extValidate = false) {
