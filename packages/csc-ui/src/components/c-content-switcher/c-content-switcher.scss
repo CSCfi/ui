@@ -1,0 +1,18 @@
+.c-content-switcher {
+  --c-switch-border-color: var(--csc-primary);
+
+  display: flex;
+  flex-wrap: wrap;
+  border: solid 1px var(--c-switch-border-color);
+  margin: 2px;
+  border-radius: var(--csc-border-radius);
+  overflow: hidden;
+
+  ::slotted(*) {
+    flex-grow: 1;
+  }
+
+  &--disabled {
+    --c-switch-border-color: var(--csc-light-grey);
+  }
+}

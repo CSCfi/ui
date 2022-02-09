@@ -25,12 +25,14 @@ export namespace Components {
         "disabled": boolean;
         "fit": boolean;
         "fixed": boolean;
+        "ghost": boolean;
         "hostId": string;
         "icon": string;
         "loading": boolean;
         "noRadius": boolean;
         "outlined": boolean;
         "secondary": boolean;
+        "text": boolean;
     }
     interface CCard {
         "background": string;
@@ -45,6 +47,12 @@ export namespace Components {
         "px": number;
         "py": number;
     }
+    interface CCardActions {
+    }
+    interface CCardContent {
+    }
+    interface CCardTitle {
+    }
     interface CCheckbox {
         "checked": boolean;
         "color": string;
@@ -56,6 +64,25 @@ export namespace Components {
     }
     interface CContainer {
         "width": number;
+    }
+    interface CContentSwitcher {
+        /**
+          * Disable the content switcher
+         */
+        "hostDisabled": boolean;
+        /**
+          * Always require a value
+          * @type {boolean}
+          * @memberof ContentSwitcher
+         */
+        "mandatory": boolean;
+        /**
+          * Always require a value
+          * @type {boolean}
+          * @memberof ContentSwitcher
+         */
+        "size": 'default' | 'small';
+        "value": number;
     }
     interface CCscLogo {
     }
@@ -77,6 +104,7 @@ export namespace Components {
         "underline": boolean;
     }
     interface CLoader {
+        "contentdelay": number;
     }
     interface CMain {
     }
@@ -112,6 +140,7 @@ export namespace Components {
     }
     interface CProgressbar {
         "color": string;
+        "indeterminate": boolean;
         "value": number;
     }
     interface CRadio {
@@ -153,21 +182,25 @@ export namespace Components {
         "active": boolean;
         "href": string;
     }
+    interface CSwitch {
+        "hostDisabled": boolean;
+        "hostId": string;
+        "value": boolean;
+    }
     interface CTab {
         "active": boolean;
         "hostId": string;
     }
     interface CTabButton {
         "active": boolean;
-        "color": string;
         "disabled": boolean;
         "hostId": string;
-        "icon": string;
         "label": string;
     }
     interface CTag {
         "active": boolean;
         "closeable": boolean;
+        "dense": boolean;
         "fit": boolean;
     }
     interface CTextField {
@@ -231,6 +264,24 @@ declare global {
         prototype: HTMLCCardElement;
         new (): HTMLCCardElement;
     };
+    interface HTMLCCardActionsElement extends Components.CCardActions, HTMLStencilElement {
+    }
+    var HTMLCCardActionsElement: {
+        prototype: HTMLCCardActionsElement;
+        new (): HTMLCCardActionsElement;
+    };
+    interface HTMLCCardContentElement extends Components.CCardContent, HTMLStencilElement {
+    }
+    var HTMLCCardContentElement: {
+        prototype: HTMLCCardContentElement;
+        new (): HTMLCCardContentElement;
+    };
+    interface HTMLCCardTitleElement extends Components.CCardTitle, HTMLStencilElement {
+    }
+    var HTMLCCardTitleElement: {
+        prototype: HTMLCCardTitleElement;
+        new (): HTMLCCardTitleElement;
+    };
     interface HTMLCCheckboxElement extends Components.CCheckbox, HTMLStencilElement {
     }
     var HTMLCCheckboxElement: {
@@ -254,6 +305,12 @@ declare global {
     var HTMLCContainerElement: {
         prototype: HTMLCContainerElement;
         new (): HTMLCContainerElement;
+    };
+    interface HTMLCContentSwitcherElement extends Components.CContentSwitcher, HTMLStencilElement {
+    }
+    var HTMLCContentSwitcherElement: {
+        prototype: HTMLCContentSwitcherElement;
+        new (): HTMLCContentSwitcherElement;
     };
     interface HTMLCCscLogoElement extends Components.CCscLogo, HTMLStencilElement {
     }
@@ -387,6 +444,12 @@ declare global {
         prototype: HTMLCSubnavigationitemElement;
         new (): HTMLCSubnavigationitemElement;
     };
+    interface HTMLCSwitchElement extends Components.CSwitch, HTMLStencilElement {
+    }
+    var HTMLCSwitchElement: {
+        prototype: HTMLCSwitchElement;
+        new (): HTMLCSwitchElement;
+    };
     interface HTMLCTabElement extends Components.CTab, HTMLStencilElement {
     }
     var HTMLCTabElement: {
@@ -434,10 +497,14 @@ declare global {
         "c-autocomplete": HTMLCAutocompleteElement;
         "c-button": HTMLCButtonElement;
         "c-card": HTMLCCardElement;
+        "c-card-actions": HTMLCCardActionsElement;
+        "c-card-content": HTMLCCardContentElement;
+        "c-card-title": HTMLCCardTitleElement;
         "c-checkbox": HTMLCCheckboxElement;
         "c-col": HTMLCColElement;
         "c-consent": HTMLCConsentElement;
         "c-container": HTMLCContainerElement;
+        "c-content-switcher": HTMLCContentSwitcherElement;
         "c-csc-logo": HTMLCCscLogoElement;
         "c-flex": HTMLCFlexElement;
         "c-h1": HTMLCH1Element;
@@ -460,6 +527,7 @@ declare global {
         "c-sidenavigationitem": HTMLCSidenavigationitemElement;
         "c-spacer": HTMLCSpacerElement;
         "c-subnavigationitem": HTMLCSubnavigationitemElement;
+        "c-switch": HTMLCSwitchElement;
         "c-tab": HTMLCTabElement;
         "c-tab-button": HTMLCTabButtonElement;
         "c-tag": HTMLCTagElement;
@@ -491,12 +559,14 @@ declare namespace LocalJSX {
         "disabled"?: boolean;
         "fit"?: boolean;
         "fixed"?: boolean;
+        "ghost"?: boolean;
         "hostId"?: string;
         "icon"?: string;
         "loading"?: boolean;
         "noRadius"?: boolean;
         "outlined"?: boolean;
         "secondary"?: boolean;
+        "text"?: boolean;
     }
     interface CCard {
         "background"?: string;
@@ -511,6 +581,12 @@ declare namespace LocalJSX {
         "px"?: number;
         "py"?: number;
     }
+    interface CCardActions {
+    }
+    interface CCardContent {
+    }
+    interface CCardTitle {
+    }
     interface CCheckbox {
         "checked"?: boolean;
         "color"?: string;
@@ -523,6 +599,26 @@ declare namespace LocalJSX {
     }
     interface CContainer {
         "width"?: number;
+    }
+    interface CContentSwitcher {
+        /**
+          * Disable the content switcher
+         */
+        "hostDisabled"?: boolean;
+        /**
+          * Always require a value
+          * @type {boolean}
+          * @memberof ContentSwitcher
+         */
+        "mandatory"?: boolean;
+        "onChangeValue"?: (event: CustomEvent<any>) => void;
+        /**
+          * Always require a value
+          * @type {boolean}
+          * @memberof ContentSwitcher
+         */
+        "size"?: 'default' | 'small';
+        "value": number;
     }
     interface CCscLogo {
     }
@@ -544,6 +640,7 @@ declare namespace LocalJSX {
         "underline"?: boolean;
     }
     interface CLoader {
+        "contentdelay"?: number;
     }
     interface CMain {
     }
@@ -579,6 +676,7 @@ declare namespace LocalJSX {
     }
     interface CProgressbar {
         "color"?: string;
+        "indeterminate"?: boolean;
         "value"?: number;
     }
     interface CRadio {
@@ -622,21 +720,26 @@ declare namespace LocalJSX {
         "active"?: boolean;
         "href"?: string;
     }
+    interface CSwitch {
+        "hostDisabled"?: boolean;
+        "hostId"?: string;
+        "onChangeValue"?: (event: CustomEvent<any>) => void;
+        "value"?: boolean;
+    }
     interface CTab {
         "active"?: boolean;
         "hostId"?: string;
     }
     interface CTabButton {
         "active"?: boolean;
-        "color"?: string;
         "disabled"?: boolean;
         "hostId"?: string;
-        "icon"?: string;
         "label"?: string;
     }
     interface CTag {
         "active"?: boolean;
         "closeable"?: boolean;
+        "dense"?: boolean;
         "fit"?: boolean;
     }
     interface CTextField {
@@ -680,10 +783,14 @@ declare namespace LocalJSX {
         "c-autocomplete": CAutocomplete;
         "c-button": CButton;
         "c-card": CCard;
+        "c-card-actions": CCardActions;
+        "c-card-content": CCardContent;
+        "c-card-title": CCardTitle;
         "c-checkbox": CCheckbox;
         "c-col": CCol;
         "c-consent": CConsent;
         "c-container": CContainer;
+        "c-content-switcher": CContentSwitcher;
         "c-csc-logo": CCscLogo;
         "c-flex": CFlex;
         "c-h1": CH1;
@@ -706,6 +813,7 @@ declare namespace LocalJSX {
         "c-sidenavigationitem": CSidenavigationitem;
         "c-spacer": CSpacer;
         "c-subnavigationitem": CSubnavigationitem;
+        "c-switch": CSwitch;
         "c-tab": CTab;
         "c-tab-button": CTabButton;
         "c-tag": CTag;
@@ -723,10 +831,14 @@ declare module "@stencil/core" {
             "c-autocomplete": LocalJSX.CAutocomplete & JSXBase.HTMLAttributes<HTMLCAutocompleteElement>;
             "c-button": LocalJSX.CButton & JSXBase.HTMLAttributes<HTMLCButtonElement>;
             "c-card": LocalJSX.CCard & JSXBase.HTMLAttributes<HTMLCCardElement>;
+            "c-card-actions": LocalJSX.CCardActions & JSXBase.HTMLAttributes<HTMLCCardActionsElement>;
+            "c-card-content": LocalJSX.CCardContent & JSXBase.HTMLAttributes<HTMLCCardContentElement>;
+            "c-card-title": LocalJSX.CCardTitle & JSXBase.HTMLAttributes<HTMLCCardTitleElement>;
             "c-checkbox": LocalJSX.CCheckbox & JSXBase.HTMLAttributes<HTMLCCheckboxElement>;
             "c-col": LocalJSX.CCol & JSXBase.HTMLAttributes<HTMLCColElement>;
             "c-consent": LocalJSX.CConsent & JSXBase.HTMLAttributes<HTMLCConsentElement>;
             "c-container": LocalJSX.CContainer & JSXBase.HTMLAttributes<HTMLCContainerElement>;
+            "c-content-switcher": LocalJSX.CContentSwitcher & JSXBase.HTMLAttributes<HTMLCContentSwitcherElement>;
             "c-csc-logo": LocalJSX.CCscLogo & JSXBase.HTMLAttributes<HTMLCCscLogoElement>;
             "c-flex": LocalJSX.CFlex & JSXBase.HTMLAttributes<HTMLCFlexElement>;
             "c-h1": LocalJSX.CH1 & JSXBase.HTMLAttributes<HTMLCH1Element>;
@@ -749,6 +861,7 @@ declare module "@stencil/core" {
             "c-sidenavigationitem": LocalJSX.CSidenavigationitem & JSXBase.HTMLAttributes<HTMLCSidenavigationitemElement>;
             "c-spacer": LocalJSX.CSpacer & JSXBase.HTMLAttributes<HTMLCSpacerElement>;
             "c-subnavigationitem": LocalJSX.CSubnavigationitem & JSXBase.HTMLAttributes<HTMLCSubnavigationitemElement>;
+            "c-switch": LocalJSX.CSwitch & JSXBase.HTMLAttributes<HTMLCSwitchElement>;
             "c-tab": LocalJSX.CTab & JSXBase.HTMLAttributes<HTMLCTabElement>;
             "c-tab-button": LocalJSX.CTabButton & JSXBase.HTMLAttributes<HTMLCTabButtonElement>;
             "c-tag": LocalJSX.CTag & JSXBase.HTMLAttributes<HTMLCTagElement>;

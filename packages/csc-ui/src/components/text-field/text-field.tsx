@@ -8,29 +8,29 @@ import {
   State,
   Watch,
   Element,
-} from "@stencil/core";
+} from '@stencil/core';
 
 @Component({
-  tag: "c-text-field",
-  styleUrl: "text-field.css",
+  tag: 'c-text-field',
+  styleUrl: 'text-field.css',
   shadow: true,
 })
 export class TextField {
   @Prop() validate: boolean = false;
-  @Watch("validate")
+  @Watch('validate')
   validateChange(newValue: boolean) {
     if (newValue) {
       this.runValidate(true, true);
     }
   }
-  @Prop({ attribute: "id" }) hostId: string;
+  @Prop({ attribute: 'id' }) hostId: string;
   @Prop() number: boolean;
   @Prop() disabled: boolean;
   @Prop() readonly: boolean;
   @Prop() shadow: boolean;
   @Prop() autofocus: boolean;
   @Prop() valid: boolean = true;
-  @Prop() validation: string = "Required field";
+  @Prop() validation: string = 'Required field';
   @Prop() required: boolean = null;
   @Prop() validateOnBlur: boolean = false;
   @Prop() label: string;
@@ -43,10 +43,10 @@ export class TextField {
   @Prop() placeholder: string;
   @Prop({ mutable: true }) value: string;
   @Prop() form: boolean;
-  outerWrapperClasses = ["outer-wrapper"];
-  validationClasses = ["validation-message"];
+  outerWrapperClasses = ['outer-wrapper'];
+  validationClasses = ['validation-message'];
   @Event() changeValue: EventEmitter;
-  @State() tick = "";
+  @State() tick = '';
   blurred = false;
   inputReference?: HTMLInputElement;
   textAreaReference?: HTMLTextAreaElement;
@@ -70,23 +70,23 @@ export class TextField {
 
   handleChange(event) {
     this.value = event.target.value;
-    this.tick = "";
-    this.changeValue.emit(event.target.value);
+    this.tick = '';
+    // this.changeValue.emit(event.target.value);
   }
 
   runValidate(forceUpdate = false, extValidate = false) {
     this.outerWrapperClasses = this.outerWrapperClasses.filter(
-      (c) => c !== "required"
+      (c) => c !== 'required'
     );
-    this.validationClasses = this.validationClasses.filter((c) => c !== "show");
+    this.validationClasses = this.validationClasses.filter((c) => c !== 'show');
     if (
       (this.blurred || !this.validateOnBlur || extValidate) &&
       ((this.required && !this.value) || !this.valid)
     ) {
-      this.outerWrapperClasses.push("required");
-      this.validationClasses.push("show");
+      this.outerWrapperClasses.push('required');
+      this.validationClasses.push('show');
       if (forceUpdate) {
-        this.tick = "force";
+        this.tick = 'force';
       }
     }
   }
@@ -113,44 +113,44 @@ export class TextField {
   );
 
   render() {
-    if (this.tick !== "force") {
+    if (this.tick !== 'force') {
       // already externally validated when forced to render
       this.runValidate();
     }
     if (this.disabled) {
-      this.outerWrapperClasses.push("disabled");
+      this.outerWrapperClasses.push('disabled');
     } else {
       this.outerWrapperClasses = this.outerWrapperClasses.filter(
-        (c) => c !== "disabled"
+        (c) => c !== 'disabled'
       );
     }
-    let borderLabel = "border-label";
-    if (this.value !== "" || this.placeholder) {
-      borderLabel += " value-set";
+    let borderLabel = 'border-label';
+    if (this.value !== '' || this.placeholder) {
+      borderLabel += ' value-set';
     }
 
     const labelBlock = (
       <div class={borderLabel}>
         <label class="top-span" htmlFor={this.name}>
           {this.label}
-          {this.required ? "*" : ""}
+          {this.required ? '*' : ''}
         </label>
         <label class="hidden">
           {this.label}
-          {this.required ? "*" : ""}
+          {this.required ? '*' : ''}
         </label>
       </div>
     );
 
-    let type = "text";
+    let type = 'text';
     if (this.number) {
-      type = "number";
+      type = 'number';
     }
     if (this.type) {
       type = this.type;
     }
     if (this.shadow) {
-      this.outerWrapperClasses.push("shadow");
+      this.outerWrapperClasses.push('shadow');
     }
 
     if (this.form) {
@@ -193,7 +193,7 @@ export class TextField {
     );
     return (
       <Host onClick={() => this.focus()}>
-        <div class={this.outerWrapperClasses.join(" ")}>
+        <div class={this.outerWrapperClasses.join(' ')}>
           <div class="border-wrapper">
             <div class="border-left"></div>
             {this.label ? labelBlock : null}
@@ -204,7 +204,7 @@ export class TextField {
           {this.rows > 1 ? textArea : textInput}
           <slot name="post"></slot>
         </div>
-        <div class={this.validationClasses.join(" ")}>
+        <div class={this.validationClasses.join(' ')}>
           {this.validationIcon} {this.validation}
         </div>
       </Host>
@@ -217,15 +217,15 @@ export class TextField {
     value: string | null
   ) {
     let input = container.querySelector(
-      "input.hidden-input"
+      'input.hidden-input'
     ) as HTMLInputElement | null;
     if (!input) {
-      input = container.ownerDocument.createElement("input");
-      input.type = "hidden";
-      input.classList.add("hidden-input");
+      input = container.ownerDocument.createElement('input');
+      input.type = 'hidden';
+      input.classList.add('hidden-input');
       container.appendChild(input);
     }
     input.name = name;
-    input.value = value || "";
+    input.value = value || '';
   }
 }

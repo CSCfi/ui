@@ -1,20 +1,21 @@
-@import "../../global/app.css";
+:host {
+  display: flex;
+}
 
 button {
-  display: inline-block;
+  display: flex;
   border: none;
   padding: 0;
   background: transparent;
+  border-radius: 2px;
 }
 
 button:focus {
   outline: none;
 }
-button:focus:not(:focus-visible) {
-}
+
 button:focus-visible {
-  /* Some even *more* exciting button focus styles */
-  outline: 1px black solid;
+  outline: 2px var(--csc-primary) solid;
   outline-offset: 2px;
 }
 
@@ -37,8 +38,9 @@ button.fit {
 }
 
 .csc-button.border-radius {
-  border-radius: 4px;
+  border-radius: var(--c-radius);
 }
+
 @media (max-width: 767px) {
   .full-width-mobile {
     max-width: 100% !important;
@@ -210,6 +212,28 @@ button.fit {
 
 .spinner_wrapper.dense_spinner .spinner {
   max-width: 24px;
+}
+
+.csc-button {
+  --c-radius: 4px;
+
+  &.grouped {
+    border-radius: 0;
+    white-space: nowrap;
+    border: solid 1px var(--current-color);
+    box-shadow: none;
+    flex-grow: 1;
+  }
+
+  &-disabled.grouped:not(.outlined) {
+    background: var(--csc-light-grey) !important;
+    color: var(--csc-dark-grey) !important;
+    box-shadow: none;
+  }
+
+  &-disabled.grouped {
+    border: solid 1px var(--csc-light-grey);
+  }
 }
 
 @keyframes svg-animation {

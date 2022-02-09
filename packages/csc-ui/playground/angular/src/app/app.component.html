@@ -1,0 +1,176 @@
+<c-button>Press</c-button>
+<br />
+<br />
+
+<c-row>
+  <c-col>
+    <c-card color="white">
+      <form [formGroup]="form">
+        <c-card-title>Usage in Angular forms</c-card-title>
+        <c-card-content>
+          <c-content-switcher
+            cControl
+            formControlName="contentSwitcher"
+            mandatory
+            block
+          >
+            <c-button>Option 8</c-button>
+            <c-button>Option 2</c-button>
+            <c-button>Option 3</c-button>
+            <c-button>Option 4</c-button>
+            <c-button>Option 5</c-button>
+            <c-button>Option 6</c-button>
+          </c-content-switcher>
+
+          <c-switch cControl formControlName="switch"
+            >Use multiplexinator to assimilate the subjects?</c-switch
+          >
+        </c-card-content>
+
+        <c-card-actions>
+          <c-spacer></c-spacer>
+          <c-button outlined>Cancel</c-button>
+          <c-button [disabled]="!form.valid">Submit</c-button>
+        </c-card-actions>
+      </form>
+    </c-card>
+
+    <pre>{{ form.value | json }}</pre>
+  </c-col>
+  <c-col>
+    <c-card color="white">
+      <form [formGroup]="form2">
+        <c-card-title>Usage in Angular forms</c-card-title>
+        <c-card-content>
+          <c-content-switcher
+            formControlName="contentSwitcher2"
+            cControl
+            mandatory
+            size="small"
+          >
+            <c-button>Press 2</c-button>
+            <c-button>Press 8</c-button>
+            <c-button>Press 7</c-button>
+          </c-content-switcher>
+
+          <c-switch cControl formControlName="switch"
+            >Use multiplexinator to assimilate the subjects?</c-switch
+          >
+        </c-card-content>
+
+        <c-card-actions>
+          <c-button fit outlined>Cancel</c-button>
+          <c-button fit [disabled]="!form2.valid">Submit</c-button>
+        </c-card-actions>
+      </form>
+    </c-card>
+  </c-col>
+  <c-col></c-col>
+</c-row>
+
+<c-row>
+  <c-col>
+    <c-text-field
+      label="test"
+      cControl
+      name="test"
+      [(ngModel)]="test"
+    ></c-text-field>
+  </c-col>
+  <c-col>{{ test }}</c-col>
+</c-row>
+
+<c-row>
+  <c-col>
+    <c-content-switcher cControl [(ngModel)]="csValue" mandatory disabled>
+      <c-button>Press</c-button>
+      <c-button>Press</c-button>
+      <c-button>Press</c-button>
+    </c-content-switcher>
+    CS: {{ csValue }}
+    <br />
+    <button (click)="csValue = 1">Set to 1</button>
+  </c-col>
+
+  <c-col>
+    <c-content-switcher
+      name="cs2"
+      cControl
+      [(ngModel)]="csValue2"
+      block
+      (changeValue)="log($event)"
+    >
+      <c-button>One</c-button>
+      <c-button>Two</c-button>
+      <c-button>Three</c-button>
+    </c-content-switcher>
+    CS2: {{ csValue2 }}
+    <br />
+    <button (click)="csValue2 = 0">Set to 0</button>
+  </c-col>
+
+  <c-col>
+    <c-content-switcher
+      name="cs"
+      ngDefaultControl
+      mandatory
+      [(ngModel)]="csValue2"
+      (input)="log($event)"
+    >
+      <c-button>One</c-button>
+      <c-button>Two</c-button>
+      <c-button>Three</c-button>
+    </c-content-switcher>
+    CS2: {{ csValue2 }}
+    <br />
+    <button (click)="csValue2 = 0">Set to 0</button>
+  </c-col>
+</c-row>
+
+<c-rov>
+  <c-col>
+    <c-button disabled>One</c-button>
+    <c-button>Two</c-button>
+    <c-button outlined>Three</c-button>
+    <c-button outlined disabled>Three</c-button>
+  </c-col>
+</c-rov>
+
+<c-row>
+  <c-col>
+    <c-switch
+      ngDefaultControl
+      name="sw"
+      [(ngModel)]="swValue"
+      (input)="log($event)"
+      (change)="log($event)"
+      (changeValue)="log($event)"
+      >Default</c-switch
+    >
+    <br />
+    sw: {{ swValue }}
+    <br />
+    <c-switch disabled>Disabled</c-switch>
+    <br />
+    <br />
+    <c-switch ngDefaultControl name="sw2" [(ngModel)]="swValue"></c-switch>
+    <br />
+    <c-button (click)="swValue = !swValue">Toggle</c-button>
+  </c-col>
+</c-row>
+
+<c-col>
+  <c-row>
+    <c-select
+      ngDefaultControl
+      name="cb"
+      [(ngModel)]="cbValue"
+      [items]="[
+        { value: '1esa', name: 'Jooooo' },
+        { value: '0mica', name: 'Jee' }
+      ]"
+    ></c-select>
+    <br />
+    cb: {{ cbValue | json }}
+  </c-row>
+</c-col>

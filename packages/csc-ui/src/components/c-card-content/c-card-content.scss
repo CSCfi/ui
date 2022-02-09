@@ -1,0 +1,14 @@
+:host {
+  display: block;
+}
+
+.c-card-content {
+  padding: 24px;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 32px;
+
+  ::slotted(*) {
+    max-width: 100%;
+  }
+}

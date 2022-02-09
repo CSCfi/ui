@@ -1,4 +1,4 @@
-# c-title
+# c-card-title
 
 
 
@@ -7,15 +7,15 @@
 
 ## Dependencies
 
-### Used by
+### Depends on
 
- - [c-card-title](../c-card-title)
+- [c-title](../title)
 
 ### Graph
 ```mermaid
 graph TD;
   c-card-title --> c-title
-  style c-title fill:#f9f,stroke:#333,stroke-width:4px
+  style c-card-title fill:#f9f,stroke:#333,stroke-width:4px
 ```
 
 ----------------------------------------------

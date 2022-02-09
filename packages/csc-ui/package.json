@@ -16,6 +16,7 @@
   ],
   "scripts": {
     "build": "stencil build --docs",
+    "build:watch": "stencil build --watch",
     "start": "stencil build --dev --watch --serve",
     "test": "stencil test --spec --e2e",
     "test.watch": "stencil test --spec --e2e --watchAll",
@@ -23,7 +24,8 @@
   },
   "devDependencies": {
     "@stencil/angular-output-target": "^0.4.0",
-    "@stencil/core": "^2.13.0"
+    "@stencil/core": "^2.13.0",
+    "@stencil/sass": "^1.5.2"
   },
   "license": "MIT",
   "dependencies": {

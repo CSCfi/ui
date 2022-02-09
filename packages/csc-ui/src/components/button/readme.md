@@ -13,12 +13,14 @@
 | `disabled`  | `disabled`  |             | `boolean` | `undefined` |
 | `fit`       | `fit`       |             | `boolean` | `undefined` |
 | `fixed`     | `fixed`     |             | `boolean` | `undefined` |
+| `ghost`     | `ghost`     |             | `boolean` | `undefined` |
 | `hostId`    | `id`        |             | `string`  | `undefined` |
 | `icon`      | `icon`      |             | `string`  | `undefined` |
 | `loading`   | `loading`   |             | `boolean` | `undefined` |
 | `noRadius`  | `no-radius` |             | `boolean` | `undefined` |
 | `outlined`  | `outlined`  |             | `boolean` | `undefined` |
 | `secondary` | `secondary` |             | `boolean` | `undefined` |
+| `text`      | `text`      |             | `boolean` | `undefined` |
 
 
 ----------------------------------------------

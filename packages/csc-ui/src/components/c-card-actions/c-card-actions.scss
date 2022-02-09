@@ -1,0 +1,10 @@
+.c-card-actions {
+  display: flex;
+  gap: 8px;
+  padding: 24px;
+  padding-top: 0;
+
+  ::slotted(c-button[fit]) {
+    flex: 1;
+  }
+}
