@@ -140,7 +140,6 @@ export namespace Components {
     }
     interface CProgressbar {
         "color": string;
-        "indeterminate": boolean;
         "value": number;
     }
     interface CRadio {
@@ -193,14 +192,15 @@ export namespace Components {
     }
     interface CTabButton {
         "active": boolean;
+        "color": string;
         "disabled": boolean;
         "hostId": string;
+        "icon": string;
         "label": string;
     }
     interface CTag {
         "active": boolean;
         "closeable": boolean;
-        "dense": boolean;
         "fit": boolean;
     }
     interface CTextField {
@@ -676,7 +676,6 @@ declare namespace LocalJSX {
     }
     interface CProgressbar {
         "color"?: string;
-        "indeterminate"?: boolean;
         "value"?: number;
     }
     interface CRadio {
@@ -732,14 +731,15 @@ declare namespace LocalJSX {
     }
     interface CTabButton {
         "active"?: boolean;
+        "color"?: string;
         "disabled"?: boolean;
         "hostId"?: string;
+        "icon"?: string;
         "label"?: string;
     }
     interface CTag {
         "active"?: boolean;
         "closeable"?: boolean;
-        "dense"?: boolean;
         "fit"?: boolean;
     }
     interface CTextField {
