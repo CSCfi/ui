@@ -1,0 +1,22 @@
+<app-example title="Usage in Angular" cols [raw]="examples[0]" [script]="scripts[0]">
+  <c-autocomplete
+    label="Countries"
+    cControl
+    [items]="filteredItems"
+    [query]="query"
+    (changeQuery)="changeQuery($event)"
+    [itemsPerPage]="10"
+    [(ngModel)]="value"
+  ></c-autocomplete>
+
+  <c-button [disabled]="!value" (click)="addTag()">Add</c-button>
+
+  <c-tag
+    *ngFor="let tag of addedTags; let i = index"
+    closeable
+    (click)="removeTag(i)"
+    (keyup.enter)="removeTag(i)"
+  >
+    {{ tag.name }}
+  </c-tag>
+</app-example>

@@ -1,0 +1,73 @@
+<app-example title="Basic usage" subtitle="Using index based values by default">
+  <c-tab-buttons value="1">
+    <c-button>One</c-button>
+    <c-button>Two</c-button>
+    <c-button>Three</c-button>
+  </c-tab-buttons>
+</app-example>
+
+<app-example title="Basic usage 2" subtitle="Using custom values">
+  <c-tab-buttons value="three">
+    <c-button value="one">One</c-button>
+    <c-button value="two">Two</c-button>
+    <c-button value="three">Three</c-button>
+  </c-tab-buttons>
+</app-example>
+
+<app-example title="Mandatory selection" subtitle="Selection can not be cleared">
+  <c-tab-buttons mandatory>
+    <c-button>One</c-button>
+    <c-button>Two</c-button>
+    <c-button>Three</c-button>
+  </c-tab-buttons>
+</app-example>
+
+<app-example title="Disabled">
+  <c-tab-buttons disabled>
+    <c-button>One</c-button>
+    <c-button>Two</c-button>
+    <c-button>Three</c-button>
+  </c-tab-buttons>
+</app-example>
+
+<app-example title="Small variant">
+  <c-tab-buttons size="small">
+    <c-button>One</c-button>
+    <c-button>Two</c-button>
+    <c-button>Three</c-button>
+  </c-tab-buttons>
+</app-example>
+
+<app-example title="Large variant">
+  <c-tab-buttons size="large">
+    <c-button>One</c-button>
+    <c-button>Two</c-button>
+    <c-button>Three</c-button>
+  </c-tab-buttons>
+</app-example>
+
+<app-example title="With descriptions">
+  <c-tab-buttons value="small">
+    <c-button value="tiny">
+      standard.tiny
+      <div slot="description">
+        <div>80 GB storage</div>
+        <div>1 GB RAM | 1 CPU</div>
+      </div>
+    </c-button>
+    <c-button value="small">
+      standard.small
+      <div slot="description">
+        <div>80 GB storage</div>
+        <div>2 GB RAM | 2 CPU</div>
+      </div>
+    </c-button>
+    <c-button value="medium">
+      standard.medium
+      <div slot="description">
+        <div>80 GB storage</div>
+        <div>4 GB RAM | 3 CPU</div>
+      </div>
+    </c-button>
+  </c-tab-buttons>
+</app-example>

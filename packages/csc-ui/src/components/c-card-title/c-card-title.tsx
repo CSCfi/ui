@@ -1,5 +1,8 @@
 import { Component, h } from '@stencil/core';
-
+/**
+ * @parent c-card
+ * @slot - Card title text
+ */
 @Component({
   tag: 'c-card-title',
   styleUrl: 'c-card-title.scss',

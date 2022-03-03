@@ -1,0 +1,11 @@
+.container-height {
+  height: calc(100vh - 60px);
+  overflow-y: scroll;
+}
+
+.subheader {
+  color: #fff;
+  text-transform: uppercase;
+  border-bottom: 1px #d7e8ea solid;
+  font-size: 12px;
+}

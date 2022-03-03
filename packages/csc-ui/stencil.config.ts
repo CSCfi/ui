@@ -33,13 +33,21 @@ export const config: Config = {
       type: 'docs-readme',
     },
     {
+      type: 'docs-json',
+      file: 'docs.json',
+    },
+    {
       type: 'www',
       serviceWorker: null, // disable service workers
     },
   ],
   plugins: [
     sass({
-      injectGlobalPaths: ['src/global/variables.scss'],
+      injectGlobalPaths: [
+        'src/styles/global.scss',
+        'src/styles/variables.css',
+        'src/styles/variables.scss',
+      ],
     }),
   ],
 };

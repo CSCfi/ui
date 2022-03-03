@@ -1,0 +1,19 @@
+<app-example title="Basic usage" [raw]="template" [script]="script">
+  <c-sidenavigation>
+    <c-sidenavigationitem
+      *ngFor="let item of items"
+      [active]="currentItem === item"
+      (click)="currentItem = item"
+    >
+      <div slot="main">
+        <span class="mdi {{ item.icon }}"></span>
+        {{ item.title }}
+      </div>
+      <div *ngIf="item.subs?.length" slot="subnavitem">
+        <c-subnavigationitem *ngFor="let sub of item.subs" href="https://www.csc.fi">
+          {{ sub.title }}
+        </c-subnavigationitem>
+      </div>
+    </c-sidenavigationitem>
+  </c-sidenavigation>
+</app-example>

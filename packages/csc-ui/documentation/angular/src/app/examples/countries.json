@@ -1,0 +1,1032 @@
+{
+  "AF": {
+    "finnish": "Afganistan",
+    "english": "Afganistan"
+  },
+  "AX": {
+    "finnish": "Ahvenanmaa",
+    "english": "Aland Islands"
+  },
+  "NL": {
+    "finnish": "Alankomaat",
+    "english": "Netherlands"
+  },
+  "AN": {
+    "finnish": "Alankomaiden Antillit",
+    "english": "Netherlands Antilles"
+  },
+  "AL": {
+    "finnish": "Albania",
+    "english": "Albania"
+  },
+  "DZ": {
+    "finnish": "Algeria",
+    "english": "Algeria"
+  },
+  "AS": {
+    "finnish": "Amerikan Samoa",
+    "english": "American Samoa"
+  },
+  "AD": {
+    "finnish": "Andorra",
+    "english": "Andorra"
+  },
+  "AO": {
+    "finnish": "Angola",
+    "english": "Angola"
+  },
+  "AI": {
+    "finnish": "Anguilla",
+    "english": "Anguilla"
+  },
+  "AG": {
+    "finnish": "Antigua ja Barbuda",
+    "english": "Antigua-Barbuda"
+  },
+  "AR": {
+    "finnish": "Argentiina",
+    "english": "Argentina"
+  },
+  "AM": {
+    "finnish": "Armenia",
+    "english": "Armenia"
+  },
+  "AW": {
+    "finnish": "Aruba",
+    "english": "Aruba"
+  },
+  "AC": {
+    "finnish": "Ascension",
+    "english": "Ascencion Island"
+  },
+  "AU": {
+    "finnish": "Australia",
+    "english": "Australia"
+  },
+  "AZ": {
+    "finnish": "Azerbaidžan",
+    "english": "Azerbaijan"
+  },
+  "BS": {
+    "finnish": "Bahama",
+    "english": "Bahamas"
+  },
+  "BH": {
+    "finnish": "Bahrain",
+    "english": "Bahrain"
+  },
+  "BD": {
+    "finnish": "Bangladesh",
+    "english": "Bangladesh"
+  },
+  "BB": {
+    "finnish": "Barbados",
+    "english": "Barbados"
+  },
+  "BE": {
+    "finnish": "Belgia",
+    "english": "Belgium"
+  },
+  "BZ": {
+    "finnish": "Belize",
+    "english": "Belize"
+  },
+  "BJ": {
+    "finnish": "Benin",
+    "english": "Benin"
+  },
+  "BM": {
+    "finnish": "Bermuda",
+    "english": "Bermuda"
+  },
+  "BT": {
+    "finnish": "Bhutan",
+    "english": "Bhutan"
+  },
+  "BO": {
+    "finnish": "Bolivia",
+    "english": "Bolivia"
+  },
+  "BQ": {
+    "finnish": "Bonaire-St. Eustatius-Saba",
+    "english": "Bonaire-St. Eustatius-Saba"
+  },
+  "BA": {
+    "finnish": "Bosnia-Hertsegovina",
+    "english": "Bosnia and Herzegovina"
+  },
+  "BW": {
+    "finnish": "Botswana",
+    "english": "Botswana"
+  },
+  "BV": {
+    "finnish": "Bouvet’n saari",
+    "english": "Bouvet Island"
+  },
+  "BR": {
+    "finnish": "Brasilia",
+    "english": "Brazil"
+  },
+  "IO": {
+    "finnish": "Brittiläinen Intian valtameren alue",
+    "english": "British Indian Ocean Territory"
+  },
+  "VG": {
+    "finnish": "Brittiläiset Neitsytsaaret",
+    "english": "British Virgin Islands"
+  },
+  "BN": {
+    "finnish": "Brunei",
+    "english": "Brunei"
+  },
+  "BG": {
+    "finnish": "Bulgaria",
+    "english": "Bulgaria"
+  },
+  "BF": {
+    "finnish": "Burkina Faso",
+    "english": "Burkina Faso"
+  },
+  "BI": {
+    "finnish": "Burundi",
+    "english": "Burundi"
+  },
+  "KY": {
+    "finnish": "Caymansaaret",
+    "english": "Cayman Islands"
+  },
+  "Ceuta": {
+    "finnish": "Ceuta",
+    "english": "Melilla",
+    "": "Melilla"
+  },
+  "CL": {
+    "finnish": "Chile",
+    "english": "Chile"
+  },
+  "CP": {
+    "finnish": "Clippertoninsaari",
+    "english": "Clipperton Island"
+  },
+  "CK": {
+    "finnish": "Cookinsaaret",
+    "english": "Cook Islands"
+  },
+  "CR": {
+    "finnish": "Costa Rica",
+    "english": "Costa Rica"
+  },
+  "CW": {
+    "finnish": "Curaçao",
+    "english": "Curacao"
+  },
+  "DG": {
+    "finnish": "Diego Garcia",
+    "english": "Diego Garcia"
+  },
+  "DJ": {
+    "finnish": "Djibouti",
+    "english": "Djibouti"
+  },
+  "DM": {
+    "finnish": "Dominica",
+    "english": "Dominica"
+  },
+  "DO": {
+    "finnish": "Dominikaaninen tasavalta",
+    "english": "Dominican Republic"
+  },
+  "EC": {
+    "finnish": "Ecuador",
+    "english": "Ecuador"
+  },
+  "EG": {
+    "finnish": "Egypti",
+    "english": "Egypt"
+  },
+  "SV": {
+    "finnish": "El Salvador",
+    "english": "El Salvador"
+  },
+  "ER": {
+    "finnish": "Eritrea",
+    "english": "Eritrea"
+  },
+  "ES": {
+    "finnish": "Espanja",
+    "english": "Spain"
+  },
+  "ET": {
+    "finnish": "Etiopia",
+    "english": "Ethiopia"
+  },
+  "ZA": {
+    "finnish": "Etelä-Afrikka",
+    "english": "South Africa"
+  },
+  "GS": {
+    "finnish": "Etelä-Georgia ja Eteläiset Sandwichsaaret",
+    "english": "South Georgia and the South Sandwich Islands"
+  },
+  "SS": {
+    "finnish": "Etelä-Sudan",
+    "english": "South Sudan"
+  },
+  "AQ": {
+    "finnish": "Etelämanner",
+    "english": "Antarctica"
+  },
+  "FK": {
+    "finnish": "Falklandinsaaret",
+    "english": "Falkland Islands"
+  },
+  "FO": {
+    "finnish": "Fårö saaret",
+    "english": "Faroe Islands"
+  },
+  "FJ": {
+    "finnish": "Fidzi",
+    "english": "Fiji Islands"
+  },
+  "PH": {
+    "finnish": "Filippiinit",
+    "english": "Philippines"
+  },
+  "GA": {
+    "finnish": "Gabon",
+    "english": "Gabon"
+  },
+  "GM": {
+    "finnish": "Gambia",
+    "english": "Gambia"
+  },
+  "GE": {
+    "finnish": "Georgia",
+    "english": "Georgia"
+  },
+  "GH": {
+    "finnish": "Ghana",
+    "english": "Ghana"
+  },
+  "GI": {
+    "finnish": "Gibraltar",
+    "english": "Gibraltar"
+  },
+  "GD": {
+    "finnish": "Grenada",
+    "english": "Grenada"
+  },
+  "GL": {
+    "finnish": "Gr̦önlanti",
+    "english": "Greenland"
+  },
+  "GP": {
+    "finnish": "Guadeloupe",
+    "english": "Guadeloupe"
+  },
+  "GU": {
+    "finnish": "Guam",
+    "english": "Guam"
+  },
+  "GT": {
+    "finnish": "Guatemala",
+    "english": "Guatemala"
+  },
+  "GG": {
+    "finnish": "Guernsey",
+    "english": "Guernsey"
+  },
+  "GN": {
+    "finnish": "Guinea",
+    "english": "Guinea"
+  },
+  "GW": {
+    "finnish": "Guinea-Bissau",
+    "english": "Guinea-Bissau"
+  },
+  "GY": {
+    "finnish": "Guyana",
+    "english": "Guyana"
+  },
+  "HT": {
+    "finnish": "Haiti",
+    "english": "Haiti"
+  },
+  "HM": {
+    "finnish": "Heard ja McDonaldinsaaret",
+    "english": "Heard Island and McDonald Islands"
+  },
+  "HN": {
+    "finnish": "Honduras",
+    "english": "Honduras"
+  },
+  "HK": {
+    "finnish": "Hong Kong",
+    "english": "Hong Kong"
+  },
+  "ID": {
+    "finnish": "Indonesia",
+    "english": "Indonesia"
+  },
+  "IN": {
+    "finnish": "Intia",
+    "english": "India"
+  },
+  "IQ": {
+    "finnish": "Irak",
+    "english": "Iraq"
+  },
+  "IR": {
+    "finnish": "Iran",
+    "english": "Iran"
+  },
+  "IE": {
+    "finnish": "Irlanti",
+    "english": "Ireland"
+  },
+  "IS": {
+    "finnish": "Islanti",
+    "english": "Iceland"
+  },
+  "IL": {
+    "finnish": "Israel",
+    "english": "Israel"
+  },
+  "IT": {
+    "finnish": "Italia",
+    "english": "Italy"
+  },
+  "AT": {
+    "finnish": "Itävalta",
+    "english": "Austria"
+  },
+  "JM": {
+    "finnish": "Jamaika",
+    "english": "Jamaica"
+  },
+  "JP": {
+    "finnish": "Japani",
+    "english": "Japan"
+  },
+  "YE": {
+    "finnish": "Jemen",
+    "english": "Yemen"
+  },
+  "JE": {
+    "finnish": "Jersey",
+    "english": "Jersey"
+  },
+  "JO": {
+    "finnish": "Jordania",
+    "english": "Jordan"
+  },
+  "CX": {
+    "finnish": "Joulusaari",
+    "english": "Christmas Island"
+  },
+  "KH": {
+    "finnish": "Kambodza",
+    "english": "Cambodia"
+  },
+  "CM": {
+    "finnish": "Kamerun",
+    "english": "Cameroon"
+  },
+  "CA": {
+    "finnish": "Kanada",
+    "english": "Canada"
+  },
+  "IC": {
+    "finnish": "Kanariansaaret",
+    "english": "Canary Islands"
+  },
+  "CV": {
+    "finnish": "Kap Verde",
+    "english": "Cape Verde Island"
+  },
+  "KZ": {
+    "finnish": "Kazakstan",
+    "english": "Kazakhstan"
+  },
+  "KE": {
+    "finnish": "Kenia",
+    "english": "Kenya"
+  },
+  "CF": {
+    "finnish": "Keski-Afrikan tasavalta",
+    "english": "Central African Republic"
+  },
+  "CN": {
+    "finnish": "Kiina",
+    "english": "China"
+  },
+  "KG": {
+    "finnish": "Kirgisia",
+    "english": "Kyrgyzstan"
+  },
+  "KI": {
+    "finnish": "Kiribati",
+    "english": "Kiribati"
+  },
+  "CO": {
+    "finnish": "Kolumbia",
+    "english": "Colombia"
+  },
+  "KM": {
+    "finnish": "Komorit",
+    "english": "Comoros"
+  },
+  "CD": {
+    "finnish": "Kongon demokraattinen tasavalta",
+    "english": "Democratic Republic of the Congo"
+  },
+  "CG": {
+    "finnish": "Kongon tasavalta",
+    "english": "Republic of the Congo"
+  },
+  "CC": {
+    "finnish": "Kookossaaret",
+    "english": "Cocos Island"
+  },
+  "KP": {
+    "finnish": "Korean demokraattinen kansantasavalta",
+    "english": "North Korea"
+  },
+  "KR": {
+    "finnish": "Korean tasavalta",
+    "english": "South Korea"
+  },
+  "GR": {
+    "finnish": "Kreikka",
+    "english": "Greece"
+  },
+  "HR": {
+    "finnish": "Kroatia",
+    "english": "Croatia"
+  },
+  "CU": {
+    "finnish": "Kuuba",
+    "english": "Cuba"
+  },
+  "KW": {
+    "finnish": "Kuwait",
+    "english": "Kuwait"
+  },
+  "CY": {
+    "finnish": "Kypros",
+    "english": "Cyprus"
+  },
+  "LA": {
+    "finnish": "Laos",
+    "english": "Laos"
+  },
+  "LV": {
+    "finnish": "Latvia",
+    "english": "Latvia"
+  },
+  "LS": {
+    "finnish": "Lesotho",
+    "english": "Lesotho"
+  },
+  "LB": {
+    "finnish": "Libanon",
+    "english": "Lebanon"
+  },
+  "LR": {
+    "finnish": "Liberia",
+    "english": "Liberia"
+  },
+  "LY": {
+    "finnish": "Libya",
+    "english": "Libya"
+  },
+  "LI": {
+    "finnish": "Liechtenstein",
+    "english": "Liechtenstein"
+  },
+  "LT": {
+    "finnish": "Liettua",
+    "english": "Lithuania"
+  },
+  "LU": {
+    "finnish": "Luxemburg",
+    "english": "Luxembourg"
+  },
+  "EH": {
+    "finnish": "Länsi-Sahara",
+    "english": "Western Sahara"
+  },
+  "MO": {
+    "finnish": "Macao",
+    "english": "Macau"
+  },
+  "MG": {
+    "finnish": "Madagaskar",
+    "english": "Madagaskar"
+  },
+  "MK": {
+    "finnish": "Makedonia",
+    "english": "Macedonia"
+  },
+  "MW": {
+    "finnish": "Malawi",
+    "english": "Malawi"
+  },
+  "MV": {
+    "finnish": "Malediivit",
+    "english": "Maldives"
+  },
+  "MY": {
+    "finnish": "Malesia",
+    "english": "Malaysia"
+  },
+  "ML": {
+    "finnish": "Mali",
+    "english": "Mali"
+  },
+  "MT": {
+    "finnish": "Malta",
+    "english": "Malta"
+  },
+  "IM": {
+    "finnish": "Mansaari",
+    "english": "Isle of Man"
+  },
+  "MA": {
+    "finnish": "Marokko",
+    "english": "Morocco"
+  },
+  "MH": {
+    "finnish": "Marshallinsaaret",
+    "english": "Marshal Islands"
+  },
+  "MQ": {
+    "finnish": "Martinique",
+    "english": "Martinique"
+  },
+  "MR": {
+    "finnish": "Mauritania",
+    "english": "Mauritania"
+  },
+  "MU": {
+    "finnish": "Mauritius",
+    "english": "Mauritius"
+  },
+  "YT": {
+    "finnish": "Mayotte",
+    "english": "Mayotte Island"
+  },
+  "MX": {
+    "finnish": "Meksiko",
+    "english": "Mexico"
+  },
+  "FM": {
+    "finnish": "Mikronesia",
+    "english": "Mikronesia"
+  },
+  "MD": {
+    "finnish": "Moldova",
+    "english": "Moldova"
+  },
+  "MC": {
+    "finnish": "Monaco",
+    "english": "Monaco"
+  },
+  "MN": {
+    "finnish": "Mongolia",
+    "english": "Mongolia"
+  },
+  "ME": {
+    "finnish": "Montenegro",
+    "english": "Montenegro"
+  },
+  "MS": {
+    "finnish": "Montserrat",
+    "english": "Montserrat"
+  },
+  "MZ": {
+    "finnish": "Mosambik",
+    "english": "Mozambique"
+  },
+  "MM": {
+    "finnish": "Myanmar (Burma)",
+    "english": "Burma (Myanmar)"
+  },
+  "NA": {
+    "finnish": "Namibia",
+    "english": "Namibia"
+  },
+  "NR": {
+    "finnish": "Nauru",
+    "english": "Nauru"
+  },
+  "NP": {
+    "finnish": "Nepal",
+    "english": "Nepal"
+  },
+  "NI": {
+    "finnish": "Nicaragua",
+    "english": "Nicaragua"
+  },
+  "NE": {
+    "finnish": "Niger",
+    "english": "Niger"
+  },
+  "NG": {
+    "finnish": "Nigeria",
+    "english": "Nigeria"
+  },
+  "NU": {
+    "finnish": "Niue",
+    "english": "Niue"
+  },
+  "NF": {
+    "finnish": "Norfolkinsaari",
+    "english": "Norfolk Island"
+  },
+  "NO": {
+    "finnish": "Norja",
+    "english": "Norway"
+  },
+  "CI": {
+    "finnish": "Norsunluurannikko",
+    "english": "Ivory Coast"
+  },
+  "OM": {
+    "finnish": "Oman",
+    "english": "Oman"
+  },
+  "PK": {
+    "finnish": "Pakistan",
+    "english": "Pakistan"
+  },
+  "PW": {
+    "finnish": "Palau",
+    "english": "Palau"
+  },
+  "PS": {
+    "finnish": "Palestiina",
+    "english": "Palestine"
+  },
+  "PA": {
+    "finnish": "Panama",
+    "english": "Panama"
+  },
+  "PG": {
+    "finnish": "Papua-Uusi-Guinea",
+    "english": "Papua New Guinea"
+  },
+  "PY": {
+    "finnish": "Paraguay",
+    "english": "Paraguay"
+  },
+  "PE": {
+    "finnish": "Peru",
+    "english": "Peru"
+  },
+  "MP": {
+    "finnish": "Pohjois-Mariaanit",
+    "english": "Northern Marina Islands"
+  },
+  "PN": {
+    "finnish": "Pitcairn",
+    "english": "Pitcairn"
+  },
+  "PT": {
+    "finnish": "Portugali",
+    "english": "Portugal"
+  },
+  "PR": {
+    "finnish": "Puerto Rico",
+    "english": "Puerto Rico"
+  },
+  "PL": {
+    "finnish": "Puola",
+    "english": "Poland"
+  },
+  "GQ": {
+    "finnish": "Päiväntasaajan Guinea",
+    "english": "Equatorial GUinea"
+  },
+  "QA": {
+    "finnish": "Qatar",
+    "english": "Qatar"
+  },
+  "FR": {
+    "finnish": "Ranska",
+    "english": "France"
+  },
+  "Metropolitan": {
+    "finnish": "Ranska (Eurooppaan kuuluvat osat)",
+    "english": "France",
+    "": "FX)"
+  },
+  "TF": {
+    "finnish": "Ranskan eteläiset ja antarktiset alueet",
+    "english": "French Southern Territories"
+  },
+  "GF": {
+    "finnish": "Ranskan Guayana",
+    "english": "French Guiana"
+  },
+  "PF": {
+    "finnish": "Ranskan Polynesia",
+    "english": "French Polynesia"
+  },
+  "RE": {
+    "finnish": "Réunion",
+    "english": "Reunion Island"
+  },
+  "RO": {
+    "finnish": "Romania",
+    "english": "Romania"
+  },
+  "RW": {
+    "finnish": "Ruanda",
+    "english": "Rwanda"
+  },
+  "SE": {
+    "finnish": "Ruotsi",
+    "english": "Sweden"
+  },
+  "BL": {
+    "finnish": "St. Barthélemy",
+    "english": "St. Barthelemy"
+  },
+  "SH": {
+    "finnish": "St. Helena",
+    "english": "St. Helena"
+  },
+  "KN": {
+    "finnish": "Saint Kitts ja Nevis",
+    "english": "St. Kittis"
+  },
+  "LC": {
+    "finnish": "Saint Lucia",
+    "english": "St. Lucia"
+  },
+  "MF": {
+    "finnish": "St. Martin",
+    "english": "St. Martin"
+  },
+  "PM": {
+    "finnish": "Saint-Pierre ja Miquelon",
+    "english": "Saint Pierre and Miquelon"
+  },
+  "VC": {
+    "finnish": "Saint Vincent ja Grenadiinit",
+    "english": "St. Vincent"
+  },
+  "DE": {
+    "finnish": "Saksa",
+    "english": "Germany"
+  },
+  "SB": {
+    "finnish": "Salomonsaaret",
+    "english": "Solomon Islands"
+  },
+  "ZM": {
+    "finnish": "Sambia",
+    "english": "Zambia"
+  },
+  "WS": {
+    "finnish": "Samoa",
+    "english": "Western Samoa"
+  },
+  "SM": {
+    "finnish": "San Marino",
+    "english": "San Marino"
+  },
+  "ST": {
+    "finnish": "São Tomé ja Príncipe",
+    "english": "Sao Tome and Principe"
+  },
+  "SA": {
+    "finnish": "Saudi-Arabia",
+    "english": "Saudi Arabia"
+  },
+  "SN": {
+    "finnish": "Senegal",
+    "english": "Senegal"
+  },
+  "RS": {
+    "finnish": "Serbia",
+    "english": "Serbia"
+  },
+  "SC": {
+    "finnish": "Seychellit",
+    "english": "Seychelles"
+  },
+  "SL": {
+    "finnish": "Sierra Leone",
+    "english": "Sierra Leone"
+  },
+  "SX": {
+    "finnish": "Sint Maarten",
+    "english": "Sint Maarten"
+  },
+  "SG": {
+    "finnish": "Singapore",
+    "english": "Singapore"
+  },
+  "SK": {
+    "finnish": "Slovakia",
+    "english": "Slovakia"
+  },
+  "SI": {
+    "finnish": "Slovenia",
+    "english": "Slovenia"
+  },
+  "SO": {
+    "finnish": "Somalia",
+    "english": "Somalia"
+  },
+  "LK": {
+    "finnish": "Sri Lanka",
+    "english": "Sri Lanka"
+  },
+  "SD": {
+    "finnish": "Sudan",
+    "english": "Sudan"
+  },
+  "FI": {
+    "finnish": "Suomi",
+    "english": "Finland"
+  },
+  "SR": {
+    "finnish": "Suriname",
+    "english": "Suriname"
+  },
+  "SJ": {
+    "finnish": "Svalbard ja Jan Mayen",
+    "english": "Svalbard and Jan Mayen"
+  },
+  "SZ": {
+    "finnish": "Swazimaa",
+    "english": "Swaziland"
+  },
+  "CH": {
+    "finnish": "Sveitsi",
+    "english": "Switzerland"
+  },
+  "SY": {
+    "finnish": "Syyria",
+    "english": "Syria"
+  },
+  "TJ": {
+    "finnish": "Tadžikistan",
+    "english": "Tajikistan"
+  },
+  "TW": {
+    "finnish": "Taiwan",
+    "english": "Taiwan"
+  },
+  "TZ": {
+    "finnish": "Tansania",
+    "english": "Tanzania"
+  },
+  "DK": {
+    "finnish": "Tanska",
+    "english": "Denmark"
+  },
+  "TH": {
+    "finnish": "Thaimaa",
+    "english": "Thailand"
+  },
+  "TL": {
+    "finnish": "Itä-Timor",
+    "english": "Timor-Leste"
+  },
+  "TG": {
+    "finnish": "Togo",
+    "english": "Togo"
+  },
+  "TK": {
+    "finnish": "Tokelau",
+    "english": "Tokelau"
+  },
+  "TO": {
+    "finnish": "Tonga",
+    "english": "Tonga"
+  },
+  "TT": {
+    "finnish": "Trinidad ja Tobago",
+    "english": "Trinidad and Tobago"
+  },
+  "TA": {
+    "finnish": "Tristan da Cunha",
+    "english": "Tristan da Cunha"
+  },
+  "TD": {
+    "finnish": "Tšad",
+    "english": "Chad"
+  },
+  "CZ": {
+    "finnish": "Tšekki",
+    "english": "Czech Republic"
+  },
+  "TN": {
+    "finnish": "Tunisia",
+    "english": "Tunisia"
+  },
+  "TR": {
+    "finnish": "Turkki",
+    "english": "Turkey"
+  },
+  "TM": {
+    "finnish": "Turkmenistan",
+    "english": "Turkmenistan"
+  },
+  "TC": {
+    "finnish": "Turks- ja Caicossaaret",
+    "english": "Turks and Caicos"
+  },
+  "TV": {
+    "finnish": "Tuvalu",
+    "english": "Tuvalu"
+  },
+  "UG": {
+    "finnish": "Uganda",
+    "english": "Uganda"
+  },
+  "UA": {
+    "finnish": "Ukraina",
+    "english": "Ukraina"
+  },
+  "HU": {
+    "finnish": "Unkari",
+    "english": "Hungary"
+  },
+  "UY": {
+    "finnish": "Uruguay",
+    "english": "Uruguay"
+  },
+  "NC": {
+    "finnish": "Uusi-Kaledonia",
+    "english": "New Caledonia"
+  },
+  "NZ": {
+    "finnish": "Uusi-Seelanti",
+    "english": "New Zealand"
+  },
+  "UZ": {
+    "finnish": "Uzbekistan",
+    "english": "Uzbekistan"
+  },
+  "BY": {
+    "finnish": "Valko-Venäjä",
+    "english": "Belarus"
+  },
+  "VU": {
+    "finnish": "Vanuatu",
+    "english": "Vanuatu"
+  },
+  "VA": {
+    "finnish": "Vatikaanivaltio",
+    "english": "Vatican City"
+  },
+  "VE": {
+    "finnish": "Venezuela",
+    "english": "Venezuela"
+  },
+  "RU": {
+    "finnish": "Venäjä",
+    "english": "Russia"
+  },
+  "VN": {
+    "finnish": "Vietnam",
+    "english": "Vietnam"
+  },
+  "EE": {
+    "finnish": "Viro",
+    "english": "Estonia"
+  },
+  "WF": {
+    "finnish": "Wallis ja Futuna",
+    "english": "Wallis and Futuna"
+  },
+  "AE": {
+    "finnish": "Yhdistyneet arabiemiirikunnat",
+    "english": "United Arab Emirates"
+  },
+  "GB": {
+    "finnish": "Yhdistynyt kuningaskunta",
+    "english": "United Kingdom"
+  },
+  "US": {
+    "finnish": "Yhdysvallat",
+    "english": "United States"
+  },
+  "VI": {
+    "finnish": "Yhdysvaltain Neitsytsaaret",
+    "english": "United States Virgin Islands"
+  },
+  "UM": {
+    "finnish": "Yhdysvaltain pienet erillissaaret",
+    "english": "United States Minor Outlying Islands"
+  },
+  "ZW": {
+    "finnish": "Zimbabwe",
+    "english": "Zimbabwe"
+  }
+}

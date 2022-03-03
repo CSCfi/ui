@@ -1,0 +1,21 @@
+<app-example title="Basic loader (Angular)" [raw]="templates[0]" [script]="script">
+  <c-card>
+    <c-loader *ngIf="loaders[0]"></c-loader>
+    <c-card-title>Loader card</c-card-title>
+    <c-card-content>Click start to show a loader for 5 seconds</c-card-content>
+    <c-card-actions>
+      <c-button (click)="start(0)">Start</c-button>
+    </c-card-actions>
+  </c-card>
+</app-example>
+
+<app-example title="Loader with delayed content (Angular)" [raw]="templates[1]" [script]="script">
+  <c-card>
+    <c-loader *ngIf="loaders[1]" contentdelay="2">This loader will disappear soon</c-loader>
+    <c-card-title>Loader card</c-card-title>
+    <c-card-content>Click start to show a loader with a delayed explanation text</c-card-content>
+    <c-card-actions>
+      <c-button (click)="start(1)">Start</c-button>
+    </c-card-actions>
+  </c-card>
+</app-example>

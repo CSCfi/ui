@@ -1,0 +1,142 @@
+<c-main>
+  <c-toolbar>
+    <c-csc-logo></c-csc-logo>
+    CSC Design System
+    <c-spacer></c-spacer>
+    <c-tag [active]="true" *ngIf="!(isMobile$ | async)">v {{ versionService.version }}</c-tag>
+    <c-navigationbutton *ngIf="isMobile$ | async"></c-navigationbutton>
+  </c-toolbar>
+
+  <c-row class="no-margin no-wrap">
+    <c-sidenavigation
+      class="autoheight"
+      *ngIf="components.length"
+      [mobile]="isMobile$ | async"
+      [multiple]="false"
+    >
+      <c-sidenavigationitem [routerLink]="['']" [active]="url === '/'">
+        <div slot="main" class="text-capitalize">
+          <span class="mdi mdi-information-outline me-1"></span>
+          About
+        </div>
+      </c-sidenavigationitem>
+
+      <c-sidenavigationitem
+        [active]="active === 'getting-started' || url?.startsWith('/getting-started')"
+        (click)="setActive('getting-started')"
+      >
+        <div slot="main" class="text-capitalize">Getting Started</div>
+
+        <div slot="subnavitem">
+          <c-subnavigationitem
+            class="text-capitalize"
+            [routerLink]="['getting-started/angular']"
+            routerLinkActive="active"
+            (click)="open()"
+            (keyup.enter)="open()"
+          >
+            <span class="mdi mdi-angular"></span>
+            Angular
+          </c-subnavigationitem>
+        </div>
+        <div slot="subnavitem">
+          <c-subnavigationitem
+            class="text-capitalize"
+            [routerLink]="['getting-started/html']"
+            routerLinkActive="active"
+            (click)="open()"
+            (keyup.enter)="open()"
+          >
+            <span class="mdi mdi-language-html5"></span>
+            HTML Page
+          </c-subnavigationitem>
+        </div>
+        <!-- 
+        <div slot="subnavitem">
+          <c-subnavigationitem class="text-capitalize" (click)="open()" (keyup.enter)="open()">
+            <span class="mdi mdi-vuejs"></span>
+            Vue
+          </c-subnavigationitem>
+        </div>
+
+        <div slot="subnavitem">
+          <c-subnavigationitem class="text-capitalize" (click)="open()" (keyup.enter)="open()">
+            <span class="mdi mdi-react"></span>
+            React
+          </c-subnavigationitem>
+        </div> -->
+      </c-sidenavigationitem>
+
+      <c-sidenavigationitem
+        [active]="active === 'templates' || url?.startsWith('/templates')"
+        (click)="setActive('templates')"
+      >
+        <div slot="main" class="text-capitalize">Templates</div>
+
+        <div slot="subnavitem">
+          <c-subnavigationitem
+            [routerLink]="['templates/basic-template']"
+            routerLinkActive="active"
+            class="text-capitalize"
+            (click)="open()"
+            (keyup.enter)="open()"
+          >
+            Basic template
+          </c-subnavigationitem>
+        </div>
+      </c-sidenavigationitem>
+
+      <p class="text-white border-bottom mt-4">Components</p>
+
+      <c-text-field
+        class="my-4 me-4"
+        placeholder="Search for a component"
+        shadow
+        cControl
+        (input)="filterComponents($event)"
+      >
+        <i class="mdi mdi-magnify" style="margin-left: 12px" slot="pre"></i>
+      </c-text-field>
+
+      <c-sidenavigationitem
+        *ngFor="let group of groupedComponents | menuGroups"
+        [active]="group.visible"
+        (click)="open(group)"
+        (keyup.enter)="open(group)"
+      >
+        <div slot="main" class="text-capitalize">{{ group.name }}</div>
+        <div slot="subnavitem">
+          <c-subnavigationitem
+            *ngFor="let item of group.components"
+            class="text-capitalize"
+            [routerLink]="['/' + item.tag]"
+            routerLinkActive="active"
+            [active]="activeComponent?.tag === item?.tag"
+            (keyup.enter)="navigate($event, item.tag)"
+          >
+            {{ item.name }}
+          </c-subnavigationitem>
+        </div>
+      </c-sidenavigationitem>
+
+      <div *ngFor="let group of groupedComponents | menuGroups: false">
+        <c-sidenavigationitem
+          *ngFor="let item of group.components"
+          class="text-capitalize"
+          [routerLink]="['/' + item.tag]"
+          routerLinkActive="active"
+          [active]="activeComponent?.tag === item?.tag"
+          (click)="open(group)"
+          (keyup.enter)="open(group)"
+        >
+          <div slot="main" class="text-capitalize">{{ item.name }}</div>
+        </c-sidenavigationitem>
+      </div>
+    </c-sidenavigation>
+    <c-flex class="container-height">
+      <c-container>
+        <router-outlet></router-outlet>
+      </c-container>
+    </c-flex>
+  </c-row>
+</c-main>

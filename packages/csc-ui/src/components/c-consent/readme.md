@@ -5,11 +5,18 @@
 <!-- Auto Generated Below -->
 
 
+## Slots
+
+| Slot | Description            |
+| ---- | ---------------------- |
+|      | Cookie consent content |
+
+
 ## Dependencies
 
 ### Depends on
 
-- [c-row](../row)
+- [c-row](../c-row)
 
 ### Graph
 ```mermaid

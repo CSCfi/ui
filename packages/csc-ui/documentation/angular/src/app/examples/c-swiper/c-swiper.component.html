@@ -1,0 +1,15 @@
+<app-example title="Usage" [raw]="example" [script]="script">
+  <c-swiper [(ngModel)]="selectedTab" cControl ngDefaultControl>
+    <c-swiper-tab
+      *ngFor="let tab of tabs; let i = index"
+      icon="storage"
+      [label]="tab.label"
+      [value]="tab.value"
+    >
+      <i class="mdi mdi-server" slot="icon"></i>
+      Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+      <span *ngIf="i % 2 === 0">Lorem ipsum dolor sit amet, consectetur adipiscing elit.</span>
+    </c-swiper-tab>
+  </c-swiper>
+  <p>Active tab: {{ selectedTab }}</p>
+</app-example>

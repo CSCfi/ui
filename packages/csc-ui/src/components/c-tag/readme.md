@@ -7,11 +7,18 @@
 
 ## Properties
 
-| Property    | Attribute   | Description | Type      | Default     |
-| ----------- | ----------- | ----------- | --------- | ----------- |
-| `active`    | `active`    |             | `boolean` | `undefined` |
-| `closeable` | `closeable` |             | `boolean` | `undefined` |
-| `fit`       | `fit`       |             | `boolean` | `undefined` |
+| Property    | Attribute   | Description                   | Type      | Default |
+| ----------- | ----------- | ----------------------------- | --------- | ------- |
+| `active`    | `active`    | Mark tag as active            | `boolean` | `false` |
+| `closeable` | `closeable` | Mark tag as closeable         | `boolean` | `false` |
+| `fit`       | `fit`       | Stretch to fill the container | `boolean` | `false` |
+
+
+## Slots
+
+| Slot | Description  |
+| ---- | ------------ |
+|      | Default slot |
 
 
 ----------------------------------------------

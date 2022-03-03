@@ -1,8 +1,13 @@
 # c-flex
 
-
-
 <!-- Auto Generated Below -->
+
+
+## Slots
+
+| Slot | Description |
+| ---- | ----------- |
+|      | Content     |
 
 
 ----------------------------------------------

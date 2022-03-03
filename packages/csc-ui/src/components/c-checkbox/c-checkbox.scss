@@ -1,0 +1,80 @@
+:host {
+  display: block;
+}
+
+.c-checkbox {
+  --c-color: var(--csc-primary);
+  --c-hover: rgba(0, 0, 0, 0.05);
+
+  padding: 10px;
+  border-radius: 50%;
+  outline: none;
+  color: var(--c-color);
+  overflow: hidden;
+  position: relative;
+
+  * {
+    pointer-events: none;
+  }
+
+  &--disabled {
+    --c-color: var(--csc-light-grey);
+    --c-hover: transparent;
+  }
+}
+
+.c-checkbox:hover {
+  background: var(--c-hover);
+}
+
+.c-checkbox:focus {
+  background: rgba(0, 0, 0, 0.05);
+}
+
+.c-checkbox-row {
+  --c-cursor: pointer;
+
+  cursor: var(--c-cursor);
+  display: flex;
+  align-items: center;
+
+  &--disabled {
+    --c-cursor: default;
+  }
+}
+
+#c-checkbox-label {
+  cursor: var(--c-cursor);
+  padding-left: 4px;
+  flex: 1;
+  user-select: none;
+}
+
+.c-checkbox__background {
+  width: 18px;
+  height: 18px;
+  border-radius: 2px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: inset 0px 0px 0px 2px var(--c-color);
+  transition: background-color 90ms cubic-bezier(0.4, 0, 0.6, 1) 0ms,
+    border-color 90ms cubic-bezier(0.4, 0, 0.6, 1) 0ms;
+}
+
+.active .c-checkbox__background {
+  background-color: var(--c-color);
+  box-shadow: none;
+}
+
+.c-checkbox__background svg {
+  width: 14px;
+  height: 14px;
+  stroke: transparent;
+  stroke-width: 3.12px;
+  transition: stroke 250ms cubic-bezier(0.4, 0, 0.6, 1) 0ms;
+}
+
+.active .c-checkbox__background svg {
+  stroke: #fff;
+}

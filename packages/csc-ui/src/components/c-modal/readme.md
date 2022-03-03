@@ -7,9 +7,17 @@
 
 ## Properties
 
-| Property | Attribute | Description | Type      | Default |
-| -------- | --------- | ----------- | --------- | ------- |
-| `value`  | `value`   |             | `boolean` | `false` |
+| Property     | Attribute    | Description                                              | Type      | Default |
+| ------------ | ------------ | -------------------------------------------------------- | --------- | ------- |
+| `persistent` | `persistent` | Not dismissed when touching/clicking outside the content | `boolean` | `true`  |
+| `value`      | `value`      | Is the modal visible                                     | `boolean` | `false` |
+
+
+## Events
+
+| Event         | Description                     | Type                   |
+| ------------- | ------------------------------- | ---------------------- |
+| `changeValue` | Triggered when value is changed | `CustomEvent<boolean>` |
 
 
 ----------------------------------------------

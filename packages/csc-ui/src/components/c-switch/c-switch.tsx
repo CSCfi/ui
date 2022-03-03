@@ -8,20 +8,35 @@ import {
   EventEmitter,
 } from '@stencil/core';
 
+/**
+ * @group Form
+ */
 @Component({
   tag: 'c-switch',
   styleUrl: 'c-switch.scss',
   shadow: true,
 })
-export class Switch {
-  @Prop({ attribute: 'disabled' }) hostDisabled: boolean;
+export class CSwitch {
+  /**
+   * Disable the switch
+   */
+  @Prop({ attribute: 'disabled' }) hostDisabled = false;
+  /**
+   * Id for the element
+   */
   @Prop({ attribute: 'id' }) hostId: string;
-  @Prop({ mutable: true }) value: boolean = false;
+  /**
+   * Value of the element
+   */
+  @Prop({ mutable: true }) value = false;
 
-  @Element() host: HTMLElement;
+  @Element() host: HTMLCSwitchElement;
   @State() hasLabel: boolean = false;
 
-  @Event() changeValue: EventEmitter;
+  /**
+   * Emit inner value change to parent
+   */
+  @Event() changeValue: EventEmitter<boolean>;
 
   componentDidLoad() {
     const slotted = this.host.childNodes;
@@ -29,12 +44,12 @@ export class Switch {
     this.hasLabel = slotted && slotted.length > 0;
   }
 
-  valueChangedHandler(event: Event) {
+  private _valueChangedHandler = (event: Event) => {
     const value = (event.currentTarget as HTMLInputElement).checked;
 
     this.value = value;
     this.changeValue.emit(value);
-  }
+  };
 
   render() {
     const classes = {
@@ -53,7 +68,7 @@ export class Switch {
             role="switch"
             disabled={this.hostDisabled}
             checked={this.value}
-            onInput={(e) => this.valueChangedHandler(e)}
+            onInput={this._valueChangedHandler}
           />
           <span class="c-switch__slider"></span>
         </div>

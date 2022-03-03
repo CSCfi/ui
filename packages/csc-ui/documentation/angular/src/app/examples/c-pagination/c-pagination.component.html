@@ -1,0 +1,8 @@
+<app-example title="Basic usage in Angular" [raw]="template" [script]="script">
+  <div class="pb-4">
+    <c-tag *ngFor="let country of countries | slice: options.startFrom:options.endTo">
+      {{ country }}
+    </c-tag>
+  </div>
+  <c-pagination cControl [(ngModel)]="options"></c-pagination>
+</app-example>

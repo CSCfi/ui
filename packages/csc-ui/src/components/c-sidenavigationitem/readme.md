@@ -7,18 +7,17 @@
 
 ## Properties
 
-| Property   | Attribute   | Description | Type      | Default     |
-| ---------- | ----------- | ----------- | --------- | ----------- |
-| `active`   | `active`    |             | `boolean` | `undefined` |
-| `href`     | `href`      |             | `string`  | `undefined` |
-| `subItems` | `sub-items` |             | `boolean` | `undefined` |
+| Property | Attribute | Description           | Type      | Default     |
+| -------- | --------- | --------------------- | --------- | ----------- |
+| `active` | `active`  | Indicate active state | `boolean` | `undefined` |
+| `href`   | `href`    | Hyperlink url         | `string`  | `undefined` |
 
 
 ## Dependencies
 
 ### Depends on
 
-- [c-row](../row)
+- [c-row](../c-row)
 
 ### Graph
 ```mermaid

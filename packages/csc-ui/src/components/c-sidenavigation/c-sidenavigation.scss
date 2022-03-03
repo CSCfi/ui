@@ -1,0 +1,89 @@
+:host::-webkit-scrollbar {
+  width: 12px;
+  background: #d8e8ea;
+}
+:host::-webkit-scrollbar-track {
+  border-radius: 10px;
+}
+:host::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.3);
+  border-radius: 10px;
+  border: solid 3px #d8e8ea;
+}
+
+:host(.autoheight) {
+  height: calc(100vh - 60px);
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+:host(.desktop) {
+  flex-grow: 1;
+  display: flex;
+  flex-shrink: 2;
+  flex-basis: 260px;
+  max-width: 320px;
+  background: var(--csc-primary);
+}
+
+.c-sidenavigation {
+  display: flex;
+  flex-flow: column wrap;
+  background: var(--csc-primary);
+  width: 100%;
+  z-index: 8;
+  position: relative;
+  padding: 24px 0px 24px 24px;
+  transition: transform 0.3s ease;
+
+  &.mobile {
+    max-width: 260px;
+    transform: translateX(0%);
+    position: fixed;
+    right: 0;
+    overflow-y: scroll;
+    z-index: 999;
+    height: calc(100% - 100px);
+
+    &.hideMenu {
+      transform: translateX(100%);
+    }
+  }
+
+  > div {
+    width: 100%;
+    display: flex;
+    flex: 1;
+    flex-flow: column nowrap;
+  }
+}
+
+.vertical-spacer {
+  flex: 1;
+}
+
+.c-overlay {
+  background: rgba(0, 0, 0, 0.5);
+  position: fixed;
+  z-index: 998;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+}
+
+@keyframes fadeIn {
+  0% {
+    background: rgba(0, 0, 0, 0);
+  }
+  100% {
+    background: rgba(0, 0, 0, 0.5);
+  }
+}
+
+.c-fadeIn {
+  z-index: 997;
+  animation-name: fadeIn;
+  animation-duration: 0.5s;
+  animation-iteration-count: 1;
+}

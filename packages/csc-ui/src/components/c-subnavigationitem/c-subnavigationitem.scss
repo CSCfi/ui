@@ -1,0 +1,29 @@
+:host {
+  cursor: pointer;
+  display: block;
+  color: #595959;
+  font-weight: 450;
+  /*height: 46px;*/
+  line-height: 46px;
+  padding-left: 42px;
+  user-select: none;
+  transition: background-color 0.2s ease-in;
+  display: flex;
+  align-items: center;
+  background-color: transparent;
+}
+
+:host(:hover) {
+  background-color: #f0f6f7;
+  color: var(--csc-primary);
+}
+
+:host(.active) {
+  background-color: #f0f6f7;
+}
+
+::slotted(span) {
+  margin-right: 8px;
+  font-size: 20px;
+  line-height: 1;
+}

@@ -1,0 +1,27 @@
+<app-example title="Basic usage (Angular)" [raw]="examples[0]" [script]="script">
+  <c-select cControl [items]="items" [(ngModel)]="value" placeholder="Select a fruit"></c-select>
+  <p class="mt-3">Selected fruit: {{ value?.name || 'None' }}</p>
+</app-example>
+
+<app-example title="Shadow variant (Angular)" [raw]="examples[1]" [script]="script">
+  <c-select
+    shadow
+    cControl
+    [items]="items"
+    [(ngModel)]="value"
+    placeholder="Select a fruit"
+  ></c-select>
+  <p class="mt-3">Selected fruit: {{ value?.name || 'None' }}</p>
+</app-example>
+
+<app-example title="Scrollable items + required (Angular)" [raw]="examples[2]" [script]="script">
+  <c-select
+    required
+    cControl
+    [itemsPerPage]="4"
+    [items]="items"
+    [(ngModel)]="value"
+    placeholder="Select a fruit"
+  ></c-select>
+  <p class="mt-3">Selected fruit: {{ value?.name || 'None' }}</p>
+</app-example>

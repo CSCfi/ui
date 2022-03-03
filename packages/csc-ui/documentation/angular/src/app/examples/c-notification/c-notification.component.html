@@ -1,0 +1,32 @@
+<app-example title="Basic example (Angular)" [raw]="templates[0]" [script]="scripts[0]">
+  <c-button (click)="addNotification()">Add notification</c-button>
+</app-example>
+
+<app-example title="Advanced example (Angular)" [raw]="templates[1]" [script]="scripts[1]">
+  <c-row gap="16">
+    <c-text-field label="Message" cControl [(ngModel)]="message"></c-text-field>
+
+    <c-select label="Type" name="type" cControl [(ngModel)]="type" [items]="types"></c-select>
+
+    <c-text-field label="Showing time" cControl number [(ngModel)]="delay"></c-text-field>
+
+    <c-select
+      label="Requires closing"
+      name="type"
+      cControl
+      [(ngModel)]="requiresClosing"
+      [items]="requiresClosingOptions"
+    ></c-select>
+    <c-select
+      label="Position"
+      name="type"
+      cControl
+      [(ngModel)]="position"
+      [items]="positions"
+    ></c-select>
+
+    <c-button (click)="customNotification()">Add notification</c-button>
+  </c-row>
+</app-example>
+
+<c-notification [notification]="notification" [position]="position?.value"></c-notification>

@@ -1,0 +1,83 @@
+:host > div {
+  cursor: pointer;
+  color: #fff;
+  font-weight: 430;
+  /*height: 46px;*/
+  line-height: 46px;
+  margin-top: 4px;
+  margin-bottom: 4px;
+  /*padding-left: 16px;*/
+  user-select: none;
+  border-top-left-radius: 4px;
+  border-bottom-left-radius: 4px;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  -moz-backface-visibility: hidden;
+  transform: translate3d(0, 0, 0);
+  -webkit-transform: translate3d(0, 0, 0);
+  -moz-transform: translate3d(0, 0, 0);
+  -webkit-transition: background-color 0.2s ease-in;
+  -moz-transition: background-color 0.2s ease-in;
+  -o-transition: background-color 0.2s ease-in;
+  transition: background-color 0.2s ease-in;
+  align-items: center;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  overflow: hidden;
+  background-color: #d8e8ea00;
+}
+
+:host(:hover) > div {
+  background-color: #d8e8ea44;
+}
+
+:host > div.active {
+  background-color: #d8e8ea;
+  color: var(--csc-primary);
+}
+
+::slotted(span) {
+  margin-right: 8px;
+  font-size: 20px;
+}
+
+.styleMain {
+  padding-left: 16px;
+}
+
+.subnavitem {
+  height: 0;
+  overflow-y: hidden;
+  -webkit-transition: all 500ms ease;
+  -moz-transition: all 500ms ease;
+  -o-transition: all 500ms ease;
+  transition: all 5000ms ease;
+  width: 100%;
+}
+
+.subnavactive {
+  height: max-content;
+  width: 100%;
+}
+
+.svg {
+  align-self: center;
+  fill: #fff;
+  transition: transform 0.3s ease;
+}
+
+:host > div.active .svg {
+  fill: var(--csc-primary);
+  transform: rotate(90deg);
+}
+
+.svg.hidden {
+  opacity: 0;
+}
+
+.middle {
+  display: flex;
+  height: 100%;
+  align-items: center;
+}

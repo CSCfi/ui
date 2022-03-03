@@ -7,10 +7,10 @@
 
 ## Properties
 
-| Property | Attribute | Description | Type      | Default     |
-| -------- | --------- | ----------- | --------- | ----------- |
-| `active` | `active`  |             | `boolean` | `undefined` |
-| `href`   | `href`    |             | `string`  | `undefined` |
+| Property | Attribute | Description  | Type      | Default     |
+| -------- | --------- | ------------ | --------- | ----------- |
+| `active` | `active`  | Active state | `boolean` | `undefined` |
+| `href`   | `href`    | Link url     | `string`  | `undefined` |
 
 
 ----------------------------------------------

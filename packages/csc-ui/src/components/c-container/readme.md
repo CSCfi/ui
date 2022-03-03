@@ -7,9 +7,16 @@
 
 ## Properties
 
-| Property | Attribute | Description | Type     | Default     |
-| -------- | --------- | ----------- | -------- | ----------- |
-| `width`  | `width`   |             | `number` | `undefined` |
+| Property | Attribute | Description                          | Type     | Default     |
+| -------- | --------- | ------------------------------------ | -------- | ----------- |
+| `width`  | `width`   | Maximum width of container in pixels | `number` | `undefined` |
+
+
+## Slots
+
+| Slot | Description                          |
+| ---- | ------------------------------------ |
+|      | Content to be centered within a page |
 
 
 ----------------------------------------------

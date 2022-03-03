@@ -7,10 +7,10 @@
 
 ## Properties
 
-| Property       | Attribute      | Description | Type     | Default   |
-| -------------- | -------------- | ----------- | -------- | --------- |
-| `notification` | `notification` |             | `any`    | `{}`      |
-| `position`     | `position`     |             | `string` | `'fixed'` |
+| Property       | Attribute  | Description                   | Type                                                                                                              | Default     |
+| -------------- | ---------- | ----------------------------- | ----------------------------------------------------------------------------------------------------------------- | ----------- |
+| `notification` | --         | notification contents         | `{ name: string; type: "warning" \| "error" \| "success" \| "info"; delay?: number; requiresClosing?: boolean; }` | `null`      |
+| `position`     | `position` | Position of the notifications | `"absolute" \| "fixed"`                                                                                           | `undefined` |
 
 
 ----------------------------------------------

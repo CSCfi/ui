@@ -7,42 +7,76 @@ import {
   Event,
   EventEmitter,
 } from '@stencil/core';
-
+import { createRipple } from '../../utils/utils';
+/**
+ * @group Form
+ */
 @Component({
   tag: 'c-checkbox',
-  styleUrl: 'c-checkbox.css',
+  styleUrl: 'c-checkbox.scss',
   shadow: true,
 })
 export class CCheckbox {
-  @Prop() label: string;
-  @Prop() color: string;
-  @Prop({ mutable: true }) checked: boolean;
+  /**
+   * Element label
+   */
+  @Prop() label: string = '';
+
+  /**
+   * Is the element checked
+   */
+  @Prop({ mutable: true }) value: boolean = false;
+
+  /**
+   * Disable the checkbox
+   */
+  @Prop() disabled = false;
+
+  /**
+   * Triggered when element is checked or unchecked
+   */
   @Event() changeValue: EventEmitter;
 
-  @Listen('keydown')
-  handleKeyDown(ev: any) {
-    if (ev.key === ' ') {
-      ev.preventDefault();
-      this.toggleState();
+  private _container: HTMLDivElement;
+
+  @Listen('keydown', { passive: true })
+  handleKeyDown(event: any) {
+    if (event.key === ' ') {
+      event.preventDefault();
+      this.toggleState(event);
     }
   }
 
-  toggleState() {
-    this.checked = !this.checked;
-    this.changeValue.emit(this.checked);
+  private toggleState(event) {
+    if (this.disabled) return;
+
+    createRipple(event, this._container, true);
+    this.value = !this.value;
+    this.changeValue.emit(this.value);
   }
 
   render() {
-    const classes = `c-checkbox__background csc-bg-color ${this.color}`;
+    const classes = `c-checkbox__background csc-bg-color`;
+    const wrapperClasses = {
+      'c-checkbox': true,
+      'c-checkbox--disabled': this.disabled,
+      active: this.value,
+    };
+    const baseClasses = {
+      'c-checkbox-row': true,
+      'c-checkbox-row--disabled': this.disabled,
+    };
+
     return (
       <Host>
-        <div class="c-checkbox-row" onClick={() => this.toggleState()}>
+        <div class={baseClasses} onClick={(event) => this.toggleState(event)}>
           <div
             role="checkbox"
-            aria-checked={this.checked}
+            aria-checked={this.value}
             tabindex="0"
             aria-labelledby="c-checkbox-label"
-            class={this.checked ? 'active c-checkbox' : 'c-checkbox'}
+            class={wrapperClasses}
+            ref={(el) => (this._container = el as HTMLDivElement)}
           >
             <div class={classes}>
               <svg class="c-checkbox__checkmark" viewBox="0 0 24 24">

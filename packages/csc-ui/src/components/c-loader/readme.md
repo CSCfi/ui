@@ -7,9 +7,9 @@
 
 ## Properties
 
-| Property       | Attribute      | Description | Type     | Default     |
-| -------------- | -------------- | ----------- | -------- | ----------- |
-| `contentdelay` | `contentdelay` |             | `number` | `undefined` |
+| Property       | Attribute      | Description                                                        | Type     | Default |
+| -------------- | -------------- | ------------------------------------------------------------------ | -------- | ------- |
+| `contentdelay` | `contentdelay` | Delay in seconds of showing the contents in the slot of the loader | `number` | `0`     |
 
 
 ----------------------------------------------

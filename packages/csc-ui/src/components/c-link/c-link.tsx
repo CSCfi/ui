@@ -1,22 +1,39 @@
 import { Component, h, Prop } from '@stencil/core';
-
+/**
+ * Basic hyperlink component
+ *
+ * @group Buttons
+ */
 @Component({
   tag: 'c-link',
-  styleUrl: 'c-link.css',
+  styleUrl: 'c-link.scss',
   shadow: true,
 })
 export class CLink {
-  @Prop() href: string;
-  @Prop() underline: boolean;
-  @Prop() target: string;
+  /**
+   * Url of link
+   */
+  @Prop() href: string = null;
+
+  /**
+   * Display line under the link
+   */
+  @Prop() underline: boolean = false;
+
+  /**
+   * regular target attribute of a hyperlink
+   */
+  @Prop() target: string = null;
 
   render() {
-    let classes = `${this.underline ? 'underline' : ''}`;
     return (
-      <a class={classes} href={this.href} target={this.target}>
+      <a
+        class={this.underline && 'underline'}
+        href={this.href}
+        target={this.target}
+      >
         <slot></slot>
       </a>
     );
   }
-
 }

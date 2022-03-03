@@ -7,10 +7,10 @@
 
 ## Properties
 
-| Property      | Attribute      | Description | Type      | Default     |
-| ------------- | -------------- | ----------- | --------- | ----------- |
-| `menuVisible` | `menu-visible` |             | `boolean` | `false`     |
-| `mobile`      | `mobile`       |             | `boolean` | `undefined` |
+| Property      | Attribute      | Description                    | Type      | Default     |
+| ------------- | -------------- | ------------------------------ | --------- | ----------- |
+| `menuVisible` | `menu-visible` | Mobile version menu visibility | `boolean` | `false`     |
+| `mobile`      | `mobile`       | Mobile version                 | `boolean` | `undefined` |
 
 
 ----------------------------------------------

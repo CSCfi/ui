@@ -5,11 +5,18 @@
 <!-- Auto Generated Below -->
 
 
+## Slots
+
+| Slot | Description     |
+| ---- | --------------- |
+|      | Card title text |
+
+
 ## Dependencies
 
 ### Depends on
 
-- [c-title](../title)
+- [c-title](../c-title)
 
 ### Graph
 ```mermaid

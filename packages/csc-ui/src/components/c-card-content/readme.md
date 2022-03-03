@@ -5,6 +5,13 @@
 <!-- Auto Generated Below -->
 
 
+## Slots
+
+| Slot | Description   |
+| ---- | ------------- |
+|      | Card contents |
+
+
 ----------------------------------------------
 
 *Built with [StencilJS](https://stenciljs.com/)*

@@ -79,8 +79,8 @@
         #{$this} {
           &__slider {
             --thumb-color: #fff;
-            --slider-color: var(--current-color);
-            --border-color: var(--current-color);
+            --slider-color: var(--csc-primary);
+            --border-color: var(--csc-primary);
 
             &::before {
               transform: translateX(var(--thumb-active-position));

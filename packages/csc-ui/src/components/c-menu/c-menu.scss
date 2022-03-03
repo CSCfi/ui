@@ -1,0 +1,106 @@
+:host {
+  display: block;
+  position: relative;
+  font-size: 14px;
+  color: #595959;
+  user-select: none;
+  cursor: pointer;
+}
+
+:host(:focus) {
+  outline: none;
+}
+
+:host(:focus-visible) {
+  /* Some even *more* exciting button focus styles */
+  background: #d8e8ea;
+  border-top-left-radius: 4px;
+  border-top-right-radius: 4px;
+  border-bottom-left-radius: 4px;
+  border-bottom-right-radius: 4px;
+  outline: 2px var(--csc-primary) solid;
+  outline-offset: 2px;
+}
+
+:host(:hover) {
+  background: #d8e8ea;
+  color: var(--csc-primary);
+  border-top-left-radius: 4px;
+  border-top-right-radius: 4px;
+  border-bottom-left-radius: 4px;
+  border-bottom-right-radius: 4px;
+}
+
+:host(.active),
+:host(:focus-visible.active) {
+  border-top-left-radius: 4px;
+  border-top-right-radius: 4px;
+  border-bottom-left-radius: 0;
+  border-bottom-right-radius: 0;
+}
+
+:host(.nohover:hover) {
+  background: transparent;
+}
+
+:host(.simple-host) {
+  background: transparent !important;
+}
+
+svg fill {
+  fill: #595959;
+}
+
+:host(.active) svg,
+:host(:hover) svg {
+  fill: var(--csc-primary);
+}
+
+.c-select-row {
+  display: flex;
+  flex: 1 1 auto;
+  margin-left: 0;
+  align-items: center;
+}
+
+.c-select-icon {
+  line-height: 20px;
+  padding: 8px 10px;
+  transition: all 0.25s;
+}
+
+.rotated {
+  transform: rotate(180deg);
+}
+
+::slotted(*[slot='activator']) {
+  display: flex;
+  column-gap: 8px;
+}
+
+.small ::slotted(*[slot='activator']) {
+  font-size: 12px;
+  column-gap: 0px;
+}
+
+.full-width {
+  width: 100%;
+  position: relative;
+  padding-left: 14px;
+  z-index: 2;
+  outline: none;
+}
+
+.c-menu-list {
+  position: absolute;
+  min-width: 100%;
+  right: 0;
+  z-index: 3;
+  background: #fff;
+  border-top-left-radius: 0;
+  border-top-right-radius: 0;
+  border-bottom-left-radius: 4px;
+  border-bottom-right-radius: 4px;
+  overflow: hidden;
+  box-shadow: 2px 4px 10px #00000029;
+}

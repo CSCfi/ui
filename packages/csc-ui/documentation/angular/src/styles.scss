@@ -1,0 +1,63 @@
+$csc-cyan: #006778;
+$csc-magenta: #830051;
+$csc-grey: #515151;
+$csc-dark-blue: #002f5f;
+$csc-blue: #117bc2;
+$csc-mid-blue: #d0dced;
+$csc-light-blue: #f8f9fc;
+$csc-light-blue-old: #eef2f8;
+$csc-navi-bg-blue: #005d8f;
+$csc-lime: #82bf37;
+$csc-light-green: #e2efd4;
+$csc-white: #fff;
+$csc-quote-green: #82bf37;
+
+$warning: #ffbb00;
+$danger: #d40c0c;
+$dark: #181a1b;
+
+$font-family-sans-serif: 'proxima-nova', sans-serif;
+$theme-colors: (
+  'primary': $csc-cyan,
+  'secondary': $csc-magenta,
+  'success': $csc-quote-green,
+  'info': $csc-blue,
+  'warning': $warning,
+  'danger': $danger,
+  'light': $csc-light-blue,
+  'dark': $dark,
+);
+
+$link-color: $csc-cyan;
+$link-hover-color: #004b58;
+
+@import '~bootstrap/scss/bootstrap.scss';
+
+/* You can add global styles to this file, and also import other style files */
+html,
+body {
+  max-width: 100vw;
+}
+
+body {
+  font-family: 'proxima-nova', sans-serif;
+  background-color: #d7e8ea;
+}
+
+.example {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 48px;
+}
+
+.monospace {
+  font-family: 'IBM Plex Mono', monospace;
+}
+
+.documentation-card {
+  background: #fff;
+  padding: 48px;
+  padding-top: 40px;
+  margin: 24px;
+  border-radius: 6px;
+}

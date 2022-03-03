@@ -1,0 +1,38 @@
+<div class="documentation-card">
+  <h1 class="text-capitalize mb-0 text-primary">Usage in basic HTML page</h1>
+
+  <div class="pt-4">
+    <p>Add following script before closing body tag</p>
+    <pre class="rounded"><code [highlight]="script"></code></pre>
+  </div>
+
+  <div class="pt-4">
+    <c-card>
+      <form action="" method="get">
+        <c-card-title>Login example</c-card-title>
+
+        <c-card-content>
+          <c-text-field label="Username" form name="username"></c-text-field>
+          <c-text-field label="Password" form name="password" type="password"></c-text-field>
+        </c-card-content>
+
+        <c-card-actions right>
+          <c-button type="submit">Login</c-button>
+        </c-card-actions>
+      </form>
+
+      <hr />
+
+      <div class="px-4 py-3">
+        <c-accordion [value]="showCode" multiple outlined>
+          <c-accordion-item value="template" heading="Template" class="mt-3 mb-0">
+            <i class="mdi mdi-language-html5" slot="icon"></i>
+            <pre class="d-flex flex-column m-0">
+              <code class="rounded" [highlight]="template"></code>
+            </pre>
+          </c-accordion-item>
+        </c-accordion>
+      </div>
+    </c-card>
+  </div>
+</div>

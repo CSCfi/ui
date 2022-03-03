@@ -1,4 +1,4 @@
-# c-accordion-item
+# c-accordion
 
 
 
@@ -7,32 +7,19 @@
 
 ## Properties
 
-| Property  | Attribute | Description | Type      | Default     |
-| --------- | --------- | ----------- | --------- | ----------- |
-| `heading` | `heading` |             | `string`  | `undefined` |
-| `icon`    | `icon`    |             | `string`  | `undefined` |
-| `value`   | `value`   |             | `boolean` | `false`     |
+| Property             | Attribute  | Description                           | Type                                       | Default     |
+| -------------------- | ---------- | ------------------------------------- | ------------------------------------------ | ----------- |
+| `multiple`           | `multiple` | Allow expanding multiple items        | `boolean`                                  | `false`     |
+| `outlined`           | `outlined` | Show an outline around expanded items | `boolean`                                  | `false`     |
+| `value` _(required)_ | `value`    | Value of the accordion                | `(string \| number)[] \| number \| string` | `undefined` |
 
 
 ## Events
 
-| Event         | Description | Type               |
-| ------------- | ----------- | ------------------ |
-| `changeValue` |             | `CustomEvent<any>` |
+| Event         | Description                | Type                            |
+| ------------- | -------------------------- | ------------------------------- |
+| `changeValue` | Emit changes to the parent | `CustomEvent<number \| string>` |
 
-
-## Dependencies
-
-### Depends on
-
-- [c-spacer](../spacer)
-
-### Graph
-```mermaid
-graph TD;
-  c-accordion-item --> c-spacer
-  style c-accordion-item fill:#f9f,stroke:#333,stroke-width:4px
-```
 
 ----------------------------------------------
 

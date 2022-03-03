@@ -1,12 +1,14 @@
 import { Component, Host, h } from '@stencil/core';
-
+/**
+ * @group Navigation
+ * @slot - Content of toolbar
+ */
 @Component({
   tag: 'c-toolbar',
   styleUrl: 'c-toolbar.css',
   shadow: true,
 })
 export class CToolbar {
-
   render() {
     return (
       <Host>
@@ -17,5 +19,4 @@ export class CToolbar {
       </Host>
     );
   }
-
 }

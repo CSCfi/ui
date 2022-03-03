@@ -5,241 +5,641 @@
  * It contains typing information for all components that exist in this project.
  */
 import { HTMLStencilElement, JSXBase } from "@stencil/core/internal";
+import { CardBackground } from "./components/c-card/c-card";
 export namespace Components {
+    interface CAccordion {
+        /**
+          * Allow expanding multiple items
+         */
+        "multiple": boolean;
+        /**
+          * Show an outline around expanded items
+         */
+        "outlined": boolean;
+        /**
+          * Value of the accordion
+         */
+        "value": number | string | (number | string)[];
+    }
     interface CAccordionItem {
+        /**
+          * Expansion status of the item
+         */
+        "expanded": boolean;
+        /**
+          * Heading of the accordion item
+         */
         "heading": string;
-        "icon": string;
-        "value": boolean;
+        /**
+          * Icon
+          * @deprecated Please use the icon slot instead
+         */
+        "icon": 'enabled' | 'disabled' | 'bell' | 'pending';
+        /**
+          * Show an outline around the expanded item
+          * @private
+         */
+        "outlined": boolean;
+        /**
+          * Value of the accordion item
+         */
+        "value": number | string;
     }
     interface CAutocomplete {
+        /**
+          * Dense variant
+         */
         "dense": boolean;
-        "items": any[];
+        /**
+          * Items to be selected
+         */
+        "items": {
+    name: string;
+    value: string;
+  }[];
+        /**
+          * Items per page before adding scroll
+         */
+        "itemsPerPage": number;
+        /**
+          * Element label
+         */
         "label": string;
-        "name": string;
-        "query": any;
+        /**
+          * Search string
+         */
+        "query": string;
+        /**
+          * Show required validation
+         */
         "required": boolean;
-        "value": any;
+        /**
+          * Selected item
+         */
+        "value": { name: string; value: string };
     }
     interface CButton {
-        "dense": boolean;
+        /**
+          * Disable the button
+         */
         "disabled": boolean;
+        /**
+          * Fit width to containing element
+         */
         "fit": boolean;
-        "fixed": boolean;
+        /**
+          * Light button background
+         */
         "ghost": boolean;
+        /**
+          * Id of the button
+         */
         "hostId": string;
-        "icon": string;
+        /**
+          * Name of the icon to be displayed in the button
+          * @deprecated Please use the icon slot instead
+         */
+        "icon": 'plus' | 'minus' | 'account' | 'edit';
+        /**
+          * Display loader on the button
+         */
         "loading": boolean;
+        /**
+          * Remove the default border radius
+         */
         "noRadius": boolean;
+        /**
+          * Outlined button style
+         */
         "outlined": boolean;
-        "secondary": boolean;
+        /**
+          * Size of the button
+         */
+        "size": 'default' | 'small' | 'large';
+        /**
+          * Transparent button background
+         */
         "text": boolean;
+        /**
+          * Button type
+         */
+        "type": 'button' | 'submit';
+        /**
+          * Value for the button - for use in the c-content-switcher
+         */
+        "value"?: number | string;
     }
     interface CCard {
-        "background": string;
-        "color": string;
-        "dark": boolean;
-        "elevation": number;
-        "ma": number;
-        "mx": number;
-        "my": number;
-        "noRadius": boolean;
-        "pa": number;
-        "px": number;
-        "py": number;
+        /**
+          * Card background image for login pages of specific services
+         */
+        "background": CardBackground;
+        /**
+          * Background color
+         */
+        "backgroundColor": string;
     }
     interface CCardActions {
+        /**
+          * Align actions to the right
+         */
+        "right": boolean;
     }
     interface CCardContent {
     }
     interface CCardTitle {
     }
     interface CCheckbox {
-        "checked": boolean;
-        "color": string;
+        /**
+          * Disable the checkbox
+         */
+        "disabled": boolean;
+        /**
+          * Element label
+         */
         "label": string;
-    }
-    interface CCol {
+        /**
+          * Is the element checked
+         */
+        "value": boolean;
     }
     interface CConsent {
     }
     interface CContainer {
+        /**
+          * Maximum width of container in pixels
+         */
         "width": number;
     }
-    interface CContentSwitcher {
-        /**
-          * Disable the content switcher
-         */
-        "hostDisabled": boolean;
-        /**
-          * Always require a value
-          * @type {boolean}
-          * @memberof ContentSwitcher
-         */
-        "mandatory": boolean;
-        /**
-          * Always require a value
-          * @type {boolean}
-          * @memberof ContentSwitcher
-         */
-        "size": 'default' | 'small';
-        "value": number;
-    }
     interface CCscLogo {
+        /**
+          * Logo width in pixels
+         */
+        "width": number;
     }
     interface CFlex {
     }
-    interface CH1 {
-    }
     interface CIconButton {
+        /**
+          * Show a badge on top of the icon
+         */
         "badge": string;
+        /**
+          * Disable the button
+         */
         "disabled": boolean;
+        /**
+          * Ghost variant of the button
+         */
         "ghost": boolean;
-        "icon": string;
+        /**
+          * Outlined variant of the button
+         */
         "outlined": boolean;
+        /**
+          * Size of the button
+         */
+        "size": 'default' | 'small';
+        /**
+          * Text variant of the button
+         */
         "text": boolean;
     }
     interface CLink {
+        /**
+          * Url of link
+         */
         "href": string;
+        /**
+          * regular target attribute of a hyperlink
+         */
         "target": string;
+        /**
+          * Display line under the link
+         */
         "underline": boolean;
     }
     interface CLoader {
+        /**
+          * Delay in seconds of showing the contents in the slot of the loader
+         */
         "contentdelay": number;
     }
     interface CMain {
     }
     interface CMenu {
-        "items": any[];
+        /**
+          * Menu items
+         */
+        "items": { name: string; action: Function }[];
+        /**
+          * No hover background
+         */
         "nohover": boolean;
+        /**
+          * Simple variant without chevron and background, E.g. when a button is the activator
+         */
         "simple": boolean;
+        /**
+          * Small variant
+         */
         "small": boolean;
     }
     interface CMenuItem {
+        /**
+          * Is the item the active selection
+         */
         "active": boolean;
+        /**
+          * Small variant
+         */
         "small": boolean;
     }
     interface CModal {
+        /**
+          * Not dismissed when touching/clicking outside the content
+         */
+        "persistent": boolean;
+        /**
+          * Is the modal visible
+         */
         "value": boolean;
     }
     interface CNavigationbutton {
     }
     interface CNotification {
-        "notification": any;
-        "position": string;
+        /**
+          * notification contents
+         */
+        "notification": {
+    name: string;
+    type: 'warning' | 'error' | 'success' | 'info';
+    delay?: number;
+    requiresClosing?: boolean;
+  };
+        /**
+          * Position of the notifications
+         */
+        "position": 'fixed' | 'absolute';
     }
-    interface COption {
-        "dense": boolean;
-        "label": string;
-        "value": string;
+    interface CPagination {
+        /**
+          * Hide range indicator
+         */
+        "hideRange": boolean;
+        /**
+          * Items per page options
+         */
+        "itemsPerPageOptions": number[];
+        /**
+          * Object containing values that are needed for pagination.  Note! startFrom and endTo are assigned automatically to the object based on other values
+         */
+        "value": {
+    itemCount: number;
+    currentPage?: number;
+    totalVisible?: number;
+    itemsPerPage?: number;
+    startFrom?: number;
+    endTo?: number;
+  };
     }
-    interface CPaginationrow {
-        "items": any[];
-        "itemsPerPage": number;
-        "itemsTotal": number;
-        "pageNumber": number;
-    }
-    interface CProgressbar {
+    interface CProgressBar {
+        /**
+          * Color of the bar (valid css color)
+          * @default var(--csc-primary)
+         */
         "color": string;
+        /**
+          * Indeterminate state of the progress bar
+         */
+        "indeterminate": boolean;
+        /**
+          * Progress bar value in percentage (0 to 100)
+         */
         "value": number;
     }
-    interface CRadio {
+    interface CRadioGroup {
+        /**
+          * Color of the radio group
+         */
         "color": string;
-        "items": any[];
+        /**
+          * Disable the radio group
+         */
+        "disabled": boolean;
+        /**
+          * Radio group items
+         */
+        "items": { label: string; value: number | string }[];
+        /**
+          * Label of the radio group
+         */
         "label": string;
-        "selected": object;
+        /**
+          * Value of the radio group
+         */
+        "value": { label: string; value: number | string };
     }
     interface CRow {
+        /**
+          * Align items vertically
+         */
+        "align": 'start' | 'center' | 'end';
+        /**
+          * Gap between items in px
+         */
+        "gap": number;
+        /**
+          * Justify content horizontally
+         */
+        "justify": 'start' | 'center' | 'end' | 'space-between';
+        /**
+          * Flex wrap
+         */
+        "wrap": boolean;
     }
     interface CSelect {
+        /**
+          * Dense variant
+         */
         "dense": boolean;
+        /**
+          * Id of the element
+         */
         "hostId": string;
-        "items": any[];
+        /**
+          * selectable items
+         */
+        "items": { name: string; value: string | number }[];
+        /**
+          * Items per page before adding scroll
+         */
         "itemsPerPage": number;
+        /**
+          * Element label
+         */
         "label": string;
+        /**
+          * Label is aligned to the right
+         */
         "labelRight": boolean;
+        /**
+          * Input field name
+         */
         "name": string;
+        /**
+          * Placeholder text
+         */
         "placeholder": string;
+        /**
+          * Show required validation
+         */
         "required": boolean;
+        /**
+          * Shadow variant
+         */
         "shadow": boolean;
-        "showNone": boolean;
+        /**
+          * Run validation when changed to true
+         */
         "validate": boolean;
+        /**
+          * Show validation after touching the menu
+         */
         "validateOnBlur": boolean;
-        "value": any;
+        /**
+          * Selected item
+         */
+        "value": { name: string; value: string | number };
     }
     interface CSidenavigation {
+        /**
+          * Mobile version menu visibility
+         */
         "menuVisible": boolean;
+        /**
+          * Mobile version
+         */
         "mobile": boolean;
     }
     interface CSidenavigationitem {
+        /**
+          * Indicate active state
+         */
         "active": boolean;
+        /**
+          * Hyperlink url
+         */
         "href": string;
-        "subItems": boolean;
     }
     interface CSpacer {
     }
     interface CSubnavigationitem {
+        /**
+          * Active state
+         */
         "active": boolean;
+        /**
+          * Link url
+         */
         "href": string;
     }
-    interface CSwitch {
-        "hostDisabled": boolean;
+    interface CSwiper {
+        /**
+          * Value of the swiper
+         */
+        "value": number | string;
+    }
+    interface CSwiperTab {
+        /**
+          * Mark as active
+         */
+        "active": boolean;
+        /**
+          * Disable button
+         */
+        "disabled": boolean;
+        /**
+          * Id of the button
+         */
         "hostId": string;
+        /**
+          * Label of the button
+         */
+        "label": string;
+        /**
+          * Value of the button
+         */
+        "value": number | string;
+    }
+    interface CSwitch {
+        /**
+          * Disable the switch
+         */
+        "hostDisabled": boolean;
+        /**
+          * Id for the element
+         */
+        "hostId": string;
+        /**
+          * Value of the element
+         */
         "value": boolean;
     }
     interface CTab {
+        /**
+          * Mark tab as active
+         */
         "active": boolean;
-        "hostId": string;
-    }
-    interface CTabButton {
-        "active": boolean;
-        "color": string;
+        /**
+          * Mark tab as disabled
+         */
         "disabled": boolean;
+        /**
+          * Id of the tab
+         */
         "hostId": string;
-        "icon": string;
-        "label": string;
+        /**
+          * Value for the tab - for use in c-tabs
+         */
+        "value"?: number | string;
+    }
+    interface CTabButtons {
+        /**
+          * Disable tab buttons
+         */
+        "hostDisabled": boolean;
+        /**
+          * Always require a selection
+         */
+        "mandatory": boolean;
+        /**
+          * Size of the buttons
+         */
+        "size": 'default' | 'small';
+        /**
+          * Value of tab buttons
+         */
+        "value": number | string;
+    }
+    interface CTabs {
+        /**
+          * Currently active tab
+         */
+        "value": number | string;
     }
     interface CTag {
+        /**
+          * Mark tag as active
+         */
         "active": boolean;
+        /**
+          * Mark tag as closeable
+         */
         "closeable": boolean;
+        /**
+          * Stretch to fill the container
+         */
         "fit": boolean;
     }
     interface CTextField {
+        /**
+          * Auto focus the input
+         */
         "autofocus": boolean;
+        /**
+          * Disable the input
+         */
         "disabled": boolean;
+        /**
+          * Render a hidden input outside the shadow dom
+         */
         "form": boolean;
+        /**
+          * Id of the input
+         */
         "hostId": string;
+        /**
+          * Label of the input
+         */
         "label": string;
+        /**
+          * Maximum value on a numeric input
+         */
         "max": number;
+        /**
+          * Minimum value on a numeric input
+         */
         "min": number;
+        /**
+          * Name of the input
+         */
         "name": string;
+        /**
+          * Numeric input
+         */
         "number": boolean;
+        /**
+          * Placeholder of the input
+         */
         "placeholder": string;
+        /**
+          * Mark as readonly
+         */
         "readonly": boolean;
+        /**
+          * Set the input as required
+         */
         "required": boolean;
+        /**
+          * Rows on the input
+         */
         "rows": number;
+        /**
+          * Shadow variant of the input
+         */
         "shadow": boolean;
+        /**
+          * Step size on a numeric input
+         */
         "step": number;
+        /**
+          * Type of the input
+         */
         "type": string;
+        /**
+          * Set the validíty of the input
+         */
         "valid": boolean;
+        /**
+          * Manual validation
+         */
         "validate": boolean;
+        /**
+          * Validate the input on blur
+         */
         "validateOnBlur": boolean;
+        /**
+          * Custom validation message
+         */
         "validation": string;
+        /**
+          * Value of the input
+         */
         "value": string;
     }
     interface CTitle {
-    }
-    interface CToggle {
-        "active": boolean;
-        "color": string;
-        "description": string;
-        "fit": boolean;
-        "fixed": boolean;
-        "subtitle": string;
     }
     interface CToolbar {
     }
 }
 declare global {
+    interface HTMLCAccordionElement extends Components.CAccordion, HTMLStencilElement {
+    }
+    var HTMLCAccordionElement: {
+        prototype: HTMLCAccordionElement;
+        new (): HTMLCAccordionElement;
+    };
     interface HTMLCAccordionItemElement extends Components.CAccordionItem, HTMLStencilElement {
     }
     var HTMLCAccordionItemElement: {
@@ -288,12 +688,6 @@ declare global {
         prototype: HTMLCCheckboxElement;
         new (): HTMLCCheckboxElement;
     };
-    interface HTMLCColElement extends Components.CCol, HTMLStencilElement {
-    }
-    var HTMLCColElement: {
-        prototype: HTMLCColElement;
-        new (): HTMLCColElement;
-    };
     interface HTMLCConsentElement extends Components.CConsent, HTMLStencilElement {
     }
     var HTMLCConsentElement: {
@@ -306,12 +700,6 @@ declare global {
         prototype: HTMLCContainerElement;
         new (): HTMLCContainerElement;
     };
-    interface HTMLCContentSwitcherElement extends Components.CContentSwitcher, HTMLStencilElement {
-    }
-    var HTMLCContentSwitcherElement: {
-        prototype: HTMLCContentSwitcherElement;
-        new (): HTMLCContentSwitcherElement;
-    };
     interface HTMLCCscLogoElement extends Components.CCscLogo, HTMLStencilElement {
     }
     var HTMLCCscLogoElement: {
@@ -323,12 +711,6 @@ declare global {
     var HTMLCFlexElement: {
         prototype: HTMLCFlexElement;
         new (): HTMLCFlexElement;
-    };
-    interface HTMLCH1Element extends Components.CH1, HTMLStencilElement {
-    }
-    var HTMLCH1Element: {
-        prototype: HTMLCH1Element;
-        new (): HTMLCH1Element;
     };
     interface HTMLCIconButtonElement extends Components.CIconButton, HTMLStencilElement {
     }
@@ -384,29 +766,23 @@ declare global {
         prototype: HTMLCNotificationElement;
         new (): HTMLCNotificationElement;
     };
-    interface HTMLCOptionElement extends Components.COption, HTMLStencilElement {
+    interface HTMLCPaginationElement extends Components.CPagination, HTMLStencilElement {
     }
-    var HTMLCOptionElement: {
-        prototype: HTMLCOptionElement;
-        new (): HTMLCOptionElement;
+    var HTMLCPaginationElement: {
+        prototype: HTMLCPaginationElement;
+        new (): HTMLCPaginationElement;
     };
-    interface HTMLCPaginationrowElement extends Components.CPaginationrow, HTMLStencilElement {
+    interface HTMLCProgressBarElement extends Components.CProgressBar, HTMLStencilElement {
     }
-    var HTMLCPaginationrowElement: {
-        prototype: HTMLCPaginationrowElement;
-        new (): HTMLCPaginationrowElement;
+    var HTMLCProgressBarElement: {
+        prototype: HTMLCProgressBarElement;
+        new (): HTMLCProgressBarElement;
     };
-    interface HTMLCProgressbarElement extends Components.CProgressbar, HTMLStencilElement {
+    interface HTMLCRadioGroupElement extends Components.CRadioGroup, HTMLStencilElement {
     }
-    var HTMLCProgressbarElement: {
-        prototype: HTMLCProgressbarElement;
-        new (): HTMLCProgressbarElement;
-    };
-    interface HTMLCRadioElement extends Components.CRadio, HTMLStencilElement {
-    }
-    var HTMLCRadioElement: {
-        prototype: HTMLCRadioElement;
-        new (): HTMLCRadioElement;
+    var HTMLCRadioGroupElement: {
+        prototype: HTMLCRadioGroupElement;
+        new (): HTMLCRadioGroupElement;
     };
     interface HTMLCRowElement extends Components.CRow, HTMLStencilElement {
     }
@@ -444,6 +820,18 @@ declare global {
         prototype: HTMLCSubnavigationitemElement;
         new (): HTMLCSubnavigationitemElement;
     };
+    interface HTMLCSwiperElement extends Components.CSwiper, HTMLStencilElement {
+    }
+    var HTMLCSwiperElement: {
+        prototype: HTMLCSwiperElement;
+        new (): HTMLCSwiperElement;
+    };
+    interface HTMLCSwiperTabElement extends Components.CSwiperTab, HTMLStencilElement {
+    }
+    var HTMLCSwiperTabElement: {
+        prototype: HTMLCSwiperTabElement;
+        new (): HTMLCSwiperTabElement;
+    };
     interface HTMLCSwitchElement extends Components.CSwitch, HTMLStencilElement {
     }
     var HTMLCSwitchElement: {
@@ -456,11 +844,17 @@ declare global {
         prototype: HTMLCTabElement;
         new (): HTMLCTabElement;
     };
-    interface HTMLCTabButtonElement extends Components.CTabButton, HTMLStencilElement {
+    interface HTMLCTabButtonsElement extends Components.CTabButtons, HTMLStencilElement {
     }
-    var HTMLCTabButtonElement: {
-        prototype: HTMLCTabButtonElement;
-        new (): HTMLCTabButtonElement;
+    var HTMLCTabButtonsElement: {
+        prototype: HTMLCTabButtonsElement;
+        new (): HTMLCTabButtonsElement;
+    };
+    interface HTMLCTabsElement extends Components.CTabs, HTMLStencilElement {
+    }
+    var HTMLCTabsElement: {
+        prototype: HTMLCTabsElement;
+        new (): HTMLCTabsElement;
     };
     interface HTMLCTagElement extends Components.CTag, HTMLStencilElement {
     }
@@ -480,12 +874,6 @@ declare global {
         prototype: HTMLCTitleElement;
         new (): HTMLCTitleElement;
     };
-    interface HTMLCToggleElement extends Components.CToggle, HTMLStencilElement {
-    }
-    var HTMLCToggleElement: {
-        prototype: HTMLCToggleElement;
-        new (): HTMLCToggleElement;
-    };
     interface HTMLCToolbarElement extends Components.CToolbar, HTMLStencilElement {
     }
     var HTMLCToolbarElement: {
@@ -493,6 +881,7 @@ declare global {
         new (): HTMLCToolbarElement;
     };
     interface HTMLElementTagNameMap {
+        "c-accordion": HTMLCAccordionElement;
         "c-accordion-item": HTMLCAccordionItemElement;
         "c-autocomplete": HTMLCAutocompleteElement;
         "c-button": HTMLCButtonElement;
@@ -501,13 +890,10 @@ declare global {
         "c-card-content": HTMLCCardContentElement;
         "c-card-title": HTMLCCardTitleElement;
         "c-checkbox": HTMLCCheckboxElement;
-        "c-col": HTMLCColElement;
         "c-consent": HTMLCConsentElement;
         "c-container": HTMLCContainerElement;
-        "c-content-switcher": HTMLCContentSwitcherElement;
         "c-csc-logo": HTMLCCscLogoElement;
         "c-flex": HTMLCFlexElement;
-        "c-h1": HTMLCH1Element;
         "c-icon-button": HTMLCIconButtonElement;
         "c-link": HTMLCLinkElement;
         "c-loader": HTMLCLoaderElement;
@@ -517,268 +903,734 @@ declare global {
         "c-modal": HTMLCModalElement;
         "c-navigationbutton": HTMLCNavigationbuttonElement;
         "c-notification": HTMLCNotificationElement;
-        "c-option": HTMLCOptionElement;
-        "c-paginationrow": HTMLCPaginationrowElement;
-        "c-progressbar": HTMLCProgressbarElement;
-        "c-radio": HTMLCRadioElement;
+        "c-pagination": HTMLCPaginationElement;
+        "c-progress-bar": HTMLCProgressBarElement;
+        "c-radio-group": HTMLCRadioGroupElement;
         "c-row": HTMLCRowElement;
         "c-select": HTMLCSelectElement;
         "c-sidenavigation": HTMLCSidenavigationElement;
         "c-sidenavigationitem": HTMLCSidenavigationitemElement;
         "c-spacer": HTMLCSpacerElement;
         "c-subnavigationitem": HTMLCSubnavigationitemElement;
+        "c-swiper": HTMLCSwiperElement;
+        "c-swiper-tab": HTMLCSwiperTabElement;
         "c-switch": HTMLCSwitchElement;
         "c-tab": HTMLCTabElement;
-        "c-tab-button": HTMLCTabButtonElement;
+        "c-tab-buttons": HTMLCTabButtonsElement;
+        "c-tabs": HTMLCTabsElement;
         "c-tag": HTMLCTagElement;
         "c-text-field": HTMLCTextFieldElement;
         "c-title": HTMLCTitleElement;
-        "c-toggle": HTMLCToggleElement;
         "c-toolbar": HTMLCToolbarElement;
     }
 }
 declare namespace LocalJSX {
+    interface CAccordion {
+        /**
+          * Allow expanding multiple items
+         */
+        "multiple"?: boolean;
+        /**
+          * Emit changes to the parent
+         */
+        "onChangeValue"?: (event: CustomEvent<number | string>) => void;
+        /**
+          * Show an outline around expanded items
+         */
+        "outlined"?: boolean;
+        /**
+          * Value of the accordion
+         */
+        "value": number | string | (number | string)[];
+    }
     interface CAccordionItem {
+        /**
+          * Expansion status of the item
+         */
+        "expanded"?: boolean;
+        /**
+          * Heading of the accordion item
+         */
         "heading"?: string;
-        "icon"?: string;
-        "onChangeValue"?: (event: CustomEvent<any>) => void;
-        "value"?: boolean;
+        /**
+          * Icon
+          * @deprecated Please use the icon slot instead
+         */
+        "icon"?: 'enabled' | 'disabled' | 'bell' | 'pending';
+        /**
+          * Emit changes to the c-accordion
+          * @private
+         */
+        "onItemChange"?: (event: CustomEvent<any>) => void;
+        /**
+          * Show an outline around the expanded item
+          * @private
+         */
+        "outlined"?: boolean;
+        /**
+          * Value of the accordion item
+         */
+        "value"?: number | string;
     }
     interface CAutocomplete {
+        /**
+          * Dense variant
+         */
         "dense"?: boolean;
-        "items"?: any[];
+        /**
+          * Items to be selected
+         */
+        "items"?: {
+    name: string;
+    value: string;
+  }[];
+        /**
+          * Items per page before adding scroll
+         */
+        "itemsPerPage"?: number;
+        /**
+          * Element label
+         */
         "label"?: string;
-        "name"?: string;
+        /**
+          * Triggered when text is typed
+         */
+        "onChangeQuery"?: (event: CustomEvent<any>) => void;
+        /**
+          * Triggered when an item is selected
+         */
         "onChangeValue"?: (event: CustomEvent<any>) => void;
-        "query"?: any;
+        /**
+          * Search string
+         */
+        "query"?: string;
+        /**
+          * Show required validation
+         */
         "required"?: boolean;
-        "value"?: any;
+        /**
+          * Selected item
+         */
+        "value"?: { name: string; value: string };
     }
     interface CButton {
-        "dense"?: boolean;
+        /**
+          * Disable the button
+         */
         "disabled"?: boolean;
+        /**
+          * Fit width to containing element
+         */
         "fit"?: boolean;
-        "fixed"?: boolean;
+        /**
+          * Light button background
+         */
         "ghost"?: boolean;
+        /**
+          * Id of the button
+         */
         "hostId"?: string;
-        "icon"?: string;
+        /**
+          * Name of the icon to be displayed in the button
+          * @deprecated Please use the icon slot instead
+         */
+        "icon"?: 'plus' | 'minus' | 'account' | 'edit';
+        /**
+          * Display loader on the button
+         */
         "loading"?: boolean;
+        /**
+          * Remove the default border radius
+         */
         "noRadius"?: boolean;
+        /**
+          * Outlined button style
+         */
         "outlined"?: boolean;
-        "secondary"?: boolean;
+        /**
+          * Size of the button
+         */
+        "size"?: 'default' | 'small' | 'large';
+        /**
+          * Transparent button background
+         */
         "text"?: boolean;
+        /**
+          * Button type
+         */
+        "type"?: 'button' | 'submit';
+        /**
+          * Value for the button - for use in the c-content-switcher
+         */
+        "value"?: number | string;
     }
     interface CCard {
-        "background"?: string;
-        "color"?: string;
-        "dark"?: boolean;
-        "elevation"?: number;
-        "ma"?: number;
-        "mx"?: number;
-        "my"?: number;
-        "noRadius"?: boolean;
-        "pa"?: number;
-        "px"?: number;
-        "py"?: number;
+        /**
+          * Card background image for login pages of specific services
+         */
+        "background"?: CardBackground;
+        /**
+          * Background color
+         */
+        "backgroundColor"?: string;
     }
     interface CCardActions {
+        /**
+          * Align actions to the right
+         */
+        "right"?: boolean;
     }
     interface CCardContent {
     }
     interface CCardTitle {
     }
     interface CCheckbox {
-        "checked"?: boolean;
-        "color"?: string;
+        /**
+          * Disable the checkbox
+         */
+        "disabled"?: boolean;
+        /**
+          * Element label
+         */
         "label"?: string;
+        /**
+          * Triggered when element is checked or unchecked
+         */
         "onChangeValue"?: (event: CustomEvent<any>) => void;
-    }
-    interface CCol {
+        /**
+          * Is the element checked
+         */
+        "value"?: boolean;
     }
     interface CConsent {
     }
     interface CContainer {
+        /**
+          * Maximum width of container in pixels
+         */
         "width"?: number;
     }
-    interface CContentSwitcher {
-        /**
-          * Disable the content switcher
-         */
-        "hostDisabled"?: boolean;
-        /**
-          * Always require a value
-          * @type {boolean}
-          * @memberof ContentSwitcher
-         */
-        "mandatory"?: boolean;
-        "onChangeValue"?: (event: CustomEvent<any>) => void;
-        /**
-          * Always require a value
-          * @type {boolean}
-          * @memberof ContentSwitcher
-         */
-        "size"?: 'default' | 'small';
-        "value": number;
-    }
     interface CCscLogo {
+        /**
+          * Logo width in pixels
+         */
+        "width"?: number;
     }
     interface CFlex {
     }
-    interface CH1 {
-    }
     interface CIconButton {
+        /**
+          * Show a badge on top of the icon
+         */
         "badge"?: string;
+        /**
+          * Disable the button
+         */
         "disabled"?: boolean;
+        /**
+          * Ghost variant of the button
+         */
         "ghost"?: boolean;
-        "icon"?: string;
+        /**
+          * Outlined variant of the button
+         */
         "outlined"?: boolean;
+        /**
+          * Size of the button
+         */
+        "size"?: 'default' | 'small';
+        /**
+          * Text variant of the button
+         */
         "text"?: boolean;
     }
     interface CLink {
+        /**
+          * Url of link
+         */
         "href"?: string;
+        /**
+          * regular target attribute of a hyperlink
+         */
         "target"?: string;
+        /**
+          * Display line under the link
+         */
         "underline"?: boolean;
     }
     interface CLoader {
+        /**
+          * Delay in seconds of showing the contents in the slot of the loader
+         */
         "contentdelay"?: number;
     }
     interface CMain {
     }
     interface CMenu {
-        "items"?: any[];
+        /**
+          * Menu items
+         */
+        "items"?: { name: string; action: Function }[];
+        /**
+          * No hover background
+         */
         "nohover"?: boolean;
+        /**
+          * Simple variant without chevron and background, E.g. when a button is the activator
+         */
         "simple"?: boolean;
+        /**
+          * Small variant
+         */
         "small"?: boolean;
     }
     interface CMenuItem {
+        /**
+          * Is the item the active selection
+         */
         "active"?: boolean;
+        /**
+          * Small variant
+         */
         "small"?: boolean;
     }
     interface CModal {
+        /**
+          * Triggered when value is changed
+         */
+        "onChangeValue"?: (event: CustomEvent<boolean>) => void;
+        /**
+          * Not dismissed when touching/clicking outside the content
+         */
+        "persistent"?: boolean;
+        /**
+          * Is the modal visible
+         */
         "value"?: boolean;
     }
     interface CNavigationbutton {
     }
     interface CNotification {
-        "notification"?: any;
-        "position"?: string;
+        /**
+          * notification contents
+         */
+        "notification"?: {
+    name: string;
+    type: 'warning' | 'error' | 'success' | 'info';
+    delay?: number;
+    requiresClosing?: boolean;
+  };
+        /**
+          * Position of the notifications
+         */
+        "position"?: 'fixed' | 'absolute';
     }
-    interface COption {
-        "dense"?: boolean;
-        "label"?: string;
-        "value"?: string;
+    interface CPagination {
+        /**
+          * Hide range indicator
+         */
+        "hideRange"?: boolean;
+        /**
+          * Items per page options
+         */
+        "itemsPerPageOptions"?: number[];
+        /**
+          * Triggered when values are changed
+         */
+        "onChangeValue"?: (event: CustomEvent<{
+    itemCount: number;
+    currentPage?: number;
+    totalVisible?: number;
+    itemsPerPage?: number;
+    startFrom?: number;
+    endTo?: number;
+  }>) => void;
+        /**
+          * Object containing values that are needed for pagination.  Note! startFrom and endTo are assigned automatically to the object based on other values
+         */
+        "value"?: {
+    itemCount: number;
+    currentPage?: number;
+    totalVisible?: number;
+    itemsPerPage?: number;
+    startFrom?: number;
+    endTo?: number;
+  };
     }
-    interface CPaginationrow {
-        "items"?: any[];
-        "itemsPerPage"?: number;
-        "itemsTotal"?: number;
-        "pageNumber"?: number;
-    }
-    interface CProgressbar {
+    interface CProgressBar {
+        /**
+          * Color of the bar (valid css color)
+          * @default var(--csc-primary)
+         */
         "color"?: string;
+        /**
+          * Indeterminate state of the progress bar
+         */
+        "indeterminate"?: boolean;
+        /**
+          * Progress bar value in percentage (0 to 100)
+         */
         "value"?: number;
     }
-    interface CRadio {
+    interface CRadioGroup {
+        /**
+          * Color of the radio group
+         */
         "color"?: string;
-        "items"?: any[];
+        /**
+          * Disable the radio group
+         */
+        "disabled"?: boolean;
+        /**
+          * Radio group items
+         */
+        "items"?: { label: string; value: number | string }[];
+        /**
+          * Label of the radio group
+         */
         "label"?: string;
+        /**
+          * Emit value change to the parent
+         */
         "onChangeValue"?: (event: CustomEvent<any>) => void;
-        "selected"?: object;
+        /**
+          * Value of the radio group
+         */
+        "value"?: { label: string; value: number | string };
     }
     interface CRow {
+        /**
+          * Align items vertically
+         */
+        "align"?: 'start' | 'center' | 'end';
+        /**
+          * Gap between items in px
+         */
+        "gap"?: number;
+        /**
+          * Justify content horizontally
+         */
+        "justify"?: 'start' | 'center' | 'end' | 'space-between';
+        /**
+          * Flex wrap
+         */
+        "wrap"?: boolean;
     }
     interface CSelect {
+        /**
+          * Dense variant
+         */
         "dense"?: boolean;
+        /**
+          * Id of the element
+         */
         "hostId"?: string;
-        "items"?: any[];
+        /**
+          * selectable items
+         */
+        "items"?: { name: string; value: string | number }[];
+        /**
+          * Items per page before adding scroll
+         */
         "itemsPerPage"?: number;
+        /**
+          * Element label
+         */
         "label"?: string;
+        /**
+          * Label is aligned to the right
+         */
         "labelRight"?: boolean;
+        /**
+          * Input field name
+         */
         "name"?: string;
+        /**
+          * Triggered when an item is selected
+         */
         "onChangeValue"?: (event: CustomEvent<any>) => void;
+        /**
+          * Placeholder text
+         */
         "placeholder"?: string;
+        /**
+          * Show required validation
+         */
         "required"?: boolean;
+        /**
+          * Shadow variant
+         */
         "shadow"?: boolean;
-        "showNone"?: boolean;
+        /**
+          * Run validation when changed to true
+         */
         "validate"?: boolean;
+        /**
+          * Show validation after touching the menu
+         */
         "validateOnBlur"?: boolean;
-        "value"?: any;
+        /**
+          * Selected item
+         */
+        "value"?: { name: string; value: string | number };
     }
     interface CSidenavigation {
+        /**
+          * Mobile version menu visibility
+         */
         "menuVisible"?: boolean;
+        /**
+          * Mobile version
+         */
         "mobile"?: boolean;
     }
     interface CSidenavigationitem {
+        /**
+          * Indicate active state
+         */
         "active"?: boolean;
+        /**
+          * Hyperlink url
+         */
         "href"?: string;
-        "subItems"?: boolean;
     }
     interface CSpacer {
     }
     interface CSubnavigationitem {
+        /**
+          * Active state
+         */
         "active"?: boolean;
+        /**
+          * Link url
+         */
         "href"?: string;
     }
-    interface CSwitch {
-        "hostDisabled"?: boolean;
+    interface CSwiper {
+        /**
+          * Value of the swiper
+         */
+        "value"?: number | string;
+    }
+    interface CSwiperTab {
+        /**
+          * Mark as active
+         */
+        "active"?: boolean;
+        /**
+          * Disable button
+         */
+        "disabled"?: boolean;
+        /**
+          * Id of the button
+         */
         "hostId"?: string;
-        "onChangeValue"?: (event: CustomEvent<any>) => void;
+        /**
+          * Label of the button
+         */
+        "label"?: string;
+        /**
+          * Emit value change to the parent
+         */
+        "onChangeValue"?: (event: CustomEvent<number | string>) => void;
+        /**
+          * Emit tab focus to the parent
+          * @private
+         */
+        "onFocusTab"?: (event: CustomEvent<any>) => void;
+        /**
+          * Emit tab change to parent
+          * @private
+         */
+        "onTabChange"?: (event: CustomEvent<any>) => void;
+        /**
+          * Value of the button
+         */
+        "value"?: number | string;
+    }
+    interface CSwitch {
+        /**
+          * Disable the switch
+         */
+        "hostDisabled"?: boolean;
+        /**
+          * Id for the element
+         */
+        "hostId"?: string;
+        /**
+          * Emit inner value change to parent
+         */
+        "onChangeValue"?: (event: CustomEvent<boolean>) => void;
+        /**
+          * Value of the element
+         */
         "value"?: boolean;
     }
     interface CTab {
+        /**
+          * Mark tab as active
+         */
         "active"?: boolean;
-        "hostId"?: string;
-    }
-    interface CTabButton {
-        "active"?: boolean;
-        "color"?: string;
+        /**
+          * Mark tab as disabled
+         */
         "disabled"?: boolean;
+        /**
+          * Id of the tab
+         */
         "hostId"?: string;
-        "icon"?: string;
-        "label"?: string;
+        /**
+          * Emit changes to the parent
+          * @private
+         */
+        "onTabChange"?: (event: CustomEvent<any>) => void;
+        /**
+          * Value for the tab - for use in c-tabs
+         */
+        "value"?: number | string;
+    }
+    interface CTabButtons {
+        /**
+          * Disable tab buttons
+         */
+        "hostDisabled"?: boolean;
+        /**
+          * Always require a selection
+         */
+        "mandatory"?: boolean;
+        /**
+          * Emit changes to the parent
+         */
+        "onChangeValue"?: (event: CustomEvent<number | string>) => void;
+        /**
+          * Size of the buttons
+         */
+        "size"?: 'default' | 'small';
+        /**
+          * Value of tab buttons
+         */
+        "value": number | string;
+    }
+    interface CTabs {
+        /**
+          * Emit changes to the parent
+         */
+        "onChangeValue"?: (event: CustomEvent<any>) => void;
+        /**
+          * Currently active tab
+         */
+        "value": number | string;
     }
     interface CTag {
+        /**
+          * Mark tag as active
+         */
         "active"?: boolean;
+        /**
+          * Mark tag as closeable
+         */
         "closeable"?: boolean;
+        /**
+          * Stretch to fill the container
+         */
         "fit"?: boolean;
     }
     interface CTextField {
+        /**
+          * Auto focus the input
+         */
         "autofocus"?: boolean;
+        /**
+          * Disable the input
+         */
         "disabled"?: boolean;
+        /**
+          * Render a hidden input outside the shadow dom
+         */
         "form"?: boolean;
+        /**
+          * Id of the input
+         */
         "hostId"?: string;
+        /**
+          * Label of the input
+         */
         "label"?: string;
+        /**
+          * Maximum value on a numeric input
+         */
         "max"?: number;
+        /**
+          * Minimum value on a numeric input
+         */
         "min"?: number;
+        /**
+          * Name of the input
+         */
         "name"?: string;
+        /**
+          * Numeric input
+         */
         "number"?: boolean;
+        /**
+          * Emit changes to the parent
+         */
         "onChangeValue"?: (event: CustomEvent<any>) => void;
+        /**
+          * Placeholder of the input
+         */
         "placeholder"?: string;
+        /**
+          * Mark as readonly
+         */
         "readonly"?: boolean;
+        /**
+          * Set the input as required
+         */
         "required"?: boolean;
+        /**
+          * Rows on the input
+         */
         "rows"?: number;
+        /**
+          * Shadow variant of the input
+         */
         "shadow"?: boolean;
+        /**
+          * Step size on a numeric input
+         */
         "step"?: number;
+        /**
+          * Type of the input
+         */
         "type"?: string;
+        /**
+          * Set the validíty of the input
+         */
         "valid"?: boolean;
+        /**
+          * Manual validation
+         */
         "validate"?: boolean;
+        /**
+          * Validate the input on blur
+         */
         "validateOnBlur"?: boolean;
+        /**
+          * Custom validation message
+         */
         "validation"?: string;
+        /**
+          * Value of the input
+         */
         "value"?: string;
     }
     interface CTitle {
     }
-    interface CToggle {
-        "active"?: boolean;
-        "color"?: string;
-        "description"?: string;
-        "fit"?: boolean;
-        "fixed"?: boolean;
-        "subtitle"?: string;
-    }
     interface CToolbar {
     }
     interface IntrinsicElements {
+        "c-accordion": CAccordion;
         "c-accordion-item": CAccordionItem;
         "c-autocomplete": CAutocomplete;
         "c-button": CButton;
@@ -787,13 +1639,10 @@ declare namespace LocalJSX {
         "c-card-content": CCardContent;
         "c-card-title": CCardTitle;
         "c-checkbox": CCheckbox;
-        "c-col": CCol;
         "c-consent": CConsent;
         "c-container": CContainer;
-        "c-content-switcher": CContentSwitcher;
         "c-csc-logo": CCscLogo;
         "c-flex": CFlex;
-        "c-h1": CH1;
         "c-icon-button": CIconButton;
         "c-link": CLink;
         "c-loader": CLoader;
@@ -803,23 +1652,24 @@ declare namespace LocalJSX {
         "c-modal": CModal;
         "c-navigationbutton": CNavigationbutton;
         "c-notification": CNotification;
-        "c-option": COption;
-        "c-paginationrow": CPaginationrow;
-        "c-progressbar": CProgressbar;
-        "c-radio": CRadio;
+        "c-pagination": CPagination;
+        "c-progress-bar": CProgressBar;
+        "c-radio-group": CRadioGroup;
         "c-row": CRow;
         "c-select": CSelect;
         "c-sidenavigation": CSidenavigation;
         "c-sidenavigationitem": CSidenavigationitem;
         "c-spacer": CSpacer;
         "c-subnavigationitem": CSubnavigationitem;
+        "c-swiper": CSwiper;
+        "c-swiper-tab": CSwiperTab;
         "c-switch": CSwitch;
         "c-tab": CTab;
-        "c-tab-button": CTabButton;
+        "c-tab-buttons": CTabButtons;
+        "c-tabs": CTabs;
         "c-tag": CTag;
         "c-text-field": CTextField;
         "c-title": CTitle;
-        "c-toggle": CToggle;
         "c-toolbar": CToolbar;
     }
 }
@@ -827,6 +1677,7 @@ export { LocalJSX as JSX };
 declare module "@stencil/core" {
     export namespace JSX {
         interface IntrinsicElements {
+            "c-accordion": LocalJSX.CAccordion & JSXBase.HTMLAttributes<HTMLCAccordionElement>;
             "c-accordion-item": LocalJSX.CAccordionItem & JSXBase.HTMLAttributes<HTMLCAccordionItemElement>;
             "c-autocomplete": LocalJSX.CAutocomplete & JSXBase.HTMLAttributes<HTMLCAutocompleteElement>;
             "c-button": LocalJSX.CButton & JSXBase.HTMLAttributes<HTMLCButtonElement>;
@@ -835,13 +1686,10 @@ declare module "@stencil/core" {
             "c-card-content": LocalJSX.CCardContent & JSXBase.HTMLAttributes<HTMLCCardContentElement>;
             "c-card-title": LocalJSX.CCardTitle & JSXBase.HTMLAttributes<HTMLCCardTitleElement>;
             "c-checkbox": LocalJSX.CCheckbox & JSXBase.HTMLAttributes<HTMLCCheckboxElement>;
-            "c-col": LocalJSX.CCol & JSXBase.HTMLAttributes<HTMLCColElement>;
             "c-consent": LocalJSX.CConsent & JSXBase.HTMLAttributes<HTMLCConsentElement>;
             "c-container": LocalJSX.CContainer & JSXBase.HTMLAttributes<HTMLCContainerElement>;
-            "c-content-switcher": LocalJSX.CContentSwitcher & JSXBase.HTMLAttributes<HTMLCContentSwitcherElement>;
             "c-csc-logo": LocalJSX.CCscLogo & JSXBase.HTMLAttributes<HTMLCCscLogoElement>;
             "c-flex": LocalJSX.CFlex & JSXBase.HTMLAttributes<HTMLCFlexElement>;
-            "c-h1": LocalJSX.CH1 & JSXBase.HTMLAttributes<HTMLCH1Element>;
             "c-icon-button": LocalJSX.CIconButton & JSXBase.HTMLAttributes<HTMLCIconButtonElement>;
             "c-link": LocalJSX.CLink & JSXBase.HTMLAttributes<HTMLCLinkElement>;
             "c-loader": LocalJSX.CLoader & JSXBase.HTMLAttributes<HTMLCLoaderElement>;
@@ -851,23 +1699,24 @@ declare module "@stencil/core" {
             "c-modal": LocalJSX.CModal & JSXBase.HTMLAttributes<HTMLCModalElement>;
             "c-navigationbutton": LocalJSX.CNavigationbutton & JSXBase.HTMLAttributes<HTMLCNavigationbuttonElement>;
             "c-notification": LocalJSX.CNotification & JSXBase.HTMLAttributes<HTMLCNotificationElement>;
-            "c-option": LocalJSX.COption & JSXBase.HTMLAttributes<HTMLCOptionElement>;
-            "c-paginationrow": LocalJSX.CPaginationrow & JSXBase.HTMLAttributes<HTMLCPaginationrowElement>;
-            "c-progressbar": LocalJSX.CProgressbar & JSXBase.HTMLAttributes<HTMLCProgressbarElement>;
-            "c-radio": LocalJSX.CRadio & JSXBase.HTMLAttributes<HTMLCRadioElement>;
+            "c-pagination": LocalJSX.CPagination & JSXBase.HTMLAttributes<HTMLCPaginationElement>;
+            "c-progress-bar": LocalJSX.CProgressBar & JSXBase.HTMLAttributes<HTMLCProgressBarElement>;
+            "c-radio-group": LocalJSX.CRadioGroup & JSXBase.HTMLAttributes<HTMLCRadioGroupElement>;
             "c-row": LocalJSX.CRow & JSXBase.HTMLAttributes<HTMLCRowElement>;
             "c-select": LocalJSX.CSelect & JSXBase.HTMLAttributes<HTMLCSelectElement>;
             "c-sidenavigation": LocalJSX.CSidenavigation & JSXBase.HTMLAttributes<HTMLCSidenavigationElement>;
             "c-sidenavigationitem": LocalJSX.CSidenavigationitem & JSXBase.HTMLAttributes<HTMLCSidenavigationitemElement>;
             "c-spacer": LocalJSX.CSpacer & JSXBase.HTMLAttributes<HTMLCSpacerElement>;
             "c-subnavigationitem": LocalJSX.CSubnavigationitem & JSXBase.HTMLAttributes<HTMLCSubnavigationitemElement>;
+            "c-swiper": LocalJSX.CSwiper & JSXBase.HTMLAttributes<HTMLCSwiperElement>;
+            "c-swiper-tab": LocalJSX.CSwiperTab & JSXBase.HTMLAttributes<HTMLCSwiperTabElement>;
             "c-switch": LocalJSX.CSwitch & JSXBase.HTMLAttributes<HTMLCSwitchElement>;
             "c-tab": LocalJSX.CTab & JSXBase.HTMLAttributes<HTMLCTabElement>;
-            "c-tab-button": LocalJSX.CTabButton & JSXBase.HTMLAttributes<HTMLCTabButtonElement>;
+            "c-tab-buttons": LocalJSX.CTabButtons & JSXBase.HTMLAttributes<HTMLCTabButtonsElement>;
+            "c-tabs": LocalJSX.CTabs & JSXBase.HTMLAttributes<HTMLCTabsElement>;
             "c-tag": LocalJSX.CTag & JSXBase.HTMLAttributes<HTMLCTagElement>;
             "c-text-field": LocalJSX.CTextField & JSXBase.HTMLAttributes<HTMLCTextFieldElement>;
             "c-title": LocalJSX.CTitle & JSXBase.HTMLAttributes<HTMLCTitleElement>;
-            "c-toggle": LocalJSX.CToggle & JSXBase.HTMLAttributes<HTMLCToggleElement>;
             "c-toolbar": LocalJSX.CToolbar & JSXBase.HTMLAttributes<HTMLCToolbarElement>;
         }
     }

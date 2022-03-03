@@ -1,12 +1,19 @@
 import { Component, Host, h, Prop } from '@stencil/core';
-
+/**
+ * A loader component that fills the nearest containing element that has css-property position set
+ *
+ * @group Indicators
+ */
 @Component({
   tag: 'c-loader',
-  styleUrl: 'c-loader.css',
+  styleUrl: 'c-loader.scss',
   shadow: true,
 })
 export class CLoader {
-  @Prop() contentdelay: number;
+  /**
+   * Delay in seconds of showing the contents in the slot of the loader
+   */
+  @Prop() contentdelay: number = 0;
 
   render() {
     const SPINNER_SMALL = (
