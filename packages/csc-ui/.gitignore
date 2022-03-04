@@ -6,3 +6,5 @@ node_modules/*
 # Automatically generated files
 docs.json
 documentation/angular/.firebase/
+
+.npmrc
