@@ -6,7 +6,6 @@
   --c-padding: 12px;
 
   display: block;
-  margin-bottom: 8px;
 
   &--expanded {
     --c-content-height: auto;
@@ -41,8 +40,8 @@
     }
 
     &:focus-visible {
-      outline: 2px black solid;
-      outline-offset: 2px;
+      outline: 2px var(--csc-primary) solid;
+      outline-offset: 4px;
     }
   }
 

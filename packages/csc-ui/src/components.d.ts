@@ -524,6 +524,10 @@ export namespace Components {
     }
     interface CTabs {
         /**
+          * Disable the bottom border
+         */
+        "borderless": boolean;
+        /**
           * Currently active tab
          */
         "value": number | string;
@@ -1512,6 +1516,10 @@ declare namespace LocalJSX {
         "value": number | string;
     }
     interface CTabs {
+        /**
+          * Disable the bottom border
+         */
+        "borderless"?: boolean;
         /**
           * Emit changes to the parent
          */

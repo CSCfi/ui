@@ -5,21 +5,19 @@
     {{ componentData?.docs }}
   </p>
 
-  <div class="border-bottom">
-    <c-tabs [value]="activeTab">
-      <c-tab
-        *ngFor="let tab of tabs"
-        [routerLink]="tab.enabled ? [] : null"
-        [queryParams]="tab.query"
-        [active]="activeTab === tab.label"
-        [disabled]="!tab.enabled"
-        [value]="tab.label"
-        (keyup.enter)="tab.enabled && navigate(tab.query)"
-      >
-        {{ tab.label }}
-      </c-tab>
-    </c-tabs>
-  </div>
+  <c-tabs [value]="activeTab">
+    <c-tab
+      *ngFor="let tab of tabs"
+      [routerLink]="tab.enabled ? [] : null"
+      [queryParams]="tab.query"
+      [active]="activeTab === tab.label"
+      [disabled]="!tab.enabled"
+      [value]="tab.label"
+      (keyup.enter)="tab.enabled && navigate(tab.query)"
+    >
+      {{ tab.label }}
+    </c-tab>
+  </c-tabs>
 
   <div class="pt-4">
     <div [hidden]="activeTab !== 'Examples'">

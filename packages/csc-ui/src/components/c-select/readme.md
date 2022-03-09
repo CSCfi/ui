@@ -12,7 +12,7 @@
 | `dense`          | `dense`            | Dense variant                           | `boolean`                                      | `false`     |
 | `hostId`         | `id`               | Id of the element                       | `string`                                       | `undefined` |
 | `items`          | --                 | selectable items                        | `{ name: string; value: string \| number; }[]` | `[]`        |
-| `itemsPerPage`   | `items-per-page`   | Items per page before adding scroll     | `number`                                       | `undefined` |
+| `itemsPerPage`   | `items-per-page`   | Items per page before adding scroll     | `number`                                       | `6`         |
 | `label`          | `label`            | Element label                           | `string`                                       | `undefined` |
 | `labelRight`     | `label-right`      | Label is aligned to the right           | `boolean`                                      | `false`     |
 | `name`           | `name`             | Input field name                        | `string`                                       | `undefined` |

@@ -6,6 +6,7 @@ import {
   Prop,
   EventEmitter,
   Listen,
+  Watch,
 } from '@stencil/core';
 
 /**
@@ -24,18 +25,32 @@ export class CTabs {
   @Prop({ mutable: true }) value!: number | string;
 
   /**
+   * Disable the bottom border
+   */
+  @Prop() borderless = false;
+
+  /**
    * Emit changes to the parent
    */
   @Event() changeValue: EventEmitter;
   @Element() el: HTMLCTabsElement;
 
+  @Watch('value')
+  onExternalValueChange() {
+    this._handleActiveTab();
+    this.changeValue.emit(this.value);
+  }
+
   @Listen('tabChange', { passive: true })
   tabChangeHandler(e) {
     this.value = e.detail;
+  }
 
-    this._handleActiveTab();
-
-    this.changeValue.emit(this.value);
+  @Listen('keydown', { capture: true })
+  handleKeyDown(event: KeyboardEvent) {
+    if (event.key === 'Enter' || event.code === 'Space') {
+      this.value = (event.target as HTMLCTabElement).value;
+    }
   }
 
   componentDidLoad() {
@@ -53,8 +68,13 @@ export class CTabs {
   }
 
   render() {
+    const classes = {
+      'c-tabs': true,
+      'c-tabs--borderless': this.borderless,
+    };
+
     return (
-      <div class="c-tabs">
+      <div class={classes}>
         <slot></slot>
       </div>
     );

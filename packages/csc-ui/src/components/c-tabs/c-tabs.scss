@@ -1,3 +1,8 @@
 .c-tabs {
   display: flex;
+  box-shadow: inset 0 -1px 0 0 var(--csc-light-grey);
+
+  &--borderless {
+    box-shadow: none;
+  }
 }

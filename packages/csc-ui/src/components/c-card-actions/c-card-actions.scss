@@ -1,8 +1,9 @@
 .c-card-actions {
+  align-items: center;
   display: flex;
   gap: 8px;
-  padding: 24px;
   padding-top: 0;
+  padding: 24px;
 
   ::slotted(c-button[fit]) {
     flex: 1;

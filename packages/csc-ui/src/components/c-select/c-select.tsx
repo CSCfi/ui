@@ -75,7 +75,7 @@ export class CSelect {
   /**
    * Items per page before adding scroll
    */
-  @Prop() itemsPerPage: number;
+  @Prop() itemsPerPage = 6;
 
   /**
    * Placeholder text

@@ -1,14 +1,15 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 
 @Component({
   selector: 'app-c-tabs',
   templateUrl: './c-tabs.component.html',
   styleUrls: ['./c-tabs.component.scss'],
 })
-export class CTabsComponent implements OnInit {
+export class CTabsComponent {
   value = 'tab1';
+  tab = 'tab1';
 
-  constructor() {}
-
-  ngOnInit(): void {}
+  onTabChange() {
+    this.tab = 'tab2';
+  }
 }

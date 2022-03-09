@@ -7,9 +7,10 @@
 
 ## Properties
 
-| Property             | Attribute | Description          | Type               | Default     |
-| -------------------- | --------- | -------------------- | ------------------ | ----------- |
-| `value` _(required)_ | `value`   | Currently active tab | `number \| string` | `undefined` |
+| Property             | Attribute    | Description               | Type               | Default     |
+| -------------------- | ------------ | ------------------------- | ------------------ | ----------- |
+| `borderless`         | `borderless` | Disable the bottom border | `boolean`          | `false`     |
+| `value` _(required)_ | `value`      | Currently active tab      | `number \| string` | `undefined` |
 
 
 ## Events
