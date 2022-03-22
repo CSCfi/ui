@@ -123,6 +123,10 @@
     }
   }
 
+  &--select .c-input__slot {
+    cursor: pointer;
+  }
+
   fieldset {
     border-collapse: collapse;
     border-color: currentColor;

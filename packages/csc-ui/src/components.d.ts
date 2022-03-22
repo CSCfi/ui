@@ -48,9 +48,29 @@ export namespace Components {
     }
     interface CAutocomplete {
         /**
+          * Auto focus the input
+         */
+        "autofocus": boolean;
+        /**
           * Dense variant
          */
         "dense": boolean;
+        /**
+          * Disable the input
+         */
+        "disabled": boolean;
+        /**
+          * Hide the hint and error messages
+         */
+        "hideDetails": boolean;
+        /**
+          * Hint text for the input
+         */
+        "hint": string;
+        /**
+          * Id of the element
+         */
+        "hostId": string;
         /**
           * Items to be selected
          */
@@ -67,6 +87,14 @@ export namespace Components {
          */
         "label": string;
         /**
+          * Input field name
+         */
+        "name": string;
+        /**
+          * Placeholder text
+         */
+        "placeholder": string;
+        /**
           * Search string
          */
         "query": string;
@@ -74,6 +102,26 @@ export namespace Components {
           * Show required validation
          */
         "required": boolean;
+        /**
+          * Shadow variant
+         */
+        "shadow": boolean;
+        /**
+          * Set the validíty of the input
+         */
+        "valid": boolean;
+        /**
+          * Manual validation
+         */
+        "validate": boolean;
+        /**
+          * Validate the input on blur
+         */
+        "validateOnBlur": boolean;
+        /**
+          * Custom validation message
+         */
+        "validation": string;
         /**
           * Selected item
          */
@@ -325,6 +373,10 @@ export namespace Components {
           * Value of the input
          */
         "value": string | number | { name: string; value: string | number };
+        /**
+          * Variant
+         */
+        "variant": 'text' | 'select';
     }
     interface CLink {
         /**
@@ -1136,9 +1188,29 @@ declare namespace LocalJSX {
     }
     interface CAutocomplete {
         /**
+          * Auto focus the input
+         */
+        "autofocus"?: boolean;
+        /**
           * Dense variant
          */
         "dense"?: boolean;
+        /**
+          * Disable the input
+         */
+        "disabled"?: boolean;
+        /**
+          * Hide the hint and error messages
+         */
+        "hideDetails"?: boolean;
+        /**
+          * Hint text for the input
+         */
+        "hint"?: string;
+        /**
+          * Id of the element
+         */
+        "hostId"?: string;
         /**
           * Items to be selected
          */
@@ -1155,6 +1227,10 @@ declare namespace LocalJSX {
          */
         "label"?: string;
         /**
+          * Input field name
+         */
+        "name"?: string;
+        /**
           * Triggered when text is typed
          */
         "onChangeQuery"?: (event: CustomEvent<any>) => void;
@@ -1163,6 +1239,10 @@ declare namespace LocalJSX {
          */
         "onChangeValue"?: (event: CustomEvent<any>) => void;
         /**
+          * Placeholder text
+         */
+        "placeholder"?: string;
+        /**
           * Search string
          */
         "query"?: string;
@@ -1170,6 +1250,26 @@ declare namespace LocalJSX {
           * Show required validation
          */
         "required"?: boolean;
+        /**
+          * Shadow variant
+         */
+        "shadow"?: boolean;
+        /**
+          * Set the validíty of the input
+         */
+        "valid"?: boolean;
+        /**
+          * Manual validation
+         */
+        "validate"?: boolean;
+        /**
+          * Validate the input on blur
+         */
+        "validateOnBlur"?: boolean;
+        /**
+          * Custom validation message
+         */
+        "validation"?: string;
         /**
           * Selected item
          */
@@ -1429,6 +1529,10 @@ declare namespace LocalJSX {
           * Value of the input
          */
         "value"?: string | number | { name: string; value: string | number };
+        /**
+          * Variant
+         */
+        "variant"?: 'text' | 'select';
     }
     interface CLink {
         /**

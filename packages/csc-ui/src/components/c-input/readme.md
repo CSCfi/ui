@@ -32,6 +32,7 @@
 | `validateOnBlur` | `validate-on-blur` | Validate the input on blur                                                                       | `boolean`                                                        | `false`            |
 | `validation`     | `validation`       | Custom validation message                                                                        | `string`                                                         | `'Required field'` |
 | `value`          | `value`            | Value of the input                                                                               | `number \| string \| { name: string; value: string \| number; }` | `undefined`        |
+| `variant`        | `variant`          | Variant                                                                                          | `"select" \| "text"`                                             | `'text'`           |
 
 
 ## Events
@@ -45,12 +46,14 @@
 
 ### Used by
 
+ - [c-autocomplete](../c-autocomplete)
  - [c-select](../c-select)
  - [c-text-field](../c-text-field)
 
 ### Graph
 ```mermaid
 graph TD;
+  c-autocomplete --> c-input
   c-select --> c-input
   c-text-field --> c-input
   style c-input fill:#f9f,stroke:#333,stroke-width:4px

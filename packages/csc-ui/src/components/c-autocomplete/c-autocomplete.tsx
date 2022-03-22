@@ -21,10 +21,45 @@ export interface SelectItem {
  */
 @Component({
   tag: 'c-autocomplete',
-  styleUrl: 'c-autocomplete.scss',
+  styleUrl: '../c-input/c-input-menu.scss',
   shadow: true,
 })
 export class CAutocomplete {
+  /**
+   * Auto focus the input
+   */
+  @Prop() autofocus = false;
+
+  /**
+   * Disable the input
+   */
+  @Prop() disabled = false;
+
+  /**
+   * Hide the hint and error messages
+   */
+  @Prop() hideDetails = false;
+
+  /**
+   * Hint text for the input
+   */
+  @Prop() hint = '';
+
+  /**
+   * Id of the element
+   */
+  @Prop({ attribute: 'id' }) hostId: string;
+
+  /**
+   * Shadow variant
+   */
+  @Prop() shadow: boolean = false;
+
+  /**
+   * Input field name
+   */
+  @Prop() name: string;
+
   /**
    * Element label
    */
@@ -49,6 +84,31 @@ export class CAutocomplete {
    * Show required validation
    */
   @Prop() required: boolean = null;
+
+  /**
+   * Set the validíty of the input
+   */
+  @Prop() valid: boolean = true;
+
+  /**
+   * Manual validation
+   */
+  @Prop() validate: boolean = false;
+
+  /**
+   * Validate the input on blur
+   */
+  @Prop() validateOnBlur: boolean = false;
+
+  /**
+   * Custom validation message
+   */
+  @Prop() validation: string = 'Required field';
+
+  /**
+   * Placeholder text
+   */
+  @Prop() placeholder = '';
 
   /**
    * Items to be selected
@@ -80,6 +140,8 @@ export class CAutocomplete {
     this.changeValue.emit({ name: item.name, value: item.value });
   }
 
+  private _inputElement: HTMLInputElement;
+
   @State() itemRefs: { value: string; ref: HTMLElement }[] = [];
 
   @Watch('items')
@@ -92,8 +154,6 @@ export class CAutocomplete {
   @Element() host: HTMLCAutocompleteElement;
   @State() menuVisible: boolean = false;
   @State() currentIndex: number = null;
-  private outerWrapperClasses = ['outer-wrapper'];
-  private validationClasses = ['validation-message'];
   private _direction = null;
   @Listen('keydown', { passive: true })
   handleKeyDown(ev: any) {
@@ -166,19 +226,6 @@ export class CAutocomplete {
     { threshold: 1 },
   );
 
-  private validationIcon = (
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      viewBox="0 0 24 24"
-      fill="#E71D32"
-      width="18px"
-      height="18px"
-    >
-      <path d="M0 0h24v24H0z" fill="none" />
-      <path d="M12 2C6.47 2 2 6.47 2 12s4.47 10 10 10 10-4.47 10-10S17.53 2 12 2zm5 13.59L15.59 17 12 13.41 8.41 17 7 15.59 10.59 12 7 8.41 8.41 7 12 10.59 15.59 7 17 8.41 13.41 12 17 15.59z" />
-    </svg>
-  );
-
   private _scrollToElement() {
     if (this.items.length > this.itemsPerPage) {
       const itemRef = this.itemRefs.find(
@@ -191,12 +238,14 @@ export class CAutocomplete {
     }
   }
 
-  private showMenu = () => {
+  private _showMenu() {
+    this._inputElement.focus();
+
     if (this.menuVisible) {
       this.currentIndex = null;
     }
     this.menuVisible = !this.menuVisible;
-  };
+  }
 
   private handleChange(event) {
     this.menuVisible = true;
@@ -209,6 +258,7 @@ export class CAutocomplete {
     this.query = item.name;
     this.value = item;
     this.valueChangedHandler(item);
+    this.menuVisible = false;
   }
 
   componentDidLoad() {
@@ -222,28 +272,23 @@ export class CAutocomplete {
     });
   }
 
-  private _setItemsPerPage() {
-    if (this.itemsPerPage > 0 && this.items.length > this.itemsPerPage) {
-      this._itemsPerPageStyle = {
-        'max-height': 49 * this.itemsPerPage + 'px',
-        'overflow-y': 'auto',
-      };
-    }
-  }
+  private _getListItem = (item) => {
+    const classes = {
+      active: this.items[this.currentIndex] === item,
+      none: item.value === null,
+    };
 
-  private getListItem = (item) => {
-    let classes = '';
-    if (this.dense) {
-      classes = 'dense';
+    let itemId = 'none';
+
+    if (typeof item?.value === 'string') {
+      itemId = item.value.replace(/[^a-zA-Z0-9-_]/g, '');
     }
 
-    if (this.items[this.currentIndex] === item) {
-      classes = `${classes} active`;
-    }
+    itemId = `item_${itemId}`;
 
     return (
       <li
-        id={'item_' + item.value}
+        id={itemId}
         ref={(el) => {
           item.ref = el as HTMLElement;
           this.itemRefs.push({ value: item.value, ref: el as HTMLElement });
@@ -256,110 +301,98 @@ export class CAutocomplete {
     );
   };
 
-  private _itemsPerPageStyle = {};
+  private _renderChevron() {
+    const classes = {
+      'c-input-menu__chevron': true,
+      'c-input-menu__chevron--active': this.menuVisible,
+    };
+
+    return (
+      <svg class={classes} viewBox="0 0 24 24">
+        <path d={mdiChevronDown} />
+      </svg>
+    );
+  }
+
+  private _renderMenu(style) {
+    return (
+      <div
+        class={{
+          'c-input-menu__item-wrapper': true,
+          'c-input-menu__item-wrapper--shadow': this.shadow,
+        }}
+        aria-expanded={this.menuVisible}
+      >
+        <div
+          style={style}
+          class={
+            this.menuVisible
+              ? 'c-input-menu__items'
+              : 'c-input-menu__items c-input-menu__items--hidden'
+          }
+        >
+          {this.items.map((item) => this._getListItem(item))}
+        </div>
+      </div>
+    );
+  }
+
+  private _renderInputElement() {
+    return (
+      <div class="c-input-menu__input" onClick={() => this._showMenu()}>
+        <input
+          ref={(el) => (this._inputElement = el as HTMLInputElement)}
+          type="text"
+          value={this.value?.name ?? null}
+          name={this.name ?? null}
+          onInput={(event) => this.handleChange(event)}
+        />
+      </div>
+    );
+  }
 
   render() {
     this.itemRefs = [];
+    let itemsPerPageStyle = {};
 
-    this._setItemsPerPage();
-    let borderLabel = 'border-label';
-    if (this.query !== '') {
-      borderLabel += ' value-set';
+    if (
+      this.itemsPerPage &&
+      this.itemsPerPage > 0 &&
+      this.items.length > this.itemsPerPage
+    ) {
+      itemsPerPageStyle = {
+        'max-height': 48 * this.itemsPerPage + 'px',
+        'overflow-y': 'scroll',
+      };
     }
-
-    if (this.required && !this.value) {
-      this.outerWrapperClasses.push('required');
-      this.validationClasses.push('show');
-    } else {
-      this.outerWrapperClasses = this.outerWrapperClasses.filter(
-        (c) => c !== 'required',
-      );
-      this.validationClasses = this.validationClasses.filter(
-        (c) => c !== 'show',
-      );
-    }
-
-    let classes = 'c-autocomplete-wrapper';
-    if (this.menuVisible) classes = `${classes} c-autocomplete-wrapper-active`;
-    if (this.dense) classes = `${classes} c-autocomplete-dense`;
-    const labelBlock = (
-      <div class={borderLabel}>
-        <label class="top-span">
-          {this.label}
-          {this.required ? '*' : ''}
-        </label>
-        <label class="hidden">
-          {this.label}
-          {this.required ? '*' : ''}
-        </label>
-      </div>
-    );
 
     return (
       <Host>
-        <div
-          class={this.outerWrapperClasses.join(' ')}
-          tabindex="0"
-          onClick={this.showMenu}
-          role="button"
-          aria-labelledby="c-select-label"
+        <c-input
+          autofocus={this.autofocus}
+          disabled={this.disabled}
+          hide-details={this.hideDetails}
+          hint={this.hint}
+          id={this.hostId}
+          label={this.label}
+          name={this.name}
+          placeholder={this.placeholder}
+          shadow={this.shadow}
+          valid={this.valid}
+          validate={this.validate}
+          validate-on-blur={this.validateOnBlur}
+          validation={this.validation}
+          value={this.query}
         >
-          <div
-            class="full-width"
-            role="button"
-            aria-labelledby="c-autocomplete-label"
-          >
-            <c-row align="center" nowrap>
-              <div class="c-autocomplete-current">
-                <input
-                  value={this.query}
-                  aria-autocomplete="list"
-                  aria-controls="c-menu-parent"
-                  aria-haspopup="true"
-                  type="text"
-                  onInput={(event) => this.handleChange(event)}
-                />
-              </div>
-              <div class="c-autocomplete-icon-wrapper">
-                <svg
-                  width="22px"
-                  height="22px"
-                  fill="#222"
-                  viewBox="0 0 24 24"
-                  class={
-                    this.menuVisible
-                      ? 'c-autocomplete-icon rotated'
-                      : 'c-autocomplete-icon'
-                  }
-                >
-                  <path d={mdiChevronDown} />
-                </svg>
-              </div>
-            </c-row>
-          </div>
-          <input type="hidden" value={this.value?.value} />
-          <div
-            id="c-menu-parent"
-            class="c-menu-parent"
-            aria-expanded={this.menuVisible}
-          >
-            {this.menuVisible ? (
-              <div class="c-menu" style={this._itemsPerPageStyle}>
-                {this.items.map((item) => this.getListItem(item))}
-              </div>
-            ) : (
-              ''
-            )}
-          </div>
-          <div class="border-wrapper">
-            <div class="border-left"></div>
-            {this.label && labelBlock}
-            <div class="border-right"></div>
-          </div>
-        </div>
-        <div class={this.validationClasses.join(' ')}>
-          {this.validationIcon} Required field
-        </div>
+          <slot name="pre" slot="pre"></slot>
+
+          {this._renderInputElement()}
+          {this._renderMenu(itemsPerPageStyle)}
+
+          {this._renderChevron()}
+
+          <slot name="post" slot="post"></slot>
+        </c-input>
       </Host>
     );
   }

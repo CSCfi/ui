@@ -17,7 +17,7 @@ import { registerClickOutside } from 'stencil-click-outside';
  */
 @Component({
   tag: 'c-select',
-  styleUrl: 'c-select.scss',
+  styleUrl: '../c-input/c-input-menu.scss',
   shadow: true,
 })
 export class CSelect {
@@ -355,8 +355,8 @@ export class CSelect {
 
   private _renderChevron() {
     const classes = {
-      'c-select__chevron': true,
-      'c-select__chevron--active': this.menuVisible,
+      'c-input-menu__chevron': true,
+      'c-input-menu__chevron--active': this.menuVisible,
     };
 
     return (
@@ -368,12 +368,12 @@ export class CSelect {
 
   private _renderInputElement() {
     return (
-      <div class="c-select__input" onClick={() => this._showMenu()}>
+      <div class="c-input-menu__input" onClick={() => this._showMenu()}>
         <input
           ref={(el) => (this._inputElement = el as HTMLInputElement)}
           type="text"
           value={this.value?.name ?? null}
-          name={this.name ?? 'esa'}
+          name={this.name ?? null}
           readonly
         />
       </div>
@@ -384,8 +384,8 @@ export class CSelect {
     return (
       <div
         class={{
-          'c-select__item-wrapper': true,
-          'c-select__item-wrapper--shadow': this.shadow,
+          'c-input-menu__item-wrapper': true,
+          'c-input-menu__item-wrapper--shadow': this.shadow,
         }}
         aria-expanded={this.menuVisible}
       >
@@ -393,8 +393,8 @@ export class CSelect {
           style={style}
           class={
             this.menuVisible
-              ? 'c-select__items'
-              : 'c-select__items c-select__items--hidden'
+              ? 'c-input-menu__items'
+              : 'c-input-menu__items c-input-menu__items--hidden'
           }
         >
           {this.items.map((item) => this._getListItem(item))}
@@ -436,6 +436,7 @@ export class CSelect {
           validate-on-blur={this.validateOnBlur}
           validation={this.validation}
           value={this.value}
+          variant="select"
         >
           <slot name="pre" slot="pre"></slot>
 

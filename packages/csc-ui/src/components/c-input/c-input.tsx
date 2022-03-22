@@ -11,6 +11,9 @@ import {
 } from '@stencil/core';
 import { mdiCloseCircle } from '@mdi/js';
 
+/**
+ * @parent None
+ */
 @Component({
   tag: 'c-input',
   styleUrl: 'c-input.scss',
@@ -133,6 +136,11 @@ export class CInput {
    * Value of the input
    */
   @Prop() value: string | number | { name: string; value: string | number };
+
+  /**
+   * Variant
+   */
+  @Prop() variant: 'text' | 'select' = 'text';
 
   /**
    * Emit changes to the parent
@@ -381,6 +389,7 @@ export class CInput {
       'c-input--shadow': this.shadow,
       'c-input--textarea': this.rows > 1,
       'c-input--error': this.messageOptions.type === 'error',
+      [`c-input--${this.variant}`]: true,
     };
 
     return (

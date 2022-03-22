@@ -26,7 +26,6 @@
 
 ### Used by
 
- - [c-autocomplete](../c-autocomplete)
  - [c-consent](../c-consent)
  - [c-pagination](../c-pagination)
  - [c-sidenavigationitem](../c-sidenavigationitem)
@@ -34,7 +33,6 @@
 ### Graph
 ```mermaid
 graph TD;
-  c-autocomplete --> c-row
   c-consent --> c-row
   c-pagination --> c-row
   c-sidenavigationitem --> c-row
