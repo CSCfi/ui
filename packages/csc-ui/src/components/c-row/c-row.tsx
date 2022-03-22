@@ -16,14 +16,17 @@ export class CRow {
    * Gap between items in px
    */
   @Prop() gap: number = 0;
+
   /**
-   * Flex wrap
+   * Disable flex wrap
    */
-  @Prop() wrap: boolean = true;
+  @Prop() nowrap: boolean = false;
+
   /**
    * Align items vertically
    */
   @Prop() align: 'start' | 'center' | 'end' = 'start';
+
   /**
    * Justify content horizontally
    */
@@ -32,10 +35,9 @@ export class CRow {
   render() {
     const classes = {
       'c-row': true,
-      wrap: this.wrap,
-      'no-wrap': !this.wrap,
-      [`align-${this.align}`]: true,
-      [`justify-${this.justify}`]: true,
+      'c-row--nowrap': this.nowrap,
+      [`c-row--align-${this.align}`]: true,
+      [`c-row--justify-${this.justify}`]: true,
     };
     return (
       <div class={classes} style={{ '--row-gap': `${this.gap}px` }}>

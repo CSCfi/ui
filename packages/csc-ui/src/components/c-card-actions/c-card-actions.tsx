@@ -1,4 +1,4 @@
-import { Component, h, Prop } from '@stencil/core';
+import { Component, h, Prop, Host } from '@stencil/core';
 /**
  * @parent c-card
  * @slot - Card actions
@@ -10,15 +10,34 @@ import { Component, h, Prop } from '@stencil/core';
 })
 export class CCardActions {
   /**
-   * Align actions to the right
+   * Align the actions
    */
-  @Prop() right = false;
+  @Prop() align: 'start' | 'center' | 'end' = 'center';
+
+  /**
+   * Justify the actions
+   */
+  @Prop() justify:
+    | 'start'
+    | 'center'
+    | 'end'
+    | 'space-between'
+    | 'stretch'
+    | 'space-around' = 'start';
+
   render() {
+    const classes = {
+      'c-card-actions': true,
+      [`c-card-actions--align-${this.align}`]: true,
+      [`c-card-actions--justify-${this.justify}`]: true,
+    };
+
     return (
-      <div class="c-card-actions">
-        {this.right && <c-spacer></c-spacer>}
-        <slot></slot>
-      </div>
+      <Host>
+        <div class={classes}>
+          <slot></slot>
+        </div>
+      </Host>
     );
   }
 }

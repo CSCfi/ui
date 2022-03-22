@@ -6,10 +6,6 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./c-link.component.scss'],
 })
 export class CLinkComponent implements OnInit {
-  template = `<c-link href="https://csc.fi">Default link</c-link>
-
-  <c-link href="https://csc.fi" [underline]="true">Underlined link</c-link>`;
-
   constructor() {}
 
   ngOnInit(): void {}

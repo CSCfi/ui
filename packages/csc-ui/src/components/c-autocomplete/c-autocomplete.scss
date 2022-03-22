@@ -37,10 +37,15 @@ label {
   user-select: none;
 }
 
+.c-autocomplete-icon-wrapper {
+  display: flex;
+  align-items: center;
+  padding: 0 12px 0 4px;
+  height: 42px;
+}
+
 .c-autocomplete-icon {
   line-height: 20px;
-  padding: 8px 12px;
-  margin-top: 3px;
   transition: all 0.25s;
 }
 
@@ -96,6 +101,8 @@ label span.required {
   z-index: 5;
   cursor: pointer;
   user-select: none;
+  border-radius: 4px;
+  overflow: hidden;
 }
 
 .c-autocomplete-current input {
@@ -132,12 +139,11 @@ label span.required {
   padding: 10px 14px;
 }
 .c-menu li:hover {
-  background-color: #eef2f8;
+  background-color: var(--csc-primary-text-hover);
 }
 
 .c-menu li.active {
-  background-color: var(--csc-primary);
-  color: #fff;
+  background-color: var(--csc-primary-text-hover);
 }
 
 .border-wrapper {

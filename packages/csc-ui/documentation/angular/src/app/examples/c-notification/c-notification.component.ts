@@ -8,7 +8,7 @@ import { Component, OnInit } from '@angular/core';
 export class CNotificationComponent implements OnInit {
   templates = [
     `<c-button (click)="addNotification()">Add notification</c-button>
-  
+
     <c-notification [notification]="notification"></c-notification>`,
     `<c-row gap="16">
   <c-text-field label="Message" cControl [(ngModel)]="message"></c-text-field>

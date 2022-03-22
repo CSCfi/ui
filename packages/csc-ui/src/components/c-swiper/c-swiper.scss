@@ -3,9 +3,10 @@
 .c-swiper {
   &__navigation {
     display: grid;
+    gap: 8px;
     grid-template-columns: auto auto 1fr;
     align-items: center;
-    margin-top: 8px;
+    margin-top: 12px;
   }
 
   .swiper-wrapper {

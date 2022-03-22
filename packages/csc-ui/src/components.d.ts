@@ -6,6 +6,7 @@
  */
 import { HTMLStencilElement, JSXBase } from "@stencil/core/internal";
 import { CardBackground } from "./components/c-card/c-card";
+import { CPaginationOptions } from "./components/c-pagination/c-pagination";
 export namespace Components {
     interface CAccordion {
         /**
@@ -141,9 +142,18 @@ export namespace Components {
     }
     interface CCardActions {
         /**
-          * Align actions to the right
+          * Align the actions
          */
-        "right": boolean;
+        "align": 'start' | 'center' | 'end';
+        /**
+          * Justify the actions
+         */
+        "justify": | 'start'
+    | 'center'
+    | 'end'
+    | 'space-between'
+    | 'stretch'
+    | 'space-around';
     }
     interface CCardContent {
     }
@@ -155,9 +165,25 @@ export namespace Components {
          */
         "disabled": boolean;
         /**
+          * Hide the hint and error messages
+         */
+        "hideDetails": boolean;
+        /**
+          * Hint text for the input
+         */
+        "hint": string;
+        /**
           * Element label
          */
         "label": string;
+        /**
+          * Set the validíty of the input
+         */
+        "valid": boolean;
+        /**
+          * Custom validation message
+         */
+        "validation": string;
         /**
           * Is the element checked
          */
@@ -199,11 +225,106 @@ export namespace Components {
         /**
           * Size of the button
          */
-        "size": 'default' | 'small';
+        "size": 'default' | 'x-small' | 'small';
         /**
           * Text variant of the button
          */
         "text": boolean;
+    }
+    interface CInput {
+        /**
+          * Auto focus the input
+         */
+        "autofocus": boolean;
+        /**
+          * Disable the input
+         */
+        "disabled": boolean;
+        /**
+          * Render a hidden input outside the shadow dom
+         */
+        "form": boolean;
+        /**
+          * Hide the hint and error messages
+         */
+        "hideDetails": boolean;
+        /**
+          * Hint text for the input
+         */
+        "hint": string;
+        /**
+          * Id of the input
+         */
+        "hostId": string;
+        /**
+          * Label of the input
+         */
+        "label": string;
+        /**
+          * Maximum value on a numeric input
+         */
+        "max": number;
+        /**
+          * Minimum value on a numeric input
+         */
+        "min": number;
+        /**
+          * Name of the input
+         */
+        "name": string;
+        /**
+          * Numeric input
+          * @deprecated Use type="number" instead
+         */
+        "number": boolean;
+        /**
+          * Placeholder of the input
+         */
+        "placeholder": string;
+        /**
+          * Mark as readonly
+         */
+        "readonly": boolean;
+        /**
+          * Set the input as required
+         */
+        "required": boolean;
+        /**
+          * Rows on the input
+         */
+        "rows": number;
+        /**
+          * Shadow variant of the input
+         */
+        "shadow": boolean;
+        /**
+          * Step size on a numeric input
+         */
+        "step": number;
+        /**
+          * Type of the input
+         */
+        "type": string;
+        /**
+          * Set the validíty of the input
+         */
+        "valid": boolean;
+        /**
+          * Manual validation
+         */
+        "validate": boolean;
+        /**
+          * Validate the input on blur
+         */
+        "validateOnBlur": boolean;
+        /**
+          * Custom validation message
+         */
+        "validation": string;
+        /**
+          * Value of the input
+         */
+        "value": string | number | { name: string; value: string | number };
     }
     interface CLink {
         /**
@@ -284,6 +405,10 @@ export namespace Components {
     }
     interface CPagination {
         /**
+          * Hide details (per page dropdown and the 'x - y of n pages' text)
+         */
+        "hideDetails": boolean;
+        /**
           * Hide range indicator
          */
         "hideRange": boolean;
@@ -292,16 +417,17 @@ export namespace Components {
          */
         "itemsPerPageOptions": number[];
         /**
+          * Hide page number buttons
+         */
+        "simple": boolean;
+        /**
+          * Hide details (per page dropdown and the 'x - y of n pages' text)
+         */
+        "size": 'default' | 'small';
+        /**
           * Object containing values that are needed for pagination.  Note! startFrom and endTo are assigned automatically to the object based on other values
          */
-        "value": {
-    itemCount: number;
-    currentPage?: number;
-    totalVisible?: number;
-    itemsPerPage?: number;
-    startFrom?: number;
-    endTo?: number;
-  };
+        "value": CPaginationOptions;
     }
     interface CProgressBar {
         /**
@@ -354,15 +480,27 @@ export namespace Components {
          */
         "justify": 'start' | 'center' | 'end' | 'space-between';
         /**
-          * Flex wrap
+          * Disable flex wrap
          */
-        "wrap": boolean;
+        "nowrap": boolean;
     }
     interface CSelect {
         /**
-          * Dense variant
+          * Auto focus the input
          */
-        "dense": boolean;
+        "autofocus": boolean;
+        /**
+          * Disable the input
+         */
+        "disabled": boolean;
+        /**
+          * Hide the hint and error messages
+         */
+        "hideDetails": boolean;
+        /**
+          * Hint text for the input
+         */
+        "hint": string;
         /**
           * Id of the element
          */
@@ -380,10 +518,6 @@ export namespace Components {
          */
         "label": string;
         /**
-          * Label is aligned to the right
-         */
-        "labelRight": boolean;
-        /**
           * Input field name
          */
         "name": string;
@@ -400,13 +534,21 @@ export namespace Components {
          */
         "shadow": boolean;
         /**
-          * Run validation when changed to true
+          * Set the validíty of the input
+         */
+        "valid": boolean;
+        /**
+          * Manual validation
          */
         "validate": boolean;
         /**
-          * Show validation after touching the menu
+          * Validate the input on blur
          */
         "validateOnBlur": boolean;
+        /**
+          * Custom validation message
+         */
+        "validation": string;
         /**
           * Selected item
          */
@@ -560,6 +702,14 @@ export namespace Components {
          */
         "form": boolean;
         /**
+          * Hide the hint and error messages
+         */
+        "hideDetails": boolean;
+        /**
+          * Hint text for the input
+         */
+        "hint": string;
+        /**
           * Id of the input
          */
         "hostId": string;
@@ -581,6 +731,7 @@ export namespace Components {
         "name": string;
         /**
           * Numeric input
+          * @deprecated Use type="number" instead
          */
         "number": boolean;
         /**
@@ -721,6 +872,12 @@ declare global {
     var HTMLCIconButtonElement: {
         prototype: HTMLCIconButtonElement;
         new (): HTMLCIconButtonElement;
+    };
+    interface HTMLCInputElement extends Components.CInput, HTMLStencilElement {
+    }
+    var HTMLCInputElement: {
+        prototype: HTMLCInputElement;
+        new (): HTMLCInputElement;
     };
     interface HTMLCLinkElement extends Components.CLink, HTMLStencilElement {
     }
@@ -899,6 +1056,7 @@ declare global {
         "c-csc-logo": HTMLCCscLogoElement;
         "c-flex": HTMLCFlexElement;
         "c-icon-button": HTMLCIconButtonElement;
+        "c-input": HTMLCInputElement;
         "c-link": HTMLCLinkElement;
         "c-loader": HTMLCLoaderElement;
         "c-main": HTMLCMainElement;
@@ -1080,9 +1238,18 @@ declare namespace LocalJSX {
     }
     interface CCardActions {
         /**
-          * Align actions to the right
+          * Align the actions
          */
-        "right"?: boolean;
+        "align"?: 'start' | 'center' | 'end';
+        /**
+          * Justify the actions
+         */
+        "justify"?: | 'start'
+    | 'center'
+    | 'end'
+    | 'space-between'
+    | 'stretch'
+    | 'space-around';
     }
     interface CCardContent {
     }
@@ -1094,6 +1261,14 @@ declare namespace LocalJSX {
          */
         "disabled"?: boolean;
         /**
+          * Hide the hint and error messages
+         */
+        "hideDetails"?: boolean;
+        /**
+          * Hint text for the input
+         */
+        "hint"?: string;
+        /**
           * Element label
          */
         "label"?: string;
@@ -1101,6 +1276,14 @@ declare namespace LocalJSX {
           * Triggered when element is checked or unchecked
          */
         "onChangeValue"?: (event: CustomEvent<any>) => void;
+        /**
+          * Set the validíty of the input
+         */
+        "valid"?: boolean;
+        /**
+          * Custom validation message
+         */
+        "validation"?: string;
         /**
           * Is the element checked
          */
@@ -1142,11 +1325,110 @@ declare namespace LocalJSX {
         /**
           * Size of the button
          */
-        "size"?: 'default' | 'small';
+        "size"?: 'default' | 'x-small' | 'small';
         /**
           * Text variant of the button
          */
         "text"?: boolean;
+    }
+    interface CInput {
+        /**
+          * Auto focus the input
+         */
+        "autofocus"?: boolean;
+        /**
+          * Disable the input
+         */
+        "disabled"?: boolean;
+        /**
+          * Render a hidden input outside the shadow dom
+         */
+        "form"?: boolean;
+        /**
+          * Hide the hint and error messages
+         */
+        "hideDetails"?: boolean;
+        /**
+          * Hint text for the input
+         */
+        "hint"?: string;
+        /**
+          * Id of the input
+         */
+        "hostId"?: string;
+        /**
+          * Label of the input
+         */
+        "label"?: string;
+        /**
+          * Maximum value on a numeric input
+         */
+        "max"?: number;
+        /**
+          * Minimum value on a numeric input
+         */
+        "min"?: number;
+        /**
+          * Name of the input
+         */
+        "name"?: string;
+        /**
+          * Numeric input
+          * @deprecated Use type="number" instead
+         */
+        "number"?: boolean;
+        /**
+          * Emit changes to the parent
+         */
+        "onChangeValue"?: (event: CustomEvent<any>) => void;
+        /**
+          * Placeholder of the input
+         */
+        "placeholder"?: string;
+        /**
+          * Mark as readonly
+         */
+        "readonly"?: boolean;
+        /**
+          * Set the input as required
+         */
+        "required"?: boolean;
+        /**
+          * Rows on the input
+         */
+        "rows"?: number;
+        /**
+          * Shadow variant of the input
+         */
+        "shadow"?: boolean;
+        /**
+          * Step size on a numeric input
+         */
+        "step"?: number;
+        /**
+          * Type of the input
+         */
+        "type"?: string;
+        /**
+          * Set the validíty of the input
+         */
+        "valid"?: boolean;
+        /**
+          * Manual validation
+         */
+        "validate"?: boolean;
+        /**
+          * Validate the input on blur
+         */
+        "validateOnBlur"?: boolean;
+        /**
+          * Custom validation message
+         */
+        "validation"?: string;
+        /**
+          * Value of the input
+         */
+        "value"?: string | number | { name: string; value: string | number };
     }
     interface CLink {
         /**
@@ -1231,6 +1513,10 @@ declare namespace LocalJSX {
     }
     interface CPagination {
         /**
+          * Hide details (per page dropdown and the 'x - y of n pages' text)
+         */
+        "hideDetails"?: boolean;
+        /**
           * Hide range indicator
          */
         "hideRange"?: boolean;
@@ -1241,25 +1527,19 @@ declare namespace LocalJSX {
         /**
           * Triggered when values are changed
          */
-        "onChangeValue"?: (event: CustomEvent<{
-    itemCount: number;
-    currentPage?: number;
-    totalVisible?: number;
-    itemsPerPage?: number;
-    startFrom?: number;
-    endTo?: number;
-  }>) => void;
+        "onChangeValue"?: (event: CustomEvent<CPaginationOptions>) => void;
+        /**
+          * Hide page number buttons
+         */
+        "simple"?: boolean;
+        /**
+          * Hide details (per page dropdown and the 'x - y of n pages' text)
+         */
+        "size"?: 'default' | 'small';
         /**
           * Object containing values that are needed for pagination.  Note! startFrom and endTo are assigned automatically to the object based on other values
          */
-        "value"?: {
-    itemCount: number;
-    currentPage?: number;
-    totalVisible?: number;
-    itemsPerPage?: number;
-    startFrom?: number;
-    endTo?: number;
-  };
+        "value"?: CPaginationOptions;
     }
     interface CProgressBar {
         /**
@@ -1316,15 +1596,27 @@ declare namespace LocalJSX {
          */
         "justify"?: 'start' | 'center' | 'end' | 'space-between';
         /**
-          * Flex wrap
+          * Disable flex wrap
          */
-        "wrap"?: boolean;
+        "nowrap"?: boolean;
     }
     interface CSelect {
         /**
-          * Dense variant
+          * Auto focus the input
          */
-        "dense"?: boolean;
+        "autofocus"?: boolean;
+        /**
+          * Disable the input
+         */
+        "disabled"?: boolean;
+        /**
+          * Hide the hint and error messages
+         */
+        "hideDetails"?: boolean;
+        /**
+          * Hint text for the input
+         */
+        "hint"?: string;
         /**
           * Id of the element
          */
@@ -1341,10 +1633,6 @@ declare namespace LocalJSX {
           * Element label
          */
         "label"?: string;
-        /**
-          * Label is aligned to the right
-         */
-        "labelRight"?: boolean;
         /**
           * Input field name
          */
@@ -1366,13 +1654,21 @@ declare namespace LocalJSX {
          */
         "shadow"?: boolean;
         /**
-          * Run validation when changed to true
+          * Set the validíty of the input
+         */
+        "valid"?: boolean;
+        /**
+          * Manual validation
          */
         "validate"?: boolean;
         /**
-          * Show validation after touching the menu
+          * Validate the input on blur
          */
         "validateOnBlur"?: boolean;
+        /**
+          * Custom validation message
+         */
+        "validation"?: string;
         /**
           * Selected item
          */
@@ -1397,6 +1693,11 @@ declare namespace LocalJSX {
           * Hyperlink url
          */
         "href"?: string;
+        /**
+          * Emit changes to the c-accordion
+          * @private
+         */
+        "onItemChange"?: (event: CustomEvent<any>) => void;
     }
     interface CSpacer {
     }
@@ -1557,6 +1858,14 @@ declare namespace LocalJSX {
          */
         "form"?: boolean;
         /**
+          * Hide the hint and error messages
+         */
+        "hideDetails"?: boolean;
+        /**
+          * Hint text for the input
+         */
+        "hint"?: string;
+        /**
           * Id of the input
          */
         "hostId"?: string;
@@ -1578,6 +1887,7 @@ declare namespace LocalJSX {
         "name"?: string;
         /**
           * Numeric input
+          * @deprecated Use type="number" instead
          */
         "number"?: boolean;
         /**
@@ -1652,6 +1962,7 @@ declare namespace LocalJSX {
         "c-csc-logo": CCscLogo;
         "c-flex": CFlex;
         "c-icon-button": CIconButton;
+        "c-input": CInput;
         "c-link": CLink;
         "c-loader": CLoader;
         "c-main": CMain;
@@ -1699,6 +2010,7 @@ declare module "@stencil/core" {
             "c-csc-logo": LocalJSX.CCscLogo & JSXBase.HTMLAttributes<HTMLCCscLogoElement>;
             "c-flex": LocalJSX.CFlex & JSXBase.HTMLAttributes<HTMLCFlexElement>;
             "c-icon-button": LocalJSX.CIconButton & JSXBase.HTMLAttributes<HTMLCIconButtonElement>;
+            "c-input": LocalJSX.CInput & JSXBase.HTMLAttributes<HTMLCInputElement>;
             "c-link": LocalJSX.CLink & JSXBase.HTMLAttributes<HTMLCLinkElement>;
             "c-loader": LocalJSX.CLoader & JSXBase.HTMLAttributes<HTMLCLoaderElement>;
             "c-main": LocalJSX.CMain & JSXBase.HTMLAttributes<HTMLCMainElement>;

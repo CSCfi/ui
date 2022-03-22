@@ -3,6 +3,7 @@ import { v4 as uuid } from 'uuid';
 
 /**
  * @parent c-accordion
+ * @slot - Default slot
  */
 @Component({
   tag: 'c-accordion-item',
@@ -44,10 +45,19 @@ export class CAccordionItem {
   @Event() itemChange: EventEmitter;
 
   @Listen('keydown', { capture: true })
-  handleKeyDown(ev: any) {
-    if (ev.key === 'Enter' || ev.code === 'Space') {
+  handleKeyDown(event: KeyboardEvent) {
+    if (
+      (event.target as HTMLElement).tagName === 'C-ACCORDION-ITEM' &&
+      (event.key === 'Enter' || event.code === 'Space')
+    ) {
+      event.preventDefault();
       this._toggle();
     }
+  }
+
+  @Listen('changeValue')
+  stop(event: Event) {
+    event.stopPropagation();
   }
 
   private _toggle() {
@@ -144,7 +154,7 @@ export class CAccordionItem {
             role="region"
             aria-labelledby={`c-accordion-${this._uniqueId}`}
           >
-            <slot></slot>
+            {this.expanded && <slot></slot>}
           </div>
         </div>
       </div>

@@ -1,4 +1,12 @@
-import { Component, Host, h, State, Prop, Listen } from '@stencil/core';
+import {
+  Component,
+  Host,
+  h,
+  State,
+  Prop,
+  Listen,
+  Element,
+} from '@stencil/core';
 import { mdiChevronDown } from '@mdi/js';
 /**
  * @group Navigation
@@ -10,6 +18,8 @@ import { mdiChevronDown } from '@mdi/js';
   shadow: true,
 })
 export class CMenu {
+  @Element() el: HTMLCMenuElement;
+
   @State() currentIndex: number = null;
   @State() menuVisible: boolean = false;
   /**
@@ -70,6 +80,13 @@ export class CMenu {
     }
   }
 
+  @Listen('blur', { capture: true })
+  handleBlur(event) {
+    if ((event.relatedTarget as HTMLElement) !== this.el) {
+      this._hideMenu();
+    }
+  }
+
   private _showMenu() {
     if (this.menuVisible) {
       this.currentIndex = null;
@@ -108,18 +125,13 @@ export class CMenu {
       hostClasses.push('nohover');
     }
     return (
-      <Host
-        tabindex="0"
-        role="button"
-        class={hostClasses.join(' ')}
-        onBlur={() => this._hideMenu()}
-      >
+      <Host tabindex="0" role="button" class={hostClasses.join(' ')}>
         {this.simple ? (
           <div class="simple" onClick={() => this._showMenu()}>
             <slot></slot>
           </div>
         ) : (
-          <div onClick={() => this._showMenu()} class="full-width">
+          <div onClick={() => this._showMenu()} class="c-menu-wrapper">
             <div class={this.small ? 'c-select-row small' : 'c-select-row'}>
               <slot></slot>
               <svg

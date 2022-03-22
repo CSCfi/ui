@@ -1,11 +1,58 @@
+:host {
+  padding: 0 var(--c-card-gap, 24px);
+  display: block;
+}
+
 .c-card-actions {
   align-items: center;
   display: flex;
   gap: 8px;
-  padding-top: 0;
-  padding: 24px;
 
   ::slotted(c-button[fit]) {
     flex: 1;
+  }
+
+  &--align {
+    &-center {
+      align-items: center;
+    }
+
+    &-start {
+      align-items: flex-start;
+    }
+
+    &-end {
+      align-items: flex-end;
+    }
+  }
+
+  &--justify {
+    &-center {
+      justify-content: center;
+    }
+
+    &-end {
+      justify-content: flex-end;
+    }
+
+    &-start {
+      justify-content: flex-start;
+    }
+
+    &-stretch {
+      justify-content: stretch;
+
+      ::slotted(*) {
+        flex: 1;
+      }
+    }
+
+    &-space-between {
+      justify-content: space-between;
+    }
+
+    &-space-around {
+      justify-content: space-around;
+    }
   }
 }

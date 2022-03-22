@@ -7,9 +7,10 @@
 
 ## Properties
 
-| Property | Attribute | Description                | Type      | Default |
-| -------- | --------- | -------------------------- | --------- | ------- |
-| `right`  | `right`   | Align actions to the right | `boolean` | `false` |
+| Property  | Attribute | Description         | Type                                                                             | Default    |
+| --------- | --------- | ------------------- | -------------------------------------------------------------------------------- | ---------- |
+| `align`   | `align`   | Align the actions   | `"center" \| "end" \| "start"`                                                   | `'center'` |
+| `justify` | `justify` | Justify the actions | `"center" \| "end" \| "space-around" \| "space-between" \| "start" \| "stretch"` | `'start'`  |
 
 
 ## Slots
@@ -18,19 +19,6 @@
 | ---- | ------------ |
 |      | Card actions |
 
-
-## Dependencies
-
-### Depends on
-
-- [c-spacer](../c-spacer)
-
-### Graph
-```mermaid
-graph TD;
-  c-card-actions --> c-spacer
-  style c-card-actions fill:#f9f,stroke:#333,stroke-width:4px
-```
 
 ----------------------------------------------
 

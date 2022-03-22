@@ -1,105 +1,117 @@
 :host {
-  display: block;
-}
-
-#c-radio-group__label {
-  margin-bottom: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
 }
 
 .c-radio-group {
-  --c-color: var(--csc-primary);
-  --c-cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
 
-  &__item {
+  &__items {
     display: flex;
-    align-items: center;
-    cursor: var(--c-cursor);
-
-    &--disabled {
-      --c-cursor: default;
-    }
+    flex-direction: column;
+    gap: 2px;
   }
 }
 
 .c-radio {
-  display: inline-block;
-  position: relative;
-  box-sizing: border-box;
-  width: 20px;
-  height: 20px;
+  --c-radio-color: var(--csc-primary);
 
-  &--disabled {
-    --c-color: var(--csc-light-grey);
-    --c-cursor: default;
+  align-items: flex-start;
+  display: flex;
+  position: relative;
+  cursor: pointer;
+  font-size: 16px;
+  user-select: none;
+  gap: 4px;
+  line-height: 1.2;
+
+  input {
+    position: absolute;
+    opacity: 0;
+    cursor: pointer;
+    height: 0;
+    width: 0;
+
+    &:checked ~ .ripple .selection {
+      &::after {
+        display: block;
+        transform: scale(1);
+      }
+    }
+  }
+
+  .ripple {
+    position: relative;
+    height: 42px;
+    width: 42px;
+    min-width: 42px;
+    border-radius: 50%;
+    overflow: hidden;
+    transition: translateZ(0);
+    color: var(--csc-primary);
+  }
+
+  .selection {
+    position: absolute;
+    top: 11px;
+    left: 11px;
+    height: 20px;
+    width: 20px;
+    background-color: transparent;
+    box-shadow: inset 0 0 0 2px var(--c-radio-color);
+    border-radius: 50%;
+    transition: box-shadow 0.15s ease-in-out;
+
+    &::after {
+      content: '';
+      position: absolute;
+      transform: scale(0);
+      transition: transform 0.15s ease-in-out;
+      top: 5px;
+      left: 5px;
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: var(--c-radio-color);
+    }
   }
 
   &__label {
-    cursor: var(--c-cursor);
-    padding-left: 4px;
-    flex: 1;
-    user-select: none;
+    padding-top: 12px;
   }
 
-  &-wrapper {
-    --c-focus: rgba(0, 0, 0, 0.05);
-    --c-hover: var(--c-focus);
+  &--disabled {
+    --c-radio-color: var(--csc-mid-grey);
 
-    padding: 10px;
-    height: 20px;
-    border-radius: 50%;
+    color: var(--c-radio-color);
+    cursor: default;
+    opacity: 0.75;
+  }
+
+  &:focus {
     outline: none;
-    overflow: hidden;
-    position: relative;
-    color: var(--c-color);
+  }
 
-    &--disabled {
-      --c-hover: transparent !important;
-    }
+  &:focus .ripple {
+    outline: 2px var(--c-radio-color) solid;
+  }
 
-    &:hover {
-      background: var(--c-hover);
-    }
-
-    &:focus {
-      background: var(--c-focus);
+  @supports selector(:focus-visible) {
+    &:focus .ripple {
+      outline: none;
     }
   }
 
-  &-outer-circle {
-    position: absolute;
-    top: 0px;
-    left: 0px;
-    box-sizing: border-box;
-    /* border-color: #008675; */
-    width: 100%;
-    height: 100%;
-    border-width: 2px;
-    border-style: solid;
-    border-radius: 50%;
-    transition: border-color 120ms cubic-bezier(0.4, 0, 0.6, 1) 0ms;
+  &:focus-visible .ripple {
+    outline: 2px var(--c-radio-color) solid;
   }
 
-  &-outer-circle,
-  &-inner-circle {
-    border-color: var(--c-color);
-  }
-
-  &-inner-circle {
-    position: absolute;
-    top: 0px;
-    left: 0px;
-    box-sizing: border-box;
-    width: 100%;
-    height: 100%;
-    transform: scale(0, 0);
-    border-width: 10px;
-    border-style: solid;
-    border-radius: 50%;
-    transition: transform 120ms cubic-bezier(0.4, 0, 0.6, 1) 0ms,
-      border-color 120ms cubic-bezier(0.4, 0, 0.6, 1) 0ms;
-  }
-
-  &.active .c-radio-inner-circle {
-    transform: scale(0.5);
+  &:not(.c-radio--disabled) {
+    .ripple:hover {
+      background-color: var(--csc-primary-text-hover);
+    }
   }
 }

@@ -21,6 +21,13 @@
 | `changeValue` | Emit changes to the parent | `CustomEvent<number \| string>` |
 
 
+## Slots
+
+| Slot | Description                                      |
+| ---- | ------------------------------------------------ |
+|      | Default slot for the c-accordion-item components |
+
+
 ----------------------------------------------
 
 *Built with [StencilJS](https://stenciljs.com/)*

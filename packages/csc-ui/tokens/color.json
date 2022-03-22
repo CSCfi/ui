@@ -1,12 +1,21 @@
 {
+  "border-radius": {
+    "value": "4px"
+  },
   "dark-grey": {
     "value": "rgb(89, 89, 89)"
   },
   "error": {
     "value": "#e71d32"
   },
+  "font-family": {
+    "value": "'proxima-nova', sans-serif"
+  },
   "light-grey": {
     "value": "rgb(223, 225, 227)"
+  },
+  "light-grey-blue": {
+    "value": "rgb(204, 244, 240)"
   },
   "lightest-grey": {
     "value": "rgba(223, 225, 227, 0.5)"
@@ -27,12 +36,6 @@
     "value": "rgb(80, 151, 141)"
   },
   "primary-text-hover": {
-    "value": "rgb(0 103 120 / 15%);"
-  },
-  "light-grey-blue": {
-    "value": "rgb(204, 244, 240)"
-  },
-  "border-radius": {
-    "value": "4px"
+    "value": "rgba(0, 103, 120, 0.15)"
   }
 }

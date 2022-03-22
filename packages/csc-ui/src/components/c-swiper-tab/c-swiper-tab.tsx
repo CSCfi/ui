@@ -82,7 +82,7 @@ export class CSwiperTab {
   handleKeyDown(ev: KeyboardEvent) {
     if (this.active) return;
 
-    if (['Space'].includes(ev.code)) {
+    if (['Space', 'Enter'].includes(ev.code)) {
       ev.preventDefault();
     }
   }
@@ -91,7 +91,7 @@ export class CSwiperTab {
   handleKeyUp(ev: KeyboardEvent) {
     if (this.active) return;
 
-    if (['Space'].includes(ev.code)) {
+    if (['Space', 'Enter'].includes(ev.code)) {
       ev.preventDefault();
       this.changeValue.emit(this.value);
     }

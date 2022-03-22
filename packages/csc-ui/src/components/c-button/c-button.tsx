@@ -81,16 +81,24 @@ export class CButton {
 
   private _container?: HTMLDivElement;
 
-  private _onClick = (event) => {
+  private _onClick = (event, center = false) => {
     if (this.disabled) {
       event.preventDefault();
       return;
     }
 
-    createRipple(event, this._container);
+    createRipple(event, this._container, center);
 
     if (this.type === 'submit') {
       this._closestElementComposed('form', this._container).submit();
+    }
+  };
+
+  private _onKeyDown = (event: KeyboardEvent) => {
+    if (['Space', 'Enter'].includes(event.code)) {
+      event.preventDefault();
+
+      this._onClick(event, true);
     }
   };
 
@@ -173,9 +181,10 @@ export class CButton {
         <button
           id={this.hostId}
           class={hostClasses}
-          tabindex="0"
+          tabindex={this.disabled ? -1 : 0}
           role="button"
           disabled={this.disabled}
+          onKeyDown={this._onKeyDown}
           onClick={this._onClick}
         >
           <div

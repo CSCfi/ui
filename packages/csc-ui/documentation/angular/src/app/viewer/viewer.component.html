@@ -5,7 +5,7 @@
     {{ componentData?.docs }}
   </p>
 
-  <c-tabs [value]="activeTab">
+  <c-tabs cControl [(ngModel)]="activeTab">
     <c-tab
       *ngFor="let tab of tabs"
       [routerLink]="tab.enabled ? [] : null"
@@ -13,7 +13,6 @@
       [active]="activeTab === tab.label"
       [disabled]="!tab.enabled"
       [value]="tab.label"
-      (keyup.enter)="tab.enabled && navigate(tab.query)"
     >
       {{ tab.label }}
     </c-tab>

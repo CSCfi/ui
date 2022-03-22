@@ -12,7 +12,7 @@
 | `align`   | `align`   | Align items vertically       | `"center" \| "end" \| "start"`                    | `'start'` |
 | `gap`     | `gap`     | Gap between items in px      | `number`                                          | `0`       |
 | `justify` | `justify` | Justify content horizontally | `"center" \| "end" \| "space-between" \| "start"` | `'start'` |
-| `wrap`    | `wrap`    | Flex wrap                    | `boolean`                                         | `true`    |
+| `nowrap`  | `nowrap`  | Disable flex wrap            | `boolean`                                         | `false`   |
 
 
 ## Slots

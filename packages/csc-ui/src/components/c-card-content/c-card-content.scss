@@ -1,12 +1,12 @@
 :host {
   display: block;
+  padding: 0 var(--c-card-gap, 24px);
 }
 
 .c-card-content {
-  padding: 24px;
   display: grid;
   grid-template-columns: 1fr;
-  gap: 32px;
+  gap: var(--c-card-gap);
 
   ::slotted(*) {
     max-width: 100%;

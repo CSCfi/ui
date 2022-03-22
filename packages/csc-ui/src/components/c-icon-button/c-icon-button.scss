@@ -1,5 +1,5 @@
 button.icon-button {
-  display: inline-block;
+  display: flex;
   border: none;
   padding: 0;
   width: 40px;
@@ -8,21 +8,64 @@ button.icon-button {
   color: #fff;
   transition: background-color 0.3s ease;
   border-radius: 50%;
-  margin: 4px;
   cursor: pointer;
   position: relative;
+  align-items: center;
+  justify-content: center;
+
+  ::slotted(svg),
+  ::slotted(i),
+  ::slotted(span) {
+    width: 24px;
+    height: 24px;
+    font-size: 24px;
+  }
+
+  ::slotted(*) {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
 
   &--small {
     width: 32px;
     height: 32px;
+
+    ::slotted(svg),
+    ::slotted(i),
+    ::slotted(span) {
+      width: 22px !important;
+      height: 22px !important;
+      font-size: 16px !important;
+    }
+  }
+
+  &--x-small {
+    width: 28px;
+    height: 28px;
+
+    ::slotted(svg),
+    ::slotted(i),
+    ::slotted(span) {
+      width: 18px !important;
+      height: 18px !important;
+      font-size: 14px !important;
+    }
   }
 
   &:focus {
-    outline: none;
+    outline: 2px var(--csc-primary) solid;
+    outline-offset: 2px;
+  }
+
+  @supports selector(:focus-visible) {
+    &:focus {
+      outline: none;
+    }
   }
 
   &:focus-visible {
-    outline: 2px black solid;
+    outline: 2px var(--csc-primary) solid;
     outline-offset: 2px;
   }
 
@@ -31,8 +74,8 @@ button.icon-button {
     color: var(--csc-primary);
 
     ::slotted(*) {
-      color: var(--csc-primary);
-      fill: var(--csc-primary);
+      color: var(--csc-primary) !important;
+      fill: var(--csc-primary) !important;
     }
 
     &:hover {
@@ -46,8 +89,8 @@ button.icon-button {
     color: var(--csc-primary);
 
     ::slotted(*) {
-      color: var(--csc-primary);
-      fill: var(--csc-primary);
+      color: var(--csc-primary) !important;
+      fill: var(--csc-primary) !important;
     }
 
     &:hover {
@@ -61,8 +104,8 @@ button.icon-button {
     color: var(--csc-primary);
 
     ::slotted(*) {
-      color: var(--csc-primary);
-      fill: var(--csc-primary);
+      color: var(--csc-primary) !important;
+      fill: var(--csc-primary) !important;
     }
 
     &.disabled {
@@ -80,8 +123,8 @@ button.icon-button {
     pointer-events: none;
 
     ::slotted(*) {
-      color: var(--csc-mid-grey);
-      fill: var(--csc-mid-grey);
+      color: var(--csc-mid-grey) !important;
+      fill: var(--csc-mid-grey) !important;
     }
 
     &.text {
@@ -120,13 +163,8 @@ button.icon-button {
   position: absolute;
   right: -6px;
   font-size: 12px;
-  border: 2px #fff solid;
+  box-shadow: 0 0 0 2px #fff;
   top: -4px;
-}
-
-svg {
-  width: 24px;
-  height: 24px;
 }
 
 .inner-container {
@@ -141,6 +179,8 @@ svg {
   border-radius: 50%;
   overflow: hidden;
   position: relative;
+  transform: translateZ(0);
+  width: 100%;
 }
 
 .ripple {

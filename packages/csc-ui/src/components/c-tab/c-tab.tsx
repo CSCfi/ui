@@ -1,4 +1,12 @@
-import { Component, Event, EventEmitter, h, Host, Prop } from '@stencil/core';
+import {
+  Component,
+  Event,
+  EventEmitter,
+  h,
+  Host,
+  Listen,
+  Prop,
+} from '@stencil/core';
 import { createRipple } from '../../utils/utils';
 /**
  * @group Tabs
@@ -41,13 +49,22 @@ export class CTab {
 
   private _container?: HTMLDivElement;
 
-  private _onClick = (event) => {
+  private _onClick = (event, center = false) => {
     if (this.disabled) return;
 
-    createRipple(event, this._container);
+    createRipple(event, this._container, center);
 
     this.tabChange.emit(this.value);
   };
+
+  @Listen('keydown', { passive: true })
+  handleKeydown(event: KeyboardEvent) {
+    if (['Space', 'Enter'].includes(event.code)) {
+      event.preventDefault();
+
+      this._onClick(event, true);
+    }
+  }
 
   render() {
     const classes = {
@@ -58,7 +75,7 @@ export class CTab {
 
     return (
       <Host
-        tabindex="0"
+        tabindex={this.disabled ? -1 : 0}
         role="button"
         aria-disabled={this.disabled ? 'true' : 'false'}
       >

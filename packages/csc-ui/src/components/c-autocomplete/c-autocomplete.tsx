@@ -80,9 +80,13 @@ export class CAutocomplete {
     this.changeValue.emit({ name: item.name, value: item.value });
   }
 
+  @State() itemRefs: { value: string; ref: HTMLElement }[] = [];
+
   @Watch('items')
-  watchHandler() {
-    this.currentIndex = null;
+  watchHandler(newValue, oldValue) {
+    if (newValue.length !== oldValue.length) {
+      this.currentIndex = null;
+    }
   }
 
   @Element() host: HTMLCAutocompleteElement;
@@ -90,6 +94,7 @@ export class CAutocomplete {
   @State() currentIndex: number = null;
   private outerWrapperClasses = ['outer-wrapper'];
   private validationClasses = ['validation-message'];
+  private _direction = null;
   @Listen('keydown', { passive: true })
   handleKeyDown(ev: any) {
     if (ev.key === 'Tab') {
@@ -97,6 +102,7 @@ export class CAutocomplete {
     }
 
     if (ev.key === 'ArrowDown') {
+      this._direction = 'end';
       ev.preventDefault();
       if (this.menuVisible === false) {
         this.menuVisible = true;
@@ -105,15 +111,18 @@ export class CAutocomplete {
           this.currentIndex = 0;
         } else if (this.currentIndex + 1 < this.items.length) {
           this.currentIndex = this.currentIndex + 1;
+          this._scrollToElement();
         }
       }
     }
 
     if (ev.key === 'ArrowUp') {
+      this._direction = 'start';
       ev.preventDefault();
       this.menuVisible = true;
       if (this.currentIndex !== null && this.currentIndex > 0) {
         this.currentIndex = this.currentIndex - 1;
+        this._scrollToElement();
       } else if (this.currentIndex === 0) {
         this.currentIndex = null;
       }
@@ -140,6 +149,23 @@ export class CAutocomplete {
     }
   }
 
+  private _observer = new IntersectionObserver(
+    (entries, observer) => {
+      entries.forEach((entry) => {
+        if (!entry.isIntersecting) {
+          entry.target.scrollIntoView({
+            block: this._direction,
+            inline: 'nearest',
+          });
+          observer.unobserve(entry.target);
+        } else {
+          observer.unobserve(entry.target);
+        }
+      });
+    },
+    { threshold: 1 },
+  );
+
   private validationIcon = (
     <svg
       xmlns="http://www.w3.org/2000/svg"
@@ -152,6 +178,18 @@ export class CAutocomplete {
       <path d="M12 2C6.47 2 2 6.47 2 12s4.47 10 10 10 10-4.47 10-10S17.53 2 12 2zm5 13.59L15.59 17 12 13.41 8.41 17 7 15.59 10.59 12 7 8.41 8.41 7 12 10.59 15.59 7 17 8.41 13.41 12 17 15.59z" />
     </svg>
   );
+
+  private _scrollToElement() {
+    if (this.items.length > this.itemsPerPage) {
+      const itemRef = this.itemRefs.find(
+        (item) => item.value === this.items[this.currentIndex].value,
+      )?.ref;
+
+      if (!!itemRef) {
+        this._observer.observe(itemRef);
+      }
+    }
+  }
 
   private showMenu = () => {
     if (this.menuVisible) {
@@ -187,7 +225,7 @@ export class CAutocomplete {
   private _setItemsPerPage() {
     if (this.itemsPerPage > 0 && this.items.length > this.itemsPerPage) {
       this._itemsPerPageStyle = {
-        'max-height': 47 * this.itemsPerPage + 'px',
+        'max-height': 49 * this.itemsPerPage + 'px',
         'overflow-y': 'auto',
       };
     }
@@ -206,7 +244,10 @@ export class CAutocomplete {
     return (
       <li
         id={'item_' + item.value}
-        ref={(el) => (item.ref = el as HTMLElement)}
+        ref={(el) => {
+          item.ref = el as HTMLElement;
+          this.itemRefs.push({ value: item.value, ref: el as HTMLElement });
+        }}
         onClick={() => this.select(item)}
         class={classes}
       >
@@ -218,6 +259,8 @@ export class CAutocomplete {
   private _itemsPerPageStyle = {};
 
   render() {
+    this.itemRefs = [];
+
     this._setItemsPerPage();
     let borderLabel = 'border-label';
     if (this.query !== '') {
@@ -266,7 +309,7 @@ export class CAutocomplete {
             role="button"
             aria-labelledby="c-autocomplete-label"
           >
-            <c-row wrap={false}>
+            <c-row align="center" nowrap>
               <div class="c-autocomplete-current">
                 <input
                   value={this.query}
@@ -277,19 +320,21 @@ export class CAutocomplete {
                   onInput={(event) => this.handleChange(event)}
                 />
               </div>
-              <svg
-                width="22"
-                height="22"
-                fill="#222"
-                viewBox="0 0 24 24"
-                class={
-                  this.menuVisible
-                    ? 'c-autocomplete-icon rotated'
-                    : 'c-autocomplete-icon'
-                }
-              >
-                <path d={mdiChevronDown} />
-              </svg>
+              <div class="c-autocomplete-icon-wrapper">
+                <svg
+                  width="22px"
+                  height="22px"
+                  fill="#222"
+                  viewBox="0 0 24 24"
+                  class={
+                    this.menuVisible
+                      ? 'c-autocomplete-icon rotated'
+                      : 'c-autocomplete-icon'
+                  }
+                >
+                  <path d={mdiChevronDown} />
+                </svg>
+              </div>
             </c-row>
           </div>
           <input type="hidden" value={this.value?.value} />

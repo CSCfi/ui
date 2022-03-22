@@ -13,6 +13,13 @@
 | `href`   | `href`    | Hyperlink url         | `string`  | `undefined` |
 
 
+## Events
+
+| Event        | Description                     | Type               |
+| ------------ | ------------------------------- | ------------------ |
+| `itemChange` | Emit changes to the c-accordion | `CustomEvent<any>` |
+
+
 ## Dependencies
 
 ### Depends on

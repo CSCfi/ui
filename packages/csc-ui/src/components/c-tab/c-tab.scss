@@ -50,6 +50,7 @@ slot {
 
   &--disabled {
     color: var(--csc-mid-grey);
+    opacity: 0.75;
     pointer-events: none;
   }
 }

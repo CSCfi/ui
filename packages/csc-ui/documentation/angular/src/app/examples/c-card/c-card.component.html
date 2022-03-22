@@ -8,9 +8,9 @@
       voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat
       non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
     </c-card-content>
-    <c-card-actions>
-      <c-checkbox label="Example checkbox"></c-checkbox>
-      <c-spacer></c-spacer>
+
+    <c-card-actions justify="space-between">
+      <c-checkbox label="Example checkbox" hide-details></c-checkbox>
       <c-button>Confirm</c-button>
     </c-card-actions>
   </c-card>
@@ -19,8 +19,9 @@
 <app-example title="Card with columns and right aligned action buttons">
   <c-card>
     <c-card-title>Example card</c-card-title>
+
     <c-card-content>
-      <c-row gap="32">
+      <c-row gap="32" nowrap>
         <div>
           Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt
           ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation
@@ -29,6 +30,7 @@
           sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id
           est laborum.
         </div>
+
         <div>
           Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt
           ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation
@@ -39,7 +41,8 @@
         </div>
       </c-row>
     </c-card-content>
-    <c-card-actions right>
+
+    <c-card-actions justify="end">
       <c-button outlined>Cancel</c-button>
       <c-button>Confirm</c-button>
     </c-card-actions>

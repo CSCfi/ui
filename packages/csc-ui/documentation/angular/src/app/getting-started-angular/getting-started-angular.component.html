@@ -30,42 +30,49 @@
           <c-text-field
             formControlName="username"
             label="Username"
-            [valid]="(username.valid && (username.dirty || username.touched)) || username.pristine"
-            validation="Please enter your username"
+            [valid]="isValid('username')"
+            [validation]="errors('username')"
             cControl
           ></c-text-field>
 
           <c-text-field
             formControlName="password"
+            hint="Please do not use numbers in your password"
             label="Password"
             type="password"
-            [valid]="(password.valid && (password.dirty || password.touched)) || password.pristine"
+            [valid]="isValid('password')"
+            [validation]="errors('password')"
             cControl
           ></c-text-field>
 
           <c-checkbox
             formControlName="consent"
-            label="I agree to the terms and conditions"
-            [valid]="(consent.valid && (consent.dirty || consent.touched)) || consent.pristine"
+            hint="Please agree to the terms and conditions"
+            [valid]="isValid('consent')"
+            [validation]="errors('consent')"
             cControl
-          ></c-checkbox>
+          >
+            I agree to the
+            <c-link href="https://csc.fi" underline>terms and conditions</c-link>
+          </c-checkbox>
         </c-card-content>
 
-        <c-card-actions right>
+        <c-card-actions justify="end">
           <c-button [disabled]="!form.valid" (click)="onSubmit()">Submit</c-button>
         </c-card-actions>
 
-        <hr />
+        <hr class="m-0" />
 
-        <div class="px-4 py-3">
+        <div class="px-4">
           <c-accordion [value]="showCode" multiple outlined>
-            <c-accordion-item value="template" heading="Template" class="mt-3 mb-0">
+            <c-accordion-item value="template" heading="Template">
               <i class="mdi mdi-language-html5" slot="icon"></i>
               <pre class="d-flex flex-column m-0">
                 <code class="rounded" [highlight]="formUsage.template"></code>
               </pre>
             </c-accordion-item>
-            <c-accordion-item value="script" heading="Script" class="mt-3 mb-0">
+
+            <c-accordion-item value="script" heading="Script">
               <i class="mdi mdi-language-typescript" slot="icon"></i>
               <pre class="d-flex flex-column m-0">
                 <code class="rounded" [highlight]="formUsage.script"></code>

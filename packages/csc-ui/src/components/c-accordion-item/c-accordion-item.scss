@@ -36,7 +36,14 @@
     gap: 8px;
 
     &:focus {
-      outline: none;
+      outline: 2px var(--csc-primary) solid;
+      outline-offset: 4px;
+    }
+
+    @supports selector(:focus-visible) {
+      &:focus {
+        outline: none;
+      }
     }
 
     &:focus-visible {

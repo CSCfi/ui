@@ -2,7 +2,7 @@
   <c-tabs value="tab1">
     <c-tab value="tab1">One</c-tab>
     <c-tab value="tab2">Two</c-tab>
-    <c-tab value="tab3">Three</c-tab>
+    <c-tab value="tab3" disabled>Three</c-tab>
   </c-tabs>
 </app-example>
 
@@ -14,14 +14,20 @@
   </c-tabs>
 </app-example>
 
-<app-example title="Usage in Angular">
+<app-example
+  title="Usage in Angular"
+  [raw]="example.angular.template"
+  [script]="example.angular.script"
+>
   <c-tabs cControl [(ngModel)]="tab">
     <c-tab value="tab1">One</c-tab>
     <c-tab value="tab2">Two</c-tab>
     <c-tab value="tab3">Three</c-tab>
   </c-tabs>
 
-  <c-card-content>current: {{ tab }}</c-card-content>
+  <p class="mt-3" *ngIf="tab === 'tab1'">This is tab one</p>
+  <p class="mt-3" *ngIf="tab === 'tab2'">And this is tab two</p>
+  <p class="mt-3" *ngIf="tab === 'tab3'">Here is tab three</p>
 
   <c-row><c-button (click)="onTabChange()">Select tab two</c-button></c-row>
 </app-example>

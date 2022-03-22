@@ -11,6 +11,7 @@ import {
   Watch,
 } from '@stencil/core';
 import { mdiChevronDown } from '@mdi/js';
+import { registerClickOutside } from 'stencil-click-outside';
 /**
  * @group Form
  */
@@ -21,21 +22,29 @@ import { mdiChevronDown } from '@mdi/js';
 })
 export class CSelect {
   /**
-   * Run validation when changed to true
+   * Auto focus the input
    */
-  @Prop() validate: boolean = false;
+  @Prop() autofocus = false;
+
+  /**
+   * Disable the input
+   */
+  @Prop() disabled = false;
+
+  /**
+   * Hide the hint and error messages
+   */
+  @Prop() hideDetails = false;
+
+  /**
+   * Hint text for the input
+   */
+  @Prop() hint = '';
 
   /**
    * Id of the element
    */
   @Prop({ attribute: 'id' }) hostId: string;
-
-  @Watch('validate')
-  validateChange(newValue: boolean) {
-    if (newValue) {
-      this._runValidate();
-    }
-  }
 
   /**
    * Element label
@@ -43,19 +52,9 @@ export class CSelect {
   @Prop() label: string;
 
   /**
-   * Dense variant
-   */
-  @Prop() dense: boolean = false;
-
-  /**
    * Shadow variant
    */
   @Prop() shadow: boolean = false;
-
-  /**
-   * Label is aligned to the right
-   */
-  @Prop() labelRight: boolean = false;
 
   /**
    * Input field name
@@ -68,9 +67,24 @@ export class CSelect {
   @Prop() required: boolean = null;
 
   /**
-   * Show validation after touching the menu
+   * Set the validíty of the input
+   */
+  @Prop() valid: boolean = true;
+
+  /**
+   * Manual validation
+   */
+  @Prop() validate: boolean = false;
+
+  /**
+   * Validate the input on blur
    */
   @Prop() validateOnBlur: boolean = false;
+
+  /**
+   * Custom validation message
+   */
+  @Prop() validation: string = 'Required field';
 
   /**
    * Items per page before adding scroll
@@ -92,14 +106,46 @@ export class CSelect {
    * selectable items
    */
   @Prop() items: { name: string; value: string | number }[] = [];
+
   @Element() host: HTMLCSelectElement;
+
   @State() menuVisible: boolean = false;
+
   @State() currentIndex: number = null;
+
   @State() itemRefs: { value: string; ref: HTMLElement }[] = [];
 
+  @Watch('validate')
+  validateChange(newValue: boolean) {
+    if (newValue) {
+      this._runValidate();
+    }
+  }
+
+  private _direction = null;
+
   private _outerWrapperClasses = ['outer-wrapper'];
+
   private _validationClasses = ['validation-message'];
 
+  private _inputElement: HTMLInputElement;
+
+  private _observer = new IntersectionObserver(
+    (entries, observer) => {
+      entries.forEach((entry) => {
+        if (!entry.isIntersecting) {
+          entry.target.scrollIntoView({
+            block: this._direction,
+            inline: 'nearest',
+          });
+          observer.unobserve(entry.target);
+        } else {
+          observer.unobserve(entry.target);
+        }
+      });
+    },
+    { threshold: 1 },
+  );
   /**
    * Triggered when an item is selected
    */
@@ -114,9 +160,13 @@ export class CSelect {
 
   private _scrollToElement() {
     if (this.items.length > this.itemsPerPage) {
-      this.itemRefs
-        .find((item) => item.value === this.items[this.currentIndex].value)
-        ?.ref.scrollIntoView();
+      const itemRef = this.itemRefs.find(
+        (item) => item.value === this.items[this.currentIndex].value,
+      )?.ref;
+
+      if (!!itemRef) {
+        this._observer.observe(itemRef);
+      }
     }
   }
 
@@ -155,6 +205,7 @@ export class CSelect {
     }
 
     if (ev.key === 'ArrowLeft') {
+      this._direction = 'start';
       ev.preventDefault();
       if (this.currentIndex !== null && this.currentIndex > 0) {
         this.currentIndex = this.currentIndex - 1;
@@ -162,9 +213,11 @@ export class CSelect {
       const selectedItem = this.items[this.currentIndex];
       this.value = selectedItem;
       this._valueChangedHandler(selectedItem);
+      this._scrollToElement();
     }
 
     if (ev.key === 'ArrowRight') {
+      this._direction = 'end';
       ev.preventDefault();
       if (this.currentIndex === null) {
         this.currentIndex = 0;
@@ -174,9 +227,11 @@ export class CSelect {
       const selectedItem = this.items[this.currentIndex];
       this.value = selectedItem;
       this._valueChangedHandler(selectedItem);
+      this._scrollToElement();
     }
 
     if (ev.key === 'ArrowDown') {
+      this._direction = 'end';
       ev.preventDefault();
       if (this.menuVisible === false) {
         this.menuVisible = true;
@@ -193,6 +248,7 @@ export class CSelect {
     }
 
     if (ev.key === 'ArrowUp') {
+      this._direction = 'start';
       ev.preventDefault();
       this.menuVisible = true;
       if (this.currentIndex !== null && this.currentIndex > 0) {
@@ -232,6 +288,8 @@ export class CSelect {
   private _blurred = false;
 
   private _showMenu() {
+    this._inputElement.focus();
+
     if (this.menuVisible) {
       this.currentIndex = null;
     }
@@ -250,20 +308,13 @@ export class CSelect {
   }
 
   private _getListItem = (item) => {
-    let classes = '';
-    if (this.dense) {
-      classes = 'dense';
-    }
-
-    if (this.items[this.currentIndex] === item) {
-      classes = `${classes} active`;
-    }
-
-    if (item.value === null) {
-      classes = `${classes} none`;
-    }
+    const classes = {
+      active: this.items[this.currentIndex] === item,
+      none: item.value === null,
+    };
 
     let itemId = 'none';
+
     if (typeof item?.value === 'string') {
       itemId = item.value.replace(/[^a-zA-Z0-9-_]/g, '');
     }
@@ -284,19 +335,6 @@ export class CSelect {
     );
   };
 
-  private _validationIcon = (
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      viewBox="0 0 24 24"
-      fill="#E71D32"
-      width="18px"
-      height="18px"
-    >
-      <path d="M0 0h24v24H0z" fill="none" />
-      <path d="M12 2C6.47 2 2 6.47 2 12s4.47 10 10 10 10-4.47 10-10S17.53 2 12 2zm5 13.59L15.59 17 12 13.41 8.41 17 7 15.59 10.59 12 7 8.41 8.41 7 12 10.59 15.59 7 17 8.41 13.41 12 17 15.59z" />
-    </svg>
-  );
-
   private _runValidate() {
     if (
       this.required &&
@@ -314,109 +352,100 @@ export class CSelect {
       );
     }
   }
+
+  private _renderChevron() {
+    const classes = {
+      'c-select__chevron': true,
+      'c-select__chevron--active': this.menuVisible,
+    };
+
+    return (
+      <svg class={classes} viewBox="0 0 24 24">
+        <path d={mdiChevronDown} />
+      </svg>
+    );
+  }
+
+  private _renderInputElement() {
+    return (
+      <div class="c-select__input" onClick={() => this._showMenu()}>
+        <input
+          ref={(el) => (this._inputElement = el as HTMLInputElement)}
+          type="text"
+          value={this.value?.name ?? null}
+          name={this.name ?? 'esa'}
+          readonly
+        />
+      </div>
+    );
+  }
+
+  private _renderMenu(style) {
+    return (
+      <div
+        class={{
+          'c-select__item-wrapper': true,
+          'c-select__item-wrapper--shadow': this.shadow,
+        }}
+        aria-expanded={this.menuVisible}
+      >
+        <div
+          style={style}
+          class={
+            this.menuVisible
+              ? 'c-select__items'
+              : 'c-select__items c-select__items--hidden'
+          }
+        >
+          {this.items.map((item) => this._getListItem(item))}
+        </div>
+      </div>
+    );
+  }
+
   render() {
-    this.itemRefs = [];
     let itemsPerPageStyle = {};
+
     if (
       this.itemsPerPage &&
       this.itemsPerPage > 0 &&
       this.items.length > this.itemsPerPage
     ) {
       itemsPerPageStyle = {
-        'max-height': 47 * this.itemsPerPage + 'px',
+        'max-height': 48 * this.itemsPerPage + 'px',
         'overflow-y': 'scroll',
       };
     }
-    let borderLabel = 'border-label';
-    if (!!this.value || this.placeholder) {
-      borderLabel += ' value-set';
-      this._outerWrapperClasses.push('value-set');
-    }
-    this._runValidate();
-
-    const labelBlock = (
-      <div class={borderLabel}>
-        <label class="top-span" htmlFor={this.name}>
-          {this.label}
-          {this.required ? '*' : ''}
-        </label>
-        <label class="hidden">
-          {this.label}
-          {this.required ? '*' : ''}
-        </label>
-      </div>
-    );
-
-    if (this.shadow) {
-      this._outerWrapperClasses.push('shadow');
-    }
-    if (this.labelRight) {
-      this._outerWrapperClasses.push('label-right');
-    }
 
     return (
-      <Host>
-        <div
+      <Host
+        ref={(el) => registerClickOutside(this, el, () => this._hideMenu())}
+      >
+        <c-input
+          autofocus={this.autofocus}
+          disabled={this.disabled}
+          hide-details={this.hideDetails}
+          hint={this.hint}
           id={this.hostId}
-          class={this._outerWrapperClasses.join(' ')}
-          tabindex="0"
-          role="button"
-          onBlur={() => this._hideMenu()}
-          aria-labelledby="c-select-label"
+          label={this.label}
+          name={this.name}
+          placeholder={this.placeholder}
+          shadow={this.shadow}
+          valid={this.valid}
+          validate={this.validate}
+          validate-on-blur={this.validateOnBlur}
+          validation={this.validation}
+          value={this.value}
         >
-          <div onClick={() => this._showMenu()} class="full-width">
-            <div class="c-select-row">
-              <slot name="pre"></slot>
-              {this.items.length === 0 ? (
-                <div class="c-select-current c-menu-no-items"></div>
-              ) : (
-                <div class="c-select-current">
-                  {this.value && this.value.name ? (
-                    this.value.name
-                  ) : (
-                    <span>{this.placeholder}</span>
-                  )}
-                </div>
-              )}
-              <slot name="post"></slot>
-              <svg
-                width="22"
-                height="22"
-                fill="#222"
-                viewBox="0 0 24 24"
-                class={
-                  this.menuVisible ? 'c-select-icon rotated' : 'c-select-icon'
-                }
-              >
-                <path d={mdiChevronDown} />
-              </svg>
-            </div>
-          </div>
+          <slot name="pre" slot="pre"></slot>
 
-          <input
-            type="hidden"
-            value={this.value ? this.value.value : null}
-            name={this.name}
-          />
-          <div class="c-menu-parent" aria-expanded={this.menuVisible}>
-            {
-              <div
-                style={itemsPerPageStyle}
-                class={this.menuVisible ? 'c-menu' : 'c-menu c-menu-hide'}
-              >
-                {this.items.map((item) => this._getListItem(item))}
-              </div>
-            }
-          </div>
-          <div class="border-wrapper">
-            <div class="border-left"></div>
-            {this.label ? labelBlock : null}
-            <div class="border-right"></div>
-          </div>
-        </div>
-        <div class={this._validationClasses.join(' ')}>
-          {this._validationIcon} Required field
-        </div>
+          {this._renderInputElement()}
+          {this._renderMenu(itemsPerPageStyle)}
+
+          {this._renderChevron()}
+
+          <slot name="post" slot="post"></slot>
+        </c-input>
       </Host>
     );
   }

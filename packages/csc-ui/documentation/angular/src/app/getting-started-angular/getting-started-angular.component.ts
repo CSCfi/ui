@@ -38,28 +38,34 @@ export class GettingStartedAngularComponent implements OnInit {
             <c-text-field
               formControlName="username"
               label="Username"
-              [valid]="(username.valid && (username.dirty || username.touched)) || username.pristine"
-              validation="Please enter your username"
+              [valid]="isValid('username')"
+              [validation]="errors('username')"
               cControl
             ></c-text-field>
 
             <c-text-field
               formControlName="password"
+              hint="Please do not use numbers in your password"
               label="Password"
               type="password"
-              [valid]="(password.valid && (password.dirty || password.touched)) || password.pristine"
+              [valid]="isValid('password')"
+              [validation]="errors('password')"
               cControl
             ></c-text-field>
 
             <c-checkbox
               formControlName="consent"
-              label="I agree to the terms and conditions"
-              [valid]="(consent.valid && (consent.dirty || consent.touched)) || consent.pristine"
+              hint="Please agree to the terms and conditions"
+              [valid]="isValid('consent')"
+              [validation]="errors('consent')"
               cControl
-            ></c-checkbox>
+            >
+              I agree to the
+              <c-link href="https://csc.fi" underline>terms and conditions</c-link>
+            </c-checkbox>
           </c-card-content>
 
-          <c-card-actions right>
+          <c-card-actions justify="end">
             <c-button [disabled]="!form.valid" (click)="onSubmit()">Submit</c-button>
           </c-card-actions>
         </c-card>
@@ -73,30 +79,50 @@ export class GettingStartedAngularComponent implements OnInit {
 
 form: FormGroup;
 
+errorMessages = {
+  required: 'This is a required field',
+  pattern: 'No numbers allowed',
+  minlength: 'The value must be at least 8 characters long',
+};
+
+customMessages = {
+  consent: {
+    required: 'You have to agree to continue',
+  },
+};
+
 constructor(private _formBuilder: FormBuilder) {}
 
 ngOnInit() {
   this.form = this._formBuilder.group({
     username: [null, [Validators.required]],
-    password: [null, [Validators.required]],
+    password: [
+      null,
+      [Validators.required, Validators.pattern(/^([^0-9]*)$/), Validators.minLength(8)],
+    ],
     consent: [false, [Validators.requiredTrue]],
   });
 }
 
-get consent() {
-  return this.form.get('consent');
+isValid(field) {
+  const input = this.form.get(field);
+
+  return input?.pristine || input?.valid || false;
 }
 
-get password() {
-  return this.form.get('password');
-}
+errors(field) {
+  const errors = Object.keys(this.form.get(field)?.errors || {});
 
-get username() {
-  return this.form.get('username');
+  if (!errors) return '';
+
+  const error = errors[0];
+
+  return this.customMessages[field]?.[error] || this.errorMessages[error] || 'Invalid value';
 }
 
 onSubmit() {
   alert('Form submitted with the following data: ' + JSON.stringify(this.form.value, null, 2));
+  this.form.reset();
 }
 `),
   };
@@ -105,29 +131,49 @@ onSubmit() {
 
   form: FormGroup;
 
+  errorMessages = {
+    required: 'This is a required field',
+    pattern: 'No numbers allowed',
+    minlength: 'The value must be at least 8 characters long',
+  };
+
+  customMessages = {
+    consent: {
+      required: 'You have to agree to continue',
+    },
+  };
+
   constructor(private _formBuilder: FormBuilder) {}
 
   ngOnInit() {
     this.form = this._formBuilder.group({
       username: [null, [Validators.required]],
-      password: [null, [Validators.required]],
+      password: [
+        null,
+        [Validators.required, Validators.pattern(/^([^0-9]*)$/), Validators.minLength(8)],
+      ],
       consent: [false, [Validators.requiredTrue]],
     });
   }
 
-  get consent() {
-    return this.form.get('consent');
+  isValid(field) {
+    const input = this.form.get(field);
+
+    return input?.pristine || input?.valid || false;
   }
 
-  get password() {
-    return this.form.get('password');
-  }
+  errors(field) {
+    const errors = Object.keys(this.form.get(field)?.errors || {});
 
-  get username() {
-    return this.form.get('username');
+    if (!errors) return '';
+
+    const error = errors[0];
+
+    return this.customMessages[field]?.[error] || this.errorMessages[error] || 'Invalid value';
   }
 
   onSubmit() {
     alert('Form submitted with the following data: ' + JSON.stringify(this.form.value, null, 2));
+    this.form.reset();
   }
 }

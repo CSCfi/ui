@@ -7,32 +7,40 @@
   </div>
 
   <div class="pt-4">
-    <c-card>
-      <form action="" method="get">
+    <form action="" method="get">
+      <c-card>
         <c-card-title>Login example</c-card-title>
 
         <c-card-content>
-          <c-text-field label="Username" form name="username"></c-text-field>
-          <c-text-field label="Password" form name="password" type="password"></c-text-field>
+          <c-text-field label="Username" name="username" form hide-details></c-text-field>
+
+          <c-text-field
+            label="Password"
+            name="password"
+            type="password"
+            form
+            hide-details
+          ></c-text-field>
         </c-card-content>
 
-        <c-card-actions right>
+        <c-card-actions justify="space-between">
+          <c-link href="#" underline>Forgot password?</c-link>
           <c-button type="submit">Login</c-button>
         </c-card-actions>
-      </form>
 
-      <hr />
+        <hr class="m-0" />
 
-      <div class="px-4 py-3">
-        <c-accordion [value]="showCode" multiple outlined>
-          <c-accordion-item value="template" heading="Template" class="mt-3 mb-0">
-            <i class="mdi mdi-language-html5" slot="icon"></i>
-            <pre class="d-flex flex-column m-0">
-              <code class="rounded" [highlight]="template"></code>
-            </pre>
-          </c-accordion-item>
-        </c-accordion>
-      </div>
-    </c-card>
+        <div class="px-4">
+          <c-accordion [value]="showCode" multiple outlined>
+            <c-accordion-item value="template" heading="Template">
+              <i class="mdi mdi-language-html5" slot="icon"></i>
+              <pre class="d-flex flex-column m-0">
+                <code class="rounded" [highlight]="template"></code>
+              </pre>
+            </c-accordion-item>
+          </c-accordion>
+        </div>
+      </c-card>
+    </form>
   </div>
 </div>

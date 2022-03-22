@@ -2,6 +2,10 @@
   display: inline-flex;
 }
 
+::slotted([slot='icon']) {
+  margin-right: 8px;
+}
+
 button {
   --c-radius: 4px;
 
@@ -16,9 +20,17 @@ button {
   border-radius: var(--c-radius);
   position: relative;
   overflow: hidden;
+  margin: 0;
 
   &:focus {
-    outline: none;
+    outline: 2px var(--csc-primary) solid;
+    outline-offset: 2px;
+  }
+
+  @supports selector(:focus-visible) {
+    &:focus {
+      outline: none;
+    }
   }
 
   &:focus-visible {
@@ -142,7 +154,7 @@ button {
   &--outlined {
     --c-background-color: transparent;
     --c-color: var(--csc-primary);
-    --c-hover-background: var(--csc-lightest-grey);
+    --c-hover-background: var(--csc-primary-text-hover);
 
     box-shadow: inset 0 0 0 2px var(--c-color);
 

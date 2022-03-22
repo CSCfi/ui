@@ -17,18 +17,29 @@ export class CSubnavigationitem {
    * Link url
    */
   @Prop() href: string;
-  private _redirect(event) {
-    event.stopPropagation();
-    const sidenav = document.querySelector('c-sidenavigation');
-    sidenav.menuVisible = false;
-    if (this.href) {
-      window.location.href = this.href;
+  private _redirect(event: KeyboardEvent | PointerEvent) {
+    if (
+      (event instanceof KeyboardEvent && event?.key === 'Enter') ||
+      event instanceof PointerEvent
+    ) {
+      event.stopPropagation();
+      const sidenav = document.querySelector('c-sidenavigation');
+      sidenav.menuVisible = false;
+
+      if (this.href) {
+        window.location.href = this.href;
+      }
     }
   }
   render() {
     const classes = this.active && 'active';
     return (
-      <Host tabindex="0" onClick={(e) => this._redirect(e)} class={classes}>
+      <Host
+        tabindex="0"
+        onClick={(e) => this._redirect(e)}
+        onKeyDown={(e) => this._redirect(e)}
+        class={classes}
+      >
         <slot></slot>
       </Host>
     );

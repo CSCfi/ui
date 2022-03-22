@@ -1,5 +1,11 @@
 <app-example title="Basic usage (Angular)" [raw]="examples[0]" [script]="script">
-  <c-select cControl [items]="items" [(ngModel)]="value" placeholder="Select a fruit"></c-select>
+  <c-select
+    cControl
+    label="Your favorite fruit"
+    [items]="items"
+    [(ngModel)]="value"
+    placeholder="Select a fruit"
+  ></c-select>
   <p class="mt-3">Selected fruit: {{ value?.name || 'None' }}</p>
 </app-example>
 
@@ -21,6 +27,7 @@
     [itemsPerPage]="4"
     [items]="items"
     [(ngModel)]="value"
+    [valid]="!!value?.value"
     placeholder="Select a fruit"
   ></c-select>
   <p class="mt-3">Selected fruit: {{ value?.name || 'None' }}</p>

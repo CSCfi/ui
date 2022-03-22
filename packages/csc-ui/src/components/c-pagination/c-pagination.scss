@@ -2,9 +2,12 @@
   display: block;
 }
 
-.range {
+span {
   font-size: 14px;
   white-space: nowrap;
-  margin-left: 8px;
-  margin-right: 8px;
+  text-align: right;
+}
+
+.range {
+  min-width: 132px;
 }

@@ -4,8 +4,6 @@
   font-weight: 430;
   /*height: 46px;*/
   line-height: 46px;
-  margin-top: 4px;
-  margin-bottom: 4px;
   /*padding-left: 16px;*/
   user-select: none;
   border-top-left-radius: 4px;
@@ -35,6 +33,16 @@
 :host > div.active {
   background-color: #d8e8ea;
   color: var(--csc-primary);
+}
+
+:host(:focus) {
+  outline: none;
+}
+
+:host(:focus-visible) {
+  border-radius: 4px 0 0 4px;
+  outline: 2px #fff solid;
+  outline-offset: 2px;
 }
 
 ::slotted(span) {

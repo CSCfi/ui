@@ -23,6 +23,13 @@
 | `changeValue` | Emit value change to the parent | `CustomEvent<any>` |
 
 
+## Slots
+
+| Slot | Description                |
+| ---- | -------------------------- |
+|      | Default slot for the label |
+
+
 ----------------------------------------------
 
 *Built with [StencilJS](https://stenciljs.com/)*

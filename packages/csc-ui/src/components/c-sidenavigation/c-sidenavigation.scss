@@ -43,7 +43,7 @@
     right: 0;
     overflow-y: scroll;
     z-index: 999;
-    height: calc(100% - 100px);
+    height: calc(100% - 60px);
 
     &.hideMenu {
       transform: translateX(100%);
@@ -53,6 +53,7 @@
   > div {
     width: 100%;
     display: flex;
+    gap: 8px;
     flex: 1;
     flex-flow: column nowrap;
   }

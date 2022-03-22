@@ -6,12 +6,36 @@
   </c-tab-buttons>
 </app-example>
 
-<app-example title="Basic usage 2" subtitle="Using custom values">
-  <c-tab-buttons value="three">
+<app-example title="Usage in Angular" subtitle="Using custom values">
+  <c-tab-buttons cControl [(ngModel)]="currentTab">
     <c-button value="one">One</c-button>
     <c-button value="two">Two</c-button>
     <c-button value="three">Three</c-button>
   </c-tab-buttons>
+
+  <c-card-content>Current tab: {{ currentTab }}</c-card-content>
+
+  <c-card-actions>
+    <c-button (click)="currentTab = 'one'">Select One</c-button>
+    <c-button (click)="currentTab = 'two'">Select Two</c-button>
+    <c-button (click)="currentTab = 'three'">Select Three</c-button>
+  </c-card-actions>
+</app-example>
+
+<app-example title="Usage in Angular" subtitle="Using indexes">
+  <c-tab-buttons cControl [(ngModel)]="currentTabIndex">
+    <c-button>One</c-button>
+    <c-button>Two</c-button>
+    <c-button>Three</c-button>
+  </c-tab-buttons>
+
+  <c-card-content>Current tab: {{ currentTabIndex }}</c-card-content>
+
+  <c-card-actions>
+    <c-button (click)="currentTabIndex = 0">Select One</c-button>
+    <c-button (click)="currentTabIndex = 1">Select Two</c-button>
+    <c-button (click)="currentTabIndex = 2">Select Three</c-button>
+  </c-card-actions>
 </app-example>
 
 <app-example title="Mandatory selection" subtitle="Selection can not be cleared">

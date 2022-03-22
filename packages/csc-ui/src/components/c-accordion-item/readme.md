@@ -23,6 +23,13 @@
 | `itemChange` | Emit changes to the c-accordion | `CustomEvent<any>` |
 
 
+## Slots
+
+| Slot | Description  |
+| ---- | ------------ |
+|      | Default slot |
+
+
 ----------------------------------------------
 
 *Built with [StencilJS](https://stenciljs.com/)*

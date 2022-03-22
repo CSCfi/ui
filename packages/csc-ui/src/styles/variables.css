@@ -1,19 +1,20 @@
 /**
  * Do not edit directly
- * Generated on Wed, 02 Mar 2022 13:54:15 GMT
+ * Generated on Wed, 16 Mar 2022 07:51:25 GMT
  */
 
 :host {
+  --csc-border-radius: 4px;
   --csc-dark-grey: rgb(89, 89, 89);
   --csc-error: #e71d32;
+  --csc-font-family: 'proxima-nova', sans-serif;
   --csc-light-grey: rgb(223, 225, 227);
+  --csc-light-grey-blue: rgb(204, 244, 240);
   --csc-lightest-grey: rgba(223, 225, 227, 0.5);
   --csc-mid-grey: rgb(140, 140, 140);
   --csc-primary: rgb(0, 103, 120);
   --csc-primary-ghost: rgba(0, 103, 120, 0.15);
   --csc-primary-ghost-hover: rgba(0, 103, 120, 0.25);
   --csc-primary-hover: rgb(80, 151, 141);
-  --csc-primary-text-hover: rgb(0 103 120 / 15%);;
-  --csc-light-grey-blue: rgb(204, 244, 240);
-  --csc-border-radius: 4px;
+  --csc-primary-text-hover: rgba(0, 103, 120, 0.15);
 }

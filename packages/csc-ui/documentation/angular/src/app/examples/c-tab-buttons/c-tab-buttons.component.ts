@@ -6,6 +6,9 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./c-tab-buttons.component.scss'],
 })
 export class CTabButtonsComponent implements OnInit {
+  currentTab = 'three';
+  currentTabIndex = 1;
+
   constructor() {}
 
   ngOnInit(): void {}

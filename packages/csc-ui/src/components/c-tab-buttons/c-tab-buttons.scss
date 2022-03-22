@@ -3,7 +3,7 @@
 
   display: flex;
   flex-wrap: wrap;
-  border: solid 2px var(--c-switch-border-color);
+  box-shadow: 0 0 0 2px var(--c-switch-border-color);
   margin: 2px;
   border-radius: var(--csc-border-radius);
   background-color: var(--csc-primary);

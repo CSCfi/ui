@@ -42,55 +42,64 @@ export class CTabButtons {
   @Event() changeValue: EventEmitter<number | string>;
   @Element() el: HTMLCTabButtonsElement;
 
+  private _isIndexBased: boolean;
+
   @Watch('value')
   watchPropHandler(value: string | number) {
+    this.el.childNodes.forEach((button: HTMLCButtonElement) => {
+      button.outlined = true;
+    });
+
     if (value !== null) {
-      this.buttons[value].outlined = false;
+      const button =
+        this.buttons.find((btn) => btn.value === value) || this.buttons[value];
+      if (button) button.outlined = false;
     }
 
-    this.changeValue.emit(value);
+    this.changeValue.emit(this.buttons[value]?.value ?? value);
   }
 
   @Listen('click', { passive: true })
   onHandleClickEvent(ev) {
+    if (this.hostDisabled) return;
+
     const clickStack = ev.composedPath();
-    const switcher = clickStack.find((e) => e.tagName === 'C-TAB-BUTTONS');
+    const tabs = clickStack.find((e) => e.tagName === 'C-TAB-BUTTONS');
     const button = clickStack.find((e) => e.tagName === 'C-BUTTON');
 
-    if (!button || !switcher) return;
+    if (!button || !tabs) return;
 
     const { index } = button.dataset;
 
+    const isActive =
+      this.value !== null &&
+      (this._isIndexBased
+        ? +index === +this.value
+        : button.value === this.value);
+
     // Disable deselection if mandatory prop is set to true
-    if (
-      (this.mandatory &&
-        !this._isString(this.value) &&
-        +index === +this.value) ||
-      (this.mandatory &&
-        this._isString(this.value) &&
-        button.value === this.value)
-    ) {
+    if (this.mandatory && isActive) {
       return;
     }
 
-    switcher.childNodes.forEach((btn: HTMLCButtonElement) => {
-      btn.outlined = true;
-    });
+    const nullValue = this._isIndexBased ? null : '';
 
-    this.value = this.value === +index ? null : +index;
+    this.value = isActive ? nullValue : button.value ?? +index;
   }
 
   get buttons() {
-    return Array.from(this.el.childNodes) as HTMLCButtonElement[];
-  }
-
-  get valueIsString() {
-    return Number.isNaN(+this.value);
+    return Array.from(this.el.childNodes).filter(
+      (element: HTMLCButtonElement) => element.tagName === 'C-BUTTON',
+    ) as HTMLCButtonElement[];
   }
 
   componentDidLoad() {
     // use 0 as value if nothing is provided
     this.value = this.value ?? 0;
+
+    this._isIndexBased = this.buttons.every(
+      (button) => typeof button.value === 'undefined',
+    );
 
     this.buttons.forEach((button: HTMLCButtonElement, index) => {
       button.setAttribute('data-index', String(index));
@@ -99,21 +108,18 @@ export class CTabButtons {
       button.disabled = this.hostDisabled;
       button.size = this.size;
 
-      if (
-        (!this._isString(this.value) && index !== +this.value) ||
-        (this._isString(this.value) && button.value !== this.value)
-      ) {
-        button.outlined = true;
-      }
+      const isActive =
+        this.value !== null &&
+        (this._isIndexBased
+          ? index === +this.value
+          : button.value === this.value);
+
+      button.outlined = !isActive;
 
       const buttonElement = button.shadowRoot.querySelector('.c-button');
 
       buttonElement.classList.add('grouped');
     });
-  }
-
-  private _isString(value) {
-    return Number.isNaN(+value);
   }
 
   render() {

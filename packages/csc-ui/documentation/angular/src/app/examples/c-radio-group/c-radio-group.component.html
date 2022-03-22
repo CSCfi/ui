@@ -1,21 +1,34 @@
 <app-example title="Basic usage" [raw]="raw.default" [script]="script.default">
   <c-radio-group
-    cControl
-    label="Example radio buttons"
     [items]="items.default"
     [(ngModel)]="selectedItem"
+    label="Example radio buttons"
+    cControl
   ></c-radio-group>
+
+  <p class="text-primary mt-4">Selected item: {{ selectedItem.label }}</p>
+</app-example>
+
+<app-example
+  title="Using the default slot as a label"
+  [raw]="raw.default"
+  [script]="script.default"
+>
+  <c-radio-group [items]="items.default" [(ngModel)]="selectedItem" cControl>
+    Choose one of the following
+    <c-link href="https://csc.fi" underline>options</c-link>
+  </c-radio-group>
 
   <p class="text-primary mt-4">Selected item: {{ selectedItem.label }}</p>
 </app-example>
 
 <app-example title="Disabled" [raw]="raw.disabled" [script]="script.disabled">
   <c-radio-group
-    cControl
-    label="Disabled radio buttons"
     [items]="items.disabled"
     [(ngModel)]="selectedItemDisabled"
+    label="Disabled radio buttons"
     disabled
+    cControl
   ></c-radio-group>
 
   <p class="text-primary mt-4">Selected item: {{ selectedItemDisabled.label }}</p>

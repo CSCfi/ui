@@ -13,18 +13,24 @@ export class GettingStartedHtmlComponent implements OnInit {
   template = formatTemplate(
     `
     <c-card>
-      <form action="" method="get">
-        <c-card-title>Login example</c-card-title>
+      <c-card-title>Login example</c-card-title>
 
-        <c-card-content>
-          <c-text-field label="Username" name="username" form></c-text-field>
-          <c-text-field label="Password" name="password" type="password" form></c-text-field>
-        </c-card-content>
+      <c-card-content>
+        <c-text-field label="Username" name="username" form hide-details></c-text-field>
 
-        <c-card-actions right>
-          <c-button type="submit">Login</c-button>
-        </c-card-actions>
-      </form>
+        <c-text-field
+          label="Password"
+          name="password"
+          type="password"
+          form
+          hide-details
+        ></c-text-field>
+      </c-card-content>
+
+      <c-card-actions justify="space-between">
+        <c-link href="#" underline>Forgot password?</c-link>
+        <c-button type="submit">Login</c-button>
+      </c-card-actions>
     </c-card>`,
     false,
   );

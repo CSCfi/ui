@@ -11,6 +11,7 @@ import {
 
 /**
  * @group Content Selectors
+ * @slot - Default slot for the c-accordion-item components
  */
 @Component({
   tag: 'c-accordion',

@@ -11,6 +11,8 @@
   display: flex;
   align-items: center;
   background-color: transparent;
+  border-radius: 4px;
+  margin: 4px;
 }
 
 :host(:hover) {
@@ -26,4 +28,13 @@
   margin-right: 8px;
   font-size: 20px;
   line-height: 1;
+}
+
+:host(:focus) {
+  outline: none;
+}
+
+:host(:focus-visible) {
+  outline: 2px var(--csc-primary) solid;
+  outline-offset: 0;
 }

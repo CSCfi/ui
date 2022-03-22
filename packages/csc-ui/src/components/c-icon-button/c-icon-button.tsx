@@ -39,7 +39,7 @@ export class CIconButton {
   /**
    * Size of the button
    */
-  @Prop() size: 'default' | 'small' = 'default';
+  @Prop() size: 'default' | 'x-small' | 'small' = 'default';
 
   private _container?: HTMLDivElement;
 
@@ -55,6 +55,7 @@ export class CIconButton {
       ghost: !!this.ghost,
       outlined: !!this.outlined,
       'icon-button--small': this.size === 'small',
+      'icon-button--x-small': this.size === 'x-small',
     };
   }
 

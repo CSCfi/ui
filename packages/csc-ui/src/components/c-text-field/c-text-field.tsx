@@ -1,13 +1,12 @@
 import {
   Component,
-  Prop,
-  Host,
-  h,
-  EventEmitter,
-  Event,
-  State,
-  Watch,
   Element,
+  Event,
+  EventEmitter,
+  h,
+  Host,
+  Prop,
+  State,
 } from '@stencil/core';
 import { mdiEye, mdiEyeOff } from '@mdi/js';
 
@@ -21,19 +20,9 @@ import { mdiEye, mdiEyeOff } from '@mdi/js';
 })
 export class CTextField {
   /**
-   * Manual validation
+   * Auto focus the input
    */
-  @Prop() validate: boolean = false;
-
-  /**
-   * Id of the input
-   */
-  @Prop({ attribute: 'id' }) hostId: string;
-
-  /**
-   * Numeric input
-   */
-  @Prop() number = false;
+  @Prop() autofocus = false;
 
   /**
    * Disable the input
@@ -41,39 +30,24 @@ export class CTextField {
   @Prop() disabled = false;
 
   /**
-   * Mark as readonly
+   * Render a hidden input outside the shadow dom
    */
-  @Prop() readonly = false;
+  @Prop() form = false;
 
   /**
-   * Shadow variant of the input
+   * Hide the hint and error messages
    */
-  @Prop() shadow = false;
+  @Prop() hideDetails = false;
 
   /**
-   * Auto focus the input
+   * Hint text for the input
    */
-  @Prop() autofocus = false;
+  @Prop() hint = '';
 
   /**
-   * Set the validíty of the input
+   * Id of the input
    */
-  @Prop() valid: boolean = true;
-
-  /**
-   * Custom validation message
-   */
-  @Prop() validation: string = 'Required field';
-
-  /**
-   * Set the input as required
-   */
-  @Prop() required: boolean = null;
-
-  /**
-   * Validate the input on blur
-   */
-  @Prop() validateOnBlur: boolean = false;
+  @Prop({ attribute: 'id' }) hostId: string;
 
   /**
    * Label of the input
@@ -81,19 +55,9 @@ export class CTextField {
   @Prop() label: string;
 
   /**
-   * Name of the input
+   * Maximum value on a numeric input
    */
-  @Prop() name: string;
-
-  /**
-   * Type of the input
-   */
-  @Prop() type: string;
-
-  /**
-   * Step size on a numeric input
-   */
-  @Prop() step: number = null;
+  @Prop() max: number = null;
 
   /**
    * Minimum value on a numeric input
@@ -101,14 +65,16 @@ export class CTextField {
   @Prop() min: number = null;
 
   /**
-   * Maximum value on a numeric input
+   * Name of the input
    */
-  @Prop() max: number = null;
+  @Prop() name: string;
 
   /**
-   * Rows on the input
+   * Numeric input
+   *
+   * @deprecated Use type="number" instead
    */
-  @Prop() rows: number = 1;
+  @Prop() number = false;
 
   /**
    * Placeholder of the input
@@ -116,225 +82,129 @@ export class CTextField {
   @Prop() placeholder: string;
 
   /**
+   * Mark as readonly
+   */
+  @Prop() readonly = false;
+
+  /**
+   * Set the input as required
+   */
+  @Prop() required: boolean = null;
+
+  /**
+   * Rows on the input
+   */
+  @Prop() rows: number = 1;
+
+  /**
+   * Shadow variant of the input
+   */
+  @Prop() shadow = false;
+
+  /**
+   * Step size on a numeric input
+   */
+  @Prop() step: number = null;
+
+  /**
+   * Type of the input
+   */
+  @Prop() type: string;
+
+  /**
+   * Set the validíty of the input
+   */
+  @Prop() valid: boolean = true;
+
+  /**
+   * Manual validation
+   */
+  @Prop() validate: boolean = false;
+
+  /**
+   * Validate the input on blur
+   */
+  @Prop() validateOnBlur: boolean = false;
+
+  /**
+   * Custom validation message
+   */
+  @Prop() validation: string = 'Required field';
+
+  /**
    * Value of the input
    */
   @Prop({ mutable: true }) value: string;
-
-  /**
-   * Render a hidden input outside the shadow dom
-   */
-  @Prop() form = false;
 
   /**
    * Emit changes to the parent
    */
   @Event() changeValue: EventEmitter;
 
-  @State() tick = '';
+  @State() isFocused = false;
 
-  private _outerWrapperClasses = ['outer-wrapper'];
-  private _validationClasses = ['validation-message'];
-  private _isBlurred = false;
-  private _inputReference?: HTMLInputElement;
-  private _textAreaReference?: HTMLTextAreaElement;
-  private _originalType = '';
+  @State() labelWidth = 0;
+
+  @State() preSlotWidth = 0;
+
+  @State() messageOptions = {
+    show: true,
+    type: 'hint',
+    content: '',
+  };
 
   @Element() hiddenEl!: HTMLCTextFieldElement;
 
-  @Watch('validate')
-  validateChange(newValue: boolean) {
-    if (newValue) {
-      this._runValidate(true, true);
-    }
-  }
+  private _originalType = '';
 
   componentWillLoad() {
     this._originalType = this.type;
   }
 
-  componentDidLoad() {
-    if (this.autofocus) {
-      setTimeout(() => {
-        this._focus();
-      }, 500);
-    }
+  get isActive() {
+    return !!this.value || this.isFocused;
   }
-
-  private _setBlur = () => {
-    this._isBlurred = true;
-    if (this.validateOnBlur) {
-      this._runValidate(true);
-    }
-  };
-
-  private _handleChange = (event) => {
-    this.value = event.target.value;
-    this.tick = '';
-    this.changeValue.emit(event.target.value);
-  };
-
-  private _runValidate(forceUpdate = false, extValidate = false) {
-    this._outerWrapperClasses = this._outerWrapperClasses.filter(
-      (c) => c !== 'required',
-    );
-    this._validationClasses = this._validationClasses.filter(
-      (c) => c !== 'show',
-    );
-    if (
-      (this._isBlurred || !this.validateOnBlur || extValidate) &&
-      ((this.required && !this.value) || !this.valid)
-    ) {
-      this._outerWrapperClasses.push('required');
-      this._validationClasses.push('show');
-      if (forceUpdate) {
-        this.tick = 'force';
-      }
-    }
-  }
-
-  private _focus = () => {
-    if (this.rows > 1) {
-      this._textAreaReference.focus();
-    } else {
-      this._inputReference.focus();
-    }
-  };
-
-  private _togglePasswordVisibility = () => {
-    this.type = this.type === 'password' ? 'text' : 'password';
-  };
 
   get passwordIcon() {
     return this.type === 'password' ? mdiEye : mdiEyeOff;
   }
 
-  private _validationIcon = (
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      viewBox="0 0 24 24"
-      fill="#E71D32"
-      width="18px"
-      height="18px"
-    >
-      <path d="M0 0h24v24H0z" fill="none" />
-      <path d="M12 2C6.47 2 2 6.47 2 12s4.47 10 10 10 10-4.47 10-10S17.53 2 12 2zm5 13.59L15.59 17 12 13.41 8.41 17 7 15.59 10.59 12 7 8.41 8.41 7 12 10.59 15.59 7 17 8.41 13.41 12 17 15.59z" />
-    </svg>
-  );
+  private _handleChange = (event) => {
+    this.value = event.target.value;
 
-  render() {
-    if (this.tick !== 'force') {
-      // already externally validated when forced to render
-      this._runValidate();
-    }
-    if (this.disabled) {
-      this._outerWrapperClasses.push('disabled');
-    } else {
-      this._outerWrapperClasses = this._outerWrapperClasses.filter(
-        (c) => c !== 'disabled',
-      );
-    }
-    let borderLabel = 'border-label';
-    if (this.value !== '' || this.placeholder) {
-      borderLabel += ' value-set';
-    }
+    this.changeValue.emit(event.target.value);
+  };
 
-    const labelBlock = (
-      <div class={borderLabel}>
-        <label class="top-span" htmlFor={this.name}>
-          {this.label}
-          {this.required ? '*' : ''}
-        </label>
-        <label class="hidden">
-          {this.label}
-          {this.required ? '*' : ''}
-        </label>
-      </div>
-    );
+  private _renderInputElement() {
+    const props = {
+      shared: {
+        id: this.hostId,
+        name: this.name,
+        disabled: this.disabled,
+        readonly: this.readonly,
+        'aria-labelledby': 'c-text-label',
+        value: this.value,
+        onInput: this._handleChange,
+        onChange: this._handleChange,
+      },
+      input: {
+        type: this.number ? 'number' : this.type || 'text',
+        min: this.min,
+        max: this.max,
+        step: this.step,
+      },
+      textArea: {
+        rows: this.rows,
+      },
+    };
 
-    let type = 'text';
+    const textInput = <input {...props.shared} {...props.input} />;
 
-    if (this.number) {
-      type = 'number';
-    }
-
-    if (this.type) {
-      type = this.type;
-    }
-
-    if (this.shadow) {
-      this._outerWrapperClasses.push('shadow');
-    }
-
-    if (this.form) {
-      this._renderInputOutsideShadowRoot(this.hiddenEl, this.name, this.value);
-    }
-
-    const textInput = (
-      <input
-        id={this.hostId}
-        ref={(el) => (this._inputReference = el as HTMLInputElement)}
-        name={this.name}
-        onBlur={this._setBlur}
-        aria-labelledby="c-text-label"
-        disabled={this.disabled}
-        readonly={this.readonly}
-        type={type}
-        min={this.min}
-        max={this.max}
-        step={this.step}
-        placeholder={this.placeholder}
-        value={this.value}
-        onInput={this._handleChange}
-        onChange={this._handleChange}
-      />
-    );
     const textArea = (
-      <textarea
-        id={this.hostId}
-        ref={(el) => (this._textAreaReference = el as HTMLTextAreaElement)}
-        name={this.name}
-        onBlur={this._setBlur}
-        rows={this.rows}
-        aria-labelledby="c-text-label"
-        disabled={this.disabled}
-        placeholder={this.placeholder}
-        readonly={this.readonly}
-        onInput={this._handleChange}
-        value={this.value}
-      ></textarea>
+      <textarea {...props.shared} {...props.textArea}></textarea>
     );
-    return (
-      <Host onClick={this._focus}>
-        <div class={this._outerWrapperClasses.join(' ')}>
-          <div class="border-wrapper">
-            <div class="border-left"></div>
-            {this.label ? labelBlock : null}
-            <div class="border-right"></div>
-          </div>
 
-          <slot name="pre"></slot>
-
-          {this.rows > 1 ? textArea : textInput}
-
-          <slot name="post"></slot>
-
-          {this._originalType === 'password' && (
-            <c-icon-button
-              size="small"
-              text
-              onClick={this._togglePasswordVisibility}
-            >
-              <svg width="22" height="22" fill="#222" viewBox="0 0 24 24">
-                <path d={this.passwordIcon} />
-              </svg>
-            </c-icon-button>
-          )}
-        </div>
-        <div class={this._validationClasses.join(' ')}>
-          {this._validationIcon} {this.validation}
-        </div>
-      </Host>
-    );
+    return this.rows > 1 ? textArea : textInput;
   }
 
   private _renderInputOutsideShadowRoot(
@@ -352,7 +222,63 @@ export class CTextField {
       input.classList.add('hidden-input');
       container.appendChild(input);
     }
+
     input.name = name;
     input.value = value || '';
+  }
+
+  private _renderPasswordToggle() {
+    if (this._originalType !== 'password') return;
+
+    return (
+      <svg
+        class="c-input__password-toggle"
+        viewBox="0 0 24 24"
+        onClick={this._togglePasswordVisibility}
+      >
+        <path d={this.passwordIcon} />
+      </svg>
+    );
+  }
+
+  private _togglePasswordVisibility = () => {
+    this.type = this.type === 'password' ? 'text' : 'password';
+  };
+
+  render() {
+    if (this.form) {
+      this._renderInputOutsideShadowRoot(this.hiddenEl, this.name, this.value);
+    }
+
+    return (
+      <Host>
+        <c-input
+          autofocus={this.autofocus}
+          disabled={this.disabled}
+          hide-details={this.hideDetails}
+          hint={this.hint}
+          id={this.hostId}
+          label={this.label}
+          name={this.name}
+          placeholder={this.placeholder}
+          readonly={this.readonly}
+          shadow={this.shadow}
+          type={this.type}
+          valid={this.valid}
+          validate={this.validate}
+          validate-on-blur={this.validateOnBlur}
+          validation={this.validation}
+          value={this.value}
+        >
+          <slot name="pre" slot="pre"></slot>
+
+          {this._renderInputElement()}
+
+          {this._renderPasswordToggle()}
+
+          <slot name="post" slot="post"></slot>
+        </c-input>
+      </Host>
+    );
   }
 }

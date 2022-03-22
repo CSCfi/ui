@@ -32,8 +32,7 @@
             class="text-capitalize"
             [routerLink]="['getting-started/angular']"
             routerLinkActive="active"
-            (click)="open()"
-            (keyup.enter)="open()"
+            (keyup.enter)="navigate($event, 'getting-started/angular')"
           >
             <span class="mdi mdi-angular"></span>
             Angular
@@ -44,8 +43,7 @@
             class="text-capitalize"
             [routerLink]="['getting-started/html']"
             routerLinkActive="active"
-            (click)="open()"
-            (keyup.enter)="open()"
+            (keyup.enter)="navigate($event, 'getting-started/html')"
           >
             <span class="mdi mdi-language-html5"></span>
             HTML Page
@@ -78,8 +76,7 @@
             [routerLink]="['templates/basic-template']"
             routerLinkActive="active"
             class="text-capitalize"
-            (click)="open()"
-            (keyup.enter)="open()"
+            (keyup.enter)="navigate($event, 'templates/basic-template')"
           >
             Basic template
           </c-subnavigationitem>
@@ -91,18 +88,17 @@
       <c-text-field
         class="my-4 me-4"
         placeholder="Search for a component"
+        hide-details
         shadow
         cControl
         (input)="filterComponents($event)"
       >
-        <i class="mdi mdi-magnify" style="margin-left: 12px" slot="pre"></i>
+        <i class="mdi mdi-magnify" slot="pre"></i>
       </c-text-field>
 
       <c-sidenavigationitem
         *ngFor="let group of groupedComponents | menuGroups"
         [active]="group.visible"
-        (click)="open(group)"
-        (keyup.enter)="open(group)"
       >
         <div slot="main" class="text-capitalize">{{ group.name }}</div>
         <div slot="subnavitem">
@@ -119,19 +115,16 @@
         </div>
       </c-sidenavigationitem>
 
-      <div *ngFor="let group of groupedComponents | menuGroups: false">
-        <c-sidenavigationitem
-          *ngFor="let item of group.components"
-          class="text-capitalize"
-          [routerLink]="['/' + item.tag]"
-          routerLinkActive="active"
-          [active]="activeComponent?.tag === item?.tag"
-          (click)="open(group)"
-          (keyup.enter)="open(group)"
-        >
-          <div slot="main" class="text-capitalize">{{ item.name }}</div>
-        </c-sidenavigationitem>
-      </div>
+      <c-sidenavigationitem
+        *ngFor="let item of (groupedComponents | menuGroups: false)[0]?.components"
+        class="text-capitalize"
+        [routerLink]="['/' + item.tag]"
+        routerLinkActive="active"
+        [active]="activeComponent?.tag === item?.tag"
+        (keyup.enter)="navigate($event, item.tag)"
+      >
+        <div slot="main" class="text-capitalize">{{ item.name }}</div>
+      </c-sidenavigationitem>
     </c-sidenavigation>
     <c-flex class="container-height">
       <c-container>

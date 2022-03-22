@@ -1,4 +1,4 @@
-import { Component, Host, h, Prop } from '@stencil/core';
+import { Component, Host, h, Prop, Listen, Element } from '@stencil/core';
 /**
  * @group Navigation
  */
@@ -17,6 +17,16 @@ export class CSidenavigation {
    * Mobile version menu visibility
    */
   @Prop({ mutable: true }) menuVisible: boolean = false; // eslint-disable-line
+  @Element() host: HTMLCSidenavigationElement;
+
+  @Listen('itemChange')
+  handleChange(event: Event) {
+    const slotted = this.host.childNodes;
+    slotted.forEach((item) => {
+      (item as HTMLCSidenavigationitemElement).active = false;
+    });
+    (event.target as HTMLCSidenavigationitemElement).active = true;
+  }
   componentDidLoad() {
     const _this = this;
 
