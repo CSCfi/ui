@@ -262,6 +262,7 @@ export class CTextField {
           name={this.name}
           placeholder={this.placeholder}
           readonly={this.readonly}
+          rows={this.rows}
           shadow={this.shadow}
           type={this.type}
           valid={this.valid}
