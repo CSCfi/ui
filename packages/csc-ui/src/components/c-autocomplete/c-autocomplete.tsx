@@ -142,12 +142,14 @@ export class CAutocomplete {
 
   private _inputElement: HTMLInputElement;
 
-  @State() itemRefs: { value: string; ref: HTMLElement }[] = [];
+  private _itemRefs: { value: string; ref: HTMLElement }[] = [];
 
   @Watch('items')
   watchHandler(newValue, oldValue) {
     if (newValue.length !== oldValue.length) {
-      this.currentIndex = null;
+      if (typeof this.currentIndex === 'number') {
+        this.currentIndex = null;
+      }
     }
   }
 
@@ -228,7 +230,7 @@ export class CAutocomplete {
 
   private _scrollToElement() {
     if (this.items.length > this.itemsPerPage) {
-      const itemRef = this.itemRefs.find(
+      const itemRef = this._itemRefs.find(
         (item) => item.value === this.items[this.currentIndex].value,
       )?.ref;
 
@@ -274,7 +276,10 @@ export class CAutocomplete {
 
   private _getListItem = (item) => {
     const classes = {
-      active: this.items[this.currentIndex] === item,
+      active:
+        this.items.length > this.currentIndex
+          ? this.items[this.currentIndex] === item
+          : false,
       none: item.value === null,
     };
 
@@ -291,7 +296,7 @@ export class CAutocomplete {
         id={itemId}
         ref={(el) => {
           item.ref = el as HTMLElement;
-          this.itemRefs.push({ value: item.value, ref: el as HTMLElement });
+          this._itemRefs.push({ value: item.value, ref: el as HTMLElement });
         }}
         onClick={() => this.select(item)}
         class={classes}
@@ -352,7 +357,7 @@ export class CAutocomplete {
   }
 
   render() {
-    this.itemRefs = [];
+    this._itemRefs = [];
     let itemsPerPageStyle = {};
 
     if (
