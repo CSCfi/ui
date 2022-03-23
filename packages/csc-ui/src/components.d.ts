@@ -5,8 +5,8 @@
  * It contains typing information for all components that exist in this project.
  */
 import { HTMLStencilElement, JSXBase } from "@stencil/core/internal";
+import { CAutocompleteItem, CPaginationOptions, CSelectItem } from "./types";
 import { CardBackground } from "./components/c-card/c-card";
-import { CPaginationOptions } from "./components/c-pagination/c-pagination";
 export namespace Components {
     interface CAccordion {
         /**
@@ -125,7 +125,7 @@ export namespace Components {
         /**
           * Selected item
          */
-        "value": { name: string; value: string };
+        "value": CAutocompleteItem;
     }
     interface CButton {
         /**
@@ -560,7 +560,7 @@ export namespace Components {
         /**
           * selectable items
          */
-        "items": { name: string; value: string | number }[];
+        "items": CSelectItem[];
         /**
           * Items per page before adding scroll
          */
@@ -581,6 +581,10 @@ export namespace Components {
           * Show required validation
          */
         "required": boolean;
+        /**
+          * Return only the item value rather than the whole item object
+         */
+        "returnValue": false;
         /**
           * Shadow variant
          */
@@ -604,7 +608,7 @@ export namespace Components {
         /**
           * Selected item
          */
-        "value": { name: string; value: string | number };
+        "value": string | number | CSelectItem;
     }
     interface CSidenavigation {
         /**
@@ -1273,7 +1277,7 @@ declare namespace LocalJSX {
         /**
           * Selected item
          */
-        "value"?: { name: string; value: string };
+        "value"?: CAutocompleteItem;
     }
     interface CButton {
         /**
@@ -1728,7 +1732,7 @@ declare namespace LocalJSX {
         /**
           * selectable items
          */
-        "items"?: { name: string; value: string | number }[];
+        "items"?: CSelectItem[];
         /**
           * Items per page before adding scroll
          */
@@ -1754,6 +1758,10 @@ declare namespace LocalJSX {
          */
         "required"?: boolean;
         /**
+          * Return only the item value rather than the whole item object
+         */
+        "returnValue"?: false;
+        /**
           * Shadow variant
          */
         "shadow"?: boolean;
@@ -1776,7 +1784,7 @@ declare namespace LocalJSX {
         /**
           * Selected item
          */
-        "value"?: { name: string; value: string | number };
+        "value"?: string | number | CSelectItem;
     }
     interface CSidenavigation {
         /**

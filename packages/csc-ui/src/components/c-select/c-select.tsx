@@ -12,6 +12,8 @@ import {
 } from '@stencil/core';
 import { mdiChevronDown } from '@mdi/js';
 import { registerClickOutside } from 'stencil-click-outside';
+import { CSelectItem } from '../../types';
+
 /**
  * @group Form
  */
@@ -67,6 +69,11 @@ export class CSelect {
   @Prop() required: boolean = null;
 
   /**
+   * Return only the item value rather than the whole item object
+   */
+  @Prop() returnValue: false;
+
+  /**
    * Set the validíty of the input
    */
   @Prop() valid: boolean = true;
@@ -99,13 +106,12 @@ export class CSelect {
   /**
    * Selected item
    */
-  @Prop({ mutable: true }) value: { name: string; value: string | number } =
-    null;
+  @Prop({ mutable: true }) value: string | number | CSelectItem = null;
 
   /**
    * selectable items
    */
-  @Prop() items: { name: string; value: string | number }[] = [];
+  @Prop() items: CSelectItem[] = [];
 
   @Element() host: HTMLCSelectElement;
 
@@ -155,7 +161,23 @@ export class CSelect {
       return element.value === item.value;
     }
     this.currentIndex = this.items.findIndex(isItem);
-    this.changeValue.emit({ name: item.name, value: item.value });
+
+    const value = this.returnValue
+      ? item.value
+      : { name: item.name, value: item.value };
+
+    this.changeValue.emit(value);
+  }
+
+  private _getLabel() {
+    if (
+      this.returnValue &&
+      (typeof this.value === 'number' || typeof this.value === 'string')
+    ) {
+      return this.items?.find((item) => item.value === this.value)?.name;
+    }
+
+    return (this.value as CSelectItem)?.name;
   }
 
   private _scrollToElement() {
@@ -372,7 +394,7 @@ export class CSelect {
         <input
           ref={(el) => (this._inputElement = el as HTMLInputElement)}
           type="text"
-          value={this.value?.name ?? null}
+          value={this._getLabel() ?? null}
           name={this.name ?? null}
           readonly
         />

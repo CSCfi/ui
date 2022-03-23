@@ -27,7 +27,7 @@
 | `validate`       | `validate`         | Manual validation                   | `boolean`                            | `false`            |
 | `validateOnBlur` | `validate-on-blur` | Validate the input on blur          | `boolean`                            | `false`            |
 | `validation`     | `validation`       | Custom validation message           | `string`                             | `'Required field'` |
-| `value`          | --                 | Selected item                       | `{ name: string; value: string; }`   | `null`             |
+| `value`          | --                 | Selected item                       | `CAutocompleteItem`                  | `null`             |
 
 
 ## Events

@@ -170,6 +170,8 @@ export class CInput {
 
   @Watch('validation')
   onValidationMessageChange(message: string) {
+    if (this.valid || !message) return;
+
     this.messageOptions = {
       ...this.messageOptions,
       content: (

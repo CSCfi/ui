@@ -11,11 +11,8 @@ import {
   Watch,
 } from '@stencil/core';
 import { mdiChevronDown } from '@mdi/js';
+import { CAutocompleteItem } from '../../types';
 
-export interface SelectItem {
-  name: string;
-  value: string;
-}
 /**
  * @group Form
  */
@@ -73,7 +70,7 @@ export class CAutocomplete {
   /**
    * Selected item
    */
-  @Prop({ mutable: true }) value: { name: string; value: string } = null;
+  @Prop({ mutable: true }) value: CAutocompleteItem = null;
 
   /**
    * Dense variant

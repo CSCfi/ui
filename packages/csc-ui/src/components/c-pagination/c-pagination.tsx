@@ -9,15 +9,7 @@ import {
   Watch,
 } from '@stencil/core';
 import { mdiChevronLeft, mdiChevronRight, mdiDotsHorizontal } from '@mdi/js';
-
-export interface CPaginationOptions {
-  itemCount: number;
-  currentPage?: number;
-  totalVisible?: number;
-  itemsPerPage?: number;
-  startFrom?: number;
-  endTo?: number;
-}
+import { CPaginationOptions } from '../../types';
 
 /**
  * @group Content Selectors
