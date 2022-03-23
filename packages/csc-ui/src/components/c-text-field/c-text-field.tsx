@@ -230,9 +230,14 @@ export class CTextField {
   private _renderPasswordToggle() {
     if (this._originalType !== 'password') return;
 
+    const classes = {
+      'c-input__password-toggle': true,
+      'c-input__password-toggle--disabled': this.disabled,
+    };
+
     return (
       <svg
-        class="c-input__password-toggle"
+        class={classes}
         viewBox="0 0 24 24"
         onClick={this._togglePasswordVisibility}
       >
@@ -242,6 +247,8 @@ export class CTextField {
   }
 
   private _togglePasswordVisibility = () => {
+    if (this.disabled) return;
+
     this.type = this.type === 'password' ? 'text' : 'password';
   };
 

@@ -39,13 +39,16 @@ textarea {
 }
 
 .c-input {
-  $this: &;
-
   &__password-toggle {
     cursor: pointer;
     fill: currentColor;
     height: 22px;
     width: 22px;
+
+    &--disabled {
+      cursor: not-allowed;
+      fill: rgba(0, 0, 0, 0.54);
+    }
   }
 
   &--disabled {

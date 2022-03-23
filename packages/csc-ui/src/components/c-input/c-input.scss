@@ -191,13 +191,6 @@
     }
   }
 
-  &__password-toggle {
-    cursor: pointer;
-    fill: currentColor;
-    height: 22px;
-    width: 22px;
-  }
-
   &--shadow {
     #{$this} {
       &__slot {
@@ -215,7 +208,7 @@
     input,
     fieldset,
     label {
-      color: var(--csc-mid-grey);
+      color: rgba(0, 0, 0, 0.5);
     }
   }
 

@@ -2,6 +2,10 @@
   <c-text-field label="Password" type="password"></c-text-field>
 </app-example>
 
+<app-example title="Disabled state">
+  <c-text-field label="Password" type="password" disabled></c-text-field>
+</app-example>
+
 <app-example title="Shadow with slots">
   <c-text-field placeholder="Text field with a shadow" shadow>
     <i class="mdi mdi-magnify" slot="pre"></i>
@@ -34,7 +38,6 @@
           placeholder="Your superhero name"
           [valid]="isValid('username')"
           [validation]="errors('username')"
-          autofocus
           cControl
         >
           <i class="mdi mdi-star" slot="pre"></i>
