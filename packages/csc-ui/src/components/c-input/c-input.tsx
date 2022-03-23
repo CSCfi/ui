@@ -405,7 +405,7 @@ export class CInput {
     };
 
     return (
-      <Host>
+      <Host disabled={this.disabled}>
         <div class={containerClasses}>
           <div class="c-input__control">
             <div class="c-input__slot">

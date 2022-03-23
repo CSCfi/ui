@@ -3,6 +3,43 @@
   cursor: text;
 }
 
+::slotted(input) {
+  max-height: 32px;
+  padding: 8px 0 8px;
+}
+
+::slotted(input),
+::slotted(textarea) {
+  background-color: transparent;
+  border: none;
+  color: rgba(0, 0, 0, 0.87);
+  flex: 1 1 auto;
+  font-family: $csc-font-family;
+  font-size: 16px;
+  line-height: 20px;
+  max-width: 100%;
+  min-width: 0;
+  width: 100%;
+}
+
+::slotted(input:focus),
+::slotted(input:active),
+::slotted(textarea:focus),
+::slotted(textarea:active) {
+  outline: none;
+}
+
+::slotted(input::-ms-reveal) {
+  display: none;
+}
+
+:host([disabled]) {
+  ::slotted(input),
+  ::slotted(textarea) {
+    color: rgba(0, 0, 0, 0.5);
+  }
+}
+
 .c-input {
   $this: &;
 
@@ -156,41 +193,6 @@
     }
   }
 
-  input {
-    max-height: 32px;
-    padding: 8px 0 8px;
-  }
-
-  textarea {
-    margin-top: 4px;
-    min-height: 44px;
-    padding: 8px 12px 8px 0;
-    resize: vertical;
-  }
-
-  input,
-  textarea {
-    background-color: transparent;
-    border: none;
-    color: rgba(0, 0, 0, 0.87);
-    flex: 1 1 auto;
-    font-family: $csc-font-family;
-    font-size: 16px;
-    line-height: 20px;
-    max-width: 100%;
-    min-width: 0;
-    width: 100%;
-
-    &:focus,
-    &:active {
-      outline: none;
-    }
-
-    &::-ms-reveal {
-      display: none;
-    }
-  }
-
   &--shadow {
     #{$this} {
       &__slot {
@@ -206,6 +208,7 @@
 
   &--disabled {
     input,
+    textarea,
     fieldset,
     label {
       color: rgba(0, 0, 0, 0.5);
