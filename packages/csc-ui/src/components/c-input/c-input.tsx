@@ -168,6 +168,18 @@ export class CInput {
     this._handleValidation(valid);
   }
 
+  @Watch('validation')
+  onValidationMessageChange(message: string) {
+    this.messageOptions = {
+      ...this.messageOptions,
+      content: (
+        <span>
+          {this._validationIcon} {message}
+        </span>
+      ),
+    };
+  }
+
   @Watch('value')
   onValueChange(value) {
     if (!value) this._onReset();
