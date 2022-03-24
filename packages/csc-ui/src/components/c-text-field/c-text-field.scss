@@ -1,43 +1,3 @@
-// :host {
-//   display: block;
-//   cursor: text;
-// }
-
-// input {
-//   max-height: 32px;
-//   padding: 8px 0 8px;
-// }
-
-// textarea {
-//   margin-top: 4px;
-//   min-height: 44px;
-//   padding: 8px 12px 8px 0;
-//   resize: vertical;
-// }
-
-// input,
-// textarea {
-//   background-color: transparent;
-//   border: none;
-//   color: rgba(0, 0, 0, 0.87);
-//   flex: 1 1 auto;
-//   font-family: $csc-font-family;
-//   font-size: 16px;
-//   line-height: 20px;
-//   max-width: 100%;
-//   min-width: 0;
-//   width: 100%;
-
-//   &:focus,
-//   &:active {
-//     outline: none;
-//   }
-
-//   &::-ms-reveal {
-//     display: none;
-//   }
-// }
-
 .c-input {
   &__password-toggle {
     cursor: pointer;
@@ -50,20 +10,4 @@
       fill: rgba(0, 0, 0, 0.54);
     }
   }
-
-  // &--disabled {
-  //   color: var(--csc-mid-grey);
-  // }
-
-  // &:focus-within {
-  //   color: var(--csc-primary);
-  // }
-
-  // &--error {
-  //   color: var(--csc-error);
-
-  //   &:focus-within {
-  //     color: var(--csc-error);
-  //   }
-  // }
 }

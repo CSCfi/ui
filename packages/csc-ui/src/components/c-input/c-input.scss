@@ -8,6 +8,13 @@
   padding: 8px 0 8px;
 }
 
+::slotted(textarea) {
+  margin-top: 4px;
+  min-height: 44px;
+  padding: 8px 12px 8px 0;
+  resize: vertical;
+}
+
 ::slotted(input),
 ::slotted(textarea) {
   background-color: transparent;
