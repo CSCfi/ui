@@ -7,9 +7,16 @@ import { Component, OnInit } from '@angular/core';
 })
 export class CSelectComponent implements OnInit {
   examples = [
-    `<c-select cControl [items]="items" [(ngModel)]="value" placeholder="Select a fruit"></c-select>
-  
-    <p>Selected fruit: {{ value?.name || 'None' }}</p>`,
+    `<c-select
+    cControl
+    label="Your favorite fruit"
+    return-value
+    [items]="items"
+    [(ngModel)]="basicValue"
+    placeholder="Select a fruit"
+  ></c-select>
+
+  <p>Selected fruit: {{ basicValue || 'None' }}</p>`,
     `<c-select
   shadow
   cControl
@@ -17,7 +24,7 @@ export class CSelectComponent implements OnInit {
   [(ngModel)]="value"
   placeholder="Select a fruit"
 ></c-select>
-<p>Selected fruit: {{ value?.name || 'None' }}</p>`,
+<p>Selected fruit: {{ (value | json) || 'None' }}</p>`,
     `<c-select
   required
   cControl
@@ -26,7 +33,7 @@ export class CSelectComponent implements OnInit {
   [(ngModel)]="value"
   placeholder="Select a fruit"
 ></c-select>
-<p>Selected fruit: {{ value?.name || 'None' }}</p>`,
+<p>Selected fruit: {{ (value | json) || 'None' }}</p>`,
   ];
   script = `value = null;
 items = [
@@ -55,6 +62,7 @@ items = [
     value: 'lemon',
   },
 ];`;
+  basicValue = null;
   value = null;
   items = [
     {

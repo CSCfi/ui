@@ -22,6 +22,10 @@ html {
   }
 }
 
+:host {
+  font-family: var(--csc-font-family);
+}
+
 @keyframes mdRipple {
   100% {
     opacity: 0;

@@ -132,14 +132,8 @@ export class CSelect {
       this._runValidate();
     }
   }
-  /**
-   * Toggle menu state
-   */
-  private _toggleMenu() {
-    this.menuVisible = true;
-  }
 
-  private _direction = null;
+  private _direction: ScrollLogicalPosition = 'end';
 
   private _outerWrapperClasses = ['outer-wrapper'];
 
@@ -166,13 +160,13 @@ export class CSelect {
 
   private _valueChangedHandler(item: any) {
     function isItem(element) {
-      return element.value === item.value;
+      return element.value === item?.value;
     }
     this.currentIndex = this.items.findIndex(isItem);
 
     const value = this.returnValue
-      ? item.value
-      : { name: item.name, value: item.value };
+      ? item?.value
+      : { name: item?.name, value: item?.value };
 
     this.changeValue.emit(value);
   }
@@ -237,9 +231,9 @@ export class CSelect {
     if (ev.key === 'ArrowLeft') {
       this._direction = 'start';
       ev.preventDefault();
-      if (this.currentIndex !== null && this.currentIndex > 0) {
-        this.currentIndex = this.currentIndex - 1;
-      }
+      if (this.currentIndex === null || this.currentIndex <= 0) return;
+
+      this.currentIndex = this.currentIndex - 1;
       const selectedItem = this.items[this.currentIndex];
       this.value = selectedItem;
       this._valueChangedHandler(selectedItem);
@@ -318,13 +312,8 @@ export class CSelect {
   private _blurred = false;
 
   private _showMenu() {
-    // this._inputElement.focus();
-    console.log(this._inputElement);
-
-    // if (this.menuVisible) {
-    //   this.currentIndex = null;
-    // }
-    // this.menuVisible = !this.menuVisible;
+    this._inputElement.focus();
+    this.menuVisible = true;
   }
 
   private _hideMenu() {
@@ -368,10 +357,6 @@ export class CSelect {
     );
   };
 
-  private _onFocus = () => {
-    this._toggleMenu();
-  };
-
   private _runValidate() {
     if (
       this.required &&
@@ -411,7 +396,7 @@ export class CSelect {
           type="text"
           value={this._getLabel() ?? null}
           name={this.name ?? null}
-          onClick={this._onFocus}
+          onClick={() => this._showMenu()}
           readonly
         />
       </div>

@@ -202,7 +202,7 @@ export class CAutocomplete {
     if (ev.key === 'Enter') {
       if (this.currentIndex !== null) {
         const selectedItem = this.items[this.currentIndex];
-        this.select(selectedItem);
+        this._select(ev, selectedItem);
         this.menuVisible = false;
       }
     }
@@ -239,11 +239,7 @@ export class CAutocomplete {
 
   private _showMenu() {
     this._inputElement.focus();
-
-    if (this.menuVisible) {
-      this.currentIndex = null;
-    }
-    this.menuVisible = !this.menuVisible;
+    this.menuVisible = true;
   }
 
   private handleChange(event) {
@@ -253,7 +249,9 @@ export class CAutocomplete {
     this.changeValue.emit(null);
   }
 
-  private select(item) {
+  private _select(event, item) {
+    event.preventDefault();
+    event.stopPropagation();
     this.query = item.name;
     this.value = item;
     this.valueChangedHandler(item);
@@ -295,7 +293,7 @@ export class CAutocomplete {
           item.ref = el as HTMLElement;
           this._itemRefs.push({ value: item.value, ref: el as HTMLElement });
         }}
-        onClick={() => this.select(item)}
+        onClick={(event) => this._select(event, item)}
         class={classes}
       >
         {item.name}
@@ -347,6 +345,7 @@ export class CAutocomplete {
           type="text"
           value={this.value?.name ?? null}
           name={this.name ?? null}
+          onClick={() => this._showMenu()}
           onInput={(event) => this.handleChange(event)}
         />
       </div>
