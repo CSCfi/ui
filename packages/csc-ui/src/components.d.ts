@@ -372,7 +372,7 @@ export namespace Components {
         /**
           * Value of the input
          */
-        "value": string | number | { name: string; value: string | number };
+        "value": string | number | CSelectItem | CAutocompleteItem;
         /**
           * Variant
          */
@@ -1532,7 +1532,7 @@ declare namespace LocalJSX {
         /**
           * Value of the input
          */
-        "value"?: string | number | { name: string; value: string | number };
+        "value"?: string | number | CSelectItem | CAutocompleteItem;
         /**
           * Variant
          */

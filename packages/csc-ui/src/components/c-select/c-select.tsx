@@ -113,19 +113,30 @@ export class CSelect {
    */
   @Prop() items: CSelectItem[] = [];
 
+  /**
+   * Triggered when an item is selected
+   */
+  @Event() changeValue: EventEmitter;
+
   @Element() host: HTMLCSelectElement;
 
   @State() menuVisible: boolean = false;
 
   @State() currentIndex: number = null;
 
-  @State() itemRefs: { value: string; ref: HTMLElement }[] = [];
+  private _itemRefs: { value: string; ref: HTMLElement }[] = [];
 
   @Watch('validate')
   validateChange(newValue: boolean) {
     if (newValue) {
       this._runValidate();
     }
+  }
+  /**
+   * Toggle menu state
+   */
+  private _toggleMenu() {
+    this.menuVisible = true;
   }
 
   private _direction = null;
@@ -152,10 +163,7 @@ export class CSelect {
     },
     { threshold: 1 },
   );
-  /**
-   * Triggered when an item is selected
-   */
-  @Event() changeValue: EventEmitter;
+
   private _valueChangedHandler(item: any) {
     function isItem(element) {
       return element.value === item.value;
@@ -182,7 +190,7 @@ export class CSelect {
 
   private _scrollToElement() {
     if (this.items.length > this.itemsPerPage) {
-      const itemRef = this.itemRefs.find(
+      const itemRef = this._itemRefs.find(
         (item) => item.value === this.items[this.currentIndex].value,
       )?.ref;
 
@@ -310,12 +318,13 @@ export class CSelect {
   private _blurred = false;
 
   private _showMenu() {
-    this._inputElement.focus();
+    // this._inputElement.focus();
+    console.log(this._inputElement);
 
-    if (this.menuVisible) {
-      this.currentIndex = null;
-    }
-    this.menuVisible = !this.menuVisible;
+    // if (this.menuVisible) {
+    //   this.currentIndex = null;
+    // }
+    // this.menuVisible = !this.menuVisible;
   }
 
   private _hideMenu() {
@@ -323,7 +332,9 @@ export class CSelect {
     this._blurred = true;
   }
 
-  private _select(item) {
+  private _select(event, item) {
+    event.preventDefault();
+    event.stopPropagation();
     this.value = item;
     this._valueChangedHandler(item);
     this.menuVisible = false;
@@ -347,14 +358,18 @@ export class CSelect {
       <li
         id={itemId}
         ref={(el) =>
-          this.itemRefs.push({ value: item.value, ref: el as HTMLElement })
+          this._itemRefs.push({ value: item.value, ref: el as HTMLElement })
         }
-        onClick={() => this._select(item)}
+        onClick={(event) => this._select(event, item)}
         class={classes}
       >
         {item.name}
       </li>
     );
+  };
+
+  private _onFocus = () => {
+    this._toggleMenu();
   };
 
   private _runValidate() {
@@ -396,6 +411,7 @@ export class CSelect {
           type="text"
           value={this._getLabel() ?? null}
           name={this.name ?? null}
+          onClick={this._onFocus}
           readonly
         />
       </div>
@@ -463,6 +479,7 @@ export class CSelect {
           <slot name="pre" slot="pre"></slot>
 
           {this._renderInputElement()}
+
           {this._renderMenu(itemsPerPageStyle)}
 
           {this._renderChevron()}

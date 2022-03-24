@@ -10,6 +10,7 @@ import {
   Watch,
 } from '@stencil/core';
 import { mdiCloseCircle } from '@mdi/js';
+import { CAutocompleteItem, CSelectItem } from '../../types';
 
 /**
  * @parent None
@@ -135,7 +136,7 @@ export class CInput {
   /**
    * Value of the input
    */
-  @Prop() value: string | number | { name: string; value: string | number };
+  @Prop() value: string | number | CSelectItem | CAutocompleteItem;
 
   /**
    * Variant
@@ -200,7 +201,7 @@ export class CInput {
   componentDidLoad() {
     if (this.autofocus) {
       setTimeout(() => {
-        this._onFocus();
+        this._onFocus(false);
       }, 500);
     }
 
@@ -208,7 +209,7 @@ export class CInput {
     this._calculateElementWidths();
     this._observer.observe(this._labelRef);
 
-    this.inputField?.addEventListener('focus', () => this._onFocus());
+    this.inputField?.addEventListener('focus', () => this._onFocus(false));
     this.inputField?.addEventListener('blur', () => this._onBlur());
     this.inputField?.addEventListener(
       'keypress',
@@ -220,6 +221,15 @@ export class CInput {
       this.inputField.placeholder =
         !!this.label || !this.placeholder ? '' : this.placeholder;
     }
+  }
+
+  disconnectedCallback() {
+    this.inputField?.removeEventListener('focus', () => this._onFocus(false));
+    this.inputField?.removeEventListener('blur', () => this._onBlur());
+    this.inputField?.removeEventListener(
+      'keypress',
+      this._preventNonNumericalInput,
+    );
   }
 
   get isActive() {
@@ -294,10 +304,13 @@ export class CInput {
     }, 100);
   };
 
-  private _onFocus = () => {
+  private _onFocus = (click = true) => {
+    if (this.disabled) return;
+
     this.isFocused = true;
 
     this.inputField?.focus();
+    if (click) this.inputField?.click();
 
     // show the label if there's no value
     if (this.inputField) {
@@ -410,7 +423,7 @@ export class CInput {
       <Host disabled={this.disabled}>
         <div class={containerClasses}>
           <div class="c-input__control">
-            <div class="c-input__slot">
+            <div class="c-input__slot" onClick={() => this._onFocus()}>
               {this._renderBorders()}
 
               <div class="c-input__field">
