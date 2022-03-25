@@ -13,3 +13,8 @@ export interface CSelectItem {
 }
 
 export interface CAutocompleteItem extends CSelectItem {}
+
+export interface CRadioGroupItem {
+  label: string;
+  value: string | number;
+}

@@ -7,6 +7,7 @@ import {
   Element,
 } from '@stencil/core';
 import { v4 as uuid } from 'uuid';
+import { CRadioGroupItem } from '../../types';
 import { createRipple } from '../../utils/utils';
 
 /**
@@ -22,7 +23,7 @@ export class CRadioGroup {
   /**
    * Value of the radio group
    */
-  @Prop({ mutable: true }) value: { label: string; value: number | string };
+  @Prop({ mutable: true }) value: CRadioGroupItem;
 
   /**
    * Label of the radio group
@@ -37,7 +38,7 @@ export class CRadioGroup {
   /**
    * Radio group items
    */
-  @Prop() items: { label: string; value: number | string }[] = [];
+  @Prop() items: CRadioGroupItem[] = [];
 
   /**
    * Disable the radio group

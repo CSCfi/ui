@@ -5,7 +5,7 @@
  * It contains typing information for all components that exist in this project.
  */
 import { HTMLStencilElement, JSXBase } from "@stencil/core/internal";
-import { CAutocompleteItem, CPaginationOptions, CSelectItem } from "./types";
+import { CAutocompleteItem, CPaginationOptions, CRadioGroupItem, CSelectItem } from "./types";
 import { CardBackground } from "./components/c-card/c-card";
 export namespace Components {
     interface CAccordion {
@@ -508,7 +508,7 @@ export namespace Components {
         /**
           * Radio group items
          */
-        "items": { label: string; value: number | string }[];
+        "items": CRadioGroupItem[];
         /**
           * Label of the radio group
          */
@@ -516,7 +516,7 @@ export namespace Components {
         /**
           * Value of the radio group
          */
-        "value": { label: string; value: number | string };
+        "value": CRadioGroupItem;
     }
     interface CRow {
         /**
@@ -1676,7 +1676,7 @@ declare namespace LocalJSX {
         /**
           * Radio group items
          */
-        "items"?: { label: string; value: number | string }[];
+        "items"?: CRadioGroupItem[];
         /**
           * Label of the radio group
          */
@@ -1688,7 +1688,7 @@ declare namespace LocalJSX {
         /**
           * Value of the radio group
          */
-        "value"?: { label: string; value: number | string };
+        "value"?: CRadioGroupItem;
     }
     interface CRow {
         /**
