@@ -69,8 +69,8 @@ export class CPagination {
   }
 
   private _isEqual(options1: CPaginationOptions, options2: CPaginationOptions) {
-    const keys1 = Object.keys(options1);
-    const keys2 = Object.keys(options2);
+    const keys1 = Object.keys(options1 || {});
+    const keys2 = Object.keys(options2 || {});
 
     if (keys1.length !== keys2.length) {
       return false;
