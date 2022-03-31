@@ -5,8 +5,11 @@ import {
   Event,
   EventEmitter,
   Element,
+  State,
+  Watch,
 } from '@stencil/core';
 import { v4 as uuid } from 'uuid';
+import { mdiCloseCircle } from '@mdi/js';
 import { CRadioGroupItem } from '../../types';
 import { createRipple } from '../../utils/utils';
 
@@ -23,7 +26,17 @@ export class CRadioGroup {
   /**
    * Value of the radio group
    */
-  @Prop({ mutable: true }) value: CRadioGroupItem;
+  @Prop({ mutable: true }) value: string | number | CRadioGroupItem;
+
+  /**
+   * Hide the hint and error messages
+   */
+  @Prop() hideDetails = false;
+
+  /**
+   * Hint text for the input
+   */
+  @Prop() hint = '';
 
   /**
    * Label of the radio group
@@ -46,11 +59,46 @@ export class CRadioGroup {
   @Prop() disabled = false;
 
   /**
+   * Return only the item value rather than the whole item object
+   */
+  @Prop() returnValue: false;
+
+  /**
+   * Set the validíty of the input
+   */
+  @Prop() valid: boolean = true;
+
+  /**
+   * Custom validation message
+   */
+  @Prop() validation: string = 'Required field';
+
+  /**
    * Emit value change to the parent
    */
   @Event() changeValue: EventEmitter;
 
   @Element() el: HTMLCRadioGroupElement;
+
+  @State() messageOptions = {
+    show: true,
+    type: 'hint',
+    content: '',
+  };
+
+  @Watch('validation')
+  onValidationMessageChange(message: string) {
+    this.onValidChange(message.length === 0);
+  }
+
+  @Watch('valid')
+  onValidChange(valid: boolean) {
+    this._handleValidation(valid || this.valid);
+  }
+
+  componentDidLoad() {
+    this._handleValidation(this.valid, 0);
+  }
 
   private _containers?: HTMLDivElement[] = [];
 
@@ -64,20 +112,46 @@ export class CRadioGroup {
     }
   }
 
+  private _handleValidation(valid: boolean, timeout = 200) {
+    this.messageOptions = {
+      ...this.messageOptions,
+      show: false,
+    };
+
+    setTimeout(() => {
+      this.messageOptions = {
+        ...this.messageOptions,
+        type: valid ? 'hint' : 'error',
+        show: true,
+        content: valid ? (
+          <span>{this.hint}</span>
+        ) : (
+          <span>
+            {this._validationIcon} {this.validation}
+          </span>
+        ),
+      };
+    }, timeout);
+  }
+
   private _select(event, item, index) {
     if (this.disabled) return;
 
     createRipple(event, this._containers[index], true);
-    this.value = item;
-    this.changeValue.emit(item);
+    this.value = this.returnValue ? item?.value : item;
+    this.changeValue.emit(this.value);
   }
 
   private _getRadioButton = (item, index) => {
     const itemId = item.value.toString().replace(/[^a-zA-Z0-9-_]/g, '');
+    const isChecked = this.returnValue
+      ? this.items?.find((i) => i.value === item.value)?.value === this.value
+      : this.value === item;
 
     const classes = {
       'c-radio': true,
       'c-radio--disabled': this.disabled,
+      'c-radio--error': this.messageOptions.type === 'error',
     };
 
     return (
@@ -93,7 +167,7 @@ export class CRadioGroup {
           aria-disabled={this.disabled}
           aria-labelledby={itemId}
           disabled={this.disabled}
-          checked={this.value === item}
+          checked={isChecked}
           name={this._uniqueId}
           tabindex="-1"
           onChange={(event) => this._select(event, item, index)}
@@ -109,11 +183,43 @@ export class CRadioGroup {
     );
   };
 
+  private _renderMessages() {
+    if (this.hideDetails) return;
+
+    const classes = {
+      'c-radio__details': true,
+      active: this.messageOptions.show,
+    };
+
+    const messageClasses = {
+      'c-radio__message': true,
+      [`c-radio__message--${this.messageOptions.type}`]: true,
+    };
+
+    return (
+      <div class={classes}>
+        <div class={messageClasses}>{this.messageOptions.content}</div>
+      </div>
+    );
+  }
+
+  private _validationIcon = (
+    <svg height="16px" width="16px" viewBox="0 0 24 24">
+      <path d={mdiCloseCircle} />
+    </svg>
+  );
+
   render() {
     const slotHasContent = !!this.el.childNodes.length;
 
+    const wrapperClasses = {
+      'c-radio-group': true,
+      'c-radio-group--disabled': this.disabled,
+      'c-radio-group--error': this.messageOptions.type === 'error',
+    };
+
     return (
-      <div class="c-radio-group">
+      <div class={wrapperClasses}>
         {(!!this.label || slotHasContent) && (
           <label id="c-radio-group__label">
             {!!this.label ? this.label : <slot></slot>}
@@ -126,6 +232,7 @@ export class CRadioGroup {
         >
           {this.items.map((item, index) => this._getRadioButton(item, index))}
         </div>
+        {this._renderMessages()}
       </div>
     );
   }

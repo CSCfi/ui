@@ -1,4 +1,4 @@
-<app-example title="Usage in Angular" cols [raw]="examples[0]" [script]="scripts[0]">
+<app-example title="Usage in Angular" cols [raw]="examples.default" [script]="scripts.default">
   <c-autocomplete
     label="Countries"
     cControl
@@ -19,4 +19,37 @@
   >
     {{ tag.name }}
   </c-tag>
+</app-example>
+
+<app-example
+  title="Usage with 'return-value'"
+  rows
+  [raw]="examples.returnValue"
+  [script]="scripts.returnValue"
+>
+  <c-row gap="8">
+    <c-autocomplete
+      [(ngModel)]="valueValue"
+      [items]="filteredItems"
+      [query]="query"
+      (changeQuery)="changeQuery($event)"
+      [itemsPerPage]="10"
+      label="Countries"
+      return-value
+      hide-details
+      cControl
+    ></c-autocomplete>
+    <c-button [disabled]="!valueValue" (click)="addValueTag()">Add</c-button>
+  </c-row>
+
+  <p style="margin: 16px 0 0">
+    Added values:
+    <c-tag>{{ addedValueTags.length }}</c-tag>
+  </p>
+  <ul>
+    <li *ngFor="let tag of addedValueTags">
+      {{ tag }}
+    </li>
+    <li *ngIf="!addedValueTags.length">No added values</li>
+  </ul>
 </app-example>

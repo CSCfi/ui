@@ -19,6 +19,7 @@ export class CRadioGroupComponent implements OnInit {
     ],
   };
 
+  selectedValue = 'one';
   selectedItem = this.items.default[1];
   selectedItemDisabled = this.items.disabled[2];
 
@@ -31,6 +32,18 @@ export class CRadioGroupComponent implements OnInit {
     ></c-radio-group>
 
     <p style="margin-top: 16px">Selected item: {{ selectedItem.label }}</p>`,
+
+    slot: `<c-radio-group
+    [items]="items.default"
+    [(ngModel)]="selectedValue"
+    return-value
+    cControl
+  >
+    Choose one of the following
+    <c-link href="https://csc.fi" underline>options</c-link>
+  </c-radio-group>
+
+  <p style="margin-top: 16px">Selected value: {{ selectedValue }}</p>`,
 
     disabled: `<c-radio-group
       cControl
@@ -51,6 +64,13 @@ export class CRadioGroupComponent implements OnInit {
     ];
 
     selectedItem = this.items[1];`,
+    slot: `items = [
+      { label: 'Radio 1', value: 'one' },
+      { label: 'Radio 2', value: 'two' },
+      { label: 'Radio 3', value: 'three' },
+    ];
+
+    selectedValue = 'one';`,
     disabled: `items = [
       { label: 'Radio 1', value: 'one--disabled' },
       { label: 'Radio 2', value: 'two--disabled' },

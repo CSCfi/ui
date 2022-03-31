@@ -11,15 +11,16 @@
 
 <app-example
   title="Using the default slot as a label"
-  [raw]="raw.default"
-  [script]="script.default"
+  subtitle="Returning only the value"
+  [raw]="raw.slot"
+  [script]="script.slot"
 >
-  <c-radio-group [items]="items.default" [(ngModel)]="selectedItem" cControl>
+  <c-radio-group [items]="items.default" [(ngModel)]="selectedValue" return-value cControl>
     Choose one of the following
     <c-link href="https://csc.fi" underline>options</c-link>
   </c-radio-group>
 
-  <p class="text-primary mt-4">Selected item: {{ selectedItem.label }}</p>
+  <p class="text-primary mt-4">Selected value: {{ selectedValue }}</p>
 </app-example>
 
 <app-example title="Disabled" [raw]="raw.disabled" [script]="script.disabled">

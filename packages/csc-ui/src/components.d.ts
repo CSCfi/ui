@@ -74,10 +74,7 @@ export namespace Components {
         /**
           * Items to be selected
          */
-        "items": {
-    name: string;
-    value: string;
-  }[];
+        "items": CAutocompleteItem[];
         /**
           * Items per page before adding scroll
          */
@@ -103,6 +100,10 @@ export namespace Components {
          */
         "required": boolean;
         /**
+          * Return only the item value rather than the whole item object
+         */
+        "returnValue": false;
+        /**
           * Shadow variant
          */
         "shadow": boolean;
@@ -125,7 +126,7 @@ export namespace Components {
         /**
           * Selected item
          */
-        "value": CAutocompleteItem;
+        "value": string | number | CAutocompleteItem;
     }
     interface CButton {
         /**
@@ -506,6 +507,14 @@ export namespace Components {
          */
         "disabled": boolean;
         /**
+          * Hide the hint and error messages
+         */
+        "hideDetails": boolean;
+        /**
+          * Hint text for the input
+         */
+        "hint": string;
+        /**
           * Radio group items
          */
         "items": CRadioGroupItem[];
@@ -514,9 +523,21 @@ export namespace Components {
          */
         "label": string;
         /**
+          * Return only the item value rather than the whole item object
+         */
+        "returnValue": false;
+        /**
+          * Set the validíty of the input
+         */
+        "valid": boolean;
+        /**
+          * Custom validation message
+         */
+        "validation": string;
+        /**
           * Value of the radio group
          */
-        "value": CRadioGroupItem;
+        "value": string | number | CRadioGroupItem;
     }
     interface CRow {
         /**
@@ -1218,10 +1239,7 @@ declare namespace LocalJSX {
         /**
           * Items to be selected
          */
-        "items"?: {
-    name: string;
-    value: string;
-  }[];
+        "items"?: CAutocompleteItem[];
         /**
           * Items per page before adding scroll
          */
@@ -1255,6 +1273,10 @@ declare namespace LocalJSX {
          */
         "required"?: boolean;
         /**
+          * Return only the item value rather than the whole item object
+         */
+        "returnValue"?: false;
+        /**
           * Shadow variant
          */
         "shadow"?: boolean;
@@ -1277,7 +1299,7 @@ declare namespace LocalJSX {
         /**
           * Selected item
          */
-        "value"?: CAutocompleteItem;
+        "value"?: string | number | CAutocompleteItem;
     }
     interface CButton {
         /**
@@ -1674,6 +1696,14 @@ declare namespace LocalJSX {
          */
         "disabled"?: boolean;
         /**
+          * Hide the hint and error messages
+         */
+        "hideDetails"?: boolean;
+        /**
+          * Hint text for the input
+         */
+        "hint"?: string;
+        /**
           * Radio group items
          */
         "items"?: CRadioGroupItem[];
@@ -1686,9 +1716,21 @@ declare namespace LocalJSX {
          */
         "onChangeValue"?: (event: CustomEvent<any>) => void;
         /**
+          * Return only the item value rather than the whole item object
+         */
+        "returnValue"?: false;
+        /**
+          * Set the validíty of the input
+         */
+        "valid"?: boolean;
+        /**
+          * Custom validation message
+         */
+        "validation"?: string;
+        /**
           * Value of the radio group
          */
-        "value"?: CRadioGroupItem;
+        "value"?: string | number | CRadioGroupItem;
     }
     interface CRow {
         /**

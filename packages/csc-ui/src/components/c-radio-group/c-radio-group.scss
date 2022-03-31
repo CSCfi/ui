@@ -14,9 +14,25 @@
     flex-direction: column;
     gap: 2px;
   }
+
+  &--disabled {
+    --c-radio-color: var(--csc-mid-grey);
+
+    color: var(--c-radio-color);
+    cursor: default;
+    opacity: 0.75;
+  }
+
+  &--error {
+    --c-radio-color: var(--csc-error);
+
+    color: var(--csc-error);
+  }
 }
 
 .c-radio {
+  $this: &;
+
   --c-radio-color: var(--csc-primary);
 
   align-items: flex-start;
@@ -79,6 +95,58 @@
     }
   }
 
+  &__details {
+    line-height: 1;
+    padding: 0 12px;
+
+    &.active {
+      #{$this} {
+        &__message {
+          opacity: 1;
+          transform: translateY(0px);
+        }
+      }
+    }
+  }
+
+  &__message {
+    font-size: 12px;
+    opacity: 0;
+    transform: translateY(-4px);
+    transition: all 0.2s cubic-bezier(0.25, 0.8, 0.5, 1);
+
+    &--hint {
+      color: var(--csc-mid-grey);
+    }
+
+    &--error {
+      color: var(--csc-error) !important;
+    }
+
+    span {
+      align-items: flex-start;
+      display: flex;
+      gap: 4px;
+      height: 16px;
+
+      &.error {
+        color: var(--csc-error);
+      }
+
+      &.hint {
+        color: var(--csc-mid-grey);
+      }
+    }
+
+    svg {
+      fill: currentColor;
+      min-height: 16px;
+      min-width: 16px;
+      position: relative;
+      top: -2px;
+    }
+  }
+
   &__label {
     padding-top: 12px;
   }
@@ -89,6 +157,18 @@
     color: var(--c-radio-color);
     cursor: default;
     opacity: 0.75;
+  }
+
+  &--error {
+    --c-radio-color: var(--csc-error);
+
+    color: var(--csc-error);
+
+    span,
+    svg {
+      fill: var(--csc-error);
+      color: var(--csc-error);
+    }
   }
 
   &:focus {

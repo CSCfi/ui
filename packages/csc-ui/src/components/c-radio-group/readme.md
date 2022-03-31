@@ -7,13 +7,18 @@
 
 ## Properties
 
-| Property   | Attribute  | Description              | Type                | Default     |
-| ---------- | ---------- | ------------------------ | ------------------- | ----------- |
-| `color`    | `color`    | Color of the radio group | `string`            | `''`        |
-| `disabled` | `disabled` | Disable the radio group  | `boolean`           | `false`     |
-| `items`    | --         | Radio group items        | `CRadioGroupItem[]` | `[]`        |
-| `label`    | `label`    | Label of the radio group | `string`            | `undefined` |
-| `value`    | --         | Value of the radio group | `CRadioGroupItem`   | `undefined` |
+| Property      | Attribute      | Description                                                  | Type                                  | Default            |
+| ------------- | -------------- | ------------------------------------------------------------ | ------------------------------------- | ------------------ |
+| `color`       | `color`        | Color of the radio group                                     | `string`                              | `''`               |
+| `disabled`    | `disabled`     | Disable the radio group                                      | `boolean`                             | `false`            |
+| `hideDetails` | `hide-details` | Hide the hint and error messages                             | `boolean`                             | `false`            |
+| `hint`        | `hint`         | Hint text for the input                                      | `string`                              | `''`               |
+| `items`       | --             | Radio group items                                            | `CRadioGroupItem[]`                   | `[]`               |
+| `label`       | `label`        | Label of the radio group                                     | `string`                              | `undefined`        |
+| `returnValue` | `return-value` | Return only the item value rather than the whole item object | `boolean`                             | `undefined`        |
+| `valid`       | `valid`        | Set the validíty of the input                                | `boolean`                             | `true`             |
+| `validation`  | `validation`   | Custom validation message                                    | `string`                              | `'Required field'` |
+| `value`       | `value`        | Value of the radio group                                     | `CRadioGroupItem \| number \| string` | `undefined`        |
 
 
 ## Events

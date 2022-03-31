@@ -70,7 +70,7 @@ export class CAutocomplete {
   /**
    * Selected item
    */
-  @Prop({ mutable: true }) value: CAutocompleteItem = null;
+  @Prop({ mutable: true }) value: string | number | CAutocompleteItem = null;
 
   /**
    * Dense variant
@@ -108,12 +108,14 @@ export class CAutocomplete {
   @Prop() placeholder = '';
 
   /**
+   * Return only the item value rather than the whole item object
+   */
+  @Prop() returnValue: false;
+
+  /**
    * Items to be selected
    */
-  @Prop() items: {
-    name: string;
-    value: string;
-  }[] = [];
+  @Prop() items: CAutocompleteItem[] = [];
 
   /**
    * Items per page before adding scroll
@@ -129,12 +131,15 @@ export class CAutocomplete {
    * Triggered when an item is selected
    */
   @Event() changeValue: EventEmitter;
-  private valueChangedHandler(item: any) {
+  private _valueChangedHandler(item: any) {
     function isItem(element) {
       return element === item;
     }
     this.currentIndex = this.items.findIndex(isItem);
-    this.changeValue.emit({ name: item.name, value: item.value });
+
+    const value = this.returnValue ? item?.value : item;
+
+    this.changeValue.emit(value);
   }
 
   private _inputElement: HTMLInputElement;
@@ -148,6 +153,11 @@ export class CAutocomplete {
         this.currentIndex = null;
       }
     }
+  }
+
+  @Watch('query')
+  watchHandler2(newValue, oldValue) {
+    console.log('QUERY CHANGE', newValue, oldValue);
   }
 
   @Element() host: HTMLCAutocompleteElement;
@@ -254,7 +264,7 @@ export class CAutocomplete {
     event.stopPropagation();
     this.query = item.name;
     this.value = item;
-    this.valueChangedHandler(item);
+    this._valueChangedHandler(item);
     this.menuVisible = false;
   }
 
@@ -337,13 +347,24 @@ export class CAutocomplete {
     );
   }
 
+  private _getLabel() {
+    if (
+      this.returnValue &&
+      (typeof this.value === 'number' || typeof this.value === 'string')
+    ) {
+      return this.items?.find((item) => item.value === this.value)?.name;
+    }
+
+    return (this.value as CAutocompleteItem)?.name;
+  }
+
   private _renderInputElement() {
     return (
       <div class="c-input-menu__input" onClick={() => this._showMenu()}>
         <input
           ref={(el) => (this._inputElement = el as HTMLInputElement)}
           type="text"
-          value={this.value?.name ?? null}
+          value={this._getLabel() ?? null}
           name={this.name ?? null}
           onClick={() => this._showMenu()}
           onInput={(event) => this.handleChange(event)}
