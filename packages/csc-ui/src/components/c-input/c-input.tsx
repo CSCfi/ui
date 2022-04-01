@@ -183,6 +183,16 @@ export class CInput {
     };
   }
 
+  @Watch('hint')
+  onHintMessageChange(message: string) {
+    if (!this.valid || !message) return;
+
+    this.messageOptions = {
+      ...this.messageOptions,
+      content: <span>{message}</span>,
+    };
+  }
+
   @Watch('value')
   onValueChange(value) {
     if (!value) this._onReset();
@@ -334,7 +344,7 @@ export class CInput {
   private _preventNonNumericalInput(event: KeyboardEvent) {
     if (this.type !== 'number') return;
 
-    if (!event.key.match(/^[0-9]+$/)) event.preventDefault();
+    if (!event.key.match(/^[0-9,\.]+$/)) event.preventDefault();
   }
 
   private _renderBorders() {
