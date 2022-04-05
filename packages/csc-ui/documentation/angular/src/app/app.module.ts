@@ -43,6 +43,7 @@ import { BasicTemplateComponent } from './basic-template/basic-template.componen
 import { GettingStartedAngularComponent } from './getting-started-angular/getting-started-angular.component';
 import { AboutComponent } from './about/about.component';
 import { GettingStartedHtmlComponent } from './getting-started-html/getting-started-html.component';
+import { GettingStartedVueComponent } from './getting-started-vue/getting-started-vue.component';
 
 @NgModule({
   declarations: [
@@ -84,6 +85,7 @@ import { GettingStartedHtmlComponent } from './getting-started-html/getting-star
     GettingStartedAngularComponent,
     AboutComponent,
     GettingStartedHtmlComponent,
+    GettingStartedVueComponent,
   ],
   imports: [
     BrowserModule,

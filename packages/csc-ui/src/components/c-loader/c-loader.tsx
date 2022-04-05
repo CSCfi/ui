@@ -1,4 +1,4 @@
-import { Component, Host, h, Prop } from '@stencil/core';
+import { Component, Element, Host, h, Prop, Watch } from '@stencil/core';
 /**
  * A loader component that fills the nearest containing element that has css-property position set
  *
@@ -13,30 +13,52 @@ export class CLoader {
   /**
    * Delay in seconds of showing the contents in the slot of the loader
    */
-  @Prop() contentdelay: number = 0;
+  @Prop() contentdelay = 0;
+
+  /**
+   * Hide the loader
+   */
+  @Prop() hide = false;
+
+  /**
+   * Size of the loader
+   */
+  @Prop() size = 48;
+
+  @Element() el: HTMLCLoaderElement;
+
+  @Watch('hide')
+  onElementHide(hide) {
+    this.el.classList[!!hide ? 'remove' : 'add']('active');
+  }
 
   render() {
-    const SPINNER_SMALL = (
-      <svg
-        class="c-loader-spinner"
-        viewBox="0 0 100 100"
-        xmlns="http://www.w3.org/2000/svg"
-      >
-        <circle class="c-loader-spinner__circle" cx="50" cy="50" r="45" />
-      </svg>
-    );
+    const slotHasContent = !!this.el.childNodes.length;
+
+    const styles = {
+      '--c-loader-size': `${this.size}px`,
+    };
+
     return (
       <Host>
-        <div class="c-spinner-wrapper">
-          <div>
-            <div class="c-spinner-inner">{SPINNER_SMALL}</div>
+        <div class="c-loader" style={styles}>
+          <svg class="c-loader__loader" viewBox="25 25 50 50">
+            <circle
+              class="c-loader__loader-path"
+              cx="50"
+              cy="50"
+              r="20"
+            ></circle>
+          </svg>
+
+          {slotHasContent && (
             <div
-              class="slot-wrapper"
+              class="c-loader__slot"
               style={{ 'animation-delay': `${this.contentdelay}s` }}
             >
               <slot></slot>
             </div>
-          </div>
+          )}
         </div>
       </Host>
     );

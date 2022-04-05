@@ -17,6 +17,12 @@ export class CSubnavigationitem {
    * Link url
    */
   @Prop() href: string;
+
+  /**
+   * Loading state
+   */
+  @Prop() loading = false;
+
   private _redirect(event: KeyboardEvent | PointerEvent) {
     if (
       (event instanceof KeyboardEvent && event?.key === 'Enter') ||
@@ -33,6 +39,8 @@ export class CSubnavigationitem {
   }
   render() {
     const classes = this.active && 'active';
+    const loaderSize = 32;
+
     return (
       <Host
         tabindex="0"
@@ -41,6 +49,7 @@ export class CSubnavigationitem {
         class={classes}
       >
         <slot></slot>
+        <c-loader size={loaderSize} hide={!this.loading}></c-loader>
       </Host>
     );
   }

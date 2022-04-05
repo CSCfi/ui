@@ -7,11 +7,25 @@
 
 ## Properties
 
-| Property | Attribute | Description  | Type      | Default     |
-| -------- | --------- | ------------ | --------- | ----------- |
-| `active` | `active`  | Active state | `boolean` | `undefined` |
-| `href`   | `href`    | Link url     | `string`  | `undefined` |
+| Property  | Attribute | Description   | Type      | Default     |
+| --------- | --------- | ------------- | --------- | ----------- |
+| `active`  | `active`  | Active state  | `boolean` | `undefined` |
+| `href`    | `href`    | Link url      | `string`  | `undefined` |
+| `loading` | `loading` | Loading state | `boolean` | `false`     |
 
+
+## Dependencies
+
+### Depends on
+
+- [c-loader](../c-loader)
+
+### Graph
+```mermaid
+graph TD;
+  c-subnavigationitem --> c-loader
+  style c-subnavigationitem fill:#f9f,stroke:#333,stroke-width:4px
+```
 
 ----------------------------------------------
 

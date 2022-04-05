@@ -2,7 +2,7 @@ import { createApp } from 'vue';
 import { applyPolyfills, defineCustomElements } from '../../../dist/loader';
 
 import App from './App.vue';
-import { vControl } from './directives/vControl';
+import { vControl } from 'csc-ui-vue-directive';
 
 const app = createApp(App);
 

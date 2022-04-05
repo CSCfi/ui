@@ -398,6 +398,14 @@ export namespace Components {
           * Delay in seconds of showing the contents in the slot of the loader
          */
         "contentdelay": number;
+        /**
+          * Hide the loader
+         */
+        "hide": boolean;
+        /**
+          * Size of the loader
+         */
+        "size": number;
     }
     interface CMain {
     }
@@ -650,6 +658,10 @@ export namespace Components {
           * Hyperlink url
          */
         "href": string;
+        /**
+          * Loading state
+         */
+        "loading": boolean;
     }
     interface CSpacer {
     }
@@ -662,6 +674,10 @@ export namespace Components {
           * Link url
          */
         "href": string;
+        /**
+          * Loading state
+         */
+        "loading": boolean;
     }
     interface CSwiper {
         /**
@@ -1579,6 +1595,14 @@ declare namespace LocalJSX {
           * Delay in seconds of showing the contents in the slot of the loader
          */
         "contentdelay"?: number;
+        /**
+          * Hide the loader
+         */
+        "hide"?: boolean;
+        /**
+          * Size of the loader
+         */
+        "size"?: number;
     }
     interface CMain {
     }
@@ -1848,6 +1872,10 @@ declare namespace LocalJSX {
          */
         "href"?: string;
         /**
+          * Loading state
+         */
+        "loading"?: boolean;
+        /**
           * Emit changes to the c-accordion
           * @private
          */
@@ -1864,6 +1892,10 @@ declare namespace LocalJSX {
           * Link url
          */
         "href"?: string;
+        /**
+          * Loading state
+         */
+        "loading"?: boolean;
     }
     interface CSwiper {
         /**

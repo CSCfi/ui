@@ -28,6 +28,11 @@ export class CSidenavigationitem {
   @Prop() href: string;
 
   /**
+   * Loading state
+   */
+  @Prop() loading = false;
+
+  /**
    * Emit changes to the c-accordion
    * @private
    */
@@ -90,6 +95,7 @@ export class CSidenavigationitem {
             {this.active ? <slot name="subnavitem"></slot> : ''}
           </div>
         </div>
+        <c-loader size={32} hide={!this.loading}></c-loader>
       </Host>
     );
   }

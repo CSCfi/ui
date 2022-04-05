@@ -1,0 +1,86 @@
+<div class="documentation-card">
+  <h1 class="text-capitalize mb-0 text-primary">Usage in Vue 3.x</h1>
+
+  <div class="alert alert-warning mt-4">
+    <p>
+      Due to a bug in Stenciljs (which is used to create the csc-ui components) we can fully support
+      only Webpack based projects.
+    </p>
+    <p class="m-0">
+      However
+      <code>csc-ui</code>
+      can be used in a Vite project using the cdn script tag and just installing and adding the
+      <code>cc-ui-vue-directive</code>
+      just like in the example below.
+    </p>
+  </div>
+
+  <div class="pt-4">
+    <p>Install the required dependencies</p>
+    <pre class="rounded"><code highlight="npm install csc-ui csc-ui-vue-directive"></code></pre>
+  </div>
+
+  <div class="pt-4">
+    <p>
+      Add the following lines to
+      <code>main.ts</code>
+    </p>
+
+    <pre class="rounded"><code [highlight]="mainUsage"></code></pre>
+  </div>
+
+  <div class="pt-4">
+    <form [formGroup]="form">
+      <c-card>
+        <c-card-title>Usage in a Vue 3 SFC</c-card-title>
+        <c-card-content>
+          <c-text-field
+            formControlName="username"
+            label="Username"
+            [valid]="isValid('username')"
+            [validation]="errors('username')"
+            cControl
+          ></c-text-field>
+
+          <c-text-field
+            formControlName="password"
+            hint="Please do not use numbers in your password"
+            label="Password"
+            type="password"
+            [valid]="isValid('password')"
+            [validation]="errors('password')"
+            cControl
+          ></c-text-field>
+
+          <c-checkbox
+            formControlName="consent"
+            hint="Please agree to the terms and conditions"
+            [valid]="isValid('consent')"
+            [validation]="errors('consent')"
+            cControl
+          >
+            I agree to the
+            <c-link href="https://csc.fi" underline>terms and conditions</c-link>
+          </c-checkbox>
+        </c-card-content>
+
+        <c-card-actions justify="end">
+          <c-button [disabled]="!form.valid" (click)="onSubmit()">Submit</c-button>
+        </c-card-actions>
+
+        <hr class="m-0" />
+
+        <div class="px-4">
+          <c-accordion [value]="showCode" multiple outlined>
+            <c-accordion-item value="template" heading="Template">
+              <i class="mdi mdi-vuejs" slot="icon"></i>
+              <pre class="d-flex flex-column m-0">
+                <code class="rounded" [highlight]="formUsage"></code>
+              </pre>
+            </c-accordion-item>
+          </c-accordion>
+        </div>
+      </c-card>
+    </form>
+  </div>
+</div>

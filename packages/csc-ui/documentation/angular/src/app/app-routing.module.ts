@@ -4,6 +4,7 @@ import { AboutComponent } from './about/about.component';
 import { BasicTemplateComponent } from './basic-template/basic-template.component';
 import { GettingStartedAngularComponent } from './getting-started-angular/getting-started-angular.component';
 import { GettingStartedHtmlComponent } from './getting-started-html/getting-started-html.component';
+import { GettingStartedVueComponent } from './getting-started-vue/getting-started-vue.component';
 import { ViewerResolverService } from './viewer/viewer-resolver.service';
 import { ViewerComponent } from './viewer/viewer.component';
 
@@ -25,6 +26,11 @@ const appRoutes: Routes = [
       {
         path: 'getting-started/html',
         component: GettingStartedHtmlComponent,
+        resolve: [ViewerResolverService],
+      },
+      {
+        path: 'getting-started/vue',
+        component: GettingStartedVueComponent,
         resolve: [ViewerResolverService],
       },
       {

@@ -26,6 +26,11 @@
   background-color: #d8e8ea00;
 }
 
+:host {
+  position: relative;
+  border-radius: 4px 0 0 4px;
+}
+
 :host(:hover) > div {
   background-color: #d8e8ea44;
 }

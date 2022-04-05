@@ -49,20 +49,18 @@
             HTML Page
           </c-subnavigationitem>
         </div>
-        <!-- 
+
         <div slot="subnavitem">
-          <c-subnavigationitem class="text-capitalize" (click)="open()" (keyup.enter)="open()">
+          <c-subnavigationitem
+            class="text-capitalize"
+            [routerLink]="['getting-started/vue']"
+            routerLinkActive="active"
+            (keyup.enter)="navigate($event, 'getting-started/vue')"
+          >
             <span class="mdi mdi-vuejs"></span>
             Vue
           </c-subnavigationitem>
         </div>
-
-        <div slot="subnavitem">
-          <c-subnavigationitem class="text-capitalize" (click)="open()" (keyup.enter)="open()">
-            <span class="mdi mdi-react"></span>
-            React
-          </c-subnavigationitem>
-        </div> -->
       </c-sidenavigationitem>
 
       <c-sidenavigationitem
