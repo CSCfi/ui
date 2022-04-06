@@ -8,11 +8,9 @@
   border-radius: var(--csc-border-radius);
   background-color: var(--csc-primary);
   gap: 2px;
-  overflow: hidden;
 
   ::slotted(*) {
     flex-grow: 1;
-    background-color: #fff;
   }
 
   &--disabled {
@@ -20,4 +18,12 @@
     pointer-events: none;
     background-color: var(--csc-light-grey);
   }
+}
+
+::slotted(c-button:first-child) {
+  --c-radius: 4px 0 0 4px;
+}
+
+::slotted(c-button:last-child) {
+  --c-radius: 0 4px 4px 0;
 }

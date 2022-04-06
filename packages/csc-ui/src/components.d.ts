@@ -142,6 +142,11 @@ export namespace Components {
          */
         "ghost": boolean;
         /**
+          * True when used as a tab button
+          * @private
+         */
+        "grouped": boolean;
+        /**
           * Id of the button
          */
         "hostId": string;
@@ -1331,6 +1336,11 @@ declare namespace LocalJSX {
          */
         "ghost"?: boolean;
         /**
+          * True when used as a tab button
+          * @private
+         */
+        "grouped"?: boolean;
+        /**
           * Id of the button
          */
         "hostId"?: string;
@@ -1347,6 +1357,11 @@ declare namespace LocalJSX {
           * Remove the default border radius
          */
         "noRadius"?: boolean;
+        /**
+          * Emit changes to the parent
+          * @private
+         */
+        "onTabChange"?: (event: CustomEvent<number | string>) => void;
         /**
           * Outlined button style
          */

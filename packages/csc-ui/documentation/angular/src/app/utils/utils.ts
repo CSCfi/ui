@@ -35,9 +35,13 @@ export function parseComponents(docs) {
     name: component.tag.replace(/^c-/, '').replaceAll('-', ' '),
   }));
 
-  const parentComponents = components.filter(
-    (component) => !component.docsTags.some((docsTag) => docsTag.name === 'parent'),
-  );
+  const parentComponents = components
+    .filter((component) => !component.docsTags.some((docsTag) => docsTag.name === 'parent'))
+    .map((item) => ({
+      ...item,
+      props: item.props.filter((e) => e.docsTags.every((tag) => tag.name !== 'private')),
+      events: item.events.filter((e) => e.docsTags.every((tag) => tag.name !== 'private')),
+    }));
 
   return parentComponents.map((item) => {
     const children = components

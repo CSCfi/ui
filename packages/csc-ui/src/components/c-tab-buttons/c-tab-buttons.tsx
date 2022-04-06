@@ -23,14 +23,17 @@ export class CTabButtons {
    * Value of tab buttons
    */
   @Prop({ mutable: true }) value!: number | string;
+
   /**
    * Always require a selection
    */
   @Prop() mandatory: boolean = false;
+
   /**
    * Size of the buttons
    */
   @Prop() size: 'default' | 'small' = 'default';
+
   /**
    * Disable tab buttons
    */
@@ -40,12 +43,13 @@ export class CTabButtons {
    * Emit changes to the parent
    */
   @Event() changeValue: EventEmitter<number | string>;
+
   @Element() el: HTMLCTabButtonsElement;
 
   private _isIndexBased: boolean;
 
   @Watch('value')
-  watchPropHandler(value: string | number) {
+  onValueChange(value: string | number) {
     this.el.childNodes.forEach((button: HTMLCButtonElement) => {
       button.outlined = true;
     });
@@ -59,23 +63,13 @@ export class CTabButtons {
     this.changeValue.emit(this.buttons[value]?.value ?? value);
   }
 
-  @Listen('click', { passive: true })
-  onHandleClickEvent(ev) {
-    if (this.hostDisabled) return;
-
-    const clickStack = ev.composedPath();
-    const tabs = clickStack.find((e) => e.tagName === 'C-TAB-BUTTONS');
-    const button = clickStack.find((e) => e.tagName === 'C-BUTTON');
-
-    if (!button || !tabs) return;
-
-    const { index } = button.dataset;
-
+  @Listen('tabChange', { passive: true })
+  onTabChange(event: CustomEvent) {
     const isActive =
       this.value !== null &&
       (this._isIndexBased
-        ? +index === +this.value
-        : button.value === this.value);
+        ? +event.detail === +this.value
+        : event.detail === this.value);
 
     // Disable deselection if mandatory prop is set to true
     if (this.mandatory && isActive) {
@@ -83,8 +77,9 @@ export class CTabButtons {
     }
 
     const nullValue = this._isIndexBased ? null : '';
+    const value = this._isIndexBased ? +event.detail : event.detail;
 
-    this.value = isActive ? nullValue : button.value ?? +index;
+    this.value = isActive ? nullValue : value;
   }
 
   get buttons() {
@@ -103,8 +98,7 @@ export class CTabButtons {
 
     this.buttons.forEach((button: HTMLCButtonElement, index) => {
       button.setAttribute('data-index', String(index));
-      button.noRadius = true;
-      button.fit = true;
+      button.grouped = true;
       button.disabled = this.hostDisabled;
       button.size = this.size;
 

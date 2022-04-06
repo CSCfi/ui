@@ -1,4 +1,12 @@
-import { Component, Prop, h, Element, Host } from '@stencil/core';
+import {
+  Component,
+  Prop,
+  Element,
+  Event,
+  EventEmitter,
+  h,
+  Host,
+} from '@stencil/core';
 import { mdiPlus, mdiMinus, mdiAccount, mdiPencil } from '@mdi/js';
 import { createRipple } from '../../utils/utils';
 
@@ -23,6 +31,12 @@ export class CButton {
    * Light button background
    */
   @Prop() ghost = false;
+
+  /**
+   * True when used as a tab button
+   * @private
+   */
+  @Prop() grouped = false;
 
   /**
    * Transparent button background
@@ -77,6 +91,12 @@ export class CButton {
    */
   @Prop() size: 'default' | 'small' | 'large' = 'default';
 
+  /**
+   * Emit changes to the parent
+   * @private
+   */
+  @Event() tabChange: EventEmitter<number | string>;
+
   @Element() hostElement: HTMLCButtonElement;
 
   private _container?: HTMLDivElement;
@@ -88,6 +108,8 @@ export class CButton {
     }
 
     createRipple(event, this._container, center);
+
+    this.tabChange.emit(this.value ?? this.hostElement.dataset.index);
 
     if (this.type === 'submit') {
       this._closestElementComposed('form', this._container).submit();
@@ -149,7 +171,7 @@ export class CButton {
       );
     }
 
-    const buttonClasses = {
+    const contentClasses = {
       'c-button': true,
       'c-button--description': this._containerhasDescriptionSlot,
       'c-button--disabled': !!this.disabled,
@@ -160,6 +182,7 @@ export class CButton {
       'c-button--outlined': !!this.outlined,
       'c-button--small': this.size === 'small',
       'c-button--text': !!this.text,
+      'c-button--grouped': this.grouped,
     };
 
     const innerClasses = {
@@ -167,9 +190,14 @@ export class CButton {
       'hide-text': this.loading,
     };
 
-    const hostClasses = {
+    const buttonClasses = {
       fit: !!this.fit,
       'no-radius': !!this.noRadius,
+      grouped: this.grouped,
+    };
+
+    const hostClasses = {
+      'c-button--active': this.grouped && !this.outlined,
     };
 
     const descriptionSlotClasses = {
@@ -177,10 +205,10 @@ export class CButton {
     };
 
     return (
-      <Host>
+      <Host class={hostClasses}>
         <button
           id={this.hostId}
-          class={hostClasses}
+          class={buttonClasses}
           tabindex={this.disabled ? -1 : 0}
           role="button"
           disabled={this.disabled}
@@ -188,7 +216,7 @@ export class CButton {
           onClick={this._onClick}
         >
           <div
-            class={buttonClasses}
+            class={contentClasses}
             ref={(el) => (this._container = el as HTMLDivElement)}
           >
             {this.loading && <div class="spinner_wrapper">{SPINNER_SMALL}</div>}

@@ -7,7 +7,9 @@
 }
 
 button {
-  --c-radius: 4px;
+  &:not(.grouped) {
+    --c-radius: 4px;
+  }
 
   &.no-radius {
     --c-radius: 0;
@@ -37,6 +39,17 @@ button {
   &:focus-visible {
     outline: 2px var(--csc-primary) solid;
     outline-offset: 2px;
+  }
+
+  &.grouped {
+    flex: 1;
+    transform: translateZ(0); // Safari border-radius fix
+
+    &:focus,
+    &:focus-visible {
+      outline-offset: 4px;
+      z-index: 1;
+    }
   }
 
   &.fit {
@@ -163,6 +176,32 @@ button {
       &--disabled {
         --c-background-color: transparent;
         --c-hover-background: transparent;
+      }
+
+      &--grouped {
+        --c-background-color: #fff;
+        --c-hover-background: var(--csc-primary-text-hover);
+
+        &::before,
+        &::after {
+          background-color: #fff;
+          content: '';
+          height: 100%;
+          left: 0;
+          position: absolute;
+          top: 0;
+          transition: background-color 0.3s ease-in-out;
+          width: 100%;
+          z-index: -1;
+        }
+
+        &:hover {
+          background-color: #fff;
+
+          &::after {
+            background-color: var(--csc-primary-text-hover);
+          }
+        }
       }
     }
   }
