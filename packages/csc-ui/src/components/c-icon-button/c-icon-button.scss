@@ -154,7 +154,7 @@ button.icon-button {
 
 .icon-button-badge {
   background: #ff5800;
-  border-radius: 50%;
+  border-radius: 16px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -165,7 +165,8 @@ button.icon-button {
   right: -6px;
   font-size: 12px;
   box-shadow: 0 0 0 2px #fff;
-  top: -4px;
+  top: -6px;
+  padding: 0 4px;
 }
 
 .inner-container {

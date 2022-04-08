@@ -44,6 +44,7 @@ import { GettingStartedAngularComponent } from './getting-started-angular/gettin
 import { AboutComponent } from './about/about.component';
 import { GettingStartedHtmlComponent } from './getting-started-html/getting-started-html.component';
 import { GettingStartedVueComponent } from './getting-started-vue/getting-started-vue.component';
+import { CLoginCardComponent } from './examples/c-login-card/c-login-card.component';
 
 @NgModule({
   declarations: [
@@ -86,6 +87,7 @@ import { GettingStartedVueComponent } from './getting-started-vue/getting-starte
     AboutComponent,
     GettingStartedHtmlComponent,
     GettingStartedVueComponent,
+    CLoginCardComponent,
   ],
   imports: [
     BrowserModule,

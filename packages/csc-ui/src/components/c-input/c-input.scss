@@ -36,10 +36,6 @@
   outline: none;
 }
 
-::slotted(input::-ms-reveal) {
-  display: none;
-}
-
 :host([disabled]) {
   ::slotted(input),
   ::slotted(textarea) {

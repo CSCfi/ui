@@ -2,6 +2,7 @@ import { Component, Host, h } from '@stencil/core';
 /**
  * A container component for cookie consent
  *
+ * @group Popups
  * @slot - Cookie consent content
  */
 @Component({

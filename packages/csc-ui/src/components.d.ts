@@ -7,6 +7,7 @@
 import { HTMLStencilElement, JSXBase } from "@stencil/core/internal";
 import { CAutocompleteItem, CPaginationOptions, CRadioGroupItem, CSelectItem } from "./types";
 import { CardBackground } from "./components/c-card/c-card";
+import { CLoginCardBlendMode } from "./components/c-login-card/c-login-card";
 export namespace Components {
     interface CAccordion {
         /**
@@ -411,6 +412,47 @@ export namespace Components {
           * Size of the loader
          */
         "size": number;
+    }
+    interface CLoginCard {
+        /**
+          * Background position (css background-position)
+         */
+        "backgroundPosition": string;
+        /**
+          * Mobile breakpoint in pixels
+         */
+        "mobileBreakpoint": number;
+        /**
+          * Add colored overlay to the background image
+         */
+        "overlay": boolean;
+        /**
+          * Add colored overlay to the background image
+         */
+        "overlayBlendMode": CLoginCardBlendMode;
+        /**
+          * Background image
+         */
+        "src": string;
+    }
+    interface CLoginCardActions {
+        /**
+          * Align the actions
+         */
+        "align": 'start' | 'center' | 'end';
+        /**
+          * Justify the actions
+         */
+        "justify": | 'start'
+    | 'center'
+    | 'end'
+    | 'space-between'
+    | 'stretch'
+    | 'space-around';
+    }
+    interface CLoginCardContent {
+    }
+    interface CLoginCardTitle {
     }
     interface CMain {
     }
@@ -989,6 +1031,30 @@ declare global {
         prototype: HTMLCLoaderElement;
         new (): HTMLCLoaderElement;
     };
+    interface HTMLCLoginCardElement extends Components.CLoginCard, HTMLStencilElement {
+    }
+    var HTMLCLoginCardElement: {
+        prototype: HTMLCLoginCardElement;
+        new (): HTMLCLoginCardElement;
+    };
+    interface HTMLCLoginCardActionsElement extends Components.CLoginCardActions, HTMLStencilElement {
+    }
+    var HTMLCLoginCardActionsElement: {
+        prototype: HTMLCLoginCardActionsElement;
+        new (): HTMLCLoginCardActionsElement;
+    };
+    interface HTMLCLoginCardContentElement extends Components.CLoginCardContent, HTMLStencilElement {
+    }
+    var HTMLCLoginCardContentElement: {
+        prototype: HTMLCLoginCardContentElement;
+        new (): HTMLCLoginCardContentElement;
+    };
+    interface HTMLCLoginCardTitleElement extends Components.CLoginCardTitle, HTMLStencilElement {
+    }
+    var HTMLCLoginCardTitleElement: {
+        prototype: HTMLCLoginCardTitleElement;
+        new (): HTMLCLoginCardTitleElement;
+    };
     interface HTMLCMainElement extends Components.CMain, HTMLStencilElement {
     }
     var HTMLCMainElement: {
@@ -1157,6 +1223,10 @@ declare global {
         "c-input": HTMLCInputElement;
         "c-link": HTMLCLinkElement;
         "c-loader": HTMLCLoaderElement;
+        "c-login-card": HTMLCLoginCardElement;
+        "c-login-card-actions": HTMLCLoginCardActionsElement;
+        "c-login-card-content": HTMLCLoginCardContentElement;
+        "c-login-card-title": HTMLCLoginCardTitleElement;
         "c-main": HTMLCMainElement;
         "c-menu": HTMLCMenuElement;
         "c-menu-item": HTMLCMenuItemElement;
@@ -1618,6 +1688,47 @@ declare namespace LocalJSX {
           * Size of the loader
          */
         "size"?: number;
+    }
+    interface CLoginCard {
+        /**
+          * Background position (css background-position)
+         */
+        "backgroundPosition"?: string;
+        /**
+          * Mobile breakpoint in pixels
+         */
+        "mobileBreakpoint"?: number;
+        /**
+          * Add colored overlay to the background image
+         */
+        "overlay"?: boolean;
+        /**
+          * Add colored overlay to the background image
+         */
+        "overlayBlendMode"?: CLoginCardBlendMode;
+        /**
+          * Background image
+         */
+        "src"?: string;
+    }
+    interface CLoginCardActions {
+        /**
+          * Align the actions
+         */
+        "align"?: 'start' | 'center' | 'end';
+        /**
+          * Justify the actions
+         */
+        "justify"?: | 'start'
+    | 'center'
+    | 'end'
+    | 'space-between'
+    | 'stretch'
+    | 'space-around';
+    }
+    interface CLoginCardContent {
+    }
+    interface CLoginCardTitle {
     }
     interface CMain {
     }
@@ -2166,6 +2277,10 @@ declare namespace LocalJSX {
         "c-input": CInput;
         "c-link": CLink;
         "c-loader": CLoader;
+        "c-login-card": CLoginCard;
+        "c-login-card-actions": CLoginCardActions;
+        "c-login-card-content": CLoginCardContent;
+        "c-login-card-title": CLoginCardTitle;
         "c-main": CMain;
         "c-menu": CMenu;
         "c-menu-item": CMenuItem;
@@ -2214,6 +2329,10 @@ declare module "@stencil/core" {
             "c-input": LocalJSX.CInput & JSXBase.HTMLAttributes<HTMLCInputElement>;
             "c-link": LocalJSX.CLink & JSXBase.HTMLAttributes<HTMLCLinkElement>;
             "c-loader": LocalJSX.CLoader & JSXBase.HTMLAttributes<HTMLCLoaderElement>;
+            "c-login-card": LocalJSX.CLoginCard & JSXBase.HTMLAttributes<HTMLCLoginCardElement>;
+            "c-login-card-actions": LocalJSX.CLoginCardActions & JSXBase.HTMLAttributes<HTMLCLoginCardActionsElement>;
+            "c-login-card-content": LocalJSX.CLoginCardContent & JSXBase.HTMLAttributes<HTMLCLoginCardContentElement>;
+            "c-login-card-title": LocalJSX.CLoginCardTitle & JSXBase.HTMLAttributes<HTMLCLoginCardTitleElement>;
             "c-main": LocalJSX.CMain & JSXBase.HTMLAttributes<HTMLCMainElement>;
             "c-menu": LocalJSX.CMenu & JSXBase.HTMLAttributes<HTMLCMenuElement>;
             "c-menu-item": LocalJSX.CMenuItem & JSXBase.HTMLAttributes<HTMLCMenuItemElement>;

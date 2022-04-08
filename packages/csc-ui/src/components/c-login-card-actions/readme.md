@@ -15,22 +15,22 @@
 
 ## Slots
 
-| Slot | Description  |
-| ---- | ------------ |
-|      | Card actions |
+| Slot | Description        |
+| ---- | ------------------ |
+|      | Login card actions |
 
 
 ## Dependencies
 
-### Used by
+### Depends on
 
- - [c-login-card-actions](../c-login-card-actions)
+- [c-card-actions](../c-card-actions)
 
 ### Graph
 ```mermaid
 graph TD;
   c-login-card-actions --> c-card-actions
-  style c-card-actions fill:#f9f,stroke:#333,stroke-width:4px
+  style c-login-card-actions fill:#f9f,stroke:#333,stroke-width:4px
 ```
 
 ----------------------------------------------
