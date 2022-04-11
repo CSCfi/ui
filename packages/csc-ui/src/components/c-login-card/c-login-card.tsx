@@ -1,4 +1,4 @@
-import { Component, Element, Host, h, Prop } from '@stencil/core';
+import { Component, Element, h, Prop, Host } from '@stencil/core';
 
 export type CLoginCardBlendMode =
   | 'normal'
@@ -25,7 +25,7 @@ export type CLoginCardBlendMode =
 @Component({
   tag: 'c-login-card',
   styleUrl: 'c-login-card.scss',
-  shadow: true,
+  shadow: false,
 })
 export class CLoginCard {
   /**
@@ -69,7 +69,7 @@ export class CLoginCard {
       );
     });
 
-    this._observer.observe(this.element);
+    this._observer.observe(this._cardElement);
   }
 
   disconnectedCallback() {
@@ -91,9 +91,11 @@ export class CLoginCard {
     return (
       <Host>
         <svg width="0" height="0">
-          <clipPath id="myClip" clipPathUnits="objectBoundingBox">
-            <path d="m0.234,0.914 c0.132,-0.026,0.286,-0.05,0.436,-0.163 c0.083,-0.063,0.152,-0.145,0.21,-0.329 c0.055,-0.172,0.072,-0.421,0.072,-0.421 h0.048 v1 h-1 v-0.057 c0,0,0.145,-0.012,0.234,-0.029" />
-          </clipPath>
+          <defs>
+            <clipPath id="myClip" clipPathUnits="objectBoundingBox">
+              <path d="m0.234,0.914 c0.132,-0.026,0.286,-0.05,0.436,-0.163 c0.083,-0.063,0.152,-0.145,0.21,-0.329 c0.055,-0.172,0.072,-0.421,0.072,-0.421 h0.048 v1 h-1 v-0.057 c0,0,0.145,-0.012,0.234,-0.029" />
+            </clipPath>
+          </defs>
         </svg>
 
         <div

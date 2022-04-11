@@ -34,6 +34,7 @@ export class CLoaderComponent implements OnInit {
 
   start(index) {
     this.loaders[index] = true;
+
     setTimeout(() => {
       this.loaders[index] = false;
     }, 5000);

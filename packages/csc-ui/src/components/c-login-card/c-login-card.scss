@@ -1,9 +1,7 @@
 :host {
   display: flex;
-}
-
-::slotted(*) {
-  max-width: 70%;
+  background: white;
+  border-radius: 6px;
 }
 
 .c-login-card {
@@ -36,21 +34,19 @@
     gap: 24px;
     padding: 72px;
     margin-bottom: 32px;
+    max-width: 80%;
   }
 
   &--mobile {
     flex-direction: column;
 
-    ::slotted(*) {
-      max-width: 100%;
-    }
-
-    ::slotted(c-login-card-title) {
+    c-login-card-title {
       font-size: 32px;
       hyphens: auto;
     }
 
     .c-login-card__content {
+      max-width: 100%;
       background-color: #fff;
       border-radius: 6px;
       margin: -6px 0 0;

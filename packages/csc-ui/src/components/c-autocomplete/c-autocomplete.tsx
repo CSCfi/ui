@@ -155,11 +155,6 @@ export class CAutocomplete {
     }
   }
 
-  @Watch('query')
-  watchHandler2(newValue, oldValue) {
-    console.log('QUERY CHANGE', newValue, oldValue);
-  }
-
   @Element() host: HTMLCAutocompleteElement;
   @State() menuVisible: boolean = false;
   @State() currentIndex: number = null;
@@ -347,24 +342,13 @@ export class CAutocomplete {
     );
   }
 
-  private _getLabel() {
-    if (
-      this.returnValue &&
-      (typeof this.value === 'number' || typeof this.value === 'string')
-    ) {
-      return this.items?.find((item) => item.value === this.value)?.name;
-    }
-
-    return (this.value as CAutocompleteItem)?.name;
-  }
-
   private _renderInputElement() {
     return (
       <div class="c-input-menu__input" onClick={() => this._showMenu()}>
         <input
           ref={(el) => (this._inputElement = el as HTMLInputElement)}
           type="text"
-          value={this._getLabel() ?? null}
+          value={this.query}
           name={this.name ?? null}
           onClick={() => this._showMenu()}
           onInput={(event) => this.handleChange(event)}

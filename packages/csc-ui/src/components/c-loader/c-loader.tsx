@@ -1,4 +1,5 @@
 import { Component, Element, Host, h, Prop, Watch } from '@stencil/core';
+
 /**
  * A loader component that fills the nearest containing element that has css-property position set
  *
@@ -29,7 +30,11 @@ export class CLoader {
 
   @Watch('hide')
   onElementHide(hide) {
-    this.el.classList[!!hide ? 'remove' : 'add']('active');
+    this.el.classList.toggle('active', !hide);
+  }
+
+  componentDidLoad() {
+    this.el.classList.toggle('active', !this.hide);
   }
 
   render() {
