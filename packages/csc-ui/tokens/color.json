@@ -37,5 +37,8 @@
   },
   "primary-text-hover": {
     "value": "rgba(0, 103, 120, 0.15)"
+  },
+  "link": {
+    "value": "#025B97"
   }
 }

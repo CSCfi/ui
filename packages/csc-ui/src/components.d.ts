@@ -421,6 +421,22 @@ export namespace Components {
          */
         "size": number;
     }
+    interface CLoginButton {
+        /**
+          * Alt description for logo
+         */
+        "alt": string;
+        /**
+          * Login provider link
+         */
+        "href": string;
+        /**
+          * Login provider logo url
+         */
+        "src": string;
+    }
+    interface CLoginButtons {
+    }
     interface CLoginCard {
         /**
           * Background position (css background-position)
@@ -1039,6 +1055,18 @@ declare global {
         prototype: HTMLCLoaderElement;
         new (): HTMLCLoaderElement;
     };
+    interface HTMLCLoginButtonElement extends Components.CLoginButton, HTMLStencilElement {
+    }
+    var HTMLCLoginButtonElement: {
+        prototype: HTMLCLoginButtonElement;
+        new (): HTMLCLoginButtonElement;
+    };
+    interface HTMLCLoginButtonsElement extends Components.CLoginButtons, HTMLStencilElement {
+    }
+    var HTMLCLoginButtonsElement: {
+        prototype: HTMLCLoginButtonsElement;
+        new (): HTMLCLoginButtonsElement;
+    };
     interface HTMLCLoginCardElement extends Components.CLoginCard, HTMLStencilElement {
     }
     var HTMLCLoginCardElement: {
@@ -1231,6 +1259,8 @@ declare global {
         "c-input": HTMLCInputElement;
         "c-link": HTMLCLinkElement;
         "c-loader": HTMLCLoaderElement;
+        "c-login-button": HTMLCLoginButtonElement;
+        "c-login-buttons": HTMLCLoginButtonsElement;
         "c-login-card": HTMLCLoginCardElement;
         "c-login-card-actions": HTMLCLoginCardActionsElement;
         "c-login-card-content": HTMLCLoginCardContentElement;
@@ -1704,6 +1734,22 @@ declare namespace LocalJSX {
           * Size of the loader
          */
         "size"?: number;
+    }
+    interface CLoginButton {
+        /**
+          * Alt description for logo
+         */
+        "alt"?: string;
+        /**
+          * Login provider link
+         */
+        "href"?: string;
+        /**
+          * Login provider logo url
+         */
+        "src"?: string;
+    }
+    interface CLoginButtons {
     }
     interface CLoginCard {
         /**
@@ -2293,6 +2339,8 @@ declare namespace LocalJSX {
         "c-input": CInput;
         "c-link": CLink;
         "c-loader": CLoader;
+        "c-login-button": CLoginButton;
+        "c-login-buttons": CLoginButtons;
         "c-login-card": CLoginCard;
         "c-login-card-actions": CLoginCardActions;
         "c-login-card-content": CLoginCardContent;
@@ -2345,6 +2393,8 @@ declare module "@stencil/core" {
             "c-input": LocalJSX.CInput & JSXBase.HTMLAttributes<HTMLCInputElement>;
             "c-link": LocalJSX.CLink & JSXBase.HTMLAttributes<HTMLCLinkElement>;
             "c-loader": LocalJSX.CLoader & JSXBase.HTMLAttributes<HTMLCLoaderElement>;
+            "c-login-button": LocalJSX.CLoginButton & JSXBase.HTMLAttributes<HTMLCLoginButtonElement>;
+            "c-login-buttons": LocalJSX.CLoginButtons & JSXBase.HTMLAttributes<HTMLCLoginButtonsElement>;
             "c-login-card": LocalJSX.CLoginCard & JSXBase.HTMLAttributes<HTMLCLoginCardElement>;
             "c-login-card-actions": LocalJSX.CLoginCardActions & JSXBase.HTMLAttributes<HTMLCLoginCardActionsElement>;
             "c-login-card-content": LocalJSX.CLoginCardContent & JSXBase.HTMLAttributes<HTMLCLoginCardContentElement>;

@@ -36,6 +36,11 @@ c-login-card {
     margin-bottom: 32px;
     max-width: 80%;
     width: 100%;
+
+    &--no-image {
+      max-width: 100%;
+      margin-bottom: 0;
+    }
   }
 
   &--mobile {
