@@ -6,7 +6,12 @@
   margin-right: 8px;
 }
 
-button {
+a {
+  text-decoration: none;
+}
+
+button,
+a {
   &:not(.grouped) {
     --c-radius: 4px;
   }
@@ -69,7 +74,7 @@ button {
     }
   }
 
-  button.full-width {
+  .full-width {
     flex-grow: 1 !important;
   }
 }

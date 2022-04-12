@@ -1,4 +1,4 @@
-:host {
+c-login-card {
   display: flex;
   background: white;
   border-radius: 6px;
@@ -35,6 +35,7 @@
     padding: 72px;
     margin-bottom: 32px;
     max-width: 80%;
+    width: 100%;
   }
 
   &--mobile {
@@ -59,7 +60,6 @@
       border-radius: 6px 6px 0 0;
       box-shadow: inset 0 -16px 16px -18px #000;
       clip-path: none;
-      min-height: 144px;
       position: relative;
       width: 100%;
     }

@@ -95,7 +95,11 @@ export class CSidenavigationitem {
             {this.active ? <slot name="subnavitem"></slot> : ''}
           </div>
         </div>
-        <c-loader size={32} hide={!this.loading}></c-loader>
+        <c-loader
+          size={32}
+          hide={!this.loading}
+          style={{ pointerEvents: 'none' }}
+        ></c-loader>
       </Host>
     );
   }

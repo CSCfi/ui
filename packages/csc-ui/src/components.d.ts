@@ -152,6 +152,10 @@ export namespace Components {
          */
         "hostId": string;
         /**
+          * Hyperlink url
+         */
+        "href": string;
+        /**
           * Name of the icon to be displayed in the button
           * @deprecated Please use the icon slot instead
          */
@@ -172,6 +176,10 @@ export namespace Components {
           * Size of the button
          */
         "size": 'default' | 'small' | 'large';
+        /**
+          * Hyperlink target
+         */
+        "target": string;
         /**
           * Transparent button background
          */
@@ -1415,6 +1423,10 @@ declare namespace LocalJSX {
          */
         "hostId"?: string;
         /**
+          * Hyperlink url
+         */
+        "href"?: string;
+        /**
           * Name of the icon to be displayed in the button
           * @deprecated Please use the icon slot instead
          */
@@ -1440,6 +1452,10 @@ declare namespace LocalJSX {
           * Size of the button
          */
         "size"?: 'default' | 'small' | 'large';
+        /**
+          * Hyperlink target
+         */
+        "target"?: string;
         /**
           * Transparent button background
          */

@@ -49,7 +49,11 @@ export class CSubnavigationitem {
         class={classes}
       >
         <slot></slot>
-        <c-loader size={loaderSize} hide={!this.loading}></c-loader>
+        <c-loader
+          size={loaderSize}
+          hide={!this.loading}
+          style={{ pointerEvents: 'none' }}
+        ></c-loader>
       </Host>
     );
   }

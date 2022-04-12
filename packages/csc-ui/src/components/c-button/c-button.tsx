@@ -92,6 +92,16 @@ export class CButton {
   @Prop() size: 'default' | 'small' | 'large' = 'default';
 
   /**
+   * Hyperlink url
+   */
+  @Prop() href: string;
+
+  /**
+   * Hyperlink target
+   */
+  @Prop() target = '_blank';
+
+  /**
    * Emit changes to the parent
    * @private
    */
@@ -204,17 +214,27 @@ export class CButton {
       'c-button__description': this._containerhasDescriptionSlot,
     };
 
+    const Tag = !!this.href ? 'a' : 'button';
+
+    const attributes = {
+      id: this.hostId,
+      class: buttonClasses,
+      tabindex: this.disabled ? -1 : 0,
+      role: 'button',
+      disabled: this.disabled,
+      onKeyDown: this._onKeyDown,
+      onClick: this._onClick,
+    };
+
+    let linkAttributes = {};
+
+    if (!!this.href) {
+      linkAttributes = { href: this.href, target: this.target };
+    }
+
     return (
       <Host class={hostClasses}>
-        <button
-          id={this.hostId}
-          class={buttonClasses}
-          tabindex={this.disabled ? -1 : 0}
-          role="button"
-          disabled={this.disabled}
-          onKeyDown={this._onKeyDown}
-          onClick={this._onClick}
-        >
+        <Tag {...attributes} {...linkAttributes}>
           <div
             class={contentClasses}
             ref={(el) => (this._container = el as HTMLDivElement)}
@@ -231,7 +251,7 @@ export class CButton {
               </div>
             )}
           </div>
-        </button>
+        </Tag>
       </Host>
     );
   }
