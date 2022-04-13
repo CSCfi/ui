@@ -1,4 +1,5 @@
 import { Component, Element, h, Prop, Host } from '@stencil/core';
+import { State } from '../../../dist/types/stencil-public-runtime';
 
 export type CLoginCardBlendMode =
   | 'normal'
@@ -59,27 +60,49 @@ export class CLoginCard {
 
   private _cardElement: HTMLDivElement;
 
+  private _paths = {
+    desktop:
+      'm0.234,0.914 c0.132,-0.026,0.286,-0.05,0.436,-0.163 c0.083,-0.063,0.152,-0.145,0.21,-0.329 c0.055,-0.172,0.072,-0.421,0.072,-0.421 h0.048 v1 h-1 v-0.057 c0,0,0.145,-0.012,0.234,-0.029',
+    mobile:
+      'm1,1 h-1 v-0.213 c0,0,0.209,-0.046,0.337,-0.109 c0.191,-0.096,0.413,-0.183,0.629,-0.608 c0.028,-0.055,0.034,-0.069,0.034,-0.069',
+  };
+
+  @State() path = '';
+
+  @State() imageHeight = '100%';
+
   componentDidLoad() {
     this._observer = new ResizeObserver(([entry]) => {
       const { width } = entry.contentRect;
 
-      this._cardElement.classList.toggle(
-        'c-login-card--mobile',
-        width <= this.mobileBreakpoint,
-      );
+      this._handleResize(width);
     });
 
     this._observer.observe(this._cardElement);
+
+    const { width } = this._cardElement.getBoundingClientRect();
+
+    this._handleResize(width);
   }
 
   disconnectedCallback() {
     this._observer.disconnect();
   }
 
+  private _handleResize(width: number) {
+    const isMobile = width <= this.mobileBreakpoint;
+    const mode = isMobile ? 'mobile' : 'desktop';
+
+    this.imageHeight = isMobile ? `${width * 0.3}px` : '100%';
+    this.path = this._paths[mode];
+    this._cardElement.classList.toggle('c-login-card--mobile', isMobile);
+  }
+
   render() {
     const style = {
       backgroundImage: `url(${this.src})`,
       backgroundPosition: this.backgroundPosition,
+      height: this.imageHeight,
       '--c-login-overlay-mode': !!this.overlay && this.overlayBlendMode,
     };
 
@@ -98,8 +121,8 @@ export class CLoginCard {
         {!!this.src && (
           <svg width="0" height="0">
             <defs>
-              <clipPath id="myClip" clipPathUnits="objectBoundingBox">
-                <path d="m0.234,0.914 c0.132,-0.026,0.286,-0.05,0.436,-0.163 c0.083,-0.063,0.152,-0.145,0.21,-0.329 c0.055,-0.172,0.072,-0.421,0.072,-0.421 h0.048 v1 h-1 v-0.057 c0,0,0.145,-0.012,0.234,-0.029" />
+              <clipPath id="cLoginClipPath" clipPathUnits="objectBoundingBox">
+                <path d={this.path} />
               </clipPath>
             </defs>
           </svg>
