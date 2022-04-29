@@ -7,11 +7,12 @@
 
 ## Properties
 
-| Property             | Attribute  | Description                           | Type                                       | Default     |
-| -------------------- | ---------- | ------------------------------------- | ------------------------------------------ | ----------- |
-| `multiple`           | `multiple` | Allow expanding multiple items        | `boolean`                                  | `false`     |
-| `outlined`           | `outlined` | Show an outline around expanded items | `boolean`                                  | `false`     |
-| `value` _(required)_ | `value`    | Value of the accordion                | `(string \| number)[] \| number \| string` | `undefined` |
+| Property             | Attribute   | Description                           | Type                                       | Default     |
+| -------------------- | ----------- | ------------------------------------- | ------------------------------------------ | ----------- |
+| `mandatory`          | `mandatory` | Disallow collapsing all the items     | `boolean`                                  | `false`     |
+| `multiple`           | `multiple`  | Allow expanding multiple items        | `boolean`                                  | `false`     |
+| `outlined`           | `outlined`  | Show an outline around expanded items | `boolean`                                  | `false`     |
+| `value` _(required)_ | `value`     | Value of the accordion                | `(string \| number)[] \| number \| string` | `undefined` |
 
 
 ## Events

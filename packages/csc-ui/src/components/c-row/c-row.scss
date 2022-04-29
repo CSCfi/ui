@@ -4,6 +4,13 @@
   flex-wrap: wrap;
   gap: var(--row-gap);
 
+  slot {
+    display: flex;
+    flex-wrap: wrap;
+    width: 100%;
+    gap: var(--row-gap);
+  }
+
   &--nowrap {
     flex-wrap: nowrap !important;
   }

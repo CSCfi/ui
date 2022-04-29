@@ -1,7 +1,7 @@
 <div class="documentation-card">
   <h1 class="text-capitalize mb-3 text-primary">Basic template</h1>
 
-  <c-card class="mb-4" no-padding>
+  <c-card class="mb-4 p-0">
     <c-main style="height: auto">
       <c-toolbar class="relative">
         <c-csc-logo></c-csc-logo>
@@ -26,12 +26,10 @@
             </div>
           </c-sidenavigationitem>
 
-          <c-sidenavigationitem slot="bottom">
-            <div slot="main">
-              <span class="mdi mdi-logout"></span>
-              Logout
-            </div>
-          </c-sidenavigationitem>
+          <c-button style="margin-right: 24px" slot="bottom" ghost inverted fit>
+            <span class="mdi mdi-logout" slot="icon"></span>
+            Logout
+          </c-button>
         </c-sidenavigation>
 
         <c-flex>

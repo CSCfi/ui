@@ -1,6 +1,7 @@
 import {
   Component,
   h,
+  Host,
   Element,
   Event,
   Prop,
@@ -33,6 +34,7 @@ export class CTabs {
    * Emit changes to the parent
    */
   @Event() changeValue: EventEmitter;
+
   @Element() el: HTMLCTabsElement;
 
   @Watch('value')
@@ -53,17 +55,82 @@ export class CTabs {
     }
   }
 
+  @Listen('keyup', { capture: true })
+  handleKeyUp(ev: KeyboardEvent) {
+    const isArrowLeft = ev.key === 'ArrowLeft';
+    const isArrowRight = ev.key === 'ArrowRight';
+    const tabIndex = this._getTabIndex(this.value);
+
+    const firstAvailableValue = this.availableValues.at(0);
+    const lastAvailableValue = this.availableValues.at(-1);
+
+    const isBeginning = this.value === firstAvailableValue;
+    const isEnd = this.value === lastAvailableValue;
+
+    const nextValue = isEnd
+      ? firstAvailableValue
+      : this.availableValues[tabIndex + 1];
+    const previousValue = isBeginning
+      ? lastAvailableValue
+      : this.availableValues[tabIndex - 1];
+
+    if (!isArrowRight && !isArrowLeft) return;
+
+    if (isArrowLeft) {
+      this.value = previousValue;
+    }
+
+    if (isArrowRight) {
+      this.value = nextValue;
+    }
+
+    this._handleActiveTab(true);
+
+    this.changeValue.emit(this.value);
+  }
+
   componentDidLoad() {
     this._handleActiveTab();
   }
 
   get tabs() {
-    return Array.from(this.el.childNodes) as HTMLCTabElement[];
+    return (Array.from(this.el.childNodes) as HTMLCTabElement[]).filter(
+      (tab) => tab.tagName === 'C-TAB',
+    );
   }
 
-  private _handleActiveTab() {
+  get setsize() {
+    return this.tabs.length;
+  }
+
+  get availableValues() {
+    return this.tabs.filter((tab) => !tab.disabled).map((tab) => tab.value);
+  }
+
+  private _getTabIndex(value: string | number) {
+    return this.availableValues.findIndex((tab) => tab === value);
+  }
+
+  private _handleActiveTab(isUserAction = false) {
+    let position = 0;
+
     this.tabs.forEach((tab: HTMLCTabElement) => {
-      tab.active = tab.value === this.value;
+      if (!tab.disabled) {
+        position += 1;
+      }
+
+      const isActive = tab.value === this.value;
+
+      tab.active = isActive;
+
+      if (!isUserAction && !tab.disabled) {
+        tab.position = position;
+        tab.setsize = this.availableValues.length;
+      }
+
+      if (isActive && isUserAction) {
+        tab.focus();
+      }
     });
   }
 
@@ -74,9 +141,9 @@ export class CTabs {
     };
 
     return (
-      <div class={classes}>
+      <Host role="tablist" class={classes}>
         <slot></slot>
-      </div>
+      </Host>
     );
   }
 }

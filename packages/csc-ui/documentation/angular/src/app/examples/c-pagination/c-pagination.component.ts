@@ -21,6 +21,10 @@ export class CPaginationComponent {
       {{ country }}
     </c-tag>
   <c-pagination cControl [(ngModel)]="options"></c-pagination>`,
+    simple: `<c-tag *ngFor="let country of countries | slice: options.startFrom:options.endTo + 1">
+      {{ country }}
+    </c-tag>
+  <c-pagination cControl [(ngModel)]="options" hide-details simple></c-pagination>`,
     advanced: `<c-card>
   <c-card-title>Example</c-card-title>
   <c-card-content>
@@ -136,10 +140,16 @@ example2() {
   };
 }`,
   };
-  countries = Object.keys(countries)
-    .map((key) => countries[key].english)
-    .sort();
+  countries = Object.values(countries).sort();
   options: CPaginationOptions = {
+    itemCount: this.countries.length,
+    itemsPerPage: 25,
+    currentPage: 1,
+    startFrom: 0,
+    endTo: 24,
+  };
+
+  optionsSimple: CPaginationOptions = {
     itemCount: this.countries.length,
     itemsPerPage: 25,
     currentPage: 1,

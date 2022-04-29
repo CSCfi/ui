@@ -1,12 +1,7 @@
 :host {
   display: block;
-  cursor: pointer;
   user-select: none;
   flex-grow: 1;
-}
-
-:host([role='button'][aria-disabled='true']) {
-  cursor: default !important;
 }
 
 :host(:focus) {
@@ -19,12 +14,17 @@
   outline-offset: 2px;
 }
 
+:host([role='tab'][aria-disabled='true']) {
+  cursor: default !important;
+}
+
 slot {
   pointer-events: none;
 }
 
-.c-tab {
-  transition: all 0.5s ease;
+:host(.c-tab) {
+  transition: box-shadow 0.3s ease-in-out;
+  cursor: pointer;
   display: block;
   height: 50px;
   line-height: 50px;
@@ -32,25 +32,41 @@ slot {
   font-weight: 600;
   text-align: center;
   box-shadow: inset 0 0 0 transparent;
+  position: relative;
+  overflow: hidden;
+}
+
+:host(.c-tab:hover) {
+  background: var(--csc-primary-ghost);
+}
+
+:host(.c-tab--active) {
+  color: var(--csc-primary);
+  box-shadow: inset 0 -15px 0 -12px var(--csc-primary);
+}
+
+:host(.c-tab--active:hover) {
+  background: transparent !important;
+}
+
+:host(.c-tab--disabled) {
+  color: var(--csc-mid-grey);
+  cursor: default;
+  opacity: 0.75;
+  pointer-events: none;
+}
+
+:host(.c-tab button) {
+  appearance: none;
+  background-color: transparent;
+  border: none;
+  color: inherit;
+  cursor: inherit;
+  font-family: inherit;
+  font-size: inherit;
+  font-weight: inherit;
+  height: 100%;
   overflow: hidden;
   position: relative;
-
-  &:hover {
-    background: #d8e8ea;
-  }
-
-  &--active {
-    color: var(--csc-primary);
-    box-shadow: inset 0 -3px 0 var(--csc-primary);
-
-    &:hover {
-      background: transparent !important;
-    }
-  }
-
-  &--disabled {
-    color: var(--csc-mid-grey);
-    opacity: 0.75;
-    pointer-events: none;
-  }
+  width: 100%;
 }

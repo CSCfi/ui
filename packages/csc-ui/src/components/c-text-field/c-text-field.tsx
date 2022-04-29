@@ -8,6 +8,7 @@ import {
   Prop,
   State,
 } from '@stencil/core';
+import { v4 as uuid } from 'uuid';
 import { mdiEye, mdiEyeOff } from '@mdi/js';
 
 /**
@@ -16,7 +17,7 @@ import { mdiEye, mdiEyeOff } from '@mdi/js';
 @Component({
   tag: 'c-text-field',
   styleUrl: 'c-text-field.scss',
-  shadow: true,
+  shadow: false,
 })
 export class CTextField {
   /**
@@ -28,11 +29,6 @@ export class CTextField {
    * Disable the input
    */
   @Prop() disabled = false;
-
-  /**
-   * Render a hidden input outside the shadow dom
-   */
-  @Prop() form = false;
 
   /**
    * Hide the hint and error messages
@@ -94,7 +90,7 @@ export class CTextField {
   /**
    * Rows on the input
    */
-  @Prop() rows: number = 1;
+  @Prop() rows = 1;
 
   /**
    * Shadow variant of the input
@@ -114,22 +110,22 @@ export class CTextField {
   /**
    * Set the validíty of the input
    */
-  @Prop() valid: boolean = true;
+  @Prop() valid = true;
 
   /**
    * Manual validation
    */
-  @Prop() validate: boolean = false;
+  @Prop() validate = false;
 
   /**
    * Validate the input on blur
    */
-  @Prop() validateOnBlur: boolean = false;
+  @Prop() validateOnBlur = false;
 
   /**
    * Custom validation message
    */
-  @Prop() validation: string = 'Required field';
+  @Prop() validation = 'Required field';
 
   /**
    * Value of the input
@@ -157,8 +153,17 @@ export class CTextField {
 
   private _originalType = '';
 
+  private _inputId: string;
+
+  private _uniqueId = uuid();
+
   componentWillLoad() {
     this._originalType = this.type;
+
+    this._inputId = `${(this.hostId || this.label || this.placeholder).replace(
+      /[^a-zA-Z0-9-_]/g,
+      '',
+    )}_${this._uniqueId}`;
   }
 
   get isActive() {
@@ -178,11 +183,10 @@ export class CTextField {
   private _renderInputElement() {
     const props = {
       shared: {
-        id: this.hostId,
+        id: this._inputId,
         name: this.name,
         disabled: this.disabled,
         readonly: this.readonly,
-        'aria-labelledby': 'c-text-label',
         value: this.value,
         onInput: this._handleChange,
         onChange: this._handleChange,
@@ -198,33 +202,19 @@ export class CTextField {
       },
     };
 
-    const textInput = <input {...props.shared} {...props.input} />;
+    const textInput = (
+      <input class="c-input__input" {...props.shared} {...props.input} />
+    );
 
     const textArea = (
-      <textarea {...props.shared} {...props.textArea}></textarea>
+      <textarea
+        class="c-input__input"
+        {...props.shared}
+        {...props.textArea}
+      ></textarea>
     );
 
     return this.rows > 1 ? textArea : textInput;
-  }
-
-  private _renderInputOutsideShadowRoot(
-    container: HTMLElement,
-    name: string,
-    value: string | null,
-  ) {
-    let input = container.querySelector(
-      'input.hidden-input',
-    ) as HTMLInputElement | null;
-
-    if (input === null) {
-      input = container.ownerDocument.createElement('input');
-      input.type = 'hidden';
-      input.classList.add('hidden-input');
-      container.appendChild(input);
-    }
-
-    input.name = name;
-    input.value = value || '';
   }
 
   private _renderPasswordToggle() {
@@ -253,10 +243,6 @@ export class CTextField {
   };
 
   render() {
-    if (this.form) {
-      this._renderInputOutsideShadowRoot(this.hiddenEl, this.name, this.value);
-    }
-
     return (
       <Host>
         <c-input
@@ -265,6 +251,7 @@ export class CTextField {
           hide-details={this.hideDetails}
           hint={this.hint}
           id={this.hostId}
+          input-id={this._inputId}
           label={this.label}
           name={this.name}
           placeholder={this.placeholder}

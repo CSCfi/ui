@@ -46,7 +46,7 @@ export class CRadioGroup {
   /**
    * Color of the radio group
    */
-  @Prop() color: string = '';
+  @Prop() color = '';
 
   /**
    * Radio group items
@@ -66,12 +66,12 @@ export class CRadioGroup {
   /**
    * Set the validíty of the input
    */
-  @Prop() valid: boolean = true;
+  @Prop() valid = true;
 
   /**
    * Custom validation message
    */
-  @Prop() validation: string = 'Required field';
+  @Prop() validation = 'Required field';
 
   /**
    * Emit value change to the parent
@@ -158,26 +158,26 @@ export class CRadioGroup {
       <label
         class={classes}
         id={itemId}
-        tabindex={this.disabled ? -1 : 0}
         onKeyDown={(event) => this._handleKeyDown(event, item, index)}
       >
         <input
           type="radio"
-          aria-checked={this.value === item}
-          aria-disabled={this.disabled}
+          aria-checked={(this.value === item).toString()}
+          aria-disabled={this.disabled.toString()}
           aria-labelledby={itemId}
           disabled={this.disabled}
           checked={isChecked}
           name={this._uniqueId}
-          tabindex="-1"
           onChange={(event) => this._select(event, item, index)}
         />
+
         <span
           class="ripple"
           ref={(el) => (this._containers[index] = el as HTMLDivElement)}
         >
           <span class="selection"></span>
         </span>
+
         <div class="c-radio__label">{item.label}</div>
       </label>
     );
@@ -219,17 +219,17 @@ export class CRadioGroup {
     };
 
     return (
-      <div class={wrapperClasses}>
+      <div
+        class={wrapperClasses}
+        role="radiogroup"
+        aria-labelledby="c-radio-group__label"
+      >
         {(!!this.label || slotHasContent) && (
           <label id="c-radio-group__label">
             {!!this.label ? this.label : <slot></slot>}
           </label>
         )}
-        <div
-          class="c-radio-group__items"
-          role="radiogroup"
-          aria-labelledby="c-radio-group__label"
-        >
+        <div class="c-radio-group__items">
           {this.items.map((item, index) => this._getRadioButton(item, index))}
         </div>
         {this._renderMessages()}

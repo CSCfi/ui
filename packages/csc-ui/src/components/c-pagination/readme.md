@@ -30,17 +30,12 @@
 
 - [c-menu](../c-menu)
 - [c-icon-button](../c-icon-button)
-- [c-row](../c-row)
-- [c-spacer](../c-spacer)
 
 ### Graph
 ```mermaid
 graph TD;
   c-pagination --> c-menu
   c-pagination --> c-icon-button
-  c-pagination --> c-row
-  c-pagination --> c-spacer
-  c-menu --> c-menu-item
   style c-pagination fill:#f9f,stroke:#333,stroke-width:4px
 ```
 

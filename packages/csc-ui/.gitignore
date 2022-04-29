@@ -8,3 +8,5 @@ docs.json
 documentation/angular/.firebase/
 
 .npmrc
+
+firebase-debug.log

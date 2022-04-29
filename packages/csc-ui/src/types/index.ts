@@ -12,7 +12,9 @@ export interface CSelectItem {
   value: string | number;
 }
 
-export interface CAutocompleteItem extends CSelectItem {}
+export interface CAutocompleteItem extends CSelectItem {
+  ref?: HTMLElement;
+}
 
 export interface CRadioGroupItem {
   label: string;

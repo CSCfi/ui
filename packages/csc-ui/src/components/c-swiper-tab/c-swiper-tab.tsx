@@ -2,6 +2,7 @@ import {
   Component,
   Prop,
   h,
+  Host,
   Event,
   Element,
   EventEmitter,
@@ -18,6 +19,8 @@ import { createRipple } from '../../utils/utils';
   shadow: true,
 })
 export class CSwiperTab {
+  @Element() el: HTMLCSwiperTabElement;
+
   /**
    * Disable button
    */
@@ -39,18 +42,25 @@ export class CSwiperTab {
   @Prop({ attribute: 'id' }) hostId: string;
 
   /**
+   * Size of the set
+   * @private
+   */
+  @Prop() setsize: number;
+
+  /**
+   * Position in the set
+   * @private
+   */
+  @Prop() position: number;
+
+  /**
    * Value of the button
    */
   @Prop() value: number | string;
 
   /**
-   * Emit tab change to parent
-   * @private
-   */
-  @Event() tabChange: EventEmitter;
-
-  /**
    * Emit value change to the parent
+   * @private
    */
   @Event({
     bubbles: true,
@@ -58,14 +68,6 @@ export class CSwiperTab {
     cancelable: true,
   })
   changeValue: EventEmitter<number | string>;
-
-  /**
-   * Emit tab focus to the parent
-   * @private
-   */
-  @Event() focusTab: EventEmitter;
-
-  @Element() el: HTMLCSwiperTabElement;
 
   private _container?: HTMLDivElement;
 
@@ -78,29 +80,6 @@ export class CSwiperTab {
     this.changeValue.emit(this.value);
   }
 
-  @Listen('keydown', { capture: true })
-  handleKeyDown(ev: KeyboardEvent) {
-    if (this.active) return;
-
-    if (['Space', 'Enter'].includes(ev.code)) {
-      ev.preventDefault();
-    }
-  }
-
-  @Listen('keyup', { capture: true })
-  handleKeyUp(ev: KeyboardEvent) {
-    if (this.active) return;
-
-    if (['Space', 'Enter'].includes(ev.code)) {
-      ev.preventDefault();
-      this.changeValue.emit(this.value);
-    }
-  }
-
-  private _onFocus = () => {
-    this.focusTab.emit(this.value);
-  };
-
   render() {
     const classes = {
       'c-swiper-tab': true,
@@ -108,27 +87,30 @@ export class CSwiperTab {
       'c-swiper-tab--disabled': this.disabled,
     };
 
+    const a11y = {
+      'aria-selected': this.active ? 'true' : 'false',
+      'aria-setsize': this.setsize,
+      'aria-posinset': this.position,
+      tabindex: this.active ? 0 : -1,
+    };
+
     return (
-      <div
-        id={this.hostId}
-        class={classes}
-        tabindex="0"
-        role="button"
-        onFocus={this._onFocus}
-      >
-        <div
-          class="c-swiper-tab__content"
-          ref={(el) => (this._container = el as HTMLDivElement)}
-        >
-          <div class="c-swiper-tab__header">
-            {this.label}
-            <slot name="icon"></slot>
-          </div>
-          <div class="c-swiper-tab__description">
-            <slot></slot>
+      <Host {...a11y} role="tab">
+        <div id={this.hostId} class={classes}>
+          <div
+            class="c-swiper-tab__content"
+            ref={(el) => (this._container = el as HTMLDivElement)}
+          >
+            <div class="c-swiper-tab__header">
+              {this.label}
+              <slot name="icon"></slot>
+            </div>
+            <div class="c-swiper-tab__description">
+              <slot></slot>
+            </div>
           </div>
         </div>
-      </div>
+      </Host>
     );
   }
 }

@@ -1,50 +1,59 @@
-<app-example title="Usage in Angular" cols [raw]="examples.default" [script]="scripts.default">
-  <c-autocomplete
-    label="Countries"
-    cControl
-    [items]="filteredItems"
-    [query]="query"
-    (changeQuery)="changeQuery($event)"
-    [itemsPerPage]="10"
-    [(ngModel)]="value"
-  ></c-autocomplete>
+<app-example title="Usage in Angular" [raw]="examples.default" [script]="scripts.default">
+  <c-row gap="8">
+    <c-autocomplete
+      id="listOfCountries"
+      label="Countries"
+      cControl
+      hide-details
+      [items]="filteredItems"
+      [query]="query"
+      (changeQuery)="changeQuery($event)"
+      [itemsPerPage]="10"
+      [(ngModel)]="value"
+      style="flex: 1"
+    >
+      <i class="mdi mdi-earth" slot="pre"></i>
+    </c-autocomplete>
 
-  <c-button [disabled]="!value" (click)="addTag()">Add</c-button>
+    <c-button (click)="addTag()" (keyup.enter)="addTag()">Add</c-button>
+  </c-row>
 
-  <c-tag
-    *ngFor="let tag of addedTags; let i = index"
-    closeable
-    (click)="removeTag(i)"
-    (keyup.enter)="removeTag(i)"
-  >
-    {{ tag.name }}
-  </c-tag>
+  <div class="mt-3">
+    <c-tag
+      *ngFor="let tag of addedTags; let i = index"
+      closeable
+      (click)="removeTag(i)"
+      (keyup.enter)="removeTag(i)"
+    >
+      {{ tag.name }}
+    </c-tag>
+  </div>
 </app-example>
 
 <app-example
   title="Usage with 'return-value'"
   rows
   [raw]="examples.returnValue"
-  [script]="scripts.returnValue"
+  [script]="scripts.default"
 >
   <c-row gap="8">
     <c-autocomplete
       [(ngModel)]="valueValue"
-      [items]="filteredItems"
-      [query]="query"
-      (changeQuery)="changeQuery($event)"
+      [items]="filteredItems2"
+      [query]="valueQuery"
+      (changeQuery)="changeQuery2($event)"
       [itemsPerPage]="10"
       label="Countries"
       return-value
       hide-details
       cControl
     ></c-autocomplete>
-    <c-button [disabled]="!valueValue" (click)="addValueTag()">Add</c-button>
+    <c-button (click)="addValueTag()" (keyup.enter)="addValueTag()">Add</c-button>
   </c-row>
 
   <p style="margin: 16px 0 0">
     Added values:
-    <c-tag>{{ addedValueTags.length }}</c-tag>
+    <c-tag flat>{{ addedValueTags.length }}</c-tag>
   </p>
   <ul>
     <li *ngFor="let tag of addedValueTags">

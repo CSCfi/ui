@@ -12,6 +12,8 @@
 | `active`   | `active`   | Mark tab as active                    | `boolean`          | `false`     |
 | `disabled` | `disabled` | Mark tab as disabled                  | `boolean`          | `false`     |
 | `hostId`   | `id`       | Id of the tab                         | `string`           | `undefined` |
+| `position` | `position` | Position in the set                   | `number`           | `undefined` |
+| `setsize`  | `setsize`  | Size of the set                       | `number`           | `undefined` |
 | `value`    | `value`    | Value for the tab - for use in c-tabs | `number \| string` | `undefined` |
 
 

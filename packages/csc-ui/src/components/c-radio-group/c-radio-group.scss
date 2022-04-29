@@ -8,6 +8,7 @@
   display: flex;
   flex-direction: column;
   gap: 4px;
+  width: fit-content;
 
   &__items {
     display: flex;
@@ -171,21 +172,21 @@
     }
   }
 
-  &:focus {
+  input:focus {
     outline: none;
   }
 
-  &:focus .ripple {
+  input:focus + .ripple {
     outline: 2px var(--c-radio-color) solid;
   }
 
   @supports selector(:focus-visible) {
-    &:focus .ripple {
+    input:focus + .ripple {
       outline: none;
     }
   }
 
-  &:focus-visible .ripple {
+  input:focus-visible + .ripple {
     outline: 2px var(--c-radio-color) solid;
   }
 

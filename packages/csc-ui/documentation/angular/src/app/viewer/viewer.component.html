@@ -10,7 +10,6 @@
       *ngFor="let tab of tabs"
       [routerLink]="tab.enabled ? [] : null"
       [queryParams]="tab.query"
-      [active]="activeTab === tab.label"
       [disabled]="!tab.enabled"
       [value]="tab.label"
     >

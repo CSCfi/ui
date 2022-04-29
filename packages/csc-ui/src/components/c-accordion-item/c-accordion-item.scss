@@ -38,6 +38,9 @@
     cursor: pointer;
     grid-template-columns: auto 1fr auto;
     gap: 8px;
+    width: 100%;
+    border: none;
+    text-align: left;
 
     &:focus {
       outline: 2px var(--csc-primary) solid;

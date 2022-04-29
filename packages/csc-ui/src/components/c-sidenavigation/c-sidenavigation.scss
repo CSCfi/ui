@@ -27,50 +27,89 @@
 }
 
 .c-sidenavigation {
-  display: flex;
-  flex-flow: column wrap;
   background: var(--csc-primary);
+  display: flex;
+  flex-flow: column nowrap;
+  flex: 1;
+  gap: 4px;
+  height: fit-content;
+  min-height: 100%;
+  padding: 24px 0px 24px 24px;
+  position: relative;
+  transition: transform 0.3s ease;
   width: 100%;
   z-index: 8;
-  position: relative;
-  padding: 24px 0px 24px 24px;
-  transition: transform 0.3s ease;
 
-  &.mobile {
-    max-width: 260px;
-    transform: translateX(0%);
-    position: fixed;
-    right: 0;
-    overflow-y: scroll;
-    z-index: 999;
-    height: calc(100% - 60px);
+  &__content {
+    $content: &;
 
-    &.hideMenu {
-      transform: translateX(100%);
+    display: flex;
+    flex-direction: column;
+    flex-basis: 260px;
+    flex-grow: 1;
+    flex-shrink: 2;
+    width: 320px;
+
+    &--mobile {
+      height: 100vh;
+      max-width: 260px;
+      overflow-y: scroll;
+      position: fixed;
+      right: 0;
+      top: 0;
+      transition: transform 0.2s cubic-bezier(0.25, 0.8, 0.5, 1);
+      transform: translateX(0%);
+      z-index: 999;
+
+      &#{$content} {
+        &--hidden {
+          transform: translateX(100%);
+        }
+      }
+
+      > nav {
+        min-height: auto;
+        padding-top: 0;
+      }
     }
   }
 
-  > div {
-    width: 100%;
+  &__burger {
+    background-color: var(--csc-primary);
     display: flex;
-    gap: 8px;
-    flex: 1;
-    flex-flow: column nowrap;
+    justify-content: flex-end;
+    padding: 8px 16px;
   }
+
+  ul {
+    display: flex;
+    flex-flow: column nowrap;
+    gap: 8px;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+}
+
+.autoheight > nav {
+  height: calc(100vh - 60px);
+  overflow-x: hidden;
+  overflow-y: auto;
 }
 
 .vertical-spacer {
   flex: 1;
+  margin-bottom: 8px;
 }
 
 .c-overlay {
   background: rgba(0, 0, 0, 0.5);
-  position: fixed;
-  z-index: 998;
-  top: 0;
   bottom: 0;
   left: 0;
+  position: fixed;
   right: 0;
+  top: 0;
+  z-index: 998;
 }
 
 @keyframes fadeIn {
@@ -83,8 +122,25 @@
 }
 
 .c-fadeIn {
-  z-index: 997;
-  animation-name: fadeIn;
   animation-duration: 0.5s;
   animation-iteration-count: 1;
+  animation-name: fadeIn;
+  z-index: 997;
+}
+
+c-sidenavigationitem,
+c-subnavigationitem {
+  display: contents;
+}
+
+.visuallyhidden {
+  border: 0;
+  clip: rect(0 0 0 0);
+  height: 1px;
+  margin: -1px;
+  overflow: hidden;
+  padding: 0;
+  position: absolute;
+  white-space: nowrap;
+  width: 1px;
 }

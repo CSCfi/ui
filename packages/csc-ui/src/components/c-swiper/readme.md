@@ -12,6 +12,13 @@
 | `value`  | `value`   | Value of the swiper | `number \| string` | `undefined` |
 
 
+## Events
+
+| Event         | Description                     | Type                            |
+| ------------- | ------------------------------- | ------------------------------- |
+| `changeValue` | Emit value change to the parent | `CustomEvent<number \| string>` |
+
+
 ## Slots
 
 | Slot | Description                                |

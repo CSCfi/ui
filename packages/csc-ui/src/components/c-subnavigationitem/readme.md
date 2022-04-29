@@ -7,11 +7,12 @@
 
 ## Properties
 
-| Property  | Attribute | Description   | Type      | Default     |
-| --------- | --------- | ------------- | --------- | ----------- |
-| `active`  | `active`  | Active state  | `boolean` | `undefined` |
-| `href`    | `href`    | Link url      | `string`  | `undefined` |
-| `loading` | `loading` | Loading state | `boolean` | `false`     |
+| Property    | Attribute   | Description                      | Type      | Default     |
+| ----------- | ----------- | -------------------------------- | --------- | ----------- |
+| `active`    | `active`    | Active state                     | `boolean` | `undefined` |
+| `focusable` | `focusable` | Element is visible and focusable | `boolean` | `false`     |
+| `href`      | `href`      | Link url                         | `string`  | `undefined` |
+| `loading`   | `loading`   | Loading state                    | `boolean` | `false`     |
 
 
 ## Dependencies

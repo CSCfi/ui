@@ -25,13 +25,11 @@
 
 ### Depends on
 
-- [c-row](../c-row)
 - [c-loader](../c-loader)
 
 ### Graph
 ```mermaid
 graph TD;
-  c-sidenavigationitem --> c-row
   c-sidenavigationitem --> c-loader
   style c-sidenavigationitem fill:#f9f,stroke:#333,stroke-width:4px
 ```

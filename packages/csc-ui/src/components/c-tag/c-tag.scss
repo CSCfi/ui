@@ -10,6 +10,10 @@
   flex-grow: 1;
 }
 
+:host(.flat) {
+  cursor: default;
+}
+
 :host(:focus) {
   outline: none;
 }
@@ -56,6 +60,18 @@ svg {
       background: #50978d;
       color: #fff;
       box-shadow: none;
+    }
+  }
+
+  &.flat {
+    &:hover {
+      background: transparent;
+    }
+  }
+
+  &.flat.active {
+    &:hover {
+      background: var(--csc-primary);
     }
   }
 }

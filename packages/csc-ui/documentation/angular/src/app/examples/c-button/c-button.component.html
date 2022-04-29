@@ -22,6 +22,17 @@
   <c-button text disabled>Text</c-button>
 </app-example>
 
+<app-example title="Inverted variant" subtitle="For dark backgrounds" cols>
+  <c-row gap="8" style="background-color: #006878; padding: 24px">
+    <c-button inverted>Default</c-button>
+    <c-button inverted loading>Default</c-button>
+    <c-button inverted disabled>Default</c-button>
+    <c-button inverted outlined>Outlined</c-button>
+    <c-button inverted ghost>Ghost</c-button>
+    <c-button inverted text>Text</c-button>
+  </c-row>
+</app-example>
+
 <app-example title="No radius" cols>
   <c-button no-radius>No radius</c-button>
   <c-button no-radius loading>No radius</c-button>
@@ -109,6 +120,13 @@
       <div>1 GB RAM | 1 CPU</div>
     </div>
   </c-button>
+  <c-button size="small" loading>
+    standard.tiny
+    <div slot="description">
+      <div>80 GB storage</div>
+      <div>1 GB RAM | 1 CPU</div>
+    </div>
+  </c-button>
   <c-button>
     standard.small
     <div slot="description">
@@ -116,7 +134,21 @@
       <div>2 GB RAM | 2 CPU</div>
     </div>
   </c-button>
+  <c-button loading>
+    standard.small
+    <div slot="description">
+      <div>80 GB storage</div>
+      <div>2 GB RAM | 2 CPU</div>
+    </div>
+  </c-button>
   <c-button size="large">
+    standard.medium
+    <div slot="description">
+      <div>80 GB storage</div>
+      <div>4 GB RAM | 3 CPU</div>
+    </div>
+  </c-button>
+  <c-button size="large" loading>
     standard.medium
     <div slot="description">
       <div>80 GB storage</div>

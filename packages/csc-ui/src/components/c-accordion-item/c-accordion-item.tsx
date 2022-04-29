@@ -12,6 +12,12 @@ import { v4 as uuid } from 'uuid';
 })
 export class CAccordionItem {
   /**
+   * Marks the item as collapsable
+   * @private
+   */
+  @Prop() collapsable = false;
+
+  /**
    * Heading of the accordion item
    */
   @Prop() heading: string;
@@ -36,7 +42,7 @@ export class CAccordionItem {
    * Show an outline around the expanded item
    * @private
    */
-  @Prop() outlined: boolean = false;
+  @Prop() outlined = false;
 
   /**
    * Emit changes to the c-accordion
@@ -61,6 +67,8 @@ export class CAccordionItem {
   }
 
   private _toggle() {
+    if (!this.collapsable && this.expanded) return;
+
     this.expanded = !this.expanded;
     this.itemChange.emit({ value: this.value, expanded: this.expanded });
   }
@@ -119,12 +127,14 @@ export class CAccordionItem {
 
     return (
       <div class={hostClasses}>
-        <div
+        <button
+          id={`header__${this._uniqueId}`}
+          aria-controls={`panel__${this._uniqueId}`}
+          aria-expanded={this.expanded.toString()}
+          aria-label={this.heading}
           class={headerClasses}
           tabindex="0"
-          aria-expanded={this.expanded}
           onClick={() => this._toggle()}
-          id={`c-accordion-item--${this._uniqueId}`}
         >
           <div class="c-accordion-item__icon">
             {!!this.icon ? this._getIcon() : <slot name="icon"></slot>}
@@ -147,12 +157,14 @@ export class CAccordionItem {
               />
             </svg>
           </div>
-        </div>
+        </button>
+
         <div class="c-accordion-item__content-wrapper">
           <div
+            id={`panel__${this._uniqueId}`}
             class="c-accordion-item__content"
             role="region"
-            aria-labelledby={`c-accordion-${this._uniqueId}`}
+            aria-labelledby={`header__${this._uniqueId}`}
           >
             {this.expanded && <slot></slot>}
           </div>

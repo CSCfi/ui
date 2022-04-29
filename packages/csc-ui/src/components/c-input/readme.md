@@ -15,6 +15,7 @@
 | `hideDetails`    | `hide-details`     | Hide the hint and error messages                                                                 | `boolean`                                              | `false`            |
 | `hint`           | `hint`             | Hint text for the input                                                                          | `string`                                               | `''`               |
 | `hostId`         | `id`               | Id of the input                                                                                  | `string`                                               | `undefined`        |
+| `inputId`        | `input-id`         | Id of the input element                                                                          | `string`                                               | `undefined`        |
 | `label`          | `label`            | Label of the input                                                                               | `string`                                               | `undefined`        |
 | `max`            | `max`              | Maximum value on a numeric input                                                                 | `number`                                               | `null`             |
 | `min`            | `min`              | Minimum value on a numeric input                                                                 | `number`                                               | `null`             |

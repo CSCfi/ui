@@ -23,6 +23,11 @@ import { createRipple } from '../../utils/utils';
 })
 export class CButton {
   /**
+   * Inverted button style for dark backgrounds
+   */
+  @Prop() inverted = false;
+
+  /**
    * Outlined button style
    */
   @Prop() outlined = false;
@@ -77,7 +82,7 @@ export class CButton {
 
   /**
    * Value for the button
-   * - for use in the c-content-switcher
+   * - for use in the c-tab-buttons
    */
   @Prop() value?: number | string;
 
@@ -114,6 +119,7 @@ export class CButton {
   private _onClick = (event, center = false) => {
     if (this.disabled) {
       event.preventDefault();
+
       return;
     }
 
@@ -193,6 +199,7 @@ export class CButton {
       'c-button--small': this.size === 'small',
       'c-button--text': !!this.text,
       'c-button--grouped': this.grouped,
+      'c-button--inverted': this.inverted,
     };
 
     const innerClasses = {
@@ -208,10 +215,12 @@ export class CButton {
 
     const hostClasses = {
       'c-button--active': this.grouped && !this.outlined,
+      inverted: this.inverted,
     };
 
     const descriptionSlotClasses = {
       'c-button__description': this._containerhasDescriptionSlot,
+      'c-button__description--loading': this.loading,
     };
 
     const Tag = !!this.href ? 'a' : 'button';
@@ -245,7 +254,7 @@ export class CButton {
               {svg}
               <slot></slot>
             </div>
-            {this._containerhasDescriptionSlot && !this.loading && (
+            {this._containerhasDescriptionSlot && (
               <div class={descriptionSlotClasses}>
                 <slot name="description"></slot>
               </div>

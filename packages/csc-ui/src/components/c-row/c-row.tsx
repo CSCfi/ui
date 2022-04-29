@@ -15,12 +15,12 @@ export class CRow {
   /**
    * Gap between items in px
    */
-  @Prop() gap: number = 0;
+  @Prop() gap = 0;
 
   /**
    * Disable flex wrap
    */
-  @Prop() nowrap: boolean = false;
+  @Prop() nowrap = false;
 
   /**
    * Align items vertically
@@ -39,6 +39,7 @@ export class CRow {
       [`c-row--align-${this.align}`]: true,
       [`c-row--justify-${this.justify}`]: true,
     };
+
     return (
       <div class={classes} style={{ '--row-gap': `${this.gap}px` }}>
         <slot></slot>

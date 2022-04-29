@@ -6,4 +6,6 @@ import config from '../../../../../package.json';
 })
 export class VersionService {
   version = config.version;
+
+  versionLabel = config.version.split('.').join(' point ');
 }

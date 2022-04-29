@@ -22,6 +22,11 @@ export class CIconButton {
   @Prop() text = false;
 
   /**
+   * Inverted color for dark backgrounds
+   */
+  @Prop() inverted = false;
+
+  /**
    * Outlined variant of the button
    */
   @Prop() outlined = false;
@@ -54,6 +59,7 @@ export class CIconButton {
       text: !!this.text,
       ghost: !!this.ghost,
       outlined: !!this.outlined,
+      inverted: !!this.inverted,
       'icon-button--small': this.size === 'small',
       'icon-button--x-small': this.size === 'x-small',
     };

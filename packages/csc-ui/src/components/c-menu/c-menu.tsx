@@ -6,6 +6,7 @@ import {
   Prop,
   Listen,
   Element,
+  Watch,
 } from '@stencil/core';
 import { mdiChevronDown } from '@mdi/js';
 /**
@@ -21,51 +22,76 @@ export class CMenu {
   @Element() el: HTMLCMenuElement;
 
   @State() currentIndex: number = null;
-  @State() menuVisible: boolean = false;
+
+  @State() menuVisible = false;
+
   /**
    * Simple variant without chevron and background, E.g. when a button is the activator
    */
-  @Prop() simple: boolean = false;
+  @Prop() simple = false;
+
   /**
    * Small variant
    */
-  @Prop() small: boolean = false;
+  @Prop() small = false;
+
   /**
    * No hover background
    */
-  @Prop() nohover: boolean = false;
+  @Prop() nohover = false;
+
   /**
    * Menu items
    */
-  @Prop() items: { name: string; action: Function }[] = [];
+  @Prop() items: { name: string; action: () => void }[] = [];
+
+  @Watch('currentIndex')
+  onIndexChange(index: number) {
+    this.listItems.forEach((item, i) => {
+      item.classList.toggle('active', i === index);
+
+      if (i === index) {
+        item.focus();
+      }
+    });
+  }
+
+  @Watch('menuVisible')
+  onVisibilityChange(visible: boolean) {
+    if (!visible) {
+      this.listItems?.[this.currentIndex]?.blur();
+      this.currentIndex = null;
+    }
+  }
 
   @Listen('keydown', { capture: true })
-  handleKeyDown(ev: any) {
+  handleKeyDown(ev: KeyboardEvent) {
     if (ev.key === 'ArrowDown') {
       ev.preventDefault();
-      if (this.menuVisible === false) {
-        this.menuVisible = true;
-      } else {
-        if (this.currentIndex === null) {
-          this.currentIndex = 0;
-        } else if (this.currentIndex + 1 < this.items.length) {
-          this.currentIndex = this.currentIndex + 1;
-        }
+
+      this.menuVisible = true;
+
+      if (this.currentIndex === null) {
+        this.currentIndex = 0;
+      } else if (this.currentIndex + 1 < this.items.length) {
+        this.currentIndex += 1;
       }
     }
 
     if (ev.key === 'ArrowUp') {
       ev.preventDefault();
+
       this.menuVisible = true;
-      if (this.currentIndex !== null && this.currentIndex > 0) {
-        this.currentIndex = this.currentIndex - 1;
-      } else if (this.currentIndex === 0) {
-        this.currentIndex = null;
+
+      if (this.currentIndex === null) {
+        this.currentIndex = this.items.length - 1;
+      } else if (this.currentIndex > 0) {
+        this.currentIndex -= 1;
       }
     }
 
     if (ev.key === 'Escape') {
-      if (this.menuVisible === true) {
+      if (this.menuVisible) {
         this.menuVisible = false;
         this.currentIndex = null;
       }
@@ -76,7 +102,17 @@ export class CMenu {
         const selectedItem = this.items[this.currentIndex];
         selectedItem.action();
         this.menuVisible = false;
+
+        return;
       }
+
+      this.menuVisible = true;
+      this.currentIndex = 0;
+    }
+
+    if (ev.key === ' ' && this.currentIndex === null) {
+      this.menuVisible = true;
+      this.currentIndex = 0;
     }
   }
 
@@ -87,10 +123,15 @@ export class CMenu {
     }
   }
 
+  get listItems(): HTMLLIElement[] {
+    return Array.from(this.el.shadowRoot.querySelectorAll('li'));
+  }
+
   private _showMenu() {
     if (this.menuVisible) {
       this.currentIndex = null;
     }
+
     this.menuVisible = !this.menuVisible;
   }
 
@@ -99,39 +140,47 @@ export class CMenu {
   }
 
   private _getListItem = (item) => {
+    const classes = {
+      small: this.small,
+    };
+
     return (
-      <c-menu-item
-        onClick={item.action}
-        active={this.items[this.currentIndex] === item}
-        small={this.small}
-      >
+      <li class={classes} tabindex="-1" role="menuitem" onClick={item.action}>
         {item.name}
-      </c-menu-item>
+      </li>
     );
   };
 
   render() {
-    const hostClasses = [];
-    if (this.menuVisible) {
-      hostClasses.push('active');
-    }
-    if (this.simple) {
-      hostClasses.push('simple-host');
-    }
-    if (this.small) {
-      hostClasses.push('small');
-    }
-    if (this.nohover) {
-      hostClasses.push('nohover');
-    }
+    const hostClasses = {
+      'c-menu': true,
+      'simple-host': this.simple,
+      active: this.menuVisible,
+      nohover: this.nohover,
+      small: this.small,
+    };
+
+    const menuClasses = {
+      'c-menu-list': true,
+      active: this.menuVisible,
+    };
+
     return (
-      <Host tabindex="0" role="button" class={hostClasses.join(' ')}>
-        {this.simple ? (
-          <div class="simple" onClick={() => this._showMenu()}>
+      <Host class={hostClasses}>
+        <button
+          aria-expanded={this.menuVisible.toString()}
+          aria-haspopup="true"
+          aria-controls="c-menu-items"
+          class={{
+            'c-menu-wrapper': !this.simple,
+            simple: this.simple,
+          }}
+          type="button"
+          onClick={() => this._showMenu()}
+        >
+          {this.simple ? (
             <slot></slot>
-          </div>
-        ) : (
-          <div onClick={() => this._showMenu()} class="c-menu-wrapper">
+          ) : (
             <div class={this.small ? 'c-select-row small' : 'c-select-row'}>
               <slot></slot>
               <svg
@@ -145,15 +194,17 @@ export class CMenu {
                 <path d={mdiChevronDown} />
               </svg>
             </div>
-          </div>
-        )}
-        {this.menuVisible ? (
-          <div class="c-menu-list" onClick={() => this._hideMenu()}>
-            {this.items.map((item) => this._getListItem(item))}
-          </div>
-        ) : (
-          ''
-        )}
+          )}
+        </button>
+
+        <ul
+          id="c-menu-items"
+          class={menuClasses}
+          role="menu"
+          onClick={() => this._hideMenu()}
+        >
+          {this.items.map((item) => this._getListItem(item))}
+        </ul>
       </Host>
     );
   }

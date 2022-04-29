@@ -12,6 +12,7 @@ import {
 } from '@stencil/core';
 import { mdiChevronDown } from '@mdi/js';
 import { registerClickOutside } from 'stencil-click-outside';
+import { v4 as uuid } from 'uuid';
 import { CSelectItem } from '../../types';
 
 /**
@@ -56,7 +57,7 @@ export class CSelect {
   /**
    * Shadow variant
    */
-  @Prop() shadow: boolean = false;
+  @Prop() shadow = false;
 
   /**
    * Input field name
@@ -76,22 +77,22 @@ export class CSelect {
   /**
    * Set the validíty of the input
    */
-  @Prop() valid: boolean = true;
+  @Prop() valid = true;
 
   /**
    * Manual validation
    */
-  @Prop() validate: boolean = false;
+  @Prop() validate = false;
 
   /**
    * Validate the input on blur
    */
-  @Prop() validateOnBlur: boolean = false;
+  @Prop() validateOnBlur = false;
 
   /**
    * Custom validation message
    */
-  @Prop() validation: string = 'Required field';
+  @Prop() validation = 'Required field';
 
   /**
    * Items per page before adding scroll
@@ -120,33 +121,36 @@ export class CSelect {
 
   @Element() host: HTMLCSelectElement;
 
-  @State() menuVisible: boolean = false;
+  @State() menuVisible = false;
 
   @State() currentIndex: number = null;
 
-  private _itemRefs: { value: string; ref: HTMLElement }[] = [];
+  @State() activeListItemId: string = null;
 
-  @Watch('validate')
-  validateChange(newValue: boolean) {
-    if (newValue) {
-      this._runValidate();
-    }
-  }
+  @State() statusText = '';
 
-  private _direction: ScrollLogicalPosition = 'end';
+  private _itemRefs: { value: string | number; ref: HTMLElement }[] = [];
+
+  private _id: string;
+
+  private _inputElement: HTMLInputElement;
+
+  private _listElement: HTMLUListElement;
 
   private _outerWrapperClasses = ['outer-wrapper'];
 
+  private _uniqueId = uuid();
+
   private _validationClasses = ['validation-message'];
 
-  private _inputElement: HTMLInputElement;
+  private _debounce = null;
 
   private _observer = new IntersectionObserver(
     (entries, observer) => {
       entries.forEach((entry) => {
         if (!entry.isIntersecting) {
           entry.target.scrollIntoView({
-            block: this._direction,
+            block: 'nearest',
             inline: 'nearest',
           });
           observer.unobserve(entry.target);
@@ -158,15 +162,34 @@ export class CSelect {
     { threshold: 1 },
   );
 
-  private _valueChangedHandler(item: any) {
-    function isItem(element) {
-      return element.value === item?.value;
+  @Watch('validate')
+  validateChange(newValue: boolean) {
+    if (newValue) {
+      this._runValidate();
     }
+  }
+
+  @Watch('currentIndex')
+  onCurrentIndexChange(index: number) {
+    const items = Array.from(this._listElement?.children || []);
+
+    this.activeListItemId = items[index]?.id ?? null;
+    this._updateStatusText();
+  }
+
+  private _valueChangedHandler(item: string | number | CSelectItem) {
+    function isItem(element) {
+      return element.value === (item as CSelectItem)?.value;
+    }
+
     this.currentIndex = this.items.findIndex(isItem);
 
     const value = this.returnValue
-      ? item?.value
-      : { name: item?.name, value: item?.value };
+      ? (item as CSelectItem)?.value
+      : {
+          name: (item as CSelectItem)?.name,
+          value: (item as CSelectItem)?.value,
+        };
 
     this.changeValue.emit(value);
   }
@@ -195,8 +218,9 @@ export class CSelect {
   }
 
   @Listen('keydown', { capture: true })
-  handleKeyDown(ev: any) {
+  handleKeyDown(ev: KeyboardEvent) {
     const letterNumber = /^[0-9a-zA-Z]+$/;
+
     if (ev.key.match(letterNumber) && ev.key.length === 1) {
       if (
         Date.now() - this._lastKeyPressTime > 3000 ||
@@ -206,6 +230,7 @@ export class CSelect {
       } else {
         this._searchString = `${this._searchString}${ev.key}`;
       }
+
       this._lastKeyPressTime = Date.now();
       const selectedItem = this.items.find((i) =>
         i.name.toLowerCase().startsWith(this._searchString),
@@ -213,6 +238,7 @@ export class CSelect {
       function isItem(element) {
         return element === selectedItem;
       }
+
       if (selectedItem) {
         if (this.menuVisible) {
           this.currentIndex = this.items.findIndex(isItem);
@@ -224,92 +250,110 @@ export class CSelect {
       }
     }
 
+    if (ev.key === 'Home' && this.menuVisible) {
+      ev.preventDefault();
+      this.currentIndex = 0;
+      this._selectItem();
+    }
+
+    if (ev.key === 'End' && this.menuVisible) {
+      ev.preventDefault();
+      this.currentIndex = this.items.length - 1;
+      this._selectItem();
+    }
+
     if (ev.key === 'Tab') {
       this.menuVisible = false;
     }
 
-    if (ev.key === 'ArrowLeft') {
-      this._direction = 'start';
+    if (ev.key === 'ArrowDown') {
       ev.preventDefault();
-      if (this.currentIndex === null || this.currentIndex <= 0) return;
 
-      this.currentIndex = this.currentIndex - 1;
-      const selectedItem = this.items[this.currentIndex];
-      this.value = selectedItem;
-      this._valueChangedHandler(selectedItem);
-      this._scrollToElement();
-    }
+      this.menuVisible = true;
 
-    if (ev.key === 'ArrowRight') {
-      this._direction = 'end';
-      ev.preventDefault();
       if (this.currentIndex === null) {
         this.currentIndex = 0;
       } else if (this.currentIndex + 1 < this.items.length) {
-        this.currentIndex = this.currentIndex + 1;
+        this.currentIndex += 1;
       }
-      const selectedItem = this.items[this.currentIndex];
-      this.value = selectedItem;
-      this._valueChangedHandler(selectedItem);
-      this._scrollToElement();
-    }
 
-    if (ev.key === 'ArrowDown') {
-      this._direction = 'end';
-      ev.preventDefault();
-      if (this.menuVisible === false) {
-        this.menuVisible = true;
-      } else {
-        if (this.currentIndex === null) {
-          this.currentIndex = 0;
-        } else if (this.currentIndex + 1 < this.items.length) {
-          this.currentIndex = this.currentIndex + 1;
-        }
-        if (this.menuVisible) {
-          this._scrollToElement();
-        }
-      }
+      this._selectItem();
     }
 
     if (ev.key === 'ArrowUp') {
-      this._direction = 'start';
       ev.preventDefault();
+
       this.menuVisible = true;
-      if (this.currentIndex !== null && this.currentIndex > 0) {
-        this.currentIndex = this.currentIndex - 1;
-        if (this.menuVisible) {
-          this._scrollToElement();
-        }
-      } else if (this.currentIndex === 0) {
-        this.currentIndex = null;
+
+      if (this.currentIndex > 0) {
+        this.currentIndex -= 1;
+      } else if (this.currentIndex === null) {
+        this.currentIndex = this.items.length - 1;
       }
+
+      this._selectItem();
     }
-    if (ev.keyCode === 32) {
-      if (this.menuVisible === false) {
+
+    if (ev.key === ' ') {
+      if (!this.menuVisible) {
         this.menuVisible = true;
       }
     }
 
     if (ev.key === 'Escape') {
-      if (this.menuVisible === true) {
+      const input = this.host.shadowRoot.querySelector('input');
+
+      if (this.menuVisible) {
         this.menuVisible = false;
-        this.currentIndex = null;
+        input.focus();
       }
     }
 
     if (ev.key === 'Enter') {
+      this.menuVisible = !this.menuVisible;
+
       if (this.currentIndex !== null) {
-        const selectedItem = this.items[this.currentIndex];
-        this.value = selectedItem;
-        this._valueChangedHandler(selectedItem);
-        this.menuVisible = false;
+        this._selectItem();
       }
     }
   }
 
+  componentWillLoad() {
+    this._id = this.hostId?.replace(/[^a-zA-Z0-9-_]/g, '') ?? this._uniqueId;
+    this._inputId =
+      'input_' +
+      (this.hostId || this.label || this.placeholder).replace(
+        /[^a-zA-Z0-9-_]/g,
+        '',
+      );
+  }
+
+  componentDidLoad() {
+    if (!!this.value && !this.currentIndex && this.currentIndex !== 0) {
+      this.currentIndex = this.items.findIndex(
+        (item) => item.value === this.value,
+      );
+    }
+  }
+
+  disconnectedCallback() {
+    this._observer.disconnect();
+  }
+
+  private _inputId: string;
+
   private _lastKeyPressTime = null;
+
   private _searchString = '';
+
   private _blurred = false;
+
+  private _selectItem() {
+    const selectedItem = this.items[this.currentIndex];
+    this.value = selectedItem;
+    this._valueChangedHandler(selectedItem);
+    this._scrollToElement();
+  }
 
   private _showMenu() {
     this._inputElement.focus();
@@ -324,14 +368,16 @@ export class CSelect {
   private _select(event, item) {
     event.preventDefault();
     event.stopPropagation();
+
     this.value = item;
     this._valueChangedHandler(item);
     this.menuVisible = false;
   }
 
-  private _getListItem = (item) => {
+  private _getListItem = (item: CSelectItem, index: number) => {
+    const isActive = this.items[this.currentIndex] === item;
+
     const classes = {
-      active: this.items[this.currentIndex] === item,
       none: item.value === null,
     };
 
@@ -341,16 +387,27 @@ export class CSelect {
       itemId = item.value.replace(/[^a-zA-Z0-9-_]/g, '');
     }
 
-    itemId = `item_${itemId}`;
+    itemId = `item_${this._id}--${itemId}`;
+
+    const a11y = {
+      role: 'option',
+      'aria-posinset': (index + 1).toString(),
+      'aria-setsize': this.items.length.toString(),
+    };
+
+    if (isActive) {
+      a11y['aria-selected'] = 'true';
+    }
 
     return (
       <li
+        {...a11y}
         id={itemId}
         ref={(el) =>
           this._itemRefs.push({ value: item.value, ref: el as HTMLElement })
         }
-        onClick={(event) => this._select(event, item)}
         class={classes}
+        onClick={(event) => this._select(event, item)}
       >
         {item.name}
       </li>
@@ -392,12 +449,17 @@ export class CSelect {
     return (
       <div class="c-input-menu__input" onClick={() => this._showMenu()}>
         <input
+          aria-controls={'results_' + this._id}
+          aria-readonly="true"
+          aria-haspopup="listbox"
+          id={this._inputId}
           ref={(el) => (this._inputElement = el as HTMLInputElement)}
+          autocomplete="off"
+          class="c-input__input"
           type="text"
           value={this._getLabel() ?? null}
           name={this.name ?? null}
-          onClick={() => this._showMenu()}
-          readonly
+          readonly="true"
         />
       </div>
     );
@@ -410,20 +472,52 @@ export class CSelect {
           'c-input-menu__item-wrapper': true,
           'c-input-menu__item-wrapper--shadow': this.shadow,
         }}
-        aria-expanded={this.menuVisible}
       >
-        <div
+        <ul
+          id={'results_' + this._id}
+          aria-activedescendant={this.activeListItemId}
+          aria-expanded={this.menuVisible.toString()}
           style={style}
+          title={this.label || this.placeholder}
           class={
             this.menuVisible
               ? 'c-input-menu__items'
               : 'c-input-menu__items c-input-menu__items--hidden'
           }
+          role="listbox"
+          ref={(el) => (this._listElement = el as HTMLUListElement)}
         >
-          {this.items.map((item) => this._getListItem(item))}
-        </div>
+          {this.items.map((item, index) => this._getListItem(item, index))}
+        </ul>
       </div>
     );
+  }
+
+  private _updateStatusText() {
+    // this.statusText = '';
+
+    if (this._debounce !== null) {
+      clearTimeout(this._debounce);
+      this._debounce = null;
+    }
+
+    this._debounce = window.setTimeout(() => {
+      const ending = !!this.items.length
+        ? ', to navigate use up and down arrows'
+        : '';
+
+      const selection = this.host.shadowRoot.querySelector(
+        'li[aria-selected="true"]',
+      );
+
+      const selectionText = !!selection
+        ? `${selection.innerHTML} ${selection.ariaPosInSet} of ${selection.ariaSetSize} is highlighted`
+        : null;
+
+      this.statusText = `${selectionText || ending}`;
+
+      this._debounce = null;
+    }, 1400);
   }
 
   render() {
@@ -444,12 +538,22 @@ export class CSelect {
       <Host
         ref={(el) => registerClickOutside(this, el, () => this._hideMenu())}
       >
+        <div
+          id={'announce-' + this._id}
+          class="visuallyhidden"
+          aria-live="polite"
+          aria-atomic="true"
+        >
+          {this.statusText}
+        </div>
+
         <c-input
           autofocus={this.autofocus}
           disabled={this.disabled}
           hide-details={this.hideDetails}
           hint={this.hint}
           id={this.hostId}
+          input-id={this._inputId}
           label={this.label}
           name={this.name}
           placeholder={this.placeholder}
@@ -463,14 +567,16 @@ export class CSelect {
         >
           <slot name="pre" slot="pre"></slot>
 
-          {this._renderInputElement()}
-
-          {this._renderMenu(itemsPerPageStyle)}
-
-          {this._renderChevron()}
+          <div class="c-input__content">
+            {this._renderInputElement()}
+            {this._renderMenu(itemsPerPageStyle)}
+            {this._renderChevron()}
+          </div>
 
           <slot name="post" slot="post"></slot>
         </c-input>
+
+        <slot></slot>
       </Host>
     );
   }

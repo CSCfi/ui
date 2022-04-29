@@ -1,19 +1,31 @@
 :host {
-  cursor: pointer;
-  display: block;
-  color: #595959;
-  font-weight: 450;
-  /*height: 46px;*/
-  line-height: 46px;
-  padding-left: 42px;
-  user-select: none;
-  transition: background-color 0.2s ease-in;
-  display: flex;
   align-items: center;
   background-color: transparent;
   border-radius: 4px;
-  margin: 4px;
+  color: #595959;
+  cursor: pointer;
+  display: block;
+  display: flex;
+  font-weight: 400;
+  line-height: 46px;
+  margin: 4px 8px;
+  overflow: hidden;
+  padding-left: 38px;
   position: relative;
+  transition: background-color 0.2s ease-in;
+  user-select: none;
+}
+
+:host > div::before {
+  background-color: var(--csc-primary);
+  content: '';
+  height: 100%;
+  left: 0;
+  position: absolute;
+  top: 0;
+  transform: translateZ(0) translateX(-8px);
+  transition: transform 0.2s ease-in-out;
+  width: 8px;
 }
 
 :host(:hover) {
@@ -22,7 +34,11 @@
 }
 
 :host(.active) {
-  background-color: #f0f6f7;
+  background-color: #ffffff;
+}
+
+:host(.active) > div::before {
+  transform: translateZ(0) translateX(0);
 }
 
 ::slotted(span) {
@@ -38,4 +54,16 @@
 :host(:focus-visible) {
   outline: 2px var(--csc-primary) solid;
   outline-offset: 0;
+}
+
+.visuallyhidden {
+  border: 0;
+  clip: rect(0 0 0 0);
+  height: 1px;
+  margin: -1px;
+  overflow: hidden;
+  padding: 0;
+  position: absolute;
+  white-space: nowrap;
+  width: 1px;
 }

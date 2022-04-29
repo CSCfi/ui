@@ -1,6 +1,5 @@
 import {
   Component,
-  Host,
   h,
   Prop,
   Event,
@@ -12,7 +11,7 @@ import { mdiChevronLeft, mdiChevronRight, mdiDotsHorizontal } from '@mdi/js';
 import { CPaginationOptions } from '../../types';
 
 /**
- * @group Content Selectors
+ * @group Navigation
  */
 
 @Component({
@@ -44,16 +43,21 @@ export class CPagination {
   @Prop() size: 'default' | 'small' = 'default';
 
   @State() private _currentPage;
+
   @State() private _itemsPerPage;
+
   @State() private _totalVisible;
+
   /**
    * Triggered when values are changed
    */
   @Event() changeValue: EventEmitter<CPaginationOptions>;
+
   /**
    * Hide range indicator
    */
-  @Prop() hideRange: boolean = false;
+  @Prop() hideRange = false;
+
   /**
    * Items per page options
    */
@@ -76,7 +80,7 @@ export class CPagination {
       return false;
     }
 
-    for (let key of keys1) {
+    for (const key of keys1) {
       if (options1[key] !== options2[key]) {
         return false;
       }
@@ -99,7 +103,7 @@ export class CPagination {
     this.changeValue.emit(this.value);
   }
 
-  private _buttons: any = [];
+  private _buttons: HTMLLIElement[] = [];
 
   private _valueChangeHandler() {
     this.value.currentPage = this._currentPage;
@@ -160,43 +164,71 @@ export class CPagination {
 
   private _getArrowLeft(size) {
     return (
-      <c-icon-button
-        disabled={this.value.currentPage <= 1}
-        size={size}
-        text
-        onClick={this._decreasePageNumber}
-      >
-        <svg width="24" height="24" viewBox="0 0 24 24">
-          <path d={mdiChevronLeft} />
-        </svg>
-      </c-icon-button>
+      <li>
+        <c-icon-button
+          aria-disabled={this.value.currentPage <= 1 ? 'true' : 'false'}
+          aria-label="previous page"
+          disabled={this.value.currentPage <= 1}
+          size={size}
+          text
+          onClick={this._decreasePageNumber}
+        >
+          <span class="visuallyhidden">
+            Previous
+            <span>page</span>
+          </span>
+          <svg width="24" height="24" viewBox="0 0 24 24">
+            <path d={mdiChevronLeft} />
+          </svg>
+        </c-icon-button>
+      </li>
     );
   }
 
   private _getArrowRight(size) {
     return (
-      <c-icon-button
-        disabled={this.value.currentPage >= this._getTotalPages()}
-        size={size}
-        text
-        onClick={this._increasePageNumber}
-      >
-        <svg width="24" height="24" viewBox="0 0 24 24">
-          <path d={mdiChevronRight} />
-        </svg>
-      </c-icon-button>
+      <li>
+        <c-icon-button
+          aria-disabled={
+            this.value.currentPage >= this._getTotalPages() ? 'true' : 'false'
+          }
+          aria-label="next page"
+          disabled={this.value.currentPage >= this._getTotalPages()}
+          size={size}
+          text
+          onClick={this._increasePageNumber}
+        >
+          <span class="visuallyhidden">
+            Next
+            <span>page</span>
+          </span>
+          <svg width="24" height="24" viewBox="0 0 24 24">
+            <path d={mdiChevronRight} />
+          </svg>
+        </c-icon-button>
+      </li>
     );
   }
 
   private _button(number, size) {
+    const params = {
+      text: this._currentPage !== number,
+      onClick: () => this._setPage(number),
+      size,
+    };
+
+    if (this._currentPage === number) {
+      params['aria-current'] = 'page';
+    }
+
     return (
-      <c-icon-button
-        size={size}
-        text={this._currentPage !== number}
-        onClick={() => this._setPage(number)}
-      >
-        <span>{number}</span>
-      </c-icon-button>
+      <li>
+        <c-icon-button {...params}>
+          <span class="visuallyhidden">page </span>
+          {number}
+          <span class="visuallyhidden">of {this._getTotalPages()}</span>
+        </c-icon-button>
+      </li>
     );
   }
 
@@ -206,11 +238,20 @@ export class CPagination {
 
   private _addSeparator(size) {
     this._buttons.push(
-      <c-icon-button size={size} text disabled>
-        <svg width="16" height="16" viewBox="0 0 24 24">
-          <path d={mdiDotsHorizontal} />
-        </svg>
-      </c-icon-button>,
+      <li>
+        <c-icon-button
+          aria-disabled="true"
+          size={size}
+          tabindex="-1"
+          role="separator"
+          disabled
+          text
+        >
+          <svg width="16" height="16" viewBox="0 0 24 24">
+            <path d={mdiDotsHorizontal} />
+          </svg>
+        </c-icon-button>
+      </li>,
     );
   }
 
@@ -269,39 +310,27 @@ export class CPagination {
     const classes = {
       'c-pagination': true,
       'c-pagination--small': this.size === 'small',
+      'c-pagination--simple': this.simple,
     };
 
     const buttonsize = this.size === 'small' ? 'x-small' : 'small';
 
     return (
-      <Host class={classes}>
-        <c-row align="center" no-wrap={this.simple} gap={4}>
-          {!this.hideDetails && (
-            <c-row
-              align="center"
-              justify="center"
-              style={{ flex: 'auto' }}
-              nowrap
-            >
-              {this._getItemsPerPage()}
-              <c-spacer></c-spacer>
-              <span class={!this.simple && 'range'}>{this._getRange()}</span>
-            </c-row>
-          )}
-          <c-row
-            align="center"
-            justify={!this.simple ? 'center' : 'end'}
-            gap={this.size === 'small' ? 2 : 4}
-            style={{ flex: '1' }}
-            class="c-pagination__buttons"
-            nowrap
-          >
-            {this._getArrowLeft(buttonsize)}
-            {!this.simple && this._getPageButtons(buttonsize)}
-            {this._getArrowRight(buttonsize)}
-          </c-row>
-        </c-row>
-      </Host>
+      <nav class={classes} role="navigation" aria-label="pagination">
+        {!this.hideDetails && (
+          <div class="c-pagination__details">
+            {this._getItemsPerPage()}
+
+            <span class={{ range: !this.simple }}>{this._getRange()}</span>
+          </div>
+        )}
+
+        <ul>
+          {this._getArrowLeft(buttonsize)}
+          {!this.simple && this._getPageButtons(buttonsize)}
+          {this._getArrowRight(buttonsize)}
+        </ul>
+      </nav>
     );
   }
 }

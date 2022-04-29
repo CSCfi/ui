@@ -39,22 +39,22 @@ export class CCheckbox {
   /**
    * Element label
    */
-  @Prop() label: string = '';
+  @Prop() label = '';
 
   /**
    * Set the validíty of the input
    */
-  @Prop() valid: boolean = true;
+  @Prop() valid = true;
 
   /**
    * Custom validation message
    */
-  @Prop() validation: string = 'Required field';
+  @Prop() validation = 'Required field';
 
   /**
    * Is the element checked
    */
-  @Prop({ mutable: true }) value: boolean = false;
+  @Prop({ mutable: true }) value = false;
 
   /**
    * Triggered when element is checked or unchecked
@@ -87,7 +87,7 @@ export class CCheckbox {
 
   @Listen('keydown', { passive: true })
   handleKeyDown(event: KeyboardEvent) {
-    if (['Space', 'Enter'].includes(event.code)) {
+    if (['Space'].includes(event.code)) {
       event.preventDefault();
       this.toggleState(event);
     }
@@ -157,31 +157,33 @@ export class CCheckbox {
 
     return (
       <Host>
-        <label
-          id="c-checkbox-label"
-          class={wrapperClasses}
-          tabindex={this.disabled ? -1 : 0}
-        >
+        <div class={wrapperClasses}>
           <input
+            class="visuallyhidden"
+            id="checkbox"
             type="checkbox"
-            aria-checked={this.value}
-            aria-disabled={this.disabled}
-            aria-labelledby="c-checkbox-label"
+            aria-checked={this.value.toString()}
+            aria-disabled={this.disabled.toString()}
             checked={this.value}
             disabled={this.disabled}
-            tabindex="-1"
             onChange={(event) => this.toggleState(event)}
           />
-          <div
-            class="ripple"
-            ref={(el) => (this._container = el as HTMLDivElement)}
-          >
-            <span class="checkmark"></span>
-          </div>
-          <div class="c-checkbox__label">
-            {!!this.label ? this.label : <slot></slot>}
-          </div>
-        </label>
+
+          <label class="c-checkbox__label" htmlFor="checkbox">
+            <div
+              class="ripple"
+              ref={(el) => (this._container = el as HTMLDivElement)}
+            >
+              <svg viewBox="0 0 100 100">
+                <path class="path" d="M12.1 52.1l24.4 24.4 53-53" />
+              </svg>
+            </div>
+
+            <div class="c-checkbox__label-content">
+              {!!this.label ? this.label : <slot></slot>}
+            </div>
+          </label>
+        </div>
 
         {this._renderMessages()}
       </Host>

@@ -1,5 +1,13 @@
-import { Component, h, Listen, Prop, State } from '@stencil/core';
-import Swiper, { Navigation, SwiperOptions } from 'swiper';
+import {
+  Component,
+  Event,
+  EventEmitter,
+  h,
+  Listen,
+  Prop,
+  State,
+} from '@stencil/core';
+import { Swiper, Navigation, SwiperOptions } from 'swiper';
 import { mdiChevronLeft, mdiChevronRight } from '@mdi/js';
 
 /**
@@ -18,11 +26,20 @@ export class CSwiper {
   @Prop({ reflect: true, mutable: true }) value: number | string;
 
   @State() isBeginning = true;
+
   @State() isEnd = false;
 
+  /**
+   * Emit value change to the parent
+   */
+  @Event() changeValue: EventEmitter<number | string>;
+
   private _container?: HTMLDivElement;
+
   private _wrapper?: HTMLDivElement;
-  private _swiper: any;
+
+  private _swiper: Swiper;
+
   private _options: SwiperOptions;
 
   @Listen('changeValue')
@@ -39,6 +56,40 @@ export class CSwiper {
     const index = (event.target as HTMLCSwiperTabElement).dataset.index;
 
     this._slideToTab(index);
+  }
+
+  @Listen('keyup', { capture: true })
+  handleKeyUp(ev: KeyboardEvent) {
+    const isArrowLeft = ev.key === 'ArrowLeft';
+    const isArrowRight = ev.key === 'ArrowRight';
+    const isBeginning = +this.value === 1;
+    const isEnd = +this.value === this.slotItems.length;
+
+    if (!isArrowRight && !isArrowLeft) return;
+
+    if (isArrowLeft) {
+      this.value = (
+        isBeginning ? this.slotItems.length : +this.value - 1
+      ).toString();
+    }
+
+    if (isArrowRight) {
+      this.value = (isEnd ? 1 : +this.value + 1).toString();
+    }
+
+    this._slideToTab(+this.value - 1);
+
+    this.slotItems.forEach((child) => {
+      const isActive = child.value === this.value;
+
+      child.active = isActive;
+
+      if (isActive) {
+        child.focus();
+      }
+    });
+
+    this.changeValue.emit(this.value);
   }
 
   get slotItems() {
@@ -58,7 +109,7 @@ export class CSwiper {
       speed: 300,
       slideToClickedSlide: true,
       slidesPerView: 1,
-      spaceBetween: 16,
+      spaceBetween: 8,
       threshold: 4,
       breakpoints: {
         480: {
@@ -87,6 +138,8 @@ export class CSwiper {
       slide.setAttribute('data-index', index.toString());
       slide.value = slide.value ?? index;
       slide.active = this.value === slide.value;
+      slide.position = index + 1;
+      slide.setsize = this.slotItems.length;
     }
 
     this._swiper = new Swiper(this._container, {
@@ -111,29 +164,43 @@ export class CSwiper {
           ref={(el) => (this._container = el as HTMLDivElement)}
         >
           <div
+            role="tablist"
             class="swiper-wrapper"
             ref={(el) => (this._wrapper = el as HTMLDivElement)}
           >
-            <slot />
+            <slot></slot>
           </div>
 
           <div class="c-swiper__navigation">
             <c-icon-button
+              aria-disabled={this.isBeginning ? 'true' : 'false'}
+              aria-label="previous page"
               class="c-icon-button--prev"
               disabled={this.isBeginning}
               size="small"
               ghost
             >
+              <span class="visuallyhidden">
+                Previous
+                <span>page</span>
+              </span>
               <svg width="24" height="24" viewBox="0 0 24 24">
                 <path d={mdiChevronLeft} />
               </svg>
             </c-icon-button>
+
             <c-icon-button
+              aria-disabled={this.isEnd ? 'true' : 'false'}
+              aria-label="next page"
               class="c-icon-button--next"
               disabled={this.isEnd}
               size="small"
               ghost
             >
+              <span class="visuallyhidden">
+                Next
+                <span>page</span>
+              </span>
               <svg width="24" height="24" viewBox="0 0 24 24">
                 <path d={mdiChevronRight} />
               </svg>

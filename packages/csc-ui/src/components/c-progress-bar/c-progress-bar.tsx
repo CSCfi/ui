@@ -35,24 +35,45 @@ export class CProgressBar {
   }
 
   render() {
+    const value = this._getSafeValue();
+
     const style = {
-      '--value': `${this._getSafeValue()}%`,
+      '--value': `${value}%`,
       '--bar-color': this.color ? this.color : null,
     };
+
     const classes = {
       'c-progress': true,
       'c-progress--indeterminate': this.indeterminate,
     };
 
+    const a11y = {
+      'aria-busy': (!this.indeterminate).toString(),
+    };
+
+    const params: {
+      role: string;
+      max: string;
+      value?: string;
+      'aria-valuenow'?: string;
+    } = {
+      role: 'progressbar',
+      max: '100',
+    };
+
+    if (!this.indeterminate) {
+      params.value = value.toString();
+      params['aria-valuenow'] = value.toString();
+    }
+
     return (
-      <Host>
-        <div class={classes} style={style}>
-          <div class="c-progress__bar"></div>
-        </div>
-        {this.indeterminate ? (
-          ''
-        ) : (
-          <div class="c-progress__percentage">{this._getSafeValue()} %</div>
+      <Host {...a11y}>
+        <label class={classes} style={style}>
+          <progress {...params}>{!this.indeterminate && `${value}%`}</progress>
+        </label>
+
+        {!this.indeterminate && (
+          <div class="c-progress__percentage">{value} %</div>
         )}
       </Host>
     );

@@ -16,6 +16,7 @@
 | `hostId`   | `id`        | Id of the button                                                                                                                         | `string`                                   | `undefined` |
 | `href`     | `href`      | Hyperlink url                                                                                                                            | `string`                                   | `undefined` |
 | `icon`     | `icon`      | <span style="color:red">**[DEPRECATED]**</span> Please use the icon slot instead<br/><br/>Name of the icon to be displayed in the button | `"account" \| "edit" \| "minus" \| "plus"` | `undefined` |
+| `inverted` | `inverted`  | Inverted button style for dark backgrounds                                                                                               | `boolean`                                  | `false`     |
 | `loading`  | `loading`   | Display loader on the button                                                                                                             | `boolean`                                  | `false`     |
 | `noRadius` | `no-radius` | Remove the default border radius                                                                                                         | `boolean`                                  | `false`     |
 | `outlined` | `outlined`  | Outlined button style                                                                                                                    | `boolean`                                  | `false`     |
@@ -23,7 +24,7 @@
 | `target`   | `target`    | Hyperlink target                                                                                                                         | `string`                                   | `'_blank'`  |
 | `text`     | `text`      | Transparent button background                                                                                                            | `boolean`                                  | `false`     |
 | `type`     | `type`      | Button type                                                                                                                              | `"button" \| "submit"`                     | `'button'`  |
-| `value`    | `value`     | Value for the button - for use in the c-content-switcher                                                                                 | `number \| string`                         | `undefined` |
+| `value`    | `value`     | Value for the button - for use in the c-tab-buttons                                                                                      | `number \| string`                         | `undefined` |
 
 
 ## Events

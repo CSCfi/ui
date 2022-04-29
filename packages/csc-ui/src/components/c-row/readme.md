@@ -27,15 +27,11 @@
 ### Used by
 
  - [c-consent](../c-consent)
- - [c-pagination](../c-pagination)
- - [c-sidenavigationitem](../c-sidenavigationitem)
 
 ### Graph
 ```mermaid
 graph TD;
   c-consent --> c-row
-  c-pagination --> c-row
-  c-sidenavigationitem --> c-row
   style c-row fill:#f9f,stroke:#333,stroke-width:4px
 ```
 

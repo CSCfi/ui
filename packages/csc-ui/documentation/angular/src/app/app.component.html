@@ -3,7 +3,14 @@
     <c-csc-logo></c-csc-logo>
     CSC Design System
     <c-spacer></c-spacer>
-    <c-tag [active]="true" *ngIf="!(isMobile$ | async)">v {{ versionService.version }}</c-tag>
+    <c-tag
+      [ariaLabel]="'Version ' + versionService.versionLabel"
+      [active]="true"
+      *ngIf="!(isMobile$ | async)"
+      flat
+    >
+      v {{ versionService.version }}
+    </c-tag>
     <c-navigationbutton *ngIf="isMobile$ | async"></c-navigationbutton>
   </c-toolbar>
 
@@ -81,11 +88,11 @@
         </div>
       </c-sidenavigationitem>
 
-      <p class="text-white border-bottom mt-4">Components</p>
+      <p class="text-white border-bottom mt-4 mb-3">Components</p>
 
       <c-text-field
-        class="my-4 me-4"
         placeholder="Search for a component"
+        style="margin-right: 24px"
         hide-details
         shadow
         cControl
@@ -98,7 +105,9 @@
         *ngFor="let group of groupedComponents | menuGroups"
         [active]="group.visible"
       >
-        <div slot="main" class="text-capitalize">{{ group.name }}</div>
+        <div slot="main" class="text-capitalize">
+          {{ group.name }}
+        </div>
         <div slot="subnavitem">
           <c-subnavigationitem
             *ngFor="let item of group.components"

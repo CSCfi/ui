@@ -21,14 +21,41 @@ export class CTag {
   @Prop() fit = false;
 
   /**
+   * Remove the hover effect
+   */
+  @Prop() flat = false;
+
+  /**
    * Mark tag as closeable
    */
   @Prop() closeable = false;
 
   render() {
+    const classes = {
+      'c-tag': true,
+      active: this.active,
+      flat: this.flat,
+    };
+
+    const hostClasses = {
+      fit: this.fit,
+      flat: this.flat,
+    };
+
+    const hostParams: {
+      tabindex: number;
+      role?: string;
+    } = {
+      tabindex: 0,
+    };
+
+    if (!this.flat) {
+      hostParams.role = 'button';
+    }
+
     return (
-      <Host tabindex="0" role="button" class={this.fit ? 'fit' : ''}>
-        <div class={this.active ? 'c-tag active' : 'c-tag'}>
+      <Host tabindex="0" {...hostParams} class={hostClasses}>
+        <div class={classes}>
           <div class="row">
             <slot></slot>
             {this.closeable ? (

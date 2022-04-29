@@ -2,15 +2,6 @@ import { Component, OnInit } from '@angular/core';
 import { CAutocompleteItem } from '../../../../../../dist/types/types';
 import countries from '../countries.json';
 
-const camelize = (str) => {
-  return str
-    .replace(/(?:^\w|[A-Z]|\b\w)/g, (word, index) => {
-      return index === 0 ? word.toLowerCase() : word.toUpperCase();
-    })
-    .replace(/\s+/g, '')
-    .replace(/([-.])/g, '');
-};
-
 @Component({
   selector: 'app-c-autocomplete',
   templateUrl: './c-autocomplete.component.html',
@@ -19,16 +10,21 @@ const camelize = (str) => {
 export class CAutocompleteComponent implements OnInit {
   examples = {
     default: `<c-autocomplete
-  label="Countries"
-  cControl
-  [items]="filteredItems"
-  [query]="query"
-  (changeQuery)="changeQuery($event)"
-  [itemsPerPage]="10"
   [(ngModel)]="value"
-></c-autocomplete>
+  [items]="filteredItems"
+  [itemsPerPage]="10"
+  [query]="query"
+  id="listOfCountries"
+  label="Countries"
+  style="flex: 1"
+  hide-details
+  cControl
+  (changeQuery)="changeQuery($event)"
+>
+  <i class="mdi mdi-earth" slot="pre"></i>
+</c-autocomplete>
 
-<c-button [disabled]="!value" (click)="addTag()">Add</c-button>
+<c-button (click)="addTag()" (keyup.enter)="addTag()">Add</c-button>
 
 <c-tag
   *ngFor="let tag of addedTags; let i = index"
@@ -41,31 +37,31 @@ export class CAutocompleteComponent implements OnInit {
 
     returnValue: `<c-row gap="8">
     <c-autocomplete
-      [(ngModel)]="valueValue"
+      [(ngModel)]="value"
       [items]="filteredItems"
-      [query]="query"
-      (changeQuery)="changeQuery($event)"
       [itemsPerPage]="10"
+      [query]="query"
       label="Countries"
       return-value
       hide-details
       cControl
+      (changeQuery)="changeQuery($event)"
     ></c-autocomplete>
 
-    <c-button [disabled]="!valueValue" (click)="addValueTag()">Add</c-button>
+    <c-button (click)="addTag()" (keyup.enter)="addTag()">Add</c-button>
   </c-row>
 
   <p style="margin: 16px 0 0">
     Added values:
-    <c-tag>{{ addedValueTags.length }}</c-tag>
+    <c-tag>{{ addedTags.length }}</c-tag>
   </p>
 
   <ul>
-    <li *ngFor="let tag of addedValueTags">
+    <li *ngFor="let tag of addedTags">
       {{ tag }}
     </li>
 
-    <li *ngIf="!addedValueTags.length">No added values</li>
+    <li *ngIf="!addedTags.length">No added values</li>
   </ul>`,
   };
 
@@ -74,16 +70,16 @@ export class CAutocompleteComponent implements OnInit {
 value = null;
 items = [
   {
-    value: 'Afganistan',
-    name: 'afganistan',
+    name: 'Afganistan',
+    value: 'AF',
   },
   {
-    value: 'Aland Islands',
-    name: 'alandIslands',
+    name: 'Aland Islands',
+    value: 'AX',
   },
   {
-    value: 'Albania',
-    name: 'albania',
+    name: 'Albania',
+    value: 'AL',
   },
   ...
 ];
@@ -103,47 +99,6 @@ changeQuery(event) {
 
 addTag() {
   if (!!this.value) this.addedTags.push(this.value);
-}
-
-removeTag(index) {
-  this.addedTags.splice(index, 1);
-}`,
-    returnValue: `query: string | number;
-
-value: string = '';
-
-items: CAutocompleteItem[] = [
-  {
-    value: 'Afganistan',
-    name: 'afganistan',
-  },
-  {
-    value: 'Aland Islands',
-    name: 'alandIslands',
-  },
-  {
-    value: 'Albania',
-    name: 'albania',
-  },
-  ...
-];
-
-addedTags: string[] = [];
-
-get filteredItems() {
-  if (!this.query) return this.items;
-
-  return this.items
-    .filter((i) => i.name?.toLowerCase()
-    .includes(this.query?.toLowerCase()));
-}
-
-changeQuery(event) {
-  this.query = event.detail;
-}
-
-addTag() {
-  if (!!this.value) this.addedTags.push(this.value);
 
   this.value = null;
   this.query = null;
@@ -151,19 +106,18 @@ addTag() {
 
 removeTag(index) {
   this.addedTags.splice(index, 1);
-}
-    `,
+}`,
   };
   query: any;
+  valueQuery: any;
   value = null;
   valueValue: string = '';
   items: CAutocompleteItem[] = Object.keys(countries)
-    .map((key) => countries[key].english)
-    .sort()
-    .map((item) => ({
-      value: camelize(item),
-      name: item,
-    }));
+    .map((key) => ({
+      value: key,
+      name: countries[key],
+    }))
+    .sort((a, b) => a.name.localeCompare(b.name));
 
   addedTags: CAutocompleteItem[] = [];
   addedValueTags: string[] = [];
@@ -173,22 +127,31 @@ removeTag(index) {
     return this.items.filter((i) => i.name?.toLowerCase().includes(this.query?.toLowerCase()));
   }
 
+  get filteredItems2() {
+    if (!this.valueQuery) return this.items;
+    return this.items.filter((i) => i.name?.toLowerCase().includes(this.valueQuery?.toLowerCase()));
+  }
+
   changeQuery(event) {
     this.query = event.detail;
   }
 
+  changeQuery2(event) {
+    this.valueQuery = event.detail;
+  }
+
   addTag() {
     if (!!this.value) this.addedTags.push(this.value);
+
+    this.value = null;
+    this.query = null;
   }
 
   addValueTag() {
     if (!!this.valueValue) this.addedValueTags.push(this.valueValue);
 
     this.valueValue = null;
-
-    // TODO:  Triggers change in the component only once!!!!!
-    // TODO:  should we use value and forget the query?
-    this.query = null;
+    this.valueQuery = null;
   }
 
   removeTag(index) {

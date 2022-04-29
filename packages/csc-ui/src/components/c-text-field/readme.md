@@ -11,7 +11,6 @@
 | ---------------- | ------------------ | ------------------------------------------------------------------------------------------------ | --------- | ------------------ |
 | `autofocus`      | `autofocus`        | Auto focus the input                                                                             | `boolean` | `false`            |
 | `disabled`       | `disabled`         | Disable the input                                                                                | `boolean` | `false`            |
-| `form`           | `form`             | Render a hidden input outside the shadow dom                                                     | `boolean` | `false`            |
 | `hideDetails`    | `hide-details`     | Hide the hint and error messages                                                                 | `boolean` | `false`            |
 | `hint`           | `hint`             | Hint text for the input                                                                          | `string`  | `''`               |
 | `hostId`         | `id`               | Id of the input                                                                                  | `string`  | `undefined`        |

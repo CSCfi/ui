@@ -1,7 +1,13 @@
-<app-example title="Usage" flex>
-  <c-tag>One</c-tag>
-  <c-tag active>Two</c-tag>
-  <c-tag>Three</c-tag>
+<app-example title="Usage" flex [raw]="template" [script]="script">
+  <c-tag [active]="active[0]" (click)="toggleActive(0)">One</c-tag>
+  <c-tag [active]="active[1]" (click)="toggleActive(1)">Two</c-tag>
+  <c-tag [active]="active[2]" (click)="toggleActive(2)">Three</c-tag>
+</app-example>
+
+<app-example title="Flat" subtitle="Use when there is no interaction with the user" flex>
+  <c-tag flat>One</c-tag>
+  <c-tag flat>Two</c-tag>
+  <c-tag flat>Three</c-tag>
 </app-example>
 
 <app-example title="Closeable" flex>

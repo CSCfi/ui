@@ -1,5 +1,6 @@
 import {
   Component,
+  Element,
   Event,
   EventEmitter,
   h,
@@ -8,6 +9,7 @@ import {
   Prop,
 } from '@stencil/core';
 import { createRipple } from '../../utils/utils';
+
 /**
  * @group Tabs
  * @parent c-tabs
@@ -19,6 +21,8 @@ import { createRipple } from '../../utils/utils';
   shadow: true,
 })
 export class CTab {
+  @Element() element: HTMLCTabElement;
+
   /**
    * Mark tab as active
    */
@@ -35,6 +39,18 @@ export class CTab {
   @Prop({ attribute: 'id' }) hostId: string;
 
   /**
+   * Position in the set
+   * @private
+   */
+  @Prop() position: number;
+
+  /**
+   * Size of the set
+   * @private
+   */
+  @Prop() setsize: number;
+
+  /**
    * Value for the tab
    * - for use in c-tabs
    */
@@ -47,12 +63,10 @@ export class CTab {
    */
   @Event() tabChange: EventEmitter;
 
-  private _container?: HTMLDivElement;
-
   private _onClick = (event, center = false) => {
     if (this.disabled) return;
 
-    createRipple(event, this._container, center);
+    createRipple(event, this.element, center);
 
     this.tabChange.emit(this.value);
   };
@@ -73,20 +87,19 @@ export class CTab {
       'c-tab--disabled': this.disabled,
     };
 
+    const a11y = {
+      'aria-disabled': this.disabled.toString(),
+      'aria-hidden': this.disabled.toString(),
+      'aria-selected': this.active.toString(),
+      'aria-setsize': this.setsize,
+      'aria-posinset': this.position,
+      role: 'tab',
+      tabindex: this.active && !this.disabled ? 0 : -1,
+    };
+
     return (
-      <Host
-        tabindex={this.disabled ? -1 : 0}
-        role="button"
-        aria-disabled={this.disabled ? 'true' : 'false'}
-      >
-        <div
-          id={this.hostId}
-          class={classes}
-          onClick={this._onClick}
-          ref={(el) => (this._container = el as HTMLDivElement)}
-        >
-          <slot></slot>
-        </div>
+      <Host {...a11y} id={this.hostId} class={classes} onClick={this._onClick}>
+        <slot></slot>
       </Host>
     );
   }
