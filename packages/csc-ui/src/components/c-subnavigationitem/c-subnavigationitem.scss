@@ -16,6 +16,11 @@
   user-select: none;
 }
 
+:host > div {
+  display: flex;
+  align-items: center;
+}
+
 :host > div::before {
   background-color: var(--csc-primary);
   content: '';
