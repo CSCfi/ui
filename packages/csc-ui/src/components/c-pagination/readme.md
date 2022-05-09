@@ -26,6 +26,10 @@
 
 ## Dependencies
 
+### Used by
+
+ - [c-data-table](../c-data-table)
+
 ### Depends on
 
 - [c-menu](../c-menu)
@@ -36,6 +40,7 @@
 graph TD;
   c-pagination --> c-menu
   c-pagination --> c-icon-button
+  c-data-table --> c-pagination
   style c-pagination fill:#f9f,stroke:#333,stroke-width:4px
 ```
 

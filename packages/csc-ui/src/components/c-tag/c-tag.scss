@@ -1,8 +1,10 @@
 :host {
+  --c-tag-margin: 2px;
+
   display: inline-block;
   cursor: pointer;
   user-select: none;
-  margin: 2px;
+  margin: var(--c-tag-margin);
 }
 
 :host(.fit) {

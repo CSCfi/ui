@@ -15,6 +15,11 @@ export class CProgressBar {
   @Prop() value = 0;
 
   /**
+   * Hide the percentage display
+   */
+  @Prop() hideDetails = false;
+
+  /**
    * Color of the bar (valid css color)
    *
    * @default var(--csc-primary)
@@ -49,6 +54,7 @@ export class CProgressBar {
 
     const a11y = {
       'aria-busy': (!this.indeterminate).toString(),
+      title: `${value} %`,
     };
 
     const params: {
@@ -72,7 +78,7 @@ export class CProgressBar {
           <progress {...params}>{!this.indeterminate && `${value}%`}</progress>
         </label>
 
-        {!this.indeterminate && (
+        {!this.indeterminate && !this.hideDetails && (
           <div class="c-progress__percentage">{value} %</div>
         )}
       </Host>

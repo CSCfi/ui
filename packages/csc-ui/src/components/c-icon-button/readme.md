@@ -14,6 +14,7 @@
 | `ghost`    | `ghost`    | Ghost variant of the button         | `boolean`                           | `false`     |
 | `inverted` | `inverted` | Inverted color for dark backgrounds | `boolean`                           | `false`     |
 | `outlined` | `outlined` | Outlined variant of the button      | `boolean`                           | `false`     |
+| `path`     | `path`     | Path for the svg icon               | `string`                            | `null`      |
 | `size`     | `size`     | Size of the button                  | `"default" \| "small" \| "x-small"` | `'default'` |
 | `text`     | `text`     | Text variant of the button          | `boolean`                           | `false`     |
 

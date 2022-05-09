@@ -32,6 +32,11 @@ export class CIconButton {
   @Prop() outlined = false;
 
   /**
+   * Path for the svg icon
+   */
+  @Prop() path: string = null;
+
+  /**
    * Ghost variant of the button
    */
   @Prop() ghost = false;
@@ -76,7 +81,13 @@ export class CIconButton {
           class="inner-container"
           ref={(el) => (this._container = el as HTMLDivElement)}
         >
-          <slot></slot>
+          <slot>
+            {this.path && (
+              <svg width="24" height="24" viewBox="0 0 24 24">
+                <path d={this.path} />
+              </svg>
+            )}
+          </slot>
         </div>
         {this.badge && this._renderBadge()}
       </button>

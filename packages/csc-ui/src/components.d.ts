@@ -5,7 +5,7 @@
  * It contains typing information for all components that exist in this project.
  */
 import { HTMLStencilElement, JSXBase } from "@stencil/core/internal";
-import { CAutocompleteItem, CPaginationOptions, CRadioGroupItem, CSelectItem } from "./types";
+import { CAutocompleteItem, CDataTableData, CDataTableFooterOptions, CDataTableHeader, CPaginationOptions, CRadioGroupItem, CSelectItem } from "./types";
 import { CardBackground } from "./components/c-card/c-card";
 import { CLoginCardBlendMode } from "./components/c-login-card/c-login-card";
 export namespace Components {
@@ -279,6 +279,52 @@ export namespace Components {
          */
         "width": number;
     }
+    interface CDataTable {
+        /**
+          * Data of the table
+         */
+        "data": CDataTableData[];
+        /**
+          * Externally sorted and paginated data
+         */
+        "externalData": boolean;
+        /**
+          * Items per page options
+         */
+        "footerOptions": CDataTableFooterOptions;
+        /**
+          * Headers of the table
+         */
+        "headers": CDataTableHeader[];
+        /**
+          * Add hover effect to the table rows
+         */
+        "hoverable": boolean;
+        /**
+          * Show a loader on top of the table
+         */
+        "loading": boolean;
+        /**
+          * Pagination options
+         */
+        "pagination": CPaginationOptions;
+        /**
+          * Make rows selectable
+         */
+        "selectable": boolean;
+        /**
+          * Property used in selections
+         */
+        "selectionProperty": string;
+        /**
+          * Sort data by
+         */
+        "sortBy": any;
+        /**
+          * Sorting direction
+         */
+        "sortDirection": 'asc' | 'desc' | null;
+    }
     interface CFlex {
     }
     interface CIconButton {
@@ -302,6 +348,10 @@ export namespace Components {
           * Outlined variant of the button
          */
         "outlined": boolean;
+        /**
+          * Path for the svg icon
+         */
+        "path": string;
         /**
           * Size of the button
          */
@@ -588,6 +638,10 @@ export namespace Components {
           * @default var(--csc-primary)
          */
         "color": string;
+        /**
+          * Hide the percentage display
+         */
+        "hideDetails": boolean;
         /**
           * Indeterminate state of the progress bar
          */
@@ -1070,6 +1124,12 @@ declare global {
         prototype: HTMLCCscLogoElement;
         new (): HTMLCCscLogoElement;
     };
+    interface HTMLCDataTableElement extends Components.CDataTable, HTMLStencilElement {
+    }
+    var HTMLCDataTableElement: {
+        prototype: HTMLCDataTableElement;
+        new (): HTMLCDataTableElement;
+    };
     interface HTMLCFlexElement extends Components.CFlex, HTMLStencilElement {
     }
     var HTMLCFlexElement: {
@@ -1299,6 +1359,7 @@ declare global {
         "c-consent": HTMLCConsentElement;
         "c-container": HTMLCContainerElement;
         "c-csc-logo": HTMLCCscLogoElement;
+        "c-data-table": HTMLCDataTableElement;
         "c-flex": HTMLCFlexElement;
         "c-icon-button": HTMLCIconButtonElement;
         "c-input": HTMLCInputElement;
@@ -1634,6 +1695,64 @@ declare namespace LocalJSX {
          */
         "width"?: number;
     }
+    interface CDataTable {
+        /**
+          * Data of the table
+         */
+        "data"?: CDataTableData[];
+        /**
+          * Externally sorted and paginated data
+         */
+        "externalData"?: boolean;
+        /**
+          * Items per page options
+         */
+        "footerOptions"?: CDataTableFooterOptions;
+        /**
+          * Headers of the table
+         */
+        "headers"?: CDataTableHeader[];
+        /**
+          * Add hover effect to the table rows
+         */
+        "hoverable"?: boolean;
+        /**
+          * Show a loader on top of the table
+         */
+        "loading"?: boolean;
+        /**
+          * Triggered on pagination
+         */
+        "onPaginate"?: (event: CustomEvent<CPaginationOptions>) => void;
+        /**
+          * Triggered on selection
+         */
+        "onSelection"?: (event: CustomEvent<any>) => void;
+        /**
+          * Triggered on sort
+         */
+        "onSort"?: (event: CustomEvent<any>) => void;
+        /**
+          * Pagination options
+         */
+        "pagination"?: CPaginationOptions;
+        /**
+          * Make rows selectable
+         */
+        "selectable"?: boolean;
+        /**
+          * Property used in selections
+         */
+        "selectionProperty"?: string;
+        /**
+          * Sort data by
+         */
+        "sortBy"?: any;
+        /**
+          * Sorting direction
+         */
+        "sortDirection"?: 'asc' | 'desc' | null;
+    }
     interface CFlex {
     }
     interface CIconButton {
@@ -1657,6 +1776,10 @@ declare namespace LocalJSX {
           * Outlined variant of the button
          */
         "outlined"?: boolean;
+        /**
+          * Path for the svg icon
+         */
+        "path"?: string;
         /**
           * Size of the button
          */
@@ -1955,6 +2078,10 @@ declare namespace LocalJSX {
           * @default var(--csc-primary)
          */
         "color"?: string;
+        /**
+          * Hide the percentage display
+         */
+        "hideDetails"?: boolean;
         /**
           * Indeterminate state of the progress bar
          */
@@ -2419,6 +2546,7 @@ declare namespace LocalJSX {
         "c-consent": CConsent;
         "c-container": CContainer;
         "c-csc-logo": CCscLogo;
+        "c-data-table": CDataTable;
         "c-flex": CFlex;
         "c-icon-button": CIconButton;
         "c-input": CInput;
@@ -2473,6 +2601,7 @@ declare module "@stencil/core" {
             "c-consent": LocalJSX.CConsent & JSXBase.HTMLAttributes<HTMLCConsentElement>;
             "c-container": LocalJSX.CContainer & JSXBase.HTMLAttributes<HTMLCContainerElement>;
             "c-csc-logo": LocalJSX.CCscLogo & JSXBase.HTMLAttributes<HTMLCCscLogoElement>;
+            "c-data-table": LocalJSX.CDataTable & JSXBase.HTMLAttributes<HTMLCDataTableElement>;
             "c-flex": LocalJSX.CFlex & JSXBase.HTMLAttributes<HTMLCFlexElement>;
             "c-icon-button": LocalJSX.CIconButton & JSXBase.HTMLAttributes<HTMLCIconButtonElement>;
             "c-input": LocalJSX.CInput & JSXBase.HTMLAttributes<HTMLCInputElement>;

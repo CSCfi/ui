@@ -242,7 +242,7 @@ export class CButton {
     }
 
     return (
-      <Host class={hostClasses}>
+      <Host class={hostClasses} onClick={(e) => e.stopPropagation()}>
         <Tag {...attributes} {...linkAttributes}>
           <div
             class={contentClasses}

@@ -32,6 +32,19 @@
 |      | Default slot for the label |
 
 
+## Dependencies
+
+### Used by
+
+ - [c-data-table](../c-data-table)
+
+### Graph
+```mermaid
+graph TD;
+  c-data-table --> c-checkbox
+  style c-checkbox fill:#f9f,stroke:#333,stroke-width:4px
+```
+
 ----------------------------------------------
 
 *Built with [StencilJS](https://stenciljs.com/)*

@@ -1,0 +1,246 @@
+:host {
+  display: block;
+  position: relative;
+  width: 100%;
+}
+
+table,
+caption,
+tbody,
+tfoot,
+thead,
+tr,
+th,
+td {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  font-size: 100%;
+  font: inherit;
+}
+
+table {
+  border-collapse: collapse;
+  border-spacing: 0;
+}
+
+.c-data-table {
+  box-shadow: inset 0 0 0 1px var(--csc-light-grey);
+  width: 100%;
+  max-width: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
+
+  .children {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  th,
+  td {
+    font-weight: 400;
+
+    > div {
+      align-items: center;
+      display: flex;
+      padding: 12px;
+      width: 100%;
+      line-height: 1;
+      box-sizing: border-box;
+    }
+  }
+
+  th {
+    font-size: 14px;
+    padding: 4px;
+
+    &.selection {
+      width: 56px;
+    }
+
+    &.indicator {
+      width: 46px;
+    }
+
+    > div {
+      gap: 8px;
+      height: 48px;
+      flex-wrap: nowrap;
+      white-space: nowrap;
+      border-radius: 4px;
+
+      &.sortable:hover {
+        cursor: pointer;
+        background-color: var(--csc-primary-text-hover);
+        color: var(--csc-primary);
+
+        svg {
+          fill: var(--csc-primary);
+        }
+      }
+    }
+  }
+
+  td {
+    font-size: 16px;
+
+    > div {
+      min-height: 56px;
+      justify-content: center;
+      gap: 8px;
+      align-items: flex-start;
+      flex-direction: column;
+      padding: 12px;
+
+      &.selection {
+        padding: 7px 0 7px 12px;
+        margin-right: -4px;
+      }
+
+      c-tag {
+        --c-tag-margin: 0px;
+      }
+    }
+
+    &.loader {
+      background-color: var(--csc-light-grey);
+      height: 2px;
+      position: relative;
+
+      > div {
+        min-height: auto;
+        height: 2px;
+        padding: 0;
+      }
+    }
+
+    &.info {
+      > div {
+        height: 108px;
+        justify-content: center;
+      }
+    }
+
+    svg {
+      transition: transform 0.3s cubic-bezier(0.25, 0.8, 0.5, 1);
+    }
+  }
+
+  tfoot {
+    tr {
+      box-shadow: inset 0 1px 0 0 var(--csc-light-grey);
+    }
+
+    td {
+      > div {
+        min-height: 48px;
+        flex-direction: row;
+        align-items: center;
+        justify-content: flex-start;
+      }
+
+      c-pagination {
+        flex: 1;
+      }
+    }
+  }
+
+  tbody {
+    tr {
+      box-shadow: inset 0 1px 0 0 var(--csc-light-grey);
+
+      &.active {
+        box-shadow: inset 2px 0 0 var(--csc-primary),
+          inset -2px 0 0 var(--csc-primary), inset 0 2px 0 var(--csc-primary);
+
+        svg {
+          transform: rotate(180deg);
+        }
+
+        + .additional-data {
+          box-shadow: inset 2px 0 0 var(--csc-primary),
+            inset -2px 0 0 var(--csc-primary), inset 0 -2px 0 var(--csc-primary);
+        }
+
+        &.selected {
+          box-shadow: inset 4px 0 0 var(--csc-primary),
+            inset -2px 0 0 var(--csc-primary), inset 0 2px 0 var(--csc-primary);
+        }
+      }
+
+      &.selected {
+        background-color: rgba($csc-primary, 0.05);
+        box-shadow: inset 4px 0 0 var(--csc-primary),
+          inset 0 1px 0 0 var(--csc-light-grey);
+      }
+    }
+  }
+
+  &__loader {
+    height: 2px;
+    width: 100%;
+    background-color: var(--csc-light-grey);
+    position: absolute;
+    overflow: hidden;
+  }
+
+  .loading-bar {
+    height: 100%;
+    width: 50%;
+    background-color: var(--csc-primary);
+    position: absolute;
+    left: -50%;
+    animation: loading 1s ease-in 0.5s infinite;
+  }
+
+  @keyframes loading {
+    0% {
+      transform: translateX(0);
+    }
+    to {
+      transform: translateX(400%);
+    }
+  }
+
+  .additional-data {
+    display: none;
+
+    &.active {
+      display: table-row;
+    }
+
+    ul {
+      padding: 0;
+      margin: 0;
+      list-style: none;
+      width: 100%;
+
+      li {
+        padding: 12px;
+
+        &:not(:last-child) {
+          box-shadow: inset 0 -1px 0 0 var(--csc-light-grey);
+        }
+
+        .children {
+          margin-top: 8px;
+        }
+      }
+    }
+  }
+
+  &--hoverable {
+    tbody {
+      tr.parent {
+        cursor: pointer;
+
+        &:hover {
+          background-color: var(--csc-primary-text-hover);
+          box-shadow: inset 0 0 0 2px var(--csc-primary);
+        }
+      }
+    }
+  }
+}

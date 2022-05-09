@@ -54,7 +54,12 @@ export class CTag {
     }
 
     return (
-      <Host tabindex="0" {...hostParams} class={hostClasses}>
+      <Host
+        tabindex="0"
+        {...hostParams}
+        class={hostClasses}
+        onClick={(e) => e.stopPropagation()}
+      >
         <div class={classes}>
           <div class="row">
             <slot></slot>

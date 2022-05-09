@@ -1,6 +1,7 @@
 import { HighlightModule, HIGHLIGHT_OPTIONS } from 'ngx-highlightjs';
 import { CUSTOM_ELEMENTS_SCHEMA, NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { HttpClientModule } from '@angular/common/http';
 import { BrowserModule } from '@angular/platform-browser';
 import { CscUiAccessorModule } from 'csc-ui-accessor';
 import { AppRoutingModule } from './app-routing.module';
@@ -45,6 +46,7 @@ import { AboutComponent } from './about/about.component';
 import { GettingStartedHtmlComponent } from './getting-started-html/getting-started-html.component';
 import { GettingStartedVueComponent } from './getting-started-vue/getting-started-vue.component';
 import { CLoginCardComponent } from './examples/c-login-card/c-login-card.component';
+import { CDataTableComponent } from './examples/c-data-table/c-data-table.component';
 
 @NgModule({
   declarations: [
@@ -88,6 +90,7 @@ import { CLoginCardComponent } from './examples/c-login-card/c-login-card.compon
     GettingStartedHtmlComponent,
     GettingStartedVueComponent,
     CLoginCardComponent,
+    CDataTableComponent,
   ],
   imports: [
     BrowserModule,
@@ -96,6 +99,7 @@ import { CLoginCardComponent } from './examples/c-login-card/c-login-card.compon
     AppRoutingModule,
     HighlightModule,
     CscUiAccessorModule,
+    HttpClientModule,
   ],
   providers: [
     {
