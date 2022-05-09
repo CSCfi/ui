@@ -705,7 +705,11 @@ export namespace Components {
         /**
           * Justify content horizontally
          */
-        "justify": 'start' | 'center' | 'end' | 'space-between';
+        "justify": | 'start'
+    | 'center'
+    | 'end'
+    | 'space-between'
+    | 'space-around';
         /**
           * Disable flex wrap
          */
@@ -2149,7 +2153,11 @@ declare namespace LocalJSX {
         /**
           * Justify content horizontally
          */
-        "justify"?: 'start' | 'center' | 'end' | 'space-between';
+        "justify"?: | 'start'
+    | 'center'
+    | 'end'
+    | 'space-between'
+    | 'space-around';
         /**
           * Disable flex wrap
          */

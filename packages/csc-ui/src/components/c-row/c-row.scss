@@ -15,34 +15,39 @@
     flex-wrap: nowrap !important;
   }
 
-  &--align-center {
+  &--align-center slot {
     align-items: center;
   }
 
-  &--align-start {
+  &--align-start slot {
     align-items: flex-start;
   }
 
-  &--align-center {
+  &--align-center slot {
     align-items: center;
   }
 
-  &--align-end {
+  &--align-end slot {
     align-items: flex-end;
   }
 
-  &--justify-start {
+  &--justify-start slot {
     justify-content: flex-start;
   }
 
-  &--justify-center {
+  &--justify-center slot {
     justify-content: center;
   }
 
-  &--justify-end {
+  &--justify-end slot {
     justify-content: flex-end;
   }
-  &--justify-space-between {
+
+  &--justify-space-between slot {
     justify-content: space-between;
+  }
+
+  &--justify-space-around slot {
+    justify-content: space-around;
   }
 }

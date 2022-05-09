@@ -47,6 +47,7 @@ import { GettingStartedHtmlComponent } from './getting-started-html/getting-star
 import { GettingStartedVueComponent } from './getting-started-vue/getting-started-vue.component';
 import { CLoginCardComponent } from './examples/c-login-card/c-login-card.component';
 import { CDataTableComponent } from './examples/c-data-table/c-data-table.component';
+import { CRowComponent } from './examples/c-row/c-row.component';
 
 @NgModule({
   declarations: [
@@ -91,6 +92,7 @@ import { CDataTableComponent } from './examples/c-data-table/c-data-table.compon
     GettingStartedVueComponent,
     CLoginCardComponent,
     CDataTableComponent,
+    CRowComponent,
   ],
   imports: [
     BrowserModule,

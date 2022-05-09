@@ -30,7 +30,12 @@ export class CRow {
   /**
    * Justify content horizontally
    */
-  @Prop() justify: 'start' | 'center' | 'end' | 'space-between' = 'start';
+  @Prop() justify:
+    | 'start'
+    | 'center'
+    | 'end'
+    | 'space-between'
+    | 'space-around' = 'start';
 
   render() {
     const classes = {
