@@ -1,4 +1,9 @@
-<app-example title="Basic usage" subtitle="Using index based values by default">
+<app-example
+  name="basic"
+  component="c-tab-buttons"
+  title="Basic usage"
+  subtitle="Using index based values by default"
+>
   <c-tab-buttons value="1">
     <c-button>One</c-button>
     <c-button>Two</c-button>
@@ -6,7 +11,12 @@
   </c-tab-buttons>
 </app-example>
 
-<app-example title="Usage in Angular" subtitle="Using custom values" [raw]="templates.values">
+<app-example
+  name="customValues"
+  component="c-tab-buttons"
+  title="Usage in Angular"
+  subtitle="Using custom values"
+>
   <c-tab-buttons cControl [(ngModel)]="currentTab">
     <c-button value="one">One</c-button>
     <c-button value="two">Two</c-button>
@@ -40,7 +50,12 @@
   </c-card-actions>
 </app-example>
 
-<app-example title="Usage in Angular" subtitle="Using indexes" [raw]="templates.indexes">
+<app-example
+  name="indexes"
+  component="c-tab-buttons"
+  title="Usage in Angular"
+  subtitle="Using indexes"
+>
   <c-tab-buttons cControl [(ngModel)]="currentTabIndex">
     <c-button>One</c-button>
     <c-button>Two</c-button>
@@ -74,7 +89,12 @@
   </c-card-actions>
 </app-example>
 
-<app-example title="Mandatory selection" subtitle="Selection can not be cleared">
+<app-example
+  name="mandatory"
+  component="c-tab-buttons"
+  title="Mandatory selection"
+  subtitle="Selection can not be cleared"
+>
   <c-tab-buttons mandatory>
     <c-button>One</c-button>
     <c-button>Two</c-button>
@@ -82,7 +102,7 @@
   </c-tab-buttons>
 </app-example>
 
-<app-example title="Disabled">
+<app-example name="disabled" component="c-tab-buttons" title="Disabled">
   <c-tab-buttons disabled>
     <c-button>One</c-button>
     <c-button>Two</c-button>
@@ -90,7 +110,7 @@
   </c-tab-buttons>
 </app-example>
 
-<app-example title="Small variant">
+<app-example name="small" component="c-tab-buttons" title="Small variant">
   <c-tab-buttons size="small">
     <c-button>One</c-button>
     <c-button>Two</c-button>
@@ -98,7 +118,7 @@
   </c-tab-buttons>
 </app-example>
 
-<app-example title="Large variant">
+<app-example name="large" component="c-tab-buttons" title="Large variant">
   <c-tab-buttons size="large">
     <c-button>One</c-button>
     <c-button>Two</c-button>
@@ -106,7 +126,7 @@
   </c-tab-buttons>
 </app-example>
 
-<app-example title="With descriptions">
+<app-example name="descriptions" component="c-tab-buttons" title="With descriptions">
   <c-tab-buttons value="small">
     <c-button value="tiny">
       standard.tiny

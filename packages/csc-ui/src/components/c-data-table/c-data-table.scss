@@ -12,11 +12,11 @@ thead,
 tr,
 th,
 td {
-  margin: 0;
-  padding: 0;
   border: 0;
   font-size: 100%;
   font: inherit;
+  margin: 0;
+  padding: 0;
 }
 
 table {
@@ -26,16 +26,34 @@ table {
 
 .c-data-table {
   box-shadow: inset 0 0 0 1px var(--csc-light-grey);
-  width: 100%;
+  left: 0;
   max-width: 100%;
   position: absolute;
   top: 0;
-  left: 0;
+  width: 100%;
 
   .children {
     display: flex;
     flex-wrap: wrap;
-    gap: 8px;
+    gap: 4px;
+    width: 100%;
+
+    pre {
+      font-family: inherit;
+      white-space: pre-wrap;
+    }
+  }
+
+  [data-align='end'] .children {
+    justify-content: flex-end;
+  }
+
+  [data-align='start'] .children {
+    justify-content: flex-start;
+  }
+
+  [data-align='center'] .children {
+    justify-content: center;
   }
 
   th,
@@ -44,11 +62,11 @@ table {
 
     > div {
       align-items: center;
+      box-sizing: border-box;
       display: flex;
+      line-height: 1;
       padding: 12px;
       width: 100%;
-      line-height: 1;
-      box-sizing: border-box;
     }
   }
 
@@ -65,16 +83,16 @@ table {
     }
 
     > div {
+      border-radius: 4px;
+      flex-wrap: nowrap;
       gap: 8px;
       height: 48px;
-      flex-wrap: nowrap;
       white-space: nowrap;
-      border-radius: 4px;
 
       &.sortable:hover {
-        cursor: pointer;
         background-color: var(--csc-primary-text-hover);
         color: var(--csc-primary);
+        cursor: pointer;
 
         svg {
           fill: var(--csc-primary);
@@ -87,16 +105,16 @@ table {
     font-size: 16px;
 
     > div {
-      min-height: 56px;
-      justify-content: center;
-      gap: 8px;
       align-items: flex-start;
       flex-direction: column;
+      gap: 8px;
+      justify-content: center;
+      min-height: 56px;
       padding: 12px;
 
       &.selection {
-        padding: 7px 0 7px 12px;
         margin-right: -4px;
+        padding: 7px 0 7px 12px;
       }
 
       c-tag {
@@ -110,8 +128,8 @@ table {
       position: relative;
 
       > div {
-        min-height: auto;
         height: 2px;
+        min-height: auto;
         padding: 0;
       }
     }
@@ -135,10 +153,10 @@ table {
 
     td {
       > div {
-        min-height: 48px;
-        flex-direction: row;
         align-items: center;
+        flex-direction: row;
         justify-content: flex-start;
+        min-height: 48px;
       }
 
       c-pagination {
@@ -151,15 +169,26 @@ table {
     tr {
       box-shadow: inset 0 1px 0 0 var(--csc-light-grey);
 
+      &.actions {
+        box-shadow: none;
+
+        td > div {
+          background-color: rgba(0, 0, 0, 0.015);
+          height: auto;
+        }
+      }
+
       &.active {
         box-shadow: inset 2px 0 0 var(--csc-primary),
           inset -2px 0 0 var(--csc-primary), inset 0 2px 0 var(--csc-primary);
+        border-radius: 6px 6px 0 0;
 
         svg {
           transform: rotate(180deg);
         }
 
         + .additional-data {
+          border-radius: 0 0 6px 6px;
           box-shadow: inset 2px 0 0 var(--csc-primary),
             inset -2px 0 0 var(--csc-primary), inset 0 -2px 0 var(--csc-primary);
         }
@@ -174,25 +203,30 @@ table {
         background-color: rgba($csc-primary, 0.05);
         box-shadow: inset 4px 0 0 var(--csc-primary),
           inset 0 1px 0 0 var(--csc-light-grey);
+
+        + .additional-data {
+          box-shadow: inset 4px 0 0 var(--csc-primary),
+            inset -2px 0 0 var(--csc-primary), inset 0 -2px 0 var(--csc-primary);
+        }
       }
     }
   }
 
   &__loader {
-    height: 2px;
-    width: 100%;
     background-color: var(--csc-light-grey);
-    position: absolute;
+    height: 2px;
     overflow: hidden;
+    position: absolute;
+    width: 100%;
   }
 
   .loading-bar {
-    height: 100%;
-    width: 50%;
-    background-color: var(--csc-primary);
-    position: absolute;
-    left: -50%;
     animation: loading 1s ease-in 0.5s infinite;
+    background-color: var(--csc-primary);
+    height: 100%;
+    left: -50%;
+    position: absolute;
+    width: 50%;
   }
 
   @keyframes loading {
@@ -212,9 +246,9 @@ table {
     }
 
     ul {
-      padding: 0;
-      margin: 0;
       list-style: none;
+      margin: 0;
+      padding: 0;
       width: 100%;
 
       li {
@@ -224,8 +258,18 @@ table {
           box-shadow: inset 0 -1px 0 0 var(--csc-light-grey);
         }
 
-        .children {
-          margin-top: 8px;
+        span {
+          color: var(--csc-primary);
+          font-weight: 600;
+        }
+
+        .title {
+          display: flex;
+          gap: 8px;
+
+          + .children {
+            margin-top: 8px;
+          }
         }
       }
     }
@@ -233,12 +277,32 @@ table {
 
   &--hoverable {
     tbody {
-      tr.parent {
+      tr:not(.additional-data) {
         cursor: pointer;
 
         &:hover {
           background-color: var(--csc-primary-text-hover);
+          border-radius: 6px;
           box-shadow: inset 0 0 0 2px var(--csc-primary);
+          overflow: hidden;
+        }
+
+        &.active:hover {
+          border-radius: 6px 6px 0 0;
+          box-shadow: inset 2px 0 0 var(--csc-primary),
+            inset -2px 0 0 var(--csc-primary), inset 0 2px 0 var(--csc-primary);
+        }
+
+        &.selected.active:hover {
+          border-radius: 6px 6px 0 0;
+          box-shadow: inset 4px 0 0 var(--csc-primary),
+            inset -2px 0 0 var(--csc-primary), inset 0 2px 0 var(--csc-primary);
+        }
+
+        &.selected:hover {
+          border-radius: 6px;
+          box-shadow: inset 4px 0 0 var(--csc-primary),
+            inset 0 0 0 2px var(--csc-primary);
         }
       }
     }

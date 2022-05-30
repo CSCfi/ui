@@ -1,18 +1,19 @@
-<app-example title="Basic usage" [raw]="templates.basic" [script]="scripts.basic">
+<app-example title="Basic usage" name="basic" component="c-data-table">
   <c-data-table id="basic" [data]="basicData" [headers]="basicHeaders"></c-data-table>
 </app-example>
 
-<app-example title="Complex example" [raw]="templates.complex" [script]="scripts.complex">
+<app-example title="Complex example" name="complex" component="c-data-table">
   <c-data-table
     id="complex"
     [data]="data"
     [headers]="headers"
     [footerOptions]="footerOptions"
-    [pagination]="options"
+    [pagination]="paginationOptions"
     [sortBy]="sortBy"
     [sortDirection]="direction"
     selection-property="id"
     selectable
+    single-expansion
     (selection)="onSelection($event)"
   ></c-data-table>
 
@@ -25,8 +26,8 @@
 <app-example
   title="Paginated data"
   subtitle="External pagination and sorting"
-  [raw]="templates.external"
-  [script]="scripts.external"
+  name="paginated"
+  component="c-data-table"
 >
   <c-data-table
     id="external-data"
@@ -36,8 +37,8 @@
     [pagination]="externalOptions"
     [sortBy]="externalSortBy"
     [sortDirection]="externalDirection"
+    no-data-text="There seems to be an error while fetching the data. Please try again later."
     external-data
-    hoverable
     (paginate)="onPagination($event)"
     (sort)="onSort($event)"
   ></c-data-table>

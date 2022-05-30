@@ -1,6 +1,5 @@
 import { Component, OnInit } from '@angular/core';
 import { VersionService } from '../services/version.service';
-import { formatTemplate } from '../utils/utils';
 
 @Component({
   selector: 'app-getting-started-html',
@@ -10,30 +9,26 @@ import { formatTemplate } from '../utils/utils';
 export class GettingStartedHtmlComponent implements OnInit {
   showCode = false;
   script = '';
-  template = formatTemplate(
-    `
-    <c-card>
-      <c-card-title>Login example</c-card-title>
+  template = `<c-card>
+  <c-card-title>Login example</c-card-title>
 
-      <c-card-content>
-        <c-text-field label="Username" name="username" form hide-details></c-text-field>
+  <c-card-content>
+    <c-text-field label="Username" name="username" form hide-details></c-text-field>
 
-        <c-text-field
-          label="Password"
-          name="password"
-          type="password"
-          form
-          hide-details
-        ></c-text-field>
-      </c-card-content>
+    <c-text-field
+      label="Password"
+      name="password"
+      type="password"
+      form
+      hide-details
+    ></c-text-field>
+  </c-card-content>
 
-      <c-card-actions justify="space-between">
-        <c-link href="#" underline>Forgot password?</c-link>
-        <c-button type="submit">Login</c-button>
-      </c-card-actions>
-    </c-card>`,
-    false,
-  );
+  <c-card-actions justify="space-between">
+    <c-link href="#" underline>Forgot password?</c-link>
+    <c-button type="submit">Login</c-button>
+  </c-card-actions>
+</c-card>`;
 
   constructor(private _versionService: VersionService) {}
 

@@ -1,4 +1,13 @@
-import { Component, h, Prop, Event, EventEmitter } from '@stencil/core';
+import {
+  Component,
+  h,
+  Prop,
+  Event,
+  EventEmitter,
+  State,
+  Watch,
+  Element,
+} from '@stencil/core';
 
 /**
  * @group Popups
@@ -9,37 +18,72 @@ import { Component, h, Prop, Event, EventEmitter } from '@stencil/core';
   shadow: true,
 })
 export class CModal {
+  @Element() el: HTMLCModalElement;
+
   /**
    * Is the modal visible
    */
-  @Prop({ mutable: true }) value: boolean = false;
+  @Prop({ mutable: true }) value = false;
+
   /**
-   * Not dismissed when touching/clicking outside the content
+   * Dismissed when touching/clicking outside the content
    */
-  @Prop() persistent: boolean = true;
+  @Prop() dismissable = false;
+
+  /**
+   * Maximum width of the dialog in pixels
+   *
+   */
+  @Prop() maxWidth = 600;
+
   /**
    * Triggered when value is changed
    */
   @Event() changeValue: EventEmitter<boolean>;
 
-  private _hideModal() {
-    if (this.persistent) return;
-    this.value = false;
-    this.changeValue.emit(this.value);
+  @State() innerValue = false;
+
+  @Watch('value')
+  onValueChange(value: boolean) {
+    setTimeout(
+      () => {
+        this.innerValue = value;
+        this.changeValue.emit(this.value);
+      },
+      value ? 0 : 500,
+    );
   }
+
+  private _hideModal() {
+    if (!this.dismissable) return;
+
+    this.value = false;
+  }
+
+  componentDidLoad() {
+    this.innerValue = this.value;
+
+    this.el.style.setProperty('--c-modal-max-width', `${this.maxWidth}px`);
+  }
+
   render() {
+    const modalClasses = {
+      'c-modal': true,
+      'c-modal--show': this.value,
+    };
+
+    const overlayClasses = {
+      'c-overlay': true,
+      'c-overlay--show': this.value,
+    };
+
     return (
-      this.value && (
-        <div class="modal-wrapper">
-          <div class="c-modal">
-            <slot></slot>
-          </div>
-          <div
-            class="c-overlay c-fadeIn"
-            onClick={() => this._hideModal()}
-          ></div>
+      <div class="modal-wrapper">
+        <div class={modalClasses}>
+          <slot></slot>
         </div>
-      )
+        <div class={overlayClasses} onClick={() => this._hideModal()}></div>
+      </div>
     );
   }
 }

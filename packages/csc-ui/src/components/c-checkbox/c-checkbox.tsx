@@ -93,6 +93,12 @@ export class CCheckbox {
     }
   }
 
+  componentWillLoad() {
+    if (typeof this.value !== 'boolean') {
+      console.warn(`[C-CHECKBOX] Property 'value' should be a boolean.`);
+    }
+  }
+
   componentDidLoad() {
     this._handleValidation(this.valid, 0);
   }
@@ -162,7 +168,7 @@ export class CCheckbox {
             class="visuallyhidden"
             id="checkbox"
             type="checkbox"
-            aria-checked={this.value.toString()}
+            aria-checked={(!!this.value).toString()}
             aria-disabled={this.disabled.toString()}
             checked={this.value}
             disabled={this.disabled}

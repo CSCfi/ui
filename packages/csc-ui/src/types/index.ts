@@ -9,7 +9,7 @@ export interface CPaginationOptions {
 
 export interface CSelectItem {
   name: string;
-  value: string | number;
+  value: string | number | boolean;
 }
 
 export interface CAutocompleteItem extends CSelectItem {
@@ -36,6 +36,8 @@ export interface CDataTableHeader {
   width?: string;
   sortable?: boolean;
   children?: CDataTableChild[];
+  hidden?: boolean;
+  align?: 'start' | 'center' | 'end';
 }
 
 export interface CDataTableData {
@@ -45,6 +47,7 @@ export interface CDataTableData {
 export interface CDataTableDataItem {
   value: string | number;
   children?: CDataTableChild[];
+  component?: CDataTableComponent;
 }
 
 export interface CDataTableChild {
@@ -54,7 +57,7 @@ export interface CDataTableChild {
 
 export interface CDataTableComponent {
   tag: string;
-  params: CDataTableComponentParams;
+  params?: CDataTableComponentParams;
   injectValue?: boolean;
 }
 
@@ -69,4 +72,37 @@ export interface CDataTableFunctionParams {
   value: string | number;
   key: string;
   data: CDataTableData;
+}
+
+export interface CNotificationItem {
+  name: string;
+  type: CNotificationItemType;
+  delay?: number;
+  requiresClosing?: boolean;
+}
+
+export type CNotificationItemType = 'warning' | 'error' | 'success' | 'info';
+
+export enum CToastType {
+  Warning = 'warning',
+  Error = 'error',
+  Success = 'success',
+  Info = 'info',
+}
+
+export enum CToastPosition {
+  Absolute = 'absolute',
+  Fixed = 'fixed',
+}
+
+export interface CToastMessage {
+  message: string;
+  title?: string;
+  type?: CToastType;
+  duration?: number;
+  persistent?: boolean;
+  position?: CToastPosition;
+  id?: string;
+  closeText?: string;
+  indeterminate?: boolean;
 }

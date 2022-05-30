@@ -6,31 +6,9 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
   styleUrls: ['./c-progress-bar.component.scss'],
 })
 export class CProgressBarComponent implements OnInit, OnDestroy {
+  // @example-start|basic
   progress = 0;
   interval = null;
-  examples = [
-    `
-<c-progress-bar value="50"></c-progress-bar>
-<c-progress-bar [value]="progress"></c-progress-bar>
-  `,
-  ];
-
-  scripts = [
-    `
-progress = 0;
-interval = null;
-
-ngOnInit() {
-  this.interval = setInterval(() => {
-    this.progress = Math.ceil(Math.random() * 100);
-  }, 2000);
-}
-
-ngOnDestroy() {
-  clearInterval(this.interval);
-}
-  `,
-  ];
 
   ngOnInit() {
     this.interval = setInterval(() => {
@@ -41,4 +19,5 @@ ngOnDestroy() {
   ngOnDestroy() {
     clearInterval(this.interval);
   }
+  // @example-end
 }

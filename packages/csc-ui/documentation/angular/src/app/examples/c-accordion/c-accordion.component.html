@@ -1,4 +1,4 @@
-<app-example title="Default" rows>
+<app-example title="Default" component="c-accordion" name="basic" rows>
   <c-accordion value="one">
     <c-accordion-item heading="One" value="one">
       <i class="mdi mdi-access-point" slot="icon"></i>
@@ -16,7 +16,13 @@
   </c-accordion>
 </app-example>
 
-<app-example title="Mandatory selection" subtitle="One expanded panel is required" rows>
+<app-example
+  title="Mandatory selection"
+  subtitle="One expanded panel is required"
+  component="c-accordion"
+  name="mandatory"
+  rows
+>
   <c-accordion value="one" mandatory>
     <c-accordion-item heading="One" value="one">
       <i class="mdi mdi-access-point" slot="icon"></i>
@@ -34,7 +40,7 @@
   </c-accordion>
 </app-example>
 
-<app-example title="Multiple" [raw]="example" rows>
+<app-example title="Multiple" component="c-accordion" name="multiple" rows>
   <c-accordion [value]="['one', 'three']" multiple>
     <c-accordion-item heading="One" value="one">
       <i class="mdi mdi-access-point" slot="icon"></i>
@@ -52,7 +58,7 @@
   </c-accordion>
 </app-example>
 
-<app-example title="Outlined items" rows>
+<app-example title="Outlined items" component="c-accordion" name="outlined" rows>
   <c-accordion value="three" outlined>
     <c-accordion-item heading="One" value="one">
       <i class="mdi mdi-access-point" slot="icon"></i>

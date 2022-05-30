@@ -102,6 +102,11 @@ export class CButton {
   @Prop() href: string;
 
   /**
+   * Path for the svg icon
+   */
+  @Prop() path: string = null;
+
+  /**
    * Hyperlink target
    */
   @Prop() target = '_blank';
@@ -250,8 +255,21 @@ export class CButton {
           >
             {this.loading && <div class="spinner_wrapper">{SPINNER_SMALL}</div>}
             <div class={innerClasses}>
-              <slot name="icon"></slot>
+              <slot name="icon">
+                {this.path && (
+                  <svg
+                    class="icon-by-path"
+                    width="24"
+                    height="24"
+                    viewBox="0 0 24 24"
+                  >
+                    <path d={this.path} />
+                  </svg>
+                )}
+              </slot>
+
               {svg}
+
               <slot></slot>
             </div>
             {this._containerhasDescriptionSlot && (

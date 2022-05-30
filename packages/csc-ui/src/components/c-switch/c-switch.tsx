@@ -21,17 +21,20 @@ export class CSwitch {
    * Disable the switch
    */
   @Prop({ attribute: 'disabled' }) hostDisabled = false;
+
   /**
    * Id for the element
    */
   @Prop({ attribute: 'id' }) hostId: string;
+
   /**
    * Value of the element
    */
   @Prop({ mutable: true }) value = false;
 
   @Element() host: HTMLCSwitchElement;
-  @State() hasLabel: boolean = false;
+
+  @State() hasLabel = false;
 
   /**
    * Emit inner value change to parent

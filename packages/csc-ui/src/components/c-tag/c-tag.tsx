@@ -30,9 +30,16 @@ export class CTag {
    */
   @Prop() closeable = false;
 
+  /**
+   * Display an optional badge at the start of the tag
+   */
+  @Prop() badge: string | number = null;
+
   render() {
     const classes = {
       'c-tag': true,
+      'c-tag--closeable': this.closeable,
+      'c-tag--badge': !!this.badge || this.badge === 0,
       active: this.active,
       flat: this.flat,
     };
@@ -42,36 +49,29 @@ export class CTag {
       flat: this.flat,
     };
 
-    const hostParams: {
-      tabindex: number;
-      role?: string;
-    } = {
+    const hostParams = {
       tabindex: 0,
+      ...(!this.flat && {
+        role: 'button',
+        onClick: (event) => event.stopPropagation(),
+      }),
     };
 
-    if (!this.flat) {
-      hostParams.role = 'button';
-    }
-
     return (
-      <Host
-        tabindex="0"
-        {...hostParams}
-        class={hostClasses}
-        onClick={(e) => e.stopPropagation()}
-      >
+      <Host tabindex="0" {...hostParams} class={hostClasses}>
         <div class={classes}>
           <div class="row">
+            {!!this.badge && <div class="badge">{this.badge}</div>}
+
             <slot></slot>
-            {this.closeable ? (
+
+            {this.closeable && (
               <svg viewBox="0 0 24 24">
                 <path
                   fill="currentColor"
                   d="M19,6.41L17.59,5L12,10.59L6.41,5L5,6.41L10.59,12L5,17.59L6.41,19L12,13.41L17.59,19L19,17.59L13.41,12L19,6.41Z"
                 />
               </svg>
-            ) : (
-              ''
             )}
           </div>
         </div>

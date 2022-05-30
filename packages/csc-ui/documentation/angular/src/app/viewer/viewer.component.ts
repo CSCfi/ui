@@ -84,6 +84,15 @@ export class ViewerComponent implements OnInit, OnDestroy {
             },
           },
           {
+            label: 'Methods',
+            enabled:
+              !!this.componentData?.methods?.length ||
+              !!this.componentData?.children?.some((child) => child.methods?.length),
+            query: {
+              tab: 'methods',
+            },
+          },
+          {
             label: 'Slots',
             enabled:
               !!this.componentData?.slots?.length ||

@@ -7,16 +7,21 @@
   right: 0;
   bottom: 0;
   left: 0;
+  pointer-events: none;
 }
 
 .c-modal {
-  max-width: 600px;
+  max-width: var(--c-modal-max-width, 600px);
   display: block;
   position: fixed;
   z-index: 200000;
-  animation-name: zoom;
-  animation-duration: 0.2s;
-  animation-iteration-count: 1;
+  transform: scale(0);
+  transition: transform 0.2s cubic-bezier(0.25, 0.8, 0.5, 1);
+  pointer-events: all;
+
+  &--show {
+    transform: scale(1);
+  }
 }
 
 .c-modal.fullscreen {
@@ -29,34 +34,17 @@
 .c-overlay {
   background: rgba(0, 0, 0, 0.5);
   position: fixed;
-  z-index: 1998;
   top: 0;
   bottom: 0;
   left: 0;
   right: 0;
-}
+  transition: opacity 0.5s cubic-bezier(0.25, 0.8, 0.5, 1);
+  opacity: 0;
+  pointer-events: none;
+  z-index: 1998;
 
-@keyframes fadeIn {
-  0% {
-    background: rgba(0, 0, 0, 0);
-  }
-  100% {
-    background: rgba(0, 0, 0, 0.5);
-  }
-}
-
-.c-fadeIn {
-  z-index: 1997;
-  animation-name: fadeIn;
-  animation-duration: 0.5s;
-  animation-iteration-count: 1;
-}
-
-@keyframes zoom {
-  0% {
-    transform: scale(0);
-  }
-  100% {
-    transform: scale(1);
+  &--show {
+    opacity: 1;
+    pointer-events: all;
   }
 }

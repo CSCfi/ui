@@ -1,0 +1,19 @@
+<p class="fs-5 fw-bold my-1 text-primary">{{ data?.tag }}</p>
+<table class="table">
+  <thead>
+    <tr class="d-flex">
+      <th class="col-3">Name</th>
+      <th class="col-4">Description</th>
+      <th class="col-5">Signature</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr *ngFor="let method of data?.methods" class="d-flex">
+      <td class="col-3">{{ method.name || '-' }}</td>
+      <td class="col-4">{{ method.docs }}</td>
+      <td class="col-5">
+        <pre>{{ method.signature }}</pre>
+      </td>
+    </tr>
+  </tbody>
+</table>

@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { formatScript, formatTemplate } from '../utils/utils';
+import { sanitize } from '../utils/utils';
 
 @Component({
   selector: 'app-getting-started-angular',
@@ -8,72 +8,65 @@ import { formatScript, formatTemplate } from '../utils/utils';
   styleUrls: ['./getting-started-angular.component.scss'],
 })
 export class GettingStartedAngularComponent implements OnInit {
-  accessorUsage = formatScript(`
-    import { NgModule } from '@angular/core';
-    import { CscUiAccessorModule } from 'csc-ui-accessor';
+  accessorUsage = `import { NgModule } from '@angular/core';
+  import { CscUiAccessorModule } from 'csc-ui-accessor';
 
-    @NgModule({
-      imports: [CscUiAccessorModule],
-    })
-    export class AppModule { }
-  `);
+  @NgModule({
+    imports: [CscUiAccessorModule],
+  })
+  export class AppModule { }
+`;
 
-  mainUsage =
-    formatScript(`import { applyPolyfills, defineCustomElements } from 'csc-ui/dist/loader';
+  mainUsage = `import { applyPolyfills, defineCustomElements } from 'csc-ui/dist/loader';
 
-    // ...
+  // ...
 
-    applyPolyfills().then(() => {
-      defineCustomElements(window);
-    });
-  `);
+  applyPolyfills().then(() => {
+    defineCustomElements(window);
+  });
+`;
 
   formUsage = {
-    template: formatTemplate(
-      `
-      <form [formGroup]="form">
-        <c-card>
-          <c-card-title>Usage in Angular forms</c-card-title>
-          <c-card-content>
-            <c-text-field
-              formControlName="username"
-              label="Username"
-              [valid]="isValid('username')"
-              [validation]="errors('username')"
-              cControl
-            ></c-text-field>
+    template: `<form [formGroup]="form">
+  <c-card>
+    <c-card-title>Usage in Angular forms</c-card-title>
+    <c-card-content>
+      <c-text-field
+        formControlName="username"
+        label="Username"
+        [valid]="isValid('username')"
+        [validation]="errors('username')"
+        cControl
+      ></c-text-field>
 
-            <c-text-field
-              formControlName="password"
-              hint="Please do not use numbers in your password"
-              label="Password"
-              type="password"
-              [valid]="isValid('password')"
-              [validation]="errors('password')"
-              cControl
-            ></c-text-field>
+      <c-text-field
+        formControlName="password"
+        hint="Please do not use numbers in your password"
+        label="Password"
+        type="password"
+        [valid]="isValid('password')"
+        [validation]="errors('password')"
+        cControl
+      ></c-text-field>
 
-            <c-checkbox
-              formControlName="consent"
-              hint="Please agree to the terms and conditions"
-              [valid]="isValid('consent')"
-              [validation]="errors('consent')"
-              cControl
-            >
-              I agree to the
-              <c-link href="https://csc.fi" underline>terms and conditions</c-link>
-            </c-checkbox>
-          </c-card-content>
+      <c-checkbox
+        formControlName="consent"
+        hint="Please agree to the terms and conditions"
+        [valid]="isValid('consent')"
+        [validation]="errors('consent')"
+        cControl
+      >
+        I agree to the
+        <c-link href="https://csc.fi" underline>terms and conditions</c-link>
+      </c-checkbox>
+    </c-card-content>
 
-          <c-card-actions justify="end">
-            <c-button [disabled]="!form.valid" (click)="onSubmit()">Submit</c-button>
-          </c-card-actions>
-        </c-card>
-      </form>
-    `,
-      false,
-    ),
-    script: formatScript(`import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+    <c-card-actions justify="end">
+      <c-button [disabled]="!form.valid" (click)="onSubmit()">Submit</c-button>
+    </c-card-actions>
+  </c-card>
+</form>`,
+    script: `import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 
 // ...
 
@@ -123,8 +116,7 @@ errors(field) {
 onSubmit() {
   alert('Form submitted with the following data: ' + JSON.stringify(this.form.value, null, 2));
   this.form.reset();
-}
-`),
+}`,
   };
 
   showCode = [];

@@ -40,3 +40,6 @@ testem.log
 # System Files
 .DS_Store
 Thumbs.db
+
+# Example data
+/src/app/examples/example-data

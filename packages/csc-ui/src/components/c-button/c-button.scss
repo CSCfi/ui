@@ -9,7 +9,12 @@
 }
 
 ::slotted([slot='icon']) {
+  font-size: var(--c-button-icon-size);
   margin-right: 8px;
+}
+
+::slotted(svg) {
+  fill: var(--c-color);
 }
 
 a {
@@ -92,6 +97,7 @@ a {
   --c-background-color: var(--csc-primary);
   --c-color: #fff;
   --c-hover-background: var(--csc-primary-hover);
+  --c-button-icon-size: 24px;
 
   $this: &;
 
@@ -118,6 +124,7 @@ a {
   line-height: 18px;
   user-select: none;
   min-width: 88px;
+  white-space: nowrap;
 
   * {
     pointer-events: none;
@@ -125,6 +132,12 @@ a {
 
   svg {
     fill: var(--c-color);
+    height: var(--c-button-icon-size);
+    width: var(--c-button-icon-size);
+
+    &.icon-by-path {
+      margin-right: 8px;
+    }
 
     &.button-icon {
       margin-right: 16px;
@@ -148,6 +161,7 @@ a {
     --c-height: 28px;
     --c-padding: 0 12px;
     --c-font-size: 14px;
+    --c-button-icon-size: 20px;
   }
 
   &--large {

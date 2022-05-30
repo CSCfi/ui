@@ -1,14 +1,4 @@
 {
-  "name": "angular-playground",
-  "version": "0.0.1",
-  "scripts": {
-    "ng": "ng",
-    "start": "ng serve",
-    "build": "ng build",
-    "watch": "ng build --watch --configuration development",
-    "test": "ng test"
-  },
-  "private": true,
   "dependencies": {
     "@angular/animations": "^13.2.6",
     "@angular/cdk": "^13.2.6",
@@ -19,13 +9,9 @@
     "@angular/platform-browser": "^13.2.6",
     "@angular/platform-browser-dynamic": "^13.2.6",
     "@angular/router": "^13.2.6",
-    "@prettier/plugin-xml": "^1.2.0",
-    "@types/prettier": "^2.4.4",
-    "angular-html-parser": "^1.8.0",
     "bootstrap": "^5.1.3",
     "csc-ui-accessor": "^0.0.13",
     "ngx-highlightjs": "^6.1.2",
-    "prettier": "^2.5.1",
     "rxjs": "^7.5.5",
     "sanitize-html": "^2.7.0",
     "tslib": "^2.3.0",
@@ -44,5 +30,17 @@
     "karma-jasmine": "~4.0.0",
     "karma-jasmine-html-reporter": "~1.7.0",
     "typescript": "~4.5.2"
-  }
+  },
+  "name": "angular-playground",
+  "private": true,
+  "scripts": {
+    "build": "npm run build:examples && ng build",
+    "build:examples": "node ../../scripts/build-examples.js",
+    "dev": "npm run build:examples && ng serve",
+    "ng": "ng",
+    "start": "ng serve",
+    "test": "ng test",
+    "watch": "ng build --watch --configuration development"
+  },
+  "version": "0.0.1"
 }

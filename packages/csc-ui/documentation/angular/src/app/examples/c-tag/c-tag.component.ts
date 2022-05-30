@@ -15,10 +15,11 @@ export class CTagComponent {
 toggleActive(index: number) {
   this.active[index] = !this.active[index];
 }`;
-
+  // @example-start|basic
   active = [false, true, false];
 
   toggleActive(index: number) {
     this.active[index] = !this.active[index];
   }
+  // @example-end
 }

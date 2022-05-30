@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { CNotificationItem, CNotificationItemType, CSelectItem } from '../../../../../../src/types';
 
 @Component({
   selector: 'app-c-notification',
@@ -6,109 +7,40 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./c-notification.component.scss'],
 })
 export class CNotificationComponent implements OnInit {
-  templates = [
-    `<c-button (click)="addNotification()">Add notification</c-button>
+  /*
+  // @example-start|basic
+  import { CNotificationItem } from 'csc-ui';
+  // @example-end
+  */
 
-    <c-notification [notification]="notification"></c-notification>`,
-    `<c-row gap="16">
-  <c-text-field label="Message" cControl [(ngModel)]="message"></c-text-field>
+  /*
+  // @example-start|custom
+  import { CNotificationItem, CNotificationItemType, CSelectItem } from 'csc-ui';
+  // @example-end
+  */
 
-  <c-select label="Type" name="type" cControl [(ngModel)]="type" [items]="types"></c-select>
+  // @example-start|basic
+  basicNotification: CNotificationItem;
+  // @example-end
 
-  <c-text-field label="Showing time" cControl number [(ngModel)]="delay"></c-text-field>
+  // @example-start|custom
+  notification: CNotificationItem;
+  // @example-end
 
-  <c-select
-    label="Requires closing"
-    name="type"
-    cControl
-    [(ngModel)]="requiresClosing"
-    [items]="requiresClosingOptions"
-  ></c-select>
+  // @example-start|basic
+  addNotification() {
+    this.basicNotification = {
+      name: 'This is an example',
+      type: 'success',
+      delay: 5,
+    };
+  }
+  // @example-end
 
-  <c-select
-    label="Position"
-    name="type"
-    cControl
-    [(ngModel)]="position"
-    [items]="positions"
-  ></c-select>
-
-  <c-button (click)="customNotification()">Add notification</c-button>
-</c-row>
-
-<c-notification [notification]="notification" [position]="position?.value"></c-notification>`,
-  ];
-  scripts = [
-    `
-notification = {};
-
-addNotification() {
-  this.notification = {
-    name: 'This is an example',
-    type: 'success',
-    delay: 5,
-  };
-}
-`,
-    `delay = 2;
-types = [
-  {
-    name: 'Warning',
-    value: 'warning',
-  },
-  {
-    name: 'Error',
-    value: 'error',
-  },
-  {
-    name: 'Success',
-    value: 'success',
-  },
-  {
-    name: 'Info',
-    value: 'info',
-  },
-];
-
-positions = [
-  {
-    name: 'Fixed',
-    value: 'fixed',
-  },
-  {
-    name: 'Absolute',
-    value: 'absolute',
-  },
-];
-
-requiresClosingOptions = [
-  {
-    name: 'No',
-    value: false,
-  },
-  {
-    name: 'Yes',
-    value: true,
-  },
-];
-
-requiresClosing = this.requiresClosingOptions[0];
-position = this.positions[0];
-type = this.types[0];
-notification = {};
-message = 'Example text';
-
-customNotification() {
-  this.notification = {
-    name: this.message,
-    type: this.type?.value,
-    delay: this.delay,
-    requiresClosing: this.requiresClosing.value,
-  };
-}`,
-  ];
+  // @example-start|custom
   delay = 2;
-  types = [
+
+  types: CSelectItem[] = [
     {
       name: 'Warning',
       value: 'warning',
@@ -126,7 +58,8 @@ customNotification() {
       value: 'info',
     },
   ];
-  positions = [
+
+  positions: CSelectItem[] = [
     {
       name: 'Fixed',
       value: 'fixed',
@@ -136,7 +69,8 @@ customNotification() {
       value: 'absolute',
     },
   ];
-  requiresClosingOptions = [
+
+  requiresClosingOptions: CSelectItem[] = [
     {
       name: 'No',
       value: false,
@@ -146,28 +80,24 @@ customNotification() {
       value: true,
     },
   ];
-  requiresClosing = this.requiresClosingOptions[0];
-  position = this.positions[0];
-  type = this.types[0];
-  notification = {};
+
+  requiresClosing = false;
+
+  position = 'fixed';
+
+  type: CNotificationItemType = 'warning';
+
   message = 'Example text';
 
-  addNotification() {
-    this.notification = {
-      name: 'This is an example',
-      type: 'success',
-      delay: 5,
-    };
-  }
-
-  customNotification() {
+  addCustomNotification() {
     this.notification = {
       name: this.message,
-      type: this.type?.value,
+      type: this.type,
       delay: this.delay,
-      requiresClosing: this.requiresClosing.value,
+      requiresClosing: this.requiresClosing,
     };
   }
+  // @example-end
 
   constructor() {}
 

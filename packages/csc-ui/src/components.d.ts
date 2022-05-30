@@ -5,7 +5,7 @@
  * It contains typing information for all components that exist in this project.
  */
 import { HTMLStencilElement, JSXBase } from "@stencil/core/internal";
-import { CAutocompleteItem, CDataTableData, CDataTableFooterOptions, CDataTableHeader, CPaginationOptions, CRadioGroupItem, CSelectItem } from "./types";
+import { CAutocompleteItem, CDataTableData, CDataTableFooterOptions, CDataTableHeader, CPaginationOptions, CRadioGroupItem, CSelectItem, CToastMessage } from "./types";
 import { CardBackground } from "./components/c-card/c-card";
 import { CLoginCardBlendMode } from "./components/c-login-card/c-login-card";
 export namespace Components {
@@ -186,6 +186,10 @@ export namespace Components {
          */
         "outlined": boolean;
         /**
+          * Path for the svg icon
+         */
+        "path": string;
+        /**
           * Size of the button
          */
         "size": 'default' | 'small' | 'large';
@@ -297,13 +301,17 @@ export namespace Components {
          */
         "headers": CDataTableHeader[];
         /**
-          * Add hover effect to the table rows
-         */
-        "hoverable": boolean;
-        /**
           * Show a loader on top of the table
          */
         "loading": boolean;
+        /**
+          * Text shown when there is no data and the table is loading
+         */
+        "loadingText": string;
+        /**
+          * Text shown when there are no data available
+         */
+        "noDataText": string;
         /**
           * Pagination options
          */
@@ -316,6 +324,10 @@ export namespace Components {
           * Property used in selections
          */
         "selectionProperty": string;
+        /**
+          * Allow only a single row expanded at a time
+         */
+        "singleExpansion": boolean;
         /**
           * Sort data by
          */
@@ -458,7 +470,7 @@ export namespace Components {
         /**
           * Value of the input
          */
-        "value": string | number | CSelectItem | CAutocompleteItem;
+        "value": string | number | boolean | CSelectItem | CAutocompleteItem;
         /**
           * Variant
          */
@@ -581,9 +593,13 @@ export namespace Components {
     }
     interface CModal {
         /**
-          * Not dismissed when touching/clicking outside the content
+          * Dismissed when touching/clicking outside the content
          */
-        "persistent": boolean;
+        "dismissable": boolean;
+        /**
+          * Maximum width of the dialog in pixels
+         */
+        "maxWidth": number;
         /**
           * Is the modal visible
          */
@@ -787,7 +803,7 @@ export namespace Components {
         /**
           * Selected item
          */
-        "value": string | number | CSelectItem;
+        "value": string | number | boolean | CSelectItem;
     }
     interface CSidenavigation {
         /**
@@ -814,6 +830,12 @@ export namespace Components {
         "loading": boolean;
     }
     interface CSpacer {
+    }
+    interface CStatus {
+        /**
+          * Status type
+         */
+        "type"?: 'info' | 'warning' | 'error' | 'success';
     }
     interface CSubnavigationitem {
         /**
@@ -947,6 +969,10 @@ export namespace Components {
          */
         "active": boolean;
         /**
+          * Display an optional badge at the start of the tag
+         */
+        "badge": string | number;
+        /**
           * Mark tag as closeable
          */
         "closeable": boolean;
@@ -1051,6 +1077,39 @@ export namespace Components {
         "value": string;
     }
     interface CTitle {
+    }
+    interface CToast {
+        /**
+          * Close toast
+          * @emits close
+         */
+        "closeToast": () => Promise<void>;
+        /**
+          * Messages
+         */
+        "message": CToastMessage;
+    }
+    interface CToasts {
+        /**
+          * Use absolute positioning
+         */
+        "absolute": boolean;
+        /**
+          * Add a new message
+         */
+        "addToast": (message: CToastMessage) => Promise<void>;
+        /**
+          * Horizontal position
+         */
+        "horizontal": 'left' | 'center' | 'right';
+        /**
+          * Remove a message by id (id should be specified in the addToast params)
+         */
+        "removeToast": (id: string) => Promise<void>;
+        /**
+          * Vertical position
+         */
+        "vertical": 'top' | 'bottom';
     }
     interface CToolbar {
     }
@@ -1284,6 +1343,12 @@ declare global {
         prototype: HTMLCSpacerElement;
         new (): HTMLCSpacerElement;
     };
+    interface HTMLCStatusElement extends Components.CStatus, HTMLStencilElement {
+    }
+    var HTMLCStatusElement: {
+        prototype: HTMLCStatusElement;
+        new (): HTMLCStatusElement;
+    };
     interface HTMLCSubnavigationitemElement extends Components.CSubnavigationitem, HTMLStencilElement {
     }
     var HTMLCSubnavigationitemElement: {
@@ -1344,6 +1409,18 @@ declare global {
         prototype: HTMLCTitleElement;
         new (): HTMLCTitleElement;
     };
+    interface HTMLCToastElement extends Components.CToast, HTMLStencilElement {
+    }
+    var HTMLCToastElement: {
+        prototype: HTMLCToastElement;
+        new (): HTMLCToastElement;
+    };
+    interface HTMLCToastsElement extends Components.CToasts, HTMLStencilElement {
+    }
+    var HTMLCToastsElement: {
+        prototype: HTMLCToastsElement;
+        new (): HTMLCToastsElement;
+    };
     interface HTMLCToolbarElement extends Components.CToolbar, HTMLStencilElement {
     }
     var HTMLCToolbarElement: {
@@ -1389,6 +1466,7 @@ declare global {
         "c-sidenavigation": HTMLCSidenavigationElement;
         "c-sidenavigationitem": HTMLCSidenavigationitemElement;
         "c-spacer": HTMLCSpacerElement;
+        "c-status": HTMLCStatusElement;
         "c-subnavigationitem": HTMLCSubnavigationitemElement;
         "c-swiper": HTMLCSwiperElement;
         "c-swiper-tab": HTMLCSwiperTabElement;
@@ -1399,6 +1477,8 @@ declare global {
         "c-tag": HTMLCTagElement;
         "c-text-field": HTMLCTextFieldElement;
         "c-title": HTMLCTitleElement;
+        "c-toast": HTMLCToastElement;
+        "c-toasts": HTMLCToastsElement;
         "c-toolbar": HTMLCToolbarElement;
     }
 }
@@ -1602,6 +1682,10 @@ declare namespace LocalJSX {
          */
         "outlined"?: boolean;
         /**
+          * Path for the svg icon
+         */
+        "path"?: string;
+        /**
           * Size of the button
          */
         "size"?: 'default' | 'small' | 'large';
@@ -1717,13 +1801,17 @@ declare namespace LocalJSX {
          */
         "headers"?: CDataTableHeader[];
         /**
-          * Add hover effect to the table rows
-         */
-        "hoverable"?: boolean;
-        /**
           * Show a loader on top of the table
          */
         "loading"?: boolean;
+        /**
+          * Text shown when there is no data and the table is loading
+         */
+        "loadingText"?: string;
+        /**
+          * Text shown when there are no data available
+         */
+        "noDataText"?: string;
         /**
           * Triggered on pagination
          */
@@ -1748,6 +1836,10 @@ declare namespace LocalJSX {
           * Property used in selections
          */
         "selectionProperty"?: string;
+        /**
+          * Allow only a single row expanded at a time
+         */
+        "singleExpansion"?: boolean;
         /**
           * Sort data by
          */
@@ -1894,7 +1986,7 @@ declare namespace LocalJSX {
         /**
           * Value of the input
          */
-        "value"?: string | number | CSelectItem | CAutocompleteItem;
+        "value"?: string | number | boolean | CSelectItem | CAutocompleteItem;
         /**
           * Variant
          */
@@ -2017,13 +2109,17 @@ declare namespace LocalJSX {
     }
     interface CModal {
         /**
+          * Dismissed when touching/clicking outside the content
+         */
+        "dismissable"?: boolean;
+        /**
+          * Maximum width of the dialog in pixels
+         */
+        "maxWidth"?: number;
+        /**
           * Triggered when value is changed
          */
         "onChangeValue"?: (event: CustomEvent<boolean>) => void;
-        /**
-          * Not dismissed when touching/clicking outside the content
-         */
-        "persistent"?: boolean;
         /**
           * Is the modal visible
          */
@@ -2239,7 +2335,7 @@ declare namespace LocalJSX {
         /**
           * Selected item
          */
-        "value"?: string | number | CSelectItem;
+        "value"?: string | number | boolean | CSelectItem;
     }
     interface CSidenavigation {
         /**
@@ -2271,6 +2367,12 @@ declare namespace LocalJSX {
         "onItemChange"?: (event: CustomEvent<any>) => void;
     }
     interface CSpacer {
+    }
+    interface CStatus {
+        /**
+          * Status type
+         */
+        "type"?: 'info' | 'warning' | 'error' | 'success';
     }
     interface CSubnavigationitem {
         /**
@@ -2430,6 +2532,10 @@ declare namespace LocalJSX {
          */
         "active"?: boolean;
         /**
+          * Display an optional badge at the start of the tag
+         */
+        "badge"?: string | number;
+        /**
           * Mark tag as closeable
          */
         "closeable"?: boolean;
@@ -2539,6 +2645,30 @@ declare namespace LocalJSX {
     }
     interface CTitle {
     }
+    interface CToast {
+        /**
+          * Messages
+         */
+        "message"?: CToastMessage;
+        /**
+          * Emit inner value change to parent
+         */
+        "onClose"?: (event: CustomEvent<CToastMessage>) => void;
+    }
+    interface CToasts {
+        /**
+          * Use absolute positioning
+         */
+        "absolute"?: boolean;
+        /**
+          * Horizontal position
+         */
+        "horizontal"?: 'left' | 'center' | 'right';
+        /**
+          * Vertical position
+         */
+        "vertical"?: 'top' | 'bottom';
+    }
     interface CToolbar {
     }
     interface IntrinsicElements {
@@ -2580,6 +2710,7 @@ declare namespace LocalJSX {
         "c-sidenavigation": CSidenavigation;
         "c-sidenavigationitem": CSidenavigationitem;
         "c-spacer": CSpacer;
+        "c-status": CStatus;
         "c-subnavigationitem": CSubnavigationitem;
         "c-swiper": CSwiper;
         "c-swiper-tab": CSwiperTab;
@@ -2590,6 +2721,8 @@ declare namespace LocalJSX {
         "c-tag": CTag;
         "c-text-field": CTextField;
         "c-title": CTitle;
+        "c-toast": CToast;
+        "c-toasts": CToasts;
         "c-toolbar": CToolbar;
     }
 }
@@ -2635,6 +2768,7 @@ declare module "@stencil/core" {
             "c-sidenavigation": LocalJSX.CSidenavigation & JSXBase.HTMLAttributes<HTMLCSidenavigationElement>;
             "c-sidenavigationitem": LocalJSX.CSidenavigationitem & JSXBase.HTMLAttributes<HTMLCSidenavigationitemElement>;
             "c-spacer": LocalJSX.CSpacer & JSXBase.HTMLAttributes<HTMLCSpacerElement>;
+            "c-status": LocalJSX.CStatus & JSXBase.HTMLAttributes<HTMLCStatusElement>;
             "c-subnavigationitem": LocalJSX.CSubnavigationitem & JSXBase.HTMLAttributes<HTMLCSubnavigationitemElement>;
             "c-swiper": LocalJSX.CSwiper & JSXBase.HTMLAttributes<HTMLCSwiperElement>;
             "c-swiper-tab": LocalJSX.CSwiperTab & JSXBase.HTMLAttributes<HTMLCSwiperTabElement>;
@@ -2645,6 +2779,8 @@ declare module "@stencil/core" {
             "c-tag": LocalJSX.CTag & JSXBase.HTMLAttributes<HTMLCTagElement>;
             "c-text-field": LocalJSX.CTextField & JSXBase.HTMLAttributes<HTMLCTextFieldElement>;
             "c-title": LocalJSX.CTitle & JSXBase.HTMLAttributes<HTMLCTitleElement>;
+            "c-toast": LocalJSX.CToast & JSXBase.HTMLAttributes<HTMLCToastElement>;
+            "c-toasts": LocalJSX.CToasts & JSXBase.HTMLAttributes<HTMLCToastsElement>;
             "c-toolbar": LocalJSX.CToolbar & JSXBase.HTMLAttributes<HTMLCToolbarElement>;
         }
     }

@@ -32,6 +32,16 @@
       </div>
     </div>
 
+    <div *ngIf="activeTab === 'Methods'">
+      <app-viewer-methods [data]="componentData"></app-viewer-methods>
+
+      <div *ngFor="let child of componentData?.children">
+        <div *ngIf="child?.methods.length">
+          <app-viewer-methods [data]="child"></app-viewer-methods>
+        </div>
+      </div>
+    </div>
+
     <div *ngIf="activeTab === 'Slots'">
       <app-viewer-slots [data]="componentData"></app-viewer-slots>
 

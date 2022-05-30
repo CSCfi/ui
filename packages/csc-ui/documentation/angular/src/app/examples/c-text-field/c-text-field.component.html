@@ -1,14 +1,15 @@
-<app-example title="Password field">
+<app-example title="Password field" name="password" component="c-text-field">
   <c-text-field label="Password" type="password"></c-text-field>
 </app-example>
 
-<app-example title="Disabled state">
+<app-example title="Disabled state" name="disabled" component="c-text-field">
   <c-text-field label="Password" type="password" disabled></c-text-field>
 </app-example>
 
-<app-example title="Shadow with slots">
+<app-example title="Shadow with slots" name="shadow" component="c-text-field">
   <c-text-field placeholder="Text field with a shadow" shadow>
     <i class="mdi mdi-magnify" slot="pre"></i>
+
     <c-tag slot="post" active>12</c-tag>
   </c-text-field>
 </app-example>
@@ -16,6 +17,8 @@
 <app-example
   title="Usage as a textarea"
   subtitle="Specify the number of rows to use the c-text-field as a textarea"
+  name="textarea"
+  component="c-text-field"
 >
   <c-text-field
     label="I am a textarea"
@@ -25,7 +28,11 @@
   ></c-text-field>
 </app-example>
 
-<app-example title="Usage in Angular forms with validation" [raw]="template" [script]="script">
+<app-example
+  title="Usage in Angular forms with validation"
+  name="validation"
+  component="c-text-field"
+>
   <form [formGroup]="form">
     <c-card>
       <c-card-title>Login form</c-card-title>

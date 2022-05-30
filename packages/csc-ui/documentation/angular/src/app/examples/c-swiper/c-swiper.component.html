@@ -1,5 +1,5 @@
-<app-example title="Usage" [raw]="example" [script]="script">
-  <c-swiper [(ngModel)]="selectedTab" cControl ngDefaultControl>
+<app-example title="Usage" name="basic" component="c-swiper">
+  <c-swiper [(ngModel)]="selectedTab" cControl>
     <c-swiper-tab
       *ngFor="let tab of tabs; let i = index"
       icon="storage"

@@ -107,7 +107,8 @@ export class CSelect {
   /**
    * Selected item
    */
-  @Prop({ mutable: true }) value: string | number | CSelectItem = null;
+  @Prop({ mutable: true }) value: string | number | boolean | CSelectItem =
+    null;
 
   /**
    * selectable items
@@ -129,7 +130,8 @@ export class CSelect {
 
   @State() statusText = '';
 
-  private _itemRefs: { value: string | number; ref: HTMLElement }[] = [];
+  private _itemRefs: { value: string | number | boolean; ref: HTMLElement }[] =
+    [];
 
   private _id: string;
 
@@ -197,7 +199,7 @@ export class CSelect {
   private _getLabel() {
     if (
       this.returnValue &&
-      (typeof this.value === 'number' || typeof this.value === 'string')
+      ['number', 'string', 'boolean'].includes(typeof this.value)
     ) {
       return this.items?.find((item) => item.value === this.value)?.name;
     }
@@ -329,7 +331,11 @@ export class CSelect {
   }
 
   componentDidLoad() {
-    if (!!this.value && !this.currentIndex && this.currentIndex !== 0) {
+    if (
+      (this.value || typeof this.value === 'boolean') &&
+      !this.currentIndex &&
+      this.currentIndex !== 0
+    ) {
       this.currentIndex = this.items.findIndex(
         (item) => item.value === this.value,
       );

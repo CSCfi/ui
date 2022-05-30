@@ -1,7 +1,7 @@
 import { Component, Host, h, Prop, Watch, State } from '@stencil/core';
 
 /**
- * @group Popups
+ * @parent None
  */
 @Component({
   tag: 'c-notification',
@@ -18,10 +18,12 @@ export class CNotification {
     delay?: number;
     requiresClosing?: boolean;
   } = null;
+
   /**
    * Position of the notifications
    */
   @Prop() position: 'fixed' | 'absolute';
+
   @Watch('notification')
   itemChange(newValue: any) {
     if (!newValue.name) return;
@@ -48,6 +50,7 @@ export class CNotification {
       if (item.timeStamp === timeStamp) {
         item.hide = true;
       }
+
       items.push(item);
     });
     this.items = items;
@@ -65,6 +68,7 @@ export class CNotification {
         i.hide = true;
         i.requiresClosing = false;
       }
+
       items.push(i);
     });
     this.items = items;
@@ -72,12 +76,15 @@ export class CNotification {
 
   private _getListItem = (item) => {
     const classes = ['notification'];
+
     if (!item.requiresClosing && item.hide) {
       classes.push('hide');
     } else {
       classes.push('appear');
     }
+
     classes.push(item.type);
+
     return (
       <div
         class={classes.join(' ')}

@@ -1,16 +1,16 @@
-<app-example title="Basic menu (Angular)" cols [raw]="templates[0]" [script]="script">
+<app-example title="Basic menu (Angular)" name="basic" component="c-menu" cols>
   <c-menu [items]="items">Basic menu</c-menu>
 </app-example>
 
-<app-example title="Menu without hover (Angular)" cols [raw]="templates[1]" [script]="script">
+<app-example title="Menu without hover (Angular)" name="nohover" component="c-menu" cols>
   <c-menu [items]="items" nohover>Menu without hover</c-menu>
 </app-example>
 
-<app-example title="Small menu (Angular)" cols [raw]="templates[2]" [script]="script">
+<app-example title="Small menu (Angular)" name="small" component="c-menu" cols>
   <c-menu [items]="items" small>Small menu</c-menu>
 </app-example>
 
-<app-example title="Simple variant (Angular)" cols [raw]="templates[3]" [script]="script">
+<app-example title="Simple variant (Angular)" name="simple" component="c-menu" cols>
   <c-menu [items]="items" simple>
     <c-icon-button ghost badge="7" tabindex="-1">
       <i class="mdi mdi-email-outline"></i>

@@ -145,7 +145,8 @@ export class CAutocomplete {
     this.changeValue.emit(value);
   }
 
-  private _itemRefs: { value: string | number; ref: HTMLElement }[] = [];
+  private _itemRefs: { value: string | number | boolean; ref: HTMLElement }[] =
+    [];
 
   private _id: string;
 

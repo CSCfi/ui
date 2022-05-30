@@ -156,7 +156,10 @@ export class CPagination {
   private _getRange() {
     if (this.hideRange) return;
 
-    const end = this._currentPage * this._itemsPerPage;
+    const end = Math.min(
+      this._currentPage * this._itemsPerPage,
+      this.value.itemCount,
+    );
     const start = end - this._itemsPerPage + 1;
 
     return `${start} - ${end} of ${this.value.itemCount} items`;

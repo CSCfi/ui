@@ -11,7 +11,7 @@
     gap: var(--row-gap);
   }
 
-  &--nowrap {
+  &--nowrap slot {
     flex-wrap: nowrap !important;
   }
 

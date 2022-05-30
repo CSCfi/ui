@@ -12,7 +12,6 @@ import { CCardComponent } from './examples/c-card/c-card.component';
 import { CTabButtonsComponent } from './examples/c-tab-buttons/c-tab-buttons.component';
 import { CIconButtonComponent } from './examples/c-icon-button/c-icon-button.component';
 import { CSwitchComponent } from './examples/c-switch/c-switch.component';
-import { CTabComponent } from './examples/c-tab/c-tab.component';
 import { CTabsComponent } from './examples/c-tabs/c-tabs.component';
 import { CTagComponent } from './examples/c-tag/c-tag.component';
 import { CTextFieldComponent } from './examples/c-text-field/c-text-field.component';
@@ -48,6 +47,10 @@ import { GettingStartedVueComponent } from './getting-started-vue/getting-starte
 import { CLoginCardComponent } from './examples/c-login-card/c-login-card.component';
 import { CDataTableComponent } from './examples/c-data-table/c-data-table.component';
 import { CRowComponent } from './examples/c-row/c-row.component';
+import { CStatusComponent } from './examples/c-status/c-status.component';
+import { CToastComponent } from './examples/c-toast/c-toast.component';
+import { CToastsComponent } from './examples/c-toasts/c-toasts.component';
+import { ViewerMethodsComponent } from './viewer/viewer-methods/viewer-methods.component';
 
 @NgModule({
   declarations: [
@@ -57,7 +60,6 @@ import { CRowComponent } from './examples/c-row/c-row.component';
     CTabButtonsComponent,
     CIconButtonComponent,
     CSwitchComponent,
-    CTabComponent,
     CTabsComponent,
     CTagComponent,
     CTextFieldComponent,
@@ -93,6 +95,10 @@ import { CRowComponent } from './examples/c-row/c-row.component';
     CLoginCardComponent,
     CDataTableComponent,
     CRowComponent,
+    CStatusComponent,
+    CToastComponent,
+    CToastsComponent,
+    ViewerMethodsComponent,
   ],
   imports: [
     BrowserModule,

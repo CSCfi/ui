@@ -1,4 +1,4 @@
-<app-example title="Basic usage" [raw]="template" [script]="script">
+<app-example title="Basic usage" name="basic" component="c-sidenavigation">
   <c-sidenavigation>
     <c-sidenavigationitem
       *ngFor="let item of items"
@@ -9,6 +9,7 @@
         <span class="mdi {{ item.icon }}"></span>
         {{ item.title }}
       </div>
+
       <div *ngIf="item.subs?.length" slot="subnavitem">
         <c-subnavigationitem *ngFor="let sub of item.subs" href="https://www.csc.fi">
           {{ sub.title }}

@@ -6,10 +6,9 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./c-checkbox.component.scss'],
 })
 export class CCheckboxComponent implements OnInit {
-  template = `<c-checkbox cControl [(ngModel)]="value" label="Example checkbox"></c-checkbox>
-
-  <p>Checkbox is {{ value ? 'checked' : 'not checked' }}</p>`;
+  // @example-start|basic|disabled
   value = false;
+  // @example-end
 
   constructor() {}
 

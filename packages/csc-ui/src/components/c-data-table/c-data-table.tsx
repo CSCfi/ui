@@ -61,11 +61,6 @@ export class CDataTable {
   @Prop() headers: CDataTableHeader[] = [];
 
   /**
-   * Add hover effect to the table rows
-   */
-  @Prop() hoverable = false;
-
-  /**
    * Items per page options
    */
   @Prop() footerOptions: CDataTableFooterOptions = {
@@ -82,6 +77,16 @@ export class CDataTable {
   @Prop() loading = false;
 
   /**
+   * Text shown when there is no data and the table is loading
+   */
+  @Prop() loadingText = 'Loading data';
+
+  /**
+   * Text shown when there are no data available
+   */
+  @Prop() noDataText = 'No data';
+
+  /**
    * Pagination options
    */
   @Prop() pagination: CPaginationOptions;
@@ -95,6 +100,11 @@ export class CDataTable {
    * Property used in selections
    */
   @Prop() selectionProperty: string = null;
+
+  /**
+   * Allow only a single row expanded at a time
+   */
+  @Prop() singleExpansion = false;
 
   /**
    * Sort data by
@@ -127,7 +137,7 @@ export class CDataTable {
 
   @State() _isPaginationSimple = false;
 
-  @State() _selectedRows: number[] = [];
+  @State() _selectedRows: (string | number)[] = [];
 
   @State() hasOverflow = false;
 
@@ -162,7 +172,18 @@ export class CDataTable {
   }
 
   componentWillLoad() {
+    this.sortBy = this.sortBy ?? this.headers[0].key;
     this._getData();
+
+    // Hide the initially hidden headers
+    this.hiddenHeaders = [
+      ...new Set([
+        ...this.hiddenHeaders,
+        ...this.headers
+          .filter((header) => !!header.hidden)
+          .map((header) => header.key),
+      ]),
+    ];
   }
 
   componentDidLoad() {
@@ -240,6 +261,7 @@ export class CDataTable {
       (header) => !Object.keys(this.data?.[0] || {}).includes(header.key),
     );
 
+    // create cells for headers not present in the data
     const extraCells = this._extraHeaders.reduce(
       (cells, header) => ({
         ...cells,
@@ -261,7 +283,8 @@ export class CDataTable {
         };
 
         Object.keys(cell)
-          .filter((key) => !this.hiddenHeaders.includes(key))
+          // remove keys not present in headers
+          .filter((key) => this._headerKeys.includes(key))
           .forEach((key) => {
             item[key] = cell[key];
           });
@@ -288,7 +311,7 @@ export class CDataTable {
 
   private get _headers() {
     return this.headers.filter(
-      (header) => !this.hiddenHeaders.includes(header.key),
+      (header) => !this.hiddenHeaders.includes(header.key) && !header.hidden,
     );
   }
 
@@ -356,13 +379,13 @@ export class CDataTable {
     this._getData();
   }
 
-  private _onSelection(index: number) {
-    if (this._selectedRows.includes(index)) {
+  private _onSelection(value: string | number) {
+    if (this._selectedRows.includes(value)) {
       this._selectedRows = this._selectedRows.filter(
-        (selection) => selection !== index,
+        (selection) => selection !== value,
       );
     } else {
-      this._selectedRows = [...this._selectedRows, index];
+      this._selectedRows = [...this._selectedRows, value];
     }
 
     this.selection.emit(this._selectedRows);
@@ -385,6 +408,12 @@ export class CDataTable {
   private _onToggleAdditionalData(value: string | number) {
     if (!this._hasHiddenData) return;
 
+    if (this.singleExpansion) {
+      this._activeRows = this._activeRows[0] === value ? [] : [value];
+
+      return;
+    }
+
     if (this._activeRows.includes(value)) {
       this._activeRows = this._activeRows.filter((i) => i !== value);
 
@@ -394,10 +423,38 @@ export class CDataTable {
     this._activeRows = [...this._activeRows, value];
   }
 
-  private _renderCell(key, options, index, rowIndex, data) {
-    const Tag = this.headers[index]?.component?.tag;
-    const injectValue = !!this.headers[index]?.component?.injectValue;
-    const params = this.headers[index]?.component?.params || {};
+  private _renderAdditioanlDataRow(rowIndex: number, rowData = {}) {
+    return (
+      this._hasHiddenData && (
+        <tr
+          class={{
+            'additional-data': true,
+            active: this._activeRows.includes(rowIndex),
+          }}
+        >
+          <td colSpan={100}>
+            <div>
+              <ul>
+                {this._renderHiddenCells(rowIndex)}
+                {this._renderHiddenHeaderChildren(rowIndex, rowData)}
+              </ul>
+            </div>
+          </td>
+        </tr>
+      )
+    );
+  }
+
+  private _renderCellData(
+    key: string,
+    options: CDataTableDataItem,
+    colIndex: number,
+    rowIndex: number,
+  ) {
+    const component = options.component || this._headers[colIndex]?.component;
+    const Tag = component?.tag || null;
+    const injectValue = !!component?.injectValue;
+    const params = component?.params || {};
 
     if (injectValue) {
       params.value = options.value;
@@ -410,9 +467,9 @@ export class CDataTable {
           params?.onClick?.({
             index: rowIndex,
             value: options.value,
+            data: this.data[rowIndex],
             event,
             key,
-            data,
           })
         }
       >
@@ -454,154 +511,286 @@ export class CDataTable {
     });
   }
 
-  private _renderRows() {
-    return Object.values(this._data).map((row, i) => {
-      const selectionValue = !!this.selectionProperty
-        ? row[this.selectionProperty]?.value || i
-        : i;
-      const isSelected = this._selectedRows.includes(selectionValue);
+  private _renderExpansionIndicator() {
+    return (
+      this._hasHiddenData && (
+        <td>
+          <div>
+            <svg width="22" height="22" viewBox="0 0 24 24">
+              <path d={mdiChevronDown} />
+            </svg>
+          </div>
+        </td>
+      )
+    );
+  }
+
+  private _renderHiddenCells(index) {
+    return this._data[index]._hiddenData
+      .filter((d) => !this._extraHeaders.find((h) => h.key === d.id))
+      .map(({ id, key, value: options }) => {
+        const index = this._headers.findIndex((h) => h.key === id);
+
+        return (
+          <li>
+            {!!key && (
+              <div class="title">
+                <span>{key}:</span>
+                {this._renderCellData(id, options, index, index)}
+              </div>
+            )}
+
+            {!!options.children && (
+              <div class="children">
+                {this._renderCellChildren(options, index, id)}
+              </div>
+            )}
+          </li>
+        );
+      });
+  }
+
+  private _renderHiddenHeaderChildren(index, rowData) {
+    return this._data[index]._hiddenData.map(({ id, key }) => {
+      const headerIndex = this.headers.findIndex((h) => h.key === id);
 
       return (
-        <Fragment>
-          <tr
-            class={{
-              active: this._activeRows.includes(i),
-              parent: this._hasHiddenData,
-              selected: isSelected,
-            }}
-            onClick={() => this._onToggleAdditionalData(i)}
-          >
-            {this.selectable && (
-              <td>
-                <div class="selection">
-                  <c-checkbox
-                    value={isSelected}
-                    hide-details
-                    onChangeValue={() => this._onSelection(selectionValue)}
-                  ></c-checkbox>
-                </div>
-              </td>
-            )}
-
-            {this._hasHiddenData && (
-              <td>
-                <div>
-                  <svg width="22" height="22" viewBox="0 0 24 24">
-                    <path d={mdiChevronDown} />
-                  </svg>
-                </div>
-              </td>
-            )}
-
-            {Object.entries(row)
-              .filter(([key]) => !['_hiddenData'].includes(key))
-              .sort(
-                ([keyA], [keyB]) =>
-                  this._headerKeys.indexOf(keyA) -
-                  this._headerKeys.indexOf(keyB),
-              )
-              .map(([key, options], index) => (
-                <td>
-                  <div>
-                    {this._renderCell(key, options, index, i, row)}
-                    {!!options.children && (
-                      <div class="children">
-                        {this._renderCellChildren(options, i, key, row)}
-                      </div>
-                    )}
-
-                    {!!this.headers[index]?.children && (
-                      <div class="children">
-                        {this._renderCellChildren(
-                          this.headers[index],
-                          i,
-                          key,
-                          row,
-                        )}
-                      </div>
-                    )}
-                  </div>
-                </td>
-              ))}
-          </tr>
-
-          {this._hasHiddenData && (
-            <tr
-              class={{
-                'additional-data': true,
-                active: this._activeRows.includes(i),
-              }}
-            >
-              <td colSpan={100}>
-                <div>
-                  <ul>
-                    {this._data[i]._hiddenData
-                      .filter(
-                        (d) => !this._extraHeaders.find((h) => h.key === d.id),
-                      )
-                      .map(({ id, key, value: options }) => {
-                        const index = this.headers.findIndex(
-                          (h) => h.key === id,
-                        );
-
-                        return (
-                          <li>
-                            {key}: {this._renderCell(id, options, index, i, {})}
-                            {!!options.children && (
-                              <div class="children">
-                                {this._renderCellChildren(options, i, id)}
-                              </div>
-                            )}
-                          </li>
-                        );
-                      })}
-
-                    {this._data[i]._hiddenData.map(({ id, key }) => {
-                      const index = this.headers.findIndex((h) => h.key === id);
-
-                      return (
-                        !!this.headers[index]?.children && (
-                          <li>
-                            <div class="children">
-                              {this._renderCellChildren(
-                                this.headers[index],
-                                i,
-                                key,
-                                row,
-                              )}
-                            </div>
-                          </li>
-                        )
-                      );
-                    })}
-                  </ul>
-                </div>
-              </td>
-            </tr>
-          )}
-        </Fragment>
+        !!this.headers[headerIndex]?.children && (
+          <li>
+            <div class="children">
+              {this._renderCellChildren(
+                this.headers[headerIndex],
+                index,
+                key,
+                rowData,
+              )}
+            </div>
+          </li>
+        )
       );
     });
   }
 
+  private _renderLoaderRow() {
+    return (
+      <tr>
+        <td class="loader" colSpan={100}>
+          {this.loading && (
+            <div class="c-data-table__loader">
+              <div class="loading-bar" />
+            </div>
+          )}
+        </td>
+      </tr>
+    );
+  }
+
+  private _renderRows() {
+    return (
+      !!this._data.length &&
+      Object.values(this._data).map((rowData, rowIndex) => {
+        const selectionValue = !!this.selectionProperty
+          ? rowData[this.selectionProperty]?.value || rowIndex
+          : rowIndex;
+        const isSelected = this._selectedRows.includes(selectionValue);
+
+        return (
+          <Fragment>
+            <tr
+              class={{
+                active: this._activeRows.includes(rowIndex),
+                parent: this._hasHiddenData,
+                selected: isSelected,
+              }}
+              onClick={() => this._onToggleAdditionalData(rowIndex)}
+            >
+              {this._renderSelectionCell(isSelected, selectionValue)}
+              {this._renderExpansionIndicator()}
+              {this._renderTableCells(rowIndex, rowData)}
+            </tr>
+
+            {this._renderAdditioanlDataRow(rowIndex, rowData)}
+          </Fragment>
+        );
+      })
+    );
+  }
+
+  private _renderSelectionCell(
+    isSelected: boolean,
+    selectionValue: string | number,
+  ) {
+    return (
+      this.selectable && (
+        <td>
+          <div class="selection">
+            <c-checkbox
+              value={isSelected}
+              hide-details
+              onChangeValue={() => this._onSelection(selectionValue)}
+            ></c-checkbox>
+          </div>
+        </td>
+      )
+    );
+  }
+
   private _renderSortIndicator(key: string) {
+    let iconPath = mdiSwapVertical;
+
+    if (key === this.sortBy && this.sortDirection === 'asc') {
+      iconPath = mdiArrowUpThin;
+    }
+
+    if (key === this.sortBy && this.sortDirection === 'desc') {
+      iconPath = mdiArrowDownThin;
+    }
+
     return (
       <svg width="24" height="24" viewBox="0 0 24 24">
-        {key === this.sortBy && this.sortDirection === 'asc' && (
-          <path d={mdiArrowUpThin} />
-        )}
-        {key === this.sortBy && this.sortDirection === 'desc' && (
-          <path d={mdiArrowDownThin} />
-        )}
-        {(key !== this.sortBy || !this.sortDirection) && (
-          <path d={mdiSwapVertical} />
-        )}
+        <path d={iconPath} />
       </svg>
     );
   }
 
+  private _renderStatusTextRow() {
+    return (
+      !this._data.length && (
+        <tr>
+          <td class="info" colSpan={100}>
+            <div>{this.loading ? this.loadingText : this.noDataText}</div>
+          </td>
+        </tr>
+      )
+    );
+  }
+
+  private _renderTableBody() {
+    return (
+      <tbody>
+        {this._renderLoaderRow()}
+        {this._renderStatusTextRow()}
+        {this._renderRows()}
+      </tbody>
+    );
+  }
+
+  private _renderTableCell(
+    key: string,
+    options: CDataTableDataItem,
+    colIndex: number,
+    rowIndex: number,
+    rowData = {},
+  ) {
+    return (
+      <td>
+        <div
+          data-align={this.headers.find((header) => header.key === key)?.align}
+        >
+          {this._renderCellData(key, options, colIndex, rowIndex)}
+
+          {!!options.children && (
+            <div class="children">
+              {this._renderCellChildren(options, rowIndex, key, rowData)}
+            </div>
+          )}
+
+          {!!this.headers.find((header) => header.key === key)?.children && (
+            <div class="children">
+              {this._renderCellChildren(
+                this.headers.find((header) => header.key === key),
+                rowIndex,
+                key,
+                rowData,
+              )}
+            </div>
+          )}
+        </div>
+      </td>
+    );
+  }
+
+  private _renderTableCells(rowIndex: number, rowData = {}) {
+    return this._sortCellProperties(rowData).map(([key, options], index) =>
+      this._renderTableCell(key, options, index, rowIndex, rowData),
+    );
+  }
+
+  private _renderTableFooter() {
+    return (
+      !!this.pagination && (
+        <tfoot>
+          <tr ref={(el) => (this._footerElement = el as HTMLTableRowElement)}>
+            <td colSpan={100}>
+              <div>
+                <c-pagination
+                  {...this.footerOptions}
+                  value={this.pagination}
+                  simple={this._isPaginationSimple}
+                  onChangeValue={(e) => this._onPaginationChange(e)}
+                ></c-pagination>
+              </div>
+            </td>
+          </tr>
+        </tfoot>
+      )
+    );
+  }
+
+  private _renderTableHeader() {
+    return (
+      <thead>
+        <tr>
+          {this.selectable && <th class="selection"></th>}
+
+          {this._hasHiddenData && <th class="indicator"></th>}
+
+          {!!this._headers.length &&
+            this._headers.map((header) => {
+              const isSortable =
+                !!header.sortable || typeof header.sortable === 'undefined';
+              const params = {
+                'data-id': header.key,
+                ref: (el) => this._addHeaderRef(header.key, el),
+                ...(!!header && {
+                  style: {
+                    ...(header.width && { width: header.width }),
+                  },
+                }),
+                ...(isSortable && {
+                  onClick: () => this._onSort(header.key),
+                }),
+              };
+
+              return (
+                <th {...params}>
+                  <div class={{ sortable: isSortable }}>
+                    {header.value}
+                    {isSortable && this._renderSortIndicator(header.key)}
+                  </div>
+                </th>
+              );
+            })}
+        </tr>
+      </thead>
+    );
+  }
+
+  /**
+   * Order table row properties by the header keys
+   */
+  private _sortCellProperties(row: CDataTableDataItemPrivate) {
+    return Object.entries(row)
+      .filter(([key]) => !['_hiddenData'].includes(key))
+      .sort(
+        ([keyA], [keyB]) =>
+          this._headerKeys.indexOf(keyA) - this._headerKeys.indexOf(keyB),
+      );
+  }
+
   private _validateProps(data) {
     if (
+      !!data &&
       !this._isValidated &&
       this.selectionProperty !== null &&
       !data[this.selectionProperty]
@@ -617,7 +806,7 @@ export class CDataTable {
   render() {
     const tableClasses = {
       'c-data-table': true,
-      'c-data-table--hoverable': this.hoverable,
+      'c-data-table--hoverable': this.selectable || this._hasHiddenData,
     };
 
     return (
@@ -626,81 +815,9 @@ export class CDataTable {
           class={tableClasses}
           ref={(el) => (this._tableElement = el as HTMLTableElement)}
         >
-          <thead>
-            <tr>
-              {this.selectable && <th class="selection"></th>}
-
-              {this._hasHiddenData && <th class="indicator"></th>}
-
-              {!!this._headers.length &&
-                this._headers.map((header) => {
-                  const isSortable =
-                    !!header.sortable || typeof header.sortable === 'undefined';
-                  const params = {
-                    'data-id': header.key,
-                    ref: (el) => this._addHeaderRef(header.key, el),
-                    ...(!!header.width && {
-                      style: {
-                        width: header.width || 'auto',
-                      },
-                    }),
-                    ...(isSortable && {
-                      onClick: () => this._onSort(header.key),
-                    }),
-                  };
-
-                  return (
-                    <th {...params}>
-                      <div class={{ sortable: isSortable }}>
-                        {header.value}
-                        {isSortable && this._renderSortIndicator(header.key)}
-                      </div>
-                    </th>
-                  );
-                })}
-            </tr>
-          </thead>
-
-          <tbody>
-            <tr>
-              <td class="loader" colSpan={100}>
-                {this.loading && (
-                  <div class="c-data-table__loader">
-                    <div class="loading-bar" />
-                  </div>
-                )}
-              </td>
-            </tr>
-
-            {!this._data.length && (
-              <tr>
-                <td class="info" colSpan={100}>
-                  <div>{this.loading ? 'Loading data' : 'No data'}</div>
-                </td>
-              </tr>
-            )}
-
-            {!!this._data.length && this._renderRows()}
-          </tbody>
-
-          {!!this.pagination && (
-            <tfoot>
-              <tr
-                ref={(el) => (this._footerElement = el as HTMLTableRowElement)}
-              >
-                <td colSpan={100}>
-                  <div>
-                    <c-pagination
-                      {...this.footerOptions}
-                      value={this.pagination}
-                      simple={this._isPaginationSimple}
-                      onChangeValue={(e) => this._onPaginationChange(e)}
-                    ></c-pagination>
-                  </div>
-                </td>
-              </tr>
-            </tfoot>
-          )}
+          {this._renderTableHeader()}
+          {this._renderTableBody()}
+          {this._renderTableFooter()}
         </table>
       </Host>
     );

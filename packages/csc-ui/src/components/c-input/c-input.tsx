@@ -141,7 +141,7 @@ export class CInput {
   /**
    * Value of the input
    */
-  @Prop() value: string | number | CSelectItem | CAutocompleteItem;
+  @Prop() value: string | number | boolean | CSelectItem | CAutocompleteItem;
 
   /**
    * Variant
@@ -270,7 +270,7 @@ export class CInput {
   }
 
   get isActive() {
-    return !!this.value || this.isFocused;
+    return !!this.value || typeof this.value === 'boolean' || this.isFocused;
   }
 
   private _setAriaDescriptionId() {

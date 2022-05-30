@@ -1,4 +1,4 @@
-<app-example title="Usage in Angular" [raw]="examples.default" [script]="scripts.default">
+<app-example title="Usage in Angular" name="angular" component="c-autocomplete">
   <c-row gap="8">
     <c-autocomplete
       id="listOfCountries"
@@ -9,7 +9,7 @@
       [query]="query"
       (changeQuery)="changeQuery($event)"
       [itemsPerPage]="10"
-      [(ngModel)]="value"
+      [(ngModel)]="selection"
       style="flex: 1"
     >
       <i class="mdi mdi-earth" slot="pre"></i>
@@ -30,35 +30,30 @@
   </div>
 </app-example>
 
-<app-example
-  title="Usage with 'return-value'"
-  rows
-  [raw]="examples.returnValue"
-  [script]="scripts.default"
->
+<app-example title="Usage with 'return-value'" name="returnValue" component="c-autocomplete" rows>
   <c-row gap="8">
     <c-autocomplete
-      [(ngModel)]="valueValue"
-      [items]="filteredItems2"
-      [query]="valueQuery"
-      (changeQuery)="changeQuery2($event)"
+      [(ngModel)]="value"
+      [items]="countries"
+      [query]="searchString"
+      (changeQuery)="onQueryChange($event)"
       [itemsPerPage]="10"
       label="Countries"
       return-value
       hide-details
       cControl
     ></c-autocomplete>
-    <c-button (click)="addValueTag()" (keyup.enter)="addValueTag()">Add</c-button>
+    <c-button (click)="onAddTag()" (keyup.enter)="onAddTag()">Add</c-button>
   </c-row>
 
   <p style="margin: 16px 0 0">
     Added values:
-    <c-tag flat>{{ addedValueTags.length }}</c-tag>
+    <c-tag flat>{{ tags.length }}</c-tag>
   </p>
   <ul>
-    <li *ngFor="let tag of addedValueTags">
+    <li *ngFor="let tag of tags">
       {{ tag }}
     </li>
-    <li *ngIf="!addedValueTags.length">No added values</li>
+    <li *ngIf="!tags.length">No added values</li>
   </ul>
 </app-example>

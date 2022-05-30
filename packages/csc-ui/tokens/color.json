@@ -20,6 +20,9 @@
   "lightest-grey": {
     "value": "rgba(223, 225, 227, 0.5)"
   },
+  "link": {
+    "value": "#025B97"
+  },
   "mid-grey": {
     "value": "rgb(140, 140, 140)"
   },
@@ -38,7 +41,10 @@
   "primary-text-hover": {
     "value": "rgba(0, 103, 120, 0.15)"
   },
-  "link": {
-    "value": "#025B97"
+  "success": {
+    "value": "#51a808"
+  },
+  "warning": {
+    "value": "#ff5800"
   }
 }

@@ -13,7 +13,7 @@
 }
 
 :host(.flat) {
-  cursor: default;
+  cursor: inherit;
 }
 
 :host(:focus) {
@@ -27,13 +27,12 @@
 svg {
   width: 14px;
   height: 14px;
-  margin-right: -6px;
 }
 
 .row {
   display: flex;
   align-items: center;
-  column-gap: 6px;
+  column-gap: 8px;
 }
 
 .c-tag {
@@ -45,8 +44,8 @@ svg {
   font-size: 14px;
   font-weight: 400;
   line-height: 1.1;
-  min-height: 22px;
-  padding: 4px 20px;
+  min-height: 24px;
+  padding: 4px 12px;
   transition: all 0.2s ease;
 
   &:hover {
@@ -63,6 +62,11 @@ svg {
       color: #fff;
       box-shadow: none;
     }
+
+    .badge {
+      background-color: #fff;
+      color: var(--csc-primary);
+    }
   }
 
   &.flat {
@@ -75,5 +79,26 @@ svg {
     &:hover {
       background: var(--csc-primary);
     }
+  }
+
+  .badge {
+    background-color: var(--csc-primary);
+    border-radius: 24px;
+    color: #fff;
+    display: grid;
+    font-size: 12px;
+    height: 16px;
+    line-height: 1;
+    min-width: 16px;
+    padding: 0 4px;
+    place-content: center;
+  }
+
+  &--badge {
+    padding-left: 4px;
+  }
+
+  &--closeable {
+    padding-right: 8px;
   }
 }

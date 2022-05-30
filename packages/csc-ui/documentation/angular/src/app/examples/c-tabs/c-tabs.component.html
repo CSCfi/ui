@@ -1,4 +1,4 @@
-<app-example title="Usage">
+<app-example title="Usage" name="basic" component="c-tabs">
   <c-tabs value="tab1">
     <c-tab value="tab1">One</c-tab>
     <c-tab value="tab2">Two</c-tab>
@@ -6,7 +6,7 @@
   </c-tabs>
 </app-example>
 
-<app-example title="No border">
+<app-example title="No border" name="borderless" component="c-tabs">
   <c-tabs value="tab1" borderless>
     <c-tab value="tab1">One</c-tab>
     <c-tab value="tab2">Two</c-tab>
@@ -14,12 +14,8 @@
   </c-tabs>
 </app-example>
 
-<app-example
-  title="Usage in Angular"
-  [raw]="example.angular.template"
-  [script]="example.angular.script"
->
-  <c-tabs cControl [(ngModel)]="tab">
+<app-example title="Usage in Angular" name="angular" component="c-tabs">
+  <c-tabs [(ngModel)]="tab" cControl>
     <c-tab value="tab1">One</c-tab>
     <c-tab value="tab2">Two</c-tab>
     <c-tab value="tab3">Three</c-tab>

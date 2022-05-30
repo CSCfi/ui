@@ -1,11 +1,11 @@
-<app-example title="Default usage">
+<app-example title="Default usage" name="basic" component="c-row">
   <c-row gap="8">
     <c-button>Button</c-button>
     <c-button>Button</c-button>
   </c-row>
 </app-example>
 
-<app-example title="Justify" [raw]="justifyRaw" [script]="justifyScript">
+<app-example title="Justify" name="justify" component="c-row">
   <c-radio-group cControl [items]="justifyItems" [(ngModel)]="selectedJustify"></c-radio-group>
 
   <c-row gap="8" [justify]="selectedJustify.value">
@@ -14,7 +14,7 @@
   </c-row>
 </app-example>
 
-<app-example title="Align" [raw]="alignRaw" [script]="alignScript">
+<app-example title="Align" name="align" component="c-row">
   <c-radio-group cControl [items]="alignItems" [(ngModel)]="selectedAlign"></c-radio-group>
 
   <c-row gap="8" [align]="selectedAlign.value">
