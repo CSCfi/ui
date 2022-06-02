@@ -24,7 +24,7 @@ import { CToastMessage } from '../../types';
  */
 @Component({
   tag: 'c-toast',
-  styleUrl: 'c-toast.css',
+  styleUrl: 'c-toast.scss',
   shadow: true,
 })
 export class CToast {

@@ -15,7 +15,7 @@ import { v4 as uuid } from 'uuid';
  */
 @Component({
   tag: 'c-toasts',
-  styleUrl: 'c-toasts.css',
+  styleUrl: 'c-toasts.scss',
   shadow: true,
 })
 export class CToasts {
@@ -80,29 +80,6 @@ export class CToasts {
 
     toast?.closeToast();
   }
-
-  // componentWillLoad() {
-  //   this._initializeMessages(this.messages);
-  // }
-
-  // private _initializeMessages(messages: CToastMessage[]) {
-  //   if (!messages.length) return;
-
-  //   requestAnimationFrame(() => {
-  //     const defaultOptions = this._getDefaultOptions();
-
-  //     this.messages = [
-  //       ...messages.map((message) => ({
-  //         ...this._getDefaultOptions(),
-  //         ...message,
-  //         duration:
-  //           +message?.duration > 0
-  //             ? +message.duration
-  //             : defaultOptions.duration,
-  //       })),
-  //     ];
-  //   });
-  // }
 
   private _onMessageClose(event: CustomEvent) {
     this._removeMessage(event.detail.id);
