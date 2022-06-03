@@ -58,6 +58,7 @@ export class CModal {
     if (!this.dismissable) return;
 
     this.value = false;
+    this.changeValue.emit(this.value);
   }
 
   componentDidLoad() {
