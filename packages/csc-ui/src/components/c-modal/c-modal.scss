@@ -11,7 +11,8 @@
 }
 
 .c-modal {
-  max-width: var(--c-modal-max-width, 600px);
+  width: var(--c-modal-width, 600px);
+  max-width: calc(100% - 32px);
   display: block;
   position: fixed;
   z-index: 200000;
@@ -22,13 +23,6 @@
   &--show {
     transform: scale(1);
   }
-}
-
-.c-modal.fullscreen {
-  top: 0;
-  bottom: 0;
-  left: 0;
-  right: 0;
 }
 
 .c-overlay {

@@ -31,10 +31,10 @@ export class CModal {
   @Prop() dismissable = false;
 
   /**
-   * Maximum width of the dialog in pixels
+   * Width of the dialog in pixels
    *
    */
-  @Prop() maxWidth = 600;
+  @Prop() width = 600;
 
   /**
    * Triggered when value is changed
@@ -63,7 +63,7 @@ export class CModal {
   componentDidLoad() {
     this.innerValue = this.value;
 
-    this.el.style.setProperty('--c-modal-max-width', `${this.maxWidth}px`);
+    this.el.style.setProperty('--c-modal-width', `${this.width}px`);
   }
 
   render() {

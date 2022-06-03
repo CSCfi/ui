@@ -597,13 +597,13 @@ export namespace Components {
          */
         "dismissable": boolean;
         /**
-          * Maximum width of the dialog in pixels
-         */
-        "maxWidth": number;
-        /**
           * Is the modal visible
          */
         "value": boolean;
+        /**
+          * Width of the dialog in pixels
+         */
+        "width": number;
     }
     interface CNavigationbutton {
     }
@@ -1114,6 +1114,86 @@ export namespace Components {
     interface CToolbar {
     }
 }
+export interface CAccordionCustomEvent<T> extends CustomEvent<T> {
+    detail: T;
+    target: HTMLCAccordionElement;
+}
+export interface CAccordionItemCustomEvent<T> extends CustomEvent<T> {
+    detail: T;
+    target: HTMLCAccordionItemElement;
+}
+export interface CAutocompleteCustomEvent<T> extends CustomEvent<T> {
+    detail: T;
+    target: HTMLCAutocompleteElement;
+}
+export interface CButtonCustomEvent<T> extends CustomEvent<T> {
+    detail: T;
+    target: HTMLCButtonElement;
+}
+export interface CCheckboxCustomEvent<T> extends CustomEvent<T> {
+    detail: T;
+    target: HTMLCCheckboxElement;
+}
+export interface CDataTableCustomEvent<T> extends CustomEvent<T> {
+    detail: T;
+    target: HTMLCDataTableElement;
+}
+export interface CInputCustomEvent<T> extends CustomEvent<T> {
+    detail: T;
+    target: HTMLCInputElement;
+}
+export interface CModalCustomEvent<T> extends CustomEvent<T> {
+    detail: T;
+    target: HTMLCModalElement;
+}
+export interface CPaginationCustomEvent<T> extends CustomEvent<T> {
+    detail: T;
+    target: HTMLCPaginationElement;
+}
+export interface CRadioGroupCustomEvent<T> extends CustomEvent<T> {
+    detail: T;
+    target: HTMLCRadioGroupElement;
+}
+export interface CSelectCustomEvent<T> extends CustomEvent<T> {
+    detail: T;
+    target: HTMLCSelectElement;
+}
+export interface CSidenavigationitemCustomEvent<T> extends CustomEvent<T> {
+    detail: T;
+    target: HTMLCSidenavigationitemElement;
+}
+export interface CSwiperCustomEvent<T> extends CustomEvent<T> {
+    detail: T;
+    target: HTMLCSwiperElement;
+}
+export interface CSwiperTabCustomEvent<T> extends CustomEvent<T> {
+    detail: T;
+    target: HTMLCSwiperTabElement;
+}
+export interface CSwitchCustomEvent<T> extends CustomEvent<T> {
+    detail: T;
+    target: HTMLCSwitchElement;
+}
+export interface CTabCustomEvent<T> extends CustomEvent<T> {
+    detail: T;
+    target: HTMLCTabElement;
+}
+export interface CTabButtonsCustomEvent<T> extends CustomEvent<T> {
+    detail: T;
+    target: HTMLCTabButtonsElement;
+}
+export interface CTabsCustomEvent<T> extends CustomEvent<T> {
+    detail: T;
+    target: HTMLCTabsElement;
+}
+export interface CTextFieldCustomEvent<T> extends CustomEvent<T> {
+    detail: T;
+    target: HTMLCTextFieldElement;
+}
+export interface CToastCustomEvent<T> extends CustomEvent<T> {
+    detail: T;
+    target: HTMLCToastElement;
+}
 declare global {
     interface HTMLCAccordionElement extends Components.CAccordion, HTMLStencilElement {
     }
@@ -1495,7 +1575,7 @@ declare namespace LocalJSX {
         /**
           * Emit changes to the parent
          */
-        "onChangeValue"?: (event: CustomEvent<number | string>) => void;
+        "onChangeValue"?: (event: CAccordionCustomEvent<number | string>) => void;
         /**
           * Show an outline around expanded items
          */
@@ -1528,7 +1608,7 @@ declare namespace LocalJSX {
           * Emit changes to the c-accordion
           * @private
          */
-        "onItemChange"?: (event: CustomEvent<any>) => void;
+        "onItemChange"?: (event: CAccordionItemCustomEvent<any>) => void;
         /**
           * Show an outline around the expanded item
           * @private
@@ -1583,11 +1663,11 @@ declare namespace LocalJSX {
         /**
           * Triggered when text is typed
          */
-        "onChangeQuery"?: (event: CustomEvent<any>) => void;
+        "onChangeQuery"?: (event: CAutocompleteCustomEvent<any>) => void;
         /**
           * Triggered when an item is selected
          */
-        "onChangeValue"?: (event: CustomEvent<any>) => void;
+        "onChangeValue"?: (event: CAutocompleteCustomEvent<any>) => void;
         /**
           * Placeholder text
          */
@@ -1676,7 +1756,7 @@ declare namespace LocalJSX {
           * Emit changes to the parent
           * @private
          */
-        "onTabChange"?: (event: CustomEvent<number | string>) => void;
+        "onTabChange"?: (event: CButtonCustomEvent<number | string>) => void;
         /**
           * Outlined button style
          */
@@ -1755,7 +1835,7 @@ declare namespace LocalJSX {
         /**
           * Triggered when element is checked or unchecked
          */
-        "onChangeValue"?: (event: CustomEvent<any>) => void;
+        "onChangeValue"?: (event: CCheckboxCustomEvent<any>) => void;
         /**
           * Set the validíty of the input
          */
@@ -1815,15 +1895,15 @@ declare namespace LocalJSX {
         /**
           * Triggered on pagination
          */
-        "onPaginate"?: (event: CustomEvent<CPaginationOptions>) => void;
+        "onPaginate"?: (event: CDataTableCustomEvent<CPaginationOptions>) => void;
         /**
           * Triggered on selection
          */
-        "onSelection"?: (event: CustomEvent<any>) => void;
+        "onSelection"?: (event: CDataTableCustomEvent<any>) => void;
         /**
           * Triggered on sort
          */
-        "onSort"?: (event: CustomEvent<any>) => void;
+        "onSort"?: (event: CDataTableCustomEvent<any>) => void;
         /**
           * Pagination options
          */
@@ -1938,7 +2018,7 @@ declare namespace LocalJSX {
         /**
           * Emit changes to the parent
          */
-        "onChangeValue"?: (event: CustomEvent<any>) => void;
+        "onChangeValue"?: (event: CInputCustomEvent<any>) => void;
         /**
           * Placeholder of the input
          */
@@ -2113,17 +2193,17 @@ declare namespace LocalJSX {
          */
         "dismissable"?: boolean;
         /**
-          * Maximum width of the dialog in pixels
-         */
-        "maxWidth"?: number;
-        /**
           * Triggered when value is changed
          */
-        "onChangeValue"?: (event: CustomEvent<boolean>) => void;
+        "onChangeValue"?: (event: CModalCustomEvent<boolean>) => void;
         /**
           * Is the modal visible
          */
         "value"?: boolean;
+        /**
+          * Width of the dialog in pixels
+         */
+        "width"?: number;
     }
     interface CNavigationbutton {
     }
@@ -2158,7 +2238,7 @@ declare namespace LocalJSX {
         /**
           * Triggered when values are changed
          */
-        "onChangeValue"?: (event: CustomEvent<CPaginationOptions>) => void;
+        "onChangeValue"?: (event: CPaginationCustomEvent<CPaginationOptions>) => void;
         /**
           * Hide page number buttons
          */
@@ -2219,7 +2299,7 @@ declare namespace LocalJSX {
         /**
           * Emit value change to the parent
          */
-        "onChangeValue"?: (event: CustomEvent<any>) => void;
+        "onChangeValue"?: (event: CRadioGroupCustomEvent<any>) => void;
         /**
           * Return only the item value rather than the whole item object
          */
@@ -2299,7 +2379,7 @@ declare namespace LocalJSX {
         /**
           * Triggered when an item is selected
          */
-        "onChangeValue"?: (event: CustomEvent<any>) => void;
+        "onChangeValue"?: (event: CSelectCustomEvent<any>) => void;
         /**
           * Placeholder text
          */
@@ -2364,7 +2444,7 @@ declare namespace LocalJSX {
           * Emit changes to the c-accordion
           * @private
          */
-        "onItemChange"?: (event: CustomEvent<any>) => void;
+        "onItemChange"?: (event: CSidenavigationitemCustomEvent<any>) => void;
     }
     interface CSpacer {
     }
@@ -2396,7 +2476,7 @@ declare namespace LocalJSX {
         /**
           * Emit value change to the parent
          */
-        "onChangeValue"?: (event: CustomEvent<number | string>) => void;
+        "onChangeValue"?: (event: CSwiperCustomEvent<number | string>) => void;
         /**
           * Value of the swiper
          */
@@ -2423,7 +2503,7 @@ declare namespace LocalJSX {
           * Emit value change to the parent
           * @private
          */
-        "onChangeValue"?: (event: CustomEvent<number | string>) => void;
+        "onChangeValue"?: (event: CSwiperTabCustomEvent<number | string>) => void;
         /**
           * Position in the set
           * @private
@@ -2451,7 +2531,7 @@ declare namespace LocalJSX {
         /**
           * Emit inner value change to parent
          */
-        "onChangeValue"?: (event: CustomEvent<boolean>) => void;
+        "onChangeValue"?: (event: CSwitchCustomEvent<boolean>) => void;
         /**
           * Value of the element
          */
@@ -2474,7 +2554,7 @@ declare namespace LocalJSX {
           * Emit changes to the parent
           * @private
          */
-        "onTabChange"?: (event: CustomEvent<any>) => void;
+        "onTabChange"?: (event: CTabCustomEvent<any>) => void;
         /**
           * Position in the set
           * @private
@@ -2502,7 +2582,7 @@ declare namespace LocalJSX {
         /**
           * Emit changes to the parent
          */
-        "onChangeValue"?: (event: CustomEvent<number | string>) => void;
+        "onChangeValue"?: (event: CTabButtonsCustomEvent<number | string>) => void;
         /**
           * Size of the buttons
          */
@@ -2520,7 +2600,7 @@ declare namespace LocalJSX {
         /**
           * Emit changes to the parent
          */
-        "onChangeValue"?: (event: CustomEvent<any>) => void;
+        "onChangeValue"?: (event: CTabsCustomEvent<any>) => void;
         /**
           * Currently active tab
          */
@@ -2593,7 +2673,7 @@ declare namespace LocalJSX {
         /**
           * Emit changes to the parent
          */
-        "onChangeValue"?: (event: CustomEvent<any>) => void;
+        "onChangeValue"?: (event: CTextFieldCustomEvent<any>) => void;
         /**
           * Placeholder of the input
          */
@@ -2653,7 +2733,7 @@ declare namespace LocalJSX {
         /**
           * Emit inner value change to parent
          */
-        "onClose"?: (event: CustomEvent<CToastMessage>) => void;
+        "onClose"?: (event: CToastCustomEvent<CToastMessage>) => void;
     }
     interface CToasts {
         /**
