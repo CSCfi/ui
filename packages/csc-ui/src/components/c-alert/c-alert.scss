@@ -1,0 +1,52 @@
+:host {
+  --c-alert-color: var(--csc-primary);
+
+  display: grid;
+  gap: 16px;
+  grid-template-columns: 1fr;
+  color: var(--c-alert-color);
+  border: 2px solid currentColor;
+  border-left-width: 12px;
+  border-radius: 6px;
+  padding: 12px;
+}
+
+:host([info]),
+:host([error]),
+:host([success]),
+:host([warning]) {
+  grid-template-columns: auto 1fr;
+}
+
+:host([info]) {
+  --c-alert-color: var(--csc-link);
+}
+
+:host([error]) {
+  --c-alert-color: var(--csc-error);
+}
+
+:host([success]) {
+  --c-alert-color: var(--csc-success);
+}
+
+:host([warning]) {
+  --c-alert-color: var(--csc-warning);
+}
+
+svg {
+  fill: currentColor;
+}
+
+.c-alert__content {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 8px;
+}
+
+::slotted(*[slot='title']) {
+  margin: 0 !important;
+  font-size: 18px;
+  font-weight: 600;
+  line-height: 24px;
+}

@@ -106,3 +106,10 @@ export interface CToastMessage {
   closeText?: string;
   indeterminate?: boolean;
 }
+
+export enum CAlertType {
+  Warning = 'warning',
+  Error = 'error',
+  Success = 'success',
+  Info = 'info',
+}

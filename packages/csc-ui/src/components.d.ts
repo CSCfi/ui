@@ -5,7 +5,7 @@
  * It contains typing information for all components that exist in this project.
  */
 import { HTMLStencilElement, JSXBase } from "@stencil/core/internal";
-import { CAutocompleteItem, CDataTableData, CDataTableFooterOptions, CDataTableHeader, CPaginationOptions, CRadioGroupItem, CSelectItem, CToastMessage } from "./types";
+import { CAlertType, CAutocompleteItem, CDataTableData, CDataTableFooterOptions, CDataTableHeader, CPaginationOptions, CRadioGroupItem, CSelectItem, CToastMessage } from "./types";
 import { CardBackground } from "./components/c-card/c-card";
 import { CLoginCardBlendMode } from "./components/c-login-card/c-login-card";
 export namespace Components {
@@ -55,6 +55,12 @@ export namespace Components {
           * Value of the accordion item
          */
         "value": number | string;
+    }
+    interface CAlert {
+        /**
+          * Type of the alert
+         */
+        "type"?: CAlertType;
     }
     interface CAutocomplete {
         /**
@@ -685,6 +691,10 @@ export namespace Components {
          */
         "hint": string;
         /**
+          * Display radio buttons inline
+         */
+        "inline": boolean;
+        /**
           * Radio group items
          */
         "items": CRadioGroupItem[];
@@ -1207,6 +1217,12 @@ declare global {
         prototype: HTMLCAccordionItemElement;
         new (): HTMLCAccordionItemElement;
     };
+    interface HTMLCAlertElement extends Components.CAlert, HTMLStencilElement {
+    }
+    var HTMLCAlertElement: {
+        prototype: HTMLCAlertElement;
+        new (): HTMLCAlertElement;
+    };
     interface HTMLCAutocompleteElement extends Components.CAutocomplete, HTMLStencilElement {
     }
     var HTMLCAutocompleteElement: {
@@ -1510,6 +1526,7 @@ declare global {
     interface HTMLElementTagNameMap {
         "c-accordion": HTMLCAccordionElement;
         "c-accordion-item": HTMLCAccordionItemElement;
+        "c-alert": HTMLCAlertElement;
         "c-autocomplete": HTMLCAutocompleteElement;
         "c-button": HTMLCButtonElement;
         "c-card": HTMLCCardElement;
@@ -1618,6 +1635,12 @@ declare namespace LocalJSX {
           * Value of the accordion item
          */
         "value"?: number | string;
+    }
+    interface CAlert {
+        /**
+          * Type of the alert
+         */
+        "type"?: CAlertType;
     }
     interface CAutocomplete {
         /**
@@ -2289,6 +2312,10 @@ declare namespace LocalJSX {
          */
         "hint"?: string;
         /**
+          * Display radio buttons inline
+         */
+        "inline"?: boolean;
+        /**
           * Radio group items
          */
         "items"?: CRadioGroupItem[];
@@ -2754,6 +2781,7 @@ declare namespace LocalJSX {
     interface IntrinsicElements {
         "c-accordion": CAccordion;
         "c-accordion-item": CAccordionItem;
+        "c-alert": CAlert;
         "c-autocomplete": CAutocomplete;
         "c-button": CButton;
         "c-card": CCard;
@@ -2812,6 +2840,7 @@ declare module "@stencil/core" {
         interface IntrinsicElements {
             "c-accordion": LocalJSX.CAccordion & JSXBase.HTMLAttributes<HTMLCAccordionElement>;
             "c-accordion-item": LocalJSX.CAccordionItem & JSXBase.HTMLAttributes<HTMLCAccordionItemElement>;
+            "c-alert": LocalJSX.CAlert & JSXBase.HTMLAttributes<HTMLCAlertElement>;
             "c-autocomplete": LocalJSX.CAutocomplete & JSXBase.HTMLAttributes<HTMLCAutocompleteElement>;
             "c-button": LocalJSX.CButton & JSXBase.HTMLAttributes<HTMLCButtonElement>;
             "c-card": LocalJSX.CCard & JSXBase.HTMLAttributes<HTMLCCardElement>;

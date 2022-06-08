@@ -5,6 +5,9 @@
 }
 
 .c-radio-group {
+  --c-radio-flex-direction: column;
+  --c-radio-item-gap: 2px;
+
   display: flex;
   flex-direction: column;
   gap: 4px;
@@ -12,8 +15,9 @@
 
   &__items {
     display: flex;
-    flex-direction: column;
-    gap: 2px;
+    flex-direction: var(--c-radio-flex-direction);
+    flex-wrap: wrap;
+    gap: var(--c-radio-item-gap);
   }
 
   &--disabled {
@@ -28,6 +32,11 @@
     --c-radio-color: var(--csc-error);
 
     color: var(--csc-error);
+  }
+
+  &--inline {
+    --c-radio-flex-direction: row;
+    --c-radio-item-gap: 12px;
   }
 }
 

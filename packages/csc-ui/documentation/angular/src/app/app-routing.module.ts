@@ -5,6 +5,7 @@ import { BasicTemplateComponent } from './basic-template/basic-template.componen
 import { GettingStartedAngularComponent } from './getting-started-angular/getting-started-angular.component';
 import { GettingStartedHtmlComponent } from './getting-started-html/getting-started-html.component';
 import { GettingStartedVueComponent } from './getting-started-vue/getting-started-vue.component';
+import { TypesComponent } from './types/types.component';
 import { ViewerResolverService } from './viewer/viewer-resolver.service';
 import { ViewerComponent } from './viewer/viewer.component';
 
@@ -16,6 +17,11 @@ const appRoutes: Routes = [
       {
         path: '',
         component: AboutComponent,
+        resolve: [ViewerResolverService],
+      },
+      {
+        path: 'types',
+        component: TypesComponent,
         resolve: [ViewerResolverService],
       },
       {
@@ -48,7 +54,12 @@ const appRoutes: Routes = [
 ];
 
 @NgModule({
-  imports: [RouterModule.forRoot(appRoutes, { preloadingStrategy: PreloadAllModules })],
+  imports: [
+    RouterModule.forRoot(appRoutes, {
+      preloadingStrategy: PreloadAllModules,
+      anchorScrolling: 'enabled',
+    }),
+  ],
   exports: [RouterModule],
 })
 export class AppRoutingModule {}

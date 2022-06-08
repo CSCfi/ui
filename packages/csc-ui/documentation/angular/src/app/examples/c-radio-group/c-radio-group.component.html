@@ -9,6 +9,10 @@
   <p class="text-primary mt-4">Selected item: {{ selectedItem.label }}</p>
 </app-example>
 
+<app-example title="Inline" name="inline" component="c-radio-group">
+  <c-radio-group [items]="items" label="Inline radio buttons" inline></c-radio-group>
+</app-example>
+
 <app-example
   title="Using the default slot as a label"
   subtitle="Returning only the value"

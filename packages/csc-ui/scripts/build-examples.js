@@ -4,6 +4,7 @@ const components = require('./utils/getComponents');
 
 const getExampleScripts = require('./utils/getExampleScripts');
 const getExampleTemplates = require('./utils/getExampleTemplates');
+const getTypes = require('./utils/getTypes');
 
 const dataFolder = path.resolve(
   __dirname,
@@ -13,6 +14,8 @@ const dataFolder = path.resolve(
 if (!fs.existsSync(dataFolder)) {
   fs.mkdirSync(dataFolder);
 }
+
+getTypes(`${dataFolder}/types.js`);
 
 components.forEach((component) => {
   getExampleScripts(component, `${dataFolder}/${component}.script.js`);

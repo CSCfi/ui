@@ -10,3 +10,5 @@ documentation/angular/.firebase/
 .npmrc
 
 firebase-debug.log
+
+playground/**/node_modules

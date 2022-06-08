@@ -160,7 +160,7 @@ export class CPagination {
       this._currentPage * this._itemsPerPage,
       this.value.itemCount,
     );
-    const start = end - this._itemsPerPage + 1;
+    const start = this.value.startFrom + 1;
 
     return `${start} - ${end} of ${this.value.itemCount} items`;
   }

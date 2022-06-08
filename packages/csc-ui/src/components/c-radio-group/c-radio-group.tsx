@@ -39,6 +39,11 @@ export class CRadioGroup {
   @Prop() hint = '';
 
   /**
+   * Display radio buttons inline
+   */
+  @Prop() inline = false;
+
+  /**
    * Label of the radio group
    */
   @Prop() label: string;
@@ -215,6 +220,7 @@ export class CRadioGroup {
     const wrapperClasses = {
       'c-radio-group': true,
       'c-radio-group--disabled': this.disabled,
+      'c-radio-group--inline': this.inline,
       'c-radio-group--error': this.messageOptions.type === 'error',
     };
 

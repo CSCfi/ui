@@ -13,6 +13,7 @@
 | `disabled`    | `disabled`     | Disable the radio group                                      | `boolean`                             | `false`            |
 | `hideDetails` | `hide-details` | Hide the hint and error messages                             | `boolean`                             | `false`            |
 | `hint`        | `hint`         | Hint text for the input                                      | `string`                              | `''`               |
+| `inline`      | `inline`       | Display radio buttons inline                                 | `boolean`                             | `false`            |
 | `items`       | --             | Radio group items                                            | `CRadioGroupItem[]`                   | `[]`               |
 | `label`       | `label`        | Label of the radio group                                     | `string`                              | `undefined`        |
 | `returnValue` | `return-value` | Return only the item value rather than the whole item object | `boolean`                             | `undefined`        |
