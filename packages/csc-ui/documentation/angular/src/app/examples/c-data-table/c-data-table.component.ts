@@ -7,7 +7,8 @@ import {
   CDataTableFooterOptions,
   CDataTableHeader,
   CDataTableData,
-} from '../../../../../../dist/types/types';
+  CToastType,
+} from '../../../../../../src/types';
 
 @Component({
   selector: 'app-c-data-table',
@@ -16,7 +17,7 @@ import {
 })
 export class CDataTableComponent implements OnInit {
   // @example-start|basic
-  basicData = [
+  basicData: CDataTableData[] = [
     {
       country: { value: 'Denmark' },
       population: { value: 5831404 },
@@ -44,7 +45,7 @@ export class CDataTableComponent implements OnInit {
     },
   ];
 
-  basicHeaders = [
+  basicHeaders: CDataTableHeader[] = [
     {
       key: 'country',
       value: 'Country',
@@ -68,7 +69,21 @@ export class CDataTableComponent implements OnInit {
   // @example-end
   */
 
+  /*
   // @example-start|complex
+  import {
+    CPaginationOptions,
+    CDataTableFooterOptions,
+    CDataTableHeader,
+    CDataTableData,
+    CToastType,
+  } from 'csc-ui';
+  // @example-end
+  */
+
+  // @example-start|complex
+  expansionStatusText = '';
+
   headers: CDataTableHeader[] = [
     {
       key: 'id',
@@ -161,6 +176,20 @@ export class CDataTableComponent implements OnInit {
 
   onSelection(event) {
     this.selections = event.detail;
+  }
+
+  onExpand(event) {
+    const { row, active } = event.detail;
+
+    const toasts = document.getElementById('toasts') as HTMLCToastsElement;
+
+    this.expansionStatusText = `Row with an id of ${row.id} was ${active ? 'expanded' : 'closed'}`;
+
+    toasts.addToast({
+      message: this.expansionStatusText,
+      duration: 3000,
+      type: CToastType.Success,
+    });
   }
   // @example-end
 

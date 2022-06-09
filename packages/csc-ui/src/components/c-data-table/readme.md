@@ -26,11 +26,12 @@
 
 ## Events
 
-| Event       | Description             | Type                              |
-| ----------- | ----------------------- | --------------------------------- |
-| `paginate`  | Triggered on pagination | `CustomEvent<CPaginationOptions>` |
-| `selection` | Triggered on selection  | `CustomEvent<any>`                |
-| `sort`      | Triggered on sort       | `CustomEvent<any>`                |
+| Event       | Description                | Type                              |
+| ----------- | -------------------------- | --------------------------------- |
+| `expand`    | Triggered on row expansion | `CustomEvent<any>`                |
+| `paginate`  | Triggered on pagination    | `CustomEvent<CPaginationOptions>` |
+| `selection` | Triggered on selection     | `CustomEvent<any>`                |
+| `sort`      | Triggered on sort          | `CustomEvent<any>`                |
 
 
 ## Dependencies

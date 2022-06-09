@@ -15,12 +15,15 @@
     selectable
     single-expansion
     (selection)="onSelection($event)"
+    (expand)="onExpand($event)"
   ></c-data-table>
 
   <div class="mt-4">
     <span class="text-primary">Currently selected ids:</span>
     {{ selections.join(', ') || 'none' }}
   </div>
+
+  <c-toasts id="toasts"></c-toasts>
 </app-example>
 
 <app-example

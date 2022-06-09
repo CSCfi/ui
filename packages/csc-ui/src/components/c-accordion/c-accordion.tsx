@@ -42,7 +42,7 @@ export class CAccordion {
   /**
    * Emit changes to the parent
    */
-  @Event() changeValue: EventEmitter<number | string>;
+  @Event({ bubbles: false }) changeValue: EventEmitter<number | string>;
 
   @Element() el: HTMLCAccordionElement;
 

@@ -1916,6 +1916,10 @@ declare namespace LocalJSX {
          */
         "noDataText"?: string;
         /**
+          * Triggered on row expansion
+         */
+        "onExpand"?: (event: CDataTableCustomEvent<any>) => void;
+        /**
           * Triggered on pagination
          */
         "onPaginate"?: (event: CDataTableCustomEvent<CPaginationOptions>) => void;

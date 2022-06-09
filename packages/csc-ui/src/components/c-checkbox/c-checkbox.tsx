@@ -59,7 +59,7 @@ export class CCheckbox {
   /**
    * Triggered when element is checked or unchecked
    */
-  @Event() changeValue: EventEmitter;
+  @Event({ bubbles: false }) changeValue: EventEmitter;
 
   @State() messageOptions = {
     show: true,

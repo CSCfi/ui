@@ -39,7 +39,7 @@ export class CSwitch {
   /**
    * Emit inner value change to parent
    */
-  @Event() changeValue: EventEmitter<boolean>;
+  @Event({ bubbles: false }) changeValue: EventEmitter<boolean>;
 
   componentDidLoad() {
     const slotted = this.host.childNodes;

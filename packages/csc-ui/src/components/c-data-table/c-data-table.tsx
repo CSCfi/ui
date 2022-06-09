@@ -122,6 +122,11 @@ export class CDataTable {
   @Event() paginate: EventEmitter<CPaginationOptions>;
 
   /**
+   * Triggered on row expansion
+   */
+  @Event() expand: EventEmitter;
+
+  /**
    * Triggered on sort
    */
   @Event() sort: EventEmitter;
@@ -405,16 +410,43 @@ export class CDataTable {
     this._getData();
   }
 
-  private _onToggleAdditionalData(value: string | number) {
-    if (!this._hasHiddenData) return;
+  private _onToggleAdditionalData(
+    event: MouseEvent,
+    value: string | number,
+    row,
+  ) {
+    if (
+      !this._hasHiddenData ||
+      (event.target as HTMLElement).tagName === 'C-CHECKBOX'
+    )
+      return;
+
+    const isActive = this.singleExpansion
+      ? this._activeRows[0] === value
+      : this._activeRows.includes(value);
+
+    const { _hiddenData, ...data } = row;
+
+    Object.keys(data).forEach((key) => {
+      data[key] = data[key].value;
+    });
+
+    _hiddenData.forEach((hiddenRow) => {
+      data[hiddenRow.id] = hiddenRow.value.value;
+    });
+
+    this.expand.emit({
+      active: !isActive,
+      row: data,
+    });
 
     if (this.singleExpansion) {
-      this._activeRows = this._activeRows[0] === value ? [] : [value];
+      this._activeRows = isActive ? [] : [value];
 
       return;
     }
 
-    if (this._activeRows.includes(value)) {
+    if (isActive) {
       this._activeRows = this._activeRows.filter((i) => i !== value);
 
       return;
@@ -602,7 +634,9 @@ export class CDataTable {
                 parent: this._hasHiddenData,
                 selected: isSelected,
               }}
-              onClick={() => this._onToggleAdditionalData(rowIndex)}
+              onClick={(event) =>
+                this._onToggleAdditionalData(event, rowIndex, rowData)
+              }
             >
               {this._renderSelectionCell(isSelected, selectionValue)}
               {this._renderExpansionIndicator()}

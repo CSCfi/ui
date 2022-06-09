@@ -118,7 +118,7 @@ export class CSelect {
   /**
    * Triggered when an item is selected
    */
-  @Event() changeValue: EventEmitter;
+  @Event({ bubbles: false }) changeValue: EventEmitter;
 
   @Element() host: HTMLCSelectElement;
 

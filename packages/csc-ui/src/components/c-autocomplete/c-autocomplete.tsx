@@ -131,7 +131,7 @@ export class CAutocomplete {
   /**
    * Triggered when an item is selected
    */
-  @Event() changeValue: EventEmitter;
+  @Event({ bubbles: false }) changeValue: EventEmitter;
 
   private _valueChangedHandler(item: string | number | CAutocompleteItem) {
     function isItem(element) {

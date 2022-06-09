@@ -135,7 +135,7 @@ export class CTextField {
   /**
    * Emit changes to the parent
    */
-  @Event() changeValue: EventEmitter;
+  @Event({ bubbles: false }) changeValue: EventEmitter;
 
   @State() isFocused = false;
 

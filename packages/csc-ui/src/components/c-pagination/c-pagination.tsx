@@ -51,7 +51,7 @@ export class CPagination {
   /**
    * Triggered when values are changed
    */
-  @Event() changeValue: EventEmitter<CPaginationOptions>;
+  @Event({ bubbles: false }) changeValue: EventEmitter<CPaginationOptions>;
 
   /**
    * Hide range indicator

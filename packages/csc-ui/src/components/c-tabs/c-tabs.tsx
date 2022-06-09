@@ -33,7 +33,7 @@ export class CTabs {
   /**
    * Emit changes to the parent
    */
-  @Event() changeValue: EventEmitter;
+  @Event({ bubbles: false }) changeValue: EventEmitter;
 
   @Element() el: HTMLCTabsElement;
 
