@@ -41,6 +41,10 @@
           Persistent (optional)
         </c-checkbox>
 
+        <c-checkbox [(ngModel)]="progress" hint="Default: true" cControl>
+          Show progress (optional)
+        </c-checkbox>
+
         <c-button fit [disabled]="!message" (click)="onAddToast()">Add toast</c-button>
       </c-card-content>
     </c-card>

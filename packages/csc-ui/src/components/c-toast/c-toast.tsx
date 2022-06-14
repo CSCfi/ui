@@ -132,6 +132,8 @@ export class CToast {
   }
 
   render() {
+    const showProgressBar = !this.message.persistent && this.message.progress;
+
     return (
       <Host
         id={`c-toast--${this.message.id}`}
@@ -158,7 +160,7 @@ export class CToast {
           {!this.message.indeterminate && this._renderCloseButton()}
         </div>
 
-        {!this.message.persistent && (
+        {showProgressBar && (
           <div
             class="c-toast__progress"
             style={{ '--c-toast-duration': `${this.message.duration}ms` }}

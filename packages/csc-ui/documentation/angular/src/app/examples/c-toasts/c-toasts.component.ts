@@ -34,6 +34,8 @@ export class CToastsComponent {
 
   persistent = false;
 
+  progress = true;
+
   indeterminateCounter = 0;
 
   verticalOptions: CSelectItem[] = [
@@ -58,6 +60,7 @@ export class CToastsComponent {
       duration: this.duration,
       message: this.message,
       persistent: this.persistent,
+      progress: this.progress,
       closeText: this.closeText,
     };
 

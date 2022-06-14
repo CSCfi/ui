@@ -44,6 +44,7 @@ export class CToasts {
     persistent: false,
     indeterminate: false,
     position: CToastPosition.Fixed,
+    progress: true,
     id: uuid(),
   });
 
