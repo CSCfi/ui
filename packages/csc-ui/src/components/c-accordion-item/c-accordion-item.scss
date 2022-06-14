@@ -3,23 +3,25 @@
 }
 
 .c-accordion-item {
-  --c-indicator-rotation: rotate(0deg);
-  --c-content-height: 0px;
-  --c-min-height: 46px;
-  --c-border-radius: 6px;
-  --c-padding: 12px;
+  --c-accordion-indicator-rotation: rotate(0deg);
+  --c-accordion-content-height: 0px;
+  --c-accordion-min-height: 46px;
+  --c-accordion-border-radius: 6px;
+  --c-accordion-padding: 12px;
+  --c-accordion-overflow: hidden;
 
   display: block;
 
   &--expanded {
-    --c-content-height: auto;
-    --c-indicator-rotation: rotate(180deg);
+    --c-accordion-content-height: auto;
+    --c-accordion-indicator-rotation: rotate(180deg);
+    --c-accordion-overflow: visible;
   }
 
   &--outlined {
-    --c-min-height: 42px;
-    --c-border-radius: 4px;
-    --c-padding: 10px;
+    --c-accordion-min-height: 42px;
+    --c-accordion-border-radius: 4px;
+    --c-accordion-padding: 10px;
 
     box-shadow: inset 0 0 0 2px var(--csc-primary-ghost);
     border-radius: 6px;
@@ -27,14 +29,14 @@
   }
 
   &__header {
-    min-height: var(--c-min-height);
+    min-height: var(--c-accordion-min-height);
     user-select: none;
     background: var(--csc-primary-ghost);
     display: grid;
     column-gap: 8px;
     align-items: center;
-    padding: 0 var(--c-padding);
-    border-radius: var(--c-border-radius);
+    padding: 0 var(--c-accordion-padding);
+    border-radius: var(--c-accordion-border-radius);
     cursor: pointer;
     grid-template-columns: auto 1fr auto;
     gap: 8px;
@@ -73,8 +75,8 @@
   }
 
   &__content-wrapper {
-    overflow: hidden;
-    height: var(--c-content-height);
+    overflow: var(--c-accordion-overflow);
+    height: var(--c-accordion-content-height);
   }
 
   &__icon {
@@ -98,7 +100,7 @@
     svg {
       width: 24px;
       height: 24px !important;
-      transform: var(--c-indicator-rotation);
+      transform: var(--c-accordion-indicator-rotation);
       transition: transform 0.3s ease-in-out;
     }
   }

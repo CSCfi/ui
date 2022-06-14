@@ -68,7 +68,9 @@ export class CSubnavigationitem {
         onKeyDown={(e) => this._redirect(e)}
       >
         <div>
-          <slot></slot>
+          <div class="c-subnavigationitem__slot">
+            <slot></slot>
+          </div>
           {this.active && <span class="visuallyhidden">, Current page</span>}
         </div>
 

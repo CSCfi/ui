@@ -14,11 +14,15 @@
   position: relative;
   transition: background-color 0.2s ease-in;
   user-select: none;
+  max-width: calc(320px - 24px - 16px);
 }
 
 :host > div {
   display: flex;
   align-items: center;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
 }
 
 :host > div::before {
@@ -71,4 +75,10 @@
   position: absolute;
   white-space: nowrap;
   width: 1px;
+}
+
+.c-subnavigationitem__slot {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
 }

@@ -127,13 +127,18 @@ export class CSidenavigationitem {
         onClick={(e) => this._redirect(e)}
         onKeyDown={(e) => this._redirect(e)}
       >
-        <div class="c-sidenavigation-item__header">
+        <div
+          class={{
+            'c-sidenavigation-item__header': true,
+            'c-sidenavigation-item__header--expandable': this._slotHasContent,
+          }}
+        >
           {this._slotHasContent && (
             <svg width="22" height="22" viewBox="0 0 24 24" class="svg">
               <path d={mdiChevronRight} />
             </svg>
           )}
-          <div>
+          <div class="c-sidenavigation-item__slot">
             <slot name="main"></slot>
           </div>
         </div>

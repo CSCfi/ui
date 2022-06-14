@@ -8,7 +8,6 @@ import {
   Input,
   OnInit,
 } from '@angular/core';
-import { sanitize } from 'src/app/utils/utils';
 import docs from '../../../../../../docs.json';
 
 @Component({
@@ -73,7 +72,7 @@ export class ExampleComponent implements AfterViewInit, AfterContentChecked, OnI
 
   initializeExamples() {
     this.code = this.examples?.template?.[this.name];
-    this.scriptCode = sanitize(this.examples?.script?.[this.name]);
+    this.scriptCode = this.examples?.script?.[this.name];
 
     this.cdref.detectChanges();
   }
