@@ -18,7 +18,7 @@ export class CLink {
   /**
    * Display line under the link
    */
-  @Prop() underline: boolean = false;
+  @Prop() underline = false;
 
   /**
    * regular target attribute of a hyperlink

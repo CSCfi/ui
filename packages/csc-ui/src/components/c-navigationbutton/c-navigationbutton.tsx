@@ -50,6 +50,7 @@ export class CNavigationbutton {
       />
     </svg>
   );
+
   render() {
     return <Host>{this._svg}</Host>;
   }

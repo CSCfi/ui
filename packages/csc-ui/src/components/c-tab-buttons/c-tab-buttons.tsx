@@ -27,7 +27,7 @@ export class CTabButtons {
   /**
    * Always require a selection
    */
-  @Prop() mandatory: boolean = false;
+  @Prop() mandatory = false;
 
   /**
    * Size of the buttons
@@ -57,6 +57,7 @@ export class CTabButtons {
     if (value !== null) {
       const button =
         this.buttons.find((btn) => btn.value === value) || this.buttons[value];
+
       if (button) button.outlined = false;
     }
 

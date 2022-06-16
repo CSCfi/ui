@@ -17,6 +17,7 @@ export class CContainer {
 
   render() {
     let style = {};
+
     if (this.width > 0) {
       style = { 'max-width': `${this.width}px` };
     }

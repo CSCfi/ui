@@ -20,7 +20,7 @@ export class CCard {
   /**
    * Background color
    */
-  @Prop() backgroundColor: string = 'white';
+  @Prop() backgroundColor = 'white';
 
   @Element() host: HTMLCCardElement;
 

@@ -45,6 +45,7 @@ export class CCscLogo {
         </g>
       </svg>
     );
+
     return <Host style={{ width: `${this.width}px` }}>{svg}</Host>;
   }
 }
