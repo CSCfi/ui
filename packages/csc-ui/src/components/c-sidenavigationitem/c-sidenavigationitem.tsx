@@ -115,7 +115,7 @@ export class CSidenavigationitem {
     };
 
     if (this._slotHasContent) {
-      a11y['aria-expanded'] = this.active.toString();
+      a11y['aria-expanded'] = !!this.active?.toString();
     } else if (this.active) {
       a11y['aria-current'] = 'page';
     }
@@ -147,7 +147,7 @@ export class CSidenavigationitem {
           <nav
             role="menubar"
             aria-label={this._ariaLabel}
-            aria-expanded={this.active.toString()}
+            aria-expanded={!!this.active?.toString()}
             class={subNavigationClasses}
           >
             <slot name="subnavitem"></slot>
