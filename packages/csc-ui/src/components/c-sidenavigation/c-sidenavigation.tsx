@@ -24,12 +24,13 @@ export class CSidenavigation {
   @Listen('itemChange')
   handleChange(event: Event) {
     const slotted = this.host.querySelectorAll('c-sidenavigationitem');
+    const { active } = event.target as HTMLCSidenavigationitemElement;
 
     slotted.forEach((item) => {
       item.active = false;
     });
 
-    (event.target as HTMLCSidenavigationitemElement).active = true;
+    (event.target as HTMLCSidenavigationitemElement).active = !active;
   }
 
   componentDidLoad() {

@@ -36,6 +36,8 @@ export class CSubnavigationitem {
       event instanceof MouseEvent ||
       event instanceof PointerEvent
     ) {
+      event.stopPropagation();
+
       const sidenav = document.querySelector('c-sidenavigation');
       sidenav.menuVisible = false;
 
