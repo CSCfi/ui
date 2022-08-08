@@ -669,6 +669,14 @@ export namespace Components {
          */
         "indeterminate": boolean;
         /**
+          * Optional details message next to percentage display
+         */
+        "label": string;
+        /**
+          * Place details next to progress bar
+         */
+        "singleLine": boolean;
+        /**
           * Progress bar value in percentage (0 to 100)
          */
         "value": number;
@@ -2297,6 +2305,14 @@ declare namespace LocalJSX {
           * Indeterminate state of the progress bar
          */
         "indeterminate"?: boolean;
+        /**
+          * Optional details message next to percentage display
+         */
+        "label"?: string;
+        /**
+          * Place details next to progress bar
+         */
+        "singleLine"?: boolean;
         /**
           * Progress bar value in percentage (0 to 100)
          */

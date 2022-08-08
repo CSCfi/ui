@@ -20,6 +20,16 @@ export class CProgressBar {
   @Prop() hideDetails = false;
 
   /**
+   * Place details next to progress bar
+   */
+  @Prop() singleLine = false;
+
+  /**
+   * Optional details message next to percentage display
+   */
+  @Prop() label = '';
+
+  /**
    * Color of the bar (valid css color)
    *
    * @default var(--csc-primary)
@@ -50,6 +60,12 @@ export class CProgressBar {
     const classes = {
       'c-progress': true,
       'c-progress--indeterminate': this.indeterminate,
+      'adjacent-details': this.singleLine,
+    };
+
+    const detailsClasses = {
+      'c-progress__percentage': true,
+      'adjacent-details': this.singleLine,
     };
 
     const a11y = {
@@ -79,7 +95,9 @@ export class CProgressBar {
         </label>
 
         {!this.indeterminate && !this.hideDetails && (
-          <div class="c-progress__percentage">{value} %</div>
+          <div class={detailsClasses}>
+            {value} % {this.label}
+          </div>
         )}
       </Host>
     );

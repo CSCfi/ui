@@ -25,13 +25,24 @@
   transform: translateZ(0); // Safari - overflow: hidden & border-radius fix
   width: calc(100% - calc(var(--border-size) * 2));
 
+  &.adjacent-details {
+    flex: 1
+  }
+
   &__percentage {
     flex-basis: 100%;
     font-size: 14px;
     margin-top: 2px;
     text-align: end;
     white-space: nowrap;
+    padding-left: 16px;
+
+    &.adjacent-details {
+      flex: 0;
+    }
   }
+
+
 
   progress {
     background-color: var(--bar-color);
