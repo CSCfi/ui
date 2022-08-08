@@ -9,6 +9,7 @@ import {
 } from '@stencil/core';
 import { CToastMessage, CToastPosition, CToastType } from '../../types';
 import { v4 as uuid } from 'uuid';
+import DOMPurify from 'dompurify';
 
 /**
  * @group Popups
@@ -101,12 +102,20 @@ export class CToasts {
   }
 
   private _renderMessage(message: CToastMessage) {
-    return (
-      <c-toast
-        message={message}
-        onClose={(e) => this._onMessageClose(e)}
-      ></c-toast>
-    );
+    const props: {
+      message: CToastMessage;
+      onClose: (event) => void;
+      innerHTML?: string;
+    } = {
+      message,
+      onClose: (e) => this._onMessageClose(e),
+    };
+
+    if (message.custom) {
+      props.innerHTML = DOMPurify.sanitize(message.template);
+    }
+
+    return <c-toast {...props}></c-toast>;
   }
 
   render() {
