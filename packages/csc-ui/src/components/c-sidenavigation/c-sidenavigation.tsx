@@ -34,11 +34,13 @@ export class CSidenavigation {
   }
 
   componentDidLoad() {
-    window.addEventListener('click', (event: MouseEvent) => {
-      if ((event.target as HTMLElement).matches('c-navigationbutton')) {
-        this.menuVisible = !this.menuVisible;
-      }
-    });
+    document
+      .querySelector('body')
+      .addEventListener('click', (event: MouseEvent) => {
+        if ((event.target as HTMLElement).matches('c-navigationbutton')) {
+          this.menuVisible = !this.menuVisible;
+        }
+      });
   }
 
   private _closeMenu() {
