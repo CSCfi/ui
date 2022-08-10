@@ -9,7 +9,6 @@ import {
 } from '@stencil/core';
 import { CToastMessage, CToastPosition, CToastType } from '../../types';
 import { v4 as uuid } from 'uuid';
-import DOMPurify from 'dompurify';
 
 /**
  * @group Popups
@@ -54,21 +53,29 @@ export class CToasts {
    */
   @Method()
   async addToast(message: CToastMessage) {
-    requestAnimationFrame(() => {
-      const defaultOptions = this._getDefaultOptions();
+    const customMessages = this.messages.filter((message) => message.custom);
 
-      this.messages = [
-        ...this.messages,
-        {
-          ...defaultOptions,
-          ...message,
-          duration:
-            +message?.duration > 0
-              ? +message.duration
-              : defaultOptions.duration,
-        },
-      ];
-    });
+    if (message.custom && customMessages.length > 0) {
+      console.warn(
+        `Custom toast messages are restricted to 1 visible message due to slot reflection limitations.`,
+      );
+    } else {
+      requestAnimationFrame(() => {
+        const defaultOptions = this._getDefaultOptions();
+
+        this.messages = [
+          ...this.messages,
+          {
+            ...defaultOptions,
+            ...message,
+            duration:
+              +message?.duration > 0
+                ? +message.duration
+                : defaultOptions.duration,
+          },
+        ];
+      });
+    }
   }
 
   /**
@@ -102,20 +109,11 @@ export class CToasts {
   }
 
   private _renderMessage(message: CToastMessage) {
-    const props: {
-      message: CToastMessage;
-      onClose: (event) => void;
-      innerHTML?: string;
-    } = {
-      message,
-      onClose: (e) => this._onMessageClose(e),
-    };
-
-    if (message.custom) {
-      props.innerHTML = DOMPurify.sanitize(message.template);
-    }
-
-    return <c-toast {...props}></c-toast>;
+    return (
+      <c-toast message={message} onClose={(e) => this._onMessageClose(e)}>
+        {message.custom && <slot />}
+      </c-toast>
+    );
   }
 
   render() {

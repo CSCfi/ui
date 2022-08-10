@@ -107,7 +107,6 @@ export interface CToastMessage {
   indeterminate?: boolean;
   progress?: boolean;
   custom?: boolean;
-  template?: string;
 }
 
 export enum CAlertType {

@@ -4,37 +4,21 @@
       <c-card-content>
         <h5>Per toast options</h5>
 
-        <c-switch [value]="custom" (changeValue)="custom = !custom">
-          Bypass default content
-        </c-switch>
+        <c-text-field [(ngModel)]="message" label="Message" hide-details cControl></c-text-field>
 
-        <ng-container *ngIf="!custom; else customContentTemplate">
-          <c-text-field [(ngModel)]="message" label="Message" hide-details cControl></c-text-field>
+        <c-text-field
+          [(ngModel)]="title"
+          label="Title (optional)"
+          hide-details
+          cControl
+        ></c-text-field>
 
-          <c-text-field
-            [(ngModel)]="title"
-            label="Title (optional)"
-            hide-details
-            cControl
-          ></c-text-field>
-
-          <c-text-field
-            [(ngModel)]="closeText"
-            label="Close text (optional)"
-            hide-details
-            cControl
-          ></c-text-field>
-        </ng-container>
-
-        <ng-template #customContentTemplate>
-          <c-text-field
-            [(ngModel)]="customContent"
-            label="Custom content"
-            rows="10"
-            hint="Text or HTML"
-            cControl
-          ></c-text-field>
-        </ng-template>
+        <c-text-field
+          [(ngModel)]="closeText"
+          label="Close text (optional)"
+          hide-details
+          cControl
+        ></c-text-field>
 
         <c-text-field
           [(ngModel)]="duration"
@@ -136,4 +120,20 @@
   </c-row>
 
   <c-toasts id="indeterminateToasts"></c-toasts>
+</app-example>
+
+<app-example
+  title="Custom template"
+  subtitle="Custom toasts are limited to one (1) visible toast"
+  name="custom"
+  component="c-toasts"
+>
+  <c-row gap="8">
+    <c-button [disabled]="hasCustomToast" (click)="onAddCustomToast()">Add toast</c-button>
+  </c-row>
+
+  <c-toasts id="customToast">
+    <p>This is a custom toast template.</p>
+    <c-button (click)="onRemoveCustomToast()">Remove toast</c-button>
+  </c-toasts>
 </app-example>

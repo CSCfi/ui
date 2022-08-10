@@ -1,6 +1,5 @@
 import { Component } from '@angular/core';
 import {
-  CRadioGroupItem,
   CSelectItem,
   CToastMessage,
   CToastType,
@@ -66,8 +65,6 @@ export class CToastsComponent {
       persistent: this.persistent,
       progress: this.progress,
       closeText: this.closeText,
-      custom: this.custom,
-      template: this.customContent,
     };
 
     const toasts = document.querySelector('#toasts') as HTMLCToastsElement;
@@ -96,6 +93,30 @@ export class CToastsComponent {
     const toasts = document.querySelector('#indeterminateToasts') as HTMLCToastsElement;
     toasts?.removeToast('indeterminate');
     this.hasToast = false;
+  }
+  // @example-end
+
+  // @example-start|custom
+  hasCustomToast = false
+
+  onAddCustomToast() {
+    const message: CToastMessage = {
+      message: '', // Required property
+      type: this.type as CToastType,
+      id: 'custom',
+      persistent: true,
+      custom: true,
+    };
+
+    const toast = document.querySelector('#customToast') as HTMLCToastsElement;
+    toast?.addToast(message);
+    this.hasCustomToast = true;
+  }
+
+  onRemoveCustomToast() {
+    const toast = document.querySelector('#customToast') as HTMLCToastsElement;
+    toast?.removeToast('custom');
+    this.hasCustomToast = false;
   }
   // @example-end
 }
