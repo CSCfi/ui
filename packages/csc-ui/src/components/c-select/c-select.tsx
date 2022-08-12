@@ -363,7 +363,11 @@ export class CSelect {
 
   private _showMenu() {
     this._inputElement.focus();
-    this.menuVisible = true;
+
+    // Hack needed to open the menu within a Vue web component
+    setTimeout(() => {
+      this.menuVisible = true;
+    }, 0);
   }
 
   private _hideMenu() {
