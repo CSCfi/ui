@@ -7,12 +7,12 @@
 
 ## Properties
 
-| Property  | Attribute | Description                                                                        | Type                                      | Default |
-| --------- | --------- | ---------------------------------------------------------------------------------- | ----------------------------------------- | ------- |
-| `items`   | --        | Menu items                                                                         | `{ name: string; action: () => void; }[]` | `[]`    |
-| `nohover` | `nohover` | No hover background                                                                | `boolean`                                 | `false` |
-| `simple`  | `simple`  | Simple variant without chevron and background, E.g. when a button is the activator | `boolean`                                 | `false` |
-| `small`   | `small`   | Small variant                                                                      | `boolean`                                 | `false` |
+| Property  | Attribute | Description                                                                        | Type                                                                                                          | Default |
+| --------- | --------- | ---------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------- | ------- |
+| `items`   | --        | Menu items                                                                         | `{ name: string; action: () => void; disabled?: boolean; icon?: string; iconPosition?: "start" \| "end"; }[]` | `[]`    |
+| `nohover` | `nohover` | No hover background                                                                | `boolean`                                                                                                     | `false` |
+| `simple`  | `simple`  | Simple variant without chevron and background, E.g. when a button is the activator | `boolean`                                                                                                     | `false` |
+| `small`   | `small`   | Small variant                                                                      | `boolean`                                                                                                     | `false` |
 
 
 ## Slots

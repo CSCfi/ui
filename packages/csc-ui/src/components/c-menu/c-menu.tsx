@@ -43,7 +43,13 @@ export class CMenu {
   /**
    * Menu items
    */
-  @Prop() items: { name: string; action: () => void }[] = [];
+  @Prop() items: {
+    name: string;
+    action: () => void;
+    disabled?: boolean;
+    icon?: string;
+    iconPosition?: 'start' | 'end';
+  }[] = [];
 
   @Watch('currentIndex')
   onIndexChange(index: number) {
@@ -100,8 +106,11 @@ export class CMenu {
     if (ev.key === 'Enter') {
       if (this.currentIndex !== null) {
         const selectedItem = this.items[this.currentIndex];
-        selectedItem.action();
-        this.menuVisible = false;
+
+        if (!selectedItem.disabled) {
+          selectedItem.action();
+          this.menuVisible = false;
+        }
 
         return;
       }
@@ -142,11 +151,32 @@ export class CMenu {
   private _getListItem = (item) => {
     const classes = {
       small: this.small,
+      disabled: item.disabled,
+      'icon-start': item.iconPosition === 'start',
+      'icon-end': item.iconPosition === 'end',
+    };
+
+    const onItemClick = (item) => {
+      if (!item.disabled) {
+        item.action();
+        this._hideMenu();
+      }
     };
 
     return (
-      <li class={classes} tabindex="-1" role="menuitem" onClick={item.action}>
+      <li
+        class={classes}
+        tabindex="-1"
+        role="menuitem"
+        onClick={() => onItemClick(item)}
+      >
         {item.name}
+
+        {item.icon && (
+          <svg class="icon" width="20" height="20" viewBox="0 0 24 24">
+            <path d={item.icon} />
+          </svg>
+        )}
       </li>
     );
   };
@@ -197,12 +227,7 @@ export class CMenu {
           )}
         </button>
 
-        <ul
-          id="c-menu-items"
-          class={menuClasses}
-          role="menu"
-          onClick={() => this._hideMenu()}
-        >
+        <ul id="c-menu-items" class={menuClasses} role="menu">
           {this.items.map((item) => this._getListItem(item))}
         </ul>
       </Host>

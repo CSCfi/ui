@@ -1,7 +1,6 @@
 :host {
   border-radius: 4px;
   color: #595959;
-  cursor: pointer;
   display: block;
   font-size: 14px;
   position: relative;
@@ -84,10 +83,21 @@
       padding-right: 8px;
     }
 
-    &:hover,
+    &:not(.disabled):hover,
     &.active {
       background: #d8e8ea;
       color: var(--csc-primary);
+    }
+    &.icon-start {
+      flex-direction: row-reverse;
+      justify-content: flex-end;
+    }
+    &.icon-end {
+      justify-content: space-between;
+    }
+    &.disabled {
+      cursor: default;
+      opacity: .4;
     }
   }
 
