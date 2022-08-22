@@ -160,7 +160,12 @@
     stroke-dasharray: 111.46px;
     stroke-dashoffset: 111.46px;
     stroke: var(--c-checkbox-color);
-    transition: all 0.25s ease-out;
+  }
+
+  &--intermediate .path {
+    stroke-dasharray: 0 !important;
+    stroke-dashoffset: 0 !important;
+    stroke: transparent;
   }
 
   .ripple {

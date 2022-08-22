@@ -84,6 +84,8 @@ export class CDataTableComponent implements OnInit {
   // @example-start|complex
   expansionStatusText = '';
 
+  singleSelection = false;
+
   headers: CDataTableHeader[] = [
     {
       key: 'id',

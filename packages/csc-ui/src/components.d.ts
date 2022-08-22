@@ -259,6 +259,10 @@ export namespace Components {
          */
         "hint": string;
         /**
+          * Intermediate state
+         */
+        "intermediate": boolean;
+        /**
           * Element label
          */
         "label": string;
@@ -334,6 +338,10 @@ export namespace Components {
           * Allow only a single row expanded at a time
          */
         "singleExpansion": boolean;
+        /**
+          * Select only a single row at a time
+         */
+        "singleSelection": boolean;
         /**
           * Sort data by
          */
@@ -1870,6 +1878,10 @@ declare namespace LocalJSX {
          */
         "hint"?: string;
         /**
+          * Intermediate state
+         */
+        "intermediate"?: boolean;
+        /**
           * Element label
          */
         "label"?: string;
@@ -1965,6 +1977,10 @@ declare namespace LocalJSX {
           * Allow only a single row expanded at a time
          */
         "singleExpansion"?: boolean;
+        /**
+          * Select only a single row at a time
+         */
+        "singleSelection"?: boolean;
         /**
           * Sort data by
          */

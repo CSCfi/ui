@@ -98,6 +98,14 @@ table {
           fill: var(--csc-primary);
         }
       }
+
+      &.selection {
+        &--heading {
+          padding-left: 8px;
+          padding-right: 0;
+          margin-right: -8px;
+        }
+      }
     }
   }
 

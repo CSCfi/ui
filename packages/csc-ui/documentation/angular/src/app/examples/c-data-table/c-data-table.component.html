@@ -3,12 +3,15 @@
 </app-example>
 
 <app-example title="Complex example" name="complex" component="c-data-table">
+  <c-switch class="mb-4" [(ngModel)]="singleSelection" cControl>Single selection</c-switch>
+
   <c-data-table
     id="complex"
     [data]="data"
     [headers]="headers"
     [footerOptions]="footerOptions"
     [pagination]="paginationOptions"
+    [singleSelection]="singleSelection"
     [sortBy]="sortBy"
     [sortDirection]="direction"
     selection-property="id"

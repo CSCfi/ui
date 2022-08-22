@@ -97,6 +97,11 @@ export class CDataTable {
   @Prop() selectable = false;
 
   /**
+   * Select only a single row at a time
+   */
+  @Prop() singleSelection = false;
+
+  /**
    * Property used in selections
    */
   @Prop() selectionProperty: string = null;
@@ -140,6 +145,8 @@ export class CDataTable {
 
   @State() _data: CDataTableDataItemPrivate[] = [];
 
+  @State() _isIntermediate = false;
+
   @State() _isPaginationSimple = false;
 
   @State() _selectedRows: (string | number)[] = [];
@@ -174,6 +181,11 @@ export class CDataTable {
   @Watch('data')
   onDataChange() {
     this._getData();
+  }
+
+  @Watch('singleSelection')
+  onSingleSelectionChange() {
+    this._selectedRows = [];
   }
 
   componentWillLoad() {
@@ -314,6 +326,15 @@ export class CDataTable {
     this._validateProps(this._data[0]);
   }
 
+  private _getSelectionValue(
+    row: CDataTableDataItemPrivate,
+    index: number,
+  ): string | number {
+    return !!this.selectionProperty
+      ? row[this.selectionProperty]?.value || index
+      : index;
+  }
+
   private get _headers() {
     return this.headers.filter(
       (header) => !this.hiddenHeaders.includes(header.key) && !header.hidden,
@@ -369,6 +390,48 @@ export class CDataTable {
     }
   }
 
+  private _setIntermediateStatus() {
+    this._isIntermediate =
+      !!this._selectedRows.length &&
+      this._selectedRows.length < this._data.length;
+  }
+
+  private _onHeadingSelection(event: KeyboardEvent | MouseEvent) {
+    event?.stopPropagation();
+    event?.preventDefault();
+
+    if (
+      event instanceof KeyboardEvent &&
+      event.type === 'keyup' &&
+      event.key !== ' '
+    ) {
+      return;
+    }
+
+    if (this._debounce !== null) {
+      clearTimeout(this._debounce);
+      this._debounce = null;
+    }
+
+    this._debounce = setTimeout(() => {
+      if (this._selectedRows.length === this._data.length) {
+        this._selectedRows = [];
+
+        this._setIntermediateStatus();
+        this.selection.emit(this._selectedRows);
+
+        return;
+      }
+
+      this._selectedRows = [
+        ...this._data.map((row, index) => this._getSelectionValue(row, index)),
+      ];
+
+      this._setIntermediateStatus();
+      this.selection.emit(this._selectedRows);
+    }, 200);
+  }
+
   private _onPaginationChange(event: CustomEvent) {
     if (this.externalData) {
       this.paginate.emit(event.detail);
@@ -385,15 +448,25 @@ export class CDataTable {
   }
 
   private _onSelection(value: string | number) {
+    if (this.singleSelection) {
+      this._selectedRows = [value];
+
+      this.selection.emit(this._selectedRows);
+
+      return;
+    }
+
     if (this._selectedRows.includes(value)) {
-      this._selectedRows = this._selectedRows.filter(
-        (selection) => selection !== value,
-      );
+      this._selectedRows = [
+        ...this._selectedRows.filter((selection) => selection !== value),
+      ];
     } else {
       this._selectedRows = [...this._selectedRows, value];
     }
 
     this.selection.emit(this._selectedRows);
+
+    this._setIntermediateStatus();
   }
 
   private _onSort(key: string) {
@@ -621,9 +694,7 @@ export class CDataTable {
     return (
       !!this._data.length &&
       Object.values(this._data).map((rowData, rowIndex) => {
-        const selectionValue = !!this.selectionProperty
-          ? rowData[this.selectionProperty]?.value || rowIndex
-          : rowIndex;
+        const selectionValue = this._getSelectionValue(rowData, rowIndex);
         const isSelected = this._selectedRows.includes(selectionValue);
 
         return (
@@ -775,7 +846,25 @@ export class CDataTable {
     return (
       <thead>
         <tr>
-          {this.selectable && <th class="selection"></th>}
+          {this.selectable && (
+            <th class="selection">
+              {!this.singleSelection && (
+                <div class="selection--heading">
+                  <c-checkbox
+                    value={this._selectedRows.length > 0}
+                    intermediate={this._isIntermediate}
+                    hide-details
+                    onClick={(event: MouseEvent) =>
+                      this._onHeadingSelection(event)
+                    }
+                    onKeyUp={(event: KeyboardEvent) =>
+                      this._onHeadingSelection(event)
+                    }
+                  ></c-checkbox>
+                </div>
+              )}
+            </th>
+          )}
 
           {this._hasHiddenData && <th class="indicator"></th>}
 

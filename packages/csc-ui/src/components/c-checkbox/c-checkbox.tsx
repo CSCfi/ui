@@ -37,6 +37,11 @@ export class CCheckbox {
   @Prop() hint = '';
 
   /**
+   * Intermediate state
+   */
+  @Prop() intermediate = false;
+
+  /**
    * Element label
    */
   @Prop() label = '';
@@ -161,6 +166,11 @@ export class CCheckbox {
       'c-checkbox--error': this.messageOptions.type === 'error',
     };
 
+    const labelClasses = {
+      'c-checkbox__label': true,
+      'c-checkbox__label--intermediate': this.intermediate,
+    };
+
     return (
       <Host>
         <div class={wrapperClasses}>
@@ -175,13 +185,18 @@ export class CCheckbox {
             onChange={(event) => this.toggleState(event)}
           />
 
-          <label class="c-checkbox__label" htmlFor="checkbox">
+          <label class={labelClasses} htmlFor="checkbox">
             <div
               class="ripple"
               ref={(el) => (this._container = el as HTMLDivElement)}
             >
               <svg viewBox="0 0 100 100">
-                <path class="path" d="M12.1 52.1l24.4 24.4 53-53" />
+                {!this.intermediate && (
+                  <path class="path" d="M12.1 52.1l24.4 24.4 53-53" />
+                )}
+                {this.intermediate && (
+                  <path class="path" d="M20 56 h60 v-8 h-60 z" />
+                )}
               </svg>
             </div>
 

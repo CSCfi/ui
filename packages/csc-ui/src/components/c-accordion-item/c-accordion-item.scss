@@ -3,7 +3,7 @@
 }
 
 .c-accordion-item {
-  --c-accordion-indicator-rotation: rotate(0deg);
+  --c-accordion-indicator-rotation: rotate(180deg);
   --c-accordion-content-height: 0px;
   --c-accordion-min-height: 46px;
   --c-accordion-border-radius: 6px;
@@ -14,7 +14,7 @@
 
   &--expanded {
     --c-accordion-content-height: auto;
-    --c-accordion-indicator-rotation: rotate(180deg);
+    --c-accordion-indicator-rotation: rotate(0deg);
     --c-accordion-overflow: visible;
   }
 
