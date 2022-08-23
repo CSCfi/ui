@@ -150,7 +150,7 @@ export class CDataTable {
 
   @State() _isPaginationSimple = false;
 
-  @State() _selectedRows: Map<number, (string | number)[]> = new Map();
+  @State() _selections: (string | number)[] = [];
 
   @State() hasOverflow = false;
 
@@ -188,7 +188,14 @@ export class CDataTable {
 
   @Watch('singleSelection')
   onSingleSelectionChange() {
-    this._selectedRows = new Map();
+    this.clearSelections();
+  }
+
+  @Watch('loading')
+  onLoadingChange(loading: boolean) {
+    if (!loading) {
+      this._setIntermediateStatus();
+    }
   }
 
   /**
@@ -196,7 +203,7 @@ export class CDataTable {
    */
   @Method()
   async clearSelections() {
-    this._selectedRows = new Map();
+    this._selections = [];
     this._emitChange();
   }
 
@@ -362,12 +369,14 @@ export class CDataTable {
   }
 
   private _emitChange() {
-    this.selection.emit([...this._selectedRows.values()].flat());
+    this.selection.emit(this._selections);
   }
 
   private _setIntermediateStatus() {
-    this._isIntermediate = this._isPageIntermediate();
-    this._refresh();
+    requestAnimationFrame(() => {
+      this._isIntermediate = this._isPageIntermediate();
+      this._refresh();
+    });
   }
 
   private _sortData(
@@ -411,18 +420,43 @@ export class CDataTable {
     }
   }
 
-  private _hasSelectionsOnPage() {
-    const page = this.pagination?.currentPage || 0;
+  private _getIndex(index: number) {
+    let realIndex = index;
 
-    return this._selectedRows.get(page)?.length > 0;
+    if (
+      !this.selectionProperty &&
+      !!this.pagination &&
+      typeof realIndex === 'number'
+    ) {
+      realIndex += this.pagination.startFrom;
+
+      if (this.sortDirection === 'desc') {
+        realIndex = this.pagination.itemCount - 1 - realIndex;
+      }
+    }
+
+    return realIndex;
+  }
+
+  private _getSelectionsForPage() {
+    return this._selections.filter((selection) =>
+      this._data
+        .map((row, index) =>
+          this._getSelectionValue(row, this._getIndex(index)),
+        )
+        .includes(selection),
+    );
+  }
+
+  private _hasSelectionsOnPage() {
+    return this._getSelectionsForPage().length > 0;
   }
 
   private _isPageIntermediate() {
-    const page = this.pagination?.currentPage || 0;
+    const selectionsInPage = this._getSelectionsForPage();
 
     return (
-      this._hasSelectionsOnPage() &&
-      this._selectedRows.get(page)?.length < this._data.length
+      this._hasSelectionsOnPage() && selectionsInPage.length < this._data.length
     );
   }
 
@@ -444,19 +478,17 @@ export class CDataTable {
     }
 
     this._debounce = setTimeout(() => {
-      const page = this.pagination.currentPage;
-
-      if (this._data.length === this._selectedRows.get(page)?.length) {
-        this._selectedRows.set(page, [
-          ...this._selectedRows
-            .get(page)
-            .filter(
-              (selection) =>
-                !this._data
-                  .map((row, index) => this._getSelectionValue(row, index))
-                  .includes(selection),
-            ),
-        ]);
+      if (this._data.length === this._getSelectionsForPage().length) {
+        this._selections = [
+          ...this._selections.filter(
+            (selection) =>
+              !this._data
+                .map((row, index) =>
+                  this._getSelectionValue(row, this._getIndex(index)),
+                )
+                .includes(selection),
+          ),
+        ];
 
         this._setIntermediateStatus();
         this._emitChange();
@@ -466,9 +498,14 @@ export class CDataTable {
         return;
       }
 
-      this._selectedRows.set(page, [
-        ...this._data.map((row, index) => this._getSelectionValue(row, index)),
-      ]);
+      this._selections = [
+        ...new Set([
+          ...this._selections,
+          ...this._data.map((row, index) =>
+            this._getSelectionValue(row, this._getIndex(index)),
+          ),
+        ]),
+      ];
 
       this._setIntermediateStatus();
       this._emitChange();
@@ -493,11 +530,8 @@ export class CDataTable {
   }
 
   private _onSelection(value: string | number) {
-    const page = this.pagination.currentPage;
-
     if (this.singleSelection) {
-      this._selectedRows = new Map();
-      this._selectedRows.set(page, [value]);
+      this._selections = [value];
 
       this._emitChange();
       this._refresh();
@@ -505,17 +539,12 @@ export class CDataTable {
       return;
     }
 
-    if (this._selectedRows.get(page)?.includes(value)) {
-      this._selectedRows.set(page, [
-        ...this._selectedRows
-          .get(page)
-          .filter((selection) => selection !== value),
-      ]);
+    if (this._selections.includes(value)) {
+      this._selections = this._selections.filter(
+        (selection) => selection !== value,
+      );
     } else {
-      this._selectedRows.set(page, [
-        ...(this._selectedRows.get(page) || []),
-        value,
-      ]);
+      this._selections = [...this._selections, value];
     }
 
     this._emitChange();
@@ -535,6 +564,9 @@ export class CDataTable {
     this.sort.emit({ sortBy: this.sortBy, direction: this.sortDirection });
 
     this._getData();
+
+    this._setIntermediateStatus();
+    this._refresh();
   }
 
   private _onToggleAdditionalData(
@@ -752,11 +784,13 @@ export class CDataTable {
     return (
       !!this._data.length &&
       Object.values(this._data).map((rowData, rowIndex) => {
-        const page = this.pagination?.currentPage || 0;
-        const selectionValue = this._getSelectionValue(rowData, rowIndex);
-        const isSelected = !!this._selectedRows
-          .get(page)
-          ?.includes(selectionValue);
+        let selectionValue = this._getSelectionValue(rowData, rowIndex);
+
+        if (!this.selectionProperty && typeof selectionValue === 'number') {
+          selectionValue = this._getIndex(selectionValue);
+        }
+
+        const isSelected = !!this._selections.includes(selectionValue);
 
         return (
           <Fragment>
