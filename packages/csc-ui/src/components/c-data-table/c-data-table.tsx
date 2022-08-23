@@ -15,6 +15,7 @@ import {
   State,
   Fragment,
   Watch,
+  Method,
 } from '@stencil/core';
 import {
   CDataTableData,
@@ -149,11 +150,13 @@ export class CDataTable {
 
   @State() _isPaginationSimple = false;
 
-  @State() _selectedRows: (string | number)[] = [];
+  @State() _selectedRows: Map<number, (string | number)[]> = new Map();
 
   @State() hasOverflow = false;
 
   @State() hiddenHeaders: string[] = [];
+
+  @State() forceRender = false;
 
   private _debounce = null;
 
@@ -185,7 +188,16 @@ export class CDataTable {
 
   @Watch('singleSelection')
   onSingleSelectionChange() {
-    this._selectedRows = [];
+    this._selectedRows = new Map();
+  }
+
+  /**
+   * Clear selections externally
+   */
+  @Method()
+  async clearSelections() {
+    this._selectedRows = new Map();
+    this._emitChange();
   }
 
   componentWillLoad() {
@@ -349,6 +361,15 @@ export class CDataTable {
     return !!this.hiddenHeaders.length;
   }
 
+  private _emitChange() {
+    this.selection.emit([...this._selectedRows.values()].flat());
+  }
+
+  private _setIntermediateStatus() {
+    this._isIntermediate = this._isPageIntermediate();
+    this._refresh();
+  }
+
   private _sortData(
     data: CDataTableDataItem[] | CDataTableDataItemPrivate[],
   ): CDataTableDataItemPrivate[] {
@@ -390,10 +411,19 @@ export class CDataTable {
     }
   }
 
-  private _setIntermediateStatus() {
-    this._isIntermediate =
-      !!this._selectedRows.length &&
-      this._selectedRows.length < this._data.length;
+  private _hasSelectionsOnPage() {
+    const page = this.pagination?.currentPage || 0;
+
+    return this._selectedRows.get(page)?.length > 0;
+  }
+
+  private _isPageIntermediate() {
+    const page = this.pagination?.currentPage || 0;
+
+    return (
+      this._hasSelectionsOnPage() &&
+      this._selectedRows.get(page)?.length < this._data.length
+    );
   }
 
   private _onHeadingSelection(event: KeyboardEvent | MouseEvent) {
@@ -414,21 +444,34 @@ export class CDataTable {
     }
 
     this._debounce = setTimeout(() => {
-      if (this._selectedRows.length === this._data.length) {
-        this._selectedRows = [];
+      const page = this.pagination.currentPage;
+
+      if (this._data.length === this._selectedRows.get(page)?.length) {
+        this._selectedRows.set(page, [
+          ...this._selectedRows
+            .get(page)
+            .filter(
+              (selection) =>
+                !this._data
+                  .map((row, index) => this._getSelectionValue(row, index))
+                  .includes(selection),
+            ),
+        ]);
 
         this._setIntermediateStatus();
-        this.selection.emit(this._selectedRows);
+        this._emitChange();
+
+        this._tableElement;
 
         return;
       }
 
-      this._selectedRows = [
+      this._selectedRows.set(page, [
         ...this._data.map((row, index) => this._getSelectionValue(row, index)),
-      ];
+      ]);
 
       this._setIntermediateStatus();
-      this.selection.emit(this._selectedRows);
+      this._emitChange();
     }, 200);
   }
 
@@ -444,27 +487,38 @@ export class CDataTable {
       ...event.detail,
     };
 
+    this._setIntermediateStatus();
+
     this._getData();
   }
 
   private _onSelection(value: string | number) {
-    if (this.singleSelection) {
-      this._selectedRows = [value];
+    const page = this.pagination.currentPage;
 
-      this.selection.emit(this._selectedRows);
+    if (this.singleSelection) {
+      this._selectedRows = new Map();
+      this._selectedRows.set(page, [value]);
+
+      this._emitChange();
+      this._refresh();
 
       return;
     }
 
-    if (this._selectedRows.includes(value)) {
-      this._selectedRows = [
-        ...this._selectedRows.filter((selection) => selection !== value),
-      ];
+    if (this._selectedRows.get(page)?.includes(value)) {
+      this._selectedRows.set(page, [
+        ...this._selectedRows
+          .get(page)
+          .filter((selection) => selection !== value),
+      ]);
     } else {
-      this._selectedRows = [...this._selectedRows, value];
+      this._selectedRows.set(page, [
+        ...(this._selectedRows.get(page) || []),
+        value,
+      ]);
     }
 
-    this.selection.emit(this._selectedRows);
+    this._emitChange();
 
     this._setIntermediateStatus();
   }
@@ -526,6 +580,10 @@ export class CDataTable {
     }
 
     this._activeRows = [...this._activeRows, value];
+  }
+
+  private _refresh() {
+    this.forceRender = !this.forceRender;
   }
 
   private _renderAdditioanlDataRow(rowIndex: number, rowData = {}) {
@@ -694,8 +752,11 @@ export class CDataTable {
     return (
       !!this._data.length &&
       Object.values(this._data).map((rowData, rowIndex) => {
+        const page = this.pagination?.currentPage || 0;
         const selectionValue = this._getSelectionValue(rowData, rowIndex);
-        const isSelected = this._selectedRows.includes(selectionValue);
+        const isSelected = !!this._selectedRows
+          .get(page)
+          ?.includes(selectionValue);
 
         return (
           <Fragment>
@@ -851,7 +912,7 @@ export class CDataTable {
               {!this.singleSelection && (
                 <div class="selection--heading">
                   <c-checkbox
-                    value={this._selectedRows.length > 0}
+                    value={this._hasSelectionsOnPage()}
                     intermediate={this._isIntermediate}
                     hide-details
                     onClick={(event: MouseEvent) =>

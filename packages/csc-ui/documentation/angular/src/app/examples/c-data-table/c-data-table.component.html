@@ -26,6 +26,12 @@
     {{ selections.join(', ') || 'none' }}
   </div>
 
+  <div class="mt-4">
+    <c-button [disabled]="!selections.length" (click)="clearSelections()">
+      Clear selections externally
+    </c-button>
+  </div>
+
   <c-toasts id="toasts"></c-toasts>
 </app-example>
 

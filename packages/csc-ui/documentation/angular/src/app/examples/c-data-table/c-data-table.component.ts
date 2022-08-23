@@ -176,6 +176,12 @@ export class CDataTableComponent implements OnInit {
 
   selections: number[] = [];
 
+  clearSelections() {
+    const dataTable = document.getElementById('complex') as HTMLCDataTableElement;
+
+    dataTable.clearSelections();
+  }
+
   onSelection(event) {
     this.selections = event.detail;
   }

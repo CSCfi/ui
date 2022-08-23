@@ -295,6 +295,10 @@ export namespace Components {
     }
     interface CDataTable {
         /**
+          * Clear selections externally
+         */
+        "clearSelections": () => Promise<void>;
+        /**
           * Data of the table
          */
         "data": CDataTableData[];

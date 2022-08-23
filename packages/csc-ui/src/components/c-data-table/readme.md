@@ -35,6 +35,19 @@
 | `sort`      | Triggered on sort          | `CustomEvent<any>`                |
 
 
+## Methods
+
+### `clearSelections() => Promise<void>`
+
+Clear selections externally
+
+#### Returns
+
+Type: `Promise<void>`
+
+
+
+
 ## Dependencies
 
 ### Depends on
