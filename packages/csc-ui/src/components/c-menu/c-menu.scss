@@ -13,7 +13,7 @@
   }
 }
 
-:host(:focus-within) {
+:host(:focus-within):not(.custom-menu-trigger) {
   background: #d8e8ea;
   outline: 2px var(--csc-primary) solid;
   outline-offset: 2px;

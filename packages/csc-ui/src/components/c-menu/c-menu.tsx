@@ -9,6 +9,7 @@ import {
   Watch,
 } from '@stencil/core';
 import { mdiChevronDown } from '@mdi/js';
+import { CMenuCustomTrigger } from '../../types';
 /**
  * @group Navigation
  * @slot - Menu title / activator element (simple variant)
@@ -39,6 +40,11 @@ export class CMenu {
    * No hover background
    */
   @Prop() nohover = false;
+
+  /**
+   * Programmatic trigger component
+   */
+  @Prop() customTrigger: CMenuCustomTrigger;
 
   /**
    * Menu items
@@ -148,6 +154,26 @@ export class CMenu {
     this.menuVisible = false;
   }
 
+  private _renderCustomTrigger() {
+    const props = this.customTrigger;
+
+    const Tag = props.component.tag;
+    const params = props.component.params;
+
+    return (
+      <Tag
+        {...params}
+        class="custom-menu-trigger"
+        aria-expanded={this.menuVisible.toString()}
+        aria-haspopup="true"
+        aria-controls="c-menu-items"
+        onClick={() => this._showMenu()}
+      >
+        {props.value}
+      </Tag>
+    );
+  }
+
   private _getListItem = (item) => {
     const classes = {
       small: this.small,
@@ -156,7 +182,9 @@ export class CMenu {
       'icon-end': item.iconPosition === 'end',
     };
 
-    const onItemClick = (item) => {
+    const onItemClick = (event, item) => {
+      event.stopPropagation();
+
       if (!item.disabled) {
         item.action();
         this._hideMenu();
@@ -168,7 +196,7 @@ export class CMenu {
         class={classes}
         tabindex="-1"
         role="menuitem"
-        onClick={() => onItemClick(item)}
+        onClick={(event) => onItemClick(event, item)}
       >
         {item.name}
 
@@ -197,35 +225,39 @@ export class CMenu {
 
     return (
       <Host class={hostClasses}>
-        <button
-          aria-expanded={this.menuVisible.toString()}
-          aria-haspopup="true"
-          aria-controls="c-menu-items"
-          class={{
-            'c-menu-wrapper': !this.simple,
-            simple: this.simple,
-          }}
-          type="button"
-          onClick={() => this._showMenu()}
-        >
-          {this.simple ? (
-            <slot></slot>
-          ) : (
-            <div class={this.small ? 'c-select-row small' : 'c-select-row'}>
+        {this.customTrigger ? (
+          this._renderCustomTrigger()
+        ) : (
+          <button
+            aria-expanded={this.menuVisible.toString()}
+            aria-haspopup="true"
+            aria-controls="c-menu-items"
+            class={{
+              'c-menu-wrapper': !this.simple,
+              simple: this.simple,
+            }}
+            type="button"
+            onClick={() => this._showMenu()}
+          >
+            {this.simple ? (
               <slot></slot>
-              <svg
-                width={this.small ? '16' : '22'}
-                height={this.small ? '16' : '22'}
-                viewBox="0 0 24 24"
-                class={
-                  this.menuVisible ? 'c-select-icon rotated' : 'c-select-icon'
-                }
-              >
-                <path d={mdiChevronDown} />
-              </svg>
-            </div>
-          )}
-        </button>
+            ) : (
+              <div class={this.small ? 'c-select-row small' : 'c-select-row'}>
+                <slot></slot>
+                <svg
+                  width={this.small ? '16' : '22'}
+                  height={this.small ? '16' : '22'}
+                  viewBox="0 0 24 24"
+                  class={
+                    this.menuVisible ? 'c-select-icon rotated' : 'c-select-icon'
+                  }
+                >
+                  <path d={mdiChevronDown} />
+                </svg>
+              </div>
+            )}
+          </button>
+        )}
 
         <ul id="c-menu-items" class={menuClasses} role="menu">
           {this.items.map((item) => this._getListItem(item))}

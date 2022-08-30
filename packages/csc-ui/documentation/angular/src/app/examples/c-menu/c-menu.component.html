@@ -17,3 +17,13 @@
     </c-icon-button>
   </c-menu>
 </app-example>
+
+<app-example 
+  title="Programmatic variant (Angular)" 
+  subtitle="For use cases where menu needs to be customizable but it's not possible to directly append with child elements" 
+  name="custom" 
+  component="c-menu" 
+  cols
+>
+  <c-menu [items]="items" [customTrigger]="customTriggerProps"></c-menu>
+</app-example>

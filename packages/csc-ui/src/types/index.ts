@@ -115,3 +115,13 @@ export enum CAlertType {
   Success = 'success',
   Info = 'info',
 }
+
+export interface CMenuCustomTrigger {
+  value: string;
+  component: {
+    tag: string;
+    params?: {
+      [key: string]: unknown;
+    };
+  };
+}
