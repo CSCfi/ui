@@ -1,4 +1,4 @@
-:host {
+.c-alert {
   --c-alert-color: var(--csc-primary);
 
   display: grid;
@@ -9,40 +9,40 @@
   border-left-width: 12px;
   border-radius: 6px;
   padding: 12px;
-}
 
-:host([info]),
-:host([error]),
-:host([success]),
-:host([warning]) {
-  grid-template-columns: auto 1fr;
-}
+  &--info,
+  &--error,
+  &--success,
+  &--warning {
+    grid-template-columns: auto 1fr;
+  }
 
-:host([info]) {
-  --c-alert-color: var(--csc-link);
-}
+  &--info {
+    --c-alert-color: var(--csc-link);
+  }
 
-:host([error]) {
-  --c-alert-color: var(--csc-error);
-}
+  &--error {
+    --c-alert-color: var(--csc-error);
+  }
 
-:host([success]) {
-  --c-alert-color: var(--csc-success);
-}
+  &--success {
+    --c-alert-color: var(--csc-success);
+  }
 
-:host([warning]) {
-  --c-alert-color: var(--csc-warning);
+  &--warning {
+    --c-alert-color: var(--csc-warning);
+  }
+
+  &__content {
+    color: rgba(0, 0, 0, 0.87);
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 8px;
+  }
 }
 
 svg {
   fill: currentColor;
-}
-
-.c-alert__content {
-  color: rgba(0, 0, 0, 0.87);
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 8px;
 }
 
 ::slotted(*[slot='title']) {

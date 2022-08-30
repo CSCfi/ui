@@ -8,7 +8,7 @@ import {
   Watch,
 } from '@stencil/core';
 import { mdiChevronLeft, mdiChevronRight, mdiDotsHorizontal } from '@mdi/js';
-import { CPaginationOptions } from '../../types';
+import { CMenuOption, CPaginationOptions } from '../../types';
 
 /**
  * @group Navigation
@@ -112,14 +112,16 @@ export class CPagination {
   }
 
   private _getItemsPerPage() {
-    const itemsPerPageOptions = this.itemsPerPageOptions.map((i) => ({
-      name: i.toString(),
-      action: () => {
-        this._itemsPerPage = i;
-        this._currentPage = 1;
-        this._valueChangeHandler();
-      },
-    }));
+    const itemsPerPageOptions: CMenuOption[] = this.itemsPerPageOptions.map(
+      (i) => ({
+        name: i.toString(),
+        action: () => {
+          this._itemsPerPage = i;
+          this._currentPage = 1;
+          this._valueChangeHandler();
+        },
+      }),
+    );
 
     return (
       <c-menu items={itemsPerPageOptions} nohover>

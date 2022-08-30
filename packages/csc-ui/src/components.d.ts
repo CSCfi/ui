@@ -5,7 +5,7 @@
  * It contains typing information for all components that exist in this project.
  */
 import { HTMLStencilElement, JSXBase } from "@stencil/core/internal";
-import { CAlertType, CAutocompleteItem, CDataTableData, CDataTableFooterOptions, CDataTableHeader, CMenuCustomTrigger, CPaginationOptions, CRadioGroupItem, CSelectItem, CToastMessage } from "./types";
+import { CAlertType, CAutocompleteItem, CDataTableData, CDataTableFooterOptions, CDataTableHeader, CMenuCustomTrigger, CMenuOption, CPaginationOptions, CRadioGroupItem, CSelectItem, CToastMessage } from "./types";
 import { CardBackground } from "./components/c-card/c-card";
 import { CLoginCardBlendMode } from "./components/c-login-card/c-login-card";
 export namespace Components {
@@ -589,13 +589,7 @@ export namespace Components {
         /**
           * Menu items
          */
-        "items": {
-    name: string;
-    action: () => void;
-    disabled?: boolean;
-    icon?: string;
-    iconPosition?: 'start' | 'end';
-  }[];
+        "items": CMenuOption[];
         /**
           * No hover background
          */
@@ -2236,13 +2230,7 @@ declare namespace LocalJSX {
         /**
           * Menu items
          */
-        "items"?: {
-    name: string;
-    action: () => void;
-    disabled?: boolean;
-    icon?: string;
-    iconPosition?: 'start' | 'end';
-  }[];
+        "items"?: CMenuOption[];
         /**
           * No hover background
          */

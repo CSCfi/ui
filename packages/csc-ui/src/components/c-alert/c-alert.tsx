@@ -31,17 +31,23 @@ export class CAlert {
   };
 
   render() {
-    return (
-      <Host {...{ [this.type]: !!this.type }}>
-        {!!this.type && (
-          <svg width="22" height="22" viewBox="0 0 24 24">
-            <path d={this._icons[this.type]} />
-          </svg>
-        )}
+    const classes = {
+      'c-alert': true,
+      ...(!!this.type && { [`c-alert--${this.type}`]: true }),
+    };
 
-        <div class="c-alert__content">
-          <slot name="title"></slot>
-          <slot></slot>
+    return (
+      <Host>
+        <div class={classes}>
+          {!!this.type && (
+            <svg width="22" height="22" viewBox="0 0 24 24">
+              <path d={this._icons[this.type]} />
+            </svg>
+          )}
+          <div class="c-alert__content">
+            <slot name="title"></slot>
+            <slot></slot>
+          </div>
         </div>
       </Host>
     );

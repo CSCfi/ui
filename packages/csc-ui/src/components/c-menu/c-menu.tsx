@@ -9,7 +9,7 @@ import {
   Watch,
 } from '@stencil/core';
 import { mdiChevronDown } from '@mdi/js';
-import { CMenuItem, CMenuCustomTrigger } from '../../types';
+import { CMenuOption, CMenuCustomTrigger } from '../../types';
 
 /**
  * @group Navigation
@@ -50,7 +50,7 @@ export class CMenu {
   /**
    * Menu items
    */
-  @Prop() items: CMenuItem[] = [];
+  @Prop() items: CMenuOption[] = [];
 
   @Watch('currentIndex')
   onIndexChange(index: number) {

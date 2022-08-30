@@ -1,8 +1,8 @@
 import { Component, Host, h, Prop } from '@stencil/core';
+
 /**
  * @parent none
  */
-
 @Component({
   tag: 'c-menu-item',
   styleUrl: 'c-menu-item.scss',

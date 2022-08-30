@@ -126,7 +126,7 @@ export interface CMenuCustomTrigger {
   };
 }
 
-export interface CMenuItem {
+export interface CMenuOption {
   name: string;
   action: () => void;
   disabled?: boolean;
