@@ -125,3 +125,11 @@ export interface CMenuCustomTrigger {
     };
   };
 }
+
+export interface CMenuItem {
+  name: string;
+  action: () => void;
+  disabled?: boolean;
+  icon?: string;
+  iconPosition?: 'start' | 'end';
+}
