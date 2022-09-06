@@ -1,12 +1,24 @@
 a {
-  display: inline;
+  display: inline-flex;
   cursor: pointer;
-  color: var(--csc-link);
   font-size: 16px;
-  font-weight: bold;
   text-decoration: none;
+
+  & svg {
+    margin: 2px 4px 0 0;
+  }
+}
+
+a.icon-after {
+  flex-direction: row-reverse;
+
+  & svg {
+    margin: 2px 0 0 4px;
+  }
 }
 
 a.underline {
   text-decoration: underline;
 }
+
+

@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { mdiOpenInNew } from '@mdi/js';
 
 @Component({
   selector: 'app-c-link',
@@ -6,6 +7,8 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./c-link.component.scss'],
 })
 export class CLinkComponent implements OnInit {
+  mdiOpenInNew = mdiOpenInNew;
+
   constructor() {}
 
   ngOnInit(): void {}
