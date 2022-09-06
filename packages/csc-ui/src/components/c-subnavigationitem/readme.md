@@ -13,6 +13,7 @@
 | `focusable` | `focusable` | Element is visible and focusable | `boolean` | `false`     |
 | `href`      | `href`      | Link url                         | `string`  | `undefined` |
 | `loading`   | `loading`   | Loading state                    | `boolean` | `false`     |
+| `target`    | `target`    | Link target                      | `string`  | `null`      |
 
 
 ## Dependencies

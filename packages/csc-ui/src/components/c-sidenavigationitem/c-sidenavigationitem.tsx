@@ -32,6 +32,11 @@ export class CSidenavigationitem {
   @Prop() href: string;
 
   /**
+   * Hyperlink target
+   */
+  @Prop() target: string = null;
+
+  /**
    * Loading state
    */
   @Prop() loading = false;
@@ -76,7 +81,11 @@ export class CSidenavigationitem {
       }
 
       if (this.href) {
-        window.location.href = this.href;
+        if (this.target) {
+          window.open(this.href, this.target);
+        } else {
+          window.location.href = this.href;
+        }
       }
     }
   }

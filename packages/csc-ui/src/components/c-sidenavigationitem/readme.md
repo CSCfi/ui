@@ -12,6 +12,7 @@
 | `active`  | `active`  | Indicate active state | `boolean` | `undefined` |
 | `href`    | `href`    | Hyperlink url         | `string`  | `undefined` |
 | `loading` | `loading` | Loading state         | `boolean` | `false`     |
+| `target`  | `target`  | Hyperlink target      | `string`  | `null`      |
 
 
 ## Events

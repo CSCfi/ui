@@ -862,6 +862,10 @@ export namespace Components {
           * Loading state
          */
         "loading": boolean;
+        /**
+          * Hyperlink target
+         */
+        "target": string;
     }
     interface CSpacer {
     }
@@ -888,6 +892,10 @@ export namespace Components {
           * Loading state
          */
         "loading": boolean;
+        /**
+          * Link target
+         */
+        "target": string;
     }
     interface CSwiper {
         /**
@@ -2524,6 +2532,10 @@ declare namespace LocalJSX {
           * @private
          */
         "onItemChange"?: (event: CSidenavigationitemCustomEvent<any>) => void;
+        /**
+          * Hyperlink target
+         */
+        "target"?: string;
     }
     interface CSpacer {
     }
@@ -2550,6 +2562,10 @@ declare namespace LocalJSX {
           * Loading state
          */
         "loading"?: boolean;
+        /**
+          * Link target
+         */
+        "target"?: string;
     }
     interface CSwiper {
         /**

@@ -26,6 +26,11 @@ export class CSubnavigationitem {
   @Prop() href: string;
 
   /**
+   * Link target
+   */
+  @Prop() target: string = null;
+
+  /**
    * Loading state
    */
   @Prop() loading = false;
@@ -42,7 +47,11 @@ export class CSubnavigationitem {
       sidenav.menuVisible = false;
 
       if (this.href) {
-        window.location.href = this.href;
+        if (this.target) {
+          window.open(this.href, this.target);
+        } else {
+          window.location.href = this.href;
+        }
       }
     }
   }

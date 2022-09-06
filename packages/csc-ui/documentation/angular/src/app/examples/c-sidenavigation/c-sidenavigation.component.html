@@ -11,7 +11,7 @@
       </div>
 
       <div *ngIf="item.subs?.length" slot="subnavitem">
-        <c-subnavigationitem *ngFor="let sub of item.subs" href="https://www.csc.fi">
+        <c-subnavigationitem *ngFor="let sub of item.subs" href="https://www.csc.fi" target="_blank">
           {{ sub.title }}
         </c-subnavigationitem>
       </div>
