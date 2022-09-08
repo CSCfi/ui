@@ -5,6 +5,16 @@ export interface CPaginationOptions {
   itemsPerPage?: number;
   startFrom?: number;
   endTo?: number;
+  locale?: string;
+  textOverrides?: CPaginationTextOverrides;
+}
+
+export interface CPaginationTextOverrides {
+  itemsPerPageText?: string;
+  nextPage?: string;
+  prevPage?: string;
+  pageText?: ({ start, end, count }) => string;
+  pageOfText?: ({ pageNumber, count }) => string;
 }
 
 export interface CSelectItem {

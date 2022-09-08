@@ -227,6 +227,16 @@ export class CDataTableComponent implements OnInit {
 
   loading = false;
 
+  textOverride = false;
+
+  textOverrides = {
+    // itemsPerPageText: 'Kohteita sivulla:',
+    nextPage: 'Seuraava sivu',
+    prevPage: 'Edellinen sivu',
+    pageText: ({start, end, count}) => `${start} - ${end} / ${count}`,
+    pageOfText: ({pageNumber, count}) => `Sivu ${pageNumber} / ${count}`,
+  };
+
   constructor(private _ngZone: NgZone, private _http: HttpClient) {}
 
   ngOnInit(): void {
@@ -338,6 +348,17 @@ export class CDataTableComponent implements OnInit {
     });
 
     this.loading = false;
+  }
+
+  toggleTextOverride(event) {
+    this._ngZone.run(() => {
+      this.externalOptions = {
+        ...this.externalOptions,
+        textOverrides: event.detail ? this.textOverrides : undefined
+      }
+
+      this.getData();
+    });
   }
   // @example-end
 }

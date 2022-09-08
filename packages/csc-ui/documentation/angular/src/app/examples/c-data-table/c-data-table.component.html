@@ -41,6 +41,10 @@
   name="paginated"
   component="c-data-table"
 >
+  <c-switch class="mb-4" (changeValue)="toggleTextOverride($event)" cControl>
+    Pagination text override
+  </c-switch>
+
   <c-data-table
     id="external-data"
     [data]="pagedData"

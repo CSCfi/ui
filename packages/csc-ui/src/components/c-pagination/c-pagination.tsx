@@ -93,6 +93,20 @@ export class CPagination {
     this._setRange();
   }
 
+  private _textContent = {
+    itemsPerPageText: 'Items per page:',
+    nextPage: 'Next page',
+    prevPage: 'Previous page',
+  };
+
+  private _getText(key: string) {
+    const source = this.value.textOverrides?.[key]
+      ? this.value.textOverrides
+      : this._textContent;
+
+    return source[key];
+  }
+
   private _setRange() {
     this._currentPage = this.value.currentPage || 1;
     this._itemsPerPage = this.value.itemsPerPage || 25;
@@ -126,7 +140,9 @@ export class CPagination {
     return (
       <c-menu items={itemsPerPageOptions} nohover>
         <div>
-          <span class="items-per-page">{this._itemsPerPage} per page</span>
+          <span class="items-per-page">
+            {this._getText('itemsPerPageText')} {this._itemsPerPage}
+          </span>
         </div>
       </c-menu>
     );
@@ -164,7 +180,21 @@ export class CPagination {
     );
     const start = this.value.startFrom + 1;
 
-    return `${start} - ${end} of ${this.value.itemCount} items`;
+    const pageTextOverride = this.value.textOverrides?.pageText;
+
+    let parsedPageTextOverride;
+
+    if (pageTextOverride) {
+      parsedPageTextOverride = pageTextOverride({
+        start: start,
+        end: end,
+        count: this.value.itemCount,
+      });
+    }
+
+    return pageTextOverride
+      ? parsedPageTextOverride
+      : `${start} - ${end} of ${this.value.itemCount} items`;
   }
 
   private _getArrowLeft(size) {
@@ -172,16 +202,13 @@ export class CPagination {
       <li>
         <c-icon-button
           aria-disabled={this.value.currentPage <= 1 ? 'true' : 'false'}
-          aria-label="previous page"
+          aria-label={`${this._getText('prevPage')}`}
           disabled={this.value.currentPage <= 1}
           size={size}
           text
           onClick={this._decreasePageNumber}
         >
-          <span class="visuallyhidden">
-            Previous
-            <span>page</span>
-          </span>
+          <span class="visuallyhidden">{this._getText('prevPage')}</span>
           <svg width="24" height="24" viewBox="0 0 24 24">
             <path d={mdiChevronLeft} />
           </svg>
@@ -197,16 +224,13 @@ export class CPagination {
           aria-disabled={
             this.value.currentPage >= this._getTotalPages() ? 'true' : 'false'
           }
-          aria-label="next page"
+          aria-label={`${this._getText('nextPage')}`}
           disabled={this.value.currentPage >= this._getTotalPages()}
           size={size}
           text
           onClick={this._increasePageNumber}
         >
-          <span class="visuallyhidden">
-            Next
-            <span>page</span>
-          </span>
+          <span class="visuallyhidden">{this._getText('nextPage')}</span>
           <svg width="24" height="24" viewBox="0 0 24 24">
             <path d={mdiChevronRight} />
           </svg>
@@ -226,12 +250,29 @@ export class CPagination {
       params['aria-current'] = 'page';
     }
 
+    const pageOfTextOverride = this.value.textOverrides?.pageOfText;
+
+    let parsedPageOfTextOverride;
+
+    if (pageOfTextOverride) {
+      parsedPageOfTextOverride = pageOfTextOverride({
+        pageNumber: number,
+        count: this._getTotalPages(),
+      });
+    }
+
     return (
       <li>
         <c-icon-button {...params}>
-          <span class="visuallyhidden">page </span>
-          {number}
-          <span class="visuallyhidden">of {this._getTotalPages()}</span>
+          <span
+            aria-label={
+              pageOfTextOverride
+                ? parsedPageOfTextOverride
+                : `page ${number} of ${this._getTotalPages()}`
+            }
+          >
+            {number}
+          </span>
         </c-icon-button>
       </li>
     );
