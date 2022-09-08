@@ -668,10 +668,10 @@ export class CDataTable {
           })
         }
       >
-        {options.value}
+        {options.formattedValue || options.value}
       </Tag>
     ) : (
-      options.value
+      options.formattedValue || options.value
     );
   }
 

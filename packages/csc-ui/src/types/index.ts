@@ -56,6 +56,7 @@ export interface CDataTableData {
 
 export interface CDataTableDataItem {
   value: string | number;
+  formattedValue?: string | number;
   children?: CDataTableChild[];
   component?: CDataTableComponent;
 }

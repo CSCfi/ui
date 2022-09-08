@@ -233,8 +233,8 @@ export class CDataTableComponent implements OnInit {
     // itemsPerPageText: 'Kohteita sivulla:',
     nextPage: 'Seuraava sivu',
     prevPage: 'Edellinen sivu',
-    pageText: ({start, end, count}) => `${start} - ${end} / ${count}`,
-    pageOfText: ({pageNumber, count}) => `Sivu ${pageNumber} / ${count}`,
+    pageText: ({ start, end, count }) => `${start} - ${end} / ${count}`,
+    pageOfText: ({ pageNumber, count }) => `Sivu ${pageNumber} / ${count}`,
   };
 
   constructor(private _ngZone: NgZone, private _http: HttpClient) {}
@@ -354,8 +354,8 @@ export class CDataTableComponent implements OnInit {
     this._ngZone.run(() => {
       this.externalOptions = {
         ...this.externalOptions,
-        textOverrides: event.detail ? this.textOverrides : undefined
-      }
+        textOverrides: event.detail ? this.textOverrides : undefined,
+      };
 
       this.getData();
     });
