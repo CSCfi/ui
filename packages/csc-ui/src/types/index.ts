@@ -44,6 +44,8 @@ export interface CDataTableHeader {
   value: null | string;
   component?: CDataTableComponent;
   width?: string;
+  // pin items to exlude the from being hidden
+  pinned?: boolean;
   sortable?: boolean;
   children?: CDataTableChild[];
   hidden?: boolean;

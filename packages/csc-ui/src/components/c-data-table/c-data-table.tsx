@@ -244,6 +244,44 @@ export class CDataTable {
     this._rootIntersectionObserver.disconnect();
   }
 
+  private _handleHeaderVisibility(
+    header: HTMLElement,
+    rootWidth: number,
+    x: number,
+  ) {
+    const index = this._headers.findIndex((h) => h.key === header.dataset.id);
+    const position = header.getBoundingClientRect();
+    const isFullyVisible = position.right - x <= rootWidth;
+    const isLastVisibleHeader =
+      header.dataset.id === Array.from(this._headerRefs.keys()).at(0);
+    const isPinned = this._headers[index]?.pinned;
+
+    if (!isFullyVisible && isPinned && index >= 1) {
+      const nextUnpinnedHeader = Array.from(this._headerRefs.values())
+        .reverse()
+        .find((hdr) => {
+          if (!hdr) return false;
+
+          return !this._headers.find((h) => h.key === hdr.dataset.id)?.pinned;
+        });
+
+      this.hiddenHeaders = [
+        ...new Set([
+          ...this.hiddenHeaders,
+          (nextUnpinnedHeader || header).dataset.id, // hide the pinned header as a last resort
+        ]),
+      ];
+
+      return;
+    }
+
+    if (!isFullyVisible && !isLastVisibleHeader) {
+      this.hiddenHeaders = [
+        ...new Set([...this.hiddenHeaders, header.dataset.id]),
+      ];
+    }
+  }
+
   private _handleResponsiveHeaders() {
     const { width: tableWidth } = this._tableElement.getBoundingClientRect();
     const { width: rootWidth, x } = this.element.getBoundingClientRect();
@@ -257,16 +295,7 @@ export class CDataTable {
       setTimeout(() => {
         for (const header of this._headerRefs.values()) {
           if (header) {
-            const position = header.getBoundingClientRect();
-            const isFullyVisible = position.right - x <= rootWidth;
-            const isLastVisibleHeader =
-              header.dataset.id === Array.from(this._headerRefs.keys()).at(0);
-
-            if (!isFullyVisible && !isLastVisibleHeader) {
-              this.hiddenHeaders = [
-                ...new Set([...this.hiddenHeaders, header.dataset.id]),
-              ];
-            }
+            this._handleHeaderVisibility(header, rootWidth, x);
           }
         }
 
@@ -318,12 +347,9 @@ export class CDataTable {
           _hiddenData: [],
         };
 
-        Object.keys(cell)
-          // remove keys not present in headers
-          .filter((key) => this._headerKeys.includes(key))
-          .forEach((key) => {
-            item[key] = cell[key];
-          });
+        Object.keys(cell).forEach((key) => {
+          item[key] = cell[key];
+        });
 
         this.hiddenHeaders.forEach((header) => {
           const cellData = this.headers.find((h) => h.key === header);
@@ -355,9 +381,14 @@ export class CDataTable {
   }
 
   private get _headers() {
-    return this.headers.filter(
-      (header) => !this.hiddenHeaders.includes(header.key) && !header.hidden,
-    );
+    return this.headers
+      .map((header) => ({
+        ...header,
+        pinned: !!header.pinned,
+      }))
+      .filter(
+        (header) => !this.hiddenHeaders.includes(header.key) && !header.hidden,
+      );
   }
 
   private get _headerKeys() {
@@ -658,15 +689,15 @@ export class CDataTable {
     return !!Tag ? (
       <Tag
         {...params}
-        onClick={(event: MouseEvent) =>
+        onClick={(event: MouseEvent) => {
           params?.onClick?.({
             index: rowIndex,
             value: options.value,
             data: this.data[rowIndex],
             event,
             key,
-          })
-        }
+          });
+        }}
       >
         {options.formattedValue || options.value}
       </Tag>
@@ -679,24 +710,35 @@ export class CDataTable {
     options: CDataTableDataItem | CDataTableHeader,
     index: number,
     key: string,
-    data = {},
+    data: CDataTableDataItemPrivate,
   ) {
     return options.children.map((child) => {
       const Tag = child.component?.tag;
       const params = child.component?.params || {};
 
+      const { _hiddenData = [], ...rest } = data;
+
+      const flatData: CDataTableData = {
+        ...(rest as Partial<CDataTableData>),
+        ..._hiddenData.reduce((obj, row) => {
+          obj[row.id] = row.value;
+
+          return obj;
+        }, {} as CDataTableData),
+      };
+
       return !!Tag ? (
         <Tag
           {...params}
-          onClick={(event: MouseEvent) =>
+          onClick={(event: MouseEvent) => {
             params?.onClick?.({
               value: options.value,
               index,
               event,
               key,
-              data,
-            })
-          }
+              data: flatData,
+            });
+          }}
         >
           {child.value}
         </Tag>
@@ -737,7 +779,7 @@ export class CDataTable {
 
             {!!options.children && (
               <div class="children">
-                {this._renderCellChildren(options, index, id)}
+                {this._renderCellChildren(options, index, id, {})}
               </div>
             )}
           </li>
@@ -882,31 +924,36 @@ export class CDataTable {
     rowIndex: number,
     rowData = {},
   ) {
+    const header = this.headers.find((header) => header.key === key);
+    const isHidden = this.hiddenHeaders.includes(key);
+
+    // Render only if key is present in headers
     return (
-      <td>
-        <div
-          data-align={this.headers.find((header) => header.key === key)?.align}
-        >
-          {this._renderCellData(key, options, colIndex, rowIndex)}
+      !!header &&
+      !isHidden && (
+        <td>
+          <div data-align={header?.align}>
+            {this._renderCellData(key, options, colIndex, rowIndex)}
 
-          {!!options.children && (
-            <div class="children">
-              {this._renderCellChildren(options, rowIndex, key, rowData)}
-            </div>
-          )}
+            {!!options.children && (
+              <div class="children">
+                {this._renderCellChildren(options, rowIndex, key, rowData)}
+              </div>
+            )}
 
-          {!!this.headers.find((header) => header.key === key)?.children && (
-            <div class="children">
-              {this._renderCellChildren(
-                this.headers.find((header) => header.key === key),
-                rowIndex,
-                key,
-                rowData,
-              )}
-            </div>
-          )}
-        </div>
-      </td>
+            {!!this.headers.find((header) => header.key === key)?.children && (
+              <div class="children">
+                {this._renderCellChildren(
+                  this.headers.find((header) => header.key === key),
+                  rowIndex,
+                  key,
+                  rowData,
+                )}
+              </div>
+            )}
+          </div>
+        </td>
+      )
     );
   }
 
