@@ -512,6 +512,10 @@ export namespace Components {
          */
         "iconFill": CSCColor;
         /**
+          * Icon style overrides
+         */
+        "iconStyle": {};
+        /**
           * Path for the svg icon
          */
         "path": string;
@@ -2180,6 +2184,10 @@ declare namespace LocalJSX {
           * Fill color for the svg icon
          */
         "iconFill"?: CSCColor;
+        /**
+          * Icon style overrides
+         */
+        "iconStyle"?: {};
         /**
           * Path for the svg icon
          */

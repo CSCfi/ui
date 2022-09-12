@@ -51,12 +51,23 @@ export class CLink {
    */
   @Prop() iconAfter: false;
 
+  /**
+   * Icon style overrides
+   */
+  @Prop() iconStyle = {};
+
   render() {
     const CSCColor = (color: CSCColor) => `var(--csc-${color})`;
 
     const classList = {
       underline: this.underline,
+      icon: !!this.path,
       'icon-after': this.iconAfter,
+    };
+
+    const iconStyle = {
+      ...this.iconStyle,
+      fill: this.iconFill ? CSCColor(this.iconFill) : 'inherit',
     };
 
     const style = {
@@ -69,9 +80,7 @@ export class CLink {
         <slot name="icon">
           {this.path && (
             <svg
-              style={{
-                fill: this.iconFill ? CSCColor(this.iconFill) : 'inherit',
-              }}
+              style={iconStyle}
               class="icon-by-path"
               width="18"
               height="18"
