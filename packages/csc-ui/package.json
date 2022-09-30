@@ -1,6 +1,6 @@
 {
   "name": "csc-ui",
-  "version": "0.4.42",
+  "version": "0.4.45",
   "description": "CSC UI components",
   "main": "dist/index.cjs.js",
   "module": "dist/custom-elements/index.js",
@@ -12,6 +12,7 @@
   "unpkg": "dist/cscwebcomponents/cscwebcomponents.esm.js",
   "files": [
     "dist/",
+    "vscode-data.json",
     "loader/"
   ],
   "scripts": {

@@ -9,6 +9,7 @@ import {
   Watch,
 } from '@stencil/core';
 import { mdiChevronDown } from '@mdi/js';
+import { registerClickOutside } from 'stencil-click-outside';
 import { CMenuOption, CMenuCustomTrigger } from '../../types';
 
 /**
@@ -126,13 +127,6 @@ export class CMenu {
     }
   }
 
-  @Listen('blur', { capture: true })
-  handleBlur(event) {
-    if ((event.relatedTarget as HTMLElement) !== this.el) {
-      this._hideMenu();
-    }
-  }
-
   get listItems(): HTMLLIElement[] {
     return Array.from(this.el.shadowRoot.querySelectorAll('li'));
   }
@@ -219,7 +213,10 @@ export class CMenu {
     };
 
     return (
-      <Host class={hostClasses}>
+      <Host
+        class={hostClasses}
+        ref={(el) => registerClickOutside(this, el, () => this._hideMenu())}
+      >
         {this.customTrigger ? (
           this._renderCustomTrigger()
         ) : (
