@@ -1,14 +1,14 @@
-c-step {
+:host {
   position: relative;
   width: 180px;
+}
 
-  &.mobile {
-    width: 22px;
+:host(.mobile) {
+  width: 22px;
+}
 
-    .c-step__label {
-      display: none;
-    }
-  }
+:host(.mobile) .c-step__label {
+  display: none;
 }
 
 .c-step {
@@ -63,7 +63,7 @@ c-step {
         svg {
           position: relative;
           fill: #fff;
-          top: -6px;
+          top: -3px;
 
           .path {
             fill: none;

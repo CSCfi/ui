@@ -8,7 +8,7 @@ import { Component, h, Prop } from '@stencil/core';
 @Component({
   tag: 'c-step',
   styleUrl: 'c-step.scss',
-  shadow: false,
+  shadow: true,
 })
 export class CStep {
   /**
@@ -33,10 +33,7 @@ export class CStep {
       <div class={rootClasses}>
         <div class="c-step__indicator">
           {!this.complete && (
-            <div
-              class={{ dot: true, current: this.current }}
-              onClick={() => (this.complete = true)}
-            ></div>
+            <div class={{ dot: true, current: this.current }}></div>
           )}
 
           {this.complete && (
