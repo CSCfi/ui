@@ -899,6 +899,24 @@ export namespace Components {
          */
         "type"?: 'info' | 'warning' | 'error' | 'success';
     }
+    interface CStep {
+        /**
+          * Mark step as complete
+          * @private
+         */
+        "complete": boolean;
+        /**
+          * Mark step as current
+          * @private
+         */
+        "current": boolean;
+    }
+    interface CSteps {
+        /**
+          * Value of the accordion (current step number)
+         */
+        "value": number | string;
+    }
     interface CSubnavigationitem {
         /**
           * Active state
@@ -1232,6 +1250,10 @@ export interface CSidenavigationitemCustomEvent<T> extends CustomEvent<T> {
     detail: T;
     target: HTMLCSidenavigationitemElement;
 }
+export interface CStepsCustomEvent<T> extends CustomEvent<T> {
+    detail: T;
+    target: HTMLCStepsElement;
+}
 export interface CSwiperCustomEvent<T> extends CustomEvent<T> {
     detail: T;
     target: HTMLCSwiperElement;
@@ -1505,6 +1527,18 @@ declare global {
         prototype: HTMLCStatusElement;
         new (): HTMLCStatusElement;
     };
+    interface HTMLCStepElement extends Components.CStep, HTMLStencilElement {
+    }
+    var HTMLCStepElement: {
+        prototype: HTMLCStepElement;
+        new (): HTMLCStepElement;
+    };
+    interface HTMLCStepsElement extends Components.CSteps, HTMLStencilElement {
+    }
+    var HTMLCStepsElement: {
+        prototype: HTMLCStepsElement;
+        new (): HTMLCStepsElement;
+    };
     interface HTMLCSubnavigationitemElement extends Components.CSubnavigationitem, HTMLStencilElement {
     }
     var HTMLCSubnavigationitemElement: {
@@ -1624,6 +1658,8 @@ declare global {
         "c-sidenavigationitem": HTMLCSidenavigationitemElement;
         "c-spacer": HTMLCSpacerElement;
         "c-status": HTMLCStatusElement;
+        "c-step": HTMLCStepElement;
+        "c-steps": HTMLCStepsElement;
         "c-subnavigationitem": HTMLCSubnavigationitemElement;
         "c-swiper": HTMLCSwiperElement;
         "c-swiper-tab": HTMLCSwiperTabElement;
@@ -2593,6 +2629,28 @@ declare namespace LocalJSX {
          */
         "type"?: 'info' | 'warning' | 'error' | 'success';
     }
+    interface CStep {
+        /**
+          * Mark step as complete
+          * @private
+         */
+        "complete"?: boolean;
+        /**
+          * Mark step as current
+          * @private
+         */
+        "current"?: boolean;
+    }
+    interface CSteps {
+        /**
+          * Emit changes to the parent
+         */
+        "onChangeValue"?: (event: CStepsCustomEvent<number | string>) => void;
+        /**
+          * Value of the accordion (current step number)
+         */
+        "value": number | string;
+    }
     interface CSubnavigationitem {
         /**
           * Active state
@@ -2939,6 +2997,8 @@ declare namespace LocalJSX {
         "c-sidenavigationitem": CSidenavigationitem;
         "c-spacer": CSpacer;
         "c-status": CStatus;
+        "c-step": CStep;
+        "c-steps": CSteps;
         "c-subnavigationitem": CSubnavigationitem;
         "c-swiper": CSwiper;
         "c-swiper-tab": CSwiperTab;
@@ -2998,6 +3058,8 @@ declare module "@stencil/core" {
             "c-sidenavigationitem": LocalJSX.CSidenavigationitem & JSXBase.HTMLAttributes<HTMLCSidenavigationitemElement>;
             "c-spacer": LocalJSX.CSpacer & JSXBase.HTMLAttributes<HTMLCSpacerElement>;
             "c-status": LocalJSX.CStatus & JSXBase.HTMLAttributes<HTMLCStatusElement>;
+            "c-step": LocalJSX.CStep & JSXBase.HTMLAttributes<HTMLCStepElement>;
+            "c-steps": LocalJSX.CSteps & JSXBase.HTMLAttributes<HTMLCStepsElement>;
             "c-subnavigationitem": LocalJSX.CSubnavigationitem & JSXBase.HTMLAttributes<HTMLCSubnavigationitemElement>;
             "c-swiper": LocalJSX.CSwiper & JSXBase.HTMLAttributes<HTMLCSwiperElement>;
             "c-swiper-tab": LocalJSX.CSwiperTab & JSXBase.HTMLAttributes<HTMLCSwiperTabElement>;

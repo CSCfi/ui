@@ -1429,6 +1429,36 @@
       ]
     },
     {
+      "name": "c-step",
+      "description": {
+        "kind": "markdown",
+        "value": ""
+      },
+      "attributes": [
+        {
+          "name": "complete",
+          "description": "Mark step as complete"
+        },
+        {
+          "name": "current",
+          "description": "Mark step as current"
+        }
+      ]
+    },
+    {
+      "name": "c-steps",
+      "description": {
+        "kind": "markdown",
+        "value": ""
+      },
+      "attributes": [
+        {
+          "name": "value",
+          "description": "Value of the accordion (current step number)"
+        }
+      ]
+    },
+    {
       "name": "c-subnavigationitem",
       "description": {
         "kind": "markdown",

@@ -1,0 +1,41 @@
+:host {
+  width: 100%;
+  display: flex;
+}
+
+.c-steps {
+  --c-step-line-color: var(--csc-mid-grey);
+  --c-step-before-color: var(--csc-mid-grey);
+  --c-step-after-color: var(--csc-mid-grey);
+  --c-step-divider-width: calc(100% + 160px);
+  --c-step-divider-margin: 10px -80px;
+
+  width: 100%;
+  display: flex;
+  flex-wrap: nowrap;
+
+  slot {
+    display: flex;
+    justify-items: space-between;
+    width: 100%;
+  }
+
+  ::slotted(.divider) {
+    height: 2px;
+    flex: 1;
+    background-color: var(--c-step-line-color);
+    width: var(--c-step-divider-width);
+    margin: var(--c-step-divider-margin);
+  }
+
+  ::slotted(.divider.complete) {
+    background-color: var(--csc-primary);
+    height: 4px;
+    margin-top: 9px;
+  }
+
+  &.mobile {
+    --c-step-divider-width: calc(100% + 11px);
+    --c-step-divider-margin: 10px -10px;
+  }
+}
