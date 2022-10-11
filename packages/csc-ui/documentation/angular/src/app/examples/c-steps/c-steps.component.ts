@@ -1,5 +1,4 @@
 import { Component, OnInit } from '@angular/core';
-import { CStepsItem } from '../../../../../../src/types';
 
 @Component({
   selector: 'app-c-steps',
