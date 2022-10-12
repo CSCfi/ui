@@ -81,7 +81,7 @@ export class CAutocomplete {
   /**
    * Show required validation
    */
-  @Prop() required: boolean = null;
+  @Prop() required = false;
 
   /**
    * Set the validíty of the input
@@ -497,6 +497,7 @@ export class CAutocomplete {
           label={this.label}
           name={this.name}
           placeholder={this.placeholder}
+          required={this.required}
           shadow={this.shadow}
           valid={this.valid}
           validate={this.validate}

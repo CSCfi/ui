@@ -96,7 +96,7 @@ export class CInput {
   /**
    * Set the input as required
    */
-  @Prop() required: boolean = null;
+  @Prop() required = false;
 
   /**
    * Rows on the input
@@ -422,6 +422,7 @@ export class CInput {
         class={classes}
       >
         {this.label}
+        {this.required && <span>&nbsp;*</span>}
       </label>
     );
   }

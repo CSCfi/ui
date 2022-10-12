@@ -28,6 +28,11 @@ export class CSwitch {
   @Prop({ attribute: 'id' }) hostId: string;
 
   /**
+   * Set as required
+   */
+  @Prop() required = false;
+
+  /**
    * Value of the element
    */
   @Prop({ mutable: true }) value = false;
@@ -78,6 +83,8 @@ export class CSwitch {
         {this.hasLabel ? (
           <div class="c-switch__label">
             <slot></slot>
+
+            {this.required && <span class="required">&nbsp;*</span>}
           </div>
         ) : null}
       </label>

@@ -401,6 +401,10 @@
           "description": "Element label"
         },
         {
+          "name": "required",
+          "description": "Set as required"
+        },
+        {
           "name": "valid",
           "description": "Set the validíty of the input"
         },
@@ -1204,6 +1208,10 @@
           "description": "Label of the radio group"
         },
         {
+          "name": "required",
+          "description": "Set as required"
+        },
+        {
           "name": "return-value",
           "description": "Return only the item value rather than the whole item object"
         },
@@ -1319,7 +1327,7 @@
         },
         {
           "name": "required",
-          "description": "Show required validation"
+          "description": "Set as required"
         },
         {
           "name": "return-value",
@@ -1551,6 +1559,10 @@
         {
           "name": "id",
           "description": "Id for the element"
+        },
+        {
+          "name": "required",
+          "description": "Set as required"
         },
         {
           "name": "value",

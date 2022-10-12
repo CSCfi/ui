@@ -39,7 +39,10 @@ export class CStep {
           {this.complete && (
             <div>
               <svg viewBox="0 0 100 100">
-                <path class="path" d="M12.1 52.1l24.4 24.4 53-53" />
+                <path
+                  class="path"
+                  d="M 12 52 l 24 24 l 47 -47 l -3 -3 l -44 44 l -21 -21 l -3 3"
+                />
               </svg>
             </div>
           )}

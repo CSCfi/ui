@@ -30,10 +30,19 @@
     --thumb-color: var(--csc-mid-grey);
     --slider-color: var(--csc-light-grey);
     --border-color: transparent;
+    --csc-error: var(--csc-mid-grey);
+
+    color: var(--csc-mid-grey);
   }
 
   &--label {
     grid-template-columns: var(--switch-width) auto;
+  }
+
+  &__label {
+    span.required {
+      color: var(--csc-error);
+    }
   }
 
   &__input {

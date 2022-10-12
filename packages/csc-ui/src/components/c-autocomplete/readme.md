@@ -21,7 +21,7 @@
 | `name`           | `name`             | Input field name                                             | `string`                                | `undefined`        |
 | `placeholder`    | `placeholder`      | Placeholder text                                             | `string`                                | `''`               |
 | `query`          | `query`            | Search string                                                | `string`                                | `null`             |
-| `required`       | `required`         | Show required validation                                     | `boolean`                               | `null`             |
+| `required`       | `required`         | Show required validation                                     | `boolean`                               | `false`            |
 | `returnValue`    | `return-value`     | Return only the item value rather than the whole item object | `boolean`                               | `undefined`        |
 | `shadow`         | `shadow`           | Shadow variant                                               | `boolean`                               | `false`            |
 | `valid`          | `valid`            | Set the validíty of the input                                | `boolean`                               | `true`             |

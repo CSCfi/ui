@@ -47,6 +47,11 @@ export class CCheckbox {
   @Prop() label = '';
 
   /**
+   * Set as required
+   */
+  @Prop() required = false;
+
+  /**
    * Set the validíty of the input
    */
   @Prop() valid = true;
@@ -191,8 +196,11 @@ export class CCheckbox {
               ref={(el) => (this._container = el as HTMLDivElement)}
             >
               <svg viewBox="0 0 100 100">
-                {!this.intermediate && (
-                  <path class="path" d="M12.1 52.1l24.4 24.4 53-53" />
+                {!this.intermediate && !!this.value && (
+                  <path
+                    class="path"
+                    d="M 12 52 l 24 24 l 47 -47 l -3 -3 l -44 44 l -21 -21 l -3 3"
+                  />
                 )}
                 {this.intermediate && (
                   <path class="path" d="M20 56 h60 v-8 h-60 z" />
@@ -202,6 +210,7 @@ export class CCheckbox {
 
             <div class="c-checkbox__label-content">
               {!!this.label ? this.label : <slot></slot>}
+              {this.required && <span class="required">&nbsp;*</span>}
             </div>
           </label>
         </div>

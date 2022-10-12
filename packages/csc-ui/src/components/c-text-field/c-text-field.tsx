@@ -90,7 +90,7 @@ export class CTextField {
   /**
    * Set the input as required
    */
-  @Prop() required: boolean = null;
+  @Prop() required = false;
 
   /**
    * Rows on the input
@@ -272,6 +272,7 @@ export class CTextField {
           name={this.name}
           placeholder={this.placeholder}
           readonly={this.readonly}
+          required={this.required}
           rows={this.rows}
           shadow={this.shadow}
           type={this.type}

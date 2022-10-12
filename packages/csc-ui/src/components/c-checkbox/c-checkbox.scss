@@ -55,10 +55,15 @@
     padding-top: 10px;
     text-align: left;
     user-select: none;
+
+    span.required {
+      color: var(--csc-error);
+    }
   }
 
   &--disabled {
     --c-checkbox-color: var(--csc-mid-grey);
+    --csc-error: var(--c-checkbox-color);
 
     color: var(--c-checkbox-color);
     opacity: 0.75;
@@ -116,8 +121,8 @@
   }
 
   .path {
-    fill: none;
     stroke: #fff;
+    fill: #fff;
     stroke-dashoffset: 0;
     stroke-width: 13;
     stroke-linecap: round;
@@ -153,13 +158,6 @@
     position: absolute;
     top: 14px;
     width: 14px;
-  }
-
-  .path {
-    fill: none;
-    stroke-dasharray: 111.46px;
-    stroke-dashoffset: 111.46px;
-    stroke: var(--c-checkbox-color);
   }
 
   &--intermediate .path {

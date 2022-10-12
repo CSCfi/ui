@@ -267,6 +267,10 @@ export namespace Components {
          */
         "label": string;
         /**
+          * Set as required
+         */
+        "required": boolean;
+        /**
           * Set the validíty of the input
          */
         "valid": boolean;
@@ -751,6 +755,10 @@ export namespace Components {
          */
         "label": string;
         /**
+          * Set as required
+         */
+        "required": boolean;
+        /**
           * Return only the item value rather than the whole item object
          */
         "returnValue": false;
@@ -831,7 +839,7 @@ export namespace Components {
          */
         "placeholder": string;
         /**
-          * Show required validation
+          * Set as required
          */
         "required": boolean;
         /**
@@ -986,6 +994,10 @@ export namespace Components {
           * Id for the element
          */
         "hostId": string;
+        /**
+          * Set as required
+         */
+        "required": boolean;
         /**
           * Value of the element
          */
@@ -1960,6 +1972,10 @@ declare namespace LocalJSX {
          */
         "onChangeValue"?: (event: CCheckboxCustomEvent<any>) => void;
         /**
+          * Set as required
+         */
+        "required"?: boolean;
+        /**
           * Set the validíty of the input
          */
         "valid"?: boolean;
@@ -2472,6 +2488,10 @@ declare namespace LocalJSX {
          */
         "onChangeValue"?: (event: CRadioGroupCustomEvent<any>) => void;
         /**
+          * Set as required
+         */
+        "required"?: boolean;
+        /**
           * Return only the item value rather than the whole item object
          */
         "returnValue"?: false;
@@ -2556,7 +2576,7 @@ declare namespace LocalJSX {
          */
         "placeholder"?: string;
         /**
-          * Show required validation
+          * Set as required
          */
         "required"?: boolean;
         /**
@@ -2733,6 +2753,10 @@ declare namespace LocalJSX {
           * Emit inner value change to parent
          */
         "onChangeValue"?: (event: CSwitchCustomEvent<boolean>) => void;
+        /**
+          * Set as required
+         */
+        "required"?: boolean;
         /**
           * Value of the element
          */

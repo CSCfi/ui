@@ -45,6 +45,7 @@
           placeholder="Your superhero name"
           [valid]="isValid('username')"
           [validation]="errors('username')"
+          required
           cControl
         >
           <i class="mdi mdi-star" slot="pre"></i>
@@ -58,6 +59,7 @@
           placeholder="Validates only on blur"
           [valid]="isValid('age')"
           [validation]="errors('age')"
+          required
           cControl
           validate-on-blur
         ></c-text-field>
@@ -69,6 +71,7 @@
           hint="Enter your super secret password"
           [valid]="isValid('password')"
           [validation]="errors('password')"
+          required
           cControl
         ></c-text-field>
       </c-card-content>

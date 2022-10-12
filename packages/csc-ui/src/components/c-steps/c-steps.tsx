@@ -7,6 +7,7 @@ import {
   Event,
   Element,
   Watch,
+  State,
 } from '@stencil/core';
 
 /**
@@ -30,6 +31,10 @@ export class CSteps {
    * Emit changes to the parent
    */
   @Event({ bubbles: false }) changeValue: EventEmitter<number | string>;
+
+  @State() isMobile = false;
+
+  @State() label = '';
 
   @Watch('value')
   watchPropHandler() {
@@ -64,6 +69,10 @@ export class CSteps {
           item.after(div);
         }
       }
+
+      if (item.current) {
+        this.label = item.textContent;
+      }
     });
 
     this._isInitialized = true;
@@ -75,12 +84,14 @@ export class CSteps {
     this._resizeObserver = new ResizeObserver(([entry]) => {
       const maxWidth = this._stepElements.length * 180;
 
+      this.isMobile = maxWidth > entry.contentRect.width;
+
       this.host.shadowRoot
         .querySelector('.c-steps')
-        .classList.toggle('mobile', maxWidth > entry.contentRect.width);
+        .classList.toggle('mobile', this.isMobile);
 
       this._stepElements.forEach((node) => {
-        node.classList.toggle('mobile', maxWidth > entry.contentRect.width);
+        node.classList.toggle('mobile', this.isMobile);
       });
     });
 
@@ -93,6 +104,9 @@ export class CSteps {
         <div class="c-steps">
           <slot></slot>
         </div>
+        {this.isMobile && (
+          <div class="c-steps__label">{this.label || 'Esko Mörkö'}</div>
+        )}
       </Host>
     );
   }

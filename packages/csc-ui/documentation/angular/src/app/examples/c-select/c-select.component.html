@@ -31,7 +31,9 @@
     [items]="items"
     [(ngModel)]="selection"
     [valid]="!!selection?.value"
+    label="Fruit of the day"
     placeholder="Select a fruit"
+    required
   ></c-select>
 
   <p class="mt-3">Selected fruit: {{ (selection | json) || 'None' }}</p>

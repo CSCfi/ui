@@ -65,9 +65,9 @@ export class CSelect {
   @Prop() name: string;
 
   /**
-   * Show required validation
+   * Set as required
    */
-  @Prop() required: boolean = null;
+  @Prop() required = false;
 
   /**
    * Return only the item value rather than the whole item object
@@ -567,6 +567,7 @@ export class CSelect {
           label={this.label}
           name={this.name}
           placeholder={this.placeholder}
+          required={this.required}
           shadow={this.shadow}
           valid={this.valid}
           validate={this.validate}

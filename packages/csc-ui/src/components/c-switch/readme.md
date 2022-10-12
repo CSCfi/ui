@@ -11,6 +11,7 @@
 | -------------- | ---------- | -------------------- | --------- | ----------- |
 | `hostDisabled` | `disabled` | Disable the switch   | `boolean` | `false`     |
 | `hostId`       | `id`       | Id for the element   | `string`  | `undefined` |
+| `required`     | `required` | Set as required      | `boolean` | `false`     |
 | `value`        | `value`    | Value of the element | `boolean` | `false`     |
 
 

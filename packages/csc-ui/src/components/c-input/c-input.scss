@@ -194,6 +194,10 @@
       &.active {
         transform: translateY(-18px) scale(0.75);
       }
+
+      span {
+        color: var(--csc-error);
+      }
     }
   }
 
@@ -236,8 +240,8 @@
 
     svg {
       fill: currentColor;
-      min-height: 16px;
-      min-width: 16px;
+      height: 16px;
+      width: 16px;
       position: relative;
       top: -2px;
     }
@@ -299,6 +303,8 @@
     textarea,
     fieldset,
     label {
+      --csc-error: rgba(0, 0, 0, 0.5);
+
       color: rgba(0, 0, 0, 0.5);
     }
   }

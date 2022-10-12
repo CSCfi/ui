@@ -69,6 +69,11 @@ export class CRadioGroup {
   @Prop() returnValue: false;
 
   /**
+   * Set as required
+   */
+  @Prop() required = false;
+
+  /**
    * Set the validíty of the input
    */
   @Prop() valid = true;
@@ -231,13 +236,16 @@ export class CRadioGroup {
         aria-labelledby="c-radio-group__label"
       >
         {(!!this.label || slotHasContent) && (
-          <label id="c-radio-group__label">
+          <label class="c-radio-group__label">
             {!!this.label ? this.label : <slot></slot>}
+            {this.required && <span class="required">&nbsp;*</span>}
           </label>
         )}
+
         <div class="c-radio-group__items">
           {this.items.map((item, index) => this._getRadioButton(item, index))}
         </div>
+
         {this._renderMessages()}
       </div>
     );

@@ -5,6 +5,7 @@
 
 :host(.mobile) {
   width: 22px;
+  height: 22px;
 }
 
 :host(.mobile) .c-step__label {
@@ -32,7 +33,7 @@
       &.current {
         --c-step-line-color: var(--csc-primary);
 
-        box-shadow: inset 0 0 0 4px var(--c-step-line-color);
+        box-shadow: inset 0 0 0 3px var(--c-step-line-color);
 
         &::before {
           content: '';

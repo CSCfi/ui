@@ -21,7 +21,7 @@
 | `number`         | `number`           | <span style="color:red">**[DEPRECATED]**</span> Use type="number" instead<br/><br/>Numeric input | `boolean` | `false`            |
 | `placeholder`    | `placeholder`      | Placeholder of the input                                                                         | `string`  | `undefined`        |
 | `readonly`       | `readonly`         | Mark as readonly                                                                                 | `boolean` | `false`            |
-| `required`       | `required`         | Set the input as required                                                                        | `boolean` | `null`             |
+| `required`       | `required`         | Set the input as required                                                                        | `boolean` | `false`            |
 | `rows`           | `rows`             | Rows on the input                                                                                | `number`  | `1`                |
 | `shadow`         | `shadow`           | Shadow variant of the input                                                                      | `boolean` | `false`            |
 | `step`           | `step`             | Step size on a numeric input                                                                     | `number`  | `null`             |

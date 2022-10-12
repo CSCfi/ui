@@ -19,7 +19,7 @@
 | `label`          | `label`            | Element label                                                | `string`                                     | `undefined`        |
 | `name`           | `name`             | Input field name                                             | `string`                                     | `undefined`        |
 | `placeholder`    | `placeholder`      | Placeholder text                                             | `string`                                     | `''`               |
-| `required`       | `required`         | Show required validation                                     | `boolean`                                    | `null`             |
+| `required`       | `required`         | Set as required                                              | `boolean`                                    | `false`            |
 | `returnValue`    | `return-value`     | Return only the item value rather than the whole item object | `boolean`                                    | `undefined`        |
 | `shadow`         | `shadow`           | Shadow variant                                               | `boolean`                                    | `false`            |
 | `valid`          | `valid`            | Set the validíty of the input                                | `boolean`                                    | `true`             |

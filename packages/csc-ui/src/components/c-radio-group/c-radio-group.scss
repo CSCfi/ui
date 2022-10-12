@@ -20,8 +20,15 @@
     gap: var(--c-radio-item-gap);
   }
 
+  &__label {
+    span.required {
+      color: var(--csc-error);
+    }
+  }
+
   &--disabled {
     --c-radio-color: var(--csc-mid-grey);
+    --csc-error: var(--csc-mid-grey);
 
     color: var(--c-radio-color);
     cursor: default;
