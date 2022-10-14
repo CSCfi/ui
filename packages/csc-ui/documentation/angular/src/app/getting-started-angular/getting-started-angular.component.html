@@ -2,85 +2,57 @@
   <h1 class="text-capitalize mb-0 text-primary">Usage in Angular</h1>
 
   <div class="pt-4">
-    <p>Install the required dependencies</p>
+    <p><strong>1. Install the required dependencies</strong></p>
     <pre class="rounded"><code highlight="npm install csc-ui csc-ui-accessor"></code></pre>
+    <p>
+      This command will install the CSC Design system component library
+      <code>csc-ui</code>
+      and the control value accessor
+      <code>csc-ui-accessor</code>
+      which allows the components to support 2-way model binding.
+    </p>
   </div>
   <div class="pt-4">
     <p>
-      Add the following lines to
-      <code>main.ts</code>
+      <strong>
+        2. Add the following lines to
+        <code>main.ts</code>
+      </strong>
     </p>
 
     <pre class="rounded"><code [highlight]="mainUsage"></code></pre>
   </div>
   <div class="pt-4">
     <p>
-      Add the CControl in the Angular
-      <code>AppModule</code>
+      <strong>
+        3. Configure
+        <code>AppModule</code>
+        to use the control value accessor and CUSTOM_ELEMENTS_SCHEMA.
+      </strong>
     </p>
 
     <pre class="rounded"><code [highlight]="accessorUsage"></code></pre>
+    <p>
+      Now you should be able to use the CSC Design system components in your project. Please note
+      that the components require the control value accessor
+      <code>cControl</code>
+      as an additional attribute to enable 2-way binding with
+      <code>[(ngModel)]</code>
+      or
+      <strong>Angular reactive forms</strong>
+      .
+    </p>
   </div>
+</div>
 
-  <div class="pt-4">
-    <form [formGroup]="form">
-      <c-card>
-        <c-card-title>Usage in Angular forms</c-card-title>
-        <c-card-content>
-          <c-text-field
-            formControlName="username"
-            label="Username"
-            [valid]="isValid('username')"
-            [validation]="errors('username')"
-            cControl
-          ></c-text-field>
+<div class="documentation-card">
+  <h2 class="text-capitalize mb-4 text-primary">Example project</h2>
 
-          <c-text-field
-            formControlName="password"
-            hint="Please do not use numbers in your password"
-            label="Password"
-            type="password"
-            [valid]="isValid('password')"
-            [validation]="errors('password')"
-            cControl
-          ></c-text-field>
-
-          <c-checkbox
-            formControlName="consent"
-            hint="Please agree to the terms and conditions"
-            [valid]="isValid('consent')"
-            [validation]="errors('consent')"
-            cControl
-          >
-            I agree to the
-            <c-link href="https://csc.fi" underline>terms and conditions</c-link>
-          </c-checkbox>
-        </c-card-content>
-
-        <c-card-actions justify="end">
-          <c-button [disabled]="!form.valid" (click)="onSubmit()">Submit</c-button>
-        </c-card-actions>
-
-        <hr class="m-0" />
-
-        <div class="px-4">
-          <c-accordion [value]="showCode" multiple outlined>
-            <c-accordion-item value="template" heading="Template">
-              <i class="mdi mdi-language-html5" slot="icon"></i>
-              <pre class="d-flex flex-column m-0">
-                <code class="rounded" [highlight]="formUsage.template"></code>
-              </pre>
-            </c-accordion-item>
-
-            <c-accordion-item value="script" heading="Script">
-              <i class="mdi mdi-language-typescript" slot="icon"></i>
-              <pre class="d-flex flex-column m-0">
-                <code class="rounded" [highlight]="formUsage.script"></code>
-              </pre>
-            </c-accordion-item>
-          </c-accordion>
-        </div>
-      </c-card>
-    </form>
-  </div>
+  <iframe
+    src="https://codesandbox.io/embed/relaxed-hertz-z0jyg9?autoresize=1&fontsize=14&hidenavigation=1&module=%2Fsrc%2Fapp%2Fapp.component.html&theme=dark&view=preview"
+    style="width: 100%; height: 600px; border: 0; border-radius: 4px; overflow: hidden"
+    title="relaxed-hertz-z0jyg9"
+    allow="accelerometer; ambient-light-sensor; camera; encrypted-media; geolocation; gyroscope; hid; microphone; midi; payment; usb; vr; xr-spatial-tracking"
+    sandbox="allow-forms allow-modals allow-popups allow-presentation allow-same-origin allow-scripts"
+  ></iframe>
 </div>

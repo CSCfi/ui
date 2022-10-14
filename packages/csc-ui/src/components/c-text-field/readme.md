@@ -9,6 +9,9 @@
 
 | Property         | Attribute          | Description                                                                                      | Type      | Default            |
 | ---------------- | ------------------ | ------------------------------------------------------------------------------------------------ | --------- | ------------------ |
+| `autocapitalize` | `autocapitalize`   | HTML input autocapitalize                                                                        | `string`  | `''`               |
+| `autocomplete`   | `autocomplete`     | HTML input autocomplete                                                                          | `string`  | `''`               |
+| `autocorrect`    | `autocorrect`      | HTML input autocorrect                                                                           | `string`  | `''`               |
 | `autofocus`      | `autofocus`        | Auto focus the input                                                                             | `boolean` | `false`            |
 | `disabled`       | `disabled`         | Disable the input                                                                                | `boolean` | `false`            |
 | `hideDetails`    | `hide-details`     | Hide the hint and error messages                                                                 | `boolean` | `false`            |

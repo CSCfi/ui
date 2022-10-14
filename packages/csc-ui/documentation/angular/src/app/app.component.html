@@ -65,7 +65,19 @@
             (keyup.enter)="navigate($event, 'getting-started/vue')"
           >
             <span class="mdi mdi-vuejs"></span>
-            Vue
+            Vue 3
+          </c-subnavigationitem>
+        </div>
+
+        <div slot="subnavitem">
+          <c-subnavigationitem
+            class="text-capitalize"
+            [routerLink]="['getting-started/vue-2']"
+            routerLinkActive="active"
+            (keyup.enter)="navigate($event, 'getting-started/vue-2')"
+          >
+            <span class="mdi mdi-vuejs"></span>
+            Vue 2
           </c-subnavigationitem>
         </div>
       </c-sidenavigationitem>

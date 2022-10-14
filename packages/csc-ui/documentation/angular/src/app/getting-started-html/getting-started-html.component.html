@@ -2,44 +2,24 @@
   <h1 class="text-capitalize mb-0 text-primary">Usage in basic HTML page</h1>
 
   <div class="pt-4">
-    <p>Add following script before closing body tag</p>
-    <pre class="rounded"><code [highlight]="script"></code></pre>
+    <p>
+      You can choose either
+      <code>npm</code>
+      or
+      <code>cdn</code>
+      to bring the component library to your HTML page
+    </p>
   </div>
 
   <div class="pt-4">
-    <form action="" method="get">
-      <c-card>
-        <c-card-title>Login example</c-card-title>
-
-        <c-card-content>
-          <c-text-field label="Username" name="username" hide-details></c-text-field>
-
-          <c-text-field
-            label="Password"
-            name="password"
-            type="password"
-            hide-details
-          ></c-text-field>
-        </c-card-content>
-
-        <c-card-actions justify="space-between">
-          <c-link href="#" underline>Forgot password?</c-link>
-          <c-button type="submit">Login</c-button>
-        </c-card-actions>
-
-        <hr class="m-0" />
-
-        <div class="px-4">
-          <c-accordion [value]="showCode" multiple outlined>
-            <c-accordion-item value="template" heading="Template">
-              <i class="mdi mdi-language-html5" slot="icon"></i>
-              <pre class="d-flex flex-column m-0">
-                <code class="rounded" [highlight]="template"></code>
-              </pre>
-            </c-accordion-item>
-          </c-accordion>
-        </div>
-      </c-card>
-    </form>
+    <p><strong>CDN: Add following script before closing body tag</strong></p>
+    <pre class="rounded"><code [highlight]="script"></code></pre>
+    <p>Now you should be able to use the CSC Design system components in your HTML page.</p>
   </div>
+</div>
+
+<div class="documentation-card">
+  <h2 class="text-capitalize mb-4 text-primary">Example project</h2>
+
+  <div id="simple-example"></div>
 </div>

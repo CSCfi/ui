@@ -54,6 +54,7 @@ import { ViewerMethodsComponent } from './viewer/viewer-methods/viewer-methods.c
 import { CAlertComponent } from './examples/c-alert/c-alert.component';
 import { TypesComponent } from './types/types.component';
 import { CStepsComponent } from './examples/c-steps/c-steps.component';
+import { GettingStartedVueLegacyComponent } from './getting-started-vue-legacy/getting-started-vue-legacy.component';
 
 @NgModule({
   declarations: [
@@ -105,6 +106,7 @@ import { CStepsComponent } from './examples/c-steps/c-steps.component';
     CAlertComponent,
     TypesComponent,
     CStepsComponent,
+    GettingStartedVueLegacyComponent,
   ],
   imports: [
     BrowserModule,

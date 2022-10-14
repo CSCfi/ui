@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { VersionService } from '../services/version.service';
+import sdk from '@stackblitz/sdk';
 
 @Component({
   selector: 'app-getting-started-html',
@@ -34,5 +35,14 @@ export class GettingStartedHtmlComponent implements OnInit {
 
   ngOnInit(): void {
     this.script = `<script src="https://unpkg.com/csc-ui@${this._versionService.version}/dist/cscwebcomponents/cscwebcomponents.esm.js" type="module"></script>`;
+
+    sdk.embedProjectId('simple-example', 'web-platform-9ew2kk', {
+      forceEmbedLayout: true,
+      openFile: 'src/App.vue',
+      view: 'preview',
+      hideNavigation: true,
+      height: 600,
+      clickToLoad: true,
+    });
   }
 }

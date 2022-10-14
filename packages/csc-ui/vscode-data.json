@@ -1690,6 +1690,18 @@
       },
       "attributes": [
         {
+          "name": "autocapitalize",
+          "description": "HTML input autocapitalize"
+        },
+        {
+          "name": "autocomplete",
+          "description": "HTML input autocomplete"
+        },
+        {
+          "name": "autocorrect",
+          "description": "HTML input autocorrect"
+        },
+        {
           "name": "autofocus",
           "description": "Auto focus the input"
         },

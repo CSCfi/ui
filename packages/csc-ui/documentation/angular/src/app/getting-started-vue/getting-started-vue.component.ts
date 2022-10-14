@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import sdk from '@stackblitz/sdk';
 
 @Component({
   selector: 'app-getting-started-vue',
@@ -9,9 +10,9 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 export class GettingStartedVueComponent implements OnInit {
   mainUsage = `import { createApp } from 'vue';
 import { applyPolyfills, defineCustomElements } from 'csc-ui/loader';
+import { vControl } from 'csc-ui-vue-directive';
 
 import App from './App.vue';
-import { vControl } from 'csc-ui-vue-directive';
 
 const app = createApp(App);
 
@@ -21,8 +22,25 @@ applyPolyfills().then(() => {
   defineCustomElements();
 });
 
-app.mount('#app');
-  `;
+app.mount('#app');`;
+
+  viteConfig = `import { defineConfig } from 'vite';
+import vue from '@vitejs/plugin-vue';
+
+export default defineConfig({
+  plugins: [
+    vue({
+      template: {
+        compilerOptions: {
+          isCustomElement: (tag) => tag.startsWith('c-'),
+        },
+      },
+    }),
+  ],
+
+  ...
+
+});`;
 
   formUsage = `<script setup lang="ts">
 import { ref } from 'vue';
@@ -115,8 +133,7 @@ const onSubmit = () => {
       <c-button @click="onSubmit">Submit</c-button>
     </c-card-actions>
   </c-card>
-</template>
-`;
+</template>`;
 
   showCode = [];
 
@@ -144,6 +161,15 @@ const onSubmit = () => {
         [Validators.required, Validators.pattern(/^([^0-9]*)$/), Validators.minLength(8)],
       ],
       consent: [false, [Validators.requiredTrue]],
+    });
+
+    sdk.embedProjectId('simple-example', 'vitejs-vite-czilun', {
+      forceEmbedLayout: true,
+      openFile: 'src/App.vue',
+      view: 'preview',
+      hideNavigation: true,
+      height: 600,
+      clickToLoad: true,
     });
   }
 

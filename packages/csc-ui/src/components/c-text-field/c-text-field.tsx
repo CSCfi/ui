@@ -26,6 +26,21 @@ export class CTextField {
   @Prop() autofocus = false;
 
   /**
+   * HTML input autocapitalize
+   */
+  @Prop() autocapitalize = '';
+
+  /**
+   * HTML input autocorrect
+   */
+  @Prop() autocorrect = '';
+
+  /**
+   * HTML input autocomplete
+   */
+  @Prop() autocomplete = '';
+
+  /**
    * Disable the input
    */
   @Prop() disabled = false;
@@ -212,6 +227,9 @@ export class CTextField {
         min: this.min,
         max: this.max,
         step: this.step,
+        ...(!!this.autocomplete && { autocomplete: this.autocomplete }),
+        ...(!!this.autocapitalize && { autocapitalize: this.autocapitalize }),
+        ...(!!this.autocorrect && { autocorrect: this.autocorrect }),
       },
       textArea: {
         rows: this.rows,

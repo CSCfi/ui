@@ -1083,6 +1083,18 @@ export namespace Components {
     }
     interface CTextField {
         /**
+          * HTML input autocapitalize
+         */
+        "autocapitalize": string;
+        /**
+          * HTML input autocomplete
+         */
+        "autocomplete": string;
+        /**
+          * HTML input autocorrect
+         */
+        "autocorrect": string;
+        /**
           * Auto focus the input
          */
         "autofocus": boolean;
@@ -2854,6 +2866,18 @@ declare namespace LocalJSX {
         "flat"?: boolean;
     }
     interface CTextField {
+        /**
+          * HTML input autocapitalize
+         */
+        "autocapitalize"?: string;
+        /**
+          * HTML input autocomplete
+         */
+        "autocomplete"?: string;
+        /**
+          * HTML input autocorrect
+         */
+        "autocorrect"?: string;
         /**
           * Auto focus the input
          */

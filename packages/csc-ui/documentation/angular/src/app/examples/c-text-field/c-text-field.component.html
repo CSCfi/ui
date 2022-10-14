@@ -6,8 +6,12 @@
   <c-text-field label="Password" type="password" disabled></c-text-field>
 </app-example>
 
-<app-example title="Shadow with slots" name="shadow" component="c-text-field">
-  <c-text-field placeholder="Text field with a shadow" shadow>
+<app-example
+  title="Shadow with slots and autocapitalize on mobile"
+  name="shadow"
+  component="c-text-field"
+>
+  <c-text-field placeholder="Text field with a shadow" shadow autocapitalize="words">
     <i class="mdi mdi-magnify" slot="pre"></i>
 
     <c-tag slot="post" active>12</c-tag>
