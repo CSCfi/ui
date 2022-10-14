@@ -30,7 +30,6 @@
 
       <c-sidenavigationitem
         [active]="active === 'getting-started' || url?.startsWith('/getting-started')"
-        (click)="setActive('getting-started')"
       >
         <div slot="main" class="text-capitalize">Getting Started</div>
 
@@ -82,10 +81,7 @@
         </div>
       </c-sidenavigationitem>
 
-      <c-sidenavigationitem
-        [active]="active === 'templates' || url?.startsWith('/templates')"
-        (click)="setActive('templates')"
-      >
+      <c-sidenavigationitem [active]="active === 'templates' || url?.startsWith('/templates')">
         <div slot="main" class="text-capitalize">Templates</div>
 
         <div slot="subnavitem">

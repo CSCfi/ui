@@ -1,4 +1,4 @@
-:host {
+.c-subnavigation-item {
   align-items: center;
   background-color: transparent;
   border-radius: 4px;
@@ -8,16 +8,20 @@
   display: flex;
   font-weight: 400;
   line-height: 46px;
-  margin: 4px 8px;
+  margin: 0 8px;
   overflow: hidden;
-  padding-left: 38px;
+  padding-left: 34px;
   position: relative;
   transition: background-color 0.2s ease-in;
   user-select: none;
   max-width: calc(320px - 24px - 16px);
 }
 
-:host > div {
+.c-subnavigation-item__wrapper {
+  padding: 2px 0;
+}
+
+.c-subnavigation-item__content {
   display: flex;
   align-items: center;
   overflow: hidden;
@@ -25,7 +29,7 @@
   text-overflow: ellipsis;
 }
 
-:host > div::before {
+.c-subnavigation-item__content::before {
   background-color: var(--csc-primary);
   content: '';
   height: 100%;
@@ -37,16 +41,16 @@
   width: 8px;
 }
 
-:host(:hover) {
+.c-subnavigation-item:hover {
   background-color: #f0f6f7;
   color: var(--csc-primary);
 }
 
-:host(.active) {
+:host(.active) .c-subnavigation-item {
   background-color: #ffffff;
 }
 
-:host(.active) > div::before {
+:host(.active) .c-subnavigation-item__content::before {
   transform: translateZ(0) translateX(0);
 }
 
@@ -56,11 +60,11 @@
   line-height: 1;
 }
 
-:host(:focus) {
+.c-subnavigation-item:focus {
   outline: none;
 }
 
-:host(:focus-visible) {
+.c-subnavigation-item:focus-visible {
   outline: 2px var(--csc-primary) solid;
   outline-offset: 0;
 }
@@ -77,8 +81,13 @@
   width: 1px;
 }
 
-.c-subnavigationitem__slot {
+.c-subnavigation-item__slot {
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
+
+  slot {
+    display: flex;
+    align-items: center;
+  }
 }

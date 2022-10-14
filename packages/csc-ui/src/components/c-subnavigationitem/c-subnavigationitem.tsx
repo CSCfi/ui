@@ -57,11 +57,6 @@ export class CSubnavigationitem {
   }
 
   render() {
-    const classes = {
-      'c-subnavigation-item': true,
-      active: this.active,
-    };
-
     const a11y = {
       tabindex: this.focusable ? '0' : '-1',
       role: 'menuitem',
@@ -74,22 +69,28 @@ export class CSubnavigationitem {
     return (
       <Host
         {...a11y}
-        class={classes}
+        class={{ active: this.active }}
         onClick={(e) => this._redirect(e)}
         onKeyDown={(e) => this._redirect(e)}
       >
-        <div>
-          <div class="c-subnavigationitem__slot">
-            <slot></slot>
-          </div>
-          {this.active && <span class="visuallyhidden">, Current page</span>}
-        </div>
+        <div class="c-subnavigation-item__wrapper">
+          <div class="c-subnavigation-item">
+            <div class="c-subnavigation-item__content">
+              <div class="c-subnavigation-item__slot">
+                <slot></slot>
+              </div>
+              {this.active && (
+                <span class="visuallyhidden">, Current page</span>
+              )}
+            </div>
 
-        <c-loader
-          size={32}
-          hide={!this.loading}
-          style={{ pointerEvents: 'none' }}
-        ></c-loader>
+            <c-loader
+              size={32}
+              hide={!this.loading}
+              style={{ pointerEvents: 'none' }}
+            ></c-loader>
+          </div>
+        </div>
       </Host>
     );
   }

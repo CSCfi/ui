@@ -100,11 +100,6 @@ export class AppComponent implements OnInit {
     }));
   }
 
-  public setActive(value) {
-    // this.open({});
-    this.active = value;
-  }
-
   private _closeAll() {
     this.active = null;
   }

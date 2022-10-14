@@ -24,13 +24,20 @@ export class CSidenavigation {
   @Listen('itemChange')
   handleChange(event: Event) {
     const slotted = this.host.querySelectorAll('c-sidenavigationitem');
-    const { active } = event.target as HTMLCSidenavigationitemElement;
+    const target = event.target as HTMLCSidenavigationitemElement;
+    const { active } = target;
 
     slotted.forEach((item) => {
-      item.active = false;
+      if (item.querySelector('[slot="subnavitem"]')) {
+        item.active = false;
+      }
     });
 
-    (event.target as HTMLCSidenavigationitemElement).active = !active;
+    if (target.querySelector('[slot="subnavitem"]')) {
+      target.active = !active;
+    } else {
+      target.active = true;
+    }
   }
 
   componentDidLoad() {
