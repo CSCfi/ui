@@ -98,14 +98,29 @@ export class CSteps {
     this._resizeObserver.observe(this.host);
   }
 
+  private _getA11yMessage(total: number, current: number) {
+    return `
+      Steps, step ${Math.min(current, total)} of ${total}.
+      ${this.label}.
+      ${current - 1} step${current - 1 !== 1 ? 's' : ''} marked as completed.
+    `;
+  }
+
   render() {
     return (
-      <Host>
-        <div class="c-steps">
+      <Host tabindex="0">
+        {this._stepElements && (
+          <span class="visuallyhidden">
+            {this._getA11yMessage(this._stepElements.length, +this.value)}
+          </span>
+        )}
+        <div class="c-steps" aria-hidden="true">
           <slot></slot>
         </div>
         {this.isMobile && (
-          <div class="c-steps__label">{this.label || 'Esko Mörkö'}</div>
+          <div class="c-steps__label" aria-hidden="true">
+            {this.label}
+          </div>
         )}
       </Host>
     );

@@ -2,6 +2,18 @@
   width: 100%;
   display: grid;
   gap: 8px;
+  border-radius: 6px;
+}
+
+@supports selector(:focus-within) {
+  :host(:focus) {
+    outline: none;
+  }
+}
+
+:host(:focus-within) {
+  outline: 2px var(--csc-primary) solid;
+  outline-offset: 2px;
 }
 
 .c-steps {
@@ -39,4 +51,16 @@
     --c-step-divider-width: calc(100% + 11px);
     --c-step-divider-margin: 10px -10px 0;
   }
+}
+
+.visuallyhidden {
+  border: 0;
+  clip: rect(0 0 0 0);
+  height: 1px;
+  margin: -1px;
+  overflow: hidden;
+  padding: 0;
+  position: absolute;
+  white-space: nowrap;
+  width: 1px;
 }
