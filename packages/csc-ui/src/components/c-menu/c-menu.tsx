@@ -229,7 +229,10 @@ export class CMenu {
               simple: this.simple,
             }}
             type="button"
-            onClick={() => this._showMenu()}
+            onClick={(event: Event) => {
+              event.stopPropagation();
+              this._showMenu();
+            }}
           >
             {this.simple ? (
               <slot></slot>
