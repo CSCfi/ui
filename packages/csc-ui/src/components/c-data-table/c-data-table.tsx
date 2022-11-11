@@ -158,6 +158,10 @@ export class CDataTable {
 
   @State() forceRender = false;
 
+  @State() breakpoints: number[] = [];
+
+  @State() markedFooterWidth: number = 0;
+
   private _debounce = null;
 
   private _extraHeaders: CDataTableHeader[] = [];
@@ -285,12 +289,16 @@ export class CDataTable {
   private _handleResponsiveHeaders() {
     const { width: tableWidth } = this._tableElement.getBoundingClientRect();
     const { width: rootWidth, x } = this.element.getBoundingClientRect();
+    const footerWidth =
+      this._footerElement?.getBoundingClientRect()?.width || 0;
+
+    if (this._debounce !== null) {
+      clearTimeout(this._debounce);
+      this._debounce = null;
+    }
 
     if (rootWidth < tableWidth) {
-      if (this._debounce !== null) {
-        clearTimeout(this._debounce);
-        this._debounce = null;
-      }
+      this.breakpoints = [...new Set([...this.breakpoints, tableWidth])];
 
       setTimeout(() => {
         for (const header of this._headerRefs.values()) {
@@ -300,15 +308,34 @@ export class CDataTable {
         }
 
         this._debounce = setTimeout(() => {
-          const footerWidth =
-            this._footerElement?.getBoundingClientRect()?.width || 0;
-
           if (rootWidth < footerWidth) {
+            this.markedFooterWidth = footerWidth;
             this._isPaginationSimple = true;
           }
         }, 200);
       }, 0);
+    } else if (
+      this.breakpoints.length > 0 &&
+      tableWidth >= this.breakpoints[this.breakpoints.length - 1]
+    ) {
+      this.breakpoints.pop();
+      // Header that can be unhided from current hiddenHeaders
+      const displayHeader = this.headers.find((header) =>
+        this.hiddenHeaders.includes(header.key),
+      );
+
+      if (!!displayHeader) {
+        const headerIndex = this.hiddenHeaders.indexOf(displayHeader.key);
+        this.hiddenHeaders.splice(headerIndex, 1);
+        this.hiddenHeaders = [...new Set([...this.hiddenHeaders])];
+      }
     }
+
+    this._debounce = setTimeout(() => {
+      if (rootWidth >= this.markedFooterWidth && this.markedFooterWidth > 0) {
+        this._isPaginationSimple = false;
+      }
+    }, 200);
   }
 
   private _addHeaderRef(key: string, el: HTMLElement) {
@@ -347,9 +374,11 @@ export class CDataTable {
           _hiddenData: [],
         };
 
-        Object.keys(cell).forEach((key) => {
-          item[key] = cell[key];
-        });
+        Object.keys(cell)
+          .filter((key) => this._headerKeys.includes(key))
+          .forEach((key) => {
+            item[key] = cell[key];
+          });
 
         this.hiddenHeaders.forEach((header) => {
           const cellData = this.headers.find((h) => h.key === header);
@@ -1045,12 +1074,14 @@ export class CDataTable {
    * Order table row properties by the header keys
    */
   private _sortCellProperties(row: CDataTableDataItemPrivate) {
-    return Object.entries(row)
+    const sorted = Object.entries(row)
       .filter(([key]) => !['_hiddenData'].includes(key))
       .sort(
         ([keyA], [keyB]) =>
           this._headerKeys.indexOf(keyA) - this._headerKeys.indexOf(keyB),
       );
+
+    return sorted;
   }
 
   private _validateProps(data) {
