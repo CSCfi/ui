@@ -221,6 +221,8 @@ export class CSelect {
 
   @Listen('keydown', { capture: true })
   handleKeyDown(ev: KeyboardEvent) {
+    if (this.disabled) return;
+
     const letterNumber = /^[0-9a-zA-Z]+$/;
 
     if (ev.key.match(letterNumber) && ev.key.length === 1) {
@@ -362,6 +364,8 @@ export class CSelect {
   }
 
   private _showMenu() {
+    if (this.disabled) return;
+
     this._inputElement.focus();
 
     // Hack needed to open the menu within a Vue web component
