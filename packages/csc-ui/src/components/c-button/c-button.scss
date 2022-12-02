@@ -10,7 +10,6 @@
 
 ::slotted([slot='icon']) {
   font-size: var(--c-button-icon-size);
-  margin-right: 8px;
 }
 
 ::slotted(svg) {
@@ -301,6 +300,7 @@ a {
 
   &__content {
     display: flex;
+    gap: 8px;
     height: var(--c-height);
     align-items: center;
     justify-content: center;

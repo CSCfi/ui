@@ -221,6 +221,10 @@
           ]
         },
         {
+          "name": "icon-end",
+          "description": "Icon after text"
+        },
+        {
           "name": "inverted",
           "description": "Inverted button style for dark backgrounds"
         },

@@ -65,6 +65,7 @@ export class CProgressBar {
 
     const detailsClasses = {
       'c-progress__percentage': true,
+      'c-progress__percentage--negative': this.value < 0,
       'adjacent-details': this.singleLine,
     };
 
@@ -96,7 +97,7 @@ export class CProgressBar {
 
         {!this.indeterminate && !this.hideDetails && (
           <div class={detailsClasses}>
-            {value} % {this.label}
+            {this.value} % {this.label}
           </div>
         )}
       </Host>

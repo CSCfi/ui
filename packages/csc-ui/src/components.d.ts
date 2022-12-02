@@ -176,6 +176,10 @@ export namespace Components {
          */
         "icon": 'plus' | 'minus' | 'account' | 'edit';
         /**
+          * Icon after text
+         */
+        "iconEnd": boolean;
+        /**
           * Inverted button style for dark backgrounds
          */
         "inverted": boolean;
@@ -1883,6 +1887,10 @@ declare namespace LocalJSX {
           * @deprecated Please use the icon slot instead
          */
         "icon"?: 'plus' | 'minus' | 'account' | 'edit';
+        /**
+          * Icon after text
+         */
+        "iconEnd"?: boolean;
         /**
           * Inverted button style for dark backgrounds
          */

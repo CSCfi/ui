@@ -64,6 +64,11 @@ export class CButton {
   @Prop() noRadius = false;
 
   /**
+   * Icon after text
+   */
+  @Prop() iconEnd = false;
+
+  /**
    * Button type
    */
   @Prop() type: 'button' | 'submit' = 'button';
@@ -246,6 +251,16 @@ export class CButton {
       linkAttributes = { href: this.href, target: this.target };
     }
 
+    const renderIcon = (
+      <slot name="icon">
+        {this.path && (
+          <svg class="icon-by-path" width="24" height="24" viewBox="0 0 24 24">
+            <path d={this.path} />
+          </svg>
+        )}
+      </slot>
+    );
+
     return (
       <Host class={hostClasses} onClick={(e) => e.stopPropagation()}>
         <Tag {...attributes} {...linkAttributes}>
@@ -255,22 +270,13 @@ export class CButton {
           >
             {this.loading && <div class="spinner_wrapper">{SPINNER_SMALL}</div>}
             <div class={innerClasses}>
-              <slot name="icon">
-                {this.path && (
-                  <svg
-                    class="icon-by-path"
-                    width="24"
-                    height="24"
-                    viewBox="0 0 24 24"
-                  >
-                    <path d={this.path} />
-                  </svg>
-                )}
-              </slot>
+              {!this.iconEnd && renderIcon}
 
               {svg}
 
               <slot></slot>
+
+              {this.iconEnd && renderIcon}
             </div>
             {this._containerhasDescriptionSlot && (
               <div class={descriptionSlotClasses}>
