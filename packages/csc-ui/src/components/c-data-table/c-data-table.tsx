@@ -160,7 +160,7 @@ export class CDataTable {
 
   @State() breakpoints: number[] = [];
 
-  @State() markedFooterWidth: number = 0;
+  @State() markedFooterWidth = 0;
 
   private _debounce = null;
 
@@ -374,11 +374,9 @@ export class CDataTable {
           _hiddenData: [],
         };
 
-        Object.keys(cell)
-          .filter((key) => this._headerKeys.includes(key))
-          .forEach((key) => {
-            item[key] = cell[key];
-          });
+        Object.keys(cell).forEach((key) => {
+          item[key] = cell[key];
+        });
 
         this.hiddenHeaders.forEach((header) => {
           const cellData = this.headers.find((h) => h.key === header);
