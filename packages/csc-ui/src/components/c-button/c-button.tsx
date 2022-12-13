@@ -144,7 +144,9 @@ export class CButton {
 
   private _onKeyDown = (event: KeyboardEvent) => {
     if (['Space', 'Enter'].includes(event.code)) {
-      event.preventDefault();
+      if (!this.href) {
+        event.preventDefault();
+      }
 
       this._onClick(event, true);
     }

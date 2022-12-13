@@ -257,13 +257,11 @@ export class CSelect {
     if (ev.key === 'Home' && this.menuVisible) {
       ev.preventDefault();
       this.currentIndex = 0;
-      this._selectItem();
     }
 
     if (ev.key === 'End' && this.menuVisible) {
       ev.preventDefault();
       this.currentIndex = this.items.length - 1;
-      this._selectItem();
     }
 
     if (ev.key === 'Tab') {
@@ -280,8 +278,6 @@ export class CSelect {
       } else if (this.currentIndex + 1 < this.items.length) {
         this.currentIndex += 1;
       }
-
-      this._selectItem();
     }
 
     if (ev.key === 'ArrowUp') {
@@ -294,8 +290,6 @@ export class CSelect {
       } else if (this.currentIndex === null) {
         this.currentIndex = this.items.length - 1;
       }
-
-      this._selectItem();
     }
 
     if (ev.key === ' ') {
