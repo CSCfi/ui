@@ -36,6 +36,7 @@
   &__content {
     color: rgba(0, 0, 0, 0.87);
     display: grid;
+    align-items: center;
     grid-template-columns: 1fr;
     gap: 8px;
   }
