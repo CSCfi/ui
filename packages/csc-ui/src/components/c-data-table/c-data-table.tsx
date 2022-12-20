@@ -961,7 +961,7 @@ export class CDataTable {
       !!header &&
       !isHidden && (
         <td>
-          <div data-align={header?.align}>
+          <div data-align={header?.align} data-justify={header?.justify}>
             {this._renderCellData(key, options, colIndex, rowIndex)}
 
             {!!options.children && (

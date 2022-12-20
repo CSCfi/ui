@@ -50,6 +50,7 @@ export interface CDataTableHeader {
   children?: CDataTableChild[];
   hidden?: boolean;
   align?: 'start' | 'center' | 'end';
+  justify?: 'start' | 'center' | 'end';
 }
 
 export interface CDataTableData {
@@ -60,6 +61,8 @@ export interface CDataTableDataItem {
   value: string | number;
   formattedValue?: string | number;
   children?: CDataTableChild[];
+  align?: 'start' | 'center' | 'end';
+  justify?: 'start' | 'center' | 'end';
   component?: CDataTableComponent;
 }
 

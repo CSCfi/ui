@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Component, NgZone, OnInit } from '@angular/core';
-import { mdiDelete, mdiHeartPlus } from '@mdi/js';
+import { mdiBabyFace, mdiDelete, mdiFlag, mdiHeartPlus } from '@mdi/js';
 import mockUsers from './mock-users';
 import {
   CPaginationOptions,
@@ -19,7 +19,32 @@ export class CDataTableComponent implements OnInit {
   // @example-start|basic
   basicData: CDataTableData[] = [
     {
-      country: { value: 'Denmark' },
+      country: {
+        value: 'Denmark',
+        formattedValue: ' ',
+        children: [
+          {
+            value: 'Denmark',
+            component: {
+              tag: 'p',
+              params: {
+                style: {
+                  margin: 0,
+                },
+              },
+            },
+          },
+          {
+            value: '',
+            component: {
+              tag: 'c-icon',
+              params: {
+                path: mdiFlag,
+              },
+            },
+          },
+        ],
+      },
       population: { value: 5831404 },
       unemployment: { value: 4.8 },
       // items not present in the header definition can be added to be used as callback attributes
@@ -55,6 +80,7 @@ export class CDataTableComponent implements OnInit {
     {
       key: 'country',
       value: 'Country',
+      align: 'center',
     },
     {
       key: 'population',
