@@ -365,6 +365,20 @@ export namespace Components {
     }
     interface CFlex {
     }
+    interface CIcon {
+        /**
+          * Fill color
+         */
+        "color": string;
+        /**
+          * Svg path d attribute value
+         */
+        "path": string;
+        /**
+          * Icon size in pixels
+         */
+        "size": number;
+    }
     interface CIconButton {
         /**
           * Show a badge on top of the icon
@@ -1405,6 +1419,12 @@ declare global {
         prototype: HTMLCFlexElement;
         new (): HTMLCFlexElement;
     };
+    interface HTMLCIconElement extends Components.CIcon, HTMLStencilElement {
+    }
+    var HTMLCIconElement: {
+        prototype: HTMLCIconElement;
+        new (): HTMLCIconElement;
+    };
     interface HTMLCIconButtonElement extends Components.CIconButton, HTMLStencilElement {
     }
     var HTMLCIconButtonElement: {
@@ -1661,6 +1681,7 @@ declare global {
         "c-csc-logo": HTMLCCscLogoElement;
         "c-data-table": HTMLCDataTableElement;
         "c-flex": HTMLCFlexElement;
+        "c-icon": HTMLCIconElement;
         "c-icon-button": HTMLCIconButtonElement;
         "c-input": HTMLCInputElement;
         "c-link": HTMLCLinkElement;
@@ -2097,6 +2118,20 @@ declare namespace LocalJSX {
         "sortDirection"?: 'asc' | 'desc' | null;
     }
     interface CFlex {
+    }
+    interface CIcon {
+        /**
+          * Fill color
+         */
+        "color"?: string;
+        /**
+          * Svg path d attribute value
+         */
+        "path"?: string;
+        /**
+          * Icon size in pixels
+         */
+        "size"?: number;
     }
     interface CIconButton {
         /**
@@ -3028,6 +3063,7 @@ declare namespace LocalJSX {
         "c-csc-logo": CCscLogo;
         "c-data-table": CDataTable;
         "c-flex": CFlex;
+        "c-icon": CIcon;
         "c-icon-button": CIconButton;
         "c-input": CInput;
         "c-link": CLink;
@@ -3089,6 +3125,7 @@ declare module "@stencil/core" {
             "c-csc-logo": LocalJSX.CCscLogo & JSXBase.HTMLAttributes<HTMLCCscLogoElement>;
             "c-data-table": LocalJSX.CDataTable & JSXBase.HTMLAttributes<HTMLCDataTableElement>;
             "c-flex": LocalJSX.CFlex & JSXBase.HTMLAttributes<HTMLCFlexElement>;
+            "c-icon": LocalJSX.CIcon & JSXBase.HTMLAttributes<HTMLCIconElement>;
             "c-icon-button": LocalJSX.CIconButton & JSXBase.HTMLAttributes<HTMLCIconButtonElement>;
             "c-input": LocalJSX.CInput & JSXBase.HTMLAttributes<HTMLCInputElement>;
             "c-link": LocalJSX.CLink & JSXBase.HTMLAttributes<HTMLCLinkElement>;

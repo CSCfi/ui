@@ -8,6 +8,7 @@
   z-index: 6;
   background: rgba(255, 255, 255, 0.8);
   border-radius: inherit;
+  visibility: hidden;
 
   opacity: 0;
   transition: opacity 0.3s ease-in-out;
@@ -15,6 +16,7 @@
 
 :host(.active) {
   opacity: 1;
+  visibility: visible;
 
   .c-loader {
     transform: scale(1);

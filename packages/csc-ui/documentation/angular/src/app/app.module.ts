@@ -55,6 +55,7 @@ import { CAlertComponent } from './examples/c-alert/c-alert.component';
 import { TypesComponent } from './types/types.component';
 import { CStepsComponent } from './examples/c-steps/c-steps.component';
 import { GettingStartedVueLegacyComponent } from './getting-started-vue-legacy/getting-started-vue-legacy.component';
+import { CIconComponent } from './examples/c-icon/c-icon.component';
 
 @NgModule({
   declarations: [
@@ -107,6 +108,7 @@ import { GettingStartedVueLegacyComponent } from './getting-started-vue-legacy/g
     TypesComponent,
     CStepsComponent,
     GettingStartedVueLegacyComponent,
+    CIconComponent,
   ],
   imports: [
     BrowserModule,

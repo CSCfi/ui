@@ -48,15 +48,18 @@
   }
 
   ul {
+    visibility: hidden;
     margin: 0;
     padding: 0;
     list-style: none;
     opacity: 0;
     pointer-events: none;
-    transition: 0.15s cubic-bezier(0.25, 0.8, 0.5, 1);
+    transition: transform 0.15s cubic-bezier(0.25, 0.8, 0.5, 1),
+      opacity 0.15s cubic-bezier(0.25, 0.8, 0.5, 1);
     transform: translateY(-8px);
 
     &.active {
+      visibility: visible;
       opacity: 1;
       pointer-events: all;
       transform: translateY(0);
@@ -97,7 +100,7 @@
     }
     &.disabled {
       cursor: default;
-      opacity: .4;
+      opacity: 0.4;
     }
   }
 
@@ -111,7 +114,7 @@
   .c-select-icon {
     line-height: 20px;
     padding: 8px 10px;
-    transition: all 0.25s;
+    transition: transform 0.25s;
   }
 
   .rotated {

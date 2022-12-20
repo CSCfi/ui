@@ -522,6 +522,27 @@
       "attributes": []
     },
     {
+      "name": "c-icon",
+      "description": {
+        "kind": "markdown",
+        "value": ""
+      },
+      "attributes": [
+        {
+          "name": "color",
+          "description": "Fill color"
+        },
+        {
+          "name": "path",
+          "description": "Svg path d attribute value"
+        },
+        {
+          "name": "size",
+          "description": "Icon size in pixels"
+        }
+      ]
+    },
+    {
       "name": "c-icon-button",
       "description": {
         "kind": "markdown",

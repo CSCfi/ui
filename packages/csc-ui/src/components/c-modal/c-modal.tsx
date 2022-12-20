@@ -43,6 +43,10 @@ export class CModal {
 
   @State() innerValue = false;
 
+  @State() animateModal = false;
+
+  private _debounce = null;
+
   @Watch('value')
   onValueChange(value: boolean) {
     setTimeout(
@@ -55,7 +59,22 @@ export class CModal {
   }
 
   private _hideModal() {
-    if (!this.dismissable) return;
+    if (!this.dismissable) {
+      this.animateModal = true;
+
+      if (this._debounce !== null) {
+        clearTimeout(this._debounce);
+        this._debounce = null;
+      }
+
+      this._debounce = window.setTimeout(() => {
+        this.animateModal = false;
+
+        this._debounce = null;
+      }, 150);
+
+      return;
+    }
 
     this.value = false;
     this.changeValue.emit(this.value);
@@ -73,6 +92,7 @@ export class CModal {
     const modalClasses = {
       'c-modal': true,
       'c-modal--show': this.value,
+      'c-modal--animate': this.animateModal,
     };
 
     const overlayClasses = {
@@ -82,8 +102,8 @@ export class CModal {
 
     return (
       <div class="modal-wrapper">
-        <div class={modalClasses}>
-          <slot></slot>
+        <div class={modalClasses} aria-hidden={!this.value}>
+          {this.value && <slot></slot>}
         </div>
         <div class={overlayClasses} onClick={() => this._hideModal()}></div>
       </div>

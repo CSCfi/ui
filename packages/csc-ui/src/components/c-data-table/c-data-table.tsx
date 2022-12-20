@@ -90,7 +90,7 @@ export class CDataTable {
   /**
    * Pagination options
    */
-  @Prop() pagination: CPaginationOptions;
+  @Prop({ mutable: true }) pagination: CPaginationOptions;
 
   /**
    * Make rows selectable
@@ -394,6 +394,8 @@ export class CDataTable {
       }, []);
 
     this._data = this._sortData(items);
+
+    this.pagination = { ...this.pagination, itemCount: this.data.length };
 
     this._validateProps(this._data[0]);
   }

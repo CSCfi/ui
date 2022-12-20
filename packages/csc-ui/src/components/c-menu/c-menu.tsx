@@ -28,6 +28,8 @@ export class CMenu {
 
   @State() menuVisible = false;
 
+  @State() isInitialized = false;
+
   /**
    * Simple variant without chevron and background, E.g. when a button is the activator
    */
@@ -198,6 +200,15 @@ export class CMenu {
     );
   };
 
+  /**
+   * Prevent unstyled elements from showing in Firefox
+   */
+  componentDidLoad() {
+    setTimeout(() => {
+      this.isInitialized = true;
+    }, 50);
+  }
+
   render() {
     const hostClasses = {
       'c-menu': true,
@@ -213,51 +224,55 @@ export class CMenu {
     };
 
     return (
-      <Host
-        class={hostClasses}
-        ref={(el) => registerClickOutside(this, el, () => this._hideMenu())}
-      >
-        {this.customTrigger ? (
-          this._renderCustomTrigger()
-        ) : (
-          <button
-            aria-expanded={this.menuVisible.toString()}
-            aria-haspopup="true"
-            aria-controls="c-menu-items"
-            class={{
-              'c-menu-wrapper': !this.simple,
-              simple: this.simple,
-            }}
-            type="button"
-            onClick={(event: Event) => {
-              event.stopPropagation();
-              this._showMenu();
-            }}
-          >
-            {this.simple ? (
-              <slot></slot>
-            ) : (
-              <div class={this.small ? 'c-select-row small' : 'c-select-row'}>
+      this.isInitialized && (
+        <Host
+          class={hostClasses}
+          ref={(el) => registerClickOutside(this, el, () => this._hideMenu())}
+        >
+          {this.customTrigger ? (
+            this._renderCustomTrigger()
+          ) : (
+            <button
+              aria-expanded={this.menuVisible.toString()}
+              aria-haspopup="true"
+              aria-controls="c-menu-items"
+              class={{
+                'c-menu-wrapper': !this.simple,
+                simple: this.simple,
+              }}
+              type="button"
+              onClick={(event: Event) => {
+                event.stopPropagation();
+                this._showMenu();
+              }}
+            >
+              {this.simple ? (
                 <slot></slot>
-                <svg
-                  width={this.small ? '16' : '22'}
-                  height={this.small ? '16' : '22'}
-                  viewBox="0 0 24 24"
-                  class={
-                    this.menuVisible ? 'c-select-icon rotated' : 'c-select-icon'
-                  }
-                >
-                  <path d={mdiChevronDown} />
-                </svg>
-              </div>
-            )}
-          </button>
-        )}
+              ) : (
+                <div class={this.small ? 'c-select-row small' : 'c-select-row'}>
+                  <slot></slot>
+                  <svg
+                    width={this.small ? '16' : '22'}
+                    height={this.small ? '16' : '22'}
+                    viewBox="0 0 24 24"
+                    class={
+                      this.menuVisible
+                        ? 'c-select-icon rotated'
+                        : 'c-select-icon'
+                    }
+                  >
+                    <path d={mdiChevronDown} />
+                  </svg>
+                </div>
+              )}
+            </button>
+          )}
 
-        <ul id="c-menu-items" class={menuClasses} role="menu">
-          {this.items.map((item) => this._getListItem(item))}
-        </ul>
-      </Host>
+          <ul id="c-menu-items" class={menuClasses} role="menu">
+            {this.items.map((item) => this._getListItem(item))}
+          </ul>
+        </Host>
+      )
     );
   }
 }
