@@ -95,7 +95,9 @@ export class CSteps {
       });
     });
 
-    this._resizeObserver.observe(this.host);
+    window.requestAnimationFrame(() => {
+      this._resizeObserver.observe(this.host);
+    });
   }
 
   private _getA11yMessage(total: number, current: number) {

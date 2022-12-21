@@ -47,6 +47,12 @@
         }
       }
     }
+
+    .complete {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
   }
 
   &--complete {
@@ -64,7 +70,6 @@
         svg {
           position: relative;
           fill: #fff;
-          top: -3px;
 
           .path {
             fill: none;

@@ -37,7 +37,7 @@ export class CStep {
           )}
 
           {this.complete && (
-            <div>
+            <div class="complete">
               <svg viewBox="0 0 100 100">
                 <path
                   class="path"
