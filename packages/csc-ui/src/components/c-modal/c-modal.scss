@@ -16,10 +16,13 @@
   display: block;
   position: fixed;
   z-index: 200000;
-  visibility: hidden;
   transform: scale(0);
   transition: transform 0.2s cubic-bezier(0.25, 0.8, 0.5, 1);
   pointer-events: all;
+
+  &--hide {
+    visibility: hidden;
+  }
 
   &--show {
     transform: scale(1);
@@ -44,7 +47,10 @@
   opacity: 0;
   pointer-events: none;
   z-index: 1998;
-  visibility: hidden;
+
+  &--hide {
+    visibility: hidden;
+  }
 
   &--show {
     opacity: 1;

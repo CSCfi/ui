@@ -92,18 +92,20 @@ export class CModal {
     const modalClasses = {
       'c-modal': true,
       'c-modal--show': this.value,
+      'c-modal--hide': !this.innerValue,
       'c-modal--animate': this.animateModal,
     };
 
     const overlayClasses = {
       'c-overlay': true,
+      'c-overlay--hide': !this.innerValue,
       'c-overlay--show': this.value,
     };
 
     return (
       <div class="modal-wrapper">
         <div class={modalClasses} aria-hidden={!this.value}>
-          {this.value && <slot></slot>}
+          {this.innerValue && <slot></slot>}
         </div>
         <div class={overlayClasses} onClick={() => this._hideModal()}></div>
       </div>
