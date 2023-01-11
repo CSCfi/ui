@@ -41,13 +41,19 @@ export class CSidenavigation {
   }
 
   componentDidLoad() {
-    document
-      .querySelector('body')
-      .addEventListener('click', (event: MouseEvent) => {
-        if ((event.target as HTMLElement).matches('c-navigationbutton')) {
-          this.menuVisible = !this.menuVisible;
+    const el = document.querySelector('body');
+
+    ['click', 'keyup'].forEach((eventType) => {
+      el.addEventListener(eventType, (e: MouseEvent | KeyboardEvent) => {
+        if ((e.target as HTMLElement).matches('c-navigationbutton')) {
+          if (eventType === 'click') {
+            this.menuVisible = !this.menuVisible;
+          } else if (e instanceof KeyboardEvent && e.key === 'Enter') {
+            this.menuVisible = !this.menuVisible;
+          }
         }
       });
+    });
   }
 
   private _closeMenu() {

@@ -630,7 +630,7 @@ export class CDataTable {
   }
 
   private _onToggleAdditionalData(
-    event: MouseEvent,
+    event: KeyboardEvent | MouseEvent,
     value: string | number,
     row,
   ) {
@@ -672,6 +672,14 @@ export class CDataTable {
     }
 
     this._activeRows = [...this._activeRows, value];
+  }
+
+  private _handleKeyUp(event: KeyboardEvent, value: string | number, row) {
+    event.preventDefault();
+
+    if (event.key === 'Enter') {
+      this._onToggleAdditionalData(event, value, row);
+    }
   }
 
   private _refresh() {
@@ -777,11 +785,16 @@ export class CDataTable {
     });
   }
 
-  private _renderExpansionIndicator() {
+  private _renderExpansionIndicator(rowIndex: number, rowData = {}) {
     return (
       this._hasHiddenData && (
         <td>
-          <div>
+          <div
+            tabindex="0"
+            onKeyUp={(event: KeyboardEvent) =>
+              this._handleKeyUp(event, rowIndex, rowData)
+            }
+          >
             <svg width="22" height="22" viewBox="0 0 24 24">
               <path d={mdiChevronDown} />
             </svg>
@@ -876,7 +889,7 @@ export class CDataTable {
               }
             >
               {this._renderSelectionCell(isSelected, selectionValue)}
-              {this._renderExpansionIndicator()}
+              {this._renderExpansionIndicator(rowIndex, rowData)}
               {this._renderTableCells(rowIndex, rowData)}
             </tr>
 

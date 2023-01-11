@@ -52,6 +52,6 @@ export class CNavigationbutton {
   );
 
   render() {
-    return <Host>{this._svg}</Host>;
+    return <Host tabindex={0}>{this._svg}</Host>;
   }
 }

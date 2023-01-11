@@ -137,8 +137,12 @@ export class CPagination {
       }),
     );
 
+    const onMenuClick = (event) => {
+      event.stopPropagation();
+    };
+
     return (
-      <c-menu items={itemsPerPageOptions} nohover>
+      <c-menu items={itemsPerPageOptions} nohover onClick={onMenuClick}>
         <div>
           <span class="items-per-page">
             {this._getText('itemsPerPageText')} {this._itemsPerPage}
