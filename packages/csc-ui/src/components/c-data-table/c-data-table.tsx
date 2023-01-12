@@ -62,6 +62,11 @@ export class CDataTable {
   @Prop() headers: CDataTableHeader[] = [];
 
   /**
+   * Hide the footer
+   */
+  @Prop() hideFooter = false;
+
+  /**
    * Items per page options
    */
   @Prop() footerOptions: CDataTableFooterOptions = {
@@ -121,6 +126,11 @@ export class CDataTable {
    * Sorting direction
    */
   @Prop() sortDirection: 'asc' | 'desc' | null = null;
+
+  /**
+   * Use sticky header
+   */
+  @Prop() stickyHeader = false;
 
   /**
    * Triggered on pagination
@@ -465,7 +475,7 @@ export class CDataTable {
       }
     });
 
-    return !!this.pagination
+    return !!this.pagination && !this.hideFooter
       ? sorted.slice(this.pagination.startFrom, this.pagination.endTo + 1)
       : sorted;
   }
@@ -1028,7 +1038,7 @@ export class CDataTable {
 
   private _renderTableHeader() {
     return (
-      <thead>
+      <thead class={{ sticky: this.stickyHeader }}>
         <tr>
           {this.selectable && (
             <th class="selection">
@@ -1126,7 +1136,7 @@ export class CDataTable {
         >
           {this._renderTableHeader()}
           {this._renderTableBody()}
-          {this._renderTableFooter()}
+          {!this.hideFooter && this._renderTableFooter()}
         </table>
       </Host>
     );

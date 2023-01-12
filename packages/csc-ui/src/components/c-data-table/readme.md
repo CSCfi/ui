@@ -13,6 +13,7 @@
 | `externalData`      | `external-data`      | Externally sorted and paginated data                      | `boolean`                 | `false`                                                                                                                                  |
 | `footerOptions`     | --                   | Items per page options                                    | `CDataTableFooterOptions` | `{     itemsPerPageOptions: [5, 25, 50, 100],     hideDetails: false,     simple: false,     hideRange: false,     size: 'default',   }` |
 | `headers`           | --                   | Headers of the table                                      | `CDataTableHeader[]`      | `[]`                                                                                                                                     |
+| `hideFooter`        | `hide-footer`        | Hide the footer                                           | `boolean`                 | `false`                                                                                                                                  |
 | `loading`           | `loading`            | Show a loader on top of the table                         | `boolean`                 | `false`                                                                                                                                  |
 | `loadingText`       | `loading-text`       | Text shown when there is no data and the table is loading | `string`                  | `'Loading data'`                                                                                                                         |
 | `noDataText`        | `no-data-text`       | Text shown when there are no data available               | `string`                  | `'No data'`                                                                                                                              |
@@ -23,6 +24,7 @@
 | `singleSelection`   | `single-selection`   | Select only a single row at a time                        | `boolean`                 | `false`                                                                                                                                  |
 | `sortBy`            | `sort-by`            | Sort data by                                              | `any`                     | `null`                                                                                                                                   |
 | `sortDirection`     | `sort-direction`     | Sorting direction                                         | `"asc" \| "desc"`         | `null`                                                                                                                                   |
+| `stickyHeader`      | `sticky-header`      | Use sticky header                                         | `boolean`                 | `false`                                                                                                                                  |
 
 
 ## Events

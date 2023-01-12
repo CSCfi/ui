@@ -172,6 +172,17 @@ table {
     }
   }
 
+  thead {
+    &.sticky {
+      background-color: #fff;
+      box-shadow: 0 2px 0 0 var(--csc-light-grey),
+        inset 0 0 0 1px var(--csc-light-grey);
+      position: sticky;
+      top: 0;
+      z-index: 3;
+    }
+  }
+
   tfoot {
     tr {
       box-shadow: inset 0 1px 0 0 var(--csc-light-grey);

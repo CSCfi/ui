@@ -1,8 +1,13 @@
-<app-example title="Basic usage" name="basic" component="c-data-table">
-  <c-data-table id="basic" [data]="basicData" [headers]="basicHeaders"></c-data-table>
+<app-example title="Basic usage" name="basic" component="c-data-table" subtitle="Without a footer">
+  <c-data-table id="basic" [data]="basicData" [headers]="basicHeaders" hide-footer></c-data-table>
 </app-example>
 
-<app-example title="Complex example" name="complex" component="c-data-table">
+<app-example
+  title="Complex example"
+  subtitle="With a sticky header"
+  name="complex"
+  component="c-data-table"
+>
   <c-switch class="mb-4" [(ngModel)]="singleSelection" cControl>Single selection</c-switch>
 
   <c-data-table
@@ -17,6 +22,7 @@
     selection-property="id"
     selectable
     single-expansion
+    sticky-header
     (selection)="onSelection($event)"
     (expand)="onExpand($event)"
   ></c-data-table>

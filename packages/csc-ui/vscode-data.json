@@ -468,6 +468,10 @@
           "description": "Externally sorted and paginated data"
         },
         {
+          "name": "hide-footer",
+          "description": "Hide the footer"
+        },
+        {
           "name": "loading",
           "description": "Show a loader on top of the table"
         },
@@ -510,6 +514,10 @@
               "name": "desc"
             }
           ]
+        },
+        {
+          "name": "sticky-header",
+          "description": "Use sticky header"
         }
       ]
     },

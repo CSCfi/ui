@@ -323,6 +323,10 @@ export namespace Components {
          */
         "headers": CDataTableHeader[];
         /**
+          * Hide the footer
+         */
+        "hideFooter": boolean;
+        /**
           * Show a loader on top of the table
          */
         "loading": boolean;
@@ -362,6 +366,10 @@ export namespace Components {
           * Sorting direction
          */
         "sortDirection": 'asc' | 'desc' | null;
+        /**
+          * Use sticky header
+         */
+        "stickyHeader": boolean;
     }
     interface CFlex {
     }
@@ -2061,6 +2069,10 @@ declare namespace LocalJSX {
          */
         "headers"?: CDataTableHeader[];
         /**
+          * Hide the footer
+         */
+        "hideFooter"?: boolean;
+        /**
           * Show a loader on top of the table
          */
         "loading"?: boolean;
@@ -2116,6 +2128,10 @@ declare namespace LocalJSX {
           * Sorting direction
          */
         "sortDirection"?: 'asc' | 'desc' | null;
+        /**
+          * Use sticky header
+         */
+        "stickyHeader"?: boolean;
     }
     interface CFlex {
     }
