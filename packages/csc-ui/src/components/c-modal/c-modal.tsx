@@ -53,6 +53,12 @@ export class CModal {
       () => {
         this.innerValue = value;
         this.changeValue.emit(this.value);
+
+        const cardChild = this.el.querySelector('c-card');
+
+        if (!value && cardChild) {
+          cardChild.exitFullscreen();
+        }
       },
       value ? 0 : 500,
     );

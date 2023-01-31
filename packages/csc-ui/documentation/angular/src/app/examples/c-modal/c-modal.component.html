@@ -57,11 +57,16 @@
   </c-modal>
 </app-example>
 
-<app-example title="Dismissable modal" name="dismissable" component="c-modal">
+<app-example
+  title="Dismissable modal"
+  subtitle="With a fullscreen toggle"
+  name="dismissable"
+  component="c-modal"
+>
   <c-button (click)="dismissableModal = true">Open dismissable modal</c-button>
 
   <c-modal cControl [(ngModel)]="dismissableModal" dismissable>
-    <c-card>
+    <c-card fullscreen>
       <c-card-title>Dismissable</c-card-title>
 
       <c-card-content>

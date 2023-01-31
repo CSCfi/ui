@@ -310,6 +310,10 @@
         {
           "name": "background-color",
           "description": "Background color"
+        },
+        {
+          "name": "fullscreen",
+          "description": "Enable the fullscreen toggle button"
         }
       ]
     },

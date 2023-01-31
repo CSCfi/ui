@@ -229,6 +229,18 @@ export namespace Components {
           * Background color
          */
         "backgroundColor": string;
+        /**
+          * Enter fullscreen from the outside
+         */
+        "enterFullscreen": () => Promise<void>;
+        /**
+          * Exit fullscreen from the outside
+         */
+        "exitFullscreen": () => Promise<void>;
+        /**
+          * Enable the fullscreen toggle button
+         */
+        "fullscreen": boolean;
     }
     interface CCardActions {
         /**
@@ -1975,6 +1987,10 @@ declare namespace LocalJSX {
           * Background color
          */
         "backgroundColor"?: string;
+        /**
+          * Enable the fullscreen toggle button
+         */
+        "fullscreen"?: boolean;
     }
     interface CCardActions {
         /**

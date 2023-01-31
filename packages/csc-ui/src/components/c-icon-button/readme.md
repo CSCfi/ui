@@ -30,6 +30,7 @@
 
 ### Used by
 
+ - [c-card](../c-card)
  - [c-pagination](../c-pagination)
  - [c-sidenavigation](../c-sidenavigation)
  - [c-swiper](../c-swiper)
@@ -37,6 +38,7 @@
 ### Graph
 ```mermaid
 graph TD;
+  c-card --> c-icon-button
   c-pagination --> c-icon-button
   c-sidenavigation --> c-icon-button
   c-swiper --> c-icon-button
