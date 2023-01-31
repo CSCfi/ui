@@ -941,7 +941,7 @@ export class CDataTable {
     }
 
     return (
-      <svg width="24" height="24" viewBox="0 0 24 24">
+      <svg width="24" height="24" viewBox="0 0 24 24" tabindex={0}>
         <path d={iconPath} />
       </svg>
     );
@@ -1076,6 +1076,7 @@ export class CDataTable {
                 }),
                 ...(isSortable && {
                   onClick: () => this._onSort(header.key),
+                  onKeyUp: () => this._onSort(header.key),
                 }),
               };
 
