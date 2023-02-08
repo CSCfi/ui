@@ -3,6 +3,8 @@ import {
   mdiArrowUpThin,
   mdiSwapVertical,
   mdiChevronDown,
+  mdiChevronLeft,
+  mdiChevronRight,
 } from '@mdi/js';
 import {
   Component,
@@ -133,6 +135,11 @@ export class CDataTable {
   @Prop() stickyHeader = false;
 
   /**
+   * Use horizontal scrolling
+   */
+  @Prop() horizontalScrolling = false;
+
+  /**
    * Triggered on pagination
    */
   @Event() paginate: EventEmitter<CPaginationOptions>;
@@ -166,17 +173,29 @@ export class CDataTable {
 
   @State() hiddenHeaders: string[] = [];
 
+  @State() initiallyHiddenHeaders: string[] = [];
+
   @State() forceRender = false;
 
   @State() breakpoints: number[] = [];
 
   @State() markedFooterWidth = 0;
 
+  @State() parentWidth = 0;
+
+  @State() firstCellHidden = false;
+
+  @State() lastCellHidden = false;
+
   private _debounce = null;
 
   private _extraHeaders: CDataTableHeader[] = [];
 
   private _rootIntersectionObserver: IntersectionObserver;
+
+  private _firstCellIntersectionObserver: IntersectionObserver;
+
+  private _lastCellIntersectionObserver: IntersectionObserver;
 
   private _resizeObserver: ResizeObserver;
 
@@ -223,39 +242,73 @@ export class CDataTable {
 
   componentWillLoad() {
     this.sortBy = this.sortBy ?? this.headers[0].key;
+    this.sortDirection = this.sortDirection ?? 'asc';
     this._getData();
+
+    this.initiallyHiddenHeaders = this.headers
+      .filter((header) => !!header.hidden)
+      .map((header) => header.key);
 
     // Hide the initially hidden headers
     this.hiddenHeaders = [
-      ...new Set([
-        ...this.hiddenHeaders,
-        ...this.headers
-          .filter((header) => !!header.hidden)
-          .map((header) => header.key),
-      ]),
+      ...new Set([...this.hiddenHeaders, ...this.initiallyHiddenHeaders]),
     ];
   }
 
   componentDidLoad() {
-    this._rootIntersectionObserver = new IntersectionObserver(([entry]) => {
-      if (entry.isIntersecting) {
-        this._handleResponsiveHeaders();
+    if (!this.horizontalScrolling) {
+      this._rootIntersectionObserver = new IntersectionObserver(([entry]) => {
+        if (entry.isIntersecting) {
+          this._handleResponsiveHeaders();
 
-        this._isVisible = true;
-      }
-    });
+          this._isVisible = true;
+        }
+      });
 
-    this._resizeObserver = new ResizeObserver(([entry]) => {
-      this._handleResize(entry);
-    });
+      this._resizeObserver = new ResizeObserver(() => {
+        this._handleResize();
+      });
 
-    this._rootIntersectionObserver.observe(this.element);
-    this._resizeObserver.observe(this._tableElement);
+      this._rootIntersectionObserver.observe(this.element);
+    } else {
+      const [firstCell] = this._headerKeys;
+      const lastCell = this._headerKeys[this._headerKeys.length - 1];
+
+      this._firstCellIntersectionObserver = new IntersectionObserver(
+        ([entry]) => {
+          this.firstCellHidden = !entry.isIntersecting;
+        },
+        { threshold: 1, rootMargin: '16px', root: this.element },
+      );
+
+      this._lastCellIntersectionObserver = new IntersectionObserver(
+        ([entry]) => {
+          this.lastCellHidden = !entry.isIntersecting;
+        },
+        { threshold: 1, rootMargin: '16px', root: this.element },
+      );
+
+      this._resizeObserver = new ResizeObserver(() => {
+        this._handleScrollWidth();
+      });
+
+      this._firstCellIntersectionObserver.observe(
+        this._tableElement.querySelector(`[data-id="${firstCell}"]`),
+      );
+
+      this._lastCellIntersectionObserver.observe(
+        this._tableElement.querySelector(`[data-id="${lastCell}"]`),
+      );
+    }
+
+    this._resizeObserver.observe(this.element);
   }
 
   disconnectedCallback() {
-    this._resizeObserver.disconnect();
-    this._rootIntersectionObserver.disconnect();
+    this._resizeObserver?.disconnect();
+    this._rootIntersectionObserver?.disconnect();
+    this._firstCellIntersectionObserver?.disconnect();
+    this._lastCellIntersectionObserver?.disconnect();
   }
 
   private _handleHeaderVisibility(
@@ -281,6 +334,7 @@ export class CDataTable {
 
       this.hiddenHeaders = [
         ...new Set([
+          ...this.initiallyHiddenHeaders,
           ...this.hiddenHeaders,
           (nextUnpinnedHeader || header).dataset.id, // hide the pinned header as a last resort
         ]),
@@ -291,7 +345,11 @@ export class CDataTable {
 
     if (!isFullyVisible && !isLastVisibleHeader) {
       this.hiddenHeaders = [
-        ...new Set([...this.hiddenHeaders, header.dataset.id]),
+        ...new Set([
+          ...this.initiallyHiddenHeaders,
+          ...this.hiddenHeaders,
+          header.dataset.id,
+        ]),
       ];
     }
   }
@@ -337,7 +395,9 @@ export class CDataTable {
       if (!!displayHeader) {
         const headerIndex = this.hiddenHeaders.indexOf(displayHeader.key);
         this.hiddenHeaders.splice(headerIndex, 1);
-        this.hiddenHeaders = [...new Set([...this.hiddenHeaders])];
+        this.hiddenHeaders = [
+          ...new Set([...this.hiddenHeaders, ...this.initiallyHiddenHeaders]),
+        ];
       }
     }
 
@@ -408,6 +468,12 @@ export class CDataTable {
     this.pagination = { ...this.pagination, itemCount: this.data.length };
 
     this._validateProps(this._data[0]);
+
+    this._handleScrollWidth();
+
+    requestAnimationFrame(() => {
+      this._handleResize();
+    });
   }
 
   private _getSelectionValue(
@@ -480,11 +546,11 @@ export class CDataTable {
       : sorted;
   }
 
-  private _handleResize(entry: ResizeObserverEntry) {
-    const { height } = entry.contentRect;
+  private _handleScrollWidth() {
+    this.parentWidth = this.element.getBoundingClientRect().width;
+  }
 
-    this.element.style.height = `${Math.ceil(height)}px`;
-
+  private _handleResize() {
     if (this._isVisible) {
       this._handleResponsiveHeaders();
     }
@@ -1016,12 +1082,20 @@ export class CDataTable {
   }
 
   private _renderTableFooter() {
+    const footerStyles = this.horizontalScrolling
+      ? {
+          maxWidth: `${this.parentWidth}px`,
+          position: 'sticky',
+          left: '0',
+        }
+      : {};
+
     return (
       !!this.pagination && (
         <tfoot>
           <tr ref={(el) => (this._footerElement = el as HTMLTableRowElement)}>
             <td colSpan={100}>
-              <div>
+              <div class="c-data-table__footer" style={footerStyles}>
                 <c-pagination
                   {...this.footerOptions}
                   value={this.pagination}
@@ -1037,6 +1111,14 @@ export class CDataTable {
   }
 
   private _renderTableHeader() {
+    const indicatorRowStyles = this.horizontalScrolling
+      ? {
+          width: `${this.parentWidth - 8}px`,
+          position: 'sticky',
+          left: '4px',
+        }
+      : {};
+
     return (
       <thead class={{ sticky: this.stickyHeader }}>
         <tr>
@@ -1071,7 +1153,7 @@ export class CDataTable {
                 ref: (el) => this._addHeaderRef(header.key, el),
                 ...(!!header && {
                   style: {
-                    ...(header.width && { width: header.width }),
+                    ...(header.width && { minWidth: header.width }),
                   },
                 }),
                 ...(isSortable && {
@@ -1090,8 +1172,88 @@ export class CDataTable {
               );
             })}
         </tr>
+
+        {this.horizontalScrolling && (
+          <tr class="c-data-table__header-indicators">
+            <th colSpan={100}>
+              <div style={indicatorRowStyles}>
+                {this.firstCellHidden && (
+                  <c-icon-button
+                    class="first"
+                    size="small"
+                    outlined
+                    onClick={() => this._scrollLeft()}
+                  >
+                    <c-icon path={mdiChevronLeft}></c-icon>
+                  </c-icon-button>
+                )}
+
+                <c-spacer />
+
+                {this.lastCellHidden && (
+                  <c-icon-button
+                    class="last"
+                    size="small"
+                    outlined
+                    onClick={() => this._scrollRight()}
+                  >
+                    <c-icon path={mdiChevronRight}></c-icon>
+                  </c-icon-button>
+                )}
+              </div>
+            </th>
+          </tr>
+        )}
       </thead>
     );
+  }
+
+  private _scrollLeft() {
+    const leftBorder = this.element.getBoundingClientRect().left;
+
+    const hiddenHeaderKeys = this._headerKeys.filter((key) => {
+      const headerCellLeftBorder = this._tableElement
+        .querySelector(`[data-id="${key}"]`)
+        ?.getBoundingClientRect().left;
+
+      return headerCellLeftBorder < leftBorder - 2;
+    });
+
+    if (hiddenHeaderKeys.length) {
+      if (hiddenHeaderKeys.length === 1) {
+        this._tableElement.scrollIntoView({
+          behavior: 'smooth',
+          block: 'nearest',
+          inline: 'start',
+        });
+
+        return;
+      }
+
+      this._tableElement
+        .querySelector(
+          `[data-id="${hiddenHeaderKeys[hiddenHeaderKeys.length - 1]}"]`,
+        )
+        .scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }
+  }
+
+  private _scrollRight() {
+    const rightBorder = this.element.getBoundingClientRect().right;
+
+    const hiddenHeaderKeys = this._headerKeys.filter((key) => {
+      const headerCellRightBorder = this._tableElement
+        .querySelector(`[data-id="${key}"]`)
+        ?.getBoundingClientRect().right;
+
+      return headerCellRightBorder > rightBorder + 2;
+    });
+
+    if (hiddenHeaderKeys.length) {
+      this._tableElement
+        .querySelector(`[data-id="${hiddenHeaderKeys[0]}"]`)
+        .scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }
   }
 
   /**
@@ -1099,7 +1261,7 @@ export class CDataTable {
    */
   private _sortCellProperties(row: CDataTableDataItemPrivate) {
     const sorted = Object.entries(row)
-      .filter(([key]) => !['_hiddenData'].includes(key))
+      .filter(([key]) => ![...this.hiddenHeaders, '_hiddenData'].includes(key))
       .sort(
         ([keyA], [keyB]) =>
           this._headerKeys.indexOf(keyA) - this._headerKeys.indexOf(keyB),
@@ -1127,6 +1289,7 @@ export class CDataTable {
     const tableClasses = {
       'c-data-table': true,
       'c-data-table--hoverable': this.selectable || this._hasHiddenData,
+      'c-data-table--scrollable': this.horizontalScrolling,
     };
 
     return (
@@ -1135,6 +1298,15 @@ export class CDataTable {
           class={tableClasses}
           ref={(el) => (this._tableElement = el as HTMLTableElement)}
         >
+          <colgroup>
+            {[
+              ...(this.selectable ? ['_selection'] : []),
+              ...(this.hiddenHeaders.length ? ['_hidden'] : []),
+              ...this._headerKeys,
+            ].map((key) => (
+              <col class={this.sortBy === key && 'sorted-column'}></col>
+            ))}
+          </colgroup>
           {this._renderTableHeader()}
           {this._renderTableBody()}
           {!this.hideFooter && this._renderTableFooter()}

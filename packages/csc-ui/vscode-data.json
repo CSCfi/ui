@@ -476,6 +476,10 @@
           "description": "Hide the footer"
         },
         {
+          "name": "horizontal-scrolling",
+          "description": "Use horizontal scrolling"
+        },
+        {
           "name": "loading",
           "description": "Show a loader on top of the table"
         },
@@ -1081,7 +1085,7 @@
       ]
     },
     {
-      "name": "c-menu-item",
+      "name": "c-menu-items",
       "description": {
         "kind": "markdown",
         "value": ""
@@ -1089,7 +1093,7 @@
       "attributes": [
         {
           "name": "active",
-          "description": "Is the item the active selection"
+          "description": "is active"
         },
         {
           "name": "small",

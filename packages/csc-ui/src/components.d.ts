@@ -339,6 +339,10 @@ export namespace Components {
          */
         "hideFooter": boolean;
         /**
+          * Use horizontal scrolling
+         */
+        "horizontalScrolling": boolean;
+        /**
           * Show a loader on top of the table
          */
         "loading": boolean;
@@ -669,11 +673,15 @@ export namespace Components {
          */
         "small": boolean;
     }
-    interface CMenuItem {
+    interface CMenuItems {
         /**
-          * Is the item the active selection
+          * is active
          */
         "active": boolean;
+        /**
+          * Menu items
+         */
+        "items": CMenuOption[];
         /**
           * Small variant
          */
@@ -1292,6 +1300,10 @@ export interface CInputCustomEvent<T> extends CustomEvent<T> {
     detail: T;
     target: HTMLCInputElement;
 }
+export interface CMenuItemsCustomEvent<T> extends CustomEvent<T> {
+    detail: T;
+    target: HTMLCMenuItemsElement;
+}
 export interface CModalCustomEvent<T> extends CustomEvent<T> {
     detail: T;
     target: HTMLCModalElement;
@@ -1517,11 +1529,11 @@ declare global {
         prototype: HTMLCMenuElement;
         new (): HTMLCMenuElement;
     };
-    interface HTMLCMenuItemElement extends Components.CMenuItem, HTMLStencilElement {
+    interface HTMLCMenuItemsElement extends Components.CMenuItems, HTMLStencilElement {
     }
-    var HTMLCMenuItemElement: {
-        prototype: HTMLCMenuItemElement;
-        new (): HTMLCMenuItemElement;
+    var HTMLCMenuItemsElement: {
+        prototype: HTMLCMenuItemsElement;
+        new (): HTMLCMenuItemsElement;
     };
     interface HTMLCModalElement extends Components.CModal, HTMLStencilElement {
     }
@@ -1714,7 +1726,7 @@ declare global {
         "c-login-card-title": HTMLCLoginCardTitleElement;
         "c-main": HTMLCMainElement;
         "c-menu": HTMLCMenuElement;
-        "c-menu-item": HTMLCMenuItemElement;
+        "c-menu-items": HTMLCMenuItemsElement;
         "c-modal": HTMLCModalElement;
         "c-navigationbutton": HTMLCNavigationbuttonElement;
         "c-notification": HTMLCNotificationElement;
@@ -2089,6 +2101,10 @@ declare namespace LocalJSX {
          */
         "hideFooter"?: boolean;
         /**
+          * Use horizontal scrolling
+         */
+        "horizontalScrolling"?: boolean;
+        /**
           * Show a loader on top of the table
          */
         "loading"?: boolean;
@@ -2439,11 +2455,19 @@ declare namespace LocalJSX {
          */
         "small"?: boolean;
     }
-    interface CMenuItem {
+    interface CMenuItems {
         /**
-          * Is the item the active selection
+          * is active
          */
         "active"?: boolean;
+        /**
+          * Menu items
+         */
+        "items"?: CMenuOption[];
+        /**
+          * Triggered when menu is closed
+         */
+        "onClose"?: (event: CMenuItemsCustomEvent<any>) => void;
         /**
           * Small variant
          */
@@ -3108,7 +3132,7 @@ declare namespace LocalJSX {
         "c-login-card-title": CLoginCardTitle;
         "c-main": CMain;
         "c-menu": CMenu;
-        "c-menu-item": CMenuItem;
+        "c-menu-items": CMenuItems;
         "c-modal": CModal;
         "c-navigationbutton": CNavigationbutton;
         "c-notification": CNotification;
@@ -3170,7 +3194,7 @@ declare module "@stencil/core" {
             "c-login-card-title": LocalJSX.CLoginCardTitle & JSXBase.HTMLAttributes<HTMLCLoginCardTitleElement>;
             "c-main": LocalJSX.CMain & JSXBase.HTMLAttributes<HTMLCMainElement>;
             "c-menu": LocalJSX.CMenu & JSXBase.HTMLAttributes<HTMLCMenuElement>;
-            "c-menu-item": LocalJSX.CMenuItem & JSXBase.HTMLAttributes<HTMLCMenuItemElement>;
+            "c-menu-items": LocalJSX.CMenuItems & JSXBase.HTMLAttributes<HTMLCMenuItemsElement>;
             "c-modal": LocalJSX.CModal & JSXBase.HTMLAttributes<HTMLCModalElement>;
             "c-navigationbutton": LocalJSX.CNavigationbutton & JSXBase.HTMLAttributes<HTMLCNavigationbuttonElement>;
             "c-notification": LocalJSX.CNotification & JSXBase.HTMLAttributes<HTMLCNotificationElement>;

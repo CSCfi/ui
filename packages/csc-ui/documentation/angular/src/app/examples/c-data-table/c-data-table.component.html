@@ -10,22 +10,26 @@
 >
   <c-switch class="mb-4" [(ngModel)]="singleSelection" cControl>Single selection</c-switch>
 
-  <c-data-table
-    id="complex"
-    [data]="data"
-    [headers]="headers"
-    [footerOptions]="footerOptions"
-    [pagination]="paginationOptions"
-    [singleSelection]="singleSelection"
-    [sortBy]="sortBy"
-    [sortDirection]="direction"
-    selection-property="id"
-    selectable
-    single-expansion
-    sticky-header
-    (selection)="onSelection($event)"
-    (expand)="onExpand($event)"
-  ></c-data-table>
+  <c-card fullscreen>
+    <c-card-title>The title of the card</c-card-title>
+
+    <c-data-table
+      id="complex"
+      [data]="data"
+      [headers]="headers"
+      [footerOptions]="footerOptions"
+      [pagination]="paginationOptions"
+      [singleSelection]="singleSelection"
+      [sortBy]="sortBy"
+      [sortDirection]="direction"
+      selection-property="id"
+      selectable
+      single-expansion
+      sticky-header
+      (selection)="onSelection($event)"
+      (expand)="onExpand($event)"
+    ></c-data-table>
+  </c-card>
 
   <div class="mt-4">
     <span class="text-primary">Currently selected ids:</span>
@@ -37,6 +41,28 @@
       Clear selections externally
     </c-button>
   </div>
+
+  <c-toasts id="toasts"></c-toasts>
+</app-example>
+
+<app-example title="Horizontal scrolling" name="horizontal" component="c-data-table">
+  <c-card fullscreen>
+    <c-card-title>Horizontally scrolling table columns</c-card-title>
+
+    <c-data-table
+      id="complex"
+      [data]="data"
+      [headers]="headers"
+      [footerOptions]="footerOptions"
+      [pagination]="paginationOptions"
+      [sortBy]="sortBy"
+      [sortDirection]="direction"
+      selection-property="id"
+      sticky-header
+      horizontal-scrolling
+      (expand)="onExpand($event)"
+    ></c-data-table>
+  </c-card>
 
   <c-toasts id="toasts"></c-toasts>
 </app-example>

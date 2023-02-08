@@ -19,11 +19,13 @@
 ### Used by
 
  - [c-card](../c-card)
+ - [c-data-table](../c-data-table)
 
 ### Graph
 ```mermaid
 graph TD;
   c-card --> c-icon
+  c-data-table --> c-icon
   style c-icon fill:#f9f,stroke:#333,stroke-width:4px
 ```
 

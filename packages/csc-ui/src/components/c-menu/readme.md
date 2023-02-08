@@ -29,9 +29,14 @@
 
  - [c-pagination](../c-pagination)
 
+### Depends on
+
+- [c-menu-items](../c-menu-items)
+
 ### Graph
 ```mermaid
 graph TD;
+  c-menu --> c-menu-items
   c-pagination --> c-menu
   style c-menu fill:#f9f,stroke:#333,stroke-width:4px
 ```

@@ -11,6 +11,7 @@ import {
 } from '@stencil/core';
 
 export type CardBackground = 'puhti' | 'mahti' | 'allas';
+
 /**
  * @group Cards
  * @slot - Card contents
