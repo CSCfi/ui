@@ -1,10 +1,16 @@
 # CSC Design System - Web Component library
 
+<!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
+
+[![All Contributors](https://img.shields.io/badge/all_contributors-0-orange.svg?style=flat-square)](#contributors-)
+
+<!-- ALL-CONTRIBUTORS-BADGE:END -->
+
 A cross-platform web component library that utilizes CSC Design System guidelines. It helps CSC developers to build applications with unified design. The components can be used with any browser and on top of any front-end framework.
 
 ## Getting Started
 
-See [documentation](https://csc-design-system-docs.web.app) how to use the web components and their attributes.
+See the [documentation](https://design-system.csc.fi/) on how to use the web components and their attributes.
 
 ## Contributing
 
@@ -24,3 +30,17 @@ The root project generates a json that is used to generate the base of the docum
 Create an example for a new web component
 
 - Run `ng g c examples/c-name-of-the-component` in documentation/angular
+
+## Contributors ✨
+
+Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/docs/en/emoji-key)):
+
+<!-- ALL-CONTRIBUTORS-LIST:START - Do not remove or modify this section -->
+<!-- prettier-ignore-start -->
+<!-- markdownlint-disable -->
+<!-- markdownlint-restore -->
+<!-- prettier-ignore-end -->
+
+<!-- ALL-CONTRIBUTORS-LIST:END -->
+
+This project follows the [all-contributors](https://github.com/all-contributors/all-contributors) specification. Contributions of any kind welcome!

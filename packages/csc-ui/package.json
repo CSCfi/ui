@@ -31,9 +31,11 @@
     "prepare": "husky install"
   },
   "devDependencies": {
+    "@auto-it/all-contributors": "^10.38.5",
     "@stencil/angular-output-target": "^0.4.0",
     "@stencil/eslint-plugin": "^0.4.0",
     "@stencil/sass": "^1.5.2",
+    "auto": "^10.38.5",
     "consola": "^2.15.3",
     "eslint-config-airbnb": "^19.0.4",
     "eslint-config-node": "^4.1.0",
@@ -53,5 +55,13 @@
     "stencil-click-outside": "^1.8.0",
     "swiper": "^8.2.1",
     "uuid": "^8.3.2"
+  },
+  "repository": "CSCfi/csc-ui",
+  "author": "mycsc team <suiteamsui@gmail.com>",
+  "auto": {
+    "plugins": [
+      "npm",
+      "all-contributors"
+    ]
   }
 }

@@ -1,0 +1,35 @@
+name: Release
+
+on:
+  pull_request:
+    branches:
+      - main
+    types:
+      - closed
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    if: "!contains(github.event.head_commit.message, 'ci skip') && !contains(github.event.head_commit.message, 'skip ci') && github.event.pull_request.merged == true"
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Prepare repository
+        run: git fetch --unshallow --tags
+
+      - name: Use Node.js 18
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
+          cache: 'npm'
+
+      - name: Create Release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+        run: |
+          npm i
+          npm run build
+          npm run style-dictionary:build:prod
+          npx auto shipit
+          npm run deploy:documentation
