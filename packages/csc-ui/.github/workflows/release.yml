@@ -31,5 +31,5 @@ jobs:
           npm i
           npm run build
           npm run style-dictionary:build:prod
-          npx auto shipit
+          npx auto latest
           npm run deploy:documentation

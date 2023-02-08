@@ -27,7 +27,7 @@
     "style-dictionary:build:prod": "style-dictionary build --config ./style-dictionary.production.config.js",
     "predeploy": "npm run build && npm run style-dictionary:build:prod",
     "deploy": "npm publish && npm run deploy:documentation",
-    "deploy:documentation": "cd documentation/angular && npm i && npm run build && firebase deploy",
+    "deploy:documentation": "cd documentation/angular && npm i --legacy-peer-deps && npm run build && firebase deploy",
     "prepare": "husky install"
   },
   "devDependencies": {
