@@ -9,6 +9,17 @@
   "imageSize": 100,
   "commit": true,
   "commitConvention": "none",
-  "contributors": [],
+  "contributors": [
+    {
+      "login": "saulipurhonen",
+      "name": "saulipurhonen",
+      "avatar_url": "https://avatars.githubusercontent.com/u/48789543?v=4",
+      "profile": "https://github.com/saulipurhonen",
+      "contributions": [
+        "doc",
+        "code"
+      ]
+    }
+  ],
   "contributorsPerLine": 7
 }
