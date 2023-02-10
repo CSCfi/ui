@@ -1,0 +1,26 @@
+language: node_js
+
+node_js:
+  - 18.12.1
+
+cache: npm
+
+git:
+  depth: false
+
+branch: master
+
+before_deploy:
+  - npm i
+  - npm run build
+  - npm run style-dictionary:build:prod
+
+deploy:
+  - provider: script
+    script: if [ "$GH_TOKEN" != "false" ];then npx auto latest; fi;
+    skip-cleanup: true
+    on:
+      branch: master
+
+after_deploy:
+  - npm run deploy:documentation
