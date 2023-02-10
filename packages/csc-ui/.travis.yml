@@ -11,8 +11,10 @@ branch:
   only:
     - master
 
+script: 'true'
+
 before_deploy:
-  - npm i
+  - npm install
   - npm run build
   - npm run style-dictionary:build:prod
 
