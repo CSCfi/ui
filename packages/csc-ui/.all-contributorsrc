@@ -28,6 +28,17 @@
       "contributions": [
         "code"
       ]
+    },
+    {
+      "login": "villeerikssoncsc",
+      "name": "villeerikssoncsc",
+      "avatar_url": "https://avatars.githubusercontent.com/u/100685708?v=4",
+      "profile": "https://github.com/villeerikssoncsc",
+      "contributions": [
+        "doc",
+        "code",
+        "test"
+      ]
     }
   ],
   "contributorsPerLine": 7
