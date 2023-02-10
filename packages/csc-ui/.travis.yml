@@ -14,7 +14,7 @@ branch:
 script: 'true'
 
 before_deploy:
-  - git fetch --unshallow --tags
+  - git fetch --tags
   - npm install
   - npm run build
   - npm run style-dictionary:build:prod
