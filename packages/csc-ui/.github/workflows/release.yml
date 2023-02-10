@@ -7,7 +7,18 @@ on:
     types:
       - closed
 
-permissions: write-all
+permissions:
+  actions: write
+  checks: write
+  contents: write
+  deployments: write
+  issues: write
+  packages: write
+  pages: write
+  pull-requests: write
+  repository-projects: write
+  security-events: write
+  statuses: read
 
 jobs:
   release:
