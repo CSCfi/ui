@@ -130,6 +130,8 @@ export class CSelect {
 
   @State() statusText = '';
 
+  @State() previousValue: CSelectItem = { value: '', name: '' };
+
   private _itemRefs: { value: string | number | boolean; ref: HTMLElement }[] =
     [];
 
@@ -179,19 +181,23 @@ export class CSelect {
     this._updateStatusText();
   }
 
-  private _valueChangedHandler(item: string | number | CSelectItem) {
+  private _valueChangedHandler(item: CSelectItem) {
     function isItem(element) {
-      return element.value === (item as CSelectItem)?.value;
+      return element.value === item?.value;
     }
 
     this.currentIndex = this.items.findIndex(isItem);
 
     const value = this.returnValue
-      ? (item as CSelectItem)?.value
+      ? item?.value
       : {
-          name: (item as CSelectItem)?.name,
-          value: (item as CSelectItem)?.value,
+          name: item?.name,
+          value: item?.value,
         };
+
+    if (this.previousValue.value === item?.value) return;
+
+    this.previousValue = item;
 
     this.changeValue.emit(value);
   }
