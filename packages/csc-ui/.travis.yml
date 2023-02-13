@@ -20,9 +20,10 @@ before_deploy:
 
 deploy:
   - provider: script
-    script: if [ "$GH_TOKEN" != "false" ];then npx auto latest && git fetch --tags; fi;
+    script: if [ "$GH_TOKEN" != "false" ];then npx auto latest --base-branch master && git fetch --tags; fi;
     skip-cleanup: true
     on:
+      tags: true
       branch: master
 
 after_deploy:
