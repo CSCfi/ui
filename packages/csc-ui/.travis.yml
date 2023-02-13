@@ -24,7 +24,8 @@ deploy:
     script: if [ "$GH_TOKEN" != "false" ];then npx auto latest; fi;
     skip-cleanup: true
     on:
-      branch: master
+      tags: true
+      all_branches: true
 
 after_deploy:
   - npm run deploy:documentation
