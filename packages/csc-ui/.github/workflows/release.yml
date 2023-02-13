@@ -26,7 +26,7 @@ jobs:
         with:
           token: ${{ secrets.NPM_TOKEN }}
 
-      - uses: gagle/package-version@v1
+      - uses: Saionaro/extract-package-version@v1.2.1
         id: package-version
 
       - name: Push GIT tag
