@@ -35,7 +35,7 @@ jobs:
         uses: thejeff77/action-push-tag@v1.0.0
         with:
           tag: ${{ steps.package-version.outputs.version }}
-          message: '${{ steps.package-version.outputs.version }}: PR #${{ github.event.pull_request.number }} ${{ github.event.pull_request.title }}'
+          message: '${{ steps.package-version.outputs.version }} PR #${{ github.event.pull_request.number }} ${{ github.event.pull_request.title }}'
 
       - name: setup Firebase
         uses: pocket-apps/action-setup-firebase@v2
