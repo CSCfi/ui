@@ -18,6 +18,8 @@ jobs:
 
       - name: NPM version bump (patch)
         run: |
+          git config --global user.email "suiteamsui@gmail.com"
+          git config --global user.name "My CSC Team"
           npm version patch -m "Bump version to %s"
         if: contains(github.event.pull_request.labels.*.name, 'patch')
 
