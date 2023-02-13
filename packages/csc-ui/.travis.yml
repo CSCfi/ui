@@ -14,18 +14,16 @@ branch:
 script: 'true'
 
 before_deploy:
-  - git fetch --tags
   - npm install
   - npm run build
   - npm run style-dictionary:build:prod
 
 deploy:
   - provider: script
-    script: if [ "$GH_TOKEN" != "false" ];then npx auto latest; fi;
+    script: if [ "$GH_TOKEN" != "false" ];then npx auto latest && git fetch --tags; fi;
     skip-cleanup: true
     on:
-      tags: true
-      all_branches: true
+      branch: master
 
 after_deploy:
   - npm run deploy:documentation
