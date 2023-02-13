@@ -24,7 +24,7 @@ before_deploy:
 
 deploy:
   - provider: script
-    script: if [ "$GH_TOKEN" != "false" ];then npx auto latest && sleep 2; fi;
+    script: if [ "$GH_TOKEN" != "false" ];then sleep 10 && npx auto latest && sleep 10; fi;
     skip-cleanup: true
     on:
       tags: true
