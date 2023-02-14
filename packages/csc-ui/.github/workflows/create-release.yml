@@ -9,7 +9,6 @@ on:
 
 jobs:
   githubrelease:
-    if: "contains(github.event.pull_request.title, '[Automated]')"
     runs-on: ubuntu-latest
 
     steps:
