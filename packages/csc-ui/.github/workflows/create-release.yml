@@ -1,11 +1,6 @@
-name: Test creating a pull request
+name: Merge the automated pull request
 
-on:
-  pull_request:
-    branches:
-      - master
-    types:
-      - opened
+on: ['pull_request']
 
 jobs:
   github-release:
