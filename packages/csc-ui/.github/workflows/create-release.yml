@@ -1,11 +1,11 @@
 name: Merge the automated pull request
 
 on:
-  pull_request:
-    branches:
-      - release/**
-    types:
-      - opened
+  workflow_dispatch:
+    inputs:
+      pr_number:
+        description: The PR id
+        required: true
 
 jobs:
   githubrelease:
@@ -14,11 +14,11 @@ jobs:
 
     steps:
       - name: Automerge the PR
-        if: github.event.pull_request.number != ''
+        if: github.event.inputs.pr_number != ''
         uses: peter-evans/enable-pull-request-automerge@v2
         with:
           token: ${{ secrets.MERGE_TOKEN }}
-          pull-request-number: ${{ github.event.pull_request.number }}
+          pull-request-number: ${{ github.event.inputs.pr_number }}
           merge-method: merge
 
       - name: Build Github release
