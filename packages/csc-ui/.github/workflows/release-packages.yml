@@ -29,6 +29,20 @@ jobs:
         run: |
           npm i && npm run predeploy
 
+      - name: Build changelog
+        env:
+          GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+        run: |
+          npx auto changelog
+
+      - name: Build Github release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+        run: |
+          npx auto release
+
       - name: Publish Package
         uses: JS-DevTools/npm-publish@v1
         with:
@@ -45,25 +59,25 @@ jobs:
       - name: Publish documentation
         run: npm run deploy:documentation
 
-      - name: Build Changelog
-        id: github_release
-        uses: mikepenz/release-changelog-builder-action@v3
-        with:
-          configuration: 'changelog.config.json'
-        env:
-          GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
+      # - name: Build Changelog
+      #   id: github_release
+      #   uses: mikepenz/release-changelog-builder-action@v3
+      #   with:
+      #     configuration: 'changelog.config.json'
+      #   env:
+      #     GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
 
-      - name: Print changelog
-        run: |
-          echo ${{steps.github_release.outputs.changelog}}
-          echo '--------------------------------'
-          echo ${{steps.github_release.outputs.commits}}
+      # - name: Print changelog
+      #   run: |
+      #     echo ${{steps.github_release.outputs.changelog}}
+      #     echo '--------------------------------'
+      #     echo ${{steps.github_release.outputs.commits}}
 
-      - name: Create Release
-        uses: mikepenz/action-gh-release@v0.2.0-a03
-        with:
-          body: ${{steps.github_release.outputs.changelog}}
-          tag_name: 'v${{ steps.package-version.outputs.version }}'
+      # - name: Create Release
+      #   uses: mikepenz/action-gh-release@v0.2.0-a03
+      #   with:
+      #     body: ${{steps.github_release.outputs.changelog}}
+      #     tag_name: 'v${{ steps.package-version.outputs.version }}'
 
   changelog:
     runs-on: ubuntu-latest
