@@ -49,3 +49,4 @@ jobs:
         uses: opspresso/action-release@master
         env:
           GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
+          TAG_NAME: 'v${{ steps.package-version.outputs.version }}'
