@@ -44,3 +44,9 @@ jobs:
 
       - name: Publish documentation
         run: npm run deploy:documentation
+
+      - name: Release to Github
+        uses: docker://antonyurchenko/git-release:latest
+        env:
+          GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
+          RELEASE_NAME_PREFIX: 'Release: '
