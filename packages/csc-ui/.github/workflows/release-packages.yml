@@ -22,7 +22,7 @@ jobs:
           git config --global user.name "My CSC Team"
           npm version patch -m "Bump version to %s"
           git tag
-          git push --follow-tags --set-upstream origin
+          git push --tags
         if: contains(github.event.pull_request.labels.*.name, 'patch')
 
       - name: Install dependencies and build packages
