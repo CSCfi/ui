@@ -1,0 +1,30 @@
+name: Test creating a pull request
+
+on:
+  pull_request:
+    branches:
+      - master
+    types:
+      - opened
+
+jobs:
+  create-release:
+    if: "contains(github.event.pull_request.title, 'Automated')"
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Automerge the PR
+        if: github.event.pull_request.number != ''
+        uses: peter-evans/enable-pull-request-automerge@v2
+        with:
+          token: ${{ secrets.MERGE_TOKEN }}
+          pull-request-number: ${{ github.event.pull_request.number }}
+          merge-method: merge
+
+      - name: Build Github release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+        run: |
+          git fetch --tags
+          npx auto release --base-branch master

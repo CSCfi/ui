@@ -10,7 +10,7 @@ on:
 jobs:
   release:
     runs-on: ubuntu-latest
-    if: "!contains(github.event.head_commit.message, 'ci skip') && !contains(github.event.head_commit.message, 'skip ci') && github.event.pull_request.merged == true"
+    if: "!contains(github.event.pull_request.title, 'Automated') && !contains(github.event.head_commit.message, 'ci skip') && !contains(github.event.head_commit.message, 'skip ci') && github.event.pull_request.merged == true"
 
     steps:
       - name: Checkout repository
@@ -37,12 +37,12 @@ jobs:
           git fetch --tags
           npx auto changelog --base-branch master
 
-      - name: Build Github release
-        env:
-          GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
-          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
-        run: |
-          npx auto release --base-branch master
+      # - name: Build Github release
+      #   env:
+      #     GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
+      #     NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+      #   run: |
+      #     npx auto release --base-branch master
 
       - name: Publish Package
         uses: JS-DevTools/npm-publish@v1
@@ -59,6 +59,17 @@ jobs:
 
       - name: Publish documentation
         run: npm run deploy:documentation
+
+      - name: create pull request
+        id: open-pr
+        uses: repo-sync/pull-request@v2
+        with:
+          github_token: ${{ secrets.GH_TOKEN }}
+          destination_branch: ${{ github.event.repository.default_branch }}
+          pr_title: '[Automated] Merge ${{ steps.package-version.outputs.version }} into ${{ github.event.repository.default_branch }}'
+          pr_body: 'Automated Pull Request'
+          pr_reviewer: ${{ secrets.MERGE_USER }}
+          pr_assignee: ${{ secrets.MERGE_USER }}
 
       # - name: Build Changelog
       #   id: github_release
