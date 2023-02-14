@@ -1,4 +1,4 @@
-name: Release Packages and Documentation Action
+name: Release Action
 
 on:
   pull_request:
@@ -53,8 +53,51 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
 
+      - name: Print changelog
+        run: |
+          echo ${{steps.github_release.outputs.changelog}}
+          echo '--------------------------------'
+          echo ${{steps.github_release.outputs.commits}}
+
       - name: Create Release
         uses: mikepenz/action-gh-release@v0.2.0-a03
         with:
           body: ${{steps.github_release.outputs.changelog}}
           tag_name: 'v${{ steps.package-version.outputs.version }}'
+
+  changelog:
+    runs-on: ubuntu-latest
+    if: "!contains(github.event.head_commit.message, 'ci skip') && !contains(github.event.head_commit.message, 'skip ci') && github.event.pull_request.merged == true"
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Unshallow
+        run: git fetch --prune --unshallow
+      - name: Find Last Tag
+        id: last
+        uses: jimschubert/query-tag-action@v1
+        with:
+          include: 'v*'
+          exclude: '*-rc*'
+          commit-ish: 'HEAD~'
+          skip-unshallow: 'true'
+      - name: Find Current Tag
+        id: current
+        uses: jimschubert/query-tag-action@v1
+        with:
+          include: 'v*'
+          exclude: '*-rc*'
+          commit-ish: '@'
+          skip-unshallow: 'true'
+      - name: Create Changelog
+        id: changelog
+        uses: ./
+        with:
+          GITHUB_TOKEN: ${{secrets.GH_TOKEN}}
+          GITHUB_REPOSITORY: ${{github.repository}}
+          CONFIG_LOCATION: .github/changelog.yml
+          FROM: ${{steps.last.outputs.tag}}
+          TO: ${{steps.current.outputs.tag}}
+          OUTPUT: .github/CHANGELOG.md
+      - name: View Changelog
+        run: cat .github/CHANGELOG.md
