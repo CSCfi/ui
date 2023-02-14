@@ -1,4 +1,4 @@
-name: Release Action
+name: Release Packages and Documentation Action
 
 on:
   pull_request:
@@ -38,8 +38,8 @@ jobs:
       - name: Push GIT tag
         uses: thejeff77/action-push-tag@v1.0.0
         with:
-          tag: ${{ steps.package-version.outputs.version }}
-          message: '${{ steps.package-version.outputs.version }}'
+          tag: v${{ steps.package-version.outputs.version }}
+          message: 'v${{ steps.package-version.outputs.version }}'
 
       - name: setup Firebase
         uses: pocket-apps/action-setup-firebase@v2
@@ -48,10 +48,3 @@ jobs:
 
       - name: Publish documentation
         run: npm run deploy:documentation
-
-      - name: Release
-        uses: docker://antonyurchenko/git-release:latest
-        env:
-          GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
-          TAG_PREFIX_REGEX: '[a-z-]*'
-          RELEASE_NAME_PREFIX: 'Release: '
