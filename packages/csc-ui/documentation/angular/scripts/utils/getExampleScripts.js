@@ -54,9 +54,7 @@ module.exports = async (component, filename) => {
                   .replace(/'\$\{([^\}]+)\}/g, "$1 + '")
                   .replace(/\$\{([^\}]+)\}/g, "' + $1 + '");
 
-          writeStream.write(
-            `${formattedRow}${index + 1 === block.length ? '`;\n' : ''}`,
-          );
+          writeStream.write(`${formattedRow}${index + 1 === block.length ? '`;\n' : ''}`);
         });
 
         writeStream.write('\n');
@@ -73,10 +71,7 @@ module.exports = async (component, filename) => {
 
     const rl = readline.createInterface({
       input: fs.createReadStream(
-        path.resolve(
-          __dirname,
-          `../../documentation/angular/src/app/examples/${component}/${component}.component.ts`,
-        ),
+        path.resolve(__dirname, `../../src/app/examples/${component}/${component}.component.ts`),
       ),
       crlfDelay: Infinity,
     });
@@ -94,10 +89,7 @@ module.exports = async (component, filename) => {
         return;
       }
 
-      if (
-        line.replace(/^\s+/g, '').startsWith('// @example-skip-start') ||
-        isSkipping
-      ) {
+      if (line.replace(/^\s+/g, '').startsWith('// @example-skip-start') || isSkipping) {
         isSkipping = true;
 
         return;

@@ -24,6 +24,7 @@
     "@angular/compiler-cli": "^14.0.1",
     "@types/jasmine": "~3.10.0",
     "@types/node": "^12.11.1",
+    "consola": "^2.15.3",
     "jasmine-core": "~3.10.0",
     "karma": "~6.3.0",
     "karma-chrome-launcher": "~3.1.0",
@@ -36,7 +37,7 @@
   "private": true,
   "scripts": {
     "build": "npm run build:examples && ng build",
-    "build:examples": "node ../../scripts/build-examples.js",
+    "build:examples": "node ./scripts/build-examples.js",
     "dev": "npm run build:examples && ng serve",
     "ng": "ng",
     "start": "ng serve",

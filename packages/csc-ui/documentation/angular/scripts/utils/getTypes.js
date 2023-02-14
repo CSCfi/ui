@@ -4,7 +4,7 @@ const readline = require('readline');
 const path = require('path');
 const consola = require('consola');
 
-module.exports = async (component, filename) => {
+module.exports = async (filename) => {
   try {
     const writeStream = fs.createWriteStream(filename);
 
@@ -18,25 +18,19 @@ module.exports = async (component, filename) => {
 
     let hasInfo = false;
     let isExample = false;
-    let exampleName = '';
-    let isInStartTag = false;
-    let row = 0;
 
     const infoText = `/**
- * Examples for ${component}.
+ * CSC-UI Types.
  * Automatically generated at ${new Date().toLocaleString()}.
  *
  * ⚠️ DO NOT EDIT THESE MANUALLY AS THEY WILL BE OVERWRITTEN IN THE NEXT BUILD!
  */
+
+  export default {
 `;
 
     const rl = readline.createInterface({
-      input: fs.createReadStream(
-        path.resolve(
-          __dirname,
-          `../../documentation/angular/src/app/examples/${component}/${component}.component.html`,
-        ),
-      ),
+      input: fs.createReadStream(path.resolve(__dirname, `../../../../src/types/index.ts`)),
       crlfDelay: Infinity,
     });
 
@@ -47,42 +41,49 @@ module.exports = async (component, filename) => {
         hasInfo = true;
       }
 
-      if (isInStartTag && line.endsWith('>')) {
-        isInStartTag = false;
-        return;
-      }
-
-      if (
-        line.replace(/^\s+/g, '').startsWith('<app-example') ||
-        isInStartTag
-      ) {
-        isInStartTag = !line.endsWith('>');
-        exampleName = line.match(/name="([^"]+)"/);
-
-        if (!exampleName) return;
-
+      if (line.startsWith('export')) {
         isExample = true;
 
-        writeline(`export const ${exampleName.pop()} = \``);
+        const name = line.split(' ').find((part) => part.match(/^C([A-Z][a-zA-Z]*)/g));
+
+        writeline(`${name}: \``);
+        writeline(line.replace('export ', '').replace('declare ', ''));
+
+        if (line.endsWith(';')) {
+          isExample = false;
+
+          writeline('`,');
+          writeline('');
+        }
 
         return;
       }
 
-      if (line.replace(/^\s+/g, '').startsWith('</app-example>') && isExample) {
+      if (line === '}') {
         isExample = false;
-        exampleName = '';
-        row = 0;
 
-        writeline('`;', false);
+        writeline(line);
+        writeline('`,');
+        writeline('');
+
+        return;
+      }
+
+      if (line.trim().startsWith('|') && line.endsWith(';')) {
+        writeline(`  ${line}`);
+        writeline('`,');
         writeline('');
 
         return;
       }
 
       if (isExample) {
-        row += 1;
-        writeline(line, row > 1);
+        writeline(`  ${line}`);
       }
+    });
+
+    rl.on('close', () => {
+      writeline('};');
     });
 
     writeStream.on('finish', () => {

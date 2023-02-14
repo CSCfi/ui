@@ -4,7 +4,7 @@ const readline = require('readline');
 const path = require('path');
 const consola = require('consola');
 
-module.exports = async (filename) => {
+module.exports = async (component, filename) => {
   try {
     const writeStream = fs.createWriteStream(filename);
 
@@ -18,20 +18,21 @@ module.exports = async (filename) => {
 
     let hasInfo = false;
     let isExample = false;
+    let exampleName = '';
+    let isInStartTag = false;
+    let row = 0;
 
     const infoText = `/**
- * CSC-UI Types.
+ * Examples for ${component}.
  * Automatically generated at ${new Date().toLocaleString()}.
  *
  * ⚠️ DO NOT EDIT THESE MANUALLY AS THEY WILL BE OVERWRITTEN IN THE NEXT BUILD!
  */
-
-  export default {
 `;
 
     const rl = readline.createInterface({
       input: fs.createReadStream(
-        path.resolve(__dirname, `../../src/types/index.ts`),
+        path.resolve(__dirname, `../../src/app/examples/${component}/${component}.component.html`),
       ),
       crlfDelay: Infinity,
     });
@@ -43,51 +44,39 @@ module.exports = async (filename) => {
         hasInfo = true;
       }
 
-      if (line.startsWith('export')) {
+      if (isInStartTag && line.endsWith('>')) {
+        isInStartTag = false;
+        return;
+      }
+
+      if (line.replace(/^\s+/g, '').startsWith('<app-example') || isInStartTag) {
+        isInStartTag = !line.endsWith('>');
+        exampleName = line.match(/name="([^"]+)"/);
+
+        if (!exampleName) return;
+
         isExample = true;
 
-        const name = line
-          .split(' ')
-          .find((part) => part.match(/^C([A-Z][a-zA-Z]*)/g));
-
-        writeline(`${name}: \``);
-        writeline(line.replace('export ', '').replace('declare ', ''));
-
-        if (line.endsWith(';')) {
-          isExample = false;
-
-          writeline('`,');
-          writeline('');
-        }
+        writeline(`export const ${exampleName.pop()} = \``);
 
         return;
       }
 
-      if (line === '}') {
+      if (line.replace(/^\s+/g, '').startsWith('</app-example>') && isExample) {
         isExample = false;
+        exampleName = '';
+        row = 0;
 
-        writeline(line);
-        writeline('`,');
+        writeline('`;', false);
         writeline('');
 
         return;
-      }
-
-      if (line.trim().startsWith('|') && line.endsWith(';')) {
-        writeline(`  ${line}`);
-        writeline('`,');
-        writeline('');
-
-        return
       }
 
       if (isExample) {
-        writeline(`  ${line}`);
+        row += 1;
+        writeline(line, row > 1);
       }
-    });
-
-    rl.on('close', () => {
-      writeline('};');
     });
 
     writeStream.on('finish', () => {
