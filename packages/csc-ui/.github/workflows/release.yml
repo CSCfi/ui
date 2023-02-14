@@ -62,9 +62,7 @@ jobs:
         run: |
           git checkout -b release/v${{ steps.package-version.outputs.version }}
           git fetch --tags
-          npx auto changelog --base-branch master
-          git add -A
-          git commit -m "Add changes"
+          npx auto changelog --base-branch release/v${{ steps.package-version.outputs.version }}
           git push
 
       - name: Create pull request
