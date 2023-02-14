@@ -68,6 +68,8 @@ jobs:
       - name: Create pull request
         id: open-pr
         uses: repo-sync/pull-request@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
         with:
           github_token: ${{ secrets.GH_TOKEN }}
           source_branch: release/v${{ steps.package-version.outputs.version }}
