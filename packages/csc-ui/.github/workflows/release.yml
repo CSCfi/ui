@@ -63,7 +63,7 @@ jobs:
           git checkout -b release/v${{ steps.package-version.outputs.version }}
           git fetch --tags
           npx auto changelog --base-branch release/v${{ steps.package-version.outputs.version }}
-          git push
+          git push --set-upstream origin release/v${{ steps.package-version.outputs.version }}
 
       - name: Create pull request
         id: open-pr
