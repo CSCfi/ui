@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
     inputs:
       pr_number:
-        description: The PR id
+        description: The pull request id
         required: true
 
 jobs:

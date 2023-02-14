@@ -81,5 +81,5 @@ jobs:
         uses: ph-fritsche/action-dispatch@v1
         with:
           token: ${{ secrets.GH_TOKEN }}
-          ident: create_release.yml
+          ident: create-release.yml
           payload: '{"pr_number":"${{ steps.open-pr.outputs.pr_number }}"}'
