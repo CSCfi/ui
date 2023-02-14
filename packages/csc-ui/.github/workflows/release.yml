@@ -23,6 +23,10 @@ jobs:
           npm version patch -m "Bump version to %s"
         if: contains(github.event.pull_request.labels.*.name, 'patch')
 
+      - name: Install dependencies and build packages
+        run: |
+          npm i && npm run predeploy
+
       - name: Publish Package
         uses: JS-DevTools/npm-publish@v1
         with:
