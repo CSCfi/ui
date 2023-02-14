@@ -1,0 +1,75 @@
+name: Release Action
+
+on:
+  pull_request:
+    branches:
+      - master
+    types:
+      - closed
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    if: "!contains(github.event.pull_request.title, 'Automated') && !contains(github.event.head_commit.message, 'ci skip') && !contains(github.event.head_commit.message, 'skip ci') && github.event.pull_request.merged == true"
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Bump NPM version (patch)
+        run: |
+          git config --global user.email "suiteamsui@gmail.com"
+          git config --global user.name "My CSC Team"
+          npm version patch -m "Bump version to %s"
+          git push --tags
+        if: contains(github.event.pull_request.labels.*.name, 'patch')
+
+      - name: Bump NPM version (minor)
+        run: |
+          git config --global user.email "suiteamsui@gmail.com"
+          git config --global user.name "My CSC Team"
+          npm version minor -m "Bump version to %s"
+          git push --tags
+        if: contains(github.event.pull_request.labels.*.name, 'minor')
+
+      - name: Bump NPM version (major)
+        run: |
+          git config --global user.email "suiteamsui@gmail.com"
+          git config --global user.name "My CSC Team"
+          npm version major -m "Bump version to %s"
+          git push --tags
+        if: contains(github.event.pull_request.labels.*.name, 'major')
+
+      - name: Setup Firebase
+        uses: pocket-apps/action-setup-firebase@v2
+        with:
+          firebase-token: ${{ secrets.FIREBASE_TOKEN }}
+
+      - name: Publish documentation
+        run: npm run deploy:documentation
+
+      - uses: Saionaro/extract-package-version@v1.2.1
+        id: package-version
+
+      - name: Create release branch and changelog
+        env:
+          GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+        run: |
+          git checkout -b release/v${{ steps.package-version.outputs.version }}
+          npx auto changelog --base-branch master
+          git add -A
+          gitm commit -m "Add changes"
+          git push
+
+      - name: create pull request
+        id: open-pr
+        uses: repo-sync/pull-request@v2
+        with:
+          github_token: ${{ secrets.GH_TOKEN }}
+          source_branch: release/v${{ steps.package-version.outputs.version }}
+          destination_branch: ${{ github.event.repository.default_branch }}
+          pr_title: '[Automated] Merge ${{ steps.package-version.outputs.version }} into ${{ github.event.repository.default_branch }}'
+          pr_body: 'Automated Pull Request'
+          pr_reviewer: ${{ secrets.MERGE_USER }}
+          pr_assignee: ${{ secrets.MERGE_USER }}

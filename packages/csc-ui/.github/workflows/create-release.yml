@@ -8,7 +8,7 @@ on:
       - opened
 
 jobs:
-  create-release:
+  github-release:
     if: "contains(github.event.pull_request.title, 'Automated')"
     runs-on: ubuntu-latest
 
