@@ -40,6 +40,10 @@ jobs:
           git push --tags
         if: contains(github.event.pull_request.labels.*.name, 'major')
 
+      - name: Install dependencies and build packages
+        run: |
+          npm i && npm run predeploy
+
       - name: Setup Firebase
         uses: pocket-apps/action-setup-firebase@v2
         with:
@@ -62,7 +66,7 @@ jobs:
           gitm commit -m "Add changes"
           git push
 
-      - name: create pull request
+      - name: Create pull request
         id: open-pr
         uses: repo-sync/pull-request@v2
         with:
