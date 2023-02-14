@@ -61,6 +61,7 @@ jobs:
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
         run: |
           git checkout -b release/v${{ steps.package-version.outputs.version }}
+          git fetch --tags
           npx auto changelog --base-branch master
           git add -A
           gitm commit -m "Add changes"
