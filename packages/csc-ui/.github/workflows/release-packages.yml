@@ -21,6 +21,8 @@ jobs:
           git config --global user.email "suiteamsui@gmail.com"
           git config --global user.name "My CSC Team"
           npm version patch -m "Bump version to %s"
+          git tag
+          git push --tags
         if: contains(github.event.pull_request.labels.*.name, 'patch')
 
       - name: Install dependencies and build packages
@@ -34,12 +36,6 @@ jobs:
 
       - uses: Saionaro/extract-package-version@v1.2.1
         id: package-version
-
-      - name: Push GIT tag
-        uses: thejeff77/action-push-tag@v1.0.0
-        with:
-          tag: v${{ steps.package-version.outputs.version }}
-          message: 'v${{ steps.package-version.outputs.version }}'
 
       - name: setup Firebase
         uses: pocket-apps/action-setup-firebase@v2
