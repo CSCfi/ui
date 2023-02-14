@@ -53,4 +53,5 @@ jobs:
         uses: docker://antonyurchenko/git-release:latest
         env:
           GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
+          TAG_PREFIX_REGEX: '[a-z-]*'
           RELEASE_NAME_PREFIX: 'Release: '
