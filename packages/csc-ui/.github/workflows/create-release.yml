@@ -23,6 +23,12 @@ jobs:
           pull-request-number: ${{ github.event.inputs.pr_number }}
           merge-method: merge
 
+      - name: merge
+        uses: nbrugger-tgm/merge-pr-action@v0.2.3
+        with:
+          token: ${{ secrets.GH_TOKEN }}
+          method: squash
+
       - name: Build Github release
         env:
           GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}

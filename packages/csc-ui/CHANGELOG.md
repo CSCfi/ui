@@ -1,3 +1,20 @@
+# v0.6.42 (Wed Feb 15 2023)
+
+#### 🐛 Bug Fix
+
+- test 3.1 [#156](https://github.com/CSCfi/csc-ui/pull/156) ([@csc-design-system-team](https://github.com/csc-design-system-team) [@razorfever](https://github.com/razorfever))
+
+#### ⚠️ Pushed to `release/v0.6.59`
+
+- Bump version to 0.6.59 ([@csc-design-system-team](https://github.com/csc-design-system-team))
+
+#### Authors: 2
+
+- [@csc-design-system-team](https://github.com/csc-design-system-team)
+- Oskari Väistö ([@razorfever](https://github.com/razorfever))
+
+---
+
 # v0.6.42 (Tue Feb 14 2023)
 
 #### 🐛 Bug Fix
