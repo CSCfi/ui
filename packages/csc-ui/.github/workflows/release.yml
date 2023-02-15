@@ -20,7 +20,7 @@ jobs:
         run: |
           git config --global user.email "suiteamsui@gmail.com"
           git config --global user.name "My CSC Team"
-          npm version patch -m "Bump version to %s"
+          npm version patch
           git push --tags
         if: contains(github.event.pull_request.labels.*.name, 'patch')
 
@@ -28,7 +28,7 @@ jobs:
         run: |
           git config --global user.email "suiteamsui@gmail.com"
           git config --global user.name "My CSC Team"
-          npm version minor -m "Bump version to %s"
+          npm version minor
           git push --tags
         if: contains(github.event.pull_request.labels.*.name, 'minor')
 
@@ -36,7 +36,7 @@ jobs:
         run: |
           git config --global user.email "suiteamsui@gmail.com"
           git config --global user.name "My CSC Team"
-          npm version major -m "Bump version to %s"
+          npm version major
           git push --tags
         if: contains(github.event.pull_request.labels.*.name, 'major')
 
