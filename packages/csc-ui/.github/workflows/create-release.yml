@@ -27,6 +27,7 @@ jobs:
         uses: nbrugger-tgm/merge-pr-action@v0.2.3
         with:
           token: ${{ secrets.GH_TOKEN }}
+          pull_request: ${{ github.event.inputs.pr_number }}
           method: squash
 
       - name: Build Github release
