@@ -74,8 +74,8 @@ jobs:
           destination_branch: ${{ github.event.repository.default_branch }}
           pr_title: '[Automated] Merge ${{ steps.package-version.outputs.version }} into ${{ github.event.repository.default_branch }}'
           pr_body: 'Automated Pull Request'
-          pr_reviewer: ${{ secrets.GH_TOKEN }}
-          pr_assignee: ${{ secrets.GH_TOKEN }}
+          pr_reviewer: ${{ secrets.MERGE_USER }}
+          pr_assignee: ${{ secrets.MERGE_USER }}
 
       - name: Dispatch workflow_dispatch event
         uses: ph-fritsche/action-dispatch@v1
