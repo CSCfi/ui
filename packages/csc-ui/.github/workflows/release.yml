@@ -60,8 +60,8 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
         run: |
-          git checkout -b release/v${{ steps.package-version.outputs.version }}
           git fetch --tags
+          git checkout -b release/v${{ steps.package-version.outputs.version }}
           npx auto changelog --base-branch release/v${{ steps.package-version.outputs.version }}
           git push --set-upstream origin release/v${{ steps.package-version.outputs.version }}
 
