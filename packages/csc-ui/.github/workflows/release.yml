@@ -49,10 +49,16 @@ jobs:
         with:
           firebase-token: ${{ secrets.FIREBASE_TOKEN }}
 
-      - name: Publish NPM package and documentation
-        run: npm run deploy
-        env:
-          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+      - name: Build packages
+        run: npm run predeploy
+
+      - name: Publish documentation
+        run: npm run deploy:documentation
+
+      - name: Publish Package
+        uses: JS-DevTools/npm-publish@v1
+        with:
+          token: ${{ secrets.NPM_TOKEN }}
 
       - uses: Saionaro/extract-package-version@v1.2.1
         id: package-version
