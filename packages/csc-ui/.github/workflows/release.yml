@@ -40,9 +40,9 @@ jobs:
           git push --tags
         if: contains(github.event.pull_request.labels.*.name, 'major')
 
-      - name: Install dependencies and build packages
+      - name: Install dependencies
         run: |
-          npm i && npm run predeploy
+          npm i
 
       - name: Setup Firebase
         uses: pocket-apps/action-setup-firebase@v2
@@ -51,6 +51,8 @@ jobs:
 
       - name: Publish NPM package and documentation
         run: npm run deploy
+        env:
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
 
       - uses: Saionaro/extract-package-version@v1.2.1
         id: package-version
