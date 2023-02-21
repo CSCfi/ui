@@ -49,8 +49,8 @@ jobs:
         with:
           firebase-token: ${{ secrets.FIREBASE_TOKEN }}
 
-      - name: Publish documentation
-        run: npm run deploy:documentation
+      - name: Publish NPM package and documentation
+        run: npm run deploy
 
       - uses: Saionaro/extract-package-version@v1.2.1
         id: package-version
