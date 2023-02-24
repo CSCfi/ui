@@ -13,3 +13,4 @@ firebase-debug.log
 
 playground/**/node_modules
 .env
+yarn-error.log
