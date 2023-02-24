@@ -1,8 +1,6 @@
 import { Component } from '@angular/core';
 import { mdiDotsHorizontal, mdiInformationOutline } from '@mdi/js';
-import {
-  CMenuCustomTrigger
-} from '../../../../../../src/types';
+import { CMenuCustomTrigger } from '../../../../../../src/types';
 
 @Component({
   selector: 'app-c-menu',
@@ -31,6 +29,6 @@ export class CMenuComponent {
         size: 'small',
       },
     },
-  }
+  };
   // @example-end
 }

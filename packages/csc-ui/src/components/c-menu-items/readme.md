@@ -7,11 +7,13 @@
 
 ## Properties
 
-| Property | Attribute | Description   | Type            | Default |
-| -------- | --------- | ------------- | --------------- | ------- |
-| `active` | `active`  | is active     | `boolean`       | `false` |
-| `items`  | --        | Menu items    | `CMenuOption[]` | `[]`    |
-| `small`  | `small`   | Small variant | `boolean`       | `false` |
+| Property | Attribute | Description   | Type               | Default     |
+| -------- | --------- | ------------- | ------------------ | ----------- |
+| `active` | `active`  | is active     | `boolean`          | `false`     |
+| `index`  | `index`   | is active     | `number`           | `null`      |
+| `items`  | --        | Menu items    | `CMenuOption[]`    | `[]`        |
+| `parent` | --        | Menu parent   | `HTMLCMenuElement` | `undefined` |
+| `small`  | `small`   | Small variant | `boolean`          | `false`     |
 
 
 ## Events

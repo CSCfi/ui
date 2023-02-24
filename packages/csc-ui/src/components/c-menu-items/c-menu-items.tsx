@@ -1,16 +1,37 @@
-import { Component, Host, h, Prop, Event, EventEmitter } from '@stencil/core';
+import {
+  Component,
+  Host,
+  h,
+  Prop,
+  Element,
+  Event,
+  EventEmitter,
+  Listen,
+  State,
+  Watch,
+} from '@stencil/core';
 import { CMenuOption } from '../../types';
 
+/**
+ * @parent none
+ */
 @Component({
   tag: 'c-menu-items',
   styleUrl: 'c-menu-items.scss',
   shadow: true,
 })
 export class CMenuItems {
+  @Element() host: HTMLCMenuItemsElement;
+
   /**
    * Menu items
    */
   @Prop() items: CMenuOption[] = [];
+
+  /**
+   * Menu parent
+   */
+  @Prop() parent: HTMLCMenuElement;
 
   /**
    * Small variant
@@ -19,6 +40,13 @@ export class CMenuItems {
 
   /**
    * is active
+   * @private
+   */
+  @Prop() index: number | null = null;
+
+  /**
+   * is active
+   * @private
    */
   @Prop() active = false;
 
@@ -26,6 +54,74 @@ export class CMenuItems {
    * Triggered when menu is closed
    */
   @Event() close: EventEmitter;
+
+  @State() currentIndex: number = null;
+
+  @Watch('currentIndex')
+  onIndexChange(index: number) {
+    this.listItems.forEach((item, i) => {
+      item.classList.toggle('active', i === index);
+
+      if (i === index) {
+        item.focus();
+      }
+    });
+  }
+
+  @Listen('keydown', { capture: true })
+  handleKeyDown(ev: KeyboardEvent) {
+    if (ev.key === 'ArrowDown') {
+      ev.preventDefault();
+
+      if (this.currentIndex === null) {
+        this.currentIndex = 0;
+      } else if (this.currentIndex + 1 < this.items.length) {
+        this.currentIndex += 1;
+      }
+    }
+
+    if (ev.key === 'ArrowUp') {
+      ev.preventDefault();
+
+      if (this.currentIndex === null) {
+        this.currentIndex = this.items.length - 1;
+      } else if (this.currentIndex > 0) {
+        this.currentIndex -= 1;
+      }
+    }
+
+    if (ev.key === 'Escape') {
+      this.close.emit();
+      this.currentIndex = null;
+    }
+
+    if (ev.key === 'Enter') {
+      if (this.currentIndex !== null) {
+        const selectedItem = this.items[this.currentIndex];
+
+        if (!selectedItem.disabled) {
+          selectedItem.action();
+          this.close.emit();
+        }
+
+        return;
+      }
+
+      this.currentIndex = 0;
+    }
+
+    if (ev.key === ' ' && this.currentIndex === null) {
+      this.currentIndex = 0;
+    }
+
+    if (ev.key === 'Tab') {
+      this.close.emit();
+    }
+  }
+
+  get listItems(): HTMLLIElement[] {
+    return Array.from(this.host?.shadowRoot?.querySelectorAll('li') || []);
+  }
 
   private _renderItem = (item) => {
     const classes = {
@@ -47,6 +143,7 @@ export class CMenuItems {
 
     return (
       <li
+        aria-disabled={(!!item.disabled).toString()}
         class={classes}
         tabindex="-1"
         role="menuitem"
@@ -62,6 +159,25 @@ export class CMenuItems {
       </li>
     );
   };
+
+  private _handleOtsideClick(event) {
+    const outsideClick =
+      typeof event.composedPath === 'function' &&
+      !event.composedPath().includes(this.parent);
+
+    if (outsideClick) {
+      this.close.emit();
+    }
+  }
+
+  componentDidLoad() {
+    window.addEventListener('click', this._handleOtsideClick.bind(this), {
+      once: true,
+    });
+
+    this.host.shadowRoot.querySelector('li').focus();
+    this.currentIndex = this.index;
+  }
 
   render() {
     const menuClasses = {

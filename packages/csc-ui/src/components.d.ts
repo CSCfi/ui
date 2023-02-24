@@ -676,12 +676,22 @@ export namespace Components {
     interface CMenuItems {
         /**
           * is active
+          * @private
          */
         "active": boolean;
+        /**
+          * is active
+          * @private
+         */
+        "index": number | null;
         /**
           * Menu items
          */
         "items": CMenuOption[];
+        /**
+          * Menu parent
+         */
+        "parent": HTMLCMenuElement;
         /**
           * Small variant
          */
@@ -2458,8 +2468,14 @@ declare namespace LocalJSX {
     interface CMenuItems {
         /**
           * is active
+          * @private
          */
         "active"?: boolean;
+        /**
+          * is active
+          * @private
+         */
+        "index"?: number | null;
         /**
           * Menu items
          */
@@ -2468,6 +2484,10 @@ declare namespace LocalJSX {
           * Triggered when menu is closed
          */
         "onClose"?: (event: CMenuItemsCustomEvent<any>) => void;
+        /**
+          * Menu parent
+         */
+        "parent"?: HTMLCMenuElement;
         /**
           * Small variant
          */

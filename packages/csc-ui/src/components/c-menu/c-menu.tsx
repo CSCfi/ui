@@ -9,7 +9,6 @@ import {
   Watch,
 } from '@stencil/core';
 import { mdiChevronDown } from '@mdi/js';
-import { registerClickOutside } from 'stencil-click-outside';
 import { CMenuOption, CMenuCustomTrigger } from '../../types';
 
 /**
@@ -33,6 +32,8 @@ export class CMenu {
   @State() menuItemsComponent: HTMLCMenuItemsElement | null = null;
 
   @State() scrollingParentComponent: HTMLElement | null = null;
+
+  @State() safeYPosition = 0;
 
   /**
    * Simple variant without chevron and background, E.g. when a button is the activator
@@ -80,88 +81,170 @@ export class CMenu {
 
   @Listen('keydown', { capture: true })
   handleKeyDown(ev: KeyboardEvent) {
-    if (ev.key === 'ArrowDown') {
+    const openKeys = ['ArrowDown', 'ArrowUp', 'Enter', ' '];
+
+    if (!this.menuVisible && openKeys.includes(ev.key)) {
       ev.preventDefault();
 
-      this.menuVisible = true;
+      this.currentIndex = null;
 
-      if (this.currentIndex === null) {
+      if (ev.key === 'ArrowDown') {
         this.currentIndex = 0;
-      } else if (this.currentIndex + 1 < this.items.length) {
-        this.currentIndex += 1;
       }
-    }
 
-    if (ev.key === 'ArrowUp') {
-      ev.preventDefault();
-
-      this.menuVisible = true;
-
-      if (this.currentIndex === null) {
+      if (ev.key === 'ArrowUp') {
         this.currentIndex = this.items.length - 1;
-      } else if (this.currentIndex > 0) {
-        this.currentIndex -= 1;
       }
+
+      this._showMenu();
     }
 
     if (ev.key === 'Escape') {
-      if (this.menuVisible) {
-        this.menuVisible = false;
-        this.currentIndex = null;
-      }
-    }
-
-    if (ev.key === 'Enter') {
-      if (this.currentIndex !== null) {
-        const selectedItem = this.items[this.currentIndex];
-
-        if (!selectedItem.disabled) {
-          selectedItem.action();
-          this.menuVisible = false;
-        }
-
-        return;
-      }
-
-      this.menuVisible = true;
-      this.currentIndex = 0;
-    }
-
-    if (ev.key === ' ' && this.currentIndex === null) {
-      this.menuVisible = true;
-      this.currentIndex = 0;
+      this._hideMenu();
     }
   }
 
   get listItems(): HTMLLIElement[] {
-    return Array.from(this.el.shadowRoot.querySelectorAll('li'));
+    return Array.from(
+      this.menuItemsComponent?.shadowRoot?.querySelectorAll('li') || [],
+    );
   }
 
-  private _getScrollParent(element) {
-    if (!element) {
-      return undefined;
-    }
-
-    let parent = element.parentNode;
-
-    while (parent) {
-      if (parent.shadowRoot === undefined) {
-        parent = parent.host;
-      } else {
-        const { overflow, overflowX } = window.getComputedStyle(parent);
-
-        if (
-          overflowX !== 'scroll' &&
-          overflow.split(' ').every((o) => o === 'auto' || o === 'scroll')
-        ) {
-          return parent;
-        }
-
-        parent = parent.parentNode;
+  private async _getScrollParent(element): Promise<HTMLElement> {
+    return new Promise((resolve) => {
+      if (!element) {
+        resolve(undefined);
       }
-    }
 
-    return document.documentElement;
+      let parent = element.parentNode;
+
+      while (parent) {
+        if (parent.shadowRoot === undefined) {
+          parent = parent.host;
+        } else {
+          const { overflow, overflowX } = window.getComputedStyle(parent);
+
+          if (
+            overflowX !== 'scroll' &&
+            overflow.split(' ').every((o) => o === 'auto' || o === 'scroll')
+          ) {
+            resolve(parent);
+          }
+
+          parent = parent.parentNode;
+        }
+      }
+
+      resolve(document.documentElement);
+    });
+  }
+
+  private _setSafeYPosition() {
+    const { top } = this.scrollingParentComponent.getBoundingClientRect();
+    const initialScrollPosition = this.scrollingParentComponent.scrollTop;
+
+    window.requestAnimationFrame(() => {
+      const { bottom: menuItemsBottom, top: menuItemsTop } =
+        this.menuItemsComponent.getBoundingClientRect();
+
+      const scrollElementTop = top - initialScrollPosition;
+      const scrollChildHeight =
+        this.scrollingParentComponent.children[0].getBoundingClientRect()
+          .height;
+      const scrollElementBottom = scrollElementTop + scrollChildHeight;
+
+      const overflow = Math.max(menuItemsBottom - scrollElementBottom, 0);
+
+      if (!this.menuItemsComponent.classList.contains('safe') && !!overflow) {
+        this.safeYPosition = menuItemsTop - overflow;
+
+        this.menuItemsComponent.style.top = `${this.safeYPosition}px`;
+
+        this.menuItemsComponent.classList.add('safe');
+      }
+    });
+  }
+
+  private _setSafeXPosition() {
+    const options = {
+      root: this.scrollingParentComponent,
+      rootMargin: '0px',
+      threshold: 1.0,
+    };
+
+    const callback = (entries) => {
+      entries.forEach((entry) => {
+        const { right: menuRight } = (
+          entry.target as HTMLCMenuItemsElement
+        ).getBoundingClientRect();
+
+        const { right: containerRight } =
+          this.scrollingParentComponent.getBoundingClientRect();
+
+        const overflowX = Math.max(menuRight - containerRight, 0);
+
+        if (!!overflowX) {
+          const left = parseFloat(this.menuItemsComponent.style.left);
+
+          this.menuItemsComponent.style.left = `${left - overflowX - 8}px`;
+        }
+      });
+    };
+
+    const observer = new IntersectionObserver(callback, options);
+
+    observer.observe(this.menuItemsComponent);
+  }
+
+  private _renderMenuItems() {
+    requestAnimationFrame(async () => {
+      this.scrollingParentComponent = await this._getScrollParent(this.el);
+
+      const { bottom, left, width } =
+        this.el.shadowRoot.children[0].getBoundingClientRect();
+
+      this.menuItemsComponent = document.createElement('c-menu-items');
+
+      this.menuItemsComponent.items = this.items;
+      this.menuItemsComponent.small = this.small;
+
+      this.menuItemsComponent.style.minWidth = `${width}px`;
+      this.menuItemsComponent.style.width = '160px';
+      this.menuItemsComponent.style.left = `${left}px`;
+      this.menuItemsComponent.style.top = `${bottom}px`;
+
+      const initialScrollPosition = this.scrollingParentComponent.scrollTop;
+
+      this.scrollingParentComponent.onscroll = (event) => {
+        const hasBeenAdjusted =
+          this.menuItemsComponent.classList.contains('safe');
+
+        const position =
+          (event.target as HTMLElement).scrollTop - initialScrollPosition;
+
+        this.menuItemsComponent.style.top = `${
+          (hasBeenAdjusted ? this.safeYPosition : bottom) - position
+        }px`;
+      };
+
+      this.menuItemsComponent.addEventListener('close', () => this._hideMenu());
+
+      document.body.appendChild(this.menuItemsComponent);
+
+      this.menuItemsComponent.active = true;
+      this.menuItemsComponent.parent = this.el;
+      this.menuItemsComponent.index = this.currentIndex;
+
+      this.menuItemsComponent.setAttribute('tabindex', '0');
+
+      this._setSafeYPosition();
+
+      window.requestAnimationFrame(() => {
+        this.menuItemsComponent.shadowRoot.querySelector('ul').focus();
+
+        this._setSafeXPosition();
+      });
+    });
   }
 
   private _showMenu() {
@@ -171,43 +254,13 @@ export class CMenu {
       return;
     }
 
-    this.menuVisible = !this.menuVisible;
-    requestAnimationFrame(() => {
-      const { top, left, width, height } = this.el.getBoundingClientRect();
+    this.menuVisible = true;
 
-      const initialPosition = top + height;
-
-      this.menuItemsComponent = document.createElement('c-menu-items');
-
-      this.menuItemsComponent.items = this.items;
-      this.menuItemsComponent.small = this.small;
-
-      this.menuItemsComponent.style.minWidth = `${width}px`;
-      this.menuItemsComponent.style.left = `${left}px`;
-      this.menuItemsComponent.style.top = `${initialPosition}px`;
-
-      this.scrollingParentComponent = this._getScrollParent(this.el);
-
-      const initialScrollPosition = this.scrollingParentComponent.scrollTop;
-
-      this.scrollingParentComponent.onscroll = (event) => {
-        const position =
-          (event.target as HTMLElement).scrollTop - initialScrollPosition;
-        this.menuItemsComponent.style.top = `${initialPosition - position}px`;
-      };
-
-      this.menuItemsComponent.addEventListener('close', () => this._hideMenu());
-
-      document.body.appendChild(this.menuItemsComponent);
-
-      this.menuItemsComponent.active = true;
-    });
+    this._renderMenuItems();
   }
 
   private _hideMenu() {
     if (!this.menuVisible) return;
-
-    this.menuVisible = false;
 
     if (this.menuItemsComponent) {
       this.menuItemsComponent.removeEventListener('close', () =>
@@ -220,6 +273,13 @@ export class CMenu {
 
       this.menuItemsComponent = null;
     }
+
+    this.menuVisible = false;
+    this.currentIndex = null;
+
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
+    this.el.shadowRoot.children[0].focus();
   }
 
   private _renderCustomTrigger() {
@@ -262,10 +322,7 @@ export class CMenu {
 
     return (
       this.isInitialized && (
-        <Host
-          class={hostClasses}
-          ref={(el) => registerClickOutside(this, el, () => this._hideMenu())}
-        >
+        <Host class={hostClasses}>
           {this.customTrigger ? (
             this._renderCustomTrigger()
           ) : (

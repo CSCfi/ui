@@ -1096,6 +1096,10 @@
           "description": "is active"
         },
         {
+          "name": "index",
+          "description": "is active"
+        },
+        {
           "name": "small",
           "description": "Small variant"
         }
