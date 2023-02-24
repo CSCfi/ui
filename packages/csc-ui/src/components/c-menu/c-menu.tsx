@@ -140,23 +140,32 @@ export class CMenu {
   }
 
   private _setSafeYPosition() {
-    const { top } = this.scrollingParentComponent.getBoundingClientRect();
+    const { top, bottom } =
+      this.scrollingParentComponent.getBoundingClientRect();
     const initialScrollPosition = this.scrollingParentComponent.scrollTop;
-
     window.requestAnimationFrame(() => {
-      const { bottom: menuItemsBottom, top: menuItemsTop } =
-        this.menuItemsComponent.getBoundingClientRect();
+      let overflow = 0;
 
-      const scrollElementTop = top - initialScrollPosition;
-      const scrollChildHeight =
-        this.scrollingParentComponent.children[0].getBoundingClientRect()
-          .height;
-      const scrollElementBottom = scrollElementTop + scrollChildHeight;
+      const {
+        bottom: menuItemsBottom,
+        height: menuItemsHeight,
+        top: menuItemsTop,
+      } = this.menuItemsComponent.getBoundingClientRect();
 
-      const overflow = Math.max(menuItemsBottom - scrollElementBottom, 0);
+      if (this.scrollingParentComponent.tagName === 'HTML') {
+        overflow = Math.max(menuItemsTop + menuItemsHeight - bottom, 0);
+      } else {
+        const scrollElementTop = top - initialScrollPosition;
+        const scrollChildHeight =
+          this.scrollingParentComponent.children[0].getBoundingClientRect()
+            .height;
+        const scrollElementBottom = scrollElementTop + scrollChildHeight;
+
+        overflow = Math.max(menuItemsBottom - scrollElementBottom, 0);
+      }
 
       if (!this.menuItemsComponent.classList.contains('safe') && !!overflow) {
-        this.safeYPosition = menuItemsTop - overflow;
+        this.safeYPosition = menuItemsTop - overflow - 8;
 
         this.menuItemsComponent.style.top = `${this.safeYPosition}px`;
 
@@ -254,7 +263,7 @@ export class CMenu {
       return;
     }
 
-    this.menuVisible = true;
+    this.menuVisible = !this.menuVisible;
 
     this._renderMenuItems();
   }

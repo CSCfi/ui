@@ -1,8 +1,17 @@
 <app-example title="Basic usage" name="basic" component="c-toolbar">
   <c-toolbar class="relative">
     <c-csc-logo></c-csc-logo>
+
     Application title
+
     <c-spacer></c-spacer>
+
+    <c-menu [items]="items" simple>
+      <c-icon-button ghost badge="4" tabindex="-1" size="small">
+        <i class="mdi mdi-email-outline"></i>
+      </c-icon-button>
+    </c-menu>
+
     <c-navigationbutton></c-navigationbutton>
   </c-toolbar>
 </app-example>

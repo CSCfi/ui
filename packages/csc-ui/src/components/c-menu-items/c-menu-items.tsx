@@ -160,20 +160,23 @@ export class CMenuItems {
     );
   };
 
-  private _handleOtsideClick(event) {
-    const outsideClick =
-      typeof event.composedPath === 'function' &&
-      !event.composedPath().includes(this.parent);
-
-    if (outsideClick) {
-      this.close.emit();
-    }
+  private _handleOtsideClick() {
+    this.close.emit();
   }
 
   componentDidLoad() {
     window.addEventListener('click', this._handleOtsideClick.bind(this), {
       once: true,
     });
+
+    // z-index
+    const styles = window.getComputedStyle(
+      (this.parent.assignedSlot || this.parent).parentElement,
+    );
+
+    const zIndex = styles.getPropertyValue('z-index');
+
+    this.host.style.zIndex = zIndex === 'auto' ? '1' : zIndex;
 
     this.host.shadowRoot.querySelector('li').focus();
     this.currentIndex = this.index;
