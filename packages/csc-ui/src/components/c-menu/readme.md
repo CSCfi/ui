@@ -1,4 +1,4 @@
-# c-menu
+# c-muna
 
 
 
@@ -7,13 +7,14 @@
 
 ## Properties
 
-| Property        | Attribute | Description                                                                        | Type                 | Default     |
-| --------------- | --------- | ---------------------------------------------------------------------------------- | -------------------- | ----------- |
-| `customTrigger` | --        | Programmatic trigger component                                                     | `CMenuCustomTrigger` | `undefined` |
-| `items`         | --        | Menu items                                                                         | `CMenuOption[]`      | `[]`        |
-| `nohover`       | `nohover` | No hover background                                                                | `boolean`            | `false`     |
-| `simple`        | `simple`  | Simple variant without chevron and background, E.g. when a button is the activator | `boolean`            | `false`     |
-| `small`         | `small`   | Small variant                                                                      | `boolean`            | `false`     |
+| Property        | Attribute        | Description                                                                        | Type                 | Default     |
+| --------------- | ---------------- | ---------------------------------------------------------------------------------- | -------------------- | ----------- |
+| `customTrigger` | --               | Programmatic trigger component                                                     | `CMenuCustomTrigger` | `undefined` |
+| `items`         | --               | Menu items                                                                         | `CMenuOption[]`      | `[]`        |
+| `itemsPerPage`  | `items-per-page` | Items per page before adding scroll                                                | `number`             | `6`         |
+| `nohover`       | `nohover`        | No hover background                                                                | `boolean`            | `false`     |
+| `simple`        | `simple`         | Simple variant without chevron and background, E.g. when a button is the activator | `boolean`            | `false`     |
+| `small`         | `small`          | Small variant                                                                      | `boolean`            | `false`     |
 
 
 ## Slots

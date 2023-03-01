@@ -2,14 +2,14 @@ import {
   Component,
   Host,
   h,
+  Element,
   State,
   Prop,
   Listen,
-  Element,
-  Watch,
 } from '@stencil/core';
 import { mdiChevronDown } from '@mdi/js';
-import { CMenuOption, CMenuCustomTrigger } from '../../types';
+import { v4 as uuid } from 'uuid';
+import { CMenuCustomTrigger, CMenuOption } from '../../types';
 
 /**
  * @group Navigation
@@ -21,19 +21,12 @@ import { CMenuOption, CMenuCustomTrigger } from '../../types';
   shadow: true,
 })
 export class CMenu {
-  @Element() el: HTMLCMenuElement;
+  @Element() host: HTMLCMenuElement;
 
-  @State() currentIndex: number = null;
-
-  @State() menuVisible = false;
-
-  @State() isInitialized = false;
-
-  @State() menuItemsComponent: HTMLCMenuItemsElement | null = null;
-
-  @State() scrollingParentComponent: HTMLElement | null = null;
-
-  @State() safeYPosition = 0;
+  /**
+   * Menu items
+   */
+  @Prop() items: CMenuOption[] = [];
 
   /**
    * Simple variant without chevron and background, E.g. when a button is the activator
@@ -51,39 +44,28 @@ export class CMenu {
   @Prop() nohover = false;
 
   /**
+   * Items per page before adding scroll
+   */
+  @Prop() itemsPerPage = 6;
+
+  /**
    * Programmatic trigger component
    */
   @Prop() customTrigger: CMenuCustomTrigger;
 
-  /**
-   * Menu items
-   */
-  @Prop() items: CMenuOption[] = [];
+  @State() menuItemsComponent: HTMLCMenuItemsElement | null = null;
 
-  @Watch('currentIndex')
-  onIndexChange(index: number) {
-    this.listItems.forEach((item, i) => {
-      item.classList.toggle('active', i === index);
+  @State() menuWrapperComponent: HTMLDivElement | null = null;
 
-      if (i === index) {
-        item.focus();
-      }
-    });
-  }
+  @State() currentIndex: number = null;
 
-  @Watch('menuVisible')
-  onVisibilityChange(visible: boolean) {
-    if (!visible) {
-      this.listItems?.[this.currentIndex]?.blur();
-      this.currentIndex = null;
-    }
-  }
+  @State() active = false;
 
   @Listen('keydown', { capture: true })
   handleKeyDown(ev: KeyboardEvent) {
     const openKeys = ['ArrowDown', 'ArrowUp', 'Enter', ' '];
 
-    if (!this.menuVisible && openKeys.includes(ev.key)) {
+    if (!this.active && openKeys.includes(ev.key)) {
       ev.preventDefault();
 
       this.currentIndex = null;
@@ -96,7 +78,7 @@ export class CMenu {
         this.currentIndex = this.items.length - 1;
       }
 
-      this._showMenu();
+      this._onClick();
     }
 
     if (ev.key === 'Escape') {
@@ -104,191 +86,126 @@ export class CMenu {
     }
   }
 
-  get listItems(): HTMLLIElement[] {
-    return Array.from(
-      this.menuItemsComponent?.shadowRoot?.querySelectorAll('li') || [],
+  private _uniqueId = `c-menu-items-${uuid()}`;
+
+  private _createWrapperElement() {
+    const existingOverlay = document.querySelector('.c-menu-overlay__content');
+
+    if (existingOverlay) return existingOverlay;
+
+    const overlay = document.createElement('div');
+
+    overlay.classList.add('c-menu-overlay');
+
+    const overlayContent = document.createElement('div');
+
+    overlayContent.classList.add('c-menu-overlay__content');
+
+    overlay.appendChild(overlayContent);
+
+    document.body.appendChild(overlay);
+
+    return overlayContent;
+  }
+
+  private _getNativeChild(parent = this.host as Element) {
+    let element = parent.shadowRoot.children[0];
+
+    if (!!element.shadowRoot) {
+      element = this._getNativeChild(element);
+    }
+
+    return element as HTMLElement;
+  }
+
+  private _addMenuItemsComponentListeners(height: number, width: number) {
+    this.menuItemsComponent.onclose = () => {
+      this._hideMenu();
+
+      const element = this._getNativeChild();
+
+      element.focus();
+    };
+
+    this.menuItemsComponent.addEventListener(
+      'open',
+      (event: CustomEvent) => this._onOpen(event, height, width),
+      {
+        once: true,
+      },
     );
   }
 
-  private async _getScrollParent(element): Promise<HTMLElement> {
-    return new Promise((resolve) => {
-      if (!element) {
-        resolve(undefined);
-      }
-
-      let parent = element.parentNode;
-
-      while (parent) {
-        if (parent.shadowRoot === undefined) {
-          parent = parent.host;
-        } else {
-          const { overflow, overflowX } = window.getComputedStyle(parent);
-
-          if (
-            overflowX !== 'scroll' &&
-            overflow.split(' ').every((o) => o === 'auto' || o === 'scroll')
-          ) {
-            resolve(parent);
-          }
-
-          parent = parent.parentNode;
-        }
-      }
-
-      resolve(document.documentElement);
-    });
-  }
-
-  private _setSafeYPosition() {
-    const { top, bottom } =
-      this.scrollingParentComponent.getBoundingClientRect();
-    const initialScrollPosition = this.scrollingParentComponent.scrollTop;
-    window.requestAnimationFrame(() => {
-      let overflow = 0;
-
-      const {
-        bottom: menuItemsBottom,
-        height: menuItemsHeight,
-        top: menuItemsTop,
-      } = this.menuItemsComponent.getBoundingClientRect();
-
-      if (this.scrollingParentComponent.tagName === 'HTML') {
-        overflow = Math.max(menuItemsTop + menuItemsHeight - bottom, 0);
-      } else {
-        const scrollElementTop = top - initialScrollPosition;
-        const scrollChildHeight =
-          this.scrollingParentComponent.children[0].getBoundingClientRect()
-            .height;
-        const scrollElementBottom = scrollElementTop + scrollChildHeight;
-
-        overflow = Math.max(menuItemsBottom - scrollElementBottom, 0);
-      }
-
-      if (!this.menuItemsComponent.classList.contains('safe') && !!overflow) {
-        this.safeYPosition = menuItemsTop - overflow - 8;
-
-        this.menuItemsComponent.style.top = `${this.safeYPosition}px`;
-
-        this.menuItemsComponent.classList.add('safe');
-      }
-    });
-  }
-
-  private _setSafeXPosition() {
-    const options = {
-      root: this.scrollingParentComponent,
-      rootMargin: '0px',
-      threshold: 1.0,
-    };
-
-    const callback = (entries) => {
-      entries.forEach((entry) => {
-        const { right: menuRight } = (
-          entry.target as HTMLCMenuItemsElement
-        ).getBoundingClientRect();
-
-        const { right: containerRight } =
-          this.scrollingParentComponent.getBoundingClientRect();
-
-        const overflowX = Math.max(menuRight - containerRight, 0);
-
-        if (!!overflowX) {
-          const left = parseFloat(this.menuItemsComponent.style.left);
-
-          this.menuItemsComponent.style.left = `${left - overflowX - 8}px`;
-        }
-      });
-    };
-
-    const observer = new IntersectionObserver(callback, options);
-
-    observer.observe(this.menuItemsComponent);
-  }
-
-  private _renderMenuItems() {
-    requestAnimationFrame(async () => {
-      this.scrollingParentComponent = await this._getScrollParent(this.el);
-
-      const { bottom, left, width } =
-        this.el.shadowRoot.children[0].getBoundingClientRect();
-
-      this.menuItemsComponent = document.createElement('c-menu-items');
-
-      this.menuItemsComponent.items = this.items;
-      this.menuItemsComponent.small = this.small;
-
-      this.menuItemsComponent.style.minWidth = `${width}px`;
-      this.menuItemsComponent.style.width = '160px';
-      this.menuItemsComponent.style.left = `${left}px`;
-      this.menuItemsComponent.style.top = `${bottom}px`;
-
-      const initialScrollPosition = this.scrollingParentComponent.scrollTop;
-
-      this.scrollingParentComponent.onscroll = (event) => {
-        const hasBeenAdjusted =
-          this.menuItemsComponent.classList.contains('safe');
-
-        const position =
-          (event.target as HTMLElement).scrollTop - initialScrollPosition;
-
-        this.menuItemsComponent.style.top = `${
-          (hasBeenAdjusted ? this.safeYPosition : bottom) - position
-        }px`;
-      };
-
-      this.menuItemsComponent.addEventListener('close', () => this._hideMenu());
-
-      document.body.appendChild(this.menuItemsComponent);
-
-      this.menuItemsComponent.active = true;
-      this.menuItemsComponent.parent = this.el;
-      this.menuItemsComponent.index = this.currentIndex;
-
-      this.menuItemsComponent.setAttribute('tabindex', '0');
-
-      this._setSafeYPosition();
-
-      window.requestAnimationFrame(() => {
-        this.menuItemsComponent.shadowRoot.querySelector('ul').focus();
-
-        this._setSafeXPosition();
-      });
-    });
-  }
-
-  private _showMenu() {
-    if (this.menuVisible) {
-      this.currentIndex = null;
-
-      return;
-    }
-
-    this.menuVisible = !this.menuVisible;
-
-    this._renderMenuItems();
+  private _getHostPosition() {
+    return this.host.getBoundingClientRect();
   }
 
   private _hideMenu() {
-    if (!this.menuVisible) return;
+    this.menuItemsComponent?.remove();
+    this.menuItemsComponent = null;
+    this.active = false;
+  }
 
-    if (this.menuItemsComponent) {
-      this.menuItemsComponent.removeEventListener('close', () =>
-        this._hideMenu(),
-      );
+  private _onOpen(event: CustomEvent, height: number, width: number) {
+    window.requestAnimationFrame(() => {
+      const { isInView, height: menuHeight, width: menuWidth } = event.detail;
 
-      this.scrollingParentComponent.onscroll = null;
+      if (!isInView.y) {
+        const posY =
+          parseFloat(this.menuItemsComponent.style.top) - menuHeight - height;
 
-      document.body.removeChild(this.menuItemsComponent);
+        this.menuItemsComponent.style.top = `${posY}px`;
+        this.menuItemsComponent.top = posY;
+      }
 
-      this.menuItemsComponent = null;
-    }
+      if (!isInView.x) {
+        this.menuItemsComponent.style.left = `${
+          parseFloat(this.menuItemsComponent.style.left) - menuWidth + width
+        }px`;
+      }
 
-    this.menuVisible = false;
-    this.currentIndex = null;
+      this.active = true;
+      this.menuItemsComponent.active = true;
 
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
-    this.el.shadowRoot.children[0].focus();
+      this.menuItemsComponent?.shadowRoot?.querySelector('ul')?.focus();
+    });
+  }
+
+  private _onClick() {
+    if (this.menuItemsComponent) return;
+
+    const { bottom, left, width, height } = this._getHostPosition();
+
+    this.menuItemsComponent = document.createElement('c-menu-items');
+
+    this.menuItemsComponent.style.top = `${bottom}px`;
+    this.menuItemsComponent.style.left = `${left}px`;
+    this.menuItemsComponent.style.minWidth = `${width}px`;
+    this.menuItemsComponent.parent = this.host;
+    this.menuItemsComponent.items = this.items;
+    this.menuItemsComponent.small = this.small;
+    this.menuItemsComponent.itemsPerPage = this.itemsPerPage;
+    this.menuItemsComponent.top = bottom;
+    this.menuItemsComponent.id = this._uniqueId;
+    this.menuItemsComponent.index = this.currentIndex;
+    this.menuItemsComponent.setAttribute('tabindex', '-1');
+    this.menuItemsComponent.setAttribute('role', 'listbox');
+
+    this._addMenuItemsComponentListeners(height, width);
+
+    this._createWrapperElement().appendChild(this.menuItemsComponent);
+
+    window.setTimeout(() => {
+      console.dir(this.menuItemsComponent);
+      (
+        (this.menuItemsComponent?.shadowRoot?.children[0] as HTMLUListElement)
+          ?.children[0] as HTMLLIElement
+      )?.focus();
+    }, 200);
+  }
+
+  disconnectedCallback() {
+    this._hideMenu();
   }
 
   private _renderCustomTrigger() {
@@ -301,74 +218,64 @@ export class CMenu {
       <Tag
         {...params}
         class="custom-menu-trigger"
-        aria-expanded={this.menuVisible.toString()}
-        aria-haspopup="true"
-        aria-controls="c-menu-items"
-        onClick={() => this._showMenu()}
+        aria-expanded={this.active.toString()}
+        aria-haspopup="listbox"
+        aria-controls={this._uniqueId}
+        onClick={() => this._onClick()}
       >
         {props.value}
       </Tag>
     );
   }
 
-  /**
-   * Prevent unstyled elements from showing in Firefox
-   */
-  componentDidLoad() {
-    setTimeout(() => {
-      this.isInitialized = true;
-    }, 50);
-  }
-
   render() {
     const hostClasses = {
       'c-menu': true,
-      'simple-host': this.simple,
-      active: this.menuVisible,
-      nohover: this.nohover,
-      small: this.small,
+      'c-menu--simple': this.simple,
+      'c-menu--active': this.active,
+      'c-menu--no-hover': this.nohover,
+      'c-menu--small': this.small,
     };
 
     return (
-      this.isInitialized && (
-        <Host class={hostClasses}>
-          {this.customTrigger ? (
-            this._renderCustomTrigger()
-          ) : (
-            <button
-              aria-expanded={this.menuVisible.toString()}
-              aria-haspopup="true"
-              aria-controls="c-menu-items"
-              class={{
-                'c-menu-wrapper': !this.simple,
-                simple: this.simple,
-              }}
-              type="button"
-              onClick={() => this._showMenu()}
-            >
-              {this.simple ? (
+      <Host class={hostClasses}>
+        {this.customTrigger ? (
+          this._renderCustomTrigger()
+        ) : (
+          <button
+            aria-expanded={this.active.toString()}
+            aria-haspopup="listbox"
+            aria-controls={this._uniqueId}
+            class={{
+              'c-menu-wrapper': !this.simple,
+              simple: this.simple,
+            }}
+            tabindex="0"
+            type="button"
+            onClick={() => this._onClick()}
+          >
+            {this.simple ? (
+              <slot></slot>
+            ) : (
+              <div class="c-menu__header">
                 <slot></slot>
-              ) : (
-                <div class={this.small ? 'c-select-row small' : 'c-select-row'}>
-                  <slot></slot>
-                  <svg
-                    width={this.small ? '16' : '22'}
-                    height={this.small ? '16' : '22'}
-                    viewBox="0 0 24 24"
-                    class={
-                      this.menuVisible
-                        ? 'c-select-icon rotated'
-                        : 'c-select-icon'
-                    }
-                  >
-                    <path d={mdiChevronDown} />
-                  </svg>
-                </div>
-              )}
-            </button>
-          )}
-        </Host>
-      )
+                <svg
+                  width={this.small ? '16' : '22'}
+                  height={this.small ? '16' : '22'}
+                  viewBox="0 0 24 24"
+                  class={
+                    this.active
+                      ? 'c-menu__icon c-menu__icon--rotated'
+                      : 'c-menu__icon'
+                  }
+                >
+                  <path d={mdiChevronDown} />
+                </svg>
+              </div>
+            )}
+          </button>
+        )}
+      </Host>
     );
   }
 }

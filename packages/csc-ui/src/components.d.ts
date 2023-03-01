@@ -661,6 +661,10 @@ export namespace Components {
          */
         "items": CMenuOption[];
         /**
+          * Items per page before adding scroll
+         */
+        "itemsPerPage": number;
+        /**
           * No hover background
          */
         "nohover": boolean;
@@ -675,8 +679,7 @@ export namespace Components {
     }
     interface CMenuItems {
         /**
-          * is active
-          * @private
+          * Menu is opened and positioned
          */
         "active": boolean;
         /**
@@ -689,13 +692,25 @@ export namespace Components {
          */
         "items": CMenuOption[];
         /**
+          * Items per page before adding scroll
+         */
+        "itemsPerPage": number;
+        /**
           * Menu parent
          */
         "parent": HTMLCMenuElement;
         /**
+          * Type of parent
+         */
+        "parentType": string;
+        /**
           * Small variant
          */
         "small": boolean;
+        /**
+          * Initial top position
+         */
+        "top": number;
     }
     interface CModal {
         /**
@@ -2453,6 +2468,10 @@ declare namespace LocalJSX {
          */
         "items"?: CMenuOption[];
         /**
+          * Items per page before adding scroll
+         */
+        "itemsPerPage"?: number;
+        /**
           * No hover background
          */
         "nohover"?: boolean;
@@ -2467,8 +2486,7 @@ declare namespace LocalJSX {
     }
     interface CMenuItems {
         /**
-          * is active
-          * @private
+          * Menu is opened and positioned
          */
         "active"?: boolean;
         /**
@@ -2481,17 +2499,40 @@ declare namespace LocalJSX {
          */
         "items"?: CMenuOption[];
         /**
-          * Triggered when menu is closed
+          * Items per page before adding scroll
+         */
+        "itemsPerPage"?: number;
+        /**
+          * Triggered when the menu is closed
          */
         "onClose"?: (event: CMenuItemsCustomEvent<any>) => void;
+        /**
+          * Triggered when the menu is opened
+         */
+        "onOpen"?: (event: CMenuItemsCustomEvent<{
+    height: number;
+    width: number;
+    isInView: {
+      x: boolean;
+      y: boolean;
+    };
+  }>) => void;
         /**
           * Menu parent
          */
         "parent"?: HTMLCMenuElement;
         /**
+          * Type of parent
+         */
+        "parentType"?: string;
+        /**
           * Small variant
          */
         "small"?: boolean;
+        /**
+          * Initial top position
+         */
+        "top"?: number;
     }
     interface CModal {
         /**

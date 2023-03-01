@@ -1071,6 +1071,10 @@
       },
       "attributes": [
         {
+          "name": "items-per-page",
+          "description": "Items per page before adding scroll"
+        },
+        {
           "name": "nohover",
           "description": "No hover background"
         },
@@ -1093,15 +1097,27 @@
       "attributes": [
         {
           "name": "active",
-          "description": "is active"
+          "description": "Menu is opened and positioned"
         },
         {
           "name": "index",
           "description": "is active"
         },
         {
+          "name": "items-per-page",
+          "description": "Items per page before adding scroll"
+        },
+        {
+          "name": "parent-type",
+          "description": "Type of parent"
+        },
+        {
           "name": "small",
           "description": "Small variant"
+        },
+        {
+          "name": "top",
+          "description": "Initial top position"
         }
       ]
     },

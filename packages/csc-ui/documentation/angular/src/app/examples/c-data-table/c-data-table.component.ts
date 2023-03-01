@@ -147,8 +147,12 @@ export class CDataTableComponent implements OnInit {
       component: {
         tag: 'c-tag',
         params: {
-          onClick: ({ data }) =>
-            console.log(`Row with an id of ${data?.['id']?.value} was clicked`),
+          onClick: ({ event, data }) => {
+            // stop clicking on the tag from opening the row details
+            event.stopPropagation();
+
+            console.log(`Row with an id of ${data?.['id']?.value} was clicked`);
+          },
         },
       },
     },
@@ -225,7 +229,12 @@ export class CDataTableComponent implements OnInit {
               path: mdiDelete,
               size: 'small',
               title: 'Remove user',
-              onClick: ({ data }) => this.onDelete(data['id'].value),
+              onClick: ({ event, data }) => {
+                // stop clicking on the button from opening the row details
+                event.stopPropagation();
+
+                this.onDelete(data['id'].value);
+              },
             },
           },
         },
@@ -238,10 +247,14 @@ export class CDataTableComponent implements OnInit {
               path: mdiHeartPlus,
               title: 'Add to favourites',
               size: 'small',
-              onClick: ({ data }) =>
+              onClick: ({ event, data }) => {
+                // stop clicking on the button from opening the row details
+                event.stopPropagation();
+
                 console.log(
                   `${data['firstName'].value} ${data['lastName'].value} added to favourites`,
-                ),
+                );
+              },
             },
           },
         },

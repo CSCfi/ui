@@ -53,7 +53,6 @@ export class CTag {
       tabindex: 0,
       ...(!this.flat && {
         role: 'button',
-        onClick: (event) => event.stopPropagation(),
       }),
     };
 
