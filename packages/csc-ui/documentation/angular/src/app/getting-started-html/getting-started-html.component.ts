@@ -34,7 +34,7 @@ export class GettingStartedHtmlComponent implements OnInit {
   constructor(private _versionService: VersionService) {}
 
   ngOnInit(): void {
-    this.script = `<script src="https://unpkg.com/csc-ui@${this._versionService.version}/dist/cscwebcomponents/cscwebcomponents.esm.js" type="module"></script>`;
+    this.script = `<script src="https://cdn.jsdelivr.net/npm/csc-ui@${this._versionService.version}/dist/cscwebcomponents/cscwebcomponents.esm.js" type="module"></script>`;
 
     sdk.embedProjectId('simple-example', 'web-platform-9ew2kk', {
       forceEmbedLayout: true,
