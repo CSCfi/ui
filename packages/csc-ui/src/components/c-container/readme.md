@@ -5,10 +5,6 @@
 <!-- Auto Generated Below -->
 
 
-## Overview
-
-Container component for holding current page content
-
 ## Properties
 
 | Property | Attribute | Description                          | Type     | Default     |

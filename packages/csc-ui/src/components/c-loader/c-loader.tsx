@@ -1,7 +1,7 @@
 import { Component, Element, Host, h, Prop, Watch } from '@stencil/core';
 
 /**
- * A loader component that fills the nearest containing element that has css-property position set to 'relative'
+ * A loader component that fills the nearest containing element that has css-property position set
  *
  * @group Indicators
  */

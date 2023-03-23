@@ -866,7 +866,7 @@
       "name": "c-loader",
       "description": {
         "kind": "markdown",
-        "value": "A loader component that fills the nearest containing element that has css-property position set to 'relative'"
+        "value": "A loader component that fills the nearest containing element that has css-property position set"
       },
       "attributes": [
         {
