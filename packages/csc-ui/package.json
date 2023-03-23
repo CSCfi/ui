@@ -31,26 +31,26 @@
     "prepare": "node -e \"try { require('husky').install() } catch (e) {if (e.code !== 'MODULE_NOT_FOUND') throw e}\""
   },
   "devDependencies": {
-    "@auto-it/all-contributors": "^10.38.5",
+    "@auto-it/all-contributors": "^10.43.0",
     "@stencil/angular-output-target": "^0.4.0",
     "@stencil/eslint-plugin": "^0.4.0",
-    "@stencil/sass": "^1.5.2",
-    "auto": "^10.38.5",
+    "@stencil/sass": "^3.0.0",
+    "auto": "^10.43.0",
     "eslint-config-airbnb": "^19.0.4",
     "eslint-config-node": "^4.1.0",
-    "eslint-config-prettier": "^8.5.0",
-    "eslint-plugin-import": "^2.26.0",
+    "eslint-config-prettier": "^8.8.0",
+    "eslint-plugin-import": "^2.27.5",
     "eslint-plugin-node": "^11.1.0",
-    "eslint-plugin-prettier": "^4.0.0",
-    "husky": "^8.0.1",
-    "prettier": "^2.6.2",
-    "style-dictionary": "^3.7.0"
+    "eslint-plugin-prettier": "^4.2.1",
+    "husky": "^8.0.3",
+    "prettier": "^2.8.6",
+    "style-dictionary": "^3.7.2"
   },
   "license": "MIT",
   "dependencies": {
-    "@mdi/js": "^6.7.96",
-    "@stencil/core": "^2.16.0",
-    "@types/node": "^17.0.38",
+    "@mdi/js": "^7.2.96",
+    "@stencil/core": "^3.2.0",
+    "@types/node": "^18.15.5",
     "stencil-click-outside": "^1.8.0",
     "swiper": "^8.2.1",
     "uuid": "^8.3.2"

@@ -5,6 +5,10 @@
 <!-- Auto Generated Below -->
 
 
+## Overview
+
+A loader component that fills the nearest containing element that has css-property position set to 'relative'
+
 ## Properties
 
 | Property       | Attribute      | Description                                                        | Type      | Default |
