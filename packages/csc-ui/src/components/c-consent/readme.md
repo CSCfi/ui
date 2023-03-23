@@ -5,6 +5,10 @@
 <!-- Auto Generated Below -->
 
 
+## Overview
+
+A container component for cookie consent
+
 ## Slots
 
 | Slot | Description            |

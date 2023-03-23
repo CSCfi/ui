@@ -5,6 +5,10 @@
 <!-- Auto Generated Below -->
 
 
+## Overview
+
+Basic hyperlink component
+
 ## Properties
 
 | Property    | Attribute    | Description                             | Type                                                                                                                                                                                                                                             | Default     |

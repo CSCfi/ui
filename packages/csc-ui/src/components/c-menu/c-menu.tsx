@@ -196,7 +196,6 @@ export class CMenu {
     this._createWrapperElement().appendChild(this.menuItemsComponent);
 
     window.setTimeout(() => {
-      console.dir(this.menuItemsComponent);
       (
         (this.menuItemsComponent?.shadowRoot?.children[0] as HTMLUListElement)
           ?.children[0] as HTMLLIElement

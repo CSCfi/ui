@@ -8,7 +8,13 @@ import { HTMLStencilElement, JSXBase } from "@stencil/core/internal";
 import { CAlertType, CAutocompleteItem, CDataTableData, CDataTableFooterOptions, CDataTableHeader, CMenuCustomTrigger, CMenuOption, CPaginationOptions, CRadioGroupItem, CSCColor, CSelectItem, CToastMessage } from "./types";
 import { CardBackground } from "./components/c-card/c-card";
 import { CLoginCardBlendMode } from "./components/c-login-card/c-login-card";
+export { CAlertType, CAutocompleteItem, CDataTableData, CDataTableFooterOptions, CDataTableHeader, CMenuCustomTrigger, CMenuOption, CPaginationOptions, CRadioGroupItem, CSCColor, CSelectItem, CToastMessage } from "./types";
+export { CardBackground } from "./components/c-card/c-card";
+export { CLoginCardBlendMode } from "./components/c-login-card/c-login-card";
 export namespace Components {
+    /**
+     * @group Content Selectors
+     */
     interface CAccordion {
         /**
           * Disallow collapsing all the items
@@ -27,6 +33,9 @@ export namespace Components {
          */
         "value": number | string | (number | string)[];
     }
+    /**
+     * @parent c-accordion
+     */
     interface CAccordionItem {
         /**
           * Marks the item as collapsable
@@ -56,12 +65,18 @@ export namespace Components {
          */
         "value": number | string;
     }
+    /**
+     * @group Indicators
+     */
     interface CAlert {
         /**
           * Type of the alert
          */
         "type"?: CAlertType;
     }
+    /**
+     * @group Form
+     */
     interface CAutocomplete {
         /**
           * Auto focus the input
@@ -144,6 +159,9 @@ export namespace Components {
          */
         "value": string | number | CAutocompleteItem;
     }
+    /**
+     * @group Buttons
+     */
     interface CButton {
         /**
           * Disable the button
@@ -220,6 +238,9 @@ export namespace Components {
          */
         "value"?: number | string;
     }
+    /**
+     * @group Cards
+     */
     interface CCard {
         /**
           * Card background image for login pages of specific services
@@ -242,6 +263,9 @@ export namespace Components {
          */
         "fullscreen": boolean;
     }
+    /**
+     * @parent c-card
+     */
     interface CCardActions {
         /**
           * Align the actions
@@ -257,10 +281,19 @@ export namespace Components {
     | 'stretch'
     | 'space-around';
     }
+    /**
+     * @parent c-card
+     */
     interface CCardContent {
     }
+    /**
+     * @parent c-card
+     */
     interface CCardTitle {
     }
+    /**
+     * @group Form
+     */
     interface CCheckbox {
         /**
           * Disable the checkbox
@@ -299,20 +332,34 @@ export namespace Components {
          */
         "value": boolean;
     }
+    /**
+     * A container component for cookie consent
+     * @group Popups
+     */
     interface CConsent {
     }
+    /**
+     * Container component for holding current page content
+     * @group Layout
+     */
     interface CContainer {
         /**
           * Maximum width of container in pixels
          */
         "width": number;
     }
+    /**
+     * @parent c-toolbar
+     */
     interface CCscLogo {
         /**
           * Logo width in pixels
          */
         "width": number;
     }
+    /**
+     * @group Tables
+     */
     interface CDataTable {
         /**
           * Clear selections externally
@@ -387,8 +434,15 @@ export namespace Components {
          */
         "stickyHeader": boolean;
     }
+    /**
+     * Component which fills the remaining space within a flex container
+     * @group Layout
+     */
     interface CFlex {
     }
+    /**
+     * @group Other
+     */
     interface CIcon {
         /**
           * Fill color
@@ -403,6 +457,9 @@ export namespace Components {
          */
         "size": number;
     }
+    /**
+     * @group Buttons
+     */
     interface CIconButton {
         /**
           * Show a badge on top of the icon
@@ -437,6 +494,9 @@ export namespace Components {
          */
         "text": boolean;
     }
+    /**
+     * @parent None
+     */
     interface CInput {
         /**
           * Auto focus the input
@@ -540,6 +600,10 @@ export namespace Components {
          */
         "variant": 'text' | 'select';
     }
+    /**
+     * Basic hyperlink component
+     * @group Buttons
+     */
     interface CLink {
         /**
           * Use another CSC color
@@ -578,6 +642,10 @@ export namespace Components {
          */
         "weight": string;
     }
+    /**
+     * A loader component that fills the nearest containing element that has css-property position set to 'relative'
+     * @group Indicators
+     */
     interface CLoader {
         /**
           * Delay in seconds of showing the contents in the slot of the loader
@@ -592,6 +660,9 @@ export namespace Components {
          */
         "size": number;
     }
+    /**
+     * @parent c-login-buttons
+     */
     interface CLoginButton {
         /**
           * Alt description for logo
@@ -606,8 +677,14 @@ export namespace Components {
          */
         "src": string;
     }
+    /**
+     * @parent none
+     */
     interface CLoginButtons {
     }
+    /**
+     * @group Cards
+     */
     interface CLoginCard {
         /**
           * Background position (css background-position)
@@ -630,6 +707,9 @@ export namespace Components {
          */
         "src": string;
     }
+    /**
+     * @parent c-login-card
+     */
     interface CLoginCardActions {
         /**
           * Align the actions
@@ -645,12 +725,25 @@ export namespace Components {
     | 'stretch'
     | 'space-around';
     }
+    /**
+     * @parent c-login-card
+     */
     interface CLoginCardContent {
     }
+    /**
+     * @parent c-login-card
+     */
     interface CLoginCardTitle {
     }
+    /**
+     * Wrapper component for the whole page
+     * @group Layout
+     */
     interface CMain {
     }
+    /**
+     * @group Navigation
+     */
     interface CMenu {
         /**
           * Programmatic trigger component
@@ -677,6 +770,9 @@ export namespace Components {
          */
         "small": boolean;
     }
+    /**
+     * @parent none
+     */
     interface CMenuItems {
         /**
           * Menu is opened and positioned
@@ -712,6 +808,9 @@ export namespace Components {
          */
         "top": number;
     }
+    /**
+     * @group Popups
+     */
     interface CModal {
         /**
           * Dismissed when touching/clicking outside the content
@@ -726,8 +825,14 @@ export namespace Components {
          */
         "width": string | number;
     }
+    /**
+     * @parent c-toolbar
+     */
     interface CNavigationbutton {
     }
+    /**
+     * @parent None
+     */
     interface CNotification {
         /**
           * notification contents
@@ -743,6 +848,9 @@ export namespace Components {
          */
         "position": 'fixed' | 'absolute';
     }
+    /**
+     * @group Navigation
+     */
     interface CPagination {
         /**
           * Hide details (per page dropdown and the 'x - y of n pages' text)
@@ -769,6 +877,9 @@ export namespace Components {
          */
         "value": CPaginationOptions;
     }
+    /**
+     * @group Indicators
+     */
     interface CProgressBar {
         /**
           * Color of the bar (valid css color)
@@ -796,6 +907,9 @@ export namespace Components {
          */
         "value": number;
     }
+    /**
+     * @group Form
+     */
     interface CRadioGroup {
         /**
           * Color of the radio group
@@ -846,6 +960,10 @@ export namespace Components {
          */
         "value": string | number | CRadioGroupItem;
     }
+    /**
+     * Generic flex row component
+     * @group Layout
+     */
     interface CRow {
         /**
           * Align items vertically
@@ -868,6 +986,9 @@ export namespace Components {
          */
         "nowrap": boolean;
     }
+    /**
+     * @group Form
+     */
     interface CSelect {
         /**
           * Auto focus the input
@@ -942,6 +1063,9 @@ export namespace Components {
          */
         "value": string | number | boolean | CSelectItem;
     }
+    /**
+     * @group Navigation
+     */
     interface CSidenavigation {
         /**
           * Mobile version menu visibility
@@ -952,6 +1076,9 @@ export namespace Components {
          */
         "mobile": boolean;
     }
+    /**
+     * @parent c-sidenavigation
+     */
     interface CSidenavigationitem {
         /**
           * Indicate active state
@@ -970,14 +1097,25 @@ export namespace Components {
          */
         "target": string;
     }
+    /**
+     * Spacer component for flex containers
+     * @group Layout
+     */
     interface CSpacer {
     }
+    /**
+     * @group Indicators
+     */
     interface CStatus {
         /**
           * Status type
          */
         "type"?: 'info' | 'warning' | 'error' | 'success';
     }
+    /**
+     * @group Indicators
+     * @parent c-steps
+     */
     interface CStep {
         /**
           * Mark step as complete
@@ -990,12 +1128,18 @@ export namespace Components {
          */
         "current": boolean;
     }
+    /**
+     * @group Indicators
+     */
     interface CSteps {
         /**
           * Value of the accordion (current step number)
          */
         "value": number | string;
     }
+    /**
+     * @parent c-sidenavigation
+     */
     interface CSubnavigationitem {
         /**
           * Active state
@@ -1018,12 +1162,18 @@ export namespace Components {
          */
         "target": string;
     }
+    /**
+     * @group Content Selectors
+     */
     interface CSwiper {
         /**
           * Value of the swiper
          */
         "value": number | string;
     }
+    /**
+     * @parent c-swiper
+     */
     interface CSwiperTab {
         /**
           * Mark as active
@@ -1056,6 +1206,9 @@ export namespace Components {
          */
         "value": number | string;
     }
+    /**
+     * @group Form
+     */
     interface CSwitch {
         /**
           * Disable the switch
@@ -1074,6 +1227,10 @@ export namespace Components {
          */
         "value": boolean;
     }
+    /**
+     * @group Tabs
+     * @parent c-tabs
+     */
     interface CTab {
         /**
           * Mark tab as active
@@ -1102,6 +1259,9 @@ export namespace Components {
          */
         "value"?: number | string;
     }
+    /**
+     * @group Content Selectors
+     */
     interface CTabButtons {
         /**
           * Disable tab buttons
@@ -1120,6 +1280,9 @@ export namespace Components {
          */
         "value": number | string;
     }
+    /**
+     * @group Content Selectors
+     */
     interface CTabs {
         /**
           * Disable the bottom border
@@ -1130,6 +1293,9 @@ export namespace Components {
          */
         "value": number | string;
     }
+    /**
+     * @group Buttons
+     */
     interface CTag {
         /**
           * Mark tag as active
@@ -1152,6 +1318,9 @@ export namespace Components {
          */
         "flat": boolean;
     }
+    /**
+     * @group Form
+     */
     interface CTextField {
         /**
           * HTML input autocapitalize
@@ -1259,8 +1428,14 @@ export namespace Components {
          */
         "value": string;
     }
+    /**
+     * @parent None
+     */
     interface CTitle {
     }
+    /**
+     * @parent none
+     */
     interface CToast {
         /**
           * Close toast
@@ -1272,6 +1447,9 @@ export namespace Components {
          */
         "message": CToastMessage;
     }
+    /**
+     * @group Popups
+     */
     interface CToasts {
         /**
           * Use absolute positioning
@@ -1294,6 +1472,9 @@ export namespace Components {
          */
         "vertical": 'top' | 'bottom';
     }
+    /**
+     * @group Navigation
+     */
     interface CToolbar {
     }
 }
@@ -1386,336 +1567,514 @@ export interface CToastCustomEvent<T> extends CustomEvent<T> {
     target: HTMLCToastElement;
 }
 declare global {
+    /**
+     * @group Content Selectors
+     */
     interface HTMLCAccordionElement extends Components.CAccordion, HTMLStencilElement {
     }
     var HTMLCAccordionElement: {
         prototype: HTMLCAccordionElement;
         new (): HTMLCAccordionElement;
     };
+    /**
+     * @parent c-accordion
+     */
     interface HTMLCAccordionItemElement extends Components.CAccordionItem, HTMLStencilElement {
     }
     var HTMLCAccordionItemElement: {
         prototype: HTMLCAccordionItemElement;
         new (): HTMLCAccordionItemElement;
     };
+    /**
+     * @group Indicators
+     */
     interface HTMLCAlertElement extends Components.CAlert, HTMLStencilElement {
     }
     var HTMLCAlertElement: {
         prototype: HTMLCAlertElement;
         new (): HTMLCAlertElement;
     };
+    /**
+     * @group Form
+     */
     interface HTMLCAutocompleteElement extends Components.CAutocomplete, HTMLStencilElement {
     }
     var HTMLCAutocompleteElement: {
         prototype: HTMLCAutocompleteElement;
         new (): HTMLCAutocompleteElement;
     };
+    /**
+     * @group Buttons
+     */
     interface HTMLCButtonElement extends Components.CButton, HTMLStencilElement {
     }
     var HTMLCButtonElement: {
         prototype: HTMLCButtonElement;
         new (): HTMLCButtonElement;
     };
+    /**
+     * @group Cards
+     */
     interface HTMLCCardElement extends Components.CCard, HTMLStencilElement {
     }
     var HTMLCCardElement: {
         prototype: HTMLCCardElement;
         new (): HTMLCCardElement;
     };
+    /**
+     * @parent c-card
+     */
     interface HTMLCCardActionsElement extends Components.CCardActions, HTMLStencilElement {
     }
     var HTMLCCardActionsElement: {
         prototype: HTMLCCardActionsElement;
         new (): HTMLCCardActionsElement;
     };
+    /**
+     * @parent c-card
+     */
     interface HTMLCCardContentElement extends Components.CCardContent, HTMLStencilElement {
     }
     var HTMLCCardContentElement: {
         prototype: HTMLCCardContentElement;
         new (): HTMLCCardContentElement;
     };
+    /**
+     * @parent c-card
+     */
     interface HTMLCCardTitleElement extends Components.CCardTitle, HTMLStencilElement {
     }
     var HTMLCCardTitleElement: {
         prototype: HTMLCCardTitleElement;
         new (): HTMLCCardTitleElement;
     };
+    /**
+     * @group Form
+     */
     interface HTMLCCheckboxElement extends Components.CCheckbox, HTMLStencilElement {
     }
     var HTMLCCheckboxElement: {
         prototype: HTMLCCheckboxElement;
         new (): HTMLCCheckboxElement;
     };
+    /**
+     * A container component for cookie consent
+     * @group Popups
+     */
     interface HTMLCConsentElement extends Components.CConsent, HTMLStencilElement {
     }
     var HTMLCConsentElement: {
         prototype: HTMLCConsentElement;
         new (): HTMLCConsentElement;
     };
+    /**
+     * Container component for holding current page content
+     * @group Layout
+     */
     interface HTMLCContainerElement extends Components.CContainer, HTMLStencilElement {
     }
     var HTMLCContainerElement: {
         prototype: HTMLCContainerElement;
         new (): HTMLCContainerElement;
     };
+    /**
+     * @parent c-toolbar
+     */
     interface HTMLCCscLogoElement extends Components.CCscLogo, HTMLStencilElement {
     }
     var HTMLCCscLogoElement: {
         prototype: HTMLCCscLogoElement;
         new (): HTMLCCscLogoElement;
     };
+    /**
+     * @group Tables
+     */
     interface HTMLCDataTableElement extends Components.CDataTable, HTMLStencilElement {
     }
     var HTMLCDataTableElement: {
         prototype: HTMLCDataTableElement;
         new (): HTMLCDataTableElement;
     };
+    /**
+     * Component which fills the remaining space within a flex container
+     * @group Layout
+     */
     interface HTMLCFlexElement extends Components.CFlex, HTMLStencilElement {
     }
     var HTMLCFlexElement: {
         prototype: HTMLCFlexElement;
         new (): HTMLCFlexElement;
     };
+    /**
+     * @group Other
+     */
     interface HTMLCIconElement extends Components.CIcon, HTMLStencilElement {
     }
     var HTMLCIconElement: {
         prototype: HTMLCIconElement;
         new (): HTMLCIconElement;
     };
+    /**
+     * @group Buttons
+     */
     interface HTMLCIconButtonElement extends Components.CIconButton, HTMLStencilElement {
     }
     var HTMLCIconButtonElement: {
         prototype: HTMLCIconButtonElement;
         new (): HTMLCIconButtonElement;
     };
+    /**
+     * @parent None
+     */
     interface HTMLCInputElement extends Components.CInput, HTMLStencilElement {
     }
     var HTMLCInputElement: {
         prototype: HTMLCInputElement;
         new (): HTMLCInputElement;
     };
+    /**
+     * Basic hyperlink component
+     * @group Buttons
+     */
     interface HTMLCLinkElement extends Components.CLink, HTMLStencilElement {
     }
     var HTMLCLinkElement: {
         prototype: HTMLCLinkElement;
         new (): HTMLCLinkElement;
     };
+    /**
+     * A loader component that fills the nearest containing element that has css-property position set to 'relative'
+     * @group Indicators
+     */
     interface HTMLCLoaderElement extends Components.CLoader, HTMLStencilElement {
     }
     var HTMLCLoaderElement: {
         prototype: HTMLCLoaderElement;
         new (): HTMLCLoaderElement;
     };
+    /**
+     * @parent c-login-buttons
+     */
     interface HTMLCLoginButtonElement extends Components.CLoginButton, HTMLStencilElement {
     }
     var HTMLCLoginButtonElement: {
         prototype: HTMLCLoginButtonElement;
         new (): HTMLCLoginButtonElement;
     };
+    /**
+     * @parent none
+     */
     interface HTMLCLoginButtonsElement extends Components.CLoginButtons, HTMLStencilElement {
     }
     var HTMLCLoginButtonsElement: {
         prototype: HTMLCLoginButtonsElement;
         new (): HTMLCLoginButtonsElement;
     };
+    /**
+     * @group Cards
+     */
     interface HTMLCLoginCardElement extends Components.CLoginCard, HTMLStencilElement {
     }
     var HTMLCLoginCardElement: {
         prototype: HTMLCLoginCardElement;
         new (): HTMLCLoginCardElement;
     };
+    /**
+     * @parent c-login-card
+     */
     interface HTMLCLoginCardActionsElement extends Components.CLoginCardActions, HTMLStencilElement {
     }
     var HTMLCLoginCardActionsElement: {
         prototype: HTMLCLoginCardActionsElement;
         new (): HTMLCLoginCardActionsElement;
     };
+    /**
+     * @parent c-login-card
+     */
     interface HTMLCLoginCardContentElement extends Components.CLoginCardContent, HTMLStencilElement {
     }
     var HTMLCLoginCardContentElement: {
         prototype: HTMLCLoginCardContentElement;
         new (): HTMLCLoginCardContentElement;
     };
+    /**
+     * @parent c-login-card
+     */
     interface HTMLCLoginCardTitleElement extends Components.CLoginCardTitle, HTMLStencilElement {
     }
     var HTMLCLoginCardTitleElement: {
         prototype: HTMLCLoginCardTitleElement;
         new (): HTMLCLoginCardTitleElement;
     };
+    /**
+     * Wrapper component for the whole page
+     * @group Layout
+     */
     interface HTMLCMainElement extends Components.CMain, HTMLStencilElement {
     }
     var HTMLCMainElement: {
         prototype: HTMLCMainElement;
         new (): HTMLCMainElement;
     };
+    /**
+     * @group Navigation
+     */
     interface HTMLCMenuElement extends Components.CMenu, HTMLStencilElement {
     }
     var HTMLCMenuElement: {
         prototype: HTMLCMenuElement;
         new (): HTMLCMenuElement;
     };
+    /**
+     * @parent none
+     */
     interface HTMLCMenuItemsElement extends Components.CMenuItems, HTMLStencilElement {
     }
     var HTMLCMenuItemsElement: {
         prototype: HTMLCMenuItemsElement;
         new (): HTMLCMenuItemsElement;
     };
+    /**
+     * @group Popups
+     */
     interface HTMLCModalElement extends Components.CModal, HTMLStencilElement {
     }
     var HTMLCModalElement: {
         prototype: HTMLCModalElement;
         new (): HTMLCModalElement;
     };
+    /**
+     * @parent c-toolbar
+     */
     interface HTMLCNavigationbuttonElement extends Components.CNavigationbutton, HTMLStencilElement {
     }
     var HTMLCNavigationbuttonElement: {
         prototype: HTMLCNavigationbuttonElement;
         new (): HTMLCNavigationbuttonElement;
     };
+    /**
+     * @parent None
+     */
     interface HTMLCNotificationElement extends Components.CNotification, HTMLStencilElement {
     }
     var HTMLCNotificationElement: {
         prototype: HTMLCNotificationElement;
         new (): HTMLCNotificationElement;
     };
+    /**
+     * @group Navigation
+     */
     interface HTMLCPaginationElement extends Components.CPagination, HTMLStencilElement {
     }
     var HTMLCPaginationElement: {
         prototype: HTMLCPaginationElement;
         new (): HTMLCPaginationElement;
     };
+    /**
+     * @group Indicators
+     */
     interface HTMLCProgressBarElement extends Components.CProgressBar, HTMLStencilElement {
     }
     var HTMLCProgressBarElement: {
         prototype: HTMLCProgressBarElement;
         new (): HTMLCProgressBarElement;
     };
+    /**
+     * @group Form
+     */
     interface HTMLCRadioGroupElement extends Components.CRadioGroup, HTMLStencilElement {
     }
     var HTMLCRadioGroupElement: {
         prototype: HTMLCRadioGroupElement;
         new (): HTMLCRadioGroupElement;
     };
+    /**
+     * Generic flex row component
+     * @group Layout
+     */
     interface HTMLCRowElement extends Components.CRow, HTMLStencilElement {
     }
     var HTMLCRowElement: {
         prototype: HTMLCRowElement;
         new (): HTMLCRowElement;
     };
+    /**
+     * @group Form
+     */
     interface HTMLCSelectElement extends Components.CSelect, HTMLStencilElement {
     }
     var HTMLCSelectElement: {
         prototype: HTMLCSelectElement;
         new (): HTMLCSelectElement;
     };
+    /**
+     * @group Navigation
+     */
     interface HTMLCSidenavigationElement extends Components.CSidenavigation, HTMLStencilElement {
     }
     var HTMLCSidenavigationElement: {
         prototype: HTMLCSidenavigationElement;
         new (): HTMLCSidenavigationElement;
     };
+    /**
+     * @parent c-sidenavigation
+     */
     interface HTMLCSidenavigationitemElement extends Components.CSidenavigationitem, HTMLStencilElement {
     }
     var HTMLCSidenavigationitemElement: {
         prototype: HTMLCSidenavigationitemElement;
         new (): HTMLCSidenavigationitemElement;
     };
+    /**
+     * Spacer component for flex containers
+     * @group Layout
+     */
     interface HTMLCSpacerElement extends Components.CSpacer, HTMLStencilElement {
     }
     var HTMLCSpacerElement: {
         prototype: HTMLCSpacerElement;
         new (): HTMLCSpacerElement;
     };
+    /**
+     * @group Indicators
+     */
     interface HTMLCStatusElement extends Components.CStatus, HTMLStencilElement {
     }
     var HTMLCStatusElement: {
         prototype: HTMLCStatusElement;
         new (): HTMLCStatusElement;
     };
+    /**
+     * @group Indicators
+     * @parent c-steps
+     */
     interface HTMLCStepElement extends Components.CStep, HTMLStencilElement {
     }
     var HTMLCStepElement: {
         prototype: HTMLCStepElement;
         new (): HTMLCStepElement;
     };
+    /**
+     * @group Indicators
+     */
     interface HTMLCStepsElement extends Components.CSteps, HTMLStencilElement {
     }
     var HTMLCStepsElement: {
         prototype: HTMLCStepsElement;
         new (): HTMLCStepsElement;
     };
+    /**
+     * @parent c-sidenavigation
+     */
     interface HTMLCSubnavigationitemElement extends Components.CSubnavigationitem, HTMLStencilElement {
     }
     var HTMLCSubnavigationitemElement: {
         prototype: HTMLCSubnavigationitemElement;
         new (): HTMLCSubnavigationitemElement;
     };
+    /**
+     * @group Content Selectors
+     */
     interface HTMLCSwiperElement extends Components.CSwiper, HTMLStencilElement {
     }
     var HTMLCSwiperElement: {
         prototype: HTMLCSwiperElement;
         new (): HTMLCSwiperElement;
     };
+    /**
+     * @parent c-swiper
+     */
     interface HTMLCSwiperTabElement extends Components.CSwiperTab, HTMLStencilElement {
     }
     var HTMLCSwiperTabElement: {
         prototype: HTMLCSwiperTabElement;
         new (): HTMLCSwiperTabElement;
     };
+    /**
+     * @group Form
+     */
     interface HTMLCSwitchElement extends Components.CSwitch, HTMLStencilElement {
     }
     var HTMLCSwitchElement: {
         prototype: HTMLCSwitchElement;
         new (): HTMLCSwitchElement;
     };
+    /**
+     * @group Tabs
+     * @parent c-tabs
+     */
     interface HTMLCTabElement extends Components.CTab, HTMLStencilElement {
     }
     var HTMLCTabElement: {
         prototype: HTMLCTabElement;
         new (): HTMLCTabElement;
     };
+    /**
+     * @group Content Selectors
+     */
     interface HTMLCTabButtonsElement extends Components.CTabButtons, HTMLStencilElement {
     }
     var HTMLCTabButtonsElement: {
         prototype: HTMLCTabButtonsElement;
         new (): HTMLCTabButtonsElement;
     };
+    /**
+     * @group Content Selectors
+     */
     interface HTMLCTabsElement extends Components.CTabs, HTMLStencilElement {
     }
     var HTMLCTabsElement: {
         prototype: HTMLCTabsElement;
         new (): HTMLCTabsElement;
     };
+    /**
+     * @group Buttons
+     */
     interface HTMLCTagElement extends Components.CTag, HTMLStencilElement {
     }
     var HTMLCTagElement: {
         prototype: HTMLCTagElement;
         new (): HTMLCTagElement;
     };
+    /**
+     * @group Form
+     */
     interface HTMLCTextFieldElement extends Components.CTextField, HTMLStencilElement {
     }
     var HTMLCTextFieldElement: {
         prototype: HTMLCTextFieldElement;
         new (): HTMLCTextFieldElement;
     };
+    /**
+     * @parent None
+     */
     interface HTMLCTitleElement extends Components.CTitle, HTMLStencilElement {
     }
     var HTMLCTitleElement: {
         prototype: HTMLCTitleElement;
         new (): HTMLCTitleElement;
     };
+    /**
+     * @parent none
+     */
     interface HTMLCToastElement extends Components.CToast, HTMLStencilElement {
     }
     var HTMLCToastElement: {
         prototype: HTMLCToastElement;
         new (): HTMLCToastElement;
     };
+    /**
+     * @group Popups
+     */
     interface HTMLCToastsElement extends Components.CToasts, HTMLStencilElement {
     }
     var HTMLCToastsElement: {
         prototype: HTMLCToastsElement;
         new (): HTMLCToastsElement;
     };
+    /**
+     * @group Navigation
+     */
     interface HTMLCToolbarElement extends Components.CToolbar, HTMLStencilElement {
     }
     var HTMLCToolbarElement: {
@@ -1782,6 +2141,9 @@ declare global {
     }
 }
 declare namespace LocalJSX {
+    /**
+     * @group Content Selectors
+     */
     interface CAccordion {
         /**
           * Disallow collapsing all the items
@@ -1804,6 +2166,9 @@ declare namespace LocalJSX {
          */
         "value": number | string | (number | string)[];
     }
+    /**
+     * @parent c-accordion
+     */
     interface CAccordionItem {
         /**
           * Marks the item as collapsable
@@ -1838,12 +2203,18 @@ declare namespace LocalJSX {
          */
         "value"?: number | string;
     }
+    /**
+     * @group Indicators
+     */
     interface CAlert {
         /**
           * Type of the alert
          */
         "type"?: CAlertType;
     }
+    /**
+     * @group Form
+     */
     interface CAutocomplete {
         /**
           * Auto focus the input
@@ -1934,6 +2305,9 @@ declare namespace LocalJSX {
          */
         "value"?: string | number | CAutocompleteItem;
     }
+    /**
+     * @group Buttons
+     */
     interface CButton {
         /**
           * Disable the button
@@ -2015,6 +2389,9 @@ declare namespace LocalJSX {
          */
         "value"?: number | string;
     }
+    /**
+     * @group Cards
+     */
     interface CCard {
         /**
           * Card background image for login pages of specific services
@@ -2029,6 +2406,9 @@ declare namespace LocalJSX {
          */
         "fullscreen"?: boolean;
     }
+    /**
+     * @parent c-card
+     */
     interface CCardActions {
         /**
           * Align the actions
@@ -2044,10 +2424,19 @@ declare namespace LocalJSX {
     | 'stretch'
     | 'space-around';
     }
+    /**
+     * @parent c-card
+     */
     interface CCardContent {
     }
+    /**
+     * @parent c-card
+     */
     interface CCardTitle {
     }
+    /**
+     * @group Form
+     */
     interface CCheckbox {
         /**
           * Disable the checkbox
@@ -2090,20 +2479,34 @@ declare namespace LocalJSX {
          */
         "value"?: boolean;
     }
+    /**
+     * A container component for cookie consent
+     * @group Popups
+     */
     interface CConsent {
     }
+    /**
+     * Container component for holding current page content
+     * @group Layout
+     */
     interface CContainer {
         /**
           * Maximum width of container in pixels
          */
         "width"?: number;
     }
+    /**
+     * @parent c-toolbar
+     */
     interface CCscLogo {
         /**
           * Logo width in pixels
          */
         "width"?: number;
     }
+    /**
+     * @group Tables
+     */
     interface CDataTable {
         /**
           * Data of the table
@@ -2190,8 +2593,15 @@ declare namespace LocalJSX {
          */
         "stickyHeader"?: boolean;
     }
+    /**
+     * Component which fills the remaining space within a flex container
+     * @group Layout
+     */
     interface CFlex {
     }
+    /**
+     * @group Other
+     */
     interface CIcon {
         /**
           * Fill color
@@ -2206,6 +2616,9 @@ declare namespace LocalJSX {
          */
         "size"?: number;
     }
+    /**
+     * @group Buttons
+     */
     interface CIconButton {
         /**
           * Show a badge on top of the icon
@@ -2240,6 +2653,9 @@ declare namespace LocalJSX {
          */
         "text"?: boolean;
     }
+    /**
+     * @parent None
+     */
     interface CInput {
         /**
           * Auto focus the input
@@ -2347,6 +2763,10 @@ declare namespace LocalJSX {
          */
         "variant"?: 'text' | 'select';
     }
+    /**
+     * Basic hyperlink component
+     * @group Buttons
+     */
     interface CLink {
         /**
           * Use another CSC color
@@ -2385,6 +2805,10 @@ declare namespace LocalJSX {
          */
         "weight"?: string;
     }
+    /**
+     * A loader component that fills the nearest containing element that has css-property position set to 'relative'
+     * @group Indicators
+     */
     interface CLoader {
         /**
           * Delay in seconds of showing the contents in the slot of the loader
@@ -2399,6 +2823,9 @@ declare namespace LocalJSX {
          */
         "size"?: number;
     }
+    /**
+     * @parent c-login-buttons
+     */
     interface CLoginButton {
         /**
           * Alt description for logo
@@ -2413,8 +2840,14 @@ declare namespace LocalJSX {
          */
         "src"?: string;
     }
+    /**
+     * @parent none
+     */
     interface CLoginButtons {
     }
+    /**
+     * @group Cards
+     */
     interface CLoginCard {
         /**
           * Background position (css background-position)
@@ -2437,6 +2870,9 @@ declare namespace LocalJSX {
          */
         "src"?: string;
     }
+    /**
+     * @parent c-login-card
+     */
     interface CLoginCardActions {
         /**
           * Align the actions
@@ -2452,12 +2888,25 @@ declare namespace LocalJSX {
     | 'stretch'
     | 'space-around';
     }
+    /**
+     * @parent c-login-card
+     */
     interface CLoginCardContent {
     }
+    /**
+     * @parent c-login-card
+     */
     interface CLoginCardTitle {
     }
+    /**
+     * Wrapper component for the whole page
+     * @group Layout
+     */
     interface CMain {
     }
+    /**
+     * @group Navigation
+     */
     interface CMenu {
         /**
           * Programmatic trigger component
@@ -2484,6 +2933,9 @@ declare namespace LocalJSX {
          */
         "small"?: boolean;
     }
+    /**
+     * @parent none
+     */
     interface CMenuItems {
         /**
           * Menu is opened and positioned
@@ -2534,6 +2986,9 @@ declare namespace LocalJSX {
          */
         "top"?: number;
     }
+    /**
+     * @group Popups
+     */
     interface CModal {
         /**
           * Dismissed when touching/clicking outside the content
@@ -2552,8 +3007,14 @@ declare namespace LocalJSX {
          */
         "width"?: string | number;
     }
+    /**
+     * @parent c-toolbar
+     */
     interface CNavigationbutton {
     }
+    /**
+     * @parent None
+     */
     interface CNotification {
         /**
           * notification contents
@@ -2569,6 +3030,9 @@ declare namespace LocalJSX {
          */
         "position"?: 'fixed' | 'absolute';
     }
+    /**
+     * @group Navigation
+     */
     interface CPagination {
         /**
           * Hide details (per page dropdown and the 'x - y of n pages' text)
@@ -2599,6 +3063,9 @@ declare namespace LocalJSX {
          */
         "value"?: CPaginationOptions;
     }
+    /**
+     * @group Indicators
+     */
     interface CProgressBar {
         /**
           * Color of the bar (valid css color)
@@ -2626,6 +3093,9 @@ declare namespace LocalJSX {
          */
         "value"?: number;
     }
+    /**
+     * @group Form
+     */
     interface CRadioGroup {
         /**
           * Color of the radio group
@@ -2680,6 +3150,10 @@ declare namespace LocalJSX {
          */
         "value"?: string | number | CRadioGroupItem;
     }
+    /**
+     * Generic flex row component
+     * @group Layout
+     */
     interface CRow {
         /**
           * Align items vertically
@@ -2702,6 +3176,9 @@ declare namespace LocalJSX {
          */
         "nowrap"?: boolean;
     }
+    /**
+     * @group Form
+     */
     interface CSelect {
         /**
           * Auto focus the input
@@ -2780,6 +3257,9 @@ declare namespace LocalJSX {
          */
         "value"?: string | number | boolean | CSelectItem;
     }
+    /**
+     * @group Navigation
+     */
     interface CSidenavigation {
         /**
           * Mobile version menu visibility
@@ -2790,6 +3270,9 @@ declare namespace LocalJSX {
          */
         "mobile"?: boolean;
     }
+    /**
+     * @parent c-sidenavigation
+     */
     interface CSidenavigationitem {
         /**
           * Indicate active state
@@ -2813,14 +3296,25 @@ declare namespace LocalJSX {
          */
         "target"?: string;
     }
+    /**
+     * Spacer component for flex containers
+     * @group Layout
+     */
     interface CSpacer {
     }
+    /**
+     * @group Indicators
+     */
     interface CStatus {
         /**
           * Status type
          */
         "type"?: 'info' | 'warning' | 'error' | 'success';
     }
+    /**
+     * @group Indicators
+     * @parent c-steps
+     */
     interface CStep {
         /**
           * Mark step as complete
@@ -2833,6 +3327,9 @@ declare namespace LocalJSX {
          */
         "current"?: boolean;
     }
+    /**
+     * @group Indicators
+     */
     interface CSteps {
         /**
           * Emit changes to the parent
@@ -2843,6 +3340,9 @@ declare namespace LocalJSX {
          */
         "value": number | string;
     }
+    /**
+     * @parent c-sidenavigation
+     */
     interface CSubnavigationitem {
         /**
           * Active state
@@ -2865,6 +3365,9 @@ declare namespace LocalJSX {
          */
         "target"?: string;
     }
+    /**
+     * @group Content Selectors
+     */
     interface CSwiper {
         /**
           * Emit value change to the parent
@@ -2875,6 +3378,9 @@ declare namespace LocalJSX {
          */
         "value"?: number | string;
     }
+    /**
+     * @parent c-swiper
+     */
     interface CSwiperTab {
         /**
           * Mark as active
@@ -2912,6 +3418,9 @@ declare namespace LocalJSX {
          */
         "value"?: number | string;
     }
+    /**
+     * @group Form
+     */
     interface CSwitch {
         /**
           * Disable the switch
@@ -2934,6 +3443,10 @@ declare namespace LocalJSX {
          */
         "value"?: boolean;
     }
+    /**
+     * @group Tabs
+     * @parent c-tabs
+     */
     interface CTab {
         /**
           * Mark tab as active
@@ -2967,6 +3480,9 @@ declare namespace LocalJSX {
          */
         "value"?: number | string;
     }
+    /**
+     * @group Content Selectors
+     */
     interface CTabButtons {
         /**
           * Disable tab buttons
@@ -2989,6 +3505,9 @@ declare namespace LocalJSX {
          */
         "value": number | string;
     }
+    /**
+     * @group Content Selectors
+     */
     interface CTabs {
         /**
           * Disable the bottom border
@@ -3003,6 +3522,9 @@ declare namespace LocalJSX {
          */
         "value": number | string;
     }
+    /**
+     * @group Buttons
+     */
     interface CTag {
         /**
           * Mark tag as active
@@ -3025,6 +3547,9 @@ declare namespace LocalJSX {
          */
         "flat"?: boolean;
     }
+    /**
+     * @group Form
+     */
     interface CTextField {
         /**
           * HTML input autocapitalize
@@ -3136,8 +3661,14 @@ declare namespace LocalJSX {
          */
         "value"?: string;
     }
+    /**
+     * @parent None
+     */
     interface CTitle {
     }
+    /**
+     * @parent none
+     */
     interface CToast {
         /**
           * Messages
@@ -3148,6 +3679,9 @@ declare namespace LocalJSX {
          */
         "onClose"?: (event: CToastCustomEvent<CToastMessage>) => void;
     }
+    /**
+     * @group Popups
+     */
     interface CToasts {
         /**
           * Use absolute positioning
@@ -3162,6 +3696,9 @@ declare namespace LocalJSX {
          */
         "vertical"?: 'top' | 'bottom';
     }
+    /**
+     * @group Navigation
+     */
     interface CToolbar {
     }
     interface IntrinsicElements {
@@ -3227,61 +3764,239 @@ export { LocalJSX as JSX };
 declare module "@stencil/core" {
     export namespace JSX {
         interface IntrinsicElements {
+            /**
+             * @group Content Selectors
+             */
             "c-accordion": LocalJSX.CAccordion & JSXBase.HTMLAttributes<HTMLCAccordionElement>;
+            /**
+             * @parent c-accordion
+             */
             "c-accordion-item": LocalJSX.CAccordionItem & JSXBase.HTMLAttributes<HTMLCAccordionItemElement>;
+            /**
+             * @group Indicators
+             */
             "c-alert": LocalJSX.CAlert & JSXBase.HTMLAttributes<HTMLCAlertElement>;
+            /**
+             * @group Form
+             */
             "c-autocomplete": LocalJSX.CAutocomplete & JSXBase.HTMLAttributes<HTMLCAutocompleteElement>;
+            /**
+             * @group Buttons
+             */
             "c-button": LocalJSX.CButton & JSXBase.HTMLAttributes<HTMLCButtonElement>;
+            /**
+             * @group Cards
+             */
             "c-card": LocalJSX.CCard & JSXBase.HTMLAttributes<HTMLCCardElement>;
+            /**
+             * @parent c-card
+             */
             "c-card-actions": LocalJSX.CCardActions & JSXBase.HTMLAttributes<HTMLCCardActionsElement>;
+            /**
+             * @parent c-card
+             */
             "c-card-content": LocalJSX.CCardContent & JSXBase.HTMLAttributes<HTMLCCardContentElement>;
+            /**
+             * @parent c-card
+             */
             "c-card-title": LocalJSX.CCardTitle & JSXBase.HTMLAttributes<HTMLCCardTitleElement>;
+            /**
+             * @group Form
+             */
             "c-checkbox": LocalJSX.CCheckbox & JSXBase.HTMLAttributes<HTMLCCheckboxElement>;
+            /**
+             * A container component for cookie consent
+             * @group Popups
+             */
             "c-consent": LocalJSX.CConsent & JSXBase.HTMLAttributes<HTMLCConsentElement>;
+            /**
+             * Container component for holding current page content
+             * @group Layout
+             */
             "c-container": LocalJSX.CContainer & JSXBase.HTMLAttributes<HTMLCContainerElement>;
+            /**
+             * @parent c-toolbar
+             */
             "c-csc-logo": LocalJSX.CCscLogo & JSXBase.HTMLAttributes<HTMLCCscLogoElement>;
+            /**
+             * @group Tables
+             */
             "c-data-table": LocalJSX.CDataTable & JSXBase.HTMLAttributes<HTMLCDataTableElement>;
+            /**
+             * Component which fills the remaining space within a flex container
+             * @group Layout
+             */
             "c-flex": LocalJSX.CFlex & JSXBase.HTMLAttributes<HTMLCFlexElement>;
+            /**
+             * @group Other
+             */
             "c-icon": LocalJSX.CIcon & JSXBase.HTMLAttributes<HTMLCIconElement>;
+            /**
+             * @group Buttons
+             */
             "c-icon-button": LocalJSX.CIconButton & JSXBase.HTMLAttributes<HTMLCIconButtonElement>;
+            /**
+             * @parent None
+             */
             "c-input": LocalJSX.CInput & JSXBase.HTMLAttributes<HTMLCInputElement>;
+            /**
+             * Basic hyperlink component
+             * @group Buttons
+             */
             "c-link": LocalJSX.CLink & JSXBase.HTMLAttributes<HTMLCLinkElement>;
+            /**
+             * A loader component that fills the nearest containing element that has css-property position set to 'relative'
+             * @group Indicators
+             */
             "c-loader": LocalJSX.CLoader & JSXBase.HTMLAttributes<HTMLCLoaderElement>;
+            /**
+             * @parent c-login-buttons
+             */
             "c-login-button": LocalJSX.CLoginButton & JSXBase.HTMLAttributes<HTMLCLoginButtonElement>;
+            /**
+             * @parent none
+             */
             "c-login-buttons": LocalJSX.CLoginButtons & JSXBase.HTMLAttributes<HTMLCLoginButtonsElement>;
+            /**
+             * @group Cards
+             */
             "c-login-card": LocalJSX.CLoginCard & JSXBase.HTMLAttributes<HTMLCLoginCardElement>;
+            /**
+             * @parent c-login-card
+             */
             "c-login-card-actions": LocalJSX.CLoginCardActions & JSXBase.HTMLAttributes<HTMLCLoginCardActionsElement>;
+            /**
+             * @parent c-login-card
+             */
             "c-login-card-content": LocalJSX.CLoginCardContent & JSXBase.HTMLAttributes<HTMLCLoginCardContentElement>;
+            /**
+             * @parent c-login-card
+             */
             "c-login-card-title": LocalJSX.CLoginCardTitle & JSXBase.HTMLAttributes<HTMLCLoginCardTitleElement>;
+            /**
+             * Wrapper component for the whole page
+             * @group Layout
+             */
             "c-main": LocalJSX.CMain & JSXBase.HTMLAttributes<HTMLCMainElement>;
+            /**
+             * @group Navigation
+             */
             "c-menu": LocalJSX.CMenu & JSXBase.HTMLAttributes<HTMLCMenuElement>;
+            /**
+             * @parent none
+             */
             "c-menu-items": LocalJSX.CMenuItems & JSXBase.HTMLAttributes<HTMLCMenuItemsElement>;
+            /**
+             * @group Popups
+             */
             "c-modal": LocalJSX.CModal & JSXBase.HTMLAttributes<HTMLCModalElement>;
+            /**
+             * @parent c-toolbar
+             */
             "c-navigationbutton": LocalJSX.CNavigationbutton & JSXBase.HTMLAttributes<HTMLCNavigationbuttonElement>;
+            /**
+             * @parent None
+             */
             "c-notification": LocalJSX.CNotification & JSXBase.HTMLAttributes<HTMLCNotificationElement>;
+            /**
+             * @group Navigation
+             */
             "c-pagination": LocalJSX.CPagination & JSXBase.HTMLAttributes<HTMLCPaginationElement>;
+            /**
+             * @group Indicators
+             */
             "c-progress-bar": LocalJSX.CProgressBar & JSXBase.HTMLAttributes<HTMLCProgressBarElement>;
+            /**
+             * @group Form
+             */
             "c-radio-group": LocalJSX.CRadioGroup & JSXBase.HTMLAttributes<HTMLCRadioGroupElement>;
+            /**
+             * Generic flex row component
+             * @group Layout
+             */
             "c-row": LocalJSX.CRow & JSXBase.HTMLAttributes<HTMLCRowElement>;
+            /**
+             * @group Form
+             */
             "c-select": LocalJSX.CSelect & JSXBase.HTMLAttributes<HTMLCSelectElement>;
+            /**
+             * @group Navigation
+             */
             "c-sidenavigation": LocalJSX.CSidenavigation & JSXBase.HTMLAttributes<HTMLCSidenavigationElement>;
+            /**
+             * @parent c-sidenavigation
+             */
             "c-sidenavigationitem": LocalJSX.CSidenavigationitem & JSXBase.HTMLAttributes<HTMLCSidenavigationitemElement>;
+            /**
+             * Spacer component for flex containers
+             * @group Layout
+             */
             "c-spacer": LocalJSX.CSpacer & JSXBase.HTMLAttributes<HTMLCSpacerElement>;
+            /**
+             * @group Indicators
+             */
             "c-status": LocalJSX.CStatus & JSXBase.HTMLAttributes<HTMLCStatusElement>;
+            /**
+             * @group Indicators
+             * @parent c-steps
+             */
             "c-step": LocalJSX.CStep & JSXBase.HTMLAttributes<HTMLCStepElement>;
+            /**
+             * @group Indicators
+             */
             "c-steps": LocalJSX.CSteps & JSXBase.HTMLAttributes<HTMLCStepsElement>;
+            /**
+             * @parent c-sidenavigation
+             */
             "c-subnavigationitem": LocalJSX.CSubnavigationitem & JSXBase.HTMLAttributes<HTMLCSubnavigationitemElement>;
+            /**
+             * @group Content Selectors
+             */
             "c-swiper": LocalJSX.CSwiper & JSXBase.HTMLAttributes<HTMLCSwiperElement>;
+            /**
+             * @parent c-swiper
+             */
             "c-swiper-tab": LocalJSX.CSwiperTab & JSXBase.HTMLAttributes<HTMLCSwiperTabElement>;
+            /**
+             * @group Form
+             */
             "c-switch": LocalJSX.CSwitch & JSXBase.HTMLAttributes<HTMLCSwitchElement>;
+            /**
+             * @group Tabs
+             * @parent c-tabs
+             */
             "c-tab": LocalJSX.CTab & JSXBase.HTMLAttributes<HTMLCTabElement>;
+            /**
+             * @group Content Selectors
+             */
             "c-tab-buttons": LocalJSX.CTabButtons & JSXBase.HTMLAttributes<HTMLCTabButtonsElement>;
+            /**
+             * @group Content Selectors
+             */
             "c-tabs": LocalJSX.CTabs & JSXBase.HTMLAttributes<HTMLCTabsElement>;
+            /**
+             * @group Buttons
+             */
             "c-tag": LocalJSX.CTag & JSXBase.HTMLAttributes<HTMLCTagElement>;
+            /**
+             * @group Form
+             */
             "c-text-field": LocalJSX.CTextField & JSXBase.HTMLAttributes<HTMLCTextFieldElement>;
+            /**
+             * @parent None
+             */
             "c-title": LocalJSX.CTitle & JSXBase.HTMLAttributes<HTMLCTitleElement>;
+            /**
+             * @parent none
+             */
             "c-toast": LocalJSX.CToast & JSXBase.HTMLAttributes<HTMLCToastElement>;
+            /**
+             * @group Popups
+             */
             "c-toasts": LocalJSX.CToasts & JSXBase.HTMLAttributes<HTMLCToastsElement>;
+            /**
+             * @group Navigation
+             */
             "c-toolbar": LocalJSX.CToolbar & JSXBase.HTMLAttributes<HTMLCToolbarElement>;
         }
     }

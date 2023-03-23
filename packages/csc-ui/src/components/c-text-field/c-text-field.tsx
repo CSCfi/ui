@@ -9,7 +9,7 @@ import {
   State,
 } from '@stencil/core';
 import { v4 as uuid } from 'uuid';
-import { mdiEye, mdiEyeOff } from '@mdi/js';
+import { mdiCalendar, mdiEye, mdiEyeOff } from '@mdi/js';
 
 /**
  * @group Form
@@ -171,6 +171,8 @@ export class CTextField {
 
   @Element() hiddenEl!: HTMLCTextFieldElement;
 
+  private _inputElement: HTMLInputElement;
+
   private _originalType = '';
 
   private _inputId: string;
@@ -212,6 +214,10 @@ export class CTextField {
 
   private _renderInputElement() {
     const props = {
+      classes: {
+        'c-input__input': true,
+        'c-input__input--filled': !!this.value,
+      },
       shared: {
         id: this._inputId,
         name: this.name,
@@ -237,18 +243,50 @@ export class CTextField {
     };
 
     const textInput = (
-      <input class="c-input__input" {...props.shared} {...props.input} />
+      <input
+        class={props.classes}
+        {...props.shared}
+        {...props.input}
+        ref={(el) => (this._inputElement = el)}
+      />
     );
 
     const textArea = (
       <textarea
-        class="c-input__input"
+        class={props.classes}
         {...props.shared}
         {...props.textArea}
       ></textarea>
     );
 
     return this.rows > 1 ? textArea : textInput;
+  }
+
+  private _isFirefox() {
+    return !!navigator.userAgent.match(/firefox|fxios/i);
+  }
+
+  private _renderDateToggle() {
+    if (this._originalType !== 'date' || this._isFirefox()) return;
+
+    const classes = {
+      'c-input__date-toggle': true,
+      'c-input__date-toggle--disabled': this.disabled,
+    };
+
+    return (
+      <svg
+        class={classes}
+        viewBox="0 0 24 24"
+        onClick={this._toggleDatepicker.bind(this)}
+      >
+        <path d={mdiCalendar} />
+      </svg>
+    );
+  }
+
+  private _toggleDatepicker() {
+    this._inputElement?.showPicker();
   }
 
   private _renderPasswordToggle() {
@@ -305,6 +343,8 @@ export class CTextField {
           {this._renderInputElement()}
 
           {this._renderPasswordToggle()}
+
+          {this._renderDateToggle()}
 
           <slot name="post" slot="post"></slot>
         </c-input>
