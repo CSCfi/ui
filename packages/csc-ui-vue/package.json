@@ -1,0 +1,22 @@
+{
+  "author": "Oskari Väistö <oskari.vaisto@csc.fi>",
+  "description": "Vue 3 directive for csc-ui components",
+  "directories": {
+    "lib": "lib"
+  },
+  "files": [
+    "lib"
+  ],
+  "homepage": "",
+  "keywords": [
+    "vue",
+    "csc-ui"
+  ],
+  "license": "ISC",
+  "main": "lib/vControl.js",
+  "name": "@cscfi/csc-ui-vue",
+  "scripts": {
+    "tsc": "tsc"
+  },
+  "version": "0.0.0"
+}

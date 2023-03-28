@@ -1,0 +1,25 @@
+{
+  "author": "Oskari Väistö <oskari.vaisto@csc.fi>",
+  "dependencies": {
+    "vue": "^2.7.14"
+  },
+  "description": "Vue 2 directive for csc-ui components",
+  "directories": {
+    "lib": "lib"
+  },
+  "files": [
+    "lib"
+  ],
+  "homepage": "",
+  "keywords": [
+    "vue2",
+    "csc-ui"
+  ],
+  "license": "ISC",
+  "main": "lib/vControl.js",
+  "name": "@cscfi/csc-ui-vue2",
+  "scripts": {
+    "tsc": "tsc"
+  },
+  "version": "0.0.0"
+}
