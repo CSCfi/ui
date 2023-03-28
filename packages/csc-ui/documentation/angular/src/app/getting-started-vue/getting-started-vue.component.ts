@@ -10,7 +10,7 @@ import sdk from '@stackblitz/sdk';
 export class GettingStartedVueComponent implements OnInit {
   mainUsage = `import { createApp } from 'vue';
 import { applyPolyfills, defineCustomElements } from 'csc-ui/loader';
-import { vControl } from 'csc-ui-vue-directive';
+import { vControl } from '@cscfi/csc-ui-vue';
 
 import App from './App.vue';
 

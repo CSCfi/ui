@@ -12,18 +12,18 @@ export class GettingStartedVueLegacyComponent implements OnInit {
 vue create my-project`;
 
   installation = `cd my-project
-npm install csc-ui csc-ui-vue-directive`;
+npm install csc-ui @cscfi/csc-ui-vue2`;
 
   mainJs = `import Vue from 'vue';
 import { applyPolyfills, defineCustomElements } from 'csc-ui/loader';
-import { vControlV2 } from 'csc-ui-vue-directive';
+import { vControl } from '@cscfi/csc-ui-vue2';
 import App from './App.vue';
 
 Vue.config.productionTip = false;
 
 Vue.config.ignoredElements = [/c-\w*/];
 
-Vue.directive('csc-model', vControlV2);
+Vue.directive('csc-model', vControl);
 
 applyPolyfills().then(() => {
   defineCustomElements();
