@@ -98,6 +98,10 @@
           "description": "Auto focus the input"
         },
         {
+          "name": "custom-menu",
+          "description": "Render custom menu"
+        },
+        {
           "name": "dense",
           "description": "Dense variant"
         },

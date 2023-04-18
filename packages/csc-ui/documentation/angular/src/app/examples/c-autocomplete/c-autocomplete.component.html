@@ -57,3 +57,33 @@
     <li *ngIf="!tags.length">No added values</li>
   </ul>
 </app-example>
+
+<app-example title="Usage with custom menu items" name="customMenu" component="c-autocomplete">
+  <c-row gap="8">
+    <c-autocomplete
+      id="customListOfCountries"
+      label="Countries"
+      cControl
+      hide-details
+      [items]="filteredItems"
+      [query]="query"
+      (changeQuery)="changeQuery($event)"
+      [itemsPerPage]="3"
+      [(ngModel)]="selection"
+      style="flex: 1"
+      [customMenu]="true"
+    >
+      <i class="mdi mdi-earth" slot="pre"></i>
+      <div
+        *ngFor="let item of filteredItems; let i = index"
+        slot="customMenu"
+        (click)="setValue($event, item)"
+      >
+        <span>
+          <b>Country {{ i + 1 }}</b>
+        </span>
+        <p>{{ item.name }}</p>
+      </div>
+    </c-autocomplete>
+  </c-row>
+</app-example>

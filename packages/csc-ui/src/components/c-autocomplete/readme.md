@@ -10,6 +10,7 @@
 | Property         | Attribute          | Description                                                  | Type                                    | Default            |
 | ---------------- | ------------------ | ------------------------------------------------------------ | --------------------------------------- | ------------------ |
 | `autofocus`      | `autofocus`        | Auto focus the input                                         | `boolean`                               | `false`            |
+| `customMenu`     | `custom-menu`      | Render custom menu                                           | `boolean`                               | `false`            |
 | `dense`          | `dense`            | Dense variant                                                | `boolean`                               | `undefined`        |
 | `disabled`       | `disabled`         | Disable the input                                            | `boolean`                               | `false`            |
 | `hideDetails`    | `hide-details`     | Hide the hint and error messages                             | `boolean`                               | `false`            |
@@ -37,6 +38,19 @@
 | ------------- | ---------------------------------- | ------------------ |
 | `changeQuery` | Triggered when text is typed       | `CustomEvent<any>` |
 | `changeValue` | Triggered when an item is selected | `CustomEvent<any>` |
+
+
+## Methods
+
+### `setValue(event: any, item: any) => Promise<void>`
+
+Sets the value of the autocomplete externally
+
+#### Returns
+
+Type: `Promise<void>`
+
+
 
 
 ## Dependencies

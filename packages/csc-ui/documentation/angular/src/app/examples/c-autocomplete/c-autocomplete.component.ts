@@ -43,6 +43,16 @@ export class CAutocompleteComponent implements OnInit {
   }
   // @example-end
 
+  // @example-start|customMenu
+  setValue(event: Event, item: CAutocompleteItem) {
+    const autocomplete = document.querySelector(
+      '#customListOfCountries',
+    ) as HTMLCAutocompleteElement;
+
+    autocomplete.setValue(event, item);
+  }
+  // @example-end
+
   // @example-start|returnValue
   searchString: any;
 

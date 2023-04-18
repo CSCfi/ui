@@ -83,6 +83,10 @@ export namespace Components {
          */
         "autofocus": boolean;
         /**
+          * Render custom menu
+         */
+        "customMenu": boolean;
+        /**
           * Dense variant
          */
         "dense": boolean;
@@ -134,6 +138,10 @@ export namespace Components {
           * Return only the item value rather than the whole item object
          */
         "returnValue": false;
+        /**
+          * Sets the value of the autocomplete externally
+         */
+        "setValue": (event: any, item: any) => Promise<void>;
         /**
           * Shadow variant
          */
@@ -2220,6 +2228,10 @@ declare namespace LocalJSX {
           * Auto focus the input
          */
         "autofocus"?: boolean;
+        /**
+          * Render custom menu
+         */
+        "customMenu"?: boolean;
         /**
           * Dense variant
          */
