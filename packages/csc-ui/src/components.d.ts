@@ -832,6 +832,10 @@ export namespace Components {
           * Width of the dialog. Numeric value is considered as pixel value (400 -> 400px)
          */
         "width": string | number;
+        /**
+          * Z-index of the modal
+         */
+        "zIndex": number;
     }
     /**
      * @parent c-toolbar
@@ -3018,6 +3022,10 @@ declare namespace LocalJSX {
           * Width of the dialog. Numeric value is considered as pixel value (400 -> 400px)
          */
         "width"?: string | number;
+        /**
+          * Z-index of the modal
+         */
+        "zIndex"?: number;
     }
     /**
      * @parent c-toolbar

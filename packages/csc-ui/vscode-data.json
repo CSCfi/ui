@@ -1143,6 +1143,10 @@
         {
           "name": "width",
           "description": "Width of the dialog. Numeric value is considered as pixel value (400 -> 400px)"
+        },
+        {
+          "name": "z-index",
+          "description": "Z-index of the modal"
         }
       ]
     },

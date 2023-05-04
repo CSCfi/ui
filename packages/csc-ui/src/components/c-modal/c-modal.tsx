@@ -37,6 +37,11 @@ export class CModal {
   @Prop() width: string | number = 600;
 
   /**
+   * Z-index of the modal
+   */
+  @Prop() zIndex = 10;
+
+  /**
    * Triggered when value is changed
    */
   @Event({ bubbles: false }) changeValue: EventEmitter<boolean>;
@@ -108,12 +113,28 @@ export class CModal {
       'c-overlay--show': this.value,
     };
 
+    const contentStyle = {
+      'z-index': `${this.zIndex + 1}`,
+    };
+
+    const overlayStyle = {
+      'z-index': `${this.zIndex}`,
+    };
+
     return (
       <div class="modal-wrapper">
-        <div class={modalClasses} aria-hidden={!this.value}>
+        <div
+          class={modalClasses}
+          aria-hidden={!this.value}
+          style={contentStyle}
+        >
           {this.innerValue && <slot></slot>}
         </div>
-        <div class={overlayClasses} onClick={() => this._hideModal()}></div>
+        <div
+          class={overlayClasses}
+          style={overlayStyle}
+          onClick={() => this._hideModal()}
+        ></div>
       </div>
     );
   }
