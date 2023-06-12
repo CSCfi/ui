@@ -1,0 +1,35 @@
+{
+  "author": "Oskari Väistö <oskari.vaisto@csc.fi>",
+  "dependencies": {
+    "test-ui": "*"
+  },
+  "description": "> TODO: description",
+  "devDependencies": {
+    "vue": "^3.3.4"
+  },
+  "directories": {
+    "lib": "lib",
+    "test": "__tests__"
+  },
+  "files": [
+    "lib"
+  ],
+  "homepage": "",
+  "license": "ISC",
+  "main": "dist/index.js",
+  "name": "test-ui-vue",
+  "publishConfig": {
+    "access": "public"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/CSCfi/ui.git"
+  },
+  "scripts": {
+    "build": "npm run tsc",
+    "test": "echo \"Error: run tests from root\" && exit 1",
+    "tsc": "tsc -p ."
+  },
+  "types": "dist/index.d.ts",
+  "version": "0.0.1"
+}

@@ -1,0 +1,133 @@
+:host {
+  --c-toast-animation-state: running;
+
+  align-items: center;
+  background-color: #fff;
+  border-radius: 6px;
+  border: 2px solid var(--c-toast-color);
+  border-left-width: 12px;
+  box-shadow: rgba(0, 0, 0, 0.07) 0px 1px 1px, rgba(0, 0, 0, 0.07) 0px 2px 2px,
+    rgba(0, 0, 0, 0.07) 0px 4px 4px, rgba(0, 0, 0, 0.07) 0px 8px 8px,
+    rgba(0, 0, 0, 0.07) 0px 16px 16px;
+  box-sizing: border-box;
+  display: grid;
+  min-height: 52px;
+  opacity: 0;
+  padding: 8px 12px;
+  pointer-events: all;
+  text-align: left;
+  transform: translateY(20px);
+  transition: opacity 0.5s ease, transform 0.5s ease;
+  width: 100%;
+  will-change: opacity, transform;
+}
+
+:host(.show) {
+  opacity: 1;
+  transform: translateY(0px);
+}
+
+:host(.info) {
+  --c-toast-color: var(--csc-link);
+}
+
+:host(.error) {
+  --c-toast-color: var(--csc-error);
+}
+
+:host(.warning) {
+  --c-toast-color: var(--csc-warning);
+}
+
+:host(.success) {
+  --c-toast-color: var(--csc-success);
+}
+
+.c-toast__content p {
+  margin: 0;
+  font-weight: 600;
+}
+
+.c-toast__item {
+  align-items: center;
+  display: grid;
+  gap: 12px;
+  grid-auto-columns: auto;
+  grid-auto-flow: column;
+  grid-template-columns: 24px 1fr;
+  font-weight: 300;
+}
+
+.c-toast__item > svg {
+  fill: var(--c-toast-color);
+}
+
+.c-toast__item svg {
+  height: 24px;
+  width: 24px;
+}
+
+.c-toast__progress {
+  background-color: var(--csc-light-grey);
+  border-radius: 8px;
+  height: 6px;
+  margin-top: 8px;
+  overflow: hidden;
+  transform: translateZ(0);
+}
+
+:host(:hover) {
+  --c-toast-animation-state: paused;
+}
+
+.c-toast__progress__bar {
+  animation-duration: var(--c-toast-duration);
+  animation-fill-mode: forwards;
+  animation-iteration-count: 1;
+  animation-name: timer;
+  animation-play-state: var(--c-toast-animation-state);
+  animation-timing-function: linear;
+  background-color: var(--c-toast-color);
+  border-radius: 8px;
+  height: 6px;
+  width: 100%;
+}
+
+.c-toast__progress__bar.indeterminate {
+  animation: indeterminate 2s infinite linear;
+  left: -100%;
+  width: 50%;
+  position: relative;
+  transform-origin: 0% 50%;
+}
+
+.visuallyhidden {
+  border: 0;
+  clip: rect(1px, 1px, 1px, 1px);
+  height: 1px;
+  overflow: hidden;
+  padding: 0;
+  position: absolute;
+  width: 1px;
+}
+
+@keyframes timer {
+  100% {
+    transform: translateX(-100%);
+  }
+}
+
+@keyframes indeterminate {
+  0% {
+    transform: translateX(100%) scaleX(1);
+  }
+  30% {
+    transform: translateX(170%) scaleX(1.75);
+  }
+  70% {
+    transform: translateX(500%) scaleX(0.1);
+  }
+  100% {
+    transform: translateX(500%) scaleX(0.1);
+  }
+}

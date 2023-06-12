@@ -1,0 +1,32 @@
+{
+  "author": "Oskari Väistö <oskari.vaisto@csc.fi>",
+  "dependencies": {
+    "csc-ui": "*"
+  },
+  "description": "CSC component library for React",
+  "directories": {
+    "lib": "lib",
+    "test": "__tests__"
+  },
+  "files": [
+    "lib"
+  ],
+  "homepage": "",
+  "license": "MIT",
+  "main": "dist/index.js",
+  "name": "@cscfi/csc-ui-react",
+  "publishConfig": {
+    "access": "public"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/CSCfi/ui.git"
+  },
+  "scripts": {
+    "build": "npm run tsc",
+    "test": "node ./__tests__/csc-ui-react.test.js",
+    "tsc": "tsc -p ."
+  },
+  "types": "dist/types/index.d.ts",
+  "version": "0.0.1"
+}

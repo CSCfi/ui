@@ -1,0 +1,72 @@
+{
+  "author": "mycsc team <suiteamsui@gmail.com>",
+  "auto": {
+    "plugins": [
+      "npm",
+      "all-contributors"
+    ]
+  },
+  "collection": "dist/collection/collection-manifest.json",
+  "collection:main": "dist/collection/index.js",
+  "dependencies": {
+    "@mdi/js": "^7.2.96",
+    "@stencil/core": "^3.3.1",
+    "@types/node": "^18.15.5",
+    "stencil-click-outside": "^1.8.0",
+    "swiper": "^8.2.1",
+    "uuid": "^8.3.2"
+  },
+  "description": "CSC UI components",
+  "devDependencies": {
+    "@baloise/vue-output-target": "^0.9.7",
+    "@stencil/eslint-plugin": "^0.4.0",
+    "@stencil/react-output-target": "^0.5.3",
+    "@stencil/sass": "^3.0.4",
+    "@stencil/vue-output-target": "^0.8.6",
+    "@types/jest": "^27.5.2",
+    "@types/node": "^16.18.11",
+    "eslint-config-airbnb": "^19.0.4",
+    "eslint-config-node": "^4.1.0",
+    "eslint-config-prettier": "^8.8.0",
+    "eslint-plugin-import": "^2.27.5",
+    "eslint-plugin-node": "^11.1.0",
+    "eslint-plugin-prettier": "^4.2.1",
+    "jest": "^27.5.1",
+    "jest-cli": "^27.5.1",
+    "puppeteer": "^19.11.1",
+    "style-dictionary": "^3.8.0"
+  },
+  "es2015": "dist/esm/index.mjs",
+  "es2017": "dist/esm/index.mjs",
+  "files": [
+    "dist/",
+    "vscode-data.json",
+    "loader/"
+  ],
+  "license": "MIT",
+  "main": "dist/index.cjs.js",
+  "module": "dist/index.js",
+  "name": "@cscfi/csc-ui",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/CSCfi/ui.git"
+  },
+  "scripts": {
+    "build": "stencil build --docs",
+    "build:watch": "stencil build --watch",
+    "deploy": "npm publish && npm run deploy:documentation",
+    "deploy:documentation": "cd documentation/angular && npm i --legacy-peer-deps && npm run build && firebase deploy",
+    "generate": "stencil generate",
+    "lint": "eslint src/**/*{.ts,.tsx}",
+    "predeploy": "npm run build && npm run style-dictionary:build:prod",
+    "start": "stencil build --dev --watch --serve",
+    "style-dictionary:build": "style-dictionary build --config ./style-dictionary.config.js",
+    "style-dictionary:build:prod": "style-dictionary build --config ./style-dictionary.production.config.js",
+    "test": "stencil test --spec --e2e",
+    "test.e2e": "stencil test --e2e --watchAll",
+    "test.watch": "stencil test --spec --watchAll"
+  },
+  "types": "dist/types/index.d.ts",
+  "unpkg": "dist/csc-ui/csc-ui.esm.js",
+  "version": "0.0.1"
+}

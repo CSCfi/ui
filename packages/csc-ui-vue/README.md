@@ -11,7 +11,7 @@ npm install @cscfi/csc-ui-vue
 // main.ts
 
 import { createApp } from 'vue';
-import { applyPolyfills, defineCustomElements } from 'csc-ui/loader';
+import { applyPolyfills, defineCustomElements } from '@cscfi/csc-ui/loader';
 import { vControl } from '@cscfi/csc-ui-vue';
 
 import App from './App.vue';

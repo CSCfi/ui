@@ -1,0 +1,50 @@
+a {
+  display: grid;
+  border: 1px var(--csc-light-grey) solid;
+  grid-template-columns: 1fr;
+  grid-template-rows: 1fr auto;
+  place-content: center;
+  border-radius: 4px;
+  text-align: center;
+  text-decoration: none;
+  color: var(--csc-dark-grey);
+  min-height: 168px;
+  height: 100%;
+  outline: 1px transparent solid;
+  transition: all 0.3s ease-in-out;
+
+  img {
+    place-self: center;
+    max-width: 200px;
+    padding: 8px 24px;
+    max-height: 120px;
+  }
+
+  div {
+    background-color: rgba(0, 0, 0, 0.015);
+    font-size: 14px;
+    padding: 4px;
+    box-shadow: 0 -1px 0 0 rgb(0 0 0 / 5%);
+  }
+
+  &:hover {
+    outline: 1px var(--csc-primary) solid;
+    border-color: var(--csc-primary);
+  }
+
+  &:focus {
+    outline: 2px var(--csc-primary) solid;
+    outline-offset: 2px;
+  }
+
+  @supports selector(:focus-visible) {
+    &:focus {
+      outline: none;
+    }
+  }
+
+  &:focus-visible {
+    outline: 2px var(--csc-primary) solid;
+    outline-offset: 2px;
+  }
+}

@@ -1,0 +1,187 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`c-data-table displays hidden data on row click 1`] = `
+<c-data-table class="hydrated">
+  <mock:shadow-root>
+    <table class="c-data-table">
+      <colgroup>
+        <col>
+        <col>
+        <col>
+      </colgroup>
+      <thead>
+        <tr>
+          <th data-id="country">
+            <div class="sortable">
+              Country
+              <svg height="24" tabindex="0" viewBox="0 0 24 24" width="24">
+                <path d="M9,3L5,7H8V14H10V7H13M16,17V10H14V17H11L15,21L19,17H16Z"></path>
+              </svg>
+            </div>
+          </th>
+          <th data-id="population">
+            <div class="sortable">
+              Population (2020)
+              <svg height="24" tabindex="0" viewBox="0 0 24 24" width="24">
+                <path d="M9,3L5,7H8V14H10V7H13M16,17V10H14V17H11L15,21L19,17H16Z"></path>
+              </svg>
+            </div>
+          </th>
+          <th data-id="actions">
+            <div></div>
+          </th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="loader" colspan="100"></td>
+        </tr>
+        <tr>
+          <td>
+            <div>
+              4.8
+            </div>
+          </td>
+          <td>
+            <div data-align="center">
+              <div class="children">
+                <p style="margin: 0px;">
+                  Denmark
+                </p>
+                <c-icon class="hydrated" style="height: 24px;"></c-icon>
+              </div>
+            </div>
+          </td>
+          <td>
+            <div>
+              5831404
+            </div>
+          </td>
+          <td>
+            <div data-align="end">
+              <div class="children">
+                <c-button class="hydrated" title="Show Code">
+                  Show Code
+                </c-button>
+              </div>
+            </div>
+          </td>
+        </tr>
+        <tr>
+          <td>
+            <div>
+              7.5
+            </div>
+          </td>
+          <td>
+            <div data-align="center">
+              Finland
+            </div>
+          </td>
+          <td>
+            <div>
+              5529543
+            </div>
+          </td>
+          <td>
+            <div data-align="end">
+              <div class="children">
+                <c-button class="hydrated" title="Show Code">
+                  Show Code
+                </c-button>
+              </div>
+            </div>
+          </td>
+        </tr>
+        <tr>
+          <td>
+            <div>
+              5.4
+            </div>
+          </td>
+          <td>
+            <div data-align="center">
+              Iceland
+            </div>
+          </td>
+          <td>
+            <div>
+              366463
+            </div>
+          </td>
+          <td>
+            <div data-align="end">
+              <div class="children">
+                <c-button class="hydrated" title="Show Code">
+                  Show Code
+                </c-button>
+              </div>
+            </div>
+          </td>
+        </tr>
+        <tr>
+          <td>
+            <div>
+              5
+            </div>
+          </td>
+          <td>
+            <div data-align="center">
+              Norway
+            </div>
+          </td>
+          <td>
+            <div>
+              5379475
+            </div>
+          </td>
+          <td>
+            <div data-align="end">
+              <div class="children">
+                <c-button class="hydrated" title="Show Code">
+                  Show Code
+                </c-button>
+              </div>
+            </div>
+          </td>
+        </tr>
+        <tr>
+          <td>
+            <div>
+              8.7
+            </div>
+          </td>
+          <td>
+            <div data-align="center">
+              Sweden
+            </div>
+          </td>
+          <td>
+            <div>
+              10353442
+            </div>
+          </td>
+          <td>
+            <div data-align="end">
+              <div class="children">
+                <c-button class="hydrated" title="Show Code">
+                  Show Code
+                </c-button>
+              </div>
+            </div>
+          </td>
+        </tr>
+      </tbody>
+      <tfoot>
+        <tr>
+          <td colspan="100">
+            <div class="c-data-table__footer">
+              <c-pagination class="hydrated"></c-pagination>
+            </div>
+          </td>
+        </tr>
+      </tfoot>
+    </table>
+  </mock:shadow-root>
+</c-data-table>
+`;

@@ -1,0 +1,9 @@
+.c-accordion {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+
+  ::slotted(*) {
+    flex-basis: 100%;
+  }
+}
