@@ -16,7 +16,6 @@
 | `grouped`  | `grouped`   | True when used as a tab button                      | `boolean`                         | `false`     |
 | `hostId`   | `id`        | Id of the button                                    | `string`                          | `undefined` |
 | `href`     | `href`      | Hyperlink url                                       | `string`                          | `undefined` |
-| `iconEnd`  | `icon-end`  | Icon after text                                     | `boolean`                         | `false`     |
 | `inverted` | `inverted`  | Inverted button style for dark backgrounds          | `boolean`                         | `false`     |
 | `loading`  | `loading`   | Display loader on the button                        | `boolean`                         | `false`     |
 | `noRadius` | `no-radius` | Remove the default border radius                    | `boolean`                         | `false`     |

@@ -67,11 +67,6 @@ export class CButton {
   @Prop() noRadius = false;
 
   /**
-   * Icon after text
-   */
-  @Prop() iconEnd = false;
-
-  /**
    * Button type
    */
   @Prop() type: 'button' | 'submit' = 'button';
@@ -171,8 +166,6 @@ export class CButton {
   }
 
   render() {
-    let svg: SVGImageElement;
-
     const contentClasses = {
       'c-button__content': true,
       'c-button__content--description': this._containerhasDescriptionSlot,
@@ -232,16 +225,6 @@ export class CButton {
       linkAttributes = { href: this.href, target: this.target };
     }
 
-    const renderIcon = (
-      <slot name="icon">
-        {this.path && (
-          <svg class="icon-by-path" width="24" height="24" viewBox="0 0 24 24">
-            <path d={this.path} />
-          </svg>
-        )}
-      </slot>
-    );
-
     const spinnerSizes = {
       small: 20,
       default: 24,
@@ -265,14 +248,9 @@ export class CButton {
                 </div>
               )}
 
-              {!this.iconEnd && renderIcon}
-
-              {svg}
-
               <slot></slot>
-
-              {this.iconEnd && renderIcon}
             </div>
+
             {this._containerhasDescriptionSlot && (
               <div class={descriptionSlotClasses}>
                 <slot name="description"></slot>
