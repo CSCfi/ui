@@ -12,6 +12,7 @@
 | `disabled` | `disabled` | Disable the button                  | `boolean`                           | `false`     |
 | `ghost`    | `ghost`    | Ghost variant of the button         | `boolean`                           | `false`     |
 | `inverted` | `inverted` | Inverted color for dark backgrounds | `boolean`                           | `false`     |
+| `loading`  | `loading`  | Loading variant of the button       | `boolean`                           | `false`     |
 | `outlined` | `outlined` | Outlined variant of the button      | `boolean`                           | `false`     |
 | `path`     | `path`     | Path for the svg icon               | `string`                            | `null`      |
 | `size`     | `size`     | Size of the button                  | `"default" \| "small" \| "x-small"` | `'default'` |
@@ -154,12 +155,14 @@
 ### Depends on
 
 - [c-badge](../c-badge)
+- [c-spinner](../c-spinner)
 - [c-ripple](../c-ripple)
 
 ### Graph
 ```mermaid
 graph TD;
   c-icon-button --> c-badge
+  c-icon-button --> c-spinner
   c-icon-button --> c-ripple
   c-card --> c-icon-button
   c-data-table --> c-icon-button

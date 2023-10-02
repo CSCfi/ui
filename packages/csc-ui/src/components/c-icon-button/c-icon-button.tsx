@@ -21,6 +21,11 @@ export class CIconButton {
   @Prop() danger = false;
 
   /**
+   * Loading variant of the button
+   */
+  @Prop() loading = false;
+
+  /**
    * Text variant of the button
    */
   @Prop() text = false;
@@ -82,6 +87,12 @@ export class CIconButton {
   };
 
   render() {
+    const spinnerSizes = {
+      'x-small': 18,
+      small: 20,
+      default: 24,
+    };
+
     return (
       <Host class={this._hostClasses()}>
         <button disabled={this.disabled} onClick={this._onClick}>
@@ -89,13 +100,22 @@ export class CIconButton {
             class="inner-container"
             ref={(el) => (this._container = el as HTMLDivElement)}
           >
-            <slot>
-              {this.path && (
-                <svg width="24" height="24" viewBox="0 0 24 24">
-                  <path d={this.path} />
-                </svg>
-              )}
-            </slot>
+            {this.loading && (
+              <c-spinner
+                color="var(--c-icon-button-loader-color)"
+                size={spinnerSizes[this.size]}
+              />
+            )}
+
+            {!this.loading && (
+              <slot>
+                {this.path && (
+                  <svg width="24" height="24" viewBox="0 0 24 24">
+                    <path d={this.path} />
+                  </svg>
+                )}
+              </slot>
+            )}
           </div>
 
           {this.badge && this._renderBadge()}

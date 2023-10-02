@@ -17,6 +17,10 @@
     <c-icon-button text>
       <c-icon :path="mdiStar"></c-icon>
     </c-icon-button>
+
+    <c-icon-button danger>
+      <c-icon :path="mdiStar"></c-icon>
+    </c-icon-button>
   </component-example>
 
   <component-example name="loading">
@@ -35,6 +39,10 @@
     </c-icon-button>
 
     <c-icon-button text loading>
+      <c-icon :path="mdiStar"></c-icon>
+    </c-icon-button>
+
+    <c-icon-button danger loading>
       <c-icon :path="mdiStar"></c-icon>
     </c-icon-button>
   </component-example>
@@ -57,10 +65,18 @@
     <c-icon-button text disabled>
       <c-icon :path="mdiStar"></c-icon>
     </c-icon-button>
+
+    <c-icon-button danger disabled>
+      <c-icon :path="mdiStar"></c-icon>
+    </c-icon-button>
   </component-example>
 
   <component-example name="sizes">
     <template #title>Sizes</template>
+
+    <c-icon-button size="x-small">
+      <c-icon :path="mdiStar"></c-icon>
+    </c-icon-button>
 
     <c-icon-button size="small">
       <c-icon :path="mdiStar"></c-icon>
@@ -89,6 +105,32 @@
     <c-icon-button badge="new" text>
       <c-icon :path="mdiStar"></c-icon>
     </c-icon-button>
+
+    <c-icon-button badge="1" danger>
+      <c-icon :path="mdiStar"></c-icon>
+    </c-icon-button>
+  </component-example>
+
+  <component-example name="inverted">
+    <template #title>Inverted</template>
+
+    <c-row gap="16" class="bg-primary-600 p-2 rounded-md">
+      <c-icon-button inverted>
+        <c-icon :path="mdiStar"></c-icon>
+      </c-icon-button>
+      <c-icon-button inverted outlined>
+        <c-icon :path="mdiStar"></c-icon>
+      </c-icon-button>
+      <c-icon-button inverted ghost>
+        <c-icon :path="mdiStar"></c-icon>
+      </c-icon-button>
+      <c-icon-button inverted text>
+        <c-icon :path="mdiStar"></c-icon>
+      </c-icon-button>
+      <c-icon-button inverted danger>
+        <c-icon :path="mdiStar"></c-icon>
+      </c-icon-button>
+    </c-row>
   </component-example>
 </template>
 

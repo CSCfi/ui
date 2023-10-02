@@ -1,7 +1,7 @@
 
 /**
  * Examples for CIconButton.vue.
- * Automatically generated at 10/2/2023, 8:59:00 AM.
+ * Automatically generated at 10/2/2023, 2:21:28 PM.
  *
  * ⚠️ DO NOT EDIT THESE MANUALLY AS THEY WILL BE OVERWRITTEN IN THE NEXT BUILD!
  */
@@ -21,6 +21,10 @@ export const variants = `
 
 <c-icon-button text>
   <c-icon :path="mdiStar"></c-icon>
+</c-icon-button>
+
+<c-icon-button danger>
+  <c-icon :path="mdiStar"></c-icon>
 </c-icon-button>`;
 
 export const loading = `
@@ -37,6 +41,50 @@ export const loading = `
 </c-icon-button>
 
 <c-icon-button text loading>
+  <c-icon :path="mdiStar"></c-icon>
+</c-icon-button>
+
+<c-icon-button danger loading>
+  <c-icon :path="mdiStar"></c-icon>
+</c-icon-button>
+
+<c-icon-button loading size="small">
+  <c-icon :path="mdiStar"></c-icon>
+</c-icon-button>
+
+<c-icon-button outlined loading size="small">
+  <c-icon :path="mdiStar"></c-icon>
+</c-icon-button>
+
+<c-icon-button ghost loading size="small">
+  <c-icon :path="mdiStar"></c-icon>
+</c-icon-button>
+
+<c-icon-button text loading size="small">
+  <c-icon :path="mdiStar"></c-icon>
+</c-icon-button>
+
+<c-icon-button danger loading size="small">
+  <c-icon :path="mdiStar"></c-icon>
+</c-icon-button>
+
+<c-icon-button loading size="x-small">
+  <c-icon :path="mdiStar"></c-icon>
+</c-icon-button>
+
+<c-icon-button outlined loading size="x-small">
+  <c-icon :path="mdiStar"></c-icon>
+</c-icon-button>
+
+<c-icon-button ghost loading size="x-small">
+  <c-icon :path="mdiStar"></c-icon>
+</c-icon-button>
+
+<c-icon-button text loading size="x-small">
+  <c-icon :path="mdiStar"></c-icon>
+</c-icon-button>
+
+<c-icon-button danger loading size="x-small">
   <c-icon :path="mdiStar"></c-icon>
 </c-icon-button>`;
 
@@ -55,9 +103,17 @@ export const disabled = `
 
 <c-icon-button text disabled>
   <c-icon :path="mdiStar"></c-icon>
+</c-icon-button>
+
+<c-icon-button danger disabled>
+  <c-icon :path="mdiStar"></c-icon>
 </c-icon-button>`;
 
 export const sizes = `
+<c-icon-button size="x-small">
+  <c-icon :path="mdiStar"></c-icon>
+</c-icon-button>
+
 <c-icon-button size="small">
   <c-icon :path="mdiStar"></c-icon>
 </c-icon-button>
@@ -81,4 +137,27 @@ export const badges = `
 
 <c-icon-button badge="new" text>
   <c-icon :path="mdiStar"></c-icon>
+</c-icon-button>
+
+<c-icon-button badge="1" danger>
+  <c-icon :path="mdiStar"></c-icon>
 </c-icon-button>`;
+
+export const inverted = `
+<c-row gap="16" class="bg-primary-600 p-2 rounded-md">
+  <c-icon-button inverted>
+    <c-icon :path="mdiStar"></c-icon>
+  </c-icon-button>
+  <c-icon-button inverted outlined>
+    <c-icon :path="mdiStar"></c-icon>
+  </c-icon-button>
+  <c-icon-button inverted ghost>
+    <c-icon :path="mdiStar"></c-icon>
+  </c-icon-button>
+  <c-icon-button inverted text>
+    <c-icon :path="mdiStar"></c-icon>
+  </c-icon-button>
+  <c-icon-button inverted danger>
+    <c-icon :path="mdiStar"></c-icon>
+  </c-icon-button>
+</c-row>`;
