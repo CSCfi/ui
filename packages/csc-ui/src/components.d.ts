@@ -1157,7 +1157,7 @@ export namespace Components {
         "target": string;
     }
     /**
-     * @parent c-sidenavigation
+     * @parent c-side-navigation
      */
     interface CSideNavigationTitle {
     }
@@ -2063,7 +2063,7 @@ declare global {
         new (): HTMLCSideNavigationItemElement;
     };
     /**
-     * @parent c-sidenavigation
+     * @parent c-side-navigation
      */
     interface HTMLCSideNavigationTitleElement extends Components.CSideNavigationTitle, HTMLStencilElement {
     }
@@ -3524,7 +3524,7 @@ declare namespace LocalJSX {
         "target"?: string;
     }
     /**
-     * @parent c-sidenavigation
+     * @parent c-side-navigation
      */
     interface CSideNavigationTitle {
     }
@@ -4220,7 +4220,7 @@ declare module "@stencil/core" {
              */
             "c-side-navigation-item": LocalJSX.CSideNavigationItem & JSXBase.HTMLAttributes<HTMLCSideNavigationItemElement>;
             /**
-             * @parent c-sidenavigation
+             * @parent c-side-navigation
              */
             "c-side-navigation-title": LocalJSX.CSideNavigationTitle & JSXBase.HTMLAttributes<HTMLCSideNavigationTitleElement>;
             /**

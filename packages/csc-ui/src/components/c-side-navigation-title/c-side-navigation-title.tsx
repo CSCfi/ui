@@ -1,7 +1,7 @@
 import { Component, Host, h } from '@stencil/core';
 
 /**
- * @parent c-sidenavigation
+ * @parent c-side-navigation
  */
 @Component({
   tag: 'c-side-navigation-title',

@@ -1,4 +1,5 @@
-:host, :root {
+:host,
+:root {
   /**
    * @prop --c-table-border-color: Table border color
    * @prop --c-table-header-text-color: Table header text color
@@ -39,12 +40,12 @@ table.c-table {
 
     th {
       border-bottom: 2px solid var(--c-table-border-color);
+      text-align: left;
     }
   }
 
   tbody {
-    box-shadow:
-      inset 1px 0 0 0 var(--c-table-border-color),
+    box-shadow: inset 1px 0 0 0 var(--c-table-border-color),
       inset -1px 0 0 0 var(--c-table-border-color),
       inset 0 1px 0 0 var(--c-table-border-color),
       inset 0 -1px 0 0 var(--c-table-border-color);

@@ -1,9 +1,13 @@
 :host {
+  /**
+   * @prop --c-side-navigation-title-color: Title color
+   * @prop --c-side-navigation-title-border-color: Title border color
+   */
   --c-side-navigation-title-color: var(--c-white);
-  --c-side-navigation-title-border: var(--c-white);
+  --c-side-navigation-title-border-color: var(--c-white);
 
   align-items: center;
-  border-bottom: 1px solid var(--c-side-navigation-title-border);
+  box-shadow: 0 1px 0 0 var(--c-side-navigation-title-border-color);
   color: var(--c-side-navigation-title-color);
   display: flex;
   gap: 8px;
