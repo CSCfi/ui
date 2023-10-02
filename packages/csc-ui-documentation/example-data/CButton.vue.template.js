@@ -1,7 +1,7 @@
 
 /**
  * Examples for CButton.vue.
- * Automatically generated at 10/2/2023, 8:59:00 AM.
+ * Automatically generated at 10/2/2023, 2:21:28 PM.
  *
  * ⚠️ DO NOT EDIT THESE MANUALLY AS THEY WILL BE OVERWRITTEN IN THE NEXT BUILD!
  */
@@ -29,26 +29,26 @@ export const disabled = `
 
 export const icon = `
 <c-button>
-  <c-icon slot="icon" :path="mdiLogin"></c-icon>
+  <c-icon :path="mdiLogin"></c-icon>
   Login
 </c-button>
 
 <c-button ghost>
-  <c-icon slot="icon" :path="mdiLogout"></c-icon>
+  <c-icon :path="mdiLogout"></c-icon>
   Logout
 </c-button>
 
 <c-button disabled>
-  <c-icon slot="icon" :path="mdiLogin"></c-icon>
+  <c-icon :path="mdiLogin"></c-icon>
   Login
 </c-button>
 
-<c-button text icon-end>
-  <c-icon slot="icon" :path="mdiArrowRight"></c-icon>
+<c-button text>
   Next
+  <c-icon :path="mdiArrowRight"></c-icon>
 </c-button>
 
 <c-button danger>
-  <c-icon slot="icon" :path="mdiDelete"></c-icon>
+  <c-icon :path="mdiDelete"></c-icon>
   Delete
 </c-button>`;

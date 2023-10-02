@@ -1,11 +1,11 @@
 
 /**
  * Examples for CAlert.vue.
- * Automatically generated at 10/2/2023, 8:59:00 AM.
+ * Automatically generated at 10/2/2023, 2:21:28 PM.
  *
  * ⚠️ DO NOT EDIT THESE MANUALLY AS THEY WILL BE OVERWRITTEN IN THE NEXT BUILD!
  */
-export const basic = `import { CAlertType, CRadioGroupItem } from 'csc-ui';
+export const basic = `import { CAlertType, CRadioGroupItem } from '@cscfi/csc-ui';
 
 const type = ref<CAlertType>(CAlertType.Info);
 

@@ -33,27 +33,27 @@
     <template #title>With icon</template>
 
     <c-button>
-      <c-icon slot="icon" :path="mdiLogin"></c-icon>
+      <c-icon :path="mdiLogin"></c-icon>
       Login
     </c-button>
 
     <c-button ghost>
-      <c-icon slot="icon" :path="mdiLogout"></c-icon>
+      <c-icon :path="mdiLogout"></c-icon>
       Logout
     </c-button>
 
     <c-button disabled>
-      <c-icon slot="icon" :path="mdiLogin"></c-icon>
+      <c-icon :path="mdiLogin"></c-icon>
       Login
     </c-button>
 
-    <c-button text icon-end>
-      <c-icon slot="icon" :path="mdiArrowRight"></c-icon>
+    <c-button text>
       Next
+      <c-icon :path="mdiArrowRight"></c-icon>
     </c-button>
 
     <c-button danger>
-      <c-icon slot="icon" :path="mdiDelete"></c-icon>
+      <c-icon :path="mdiDelete"></c-icon>
       Delete
     </c-button>
   </component-example>

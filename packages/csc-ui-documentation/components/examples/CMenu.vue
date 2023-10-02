@@ -11,7 +11,7 @@
 <script setup lang="ts">
 // @example-start|basic
 import { mdiInformationOutline } from '@mdi/js';
-import { CToastType } from 'csc-ui';
+import { CToastType } from '@cscfi/csc-ui';
 
 const toastsRef = ref<HTMLCToastsElement | null>(null);
 
