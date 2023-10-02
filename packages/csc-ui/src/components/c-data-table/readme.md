@@ -111,6 +111,7 @@ graph TD;
   c-menu --> c-menu-items
   c-menu --> c-icon
   c-icon-button --> c-badge
+  c-icon-button --> c-spinner
   c-icon-button --> c-ripple
   style c-data-table fill:#f9f,stroke:#333,stroke-width:4px
 ```

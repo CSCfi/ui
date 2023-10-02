@@ -222,6 +222,7 @@
     }
 
     thead {
+      background-color: var(--c-data-table-background-color);
       position: relative;
 
       &.sticky {

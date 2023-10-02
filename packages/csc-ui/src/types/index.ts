@@ -71,6 +71,7 @@ export interface CDataTableDataItem {
 export interface CDataTableChild {
   value: null | string;
   component?: CDataTableComponent;
+  children?: CDataTableChild[];
 }
 
 export interface CDataTableComponent {

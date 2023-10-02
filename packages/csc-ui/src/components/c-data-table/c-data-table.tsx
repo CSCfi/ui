@@ -897,17 +897,23 @@ export class CDataTable {
       return !!Tag ? (
         <Tag
           {...params}
-          onClick={(event: MouseEvent) => {
-            params?.onClick?.({
-              value: options.value,
-              index,
-              event,
-              key,
-              data: flatData,
-            });
-          }}
+          {...(!!params?.onClick
+            ? {}
+            : {
+                onClick: (event: MouseEvent) => {
+                  params.onClick({
+                    value: options.value,
+                    index,
+                    event,
+                    key,
+                    data: flatData,
+                  });
+                },
+              })}
         >
-          {child.value}
+          {!!child.children?.length
+            ? this._renderCellChildren(child, index, key, data)
+            : child.value}
         </Tag>
       ) : (
         child.value
