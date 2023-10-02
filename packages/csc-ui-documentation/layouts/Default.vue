@@ -21,6 +21,18 @@
 
         <c-side-navigation-title>Components</c-side-navigation-title>
 
+        <c-text-field
+          v-model="query"
+          v-control
+          class="mr-6"
+          placeholder="Search for a component"
+          hide-details
+          shadow
+          @input="filterComponents()"
+        >
+          <c-icon slot="pre" :path="mdiMagnify" size="16"></c-icon>
+        </c-text-field>
+
         <c-side-navigation-item
           v-for="group in navItems"
           :key="group.name"
@@ -52,7 +64,7 @@
 </template>
 
 <script lang="ts" setup>
-import { mdiInformationOutline } from '@mdi/js';
+import { mdiInformationOutline, mdiMagnify } from '@mdi/js';
 import { storeToRefs } from 'pinia';
 import { ComponentData } from '../types/docs';
 
@@ -63,6 +75,8 @@ interface ComponentGroup {
 }
 
 const navItems = ref<ComponentGroup[]>([]);
+
+const query = ref('');
 
 const route = useRoute();
 
@@ -86,11 +100,10 @@ onMounted(() => {
 const isMobile = computed(() => width.value < 1280);
 
 const getGroupedComponents = (
-  items: any,
-  query = null,
+  query = '',
   visible = false,
 ): ComponentGroup[] => {
-  return items
+  return parsedData.value
     .filter((component: any) => {
       if (!query) return component;
 
@@ -107,7 +120,7 @@ const getGroupedComponents = (
         groups.push({
           name: groupName,
           components: [component],
-          visible: visible && !!query,
+          visible: false,
         });
 
         return groups;
@@ -123,8 +136,12 @@ const getGroupedComponents = (
         (component: any) => component.tag === route.params.slug[0],
       );
 
-      return { ...group, visible: isActive };
+      return { ...group, visible: isActive || visible };
     });
+};
+
+const filterComponents = () => {
+  navItems.value = getGroupedComponents(query.value, !!query.value);
 };
 
 watch(
@@ -132,7 +149,7 @@ watch(
   (data) => {
     if (!data) return;
 
-    navItems.value = getGroupedComponents(data);
+    navItems.value = getGroupedComponents();
   },
   { immediate: true },
 );
