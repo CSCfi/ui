@@ -117,7 +117,14 @@ const getGroupedComponents = (
 
       return groups;
     }, [] as ComponentGroup[])
-    .sort((a: any, b: any) => a.name.localeCompare(b.name));
+    .sort((a: any, b: any) => a.name.localeCompare(b.name))
+    .map((group: ComponentGroup) => {
+      const isActive = group.components.some(
+        (component: any) => component.tag === route.params.slug[0],
+      );
+
+      return { ...group, visible: isActive };
+    });
 };
 
 watch(
