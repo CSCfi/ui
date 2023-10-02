@@ -61,6 +61,7 @@ graph TD;
   c-menu --> c-menu-items
   c-menu --> c-icon
   c-icon-button --> c-badge
+  c-icon-button --> c-spinner
   c-icon-button --> c-ripple
   c-data-table --> c-pagination
   style c-pagination fill:#f9f,stroke:#333,stroke-width:4px

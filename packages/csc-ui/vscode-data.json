@@ -201,10 +201,6 @@
           "description": "Hyperlink url"
         },
         {
-          "name": "icon-end",
-          "description": "Icon after text"
-        },
-        {
           "name": "inverted",
           "description": "Inverted button style for dark backgrounds"
         },
@@ -539,6 +535,10 @@
           "description": "Inverted color for dark backgrounds"
         },
         {
+          "name": "loading",
+          "description": "Loading variant of the button"
+        },
+        {
           "name": "outlined",
           "description": "Outlined variant of the button"
         },
@@ -747,7 +747,7 @@
         },
         {
           "name": "href",
-          "description": "Login provider link. Do not set if using a click handler like @click in Vue or (click) in Angular"
+          "description": "Login provider link. Do not set if using a click handler like"
         },
         {
           "name": "src",

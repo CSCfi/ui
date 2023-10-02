@@ -1,5 +1,5 @@
 {
-  "author": "Oskari Väistö <oskari.vaisto@csc.fi>",
+  "author": "My CSC Team <suiteamsui@gmail.com>",
   "description": "Vue 3 directive for csc-ui components",
   "directories": {
     "lib": "lib"
@@ -12,7 +12,7 @@
     "vue",
     "csc-ui"
   ],
-  "license": "ISC",
+  "license": "MIT",
   "main": "lib/vControl.js",
   "name": "@cscfi/csc-ui-vue",
   "scripts": {

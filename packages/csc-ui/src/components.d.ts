@@ -199,10 +199,6 @@ export namespace Components {
          */
         "href": string;
         /**
-          * Icon after text
-         */
-        "iconEnd": boolean;
-        /**
           * Inverted button style for dark backgrounds
          */
         "inverted": boolean;
@@ -477,6 +473,10 @@ export namespace Components {
          */
         "inverted": boolean;
         /**
+          * Loading variant of the button
+         */
+        "loading": boolean;
+        /**
           * Outlined variant of the button
          */
         "outlined": boolean;
@@ -652,7 +652,8 @@ export namespace Components {
          */
         "alt": string;
         /**
-          * Login provider link. Do not set if using a click handler like @click in Vue or (click) in Angular
+          * Login provider link. Do not set if using a click handler like
+          * @click in Vue or (click) in Angular
          */
         "href"?: string;
         /**
@@ -2512,10 +2513,6 @@ declare namespace LocalJSX {
          */
         "href"?: string;
         /**
-          * Icon after text
-         */
-        "iconEnd"?: boolean;
-        /**
           * Inverted button style for dark backgrounds
          */
         "inverted"?: boolean;
@@ -2799,6 +2796,10 @@ declare namespace LocalJSX {
          */
         "inverted"?: boolean;
         /**
+          * Loading variant of the button
+         */
+        "loading"?: boolean;
+        /**
           * Outlined variant of the button
          */
         "outlined"?: boolean;
@@ -2978,7 +2979,8 @@ declare namespace LocalJSX {
          */
         "alt"?: string;
         /**
-          * Login provider link. Do not set if using a click handler like @click in Vue or (click) in Angular
+          * Login provider link. Do not set if using a click handler like
+          * @click in Vue or (click) in Angular
          */
         "href"?: string;
         /**

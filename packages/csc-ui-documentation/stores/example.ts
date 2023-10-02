@@ -2,7 +2,7 @@ import { defineStore } from 'pinia';
 import { ComponentData } from '../types/docs.d';
 import { components } from '../docs.json';
 
-export const useExampleStore = defineStore('counter', () => {
+export const useExampleStore = defineStore('example', () => {
   const currentComponent = ref('');
 
   const parseComponents = (items: any) => {

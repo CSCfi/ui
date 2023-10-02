@@ -22,11 +22,11 @@
         <div class="flex justify-start mb-4">
           <c-tab-buttons v-model="exampleType" v-control size="small" mandatory>
             <c-button value="template">
-              <c-icon slot="icon" :path="mdiLanguageHtml5"></c-icon>
+              <c-icon :path="mdiLanguageHtml5"></c-icon>
               Template
             </c-button>
             <c-button v-if="examples.scripts.get(name)" value="script">
-              <c-icon slot="icon" :path="mdiLanguageTypescript"></c-icon>
+              <c-icon :path="mdiLanguageTypescript"></c-icon>
               Script
             </c-button>
           </c-tab-buttons>
@@ -59,8 +59,6 @@
 
 <script setup lang="ts">
 import { mdiLanguageHtml5, mdiLanguageTypescript, mdiXml } from '@mdi/js';
-// import { storeToRefs } from 'pinia';
-import CodeBlock from 'vue3-code-block';
 
 defineProps<{
   rows?: boolean;

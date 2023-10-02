@@ -63,6 +63,7 @@ graph TD;
   c-card --> c-icon-button
   c-card --> c-icon
   c-icon-button --> c-badge
+  c-icon-button --> c-spinner
   c-icon-button --> c-ripple
   style c-card fill:#f9f,stroke:#333,stroke-width:4px
 ```

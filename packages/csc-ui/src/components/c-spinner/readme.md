@@ -26,12 +26,14 @@
 ### Used by
 
  - [c-button](../c-button)
+ - [c-icon-button](../c-icon-button)
  - [c-loader](../c-loader)
 
 ### Graph
 ```mermaid
 graph TD;
   c-button --> c-spinner
+  c-icon-button --> c-spinner
   c-loader --> c-spinner
   style c-spinner fill:#f9f,stroke:#333,stroke-width:4px
 ```
