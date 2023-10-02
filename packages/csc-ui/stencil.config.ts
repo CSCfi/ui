@@ -8,10 +8,10 @@ import { reactOutputTarget } from '@stencil/react-output-target';
 
 const componentModels: ComponentModelConfig[] = [
   {
-    elements: ['c-radio-group', 'c-select', 'c-checkbox', 'c-text-field'],
-    event: 'change-value',
+    elements: ['c-text-field'],
+    event: 'changeValue',
+    // externalEvent: 'change',
     targetAttr: 'value',
-    externalEvent: 'changeValue',
   },
 ];
 
