@@ -1,0 +1,132 @@
+:host {
+  /**
+   * @prop --c-side-navigation-item-hover-background-color: Side navigation item hover background color
+   * @prop --c-side-navigation-item-active-background-color: Side navigation item active background color
+   * @prop --c-side-navigation-item-active-text-color: Side navigation item active text color
+   */
+  --c-side-navigation-item-hover-background-color: var(--c-primary-500);
+  --c-side-navigation-item-active-background-color: var(--c-primary-200);
+  --c-side-navigation-item-active-text-color: var(--c-primary-600);
+}
+
+:host(.c-side-navigation-item) {
+  align-items: center;
+  backface-visibility: hidden;
+  border-radius: 4px 0 0 4px;
+  color: var(--c-white);
+  cursor: pointer;
+  display: grid;
+  grid-template-columns: 1fr;
+  font-weight: 400;
+  overflow: hidden;
+  position: relative;
+  transform: translate3d(0, 0, 0);
+  user-select: none;
+  min-width: calc(320px - 24px);
+}
+
+:host(.c-side-navigation-item:hover) {
+  background-color: var(--c-side-navigation-item-hover-background-color);
+}
+
+:host(.c-side-navigation-item:focus) {
+  outline: none;
+}
+
+:host(.c-side-navigation-item:focus-visible) {
+  border-radius: 4px 0 0 4px;
+  outline: 2px var(--c-white) solid;
+  outline-offset: 2px;
+}
+
+:host(.c-side-navigation-item.active) {
+  background-color: var(--c-side-navigation-item-active-background-color);
+  color: var(--c-side-navigation-item-active-text-color);
+
+  .svg {
+    fill: var(--c-side-navigation-item-active-text-color);
+    transform: rotate(90deg);
+  }
+
+  .c-side-navigation-item__header {
+    color: var(--c-side-navigation-item-active-text-color);
+  }
+}
+
+.c-side-navigation-item {
+  &__header {
+    align-items: center;
+    color: var(--c-white);
+    display: grid;
+    gap: 8px;
+    grid-template-columns: 1fr;
+    min-height: 46px;
+    padding: 0 12px;
+
+    &--expandable {
+      grid-template-columns: auto 1fr;
+    }
+  }
+
+  &__slot {
+    max-width: 100%;
+    overflow: hidden;
+  }
+}
+
+:host(.c-side-navigation-item--parent.active) {
+  padding-bottom: 4px;
+}
+
+::slotted(span),
+::slotted(c-icon) {
+  margin-right: 8px;
+  font-size: 20px;
+}
+
+::slotted([slot='main']) {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  line-height: normal;
+}
+
+.styleMain {
+  padding-left: 16px;
+}
+
+.subnavitem {
+  height: 0;
+  overflow-y: hidden;
+  transition: all 500ms ease;
+  width: 100%;
+}
+
+.subnavactive {
+  height: max-content;
+  width: 100%;
+}
+
+.svg {
+  align-self: center;
+  fill: var(--c-white);
+  transition: transform 0.3s ease;
+}
+
+:host > div.active .svg {
+  fill: var(--c-side-navigation-item-active);
+  transform: rotate(90deg);
+}
+
+.svg.hidden {
+  opacity: 0;
+}
+
+.middle {
+  display: flex;
+  height: 100%;
+  align-items: center;
+}

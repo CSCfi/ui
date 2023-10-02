@@ -1,0 +1,76 @@
+:host {
+  --c-modal-overlay-color: rgba(0, 0, 0, 0.5);
+}
+
+.modal-wrapper {
+  display: flex;
+  position: absolute;
+  align-items: center;
+  justify-content: center;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  pointer-events: none;
+}
+
+.c-modal {
+  width: var(--c-modal-width, 600px);
+  max-width: calc(100% - 32px);
+  display: block;
+  position: fixed;
+  transform: scale(0);
+  transition: transform 0.2s cubic-bezier(0.25, 0.8, 0.5, 1);
+  pointer-events: all;
+
+  &--hide {
+    visibility: hidden;
+  }
+
+  &--show {
+    transform: scale(1);
+    visibility: visible;
+  }
+
+  &--animate {
+    animation-duration: 0.15s;
+    animation-name: animate-dialog;
+    animation-timing-function: cubic-bezier(0.25, 0.8, 0.25, 1);
+  }
+}
+
+.c-overlay {
+  background-color: var(--c-modal-overlay-color);
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  transition: opacity 0.5s cubic-bezier(0.25, 0.8, 0.5, 1);
+  opacity: 0;
+  pointer-events: none;
+  backdrop-filter: blur(4px);
+
+  &--hide {
+    visibility: hidden;
+  }
+
+  &--show {
+    opacity: 1;
+    pointer-events: all;
+    visibility: visible;
+  }
+}
+
+@keyframes animate-dialog {
+  0% {
+    transform: scale(1);
+  }
+
+  50% {
+    transform: scale(1.03);
+  }
+  100% {
+    transform: scale(1);
+  }
+}

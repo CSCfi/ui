@@ -1,0 +1,107 @@
+/**
+   * @prop --c-sub-navigation-item-text-color: Sub navigation item text color
+   * @prop --c-sub-navigation-item-hover-background-color: Sub navigation item hover background color
+   * @prop --c-sub-navigation-item-active-text-color: Sub navigation item active text color
+   * @prop --c-sub-navigation-item-active-background-color: Sub navigation item active background color
+   */
+:host {
+  --c-sub-navigation-item-text-color: var(--c-text-body);
+  --c-sub-navigation-item-hover-background-color: var(--c-primary-100);
+  --c-sub-navigation-item-active-text-color: var(--c-primary-600);
+  --c-sub-navigation-item-active-background-color: var(--c-white);
+}
+
+.c-sub-navigation-item {
+  align-items: center;
+  background-color: transparent;
+  border-radius: 4px;
+  color: var(--c-sub-navigation-item-text-color);
+  cursor: pointer;
+  display: block;
+  display: flex;
+  font-weight: 400;
+  line-height: 46px;
+  margin: 0 8px;
+  overflow: hidden;
+  padding-left: 34px;
+  position: relative;
+  transition: background-color 0.2s ease-in;
+  user-select: none;
+  max-width: calc(320px - 24px - 16px);
+}
+
+.c-sub-navigation-item__wrapper {
+  padding: 2px 0;
+}
+
+.c-sub-navigation-item__content {
+  display: flex;
+  align-items: center;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.c-sub-navigation-item__content::before {
+  background-color: var(--c-sub-navigation-item-active-text-color);
+  content: '';
+  height: 100%;
+  left: 0;
+  position: absolute;
+  top: 0;
+  transform: translateZ(0) translateX(-8px);
+  transition: transform 0.2s ease-in-out;
+  width: 8px;
+}
+
+.c-sub-navigation-item:hover {
+  background-color: var(--c-sub-navigation-item-hover-background-color);
+  color: var(--c-sub-navigation-item-active-text-color);
+}
+
+:host(.active) .c-sub-navigation-item {
+  background-color: var(--c-sub-navigation-item-active-background-color);
+}
+
+:host(.active) .c-sub-navigation-item__content::before {
+  transform: translateZ(0) translateX(0);
+}
+
+::slotted(span) {
+  margin-right: 8px;
+  font-size: 20px;
+  line-height: 1;
+}
+
+:host(:host:focus),
+:host(:host:focus) .c-sub-navigation-item {
+  outline: none;
+}
+
+:host(:host:focus-visible) .c-sub-navigation-item {
+  outline: 2px var(--c-sub-navigation-item-active-text-color) solid;
+  outline-offset: 2px;
+}
+
+.visuallyhidden {
+  border: 0;
+  clip: rect(0 0 0 0);
+  height: 1px;
+  margin: -1px;
+  overflow: hidden;
+  padding: 0;
+  position: absolute;
+  white-space: nowrap;
+  width: 1px;
+}
+
+.c-sub-navigation-item__slot {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+
+  slot {
+    display: flex;
+    align-items: center;
+  }
+}

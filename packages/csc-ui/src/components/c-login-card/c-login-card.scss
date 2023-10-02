@@ -1,0 +1,71 @@
+:root {
+  /**
+   * @prop --c-login-card-overlay-color: Login card overlay blend color
+   */
+  --c-login-card-overlay-color: var(--c-primary-600);
+}
+
+c-login-card {
+  display: flex;
+  background: var(--c-white);
+  border-radius: 6px;
+}
+
+.c-login-card {
+  border-radius: 6px;
+  box-shadow: rgb(0 0 0 / 15%) 0px 10px 20px, rgb(0 0 0 / 20%) 0px 5px 5px;
+  display: flex;
+  position: relative;
+  width: 100%;
+
+  &__image {
+    background-size: cover;
+    border-radius: 6px;
+    clip-path: url(#cLoginClipPath);
+    height: 100%;
+    left: 0;
+    overflow: hidden;
+    position: absolute;
+    top: 0;
+    width: 100%;
+
+    &--overlay {
+      background-color: var(--c-login-card-overlay-color);
+      background-blend-mode: var(--c-login-overlay-mode);
+    }
+  }
+
+  &__content {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+    padding: 72px;
+    margin-bottom: 32px;
+    max-width: 80%;
+    width: 100%;
+
+    &--no-image {
+      max-width: 100%;
+      margin-bottom: 0;
+    }
+  }
+
+  &--mobile {
+    c-login-card-title {
+      font-size: 32px;
+      hyphens: auto;
+    }
+
+    .c-login-card__content {
+      max-width: 100%;
+      padding: 40px;
+    }
+
+    .c-login-card__image {
+      border-radius: 0 0 6px 6px;
+      bottom: 0;
+      top: auto;
+      width: 100%;
+    }
+  }
+}

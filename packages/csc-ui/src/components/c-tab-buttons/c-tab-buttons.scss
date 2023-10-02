@@ -1,0 +1,108 @@
+:host {
+  /**
+   * @prop --c-tab-buttons-active-background-color: Active tab button background color
+   * @prop --c-tab-buttons-active-background-color-hover: Active tab button hover background color
+   * @prop --c-tab-buttons-active-text-color: Active tab button text color
+   */
+  --c-tab-buttons-active-background-color: var(--c-primary-600);
+  --c-tab-buttons-active-background-color-hover: var(--c-primary-400);
+  --c-tab-buttons-active-text-color: var(--c-white);
+
+  /**
+   * @prop --c-tab-buttons-background-color: Tab button background color
+   * @prop --c-tab-buttons-background-color-hover: Tab button hover background color
+   * @prop --c-tab-buttons-text-color: Tab button text color
+   * @prop --c-tab-buttons-border-color: Tab button border color
+   */
+  --c-tab-buttons-background-color: var(--c-white);
+  --c-tab-buttons-background-color-hover: var(--c-primary-200);
+  --c-tab-buttons-text-color: var(--c-primary-600);
+  --c-tab-buttons-border-color: var(--c-primary-600);
+
+  /**
+   * @prop --c-tab-buttons-background-color: Disabled tab buttons border color
+   */
+   --c-tab-buttons-disabled-border: var(--c-tertiary-400);
+
+  /**
+   * @prop --c-tab-buttons-border-radius: Tab buttons border radius
+   */
+  --c-tab-buttons-border-radius: 4px;
+
+  ::slotted(c-button) {
+    --c-button-background-color: var(--c-tab-buttons-active-background-color) !important;
+    --c-button-background-color-hover: var(--c-tab-buttons-active-background-color-hover) !important;
+    --c-button-text-color: var(--c-tab-buttons-active-text-color) !important;
+
+    --c-button-border-radius: 0;
+    --c-button-min-width: auto;
+    --c-button-padding: 0 8px;
+
+    flex-grow: 1;
+  }
+
+  ::slotted(c-button.c-button--outlined) {
+    --c-button-outlined-background-color: var(--c-tab-buttons-background-color) !important;
+    --c-button-outlined-background-color-hover: var(--c-tab-buttons-background-color-hover) !important;
+    --c-button-outlined-text-color: var(--c-tab-buttons-text-color) !important;
+    --c-button-outlined-border-color: var(--c-tab-buttons-border-color) !important;
+
+    box-shadow: none;
+
+    &::before,
+    &::after {
+      background-color: #fff;
+      border-radius: inherit;
+      content: '';
+      height: 100%;
+      left: 0;
+      position: absolute;
+      top: 0;
+      transition: background-color 0.3s ease-in-out;
+      width: 100%;
+      z-index: -1;
+    }
+
+    &:hover {
+      background-color: var(--c-tab-button-background-color);
+    }
+  }
+
+  ::slotted(c-button:first-child) {
+    --c-button-border-radius: var(--c-tab-buttons-border-radius) 0 0 var(--c-tab-buttons-border-radius);
+  }
+
+  ::slotted(c-button:last-child) {
+    --c-button-border-radius: 0 var(--c-tab-buttons-border-radius) var(--c-tab-buttons-border-radius) 0;
+  }
+
+  ::slotted(*) {
+    flex-grow: 1;
+  }
+
+  display: flex;
+  flex-wrap: wrap;
+  box-shadow: 0 0 0 2px var(--c-tab-buttons-border-color);
+  margin: 2px;
+  border-radius: var(--c-tab-buttons-border-radius);
+  background-color: var(--c-tab-buttons-border-color);
+  gap: 2px;
+}
+
+:host(.disabled) {
+  --c-tab-buttons-border-color: var(--c-tab-buttons-disabled-border) !important;
+
+  pointer-events: none;
+}
+
+:host(.c-tab-buttons) {
+  ::slotted(c-button:focus) {
+    outline: none;
+  }
+
+  ::slotted(c-button:focus-visible) {
+    outline: 2px var(--c-tab-buttons-border-color) solid;
+    outline-offset: 4px;
+    z-index: 1;
+  }
+}

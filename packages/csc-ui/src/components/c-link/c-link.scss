@@ -1,0 +1,42 @@
+:host {
+  /**
+   * @prop --c-link-color: Link color
+   * @prop --c-link-hover: Link hover background color
+   */
+  --c-link-color: var(--c-info-700);
+  --c-link-hover: var(--c-accent-200);
+}
+
+a {
+  --c-link-icon-margin: 8px;
+
+  align-items: center;
+  color: var(--c-link-color);
+  background-color: var(--c-transparent);
+  display: inline-flex;
+  cursor: pointer;
+  font-size: inherit;
+  text-decoration: none;
+  gap: var(--c-link-icon-margin);
+  transition: background-color 0.3s ease-in-out;
+
+  &:hover {
+    background-color: var(--c-link-hover);
+  }
+
+  @supports selector(:focus-visible) {
+    &:focus {
+      outline: none;
+    }
+  }
+
+  &:focus-visible {
+    outline: 2px var(--c-link-color) solid;
+    outline-offset: 4px;
+    border-radius: 2px;
+  }
+}
+
+a.underline {
+  text-decoration: underline;
+}

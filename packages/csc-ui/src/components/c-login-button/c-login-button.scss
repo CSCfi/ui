@@ -1,0 +1,67 @@
+:host {
+  /**
+   * @prop --c-login-button-background-color: Button background color
+   * @prop --c-login-button-border-color: Button border color
+   * @prop --c-login-button-outline-color: Button outline color
+   * @prop --c-login-button-text-color: Button text color
+   * @prop --c-login-button-title-background-color: Button title color
+   */
+  --c-login-button-background-color: var(--c-white);
+  --c-login-button-border-color: var(--c-primary-200);
+  --c-login-button-outline-color: var(--c-primary-600);
+  --c-login-button-text-color: var(--c-text-system);
+  --c-login-button-title-background-color: var(--c-tertiary-100);
+}
+
+a {
+  background-color: var(--c-login-button-background-color);
+  border-radius: 4px;
+  border: 1px var(--c-login-button-border-color) solid;
+  color: var(--c-login-button-text-color);
+  cursor: pointer;
+  display: grid;
+  grid-template-columns: 1fr;
+  grid-template-rows: 1fr auto;
+  height: 100%;
+  min-height: 168px;
+  outline: 1px transparent solid;
+  place-content: center;
+  text-align: center;
+  text-decoration: none;
+
+  img {
+    max-height: 120px;
+    max-width: 200px;
+    padding: 8px 24px;
+    place-self: center;
+  }
+
+  div {
+    background-color: var(--c-login-button-title-background-color);
+    border-radius: 0 0 4px 4px;
+    box-shadow: 0 -1px 0 0 var(--c-login-button-border-color);
+    font-size: 14px;
+    padding: 4px;
+  }
+
+  &:hover {
+    border-color: var(--c-login-button-outline-color);
+    outline: 1px var(--c-login-button-outline-color) solid;
+  }
+
+  &:focus {
+    outline: 2px var(--c-login-button-outline-color) solid;
+    outline-offset: 2px;
+  }
+
+  @supports selector(:focus-visible) {
+    &:focus {
+      outline: none;
+    }
+  }
+
+  &:focus-visible {
+    outline: 2px var(--c-login-button-outline-color) solid;
+    outline-offset: 2px;
+  }
+}
