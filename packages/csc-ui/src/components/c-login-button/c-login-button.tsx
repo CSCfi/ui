@@ -2,6 +2,7 @@ import { Component, h, Prop } from '@stencil/core';
 
 /**
  * @parent c-login-buttons
+ * @slot default slot - Default slot
  */
 @Component({
   tag: 'c-login-button',
@@ -10,7 +11,7 @@ import { Component, h, Prop } from '@stencil/core';
 })
 export class CLoginButton {
   /**
-   * Login provider link. Do not set if using a click handler like @click in Vue or (click) in Angular
+   * Login provider link. Do not set if using a javascript click handler
    */
   @Prop() href? = '';
 

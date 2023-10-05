@@ -2,6 +2,7 @@ import { Component, Host, h } from '@stencil/core';
 
 /**
  * @group buttons
+ * @slot default slot - Default slot
  */
 @Component({
   tag: 'c-login-buttons',

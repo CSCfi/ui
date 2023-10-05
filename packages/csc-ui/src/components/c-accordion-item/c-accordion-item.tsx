@@ -129,7 +129,7 @@ export class CAccordionItem {
 
     this._animation = this._accordionElement.animate(
       { height: [startHeight, endHeight] },
-      { duration: 300, easing: 'cubic-bezier(0.25, 0.8, 0.5, 1)' },
+      { duration: 300, easing: 'cubic-bezier(0.075, 0.82, 0.165, 1)' },
     );
 
     this._animation.onfinish = () => this._onAnimationFinish(false);
