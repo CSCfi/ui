@@ -20,20 +20,10 @@
   border-radius: 6px;
 }
 
-:host(.c-card--fullscreen) {
-  height: 100vh;
-  left: 0 !important;
-  overflow-y: scroll;
-  position: fixed;
-  top: 0 !important;
-  width: 100vw;
-  z-index: 10;
-}
-
 .c-card {
   &__fullscreen-toggle {
     position: absolute;
-    right: 22px;
-    top: 22px;
+    right: calc(var(--c-card-gap) - 8px);
+    top: calc(var(--c-card-gap) - 8px);
   }
 }

@@ -29,8 +29,18 @@ export class CCard {
 
   @Element() host: HTMLCCardElement;
 
-  private _onFullscreen() {
+  private _toggleFullscreen() {
     this.isFullscreen = !this.isFullscreen;
+  }
+
+  private _onFullscreen() {
+    if (document.fullscreenElement) {
+      this.exitFullscreen();
+
+      return;
+    }
+
+    this.host.requestFullscreen();
 
     const modalWrapper =
       this.host.parentElement?.shadowRoot?.querySelector('.modal-wrapper');
@@ -48,6 +58,18 @@ export class CCard {
     if (!!title && this.fullscreen) {
       title.style.marginRight = '40px';
     }
+
+    this.host.addEventListener(
+      'fullscreenchange',
+      this._toggleFullscreen.bind(this),
+    );
+  }
+
+  disconnectedCallback() {
+    this.host.removeEventListener(
+      'fullscreenchange',
+      this._toggleFullscreen.bind(this),
+    );
   }
 
   /**
@@ -55,7 +77,7 @@ export class CCard {
    */
   @Method()
   async exitFullscreen() {
-    this.isFullscreen = false;
+    document.exitFullscreen();
 
     const modalWrapper =
       this.host.parentElement?.shadowRoot?.querySelector('.modal-wrapper');
@@ -76,7 +98,6 @@ export class CCard {
   render() {
     const hostClasses = {
       'c-card': true,
-      'c-card--fullscreen': this.isFullscreen,
     };
 
     return (
