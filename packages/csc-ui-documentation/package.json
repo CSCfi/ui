@@ -27,8 +27,9 @@
   },
   "name": "@cscfi/csc-ui-documentation",
   "scripts": {
-    "build": "nuxt build",
-    "dev": "nuxt dev",
+    "build": "npm run build:examples && nuxt build",
+    "build:examples": "node ./scripts/build-examples.js",
+    "dev": "npm run build:examples && nuxt dev",
     "generate": "nuxt generate",
     "lint": "npm run lint:js && npm run lint:prettier",
     "lint:js": "eslint --ext \".ts,.vue\" --ignore-path .gitignore .",
