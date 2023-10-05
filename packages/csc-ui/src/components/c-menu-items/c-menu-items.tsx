@@ -14,7 +14,6 @@ import { CMenuOption } from '../../types';
 
 /**
  * @parent c-menu
- * @private
  */
 @Component({
   tag: 'c-menu-items',
@@ -26,31 +25,37 @@ export class CMenuItems {
 
   /**
    * Menu items
+   * @private
    */
   @Prop() items: CMenuOption[] = [];
 
   /**
    * Small variant
+   * @private
    */
   @Prop() small = false;
 
   /**
    * Menu is opened and positioned
+   * @private
    */
   @Prop() active = false;
 
   /**
    * Type of parent
+   * @private
    */
   @Prop() parentType = 'menu';
 
   /**
    * Menu parent
+   * @private
    */
   @Prop() parent: HTMLCMenuElement;
 
   /**
    * Initial top position
+   * @private
    */
   @Prop() top = 0;
 
@@ -62,16 +67,19 @@ export class CMenuItems {
 
   /**
    * Items per page before adding scroll
+   * @private
    */
   @Prop() itemsPerPage = 6;
 
   /**
    * Triggered when the menu is closed
+   * @private
    */
   @Event() close: EventEmitter;
 
   /**
    * Triggered when the menu is opened
+   * @private
    */
   @Event() open: EventEmitter<{
     height: number;
