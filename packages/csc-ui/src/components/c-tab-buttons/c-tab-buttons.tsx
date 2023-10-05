@@ -59,13 +59,17 @@ export class CTabButtons {
 
   @Watch('value')
   onValueChange(value: string | number) {
-    this.el.childNodes.forEach((button: HTMLCButtonElement) => {
-      button.setAttribute('outlined', 'true');
+    this.buttons.forEach((button: HTMLCButtonElement) => {
+      if (!button.disabled) {
+        button.setAttribute('outlined', 'true');
+      }
     });
 
     if (value !== null) {
       this.buttons.forEach((button: HTMLCButtonElement) => {
-        button.setAttribute('outlined', 'true');
+        if (!button.disabled) {
+          button.setAttribute('outlined', 'true');
+        }
       });
 
       const button =
@@ -84,6 +88,46 @@ export class CTabButtons {
     event.stopPropagation();
 
     this._focusedTabValue = event.detail;
+  }
+
+  @Listen('keyup', { capture: true })
+  handleKeyUp(event: KeyboardEvent) {
+    event.stopPropagation();
+
+    const isArrowLeft = event.key === 'ArrowLeft';
+    const isArrowRight = event.key === 'ArrowRight';
+
+    if (!isArrowRight && !isArrowLeft) return;
+
+    const tabIndex =
+      this._getTabIndex(this._focusedTabValue) ??
+      +this.buttons[this._focusedTabValue]?.dataset.index;
+
+    const firstAvailableValue = this.availableValues.at(0);
+    const lastAvailableValue = this.availableValues.at(-1);
+
+    const isBeginning = this._focusedTabValue === firstAvailableValue;
+    const isEnd = this._focusedTabValue === lastAvailableValue;
+
+    const nextValue = isEnd
+      ? firstAvailableValue
+      : this.availableValues[tabIndex + 1];
+
+    const previousValue = isBeginning
+      ? lastAvailableValue
+      : this.availableValues[tabIndex - 1];
+
+    const value = isArrowLeft ? previousValue : nextValue;
+
+    const item = this.buttons
+      .find(
+        (button) => button.value === value || button.dataset.index === value,
+      )
+      .shadowRoot.querySelector('button');
+
+    requestAnimationFrame(() => {
+      item?.focus();
+    });
   }
 
   @Listen('tabChange', { passive: true })
@@ -147,6 +191,10 @@ export class CTabButtons {
         (this._isIndexBased
           ? index === +this.value
           : button.value === this.value);
+
+      button.shadowRoot
+        .querySelector('button')
+        .setAttribute('tabindex', isActive && !this.hostDisabled ? '0' : '-1');
 
       if (isActive) {
         button.removeAttribute('outlined');
