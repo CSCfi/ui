@@ -7,16 +7,19 @@
 
       <c-spacer />
 
+      <c-tag active flat>v{{ version }}</c-tag>
+
       <c-navigation-button v-if="isMobile" />
     </c-toolbar>
 
     <div class="flex h-[calc(100vh-60px)]">
       <c-side-navigation :mobile="isMobile">
-        <c-side-navigation-item>
-          <div slot="main" class="flex gap-3 items-center">
-            <c-icon :path="mdiInformationOutline" size="16"></c-icon>
-            About
-          </div>
+        <c-side-navigation-item
+          @keyup.enter="navigateTo('/')"
+          @click="navigateTo('/')"
+        >
+          <c-icon :path="mdiInformationOutline" size="16"></c-icon>
+          About
         </c-side-navigation-item>
 
         <c-side-navigation-title>Components</c-side-navigation-title>
@@ -38,21 +41,19 @@
           :key="group.name"
           :active="group.visible"
         >
-          <div slot="main" class="capitalize">
-            {{ group.name }}
-          </div>
+          {{ group.name }}
 
-          <div slot="subnavitem">
-            <c-sub-navigation-item
-              v-for="item in group.components"
-              :key="item.name"
-              :active="route.params.slug[0] === item?.tag"
-              class="capitalize"
-              @click="onNavigation(item.tag)"
-            >
-              {{ item.name }}
-            </c-sub-navigation-item>
-          </div>
+          <c-sub-navigation-item
+            v-for="item in group.components"
+            slot="subnavitem"
+            :key="item.name"
+            :active="route?.params?.slug?.[0] === item?.tag"
+            class="capitalize"
+            @keyup.enter="onNavigateToComponent(item.tag)"
+            @click="onNavigateToComponent(item.tag)"
+          >
+            {{ item.name }}
+          </c-sub-navigation-item>
         </c-side-navigation-item>
       </c-side-navigation>
 
@@ -67,6 +68,9 @@
 import { mdiInformationOutline, mdiMagnify } from '@mdi/js';
 import { storeToRefs } from 'pinia';
 import { ComponentData } from '../types/docs';
+import packageJson from '../package.json';
+
+const version = ref(packageJson.version);
 
 interface ComponentGroup {
   name: string;
@@ -132,6 +136,8 @@ const getGroupedComponents = (
     }, [] as ComponentGroup[])
     .sort((a: any, b: any) => a.name.localeCompare(b.name))
     .map((group: ComponentGroup) => {
+      if (!route.path.includes('components')) return group;
+
       const isActive = group.components.some(
         (component: any) => component.tag === route.params.slug[0],
       );
@@ -157,6 +163,8 @@ watch(
 watch(
   () => route,
   (currentRoute) => {
+    if (!currentRoute.path.includes('components')) return;
+    console.log(currentRoute);
     const [component] = currentRoute.params.slug;
 
     currentComponent.value = component;
@@ -164,9 +172,9 @@ watch(
   { immediate: true },
 );
 
-const onNavigation = async (name: string) => {
+const onNavigateToComponent = async (name: string) => {
   currentComponent.value = name;
 
-  await navigateTo(`/${name}`);
+  await navigateTo(`/components/${name}`);
 };
 </script>
