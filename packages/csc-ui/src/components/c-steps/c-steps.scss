@@ -12,13 +12,13 @@
   border-radius: 6px;
 }
 
-@supports selector(:focus-within) {
+@supports selector(:focus-visible) {
   :host(:focus) {
     outline: none;
   }
 }
 
-:host(:focus-within) {
+:host(:focus-visible) {
   outline: 2px var(--c-steps-line-complete-color) solid;
   outline-offset: 2px;
 }
