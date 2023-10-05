@@ -72,7 +72,7 @@ module.exports = {
         project: './tsconfig.json',
       },
       extends: [
-        'plugin:@stencil/recommended',
+        'plugin:@stencil-community/recommended',
         'plugin:@typescript-eslint/recommended',
         'plugin:prettier/recommended',
         'plugin:import/errors',
@@ -80,12 +80,12 @@ module.exports = {
         'plugin:import/typescript',
       ],
       rules: {
-        '@stencil/class-pattern': [
+        '@stencil-community/class-pattern': [
           'error',
           { pattern: '^C[A-Z]{1}', ignoreCase: false },
         ],
-        '@stencil/strict-boolean-conditions': 'off',
-        '@stencil/decorators-style': [
+        '@stencil-community/strict-boolean-conditions': 'off',
+        '@stencil-community/decorators-style': [
           'error',
           { prop: 'inline', method: 'multiline' },
         ],
@@ -139,7 +139,9 @@ module.exports = {
         'no-prototype-builtins': 'off',
         'no-underscore-dangle': 'off',
         'no-unused-vars': 'off',
-        '@typescript-eslint/no-unused-vars': ['warn'],
+        "@typescript-eslint/no-unused-vars": ["error", {
+          "varsIgnorePattern": "^h$"
+        }],
         'prettier/prettier': 'error',
       },
     },
