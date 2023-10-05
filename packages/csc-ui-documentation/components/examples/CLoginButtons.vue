@@ -2,7 +2,7 @@
   <component-example name="basic">
     <template #title>Basic usage</template>
 
-    <c-card style="width: 600px">
+    <c-card class="max-w-xl w-full">
       <c-card-title>Select authentication provider</c-card-title>
 
       <c-card-content>

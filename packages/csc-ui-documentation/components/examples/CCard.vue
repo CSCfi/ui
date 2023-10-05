@@ -1,5 +1,7 @@
 <template>
   <component-example name="basic">
+    <template #title>Basic usage</template>
+
     <c-card>
       <c-card-title>The title of the card</c-card-title>
 

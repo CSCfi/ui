@@ -74,6 +74,11 @@
 </template>
 
 <script setup lang="ts">
+// @example-start|basic|closeable
+import { ref } from 'vue';
+
+// @example-end
+
 // @example-start|basic
 const active = ref([false, true, false]);
 

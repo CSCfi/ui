@@ -10,6 +10,7 @@
 
 <script setup lang="ts">
 // @example-start|basic
+import { ref } from 'vue';
 import { mdiInformationOutline } from '@mdi/js';
 import { CToastType } from '@cscfi/csc-ui';
 

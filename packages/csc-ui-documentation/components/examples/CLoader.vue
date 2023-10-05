@@ -40,6 +40,8 @@
 
 <script setup lang="ts">
 // @example-start|basic|delayed
+import { ref } from 'vue';
+
 const loader = ref(false);
 
 const startLoader = () => {

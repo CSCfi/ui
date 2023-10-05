@@ -24,6 +24,7 @@
 
 <script setup lang="ts">
 // @example-start|basic
+import { ref } from 'vue';
 import { CAlertType, CRadioGroupItem } from '@cscfi/csc-ui';
 
 const type = ref<CAlertType>(CAlertType.Info);

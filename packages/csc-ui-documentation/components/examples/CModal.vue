@@ -99,6 +99,11 @@
 </template>
 
 <script setup lang="ts">
+// @example-start|basic|customWidth|dismissable
+import { ref } from 'vue';
+
+// @example-end
+
 // @example-start|basic
 const basicModal = ref(false);
 // @example-end

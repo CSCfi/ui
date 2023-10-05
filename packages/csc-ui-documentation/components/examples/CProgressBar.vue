@@ -15,6 +15,8 @@
 
 <script setup lang="ts">
 // @example-start|basic
+import { ref } from 'vue';
+
 const progress = ref(25);
 
 const interval = setInterval(() => {

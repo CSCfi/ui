@@ -50,6 +50,7 @@
 
 <script setup lang="ts">
 // @example-start|basic|mobile
+import { ref } from 'vue';
 import { mdiChevronLeft, mdiChevronRight } from '@mdi/js';
 
 const step = ref(1);
