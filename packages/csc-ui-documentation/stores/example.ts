@@ -1,9 +1,22 @@
 import { defineStore } from 'pinia';
-import { ComponentData } from '../types/docs.d';
-import { components } from '../docs.json';
+import { components } from '../../csc-ui/docs.json';
+import { ComponentData } from '~/types/docs';
 
 export const useExampleStore = defineStore('example', () => {
   const currentComponent = ref('');
+
+  const parseChild = (child: ComponentData) => ({
+    ...child,
+    props: child.props.filter((e) =>
+      e.docsTags.every((tag: any) => tag.name !== 'private'),
+    ),
+    events: child.events.filter((e) =>
+      e.docsTags.every((tag) => tag.name !== 'private'),
+    ),
+    methods: child.methods.filter((e) =>
+      e.docsTags.every((tag) => tag.name !== 'private'),
+    ),
+  });
 
   const parseComponents = (items: any) => {
     const parsed: ComponentData[] = items.map((component: any) => ({
@@ -16,15 +29,7 @@ export const useExampleStore = defineStore('example', () => {
         (component) =>
           !component.docsTags.some((docsTag) => docsTag.name === 'parent'),
       )
-      .map((item) => ({
-        ...item,
-        props: item.props.filter((e) =>
-          e.docsTags.every((tag: any) => tag.name !== 'private'),
-        ),
-        events: item.events.filter((e) =>
-          e.docsTags.every((tag) => tag.name !== 'private'),
-        ),
-      }));
+      .map(parseChild);
 
     return parentComponents.map((item) => {
       const children = parsed
@@ -33,15 +38,7 @@ export const useExampleStore = defineStore('example', () => {
             (docsTag) => docsTag.name === 'parent' && docsTag.text === item.tag,
           ),
         )
-        .map((child) => ({
-          ...child,
-          props: child.props.filter((e) =>
-            e.docsTags.every((tag: any) => tag.name !== 'private'),
-          ),
-          events: child.events.filter((e) =>
-            e.docsTags.every((tag) => tag.name !== 'private'),
-          ),
-        }));
+        .map(parseChild);
 
       return { ...item, children };
     });

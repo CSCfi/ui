@@ -57,7 +57,7 @@
         </c-side-navigation-item>
       </c-side-navigation>
 
-      <div class="flex-1 h-full p-2 sm:p-4 md:p-6 lg:p-12 overflow-y-auto">
+      <div class="flex-1 h-full p-2 sm:p-3 md:p-4 lg:p-6 overflow-y-auto">
         <slot />
       </div>
     </div>
@@ -164,7 +164,7 @@ watch(
   () => route,
   (currentRoute) => {
     if (!currentRoute.path.includes('components')) return;
-    console.log(currentRoute);
+
     const [component] = currentRoute.params.slug;
 
     currentComponent.value = component;
