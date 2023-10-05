@@ -1,19 +1,44 @@
 /**
    * @prop --c-sub-navigation-item-text-color: Sub navigation item text color
-   * @prop --c-sub-navigation-item-hover-background-color: Sub navigation item hover background color
+   * @prop --c-sub-navigation-item-background-color-hover: Sub navigation item hover background color
    * @prop --c-sub-navigation-item-active-text-color: Sub navigation item active text color
    * @prop --c-sub-navigation-item-active-background-color: Sub navigation item active background color
    */
 :host {
   --c-sub-navigation-item-text-color: var(--c-text-body);
-  --c-sub-navigation-item-hover-background-color: var(--c-primary-100);
+  --c-sub-navigation-item-background-color: var(--c-transparent);
+  --c-sub-navigation-item-background-color-hover: var(--c-primary-100);
   --c-sub-navigation-item-active-text-color: var(--c-primary-600);
   --c-sub-navigation-item-active-background-color: var(--c-white);
 }
 
+:host(.c-sub-navigation-item--sub-level) {
+  // --c-sub-navigation-item-sub-item-background-color-hover: yellow;
+  // --c-sub-navigation-item-sub-item-background-color: purple;
+  // --c-sub-navigation-item-sub-item-active-text-color: cyan;
+  // --c-sub-navigation-item-sub-item-active-background-color: hotpink;
+  // --c-sub-navigation-item-sub-item-text-color: rgb(44, 255, 2);
+
+  --c-sub-navigation-item-background-color: var(
+    --c-sub-navigation-item-sub-item-background-color
+  );
+  --c-sub-navigation-item-text-color: var(
+    --c-sub-navigation-item-sub-item-text-color
+  );
+  --c-sub-navigation-item-background-color-hover: var(
+    --c-sub-navigation-item-sub-item-background-color-hover
+  );
+  --c-sub-navigation-item-active-text-color: var(
+    --c-sub-navigation-item-sub-item-active-text-color
+  );
+  --c-sub-navigation-item-active-background-color: var(
+    --c-sub-navigation-item-sub-item-active-background-color
+  );
+}
+
 .c-sub-navigation-item {
   align-items: center;
-  background-color: transparent;
+  background-color: var(--c-sub-navigation-item-background-color);
   border-radius: 4px;
   color: var(--c-sub-navigation-item-text-color);
   cursor: pointer;
@@ -55,7 +80,7 @@
 }
 
 .c-sub-navigation-item:hover {
-  background-color: var(--c-sub-navigation-item-hover-background-color);
+  background-color: var(--c-sub-navigation-item-background-color-hover);
   color: var(--c-sub-navigation-item-active-text-color);
 }
 
@@ -102,6 +127,7 @@
 
   slot {
     display: flex;
+    gap: 8px;
     align-items: center;
   }
 }

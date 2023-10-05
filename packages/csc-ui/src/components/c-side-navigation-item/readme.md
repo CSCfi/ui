@@ -26,7 +26,7 @@
 | -------------------------------------------------- | -------------------------------------------- |
 | `--c-side-navigation-item-active-background-color` | Side navigation item active background color |
 | `--c-side-navigation-item-active-text-color`       | Side navigation item active text color       |
-| `--c-side-navigation-item-hover-background-color`  | Side navigation item hover background color  |
+| `--c-side-navigation-item-background-color-hover`  | Side navigation item hover background color  |
 
 
 ## Dependencies

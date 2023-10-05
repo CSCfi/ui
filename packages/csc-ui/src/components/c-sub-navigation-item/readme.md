@@ -20,7 +20,7 @@
 | ------------------------------------------------- | ------------------------------------------- |
 | `--c-sub-navigation-item-active-background-color` | Sub navigation item active background color |
 | `--c-sub-navigation-item-active-text-color`       | Sub navigation item active text color       |
-| `--c-sub-navigation-item-hover-background-color`  | Sub navigation item hover background color  |
+| `--c-sub-navigation-item-background-color-hover`  | Sub navigation item hover background color  |
 | `--c-sub-navigation-item-text-color`              | Sub navigation item text color              |
 
 

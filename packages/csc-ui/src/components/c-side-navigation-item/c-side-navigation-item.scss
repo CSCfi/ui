@@ -1,19 +1,38 @@
 :host {
   /**
-   * @prop --c-side-navigation-item-hover-background-color: Side navigation item hover background color
+   * @prop --c-side-navigation-item-background-color-hover: Side navigation item hover background color
    * @prop --c-side-navigation-item-active-background-color: Side navigation item active background color
    * @prop --c-side-navigation-item-active-text-color: Side navigation item active text color
    */
-  --c-side-navigation-item-hover-background-color: var(--c-primary-500);
+  --c-side-navigation-item-background-color-hover: var(--c-primary-500);
   --c-side-navigation-item-active-background-color: var(--c-primary-200);
   --c-side-navigation-item-active-text-color: var(--c-primary-600);
+
+  --c-side-navigation-item-background-color: var(--c-transparent);
+  --c-side-navigation-item-text-color: var(--c-white);
+  --c-side-navigation-item-outline-color: var(--c-white);
+
+  --c-sub-navigation-item-background-color-hover: var(--c-primary-100);
+  --c-sub-navigation-item-background-color: var(--c-transparent);
+  --c-sub-navigation-item-active-text-color: var(--c-primary-600);
+  --c-sub-navigation-item-active-background-color: var(--c-white);
+  --c-sub-navigation-item-text-color: var(--c-text-body);
+
+  --c-sub-navigation-item-sub-item-background-color-hover: var(--c-primary-100);
+  --c-sub-navigation-item-sub-item-background-color: var(--c-transparent);
+  --c-sub-navigation-item-sub-item-active-text-color: var(--c-primary-600);
+  --c-sub-navigation-item-sub-item-active-background-color: var(
+    --c-primary-100
+  );
+  --c-sub-navigation-item-sub-item-text-color: var(--c-text-body);
 }
 
 :host(.c-side-navigation-item) {
   align-items: center;
   backface-visibility: hidden;
   border-radius: 4px 0 0 4px;
-  color: var(--c-white);
+  background-color: var(--c-side-navigation-item-background-color);
+  color: var(--c-side-navigation-item-text-color);
   cursor: pointer;
   display: grid;
   grid-template-columns: 1fr;
@@ -22,11 +41,10 @@
   position: relative;
   transform: translate3d(0, 0, 0);
   user-select: none;
-  min-width: calc(320px - 24px);
 }
 
 :host(.c-side-navigation-item:hover) {
-  background-color: var(--c-side-navigation-item-hover-background-color);
+  background-color: var(--c-side-navigation-item-background-color-hover);
 }
 
 :host(.c-side-navigation-item:focus) {
@@ -34,8 +52,7 @@
 }
 
 :host(.c-side-navigation-item:focus-visible) {
-  border-radius: 4px 0 0 4px;
-  outline: 2px var(--c-white) solid;
+  outline: 2px var(--c-side-navigation-item-outline-color) solid;
   outline-offset: 2px;
 }
 
@@ -56,7 +73,7 @@
 .c-side-navigation-item {
   &__header {
     align-items: center;
-    color: var(--c-white);
+    color: var(--c-side-navigation-item-text-color);
     display: grid;
     gap: 8px;
     grid-template-columns: 1fr;
@@ -71,6 +88,14 @@
   &__slot {
     max-width: 100%;
     overflow: hidden;
+
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    line-height: normal;
   }
 }
 
@@ -80,18 +105,7 @@
 
 ::slotted(span),
 ::slotted(c-icon) {
-  margin-right: 8px;
   font-size: 20px;
-}
-
-::slotted([slot='main']) {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  line-height: normal;
 }
 
 .styleMain {
@@ -112,12 +126,12 @@
 
 .svg {
   align-self: center;
-  fill: var(--c-white);
+  fill: var(--c-side-navigation-item-text-color);
   transition: transform 0.3s ease;
 }
 
 :host > div.active .svg {
-  fill: var(--c-side-navigation-item-active);
+  fill: var(--c-side-navigation-item-active-text-color);
   transform: rotate(90deg);
 }
 
@@ -129,4 +143,16 @@
   display: flex;
   height: 100%;
   align-items: center;
+}
+
+:host([slot='subnavitem']) {
+  --c-side-navigation-item-text-color: var(--c-primary-600);
+  --c-side-navigation-item-background-color: var(--c-white);
+  --c-side-navigation-item-background-color-hover: var(--c-primary-100);
+  --c-side-navigation-item-active-text-color: var(--c-primary-600);
+  --c-side-navigation-item-active-background-color: var(--c-white);
+  --c-side-navigation-item-outline-color: var(--c-primary-600);
+
+  border-radius: 4px;
+  margin: 0 8px 4px;
 }

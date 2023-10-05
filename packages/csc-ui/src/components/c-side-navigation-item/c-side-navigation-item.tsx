@@ -6,6 +6,7 @@ import {
   Element,
   Event,
   EventEmitter,
+  Listen,
   Watch,
 } from '@stencil/core';
 import { mdiChevronRight } from '@mdi/js';
@@ -47,6 +48,17 @@ export class CSideNavigationItem {
    */
   @Event() itemChange: EventEmitter;
 
+  @Listen('itemChange')
+  handleChange(event: Event) {
+    if (this._isSubItem) {
+      event.stopPropagation();
+      event.stopImmediatePropagation();
+      event.preventDefault();
+
+      this.active = !this.active;
+    }
+  }
+
   @Watch('active')
   onActiveChange(active: boolean) {
     this._handleChildFocusableChange(active);
@@ -54,14 +66,14 @@ export class CSideNavigationItem {
 
   private _ariaLabel: string;
 
+  private _isSubItem = false;
+
   private _handleChildFocusableChange(focusable: boolean) {
     if (!this._slotHasContent) return;
 
-    const children = Array.from(
-      this.hostElement.querySelector('[slot="subnavitem"]').children,
-    );
-
-    children.forEach((child: HTMLCSubNavigationItemElement) => {
+    Array.from(
+      this.hostElement.querySelectorAll('[slot="subnavitem"]'),
+    ).forEach((child: HTMLCSubNavigationItemElement) => {
       child.ariaHidden = (!focusable).toString();
       child.focusable = focusable;
     });
@@ -72,7 +84,12 @@ export class CSideNavigationItem {
       (event instanceof KeyboardEvent && event?.key === 'Enter') ||
       !(event instanceof KeyboardEvent)
     ) {
-      // event.stopPropagation();
+      if (this._isSubItem) {
+        event.stopPropagation();
+        event.stopImmediatePropagation();
+        event.preventDefault();
+      }
+
       this.itemChange.emit(event);
 
       if (!this._slotHasContent) {
@@ -97,13 +114,30 @@ export class CSideNavigationItem {
       '[slot="subnavitem"]',
     );
 
-    const children = Array.from(
-      this.hostElement.querySelector('[slot="main"]').childNodes,
-    );
-
-    this._ariaLabel = children.find((c) => !!c.nodeValue)?.nodeValue?.trim();
+    this._isSubItem = !!this.hostElement.getAttribute('slot');
 
     this._handleChildFocusableChange(this.active);
+  }
+
+  componentDidLoad() {
+    for (const node of this.hostElement.childNodes) {
+      if (node.nodeName === '#text') {
+        this._ariaLabel = node.nodeValue.trim();
+        break;
+      }
+    }
+
+    this._handleChildClasses();
+  }
+
+  private _handleChildClasses() {
+    if (!this._isSubItem) return;
+
+    Array.from(this.hostElement.children)
+      .filter((child) => child.tagName === 'C-SUB-NAVIGATION-ITEM')
+      .forEach((child: HTMLCSubNavigationItemElement) => {
+        child.classList.add('c-sub-navigation-item--sub-level');
+      });
   }
 
   render() {
@@ -148,7 +182,7 @@ export class CSideNavigationItem {
             </svg>
           )}
           <div class="c-side-navigation-item__slot">
-            <slot name="main"></slot>
+            <slot></slot>
           </div>
         </div>
 

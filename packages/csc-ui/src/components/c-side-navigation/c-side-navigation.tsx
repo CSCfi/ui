@@ -28,7 +28,7 @@ export class CSideNavigation {
     const { active } = target;
 
     slotted.forEach((item) => {
-      if (item.querySelector('[slot="subnavitem"]')) {
+      if (item.querySelector('c-sub-navigation-item[slot="subnavitem"]')) {
         item.active = false;
       }
     });
