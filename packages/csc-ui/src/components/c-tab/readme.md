@@ -19,9 +19,10 @@
 
 ## Events
 
-| Event       | Description                | Type               |
-| ----------- | -------------------------- | ------------------ |
-| `tabChange` | Emit changes to the parent | `CustomEvent<any>` |
+| Event       | Description                | Type                            |
+| ----------- | -------------------------- | ------------------------------- |
+| `tabChange` | Emit changes to the parent | `CustomEvent<number \| string>` |
+| `tabFocus`  | Emit focus to the parent   | `CustomEvent<number \| string>` |
 
 
 ## Slots

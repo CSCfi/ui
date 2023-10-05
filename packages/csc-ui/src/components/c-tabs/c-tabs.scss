@@ -6,19 +6,29 @@
   --c-tabs-border-color: var(--c-tertiary-200);
   --c-tabs-indicator-color: var(--c-primary-600);
 
-  --_transition-speed: 1ms;
+  --c-tabs-transition-speed: 0.001ms;
+}
+
+:host(.c-tabs) ::slotted(c-tab-buttons) {
+  grid-column: 1 / span var(--c-tabs-count);
+  grid-row: 1;
 }
 
 :host(.c-tabs) {
-  box-shadow: inset 0 -1px 0 0 var(--c-tabs-border-color);
-  display: flex;
-  list-style: none;
+  display: grid;
+  grid-auto-columns: 1fr;
+  grid-auto-flow: column;
   margin: 0;
   padding: 0;
   position: relative;
 }
 
-:host(.c-tabs--borderless) {
+:host(.c-tabs) ::slotted(c-tab) {
+  box-shadow: inset 0 -1px 0 0 var(--c-tabs-border-color);
+  grid-row: 1;
+}
+
+:host(.c-tabs--borderless) ::slotted(c-tab) {
   box-shadow: none;
 }
 
@@ -31,12 +41,24 @@
   position: absolute;
   left: 0;
   right: 0;
-  bottom: 0;
+  top: calc(var(--c-tabs-indicator-top) - 3px);
   height: 3px;
   scale: var(--c-tabs-indicator-width, 0.125) 1;
   opacity: 0.01;
   translate: var(--c-tabs-indicator-left, 0) 0;
   transform-origin: left;
-  transition: scale var(--_transition-speed), translate var(--_transition-speed);
+  transition:
+    scale var(--c-tabs-transition-speed) cubic-bezier(0.075, 0.82, 0.165, 1),
+    translate var(--c-tabs-transition-speed) cubic-bezier(0.075, 0.82, 0.165, 1);
   background: var(--c-tabs-indicator-color);
+}
+
+:host(.c-tabs.c-tabs--buttons)::after {
+  display: none;
+}
+
+:host(.c-tabs) > div {
+  grid-column: 1 / span var(--c-tabs-count);
+  grid-row: 2;
+  display: flex;
 }

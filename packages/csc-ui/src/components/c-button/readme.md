@@ -22,6 +22,7 @@
 | `outlined` | `outlined`  | Outlined button style                               | `boolean`                         | `false`     |
 | `path`     | `path`      | Path for the svg icon                               | `string`                          | `null`      |
 | `size`     | `size`      | Size of the button                                  | `"default" \| "large" \| "small"` | `'default'` |
+| `tabs`     | `tabs`      | Used a s atab button                                | `boolean`                         | `false`     |
 | `target`   | `target`    | Hyperlink target                                    | `string`                          | `'_blank'`  |
 | `text`     | `text`      | Transparent button background                       | `boolean`                         | `false`     |
 | `type`     | `type`      | Button type                                         | `"button" \| "submit"`            | `'button'`  |
@@ -33,6 +34,7 @@
 | Event       | Description                | Type                            |
 | ----------- | -------------------------- | ------------------------------- |
 | `tabChange` | Emit changes to the parent | `CustomEvent<number \| string>` |
+| `tabFocus`  | Emit focus to the parent   | `CustomEvent<number \| string>` |
 
 
 ## Slots

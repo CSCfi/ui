@@ -6,6 +6,7 @@ import {
   EventEmitter,
   h,
   Host,
+  Listen,
 } from '@stencil/core';
 
 /**
@@ -108,12 +109,30 @@ export class CButton {
   @Prop() target = '_blank';
 
   /**
+   * Used a s atab button
+   * @private
+   */
+  @Prop() tabs = false;
+
+  /**
    * Emit changes to the parent
    * @private
    */
   @Event() tabChange: EventEmitter<number | string>;
 
+  /**
+   * Emit focus to the parent
+   *
+   * @private
+   */
+  @Event() tabFocus: EventEmitter<number | string>;
+
   @Element() hostElement: HTMLCButtonElement;
+
+  @Listen('focus', { passive: true })
+  onTabFocus() {
+    this.tabFocus.emit(this.value ?? this.hostElement.dataset.index);
+  }
 
   private _container?: HTMLDivElement;
 
@@ -128,7 +147,9 @@ export class CButton {
 
     this._rippleElement.createRipple(event, this._container, center);
 
-    this.tabChange.emit(this.value ?? this.hostElement.dataset.index);
+    if (this.tabs) {
+      this.tabChange.emit(this.value ?? this.hostElement.dataset.index);
+    }
 
     if (this.type === 'submit') {
       this._closestElementComposed('form', this._container).submit();

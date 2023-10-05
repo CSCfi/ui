@@ -223,6 +223,11 @@ export namespace Components {
          */
         "size": 'default' | 'small' | 'large';
         /**
+          * Used a s atab button
+          * @private
+         */
+        "tabs": boolean;
+        /**
           * Hyperlink target
          */
         "target": string;
@@ -652,8 +657,7 @@ export namespace Components {
          */
         "alt": string;
         /**
-          * Login provider link. Do not set if using a click handler like
-          * @click in Vue or (click) in Angular
+          * Login provider link. Do not set if using a javascript click handler
          */
         "href"?: string;
         /**
@@ -760,11 +764,11 @@ export namespace Components {
     }
     /**
      * @parent c-menu
-     * @private 
      */
     interface CMenuItems {
         /**
           * Menu is opened and positioned
+          * @private
          */
         "active": boolean;
         /**
@@ -774,26 +778,32 @@ export namespace Components {
         "index": number | null;
         /**
           * Menu items
+          * @private
          */
         "items": CMenuOption[];
         /**
           * Items per page before adding scroll
+          * @private
          */
         "itemsPerPage": number;
         /**
           * Menu parent
+          * @private
          */
         "parent": HTMLCMenuElement;
         /**
           * Type of parent
+          * @private
          */
         "parentType": string;
         /**
           * Small variant
+          * @private
          */
         "small": boolean;
         /**
           * Initial top position
+          * @private
          */
         "top": number;
     }
@@ -1361,7 +1371,40 @@ export namespace Components {
          */
         "size": 'default' | 'small';
         /**
+          * Used as controller for c-tabs
+          * @private
+         */
+        "tabs": boolean;
+        /**
           * Value of tab buttons
+         */
+        "value": number | string;
+    }
+    /**
+     * @parent c-tabs
+     */
+    interface CTabItem {
+        /**
+          * Active
+          * @private
+         */
+        "active": boolean;
+        /**
+          * Tab value
+         */
+        "value": number | string;
+    }
+    /**
+     * @parent c-tabs
+     */
+    interface CTabItems {
+        /**
+          * Disable animation
+          * @private
+         */
+        "disableAnimation": boolean;
+        /**
+          * Currently active tab
          */
         "value": number | string;
     }
@@ -1386,6 +1429,10 @@ export namespace Components {
           * Disable the bottom border
          */
         "borderless": boolean;
+        /**
+          * Disable animation
+         */
+        "disableAnimation": boolean;
         /**
           * Currently active tab
          */
@@ -1659,6 +1706,10 @@ export interface CTabCustomEvent<T> extends CustomEvent<T> {
 export interface CTabButtonsCustomEvent<T> extends CustomEvent<T> {
     detail: T;
     target: HTMLCTabButtonsElement;
+}
+export interface CTabItemCustomEvent<T> extends CustomEvent<T> {
+    detail: T;
+    target: HTMLCTabItemElement;
 }
 export interface CTabsCustomEvent<T> extends CustomEvent<T> {
     detail: T;
@@ -1936,7 +1987,6 @@ declare global {
     };
     /**
      * @parent c-menu
-     * @private 
      */
     interface HTMLCMenuItemsElement extends Components.CMenuItems, HTMLStencilElement {
     }
@@ -2174,6 +2224,24 @@ declare global {
         new (): HTMLCTabButtonsElement;
     };
     /**
+     * @parent c-tabs
+     */
+    interface HTMLCTabItemElement extends Components.CTabItem, HTMLStencilElement {
+    }
+    var HTMLCTabItemElement: {
+        prototype: HTMLCTabItemElement;
+        new (): HTMLCTabItemElement;
+    };
+    /**
+     * @parent c-tabs
+     */
+    interface HTMLCTabItemsElement extends Components.CTabItems, HTMLStencilElement {
+    }
+    var HTMLCTabItemsElement: {
+        prototype: HTMLCTabItemsElement;
+        new (): HTMLCTabItemsElement;
+    };
+    /**
      * @group tables
      */
     interface HTMLCTableElement extends Components.CTable, HTMLStencilElement {
@@ -2300,6 +2368,8 @@ declare global {
         "c-switch": HTMLCSwitchElement;
         "c-tab": HTMLCTabElement;
         "c-tab-buttons": HTMLCTabButtonsElement;
+        "c-tab-item": HTMLCTabItemElement;
+        "c-tab-items": HTMLCTabItemsElement;
         "c-table": HTMLCTableElement;
         "c-tabs": HTMLCTabsElement;
         "c-tag": HTMLCTagElement;
@@ -2530,6 +2600,11 @@ declare namespace LocalJSX {
          */
         "onTabChange"?: (event: CButtonCustomEvent<number | string>) => void;
         /**
+          * Emit focus to the parent
+          * @private
+         */
+        "onTabFocus"?: (event: CButtonCustomEvent<number | string>) => void;
+        /**
           * Outlined button style
          */
         "outlined"?: boolean;
@@ -2541,6 +2616,11 @@ declare namespace LocalJSX {
           * Size of the button
          */
         "size"?: 'default' | 'small' | 'large';
+        /**
+          * Used a s atab button
+          * @private
+         */
+        "tabs"?: boolean;
         /**
           * Hyperlink target
          */
@@ -2979,8 +3059,7 @@ declare namespace LocalJSX {
          */
         "alt"?: string;
         /**
-          * Login provider link. Do not set if using a click handler like
-          * @click in Vue or (click) in Angular
+          * Login provider link. Do not set if using a javascript click handler
          */
         "href"?: string;
         /**
@@ -3087,11 +3166,11 @@ declare namespace LocalJSX {
     }
     /**
      * @parent c-menu
-     * @private 
      */
     interface CMenuItems {
         /**
           * Menu is opened and positioned
+          * @private
          */
         "active"?: boolean;
         /**
@@ -3101,18 +3180,22 @@ declare namespace LocalJSX {
         "index"?: number | null;
         /**
           * Menu items
+          * @private
          */
         "items"?: CMenuOption[];
         /**
           * Items per page before adding scroll
+          * @private
          */
         "itemsPerPage"?: number;
         /**
           * Triggered when the menu is closed
+          * @private
          */
         "onClose"?: (event: CMenuItemsCustomEvent<any>) => void;
         /**
           * Triggered when the menu is opened
+          * @private
          */
         "onOpen"?: (event: CMenuItemsCustomEvent<{
     height: number;
@@ -3124,18 +3207,22 @@ declare namespace LocalJSX {
   }>) => void;
         /**
           * Menu parent
+          * @private
          */
         "parent"?: HTMLCMenuElement;
         /**
           * Type of parent
+          * @private
          */
         "parentType"?: string;
         /**
           * Small variant
+          * @private
          */
         "small"?: boolean;
         /**
           * Initial top position
+          * @private
          */
         "top"?: number;
     }
@@ -3717,7 +3804,12 @@ declare namespace LocalJSX {
           * Emit changes to the parent
           * @private
          */
-        "onTabChange"?: (event: CTabCustomEvent<any>) => void;
+        "onTabChange"?: (event: CTabCustomEvent<number | string>) => void;
+        /**
+          * Emit focus to the parent
+          * @private
+         */
+        "onTabFocus"?: (event: CTabCustomEvent<number | string>) => void;
         /**
           * Position in the set
           * @private
@@ -3754,9 +3846,46 @@ declare namespace LocalJSX {
          */
         "size"?: 'default' | 'small';
         /**
+          * Used as controller for c-tabs
+          * @private
+         */
+        "tabs"?: boolean;
+        /**
           * Value of tab buttons
          */
         "value"?: number | string;
+    }
+    /**
+     * @parent c-tabs
+     */
+    interface CTabItem {
+        /**
+          * Active
+          * @private
+         */
+        "active"?: boolean;
+        /**
+          * Emit changes to the parent
+         */
+        "onContentChange"?: (event: CTabItemCustomEvent<any>) => void;
+        /**
+          * Tab value
+         */
+        "value": number | string;
+    }
+    /**
+     * @parent c-tabs
+     */
+    interface CTabItems {
+        /**
+          * Disable animation
+          * @private
+         */
+        "disableAnimation"?: boolean;
+        /**
+          * Currently active tab
+         */
+        "value": number | string;
     }
     /**
      * @group tables
@@ -3779,6 +3908,10 @@ declare namespace LocalJSX {
           * Disable the bottom border
          */
         "borderless"?: boolean;
+        /**
+          * Disable animation
+         */
+        "disableAnimation"?: boolean;
         /**
           * Emit changes to the parent
          */
@@ -4030,6 +4163,8 @@ declare namespace LocalJSX {
         "c-switch": CSwitch;
         "c-tab": CTab;
         "c-tab-buttons": CTabButtons;
+        "c-tab-item": CTabItem;
+        "c-tab-items": CTabItems;
         "c-table": CTable;
         "c-tabs": CTabs;
         "c-tag": CTag;
@@ -4163,7 +4298,6 @@ declare module "@stencil/core" {
             "c-menu": LocalJSX.CMenu & JSXBase.HTMLAttributes<HTMLCMenuElement>;
             /**
              * @parent c-menu
-             * @private 
              */
             "c-menu-items": LocalJSX.CMenuItems & JSXBase.HTMLAttributes<HTMLCMenuItemsElement>;
             /**
@@ -4270,6 +4404,14 @@ declare module "@stencil/core" {
              * @group Content Selectors
              */
             "c-tab-buttons": LocalJSX.CTabButtons & JSXBase.HTMLAttributes<HTMLCTabButtonsElement>;
+            /**
+             * @parent c-tabs
+             */
+            "c-tab-item": LocalJSX.CTabItem & JSXBase.HTMLAttributes<HTMLCTabItemElement>;
+            /**
+             * @parent c-tabs
+             */
+            "c-tab-items": LocalJSX.CTabItems & JSXBase.HTMLAttributes<HTMLCTabItemsElement>;
             /**
              * @group tables
              */

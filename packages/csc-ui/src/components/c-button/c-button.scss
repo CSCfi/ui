@@ -5,6 +5,7 @@
   --c-button-padding: 0 16px;
   --c-button-font-size: 16px;
   --c-button-icon-size: 24px;
+  --c-button-outline-offset: 2px;
 
   border-radius: var(--c-button-border-radius);
   display: inline-flex;
@@ -428,6 +429,10 @@
 //   --c-button-text-color: var(--c-white);
 // }
 
+:host(.c-button:focus) {
+  z-index: 2;
+}
+
 :host(.c-button) a:focus,
 :host(.c-button) button:focus {
   outline: none;
@@ -436,7 +441,7 @@
 :host(.c-button) a:focus-visible,
 :host(.c-button) button:focus-visible {
   outline: 2px var(--c-button-outline-color) solid;
-  outline-offset: 2px;
+  outline-offset: var(--c-button-outline-offset);
   z-index: 1;
 }
 

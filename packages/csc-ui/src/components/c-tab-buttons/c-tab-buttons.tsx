@@ -31,6 +31,12 @@ export class CTabButtons {
   @Prop() mandatory = false;
 
   /**
+   * Used as controller for c-tabs
+   * @private
+   */
+  @Prop() tabs = false;
+
+  /**
    * Size of the buttons
    */
   @Prop() size: 'default' | 'small' = 'default';
@@ -48,6 +54,8 @@ export class CTabButtons {
   @Element() el: HTMLCTabButtonsElement;
 
   private _isIndexBased: boolean;
+
+  private _focusedTabValue = this.value;
 
   @Watch('value')
   onValueChange(value: string | number) {
@@ -71,8 +79,17 @@ export class CTabButtons {
     this.changeValue.emit(this.buttons[value]?.value ?? value);
   }
 
+  @Listen('tabFocus', { passive: true })
+  tabFocusHandler(event: CustomEvent) {
+    event.stopPropagation();
+
+    this._focusedTabValue = event.detail;
+  }
+
   @Listen('tabChange', { passive: true })
   onTabChange(event: CustomEvent) {
+    if (!this.tabs) event.stopPropagation();
+
     const isActive =
       this.value !== null &&
       (this._isIndexBased
@@ -90,10 +107,22 @@ export class CTabButtons {
     this.value = isActive ? nullValue : value;
   }
 
+  get availableValues() {
+    return this.buttons.map((button) => button.value ?? button.dataset.index);
+  }
+
   get buttons() {
-    return Array.from(this.el.childNodes).filter(
-      (element: HTMLCButtonElement) => element.tagName === 'C-BUTTON',
+    return Array.from(
+      this.el.querySelectorAll(':scope > c-button'),
     ) as HTMLCButtonElement[];
+  }
+
+  private _getTabIndex(value: string | number) {
+    const index = this.availableValues.findIndex(
+      (buttonValue) => buttonValue === value,
+    );
+
+    return index;
   }
 
   componentDidLoad() {
@@ -103,10 +132,14 @@ export class CTabButtons {
 
     this.buttons.forEach((button: HTMLCButtonElement, index) => {
       button.setAttribute('data-index', String(index));
-      button.setAttribute('outlined', 'true');
+      button.setAttribute('tabs', 'true');
 
-      button.outlined = true;
-      button.disabled = this.hostDisabled;
+      if (!button.disabled) {
+        button.setAttribute('outlined', 'true');
+        button.outlined = true;
+      }
+
+      button.disabled = this.hostDisabled || button.disabled;
       button.size = this.size;
 
       const isActive =

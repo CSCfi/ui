@@ -60,7 +60,14 @@ export class CTab {
    *
    * @private
    */
-  @Event() tabChange: EventEmitter;
+  @Event() tabChange: EventEmitter<number | string>;
+
+  /**
+   * Emit focus to the parent
+   *
+   * @private
+   */
+  @Event() tabFocus: EventEmitter<number | string>;
 
   private _rippleElement: HTMLCRippleElement;
 
@@ -71,6 +78,11 @@ export class CTab {
 
     this.tabChange.emit(this.value);
   };
+
+  @Listen('focus', { passive: true })
+  onTabFocus() {
+    this.tabFocus.emit(this.value);
+  }
 
   @Listen('keydown', { passive: true })
   handleKeydown(event: KeyboardEvent) {

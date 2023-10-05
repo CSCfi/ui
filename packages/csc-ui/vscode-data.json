@@ -236,6 +236,10 @@
           ]
         },
         {
+          "name": "tabs",
+          "description": "Used a s atab button"
+        },
+        {
           "name": "target",
           "description": "Hyperlink target"
         },
@@ -747,7 +751,7 @@
         },
         {
           "name": "href",
-          "description": "Login provider link. Do not set if using a click handler like"
+          "description": "Login provider link. Do not set if using a javascript click handler"
         },
         {
           "name": "src",
@@ -1658,8 +1662,46 @@
           ]
         },
         {
+          "name": "tabs",
+          "description": "Used as controller for c-tabs"
+        },
+        {
           "name": "value",
           "description": "Value of tab buttons"
+        }
+      ]
+    },
+    {
+      "name": "c-tab-item",
+      "description": {
+        "kind": "markdown",
+        "value": ""
+      },
+      "attributes": [
+        {
+          "name": "active",
+          "description": "Active"
+        },
+        {
+          "name": "value",
+          "description": "Tab value"
+        }
+      ]
+    },
+    {
+      "name": "c-tab-items",
+      "description": {
+        "kind": "markdown",
+        "value": ""
+      },
+      "attributes": [
+        {
+          "name": "disable-animation",
+          "description": "Disable animation"
+        },
+        {
+          "name": "value",
+          "description": "Currently active tab"
         }
       ]
     },
@@ -1690,6 +1732,10 @@
         {
           "name": "borderless",
           "description": "Disable the bottom border"
+        },
+        {
+          "name": "disable-animation",
+          "description": "Disable animation"
         },
         {
           "name": "value",

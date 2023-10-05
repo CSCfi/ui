@@ -7,12 +7,13 @@
 
 ## Properties
 
-| Property       | Attribute   | Description                | Type                   | Default     |
-| -------------- | ----------- | -------------------------- | ---------------------- | ----------- |
-| `hostDisabled` | `disabled`  | Disable tab buttons        | `boolean`              | `false`     |
-| `mandatory`    | `mandatory` | Always require a selection | `boolean`              | `false`     |
-| `size`         | `size`      | Size of the buttons        | `"default" \| "small"` | `'default'` |
-| `value`        | `value`     | Value of tab buttons       | `number \| string`     | `0`         |
+| Property       | Attribute   | Description                   | Type                   | Default     |
+| -------------- | ----------- | ----------------------------- | ---------------------- | ----------- |
+| `hostDisabled` | `disabled`  | Disable tab buttons           | `boolean`              | `false`     |
+| `mandatory`    | `mandatory` | Always require a selection    | `boolean`              | `false`     |
+| `size`         | `size`      | Size of the buttons           | `"default" \| "small"` | `'default'` |
+| `tabs`         | `tabs`      | Used as controller for c-tabs | `boolean`              | `false`     |
+| `value`        | `value`     | Value of tab buttons          | `number \| string`     | `0`         |
 
 
 ## Events

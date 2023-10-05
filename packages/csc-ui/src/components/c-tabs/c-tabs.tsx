@@ -31,6 +31,11 @@ export class CTabs {
   @Prop() borderless = false;
 
   /**
+   * Disable animation
+   */
+  @Prop() disableAnimation = false;
+
+  /**
    * Emit changes to the parent
    */
   @Event({ bubbles: false }) changeValue: EventEmitter;
@@ -43,56 +48,120 @@ export class CTabs {
 
   private _debounce = null;
 
+  private _isDirty = false;
+
+  private _focusedTabValue = this.value;
+
+  private static _uniqueId = 0;
+
   @Watch('value')
   onExternalValueChange() {
     this._handleActiveTab();
     this.changeValue.emit(this.value);
   }
 
+  @Listen('tabFocus', { passive: true })
+  tabFocusHandler(event: CustomEvent) {
+    event.stopPropagation();
+
+    this._focusedTabValue = event.detail;
+  }
+
   @Listen('tabChange', { passive: true })
-  tabChangeHandler(e) {
-    this.value = e.detail;
+  tabChangeHandler(event: CustomEvent) {
+    event.stopPropagation();
+
+    this.value = event.detail;
+
+    this._updateItemsValue();
   }
 
   @Listen('keydown', { capture: true })
   handleKeyDown(event: KeyboardEvent) {
+    // @ts-expect-error - type of the event.target is unknown
+    if (!this.tabs.includes(event.target) || event.target.disabled) return;
+
     if (event.key === 'Enter' || event.code === 'Space') {
       this.value = (event.target as HTMLCTabElement).value;
     }
   }
 
   @Listen('keyup', { capture: true })
-  handleKeyUp(ev: KeyboardEvent) {
-    const isArrowLeft = ev.key === 'ArrowLeft';
-    const isArrowRight = ev.key === 'ArrowRight';
-    const tabIndex = this._getTabIndex(this.value);
+  handleKeyUp(event: KeyboardEvent) {
+    this._isDirty = true;
+
+    // @ts-expect-error - type of the event.target is unknown
+    if (!this.tabs.includes(event.target)) return;
+
+    const isArrowLeft = event.key === 'ArrowLeft';
+    const isArrowRight = event.key === 'ArrowRight';
+
+    if (!isArrowRight && !isArrowLeft) return;
+
+    const tabIndex = this._getTabIndex(this._focusedTabValue);
 
     const firstAvailableValue = this.availableValues.at(0);
     const lastAvailableValue = this.availableValues.at(-1);
 
-    const isBeginning = this.value === firstAvailableValue;
-    const isEnd = this.value === lastAvailableValue;
+    const isBeginning = this._focusedTabValue === firstAvailableValue;
+    const isEnd = this._focusedTabValue === lastAvailableValue;
 
     const nextValue = isEnd
       ? firstAvailableValue
       : this.availableValues[tabIndex + 1];
+
     const previousValue = isBeginning
       ? lastAvailableValue
       : this.availableValues[tabIndex - 1];
 
-    if (!isArrowRight && !isArrowLeft) return;
-
     if (isArrowLeft) {
-      this.value = previousValue;
+      this._focusTab(previousValue);
     }
 
     if (isArrowRight) {
-      this.value = nextValue;
+      this._focusTab(nextValue);
+    }
+  }
+
+  private get _prefersReducedMotion() {
+    return (
+      window.matchMedia('(prefers-reduced-motion: reduce)').matches ||
+      this.disableAnimation
+    );
+  }
+
+  private get _tabItems() {
+    return this.el.querySelector(
+      ':scope > c-tab-items',
+    ) as HTMLCTabItemsElement;
+  }
+
+  private get _tabButtons() {
+    return this.el.querySelector(
+      ':scope > c-tab-buttons',
+    ) as HTMLCTabButtonsElement;
+  }
+
+  private _updateItemsValue() {
+    this.tabItems.value = this.value;
+
+    if (this._tabButtons) {
+      this._tabButtons.value = this.value;
+    }
+  }
+
+  componentWillLoad() {
+    CTabs._uniqueId += 1;
+
+    this._tabItems.disableAnimation = this._prefersReducedMotion;
+
+    // if tab buttons are used, mark them as tab controller
+    if (this._tabButtons) {
+      this.el.classList.add('c-tabs--buttons');
+      this._tabButtons.setAttribute('tabs', 'true');
     }
 
-    this._handleActiveTab(true);
-
-    this.changeValue.emit(this.value);
+    this._updateItemsValue();
   }
 
   componentDidLoad() {
@@ -103,12 +172,24 @@ export class CTabs {
     });
 
     this._resizeObserver.observe(this.el);
+
+    this.el.style.setProperty('--c-tabs-count', this.setsize.toString());
   }
 
   get tabs() {
-    return (Array.from(this.el.childNodes) as HTMLCTabElement[]).filter(
-      (tab) => tab.tagName === 'C-TAB',
-    );
+    if (!!this._tabButtons) {
+      return Array.from(
+        this._tabButtons.querySelectorAll(':scope > c-button'),
+      ) as HTMLCButtonElement[];
+    }
+
+    return Array.from(
+      this.el.querySelectorAll(':scope > c-tab'),
+    ) as HTMLCTabElement[];
+  }
+
+  get tabItems() {
+    return this.el.querySelector('c-tab-items') as HTMLCTabItemsElement;
   }
 
   get setsize() {
@@ -116,7 +197,7 @@ export class CTabs {
   }
 
   get availableValues() {
-    return this.tabs.filter((tab) => !tab.disabled).map((tab) => tab.value);
+    return this.tabs.map((tab) => tab.value);
   }
 
   private _observer = new IntersectionObserver(
@@ -136,6 +217,10 @@ export class CTabs {
     return this.availableValues.findIndex((tab) => tab === value);
   }
 
+  private _setIndicatorTop(value: number) {
+    this.el.style.setProperty('--c-tabs-indicator-top', `${value}px`);
+  }
+
   private _setIndicatorLeft(value: number) {
     this.el.style.setProperty('--c-tabs-indicator-left', `${value}px`);
   }
@@ -144,7 +229,7 @@ export class CTabs {
     this.el.style.setProperty('--c-tabs-indicator-width', value.toString());
   }
 
-  private _handleActiveTab(isUserAction = false) {
+  private _handleActiveTab() {
     requestAnimationFrame(() => {
       let position = 0;
 
@@ -152,29 +237,66 @@ export class CTabs {
         (this.el.querySelector('[aria-selected="true"]') as HTMLCTabElement) ??
         this.tabs[0];
 
-      this.tabs.forEach((tab: HTMLCTabElement) => {
-        if (!tab.disabled) {
-          position += 1;
-        }
+      this.tabs.forEach(
+        (tab: HTMLCTabElement | HTMLCButtonElement, index: number) => {
+          if (!tab.disabled) {
+            position += 1;
+          }
 
-        const isActive = tab.value === this.value;
+          const isActive = tab.value === this.value;
 
-        tab.active = isActive;
+          const tabId = `c-tab-${CTabs._uniqueId}-${index + 1}`;
 
-        if (!isUserAction && !tab.disabled) {
-          tab.position = position;
-          tab.setsize = this.availableValues.length;
-        }
+          const tabItemId = `c-tab-item-${CTabs._uniqueId}-${index + 1}`;
 
-        if (isActive) {
-          this._moveIndicator(oldTab, tab);
-        }
+          tab.setAttribute('id', tabId);
+          tab.setAttribute('aria-controls', tabItemId);
 
-        if (isActive && isUserAction) {
-          tab.focus();
-        }
-      });
+          if (!this._tabButtons) {
+            (tab as HTMLCTabElement).active = isActive;
+          } else if (isActive) {
+            this._tabButtons.value = tab.value;
+          }
+
+          const item = (
+            Array.from(
+              this.tabItems.querySelectorAll(':scope > c-tab-item'),
+            ) as HTMLCTabItemElement[]
+          ).find((child) => child.value === tab.value);
+
+          item.classList.toggle('disabled', tab.disabled);
+          item.setAttribute('id', tabItemId);
+          item.setAttribute('aria-labelledby', tabId);
+          item.active = isActive;
+
+          if (!tab.disabled) {
+            tab.setAttribute('aria-posinset', position.toString());
+            tab.setAttribute('setsize', this.availableValues.length.toString());
+          }
+
+          if (isActive && !this._tabButtons) {
+            this._moveIndicator(
+              oldTab as HTMLCTabElement,
+              tab as HTMLCTabElement,
+            );
+          }
+
+          if (isActive && this._isDirty) {
+            tab.focus();
+          }
+        },
+      );
     });
+  }
+
+  private _focusTab(value: string | number) {
+    if (this._tabButtons) {
+      return;
+    }
+
+    const item = this.tabs.find((tab) => tab.value === value);
+
+    item?.focus();
   }
 
   private _handleResize() {
@@ -190,9 +312,11 @@ export class CTabs {
 
   private _moveIndicator(oldTab: HTMLCTabElement, newTab: HTMLCTabElement) {
     requestAnimationFrame(() => {
-      if (this._initialized) {
-        this.el.style.setProperty('--_transition-speed', '200ms');
+      if (this._initialized && !this._prefersReducedMotion) {
+        this.el.style.setProperty('--c-tabs-transition-speed', '200ms');
       }
+
+      this._setIndicatorTop(this.el.querySelector('c-tab').offsetHeight);
 
       const newTabWidth = newTab.offsetWidth / this.el.offsetWidth;
 
@@ -243,6 +367,10 @@ export class CTabs {
     return (
       <Host role="tablist" class={classes}>
         <slot></slot>
+
+        <div>
+          <slot name="items"></slot>
+        </div>
       </Host>
     );
   }
