@@ -224,7 +224,7 @@ export class CAccordionItem {
             <div class={indicatorClasses}>
               <c-icon
                 path={mdiChevronRight}
-                color="var(--c-accordion-item-text)"
+                color="var(--c-accordion-item-text-color)"
                 class={{ expanded: this.expanded }}
               ></c-icon>
             </div>
