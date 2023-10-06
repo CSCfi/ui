@@ -9,6 +9,8 @@
   --c-checkbox-color-active: var(--c-checkbox-color);
   --c-checkbox-background-color-hover: rgba(var(--c-primary-rgb), 0.1);
   --c-checkbox-disabled-color: var(--c-tertiary-500);
+
+  --c-checkbox-error-color: var(--c-error-600);
 }
 
 .c-checkbox {
@@ -42,7 +44,7 @@
     }
 
     &--error {
-      color: var(--c-error-600);
+      color: var(--c-checkbox-error-color);
     }
 
     span {
@@ -75,6 +77,7 @@
   &--disabled {
     --c-checkbox-color: var(--c-checkbox-disabled-color);
     --c-error-600: var(--c-checkbox-color);
+    --c-checkbox-color-active: var(--c-checkbox-disabled-color);
 
     color: var(--c-checkbox-color);
     opacity: 0.75;
@@ -86,8 +89,9 @@
 
   &--error {
     --c-checkbox-color: var(--c-error-600);
+    --c-checkbox-color-active: var(--c-checkbox-error-color);
 
-    color: var(--c-error-600);
+    color: var(--c-checkbox-error-color);
   }
 
   input:focus {
