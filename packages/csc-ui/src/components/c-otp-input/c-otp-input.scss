@@ -19,6 +19,11 @@
   display: block;
 }
 
+:host(.error) {
+  --c-otp-input-border-color: var(--c-error-600);
+  --c-otp-input-border-color-active: var(--c-error-600);
+}
+
 .visuallyhidden {
   border: 0;
   clip: rect(0 0 0 0);

@@ -240,6 +240,7 @@ export class COtpInput {
       <Host
         id={this.id}
         style={{ '--c-otp-input-count': this.length.toString() }}
+        class={{ error: !this.valid }}
       >
         <div
           id={'announce-' + this.id}
