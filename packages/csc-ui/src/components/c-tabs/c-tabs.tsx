@@ -264,10 +264,12 @@ export class CTabs {
             ) as HTMLCTabItemElement[]
           ).find((child) => child.value === tab.value);
 
-          item.classList.toggle('disabled', tab.disabled);
+          item.setAttribute('disabled', tab.disabled.toString());
+
           item.setAttribute('id', tabItemId);
           item.setAttribute('aria-labelledby', tabId);
           item.active = isActive;
+          item.setAttribute('active', isActive.toString());
 
           if (!tab.disabled) {
             tab.setAttribute('aria-posinset', position.toString());
