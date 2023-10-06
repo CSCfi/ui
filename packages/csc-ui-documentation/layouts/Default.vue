@@ -40,6 +40,7 @@
           v-for="group in navItems"
           :key="group.name"
           :active="group.visible"
+          class="capitalize"
         >
           {{ group.name }}
 
