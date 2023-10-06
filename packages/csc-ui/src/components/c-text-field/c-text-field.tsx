@@ -351,7 +351,7 @@ export class CTextField {
 
           {this._renderDateToggle()}
 
-          <slot name="post" slot="post"></slot>
+          <slot name="post"></slot>
         </c-input>
       </Host>
     );

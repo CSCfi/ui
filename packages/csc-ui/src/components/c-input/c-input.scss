@@ -303,6 +303,14 @@
   &--error {
     color: var(--c-input-error-color);
 
+    fieldset {
+      border-color: var(--c-input-error-color) !important;
+    }
+
+    label {
+      color: var(--c-input-error-color) !important;
+    }
+
     &:focus-within {
       color: var(--c-input-error-color);
     }

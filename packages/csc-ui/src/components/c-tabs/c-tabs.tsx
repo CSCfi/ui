@@ -167,8 +167,8 @@ export class CTabs {
   componentDidLoad() {
     this._observer.observe(this.el);
 
-    this._resizeObserver = new ResizeObserver(() => {
-      this._handleResize();
+    this._resizeObserver = new ResizeObserver((entries) => {
+      this._handleResize(entries[0].contentRect.width);
     });
 
     this._resizeObserver.observe(this.el);
@@ -212,6 +212,8 @@ export class CTabs {
     },
     { threshold: 1 },
   );
+
+  private _previousWidth = 0;
 
   private _getTabIndex(value: string | number) {
     return this.availableValues.findIndex((tab) => tab === value);
@@ -301,14 +303,17 @@ export class CTabs {
     item?.focus();
   }
 
-  private _handleResize() {
+  private _handleResize(width: number) {
     if (this._debounce !== null) {
       clearTimeout(this._debounce);
       this._debounce = null;
     }
 
     this._debounce = setTimeout(() => {
+      if (width === this._previousWidth) return;
+
       this._handleActiveTab();
+      this._previousWidth = width;
     }, 200);
   }
 

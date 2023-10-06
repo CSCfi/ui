@@ -4,7 +4,7 @@
       <h2 v-if="slots.title" class="font-medium text-xl text-primary-600">
         <slot name="title" />
       </h2>
-      <h3 v-if="slots.subtitle" class="text-tertiary-600">
+      <h3 v-if="slots.subtitle" class="text-tertiary-600 -mt-2">
         <slot name="subtitle" />
       </h3>
     </div>
