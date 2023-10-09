@@ -81,20 +81,19 @@ export class CTabItems {
       );
 
       if (!this.disableAnimation && !this._initialized) {
+        this._initialized = true;
         setTimeout(() => {
           this.el.style.setProperty(
             '--c-tab-items-animation-duration',
             '300ms',
           );
-
-          this._initialized = true;
         }, 500);
       }
     });
   }
 
   private _handleResize() {
-    if (this._isAnimating) return;
+    if (this._isAnimating || !this._initialized) return;
 
     if (this._debounce !== null) {
       clearTimeout(this._debounce);

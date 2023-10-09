@@ -160,7 +160,7 @@ export class CRadioGroup {
     const itemId = item.value.toString().replace(/[^a-zA-Z0-9-_]/g, '');
     const isChecked = this.returnValue
       ? this.items?.find((i) => i.value === item.value)?.value === this.value
-      : this.value === item;
+      : (this.value as CRadioGroupItem).value === item.value;
 
     const classes = {
       'c-radio': true,

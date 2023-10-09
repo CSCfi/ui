@@ -414,8 +414,6 @@ export class CInput {
                 {this._renderLabel()}
 
                 <slot></slot>
-
-                <slot name="post"></slot>
               </div>
             </div>
 

@@ -16,7 +16,7 @@
 }
 
 .c-radio-group {
-  --c-radio-group-error: var(--c-error-600);
+  --c-radio-group-error-color: var(--c-error-600);
   --c-radio-flex-direction: column;
   --c-radio-item-gap: 2px;
 
@@ -33,14 +33,18 @@
   }
 
   &__label {
+    display: flex;
+    gap: 4px;
+    align-items: center;
+
     span.required {
-      color: var(--c-radio-group-error);
+      color: var(--c-radio-group-error-color);
     }
   }
 
   &--disabled {
     --c-radio-group-color: var(--c-radio-group-disabled-color);
-    --c-radio-group-error: var(--c-radio-group-disabled-color);
+    --c-radio-group-error-color: var(--c-radio-group-disabled-color);
 
     color: var(--c-radio-group-disabled-color);
     cursor: default;
@@ -48,9 +52,10 @@
   }
 
   &--error {
-    --c-radio-group-color: var(--c-radio-group-error);
+    --c-radio-group-color: var(--c-radio-group-error-color);
+    --c-radio-group-active-color: var(--c-radio-group-error-color);
 
-    color: var(--c-radio-group-error);
+    color: var(--c-radio-group-error-color);
   }
 
   &--inline {
@@ -147,7 +152,7 @@
     }
 
     &--error {
-      color: var(--c-radio-group-error) !important;
+      color: var(--c-radio-group-error-color) !important;
     }
 
     span {
@@ -157,7 +162,7 @@
       height: 16px;
 
       &.error {
-        color: var(--c-radio-group-error);
+        color: var(--c-radio-group-error-color);
       }
 
       &.hint {
@@ -188,14 +193,14 @@
   }
 
   &--error {
-    --c-radio-group-color: var(--c-radio-group-error);
+    --c-radio-group-color: var(--c-radio-group-error-color);
 
-    color: var(--c-radio-group-error);
+    color: var(--c-radio-group-error-color);
 
     span,
     svg {
-      fill: var(--c-radio-group-error);
-      color: var(--c-radio-group-error);
+      fill: var(--c-radio-group-error-color);
+      color: var(--c-radio-group-error-color);
     }
   }
 

@@ -4,7 +4,7 @@
       <h2 v-if="slots.title" class="font-medium text-xl text-primary-600">
         <slot name="title" />
       </h2>
-      <h3 v-if="slots.subtitle" class="text-tertiary-600">
+      <h3 v-if="slots.subtitle" class="text-tertiary-600 -mt-2">
         <slot name="subtitle" />
       </h3>
     </div>
@@ -15,7 +15,7 @@
       <slot />
     </div>
 
-    <c-accordion value="" outlined>
+    <c-accordion class="code-axamples" value="" outlined>
       <c-accordion-item heading="Code" value="code">
         <c-icon slot="icon" :path="mdiXml"></c-icon>
 
@@ -93,3 +93,11 @@ onMounted(async () => {
   });
 });
 </script>
+
+<style scoped>
+c-accordion.code-axamples c-accordion-item {
+  --c-accordion-item-header-background-color: var(--c-info-200);
+  --c-accordion-item-outline-color: var(--c-primary-600);
+  --c-accordion-item-text-color: var(--c-info-700);
+}
+</style>

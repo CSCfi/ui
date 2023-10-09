@@ -8,12 +8,16 @@
   user-select: none;
 }
 
-:host(.active) {
+:host([active="true"]) {
   height: auto;
   user-select: auto;
 }
 
-:host(.disabled) {
+:host([active="false"]) > div {
+  display: none;
+}
+
+:host([disabled="true"]) {
   min-width: 0;
   width: 0;
   overflow: hidden;

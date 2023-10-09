@@ -167,8 +167,8 @@ export class CTabs {
   componentDidLoad() {
     this._observer.observe(this.el);
 
-    this._resizeObserver = new ResizeObserver(() => {
-      this._handleResize();
+    this._resizeObserver = new ResizeObserver((entries) => {
+      this._handleResize(entries[0].contentRect.width);
     });
 
     this._resizeObserver.observe(this.el);
@@ -212,6 +212,8 @@ export class CTabs {
     },
     { threshold: 1 },
   );
+
+  private _previousWidth = 0;
 
   private _getTabIndex(value: string | number) {
     return this.availableValues.findIndex((tab) => tab === value);
@@ -264,10 +266,12 @@ export class CTabs {
             ) as HTMLCTabItemElement[]
           ).find((child) => child.value === tab.value);
 
-          item.classList.toggle('disabled', tab.disabled);
+          item.setAttribute('disabled', tab.disabled.toString());
+
           item.setAttribute('id', tabItemId);
           item.setAttribute('aria-labelledby', tabId);
           item.active = isActive;
+          item.setAttribute('active', isActive.toString());
 
           if (!tab.disabled) {
             tab.setAttribute('aria-posinset', position.toString());
@@ -299,14 +303,17 @@ export class CTabs {
     item?.focus();
   }
 
-  private _handleResize() {
+  private _handleResize(width: number) {
     if (this._debounce !== null) {
       clearTimeout(this._debounce);
       this._debounce = null;
     }
 
     this._debounce = setTimeout(() => {
+      if (width === this._previousWidth) return;
+
       this._handleActiveTab();
+      this._previousWidth = width;
     }, 200);
   }
 
