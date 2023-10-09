@@ -15,7 +15,7 @@
       <slot />
     </div>
 
-    <c-accordion class="code-axamples" value="" outlined>
+    <c-accordion class="code-examples" value="" outlined>
       <c-accordion-item heading="Code" value="code">
         <c-icon slot="icon" :path="mdiXml"></c-icon>
 
@@ -94,10 +94,14 @@ onMounted(async () => {
 });
 </script>
 
-<style scoped>
-c-accordion.code-axamples c-accordion-item {
-  --c-accordion-item-header-background-color: var(--c-info-200);
-  --c-accordion-item-outline-color: var(--c-primary-600);
-  --c-accordion-item-text-color: var(--c-info-700);
+<style scoped lang="scss">
+c-accordion.code-examples c-accordion-item {
+  --c-accordion-item-header-background-color: var(--c-tertiary-700);
+  --c-accordion-item-outline-color: var(--c-tertiary-700);
+  --c-accordion-item-text-color: var(--c-white);
+}
+
+c-button {
+  --c-button-background-color: var(--c-tertiary-700);
 }
 </style>

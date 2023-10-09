@@ -55,16 +55,18 @@ export class CSwiper {
 
   @Listen('changeValue')
   onTabClick(event: MouseEvent) {
+    event.stopPropagation();
+
     this.value = event.detail;
 
     this._updateStatusText();
   }
 
   @Listen('keyup', { capture: true })
-  handleKeyUp(ev: KeyboardEvent) {
-    const index = +(ev.target as HTMLCSwiperTabElement).dataset.index;
-    const isArrowLeft = ev.key === 'ArrowLeft';
-    const isArrowRight = ev.key === 'ArrowRight';
+  handleKeyUp(event: KeyboardEvent) {
+    const index = +(event.target as HTMLCSwiperTabElement).dataset.index;
+    const isArrowLeft = event.key === 'ArrowLeft';
+    const isArrowRight = event.key === 'ArrowRight';
     const isBeginning = index === 0;
     const isEnd = index === this.slotItems.length - 1;
 
