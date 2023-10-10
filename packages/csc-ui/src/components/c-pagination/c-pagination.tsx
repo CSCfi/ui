@@ -72,7 +72,9 @@ export class CPagination {
   valueHandler(value: CPaginationOptions, oldValue: CPaginationOptions) {
     if (this._isEqual(value, oldValue)) return;
 
-    this._setRange();
+    requestAnimationFrame(() => {
+      this._setRange();
+    });
   }
 
   private _isEqual(options1: CPaginationOptions, options2: CPaginationOptions) {
@@ -114,11 +116,16 @@ export class CPagination {
     if (!this.value) return;
 
     this._currentPage = this.value.currentPage || 1;
+
     this._itemsPerPage = this.value.itemsPerPage || 25;
+
     this._totalVisible = this.value.totalVisible || 7;
+
     this.value.startFrom =
       this._currentPage * this._itemsPerPage - this._itemsPerPage;
+
     this.value.endTo = this._currentPage * this._itemsPerPage - 1;
+
     this.changeValue.emit(this.value);
   }
 
@@ -126,7 +133,9 @@ export class CPagination {
 
   private _valueChangeHandler() {
     this.value.currentPage = this._currentPage;
+
     this.value.itemsPerPage = this._itemsPerPage;
+
     this._setRange();
   }
 
