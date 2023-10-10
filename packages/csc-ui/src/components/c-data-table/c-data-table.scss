@@ -14,11 +14,17 @@
   --c-data-table-border-color: var(--c-tertiary-200);
   --c-data-table-background-color-hover: var(--c-primary-100);
   --c-data-table-selected-row-background-color: rgba(var(--c-primary-rgb), 0.1);
-  --c-data-table-highlighted-column-background-color: rgba(var(--c-primary-rgb), 0.1);
+  --c-data-table-highlighted-column-background-color: rgba(
+    var(--c-primary-rgb),
+    0.1
+  );
   --c-data-table-active: var(--c-primary-600);
   --c-data-table-checkbox-color: var(--c-primary-600);
   --c-data-table-checkbox-color-active: var(--c-data-table-checkbox-color);
-  --c-data-table-checkbox-background-color-hover: rgba(var(--c-primary-rgb), 0.1);
+  --c-data-table-checkbox-background-color-hover: rgba(
+    var(--c-primary-rgb),
+    0.1
+  );
 
   /**
    * @prop --c-data-table-pagination-button-active-background-color: Table pagination button background color
@@ -28,12 +34,21 @@
    * @prop --c-data-table-pagination-button-background-color-hover: Table pagination button hover background color
    * @prop --c-data-table-pagination-button-text-color: Table pagination button text color
    */
-  --c-data-table-pagination-button-active-background-color: var(--c-primary-600);
-  --c-data-table-pagination-button-active-background-color-hover: var(--c-primary-400);
+  --c-data-table-pagination-button-active-background-color: var(
+    --c-primary-600
+  );
+  --c-data-table-pagination-button-active-background-color-hover: var(
+    --c-primary-400
+  );
   --c-data-table-pagination-button-active-text-color: var(--c-white);
   --c-data-table-pagination-button-background-color: var(--c-transparent);
-  --c-data-table-pagination-button-background-color-hover: rgba(var(--c-primary-rgb), 0.1);
-  --c-data-table-pagination-button-text-color: var(--c-data-table-pagination-button-active-background-color);
+  --c-data-table-pagination-button-background-color-hover: rgba(
+    var(--c-primary-rgb),
+    0.1
+  );
+  --c-data-table-pagination-button-text-color: var(
+    --c-data-table-pagination-button-active-background-color
+  );
 
   /**
    * @prop --c-data-table-menu-text-color: Table pagination menu text color
@@ -49,12 +64,15 @@
   c-checkbox {
     --c-checkbox-color: var(--c-data-table-checkbox-color);
     --c-checkbox-color-active: var(--c-data-table-checkbox-color-active);
-    --c-checkbox-background-color-hover: var(--c-data-table-checkbox-background-color-hover);
+    --c-checkbox-background-color-hover: var(
+      --c-data-table-checkbox-background-color-hover
+    );
   }
 
   display: block;
   position: relative;
   width: 100%;
+  max-width: 100%;
 
   table,
   caption,
@@ -265,17 +283,35 @@
         }
 
         c-pagination {
-          --c-pagination-button-active-background-color: var(--c-data-table-pagination-button-active-background-color);
-          --c-pagination-button-active-background-color-hover: var(--c-data-table-pagination-button-active-background-color-hover);
-          --c-pagination-button-active-text-color: var(--c-data-table-pagination-button-active-text-color);
-          --c-pagination-button-background-color: var(--c-data-table-pagination-button-background-color);
-          --c-pagination-button-background-color-hover: var(--c-data-table-pagination-button-background-color-hover);
-          --c-pagination-button-text-color: var(--c-data-table-pagination-button-text-color);
+          --c-pagination-button-active-background-color: var(
+            --c-data-table-pagination-button-active-background-color
+          );
+          --c-pagination-button-active-background-color-hover: var(
+            --c-data-table-pagination-button-active-background-color-hover
+          );
+          --c-pagination-button-active-text-color: var(
+            --c-data-table-pagination-button-active-text-color
+          );
+          --c-pagination-button-background-color: var(
+            --c-data-table-pagination-button-background-color
+          );
+          --c-pagination-button-background-color-hover: var(
+            --c-data-table-pagination-button-background-color-hover
+          );
+          --c-pagination-button-text-color: var(
+            --c-data-table-pagination-button-text-color
+          );
 
           --c-pagination-menu-text-color: var(--c-data-table-menu-text-color);
-          --c-pagination-menu-text-color-active: var(--c-data-table-menu-text-color-active);
-          --c-pagination-menu-background-color-hover: var(--c-data-table-menu-background-color-hover);
-          --c-pagination-menu-outline-color: var(--c-data-table-menu-text-color);
+          --c-pagination-menu-text-color-active: var(
+            --c-data-table-menu-text-color-active
+          );
+          --c-pagination-menu-background-color-hover: var(
+            --c-data-table-menu-background-color-hover
+          );
+          --c-pagination-menu-outline-color: var(
+            --c-data-table-menu-text-color
+          );
 
           flex: 1;
         }
