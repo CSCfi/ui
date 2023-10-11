@@ -2,7 +2,13 @@
   <component-example name="basic">
     <template #title>Basic usage</template>
 
-    <c-button @click="basicModal = true">Open modal</c-button>
+    <c-button
+      @click="basicModal = true"
+      @keyup.enter="basicModal = true"
+      @keyup.space="basicModal = true"
+    >
+      Open modal
+    </c-button>
 
     <c-modal v-model="basicModal" v-control>
       <c-card>
@@ -16,7 +22,13 @@
         </c-card-content>
 
         <c-card-actions>
-          <c-button @click="basicModal = false">Close</c-button>
+          <c-button
+            @click="basicModal = false"
+            @keyup.enter="basicModal = false"
+            @keyup.space="basicModal = false"
+          >
+            Close
+          </c-button>
         </c-card-actions>
       </c-card>
     </c-modal>
@@ -26,11 +38,19 @@
     <template #title>Custom width</template>
 
     <c-row gap="8">
-      <c-button @click="numericWidthModal = true">
+      <c-button
+        @click="numericWidthModal = true"
+        @keyup.enter="numericWidthModal = true"
+        @keyup.space="numericWidthModal = true"
+      >
         Open modal with a numeric width
       </c-button>
 
-      <c-button @click="stringWidthModal = true">
+      <c-button
+        @click="stringWidthModal = true"
+        @keyup.enter="stringWidthModal = true"
+        @keyup.space="stringWidthModal = true"
+      >
         Open modal with a width defined as string
       </c-button>
     </c-row>
@@ -47,7 +67,13 @@
         </c-card-content>
 
         <c-card-actions>
-          <c-button @click="numericWidthModal = false">Close</c-button>
+          <c-button
+            @click="numericWidthModal = false"
+            @keyup.enter="numericWidthModal = false"
+            @keyup.space="numericWidthModal = false"
+          >
+            Close
+          </c-button>
         </c-card-actions>
       </c-card>
     </c-modal>
@@ -64,7 +90,13 @@
         </c-card-content>
 
         <c-card-actions>
-          <c-button @click="stringWidthModal = false">Close</c-button>
+          <c-button
+            @click="stringWidthModal = false"
+            @keyup.enter="stringWidthModal = false"
+            @keyup.space="stringWidthModal = false"
+          >
+            Close
+          </c-button>
         </c-card-actions>
       </c-card>
     </c-modal>
@@ -75,7 +107,13 @@
 
     <template #subtitle>With fullscreen toggle</template>
 
-    <c-button @click="dismissableModal = true">Open dismissable modal</c-button>
+    <c-button
+      @click="dismissableModal = true"
+      @keyup.enter="dismissableModal = true"
+      @keyup.space="dismissableModal = true"
+    >
+      Open dismissable modal
+    </c-button>
 
     <c-modal v-model="dismissableModal" v-control dismissable>
       <c-card fullscreen>
@@ -91,7 +129,13 @@
         </c-card-content>
 
         <c-card-actions>
-          <c-button @click="dismissableModal = false">Close</c-button>
+          <c-button
+            @click="dismissableModal = false"
+            @keyup.enter="dismissableModal = false"
+            @keyup.space="dismissableModal = false"
+          >
+            Close
+          </c-button>
         </c-card-actions>
       </c-card>
     </c-modal>
