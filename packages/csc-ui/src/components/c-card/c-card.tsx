@@ -102,20 +102,22 @@ export class CCard {
 
     return (
       <Host class={hostClasses}>
-        {this.fullscreen && (
-          <c-icon-button
-            aria-hidden="true"
-            class="c-card__fullscreen-toggle"
-            title={this.isFullscreen ? 'Exit fullscreen' : 'Enter fullscreen'}
-            text
-            onClick={() => this._onFullscreen()}
-          >
-            <c-icon
-              path={this.isFullscreen ? mdiFullscreenExit : mdiFullscreen}
-            />
-          </c-icon-button>
-        )}
-        <slot></slot>
+        <article>
+          {this.fullscreen && (
+            <c-icon-button
+              aria-hidden="true"
+              class="c-card__fullscreen-toggle"
+              title={this.isFullscreen ? 'Exit fullscreen' : 'Enter fullscreen'}
+              text
+              onClick={() => this._onFullscreen()}
+            >
+              <c-icon
+                path={this.isFullscreen ? mdiFullscreenExit : mdiFullscreen}
+              />
+            </c-icon-button>
+          )}
+          <slot></slot>
+        </article>
       </Host>
     );
   }
