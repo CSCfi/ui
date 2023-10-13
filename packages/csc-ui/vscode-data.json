@@ -714,6 +714,69 @@
       ]
     },
     {
+      "name": "c-list",
+      "description": {
+        "kind": "markdown",
+        "value": ""
+      },
+      "attributes": [
+        {
+          "name": "disabled",
+          "description": "Disable the list"
+        }
+      ]
+    },
+    {
+      "name": "c-list-item",
+      "description": {
+        "kind": "markdown",
+        "value": ""
+      },
+      "attributes": [
+        {
+          "name": "active",
+          "description": "Set the item active"
+        },
+        {
+          "name": "disabled",
+          "description": "Disable the item"
+        },
+        {
+          "name": "disabled-by-parent",
+          "description": "Disabled by the parent list"
+        },
+        {
+          "name": "hoverable",
+          "description": "Display background color on hover"
+        },
+        {
+          "name": "href",
+          "description": "Hyperlink url"
+        },
+        {
+          "name": "ripple",
+          "description": "Add ripple effect to the item"
+        },
+        {
+          "name": "target",
+          "description": "Hyperlink target"
+        }
+      ]
+    },
+    {
+      "name": "c-list-item-title",
+      "description": {
+        "kind": "markdown",
+        "value": ""
+      },
+      "attributes": [
+        {
+          "name": "active",
+          "description": "Set the title active"
+        }
+      ]
+    },
+    {
       "name": "c-loader",
       "description": {
         "kind": "markdown",
