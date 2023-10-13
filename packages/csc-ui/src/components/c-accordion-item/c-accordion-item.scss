@@ -4,62 +4,56 @@
    * @prop --c-accordion-item-outline-color: Accordion item outline color
    * @prop --c-accordion-item-text-color: Accordion item text color
    */
-  --c-accordion-item-header-background-color: var(--c-primary-200);
-  --c-accordion-item-outline-color: var(--c-primary-600);
-  --c-accordion-item-text-color: var(--c-primary-600);
+  --_c-accordion-item-header-background-color: var(--c-accordion-item-header-background-color, var(--c-primary-200));
+  --_c-accordion-item-outline-color: var(--c-accordion-item-outline-color, var(--c-primary-600));
+  --_c-accordion-item-text-color: var(--c-accordion-item-text-color, var(--c-primary-600));
 
   max-width: 100%;
 
   summary::-webkit-details-marker {
-    display:none;
+    display: none;
   }
 }
 
 .c-accordion-item {
   $this: &;
 
-  --c-accordion-item-indicator-rotation: rotate(0deg);
-  --c-accordion-item-content-height: 0px;
-  --c-accordion-item-min-height: 46px;
-  --c-accordion-item-border-radius: 6px;
-  --c-accordion-item-padding: 12px;
-  --c-accordion-item-overflow: visible;
-  --c-accordion-item-outline-color-offset: 4px;
+  --_c-accordion-item-indicator-rotation: rotate(0deg);
+  --_c-accordion-item-content-height: 0;
+  --_c-accordion-item-min-height: 46px;
+  --_c-accordion-item-border-radius: 6px;
+  --_c-accordion-item-padding: 12px;
+  --_c-accordion-item-overflow: visible;
+  --_c-accordion-item-outline-color-offset: 4px;
 
   display: block;
-  overflow: var(--c-accordion-item-overflow);
+  overflow: var(--_c-accordion-item-overflow);
 
   &--expanding {
-    --c-accordion-item-overflow: hidden !important;
-    --c-accordion-item-outline-color: transparent;
+    --_c-accordion-item-overflow: hidden !important;
+    --_c-accordion-item-outline-color: transparent;
   }
 
   &--expanded {
-    --c-accordion-item-content-height: auto;
-    --c-accordion-item-indicator-rotation: rotate(90deg);
-    --c-accordion-item-overflow: visible;
+    --_c-accordion-item-content-height: auto;
+    --_c-accordion-item-indicator-rotation: rotate(90deg);
+    --_c-accordion-item-overflow: visible;
   }
 
   &--outlined {
-    --c-accordion-item-min-height: 42px;
-    --c-accordion-item-border-radius: 4px;
-    --c-accordion-item-padding: 10px;
-    --c-accordion-item-outline-color-offset: 6px;
-
-    box-shadow: inset 0 0 0 2px var(--c-accordion-item-header-background-color);
-    border-radius: 6px;
-    padding: 2px;
+    box-shadow: inset 0 0 0 2px var(--_c-accordion-item-header-background-color);
+    border-radius: var(--_c-accordion-item-border-radius);
   }
 
   &__header {
-    min-height: var(--c-accordion-item-min-height);
+    min-height: var(--_c-accordion-item-min-height);
     user-select: none;
-    background-color: var(--c-accordion-item-header-background-color);
+    background-color: var(--_c-accordion-item-header-background-color);
     display: grid;
     column-gap: 8px;
     align-items: center;
-    padding: 0 var(--c-accordion-item-padding);
-    border-radius: var(--c-accordion-item-border-radius);
+    padding: 0 var(--_c-accordion-item-padding);
+    border-radius: var(--_c-accordion-item-border-radius);
     cursor: pointer;
     grid-template-columns: auto 1fr auto;
     gap: 8px;
@@ -78,8 +72,8 @@
     }
 
     &:focus {
-      outline: 2px var(--c-accordion-item-outline-color) solid;
-      outline-offset: var(--c-accordion-item-outline-color-offset);
+      outline: 2px var(--_c-accordion-item-outline-color) solid;
+      outline-offset: var(--_c-accordion-item-outline-color-offset);
     }
 
     @supports selector(:focus-visible) {
@@ -89,8 +83,8 @@
     }
 
     &:focus-visible {
-      outline: 2px var(--c-accordion-item-outline-color) solid;
-      outline-offset: var(--c-accordion-item-outline-color-offset);
+      outline: 2px var(--_c-accordion-item-outline-color) solid;
+      outline-offset: var(--_c-accordion-item-outline-color-offset);
     }
   }
 
@@ -100,7 +94,7 @@
     font-weight: 500;
     font-size: 16px;
     line-height: 1;
-    color: var(--c-accordion-item-text-color);
+    color: var(--_c-accordion-item-text-color);
   }
 
   &__content {
@@ -114,7 +108,7 @@
   &__icon {
     height: 24px;
     font-size: 24px;
-    color: var(--c-accordion-item-text-color);
+    color: var(--_c-accordion-item-text-color);
     display: flex;
     align-items: center;
 
@@ -132,7 +126,7 @@
     c-icon {
       width: 24px;
       height: 24px !important;
-      transform: var(--c-accordion-item-indicator-rotation);
+      transform: var(--_c-accordion-item-indicator-rotation);
       transition: transform 0.3s ease;
     }
   }

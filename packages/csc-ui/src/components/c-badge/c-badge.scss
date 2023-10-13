@@ -4,28 +4,26 @@
    * @prop --c-badge-text-color: Badge text color
    * @prop --c-badge-border-color: Badge border color
    */
-  --c-badge-background-color: var(--c-warning-600);
-  --c-badge-color: var(--c-white);
-  --c-badge-border-color: var(--c-white);
+  --_c-badge-background-color: var(--c-badge-background-color, var(--c-warning-600));
+  --_c-badge-color: var(--c-badge-color, var(--c-white));
+  --_c-badge-border-color: var(--c-badge-border-color, var(--c-white));
 
-  display: flex;
   align-items: center;
-  justify-items: center;
-  background-color: var(--c-badge-background-color);
+  background-color: var(--_c-badge-background-color);
   border-radius: 16px;
+  box-shadow: 0 0 0 2px var(--_c-badge-border-color);
+  color: var(--_c-badge-text-color);
   display: flex;
-  align-items: center;
-  justify-content: center;
-  min-width: 16px;
+  font-size: 12px;
   height: 16px;
-  color: var(--c-badge-text-color);
+  justify-content: center;
+  justify-items: center;
+  line-height: 1;
+  min-width: 16px;
+  padding: 0 4px;
+  pointer-events: none;
   position: absolute;
   right: -6px;
-  font-size: 12px;
-  box-shadow: 0 0 0 2px var(--c-badge-border-color);
   top: -6px;
-  padding: 0 4px;
-  line-height: 1;
   z-index: 2;
-  pointer-events: none;
 }

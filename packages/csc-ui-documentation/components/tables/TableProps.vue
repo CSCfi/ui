@@ -12,7 +12,20 @@
     <tbody>
       <tr v-for="item in items" :key="item.name" class="border-b">
         <td>{{ item.name }}</td>
-        <td>{{ item.type }}</td>
+        <td>
+          <template v-if="hasCType(item)">
+            <NuxtLink
+              class="text-primary-600"
+              :to="{ name: 'types', hash: `#${item.type.replace('[]', '')}` }"
+            >
+              {{ item.type }}
+            </NuxtLink>
+          </template>
+
+          <template v-else>
+            {{ item.type }}
+          </template>
+        </td>
         <td>{{ item.default }}</td>
         <td>{{ item.docs }}</td>
       </tr>
@@ -21,9 +34,22 @@
 </template>
 
 <script setup lang="ts">
+import typeDefinitions from '../../example-data/types';
+
+type TypeTableItem = {
+  name: string;
+  type: string;
+  default: string;
+  docs: string;
+};
+
 defineProps<{
-  items: any;
+  items: TypeTableItem[];
 }>();
+
+const hasCType = (item: TypeTableItem) => {
+  return Object.keys(typeDefinitions).includes(item.type.replace('[]', ''));
+};
 </script>
 
 <style lang="scss"></style>

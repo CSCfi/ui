@@ -13,6 +13,15 @@
 | `responsive`       | `responsive`        | Should the table be responsive | `boolean` | `false` |
 
 
+## CSS Custom Properties
+
+| Name                                    | Description                                      |
+| --------------------------------------- | ------------------------------------------------ |
+| `--c-table-border-color`                | Table border color                               |
+| `--c-table-header-text-color`           | Table header text color                          |
+| `--c-table-row-background-color-mobile` | Background color for table rows (even) in mobile |
+
+
 ----------------------------------------------
 
 *Built with [StencilJS](https://stenciljs.com/)*

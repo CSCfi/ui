@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia';
-import { components } from '../../csc-ui/docs.json';
+import { components, typeLibrary } from '../../csc-ui/docs.json';
 import { ComponentData } from '~/types/docs';
 
 export const useExampleStore = defineStore('example', () => {
@@ -52,5 +52,22 @@ export const useExampleStore = defineStore('example', () => {
     );
   });
 
-  return { componentData, currentComponent, parsedData };
+  const types = computed(() => {
+    const definitions = new Map();
+
+    Object.values(typeLibrary).forEach((type) => {
+      const tag = type.path.split('/').at(-1)?.replace('.tsx', '');
+      const definition = type.declaration.replace('export ', '');
+
+      if (tag?.startsWith('c-') && !definition.startsWith('type _')) {
+        const existingItem = definitions.get(tag) || [];
+
+        definitions.set(tag, [...existingItem, definition]);
+      }
+    });
+
+    return definitions;
+  });
+
+  return { componentData, currentComponent, parsedData, types };
 });

@@ -60,11 +60,9 @@
     background-color: var(--c-progress-bar-color);
     border-radius: var(--c-progress-bar-height);
     width: 100%;
-    background-color: transparent;
     overflow: hidden;
     height: calc(
-      var(--c-progress-bar-height) -
-        calc(var(--c-progress-bar-border-width) * 2)
+      var(--c-progress-bar-height) - calc(var(--c-progress-bar-border-width) * 2)
     );
     position: absolute;
     border: none;
@@ -108,7 +106,7 @@
 
   &--indeterminate {
     &::before {
-      content: '';
+      content: "";
       position: absolute;
       background-color: var(--c-progress-bar-color);
       border-radius: var(--c-progress-bar-height);
@@ -127,12 +125,15 @@
   0% {
     transform: translateX(100%) scaleX(1);
   }
+
   30% {
     transform: translateX(170%) scaleX(1.75);
   }
+
   70% {
     transform: translateX(500%) scaleX(0.1);
   }
+
   100% {
     transform: translateX(500%) scaleX(0.1);
   }

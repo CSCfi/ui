@@ -13,11 +13,10 @@ c-login-card {
 
 .c-login-card {
   border-radius: 6px;
-  box-shadow: rgb(0 0 0 / 15%) 0px 10px 20px, rgb(0 0 0 / 20%) 0px 5px 5px;
+  box-shadow: rgb(0 0 0 / 15%) 0 10px 20px, rgb(0 0 0 / 20%) 0 5px 5px;
   display: flex;
   position: relative;
   width: 100%;
-
 
   &__image {
     background-size: cover;

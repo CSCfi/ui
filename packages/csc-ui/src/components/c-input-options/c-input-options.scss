@@ -1,0 +1,79 @@
+:host {
+  /**
+   * @prop --c-item-options-background-color-hover: Menu item hover background color
+   * @prop --c-item-options-text-color: Menu item text color
+   * @prop --c-item-options-text-color-active: Active menu item text color
+   */
+  --c-item-options-background-color-hover: var(--c-primary-200);
+  --c-item-options-text-color: var(--c-text-body);
+  --c-item-options-text-color-active: var(--c-primary-600);
+
+  --c-menu-item-font-size: 14px;
+  --c-menu-item-height: 42px;
+
+  display: block;
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+
+  .c-input-options-overlay {
+    position: fixed;
+    inset: 0;
+  }
+
+  .c-input-options-overlay__content {
+    position: absolute;
+  }
+
+  ul {
+    margin: 0;
+    padding: 0;
+    background-color: var(--c-white);
+    list-style: none;
+    box-shadow: 2px 4px 10px #00000029;
+    width: 100%;
+    overflow-y: scroll;
+    pointer-events: auto;
+    border-radius: 4px;
+    visibility: hidden;
+
+    &.active {
+      visibility: visible;
+      animation: 0.2s 1 fadeIn cubic-bezier(0.25, 0.8, 0.5, 1);
+    }
+  }
+
+  li {
+    align-items: center;
+    background: var(--c-white);
+    column-gap: 12px;
+    cursor: pointer;
+    display: flex;
+    flex-wrap: nowrap;
+    font-size: var(--c-menu-item-font-size);
+    min-height: var(--c-menu-item-height);
+    padding-left: 10px;
+    padding-right: 10px;
+    outline: none;
+    white-space: nowrap;
+    pointer-events: auto;
+
+    &:not(.disabled):hover,
+    &.active {
+      background: var(--c-item-options-background-color-hover);
+      color: var(--c-item-options-text-color-active);
+    }
+  }
+
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(-8px);
+    }
+
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+}

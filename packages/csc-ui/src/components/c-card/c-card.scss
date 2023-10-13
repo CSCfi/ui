@@ -8,11 +8,11 @@
 
   display: block;
   border-radius: 6px;
-  box-shadow: rgb(0 0 0 / 15%) 0px 10px 20px, rgb(0 0 0 / 20%) 0px 5px 5px;
+  box-shadow: rgba(0, 0, 0, 0.15) 0 10px 20px, rgba(0, 0, 0, 0.2) 0 5px 5px;
   padding-block: var(--c-card-gap);
   position: relative;
   background-color: var(--c-card-background-color);
-  
+
   article {
     display: flex;
     flex-direction: column;

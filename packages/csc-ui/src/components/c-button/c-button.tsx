@@ -99,11 +99,6 @@ export class CButton {
   @Prop() href: string;
 
   /**
-   * Path for the svg icon
-   */
-  @Prop() path: string = null;
-
-  /**
    * Hyperlink target
    */
   @Prop() target = '_blank';
@@ -263,7 +258,7 @@ export class CButton {
               {this.loading && (
                 <div class="c-button__loader">
                   <c-spinner
-                    color="var(--c-button-loader-color)"
+                    color="var(--_c-button-loader-color)"
                     size={spinnerSizes[this.size]}
                   />
                 </div>

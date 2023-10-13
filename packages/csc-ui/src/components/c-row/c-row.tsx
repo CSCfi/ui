@@ -1,4 +1,4 @@
-import { Component, h, Prop } from '@stencil/core';
+import { Component, h, Host, Prop } from '@stencil/core';
 
 /**
  * Generic flex row component
@@ -46,9 +46,9 @@ export class CRow {
     };
 
     return (
-      <div class={classes} style={{ '--c-row-gap': `${this.gap}px` }}>
+      <Host class={classes} style={{ '--c-row-gap': `${this.gap}px` }}>
         <slot></slot>
-      </div>
+      </Host>
     );
   }
 }

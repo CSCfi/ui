@@ -13,8 +13,7 @@
   box-sizing: border-box;
 }
 
-:root,
-:host {
+:root {
   --c-accent-100: #e5f9f7ff;
   --c-accent-200: #ccf4f0ff;
   --c-accent-300: #99e9e0ff;
@@ -116,3 +115,13 @@
   --c-text-body: var(--c-primary-900);
   --c-text-system: var(--c-tertiary-600);
 }
+
+/* c-list {
+  --c-list-item-text-color: var();
+  --c-list-item-text-color-active: var(--c-secondary-600);
+  --c-list-item-background-color-active: rgba(var(--c-secondary-rgb), 0.1);
+  --c-list-item-background-color-hover: rgba(var(--c-secondary-rgb), 0.2);
+
+  --c-checkbox-color: var(--c-secondary-600);
+  --c-checkbox-background-color-hover: rgba(var(--c-secondary-rgb), 0.1);
+} */

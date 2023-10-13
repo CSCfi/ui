@@ -1,5 +1,8 @@
 :host {
-  --c-icon-color: currentColor;
+  /**
+   * @prop --c-icon-color: Color of the icon
+   */
+  --c-icon-color: var(--c-icon-default-color, currentcolor);
 
   display: inline-flex;
   align-items: center;

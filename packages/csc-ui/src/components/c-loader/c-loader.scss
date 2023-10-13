@@ -4,6 +4,14 @@
    */
   --c-loader-color: var(--c-primary-600);
 
+  --c-rotation-animation-speed: 2s;
+  --c-rotation-animation-easing: linear;
+  --c-stroke-animation-speed: 1.5s;
+  --c-stroke-animation-easing: ease-in-out;
+  --c-stroke-width: 4px;
+  --c-stroke-start-dasharray: 1, 200;
+  --c-stroke-end-dasharray: 89, 200;
+
   width: 100%;
   position: absolute;
   top: 0;
@@ -14,7 +22,6 @@
   background: rgba(255, 255, 255, 0.8);
   border-radius: inherit;
   visibility: hidden;
-
   opacity: 0;
   transition: opacity 0.3s ease-in-out, transform 0.3s ease-in-out;
 }
@@ -26,16 +33,6 @@
   .c-loader {
     transform: scale(1);
   }
-}
-
-:host {
-  --rotation-animation-speed: 2s;
-  --rotation-animation-easing: linear;
-  --stroke-animation-speed: 1.5s;
-  --stroke-animation-easing: ease-in-out;
-  --stroke-width: 4px;
-  --stroke-start-dasharray: 1, 200;
-  --stroke-end-dasharray: 89, 200;
 }
 
 .c-loader {
@@ -55,7 +52,7 @@
     text-align: center;
     font-weight: 500;
     display: block;
-    max-height: 0px;
+    max-height: 0;
     overflow: hidden;
     animation-duration: 4s;
     animation-direction: forwards;
@@ -73,23 +70,26 @@
 
 @keyframes animate-stroke {
   0% {
-    stroke-dasharray: var(--stroke-start-dasharray);
+    stroke-dasharray: var(--c-stroke-start-dasharray);
     stroke-dashoffset: 0;
   }
+
   50% {
-    stroke-dasharray: var(--stroke-end-dasharray);
+    stroke-dasharray: var(--c-stroke-end-dasharray);
     stroke-dashoffset: -35;
   }
+
   100% {
-    stroke-dasharray: var(--stroke-end-dasharray);
+    stroke-dasharray: var(--c-stroke-end-dasharray);
     stroke-dashoffset: -124;
   }
 }
 
 @keyframes fadein {
   0% {
-    max-height: 0px;
+    max-height: 0;
   }
+
   100% {
     max-height: 300px;
   }

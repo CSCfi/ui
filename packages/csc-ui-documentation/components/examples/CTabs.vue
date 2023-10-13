@@ -16,6 +16,9 @@
         </c-tab-item>
         <c-tab-item value="tab3">
           This is the content for the third tab
+          <c-button @click="dialogOpen = true"></c-button>
+
+          <dialog :open="dialogOpen">Jag är en paahtolaipä</dialog>
         </c-tab-item>
       </c-tab-items>
     </c-tabs>
@@ -72,6 +75,9 @@ const tab2 = ref<Tab>('tab2');
 // @example-start|noAnimation
 const tab3 = ref<Tab>('tab1');
 // @example-end
+
+// dialog test
+const dialogOpen = ref(false);
 </script>
 
 <style lang="scss"></style>

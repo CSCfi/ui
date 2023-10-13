@@ -1,4 +1,5 @@
-:host, :root {
+:host,
+:root {
   /**
    * @prop --c-menu-items-background-color-hover: Menu item hover background color
    * @prop --c-menu-items-text-color: Menu item text color
@@ -11,11 +12,7 @@
   position: absolute;
   border-radius: inherit;
   display: flex;
-  left: 0;
   pointer-events: none;
-  top: 0;
-  bottom: 0;
-  right: 0;
   inset: inherit;
 }
 
@@ -84,6 +81,7 @@ li {
     opacity: 0;
     transform: translateY(-8px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);

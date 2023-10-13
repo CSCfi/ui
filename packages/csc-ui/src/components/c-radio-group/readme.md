@@ -7,20 +7,20 @@
 
 ## Properties
 
-| Property      | Attribute      | Description                                                  | Type                                  | Default            |
-| ------------- | -------------- | ------------------------------------------------------------ | ------------------------------------- | ------------------ |
-| `color`       | `color`        | Color of the radio group                                     | `string`                              | `''`               |
-| `disabled`    | `disabled`     | Disable the radio group                                      | `boolean`                             | `false`            |
-| `hideDetails` | `hide-details` | Hide the hint and error messages                             | `boolean`                             | `false`            |
-| `hint`        | `hint`         | Hint text for the input                                      | `string`                              | `''`               |
-| `inline`      | `inline`       | Display radio buttons inline                                 | `boolean`                             | `false`            |
-| `items`       | --             | Radio group items                                            | `CRadioGroupItem[]`                   | `[]`               |
-| `label`       | `label`        | Label of the radio group                                     | `string`                              | `undefined`        |
-| `required`    | `required`     | Set as required                                              | `boolean`                             | `false`            |
-| `returnValue` | `return-value` | Return only the item value rather than the whole item object | `boolean`                             | `undefined`        |
-| `valid`       | `valid`        | Set the validity of the input                                | `boolean`                             | `true`             |
-| `validation`  | `validation`   | Custom validation message                                    | `string`                              | `'Required field'` |
-| `value`       | `value`        | Value of the radio group                                     | `CRadioGroupItem \| number \| string` | `undefined`        |
+| Property      | Attribute      | Description                                                  | Type                                                              | Default            |
+| ------------- | -------------- | ------------------------------------------------------------ | ----------------------------------------------------------------- | ------------------ |
+| `color`       | `color`        | Color of the radio group                                     | `string`                                                          | `''`               |
+| `disabled`    | `disabled`     | Disable the radio group                                      | `boolean`                                                         | `false`            |
+| `hideDetails` | `hide-details` | Hide the hint and error messages                             | `boolean`                                                         | `false`            |
+| `hint`        | `hint`         | Hint text for the input                                      | `string`                                                          | `''`               |
+| `inline`      | `inline`       | Display radio buttons inline                                 | `boolean`                                                         | `false`            |
+| `items`       | --             | Radio group items                                            | `CRadioGroupItem[]`                                               | `[]`               |
+| `label`       | `label`        | Label of the radio group                                     | `string`                                                          | `undefined`        |
+| `required`    | `required`     | Set as required                                              | `boolean`                                                         | `false`            |
+| `returnValue` | `return-value` | Return only the item value rather than the whole item object | `boolean`                                                         | `undefined`        |
+| `valid`       | `valid`        | Set the validity of the input                                | `boolean`                                                         | `true`             |
+| `validation`  | `validation`   | Custom validation message                                    | `string`                                                          | `'Required field'` |
+| `value`       | `value`        | Value of the radio group                                     | `number \| string \| { label: string; value: string \| number; }` | `undefined`        |
 
 
 ## Events
@@ -35,6 +35,16 @@
 | Slot             | Description                |
 | ---------------- | -------------------------- |
 | `"Default slot"` | Default slot for the label |
+
+
+## CSS Custom Properties
+
+| Name                                     | Description                         |
+| ---------------------------------------- | ----------------------------------- |
+| `--c-radio-group-active-color`           | Active radio button color           |
+| `--c-radio-group-background-color-hover` | Radio button hover background color |
+| `--c-radio-group-color`                  | Radio button color                  |
+| `--c-radio-group-disabled-color`         | Disabled radio button color         |
 
 
 ## Dependencies

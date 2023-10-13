@@ -114,7 +114,7 @@
     transition: box-shadow 0.15s ease-in-out;
 
     &::after {
-      content: '';
+      content: "";
       position: absolute;
       transform: scale(0);
       transition: transform 0.15s ease-in-out;
@@ -135,7 +135,7 @@
       #{$this} {
         &__message {
           opacity: 1;
-          transform: translateY(0px);
+          transform: translateY(0);
         }
       }
     }

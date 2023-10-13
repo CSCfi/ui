@@ -1,0 +1,101 @@
+{
+  "ignoreFiles": [
+    "dist/**/*.*",
+    "src/styles/**/*.scss",
+    "src/styles/**/*.css"
+  ],
+  "overrides": [
+    {
+      "customSyntax": "postcss-scss",
+      "extends": [
+        "stylelint-config-standard-scss"
+      ],
+      "files": [
+        "src/components/**/*.scss"
+      ],
+      "rules": {
+        "alpha-value-notation": "number",
+        "at-rule-empty-line-before": [
+          "always",
+          {
+            "ignore": [
+              "after-comment"
+            ],
+            "ignoreAtRules": [
+              "import",
+              "first-nested"
+            ]
+          }
+        ],
+        "at-rule-name-case": "lower",
+        "block-closing-brace-empty-line-before": "never",
+        "block-closing-brace-newline-before": "always",
+        "block-no-empty": true,
+        "block-opening-brace-space-before": "always",
+        "color-function-notation": "legacy",
+        "color-hex-case": "lower",
+        "color-hex-length": "long",
+        "color-no-invalid-hex": true,
+        "comment-empty-line-before": [
+          "always",
+          {
+            "except": [
+              "first-nested"
+            ]
+          }
+        ],
+        "comment-whitespace-inside": "always",
+        "custom-property-pattern": "c-.+",
+        "declaration-block-no-duplicate-properties": true,
+        "declaration-block-semicolon-newline-after": "always",
+        "declaration-block-single-line-max-declarations": 1,
+        "declaration-block-trailing-semicolon": "always",
+        "declaration-colon-space-after": "always-single-line",
+        "declaration-colon-space-before": "never",
+        "declaration-empty-line-before": [
+          "always",
+          {
+            "except": [
+              "first-nested",
+              "after-declaration"
+            ]
+          }
+        ],
+        "function-comma-space-after": "always-single-line",
+        "function-comma-space-before": "never",
+        "indentation": 2,
+        "length-zero-no-unit": true,
+        "max-empty-lines": 1,
+        "no-descending-specificity": null,
+        "no-duplicate-selectors": true,
+        "no-invalid-position-at-import-rule": null,
+        "number-no-trailing-zeros": true,
+        "rule-empty-line-before": [
+          "always",
+          {
+            "except": [
+              "first-nested"
+            ],
+            "ignore": [
+              "after-comment"
+            ]
+          }
+        ],
+        "selector-attribute-quotes": "always",
+        "selector-class-pattern": null,
+        "selector-list-comma-newline-after": "always",
+        "shorthand-property-no-redundant-values": true,
+        "string-quotes": "double",
+        "value-keyword-case": [
+          "lower",
+          {
+            "camelCaseSvgKeywords": true
+          }
+        ],
+        "value-list-comma-space-after": "always-single-line",
+        "value-no-vendor-prefix": true
+      }
+    }
+  ],
+  "rules": {}
+}

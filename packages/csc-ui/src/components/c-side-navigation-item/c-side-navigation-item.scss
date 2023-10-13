@@ -86,16 +86,14 @@
   }
 
   &__slot {
+    align-items: center;
+    display: flex;
+    gap: 8px;
+    line-height: normal;
     max-width: 100%;
     overflow: hidden;
-
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    white-space: nowrap;
-    overflow: hidden;
     text-overflow: ellipsis;
-    line-height: normal;
+    white-space: nowrap;
   }
 }
 
@@ -145,7 +143,7 @@
   align-items: center;
 }
 
-:host([slot='subnavitem']) {
+:host([slot="subnavitem"]) {
   --c-side-navigation-item-text-color: var(--c-primary-600);
   --c-side-navigation-item-background-color: var(--c-white);
   --c-side-navigation-item-background-color-hover: var(--c-primary-100);

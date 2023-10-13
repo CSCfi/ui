@@ -8,6 +8,7 @@ import {
   EventEmitter,
   State,
   Watch,
+  Element,
 } from '@stencil/core';
 import { mdiCloseCircle } from '@mdi/js';
 
@@ -21,6 +22,8 @@ import { mdiCloseCircle } from '@mdi/js';
   shadow: true,
 })
 export class CCheckbox {
+  @Element() el: HTMLCCheckboxElement;
+
   /**
    * Disable the checkbox
    */
@@ -179,6 +182,8 @@ export class CCheckbox {
       'c-checkbox__label--indeterminate': this.indeterminate,
     };
 
+    const slotHasContent = !!this.el.childNodes.length;
+
     return (
       <Host>
         <div class={wrapperClasses}>
@@ -213,10 +218,12 @@ export class CCheckbox {
               <c-ripple ref={(el) => (this._rippleElement = el)}></c-ripple>
             </div>
 
-            <div class="c-checkbox__label-content">
-              {!!this.label ? this.label : <slot></slot>}
-              {this.required && <span class="required">&nbsp;*</span>}
-            </div>
+            {(!!this.label || slotHasContent) && (
+              <div class="c-checkbox__label-content">
+                {!!this.label ? this.label : <slot></slot>}
+                {this.required && <span class="required">&nbsp;*</span>}
+              </div>
+            )}
           </label>
         </div>
 

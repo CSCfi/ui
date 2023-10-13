@@ -32,9 +32,9 @@ export class CSpinner {
     };
 
     const style = {
-      '--size': `${this.size}px`,
-      '--width': `${this.width}px`,
-      '--color': this.color,
+      '--c-size': `${this.size}px`,
+      '--c-width': `${this.width}px`,
+      '--c-color': this.color,
     };
 
     return (

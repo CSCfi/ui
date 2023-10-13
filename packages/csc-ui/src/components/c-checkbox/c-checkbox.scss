@@ -5,12 +5,11 @@
    * @prop --c-checkbox-background-color-hover: Checkbox hover background color
    * @prop --c-checkbox-disabled-color: Disabled checkbox color
    */
-  --c-checkbox-color: var(--c-primary-600);
-  --c-checkbox-color-active: var(--c-checkbox-color);
-  --c-checkbox-background-color-hover: rgba(var(--c-primary-rgb), 0.1);
-  --c-checkbox-disabled-color: var(--c-tertiary-500);
-
-  --c-checkbox-error-color: var(--c-error-600);
+  --_c-checkbox-color: var(--c-checkbox-color, var(--c-primary-600));
+  --_c-checkbox-color-active: var(--c-checkbox-color-active, var(--_c-checkbox-color));
+  --_c-checkbox-background-color-hover: var(--c-checkbox-background-color-hover, rgba(var(--c-primary-rgb), 0.1));
+  --_c-checkbox-disabled-color: var(--c-checkbox-disabled-color, var(--c-tertiary-500));
+  --_c-checkbox-error-color: var(--c-error-600);
 }
 
 .c-checkbox {
@@ -27,7 +26,7 @@
       #{$this} {
         &__message {
           opacity: 1;
-          transform: translateY(0px);
+          transform: translateY(0);
         }
       }
     }
@@ -44,7 +43,7 @@
     }
 
     &--error {
-      color: var(--c-checkbox-error-color);
+      color: var(--_c-checkbox-error-color);
     }
 
     span {
@@ -75,11 +74,11 @@
   }
 
   &--disabled {
-    --c-checkbox-color: var(--c-checkbox-disabled-color);
-    --c-error-600: var(--c-checkbox-color);
-    --c-checkbox-color-active: var(--c-checkbox-disabled-color);
+    --_c-checkbox-color: var(--_c-checkbox-disabled-color);
+    --c-error-600: var(--_c-checkbox-color);
+    --_c-checkbox-color-active: var(--_c-checkbox-disabled-color);
 
-    color: var(--c-checkbox-color);
+    color: var(--_c-checkbox-color);
     opacity: 0.75;
 
     .c-checkbox__label {
@@ -88,10 +87,10 @@
   }
 
   &--error {
-    --c-checkbox-color: var(--c-error-600);
-    --c-checkbox-color-active: var(--c-checkbox-error-color);
+    --_c-checkbox-color: var(--c-error-600);
+    --_c-checkbox-color-active: var(--_c-checkbox-error-color);
 
-    color: var(--c-checkbox-error-color);
+    color: var(--_c-checkbox-error-color);
   }
 
   input:focus {
@@ -99,7 +98,7 @@
   }
 
   input:focus + .c-checkbox__label .ripple {
-    outline: 2px var(--c-checkbox-color-active) solid;
+    outline: 2px var(--_c-checkbox-color-active) solid;
   }
 
   @supports selector(:focus-visible) {
@@ -109,12 +108,12 @@
   }
 
   input:focus-visible + .c-checkbox__label .ripple {
-    outline: 2px var(--c-checkbox-color-active) solid;
+    outline: 2px var(--_c-checkbox-color-active) solid;
   }
 
   &:not(.c-checkbox--disabled) {
     .ripple:hover {
-      background-color: var(--c-checkbox-background-color-hover);
+      background-color: var(--_c-checkbox-background-color-hover);
     }
   }
 
@@ -131,13 +130,13 @@
 
 .c-checkbox input:checked + .c-checkbox__label {
   .ripple::before {
-    background: var(--c-checkbox-color-active);
-    border-color: var(--c-checkbox-color-active);
+    background: var(--_c-checkbox-color-active);
+    border-color: var(--_c-checkbox-color-active);
   }
 
   .path {
-    stroke: #fff;
-    fill: #fff;
+    stroke: #ffffff;
+    fill: #ffffff;
     stroke-dashoffset: 0;
     stroke-width: 13;
     stroke-linecap: round;
@@ -169,7 +168,7 @@
 
   .ripple {
     border-radius: 50%;
-    color: var(--c-checkbox-color-active);
+    color: var(--_c-checkbox-color-active);
     display: grid;
     height: 42px;
     min-width: 42px;
@@ -181,8 +180,8 @@
 
     &::before {
       border-radius: 2px;
-      border: 2px solid var(--c-checkbox-color);
-      content: '';
+      border: 2px solid var(--_c-checkbox-color);
+      content: "";
       display: inline-block;
       height: 18px;
       left: 12px;

@@ -42,17 +42,16 @@
   border-radius: 4px;
   color: var(--c-sub-navigation-item-text-color);
   cursor: pointer;
-  display: block;
   display: flex;
   font-weight: 400;
   line-height: 46px;
   margin: 0 8px;
+  max-width: calc(320px - 24px - 16px);
   overflow: hidden;
   padding-left: 34px;
   position: relative;
   transition: background-color 0.2s ease-in;
   user-select: none;
-  max-width: calc(320px - 24px - 16px);
 }
 
 .c-sub-navigation-item__wrapper {
@@ -69,7 +68,7 @@
 
 .c-sub-navigation-item__content::before {
   background-color: var(--c-sub-navigation-item-active-text-color);
-  content: '';
+  content: "";
   height: 100%;
   left: 0;
   position: absolute;

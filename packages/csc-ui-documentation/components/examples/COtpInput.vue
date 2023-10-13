@@ -44,6 +44,7 @@ import { ref } from 'vue';
 import { CToastType } from '@cscfi/csc-ui';
 
 const toasts = ref<HTMLCToastsElement | null>(null);
+
 const otp1 = ref('');
 
 const onComplete = (event: CustomEvent) => {

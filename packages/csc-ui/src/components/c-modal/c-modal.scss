@@ -1,44 +1,44 @@
 dialog {
-  margin: auto;
-  padding: 0;
-  inset: 0;
-  border: none;
-  width: var(--c-modal-width, 600px);
-  max-width: calc(100% - 32px);
   background-color: transparent;
+  border: none;
+  inset: 0;
+  margin: auto;
+  max-width: calc(100% - 32px);
   overflow: visible;
-  
+  padding: 0;
+  width: var(--c-modal-width, 600px);
+
   &:not([open]) {
     pointer-events: none;
     opacity: 0;
   }
-  
+
   &::backdrop {
     backdrop-filter: blur(4px);
     background-color: rgba(0, 0, 0, 0.5);
-  } 
+  }
 }
 
-@media (prefers-reduced-motion: no-preference) {  
+@media (prefers-reduced-motion: no-preference) {
   dialog {
     &.nudging {
-      animation: dialog-nudge 0.15s cubic-bezier(0.25, 0.8, 0.25, 1) !important;    
-    }  
+      animation: dialog-nudge 0.15s cubic-bezier(0.25, 0.8, 0.25, 1) !important;
+    }
 
     &.opening {
       animation: dialog-open 0.3s cubic-bezier(0.25, 0.8, 0.5, 1) forwards;
 
-      &::backdrop { 
-        animation: backdrop-fadein 0.3s forwards;       
-      } 
+      &::backdrop {
+        animation: backdrop-fadein 0.3s forwards;
+      }
     }
 
     &.closing {
       animation: dialog-close 0.3s cubic-bezier(0.25, 0.8, 0.5, 1) forwards;
 
-      &::backdrop { 
-        animation: backdrop-fadeout 0.3s forwards; 
-      } 
+      &::backdrop {
+        animation: backdrop-fadeout 0.3s forwards;
+      }
     }
   }
 }
@@ -54,7 +54,7 @@ dialog {
 
   100% {
     transform: scale(1);
-  } 
+  }
 }
 
 @keyframes dialog-open {

@@ -217,10 +217,6 @@
           "description": "Outlined button style"
         },
         {
-          "name": "path",
-          "description": "Path for the svg icon"
-        },
-        {
           "name": "size",
           "description": "Size of the button",
           "values": [
@@ -483,6 +479,39 @@
       ]
     },
     {
+      "name": "c-dropdown",
+      "description": {
+        "kind": "markdown",
+        "value": ""
+      },
+      "attributes": [
+        {
+          "name": "index",
+          "description": "Initial value index"
+        },
+        {
+          "name": "input-id",
+          "description": "Id of the input element"
+        },
+        {
+          "name": "is-open",
+          "description": "Dropdown open state"
+        },
+        {
+          "name": "items-per-page",
+          "description": "Items per page before adding scroll"
+        }
+      ]
+    },
+    {
+      "name": "c-dropdowns",
+      "description": {
+        "kind": "markdown",
+        "value": ""
+      },
+      "attributes": []
+    },
+    {
       "name": "c-flex",
       "description": {
         "kind": "markdown",
@@ -607,6 +636,10 @@
           "description": "Id of the input element"
         },
         {
+          "name": "items-per-page",
+          "description": "Items per page before adding scroll"
+        },
+        {
           "name": "label",
           "description": "Label of the input"
         },
@@ -621,10 +654,6 @@
         {
           "name": "name",
           "description": "Name of the input"
-        },
-        {
-          "name": "number",
-          "description": "Numeric input"
         },
         {
           "name": "placeholder",
@@ -689,6 +718,19 @@
       ]
     },
     {
+      "name": "c-input-options",
+      "description": {
+        "kind": "markdown",
+        "value": ""
+      },
+      "attributes": [
+        {
+          "name": "items-per-page",
+          "description": "Items per page before adding scroll"
+        }
+      ]
+    },
+    {
       "name": "c-link",
       "description": {
         "kind": "markdown",
@@ -710,6 +752,69 @@
         {
           "name": "weight",
           "description": "Customisable font weight"
+        }
+      ]
+    },
+    {
+      "name": "c-list",
+      "description": {
+        "kind": "markdown",
+        "value": ""
+      },
+      "attributes": [
+        {
+          "name": "disabled",
+          "description": "Disable the list"
+        }
+      ]
+    },
+    {
+      "name": "c-list-item",
+      "description": {
+        "kind": "markdown",
+        "value": ""
+      },
+      "attributes": [
+        {
+          "name": "active",
+          "description": "Set the item active"
+        },
+        {
+          "name": "disabled",
+          "description": "Disable the item"
+        },
+        {
+          "name": "disabled-by-parent",
+          "description": "Disabled by the parent list"
+        },
+        {
+          "name": "hoverable",
+          "description": "Display background color on hover"
+        },
+        {
+          "name": "href",
+          "description": "Hyperlink url"
+        },
+        {
+          "name": "ripple",
+          "description": "Add ripple effect to the item"
+        },
+        {
+          "name": "target",
+          "description": "Hyperlink target"
+        }
+      ]
+    },
+    {
+      "name": "c-list-item-title",
+      "description": {
+        "kind": "markdown",
+        "value": ""
+      },
+      "attributes": [
+        {
+          "name": "active",
+          "description": "Set the title active"
         }
       ]
     },

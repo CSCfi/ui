@@ -1,18 +1,18 @@
 :host {
   --c-tab-items-height: auto;
-  --c-tab-items-position-left: 0px;
+  --c-tab-items-position-left: 0;
   --c-tab-items-animation-duration: 0.001ms;
 
   display: block;
-  width: 100%;
-  transition: height var(--c-tab-items-animation-duration) cubic-bezier(0.075, 0.82, 0.165, 1);
   height: var(--c-tab-items-height);
   overflow: hidden;
+  transition: height var(--c-tab-items-animation-duration) cubic-bezier(0.075, 0.82, 0.165, 1);
+  width: 100%;
 
   > div {
-    display: flex;
     align-items: flex-start;
-    transition: transform var(--c-tab-items-animation-duration) cubic-bezier(0.075, 0.82, 0.165, 1);
-    transform: translateX(var(--c-tab-items-position-left));
+    display: flex;
+    transition: translate var(--c-tab-items-animation-duration) cubic-bezier(0.075, 0.82, 0.165, 1);
+    translate: var(--c-tab-items-position-left);
   }
 }
