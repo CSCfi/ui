@@ -31,6 +31,23 @@
 | `"Default slot"` | Default slot |
 
 
+## CSS Custom Properties
+
+| Name                                    | Description                             |
+| --------------------------------------- | --------------------------------------- |
+| `--c-tag-background-color`              | Tag background color                    |
+| `--c-tag-background-color-active`       | Tag background color if active          |
+| `--c-tag-background-color-hover`        | Tag background color on hover           |
+| `--c-tag-background-color-hover-active` | Tag background color on hover if active |
+| `--c-tag-badge-background-color`        | Tag badge background color              |
+| `--c-tag-badge-background-color-active` | Tag badge background color if active    |
+| `--c-tag-badge-text-color`              | Tag badge text color                    |
+| `--c-tag-badge-text-color-active`       | Tag badge text color if active          |
+| `--c-tag-border-color`                  | Tag border color                        |
+| `--c-tag-text-color`                    | Tag text color                          |
+| `--c-tag-text-color-active`             | Tag text color if active                |
+
+
 ## Dependencies
 
 ### Depends on

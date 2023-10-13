@@ -13,8 +13,9 @@
     </c-toolbar>
 
     <div class="flex h-[calc(100vh-60px)]">
-      <c-side-navigation :mobile="isMobile">
+      <c-side-navigation :mobile="isMobile" class="autoheight">
         <c-side-navigation-item
+          :active="route?.name === 'index'"
           @keyup.enter="navigateTo('/')"
           @click="navigateTo('/')"
         >
@@ -56,17 +57,36 @@
             {{ item.name }}
           </c-sub-navigation-item>
         </c-side-navigation-item>
+
+        <c-side-navigation-title>Miscellaneous</c-side-navigation-title>
+
+        <c-side-navigation-item
+          :active="route?.name === 'types'"
+          @keyup.enter="navigateTo('/types')"
+          @click="navigateTo('/types')"
+        >
+          <c-icon :path="mdiLanguageTypescript" size="16"></c-icon>
+          Types
+        </c-side-navigation-item>
       </c-side-navigation>
 
-      <div class="flex-1 h-full p-2 sm:p-3 md:p-4 lg:p-6 overflow-y-auto">
-        <slot />
+      <div
+        class="flex-1 h-full p-2 sm:p-3 md:p-4 lg:p-6 overflow-y-auto scroll-smooth"
+      >
+        <div class="max-w-7xl">
+          <slot />
+        </div>
       </div>
     </div>
   </c-main>
 </template>
 
 <script lang="ts" setup>
-import { mdiInformationOutline, mdiMagnify } from '@mdi/js';
+import {
+  mdiInformationOutline,
+  mdiLanguageTypescript,
+  mdiMagnify,
+} from '@mdi/js';
 import { storeToRefs } from 'pinia';
 import { ComponentData } from '../types/docs';
 import packageJson from '../package.json';

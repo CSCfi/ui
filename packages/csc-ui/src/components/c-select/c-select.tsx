@@ -9,9 +9,9 @@ import {
   Event,
   EventEmitter,
   Watch,
+  Method,
 } from '@stencil/core';
 import { mdiChevronDown } from '@mdi/js';
-import { registerClickOutside } from 'stencil-click-outside';
 import { CSelectItem } from '../../types';
 
 /**
@@ -144,11 +144,13 @@ export class CSelect {
 
   private _id: string;
 
-  private _inputElement: HTMLInputElement;
+  // private _inputElement: HTMLInputElement;
 
   private _cOptionElements: Map<string, HTMLCOptionElement> = new Map();
 
   private _selectionElement: HTMLDivElement;
+
+  private _cInput: HTMLCInputElement;
 
   private _outerWrapperClasses = ['outer-wrapper'];
 
@@ -175,6 +177,17 @@ export class CSelect {
     { threshold: 1 },
   );
 
+  @Watch('value')
+  onValueChange() {
+    if (!this.value) return;
+
+    const realValue = !(this.value as CSelectItem)?.value
+      ? this._items.find((item) => item.value === this.value)
+      : this.value;
+
+    this._valueChangedHandler(realValue as CSelectItem);
+  }
+
   @Watch('validate')
   validateChange(newValue: boolean) {
     if (newValue) {
@@ -191,13 +204,13 @@ export class CSelect {
     this._updateStatusText();
   }
 
-  private get _firstSelectableIndex() {
-    return this._items.findIndex((item) => !item.disabled);
-  }
+  // private get _firstSelectableIndex() {
+  //   return this._items.findIndex((item) => !item.disabled);
+  // }
 
-  private get _lastSelectableIndex() {
-    return [...this._items].reverse().findIndex((item) => !item.disabled);
-  }
+  // private get _lastSelectableIndex() {
+  //   return [...this._items].reverse().findIndex((item) => !item.disabled);
+  // }
 
   private get _items() {
     return this.hasOptionItems ? this._optionItems : this.items;
@@ -224,15 +237,13 @@ export class CSelect {
       this._selectionElement.replaceChildren(clone);
     }
 
-    function isItem(element) {
-      return element.value === item?.value;
-    }
-
-    this.currentIndex = this._items.findIndex(isItem);
+    this.currentIndex = this._items.findIndex(
+      (element) => element.value === item?.value,
+    );
 
     const value = this._setValue(item);
 
-    if (this.previousValue.value === item?.value) return;
+    if (this.previousValue && this.previousValue?.value === item?.value) return;
 
     this.previousValue = item;
 
@@ -293,83 +304,94 @@ export class CSelect {
       }
 
       if (selectedItem) {
+        // this._inputOptions.selectItem(this.currentIndex);
+
         if (this.menuVisible) {
           this.currentIndex = this._items.findIndex(isItem);
           this._scrollToElement();
         } else {
           this.value = selectedItem;
-          this._valueChangedHandler(selectedItem);
+          // this._valueChangedHandler(selectedItem);
         }
       }
     }
 
-    if (ev.key === 'Home' && this.menuVisible) {
-      ev.preventDefault();
+    // if (ev.key === 'Home' && this.menuVisible) {
+    //   ev.preventDefault();
 
-      this.currentIndex = this._firstSelectableIndex;
-    }
+    //   this.currentIndex = this._firstSelectableIndex;
+    // }
 
-    if (ev.key === 'End' && this.menuVisible) {
-      ev.preventDefault();
+    // if (ev.key === 'End' && this.menuVisible) {
+    //   ev.preventDefault();
 
-      this.currentIndex = this._lastSelectableIndex;
-    }
+    //   this.currentIndex = this._lastSelectableIndex;
+    // }
 
     if (ev.key === 'Tab') {
-      this.menuVisible = false;
+      this._cInput.closeDropdown();
     }
 
     if (ev.key === 'ArrowDown') {
       ev.preventDefault();
 
-      this.menuVisible = true;
+      this._showMenu();
 
-      if (this.currentIndex === null) {
-        this.currentIndex = 0;
-      } else if (this.currentIndex + 1 < this._items.length) {
-        this.currentIndex += 1;
-      }
+      // if (this.currentIndex === null) {
+      //   this.currentIndex = 0;
+      // } else if (this.currentIndex + 1 < this._items.length) {
+      //   this.currentIndex += 1;
+      // }
     }
 
     if (ev.key === 'ArrowUp') {
       ev.preventDefault();
 
-      this.menuVisible = true;
+      this._showMenu();
 
-      if (this.currentIndex > 0) {
-        this.currentIndex -= 1;
-      } else if (this.currentIndex === null) {
-        this.currentIndex = this._items.length - 1;
-      }
+      // if (this.currentIndex > 0) {
+      //   this.currentIndex -= 1;
+      // } else if (this.currentIndex === null) {
+      //   this.currentIndex = this._items.length - 1;
+      // }
     }
 
     if (ev.key === ' ') {
       ev.preventDefault();
 
-      if (!this.menuVisible) {
-        this.menuVisible = true;
-      }
+      this._showMenu();
+      // if (!this.menuVisible) {
+      // }
     }
 
-    if (ev.key === 'Escape') {
-      if (this.menuVisible) {
-        this.menuVisible = false;
+    // if (ev.key === 'Escape') {
+    //   if (this.menuVisible) {
+    //     this.menuVisible = false;
 
-        this._inputElement.focus();
-      }
-    }
+    //     this._inputElement.focus();
+    //   }
+    // }
 
     if (ev.key === 'Enter') {
-      this.menuVisible = !this.menuVisible;
-
-      if (this.currentIndex !== null) {
-        this._selectItem();
-      }
-
-      if (!this.menuVisible) {
-        this._inputElement.focus();
-      }
+      // this.menuVisible = !this.menuVisible;
+      // if (this.currentIndex !== null) {
+      //   this._selectItem();
+      // }
+      // if (!this.menuVisible) {
+      //   this._inputElement.focus();
+      // }
     }
+  }
+
+  /**
+   * sika
+   * @param index Maukka
+   */
+  @Method()
+  async onItemSelection(index: number) {
+    this.currentIndex = index;
+
+    this._selectItem();
   }
 
   componentWillLoad() {
@@ -380,11 +402,10 @@ export class CSelect {
       CSelect._uniqueId.toString();
 
     this._inputId =
-      'input_' +
-      (this.hostId || this.label || this.placeholder).replace(
-        /[^a-zA-Z0-9-_]/g,
-        '',
-      );
+      'input-' +
+      (this.hostId || this.label || this.placeholder)
+        .replace(/[^a-zA-Z0-9-_]/g, '')
+        .toLowerCase();
   }
 
   componentDidLoad() {
@@ -399,6 +420,18 @@ export class CSelect {
         (item) => item.value === this.value,
       );
     }
+
+    requestAnimationFrame(() => {
+      this._cInput.createDropdown({
+        type: 'select',
+        items: this._items,
+        options: this._cOptionElements,
+        parent: this.host,
+        index: this.currentIndex || 0,
+        click: false,
+        id: this._inputId,
+      });
+    });
   }
 
   disconnectedCallback() {
@@ -417,26 +450,59 @@ export class CSelect {
 
   private _selectItem() {
     const selectedItem = this._items[this.currentIndex];
+
     this.value = selectedItem;
-    this._valueChangedHandler(selectedItem);
+
+    // this._valueChangedHandler(selectedItem);
     this._scrollToElement();
   }
+
+  // private _createCItemOptionsElement() {
+  //   const existingElement = document.querySelector('c-input-options');
+  //   const element =
+  //     existingElement || document.createElement('c-input-options');
+
+  //   this._inputOptions = element;
+  //   this._inputOptions.itemsPerPage = this.itemsPerPage;
+
+  //   if (existingElement) {
+  //     return existingElement;
+  //   }
+
+  //   document.body.appendChild(element);
+  // }
+
+  // private _getHostPosition() {
+  //   return this.host.shadowRoot
+  //     .querySelector('.c-input__slot')
+  //     .getBoundingClientRect();
+  // }
 
   private _showMenu() {
     if (this.disabled) return;
 
-    this._inputElement.focus();
+    this._cInput.openDropdown();
 
-    // Hack needed to open the menu within a Vue web component
-    setTimeout(() => {
-      this.menuVisible = true;
-    }, 0);
+    // this._cInput.createDropdown({
+    //   type: 'select',
+    //   items: this._items,
+    //   options: this._cOptionElements,
+    //   parent: this.host,
+    //   index: this.currentIndex || 0,
+    //   click,
+    //   id: this._inputId,
+    // });
+
+    // this._hasDropdown = true;
+
+    // this._inputOptions.positionMenu(this._getHostPosition());
   }
 
-  private _hideMenu() {
-    this.menuVisible = false;
-    this._blurred = true;
-  }
+  // private _hideMenu() {
+  //   this.menuVisible = false;
+  //   this._blurred = true;
+  //   this._cInput.closeDropdown();
+  // }
 
   private _select(event, item: CSelectItem) {
     if (!!item.disabled) return;
@@ -446,7 +512,7 @@ export class CSelect {
 
     this.value = this._setValue(item);
 
-    this._valueChangedHandler(item);
+    // this._valueChangedHandler(item);
 
     this.menuVisible = false;
   }
@@ -564,13 +630,13 @@ export class CSelect {
 
   private _renderInputElement() {
     return (
-      <div class="c-input-menu__input" onClick={() => this._showMenu()}>
+      <div class="c-input-menu__input">
         <input
-          aria-controls={'results_' + this._id}
+          aria-controls={this._inputId + '-items'}
           aria-readonly="true"
           aria-haspopup="listbox"
           id={this._inputId}
-          ref={(el) => (this._inputElement = el)}
+          // ref={(el) => (this._inputElement = el)}
           autocomplete="off"
           class="c-input__input"
           type="text"
@@ -662,9 +728,7 @@ export class CSelect {
     }
 
     return (
-      <Host
-        ref={(el) => registerClickOutside(this, el, () => this._hideMenu())}
-      >
+      <Host>
         <div
           id={'announce-' + this._id}
           class="visuallyhidden"
@@ -675,12 +739,14 @@ export class CSelect {
         </div>
 
         <c-input
+          ref={(el) => (this._cInput = el)}
           autofocus={this.autofocus}
           disabled={this.disabled}
           hide-details={this.hideDetails}
           hint={this.hint}
           id={this.hostId}
           input-id={this._inputId}
+          itemns-per-page={this.itemsPerPage}
           label={this.label}
           name={this.name}
           placeholder={this.placeholder}
@@ -692,6 +758,7 @@ export class CSelect {
           validation={this.validation}
           value={this.value}
           variant="select"
+          onItemClick={() => this._showMenu()}
         >
           <slot name="pre" slot="pre"></slot>
 

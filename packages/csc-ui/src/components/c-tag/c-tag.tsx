@@ -51,10 +51,12 @@ export class CTag {
   }
 
   render() {
+    const hasBadge = !!this.badge || this.badge === 0;
+
     const hostClasses = {
       'c-tag': true,
       'c-tag--closeable': this.closeable,
-      'c-tag--badge': !!this.badge || this.badge === 0,
+      'c-tag--badge': hasBadge,
       'c-tag--active': this.active,
       'c-tag--block': this.block,
       'c-tag--fit': this.fit,
@@ -66,17 +68,11 @@ export class CTag {
       ...(!this.flat && {
         role: 'button',
       }),
-    };
-
-    const badgeClasses = {
-      'c-tag__badge': true,
-      'c-tag__badge--active': this.active,
+      ...(hasBadge ? { 'data-badge': this.badge } : {}),
     };
 
     return (
       <Host tabindex="0" {...hostParams} class={hostClasses}>
-        {!!this.badge && <div class={badgeClasses}>{this.badge}</div>}
-
         <slot></slot>
 
         {this.closeable && (

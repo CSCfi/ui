@@ -1,4 +1,4 @@
-.c-row {
+:host(.c-row) {
   display: flex;
   flex: 1 1 auto;
   flex-wrap: wrap;
@@ -10,44 +10,40 @@
     width: 100%;
     gap: var(--c-row-gap);
   }
+}
 
-  &--nowrap slot {
-    flex-wrap: nowrap !important;
-  }
+:host(.c-row--nowrap) slot {
+  flex-wrap: nowrap !important;
+}
 
-  &--align-center slot {
-    align-items: center;
-  }
+:host(.c-row--align-center) slot {
+  align-items: center;
+}
 
-  &--align-start slot {
-    align-items: flex-start;
-  }
+:host(.c-row--align-start) slot {
+  align-items: flex-start;
+}
 
-  &--align-center slot {
-    align-items: center;
-  }
+:host(.c-row--align-end) slot {
+  align-items: flex-end;
+}
 
-  &--align-end slot {
-    align-items: flex-end;
-  }
+:host(.c-row--justify-start) slot {
+  justify-content: flex-start;
+}
 
-  &--justify-start slot {
-    justify-content: flex-start;
-  }
+:host(.c-row--justify-center) slot {
+  justify-content: center;
+}
 
-  &--justify-center slot {
-    justify-content: center;
-  }
+:host(.c-row--justify-end) slot {
+  justify-content: flex-end;
+}
 
-  &--justify-end slot {
-    justify-content: flex-end;
-  }
+:host(.c-row--justify-space-between) slot {
+  justify-content: space-between;
+}
 
-  &--justify-space-between slot {
-    justify-content: space-between;
-  }
-
-  &--justify-space-around slot {
-    justify-content: space-around;
-  }
+:host(.c-row--justify-space-around) slot {
+  justify-content: space-around;
 }

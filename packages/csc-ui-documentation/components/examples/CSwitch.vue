@@ -1,6 +1,7 @@
 <template>
   <component-example name="basic" rows>
     <template #title>Basic usage</template>
+
     <c-switch v-model="switch1" v-control>
       {{ switch1 ? 'Active' : 'Inactive' }}
     </c-switch>

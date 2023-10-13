@@ -479,6 +479,39 @@
       ]
     },
     {
+      "name": "c-dropdown",
+      "description": {
+        "kind": "markdown",
+        "value": ""
+      },
+      "attributes": [
+        {
+          "name": "index",
+          "description": "Initial value index"
+        },
+        {
+          "name": "input-id",
+          "description": "Id of the input element"
+        },
+        {
+          "name": "is-open",
+          "description": "Dropdown open state"
+        },
+        {
+          "name": "items-per-page",
+          "description": "Items per page before adding scroll"
+        }
+      ]
+    },
+    {
+      "name": "c-dropdowns",
+      "description": {
+        "kind": "markdown",
+        "value": ""
+      },
+      "attributes": []
+    },
+    {
       "name": "c-flex",
       "description": {
         "kind": "markdown",
@@ -603,6 +636,10 @@
           "description": "Id of the input element"
         },
         {
+          "name": "items-per-page",
+          "description": "Items per page before adding scroll"
+        },
+        {
           "name": "label",
           "description": "Label of the input"
         },
@@ -677,6 +714,19 @@
               "name": "text"
             }
           ]
+        }
+      ]
+    },
+    {
+      "name": "c-input-options",
+      "description": {
+        "kind": "markdown",
+        "value": ""
+      },
+      "attributes": [
+        {
+          "name": "items-per-page",
+          "description": "Items per page before adding scroll"
         }
       ]
     },

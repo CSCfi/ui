@@ -3,14 +3,14 @@
   gap: 12px;
   grid-template-columns: 1fr;
   left: 0;
+  max-width: 100%;
+  min-width: 30vw;
   padding: 12px;
   pointer-events: none;
   position: fixed;
   right: 0;
-  z-index: 10000;
-  max-width: 100%;
-  min-width: 30vw;
   width: 640px;
+  z-index: 10000;
 }
 
 :host(.absolute) {
@@ -26,15 +26,15 @@
 }
 
 :host(.right) {
-  right: 0;
-  left: auto;
   justify-content: end;
+  left: auto;
+  right: 0;
 }
 
 :host(.left) {
-  right: auto;
-  left: 0;
   justify-content: start;
+  left: 0;
+  right: auto;
 }
 
 :host(.center) {

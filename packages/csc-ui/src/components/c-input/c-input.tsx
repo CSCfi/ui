@@ -8,8 +8,10 @@ import {
   EventEmitter,
   Element,
   Watch,
+  Method,
 } from '@stencil/core';
 import { CAutocompleteItem, CSelectItem } from '../../types';
+import { _CDropdownParams } from '../c-dropdowns/c-dropdowns';
 
 /**
  * @parent None
@@ -54,6 +56,11 @@ export class CInput {
    * Id of the input element
    */
   @Prop() inputId: string;
+
+  /**
+   * Items per page before adding scroll
+   */
+  @Prop() itemsPerPage = 6;
 
   /**
    * Label of the input
@@ -145,6 +152,11 @@ export class CInput {
    */
   @Event({ bubbles: false }) changeValue: EventEmitter;
 
+  /**
+   * Emit click to the parent
+   */
+  @Event({ bubbles: false }) itemClick: EventEmitter;
+
   @State() isFocused = false;
 
   @State() labelWidth = 0;
@@ -152,6 +164,8 @@ export class CInput {
   @State() preSlotWidth = 0;
 
   @State() statusText = '';
+
+  @State() currentIndex: number = null;
 
   @Element() hiddenEl!: HTMLCInputElement;
 
@@ -169,7 +183,9 @@ export class CInput {
 
   @Watch('value')
   onValueChange(value) {
-    if (!value) this._onReset();
+    if (!value) {
+      this._onReset();
+    }
   }
 
   @Watch('placeholder')
@@ -182,6 +198,24 @@ export class CInput {
   private _labelRef: HTMLLabelElement;
 
   private _debounce = null;
+
+  private _dropdownsElement: HTMLCDropdownsElement;
+
+  private _dropdownElement: HTMLCDropdownElement;
+
+  private _outsideClickFn: () => void;
+
+  // private _parentTop = 0;
+
+  // private _listSize = 0;
+
+  // private _parent: HTMLCSelectElement | HTMLCAutocompleteElement;
+
+  componentWillLoad() {
+    if (this.variant === 'select') {
+      this._createDropdownWrapper();
+    }
+  }
 
   componentDidLoad() {
     if (this.autofocus) {
@@ -210,6 +244,16 @@ export class CInput {
         !!this.label || !this.placeholder ? '' : this.placeholder;
 
       this.inputField.title = this.label ?? this.placeholder;
+
+      requestAnimationFrame(() => {
+        const container = this.inputField.closest(
+          '.c-input-menu__input',
+        ) as HTMLDivElement;
+
+        if (!container) return;
+
+        container.dataset.placeholder = this.placeholder;
+      });
     }
   }
 
@@ -222,6 +266,8 @@ export class CInput {
     );
 
     this._observer.disconnect();
+
+    this._dropdownElement?.remove();
   }
 
   get isActive() {
@@ -266,6 +312,98 @@ export class CInput {
     this.preSlotWidth = this.inputField.offsetLeft;
   }
 
+  private _handleOutsideClick(event) {
+    if (!event.composedPath().includes(this._dropdownElement)) {
+      this.closeDropdown();
+    }
+  }
+
+  private async _getScrollParent(element): Promise<HTMLElement> {
+    return new Promise((resolve) => {
+      if (!element) {
+        resolve(undefined);
+      }
+
+      let parent = element.parentNode;
+
+      while (parent) {
+        if (parent.shadowRoot === undefined) {
+          parent = parent.host;
+        } else {
+          const { overflow, overflowX } = window.getComputedStyle(parent);
+
+          if (
+            overflowX !== 'scroll' &&
+            overflow.split(' ').every((o) => o === 'auto' || o === 'scroll')
+          ) {
+            resolve(parent);
+          }
+
+          parent = parent.parentNode;
+        }
+      }
+
+      resolve(document.documentElement);
+    });
+  }
+
+  /**
+   * Create a dropdown
+   */
+  @Method()
+  async createDropdown(params: _CDropdownParams) {
+    const wrapper = await this._getScrollParent(this.hiddenEl);
+
+    this._dropdownElement = await this._dropdownsElement.createDropdown({
+      ...params,
+      wrapper,
+    });
+  }
+
+  /**
+   * Opens the dropdown
+   */
+  @Method()
+  async openDropdown() {
+    this._dropdownElement.shadowRoot
+      .querySelector('ul')
+      .classList.add('active');
+
+    this._dropdownElement.isOpen = true;
+
+    this._outsideClickFn = this._handleOutsideClick.bind(this);
+
+    requestAnimationFrame(() => {
+      window.addEventListener('click', this._outsideClickFn);
+    });
+  }
+
+  /**
+   * Closes the dropdown
+   */
+  @Method()
+  async closeDropdown() {
+    this._dropdownElement.shadowRoot
+      .querySelector('ul')
+      .classList.remove('active');
+
+    this._dropdownElement.isOpen = false;
+
+    window.removeEventListener('click', this._outsideClickFn);
+  }
+
+  private _createDropdownWrapper() {
+    const existingElement = document.querySelector('c-dropdowns');
+    const element = existingElement || document.createElement('c-dropdowns');
+
+    this._dropdownsElement = element;
+    // this._dropdownsElement.itemsPerPage = this.itemsPerPage;
+
+    if (existingElement) return;
+
+    document.body.appendChild(element);
+  }
+
   private _onBlur = () => {
     // delay the blur event to prevent the label from 'flashing' on c-select selection
     setTimeout(() => {
@@ -284,7 +422,10 @@ export class CInput {
 
     this.inputField?.focus();
 
-    if (click) this.inputField?.click();
+    if (click) {
+      this.inputField?.click();
+      this.itemClick.emit();
+    }
 
     // show the label if there's no value
     if (this.inputField) {
@@ -377,6 +518,7 @@ export class CInput {
       'c-input--shadow': this.shadow,
       'c-input--textarea': this.rows > 1,
       'c-input--error': !this.valid,
+      filled: !!this.value,
       [`c-input--${this.variant}`]: true,
     };
 

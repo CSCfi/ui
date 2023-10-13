@@ -150,6 +150,15 @@ export class CAutocomplete {
     this._select(event, item);
   }
 
+  /**
+   * sika
+   * @param index Maukka
+   */
+  @Method()
+  async onItemSelection(index: number) {
+    this.currentIndex = index;
+  }
+
   private _valueChangedHandler(item: string | number | CAutocompleteItem) {
     function isItem(element) {
       return element === item;

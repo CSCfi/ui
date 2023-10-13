@@ -50,6 +50,13 @@ export default async (component, filename) => {
         hasInfo = true;
       }
 
+      if (
+        line.replace(/^\s+/g, '').startsWith('<!-- @example-skip-line') ||
+        line.replace(/^\s+/g, '').endsWith('@example-skip-line -->')
+      ) {
+        return;
+      }
+
       if (isInStartTag && line.endsWith('>')) {
         isInStartTag = false;
         return;

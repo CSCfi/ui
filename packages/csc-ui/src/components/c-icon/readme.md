@@ -14,6 +14,13 @@
 | `size`   | `size`    | Icon size in pixels        | `number` | `24`             |
 
 
+## CSS Custom Properties
+
+| Name             | Description       |
+| ---------------- | ----------------- |
+| `--c-icon-color` | Color of the icon |
+
+
 ## Dependencies
 
 ### Used by

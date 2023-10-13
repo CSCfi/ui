@@ -6,8 +6,14 @@
  */
 import { HTMLStencilElement, JSXBase } from "@stencil/core/internal";
 import { CAlertType, CAutocompleteItem, CDataTableData, CDataTableFooterOptions, CDataTableHeader, CMenuCustomTrigger, CMenuOption, CPaginationOptions, CRadioGroupItem, CSelectItem, CToastMessage } from "./types";
+import { _CDropdownParams } from "./components/c-dropdowns/c-dropdowns";
+import { _CDropdownParams as _CDropdownParams1 } from "./components/c-dropdowns/c-dropdowns";
+import { CInputOptionsParams, Position } from "./components/c-input-options/c-input-options";
 import { CLoginCardBlendMode } from "./components/c-login-card/c-login-card";
 export { CAlertType, CAutocompleteItem, CDataTableData, CDataTableFooterOptions, CDataTableHeader, CMenuCustomTrigger, CMenuOption, CPaginationOptions, CRadioGroupItem, CSelectItem, CToastMessage } from "./types";
+export { _CDropdownParams } from "./components/c-dropdowns/c-dropdowns";
+export { _CDropdownParams as _CDropdownParams1 } from "./components/c-dropdowns/c-dropdowns";
+export { CInputOptionsParams, Position } from "./components/c-input-options/c-input-options";
 export { CLoginCardBlendMode } from "./components/c-login-card/c-login-card";
 export namespace Components {
     /**
@@ -116,6 +122,11 @@ export namespace Components {
          */
         "name": string;
         /**
+          * sika
+          * @param index Maukka
+         */
+        "onItemSelection": (index: number) => Promise<void>;
+        /**
           * Placeholder text
          */
         "placeholder": string;
@@ -214,10 +225,6 @@ export namespace Components {
           * Outlined button style
          */
         "outlined": boolean;
-        /**
-          * Path for the svg icon
-         */
-        "path": string;
         /**
           * Size of the button
          */
@@ -430,6 +437,46 @@ export namespace Components {
          */
         "stickyHeader": boolean;
     }
+    interface CDropdown {
+        /**
+          * Initial value index
+         */
+        "index": number;
+        /**
+          * Id of the input element
+         */
+        "inputId": string;
+        /**
+          * Dropdown open state
+         */
+        "isOpen": boolean;
+        /**
+          * Dropdown items
+         */
+        "items": CSelectItem[];
+        /**
+          * Items per page before adding scroll
+         */
+        "itemsPerPage": number;
+        /**
+          * Dropdown options
+         */
+        "options": Map<string, HTMLCOptionElement>;
+        /**
+          * Dropdown parent
+         */
+        "parent": HTMLCSelectElement | HTMLCAutocompleteElement;
+        /**
+          * Dropdown scrolling parent
+         */
+        "wrapper": HTMLElement;
+    }
+    interface CDropdowns {
+        /**
+          * Creates a dropdown
+         */
+        "createDropdown": (params: _CDropdownParams) => Promise<HTMLCDropdownElement>;
+    }
     /**
      * Component which fills the remaining space within a flex container
      * @group Layout
@@ -507,6 +554,14 @@ export namespace Components {
          */
         "autofocus": boolean;
         /**
+          * Closes the dropdown
+         */
+        "closeDropdown": () => Promise<void>;
+        /**
+          * Create a dropdown
+         */
+        "createDropdown": (params: _CDropdownParams1) => Promise<void>;
+        /**
           * Disable the input
          */
         "disabled": boolean;
@@ -531,6 +586,10 @@ export namespace Components {
          */
         "inputId": string;
         /**
+          * Items per page before adding scroll
+         */
+        "itemsPerPage": number;
+        /**
           * Label of the input
          */
         "label": string;
@@ -547,10 +606,9 @@ export namespace Components {
          */
         "name": string;
         /**
-          * Numeric input
-          * @deprecated Use type="number" instead
+          * Opens the dropdown
          */
-        "number": boolean;
+        "openDropdown": () => Promise<void>;
         /**
           * Placeholder of the input
          */
@@ -605,6 +663,35 @@ export namespace Components {
         "variant": 'text' | 'select';
     }
     /**
+     * @group Form
+     */
+    interface CInputOptions {
+        /**
+          * juu
+          * @param params jees
+         */
+        "createMenuItems": (params: CInputOptionsParams) => Promise<void>;
+        /**
+          * Items per page before adding scroll
+         */
+        "itemsPerPage": number;
+        /**
+          * juu
+          * @param params jees
+         */
+        "open": () => Promise<void>;
+        /**
+          * kusi
+          * @param options kakka
+         */
+        "positionMenu": (options: Position) => Promise<void>;
+        /**
+          * juu
+          * @param params jees
+         */
+        "selectItem": (index: number) => Promise<void>;
+    }
+    /**
      * Basic hyperlink component
      * @group Buttons
      */
@@ -625,6 +712,49 @@ export namespace Components {
           * Customisable font weight
          */
         "weight": string;
+    }
+    interface CList {
+        /**
+          * Disable the list
+         */
+        "disabled": boolean;
+    }
+    interface CListItem {
+        /**
+          * Set the item active
+         */
+        "active": boolean;
+        /**
+          * Disable the item
+         */
+        "disabled": boolean;
+        /**
+          * Disabled by the parent list
+          * @private
+         */
+        "disabledByParent": boolean;
+        /**
+          * Display background color on hover
+         */
+        "hoverable": boolean;
+        /**
+          * Hyperlink url
+         */
+        "href"?: string;
+        /**
+          * Add ripple effect to the item
+         */
+        "ripple": boolean;
+        /**
+          * Hyperlink target
+         */
+        "target": string;
+    }
+    interface CListItemTitle {
+        /**
+          * Set the title active
+         */
+        "active": boolean;
     }
     /**
      * A loader component that fills the nearest containing element that has css-property position set to 'relative'
@@ -1091,6 +1221,11 @@ export namespace Components {
           * Input field name
          */
         "name": string;
+        /**
+          * sika
+          * @param index Maukka
+         */
+        "onItemSelection": (index: number) => Promise<void>;
         /**
           * display the option as selection (works only when c-option elements are used)
          */
@@ -1855,6 +1990,18 @@ declare global {
         prototype: HTMLCDataTableElement;
         new (): HTMLCDataTableElement;
     };
+    interface HTMLCDropdownElement extends Components.CDropdown, HTMLStencilElement {
+    }
+    var HTMLCDropdownElement: {
+        prototype: HTMLCDropdownElement;
+        new (): HTMLCDropdownElement;
+    };
+    interface HTMLCDropdownsElement extends Components.CDropdowns, HTMLStencilElement {
+    }
+    var HTMLCDropdownsElement: {
+        prototype: HTMLCDropdownsElement;
+        new (): HTMLCDropdownsElement;
+    };
     /**
      * Component which fills the remaining space within a flex container
      * @group Layout
@@ -1893,6 +2040,15 @@ declare global {
         new (): HTMLCInputElement;
     };
     /**
+     * @group Form
+     */
+    interface HTMLCInputOptionsElement extends Components.CInputOptions, HTMLStencilElement {
+    }
+    var HTMLCInputOptionsElement: {
+        prototype: HTMLCInputOptionsElement;
+        new (): HTMLCInputOptionsElement;
+    };
+    /**
      * Basic hyperlink component
      * @group Buttons
      */
@@ -1901,6 +2057,24 @@ declare global {
     var HTMLCLinkElement: {
         prototype: HTMLCLinkElement;
         new (): HTMLCLinkElement;
+    };
+    interface HTMLCListElement extends Components.CList, HTMLStencilElement {
+    }
+    var HTMLCListElement: {
+        prototype: HTMLCListElement;
+        new (): HTMLCListElement;
+    };
+    interface HTMLCListItemElement extends Components.CListItem, HTMLStencilElement {
+    }
+    var HTMLCListItemElement: {
+        prototype: HTMLCListItemElement;
+        new (): HTMLCListItemElement;
+    };
+    interface HTMLCListItemTitleElement extends Components.CListItemTitle, HTMLStencilElement {
+    }
+    var HTMLCListItemTitleElement: {
+        prototype: HTMLCListItemTitleElement;
+        new (): HTMLCListItemTitleElement;
     };
     /**
      * A loader component that fills the nearest containing element that has css-property position set to 'relative'
@@ -2328,11 +2502,17 @@ declare global {
         "c-container": HTMLCContainerElement;
         "c-csc-logo": HTMLCCscLogoElement;
         "c-data-table": HTMLCDataTableElement;
+        "c-dropdown": HTMLCDropdownElement;
+        "c-dropdowns": HTMLCDropdownsElement;
         "c-flex": HTMLCFlexElement;
         "c-icon": HTMLCIconElement;
         "c-icon-button": HTMLCIconButtonElement;
         "c-input": HTMLCInputElement;
+        "c-input-options": HTMLCInputOptionsElement;
         "c-link": HTMLCLinkElement;
+        "c-list": HTMLCListElement;
+        "c-list-item": HTMLCListItemElement;
+        "c-list-item-title": HTMLCListItemTitleElement;
         "c-loader": HTMLCLoaderElement;
         "c-login-button": HTMLCLoginButtonElement;
         "c-login-buttons": HTMLCLoginButtonsElement;
@@ -2609,10 +2789,6 @@ declare namespace LocalJSX {
          */
         "outlined"?: boolean;
         /**
-          * Path for the svg icon
-         */
-        "path"?: string;
-        /**
           * Size of the button
          */
         "size"?: 'default' | 'small' | 'large';
@@ -2828,6 +3004,42 @@ declare namespace LocalJSX {
          */
         "stickyHeader"?: boolean;
     }
+    interface CDropdown {
+        /**
+          * Initial value index
+         */
+        "index"?: number;
+        /**
+          * Id of the input element
+         */
+        "inputId"?: string;
+        /**
+          * Dropdown open state
+         */
+        "isOpen"?: boolean;
+        /**
+          * Dropdown items
+         */
+        "items"?: CSelectItem[];
+        /**
+          * Items per page before adding scroll
+         */
+        "itemsPerPage"?: number;
+        /**
+          * Dropdown options
+         */
+        "options"?: Map<string, HTMLCOptionElement>;
+        /**
+          * Dropdown parent
+         */
+        "parent"?: HTMLCSelectElement | HTMLCAutocompleteElement;
+        /**
+          * Dropdown scrolling parent
+         */
+        "wrapper"?: HTMLElement;
+    }
+    interface CDropdowns {
+    }
     /**
      * Component which fills the remaining space within a flex container
      * @group Layout
@@ -2929,6 +3141,10 @@ declare namespace LocalJSX {
          */
         "inputId"?: string;
         /**
+          * Items per page before adding scroll
+         */
+        "itemsPerPage"?: number;
+        /**
           * Label of the input
          */
         "label"?: string;
@@ -2945,14 +3161,13 @@ declare namespace LocalJSX {
          */
         "name"?: string;
         /**
-          * Numeric input
-          * @deprecated Use type="number" instead
-         */
-        "number"?: boolean;
-        /**
           * Emit changes to the parent
          */
         "onChangeValue"?: (event: CInputCustomEvent<any>) => void;
+        /**
+          * Emit click to the parent
+         */
+        "onItemClick"?: (event: CInputCustomEvent<any>) => void;
         /**
           * Placeholder of the input
          */
@@ -3007,6 +3222,15 @@ declare namespace LocalJSX {
         "variant"?: 'text' | 'select';
     }
     /**
+     * @group Form
+     */
+    interface CInputOptions {
+        /**
+          * Items per page before adding scroll
+         */
+        "itemsPerPage"?: number;
+    }
+    /**
      * Basic hyperlink component
      * @group Buttons
      */
@@ -3027,6 +3251,49 @@ declare namespace LocalJSX {
           * Customisable font weight
          */
         "weight"?: string;
+    }
+    interface CList {
+        /**
+          * Disable the list
+         */
+        "disabled"?: boolean;
+    }
+    interface CListItem {
+        /**
+          * Set the item active
+         */
+        "active"?: boolean;
+        /**
+          * Disable the item
+         */
+        "disabled"?: boolean;
+        /**
+          * Disabled by the parent list
+          * @private
+         */
+        "disabledByParent"?: boolean;
+        /**
+          * Display background color on hover
+         */
+        "hoverable"?: boolean;
+        /**
+          * Hyperlink url
+         */
+        "href"?: string;
+        /**
+          * Add ripple effect to the item
+         */
+        "ripple"?: boolean;
+        /**
+          * Hyperlink target
+         */
+        "target"?: string;
+    }
+    interface CListItemTitle {
+        /**
+          * Set the title active
+         */
+        "active"?: boolean;
     }
     /**
      * A loader component that fills the nearest containing element that has css-property position set to 'relative'
@@ -4123,11 +4390,17 @@ declare namespace LocalJSX {
         "c-container": CContainer;
         "c-csc-logo": CCscLogo;
         "c-data-table": CDataTable;
+        "c-dropdown": CDropdown;
+        "c-dropdowns": CDropdowns;
         "c-flex": CFlex;
         "c-icon": CIcon;
         "c-icon-button": CIconButton;
         "c-input": CInput;
+        "c-input-options": CInputOptions;
         "c-link": CLink;
+        "c-list": CList;
+        "c-list-item": CListItem;
+        "c-list-item-title": CListItemTitle;
         "c-loader": CLoader;
         "c-login-button": CLoginButton;
         "c-login-buttons": CLoginButtons;
@@ -4236,6 +4509,8 @@ declare module "@stencil/core" {
              * @group Tables
              */
             "c-data-table": LocalJSX.CDataTable & JSXBase.HTMLAttributes<HTMLCDataTableElement>;
+            "c-dropdown": LocalJSX.CDropdown & JSXBase.HTMLAttributes<HTMLCDropdownElement>;
+            "c-dropdowns": LocalJSX.CDropdowns & JSXBase.HTMLAttributes<HTMLCDropdownsElement>;
             /**
              * Component which fills the remaining space within a flex container
              * @group Layout
@@ -4254,10 +4529,17 @@ declare module "@stencil/core" {
              */
             "c-input": LocalJSX.CInput & JSXBase.HTMLAttributes<HTMLCInputElement>;
             /**
+             * @group Form
+             */
+            "c-input-options": LocalJSX.CInputOptions & JSXBase.HTMLAttributes<HTMLCInputOptionsElement>;
+            /**
              * Basic hyperlink component
              * @group Buttons
              */
             "c-link": LocalJSX.CLink & JSXBase.HTMLAttributes<HTMLCLinkElement>;
+            "c-list": LocalJSX.CList & JSXBase.HTMLAttributes<HTMLCListElement>;
+            "c-list-item": LocalJSX.CListItem & JSXBase.HTMLAttributes<HTMLCListItemElement>;
+            "c-list-item-title": LocalJSX.CListItemTitle & JSXBase.HTMLAttributes<HTMLCListItemTitleElement>;
             /**
              * A loader component that fills the nearest containing element that has css-property position set to 'relative'
              * @group Indicators

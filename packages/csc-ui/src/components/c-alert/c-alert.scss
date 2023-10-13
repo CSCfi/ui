@@ -46,7 +46,7 @@ svg {
   fill: currentColor;
 }
 
-::slotted(*[slot='title']) {
+::slotted(*[slot="title"]) {
   margin: 0 !important;
   font-size: 18px;
   font-weight: 600;

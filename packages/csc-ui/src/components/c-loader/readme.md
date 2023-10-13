@@ -17,6 +17,13 @@ A loader component that fills the nearest containing element that has css-proper
 | `width`        | `width`        | Width of the loader                                                | `number`  | `4`     |
 
 
+## CSS Custom Properties
+
+| Name               | Description  |
+| ------------------ | ------------ |
+| `--c-loader-color` | Loader color |
+
+
 ## Dependencies
 
 ### Used by

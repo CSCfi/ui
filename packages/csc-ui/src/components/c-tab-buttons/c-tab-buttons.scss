@@ -22,7 +22,7 @@
   /**
    * @prop --c-tab-buttons-background-color: Disabled tab buttons border color
    */
-   --c-tab-buttons-disabled-border: var(--c-tertiary-400);
+  --c-tab-buttons-disabled-border: var(--c-tertiary-400);
 
   /**
    * @prop --c-tab-buttons-border-radius: Tab buttons border radius
@@ -52,9 +52,9 @@
 
     &::before,
     &::after {
-      background-color: #fff;
+      background-color: #ffffff;
       border-radius: inherit;
-      content: '';
+      content: "";
       height: 100%;
       left: 0;
       position: absolute;

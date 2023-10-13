@@ -8,7 +8,7 @@
           {{ componentData?.name }}
         </h1>
 
-        <h2 class="text-2xl text-tertiary-500">{{ component }}</h2>
+        <h2 class="text-xl text-tertiary-500">{{ component }}</h2>
       </div>
 
       <p v-if="!!componentData?.docs">{{ componentData.docs }}</p>
@@ -55,7 +55,7 @@ const props = defineProps<{
 
 const route = useRoute();
 
-const { componentData } = storeToRefs(useExampleStore());
+const { componentData, types } = storeToRefs(useExampleStore());
 
 const onTabClick = async (tab: any) => {
   await navigateTo({ ...route, query: tab.query });
@@ -138,6 +138,15 @@ const tabs = computed(() => {
         !!componentData.value?.children?.some((child) => child.styles?.length),
       query: {
         tab: 'styles',
+      },
+      component: DocumentationTable,
+    },
+    {
+      label: 'Types',
+      value: 'types',
+      enabled: !!types.value.get(route.params.slug[0]),
+      query: {
+        tab: 'types',
       },
       component: DocumentationTable,
     },

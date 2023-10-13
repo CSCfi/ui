@@ -9,29 +9,30 @@
    * @prop --c-autocomplete-option-text-color: Autocomplete option text color
    * @prop --c-autocomplete-placeholder-color: Autocomplete placeholder color
    */
-  --c-autocomplete-option-background-color: var(--c-white);
-  --c-autocomplete-option-background-hover-color: var(--c-primary-100);
-  --c-autocomplete-active-color: var(--c-primary-600);
-  --c-autocomplete-inactive-color: var(--c-tertiary-600);
-  --c-autocomplete-background-color: var(--c-transparent);
-  --c-autocomplete-text-color: var(--c-text-body);
-  --c-autocomplete-option-text-color: var(--c-text-body);
-  --c-autocomplete-placeholder-color: var(--c-tertiary-500);
+  --_c-autocomplete-option-background-color: var(--c-autocomplete-option-background-color, var(--c-white));
+  --_c-autocomplete-option-background-hover-color: var(--c-autocomplete-option-background-hover-color, var(--c-primary-100));
+  --_c-autocomplete-active-color: var(--c-autocomplete-active-color, var(--c-primary-600));
+  --_c-autocomplete-inactive-color: var(--c-autocomplete-inactive-color, var(--c-tertiary-600));
+  --_c-autocomplete-background-color: var(--c-autocomplete-background-color, var(--c-transparent));
+  --_c-autocomplete-text-color: var(--c-autocomplete-text-color, var(--c-text-body));
+  --_c-autocomplete-option-text-color: var(--c-autocomplete-option-text-color, var(--c-text-body));
+  --_c-autocomplete-placeholder-color: var(--c-autocomplete-placeholder-color, var(--c-tertiary-500));
 
+  // c-select options
   --c-select-option-background-color: var(
-    --c-autocomplete-option-background-color
+    --_c-autocomplete-option-background-color
   );
   --c-select-option-background-color-hover: var(
-    --c-autocomplete-option-background-hover-color
+    --_c-autocomplete-option-background-hover-color
   );
+  --c-select-option-text-color: var(--_c-autocomplete-option-text-color);
 
-  --c-select-option-text-color: var(--c-autocomplete-option-text-color);
-
-  --c-input-active-color: var(--c-autocomplete-active-color);
-  --c-input-inactive-color: var(--c-autocomplete-inactive-color);
-  --c-input-background-color: var(--c-autocomplete-background-color);
-  --c-input-text-color: var(--c-autocomplete-text-color);
-  --c-input-placeholder-color: var(--c-autocomplete-placeholder-color);
+  // c-input
+  --c-input-active-color: var(--_c-autocomplete-active-color);
+  --c-input-inactive-color: var(--_c-autocomplete-inactive-color);
+  --c-input-background-color: var(--_c-autocomplete-background-color);
+  --c-input-text-color: var(--_c-autocomplete-text-color);
+  --c-input-placeholder-color: var(--_c-autocomplete-placeholder-color);
 }
 
-@import '../c-input/c-input-menu.scss';
+@import "../c-input/c-input-menu";

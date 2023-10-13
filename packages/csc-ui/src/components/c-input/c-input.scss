@@ -58,42 +58,6 @@
   input,
   textarea {
     box-sizing: content-box;
-  }
-
-  input[type='checkbox'],
-  input[type='radio'],
-  select {
-    box-sizing: border-box;
-  }
-
-  input[type='search'] {
-    appearance: textfield;
-    box-sizing: content-box;
-  }
-
-  ::-webkit-search-decoration {
-    display: none;
-  }
-
-  textarea {
-    vertical-align: top;
-    overflow: auto;
-  }
-
-  input {
-    max-height: 32px;
-    padding: 8px 0 8px;
-  }
-
-  textarea {
-    margin-top: 4px;
-    min-height: 44px;
-    padding: 8px 12px 8px 0;
-    resize: vertical;
-  }
-
-  input,
-  textarea {
     background-color: transparent;
     border: none;
     color: var(--c-input-text-color);
@@ -104,6 +68,35 @@
     max-width: 100%;
     min-width: 0;
     width: 100%;
+  }
+
+  input[type="checkbox"],
+  input[type="radio"],
+  select {
+    box-sizing: border-box;
+  }
+
+  input[type="search"] {
+    appearance: textfield;
+    box-sizing: content-box;
+  }
+
+  ::-webkit-search-decoration {
+    display: none;
+  }
+
+  textarea {
+    margin-top: 4px;
+    min-height: 44px;
+    overflow: auto;
+    padding: 8px 12px 8px 0;
+    resize: vertical;
+    vertical-align: top;
+  }
+
+  input {
+    max-height: 32px;
+    padding: 8px 0;
   }
 
   input:focus,
@@ -162,7 +155,7 @@
     label {
       font-size: 16px;
       height: 20px;
-      left: 0px;
+      left: 0;
       letter-spacing: normal;
       line-height: 20px;
       max-width: 90%;
@@ -232,7 +225,7 @@
     #{$this} {
       &__slot {
         background-color: var(--c-input-shadow-background-color);
-        box-shadow: rgba(0, 0, 0, 0.15) 0px 5px 15px 0px;
+        box-shadow: rgba(0, 0, 0, 0.15) 0 5px 15px 0;
 
         input,
         textarea {
@@ -281,6 +274,7 @@
   }
 
   &:focus-within,
+  &.active,
   &:not(.c-input--disabled):active {
     --c-input-border-width: 2px;
 
@@ -292,11 +286,27 @@
 
     label {
       color: var(--c-input-active-color);
-      transform: translateX(0px) translateY(-18px) scale(0.75);
+      transform: translateX(0) translateY(-18px) scale(0.75);
     }
 
     legend {
       width: var(--c-input-legend-width);
+    }
+  }
+
+  &.active:not(.filled) {
+    .c-input-menu__input {
+      position: relative;
+
+      &::after {
+        display: flex;
+        align-items: center;
+        position: absolute;
+        inset: 0;
+        content: attr(data-placeholder);
+        pointer-events: none;
+        color: var(--c-input-placeholder-color);
+      }
     }
   }
 

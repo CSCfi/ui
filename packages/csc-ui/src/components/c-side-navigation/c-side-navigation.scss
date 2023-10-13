@@ -29,7 +29,7 @@
   flex: 1;
   gap: 4px;
   min-height: fit-content;
-  padding: 24px 0px 24px 24px;
+  padding: 24px 0 24px 24px;
   position: relative;
   transition: transform 0.3s ease;
   width: 100%;
@@ -112,6 +112,7 @@
   0% {
     opacity: 0;
   }
+
   100% {
     opacity: 1;
   }
