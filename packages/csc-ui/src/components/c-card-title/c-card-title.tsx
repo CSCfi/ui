@@ -11,10 +11,10 @@ import { Component, h } from '@stencil/core';
 export class CCardTitle {
   render() {
     return (
-      <div class="c-card-title">
+      <header class="c-card-title">
         <slot></slot>
         <div class="c-card-title__underline"></div>
-      </div>
+      </header>
     );
   }
 }

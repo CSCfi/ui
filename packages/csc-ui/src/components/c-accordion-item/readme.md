@@ -30,15 +30,6 @@
 | `"Default slot"` | Default slot |
 
 
-## CSS Custom Properties
-
-| Name                                         | Description                            |
-| -------------------------------------------- | -------------------------------------- |
-| `--c-accordion-item-header-background-color` | Accordion item header background color |
-| `--c-accordion-item-outline-color`           | Accordion item outline color           |
-| `--c-accordion-item-text-color`              | Accordion item text color              |
-
-
 ## Dependencies
 
 ### Depends on
