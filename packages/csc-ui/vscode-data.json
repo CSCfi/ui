@@ -623,10 +623,6 @@
           "description": "Name of the input"
         },
         {
-          "name": "number",
-          "description": "Numeric input"
-        },
-        {
           "name": "placeholder",
           "description": "Placeholder of the input"
         },

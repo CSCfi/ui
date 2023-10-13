@@ -76,13 +76,6 @@ export class CInput {
   @Prop() name: string;
 
   /**
-   * Numeric input
-   *
-   * @deprecated Use type="number" instead
-   */
-  @Prop() number = false;
-
-  /**
    * Placeholder of the input
    */
   @Prop() placeholder: string;
