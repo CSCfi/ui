@@ -217,10 +217,6 @@
           "description": "Outlined button style"
         },
         {
-          "name": "path",
-          "description": "Path for the svg icon"
-        },
-        {
           "name": "size",
           "description": "Size of the button",
           "values": [

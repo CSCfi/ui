@@ -99,11 +99,6 @@ export class CButton {
   @Prop() href: string;
 
   /**
-   * Path for the svg icon
-   */
-  @Prop() path: string = null;
-
-  /**
    * Hyperlink target
    */
   @Prop() target = '_blank';
