@@ -89,7 +89,7 @@ export class CDropdown {
 
   @State() statusText = '';
 
-  private _isOpenedWithKeyboard = false;
+  // private _isOpenedWithKeyboard = false;
 
   private _id = '';
 
@@ -119,7 +119,7 @@ export class CDropdown {
   @Watch('isOpen')
   onOpenStateChange(open) {
     if (!this.wasClicked && ['select', 'autocomplete'].includes(this.type)) {
-      this._isOpenedWithKeyboard = open;
+      // this._isOpenedWithKeyboard = open;
     }
 
     if (open) {
@@ -129,6 +129,7 @@ export class CDropdown {
       requestAnimationFrame(() => {
         if (this.focusList) {
           this._listElement.focus();
+          this.currentIndex = 0;
           this._handleCurrentIndexChange();
         }
       });
@@ -168,7 +169,7 @@ export class CDropdown {
   }
 
   private get _lastSelectableIndex() {
-    return [...this.items].reverse().findIndex((item) => !item.disabled);
+    return this.items.findLastIndex((item) => !item.disabled);
   }
 
   private _observer = new IntersectionObserver(
@@ -243,7 +244,7 @@ export class CDropdown {
     this._itemRefs.push(listItem);
 
     if (this.options.size) {
-      listItem.appendChild(this.options.get(item.name));
+      listItem.appendChild(this.options.get(item.value as string));
 
       this._listElement.appendChild(listItem);
 
@@ -305,9 +306,10 @@ export class CDropdown {
     this.scrollingParent = this.wrapper;
 
     this._listElement.addEventListener(
-      'keyup',
+      'keydown',
       this._onKeyboardNavigation.bind(this),
     );
+    this._listElement.addEventListener('keyup', this._onKeyDown.bind(this));
   }
 
   private _onOpen() {
@@ -426,12 +428,17 @@ export class CDropdown {
     this.host.style.top = `${this.topPosition - differenceY}px`;
   }
 
-  private _onKeyboardNavigation(event: KeyboardEvent) {
-    if (this._isOpenedWithKeyboard) {
-      this._isOpenedWithKeyboard = false;
+  private _onKeyDown(event: KeyboardEvent) {
+    event.preventDefault();
+    event.stopPropagation();
+  }
 
-      return;
-    }
+  private _onKeyboardNavigation(event: KeyboardEvent) {
+    // if (this._isOpenedWithKeyboard && this.type === 'select') {
+    //   this._isOpenedWithKeyboard = false;
+
+    //   return;
+    // }
 
     this.wasClicked = false;
 
@@ -508,6 +515,9 @@ export class CDropdown {
 
     if (event.key === 'ArrowDown') {
       event.preventDefault();
+      event.stopPropagation();
+
+      console.log('❤️');
 
       if (this.currentIndex === null) {
         this.currentIndex = 0;
@@ -520,8 +530,14 @@ export class CDropdown {
 
     if (event.key === 'ArrowUp') {
       event.preventDefault();
+      event.stopPropagation();
 
-      if (this.isOpen && this.currentIndex > 0) {
+      if (this.isOpen && this.currentIndex === 0) {
+        this.currentIndex = null;
+        this._onClose(true);
+
+        return;
+      } else if (this.isOpen && this.currentIndex > 0) {
         this.currentIndex -= 1;
       } else if (this.currentIndex === null) {
         this.currentIndex = this._listSize - 1;
@@ -545,7 +561,7 @@ export class CDropdown {
 
   private _handleCurrentIndexChange() {
     if (this.currentIndex === null) {
-      this.parent.setActiveDescendant('');
+      this.parent?.setActiveDescendant('');
 
       return;
     }
@@ -555,9 +571,11 @@ export class CDropdown {
     requestAnimationFrame(() => {
       const item = this._itemRefs[this.currentIndex];
 
+      if (!item) return;
+
       item?.focus();
 
-      this.parent.setActiveDescendant(item.id ?? null);
+      this.parent?.setActiveDescendant(item.id ?? null);
     });
   }
 

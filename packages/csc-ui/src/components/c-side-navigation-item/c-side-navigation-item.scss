@@ -1,38 +1,40 @@
-:host {
+:host(c-side-navigation-item) {
   /**
+   * @prop --c-side-navigation-item-background-color-active: Active side navigation item background color
    * @prop --c-side-navigation-item-background-color-hover: Side navigation item hover background color
-   * @prop --c-side-navigation-item-active-background-color: Side navigation item active background color
-   * @prop --c-side-navigation-item-active-text-color: Side navigation item active text color
+   * @prop --c-side-navigation-item-background-color: Side navigation item background color
+   * @prop --c-side-navigation-item-outline-color: Side navigation item outline color
+   * @prop --c-side-navigation-item-text-color-active: Active side navigation item text color
+   * @prop --c-side-navigation-item-text-color: Side navigation item text color
    */
-  --c-side-navigation-item-background-color-hover: var(--c-primary-500);
-  --c-side-navigation-item-active-background-color: var(--c-primary-200);
-  --c-side-navigation-item-active-text-color: var(--c-primary-600);
+  --_c-side-navigation-item-background-color-active: var(--c-side-navigation-item-background-color-active, var(--c-primary-200));
+  --_c-side-navigation-item-background-color-hover: var(--c-side-navigation-item-background-color-hover, var(--c-primary-500));
+  --_c-side-navigation-item-background-color: var(--c-side-navigation-item-background-color, var(--c-transparent));
+  --_c-side-navigation-item-outline-color: var(--c-side-navigation-item-outline-color, var(--c-white));
+  --_c-side-navigation-item-text-color-active: var(--c-side-navigation-item-text-color-active, var(--c-primary-600));
+  --_c-side-navigation-item-text-color: var(--c-side-navigation-item-text-color, var(--c-white));
 
-  --c-side-navigation-item-background-color: var(--c-transparent);
-  --c-side-navigation-item-text-color: var(--c-white);
-  --c-side-navigation-item-outline-color: var(--c-white);
-
-  --c-sub-navigation-item-background-color-hover: var(--c-primary-100);
-  --c-sub-navigation-item-background-color: var(--c-transparent);
-  --c-sub-navigation-item-active-text-color: var(--c-primary-600);
-  --c-sub-navigation-item-active-background-color: var(--c-white);
-  --c-sub-navigation-item-text-color: var(--c-text-body);
-
-  --c-sub-navigation-item-sub-item-background-color-hover: var(--c-primary-100);
-  --c-sub-navigation-item-sub-item-background-color: var(--c-transparent);
-  --c-sub-navigation-item-sub-item-active-text-color: var(--c-primary-600);
-  --c-sub-navigation-item-sub-item-active-background-color: var(
-    --c-primary-100
-  );
-  --c-sub-navigation-item-sub-item-text-color: var(--c-text-body);
+  /**
+   * @prop --c-side-navigation-item-sub-item-background-color-active: Active 2nd level item background color
+   * @prop --c-side-navigation-item-sub-item-background-color-hover: 2nd level item hover background color
+   * @prop --c-side-navigation-item-sub-item-background-color: 2nd level item background color
+   * @prop --c-side-navigation-item-sub-item-text-color-active: Active 2nd level item text color
+   * @prop --c-side-navigation-item-sub-item-text-color: 2nd level item text color
+   */
+  --_c-side-navigation-item-sub-item-background-color-active: var(--c-side-navigation-item-sub-item-background-color-active, var(--c-white));
+  --_c-side-navigation-item-sub-item-background-color-hover: var(--c-side-navigation-item-sub-item-background-color-hover, var(--c-primary-100));
+  --_c-side-navigation-item-sub-item-background-color: var(--c-side-navigation-item-sub-item-background-color, var(--c-white));
+  --_c-side-navigation-item-sub-item-outline-color: var(--c-side-navigation-item-sub-item-outline-color, var(--c-primary-600));
+  --_c-side-navigation-item-sub-item-text-color-active: var(--c-side-navigation-item-sub-item-text-color-active, var(--c-primary-600));
+  --_c-side-navigation-item-sub-item-text-color: var(--c-side-navigation-item-sub-item-text-color, var(--c-primary-600));
 }
 
 :host(.c-side-navigation-item) {
   align-items: center;
   backface-visibility: hidden;
   border-radius: 4px 0 0 4px;
-  background-color: var(--c-side-navigation-item-background-color);
-  color: var(--c-side-navigation-item-text-color);
+  background-color: var(--_c-side-navigation-item-background-color);
+  color: var(--_c-side-navigation-item-text-color);
   cursor: pointer;
   display: grid;
   grid-template-columns: 1fr;
@@ -44,7 +46,7 @@
 }
 
 :host(.c-side-navigation-item:hover) {
-  background-color: var(--c-side-navigation-item-background-color-hover);
+  background-color: var(--_c-side-navigation-item-background-color-hover);
 }
 
 :host(.c-side-navigation-item:focus) {
@@ -52,28 +54,28 @@
 }
 
 :host(.c-side-navigation-item:focus-visible) {
-  outline: 2px var(--c-side-navigation-item-outline-color) solid;
+  outline: 2px var(--_c-side-navigation-item-outline-color) solid;
   outline-offset: 2px;
 }
 
 :host(.c-side-navigation-item.active) {
-  background-color: var(--c-side-navigation-item-active-background-color);
-  color: var(--c-side-navigation-item-active-text-color);
+  background-color: var(--_c-side-navigation-item-background-color-active);
+  color: var(--_c-side-navigation-item-text-color-active);
 
   .svg {
-    fill: var(--c-side-navigation-item-active-text-color);
+    fill: var(--_c-side-navigation-item-text-color-active);
     transform: rotate(90deg);
   }
 
   .c-side-navigation-item__header {
-    color: var(--c-side-navigation-item-active-text-color);
+    color: var(--_c-side-navigation-item-text-color-active);
   }
 }
 
 .c-side-navigation-item {
   &__header {
     align-items: center;
-    color: var(--c-side-navigation-item-text-color);
+    color: var(--_c-side-navigation-item-text-color);
     display: grid;
     gap: 8px;
     grid-template-columns: 1fr;
@@ -124,12 +126,12 @@
 
 .svg {
   align-self: center;
-  fill: var(--c-side-navigation-item-text-color);
+  fill: var(--_c-side-navigation-item-text-color);
   transition: transform 0.3s ease;
 }
 
 :host > div.active .svg {
-  fill: var(--c-side-navigation-item-active-text-color);
+  fill: var(--_c-side-navigation-item-text-color-active);
   transform: rotate(90deg);
 }
 
@@ -144,12 +146,12 @@
 }
 
 :host([slot="subnavitem"]) {
-  --c-side-navigation-item-text-color: var(--c-primary-600);
-  --c-side-navigation-item-background-color: var(--c-white);
-  --c-side-navigation-item-background-color-hover: var(--c-primary-100);
-  --c-side-navigation-item-active-text-color: var(--c-primary-600);
-  --c-side-navigation-item-active-background-color: var(--c-white);
-  --c-side-navigation-item-outline-color: var(--c-primary-600);
+  --_c-side-navigation-item-text-color: var(--c-side-navigation-item-text-color, var(--_c-side-navigation-item-sub-item-text-color));
+  --_c-side-navigation-item-background-color: var(--c-side-navigation-item-background-color, var(--_c-side-navigation-item-sub-item-background-color));
+  --_c-side-navigation-item-background-color-hover: var(--c-side-navigation-item-background-color-hover, var(--_c-side-navigation-item-sub-item-background-color-hover));
+  --_c-side-navigation-item-text-color-active: var(--c-side-navigation-item-text-color-active, var(--_c-side-navigation-item-sub-item-text-color-active));
+  --_c-side-navigation-item-background-color-active: var(--c-side-navigation-item-background-color-active, var(--_c-side-navigation-item-sub-item-background-color-active));
+  --_c-side-navigation-item-outline-color: var(--c-side-navigation-item-outline-color, var(--_c-side-navigation-item-sub-item-outline-color));
 
   border-radius: 4px;
   margin: 0 8px 4px;

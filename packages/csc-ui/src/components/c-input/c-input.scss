@@ -1,16 +1,17 @@
 :root,
 :host {
-  --c-input-inactive-color: var(--c-tertiary-600);
-  --c-input-active-color: var(--c-primary-600);
-  --c-input-background-color: var(--c-transparent);
-  --c-input-text-color: var(--c-text-body);
-  --c-input-placeholder-color: var(--c-tertiary-500);
-  --c-input-shadow-active-color: var(--c-input-active-color);
-  --c-input-shadow-background-color: var(--c-white);
-  --c-input-shadow-text-color: var(--c-input-text-color);
-  --c-input-shadow-placeholder-color: var(--c-input-placeholder-color);
+  --_c-input-inactive-color: var(--c-tertiary-600);
+  --_c-input-active-color: var(--c-primary-600);
+  --_c-input-background-color: var(--c-transparent);
+  --_c-input-text-color: var(--c-text-body);
+  --_c-input-placeholder-color: var(--c-tertiary-500);
+  --_c-input-shadow-active-color: var(--_c-input-active-color);
+  --_c-input-shadow-background-color: var(--c-white);
+  --_c-input-shadow-text-color: var(--_c-input-text-color);
+  --_c-input-shadow-placeholder-color: var(--_c-input-placeholder-color);
 
-  --c-input-error-color: var(--c-error-600);
+  // private
+  --_c-input-error-color: var(--c-error-600);
 }
 
 .visuallyhidden {
@@ -28,7 +29,7 @@
 .c-input {
   $this: &;
 
-  --c-input-border-width: 1px;
+  --_c-input-border-width: 1px;
 
   align-items: flex-start;
   border-radius: 4px;
@@ -60,7 +61,7 @@
     box-sizing: content-box;
     background-color: transparent;
     border: none;
-    color: var(--c-input-text-color);
+    color: var(--_c-input-text-color);
     flex: 1 1 auto;
     font-family: var(--c-font-family);
     font-size: 16px;
@@ -116,9 +117,8 @@
     border-radius: inherit;
     color: currentColor;
     display: flex;
-    flex-direction: column;
+    flex-flow: column wrap;
     flex-grow: 1;
-    flex-wrap: wrap;
     gap: 8px;
     height: auto;
     min-width: 0;
@@ -167,7 +167,7 @@
       text-overflow: ellipsis;
       top: 12px;
       transform-origin: top left;
-      transform: translateX(var(--c-input-label-position)) translateY(0)
+      transform: translateX(var(--_c-input-label-position)) translateY(0)
         scale(1);
       transition: 0.3s cubic-bezier(0.25, 0.8, 0.5, 1);
       white-space: nowrap;
@@ -177,7 +177,7 @@
       }
 
       span {
-        color: var(--c-input-error-color);
+        color: var(--_c-input-error-color);
       }
     }
   }
@@ -187,21 +187,17 @@
   }
 
   fieldset {
-    background-color: var(--c-input-background-color);
+    background-color: var(--_c-input-background-color);
     border-collapse: collapse;
-    border-color: var(--c-input-inactive-color);
+    border-color: var(--_c-input-inactive-color);
     border-radius: inherit;
     border-style: solid;
-    border-width: var(--c-input-border-width);
-    bottom: 0;
-    left: 0;
+    border-width: var(--_c-input-border-width);
+    inset: 0;
     margin: 0;
-    padding-left: 8px;
-    padding: 0;
+    padding: 0 0 0 8px;
     pointer-events: none;
     position: absolute;
-    right: 0;
-    top: 0;
     transition-duration: 0.15s;
     transition-property: color;
     transition-timing-function: cubic-bezier(0.25, 0.8, 0.25, 1);
@@ -209,14 +205,14 @@
     legend {
       float: none;
       line-height: 11px;
-      margin-left: 7px;
+      margin-left: -1px;
       padding: 0;
       text-align: left;
       transition: width 0.3s cubic-bezier(0.25, 0.8, 0.5, 1);
       width: 0;
 
       &.active {
-        width: var(--c-input-legend-width);
+        width: var(--_c-input-legend-width);
       }
     }
   }
@@ -224,19 +220,19 @@
   &--shadow {
     #{$this} {
       &__slot {
-        background-color: var(--c-input-shadow-background-color);
+        background-color: var(--_c-input-shadow-background-color);
         box-shadow: rgba(0, 0, 0, 0.15) 0 5px 15px 0;
 
         input,
         textarea {
-          color: var(--c-input-shadow-text-color);
+          color: var(--_c-input-shadow-text-color);
         }
 
         &:focus-within {
-          outline: 2px var(--c-input-active-color) solid;
+          outline: 2px var(--_c-input-active-color) solid;
 
           c-icon {
-            --c-icon-color: var(--c-input-shadow-active-color) !important;
+            --c-icon-color: var(--_c-input-shadow-active-color) !important;
           }
         }
       }
@@ -244,7 +240,7 @@
 
     input::placeholder,
     textarea::placeholder {
-      color: var(--c-input-shadow-placeholder-color);
+      color: var(--_c-input-shadow-placeholder-color);
       opacity: 1;
     }
   }
@@ -254,7 +250,7 @@
     textarea,
     fieldset,
     label {
-      --c-input-error-color: var(--c-tertiary-500);
+      --_c-input-error-color: var(--c-tertiary-500);
 
       color: var(--c-tertiary-500);
     }
@@ -269,28 +265,28 @@
   }
 
   ::placeholder {
-    color: var(--c-input-placeholder-color);
+    color: var(--_c-input-placeholder-color);
     opacity: 1;
   }
 
   &:focus-within,
   &.active,
   &:not(.c-input--disabled):active {
-    --c-input-border-width: 2px;
+    --_c-input-border-width: 2px;
 
-    color: var(--c-input-active-color);
+    color: var(--_c-input-active-color);
 
     fieldset {
-      border-color: var(--c-input-active-color);
+      border-color: var(--_c-input-active-color);
     }
 
     label {
-      color: var(--c-input-active-color);
+      color: var(--_c-input-active-color);
       transform: translateX(0) translateY(-18px) scale(0.75);
     }
 
     legend {
-      width: var(--c-input-legend-width);
+      width: var(--_c-input-legend-width);
     }
   }
 
@@ -305,24 +301,24 @@
         inset: 0;
         content: attr(data-placeholder);
         pointer-events: none;
-        color: var(--c-input-placeholder-color);
+        color: var(--_c-input-placeholder-color);
       }
     }
   }
 
   &--error {
-    color: var(--c-input-error-color);
+    color: var(--_c-input-error-color);
 
     fieldset {
-      border-color: var(--c-input-error-color) !important;
+      border-color: var(--_c-input-error-color) !important;
     }
 
     label {
-      color: var(--c-input-error-color) !important;
+      color: var(--_c-input-error-color) !important;
     }
 
     &:focus-within {
-      color: var(--c-input-error-color);
+      color: var(--_c-input-error-color);
     }
   }
 }

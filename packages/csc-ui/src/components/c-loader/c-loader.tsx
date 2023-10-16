@@ -53,17 +53,17 @@ export class CLoader {
       <Host>
         <div class="c-loader" style={styles}>
           <c-spinner
-            color="var(--c-loader-color)"
+            color="var(--_c-loader-color)"
             size={this.size}
             width={this.width}
-          ></c-spinner>
+          />
 
           {slotHasContent && (
             <div
               class="c-loader__slot"
               style={{ 'animation-delay': `${this.contentdelay}s` }}
             >
-              <slot></slot>
+              <slot />
             </div>
           )}
         </div>

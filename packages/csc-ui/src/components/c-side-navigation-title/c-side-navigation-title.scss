@@ -3,12 +3,12 @@
    * @prop --c-side-navigation-title-color: Title color
    * @prop --c-side-navigation-title-border-color: Title border color
    */
-  --c-side-navigation-title-color: var(--c-white);
-  --c-side-navigation-title-border-color: var(--c-white);
+  --_c-side-navigation-title-color: var(--c-side-navigation-title-color, var(--c-white));
+  --_c-side-navigation-title-border-color: var(--c-side-navigation-title-border-color, var(--c-white));
 
   align-items: center;
-  box-shadow: 0 1px 0 0 var(--c-side-navigation-title-border-color);
-  color: var(--c-side-navigation-title-color);
+  box-shadow: 0 1px 0 0 var(--_c-side-navigation-title-border-color);
+  color: var(--_c-side-navigation-title-color);
   display: flex;
   gap: 8px;
   margin: 1.25rem 0 1rem;

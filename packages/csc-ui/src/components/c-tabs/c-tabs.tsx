@@ -173,7 +173,7 @@ export class CTabs {
 
     this._resizeObserver.observe(this.el);
 
-    this.el.style.setProperty('--c-tabs-count', this.setsize.toString());
+    this.el.style.setProperty('--_c-tabs-count', this.setsize.toString());
   }
 
   get tabs() {
@@ -220,15 +220,15 @@ export class CTabs {
   }
 
   private _setIndicatorTop(value: number) {
-    this.el.style.setProperty('--c-tabs-indicator-top', `${value}px`);
+    this.el.style.setProperty('--_c-tabs-indicator-top', `${value}px`);
   }
 
   private _setIndicatorLeft(value: number) {
-    this.el.style.setProperty('--c-tabs-indicator-left', `${value}px`);
+    this.el.style.setProperty('--_c-tabs-indicator-left', `${value}px`);
   }
 
   private _setIndicatorWidth(value: number) {
-    this.el.style.setProperty('--c-tabs-indicator-width', value.toString());
+    this.el.style.setProperty('--_c-tabs-indicator-width', value.toString());
   }
 
   private _handleActiveTab() {
@@ -283,6 +283,8 @@ export class CTabs {
               oldTab as HTMLCTabElement,
               tab as HTMLCTabElement,
             );
+
+            // console.log('active tab', oldTab, tab);
           }
 
           if (isActive && this._isDirty) {
@@ -320,7 +322,7 @@ export class CTabs {
   private _moveIndicator(oldTab: HTMLCTabElement, newTab: HTMLCTabElement) {
     requestAnimationFrame(() => {
       if (this._initialized && !this._prefersReducedMotion) {
-        this.el.style.setProperty('--c-tabs-transition-speed', '200ms');
+        this.el.style.setProperty('--_c-tabs-transition-speed', '200ms');
       }
 
       this._setIndicatorTop(this.el.querySelector('c-tab').offsetHeight);

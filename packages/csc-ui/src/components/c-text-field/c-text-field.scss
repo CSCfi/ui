@@ -23,16 +23,15 @@
 }
 
 .c-input {
-  --c-input-color: var(--c-text-field-active-color);
-  --c-input-active-color: var(--c-text-field-active-color);
-  --c-input-inactive-color: var(--c-text-field-inactive-color);
-  --c-input-background-color: var(--c-text-field-background-color);
-  --c-input-text-color: var(--c-text-field-text-color);
-  --c-input-placeholder-color: var(--c-text-field-placeholder-color);
-  --c-input-shadow-active-color: var(--c-text-field-shadow-active-color);
-  --c-input-shadow-background-color: var(--c-text-field-shadow-background-color);
-  --c-input-shadow-text-color: var(--c-text-field-shadow-text-color);
-  --c-input-shadow-placeholder-color: var(--c-text-field-shadow-placeholder-color);
+  --_c-input-active-color: var(--c-text-field-active-color);
+  --_c-input-inactive-color: var(--c-text-field-inactive-color);
+  --_c-input-background-color: var(--c-text-field-background-color);
+  --_c-input-text-color: var(--c-text-field-text-color);
+  --_c-input-placeholder-color: var(--c-text-field-placeholder-color);
+  --_c-input-shadow-active-color: var(--c-text-field-shadow-active-color);
+  --_c-input-shadow-background-color: var(--c-text-field-shadow-background-color);
+  --_c-input-shadow-text-color: var(--c-text-field-shadow-text-color);
+  --_c-input-shadow-placeholder-color: var(--c-text-field-shadow-placeholder-color);
 
   &__password-toggle,
   &__date-toggle {

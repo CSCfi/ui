@@ -10,4 +10,6 @@ const directory = path.resolve(__dirname, '../../components/examples');
 
 const components = fs.readdirSync(directory);
 
+console.log(components);
+
 export default components;

@@ -1,4 +1,4 @@
-import { Component, Element, Host, Prop, h } from '@stencil/core';
+import { Component, Element, Host, Prop, Watch, h } from '@stencil/core';
 
 @Component({
   tag: 'c-list-item',
@@ -43,6 +43,15 @@ export class CListItem {
    * Hyperlink target
    */
   @Prop() target = '_blank';
+
+  @Watch('active')
+  onActiveChange(active) {
+    const title = this.el.querySelector('c-list-item-title');
+
+    if (!title) return;
+
+    title.active = active;
+  }
 
   private get _slots() {
     const hasPreSlot = !!this.el.querySelector('[slot="pre"]');

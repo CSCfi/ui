@@ -10,14 +10,12 @@ import { _CDropdownUpdateParams } from "./components/c-dropdown/c-dropdown";
 import { _CDropdownParams } from "./components/c-dropdowns/c-dropdowns";
 import { _CDropdownParams as _CDropdownParams1 } from "./components/c-dropdowns/c-dropdowns";
 import { _CDropdownUpdateParams as _CDropdownUpdateParams1 } from "./components/c-dropdown/c-dropdown";
-import { CInputOptionsParams, Position } from "./components/c-input-options/c-input-options";
 import { CLoginCardBlendMode } from "./components/c-login-card/c-login-card";
 export { CAlertType, CAutocompleteItem, CDataTableData, CDataTableFooterOptions, CDataTableHeader, CMenuCustomTrigger, CMenuOption, CPaginationOptions, CRadioGroupItem, CSelectItem, CToastMessage } from "./types";
 export { _CDropdownUpdateParams } from "./components/c-dropdown/c-dropdown";
 export { _CDropdownParams } from "./components/c-dropdowns/c-dropdowns";
 export { _CDropdownParams as _CDropdownParams1 } from "./components/c-dropdowns/c-dropdowns";
 export { _CDropdownUpdateParams as _CDropdownUpdateParams1 } from "./components/c-dropdown/c-dropdown";
-export { CInputOptionsParams, Position } from "./components/c-input-options/c-input-options";
 export { CLoginCardBlendMode } from "./components/c-login-card/c-login-card";
 export namespace Components {
     /**
@@ -707,35 +705,6 @@ export namespace Components {
         "variant": 'text' | 'select';
     }
     /**
-     * @group Form
-     */
-    interface CInputOptions {
-        /**
-          * juu
-          * @param params jees
-         */
-        "createMenuItems": (params: CInputOptionsParams) => Promise<void>;
-        /**
-          * Items per page before adding scroll
-         */
-        "itemsPerPage": number;
-        /**
-          * juu
-          * @param params jees
-         */
-        "open": () => Promise<void>;
-        /**
-          * kusi
-          * @param options kakka
-         */
-        "positionMenu": (options: Position) => Promise<void>;
-        /**
-          * juu
-          * @param params jees
-         */
-        "selectItem": (index: number) => Promise<void>;
-    }
-    /**
      * Basic hyperlink component
      * @group Buttons
      */
@@ -1077,6 +1046,11 @@ export namespace Components {
           * Custom validation message
          */
         "validation": string;
+    }
+    /**
+     * @group Layout
+     */
+    interface CPage {
     }
     /**
      * @group Navigation
@@ -2092,15 +2066,6 @@ declare global {
         new (): HTMLCInputElement;
     };
     /**
-     * @group Form
-     */
-    interface HTMLCInputOptionsElement extends Components.CInputOptions, HTMLStencilElement {
-    }
-    var HTMLCInputOptionsElement: {
-        prototype: HTMLCInputOptionsElement;
-        new (): HTMLCInputOptionsElement;
-    };
-    /**
      * Basic hyperlink component
      * @group Buttons
      */
@@ -2264,6 +2229,15 @@ declare global {
     var HTMLCOtpInputElement: {
         prototype: HTMLCOtpInputElement;
         new (): HTMLCOtpInputElement;
+    };
+    /**
+     * @group Layout
+     */
+    interface HTMLCPageElement extends Components.CPage, HTMLStencilElement {
+    }
+    var HTMLCPageElement: {
+        prototype: HTMLCPageElement;
+        new (): HTMLCPageElement;
     };
     /**
      * @group Navigation
@@ -2560,7 +2534,6 @@ declare global {
         "c-icon": HTMLCIconElement;
         "c-icon-button": HTMLCIconButtonElement;
         "c-input": HTMLCInputElement;
-        "c-input-options": HTMLCInputOptionsElement;
         "c-link": HTMLCLinkElement;
         "c-list": HTMLCListElement;
         "c-list-item": HTMLCListItemElement;
@@ -2580,6 +2553,7 @@ declare global {
         "c-navigation-button": HTMLCNavigationButtonElement;
         "c-option": HTMLCOptionElement;
         "c-otp-input": HTMLCOtpInputElement;
+        "c-page": HTMLCPageElement;
         "c-pagination": HTMLCPaginationElement;
         "c-progress-bar": HTMLCProgressBarElement;
         "c-radio-group": HTMLCRadioGroupElement;
@@ -3292,15 +3266,6 @@ declare namespace LocalJSX {
         "variant"?: 'text' | 'select';
     }
     /**
-     * @group Form
-     */
-    interface CInputOptions {
-        /**
-          * Items per page before adding scroll
-         */
-        "itemsPerPage"?: number;
-    }
-    /**
      * Basic hyperlink component
      * @group Buttons
      */
@@ -3671,6 +3636,11 @@ declare namespace LocalJSX {
           * Custom validation message
          */
         "validation"?: string;
+    }
+    /**
+     * @group Layout
+     */
+    interface CPage {
     }
     /**
      * @group Navigation
@@ -4466,7 +4436,6 @@ declare namespace LocalJSX {
         "c-icon": CIcon;
         "c-icon-button": CIconButton;
         "c-input": CInput;
-        "c-input-options": CInputOptions;
         "c-link": CLink;
         "c-list": CList;
         "c-list-item": CListItem;
@@ -4486,6 +4455,7 @@ declare namespace LocalJSX {
         "c-navigation-button": CNavigationButton;
         "c-option": COption;
         "c-otp-input": COtpInput;
+        "c-page": CPage;
         "c-pagination": CPagination;
         "c-progress-bar": CProgressBar;
         "c-radio-group": CRadioGroup;
@@ -4599,10 +4569,6 @@ declare module "@stencil/core" {
              */
             "c-input": LocalJSX.CInput & JSXBase.HTMLAttributes<HTMLCInputElement>;
             /**
-             * @group Form
-             */
-            "c-input-options": LocalJSX.CInputOptions & JSXBase.HTMLAttributes<HTMLCInputOptionsElement>;
-            /**
              * Basic hyperlink component
              * @group Buttons
              */
@@ -4672,6 +4638,10 @@ declare module "@stencil/core" {
              * @group Form
              */
             "c-otp-input": LocalJSX.COtpInput & JSXBase.HTMLAttributes<HTMLCOtpInputElement>;
+            /**
+             * @group Layout
+             */
+            "c-page": LocalJSX.CPage & JSXBase.HTMLAttributes<HTMLCPageElement>;
             /**
              * @group Navigation
              */

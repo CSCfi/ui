@@ -738,19 +738,6 @@
       ]
     },
     {
-      "name": "c-input-options",
-      "description": {
-        "kind": "markdown",
-        "value": ""
-      },
-      "attributes": [
-        {
-          "name": "items-per-page",
-          "description": "Items per page before adding scroll"
-        }
-      ]
-    },
-    {
       "name": "c-link",
       "description": {
         "kind": "markdown",
@@ -1220,6 +1207,14 @@
           "description": "Custom validation message"
         }
       ]
+    },
+    {
+      "name": "c-page",
+      "description": {
+        "kind": "markdown",
+        "value": ""
+      },
+      "attributes": []
     },
     {
       "name": "c-pagination",

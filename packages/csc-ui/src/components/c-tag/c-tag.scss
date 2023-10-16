@@ -1,34 +1,34 @@
 :host {
   /**
-   * @prop --c-tag-background-color: Tag background color
-   * @prop --c-tag-border-color: Tag border color
-   * @prop --c-tag-text-color: Tag text color
-   * @prop --c-tag-text-color-active: Tag text color if active
-   * @prop --c-tag-background-color-active:  Tag background color if active
+   * @prop --c-tag-background-color-active-hover: Active tag background color on hover
+   * @prop --c-tag-background-color-active: Active tag background color
    * @prop --c-tag-background-color-hover: Tag background color on hover
-   * @prop --c-tag-background-color-hover-active: Tag background color on hover if active
+   * @prop --c-tag-background-color: Tag background color
+   * @prop --c-tag-badge-background-color-active: Active tag badge background color
    * @prop --c-tag-badge-background-color: Tag badge background color
+   * @prop --c-tag-badge-text-color-active: Active tag badge text color
    * @prop --c-tag-badge-text-color: Tag badge text color
-   * @prop --c-tag-badge-background-color-active: Tag badge background color if active
-   * @prop --c-tag-badge-text-color-active: Tag badge text color if active
+   * @prop --c-tag-border-color: Tag border color
+   * @prop --c-tag-text-color-active: Active tag text color
+   * @prop --c-tag-text-color: Tag text color
    */
-  --c-tag-background-color: var(--c-transparent);
-  --c-tag-border-color: var(--c-tag-text-color);
-  --c-tag-text-color: var(--c-primary-600);
-  --c-tag-text-color-active: var(--c-white);
-  --c-tag-background-color-active: var(--c-tag-text-color);
-  --c-tag-background-color-hover: rgba(var(--c-primary-rgb), 0.1);
-  --c-tag-background-color-hover-active: var(--c-primary-400);
-  --c-tag-badge-background-color: var(--c-tag-background-color-active);
-  --c-tag-badge-text-color: var(--c-tag-text-color-active);
-  --c-tag-badge-background-color-active: var(--c-tag-text-color-active);
-  --c-tag-badge-text-color-active: var(--c-tag-text-color);
+  --_c-tag-background-color-active-hover: var(--c-tag-background-color-active-hover, var(--c-primary-400));
+  --_c-tag-background-color-active: var(--c-tag-background-color-active, var(--_c-tag-text-color));
+  --_c-tag-background-color-hover: var(--c-tag-background-color-hover, rgba(var(--c-primary-rgb), 0.1));
+  --_c-tag-background-color: var(--c-tag-background-color, var(--c-transparent));
+  --_c-tag-badge-background-color-active: var(--c-tag-badge-background-color-active, var(--_c-tag-text-color-active));
+  --_c-tag-badge-background-color: var(--c-tag-badge-background-color, var(--_c-tag-background-color-active));
+  --_c-tag-badge-text-color-active: var(--c-tag-badge-text-color-active, var(--_c-tag-text-color));
+  --_c-tag-badge-text-color: var(--c-tag-badge-text-color, var(--_c-tag-text-color-active));
+  --_c-tag-border-color: var(--c-tag-border-color, var(--_c-tag-text-color));
+  --_c-tag-text-color-active: var(--c-tag-text-color-active, var(--c-white));
+  --_c-tag-text-color: var(--c-tag-text-color, var(--c-primary-600));
 
   align-items: center;
-  background: var(--c-tag-background-color);
+  background: var(--_c-tag-background-color);
   border-radius: 999px;
-  box-shadow: inset 0 0 0 1px var(--c-tag-border-color);
-  color: var(--c-tag-text-color);
+  box-shadow: inset 0 0 0 1px var(--_c-tag-border-color);
+  color: var(--_c-tag-text-color);
   cursor: pointer;
   display: inline-flex;
   font-size: 14px;
@@ -42,20 +42,20 @@
   user-select: none;
 
   c-icon-button {
-    --c-icon-button-height: 20px;
-    --c-icon-button-width: 20px;
+    --_c-icon-button-height: 20px;
+    --_c-icon-button-width: 20px;
     --c-icon-button-background-color: var(--c-transparent);
-    --c-icon-button-text-color: var(--c-tag-text-color);
-    --c-icon-button-background-hover: var(--c-tag-background-color-active);
+    --c-icon-button-text-color: var(--_c-tag-text-color);
+    --c-icon-button-background-hover: var(--_c-tag-background-color-active);
 
     &:hover {
-      --c-icon-button-text-color: var(--c-tag-text-color-active);
+      --c-icon-button-text-color: var(--_c-tag-text-color-active);
     }
   }
 }
 
 :host(:host:hover) {
-  background-color: var(--c-tag-background-color-hover);
+  background-color: var(--_c-tag-background-color-hover);
 }
 
 :host([data-badge]) {
@@ -63,9 +63,9 @@
 
   &::before {
     content: attr(data-badge);
-    background-color: var(--c-tag-badge-background-color);
+    background-color: var(--_c-tag-badge-background-color);
     border-radius: 999px;
-    color: var(--c-tag-badge-text-color);
+    color: var(--_c-tag-badge-text-color);
     display: inline-grid;
     font-size: 12px;
     height: 20px;
@@ -78,8 +78,8 @@
 
 :host([data-badge].c-tag--active) {
   &::before {
-    background-color: var(--c-tag-badge-background-color-active);
-    color: var(--c-tag-badge-text-color-active);
+    background-color: var(--_c-tag-badge-background-color-active);
+    color: var(--_c-tag-badge-text-color-active);
   }
 }
 
@@ -104,27 +104,27 @@
 }
 
 :host(:focus-visible) {
-  outline: 2px var(--c-tag-border-color) solid;
+  outline: 2px var(--_c-tag-border-color) solid;
   outline-offset: 2px;
   z-index: 1;
 }
 
 :host(.c-tag--active) {
-  background: var(--c-tag-background-color-active);
-  color: var(--c-tag-text-color-active);
+  background: var(--_c-tag-background-color-active);
+  color: var(--_c-tag-text-color-active);
 }
 
 :host(.c-tag--active .c-tag__badge) {
-  background: var(--c-tag-badge-background-color-active);
-  color: var(--c-tag-badge-text-color-active);
+  background: var(--_c-tag-badge-background-color-active);
+  color: var(--_c-tag-badge-text-color-active);
 }
 
 :host(.c-tag--active:hover) {
-  background: var(--c-tag-background-color-hover-active);
+  background: var(--_c-tag-background-color-active-hover);
   box-shadow: none;
 }
 
 :host(.c-tag--active) c-icon-button {
-  --c-icon-button-text-color: var(--c-tag-text-color-active);
-  --c-icon-button-background-hover: var(--c-tag-background-color-active);
+  --c-icon-button-text-color: var(--_c-tag-text-color-active);
+  --c-icon-button-background-hover: var(--_c-tag-background-color-active);
 }

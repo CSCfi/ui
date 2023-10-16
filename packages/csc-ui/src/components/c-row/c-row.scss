@@ -2,13 +2,13 @@
   display: flex;
   flex: 1 1 auto;
   flex-wrap: wrap;
-  gap: var(--c-row-gap);
+  gap: var(--_c-row-gap);
 
   slot {
     display: flex;
     flex-wrap: wrap;
     width: 100%;
-    gap: var(--c-row-gap);
+    gap: var(--_c-row-gap);
   }
 }
 

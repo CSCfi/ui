@@ -5,10 +5,10 @@
    * @prop --c-radio-group-background-color-hover: Radio button hover background color
    * @prop --c-radio-group-disabled-color: Disabled radio button color
    */
-  --c-radio-group-color: var(--c-primary-600);
-  --c-radio-group-active-color: var(--c-radio-group-color);
-  --c-radio-group-background-color-hover: rgba(var(--c-primary-rgb), 0.1);
-  --c-radio-group-disabled-color: var(--c-tertiary-500);
+  --_c-radio-group-color: var(--c-radio-group-color, var(--c-primary-600));
+  --_c-radio-group-active-color: var(--_c-radio-group-active-color, var(--c-radio-group-color));
+  --_c-radio-group-background-color-hover: var(--c-radio-group-background-color-hover, rgba(var(--c-primary-rgb), 0.1));
+  --_c-radio-group-disabled-color: var(--c-radio-group-disabled-color, var(--c-tertiary-500));
 
   display: flex;
   flex-direction: column;
@@ -16,7 +16,7 @@
 }
 
 .c-radio-group {
-  --c-radio-group-error-color: var(--c-error-600);
+  --_c-radio-group-error-color: var(--c-error-600);
   --c-radio-flex-direction: column;
   --c-radio-item-gap: 2px;
 
@@ -27,8 +27,7 @@
 
   &__items {
     display: flex;
-    flex-direction: var(--c-radio-flex-direction);
-    flex-wrap: wrap;
+    flex-flow: var(--c-radio-flex-direction) wrap;
     gap: var(--c-radio-item-gap);
   }
 
@@ -38,24 +37,24 @@
     align-items: center;
 
     span.required {
-      color: var(--c-radio-group-error-color);
+      color: var(--_c-radio-group-error-color);
     }
   }
 
   &--disabled {
-    --c-radio-group-color: var(--c-radio-group-disabled-color);
-    --c-radio-group-error-color: var(--c-radio-group-disabled-color);
+    --_c-radio-group-color: var(--_c-radio-group-disabled-color);
+    --_c-radio-group-error-color: var(--_c-radio-group-disabled-color);
 
-    color: var(--c-radio-group-disabled-color);
+    color: var(--_c-radio-group-disabled-color);
     cursor: default;
     opacity: 0.75;
   }
 
   &--error {
-    --c-radio-group-color: var(--c-radio-group-error-color);
-    --c-radio-group-active-color: var(--c-radio-group-error-color);
+    --_c-radio-group-color: var(--_c-radio-group-error-color);
+    --_c-radio-group-active-color: var(--_c-radio-group-error-color);
 
-    color: var(--c-radio-group-error-color);
+    color: var(--_c-radio-group-error-color);
   }
 
   &--inline {
@@ -99,7 +98,7 @@
     border-radius: 50%;
     overflow: hidden;
     transition: translateZ(0);
-    color: var(--c-radio-group-color);
+    color: var(--_c-radio-group-color);
   }
 
   .selection {
@@ -109,7 +108,7 @@
     height: 20px;
     width: 20px;
     background-color: transparent;
-    box-shadow: inset 0 0 0 2px var(--c-radio-group-color);
+    box-shadow: inset 0 0 0 2px var(--_c-radio-group-color);
     border-radius: 50%;
     transition: box-shadow 0.15s ease-in-out;
 
@@ -123,7 +122,7 @@
       width: 10px;
       height: 10px;
       border-radius: 50%;
-      background: var(--c-radio-group-active-color);
+      background: var(--_c-radio-group-active-color);
     }
   }
 
@@ -152,7 +151,7 @@
     }
 
     &--error {
-      color: var(--c-radio-group-error-color) !important;
+      color: var(--_c-radio-group-error-color) !important;
     }
 
     span {
@@ -162,7 +161,7 @@
       height: 16px;
 
       &.error {
-        color: var(--c-radio-group-error-color);
+        color: var(--_c-radio-group-error-color);
       }
 
       &.hint {
@@ -184,23 +183,23 @@
   }
 
   &--disabled {
-    --c-radio-group-color: var(--c-radio-group-disabled-color);
-    --c-radio-group-active-color: var(--c-radio-group-disabled-color);
+    --_c-radio-group-color: var(--_c-radio-group-disabled-color);
+    --_c-radio-group-active-color: var(--_c-radio-group-disabled-color);
 
-    color: var(--c-radio-group-color);
+    color: var(--_c-radio-group-color);
     cursor: default;
     opacity: 0.75;
   }
 
   &--error {
-    --c-radio-group-color: var(--c-radio-group-error-color);
+    --_c-radio-group-color: var(--_c-radio-group-error-color);
 
-    color: var(--c-radio-group-error-color);
+    color: var(--_c-radio-group-error-color);
 
     span,
     svg {
-      fill: var(--c-radio-group-error-color);
-      color: var(--c-radio-group-error-color);
+      fill: var(--_c-radio-group-error-color);
+      color: var(--_c-radio-group-error-color);
     }
   }
 
@@ -209,7 +208,7 @@
   }
 
   input:focus + .ripple {
-    outline: 2px var(--c-radio-group-active-color) solid;
+    outline: 2px var(--_c-radio-group-active-color) solid;
   }
 
   @supports selector(:focus-visible) {
@@ -219,12 +218,12 @@
   }
 
   input:focus-visible + .ripple {
-    outline: 2px var(--c-radio-group-color) solid;
+    outline: 2px var(--_c-radio-group-color) solid;
   }
 
   &:not(.c-radio--disabled) {
     .ripple:hover {
-      background-color: var(--c-radio-group-background-color-hover);
+      background-color: var(--_c-radio-group-background-color-hover);
     }
   }
 }

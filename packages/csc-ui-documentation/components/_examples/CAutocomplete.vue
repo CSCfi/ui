@@ -18,10 +18,12 @@
         <c-icon slot="pre" :path="mdiEarth" size="16"></c-icon>
       </c-autocomplete>
 
+      <pre>{{ selection }} {{ query }}</pre>
+
       <c-button @click="addTag()" @keyup.enter="addTag()">Add</c-button>
     </c-row>
 
-    <div class="mt-3">
+    <c-tags class="mt-3">
       <c-tag
         v-for="(tag, index) of addedTags"
         :key="index"
@@ -31,7 +33,7 @@
       >
         {{ tag.name }}
       </c-tag>
-    </div>
+    </c-tags>
   </component-example>
 
   <component-example name="returnValue" rows>
@@ -78,7 +80,7 @@
         v-control
         label="Countries"
         hide-details
-        :items="filteredItems"
+        :items="filteredItemsCustomMenu"
         :query="queryCustomMenu"
         :items-per-page="10"
         :custom-menu="true"
@@ -87,18 +89,17 @@
       >
         <c-icon slot="pre" :path="mdiEarth" size="16"></c-icon>
 
-        <div
-          v-for="(item, index) in filteredItems"
+        <c-option
+          v-for="(item, index) in filteredItemsCustomMenu"
           :key="index"
-          slot="customMenu"
-          @click="setValue($event, item)"
+          :value="item.value"
+          :name="item.name"
         >
-          <span>
-            <b>Country {{ index + 1 }}</b>
-          </span>
-
-          <p>{{ item.name }}</p>
-        </div>
+          <c-row align="center" gap="16">
+            <c-tag active flat>{{ item.value }}</c-tag>
+            <p>{{ item.name }}</p>
+          </c-row>
+        </c-option>
       </c-autocomplete>
     </c-row>
   </component-example>
@@ -184,13 +185,22 @@ const onQueryChange = (event: InputEvent) => {
 // @example-start|customMenu
 const autocomplete = ref<HTMLCAutocompleteElement | null>();
 
-const setValue = (event: Event, item: CAutocompleteItem) => {
-  autocomplete.value?.setValue(event, item);
-};
+// const setValue = (event: Event, item: CAutocompleteItem) => {
+//   autocomplete.value?.setValue(event, item);
+// };
 
 const selectionCustomMenu = ref();
 
 const queryCustomMenu = ref('');
+
+const filteredItemsCustomMenu = computed(() => {
+  if (!queryCustomMenu.value) return items.value;
+
+  return items.value.filter(
+    (i) => i.name?.toLowerCase().includes(queryCustomMenu.value?.toLowerCase()),
+  );
+});
+
 // @example-end
 </script>
 

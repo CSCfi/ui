@@ -16,12 +16,17 @@
 
 ## CSS Custom Properties
 
-| Name                                              | Description                                 |
-| ------------------------------------------------- | ------------------------------------------- |
-| `--c-sub-navigation-item-active-background-color` | Sub navigation item active background color |
-| `--c-sub-navigation-item-active-text-color`       | Sub navigation item active text color       |
-| `--c-sub-navigation-item-background-color-hover`  | Sub navigation item hover background color  |
-| `--c-sub-navigation-item-text-color`              | Sub navigation item text color              |
+| Name                                                       | Description                                 |
+| ---------------------------------------------------------- | ------------------------------------------- |
+| `--c-sub-navigation-item-background-color-active`          | Sub navigation item active background color |
+| `--c-sub-navigation-item-background-color-hover`           | Sub navigation item hover background color  |
+| `--c-sub-navigation-item-sub-item-background-color`        | 3rd level item background color             |
+| `--c-sub-navigation-item-sub-item-background-color-active` | Active 3rd level item background color      |
+| `--c-sub-navigation-item-sub-item-background-color-hover`  | 3rd level item hover background color       |
+| `--c-sub-navigation-item-sub-item-text-color`              | 3rd level item text color                   |
+| `--c-sub-navigation-item-sub-item-text-color-active`       | Active 3rd level item text color            |
+| `--c-sub-navigation-item-text-color`                       | Sub navigation item text color              |
+| `--c-sub-navigation-item-text-color-active`                | Sub navigation item active text color       |
 
 
 ## Dependencies

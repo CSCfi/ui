@@ -16,6 +16,7 @@ module.exports = {
   plugins: [],
   rules: {
     'vue/no-deprecated-slot-attribute': 'off',
+    'vue/multi-word-component-names': 'off',
   },
   settings: {
     'import/resolver': {

@@ -3,11 +3,11 @@
    * @prop --c-card-title-color: Card title color
    * @prop --c-card-title-underline-color: Card title underline color
    */
-  --c-card-title-color: var(--c-text-system);
-  --c-card-title-underline-color: var(--c-primary-600);
+  --_c-card-title-color: var(--c-card-title-color, var(--c-text-system));
+  --_c-card-title-underline-color: var(--c-card-title-underline-color, var(--c-primary-600));
 
-  color: var(--c-card-title-color);
-  padding-inline: var(--c-card-gap, 24px);
+  color: var(--_c-card-title-color);
+  padding-inline: var(--_c-card-gap, 24px);
   display: block;
   font-family: var(--c-font-family);
   font-size: 1rem;
@@ -17,7 +17,7 @@
 
 .c-card-title {
   &__underline {
-    background-color: var(--c-card-title-underline-color);
+    background-color: var(--_c-card-title-underline-color);
     border-radius: 4px;
     height: 4px;
     margin-top: 10px;

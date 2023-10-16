@@ -31,20 +31,20 @@
 
 ## CSS Custom Properties
 
-| Name                                          | Description                      |
-| --------------------------------------------- | -------------------------------- |
-| `--c-switch-active-background-color`          | Active background color          |
-| `--c-switch-active-border-color`              | Active border color              |
-| `--c-switch-active-disabled-background-color` | Disabled active background color |
-| `--c-switch-active-disabled-border-color`     | Disabled active border color     |
-| `--c-switch-active-disabled-handle-color`     | Disabled active handle color     |
-| `--c-switch-active-handle-color`              | Active handle color              |
-| `--c-switch-background-color`                 | Background color                 |
-| `--c-switch-border-color`                     | Border color                     |
-| `--c-switch-disabled-background-color`        | Disabled background color        |
-| `--c-switch-disabled-border-color`            | Disabled border color            |
-| `--c-switch-disabled-handle-color`            | Disabled handle color            |
-| `--c-switch-handle-color`                     | Handle color                     |
+| Name                                      | Description                      |
+| ----------------------------------------- | -------------------------------- |
+| `--c-switch-border-color`                 | Border color                     |
+| `--c-switch-border-color-active`          | Active border color              |
+| `--c-switch-border-color-active-disabled` | Disabled active border color     |
+| `--c-switch-border-color-disabled`        | Disabled border color            |
+| `--c-switch-handle-color`                 | Handle color                     |
+| `--c-switch-handle-color-active`          | Active handle color              |
+| `--c-switch-handle-color-active-disabled` | Disabled active handle color     |
+| `--c-switch-handle-color-disabled`        | Disabled handle color            |
+| `--c-switch-slider-color`                 | Background color                 |
+| `--c-switch-slider-color-active`          | Active background color          |
+| `--c-switch-slider-color-active-disabled` | Disabled active background color |
+| `--c-switch-slider-color-disabled`        | Disabled background color        |
 
 
 ----------------------------------------------

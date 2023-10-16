@@ -55,21 +55,13 @@ const props = defineProps<{
 
 const route = useRoute();
 
-const { componentData, types } = storeToRefs(useExampleStore());
+const { componentData } = storeToRefs(useExampleStore());
 
 const onTabClick = async (tab: any) => {
   await navigateTo({ ...route, query: tab.query });
 };
 
-const toPascalCase = (name: string) =>
-  name
-    .split('-')
-    .map(
-      (part) => part.charAt(0).toUpperCase() + part.substring(1).toLowerCase(),
-    )
-    .join('');
-
-provide('componentName', toPascalCase(props.component));
+provide('componentName', props.component);
 
 const tabs = computed(() => {
   return [
@@ -80,8 +72,7 @@ const tabs = computed(() => {
       query: {},
       component: props.component
         ? defineAsyncComponent({
-            loader: () =>
-              import(`./examples/${toPascalCase(props.component)}.vue`),
+            loader: () => import(`./examples/${props.component}/Index.vue`),
             errorComponent: ErrorComponent,
           })
         : null,
@@ -141,15 +132,15 @@ const tabs = computed(() => {
       },
       component: DocumentationTable,
     },
-    {
-      label: 'Types',
-      value: 'types',
-      enabled: !!types.value.get(route.params.slug[0]),
-      query: {
-        tab: 'types',
-      },
-      component: DocumentationTable,
-    },
+    // {
+    //   label: 'Types',
+    //   value: 'types',
+    //   enabled: !!types.value.get(route.params.slug[0]),
+    //   query: {
+    //     tab: 'types',
+    //   },
+    //   component: DocumentationTable,
+    // },
   ];
 });
 

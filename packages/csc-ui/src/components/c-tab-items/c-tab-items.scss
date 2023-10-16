@@ -1,18 +1,18 @@
 :host {
-  --c-tab-items-height: auto;
-  --c-tab-items-position-left: 0;
-  --c-tab-items-animation-duration: 0.001ms;
+  --_c-tab-items-height: auto;
+  --_c-tab-items-position-left: 0;
+  --_c-tab-items-animation-duration: 0.001ms;
 
   display: block;
-  height: var(--c-tab-items-height);
+  height: var(--_c-tab-items-height);
   overflow: hidden;
-  transition: height var(--c-tab-items-animation-duration) cubic-bezier(0.075, 0.82, 0.165, 1);
+  transition: height var(--_c-tab-items-animation-duration) cubic-bezier(0.075, 0.82, 0.165, 1);
   width: 100%;
 
   > div {
     align-items: flex-start;
     display: flex;
-    transition: translate var(--c-tab-items-animation-duration) cubic-bezier(0.075, 0.82, 0.165, 1);
-    translate: var(--c-tab-items-position-left);
+    transition: translate var(--_c-tab-items-animation-duration) cubic-bezier(0.075, 0.82, 0.165, 1);
+    translate: var(--_c-tab-items-position-left);
   }
 }

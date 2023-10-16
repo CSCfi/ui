@@ -43,7 +43,7 @@ export class CTabItems {
   tabContentChangeHandler(e: CustomEvent) {
     e.stopPropagation();
 
-    this.el.style.setProperty('--c-tab-items-height', 'auto');
+    this.el.style.setProperty('--_c-tab-items-height', 'auto');
   }
 
   private _resizeObserver: ResizeObserver;
@@ -70,13 +70,13 @@ export class CTabItems {
     });
 
     this.el.style.setProperty(
-      '--c-tab-items-height',
+      '--_c-tab-items-height',
       `${this.activeTab.scrollHeight}px`,
     );
 
     requestAnimationFrame(() => {
       this.el.style.setProperty(
-        '--c-tab-items-position-left',
+        '--_c-tab-items-position-left',
         `${-1 * this.activeTab.offsetLeft}px`,
       );
 
@@ -84,7 +84,7 @@ export class CTabItems {
         this._initialized = true;
         setTimeout(() => {
           this.el.style.setProperty(
-            '--c-tab-items-animation-duration',
+            '--_c-tab-items-animation-duration',
             '300ms',
           );
         }, 500);

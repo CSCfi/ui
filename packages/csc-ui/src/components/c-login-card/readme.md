@@ -25,9 +25,10 @@
 
 ## CSS Custom Properties
 
-| Name                           | Description                    |
-| ------------------------------ | ------------------------------ |
-| `--c-login-card-overlay-color` | Login card overlay blend color |
+| Name                              | Description                    |
+| --------------------------------- | ------------------------------ |
+| `--c-login-card-background-color` | Login card background color    |
+| `--c-login-card-overlay-color`    | Login card overlay blend color |
 
 
 ----------------------------------------------

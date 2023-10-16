@@ -1,16 +1,16 @@
 :host {
-  --c-navigation-button-color: var(--c-text-system);
+  /**
+   * @prop --c-navigation-button-color: Burger menu color
+   */
+  --_c-navigation-button-color: var(--c-navigation-button-color, var(--c-text-system));
 
   display: block;
   margin-right: 0;
-  padding-right: 12px;
-  padding-left: 12px;
-  padding-top: 14px;
-  padding-bottom: 10px;
+  padding: 14px 12px 10px;
   cursor: pointer;
   user-select: none;
 
   line {
-    stroke: var(--c-navigation-button-color);
+    stroke: var(--_c-navigation-button-color);
   }
 }

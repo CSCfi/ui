@@ -5,9 +5,9 @@
    * @prop --c-menu-items-text-color: Menu item text color
    * @prop --c-menu-items-text-color-active: Active menu item text color
    */
-  --c-menu-items-background-color-hover: var(--c-primary-200);
-  --c-menu-items-text-color: var(--c-text-body);
-  --c-menu-items-text-color-active: var(--c-primary-600);
+  --_c-menu-items-background-color-hover: var(--c-menu-items-background-color-hover, var(--c-primary-200));
+  --_c-menu-items-text-color: var(--c-menu-items-text-color, var(--c-text-body));
+  --_c-menu-items-text-color-active: var(--c-menu-items-text-color-active, var(--c-primary-600));
 
   position: absolute;
   border-radius: inherit;
@@ -17,13 +17,13 @@
 }
 
 ul.c-menu-items {
-  --c-menu-item-font-size: 14px;
+  --_c-menu-item-font-size: 14px;
 
   margin: 0;
   padding: 0;
   background-color: var(--c-white);
   list-style: none;
-  animation: 0.1s 1 fadeIn cubic-bezier(0.25, 0.8, 0.5, 1);
+  animation: 0.1s 1 fade-in cubic-bezier(0.25, 0.8, 0.5, 1);
   box-shadow: 2px 4px 10px #00000029;
   width: 100%;
   overflow-y: scroll;
@@ -32,7 +32,7 @@ ul.c-menu-items {
   visibility: hidden;
 
   &--small {
-    --c-menu-item-font-size: 12px;
+    --_c-menu-item-font-size: 12px;
   }
 
   &--active {
@@ -47,8 +47,8 @@ li {
   cursor: pointer;
   display: flex;
   flex-wrap: nowrap;
-  font-size: var(--c-menu-item-font-size);
-  height: var(--c-menu-item-height);
+  font-size: var(--_c-menu-item-font-size);
+  height: var(--_c-menu-item-height);
   padding-left: 10px;
   padding-right: 10px;
   outline: none;
@@ -57,8 +57,8 @@ li {
 
   &:not(.disabled):hover,
   &.active {
-    background: var(--c-menu-items-background-color-hover);
-    color: var(--c-menu-items-text-color-active);
+    background: var(--_c-menu-items-background-color-hover);
+    color: var(--_c-menu-items-text-color-active);
   }
 
   &.icon-start {
@@ -76,7 +76,7 @@ li {
   }
 }
 
-@keyframes fadeIn {
+@keyframes fade-in {
   from {
     opacity: 0;
     transform: translateY(-8px);

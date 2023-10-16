@@ -57,7 +57,7 @@ export class CTabItem {
 
     return (
       <Host {...attributes}>
-        <div>
+        <div class={{ active: this.active }}>
           <slot></slot>
         </div>
       </Host>

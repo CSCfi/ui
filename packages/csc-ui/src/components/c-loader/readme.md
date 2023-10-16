@@ -19,9 +19,11 @@ A loader component that fills the nearest containing element that has css-proper
 
 ## CSS Custom Properties
 
-| Name               | Description  |
-| ------------------ | ------------ |
-| `--c-loader-color` | Loader color |
+| Name                          | Description             |
+| ----------------------------- | ----------------------- |
+| `--c-loader-background-color` | Loader background color |
+| `--c-loader-color`            | Loader color            |
+| `--c-loader-text-color`       | Loader text color       |
 
 
 ## Dependencies

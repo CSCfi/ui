@@ -187,6 +187,11 @@ export class CAutocomplete {
   @Method()
   async onItemSelection(index: number) {
     this.currentIndex = index;
+
+    const selectedItem = this._items[this.currentIndex];
+
+    this.value = selectedItem;
+    this.query = selectedItem.name;
   }
 
   private _valueChangedHandler(item: string | number | CAutocompleteItem) {
@@ -240,11 +245,13 @@ export class CAutocomplete {
   onValueChange() {
     if (!this.value) return;
 
-    const realValue = !(this.value as CAutocompleteItem)?.value
-      ? this._items.find((item) => item.value === this.value)
-      : this.value;
+    requestAnimationFrame(() => {
+      const realValue = !(this.value as CAutocompleteItem)?.value
+        ? this._items.find((item) => item.value === this.value)
+        : this.value;
 
-    this._valueChangedHandler(realValue as CAutocompleteItem);
+      this._valueChangedHandler(realValue as CAutocompleteItem);
+    });
   }
 
   @Listen('keydown', { passive: true })
@@ -451,6 +458,7 @@ export class CAutocomplete {
           validation={this.validation}
           value={this.query}
           variant="select"
+          onItemClick={() => this.items.length && this._showMenu()}
         >
           <slot name="pre" slot="pre"></slot>
 

@@ -1,46 +1,43 @@
-/**
+:host(c-sub-navigation-item) {
+  /**
    * @prop --c-sub-navigation-item-text-color: Sub navigation item text color
    * @prop --c-sub-navigation-item-background-color-hover: Sub navigation item hover background color
-   * @prop --c-sub-navigation-item-active-text-color: Sub navigation item active text color
-   * @prop --c-sub-navigation-item-active-background-color: Sub navigation item active background color
+   * @prop --c-sub-navigation-item-text-color-active: Sub navigation item active text color
+   * @prop --c-sub-navigation-item-background-color-active: Sub navigation item active background color
    */
-:host {
-  --c-sub-navigation-item-text-color: var(--c-text-body);
-  --c-sub-navigation-item-background-color: var(--c-transparent);
-  --c-sub-navigation-item-background-color-hover: var(--c-primary-100);
-  --c-sub-navigation-item-active-text-color: var(--c-primary-600);
-  --c-sub-navigation-item-active-background-color: var(--c-white);
+  --_c-sub-navigation-item-text-color: var(--c-sub-navigation-item-text-color, var(--c-text-body));
+  --_c-sub-navigation-item-background-color: var(--c-sub-navigation-item-background-color, var(--c-transparent));
+  --_c-sub-navigation-item-background-color-hover: var(--c-sub-navigation-item-background-color-hover, var(--c-primary-100));
+  --_c-sub-navigation-item-text-color-active: var(--c-sub-navigation-item-text-color-active, var(--c-primary-600));
+  --_c-sub-navigation-item-background-color-active: var(--c-sub-navigation-item-background-color-active, var(--c-white));
+
+  /**
+   * @prop --c-sub-navigation-item-sub-item-background-color-active: Active 3rd level item background color
+   * @prop --c-sub-navigation-item-sub-item-background-color-hover: 3rd level item hover background color
+   * @prop --c-sub-navigation-item-sub-item-background-color: 3rd level item background color
+   * @prop --c-sub-navigation-item-sub-item-text-color-active: Active 3rd level item text color
+   * @prop --c-sub-navigation-item-sub-item-text-color: 3rd level item text color
+   */
+  --_c-sub-navigation-item-sub-item-background-color-active: var(--c-sub-navigation-item-sub-item-background-color-active, var(--c-primary-100));
+  --_c-sub-navigation-item-sub-item-background-color-hover: var(--c-sub-navigation-item-sub-item-background-color-hover, var(--c-primary-100));
+  --_c-sub-navigation-item-sub-item-background-color: var(--c-sub-navigation-item-sub-item-background-color, var(--c-transparent));
+  --_c-sub-navigation-item-sub-item-text-color-active: var(--c-sub-navigation-item-sub-item-text-color-active, var(--c-primary-600));
+  --_c-sub-navigation-item-sub-item-text-color: var(--c-sub-navigation-item-sub-item-text-color, var(--c-text-body));
 }
 
 :host(.c-sub-navigation-item--sub-level) {
-  // --c-sub-navigation-item-sub-item-background-color-hover: yellow;
-  // --c-sub-navigation-item-sub-item-background-color: purple;
-  // --c-sub-navigation-item-sub-item-active-text-color: cyan;
-  // --c-sub-navigation-item-sub-item-active-background-color: hotpink;
-  // --c-sub-navigation-item-sub-item-text-color: rgb(44, 255, 2);
-
-  --c-sub-navigation-item-background-color: var(
-    --c-sub-navigation-item-sub-item-background-color
-  );
-  --c-sub-navigation-item-text-color: var(
-    --c-sub-navigation-item-sub-item-text-color
-  );
-  --c-sub-navigation-item-background-color-hover: var(
-    --c-sub-navigation-item-sub-item-background-color-hover
-  );
-  --c-sub-navigation-item-active-text-color: var(
-    --c-sub-navigation-item-sub-item-active-text-color
-  );
-  --c-sub-navigation-item-active-background-color: var(
-    --c-sub-navigation-item-sub-item-active-background-color
-  );
+  --_c-sub-navigation-item-background-color: var(--_c-sub-navigation-item-sub-item-background-color);
+  --_c-sub-navigation-item-text-color: var(--_c-sub-navigation-item-sub-item-text-color);
+  --_c-sub-navigation-item-background-color-hover: var(--_c-sub-navigation-item-sub-item-background-color-hover);
+  --_c-sub-navigation-item-text-color-active: var(--_c-sub-navigation-item-sub-item-text-color-active);
+  --_c-sub-navigation-item-background-color-active: var(--_c-sub-navigation-item-sub-item-background-color-active);
 }
 
 .c-sub-navigation-item {
   align-items: center;
-  background-color: var(--c-sub-navigation-item-background-color);
+  background-color: var(--_c-sub-navigation-item-background-color);
   border-radius: 4px;
-  color: var(--c-sub-navigation-item-text-color);
+  color: var(--_c-sub-navigation-item-text-color);
   cursor: pointer;
   display: flex;
   font-weight: 400;
@@ -67,7 +64,7 @@
 }
 
 .c-sub-navigation-item__content::before {
-  background-color: var(--c-sub-navigation-item-active-text-color);
+  background-color: var(--_c-sub-navigation-item-text-color-active);
   content: "";
   height: 100%;
   left: 0;
@@ -79,12 +76,12 @@
 }
 
 .c-sub-navigation-item:hover {
-  background-color: var(--c-sub-navigation-item-background-color-hover);
-  color: var(--c-sub-navigation-item-active-text-color);
+  background-color: var(--_c-sub-navigation-item-background-color-hover);
+  color: var(--_c-sub-navigation-item-text-color-active);
 }
 
 :host(.active) .c-sub-navigation-item {
-  background-color: var(--c-sub-navigation-item-active-background-color);
+  background-color: var(--_c-sub-navigation-item-background-color-active);
 }
 
 :host(.active) .c-sub-navigation-item__content::before {
@@ -103,7 +100,7 @@
 }
 
 :host(:host:focus-visible) .c-sub-navigation-item {
-  outline: 2px var(--c-sub-navigation-item-active-text-color) solid;
+  outline: 2px var(--_c-sub-navigation-item-text-color-active) solid;
   outline-offset: 2px;
 }
 

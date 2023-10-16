@@ -1,10 +1,12 @@
 :host {
   /**
-   * @prop --c-steps-line-color: Steps line color
-   * @prop --c-steps-line-complete-color: Steps line complete color
+   * @prop --c-steps-outline-color: Steps outline color
    */
-  --c-steps-line-color: var(--c-tertiary-500);
-  --c-steps-line-complete-color: var(--c-primary-600);
+  --_c-steps-outline-color: var(--c-steps-outline-color, var(--c-primary-600));
+
+  // private
+  --_c-steps-color: var(--c-step-color, var(--c-tertiary-500));
+  --_c-steps-color-complete: var(--c-step-color-complete, var(--c-primary-600));
 
   width: 100%;
   display: grid;
@@ -19,7 +21,7 @@
 }
 
 :host(:focus-visible) {
-  outline: 2px var(--c-steps-line-complete-color) solid;
+  outline: 2px var(--_c-steps-outline-color) solid;
   outline-offset: 2px;
 }
 
@@ -40,13 +42,13 @@
   ::slotted(.divider) {
     height: 2px;
     flex: 1;
-    background-color: var(--c-steps-line-color);
+    background-color: var(--_c-steps-color);
     width: var(--c-steps-divider-width);
     margin: var(--c-steps-divider-margin);
   }
 
   ::slotted(.divider.complete) {
-    background-color: var(--c-steps-line-complete-color);
+    background-color: var(--_c-steps-color-complete);
     height: 4px;
     margin-top: 9px;
   }

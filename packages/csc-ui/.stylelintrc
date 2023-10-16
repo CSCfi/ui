@@ -66,6 +66,7 @@
         "indentation": 2,
         "length-zero-no-unit": true,
         "max-empty-lines": 1,
+        "media-feature-range-notation": "prefix",
         "no-descending-specificity": null,
         "no-duplicate-selectors": true,
         "no-invalid-position-at-import-rule": null,

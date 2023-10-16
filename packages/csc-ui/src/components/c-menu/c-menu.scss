@@ -5,13 +5,14 @@
    * @prop --c-menu-background-color-hover: Menu hover background color
    * @prop --c-menu-outline-color: Menu outline color
    */
-  --c-menu-text-color: var(--c-text-system);
-  --c-menu-text-color-active: var(--c-primary-600);
-  --c-menu-background-color-hover: var(--c-primary-200);
-  --c-menu-outline-color: var(--c-primary-600);
+  --_c-menu-text-color: var(--c-menu-text-color, var(--c-text-system));
+  --_c-menu-text-color-active: var(--c-menu-text-color-active, var(--c-primary-600));
+  --_c-menu-background-color-hover: var(--c-menu-background-color-hover, var(--c-primary-200));
+  --_c-menu-outline-color: var(--c-menu-outline-color, var(--c-primary-600));
 
-  --c-menu-header-height: 38px;
-  --c-menu-padding: 0 14px;
+  // private
+  --_c-menu-header-height: 38px;
+  --_c-menu-padding: 0 14px;
 
   border-radius: 4px;
   display: block;
@@ -23,17 +24,17 @@
     background: none;
     border-radius: 4px;
     border: none;
-    color: var(--c-menu-text-color);
+    color: var(--_c-menu-text-color);
     cursor: pointer;
     display: block;
     font-family: var(--c-font-family);
     margin: 0;
-    padding: var(--c-menu-padding);
+    padding: var(--_c-menu-padding);
     position: relative;
     user-select: none;
 
     &:focus {
-      outline: 2px var(--c-menu-outline-color) solid;
+      outline: 2px var(--_c-menu-outline-color) solid;
       outline-offset: 2px;
     }
 
@@ -44,12 +45,12 @@
     }
 
     &:focus-visible {
-      outline: 2px var(--c-menu-outline-color) solid;
+      outline: 2px var(--_c-menu-outline-color) solid;
       outline-offset: 2px;
     }
 
     &:hover {
-      background-color: var(--c-menu-background-color-hover);
+      background-color: var(--_c-menu-background-color-hover);
     }
   }
 
@@ -68,36 +69,33 @@
     margin-left: 0;
     align-items: center;
     gap: 8px;
-    height: var(--c-menu-header-height);
+    height: var(--_c-menu-header-height);
   }
 }
 
 :host(.c-menu--simple) {
-  --c-menu-padding: 0;
-  --c-menu-background-color-hover: transparent !important;
+  --_c-menu-padding: 0;
+  --_c-menu-background-color-hover: transparent !important;
 
   background: transparent !important;
 }
 
 :host(.c-menu--small) {
-  --c-menu-header-height: 32px;
+  --_c-menu-header-height: 32px;
 }
 
 :host(.c-menu--active) c-icon,
 :host(:hover) c-icon {
-  color: var(--c-menu-text-color-active);
+  color: var(--_c-menu-text-color-active);
 }
 
 :host(.c-menu--no-hover) {
-  --c-menu-background-color-hover: transparent !important;
+  --_c-menu-background-color-hover: transparent !important;
 }
 
 .c-menu-overlay {
   position: fixed;
-  top: 0;
-  left: 0;
-  bottom: 0;
-  right: 0;
+  inset: 0;
   pointer-events: none;
 
   &__content {

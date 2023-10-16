@@ -5,9 +5,9 @@
    * @prop --c-table-header-text-color: Table header text color
    * @prop --c-table-row-background-color-mobile: Background color for table rows (even) in mobile
    */
-  --c-table-border-color: var(--c-tertiary-200);
-  --c-table-header-text-color: var(--c-text-system);
-  --c-table-row-background-color-mobile: rgba(var(--c-primary-rgb), 0.05);
+  --_c-table-border-color: var(--c-table-border-color, var(--c-tertiary-200));
+  --_c-table-header-text-color: var(--c-table-header-text-color, var(--c-text-system));
+  --_c-table-row-background-color-mobile: var(--c-table-row-background-color-mobile, rgba(var(--c-primary-rgb), 0.05));
 }
 
 table.c-table {
@@ -15,7 +15,7 @@ table.c-table {
   border-spacing: 0;
   border: 0;
   font-size: 100%;
-  font: inherit;
+  font-family: var(--c-font-family);
   margin: 0;
   padding: 0;
   width: 100%;
@@ -29,7 +29,7 @@ table.c-table {
   td {
     border: 0;
     font-size: 100%;
-    font: inherit;
+    font-family: var(--c-font-family);
     margin: 0;
     padding: 0;
   }
@@ -39,28 +39,28 @@ table.c-table {
     position: relative;
 
     th {
-      border-bottom: 2px solid var(--c-table-border-color);
+      border-bottom: 2px solid var(--_c-table-border-color);
       text-align: left;
     }
   }
 
   tbody {
-    box-shadow: inset 1px 0 0 0 var(--c-table-border-color),
-      inset -1px 0 0 0 var(--c-table-border-color),
-      inset 0 1px 0 0 var(--c-table-border-color),
-      inset 0 -1px 0 0 var(--c-table-border-color);
+    box-shadow: inset 1px 0 0 0 var(--_c-table-border-color),
+      inset -1px 0 0 0 var(--_c-table-border-color),
+      inset 0 1px 0 0 var(--_c-table-border-color),
+      inset 0 -1px 0 0 var(--_c-table-border-color);
 
     /* Safari box shadow replacement */
     @supports (-webkit-hyphens: none) {
-      border: 1px solid var(--c-table-border-color);
+      border: 1px solid var(--_c-table-border-color);
 
       tr {
-        border-bottom: 1px solid var(--c-table-border-color);
+        border-bottom: 1px solid var(--_c-table-border-color);
       }
     }
 
     tr {
-      box-shadow: inset 0 1px 0 0 var(--c-table-border-color);
+      box-shadow: inset 0 1px 0 0 var(--_c-table-border-color);
     }
   }
 
@@ -68,7 +68,7 @@ table.c-table {
     background-color: var(--c-white);
 
     tr {
-      box-shadow: inset 0 1px 0 0 var(--c-table-border-color);
+      box-shadow: inset 0 1px 0 0 var(--_c-table-border-color);
     }
 
     td {
@@ -91,7 +91,7 @@ table.c-table {
   th {
     height: 48px;
     font-size: 14px;
-    color: var(--c-table-header-text-color);
+    color: var(--_c-table-header-text-color);
   }
 
   td {
@@ -116,7 +116,7 @@ table.c-table {
           border: none;
         }
 
-        box-shadow: inset 0 0 0 1px var(--c-table-border-color);
+        box-shadow: inset 0 0 0 1px var(--_c-table-border-color);
       }
     }
 
@@ -132,7 +132,7 @@ table.c-table {
 
       &::before {
         font-size: 14px;
-        color: var(--c-table-header-text-color);
+        color: var(--_c-table-header-text-color);
         content: attr(data-title);
         display: inline-block;
         text-align: start;
@@ -140,7 +140,7 @@ table.c-table {
       }
 
       &:nth-of-type(even) {
-        background-color: var(--c-table-row-background-color-mobile);
+        background-color: var(--_c-table-row-background-color-mobile);
       }
     }
   }

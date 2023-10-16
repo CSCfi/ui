@@ -10,21 +10,15 @@
    * @prop --c-data-table-checkbox-color-active: Active table checkbox color
    * @prop --c-data-table-checkbox-background-color-hover: Table checkbox hover background color
    */
-  --c-data-table-background-color: var(--c-white);
-  --c-data-table-border-color: var(--c-tertiary-200);
-  --c-data-table-background-color-hover: var(--c-primary-100);
-  --c-data-table-selected-row-background-color: rgba(var(--c-primary-rgb), 0.1);
-  --c-data-table-highlighted-column-background-color: rgba(
-    var(--c-primary-rgb),
-    0.1
-  );
-  --c-data-table-active: var(--c-primary-600);
-  --c-data-table-checkbox-color: var(--c-primary-600);
-  --c-data-table-checkbox-color-active: var(--c-data-table-checkbox-color);
-  --c-data-table-checkbox-background-color-hover: rgba(
-    var(--c-primary-rgb),
-    0.1
-  );
+  --_c-data-table-background-color: var(--c-data-table-background-color, var(--c-white));
+  --_c-data-table-border-color: var(--c-data-table-border-color, var(--c-tertiary-200));
+  --_c-data-table-background-color-hover: var(--c-data-table-background-color-hover, var(--c-primary-100));
+  --_c-data-table-selected-row-background-color: var(--c-data-table-selected-row-background-color, rgba(var(--c-primary-rgb), 0.1));
+  --_c-data-table-highlighted-column-background-color: var(--c-data-table-highlighted-column-background-color, rgba(var(--c-primary-rgb), 0.1));
+  --_c-data-table-active: var(--c-data-table-active, var(--c-primary-600));
+  --_c-data-table-checkbox-color: var(--c-data-table-checkbox-color, var(--c-primary-600));
+  --_c-data-table-checkbox-color-active: var(--c-data-table-checkbox-color-active, var(--_c-data-table-checkbox-color));
+  --_c-data-table-checkbox-background-color-hover: var(--c-data-table-checkbox-background-color-hover, rgba(var(--c-primary-rgb), 0.1));
 
   /**
    * @prop --c-data-table-pagination-button-active-background-color: Table pagination button background color
@@ -34,21 +28,12 @@
    * @prop --c-data-table-pagination-button-background-color-hover: Table pagination button hover background color
    * @prop --c-data-table-pagination-button-text-color: Table pagination button text color
    */
-  --c-data-table-pagination-button-active-background-color: var(
-    --c-primary-600
-  );
-  --c-data-table-pagination-button-active-background-color-hover: var(
-    --c-primary-400
-  );
-  --c-data-table-pagination-button-active-text-color: var(--c-white);
-  --c-data-table-pagination-button-background-color: var(--c-transparent);
-  --c-data-table-pagination-button-background-color-hover: rgba(
-    var(--c-primary-rgb),
-    0.1
-  );
-  --c-data-table-pagination-button-text-color: var(
-    --c-data-table-pagination-button-active-background-color
-  );
+  --_c-data-table-pagination-button-active-background-color: var(--c-data-table-pagination-button-active-background-color, var(--c-primary-600));
+  --_c-data-table-pagination-button-active-background-color-hover: var(--c-data-table-pagination-button-active-background-color-hover, var(--c-primary-400));
+  --_c-data-table-pagination-button-active-text-color: var(--c-data-table-pagination-button-active-text-color, var(--c-white));
+  --_c-data-table-pagination-button-background-color: var(--c-data-table-pagination-button-background-color, var(--c-transparent));
+  --_c-data-table-pagination-button-background-color-hover: var(--c-data-table-pagination-button-background-color-hover, rgba(var(--c-primary-rgb), 0.1));
+  --_c-data-table-pagination-button-text-color: var(--c-data-table-pagination-button-text-color, var(--_c-data-table-pagination-button-active-background-color));
 
   /**
    * @prop --c-data-table-menu-text-color: Table pagination menu text color
@@ -56,17 +41,15 @@
    * @prop --c-data-table-menu-background-color-hover: Table pagination menu hover background color
    * @prop --c-data-table-menu-outline-color: Table pagination menu outline color
    */
-  --c-data-table-menu-text-color: var(--c-text-system);
-  --c-data-table-menu-text-color-active: var(--c-primary-600);
-  --c-data-table-menu-background-color-hover: var(--c-primary-200);
-  --c-data-table-menu-outline-color: var(--c-primary-600);
+  --_c-data-table-menu-text-color: var(--c-data-table-menu-text-color, var(--c-text-system));
+  --_c-data-table-menu-text-color-active: var(--c-data-table-menu-text-color-active, var(--c-primary-600));
+  --_c-data-table-menu-background-color-hover: var(--c-data-table-menu-background-color-hover, var(--c-primary-200));
+  --_c-data-table-menu-outline-color: var(--c-data-table-menu-outline-color, var(--c-primary-600));
 
   c-checkbox {
-    --c-checkbox-color: var(--c-data-table-checkbox-color);
-    --c-checkbox-color-active: var(--c-data-table-checkbox-color-active);
-    --c-checkbox-background-color-hover: var(
-      --c-data-table-checkbox-background-color-hover
-    );
+    --c-checkbox-color: var(--_c-data-table-checkbox-color);
+    --c-checkbox-color-active: var(--_c-data-table-checkbox-color-active);
+    --c-checkbox-background-color-hover: var(--_c-data-table-checkbox-background-color-hover);
   }
 
   display: block;
@@ -84,19 +67,19 @@
   td {
     border: 0;
     font-size: 100%;
-    font: inherit;
+    font-family: inherit;
     margin: 0;
     padding: 0;
   }
 
   table {
-    background-color: var(--c-data-table-background-color);
+    background-color: var(--_c-data-table-background-color);
     border-collapse: collapse;
     border-spacing: 0;
   }
 
   .c-data-table {
-    box-shadow: inset 0 0 0 1px var(--c-data-table-border-color);
+    box-shadow: inset 0 0 0 1px var(--_c-data-table-border-color);
     width: 100%;
 
     .children {
@@ -175,12 +158,12 @@
         white-space: nowrap;
 
         &.sortable:hover {
-          background-color: var(--c-data-table-background-color-hover);
-          color: var(--c-data-table-active);
+          background-color: var(--_c-data-table-background-color-hover);
+          color: var(--_c-data-table-active);
           cursor: pointer;
 
           svg {
-            fill: var(--c-data-table-active);
+            fill: var(--_c-data-table-active);
           }
         }
 
@@ -216,7 +199,7 @@
       }
 
       &.loader {
-        background-color: var(--c-data-table-border-color);
+        background-color: var(--_c-data-table-border-color);
         height: 2px;
         position: relative;
 
@@ -240,11 +223,11 @@
     }
 
     thead {
-      background-color: var(--c-data-table-background-color);
+      background-color: var(--_c-data-table-background-color);
       position: relative;
 
       &.sticky {
-        box-shadow: 0 2px 0 0 var(--c-data-table-border-color);
+        box-shadow: 0 2px 0 0 var(--_c-data-table-border-color);
         position: sticky;
         top: 0;
         z-index: 3;
@@ -271,7 +254,7 @@
 
     tfoot {
       tr {
-        box-shadow: inset 0 1px 0 0 var(--c-data-table-border-color);
+        box-shadow: inset 0 1px 0 0 var(--_c-data-table-border-color);
       }
 
       td {
@@ -283,35 +266,16 @@
         }
 
         c-pagination {
-          --c-pagination-button-active-background-color: var(
-            --c-data-table-pagination-button-active-background-color
-          );
-          --c-pagination-button-active-background-color-hover: var(
-            --c-data-table-pagination-button-active-background-color-hover
-          );
-          --c-pagination-button-active-text-color: var(
-            --c-data-table-pagination-button-active-text-color
-          );
-          --c-pagination-button-background-color: var(
-            --c-data-table-pagination-button-background-color
-          );
-          --c-pagination-button-background-color-hover: var(
-            --c-data-table-pagination-button-background-color-hover
-          );
-          --c-pagination-button-text-color: var(
-            --c-data-table-pagination-button-text-color
-          );
-
-          --c-pagination-menu-text-color: var(--c-data-table-menu-text-color);
-          --c-pagination-menu-text-color-active: var(
-            --c-data-table-menu-text-color-active
-          );
-          --c-pagination-menu-background-color-hover: var(
-            --c-data-table-menu-background-color-hover
-          );
-          --c-pagination-menu-outline-color: var(
-            --c-data-table-menu-text-color
-          );
+          --c-pagination-button-active-background-color: var(--_c-data-table-pagination-button-active-background-color);
+          --c-pagination-button-active-background-color-hover: var(--_c-data-table-pagination-button-active-background-color-hover);
+          --c-pagination-button-active-text-color: var(--_c-data-table-pagination-button-active-text-color);
+          --c-pagination-button-background-color: var(--_c-data-table-pagination-button-background-color);
+          --c-pagination-button-background-color-hover: var(--_c-data-table-pagination-button-background-color-hover);
+          --c-pagination-button-text-color: var(--_c-data-table-pagination-button-text-color);
+          --c-pagination-menu-text-color: var(--_c-data-table-menu-text-color);
+          --c-pagination-menu-text-color-active: var(--_c-data-table-menu-text-color-active);
+          --c-pagination-menu-background-color-hover: var(--_c-data-table-menu-background-color-hover);
+          --c-pagination-menu-outline-color: var(--_c-data-table-menu-text-color);
 
           flex: 1;
         }
@@ -322,12 +286,12 @@
       /* Safari box shadow replacement */
       @supports (-webkit-hyphens: none) {
         tr {
-          border-bottom: 1px solid var(--c-data-table-border-color);
+          border-bottom: 1px solid var(--_c-data-table-border-color);
         }
       }
 
       tr {
-        box-shadow: inset 0 1px 0 0 var(--c-data-table-border-color);
+        box-shadow: inset 0 1px 0 0 var(--_c-data-table-border-color);
 
         &.actions {
           box-shadow: none;
@@ -339,9 +303,9 @@
         }
 
         &.active {
-          box-shadow: inset 2px 0 0 var(--c-data-table-active),
-            inset -2px 0 0 var(--c-data-table-active),
-            inset 0 2px 0 var(--c-data-table-active);
+          box-shadow: inset 2px 0 0 var(--_c-data-table-active),
+            inset -2px 0 0 var(--_c-data-table-active),
+            inset 0 2px 0 var(--_c-data-table-active);
           border-radius: 6px 6px 0 0;
 
           svg {
@@ -350,34 +314,34 @@
 
           + .additional-data {
             border-radius: 0 0 6px 6px;
-            box-shadow: inset 2px 0 0 var(--c-data-table-active),
-              inset -2px 0 0 var(--c-data-table-active),
-              inset 0 -2px 0 var(--c-data-table-active);
+            box-shadow: inset 2px 0 0 var(--_c-data-table-active),
+              inset -2px 0 0 var(--_c-data-table-active),
+              inset 0 -2px 0 var(--_c-data-table-active);
           }
 
           &.selected {
-            box-shadow: inset 4px 0 0 var(--c-data-table-active),
-              inset -2px 0 0 var(--c-data-table-active),
-              inset 0 2px 0 var(--c-data-table-active);
+            box-shadow: inset 4px 0 0 var(--_c-data-table-active),
+              inset -2px 0 0 var(--_c-data-table-active),
+              inset 0 2px 0 var(--_c-data-table-active);
           }
         }
 
         &.selected {
-          background-color: var(--c-data-table-selected-row-background-color);
-          box-shadow: inset 4px 0 0 var(--c-data-table-active),
-            inset 0 1px 0 0 var(--c-data-table-border-color);
+          background-color: var(--_c-data-table-selected-row-background-color);
+          box-shadow: inset 4px 0 0 var(--_c-data-table-active),
+            inset 0 1px 0 0 var(--_c-data-table-border-color);
 
           + .additional-data {
-            box-shadow: inset 4px 0 0 var(--c-data-table-active),
-              inset -2px 0 0 var(--c-data-table-active),
-              inset 0 -2px 0 var(--c-data-table-active);
+            box-shadow: inset 4px 0 0 var(--_c-data-table-active),
+              inset -2px 0 0 var(--_c-data-table-active),
+              inset 0 -2px 0 var(--_c-data-table-active);
           }
         }
       }
     }
 
     &__loader {
-      background-color: var(--c-data-table-border-color);
+      background-color: var(--_c-data-table-border-color);
       height: 2px;
       overflow: hidden;
       position: absolute;
@@ -386,7 +350,7 @@
 
     .loading-bar {
       animation: loading 1s ease-in 0.5s infinite;
-      background-color: var(--c-data-table-active);
+      background-color: var(--_c-data-table-active);
       height: 100%;
       left: -50%;
       position: absolute;
@@ -398,7 +362,7 @@
         transform: translateX(0);
       }
 
-      to {
+      100% {
         transform: translateX(400%);
       }
     }
@@ -420,11 +384,11 @@
           padding: 12px;
 
           &:not(:last-child) {
-            box-shadow: inset 0 -1px 0 0 var(--c-data-table-border-color);
+            box-shadow: inset 0 -1px 0 0 var(--_c-data-table-border-color);
           }
 
           span {
-            color: var(--c-data-table-active);
+            color: var(--_c-data-table-active);
             font-weight: 600;
           }
 
@@ -450,9 +414,9 @@
           cursor: pointer;
 
           &:hover {
-            background-color: var(--c-data-table-background-color-hover);
+            background-color: var(--_c-data-table-background-color-hover);
             border-radius: 6px;
-            box-shadow: inset 0 0 0 2px var(--c-data-table-active);
+            box-shadow: inset 0 0 0 2px var(--_c-data-table-active);
             overflow: hidden;
 
             c-button.text,
@@ -463,22 +427,22 @@
 
           &.active:hover {
             border-radius: 6px 6px 0 0;
-            box-shadow: inset 2px 0 0 var(--c-data-table-active),
-              inset -2px 0 0 var(--c-data-table-active),
-              inset 0 2px 0 var(--c-data-table-active);
+            box-shadow: inset 2px 0 0 var(--_c-data-table-active),
+              inset -2px 0 0 var(--_c-data-table-active),
+              inset 0 2px 0 var(--_c-data-table-active);
           }
 
           &.selected.active:hover {
             border-radius: 6px 6px 0 0;
-            box-shadow: inset 4px 0 0 var(--c-data-table-active),
-              inset -2px 0 0 var(--c-data-table-active),
-              inset 0 2px 0 var(--c-data-table-active);
+            box-shadow: inset 4px 0 0 var(--_c-data-table-active),
+              inset -2px 0 0 var(--_c-data-table-active),
+              inset 0 2px 0 var(--_c-data-table-active);
           }
 
           &.selected:hover {
             border-radius: 6px;
-            box-shadow: inset 4px 0 0 var(--c-data-table-active),
-              inset 0 0 0 2px var(--c-data-table-active);
+            box-shadow: inset 4px 0 0 var(--_c-data-table-active),
+              inset 0 0 0 2px var(--_c-data-table-active);
           }
         }
       }
@@ -486,7 +450,7 @@
   }
 
   .sorted-column {
-    background-color: var(--c-data-table-highlighted-column-background-color);
+    background-color: var(--_c-data-table-highlighted-column-background-color);
   }
 }
 
@@ -510,13 +474,13 @@
 // }
 
 // table {
-//   background-color: var(--c-data-table-background-color);
+//   background-color: var(--_c-data-table-background-color);
 //   border-collapse: collapse;
 //   border-spacing: 0;
 // }
 
 // .c-data-table {
-//   box-shadow: inset 0 0 0 1px var(--c-data-table-border-color);
+//   box-shadow: inset 0 0 0 1px var(--_c-data-table-border-color);
 //   width: 100%;
 
 //   .children {
@@ -595,12 +559,12 @@
 //       white-space: nowrap;
 
 //       &.sortable:hover {
-//         background-color: var(--c-data-table-background-color-hover);
-//         color: var(--c-data-table-active);
+//         background-color: var(--_c-data-table-background-color-hover);
+//         color: var(--_c-data-table-active);
 //         cursor: pointer;
 
 //         svg {
-//           fill: var(--c-data-table-active);
+//           fill: var(--_c-data-table-active);
 //         }
 //       }
 
@@ -636,7 +600,7 @@
 //     }
 
 //     &.loader {
-//       background-color: var(--c-data-table-border-color);
+//       background-color: var(--_c-data-table-border-color);
 //       height: 2px;
 //       position: relative;
 
@@ -663,7 +627,7 @@
 //     position: relative;
 
 //     &.sticky {
-//       box-shadow: 0 2px 0 0 var(--c-data-table-border-color);
+//       box-shadow: 0 2px 0 0 var(--_c-data-table-border-color);
 //       position: sticky;
 //       top: 0;
 //       z-index: 3;
@@ -690,7 +654,7 @@
 
 //   tfoot {
 //     tr {
-//       box-shadow: inset 0 1px 0 0 var(--c-data-table-border-color);
+//       box-shadow: inset 0 1px 0 0 var(--_c-data-table-border-color);
 //     }
 
 //     td {
@@ -711,12 +675,12 @@
 //     /* Safari box shadow replacement */
 //     @supports (-webkit-hyphens: none) {
 //       tr {
-//         border-bottom: 1px solid var(--c-data-table-border-color);
+//         border-bottom: 1px solid var(--_c-data-table-border-color);
 //       }
 //     }
 
 //     tr {
-//       box-shadow: inset 0 1px 0 0 var(--c-data-table-border-color);
+//       box-shadow: inset 0 1px 0 0 var(--_c-data-table-border-color);
 
 //       &.actions {
 //         box-shadow: none;
@@ -728,9 +692,9 @@
 //       }
 
 //       &.active {
-//         box-shadow: inset 2px 0 0 var(--c-data-table-active),
-//           inset -2px 0 0 var(--c-data-table-active),
-//           inset 0 2px 0 var(--c-data-table-active);
+//         box-shadow: inset 2px 0 0 var(--_c-data-table-active),
+//           inset -2px 0 0 var(--_c-data-table-active),
+//           inset 0 2px 0 var(--_c-data-table-active);
 //         border-radius: 6px 6px 0 0;
 
 //         svg {
@@ -739,34 +703,34 @@
 
 //         + .additional-data {
 //           border-radius: 0 0 6px 6px;
-//           box-shadow: inset 2px 0 0 var(--c-data-table-active),
-//             inset -2px 0 0 var(--c-data-table-active),
-//             inset 0 -2px 0 var(--c-data-table-active);
+//           box-shadow: inset 2px 0 0 var(--_c-data-table-active),
+//             inset -2px 0 0 var(--_c-data-table-active),
+//             inset 0 -2px 0 var(--_c-data-table-active);
 //         }
 
 //         &.selected {
-//           box-shadow: inset 4px 0 0 var(--c-data-table-active),
-//             inset -2px 0 0 var(--c-data-table-active),
-//             inset 0 2px 0 var(--c-data-table-active);
+//           box-shadow: inset 4px 0 0 var(--_c-data-table-active),
+//             inset -2px 0 0 var(--_c-data-table-active),
+//             inset 0 2px 0 var(--_c-data-table-active);
 //         }
 //       }
 
 //       &.selected {
-//         background-color: var(---c-data-table-selected-row-background-color);
-//         box-shadow: inset 4px 0 0 var(--c-data-table-active),
-//           inset 0 1px 0 0 var(--c-data-table-border-color);
+//         background-color: var(---_c-data-table-selected-row-background-color);
+//         box-shadow: inset 4px 0 0 var(--_c-data-table-active),
+//           inset 0 1px 0 0 var(--_c-data-table-border-color);
 
 //         + .additional-data {
-//           box-shadow: inset 4px 0 0 var(--c-data-table-active),
-//             inset -2px 0 0 var(--c-data-table-active),
-//             inset 0 -2px 0 var(--c-data-table-active);
+//           box-shadow: inset 4px 0 0 var(--_c-data-table-active),
+//             inset -2px 0 0 var(--_c-data-table-active),
+//             inset 0 -2px 0 var(--_c-data-table-active);
 //         }
 //       }
 //     }
 //   }
 
 //   &__loader {
-//     background-color: var(--c-data-table-border-color);
+//     background-color: var(--_c-data-table-border-color);
 //     height: 2px;
 //     overflow: hidden;
 //     position: absolute;
@@ -775,7 +739,7 @@
 
 //   .loading-bar {
 //     animation: loading 1s ease-in 0.5s infinite;
-//     background-color: var(--c-data-table-active);
+//     background-color: var(--_c-data-table-active);
 //     height: 100%;
 //     left: -50%;
 //     position: absolute;
@@ -808,11 +772,11 @@
 //         padding: 12px;
 
 //         &:not(:last-child) {
-//           box-shadow: inset 0 -1px 0 0 var(--c-data-table-border-color);
+//           box-shadow: inset 0 -1px 0 0 var(--_c-data-table-border-color);
 //         }
 
 //         span {
-//           color: var(--c-data-table-active);
+//           color: var(--_c-data-table-active);
 //           font-weight: 600;
 //         }
 
@@ -838,9 +802,9 @@
 //         cursor: pointer;
 
 //         &:hover {
-//           background-color: var(--c-data-table-background-color-hover);
+//           background-color: var(--_c-data-table-background-color-hover);
 //           border-radius: 6px;
-//           box-shadow: inset 0 0 0 2px var(--c-data-table-active);
+//           box-shadow: inset 0 0 0 2px var(--_c-data-table-active);
 //           overflow: hidden;
 
 //           c-button.text,
@@ -851,22 +815,22 @@
 
 //         &.active:hover {
 //           border-radius: 6px 6px 0 0;
-//           box-shadow: inset 2px 0 0 var(--c-data-table-active),
-//             inset -2px 0 0 var(--c-data-table-active),
-//             inset 0 2px 0 var(--c-data-table-active);
+//           box-shadow: inset 2px 0 0 var(--_c-data-table-active),
+//             inset -2px 0 0 var(--_c-data-table-active),
+//             inset 0 2px 0 var(--_c-data-table-active);
 //         }
 
 //         &.selected.active:hover {
 //           border-radius: 6px 6px 0 0;
-//           box-shadow: inset 4px 0 0 var(--c-data-table-active),
-//             inset -2px 0 0 var(--c-data-table-active),
-//             inset 0 2px 0 var(--c-data-table-active);
+//           box-shadow: inset 4px 0 0 var(--_c-data-table-active),
+//             inset -2px 0 0 var(--_c-data-table-active),
+//             inset 0 2px 0 var(--_c-data-table-active);
 //         }
 
 //         &.selected:hover {
 //           border-radius: 6px;
-//           box-shadow: inset 4px 0 0 var(--c-data-table-active),
-//             inset 0 0 0 2px var(--c-data-table-active);
+//           box-shadow: inset 4px 0 0 var(--_c-data-table-active),
+//             inset 0 0 0 2px var(--_c-data-table-active);
 //         }
 //       }
 //     }

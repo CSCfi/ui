@@ -21,10 +21,10 @@ Basic hyperlink component
 
 ## CSS Custom Properties
 
-| Name             | Description                 |
-| ---------------- | --------------------------- |
-| `--c-link-color` | Link color                  |
-| `--c-link-hover` | Link hover background color |
+| Name              | Description                 |
+| ----------------- | --------------------------- |
+| `--_c-link-color` | Link color                  |
+| `--_c-link-hover` | Link hover background color |
 
 
 ----------------------------------------------

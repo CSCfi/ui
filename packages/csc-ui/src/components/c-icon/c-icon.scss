@@ -2,14 +2,14 @@
   /**
    * @prop --c-icon-color: Color of the icon
    */
-  --c-icon-color: var(--c-icon-default-color, currentcolor);
+  --_c-icon-color: var(--c-icon-color, var(--c-icon-default-color, curentColor));
 
   display: inline-flex;
   align-items: center;
 
   svg {
     path {
-      fill: var(--c-icon-color, currentColor);
+      fill: var(--_c-icon-color);
     }
   }
 }

@@ -1,9 +1,9 @@
 :host {
-  --c-tab-item-padding: 16px;
+  --_c-tab-item-padding: 16px;
 
   display: block;
   min-width: 100%;
-  padding: var(--c-tab-item-padding);
+  padding: var(--_c-tab-item-padding);
   height: 0;
   user-select: none;
 }

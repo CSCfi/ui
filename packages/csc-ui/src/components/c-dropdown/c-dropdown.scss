@@ -5,12 +5,14 @@
    * @prop --c-dropdown-text-color: Menu item text color
    * @prop --c-dropdown-text-color-active: Active menu item text color
    */
-  --c-dropdown-background-color: var(--c-white);
-  --c-dropdown-background-color-hover: var(--c-primary-200);
-  --c-dropdown-text-color: var(--c-text-body);
-  --c-dropdown-text-color-active: var(--c-primary-600);
-  --c-dropdown-font-size: 14px;
-  --c-dropdown-height: 42px;
+  --_c-dropdown-background-color: var(--c-dropdown-background-color, var(--c-white));
+  --_c-dropdown-background-color-hover: var(--c-dropdown-background-color-hover, var(--c-primary-200));
+  --_c-dropdown-text-color: var(--c-dropdown-text-color, var(--c-text-body));
+  --_c-dropdown-text-color-active: var(--c-dropdown-text-color-active, var(--c-primary-600));
+
+  // private
+  --_c-dropdown-font-size: 14px;
+  --_c-dropdown-height: 42px;
 
   display: block;
   position: absolute;
@@ -18,7 +20,7 @@
   ul {
     margin: 0;
     padding: 0;
-    background-color: var(--c-dropdown-background-color);
+    background-color: var(--_c-dropdown-background-color);
     list-style: none;
     box-shadow: 2px 4px 10px #00000029;
     width: 100%;
@@ -41,8 +43,8 @@
     cursor: pointer;
     display: flex;
     flex-wrap: nowrap;
-    font-size: var(--c-dropdown-font-size);
-    min-height: var(--c-dropdown-height);
+    font-size: var(--_c-dropdown-font-size);
+    min-height: var(--_c-dropdown-height);
     padding-left: 10px;
     padding-right: 10px;
     outline: none;
@@ -51,8 +53,8 @@
 
     &:not(.disabled):hover,
     &.active {
-      background: var(--c-dropdown-background-color-hover);
-      color: var(--c-dropdown-text-color-active);
+      background: var(--_c-dropdown-background-color-hover);
+      color: var(--_c-dropdown-text-color-active);
     }
 
     &.disabled {

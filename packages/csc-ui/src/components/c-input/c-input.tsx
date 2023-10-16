@@ -450,8 +450,11 @@ export class CInput {
 
     if (click) {
       this.inputField?.click();
-      this._dropdownElement.wasClicked = true;
-      this.itemClick.emit();
+
+      if (this._dropdownElement) {
+        this._dropdownElement.wasClicked = true;
+        this.itemClick.emit();
+      }
     }
 
     // show the label if there's no value
@@ -491,7 +494,7 @@ export class CInput {
         <legend
           class={classes}
           style={{
-            '--c-input-legend-width': this.labelWidth + 'px',
+            '--_c-input-legend-width': this.labelWidth + 'px',
           }}
         >
           <span class="notranslate"></span>
@@ -568,7 +571,7 @@ export class CInput {
               <div
                 class="c-input__field"
                 style={{
-                  '--c-input-label-position': this.preSlotWidth + 'px',
+                  '--_c-input-label-position': this.preSlotWidth + 'px',
                 }}
               >
                 <slot name="pre"></slot>

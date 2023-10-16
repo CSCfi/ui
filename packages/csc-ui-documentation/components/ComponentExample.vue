@@ -25,7 +25,7 @@
               <c-icon :path="mdiLanguageHtml5"></c-icon>
               Template
             </c-button>
-            <c-button v-if="examples.scripts.get(name)" value="script">
+            <c-button v-if="exampleScript" value="script">
               <c-icon :path="mdiLanguageTypescript"></c-icon>
               Script
             </c-button>
@@ -34,8 +34,8 @@
 
         <keep-alive>
           <CodeBlock
-            v-if="exampleType === 'template' && examples.templates.get(name)"
-            :code="examples.templates.get(name).trim()"
+            v-if="exampleType === 'template' && exampleTemplate"
+            :code="exampleTemplate.trim()"
             :highlightjs="true"
             lang="html"
             theme="atom-one-dark"
@@ -44,8 +44,8 @@
           />
 
           <CodeBlock
-            v-else-if="exampleType === 'script' && examples.scripts.get(name)"
-            :code="examples.scripts.get(name).trim()"
+            v-else-if="exampleType === 'script' && exampleScript"
+            :code="exampleScript.trim()"
             :highlightjs="true"
             theme="atom-one-dark"
             code-block-radius="6px"
@@ -62,35 +62,43 @@ import { mdiLanguageHtml5, mdiLanguageTypescript, mdiXml } from '@mdi/js';
 
 defineProps<{
   rows?: boolean;
-  name: string;
 }>();
 
 const slots = useSlots();
 
 const exampleType = ref<'template' | 'script'>('template');
 
-const examples = ref({ scripts: new Map(), templates: new Map() });
+const exampleScript = ref('');
+
+const exampleTemplate = ref('');
 
 const componentName = inject('componentName');
 
-// const { componentData } = storeToRefs(useExampleStore());
+const scriptFiles = import.meta.glob(`../example-data/**/*.script.js`);
 
-const scripts = computed(() => {
-  return import(`../example-data/${componentName}.vue.script.js`);
-});
+const templateFiles = import.meta.glob(`../example-data/**/*.template.js`);
 
-const templates = computed(() => {
-  return import(`../example-data/${componentName}.vue.template.js`);
-});
+onMounted(() => {
+  const instance = getCurrentInstance();
+  const parent = instance?.parent?.type?.__name?.toLowerCase();
 
-onMounted(async () => {
-  Object.entries(await scripts.value).forEach(([key, value]) => {
-    examples.value.scripts.set(key, value);
-  });
+  for (const path in scriptFiles) {
+    if (path.includes(`/example-data/${componentName}/${parent}.`)) {
+      // @ts-ignore
+      scriptFiles[path]().then((mod: any) => {
+        exampleScript.value = mod.default;
+      });
+    }
+  }
 
-  Object.entries(await templates.value).forEach(([key, value]) => {
-    examples.value.templates.set(key, value);
-  });
+  for (const path in templateFiles) {
+    if (path.includes(`/example-data/${componentName}/${parent}.`)) {
+      // @ts-ignore
+      templateFiles[path]().then((mod: any) => {
+        exampleTemplate.value = mod.default;
+      });
+    }
+  }
 });
 </script>
 

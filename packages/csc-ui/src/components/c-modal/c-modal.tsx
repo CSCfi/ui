@@ -141,7 +141,7 @@ export class CModal {
 
     const width = isNaN(this.width as number) ? this.width : `${this.width}px`;
 
-    this.el.style.setProperty('--c-modal-width', `${width}`);
+    this.el.style.setProperty('--_c-modal-width', `${width}`);
   }
 
   componentDidLoad() {

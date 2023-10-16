@@ -96,6 +96,14 @@
 // @example-start|basic|objectItems|optionAsValue
 import { ref } from 'vue';
 // @example-end
+import countries from '../data/countries.json';
+
+const items = computed(() => {
+  return Object.entries(countries).map(([value, name]) => ({
+    name,
+    value,
+  }));
+});
 
 // @example-start|basic
 const selectedItem = ref('normal');
@@ -107,17 +115,21 @@ const selectedOption = ref('');
 
 // @example-start|objectItems
 const value = ref(null);
-
+// @example-end
+/*
+// @example-start|objectItems
 const items = [
-  { name: 'Finland', value: 'finland' },
-  { name: 'Sweden', value: 'sweden' },
-  { name: 'Norway', value: 'norway' },
-  { name: 'Denmark', value: 'denmark' },
-  { name: 'Germany', value: 'germany' },
-  { name: 'Belgium', value: 'belgium' },
-  { name: 'France', value: 'france' },
+  { name: 'Finland', value: 'FI' },
+  { name: 'Sweden', value: 'SE' },
+  { name: 'Norway', value: 'NO' },
+  { name: 'Denmark', value: 'DK' },
+  { name: 'Germany', value: 'DE' },
+  { name: 'Belgium', value: 'BE' },
+  { name: 'France', value: 'FR' },
+  // ...
 ];
 // @example-end
+*/
 </script>
 
 <style lang="scss"></style>

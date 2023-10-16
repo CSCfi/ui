@@ -6,7 +6,7 @@ dialog {
   max-width: calc(100% - 32px);
   overflow: visible;
   padding: 0;
-  width: var(--c-modal-width, 600px);
+  width: var(--_c-modal-width, 600px);
 
   &:not([open]) {
     pointer-events: none;

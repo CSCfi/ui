@@ -46,7 +46,7 @@ export class CRow {
     };
 
     return (
-      <Host class={classes} style={{ '--c-row-gap': `${this.gap}px` }}>
+      <Host class={classes} style={{ '--_c-row-gap': `${this.gap}px` }}>
         <slot></slot>
       </Host>
     );

@@ -3,16 +3,16 @@
    * @prop --c-main-background-color: Background color
    * @prop --c-main-text-color: Text color
    */
-  --c-main-background-color: var(--c-primary-200);
-  --c-main-text-color: var(--c-text-body);
+  --_c-main-background-color: var(--c-main-background-color, var(--c-primary-200));
+  --_c-main-text-color: var(--c-main-text-color, var(--c-text-body));
 
-  background: var(--c-main-background-color);
-  color: var(--c-main-text-color);
+  background: var(--_c-main-background-color);
+  color: var(--_c-main-text-color);
   display: flex;
   flex-direction: column;
   height: 100vh;
 
-  :slotted(*) {
-    color: var(--c-main-text);
+  ::slotted(*) {
+    color: var(--_c-main-text-color);
   }
 }

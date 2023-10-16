@@ -2,10 +2,10 @@
   /**
    * @prop --c-login-card-title-color: Login card title text color
    */
-  --c-login-card-title-color: var(--c-primary-600);
+  --_c-login-card-title-color: var(--c-login-card-title-color, var(--c-primary-600));
 
   display: block;
-  color: var(--c-login-card-title-color);
+  color: var(--_c-login-card-title-color);
   font-family: var(--c-font-family);
   font-size: 40px;
   font-weight: 700;

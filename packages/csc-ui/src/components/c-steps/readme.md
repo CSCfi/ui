@@ -28,10 +28,9 @@
 
 ## CSS Custom Properties
 
-| Name                            | Description               |
-| ------------------------------- | ------------------------- |
-| `--c-steps-line-color`          | Steps line color          |
-| `--c-steps-line-complete-color` | Steps line complete color |
+| Name                      | Description         |
+| ------------------------- | ------------------- |
+| `--c-steps-outline-color` | Steps outline color |
 
 
 ----------------------------------------------

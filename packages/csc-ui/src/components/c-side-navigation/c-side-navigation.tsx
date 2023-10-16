@@ -96,7 +96,7 @@ export class CSideNavigation {
 
         {this.menuVisible && this.mobile && (
           <div
-            class="c-overlay c-fadeIn"
+            class="c-overlay c-fade-in"
             onClick={() => this._closeMenu()}
           ></div>
         )}

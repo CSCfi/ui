@@ -1,25 +1,22 @@
 :host {
   /**
    * @prop --c-loader-color: Loader color
+   * @prop --c-loader-background-color: Loader background color
+   * @prop --c-loader-text-color: Loader text color
    */
-  --c-loader-color: var(--c-primary-600);
+  --_c-loader-color: var(--c-loader-color, var(--c-primary-600));
+  --_c-loader-background-color: var(--c-loader-background-color, rgba(var(--c-white-rgb), 0.8));
+  --_c-loader-text-color: var(--c-loader-text-color, var(--c-text-system));
 
-  --c-rotation-animation-speed: 2s;
-  --c-rotation-animation-easing: linear;
-  --c-stroke-animation-speed: 1.5s;
-  --c-stroke-animation-easing: ease-in-out;
-  --c-stroke-width: 4px;
-  --c-stroke-start-dasharray: 1, 200;
-  --c-stroke-end-dasharray: 89, 200;
+  // private
+  --_c-stroke-start-dasharray: 1, 200;
+  --_c-stroke-end-dasharray: 89, 200;
 
   width: 100%;
   position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
+  inset: 0;
   z-index: 6;
-  background: rgba(255, 255, 255, 0.8);
+  background: var(--_c-loader-background-color);
   border-radius: inherit;
   visibility: hidden;
   opacity: 0;
@@ -48,7 +45,7 @@
   &__slot {
     line-height: 40px;
     font-size: 14px;
-    color: var(--c-text-system);
+    color: var(--_c-loader-text-color);
     text-align: center;
     font-weight: 500;
     display: block;
@@ -70,17 +67,17 @@
 
 @keyframes animate-stroke {
   0% {
-    stroke-dasharray: var(--c-stroke-start-dasharray);
+    stroke-dasharray: var(--_c-stroke-start-dasharray);
     stroke-dashoffset: 0;
   }
 
   50% {
-    stroke-dasharray: var(--c-stroke-end-dasharray);
+    stroke-dasharray: var(--_c-stroke-end-dasharray);
     stroke-dashoffset: -35;
   }
 
   100% {
-    stroke-dasharray: var(--c-stroke-end-dasharray);
+    stroke-dasharray: var(--_c-stroke-end-dasharray);
     stroke-dashoffset: -124;
   }
 }

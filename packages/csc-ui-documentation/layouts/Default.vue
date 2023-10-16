@@ -70,13 +70,11 @@
         </c-side-navigation-item>
       </c-side-navigation>
 
-      <div
-        class="flex-1 h-full p-2 sm:p-3 md:p-4 lg:p-6 overflow-y-auto scroll-smooth"
-      >
+      <c-page>
         <div class="max-w-7xl">
           <slot />
         </div>
-      </div>
+      </c-page>
     </div>
   </c-main>
 </template>
