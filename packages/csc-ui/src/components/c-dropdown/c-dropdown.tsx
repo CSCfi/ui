@@ -1,5 +1,20 @@
-import { Component, Element, Host, Prop, State, Watch, h } from '@stencil/core';
-import { CSelectItem } from '../../types';
+import {
+  Component,
+  Element,
+  Host,
+  Method,
+  Prop,
+  State,
+  Watch,
+  h,
+} from '@stencil/core';
+import { CAutocompleteItem, CSelectItem } from '../../types';
+import { mdiAlert } from '@mdi/js';
+
+export type _CDropdownUpdateParams = {
+  items?: CSelectItem[] | CAutocompleteItem[];
+  options?: Map<string, HTMLCOptionElement>;
+};
 
 @Component({
   tag: 'c-dropdown',
@@ -12,7 +27,7 @@ export class CDropdown {
   /**
    * Dropdown items
    */
-  @Prop() items: CSelectItem[] = [];
+  @Prop() items: CSelectItem[] | CAutocompleteItem[] = [];
 
   /**
    * Dropdown options
@@ -45,9 +60,24 @@ export class CDropdown {
   @Prop() isOpen = false;
 
   /**
+   * Focus dropdown on open
+   */
+  @Prop() focusList: boolean;
+
+  /**
    * Id of the input element
    */
   @Prop() inputId: string;
+
+  /**
+   * Type of the parent element
+   */
+  @Prop() type: 'select' | 'autocomplete';
+
+  /**
+   * @private
+   */
+  @Prop() wasClicked = false;
 
   @State() currentIndex: number = null;
 
@@ -59,16 +89,48 @@ export class CDropdown {
 
   @State() statusText = '';
 
+  private _isOpenedWithKeyboard = false;
+
   private _id = '';
+
+  /**
+   * @private
+   */
+  @Method()
+  async updateDropdown(params: _CDropdownUpdateParams) {
+    this.currentIndex = null;
+    this.items = params.items || this.items;
+    this.options = params.options || this.options;
+
+    this._updateMenuItems();
+    this._updateStatusText();
+  }
+
+  /**
+   * @private
+   */
+  @Method()
+  async focusDropdown() {
+    requestAnimationFrame(() => {
+      this._listElement.focus();
+    });
+  }
 
   @Watch('isOpen')
   onOpenStateChange(open) {
+    if (!this.wasClicked && ['select', 'autocomplete'].includes(this.type)) {
+      this._isOpenedWithKeyboard = open;
+    }
+
     if (open) {
       this._onOpen();
       this._createEventListeners();
 
       requestAnimationFrame(() => {
-        this._listElement.focus();
+        if (this.focusList) {
+          this._listElement.focus();
+          this._handleCurrentIndexChange();
+        }
       });
 
       return;
@@ -76,6 +138,11 @@ export class CDropdown {
 
     this._onClose();
     this._removeEventListeners();
+  }
+
+  @Watch('currentIndex')
+  onCurrentIndexChange() {
+    this._handleCurrentIndexChange();
   }
 
   private _debounce = null;
@@ -134,7 +201,7 @@ export class CDropdown {
 
     if (isActive) {
       this.currentIndex = index;
-      this._listElement.setAttribute('aria-activedescendant', itemId);
+      this.parent.setActiveDescendant(itemId);
     }
 
     const listItem = document.createElement('li');
@@ -143,6 +210,7 @@ export class CDropdown {
     listItem.role = 'option';
     listItem.ariaPosInSet = (index + 1).toString();
     listItem.ariaSetSize = this.items.length.toString();
+
     listItem.ariaSelected = isActive.toString();
 
     listItem.id = itemId;
@@ -187,6 +255,34 @@ export class CDropdown {
     this._listElement.appendChild(listItem);
   };
 
+  private _renderEmptyItem() {
+    const emptyElement = document.createElement('li');
+    emptyElement.tabIndex = -1;
+
+    const icon = document.createElement('c-icon');
+    icon.path = mdiAlert;
+    icon.size = 18;
+    icon.color = 'var(--c-warning-600)';
+
+    emptyElement.appendChild(icon);
+    emptyElement.append('No suggestions found');
+
+    this._listElement.appendChild(emptyElement);
+  }
+
+  private _updateMenuItems() {
+    this._listElement.replaceChildren();
+    this._itemRefs.length = 0;
+
+    if (!this.items.length) {
+      this._renderEmptyItem();
+
+      return;
+    }
+
+    this.items.map((item, index) => this._renderMenuItem(item, index));
+  }
+
   private _renderMenu(/* style */) {
     this._id = `${this.inputId}--items`;
 
@@ -212,31 +308,6 @@ export class CDropdown {
       'keyup',
       this._onKeyboardNavigation.bind(this),
     );
-
-    // return (
-    //   <div
-    //     class={{
-    //       'c-input-menu__item-wrapper': true,
-    //     }}
-    //   >
-    //     <ul
-    //       id={'results_' + this.hostId}
-    //       class="active"
-    //       // aria-activedescendant={this.activeListItemId}
-    //       // aria-expanded={this.menuVisible.toString()}
-    //       // style={style}
-    //       // title={this.label || this.placeholder}
-    //       // class={
-    //       //   this.menuVisible
-    //       //     ? 'c-input-menu__items'
-    //       //     : 'c-input-menu__items c-input-menu__items--hidden'
-    //       // }
-    //       role="listbox"
-    //     >
-    //       {this.items.map((item, index) => this._renderMenuItem(item, index))}
-    //     </ul>
-    //   </div>
-    // );
   }
 
   private _onOpen() {
@@ -247,10 +318,13 @@ export class CDropdown {
   }
 
   private _onClose(focusInput = false) {
+    this.parent.onHideMenu();
     this.parent.shadowRoot.querySelector('.c-input').classList.remove('active');
     this._listElement.classList.remove('active');
     this._listElement.ariaExpanded = 'false';
     this._listElement.tabIndex = -1;
+    this.isOpen = false;
+    this.currentIndex = this.index;
 
     if (focusInput) {
       this.parent.shadowRoot.querySelector('input').focus();
@@ -263,17 +337,11 @@ export class CDropdown {
     if (isDisabled) return;
 
     this.parent.onItemSelection(index);
+    this.index = index;
     this._onClose(focusInput);
 
     this._itemRefs.forEach((item, i) => {
       item.ariaSelected = (i === index).toString();
-
-      if (i === index) {
-        this._listElement.setAttribute(
-          'aria-activedescendant',
-          item.id ?? null,
-        );
-      }
     });
   }
 
@@ -301,9 +369,6 @@ export class CDropdown {
     requestAnimationFrame(async () => {
       this._positionMenu();
 
-      const viewportHeight = window.innerHeight;
-      const viewportWidth = window.innerWidth;
-
       const { bottom, right, height, width } =
         this.host.getBoundingClientRect();
 
@@ -320,8 +385,8 @@ export class CDropdown {
       this.scrollingParent.addEventListener('scroll', this._onScrollFn);
 
       const isInView = {
-        x: right < viewportWidth,
-        y: bottom < viewportHeight,
+        x: right < this.scrollingParent.scrollWidth,
+        y: bottom < this.scrollingParent.scrollHeight,
       };
 
       // ------
@@ -362,10 +427,38 @@ export class CDropdown {
   }
 
   private _onKeyboardNavigation(event: KeyboardEvent) {
+    if (this._isOpenedWithKeyboard) {
+      this._isOpenedWithKeyboard = false;
+
+      return;
+    }
+
+    this.wasClicked = false;
+
     const letterNumber = /^[0-9a-zA-Z]+$/;
 
-    if (event.key.match(letterNumber) && event.key.length === 1) {
-      this.isOpen = true;
+    if (
+      (event.key.match(letterNumber) && event.key.length === 1) ||
+      event.key === 'Backspace'
+    ) {
+      if (this.type === 'autocomplete') {
+        this.parent.shadowRoot.querySelector('input').focus();
+
+        const { query } = this.parent as HTMLCAutocompleteElement;
+
+        let updatedQuery = '';
+
+        if (event.key === 'Backspace') {
+          updatedQuery = query.slice(0, -1);
+        } else {
+          updatedQuery = `${query}${event.key}`;
+        }
+
+        (this.parent as HTMLCAutocompleteElement).updateQuery(updatedQuery);
+
+        return;
+      }
+      // this.isOpen = true;
 
       if (
         Date.now() - this._lastKeyPressTime > 3000 ||
@@ -382,12 +475,10 @@ export class CDropdown {
         i.name.toLowerCase().startsWith(this._searchString),
       );
 
-      function isItem(element) {
-        return element === selectedItem;
-      }
-
       if (selectedItem) {
-        this.currentIndex = this.items.findIndex(isItem);
+        this.currentIndex = this.items.findIndex(
+          (element) => element === selectedItem,
+        );
 
         if (this.isOpen) {
           this._scrollToElement();
@@ -450,16 +541,24 @@ export class CDropdown {
 
       this.currentIndex = this._lastSelectableIndex;
     }
-
-    this._handleCurrentIndexChange();
   }
 
   private _handleCurrentIndexChange() {
-    if (this.currentIndex === null) return;
+    if (this.currentIndex === null) {
+      this.parent.setActiveDescendant('');
+
+      return;
+    }
 
     this._updateStatusText();
 
-    requestAnimationFrame(() => this._itemRefs[this.currentIndex].focus());
+    requestAnimationFrame(() => {
+      const item = this._itemRefs[this.currentIndex];
+
+      item?.focus();
+
+      this.parent.setActiveDescendant(item.id ?? null);
+    });
   }
 
   private _updateStatusText() {
@@ -479,28 +578,48 @@ export class CDropdown {
 
       const beginning = isDisabled ? 'Disabled option - ' : '';
 
-      const selectionText = !!selection
+      let selectionText = !!selection
         ? `${beginning}${selection.dataset.value} -  ${selection.ariaPosInSet} of ${selection.ariaSetSize} is highlighted`
         : null;
+
+      if (this.currentIndex === null && this.type === 'autocomplete') {
+        selectionText = this.items.length
+          ? `${this.items.length} result${
+              this.items.length !== 1 ? 's' : ''
+            } available`
+          : 'No search results available';
+      }
 
       this.statusText = `${selectionText || ending}`;
 
       this._debounce = null;
-    }, 100);
+    }, 1400);
   }
 
   componentWillLoad() {
-    this.currentIndex = this.index;
     this._renderMenu();
   }
 
+  componentDidLoad() {
+    this.currentIndex = this.index;
+  }
+
   render() {
+    if (
+      this.itemsPerPage &&
+      this.itemsPerPage > 0 &&
+      this.items.length > this.itemsPerPage
+    ) {
+      this._listElement.style.maxHeight = 42 * (this.itemsPerPage + 0.5) + 'px';
+      this._listElement.style.overflowY = 'scroll';
+    }
+
     return (
       <Host>
         <div
           id={'announce-' + this._id}
           class="visuallyhidden"
-          aria-live="assertive"
+          aria-live="polite"
           aria-atomic="true"
         >
           {this.statusText}

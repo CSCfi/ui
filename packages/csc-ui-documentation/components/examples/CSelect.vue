@@ -18,13 +18,6 @@
         </c-row>
       </c-option>
 
-      <c-option value="niilo" name="niilo">
-        <c-row align="center" justify="space-between">
-          Niilo
-          <c-tag flat>100 BU / node / h</c-tag>
-        </c-row>
-      </c-option>
-
       <c-option value="interactive" name="interactive">
         <c-row align="center" justify="space-between">
           Interactive
@@ -59,7 +52,7 @@
       option-as-selection
     >
       <c-option value="normal" name="normal">
-        <c-row class="wtf" align="center" justify="space-between">
+        <c-row align="center" justify="space-between">
           Normal
           <c-tag flat>100 BU / node / h</c-tag>
         </c-row>

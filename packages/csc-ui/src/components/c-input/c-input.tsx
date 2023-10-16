@@ -12,6 +12,7 @@ import {
 } from '@stencil/core';
 import { CAutocompleteItem, CSelectItem } from '../../types';
 import { _CDropdownParams } from '../c-dropdowns/c-dropdowns';
+import { _CDropdownUpdateParams } from '../c-dropdown/c-dropdown';
 
 /**
  * @parent None
@@ -154,8 +155,15 @@ export class CInput {
 
   /**
    * Emit click to the parent
+   * @private
    */
   @Event({ bubbles: false }) itemClick: EventEmitter;
+
+  /**
+   * Emit close to the parent
+   * @private
+   */
+  @Event({ bubbles: false }) dropdownClose: EventEmitter;
 
   @State() isFocused = false;
 
@@ -348,6 +356,14 @@ export class CInput {
   }
 
   /**
+   * @private
+   */
+  @Method()
+  async focusDropdown() {
+    this._dropdownElement.focusDropdown();
+  }
+
+  /**
    * Create a dropdown
    */
   @Method()
@@ -356,6 +372,7 @@ export class CInput {
 
     this._dropdownElement = await this._dropdownsElement.createDropdown({
       ...params,
+      itemsPerPage: params.itemsPerPage || 6,
       wrapper,
     });
   }
@@ -364,12 +381,13 @@ export class CInput {
    * Opens the dropdown
    */
   @Method()
-  async openDropdown() {
+  async openDropdown(focusList = true) {
     this._dropdownElement.shadowRoot
       .querySelector('ul')
       .classList.add('active');
 
     this._dropdownElement.isOpen = true;
+    this._dropdownElement.focusList = focusList;
 
     this._outsideClickFn = this._handleOutsideClick.bind(this);
 
@@ -390,6 +408,14 @@ export class CInput {
     this._dropdownElement.isOpen = false;
 
     window.removeEventListener('click', this._outsideClickFn);
+  }
+
+  /**
+   * @private
+   */
+  @Method()
+  async updateDropdown(params: _CDropdownUpdateParams) {
+    this._dropdownElement?.updateDropdown(params);
   }
 
   private _createDropdownWrapper() {
@@ -424,6 +450,7 @@ export class CInput {
 
     if (click) {
       this.inputField?.click();
+      this._dropdownElement.wasClicked = true;
       this.itemClick.emit();
     }
 

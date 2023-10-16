@@ -74,12 +74,12 @@
     <c-row gap="8">
       <c-autocomplete
         ref="autocomplete"
-        v-model="selection"
+        v-model="selectionCustomMenu"
         v-control
         label="Countries"
         hide-details
         :items="filteredItems"
-        :query="query"
+        :query="queryCustomMenu"
         :items-per-page="10"
         :custom-menu="true"
         style="flex: 1"
@@ -187,6 +187,10 @@ const autocomplete = ref<HTMLCAutocompleteElement | null>();
 const setValue = (event: Event, item: CAutocompleteItem) => {
   autocomplete.value?.setValue(event, item);
 };
+
+const selectionCustomMenu = ref();
+
+const queryCustomMenu = ref('');
 // @example-end
 </script>
 

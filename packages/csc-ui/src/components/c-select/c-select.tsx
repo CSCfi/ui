@@ -144,8 +144,6 @@ export class CSelect {
 
   private _id: string;
 
-  // private _inputElement: HTMLInputElement;
-
   private _cOptionElements: Map<string, HTMLCOptionElement> = new Map();
 
   private _selectionElement: HTMLDivElement;
@@ -203,14 +201,6 @@ export class CSelect {
 
     this._updateStatusText();
   }
-
-  // private get _firstSelectableIndex() {
-  //   return this._items.findIndex((item) => !item.disabled);
-  // }
-
-  // private get _lastSelectableIndex() {
-  //   return [...this._items].reverse().findIndex((item) => !item.disabled);
-  // }
 
   private get _items() {
     return this.hasOptionItems ? this._optionItems : this.items;
@@ -304,29 +294,14 @@ export class CSelect {
       }
 
       if (selectedItem) {
-        // this._inputOptions.selectItem(this.currentIndex);
-
         if (this.menuVisible) {
           this.currentIndex = this._items.findIndex(isItem);
           this._scrollToElement();
         } else {
           this.value = selectedItem;
-          // this._valueChangedHandler(selectedItem);
         }
       }
     }
-
-    // if (ev.key === 'Home' && this.menuVisible) {
-    //   ev.preventDefault();
-
-    //   this.currentIndex = this._firstSelectableIndex;
-    // }
-
-    // if (ev.key === 'End' && this.menuVisible) {
-    //   ev.preventDefault();
-
-    //   this.currentIndex = this._lastSelectableIndex;
-    // }
 
     if (ev.key === 'Tab') {
       this._cInput.closeDropdown();
@@ -336,62 +311,38 @@ export class CSelect {
       ev.preventDefault();
 
       this._showMenu();
-
-      // if (this.currentIndex === null) {
-      //   this.currentIndex = 0;
-      // } else if (this.currentIndex + 1 < this._items.length) {
-      //   this.currentIndex += 1;
-      // }
     }
 
     if (ev.key === 'ArrowUp') {
       ev.preventDefault();
 
       this._showMenu();
-
-      // if (this.currentIndex > 0) {
-      //   this.currentIndex -= 1;
-      // } else if (this.currentIndex === null) {
-      //   this.currentIndex = this._items.length - 1;
-      // }
     }
 
     if (ev.key === ' ') {
       ev.preventDefault();
 
       this._showMenu();
-      // if (!this.menuVisible) {
-      // }
-    }
-
-    // if (ev.key === 'Escape') {
-    //   if (this.menuVisible) {
-    //     this.menuVisible = false;
-
-    //     this._inputElement.focus();
-    //   }
-    // }
-
-    if (ev.key === 'Enter') {
-      // this.menuVisible = !this.menuVisible;
-      // if (this.currentIndex !== null) {
-      //   this._selectItem();
-      // }
-      // if (!this.menuVisible) {
-      //   this._inputElement.focus();
-      // }
     }
   }
 
   /**
-   * sika
-   * @param index Maukka
+   * Select item by index
    */
   @Method()
   async onItemSelection(index: number) {
     this.currentIndex = index;
 
     this._selectItem();
+  }
+
+  /**
+   * Hide menu
+   * @private
+   */
+  @Method()
+  async onHideMenu() {
+    this.menuVisible = false;
   }
 
   componentWillLoad() {
@@ -427,7 +378,8 @@ export class CSelect {
         items: this._items,
         options: this._cOptionElements,
         parent: this.host,
-        index: this.currentIndex || 0,
+        itemsPerPage: this.itemsPerPage,
+        index: this.currentIndex,
         click: false,
         id: this._inputId,
       });
@@ -448,73 +400,29 @@ export class CSelect {
 
   private _optionItems: CSelectItem[] = [];
 
+  private _inputElement: HTMLInputElement;
+
   private _selectItem() {
     const selectedItem = this._items[this.currentIndex];
 
     this.value = selectedItem;
 
-    // this._valueChangedHandler(selectedItem);
     this._scrollToElement();
   }
 
-  // private _createCItemOptionsElement() {
-  //   const existingElement = document.querySelector('c-input-options');
-  //   const element =
-  //     existingElement || document.createElement('c-input-options');
-
-  //   this._inputOptions = element;
-  //   this._inputOptions.itemsPerPage = this.itemsPerPage;
-
-  //   if (existingElement) {
-  //     return existingElement;
-  //   }
-
-  //   document.body.appendChild(element);
-  // }
-
-  // private _getHostPosition() {
-  //   return this.host.shadowRoot
-  //     .querySelector('.c-input__slot')
-  //     .getBoundingClientRect();
-  // }
+  /**
+   * @private
+   */
+  @Method()
+  async setActiveDescendant(id: string) {
+    this._inputElement.setAttribute('aria-activedescendant', id);
+  }
 
   private _showMenu() {
     if (this.disabled) return;
 
+    this.menuVisible = true;
     this._cInput.openDropdown();
-
-    // this._cInput.createDropdown({
-    //   type: 'select',
-    //   items: this._items,
-    //   options: this._cOptionElements,
-    //   parent: this.host,
-    //   index: this.currentIndex || 0,
-    //   click,
-    //   id: this._inputId,
-    // });
-
-    // this._hasDropdown = true;
-
-    // this._inputOptions.positionMenu(this._getHostPosition());
-  }
-
-  // private _hideMenu() {
-  //   this.menuVisible = false;
-  //   this._blurred = true;
-  //   this._cInput.closeDropdown();
-  // }
-
-  private _select(event, item: CSelectItem) {
-    if (!!item.disabled) return;
-
-    event.preventDefault();
-    event.stopPropagation();
-
-    this.value = this._setValue(item);
-
-    // this._valueChangedHandler(item);
-
-    this.menuVisible = false;
   }
 
   private _getOptionItems() {
@@ -550,52 +458,6 @@ export class CSelect {
       }
     });
   }
-
-  private _getListItem = (item: CSelectItem, index: number) => {
-    const isActive = this._items[this.currentIndex]?.value === item.value;
-
-    const classes = {
-      none: item.value === null,
-      disabled: !!item.disabled,
-    };
-
-    let itemId = 'none';
-
-    if (typeof item?.value === 'string') {
-      itemId = item.value.replace(/[^a-zA-Z0-9-_]/g, '');
-    }
-
-    itemId = `item_${this._id}--${itemId}`;
-
-    const a11y = {
-      role: 'option',
-      'aria-posinset': (index + 1).toString(),
-      'aria-setsize': this._items.length.toString(),
-    };
-
-    if (isActive) {
-      a11y['aria-selected'] = 'true';
-    }
-
-    return (
-      <li
-        {...a11y}
-        id={itemId}
-        ref={(el) =>
-          this._itemRefs.push({ value: item.value, ref: el as HTMLElement })
-        }
-        class={classes}
-        data-value={item.name}
-        onClick={(event) => this._select(event, item)}
-      >
-        {this.hasOptionItems ? (
-          <slot name={`option-${index}`}></slot>
-        ) : (
-          item.name
-        )}
-      </li>
-    );
-  };
 
   private _runValidate() {
     if (
@@ -633,10 +495,11 @@ export class CSelect {
       <div class="c-input-menu__input">
         <input
           aria-controls={this._inputId + '-items'}
+          aria-expanded={this.menuVisible.toString()}
           aria-readonly="true"
           aria-haspopup="listbox"
+          ref={(el) => (this._inputElement = el)}
           id={this._inputId}
-          // ref={(el) => (this._inputElement = el)}
           autocomplete="off"
           class="c-input__input"
           type="text"
@@ -649,33 +512,6 @@ export class CSelect {
           ref={(el) => (this._selectionElement = el)}
           class="c-input-menu__selection"
         />
-      </div>
-    );
-  }
-
-  private _renderMenu(style) {
-    return (
-      <div
-        class={{
-          'c-input-menu__item-wrapper': true,
-          'c-input-menu__item-wrapper--shadow': this.shadow,
-        }}
-      >
-        <ul
-          id={'results_' + this._id}
-          aria-activedescendant={this.activeListItemId}
-          aria-expanded={this.menuVisible.toString()}
-          style={style}
-          title={this.label || this.placeholder}
-          class={
-            this.menuVisible
-              ? 'c-input-menu__items'
-              : 'c-input-menu__items c-input-menu__items--hidden'
-          }
-          role="listbox"
-        >
-          {this._items.map((item, index) => this._getListItem(item, index))}
-        </ul>
       </div>
     );
   }
@@ -714,19 +550,6 @@ export class CSelect {
   }
 
   render() {
-    let itemsPerPageStyle = {};
-
-    if (
-      this.itemsPerPage &&
-      this.itemsPerPage > 0 &&
-      this._items.length > this.itemsPerPage
-    ) {
-      itemsPerPageStyle = {
-        'max-height': 48 * this.itemsPerPage + 'px',
-        'overflow-y': 'scroll',
-      };
-    }
-
     return (
       <Host>
         <div
@@ -764,7 +587,6 @@ export class CSelect {
 
           <div class="c-input__content">
             {this._renderInputElement()}
-            {this._renderMenu(itemsPerPageStyle)}
             {this._renderChevron()}
 
             <slot onSlotchange={this._handleSlotChange}></slot>

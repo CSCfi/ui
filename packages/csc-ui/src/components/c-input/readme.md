@@ -38,10 +38,11 @@
 
 ## Events
 
-| Event         | Description                | Type               |
-| ------------- | -------------------------- | ------------------ |
-| `changeValue` | Emit changes to the parent | `CustomEvent<any>` |
-| `itemClick`   | Emit click to the parent   | `CustomEvent<any>` |
+| Event           | Description                | Type               |
+| --------------- | -------------------------- | ------------------ |
+| `changeValue`   | Emit changes to the parent | `CustomEvent<any>` |
+| `dropdownClose` | Emit close to the parent   | `CustomEvent<any>` |
+| `itemClick`     | Emit click to the parent   | `CustomEvent<any>` |
 
 
 ## Methods
@@ -66,9 +67,29 @@ Type: `Promise<void>`
 
 
 
-### `openDropdown() => Promise<void>`
+### `focusDropdown() => Promise<void>`
+
+
+
+#### Returns
+
+Type: `Promise<void>`
+
+
+
+### `openDropdown(focusList?: boolean) => Promise<void>`
 
 Opens the dropdown
+
+#### Returns
+
+Type: `Promise<void>`
+
+
+
+### `updateDropdown(params: _CDropdownUpdateParams) => Promise<void>`
+
+
 
 #### Returns
 
@@ -96,6 +117,7 @@ graph TD;
   c-input --> c-dropdowns
   c-input --> c-message
   c-dropdowns --> c-dropdown
+  c-dropdown --> c-icon
   c-autocomplete --> c-input
   c-select --> c-input
   c-text-field --> c-input

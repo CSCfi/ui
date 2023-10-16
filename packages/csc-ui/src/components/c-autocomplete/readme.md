@@ -7,29 +7,29 @@
 
 ## Properties
 
-| Property         | Attribute          | Description                                                  | Type                                                       | Default            |
-| ---------------- | ------------------ | ------------------------------------------------------------ | ---------------------------------------------------------- | ------------------ |
-| `autofocus`      | `autofocus`        | Auto focus the input                                         | `boolean`                                                  | `false`            |
-| `customMenu`     | `custom-menu`      | Render custom menu                                           | `boolean`                                                  | `false`            |
-| `dense`          | `dense`            | Dense variant                                                | `boolean`                                                  | `undefined`        |
-| `disabled`       | `disabled`         | Disable the input                                            | `boolean`                                                  | `false`            |
-| `hideDetails`    | `hide-details`     | Hide the hint and error messages                             | `boolean`                                                  | `false`            |
-| `hint`           | `hint`             | Hint text for the input                                      | `string`                                                   | `''`               |
-| `hostId`         | `id`               | Id of the element                                            | `string`                                                   | `undefined`        |
-| `items`          | --                 | Items to be selected                                         | `CAutocompleteItem[]`                                      | `[]`               |
-| `itemsPerPage`   | `items-per-page`   | Items per page before adding scroll                          | `number`                                                   | `undefined`        |
-| `label`          | `label`            | Element label                                                | `string`                                                   | `undefined`        |
-| `name`           | `name`             | Input field name                                             | `string`                                                   | `undefined`        |
-| `placeholder`    | `placeholder`      | Placeholder text                                             | `string`                                                   | `''`               |
-| `query`          | `query`            | Search string                                                | `string`                                                   | `null`             |
-| `required`       | `required`         | Show required validation                                     | `boolean`                                                  | `false`            |
-| `returnValue`    | `return-value`     | Return only the item value rather than the whole item object | `boolean`                                                  | `undefined`        |
-| `shadow`         | `shadow`           | Shadow variant                                               | `boolean`                                                  | `false`            |
-| `valid`          | `valid`            | Set the validíty of the input                                | `boolean`                                                  | `true`             |
-| `validate`       | `validate`         | Manual validation                                            | `boolean`                                                  | `false`            |
-| `validateOnBlur` | `validate-on-blur` | Validate the input on blur                                   | `boolean`                                                  | `false`            |
-| `validation`     | `validation`       | Custom validation message                                    | `string`                                                   | `'Required field'` |
-| `value`          | `value`            | Selected item                                                | `CSelectItem & { ref?: HTMLElement; } \| number \| string` | `null`             |
+| Property            | Attribute             | Description                                                                  | Type                                                       | Default            |
+| ------------------- | --------------------- | ---------------------------------------------------------------------------- | ---------------------------------------------------------- | ------------------ |
+| `autofocus`         | `autofocus`           | Auto focus the input                                                         | `boolean`                                                  | `false`            |
+| `dense`             | `dense`               | Dense variant                                                                | `boolean`                                                  | `undefined`        |
+| `disabled`          | `disabled`            | Disable the input                                                            | `boolean`                                                  | `false`            |
+| `hideDetails`       | `hide-details`        | Hide the hint and error messages                                             | `boolean`                                                  | `false`            |
+| `hint`              | `hint`                | Hint text for the input                                                      | `string`                                                   | `''`               |
+| `hostId`            | `id`                  | Id of the element                                                            | `string`                                                   | `undefined`        |
+| `items`             | --                    | Items to be selected                                                         | `CAutocompleteItem[]`                                      | `[]`               |
+| `itemsPerPage`      | `items-per-page`      | Items per page before adding scroll                                          | `number`                                                   | `undefined`        |
+| `label`             | `label`               | Element label                                                                | `string`                                                   | `undefined`        |
+| `name`              | `name`                | Input field name                                                             | `string`                                                   | `undefined`        |
+| `optionAsSelection` | `option-as-selection` | display the option as selection (works only when c-option elements are used) | `boolean`                                                  | `undefined`        |
+| `placeholder`       | `placeholder`         | Placeholder text                                                             | `string`                                                   | `''`               |
+| `query`             | `query`               | Search string                                                                | `string`                                                   | `null`             |
+| `required`          | `required`            | Show required validation                                                     | `boolean`                                                  | `false`            |
+| `returnValue`       | `return-value`        | Return only the item value rather than the whole item object                 | `boolean`                                                  | `undefined`        |
+| `shadow`            | `shadow`              | Shadow variant                                                               | `boolean`                                                  | `false`            |
+| `valid`             | `valid`               | Set the validíty of the input                                                | `boolean`                                                  | `true`             |
+| `validate`          | `validate`            | Manual validation                                                            | `boolean`                                                  | `false`            |
+| `validateOnBlur`    | `validate-on-blur`    | Validate the input on blur                                                   | `boolean`                                                  | `false`            |
+| `validation`        | `validation`          | Custom validation message                                                    | `string`                                                   | `'Required field'` |
+| `value`             | `value`               | Selected item                                                                | `CSelectItem & { ref?: HTMLElement; } \| number \| string` | `null`             |
 
 
 ## Events
@@ -42,9 +42,29 @@
 
 ## Methods
 
+### `onHideMenu() => Promise<void>`
+
+Hide menu
+
+#### Returns
+
+Type: `Promise<void>`
+
+
+
 ### `onItemSelection(index: number) => Promise<void>`
 
-sika
+Select item by index
+
+#### Returns
+
+Type: `Promise<void>`
+
+
+
+### `setActiveDescendant(id: string) => Promise<void>`
+
+
 
 #### Returns
 
@@ -62,14 +82,23 @@ Type: `Promise<void>`
 
 
 
+### `updateQuery(query: string) => Promise<void>`
+
+
+
+#### Returns
+
+Type: `Promise<void>`
+
+
+
 
 ## Slots
 
-| Slot           | Description                    |
-| -------------- | ------------------------------ |
-| `"customMenu"` | Custom menu content            |
-| `"post"`       | Content added after the input  |
-| `"pre"`        | Content added before the input |
+| Slot     | Description                    |
+| -------- | ------------------------------ |
+| `"post"` | Content added after the input  |
+| `"pre"`  | Content added before the input |
 
 
 ## CSS Custom Properties
@@ -99,6 +128,7 @@ graph TD;
   c-input --> c-dropdowns
   c-input --> c-message
   c-dropdowns --> c-dropdown
+  c-dropdown --> c-icon
   style c-autocomplete fill:#f9f,stroke:#333,stroke-width:4px
 ```
 

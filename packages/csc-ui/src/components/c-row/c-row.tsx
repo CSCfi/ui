@@ -25,7 +25,7 @@ export class CRow {
   /**
    * Align items vertically
    */
-  @Prop() align: 'start' | 'center' | 'end' = 'start';
+  @Prop() align: 'start' | 'center' | 'end';
 
   /**
    * Justify content horizontally
@@ -35,14 +35,14 @@ export class CRow {
     | 'center'
     | 'end'
     | 'space-between'
-    | 'space-around' = 'start';
+    | 'space-around';
 
   render() {
     const classes = {
       'c-row': true,
       'c-row--nowrap': this.nowrap,
-      [`c-row--align-${this.align}`]: true,
-      [`c-row--justify-${this.justify}`]: true,
+      [`c-row--align-${this.align}`]: !!this.align,
+      [`c-row--justify-${this.justify}`]: !!this.justify,
     };
 
     return (

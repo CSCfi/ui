@@ -6,13 +6,17 @@
  */
 import { HTMLStencilElement, JSXBase } from "@stencil/core/internal";
 import { CAlertType, CAutocompleteItem, CDataTableData, CDataTableFooterOptions, CDataTableHeader, CMenuCustomTrigger, CMenuOption, CPaginationOptions, CRadioGroupItem, CSelectItem, CToastMessage } from "./types";
+import { _CDropdownUpdateParams } from "./components/c-dropdown/c-dropdown";
 import { _CDropdownParams } from "./components/c-dropdowns/c-dropdowns";
 import { _CDropdownParams as _CDropdownParams1 } from "./components/c-dropdowns/c-dropdowns";
+import { _CDropdownUpdateParams as _CDropdownUpdateParams1 } from "./components/c-dropdown/c-dropdown";
 import { CInputOptionsParams, Position } from "./components/c-input-options/c-input-options";
 import { CLoginCardBlendMode } from "./components/c-login-card/c-login-card";
 export { CAlertType, CAutocompleteItem, CDataTableData, CDataTableFooterOptions, CDataTableHeader, CMenuCustomTrigger, CMenuOption, CPaginationOptions, CRadioGroupItem, CSelectItem, CToastMessage } from "./types";
+export { _CDropdownUpdateParams } from "./components/c-dropdown/c-dropdown";
 export { _CDropdownParams } from "./components/c-dropdowns/c-dropdowns";
 export { _CDropdownParams as _CDropdownParams1 } from "./components/c-dropdowns/c-dropdowns";
+export { _CDropdownUpdateParams as _CDropdownUpdateParams1 } from "./components/c-dropdown/c-dropdown";
 export { CInputOptionsParams, Position } from "./components/c-input-options/c-input-options";
 export { CLoginCardBlendMode } from "./components/c-login-card/c-login-card";
 export namespace Components {
@@ -82,10 +86,6 @@ export namespace Components {
          */
         "autofocus": boolean;
         /**
-          * Render custom menu
-         */
-        "customMenu": boolean;
-        /**
           * Dense variant
          */
         "dense": boolean;
@@ -122,10 +122,18 @@ export namespace Components {
          */
         "name": string;
         /**
-          * sika
-          * @param index Maukka
+          * Hide menu
+          * @private
+         */
+        "onHideMenu": () => Promise<void>;
+        /**
+          * Select item by index
          */
         "onItemSelection": (index: number) => Promise<void>;
+        /**
+          * display the option as selection (works only when c-option elements are used)
+         */
+        "optionAsSelection": false;
         /**
           * Placeholder text
          */
@@ -143,6 +151,10 @@ export namespace Components {
          */
         "returnValue": false;
         /**
+          * @private
+         */
+        "setActiveDescendant": (id: string) => Promise<void>;
+        /**
           * Sets the value of the autocomplete externally
          */
         "setValue": (event: any, item: any) => Promise<void>;
@@ -150,6 +162,10 @@ export namespace Components {
           * Shadow variant
          */
         "shadow": boolean;
+        /**
+          * @private
+         */
+        "updateQuery": (query: string) => Promise<void>;
         /**
           * Set the validíty of the input
          */
@@ -439,6 +455,14 @@ export namespace Components {
     }
     interface CDropdown {
         /**
+          * @private
+         */
+        "focusDropdown": () => Promise<void>;
+        /**
+          * Focus dropdown on open
+         */
+        "focusList": boolean;
+        /**
           * Initial value index
          */
         "index": number;
@@ -453,7 +477,7 @@ export namespace Components {
         /**
           * Dropdown items
          */
-        "items": CSelectItem[];
+        "items": CSelectItem[] | CAutocompleteItem[];
         /**
           * Items per page before adding scroll
          */
@@ -466,6 +490,18 @@ export namespace Components {
           * Dropdown parent
          */
         "parent": HTMLCSelectElement | HTMLCAutocompleteElement;
+        /**
+          * Type of the parent element
+         */
+        "type": 'select' | 'autocomplete';
+        /**
+          * @private
+         */
+        "updateDropdown": (params: _CDropdownUpdateParams) => Promise<void>;
+        /**
+          * @private
+         */
+        "wasClicked": boolean;
         /**
           * Dropdown scrolling parent
          */
@@ -566,6 +602,10 @@ export namespace Components {
          */
         "disabled": boolean;
         /**
+          * @private
+         */
+        "focusDropdown": () => Promise<void>;
+        /**
           * Render a hidden input outside the shadow dom
          */
         "form": boolean;
@@ -608,7 +648,7 @@ export namespace Components {
         /**
           * Opens the dropdown
          */
-        "openDropdown": () => Promise<void>;
+        "openDropdown": (focusList?: boolean) => Promise<void>;
         /**
           * Placeholder of the input
          */
@@ -637,6 +677,10 @@ export namespace Components {
           * Type of the input
          */
         "type": string;
+        /**
+          * @private
+         */
+        "updateDropdown": (params: _CDropdownUpdateParams1) => Promise<void>;
         /**
           * Set the validíty of the input
          */
@@ -1222,8 +1266,12 @@ export namespace Components {
          */
         "name": string;
         /**
-          * sika
-          * @param index Maukka
+          * Hide menu
+          * @private
+         */
+        "onHideMenu": () => Promise<void>;
+        /**
+          * Select item by index
          */
         "onItemSelection": (index: number) => Promise<void>;
         /**
@@ -1242,6 +1290,10 @@ export namespace Components {
           * Return only the item value rather than the whole item object
          */
         "returnValue": false;
+        /**
+          * @private
+         */
+        "setActiveDescendant": (id: string) => Promise<void>;
         /**
           * Shadow variant
          */
@@ -2636,10 +2688,6 @@ declare namespace LocalJSX {
          */
         "autofocus"?: boolean;
         /**
-          * Render custom menu
-         */
-        "customMenu"?: boolean;
-        /**
           * Dense variant
          */
         "dense"?: boolean;
@@ -2683,6 +2731,10 @@ declare namespace LocalJSX {
           * Triggered when an item is selected
          */
         "onChangeValue"?: (event: CAutocompleteCustomEvent<any>) => void;
+        /**
+          * display the option as selection (works only when c-option elements are used)
+         */
+        "optionAsSelection"?: false;
         /**
           * Placeholder text
          */
@@ -3006,6 +3058,10 @@ declare namespace LocalJSX {
     }
     interface CDropdown {
         /**
+          * Focus dropdown on open
+         */
+        "focusList"?: boolean;
+        /**
           * Initial value index
          */
         "index"?: number;
@@ -3020,7 +3076,7 @@ declare namespace LocalJSX {
         /**
           * Dropdown items
          */
-        "items"?: CSelectItem[];
+        "items"?: CSelectItem[] | CAutocompleteItem[];
         /**
           * Items per page before adding scroll
          */
@@ -3033,6 +3089,14 @@ declare namespace LocalJSX {
           * Dropdown parent
          */
         "parent"?: HTMLCSelectElement | HTMLCAutocompleteElement;
+        /**
+          * Type of the parent element
+         */
+        "type"?: 'select' | 'autocomplete';
+        /**
+          * @private
+         */
+        "wasClicked"?: boolean;
         /**
           * Dropdown scrolling parent
          */
@@ -3165,7 +3229,13 @@ declare namespace LocalJSX {
          */
         "onChangeValue"?: (event: CInputCustomEvent<any>) => void;
         /**
+          * Emit close to the parent
+          * @private
+         */
+        "onDropdownClose"?: (event: CInputCustomEvent<any>) => void;
+        /**
           * Emit click to the parent
+          * @private
          */
         "onItemClick"?: (event: CInputCustomEvent<any>) => void;
         /**

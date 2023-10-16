@@ -7,7 +7,7 @@ export type CDropdownParamsSelect = {
 };
 
 export type CDropdownParamsAutoComplete = {
-  type: 'auto-complete';
+  type: 'autocomplete';
   parent: HTMLCAutocompleteElement;
 };
 
@@ -50,6 +50,7 @@ export class CDropdowns {
     element.wrapper = params.wrapper;
     element.inputId = params.id;
     element.index = params.index;
+    element.type = params.type;
 
     this.host.shadowRoot.appendChild(element);
 

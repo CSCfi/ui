@@ -39,9 +39,29 @@
 
 ## Methods
 
+### `onHideMenu() => Promise<void>`
+
+Hide menu
+
+#### Returns
+
+Type: `Promise<void>`
+
+
+
 ### `onItemSelection(index: number) => Promise<void>`
 
-sika
+Select item by index
+
+#### Returns
+
+Type: `Promise<void>`
+
+
+
+### `setActiveDescendant(id: string) => Promise<void>`
+
+
 
 #### Returns
 
@@ -84,6 +104,7 @@ graph TD;
   c-input --> c-dropdowns
   c-input --> c-message
   c-dropdowns --> c-dropdown
+  c-dropdown --> c-icon
   style c-select fill:#f9f,stroke:#333,stroke-width:4px
 ```
 

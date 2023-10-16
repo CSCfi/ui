@@ -80,10 +80,6 @@
           "description": "Auto focus the input"
         },
         {
-          "name": "custom-menu",
-          "description": "Render custom menu"
-        },
-        {
           "name": "dense",
           "description": "Dense variant"
         },
@@ -114,6 +110,10 @@
         {
           "name": "name",
           "description": "Input field name"
+        },
+        {
+          "name": "option-as-selection",
+          "description": "display the option as selection (works only when c-option elements are used)"
         },
         {
           "name": "placeholder",
@@ -486,6 +486,10 @@
       },
       "attributes": [
         {
+          "name": "focus-list",
+          "description": "Focus dropdown on open"
+        },
+        {
           "name": "index",
           "description": "Initial value index"
         },
@@ -500,6 +504,22 @@
         {
           "name": "items-per-page",
           "description": "Items per page before adding scroll"
+        },
+        {
+          "name": "type",
+          "description": "Type of the parent element",
+          "values": [
+            {
+              "name": "autocomplete"
+            },
+            {
+              "name": "select"
+            }
+          ]
+        },
+        {
+          "name": "was-clicked",
+          "description": ""
         }
       ]
     },

@@ -32,6 +32,7 @@ Type: `Promise<HTMLCDropdownElement>`
 ```mermaid
 graph TD;
   c-dropdowns --> c-dropdown
+  c-dropdown --> c-icon
   c-input --> c-dropdowns
   style c-dropdowns fill:#f9f,stroke:#333,stroke-width:4px
 ```
