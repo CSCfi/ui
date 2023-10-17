@@ -102,7 +102,7 @@ export class CIconButton {
           >
             {this.loading && (
               <c-spinner
-                color="var(--c-icon-button-loader-color)"
+                color="var(--_c-icon-button-loader-color)"
                 size={spinnerSizes[this.size]}
               />
             )}

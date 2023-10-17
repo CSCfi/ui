@@ -5,7 +5,7 @@
    * @prop --c-badge-border-color: Badge border color
    */
   --_c-badge-background-color: var(--c-badge-background-color, var(--c-warning-600));
-  --_c-badge-color: var(--c-badge-color, var(--c-white));
+  --_c-badge-text-color: var(--c-badge-text-color, var(--c-white));
   --_c-badge-border-color: var(--c-badge-border-color, var(--c-white));
 
   align-items: center;
