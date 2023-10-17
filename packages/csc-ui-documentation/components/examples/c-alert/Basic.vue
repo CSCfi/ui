@@ -1,5 +1,5 @@
 <template>
-  <component-example name="basic" rows>
+  <component-example rows>
     <template #title>Basic usage</template>
 
     <c-alert :type="type">
@@ -23,7 +23,6 @@
 </template>
 
 <script setup lang="ts">
-// @example-start|basic
 import { ref } from 'vue';
 import { CAlertType, CRadioGroupItem } from '@cscfi/csc-ui';
 
@@ -36,7 +35,4 @@ const types: CRadioGroupItem[] = [
   { value: CAlertType.Warning, label: 'Warning' },
   { value: CAlertType.Error, label: 'Error' },
 ];
-// @example-end
 </script>
-
-<style lang="scss"></style>

@@ -29,6 +29,14 @@
    */
   --_c-tab-buttons-border-radius: var(--c-tab-buttons-border-radius, 4px);
 
+  background-color: var(--_c-tab-buttons-border-color);
+  border-radius: var(--_c-tab-buttons-border-radius);
+  box-shadow: 0 0 0 2px var(--_c-tab-buttons-border-color);
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2px;
+  margin: 2px;
+
   ::slotted(c-button) {
     --c-button-background-color-hover: var(--_c-tab-buttons-background-color-active-hover);
     --c-button-background-color: var(--_c-tab-buttons-background-color-active);
@@ -79,14 +87,6 @@
   ::slotted(*) {
     flex-grow: 1;
   }
-
-  background-color: var(--_c-tab-buttons-border-color);
-  border-radius: var(--_c-tab-buttons-border-radius);
-  box-shadow: 0 0 0 2px var(--_c-tab-buttons-border-color);
-  display: flex;
-  flex-wrap: wrap;
-  gap: 2px;
-  margin: 2px;
 }
 
 :host(.disabled) {
