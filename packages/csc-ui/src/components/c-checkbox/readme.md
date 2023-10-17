@@ -41,7 +41,7 @@
 | `--c-checkbox-background-color-hover` | Checkbox hover background color |
 | `--c-checkbox-color`                  | Checkbox color                  |
 | `--c-checkbox-color-active`           | Active checkbox color           |
-| `--c-checkbox-disabled-color`         | Disabled checkbox color         |
+| `--c-checkbox-color-disabled`         | Disabled checkbox color         |
 
 
 ## Dependencies

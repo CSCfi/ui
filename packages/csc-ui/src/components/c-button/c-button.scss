@@ -498,7 +498,7 @@ a {
   }
 }
 
-@media (width <= 767px) {
+@media (max-width: 767px) {
   .full-width-mobile {
     max-width: 100% !important;
     width: 100% !important;

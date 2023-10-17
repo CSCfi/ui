@@ -1,15 +1,17 @@
 :host {
   /**
-   * @prop --c-checkbox-color: Checkbox color
-   * @prop --c-checkbox-color-active: Active checkbox color
    * @prop --c-checkbox-background-color-hover: Checkbox hover background color
-   * @prop --c-checkbox-disabled-color: Disabled checkbox color
+   * @prop --c-checkbox-color-active: Active checkbox color
+   * @prop --c-checkbox-color-disabled: Disabled checkbox color
+   * @prop --c-checkbox-color: Checkbox color
    */
-  --_c-checkbox-color: var(--c-checkbox-color, var(--c-primary-600));
-  --_c-checkbox-color-active: var(--c-checkbox-color-active, var(--_c-checkbox-color));
   --_c-checkbox-background-color-hover: var(--c-checkbox-background-color-hover, rgba(var(--c-primary-rgb), 0.1));
-  --_c-checkbox-disabled-color: var(--c-checkbox-disabled-color, var(--c-tertiary-500));
-  --_c-checkbox-error-color: var(--c-error-600);
+  --_c-checkbox-color-active: var(--c-checkbox-color-active, var(--_c-checkbox-color));
+  --_c-checkbox-color-disabled: var(--c-checkbox-color-disabled, var(--c-tertiary-500));
+  --_c-checkbox-color: var(--c-checkbox-color, var(--c-primary-600));
+
+  // private
+  --_c-checkbox-color-error: var(--c-error-600);
 }
 
 .c-checkbox {
@@ -43,7 +45,7 @@
     }
 
     &--error {
-      color: var(--_c-checkbox-error-color);
+      color: var(--_c-checkbox-color-error);
     }
 
     span {
@@ -74,9 +76,9 @@
   }
 
   &--disabled {
-    --_c-checkbox-color: var(--_c-checkbox-disabled-color);
+    --_c-checkbox-color: var(--_c-checkbox-color-disabled);
     --c-error-600: var(--_c-checkbox-color);
-    --_c-checkbox-color-active: var(--_c-checkbox-disabled-color);
+    --_c-checkbox-color-active: var(--_c-checkbox-color-disabled);
 
     color: var(--_c-checkbox-color);
     opacity: 0.75;
@@ -88,9 +90,9 @@
 
   &--error {
     --_c-checkbox-color: var(--c-error-600);
-    --_c-checkbox-color-active: var(--_c-checkbox-error-color);
+    --_c-checkbox-color-active: var(--_c-checkbox-color-error);
 
-    color: var(--_c-checkbox-error-color);
+    color: var(--_c-checkbox-color-error);
   }
 
   input:focus {

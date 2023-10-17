@@ -11,27 +11,27 @@
    * @prop --c-text-field-shadow-text-color: Shadow text field text color
    * @prop --c-text-field-shadow-placeholder-color: Shadow text field placeholder color
    */
-  --c-text-field-active-color: var(--c-primary-600);
-  --c-text-field-inactive-color: var(--c-tertiary-600);
-  --c-text-field-background-color: var(--c-transparent);
-  --c-text-field-text-color: var(--c-text-body);
-  --c-text-field-placeholder-color: var(--c-tertiary-500);
-  --c-text-field-shadow-active-color: var(--c-text-field-active-color);
-  --c-text-field-shadow-background-color: var(--c-white);
-  --c-text-field-shadow-text-color: var(--c-text-field-text-color);
-  --c-text-field-shadow-placeholder-color: var(--c-text-field-placeholder-color);
+  --_c-text-field-active-color: var(--c-text-field-active-color, var(--c-primary-600));
+  --_c-text-field-inactive-color: var(--c-text-field-inactive-color, var(--c-tertiary-600));
+  --_c-text-field-background-color: var(--c-text-field-background-color, var(--c-transparent));
+  --_c-text-field-text-color: var(--c-text-field-text-color, var(--c-text-body));
+  --_c-text-field-placeholder-color: var(--c-text-field-placeholder-color, var(--c-tertiary-500));
+  --_c-text-field-shadow-active-color: var(--c-text-field-shadow-active-color, var(--_c-text-field-active-color));
+  --_c-text-field-shadow-background-color: var(--c-text-field-shadow-background-color, var(--c-white));
+  --_c-text-field-shadow-text-color: var(--c-text-field-shadow-text-color, var(--_c-text-field-text-color));
+  --_c-text-field-shadow-placeholder-color: var(--c-text-field-shadow-placeholder-color, var(--_c-text-field-placeholder-color));
 }
 
 .c-input {
-  --_c-input-active-color: var(--c-text-field-active-color);
-  --_c-input-inactive-color: var(--c-text-field-inactive-color);
-  --_c-input-background-color: var(--c-text-field-background-color);
-  --_c-input-text-color: var(--c-text-field-text-color);
-  --_c-input-placeholder-color: var(--c-text-field-placeholder-color);
-  --_c-input-shadow-active-color: var(--c-text-field-shadow-active-color);
-  --_c-input-shadow-background-color: var(--c-text-field-shadow-background-color);
-  --_c-input-shadow-text-color: var(--c-text-field-shadow-text-color);
-  --_c-input-shadow-placeholder-color: var(--c-text-field-shadow-placeholder-color);
+  --_c-input-active-color: var(--_c-text-field-active-color);
+  --_c-input-inactive-color: var(--_c-text-field-inactive-color);
+  --_c-input-background-color: var(--_c-text-field-background-color);
+  --_c-input-text-color: var(--_c-text-field-text-color);
+  --_c-input-placeholder-color: var(--_c-text-field-placeholder-color);
+  --_c-input-shadow-active-color: var(--_c-text-field-shadow-active-color);
+  --_c-input-shadow-background-color: var(--_c-text-field-shadow-background-color);
+  --_c-input-shadow-text-color: var(--_c-text-field-shadow-text-color);
+  --_c-input-shadow-placeholder-color: var(--_c-text-field-shadow-placeholder-color);
 
   &__password-toggle,
   &__date-toggle {

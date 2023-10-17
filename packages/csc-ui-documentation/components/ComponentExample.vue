@@ -108,12 +108,15 @@ onMounted(() => {
 
 <style scoped lang="scss">
 c-accordion.code-examples c-accordion-item {
-  --c-accordion-item-header-background-color: var(--c-tertiary-700);
-  --c-accordion-item-outline-color: var(--c-tertiary-700);
+  --c-accordion-item-header-background-color: var(--c-tertiary-800);
+  --c-accordion-item-outline-color: var(--c-tertiary-800);
   --c-accordion-item-text-color: var(--c-white);
 }
 
-c-button {
-  --c-button-background-color: var(--c-tertiary-700);
+c-tab-buttons {
+  --_c-tab-buttons-background-color-active: var(--c-tertiary-800);
+  --_c-tab-buttons-border-color: var(--c-tertiary-800);
+  --_c-tab-buttons-text-color: var(--c-tertiary-800);
+  --_c-tab-buttons-background-color-active-hover: var(--c-tertiary-500);
 }
 </style>
