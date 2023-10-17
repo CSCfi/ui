@@ -80,13 +80,17 @@ const templateFiles = import.meta.glob(`../example-data/**/*.template.js`);
 
 onMounted(() => {
   const instance = getCurrentInstance();
-  const parent = instance?.parent?.type?.__name?.toLowerCase();
+  const parent = instance?.parent?.type?.__file
+    ?.split('/')
+    ?.at(-1)
+    ?.replace('.vue', '')
+    .toLowerCase();
 
   for (const path in scriptFiles) {
     if (path.includes(`/example-data/${componentName}/${parent}.`)) {
       // @ts-ignore
       scriptFiles[path]().then((mod: any) => {
-        exampleScript.value = mod.default;
+        exampleScript.value = mod.default || '';
       });
     }
   }
