@@ -1,5 +1,5 @@
 <template>
-  <component-example name="basic" rows>
+  <component-example rows>
     <template #title>Basic usage</template>
 
     <c-checkbox v-model="checkbox1" v-control hide-details>
@@ -22,7 +22,7 @@
       Required with hint
     </c-checkbox>
 
-    <c-checkbox :valid="false" validation="This is a required input" required>
+    <c-checkbox :valid="false" validation="This input has an error" required>
       Error state
     </c-checkbox>
 
@@ -34,13 +34,9 @@
 </template>
 
 <script setup lang="ts">
-// @example-start|basic
 import { ref } from 'vue';
 
 const checkbox1 = ref(false);
 
 const checkbox2 = ref(true);
-// @example-end
 </script>
-
-<style lang="scss"></style>
