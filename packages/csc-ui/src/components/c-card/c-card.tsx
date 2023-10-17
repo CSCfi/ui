@@ -77,6 +77,8 @@ export class CCard {
    */
   @Method()
   async exitFullscreen() {
+    if (!document.fullscreenElement) return;
+
     document.exitFullscreen();
 
     const modalWrapper =

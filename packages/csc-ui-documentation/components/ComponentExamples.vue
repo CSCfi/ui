@@ -1,7 +1,5 @@
 <template>
   <c-card class="max-w-screen-xl mx-auto">
-    <!-- <c-card-title>{{ component }}</c-card-title> -->
-
     <c-card-content>
       <div>
         <h1 class="text-4xl capitalize font-bold text-primary-600">

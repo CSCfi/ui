@@ -1,5 +1,5 @@
 <template>
-  <c-table>
+  <c-table responsive>
     <thead>
       <tr>
         <th>Event</th>
@@ -23,5 +23,3 @@ defineProps<{
   items: any;
 }>();
 </script>
-
-<style lang="scss"></style>

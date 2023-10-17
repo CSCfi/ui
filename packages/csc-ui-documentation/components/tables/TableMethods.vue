@@ -1,5 +1,5 @@
 <template>
-  <c-table>
+  <c-table responsive>
     <thead>
       <tr>
         <th>Method</th>
