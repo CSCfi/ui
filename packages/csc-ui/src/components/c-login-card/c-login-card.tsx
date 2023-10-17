@@ -100,7 +100,7 @@ export class CLoginCard {
       backgroundImage: `url(${this.src})`,
       backgroundPosition: this.backgroundPosition,
       height: this.imageHeight,
-      '--_c-login-overlay-mode': !!this.overlay && this.overlayBlendMode,
+      '--_c-login-card-overlay-mode': !!this.overlay && this.overlayBlendMode,
     };
 
     const imageClasses = {

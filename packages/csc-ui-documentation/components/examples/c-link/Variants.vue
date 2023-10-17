@@ -1,11 +1,4 @@
 <template>
-  <component-example name="basic" rows>
-    <template #title>Basic usage</template>
-
-    <c-link href="https://csc.fi">Default link</c-link>
-    <c-link href="https://csc.fi" underline>Underlined link</c-link>
-  </component-example>
-
   <component-example name="variants" rows>
     <template #title>Variants</template>
 
@@ -32,8 +25,5 @@
 </template>
 
 <script setup lang="ts">
-// @example-start|variants
 import { mdiOpenInNew } from '@mdi/js';
-// @example-end
 </script>
-<style lang="scss"></style>

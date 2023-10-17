@@ -3,8 +3,14 @@
    * @prop --c-login-card-background-color: Login card background color
    * @prop --c-login-card-overlay-color: Login card overlay blend color
    */
-  --_c-login-card-background-color: var(--c-login-card-background-color:, var(--c-white));
-  --_c-login-card-overlay-color: var(--c-login-card-overlay-color:, var(--c-primary-600));
+  --_c-login-card-background-color: var(
+    --c-login-card-background-color,
+    var(--c-white)
+  );
+  --_c-login-card-overlay-color: var(
+    --c-login-card-overlay-color,
+    var(--c-primary-600)
+  );
 }
 
 c-login-card {
@@ -23,7 +29,7 @@ c-login-card {
   &__image {
     background-size: cover;
     border-radius: 6px;
-    clip-path: url("#cLoginClipPath");
+    clip-path: url('#cLoginClipPath');
     height: 100%;
     left: 0;
     overflow: hidden;
@@ -33,7 +39,7 @@ c-login-card {
 
     &--overlay {
       background-color: var(--_c-login-card-overlay-color);
-      background-blend-mode: var(--_c-login-overlay-mode);
+      background-blend-mode: var(--_c-login-card-overlay-mode);
     }
   }
 

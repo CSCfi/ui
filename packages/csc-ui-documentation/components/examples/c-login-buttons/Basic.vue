@@ -19,7 +19,3 @@
     </c-card>
   </component-example>
 </template>
-
-<script setup lang="ts"></script>
-
-<style lang="scss"></style>
