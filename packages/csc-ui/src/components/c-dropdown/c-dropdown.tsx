@@ -382,16 +382,18 @@ export class CDropdown {
 
       this._parentTop = parentTop;
 
+      const scrollTop = this.scrollingParent.scrollTop;
+
+      const scrollLeft = this.scrollingParent.scrollLeft;
+
       this._onScrollFn = this._onScroll.bind(this);
 
       this.scrollingParent.addEventListener('scroll', this._onScrollFn);
 
       const isInView = {
-        x: right < this.scrollingParent.scrollWidth,
-        y: bottom < this.scrollingParent.scrollHeight,
+        x: right < this.scrollingParent.scrollWidth - scrollLeft,
+        y: bottom < this.scrollingParent.scrollHeight - scrollTop,
       };
-
-      // ------
 
       if (!isInView.y) {
         const posY = parseFloat(this.host.style.top) - height - parentHeight;
