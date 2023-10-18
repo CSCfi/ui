@@ -212,7 +212,7 @@ export class CMenuItems {
 
     this._listElement.style.maxHeight = `${containerHeight}px`;
     this._listElement.style.setProperty(
-      '--c-menu-item-height',
+      '--_c-menu-item-height',
       `${itemHeight}px`,
     );
   }

@@ -1042,16 +1042,16 @@
           "description": "Menu content css class"
         },
         {
-          "name": "items-per-page",
-          "description": "Items per page before adding scroll"
+          "name": "custom",
+          "description": "No chevron and background, E.g. when a button is the activator"
         },
         {
-          "name": "nohover",
+          "name": "flat",
           "description": "No hover background"
         },
         {
-          "name": "simple",
-          "description": "Simple variant without chevron and background, E.g. when a button is the activator"
+          "name": "items-per-page",
+          "description": "Items per page before adding scroll"
         },
         {
           "name": "small",

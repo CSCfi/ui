@@ -6,8 +6,14 @@
    * @prop --c-menu-outline-color: Menu outline color
    */
   --_c-menu-text-color: var(--c-menu-text-color, var(--c-text-system));
-  --_c-menu-text-color-active: var(--c-menu-text-color-active, var(--c-primary-600));
-  --_c-menu-background-color-hover: var(--c-menu-background-color-hover, var(--c-primary-200));
+  --_c-menu-text-color-active: var(
+    --c-menu-text-color-active,
+    var(--c-primary-600)
+  );
+  --_c-menu-background-color-hover: var(
+    --c-menu-background-color-hover,
+    var(--c-primary-200)
+  );
   --_c-menu-outline-color: var(--c-menu-outline-color, var(--c-primary-600));
 
   // private
@@ -73,7 +79,7 @@
   }
 }
 
-:host(.c-menu--simple) {
+:host(.c-menu--custom) {
   --_c-menu-padding: 0;
   --_c-menu-background-color-hover: transparent !important;
 

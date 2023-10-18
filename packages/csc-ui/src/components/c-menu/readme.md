@@ -7,15 +7,14 @@
 
 ## Properties
 
-| Property        | Attribute        | Description                                                                        | Type                                                                                    | Default     |
-| --------------- | ---------------- | ---------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------- | ----------- |
-| `contentClass`  | `content-class`  | Menu content css class                                                             | `string`                                                                                | `''`        |
-| `customTrigger` | --               | Programmatic trigger component                                                     | `{ value: string; component: { tag: string; params?: { [key: string]: unknown; }; }; }` | `undefined` |
-| `items`         | --               | Menu items                                                                         | `CMenuOption[]`                                                                         | `[]`        |
-| `itemsPerPage`  | `items-per-page` | Items per page before adding scroll                                                | `number`                                                                                | `6`         |
-| `nohover`       | `nohover`        | No hover background                                                                | `boolean`                                                                               | `false`     |
-| `simple`        | `simple`         | Simple variant without chevron and background, E.g. when a button is the activator | `boolean`                                                                               | `false`     |
-| `small`         | `small`          | Small variant                                                                      | `boolean`                                                                               | `false`     |
+| Property       | Attribute        | Description                                                    | Type            | Default |
+| -------------- | ---------------- | -------------------------------------------------------------- | --------------- | ------- |
+| `contentClass` | `content-class`  | Menu content css class                                         | `string`        | `''`    |
+| `custom`       | `custom`         | No chevron and background, E.g. when a button is the activator | `boolean`       | `false` |
+| `flat`         | `flat`           | No hover background                                            | `boolean`       | `false` |
+| `items`        | --               | Menu items                                                     | `CMenuOption[]` | `[]`    |
+| `itemsPerPage` | `items-per-page` | Items per page before adding scroll                            | `number`        | `6`     |
+| `small`        | `small`          | Small variant                                                  | `boolean`       | `false` |
 
 
 ## Slots

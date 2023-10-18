@@ -5,13 +5,13 @@
  * It contains typing information for all components that exist in this project.
  */
 import { HTMLStencilElement, JSXBase } from "@stencil/core/internal";
-import { CAlertType, CAutocompleteItem, CDataTableData, CDataTableFooterOptions, CDataTableHeader, CMenuCustomTrigger, CMenuOption, CPaginationOptions, CRadioGroupItem, CSelectItem, CToastMessage } from "./types";
+import { CAlertType, CAutocompleteItem, CDataTableData, CDataTableFooterOptions, CDataTableHeader, CMenuOption, CPaginationOptions, CRadioGroupItem, CSelectItem, CToastMessage } from "./types";
 import { _CDropdownUpdateParams } from "./components/c-dropdown/c-dropdown";
 import { _CDropdownParams } from "./components/c-dropdowns/c-dropdowns";
 import { _CDropdownParams as _CDropdownParams1 } from "./components/c-dropdowns/c-dropdowns";
 import { _CDropdownUpdateParams as _CDropdownUpdateParams1 } from "./components/c-dropdown/c-dropdown";
 import { CLoginCardBlendMode } from "./components/c-login-card/c-login-card";
-export { CAlertType, CAutocompleteItem, CDataTableData, CDataTableFooterOptions, CDataTableHeader, CMenuCustomTrigger, CMenuOption, CPaginationOptions, CRadioGroupItem, CSelectItem, CToastMessage } from "./types";
+export { CAlertType, CAutocompleteItem, CDataTableData, CDataTableFooterOptions, CDataTableHeader, CMenuOption, CPaginationOptions, CRadioGroupItem, CSelectItem, CToastMessage } from "./types";
 export { _CDropdownUpdateParams } from "./components/c-dropdown/c-dropdown";
 export { _CDropdownParams } from "./components/c-dropdowns/c-dropdowns";
 export { _CDropdownParams as _CDropdownParams1 } from "./components/c-dropdowns/c-dropdowns";
@@ -881,9 +881,13 @@ export namespace Components {
          */
         "contentClass": string;
         /**
-          * Programmatic trigger component
+          * No chevron and background, E.g. when a button is the activator
          */
-        "customTrigger": CMenuCustomTrigger;
+        "custom": boolean;
+        /**
+          * No hover background
+         */
+        "flat": boolean;
         /**
           * Menu items
          */
@@ -892,14 +896,6 @@ export namespace Components {
           * Items per page before adding scroll
          */
         "itemsPerPage": number;
-        /**
-          * No hover background
-         */
-        "nohover": boolean;
-        /**
-          * Simple variant without chevron and background, E.g. when a button is the activator
-         */
-        "simple": boolean;
         /**
           * Small variant
          */
@@ -3437,9 +3433,13 @@ declare namespace LocalJSX {
          */
         "contentClass"?: string;
         /**
-          * Programmatic trigger component
+          * No chevron and background, E.g. when a button is the activator
          */
-        "customTrigger"?: CMenuCustomTrigger;
+        "custom"?: boolean;
+        /**
+          * No hover background
+         */
+        "flat"?: boolean;
         /**
           * Menu items
          */
@@ -3448,14 +3448,6 @@ declare namespace LocalJSX {
           * Items per page before adding scroll
          */
         "itemsPerPage"?: number;
-        /**
-          * No hover background
-         */
-        "nohover"?: boolean;
-        /**
-          * Simple variant without chevron and background, E.g. when a button is the activator
-         */
-        "simple"?: boolean;
         /**
           * Small variant
          */
