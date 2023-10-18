@@ -1257,10 +1257,6 @@
       },
       "attributes": [
         {
-          "name": "color",
-          "description": "Color of the bar (valid css color)"
-        },
-        {
           "name": "hide-details",
           "description": "Hide the percentage display"
         },

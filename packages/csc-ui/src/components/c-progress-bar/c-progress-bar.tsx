@@ -30,13 +30,6 @@ export class CProgressBar {
   @Prop() label = '';
 
   /**
-   * Color of the bar (valid css color)
-   *
-   * @default var(--csc-primary)
-   */
-  @Prop() color: string;
-
-  /**
    * Indeterminate state of the progress bar
    */
   @Prop() indeterminate = false;
@@ -53,8 +46,7 @@ export class CProgressBar {
     const value = this._getSafeValue();
 
     const style = {
-      '--c-progress-bar-value': `${value}%`,
-      '--c-progress-bar-color': this.color ? this.color : null,
+      '--_c-progress-bar-value': `${value}%`,
     };
 
     const classes = {
