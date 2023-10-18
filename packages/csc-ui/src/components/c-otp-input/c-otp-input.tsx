@@ -239,7 +239,7 @@ export class COtpInput {
     return (
       <Host
         id={this.id}
-        style={{ '--c-otp-input-count': this.length.toString() }}
+        style={{ '--_c-otp-input-count': this.length.toString() }}
         class={{ error: !this.valid }}
       >
         <div

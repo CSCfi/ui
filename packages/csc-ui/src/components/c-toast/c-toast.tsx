@@ -121,7 +121,7 @@ export class CToast {
       >
         <c-icon
           {...{ ...(!!this.message.closeText && { slot: 'icon' }) }}
-          color="var(--c-toast-color)"
+          color="var(--_c-toast-color)"
           path={this._icons.close}
         />
 
@@ -170,7 +170,7 @@ export class CToast {
         {showProgressBar && (
           <div
             class="c-toast__progress"
-            style={{ '--c-toast-duration': `${this.message.duration}ms` }}
+            style={{ '--_c-toast-duration': `${this.message.duration}ms` }}
           >
             <div
               class={{

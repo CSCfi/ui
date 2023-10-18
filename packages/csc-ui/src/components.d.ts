@@ -1086,11 +1086,6 @@ export namespace Components {
      */
     interface CProgressBar {
         /**
-          * Color of the bar (valid css color)
-          * @default var(--csc-primary)
-         */
-        "color": string;
-        /**
           * Hide the percentage display
          */
         "hideDetails": boolean;
@@ -3679,11 +3674,6 @@ declare namespace LocalJSX {
      * @group Indicators
      */
     interface CProgressBar {
-        /**
-          * Color of the bar (valid css color)
-          * @default var(--csc-primary)
-         */
-        "color"?: string;
         /**
           * Hide the percentage display
          */
