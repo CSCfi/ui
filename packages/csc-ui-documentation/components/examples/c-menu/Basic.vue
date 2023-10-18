@@ -4,14 +4,25 @@
 
     <c-menu :items="items">Basic menu</c-menu>
 
-    <c-toasts ref="toastsRef"></c-toasts>
+    <c-menu :items="items" flat>Flat menu</c-menu>
+
+    <c-menu :items="items" small>Small menu</c-menu>
+
+    <c-menu :items="items" custom>
+      <c-icon-button ghost badge="8" tabindex="-1">
+        <c-icon :path="mdiEmailOutline"></c-icon>
+      </c-icon-button>
+    </c-menu>
+
+    <teleport to="body">
+      <c-toasts ref="toastsRef"></c-toasts>
+    </teleport>
   </component-example>
 </template>
 
 <script setup lang="ts">
-// @example-start|basic
 import { ref } from 'vue';
-import { mdiInformationOutline } from '@mdi/js';
+import { mdiInformationOutline, mdiEmailOutline } from '@mdi/js';
 import { CToastType } from '@cscfi/csc-ui';
 
 const toastsRef = ref<HTMLCToastsElement | null>(null);
@@ -55,7 +66,4 @@ const onItemClick = (message: string) => {
     type: CToastType.Success,
   });
 };
-// @example-end
 </script>
-
-<style lang="scss"></style>

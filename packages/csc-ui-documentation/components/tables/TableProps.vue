@@ -11,7 +11,7 @@
 
     <tbody>
       <tr v-for="item in items" :key="item.name" class="border-b">
-        <td>{{ item.name }}</td>
+        <td class="w-56">{{ kebabify(item.name) }}</td>
         <td>
           <template v-if="hasCType(item)">
             <NuxtLink
@@ -46,6 +46,12 @@ type TypeTableItem = {
 defineProps<{
   items: TypeTableItem[];
 }>();
+
+const kebabify = (str: string) =>
+  str.replace(
+    /[A-Z]+(?![a-z])|[A-Z]/g,
+    ($, ofs) => (ofs ? '-' : '') + $.toLowerCase(),
+  );
 
 const hasCType = (item: TypeTableItem) => {
   return Object.keys(typeDefinitions).includes(item.type.replace('[]', ''));

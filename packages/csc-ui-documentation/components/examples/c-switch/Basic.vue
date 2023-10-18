@@ -19,13 +19,9 @@
 </template>
 
 <script setup lang="ts">
-// @example-start|basic
 import { ref } from 'vue';
 
 const switch1 = ref(false);
 
 const switch2 = ref(true);
-// @example-end
 </script>
-
-<style lang="scss"></style>

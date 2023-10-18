@@ -7,7 +7,10 @@
    * @prop --c-progress-bar-value: Progress bar value in %
    */
   --_c-progress-bar-color: var(--c-progress-bar-color, var(--c-primary-600));
-  --_c-progress-bar-background-color: var(--c-progress-bar-background-color, var(--c-tertiary-200));
+  --_c-progress-bar-background-color: var(
+    --c-progress-bar-background-color,
+    var(--c-tertiary-200)
+  );
   --_c-progress-bar-border-width: var(--c-progress-bar-border-width, 4px);
   --_c-progress-bar-height: var(--c-progress-bar-height, 16px);
   --_c-progress-bar-value: var(--c-progress-bar-value, 0%);
@@ -27,7 +30,8 @@
     var(--_c-progress-bar-background-color);
   flex-basis: 100%;
   height: calc(
-    var(--_c-progress-bar-height) - calc(var(--_c-progress-bar-border-width) * 2)
+    var(--_c-progress-bar-height) -
+      calc(var(--_c-progress-bar-border-width) * 2)
   );
   margin: var(--_c-progress-bar-border-width);
   opacity: 0.75;
@@ -57,12 +61,13 @@
   }
 
   progress {
-    background-color: var(--_c-progress-bar-color);
+    background-color: var(--_c-progress-bar-background-color);
     border-radius: var(--_c-progress-bar-height);
     width: 100%;
     overflow: hidden;
     height: calc(
-      var(--_c-progress-bar-height) - calc(var(--_c-progress-bar-border-width) * 2)
+      var(--_c-progress-bar-height) -
+        calc(var(--_c-progress-bar-border-width) * 2)
     );
     position: absolute;
     border: none;
@@ -106,7 +111,8 @@
 
   &--indeterminate {
     &::before {
-      content: "";
+      content: '';
+      z-index: 1;
       position: absolute;
       background-color: var(--_c-progress-bar-color);
       border-radius: var(--_c-progress-bar-height);
