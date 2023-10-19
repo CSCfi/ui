@@ -1,5 +1,5 @@
 <template>
-  <component-example name="basic" rows>
+  <component-example name="basic">
     <template #title>Basic usage</template>
     <template #subtitle>With one to three level navigation</template>
 

@@ -49,7 +49,7 @@
             Persistent (optional)
           </c-checkbox>
 
-          <c-checkbox v-model="progress" v-control hint="Default: true">
+          <c-checkbox v-model="progress" v-control hint="Default: false">
             Show progress (optional)
           </c-checkbox>
 
@@ -106,7 +106,6 @@
 </template>
 
 <script setup lang="ts">
-// @example-start|basic
 import { CSelectItem, CToastMessage, CToastType } from '@cscfi/csc-ui';
 import { ref } from 'vue';
 
@@ -137,7 +136,7 @@ const absolute = ref(false);
 
 const persistent = ref(false);
 
-const progress = ref(true);
+const progress = ref(false);
 
 const verticalOptions: CSelectItem[] = [
   { name: 'Top', value: 'top' },
@@ -167,7 +166,6 @@ const onAddToast = () => {
 
   toasts.value?.addToast(message);
 };
-// @example-end
 </script>
 
 <style lang="scss"></style>

@@ -3,8 +3,14 @@
    * @prop --c-side-navigation-background-color: Side navigation background color
    * @prop --c-side-navigation-overlay-color: Side navigation overlay color
    */
-  --_c-side-navigation-background-color: var(--c-side-navigation-background-color, var(--c-primary-600));
-  --_c-side-navigation-overlay-color: var(--c-side-navigation-overlay-color, rgba(var(--c-black), 0.5));
+  --_c-side-navigation-background-color: var(
+    --c-side-navigation-background-color,
+    var(--c-primary-600)
+  );
+  --_c-side-navigation-overlay-color: var(
+    --c-side-navigation-overlay-color,
+    rgba(var(--c-black), 0.5)
+  );
 }
 
 :host(.autoheight) {
@@ -15,7 +21,6 @@
 
 :host(.desktop) {
   background-color: var(--_c-side-navigation-background-color);
-  flex: 1 2;
   display: flex;
   min-width: clamp(300px, 20vw, 340px);
 }

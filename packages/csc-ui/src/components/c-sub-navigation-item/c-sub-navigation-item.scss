@@ -5,11 +5,26 @@
    * @prop --c-sub-navigation-item-text-color-active: Sub navigation item active text color
    * @prop --c-sub-navigation-item-background-color-active: Sub navigation item active background color
    */
-  --_c-sub-navigation-item-text-color: var(--c-sub-navigation-item-text-color, var(--c-text-body));
-  --_c-sub-navigation-item-background-color: var(--c-sub-navigation-item-background-color, var(--c-transparent));
-  --_c-sub-navigation-item-background-color-hover: var(--c-sub-navigation-item-background-color-hover, var(--c-primary-100));
-  --_c-sub-navigation-item-text-color-active: var(--c-sub-navigation-item-text-color-active, var(--c-primary-600));
-  --_c-sub-navigation-item-background-color-active: var(--c-sub-navigation-item-background-color-active, var(--c-white));
+  --_c-sub-navigation-item-text-color: var(
+    --c-sub-navigation-item-text-color,
+    var(--c-text-body)
+  );
+  --_c-sub-navigation-item-background-color: var(
+    --c-sub-navigation-item-background-color,
+    var(--c-transparent)
+  );
+  --_c-sub-navigation-item-background-color-hover: var(
+    --c-sub-navigation-item-background-color-hover,
+    var(--c-primary-100)
+  );
+  --_c-sub-navigation-item-text-color-active: var(
+    --c-sub-navigation-item-text-color-active,
+    var(--c-primary-600)
+  );
+  --_c-sub-navigation-item-background-color-active: var(
+    --c-sub-navigation-item-background-color-active,
+    var(--c-white)
+  );
 
   /**
    * @prop --c-sub-navigation-item-sub-item-background-color-active: Active 3rd level item background color
@@ -18,19 +33,44 @@
    * @prop --c-sub-navigation-item-sub-item-text-color-active: Active 3rd level item text color
    * @prop --c-sub-navigation-item-sub-item-text-color: 3rd level item text color
    */
-  --_c-sub-navigation-item-sub-item-background-color-active: var(--c-sub-navigation-item-sub-item-background-color-active, var(--c-primary-100));
-  --_c-sub-navigation-item-sub-item-background-color-hover: var(--c-sub-navigation-item-sub-item-background-color-hover, var(--c-primary-100));
-  --_c-sub-navigation-item-sub-item-background-color: var(--c-sub-navigation-item-sub-item-background-color, var(--c-transparent));
-  --_c-sub-navigation-item-sub-item-text-color-active: var(--c-sub-navigation-item-sub-item-text-color-active, var(--c-primary-600));
-  --_c-sub-navigation-item-sub-item-text-color: var(--c-sub-navigation-item-sub-item-text-color, var(--c-text-body));
+  --_c-sub-navigation-item-sub-item-background-color-active: var(
+    --c-sub-navigation-item-sub-item-background-color-active,
+    var(--c-primary-100)
+  );
+  --_c-sub-navigation-item-sub-item-background-color-hover: var(
+    --c-sub-navigation-item-sub-item-background-color-hover,
+    var(--c-primary-100)
+  );
+  --_c-sub-navigation-item-sub-item-background-color: var(
+    --c-sub-navigation-item-sub-item-background-color,
+    var(--c-transparent)
+  );
+  --_c-sub-navigation-item-sub-item-text-color-active: var(
+    --c-sub-navigation-item-sub-item-text-color-active,
+    var(--c-primary-600)
+  );
+  --_c-sub-navigation-item-sub-item-text-color: var(
+    --c-sub-navigation-item-sub-item-text-color,
+    var(--c-text-body)
+  );
 }
 
 :host(.c-sub-navigation-item--sub-level) {
-  --_c-sub-navigation-item-background-color: var(--_c-sub-navigation-item-sub-item-background-color);
-  --_c-sub-navigation-item-text-color: var(--_c-sub-navigation-item-sub-item-text-color);
-  --_c-sub-navigation-item-background-color-hover: var(--_c-sub-navigation-item-sub-item-background-color-hover);
-  --_c-sub-navigation-item-text-color-active: var(--_c-sub-navigation-item-sub-item-text-color-active);
-  --_c-sub-navigation-item-background-color-active: var(--_c-sub-navigation-item-sub-item-background-color-active);
+  --_c-sub-navigation-item-background-color: var(
+    --_c-sub-navigation-item-sub-item-background-color
+  );
+  --_c-sub-navigation-item-text-color: var(
+    --_c-sub-navigation-item-sub-item-text-color
+  );
+  --_c-sub-navigation-item-background-color-hover: var(
+    --_c-sub-navigation-item-sub-item-background-color-hover
+  );
+  --_c-sub-navigation-item-text-color-active: var(
+    --_c-sub-navigation-item-sub-item-text-color-active
+  );
+  --_c-sub-navigation-item-background-color-active: var(
+    --_c-sub-navigation-item-sub-item-background-color-active
+  );
 }
 
 .c-sub-navigation-item {
@@ -43,7 +83,6 @@
   font-weight: 400;
   line-height: 46px;
   margin: 0 8px;
-  max-width: calc(320px - 24px - 16px);
   overflow: hidden;
   padding-left: 34px;
   position: relative;
@@ -65,7 +104,7 @@
 
 .c-sub-navigation-item__content::before {
   background-color: var(--_c-sub-navigation-item-text-color-active);
-  content: "";
+  content: '';
   height: 100%;
   left: 0;
   position: absolute;

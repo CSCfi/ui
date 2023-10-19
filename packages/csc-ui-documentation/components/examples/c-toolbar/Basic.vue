@@ -9,7 +9,7 @@
 
       <c-spacer></c-spacer>
 
-      <c-menu :items="items" simple>
+      <c-menu :items="items" custom>
         <c-icon-button ghost badge="4" tabindex="-1" size="small">
           <c-icon :path="mdiEmailOutline"></c-icon>
         </c-icon-button>
@@ -21,7 +21,6 @@
 </template>
 
 <script setup lang="ts">
-// @example-start|basic
 import { mdiEmailOutline } from '@mdi/js';
 
 const items = [
@@ -30,7 +29,4 @@ const items = [
   { name: 'Item 3', action: () => alert('Item 3 selected'), disabled: true },
   { name: 'Item 4', action: () => alert('Item 4 selected') },
 ];
-// @example-end
 </script>
-
-<style lang="scss"></style>
