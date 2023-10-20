@@ -26,7 +26,7 @@ const users: CDataTableData[] = [
       value: 'Yovonnda',
     },
     id: {
-      value: 1,
+      value: 'user_01',
     },
     lastName: {
       value: 'Whitehorn',
@@ -43,7 +43,7 @@ const users: CDataTableData[] = [
       value: 'Gerry',
     },
     id: {
-      value: 2,
+      value: 'user_02',
     },
     lastName: {
       value: 'McCrillis',
@@ -60,7 +60,7 @@ const users: CDataTableData[] = [
       value: 'Sarajane',
     },
     id: {
-      value: 3,
+      value: 'user_03',
     },
     lastName: {
       value: 'Doxey',
@@ -77,7 +77,7 @@ const users: CDataTableData[] = [
       value: 'Elle',
     },
     id: {
-      value: 4,
+      value: 'user_04',
     },
     lastName: {
       value: 'Guiot',
@@ -94,7 +94,7 @@ const users: CDataTableData[] = [
       value: 'Patten',
     },
     id: {
-      value: 5,
+      value: 'user_05',
     },
     lastName: {
       value: 'Botley',
@@ -111,7 +111,7 @@ const users: CDataTableData[] = [
       value: 'Marleah',
     },
     id: {
-      value: 6,
+      value: 'user_06',
     },
     lastName: {
       value: 'Penswick',
@@ -128,7 +128,7 @@ const users: CDataTableData[] = [
       value: 'Pat',
     },
     id: {
-      value: 7,
+      value: 'user_07',
     },
     lastName: {
       value: 'Triner',
@@ -145,7 +145,7 @@ const users: CDataTableData[] = [
       value: 'Martynne',
     },
     id: {
-      value: 8,
+      value: 'user_08',
     },
     lastName: {
       value: 'Antoniou',
@@ -162,7 +162,7 @@ const users: CDataTableData[] = [
       value: 'Jamal',
     },
     id: {
-      value: 9,
+      value: 'user_09',
     },
     lastName: {
       value: 'Mudie',
@@ -179,7 +179,7 @@ const users: CDataTableData[] = [
       value: 'Elvera',
     },
     id: {
-      value: 10,
+      value: 'user_10',
     },
     lastName: {
       value: 'Children',
@@ -196,7 +196,7 @@ const users: CDataTableData[] = [
       value: 'Ladonna',
     },
     id: {
-      value: 11,
+      value: 'user_11',
     },
     lastName: {
       value: 'Mitchinson',
@@ -213,7 +213,7 @@ const users: CDataTableData[] = [
       value: 'Jehanna',
     },
     id: {
-      value: 12,
+      value: 'user_12',
     },
     lastName: {
       value: 'Tiffin',
@@ -230,7 +230,7 @@ const users: CDataTableData[] = [
       value: 'Norby',
     },
     id: {
-      value: 13,
+      value: 'user_13',
     },
     lastName: {
       value: 'Borthram',
@@ -247,7 +247,7 @@ const users: CDataTableData[] = [
       value: 'Kimberlee',
     },
     id: {
-      value: 14,
+      value: 'user_14',
     },
     lastName: {
       value: 'Stringfellow',
@@ -264,7 +264,7 @@ const users: CDataTableData[] = [
       value: 'Gordie',
     },
     id: {
-      value: 15,
+      value: 'user_15',
     },
     lastName: {
       value: 'Banasik',
@@ -281,7 +281,7 @@ const users: CDataTableData[] = [
       value: 'Aurel',
     },
     id: {
-      value: 16,
+      value: 'user_16',
     },
     lastName: {
       value: 'McMains',
@@ -298,7 +298,7 @@ const users: CDataTableData[] = [
       value: 'Cristen',
     },
     id: {
-      value: 17,
+      value: 'user_17',
     },
     lastName: {
       value: 'Kleinmann',
@@ -315,7 +315,7 @@ const users: CDataTableData[] = [
       value: 'Thibaud',
     },
     id: {
-      value: 18,
+      value: 'user_18',
     },
     lastName: {
       value: 'Plues',
@@ -332,7 +332,7 @@ const users: CDataTableData[] = [
       value: 'Carver',
     },
     id: {
-      value: 19,
+      value: 'user_19',
     },
     lastName: {
       value: 'Oliphard',
@@ -349,7 +349,7 @@ const users: CDataTableData[] = [
       value: 'Shurlocke',
     },
     id: {
-      value: 20,
+      value: 'user_20',
     },
     lastName: {
       value: 'Orris',
@@ -366,7 +366,7 @@ const users: CDataTableData[] = [
       value: 'Bryan',
     },
     id: {
-      value: 21,
+      value: 'user_21',
     },
     lastName: {
       value: 'Bethune',
@@ -383,7 +383,7 @@ const users: CDataTableData[] = [
       value: 'Carleton',
     },
     id: {
-      value: 22,
+      value: 'user_22',
     },
     lastName: {
       value: 'Yonnie',
@@ -400,7 +400,7 @@ const users: CDataTableData[] = [
       value: 'Sibilla',
     },
     id: {
-      value: 23,
+      value: 'user_23',
     },
     lastName: {
       value: 'Easum',
@@ -417,7 +417,7 @@ const users: CDataTableData[] = [
       value: 'Dosi',
     },
     id: {
-      value: 24,
+      value: 'user_24',
     },
     lastName: {
       value: 'Claesens',
@@ -434,7 +434,7 @@ const users: CDataTableData[] = [
       value: 'Daron',
     },
     id: {
-      value: 25,
+      value: 'user_25',
     },
     lastName: {
       value: 'Epinoy',
@@ -451,7 +451,7 @@ const users: CDataTableData[] = [
       value: 'Vanya',
     },
     id: {
-      value: 26,
+      value: 'user_26',
     },
     lastName: {
       value: 'Filippucci',
@@ -468,7 +468,7 @@ const users: CDataTableData[] = [
       value: 'Caroline',
     },
     id: {
-      value: 27,
+      value: 'user_27',
     },
     lastName: {
       value: 'Janu',
@@ -485,7 +485,7 @@ const users: CDataTableData[] = [
       value: 'Meyer',
     },
     id: {
-      value: 28,
+      value: 'user_28',
     },
     lastName: {
       value: 'Chantillon',
@@ -502,7 +502,7 @@ const users: CDataTableData[] = [
       value: 'Iorgos',
     },
     id: {
-      value: 29,
+      value: 'user_29',
     },
     lastName: {
       value: 'Ben',
@@ -519,7 +519,7 @@ const users: CDataTableData[] = [
       value: 'Stella',
     },
     id: {
-      value: 30,
+      value: 'user_30',
     },
     lastName: {
       value: 'Fulbrook',
@@ -536,7 +536,7 @@ const users: CDataTableData[] = [
       value: 'Adamo',
     },
     id: {
-      value: 31,
+      value: 'user_31',
     },
     lastName: {
       value: 'Pepperell',
@@ -553,7 +553,7 @@ const users: CDataTableData[] = [
       value: 'Esme',
     },
     id: {
-      value: 32,
+      value: 'user_32',
     },
     lastName: {
       value: 'Bence',
@@ -570,7 +570,7 @@ const users: CDataTableData[] = [
       value: 'Viv',
     },
     id: {
-      value: 33,
+      value: 'user_33',
     },
     lastName: {
       value: 'Seear',
@@ -587,7 +587,7 @@ const users: CDataTableData[] = [
       value: 'Hester',
     },
     id: {
-      value: 34,
+      value: 'user_34',
     },
     lastName: {
       value: 'Marchelli',
@@ -604,7 +604,7 @@ const users: CDataTableData[] = [
       value: 'Francisco',
     },
     id: {
-      value: 35,
+      value: 'user_35',
     },
     lastName: {
       value: 'Laurisch',
@@ -621,7 +621,7 @@ const users: CDataTableData[] = [
       value: 'Nikos',
     },
     id: {
-      value: 36,
+      value: 'user_36',
     },
     lastName: {
       value: 'Ranscombe',
@@ -638,7 +638,7 @@ const users: CDataTableData[] = [
       value: 'Sherlocke',
     },
     id: {
-      value: 37,
+      value: 'user_37',
     },
     lastName: {
       value: 'Marquet',
@@ -655,7 +655,7 @@ const users: CDataTableData[] = [
       value: 'Dario',
     },
     id: {
-      value: 38,
+      value: 'user_38',
     },
     lastName: {
       value: 'Dallinder',
@@ -672,7 +672,7 @@ const users: CDataTableData[] = [
       value: 'Cliff',
     },
     id: {
-      value: 39,
+      value: 'user_39',
     },
     lastName: {
       value: 'Ranfield',
@@ -689,7 +689,7 @@ const users: CDataTableData[] = [
       value: 'Lina',
     },
     id: {
-      value: 40,
+      value: 'user_40',
     },
     lastName: {
       value: 'Rammell',
@@ -706,7 +706,7 @@ const users: CDataTableData[] = [
       value: 'Dennison',
     },
     id: {
-      value: 41,
+      value: 'user_41',
     },
     lastName: {
       value: 'Farnish',
@@ -723,7 +723,7 @@ const users: CDataTableData[] = [
       value: 'Alard',
     },
     id: {
-      value: 42,
+      value: 'user_42',
     },
     lastName: {
       value: 'Twinbourne',
@@ -740,7 +740,7 @@ const users: CDataTableData[] = [
       value: 'Cary',
     },
     id: {
-      value: 43,
+      value: 'user_43',
     },
     lastName: {
       value: 'Gitting',
@@ -757,7 +757,7 @@ const users: CDataTableData[] = [
       value: 'Darla',
     },
     id: {
-      value: 44,
+      value: 'user_44',
     },
     lastName: {
       value: 'Gillinghams',
@@ -774,7 +774,7 @@ const users: CDataTableData[] = [
       value: 'Basil',
     },
     id: {
-      value: 45,
+      value: 'user_45',
     },
     lastName: {
       value: 'Blampey',
@@ -791,7 +791,7 @@ const users: CDataTableData[] = [
       value: 'Chan',
     },
     id: {
-      value: 46,
+      value: 'user_46',
     },
     lastName: {
       value: 'Dowda',
@@ -808,7 +808,7 @@ const users: CDataTableData[] = [
       value: 'Cherlyn',
     },
     id: {
-      value: 47,
+      value: 'user_47',
     },
     lastName: {
       value: 'Shower',
@@ -825,7 +825,7 @@ const users: CDataTableData[] = [
       value: 'Harold',
     },
     id: {
-      value: 48,
+      value: 'user_48',
     },
     lastName: {
       value: 'Flower',
@@ -842,7 +842,7 @@ const users: CDataTableData[] = [
       value: 'Zonda',
     },
     id: {
-      value: 49,
+      value: 'user_49',
     },
     lastName: {
       value: 'Duesbury',
@@ -859,7 +859,7 @@ const users: CDataTableData[] = [
       value: 'Chance',
     },
     id: {
-      value: 50,
+      value: 'user_50',
     },
     lastName: {
       value: 'Diplock',
@@ -871,12 +871,17 @@ const getProgressFromValue = (value: string) =>
   Math.min(value.length * 10, 100);
 
 users.forEach((user) => {
+  const progress = getProgressFromValue(user.firstName.value as string);
+  const progress2 = getProgressFromValue(user.lastName.value as string);
+
   user.progress = {
-    value: getProgressFromValue(user.firstName.value as string),
+    value: progress,
+    formattedValue: `${formatNumber(progress, 1)} %`,
   };
 
   user.progress2 = {
-    value: getProgressFromValue(user.lastName.value as string),
+    value: progress2,
+    formattedValue: `${formatNumber(progress2, 1)} %`,
   };
 
   const failure = getProgressFromValue(user.firstName.value as string) / 3;
