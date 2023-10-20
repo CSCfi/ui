@@ -69,9 +69,14 @@
   .c-tabs__content {
     display: flex;
   }
+
+  ::slotted(c-tab-buttons) {
+    flex-grow: 1;
+  }
 }
 
 :host(.c-tabs.c-tabs--justify-start:not(.c-tabs--vertical)) {
+  ::slotted(c-tab-buttons),
   ::slotted(c-tab) {
     flex-grow: 0;
   }
@@ -82,6 +87,7 @@
     justify-content: end;
   }
 
+  ::slotted(c-tab-buttons),
   ::slotted(c-tab) {
     flex-grow: 0;
   }
@@ -92,6 +98,7 @@
     justify-content: center;
   }
 
+  ::slotted(c-tab-buttons),
   ::slotted(c-tab) {
     flex-grow: 0;
   }
@@ -149,6 +156,7 @@
 }
 
 :host(.c-tabs.c-tabs--buttons) {
+  .c-tabs__tabs::after,
   .c-tabs__scroll::after {
     display: none;
   }

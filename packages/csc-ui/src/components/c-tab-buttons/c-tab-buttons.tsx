@@ -131,14 +131,19 @@ export class CTabButtons {
   }
 
   @Listen('tabChange', { passive: true })
-  onTabChange(event: CustomEvent) {
+  onTabChange(
+    event: CustomEvent<{
+      value: number | string;
+      element: HTMLCButtonElement;
+    }>,
+  ) {
     if (!this.tabs) event.stopPropagation();
 
     const isActive =
       this.value !== null &&
       (this._isIndexBased
-        ? +event.detail === +this.value
-        : event.detail === this.value);
+        ? +event.detail.value === +this.value
+        : event.detail.value === this.value);
 
     // Disable deselection if mandatory prop is set to true
     if (this.mandatory && isActive) {
@@ -146,7 +151,7 @@ export class CTabButtons {
     }
 
     const nullValue = this._isIndexBased ? null : '';
-    const value = this._isIndexBased ? +event.detail : event.detail;
+    const value = this._isIndexBased ? +event.detail.value : event.detail.value;
 
     this.value = isActive ? nullValue : value;
   }

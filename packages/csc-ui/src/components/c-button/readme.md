@@ -30,10 +30,10 @@
 
 ## Events
 
-| Event       | Description                | Type                            |
-| ----------- | -------------------------- | ------------------------------- |
-| `tabChange` | Emit changes to the parent | `CustomEvent<number \| string>` |
-| `tabFocus`  | Emit focus to the parent   | `CustomEvent<number \| string>` |
+| Event       | Description                | Type                                                                     |
+| ----------- | -------------------------- | ------------------------------------------------------------------------ |
+| `tabChange` | Emit changes to the parent | `CustomEvent<{ value: string \| number; element: HTMLCButtonElement; }>` |
+| `tabFocus`  | Emit focus to the parent   | `CustomEvent<number \| string>`                                          |
 
 
 ## Slots

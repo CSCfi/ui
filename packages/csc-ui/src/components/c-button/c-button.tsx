@@ -113,7 +113,10 @@ export class CButton {
    * Emit changes to the parent
    * @private
    */
-  @Event() tabChange: EventEmitter<number | string>;
+  @Event() tabChange: EventEmitter<{
+    value: number | string;
+    element: HTMLCButtonElement;
+  }>;
 
   /**
    * Emit focus to the parent
@@ -143,7 +146,10 @@ export class CButton {
     this._rippleElement.createRipple(event, this._container, center);
 
     if (this.tabs) {
-      this.tabChange.emit(this.value ?? this.hostElement.dataset.index);
+      this.tabChange.emit({
+        value: this.value ?? this.hostElement.dataset.index,
+        element: this.hostElement,
+      });
     }
 
     if (this.type === 'submit') {

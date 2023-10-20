@@ -2815,7 +2815,10 @@ declare namespace LocalJSX {
           * Emit changes to the parent
           * @private
          */
-        "onTabChange"?: (event: CButtonCustomEvent<number | string>) => void;
+        "onTabChange"?: (event: CButtonCustomEvent<{
+    value: number | string;
+    element: HTMLCButtonElement;
+  }>) => void;
         /**
           * Emit focus to the parent
           * @private
