@@ -12,6 +12,7 @@
 | `borderless`         | `borderless`        | Disable the bottom border | `boolean`          | `false`     |
 | `disableAnimation`   | `disable-animation` | Disable animation         | `boolean`          | `false`     |
 | `value` _(required)_ | `value`             | Currently active tab      | `number \| string` | `undefined` |
+| `vertical`           | `vertical`          | Vertical tabs             | `boolean`          | `false`     |
 
 
 ## Events

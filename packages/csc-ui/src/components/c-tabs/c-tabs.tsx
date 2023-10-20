@@ -36,17 +36,28 @@ export class CTabs {
   @Prop() disableAnimation = false;
 
   /**
+   * Vertical tabs
+   */
+  @Prop() vertical = false;
+
+  /**
    * Emit changes to the parent
    */
   @Event({ bubbles: false }) changeValue: EventEmitter;
 
   @Element() el: HTMLCTabsElement;
 
+  private _tabsTabsElement: HTMLDivElement;
+
+  private _tabsScrollElement: HTMLDivElement;
+
   private _initialized = false;
 
   private _resizeObserver: ResizeObserver;
 
   private _debounce = null;
+
+  private _moveDebounce = null;
 
   private _isDirty = false;
 
