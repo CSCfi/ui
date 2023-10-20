@@ -726,6 +726,9 @@ export namespace Components {
          */
         "weight": string;
     }
+    /**
+     * @group Other
+     */
     interface CList {
         /**
           * Disable the list
@@ -2070,6 +2073,9 @@ declare global {
         prototype: HTMLCLinkElement;
         new (): HTMLCLinkElement;
     };
+    /**
+     * @group Other
+     */
     interface HTMLCListElement extends Components.CList, HTMLStencilElement {
     }
     var HTMLCListElement: {
@@ -3282,6 +3288,9 @@ declare namespace LocalJSX {
          */
         "weight"?: string;
     }
+    /**
+     * @group Other
+     */
     interface CList {
         /**
           * Disable the list
@@ -4566,6 +4575,9 @@ declare module "@stencil/core" {
              * @group Buttons
              */
             "c-link": LocalJSX.CLink & JSXBase.HTMLAttributes<HTMLCLinkElement>;
+            /**
+             * @group Other
+             */
             "c-list": LocalJSX.CList & JSXBase.HTMLAttributes<HTMLCListElement>;
             "c-list-item": LocalJSX.CListItem & JSXBase.HTMLAttributes<HTMLCListItemElement>;
             "c-list-item-title": LocalJSX.CListItemTitle & JSXBase.HTMLAttributes<HTMLCListItemTitleElement>;

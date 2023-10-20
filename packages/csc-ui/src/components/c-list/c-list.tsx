@@ -1,5 +1,8 @@
 import { Component, Element, Host, Prop, Watch, h } from '@stencil/core';
 
+/**
+ * @group Other
+ */
 @Component({
   tag: 'c-list',
   styleUrl: 'c-list.scss',

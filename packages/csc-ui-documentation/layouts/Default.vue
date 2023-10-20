@@ -28,34 +28,23 @@
         <c-text-field
           v-model="query"
           v-control
-          class="mr-6"
+          class="mr-6 mb-2"
           placeholder="Search for a component"
           hide-details
           shadow
-          @input="filterComponents()"
         >
           <c-icon slot="pre" :path="mdiMagnify" size="16"></c-icon>
         </c-text-field>
 
         <c-side-navigation-item
-          v-for="group in navItems"
-          :key="group.name"
-          :active="group.visible"
+          v-for="component in components"
+          :key="component.name"
+          :active="route?.params?.slug?.[0] === component.tag"
           class="capitalize"
+          @keyup.enter="onNavigateToComponent(component.tag)"
+          @click="onNavigateToComponent(component.tag)"
         >
-          {{ group.name }}
-
-          <c-sub-navigation-item
-            v-for="item in group.components"
-            slot="subnavitem"
-            :key="item.name"
-            :active="route?.params?.slug?.[0] === item?.tag"
-            class="capitalize"
-            @keyup.enter="onNavigateToComponent(item.tag)"
-            @click="onNavigateToComponent(item.tag)"
-          >
-            {{ item.name }}
-          </c-sub-navigation-item>
+          {{ component.name }}
         </c-side-navigation-item>
 
         <c-side-navigation-title>Miscellaneous</c-side-navigation-title>
@@ -86,18 +75,9 @@ import {
   mdiMagnify,
 } from '@mdi/js';
 import { storeToRefs } from 'pinia';
-import { ComponentData } from '../types/docs';
 import packageJson from '../package.json';
 
 const version = ref(packageJson.version);
-
-interface ComponentGroup {
-  name: string;
-  components: ComponentData[];
-  visible: boolean;
-}
-
-const navItems = ref<ComponentGroup[]>([]);
 
 const query = ref('');
 
@@ -122,61 +102,19 @@ onMounted(() => {
 
 const isMobile = computed(() => width.value < 1280);
 
-const getGroupedComponents = (
-  query = '',
-  visible = false,
-): ComponentGroup[] => {
-  return parsedData.value
-    .filter((component: any) => {
-      if (!query) return component;
-
-      return component.tag.includes(query);
-    })
-    .reduce((groups: ComponentGroup[], component: any) => {
-      const groupName = (
-        component.docsTags.find((docsTag: any) => docsTag.name === 'group')
-          ?.text || 'ungrouped'
-      ).toLowerCase();
-      const group = groups.find((group) => group.name === groupName);
-
-      if (!group) {
-        groups.push({
-          name: groupName,
-          components: [component],
-          visible: false,
-        });
-
-        return groups;
+const components = computed(() =>
+  parsedData.value
+    .filter((component) => {
+      if (query.value) {
+        return component.docsTags.length && component.tag.includes(query.value);
       }
 
-      group.components.push(component);
-
-      return groups;
-    }, [] as ComponentGroup[])
-    .sort((a: any, b: any) => a.name.localeCompare(b.name))
-    .map((group: ComponentGroup) => {
-      if (!route.path.includes('components')) return group;
-
-      const isActive = group.components.some(
-        (component: any) => component.tag === route.params.slug[0],
-      );
-
-      return { ...group, visible: isActive || visible };
-    });
-};
-
-const filterComponents = () => {
-  navItems.value = getGroupedComponents(query.value, !!query.value);
-};
-
-watch(
-  parsedData.value,
-  (data) => {
-    if (!data) return;
-
-    navItems.value = getGroupedComponents();
-  },
-  { immediate: true },
+      return component.docsTags.length;
+    })
+    .map((data) => ({
+      tag: data.tag,
+      name: data.name,
+    })),
 );
 
 watch(
