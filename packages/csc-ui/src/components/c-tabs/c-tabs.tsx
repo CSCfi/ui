@@ -12,6 +12,8 @@ import {
   State,
 } from '@stencil/core';
 
+export type CTabsJustify = 'stretch' | 'start' | 'end' | 'center';
+
 enum ScrollDirection {
   Left = 2,
   Right = 4,
@@ -43,6 +45,11 @@ export class CTabs {
   @Prop() disableAnimation = false;
 
   /**
+   * Justification of the children
+   */
+  @Prop() justify: CTabsJustify = 'stretch';
+
+  /**
    * Vertical tabs
    */
   @Prop() vertical = false;
@@ -71,6 +78,11 @@ export class CTabs {
   private _focusedTabValue = this.value;
 
   private static _uniqueId = 0;
+
+  @Watch('justify')
+  onJustificationChange() {
+    this._handleActiveTab();
+  }
 
   @Watch('value')
   onExternalValueChange() {
@@ -649,6 +661,7 @@ export class CTabs {
       'c-tabs--borderless': this.borderless,
       'c-tabs--vertical': this.vertical,
       'c-tabs--overflow': this.isOverflowing,
+      [`c-tabs--justify-${this.justify}`]: true,
     };
 
     return (

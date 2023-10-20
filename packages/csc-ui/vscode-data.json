@@ -1854,6 +1854,24 @@
           "description": "Disable animation"
         },
         {
+          "name": "justify",
+          "description": "Justification of the children",
+          "values": [
+            {
+              "name": "center"
+            },
+            {
+              "name": "end"
+            },
+            {
+              "name": "start"
+            },
+            {
+              "name": "stretch"
+            }
+          ]
+        },
+        {
           "name": "value",
           "description": "Currently active tab"
         },

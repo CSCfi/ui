@@ -7,12 +7,14 @@
 
 ## Properties
 
-| Property             | Attribute           | Description               | Type               | Default     |
-| -------------------- | ------------------- | ------------------------- | ------------------ | ----------- |
-| `borderless`         | `borderless`        | Disable the bottom border | `boolean`          | `false`     |
-| `disableAnimation`   | `disable-animation` | Disable animation         | `boolean`          | `false`     |
-| `value` _(required)_ | `value`             | Currently active tab      | `number \| string` | `undefined` |
-| `vertical`           | `vertical`          | Vertical tabs             | `boolean`          | `false`     |
+| Property             | Attribute           | Description                                                                       | Type                                        | Default     |
+| -------------------- | ------------------- | --------------------------------------------------------------------------------- | ------------------------------------------- | ----------- |
+| `borderless`         | `borderless`        | Disable the bottom border                                                         | `boolean`                                   | `false`     |
+| `disableAnimation`   | `disable-animation` | Disable animation                                                                 | `boolean`                                   | `false`     |
+| `justify`            | `justify`           | Justification of the children                                                     | `"center" \| "end" \| "start" \| "stretch"` | `'stretch'` |
+| `mobileBreakpoint`   | `mobile-breakpoint` | Mobile breakpoint in pixels - affects the content stacking with the vertical tabs | `number`                                    | `640`       |
+| `value` _(required)_ | `value`             | Currently active tab                                                              | `number \| string`                          | `undefined` |
+| `vertical`           | `vertical`          | Vertical tabs                                                                     | `boolean`                                   | `false`     |
 
 
 ## Events
