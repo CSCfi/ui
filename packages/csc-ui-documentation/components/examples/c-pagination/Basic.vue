@@ -14,7 +14,7 @@
 
 <script setup lang="ts">
 import { CPaginationOptions } from '@cscfi/csc-ui';
-import countries from '../data/countries.json';
+import countries from '../../data/countries.json';
 
 const countriesList = Object.values(countries).sort();
 

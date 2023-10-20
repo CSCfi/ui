@@ -22,15 +22,12 @@
 
 <script setup lang="ts">
 import { CPaginationOptions } from '@cscfi/csc-ui';
-import countries from '../data/countries.json';
+import countries from '../../data/countries.json';
 
 const countriesList = Object.values(countries).sort();
 
 const filteredCountries = computed(() =>
-  countriesList.slice(
-    options.value.startFrom,
-    (optionsSimple.value?.endTo || 0) + 1,
-  ),
+  countriesList.slice(options.value.startFrom, (options.value?.endTo || 0) + 1),
 );
 
 const options = ref<CPaginationOptions>({
