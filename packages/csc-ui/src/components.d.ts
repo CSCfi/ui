@@ -11,12 +11,14 @@ import { _CDropdownParams } from "./components/c-dropdowns/c-dropdowns";
 import { _CDropdownParams as _CDropdownParams1 } from "./components/c-dropdowns/c-dropdowns";
 import { _CDropdownUpdateParams as _CDropdownUpdateParams1 } from "./components/c-dropdown/c-dropdown";
 import { CLoginCardBlendMode } from "./components/c-login-card/c-login-card";
+import { CTabsJustify } from "./components/c-tabs/c-tabs";
 export { CAlertType, CAutocompleteItem, CDataTableData, CDataTableFooterOptions, CDataTableHeader, CMenuOption, CPaginationOptions, CRadioGroupItem, CSelectItem, CToastMessage } from "./types";
 export { _CDropdownUpdateParams } from "./components/c-dropdown/c-dropdown";
 export { _CDropdownParams } from "./components/c-dropdowns/c-dropdowns";
 export { _CDropdownParams as _CDropdownParams1 } from "./components/c-dropdowns/c-dropdowns";
 export { _CDropdownUpdateParams as _CDropdownUpdateParams1 } from "./components/c-dropdown/c-dropdown";
 export { CLoginCardBlendMode } from "./components/c-login-card/c-login-card";
+export { CTabsJustify } from "./components/c-tabs/c-tabs";
 export namespace Components {
     /**
      * @group Content Selectors
@@ -1585,6 +1587,14 @@ export namespace Components {
           * Disable animation
          */
         "disableAnimation": boolean;
+        /**
+          * Justification of the children
+         */
+        "justify": CTabsJustify;
+        /**
+          * Mobile breakpoint in pixels - affects the content stacking with the vertical tabs
+         */
+        "mobileBreakpoint": number;
         /**
           * Currently active tab
          */
@@ -4208,6 +4218,14 @@ declare namespace LocalJSX {
           * Disable animation
          */
         "disableAnimation"?: boolean;
+        /**
+          * Justification of the children
+         */
+        "justify"?: CTabsJustify;
+        /**
+          * Mobile breakpoint in pixels - affects the content stacking with the vertical tabs
+         */
+        "mobileBreakpoint"?: number;
         /**
           * Emit changes to the parent
          */

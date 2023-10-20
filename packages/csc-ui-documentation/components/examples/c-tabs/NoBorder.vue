@@ -8,9 +8,15 @@
       <c-tab value="tab3">Three</c-tab>
 
       <c-tab-items slot="items">
-        <c-tab-item value="tab1">1</c-tab-item>
-        <c-tab-item value="tab2">2</c-tab-item>
-        <c-tab-item value="tab3">3</c-tab-item>
+        <c-tab-item value="tab1">
+          This is the content for the first tab
+        </c-tab-item>
+        <c-tab-item value="tab2">
+          This is the content for the second tab
+        </c-tab-item>
+        <c-tab-item value="tab3">
+          This is the content for the third tab
+        </c-tab-item>
       </c-tab-items>
     </c-tabs>
   </component-example>

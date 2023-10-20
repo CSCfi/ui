@@ -1,8 +1,8 @@
 <template>
-  <component-example name="noAnimation" rows>
-    <template #title>Without animation</template>
+  <component-example rows>
+    <template #title>Tab placement</template>
 
-    <c-tabs v-model="tab" v-control disable-animation>
+    <c-tabs v-model="tab" v-control :justify="justifyTabs">
       <c-tab value="tab1">One</c-tab>
       <c-tab value="tab2">Two</c-tab>
       <c-tab value="tab3">Three</c-tab>
@@ -19,13 +19,34 @@
         </c-tab-item>
       </c-tab-items>
     </c-tabs>
+
+    <c-radio-group
+      v-model="justifyTabs"
+      v-control
+      :items="options"
+      inline
+      hide-details
+      return-value
+    >
+      Change the tab placement
+    </c-radio-group>
   </component-example>
 </template>
 
 <script setup lang="ts">
+import { CRadioGroupItem, CTabsJustify } from '@cscfi/csc-ui';
 import { ref } from 'vue';
 
 type Tab = 'tab1' | 'tab2' | 'tab3';
 
 const tab = ref<Tab>('tab1');
+
+const justifyTabs = ref<CTabsJustify>('start');
+
+const options: CRadioGroupItem[] = [
+  { value: 'start', label: 'Start' },
+  { value: 'center', label: 'Center' },
+  { value: 'end', label: 'End' },
+  { value: 'stretch', label: 'Stretch' },
+];
 </script>

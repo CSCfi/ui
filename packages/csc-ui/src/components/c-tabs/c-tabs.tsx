@@ -50,6 +50,12 @@ export class CTabs {
   @Prop() justify: CTabsJustify = 'stretch';
 
   /**
+   * Mobile breakpoint in pixels
+   * - affects the content stacking with the vertical tabs
+   */
+  @Prop() mobileBreakpoint = 640;
+
+  /**
    * Vertical tabs
    */
   @Prop() vertical = false;
@@ -428,6 +434,8 @@ export class CTabs {
         if (width === this._previousWidth) return;
         this._handleOverflow();
 
+        this.isMobile = width < this.mobileBreakpoint;
+
         this._maxScrollOffset =
           -1 * (content.scrollWidth - container.clientWidth);
 
@@ -459,7 +467,7 @@ export class CTabs {
         const newTabWidth = newTab.offsetWidth / content.offsetWidth;
 
         const newTabHeight = this.vertical
-          ? (newTab.offsetHeight + 20) / content.offsetHeight
+          ? newTab.offsetHeight / content.offsetHeight
           : newTab.offsetHeight / content.offsetHeight;
 
         const newTabPosition = oldTab.compareDocumentPosition(newTab);
@@ -478,7 +486,7 @@ export class CTabs {
             : oldTab.offsetLeft + oldTab.offsetWidth - newTab.offsetLeft;
 
           this._setIndicatorLeft(newTab.offsetLeft - buttonOffset);
-          this._setIndicatorTop(newTab.offsetTop);
+          this._setIndicatorTop(newTab.offsetTop - buttonOffset);
         }
 
         this._setIndicatorWidth(
@@ -491,7 +499,7 @@ export class CTabs {
           if (event.propertyName !== 'scale') return;
 
           this._setIndicatorLeft(newTab.offsetLeft - buttonOffset);
-          this._setIndicatorTop(newTab.offsetTop);
+          this._setIndicatorTop(newTab.offsetTop - buttonOffset);
 
           this._setIndicatorWidth(this.vertical ? newTabHeight : newTabWidth);
 
@@ -517,6 +525,8 @@ export class CTabs {
   private _touchOffset = 0;
 
   @State() isOverflowing = false;
+
+  @State() isMobile = false;
 
   @State() scrollOffset = 0;
 
@@ -661,6 +671,7 @@ export class CTabs {
       'c-tabs--borderless': this.borderless,
       'c-tabs--vertical': this.vertical,
       'c-tabs--overflow': this.isOverflowing,
+      'c-tabs--mobile': this.isMobile,
       [`c-tabs--justify-${this.justify}`]: true,
     };
 

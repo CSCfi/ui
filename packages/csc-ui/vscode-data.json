@@ -1872,6 +1872,10 @@
           ]
         },
         {
+          "name": "mobile-breakpoint",
+          "description": "Mobile breakpoint in pixels\n- affects the content stacking with the vertical tabs"
+        },
+        {
           "name": "value",
           "description": "Currently active tab"
         },
