@@ -11,7 +11,7 @@
 
       <p v-if="!!componentData?.docs">{{ componentData.docs }}</p>
 
-      <c-tabs v-model="activeTab" v-control :vertical="isMobile">
+      <c-tabs v-model="activeTab" v-control>
         <c-tab
           v-for="tab in tabs"
           :key="tab.value"
@@ -51,11 +51,9 @@ const props = defineProps<{
 
 const cardRef = ref<HTMLCCardElement | null>(null);
 
-const isMobile = ref(false);
-
 const route = useRoute();
 
-const { componentData } = storeToRefs(useExampleStore());
+const { componentData, types } = storeToRefs(useExampleStore());
 
 const onTabClick = async (tab: any) => {
   await navigateTo({ ...route, query: tab.query });
@@ -132,26 +130,19 @@ const tabs = computed(() => {
       },
       component: DocumentationTable,
     },
-    // {
-    //   label: 'Types',
-    //   value: 'types',
-    //   enabled: !!types.value.get(route.params.slug[0]),
-    //   query: {
-    //     tab: 'types',
-    //   },
-    //   component: DocumentationTable,
-    // },
+    {
+      label: 'Types',
+      value: 'types',
+      enabled: !!types.value.get(route.params.slug[0]),
+      query: {
+        tab: 'types',
+      },
+      component: DocumentationTable,
+    },
   ];
 });
 
 const activeTab = ref(route.query.tab || tabs.value[0].value);
-
-onMounted(() => {
-  // useResizeObserver(cardRef, ([entry]) => {
-  //   const { width } = entry.contentRect;
-  //   isMobile.value = width <= 440;
-  // });
-});
 </script>
 
 <style lang="scss">
