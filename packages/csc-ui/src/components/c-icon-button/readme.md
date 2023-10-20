@@ -150,6 +150,7 @@
  - [c-pagination](../c-pagination)
  - [c-side-navigation](../c-side-navigation)
  - [c-swiper](../c-swiper)
+ - [c-tabs](../c-tabs)
  - [c-tag](../c-tag)
 
 ### Depends on
@@ -169,6 +170,7 @@ graph TD;
   c-pagination --> c-icon-button
   c-side-navigation --> c-icon-button
   c-swiper --> c-icon-button
+  c-tabs --> c-icon-button
   c-tag --> c-icon-button
   style c-icon-button fill:#f9f,stroke:#333,stroke-width:4px
 ```

@@ -1,5 +1,5 @@
 <template>
-  <div class="component-example grid gap-6">
+  <div class="component-example flex flex-col gap-6">
     <div>
       <h2 v-if="slots.title" class="font-medium text-xl text-primary-600">
         <slot name="title" />
@@ -11,7 +11,7 @@
 
     <p v-if="slots.description"><slot name="description" /></p>
 
-    <div class="gap-4 flex" :class="rows ? 'flex-col' : 'flex-wrap'">
+    <div class="gap-4 flex w-full" :class="rows ? 'flex-col' : 'flex-wrap'">
       <slot />
     </div>
 
@@ -118,5 +118,8 @@ c-tab-buttons {
   --_c-tab-buttons-border-color: var(--c-tertiary-800);
   --_c-tab-buttons-text-color: var(--c-tertiary-800);
   --_c-tab-buttons-background-color-active-hover: var(--c-tertiary-500);
+}
+.component-example {
+  transform: translateX(0);
 }
 </style>

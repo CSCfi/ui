@@ -1,7 +1,7 @@
 <template>
-  <c-card class="max-w-screen-xl mx-auto">
+  <c-card ref="cardRef" class="max-w-screen-xl mx-auto">
     <c-card-content>
-      <div>
+      <div class="example-headings">
         <h1 class="text-4xl capitalize font-bold text-primary-600">
           {{ componentData?.name }}
         </h1>
@@ -11,33 +11,31 @@
 
       <p v-if="!!componentData?.docs">{{ componentData.docs }}</p>
 
-      <div>
-        <c-tabs v-model="activeTab" v-control>
-          <c-tab
-            v-for="tab in tabs"
-            :key="tab.value"
-            :disabled="!tab.enabled"
-            :value="tab.value"
-            @click="onTabClick(tab)"
-          >
-            {{ tab.label }}
-          </c-tab>
+      <c-tabs v-model="activeTab" v-control :vertical="isMobile">
+        <c-tab
+          v-for="tab in tabs"
+          :key="tab.value"
+          :disabled="!tab.enabled"
+          :value="tab.value"
+          @click="onTabClick(tab)"
+        >
+          {{ tab.label }}
+        </c-tab>
 
-          <c-tab-items slot="items">
-            <c-tab-item
-              v-for="tab in tabs"
-              :key="`item-${tab.label.toLowerCase()}`"
-              :value="tab.value"
-            >
-              <div v-if="tab.enabled" class="grid gap-6">
-                <keep-alive>
-                  <component :is="tab.component" :component="tab.query.tab" />
-                </keep-alive>
-              </div>
-            </c-tab-item>
-          </c-tab-items>
-        </c-tabs>
-      </div>
+        <c-tab-items slot="items">
+          <c-tab-item
+            v-for="tab in tabs"
+            :key="`item-${tab.label.toLowerCase()}`"
+            :value="tab.value"
+          >
+            <div v-if="tab.enabled" class="flex flex-col gap-6">
+              <keep-alive>
+                <component :is="tab.component" :component="tab.query.tab" />
+              </keep-alive>
+            </div>
+          </c-tab-item>
+        </c-tab-items>
+      </c-tabs>
     </c-card-content>
   </c-card>
 </template>
@@ -50,6 +48,10 @@ import DocumentationTable from './DocumentationTable.vue';
 const props = defineProps<{
   component: string;
 }>();
+
+const cardRef = ref<HTMLCCardElement | null>(null);
+
+const isMobile = ref(false);
 
 const route = useRoute();
 
@@ -143,6 +145,13 @@ const tabs = computed(() => {
 });
 
 const activeTab = ref(route.query.tab || tabs.value[0].value);
+
+onMounted(() => {
+  // useResizeObserver(cardRef, ([entry]) => {
+  //   const { width } = entry.contentRect;
+  //   isMobile.value = width <= 440;
+  // });
+});
 </script>
 
 <style lang="scss">

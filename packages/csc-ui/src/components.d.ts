@@ -1589,6 +1589,10 @@ export namespace Components {
           * Currently active tab
          */
         "value": number | string;
+        /**
+          * Vertical tabs
+         */
+        "vertical": boolean;
     }
     /**
      * @parent c-tags
@@ -4093,7 +4097,10 @@ declare namespace LocalJSX {
           * Emit changes to the parent
           * @private
          */
-        "onTabChange"?: (event: CTabCustomEvent<number | string>) => void;
+        "onTabChange"?: (event: CTabCustomEvent<{
+    value: number | string;
+    element: HTMLCTabElement;
+  }>) => void;
         /**
           * Emit focus to the parent
           * @private
@@ -4209,6 +4216,10 @@ declare namespace LocalJSX {
           * Currently active tab
          */
         "value": number | string;
+        /**
+          * Vertical tabs
+         */
+        "vertical"?: boolean;
     }
     /**
      * @parent c-tags

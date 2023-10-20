@@ -60,7 +60,10 @@ export class CTab {
    *
    * @private
    */
-  @Event() tabChange: EventEmitter<number | string>;
+  @Event() tabChange: EventEmitter<{
+    value: number | string;
+    element: HTMLCTabElement;
+  }>;
 
   /**
    * Emit focus to the parent
@@ -76,7 +79,7 @@ export class CTab {
 
     this._rippleElement.createRipple(event, this.element, center);
 
-    this.tabChange.emit(this.value);
+    this.tabChange.emit({ value: this.value, element: this.element });
   };
 
   @Listen('focus', { passive: true })
@@ -111,8 +114,16 @@ export class CTab {
     };
 
     return (
-      <Host {...a11y} id={this.hostId} class={classes} onClick={this._onClick}>
-        <slot></slot>
+      <Host
+        {...a11y}
+        id={this.hostId}
+        data-value={this.value}
+        class={classes}
+        onClick={this._onClick}
+      >
+        <span>
+          <slot></slot>
+        </span>
 
         <c-ripple ref={(el) => (this._rippleElement = el)}></c-ripple>
       </Host>

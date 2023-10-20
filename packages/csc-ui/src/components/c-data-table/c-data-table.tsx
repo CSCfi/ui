@@ -27,6 +27,7 @@ import {
   CPaginationOptions,
 } from '../../types';
 
+// eslint-disable-next-line @typescript-eslint/consistent-type-definitions
 interface CDataTableDataItemPrivate extends Omit<CDataTableDataItem, 'value'> {
   _hiddenData?: {
     id?: string;
@@ -897,7 +898,7 @@ export class CDataTable {
       return !!Tag ? (
         <Tag
           {...params}
-          {...(!!params?.onClick
+          {...(!params?.onClick
             ? {}
             : {
                 onClick: (event: MouseEvent) => {

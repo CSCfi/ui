@@ -32,6 +32,7 @@
  - [c-menu](../c-menu)
  - [c-pagination](../c-pagination)
  - [c-side-navigation](../c-side-navigation)
+ - [c-tabs](../c-tabs)
  - [c-tag](../c-tag)
  - [c-toast](../c-toast)
 
@@ -45,6 +46,7 @@ graph TD;
   c-menu --> c-icon
   c-pagination --> c-icon
   c-side-navigation --> c-icon
+  c-tabs --> c-icon
   c-tag --> c-icon
   c-toast --> c-icon
   style c-icon fill:#f9f,stroke:#333,stroke-width:4px

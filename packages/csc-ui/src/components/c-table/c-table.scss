@@ -125,10 +125,10 @@ table.c-table {
     }
 
     td {
-      display: flex;
-      justify-content: space-between;
+      display: grid;
+      gap: 4px;
       padding: 12px;
-      text-align: end;
+      min-height: 62px;
 
       &::before {
         font-size: 14px;
