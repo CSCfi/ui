@@ -9,6 +9,7 @@ import {
   State,
   Watch,
   Element,
+  AttachInternals,
 } from '@stencil/core';
 import { mdiCloseCircle } from '@mdi/js';
 
@@ -20,9 +21,18 @@ import { mdiCloseCircle } from '@mdi/js';
   tag: 'c-checkbox',
   styleUrl: 'c-checkbox.scss',
   shadow: true,
+  formAssociated: true,
 })
 export class CCheckbox {
   @Element() el: HTMLCCheckboxElement;
+
+  // eslint-disable-next-line @stencil-community/own-props-must-be-private
+  @AttachInternals() internals: ElementInternals;
+
+  /**
+   * If `true`, the checkbox is selected.
+   */
+  @Prop({ mutable: true }) checked = false;
 
   /**
    * Disable the checkbox
@@ -65,9 +75,26 @@ export class CCheckbox {
   @Prop() validation = 'Required field';
 
   /**
-   * Is the element checked
+   * The input value
+   * - Only used when the checkbox participates in a native `<form>`
    */
-  @Prop({ mutable: true }) value = false;
+  @Prop() value: string | boolean = false;
+
+  /**
+   * The value when the checkbox is checked
+   */
+  @Prop() trueValue: boolean | string = true;
+
+  /**
+   * The value when the checkbox is unchecked
+   */
+  @Prop() falseValue: boolean | string = false;
+
+  /**
+   * Name of the input
+   * - Only used when the checkbox participates in a native `<form>`
+   */
+  @Prop({ attribute: 'name' }) hostName: string;
 
   /**
    * Triggered when element is checked or unchecked
@@ -109,8 +136,12 @@ export class CCheckbox {
   }
 
   componentWillLoad() {
-    if (typeof this.value !== 'boolean') {
-      console.warn(`[C-CHECKBOX] Property 'value' should be a boolean.`);
+    if (this.value === this.trueValue) {
+      this.checked = true;
+    }
+
+    if (this.checked) {
+      this.internals.setFormValue(this.value as string);
     }
   }
 
@@ -146,8 +177,17 @@ export class CCheckbox {
 
     this._rippleElement.createRipple(event, this._container, true);
 
-    this.value = !this.value;
-    this.changeValue.emit(this.value);
+    this.checked = !this.checked;
+
+    if (typeof this.value === 'string' && typeof this.trueValue === 'boolean') {
+      this.changeValue.emit(this.value);
+
+      this.internals.setFormValue(this.value as string);
+
+      return;
+    }
+
+    this.changeValue.emit(this.checked ? this.trueValue : this.falseValue);
   }
 
   private _renderMessages() {
@@ -190,10 +230,11 @@ export class CCheckbox {
           <input
             class="visuallyhidden"
             id="checkbox"
+            {...(!!this.hostName ? { name: this.hostName } : {})}
             type="checkbox"
-            aria-checked={(!!this.value).toString()}
+            aria-checked={this.checked.toString()}
             aria-disabled={this.disabled.toString()}
-            checked={this.value}
+            checked={this.checked ? true : undefined}
             disabled={this.disabled}
             onChange={(event) => this.toggleState(event)}
           />
@@ -204,7 +245,7 @@ export class CCheckbox {
               ref={(el) => (this._container = el as HTMLDivElement)}
             >
               <svg viewBox="0 0 100 100">
-                {!this.indeterminate && !!this.value && (
+                {!this.indeterminate && this.checked && (
                   <path
                     class="path"
                     d="M 12 52 l 24 24 l 47 -47 l -3 -3 l -44 44 l -21 -21 l -3 3"

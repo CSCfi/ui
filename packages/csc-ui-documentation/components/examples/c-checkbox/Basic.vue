@@ -2,8 +2,14 @@
   <component-example rows>
     <template #title>Basic usage</template>
 
-    <c-checkbox v-model="checkbox1" v-control hide-details>
-      {{ checkbox1 ? 'Checked' : 'Unchecked' }}
+    <c-checkbox
+      v-model="checkbox1"
+      v-control
+      true-value="on"
+      false-value="off"
+      hide-details
+    >
+      Value as tring: {{ checkbox1 }}
     </c-checkbox>
 
     <c-checkbox v-model="checkbox2" v-control hide-details>
@@ -12,7 +18,7 @@
 
     <c-checkbox label="Label as a prop" hide-details />
 
-    <c-checkbox :value="true" disabled hide-details>
+    <c-checkbox v-model="checkbox3" v-control disabled hide-details>
       Disabled, checked
     </c-checkbox>
 
@@ -36,7 +42,9 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 
-const checkbox1 = ref(false);
+const checkbox1 = ref('on');
 
 const checkbox2 = ref(true);
+
+const checkbox3 = ref(true);
 </script>
