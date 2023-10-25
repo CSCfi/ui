@@ -1,4 +1,5 @@
 import {
+  AttachInternals,
   Component,
   Element,
   Host,
@@ -22,8 +23,12 @@ import { CSelectItem } from '../../types';
   tag: 'c-select',
   styleUrl: 'c-select.scss',
   shadow: true,
+  formAssociated: true,
 })
 export class CSelect {
+  // eslint-disable-next-line
+  @AttachInternals() internals: ElementInternals;
+
   /**
    * Auto focus the input
    */
@@ -238,6 +243,8 @@ export class CSelect {
     this.previousValue = item;
 
     this.changeValue.emit(value);
+
+    this.internals.setFormValue(item.value as string);
   }
 
   private _getLabel() {
@@ -357,6 +364,18 @@ export class CSelect {
       (this.hostId || this.label || this.placeholder)
         .replace(/[^a-zA-Z0-9-_]/g, '')
         .toLowerCase();
+
+    this._setInitialValue();
+  }
+
+  private _setInitialValue() {
+    if (!this.value) return;
+
+    const value = this.returnValue
+      ? this.value
+      : (this.value as CSelectItem).value;
+
+    this.internals.setFormValue(value as string);
   }
 
   componentDidLoad() {
