@@ -1,5 +1,14 @@
 import { Component, h, Host, Prop } from '@stencil/core';
 
+export type CRowAlign = 'start' | 'center' | 'end';
+
+export type CRowJustify =
+  | 'start'
+  | 'center'
+  | 'end'
+  | 'space-between'
+  | 'space-around';
+
 /**
  * Generic flex row component
  *
@@ -25,17 +34,12 @@ export class CRow {
   /**
    * Align items vertically
    */
-  @Prop() align: 'start' | 'center' | 'end';
+  @Prop() align: CRowAlign;
 
   /**
    * Justify content horizontally
    */
-  @Prop() justify:
-    | 'start'
-    | 'center'
-    | 'end'
-    | 'space-between'
-    | 'space-around';
+  @Prop() justify: CRowJustify;
 
   render() {
     const classes = {
