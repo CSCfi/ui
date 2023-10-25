@@ -257,6 +257,8 @@ export class CAutocomplete {
     if (!Object.keys(this._cOptionElements).length) return {};
 
     return this._itemValues.reduce((items, item) => {
+      if (!this._cOptionElements[item as string]) return items;
+
       items[item as string] = this._cOptionElements[item as string].cloneNode(
         true,
       ) as HTMLCOptionElement;
@@ -266,21 +268,19 @@ export class CAutocomplete {
   }
 
   @Watch('items')
-  watchHandler(newValue, oldValue) {
-    if (newValue.length !== oldValue.length) {
-      this.currentIndex = !!newValue.length ? 0 : null;
+  watchHandler(items) {
+    this.currentIndex = !!items.length ? 0 : null;
 
-      this._optionItems = this._optionItems.filter((item) =>
-        this._itemValues.includes(item.value),
-      );
+    this._optionItems = this._optionItems.filter((item) =>
+      this._itemValues.includes(item.value),
+    );
 
-      requestAnimationFrame(async () => {
-        await this._cInput.updateDropdown({
-          items: newValue,
-          options: this._filteredOptions,
-        });
+    requestAnimationFrame(async () => {
+      await this._cInput.updateDropdown({
+        items: items,
+        options: this._filteredOptions,
       });
-    }
+    });
   }
 
   @Watch('value')
@@ -311,13 +311,15 @@ export class CAutocomplete {
     if (ev.key === 'ArrowDown') {
       ev.preventDefault();
 
-      this._showMenu();
+      this._cInput.openDropdown();
+      this._cInput.focusItem('first');
     }
 
     if (ev.key === 'ArrowUp') {
       ev.preventDefault();
 
-      this._showMenu();
+      this._cInput.openDropdown();
+      this._cInput.focusItem('last');
     }
 
     if (ev.key === ' ') {
@@ -479,7 +481,7 @@ export class CAutocomplete {
 
   render() {
     return (
-      <Host>
+      <Host title={this.query}>
         <c-input
           ref={(el) => (this._cInput = el)}
           autofocus={this.autofocus}

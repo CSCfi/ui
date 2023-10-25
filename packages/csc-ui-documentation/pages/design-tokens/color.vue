@@ -93,11 +93,78 @@
         </div>
       </div>
     </c-card-content>
+
+    <c-card-content class="mt-4">
+      <h2 class="text-xl capitalize font-bold flex items-center gap-2">
+        <c-icon
+          :path="mdiLanguageHtml5"
+          :size="32"
+          color="var(--c-warning-600)"
+        />
+        Usage in HTML
+      </h2>
+
+      <code-block
+        :code="cssHead"
+        theme="atom-one-dark"
+        lang="html"
+        code-block-radius="6px"
+        highlightjs
+        persistent-copy-button
+      />
+    </c-card-content>
+
+    <c-card-content class="mt-4">
+      <h2 class="text-xl capitalize font-bold flex items-center gap-2">
+        <c-icon :path="mdiSass" :size="32" color="var(--c-error-300)" />
+        Usage in SCSS
+      </h2>
+
+      <code-block
+        :code="scssUsage"
+        theme="atom-one-dark"
+        lang="scss"
+        code-block-radius="6px"
+        highlightjs
+        persistent-copy-button
+      />
+    </c-card-content>
+
+    <c-card-content class="mt-4">
+      <h2 class="text-xl capitalize font-bold flex items-center gap-2">
+        <c-icon :path="mdiTailwind" :size="32" color="var(--c-info-600)" />
+        Usage with Tailwind CSS
+      </h2>
+
+      CSC-UI provides the color tokens as a theme for Tailwind CSS.
+
+      <code-block
+        :code="tailwindConfig"
+        theme="atom-one-dark"
+        lang="javascript"
+        label="tailwind.config.js"
+        code-block-radius="6px"
+        highlightjs
+        persistent-copy-button
+      />
+
+      <code-block
+        :code="tailwindUsage"
+        theme="atom-one-dark"
+        lang="html"
+        code-block-radius="6px"
+        highlightjs
+        persistent-copy-button
+      />
+
+      <p class="text-primary-600">I should have primary colored text</p>
+    </c-card-content>
   </c-card>
 </template>
 
 <script setup lang="ts">
 import { theme } from '@cscfi/csc-ui/tailwind';
+import { mdiLanguageHtml5, mdiSass, mdiTailwind } from '@mdi/js';
 
 const sortOrder = [
   'primary',
@@ -134,4 +201,37 @@ const themeColors = computed(() => {
     )
     .sort((a, b) => order[a.name] - order[b.name]);
 });
+
+const cssHead = `<html>
+  <head>
+    <link rel="stylesheet" href="path/to/csc-ui/theme.css" />
+  </head>
+
+  <body>
+    ...
+  </body>
+</html>`;
+
+const tailwindConfig = `/** @type {import('tailwindcss').Config} */
+
+const defaultColors = require('tailwindcss/colors');
+const { theme } = require('@cscfi/csc-ui/tailwind');
+
+module.exports = {
+  content: ['./src/**/*.{html,js}'],
+  theme: {
+    colors: {
+      ...defaultColors,
+      ...theme.colors,
+    },
+  },
+}`;
+
+const tailwindUsage = `<p class="text-primary-600">I should have primary colored text</p>`;
+
+const scssUsage = `@import "path/to/csc-ui/theme.scss";
+
+p {
+  color: $c-primary-600;
+}`;
 </script>

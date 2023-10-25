@@ -467,6 +467,10 @@ export namespace Components {
          */
         "focusDropdown": () => Promise<void>;
         /**
+          * @private
+         */
+        "focusItem": (type: 'first' | 'last') => Promise<void>;
+        /**
           * Focus dropdown on open
          */
         "focusList": boolean;
@@ -607,6 +611,10 @@ export namespace Components {
           * @private
          */
         "focusDropdown": () => Promise<void>;
+        /**
+          * @private
+         */
+        "focusItem": (type: 'first' | 'last') => Promise<void>;
         /**
           * Render a hidden input outside the shadow dom
          */

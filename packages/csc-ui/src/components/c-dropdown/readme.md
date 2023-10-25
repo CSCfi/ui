@@ -34,6 +34,16 @@ Type: `Promise<void>`
 
 
 
+### `focusItem(type: 'first' | 'last') => Promise<void>`
+
+
+
+#### Returns
+
+Type: `Promise<void>`
+
+
+
 ### `updateDropdown(params: _CDropdownUpdateParams) => Promise<void>`
 
 

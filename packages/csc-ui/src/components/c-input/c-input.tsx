@@ -364,6 +364,14 @@ export class CInput {
   }
 
   /**
+   * @private
+   */
+  @Method()
+  async focusItem(type: 'first' | 'last') {
+    await this._dropdownElement.focusItem(type);
+  }
+
+  /**
    * Create a dropdown
    */
   @Method()

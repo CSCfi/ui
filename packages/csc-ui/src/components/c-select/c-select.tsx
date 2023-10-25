@@ -570,7 +570,7 @@ export class CSelect {
 
   render() {
     return (
-      <Host>
+      <Host title={this._getLabel() ?? null}>
         <div
           id={'announce-' + this._id}
           class="visuallyhidden"

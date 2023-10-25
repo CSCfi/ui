@@ -182,8 +182,16 @@
     }
   }
 
-  &--select .c-input__slot {
-    cursor: pointer;
+  &--select {
+    input {
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .c-input__slot {
+      cursor: pointer;
+    }
   }
 
   fieldset {

@@ -77,6 +77,16 @@ Type: `Promise<void>`
 
 
 
+### `focusItem(type: 'first' | 'last') => Promise<void>`
+
+
+
+#### Returns
+
+Type: `Promise<void>`
+
+
+
 ### `openDropdown(focusList?: boolean) => Promise<void>`
 
 Opens the dropdown

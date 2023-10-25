@@ -124,6 +124,20 @@ export class CDropdown {
     });
   }
 
+  /**
+   * @private
+   */
+  @Method()
+  async focusItem(type: 'first' | 'last') {
+    requestAnimationFrame(() => {
+      const index = type === 'first' ? 0 : this.items.length - 1;
+
+      this.currentIndex = index;
+
+      this._itemRefs[index].focus();
+    });
+  }
+
   @Watch('isOpen')
   onOpenStateChange(open) {
     if (!this.wasClicked && ['select', 'autocomplete'].includes(this.type)) {
@@ -208,6 +222,17 @@ export class CDropdown {
     { threshold: 1 },
   );
 
+  private _highlightMatchingText(value: string) {
+    if (this.type === 'select') return value;
+
+    const regex = new RegExp(
+      (this.parent as HTMLCAutocompleteElement).query,
+      'gi',
+    );
+
+    return value.replace(regex, (match) => `<mark>${match}</mark>`);
+  }
+
   private _renderMenuItem = (item: CSelectItem, index: number) => {
     const isActive = this.items[this.currentIndex]?.value === item.value;
 
@@ -268,6 +293,19 @@ export class CDropdown {
 
         if (!option) return;
 
+        if (
+          (this.parent as HTMLCAutocompleteElement).query?.length &&
+          this.type === 'autocomplete'
+        ) {
+          const optionValue = option.querySelector('c-option-value');
+
+          if (optionValue) {
+            optionValue.innerHTML = this._highlightMatchingText(
+              optionValue.textContent,
+            );
+          }
+        }
+
         listItem.appendChild(option);
 
         this._listElement.appendChild(listItem);
@@ -276,7 +314,10 @@ export class CDropdown {
       return;
     }
 
-    listItem.append(item.name);
+    const span = document.createElement('span');
+    span.innerHTML = this._highlightMatchingText(item.name);
+
+    listItem.appendChild(span);
 
     this._listElement.appendChild(listItem);
   };
@@ -335,6 +376,7 @@ export class CDropdown {
       'keydown',
       this._onKeyboardNavigation.bind(this),
     );
+
     this._listElement.addEventListener('keyup', this._onKeyDown.bind(this));
   }
 

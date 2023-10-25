@@ -17,6 +17,12 @@
   display: block;
   position: absolute;
 
+  mark {
+    color: inherit;
+    background-color: transparent;
+    box-shadow: 0 2px 0 0 var(--_c-dropdown-text-color-active);
+  }
+
   ul {
     margin: 0;
     padding: 0;

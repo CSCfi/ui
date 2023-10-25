@@ -1,6 +1,11 @@
 <template>
   <component-example rows>
-    <template #title>Usage with custom menu items</template>
+    <template #title>Usage with c-option elements</template>
+
+    <template #subtitle>
+      Wrap the text content of the option with c-option-value to enable match
+      highlighting
+    </template>
 
     <c-row gap="8">
       <c-autocomplete
@@ -24,7 +29,7 @@
           <c-row align="center" gap="16">
             <c-tag active flat>{{ item.value }}</c-tag>
 
-            <p>{{ item.name }}</p>
+            <c-option-value>{{ item.name }}</c-option-value>
           </c-row>
         </c-option>
       </c-autocomplete>
