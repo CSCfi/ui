@@ -1171,6 +1171,14 @@
       ]
     },
     {
+      "name": "c-option-value",
+      "description": {
+        "kind": "markdown",
+        "value": ""
+      },
+      "attributes": []
+    },
+    {
       "name": "c-otp-input",
       "description": {
         "kind": "markdown",

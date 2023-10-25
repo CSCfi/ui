@@ -1021,6 +1021,8 @@ export namespace Components {
          */
         "value": string | number;
     }
+    interface COptionValue {
+    }
     /**
      * @group Form
      */
@@ -2222,6 +2224,12 @@ declare global {
         prototype: HTMLCOptionElement;
         new (): HTMLCOptionElement;
     };
+    interface HTMLCOptionValueElement extends Components.COptionValue, HTMLStencilElement {
+    }
+    var HTMLCOptionValueElement: {
+        prototype: HTMLCOptionValueElement;
+        new (): HTMLCOptionValueElement;
+    };
     /**
      * @group Form
      */
@@ -2551,6 +2559,7 @@ declare global {
         "c-modal": HTMLCModalElement;
         "c-navigation-button": HTMLCNavigationButtonElement;
         "c-option": HTMLCOptionElement;
+        "c-option-value": HTMLCOptionValueElement;
         "c-otp-input": HTMLCOtpInputElement;
         "c-page": HTMLCPageElement;
         "c-pagination": HTMLCPaginationElement;
@@ -3601,6 +3610,8 @@ declare namespace LocalJSX {
          */
         "value"?: string | number;
     }
+    interface COptionValue {
+    }
     /**
      * @group Form
      */
@@ -4471,6 +4482,7 @@ declare namespace LocalJSX {
         "c-modal": CModal;
         "c-navigation-button": CNavigationButton;
         "c-option": COption;
+        "c-option-value": COptionValue;
         "c-otp-input": COtpInput;
         "c-page": CPage;
         "c-pagination": CPagination;
@@ -4644,6 +4656,7 @@ declare module "@stencil/core" {
              * @parent c-select
              */
             "c-option": LocalJSX.COption & JSXBase.HTMLAttributes<HTMLCOptionElement>;
+            "c-option-value": LocalJSX.COptionValue & JSXBase.HTMLAttributes<HTMLCOptionValueElement>;
             /**
              * @group Form
              */
