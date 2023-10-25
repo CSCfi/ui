@@ -55,8 +55,10 @@ const route = useRoute();
 
 const { componentData, types } = storeToRefs(useExampleStore());
 
-const onTabClick = async (tab: any) => {
-  await navigateTo({ ...route, query: tab.query });
+const onTabClick = (tab: any) => {
+  requestAnimationFrame(async () => {
+    await navigateTo({ query: tab.query });
+  });
 };
 
 provide('componentName', props.component);

@@ -23,6 +23,68 @@
           About
         </c-side-navigation-item>
 
+        <c-side-navigation-item
+          :active="route?.fullPath.startsWith('/getting-started')"
+        >
+          Getting Started
+
+          <c-sub-navigation-item
+            slot="subnavitem"
+            class="capitalize"
+            :active="route?.fullPath.includes('angular')"
+            @keyup.enter="navigateTo('/getting-started/angular')"
+            @click="navigateTo('/getting-started/angular')"
+          >
+            <c-icon :path="mdiAngular" size="16" />
+            Angular
+          </c-sub-navigation-item>
+
+          <c-sub-navigation-item
+            slot="subnavitem"
+            class="capitalize"
+            @keyup.enter="navigateTo('/getting-started/html')"
+            @click="navigateTo('/getting-started/html')"
+          >
+            <c-icon :path="mdiLanguageHtml5" size="16" />
+            Html page
+          </c-sub-navigation-item>
+
+          <c-sub-navigation-item
+            slot="subnavitem"
+            class="capitalize"
+            :active="route?.fullPath.includes('vue3')"
+            @keyup.enter="navigateTo('/getting-started/vue3')"
+            @click="navigateTo('/getting-started/vue3')"
+          >
+            <c-icon :path="mdiVuejs" size="16" />
+            Vue 3
+          </c-sub-navigation-item>
+
+          <c-sub-navigation-item
+            slot="subnavitem"
+            class="capitalize"
+            :active="route?.fullPath.includes('vue2')"
+            @keyup.enter="navigateTo('/getting-started/vue2')"
+            @click="navigateTo('/getting-started/vue2')"
+          >
+            <c-icon :path="mdiVuejs" size="16" />
+            Vue 2
+          </c-sub-navigation-item>
+        </c-side-navigation-item>
+
+        <c-side-navigation-item>
+          Templates
+          <c-sub-navigation-item
+            slot="subnavitem"
+            class="capitalize"
+            :active="route?.fullPath.includes('basic-template')"
+            @keyup.enter="navigateTo('/basic-template')"
+            @click="navigateTo('/basic-template')"
+          >
+            Basic template
+          </c-sub-navigation-item>
+        </c-side-navigation-item>
+
         <c-side-navigation-title>Components</c-side-navigation-title>
 
         <c-text-field
@@ -70,9 +132,12 @@
 
 <script lang="ts" setup>
 import {
+  mdiAngular,
   mdiInformationOutline,
+  mdiLanguageHtml5,
   mdiLanguageTypescript,
   mdiMagnify,
+  mdiVuejs,
 } from '@mdi/js';
 import { storeToRefs } from 'pinia';
 import packageJson from '../package.json';
