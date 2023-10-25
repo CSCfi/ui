@@ -1,5 +1,8 @@
 :host {
-  --_c-button-border-radius: 4px;
+  /**
+   * @prop --c-button-border-radius: Button border radius
+   */
+  --_c-button-border-radius: var(--c-button-border-radius, 4px);
   --_c-button-height: 44px;
   --_c-button-min-width: 88px;
   --_c-button-padding: 0 16px;

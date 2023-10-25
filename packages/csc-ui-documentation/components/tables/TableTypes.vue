@@ -1,13 +1,13 @@
 <template>
   <div class="grid gap-6">
-    <CodeBlock
+    <code-block
       v-for="(definition, index) in types.get(component)"
       :key="`definition-${index}`"
       :code="definition"
-      :highlightjs="true"
       theme="atom-one-dark"
       lang="typescript"
       code-block-radius="6px"
+      highlightjs
       persistent-copy-button
     />
   </div>

@@ -15,10 +15,10 @@
       v-model="type"
       v-control
       :items="types"
-      inline
       hide-details
+      inline
       return-value
-    ></c-radio-group>
+    />
   </component-example>
 </template>
 

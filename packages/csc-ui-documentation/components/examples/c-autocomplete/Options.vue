@@ -8,15 +8,12 @@
         v-model="selection"
         v-control
         label="Countries"
-        hide-details
         :items="filteredItems"
         :query="query"
         :items-per-page="10"
-        :custom-menu="true"
-        style="flex: 1"
-        @input="onQueryChange($event)"
+        @changeQuery="onQueryChange"
       >
-        <c-icon slot="pre" :path="mdiEarth" size="16"></c-icon>
+        <c-icon slot="pre" :path="mdiEarth" size="16" />
 
         <c-option
           v-for="(item, index) in filteredItems"
@@ -26,6 +23,7 @@
         >
           <c-row align="center" gap="16">
             <c-tag active flat>{{ item.value }}</c-tag>
+
             <p>{{ item.name }}</p>
           </c-row>
         </c-option>
@@ -62,6 +60,6 @@ const filteredItems = computed(() => {
 });
 
 const onQueryChange = (event: InputEvent) => {
-  query.value = (event.target as HTMLCAutocompleteElement).query;
+  query.value = event.detail.toString();
 };
 </script>

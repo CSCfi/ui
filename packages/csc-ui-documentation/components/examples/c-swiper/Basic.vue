@@ -13,7 +13,7 @@
         @click="!tab.disabled && selectTab(tab)"
         @keyup.enter="!tab.disabled && selectTab(tab)"
       >
-        <c-icon slot="icon" :path="mdiServer"></c-icon>
+        <c-icon slot="icon" :path="mdiServer" />
 
         Lorem ipsum dolor sit amet, consectetur adipiscing elit.
 

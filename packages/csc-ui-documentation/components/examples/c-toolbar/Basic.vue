@@ -3,15 +3,15 @@
     <template #title>Basic usage</template>
 
     <c-toolbar class="relative">
-      <c-csc-logo></c-csc-logo>
+      <c-csc-logo />
 
       Application title
 
-      <c-spacer></c-spacer>
+      <c-spacer />
 
       <c-menu :items="items" custom>
         <c-icon-button ghost badge="4" tabindex="-1" size="small">
-          <c-icon :path="mdiEmailOutline"></c-icon>
+          <c-icon :path="mdiEmailOutline" />
         </c-icon-button>
       </c-menu>
 

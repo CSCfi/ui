@@ -46,6 +46,10 @@ export class CTabItem {
     this._resizeObserver.observe(this.el.shadowRoot.querySelector('div'));
   }
 
+  disconnectedCallback() {
+    this._resizeObserver.disconnect();
+  }
+
   private _handleResize() {
     this.contentChange.emit();
   }

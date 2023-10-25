@@ -10,15 +10,11 @@
 
     <c-link href="https://csc.fi" target="_blank">
       Link with icon
-      <c-icon
-        :path="mdiOpenInNew"
-        color="var(--c-primary-600)"
-        size="18"
-      ></c-icon>
+      <c-icon :path="mdiOpenInNew" color="var(--c-primary-600)" size="18" />
     </c-link>
 
     <c-link href="https://csc.fi" color="error" target="_blank">
-      <c-icon :path="mdiOpenInNew" size="18"></c-icon>
+      <c-icon :path="mdiOpenInNew" size="18" />
       Link with icon in front
     </c-link>
   </component-example>

@@ -317,9 +317,17 @@ export namespace Components {
      */
     interface CCheckbox {
         /**
+          * If `true`, the checkbox is selected.
+         */
+        "checked": boolean;
+        /**
           * Disable the checkbox
          */
         "disabled": boolean;
+        /**
+          * The value when the checkbox is unchecked
+         */
+        "falseValue": boolean | string;
         /**
           * Hide the hint and error messages
          */
@@ -328,6 +336,10 @@ export namespace Components {
           * Hint text for the input
          */
         "hint": string;
+        /**
+          * Name of the input - Only used when the checkbox participates in a native `<form>`
+         */
+        "hostName": string;
         /**
           * Indeterminate state
          */
@@ -341,6 +353,10 @@ export namespace Components {
          */
         "required": boolean;
         /**
+          * The value when the checkbox is checked
+         */
+        "trueValue": boolean | string;
+        /**
           * Set the validity of the input
          */
         "valid": boolean;
@@ -349,9 +365,9 @@ export namespace Components {
          */
         "validation": string;
         /**
-          * Is the element checked
+          * The input value - Only used when the checkbox participates in a native `<form>`
          */
-        "value": boolean;
+        "value": string | boolean;
     }
     /**
      * Container component for holding current page content
@@ -2896,9 +2912,17 @@ declare namespace LocalJSX {
      */
     interface CCheckbox {
         /**
+          * If `true`, the checkbox is selected.
+         */
+        "checked"?: boolean;
+        /**
           * Disable the checkbox
          */
         "disabled"?: boolean;
+        /**
+          * The value when the checkbox is unchecked
+         */
+        "falseValue"?: boolean | string;
         /**
           * Hide the hint and error messages
          */
@@ -2907,6 +2931,10 @@ declare namespace LocalJSX {
           * Hint text for the input
          */
         "hint"?: string;
+        /**
+          * Name of the input - Only used when the checkbox participates in a native `<form>`
+         */
+        "hostName"?: string;
         /**
           * Indeterminate state
          */
@@ -2924,6 +2952,10 @@ declare namespace LocalJSX {
          */
         "required"?: boolean;
         /**
+          * The value when the checkbox is checked
+         */
+        "trueValue"?: boolean | string;
+        /**
           * Set the validity of the input
          */
         "valid"?: boolean;
@@ -2932,9 +2964,9 @@ declare namespace LocalJSX {
          */
         "validation"?: string;
         /**
-          * Is the element checked
+          * The input value - Only used when the checkbox participates in a native `<form>`
          */
-        "value"?: boolean;
+        "value"?: string | boolean;
     }
     /**
      * Container component for holding current page content

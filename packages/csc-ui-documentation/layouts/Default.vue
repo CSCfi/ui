@@ -19,8 +19,17 @@
           @keyup.enter="navigateTo('/')"
           @click="navigateTo('/')"
         >
-          <c-icon :path="mdiInformationOutline" size="16"></c-icon>
+          <c-icon :path="mdiInformationOutline" size="16" />
           About
+        </c-side-navigation-item>
+
+        <c-side-navigation-item
+          :active="route?.name === 'customization'"
+          @keyup.enter="navigateTo('/customization')"
+          @click="navigateTo('/customization')"
+        >
+          <c-icon :path="mdiPalette" size="16" />
+          Customization
         </c-side-navigation-item>
 
         <c-side-navigation-title>Components</c-side-navigation-title>
@@ -33,7 +42,7 @@
           hide-details
           shadow
         >
-          <c-icon slot="pre" :path="mdiMagnify" size="16"></c-icon>
+          <c-icon slot="pre" :path="mdiMagnify" size="16" />
         </c-text-field>
 
         <c-side-navigation-item
@@ -47,6 +56,17 @@
           {{ component.name }}
         </c-side-navigation-item>
 
+        <c-side-navigation-title>Design tokens</c-side-navigation-title>
+
+        <c-side-navigation-item
+          :active="route?.name === 'color'"
+          @keyup.enter="navigateTo('/design-tokens/color')"
+          @click="navigateTo('/design-tokens/color')"
+        >
+          <c-icon :path="mdiPalette" size="16" />
+          Color
+        </c-side-navigation-item>
+
         <c-side-navigation-title>Miscellaneous</c-side-navigation-title>
 
         <c-side-navigation-item
@@ -54,7 +74,7 @@
           @keyup.enter="navigateTo('/types')"
           @click="navigateTo('/types')"
         >
-          <c-icon :path="mdiLanguageTypescript" size="16"></c-icon>
+          <c-icon :path="mdiLanguageTypescript" size="16" />
           Types
         </c-side-navigation-item>
       </c-side-navigation>
@@ -73,6 +93,7 @@ import {
   mdiInformationOutline,
   mdiLanguageTypescript,
   mdiMagnify,
+  mdiPalette,
 } from '@mdi/js';
 import { storeToRefs } from 'pinia';
 import packageJson from '../package.json';

@@ -16,7 +16,8 @@
       </c-card-content>
 
       <c-card-actions justify="space-between">
-        <c-checkbox label="Example checkbox" hide-details></c-checkbox>
+        <c-checkbox label="Example checkbox" hide-details />
+
         <c-button>Confirm</c-button>
       </c-card-actions>
     </c-card>

@@ -51,6 +51,7 @@
 | -------------------------------------------------------- | -------------------------------------------------- |
 | `--c-button-background-color`                            | Default button background color                    |
 | `--c-button-background-color-hover`                      | Default button hover background color              |
+| `--c-button-border-radius`                               | Button border radius                               |
 | `--c-button-danger-background-color`                     | Danger button background color                     |
 | `--c-button-danger-background-color-hover`               | Danger button hover background color               |
 | `--c-button-danger-disabled-background-color`            | Disabled danger button background color            |

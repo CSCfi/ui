@@ -2,9 +2,9 @@
   <component-example name="basic" rows>
     <template #title>Basic usage</template>
 
-    <c-progress-bar value="50"></c-progress-bar>
+    <c-progress-bar value="50" />
 
-    <c-progress-bar :value="progress"></c-progress-bar>
+    <c-progress-bar :value="progress" />
   </component-example>
 </template>
 

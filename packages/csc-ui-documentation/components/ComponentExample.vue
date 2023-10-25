@@ -4,6 +4,7 @@
       <h2 v-if="slots.title" class="font-medium text-xl text-primary-600">
         <slot name="title" />
       </h2>
+
       <h3 v-if="slots.subtitle" class="text-tertiary-600">
         <slot name="subtitle" />
       </h3>
@@ -17,38 +18,39 @@
 
     <c-accordion class="code-examples" value="" outlined>
       <c-accordion-item heading="Code" value="code">
-        <c-icon slot="icon" :path="mdiXml"></c-icon>
+        <c-icon slot="icon" :path="mdiXml" />
 
         <div class="flex justify-start mb-4">
           <c-tab-buttons v-model="exampleType" v-control size="small" mandatory>
             <c-button value="template">
-              <c-icon :path="mdiLanguageHtml5"></c-icon>
+              <c-icon :path="mdiLanguageHtml5" />
               Template
             </c-button>
+
             <c-button v-if="exampleScript" value="script">
-              <c-icon :path="mdiLanguageTypescript"></c-icon>
+              <c-icon :path="mdiLanguageTypescript" />
               Script
             </c-button>
           </c-tab-buttons>
         </div>
 
         <keep-alive>
-          <CodeBlock
+          <code-block
             v-if="exampleType === 'template' && exampleTemplate"
             :code="exampleTemplate.trim()"
-            :highlightjs="true"
             lang="html"
             theme="atom-one-dark"
             code-block-radius="6px"
+            highlightjs
             persistent-copy-button
           />
 
-          <CodeBlock
+          <code-block
             v-else-if="exampleType === 'script' && exampleScript"
             :code="exampleScript.trim()"
-            :highlightjs="true"
             theme="atom-one-dark"
             code-block-radius="6px"
+            highlightjs
             persistent-copy-button
           />
         </keep-alive>

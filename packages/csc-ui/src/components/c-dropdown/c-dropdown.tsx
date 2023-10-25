@@ -85,6 +85,8 @@ export class CDropdown {
 
   @State() topPosition: number;
 
+  @State() bottomTranslate: number;
+
   @State() scrollingParent: HTMLElement;
 
   @State() statusText = '';
@@ -98,12 +100,18 @@ export class CDropdown {
    */
   @Method()
   async updateDropdown(params: _CDropdownUpdateParams) {
-    this.currentIndex = null;
-    this.items = params.items || this.items;
-    this.options = params.options || this.options;
+    this.items = [];
+    this._itemRefs = [];
+    this.options = new Map();
 
-    this._updateMenuItems();
-    this._updateStatusText();
+    requestAnimationFrame(() => {
+      this.currentIndex = null;
+      this.items = params.items || this.items;
+      this.options = params.options || this.options;
+
+      this._updateMenuItems();
+      this._updateStatusText();
+    });
   }
 
   /**
@@ -132,11 +140,14 @@ export class CDropdown {
           this.currentIndex = 0;
           this._handleCurrentIndexChange();
         }
+
+        this._positionMenu();
       });
 
       return;
     }
 
+    this._openedOnTop = false;
     this._onClose();
     this._removeEventListeners();
   }
@@ -158,7 +169,11 @@ export class CDropdown {
 
   private _parentTop = 0;
 
+  private _openedOnTop = false;
+
   private _searchString = '';
+
+  private _resizeObserver: ResizeObserver;
 
   private get _listSize() {
     return this.items.length || 0;
@@ -244,9 +259,15 @@ export class CDropdown {
     this._itemRefs.push(listItem);
 
     if (this.options.size) {
-      listItem.appendChild(this.options.get(item.value as string));
+      requestAnimationFrame(() => {
+        const option = this.options.get(item.value as string);
 
-      this._listElement.appendChild(listItem);
+        if (!option) return;
+
+        listItem.appendChild(option);
+
+        this._listElement.appendChild(listItem);
+      });
 
       return;
     }
@@ -268,20 +289,22 @@ export class CDropdown {
     emptyElement.appendChild(icon);
     emptyElement.append('No suggestions found');
 
-    this._listElement.appendChild(emptyElement);
+    this._listElement.replaceChildren(emptyElement);
   }
 
   private _updateMenuItems() {
-    this._listElement.replaceChildren();
-    this._itemRefs.length = 0;
-
     if (!this.items.length) {
       this._renderEmptyItem();
 
       return;
     }
 
-    this.items.map((item, index) => this._renderMenuItem(item, index));
+    requestAnimationFrame(() => {
+      this._listElement.replaceChildren();
+      this._itemRefs.length = 0;
+
+      this.items.map((item, index) => this._renderMenuItem(item, index));
+    });
   }
 
   private _renderMenu(/* style */) {
@@ -291,7 +314,6 @@ export class CDropdown {
 
     // a11y
     listElement.role = `listbox`;
-    // listElement.ariaActivedescendant = this.activeListItemId;
     listElement.ariaExpanded = this.isVisible.toString();
     listElement.tabIndex = -1;
 
@@ -354,13 +376,55 @@ export class CDropdown {
   }
 
   private _positionMenu() {
-    const { bottom, left, width } = this._getParentPosition();
+    requestAnimationFrame(() => {
+      const scrollTop = this.scrollingParent.scrollTop;
 
-    this.topPosition = bottom;
+      const scrollLeft = this.scrollingParent.scrollLeft;
 
-    this.host.style.top = `${bottom}px`;
-    this.host.style.left = `${left}px`;
-    this.host.style.minWidth = `${width}px`;
+      const {
+        top: parentTop,
+        bottom: parentBottom,
+        left: parentLeft,
+        width: parentWidth,
+        height: parentHeight,
+      } = this._getParentPosition();
+
+      this.host.style.top = `${parentBottom}px`;
+      this.host.style.left = `${parentLeft}px`;
+      this.host.style.minWidth = `${parentWidth}px`;
+      this.bottomTranslate = 0;
+
+      this.host.style.removeProperty('transform');
+
+      const { bottom, right, height, width } =
+        this.host.getBoundingClientRect();
+
+      this._parentTop = parentTop;
+
+      const isInView = {
+        x: right < this.scrollingParent.scrollWidth - scrollLeft,
+        y: bottom < this.scrollingParent.scrollHeight - scrollTop,
+      };
+
+      if (!isInView.y || this._openedOnTop) {
+        this._openedOnTop = true;
+
+        this.bottomTranslate = height + parentHeight;
+
+        this.host.style.setProperty(
+          'transform',
+          `translateY(-${this.bottomTranslate}px`,
+        );
+      }
+
+      this.topPosition = parentBottom;
+
+      if (!isInView.x) {
+        this.host.style.left = `${
+          parseFloat(this.host.style.left) - width + parentWidth
+        }px`;
+      }
+    });
   }
 
   private _removeEventListeners() {
@@ -369,44 +433,9 @@ export class CDropdown {
 
   private _createEventListeners() {
     requestAnimationFrame(async () => {
-      this._positionMenu();
-
-      const { bottom, right, height, width } =
-        this.host.getBoundingClientRect();
-
-      const {
-        top: parentTop,
-        height: parentHeight,
-        width: parentWidth,
-      } = this._getParentPosition();
-
-      this._parentTop = parentTop;
-
-      const scrollTop = this.scrollingParent.scrollTop;
-
-      const scrollLeft = this.scrollingParent.scrollLeft;
-
       this._onScrollFn = this._onScroll.bind(this);
 
       this.scrollingParent.addEventListener('scroll', this._onScrollFn);
-
-      const isInView = {
-        x: right < this.scrollingParent.scrollWidth - scrollLeft,
-        y: bottom < this.scrollingParent.scrollHeight - scrollTop,
-      };
-
-      if (!isInView.y) {
-        const posY = parseFloat(this.host.style.top) - height - parentHeight;
-
-        this.host.style.top = `${posY}px`;
-        this.topPosition = posY;
-      }
-
-      if (!isInView.x) {
-        this.host.style.left = `${
-          parseFloat(this.host.style.left) - width + parentWidth
-        }px`;
-      }
 
       this._listElement.classList.add('active');
     });
@@ -427,6 +456,15 @@ export class CDropdown {
 
     const differenceY = this._parentTop - parentTop;
 
+    if (this._openedOnTop) {
+      this.host.style.setProperty(
+        'transform',
+        `translateY(calc(-1 * ${this.bottomTranslate + differenceY}px))`,
+      );
+
+      return;
+    }
+
     this.host.style.top = `${this.topPosition - differenceY}px`;
   }
 
@@ -436,12 +474,6 @@ export class CDropdown {
   }
 
   private _onKeyboardNavigation(event: KeyboardEvent) {
-    // if (this._isOpenedWithKeyboard && this.type === 'select') {
-    //   this._isOpenedWithKeyboard = false;
-
-    //   return;
-    // }
-
     this.wasClicked = false;
 
     const letterNumber = /^[0-9a-zA-Z]+$/;
@@ -467,7 +499,6 @@ export class CDropdown {
 
         return;
       }
-      // this.isOpen = true;
 
       if (
         Date.now() - this._lastKeyPressTime > 3000 ||
@@ -518,8 +549,6 @@ export class CDropdown {
     if (event.key === 'ArrowDown') {
       event.preventDefault();
       event.stopPropagation();
-
-      console.log('❤️');
 
       if (this.currentIndex === null) {
         this.currentIndex = 0;
@@ -622,6 +651,18 @@ export class CDropdown {
 
   componentDidLoad() {
     this.currentIndex = this.index;
+
+    this._resizeObserver = new ResizeObserver(() => {
+      if (!this.isOpen) return;
+
+      this._positionMenu();
+    });
+
+    this._resizeObserver.observe(this.host);
+  }
+
+  disconnectedCallback() {
+    this._resizeObserver.disconnect();
   }
 
   render() {

@@ -1,5 +1,5 @@
 <template>
-  <component-examples :component="slug[0]"></component-examples>
+  <component-examples :component="slug[0]" />
 </template>
 
 <script setup lang="ts">

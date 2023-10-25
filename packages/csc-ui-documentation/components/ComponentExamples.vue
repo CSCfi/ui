@@ -61,6 +61,13 @@ const onTabClick = async (tab: any) => {
 
 provide('componentName', props.component);
 
+watch(
+  () => props.component,
+  () => {
+    activeTab.value = tabs.value[0].value;
+  },
+);
+
 const tabs = computed(() => {
   return [
     {
@@ -133,7 +140,7 @@ const tabs = computed(() => {
     {
       label: 'Types',
       value: 'types',
-      enabled: !!types.value.get(route.params.slug[0]),
+      enabled: !!types.value?.get(route.params.slug[0]),
       query: {
         tab: 'types',
       },

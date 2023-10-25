@@ -12,21 +12,21 @@
             v-control
             label="Message"
             hide-details
-          ></c-text-field>
+          />
 
           <c-text-field
             v-model="title"
             v-control
             label="Title (optional)"
             hide-details
-          ></c-text-field>
+          />
 
           <c-text-field
             v-model="closeText"
             v-control
             label="Close text (optional)"
             hide-details
-          ></c-text-field>
+          />
 
           <c-text-field
             v-model="duration"
@@ -34,7 +34,7 @@
             label="Duration, ms (optional)"
             type="number"
             hint="Default: 6000ms"
-          ></c-text-field>
+          />
 
           <c-select
             v-model="type"
@@ -43,7 +43,7 @@
             :items="types"
             hint="Default: 'Info'"
             return-value
-          ></c-select>
+          />
 
           <c-checkbox v-model="persistent" v-control hint="Default: false">
             Persistent (optional)
@@ -72,7 +72,7 @@
             :items="verticalOptions"
             hint="Default: 'Bottom'"
             return-value
-          ></c-select>
+          />
 
           <c-select
             v-model="horizontal"
@@ -81,7 +81,7 @@
             :items="horizontalOptions"
             hint="Default: 'Right'"
             return-value
-          ></c-select>
+          />
 
           <c-checkbox v-model="absolute" v-control hint="Default: false">
             Absolute positioning

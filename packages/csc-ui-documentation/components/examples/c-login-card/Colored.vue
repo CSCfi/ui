@@ -45,7 +45,7 @@
         :items="blendModes"
         label="Overlay blend mode"
         hide-details
-      ></c-select>
+      />
     </c-row>
   </component-example>
 </template>

@@ -8,8 +8,11 @@
       <c-card-content>
         <c-steps v-model="step" v-control>
           <c-step>Step number 1</c-step>
+
           <c-step>Step number 2</c-step>
+
           <c-step>Step number 3</c-step>
+
           <c-step>Step number 4</c-step>
         </c-steps>
       </c-card-content>

@@ -1,6 +1,7 @@
 <template>
   <component-example name="manual" rows>
     <template #title>Basic usage</template>
+
     <template #subtitle>Manual submitting</template>
 
     <div>
@@ -13,6 +14,7 @@
         :valid="isValid"
         :validation="errorMessage"
       />
+
       <c-button
         @click="onManualCompletion()"
         @keyup.enter="onManualCompletion()"

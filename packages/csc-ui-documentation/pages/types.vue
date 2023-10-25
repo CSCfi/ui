@@ -1,6 +1,6 @@
 <template>
   <c-card>
-    <c-card-title>Types</c-card-title>
+    <h1 class="text-4xl capitalize font-bold text-primary-600 pl-6">Types</h1>
 
     <c-card-content>
       <div class="grid gap-6 md:grid-cols-[auto_1fr]">
@@ -16,7 +16,7 @@
               @keyup.space.prevent="onItemClick(name)"
               @keyup.enter.prevent="onItemClick(name)"
             >
-              <c-icon slot="pre" :path="mdiLanguageTypescript"></c-icon>
+              <c-icon slot="pre" :path="mdiLanguageTypescript" />
               {{ name }}
             </c-list-item>
           </c-list>
@@ -31,12 +31,12 @@
           >
             <p class="font-medium text-lg text-primary-600 py-2">{{ name }}</p>
 
-            <CodeBlock
+            <code-block
               :code="definition"
-              :highlightjs="true"
               theme="atom-one-dark"
               lang="typescript"
               code-block-radius="6px"
+              highlightjs
               persistent-copy-button
             />
           </div>

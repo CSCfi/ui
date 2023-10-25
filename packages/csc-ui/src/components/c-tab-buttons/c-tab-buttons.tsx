@@ -199,7 +199,7 @@ export class CTabButtons {
 
       button.shadowRoot
         .querySelector('button')
-        .setAttribute('tabindex', isActive && !this.hostDisabled ? '0' : '-1');
+        ?.setAttribute('tabindex', isActive && !this.hostDisabled ? '0' : '-1');
 
       if (isActive) {
         button.removeAttribute('outlined');

@@ -10,12 +10,12 @@
 
     <c-menu :items="items" custom>
       <c-icon-button ghost badge="8" tabindex="-1">
-        <c-icon :path="mdiEmailOutline"></c-icon>
+        <c-icon :path="mdiEmailOutline" />
       </c-icon-button>
     </c-menu>
 
     <teleport to="body">
-      <c-toasts ref="toastsRef"></c-toasts>
+      <c-toasts ref="toastsRef" />
     </teleport>
   </component-example>
 </template>

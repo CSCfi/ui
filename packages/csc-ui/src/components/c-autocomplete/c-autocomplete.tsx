@@ -25,6 +25,8 @@ import { CAutocompleteItem } from '../../types';
   shadow: true,
 })
 export class CAutocomplete {
+  @Element() host: HTMLCAutocompleteElement;
+
   /**
    * Auto focus the input
    */
@@ -224,20 +226,44 @@ export class CAutocomplete {
     return this.hasOptionItems ? this._optionItems : this.items;
   }
 
-  @Element() host: HTMLCAutocompleteElement;
-
   @State() menuVisible = false;
 
   @State() currentIndex: number = null;
 
   @State() hasOptionItems = false;
 
+  @State() options = new Map();
+
+  private get _itemValues() {
+    return this.items.map((item) => item.value);
+  }
+
+  private get _filteredOptions() {
+    return new Map(
+      [...this._cOptionElements]
+        .filter(([key]) => this._itemValues.includes(key))
+        .map(([key, option]) => [
+          key,
+          option.cloneNode(true) as HTMLCOptionElement,
+        ]),
+    );
+  }
+
   @Watch('items')
   watchHandler(newValue, oldValue) {
     if (newValue.length !== oldValue.length) {
       this.currentIndex = !!newValue.length ? 0 : null;
 
-      this._cInput.updateDropdown({ items: newValue });
+      this._optionItems = this._optionItems.filter((item) =>
+        this._itemValues.includes(item.value),
+      );
+
+      requestAnimationFrame(async () => {
+        await this._cInput.updateDropdown({
+          items: newValue,
+          options: this._filteredOptions,
+        });
+      });
     }
   }
 
@@ -333,6 +359,8 @@ export class CAutocomplete {
 
         item.slot = `option-${index}`;
 
+        this.options.set(item.value, item.cloneNode(true));
+
         this._cOptionElements.set(item.value.toString(), item);
 
         return cAutocompleteItem;
@@ -348,11 +376,6 @@ export class CAutocomplete {
 
   private _handleSlotChange = () => {
     this._getOptionItems();
-
-    this._cInput.updateDropdown({
-      items: this._items,
-      options: this._cOptionElements,
-    });
   };
 
   private handleChange(event) {
@@ -389,7 +412,7 @@ export class CAutocomplete {
       this._cInput.createDropdown({
         type: 'autocomplete',
         items: this._items,
-        options: this._cOptionElements,
+        options: this.options,
         itemsPerPage: this.itemsPerPage,
         parent: this.host,
         index: this.currentIndex,
@@ -458,7 +481,7 @@ export class CAutocomplete {
           validation={this.validation}
           value={this.query}
           variant="select"
-          onItemClick={() => this.items.length && this._showMenu()}
+          onItemClick={() => this.items.length && this._showMenu(false)}
         >
           <slot name="pre" slot="pre"></slot>
 

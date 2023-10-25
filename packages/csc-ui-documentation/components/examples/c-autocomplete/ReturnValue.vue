@@ -14,7 +14,7 @@
         return-value
         @input="onQueryChange($event)"
       >
-        <c-icon slot="pre" :path="mdiEarth" size="16"></c-icon>
+        <c-icon slot="pre" :path="mdiEarth" size="16" />
       </c-autocomplete>
 
       <c-button @click="onAddTag()" @keyup.enter="onAddTag()">Add</c-button>
@@ -24,6 +24,7 @@
       Added values:
       <c-tag flat>{{ tags.length }}</c-tag>
     </p>
+
     <ul>
       <li v-for="tag in tags" :key="tag">
         {{ tag }}

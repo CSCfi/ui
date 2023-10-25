@@ -48,10 +48,20 @@
   },
   "es2015": "dist/esm/index.js",
   "es2017": "dist/esm/index.js",
+  "exports": {
+    ".": {
+      "types": "./dist/types/index.d.ts"
+    },
+    "./css/*": "./dist/styles/css/*",
+    "./loader": "./dist/loader/index.js",
+    "./loader/*": "./dist/loader/*",
+    "./scss/*": "./dist/styles/css/*",
+    "./tailwind": "./dist/tailwind/theme.js"
+  },
   "files": [
-    "dist/",
+    "dist",
     "vscode-data.json",
-    "loader/"
+    "loader"
   ],
   "homepage": "https://design-system.csc.fi",
   "license": "MIT",
@@ -60,7 +70,7 @@
   "name": "@cscfi/csc-ui",
   "repository": "CSCfi/csc-ui",
   "scripts": {
-    "build": "rimraf ./dist && stencil build --docs",
+    "build": "rimraf ./dist && stencil build --docs && npm run style-dictionary:build",
     "build:visual-testing": "docker build -t csc-ui-playwright .",
     "build:watch": "stencil build --watch",
     "deploy": "npm publish && npm run deploy:documentation",

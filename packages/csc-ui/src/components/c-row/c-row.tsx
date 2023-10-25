@@ -1,4 +1,4 @@
-import { Component, h, Host, Prop } from '@stencil/core';
+import { Component, Element, h, Host, Prop } from '@stencil/core';
 
 /**
  * Generic flex row component
@@ -12,6 +12,8 @@ import { Component, h, Host, Prop } from '@stencil/core';
   shadow: true,
 })
 export class CRow {
+  @Element() el: HTMLCRowElement;
+
   /**
    * Gap between items in px
    */
@@ -37,6 +39,10 @@ export class CRow {
     | 'space-between'
     | 'space-around';
 
+  componentDidLoad() {
+    this.el.style.setProperty('--_c-row-gap', this.el.dataset.gap);
+  }
+
   render() {
     const classes = {
       'c-row': true,
@@ -46,7 +52,7 @@ export class CRow {
     };
 
     return (
-      <Host class={classes} style={{ '--_c-row-gap': `${this.gap}px` }}>
+      <Host data-gap={`${this.gap}px`} class={classes}>
         <slot></slot>
       </Host>
     );
