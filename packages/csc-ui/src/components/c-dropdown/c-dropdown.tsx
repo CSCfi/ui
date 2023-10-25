@@ -13,7 +13,7 @@ import { mdiAlert } from '@mdi/js';
 
 export type _CDropdownUpdateParams = {
   items?: CSelectItem[] | CAutocompleteItem[];
-  options?: Map<string, HTMLCOptionElement>;
+  options?: Record<string, HTMLCOptionElement>;
 };
 
 @Component({
@@ -32,7 +32,7 @@ export class CDropdown {
   /**
    * Dropdown options
    */
-  @Prop() options: Map<string, HTMLCOptionElement>;
+  @Prop() options: Record<string, HTMLCOptionElement>;
 
   /**
    * Items per page before adding scroll
@@ -102,7 +102,7 @@ export class CDropdown {
   async updateDropdown(params: _CDropdownUpdateParams) {
     this.items = [];
     this._itemRefs = [];
-    this.options = new Map();
+    this.options = {};
 
     requestAnimationFrame(() => {
       this.currentIndex = null;
@@ -137,7 +137,11 @@ export class CDropdown {
       requestAnimationFrame(() => {
         if (this.focusList) {
           this._listElement.focus();
-          this.currentIndex = 0;
+
+          if (this.type === 'autocomplete') {
+            this.currentIndex = 0;
+          }
+
           this._handleCurrentIndexChange();
         }
 
@@ -258,9 +262,9 @@ export class CDropdown {
 
     this._itemRefs.push(listItem);
 
-    if (this.options.size) {
+    if (Object.keys(this.options).length) {
       requestAnimationFrame(() => {
-        const option = this.options.get(item.value as string);
+        const option = this.options[item.value as string];
 
         if (!option) return;
 

@@ -493,7 +493,7 @@ export namespace Components {
         /**
           * Dropdown options
          */
-        "options": Map<string, HTMLCOptionElement>;
+        "options": Record<string, HTMLCOptionElement>;
         /**
           * Dropdown parent
          */
@@ -3066,7 +3066,7 @@ declare namespace LocalJSX {
         /**
           * Dropdown options
          */
-        "options"?: Map<string, HTMLCOptionElement>;
+        "options"?: Record<string, HTMLCOptionElement>;
         /**
           * Dropdown parent
          */

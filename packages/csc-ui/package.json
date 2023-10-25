@@ -74,7 +74,7 @@
   "scripts": {
     "build": "rimraf ./dist && stencil build --docs && npm run style-dictionary:build",
     "build:visual-testing": "docker build -t csc-ui-playwright .",
-    "build:watch": "stencil build --watch",
+    "build:watch": "npm run style-dictionary:build && stencil build --docs --watch",
     "deploy": "npm publish && npm run deploy:documentation",
     "deploy:documentation": "cd documentation/angular && npm i --legacy-peer-deps && npm run build && firebase deploy",
     "generate": "stencil generate",

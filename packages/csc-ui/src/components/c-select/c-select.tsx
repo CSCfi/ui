@@ -149,7 +149,7 @@ export class CSelect {
 
   private _id: string;
 
-  private _cOptionElements: Map<string, HTMLCOptionElement> = new Map();
+  private _cOptionElements: Record<string, HTMLCOptionElement> = {};
 
   private _selectionElement: HTMLDivElement;
 
@@ -222,7 +222,7 @@ export class CSelect {
 
   private _valueChangedHandler(item: CSelectItem) {
     if (this.hasOptionItems && this.optionAsSelection) {
-      const selection = this._cOptionElements.get(item.value.toString());
+      const selection = this._cOptionElements[item.value.toString()];
 
       if (!selection) return;
 
@@ -446,7 +446,7 @@ export class CSelect {
 
   private _getOptionItems() {
     requestAnimationFrame(() => {
-      this._cOptionElements = new Map();
+      this._cOptionElements = {};
 
       let selection: CSelectItem | null = null;
 
@@ -465,7 +465,7 @@ export class CSelect {
 
         item.slot = `option-${index}`;
 
-        this._cOptionElements.set(item.value.toString(), item);
+        this._cOptionElements[item.value.toString()] = item;
 
         return cSelectItem;
       });

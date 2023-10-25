@@ -1,4 +1,5 @@
 import {
+  AttachInternals,
   Component,
   Element,
   Host,
@@ -23,9 +24,13 @@ import { CAutocompleteItem } from '../../types';
   tag: 'c-autocomplete',
   styleUrl: 'c-autocomplete.scss',
   shadow: true,
+  formAssociated: true,
 })
 export class CAutocomplete {
   @Element() host: HTMLCAutocompleteElement;
+
+  // eslint-disable-next-line
+  @AttachInternals() internals: ElementInternals;
 
   /**
    * Auto focus the input
@@ -196,6 +201,14 @@ export class CAutocomplete {
     this.query = selectedItem.name;
   }
 
+  private _setFormValue(item) {
+    if (!item) return;
+
+    const value = this.returnValue ? item : (item as CAutocompleteItem).value;
+
+    this.internals.setFormValue(value as string);
+  }
+
   private _valueChangedHandler(item: string | number | CAutocompleteItem) {
     function isItem(element) {
       return element === item;
@@ -205,10 +218,12 @@ export class CAutocomplete {
 
     const value = this.returnValue ? (item as CAutocompleteItem)?.value : item;
 
+    this._setFormValue(item);
+
     this.changeValue.emit(value);
   }
 
-  private _cOptionElements: Map<string, HTMLCOptionElement> = new Map();
+  private _cOptionElements: Record<string, HTMLCOptionElement> = {};
 
   private _optionItems: CAutocompleteItem[] = [];
 
@@ -232,21 +247,22 @@ export class CAutocomplete {
 
   @State() hasOptionItems = false;
 
-  @State() options = new Map();
+  @State() options: Record<string, HTMLCOptionElement> = {};
 
   private get _itemValues() {
     return this.items.map((item) => item.value);
   }
 
   private get _filteredOptions() {
-    return new Map(
-      [...this._cOptionElements]
-        .filter(([key]) => this._itemValues.includes(key))
-        .map(([key, option]) => [
-          key,
-          option.cloneNode(true) as HTMLCOptionElement,
-        ]),
-    );
+    if (!Object.keys(this._cOptionElements).length) return {};
+
+    return this._itemValues.reduce((items, item) => {
+      items[item as string] = this._cOptionElements[item as string].cloneNode(
+        true,
+      ) as HTMLCOptionElement;
+
+      return items;
+    }, {} as Record<string, HTMLCOptionElement>);
   }
 
   @Watch('items')
@@ -340,7 +356,7 @@ export class CAutocomplete {
 
   private _getOptionItems() {
     requestAnimationFrame(() => {
-      this._cOptionElements = new Map();
+      this._cOptionElements = {};
 
       let selection: CAutocompleteItem | null = null;
 
@@ -359,9 +375,11 @@ export class CAutocomplete {
 
         item.slot = `option-${index}`;
 
-        this.options.set(item.value, item.cloneNode(true));
+        this.options[item.value] = item.cloneNode(true) as HTMLCOptionElement;
 
-        this._cOptionElements.set(item.value.toString(), item);
+        this._cOptionElements[item.value.toString()] = item.cloneNode(
+          true,
+        ) as HTMLCOptionElement;
 
         return cAutocompleteItem;
       });

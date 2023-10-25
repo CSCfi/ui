@@ -15,7 +15,7 @@
 | `isOpen`       | `is-open`        | Dropdown open state                 | `boolean`                                        | `false`     |
 | `items`        | --               | Dropdown items                      | `CAutocompleteItem[] \| CSelectItem[]`           | `[]`        |
 | `itemsPerPage` | `items-per-page` | Items per page before adding scroll | `number`                                         | `undefined` |
-| `options`      | --               | Dropdown options                    | `Map<string, HTMLCOptionElement>`                | `undefined` |
+| `options`      | --               | Dropdown options                    | `{ [x: string]: HTMLCOptionElement; }`           | `undefined` |
 | `parent`       | --               | Dropdown parent                     | `HTMLCAutocompleteElement \| HTMLCSelectElement` | `undefined` |
 | `type`         | `type`           | Type of the parent element          | `"autocomplete" \| "select"`                     | `undefined` |
 | `wasClicked`   | `was-clicked`    |                                     | `boolean`                                        | `false`     |

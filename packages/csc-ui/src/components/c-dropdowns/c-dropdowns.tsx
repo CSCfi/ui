@@ -18,7 +18,7 @@ export type _CDropdownParams = {
   id: string;
   wrapper?: HTMLElement;
   itemsPerPage?: number;
-  options?: Map<string, HTMLCOptionElement>;
+  options?: Record<string, HTMLCOptionElement>;
 } & (CDropdownParamsSelect | CDropdownParamsAutoComplete);
 
 export type Position = {
