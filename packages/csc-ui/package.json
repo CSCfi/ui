@@ -50,13 +50,15 @@
   "es2017": "dist/esm/index.js",
   "exports": {
     ".": {
+      "import": "./dist/index.js",
       "types": "./dist/types/index.d.ts"
     },
     "./css/*": "./dist/styles/css/*",
     "./loader": "./dist/loader/index.js",
     "./loader/*": "./dist/loader/*",
     "./scss/*": "./dist/styles/css/*",
-    "./tailwind": "./dist/tailwind/theme.js"
+    "./tailwind": "./dist/tailwind/theme.js",
+    "./tailwind/*": "./dist/tailwind/*"
   },
   "files": [
     "dist",
