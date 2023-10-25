@@ -11,6 +11,7 @@ import { _CDropdownParams } from "./components/c-dropdowns/c-dropdowns";
 import { _CDropdownParams as _CDropdownParams1 } from "./components/c-dropdowns/c-dropdowns";
 import { _CDropdownUpdateParams as _CDropdownUpdateParams1 } from "./components/c-dropdown/c-dropdown";
 import { CLoginCardBlendMode } from "./components/c-login-card/c-login-card";
+import { CRowAlign, CRowJustify } from "./components/c-row/c-row";
 import { CTabsJustify } from "./components/c-tabs/c-tabs";
 export { CAlertType, CAutocompleteItem, CDataTableData, CDataTableFooterOptions, CDataTableHeader, CMenuOption, CPaginationOptions, CRadioGroupItem, CSelectItem, CToastMessage } from "./types";
 export { _CDropdownUpdateParams } from "./components/c-dropdown/c-dropdown";
@@ -18,6 +19,7 @@ export { _CDropdownParams } from "./components/c-dropdowns/c-dropdowns";
 export { _CDropdownParams as _CDropdownParams1 } from "./components/c-dropdowns/c-dropdowns";
 export { _CDropdownUpdateParams as _CDropdownUpdateParams1 } from "./components/c-dropdown/c-dropdown";
 export { CLoginCardBlendMode } from "./components/c-login-card/c-login-card";
+export { CRowAlign, CRowJustify } from "./components/c-row/c-row";
 export { CTabsJustify } from "./components/c-tabs/c-tabs";
 export namespace Components {
     /**
@@ -370,16 +372,6 @@ export namespace Components {
         "value": string | boolean;
     }
     /**
-     * Container component for holding current page content
-     * @group Layout
-     */
-    interface CContainer {
-        /**
-          * Maximum width of container in pixels
-         */
-        "width": number;
-    }
-    /**
      * @parent c-toolbar
      */
     interface CCscLogo {
@@ -528,12 +520,6 @@ export namespace Components {
           * Creates a dropdown
          */
         "createDropdown": (params: _CDropdownParams) => Promise<HTMLCDropdownElement>;
-    }
-    /**
-     * Component which fills the remaining space within a flex container
-     * @group Layout
-     */
-    interface CFlex {
     }
     /**
      * @group Other
@@ -1193,7 +1179,7 @@ export namespace Components {
         /**
           * Align items vertically
          */
-        "align": 'start' | 'center' | 'end';
+        "align": CRowAlign;
         /**
           * Gap between items in px
          */
@@ -1201,11 +1187,7 @@ export namespace Components {
         /**
           * Justify content horizontally
          */
-        "justify": | 'start'
-    | 'center'
-    | 'end'
-    | 'space-between'
-    | 'space-around';
+        "justify": CRowJustify;
         /**
           * Disable flex wrap
          */
@@ -1479,6 +1461,14 @@ export namespace Components {
      */
     interface CSwitch {
         /**
+          * If `true`, the checkbox is selected.
+         */
+        "checked": boolean;
+        /**
+          * The value when the checkbox is unchecked
+         */
+        "falseValue": boolean | string;
+        /**
           * Disable the switch
          */
         "hostDisabled": boolean;
@@ -1491,9 +1481,13 @@ export namespace Components {
          */
         "required": boolean;
         /**
-          * Value of the element
+          * The value when the checkbox is checked
          */
-        "value": boolean;
+        "trueValue": boolean | string;
+        /**
+          * The input value - Only used when the checkbox participates in a native `<form>`
+         */
+        "value": string | boolean;
     }
     /**
      * @group Tabs
@@ -2013,16 +2007,6 @@ declare global {
         new (): HTMLCCheckboxElement;
     };
     /**
-     * Container component for holding current page content
-     * @group Layout
-     */
-    interface HTMLCContainerElement extends Components.CContainer, HTMLStencilElement {
-    }
-    var HTMLCContainerElement: {
-        prototype: HTMLCContainerElement;
-        new (): HTMLCContainerElement;
-    };
-    /**
      * @parent c-toolbar
      */
     interface HTMLCCscLogoElement extends Components.CCscLogo, HTMLStencilElement {
@@ -2051,16 +2035,6 @@ declare global {
     var HTMLCDropdownsElement: {
         prototype: HTMLCDropdownsElement;
         new (): HTMLCDropdownsElement;
-    };
-    /**
-     * Component which fills the remaining space within a flex container
-     * @group Layout
-     */
-    interface HTMLCFlexElement extends Components.CFlex, HTMLStencilElement {
-    }
-    var HTMLCFlexElement: {
-        prototype: HTMLCFlexElement;
-        new (): HTMLCFlexElement;
     };
     /**
      * @group Other
@@ -2552,12 +2526,10 @@ declare global {
         "c-card-content": HTMLCCardContentElement;
         "c-card-title": HTMLCCardTitleElement;
         "c-checkbox": HTMLCCheckboxElement;
-        "c-container": HTMLCContainerElement;
         "c-csc-logo": HTMLCCscLogoElement;
         "c-data-table": HTMLCDataTableElement;
         "c-dropdown": HTMLCDropdownElement;
         "c-dropdowns": HTMLCDropdownsElement;
-        "c-flex": HTMLCFlexElement;
         "c-icon": HTMLCIconElement;
         "c-icon-button": HTMLCIconButtonElement;
         "c-input": HTMLCInputElement;
@@ -2969,16 +2941,6 @@ declare namespace LocalJSX {
         "value"?: string | boolean;
     }
     /**
-     * Container component for holding current page content
-     * @group Layout
-     */
-    interface CContainer {
-        /**
-          * Maximum width of container in pixels
-         */
-        "width"?: number;
-    }
-    /**
      * @parent c-toolbar
      */
     interface CCscLogo {
@@ -3123,12 +3085,6 @@ declare namespace LocalJSX {
         "wrapper"?: HTMLElement;
     }
     interface CDropdowns {
-    }
-    /**
-     * Component which fills the remaining space within a flex container
-     * @group Layout
-     */
-    interface CFlex {
     }
     /**
      * @group Other
@@ -3815,7 +3771,7 @@ declare namespace LocalJSX {
         /**
           * Align items vertically
          */
-        "align"?: 'start' | 'center' | 'end';
+        "align"?: CRowAlign;
         /**
           * Gap between items in px
          */
@@ -3823,11 +3779,7 @@ declare namespace LocalJSX {
         /**
           * Justify content horizontally
          */
-        "justify"?: | 'start'
-    | 'center'
-    | 'end'
-    | 'space-between'
-    | 'space-around';
+        "justify"?: CRowJustify;
         /**
           * Disable flex wrap
          */
@@ -4110,6 +4062,14 @@ declare namespace LocalJSX {
      */
     interface CSwitch {
         /**
+          * If `true`, the checkbox is selected.
+         */
+        "checked"?: boolean;
+        /**
+          * The value when the checkbox is unchecked
+         */
+        "falseValue"?: boolean | string;
+        /**
           * Disable the switch
          */
         "hostDisabled"?: boolean;
@@ -4120,15 +4080,19 @@ declare namespace LocalJSX {
         /**
           * Emit inner value change to parent
          */
-        "onChangeValue"?: (event: CSwitchCustomEvent<boolean>) => void;
+        "onChangeValue"?: (event: CSwitchCustomEvent<any>) => void;
         /**
           * Set as required
          */
         "required"?: boolean;
         /**
-          * Value of the element
+          * The value when the checkbox is checked
          */
-        "value"?: boolean;
+        "trueValue"?: boolean | string;
+        /**
+          * The input value - Only used when the checkbox participates in a native `<form>`
+         */
+        "value"?: string | boolean;
     }
     /**
      * @group Tabs
@@ -4482,12 +4446,10 @@ declare namespace LocalJSX {
         "c-card-content": CCardContent;
         "c-card-title": CCardTitle;
         "c-checkbox": CCheckbox;
-        "c-container": CContainer;
         "c-csc-logo": CCscLogo;
         "c-data-table": CDataTable;
         "c-dropdown": CDropdown;
         "c-dropdowns": CDropdowns;
-        "c-flex": CFlex;
         "c-icon": CIcon;
         "c-icon-button": CIconButton;
         "c-input": CInput;
@@ -4592,11 +4554,6 @@ declare module "@stencil/core" {
              */
             "c-checkbox": LocalJSX.CCheckbox & JSXBase.HTMLAttributes<HTMLCCheckboxElement>;
             /**
-             * Container component for holding current page content
-             * @group Layout
-             */
-            "c-container": LocalJSX.CContainer & JSXBase.HTMLAttributes<HTMLCContainerElement>;
-            /**
              * @parent c-toolbar
              */
             "c-csc-logo": LocalJSX.CCscLogo & JSXBase.HTMLAttributes<HTMLCCscLogoElement>;
@@ -4606,11 +4563,6 @@ declare module "@stencil/core" {
             "c-data-table": LocalJSX.CDataTable & JSXBase.HTMLAttributes<HTMLCDataTableElement>;
             "c-dropdown": LocalJSX.CDropdown & JSXBase.HTMLAttributes<HTMLCDropdownElement>;
             "c-dropdowns": LocalJSX.CDropdowns & JSXBase.HTMLAttributes<HTMLCDropdownsElement>;
-            /**
-             * Component which fills the remaining space within a flex container
-             * @group Layout
-             */
-            "c-flex": LocalJSX.CFlex & JSXBase.HTMLAttributes<HTMLCFlexElement>;
             /**
              * @group Other
              */

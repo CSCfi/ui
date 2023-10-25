@@ -400,19 +400,6 @@
       ]
     },
     {
-      "name": "c-container",
-      "description": {
-        "kind": "markdown",
-        "value": "Container component for holding current page content"
-      },
-      "attributes": [
-        {
-          "name": "width",
-          "description": "Maximum width of container in pixels"
-        }
-      ]
-    },
-    {
       "name": "c-csc-logo",
       "description": {
         "kind": "markdown",
@@ -544,14 +531,6 @@
       "description": {
         "kind": "markdown",
         "value": ""
-      },
-      "attributes": []
-    },
-    {
-      "name": "c-flex",
-      "description": {
-        "kind": "markdown",
-        "value": "Component which fills the remaining space within a flex container"
       },
       "attributes": []
     },
@@ -1716,6 +1695,14 @@
       },
       "attributes": [
         {
+          "name": "checked",
+          "description": "If `true`, the checkbox is selected."
+        },
+        {
+          "name": "false-value",
+          "description": "The value when the checkbox is unchecked"
+        },
+        {
           "name": "disabled",
           "description": "Disable the switch"
         },
@@ -1728,8 +1715,12 @@
           "description": "Set as required"
         },
         {
+          "name": "true-value",
+          "description": "The value when the checkbox is checked"
+        },
+        {
           "name": "value",
-          "description": "Value of the element"
+          "description": "The input value\n- Only used when the checkbox participates in a native `<form>`"
         }
       ]
     },

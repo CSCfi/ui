@@ -131,7 +131,7 @@ export class CCheckbox {
   handleKeyDown(event: KeyboardEvent) {
     if (['Space'].includes(event.code)) {
       event.preventDefault();
-      this.toggleState(event);
+      this._toggleState(event);
     }
   }
 
@@ -172,7 +172,7 @@ export class CCheckbox {
     }, timeout);
   }
 
-  private toggleState(event) {
+  private _toggleState(event) {
     if (this.disabled) return;
 
     this._rippleElement.createRipple(event, this._container, true);
@@ -182,7 +182,9 @@ export class CCheckbox {
     if (typeof this.value === 'string' && typeof this.trueValue === 'boolean') {
       this.changeValue.emit(this.value);
 
-      this.internals.setFormValue(this.value as string);
+      console.log('🐿️', this.checked, this.value);
+
+      this.internals.setFormValue(this.checked ? (this.value as string) : null);
 
       return;
     }
@@ -236,7 +238,7 @@ export class CCheckbox {
             aria-disabled={this.disabled.toString()}
             checked={this.checked ? true : undefined}
             disabled={this.disabled}
-            onChange={(event) => this.toggleState(event)}
+            onChange={(event) => this._toggleState(event)}
           />
 
           <label class={labelClasses} htmlFor="checkbox">

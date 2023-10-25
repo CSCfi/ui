@@ -1,4 +1,5 @@
 import {
+  AttachInternals,
   Component,
   Element,
   Event,
@@ -18,9 +19,13 @@ import { mdiCalendar, mdiEye, mdiEyeOff } from '@mdi/js';
 @Component({
   tag: 'c-text-field',
   styleUrl: 'c-text-field.scss',
-  shadow: false,
+  shadow: true,
+  formAssociated: true,
 })
 export class CTextField {
+  // eslint-disable-next-line
+  @AttachInternals() internals: ElementInternals;
+
   /**
    * Auto focus the input
    */
@@ -191,6 +196,8 @@ export class CTextField {
       this.placeholder ||
       ''
     ).replace(/[^a-zA-Z0-9-_]/g, '')}_${CTextField._uniqueId}`;
+
+    this.internals.setFormValue(this.value);
   }
 
   get isActive() {
@@ -207,6 +214,7 @@ export class CTextField {
       : event.target.value;
 
     this.changeValue.emit(this.value);
+    this.internals.setFormValue(this.value);
   };
 
   private _handleBlur = (event) => {

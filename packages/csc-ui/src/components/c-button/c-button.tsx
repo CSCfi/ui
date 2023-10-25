@@ -153,8 +153,25 @@ export class CButton {
     }
 
     if (this.type === 'submit') {
-      this._closestElementComposed('form', this._container).submit();
+      const submitButton = this._createHiddenSubmitButton();
+
+      submitButton.click();
+
+      submitButton.remove();
     }
+  };
+
+  private _createHiddenSubmitButton = () => {
+    const form = this._closestElementComposed('form', this._container);
+
+    const submitButton = document.createElement('button');
+    submitButton.type = this.type;
+    submitButton.style.display = 'none';
+    submitButton.disabled = this.disabled;
+
+    form.appendChild(submitButton);
+
+    return submitButton;
   };
 
   private _onKeyDown = (event: KeyboardEvent) => {
@@ -239,6 +256,7 @@ export class CButton {
       class: buttonClasses,
       disabled: this.disabled,
       onClick: this._onClick,
+      type: this.type,
     };
 
     let linkAttributes = {};

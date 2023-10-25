@@ -9,7 +9,7 @@
       false-value="off"
       hide-details
     >
-      Value as tring: {{ checkbox1 }}
+      Value as string: {{ checkbox1 }}
     </c-checkbox>
 
     <c-checkbox v-model="checkbox2" v-control hide-details>
