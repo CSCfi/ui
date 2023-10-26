@@ -66,20 +66,6 @@ StyleDictionaryPackage.registerFormat({
   },
 });
 
-StyleDictionaryPackage.registerAction({
-  name: 'copy_assets',
-  do: function (dictionary, config) {
-    config.files.forEach((file) => {
-      fs.mkdirSync(config.distPath, { recursive: true });
-      fs.copyFileSync(
-        `${config.buildPath}${file.destination}`,
-        `${config.distPath}/${file.destination}`,
-      );
-    });
-    // fs.copySync('src/styles/css', config.buildPath + 'assets');
-  },
-});
-
 module.exports = {
   source: ['tokens/**/*.json'],
 
@@ -94,7 +80,6 @@ module.exports = {
           format: 'tailwind/variables',
         },
       ],
-      actions: ['copy_assets'],
     },
 
     // Scss theme variables
@@ -113,7 +98,6 @@ module.exports = {
           },
         },
       ],
-      actions: ['copy_assets'],
     },
 
     // Other scss variables
@@ -133,7 +117,6 @@ module.exports = {
             },
           },
         })),
-      // actions: ['copy_assets'],
     },
 
     // Css theme variables
@@ -152,7 +135,6 @@ module.exports = {
           },
         },
       ],
-      actions: ['copy_assets'],
     },
 
     // Other css variables
@@ -175,7 +157,6 @@ module.exports = {
             selector: ':host, :root',
           },
         })),
-      actions: ['copy_assets'],
     },
 
     scss: {
