@@ -37,7 +37,10 @@ StyleDictionaryPackage.registerFormat({
 
     const options = prettier.resolveConfig('./prettier.config.js');
 
-    return prettier.format(`export const theme = ${JSON.stringify(config)}`, options);
+    return prettier.format(
+      `export const theme = ${JSON.stringify(config)}`,
+      options,
+    );
   },
 });
 
@@ -65,13 +68,16 @@ StyleDictionaryPackage.registerFormat({
 
 StyleDictionaryPackage.registerAction({
   name: 'copy_assets',
-  do: function(dictionary, config) {
+  do: function (dictionary, config) {
     config.files.forEach((file) => {
-      fs.mkdirSync(config.distPath, { recursive: true })
-      fs.copyFileSync(`${config.buildPath}${file.destination}`, `${config.distPath}/${file.destination}`);
+      fs.mkdirSync(config.distPath, { recursive: true });
+      fs.copyFileSync(
+        `${config.buildPath}${file.destination}`,
+        `${config.distPath}/${file.destination}`,
+      );
     });
     // fs.copySync('src/styles/css', config.buildPath + 'assets');
-  }
+  },
 });
 
 module.exports = {
@@ -153,7 +159,7 @@ module.exports = {
     'css/category': {
       transformGroup: 'css',
       buildPath: `src/styles/css/`,
-      // distPath: `dist/styles/css`,
+      distPath: `dist/styles/css`,
       files: tokens
         .filter((tokenCategory) => tokenCategory !== 'theme')
         .map((tokenCategory) => ({
@@ -169,7 +175,7 @@ module.exports = {
             selector: ':host, :root',
           },
         })),
-      // actions: ['copy_assets'],
+      actions: ['copy_assets'],
     },
 
     scss: {

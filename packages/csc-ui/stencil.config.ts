@@ -2,7 +2,7 @@ import { Config } from '@stencil/core';
 import { sass } from '@stencil/sass';
 
 export const config: Config = {
-  namespace: 'cscwebcomponents',
+  namespace: 'csc-ui',
   outputTargets: [
     {
       type: 'dist',

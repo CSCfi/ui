@@ -1,3 +1,6 @@
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans:wght@400;500;600;700&display=swap');
+@import url('@cscfi/csc-ui/css/theme.css');
+
 .fade-enter-active,
 .fade-leave-active {
   transition: opacity 0.5s;
@@ -19,4 +22,8 @@ code {
 *::before,
 *::after {
   box-sizing: border-box;
+}
+
+:root {
+  --c-font-family: 'Noto Sans', sans-serif;
 }
