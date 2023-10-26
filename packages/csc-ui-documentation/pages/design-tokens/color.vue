@@ -122,6 +122,22 @@
 
     <c-card-content class="mt-4">
       <h2 class="text-xl capitalize font-bold flex items-center gap-2">
+        <c-icon :path="mdiLanguageCss3" :size="32" color="var(--c-info-600)" />
+        Usage in CSS
+      </h2>
+
+      <code-block
+        :code="cssUsage"
+        theme="atom-one-dark"
+        lang="css"
+        code-block-radius="6px"
+        highlightjs
+        persistent-copy-button
+      />
+    </c-card-content>
+
+    <c-card-content class="mt-4">
+      <h2 class="text-xl capitalize font-bold flex items-center gap-2">
         <c-icon :path="mdiSass" :size="32" color="var(--c-error-300)" />
         Usage in SCSS
       </h2>
@@ -170,7 +186,12 @@
 
 <script setup lang="ts">
 import { theme } from '@cscfi/csc-ui/tailwind';
-import { mdiLanguageHtml5, mdiSass, mdiTailwind } from '@mdi/js';
+import {
+  mdiLanguageCss3,
+  mdiLanguageHtml5,
+  mdiSass,
+  mdiTailwind,
+} from '@mdi/js';
 
 const sortOrder = [
   'primary',
@@ -210,7 +231,7 @@ const themeColors = computed(() => {
 
 const cssHead = `<html>
   <head>
-    <link rel="stylesheet" href="path/to/csc-ui/theme.css" />
+    <link rel="stylesheet" href="path/to/csc-ui/css/theme.css" />
   </head>
 
   <body>
@@ -235,7 +256,13 @@ module.exports = {
 
 const tailwindUsage = `<p class="text-primary-600">I should have primary colored text</p>`;
 
-const scssUsage = `@import "path/to/csc-ui/theme.scss";
+const cssUsage = `@import url('@cscfi/csc-ui/css/theme.css');
+
+p {
+  color: var(--c-primary-600);
+}`;
+
+const scssUsage = `@import url('@cscfi/csc-ui/scss/theme.scss');
 
 p {
   color: $c-primary-600;

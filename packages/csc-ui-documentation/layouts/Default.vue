@@ -19,17 +19,8 @@
           @keyup.enter="navigateTo('/')"
           @click="navigateTo('/')"
         >
-          <c-icon :path="mdiInformationOutline" size="16" />
+          <c-icon :path="mdiInformationOutline" />
           About
-        </c-side-navigation-item>
-
-        <c-side-navigation-item
-          :active="route?.name === 'customization'"
-          @keyup.enter="navigateTo('/customization')"
-          @click="navigateTo('/customization')"
-        >
-          <c-icon :path="mdiPalette" size="16" />
-          Customization
         </c-side-navigation-item>
 
         <c-side-navigation-item
@@ -40,43 +31,44 @@
           <c-sub-navigation-item
             slot="subnavitem"
             class="capitalize"
-            :active="route?.fullPath.includes('angular')"
+            :active="route?.name === 'getting-started-angular'"
             @keyup.enter="navigateTo('/getting-started/angular')"
             @click="navigateTo('/getting-started/angular')"
           >
-            <c-icon :path="mdiAngular" size="16" />
+            <c-icon :path="mdiAngular" />
             Angular
           </c-sub-navigation-item>
 
           <c-sub-navigation-item
             slot="subnavitem"
             class="capitalize"
+            :active="route?.name === 'getting-started-html'"
             @keyup.enter="navigateTo('/getting-started/html')"
             @click="navigateTo('/getting-started/html')"
           >
-            <c-icon :path="mdiLanguageHtml5" size="16" />
+            <c-icon :path="mdiLanguageHtml5" />
             Html page
           </c-sub-navigation-item>
 
           <c-sub-navigation-item
             slot="subnavitem"
             class="capitalize"
-            :active="route?.fullPath.includes('vue3')"
+            :active="route?.name === 'getting-started-vue3'"
             @keyup.enter="navigateTo('/getting-started/vue3')"
             @click="navigateTo('/getting-started/vue3')"
           >
-            <c-icon :path="mdiVuejs" size="16" />
+            <c-icon :path="mdiVuejs" />
             Vue 3
           </c-sub-navigation-item>
 
           <c-sub-navigation-item
             slot="subnavitem"
             class="capitalize"
-            :active="route?.fullPath.includes('vue2')"
+            :active="route?.name === 'getting-started-vue2'"
             @keyup.enter="navigateTo('/getting-started/vue2')"
             @click="navigateTo('/getting-started/vue2')"
           >
-            <c-icon :path="mdiVuejs" size="16" />
+            <c-icon :path="mdiVuejs" />
             Vue 2
           </c-sub-navigation-item>
         </c-side-navigation-item>
@@ -121,12 +113,21 @@
         <c-side-navigation-title>Design tokens</c-side-navigation-title>
 
         <c-side-navigation-item
-          :active="route?.name === 'color'"
+          :active="route?.name === 'design-tokens-color'"
           @keyup.enter="navigateTo('/design-tokens/color')"
           @click="navigateTo('/design-tokens/color')"
         >
           <c-icon :path="mdiPalette" size="16" />
           Color
+        </c-side-navigation-item>
+
+        <c-side-navigation-item
+          :active="route?.name === 'design-tokens-customization'"
+          @keyup.enter="navigateTo('/design-tokens/customization')"
+          @click="navigateTo('/design-tokens/customization')"
+        >
+          <c-icon :path="mdiFormatPaint" size="16" />
+          Customization
         </c-side-navigation-item>
 
         <c-side-navigation-title>Miscellaneous</c-side-navigation-title>
@@ -153,6 +154,7 @@
 <script lang="ts" setup>
 import {
   mdiAngular,
+  mdiFormatPaint,
   mdiInformationOutline,
   mdiLanguageHtml5,
   mdiLanguageTypescript,
