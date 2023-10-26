@@ -58,7 +58,7 @@ const toasts = ref<HTMLCToastsElement | null>(null);
 
 const onItemClick = (title: string) => {
   toasts.value?.addToast({
-    message: `Item '${title}' was clicked`,
+    message: 'Item "' + title + '" was clicked',
     duration: 3000,
     type: CToastType.Success,
   });

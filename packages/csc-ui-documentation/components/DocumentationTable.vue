@@ -1,16 +1,18 @@
 <template>
   <div>
-    <p class="text-primary-600 text-lg font-medium m-0">
-      {{ componentData?.tag }}
-    </p>
+    <div>
+      <p class="text-primary-600 text-lg font-medium m-0">
+        {{ componentData?.tag }}
+      </p>
 
-    <component :is="table" :items="items" />
-  </div>
+      <component :is="table" :items="items" />
+    </div>
 
-  <div v-for="child in childItems" :key="child.tag">
-    <p class="text-primary-600 text-lg font-medium m-0">{{ child.tag }}</p>
+    <div v-for="child in childItems" :key="child.tag">
+      <p class="text-primary-600 text-lg font-medium m-0">{{ child.tag }}</p>
 
-    <component :is="table" :items="child.items" :tag="child.tag" />
+      <component :is="table" :items="child.items" :tag="child.tag" />
+    </div>
   </div>
 </template>
 

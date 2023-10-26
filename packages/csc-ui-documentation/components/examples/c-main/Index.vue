@@ -1,11 +1,9 @@
-<template>
-  <basic />
-</template>
+<template>Example not available</template>
 
 <script setup lang="ts">
-import Basic from './Basic.vue';
-
 defineOptions({
   inheritAttrs: false,
 });
 </script>
+
+<style lang="scss"></style>

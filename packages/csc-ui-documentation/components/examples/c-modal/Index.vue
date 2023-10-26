@@ -10,4 +10,8 @@
 import Basic from './Basic.vue';
 import CustomWidth from './CustomWidth.vue';
 import Dismissable from './Dismissable.vue';
+
+defineOptions({
+  inheritAttrs: false,
+});
 </script>
