@@ -1,4 +1,5 @@
 import {
+  AttachInternals,
   Component,
   Event,
   EventEmitter,
@@ -16,8 +17,12 @@ import {
   tag: 'c-otp-input',
   styleUrl: 'c-otp-input.scss',
   shadow: true,
+  formAssociated: true,
 })
 export class COtpInput {
+  // eslint-disable-next-line
+  @AttachInternals() internals: ElementInternals;
+
   /**
    * Hide the hint and error messages
    */
@@ -88,6 +93,8 @@ export class COtpInput {
       if (isFullyFilled) {
         this.completion.emit(this._value || null);
       }
+
+      this.internals.setFormValue(this._value);
 
       this._updateStatusText();
     });
@@ -228,6 +235,8 @@ export class COtpInput {
 
   componentWillLoad() {
     COtpInput._uniqueId += 1;
+
+    this.internals.setFormValue(this._value);
   }
 
   render() {

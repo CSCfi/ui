@@ -92,8 +92,6 @@ export class CSwitch {
     if (typeof this.value === 'string' && typeof this.trueValue === 'boolean') {
       this.changeValue.emit(this.value);
 
-      console.log('🪓', this.checked, this.value);
-
       this.internals.setFormValue(this.checked ? (this.value as string) : null);
 
       return;

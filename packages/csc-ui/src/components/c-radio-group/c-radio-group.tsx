@@ -7,6 +7,7 @@ import {
   Element,
   State,
   Watch,
+  AttachInternals,
 } from '@stencil/core';
 import { mdiCloseCircle } from '@mdi/js';
 import { CRadioGroupItem } from '../../types';
@@ -19,8 +20,12 @@ import { CRadioGroupItem } from '../../types';
   tag: 'c-radio-group',
   styleUrl: 'c-radio-group.scss',
   shadow: true,
+  formAssociated: true,
 })
 export class CRadioGroup {
+  // eslint-disable-next-line @stencil-community/own-props-must-be-private
+  @AttachInternals() internals: ElementInternals;
+
   /**
    * Value of the radio group
    */
@@ -154,13 +159,20 @@ export class CRadioGroup {
     );
     this.value = this.returnValue ? item?.value : item;
     this.changeValue.emit(this.value);
+
+    const value = this.returnValue
+      ? this.value
+      : (this.value as CRadioGroupItem).value;
+
+    this.internals.setFormValue(value as string);
   }
 
   private _getRadioButton = (item, index) => {
     const itemId = item.value.toString().replace(/[^a-zA-Z0-9-_]/g, '');
+
     const isChecked = this.returnValue
       ? this.items?.find((i) => i.value === item.value)?.value === this.value
-      : (this.value as CRadioGroupItem).value === item.value;
+      : (this.value as CRadioGroupItem)?.value === item.value;
 
     const classes = {
       'c-radio': true,
@@ -227,6 +239,14 @@ export class CRadioGroup {
 
   componentWillLoad() {
     CRadioGroup._uniqueId += 1;
+
+    if (this.value) {
+      const value = this.returnValue
+        ? this.value
+        : (this.value as CRadioGroupItem).value;
+
+      this.internals.setFormValue(value as string);
+    }
   }
 
   render() {
