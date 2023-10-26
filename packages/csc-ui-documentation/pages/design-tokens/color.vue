@@ -3,9 +3,15 @@
     <c-card-content>
       <h1 class="text-4xl capitalize font-bold text-primary-600">Color</h1>
 
-      Color tokens are referenced using the --c-{color}-{n} CSS custom property,
-      where {color} is the name of the palette and {n} is the numeric value of
-      the desired shade.
+      <p>
+        Color tokens are referenced using the
+        <code>--c-{color}-{n}</code>
+        CSS custom property, where
+        <code>{color}</code>
+        is the name of the palette and
+        <code>{n}</code>
+        is the numeric value of the desired shade.
+      </p>
 
       <div
         class="grid grid-cols-1 md:grid-cols-[auto_1fr] gap-x-8 md:gap-y-4 align-top"
