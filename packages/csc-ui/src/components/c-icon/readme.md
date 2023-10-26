@@ -30,6 +30,7 @@
  - [c-data-table](../c-data-table)
  - [c-dropdown](../c-dropdown)
  - [c-menu](../c-menu)
+ - [c-navigation-button](../c-navigation-button)
  - [c-pagination](../c-pagination)
  - [c-side-navigation](../c-side-navigation)
  - [c-tabs](../c-tabs)
@@ -44,6 +45,7 @@ graph TD;
   c-data-table --> c-icon
   c-dropdown --> c-icon
   c-menu --> c-icon
+  c-navigation-button --> c-icon
   c-pagination --> c-icon
   c-side-navigation --> c-icon
   c-tabs --> c-icon

@@ -147,6 +147,7 @@
 
  - [c-card](../c-card)
  - [c-data-table](../c-data-table)
+ - [c-navigation-button](../c-navigation-button)
  - [c-pagination](../c-pagination)
  - [c-side-navigation](../c-side-navigation)
  - [c-swiper](../c-swiper)
@@ -167,6 +168,7 @@ graph TD;
   c-icon-button --> c-ripple
   c-card --> c-icon-button
   c-data-table --> c-icon-button
+  c-navigation-button --> c-icon-button
   c-pagination --> c-icon-button
   c-side-navigation --> c-icon-button
   c-swiper --> c-icon-button

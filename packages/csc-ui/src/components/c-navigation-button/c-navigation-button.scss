@@ -2,15 +2,16 @@
   /**
    * @prop --c-navigation-button-color: Burger menu color
    */
-  --_c-navigation-button-color: var(--c-navigation-button-color, var(--c-text-system));
+  --_c-navigation-button-color: var(
+    --c-navigation-button-color,
+    var(--c-text-system)
+  );
 
   display: block;
   margin-right: 0;
-  padding: 14px 12px 10px;
   cursor: pointer;
   user-select: none;
+  border-radius: 50%;
 
-  line {
-    stroke: var(--_c-navigation-button-color);
-  }
+  --c-icon-button-text-text-color: var(--_c-navigation-button-color);
 }
