@@ -3,6 +3,7 @@ dist/*
 node_modules/*
 .vscode/*
 .stencil/*
+src/styles/*
 
 # Automatically generated files
 docs.json

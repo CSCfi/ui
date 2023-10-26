@@ -29,7 +29,7 @@ export const config: Config = {
   plugins: [
     sass({
       injectGlobalPaths: [
-        'src/styles/global.scss',
+        'src/assets/global.scss',
         'src/styles/variables.scss',
       ],
     }),
