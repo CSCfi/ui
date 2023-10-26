@@ -10,8 +10,8 @@
   "collection:main": "dist/collection/index.js",
   "dependencies": {
     "@mdi/js": "^7.3.67",
-    "@stencil/core": "^4.5.0",
-    "@types/node": "^20.8.6",
+    "@stencil/core": "^4.6.0",
+    "@types/node": "^20.8.9",
     "normalize.css": "^8.0.1",
     "stencil-click-outside": "^1.8.0",
     "swiper": "^9.4.1",
@@ -22,13 +22,13 @@
     "@auto-it/all-contributors": "^10.46.0",
     "@playwright/test": "^1.39.0",
     "@stencil-community/eslint-plugin": "^0.5.0",
-    "@stencil/sass": "^3.0.6",
+    "@stencil/sass": "^3.0.7",
     "@types/jest": "^27.0.3",
     "auto": "^10.46.0",
     "eslint-config-airbnb": "^19.0.4",
     "eslint-config-node": "^4.1.0",
     "eslint-config-prettier": "^8.8.0",
-    "eslint-plugin-import": "^2.28.1",
+    "eslint-plugin-import": "^2.29.0",
     "eslint-plugin-node": "^11.1.0",
     "eslint-plugin-prettier": "^4.2.1",
     "husky": "^8.0.3",
@@ -39,8 +39,8 @@
     "prettier": "^2.8.8",
     "puppeteer": "^20.7.3",
     "rimraf": "^5.0.5",
-    "style-dictionary": "^3.8.0",
-    "stylelint": "^15.10.3",
+    "style-dictionary": "^3.9.0",
+    "stylelint": "^15.11.0",
     "stylelint-config-standard-scss": "^11.0.0"
   },
   "directories": {
@@ -57,8 +57,8 @@
     "./loader": "./dist/loader/index.js",
     "./loader/*": "./dist/loader/*",
     "./scss/*": "./dist/styles/css/*",
-    "./tailwind": "./dist/tailwind/theme.js",
-    "./tailwind/*": "./dist/tailwind/*"
+    "./tailwind": "./dist/styles/tailwind/theme.js",
+    "./tailwind/*": "./dist/styles/tailwind/*"
   },
   "files": [
     "dist",
@@ -72,7 +72,7 @@
   "name": "@cscfi/csc-ui",
   "repository": "CSCfi/csc-ui",
   "scripts": {
-    "build": "rimraf ./dist && stencil build --docs && npm run style-dictionary:build",
+    "build": "rimraf ./dist && stencil build --docs-readme && npm run style-dictionary:build",
     "build:visual-testing": "docker build -t csc-ui-playwright .",
     "build:watch": "npm run style-dictionary:build && stencil build --docs --watch",
     "deploy": "npm publish && npm run deploy:documentation",

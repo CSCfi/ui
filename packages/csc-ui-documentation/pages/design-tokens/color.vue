@@ -1,5 +1,5 @@
 <template>
-  <c-card ref="cardRef" class="max-w-screen-xl mx-auto">
+  <c-card class="max-w-screen-xl mx-auto">
     <c-card-content>
       <h1 class="text-4xl capitalize font-bold text-primary-600">Color</h1>
 

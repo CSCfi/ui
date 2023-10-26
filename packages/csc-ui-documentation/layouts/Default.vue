@@ -73,19 +73,6 @@
           </c-sub-navigation-item>
         </c-side-navigation-item>
 
-        <c-side-navigation-item>
-          Templates
-          <c-sub-navigation-item
-            slot="subnavitem"
-            class="capitalize"
-            :active="route?.fullPath.includes('basic-template')"
-            @keyup.enter="navigateTo('/basic-template')"
-            @click="navigateTo('/basic-template')"
-          >
-            Basic template
-          </c-sub-navigation-item>
-        </c-side-navigation-item>
-
         <c-side-navigation-title>Components</c-side-navigation-title>
 
         <c-text-field

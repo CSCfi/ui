@@ -6,9 +6,11 @@ export const config: Config = {
   outputTargets: [
     {
       type: 'dist',
+      copy: [{ src: 'styles', dest: 'dist/styles' }],
     },
     {
       type: 'dist-custom-elements',
+      copy: [{ src: 'styles', dest: 'dist/styles' }],
     },
     {
       type: 'docs-readme',
