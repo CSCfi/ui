@@ -4,7 +4,6 @@ node_modules/*
 .vscode/*
 .stencil/*
 src/styles/*
-src/components.d.ts
 
 # Automatically generated files
 docs.json
