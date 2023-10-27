@@ -31,6 +31,7 @@ jobs:
 
       - name: Install dependencies & publish NPM package
         run: |
+          cd packages/csc-ui
           npm ci
           npm run build
           npm publish
