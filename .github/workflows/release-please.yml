@@ -18,6 +18,8 @@ jobs:
         with:
           release-type: node
           package-name: release-please-action
+          path: 'packages/csc-ui'
+          changelog-path: 'packages/csc-ui/CHANGELOG.md'
 
       - name: Checkout repository
         uses: actions/checkout@v2
