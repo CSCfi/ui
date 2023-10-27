@@ -4,6 +4,8 @@ node_modules/*
 .vscode/*
 .stencil/*
 src/styles/*
+!src/styles/.gitkeep
+
 
 # Automatically generated files
 docs.json
