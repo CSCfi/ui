@@ -1,0 +1,158 @@
+:host(c-side-navigation-item) {
+  /**
+   * @prop --c-side-navigation-item-background-color-active: Active side navigation item background color
+   * @prop --c-side-navigation-item-background-color-hover: Side navigation item hover background color
+   * @prop --c-side-navigation-item-background-color: Side navigation item background color
+   * @prop --c-side-navigation-item-outline-color: Side navigation item outline color
+   * @prop --c-side-navigation-item-text-color-active: Active side navigation item text color
+   * @prop --c-side-navigation-item-text-color: Side navigation item text color
+   */
+  --_c-side-navigation-item-background-color-active: var(--c-side-navigation-item-background-color-active, var(--c-primary-200));
+  --_c-side-navigation-item-background-color-hover: var(--c-side-navigation-item-background-color-hover, var(--c-primary-500));
+  --_c-side-navigation-item-background-color: var(--c-side-navigation-item-background-color, var(--c-transparent));
+  --_c-side-navigation-item-outline-color: var(--c-side-navigation-item-outline-color, var(--c-white));
+  --_c-side-navigation-item-text-color-active: var(--c-side-navigation-item-text-color-active, var(--c-primary-600));
+  --_c-side-navigation-item-text-color: var(--c-side-navigation-item-text-color, var(--c-white));
+
+  /**
+   * @prop --c-side-navigation-item-sub-item-background-color-active: Active 2nd level item background color
+   * @prop --c-side-navigation-item-sub-item-background-color-hover: 2nd level item hover background color
+   * @prop --c-side-navigation-item-sub-item-background-color: 2nd level item background color
+   * @prop --c-side-navigation-item-sub-item-text-color-active: Active 2nd level item text color
+   * @prop --c-side-navigation-item-sub-item-text-color: 2nd level item text color
+   */
+  --_c-side-navigation-item-sub-item-background-color-active: var(--c-side-navigation-item-sub-item-background-color-active, var(--c-white));
+  --_c-side-navigation-item-sub-item-background-color-hover: var(--c-side-navigation-item-sub-item-background-color-hover, var(--c-primary-100));
+  --_c-side-navigation-item-sub-item-background-color: var(--c-side-navigation-item-sub-item-background-color, var(--c-white));
+  --_c-side-navigation-item-sub-item-outline-color: var(--c-side-navigation-item-sub-item-outline-color, var(--c-primary-600));
+  --_c-side-navigation-item-sub-item-text-color-active: var(--c-side-navigation-item-sub-item-text-color-active, var(--c-primary-600));
+  --_c-side-navigation-item-sub-item-text-color: var(--c-side-navigation-item-sub-item-text-color, var(--c-primary-600));
+}
+
+:host(.c-side-navigation-item) {
+  align-items: center;
+  backface-visibility: hidden;
+  border-radius: 4px 0 0 4px;
+  background-color: var(--_c-side-navigation-item-background-color);
+  color: var(--_c-side-navigation-item-text-color);
+  cursor: pointer;
+  display: grid;
+  grid-template-columns: 1fr;
+  font-weight: 400;
+  overflow: hidden;
+  position: relative;
+  transform: translate3d(0, 0, 0);
+  user-select: none;
+}
+
+:host(.c-side-navigation-item:hover) {
+  background-color: var(--_c-side-navigation-item-background-color-hover);
+}
+
+:host(.c-side-navigation-item:focus) {
+  outline: none;
+}
+
+:host(.c-side-navigation-item:focus-visible) {
+  outline: 2px var(--_c-side-navigation-item-outline-color) solid;
+  outline-offset: 2px;
+}
+
+:host(.c-side-navigation-item.active) {
+  background-color: var(--_c-side-navigation-item-background-color-active);
+  color: var(--_c-side-navigation-item-text-color-active);
+
+  .svg {
+    fill: var(--_c-side-navigation-item-text-color-active);
+    transform: rotate(90deg);
+  }
+
+  .c-side-navigation-item__header {
+    color: var(--_c-side-navigation-item-text-color-active);
+  }
+}
+
+.c-side-navigation-item {
+  &__header {
+    align-items: center;
+    color: var(--_c-side-navigation-item-text-color);
+    display: grid;
+    gap: 8px;
+    grid-template-columns: 1fr;
+    min-height: 46px;
+    padding: 0 12px;
+
+    &--expandable {
+      grid-template-columns: auto 1fr;
+    }
+  }
+
+  &__slot {
+    align-items: center;
+    display: flex;
+    gap: 8px;
+    line-height: normal;
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+}
+
+:host(.c-side-navigation-item--parent.active) {
+  padding-bottom: 4px;
+}
+
+::slotted(span),
+::slotted(c-icon) {
+  font-size: 20px;
+}
+
+.styleMain {
+  padding-left: 16px;
+}
+
+.subnavitem {
+  height: 0;
+  overflow-y: hidden;
+  transition: all 500ms ease;
+  width: 100%;
+}
+
+.subnavactive {
+  height: max-content;
+  width: 100%;
+}
+
+.svg {
+  align-self: center;
+  fill: var(--_c-side-navigation-item-text-color);
+  transition: transform 0.3s ease;
+}
+
+:host > div.active .svg {
+  fill: var(--_c-side-navigation-item-text-color-active);
+  transform: rotate(90deg);
+}
+
+.svg.hidden {
+  opacity: 0;
+}
+
+.middle {
+  display: flex;
+  height: 100%;
+  align-items: center;
+}
+
+:host([slot="subnavitem"]) {
+  --_c-side-navigation-item-text-color: var(--c-side-navigation-item-text-color, var(--_c-side-navigation-item-sub-item-text-color));
+  --_c-side-navigation-item-background-color: var(--c-side-navigation-item-background-color, var(--_c-side-navigation-item-sub-item-background-color));
+  --_c-side-navigation-item-background-color-hover: var(--c-side-navigation-item-background-color-hover, var(--_c-side-navigation-item-sub-item-background-color-hover));
+  --_c-side-navigation-item-text-color-active: var(--c-side-navigation-item-text-color-active, var(--_c-side-navigation-item-sub-item-text-color-active));
+  --_c-side-navigation-item-background-color-active: var(--c-side-navigation-item-background-color-active, var(--_c-side-navigation-item-sub-item-background-color-active));
+  --_c-side-navigation-item-outline-color: var(--c-side-navigation-item-outline-color, var(--_c-side-navigation-item-sub-item-outline-color));
+
+  border-radius: 4px;
+  margin: 0 8px 4px;
+}

@@ -1,0 +1,80 @@
+:host(c-list-item) {
+  /**
+   * @prop --c-list-item-text-color: Default text color
+   * @prop --c-list-item-text-color-active: Active text color
+   * @prop --c-list-item-background-color: Default background color
+   * @prop --c-list-item-background-color-active: Active background color
+   * @prop --c-list-item-background-color-hover: Hover background color
+   * @prop --c-list-item-outline-color: Outline color
+   */
+  --_c-list-item-text-color: var(--c-list-item-text-color, var(--c-text-system));
+  --_c-list-item-text-color-active: var(--c-list-item-text-color-active, var(--c-primary-600));
+  --_c-list-item-background-color: var(--c-list-item-background-color, var(--c-transparent));
+  --_c-list-item-background-color-active: var(--c-list-item-background-color-active, rgba(var(--c-primary-rgb), 0.1));
+  --_c-list-item-background-color-hover: var(--c-list-item-background-color-hover, rgba(var(--c-primary-rgb), 0.2));
+  --_c-list-item-outline-color: var(--c-list-item-outline-color, var(--c-primary-600));
+
+  // private
+  --_c-list-item-border-radius: 4px;
+
+  display: block;
+  background-color: var(--_c-list-item-background-color);
+  border-radius: var(--_c-list-item-border-radius);
+
+  .c-list-item__content {
+    align-items: center;
+    border-radius: var(--_c-list-item-border-radius);
+    color: var(--_c-list-item-text-color);
+    display: flex;
+    gap: 16px;
+    min-height: 42px;
+    padding: 12px;
+    width: 100%;
+    position: relative;
+
+    slot {
+      display: grid;
+      gap: 4px;
+      line-height: 1;
+
+      &:not([name]) {
+        flex: 1;
+      }
+    }
+
+    &:is(a) {
+      text-decoration: none;
+      border-radius: var(--_c-list-item-border-radius);
+    }
+  }
+}
+
+:host(c-list-item:focus-visible) {
+  outline: 2px var(--_c-list-item-outline-color) solid;
+  outline-offset: 2px;
+}
+
+:host(c-list-item.c-list-item--hoverable:hover) {
+  background-color: var(--_c-list-item-background-color-hover);
+}
+
+:host(.c-list-item--active) {
+  --_c-list-item-text-color: var(--_c-list-item-text-color-active);
+
+  background-color: var(--_c-list-item-background-color-active);
+}
+
+:host(.c-list-item--ripple) {
+  cursor: pointer;
+}
+
+:host(.c-list-item--disabled) {
+  background-color: rgba(var(--c-tertiary-rgb), 0.05);
+  cursor: default;
+  opacity: 0.75;
+  pointer-events: none;
+}
+
+:host(.c-list-item--disabled) ::slotted(c-icon) {
+  --c-icon-color: var(--c-tertiary-400) !important;
+}

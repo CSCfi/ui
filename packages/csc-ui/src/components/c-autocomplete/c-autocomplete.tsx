@@ -1,4 +1,5 @@
 import {
+  AttachInternals,
   Component,
   Element,
   Host,
@@ -11,31 +12,30 @@ import {
   Watch,
   Method,
 } from '@stencil/core';
-import { mdiChevronDown, mdiAlert } from '@mdi/js';
+import { mdiChevronDown } from '@mdi/js';
 import { CAutocompleteItem } from '../../types';
 
 /**
  * @group Form
  * @slot pre - Content added before the input
  * @slot post - Content added after the input
- * @slot customMenu - Custom menu content
  */
 @Component({
   tag: 'c-autocomplete',
-  styleUrl: '../c-input/c-input-menu.scss',
+  styleUrl: 'c-autocomplete.scss',
   shadow: true,
+  formAssociated: true,
 })
 export class CAutocomplete {
+  @Element() host: HTMLCAutocompleteElement;
+
+  // eslint-disable-next-line
+  @AttachInternals() internals: ElementInternals;
+
   /**
    * Auto focus the input
    */
   @Prop() autofocus = false;
-
-  /**
-    Render custom menu
-  */
-
-  @Prop() customMenu = false;
 
   /**
    * Disable the input
@@ -133,6 +133,11 @@ export class CAutocomplete {
   @Prop() itemsPerPage: number;
 
   /**
+   * display the option as selection (works only when c-option elements are used)
+   */
+  @Prop() optionAsSelection: false;
+
+  /**
    * Triggered when text is typed
    */
   @Event() changeQuery: EventEmitter;
@@ -150,6 +155,60 @@ export class CAutocomplete {
     this._select(event, item);
   }
 
+  /**
+   * Hide menu
+   * @private
+   */
+  @Method()
+  async onHideMenu() {
+    this.menuVisible = false;
+  }
+
+  /**
+   * @private
+   */
+  @Method()
+  async setActiveDescendant(id: string) {
+    if (!id) {
+      this._inputElement.removeAttribute('aria-activedescendant');
+
+      return;
+    }
+
+    this._inputElement.setAttribute('aria-activedescendant', id);
+  }
+
+  /**
+   * @private
+   */
+  @Method()
+  async updateQuery(query: string) {
+    this.query = query;
+    this.changeQuery.emit(this.query);
+    this.changeValue.emit(null);
+  }
+
+  /**
+   * Select item by index
+   */
+  @Method()
+  async onItemSelection(index: number) {
+    this.currentIndex = index;
+
+    const selectedItem = this._items[this.currentIndex];
+
+    this.value = selectedItem;
+    this.query = selectedItem.name;
+  }
+
+  private _setFormValue(item) {
+    if (!item) return;
+
+    const value = this.returnValue ? item : (item as CAutocompleteItem).value;
+
+    this.internals.setFormValue(value as string);
+  }
+
   private _valueChangedHandler(item: string | number | CAutocompleteItem) {
     function isItem(element) {
       return element === item;
@@ -159,13 +218,14 @@ export class CAutocomplete {
 
     const value = this.returnValue ? (item as CAutocompleteItem)?.value : item;
 
+    this._setFormValue(item);
+
     this.changeValue.emit(value);
   }
 
-  private _itemRefs: { value: string | number | boolean; ref: HTMLElement }[] =
-    [];
+  private _cOptionElements: Record<string, HTMLCOptionElement> = {};
 
-  private _id: string;
+  private _optionItems: CAutocompleteItem[] = [];
 
   private _inputId: string;
 
@@ -173,121 +233,110 @@ export class CAutocomplete {
 
   private _direction = null;
 
-  private _debounce = null;
+  private _cInput: HTMLCInputElement;
 
-  @Element() host: HTMLCAutocompleteElement;
+  private _inputElement: HTMLInputElement;
+
+  get _items() {
+    return this.hasOptionItems ? this._optionItems : this.items;
+  }
 
   @State() menuVisible = false;
 
   @State() currentIndex: number = null;
 
-  @State() statusText = '';
+  @State() hasOptionItems = false;
+
+  @State() options: Record<string, HTMLCOptionElement> = {};
+
+  private get _itemValues() {
+    return this.items.map((item) => item.value);
+  }
+
+  private get _filteredOptions() {
+    if (!Object.keys(this._cOptionElements).length) return {};
+
+    return this._itemValues.reduce((items, item) => {
+      if (!this._cOptionElements[item as string]) return items;
+
+      items[item as string] = this._cOptionElements[item as string].cloneNode(
+        true,
+      ) as HTMLCOptionElement;
+
+      return items;
+    }, {} as Record<string, HTMLCOptionElement>);
+  }
 
   @Watch('items')
-  watchHandler(newValue, oldValue) {
-    if (newValue.length !== oldValue.length) {
-      this.currentIndex = !!newValue.length ? 0 : null;
+  watchHandler(items) {
+    this.currentIndex = !!items.length ? 0 : null;
 
-      this._updateStatusText();
-    }
+    this._optionItems = this._optionItems.filter((item) =>
+      this._itemValues.includes(item.value),
+    );
+
+    requestAnimationFrame(async () => {
+      await this._cInput.updateDropdown({
+        items: items,
+        options: this._filteredOptions,
+      });
+    });
+  }
+
+  @Watch('value')
+  onValueChange() {
+    if (!this.value) return;
+
+    requestAnimationFrame(() => {
+      const realValue = !(this.value as CAutocompleteItem)?.value
+        ? this._items.find((item) => item.value === this.value)
+        : this.value;
+
+      this._valueChangedHandler(realValue as CAutocompleteItem);
+    });
   }
 
   @Listen('keydown', { passive: true })
   handleKeyDown(ev: KeyboardEvent) {
-    if (ev.key === 'Escape') {
-      this.menuVisible = false;
-      this.currentIndex = null;
+    const alphanumeric = /^[0-9a-zA-Z]+$/;
 
-      return;
+    if (ev.key.match(alphanumeric) && ev.key.length === 1) {
+      this._showMenu(false);
     }
 
     if (ev.key === 'Tab') {
-      this.menuVisible = false;
-
-      const item = this.items[this.currentIndex];
-
-      if (!item) return;
-
-      const { name, value } = item;
-
-      this.query = name;
-      this.changeValue.emit(this.returnValue ? value : item);
+      this._cInput.closeDropdown();
     }
 
     if (ev.key === 'ArrowDown') {
-      this._direction = 'end';
       ev.preventDefault();
 
-      if (!this.menuVisible) {
-        this.menuVisible = true;
-
-        return;
-      }
-
-      if (this.currentIndex === null) {
-        this.currentIndex = 0;
-      } else if (this.currentIndex + 1 < this.items.length) {
-        this.currentIndex += 1;
-      }
-
-      if (this.customMenu && this.currentIndex > 0) {
-        const currentItem = this._getItemRef(this.currentIndex);
-        const prevItem = this._getItemRef(this.currentIndex - 1);
-        prevItem.toggleAttribute('aria-selected');
-        currentItem.setAttribute('aria-selected', 'true');
-      }
-
-      this._scrollToElement();
+      this._cInput.openDropdown();
+      this._cInput.focusItem('first');
     }
 
     if (ev.key === 'ArrowUp') {
-      this._direction = 'start';
       ev.preventDefault();
 
-      if (!this.menuVisible) {
-        this.menuVisible = true;
-
-        return;
-      }
-
-      if (this.currentIndex > 0) {
-        this.currentIndex -= 1;
-      } else if (this.currentIndex === null) {
-        this.currentIndex = this.items.length - 1;
-      }
-
-      if (this.customMenu && this.currentIndex >= 0) {
-        const currentItem = this._getItemRef(this.currentIndex);
-        const prevItem = this._getItemRef(this.currentIndex + 1);
-        prevItem.toggleAttribute('aria-selected');
-        currentItem.setAttribute('aria-selected', 'true');
-      }
-
-      this._scrollToElement();
+      this._cInput.openDropdown();
+      this._cInput.focusItem('last');
     }
 
-    if (ev.keyCode === 32) {
-      if (!this.menuVisible) {
-        this.menuVisible = true;
-        ev.preventDefault();
-      }
-    }
+    if (ev.key === ' ') {
+      ev.preventDefault();
 
-    if (ev.key === 'Enter') {
-      if (this.currentIndex !== null) {
-        const selectedItem = this.items[this.currentIndex];
-        this._select(ev, selectedItem);
-        this.menuVisible = false;
-      }
+      this._showMenu();
     }
   }
 
-  private _getItemRef(index) {
-    const itemRef = this._itemRefs.find(
-      (item) => item.value === this.items[index].value,
-    )?.ref;
+  private _showMenu(focusList = true) {
+    if (this.disabled) return;
 
-    return itemRef;
+    this._cInput.openDropdown(focusList);
+
+    if (focusList) {
+      this._cInput.focusDropdown();
+    }
   }
 
   private _observer = new IntersectionObserver(
@@ -307,57 +356,53 @@ export class CAutocomplete {
     { threshold: 1 },
   );
 
-  private _scrollToElement() {
-    if (this.items.length > this.itemsPerPage) {
-      const itemRef = this._getItemRef(this.currentIndex);
+  private _getOptionItems() {
+    requestAnimationFrame(() => {
+      this._cOptionElements = {};
 
-      if (!!itemRef) {
-        this._observer.observe(itemRef);
+      let selection: CAutocompleteItem | null = null;
+
+      this._optionItems = (
+        this.host ? Array.from(this.host.querySelectorAll('c-option')) : []
+      ).map((item, index) => {
+        const cAutocompleteItem = {
+          value: item.value,
+          name: item.name || item.innerText,
+          disabled: !!item.disabled,
+        } as CAutocompleteItem;
+
+        if (item.selected) {
+          selection = cAutocompleteItem;
+        }
+
+        item.slot = `option-${index}`;
+
+        this.options[item.value] = item.cloneNode(true) as HTMLCOptionElement;
+
+        this._cOptionElements[item.value.toString()] = item.cloneNode(
+          true,
+        ) as HTMLCOptionElement;
+
+        return cAutocompleteItem;
+      });
+
+      this.hasOptionItems = !!this._optionItems.length;
+
+      if (selection) {
+        this._valueChangedHandler(selection);
       }
-    }
-
-    this._updateStatusText();
+    });
   }
 
-  private _updateStatusText() {
-    this.statusText = this.query;
-
-    if (this._debounce !== null) {
-      clearTimeout(this._debounce);
-      this._debounce = null;
-    }
-
-    this._debounce = window.setTimeout(() => {
-      const word = this.items.length === 1 ? 'suggestion' : 'suggestions';
-      const ending = !!this.items.length
-        ? ', to navigate use up and down arrows'
-        : '.';
-
-      const selection = this.host.shadowRoot.querySelector(
-        'li[aria-selected="true"]',
-      );
-
-      const selectionText = !!selection
-        ? `. ${selection.innerHTML} ${selection.ariaPosInSet} of ${selection.ariaSetSize} is highlighted`
-        : null;
-
-      this.statusText = `${this.items.length} ${word} found${
-        selectionText || ending
-      }`;
-
-      this._debounce = null;
-    }, 1400);
-  }
+  private _handleSlotChange = () => {
+    this._getOptionItems();
+  };
 
   private handleChange(event) {
     this.menuVisible = true;
     this.query = event.target.value;
     this.changeQuery.emit(this.query);
     this.changeValue.emit(null);
-
-    if (!this.query.length) {
-      this.statusText = '';
-    }
   }
 
   private _select(event, item) {
@@ -372,10 +417,6 @@ export class CAutocomplete {
   componentWillLoad() {
     CAutocomplete._uniqueId += 1;
 
-    this._id =
-      this.hostId?.replace(/[^a-zA-Z0-9-_]/g, '') ??
-      CAutocomplete._uniqueId.toString();
-
     this._inputId =
       'input_' +
       (this.hostId || this.label || this.placeholder).replace(
@@ -385,32 +426,24 @@ export class CAutocomplete {
   }
 
   componentDidLoad() {
-    window.addEventListener('click', (event: MouseEvent) => {
-      if (!(event.target as HTMLElement).matches('c-autocomplete')) {
-        this.menuVisible = false;
-        this.currentIndex = null;
-      }
+    this._getOptionItems();
+
+    requestAnimationFrame(() => {
+      this._cInput.createDropdown({
+        type: 'autocomplete',
+        items: this._items,
+        options: this.options,
+        itemsPerPage: this.itemsPerPage,
+        parent: this.host,
+        index: this.currentIndex,
+        click: false,
+        id: this._inputId,
+      });
     });
   }
 
   disconnectedCallback() {
     this._observer.disconnect();
-  }
-
-  private _getActiveListItemId() {
-    return `option--${this._id}-${this.currentIndex}`;
-  }
-
-  private _handleFocus(event: FocusEvent) {
-    const { value } = event.target as HTMLInputElement;
-
-    if (!!value) {
-      this.menuVisible = true;
-    }
-
-    this.statusText = '';
-
-    this._updateStatusText();
   }
 
   private _renderChevron() {
@@ -420,176 +453,37 @@ export class CAutocomplete {
     };
 
     return (
-      <svg class={classes} viewBox='0 0 24 24'>
+      <svg class={classes} viewBox="0 0 24 24">
         <path d={mdiChevronDown} />
       </svg>
     );
   }
 
-  private _renderEmptyMenu() {
-    return (
-      <ul class='c-input-menu__items c-input-menu__items--empty'>
-        <li tabindex='-1'>
-          <svg viewBox='0 0 24 24'>
-            <path d={mdiAlert} />
-          </svg>
-          No suggestions found
-        </li>
-      </ul>
-    );
-  }
-
-  private _renderCustomMenu(style) {
-    if (this.currentIndex === 0 && this.menuVisible) {
-      const selectedItem = document.querySelectorAll(
-        'div[aria-selected = "true"]',
-      );
-
-      if (selectedItem.length === 1) {
-        /**
-          When currentIndex is 0 and there is no query text,
-          remove aria-selected attribute from current highlighted item
-         */
-        selectedItem[0].toggleAttribute('aria-selected');
-      }
-
-      const currentItem = this._getItemRef(this.currentIndex);
-      currentItem.setAttribute('aria-selected', 'true');
-    }
-
-    return (
-      <div
-        class={{
-          'c-input-menu__item-wrapper': true,
-          'c-input-menu__item-wrapper--shadow': this.shadow,
-        }}
-      >
-        {!!this.items.length && this.menuVisible && (
-          <div
-            id={'results_' + this._id}
-            class={
-              this.menuVisible
-                ? 'c-input-menu__items'
-                : 'c-input-menu__items c-input-menu__items--hidden'
-            }
-            style={style}
-          >
-            <slot name='customMenu' />
-          </div>
-        )}
-        {!this.items.length &&
-          this.menuVisible &&
-          this.query.length > 0 &&
-          this._renderEmptyMenu()}
-      </div>
-    );
-  }
-
-  private _renderMenu(style) {
-    return (
-      <div
-        class={{
-          'c-input-menu__item-wrapper': true,
-          'c-input-menu__item-wrapper--shadow': this.shadow,
-        }}
-      >
-        {!!this.items.length && (
-          <ul
-            id={'results_' + this._id}
-            class={
-              this.menuVisible
-                ? 'c-input-menu__items'
-                : 'c-input-menu__items c-input-menu__items--hidden'
-            }
-            role='listbox'
-            style={style}
-          >
-            {this.menuVisible &&
-              this.items.map((item, index) => (
-                <li
-                  id={`option--${this._id}-${index}`}
-                  aria-posinset={(index + 1).toString()}
-                  aria-setsize={this.items.length.toString()}
-                  aria-selected={(this.currentIndex === index).toString()}
-                  role='option'
-                  tabindex='-1'
-                  ref={(el) => {
-                    item.ref = el as HTMLElement;
-                    this._itemRefs.push({
-                      value: item.value,
-                      ref: el as HTMLElement,
-                    });
-                  }}
-                  onClick={(event) => this._select(event, item)}
-                >
-                  {item.name}
-                </li>
-              ))}
-          </ul>
-        )}
-        {!this.items.length && this.menuVisible && this._renderEmptyMenu()}
-      </div>
-    );
-  }
-
   private _renderInputElement() {
     return (
-      <div class='c-input-menu__input'>
+      <div class="c-input-menu__input">
         <input
-          type='text'
+          type="text"
+          ref={(el) => (this._inputElement = el)}
           aria-expanded={this.menuVisible.toString()}
-          aria-owns={'results_' + this._id}
-          aria-autocomplete='list'
-          aria-activedescendant={this._getActiveListItemId()}
-          autocomplete='off'
-          class='c-input__input'
-          role='combobox'
+          aria-owns={this._inputId + '-items'}
+          aria-autocomplete="list"
+          autocomplete="off"
+          class="c-input__input"
+          role="combobox"
           value={this.query}
           name={this.name ?? null}
           onInput={(event) => this.handleChange(event)}
-          onFocus={(event) => this._handleFocus(event)}
         />
       </div>
     );
   }
 
   render() {
-    this._itemRefs = [];
-    let itemsPerPageStyle = {};
-
-    if (
-      this.itemsPerPage &&
-      this.itemsPerPage > 0 &&
-      this.items.length > this.itemsPerPage
-    ) {
-      itemsPerPageStyle = {
-        'max-height': 48 * this.itemsPerPage + 'px',
-      };
-    }
-
-    if (this.customMenu) {
-      const slotContent = document.querySelectorAll('[slot="customMenu"]');
-
-      for (let i = 0; i < this.items.length; i++) {
-        this._itemRefs.push({
-          value: this.items[i].value,
-          ref: slotContent[i] as HTMLElement,
-        });
-      }
-    }
-
     return (
-      <Host>
-        <div
-          id={'announce-' + this._id}
-          class='visuallyhidden'
-          aria-live='polite'
-          aria-atomic='true'
-        >
-          {this.statusText}
-        </div>
-
+      <Host title={this.query}>
         <c-input
+          ref={(el) => (this._cInput = el)}
           autofocus={this.autofocus}
           disabled={this.disabled}
           hide-details={this.hideDetails}
@@ -606,18 +500,19 @@ export class CAutocomplete {
           validate-on-blur={this.validateOnBlur}
           validation={this.validation}
           value={this.query}
+          variant="select"
+          onItemClick={() => this.items.length && this._showMenu(false)}
         >
-          <slot name='pre' slot='pre'></slot>
+          <slot name="pre" slot="pre"></slot>
 
-          <div class='c-input__content'>
+          <div class="c-input__content">
             {this._renderInputElement()}
-            {this.customMenu
-              ? this._renderCustomMenu(itemsPerPageStyle)
-              : this._renderMenu(itemsPerPageStyle)}
             {this._renderChevron()}
+
+            <slot onSlotchange={this._handleSlotChange}></slot>
           </div>
 
-          <slot name='post' slot='post'></slot>
+          <slot name="post" slot="post"></slot>
         </c-input>
       </Host>
     );

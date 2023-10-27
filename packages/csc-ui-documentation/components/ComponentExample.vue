@@ -1,9 +1,10 @@
 <template>
-  <div class="component-example grid gap-6">
+  <div class="component-example flex flex-col gap-6">
     <div>
       <h2 v-if="slots.title" class="font-medium text-xl text-primary-600">
         <slot name="title" />
       </h2>
+
       <h3 v-if="slots.subtitle" class="text-tertiary-600">
         <slot name="subtitle" />
       </h3>
@@ -11,44 +12,45 @@
 
     <p v-if="slots.description"><slot name="description" /></p>
 
-    <div class="gap-4 flex" :class="rows ? 'flex-col' : 'flex-wrap'">
+    <div class="gap-4 flex w-full" :class="rows ? 'flex-col' : 'flex-wrap'">
       <slot />
     </div>
 
-    <c-accordion value="" outlined>
+    <c-accordion class="code-examples" value="" outlined>
       <c-accordion-item heading="Code" value="code">
-        <c-icon slot="icon" :path="mdiXml"></c-icon>
+        <c-icon slot="icon" :path="mdiXml" />
 
         <div class="flex justify-start mb-4">
           <c-tab-buttons v-model="exampleType" v-control size="small" mandatory>
             <c-button value="template">
-              <c-icon slot="icon" :path="mdiLanguageHtml5"></c-icon>
+              <c-icon :path="mdiLanguageHtml5" />
               Template
             </c-button>
-            <c-button v-if="examples.scripts.get(name)" value="script">
-              <c-icon slot="icon" :path="mdiLanguageTypescript"></c-icon>
+
+            <c-button v-if="exampleScript" value="script">
+              <c-icon :path="mdiLanguageTypescript" />
               Script
             </c-button>
           </c-tab-buttons>
         </div>
 
         <keep-alive>
-          <CodeBlock
-            v-if="exampleType === 'template' && examples.templates.get(name)"
-            :code="examples.templates.get(name).trim()"
-            :highlightjs="true"
+          <code-block
+            v-if="exampleType === 'template' && exampleTemplate"
+            :code="exampleTemplate.trim()"
             lang="html"
             theme="atom-one-dark"
             code-block-radius="6px"
+            highlightjs
             persistent-copy-button
           />
 
-          <CodeBlock
-            v-else-if="exampleType === 'script' && examples.scripts.get(name)"
-            :code="examples.scripts.get(name).trim()"
-            :highlightjs="true"
+          <code-block
+            v-else-if="exampleType === 'script' && exampleScript"
+            :code="exampleScript.trim()"
             theme="atom-one-dark"
             code-block-radius="6px"
+            highlightjs
             persistent-copy-button
           />
         </keep-alive>
@@ -59,39 +61,67 @@
 
 <script setup lang="ts">
 import { mdiLanguageHtml5, mdiLanguageTypescript, mdiXml } from '@mdi/js';
-// import { storeToRefs } from 'pinia';
-import CodeBlock from 'vue3-code-block';
 
 defineProps<{
   rows?: boolean;
-  name: string;
 }>();
 
 const slots = useSlots();
 
 const exampleType = ref<'template' | 'script'>('template');
 
-const examples = ref({ scripts: new Map(), templates: new Map() });
+const exampleScript = ref('');
+
+const exampleTemplate = ref('');
 
 const componentName = inject('componentName');
 
-// const { componentData } = storeToRefs(useExampleStore());
+const scriptFiles = import.meta.glob(`../example-data/**/*.script.js`);
 
-const scripts = computed(() => {
-  return import(`../example-data/${componentName}.vue.script.js`);
-});
+const templateFiles = import.meta.glob(`../example-data/**/*.template.js`);
 
-const templates = computed(() => {
-  return import(`../example-data/${componentName}.vue.template.js`);
-});
+onMounted(() => {
+  const instance = getCurrentInstance();
+  const parent = instance?.parent?.type?.__file
+    ?.split('/')
+    ?.at(-1)
+    ?.replace('.vue', '')
+    .toLowerCase();
 
-onMounted(async () => {
-  Object.entries(await scripts.value).forEach(([key, value]) => {
-    examples.value.scripts.set(key, value);
-  });
+  for (const path in scriptFiles) {
+    if (path.includes(`/example-data/${componentName}/${parent}.`)) {
+      // @ts-ignore
+      scriptFiles[path]().then((mod: any) => {
+        exampleScript.value = mod.default || '';
+      });
+    }
+  }
 
-  Object.entries(await templates.value).forEach(([key, value]) => {
-    examples.value.templates.set(key, value);
-  });
+  for (const path in templateFiles) {
+    if (path.includes(`/example-data/${componentName}/${parent}.`)) {
+      // @ts-ignore
+      templateFiles[path]().then((mod: any) => {
+        exampleTemplate.value = mod.default;
+      });
+    }
+  }
 });
 </script>
+
+<style scoped lang="scss">
+c-accordion.code-examples c-accordion-item {
+  --c-accordion-item-header-background-color: var(--c-tertiary-800);
+  --c-accordion-item-outline-color: var(--c-tertiary-800);
+  --c-accordion-item-text-color: var(--c-white);
+}
+
+c-tab-buttons {
+  --_c-tab-buttons-background-color-active: var(--c-tertiary-800);
+  --_c-tab-buttons-border-color: var(--c-tertiary-800);
+  --_c-tab-buttons-text-color: var(--c-tertiary-800);
+  --_c-tab-buttons-background-color-active-hover: var(--c-tertiary-500);
+}
+.component-example {
+  transform: translateX(0);
+}
+</style>

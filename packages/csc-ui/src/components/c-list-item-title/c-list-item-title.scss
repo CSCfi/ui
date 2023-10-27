@@ -1,0 +1,16 @@
+:host(.c-list-item-title) {
+  /**
+   * @prop --c-list-item-title-color: Title color
+   * @prop --c-list-item-title-color-active: Active title color
+   */
+  --_c-list-item-title-color: var(--c-list-item-title-color, var(--c-text-body));
+  --_c-list-item-title-color-active: var(--c-list-item-title-color-active, var(--c-primary-600));
+
+  display: block;
+  font-weight: 500;
+  color: var(--_c-list-item-title-color);
+}
+
+:host(.c-list-item-title--active) {
+  color: var(--_c-list-item-title-color-active);
+}

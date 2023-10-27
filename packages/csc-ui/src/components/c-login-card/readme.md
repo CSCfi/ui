@@ -23,6 +23,14 @@
 | `"Default slot"` | Login Card contents |
 
 
+## CSS Custom Properties
+
+| Name                              | Description                    |
+| --------------------------------- | ------------------------------ |
+| `--c-login-card-background-color` | Login card background color    |
+| `--c-login-card-overlay-color`    | Login card overlay blend color |
+
+
 ----------------------------------------------
 
 *Built with [StencilJS](https://stenciljs.com/)*

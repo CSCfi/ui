@@ -16,6 +16,16 @@ export class CIconButton {
   @Prop() badge: string;
 
   /**
+   * Danger variant of the button
+   */
+  @Prop() danger = false;
+
+  /**
+   * Loading variant of the button
+   */
+  @Prop() loading = false;
+
+  /**
    * Text variant of the button
    */
   @Prop() text = false;
@@ -55,19 +65,20 @@ export class CIconButton {
   private _rippleElement: HTMLCRippleElement;
 
   private _renderBadge() {
-    return <div class='icon-button-badge'>{this.badge}</div>;
+    return <c-badge>{this.badge}</c-badge>;
   }
 
-  private _outerClasses() {
+  private _hostClasses() {
     return {
-      'icon-button': true,
-      disabled: !!this.disabled,
-      text: !!this.text,
-      ghost: !!this.ghost,
-      outlined: !!this.outlined,
-      inverted: !!this.inverted,
-      'icon-button--small': this.size === 'small',
-      'icon-button--x-small': this.size === 'x-small',
+      'c-icon-button': true,
+      'c-icon-button--disabled': !!this.disabled,
+      'c-icon-button--danger': !!this.danger,
+      'c-icon-button--text': !!this.text,
+      'c-icon-button--ghost': !!this.ghost,
+      'c-icon-button--outlined': !!this.outlined,
+      'c-icon-button--inverted': !!this.inverted,
+      'c-icon-button--small': this.size === 'small',
+      'c-icon-button--x-small': this.size === 'x-small',
     };
   }
 
@@ -76,27 +87,40 @@ export class CIconButton {
   };
 
   render() {
+    const spinnerSizes = {
+      'x-small': 18,
+      small: 20,
+      default: 24,
+    };
+
     return (
-      <Host>
-        <button class={this._outerClasses()} onClick={this._onClick}>
+      <Host class={this._hostClasses()}>
+        <button disabled={this.disabled} onClick={this._onClick}>
           <div
-            class='inner-container'
+            class="inner-container"
             ref={(el) => (this._container = el as HTMLDivElement)}
           >
-            <slot>
-              {this.path && (
-                <svg width='24' height='24' viewBox='0 0 24 24'>
-                  <path d={this.path} />
-                </svg>
-              )}
-            </slot>
+            {this.loading && (
+              <c-spinner
+                color="var(--_c-icon-button-loader-color)"
+                size={spinnerSizes[this.size]}
+              />
+            )}
+
+            {!this.loading && (
+              <slot>
+                {this.path && (
+                  <svg width="24" height="24" viewBox="0 0 24 24">
+                    <path d={this.path} />
+                  </svg>
+                )}
+              </slot>
+            )}
           </div>
+
           {this.badge && this._renderBadge()}
 
-          <c-ripple
-            ref={(el) => (this._rippleElement = el)}
-            circular
-          ></c-ripple>
+          <c-ripple ref={(el) => (this._rippleElement = el)}></c-ripple>
         </button>
       </Host>
     );

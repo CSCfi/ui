@@ -13,7 +13,7 @@ import {
 import { CMenuOption } from '../../types';
 
 /**
- * @parent none
+ * @parent c-menu
  */
 @Component({
   tag: 'c-menu-items',
@@ -25,31 +25,37 @@ export class CMenuItems {
 
   /**
    * Menu items
+   * @private
    */
   @Prop() items: CMenuOption[] = [];
 
   /**
    * Small variant
+   * @private
    */
   @Prop() small = false;
 
   /**
    * Menu is opened and positioned
+   * @private
    */
   @Prop() active = false;
 
   /**
    * Type of parent
+   * @private
    */
   @Prop() parentType = 'menu';
 
   /**
    * Menu parent
+   * @private
    */
   @Prop() parent: HTMLCMenuElement;
 
   /**
    * Initial top position
+   * @private
    */
   @Prop() top = 0;
 
@@ -61,16 +67,19 @@ export class CMenuItems {
 
   /**
    * Items per page before adding scroll
+   * @private
    */
   @Prop() itemsPerPage = 6;
 
   /**
    * Triggered when the menu is closed
+   * @private
    */
   @Event() close: EventEmitter;
 
   /**
    * Triggered when the menu is opened
+   * @private
    */
   @Event() open: EventEmitter<{
     height: number;
@@ -203,7 +212,7 @@ export class CMenuItems {
 
     this._listElement.style.maxHeight = `${containerHeight}px`;
     this._listElement.style.setProperty(
-      '--c-menu-item-height',
+      '--_c-menu-item-height',
       `${itemHeight}px`,
     );
   }
@@ -332,14 +341,14 @@ export class CMenuItems {
       <li
         aria-disabled={(!!item.disabled).toString()}
         class={classes}
-        tabindex='-1'
-        role='menuitem'
+        tabindex="-1"
+        role="menuitem"
         onClick={(event) => onItemClick(event, item)}
       >
         {item.name}
 
         {item.icon && (
-          <svg class='icon' width='20' height='20' viewBox='0 0 24 24'>
+          <svg class="icon" width="20" height="20" viewBox="0 0 24 24">
             <path d={item.icon} />
           </svg>
         )}

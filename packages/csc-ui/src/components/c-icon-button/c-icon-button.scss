@@ -1,35 +1,82 @@
-// TODO:  Remove and add to index.html
-@import '../../styles/css/c-icon-button.css';
-
 :host {
+  /**
+   * @prop --c-icon-button-background-color: Default icon button background color
+   * @prop --c-icon-button-background-color-hover: Default icon button hover background
+   * @prop --c-icon-button-badge-background-color: Default icon button badge background color
+   * @prop --c-icon-button-badge-border-color: Default icon button badge outline color
+   * @prop --c-icon-button-badge-text-color: Default icon button badge text color
+   * @prop --c-icon-button-border-radius: Icon button border radius
+   * @prop --c-icon-button-outline-color: Default icon button outline color
+   * @prop --c-icon-button-text-color: Default icon button text color
+   */
+  --_c-icon-button-background-color: var(--c-icon-button-background-color, var(--c-primary-600));
+  --_c-icon-button-background-color-hover: var(--c-icon-button-background-color-hover, var(--c-primary-400));
+  --_c-icon-button-badge-background-color: var(--c-icon-button-badge-background-color, var(--c-warning-600));
+  --_c-icon-button-badge-border-color: var(--c-icon-button-badge-border-color, var(--c-white));
+  --_c-icon-button-badge-text-color: var(--c-icon-button-badge-text-color, var(--c-white));
+  --_c-icon-button-border-radius: var(--c-icon-button-border-radius, 50%);
+  --_c-icon-button-outline-color: var(--c-icon-button-outline-color, var(--c-primary-600));
+  --_c-icon-button-text-color: var(--c-icon-button-text-color, var(--c-white));
+
+  // private
+  --_c-icon-button-loader-color: var(--_c-icon-button-text-color);
+  --_c-icon-button-height: 40px;
+  --_c-icon-button-width: 40px;
+
   display: block;
   position: relative;
-  border-radius: 50%;
+  border-radius: var(--_c-icon-button-border-radius);
+
+  button {
+    background-color: transparent;
+    color: currentColor;
+    display: inline-grid;
+    place-items: center;
+    border: none;
+    padding: 0;
+    position: relative;
+    margin: 0;
+    width: 100%;
+    height: 100%;
+    cursor: pointer;
+    transition:
+      background-color 0.3s cubic-bezier(0.25, 0.8, 0.5, 1),
+      color 0.3s cubic-bezier(0.25, 0.8, 0.5, 1);
+    outline: none;
+    border-radius: var(--_c-icon-button-border-radius);
+
+    &:disabled {
+      cursor: default;
+    }
+  }
+
+  c-badge {
+    --_c-badge-background-color: var(--c-badge-background-color, var(--_c-icon-button-badge-background-color));
+    --_c-badge-text-color: var(--c-badge-text-color, var(--_c-icon-button-badge-border-color));
+    --_c-badge-border-color: var(--c-badge-border-color, var(--_c-icon-button-badge-text-color));
+  }
 }
 
-button.icon-button {
-  --c-icon-button-background: var(--c-icon-button-background)
+:host(.c-icon-button) button {
+  appearance: none;
+}
 
-  font-family: var(--csc-font-family);
+:host(.c-icon-button) {
+  font-family: var(--c-font-family);
   display: flex;
   border: none;
   padding: 0;
-  width: 40px;
-  height: 40px;
-  background: var(--csc-primary);
-  color: #fff;
+  width: var(--_c-icon-button-width);
+  height: var(--_c-icon-button-height);
+  background-color: var(--_c-icon-button-background-color);
+  color: var(--_c-icon-button-text-color);
   transition: background-color 0.3s ease;
-  border-radius: 50%;
   cursor: pointer;
   position: relative;
   align-items: center;
   justify-content: center;
   backface-visibility: hidden;
-  -webkit-backface-visibility: hidden;
-  -moz-backface-visibility: hidden;
   transform: translate3d(0, 0, 0);
-  -webkit-transform: translate3d(0, 0, 0);
-  -moz-transform: translate3d(0, 0, 0);
   line-height: normal;
 
   ::slotted(svg),
@@ -47,286 +94,661 @@ button.icon-button {
     align-items: center;
     justify-content: center;
   }
+}
 
-  &--small {
-    width: 32px;
-    height: 32px;
+:host(:host:hover) {
+  background-color: var(--_c-icon-button-background-color-hover);
+}
 
-    ::slotted(c-icon) {
-      width: 20px !important;
-      height: 20px !important;
-      font-size: 20px !important;
-    }
+:host(.c-icon-button--small) {
+  --_c-icon-button-height: 32px;
+  --_c-icon-button-width: 32px;
 
-    ::slotted(svg),
-    ::slotted(i),
-    ::slotted(span) {
-      width: 22px !important;
-      height: 22px !important;
-      font-size: 16px !important;
-    }
+  ::slotted(c-icon) {
+    width: 20px !important;
+    height: 20px !important;
+    font-size: 20px !important;
   }
 
-  &--x-small {
-    width: 28px;
-    height: 28px;
+  ::slotted(svg),
+  ::slotted(i),
+  ::slotted(span) {
+    width: 22px !important;
+    height: 22px !important;
+    font-size: 16px !important;
+  }
+}
 
-    ::slotted(c-icon) {
-      width: 14px !important;
-      height: 14px !important;
-      font-size: 14px !important;
-    }
+:host(.c-icon-button--x-small) {
+  --_c-icon-button-height: 28px;
+  --_c-icon-button-width: 28px;
 
-    ::slotted(svg),
-    ::slotted(i),
-    ::slotted(span) {
-      width: 18px !important;
-      height: 18px !important;
-      font-size: 14px !important;
-    }
+  ::slotted(c-icon) {
+    width: 14px !important;
+    height: 14px !important;
+    font-size: 14px !important;
   }
 
-  &:focus {
-    outline: 2px var(--csc-primary) solid;
-    outline-offset: 2px;
+  ::slotted(svg),
+  ::slotted(i),
+  ::slotted(span) {
+    width: 18px !important;
+    height: 18px !important;
+    font-size: 14px !important;
+  }
+}
+
+:host(.c-icon-button) button:focus {
+  outline: none;
+}
+
+:host(.c-icon-button) button:focus-visible {
+  outline: 2px var(--_c-icon-button-outline-color) solid;
+  outline-offset: 2px;
+}
+
+:host(.c-icon-button--inverted) {
+  /**
+   * @prop --c-icon-button-inverted-background-color: Inverted default button background color
+   * @prop --c-icon-button-inverted-text-color: Iverted default button text color
+   * @prop --c-icon-button-inverted-background-color-hover: Inverted default button hover background color
+   * @prop --c-icon-button-inverted-badge-background-color: Iverted default button badge background color
+   * @prop --c-icon-button-inverted-badge-border-color: Iverted default button badge outline color
+   * @prop --c-icon-button-inverted-badge-text-color: Iverted default button badge text color
+   */
+  --_c-icon-button-inverted-background-color: var(--c-icon-button-inverted-background-color, var(--c-white));
+  --_c-icon-button-inverted-text-color: var(--c-icon-button-inverted-text-color, var(--c-primary-600));
+  --_c-icon-button-inverted-background-color-hover: var(--c-icon-button-inverted-background-color-hover, var(--c-primary-200));
+  --_c-icon-button-inverted-badge-background-color: var(--c-icon-button-inverted-badge-background-color, var(--_c-icon-button-badge-background-color));
+  --_c-icon-button-inverted-badge-border-color: var(--c-icon-button-inverted-badge-border-color, var(--c-transparent));
+  --_c-icon-button-inverted-badge-text-color: var(--c-icon-button-inverted-badge-text-color, var(--_c-icon-button-badge-text-color));
+
+  // private
+  --_c-icon-button-loader-color: var(--_c-icon-button-inverted-text-color);
+
+  background-color: var(--_c-icon-button-inverted-background-color);
+  color: var(--_c-icon-button-inverted-text-color);
+
+  c-badge {
+    --_c-badge-text-color: var(--c-badge-text-color, var(--_c-icon-button-inverted-badge-border-color));
+    --_c-badge-background-color: var(--c-badge-background-color, var(--_c-icon-button-inverted-badge-background-color));
+    --_c-badge-border-color: var(--c-badge-border-color, var(--_c-icon-button-inverted-badge-text-color));
+  }
+}
+
+:host(.c-icon-button--inverted:hover) {
+  background-color: var(--_c-icon-button-inverted-background-color-hover);
+}
+
+:host(.c-icon-button--inverted.c-icon-button--disabled) {
+  /**
+   * @prop --c-icon-button-inverted-background-color-disabled: Disabled inverted default icon button background color
+   * @prop --c-icon-button-inverted-text-color-disabled: Disabled inverted default icon button text color
+   * @prop --c-icon-button-inverted-outline-color-disabled: Disabled inverted default icon button outline color
+   * @prop --c-icon-button-inverted-badge-background-color-disabled: Disabled inverted default icon button badge background color
+   * @prop --c-icon-button-inverted-badge-border-color-disabled: Disabled inverted default icon button badge border color
+   * @prop --c-icon-button-inverted-badge-text-color-disabled: Disabled inverted default icon button badge text color
+   */
+  --_c-icon-button-inverted-background-color-disabled: var(--c-icon-button-inverted-background-color-disabled, var(--_c-icon-button-background-color-disabled));
+  --_c-icon-button-inverted-text-color-disabled: var(--c-icon-button-inverted-text-color-disabled, var(--_c-icon-button-text-color-disabled));
+  --_c-icon-button-inverted-outline-color-disabled: var(--c-icon-button-inverted-outline-color-disabled, var(--_c-icon-button-outline-color-disabled));
+  --_c-icon-button-inverted-badge-background-color-disabled: var(--c-icon-button-inverted-badge-background-color-disabled, var(--c-tertiary-200));
+  --_c-icon-button-inverted-badge-border-color-disabled: var(--c-icon-button-inverted-badge-border-color-disabled, var(--c-transparent));
+  --_c-icon-button-inverted-badge-text-color-disabled: var(--c-icon-button-inverted-badge-text-color-disabled, var(--c-tertiary-700));
+
+  // private
+  --_c-icon-button-loader-color: var(--_c-icon-button-inverted-text-color-disabled);
+
+  background-color: var(--_c-icon-button-inverted-background-color-disabled);
+  color: var(--_c-icon-button-inverted-text-color-disabled);
+  pointer-events: none;
+
+  c-badge {
+    --_c-badge-background-color: var(--c-badge-background-color, var(--_c-icon-button-inverted-badge-background-color-disabled));
+    --_c-badge-text-color: var(--c-badge-text-color, var(--_c-icon-button-inverted-badge-border-color-disabled));
+    --_c-badge-border-color: var(--c-badge-border-color, var(--_c-icon-button-inverted-badge-text-color-disabled));
   }
 
-  @supports selector(:focus-visible) {
-    &:focus {
-      outline: none;
-    }
+  .icon-button-badge {
+    background: #acacac;
   }
+}
 
-  &:focus-visible {
-    outline: 2px var(--csc-primary) solid;
-    outline-offset: 2px;
+:host(.c-icon-button--disabled) {
+  /**
+   * @prop --c-icon-button-background-color-disabled: Disabled default icon button background color
+   * @prop --c-icon-button-background-color-disabled-hover: Disabled default icon button hover background color
+   * @prop --c-icon-button-text-color-disabled: Disabled default icon button text color
+   * @prop --c-icon-button-outline-color-disabled: Disabled default icon button outline color
+   * @prop --c-icon-button-badge-background-color-disabled: Disabled default icon button badge background color
+   * @prop --c-icon-button-badge-border-color-disabled: Disabled default icon button badge border color
+   * @prop --c-icon-button-badge-text-color-disabled: Disabled default icon button badge text color
+   */
+  --_c-icon-button-background-color-disabled: var(--c-icon-button-background-color-disabled, var(--c-tertiary-100));
+  --_c-icon-button-background-color-disabled-hover: var(--c-icon-button-background-color-disabled-hover, var(--c-tertiary-100));
+  --_c-icon-button-text-color-disabled: var(--c-icon-button-text-color-disabled, var(--c-tertiary-600));
+  --_c-icon-button-outline-color-disabled: var(--c-icon-button-outline-color-disabled, var(--c-tertiary-600));
+  --_c-icon-button-badge-background-color-disabled: var(--c-icon-button-badge-background-color-disabled, var(--c-tertiary-600));
+  --_c-icon-button-badge-border-color-disabled: var(--c-icon-button-badge-border-color-disabled, var(--_c-icon-button-badge-border-color));
+  --_c-icon-button-badge-text-color-disabled: var(--c-icon-button-badge-text-color-disabled, var(--_c-icon-button-badge-text-color));
+
+  // private
+  --_c-icon-button-loader-color: var(--_c-icon-button-text-color-disabled);
+
+  background-color: var(--_c-icon-button-background-color-disabled);
+  color: var(--_c-icon-button-text-color-disabled);
+  pointer-events: none;
+
+  c-badge {
+    --_c-badge-background-color: var(--c-badge-background-color, var(--_c-icon-button-badge-background-color-disabled));
+    --_c-badge-text-color: var(--c-badge-text-color, var(--_c-icon-button-badge-border-color-disabled));
+    --_c-badge-border-color: var(--c-badge-border-color, var(--_c-icon-button-badge-text-color-disabled));
   }
+}
 
-  &.ghost {
-    background: var(--csc-primary-ghost);
-    color: var(--csc-primary);
+:host(.c-icon-button--danger) {
+  /**
+   * @prop --c-icon-button-danger-background-color: Danger icon button background color
+   * @prop --c-icon-button-danger-text-color: Danger icon button text color
+   * @prop --c-icon-button-danger-background-color-hover: Danger icon button hover background color
+   * @prop --c-icon-button-danger-badge-background-color: Danger icon button badge background color
+   * @prop --c-icon-button-danger-badge-border-color: Danger icon button badge border color
+   * @prop --c-icon-button-danger-badge-text-color: Danger icon button badge text color
+   */
+  --_c-icon-button-danger-background-color: var(--c-icon-button-danger-background-color, var(--c-error-600));
+  --_c-icon-button-danger-text-color: var(--c-icon-button-danger-text-color, var(--c-white));
+  --_c-icon-button-danger-background-color-hover: var(--c-icon-button-danger-background-color-hover, var(--c-error-400));
+  --_c-icon-button-danger-badge-background-color: var(--c-icon-button-danger-badge-background-color, var(--_c-icon-button-badge-background-color));
+  --_c-icon-button-danger-badge-border-color: var(--c-icon-button-danger-badge-border-color, var(--_c-icon-button-badge-border-color));
+  --_c-icon-button-danger-badge-text-color: var(--c-icon-button-danger-badge-text-color, var(--_c-icon-button-badge-text-color));
 
-    ::slotted(*),
-    svg {
-      color: var(--csc-primary) !important;
-      fill: var(--csc-primary) !important;
-    }
+  // private
+  --_c-icon-button-loader-color: var(--_c-icon-button-danger-text-color);
 
-    &:hover {
-      background: var(--csc-primary-ghost-hover);
-    }
+  background-color: var(--_c-icon-button-danger-background-color);
+  color: var(--_c-icon-button-danger-text-color);
 
-    &.inverted {
-      color: #fff;
-      background: rgba(255, 255, 255, 0.15);
-
-      ::slotted(*),
-      svg {
-        color: #fff !important;
-        fill: #fff !important;
-      }
-
-      &:hover {
-        background: rgba(255, 255, 255, 0.25);
-      }
-    }
+  c-badge {
+    --_c-badge-background-color: var(--c-badge-background-color, var(--_c-icon-button-danger-badge-background-color));
+    --_c-badge-text-color: var(--c-badge-text-color, var(--_c-icon-button-danger-badge-border-color));
+    --_c-badge-border-color: var(--c-badge-border-color, var(--_c-icon-button-danger-badge-text-color));
   }
+}
 
-  &.text {
-    background: transparent;
-    color: var(--csc-primary);
+:host(.c-icon-button--danger:hover) {
+  background-color: var(--_c-icon-button-danger-background-color-hover);
+}
 
-    ::slotted(*),
-    svg {
-      color: var(--csc-primary) !important;
-      fill: var(--csc-primary) !important;
-    }
+:host(.c-icon-button--danger.c-icon-button--disabled) {
+  /**
+   * @prop --c-icon-button-danger-background-color-disabled: Danger icon button background color
+   * @prop --c-icon-button-danger-text-color-disabled: Danger icon button text color
+   * @prop --c-icon-button-danger-badge-background-color-disabled: Danger icon button badge background color
+   * @prop --c-icon-button-danger-badge-border-color-disabled: Danger icon button badge border color
+   * @prop --c-icon-button-danger-badge-text-color-disabled: Danger icon button badge text color
+   */
+  --_c-icon-button-danger-background-color-disabled: var(--c-icon-button-danger-background-color-disabled, var(--_c-icon-button-background-color-disabled));
+  --_c-icon-button-danger-text-color-disabled: var(--c-icon-button-danger-text-color-disabled, var(--_c-icon-button-text-color-disabled));
+  --_c-icon-button-danger-badge-background-color-disabled: var(--c-icon-button-danger-badge-background-color-disabled, var(--_c-icon-button-badge-background-color-disabled));
+  --_c-icon-button-danger-badge-border-color-disabled: var(--c-icon-button-danger-badge-border-color-disabled, var(--_c-icon-button-badge-border-color-disabled));
+  --_c-icon-button-danger-badge-text-color-disabled: var(--c-icon-button-danger-badge-text-color-disabled, var(--_c-icon-button-badge-text-color-disabled));
 
-    &:hover {
-      background: var(--csc-primary-text-hover);
-    }
+  // private
+  --_c-icon-button-loader-color: var(--_c-icon-button-danger-text-color-disabled);
 
-    &.inverted {
-      color: #fff;
+  background-color: var(--_c-icon-button-danger-background-color-disabled);
+  color: var(--_c-icon-button-danger-text-color-disabled);
 
-      ::slotted(*),
-      svg {
-        color: #fff !important;
-        fill: #fff !important;
-      }
-
-      &:hover {
-        background: rgba(255, 255, 255, 0.15);
-      }
-    }
+  c-badge {
+    --_c-badge-background-color: var(--c-badge-background-color, var(--_c-icon-button-danger-badge-background-color-disabled));
+    --_c-badge-text-color: var(--c-badge-text-color, var(--_c-icon-button-danger-badge-border-color-disabled));
+    --_c-badge-border-color: var(--c-badge-border-color, var(--_c-icon-button-danger-badge-text-color-disabled));
   }
+}
 
-  &.outlined {
-    background: transparent;
-    box-shadow: inset 0 0 0 2px var(--csc-primary);
-    color: var(--csc-primary);
+:host(.c-icon-button--danger.c-icon-button--inverted) {
+  /**
+   * @prop --c-icon-button-danger-inverted-background-color: Danger icon button background color
+   * @prop --c-icon-button-danger-inverted-text-color: Danger icon button text color
+   * @prop --c-icon-button-danger-inverted-background-color-hover: Danger icon button hover background color
+   * @prop --c-icon-button-danger-inverted-badge-background-color: Danger icon button badge background color
+   * @prop --c-icon-button-danger-inverted-badge-border-color: Danger icon button badge border color
+   * @prop --c-icon-button-danger-inverted-badge-text-color: Danger icon button badge text color
+   */
+  --_c-icon-button-danger-inverted-background-color: var(--_c-icon-button-inverted-background-color);
+  --_c-icon-button-danger-inverted-text-color: var(--_c-icon-button-danger-background-color);
+  --_c-icon-button-danger-inverted-badge-background-color: var(--_c-icon-button-inverted-badge-background-color);
+  --_c-icon-button-danger-inverted-badge-border-color: var(--_c-icon-button-inverted-badge-border-color);
+  --_c-icon-button-danger-inverted-badge-text-color: var(--_c-icon-button-inverted-badge-text-color);
+  --_c-icon-button-loader-color: var(--_c-icon-button-danger-inverted-text-color);
 
-    ::slotted(*),
-    svg {
-      color: var(--csc-primary) !important;
-      fill: var(--csc-primary) !important;
-    }
+  background-color: var(--_c-icon-button-danger-inverted-background-color);
+  color: var(--_c-icon-button-danger-inverted-text-color);
 
-    &.disabled {
-      background: transparent;
-      box-shadow: inset 0 0 0 2px #acacac;
-    }
-
-    &:hover {
-      background: var(--csc-primary-text-hover);
-    }
-
-    &.inverted {
-      color: #fff;
-      box-shadow: inset 0 0 0 2px #fff;
-
-      ::slotted(*),
-      svg {
-        color: #fff !important;
-        fill: #fff !important;
-      }
-
-      &:hover {
-        background: rgba(255, 255, 255, 0.15);
-      }
-    }
+  c-badge {
+    --_c-badge-background-color: var(--c-badge-background-color, var(--_c-icon-button-danger-inverted-badge-background-color));
+    --_c-badge-text-color: var(--c-badge-text-color, var(--_c-icon-button-danger-inverted-badge-border-color));
+    --_c-badge-border-color: var(--c-badge-border-color, var(--_c-icon-button-danger-inverted-badge-text-color));
   }
+}
 
-  &.disabled {
-    background: var(--csc-lightest-grey);
-    pointer-events: none;
+:host(.c-icon-button--danger.c-icon-button--inverted.c-icon-button--disabled) {
+  /**
+   * @prop --c-icon-button-danger-inverted-background-color: Danger icon button background color
+   * @prop --c-icon-button-danger-inverted-text-color: Danger icon button text color
+   * @prop --c-icon-button-danger-inverted-background-color-hover: Danger icon button hover background color
+   * @prop --c-icon-button-danger-inverted-badge-background-color: Danger icon button badge background color
+   * @prop --c-icon-button-danger-inverted-badge-border-color: Danger icon button badge border color
+   * @prop --c-icon-button-danger-inverted-badge-text-color: Danger icon button badge text color
+   */
+  --_c-icon-button-danger-inverted-disabled-background-color: var(--_c-icon-button-background-color-disabled);
+  --_c-icon-button-danger-inverted-disabled-text-color: var(--_c-icon-button-text-color-disabled);
+  --_c-icon-button-danger-inverted-disabled-badge-background-color: var(--_c-icon-button-inverted-badge-background-color-disabled);
+  --_c-icon-button-danger-inverted-disabled-badge-border-color: var(--_c-icon-button-inverted-badge-border-color);
+  --_c-icon-button-danger-inverted-disabled-badge-text-color: var(--_c-icon-button-inverted-badge-text-color-disabled);
+  --_c-icon-button-loader-color: var(--_c-icon-button-danger-inverted-disabled-text-color);
 
-    ::slotted(*),
-    svg {
-      color: var(--csc-mid-grey) !important;
-      fill: var(--csc-mid-grey) !important;
-    }
+  background-color: var(--_c-icon-button-danger-inverted-disabled-background-color);
+  color: var(--_c-icon-button-danger-inverted-disabled-text-color);
 
-    &.text {
-      background: transparent;
-    }
-
-    &.ghost {
-      background: var(--csc-lightest-grey);
-    }
-
-    &:hover {
-      background: transparent;
-    }
+  c-badge {
+    --_c-badge-background-color: var(--c-badge-background-color, var(--_c-icon-button-danger-inverted-disabled-badge-background-color));
+    --_c-badge-text-color: var(--c-badge-text-color, var(--_c-icon-button-danger-inverted-disabled-badge-border-color));
+    --_c-badge-border-color: var(--c-badge-border-color, var(--_c-icon-button-danger-inverted-disabled-badge-text-color));
   }
+}
 
-  &:hover {
-    background: var(--csc-primary-hover);
+:host(.c-icon-button--ghost) {
+  /**
+   * @prop --c-icon-button-ghost-background-color: Ghost icon button background color
+   * @prop --c-icon-button-ghost-text-color: Ghost icon button text color
+   * @prop --c-icon-button-ghost-background-color-hover: Ghost icon button hover background color
+   * @prop --c-icon-button-ghost-badge-background-color: Ghost icon button badge background color
+   * @prop --c-icon-button-ghost-badge-border-color: Ghost icon button badge border color
+   * @prop --c-icon-button-ghost-badge-text-color: Ghost icon button badge text color
+   */
+  --_c-icon-button-ghost-background-color: var(--c-icon-button-ghost-background-color, rgba(var(--c-primary-rgb), 0.2));
+  --_c-icon-button-ghost-text-color: var(--c-icon-button-ghost-text-color, var(--c-primary-600));
+  --_c-icon-button-ghost-background-color-hover: var(--c-icon-button-ghost-background-color-hover, rgba(var(--c-primary-rgb), 0.3));
+  --_c-icon-button-ghost-badge-background-color: var(--c-icon-button-ghost-badge-background-color, var(--_c-icon-button-badge-background-color));
+  --_c-icon-button-ghost-badge-border-color: var(--c-icon-button-ghost-badge-border-color, var(--_c-icon-button-badge-border-color));
+  --_c-icon-button-ghost-badge-text-color: var(--c-icon-button-ghost-badge-text-color, var(--_c-icon-button-badge-text-color));
+
+  // private
+  --_c-icon-button-loader-color: var(--_c-icon-button-ghost-text-color);
+
+  background-color: var(--_c-icon-button-ghost-background-color);
+  color: var(--_c-icon-button-ghost-text-color);
+
+  c-badge {
+    --_c-badge-background-color: var(--c-badge-background-color, var(--_c-icon-button-badge-background-color));
+    --_c-badge-text-color: var(--c-badge-text-color, var(--_c-icon-button-badge-border-color));
+    --_c-badge-border-color: var(--c-badge-border-color, var(--_c-icon-button-badge-text-color));
+  }
+}
+
+:host(.c-icon-button--ghost:hover) {
+  background-color: var(--_c-icon-button-ghost-background-color-hover);
+}
+
+:host(.c-icon-button--ghost.c-icon-button--inverted) {
+  /**
+   * @prop --c-icon-button-ghost-inverted-background-color: Inverted ghost icon button background color
+   * @prop --c-icon-button-ghost-inverted-background-color-hover: Inverted ghost icon button hover background color
+   * @prop --c-icon-button-ghost-inverted-text-color: Inverted ghost icon button text color
+   * @prop --c-icon-button-ghost-inverted-badge-background-color: Inverted ghost icon button badge background color
+   * @prop --c-icon-button-ghost-inverted-badge-border-color: Inverted ghost icon button badge border border color
+   * @prop --c-icon-button-ghost-inverted-badge-text-color: Inverted ghost icon button badge text color
+   */
+  --_c-icon-button-ghost-inverted-background-color: var(--c-icon-button-ghost-inverted-background-color, rgba(var(--c-white-rgb), 0.2));
+  --_c-icon-button-ghost-inverted-background-color-hover: var(--c-icon-button-ghost-inverted-background-color-hover, rgba(var(--c-white-rgb), 0.3));
+  --_c-icon-button-ghost-inverted-text-color: var(--c-icon-button-ghost-inverted-text-color, var(--c-white));
+  --_c-icon-button-ghost-inverted-badge-background-color: var(--c-icon-button-ghost-inverted-badge-background-color, var(--_c-icon-button-inverted-badge-background-color));
+  --_c-icon-button-ghost-inverted-badge-border-color: var(--c-icon-button-ghost-inverted-badge-border-color, var(--_c-icon-button-inverted-badge-border-color));
+  --_c-icon-button-ghost-inverted-badge-text-color: var(--c-icon-button-ghost-inverted-badge-text-color, var(--_c-icon-button-inverted-badge-text-color));
+
+  // private
+  --_c-icon-button-loader-color: var(--_c-icon-button-ghost-inverted-text-color);
+
+  background-color: var(--_c-icon-button-ghost-inverted-background-color);
+  color: var(--_c-icon-button-ghost-inverted-text-color);
+
+  c-badge {
+    --_c-badge-background-color: var(--c-badge-background-color, var(--_c-icon-button-ghost-inverted-badge-background-color));
+    --_c-badge-text-color: var(--c-badge-text-color, var(--_c-icon-button-ghost-inverted-badge-border-color));
+    --_c-badge-border-color: var(--c-badge-border-color, var(--_c-icon-button-ghost-inverted-badge-text-color));
+  }
+}
+
+:host(.c-icon-button--ghost.c-icon-button--inverted:hover) {
+  background-color: var(--_c-icon-button-ghost-inverted-background-color-hover);
+}
+
+:host(.c-icon-button--ghost.c-icon-button--disabled) {
+  /**
+   * @prop --c-icon-button-ghost-disabled-background-color: Disabled ghost icon button background color
+   * @prop --c-icon-button-ghost-disabled-text-color: Disabled ghost icon button text color
+   * @prop --c-icon-button-ghost-disabled-background-color-hover: Disabled ghost icon button hover background color
+   * @prop --c-icon-button-ghost-disabled-badge-background-color: Disabled ghost icon button badge background color
+   * @prop --c-icon-button-ghost-disabled-badge-border-color: Disabled ghost icon button badge border color
+   * @prop --c-icon-button-ghost-disabled-badge-text-color: Disabled ghost icon button badge text color
+   */
+  --_c-icon-button-ghost-disabled-background-color: var(--c-icon-button-ghost-disabled-background-color, var(--c-tertiary-200));
+  --_c-icon-button-ghost-disabled-text-color: var(--c-icon-button-ghost-disabled-text-color, var(--c-tertiary-500));
+  --_c-icon-button-ghost-disabled-background-color-hover: var(--c-icon-button-ghost-disabled-background-color-hover, var(--c-tertiary-100));
+  --_c-icon-button-ghost-disabled-badge-background-color: var(--c-icon-button-ghost-disabled-badge-background-color, var(--_c-icon-button-badge-background-color-disabled));
+  --_c-icon-button-ghost-disabled-badge-border-color: var(--c-icon-button-ghost-disabled-badge-border-color, var(--_c-icon-button-badge-border-color-disabled));
+  --_c-icon-button-ghost-disabled-badge-text-color: var(--c-icon-button-ghost-disabled-badge-text-color, var(--_c-icon-button-badge-text-color-disabled));
+
+  // private
+  --_c-icon-button-loader-color: var(--_c-icon-button-ghost-disabled-text-color);
+
+  background-color: var(--_c-icon-button-ghost-disabled-background-color);
+  color: var(--_c-icon-button-ghost-disabled-text-color);
+
+  c-badge {
+    --_c-badge-background-color: var(--c-badge-background-color, var(--_c-icon-button-ghost-disabled-badge-background-color));
+    --_c-badge-text-color: var(--c-badge-text-color, var(--_c-icon-button-ghost-disabled-badge-border-color));
+    --_c-badge-border-color: var(--c-badge-border-color, var(--_c-icon-button-ghost-disabled-badge-text-color));
+  }
+}
+
+:host(.c-icon-button--ghost.c-icon-button--disabled:hover) {
+  background-color: var(--_c-icon-button-ghost-disabled-background-color-hover);
+}
+
+:host(.c-icon-button--ghost.c-icon-button--inverted.c-icon-button--disabled) {
+  /**
+   * @prop --c-icon-button-ghost-inverted-disabled-background-color: Disabled ghost icon button background color
+   * @prop --c-icon-button-ghost-inverted-disabled-text-color: Disabled ghost icon button text color
+   * @prop --c-icon-button-ghost-inverted-disabled-badge-background-color: Disabled ghost icon button badge background color
+   * @prop --c-icon-button-ghost-inverted-disabled-badge-border-color: Disabled ghost icon button badge border color
+   * @prop --c-icon-button-ghost-inverted-disabled-badge-text-color: Disabled ghost icon button badge text color
+   */
+  --_c-icon-button-ghost-inverted-disabled-background-color: var(--c-icon-button-ghost-inverted-disabled-background-color, rgba(var(--c-white-rgb), 0.05));
+  --_c-icon-button-ghost-inverted-disabled-text-color: var(--c-icon-button-ghost-inverted-disabled-text-color, var(--c-tertiary-400));
+  --_c-icon-button-ghost-inverted-disabled-badge-background-color: var(--c-icon-button-ghost-inverted-disabled-badge-background-color, var(--_c-icon-button-inverted-badge-background-color-disabled));
+  --_c-icon-button-ghost-inverted-disabled-badge-border-color: var(--c-icon-button-ghost-inverted-disabled-badge-border-color, var(--_c-icon-button-inverted-badge-border-color));
+  --_c-icon-button-ghost-inverted-disabled-badge-text-color: var(--c-icon-button-ghost-inverted-disabled-badge-text-color, var(--_c-icon-button-inverted-badge-text-color-disabled));
+
+  // private
+  --_c-icon-button-loader-color: var(--_c-icon-button-ghost-inverted-disabled-text-color);
+
+  background-color: var(--_c-icon-button-ghost-inverted-disabled-background-color);
+  color: var(--_c-icon-button-ghost-inverted-disabled-text-color);
+
+  c-badge {
+    --_c-badge-background-color: var(--c-badge-background-color, var(--_c-icon-button-ghost-inverted-disabled-badge-background-color));
+    --_c-badge-text-color: var(--c-badge-text-color, var(--_c-icon-button-ghost-inverted-disabled-badge-border-color));
+    --_c-badge-border-color: var(--c-badge-border-color, var(--_c-icon-button-ghost-inverted-disabled-badge-text-color));
+  }
+}
+
+:host(.c-icon-button--text) {
+  /**
+   * @prop --c-icon-button-text-text-color: Text icon button text color
+   * @prop --c-icon-button-text-background-color: Text icon button background color
+   * @prop --c-icon-button-text-background-color-hover: Text icon button hover background color
+   * @prop --c-icon-button-text-badge-background-color: Text icon button badge background color
+   * @prop --c-icon-button-text-badge-border-color: Text icon button badge border color
+   * @prop --c-icon-button-text-badge-text-color: Text icon button badge text color
+   */
+  --_c-icon-button-text-text-color: var(--c-icon-button-text-text-color, var(--c-primary-600));
+  --_c-icon-button-text-background-color: var(--c-icon-button-text-background-color, var(--c-transparent));
+  --_c-icon-button-text-background-color-hover: var(--c-icon-button-text-background-color-hover, var(--c-primary-100));
+  --_c-icon-button-text-badge-background-color: var(--c-icon-button-text-badge-background-color, var(--_c-icon-button-badge-background-color));
+  --_c-icon-button-text-badge-border-color: var(--c-icon-button-text-badge-border-color, var(--_c-icon-button-badge-border-color));
+  --_c-icon-button-text-badge-text-color: var(--c-icon-button-text-badge-text-color, var(--_c-icon-button-badge-text-color));
+
+  // private
+  --_c-icon-button-loader-color: var(--_c-icon-button-text-text-color);
+
+  background-color: var(--_c-icon-button-text-background-color);
+  color: var(--_c-icon-button-text-text-color);
+
+  c-badge {
+    --_c-badge-background-color: var(--c-badge-background-color, var(--_c-icon-button-text-badge-background-color));
+    --_c-badge-text-color: var(--c-badge-text-color, var(--_c-icon-button-text-badge-border-color));
+    --_c-badge-border-color: var(--c-badge-border-color, var(--_c-icon-button-text-badge-text-color));
+  }
+}
+
+:host(.c-icon-button--text:hover) {
+  background-color: var(--_c-icon-button-text-background-color-hover);
+}
+
+:host(.c-icon-button--text.c-icon-button--inverted) {
+  /**
+   * @prop --c-icon-button-text-text-color: Text icon button text color
+   * @prop --c-icon-button-text-background-color: Text icon button background color
+   * @prop --c-icon-button-text-background-color-hover: Text icon button hover background color
+   * @prop --c-icon-button-text-badge-background-color: Text icon button badge background color
+   * @prop --c-icon-button-text-badge-border-color: Text icon button badge border color
+   * @prop --c-icon-button-text-badge-text-color: Text icon button badge text color
+   */
+  --_c-icon-button-text-inverted-text-color: var(--c-icon-button-text-inverted-text-color, var(--c-white));
+  --_c-icon-button-text-inverted-background-color: var(--c-icon-button-text-inverted-background-color, var(--c-transparent));
+  --_c-icon-button-text-inverted-background-color-hover: var(--c-icon-button-text-inverted-background-color-hover, rgba(var(--c-white-rgb), 0.2));
+  --_c-icon-button-text-inverted-badge-background-color: var(--c-icon-button-text-inverted-badge-background-color, var(--_c-icon-button-badge-background-color));
+  --_c-icon-button-text-inverted-badge-border-color: var(--c-icon-button-text-inverted-badge-border-color, var(--_c-icon-button-inverted-badge-border-color));
+  --_c-icon-button-text-inverted-badge-text-color: var(--c-icon-button-text-inverted-badge-text-color, var(--_c-icon-button-badge-text-color));
+
+  // private
+  --_c-icon-button-loader-color: var(--_c-icon-button-text-inverted-text-color);
+
+  background-color: var(--_c-icon-button-text-inverted-background-color);
+  color: var(--_c-icon-button-text-inverted-text-color);
+
+  c-badge {
+    --_c-badge-background-color: var(--c-badge-background-color, var(--_c-icon-button-text-inverted-badge-background-color));
+    --_c-badge-text-color: var(--c-badge-text-color, var(--_c-icon-button-text-inverted-badge-border-color));
+    --_c-badge-border-color: var(--c-badge-border-color, var(--_c-icon-button-text-inverted-badge-text-color));
+  }
+}
+
+:host(.c-icon-button--text.c-icon-button--inverted:hover) {
+  background-color: var(--_c-icon-button-text-inverted-background-color-hover);
+}
+
+:host(.c-icon-button--text.c-icon-button--disabled) {
+  /**
+   * @prop --c-icon-button-text-disabled-text-color: Disabled text icon button text color
+   * @prop --c-icon-button-text-disabled-background-color: Disabled text icon button background color
+   * @prop --c-icon-button-text-disabled-badge-background-color: Disabled text icon button badge background color
+   * @prop --c-icon-button-text-disabled-badge-border-color: Disabled text icon button badge border color
+   * @prop --c-icon-button-text-disabled-badge-text-color: Disabled text icon button badge text color
+   */
+  --_c-icon-button-text-disabled-text-color: var(--c-icon-button-text-disabled-text-color, var(--c-tertiary-400));
+  --_c-icon-button-text-disabled-background-color: var(--c-icon-button-text-disabled-background-color, var(--c-transparent));
+  --_c-icon-button-text-disabled-badge-background-color: var(--c-icon-button-text-disabled-badge-background-color, var(--_c-icon-button-badge-background-color-disabled));
+  --_c-icon-button-text-disabled-badge-border-color: var(--c-icon-button-text-disabled-badge-border-color, var(--_c-icon-button-badge-border-color-disabled));
+  --_c-icon-button-text-disabled-badge-text-color: var(--c-icon-button-text-disabled-badge-text-color, var(--_c-icon-button-badge-text-color-disabled));
+
+  // private
+  --_c-icon-button-loader-color: var(--_c-icon-button-text-disabled-text-color);
+
+  background-color: var(--_c-icon-button-text-disabled-background-color);
+  color: var(--_c-icon-button-text-disabled-text-color);
+
+  c-badge {
+    --_c-badge-background-color: var(--c-badge-background-color, var(--_c-icon-button-text-disabled-badge-background-color));
+    --_c-badge-text-color: var(--c-badge-text-color, var(--_c-icon-button-text-disabled-badge-border-color));
+    --_c-badge-border-color: var(--c-badge-border-color, var(--_c-icon-button-text-disabled-badge-text-color));
+  }
+}
+
+:host(.c-icon-button--text.c-icon-button--inverted.c-icon-button--disabled) {
+  /**
+   * @prop --c-icon-button-text-inverted-disabled-text-color: Disabled inverted text icon button text color
+   * @prop --c-icon-button-text-inverted-disabled-background-color: Disabled inverted text icon button background color
+   * @prop --c-icon-button-text-inverted-disabled-badge-background-color: Disabled inverted text icon button badge background color
+   * @prop --c-icon-button-text-inverted-disabled-badge-border-color: Disabled inverted text icon button badge border color
+   * @prop --c-icon-button-text-inverted-disabled-badge-text-color: Disabled inverted text icon button badge text color
+   */
+  --_c-icon-button-text-inverted-disabled-text-color: var(--c-icon-button-text-inverted-disabled-text-color, var(--c-tertiary-400));
+  --_c-icon-button-text-inverted-disabled-background-color: var(--c-icon-button-text-inverted-disabled-background-color, var(--c-transparent));
+  --_c-icon-button-text-inverted-disabled-badge-background-color: var(--c-icon-button-text-inverted-disabled-badge-background-color, var(--_c-icon-button-inverted-badge-background-color-disabled));
+  --_c-icon-button-text-inverted-disabled-badge-border-color: var(--c-icon-button-text-inverted-disabled-badge-border-color, var(--_c-icon-button-inverted-badge-border-color-disabled));
+  --_c-icon-button-text-inverted-disabled-badge-text-color: var(--c-icon-button-text-inverted-disabled-badge-text-color, var(--_c-icon-button-inverted-badge-text-color-disabled));
+
+  // private
+  --_c-icon-button-loader-color: var(--_c-icon-button-text-inverted-disabled-text-color);
+
+  background-color: var(--_c-icon-button-text-inverted-disabled-background-color);
+  color: var(--_c-icon-button-text-inverted-disabled-text-color);
+
+  c-badge {
+    --_c-badge-background-color: var(--c-badge-background-color, var(--_c-icon-button-text-inverted-disabled-badge-background-color));
+    --_c-badge-text-color: var(--c-badge-text-color, var(--_c-icon-button-text-inverted-disabled-badge-border-color));
+    --_c-badge-border-color: var(--c-badge-border-color, var(--_c-icon-button-text-inverted-disabled-badge-text-color));
+  }
+}
+
+:host(.c-icon-button--outlined) {
+  /**
+   * @prop --c-icon-button-outlined-text-color: Outlined icon button text color
+   * @prop --c-icon-button-outlined-background-color: Outlined icon button background color
+   * @prop --c-icon-button-outlined-background-color-hover: Outlined icon button hover background color
+   * @prop --c-icon-button-outlined-border-color: Outlined icon button border color
+   * @prop --c-icon-button-outlined-badge-background-color: Outlined icon button badge background color
+   * @prop --c-icon-button-outlined-badge-border-color: Outlined icon button badge border color
+   * @prop --c-icon-button-outlined-badge-text-color: Outlined icon button badge text color
+   */
+  --_c-icon-button-outlined-text-color: var(--c-icon-button-outlined-text-color, var(--c-primary-600));
+  --_c-icon-button-outlined-background-color: var(--c-icon-button-outlined-background-color, var(--c-transparent));
+  --_c-icon-button-outlined-background-color-hover: var(--c-icon-button-outlined-background-color-hover, rgba(var(--c-primary-rgb), 0.1));
+  --_c-icon-button-outlined-border-color: var(--c-icon-button-outlined-border-color, var(--_c-icon-button-outlined-text-color));
+  --_c-icon-button-outlined-badge-background-color: var(--c-icon-button-outlined-badge-background-color, var(--_c-icon-button-badge-background-color));
+  --_c-icon-button-outlined-badge-border-color: var(--c-icon-button-outlined-badge-border-color, var(--_c-icon-button-badge-border-color));
+  --_c-icon-button-outlined-badge-text-color: var(--c-icon-button-outlined-badge-text-color, var(--_c-icon-button-badge-text-color));
+
+  // private
+  --_c-icon-button-loader-color: var(--_c-icon-button-outlined-text-color);
+
+  background-color: var(--_c-icon-button-outlined-background-color);
+  box-shadow: inset 0 0 0 2px var(--_c-icon-button-outlined-border-color);
+  color: var(--_c-icon-button-outlined-text-color);
+
+  c-badge {
+    --_c-badge-background-color: var(--c-badge-background-color, var(--_c-icon-button-outlined-badge-background-color));
+    --_c-badge-text-color: var(--c-badge-text-color, var(--_c-icon-button-outlined-badge-border-color));
+    --_c-badge-border-color: var(--c-badge-border-color, var(--_c-icon-button-outlined-badge-text-color));
+  }
+}
+
+:host(.c-icon-button--outlined:hover) {
+  background-color: var(--_c-icon-button-outlined-background-color-hover);
+}
+
+:host(.c-icon-button--outlined.c-icon-button--disabled) {
+  /**
+   * @prop --c-icon-button-outlined-disabled-text-color: Disabled outlined icon button text color
+   * @prop --c-icon-button-outlined-disabled-background-color: Disabled outlined icon button background color
+   * @prop --c-icon-button-outlined-disabled-border-color: Disabled outlined icon button border color
+   * @prop --c-icon-button-outlined-disabled-badge-background-color: Disabled outlined icon button badge background color
+   * @prop --c-icon-button-outlined-disabled-badge-border-color: Disabled outlined icon button badge border color
+   * @prop --c-icon-button-outlined-disabled-badge-text-color: Disabled outlined icon button badge text color
+   */
+  --_c-icon-button-outlined-disabled-text-color: var(--c-icon-button-outlined-disabled-text-color, var(--c-tertiary-500));
+  --_c-icon-button-outlined-disabled-background-color: var(--c-icon-button-outlined-disabled-background-color, var(--c-transparent));
+  --_c-icon-button-outlined-disabled-border-color: var(--c-icon-button-outlined-disabled-border-color, var(--c-tertiary-400));
+  --_c-icon-button-outlined-disabled-badge-background-color: var(--c-icon-button-outlined-disabled-badge-background-color, var(--_c-icon-button-badge-background-color-disabled));
+  --_c-icon-button-outlined-disabled-badge-border-color: var(--c-icon-button-outlined-disabled-badge-border-color, var(--_c-icon-button-badge-border-color-disabled));
+  --_c-icon-button-outlined-disabled-badge-text-color: var(--c-icon-button-outlined-disabled-badge-text-color, var(--_c-icon-button-badge-text-color-disabled));
+
+  // private
+  --_c-icon-button-loader-color: var(--_c-icon-button-outlined-disabled-text-color);
+
+  background-color: var(--_c-icon-button-outlined-disabled-background-color);
+  box-shadow: inset 0 0 0 2px var(--_c-icon-button-outlined-disabled-border-color);
+  color: var(--_c-icon-button-outlined-disabled-text-color);
+
+  c-badge {
+    --_c-badge-background-color: var(--c-badge-background-color, var(--_c-icon-button-outlined-disabled-badge-background-color));
+    --_c-badge-text-color: var(--c-badge-text-color, var(--_c-icon-button-outlined-disabled-badge-border-color));
+    --_c-badge-border-color: var(--c-badge-border-color, var(--_c-icon-button-outlined-disabled-badge-text-color));
+  }
+}
+
+:host(.c-icon-button--outlined.c-icon-button--inverted) {
+  /**
+   * @prop --c-icon-button-outlined-inverted-text-color: Inverted outlined icon button text color
+   * @prop --c-icon-button-outlined-inverted-background-color: Inverted outlined icon button background color
+   * @prop --c-icon-button-outlined-inverted-background-color-hover: INverted outlined icon button hover background color
+   * @prop --c-icon-button-outlined-inverted-border-color: Inverted outlined icon button border color
+   * @prop --c-icon-button-outlined-inverted-badge-background-color: Inverted outlined icon button badge background color
+   * @prop --c-icon-button-outlined-inverted-badge-border-color: Inverted outlined icon button badge border color
+   * @prop --c-icon-button-outlined-inverted-badge-text-color: Inverted outlined icon button badge text color
+   */
+  --_c-icon-button-outlined-inverted-text-color: var(--c-icon-button-outlined-inverted-text-color, var(--c-white));
+  --_c-icon-button-outlined-inverted-background-color: var(--c-icon-button-outlined-inverted-background-color, var(--c-transparent));
+  --_c-icon-button-outlined-inverted-background-color-hover: var(--c-icon-button-outlined-inverted-background-color-hover, rgba(var(--c-white-rgb), 0.2));
+  --_c-icon-button-outlined-inverted-border-color: var(--c-icon-button-outlined-inverted-border-color, var(--_c-icon-button-outlined-inverted-text-color));
+  --_c-icon-button-outlined-inverted-badge-background-color: var(--c-icon-button-outlined-inverted-badge-background-color, var(--_c-icon-button-inverted-badge-background-color));
+  --_c-icon-button-outlined-inverted-badge-border-color: var(--c-icon-button-outlined-inverted-badge-border-color, var(--_c-icon-button-inverted-badge-border-color));
+  --_c-icon-button-outlined-inverted-badge-text-color: var(--c-icon-button-outlined-inverted-badge-text-color, var(--_c-icon-button-inverted-badge-text-color));
+
+  // private
+  --_c-icon-button-loader-color: var(--_c-icon-button-outlined-inverted-text-color);
+
+  background-color: var(--_c-icon-button-outlined-inverted-background-color);
+  box-shadow: inset 0 0 0 2px var(--_c-icon-button-outlined-inverted-border-color);
+  color: var(--_c-icon-button-outlined-inverted-text-color);
+
+  c-badge {
+    --_c-badge-background-color: var(--c-badge-background-color, var(--_c-icon-button-outlined-inverted-badge-background-color));
+    --_c-badge-text-color: var(--c-badge-text-color, var(--_c-icon-button-outlined-inverted-badge-border-color));
+    --_c-badge-border-color: var(--c-badge-border-color, var(--_c-icon-button-outlined-inverted-badge-text-color));
+  }
+}
+
+:host(.c-icon-button--outlined.c-icon-button--inverted:hover) {
+  background-color: var(--_c-icon-button-outlined-inverted-background-color-hover);
+}
+
+:host(.c-icon-button--outlined.c-icon-button--inverted.c-icon-button--disabled) {
+  /**
+   * @prop --c-icon-button-outlined-inverted-disabled-text-color: Disabled outlined icon button text color
+   * @prop --c-icon-button-outlined-inverted-disabled-background-color: Disabled outlined icon button background color
+   * @prop --c-icon-button-outlined-inverted-disabled-border-color: Disabled outlined icon button border color
+   * @prop --c-icon-button-outlined-inverted-disabled-badge-background-color: Disabled outlined icon button badge background color
+   * @prop --c-icon-button-outlined-inverted-disabled-badge-border-color: Disabled outlined icon button badge border color
+   * @prop --c-icon-button-outlined-inverted-disabled-badge-text-color: Disabled outlined icon button badge text color
+   */
+  --_c-icon-button-outlined-inverted-disabled-text-color: var(--c-icon-button-outlined-inverted-disabled-text-color, var(--c-tertiary-400));
+  --_c-icon-button-outlined-inverted-disabled-background-color: var(--c-icon-button-outlined-inverted-disabled-background-color, var(--c-transparent));
+  --_c-icon-button-outlined-inverted-disabled-border-color: var(--c-icon-button-outlined-inverted-disabled-border-color, var(--c-tertiary-500));
+  --_c-icon-button-outlined-inverted-disabled-badge-background-color: var(--c-icon-button-outlined-inverted-disabled-badge-background-color, var(--_c-icon-button-inverted-badge-background-color-disabled));
+  --_c-icon-button-outlined-inverted-disabled-badge-border-color: var(--c-icon-button-outlined-inverted-disabled-badge-border-color, var(--_c-icon-button-inverted-badge-border-color-disabled));
+  --_c-icon-button-outlined-inverted-disabled-badge-text-color: var(--c-icon-button-outlined-inverted-disabled-badge-text-color, var(--_c-icon-button-inverted-badge-text-color-disabled));
+
+  // private
+  --_c-icon-button-loader-color: var(--_c-icon-button-outlined-iverted-disabled-text-color);
+
+  background-color: var(--_c-icon-button-outlined-inverted-disabled-background-color);
+  box-shadow: inset 0 0 0 2px var(--_c-icon-button-outlined-inverted-disabled-border-color);
+  color: var(--_c-icon-button-outlined-inverted-disabled-text-color);
+
+  c-badge {
+    --_c-badge-background-color: var(--c-badge-background-color, var(--_c-icon-button-outlined-inverted-disabled-badge-background-color));
+    --_c-badge-text-color: var(--c-badge-text-color, var(--_c-icon-button-outlined-inverted-disabled-badge-border-color));
+    --_c-badge-border-color: var(--c-badge-border-color, var(--_c-icon-button-outlined-inverted-disabled-badge-text-color));
   }
 }
 
 ::slotted(*),
 svg {
-  color: rgb(255, 255, 255);
-  fill: rgb(255, 255, 255);
   pointer-events: none;
 }
 
-.icon-button-badge {
-  background: #ff5800;
-  border-radius: 16px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  min-width: 16px;
-  height: 16px;
-  color: #fff;
-  position: absolute;
-  right: -6px;
-  font-size: 12px;
-  box-shadow: 0 0 0 2px #fff;
-  top: -6px;
-  padding: 0 4px;
-  line-height: 1;
-}
-
 .inner-container {
-  top: 0;
-  bottom: 0;
-  right: 0;
-  left: 0;
-  display: flex;
   align-items: center;
-  justify-content: center;
+  display: flex;
   height: 100%;
-  border-radius: 50%;
+  inset: 0;
+  justify-content: center;
   overflow: hidden;
   position: relative;
   transform: translateZ(0);
   width: 100%;
-}
-
-.ripple {
-  transition: background 0.5s;
-  background-position: center;
-  position: absolute;
-  border-radius: 50%;
-
-  &:hover {
-    background: rgba(255, 255, 255, 0)
-      radial-gradient(circle, transparent 1%, rgba(255, 255, 255, 0.15) 1%)
-      center/15000%;
-  }
-
-  &:active {
-    background-color: rgba(255, 255, 255, 0.25);
-    background-size: 100%;
-    transition: background 0s;
-  }
-}
-
-.disabled .icon-button-badge {
-  background: #acacac;
-}
-
-.outlined .ripple {
-  &:hover {
-    background: rgba(0, 103, 120, 0)
-      radial-gradient(circle, transparent 1%, rgba(0, 103, 120, 0.05) 1%)
-      center/15000%;
-  }
-
-  &:active {
-    background-color: rgba(0, 103, 120, 0.15);
-    background-size: 100%;
-    transition: background 0s;
-  }
-}
-
-.text .ripple {
-  &:hover {
-    background: rgba(0, 103, 120, 0)
-      radial-gradient(circle, transparent 1%, rgba(0, 103, 120, 0.05) 1%)
-      center/15000%;
-  }
-
-  &:active {
-    background-color: rgba(0, 103, 120, 0.15);
-    background-size: 100%;
-    transition: background 0s;
-  }
-}
-
-.ghost .ripple {
-  &:hover {
-    background: rgba(0, 103, 120, 0)
-      radial-gradient(circle, transparent 1%, rgba(0, 103, 120, 0.05) 1%)
-      center/15000%;
-  }
-
-  &:active {
-    background-color: rgba(0, 103, 120, 0.15);
-    background-size: 100%;
-    transition: background 0s;
-  }
 }

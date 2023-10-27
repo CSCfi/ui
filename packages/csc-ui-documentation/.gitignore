@@ -22,3 +22,6 @@ logs
 .env
 .env.*
 !.env.example
+
+# auto generated data for the examples
+example-data

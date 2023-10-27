@@ -1,0 +1,18 @@
+:host {
+  --_c-tab-items-height: auto;
+  --_c-tab-items-position-left: 0;
+  --_c-tab-items-animation-duration: 0.001ms;
+
+  display: block;
+  height: var(--_c-tab-items-height);
+  overflow: hidden;
+  transition: height var(--_c-tab-items-animation-duration) cubic-bezier(0.075, 0.82, 0.165, 1);
+  width: 100%;
+
+  > div {
+    align-items: flex-start;
+    display: flex;
+    transition: translate var(--_c-tab-items-animation-duration) cubic-bezier(0.075, 0.82, 0.165, 1);
+    translate: var(--_c-tab-items-position-left);
+  }
+}

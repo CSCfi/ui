@@ -1,0 +1,17 @@
+:host {
+  /**
+   * @prop --c-navigation-button-color: Burger menu color
+   */
+  --_c-navigation-button-color: var(
+    --c-navigation-button-color,
+    var(--c-text-system)
+  );
+
+  display: block;
+  margin-right: 0;
+  cursor: pointer;
+  user-select: none;
+  border-radius: 50%;
+
+  --c-icon-button-text-text-color: var(--_c-navigation-button-color);
+}

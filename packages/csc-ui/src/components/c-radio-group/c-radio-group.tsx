@@ -7,6 +7,7 @@ import {
   Element,
   State,
   Watch,
+  AttachInternals,
 } from '@stencil/core';
 import { mdiCloseCircle } from '@mdi/js';
 import { CRadioGroupItem } from '../../types';
@@ -19,8 +20,12 @@ import { CRadioGroupItem } from '../../types';
   tag: 'c-radio-group',
   styleUrl: 'c-radio-group.scss',
   shadow: true,
+  formAssociated: true,
 })
 export class CRadioGroup {
+  // eslint-disable-next-line @stencil-community/own-props-must-be-private
+  @AttachInternals() internals: ElementInternals;
+
   /**
    * Value of the radio group
    */
@@ -64,7 +69,7 @@ export class CRadioGroup {
   /**
    * Return only the item value rather than the whole item object
    */
-  @Prop() returnValue: false;
+  @Prop() returnValue = false;
 
   /**
    * Set as required
@@ -145,7 +150,7 @@ export class CRadioGroup {
   }
 
   private _select(event, item, index) {
-    if (this.disabled) return;
+    if (!!item.disabled || this.disabled) return;
 
     this._rippleElements[index].createRipple(
       event,
@@ -154,17 +159,53 @@ export class CRadioGroup {
     );
     this.value = this.returnValue ? item?.value : item;
     this.changeValue.emit(this.value);
+
+    const value = this.returnValue
+      ? this.value
+      : (this.value as CRadioGroupItem).value;
+
+    this.internals.setFormValue(value as string);
   }
+
+  private _handleSlotChange = () => {
+    this._getRadioButtons();
+  };
+
+  private _getRadioButtons = () => {
+    const radios = this.el.querySelectorAll('c-radio');
+
+    if (radios.length) {
+      this.returnValue = true;
+
+      this.items = [
+        ...Array.from(radios).map((radio) => {
+          if (!!radio.checked) {
+            this.value = radio.value;
+            this.changeValue.emit(this.value);
+          }
+
+          radio.style.display = 'none';
+
+          return {
+            name: radio.textContent,
+            value: radio.value,
+            disabled: !!radio.disabled,
+          };
+        }),
+      ];
+    }
+  };
 
   private _getRadioButton = (item, index) => {
     const itemId = item.value.toString().replace(/[^a-zA-Z0-9-_]/g, '');
+
     const isChecked = this.returnValue
       ? this.items?.find((i) => i.value === item.value)?.value === this.value
-      : this.value === item;
+      : (this.value as CRadioGroupItem)?.value === item.value;
 
     const classes = {
       'c-radio': true,
-      'c-radio--disabled': this.disabled,
+      'c-radio--disabled': !!item.disabled || this.disabled,
       'c-radio--error': this.messageOptions.type === 'error',
     };
 
@@ -175,29 +216,26 @@ export class CRadioGroup {
         onKeyDown={(event) => this._handleKeyDown(event, item, index)}
       >
         <input
-          type='radio'
+          type="radio"
           aria-checked={(this.value === item).toString()}
-          aria-disabled={this.disabled.toString()}
+          aria-disabled={(!!item.disabled || this.disabled).toString()}
           aria-labelledby={itemId}
-          disabled={this.disabled}
+          disabled={!!item.disabled || this.disabled}
           checked={isChecked}
           name={CRadioGroup._uniqueId.toString()}
           onChange={(event) => this._select(event, item, index)}
         />
 
         <span
-          class='ripple'
+          class="ripple"
           ref={(el) => (this._containers[index] = el as HTMLDivElement)}
         >
-          <span class='selection'></span>
+          <span class="selection"></span>
 
-          <c-ripple
-            ref={(el) => (this._rippleElements[index] = el)}
-            circular
-          ></c-ripple>
+          <c-ripple ref={(el) => (this._rippleElements[index] = el)}></c-ripple>
         </span>
 
-        <div class='c-radio__label'>{item.label}</div>
+        <div class="c-radio__label">{item.name}</div>
       </label>
     );
   };
@@ -223,13 +261,21 @@ export class CRadioGroup {
   }
 
   private _validationIcon = (
-    <svg height='16px' width='16px' viewBox='0 0 24 24'>
+    <svg height="16px" width="16px" viewBox="0 0 24 24">
       <path d={mdiCloseCircle} />
     </svg>
   );
 
   componentWillLoad() {
     CRadioGroup._uniqueId += 1;
+
+    if (this.value) {
+      const value = this.returnValue
+        ? this.value
+        : (this.value as CRadioGroupItem).value;
+
+      this.internals.setFormValue(value as string);
+    }
   }
 
   render() {
@@ -245,17 +291,21 @@ export class CRadioGroup {
     return (
       <div
         class={wrapperClasses}
-        role='radiogroup'
-        aria-labelledby='c-radio-group__label'
+        role="radiogroup"
+        aria-labelledby="c-radio-group__label"
       >
         {(!!this.label || slotHasContent) && (
-          <label class='c-radio-group__label'>
-            {!!this.label ? this.label : <slot></slot>}
-            {this.required && <span class='required'>&nbsp;*</span>}
+          <label class="c-radio-group__label">
+            {!!this.label ? (
+              this.label
+            ) : (
+              <slot onSlotchange={this._handleSlotChange}></slot>
+            )}
+            {this.required && <span class="required">&nbsp;*</span>}
           </label>
         )}
 
-        <div class='c-radio-group__items'>
+        <div class="c-radio-group__items">
           {this.items.map((item, index) => this._getRadioButton(item, index))}
         </div>
 

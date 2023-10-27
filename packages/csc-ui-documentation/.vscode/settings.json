@@ -10,5 +10,6 @@
     "sideBar.border": "#23bb0d",
     "tab.activeBorder": "#23bb0d"
   },
-  "peacock.color": "#23bb0d"
+  "peacock.color": "#23bb0d",
+  "html.customData": ["./node_modules/csc-ui/vscode-data.json"]
 }

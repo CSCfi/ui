@@ -1,0 +1,141 @@
+:host {
+  /**
+   * @prop --c-side-navigation-background-color: Side navigation background color
+   * @prop --c-side-navigation-overlay-color: Side navigation overlay color
+   */
+  --_c-side-navigation-background-color: var(
+    --c-side-navigation-background-color,
+    var(--c-primary-600)
+  );
+  --_c-side-navigation-overlay-color: var(
+    --c-side-navigation-overlay-color,
+    rgba(var(--c-black), 0.5)
+  );
+}
+
+:host(.autoheight) {
+  height: calc(100vh - 60px);
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+:host(.desktop) {
+  background-color: var(--_c-side-navigation-background-color);
+  display: flex;
+  min-width: clamp(300px, 20vw, 340px);
+}
+
+.c-side-navigation {
+  background-color: var(--_c-side-navigation-background-color);
+  display: flex;
+  flex-flow: column nowrap;
+  flex: 1;
+  gap: 4px;
+  min-height: fit-content;
+  padding: 24px 0 24px 24px;
+  position: relative;
+  transition: transform 0.3s ease;
+  width: 100%;
+  z-index: 8;
+
+  &__content {
+    $content: &;
+
+    display: flex;
+    flex-direction: column;
+    flex: 1 2 260px;
+    width: 320px;
+
+    &--mobile {
+      height: 100vh;
+      max-width: 320px;
+      overflow-y: scroll;
+      position: fixed;
+      right: 0;
+      top: 0;
+      transition: transform 0.2s cubic-bezier(0.25, 0.8, 0.5, 1);
+      transform: translateX(0%);
+      z-index: 999;
+
+      &#{$content} {
+        &--hidden {
+          transform: translateX(100%);
+        }
+      }
+
+      > nav {
+        min-height: auto;
+        padding-top: 0;
+      }
+    }
+  }
+
+  &__burger {
+    background-color: var(--_c-side-navigation-background-color);
+    display: flex;
+    justify-content: flex-end;
+    padding: 8px 16px;
+  }
+
+  ul {
+    display: flex;
+    flex-flow: column nowrap;
+    gap: 8px;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+}
+
+.autoheight > nav {
+  height: calc(100vh - 60px);
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+
+.vertical-spacer {
+  flex: 1;
+  margin-bottom: 8px;
+}
+
+.c-overlay {
+  background: var(--_c-side-navigation-overlay-color);
+  backdrop-filter: blur(4px);
+  inset: 0;
+  position: fixed;
+  z-index: 998;
+}
+
+@keyframes fade-in {
+  0% {
+    opacity: 0;
+  }
+
+  100% {
+    opacity: 1;
+  }
+}
+
+.c-fade-in {
+  animation-duration: 0.5s;
+  animation-iteration-count: 1;
+  animation-name: fade-in;
+  z-index: 997;
+}
+
+c-side-navigation-item,
+c-sub-navigation-item {
+  display: contents;
+}
+
+.visuallyhidden {
+  border: 0;
+  clip: rect(0 0 0 0);
+  height: 1px;
+  margin: -1px;
+  overflow: hidden;
+  padding: 0;
+  position: absolute;
+  white-space: nowrap;
+  width: 1px;
+}

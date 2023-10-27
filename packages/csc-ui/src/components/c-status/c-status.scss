@@ -1,50 +1,61 @@
 :host {
+  /**
+   * @prop --c-status-background-color: Status default background color
+   * @prop --c-status-info-text-color: Status info background color
+   * @prop --c-status-info-background-color: Status info background color
+   * @prop --c-status-warning-text-color: Status warning text color
+   * @prop --c-status-warning-background-color: Status warning background color
+   * @prop --c-status-error-text-color: Status error text color
+   * @prop --c-status-error-background-color: Status error background color
+   * @prop --c-status-success-text-color: Status success text color
+   * @prop --c-status-success-background-color: Status success background color
+   */
+  --_c-status-background-color: var(--c-status-background-color, var(--c-primary-200));
+  --_c-status-info-text-color: var(--c-status-info-text-color, var(--c-info-800));
+  --_c-status-info-background-color: var(--c-status-info-background-color, var(--c-info-200));
+  --_c-status-warning-text-color: var(--c-status-warning-text-color, var(--c-warning-800));
+  --_c-status-warning-background-color: var(--c-status-warning-background-color, var(--c-warning-200));
+  --_c-status-error-text-color: var(--c-status-error-text-color, var(--c-error-800));
+  --_c-status-error-background-color: var(--c-status-error-background-color, var(--c-error-200));
+  --_c-status-success-text-color: var(--c-status-success-text-color, var(--c-success-800));
+  --_c-status-success-background-color: var(--c-status-success-background-color, var(--c-success-200));
+
   display: block;
 }
 
 .c-status {
-  --c-status-bg: #e5eff1;
-  --c-status-info: #002f5f;
-  --c-status-info-bg: #eef2f8;
-  --c-status-warning: #c74600;
-  --c-status-warning-bg: #fff7e3;
-  --c-status-error: #b90729;
-  --c-status-error-bg: #f8e5e9;
-  --c-status-success: #3a7a06;
-  --c-status-success-bg: #e5f2da;
-
+  align-items: center;
+  background-color: var(--_c-status-background-color);
+  border-radius: 4px;
+  box-shadow: inset 0 0 0 1px currentColor;
+  color: var(--c-primary-800);
   display: inline-flex;
+  font-size: 14px;
+  justify-content: center;
+  line-height: 1;
   min-height: 24px;
   min-width: 88px;
-  padding: 4px 16px;
-  align-items: center;
-  justify-content: center;
-  border-radius: 4px;
-  color: var(--csc-primary);
-  background-color: var(--c-status-bg);
-  position: relative;
-  box-shadow: inset 0 0 0 1px currentColor;
   overflow: hidden;
-  line-height: 1;
-  font-size: 14px;
+  padding: 4px 16px;
+  position: relative;
 
   &--info {
-    color: var(--c-status-info);
-    background-color: var(--c-status-info-bg);
+    color: var(--_c-status-info-text-color);
+    background-color: var(--_c-status-info-background-color);
   }
 
   &--warning {
-    color: var(--c-status-warning);
-    background-color: var(--c-status-warning-bg);
+    color: var(--_c-status-warning-text-color);
+    background-color: var(--_c-status-warning-background-color);
   }
 
   &--error {
-    color: var(--c-status-error);
-    background-color: var(--c-status-error-bg);
+    color: var(--_c-status-error-text-color);
+    background-color: var(--_c-status-error-background-color);
   }
 
   &--success {
-    color: var(--c-status-success);
-    background-color: var(--c-status-success-bg);
+    color: var(--_c-status-success-text-color);
+    background-color: var(--_c-status-success-background-color);
   }
 }

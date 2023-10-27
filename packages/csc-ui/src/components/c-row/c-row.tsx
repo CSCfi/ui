@@ -1,4 +1,5 @@
-import { Component, h, Prop } from '@stencil/core';
+import { Component, Element, h, Host, Prop } from '@stencil/core';
+import { CRowAlign, CRowJustify } from '../../types';
 
 /**
  * Generic flex row component
@@ -12,6 +13,8 @@ import { Component, h, Prop } from '@stencil/core';
   shadow: true,
 })
 export class CRow {
+  @Element() el: HTMLCRowElement;
+
   /**
    * Gap between items in px
    */
@@ -25,30 +28,29 @@ export class CRow {
   /**
    * Align items vertically
    */
-  @Prop() align: 'start' | 'center' | 'end' = 'start';
+  @Prop() align: CRowAlign;
 
   /**
    * Justify content horizontally
    */
-  @Prop() justify:
-    | 'start'
-    | 'center'
-    | 'end'
-    | 'space-between'
-    | 'space-around' = 'start';
+  @Prop() justify: CRowJustify;
+
+  componentDidLoad() {
+    this.el.style.setProperty('--_c-row-gap', this.el.dataset.gap);
+  }
 
   render() {
     const classes = {
       'c-row': true,
       'c-row--nowrap': this.nowrap,
-      [`c-row--align-${this.align}`]: true,
-      [`c-row--justify-${this.justify}`]: true,
+      [`c-row--align-${this.align}`]: !!this.align,
+      [`c-row--justify-${this.justify}`]: !!this.justify,
     };
 
     return (
-      <div class={classes} style={{ '--row-gap': `${this.gap}px` }}>
+      <Host data-gap={`${this.gap}px`} class={classes}>
         <slot></slot>
-      </div>
+      </Host>
     );
   }
 }

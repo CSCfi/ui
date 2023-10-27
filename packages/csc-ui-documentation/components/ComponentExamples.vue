@@ -1,41 +1,41 @@
 <template>
-  <c-card class="max-w-screen-xl mx-auto">
-    <!-- <c-card-title>{{ component }}</c-card-title> -->
-
+  <c-card ref="cardRef" class="max-w-screen-xl mx-auto">
     <c-card-content>
-      <div class="grid gap-1">
+      <div class="example-headings">
         <h1 class="text-4xl capitalize font-bold text-primary-600">
           {{ componentData?.name }}
         </h1>
 
-        <h2 class="text-2xl text-tertiary-500">{{ component }}</h2>
+        <h2 class="text-xl text-tertiary-500">{{ component }}</h2>
       </div>
 
-      <div>
-        <c-tabs v-model="activeTab" v-control>
-          <c-tab
+      <p v-if="!!componentData?.docs">{{ componentData.docs }}</p>
+
+      <c-tabs v-model="activeTab" v-control>
+        <c-tab
+          v-for="tab in tabs"
+          :key="tab.value"
+          :disabled="!tab.enabled"
+          :value="tab.value"
+          @click="onTabClick(tab)"
+        >
+          {{ tab.label }}
+        </c-tab>
+
+        <c-tab-items slot="items">
+          <c-tab-item
             v-for="tab in tabs"
-            :key="tab.label"
-            :disabled="!tab.enabled"
-            :value="tab.label"
-            @click="onTabClick(tab)"
+            :key="`item-${tab.label.toLowerCase()}`"
+            :value="tab.value"
           >
-            {{ tab.label }}
-          </c-tab>
-        </c-tabs>
-      </div>
-
-      <!-- <transition name="fade" mode="out-in"> -->
-      <keep-alive>
-        <component :is="example" v-if="activeTab === 'Examples'" />
-
-        <documentation-table
-          v-else
-          :key="(route.query.tab as string) || 'default'"
-        />
-      </keep-alive>
-
-      <!-- </transition> -->
+            <div v-if="tab.enabled" class="flex flex-col gap-6">
+              <keep-alive>
+                <component :is="tab.component" :component="tab.query.tab" />
+              </keep-alive>
+            </div>
+          </c-tab-item>
+        </c-tab-items>
+      </c-tabs>
     </c-card-content>
   </c-card>
 </template>
@@ -43,113 +43,106 @@
 <script setup lang="ts">
 import { storeToRefs } from 'pinia';
 import ErrorComponent from './ErrorComponent.vue';
-import { ComponentData } from '~/types/docs';
+import DocumentationTable from './DocumentationTable.vue';
 
 const props = defineProps<{
   component: string;
 }>();
 
+const cardRef = ref<HTMLCCardElement | null>(null);
+
 const route = useRoute();
 
 const { componentData } = storeToRefs(useExampleStore());
 
-const onTabClick = async (tab: any) => {
-  await navigateTo({ ...route, query: tab.query });
+const onTabClick = (tab: any) => {
+  requestAnimationFrame(async () => {
+    await navigateTo({ query: tab.query });
+  });
 };
 
-const toPascalCase = (name: string) =>
-  name
-    .split('-')
-    .map(
-      (part) => part.charAt(0).toUpperCase() + part.substring(1).toLowerCase(),
-    )
-    .join('');
+provide('componentName', props.component);
 
-provide('componentName', toPascalCase(props.component));
-
-const example = computed(() =>
-  props.component
-    ? defineAsyncComponent({
-        loader: () => import(`./examples/${toPascalCase(props.component)}.vue`),
-        errorComponent: ErrorComponent,
-      })
-    : null,
+watch(
+  () => props.component,
+  () => {
+    activeTab.value = tabs.value[0].value;
+  },
 );
 
-const activeTab = ref('Examples');
-
-const isPrivate = (child: ComponentData) => {
-  return child.docsTags.some((tag) => tag.name !== 'private');
-};
-
 const tabs = computed(() => {
-  const isChildPrivate = componentData.value?.children.some(isPrivate);
-
   return [
     {
       label: 'Examples',
+      value: 'examples',
       enabled: true,
       query: {},
+      component: props.component
+        ? defineAsyncComponent({
+            loader: () => import(`./examples/${props.component}/Index.vue`),
+            errorComponent: ErrorComponent,
+          })
+        : null,
     },
     {
       label: 'Attributes',
+      value: 'props',
       enabled:
         !!componentData.value?.props?.length ||
-        (!!componentData.value?.children?.some(
-          (child) => child.props?.length,
-        ) &&
-          !isChildPrivate),
+        !!componentData.value?.children?.some((child) => child.props?.length),
       query: {
         tab: 'props',
       },
+      component: DocumentationTable,
     },
     {
       label: 'Methods',
+      value: 'methods',
       enabled:
         !!componentData.value?.methods?.length ||
-        (!!componentData.value?.children?.some(
-          (child) => child.methods?.length,
-        ) &&
-          !isChildPrivate),
+        !!componentData.value?.children?.some((child) => child.methods?.length),
       query: {
         tab: 'methods',
       },
+      component: DocumentationTable,
     },
     {
       label: 'Slots',
+      value: 'slots',
       enabled:
         !!componentData.value?.slots?.length ||
-        (!!componentData.value?.children?.some(
-          (child) => child.slots?.length,
-        ) &&
-          !isChildPrivate),
+        !!componentData.value?.children?.some((child) => child.slots?.length),
       query: {
         tab: 'slots',
       },
+      component: DocumentationTable,
     },
     {
       label: 'Events',
+      value: 'events',
       enabled:
         !!componentData.value?.events?.length ||
-        (!!componentData.value?.children?.some(
-          (child) => child.events?.length,
-        ) &&
-          !isChildPrivate),
+        !!componentData.value?.children?.some((child) => child.events?.length),
       query: {
         tab: 'events',
       },
+      component: DocumentationTable,
     },
     {
       label: 'Styles',
+      value: 'styles',
       enabled:
         !!componentData.value?.styles?.length ||
         !!componentData.value?.children?.some((child) => child.styles?.length),
       query: {
         tab: 'styles',
       },
+      component: DocumentationTable,
     },
   ];
 });
+
+const activeTab = ref(route.query.tab || tabs.value[0].value);
 </script>
 
 <style lang="scss">

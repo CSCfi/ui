@@ -1,33 +1,16 @@
 import { Config } from '@stencil/core';
 import { sass } from '@stencil/sass';
-import {
-  angularOutputTarget,
-  ValueAccessorConfig,
-} from '@stencil/angular-output-target';
-
-const angularValueAccessorBindings: ValueAccessorConfig[] = [
-  {
-    elementSelectors: ['c-select', 'c-autocomplete', 'c-content-switcher'],
-    event: 'changeValue',
-    targetAttr: 'value',
-    type: 'select',
-  },
-];
 
 export const config: Config = {
-  namespace: 'cscwebcomponents',
+  namespace: 'csc-ui',
   outputTargets: [
-    angularOutputTarget({
-      componentCorePackage: 'component-library',
-      directivesProxyFile:
-        '../component-library-angular/src/directives/proxies.ts',
-      valueAccessorConfigs: angularValueAccessorBindings,
-    }),
     {
       type: 'dist',
+      copy: [{ src: 'styles', dest: 'dist/styles' }],
     },
     {
       type: 'dist-custom-elements',
+      copy: [{ src: 'styles', dest: 'dist/styles' }],
     },
     {
       type: 'docs-readme',
@@ -48,8 +31,7 @@ export const config: Config = {
   plugins: [
     sass({
       injectGlobalPaths: [
-        'src/styles/global.scss',
-        'src/styles/variables.css',
+        'src/assets/global.scss',
         'src/styles/variables.scss',
       ],
     }),
