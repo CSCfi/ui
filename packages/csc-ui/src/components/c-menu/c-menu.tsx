@@ -8,7 +8,7 @@ import {
   Listen,
 } from '@stencil/core';
 import { mdiChevronDown } from '@mdi/js';
-import { CMenuCustomTrigger, CMenuOption } from '../../types';
+import { CMenuOption } from '../../types';
 
 /**
  * @group Navigation
@@ -28,9 +28,14 @@ export class CMenu {
   @Prop() items: CMenuOption[] = [];
 
   /**
-   * Simple variant without chevron and background, E.g. when a button is the activator
+   * Menu content css class
    */
-  @Prop() simple = false;
+  @Prop() contentClass = '';
+
+  /**
+   * No chevron and background, E.g. when a button is the activator
+   */
+  @Prop() custom = false;
 
   /**
    * Small variant
@@ -40,17 +45,12 @@ export class CMenu {
   /**
    * No hover background
    */
-  @Prop() nohover = false;
+  @Prop() flat = false;
 
   /**
    * Items per page before adding scroll
    */
   @Prop() itemsPerPage = 6;
-
-  /**
-   * Programmatic trigger component
-   */
-  @Prop() customTrigger: CMenuCustomTrigger;
 
   @State() menuItemsComponent: HTMLCMenuItemsElement | null = null;
 
@@ -190,6 +190,10 @@ export class CMenu {
     this.menuItemsComponent.setAttribute('tabindex', '-1');
     this.menuItemsComponent.setAttribute('role', 'listbox');
 
+    if (this.contentClass) {
+      this.menuItemsComponent.classList.add(this.contentClass);
+    }
+
     this._addMenuItemsComponentListeners(height, width);
 
     this._createWrapperElement().appendChild(this.menuItemsComponent);
@@ -210,73 +214,46 @@ export class CMenu {
     this._hideMenu();
   }
 
-  private _renderCustomTrigger() {
-    const props = this.customTrigger;
-
-    const Tag = props.component.tag;
-    const params = props.component.params;
-
-    return (
-      <Tag
-        {...params}
-        class='custom-menu-trigger'
-        aria-expanded={this.active.toString()}
-        aria-haspopup='listbox'
-        aria-controls={`c-menu-items-${CMenu._uniqueId}`}
-        onClick={() => this._onClick()}
-      >
-        {props.value}
-      </Tag>
-    );
-  }
-
   render() {
     const hostClasses = {
       'c-menu': true,
-      'c-menu--simple': this.simple,
+      'c-menu--custom': this.custom,
       'c-menu--active': this.active,
-      'c-menu--no-hover': this.nohover,
+      'c-menu--no-hover': this.flat,
       'c-menu--small': this.small,
     };
 
     return (
       <Host class={hostClasses}>
-        {this.customTrigger ? (
-          this._renderCustomTrigger()
-        ) : (
-          <button
-            aria-expanded={this.active.toString()}
-            aria-haspopup='listbox'
-            aria-controls={`c-menu-items-${CMenu._uniqueId}`}
-            class={{
-              'c-menu-wrapper': !this.simple,
-              simple: this.simple,
-            }}
-            tabindex='0'
-            type='button'
-            onClick={() => this._onClick()}
-          >
-            {this.simple ? (
+        <button
+          aria-expanded={this.active.toString()}
+          aria-haspopup="listbox"
+          aria-controls={`c-menu-items-${CMenu._uniqueId}`}
+          class={{
+            'c-menu-wrapper': !this.custom,
+            custom: this.custom,
+          }}
+          tabindex="0"
+          type="button"
+          onClick={() => this._onClick()}
+        >
+          {this.custom ? (
+            <slot></slot>
+          ) : (
+            <div class="c-menu__header">
               <slot></slot>
-            ) : (
-              <div class='c-menu__header'>
-                <slot></slot>
-                <svg
-                  width={this.small ? '16' : '22'}
-                  height={this.small ? '16' : '22'}
-                  viewBox='0 0 24 24'
-                  class={
-                    this.active
-                      ? 'c-menu__icon c-menu__icon--rotated'
-                      : 'c-menu__icon'
-                  }
-                >
-                  <path d={mdiChevronDown} />
-                </svg>
-              </div>
-            )}
-          </button>
-        )}
+
+              <c-icon
+                path={mdiChevronDown}
+                class={
+                  this.active
+                    ? 'c-menu__icon c-menu__icon--rotated'
+                    : 'c-menu__icon'
+                }
+              />
+            </div>
+          )}
+        </button>
       </Host>
     );
   }

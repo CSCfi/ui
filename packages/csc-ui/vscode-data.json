@@ -46,24 +46,6 @@
           "description": "Heading of the accordion item"
         },
         {
-          "name": "icon",
-          "description": "Icon",
-          "values": [
-            {
-              "name": "bell"
-            },
-            {
-              "name": "disabled"
-            },
-            {
-              "name": "enabled"
-            },
-            {
-              "name": "pending"
-            }
-          ]
-        },
-        {
           "name": "outlined",
           "description": "Show an outline around the expanded item"
         },
@@ -98,10 +80,6 @@
           "description": "Auto focus the input"
         },
         {
-          "name": "custom-menu",
-          "description": "Render custom menu"
-        },
-        {
           "name": "dense",
           "description": "Dense variant"
         },
@@ -132,6 +110,10 @@
         {
           "name": "name",
           "description": "Input field name"
+        },
+        {
+          "name": "option-as-selection",
+          "description": "display the option as selection (works only when c-option elements are used)"
         },
         {
           "name": "placeholder",
@@ -176,6 +158,14 @@
       ]
     },
     {
+      "name": "c-badge",
+      "description": {
+        "kind": "markdown",
+        "value": ""
+      },
+      "attributes": []
+    },
+    {
       "name": "c-button",
       "description": {
         "kind": "markdown",
@@ -211,28 +201,6 @@
           "description": "Hyperlink url"
         },
         {
-          "name": "icon",
-          "description": "Name of the icon to be displayed in the button",
-          "values": [
-            {
-              "name": "account"
-            },
-            {
-              "name": "edit"
-            },
-            {
-              "name": "minus"
-            },
-            {
-              "name": "plus"
-            }
-          ]
-        },
-        {
-          "name": "icon-end",
-          "description": "Icon after text"
-        },
-        {
           "name": "inverted",
           "description": "Inverted button style for dark backgrounds"
         },
@@ -249,10 +217,6 @@
           "description": "Outlined button style"
         },
         {
-          "name": "path",
-          "description": "Path for the svg icon"
-        },
-        {
           "name": "size",
           "description": "Size of the button",
           "values": [
@@ -266,6 +230,10 @@
               "name": "small"
             }
           ]
+        },
+        {
+          "name": "tabs",
+          "description": "Used a s atab button"
         },
         {
           "name": "target",
@@ -300,25 +268,6 @@
         "value": ""
       },
       "attributes": [
-        {
-          "name": "background",
-          "description": "Card background image for login pages of specific services",
-          "values": [
-            {
-              "name": "allas"
-            },
-            {
-              "name": "mahti"
-            },
-            {
-              "name": "puhti"
-            }
-          ]
-        },
-        {
-          "name": "background-color",
-          "description": "Background color"
-        },
         {
           "name": "fullscreen",
           "description": "Enable the fullscreen toggle button"
@@ -397,8 +346,16 @@
       },
       "attributes": [
         {
+          "name": "checked",
+          "description": "If `true`, the checkbox is selected."
+        },
+        {
           "name": "disabled",
           "description": "Disable the checkbox"
+        },
+        {
+          "name": "false-value",
+          "description": "The value when the checkbox is unchecked"
         },
         {
           "name": "hide-details",
@@ -407,6 +364,10 @@
         {
           "name": "hint",
           "description": "Hint text for the input"
+        },
+        {
+          "name": "name",
+          "description": "Name of the input\n- Only used when the checkbox participates in a native `<form>`"
         },
         {
           "name": "indeterminate",
@@ -421,6 +382,10 @@
           "description": "Set as required"
         },
         {
+          "name": "true-value",
+          "description": "The value when the checkbox is checked"
+        },
+        {
           "name": "valid",
           "description": "Set the validity of the input"
         },
@@ -430,20 +395,7 @@
         },
         {
           "name": "value",
-          "description": "Is the element checked"
-        }
-      ]
-    },
-    {
-      "name": "c-container",
-      "description": {
-        "kind": "markdown",
-        "value": "Container component for holding current page content"
-      },
-      "attributes": [
-        {
-          "name": "width",
-          "description": "Maximum width of container in pixels"
+          "description": "The input value\n- Only used when the checkbox participates in a native `<form>`"
         }
       ]
     },
@@ -530,10 +482,55 @@
       ]
     },
     {
-      "name": "c-flex",
+      "name": "c-dropdown",
       "description": {
         "kind": "markdown",
-        "value": "Component which fills the remaining space within a flex container"
+        "value": ""
+      },
+      "attributes": [
+        {
+          "name": "focus-list",
+          "description": "Focus dropdown on open"
+        },
+        {
+          "name": "index",
+          "description": "Initial value index"
+        },
+        {
+          "name": "input-id",
+          "description": "Id of the input element"
+        },
+        {
+          "name": "is-open",
+          "description": "Dropdown open state"
+        },
+        {
+          "name": "items-per-page",
+          "description": "Items per page before adding scroll"
+        },
+        {
+          "name": "type",
+          "description": "Type of the parent element",
+          "values": [
+            {
+              "name": "autocomplete"
+            },
+            {
+              "name": "select"
+            }
+          ]
+        },
+        {
+          "name": "was-clicked",
+          "description": ""
+        }
+      ]
+    },
+    {
+      "name": "c-dropdowns",
+      "description": {
+        "kind": "markdown",
+        "value": ""
       },
       "attributes": []
     },
@@ -570,6 +567,10 @@
           "description": "Show a badge on top of the icon"
         },
         {
+          "name": "danger",
+          "description": "Danger variant of the button"
+        },
+        {
           "name": "disabled",
           "description": "Disable the button"
         },
@@ -580,6 +581,10 @@
         {
           "name": "inverted",
           "description": "Inverted color for dark backgrounds"
+        },
+        {
+          "name": "loading",
+          "description": "Loading variant of the button"
         },
         {
           "name": "outlined",
@@ -646,6 +651,10 @@
           "description": "Id of the input element"
         },
         {
+          "name": "items-per-page",
+          "description": "Items per page before adding scroll"
+        },
+        {
           "name": "label",
           "description": "Label of the input"
         },
@@ -660,10 +669,6 @@
         {
           "name": "name",
           "description": "Name of the input"
-        },
-        {
-          "name": "number",
-          "description": "Numeric input"
         },
         {
           "name": "placeholder",
@@ -735,118 +740,8 @@
       },
       "attributes": [
         {
-          "name": "color",
-          "description": "Use another CSC color",
-          "values": [
-            {
-              "name": "dark-grey"
-            },
-            {
-              "name": "error"
-            },
-            {
-              "name": "info"
-            },
-            {
-              "name": "light-grey"
-            },
-            {
-              "name": "light-grey-blue"
-            },
-            {
-              "name": "lightest-grey"
-            },
-            {
-              "name": "link"
-            },
-            {
-              "name": "mid-grey"
-            },
-            {
-              "name": "primary"
-            },
-            {
-              "name": "primary-ghost"
-            },
-            {
-              "name": "primary-ghost-hover"
-            },
-            {
-              "name": "primary-hover"
-            },
-            {
-              "name": "primary-text-hover"
-            },
-            {
-              "name": "success"
-            },
-            {
-              "name": "warning"
-            }
-          ]
-        },
-        {
           "name": "href",
           "description": "Url of link"
-        },
-        {
-          "name": "icon-after",
-          "description": "Icon position"
-        },
-        {
-          "name": "icon-fill",
-          "description": "Fill color for the svg icon",
-          "values": [
-            {
-              "name": "dark-grey"
-            },
-            {
-              "name": "error"
-            },
-            {
-              "name": "info"
-            },
-            {
-              "name": "light-grey"
-            },
-            {
-              "name": "light-grey-blue"
-            },
-            {
-              "name": "lightest-grey"
-            },
-            {
-              "name": "link"
-            },
-            {
-              "name": "mid-grey"
-            },
-            {
-              "name": "primary"
-            },
-            {
-              "name": "primary-ghost"
-            },
-            {
-              "name": "primary-ghost-hover"
-            },
-            {
-              "name": "primary-hover"
-            },
-            {
-              "name": "primary-text-hover"
-            },
-            {
-              "name": "success"
-            },
-            {
-              "name": "warning"
-            }
-          ]
-        },
-        {
-          "name": "path",
-          "description": "Path for the svg icon"
         },
         {
           "name": "target",
@@ -859,6 +754,69 @@
         {
           "name": "weight",
           "description": "Customisable font weight"
+        }
+      ]
+    },
+    {
+      "name": "c-list",
+      "description": {
+        "kind": "markdown",
+        "value": ""
+      },
+      "attributes": [
+        {
+          "name": "disabled",
+          "description": "Disable the list"
+        }
+      ]
+    },
+    {
+      "name": "c-list-item",
+      "description": {
+        "kind": "markdown",
+        "value": ""
+      },
+      "attributes": [
+        {
+          "name": "active",
+          "description": "Set the item active"
+        },
+        {
+          "name": "disabled",
+          "description": "Disable the item"
+        },
+        {
+          "name": "disabled-by-parent",
+          "description": "Disabled by the parent list"
+        },
+        {
+          "name": "hoverable",
+          "description": "Display background color on hover"
+        },
+        {
+          "name": "href",
+          "description": "Hyperlink url"
+        },
+        {
+          "name": "ripple",
+          "description": "Add ripple effect to the item"
+        },
+        {
+          "name": "target",
+          "description": "Hyperlink target"
+        }
+      ]
+    },
+    {
+      "name": "c-list-item-title",
+      "description": {
+        "kind": "markdown",
+        "value": ""
+      },
+      "attributes": [
+        {
+          "name": "active",
+          "description": "Set the title active"
         }
       ]
     },
@@ -880,6 +838,10 @@
         {
           "name": "size",
           "description": "Size of the loader"
+        },
+        {
+          "name": "width",
+          "description": "Width of the loader"
         }
       ]
     },
@@ -896,7 +858,7 @@
         },
         {
           "name": "href",
-          "description": "Login provider link"
+          "description": "Login provider link. Do not set if using a javascript click handler"
         },
         {
           "name": "src",
@@ -1071,16 +1033,20 @@
       },
       "attributes": [
         {
-          "name": "items-per-page",
-          "description": "Items per page before adding scroll"
+          "name": "content-class",
+          "description": "Menu content css class"
         },
         {
-          "name": "nohover",
+          "name": "custom",
+          "description": "No chevron and background, E.g. when a button is the activator"
+        },
+        {
+          "name": "flat",
           "description": "No hover background"
         },
         {
-          "name": "simple",
-          "description": "Simple variant without chevron and background, E.g. when a button is the activator"
+          "name": "items-per-page",
+          "description": "Items per page before adding scroll"
         },
         {
           "name": "small",
@@ -1172,7 +1138,7 @@
       ]
     },
     {
-      "name": "c-navigationbutton",
+      "name": "c-navigation-button",
       "description": {
         "kind": "markdown",
         "value": ""
@@ -1203,6 +1169,14 @@
           "description": "Option value"
         }
       ]
+    },
+    {
+      "name": "c-option-value",
+      "description": {
+        "kind": "markdown",
+        "value": ""
+      },
+      "attributes": []
     },
     {
       "name": "c-otp-input",
@@ -1236,6 +1210,14 @@
           "description": "Custom validation message"
         }
       ]
+    },
+    {
+      "name": "c-page",
+      "description": {
+        "kind": "markdown",
+        "value": ""
+      },
+      "attributes": []
     },
     {
       "name": "c-pagination",
@@ -1278,10 +1260,6 @@
       },
       "attributes": [
         {
-          "name": "color",
-          "description": "Color of the bar (valid css color)"
-        },
-        {
           "name": "hide-details",
           "description": "Hide the percentage display"
         },
@@ -1300,6 +1278,27 @@
         {
           "name": "value",
           "description": "Progress bar value in percentage (0 to 100)"
+        }
+      ]
+    },
+    {
+      "name": "c-radio",
+      "description": {
+        "kind": "markdown",
+        "value": ""
+      },
+      "attributes": [
+        {
+          "name": "checked",
+          "description": "Set option as checked"
+        },
+        {
+          "name": "disabled",
+          "description": "Disable the radio button"
+        },
+        {
+          "name": "value",
+          "description": "Radio button value"
         }
       ]
     },
@@ -1362,12 +1361,7 @@
         "kind": "markdown",
         "value": ""
       },
-      "attributes": [
-        {
-          "name": "circular",
-          "description": "Create a circular ripple"
-        }
-      ]
+      "attributes": []
     },
     {
       "name": "c-row",
@@ -1504,7 +1498,7 @@
       ]
     },
     {
-      "name": "c-sidenavigation",
+      "name": "c-side-navigation",
       "description": {
         "kind": "markdown",
         "value": ""
@@ -1521,7 +1515,7 @@
       ]
     },
     {
-      "name": "c-sidenavigationitem",
+      "name": "c-side-navigation-item",
       "description": {
         "kind": "markdown",
         "value": ""
@@ -1546,12 +1540,41 @@
       ]
     },
     {
+      "name": "c-side-navigation-title",
+      "description": {
+        "kind": "markdown",
+        "value": ""
+      },
+      "attributes": []
+    },
+    {
       "name": "c-spacer",
       "description": {
         "kind": "markdown",
         "value": "Spacer component for flex containers"
       },
       "attributes": []
+    },
+    {
+      "name": "c-spinner",
+      "description": {
+        "kind": "markdown",
+        "value": ""
+      },
+      "attributes": [
+        {
+          "name": "color",
+          "description": "Color of the spinner"
+        },
+        {
+          "name": "size",
+          "description": "Size of the spinner"
+        },
+        {
+          "name": "width",
+          "description": "Width of the spinner"
+        }
+      ]
     },
     {
       "name": "c-status",
@@ -1611,7 +1634,7 @@
       ]
     },
     {
-      "name": "c-subnavigationitem",
+      "name": "c-sub-navigation-item",
       "description": {
         "kind": "markdown",
         "value": ""
@@ -1646,6 +1669,10 @@
         "value": ""
       },
       "attributes": [
+        {
+          "name": "id",
+          "description": "Id of the swiper element"
+        },
         {
           "name": "value",
           "description": "Value of the swiper"
@@ -1697,6 +1724,14 @@
       },
       "attributes": [
         {
+          "name": "checked",
+          "description": "If `true`, the checkbox is selected."
+        },
+        {
+          "name": "false-value",
+          "description": "The value when the checkbox is unchecked"
+        },
+        {
           "name": "disabled",
           "description": "Disable the switch"
         },
@@ -1709,8 +1744,12 @@
           "description": "Set as required"
         },
         {
+          "name": "true-value",
+          "description": "The value when the checkbox is checked"
+        },
+        {
           "name": "value",
-          "description": "Value of the element"
+          "description": "The input value\n- Only used when the checkbox participates in a native `<form>`"
         }
       ]
     },
@@ -1775,8 +1814,63 @@
           ]
         },
         {
+          "name": "tabs",
+          "description": "Used as controller for c-tabs"
+        },
+        {
           "name": "value",
           "description": "Value of tab buttons"
+        }
+      ]
+    },
+    {
+      "name": "c-tab-item",
+      "description": {
+        "kind": "markdown",
+        "value": ""
+      },
+      "attributes": [
+        {
+          "name": "active",
+          "description": "Active"
+        },
+        {
+          "name": "value",
+          "description": "Tab value"
+        }
+      ]
+    },
+    {
+      "name": "c-tab-items",
+      "description": {
+        "kind": "markdown",
+        "value": ""
+      },
+      "attributes": [
+        {
+          "name": "disable-animation",
+          "description": "Disable animation"
+        },
+        {
+          "name": "value",
+          "description": "Currently active tab"
+        }
+      ]
+    },
+    {
+      "name": "c-table",
+      "description": {
+        "kind": "markdown",
+        "value": ""
+      },
+      "attributes": [
+        {
+          "name": "mobile-breakpoint",
+          "description": "Mobile breakpoint in pixels"
+        },
+        {
+          "name": "responsive",
+          "description": "Should the table be responsive"
         }
       ]
     },
@@ -1792,8 +1886,38 @@
           "description": "Disable the bottom border"
         },
         {
+          "name": "disable-animation",
+          "description": "Disable animation"
+        },
+        {
+          "name": "justify",
+          "description": "Justification of the children",
+          "values": [
+            {
+              "name": "center"
+            },
+            {
+              "name": "end"
+            },
+            {
+              "name": "start"
+            },
+            {
+              "name": "stretch"
+            }
+          ]
+        },
+        {
+          "name": "mobile-breakpoint",
+          "description": "Mobile breakpoint in pixels\n- affects the content stacking with the vertical tabs"
+        },
+        {
           "name": "value",
           "description": "Currently active tab"
+        },
+        {
+          "name": "vertical",
+          "description": "Vertical tabs"
         }
       ]
     },
@@ -1813,6 +1937,10 @@
           "description": "Display an optional badge at the start of the tag"
         },
         {
+          "name": "block",
+          "description": "Stretch to fill the container row"
+        },
+        {
           "name": "closeable",
           "description": "Mark tag as closeable"
         },
@@ -1825,6 +1953,14 @@
           "description": "Remove the hover effect"
         }
       ]
+    },
+    {
+      "name": "c-tags",
+      "description": {
+        "kind": "markdown",
+        "value": ""
+      },
+      "attributes": []
     },
     {
       "name": "c-text-field",
@@ -1938,14 +2074,6 @@
           "description": "Value of the input"
         }
       ]
-    },
-    {
-      "name": "c-title",
-      "description": {
-        "kind": "markdown",
-        "value": ""
-      },
-      "attributes": []
     },
     {
       "name": "c-toast",

@@ -1,11 +1,183 @@
 :host(.c-tabs) {
-  box-shadow: inset 0 -1px 0 0 var(--csc-light-grey);
-  display: flex;
-  list-style: none;
-  margin: 0;
-  padding: 0;
+  /**
+   * @prop --c-tabs-border-color: Tabs border color
+   * @prop --c-tabs-indicator-color: Tab indicator color
+   */
+  --_c-tabs-border-color: var(--c-tabs-border-color, var(--c-tertiary-200));
+  --_c-tabs-indicator-color: var(--c-tabs-indicator-color, var(--c-primary-600));
+
+  // private
+  --_c-tabs-transition-speed: 0.001ms;
+
+  display: block;
+  width: 100%;
+  transform: translateX(0%);
+  max-width: 100%;
+
+  .c-tabs__container {
+    display: grid;
+    grid-template-columns: 1fr;
+    align-items: center;
+    gap: 4px;
+
+    --c-icon-button-border-radius: 4px;
+  }
+
+  .c-tabs__tabs {
+    display: flex;
+    overflow: hidden;
+    padding: 4px;
+    position: relative;
+
+    &::after {
+      position: absolute;
+      content: "";
+      bottom: 4px;
+      inset-inline: 0;
+      height: 1px;
+      background-color: var(--_c-tabs-border-color);
+    }
+  }
+
+  .c-tabs__scroll {
+    transform: translateX(var(--_c-tabs-scroll-position-x));
+    transition: transform var(--_c-tabs-transition-speed) cubic-bezier(0.075, 0.82, 0.165, 1);
+    display: flex;
+    margin: 0;
+    padding: 0;
+    position: relative;
+    flex-grow: 1;
+
+    &::after {
+      content: "";
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      height: 3px;
+      scale: var(--_c-tabs-indicator-width, 0.125) 1;
+      opacity: 0.01;
+      translate: var(--_c-tabs-indicator-left, 0) 0;
+      transform-origin: left;
+      transition:
+        scale var(--_c-tabs-transition-speed) cubic-bezier(0.075, 0.82, 0.165, 1),
+        translate var(--_c-tabs-transition-speed) cubic-bezier(0.075, 0.82, 0.165, 1);
+      background: var(--_c-tabs-indicator-color);
+    }
+  }
+
+  .c-tabs__content {
+    display: flex;
+  }
+
+  ::slotted(c-tab-buttons) {
+    flex-grow: 1;
+  }
 }
 
-:host(.c-tabs--borderless) {
+:host(.c-tabs.c-tabs--justify-start:not(.c-tabs--vertical)) {
+  ::slotted(c-tab-buttons),
+  ::slotted(c-tab) {
+    flex-grow: 0;
+  }
+}
+
+:host(.c-tabs.c-tabs--justify-end:not(.c-tabs--vertical)) {
+  .c-tabs__scroll {
+    justify-content: end;
+  }
+
+  ::slotted(c-tab-buttons),
+  ::slotted(c-tab) {
+    flex-grow: 0;
+  }
+}
+
+:host(.c-tabs.c-tabs--justify-center:not(.c-tabs--vertical)) {
+  .c-tabs__scroll {
+    justify-content: center;
+  }
+
+  ::slotted(c-tab-buttons),
+  ::slotted(c-tab) {
+    flex-grow: 0;
+  }
+}
+
+:host(.c-tabs.c-tabs--vertical.c-tabs--mobile) {
+  grid-template-columns: 1fr;
+}
+
+:host(.c-tabs.c-tabs--vertical) {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  grid-template-rows: 1fr;
+
+  .c-tabs__tabs::after {
+    display: none;
+  }
+
+  ::slotted(c-tab-items) {
+    position: relative;
+    min-height: 100%;
+  }
+
+  .c-tabs__scroll {
+    display: grid;
+    max-width: 100%;
+
+    &::after {
+      display: none;
+    }
+
+    &::before {
+      content: "";
+      position: absolute;
+      width: 4px;
+      top: 0;
+      bottom: 0;
+      right: 0;
+      scale: 1 var(--_c-tabs-indicator-width, 0.125);
+      opacity: 0.01;
+      translate: 0 var(--_c-tabs-indicator-top, 0);
+      transform-origin: top left;
+      transition: scale var(--_c-tabs-transition-speed) cubic-bezier(0.075, 0.82, 0.165, 1), translate var(--_c-tabs-transition-speed) cubic-bezier(0.075, 0.82, 0.165, 1);
+      background: var(--_c-tabs-indicator-color);
+    }
+  }
+
+  ::slotted(c-tab) {
+    box-shadow: inset -1px 0 0 0 var(--_c-tabs-border-color);
+    padding-inline: 24px;
+    justify-content: start;
+    max-width: 100%;
+    min-width: 100%;
+  }
+}
+
+:host(.c-tabs.c-tabs--buttons) {
+  .c-tabs__tabs::after,
+  .c-tabs__scroll::after {
+    display: none;
+  }
+}
+
+:host(.c-tabs--borderless) ::slotted(c-tab) {
   box-shadow: none;
+}
+
+:host(.c-tabs.c-tabs--initialized) {
+  .c-tabs__scroll::after {
+    opacity: 1;
+  }
+
+  .c-tabs__scroll::before {
+    opacity: 1;
+  }
+}
+
+:host(.c-tabs.c-tabs--overflow) {
+  .c-tabs__container {
+    grid-template-columns: auto 1fr auto;
+  }
 }

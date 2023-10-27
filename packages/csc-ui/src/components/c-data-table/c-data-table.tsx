@@ -27,6 +27,7 @@ import {
   CPaginationOptions,
 } from '../../types';
 
+// eslint-disable-next-line @typescript-eslint/consistent-type-definitions
 interface CDataTableDataItemPrivate extends Omit<CDataTableDataItem, 'value'> {
   _hiddenData?: {
     id?: string;
@@ -897,17 +898,23 @@ export class CDataTable {
       return !!Tag ? (
         <Tag
           {...params}
-          onClick={(event: MouseEvent) => {
-            params?.onClick?.({
-              value: options.value,
-              index,
-              event,
-              key,
-              data: flatData,
-            });
-          }}
+          {...(!params?.onClick
+            ? {}
+            : {
+                onClick: (event: MouseEvent) => {
+                  params.onClick({
+                    value: options.value,
+                    index,
+                    event,
+                    key,
+                    data: flatData,
+                  });
+                },
+              })}
         >
-          {child.value}
+          {!!child.children?.length
+            ? this._renderCellChildren(child, index, key, data)
+            : child.value}
         </Tag>
       ) : (
         child.value
@@ -920,12 +927,12 @@ export class CDataTable {
       this._hasHiddenData && (
         <td>
           <div
-            tabindex='0'
+            tabindex="0"
             onKeyUp={(event: KeyboardEvent) =>
               this._handleKeyUp(event, rowIndex, rowData)
             }
           >
-            <svg width='22' height='22' viewBox='0 0 24 24'>
+            <svg width="22" height="22" viewBox="0 0 24 24">
               <path d={mdiChevronDown} />
             </svg>
           </div>
@@ -943,14 +950,14 @@ export class CDataTable {
         return (
           <li>
             {!!key && (
-              <div class='title'>
+              <div class="title">
                 <span>{key}:</span>
                 {this._renderCellData(id, options, index, index)}
               </div>
             )}
 
             {!!options.children && (
-              <div class='children'>
+              <div class="children">
                 {this._renderCellChildren(options, index, id, {})}
               </div>
             )}
@@ -966,7 +973,7 @@ export class CDataTable {
       return (
         !!this.headers[headerIndex]?.children && (
           <li>
-            <div class='children'>
+            <div class="children">
               {this._renderCellChildren(
                 this.headers[headerIndex],
                 index,
@@ -983,10 +990,10 @@ export class CDataTable {
   private _renderLoaderRow() {
     return (
       <tr>
-        <td class='loader' colSpan={100}>
+        <td class="loader" colSpan={100}>
           {this.loading && (
-            <div class='c-data-table__loader'>
-              <div class='loading-bar' />
+            <div class="c-data-table__loader">
+              <div class="loading-bar" />
             </div>
           )}
         </td>
@@ -1037,7 +1044,7 @@ export class CDataTable {
     return (
       this.selectable && (
         <td>
-          <div class='selection'>
+          <div class="selection">
             <c-checkbox
               value={isSelected}
               hide-details
@@ -1061,7 +1068,7 @@ export class CDataTable {
     }
 
     return (
-      <svg width='24' height='24' viewBox='0 0 24 24' tabindex={0}>
+      <svg width="24" height="24" viewBox="0 0 24 24" tabindex={0}>
         <path d={iconPath} />
       </svg>
     );
@@ -1071,7 +1078,7 @@ export class CDataTable {
     return (
       !this._data.length && (
         <tr>
-          <td class='info' colSpan={100}>
+          <td class="info" colSpan={100}>
             <div>{this.loading ? this.loadingText : this.noDataText}</div>
           </td>
         </tr>
@@ -1108,13 +1115,13 @@ export class CDataTable {
             {this._renderCellData(key, options, colIndex, rowIndex)}
 
             {!!options.children && (
-              <div class='children'>
+              <div class="children">
                 {this._renderCellChildren(options, rowIndex, key, rowData)}
               </div>
             )}
 
             {!!this.headers.find((header) => header.key === key)?.children && (
-              <div class='children'>
+              <div class="children">
                 {this._renderCellChildren(
                   this.headers.find((header) => header.key === key),
                   rowIndex,
@@ -1149,7 +1156,7 @@ export class CDataTable {
         <tfoot>
           <tr ref={(el) => (this._footerElement = el as HTMLTableRowElement)}>
             <td colSpan={100}>
-              <div class='c-data-table__footer' style={footerStyles}>
+              <div class="c-data-table__footer" style={footerStyles}>
                 <c-pagination
                   {...this.footerOptions}
                   value={this.pagination}
@@ -1177,9 +1184,9 @@ export class CDataTable {
       <thead class={{ sticky: this.stickyHeader }}>
         <tr>
           {this.selectable && (
-            <th class='selection'>
+            <th class="selection">
               {!this.singleSelection && (
-                <div class='selection--heading'>
+                <div class="selection--heading">
                   <c-checkbox
                     value={this._hasSelectionsOnPage()}
                     indeterminate={this._isIndeterminate}
@@ -1196,7 +1203,7 @@ export class CDataTable {
             </th>
           )}
 
-          {this._hasHiddenData && <th class='indicator'></th>}
+          {this._hasHiddenData && <th class="indicator"></th>}
 
           {!!this._headers.length &&
             this._headers.map((header) => {
@@ -1228,13 +1235,13 @@ export class CDataTable {
         </tr>
 
         {this.horizontalScrolling && (
-          <tr class='c-data-table__header-indicators'>
+          <tr class="c-data-table__header-indicators">
             <th colSpan={100}>
               <div style={indicatorRowStyles}>
                 {this.firstCellHidden && (
                   <c-icon-button
-                    class='first'
-                    size='small'
+                    class="first"
+                    size="small"
                     outlined
                     onClick={() => this._scrollLeft()}
                   >
@@ -1246,8 +1253,8 @@ export class CDataTable {
 
                 {this.lastCellHidden && (
                   <c-icon-button
-                    class='last'
-                    size='small'
+                    class="last"
+                    size="small"
                     outlined
                     onClick={() => this._scrollRight()}
                   >

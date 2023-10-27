@@ -6,8 +6,8 @@ import {
   EventEmitter,
   h,
   Host,
+  Listen,
 } from '@stencil/core';
-import { mdiPlus, mdiMinus, mdiAccount, mdiPencil } from '@mdi/js';
 
 /**
  * @group Buttons
@@ -68,11 +68,6 @@ export class CButton {
   @Prop() noRadius = false;
 
   /**
-   * Icon after text
-   */
-  @Prop() iconEnd = false;
-
-  /**
    * Button type
    */
   @Prop() type: 'button' | 'submit' = 'button';
@@ -81,13 +76,6 @@ export class CButton {
    * Disable the button
    */
   @Prop({ reflect: true }) disabled = false;
-
-  /**
-   * Name of the icon to be displayed in the button
-   *
-   * @deprecated Please use the icon slot instead
-   */
-  @Prop() icon: 'plus' | 'minus' | 'account' | 'edit';
 
   /**
    * Value for the button
@@ -111,22 +99,38 @@ export class CButton {
   @Prop() href: string;
 
   /**
-   * Path for the svg icon
-   */
-  @Prop() path: string = null;
-
-  /**
    * Hyperlink target
    */
   @Prop() target = '_blank';
 
   /**
+   * Used a s atab button
+   * @private
+   */
+  @Prop() tabs = false;
+
+  /**
    * Emit changes to the parent
    * @private
    */
-  @Event() tabChange: EventEmitter<number | string>;
+  @Event() tabChange: EventEmitter<{
+    value: number | string;
+    element: HTMLCButtonElement;
+  }>;
+
+  /**
+   * Emit focus to the parent
+   *
+   * @private
+   */
+  @Event() tabFocus: EventEmitter<number | string>;
 
   @Element() hostElement: HTMLCButtonElement;
+
+  @Listen('focus', { passive: true })
+  onTabFocus() {
+    this.tabFocus.emit(this.value ?? this.hostElement.dataset.index);
+  }
 
   private _container?: HTMLDivElement;
 
@@ -141,11 +145,33 @@ export class CButton {
 
     this._rippleElement.createRipple(event, this._container, center);
 
-    this.tabChange.emit(this.value ?? this.hostElement.dataset.index);
+    if (this.tabs) {
+      this.tabChange.emit({
+        value: this.value ?? this.hostElement.dataset.index,
+        element: this.hostElement,
+      });
+    }
 
     if (this.type === 'submit') {
-      this._closestElementComposed('form', this._container).submit();
+      const submitButton = this._createHiddenSubmitButton();
+
+      submitButton.click();
+
+      submitButton.remove();
     }
+  };
+
+  private _createHiddenSubmitButton = () => {
+    const form = this._closestElementComposed('form', this._container);
+
+    const submitButton = document.createElement('button');
+    submitButton.type = this.type;
+    submitButton.style.display = 'none';
+    submitButton.disabled = this.disabled;
+
+    form.appendChild(submitButton);
+
+    return submitButton;
   };
 
   private _onKeyDown = (event: KeyboardEvent) => {
@@ -179,45 +205,17 @@ export class CButton {
   }
 
   render() {
-    const SPINNER_SMALL: SVGImageElement = (
-      <svg
-        class='spinner'
-        viewBox='0 0 100 100'
-        xmlns='http://www.w3.org/2000/svg'
-      >
-        <circle class='spinner__circle' cx='50' cy='50' r='45' />
-      </svg>
-    );
-
-    let selectedIcon = null;
-    let svg: SVGImageElement;
-
-    if (this.icon) {
-      const icons = {
-        plus: mdiPlus,
-        minus: mdiMinus,
-        account: mdiAccount,
-        edit: mdiPencil,
-      };
-      selectedIcon = icons[this.icon];
-      svg = (
-        <svg class='button-icon' width='16' height='16' viewBox='0 0 22 22'>
-          <path d={selectedIcon} />
-        </svg>
-      );
-    }
-
     const contentClasses = {
-      'c-button': true,
-      'c-button--description': this._containerhasDescriptionSlot,
-      'c-button--fitted': !!this.fit,
-      'c-button--large': this.size === 'large',
-      'c-button--no-radius': !!this.noRadius,
-      'c-button--small': this.size === 'small',
+      'c-button__content': true,
+      'c-button__content--description': this._containerhasDescriptionSlot,
+      'c-button__content--fitted': !!this.fit,
+      'c-button__content--large': this.size === 'large',
+      'c-button__content--no-radius': !!this.noRadius,
+      'c-button__content--small': this.size === 'small',
     };
 
     const innerClasses = {
-      'c-button__content': true,
+      'c-button__content__inner': true,
       'hide-text': this.loading,
     };
 
@@ -228,21 +226,23 @@ export class CButton {
     };
 
     const hostClasses = {
+      'c-button': true,
+      'c-button--ghost': this.ghost,
+      'c-button--outlined': this.outlined,
+      'c-button--danger': this.danger,
+      'c-button--disabled': this.disabled,
+      'c-button--inverted': this.inverted,
+      'c-button--text': this.text,
+      'c-button--fitted': !!this.fit,
+      'c-button--description': !!this._containerhasDescriptionSlot,
       'c-button--active': this.grouped && !this.outlined,
-      'no-radius': !!this.noRadius,
-      disabled: !!this.disabled,
-      ghost: !!this.ghost,
-      grouped: this.grouped,
-      inverted: this.inverted,
-      outlined: this.outlined,
-      danger: this.danger,
-      text: !!this.text,
-      description: !!this._containerhasDescriptionSlot,
+      'c-button--no-radius': !!this.noRadius,
+      [`c-button--${this.size}`]: true,
     };
 
     const descriptionSlotClasses = {
-      'c-button__description': this._containerhasDescriptionSlot,
-      'c-button__description--loading': this.loading,
+      'c-button__content__description': this._containerhasDescriptionSlot,
+      'c-button__content__description--loading': this.loading,
     };
 
     const Tag = !!this.href ? 'a' : 'button';
@@ -254,9 +254,9 @@ export class CButton {
     const attributes = {
       id: this.hostId,
       class: buttonClasses,
-      tabindex: '-1',
       disabled: this.disabled,
       onClick: this._onClick,
+      type: this.type,
     };
 
     let linkAttributes = {};
@@ -265,40 +265,35 @@ export class CButton {
       linkAttributes = { href: this.href, target: this.target };
     }
 
-    const renderIcon = (
-      <slot name='icon'>
-        {this.path && (
-          <svg class='icon-by-path' width='24' height='24' viewBox='0 0 24 24'>
-            <path d={this.path} />
-          </svg>
-        )}
-      </slot>
-    );
+    const spinnerSizes = {
+      small: 20,
+      default: 24,
+      large: 28,
+    };
 
     return (
-      <Host
-        class={hostClasses}
-        tabindex={!!this.disabled ? '-1' : '0'}
-        {...hostAttributes}
-      >
+      <Host class={hostClasses} {...hostAttributes}>
         <Tag {...attributes} {...linkAttributes}>
           <div
             class={contentClasses}
             ref={(el) => (this._container = el as HTMLDivElement)}
           >
-            {this.loading && <div class='spinner_wrapper'>{SPINNER_SMALL}</div>}
             <div class={innerClasses}>
-              {!this.iconEnd && renderIcon}
-
-              {svg}
+              {this.loading && (
+                <div class="c-button__loader">
+                  <c-spinner
+                    color="var(--_c-button-loader-color)"
+                    size={spinnerSizes[this.size]}
+                  />
+                </div>
+              )}
 
               <slot></slot>
-
-              {this.iconEnd && renderIcon}
             </div>
+
             {this._containerhasDescriptionSlot && (
               <div class={descriptionSlotClasses}>
-                <slot name='description'></slot>
+                <slot name="description"></slot>
               </div>
             )}
           </div>

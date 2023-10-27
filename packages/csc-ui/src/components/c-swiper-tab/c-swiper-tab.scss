@@ -1,6 +1,22 @@
-:host {
-  display: inline-block;
-  border-radius: 4px;
+:host(c-swiper-tab) {
+  /**
+   * @prop --c-swiper-tab-background-color-active: Swiper active background color
+   * @prop --c-swiper-tab-background-color-disabled: Swiper disabled background color
+   * @prop --c-swiper-tab-background-color: Swiper background color
+   * @prop --c-swiper-tab-hover-color: Swiper hover color
+   * @prop --c-swiper-tab-text-color-active: Swiper active text color
+   * @prop --c-swiper-tab-text-color-disabled: Swiper disabled text color
+   * @prop --c-swiper-tab-text-color: Swiper text color
+   */
+  --_c-swiper-tab-background-color-active: var(--c-swiper-tab-background-color-active, var(--c-primary-600));
+  --_c-swiper-tab-background-color-disabled: var(--c-swiper-tab-background-color-disabled, var(--c-tertiary-100));
+  --_c-swiper-tab-background-color: var(--c-swiper-tab-background-color, var(--c-primary-200));
+  --_c-swiper-tab-hover-color: var(--c-swiper-tab-hover-color, var(--c-primary-100));
+  --_c-swiper-tab-text-color-active: var(--c-swiper-tab-text-color-active, var(--c-white));
+  --_c-swiper-tab-text-color-disabled: var(--c-swiper-tab-text-color-disabled, var(--c-tertiary-600));
+  --_c-swiper-tab-text-color: var(--c-swiper-tab-text-color, var(--c-primary-600));
+
+  border-radius: 8px;
   width: 100%;
   height: 100%;
   outline: none;
@@ -14,7 +30,7 @@
 }
 
 :host(:focus) {
-  outline: 2px var(--csc-primary) solid;
+  outline: 2px var(--_c-swiper-tab-background-color-active) solid;
   outline-offset: -2px;
 }
 
@@ -25,7 +41,7 @@
 }
 
 :host(:focus-visible) {
-  outline: 2px var(--csc-primary) solid;
+  outline: 2px var(--_c-swiper-tab-background-color-active) solid;
   outline-offset: -2px;
 }
 
@@ -34,22 +50,22 @@
 
   height: 100%;
 
-  &:hover:not(#{$this}--active) {
+  &:hover:not(#{$this}--active):not(#{$this}--disabled) {
     #{$this}__content {
-      background-color: var(--csc-primary-ghost-hover);
+      background-color: var(--_c-swiper-tab-hover-color);
     }
   }
 
   &__content {
-    --c-color: var(--csc-primary);
-    border-radius: 4px;
-    background-color: var(--csc-primary-ghost);
-    color: var(--csc-primary);
+    border-radius: 6px;
+    background-color: var(--_c-swiper-tab-background-color);
+    color: var(--_c-swiper-tab-text-color);
     cursor: pointer;
     transition: background-color 0.2s ease-in-out;
     display: grid;
     gap: 4px;
     grid-template-columns: 1fr;
+    line-height: 1.5;
     padding: 16px;
     align-content: start;
     position: relative;
@@ -72,9 +88,8 @@
 
   &--disabled {
     #{$this}__content {
-      --c-color: var(--csc-mid-grey);
-      background: var(--csc-lightest-grey);
-      color: var(--csc-mid-grey);
+      background: var(--_c-swiper-tab-background-color-disabled);
+      color: var(--_c-swiper-tab-text-color-disabled);
       cursor: default !important;
       pointer-events: none;
     }
@@ -82,13 +97,12 @@
 
   &--active {
     #{$this}__content {
-      background-color: var(--csc-primary);
-      --c-color: #fff;
-      color: #fff;
+      background-color: var(--_c-swiper-tab-background-color-active);
+      color: var(--_c-swiper-tab-text-color-active);
       pointer-events: none;
 
       &:hover {
-        background-color: var(--csc-primary-hover);
+        background-color: var(--_c-swiper-tab-background-color-active);
       }
     }
   }

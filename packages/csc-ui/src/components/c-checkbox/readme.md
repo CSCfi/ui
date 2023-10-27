@@ -7,17 +7,21 @@
 
 ## Properties
 
-| Property        | Attribute       | Description                      | Type      | Default            |
-| --------------- | --------------- | -------------------------------- | --------- | ------------------ |
-| `disabled`      | `disabled`      | Disable the checkbox             | `boolean` | `false`            |
-| `hideDetails`   | `hide-details`  | Hide the hint and error messages | `boolean` | `false`            |
-| `hint`          | `hint`          | Hint text for the input          | `string`  | `''`               |
-| `indeterminate` | `indeterminate` | Indeterminate state              | `boolean` | `false`            |
-| `label`         | `label`         | Element label                    | `string`  | `''`               |
-| `required`      | `required`      | Set as required                  | `boolean` | `false`            |
-| `valid`         | `valid`         | Set the validity of the input    | `boolean` | `true`             |
-| `validation`    | `validation`    | Custom validation message        | `string`  | `'Required field'` |
-| `value`         | `value`         | Is the element checked           | `boolean` | `false`            |
+| Property        | Attribute       | Description                                                                       | Type                | Default            |
+| --------------- | --------------- | --------------------------------------------------------------------------------- | ------------------- | ------------------ |
+| `checked`       | `checked`       | If `true`, the checkbox is selected.                                              | `boolean`           | `false`            |
+| `disabled`      | `disabled`      | Disable the checkbox                                                              | `boolean`           | `false`            |
+| `falseValue`    | `false-value`   | The value when the checkbox is unchecked                                          | `boolean \| string` | `false`            |
+| `hideDetails`   | `hide-details`  | Hide the hint and error messages                                                  | `boolean`           | `false`            |
+| `hint`          | `hint`          | Hint text for the input                                                           | `string`            | `''`               |
+| `hostName`      | `name`          | Name of the input - Only used when the checkbox participates in a native `<form>` | `string`            | `undefined`        |
+| `indeterminate` | `indeterminate` | Indeterminate state                                                               | `boolean`           | `false`            |
+| `label`         | `label`         | Element label                                                                     | `string`            | `''`               |
+| `required`      | `required`      | Set as required                                                                   | `boolean`           | `false`            |
+| `trueValue`     | `true-value`    | The value when the checkbox is checked                                            | `boolean \| string` | `true`             |
+| `valid`         | `valid`         | Set the validity of the input                                                     | `boolean`           | `true`             |
+| `validation`    | `validation`    | Custom validation message                                                         | `string`            | `'Required field'` |
+| `value`         | `value`         | The input value - Only used when the checkbox participates in a native `<form>`   | `boolean \| string` | `false`            |
 
 
 ## Events
@@ -32,6 +36,16 @@
 | Slot             | Description                |
 | ---------------- | -------------------------- |
 | `"Default slot"` | Default slot for the label |
+
+
+## CSS Custom Properties
+
+| Name                                  | Description                     |
+| ------------------------------------- | ------------------------------- |
+| `--c-checkbox-background-color-hover` | Checkbox hover background color |
+| `--c-checkbox-color`                  | Checkbox color                  |
+| `--c-checkbox-color-active`           | Active checkbox color           |
+| `--c-checkbox-color-disabled`         | Disabled checkbox color         |
 
 
 ## Dependencies

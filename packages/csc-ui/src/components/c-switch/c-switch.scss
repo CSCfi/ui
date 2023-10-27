@@ -1,22 +1,51 @@
-// TODO:  Remove and add to index.html
-@import '../../styles/css/c-switch.css';
+:host(c-switch) {
+  /**
+   * @prop --c-switch-border-color: Border color
+   * @prop --c-switch-handle-color: Handle color
+   * @prop --c-switch-slider-color: Background color
+   */
+  --_c-switch-border-color: var(--c-switch-border-color, var(--c-tertiary-600));
+  --_c-switch-handle-color: var(--c-switch-handle-color, var(--c-tertiary-600));
+  --_c-switch-slider-color: var(--c-switch-slider-color, var(--c-transparent));
 
-:host {
+  /**
+   * @prop --c-switch-border-color-disabled: Disabled border color
+   * @prop --c-switch-handle-color-disabled: Disabled handle color
+   * @prop --c-switch-slider-color-disabled: Disabled background color
+   */
+  --_c-switch-border-color-disabled: var(--c-switch-border-color-disabled, var(--c-transparent));
+  --_c-switch-handle-color-disabled: var(--c-switch-handle-color-disabled, var(--c-tertiary-500));
+  --_c-switch-slider-color-disabled: var(--c-switch-slider-color-disabled, var(--c-tertiary-200));
+
+  /**
+   * @prop --c-switch-slider-color-active: Active background color
+   * @prop --c-switch-border-color-active: Active border color
+   * @prop --c-switch-handle-color-active: Active handle color
+   */
+  --_c-switch-border-color-active: var(--c-switch-border-color-active, var(--c-primary-600));
+  --_c-switch-handle-color-active: var(--c-switch-handle-color-active, var(--c-white));
+  --_c-switch-slider-color-active: var(--c-switch-slider-color-active, var(--c-primary-600));
+
+  /**
+   * @prop --c-switch-border-color-active-disabled: Disabled active border color
+   * @prop --c-switch-handle-color-active-disabled: Disabled active handle color
+   * @prop --c-switch-slider-color-active-disabled: Disabled active background color
+   */
+  --_c-switch-border-color-active-disabled: var(--c-switch-border-color-active-disabled, var(--c-tertiary-400));
+  --_c-switch-handle-color-active-disabled: var(--c-switch-handle-color-active-disabled, var(--c-white));
+  --_c-switch-slider-color-active-disabled: var(--c-switch-slider-color-active-disabled, var(--c-tertiary-400));
+
   display: inline-block;
 }
 
 .c-switch {
-  --c-switch-border-color: var(--c-switch-inactive-border-color);
-  --c-switch-thumb-color: var(--c-switch-inactive-thumb-color);
-  --c-switch-slider-color: var(--c-switch-inactive-slider-color);
-
-  --c-switch-thumb-margin: 5px;
-  --c-switch-pointer: pointer;
-  --c-switch-height: 22px;
-  --c-switch-width: 44px;
-  --c-switch-thumb-size: calc(var(--c-switch-height) - 2 * var(--c-switch-thumb-margin));
-  --c-switch-thumb-active-position: calc(
-    var(--c-switch-width) - var(--c-switch-thumb-size) - 2 * var(--c-switch-thumb-margin)
+  --_c-switch-handle-margin: 5px;
+  --_c-switch-pointer: pointer;
+  --_c-switch-height: 22px;
+  --_c-switch-width: 44px;
+  --_c-switch-handle-size: calc(var(--_c-switch-height) - 2 * var(--_c-switch-handle-margin));
+  --_c-switch-handle-position-active: calc(
+    var(--_c-switch-width) - var(--_c-switch-handle-size) - 2 * var(--_c-switch-handle-margin)
   );
 
   $this: &;
@@ -24,68 +53,59 @@
   backface-visibility: hidden;
   transform: translate3d(0, 0, 0);
   display: inline-grid;
-  height: var(--c-switch-height);
+  height: var(--_c-switch-height);
   position: relative;
-
   grid-template-columns: 1fr;
   gap: 12px;
   align-items: center;
 
   &--disabled {
-    --c-switch-thumb-color: var(--c-switch-disabled-thumb-color);
-    --c-switch-slider-color: var(--c-switch-disabled-slider-color);
-    --c-switch-border-color: transparent;
+    --_c-switch-pointer: default;
+    --_c-switch-handle-color: var(--_c-switch-handle-color-disabled);
+    --_c-switch-slider-color: var(--_c-switch-slider-color-disabled);
+    --_c-switch-border-color: var(--_c-switch-border-color-disabled);
+    --c-error-600: var(--c-tertiary-400);
 
-    --c-switch-pointer: default;
-
-    // TODO:  get from theme
-    --csc-error: var(--csc-mid-grey);
-
-    // TODO:  get from theme
-    color: var(--csc-mid-grey);
+    color: var(--c-tertiary-500);
   }
 
   &--label {
-    grid-template-columns: var(--c-switch-width) auto;
+    grid-template-columns: var(--_c-switch-width) auto;
   }
 
   &__label {
     span.required {
-      // TODO:  get from theme
-      color: var(--csc-error);
+      color: var(--c-error-600);
     }
   }
 
   &__input {
-    height: var(--c-switch-height);
+    height: var(--_c-switch-height);
     position: relative;
-    width: var(--c-switch-width);
+    width: var(--_c-switch-width);
     align-self: start;
   }
 
   &__slider {
-    background-color: var(--c-switch-slider-color);
-    border-radius: var(--c-switch-height);
-    box-shadow: inset 0 0 0 2px var(--c-switch-border-color);
-    bottom: 0;
-    cursor: var(--c-switch-pointer);
-    left: 0;
+    background-color: var(--_c-switch-slider-color);
+    border-radius: var(--_c-switch-height);
+    box-shadow: inset 0 0 0 2px var(--_c-switch-border-color);
+    inset: 0;
+    cursor: var(--_c-switch-pointer);
     position: absolute;
-    right: 0;
-    top: 0;
     transform-origin: 50% 50%;
     transition: 0.3s cubic-bezier(0.25, 0.8, 0.5, 1);
 
     &::before {
-      background-color: var(--c-switch-thumb-color);
+      background-color: var(--_c-switch-handle-color);
       border-radius: 50%;
-      bottom: var(--c-switch-thumb-margin);
-      content: '';
-      height: var(--c-switch-thumb-size);
-      left: var(--c-switch-thumb-margin);
+      bottom: var(--_c-switch-handle-margin);
+      content: "";
+      height: var(--_c-switch-handle-size);
+      left: var(--_c-switch-handle-margin);
       position: absolute;
       transition: 0.3s cubic-bezier(0.25, 0.8, 0.5, 1);
-      width: var(--c-switch-thumb-size);
+      width: var(--_c-switch-handle-size);
     }
   }
 
@@ -98,12 +118,18 @@
       + {
         #{$this} {
           &__slider {
-            --c-switch-thumb-color: var(--c-switch-active-thumb-color);
-            --c-switch-slider-color: var(--c-switch-active-slider-color);
-            --c-switch-border-color: var(--c-switch-active-border-color);
+            --_c-switch-handle-color: var(--_c-switch-handle-color-active);
+            --_c-switch-slider-color: var(--_c-switch-slider-color-active);
+            --_c-switch-border-color: var(--_c-switch-border-color-active);
 
             &::before {
-              transform: translateX(var(--c-switch-thumb-active-position));
+              transform: translateX(var(--_c-switch-handle-position-active));
+            }
+
+            &--disabled {
+              --_c-switch-handle-color: var(--_c-switch-handle-color-active-disabled);
+              --_c-switch-slider-color: var(--_c-switch-slider-color-active-disabled);
+              --_c-switch-border-color: var(--_c-switch-border-color-active-disabled);
             }
           }
         }
@@ -119,11 +145,12 @@
         }
       }
     }
+
     &:focus-visible {
       + {
         #{$this} {
           &__slider {
-            outline: 2px var(--csc-primary) solid;
+            outline: 2px var(--c-primary-600) solid;
             outline-offset: 2px;
           }
         }

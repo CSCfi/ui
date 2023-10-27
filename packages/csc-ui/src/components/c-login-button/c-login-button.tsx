@@ -2,6 +2,7 @@ import { Component, h, Prop } from '@stencil/core';
 
 /**
  * @parent c-login-buttons
+ * @slot default slot - Default slot
  */
 @Component({
   tag: 'c-login-button',
@@ -10,14 +11,14 @@ import { Component, h, Prop } from '@stencil/core';
 })
 export class CLoginButton {
   /**
-   * Login provider link
+   * Login provider link. Do not set if using a javascript click handler
    */
-  @Prop() href = '';
+  @Prop() href? = '';
 
   /**
    * Login provider logo url
    */
-  @Prop() src = '';
+  @Prop() src!: string;
 
   /**
    * Alt description for logo
@@ -25,9 +26,15 @@ export class CLoginButton {
   @Prop() alt = '';
 
   render() {
+    const props = {
+      tabindex: '0',
+      ...(!!this.href ? { href: this.href } : {}),
+    };
+
     return (
-      <a style={{ backgroundImage: this.src }} href={this.href}>
-        <img src={this.src} alt={this.alt} />
+      <a {...props}>
+        <img src={this.src || ''} alt={this.alt} />
+
         <div>
           <slot></slot>
         </div>

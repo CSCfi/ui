@@ -1,22 +1,5 @@
-import { Component, Element, h, Prop, State, Host } from '@stencil/core';
-
-export type CLoginCardBlendMode =
-  | 'normal'
-  | 'multiply'
-  | 'screen'
-  | 'overlay'
-  | 'darken'
-  | 'lighten'
-  | 'color-dodge'
-  | 'color-burn'
-  | 'hard-light'
-  | 'soft-light'
-  | 'difference'
-  | 'exclusion'
-  | 'hue'
-  | 'saturation'
-  | 'color'
-  | 'luminosity';
+import { Component, Element, h, Prop, State } from '@stencil/core';
+import { CLoginCardBlendMode } from '../../types';
 
 /**
  * @group Cards
@@ -100,7 +83,7 @@ export class CLoginCard {
       backgroundImage: `url(${this.src})`,
       backgroundPosition: this.backgroundPosition,
       height: this.imageHeight,
-      '--c-login-overlay-mode': !!this.overlay && this.overlayBlendMode,
+      '--_c-login-card-overlay-mode': !!this.overlay && this.overlayBlendMode,
     };
 
     const imageClasses = {
@@ -114,11 +97,11 @@ export class CLoginCard {
     };
 
     return (
-      <Host>
+      <article>
         {!!this.src && (
-          <svg width='0' height='0'>
+          <svg width="0" height="0">
             <defs>
-              <clipPath id='cLoginClipPath' clipPathUnits='objectBoundingBox'>
+              <clipPath id="cLoginClipPath" clipPathUnits="objectBoundingBox">
                 <path d={this.path} />
               </clipPath>
             </defs>
@@ -126,7 +109,7 @@ export class CLoginCard {
         )}
 
         <div
-          class='c-login-card'
+          class="c-login-card"
           ref={(el) => (this._cardElement = el as HTMLDivElement)}
         >
           {!!this.src && <div class={imageClasses} style={style}></div>}
@@ -135,7 +118,7 @@ export class CLoginCard {
             <slot></slot>
           </div>
         </div>
-      </Host>
+      </article>
     );
   }
 }

@@ -1,4 +1,4 @@
-export interface CPaginationOptions {
+export type CPaginationOptions = {
   itemCount: number;
   currentPage?: number;
   totalVisible?: number;
@@ -7,40 +7,41 @@ export interface CPaginationOptions {
   endTo?: number;
   locale?: string;
   textOverrides?: CPaginationTextOverrides;
-}
+};
 
-export interface CPaginationTextOverrides {
+export type CPaginationTextOverrides = {
   itemsPerPageText?: string;
   nextPage?: string;
   prevPage?: string;
   pageText?: ({ start, end, count }) => string;
   pageOfText?: ({ pageNumber, count }) => string;
-}
+};
 
-export interface CSelectItem {
+export type CSelectItem = {
   name: string;
   value: string | number | boolean;
   disabled?: boolean;
-}
+};
 
-export interface CAutocompleteItem extends CSelectItem {
+export type CAutocompleteItem = CSelectItem & {
   ref?: HTMLElement;
-}
+};
 
-export interface CRadioGroupItem {
-  label: string;
+export type CRadioGroupItem = {
+  name: string;
   value: string | number;
-}
+  disabled?: boolean;
+};
 
-export interface CDataTableFooterOptions {
+export type CDataTableFooterOptions = {
   itemsPerPageOptions?: number[];
   hideDetails?: boolean;
   simple?: boolean;
   hideRange?: boolean;
   size?: 'default' | 'small';
-}
+};
 
-export interface CDataTableHeader {
+export type CDataTableHeader = {
   key: string;
   value: null | string;
   component?: CDataTableComponent;
@@ -52,13 +53,13 @@ export interface CDataTableHeader {
   hidden?: boolean;
   align?: 'start' | 'center' | 'end';
   justify?: 'start' | 'center' | 'end';
-}
+};
 
-export interface CDataTableData {
+export type CDataTableData = {
   [key: string]: CDataTableDataItem;
-}
+};
 
-export interface CDataTableDataItem {
+export type CDataTableDataItem = {
   value: string | number;
   formattedValue?: string | number;
   plainTextValue?: string;
@@ -66,39 +67,39 @@ export interface CDataTableDataItem {
   align?: 'start' | 'center' | 'end';
   justify?: 'start' | 'center' | 'end';
   component?: CDataTableComponent;
-}
+};
 
-export interface CDataTableChild {
+export type CDataTableChild = {
   value: null | string;
   component?: CDataTableComponent;
-}
+  children?: CDataTableChild[];
+};
 
-export interface CDataTableComponent {
+export type CDataTableComponent = {
   tag: string;
   params?: CDataTableComponentParams;
   injectValue?: boolean;
-}
+};
 
-export interface CDataTableComponentParams {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  [key: string]: any;
+export type CDataTableComponentParams = {
+  [key: string]: unknown;
   onClick?: (params: CDataTableFunctionParams) => unknown;
-}
+};
 
-export interface CDataTableFunctionParams {
+export type CDataTableFunctionParams = {
   event: MouseEvent;
   index: number;
   value: string | number;
   key: string;
   data: CDataTableData;
-}
+};
 
-export interface CNotificationItem {
+export type CNotificationItem = {
   name: string;
   type: CNotificationItemType;
   delay?: number;
   requiresClosing?: boolean;
-}
+};
 
 export type CNotificationItemType = 'warning' | 'error' | 'success' | 'info';
 
@@ -114,7 +115,7 @@ export enum CToastPosition {
   Fixed = 'fixed',
 }
 
-export interface CToastMessage {
+export type CToastMessage = {
   message: string;
   title?: string;
   type?: CToastType;
@@ -126,7 +127,7 @@ export interface CToastMessage {
   indeterminate?: boolean;
   progress?: boolean;
   custom?: boolean;
-}
+};
 
 export enum CAlertType {
   Warning = 'warning',
@@ -135,7 +136,7 @@ export enum CAlertType {
   Info = 'info',
 }
 
-export interface CMenuCustomTrigger {
+export type CMenuCustomTrigger = {
   value: string;
   component: {
     tag: string;
@@ -143,31 +144,41 @@ export interface CMenuCustomTrigger {
       [key: string]: unknown;
     };
   };
-}
+};
 
-export interface CMenuOption {
+export type CMenuOption = {
   name: string;
   action: () => void;
   disabled?: boolean;
   icon?: string;
   iconPosition?: 'start' | 'end';
-}
+};
 
-export type CSCColor =
-  | 'primary'
-  | 'primary-ghost'
-  | 'primary-ghost-hover'
-  | 'primary-hover'
-  | 'primary-text-hover'
-  | 'primary-hover'
-  | 'primary-text-hover'
-  | 'dark-grey'
-  | 'mid-grey'
-  | 'light-grey'
-  | 'light-grey-blue'
-  | 'lightest-grey'
-  | 'link'
-  | 'error'
-  | 'warning'
-  | 'success'
-  | 'info';
+export type CLoginCardBlendMode =
+  | 'normal'
+  | 'multiply'
+  | 'screen'
+  | 'overlay'
+  | 'darken'
+  | 'lighten'
+  | 'color-dodge'
+  | 'color-burn'
+  | 'hard-light'
+  | 'soft-light'
+  | 'difference'
+  | 'exclusion'
+  | 'hue'
+  | 'saturation'
+  | 'color'
+  | 'luminosity';
+
+export type CRowAlign = 'start' | 'center' | 'end';
+
+export type CRowJustify =
+  | 'start'
+  | 'center'
+  | 'end'
+  | 'space-between'
+  | 'space-around';
+
+export type CTabsJustify = 'stretch' | 'start' | 'end' | 'center';

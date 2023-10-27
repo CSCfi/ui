@@ -1,27 +1,33 @@
 :host {
+  /**
+   * @prop --c-steps-outline-color: Steps outline color
+   */
+  --_c-steps-outline-color: var(--c-steps-outline-color, var(--c-primary-600));
+
+  // private
+  --_c-steps-color: var(--c-step-color, var(--c-tertiary-500));
+  --_c-steps-color-complete: var(--c-step-color-complete, var(--c-primary-600));
+
   width: 100%;
   display: grid;
   gap: 8px;
   border-radius: 6px;
 }
 
-@supports selector(:focus-within) {
+@supports selector(:focus-visible) {
   :host(:focus) {
     outline: none;
   }
 }
 
-:host(:focus-within) {
-  outline: 2px var(--csc-primary) solid;
+:host(:focus-visible) {
+  outline: 2px var(--_c-steps-outline-color) solid;
   outline-offset: 2px;
 }
 
 .c-steps {
-  --c-step-line-color: var(--csc-mid-grey);
-  --c-step-before-color: var(--csc-mid-grey);
-  --c-step-after-color: var(--csc-mid-grey);
-  --c-step-divider-width: calc(100% + 160px);
-  --c-step-divider-margin: 10px -80px 0;
+  --c-steps-divider-width: calc(100% + 160px);
+  --c-steps-divider-margin: 10px -80px 0;
 
   width: 100%;
   display: flex;
@@ -36,20 +42,20 @@
   ::slotted(.divider) {
     height: 2px;
     flex: 1;
-    background-color: var(--c-step-line-color);
-    width: var(--c-step-divider-width);
-    margin: var(--c-step-divider-margin);
+    background-color: var(--_c-steps-color);
+    width: var(--c-steps-divider-width);
+    margin: var(--c-steps-divider-margin);
   }
 
   ::slotted(.divider.complete) {
-    background-color: var(--csc-primary);
+    background-color: var(--_c-steps-color-complete);
     height: 4px;
     margin-top: 9px;
   }
 
   &.mobile {
-    --c-step-divider-width: calc(100% + 11px);
-    --c-step-divider-margin: 10px -10px 0;
+    --c-steps-divider-width: calc(100% + 11px);
+    --c-steps-divider-margin: 10px -10px 0;
   }
 }
 

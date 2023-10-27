@@ -7,16 +7,16 @@
 
 ## Properties
 
-| Property  | Attribute | Description | Type            | Default     |
-| --------- | --------- | ----------- | --------------- | ----------- |
-| `message` | --        | Messages    | `CToastMessage` | `undefined` |
+| Property  | Attribute | Description | Type                                                                                                                                                                                                                          | Default     |
+| --------- | --------- | ----------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------- |
+| `message` | --        | Messages    | `{ message: string; title?: string; type?: CToastType; duration?: number; persistent?: boolean; position?: CToastPosition; id?: string; closeText?: string; indeterminate?: boolean; progress?: boolean; custom?: boolean; }` | `undefined` |
 
 
 ## Events
 
-| Event   | Description                       | Type                         |
-| ------- | --------------------------------- | ---------------------------- |
-| `close` | Emit inner value change to parent | `CustomEvent<CToastMessage>` |
+| Event   | Description                       | Type                                                                                                                                                                                                                                       |
+| ------- | --------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `close` | Emit inner value change to parent | `CustomEvent<{ message: string; title?: string; type?: CToastType; duration?: number; persistent?: boolean; position?: CToastPosition; id?: string; closeText?: string; indeterminate?: boolean; progress?: boolean; custom?: boolean; }>` |
 
 
 ## Methods
@@ -30,6 +30,14 @@ Close toast
 Type: `Promise<void>`
 
 
+
+
+## CSS Custom Properties
+
+| Name                         | Description            |
+| ---------------------------- | ---------------------- |
+| `--c-toast-background-color` | Toast background color |
+| `--c-toast-text-color`       | Toast text color       |
 
 
 ## Dependencies

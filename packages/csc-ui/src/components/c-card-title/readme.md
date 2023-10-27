@@ -12,18 +12,13 @@
 | `"Default slot"` | Card title text |
 
 
-## Dependencies
+## CSS Custom Properties
 
-### Depends on
+| Name                             | Description                |
+| -------------------------------- | -------------------------- |
+| `--c-card-title-color`           | Card title color           |
+| `--c-card-title-underline-color` | Card title underline color |
 
-- [c-title](../c-title)
-
-### Graph
-```mermaid
-graph TD;
-  c-card-title --> c-title
-  style c-card-title fill:#f9f,stroke:#333,stroke-width:4px
-```
 
 ----------------------------------------------
 

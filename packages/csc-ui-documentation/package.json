@@ -1,27 +1,25 @@
 {
-  "name": "nuxt-app",
-  "private": true,
-  "type": "module",
-  "scripts": {
-    "build": "nuxt build",
-    "dev": "nuxt dev",
-    "generate": "nuxt generate",
-    "preview": "nuxt preview",
-    "postinstall": "nuxt prepare",
-    "lint:js": "eslint --ext \".ts,.vue\" --ignore-path .gitignore .",
-    "lint:prettier": "prettier --check .",
-    "lint": "yarn lint:js && yarn lint:prettier",
-    "lintfix": "prettier --write --list-different . && yarn lint:js --fix"
+  "dependencies": {
+    "@cscfi/csc-ui": "latest",
+    "@cscfi/csc-ui-vue": "latest",
+    "@mdi/js": "^7.2.96",
+    "@pinia/nuxt": "^0.4.11",
+    "@vueuse/nuxt": "^10.5.0",
+    "nuxt-stencil": "^0.1.1",
+    "pinia": "^2.1.6",
+    "vue3-code-block": "^2.2.12"
   },
   "devDependencies": {
     "@nuxt/devtools": "latest",
     "@nuxtjs/eslint-config-typescript": "^12.1.0",
+    "@nuxtjs/stylelint-module": "^5.1.0",
     "@nuxtjs/tailwindcss": "^6.8.0",
     "@typescript-eslint/parser": "^6.7.3",
     "@vitejs/plugin-vue": "^4.3.4",
-    "csc-ui": "^0.9.3",
     "eslint": "^8.50.0",
     "eslint-config-prettier": "^9.0.0",
+    "eslint-import-resolver-typescript": "^3.6.1",
+    "eslint-plugin-import": "^2.28.1",
     "eslint-plugin-prettier": "^5.0.0",
     "nuxt": "^3.7.4",
     "prettier": "^3.0.3",
@@ -29,12 +27,20 @@
     "vue": "^3.3.4",
     "vue-router": "^4.2.5"
   },
-  "dependencies": {
-    "@cscfi/csc-ui-vue": "^0.0.1",
-    "@mdi/js": "^7.2.96",
-    "@pinia/nuxt": "^0.4.11",
-    "nuxt-stencil": "^0.1.1",
-    "pinia": "^2.1.6",
-    "vue3-code-block": "^2.2.12"
-  }
+  "name": "@cscfi/csc-ui-documentation",
+  "scripts": {
+    "build": "npm run build:examples && nuxt build",
+    "build:examples": "node ./scripts/build-examples.js",
+    "dev": "npm run build:examples && nuxt dev",
+    "deploy": "npm i && npm run build && firebase deploy",
+    "generate": "nuxt generate",
+    "lint": "npm run lint:js && npm run lint:prettier",
+    "lint:fix": "prettier --write --list-different . && npm run lint:js --fix",
+    "lint:js": "eslint --ext \".ts,.vue\" --ignore-path .gitignore .",
+    "lint:prettier": "prettier --check .",
+    "postinstall": "nuxt prepare",
+    "preview": "nuxt preview"
+  },
+  "type": "module",
+  "version": "0.0.1"
 }

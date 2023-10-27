@@ -1,9 +1,19 @@
 :host {
-  --bar-color: var(--csc-primary);
-  --bg-color: var(--csc-light-grey);
-  --border-size: 4px;
-  --height: 16px;
-  --value: 0%;
+  /**
+   * @prop --c-progress-bar-color: Progress bar color
+   * @prop --c-progress-bar-background-color: Progress bar background color
+   * @prop --c-progress-bar-border-width: Progress bar border width in px
+   * @prop --c-progress-bar-height: Progress bar height in px
+   * @prop --c-progress-bar-value: Progress bar value in %
+   */
+  --_c-progress-bar-color: var(--c-progress-bar-color, var(--c-primary-600));
+  --_c-progress-bar-background-color: var(
+    --c-progress-bar-background-color,
+    var(--c-tertiary-200)
+  );
+  --_c-progress-bar-border-width: var(--c-progress-bar-border-width, 4px);
+  --_c-progress-bar-height: var(--c-progress-bar-height, 16px);
+  --_c-progress-bar-value: var(--c-progress-bar-value, 0%);
 
   align-items: center;
   display: flex;
@@ -14,16 +24,20 @@
   $this: &;
 
   position: relative;
-  background-color: var(--bg-color);
-  border-radius: var(--height);
-  box-shadow: 0 0 0 var(--border-size) var(--bg-color);
+  background-color: var(--_c-progress-bar-background-color);
+  border-radius: var(--_c-progress-bar-height);
+  box-shadow: 0 0 0 var(--_c-progress-bar-border-width)
+    var(--_c-progress-bar-background-color);
   flex-basis: 100%;
-  height: calc(var(--height) - calc(var(--border-size) * 2));
-  margin: var(--border-size);
+  height: calc(
+    var(--_c-progress-bar-height) -
+      calc(var(--_c-progress-bar-border-width) * 2)
+  );
+  margin: var(--_c-progress-bar-border-width);
   opacity: 0.75;
   overflow: hidden;
   transform: translateZ(0); // Safari - overflow: hidden & border-radius fix
-  width: calc(100% - calc(var(--border-size) * 2));
+  width: calc(100% - calc(var(--_c-progress-bar-border-width) * 2));
 
   &.adjacent-details {
     flex: 1;
@@ -38,7 +52,7 @@
     padding-left: 16px;
 
     &--negative {
-      color: var(--csc-error);
+      color: var(--c-error-600);
     }
 
     &.adjacent-details {
@@ -47,12 +61,14 @@
   }
 
   progress {
-    background-color: var(--bar-color);
-    border-radius: var(--height);
+    background-color: var(--_c-progress-bar-background-color);
+    border-radius: var(--_c-progress-bar-height);
     width: 100%;
-    background-color: transparent;
     overflow: hidden;
-    height: calc(var(--height) - calc(var(--border-size) * 2));
+    height: calc(
+      var(--_c-progress-bar-height) -
+        calc(var(--_c-progress-bar-border-width) * 2)
+    );
     position: absolute;
     border: none;
 
@@ -64,7 +80,7 @@
   }
 
   &:focus-within {
-    outline: 2px var(--csc-primary) solid;
+    outline: 2px var(--c-primary-600) solid;
     outline-offset: 6px;
   }
 
@@ -74,15 +90,15 @@
 
   ::-webkit-progress-value {
     transition: width 0.3s ease-in-out;
-    background-color: var(--bar-color);
-    border-radius: var(--height);
+    background-color: var(--_c-progress-bar-color);
+    border-radius: var(--_c-progress-bar-height);
   }
 
   ::-moz-progress-bar {
     transition: padding-bottom 1s;
     padding-left: 60px;
-    padding-bottom: var(--value);
-    background-color: var(--bar-color);
+    padding-bottom: var(--_c-progress-bar-value);
+    background-color: var(--_c-progress-bar-color);
     height: 0;
     transform-origin: 0 0;
     transform: rotate(-90deg) translateX(-60px);
@@ -96,30 +112,34 @@
   &--indeterminate {
     &::before {
       content: '';
+      z-index: 1;
       position: absolute;
-      background-color: var(--bar-color);
-      border-radius: var(--height);
+      background-color: var(--_c-progress-bar-color);
+      border-radius: var(--_c-progress-bar-height);
       left: -100%;
       height: 100%;
-      transform: translateX(var(--value, 0%));
+      transform: translateX(var(--_c-progress-bar-value, 0%));
       transition: transform 0.3s ease-in-out;
-      animation: indeterminateAnimation 2s infinite linear;
+      animation: indeterminate 2s infinite linear;
       width: 50%;
       transform-origin: 0% 50%;
     }
   }
 }
 
-@keyframes indeterminateAnimation {
+@keyframes indeterminate {
   0% {
     transform: translateX(100%) scaleX(1);
   }
+
   30% {
     transform: translateX(170%) scaleX(1.75);
   }
+
   70% {
     transform: translateX(500%) scaleX(0.1);
   }
+
   100% {
     transform: translateX(500%) scaleX(0.1);
   }

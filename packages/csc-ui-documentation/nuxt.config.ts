@@ -3,9 +3,9 @@
 export default defineNuxtConfig({
   ssr: false,
 
-  devtools: { enabled: true },
+  devtools: { enabled: false },
 
-  modules: ['@nuxtjs/tailwindcss', '@pinia/nuxt'],
+  modules: ['@nuxtjs/tailwindcss', '@pinia/nuxt', '@vueuse/nuxt'],
 
   build: {
     transpile: ['csc-ui/loader', '@cscfi/csc-ui-vue'],

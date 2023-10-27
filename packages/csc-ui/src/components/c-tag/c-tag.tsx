@@ -1,7 +1,8 @@
-import { Component, Host, h, Prop } from '@stencil/core';
+import { mdiClose } from '@mdi/js';
+import { Component, Host, h, Prop, Event, EventEmitter } from '@stencil/core';
 
 /**
- * @group Buttons
+ * @parent c-tags
  * @slot Default slot - Default slot
  */
 @Component({
@@ -14,6 +15,11 @@ export class CTag {
    * Mark tag as active
    */
   @Prop() active = false;
+
+  /**
+   * Stretch to fill the container row
+   */
+  @Prop() block = false;
 
   /**
    * Stretch to fill the container
@@ -35,18 +41,26 @@ export class CTag {
    */
   @Prop() badge: string | number = null;
 
+  /**
+   * Emit close event on close icon click
+   */
+  @Event() close: EventEmitter;
+
+  private _onClose() {
+    this.close.emit();
+  }
+
   render() {
-    const classes = {
-      'c-tag': true,
-      'c-tag--closeable': this.closeable,
-      'c-tag--badge': !!this.badge || this.badge === 0,
-      active: this.active,
-      flat: this.flat,
-    };
+    const hasBadge = !!this.badge || this.badge === 0;
 
     const hostClasses = {
-      fit: this.fit,
-      flat: this.flat,
+      'c-tag': true,
+      'c-tag--closeable': this.closeable,
+      'c-tag--badge': hasBadge,
+      'c-tag--active': this.active,
+      'c-tag--block': this.block,
+      'c-tag--fit': this.fit,
+      'c-tag--flat': this.flat,
     };
 
     const hostParams = {
@@ -54,26 +68,18 @@ export class CTag {
       ...(!this.flat && {
         role: 'button',
       }),
+      ...(hasBadge ? { 'data-badge': this.badge } : {}),
     };
 
     return (
-      <Host tabindex='0' {...hostParams} class={hostClasses}>
-        <div class={classes}>
-          <div class='row'>
-            {!!this.badge && <div class='badge'>{this.badge}</div>}
+      <Host tabindex="0" {...hostParams} class={hostClasses}>
+        <slot></slot>
 
-            <slot></slot>
-
-            {this.closeable && (
-              <svg viewBox='0 0 24 24'>
-                <path
-                  fill='currentColor'
-                  d='M19,6.41L17.59,5L12,10.59L6.41,5L5,6.41L10.59,12L5,17.59L6.41,19L12,13.41L17.59,19L19,17.59L13.41,12L19,6.41Z'
-                />
-              </svg>
-            )}
-          </div>
-        </div>
+        {this.closeable && (
+          <c-icon-button onClick={() => this._onClose()}>
+            <c-icon size={16} path={mdiClose}></c-icon>
+          </c-icon-button>
+        )}
       </Host>
     );
   }

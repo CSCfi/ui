@@ -10,5 +10,6 @@
     "sideBar.border": "#086165",
     "tab.activeBorder": "#086165"
   },
-  "peacock.color": "#086165"
+  "peacock.color": "#086165",
+  "typescript.tsdk": "node_modules/typescript/lib"
 }

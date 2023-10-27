@@ -8,25 +8,44 @@ import { consola } from 'consola';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-export default async (component, filename) => {
+export default async (component, folder) => {
   try {
-    const writeStream = fs.createWriteStream(filename);
+    const directory = path.resolve(
+      __dirname,
+      `../../components/examples/${component}`,
+    );
 
-    const writeline = (line, lineChange = true) => {
-      if (lineChange) {
-        writeStream.write('\n');
-      }
+    const examples = fs.readdirSync(directory);
 
-      writeStream.write(line.replace(/^\s{4}/, ''));
-    };
+    const dataFolder = `${folder}/${component}`;
 
-    let hasInfo = false;
-    let isExample = false;
-    let exampleName = '';
-    let isInStartTag = false;
-    let row = 0;
+    if (!fs.existsSync(dataFolder)) {
+      fs.mkdirSync(dataFolder);
+    }
 
-    const infoText = `/**
+    for await (const example of examples) {
+      const exampleName = example.split('.')[0].toLowerCase();
+
+      if (exampleName === 'index') continue;
+
+      const filename = `${folder}/${component}/${exampleName}.template.js`;
+
+      const writeStream = fs.createWriteStream(filename);
+
+      const writeline = (line, lineChange = true) => {
+        if (lineChange) {
+          writeStream.write('\n');
+        }
+
+        writeStream.write(line.replace(/^\s{4}/, ''));
+      };
+
+      let hasInfo = false;
+      let isExample = false;
+      let isInStartTag = false;
+      let row = 0;
+
+      const infoText = `/**
  * Examples for ${component}.
  * Automatically generated at ${new Date().toLocaleString()}.
  *
@@ -34,70 +53,77 @@ export default async (component, filename) => {
  */
 `;
 
-    const rl = readline.createInterface({
-      input: fs.createReadStream(
-        path.resolve(__dirname, `../../components/examples/${component}`),
-      ),
-      crlfDelay: Infinity,
-    });
+      const rl = readline.createInterface({
+        input: fs.createReadStream(
+          path.resolve(
+            __dirname,
+            `../../components/examples/${component}/${example}`,
+          ),
+        ),
+        crlfDelay: Infinity,
+      });
 
-    rl.on('line', (line) => {
-      if (line.replace(/^\s+/g, '').startsWith('<template #')) return;
+      rl.on('line', (line) => {
+        if (line.replace(/^\s+/g, '').startsWith('<template #')) return;
 
-      if (!hasInfo) {
-        writeline(infoText);
+        if (!hasInfo) {
+          writeline(infoText);
 
-        hasInfo = true;
-      }
+          hasInfo = true;
+        }
 
-      if (isInStartTag && line.endsWith('>')) {
-        isInStartTag = false;
-        return;
-      }
+        if (
+          line.replace(/^\s+/g, '').startsWith('<!-- @example-skip-line') ||
+          line.replace(/^\s+/g, '').endsWith('@example-skip-line -->')
+        ) {
+          return;
+        }
 
-      if (
-        line.replace(/^\s+/g, '').startsWith('<component-example') ||
-        isInStartTag
-      ) {
-        isInStartTag = !line.endsWith('>');
-        exampleName = line.match(/name="([^"]+)"/);
+        if (isInStartTag && line.endsWith('>')) {
+          isInStartTag = false;
+          return;
+        }
 
-        if (!exampleName) return;
+        if (
+          line.replace(/^\s+/g, '').startsWith('<component-example') ||
+          isInStartTag
+        ) {
+          isInStartTag = !line.endsWith('>');
 
-        isExample = true;
+          isExample = true;
 
-        writeline(`export const ${exampleName.pop()} = \``);
+          writeline('export default `');
 
-        return;
-      }
+          return;
+        }
 
-      if (
-        line.replace(/^\s+/g, '').startsWith('</component-example>') &&
-        isExample
-      ) {
-        isExample = false;
-        exampleName = '';
-        row = 0;
+        if (
+          line.replace(/^\s+/g, '').startsWith('</component-example>') &&
+          isExample
+        ) {
+          isExample = false;
+          row = 0;
 
-        writeline('`;', false);
-        writeline('');
+          writeline('`;', false);
+          writeline('');
 
-        return;
-      }
+          return;
+        }
 
-      if (isExample) {
-        row += 1;
-        writeline(line, row > 1);
-      }
-    });
+        if (isExample) {
+          row += 1;
+          writeline(line, row > 1);
+        }
+      });
 
-    writeStream.on('finish', () => {
-      consola.success(filename);
-    });
+      writeStream.on('finish', () => {
+        consola.success(filename);
+      });
 
-    await events.once(rl, 'close');
+      await events.once(rl, 'close');
 
-    writeStream.end();
+      writeStream.end();
+    }
   } catch (err) {
     console.error(err);
   }

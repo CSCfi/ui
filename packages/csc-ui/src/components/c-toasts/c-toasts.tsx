@@ -45,7 +45,7 @@ export class CToasts {
     persistent: false,
     indeterminate: false,
     position: CToastPosition.Fixed,
-    progress: true,
+    progress: false,
     id: `c-toast-item-${CToasts._uniqueId}`,
   });
 
