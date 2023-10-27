@@ -14,21 +14,42 @@
 | `size`   | `size`    | Icon size in pixels        | `number` | `24`             |
 
 
+## CSS Custom Properties
+
+| Name             | Description       |
+| ---------------- | ----------------- |
+| `--c-icon-color` | Color of the icon |
+
+
 ## Dependencies
 
 ### Used by
 
+ - [c-accordion-item](../c-accordion-item)
  - [c-card](../c-card)
  - [c-data-table](../c-data-table)
- - [c-link](../c-link)
+ - [c-dropdown](../c-dropdown)
+ - [c-menu](../c-menu)
+ - [c-navigation-button](../c-navigation-button)
+ - [c-pagination](../c-pagination)
+ - [c-side-navigation](../c-side-navigation)
+ - [c-tabs](../c-tabs)
+ - [c-tag](../c-tag)
  - [c-toast](../c-toast)
 
 ### Graph
 ```mermaid
 graph TD;
+  c-accordion-item --> c-icon
   c-card --> c-icon
   c-data-table --> c-icon
-  c-link --> c-icon
+  c-dropdown --> c-icon
+  c-menu --> c-icon
+  c-navigation-button --> c-icon
+  c-pagination --> c-icon
+  c-side-navigation --> c-icon
+  c-tabs --> c-icon
+  c-tag --> c-icon
   c-toast --> c-icon
   style c-icon fill:#f9f,stroke:#333,stroke-width:4px
 ```

@@ -1,4 +1,15 @@
 :host {
+  /**
+   * @prop --c-icon-color: Color of the icon
+   */
+  --_c-icon-color: var(--c-icon-color, var(--c-icon-default-color, curentColor));
+
   display: inline-flex;
   align-items: center;
+
+  svg {
+    path {
+      fill: var(--_c-icon-color);
+    }
+  }
 }

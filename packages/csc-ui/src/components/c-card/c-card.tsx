@@ -5,12 +5,9 @@ import {
   Host,
   h,
   Prop,
-  getAssetPath,
   State,
   Method,
 } from '@stencil/core';
-
-export type CardBackground = 'puhti' | 'mahti' | 'allas';
 
 /**
  * @group Cards
@@ -24,16 +21,6 @@ export type CardBackground = 'puhti' | 'mahti' | 'allas';
 })
 export class CCard {
   /**
-   * Card background image for login pages of specific services
-   */
-  @Prop() background: CardBackground;
-
-  /**
-   * Background color
-   */
-  @Prop() backgroundColor = 'white';
-
-  /**
    * Enable the fullscreen toggle button
    */
   @Prop() fullscreen = false;
@@ -42,10 +29,18 @@ export class CCard {
 
   @Element() host: HTMLCCardElement;
 
-  private _allowedBackgrounds = ['puhti', 'mahti', 'allas'];
+  private _toggleFullscreen() {
+    this.isFullscreen = !this.isFullscreen;
+  }
 
   private _onFullscreen() {
-    this.isFullscreen = !this.isFullscreen;
+    if (document.fullscreenElement) {
+      this.exitFullscreen();
+
+      return;
+    }
+
+    this.host.requestFullscreen();
 
     const modalWrapper =
       this.host.parentElement?.shadowRoot?.querySelector('.modal-wrapper');
@@ -63,6 +58,18 @@ export class CCard {
     if (!!title && this.fullscreen) {
       title.style.marginRight = '40px';
     }
+
+    this.host.addEventListener(
+      'fullscreenchange',
+      this._toggleFullscreen.bind(this),
+    );
+  }
+
+  disconnectedCallback() {
+    this.host.removeEventListener(
+      'fullscreenchange',
+      this._toggleFullscreen.bind(this),
+    );
   }
 
   /**
@@ -70,7 +77,9 @@ export class CCard {
    */
   @Method()
   async exitFullscreen() {
-    this.isFullscreen = false;
+    if (!document.fullscreenElement) return;
+
+    document.exitFullscreen();
 
     const modalWrapper =
       this.host.parentElement?.shadowRoot?.querySelector('.modal-wrapper');
@@ -89,39 +98,28 @@ export class CCard {
   }
 
   render() {
-    const style = {
-      'background-color': this.backgroundColor,
-    };
-
     const hostClasses = {
       'c-card': true,
-      'c-card--fullscreen': this.isFullscreen,
     };
 
-    if (this._allowedBackgrounds.includes(this.background)) {
-      style['background-image'] = `url(${getAssetPath(
-        `./assets/${this.background}.gif`,
-      )}`;
-      style['background-size'] = 'cover';
-      style['background-position-y'] = 'bottom';
-    }
-
     return (
-      <Host class={hostClasses} style={style}>
-        {this.fullscreen && (
-          <c-icon-button
-            aria-hidden='true'
-            class='c-card__fullscreen-toggle'
-            title={this.isFullscreen ? 'Exit fullscreen' : 'Enter fullscreen'}
-            text
-            onClick={() => this._onFullscreen()}
-          >
-            <c-icon
-              path={this.isFullscreen ? mdiFullscreenExit : mdiFullscreen}
-            />
-          </c-icon-button>
-        )}
-        <slot></slot>
+      <Host class={hostClasses}>
+        <article>
+          {this.fullscreen && (
+            <c-icon-button
+              aria-hidden="true"
+              class="c-card__fullscreen-toggle"
+              title={this.isFullscreen ? 'Exit fullscreen' : 'Enter fullscreen'}
+              text
+              onClick={() => this._onFullscreen()}
+            >
+              <c-icon
+                path={this.isFullscreen ? mdiFullscreenExit : mdiFullscreen}
+              />
+            </c-icon-button>
+          )}
+          <slot></slot>
+        </article>
       </Host>
     );
   }

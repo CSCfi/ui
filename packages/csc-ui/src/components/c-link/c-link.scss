@@ -1,29 +1,42 @@
-$icon-margin: 4px;
+:host(c-link) {
+  /**
+   * @prop --_c-link-color: Link color
+   * @prop --_c-link-hover: Link hover background color
+   */
+  --_c-link-color: var(--c-link-color, var(--c-info-700));
+  --_c-link-hover: var(--c-link-hover, var(--c-accent-200));
 
-a {
-  display: inline-flex;
-  cursor: pointer;
-  font-size: 16px;
-  text-decoration: none;
-}
+  a {
+    --_c-link-icon-margin: 8px;
 
-a.icon {
-  display: flex;
-  align-items: center;
-  & svg {
-    margin-right: $icon-margin;
+    align-items: center;
+    color: var(--_c-link-color);
+    background-color: var(--c-transparent);
+    display: inline-flex;
+    cursor: pointer;
+    font-size: inherit;
+    text-decoration: none;
+    gap: var(--_c-link-icon-margin);
+    transition: background-color 0.3s ease-in-out;
+
+    &:hover {
+      background-color: var(--_c-link-hover);
+    }
+
+    @supports selector(:focus-visible) {
+      &:focus {
+        outline: none;
+      }
+    }
+
+    &:focus-visible {
+      outline: 2px var(--_c-link-color) solid;
+      outline-offset: 4px;
+      border-radius: 2px;
+    }
+  }
+
+  a.underline {
+    text-decoration: underline;
   }
 }
-
-a.icon-after {
-  flex-direction: row-reverse;
-  & svg {
-    margin-left: $icon-margin;
-  }
-}
-
-a.underline {
-  text-decoration: underline;
-}
-
-

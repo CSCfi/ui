@@ -1,0 +1,24 @@
+:host {
+  --_c-tab-item-padding: 16px;
+
+  display: block;
+  min-width: 100%;
+  padding: var(--_c-tab-item-padding);
+  height: 0;
+  user-select: none;
+}
+
+:host([active="true"]) {
+  height: auto;
+  user-select: auto;
+}
+
+:host([active="false"]) > div {
+  display: none;
+}
+
+:host([disabled="true"]) {
+  min-width: 0;
+  width: 0;
+  overflow: hidden;
+}

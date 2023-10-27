@@ -1,4 +1,5 @@
 import {
+  AttachInternals,
   Component,
   Event,
   EventEmitter,
@@ -16,8 +17,12 @@ import {
   tag: 'c-otp-input',
   styleUrl: 'c-otp-input.scss',
   shadow: true,
+  formAssociated: true,
 })
 export class COtpInput {
+  // eslint-disable-next-line
+  @AttachInternals() internals: ElementInternals;
+
   /**
    * Hide the hint and error messages
    */
@@ -88,6 +93,8 @@ export class COtpInput {
       if (isFullyFilled) {
         this.completion.emit(this._value || null);
       }
+
+      this.internals.setFormValue(this._value);
 
       this._updateStatusText();
     });
@@ -216,8 +223,8 @@ export class COtpInput {
         aria-label={`Enter code - digit number - ${index + 1} of ${
           this.length
         }`}
-        type='tel'
-        maxlength='1'
+        type="tel"
+        maxlength="1"
         onFocus={() => this._onFocus(index)}
         onInput={(event) => this._onInput(event)}
         onKeyDown={(event) => this._onKeyDown(event)}
@@ -228,6 +235,8 @@ export class COtpInput {
 
   componentWillLoad() {
     COtpInput._uniqueId += 1;
+
+    this.internals.setFormValue(this._value);
   }
 
   render() {
@@ -239,13 +248,14 @@ export class COtpInput {
     return (
       <Host
         id={this.id}
-        style={{ '--c-otp-input-count': this.length.toString() }}
+        style={{ '--_c-otp-input-count': this.length.toString() }}
+        class={{ error: !this.valid }}
       >
         <div
           id={'announce-' + this.id}
-          class='visuallyhidden'
-          aria-live='polite'
-          aria-atomic='true'
+          class="visuallyhidden"
+          aria-live="polite"
+          aria-atomic="true"
         >
           {this.statusText}
         </div>

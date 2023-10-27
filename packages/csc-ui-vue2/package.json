@@ -1,5 +1,5 @@
 {
-  "author": "Oskari Väistö <oskari.vaisto@csc.fi>",
+  "author": "My CSC Team <suiteamsui@gmail.com>",
   "dependencies": {
     "vue": "^2.7.14"
   },
@@ -15,7 +15,7 @@
     "vue2",
     "csc-ui"
   ],
-  "license": "ISC",
+  "license": "MIT",
   "main": "lib/vControl.js",
   "name": "@cscfi/csc-ui-vue2",
   "scripts": {

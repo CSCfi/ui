@@ -1,7 +1,27 @@
 :host {
+  /**
+   * @prop --c-tab-border-color-active: Active tab bottom border color
+   * @prop --c-tab-background-color-hover: Tab hover background color
+   * @prop --c-tab-outline-color: Tab outline color
+   * @prop --c-tab-text-color: Tab text color
+   */
+  --_c-tab-border-color-active: var(--c-tab-border-color-active, var(--_c-tab-text-color));
+  --_c-tab-background-color-hover: var(--c-tab-background-color-hover, var(--c-primary-100));
+  --_c-tab-outline-color: var(--c-tab-outline-color, var(--_c-tab-text-color));
+  --_c-tab-text-color: var(--c-tab-text-color, var(--c-primary-600));
+
   display: block;
   user-select: none;
+  min-width: min-content;
+  padding-inline: 12px;
   flex-grow: 1;
+
+  span {
+    max-width: 100%;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
 }
 
 :host(:focus) {
@@ -10,11 +30,11 @@
 
 :host(:focus-visible) {
   border-radius: 4px;
-  outline: 2px var(--csc-primary) solid;
+  outline: 2px var(--_c-tab-outline-color) solid;
   outline-offset: 2px;
 }
 
-:host([role='tab'][aria-disabled='true']) {
+:host([role="tab"][aria-disabled="true"]) {
   cursor: default !important;
 }
 
@@ -23,34 +43,31 @@ slot {
 }
 
 :host(.c-tab) {
-  transition: box-shadow 0.3s ease-in-out;
+  align-items: center;
+  color: var(--_c-tab-text-color);
   cursor: pointer;
-  display: block;
-  height: 50px;
-  line-height: 50px;
-  color: var(--csc-primary);
+  display: inline-flex;
   font-weight: 600;
-  text-align: center;
-  box-shadow: inset 0 0 0 transparent;
-  position: relative;
+  height: 52px;
+  justify-content: center;
   overflow: hidden;
+  position: relative;
 }
 
 :host(.c-tab:hover) {
-  background: var(--csc-primary-ghost);
+  background-color: var(--_c-tab-background-color-hover);
 }
 
 :host(.c-tab--active) {
-  color: var(--csc-primary);
-  box-shadow: inset 0 -15px 0 -12px var(--csc-primary);
+  // box-shadow: inset 0 -3px 0 0 var(--_c-tab-border-color-active);
 }
 
 :host(.c-tab--active:hover) {
-  background: transparent !important;
+  background-color: transparent !important;
 }
 
 :host(.c-tab--disabled) {
-  color: var(--csc-mid-grey);
+  color: var(--c-tertiary-500);
   cursor: default;
   opacity: 0.75;
   pointer-events: none;

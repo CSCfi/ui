@@ -1,29 +1,108 @@
-.c-tab-buttons {
-  --c-switch-border-color: var(--csc-primary);
+:host {
+  /**
+   * @prop --c-tab-buttons-background-color-active-hover: Active tab button hover background color
+   * @prop --c-tab-buttons-background-color-active: Active tab button background color
+   * @prop --c-tab-buttons-text-color-active: Active tab button text color
+   */
+  --_c-tab-buttons-background-color-active-hover: var(--c-tab-buttons-background-color-active-hover, var(--c-primary-400));
+  --_c-tab-buttons-background-color-active: var(--c-tab-buttons-background-color-active, var(--c-primary-600));
+  --_c-tab-buttons-text-color-active: var(--c-tab-buttons-text-color-active, var(--c-white));
 
+  /**
+   * @prop --c-tab-buttons-background-color-hover: Tab button hover background color
+   * @prop --c-tab-buttons-background-color: Tab button background color
+   * @prop --c-tab-buttons-border-color: Tab button border color
+   * @prop --c-tab-buttons-text-color: Tab button text color
+   */
+  --_c-tab-buttons-background-color-hover: var(--c-tab-buttons-background-color-hover, var(--c-primary-200));
+  --_c-tab-buttons-background-color: var(--c-tab-buttons-background-color, var(--c-white));
+  --_c-tab-buttons-border-color: var(--c-tab-buttons-border-color, var(--c-primary-600));
+  --_c-tab-buttons-text-color: var(--c-tab-buttons-text-color, var(--c-primary-600));
+
+  /**
+   * @prop --c-tab-buttons-background-color: Disabled tab buttons border color
+   */
+  --_c-tab-buttons-border-color-disabled: var(--c-tab-buttons-border-color-disabled, var(--c-tertiary-400));
+
+  /**
+   * @prop --c-tab-buttons-border-radius: Tab buttons border radius
+   */
+  --_c-tab-buttons-border-radius: var(--c-tab-buttons-border-radius, 4px);
+
+  background-color: var(--_c-tab-buttons-border-color);
+  border-radius: var(--_c-tab-buttons-border-radius);
+  box-shadow: 0 0 0 2px var(--_c-tab-buttons-border-color);
   display: flex;
   flex-wrap: wrap;
-  box-shadow: 0 0 0 2px var(--c-switch-border-color);
-  margin: 2px;
-  border-radius: var(--csc-border-radius);
-  background-color: var(--csc-primary);
   gap: 2px;
+  margin: 2px;
+
+  ::slotted(c-button) {
+    --c-button-background-color-hover: var(--_c-tab-buttons-background-color-active-hover);
+    --c-button-background-color: var(--_c-tab-buttons-background-color-active);
+    --c-button-text-color: var(--_c-tab-buttons-text-color-active);
+    --_c-button-border-radius: 0;
+    --_c-button-min-width: auto;
+    --_c-button-padding: 0 8px;
+    --_c-button-outline-offset: 4px;
+
+    flex-grow: 1;
+  }
+
+  ::slotted(c-button.c-button--outlined) {
+    --c-button-outlined-background-color-hover: var(--_c-tab-buttons-background-color-hover);
+    --c-button-outlined-background-color: var(--_c-tab-buttons-background-color);
+    --c-button-outlined-border-color: var(--_c-tab-buttons-border-color);
+    --c-button-outlined-text-color: var(--_c-tab-buttons-text-color);
+
+    box-shadow: none;
+
+    &::before,
+    &::after {
+      background-color: #ffffff;
+      border-radius: inherit;
+      content: "";
+      height: 100%;
+      left: 0;
+      position: absolute;
+      top: 0;
+      transition: background-color 0.3s ease-in-out;
+      width: 100%;
+      z-index: -1;
+    }
+
+    &:hover {
+      background-color: var(--c-tab-button-background-color);
+    }
+  }
+
+  ::slotted(c-button:first-child) {
+    --_c-button-border-radius: var(--_c-tab-buttons-border-radius) 0 0 var(--_c-tab-buttons-border-radius);
+  }
+
+  ::slotted(c-button:last-child) {
+    --_c-button-border-radius: 0 var(--_c-tab-buttons-border-radius) var(--_c-tab-buttons-border-radius) 0;
+  }
 
   ::slotted(*) {
     flex-grow: 1;
   }
+}
 
-  &--disabled {
-    --c-switch-border-color: var(--csc-light-grey);
-    pointer-events: none;
-    background-color: var(--csc-light-grey);
+:host(.disabled) {
+  --_c-tab-buttons-border-color: var(--_c-tab-buttons-border-color-disabled) !important;
+
+  pointer-events: none;
+}
+
+:host(.c-tab-buttons) {
+  ::slotted(c-button:focus) {
+    outline: none;
   }
-}
 
-::slotted(c-button:first-child) {
-  --c-radius: 4px 0 0 4px;
-}
-
-::slotted(c-button:last-child) {
-  --c-radius: 0 4px 4px 0;
+  ::slotted(c-button:focus-visible) {
+    outline: 2px var(--_c-tab-buttons-border-color) solid;
+    outline-offset: 4px;
+    z-index: 1;
+  }
 }

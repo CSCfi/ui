@@ -25,9 +25,16 @@ export class CSwiper {
    */
   @Prop({ reflect: true, mutable: true }) value: number | string;
 
+  /**
+   * Id of the swiper element
+   */
+  @Prop({ attribute: 'id' }) elementId!: string;
+
   @State() isBeginning = true;
 
   @State() isEnd = false;
+
+  @State() statusText = '';
 
   /**
    * Emit value change to the parent
@@ -42,47 +49,47 @@ export class CSwiper {
 
   private _options: SwiperOptions;
 
+  private _debounce = null;
+
+  private static _uniqueId = 0;
+
   @Listen('changeValue')
   onTabClick(event: MouseEvent) {
+    event.stopPropagation();
+
     this.value = event.detail;
 
-    this.slotItems.forEach((child) => {
-      child.active = child.value === event.detail;
-    });
-  }
-
-  @Listen('focusTab', { passive: true })
-  onTabFocus(event: CustomEvent<number | string>) {
-    const index = (event.target as HTMLCSwiperTabElement).dataset.index;
-
-    this._slideToTab(index);
+    this._updateStatusText();
   }
 
   @Listen('keyup', { capture: true })
-  handleKeyUp(ev: KeyboardEvent) {
-    const isArrowLeft = ev.key === 'ArrowLeft';
-    const isArrowRight = ev.key === 'ArrowRight';
-    const isBeginning = +this.value === 1;
-    const isEnd = +this.value === this.slotItems.length;
+  handleKeyUp(event: KeyboardEvent) {
+    const index = +(event.target as HTMLCSwiperTabElement).dataset.index;
+    const isArrowLeft = event.key === 'ArrowLeft';
+    const isArrowRight = event.key === 'ArrowRight';
+    const isBeginning = index === 0;
+    const isEnd = index === this.slotItems.length - 1;
 
     if (!isArrowRight && !isArrowLeft) return;
 
     if (isArrowLeft) {
-      this.value = (
-        isBeginning ? this.slotItems.length : +this.value - 1
-      ).toString();
+      if (isBeginning) return;
+
+      this.value = this.slotItems[index - 1].value;
     }
 
     if (isArrowRight) {
-      this.value = (isEnd ? 1 : +this.value + 1).toString();
+      if (isEnd) return;
+
+      this.value = this.slotItems[index + 1].value;
     }
 
-    this._slideToTab(+this.value - 1);
+    this._slideToTab(index - 1);
 
     this.slotItems.forEach((child) => {
       const isActive = child.value === this.value;
 
-      child.active = isActive;
+      // child.active = isActive;
 
       if (isActive) {
         child.focus();
@@ -90,6 +97,10 @@ export class CSwiper {
     });
 
     this.changeValue.emit(this.value);
+  }
+
+  get id() {
+    return this.elementId || `c-swiper--${CSwiper._uniqueId}`;
   }
 
   get slotItems() {
@@ -129,17 +140,23 @@ export class CSwiper {
       keyboard: true,
     };
 
-    this._initSwiper();
+    this._initializeSwiper();
   }
 
-  private _initSwiper() {
+  private _initializeSwiper() {
     for (const [index, slide] of this.slotItems.entries()) {
       slide.classList.add('swiper-slide');
       slide.setAttribute('data-index', index.toString());
+
       slide.value = slide.value ?? index;
-      slide.active = this.value === slide.value;
       slide.position = index + 1;
       slide.setsize = this.slotItems.length;
+
+      if (slide.active) {
+        requestAnimationFrame(() => {
+          this._slideToTab(index);
+        });
+      }
     }
 
     this._swiper = new Swiper(this._container, {
@@ -150,58 +167,86 @@ export class CSwiper {
       this.isBeginning = isBeginning;
       this.isEnd = isEnd;
     });
+  }
 
-    this._slideToTab(
-      this.slotItems?.findIndex((item) => item.value === this.value) || 0,
-    );
+  private _updateStatusText() {
+    this.statusText = '';
+
+    if (this._debounce !== null) {
+      clearTimeout(this._debounce);
+      this._debounce = null;
+    }
+
+    this._debounce = window.setTimeout(() => {
+      const selection = this.slotItems?.find(
+        (item) => item.value === this.value,
+      );
+
+      this.statusText += `Currently selected - ${selection?.label}`;
+
+      this._debounce = null;
+    }, 1400);
+  }
+
+  componentWillLoad() {
+    CSwiper._uniqueId += 1;
   }
 
   render() {
     return (
-      <div class='c-swiper swiper'>
+      <div class="c-swiper swiper">
         <div
-          class='swiper-container'
+          id={'announce-' + this.id}
+          class="visuallyhidden"
+          aria-live="polite"
+          aria-atomic="true"
+        >
+          {this.statusText}
+        </div>
+
+        <div
+          class="swiper-container"
           ref={(el) => (this._container = el as HTMLDivElement)}
         >
           <div
-            role='tablist'
-            class='swiper-wrapper'
+            role="tablist"
+            class="swiper-wrapper"
             ref={(el) => (this._wrapper = el as HTMLDivElement)}
           >
             <slot></slot>
           </div>
 
-          <div class='c-swiper__navigation'>
+          <div class="c-swiper__navigation">
             <c-icon-button
               aria-disabled={this.isBeginning ? 'true' : 'false'}
-              aria-label='previous page'
-              class='c-icon-button--prev'
+              aria-label="previous page"
+              class="c-icon-button--prev"
               disabled={this.isBeginning}
-              size='small'
+              size="small"
               ghost
             >
-              <span class='visuallyhidden'>
+              <span class="visuallyhidden">
                 Previous
                 <span>page</span>
               </span>
-              <svg width='24' height='24' viewBox='0 0 24 24'>
+              <svg width="24" height="24" viewBox="0 0 24 24">
                 <path d={mdiChevronLeft} />
               </svg>
             </c-icon-button>
 
             <c-icon-button
               aria-disabled={this.isEnd ? 'true' : 'false'}
-              aria-label='next page'
-              class='c-icon-button--next'
+              aria-label="next page"
+              class="c-icon-button--next"
               disabled={this.isEnd}
-              size='small'
+              size="small"
               ghost
             >
-              <span class='visuallyhidden'>
+              <span class="visuallyhidden">
                 Next
                 <span>page</span>
               </span>
-              <svg width='24' height='24' viewBox='0 0 24 24'>
+              <svg width="24" height="24" viewBox="0 0 24 24">
                 <path d={mdiChevronRight} />
               </svg>
             </c-icon-button>

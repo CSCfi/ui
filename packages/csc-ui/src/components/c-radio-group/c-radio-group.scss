@@ -1,56 +1,66 @@
 :host {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-}
-
-.c-radio-group {
-  --c-radio-flex-direction: column;
-  --c-radio-item-gap: 2px;
+  /**
+   * @prop --c-radio-group-background-color-hover: Radio button hover background color
+   * @prop --c-radio-group-color: Radio button color
+   * @prop --c-radio-group-color-active: Active radio button color
+   * @prop --c-radio-group-color-disabled: Disabled radio button color
+   */
+  --_c-radio-group-background-color-hover: var(--c-radio-group-background-color-hover, rgba(var(--c-primary-rgb), 0.1));
+  --_c-radio-group-color: var(--c-radio-group-color, var(--c-primary-600));
+  --_c-radio-group-color-active: var(--c-radio-group-color-active, var(--_c-radio-group-color));
+  --_c-radio-group-color-disabled: var(--c-radio-group-color-disabled, var(--c-tertiary-500));
 
   display: flex;
   flex-direction: column;
   gap: 4px;
   width: fit-content;
+}
+
+.c-radio-group {
+  --_c-radio-group-error-color: var(--c-error-600);
+  --_c-radio-flex-direction: column;
+  --_c-radio-item-gap: 2px;
 
   &__items {
     display: flex;
-    flex-direction: var(--c-radio-flex-direction);
-    flex-wrap: wrap;
-    gap: var(--c-radio-item-gap);
+    flex-flow: var(--_c-radio-flex-direction) wrap;
+    gap: var(--_c-radio-item-gap);
   }
 
   &__label {
+    display: flex;
+    gap: 4px;
+    align-items: center;
+
     span.required {
-      color: var(--csc-error);
+      color: var(--_c-radio-group-error-color);
     }
   }
 
   &--disabled {
-    --c-radio-color: var(--csc-mid-grey);
-    --csc-error: var(--csc-mid-grey);
+    --_c-radio-group-color: var(--_c-radio-group-color-disabled);
+    --_c-radio-group-error-color: var(--_c-radio-group-color-disabled);
 
-    color: var(--c-radio-color);
+    color: var(--_c-radio-group-color-disabled);
     cursor: default;
     opacity: 0.75;
   }
 
   &--error {
-    --c-radio-color: var(--csc-error);
+    --_c-radio-group-color: var(--_c-radio-group-error-color);
+    --_c-radio-group-color-active: var(--_c-radio-group-error-color);
 
-    color: var(--csc-error);
+    color: var(--_c-radio-group-error-color);
   }
 
   &--inline {
-    --c-radio-flex-direction: row;
-    --c-radio-item-gap: 12px;
+    --_c-radio-flex-direction: row;
+    --_c-radio-item-gap: 12px;
   }
 }
 
 .c-radio {
   $this: &;
-
-  --c-radio-color: var(--csc-primary);
 
   align-items: flex-start;
   display: flex;
@@ -84,7 +94,7 @@
     border-radius: 50%;
     overflow: hidden;
     transition: translateZ(0);
-    color: var(--csc-primary);
+    color: var(--_c-radio-group-color);
   }
 
   .selection {
@@ -94,12 +104,12 @@
     height: 20px;
     width: 20px;
     background-color: transparent;
-    box-shadow: inset 0 0 0 2px var(--c-radio-color);
+    box-shadow: inset 0 0 0 2px var(--_c-radio-group-color);
     border-radius: 50%;
     transition: box-shadow 0.15s ease-in-out;
 
     &::after {
-      content: '';
+      content: "";
       position: absolute;
       transform: scale(0);
       transition: transform 0.15s ease-in-out;
@@ -108,7 +118,7 @@
       width: 10px;
       height: 10px;
       border-radius: 50%;
-      background: var(--c-radio-color);
+      background: var(--_c-radio-group-color-active);
     }
   }
 
@@ -120,7 +130,7 @@
       #{$this} {
         &__message {
           opacity: 1;
-          transform: translateY(0px);
+          transform: translateY(0);
         }
       }
     }
@@ -133,11 +143,11 @@
     transition: all 0.2s cubic-bezier(0.25, 0.8, 0.5, 1);
 
     &--hint {
-      color: var(--csc-mid-grey);
+      color: var(--c-tertiary-500);
     }
 
     &--error {
-      color: var(--csc-error) !important;
+      color: var(--_c-radio-group-error-color) !important;
     }
 
     span {
@@ -147,11 +157,11 @@
       height: 16px;
 
       &.error {
-        color: var(--csc-error);
+        color: var(--_c-radio-group-error-color);
       }
 
       &.hint {
-        color: var(--csc-mid-grey);
+        color: var(--c-tertiary-500);
       }
     }
 
@@ -169,22 +179,23 @@
   }
 
   &--disabled {
-    --c-radio-color: var(--csc-mid-grey);
+    --_c-radio-group-color: var(--_c-radio-group-color-disabled);
+    --_c-radio-group-color-active: var(--_c-radio-group-color-disabled);
 
-    color: var(--c-radio-color);
+    color: var(--_c-radio-group-color);
     cursor: default;
     opacity: 0.75;
   }
 
   &--error {
-    --c-radio-color: var(--csc-error);
+    --_c-radio-group-color: var(--_c-radio-group-error-color);
 
-    color: var(--csc-error);
+    color: var(--_c-radio-group-error-color);
 
     span,
     svg {
-      fill: var(--csc-error);
-      color: var(--csc-error);
+      fill: var(--_c-radio-group-error-color);
+      color: var(--_c-radio-group-error-color);
     }
   }
 
@@ -193,7 +204,7 @@
   }
 
   input:focus + .ripple {
-    outline: 2px var(--c-radio-color) solid;
+    outline: 2px var(--_c-radio-group-color-active) solid;
   }
 
   @supports selector(:focus-visible) {
@@ -203,12 +214,12 @@
   }
 
   input:focus-visible + .ripple {
-    outline: 2px var(--c-radio-color) solid;
+    outline: 2px var(--_c-radio-group-color) solid;
   }
 
   &:not(.c-radio--disabled) {
     .ripple:hover {
-      background-color: var(--csc-primary-text-hover);
+      background-color: var(--_c-radio-group-background-color-hover);
     }
   }
 }

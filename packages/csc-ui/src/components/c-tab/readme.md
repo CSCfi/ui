@@ -19,9 +19,10 @@
 
 ## Events
 
-| Event       | Description                | Type               |
-| ----------- | -------------------------- | ------------------ |
-| `tabChange` | Emit changes to the parent | `CustomEvent<any>` |
+| Event       | Description                | Type                                                                  |
+| ----------- | -------------------------- | --------------------------------------------------------------------- |
+| `tabChange` | Emit changes to the parent | `CustomEvent<{ value: string \| number; element: HTMLCTabElement; }>` |
+| `tabFocus`  | Emit focus to the parent   | `CustomEvent<number \| string>`                                       |
 
 
 ## Slots
@@ -29,6 +30,16 @@
 | Slot             | Description  |
 | ---------------- | ------------ |
 | `"Default slot"` | Default slot |
+
+
+## CSS Custom Properties
+
+| Name                             | Description                    |
+| -------------------------------- | ------------------------------ |
+| `--c-tab-background-color-hover` | Tab hover background color     |
+| `--c-tab-border-color-active`    | Active tab bottom border color |
+| `--c-tab-outline-color`          | Tab outline color              |
+| `--c-tab-text-color`             | Tab text color                 |
 
 
 ## Dependencies

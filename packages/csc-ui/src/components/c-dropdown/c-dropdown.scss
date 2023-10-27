@@ -1,0 +1,94 @@
+:host {
+  /**
+   * @prop --c-dropdown-background-color: Menu background color
+   * @prop --c-dropdown-background-color-hover: Menu item hover background color
+   * @prop --c-dropdown-text-color: Menu item text color
+   * @prop --c-dropdown-text-color-active: Active menu item text color
+   */
+  --_c-dropdown-background-color: var(--c-dropdown-background-color, var(--c-white));
+  --_c-dropdown-background-color-hover: var(--c-dropdown-background-color-hover, var(--c-primary-200));
+  --_c-dropdown-text-color: var(--c-dropdown-text-color, var(--c-text-body));
+  --_c-dropdown-text-color-active: var(--c-dropdown-text-color-active, var(--c-primary-600));
+
+  // private
+  --_c-dropdown-font-size: 14px;
+  --_c-dropdown-height: 42px;
+
+  display: block;
+  position: absolute;
+
+  mark {
+    color: inherit;
+    background-color: transparent;
+    box-shadow: 0 2px 0 0 var(--_c-dropdown-text-color-active);
+  }
+
+  ul {
+    margin: 0;
+    padding: 0;
+    background-color: var(--_c-dropdown-background-color);
+    list-style: none;
+    box-shadow: 2px 4px 10px #00000029;
+    width: 100%;
+    overflow-y: scroll;
+    pointer-events: auto;
+    border-radius: 4px;
+    visibility: hidden;
+    outline: none;
+
+    &.active {
+      visibility: visible;
+      animation: 0.2s 1 fade-in cubic-bezier(0.25, 0.8, 0.5, 1);
+    }
+  }
+
+  li {
+    align-items: center;
+    background: var(--c-white);
+    column-gap: 12px;
+    cursor: pointer;
+    display: flex;
+    flex-wrap: nowrap;
+    font-size: var(--_c-dropdown-font-size);
+    min-height: var(--_c-dropdown-height);
+    padding-left: 10px;
+    padding-right: 10px;
+    outline: none;
+    white-space: nowrap;
+    pointer-events: auto;
+
+    &:not(.disabled):hover,
+    &.active {
+      background: var(--_c-dropdown-background-color-hover);
+      color: var(--_c-dropdown-text-color-active);
+    }
+
+    &.disabled {
+      background-color: rgba(var(--c-tertiary-rgb), 0.05);
+      cursor: default;
+      filter: grayscale(1) opacity(0.75);
+    }
+  }
+
+  .visuallyhidden {
+    border: 0;
+    clip: rect(1px, 1px, 1px, 1px);
+    height: 1px;
+    overflow: hidden;
+    padding: 0;
+    position: absolute;
+    width: 1px;
+  }
+
+  @keyframes fade-in {
+    from {
+      opacity: 0;
+      transform: translateY(-8px);
+    }
+
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+}

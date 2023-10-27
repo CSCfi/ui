@@ -1,39 +1,56 @@
+:host {
+  /**
+   * @prop --c-login-button-background-color: Button background color
+   * @prop --c-login-button-border-color: Button border color
+   * @prop --c-login-button-outline-color: Button outline color
+   * @prop --c-login-button-text-color: Button text color
+   * @prop --c-login-button-title-background-color: Button title color
+   */
+  --_c-login-button-background-color: var(--c-login-button-background-color, var(--c-white));
+  --_c-login-button-border-color: var(--c-login-button-border-color, var(--c-primary-200));
+  --_c-login-button-outline-color: var(--c-login-button-outline-color, var(--c-primary-600));
+  --_c-login-button-text-color: var(--c-login-button-text-color, var(--c-text-system));
+  --_c-login-button-title-background-color: var(--c-login-button-title-background-color, var(--c-tertiary-100));
+}
+
 a {
+  background-color: var(--_c-login-button-background-color);
+  border-radius: 4px;
+  border: 1px var(--_c-login-button-border-color) solid;
+  color: var(--_c-login-button-text-color);
+  cursor: pointer;
   display: grid;
-  border: 1px var(--csc-light-grey) solid;
   grid-template-columns: 1fr;
   grid-template-rows: 1fr auto;
+  height: 100%;
+  min-height: 168px;
+  outline: 1px transparent solid;
   place-content: center;
-  border-radius: 4px;
   text-align: center;
   text-decoration: none;
-  color: var(--csc-dark-grey);
-  min-height: 168px;
-  height: 100%;
-  outline: 1px transparent solid;
-  transition: all 0.3s ease-in-out;
 
   img {
-    place-self: center;
+    max-height: 120px;
     max-width: 200px;
     padding: 8px 24px;
-    max-height: 120px;
+    place-self: center;
   }
 
   div {
-    background-color: rgba(0, 0, 0, 0.015);
+    background-color: var(--_c-login-button-title-background-color);
+    border-radius: 0 0 4px 4px;
+    box-shadow: 0 -1px 0 0 var(--_c-login-button-border-color);
     font-size: 14px;
     padding: 4px;
-    box-shadow: 0 -1px 0 0 rgb(0 0 0 / 5%);
   }
 
   &:hover {
-    outline: 1px var(--csc-primary) solid;
-    border-color: var(--csc-primary);
+    border-color: var(--_c-login-button-outline-color);
+    outline: 1px var(--_c-login-button-outline-color) solid;
   }
 
   &:focus {
-    outline: 2px var(--csc-primary) solid;
+    outline: 2px var(--_c-login-button-outline-color) solid;
     outline-offset: 2px;
   }
 
@@ -44,7 +61,7 @@ a {
   }
 
   &:focus-visible {
-    outline: 2px var(--csc-primary) solid;
+    outline: 2px var(--_c-login-button-outline-color) solid;
     outline-offset: 2px;
   }
 }

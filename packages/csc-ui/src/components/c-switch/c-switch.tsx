@@ -6,6 +6,7 @@ import {
   State,
   Event,
   EventEmitter,
+  AttachInternals,
 } from '@stencil/core';
 
 /**
@@ -16,8 +17,33 @@ import {
   tag: 'c-switch',
   styleUrl: 'c-switch.scss',
   shadow: true,
+  formAssociated: true,
 })
 export class CSwitch {
+  // eslint-disable-next-line @stencil-community/own-props-must-be-private
+  @AttachInternals() internals: ElementInternals;
+
+  /**
+   * If `true`, the checkbox is selected.
+   */
+  @Prop({ mutable: true }) checked = false;
+
+  /**
+   * The input value
+   * - Only used when the checkbox participates in a native `<form>`
+   */
+  @Prop() value: string | boolean = false;
+
+  /**
+   * The value when the checkbox is checked
+   */
+  @Prop() trueValue: boolean | string = true;
+
+  /**
+   * The value when the checkbox is unchecked
+   */
+  @Prop() falseValue: boolean | string = false;
+
   /**
    * Disable the switch
    */
@@ -33,11 +59,6 @@ export class CSwitch {
    */
   @Prop() required = false;
 
-  /**
-   * Value of the element
-   */
-  @Prop({ mutable: true }) value = false;
-
   @Element() host: HTMLCSwitchElement;
 
   @State() hasLabel = false;
@@ -45,7 +66,17 @@ export class CSwitch {
   /**
    * Emit inner value change to parent
    */
-  @Event({ bubbles: false }) changeValue: EventEmitter<boolean>;
+  @Event({ bubbles: false }) changeValue: EventEmitter;
+
+  componentWillLoad() {
+    if (this.value === this.trueValue) {
+      this.checked = true;
+    }
+
+    if (this.checked) {
+      this.internals.setFormValue(this.value as string);
+    }
+  }
 
   componentDidLoad() {
     const slotted = this.host.childNodes;
@@ -53,11 +84,20 @@ export class CSwitch {
     this.hasLabel = slotted && slotted.length > 0;
   }
 
-  private _valueChangedHandler = (event: Event) => {
-    const value = (event.currentTarget as HTMLInputElement).checked;
+  private _toggleState = () => {
+    if (this.hostDisabled) return;
 
-    this.value = value;
-    this.changeValue.emit(value);
+    this.checked = !this.checked;
+
+    if (typeof this.value === 'string' && typeof this.trueValue === 'boolean') {
+      this.changeValue.emit(this.value);
+
+      this.internals.setFormValue(this.checked ? (this.value as string) : null);
+
+      return;
+    }
+
+    this.changeValue.emit(this.checked ? this.trueValue : this.falseValue);
   };
 
   render() {
@@ -67,25 +107,30 @@ export class CSwitch {
       'c-switch--label': this.hasLabel,
     };
 
+    const sliderClasses = {
+      'c-switch__slider': true,
+      'c-switch__slider--disabled': !!this.hostDisabled,
+    };
+
     return (
       <label class={classes} htmlFor={this.hostId}>
-        <div class='c-switch__input'>
+        <div class="c-switch__input">
           <input
             id={this.hostId}
-            aria-checked={this.value}
-            type='checkbox'
-            role='switch'
+            aria-checked={this.checked.toString()}
+            type="checkbox"
+            role="switch"
             disabled={this.hostDisabled}
-            checked={this.value}
-            onInput={this._valueChangedHandler}
+            checked={this.checked ? true : undefined}
+            onChange={() => this._toggleState()}
           />
-          <span class='c-switch__slider'></span>
+          <span class={sliderClasses}></span>
         </div>
         {this.hasLabel ? (
-          <div class='c-switch__label'>
+          <div class="c-switch__label">
             <slot></slot>
 
-            {this.required && <span class='required'>&nbsp;*</span>}
+            {this.required && <span class="required">&nbsp;*</span>}
           </div>
         ) : null}
       </label>

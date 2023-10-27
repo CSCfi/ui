@@ -9,66 +9,44 @@ const __filename = fileURLToPath(import.meta.url);
 
 const __dirname = path.dirname(__filename);
 
-export default async (component, filename) => {
+export default async (component, folder) => {
   try {
-    const writeStream = fs.createWriteStream(filename);
+    const directory = path.resolve(
+      __dirname,
+      `../../components/examples/${component}`,
+    );
 
-    const writeline = (line, lineChange = true) => {
-      if (lineChange) {
-        writeStream.write('\n');
-      }
+    const examples = fs.readdirSync(directory);
 
-      writeStream.write(line);
-    };
+    const dataFolder = `${folder}/${component}`;
 
-    let hasInfo = false;
-    let isExample = false;
-    let isSkipping = false;
-    let row = 0;
+    if (!fs.existsSync(dataFolder)) {
+      fs.mkdirSync(dataFolder);
+    }
 
-    const data = {};
-    let examples = [];
+    for await (const example of examples) {
+      const exampleName = example.split('.')[0].toLowerCase();
 
-    const addLine = ({ line, name, lineChange = true, firstLine = false }) => {
-      let firstExample = false;
+      if (exampleName === 'index') continue;
 
-      if (!data[name]) {
-        firstExample = true;
-        data[name] = [];
-      }
+      const filename = `${folder}/${component}/${exampleName}.script.js`;
 
-      if (lineChange && !firstExample) {
-        data[name].push('\n');
-      }
+      const writeStream = fs.createWriteStream(filename);
 
-      if (firstLine && !firstExample) {
-        return;
-      }
+      const writeline = (line, lineChange = true) => {
+        if (lineChange) {
+          writeStream.write('\n');
+        }
 
-      data[name].push(line);
-    };
+        writeStream.write(line);
+      };
 
-    const writeData = () => {
-      Object.values(data).forEach((block) => {
-        block.forEach((row, index) => {
-          const formattedRow =
-            index === 0
-              ? row
-              : row
-                  .replace(/`/g, "'")
-                  .replace(/'\$\{([^}]+)\}/g, "$1 + '")
-                  .replace(/\$\{([^}]+)\}/g, "' + $1 + '");
+      let hasInfo = false;
+      let isExample = false;
+      let isSkipping = false;
+      let row = 0;
 
-          writeStream.write(
-            `${formattedRow}${index + 1 === block.length ? '`;\n' : ''}`,
-          );
-        });
-
-        writeStream.write('\n');
-      });
-    };
-
-    const infoText = `/**
+      const infoText = `/**
  * Examples for ${component}.
  * Automatically generated at ${new Date().toLocaleString()}.
  *
@@ -76,84 +54,70 @@ export default async (component, filename) => {
  */
 `;
 
-    const rl = readline.createInterface({
-      input: fs.createReadStream(
-        path.resolve(__dirname, `../../components/examples/${component}`),
-      ),
-      crlfDelay: Infinity,
-    });
+      const rl = readline.createInterface({
+        input: fs.createReadStream(
+          path.resolve(
+            __dirname,
+            `../../components/examples/${component}/${example}`,
+          ),
+        ),
+        crlfDelay: Infinity,
+      });
 
-    rl.on('line', (line) => {
-      if (!hasInfo) {
-        writeline(infoText);
+      rl.on('line', (line) => {
+        if (!hasInfo) {
+          writeline(infoText);
 
-        hasInfo = true;
-      }
+          hasInfo = true;
+        }
 
-      if (line.replace(/^\s+/g, '').startsWith('// @example-skip-end')) {
-        isSkipping = false;
+        if (line.replace(/^\s+/g, '').startsWith('// @example-skip-end')) {
+          isSkipping = false;
 
-        return;
-      }
+          return;
+        }
 
-      if (
-        line.replace(/^\s+/g, '').startsWith('// @example-skip-start') ||
-        isSkipping
-      ) {
-        isSkipping = true;
+        if (
+          line.replace(/^\s+/g, '').startsWith('// @example-skip-start') ||
+          isSkipping
+        ) {
+          isSkipping = true;
 
-        return;
-      }
+          return;
+        }
 
-      if (line.replace(/^\s+/g, '').startsWith('// @example-start')) {
-        const [, ...names] = line.split('|');
-        examples = names;
-        isExample = true;
+        if (line.replace(/^\s+/g, '').startsWith('<script ')) {
+          isExample = true;
 
-        examples.forEach((e) => {
-          addLine({
-            line: `export const ${e} = \``,
-            name: e,
-            firstLine: true,
-            lineChange: true,
-          });
-        });
+          writeline('export default `');
 
-        return;
-      }
+          return;
+        }
 
-      if (line.replace(/^\s+/g, '').startsWith('// @example-end')) {
-        examples.forEach((e) => {
-          addLine({ line: '', name: e });
-        });
+        if (line.replace(/^\s+/g, '').startsWith('</script>')) {
+          isExample = false;
+          row = 0;
 
-        isExample = false;
-        examples = [];
-        row = 0;
+          writeline('`;', false);
+          writeline('');
 
-        return;
-      }
+          return;
+        }
 
-      if (isExample) {
-        row += 1;
+        if (isExample) {
+          row += 1;
+          writeline(line, row > 1);
+        }
+      });
 
-        examples.forEach((e) => {
-          addLine({ line, name: e, lineChange: row > 1 });
-        });
-      }
-    });
+      writeStream.on('finish', () => {
+        consola.success(filename);
+      });
 
-    rl.on('close', () => {
-      writeData();
-    });
+      await events.once(rl, 'close');
 
-    writeStream.on('finish', () => {
-      consola.success(filename);
-    });
-
-    await events.once(rl, 'close');
-
-    writeStream.end();
+      writeStream.end();
+    }
   } catch (err) {
     console.error(err);
   }

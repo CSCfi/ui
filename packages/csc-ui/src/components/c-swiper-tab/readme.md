@@ -23,6 +23,19 @@
 | `changeValue` | Emit value change to the parent | `CustomEvent<number \| string>` |
 
 
+## CSS Custom Properties
+
+| Name                                       | Description                      |
+| ------------------------------------------ | -------------------------------- |
+| `--c-swiper-tab-background-color`          | Swiper background color          |
+| `--c-swiper-tab-background-color-active`   | Swiper active background color   |
+| `--c-swiper-tab-background-color-disabled` | Swiper disabled background color |
+| `--c-swiper-tab-hover-color`               | Swiper hover color               |
+| `--c-swiper-tab-text-color`                | Swiper text color                |
+| `--c-swiper-tab-text-color-active`         | Swiper active text color         |
+| `--c-swiper-tab-text-color-disabled`       | Swiper disabled text color       |
+
+
 ## Dependencies
 
 ### Depends on

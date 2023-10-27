@@ -7,11 +7,9 @@
 
 ## Properties
 
-| Property          | Attribute          | Description                                                | Type                            | Default     |
-| ----------------- | ------------------ | ---------------------------------------------------------- | ------------------------------- | ----------- |
-| `background`      | `background`       | Card background image for login pages of specific services | `"allas" \| "mahti" \| "puhti"` | `undefined` |
-| `backgroundColor` | `background-color` | Background color                                           | `string`                        | `'white'`   |
-| `fullscreen`      | `fullscreen`       | Enable the fullscreen toggle button                        | `boolean`                       | `false`     |
+| Property     | Attribute    | Description                         | Type      | Default |
+| ------------ | ------------ | ----------------------------------- | --------- | ------- |
+| `fullscreen` | `fullscreen` | Enable the fullscreen toggle button | `boolean` | `false` |
 
 
 ## Methods
@@ -44,6 +42,14 @@ Type: `Promise<void>`
 | `"Default slot"` | Card components |
 
 
+## CSS Custom Properties
+
+| Name                        | Description               |
+| --------------------------- | ------------------------- |
+| `--c-card-background-color` | Card background color     |
+| `--c-card-gap`              | Card column gap / padding |
+
+
 ## Dependencies
 
 ### Depends on
@@ -56,6 +62,8 @@ Type: `Promise<void>`
 graph TD;
   c-card --> c-icon-button
   c-card --> c-icon
+  c-icon-button --> c-badge
+  c-icon-button --> c-spinner
   c-icon-button --> c-ripple
   style c-card fill:#f9f,stroke:#333,stroke-width:4px
 ```

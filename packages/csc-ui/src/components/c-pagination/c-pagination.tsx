@@ -1,6 +1,7 @@
 import {
   Component,
   h,
+  Host,
   Prop,
   Event,
   EventEmitter,
@@ -71,7 +72,9 @@ export class CPagination {
   valueHandler(value: CPaginationOptions, oldValue: CPaginationOptions) {
     if (this._isEqual(value, oldValue)) return;
 
-    this._setRange();
+    requestAnimationFrame(() => {
+      this._setRange();
+    });
   }
 
   private _isEqual(options1: CPaginationOptions, options2: CPaginationOptions) {
@@ -110,12 +113,19 @@ export class CPagination {
   }
 
   private _setRange() {
+    if (!this.value) return;
+
     this._currentPage = this.value.currentPage || 1;
+
     this._itemsPerPage = this.value.itemsPerPage || 25;
+
     this._totalVisible = this.value.totalVisible || 7;
+
     this.value.startFrom =
       this._currentPage * this._itemsPerPage - this._itemsPerPage;
+
     this.value.endTo = this._currentPage * this._itemsPerPage - 1;
+
     this.changeValue.emit(this.value);
   }
 
@@ -123,11 +133,13 @@ export class CPagination {
 
   private _valueChangeHandler() {
     this.value.currentPage = this._currentPage;
+
     this.value.itemsPerPage = this._itemsPerPage;
+
     this._setRange();
   }
 
-  private _getItemsPerPage() {
+  private _renderMenu() {
     const itemsPerPageOptions: CMenuOption[] = this.itemsPerPageOptions.map(
       (i) => ({
         name: i.toString(),
@@ -144,13 +156,15 @@ export class CPagination {
     };
 
     return (
-      <c-menu items={itemsPerPageOptions} nohover onClick={onMenuClick}>
-        <div>
-          <span class='items-per-page'>
-            {this._getText('itemsPerPageText')} {this._itemsPerPage}
-          </span>
-        </div>
-      </c-menu>
+      <div class="c-pagination__items-per-page">
+        {this._getText('itemsPerPageText')}
+
+        <c-menu items={itemsPerPageOptions} onClick={onMenuClick}>
+          <div>
+            <span class="items-per-page">{this._itemsPerPage}</span>
+          </div>
+        </c-menu>
+      </div>
     );
   }
 
@@ -214,10 +228,9 @@ export class CPagination {
           text
           onClick={this._decreasePageNumber}
         >
-          <span class='visuallyhidden'>{this._getText('prevPage')}</span>
-          <svg width='24' height='24' viewBox='0 0 24 24'>
-            <path d={mdiChevronLeft} />
-          </svg>
+          <span class="visuallyhidden">{this._getText('prevPage')}</span>
+
+          <c-icon path={mdiChevronLeft}></c-icon>
         </c-icon-button>
       </li>
     );
@@ -236,10 +249,9 @@ export class CPagination {
           text
           onClick={this._increasePageNumber}
         >
-          <span class='visuallyhidden'>{this._getText('nextPage')}</span>
-          <svg width='24' height='24' viewBox='0 0 24 24'>
-            <path d={mdiChevronRight} />
-          </svg>
+          <span class="visuallyhidden">{this._getText('nextPage')}</span>
+
+          <c-icon path={mdiChevronRight}></c-icon>
         </c-icon-button>
       </li>
     );
@@ -292,14 +304,14 @@ export class CPagination {
     this._buttons.push(
       <li>
         <c-icon-button
-          aria-disabled='true'
+          aria-disabled="true"
           size={size}
-          tabindex='-1'
-          role='separator'
+          tabindex="-1"
+          role="separator"
           disabled
           text
         >
-          <svg width='16' height='16' viewBox='0 0 24 24'>
+          <svg width="16" height="16" viewBox="0 0 24 24">
             <path d={mdiDotsHorizontal} />
           </svg>
         </c-icon-button>
@@ -358,7 +370,7 @@ export class CPagination {
     return this._buttons;
   }
 
-  private _renderButtons() {
+  private _renderPaginationButtons() {
     if (!this.value.itemCount) return '';
 
     const buttonsize = this.size === 'small' ? 'x-small' : 'small';
@@ -380,17 +392,17 @@ export class CPagination {
     };
 
     return (
-      <nav class={classes} role='navigation' aria-label='pagination'>
-        {!this.hideDetails && (
-          <div class='c-pagination__details'>
-            {this._getItemsPerPage()}
-
-            <span class={{ range: !this.simple }}>{this._getRange()}</span>
-          </div>
-        )}
-
-        {this._renderButtons()}
-      </nav>
+      <Host class={classes}>
+        <nav role="navigation" aria-label="pagination">
+          {!this.hideDetails && (
+            <div class="c-pagination__details">
+              {this._renderMenu()}
+              <span class={{ range: !this.simple }}>{this._getRange()}</span>
+            </div>
+          )}
+          {this._renderPaginationButtons()}
+        </nav>
+      </Host>
     );
   }
 }

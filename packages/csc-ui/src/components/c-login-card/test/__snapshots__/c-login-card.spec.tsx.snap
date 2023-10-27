@@ -11,7 +11,7 @@ exports[`c-login-card add source to background-image 1`] = `
     </defs>
   </svg>
   <div class="c-login-card">
-    <div class="c-login-card__image" style="background-image: url(mahti); background-position: bottom right; height: 100%; --c-login-overlay-mode: false;"></div>
+    <div class="c-login-card__image" style="background-image: url(mahti); background-position: bottom right; height: 100%; --_c-login-overlay-mode: false;"></div>
     <div class="c-login-card__content">
       This is a login card
     </div>
@@ -81,7 +81,7 @@ exports[`c-login-card renders colored overlay 1`] = `
     </defs>
   </svg>
   <div class="c-login-card">
-    <div class="c-login-card__image c-login-card__image--overlay" style="background-image: url(mahti); background-position: top left; height: 100%; --c-login-overlay-mode: hue;"></div>
+    <div class="c-login-card__image c-login-card__image--overlay" style="background-image: url(mahti); background-position: top left; height: 100%; --_c-login-overlay-mode: hue;"></div>
     <div class="c-login-card__content">
       This is a login card
     </div>
@@ -116,7 +116,7 @@ exports[`c-login-card renders custom background-position 1`] = `
     </defs>
   </svg>
   <div class="c-login-card">
-    <div class="c-login-card__image" style="background-image: url(mahti); background-position: top left; height: 100%; --c-login-overlay-mode: false;"></div>
+    <div class="c-login-card__image" style="background-image: url(mahti); background-position: top left; height: 100%; --_c-login-overlay-mode: false;"></div>
     <div class="c-login-card__content">
       This is a login card
     </div>
@@ -135,7 +135,7 @@ exports[`c-login-card renders custom background-position 2`] = `
     </defs>
   </svg>
   <div class="c-login-card">
-    <div class="c-login-card__image" style="background-image: url(mahti); background-position: 25% 50%; height: 100%; --c-login-overlay-mode: false;"></div>
+    <div class="c-login-card__image" style="background-image: url(mahti); background-position: 25% 50%; height: 100%; --_c-login-overlay-mode: false;"></div>
     <div class="c-login-card__content">
       This is a login card
     </div>
