@@ -28,8 +28,9 @@ export type CAutocompleteItem = CSelectItem & {
 };
 
 export type CRadioGroupItem = {
-  label: string;
+  name: string;
   value: string | number;
+  disabled?: boolean;
 };
 
 export type CDataTableFooterOptions = {

@@ -150,7 +150,7 @@ export class CRadioGroup {
   }
 
   private _select(event, item, index) {
-    if (this.disabled) return;
+    if (!!item.disabled || this.disabled) return;
 
     this._rippleElements[index].createRipple(
       event,
@@ -176,7 +176,7 @@ export class CRadioGroup {
 
     const classes = {
       'c-radio': true,
-      'c-radio--disabled': this.disabled,
+      'c-radio--disabled': !!item.disabled || this.disabled,
       'c-radio--error': this.messageOptions.type === 'error',
     };
 
@@ -189,9 +189,9 @@ export class CRadioGroup {
         <input
           type="radio"
           aria-checked={(this.value === item).toString()}
-          aria-disabled={this.disabled.toString()}
+          aria-disabled={(!!item.disabled || this.disabled).toString()}
           aria-labelledby={itemId}
-          disabled={this.disabled}
+          disabled={!!item.disabled || this.disabled}
           checked={isChecked}
           name={CRadioGroup._uniqueId.toString()}
           onChange={(event) => this._select(event, item, index)}
@@ -206,7 +206,7 @@ export class CRadioGroup {
           <c-ripple ref={(el) => (this._rippleElements[index] = el)}></c-ripple>
         </span>
 
-        <div class="c-radio__label">{item.label}</div>
+        <div class="c-radio__label">{item.name}</div>
       </label>
     );
   };

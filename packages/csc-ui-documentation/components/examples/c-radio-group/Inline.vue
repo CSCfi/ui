@@ -21,9 +21,9 @@
 import { ref } from 'vue';
 
 const items = [
-  { label: 'Radio 1', value: 'radio_one' },
-  { label: 'Radio 2', value: 'radio_two' },
-  { label: 'Radio 3', value: 'radio_three' },
+  { name: 'Radio 1', value: 'radio_one' },
+  { name: 'Radio 2', value: 'radio_two', disabled: true },
+  { name: 'Radio 3', value: 'radio_three' },
 ];
 
 const selectedInlineValue = ref(items[2].value);
