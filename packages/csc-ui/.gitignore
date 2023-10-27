@@ -8,11 +8,8 @@ src/components.d.ts
 
 # Automatically generated files
 docs.json
-documentation/angular/.firebase/
 
 .npmrc
-
-firebase-debug.log
 
 playground/**/node_modules
 .env
