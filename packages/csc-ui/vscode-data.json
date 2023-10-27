@@ -1282,6 +1282,27 @@
       ]
     },
     {
+      "name": "c-radio",
+      "description": {
+        "kind": "markdown",
+        "value": ""
+      },
+      "attributes": [
+        {
+          "name": "checked",
+          "description": "Set option as checked"
+        },
+        {
+          "name": "disabled",
+          "description": "Disable the radio button"
+        },
+        {
+          "name": "value",
+          "description": "Radio button value"
+        }
+      ]
+    },
+    {
       "name": "c-radio-group",
       "description": {
         "kind": "markdown",

@@ -69,7 +69,7 @@ export class CRadioGroup {
   /**
    * Return only the item value rather than the whole item object
    */
-  @Prop() returnValue: false;
+  @Prop() returnValue = false;
 
   /**
    * Set as required
@@ -166,6 +166,35 @@ export class CRadioGroup {
 
     this.internals.setFormValue(value as string);
   }
+
+  private _handleSlotChange = () => {
+    this._getRadioButtons();
+  };
+
+  private _getRadioButtons = () => {
+    const radios = this.el.querySelectorAll('c-radio');
+
+    if (radios.length) {
+      this.returnValue = true;
+
+      this.items = [
+        ...Array.from(radios).map((radio) => {
+          if (!!radio.checked) {
+            this.value = radio.value;
+            this.changeValue.emit(this.value);
+          }
+
+          radio.style.display = 'none';
+
+          return {
+            name: radio.textContent,
+            value: radio.value,
+            disabled: !!radio.disabled,
+          };
+        }),
+      ];
+    }
+  };
 
   private _getRadioButton = (item, index) => {
     const itemId = item.value.toString().replace(/[^a-zA-Z0-9-_]/g, '');
@@ -267,7 +296,11 @@ export class CRadioGroup {
       >
         {(!!this.label || slotHasContent) && (
           <label class="c-radio-group__label">
-            {!!this.label ? this.label : <slot></slot>}
+            {!!this.label ? (
+              this.label
+            ) : (
+              <slot onSlotchange={this._handleSlotChange}></slot>
+            )}
             {this.required && <span class="required">&nbsp;*</span>}
           </label>
         )}
