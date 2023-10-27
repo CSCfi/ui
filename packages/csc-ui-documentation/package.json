@@ -41,6 +41,7 @@
     "postinstall": "nuxt prepare",
     "preview": "nuxt preview"
   },
+  "main": ".output/server/index.mjs",
   "type": "module",
-  "version": "0.0.1"
+  "version": "1.0.0"
 }

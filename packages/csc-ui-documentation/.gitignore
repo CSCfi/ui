@@ -3,6 +3,7 @@
 .data
 .nuxt
 .nitro
+.netlify
 .cache
 dist
 
