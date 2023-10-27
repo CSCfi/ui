@@ -16,7 +16,11 @@
               @keyup.space.prevent="onItemClick(name)"
               @keyup.enter.prevent="onItemClick(name)"
             >
-              <c-icon slot="pre" :path="mdiLanguageTypescript" />
+              <c-icon
+                slot="pre"
+                :path="mdiLanguageTypescript"
+                class="text-info-700"
+              />
               {{ name }}
             </c-list-item>
           </c-list>

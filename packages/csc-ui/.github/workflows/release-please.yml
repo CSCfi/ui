@@ -46,6 +46,7 @@ jobs:
 
       - name: Release documentation
         run: |
-          npm run predeploy
-          npm run deploy:documentation
+          cd ../csc-ui-documentation
+          npm --no-git-tag-version version ${{steps.release.outputs.major}}.${{steps.release.outputs.minor}}.${{steps.release.outputs.patch}}
+          npm run deploy
         if: ${{ steps.release.outputs.release_created }}

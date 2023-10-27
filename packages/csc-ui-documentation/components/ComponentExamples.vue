@@ -53,7 +53,7 @@ const cardRef = ref<HTMLCCardElement | null>(null);
 
 const route = useRoute();
 
-const { componentData, types } = storeToRefs(useExampleStore());
+const { componentData } = storeToRefs(useExampleStore());
 
 const onTabClick = (tab: any) => {
   requestAnimationFrame(async () => {
@@ -136,15 +136,6 @@ const tabs = computed(() => {
         !!componentData.value?.children?.some((child) => child.styles?.length),
       query: {
         tab: 'styles',
-      },
-      component: DocumentationTable,
-    },
-    {
-      label: 'Types',
-      value: 'types',
-      enabled: !!types.value?.get(route.params.slug[0]),
-      query: {
-        tab: 'types',
       },
       component: DocumentationTable,
     },

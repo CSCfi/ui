@@ -1,13 +1,5 @@
 import { Component, Element, h, Host, Prop } from '@stencil/core';
-
-export type CRowAlign = 'start' | 'center' | 'end';
-
-export type CRowJustify =
-  | 'start'
-  | 'center'
-  | 'end'
-  | 'space-between'
-  | 'space-around';
+import { CRowAlign, CRowJustify } from '../../types';
 
 /**
  * Generic flex row component

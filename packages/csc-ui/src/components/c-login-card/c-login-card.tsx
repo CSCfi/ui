@@ -1,22 +1,5 @@
 import { Component, Element, h, Prop, State } from '@stencil/core';
-
-export type CLoginCardBlendMode =
-  | 'normal'
-  | 'multiply'
-  | 'screen'
-  | 'overlay'
-  | 'darken'
-  | 'lighten'
-  | 'color-dodge'
-  | 'color-burn'
-  | 'hard-light'
-  | 'soft-light'
-  | 'difference'
-  | 'exclusion'
-  | 'hue'
-  | 'saturation'
-  | 'color'
-  | 'luminosity';
+import { CLoginCardBlendMode } from '../../types';
 
 /**
  * @group Cards

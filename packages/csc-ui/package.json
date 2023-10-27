@@ -75,13 +75,11 @@
     "build": "rimraf ./dist && stencil build --docs-readme && npm run style-dictionary:build",
     "build:visual-testing": "docker build -t csc-ui-playwright .",
     "build:watch": "npm run style-dictionary:build && stencil build --docs --watch",
-    "deploy": "npm publish && npm run deploy:documentation",
-    "deploy:documentation": "cd documentation/angular && npm i --legacy-peer-deps && npm run build && firebase deploy",
+    "deploy": "npm run build && npm run deploy:documentation",
     "generate": "stencil generate",
     "lint": "eslint src/**/*{.ts,.tsx}",
     "lint:styles": "stylelint --allow-empty-input \"**/*.{css,scss}\"",
     "pre-commit": "npm run lint",
-    "predeploy": "npm run build && npm run style-dictionary:build:prod",
     "start": "stencil build --dev --watch --serve",
     "style-dictionary:build": "style-dictionary build --config ./style-dictionary.config.js",
     "style-dictionary:build:prod": "style-dictionary build --config ./style-dictionary.production.config.js",
@@ -92,6 +90,6 @@
     "test.watch": "stencil test --spec --watchAll"
   },
   "types": "dist/types/index.d.ts",
-  "unpkg": "dist/cscwebcomponents/cscwebcomponents.esm.js",
-  "version": "0.9.2"
+  "unpkg": "dist/csc-ui/csc-ui.esm.js",
+  "version": "0.9.4"
 }

@@ -1,7 +1,7 @@
 {
   "dependencies": {
-    "@cscfi/csc-ui": "^0.9.2",
-    "@cscfi/csc-ui-vue": "^0.0.1",
+    "@cscfi/csc-ui": "latest",
+    "@cscfi/csc-ui-vue": "latest",
     "@mdi/js": "^7.2.96",
     "@pinia/nuxt": "^0.4.11",
     "@vueuse/nuxt": "^10.5.0",
@@ -32,6 +32,7 @@
     "build": "npm run build:examples && nuxt build",
     "build:examples": "node ./scripts/build-examples.js",
     "dev": "npm run build:examples && nuxt dev",
+    "deploy": "npm i && npm run build && firebase deploy",
     "generate": "nuxt generate",
     "lint": "npm run lint:js && npm run lint:prettier",
     "lint:fix": "prettier --write --list-different . && npm run lint:js --fix",

@@ -11,8 +11,7 @@ import {
   Watch,
   State,
 } from '@stencil/core';
-
-export type CTabsJustify = 'stretch' | 'start' | 'end' | 'center';
+import { CTabsJustify } from '../../types';
 
 enum ScrollDirection {
   Left = 2,

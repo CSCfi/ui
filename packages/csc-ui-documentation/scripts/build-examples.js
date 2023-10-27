@@ -4,7 +4,7 @@ import fs from 'fs';
 import components from './utils/getComponents.js';
 import getExampleScripts from './utils/getExampleScripts.js';
 import getExampleTemplates from './utils/getExampleTemplates.js';
-// import getTypes from './utils/getTypes.js';
+import getTypes from './utils/getTypes.js';
 
 const __filename = fileURLToPath(import.meta.url);
 
@@ -16,7 +16,7 @@ if (!fs.existsSync(dataFolder)) {
   fs.mkdirSync(dataFolder);
 }
 
-// getTypes(`${dataFolder}/types.js`);
+getTypes(`${dataFolder}/types.js`);
 
 components.forEach((component) => {
   getExampleScripts(component, dataFolder);

@@ -153,3 +153,32 @@ export type CMenuOption = {
   icon?: string;
   iconPosition?: 'start' | 'end';
 };
+
+export type CLoginCardBlendMode =
+  | 'normal'
+  | 'multiply'
+  | 'screen'
+  | 'overlay'
+  | 'darken'
+  | 'lighten'
+  | 'color-dodge'
+  | 'color-burn'
+  | 'hard-light'
+  | 'soft-light'
+  | 'difference'
+  | 'exclusion'
+  | 'hue'
+  | 'saturation'
+  | 'color'
+  | 'luminosity';
+
+export type CRowAlign = 'start' | 'center' | 'end';
+
+export type CRowJustify =
+  | 'start'
+  | 'center'
+  | 'end'
+  | 'space-between'
+  | 'space-around';
+
+export type CTabsJustify = 'stretch' | 'start' | 'end' | 'center';

@@ -9,7 +9,7 @@
     </div>
 
     <div v-for="child in childItems" :key="child.tag">
-      <p class="text-primary-600 text-lg font-medium m-0">{{ child.tag }}</p>
+      <p class="text-primary-600 text-lg font-medium mt-6">{{ child.tag }}</p>
 
       <component :is="table" :items="child.items" :tag="child.tag" />
     </div>
