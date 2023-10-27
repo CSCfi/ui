@@ -1,0 +1,137 @@
+<app-example title="Usage with c-options" name="withOptions" component="c-select">
+  <c-select
+    cControl
+    label="Partition"
+    [(ngModel)]="selectedItem"
+    placeholder="Choose partition..."
+    style="max-width: 360px"
+    return-value
+  >
+    <c-option value="normal" name="normal">
+      <c-row align="center" justify="space-between">
+        Normal
+        <c-tag flat>100 BU / node / h</c-tag>
+      </c-row>
+    </c-option>
+
+    <c-option value="interactive" name="interactive">
+      <c-row align="center" justify="space-between">
+        Interactive
+        <c-tag flat>1 BU / CPU / h</c-tag>
+      </c-row>
+    </c-option>
+
+    <c-option value="gpu" name="gpu" disabled>
+      <c-row align="center" justify="space-between">
+        GPU
+        <c-tag flat badge="N/A" active>100 BU / GPU / h</c-tag>
+      </c-row>
+    </c-option>
+  </c-select>
+
+  <p class="mt-3">Selected partition value: {{ selectedItem || '?' }}</p>
+</app-example>
+
+<app-example
+  title="Usage with c-options"
+  subtitle="Displaying the option as selection"
+  name="withOptionsRich"
+  component="c-select"
+>
+  <c-select
+    cControl
+    label="Partition"
+    [(ngModel)]="selectedOption"
+    placeholder="Choose partition..."
+    style="max-width: 360px"
+    option-as-selection
+    return-value
+  >
+    <c-option value="normal" name="normal">
+      <c-row align="center" justify="space-between">
+        Normal
+        <c-tag flat>100 BU / node / h</c-tag>
+      </c-row>
+    </c-option>
+
+    <c-option value="interactive" name="interactive">
+      <c-row align="center" justify="space-between">
+        Interactive
+        <c-tag flat>1 BU / CPU / h</c-tag>
+      </c-row>
+    </c-option>
+
+    <c-option value="gpu" name="gpu">
+      <c-row align="center" justify="space-between">
+        GPU
+        <c-tag flat>100 BU / GPU / h</c-tag>
+      </c-row>
+    </c-option>
+  </c-select>
+
+  <p class="mt-3">Selected partition: {{ selectedOption || '?' }}</p>
+</app-example>
+
+<app-example
+  title="Usage with c-options"
+  subtitle="Selected by default"
+  name="optionsAndSelection"
+  component="c-select"
+>
+  <c-select
+    cControl
+    label="Partition"
+    [(ngModel)]="selected"
+    placeholder="Choose partition..."
+    return-value
+  >
+    <c-option value="Normal">Normal</c-option>
+
+    <c-option value="Interactive" selected>Interactive</c-option>
+
+    <c-option value="GPU">GPU</c-option>
+  </c-select>
+
+  <p class="mt-3">Selected partition: {{ selected || 'None' }}</p>
+</app-example>
+
+<app-example title="Basic usage with return-value (Angular)" name="basic" component="c-select">
+  <c-select
+    cControl
+    label="Country"
+    return-value
+    [items]="items"
+    [(ngModel)]="value"
+    placeholder="Choose country..."
+  ></c-select>
+
+  <p class="mt-3">Selected country: {{ value || 'None' }}</p>
+</app-example>
+
+<app-example title="Shadow variant (Angular)" name="shadow" component="c-select">
+  <c-select
+    shadow
+    cControl
+    [items]="items"
+    [(ngModel)]="selection"
+    placeholder="Country"
+  ></c-select>
+
+  <p class="mt-3">Selected country: {{ (selection | json) || 'None' }}</p>
+</app-example>
+
+<app-example title="Scrollable items + required (Angular)" name="scrollable" component="c-select">
+  <c-select
+    required
+    cControl
+    [itemsPerPage]="4"
+    [items]="items"
+    [(ngModel)]="selection"
+    [valid]="!!selection?.value"
+    label="Country"
+    placeholder="Choose country..."
+    required
+  ></c-select>
+
+  <p class="mt-3">Selected country: {{ (selection | json) || 'None' }}</p>
+</app-example>

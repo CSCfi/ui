@@ -1,0 +1,19 @@
+// @import '~normalize.css/normalize.css';
+
+html {
+  box-sizing: border-box;
+}
+
+*,
+*:before,
+*:after {
+  box-sizing: inherit;
+}
+
+:host {
+  font-family: var(--csc-font-family);
+}
+
+::-ms-reveal {
+  display: none;
+}

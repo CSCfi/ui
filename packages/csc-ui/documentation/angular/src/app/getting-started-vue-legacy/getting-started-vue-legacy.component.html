@@ -1,0 +1,53 @@
+<div class="documentation-card">
+  <h1 class="text-capitalize mb-0 text-primary">Usage in Vue 2.x</h1>
+
+  <div class="pt-4">
+    <p>
+      <strong>1. Initialize a new Vue project</strong>
+    </p>
+    <pre class="rounded"><code [highlight]="initialize"></code></pre>
+    <p>
+      These commands will first install the
+      <code>Vue Cli</code>
+      globally, and then use it to initialize a new project. Select Vue 2 preset when prompted.
+    </p>
+  </div>
+
+  <div class="pt-4">
+    <p>
+      <strong>2. Install the required dependencies</strong>
+    </p>
+    <pre class="rounded"><code [highlight]="installation"></code></pre>
+    <p>
+      This command will install the CSC Design system component library
+      <code>csc-ui</code>
+      and the directive
+      <code>@cscfi/csc-ui-vue2</code>
+      which allows the components to support 2-way model binding.
+    </p>
+  </div>
+
+  <div class="pt-4">
+    <p>
+      <strong>
+        3. Configure the project to utilize the components by adding these lines to
+        <code>main.js</code>
+      </strong>
+    </p>
+    <pre class="rounded"><code [highlight]="mainJs"></code></pre>
+    <p>
+      Now you should be able to use the CSC Design system components in your project. Please note
+      that when using the <code>@cscfi/csc-ui-vue2</code> with Vue 2.x you need to bind your models with
+      <code>v-csc-model</code>
+      instead of
+      <code>v-model</code>
+      .
+    </p>
+  </div>
+</div>
+
+<div class="documentation-card">
+  <h2 class="text-capitalize mb-4 text-primary">Example project</h2>
+
+  <div id="simple-example"></div>
+</div>

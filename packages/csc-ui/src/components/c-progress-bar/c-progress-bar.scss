@@ -1,0 +1,126 @@
+:host {
+  --bar-color: var(--csc-primary);
+  --bg-color: var(--csc-light-grey);
+  --border-size: 4px;
+  --height: 16px;
+  --value: 0%;
+
+  align-items: center;
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.c-progress {
+  $this: &;
+
+  position: relative;
+  background-color: var(--bg-color);
+  border-radius: var(--height);
+  box-shadow: 0 0 0 var(--border-size) var(--bg-color);
+  flex-basis: 100%;
+  height: calc(var(--height) - calc(var(--border-size) * 2));
+  margin: var(--border-size);
+  opacity: 0.75;
+  overflow: hidden;
+  transform: translateZ(0); // Safari - overflow: hidden & border-radius fix
+  width: calc(100% - calc(var(--border-size) * 2));
+
+  &.adjacent-details {
+    flex: 1;
+  }
+
+  &__percentage {
+    flex-basis: 100%;
+    font-size: 14px;
+    margin-top: 2px;
+    text-align: end;
+    white-space: nowrap;
+    padding-left: 16px;
+
+    &--negative {
+      color: var(--csc-error);
+    }
+
+    &.adjacent-details {
+      flex: 0;
+    }
+  }
+
+  progress {
+    background-color: var(--bar-color);
+    border-radius: var(--height);
+    width: 100%;
+    background-color: transparent;
+    overflow: hidden;
+    height: calc(var(--height) - calc(var(--border-size) * 2));
+    position: absolute;
+    border: none;
+
+    @supports selector(:focus-within) {
+      &:focus {
+        outline: none;
+      }
+    }
+  }
+
+  &:focus-within {
+    outline: 2px var(--csc-primary) solid;
+    outline-offset: 6px;
+  }
+
+  ::-webkit-progress-bar {
+    background-color: transparent;
+  }
+
+  ::-webkit-progress-value {
+    transition: width 0.3s ease-in-out;
+    background-color: var(--bar-color);
+    border-radius: var(--height);
+  }
+
+  ::-moz-progress-bar {
+    transition: padding-bottom 1s;
+    padding-left: 60px;
+    padding-bottom: var(--value);
+    background-color: var(--bar-color);
+    height: 0;
+    transform-origin: 0 0;
+    transform: rotate(-90deg) translateX(-60px);
+  }
+
+  /* Force indeterminate bars to have zero width */
+  :indeterminate::-moz-progress-bar {
+    width: 0;
+  }
+
+  &--indeterminate {
+    &::before {
+      content: '';
+      position: absolute;
+      background-color: var(--bar-color);
+      border-radius: var(--height);
+      left: -100%;
+      height: 100%;
+      transform: translateX(var(--value, 0%));
+      transition: transform 0.3s ease-in-out;
+      animation: indeterminateAnimation 2s infinite linear;
+      width: 50%;
+      transform-origin: 0% 50%;
+    }
+  }
+}
+
+@keyframes indeterminateAnimation {
+  0% {
+    transform: translateX(100%) scaleX(1);
+  }
+  30% {
+    transform: translateX(170%) scaleX(1.75);
+  }
+  70% {
+    transform: translateX(500%) scaleX(0.1);
+  }
+  100% {
+    transform: translateX(500%) scaleX(0.1);
+  }
+}

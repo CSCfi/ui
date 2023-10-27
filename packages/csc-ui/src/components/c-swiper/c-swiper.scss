@@ -1,0 +1,51 @@
+@import '~swiper/swiper.scss';
+
+.c-swiper {
+  &__navigation {
+    display: grid;
+    gap: 8px;
+    grid-template-columns: auto auto 1fr;
+    align-items: center;
+    margin-top: 8px;
+    padding: 4px;
+  }
+
+  .swiper-wrapper {
+    width: 1px !important;
+    display: grid !important;
+    grid-auto-flow: column;
+    grid-template-columns: 1fr;
+  }
+
+  .swiper-pagination {
+    position: relative;
+    bottom: auto;
+    left: auto;
+    width: auto;
+    text-align: right;
+  }
+
+  .swiper-container {
+    overflow: hidden;
+  }
+
+  .c-icon-button {
+    &--next,
+    &--prev {
+      z-index: 1;
+      position: relative;
+    }
+  }
+
+  .visuallyhidden {
+    border: 0;
+    clip: rect(0 0 0 0);
+    height: 1px;
+    margin: -1px;
+    overflow: hidden;
+    padding: 0;
+    position: absolute;
+    white-space: nowrap;
+    width: 1px;
+  }
+}

@@ -1,0 +1,139 @@
+<app-example title="Basic usage" name="basic" component="c-toasts">
+  <c-row gap="16">
+    <c-card style="width: 340px; max-width: calc(100% - 64px)">
+      <c-card-content>
+        <h5>Per toast options</h5>
+
+        <c-text-field [(ngModel)]="message" label="Message" hide-details cControl></c-text-field>
+
+        <c-text-field
+          [(ngModel)]="title"
+          label="Title (optional)"
+          hide-details
+          cControl
+        ></c-text-field>
+
+        <c-text-field
+          [(ngModel)]="closeText"
+          label="Close text (optional)"
+          hide-details
+          cControl
+        ></c-text-field>
+
+        <c-text-field
+          [(ngModel)]="duration"
+          label="Duration, ms (optional)"
+          type="number"
+          hint="Default: 6000ms"
+          cControl
+        ></c-text-field>
+
+        <c-select
+          [(ngModel)]="type"
+          label="Type (optional)"
+          [items]="types"
+          hint="Default: 'Info'"
+          return-value
+          cControl
+        ></c-select>
+
+        <c-checkbox [(ngModel)]="persistent" hint="Default: false" cControl>
+          Persistent (optional)
+        </c-checkbox>
+
+        <c-checkbox [(ngModel)]="progress" hint="Default: true" cControl>
+          Show progress (optional)
+        </c-checkbox>
+
+        <c-button
+          fit
+          [disabled]="(!custom && !message) || (custom && !customContent)"
+          (click)="onAddToast()"
+        >
+          Add toast
+        </c-button>
+      </c-card-content>
+    </c-card>
+
+    <div>
+      <h5 style="margin-bottom: 24px">Global options</h5>
+
+      <c-row gap="16" style="margin-bottom: 16px">
+        <c-select
+          [(ngModel)]="vertical"
+          label="Vertical position"
+          [items]="verticalOptions"
+          hint="Default: 'Bottom'"
+          return-value
+          cControl
+        ></c-select>
+
+        <c-select
+          [(ngModel)]="horizontal"
+          label="Horizontal position"
+          [items]="horizontalOptions"
+          hint="Default: 'Right'"
+          return-value
+          cControl
+        ></c-select>
+
+        <c-checkbox [(ngModel)]="absolute" hint="Default: false" cControl>
+          Absolute positioning
+        </c-checkbox>
+      </c-row>
+
+      <div
+        style="
+          position: relative;
+          min-width: 320px;
+          min-height: 400px;
+          background: #eee;
+          display: grid;
+          place-content: center;
+          flex: 1;
+          padding: 16px;
+        "
+      >
+        <p style="font-weight: 600">Message container</p>
+        <span>Check absolute positioning to contain toast messages here.</span>
+        <span>Timed toast messages can be delayed by hovering them with mouse</span>
+        <c-toasts
+          id="toasts"
+          [absolute]="absolute"
+          [vertical]="vertical"
+          [horizontal]="horizontal"
+        ></c-toasts>
+      </div>
+    </div>
+  </c-row>
+</app-example>
+
+<app-example
+  title="Close externally"
+  subtitle="ie. after some async method completes"
+  name="indeterminate"
+  component="c-toasts"
+>
+  <c-row gap="8">
+    <c-button [disabled]="hasToast" (click)="onAddIndeterminateToast()">Add toast</c-button>
+    <c-button [disabled]="!hasToast" (click)="onRemoveIndeterminateToast()">Remove toast</c-button>
+  </c-row>
+
+  <c-toasts id="indeterminateToasts"></c-toasts>
+</app-example>
+
+<app-example
+  title="Custom template"
+  subtitle="Custom toasts are limited to one (1) visible toast"
+  name="custom"
+  component="c-toasts"
+>
+  <c-row gap="8">
+    <c-button [disabled]="hasCustomToast" (click)="onAddCustomToast()">Add toast</c-button>
+  </c-row>
+
+  <c-toasts id="customToast">
+    <p>This is a custom toast template.</p>
+    <c-button (click)="onRemoveCustomToast()">Remove toast</c-button>
+  </c-toasts>
+</app-example>

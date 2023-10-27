@@ -1,0 +1,332 @@
+// TODO:  Remove and add to index.html
+@import '../../styles/css/c-icon-button.css';
+
+:host {
+  display: block;
+  position: relative;
+  border-radius: 50%;
+}
+
+button.icon-button {
+  --c-icon-button-background: var(--c-icon-button-background)
+
+  font-family: var(--csc-font-family);
+  display: flex;
+  border: none;
+  padding: 0;
+  width: 40px;
+  height: 40px;
+  background: var(--csc-primary);
+  color: #fff;
+  transition: background-color 0.3s ease;
+  border-radius: 50%;
+  cursor: pointer;
+  position: relative;
+  align-items: center;
+  justify-content: center;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  -moz-backface-visibility: hidden;
+  transform: translate3d(0, 0, 0);
+  -webkit-transform: translate3d(0, 0, 0);
+  -moz-transform: translate3d(0, 0, 0);
+  line-height: normal;
+
+  ::slotted(svg),
+  ::slotted(c-icon),
+  ::slotted(i),
+  ::slotted(span) {
+    width: 24px;
+    height: 24px;
+    font-size: 24px;
+  }
+
+  ::slotted(*),
+  svg {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  &--small {
+    width: 32px;
+    height: 32px;
+
+    ::slotted(c-icon) {
+      width: 20px !important;
+      height: 20px !important;
+      font-size: 20px !important;
+    }
+
+    ::slotted(svg),
+    ::slotted(i),
+    ::slotted(span) {
+      width: 22px !important;
+      height: 22px !important;
+      font-size: 16px !important;
+    }
+  }
+
+  &--x-small {
+    width: 28px;
+    height: 28px;
+
+    ::slotted(c-icon) {
+      width: 14px !important;
+      height: 14px !important;
+      font-size: 14px !important;
+    }
+
+    ::slotted(svg),
+    ::slotted(i),
+    ::slotted(span) {
+      width: 18px !important;
+      height: 18px !important;
+      font-size: 14px !important;
+    }
+  }
+
+  &:focus {
+    outline: 2px var(--csc-primary) solid;
+    outline-offset: 2px;
+  }
+
+  @supports selector(:focus-visible) {
+    &:focus {
+      outline: none;
+    }
+  }
+
+  &:focus-visible {
+    outline: 2px var(--csc-primary) solid;
+    outline-offset: 2px;
+  }
+
+  &.ghost {
+    background: var(--csc-primary-ghost);
+    color: var(--csc-primary);
+
+    ::slotted(*),
+    svg {
+      color: var(--csc-primary) !important;
+      fill: var(--csc-primary) !important;
+    }
+
+    &:hover {
+      background: var(--csc-primary-ghost-hover);
+    }
+
+    &.inverted {
+      color: #fff;
+      background: rgba(255, 255, 255, 0.15);
+
+      ::slotted(*),
+      svg {
+        color: #fff !important;
+        fill: #fff !important;
+      }
+
+      &:hover {
+        background: rgba(255, 255, 255, 0.25);
+      }
+    }
+  }
+
+  &.text {
+    background: transparent;
+    color: var(--csc-primary);
+
+    ::slotted(*),
+    svg {
+      color: var(--csc-primary) !important;
+      fill: var(--csc-primary) !important;
+    }
+
+    &:hover {
+      background: var(--csc-primary-text-hover);
+    }
+
+    &.inverted {
+      color: #fff;
+
+      ::slotted(*),
+      svg {
+        color: #fff !important;
+        fill: #fff !important;
+      }
+
+      &:hover {
+        background: rgba(255, 255, 255, 0.15);
+      }
+    }
+  }
+
+  &.outlined {
+    background: transparent;
+    box-shadow: inset 0 0 0 2px var(--csc-primary);
+    color: var(--csc-primary);
+
+    ::slotted(*),
+    svg {
+      color: var(--csc-primary) !important;
+      fill: var(--csc-primary) !important;
+    }
+
+    &.disabled {
+      background: transparent;
+      box-shadow: inset 0 0 0 2px #acacac;
+    }
+
+    &:hover {
+      background: var(--csc-primary-text-hover);
+    }
+
+    &.inverted {
+      color: #fff;
+      box-shadow: inset 0 0 0 2px #fff;
+
+      ::slotted(*),
+      svg {
+        color: #fff !important;
+        fill: #fff !important;
+      }
+
+      &:hover {
+        background: rgba(255, 255, 255, 0.15);
+      }
+    }
+  }
+
+  &.disabled {
+    background: var(--csc-lightest-grey);
+    pointer-events: none;
+
+    ::slotted(*),
+    svg {
+      color: var(--csc-mid-grey) !important;
+      fill: var(--csc-mid-grey) !important;
+    }
+
+    &.text {
+      background: transparent;
+    }
+
+    &.ghost {
+      background: var(--csc-lightest-grey);
+    }
+
+    &:hover {
+      background: transparent;
+    }
+  }
+
+  &:hover {
+    background: var(--csc-primary-hover);
+  }
+}
+
+::slotted(*),
+svg {
+  color: rgb(255, 255, 255);
+  fill: rgb(255, 255, 255);
+  pointer-events: none;
+}
+
+.icon-button-badge {
+  background: #ff5800;
+  border-radius: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 16px;
+  height: 16px;
+  color: #fff;
+  position: absolute;
+  right: -6px;
+  font-size: 12px;
+  box-shadow: 0 0 0 2px #fff;
+  top: -6px;
+  padding: 0 4px;
+  line-height: 1;
+}
+
+.inner-container {
+  top: 0;
+  bottom: 0;
+  right: 0;
+  left: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  border-radius: 50%;
+  overflow: hidden;
+  position: relative;
+  transform: translateZ(0);
+  width: 100%;
+}
+
+.ripple {
+  transition: background 0.5s;
+  background-position: center;
+  position: absolute;
+  border-radius: 50%;
+
+  &:hover {
+    background: rgba(255, 255, 255, 0)
+      radial-gradient(circle, transparent 1%, rgba(255, 255, 255, 0.15) 1%)
+      center/15000%;
+  }
+
+  &:active {
+    background-color: rgba(255, 255, 255, 0.25);
+    background-size: 100%;
+    transition: background 0s;
+  }
+}
+
+.disabled .icon-button-badge {
+  background: #acacac;
+}
+
+.outlined .ripple {
+  &:hover {
+    background: rgba(0, 103, 120, 0)
+      radial-gradient(circle, transparent 1%, rgba(0, 103, 120, 0.05) 1%)
+      center/15000%;
+  }
+
+  &:active {
+    background-color: rgba(0, 103, 120, 0.15);
+    background-size: 100%;
+    transition: background 0s;
+  }
+}
+
+.text .ripple {
+  &:hover {
+    background: rgba(0, 103, 120, 0)
+      radial-gradient(circle, transparent 1%, rgba(0, 103, 120, 0.05) 1%)
+      center/15000%;
+  }
+
+  &:active {
+    background-color: rgba(0, 103, 120, 0.15);
+    background-size: 100%;
+    transition: background 0s;
+  }
+}
+
+.ghost .ripple {
+  &:hover {
+    background: rgba(0, 103, 120, 0)
+      radial-gradient(circle, transparent 1%, rgba(0, 103, 120, 0.05) 1%)
+      center/15000%;
+  }
+
+  &:active {
+    background-color: rgba(0, 103, 120, 0.15);
+    background-size: 100%;
+    transition: background 0s;
+  }
+}

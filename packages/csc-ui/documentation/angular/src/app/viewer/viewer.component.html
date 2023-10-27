@@ -1,0 +1,65 @@
+<div class="viewer" [class.mobile]="isMobile$ | async">
+  <h1 class="text-capitalize mb-0 text-primary">{{ componentData?.name }}</h1>
+  <p class="mb-0 fs-6 text-black-50">{{ componentData?.tag }}</p>
+  <p class="mt-2 mb-4 mb-0 fs-6 text-black-80" *ngIf="componentData?.docs">
+    {{ componentData?.docs }}
+  </p>
+
+  <c-tabs cControl [(ngModel)]="activeTab">
+    <c-tab
+      *ngFor="let tab of tabs"
+      [routerLink]="tab.enabled ? [] : null"
+      [queryParams]="tab.query"
+      [disabled]="!tab.enabled"
+      [value]="tab.label"
+    >
+      {{ tab.label }}
+    </c-tab>
+  </c-tabs>
+
+  <div class="pt-4">
+    <div [hidden]="activeTab !== 'Examples'">
+      <ng-container appDynamicComponent></ng-container>
+    </div>
+
+    <div *ngIf="activeTab === 'Attributes'">
+      <app-viewer-attributes [data]="componentData"></app-viewer-attributes>
+
+      <div *ngFor="let child of componentData?.children">
+        <div *ngIf="child?.props.length">
+          <app-viewer-attributes [data]="child"></app-viewer-attributes>
+        </div>
+      </div>
+    </div>
+
+    <div *ngIf="activeTab === 'Methods'">
+      <app-viewer-methods [data]="componentData"></app-viewer-methods>
+
+      <div *ngFor="let child of componentData?.children">
+        <div *ngIf="child?.methods.length">
+          <app-viewer-methods [data]="child"></app-viewer-methods>
+        </div>
+      </div>
+    </div>
+
+    <div *ngIf="activeTab === 'Slots'">
+      <app-viewer-slots [data]="componentData"></app-viewer-slots>
+
+      <div *ngFor="let child of componentData?.children">
+        <div *ngIf="child?.slots.length">
+          <app-viewer-slots [data]="child"></app-viewer-slots>
+        </div>
+      </div>
+    </div>
+
+    <div *ngIf="activeTab === 'Events'">
+      <app-viewer-events [data]="componentData"></app-viewer-events>
+
+      <div *ngFor="let child of componentData?.children">
+        <div *ngIf="child?.events.length">
+          <app-viewer-events [data]="child"></app-viewer-events>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

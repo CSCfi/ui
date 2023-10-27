@@ -1,0 +1,29 @@
+$icon-margin: 4px;
+
+a {
+  display: inline-flex;
+  cursor: pointer;
+  font-size: 16px;
+  text-decoration: none;
+}
+
+a.icon {
+  display: flex;
+  align-items: center;
+  & svg {
+    margin-right: $icon-margin;
+  }
+}
+
+a.icon-after {
+  flex-direction: row-reverse;
+  & svg {
+    margin-left: $icon-margin;
+  }
+}
+
+a.underline {
+  text-decoration: underline;
+}
+
+

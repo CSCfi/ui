@@ -1,0 +1,304 @@
+:host {
+  display: block;
+  cursor: text;
+}
+
+:host([disabled]) {
+  ::slotted(input),
+  ::slotted(textarea) {
+    color: rgba(0, 0, 0, 0.5);
+  }
+}
+
+.visuallyhidden {
+  border: 0;
+  clip: rect(0 0 0 0);
+  height: 1px;
+  margin: -1px;
+  overflow: hidden;
+  padding: 0;
+  position: absolute;
+  white-space: nowrap;
+  width: 1px;
+}
+
+.c-input {
+  --c-color: rgba(0, 0, 0, 0.87);
+
+  $this: &;
+
+  --c-input-border-width: 1px;
+
+  align-items: flex-start;
+  display: flex;
+  flex: 1 1 auto;
+  font-family: $csc-font-family;
+  font-size: 16px;
+  letter-spacing: normal;
+  max-width: 100%;
+  text-align: left;
+  border-radius: 4px;
+
+  input,
+  select,
+  textarea {
+    margin: 0;
+    border: 0;
+    padding: 0;
+    display: inline-block;
+    vertical-align: middle;
+    white-space: normal;
+    background: none;
+    line-height: 1;
+
+    /* Browsers have different default form fonts */
+    font-size: 16px;
+    font-family: $csc-font-family;
+  }
+
+  input,
+  textarea {
+    -webkit-box-sizing: content-box;
+    -moz-box-sizing: content-box;
+    box-sizing: content-box;
+  }
+
+  input[type='checkbox'],
+  input[type='radio'],
+  select {
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+  }
+
+  input[type='search'] {
+    -webkit-appearance: textfield;
+    -webkit-box-sizing: content-box;
+    box-sizing: content-box;
+  }
+
+  ::-webkit-search-decoration {
+    display: none;
+  }
+
+  textarea {
+    vertical-align: top;
+    overflow: auto;
+  }
+
+  input {
+    max-height: 32px;
+    padding: 8px 0 8px;
+  }
+
+  textarea {
+    margin-top: 4px;
+    min-height: 44px;
+    padding: 8px 12px 8px 0;
+    resize: vertical;
+  }
+
+  input,
+  textarea {
+    background-color: transparent;
+    border: none;
+    color: rgba(0, 0, 0, 0.87);
+    flex: 1 1 auto;
+    font-family: $csc-font-family;
+    font-size: 16px;
+    line-height: 20px;
+    max-width: 100%;
+    min-width: 0;
+    width: 100%;
+  }
+
+  input:focus,
+  input:active,
+  textarea:focus,
+  textarea:active {
+    outline: none;
+  }
+
+  .c-input__content {
+    align-items: center;
+    display: flex;
+    width: 100%;
+  }
+
+  &__control {
+    border-radius: inherit;
+    color: currentColor;
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+    flex-wrap: wrap;
+    gap: 8px;
+    height: auto;
+    min-width: 0;
+    width: 100%;
+  }
+
+  &__slot {
+    align-items: stretch;
+    background: transparent;
+    border-radius: inherit;
+    color: inherit;
+    cursor: text;
+    display: flex;
+    min-height: 44px;
+    padding: 0 12px;
+    position: relative;
+    transition: 0.3s cubic-bezier(0.25, 0.8, 0.5, 1);
+    width: 100%;
+
+    .click-trap {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(128, 255, 0, 0.295);
+    }
+  }
+
+  &__field {
+    align-items: center;
+    display: flex;
+    flex: 1 1 auto;
+    gap: 8px;
+    position: relative;
+
+    input,
+    textarea {
+      flex: 1;
+      outline: 0;
+    }
+
+    label {
+      font-size: 16px;
+      height: 20px;
+      left: 0px;
+      letter-spacing: normal;
+      line-height: 20px;
+      max-width: 90%;
+      min-height: 8px;
+      overflow: hidden;
+      pointer-events: none;
+      position: absolute;
+      right: auto;
+      text-overflow: ellipsis;
+      top: 12px;
+      transform-origin: top left;
+      transform: translateX(var(--c-label-position)) translateY(0) scale(1);
+      transition: 0.3s cubic-bezier(0.25, 0.8, 0.5, 1);
+      white-space: nowrap;
+
+      &.active {
+        transform: translateY(-18px) scale(0.75);
+      }
+
+      span {
+        color: var(--csc-error);
+      }
+    }
+  }
+
+  &--select .c-input__slot {
+    cursor: pointer;
+  }
+
+  fieldset {
+    border-collapse: collapse;
+    border-color: currentColor;
+    border-radius: inherit;
+    border-style: solid;
+    border-width: var(--c-input-border-width);
+    bottom: 0;
+    left: 0;
+    margin: 0;
+    padding-left: 8px;
+    padding: 0;
+    pointer-events: none;
+    position: absolute;
+    right: 0;
+    top: 0;
+    transition-duration: 0.15s;
+    transition-property: color;
+    transition-timing-function: cubic-bezier(0.25, 0.8, 0.25, 1);
+
+    legend {
+      float: none;
+      line-height: 11px;
+      margin-left: 7px;
+      padding: 0;
+      text-align: left;
+      transition: width 0.3s cubic-bezier(0.25, 0.8, 0.5, 1);
+      width: 0;
+
+      &.active {
+        width: var(--c-legend-width);
+      }
+    }
+  }
+
+  &--shadow {
+    #{$this} {
+      &__slot {
+        background: #fff;
+        box-shadow: rgba(0, 0, 0, 0.15) 0px 5px 15px 0px;
+
+        &:focus-within {
+          outline: 2px var(--csc-primary) solid;
+        }
+      }
+    }
+  }
+
+  &--disabled {
+    input,
+    textarea,
+    fieldset,
+    label {
+      --csc-error: rgba(0, 0, 0, 0.5);
+
+      color: rgba(0, 0, 0, 0.5);
+    }
+  }
+
+  &--textarea {
+    #{$this} {
+      &__field {
+        margin-right: -12px;
+      }
+    }
+  }
+
+  ::placeholder {
+    color: rgba(0, 0, 0, 0.46);
+    opacity: 1;
+  }
+
+  &:focus-within,
+  &:not(.c-input--disabled):active {
+    --c-input-border-width: 2px;
+    --c-color: var(--csc-primary);
+
+    color: var(--csc-primary);
+
+    label {
+      transform: translateX(0px) translateY(-18px) scale(0.75);
+    }
+
+    legend {
+      width: var(--c-legend-width);
+    }
+  }
+
+  &--error {
+    color: var(--csc-error);
+
+    &:focus-within {
+      color: var(--csc-error);
+    }
+  }
+}

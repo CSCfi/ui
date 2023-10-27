@@ -1,0 +1,57 @@
+<div class="documentation-card">
+  <h1 class="text-capitalize mb-0 text-primary">Usage in Vue 3.x</h1>
+
+  <div class="pt-4">
+    <p>
+      <strong>1. Initialize a new Vue project</strong>
+    </p>
+    <pre class="rounded"><code highlight="npm init vue@latest"></code></pre>
+    <p>
+      This command will install and execute
+      <code>create-vue</code>
+      , the official Vue project scaffolding tool. You will be presented with prompts for a number
+      of optional features such as TypeScript and testing support.
+    </p>
+  </div>
+
+  <div class="pt-4">
+    <p><strong>2. Install the required dependencies</strong></p>
+    <pre class="rounded"><code highlight="npm install csc-ui @cscfi/csc-ui-vue"></code></pre>
+    <p>
+      This command will install the CSC Design system component library
+      <code>csc-ui</code>
+      and the directive
+      <code>@cscfi/csc-ui-vue</code>
+      which allows the components to support 2-way model binding.
+    </p>
+  </div>
+
+  <div class="pt-4">
+    <p>
+      <strong>
+        3. Add the following lines to
+        <code>main.ts</code>
+      </strong>
+    </p>
+
+    <pre class="rounded"><code [highlight]="mainUsage"></code></pre>
+  </div>
+
+  <div class="pt-4">
+    <p>
+      <strong>
+        4. Add the following lines to
+        <code>vite.config.ts</code>
+      </strong>
+    </p>
+
+    <pre class="rounded"><code [highlight]="viteConfig"></code></pre>
+
+    <p>Now you should be able to use the CSC Design system components in your project.</p>
+  </div>
+</div>
+<div class="documentation-card">
+  <h2 class="text-capitalize mb-4 text-primary">Example project</h2>
+
+  <div id="simple-example"></div>
+</div>

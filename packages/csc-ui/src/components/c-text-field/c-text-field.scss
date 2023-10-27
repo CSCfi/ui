@@ -1,0 +1,31 @@
+.c-input {
+  &__password-toggle,
+  &__date-toggle {
+    cursor: pointer;
+    fill: currentColor;
+    height: 22px;
+    width: 22px;
+
+    &--disabled {
+      cursor: not-allowed;
+      fill: rgba(0, 0, 0, 0.54);
+    }
+  }
+
+  input {
+    &[type="date"] {
+      opacity: 0;
+
+      &::-webkit-calendar-picker-indicator,
+      &::-webkit-inner-spin-button {
+        display: none;
+        appearance: none;
+      }
+
+      &:focus,
+      &.c-input__input--filled {
+        opacity: 1;
+      }
+    }
+  }
+}

@@ -1,0 +1,21 @@
+<p class="fs-5 fw-bold my-1 text-primary">{{ data?.tag }}</p>
+<table class="table">
+  <thead>
+    <tr class="d-flex">
+      <th class="col-4">Event</th>
+      <th class="col-4">Type</th>
+      <th class="col-4">Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr *ngFor="let event of data?.events" class="d-flex">
+      <td class="col-4">
+        {{ event.event }}
+      </td>
+      <td class="col-4 monospace">{{ event.detail }}</td>
+      <td class="col-4">
+        {{ event.docs }}
+      </td>
+    </tr>
+  </tbody>
+</table>

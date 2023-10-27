@@ -1,0 +1,92 @@
+<app-example title="Date field" name="date" component="c-text-field">
+  <c-text-field label="Date" type="date"></c-text-field>
+</app-example>
+
+<app-example title="Password field" name="password" component="c-text-field">
+  <c-text-field label="Password" type="password"></c-text-field>
+</app-example>
+
+<app-example title="Disabled state" name="disabled" component="c-text-field">
+  <c-text-field label="Password" type="password" disabled></c-text-field>
+</app-example>
+
+<app-example
+  title="Shadow with slots and autocapitalize on mobile"
+  name="shadow"
+  component="c-text-field"
+>
+  <c-text-field placeholder="Text field with a shadow" shadow autocapitalize="words">
+    <c-icon [path]="mdiMagnify" slot="pre" size="16"></c-icon>
+
+    <c-tag slot="post" active>12</c-tag>
+  </c-text-field>
+</app-example>
+
+<app-example
+  title="Usage as a textarea"
+  subtitle="Specify the number of rows to use the c-text-field as a textarea"
+  name="textarea"
+  component="c-text-field"
+>
+  <c-text-field
+    label="I am a textarea"
+    placeholder="I have a placeholder text too!"
+    rows="10"
+    hint="Use the force Luke!"
+  ></c-text-field>
+</app-example>
+
+<app-example
+  title="Usage in Angular forms with validation"
+  name="validation"
+  component="c-text-field"
+>
+  <form [formGroup]="form">
+    <c-card>
+      <c-card-title>Login form</c-card-title>
+
+      <c-card-content>
+        <c-text-field
+          formControlName="username"
+          label="Username"
+          hint="Enter your username"
+          placeholder="Your superhero name"
+          [valid]="isValid('username')"
+          [validation]="errors('username')"
+          required
+          cControl
+        >
+          <c-icon [path]="mdiStar" slot="pre" size="16"></c-icon>
+        </c-text-field>
+
+        <c-text-field
+          formControlName="age"
+          label="Age"
+          type="number"
+          hint="Verify your age"
+          placeholder="Validates only on blur"
+          [valid]="isValid('age')"
+          [validation]="errors('age')"
+          required
+          cControl
+          validate-on-blur
+        ></c-text-field>
+
+        <c-text-field
+          formControlName="password"
+          label="Password"
+          type="password"
+          hint="Enter your super secret password"
+          [valid]="isValid('password')"
+          [validation]="errors('password')"
+          required
+          cControl
+        ></c-text-field>
+      </c-card-content>
+
+      <c-card-actions>
+        <c-button [disabled]="!form.valid" (click)="onSubmit()">Submit</c-button>
+      </c-card-actions>
+    </c-card>
+  </form>
+</app-example>

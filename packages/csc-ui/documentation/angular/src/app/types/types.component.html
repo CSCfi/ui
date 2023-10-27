@@ -1,0 +1,18 @@
+<div class="documentation-card">
+  <h1 class="text-start text-capitalize mb-0 text-primary">CSC UI Types</h1>
+
+  <div class="row">
+    <div class="col">
+      <ul class="mt-4">
+        <li *ngFor="let type of types" (click)="scrollToType(type.type)">{{ type.type }}</li>
+      </ul>
+    </div>
+
+    <div class="col">
+      <div *ngFor="let type of types" class="my-4">
+        <p class="fw-5 fs-5 mb-2" [id]="type.type">{{ type.type }}</p>
+        <pre class="rounded"><code [highlight]="type.value"></code></pre>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,69 @@
+{
+  "projectName": "csc-ui",
+  "projectOwner": "CSCfi",
+  "repoType": "github",
+  "repoHost": "https://github.com",
+  "files": [
+    "README.md"
+  ],
+  "imageSize": 100,
+  "commit": true,
+  "commitConvention": "none",
+  "contributors": [
+    {
+      "login": "saulipurhonen",
+      "name": "saulipurhonen",
+      "avatar_url": "https://avatars.githubusercontent.com/u/48789543?v=4",
+      "profile": "https://github.com/saulipurhonen",
+      "contributions": [
+        "doc",
+        "code"
+      ]
+    },
+    {
+      "login": "hannyle",
+      "name": "Hang Le",
+      "avatar_url": "https://avatars.githubusercontent.com/u/23532204?v=4",
+      "profile": "https://github.com/hannyle",
+      "contributions": [
+        "code"
+      ]
+    },
+    {
+      "login": "villeerikssoncsc",
+      "name": "villeerikssoncsc",
+      "avatar_url": "https://avatars.githubusercontent.com/u/100685708?v=4",
+      "profile": "https://github.com/villeerikssoncsc",
+      "contributions": [
+        "doc",
+        "code",
+        "test",
+        "infra"
+      ]
+    },
+    {
+      "login": "csc-design-system-team",
+      "name": "csc-design-system-team",
+      "avatar_url": "https://avatars.githubusercontent.com/u/115702104?v=4",
+      "profile": "https://github.com/csc-design-system-team",
+      "contributions": [
+        "doc",
+        "infra",
+        "code"
+      ]
+    },
+    {
+      "login": "razorfever",
+      "name": "Oskari Väistö",
+      "avatar_url": "https://avatars.githubusercontent.com/u/5346684?v=4",
+      "profile": "https://github.com/razorfever",
+      "contributions": [
+        "doc",
+        "infra",
+        "code",
+        "test"
+      ]
+    }
+  ],
+  "contributorsPerLine": 7
+}

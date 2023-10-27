@@ -1,0 +1,50 @@
+:host {
+  display: block;
+}
+
+.c-status {
+  --c-status-bg: #e5eff1;
+  --c-status-info: #002f5f;
+  --c-status-info-bg: #eef2f8;
+  --c-status-warning: #c74600;
+  --c-status-warning-bg: #fff7e3;
+  --c-status-error: #b90729;
+  --c-status-error-bg: #f8e5e9;
+  --c-status-success: #3a7a06;
+  --c-status-success-bg: #e5f2da;
+
+  display: inline-flex;
+  min-height: 24px;
+  min-width: 88px;
+  padding: 4px 16px;
+  align-items: center;
+  justify-content: center;
+  border-radius: 4px;
+  color: var(--csc-primary);
+  background-color: var(--c-status-bg);
+  position: relative;
+  box-shadow: inset 0 0 0 1px currentColor;
+  overflow: hidden;
+  line-height: 1;
+  font-size: 14px;
+
+  &--info {
+    color: var(--c-status-info);
+    background-color: var(--c-status-info-bg);
+  }
+
+  &--warning {
+    color: var(--c-status-warning);
+    background-color: var(--c-status-warning-bg);
+  }
+
+  &--error {
+    color: var(--c-status-error);
+    background-color: var(--c-status-error-bg);
+  }
+
+  &--success {
+    color: var(--c-status-success);
+    background-color: var(--c-status-success-bg);
+  }
+}
