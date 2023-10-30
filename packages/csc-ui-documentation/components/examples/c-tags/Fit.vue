@@ -1,5 +1,5 @@
 <template>
-  <component-example rows>
+  <component-example rows name="fit">
     <template #title>Fit</template>
 
     <c-tags>

@@ -1,5 +1,5 @@
 <template>
-  <component-example>
+  <component-example name="basic">
     <template #title>Basic usage</template>
 
     <c-tags>

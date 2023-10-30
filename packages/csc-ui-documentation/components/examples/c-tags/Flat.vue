@@ -1,5 +1,5 @@
 <template>
-  <component-example>
+  <component-example name="flat">
     <template #title>Flat</template>
 
     <template #subtitle>

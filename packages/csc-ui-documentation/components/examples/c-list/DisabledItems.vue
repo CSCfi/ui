@@ -1,5 +1,5 @@
 <template>
-  <component-example name="disabledItems" rows>
+  <component-example name="disabled-items" rows>
     <template #title>Disabled items</template>
 
     <c-list>

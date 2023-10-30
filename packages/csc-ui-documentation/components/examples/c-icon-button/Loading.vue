@@ -1,5 +1,5 @@
 <template>
-  <component-example>
+  <component-example name="loading">
     <template #title>Loading</template>
 
     <c-icon-button loading>

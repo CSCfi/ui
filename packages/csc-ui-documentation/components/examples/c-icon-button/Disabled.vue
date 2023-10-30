@@ -1,5 +1,5 @@
 <template>
-  <component-example>
+  <component-example name="disabled">
     <template #title>Disabled</template>
 
     <c-icon-button disabled>

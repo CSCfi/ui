@@ -1,5 +1,5 @@
 <template>
-  <component-example>
+  <component-example name="badges">
     <template #title>Badges</template>
 
     <c-icon-button badge="8">

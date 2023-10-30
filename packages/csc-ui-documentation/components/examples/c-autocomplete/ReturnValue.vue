@@ -1,5 +1,5 @@
 <template>
-  <component-example rows>
+  <component-example rows name="return-value">
     <template #title>Usage with 'return-value'</template>
 
     <c-row gap="8">

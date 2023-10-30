@@ -1,5 +1,5 @@
 <template>
-  <component-example name="noBorder" rows>
+  <component-example name="no-border" rows>
     <template #title>Without border</template>
 
     <c-tabs v-model="tab" v-control borderless>

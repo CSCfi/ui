@@ -1,5 +1,5 @@
 <template>
-  <component-example rows>
+  <component-example rows name="multiple">
     <template #title>Multiple</template>
 
     <template #subtitle>Allow multiple expanded panels</template>

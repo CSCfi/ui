@@ -1,5 +1,5 @@
 <template>
-  <component-example name="optionAsValue" rows>
+  <component-example name="option-as-value" rows>
     <template #title>Basic usage</template>
 
     <template #subtitle>Option as selection</template>

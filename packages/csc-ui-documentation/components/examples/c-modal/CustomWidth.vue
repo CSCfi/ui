@@ -1,5 +1,5 @@
 <template>
-  <component-example name="customWidth">
+  <component-example name="custom-width">
     <template #title>Custom width</template>
 
     <c-row gap="8">

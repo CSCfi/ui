@@ -1,5 +1,5 @@
 <template>
-  <component-example name="noAnimation" rows>
+  <component-example name="vertical" rows>
     <template #title>Vertical tabs</template>
 
     <c-tabs v-model="tab" v-control vertical>
