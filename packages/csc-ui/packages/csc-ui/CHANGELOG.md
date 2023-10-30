@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.0.2](https://github.com/CSCfi/ui/compare/v1.0.1...v1.0.2) (2023-10-30)
+
+
+### Bug Fixes
+
+* Fix CSS root definitions ([0bbbed8](https://github.com/CSCfi/ui/commit/0bbbed81fe0ca0f8cd50e181c33841a848791d81))
+
 ## [1.0.1](https://github.com/CSCfi/ui/compare/v1.0.0...v1.0.1) (2023-10-30)
 
 
