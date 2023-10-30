@@ -1,5 +1,5 @@
 <template>
-  <component-example name="basic" rows>
+  <component-example name="radio-buttons" rows>
     <template #title>Usage with c-radio elements</template>
 
     <c-radio-group v-model="selection" v-control>

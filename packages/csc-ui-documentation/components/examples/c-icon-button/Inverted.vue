@@ -1,5 +1,5 @@
 <template>
-  <component-example>
+  <component-example name="inverted">
     <template #title>Inverted</template>
 
     <c-row gap="16" class="bg-primary-600 p-2 rounded-md">

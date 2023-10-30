@@ -1,5 +1,5 @@
 <template>
-  <component-example rows>
+  <component-example rows name="justification">
     <template #title>Tab placement</template>
 
     <c-tabs v-model="tab" v-control :justify="justifyTabs">

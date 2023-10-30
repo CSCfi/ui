@@ -1,5 +1,5 @@
 <template>
-  <component-example>
+  <component-example name="fullscreen">
     <template #title>Fullscreen</template>
 
     <c-card ref="cardRef" fullscreen>

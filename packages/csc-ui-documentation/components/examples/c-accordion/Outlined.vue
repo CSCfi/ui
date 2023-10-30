@@ -1,5 +1,5 @@
 <template>
-  <component-example rows>
+  <component-example rows name="outlined">
     <template #title>Outlined items</template>
 
     <c-accordion value="three" outlined>

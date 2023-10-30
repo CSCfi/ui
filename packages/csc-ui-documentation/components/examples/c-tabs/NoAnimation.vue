@@ -1,5 +1,5 @@
 <template>
-  <component-example name="noAnimation" rows>
+  <component-example name="no-animation" rows>
     <template #title>Without animation</template>
 
     <c-tabs v-model="tab" v-control disable-animation>

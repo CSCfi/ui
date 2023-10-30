@@ -1,5 +1,5 @@
 <template>
-  <component-example>
+  <component-example name="complex">
     <template #title>Complex example</template>
 
     <c-switch v-model="singleSelection" v-control class="mb-4">

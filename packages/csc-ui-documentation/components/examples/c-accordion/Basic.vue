@@ -1,5 +1,5 @@
 <template>
-  <component-example rows>
+  <component-example rows name="basic">
     <template #title>Default</template>
 
     <c-accordion value="one">

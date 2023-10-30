@@ -1,5 +1,5 @@
 <template>
-  <component-example rows>
+  <component-example rows name="basic">
     <template #title>Basic usage</template>
 
     <c-alert :type="type">

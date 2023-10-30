@@ -1,5 +1,5 @@
 <template>
-  <component-example rows>
+  <component-example rows name="closeable">
     <template #title>Closeable</template>
 
     <c-tags>

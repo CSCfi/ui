@@ -1,5 +1,5 @@
 <template>
-  <component-example>
+  <component-example name="sizes">
     <template #title>Sizes</template>
 
     <c-icon-button size="x-small">

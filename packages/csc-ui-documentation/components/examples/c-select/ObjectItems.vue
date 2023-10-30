@@ -1,5 +1,5 @@
 <template>
-  <component-example name="objectItems" rows>
+  <component-example name="object-items" rows>
     <template #title>Items as array</template>
 
     <c-select

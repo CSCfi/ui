@@ -1,5 +1,5 @@
 <template>
-  <component-example rows>
+  <component-example rows name="mandatory">
     <template #title>Mandatory selection</template>
 
     <template #subtitle>One expanded panel is required</template>

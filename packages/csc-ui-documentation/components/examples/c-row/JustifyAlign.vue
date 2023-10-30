@@ -1,5 +1,5 @@
 <template>
-  <component-example rows>
+  <component-example rows name="justify-align">
     <template #title>Justify and align</template>
 
     <c-radio-group

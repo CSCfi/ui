@@ -1,5 +1,5 @@
 <template>
-  <component-example rows>
+  <component-example rows name="options">
     <template #title>Usage with c-option elements</template>
 
     <template #subtitle>
