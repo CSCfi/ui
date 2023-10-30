@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.0.1](https://github.com/CSCfi/ui/compare/v1.0.0...v1.0.1) (2023-10-30)
+
+
+### Bug Fixes
+
+* c-card: Enable scrolling in fullscreen mode ([568f46a](https://github.com/CSCfi/ui/commit/568f46a79809d48a50f31054a2c7a071642a8697))
+
 ## [1.0.0](https://github.com/CSCfi/ui/compare/v0.0.1...v1.0.0) (2023-10-27)
 
 
