@@ -72,7 +72,7 @@
   "name": "@cscfi/csc-ui",
   "repository": "CSCfi/csc-ui",
   "scripts": {
-    "build": "rimraf ./dist && stencil build --docs-readme && npm run style-dictionary:build",
+    "build": "rimraf ./dist && npm run style-dictionary:build && stencil build --docs-readme",
     "build:visual-testing": "docker build -t csc-ui-playwright .",
     "build:watch": "npm run style-dictionary:build && stencil build --docs --watch",
     "deploy": "npm run build && npm run deploy:documentation",
