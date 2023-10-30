@@ -52,7 +52,7 @@
 
 <script setup lang="ts">
 import { mdiLanguageTypescript } from '@mdi/js';
-import typeDefinitions from '../example-data/types';
+import typeDefinitions from '../public/example-data/types';
 
 const route = useRoute();
 
