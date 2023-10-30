@@ -76,17 +76,21 @@ const exampleTemplate = ref('');
 
 const componentName = inject('componentName');
 
-const scriptFiles = import.meta.glob(`/example-data/**/*.script.js`);
+const scriptFiles = import.meta.glob(`../public/example-data/**/*.script.js`);
 
-const templateFiles = import.meta.glob(`/example-data/**/*.template.js`);
+const templateFiles = import.meta.glob(
+  `../public/example-data/**/*.template.js`,
+);
 
 onMounted(() => {
   const instance = getCurrentInstance();
-  const parent = instance?.parent?.type?.__file
-    ?.split('/')
-    ?.at(-1)
-    ?.replace('.vue', '')
-    .toLowerCase();
+
+  const parent =
+    instance?.parent?.type?.__file
+      ?.split('/')
+      ?.at(-1)
+      ?.replace('.vue', '')
+      .toLowerCase() || instance?.parent?.type?.__name?.toLowerCase();
 
   for (const path in scriptFiles) {
     if (path.includes(`/example-data/${componentName}/${parent}.`)) {
