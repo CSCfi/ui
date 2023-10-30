@@ -25,4 +25,4 @@ logs
 !.env.example
 
 # auto generated data for the examples
-example-data
+public/example-data
