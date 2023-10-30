@@ -40,7 +40,7 @@
 </template>
 
 <script setup lang="ts">
-import typeDefinitions from '../../public/example-data/types';
+import typeDefinitions from '../../example-data/types';
 
 type TypeTableItem = {
   name: string;
