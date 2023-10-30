@@ -154,36 +154,9 @@ module.exports = {
             },
           },
           options: {
-            selector: ':host, :root',
+            selector: ':root',
           },
         })),
-    },
-
-    scss: {
-      transformGroup: 'scss',
-      buildPath: 'src/styles/',
-      prefix: 'csc',
-      files: [
-        {
-          destination: 'variables.scss',
-          format: 'scss/variables',
-        },
-      ],
-    },
-
-    css: {
-      transformGroup: 'css',
-      buildPath: 'src/styles/',
-      prefix: 'csc',
-      files: [
-        {
-          format: 'css/variables',
-          destination: 'variables.css',
-          options: {
-            selector: ':host',
-          },
-        },
-      ],
     },
   },
 };

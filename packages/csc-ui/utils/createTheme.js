@@ -3,7 +3,7 @@ const getRgbValue = require('./getRgbValue');
 
 const formats = {
   css: {
-    fileStart: ':root,\n:host {',
+    fileStart: ':root {',
     fileEnd: '\n};\n',
     prefix: '\n\t--c',
     postfix: '',
@@ -36,9 +36,9 @@ module.exports = (dictionary, type) => {
           cache.add(token.name);
 
           const isBaseValue = (name) => {
-            const baseValues = [baseColor, 'white', 'black']
+            const baseValues = [baseColor, 'white', 'black'];
 
-            return baseValues.some(value => name.endsWith(value));
+            return baseValues.some((value) => name.endsWith(value));
           };
 
           const name = token.name.replace('theme-', '');
@@ -47,7 +47,10 @@ module.exports = (dictionary, type) => {
           theme += `${token.value};${config.postfix}`;
 
           if (isBaseValue(name)) {
-            theme += `${config.prefix}-${name.replace(`-${baseColor}`, '')}-rgb: `;
+            theme += `${config.prefix}-${name.replace(
+              `-${baseColor}`,
+              '',
+            )}-rgb: `;
             theme += `${getRgbValue(token.value)};${config.postfix}`;
           }
         }
