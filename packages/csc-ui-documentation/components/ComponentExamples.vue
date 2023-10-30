@@ -3,10 +3,10 @@
     <c-card-content>
       <div class="example-headings">
         <h1 class="text-4xl capitalize font-bold text-primary-600">
-          {{ componentData?.name }}
+          {{ pageTitles?.title }}
         </h1>
 
-        <h2 class="text-xl text-tertiary-500">{{ component }}</h2>
+        <h2 class="text-xl text-tertiary-500">{{ pageTitles?.subtitle }}</h2>
       </div>
 
       <p v-if="!!componentData?.docs">{{ componentData.docs }}</p>
@@ -53,7 +53,7 @@ const cardRef = ref<HTMLCCardElement | null>(null);
 
 const route = useRoute();
 
-const { componentData } = storeToRefs(useExampleStore());
+const { componentData, pageTitles } = storeToRefs(useExampleStore());
 
 const onTabClick = (tab: any) => {
   requestAnimationFrame(async () => {

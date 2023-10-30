@@ -18,16 +18,18 @@ jobs:
         with:
           release-type: node
           package-name: release-please-action
+          path: 'packages/csc-ui'
+          changelog-path: 'packages/csc-ui/CHANGELOG.md'
 
       - name: Checkout repository
         uses: actions/checkout@v2
-        if: ${{ steps.release.outputs.release_created }}
+        if: ${{ steps.release.outputs.releases_created }}
 
       - uses: actions/setup-node@v1
         with:
           node-version: 18
           registry-url: 'https://registry.npmjs.org'
-        if: ${{ steps.release.outputs.release_created }}
+        if: ${{ steps.release.outputs.releases_created }}
 
       - name: Install dependencies & publish NPM package
         run: |
@@ -37,17 +39,4 @@ jobs:
           npm publish
         env:
           NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
-        if: ${{ steps.release.outputs.release_created }}
-
-      - name: Setup Firebase
-        uses: pocket-apps/action-setup-firebase@v2
-        with:
-          firebase-token: ${{ secrets.FIREBASE_TOKEN }}
-        if: ${{ steps.release.outputs.release_created }}
-
-      - name: Release documentation
-        run: |
-          cd ../csc-ui-documentation
-          npm --no-git-tag-version version ${{steps.release.outputs.major}}.${{steps.release.outputs.minor}}.${{steps.release.outputs.patch}}
-          npm run deploy
-        if: ${{ steps.release.outputs.release_created }}
+        if: ${{ steps.release.outputs.releases_created }}

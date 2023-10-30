@@ -11,8 +11,8 @@
     "typescript": "^4.9.5"
   },
   "scripts": {
+    "build": "lerna run build",
     "publish": "lerna run tsc && lerna publish",
-    "prepare": "chmod +x ./node_modules/husky/lib/bin.js && husky install"
-  },
-  "version": "1.0.0"
+    "prepare": "if [ \"$CI\" = true ]; then echo \"Skip Husky\"; else chmod +x ./node_modules/husky/lib/bin.js && husky install; fi"
+  }
 }

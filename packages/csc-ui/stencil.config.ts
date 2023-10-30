@@ -30,10 +30,7 @@ export const config: Config = {
   ],
   plugins: [
     sass({
-      injectGlobalPaths: [
-        'src/assets/global.scss',
-        'src/styles/variables.scss',
-      ],
+      injectGlobalPaths: ['src/assets/global.scss'],
     }),
   ],
   extras: {

@@ -20,6 +20,18 @@
   }
 }
 
+:host(.c-card--fullscreen) {
+  --c-icon-button-text-background-color: var(--c-white);
+
+  overflow: auto;
+
+  .c-card {
+    &__fullscreen-toggle {
+      position: fixed;
+    }
+  }
+}
+
 ::slotted(c-loader) {
   border-radius: 6px;
 }

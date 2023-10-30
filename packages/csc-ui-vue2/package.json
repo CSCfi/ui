@@ -19,7 +19,8 @@
   "main": "lib/vControl.js",
   "name": "@cscfi/csc-ui-vue2",
   "scripts": {
+    "build": "tsc",
     "tsc": "tsc"
   },
-  "version": "0.0.1"
+  "version": "0.0.2"
 }

@@ -29,10 +29,10 @@ import { CAlertType, CRadioGroupItem } from '@cscfi/csc-ui';
 const type = ref<CAlertType>(CAlertType.Info);
 
 const types: CRadioGroupItem[] = [
-  { value: '', label: 'Default' },
-  { value: CAlertType.Info, label: 'Info' },
-  { value: CAlertType.Success, label: 'Success' },
-  { value: CAlertType.Warning, label: 'Warning' },
-  { value: CAlertType.Error, label: 'Error' },
+  { value: '', name: 'Default' },
+  { value: CAlertType.Info, name: 'Info' },
+  { value: CAlertType.Success, name: 'Success' },
+  { value: CAlertType.Warning, name: 'Warning' },
+  { value: CAlertType.Error, name: 'Error' },
 ];
 </script>

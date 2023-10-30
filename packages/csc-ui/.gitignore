@@ -4,15 +4,13 @@ node_modules/*
 .vscode/*
 .stencil/*
 src/styles/*
-src/components.d.ts
+!src/styles/.gitkeep
+
 
 # Automatically generated files
 docs.json
-documentation/angular/.firebase/
 
 .npmrc
-
-firebase-debug.log
 
 playground/**/node_modules
 .env

@@ -378,6 +378,8 @@ export class CInput {
   async createDropdown(params: _CDropdownParams) {
     const wrapper = await this._getScrollParent(this.hiddenEl);
 
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
     this._dropdownElement = await this._dropdownsElement.createDropdown({
       ...params,
       itemsPerPage: params.itemsPerPage || 6,

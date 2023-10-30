@@ -100,6 +100,7 @@ export class CCard {
   render() {
     const hostClasses = {
       'c-card': true,
+      'c-card--fullscreen': this.isFullscreen,
     };
 
     return (
