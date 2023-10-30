@@ -2,10 +2,7 @@
   <component-example rows name="options">
     <template #title>Usage with c-option elements</template>
 
-    <template #subtitle>
-      Wrap the text content of the option with c-option-value to enable match
-      highlighting
-    </template>
+    <template #subtitle>Use c-option-value for match highlighting</template>
 
     <c-row gap="8">
       <c-autocomplete

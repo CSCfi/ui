@@ -2,9 +2,7 @@
   <component-example name="flat">
     <template #title>Flat</template>
 
-    <template #subtitle>
-      Used to indicate there's no user interactivity
-    </template>
+    <template #subtitle>Indicates there's no user interactivity</template>
 
     <c-tags>
       <c-tag flat>One</c-tag>
