@@ -76,9 +76,9 @@ const exampleTemplate = ref('');
 
 const componentName = inject('componentName');
 
-const scriptFiles = import.meta.glob(`../example-data/**/*.script.js`);
+const scriptFiles = import.meta.glob(`/example-data/**/*.script.js`);
 
-const templateFiles = import.meta.glob(`../example-data/**/*.template.js`);
+const templateFiles = import.meta.glob(`/example-data/**/*.template.js`);
 
 onMounted(() => {
   const instance = getCurrentInstance();
