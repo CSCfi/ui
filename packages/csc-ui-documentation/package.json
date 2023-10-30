@@ -1,7 +1,7 @@
 {
   "dependencies": {
-    "@cscfi/csc-ui": "latest",
-    "@cscfi/csc-ui-vue": "^0.0.2",
+    "@cscfi/csc-ui": "*",
+    "@cscfi/csc-ui-vue": "*",
     "@mdi/js": "^7.2.96",
     "@pinia/nuxt": "^0.4.11",
     "@vueuse/nuxt": "^10.5.0",

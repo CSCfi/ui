@@ -48,9 +48,9 @@ const tab = ref<Tab>('tab1');
 const justifyTabs = ref<CTabsJustify>('start');
 
 const options: CRadioGroupItem[] = [
-  { value: 'start', label: 'Start' },
-  { value: 'center', label: 'Center' },
-  { value: 'end', label: 'End' },
-  { value: 'stretch', label: 'Stretch' },
+  { value: 'start', name: 'Start' },
+  { value: 'center', name: 'Center' },
+  { value: 'end', name: 'End' },
+  { value: 'stretch', name: 'Stretch' },
 ];
 </script>

@@ -5,6 +5,8 @@ import { ComponentData } from '~/types/docs';
 export const useExampleStore = defineStore('example', () => {
   const currentComponent = ref('');
 
+  const pageTitles = ref<{ title: string; subtitle: string }>();
+
   const parseChild = (child: ComponentData) => ({
     ...child,
     props: child.props.filter((e) =>
@@ -52,5 +54,5 @@ export const useExampleStore = defineStore('example', () => {
     );
   });
 
-  return { componentData, currentComponent, parsedData };
+  return { componentData, currentComponent, parsedData, pageTitles };
 });
