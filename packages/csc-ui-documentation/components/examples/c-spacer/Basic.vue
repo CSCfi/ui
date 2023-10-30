@@ -3,19 +3,23 @@
     <template #title>Basic usage</template>
 
     <c-row align="end">
-      <c-icon :path="mdiForklift" size="128" color="var(--c-info-700)" />
+      <c-icon
+        :path="mdiArrowRightBoldOutline"
+        size="64"
+        color="var(--c-primary-600)"
+      />
 
       <c-spacer />
 
       <c-icon
-        :path="mdiPackageVariantClosed"
-        size="128"
-        color="var(--c-warning-500)"
+        :path="mdiArrowLeftBoldOutline"
+        size="64"
+        color="var(--c-primary-600)"
       />
     </c-row>
   </component-example>
 </template>
 
 <script setup lang="ts">
-import { mdiForklift, mdiPackageVariantClosed } from '@mdi/js';
+import { mdiArrowLeftBoldOutline, mdiArrowRightBoldOutline } from '@mdi/js';
 </script>
