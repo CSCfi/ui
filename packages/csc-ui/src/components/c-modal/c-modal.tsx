@@ -93,6 +93,10 @@ export class CModal {
       this._dialog.classList.remove('closing');
       this._dialog.close();
     }
+
+    if (!document.fullscreenElement) return;
+
+    document.exitFullscreen();
   };
 
   private _handleClickOutside = () => {

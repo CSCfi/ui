@@ -19,6 +19,11 @@ export default defineNuxtConfig({
 
   app: {
     pageTransition: { name: 'fade', mode: 'out-in' },
+    head: {
+      title: 'Design System - CSC',
+      charset: 'utf-8',
+      viewport: 'width=device-width, initial-scale=1',
+    },
   },
 
   css: ['~/assets/css/main.css'],

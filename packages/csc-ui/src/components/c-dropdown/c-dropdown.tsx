@@ -463,6 +463,8 @@ export class CDropdown {
         );
       }
 
+      this.host.style.setProperty('--_c-dropdown-width', `${parentWidth}px`);
+
       this.topPosition = parentBottom;
 
       if (!isInView.x) {
