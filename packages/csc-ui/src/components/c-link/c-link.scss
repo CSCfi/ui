@@ -10,13 +10,14 @@
     --_c-link-icon-margin: 8px;
 
     align-items: center;
-    color: var(--_c-link-color);
     background-color: var(--c-transparent);
-    display: inline-flex;
+    color: var(--_c-link-color);
     cursor: pointer;
+    display: inline-flex;
     font-size: inherit;
-    text-decoration: none;
     gap: var(--_c-link-icon-margin);
+    justify-content: start;
+    text-decoration: none;
     transition: background-color 0.3s ease-in-out;
 
     &:hover {

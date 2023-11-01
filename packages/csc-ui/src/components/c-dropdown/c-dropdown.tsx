@@ -422,55 +422,54 @@ export class CDropdown {
   }
 
   private _positionMenu() {
-    requestAnimationFrame(() => {
-      const scrollTop = this.scrollingParent.scrollTop;
+    const scrollTop = this.scrollingParent.scrollTop;
 
-      const scrollLeft = this.scrollingParent.scrollLeft;
+    const scrollLeft = this.scrollingParent.scrollLeft;
 
-      const {
-        top: parentTop,
-        bottom: parentBottom,
-        left: parentLeft,
-        width: parentWidth,
-        height: parentHeight,
-      } = this._getParentPosition();
+    const {
+      top: parentTop,
+      bottom: parentBottom,
+      left: parentLeft,
+      width: parentWidth,
+      height: parentHeight,
+    } = this._getParentPosition();
 
-      this.host.style.top = `${parentBottom}px`;
-      this.host.style.left = `${parentLeft}px`;
-      this.host.style.minWidth = `${parentWidth}px`;
-      this.bottomTranslate = 0;
+    this.host.style.top = `${parentBottom}px`;
+    this.host.style.left = `${parentLeft}px`;
+    this.host.style.minWidth = `${parentWidth}px`;
+    this.bottomTranslate = 0;
 
-      this.host.style.removeProperty('transform');
+    this.host.style.removeProperty('transform');
 
-      const { bottom, right, height, width } =
-        this.host.getBoundingClientRect();
+    const { bottom, right, height, width } = this.host.getBoundingClientRect();
 
-      this._parentTop = parentTop;
+    this._parentTop = parentTop;
 
-      const isInView = {
-        x: right < this.scrollingParent.scrollWidth - scrollLeft,
-        y: bottom < this.scrollingParent.scrollHeight - scrollTop,
-      };
+    const isInView = {
+      x: right < this.scrollingParent.scrollWidth - scrollLeft,
+      y: bottom < this.scrollingParent.scrollHeight - scrollTop,
+    };
 
-      if (!isInView.y || this._openedOnTop) {
-        this._openedOnTop = true;
+    if (!isInView.y || this._openedOnTop) {
+      this._openedOnTop = true;
 
-        this.bottomTranslate = height + parentHeight;
+      this.bottomTranslate = height + parentHeight;
 
-        this.host.style.setProperty(
-          'transform',
-          `translateY(-${this.bottomTranslate}px`,
-        );
-      }
+      this.host.style.setProperty(
+        'transform',
+        `translateY(-${this.bottomTranslate}px`,
+      );
+    }
 
-      this.topPosition = parentBottom;
+    this.host.style.setProperty('--_c-dropdown-width', `${parentWidth}px`);
 
-      if (!isInView.x) {
-        this.host.style.left = `${
-          parseFloat(this.host.style.left) - width + parentWidth
-        }px`;
-      }
-    });
+    this.topPosition = parentBottom;
+
+    if (!isInView.x) {
+      this.host.style.left = `${
+        parseFloat(this.host.style.left) - width + parentWidth
+      }px`;
+    }
   }
 
   private _removeEventListeners() {

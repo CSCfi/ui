@@ -28,10 +28,6 @@
   }
 
   &__label {
-    display: flex;
-    gap: 4px;
-    align-items: center;
-
     span.required {
       color: var(--_c-radio-group-error-color);
     }

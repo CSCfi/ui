@@ -8,7 +8,7 @@
         @keyup.enter="numericWidthModal = true"
         @keyup.space="numericWidthModal = true"
       >
-        Open modal with a numeric width
+        Numeric width
       </c-button>
 
       <c-button
@@ -16,7 +16,7 @@
         @keyup.enter="stringWidthModal = true"
         @keyup.space="stringWidthModal = true"
       >
-        Open modal with a width defined as string
+        String width
       </c-button>
     </c-row>
 
@@ -31,7 +31,7 @@
           aliquip ex ea commodo consequat.
         </c-card-content>
 
-        <c-card-actions>
+        <c-card-actions justify="end">
           <c-button
             @click="numericWidthModal = false"
             @keyup.enter="numericWidthModal = false"
@@ -54,7 +54,7 @@
           aliquip ex ea commodo consequat.
         </c-card-content>
 
-        <c-card-actions>
+        <c-card-actions justify="end">
           <c-button
             @click="stringWidthModal = false"
             @keyup.enter="stringWidthModal = false"

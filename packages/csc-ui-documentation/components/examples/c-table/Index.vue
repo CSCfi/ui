@@ -8,7 +8,5 @@
 import Basic from './Basic.vue';
 import Responsive from './Responsive.vue';
 
-defineOptions({
-  inheritAttrs: false,
-});
+usePageTitles();
 </script>

@@ -8,7 +8,5 @@
 import Basic from './Basic.vue';
 import Complex from './Complex.vue';
 
-defineOptions({
-  inheritAttrs: false,
-});
+usePageTitles();
 </script>

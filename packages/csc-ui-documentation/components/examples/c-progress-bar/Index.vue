@@ -8,7 +8,5 @@
 import Basic from './Basic.vue';
 import Indeterminate from './Indeterminate.vue';
 
-defineOptions({
-  inheritAttrs: false,
-});
+usePageTitles();
 </script>

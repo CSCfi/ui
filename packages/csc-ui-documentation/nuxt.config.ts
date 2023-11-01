@@ -18,13 +18,18 @@ export default defineNuxtConfig({
   },
 
   app: {
-    pageTransition: { name: 'fade', mode: 'out-in' },
+    pageTransition: { name: 'page', mode: 'default' },
+    head: {
+      title: 'Design System - CSC',
+      charset: 'utf-8',
+      viewport: 'width=device-width, initial-scale=1',
+    },
   },
 
   css: ['~/assets/css/main.css'],
 
   imports: {
-    dirs: ['./stores'],
+    dirs: ['./stores', './composables'],
   },
 
   // @ts-ignore

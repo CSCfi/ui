@@ -25,7 +25,7 @@
           aliquip ex ea commodo consequat.
         </c-card-content>
 
-        <c-card-actions>
+        <c-card-actions justify="end">
           <c-button
             @click="dismissableModal = false"
             @keyup.enter="dismissableModal = false"

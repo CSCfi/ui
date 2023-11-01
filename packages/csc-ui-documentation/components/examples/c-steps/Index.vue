@@ -8,7 +8,5 @@
 import Basic from './Basic.vue';
 import Mobile from './Mobile.vue';
 
-defineOptions({
-  inheritAttrs: false,
-});
+usePageTitles();
 </script>
