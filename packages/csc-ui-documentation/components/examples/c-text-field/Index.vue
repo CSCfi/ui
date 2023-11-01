@@ -23,7 +23,5 @@ import Slots from './Slots.vue';
 import TextareaExample from './Textarea.vue';
 import Status from './Status.vue';
 
-defineOptions({
-  inheritAttrs: false,
-});
+usePageTitles();
 </script>

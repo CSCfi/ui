@@ -17,7 +17,6 @@
           :key="tab.value"
           :disabled="!tab.enabled"
           :value="tab.value"
-          @click="onTabClick(tab)"
         >
           {{ tab.label }}
         </c-tab>
@@ -54,12 +53,6 @@ const cardRef = ref<HTMLCCardElement | null>(null);
 const route = useRoute();
 
 const { componentData, pageTitles } = storeToRefs(useExampleStore());
-
-const onTabClick = (tab: any) => {
-  requestAnimationFrame(async () => {
-    await navigateTo({ query: tab.query });
-  });
-};
 
 provide('componentName', props.component);
 

@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia';
 import { components } from '../../csc-ui/docs.json';
-import { ComponentData } from '~/types/docs';
+import { ComponentData } from '../types/docs';
 
 export const useExampleStore = defineStore('example', () => {
   const currentComponent = ref('');

@@ -29,7 +29,7 @@
   },
   "name": "@cscfi/csc-ui-documentation",
   "scripts": {
-    "build": "npm run build:examples && nuxt build",
+    "build": "node scripts/updateVersion.js && npm run build:examples && nuxt build",
     "build:examples": "node ./scripts/build-examples.js",
     "dev": "npm run build:examples && nuxt dev",
     "generate": "nuxt generate",

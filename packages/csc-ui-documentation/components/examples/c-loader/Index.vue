@@ -8,7 +8,5 @@
 import Basic from './Basic.vue';
 import Delayed from './Delayed.vue';
 
-defineOptions({
-  inheritAttrs: false,
-});
+usePageTitles();
 </script>

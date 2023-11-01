@@ -11,7 +11,5 @@ import Basic from './Basic.vue';
 import OptionAsValue from './OptionAsValue.vue';
 import ObjectItems from './ObjectItems.vue';
 
-defineOptions({
-  inheritAttrs: false,
-});
+usePageTitles();
 </script>

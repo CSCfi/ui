@@ -2,13 +2,15 @@
 @import url('@cscfi/csc-ui/css/theme.css');
 @import url('@cscfi/csc-ui/css/typography.css');
 
-.fade-enter-active,
-.fade-leave-active {
-  transition: opacity 0.5s;
+.page-enter-active,
+.page-leave-active {
+  @apply origin-center transition-all duration-300 ease-in-out absolute left-0 top-0 w-full;
 }
-.fade-enter,
-.fade-leave-active {
-  opacity: 0;
+.page-leave-to {
+  @apply scale-95 opacity-0  absolute left-0 top-0 w-full;
+}
+.page-enter-from {
+  @apply scale-105 opacity-0;
 }
 
 code {
@@ -27,4 +29,8 @@ code {
 
 :root {
   --c-font-family: 'Noto Sans', sans-serif;
+}
+
+body {
+  overscroll-behavior: none;
 }
