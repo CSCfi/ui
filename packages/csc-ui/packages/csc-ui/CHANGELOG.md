@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.0.3](https://github.com/CSCfi/ui/compare/v1.0.2...v1.0.3) (2023-11-01)
+
+
+### Bug Fixes
+
+* c-radio-group - Fix using label as a prop with c-radio items ([ceff2fc](https://github.com/CSCfi/ui/commit/ceff2fc419881229e4aa0d26828a2db6389e5e82))
+
 ## [1.0.2](https://github.com/CSCfi/ui/compare/v1.0.1...v1.0.2) (2023-10-30)
 
 
