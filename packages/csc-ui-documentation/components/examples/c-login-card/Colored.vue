@@ -10,9 +10,7 @@
       :overlay="showOverlay"
       :overlay-blend-mode="blendMode.value"
     >
-      <c-login-card-title>
-        Login to service {{ blendMode.value }} {{ showOverlay }}
-      </c-login-card-title>
+      <c-login-card-title>Login to service</c-login-card-title>
 
       <c-login-card-content>
         <div>

@@ -56,7 +56,6 @@
     border-radius: var(--_c-accordion-item-border-radius);
     cursor: pointer;
     grid-template-columns: auto 1fr auto;
-    gap: 8px;
     border: none;
     text-align: left;
     margin: 0;
@@ -122,6 +121,7 @@
   &__indicator {
     display: flex;
     align-items: center;
+    color: var(--_c-accordion-item-text-color);
 
     c-icon {
       width: 24px;

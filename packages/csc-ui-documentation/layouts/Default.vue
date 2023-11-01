@@ -130,7 +130,7 @@
       </c-side-navigation>
 
       <c-page>
-        <div class="max-w-7xl">
+        <div class="max-w-7xl w-full relative">
           <slot />
         </div>
       </c-page>

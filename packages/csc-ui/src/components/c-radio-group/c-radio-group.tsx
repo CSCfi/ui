@@ -296,11 +296,10 @@ export class CRadioGroup {
       >
         {(!!this.label || slotHasContent) && (
           <label class="c-radio-group__label">
-            {!!this.label ? (
-              this.label
-            ) : (
-              <slot onSlotchange={this._handleSlotChange}></slot>
-            )}
+            {!!this.label && this.label}
+
+            <slot onSlotchange={this._handleSlotChange}></slot>
+
             {this.required && <span class="required">&nbsp;*</span>}
           </label>
         )}

@@ -34,11 +34,11 @@ export default async (component, folder) => {
       const writeStream = fs.createWriteStream(filename);
 
       const writeline = (line, lineChange = true) => {
+        writeStream.write(line);
+
         if (lineChange) {
           writeStream.write('\n');
         }
-
-        writeStream.write(line);
       };
 
       let hasInfo = false;
@@ -47,10 +47,10 @@ export default async (component, folder) => {
       let row = 0;
 
       const infoText = `/**
- * Examples for ${component}.
+ * Example script for ${component} (${example}).
  * Automatically generated at ${new Date().toLocaleString()}.
  *
- * ⚠️ DO NOT EDIT THESE MANUALLY AS THEY WILL BE OVERWRITTEN IN THE NEXT BUILD!
+ * ⚠️ DO NOT EDIT THIS MANUALLY AS IT WILL BE OVERWRITTEN IN THE NEXT BUILD!
  */
 `;
 
