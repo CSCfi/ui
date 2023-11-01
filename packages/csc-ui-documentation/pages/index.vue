@@ -22,15 +22,13 @@
 
       <ul>
         <li>
-          <c-link href="https://www.npmjs.com/package/csc-ui">
+          <c-link href="https://www.npmjs.com/package/@cscfi/csc-ui">
             NPM Package
           </c-link>
         </li>
 
         <li>
-          <c-link href="https://github.com/CSCfi/csc-ui">
-            Github Repository
-          </c-link>
+          <c-link href="https://github.com/CSCfi/ui">Github Repository</c-link>
         </li>
 
         <li>

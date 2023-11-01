@@ -8,7 +8,7 @@
       <p><strong>1. Install the required dependencies</strong></p>
 
       <code-block
-        code="npm install csc-ui csc-ui-accessor"
+        code="npm install @cscfi/csc-ui csc-ui-accessor"
         theme="atom-one-dark"
         lang="bash"
         code-block-radius="6px"
@@ -18,7 +18,7 @@
 
       <p>
         This command will install the CSC Design system component library
-        <code>csc-ui</code>
+        <code>@cscfi/csc-ui</code>
         and the control value accessor
         <code>csc-ui-accessor</code>
         which allows the components to support 2-way model binding.
@@ -73,7 +73,7 @@
 </template>
 
 <script setup lang="ts">
-const mainUsage = `import { applyPolyfills, defineCustomElements } from 'csc-ui/dist/loader';
+const mainUsage = `import { applyPolyfills, defineCustomElements } from '@cscfi/csc-ui/loader';
 
 // ...
 

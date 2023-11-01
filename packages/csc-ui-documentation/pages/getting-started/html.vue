@@ -41,7 +41,7 @@ const cdn = computed(() => {
   return (
     '<script src="https://cdn.jsdelivr.net/npm/@cscfi/csc-ui@' +
     version.value +
-    '/dist/cscwebcomponents/cscwebcomponents.esm.js"></' +
+    '/dist/csc-ui/csc-ui.esm.js"></' +
     'script>'
   );
 });
