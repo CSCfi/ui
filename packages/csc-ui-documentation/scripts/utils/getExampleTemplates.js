@@ -33,23 +33,24 @@ export default async (component, folder) => {
       const writeStream = fs.createWriteStream(filename);
 
       const writeline = (line, lineChange = true) => {
+        writeStream.write(line.replace(/^\s{4}/, ''));
+
         if (lineChange) {
           writeStream.write('\n');
         }
-
-        writeStream.write(line.replace(/^\s{4}/, ''));
       };
 
       let hasInfo = false;
       let isExample = false;
       let isInStartTag = false;
+      let isInTitle = false;
       let row = 0;
 
       const infoText = `/**
- * Examples for ${component}.
+ * Example template for ${component} (${example}).
  * Automatically generated at ${new Date().toLocaleString()}.
  *
- * ⚠️ DO NOT EDIT THESE MANUALLY AS THEY WILL BE OVERWRITTEN IN THE NEXT BUILD!
+ * ⚠️ DO NOT EDIT THIS MANUALLY AS IT WILL BE OVERWRITTEN IN THE NEXT BUILD!
  */
 `;
 
@@ -64,7 +65,19 @@ export default async (component, folder) => {
       });
 
       rl.on('line', (line) => {
-        if (line.replace(/^\s+/g, '').startsWith('<template #')) return;
+        if (line.replace(/^\s+/g, '').startsWith('<template #')) {
+          isInTitle = true;
+        }
+
+        if (isInTitle && !line.endsWith('</template>')) {
+          return;
+        }
+
+        if (isInTitle && line.endsWith('</template>')) {
+          isInTitle = false;
+
+          return;
+        }
 
         if (!hasInfo) {
           writeline(infoText);
@@ -76,11 +89,6 @@ export default async (component, folder) => {
           line.replace(/^\s+/g, '').startsWith('<!-- @example-skip-line') ||
           line.replace(/^\s+/g, '').endsWith('@example-skip-line -->')
         ) {
-          return;
-        }
-
-        if (isInStartTag && line.endsWith('>')) {
-          isInStartTag = false;
           return;
         }
 
