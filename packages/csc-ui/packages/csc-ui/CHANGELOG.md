@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.0.4](https://github.com/CSCfi/ui/compare/v1.0.3...v1.0.4) (2023-11-06)
+
+
+### Bug Fixes
+
+* c-dropdown - use dialog element to fix z-index issues when inside c-modal ([4b6ea11](https://github.com/CSCfi/ui/commit/4b6ea11ad2b96cd3c972abd58fc42e92e90a3b52))
+
 ## [1.0.3](https://github.com/CSCfi/ui/compare/v1.0.2...v1.0.3) (2023-11-01)
 
 
