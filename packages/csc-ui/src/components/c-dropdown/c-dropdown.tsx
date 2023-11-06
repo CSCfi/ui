@@ -679,11 +679,10 @@ export class CDropdown {
     this._resizeObserver = new ResizeObserver(() => {
       if (!this.isOpen) return;
 
-      console.log('🍔');
       this._positionMenu();
     });
 
-    this._resizeObserver.observe(this.scrollingParent);
+    this._resizeObserver.observe(this._dialogElement);
   }
 
   disconnectedCallback() {
