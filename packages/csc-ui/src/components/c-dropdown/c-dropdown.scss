@@ -23,12 +23,26 @@
     box-shadow: 0 2px 0 0 var(--_c-dropdown-text-color-active);
   }
 
+  dialog {
+    margin: 0;
+    padding: 0;
+    border: none;
+    background-color: transparent;
+    position: fixed;
+    box-shadow: 2px 4px 10px #00000029;
+    border-radius: 4px;
+    overflow: hidden;
+
+    &::backdrop {
+      display: none;
+    }
+  }
+
   ul {
     margin: 0;
     padding: 0;
     background-color: var(--_c-dropdown-background-color);
     list-style: none;
-    box-shadow: 2px 4px 10px #00000029;
     width: 100%;
     overflow-y: scroll;
     pointer-events: auto;

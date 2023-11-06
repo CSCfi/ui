@@ -101,6 +101,8 @@ export class CModal {
 
   private _handleClickOutside = () => {
     this._dialog.addEventListener('click', (e) => {
+      if (e.clientX === 0 && e.clientY === 0) return;
+
       const dialogDimensions = this._dialog.getBoundingClientRect();
 
       if (
