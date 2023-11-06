@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.0.5](https://github.com/CSCfi/ui/compare/v1.0.4...v1.0.5) (2023-11-06)
+
+
+### Bug Fixes
+
+* c-autocomplete - Position dropdown on resize ([2208481](https://github.com/CSCfi/ui/commit/2208481e85f20e81269e5c62a6fe295d64de1aae))
+
 ## [1.0.4](https://github.com/CSCfi/ui/compare/v1.0.3...v1.0.4) (2023-11-06)
 
 
