@@ -23,7 +23,7 @@
           :value="item.value"
           :name="item.name"
         >
-          <c-row align="center" gap="16">
+          <c-row align="center" gap="16" nowrap>
             <c-tag active flat>{{ item.value }}</c-tag>
 
             <c-option-value>{{ item.name }}</c-option-value>

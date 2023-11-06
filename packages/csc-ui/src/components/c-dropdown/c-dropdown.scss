@@ -49,7 +49,6 @@
     border-radius: 4px;
     visibility: hidden;
     outline: none;
-    max-width: var(--_c-dropdown-width);
 
     &.active {
       visibility: visible;
@@ -73,7 +72,8 @@
     pointer-events: auto;
     width: 100%;
     
-    span {
+    span,
+    c-option-value {
       width: 100%;
       white-space: nowrap;
       overflow: hidden;
