@@ -221,6 +221,8 @@ export class CSelect {
   }
 
   private _valueChangedHandler(item: CSelectItem) {
+    if (!item) return;
+
     if (this.hasOptionItems && this.optionAsSelection) {
       const selection = this._cOptionElements[item.value.toString()];
 

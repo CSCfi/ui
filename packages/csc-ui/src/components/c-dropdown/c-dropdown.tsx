@@ -167,7 +167,6 @@ export class CDropdown {
 
     this._openedOnTop = false;
     this._onClose();
-    this._removeEventListeners();
   }
 
   @Watch('currentIndex')
@@ -183,9 +182,7 @@ export class CDropdown {
 
   private _listElement: HTMLUListElement;
 
-  private _onScrollFn: () => void;
-
-  private _parentTop = 0;
+  private _dialogElement: HTMLDialogElement;
 
   private _openedOnTop = false;
 
@@ -355,6 +352,8 @@ export class CDropdown {
   private _renderMenu(/* style */) {
     this._id = `${this.inputId}--items`;
 
+    const dialogElement = document.createElement('dialog');
+
     const listElement = document.createElement('ul');
 
     // a11y
@@ -364,9 +363,13 @@ export class CDropdown {
 
     listElement.id = this._id;
 
+    this._dialogElement = dialogElement;
+
     this._listElement = listElement;
 
-    this.host.shadowRoot.appendChild(listElement);
+    this._dialogElement.appendChild(listElement);
+
+    this.host.shadowRoot.appendChild(dialogElement);
 
     this.items.map((item, index) => this._renderMenuItem(item, index));
 
@@ -385,6 +388,7 @@ export class CDropdown {
     this._listElement.classList.add('active');
     this._listElement.ariaExpanded = 'true';
     this._listElement.tabIndex = 0;
+    this._dialogElement.showModal();
   }
 
   private _onClose(focusInput = false) {
@@ -395,6 +399,7 @@ export class CDropdown {
     this._listElement.tabIndex = -1;
     this.isOpen = false;
     this.currentIndex = this.index;
+    this._dialogElement.close();
 
     if (focusInput) {
       this.parent.shadowRoot.querySelector('input').focus();
@@ -427,23 +432,22 @@ export class CDropdown {
     const scrollLeft = this.scrollingParent.scrollLeft;
 
     const {
-      top: parentTop,
       bottom: parentBottom,
       left: parentLeft,
       width: parentWidth,
       height: parentHeight,
     } = this._getParentPosition();
 
-    this.host.style.top = `${parentBottom}px`;
-    this.host.style.left = `${parentLeft}px`;
-    this.host.style.minWidth = `${parentWidth}px`;
     this.bottomTranslate = 0;
 
-    this.host.style.removeProperty('transform');
+    this._dialogElement.style.width = `${parentWidth}px`;
+    this._dialogElement.style.top = `${parentBottom}px`;
+    this._dialogElement.style.left = `${parentLeft}px`;
 
-    const { bottom, right, height, width } = this.host.getBoundingClientRect();
+    this._dialogElement.style.removeProperty('transform');
 
-    this._parentTop = parentTop;
+    const { bottom, right, height, width } =
+      this._dialogElement.getBoundingClientRect();
 
     const isInView = {
       x: right < this.scrollingParent.scrollWidth - scrollLeft,
@@ -455,7 +459,7 @@ export class CDropdown {
 
       this.bottomTranslate = height + parentHeight;
 
-      this.host.style.setProperty(
+      this._dialogElement.style.setProperty(
         'transform',
         `translateY(-${this.bottomTranslate}px`,
       );
@@ -466,22 +470,14 @@ export class CDropdown {
     this.topPosition = parentBottom;
 
     if (!isInView.x) {
-      this.host.style.left = `${
-        parseFloat(this.host.style.left) - width + parentWidth
+      this._dialogElement.style.left = `${
+        parseFloat(this._dialogElement.style.left) - width + parentWidth
       }px`;
     }
   }
 
-  private _removeEventListeners() {
-    this.scrollingParent.removeEventListener('scroll', this._onScrollFn);
-  }
-
   private _createEventListeners() {
     requestAnimationFrame(async () => {
-      this._onScrollFn = this._onScroll.bind(this);
-
-      this.scrollingParent.addEventListener('scroll', this._onScrollFn);
-
       this._listElement.classList.add('active');
     });
   }
@@ -494,23 +490,6 @@ export class CDropdown {
         this._observer.observe(itemRef);
       }
     }
-  }
-
-  private _onScroll() {
-    const { top: parentTop } = this.parent.getBoundingClientRect();
-
-    const differenceY = this._parentTop - parentTop;
-
-    if (this._openedOnTop) {
-      this.host.style.setProperty(
-        'transform',
-        `translateY(calc(-1 * ${this.bottomTranslate + differenceY}px))`,
-      );
-
-      return;
-    }
-
-    this.host.style.top = `${this.topPosition - differenceY}px`;
   }
 
   private _onKeyDown(event: KeyboardEvent) {
@@ -700,10 +679,11 @@ export class CDropdown {
     this._resizeObserver = new ResizeObserver(() => {
       if (!this.isOpen) return;
 
+      console.log('🍔');
       this._positionMenu();
     });
 
-    this._resizeObserver.observe(this.host);
+    this._resizeObserver.observe(this.scrollingParent);
   }
 
   disconnectedCallback() {
