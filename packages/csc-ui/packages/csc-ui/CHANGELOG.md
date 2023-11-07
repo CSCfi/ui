@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.0.6](https://github.com/CSCfi/ui/compare/v1.0.5...v1.0.6) (2023-11-07)
+
+
+### Bug Fixes
+
+* c-dropdown - Use viewport size to determine the dropdown position ([33ddfdd](https://github.com/CSCfi/ui/commit/33ddfdd50668dc616958e44d9846ee00fadf6e32))
+
 ## [1.0.5](https://github.com/CSCfi/ui/compare/v1.0.4...v1.0.5) (2023-11-06)
 
 
