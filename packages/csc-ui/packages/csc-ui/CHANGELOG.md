@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.0.7](https://github.com/CSCfi/ui/compare/v1.0.6...v1.0.7) (2023-11-07)
+
+
+### Bug Fixes
+
+* c-page - Hide scroll indicator on default, use css variables for max-width and justify-content ([22b9918](https://github.com/CSCfi/ui/commit/22b9918d74661b071c1e094c7e41d7d5326f734f))
+* c-side-navigation - remove redundant subnavitem slot ([f926407](https://github.com/CSCfi/ui/commit/f9264078b05020b00d09e66a55563daf44b63dde))
+
 ## [1.0.6](https://github.com/CSCfi/ui/compare/v1.0.5...v1.0.6) (2023-11-07)
 
 
