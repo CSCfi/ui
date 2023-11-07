@@ -1,11 +1,20 @@
 :host(c-page) {
-  display: block;
+  /**
+   * @prop --c-page-max-width: Maximum width for the content
+   * @prop --c-page-justify-content: Justify page content
+   */
+  --_c-page-max-width: var(--c-page-max-width, 1280px);
+  --_c-page-justify-content: var(--c-page-justify-content, start);
+
+  display: flex;
   height: 100%;
   width: 100%;
   padding: 0.5rem;
   overflow-y: auto;
   scroll-behavior: smooth;
   position: relative;
+  align-items: start;
+  justify-content: var(--_c-page-justify-content);
 
   @media (min-width: 640px) {
     padding: 0.75rem;
@@ -23,5 +32,11 @@
     top: 0;
     left: 0;
     width: 0%;
+  }
+
+  .c-page__container {
+    position: relative;
+    width: 100%;
+    max-width: var(--_c-page-max-width);
   }
 }

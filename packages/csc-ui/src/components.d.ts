@@ -1058,6 +1058,10 @@ export namespace Components {
      * @group Layout
      */
     interface CPage {
+        /**
+          * Display scroll indicator
+         */
+        "scrollIndicator": boolean;
     }
     /**
      * @group Navigation
@@ -3980,6 +3984,10 @@ declare namespace LocalJSX {
      * @group Layout
      */
     interface CPage {
+        /**
+          * Display scroll indicator
+         */
+        "scrollIndicator"?: boolean;
     }
     /**
      * @group Navigation
