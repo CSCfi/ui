@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.0.8](https://github.com/CSCfi/ui/compare/v1.0.7...v1.0.8) (2023-11-07)
+
+
+### Bug Fixes
+
+* c-button - use correct loader color with disabled buttons ([4e5908a](https://github.com/CSCfi/ui/commit/4e5908a68484b8aaea376bc266b0af2017a110d5))
+
 ## [1.0.7](https://github.com/CSCfi/ui/compare/v1.0.6...v1.0.7) (2023-11-07)
 
 
