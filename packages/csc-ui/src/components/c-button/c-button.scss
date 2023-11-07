@@ -55,19 +55,6 @@
   background-color: var(--_c-button-background-color-hover);
 }
 
-:host(.c-button--disabled) {
-  /**
-  * @prop --c-button-disabled-background-color: Disabled button background color
-  * @prop --c-button-disabled-text-color: Disabled button text color
-  */
-  --_c-button-disabled-background-color: var(--c-button-disabled-background-color, var(--c-tertiary-100));
-  --_c-button-disabled-text-color: var(--c-button-disabled-text-color, var(--c-tertiary-600));
-
-  background-color: var(--_c-button-disabled-background-color);
-  color: var(--_c-button-disabled-text-color);
-  pointer-events: none;
-}
-
 :host(.c-button--inverted) {
   /**
    * @prop --c-button-inverted-background-color: Inverted default button background color
@@ -427,6 +414,22 @@
 
   background-color: var(--_c-button-outlined-inverted-disabled-background-color);
   color: var(--_c-button-outlined-inverted-disabled-text-color);
+}
+
+:host(.c-button--disabled) {
+  /**
+  * @prop --c-button-disabled-background-color: Disabled button background color
+  * @prop --c-button-disabled-text-color: Disabled button text color
+  */
+  --_c-button-disabled-background-color: var(--c-button-disabled-background-color, var(--c-tertiary-100));
+  --_c-button-disabled-text-color: var(--c-button-disabled-text-color, var(--c-tertiary-600));
+
+  // private
+  --_c-button-loader-color: var(--_c-button-disabled-text-color);
+
+  background-color: var(--_c-button-disabled-background-color);
+  color: var(--_c-button-disabled-text-color);
+  pointer-events: none;
 }
 
 // ==========================================================================
