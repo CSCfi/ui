@@ -18,20 +18,20 @@
   position: absolute;
 
   mark {
-    color: inherit;
     background-color: transparent;
     box-shadow: 0 2px 0 0 var(--_c-dropdown-text-color-active);
+    color: inherit;
   }
 
   dialog {
-    margin: 0;
-    padding: 0;
-    border: none;
     background-color: transparent;
-    position: fixed;
-    box-shadow: 2px 4px 10px #00000029;
     border-radius: 4px;
+    border: none;
+    box-shadow: 2px 4px 10px #00000029;
+    margin: 0;
     overflow: hidden;
+    padding: 0;
+    position: fixed;
 
     &::backdrop {
       display: none;
@@ -39,16 +39,17 @@
   }
 
   ul {
-    margin: 0;
-    padding: 0;
     background-color: var(--_c-dropdown-background-color);
-    list-style: none;
-    width: 100%;
-    overflow-y: scroll;
-    pointer-events: auto;
     border-radius: 4px;
-    visibility: hidden;
+    height: 100%;
+    list-style: none;
+    margin: 0;
     outline: none;
+    overflow-y: scroll;
+    padding: 0;
+    pointer-events: auto;
+    visibility: hidden;
+    width: 100%;
 
     &.active {
       visibility: visible;
@@ -65,19 +66,19 @@
     flex-wrap: nowrap;
     font-size: var(--_c-dropdown-font-size);
     min-height: var(--_c-dropdown-height);
+    outline: none;
     padding-left: 10px;
     padding-right: 10px;
-    outline: none;
-    white-space: nowrap;
     pointer-events: auto;
+    white-space: nowrap;
     width: 100%;
     
     span,
     c-option-value {
-      width: 100%;
-      white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
+      white-space: nowrap;
+      width: 100%;
     }
 
     &:not(.disabled):hover,

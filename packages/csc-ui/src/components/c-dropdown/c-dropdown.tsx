@@ -87,11 +87,7 @@ export class CDropdown {
 
   @State() bottomTranslate: number;
 
-  @State() scrollingParent: HTMLElement;
-
   @State() statusText = '';
-
-  // private _isOpenedWithKeyboard = false;
 
   private _id = '';
 
@@ -373,8 +369,6 @@ export class CDropdown {
 
     this.items.map((item, index) => this._renderMenuItem(item, index));
 
-    this.scrollingParent = this.wrapper;
-
     this._listElement.addEventListener(
       'keydown',
       this._onKeyboardNavigation.bind(this),
@@ -427,15 +421,14 @@ export class CDropdown {
   }
 
   private _positionMenu() {
-    const scrollTop = this.scrollingParent.scrollTop;
-
-    const scrollLeft = this.scrollingParent.scrollLeft;
+    const { innerWidth, innerHeight } = window;
 
     const {
       bottom: parentBottom,
       left: parentLeft,
       width: parentWidth,
       height: parentHeight,
+      top: parentTop,
     } = this._getParentPosition();
 
     this.bottomTranslate = 0;
@@ -450,9 +443,15 @@ export class CDropdown {
       this._dialogElement.getBoundingClientRect();
 
     const isInView = {
-      x: right < this.scrollingParent.scrollWidth - scrollLeft,
-      y: bottom < this.scrollingParent.scrollHeight - scrollTop,
+      x: right < innerWidth,
+      y: bottom < innerHeight,
     };
+
+    const fitsOnTop = parentTop - height > 0;
+
+    if (!fitsOnTop && !isInView.y) {
+      this._dialogElement.style.height = `${parentTop}px`;
+    }
 
     if (!isInView.y || this._openedOnTop) {
       this._openedOnTop = true;
@@ -464,8 +463,6 @@ export class CDropdown {
         `translateY(-${this.bottomTranslate}px`,
       );
     }
-
-    this.host.style.setProperty('--_c-dropdown-width', `${parentWidth}px`);
 
     this.topPosition = parentBottom;
 
@@ -695,8 +692,7 @@ export class CDropdown {
       this.itemsPerPage > 0 &&
       this.items.length > this.itemsPerPage
     ) {
-      this._listElement.style.maxHeight = 42 * (this.itemsPerPage + 0.5) + 'px';
-      this._listElement.style.overflowY = 'scroll';
+      this._dialogElement.style.height = 42 * (this.itemsPerPage + 0.5) + 'px';
     }
 
     return (
