@@ -28,16 +28,28 @@ export class CSideNavigation {
     const { active } = target;
 
     slotted.forEach((item) => {
-      if (item.querySelector('c-sub-navigation-item[slot="subnavitem"]')) {
+      if (item.querySelector('c-sub-navigation-item[slot="sub-item"]')) {
         item.active = false;
       }
     });
 
-    if (target.querySelector('[slot="subnavitem"]')) {
+    if (target.querySelector('[slot="sub-item"]')) {
       target.active = !active;
     } else {
       target.active = true;
     }
+  }
+
+  private _assignSubItemSlots() {
+    const subItems = this.host.querySelectorAll('c-sub-navigation-item');
+
+    Array.from(subItems).forEach((item) => {
+      item.setAttribute('slot', 'sub-item');
+    });
+  }
+
+  componentWillLoad() {
+    this._assignSubItemSlots();
   }
 
   componentDidLoad() {

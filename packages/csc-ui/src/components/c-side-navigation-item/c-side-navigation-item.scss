@@ -112,7 +112,7 @@
   padding-left: 16px;
 }
 
-.subnavitem {
+.sub-item {
   height: 0;
   overflow-y: hidden;
   transition: all 500ms ease;
@@ -145,7 +145,7 @@
   align-items: center;
 }
 
-:host([slot="subnavitem"]) {
+:host([slot="sub-item"]) {
   --_c-side-navigation-item-text-color: var(--c-side-navigation-item-text-color, var(--_c-side-navigation-item-sub-item-text-color));
   --_c-side-navigation-item-background-color: var(--c-side-navigation-item-background-color, var(--_c-side-navigation-item-sub-item-background-color));
   --_c-side-navigation-item-background-color-hover: var(--c-side-navigation-item-background-color-hover, var(--_c-side-navigation-item-sub-item-background-color-hover));
