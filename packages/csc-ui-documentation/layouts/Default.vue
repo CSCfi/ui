@@ -29,7 +29,6 @@
           Getting Started
 
           <c-sub-navigation-item
-            slot="subnavitem"
             class="capitalize"
             :active="route?.name === 'getting-started-angular'"
             @keyup.enter="navigateTo('/getting-started/angular')"
@@ -40,7 +39,6 @@
           </c-sub-navigation-item>
 
           <c-sub-navigation-item
-            slot="subnavitem"
             class="capitalize"
             :active="route?.name === 'getting-started-html'"
             @keyup.enter="navigateTo('/getting-started/html')"
@@ -51,7 +49,6 @@
           </c-sub-navigation-item>
 
           <c-sub-navigation-item
-            slot="subnavitem"
             class="capitalize"
             :active="route?.name === 'getting-started-vue3'"
             @keyup.enter="navigateTo('/getting-started/vue3')"
@@ -62,7 +59,6 @@
           </c-sub-navigation-item>
 
           <c-sub-navigation-item
-            slot="subnavitem"
             class="capitalize"
             :active="route?.name === 'getting-started-vue2'"
             @keyup.enter="navigateTo('/getting-started/vue2')"
@@ -130,9 +126,7 @@
       </c-side-navigation>
 
       <c-page>
-        <div class="max-w-7xl w-full relative">
-          <slot />
-        </div>
+        <slot />
       </c-page>
     </div>
   </c-main>

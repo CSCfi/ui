@@ -1,5 +1,5 @@
 <template>
-  <c-card ref="cardRef" class="max-w-screen-xl mx-auto">
+  <c-card ref="cardRef">
     <c-card-content>
       <div class="example-headings">
         <h1 class="text-4xl capitalize font-bold text-primary-600">
