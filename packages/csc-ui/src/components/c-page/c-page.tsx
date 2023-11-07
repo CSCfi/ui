@@ -1,4 +1,4 @@
-import { Component, Element, Host, h } from '@stencil/core';
+import { Component, Element, Host, Prop, h } from '@stencil/core';
 
 /**
  * @group Layout
@@ -12,9 +12,16 @@ import { Component, Element, Host, h } from '@stencil/core';
 export class CPage {
   @Element() el: HTMLCPageElement;
 
+  /**
+   * Display scroll indicator
+   */
+  @Prop() scrollIndicator = false;
+
   private _scrollIndicator: HTMLDivElement;
 
   private _onScroll() {
+    if (!this.scrollIndicator) return;
+
     const scrollTop = this.el.scrollTop;
     const height = this.el.scrollHeight - this.el.clientHeight;
     const scrolled = (scrollTop / height) * 100;
@@ -29,12 +36,16 @@ export class CPage {
   render() {
     return (
       <Host>
-        <div
-          ref={(el) => (this._scrollIndicator = el)}
-          class="scroll-indicator"
-        />
+        {this.scrollIndicator && (
+          <div
+            ref={(el) => (this._scrollIndicator = el)}
+            class="scroll-indicator"
+          />
+        )}
 
-        <slot></slot>
+        <div class="c-page__container">
+          <slot></slot>
+        </div>
       </Host>
     );
   }

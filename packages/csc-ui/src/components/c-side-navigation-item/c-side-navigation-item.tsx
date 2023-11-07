@@ -71,12 +71,12 @@ export class CSideNavigationItem {
   private _handleChildFocusableChange(focusable: boolean) {
     if (!this._slotHasContent) return;
 
-    Array.from(
-      this.hostElement.querySelectorAll('[slot="subnavitem"]'),
-    ).forEach((child: HTMLCSubNavigationItemElement) => {
-      child.ariaHidden = (!focusable).toString();
-      child.focusable = focusable;
-    });
+    Array.from(this.hostElement.querySelectorAll('[slot="sub-item"]')).forEach(
+      (child: HTMLCSubNavigationItemElement) => {
+        child.ariaHidden = (!focusable).toString();
+        child.focusable = focusable;
+      },
+    );
   }
 
   private _redirect(event: KeyboardEvent | Event) {
@@ -109,10 +109,21 @@ export class CSideNavigationItem {
 
   private _slotHasContent = false;
 
-  componentWillLoad() {
-    this._slotHasContent = !!this.hostElement.querySelector(
-      '[slot="subnavitem"]',
+  private _assignSubItemSlots() {
+    const subItems = this.hostElement.querySelectorAll(
+      'c-side-navigation-item',
     );
+
+    Array.from(subItems).forEach((item) => {
+      item.setAttribute('slot', 'sub-item');
+    });
+  }
+
+  componentWillLoad() {
+    this._assignSubItemSlots();
+
+    this._slotHasContent =
+      !!this.hostElement.querySelector('[slot="sub-item"]');
 
     this._isSubItem = !!this.hostElement.getAttribute('slot');
 
@@ -149,7 +160,7 @@ export class CSideNavigationItem {
 
     const subNavigationClasses = {
       subnavactive: this.active,
-      subnavitem: !this.active,
+      'sub-item': !this.active,
     };
 
     const a11y = {
@@ -193,7 +204,7 @@ export class CSideNavigationItem {
             aria-expanded={(!!this.active)?.toString()}
             class={subNavigationClasses}
           >
-            <slot name="subnavitem"></slot>
+            <slot name="sub-item"></slot>
           </nav>
         )}
 
