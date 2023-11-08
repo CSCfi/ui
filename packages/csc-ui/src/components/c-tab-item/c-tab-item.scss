@@ -1,5 +1,8 @@
 :host {
-  --_c-tab-item-padding: 16px;
+  /**
+   * @prop --c-tab-item-padding: Tab item padding
+   */
+  --_c-tab-item-padding: var(--c-tab-item-padding, 16px 0 0 0);
 
   display: block;
   min-width: 100%;
