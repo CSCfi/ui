@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.0.10](https://github.com/CSCfi/ui/compare/v1.0.9...v1.0.10) (2023-11-08)
+
+
+### Bug Fixes
+
+* c-tabs - make c-tab-item padding overridable ([9bdf352](https://github.com/CSCfi/ui/commit/9bdf35253ca2856c39646940c59e70076470af8c))
+
 ## [1.0.9](https://github.com/CSCfi/ui/compare/v1.0.8...v1.0.9) (2023-11-08)
 
 
