@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.0.9](https://github.com/CSCfi/ui/compare/v1.0.8...v1.0.9) (2023-11-08)
+
+
+### Bug Fixes
+
+* c-page - use correct height ([495d585](https://github.com/CSCfi/ui/commit/495d58582572172a8cd3b4d0bf7307114ba39697))
+
 ## [1.0.8](https://github.com/CSCfi/ui/compare/v1.0.7...v1.0.8) (2023-11-07)
 
 
