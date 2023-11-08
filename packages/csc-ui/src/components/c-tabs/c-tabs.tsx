@@ -461,7 +461,7 @@ export class CTabs {
           container.style.setProperty('--_c-tabs-transition-speed', '200ms');
         }
 
-        const buttonOffset = this.isOverflowing ? 36 : 4;
+        const buttonOffset = this.isOverflowing ? 32 : 0;
 
         const newTabWidth = newTab.offsetWidth / content.offsetWidth;
 

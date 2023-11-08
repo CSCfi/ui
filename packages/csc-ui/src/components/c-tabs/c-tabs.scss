@@ -28,6 +28,7 @@
     overflow: hidden;
     padding: 4px;
     position: relative;
+    margin: -4px;
 
     &::after {
       position: absolute;
