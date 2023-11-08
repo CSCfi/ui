@@ -12,7 +12,7 @@
       <c-navigation-button v-if="isMobile" />
     </c-toolbar>
 
-    <div class="flex h-[calc(100vh-60px)]">
+    <c-row nowrap>
       <c-side-navigation :mobile="isMobile" class="autoheight">
         <c-side-navigation-item
           :active="route?.name === 'index'"
@@ -128,7 +128,7 @@
       <c-page>
         <slot />
       </c-page>
-    </div>
+    </c-row>
   </c-main>
 </template>
 
