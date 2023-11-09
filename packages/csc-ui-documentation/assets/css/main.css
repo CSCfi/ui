@@ -1,6 +1,5 @@
 @import url('https://fonts.googleapis.com/css2?family=Noto+Sans:wght@400;500;600;700&display=swap');
 @import url('@cscfi/csc-ui/css/theme.css');
-@import url('@cscfi/csc-ui/css/typography.css');
 
 .page-enter-active,
 .page-leave-active {
