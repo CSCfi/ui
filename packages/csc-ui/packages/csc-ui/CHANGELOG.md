@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.0.11](https://github.com/CSCfi/ui/compare/v1.0.10...v1.0.11) (2023-11-09)
+
+
+### Bug Fixes
+
+* theme - add typography definitions to theme ([1bae3a4](https://github.com/CSCfi/ui/commit/1bae3a4ef05c9583db43c23da9c6cb9b4bd79669))
+
 ## [1.0.10](https://github.com/CSCfi/ui/compare/v1.0.9...v1.0.10) (2023-11-08)
 
 
