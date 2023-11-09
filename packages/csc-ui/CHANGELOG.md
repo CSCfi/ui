@@ -1,44 +1,131 @@
 # Changelog
 
-## [0.9.2](https://github.com/CSCfi/csc-ui/compare/v0.9.1...v0.9.2) (2023-09-18)
+## [1.0.11](https://github.com/CSCfi/ui/compare/v1.0.10...v1.0.11) (2023-11-09)
 
 
 ### Bug Fixes
 
-* c-select keyboard navigation scrolling fixed ([2efa2bb](https://github.com/CSCfi/csc-ui/commit/2efa2bba774749b7ce8bd2f42025d688ba4984ea))
+* theme - add typography definitions to theme ([1bae3a4](https://github.com/CSCfi/ui/commit/1bae3a4ef05c9583db43c23da9c6cb9b4bd79669))
 
-## [0.9.1](https://github.com/CSCfi/csc-ui/compare/v0.9.0...v0.9.1) (2023-09-15)
+## [1.0.10](https://github.com/CSCfi/ui/compare/v1.0.9...v1.0.10) (2023-11-08)
 
 
 ### Bug Fixes
 
-* Show selected item correctly in c-select ([6c26038](https://github.com/CSCfi/csc-ui/commit/6c260384f278ac1c77735a609aefc8e87f56af31))
+* c-tabs - make c-tab-item padding overridable ([9bdf352](https://github.com/CSCfi/ui/commit/9bdf35253ca2856c39646940c59e70076470af8c))
 
-## [0.9.0](https://github.com/CSCfi/csc-ui/compare/v0.8.1...v0.9.0) (2023-09-14)
+## [1.0.9](https://github.com/CSCfi/ui/compare/v1.0.8...v1.0.9) (2023-11-08)
 
+
+### Bug Fixes
+
+* c-page - use correct height ([495d585](https://github.com/CSCfi/ui/commit/495d58582572172a8cd3b4d0bf7307114ba39697))
+
+## [1.0.8](https://github.com/CSCfi/ui/compare/v1.0.7...v1.0.8) (2023-11-07)
+
+
+### Bug Fixes
+
+* c-button - use correct loader color with disabled buttons ([4e5908a](https://github.com/CSCfi/ui/commit/4e5908a68484b8aaea376bc266b0af2017a110d5))
+
+## [1.0.7](https://github.com/CSCfi/ui/compare/v1.0.6...v1.0.7) (2023-11-07)
+
+
+### Bug Fixes
+
+* c-page - Hide scroll indicator on default, use css variables for max-width and justify-content ([22b9918](https://github.com/CSCfi/ui/commit/22b9918d74661b071c1e094c7e41d7d5326f734f))
+* c-side-navigation - remove redundant subnavitem slot ([f926407](https://github.com/CSCfi/ui/commit/f9264078b05020b00d09e66a55563daf44b63dde))
+
+## [1.0.6](https://github.com/CSCfi/ui/compare/v1.0.5...v1.0.6) (2023-11-07)
+
+
+### Bug Fixes
+
+* c-dropdown - Use viewport size to determine the dropdown position ([33ddfdd](https://github.com/CSCfi/ui/commit/33ddfdd50668dc616958e44d9846ee00fadf6e32))
+
+## [1.0.5](https://github.com/CSCfi/ui/compare/v1.0.4...v1.0.5) (2023-11-06)
+
+
+### Bug Fixes
+
+* c-autocomplete - Position dropdown on resize ([2208481](https://github.com/CSCfi/ui/commit/2208481e85f20e81269e5c62a6fe295d64de1aae))
+
+## [1.0.4](https://github.com/CSCfi/ui/compare/v1.0.3...v1.0.4) (2023-11-06)
+
+
+### Bug Fixes
+
+* c-dropdown - use dialog element to fix z-index issues when inside c-modal ([4b6ea11](https://github.com/CSCfi/ui/commit/4b6ea11ad2b96cd3c972abd58fc42e92e90a3b52))
+
+## [1.0.3](https://github.com/CSCfi/ui/compare/v1.0.2...v1.0.3) (2023-11-01)
+
+
+### Bug Fixes
+
+* c-radio-group - Fix using label as a prop with c-radio items ([ceff2fc](https://github.com/CSCfi/ui/commit/ceff2fc419881229e4aa0d26828a2db6389e5e82))
+
+## [1.0.2](https://github.com/CSCfi/ui/compare/v1.0.1...v1.0.2) (2023-10-30)
+
+
+### Bug Fixes
+
+* Fix CSS root definitions ([0bbbed8](https://github.com/CSCfi/ui/commit/0bbbed81fe0ca0f8cd50e181c33841a848791d81))
+
+## [1.0.1](https://github.com/CSCfi/ui/compare/v1.0.0...v1.0.1) (2023-10-30)
+
+
+### Bug Fixes
+
+* c-card: Enable scrolling in fullscreen mode ([568f46a](https://github.com/CSCfi/ui/commit/568f46a79809d48a50f31054a2c7a071642a8697))
+
+## [1.0.0](https://github.com/CSCfi/ui/compare/v0.0.1...v1.0.0) (2023-10-27)
+
+
+### ⚠ BREAKING CHANGES
+
+* Changed label into name in radio group items. Items can now be disabled
+* Make otp input and radio button group work with regular form
+* Form related components work now with regular form
+* Removed c-flex and c-container
+* Custom trigger removed: Datatable allows nesting. Renamed simple and nohover props.
+* Removed path prop from c-button
+* Removed number prop from c-text-field
+* Unify c-tab-buttons keyboard usage with c-tabs usage
+* New components: c-tab-items and c-tab-item
+* Side navigation: Three-level support, Remove named main slot
+* Simplified c-link usage with an icon
 
 ### Features
 
-* Add ability to use c-select with c-option elements  like native select with options. ([436d7a8](https://github.com/CSCfi/csc-ui/commit/436d7a83048ca5d045c802e99d09066f8176d35e))
-
-## [0.8.1](https://github.com/CSCfi/csc-ui/compare/v0.8.0...v0.8.1) (2023-09-12)
+* Add loading state to c-icon-button ([07a5523](https://github.com/CSCfi/ui/commit/07a552351a74aa4cb0f9f95852e097cdd2d6a5f3))
+* Add prop to justify tabs ([ac53d26](https://github.com/CSCfi/ui/commit/ac53d26a3f97e8c8eade0da38572b5379695c980))
+* C-checkbox works inside a native html form ([f5797cd](https://github.com/CSCfi/ui/commit/f5797cd6b8746c248edab823804c078dbe84e89b))
+* Changed label into name in radio group items. Items can now be disabled ([62b859f](https://github.com/CSCfi/ui/commit/62b859fc348b8e7e14d1ab294461fcce6f80507d))
+* Children can now be nested in c-data-table ([0c8e1b9](https://github.com/CSCfi/ui/commit/0c8e1b9436b6f7566cb9475776d76fd7012cea4d))
+* Form related components work now with regular form ([126d367](https://github.com/CSCfi/ui/commit/126d36734a9b987e3efd3cd1a406f52dff764ded))
+* Make otp input and radio button group work with regular form ([2e086e3](https://github.com/CSCfi/ui/commit/2e086e3fb92f3f8cc51b58bd32d28dd1f0268e61))
+* New component - c-list ([5f088d6](https://github.com/CSCfi/ui/commit/5f088d69684dd97e7ad488ec44432fd42775057a))
+* New component - c-page ([51b012e](https://github.com/CSCfi/ui/commit/51b012ee7167563b6b55de98075de03bdf310742))
+* New component - c-radio ([f9a6414](https://github.com/CSCfi/ui/commit/f9a64144188c90e7b3ae5a5af7245b1551dd43be))
+* New component - c-side-navigation-title ([a05755a](https://github.com/CSCfi/ui/commit/a05755a9d4643b9a47f6ecc3b7e2b192a382184b))
+* New component - c-table ([948128f](https://github.com/CSCfi/ui/commit/948128f97f93597707a6d97fec780e8857df37a0))
+* new component - c-tags ([8fa8d48](https://github.com/CSCfi/ui/commit/8fa8d487a4d43f208b767d670941b46677e6e09d))
+* New component: c-option-value. Used with c-autocomplete ([5aaefa2](https://github.com/CSCfi/ui/commit/5aaefa2854fed945bd6463bb7236f1ede8789b04))
+* New components: c-tab-items and c-tab-item ([4571423](https://github.com/CSCfi/ui/commit/4571423ab020b34a65fe7657c2d7e48e9c7ccbf2))
+* Removed c-flex and c-container ([3188279](https://github.com/CSCfi/ui/commit/31882794381f5b924fc66bdca4acad54aab99fc9))
+* Removed number prop from c-text-field ([8c68a64](https://github.com/CSCfi/ui/commit/8c68a6426d86980a4f6013c0187c51b722b7677a))
+* Removed path prop from c-button ([8723101](https://github.com/CSCfi/ui/commit/8723101e60b868b6d2191b388086a41ea10273f2))
+* Side navigation: Three-level support, Remove named main slot ([580fb5b](https://github.com/CSCfi/ui/commit/580fb5b60c4d448ef5caec7d181a1d14122b0841))
+* Vertical tabs ([c89ba83](https://github.com/CSCfi/ui/commit/c89ba8397839092afee19e5de7da1f2987b2b61b))
 
 
 ### Bug Fixes
 
-* Prevent artifacts in c-otp-input ([ef9669d](https://github.com/CSCfi/csc-ui/commit/ef9669de2fcc6f51c0623c7b2813b4137eaebd3a))
-
-## [0.8.0](https://github.com/CSCfi/csc-ui/compare/v0.7.8...v0.8.0) (2023-09-12)
-
-
-### Features
-
-* Add new component: c-otp-input ([803b084](https://github.com/CSCfi/csc-ui/commit/803b084c4131388c2fdcdbf42baa170a6f0177d9))
-
-## [0.7.8](https://github.com/CSCfi/csc-ui/compare/v0.7.1...v0.7.8) (2023-09-06)
+* Unify c-tab-buttons keyboard usage with c-tabs usage ([8144cfc](https://github.com/CSCfi/ui/commit/8144cfcc844c289a8081cc62f990d5c06694d91c))
+* Use dynamic gap in c-card and c-login-buttons ([7ff05dd](https://github.com/CSCfi/ui/commit/7ff05dd68b6774ad71f26e4aea62b94c2abaa7a4))
 
 
-### Bug Fixes
+### Code Refactoring
 
-* Fix c-button styles ([4e034c8](https://github.com/CSCfi/csc-ui/commit/4e034c86885ef2d1caadd8802337461a7269e56b))
-* Use master branch in release workflow ([d155522](https://github.com/CSCfi/csc-ui/commit/d1555226fbecdf9b8c4c2e3ffb573808f93afe4a))
+* Custom trigger removed: Datatable allows nesting. Renamed simple and nohover props. ([5ad7faf](https://github.com/CSCfi/ui/commit/5ad7fafdac75ac3bd5c34516ef63706e93d624f0))
+* Simplified c-link usage with an icon ([4422a0d](https://github.com/CSCfi/ui/commit/4422a0d1d8dce383a06d78e43cc7fafe7dee5996))
