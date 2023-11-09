@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.0.12](https://github.com/CSCfi/ui/compare/v1.0.11...v1.0.12) (2023-11-09)
+
+
+### Bug Fixes
+
+* c-card: Firefox fullscreen toggle button position fix ([8a44beb](https://github.com/CSCfi/ui/commit/8a44bebb37eee0b210ae799d9b7b9242ebb5f69c))
+
 ## [1.0.11](https://github.com/CSCfi/ui/compare/v1.0.10...v1.0.11) (2023-11-09)
 
 
