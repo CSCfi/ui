@@ -28,6 +28,10 @@
   .c-card {
     &__fullscreen-toggle {
       position: fixed;
+
+      @-moz-document url-prefix() {
+        position: absolute;
+      }
     }
   }
 }
