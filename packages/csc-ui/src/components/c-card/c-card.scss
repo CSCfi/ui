@@ -1,4 +1,4 @@
-:host {
+:host(c-card) {
   /**
    * @prop --c-card-gap: Card column gap / padding
    * @prop --c-card-background-color: Card background color
@@ -6,7 +6,7 @@
   --_c-card-gap: var(--c-card-gap, clamp(1rem, 2vw, 1.5rem));
   --_c-card-background-color: var(--c-card-background-color, var(--c-white));
 
-  display: block;
+  display: flex;
   border-radius: 6px;
   box-shadow: rgba(0, 0, 0, 0.15) 0 10px 20px, rgba(0, 0, 0, 0.2) 0 5px 5px;
   padding-block: var(--_c-card-gap);
@@ -17,6 +17,7 @@
     display: flex;
     flex-direction: column;
     gap: var(--_c-card-gap);
+    flex: 1;
   }
 }
 
