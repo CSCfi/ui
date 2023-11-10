@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.0.15](https://github.com/CSCfi/ui/compare/v1.0.14...v1.0.15) (2023-11-10)
+
+
+### Bug Fixes
+
+* c-card - use display flex on the host ([12f6891](https://github.com/CSCfi/ui/commit/12f6891a3e5bfbe8b1586cf6c25db057008d0856))
+
 ## [1.0.14](https://github.com/CSCfi/ui/compare/v1.0.13...v1.0.14) (2023-11-10)
 
 
