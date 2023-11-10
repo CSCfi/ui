@@ -16,8 +16,9 @@
   article {
     display: flex;
     flex-direction: column;
-    gap: var(--_c-card-gap);
     flex: 1;
+    gap: var(--_c-card-gap);
+    max-width: 100%;
   }
 }
 
