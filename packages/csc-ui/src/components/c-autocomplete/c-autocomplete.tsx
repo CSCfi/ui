@@ -27,7 +27,7 @@ import { CAutocompleteItem } from '../../types';
   formAssociated: true,
 })
 export class CAutocomplete {
-  @Element() host: HTMLCAutocompleteElement;
+  @Element() el: HTMLCAutocompleteElement;
 
   // eslint-disable-next-line
   @AttachInternals() internals: ElementInternals;
@@ -233,9 +233,9 @@ export class CAutocomplete {
 
   private _direction = null;
 
-  private _cInput: HTMLCInputElement;
-
   private _inputElement: HTMLInputElement;
+
+  private _dropdownElement: HTMLCDropdownElement;
 
   get _items() {
     return this.hasOptionItems ? this._optionItems : this.items;
@@ -276,7 +276,7 @@ export class CAutocomplete {
     );
 
     requestAnimationFrame(async () => {
-      await this._cInput.updateDropdown({
+      await this._dropdownElement.updateDropdown({
         items: items,
         options: this._filteredOptions,
       });
@@ -302,24 +302,30 @@ export class CAutocomplete {
 
     if (ev.key.match(alphanumeric) && ev.key.length === 1) {
       this._showMenu(false);
+
+      if (!this.query) {
+        this.updateQuery(ev.key);
+      }
+
+      this._inputElement.focus();
     }
 
     if (ev.key === 'Tab') {
-      this._cInput.closeDropdown();
+      this._dropdownElement.close();
     }
 
     if (ev.key === 'ArrowDown') {
       ev.preventDefault();
 
-      this._cInput.openDropdown();
-      this._cInput.focusItem('first');
+      this._dropdownElement.open();
+      this._dropdownElement.focusItem(0);
     }
 
     if (ev.key === 'ArrowUp') {
       ev.preventDefault();
 
-      this._cInput.openDropdown();
-      this._cInput.focusItem('last');
+      this._dropdownElement.open();
+      this._dropdownElement.focusItem(this._items.length - 1);
     }
 
     if (ev.key === ' ') {
@@ -332,10 +338,10 @@ export class CAutocomplete {
   private _showMenu(focusList = true) {
     if (this.disabled) return;
 
-    this._cInput.openDropdown(focusList);
+    this._dropdownElement.open(focusList);
 
     if (focusList) {
-      this._cInput.focusDropdown();
+      this._dropdownElement.focusDropdown();
     }
   }
 
@@ -363,7 +369,7 @@ export class CAutocomplete {
       let selection: CAutocompleteItem | null = null;
 
       this._optionItems = (
-        this.host ? Array.from(this.host.querySelectorAll('c-option')) : []
+        this.el ? Array.from(this.el.querySelectorAll('c-option')) : []
       ).map((item, index) => {
         const cAutocompleteItem = {
           value: item.value,
@@ -427,19 +433,6 @@ export class CAutocomplete {
 
   componentDidLoad() {
     this._getOptionItems();
-
-    requestAnimationFrame(() => {
-      this._cInput.createDropdown({
-        type: 'autocomplete',
-        items: this._items,
-        options: this.options,
-        itemsPerPage: this.itemsPerPage,
-        parent: this.host,
-        index: this.currentIndex,
-        click: false,
-        id: this._inputId,
-      });
-    });
   }
 
   disconnectedCallback() {
@@ -483,7 +476,6 @@ export class CAutocomplete {
     return (
       <Host title={this.query}>
         <c-input
-          ref={(el) => (this._cInput = el)}
           autofocus={this.autofocus}
           disabled={this.disabled}
           hide-details={this.hideDetails}
@@ -511,6 +503,18 @@ export class CAutocomplete {
 
             <slot onSlotchange={this._handleSlotChange}></slot>
           </div>
+
+          <c-dropdown
+            ref={(el) => (this._dropdownElement = el)}
+            slot="dropdown"
+            items={this._items}
+            options={this._cOptionElements}
+            items-per-page={this.itemsPerPage}
+            parent={this.el}
+            index={this.currentIndex}
+            input-id={this._inputId}
+            type="autocomplete"
+          />
 
           <slot name="post" slot="post"></slot>
         </c-input>

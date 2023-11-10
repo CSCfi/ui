@@ -29,10 +29,24 @@ export class CDropdown {
    */
   @Prop() items: CSelectItem[] | CAutocompleteItem[] = [];
 
+  @Watch('items')
+  onItemsChange() {
+    if (!this.items.length) return;
+
+    this._updateMenuItems();
+  }
+
   /**
    * Dropdown options
    */
   @Prop() options: Record<string, HTMLCOptionElement>;
+
+  @Watch('options')
+  onOptionsChange() {
+    if (!Object.keys(this.options).length) return;
+
+    this._updateMenuItems();
+  }
 
   /**
    * Items per page before adding scroll
@@ -43,11 +57,6 @@ export class CDropdown {
    * Dropdown parent
    */
   @Prop() parent: HTMLCSelectElement | HTMLCAutocompleteElement;
-
-  /**
-   * Dropdown scrolling parent
-   */
-  @Prop() wrapper: HTMLElement;
 
   /**
    * Initial value index
@@ -84,8 +93,6 @@ export class CDropdown {
   @State() isVisible = false;
 
   @State() topPosition: number;
-
-  @State() bottomTranslate: number;
 
   @State() statusText = '';
 
@@ -124,45 +131,50 @@ export class CDropdown {
    * @private
    */
   @Method()
-  async focusItem(type: 'first' | 'last') {
+  async open(focusList = false) {
+    this._onOpen();
+    this._createEventListeners();
+
+    this._outsideClickFn = this._handleOutsideClick.bind(this);
+
     requestAnimationFrame(() => {
-      const index = type === 'first' ? 0 : this.items.length - 1;
+      if (focusList) {
+        this._listElement.focus();
 
-      this.currentIndex = index;
+        if (this.type === 'autocomplete') {
+          this.currentIndex = 0;
+        }
 
-      this._itemRefs[index].focus();
+        this._handleCurrentIndexChange();
+      }
+
+      this._positionMenu();
+
+      window.addEventListener('click', this._outsideClickFn);
     });
   }
 
-  @Watch('isOpen')
-  onOpenStateChange(open) {
-    if (!this.wasClicked && ['select', 'autocomplete'].includes(this.type)) {
-      // this._isOpenedWithKeyboard = open;
-    }
-
-    if (open) {
-      this._onOpen();
-      this._createEventListeners();
-
-      requestAnimationFrame(() => {
-        if (this.focusList) {
-          this._listElement.focus();
-
-          if (this.type === 'autocomplete') {
-            this.currentIndex = 0;
-          }
-
-          this._handleCurrentIndexChange();
-        }
-
-        this._positionMenu();
-      });
-
-      return;
-    }
-
+  /**
+   * @private
+   */
+  @Method()
+  async close() {
     this._openedOnTop = false;
     this._onClose();
+
+    window.removeEventListener('click', this._outsideClickFn);
+  }
+
+  /**
+   * @private
+   */
+  @Method()
+  async focusItem(type: number) {
+    requestAnimationFrame(() => {
+      this.currentIndex = type;
+
+      this._itemRefs[this.currentIndex].focus();
+    });
   }
 
   @Watch('currentIndex')
@@ -185,6 +197,8 @@ export class CDropdown {
   private _searchString = '';
 
   private _resizeObserver: ResizeObserver;
+
+  private _outsideClickFn: () => void;
 
   private get _listSize() {
     return this.items.length || 0;
@@ -216,14 +230,22 @@ export class CDropdown {
   );
 
   private _highlightMatchingText(value: string) {
-    if (this.type === 'select') return value;
+    if (
+      this.type === 'select' ||
+      (this.parent as HTMLCAutocompleteElement).query === ''
+    )
+      return value;
 
     const regex = new RegExp(
       (this.parent as HTMLCAutocompleteElement).query,
       'gi',
     );
 
-    return value.replace(regex, (match) => `<mark>${match}</mark>`);
+    const highlighted = value
+      .replace(/(<([^>]+)>)/gi, '')
+      .replace(regex, (match) => `<mark>${match}</mark>`);
+
+    return highlighted;
   }
 
   private _renderMenuItem = (item: CSelectItem, index: number) => {
@@ -337,15 +359,17 @@ export class CDropdown {
       return;
     }
 
-    requestAnimationFrame(() => {
-      this._listElement.replaceChildren();
-      this._itemRefs.length = 0;
+    this._listElement.replaceChildren();
+    this._itemRefs.length = 0;
 
-      this.items.map((item, index) => this._renderMenuItem(item, index));
+    this.items.map((item, index) => this._renderMenuItem(item, index));
+
+    requestAnimationFrame(() => {
+      this._positionMenu();
     });
   }
 
-  private _renderMenu(/* style */) {
+  private _renderMenu() {
     this._id = `${this.inputId}--items`;
 
     const dialogElement = document.createElement('dialog');
@@ -380,6 +404,7 @@ export class CDropdown {
   private _onOpen() {
     this.parent.shadowRoot.querySelector('.c-input').classList.add('active');
     this._listElement.classList.add('active');
+    this.isOpen = true;
     this._listElement.ariaExpanded = 'true';
     this._listElement.tabIndex = 0;
     this._dialogElement.showModal();
@@ -401,6 +426,8 @@ export class CDropdown {
   }
 
   private _onSelect(index: number, focusInput = false) {
+    if (index === null) return;
+
     const isDisabled = this._itemRefs[index].classList.contains('disabled');
 
     if (isDisabled) return;
@@ -427,14 +454,12 @@ export class CDropdown {
       bottom: parentBottom,
       left: parentLeft,
       width: parentWidth,
-      height: parentHeight,
       top: parentTop,
     } = this._getParentPosition();
 
-    this.bottomTranslate = 0;
-
     this._dialogElement.style.width = `${parentWidth}px`;
     this._dialogElement.style.top = `${parentBottom}px`;
+    this._dialogElement.style.bottom = 'auto';
     this._dialogElement.style.left = `${parentLeft}px`;
 
     this._dialogElement.style.removeProperty('transform');
@@ -450,18 +475,14 @@ export class CDropdown {
     const fitsOnTop = parentTop - height > 0;
 
     if (!fitsOnTop && !isInView.y) {
-      this._dialogElement.style.height = `${parentTop}px`;
+      this._dialogElement.style.maxHeight = `${parentTop}px`;
     }
 
     if (!isInView.y || this._openedOnTop) {
       this._openedOnTop = true;
 
-      this.bottomTranslate = height + parentHeight;
-
-      this._dialogElement.style.setProperty(
-        'transform',
-        `translateY(-${this.bottomTranslate}px`,
-      );
+      this._dialogElement.style.top = 'auto';
+      this._dialogElement.style.bottom = `${innerHeight - parentTop}px`;
     }
 
     this.topPosition = parentBottom;
@@ -504,8 +525,6 @@ export class CDropdown {
       event.key === 'Backspace'
     ) {
       if (this.type === 'autocomplete') {
-        this.parent.shadowRoot.querySelector('input').focus();
-
         const { query } = this.parent as HTMLCAutocompleteElement;
 
         let updatedQuery = '';
@@ -631,6 +650,12 @@ export class CDropdown {
     });
   }
 
+  private _handleOutsideClick(event) {
+    if (!event.composedPath().includes(this._dialogElement)) {
+      this.close();
+    }
+  }
+
   private _updateStatusText() {
     if (this._debounce !== null) {
       clearTimeout(this._debounce);
@@ -666,11 +691,9 @@ export class CDropdown {
     }, 1400);
   }
 
-  componentWillLoad() {
-    this._renderMenu();
-  }
-
   componentDidLoad() {
+    this._renderMenu();
+
     this.currentIndex = this.index;
 
     this._resizeObserver = new ResizeObserver(() => {
@@ -679,7 +702,7 @@ export class CDropdown {
       this._positionMenu();
     });
 
-    this._resizeObserver.observe(this._dialogElement);
+    this._resizeObserver.observe(window.document.body);
   }
 
   disconnectedCallback() {
@@ -688,11 +711,13 @@ export class CDropdown {
 
   render() {
     if (
+      this._dialogElement &&
       this.itemsPerPage &&
       this.itemsPerPage > 0 &&
       this.items.length > this.itemsPerPage
     ) {
-      this._dialogElement.style.height = 42 * (this.itemsPerPage + 0.5) + 'px';
+      this._dialogElement.style.maxHeight =
+        42 * (this.itemsPerPage + 0.5) + 'px';
     }
 
     return (

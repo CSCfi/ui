@@ -11,7 +11,11 @@
 
       <p v-if="!!componentData?.docs">{{ componentData.docs }}</p>
 
-      <c-tabs v-model="activeTab" v-control>
+      <c-tabs
+        v-model="activeTab"
+        v-control
+        style="--c-tab-item-padding: 16px 8px 8px"
+      >
         <c-tab
           v-for="tab in tabs"
           :key="tab.value"

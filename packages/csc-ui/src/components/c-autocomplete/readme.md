@@ -120,14 +120,14 @@ Type: `Promise<void>`
 ### Depends on
 
 - [c-input](../c-input)
+- [c-dropdown](../c-dropdown)
 
 ### Graph
 ```mermaid
 graph TD;
   c-autocomplete --> c-input
-  c-input --> c-dropdowns
+  c-autocomplete --> c-dropdown
   c-input --> c-message
-  c-dropdowns --> c-dropdown
   c-dropdown --> c-icon
   style c-autocomplete fill:#f9f,stroke:#333,stroke-width:4px
 ```

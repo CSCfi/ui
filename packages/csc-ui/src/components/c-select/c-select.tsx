@@ -26,6 +26,8 @@ import { CSelectItem } from '../../types';
   formAssociated: true,
 })
 export class CSelect {
+  @Element() el: HTMLCSelectElement;
+
   // eslint-disable-next-line
   @AttachInternals() internals: ElementInternals;
 
@@ -130,8 +132,6 @@ export class CSelect {
    */
   @Event({ bubbles: false }) changeValue: EventEmitter;
 
-  @Element() host: HTMLCSelectElement;
-
   @State() menuVisible = false;
 
   @State() currentIndex: number = null;
@@ -152,8 +152,6 @@ export class CSelect {
   private _cOptionElements: Record<string, HTMLCOptionElement> = {};
 
   private _selectionElement: HTMLDivElement;
-
-  private _cInput: HTMLCInputElement;
 
   private _outerWrapperClasses = ['outer-wrapper'];
 
@@ -313,19 +311,27 @@ export class CSelect {
     }
 
     if (ev.key === 'Tab') {
-      this._cInput.closeDropdown();
+      this._dropdownElement.close();
     }
 
     if (ev.key === 'ArrowDown') {
       ev.preventDefault();
 
+      if (this._dropdownElement.isOpen) return;
+
       this._showMenu();
+
+      this._dropdownElement.focusItem(this.currentIndex);
     }
 
     if (ev.key === 'ArrowUp') {
       ev.preventDefault();
 
+      if (this._dropdownElement.isOpen) return;
+
       this._showMenu();
+
+      this._dropdownElement.focusItem(this.currentIndex);
     }
 
     if (ev.key === ' ') {
@@ -392,19 +398,6 @@ export class CSelect {
         (item) => item.value === this.value,
       );
     }
-
-    requestAnimationFrame(() => {
-      this._cInput.createDropdown({
-        type: 'select',
-        items: this._items,
-        options: this._cOptionElements,
-        parent: this.host,
-        itemsPerPage: this.itemsPerPage,
-        index: this.currentIndex,
-        click: false,
-        id: this._inputId,
-      });
-    });
   }
 
   disconnectedCallback() {
@@ -422,6 +415,8 @@ export class CSelect {
   private _optionItems: CSelectItem[] = [];
 
   private _inputElement: HTMLInputElement;
+
+  private _dropdownElement: HTMLCDropdownElement;
 
   private _selectItem() {
     const selectedItem = this._items[this.currentIndex];
@@ -443,7 +438,8 @@ export class CSelect {
     if (this.disabled) return;
 
     this.menuVisible = true;
-    this._cInput.openDropdown();
+
+    this._dropdownElement.open();
   }
 
   private _getOptionItems() {
@@ -453,7 +449,7 @@ export class CSelect {
       let selection: CSelectItem | null = null;
 
       this._optionItems = (
-        this.host ? Array.from(this.host.querySelectorAll('c-option')) : []
+        this.el ? Array.from(this.el.querySelectorAll('c-option')) : []
       ).map((item, index) => {
         const cSelectItem = {
           value: item.value,
@@ -548,7 +544,7 @@ export class CSelect {
     }
 
     this._debounce = window.setTimeout(() => {
-      const selection = this.host.shadowRoot.querySelector(
+      const selection = this.el.shadowRoot.querySelector(
         'li[aria-selected="true"]',
       ) as HTMLLIElement;
 
@@ -583,14 +579,14 @@ export class CSelect {
         </div>
 
         <c-input
-          ref={(el) => (this._cInput = el)}
           autofocus={this.autofocus}
           disabled={this.disabled}
           hide-details={this.hideDetails}
           hint={this.hint}
           id={this.hostId}
           input-id={this._inputId}
-          itemns-per-page={this.itemsPerPage}
+          items={this._items}
+          items-per-page={this.itemsPerPage}
           label={this.label}
           name={this.name}
           placeholder={this.placeholder}
@@ -612,6 +608,18 @@ export class CSelect {
 
             <slot onSlotchange={this._handleSlotChange}></slot>
           </div>
+
+          <c-dropdown
+            ref={(el) => (this._dropdownElement = el)}
+            slot="dropdown"
+            items={this._items}
+            options={this._cOptionElements}
+            items-per-page={this.itemsPerPage}
+            parent={this.el}
+            index={this.currentIndex}
+            input-id={this._inputId}
+            type="select"
+          />
 
           <slot name="post" slot="post"></slot>
         </c-input>

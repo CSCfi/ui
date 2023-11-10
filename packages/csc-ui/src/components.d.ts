@@ -7,14 +7,8 @@
 import { HTMLStencilElement, JSXBase } from "@stencil/core/internal";
 import { CAlertType, CAutocompleteItem, CDataTableData, CDataTableFooterOptions, CDataTableHeader, CLoginCardBlendMode, CMenuOption, CPaginationOptions, CRadioGroupItem, CRowAlign, CRowJustify, CSelectItem, CTabsJustify, CToastMessage } from "./types";
 import { _CDropdownUpdateParams } from "./components/c-dropdown/c-dropdown";
-import { _CDropdownParams } from "./components/c-dropdowns/c-dropdowns";
-import { _CDropdownParams as _CDropdownParams1 } from "./components/c-dropdowns/c-dropdowns";
-import { _CDropdownUpdateParams as _CDropdownUpdateParams1 } from "./components/c-dropdown/c-dropdown";
 export { CAlertType, CAutocompleteItem, CDataTableData, CDataTableFooterOptions, CDataTableHeader, CLoginCardBlendMode, CMenuOption, CPaginationOptions, CRadioGroupItem, CRowAlign, CRowJustify, CSelectItem, CTabsJustify, CToastMessage } from "./types";
 export { _CDropdownUpdateParams } from "./components/c-dropdown/c-dropdown";
-export { _CDropdownParams } from "./components/c-dropdowns/c-dropdowns";
-export { _CDropdownParams as _CDropdownParams1 } from "./components/c-dropdowns/c-dropdowns";
-export { _CDropdownUpdateParams as _CDropdownUpdateParams1 } from "./components/c-dropdown/c-dropdown";
 export namespace Components {
     /**
      * @group Content Selectors
@@ -459,11 +453,15 @@ export namespace Components {
         /**
           * @private
          */
+        "close": () => Promise<void>;
+        /**
+          * @private
+         */
         "focusDropdown": () => Promise<void>;
         /**
           * @private
          */
-        "focusItem": (type: 'first' | 'last') => Promise<void>;
+        "focusItem": (type: number) => Promise<void>;
         /**
           * Focus dropdown on open
          */
@@ -489,6 +487,10 @@ export namespace Components {
          */
         "itemsPerPage": number;
         /**
+          * @private
+         */
+        "open": (focusList?: boolean) => Promise<void>;
+        /**
           * Dropdown options
          */
         "options": Record<string, HTMLCOptionElement>;
@@ -508,16 +510,6 @@ export namespace Components {
           * @private
          */
         "wasClicked": boolean;
-        /**
-          * Dropdown scrolling parent
-         */
-        "wrapper": HTMLElement;
-    }
-    interface CDropdowns {
-        /**
-          * Creates a dropdown
-         */
-        "createDropdown": (params: _CDropdownParams) => Promise<HTMLCDropdownElement>;
     }
     /**
      * @group Other
@@ -590,25 +582,9 @@ export namespace Components {
          */
         "autofocus": boolean;
         /**
-          * Closes the dropdown
-         */
-        "closeDropdown": () => Promise<void>;
-        /**
-          * Create a dropdown
-         */
-        "createDropdown": (params: _CDropdownParams1) => Promise<void>;
-        /**
           * Disable the input
          */
         "disabled": boolean;
-        /**
-          * @private
-         */
-        "focusDropdown": () => Promise<void>;
-        /**
-          * @private
-         */
-        "focusItem": (type: 'first' | 'last') => Promise<void>;
         /**
           * Render a hidden input outside the shadow dom
          */
@@ -630,6 +606,10 @@ export namespace Components {
          */
         "inputId": string;
         /**
+          * Items for the dropdown
+         */
+        "items": CSelectItem[];
+        /**
           * Items per page before adding scroll
          */
         "itemsPerPage": number;
@@ -649,10 +629,6 @@ export namespace Components {
           * Name of the input
          */
         "name": string;
-        /**
-          * Opens the dropdown
-         */
-        "openDropdown": (focusList?: boolean) => Promise<void>;
         /**
           * Placeholder of the input
          */
@@ -681,10 +657,6 @@ export namespace Components {
           * Type of the input
          */
         "type": string;
-        /**
-          * @private
-         */
-        "updateDropdown": (params: _CDropdownUpdateParams1) => Promise<void>;
         /**
           * Set the validíty of the input
          */
@@ -2129,12 +2101,6 @@ declare global {
         prototype: HTMLCDropdownElement;
         new (): HTMLCDropdownElement;
     };
-    interface HTMLCDropdownsElement extends Components.CDropdowns, HTMLStencilElement {
-    }
-    var HTMLCDropdownsElement: {
-        prototype: HTMLCDropdownsElement;
-        new (): HTMLCDropdownsElement;
-    };
     /**
      * @group Other
      */
@@ -2867,7 +2833,6 @@ declare global {
         "c-csc-logo": HTMLCCscLogoElement;
         "c-data-table": HTMLCDataTableElement;
         "c-dropdown": HTMLCDropdownElement;
-        "c-dropdowns": HTMLCDropdownsElement;
         "c-icon": HTMLCIconElement;
         "c-icon-button": HTMLCIconButtonElement;
         "c-input": HTMLCInputElement;
@@ -3419,12 +3384,6 @@ declare namespace LocalJSX {
           * @private
          */
         "wasClicked"?: boolean;
-        /**
-          * Dropdown scrolling parent
-         */
-        "wrapper"?: HTMLElement;
-    }
-    interface CDropdowns {
     }
     /**
      * @group Other
@@ -3520,6 +3479,10 @@ declare namespace LocalJSX {
           * Id of the input element
          */
         "inputId"?: string;
+        /**
+          * Items for the dropdown
+         */
+        "items"?: CSelectItem[];
         /**
           * Items per page before adding scroll
          */
@@ -4812,7 +4775,6 @@ declare namespace LocalJSX {
         "c-csc-logo": CCscLogo;
         "c-data-table": CDataTable;
         "c-dropdown": CDropdown;
-        "c-dropdowns": CDropdowns;
         "c-icon": CIcon;
         "c-icon-button": CIconButton;
         "c-input": CInput;
@@ -4927,7 +4889,6 @@ declare module "@stencil/core" {
              */
             "c-data-table": LocalJSX.CDataTable & JSXBase.HTMLAttributes<HTMLCDataTableElement>;
             "c-dropdown": LocalJSX.CDropdown & JSXBase.HTMLAttributes<HTMLCDropdownElement>;
-            "c-dropdowns": LocalJSX.CDropdowns & JSXBase.HTMLAttributes<HTMLCDropdownsElement>;
             /**
              * @group Other
              */
