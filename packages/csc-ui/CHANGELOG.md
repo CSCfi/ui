@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.0.13](https://github.com/CSCfi/ui/compare/v1.0.12...v1.0.13) (2023-11-10)
+
+
+### Bug Fixes
+
+* c-dropdown: remove c-dropdowns and use c-dropdown directly on c-select and -c-autocomplete ([d77e897](https://github.com/CSCfi/ui/commit/d77e89733fcbd33c1904e679610bc790fa02505e))
+
 ## [1.0.12](https://github.com/CSCfi/ui/compare/v1.0.11...v1.0.12) (2023-11-09)
 
 
