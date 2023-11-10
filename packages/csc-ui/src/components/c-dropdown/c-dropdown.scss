@@ -1,4 +1,4 @@
-:host {
+:host(c-dropdown) {
   /**
    * @prop --c-dropdown-background-color: Menu background color
    * @prop --c-dropdown-background-color-hover: Menu item hover background color
@@ -29,7 +29,7 @@
     border: none;
     box-shadow: 2px 4px 10px #00000029;
     margin: 0;
-    overflow: hidden;
+    overflow-y: scroll;
     padding: 0;
     position: fixed;
 
@@ -41,11 +41,9 @@
   ul {
     background-color: var(--_c-dropdown-background-color);
     border-radius: 4px;
-    height: 100%;
     list-style: none;
     margin: 0;
     outline: none;
-    overflow-y: scroll;
     padding: 0;
     pointer-events: auto;
     visibility: hidden;
