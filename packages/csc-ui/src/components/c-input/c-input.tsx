@@ -8,11 +8,8 @@ import {
   EventEmitter,
   Element,
   Watch,
-  Method,
 } from '@stencil/core';
 import { CAutocompleteItem, CSelectItem } from '../../types';
-import { _CDropdownParams } from '../c-dropdowns/c-dropdowns';
-import { _CDropdownUpdateParams } from '../c-dropdown/c-dropdown';
 
 /**
  * @parent None
@@ -23,6 +20,8 @@ import { _CDropdownUpdateParams } from '../c-dropdown/c-dropdown';
   shadow: false,
 })
 export class CInput {
+  @Element() el!: HTMLCInputElement;
+
   /**
    * Auto focus the input
    */
@@ -57,6 +56,11 @@ export class CInput {
    * Id of the input element
    */
   @Prop() inputId: string;
+
+  /**
+   * Items for the dropdown
+   */
+  @Prop() items: CSelectItem[];
 
   /**
    * Items per page before adding scroll
@@ -175,8 +179,6 @@ export class CInput {
 
   @State() currentIndex: number = null;
 
-  @Element() hiddenEl!: HTMLCInputElement;
-
   @Watch('valid')
   onValidChange() {
     if (this.validateOnBlur && !this._hasBlurred) return;
@@ -207,23 +209,7 @@ export class CInput {
 
   private _debounce = null;
 
-  private _dropdownsElement: HTMLCDropdownsElement;
-
   private _dropdownElement: HTMLCDropdownElement;
-
-  private _outsideClickFn: () => void;
-
-  // private _parentTop = 0;
-
-  // private _listSize = 0;
-
-  // private _parent: HTMLCSelectElement | HTMLCAutocompleteElement;
-
-  componentWillLoad() {
-    if (this.variant === 'select') {
-      this._createDropdownWrapper();
-    }
-  }
 
   componentDidLoad() {
     if (this.autofocus) {
@@ -320,126 +306,6 @@ export class CInput {
     this.preSlotWidth = this.inputField.offsetLeft;
   }
 
-  private _handleOutsideClick(event) {
-    if (!event.composedPath().includes(this._dropdownElement)) {
-      this.closeDropdown();
-    }
-  }
-
-  private async _getScrollParent(element): Promise<HTMLElement> {
-    return new Promise((resolve) => {
-      if (!element) {
-        resolve(undefined);
-      }
-
-      let parent = element.parentNode;
-
-      while (parent) {
-        if (parent.shadowRoot === undefined) {
-          parent = parent.host;
-        } else {
-          const { overflow, overflowX } = window.getComputedStyle(parent);
-
-          if (
-            overflowX !== 'scroll' &&
-            overflow.split(' ').every((o) => o === 'auto' || o === 'scroll')
-          ) {
-            resolve(parent);
-          }
-
-          parent = parent.parentNode;
-        }
-      }
-
-      resolve(document.documentElement);
-    });
-  }
-
-  /**
-   * @private
-   */
-  @Method()
-  async focusDropdown() {
-    this._dropdownElement.focusDropdown();
-  }
-
-  /**
-   * @private
-   */
-  @Method()
-  async focusItem(type: 'first' | 'last') {
-    await this._dropdownElement.focusItem(type);
-  }
-
-  /**
-   * Create a dropdown
-   */
-  @Method()
-  async createDropdown(params: _CDropdownParams) {
-    const wrapper = await this._getScrollParent(this.hiddenEl);
-
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
-    this._dropdownElement = await this._dropdownsElement.createDropdown({
-      ...params,
-      itemsPerPage: params.itemsPerPage || 6,
-      wrapper,
-    });
-  }
-
-  /**
-   * Opens the dropdown
-   */
-  @Method()
-  async openDropdown(focusList = true) {
-    this._dropdownElement.shadowRoot
-      .querySelector('ul')
-      .classList.add('active');
-
-    this._dropdownElement.isOpen = true;
-    this._dropdownElement.focusList = focusList;
-
-    this._outsideClickFn = this._handleOutsideClick.bind(this);
-
-    requestAnimationFrame(() => {
-      window.addEventListener('click', this._outsideClickFn);
-    });
-  }
-
-  /**
-   * Closes the dropdown
-   */
-  @Method()
-  async closeDropdown() {
-    this._dropdownElement.shadowRoot
-      .querySelector('ul')
-      .classList.remove('active');
-
-    this._dropdownElement.isOpen = false;
-
-    window.removeEventListener('click', this._outsideClickFn);
-  }
-
-  /**
-   * @private
-   */
-  @Method()
-  async updateDropdown(params: _CDropdownUpdateParams) {
-    this._dropdownElement?.updateDropdown(params);
-  }
-
-  private _createDropdownWrapper() {
-    const existingElement = document.querySelector('c-dropdowns');
-    const element = existingElement || document.createElement('c-dropdowns');
-
-    this._dropdownsElement = element;
-    // this._dropdownsElement.itemsPerPage = this.itemsPerPage;
-
-    if (existingElement) return;
-
-    document.body.appendChild(element);
-  }
-
   private _onBlur = () => {
     // delay the blur event to prevent the label from 'flashing' on c-select selection
     setTimeout(() => {
@@ -461,8 +327,7 @@ export class CInput {
     if (click) {
       this.inputField?.click();
 
-      if (this._dropdownElement) {
-        this._dropdownElement.wasClicked = true;
+      if (this.variant === 'select') {
         this.itemClick.emit();
       }
     }
@@ -533,7 +398,7 @@ export class CInput {
   }
 
   get inputField() {
-    return this.hiddenEl?.querySelector('.c-input__input') as
+    return this.el?.querySelector('.c-input__input') as
       | HTMLInputElement
       | HTMLTextAreaElement;
   }
@@ -591,6 +456,8 @@ export class CInput {
                 <slot></slot>
               </div>
             </div>
+
+            {this.variant === 'select' && <slot name="dropdown"></slot>}
 
             {!this.hideDetails && (
               <c-message

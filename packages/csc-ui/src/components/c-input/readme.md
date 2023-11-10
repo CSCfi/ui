@@ -16,6 +16,7 @@
 | `hint`           | `hint`             | Hint text for the input                      | `string`                                                                                                                                           | `''`               |
 | `hostId`         | `id`               | Id of the input                              | `string`                                                                                                                                           | `undefined`        |
 | `inputId`        | `input-id`         | Id of the input element                      | `string`                                                                                                                                           | `undefined`        |
+| `items`          | --                 | Items for the dropdown                       | `CSelectItem[]`                                                                                                                                    | `undefined`        |
 | `itemsPerPage`   | `items-per-page`   | Items per page before adding scroll          | `number`                                                                                                                                           | `6`                |
 | `label`          | `label`            | Label of the input                           | `string`                                                                                                                                           | `undefined`        |
 | `max`            | `max`              | Maximum value on a numeric input             | `number`                                                                                                                                           | `null`             |
@@ -45,69 +46,6 @@
 | `itemClick`     | Emit click to the parent   | `CustomEvent<any>` |
 
 
-## Methods
-
-### `closeDropdown() => Promise<void>`
-
-Closes the dropdown
-
-#### Returns
-
-Type: `Promise<void>`
-
-
-
-### `createDropdown(params: _CDropdownParams) => Promise<void>`
-
-Create a dropdown
-
-#### Returns
-
-Type: `Promise<void>`
-
-
-
-### `focusDropdown() => Promise<void>`
-
-
-
-#### Returns
-
-Type: `Promise<void>`
-
-
-
-### `focusItem(type: 'first' | 'last') => Promise<void>`
-
-
-
-#### Returns
-
-Type: `Promise<void>`
-
-
-
-### `openDropdown(focusList?: boolean) => Promise<void>`
-
-Opens the dropdown
-
-#### Returns
-
-Type: `Promise<void>`
-
-
-
-### `updateDropdown(params: _CDropdownUpdateParams) => Promise<void>`
-
-
-
-#### Returns
-
-Type: `Promise<void>`
-
-
-
-
 ## Dependencies
 
 ### Used by
@@ -118,16 +56,12 @@ Type: `Promise<void>`
 
 ### Depends on
 
-- [c-dropdowns](../c-dropdowns)
 - [c-message](../c-message)
 
 ### Graph
 ```mermaid
 graph TD;
-  c-input --> c-dropdowns
   c-input --> c-message
-  c-dropdowns --> c-dropdown
-  c-dropdown --> c-icon
   c-autocomplete --> c-input
   c-select --> c-input
   c-text-field --> c-input

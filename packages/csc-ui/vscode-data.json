@@ -527,14 +527,6 @@
       ]
     },
     {
-      "name": "c-dropdowns",
-      "description": {
-        "kind": "markdown",
-        "value": ""
-      },
-      "attributes": []
-    },
-    {
       "name": "c-icon",
       "description": {
         "kind": "markdown",

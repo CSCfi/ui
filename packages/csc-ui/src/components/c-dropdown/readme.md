@@ -19,10 +19,19 @@
 | `parent`       | --               | Dropdown parent                     | `HTMLCAutocompleteElement \| HTMLCSelectElement` | `undefined` |
 | `type`         | `type`           | Type of the parent element          | `"autocomplete" \| "select"`                     | `undefined` |
 | `wasClicked`   | `was-clicked`    |                                     | `boolean`                                        | `false`     |
-| `wrapper`      | --               | Dropdown scrolling parent           | `HTMLElement`                                    | `undefined` |
 
 
 ## Methods
+
+### `close() => Promise<void>`
+
+
+
+#### Returns
+
+Type: `Promise<void>`
+
+
 
 ### `focusDropdown() => Promise<void>`
 
@@ -34,7 +43,17 @@ Type: `Promise<void>`
 
 
 
-### `focusItem(type: 'first' | 'last') => Promise<void>`
+### `focusItem(type: number) => Promise<void>`
+
+
+
+#### Returns
+
+Type: `Promise<void>`
+
+
+
+### `open(focusList?: boolean) => Promise<void>`
 
 
 
@@ -69,7 +88,8 @@ Type: `Promise<void>`
 
 ### Used by
 
- - [c-dropdowns](../c-dropdowns)
+ - [c-autocomplete](../c-autocomplete)
+ - [c-select](../c-select)
 
 ### Depends on
 
@@ -79,7 +99,8 @@ Type: `Promise<void>`
 ```mermaid
 graph TD;
   c-dropdown --> c-icon
-  c-dropdowns --> c-dropdown
+  c-autocomplete --> c-dropdown
+  c-select --> c-dropdown
   style c-dropdown fill:#f9f,stroke:#333,stroke-width:4px
 ```
 
