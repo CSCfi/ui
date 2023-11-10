@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.0.14](https://github.com/CSCfi/ui/compare/v1.0.13...v1.0.14) (2023-11-10)
+
+
+### Bug Fixes
+
+* c-dropdown - fix not being able to scroll with overflowing items ([add36e4](https://github.com/CSCfi/ui/commit/add36e4e19868817894108856904c00c72e7d641))
+
 ## [1.0.13](https://github.com/CSCfi/ui/compare/v1.0.12...v1.0.13) (2023-11-10)
 
 
