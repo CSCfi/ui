@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.0.16](https://github.com/CSCfi/ui/compare/v1.0.15...v1.0.16) (2023-11-10)
+
+
+### Bug Fixes
+
+* c-card - prevent content from overflowing the card ([c1c38fb](https://github.com/CSCfi/ui/commit/c1c38fb47871d7d4bb6c97783bcdda6e9ea3b30f))
+
 ## [1.0.15](https://github.com/CSCfi/ui/compare/v1.0.14...v1.0.15) (2023-11-10)
 
 
