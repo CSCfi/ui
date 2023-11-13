@@ -25,7 +25,7 @@
   }
 
   dialog {
-    background-color: transparent;
+    background-color: white;
     border-radius: 4px;
     border: none;
     box-shadow: 2px 4px 10px #00000029;
@@ -35,7 +35,7 @@
     position: fixed;
 
     &::backdrop {
-      display: none;
+      visibility: none;
     }
   }
 

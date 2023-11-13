@@ -498,16 +498,18 @@ export class CDropdown {
         width: inputSize.width,
       };
 
-      this._dialogElement.style.width = `${this._inputSize.width}px`;
-      this._dialogElement.style.top = `${inputSize.top}px`;
-      this._dialogElement.style.bottom = 'auto';
-      this._dialogElement.style.left = `${inputSize.left}px`;
+      this._dialogElement.style.inset = '0';
+      this._dialogElement.style.width = '100lvw';
+
+      // this._dialogElement.style.width = `${this._inputSize.width}px`;
+      // this._dialogElement.style.top = `${inputSize.top}px`;
+      // this._dialogElement.style.bottom = 'auto';
+      // this._dialogElement.style.left = `${inputSize.left}px`;
 
       const { bottom, right, height } =
         this._dialogElement.getBoundingClientRect();
 
-      this._listElement.style.maxHeight =
-        42 * (this.itemsPerPage + 0.5) - 52 + 'px';
+      this._listElement.style.maxHeight = 'calc(100svh - 52px)';
 
       const isInView = {
         x: right < innerWidth,
