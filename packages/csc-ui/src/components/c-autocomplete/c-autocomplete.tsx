@@ -333,6 +333,10 @@ export class CAutocomplete {
 
       this._showMenu();
     }
+
+    if (ev.key === 'Escape') {
+      this._dropdownElement.close();
+    }
   }
 
   private _showMenu(focusList = true) {
@@ -341,7 +345,7 @@ export class CAutocomplete {
     this._dropdownElement.open(focusList);
 
     if (focusList) {
-      this._dropdownElement.focusDropdown();
+      // this._dropdownElement.focusDropdown();
     }
   }
 
@@ -475,49 +479,50 @@ export class CAutocomplete {
   render() {
     return (
       <Host title={this.query}>
-        <c-input
-          autofocus={this.autofocus}
-          disabled={this.disabled}
-          hide-details={this.hideDetails}
-          hint={this.hint}
-          id={this.hostId}
+        <c-dropdown
+          ref={(el) => (this._dropdownElement = el)}
+          slot="dropdown"
+          items={this._items}
+          options={this._cOptionElements}
+          items-per-page={this.itemsPerPage}
+          parent={this.el}
+          index={this.currentIndex}
           input-id={this._inputId}
-          label={this.label}
-          name={this.name}
-          placeholder={this.placeholder}
-          required={this.required}
-          shadow={this.shadow}
-          valid={this.valid}
-          validate={this.validate}
-          validate-on-blur={this.validateOnBlur}
-          validation={this.validation}
-          value={this.query}
-          variant="select"
-          onItemClick={() => this.items.length && this._showMenu(false)}
+          type="autocomplete"
         >
-          <slot name="pre" slot="pre"></slot>
-
-          <div class="c-input__content">
-            {this._renderInputElement()}
-            {this._renderChevron()}
-
-            <slot onSlotchange={this._handleSlotChange}></slot>
-          </div>
-
-          <c-dropdown
-            ref={(el) => (this._dropdownElement = el)}
-            slot="dropdown"
-            items={this._items}
-            options={this._cOptionElements}
-            items-per-page={this.itemsPerPage}
-            parent={this.el}
-            index={this.currentIndex}
+          <c-input
+            slot="default"
+            autofocus={this.autofocus}
+            disabled={this.disabled}
+            hide-details={this.hideDetails}
+            hint={this.hint}
+            id={this.hostId}
             input-id={this._inputId}
-            type="autocomplete"
-          />
+            label={this.label}
+            name={this.name}
+            placeholder={this.placeholder}
+            required={this.required}
+            shadow={this.shadow}
+            valid={this.valid}
+            validate={this.validate}
+            validate-on-blur={this.validateOnBlur}
+            validation={this.validation}
+            value={this.query}
+            variant="select"
+            onItemClick={() => this.items.length && this._showMenu(false)}
+          >
+            <slot name="pre" slot="pre"></slot>
 
-          <slot name="post" slot="post"></slot>
-        </c-input>
+            <div class="c-input__content">
+              {this._renderInputElement()}
+              {this._renderChevron()}
+
+              <slot onSlotchange={this._handleSlotChange}></slot>
+            </div>
+
+            <slot name="post" slot="post"></slot>
+          </c-input>
+        </c-dropdown>
       </Host>
     );
   }

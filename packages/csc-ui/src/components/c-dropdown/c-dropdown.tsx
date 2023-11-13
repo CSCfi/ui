@@ -22,7 +22,7 @@ export type _CDropdownUpdateParams = {
   shadow: true,
 })
 export class CDropdown {
-  @Element() host: HTMLCDropdownElement;
+  @Element() el: HTMLCDropdownElement;
 
   /**
    * Dropdown items
@@ -121,17 +121,9 @@ export class CDropdown {
    * @private
    */
   @Method()
-  async focusDropdown() {
-    requestAnimationFrame(() => {
-      this._listElement.focus();
-    });
-  }
-
-  /**
-   * @private
-   */
-  @Method()
   async open(focusList = false) {
+    if (this.isOpen) return;
+
     this._onOpen();
     this._createEventListeners();
 
@@ -139,7 +131,7 @@ export class CDropdown {
 
     requestAnimationFrame(() => {
       if (focusList) {
-        this._listElement.focus();
+        // this._listElement.focus();
 
         if (this.type === 'autocomplete') {
           this.currentIndex = 0;
@@ -191,6 +183,17 @@ export class CDropdown {
   private _listElement: HTMLUListElement;
 
   private _dialogElement: HTMLDialogElement;
+
+  private _inputElement: HTMLCInputElement;
+
+  private _dummyElement: HTMLDivElement;
+
+  private _inputSize = {
+    height: 0,
+    width: 0,
+  };
+
+  private _hideDetails = false;
 
   private _openedOnTop = false;
 
@@ -372,9 +375,15 @@ export class CDropdown {
   private _renderMenu() {
     this._id = `${this.inputId}--items`;
 
-    const dialogElement = document.createElement('dialog');
+    this._dialogElement = document.createElement('dialog');
 
     const listElement = document.createElement('ul');
+
+    const slotElementTop = document.createElement('slot');
+
+    slotElementTop.name = 'input-slot-top';
+
+    this._dialogElement.appendChild(slotElementTop);
 
     // a11y
     listElement.role = `listbox`;
@@ -383,13 +392,11 @@ export class CDropdown {
 
     listElement.id = this._id;
 
-    this._dialogElement = dialogElement;
-
     this._listElement = listElement;
 
     this._dialogElement.appendChild(listElement);
 
-    this.host.shadowRoot.appendChild(dialogElement);
+    this.el.shadowRoot.appendChild(this._dialogElement);
 
     this.items.map((item, index) => this._renderMenuItem(item, index));
 
@@ -399,6 +406,12 @@ export class CDropdown {
     );
 
     this._listElement.addEventListener('keyup', this._onKeyDown.bind(this));
+
+    const slotElementBottom = document.createElement('slot');
+
+    slotElementBottom.name = 'input-slot-bottom';
+
+    this._dialogElement.appendChild(slotElementBottom);
   }
 
   private _onOpen() {
@@ -407,6 +420,18 @@ export class CDropdown {
     this.isOpen = true;
     this._listElement.ariaExpanded = 'true';
     this._listElement.tabIndex = 0;
+
+    this._dummyElement.style.width = `${this.parent.clientWidth}px`;
+    this._dummyElement.style.height = `${this._inputSize.height}px`;
+    this._dummyElement.style.display = 'block';
+
+    this._dummyElement.slot = 'default';
+
+    this._inputElement = this.el.querySelector('c-input');
+
+    this._inputElement.hideDetails = true;
+    this._inputElement.slot = 'input-slot-top';
+
     this._dialogElement.showModal();
   }
 
@@ -419,6 +444,13 @@ export class CDropdown {
     this.isOpen = false;
     this.currentIndex = this.index;
     this._dialogElement.close();
+    this._inputElement.slot = 'default';
+    this._inputElement.hideDetails = this._hideDetails;
+
+    this._dummyElement.style.width = '0';
+    this._dummyElement.style.display = 'none';
+
+    this._dialogElement.style.width = '0';
 
     if (focusInput) {
       this.parent.shadowRoot.querySelector('input').focus();
@@ -450,48 +482,59 @@ export class CDropdown {
   private _positionMenu() {
     const { innerWidth, innerHeight } = window;
 
-    const {
-      bottom: parentBottom,
-      left: parentLeft,
-      width: parentWidth,
-      top: parentTop,
-    } = this._getParentPosition();
+    requestAnimationFrame(() => {
+      const {
+        bottom: parentBottom,
+        width: parentWidth,
+        top: parentTop,
+      } = this._getParentPosition();
 
-    this._dialogElement.style.width = `${parentWidth}px`;
-    this._dialogElement.style.top = `${parentBottom}px`;
-    this._dialogElement.style.bottom = 'auto';
-    this._dialogElement.style.left = `${parentLeft}px`;
+      const inputSize = this.el.getBoundingClientRect();
 
-    this._dialogElement.style.removeProperty('transform');
+      console.log(inputSize.width, parentWidth);
 
-    const { bottom, right, height, width } =
-      this._dialogElement.getBoundingClientRect();
+      this._inputSize = {
+        height: inputSize.height,
+        width: inputSize.width,
+      };
 
-    const isInView = {
-      x: right < innerWidth,
-      y: bottom < innerHeight,
-    };
+      this._dialogElement.style.width = `${this._inputSize.width}px`;
+      this._dialogElement.style.top = `${inputSize.top}px`;
+      this._dialogElement.style.bottom = 'auto';
+      this._dialogElement.style.left = `${inputSize.left}px`;
 
-    const fitsOnTop = parentTop - height > 0;
+      const { bottom, right, height } =
+        this._dialogElement.getBoundingClientRect();
 
-    if (!fitsOnTop && !isInView.y) {
-      this._dialogElement.style.maxHeight = `${parentTop}px`;
-    }
+      this._listElement.style.maxHeight =
+        42 * (this.itemsPerPage + 0.5) - 52 + 'px';
 
-    if (!isInView.y || this._openedOnTop) {
-      this._openedOnTop = true;
+      const isInView = {
+        x: right < innerWidth,
+        y: bottom < innerHeight,
+      };
 
-      this._dialogElement.style.top = 'auto';
-      this._dialogElement.style.bottom = `${innerHeight - parentTop}px`;
-    }
+      const fitsOnTop = parentTop - height > 0;
 
-    this.topPosition = parentBottom;
+      if (!fitsOnTop && !isInView.y) {
+        this._dialogElement.style.maxHeight = `${parentTop}px`;
+      }
 
-    if (!isInView.x) {
-      this._dialogElement.style.left = `${
-        parseFloat(this._dialogElement.style.left) - width + parentWidth
-      }px`;
-    }
+      if (!isInView.y || this._openedOnTop) {
+        this._openedOnTop = true;
+
+        this._inputElement.hideDetails = true;
+        this._inputElement.slot = 'input-slot-bottom';
+
+        this._dialogElement.style.top = 'auto';
+        this._dialogElement.style.bottom = `${
+          innerHeight - inputSize.top - 44
+        }px`;
+        this._inputElement.scrollIntoView();
+      }
+
+      this.topPosition = parentBottom;
+    });
   }
 
   private _createEventListeners() {
@@ -692,14 +735,17 @@ export class CDropdown {
   }
 
   componentDidLoad() {
+    this._hideDetails = this.parent.hideDetails;
     this._renderMenu();
+    this._positionMenu();
 
     this.currentIndex = this.index;
 
     this._resizeObserver = new ResizeObserver(() => {
       if (!this.isOpen) return;
 
-      this._positionMenu();
+      this.close();
+      // this._positionMenu();
     });
 
     this._resizeObserver.observe(window.document.body);
@@ -730,6 +776,10 @@ export class CDropdown {
         >
           {this.statusText}
         </div>
+
+        <slot name="default"></slot>
+
+        <div class="dummy" ref={(el) => (this._dummyElement = el)}></div>
       </Host>
     );
   }

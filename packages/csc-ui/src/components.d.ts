@@ -457,10 +457,6 @@ export namespace Components {
         /**
           * @private
          */
-        "focusDropdown": () => Promise<void>;
-        /**
-          * @private
-         */
         "focusItem": (type: number) => Promise<void>;
         /**
           * Focus dropdown on open

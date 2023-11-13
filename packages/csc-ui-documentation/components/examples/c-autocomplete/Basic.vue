@@ -4,7 +4,7 @@
 
     <c-row gap="8">
       <c-autocomplete
-        id="listOfCountries"
+        id="listOfCountriesBasic"
         v-model="selection"
         v-control
         label="Countries"
@@ -12,6 +12,7 @@
         :items="filteredItems"
         :query="query"
         :items-per-page="10"
+        style="flex: 1"
         @input="onQueryChange($event)"
       >
         <c-icon slot="pre" :path="mdiEarth" size="16" />
@@ -20,7 +21,7 @@
       <c-button @click="onAddTag()" @keyup.enter="onAddTag()">Add</c-button>
     </c-row>
 
-    <c-tags class="mt-3">
+    <c-tags v-if="tags.length" class="mt-3">
       <c-tag
         v-for="(tag, index) of tags"
         :key="index"

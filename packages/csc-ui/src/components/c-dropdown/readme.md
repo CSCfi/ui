@@ -33,16 +33,6 @@ Type: `Promise<void>`
 
 
 
-### `focusDropdown() => Promise<void>`
-
-
-
-#### Returns
-
-Type: `Promise<void>`
-
-
-
 ### `focusItem(type: number) => Promise<void>`
 
 
