@@ -303,10 +303,6 @@ export class CAutocomplete {
     if (ev.key.match(alphanumeric) && ev.key.length === 1) {
       this._showMenu(false);
 
-      if (!this.query) {
-        this.updateQuery(ev.key);
-      }
-
       this._inputElement.focus();
     }
 
@@ -369,6 +365,7 @@ export class CAutocomplete {
   private _getOptionItems() {
     requestAnimationFrame(() => {
       this._cOptionElements = {};
+      this._optionItems.length = 0;
 
       let selection: CAutocompleteItem | null = null;
 

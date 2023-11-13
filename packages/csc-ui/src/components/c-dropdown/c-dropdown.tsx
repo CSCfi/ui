@@ -131,8 +131,6 @@ export class CDropdown {
 
     requestAnimationFrame(() => {
       if (focusList) {
-        // this._listElement.focus();
-
         if (this.type === 'autocomplete') {
           this.currentIndex = 0;
         }
@@ -178,8 +176,6 @@ export class CDropdown {
 
   private _itemRefs: HTMLLIElement[] = [];
 
-  private _lastKeyPressTime = null;
-
   private _listElement: HTMLUListElement;
 
   private _dialogElement: HTMLDialogElement;
@@ -197,8 +193,6 @@ export class CDropdown {
 
   private _openedOnTop = false;
 
-  private _searchString = '';
-
   private _resizeObserver: ResizeObserver;
 
   private _outsideClickFn: () => void;
@@ -214,23 +208,6 @@ export class CDropdown {
   private get _lastSelectableIndex() {
     return this.items.findLastIndex((item) => !item.disabled);
   }
-
-  private _observer = new IntersectionObserver(
-    (entries, observer) => {
-      entries.forEach((entry) => {
-        if (!entry.isIntersecting) {
-          entry.target.scrollIntoView({
-            block: 'nearest',
-            inline: 'nearest',
-          });
-          observer.unobserve(entry.target);
-        } else {
-          observer.unobserve(entry.target);
-        }
-      });
-    },
-    { threshold: 1 },
-  );
 
   private _highlightMatchingText(value: string) {
     if (
@@ -416,6 +393,7 @@ export class CDropdown {
 
   private _onOpen() {
     this.parent.shadowRoot.querySelector('.c-input').classList.add('active');
+    this._dialogElement.classList.add('active');
     this._listElement.classList.add('active');
     this.isOpen = true;
     this._listElement.ariaExpanded = 'true';
@@ -483,28 +461,20 @@ export class CDropdown {
     const { innerWidth, innerHeight } = window;
 
     requestAnimationFrame(() => {
-      const {
-        bottom: parentBottom,
-        width: parentWidth,
-        top: parentTop,
-      } = this._getParentPosition();
+      const { bottom: parentBottom, top: parentTop } =
+        this._getParentPosition();
 
       const inputSize = this.el.getBoundingClientRect();
-
-      console.log(inputSize.width, parentWidth);
 
       this._inputSize = {
         height: inputSize.height,
         width: inputSize.width,
       };
 
-      this._dialogElement.style.inset = '0';
-      this._dialogElement.style.width = '100lvw';
-
-      // this._dialogElement.style.width = `${this._inputSize.width}px`;
-      // this._dialogElement.style.top = `${inputSize.top}px`;
-      // this._dialogElement.style.bottom = 'auto';
-      // this._dialogElement.style.left = `${inputSize.left}px`;
+      this._dialogElement.style.width = `${this._inputSize.width}px`;
+      this._dialogElement.style.top = `${inputSize.top}px`;
+      this._dialogElement.style.bottom = 'auto';
+      this._dialogElement.style.left = `${inputSize.left}px`;
 
       const { bottom, right, height } =
         this._dialogElement.getBoundingClientRect();
@@ -545,16 +515,6 @@ export class CDropdown {
     });
   }
 
-  private _scrollToElement() {
-    if (this.items.length > this.itemsPerPage) {
-      const itemRef = this._itemRefs[this.currentIndex];
-
-      if (!!itemRef) {
-        this._observer.observe(itemRef);
-      }
-    }
-  }
-
   private _onKeyDown(event: KeyboardEvent) {
     event.preventDefault();
     event.stopPropagation();
@@ -562,56 +522,6 @@ export class CDropdown {
 
   private _onKeyboardNavigation(event: KeyboardEvent) {
     this.wasClicked = false;
-
-    const letterNumber = /^[0-9a-zA-Z]+$/;
-
-    if (
-      (event.key.match(letterNumber) && event.key.length === 1) ||
-      event.key === 'Backspace'
-    ) {
-      if (this.type === 'autocomplete') {
-        const { query } = this.parent as HTMLCAutocompleteElement;
-
-        let updatedQuery = '';
-
-        if (event.key === 'Backspace') {
-          updatedQuery = query.slice(0, -1);
-        } else {
-          updatedQuery = `${query}${event.key}`;
-        }
-
-        (this.parent as HTMLCAutocompleteElement).updateQuery(updatedQuery);
-
-        return;
-      }
-
-      if (
-        Date.now() - this._lastKeyPressTime > 3000 ||
-        this._searchString.length > 2
-      ) {
-        this._searchString = event.key;
-      } else {
-        this._searchString = `${this._searchString}${event.key}`;
-      }
-
-      this._lastKeyPressTime = Date.now();
-
-      const selectedItem = this.items.find((i) =>
-        i.name.toLowerCase().startsWith(this._searchString),
-      );
-
-      if (selectedItem) {
-        this.currentIndex = this.items.findIndex(
-          (element) => element === selectedItem,
-        );
-
-        if (this.isOpen) {
-          this._scrollToElement();
-        } else {
-          this._onSelect(this.currentIndex, true);
-        }
-      }
-    }
 
     if (event.key === 'Enter') {
       this._onSelect(this.currentIndex, true);
@@ -747,7 +657,6 @@ export class CDropdown {
       if (!this.isOpen) return;
 
       this.close();
-      // this._positionMenu();
     });
 
     this._resizeObserver.observe(window.document.body);
