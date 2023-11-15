@@ -38,16 +38,6 @@
 | `"Default slot"` | Default slot for the label |
 
 
-## CSS Custom Properties
-
-| Name                                  | Description                     |
-| ------------------------------------- | ------------------------------- |
-| `--c-checkbox-background-color-hover` | Checkbox hover background color |
-| `--c-checkbox-color`                  | Checkbox color                  |
-| `--c-checkbox-color-active`           | Active checkbox color           |
-| `--c-checkbox-color-disabled`         | Disabled checkbox color         |
-
-
 ## Dependencies
 
 ### Used by

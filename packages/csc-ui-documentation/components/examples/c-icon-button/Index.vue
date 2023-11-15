@@ -20,5 +20,9 @@ import Sizes from './Sizes.vue';
 import Badges from './Badges.vue';
 import Inverted from './Inverted.vue';
 
+defineOptions({
+  inheritAttrs: false,
+});
+
 usePageTitles();
 </script>

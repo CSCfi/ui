@@ -26,13 +26,6 @@
 | `"Default slot"` | Default slot |
 
 
-## CSS Custom Properties
-
-| Name                      | Description         |
-| ------------------------- | ------------------- |
-| `--c-steps-outline-color` | Steps outline color |
-
-
 ----------------------------------------------
 
 *Built with [StencilJS](https://stenciljs.com/)*

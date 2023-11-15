@@ -32,16 +32,6 @@
 | `"Default slot"` | Default slot |
 
 
-## CSS Custom Properties
-
-| Name                             | Description                    |
-| -------------------------------- | ------------------------------ |
-| `--c-tab-background-color-hover` | Tab hover background color     |
-| `--c-tab-border-color-active`    | Active tab bottom border color |
-| `--c-tab-outline-color`          | Tab outline color              |
-| `--c-tab-text-color`             | Tab text color                 |
-
-
 ## Dependencies
 
 ### Depends on

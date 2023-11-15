@@ -14,18 +14,12 @@
 | `size`   | `size`    | Icon size in pixels        | `number` | `24`             |
 
 
-## CSS Custom Properties
-
-| Name             | Description       |
-| ---------------- | ----------------- |
-| `--c-icon-color` | Color of the icon |
-
-
 ## Dependencies
 
 ### Used by
 
  - [c-accordion-item](../c-accordion-item)
+ - [c-autocomplete-2](../c-autocomplete-2)
  - [c-card](../c-card)
  - [c-data-table](../c-data-table)
  - [c-dropdown](../c-dropdown)
@@ -41,6 +35,7 @@
 ```mermaid
 graph TD;
   c-accordion-item --> c-icon
+  c-autocomplete-2 --> c-icon
   c-card --> c-icon
   c-data-table --> c-icon
   c-dropdown --> c-icon

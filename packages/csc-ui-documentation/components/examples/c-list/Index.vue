@@ -23,5 +23,9 @@ import DisabledItems from './DisabledItems.vue';
 import Actions from './Actions.vue';
 import Active from './Active.vue';
 
+defineOptions({
+  inheritAttrs: false,
+});
+
 usePageTitles();
 </script>

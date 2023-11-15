@@ -18,18 +18,6 @@
 | `target`           | `target`             | Hyperlink target                  | `string`  | `'_blank'`  |
 
 
-## CSS Custom Properties
-
-| Name                                    | Description              |
-| --------------------------------------- | ------------------------ |
-| `--c-list-item-background-color`        | Default background color |
-| `--c-list-item-background-color-active` | Active background color  |
-| `--c-list-item-background-color-hover`  | Hover background color   |
-| `--c-list-item-outline-color`           | Outline color            |
-| `--c-list-item-text-color`              | Default text color       |
-| `--c-list-item-text-color-active`       | Active text color        |
-
-
 ## Dependencies
 
 ### Depends on

@@ -64,21 +64,10 @@ Type: `Promise<void>`
 
 
 
-## CSS Custom Properties
-
-| Name                                  | Description                      |
-| ------------------------------------- | -------------------------------- |
-| `--c-dropdown-background-color`       | Menu background color            |
-| `--c-dropdown-background-color-hover` | Menu item hover background color |
-| `--c-dropdown-text-color`             | Menu item text color             |
-| `--c-dropdown-text-color-active`      | Active menu item text color      |
-
-
 ## Dependencies
 
 ### Used by
 
- - [c-autocomplete](../c-autocomplete)
  - [c-select](../c-select)
 
 ### Depends on
@@ -89,7 +78,6 @@ Type: `Promise<void>`
 ```mermaid
 graph TD;
   c-dropdown --> c-icon
-  c-autocomplete --> c-dropdown
   c-select --> c-dropdown
   style c-dropdown fill:#f9f,stroke:#333,stroke-width:4px
 ```

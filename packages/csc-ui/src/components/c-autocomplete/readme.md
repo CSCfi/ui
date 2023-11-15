@@ -82,6 +82,16 @@ Type: `Promise<void>`
 
 
 
+### `update() => Promise<void>`
+
+Update options when filtering is complete
+
+#### Returns
+
+Type: `Promise<void>`
+
+
+
 ### `updateQuery(query: string) => Promise<void>`
 
 
@@ -101,34 +111,16 @@ Type: `Promise<void>`
 | `"pre"`  | Content added before the input |
 
 
-## CSS Custom Properties
-
-| Name                                             | Description                                |
-| ------------------------------------------------ | ------------------------------------------ |
-| `--c-autocomplete-active-color`                  | Autocomplete active color                  |
-| `--c-autocomplete-background-color`              | Autocomplete background color              |
-| `--c-autocomplete-inactive-color`                | Autocomplete inactive color                |
-| `--c-autocomplete-option-background-color`       | Autocomplete option background color       |
-| `--c-autocomplete-option-background-hover-color` | Autocomplete option background hover color |
-| `--c-autocomplete-option-text-color`             | Autocomplete option text color             |
-| `--c-autocomplete-placeholder-color`             | Autocomplete placeholder color             |
-| `--c-autocomplete-text-color`                    | Autocomplete text color                    |
-
-
 ## Dependencies
 
 ### Depends on
 
-- [c-dropdown](../c-dropdown)
-- [c-input](../c-input)
+- [c-dropdown-options](../c-dropdown-options)
 
 ### Graph
 ```mermaid
 graph TD;
-  c-autocomplete --> c-dropdown
-  c-autocomplete --> c-input
-  c-dropdown --> c-icon
-  c-input --> c-message
+  c-autocomplete --> c-dropdown-options
   style c-autocomplete fill:#f9f,stroke:#333,stroke-width:4px
 ```
 

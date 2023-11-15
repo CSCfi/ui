@@ -112,6 +112,9 @@ export class CDropdown {
       this.items = params.items || this.items;
       this.options = params.options || this.options;
 
+      console.log('🔫', this.items);
+      console.log('🧬', this.options);
+
       this._updateMenuItems();
       this._updateStatusText();
     });

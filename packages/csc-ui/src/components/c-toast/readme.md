@@ -32,14 +32,6 @@ Type: `Promise<void>`
 
 
 
-## CSS Custom Properties
-
-| Name                         | Description            |
-| ---------------------------- | ---------------------- |
-| `--c-toast-background-color` | Toast background color |
-| `--c-toast-text-color`       | Toast text color       |
-
-
 ## Dependencies
 
 ### Used by

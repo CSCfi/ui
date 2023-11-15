@@ -6,9 +6,9 @@
 .c-input-menu {
   &__chevron {
     fill: currentColor;
-    height: 22px;
-    width: 22px;
-    min-width: 22px;
+    height: 32px;
+    width: 32px;
+    min-width: 32px;
     transform: rotate(0deg);
     transition: transform 0.3s ease-in-out;
 
@@ -93,7 +93,7 @@
         background-color: var(--_c-select-option-background-color-hover);
       }
 
-      &[aria-selected="true"] {
+      &[aria-selected='true'] {
         background-color: var(--_c-select-option-background-color-hover);
         box-shadow: inset 0 0 0 1px var(--_c-select-active-color);
         border-radius: 4px;

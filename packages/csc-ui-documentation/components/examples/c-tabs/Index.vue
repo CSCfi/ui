@@ -17,5 +17,9 @@ import NoAnimation from './NoAnimation.vue';
 import Justification from './Justification.vue';
 import Vertical from './Vertical.vue';
 
+defineOptions({
+  inheritAttrs: false,
+});
+
 usePageTitles();
 </script>

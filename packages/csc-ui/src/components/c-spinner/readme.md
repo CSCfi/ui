@@ -14,13 +14,6 @@
 | `width`  | `width`   | Width of the spinner | `number` | `2`                      |
 
 
-## CSS Custom Properties
-
-| Name                | Description   |
-| ------------------- | ------------- |
-| `--c-spinner-color` | Spinner color |
-
-
 ## Dependencies
 
 ### Used by

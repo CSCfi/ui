@@ -153,9 +153,79 @@ export namespace Components {
          */
         "shadow": boolean;
         /**
+          * Update options when filtering is complete
+         */
+        "update": () => Promise<void>;
+        /**
           * @private
          */
         "updateQuery": (query: string) => Promise<void>;
+        /**
+          * Set the validíty of the input
+         */
+        "valid": boolean;
+        /**
+          * Manual validation
+         */
+        "validate": boolean;
+        /**
+          * Validate the input on blur
+         */
+        "validateOnBlur": boolean;
+        /**
+          * Custom validation message
+         */
+        "validation": string;
+        /**
+          * Selected item
+         */
+        "value": string | number | CAutocompleteItem;
+    }
+    interface CAutocomplete2 {
+        /**
+          * Disable the input
+         */
+        "disabled": boolean;
+        /**
+          * Hide the hint and error messages
+         */
+        "hideDetails": boolean;
+        /**
+          * Hint text for the input
+         */
+        "hint": string;
+        /**
+          * Id of the element
+         */
+        "hostId": string;
+        /**
+          * Items per page before adding scroll
+         */
+        "itemsPerPage": number;
+        /**
+          * Element label
+         */
+        "label": string;
+        /**
+          * Input field name
+         */
+        "name": string;
+        /**
+          * Placeholder text
+         */
+        "placeholder": string;
+        /**
+          * Search string
+         */
+        "query": string;
+        /**
+          * Show required validation
+         */
+        "required": boolean;
+        /**
+          * Shadow variant
+         */
+        "shadow": boolean;
         /**
           * Set the validíty of the input
          */
@@ -506,6 +576,38 @@ export namespace Components {
           * @private
          */
         "wasClicked": boolean;
+    }
+    interface CDropdownOptions {
+        /**
+          * Open dropdown
+         */
+        "close": () => Promise<void>;
+        /**
+          * Current index value
+         */
+        "index": number;
+        /**
+          * Items per page before adding scroll
+         */
+        "itemsPerPage": number;
+        /**
+          * Open dropdown
+         */
+        "open": () => Promise<void>;
+        /**
+          * Dropdown options
+         */
+        "options": NodeListOf<HTMLCOptionElement>;
+        /**
+          * Dropdown parent
+         */
+        "parent": | HTMLCSelectElement
+    | HTMLCAutocompleteElement
+    | HTMLCAutocomplete2Element;
+        /**
+          * Update list items
+         */
+        "updateList": () => Promise<void>;
     }
     /**
      * @group Other
@@ -948,6 +1050,10 @@ export namespace Components {
      * @group Popups
      */
     interface CModal {
+        /**
+          * Disable backdrop blur effect
+         */
+        "disableBackdropBlur": boolean;
         /**
           * Dismissed when touching/clicking outside the content
          */
@@ -1811,6 +1917,10 @@ export interface CAutocompleteCustomEvent<T> extends CustomEvent<T> {
     detail: T;
     target: HTMLCAutocompleteElement;
 }
+export interface CAutocomplete2CustomEvent<T> extends CustomEvent<T> {
+    detail: T;
+    target: HTMLCAutocomplete2Element;
+}
 export interface CButtonCustomEvent<T> extends CustomEvent<T> {
     detail: T;
     target: HTMLCButtonElement;
@@ -1822,6 +1932,10 @@ export interface CCheckboxCustomEvent<T> extends CustomEvent<T> {
 export interface CDataTableCustomEvent<T> extends CustomEvent<T> {
     detail: T;
     target: HTMLCDataTableElement;
+}
+export interface CDropdownOptionsCustomEvent<T> extends CustomEvent<T> {
+    detail: T;
+    target: HTMLCDropdownOptionsElement;
 }
 export interface CInputCustomEvent<T> extends CustomEvent<T> {
     detail: T;
@@ -1970,6 +2084,24 @@ declare global {
         prototype: HTMLCAutocompleteElement;
         new (): HTMLCAutocompleteElement;
     };
+    interface HTMLCAutocomplete2ElementEventMap {
+        "changeQuery": any;
+        "changeValue": any;
+    }
+    interface HTMLCAutocomplete2Element extends Components.CAutocomplete2, HTMLStencilElement {
+        addEventListener<K extends keyof HTMLCAutocomplete2ElementEventMap>(type: K, listener: (this: HTMLCAutocomplete2Element, ev: CAutocomplete2CustomEvent<HTMLCAutocomplete2ElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions): void;
+        removeEventListener<K extends keyof HTMLCAutocomplete2ElementEventMap>(type: K, listener: (this: HTMLCAutocomplete2Element, ev: CAutocomplete2CustomEvent<HTMLCAutocomplete2ElementEventMap[K]>) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | EventListenerOptions): void;
+    }
+    var HTMLCAutocomplete2Element: {
+        prototype: HTMLCAutocomplete2Element;
+        new (): HTMLCAutocomplete2Element;
+    };
     /**
      * @parent none
      */
@@ -2096,6 +2228,24 @@ declare global {
     var HTMLCDropdownElement: {
         prototype: HTMLCDropdownElement;
         new (): HTMLCDropdownElement;
+    };
+    interface HTMLCDropdownOptionsElementEventMap {
+        "selectOption": any;
+        "dropdownStateChange": boolean;
+    }
+    interface HTMLCDropdownOptionsElement extends Components.CDropdownOptions, HTMLStencilElement {
+        addEventListener<K extends keyof HTMLCDropdownOptionsElementEventMap>(type: K, listener: (this: HTMLCDropdownOptionsElement, ev: CDropdownOptionsCustomEvent<HTMLCDropdownOptionsElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions): void;
+        removeEventListener<K extends keyof HTMLCDropdownOptionsElementEventMap>(type: K, listener: (this: HTMLCDropdownOptionsElement, ev: CDropdownOptionsCustomEvent<HTMLCDropdownOptionsElementEventMap[K]>) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | EventListenerOptions): void;
+    }
+    var HTMLCDropdownOptionsElement: {
+        prototype: HTMLCDropdownOptionsElement;
+        new (): HTMLCDropdownOptionsElement;
     };
     /**
      * @group Other
@@ -2819,6 +2969,7 @@ declare global {
         "c-accordion-item": HTMLCAccordionItemElement;
         "c-alert": HTMLCAlertElement;
         "c-autocomplete": HTMLCAutocompleteElement;
+        "c-autocomplete-2": HTMLCAutocomplete2Element;
         "c-badge": HTMLCBadgeElement;
         "c-button": HTMLCButtonElement;
         "c-card": HTMLCCardElement;
@@ -2829,6 +2980,7 @@ declare global {
         "c-csc-logo": HTMLCCscLogoElement;
         "c-data-table": HTMLCDataTableElement;
         "c-dropdown": HTMLCDropdownElement;
+        "c-dropdown-options": HTMLCDropdownOptionsElement;
         "c-icon": HTMLCIconElement;
         "c-icon-button": HTMLCIconButtonElement;
         "c-input": HTMLCInputElement;
@@ -3025,6 +3177,80 @@ declare namespace LocalJSX {
           * Return only the item value rather than the whole item object
          */
         "returnValue"?: false;
+        /**
+          * Shadow variant
+         */
+        "shadow"?: boolean;
+        /**
+          * Set the validíty of the input
+         */
+        "valid"?: boolean;
+        /**
+          * Manual validation
+         */
+        "validate"?: boolean;
+        /**
+          * Validate the input on blur
+         */
+        "validateOnBlur"?: boolean;
+        /**
+          * Custom validation message
+         */
+        "validation"?: string;
+        /**
+          * Selected item
+         */
+        "value"?: string | number | CAutocompleteItem;
+    }
+    interface CAutocomplete2 {
+        /**
+          * Disable the input
+         */
+        "disabled"?: boolean;
+        /**
+          * Hide the hint and error messages
+         */
+        "hideDetails"?: boolean;
+        /**
+          * Hint text for the input
+         */
+        "hint"?: string;
+        /**
+          * Id of the element
+         */
+        "hostId"?: string;
+        /**
+          * Items per page before adding scroll
+         */
+        "itemsPerPage"?: number;
+        /**
+          * Element label
+         */
+        "label"?: string;
+        /**
+          * Input field name
+         */
+        "name"?: string;
+        /**
+          * Triggered when text is typed
+         */
+        "onChangeQuery"?: (event: CAutocomplete2CustomEvent<any>) => void;
+        /**
+          * Triggered when option is selected
+         */
+        "onChangeValue"?: (event: CAutocomplete2CustomEvent<any>) => void;
+        /**
+          * Placeholder text
+         */
+        "placeholder"?: string;
+        /**
+          * Search string
+         */
+        "query"?: string;
+        /**
+          * Show required validation
+         */
+        "required"?: boolean;
         /**
           * Shadow variant
          */
@@ -3380,6 +3606,34 @@ declare namespace LocalJSX {
           * @private
          */
         "wasClicked"?: boolean;
+    }
+    interface CDropdownOptions {
+        /**
+          * Current index value
+         */
+        "index"?: number;
+        /**
+          * Items per page before adding scroll
+         */
+        "itemsPerPage"?: number;
+        /**
+          * Triggered when dropdown opens or closes
+         */
+        "onDropdownStateChange"?: (event: CDropdownOptionsCustomEvent<boolean>) => void;
+        /**
+          * Triggered when option is selected
+         */
+        "onSelectOption"?: (event: CDropdownOptionsCustomEvent<any>) => void;
+        /**
+          * Dropdown options
+         */
+        "options"?: NodeListOf<HTMLCOptionElement>;
+        /**
+          * Dropdown parent
+         */
+        "parent"?: | HTMLCSelectElement
+    | HTMLCAutocompleteElement
+    | HTMLCAutocomplete2Element;
     }
     /**
      * @group Other
@@ -3853,6 +4107,10 @@ declare namespace LocalJSX {
      * @group Popups
      */
     interface CModal {
+        /**
+          * Disable backdrop blur effect
+         */
+        "disableBackdropBlur"?: boolean;
         /**
           * Dismissed when touching/clicking outside the content
          */
@@ -4761,6 +5019,7 @@ declare namespace LocalJSX {
         "c-accordion-item": CAccordionItem;
         "c-alert": CAlert;
         "c-autocomplete": CAutocomplete;
+        "c-autocomplete-2": CAutocomplete2;
         "c-badge": CBadge;
         "c-button": CButton;
         "c-card": CCard;
@@ -4771,6 +5030,7 @@ declare namespace LocalJSX {
         "c-csc-logo": CCscLogo;
         "c-data-table": CDataTable;
         "c-dropdown": CDropdown;
+        "c-dropdown-options": CDropdownOptions;
         "c-icon": CIcon;
         "c-icon-button": CIconButton;
         "c-input": CInput;
@@ -4848,6 +5108,7 @@ declare module "@stencil/core" {
              * @group Form
              */
             "c-autocomplete": LocalJSX.CAutocomplete & JSXBase.HTMLAttributes<HTMLCAutocompleteElement>;
+            "c-autocomplete-2": LocalJSX.CAutocomplete2 & JSXBase.HTMLAttributes<HTMLCAutocomplete2Element>;
             /**
              * @parent none
              */
@@ -4885,6 +5146,7 @@ declare module "@stencil/core" {
              */
             "c-data-table": LocalJSX.CDataTable & JSXBase.HTMLAttributes<HTMLCDataTableElement>;
             "c-dropdown": LocalJSX.CDropdown & JSXBase.HTMLAttributes<HTMLCDropdownElement>;
+            "c-dropdown-options": LocalJSX.CDropdownOptions & JSXBase.HTMLAttributes<HTMLCDropdownOptionsElement>;
             /**
              * @group Other
              */

@@ -71,13 +71,13 @@
     width: 100%;
   }
 
-  input[type="checkbox"],
-  input[type="radio"],
+  input[type='checkbox'],
+  input[type='radio'],
   select {
     box-sizing: border-box;
   }
 
-  input[type="search"] {
+  input[type='search'] {
     appearance: textfield;
     box-sizing: content-box;
   }
@@ -111,6 +111,15 @@
     align-items: center;
     display: flex;
     width: 100%;
+
+    slot {
+      display: none;
+    }
+
+    c-icon-button {
+      aspect-ratio: 1;
+      margin-right: -6px;
+    }
   }
 
   &__control {

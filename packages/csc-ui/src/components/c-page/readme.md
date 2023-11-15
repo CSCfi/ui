@@ -19,14 +19,6 @@
 | `"default"` | Default slot |
 
 
-## CSS Custom Properties
-
-| Name                       | Description                   |
-| -------------------------- | ----------------------------- |
-| `--c-page-justify-content` | Justify page content          |
-| `--c-page-max-width`       | Maximum width for the content |
-
-
 ----------------------------------------------
 
 *Built with [StencilJS](https://stenciljs.com/)*

@@ -5,12 +5,11 @@
     <template #subtitle>Use c-option-value for match highlighting</template>
 
     <c-row gap="8">
-      <c-autocomplete
+      <c-autocomplete-2
         ref="autocomplete"
         v-model="selection"
         v-control
         label="Countries"
-        :items="filteredItems"
         :query="query"
         :items-per-page="10"
         @changeQuery="onQueryChange"
@@ -18,8 +17,8 @@
         <c-icon slot="pre" :path="mdiEarth" size="16" />
 
         <c-option
-          v-for="(item, index) in filteredItems"
-          :key="index"
+          v-for="item in filteredItems"
+          :key="item.value"
           :value="item.value"
           :name="item.name"
         >
@@ -29,7 +28,7 @@
             <c-option-value>{{ item.name }}</c-option-value>
           </c-row>
         </c-option>
-      </c-autocomplete>
+      </c-autocomplete-2>
     </c-row>
   </component-example>
 </template>
@@ -43,6 +42,8 @@ import countries from '../../data/countries.json';
 const selection = ref();
 
 const query = ref('');
+
+const autocomplete = ref<HTMLCAutocompleteElement | null>(null);
 
 const items = computed<CAutocompleteItem[]>(() =>
   Object.keys(countries)

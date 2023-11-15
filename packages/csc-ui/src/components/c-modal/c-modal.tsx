@@ -44,6 +44,11 @@ export class CModal {
   @Prop() zIndex = 10;
 
   /**
+   * Disable backdrop blur effect
+   */
+  @Prop() disableBackdropBlur = false;
+
+  /**
    * Triggered when value is changed
    */
   @Event({ bubbles: false }) changeValue: EventEmitter<boolean>;
@@ -159,10 +164,15 @@ export class CModal {
       'z-index': `${this.zIndex}`,
     };
 
+    const classes = {
+      'backdrop-blur': !this.disableBackdropBlur,
+    };
+
     return (
       <dialog
         ref={(el) => (this._dialog = el as HTMLDialogElement)}
         style={dialogStyle}
+        class={classes}
         onKeyDown={this._handleKeyDown}
       >
         <slot></slot>

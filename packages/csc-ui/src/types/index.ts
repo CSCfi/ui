@@ -19,7 +19,7 @@ export type CPaginationTextOverrides = {
 
 export type CSelectItem = {
   name: string;
-  value: string | number | boolean;
+  value: string | number;
   disabled?: boolean;
 };
 
