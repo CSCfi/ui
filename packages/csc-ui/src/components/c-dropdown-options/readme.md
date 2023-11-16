@@ -9,10 +9,12 @@
 
 | Property       | Attribute        | Description                         | Type                                                                          | Default     |
 | -------------- | ---------------- | ----------------------------------- | ----------------------------------------------------------------------------- | ----------- |
+| `hostId`       | `id`             | Id of the element                   | `string`                                                                      | `undefined` |
 | `index`        | `index`          | Current index value                 | `number`                                                                      | `undefined` |
 | `itemsPerPage` | `items-per-page` | Items per page before adding scroll | `number`                                                                      | `undefined` |
 | `options`      | --               | Dropdown options                    | `NodeListOf<HTMLCOptionElement>`                                              | `undefined` |
 | `parent`       | --               | Dropdown parent                     | `HTMLCAutocomplete2Element \| HTMLCAutocompleteElement \| HTMLCSelectElement` | `undefined` |
+| `type`         | `type`           | Type of the parent element          | `"autocomplete" \| "select"`                                                  | `undefined` |
 
 
 ## Events
@@ -35,9 +37,39 @@ Type: `Promise<void>`
 
 
 
+### `focusItem(index: number) => Promise<void>`
+
+
+
+#### Returns
+
+Type: `Promise<void>`
+
+
+
 ### `open() => Promise<void>`
 
 Open dropdown
+
+#### Returns
+
+Type: `Promise<void>`
+
+
+
+### `selectItem(index: number) => Promise<boolean>`
+
+Select item
+
+#### Returns
+
+Type: `Promise<boolean>`
+
+the disabled status of the input
+
+### `setStatusText(text: string) => Promise<void>`
+
+
 
 #### Returns
 

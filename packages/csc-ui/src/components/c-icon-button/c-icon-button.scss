@@ -79,8 +79,11 @@
   transform: translate3d(0, 0, 0);
   line-height: normal;
 
+  ::slotted(c-icon) {
+    --_c-icon-size: 24px;
+  }
+
   ::slotted(svg),
-  ::slotted(c-icon),
   ::slotted(i),
   ::slotted(span) {
     width: 24px;
@@ -105,9 +108,7 @@
   --_c-icon-button-width: 32px;
 
   ::slotted(c-icon) {
-    width: 20px !important;
-    height: 20px !important;
-    font-size: 20px !important;
+    --_c-icon-size: 20px;
   }
 
   ::slotted(svg),
@@ -124,9 +125,7 @@
   --_c-icon-button-width: 28px;
 
   ::slotted(c-icon) {
-    width: 14px !important;
-    height: 14px !important;
-    font-size: 14px !important;
+    --_c-icon-size: 14px;
   }
 
   ::slotted(svg),

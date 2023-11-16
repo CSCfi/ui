@@ -15,6 +15,7 @@
 | `hostId`         | `id`               | Id of the element                   | `string`                                                   | `undefined`        |
 | `itemsPerPage`   | `items-per-page`   | Items per page before adding scroll | `number`                                                   | `undefined`        |
 | `label`          | `label`            | Element label                       | `string`                                                   | `undefined`        |
+| `loading`        | `loading`          | Show loading state                  | `boolean`                                                  | `false`            |
 | `name`           | `name`             | Input field name                    | `string`                                                   | `undefined`        |
 | `placeholder`    | `placeholder`      | Placeholder text                    | `string`                                                   | `''`               |
 | `query`          | `query`            | Search string                       | `string`                                                   | `null`             |
@@ -39,6 +40,7 @@
 
 ### Depends on
 
+- [c-spinner](../c-spinner)
 - [c-icon-button](../c-icon-button)
 - [c-icon](../c-icon)
 - [c-dropdown-options](../c-dropdown-options)
@@ -47,6 +49,7 @@
 ### Graph
 ```mermaid
 graph TD;
+  c-autocomplete-2 --> c-spinner
   c-autocomplete-2 --> c-icon-button
   c-autocomplete-2 --> c-icon
   c-autocomplete-2 --> c-dropdown-options

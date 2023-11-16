@@ -189,6 +189,10 @@
           "description": "Element label"
         },
         {
+          "name": "loading",
+          "description": "Show loading state"
+        },
+        {
           "name": "name",
           "description": "Input field name"
         },
@@ -607,12 +611,28 @@
       },
       "attributes": [
         {
+          "name": "id",
+          "description": "Id of the element"
+        },
+        {
           "name": "index",
           "description": "Current index value"
         },
         {
           "name": "items-per-page",
           "description": "Items per page before adding scroll"
+        },
+        {
+          "name": "type",
+          "description": "Type of the parent element",
+          "values": [
+            {
+              "name": "autocomplete"
+            },
+            {
+              "name": "select"
+            }
+          ]
         }
       ]
     },

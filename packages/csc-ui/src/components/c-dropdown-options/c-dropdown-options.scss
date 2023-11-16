@@ -24,7 +24,6 @@
   --_c-dropdown-height: 42px;
 
   display: block;
-
   position: relative;
 
   mark {
@@ -48,11 +47,11 @@
     }
 
     &[open].mobile {
-      width: 100lvw !important;
-      max-width: 100lvw !important;
-      height: 100svh !important;
-      max-height: 100svh !important;
-      inset: 0 !important;
+      width: 100vw;
+      max-width: 100vw;
+      height: 100vh;
+      max-height: 100svh;
+      inset: 0;
 
       .input-top-wrapper {
         padding: 8px;
@@ -82,10 +81,10 @@
       animation: 0.2s 1 fade-in cubic-bezier(0.25, 0.8, 0.5, 1);
 
       &.mobile {
-        width: 100lvw;
-        max-width: 100lvw;
-        height: calc(100svh - 52px);
-        max-height: calc(100svh - 52px);
+        width: 100vw;
+        max-width: 100vw;
+        height: 100vh;
+        max-height: calc(100svh - 60px);
       }
     }
   }
@@ -115,6 +114,7 @@
     }
 
     &:not(.disabled):hover,
+    &:not(.disabled):focus,
     &.active {
       background: var(--_c-dropdown-background-color-hover);
       color: var(--_c-dropdown-text-color-active);

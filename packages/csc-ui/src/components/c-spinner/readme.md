@@ -18,6 +18,7 @@
 
 ### Used by
 
+ - [c-autocomplete-2](../c-autocomplete-2)
  - [c-button](../c-button)
  - [c-icon-button](../c-icon-button)
  - [c-loader](../c-loader)
@@ -25,6 +26,7 @@
 ### Graph
 ```mermaid
 graph TD;
+  c-autocomplete-2 --> c-spinner
   c-button --> c-spinner
   c-icon-button --> c-spinner
   c-loader --> c-spinner

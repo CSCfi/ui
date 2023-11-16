@@ -21,17 +21,6 @@ export class CDropdownOptions {
   @Element() el: HTMLCDropdownOptionsElement;
 
   /**
-   * Dropdown dialog element
-   */
-  private _dialog: HTMLDialogElement;
-
-  private _list: HTMLUListElement;
-
-  private _outsideClickFn: () => void;
-
-  private _resizeObserver: ResizeObserver;
-
-  /**
    * Items per page before adding scroll
    */
   @Prop() itemsPerPage: number;
@@ -55,14 +44,37 @@ export class CDropdownOptions {
   @Prop() index: number;
 
   /**
+   * Id of the element
+   */
+  @Prop({ attribute: 'id' }) hostId: string;
+
+  /**
    * Triggered when option is selected
    */
   @Event() selectOption: EventEmitter;
 
   /**
+   * Type of the parent element
+   */
+  @Prop() type: 'select' | 'autocomplete';
+
+  /**
    * Triggered when dropdown opens or closes
    */
   @Event() dropdownStateChange: EventEmitter<boolean>;
+
+  /**
+   * Dropdown dialog element
+   */
+  private _dialog: HTMLDialogElement;
+
+  private _debounce = null;
+
+  private _list: HTMLUListElement;
+
+  private _outsideClickFn: () => void;
+
+  private _resizeObserver: ResizeObserver;
 
   private _inputElement: HTMLCInputElement;
 
@@ -70,9 +82,13 @@ export class CDropdownOptions {
 
   private _isMobile = false;
 
+  private _listItems: HTMLLIElement[] = [];
+
   @State() renderedList = null;
 
   @State() isOpen = false;
+
+  @State() statusText = '';
 
   @Watch('options')
   optionsWatcher() {
@@ -84,6 +100,41 @@ export class CDropdownOptions {
   @Watch('isOpen')
   stateWatcher() {
     this.dropdownStateChange.emit(this.isOpen);
+  }
+
+  @Watch('index')
+  handleIndexChange(index) {
+    requestAnimationFrame(() => {
+      this._updateStatusText();
+
+      this._listItems.forEach((item, itemIndex) => {
+        item?.classList.toggle('active', index === itemIndex);
+
+        if (index === itemIndex) {
+          item?.focus();
+        }
+      });
+    });
+  }
+
+  /**
+   * @private
+   */
+  @Method()
+  async setStatusText(text: string) {
+    requestAnimationFrame(() => {
+      this.statusText = text;
+    });
+  }
+
+  /**
+   * @private
+   */
+  @Method()
+  async focusItem(index: number) {
+    requestAnimationFrame(() => {
+      this._listItems[index].focus();
+    });
   }
 
   /**
@@ -150,6 +201,23 @@ export class CDropdownOptions {
     requestAnimationFrame(() => {
       this.renderedList = this._renderList();
     });
+  }
+
+  /**
+   * Select item
+   * @returns the disabled status of the input
+   */
+  @Method()
+  async selectItem(index: number) {
+    const item = this._listItems[index];
+
+    if (item.classList.contains('disabled')) {
+      return true;
+    }
+
+    this._listItems[index].click();
+
+    return false;
   }
 
   /**
@@ -220,8 +288,6 @@ export class CDropdownOptions {
 
         const { bottom, right, height } = this._dialog.getBoundingClientRect();
 
-        this._list.style.maxHeight = 'calc(100svh - 52px)';
-
         const isInView = {
           x: right < innerWidth,
           y: bottom < innerHeight,
@@ -244,7 +310,7 @@ export class CDropdownOptions {
           this._inputElement.scrollIntoView();
         }
 
-        this._dummyElement.style.width = `${this.parent.clientWidth}px`;
+        this._dummyElement.style.width = `${this._getParentPosition().width}px`;
         this._dummyElement.style.height = `${this._inputSize.height}px`;
         this._dummyElement.style.display = 'block';
       }
@@ -264,7 +330,9 @@ export class CDropdownOptions {
 
     const options = Array.from(this.options);
 
-    return options.map((option) => {
+    this._listItems.length = 0;
+
+    return options.map((option, index) => {
       const optionValue = option.querySelector('c-option-value');
 
       if (optionValue) {
@@ -275,6 +343,15 @@ export class CDropdownOptions {
 
       return (
         <li
+          ref={(el) => this._listItems.push(el)}
+          id={`${this.hostId}-option-${option.value}`}
+          tabindex="-1"
+          role="option"
+          aria-set-size={this.options.length.toString()}
+          aria-pos-in-set={(index + 1).toString()}
+          aria-selected={(!!option.selected).toString()}
+          class={{ disabled: !!option.disabled }}
+          data-name={option.name}
           onClick={(event) => {
             if (option.disabled) {
               event.preventDefault();
@@ -290,14 +367,55 @@ export class CDropdownOptions {
     });
   }
 
+  private _updateStatusText() {
+    if (this._debounce !== null) {
+      clearTimeout(this._debounce);
+      this._debounce = null;
+    }
+
+    this._debounce = window.setTimeout(() => {
+      const selection = this._listItems[this.index];
+
+      const ending = !!this.options.length
+        ? ', to navigate use up and down arrows'
+        : '';
+
+      const total = this._listItems.length;
+
+      const position = this.index + 1;
+
+      const isDisabled = !!selection?.classList?.contains('disabled');
+
+      const beginning = isDisabled ? 'Disabled option - ' : '';
+
+      let selectionText = !!selection
+        ? `${beginning}${selection.dataset.name} -  ${position} of ${total} is highlighted`
+        : null;
+
+      if (this.index === null && this.type === 'autocomplete') {
+        selectionText = this.options.length
+          ? `${this.options.length} result${
+              this.options.length !== 1 ? 's' : ''
+            } available`
+          : 'No search results available';
+      }
+
+      this.statusText = `${selectionText || ending}`;
+
+      this._debounce = null;
+    }, 1400);
+  }
+
   render() {
     if (
+      !this._isMobile &&
       this._dialog &&
       this.itemsPerPage &&
       this.itemsPerPage > 0 &&
       this.options.length > this.itemsPerPage
     ) {
       this._dialog.style.maxHeight = 42 * (this.itemsPerPage + 0.5) + 'px';
+      this._list.style.maxHeight = 42 * (this.itemsPerPage + 0.5) - 60 + 'px';
     }
 
     return (
@@ -310,13 +428,26 @@ export class CDropdownOptions {
           ref={(el) => (this._dialog = el)}
           class={{ mobile: this._isMobile }}
         >
+          <div
+            id={'announce-' + this.hostId}
+            class="visuallyhidden"
+            aria-live="polite"
+            aria-atomic="true"
+          >
+            {this.statusText}
+          </div>
+
           <div class="input-top-wrapper">
             <slot name="input-top"></slot>
           </div>
 
           <ul
             ref={(el) => (this._list = el)}
+            id={`${this.hostId}--results`}
+            role="listbox"
+            aria-expanded={this.isOpen.toString()}
             class={{ active: this.isOpen, mobile: this._isMobile }}
+            tabindex="-1"
           >
             {this.renderedList}
           </ul>

@@ -1,11 +1,16 @@
-:host {
+:host(c-icon) {
   /**
    * @prop --c-icon-color: Color of the icon
    */
-  --_c-icon-color: var(--c-icon-color, var(--c-icon-default-color, curentColor));
+  --_c-icon-color: var(--c-icon-color, var(--_c-icon-default-color, curentColor));
+
+  // private
+  --_c-icon-size: var(--c-icon-size, 24px);
 
   display: inline-flex;
   align-items: center;
+  height: var(--_c-icon-size);
+  aspect-ratio: 1;
 
   svg {
     path {

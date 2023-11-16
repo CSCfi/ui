@@ -207,6 +207,10 @@ export namespace Components {
          */
         "label": string;
         /**
+          * Show loading state
+         */
+        "loading": boolean;
+        /**
           * Input field name
          */
         "name": string;
@@ -583,6 +587,14 @@ export namespace Components {
          */
         "close": () => Promise<void>;
         /**
+          * @private
+         */
+        "focusItem": (index: number) => Promise<void>;
+        /**
+          * Id of the element
+         */
+        "hostId": string;
+        /**
           * Current index value
          */
         "index": number;
@@ -604,6 +616,19 @@ export namespace Components {
         "parent": | HTMLCSelectElement
     | HTMLCAutocompleteElement
     | HTMLCAutocomplete2Element;
+        /**
+          * Select item
+          * @returns the disabled status of the input
+         */
+        "selectItem": (index: number) => Promise<boolean>;
+        /**
+          * @private
+         */
+        "setStatusText": (text: string) => Promise<void>;
+        /**
+          * Type of the parent element
+         */
+        "type": 'select' | 'autocomplete';
         /**
           * Update list items
          */
@@ -3228,6 +3253,10 @@ declare namespace LocalJSX {
          */
         "label"?: string;
         /**
+          * Show loading state
+         */
+        "loading"?: boolean;
+        /**
           * Input field name
          */
         "name"?: string;
@@ -3609,6 +3638,10 @@ declare namespace LocalJSX {
     }
     interface CDropdownOptions {
         /**
+          * Id of the element
+         */
+        "hostId"?: string;
+        /**
           * Current index value
          */
         "index"?: number;
@@ -3634,6 +3667,10 @@ declare namespace LocalJSX {
         "parent"?: | HTMLCSelectElement
     | HTMLCAutocompleteElement
     | HTMLCAutocomplete2Element;
+        /**
+          * Type of the parent element
+         */
+        "type"?: 'select' | 'autocomplete';
     }
     /**
      * @group Other
