@@ -11,9 +11,10 @@
         hide-details
         :items="filteredItems"
         :query="query"
+        return-object
         :items-per-page="10"
         style="flex: 1"
-        @input="onQueryChange($event)"
+        @changeQuery="onQueryChange"
       >
         <c-icon slot="pre" :path="mdiEarth" size="16" />
       </c-autocomplete>

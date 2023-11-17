@@ -77,20 +77,31 @@ Type: `Promise<void>`
 | `"Default slot"` | Use c-option elements only |
 
 
+## CSS Custom Properties
+
+| Name                                       | Description                          |
+| ------------------------------------------ | ------------------------------------ |
+| `--c-select-active-color`                  | Active select color                  |
+| `--c-select-background-color`              | Inactive select background color     |
+| `--c-select-inactive-color`                | Inactive select color                |
+| `--c-select-option-background-color`       | Select option background color       |
+| `--c-select-option-background-color-hover` | Select option hover background color |
+| `--c-select-option-text-color`             | Select option text color             |
+| `--c-select-placeholder-color`             | Select placeholder color             |
+| `--c-select-text-color`                    | Select text color                    |
+
+
 ## Dependencies
 
 ### Depends on
 
 - [c-input](../c-input)
-- [c-dropdown](../c-dropdown)
 
 ### Graph
 ```mermaid
 graph TD;
   c-select --> c-input
-  c-select --> c-dropdown
   c-input --> c-message
-  c-dropdown --> c-icon
   style c-select fill:#f9f,stroke:#333,stroke-width:4px
 ```
 

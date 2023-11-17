@@ -30,6 +30,20 @@
 | `"Default slot"` | Default slot for the c-button elements |
 
 
+## CSS Custom Properties
+
+| Name                                            | Description                              |
+| ----------------------------------------------- | ---------------------------------------- |
+| `--c-tab-buttons-background-color`              | Tab button background color              |
+| `--c-tab-buttons-background-color-active`       | Active tab button background color       |
+| `--c-tab-buttons-background-color-active-hover` | Active tab button hover background color |
+| `--c-tab-buttons-background-color-hover`        | Tab button hover background color        |
+| `--c-tab-buttons-border-color`                  | Tab button border color                  |
+| `--c-tab-buttons-border-radius`                 | Tab buttons border radius                |
+| `--c-tab-buttons-text-color`                    | Tab button text color                    |
+| `--c-tab-buttons-text-color-active`             | Active tab button text color             |
+
+
 ----------------------------------------------
 
 *Built with [StencilJS](https://stenciljs.com/)*

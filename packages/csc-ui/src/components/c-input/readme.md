@@ -50,7 +50,7 @@
 
 ### Used by
 
- - [c-autocomplete-2](../c-autocomplete-2)
+ - [c-autocomplete](../c-autocomplete)
  - [c-select](../c-select)
  - [c-text-field](../c-text-field)
 
@@ -62,7 +62,7 @@
 ```mermaid
 graph TD;
   c-input --> c-message
-  c-autocomplete-2 --> c-input
+  c-autocomplete --> c-input
   c-select --> c-input
   c-text-field --> c-input
   style c-input fill:#f9f,stroke:#333,stroke-width:4px

@@ -1,46 +1,85 @@
 import {
-  AttachInternals,
   Component,
-  Element,
   Host,
+  h,
   Prop,
   State,
-  h,
-  Listen,
+  Element,
   Event,
   EventEmitter,
+  Listen,
   Watch,
   Method,
 } from '@stencil/core';
-// import { mdiChevronDown } from '@mdi/js';
 import { CAutocompleteItem } from '../../types';
+import { mdiChevronDown, mdiClose } from '@mdi/js';
 
 /**
  * @group Form
- * @slot pre - Content added before the input
- * @slot post - Content added after the input
  */
 @Component({
   tag: 'c-autocomplete',
   styleUrl: 'c-autocomplete.scss',
   shadow: true,
-  formAssociated: true,
 })
 export class CAutocomplete {
   @Element() el: HTMLCAutocompleteElement;
 
-  // eslint-disable-next-line
-  @AttachInternals() internals: ElementInternals;
+  private static _uniqueId = 0;
+
+  private _dropdownElement: HTMLCDropdownElement;
+
+  private _inputElement: HTMLInputElement;
+
+  private _inputId: string;
+
+  private _preventDialogOpen = false;
+
+  private _debounce = null;
+
+  private get _id() {
+    return this.hostId || `autocomplete_${CAutocomplete._uniqueId}`;
+  }
 
   /**
-   * Auto focus the input
+   * Dropdown items
    */
-  @Prop() autofocus = false;
+  @Prop() items: CAutocompleteItem[] = [];
+
+  /**
+   * Selected item
+   */
+  @Prop() value: string | number | CAutocompleteItem = null;
+
+  /**
+   * Search string
+   */
+  @Prop() query: string = null;
+
+  /**
+   * Id of the element
+   */
+  @Prop({ attribute: 'id' }) hostId: string;
 
   /**
    * Disable the input
    */
   @Prop() disabled = false;
+
+  /**
+   * Element label
+   */
+  @Prop() label: string;
+
+  /**
+   * Input field name
+   */
+  @Prop() name: string;
+
+  /**
+   * Placeholder text
+   */
+  @Prop() placeholder = '';
 
   /**
    * Hide the hint and error messages
@@ -53,39 +92,9 @@ export class CAutocomplete {
   @Prop() hint = '';
 
   /**
-   * Id of the element
+   * Show loading state
    */
-  @Prop({ attribute: 'id' }) hostId: string;
-
-  /**
-   * Shadow variant
-   */
-  @Prop() shadow = false;
-
-  /**
-   * Input field name
-   */
-  @Prop() name: string;
-
-  /**
-   * Element label
-   */
-  @Prop() label: string;
-
-  /**
-   * Search string
-   */
-  @Prop({ mutable: true }) query: string = null;
-
-  /**
-   * Selected item
-   */
-  @Prop({ mutable: true }) value: string | number | CAutocompleteItem = null;
-
-  /**
-   * Dense variant
-   */
-  @Prop() dense: boolean;
+  @Prop() loading = false;
 
   /**
    * Show required validation
@@ -113,29 +122,14 @@ export class CAutocomplete {
   @Prop() validation = 'Required field';
 
   /**
-   * Placeholder text
+   * Shadow variant
    */
-  @Prop() placeholder = '';
+  @Prop() shadow = false;
 
   /**
-   * Return only the item value rather than the whole item object
+   * Return object instead of value
    */
-  @Prop() returnValue: false;
-
-  /**
-   * Items to be selected
-   */
-  @Prop() items: CAutocompleteItem[] = [];
-
-  /**
-   * Items per page before adding scroll
-   */
-  @Prop() itemsPerPage: number;
-
-  /**
-   * display the option as selection (works only when c-option elements are used)
-   */
-  @Prop() optionAsSelection: false;
+  @Prop() returnObject = false;
 
   /**
    * Triggered when text is typed
@@ -143,421 +137,368 @@ export class CAutocomplete {
   @Event() changeQuery: EventEmitter;
 
   /**
-   * Triggered when an item is selected
+   * Triggered when option is selected
    */
   @Event({ bubbles: false }) changeValue: EventEmitter;
 
   /**
-   * Sets the value of the autocomplete externally
+   * Items per page before adding scroll
    */
-  @Method()
-  async setValue(event, item) {
-    this._select(event, item);
-  }
+  @Prop() itemsPerPage: number;
 
-  /**
-   * Hide menu
-   * @private
-   */
-  @Method()
-  async onHideMenu() {
-    this.menuVisible = false;
-  }
-
-  /**
-   * @private
-   */
-  @Method()
-  async setActiveDescendant(id: string) {
-    if (!id) {
-      this._inputElement.removeAttribute('aria-activedescendant');
-
-      return;
-    }
-
-    this._inputElement.setAttribute('aria-activedescendant', id);
-  }
-
-  /**
-   * @private
-   */
-  @Method()
-  async updateQuery(query: string) {
-    this.query = query;
-    this.changeQuery.emit(this.query);
-    this.changeValue.emit(null);
-  }
-
-  /**
-   * Select item by index
-   */
-  @Method()
-  async onItemSelection(index: number) {
-    this.currentIndex = index;
-
-    const selectedItem = this._items[this.currentIndex];
-
-    this.value = selectedItem;
-    this.query = selectedItem.name;
-  }
-
-  private _setFormValue(item) {
-    if (!item) return;
-
-    const value = this.returnValue ? item : (item as CAutocompleteItem).value;
-
-    this.internals.setFormValue(value as string);
-  }
-
-  private _valueChangedHandler(item: string | number | CAutocompleteItem) {
-    function isItem(element) {
-      return element === item;
-    }
-
-    this.currentIndex = this.items.findIndex(isItem);
-
-    const value = this.returnValue ? (item as CAutocompleteItem)?.value : item;
-
-    this._setFormValue(item);
-
-    this.changeValue.emit(value);
-  }
-
-  private _cOptionElements: Record<string, HTMLCOptionElement> = {};
-
-  private _optionItems: CAutocompleteItem[] = [];
-
-  // private _inputId: string;
-
-  private static _uniqueId = 0;
-
-  private _direction = null;
-
-  private _inputElement: HTMLInputElement;
-
-  private _dropdownElement: HTMLCDropdownOptionsElement;
-
-  get _items() {
-    return this.hasOptionItems ? this._optionItems : this.items;
-  }
-
-  @State() menuVisible = false;
+  @State() optionElements: NodeListOf<HTMLCOptionElement>;
 
   @State() currentIndex: number = null;
 
-  @State() hasOptionItems = false;
+  @State() dropdownVisible = false;
 
-  @State() options: Record<string, HTMLCOptionElement> = {};
+  @State() statusText = '';
 
-  @State() rawOptionElements: HTMLCOptionElement[] = [];
+  @State() optionElementsExist = false;
 
-  private get _itemValues() {
-    return this.items.map((item) => item.value);
-  }
+  /**
+   * Reset autocomplete state
+   */
+  @Method()
+  async reset() {
+    this.query = '';
 
-  // private get _filteredOptions() {
-  //   if (!Object.keys(this._cOptionElements).length) return {};
+    this.changeValue.emit(null);
 
-  //   return this._itemValues.reduce((items, item) => {
-  //     if (!this._cOptionElements[item as string]) return items;
+    this.changeQuery.emit('');
 
-  //     items[item as string] = this._cOptionElements[item as string].cloneNode(
-  //       true,
-  //     ) as HTMLCOptionElement;
-
-  //     return items;
-  //   }, {} as Record<string, HTMLCOptionElement>);
-  // }
-
-  @Watch('items')
-  watchHandler(items) {
-    this.currentIndex = !!items.length ? 0 : null;
-
-    this._optionItems = this._optionItems.filter((item) =>
-      this._itemValues.includes(item.value),
-    );
-
-    // requestAnimationFrame(async () => {
-    //   await this._dropdownElement.updateDropdown({
-    //     items: items,
-    //     options: this._filteredOptions,
-    //   });
-    // });
-  }
-
-  @Watch('value')
-  onValueChange() {
-    if (!this.value) return;
-
-    requestAnimationFrame(() => {
-      const realValue = !(this.value as CAutocompleteItem)?.value
-        ? this._items.find((item) => item.value === this.value)
-        : this.value;
-
-      this._valueChangedHandler(realValue as CAutocompleteItem);
-    });
-  }
-
-  @Listen('optionsupdated')
-  handleOptionsUpdated() {
-    console.log('mitäääääääääää');
-    this._getOptionItems();
-    console.log(this.rawOptionElements);
+    this._dropdownElement.updateList();
   }
 
   @Listen('keydown', { passive: true })
-  handleKeyDown(ev: KeyboardEvent) {
-    const alphanumeric = /^[0-9a-zA-Z]+$/;
+  handleKeyDown(event: KeyboardEvent) {
+    const alphanumeric = /^[0-9a-zA-Z ]+$/;
 
-    if (ev.key.match(alphanumeric) && ev.key.length === 1) {
-      this._showMenu(false);
+    if (event.key.match(alphanumeric) && event.key.length === 1) {
+      if (!this.dropdownVisible) {
+        this._dropdownElement.open();
+
+        return;
+      }
 
       this._inputElement.focus();
 
       return;
     }
 
-    if (ev.key === 'Tab') {
-      // this._dropdownElement.close();
+    if (event.key === 'Escape') {
+      this._preventDialogOpen = true;
+      this._dropdownElement.close();
+      this._inputElement.focus();
+
+      return;
     }
 
-    if (ev.key === 'ArrowDown') {
-      ev.preventDefault();
+    if (event.key === 'Tab') {
+      this._dropdownElement.close();
 
-      this._dropdownElement.open();
-      // this._dropdownElement.focusItem(0);
+      return;
     }
 
-    if (ev.key === 'ArrowUp') {
-      ev.preventDefault();
+    if (event.key === 'ArrowDown') {
+      event.preventDefault();
 
-      this._dropdownElement.open();
-      // this._dropdownElement.focusItem(this._items.length - 1);
-    }
+      if (!this._items.length) return;
 
-    if (ev.key === ' ') {
-      ev.preventDefault();
+      if (!this.dropdownVisible || this.currentIndex === null) {
+        this.currentIndex = 0;
+        this._dropdownElement.open();
+        this._dropdownElement.focusItem(this.currentIndex);
 
-      this._showMenu();
-    }
-
-    if (ev.key === 'Escape') {
-      // this._dropdownElement.close();
-    }
-  }
-
-  private _showMenu(focusList = true) {
-    if (this.disabled) return;
-
-    this._dropdownElement.open();
-
-    if (focusList) {
-      // this._dropdownElement.focusDropdown();
-    }
-  }
-
-  private _observer = new IntersectionObserver(
-    (entries, observer) => {
-      entries.forEach((entry) => {
-        if (!entry.isIntersecting) {
-          entry.target.scrollIntoView({
-            block: this._direction,
-            inline: 'nearest',
-          });
-          observer.unobserve(entry.target);
-        } else {
-          observer.unobserve(entry.target);
-        }
-      });
-    },
-    { threshold: 1 },
-  );
-
-  private _getOptionItems() {
-    this.rawOptionElements = Array.from(this.el.querySelectorAll('c-option'));
-
-    requestAnimationFrame(async () => {
-      this._cOptionElements = {};
-      this._optionItems.length = 0;
-
-      let selection: CAutocompleteItem | null = null;
-
-      this._optionItems = (
-        this.el ? Array.from(this.el.querySelectorAll('c-option')) : []
-      ).map((item, index) => {
-        const cAutocompleteItem = {
-          value: item.value,
-          name: item.name || item.innerText,
-          disabled: !!item.disabled,
-        } as CAutocompleteItem;
-
-        if (item.selected) {
-          selection = cAutocompleteItem;
-        }
-
-        item.slot = `option-${index}`;
-
-        this.options[item.value] = item.cloneNode(true) as HTMLCOptionElement;
-
-        this._cOptionElements[item.value.toString()] = item.cloneNode(
-          true,
-        ) as HTMLCOptionElement;
-
-        return cAutocompleteItem;
-      });
-
-      this.hasOptionItems = !!this._optionItems.length;
-
-      if (selection) {
-        this._valueChangedHandler(selection);
+        return;
       }
 
-      // await this._dropdownElement.updateDropdown({
-      //   items: this._items,
-      //   options: this._filteredOptions,
-      // });
-    });
+      this.currentIndex = Math.min(
+        this.currentIndex + 1,
+        this._items.length - 1,
+      );
+
+      this._dropdownElement.focusItem(this.currentIndex);
+
+      return;
+    }
+
+    if (event.key === 'ArrowUp') {
+      event.preventDefault();
+
+      if (this.currentIndex === 0) {
+        this._dropdownElement.close();
+        this._inputElement.focus();
+      }
+
+      if (!this.dropdownVisible || this.currentIndex === null) {
+        this.currentIndex = this._items.length - 1;
+        this._dropdownElement.open();
+        this._dropdownElement.focusItem(this.currentIndex);
+
+        return;
+      }
+
+      this.currentIndex = Math.max(this.currentIndex - 1, 0);
+
+      this._dropdownElement.focusItem(this.currentIndex);
+    }
+
+    if (event.key === 'Enter') {
+      event.preventDefault();
+
+      if (this.currentIndex === null) return;
+
+      const isDisabled = this._dropdownElement.selectItem(this.currentIndex);
+
+      if (isDisabled) return;
+
+      this._preventDialogOpen = true;
+
+      this._inputElement.focus();
+
+      return;
+    }
+
+    if (event.key === 'Home' && this.dropdownVisible) {
+      this.currentIndex = 0;
+    }
+
+    if (event.key === 'End' && this.dropdownVisible) {
+      this.currentIndex = this._items.length - 1;
+    }
+  }
+
+  @Listen('dropdownStateChange')
+  onDropdownStateChange(event: CustomEvent<boolean>) {
+    const isOpen = event.detail;
+
+    this.dropdownVisible = isOpen;
+
+    if (!isOpen) {
+      requestAnimationFrame(() => {
+        this.currentIndex = null;
+      });
+    }
+  }
+
+  @Listen('selectOption')
+  onSelectOption(event: CustomEvent<{ name: string; value: string }>) {
+    this._dropdownElement.close();
+
+    this.changeValue.emit(
+      this.returnObject ? event.detail : event.detail.value,
+    );
+
+    this.query = event.detail.name;
+
+    this.changeQuery.emit(event.detail.name);
+  }
+
+  @Watch('query')
+  handleQueryChange() {
+    this._updateStatusText();
+  }
+
+  private _updateInput(event: InputEvent) {
+    this._dropdownElement.open();
+
+    this.query = (event.target as HTMLInputElement).value;
+
+    this.changeQuery.emit(this.query);
+
+    this._dropdownElement.updateList();
   }
 
   private _handleSlotChange = () => {
-    // this._getOptionItems();
+    this.optionElements = this.el.querySelectorAll('c-option');
+
+    if (this.optionElements.length && !this.optionElementsExist) {
+      this.optionElementsExist = true;
+    }
   };
 
-  // private handleChange(event) {
-  //   this.menuVisible = true;
-  //   this.query = event.target.value;
-  //   this.changeQuery.emit(this.query);
-  //   this.changeValue.emit(null);
+  private _toggleDropdown = (event) => {
+    event.stopPropagation();
 
-  //   requestAnimationFrame(() => {
-  //     // this.update();
-  //   });
-  // }
+    if (this.dropdownVisible) {
+      this._dropdownElement.close();
 
-  /**
-   * Update options when filtering is complete
-   */
-  @Method()
-  async update() {
-    this._getOptionItems();
+      return;
+    }
+
+    this._dropdownElement.open();
+  };
+
+  private _onButtonKeyDown = (
+    src: 'chevron' | 'reset',
+    event: KeyboardEvent,
+  ) => {
+    event.stopPropagation();
+
+    if (event.key !== 'Tab') event.preventDefault();
+
+    if (['Enter', ' '].includes(event.key)) {
+      if (src === 'chevron') {
+        this._toggleDropdown(event);
+
+        return;
+      }
+
+      this._reset(event);
+
+      this._preventDialogOpen = true;
+
+      this._inputElement.focus();
+    }
+  };
+
+  private _renderLoader() {
+    return <c-spinner color="var(--_c-autocomplete-active-color)" size={20} />;
   }
 
-  private _select(event, item) {
-    event.preventDefault();
+  private _renderChevron() {
+    const classes = {
+      'c-input-menu__chevron': true,
+      'c-input-menu__chevron--active': this.dropdownVisible,
+    };
+
+    return (
+      <c-icon-button
+        size="x-small"
+        class={classes}
+        text
+        onClick={(event) => this._toggleDropdown(event)}
+        onKeyDown={(event) => this._onButtonKeyDown('chevron', event)}
+      >
+        <c-icon path={mdiChevronDown} size={24} />
+      </c-icon-button>
+    );
+  }
+
+  private _reset = (event) => {
     event.stopPropagation();
-    this.query = item.name;
-    this.value = item;
-    this._valueChangedHandler(item);
-    this.menuVisible = false;
+
+    this.query = '';
+
+    this.changeValue.emit(null);
+
+    this.changeQuery.emit('');
+
+    this._preventDialogOpen = true;
+
+    this._inputElement.focus();
+
+    this._dropdownElement.updateList();
+  };
+
+  private _renderReset() {
+    return (
+      <c-icon-button
+        aria-label=""
+        size="x-small"
+        text
+        onClick={(event) => this._reset(event)}
+        onKeyDown={(event) => this._onButtonKeyDown('reset', event)}
+      >
+        <c-icon path={mdiClose} size={20} />
+      </c-icon-button>
+    );
+  }
+
+  private _onInputFocus = () => {
+    if (!this._preventDialogOpen) {
+      this._dropdownElement.open();
+    }
+
+    this._updateStatusText();
+
+    this._preventDialogOpen = false;
+  };
+
+  private _renderInputElement() {
+    return (
+      <div class="c-input-menu__input">
+        <input
+          type="text"
+          ref={(el) => (this._inputElement = el)}
+          aria-expanded={this.dropdownVisible.toString()}
+          aria-owns={this._inputId + '-items'}
+          aria-autocomplete="list"
+          autocomplete="off"
+          class="c-input__input"
+          role="combobox"
+          value={this.query}
+          name={this.name ?? null}
+          onInput={(event) => this._updateInput(event)}
+          onFocus={() => this._onInputFocus()}
+        />
+      </div>
+    );
   }
 
   componentWillLoad() {
     CAutocomplete._uniqueId += 1;
 
-    // this._inputId =
-    //   'input_' +
-    //   (this.hostId || this.label || this.placeholder).replace(
-    //     /[^a-zA-Z0-9-_]/g,
-    //     '',
-    //   );
+    this._inputId =
+      'input_' +
+      (this.hostId || this.label || this.placeholder).replace(
+        /[^a-zA-Z0-9-_]/g,
+        '',
+      );
   }
 
-  componentDidLoad() {
-    this._getOptionItems();
+  private get _items() {
+    return this.optionElementsExist ? this.optionElements : this.items;
   }
 
-  disconnectedCallback() {
-    this._observer.disconnect();
+  private _updateStatusText() {
+    if (this._debounce !== null) {
+      clearTimeout(this._debounce);
+      this._debounce = null;
+    }
+
+    this._debounce = window.setTimeout(() => {
+      const ending = !!this._items.length
+        ? ' or navigate using the up and down arrows'
+        : '';
+
+      if (this.currentIndex === null) {
+        this.statusText = this._items.length
+          ? `${this._items.length} result${
+              this._items.length !== 1 ? 's' : ''
+            } available`
+          : 'No search results available';
+      }
+
+      if (this.query !== null && this._items.length) {
+        this.statusText += ', input a search query to filter the results';
+      }
+
+      this._dropdownElement.setStatusText(this.statusText + ending);
+
+      this._debounce = null;
+    }, 1400);
   }
-
-  // private _renderChevron() {
-  //   const classes = {
-  //     'c-input-menu__chevron': true,
-  //     'c-input-menu__chevron--active': this.menuVisible,
-  //   };
-
-  //   return (
-  //     <svg class={classes} viewBox="0 0 24 24">
-  //       <path d={mdiChevronDown} />
-  //     </svg>
-  //   );
-  // }
-
-  // private _renderInputElement() {
-  //   return (
-  //     <div class="c-input-menu__input">
-  //       <input
-  //         type="text"
-  //         ref={(el) => (this._inputElement = el)}
-  //         aria-expanded={this.menuVisible.toString()}
-  //         aria-owns={this._inputId + '-items'}
-  //         aria-autocomplete="list"
-  //         autocomplete="off"
-  //         class="c-input__input"
-  //         role="combobox"
-  //         value={this.query}
-  //         name={this.name ?? null}
-  //         onInput={(event) => this.handleChange(event)}
-  //       />
-  //     </div>
-  //   );
-  // }
 
   render() {
+    const itemType = this.optionElementsExist ? 'option' : 'item';
+
     return (
-      <Host title={this.query}>
-        <c-dropdown-options
+      <Host>
+        <c-dropdown
           ref={(el) => (this._dropdownElement = el)}
-          items-per-page={this.itemsPerPage}
-          parent={this.el}
+          id={`${this._id}-dropdown`}
           index={this.currentIndex}
-        >
-          {/* <c-input
-            slot="default"
-            autofocus={this.autofocus}
-            disabled={this.disabled}
-            hide-details={this.hideDetails}
-            hint={this.hint}
-            id={this.hostId}
-            input-id={this._inputId}
-            label={this.label}
-            name={this.name}
-            placeholder={this.placeholder}
-            required={this.required}
-            shadow={this.shadow}
-            valid={this.valid}
-            validate={this.validate}
-            validate-on-blur={this.validateOnBlur}
-            validation={this.validation}
-            value={this.query}
-            variant="select"
-            onItemClick={() => this.items.length && this._showMenu(false)}
-          >
-
-            <div class="c-input__content">
-              {this._renderInputElement()}
-              {this._renderChevron()}
-            </div>
-
-          </c-input> */}
-          <input type="text" slot="default" value={this.query} />
-        </c-dropdown-options>
-
-        <slot onSlotchange={() => this._handleSlotChange()}></slot>
-        {/* <c-dropdown
-          ref={(el) => (this._dropdownElement = el)}
-          slot="dropdown"
-          items={this._items}
-          options={this._cOptionElements}
           items-per-page={this.itemsPerPage}
+          item-type={itemType}
+          items={
+            this._items as NodeListOf<HTMLCOptionElement> & CAutocompleteItem[]
+          }
           parent={this.el}
-          index={this.currentIndex}
-          input-id={this._inputId}
-          type="autocomplete"
         >
           <c-input
             slot="default"
-            autofocus={this.autofocus}
             disabled={this.disabled}
             hide-details={this.hideDetails}
             hint={this.hint}
@@ -574,20 +515,24 @@ export class CAutocomplete {
             validation={this.validation}
             value={this.query}
             variant="select"
-            onItemClick={() => this.items.length && this._showMenu(false)}
           >
             <slot name="pre" slot="pre"></slot>
 
             <div class="c-input__content">
               {this._renderInputElement()}
-              {this._renderChevron()}
 
-              <slot onSlotchange={this._handleSlotChange}></slot>
+              {this.loading && this._renderLoader()}
+
+              {!this.loading && this.value && this._renderReset()}
+
+              {!this.loading && !this.value && this._renderChevron()}
+
+              <slot onSlotchange={() => this._handleSlotChange()}></slot>
             </div>
 
             <slot name="post" slot="post"></slot>
           </c-input>
-        </c-dropdown> */}
+        </c-dropdown>
       </Host>
     );
   }

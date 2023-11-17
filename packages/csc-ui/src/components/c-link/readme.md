@@ -19,6 +19,14 @@ Basic hyperlink component
 | `weight`    | `weight`    | Customisable font weight                | `string`  | `'600'` |
 
 
+## CSS Custom Properties
+
+| Name              | Description                 |
+| ----------------- | --------------------------- |
+| `--_c-link-color` | Link color                  |
+| `--_c-link-hover` | Link hover background color |
+
+
 ----------------------------------------------
 
 *Built with [StencilJS](https://stenciljs.com/)*

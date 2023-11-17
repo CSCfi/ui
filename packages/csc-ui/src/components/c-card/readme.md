@@ -42,6 +42,14 @@ Type: `Promise<void>`
 | `"Default slot"` | Card components |
 
 
+## CSS Custom Properties
+
+| Name                        | Description               |
+| --------------------------- | ------------------------- |
+| `--c-card-background-color` | Card background color     |
+| `--c-card-gap`              | Card column gap / padding |
+
+
 ## Dependencies
 
 ### Depends on

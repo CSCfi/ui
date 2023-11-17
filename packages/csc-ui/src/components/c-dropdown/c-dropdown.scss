@@ -24,8 +24,7 @@
   --_c-dropdown-height: 42px;
 
   display: block;
-
-  // position: relative;
+  position: relative;
 
   mark {
     background-color: transparent;
@@ -44,17 +43,18 @@
     position: fixed;
 
     &::backdrop {
-      visibility: none;
-      opacity: 0;
+      display: none;
     }
 
-    &.active {
-      @media (max-width: 640px) {
-        width: 100lvw !important;
-        max-width: 100lvw !important;
-        height: 100svh !important;
-        max-height: 100svh !important;
-        inset: 0 !important;
+    &[open].mobile {
+      width: 100vw;
+      max-width: 100vw;
+      height: 100vh;
+      max-height: 100svh;
+      inset: 0;
+
+      .input-top-wrapper {
+        padding: 8px;
       }
     }
   }
@@ -73,18 +73,18 @@
     pointer-events: auto;
     visibility: hidden;
     width: 100%;
-    height: 100%;
+    height: max-content;
     overflow-y: scroll;
 
     &.active {
       visibility: visible;
       animation: 0.2s 1 fade-in cubic-bezier(0.25, 0.8, 0.5, 1);
 
-      @media (max-width: 640px) {
-        width: 100lvw;
-        max-width: 100lvw;
-        height: calc(100svh - 52px);
-        max-height: calc(100svh - 52px);
+      &.mobile {
+        width: 100vw;
+        max-width: 100vw;
+        height: 100vh;
+        max-height: calc(100svh - 60px);
       }
     }
   }
@@ -114,6 +114,7 @@
     }
 
     &:not(.disabled):hover,
+    &:not(.disabled):focus,
     &.active {
       background: var(--_c-dropdown-background-color-hover);
       color: var(--_c-dropdown-text-color-active);

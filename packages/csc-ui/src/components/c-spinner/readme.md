@@ -14,11 +14,18 @@
 | `width`  | `width`   | Width of the spinner | `number` | `2`                      |
 
 
+## CSS Custom Properties
+
+| Name                | Description   |
+| ------------------- | ------------- |
+| `--c-spinner-color` | Spinner color |
+
+
 ## Dependencies
 
 ### Used by
 
- - [c-autocomplete-2](../c-autocomplete-2)
+ - [c-autocomplete](../c-autocomplete)
  - [c-button](../c-button)
  - [c-icon-button](../c-icon-button)
  - [c-loader](../c-loader)
@@ -26,7 +33,7 @@
 ### Graph
 ```mermaid
 graph TD;
-  c-autocomplete-2 --> c-spinner
+  c-autocomplete --> c-spinner
   c-button --> c-spinner
   c-icon-button --> c-spinner
   c-loader --> c-spinner

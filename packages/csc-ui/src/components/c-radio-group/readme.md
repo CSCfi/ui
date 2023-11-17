@@ -37,6 +37,16 @@
 | `"Default slot"` | Default slot for the label |
 
 
+## CSS Custom Properties
+
+| Name                                     | Description                         |
+| ---------------------------------------- | ----------------------------------- |
+| `--c-radio-group-background-color-hover` | Radio button hover background color |
+| `--c-radio-group-color`                  | Radio button color                  |
+| `--c-radio-group-color-active`           | Active radio button color           |
+| `--c-radio-group-color-disabled`         | Disabled radio button color         |
+
+
 ## Dependencies
 
 ### Depends on

@@ -4,8 +4,8 @@
 
     <template #subtitle>Use c-option-value for match highlighting</template>
 
-    <c-row gap="8" nowrap>
-      <c-autocomplete-2
+    <c-row gap="8" nowrap align="start">
+      <c-autocomplete
         ref="autocomplete"
         v-model="selection"
         v-control
@@ -31,10 +31,18 @@
             <c-option-value>{{ item.name }}</c-option-value>
           </c-row>
         </c-option>
-      </c-autocomplete-2>
+      </c-autocomplete>
 
-      <c-button>Kakka</c-button>
+      <c-button :disabled="!selection" @click="add()" @keyup.enter="add()">
+        Add
+      </c-button>
     </c-row>
+
+    <c-tags>
+      <c-tag v-for="country in selections" :key="country">
+        {{ country }}
+      </c-tag>
+    </c-tags>
   </component-example>
 </template>
 
@@ -47,6 +55,8 @@ import countries from '../../data/countries.json';
 const selection = ref();
 
 const query = ref('');
+
+const selections = ref<string[]>([]);
 
 const loading = ref(false);
 
@@ -71,5 +81,11 @@ const filteredItems = computed(() => {
 
 const onQueryChange = (event: InputEvent) => {
   query.value = event.detail.toString();
+};
+
+const add = () => {
+  selections.value.push(selection.value);
+
+  autocomplete.value?.reset();
 };
 </script>

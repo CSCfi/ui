@@ -27,6 +27,13 @@
 | `"Default slot"` | Default slot |
 
 
+## CSS Custom Properties
+
+| Name                   | Description      |
+| ---------------------- | ---------------- |
+| `--c-tab-item-padding` | Tab item padding |
+
+
 ----------------------------------------------
 
 *Built with [StencilJS](https://stenciljs.com/)*

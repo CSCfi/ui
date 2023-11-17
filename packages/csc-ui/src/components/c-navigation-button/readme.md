@@ -3,6 +3,13 @@
 <!-- Auto Generated Below -->
 
 
+## CSS Custom Properties
+
+| Name                          | Description       |
+| ----------------------------- | ----------------- |
+| `--c-navigation-button-color` | Burger menu color |
+
+
 ## Dependencies
 
 ### Depends on

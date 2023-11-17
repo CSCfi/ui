@@ -144,6 +144,8 @@ export class CSelect {
 
   @State() previousValue: CSelectItem = { value: '', name: '' };
 
+  @State() dropdownVisible = false;
+
   private _itemRefs: { value: string | number | boolean; ref: HTMLElement }[] =
     [];
 
@@ -274,6 +276,19 @@ export class CSelect {
     }
   }
 
+  @Listen('dropdownStateChange')
+  onDropdownStateChange(event: CustomEvent<boolean>) {
+    const isOpen = event.detail;
+
+    this.dropdownVisible = isOpen;
+
+    if (!isOpen) {
+      requestAnimationFrame(() => {
+        this.currentIndex = null;
+      });
+    }
+  }
+
   @Listen('keydown', { capture: true })
   handleKeyDown(ev: KeyboardEvent) {
     if (this.disabled) return;
@@ -317,7 +332,7 @@ export class CSelect {
     if (ev.key === 'ArrowDown') {
       ev.preventDefault();
 
-      if (this._dropdownElement.isOpen) return;
+      if (this.dropdownVisible) return;
 
       this._showMenu();
 
@@ -327,7 +342,7 @@ export class CSelect {
     if (ev.key === 'ArrowUp') {
       ev.preventDefault();
 
-      if (this._dropdownElement.isOpen) return;
+      if (this.dropdownVisible) return;
 
       this._showMenu();
 
@@ -609,7 +624,7 @@ export class CSelect {
             <slot onSlotchange={this._handleSlotChange}></slot>
           </div>
 
-          <c-dropdown
+          {/* <c-dropdown
             ref={(el) => (this._dropdownElement = el)}
             slot="dropdown"
             items={this._items}
@@ -619,7 +634,7 @@ export class CSelect {
             index={this.currentIndex}
             input-id={this._inputId}
             type="select"
-          />
+          /> */}
 
           <slot name="post" slot="post"></slot>
         </c-input>

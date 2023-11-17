@@ -76,95 +76,6 @@
       },
       "attributes": [
         {
-          "name": "autofocus",
-          "description": "Auto focus the input"
-        },
-        {
-          "name": "dense",
-          "description": "Dense variant"
-        },
-        {
-          "name": "disabled",
-          "description": "Disable the input"
-        },
-        {
-          "name": "hide-details",
-          "description": "Hide the hint and error messages"
-        },
-        {
-          "name": "hint",
-          "description": "Hint text for the input"
-        },
-        {
-          "name": "id",
-          "description": "Id of the element"
-        },
-        {
-          "name": "items-per-page",
-          "description": "Items per page before adding scroll"
-        },
-        {
-          "name": "label",
-          "description": "Element label"
-        },
-        {
-          "name": "name",
-          "description": "Input field name"
-        },
-        {
-          "name": "option-as-selection",
-          "description": "display the option as selection (works only when c-option elements are used)"
-        },
-        {
-          "name": "placeholder",
-          "description": "Placeholder text"
-        },
-        {
-          "name": "query",
-          "description": "Search string"
-        },
-        {
-          "name": "required",
-          "description": "Show required validation"
-        },
-        {
-          "name": "return-value",
-          "description": "Return only the item value rather than the whole item object"
-        },
-        {
-          "name": "shadow",
-          "description": "Shadow variant"
-        },
-        {
-          "name": "valid",
-          "description": "Set the validíty of the input"
-        },
-        {
-          "name": "validate",
-          "description": "Manual validation"
-        },
-        {
-          "name": "validate-on-blur",
-          "description": "Validate the input on blur"
-        },
-        {
-          "name": "validation",
-          "description": "Custom validation message"
-        },
-        {
-          "name": "value",
-          "description": "Selected item"
-        }
-      ]
-    },
-    {
-      "name": "c-autocomplete-2",
-      "description": {
-        "kind": "markdown",
-        "value": ""
-      },
-      "attributes": [
-        {
           "name": "disabled",
           "description": "Disable the input"
         },
@@ -207,6 +118,10 @@
         {
           "name": "required",
           "description": "Show required validation"
+        },
+        {
+          "name": "return-object",
+          "description": "Return object instead of value"
         },
         {
           "name": "shadow",
@@ -566,57 +481,24 @@
       },
       "attributes": [
         {
-          "name": "focus-list",
-          "description": "Focus dropdown on open"
-        },
-        {
-          "name": "index",
-          "description": "Initial value index"
-        },
-        {
-          "name": "input-id",
-          "description": "Id of the input element"
-        },
-        {
-          "name": "is-open",
-          "description": "Dropdown open state"
-        },
-        {
-          "name": "items-per-page",
-          "description": "Items per page before adding scroll"
-        },
-        {
-          "name": "type",
-          "description": "Type of the parent element",
-          "values": [
-            {
-              "name": "autocomplete"
-            },
-            {
-              "name": "select"
-            }
-          ]
-        },
-        {
-          "name": "was-clicked",
-          "description": ""
-        }
-      ]
-    },
-    {
-      "name": "c-dropdown-options",
-      "description": {
-        "kind": "markdown",
-        "value": ""
-      },
-      "attributes": [
-        {
           "name": "id",
           "description": "Id of the element"
         },
         {
           "name": "index",
           "description": "Current index value"
+        },
+        {
+          "name": "item-type",
+          "description": "Type of items",
+          "values": [
+            {
+              "name": "item"
+            },
+            {
+              "name": "option"
+            }
+          ]
         },
         {
           "name": "items-per-page",

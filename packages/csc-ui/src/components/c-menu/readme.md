@@ -24,6 +24,16 @@
 | `"Default slot"` | Menu title / activator element (simple variant) |
 
 
+## CSS Custom Properties
+
+| Name                              | Description                 |
+| --------------------------------- | --------------------------- |
+| `--c-menu-background-color-hover` | Menu hover background color |
+| `--c-menu-outline-color`          | Menu outline color          |
+| `--c-menu-text-color`             | Menu text color             |
+| `--c-menu-text-color-active`      | Menu active text color      |
+
+
 ## Dependencies
 
 ### Used by
