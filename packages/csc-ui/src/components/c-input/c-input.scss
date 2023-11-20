@@ -1,5 +1,4 @@
-:root,
-:host {
+:host(c-input) {
   --_c-input-inactive-color: var(--c-tertiary-600);
   --_c-input-active-color: var(--c-primary-600);
   --_c-input-background-color: var(--c-transparent);
@@ -71,13 +70,13 @@
     width: 100%;
   }
 
-  input[type='checkbox'],
-  input[type='radio'],
+  input[type="checkbox"],
+  input[type="radio"],
   select {
     box-sizing: border-box;
   }
 
-  input[type='search'] {
+  input[type="search"] {
     appearance: textfield;
     box-sizing: content-box;
   }
@@ -102,6 +101,7 @@
 
   input:focus,
   input:active,
+  input[aria-expanded="true"],
   textarea:focus,
   textarea:active {
     outline: none;
@@ -288,7 +288,7 @@
   }
 
   &:focus-within,
-  &.active,
+  &--active,
   &:not(.c-input--disabled):active {
     --_c-input-border-width: 2px;
 

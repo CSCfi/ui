@@ -150,14 +150,14 @@ export class CDropdown {
   async open() {
     if (this._dialog.open) return;
 
-    this._positionMenu();
-
     this._outsideClickFn = this._handleOutsideClick.bind(this);
 
     window.addEventListener('click', this._outsideClickFn);
 
     requestAnimationFrame(() => {
       this.isOpen = true;
+
+      this._positionMenu();
     });
   }
 
@@ -281,8 +281,13 @@ export class CDropdown {
     const { innerWidth, innerHeight } = window;
 
     this._dialog.style.width = 'auto';
+    this._dialog.style.opacity = '0';
+
+    this._dialog.showModal();
 
     requestAnimationFrame(() => {
+      let inputSlot = 'input-top';
+
       if (!this._isMobile) {
         const { top: parentTop, width } = this._getParentPosition();
 
@@ -315,7 +320,7 @@ export class CDropdown {
           this._openedOnTop = true;
 
           this._inputElement.hideDetails = true;
-          this._inputElement.slot = 'input-slot-bottom';
+          inputSlot = 'input-bottom';
 
           this._dialog.style.top = 'auto';
           this._dialog.style.bottom = `${innerHeight - inputSize.top - 44}px`;
@@ -329,11 +334,15 @@ export class CDropdown {
 
       this._dummyElement.slot = 'default';
 
-      this._inputElement.slot = 'input-top';
+      this._inputElement.slot = inputSlot;
 
       this._inputElement.hideDetails = true;
 
-      this._dialog.showModal();
+      this._dialog.style.opacity = '1';
+
+      const input = this.parent.shadowRoot.querySelector('input');
+
+      input.focus();
     });
   }
 
@@ -472,8 +481,8 @@ export class CDropdown {
       this.itemsPerPage > 0 &&
       this.items.length > this.itemsPerPage
     ) {
-      this._dialog.style.maxHeight = 42 * (this.itemsPerPage + 0.5) + 'px';
-      this._list.style.maxHeight = 42 * (this.itemsPerPage + 0.5) - 60 + 'px';
+      this._dialog.style.maxHeight = 42 * (this.itemsPerPage + 0.5) + 60 + 'px';
+      this._list.style.maxHeight = 42 * (this.itemsPerPage + 0.5) + 'px';
     }
 
     return (
@@ -483,8 +492,10 @@ export class CDropdown {
         <div class="dummy" ref={(el) => (this._dummyElement = el)}></div>
 
         <dialog
+          tabindex="-1"
           ref={(el) => (this._dialog = el)}
           class={{ mobile: this._isMobile }}
+          onCancel={() => this.close()}
         >
           <div
             id={'announce-' + this.hostId}
@@ -510,7 +521,11 @@ export class CDropdown {
             {this.renderedList}
           </ul>
 
-          <slot name="input-bottom"></slot>
+          <div
+            class={{ active: this._openedOnTop, 'input-bottom-wrapper': true }}
+          >
+            <slot name="input-bottom"></slot>
+          </div>
         </dialog>
       </Host>
     );

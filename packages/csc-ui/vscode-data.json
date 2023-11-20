@@ -607,6 +607,10 @@
       },
       "attributes": [
         {
+          "name": "active",
+          "description": "Active state"
+        },
+        {
           "name": "autofocus",
           "description": "Auto focus the input"
         },
@@ -1417,8 +1421,8 @@
       },
       "attributes": [
         {
-          "name": "autofocus",
-          "description": "Auto focus the input"
+          "name": "clearable",
+          "description": "Make the selected value clearable"
         },
         {
           "name": "disabled",
@@ -1445,6 +1449,10 @@
           "description": "Element label"
         },
         {
+          "name": "loading",
+          "description": "Show loading state"
+        },
+        {
           "name": "name",
           "description": "Input field name"
         },
@@ -1458,11 +1466,11 @@
         },
         {
           "name": "required",
-          "description": "Set as required"
+          "description": "Show required validation"
         },
         {
-          "name": "return-value",
-          "description": "Return only the item value rather than the whole item object"
+          "name": "return-object",
+          "description": "Return object instead of value"
         },
         {
           "name": "shadow",
@@ -1470,7 +1478,7 @@
         },
         {
           "name": "valid",
-          "description": "Set the validity of the input"
+          "description": "Set the validíty of the input"
         },
         {
           "name": "validate",

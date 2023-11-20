@@ -31,6 +31,8 @@ export class CAutocomplete {
 
   private _inputElement: HTMLInputElement;
 
+  private _cInputElement: HTMLCInputElement;
+
   private _inputId: string;
 
   private _preventDialogOpen = false;
@@ -144,7 +146,7 @@ export class CAutocomplete {
   /**
    * Items per page before adding scroll
    */
-  @Prop() itemsPerPage: number;
+  @Prop() itemsPerPage = 6;
 
   @State() optionElements: NodeListOf<HTMLCOptionElement>;
 
@@ -187,15 +189,24 @@ export class CAutocomplete {
     }
 
     if (event.key === 'Escape') {
+      event.preventDefault();
+
       this._preventDialogOpen = true;
       this._dropdownElement.close();
-      this._inputElement.focus();
+
+      requestAnimationFrame(() => {
+        this._inputElement.focus();
+      });
 
       return;
     }
 
     if (event.key === 'Tab') {
-      this._dropdownElement.close();
+      this._inputElement.focus();
+
+      requestAnimationFrame(() => {
+        this._dropdownElement.close();
+      });
 
       return;
     }
@@ -249,15 +260,7 @@ export class CAutocomplete {
 
       if (this.currentIndex === null) return;
 
-      const isDisabled = this._dropdownElement.selectItem(this.currentIndex);
-
-      if (isDisabled) return;
-
-      this._preventDialogOpen = true;
-
-      this._inputElement.focus();
-
-      return;
+      this._dropdownElement.selectItem(this.currentIndex);
     }
 
     if (event.key === 'Home' && this.dropdownVisible) {
@@ -293,6 +296,10 @@ export class CAutocomplete {
     this.query = event.detail.name;
 
     this.changeQuery.emit(event.detail.name);
+
+    this._preventDialogOpen = true;
+
+    this._inputElement.focus();
   }
 
   @Watch('query')
@@ -386,6 +393,8 @@ export class CAutocomplete {
     this.changeQuery.emit('');
 
     this._preventDialogOpen = true;
+
+    this._cInputElement.reset();
 
     this._inputElement.focus();
 
@@ -496,9 +505,12 @@ export class CAutocomplete {
             this._items as NodeListOf<HTMLCOptionElement> & CAutocompleteItem[]
           }
           parent={this.el}
+          type="autocomplete"
         >
           <c-input
             slot="default"
+            ref={(el) => (this._cInputElement = el)}
+            active={this.dropdownVisible}
             disabled={this.disabled}
             hide-details={this.hideDetails}
             hint={this.hint}

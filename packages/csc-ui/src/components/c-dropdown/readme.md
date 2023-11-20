@@ -104,6 +104,7 @@ Type: `Promise<void>`
 ### Used by
 
  - [c-autocomplete](../c-autocomplete)
+ - [c-select](../c-select)
 
 ### Depends on
 
@@ -114,6 +115,7 @@ Type: `Promise<void>`
 graph TD;
   c-dropdown --> c-icon
   c-autocomplete --> c-dropdown
+  c-select --> c-dropdown
   style c-dropdown fill:#f9f,stroke:#333,stroke-width:4px
 ```
 

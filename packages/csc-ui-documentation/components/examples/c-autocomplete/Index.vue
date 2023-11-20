@@ -1,7 +1,7 @@
 <template>
-  <basic />
-
   <return-value />
+
+  <basic />
 
   <options />
 </template>

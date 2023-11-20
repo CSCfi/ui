@@ -12,7 +12,7 @@
 | `hint`           | `hint`             | Hint text for the input             | `string`                                                   | `''`               |
 | `hostId`         | `id`               | Id of the element                   | `string`                                                   | `undefined`        |
 | `items`          | --                 | Dropdown items                      | `CAutocompleteItem[]`                                      | `[]`               |
-| `itemsPerPage`   | `items-per-page`   | Items per page before adding scroll | `number`                                                   | `undefined`        |
+| `itemsPerPage`   | `items-per-page`   | Items per page before adding scroll | `number`                                                   | `6`                |
 | `label`          | `label`            | Element label                       | `string`                                                   | `undefined`        |
 | `loading`        | `loading`          | Show loading state                  | `boolean`                                                  | `false`            |
 | `name`           | `name`             | Input field name                    | `string`                                                   | `undefined`        |

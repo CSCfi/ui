@@ -546,6 +546,10 @@ export namespace Components {
      */
     interface CInput {
         /**
+          * Active state
+         */
+        "active": boolean;
+        /**
           * Auto focus the input
          */
         "autofocus": boolean;
@@ -609,6 +613,10 @@ export namespace Components {
           * Set the input as required
          */
         "required": boolean;
+        /**
+          * @private
+         */
+        "reset": () => Promise<void>;
         /**
           * Rows on the input
          */
@@ -1167,9 +1175,9 @@ export namespace Components {
      */
     interface CSelect {
         /**
-          * Auto focus the input
+          * Make the selected value clearable
          */
-        "autofocus": boolean;
+        "clearable": boolean;
         /**
           * Disable the input
          */
@@ -1187,7 +1195,7 @@ export namespace Components {
          */
         "hostId": string;
         /**
-          * selectable items
+          * Dropdown items
          */
         "items": CSelectItem[];
         /**
@@ -1199,18 +1207,13 @@ export namespace Components {
          */
         "label": string;
         /**
+          * Show loading state
+         */
+        "loading": boolean;
+        /**
           * Input field name
          */
         "name": string;
-        /**
-          * Hide menu
-          * @private
-         */
-        "onHideMenu": () => Promise<void>;
-        /**
-          * Select item by index
-         */
-        "onItemSelection": (index: number) => Promise<void>;
         /**
           * display the option as selection (works only when c-option elements are used)
          */
@@ -1220,23 +1223,23 @@ export namespace Components {
          */
         "placeholder": string;
         /**
-          * Set as required
+          * Show required validation
          */
         "required": boolean;
         /**
-          * Return only the item value rather than the whole item object
+          * Reset select state
          */
-        "returnValue": false;
+        "reset": () => Promise<void>;
         /**
-          * @private
+          * Return object instead of value
          */
-        "setActiveDescendant": (id: string) => Promise<void>;
+        "returnObject": boolean;
         /**
           * Shadow variant
          */
         "shadow": boolean;
         /**
-          * Set the validity of the input
+          * Set the validíty of the input
          */
         "valid": boolean;
         /**
@@ -1254,7 +1257,7 @@ export namespace Components {
         /**
           * Selected item
          */
-        "value": string | number | boolean | CSelectItem;
+        "value": string | number | CSelectItem;
     }
     /**
      * @group Navigation
@@ -3430,6 +3433,10 @@ declare namespace LocalJSX {
      */
     interface CInput {
         /**
+          * Active state
+         */
+        "active"?: boolean;
+        /**
           * Auto focus the input
          */
         "autofocus"?: boolean;
@@ -4098,9 +4105,9 @@ declare namespace LocalJSX {
      */
     interface CSelect {
         /**
-          * Auto focus the input
+          * Make the selected value clearable
          */
-        "autofocus"?: boolean;
+        "clearable"?: boolean;
         /**
           * Disable the input
          */
@@ -4118,7 +4125,7 @@ declare namespace LocalJSX {
          */
         "hostId"?: string;
         /**
-          * selectable items
+          * Dropdown items
          */
         "items"?: CSelectItem[];
         /**
@@ -4130,11 +4137,15 @@ declare namespace LocalJSX {
          */
         "label"?: string;
         /**
+          * Show loading state
+         */
+        "loading"?: boolean;
+        /**
           * Input field name
          */
         "name"?: string;
         /**
-          * Triggered when an item is selected
+          * Triggered when option is selected
          */
         "onChangeValue"?: (event: CSelectCustomEvent<any>) => void;
         /**
@@ -4146,19 +4157,19 @@ declare namespace LocalJSX {
          */
         "placeholder"?: string;
         /**
-          * Set as required
+          * Show required validation
          */
         "required"?: boolean;
         /**
-          * Return only the item value rather than the whole item object
+          * Return object instead of value
          */
-        "returnValue"?: false;
+        "returnObject"?: boolean;
         /**
           * Shadow variant
          */
         "shadow"?: boolean;
         /**
-          * Set the validity of the input
+          * Set the validíty of the input
          */
         "valid"?: boolean;
         /**
@@ -4176,7 +4187,7 @@ declare namespace LocalJSX {
         /**
           * Selected item
          */
-        "value"?: string | number | boolean | CSelectItem;
+        "value"?: string | number | CSelectItem;
     }
     /**
      * @group Navigation

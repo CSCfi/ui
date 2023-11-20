@@ -1,6 +1,6 @@
 <template>
   <component-example rows name="return-value">
-    <template #title>Usage with 'return-value'</template>
+    <template #title>Basic usage</template>
 
     <c-row gap="8">
       <c-autocomplete

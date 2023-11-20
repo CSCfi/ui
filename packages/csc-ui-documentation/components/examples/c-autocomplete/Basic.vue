@@ -1,6 +1,8 @@
 <template>
   <component-example rows name="basic">
-    <template #title>Basic usage</template>
+    <template #title>Usage with an array of objects</template>
+
+    <template #subtitle>Returning an object on selection</template>
 
     <c-row gap="8">
       <c-autocomplete
@@ -8,12 +10,12 @@
         v-model="selection"
         v-control
         label="Countries"
-        hide-details
+        placeholder="Choose a country"
         :items="filteredItems"
         :query="query"
-        return-object
-        :items-per-page="10"
         style="flex: 1"
+        hide-details
+        return-object
         @changeQuery="onQueryChange"
       >
         <c-icon slot="pre" :path="mdiEarth" size="16" />

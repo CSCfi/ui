@@ -8,6 +8,7 @@ import {
   EventEmitter,
   Element,
   Watch,
+  Method,
 } from '@stencil/core';
 import { CAutocompleteItem, CSelectItem } from '../../types';
 
@@ -21,6 +22,11 @@ import { CAutocompleteItem, CSelectItem } from '../../types';
 })
 export class CInput {
   @Element() el!: HTMLCInputElement;
+
+  /**
+   * Active state
+   */
+  @Prop() active = false;
 
   /**
    * Auto focus the input
@@ -211,6 +217,14 @@ export class CInput {
 
   private _dropdownElement: HTMLCDropdownElement;
 
+  /**
+   * @private
+   */
+  @Method()
+  async reset() {
+    this._onReset();
+  }
+
   componentDidLoad() {
     if (this.autofocus) {
       setTimeout(() => {
@@ -309,8 +323,10 @@ export class CInput {
   private _onBlur = () => {
     // delay the blur event to prevent the label from 'flashing' on c-select selection
     setTimeout(() => {
-      this.isFocused = false;
-      this._hasBlurred = true;
+      if (!this.active) {
+        this.isFocused = false;
+        this._hasBlurred = true;
+      }
 
       // show the label if there's no label or value
       this._onReset();
@@ -341,6 +357,16 @@ export class CInput {
 
   private _onReset() {
     if (this.inputField) {
+      if (
+        !!this.placeholder &&
+        !this.value &&
+        (this.active || this.isFocused)
+      ) {
+        this.inputField.placeholder = this.placeholder;
+
+        return;
+      }
+
       this.inputField.placeholder =
         !this.label && !this.value && !!this.placeholder
           ? this.placeholder
@@ -361,7 +387,7 @@ export class CInput {
     if (this.shadow) return;
 
     const classes = {
-      active: this.isActive,
+      active: this.isActive || this.active,
     };
 
     return (
@@ -423,6 +449,9 @@ export class CInput {
       'c-input--shadow': this.shadow,
       'c-input--textarea': this.rows > 1,
       'c-input--error': !this.valid,
+      'c-input--jorma': this.isFocused,
+      'c-input--keino': this.active,
+      'c-input--active': this.isFocused || this.active,
       filled: !!this.value,
       [`c-input--${this.variant}`]: true,
     };

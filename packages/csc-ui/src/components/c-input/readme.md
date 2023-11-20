@@ -9,6 +9,7 @@
 
 | Property         | Attribute          | Description                                  | Type                                                                                                                                    | Default            |
 | ---------------- | ------------------ | -------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------- | ------------------ |
+| `active`         | `active`           | Active state                                 | `boolean`                                                                                                                               | `false`            |
 | `autofocus`      | `autofocus`        | Auto focus the input                         | `boolean`                                                                                                                               | `false`            |
 | `disabled`       | `disabled`         | Disable the input                            | `boolean`                                                                                                                               | `false`            |
 | `form`           | `form`             | Render a hidden input outside the shadow dom | `boolean`                                                                                                                               | `false`            |
@@ -44,6 +45,19 @@
 | `changeValue`   | Emit changes to the parent | `CustomEvent<any>` |
 | `dropdownClose` | Emit close to the parent   | `CustomEvent<any>` |
 | `itemClick`     | Emit click to the parent   | `CustomEvent<any>` |
+
+
+## Methods
+
+### `reset() => Promise<void>`
+
+
+
+#### Returns
+
+Type: `Promise<void>`
+
+
 
 
 ## Dependencies

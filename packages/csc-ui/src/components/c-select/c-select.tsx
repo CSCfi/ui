@@ -1,19 +1,17 @@
 import {
-  AttachInternals,
   Component,
   Element,
+  Event,
+  EventEmitter,
   Host,
+  Listen,
+  Method,
   Prop,
   State,
   h,
-  Listen,
-  Event,
-  EventEmitter,
-  Watch,
-  Method,
 } from '@stencil/core';
-import { mdiChevronDown } from '@mdi/js';
 import { CSelectItem } from '../../types';
+import { mdiChevronDown, mdiClose } from '@mdi/js';
 
 /**
  * @group Form
@@ -23,23 +21,49 @@ import { CSelectItem } from '../../types';
   tag: 'c-select',
   styleUrl: 'c-select.scss',
   shadow: true,
-  formAssociated: true,
 })
 export class CSelect {
   @Element() el: HTMLCSelectElement;
 
-  // eslint-disable-next-line
-  @AttachInternals() internals: ElementInternals;
+  /**
+   * Dropdown items
+   */
+  @Prop() items: CSelectItem[] = [];
 
   /**
-   * Auto focus the input
+   * Selected item
    */
-  @Prop() autofocus = false;
+  @Prop() value: string | number | CSelectItem = null;
+
+  /**
+   * Id of the element
+   */
+  @Prop({ attribute: 'id' }) hostId: string;
+
+  /**
+   * Make the selected value clearable
+   */
+  @Prop() clearable = false;
 
   /**
    * Disable the input
    */
   @Prop() disabled = false;
+
+  /**
+   * Element label
+   */
+  @Prop() label: string;
+
+  /**
+   * Input field name
+   */
+  @Prop() name: string;
+
+  /**
+   * Placeholder text
+   */
+  @Prop() placeholder = '';
 
   /**
    * Hide the hint and error messages
@@ -52,37 +76,17 @@ export class CSelect {
   @Prop() hint = '';
 
   /**
-   * Id of the element
+   * Show loading state
    */
-  @Prop({ attribute: 'id' }) hostId: string;
+  @Prop() loading = false;
 
   /**
-   * Element label
-   */
-  @Prop() label: string;
-
-  /**
-   * Shadow variant
-   */
-  @Prop() shadow = false;
-
-  /**
-   * Input field name
-   */
-  @Prop() name: string;
-
-  /**
-   * Set as required
+   * Show required validation
    */
   @Prop() required = false;
 
   /**
-   * Return only the item value rather than the whole item object
-   */
-  @Prop() returnValue: false;
-
-  /**
-   * Set the validity of the input
+   * Set the validíty of the input
    */
   @Prop() valid = true;
 
@@ -102,25 +106,19 @@ export class CSelect {
   @Prop() validation = 'Required field';
 
   /**
+   * Shadow variant
+   */
+  @Prop() shadow = false;
+
+  /**
+   * Return object instead of value
+   */
+  @Prop() returnObject = false;
+
+  /**
    * Items per page before adding scroll
    */
   @Prop() itemsPerPage = 6;
-
-  /**
-   * Placeholder text
-   */
-  @Prop() placeholder = '';
-
-  /**
-   * Selected item
-   */
-  @Prop({ mutable: true }) value: string | number | boolean | CSelectItem =
-    null;
-
-  /**
-   * selectable items
-   */
-  @Prop() items: CSelectItem[] = [];
 
   /**
    * display the option as selection (works only when c-option elements are used)
@@ -128,151 +126,189 @@ export class CSelect {
   @Prop() optionAsSelection: false;
 
   /**
-   * Triggered when an item is selected
+   * Triggered when option is selected
    */
   @Event({ bubbles: false }) changeValue: EventEmitter;
 
-  @State() menuVisible = false;
+  @State() optionElements: NodeListOf<HTMLCOptionElement>;
 
   @State() currentIndex: number = null;
 
-  @State() activeListItemId: string = null;
+  @State() dropdownVisible = false;
 
   @State() statusText = '';
 
-  @State() hasOptionItems = false;
-
-  @State() previousValue: CSelectItem = { value: '', name: '' };
-
-  @State() dropdownVisible = false;
-
-  private _itemRefs: { value: string | number | boolean; ref: HTMLElement }[] =
-    [];
-
-  private _id: string;
-
-  private _cOptionElements: Record<string, HTMLCOptionElement> = {};
-
-  private _selectionElement: HTMLDivElement;
-
-  private _outerWrapperClasses = ['outer-wrapper'];
+  @State() optionElementsExist = false;
 
   private static _uniqueId = 0;
 
-  private _validationClasses = ['validation-message'];
+  private _dropdownElement: HTMLCDropdownElement;
+
+  private _inputElement: HTMLInputElement;
+
+  private _cInputElement: HTMLCInputElement;
+
+  private _selectionElement: HTMLDivElement;
+
+  private _inputId: string;
+
+  private _preventDialogOpen = false;
 
   private _debounce = null;
 
-  private _observer = new IntersectionObserver(
-    (entries, observer) => {
-      entries.forEach((entry) => {
-        if (!entry.isIntersecting) {
-          entry.target.scrollIntoView({
-            block: 'nearest',
-            inline: 'nearest',
-          });
-          observer.unobserve(entry.target);
-        } else {
-          observer.unobserve(entry.target);
-        }
-      });
-    },
-    { threshold: 1 },
-  );
+  private _lastKeyPressTime = null;
 
-  @Watch('value')
-  onValueChange() {
-    if (!this.value) return;
+  private _searchString = '';
 
-    const realValue = !(this.value as CSelectItem)?.value
-      ? this._items.find((item) => item.value === this.value)
-      : this.value;
-
-    this._valueChangedHandler(realValue as CSelectItem);
-  }
-
-  @Watch('validate')
-  validateChange(newValue: boolean) {
-    if (newValue) {
-      this._runValidate();
-    }
-  }
-
-  @Watch('currentIndex')
-  onCurrentIndexChange(index: number) {
-    this.activeListItemId = this._itemRefs[index]?.ref?.id ?? null;
-
-    this._scrollToElement();
-
-    this._updateStatusText();
+  private get _id() {
+    return this.hostId || `select_${CSelect._uniqueId}`;
   }
 
   private get _items() {
-    return this.hasOptionItems ? this._optionItems : this.items;
+    return this.optionElementsExist ? this.optionElements : this.items;
   }
 
-  private _setValue(item: CSelectItem) {
-    return this.returnValue
-      ? item?.value
-      : {
-          name: item?.name,
-          value: item?.value,
-        };
-  }
-
-  private _valueChangedHandler(item: CSelectItem) {
-    if (!item) return;
-
-    if (this.hasOptionItems && this.optionAsSelection) {
-      const selection = this._cOptionElements[item.value.toString()];
-
-      if (!selection) return;
-
-      const clone = selection.cloneNode(true);
-
-      this._selectionElement.classList.add('c-input-menu__selection--show');
-      this._selectionElement.replaceChildren(clone);
-    }
-
-    this.currentIndex = this._items.findIndex(
-      (element) => element.value === item?.value,
-    );
-
-    const value = this._setValue(item);
-
-    if (this.previousValue && this.previousValue?.value === item?.value) return;
-
-    this.previousValue = item;
-
-    this.changeValue.emit(value);
-
-    this.internals.setFormValue(item.value as string);
-  }
-
-  private _getLabel() {
+  private get _value() {
     if (!this.value) return '';
 
     if (
-      this.returnValue &&
-      ['number', 'string', 'boolean'].includes(typeof this.value)
+      !this.returnObject &&
+      !['number', 'string'].includes(typeof this.value)
     ) {
-      return this._items?.find((item) => item.value === this.value)?.name;
+      console.warn(
+        `[C-SELECT] The value should be of type 'number' or 'string' when return-object is not used.`,
+      );
+
+      return '';
     }
 
-    return this._items?.find(
+    if (
+      !this.returnObject &&
+      ['number', 'string'].includes(typeof this.value)
+    ) {
+      return Array.from(this._items)?.find((item) => item.value === this.value)
+        ?.name;
+    }
+
+    return (this._items as CSelectItem[])?.find(
       (item) => item.value === (this.value as CSelectItem).value,
     )?.name;
   }
 
-  private _scrollToElement() {
-    if (this._items.length > this.itemsPerPage) {
-      const itemRef = this._itemRefs.find(
-        (item) => item.value === this._items[this.currentIndex]?.value,
-      )?.ref;
+  /**
+   * Reset select state
+   */
+  @Method()
+  async reset() {
+    this.changeValue.emit(null);
 
-      if (!!itemRef) {
-        this._observer.observe(itemRef);
+    this._dropdownElement.updateList();
+  }
+
+  @Listen('keydown', { passive: true })
+  handleKeyDown(event: KeyboardEvent) {
+    const alphanumeric = /^[0-9a-zA-Z ]+$/;
+
+    if (event.key.match(alphanumeric) && event.key.length === 1) {
+      if (this.dropdownVisible) return;
+
+      if (Date.now() - this._lastKeyPressTime > 3000) {
+        this._searchString = event.key;
+      } else {
+        this._searchString += event.key;
       }
+
+      this._lastKeyPressTime = Date.now();
+
+      const selectionIndex = Array.from(this._items).findIndex((i) =>
+        i.name.toLowerCase().startsWith(this._searchString),
+      );
+
+      this.currentIndex = selectionIndex >= 0 ? selectionIndex : null;
+
+      if (this.currentIndex !== null) {
+        this._dropdownElement.selectItem(this.currentIndex);
+      }
+
+      return;
+    }
+
+    if (event.key === 'Escape') {
+      // this._preventDialogOpen = true;
+      this._dropdownElement.close();
+      this._inputElement.focus();
+
+      return;
+    }
+
+    if (event.key === 'Tab') {
+      this._dropdownElement.close();
+
+      return;
+    }
+
+    if (event.key === 'ArrowDown') {
+      event.preventDefault();
+
+      if (!this._items.length) return;
+
+      if (!this.dropdownVisible || this.currentIndex === null) {
+        this.currentIndex = 0;
+        this._dropdownElement.open();
+        this._dropdownElement.focusItem(this.currentIndex);
+
+        return;
+      }
+
+      this.currentIndex = Math.min(
+        this.currentIndex + 1,
+        this._items.length - 1,
+      );
+
+      this._dropdownElement.focusItem(this.currentIndex);
+
+      return;
+    }
+
+    if (event.key === 'ArrowUp') {
+      event.preventDefault();
+
+      if (this.currentIndex === 0) {
+        this._dropdownElement.close();
+        this._inputElement.focus();
+      }
+
+      if (!this.dropdownVisible || this.currentIndex === null) {
+        this.currentIndex = this._items.length - 1;
+        this._dropdownElement.open();
+        this._dropdownElement.focusItem(this.currentIndex);
+
+        return;
+      }
+
+      this.currentIndex = Math.max(this.currentIndex - 1, 0);
+
+      this._dropdownElement.focusItem(this.currentIndex);
+    }
+
+    if (event.key === ' ') {
+      event.preventDefault();
+    }
+
+    if (event.key === 'Enter') {
+      event.preventDefault();
+
+      if (this.currentIndex === null) return;
+
+      this._dropdownElement.selectItem(this.currentIndex);
+    }
+
+    if (event.key === 'Home' && this.dropdownVisible) {
+      this.currentIndex = 0;
+    }
+
+    if (event.key === 'End' && this.dropdownVisible) {
+      this.currentIndex = this._items.length - 1;
     }
   }
 
@@ -289,236 +325,169 @@ export class CSelect {
     }
   }
 
-  @Listen('keydown', { capture: true })
-  handleKeyDown(ev: KeyboardEvent) {
-    if (this.disabled) return;
+  @Listen('selectOption')
+  onSelectOption(event: CustomEvent<{ name: string; value: string }>) {
+    this._dropdownElement.close();
 
-    const letterNumber = /^[0-9a-zA-Z]+$/;
+    const { name, value } = event.detail;
 
-    if (ev.key.match(letterNumber) && ev.key.length === 1) {
-      if (
-        Date.now() - this._lastKeyPressTime > 3000 ||
-        this._searchString.length > 2
-      ) {
-        this._searchString = ev.key;
-      } else {
-        this._searchString = `${this._searchString}${ev.key}`;
-      }
-
-      this._lastKeyPressTime = Date.now();
-
-      const selectedItem = this._items.find((i) =>
-        i.name.toLowerCase().startsWith(this._searchString),
+    if (this.optionElementsExist && this.optionAsSelection) {
+      // const selection = this._cOptionElements[item.value.toString()];
+      const selection = Array.from(this.optionElements).find(
+        (item) => item.value === value && item.name === name,
       );
 
-      function isItem(element) {
-        return element === selectedItem;
-      }
+      if (!selection) return;
 
-      if (selectedItem) {
-        if (this.menuVisible) {
-          this.currentIndex = this._items.findIndex(isItem);
-          this._scrollToElement();
-        } else {
-          this.value = selectedItem;
-        }
-      }
+      const clone = selection.cloneNode(true);
+
+      this._selectionElement.classList.add('c-input-menu__selection--show');
+      this._selectionElement.replaceChildren(clone);
     }
 
-    if (ev.key === 'Tab') {
+    this.changeValue.emit(this.returnObject ? event.detail : value);
+
+    this._preventDialogOpen = true;
+
+    this._inputElement.focus();
+  }
+
+  private _toggleDropdown = (event) => {
+    event.stopPropagation();
+
+    if (this.dropdownVisible) {
       this._dropdownElement.close();
+
+      return;
     }
 
-    if (ev.key === 'ArrowDown') {
-      ev.preventDefault();
+    this._dropdownElement.open();
+  };
 
-      if (this.dropdownVisible) return;
+  private _onButtonKeyDown = (
+    src: 'chevron' | 'reset',
+    event: KeyboardEvent,
+  ) => {
+    event.stopPropagation();
 
-      this._showMenu();
+    if (event.key !== 'Tab') event.preventDefault();
 
-      this._dropdownElement.focusItem(this.currentIndex);
+    if (['Enter', ' '].includes(event.key)) {
+      if (src === 'chevron') {
+        this._toggleDropdown(event);
+
+        return;
+      }
+
+      this._onReset(event);
+
+      // this._preventDialogOpen = true;
+
+      requestAnimationFrame(() => {
+        this._inputElement.focus();
+      });
     }
+  };
 
-    if (ev.key === 'ArrowUp') {
-      ev.preventDefault();
+  private _onSlotChange = () => {
+    this.optionElements = this.el.querySelectorAll('c-option');
 
-      if (this.dropdownVisible) return;
-
-      this._showMenu();
-
-      this._dropdownElement.focusItem(this.currentIndex);
+    if (this.optionElements.length && !this.optionElementsExist) {
+      this.optionElementsExist = true;
     }
+  };
 
-    if (ev.key === ' ') {
-      ev.preventDefault();
+  private _onReset = (event) => {
+    event.stopPropagation();
 
-      this._showMenu();
-    }
+    this.changeValue.emit(null);
+
+    this._selectionElement.classList.remove('c-input-menu__selection--show');
+    this._selectionElement.replaceChildren(null);
+
+    // this._preventDialogOpen = true;
+
+    this._cInputElement.reset();
+
+    this._inputElement.focus();
+
+    this._dropdownElement.updateList();
+  };
+
+  private _updateInput() {
+    this._dropdownElement.open();
+
+    this._dropdownElement.updateList();
   }
 
-  /**
-   * Select item by index
-   */
-  @Method()
-  async onItemSelection(index: number) {
-    this.currentIndex = index;
+  private _updateStatusText() {
+    if (this._debounce !== null) {
+      clearTimeout(this._debounce);
+      this._debounce = null;
+    }
 
-    this._selectItem();
+    this._debounce = window.setTimeout(() => {
+      this.statusText = '';
+
+      if (this.currentIndex === null) {
+        this.statusText = this._items.length
+          ? `${this._items.length} option${
+              this._items.length !== 1 ? 's' : ''
+            } available`
+          : 'No options available';
+      }
+
+      const ending = !!this._items.length
+        ? ', navigate using the up and down arrows'
+        : '';
+
+      this._dropdownElement.setStatusText(this.statusText + ending);
+
+      this._debounce = null;
+    }, 1400);
   }
 
-  /**
-   * Hide menu
-   * @private
-   */
-  @Method()
-  async onHideMenu() {
-    this.menuVisible = false;
-  }
+  private _onInputFocus = () => {
+    if (!this._preventDialogOpen) {
+      this._dropdownElement.open();
+    }
+
+    this._updateStatusText();
+
+    this._preventDialogOpen = false;
+  };
 
   componentWillLoad() {
     CSelect._uniqueId += 1;
 
-    this._id =
-      this.hostId?.replace(/[^a-zA-Z0-9-_]/g, '') ??
-      CSelect._uniqueId.toString();
-
     this._inputId =
-      'input-' +
-      (this.hostId || this.label || this.placeholder)
-        .replace(/[^a-zA-Z0-9-_]/g, '')
-        .toLowerCase();
-
-    this._setInitialValue();
-  }
-
-  private _setInitialValue() {
-    if (!this.value) return;
-
-    const value = this.returnValue
-      ? this.value
-      : (this.value as CSelectItem).value;
-
-    this.internals.setFormValue(value as string);
-  }
-
-  componentDidLoad() {
-    this._getOptionItems();
-
-    if (
-      (this.value || typeof this.value === 'boolean') &&
-      !this.currentIndex &&
-      this.currentIndex !== 0
-    ) {
-      this.currentIndex = this._items.findIndex(
-        (item) => item.value === this.value,
+      'input_' +
+      (this.hostId || this.label || this.placeholder).replace(
+        /[^a-zA-Z0-9-_]/g,
+        '',
       );
-    }
   }
 
-  disconnectedCallback() {
-    this._observer.disconnect();
-  }
-
-  private _inputId: string;
-
-  private _lastKeyPressTime = null;
-
-  private _searchString = '';
-
-  private _blurred = false;
-
-  private _optionItems: CSelectItem[] = [];
-
-  private _inputElement: HTMLInputElement;
-
-  private _dropdownElement: HTMLCDropdownElement;
-
-  private _selectItem() {
-    const selectedItem = this._items[this.currentIndex];
-
-    this.value = selectedItem;
-
-    this._scrollToElement();
-  }
-
-  /**
-   * @private
-   */
-  @Method()
-  async setActiveDescendant(id: string) {
-    this._inputElement.setAttribute('aria-activedescendant', id);
-  }
-
-  private _showMenu() {
-    if (this.disabled) return;
-
-    this.menuVisible = true;
-
-    this._dropdownElement.open();
-  }
-
-  private _getOptionItems() {
-    requestAnimationFrame(() => {
-      this._cOptionElements = {};
-
-      let selection: CSelectItem | null = null;
-
-      this._optionItems = (
-        this.el ? Array.from(this.el.querySelectorAll('c-option')) : []
-      ).map((item, index) => {
-        const cSelectItem = {
-          value: item.value,
-          name: item.name || item.innerText,
-          disabled: !!item.disabled,
-        } as CSelectItem;
-
-        if (item.selected) {
-          selection = cSelectItem;
-        }
-
-        item.slot = `option-${index}`;
-
-        this._cOptionElements[item.value.toString()] = item;
-
-        return cSelectItem;
-      });
-
-      this.hasOptionItems = !!this._optionItems.length;
-
-      if (selection) {
-        this._valueChangedHandler(selection);
-      }
-    });
-  }
-
-  private _runValidate() {
-    if (
-      this.required &&
-      !this.value &&
-      (this._blurred || !this.validateOnBlur)
-    ) {
-      this._outerWrapperClasses.push('required');
-      this._validationClasses.push('show');
-    } else {
-      this._outerWrapperClasses = this._outerWrapperClasses.filter(
-        (c) => c !== 'required',
-      );
-      this._validationClasses = this._validationClasses.filter(
-        (c) => c !== 'show',
-      );
-    }
+  private _renderLoader() {
+    return <c-spinner color="var(--_c-autocomplete-active-color)" size={20} />;
   }
 
   private _renderChevron() {
     const classes = {
       'c-input-menu__chevron': true,
-      'c-input-menu__chevron--active': this.menuVisible,
+      'c-input-menu__chevron--active': this.dropdownVisible,
     };
 
     return (
-      <svg class={classes} viewBox="0 0 24 24">
-        <path d={mdiChevronDown} />
-      </svg>
+      <c-icon-button
+        size="x-small"
+        class={classes}
+        text
+        onClick={(event) => this._toggleDropdown(event)}
+        onKeyDown={(event) => this._onButtonKeyDown('chevron', event)}
+      >
+        <c-icon path={mdiChevronDown} size={24} />
+      </c-icon-button>
     );
   }
 
@@ -526,18 +495,19 @@ export class CSelect {
     return (
       <div class="c-input-menu__input">
         <input
-          aria-controls={this._inputId + '-items'}
-          aria-expanded={this.menuVisible.toString()}
-          aria-readonly="true"
-          aria-haspopup="listbox"
+          type="text"
+          readonly
           ref={(el) => (this._inputElement = el)}
-          id={this._inputId}
+          aria-expanded={this.dropdownVisible.toString()}
+          aria-owns={this._inputId + '-items'}
+          aria-autocomplete="list"
           autocomplete="off"
           class="c-input__input"
-          type="text"
-          value={this._getLabel() ?? null}
+          role="combobox"
+          value={this._value}
           name={this.name ?? null}
-          readonly="true"
+          onInput={() => this._updateInput()}
+          onFocus={() => this._onInputFocus()}
         />
 
         <div
@@ -548,96 +518,79 @@ export class CSelect {
     );
   }
 
-  private _handleSlotChange = () => {
-    this._getOptionItems();
-  };
-
-  private _updateStatusText() {
-    if (this._debounce !== null) {
-      clearTimeout(this._debounce);
-      this._debounce = null;
-    }
-
-    this._debounce = window.setTimeout(() => {
-      const selection = this.el.shadowRoot.querySelector(
-        'li[aria-selected="true"]',
-      ) as HTMLLIElement;
-
-      const ending = !!this._items.length
-        ? ', to navigate use up and down arrows'
-        : '';
-
-      const isDisabled = !!selection?.classList?.contains('disabled');
-
-      const beginning = isDisabled ? 'Disabled option - ' : '';
-
-      const selectionText = !!selection
-        ? `${beginning}${selection.dataset.value} -  ${selection.ariaPosInSet} of ${selection.ariaSetSize} is highlighted`
-        : null;
-
-      this.statusText = `${selectionText || ending}`;
-
-      this._debounce = null;
-    }, 1400);
+  private _renderReset() {
+    return (
+      <c-icon-button
+        aria-label=""
+        size="x-small"
+        text
+        onClick={(event) => this._onReset(event)}
+        onKeyDown={(event) => this._onButtonKeyDown('reset', event)}
+      >
+        <c-icon path={mdiClose} size={20} />
+      </c-icon-button>
+    );
   }
 
   render() {
+    const itemType = this.optionElementsExist ? 'option' : 'item';
+
     return (
-      <Host title={this._getLabel() ?? null}>
-        <div
-          id={'announce-' + this._id}
-          class="visuallyhidden"
-          aria-live="polite"
-          aria-atomic="true"
-        >
-          {this.statusText}
-        </div>
-
-        <c-input
-          autofocus={this.autofocus}
-          disabled={this.disabled}
-          hide-details={this.hideDetails}
-          hint={this.hint}
-          id={this.hostId}
-          input-id={this._inputId}
-          items={this._items}
+      <Host>
+        <c-dropdown
+          ref={(el) => (this._dropdownElement = el)}
+          id={`${this._id}-dropdown`}
+          index={this.currentIndex}
           items-per-page={this.itemsPerPage}
-          label={this.label}
-          name={this.name}
-          placeholder={this.placeholder}
-          required={this.required}
-          shadow={this.shadow}
-          valid={this.valid}
-          validate={this.validate}
-          validate-on-blur={this.validateOnBlur}
-          validation={this.validation}
-          value={this.value}
-          variant="select"
-          onItemClick={() => this._showMenu()}
+          item-type={itemType}
+          items={this._items as NodeListOf<HTMLCOptionElement> & CSelectItem[]}
+          parent={this.el}
+          type="select"
         >
-          <slot name="pre" slot="pre"></slot>
-
-          <div class="c-input__content">
-            {this._renderInputElement()}
-            {this._renderChevron()}
-
-            <slot onSlotchange={this._handleSlotChange}></slot>
-          </div>
-
-          {/* <c-dropdown
-            ref={(el) => (this._dropdownElement = el)}
-            slot="dropdown"
-            items={this._items}
-            options={this._cOptionElements}
-            items-per-page={this.itemsPerPage}
-            parent={this.el}
-            index={this.currentIndex}
+          <c-input
+            slot="default"
+            ref={(el) => (this._cInputElement = el)}
+            active={this.dropdownVisible}
+            disabled={this.disabled}
+            hide-details={this.hideDetails}
+            hint={this.hint}
+            id={this.hostId}
             input-id={this._inputId}
-            type="select"
-          /> */}
+            label={this.label}
+            name={this.name}
+            placeholder={this.placeholder}
+            required={this.required}
+            shadow={this.shadow}
+            valid={this.valid}
+            validate={this.validate}
+            validate-on-blur={this.validateOnBlur}
+            validation={this.validation}
+            value={this.value}
+            variant="select"
+            onClick={() => this._dropdownElement.open()}
+          >
+            <slot name="pre" slot="pre"></slot>
 
-          <slot name="post" slot="post"></slot>
-        </c-input>
+            <div class="c-input__content">
+              {this._renderInputElement()}
+
+              {this.loading && this._renderLoader()}
+
+              {!this.loading &&
+                this.value &&
+                this.clearable &&
+                this._renderReset()}
+
+              {!this.loading &&
+                (!this.value || !this.clearable) &&
+                this._renderChevron()}
+
+              <slot onSlotchange={() => this._onSlotChange()}></slot>
+            </div>
+
+            <slot name="post" slot="post"></slot>
+          </c-input>
+        </c-dropdown>
       </Host>
     );
   }
