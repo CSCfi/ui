@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.0.17](https://github.com/CSCfi/ui/compare/v1.0.16...v1.0.17) (2023-11-20)
+
+
+### Features
+
+* c-autocomplete, c-select: Improved usability in mobile browsers. ([ce13cbe](https://github.com/CSCfi/ui/commit/ce13cbeaf4bc41bedb06921c6bfd8b189d907c11))
+
 ## [1.0.16](https://github.com/CSCfi/ui/compare/v1.0.15...v1.0.16) (2023-11-10)
 
 
