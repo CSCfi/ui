@@ -40,6 +40,22 @@
         highlightjs
         persistent-copy-button
       />
+
+      <p>
+        <strong>
+          3. Add the following line to
+          <code>main.css</code>
+        </strong>
+      </p>
+
+      <code-block
+        theme="atom-one-dark"
+        lang="css"
+        code="@import url('@cscfi/csc-ui/css/theme.css');"
+        code-block-radius="6px"
+        highlightjs
+        persistent-copy-button
+      />
     </c-card-content>
   </c-card>
 </template>

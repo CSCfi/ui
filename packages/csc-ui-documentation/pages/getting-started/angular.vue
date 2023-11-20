@@ -58,6 +58,22 @@
       />
 
       <p>
+        <strong>
+          4. Add the following line to
+          <code>styles.scss</code>
+        </strong>
+      </p>
+
+      <code-block
+        theme="atom-one-dark"
+        lang="css"
+        code="@import url('@cscfi/csc-ui/css/theme.css');"
+        code-block-radius="6px"
+        highlightjs
+        persistent-copy-button
+      />
+
+      <p>
         Now you should be able to use the CSC Design system components in your
         project. Please note that the components require the control value
         accessor

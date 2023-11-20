@@ -2,7 +2,9 @@
   <component-example name="dismissable">
     <template #title>Dismissable</template>
 
-    <template #subtitle>With fullscreen toggle</template>
+    <template #subtitle>
+      With fullscreen toggle and without backdrop blur
+    </template>
 
     <c-button
       @click="dismissableModal = true"
@@ -12,7 +14,12 @@
       Open dismissable modal
     </c-button>
 
-    <c-modal v-model="dismissableModal" v-control dismissable>
+    <c-modal
+      v-model="dismissableModal"
+      v-control
+      dismissable
+      disable-backdrop-blur
+    >
       <c-card fullscreen>
         <c-card-title>Dismissable</c-card-title>
 

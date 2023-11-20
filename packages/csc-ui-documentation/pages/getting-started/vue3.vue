@@ -58,6 +58,22 @@
       />
 
       <p>
+        <strong>
+          4. Add the following line to
+          <code>main.css</code>
+        </strong>
+      </p>
+
+      <code-block
+        theme="atom-one-dark"
+        lang="css"
+        code="@import url('@cscfi/csc-ui/css/theme.css');"
+        code-block-radius="6px"
+        highlightjs
+        persistent-copy-button
+      />
+
+      <p>
         Now you should be able to use the CSC Design system components in your
         project.
       </p>
@@ -67,7 +83,7 @@
 
 <script setup lang="ts">
 const mainTs = `import { createApp } from 'vue';
-import { applyPolyfills, defineCustomElements } from 'csc-ui/loader';
+import { applyPolyfills, defineCustomElements } from '@cscfi/csc-ui/loader';
 import { vControl } from '@cscfi/csc-ui-vue';
 
 import App from './App.vue';

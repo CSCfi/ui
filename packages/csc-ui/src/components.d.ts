@@ -6,9 +6,7 @@
  */
 import { HTMLStencilElement, JSXBase } from "@stencil/core/internal";
 import { CAlertType, CAutocompleteItem, CDataTableData, CDataTableFooterOptions, CDataTableHeader, CLoginCardBlendMode, CMenuOption, CPaginationOptions, CRadioGroupItem, CRowAlign, CRowJustify, CSelectItem, CTabsJustify, CToastMessage } from "./types";
-import { _CDropdownUpdateParams } from "./components/c-dropdown/c-dropdown";
 export { CAlertType, CAutocompleteItem, CDataTableData, CDataTableFooterOptions, CDataTableHeader, CLoginCardBlendMode, CMenuOption, CPaginationOptions, CRadioGroupItem, CRowAlign, CRowJustify, CSelectItem, CTabsJustify, CToastMessage } from "./types";
-export { _CDropdownUpdateParams } from "./components/c-dropdown/c-dropdown";
 export namespace Components {
     /**
      * @group Content Selectors
@@ -72,14 +70,6 @@ export namespace Components {
      */
     interface CAutocomplete {
         /**
-          * Auto focus the input
-         */
-        "autofocus": boolean;
-        /**
-          * Dense variant
-         */
-        "dense": boolean;
-        /**
           * Disable the input
          */
         "disabled": boolean;
@@ -96,7 +86,7 @@ export namespace Components {
          */
         "hostId": string;
         /**
-          * Items to be selected
+          * Dropdown items
          */
         "items": CAutocompleteItem[];
         /**
@@ -108,22 +98,13 @@ export namespace Components {
          */
         "label": string;
         /**
+          * Show loading state
+         */
+        "loading": boolean;
+        /**
           * Input field name
          */
         "name": string;
-        /**
-          * Hide menu
-          * @private
-         */
-        "onHideMenu": () => Promise<void>;
-        /**
-          * Select item by index
-         */
-        "onItemSelection": (index: number) => Promise<void>;
-        /**
-          * display the option as selection (works only when c-option elements are used)
-         */
-        "optionAsSelection": false;
         /**
           * Placeholder text
          */
@@ -137,25 +118,17 @@ export namespace Components {
          */
         "required": boolean;
         /**
-          * Return only the item value rather than the whole item object
+          * Reset autocomplete state
          */
-        "returnValue": false;
+        "reset": () => Promise<void>;
         /**
-          * @private
+          * Return object instead of value
          */
-        "setActiveDescendant": (id: string) => Promise<void>;
-        /**
-          * Sets the value of the autocomplete externally
-         */
-        "setValue": (event: any, item: any) => Promise<void>;
+        "returnObject": boolean;
         /**
           * Shadow variant
          */
         "shadow": boolean;
-        /**
-          * @private
-         */
-        "updateQuery": (query: string) => Promise<void>;
         /**
           * Set the validíty of the input
          */
@@ -451,65 +424,60 @@ export namespace Components {
     }
     interface CDropdown {
         /**
-          * @private
+          * Open dropdown
          */
         "close": () => Promise<void>;
         /**
           * @private
          */
-        "focusDropdown": () => Promise<void>;
+        "focusItem": (index: number) => Promise<void>;
         /**
-          * @private
+          * Id of the element
          */
-        "focusItem": (type: number) => Promise<void>;
+        "hostId": string;
         /**
-          * Focus dropdown on open
-         */
-        "focusList": boolean;
-        /**
-          * Initial value index
+          * Current index value
          */
         "index": number;
         /**
-          * Id of the input element
+          * Type of items
          */
-        "inputId": string;
+        "itemType": 'option' | 'item';
         /**
-          * Dropdown open state
+          * Dropdown options
          */
-        "isOpen": boolean;
-        /**
-          * Dropdown items
-         */
-        "items": CSelectItem[] | CAutocompleteItem[];
+        "items": | NodeListOf<HTMLCOptionElement>
+    | CAutocompleteItem[]
+    | CSelectItem[];
         /**
           * Items per page before adding scroll
          */
         "itemsPerPage": number;
         /**
-          * @private
+          * Open dropdown
          */
-        "open": (focusList?: boolean) => Promise<void>;
-        /**
-          * Dropdown options
-         */
-        "options": Record<string, HTMLCOptionElement>;
+        "open": () => Promise<void>;
         /**
           * Dropdown parent
          */
         "parent": HTMLCSelectElement | HTMLCAutocompleteElement;
         /**
+          * Select item
+          * @returns the disabled status of the input
+         */
+        "selectItem": (index: number) => Promise<boolean>;
+        /**
+          * @private
+         */
+        "setStatusText": (text: string) => Promise<void>;
+        /**
           * Type of the parent element
          */
         "type": 'select' | 'autocomplete';
         /**
-          * @private
+          * Update list items
          */
-        "updateDropdown": (params: _CDropdownUpdateParams) => Promise<void>;
-        /**
-          * @private
-         */
-        "wasClicked": boolean;
+        "updateList": () => Promise<void>;
     }
     /**
      * @group Other
@@ -578,6 +546,10 @@ export namespace Components {
      */
     interface CInput {
         /**
+          * Active state
+         */
+        "active": boolean;
+        /**
           * Auto focus the input
          */
         "autofocus": boolean;
@@ -641,6 +613,10 @@ export namespace Components {
           * Set the input as required
          */
         "required": boolean;
+        /**
+          * @private
+         */
+        "reset": () => Promise<void>;
         /**
           * Rows on the input
          */
@@ -953,6 +929,10 @@ export namespace Components {
      */
     interface CModal {
         /**
+          * Disable backdrop blur effect
+         */
+        "disableBackdropBlur": boolean;
+        /**
           * Dismissed when touching/clicking outside the content
          */
         "dismissable": boolean;
@@ -1195,9 +1175,9 @@ export namespace Components {
      */
     interface CSelect {
         /**
-          * Auto focus the input
+          * Make the selected value clearable
          */
-        "autofocus": boolean;
+        "clearable": boolean;
         /**
           * Disable the input
          */
@@ -1215,7 +1195,7 @@ export namespace Components {
          */
         "hostId": string;
         /**
-          * selectable items
+          * Dropdown items
          */
         "items": CSelectItem[];
         /**
@@ -1227,18 +1207,13 @@ export namespace Components {
          */
         "label": string;
         /**
+          * Show loading state
+         */
+        "loading": boolean;
+        /**
           * Input field name
          */
         "name": string;
-        /**
-          * Hide menu
-          * @private
-         */
-        "onHideMenu": () => Promise<void>;
-        /**
-          * Select item by index
-         */
-        "onItemSelection": (index: number) => Promise<void>;
         /**
           * display the option as selection (works only when c-option elements are used)
          */
@@ -1248,23 +1223,23 @@ export namespace Components {
          */
         "placeholder": string;
         /**
-          * Set as required
+          * Show required validation
          */
         "required": boolean;
         /**
-          * Return only the item value rather than the whole item object
+          * Reset select state
          */
-        "returnValue": false;
+        "reset": () => Promise<void>;
         /**
-          * @private
+          * Return object instead of value
          */
-        "setActiveDescendant": (id: string) => Promise<void>;
+        "returnObject": boolean;
         /**
           * Shadow variant
          */
         "shadow": boolean;
         /**
-          * Set the validity of the input
+          * Set the validíty of the input
          */
         "valid": boolean;
         /**
@@ -1282,7 +1257,7 @@ export namespace Components {
         /**
           * Selected item
          */
-        "value": string | number | boolean | CSelectItem;
+        "value": string | number | CSelectItem;
     }
     /**
      * @group Navigation
@@ -1827,6 +1802,10 @@ export interface CDataTableCustomEvent<T> extends CustomEvent<T> {
     detail: T;
     target: HTMLCDataTableElement;
 }
+export interface CDropdownCustomEvent<T> extends CustomEvent<T> {
+    detail: T;
+    target: HTMLCDropdownElement;
+}
 export interface CInputCustomEvent<T> extends CustomEvent<T> {
     detail: T;
     target: HTMLCInputElement;
@@ -2095,7 +2074,19 @@ declare global {
         prototype: HTMLCDataTableElement;
         new (): HTMLCDataTableElement;
     };
+    interface HTMLCDropdownElementEventMap {
+        "selectOption": any;
+        "dropdownStateChange": boolean;
+    }
     interface HTMLCDropdownElement extends Components.CDropdown, HTMLStencilElement {
+        addEventListener<K extends keyof HTMLCDropdownElementEventMap>(type: K, listener: (this: HTMLCDropdownElement, ev: CDropdownCustomEvent<HTMLCDropdownElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions): void;
+        removeEventListener<K extends keyof HTMLCDropdownElementEventMap>(type: K, listener: (this: HTMLCDropdownElement, ev: CDropdownCustomEvent<HTMLCDropdownElementEventMap[K]>) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | EventListenerOptions): void;
     }
     var HTMLCDropdownElement: {
         prototype: HTMLCDropdownElement;
@@ -2962,14 +2953,6 @@ declare namespace LocalJSX {
      */
     interface CAutocomplete {
         /**
-          * Auto focus the input
-         */
-        "autofocus"?: boolean;
-        /**
-          * Dense variant
-         */
-        "dense"?: boolean;
-        /**
           * Disable the input
          */
         "disabled"?: boolean;
@@ -2986,7 +2969,7 @@ declare namespace LocalJSX {
          */
         "hostId"?: string;
         /**
-          * Items to be selected
+          * Dropdown items
          */
         "items"?: CAutocompleteItem[];
         /**
@@ -2998,6 +2981,10 @@ declare namespace LocalJSX {
          */
         "label"?: string;
         /**
+          * Show loading state
+         */
+        "loading"?: boolean;
+        /**
           * Input field name
          */
         "name"?: string;
@@ -3006,13 +2993,9 @@ declare namespace LocalJSX {
          */
         "onChangeQuery"?: (event: CAutocompleteCustomEvent<any>) => void;
         /**
-          * Triggered when an item is selected
+          * Triggered when option is selected
          */
         "onChangeValue"?: (event: CAutocompleteCustomEvent<any>) => void;
-        /**
-          * display the option as selection (works only when c-option elements are used)
-         */
-        "optionAsSelection"?: false;
         /**
           * Placeholder text
          */
@@ -3026,9 +3009,9 @@ declare namespace LocalJSX {
          */
         "required"?: boolean;
         /**
-          * Return only the item value rather than the whole item object
+          * Return object instead of value
          */
-        "returnValue"?: false;
+        "returnObject"?: boolean;
         /**
           * Shadow variant
          */
@@ -3345,33 +3328,35 @@ declare namespace LocalJSX {
     }
     interface CDropdown {
         /**
-          * Focus dropdown on open
+          * Id of the element
          */
-        "focusList"?: boolean;
+        "hostId"?: string;
         /**
-          * Initial value index
+          * Current index value
          */
         "index"?: number;
         /**
-          * Id of the input element
+          * Type of items
          */
-        "inputId"?: string;
+        "itemType"?: 'option' | 'item';
         /**
-          * Dropdown open state
+          * Dropdown options
          */
-        "isOpen"?: boolean;
-        /**
-          * Dropdown items
-         */
-        "items"?: CSelectItem[] | CAutocompleteItem[];
+        "items"?: | NodeListOf<HTMLCOptionElement>
+    | CAutocompleteItem[]
+    | CSelectItem[];
         /**
           * Items per page before adding scroll
          */
         "itemsPerPage"?: number;
         /**
-          * Dropdown options
+          * Triggered when dropdown opens or closes
          */
-        "options"?: Record<string, HTMLCOptionElement>;
+        "onDropdownStateChange"?: (event: CDropdownCustomEvent<boolean>) => void;
+        /**
+          * Triggered when option is selected
+         */
+        "onSelectOption"?: (event: CDropdownCustomEvent<any>) => void;
         /**
           * Dropdown parent
          */
@@ -3380,10 +3365,6 @@ declare namespace LocalJSX {
           * Type of the parent element
          */
         "type"?: 'select' | 'autocomplete';
-        /**
-          * @private
-         */
-        "wasClicked"?: boolean;
     }
     /**
      * @group Other
@@ -3451,6 +3432,10 @@ declare namespace LocalJSX {
      * @parent None
      */
     interface CInput {
+        /**
+          * Active state
+         */
+        "active"?: boolean;
         /**
           * Auto focus the input
          */
@@ -3858,6 +3843,10 @@ declare namespace LocalJSX {
      */
     interface CModal {
         /**
+          * Disable backdrop blur effect
+         */
+        "disableBackdropBlur"?: boolean;
+        /**
           * Dismissed when touching/clicking outside the content
          */
         "dismissable"?: boolean;
@@ -4116,9 +4105,9 @@ declare namespace LocalJSX {
      */
     interface CSelect {
         /**
-          * Auto focus the input
+          * Make the selected value clearable
          */
-        "autofocus"?: boolean;
+        "clearable"?: boolean;
         /**
           * Disable the input
          */
@@ -4136,7 +4125,7 @@ declare namespace LocalJSX {
          */
         "hostId"?: string;
         /**
-          * selectable items
+          * Dropdown items
          */
         "items"?: CSelectItem[];
         /**
@@ -4148,11 +4137,15 @@ declare namespace LocalJSX {
          */
         "label"?: string;
         /**
+          * Show loading state
+         */
+        "loading"?: boolean;
+        /**
           * Input field name
          */
         "name"?: string;
         /**
-          * Triggered when an item is selected
+          * Triggered when option is selected
          */
         "onChangeValue"?: (event: CSelectCustomEvent<any>) => void;
         /**
@@ -4164,19 +4157,19 @@ declare namespace LocalJSX {
          */
         "placeholder"?: string;
         /**
-          * Set as required
+          * Show required validation
          */
         "required"?: boolean;
         /**
-          * Return only the item value rather than the whole item object
+          * Return object instead of value
          */
-        "returnValue"?: false;
+        "returnObject"?: boolean;
         /**
           * Shadow variant
          */
         "shadow"?: boolean;
         /**
-          * Set the validity of the input
+          * Set the validíty of the input
          */
         "valid"?: boolean;
         /**
@@ -4194,7 +4187,7 @@ declare namespace LocalJSX {
         /**
           * Selected item
          */
-        "value"?: string | number | boolean | CSelectItem;
+        "value"?: string | number | CSelectItem;
     }
     /**
      * @group Navigation

@@ -8,5 +8,9 @@
 import Basic from './Basic.vue';
 import Variants from './Variants.vue';
 
+defineOptions({
+  inheritAttrs: false,
+});
+
 usePageTitles();
 </script>

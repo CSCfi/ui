@@ -1,12 +1,10 @@
 <template>
   <component-example name="manual" rows>
-    <template #title>Basic usage</template>
-
-    <template #subtitle>Manual submitting</template>
+    <template #title>Manual submitting</template>
 
     <div>
       <c-otp-input
-        id="basic-otp-example"
+        id="manual-submit-example"
         v-model="otp"
         v-control
         hint="Please enter your one time password"

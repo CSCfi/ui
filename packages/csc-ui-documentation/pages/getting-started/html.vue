@@ -13,12 +13,25 @@
         to bring the component library to your HTML page
       </p>
 
-      <p><strong>CDN: Add following script before closing body tag</strong></p>
+      <p><strong>CDN</strong></p>
+
+      <p>Add following script before closing body tag</p>
 
       <code-block
         theme="atom-one-dark"
         lang="html"
         :code="cdn"
+        code-block-radius="6px"
+        highlightjs
+        persistent-copy-button
+      />
+
+      <p>Add following line inside head tag to enable styles</p>
+
+      <code-block
+        theme="atom-one-dark"
+        lang="html"
+        :code="css"
         code-block-radius="6px"
         highlightjs
         persistent-copy-button
@@ -43,6 +56,14 @@ const cdn = computed(() => {
     version.value +
     '/dist/csc-ui/csc-ui.esm.js"></' +
     'script>'
+  );
+});
+
+const css = computed(() => {
+  return (
+    '<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@cscfi/csc-ui@' +
+    version.value +
+    '/dist/styles/css/theme.css"></link>'
   );
 });
 </script>

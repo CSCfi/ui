@@ -1,20 +1,17 @@
+import { mdiAlert } from '@mdi/js';
 import {
   Component,
-  Element,
   Host,
-  Method,
   Prop,
-  State,
-  Watch,
   h,
+  Element,
+  Method,
+  Watch,
+  Event,
+  EventEmitter,
+  State,
 } from '@stencil/core';
 import { CAutocompleteItem, CSelectItem } from '../../types';
-import { mdiAlert } from '@mdi/js';
-
-export type _CDropdownUpdateParams = {
-  items?: CSelectItem[] | CAutocompleteItem[];
-  options?: Record<string, HTMLCOptionElement>;
-};
 
 @Component({
   tag: 'c-dropdown',
@@ -22,31 +19,7 @@ export type _CDropdownUpdateParams = {
   shadow: true,
 })
 export class CDropdown {
-  @Element() host: HTMLCDropdownElement;
-
-  /**
-   * Dropdown items
-   */
-  @Prop() items: CSelectItem[] | CAutocompleteItem[] = [];
-
-  @Watch('items')
-  onItemsChange() {
-    if (!this.items.length) return;
-
-    this._updateMenuItems();
-  }
-
-  /**
-   * Dropdown options
-   */
-  @Prop() options: Record<string, HTMLCOptionElement>;
-
-  @Watch('options')
-  onOptionsChange() {
-    if (!Object.keys(this.options).length) return;
-
-    this._updateMenuItems();
-  }
+  @Element() el: HTMLCDropdownElement;
 
   /**
    * Items per page before adding scroll
@@ -59,24 +32,27 @@ export class CDropdown {
   @Prop() parent: HTMLCSelectElement | HTMLCAutocompleteElement;
 
   /**
-   * Initial value index
+   * Dropdown options
+   */
+  @Prop() items:
+    | NodeListOf<HTMLCOptionElement>
+    | CAutocompleteItem[]
+    | CSelectItem[];
+
+  /**
+   * Current index value
    */
   @Prop() index: number;
 
   /**
-   * Dropdown open state
+   * Id of the element
    */
-  @Prop() isOpen = false;
+  @Prop({ attribute: 'id' }) hostId: string;
 
   /**
-   * Focus dropdown on open
+   * Triggered when option is selected
    */
-  @Prop() focusList: boolean;
-
-  /**
-   * Id of the input element
-   */
-  @Prop() inputId: string;
+  @Event() selectOption: EventEmitter;
 
   /**
    * Type of the parent element
@@ -84,36 +60,66 @@ export class CDropdown {
   @Prop() type: 'select' | 'autocomplete';
 
   /**
-   * @private
+   * Type of items
    */
-  @Prop() wasClicked = false;
+  @Prop() itemType: 'option' | 'item';
 
-  @State() currentIndex: number = null;
+  /**
+   * Triggered when dropdown opens or closes
+   */
+  @Event() dropdownStateChange: EventEmitter<boolean>;
 
-  @State() isVisible = false;
+  /**
+   * Dropdown dialog element
+   */
+  private _dialog: HTMLDialogElement;
 
-  @State() topPosition: number;
+  private _debounce = null;
+
+  private _list: HTMLUListElement;
+
+  private _outsideClickFn: () => void;
+
+  private _resizeObserver: ResizeObserver;
+
+  private _inputElement: HTMLCInputElement;
+
+  private _dummyElement: HTMLDivElement;
+
+  private _isMobile = false;
+
+  private _listItems: HTMLLIElement[] = [];
+
+  @State() renderedList = null;
+
+  @State() isOpen = false;
 
   @State() statusText = '';
 
-  private _id = '';
-
-  /**
-   * @private
-   */
-  @Method()
-  async updateDropdown(params: _CDropdownUpdateParams) {
-    this.items = [];
-    this._itemRefs = [];
-    this.options = {};
-
+  @Watch('items')
+  optionsWatcher() {
     requestAnimationFrame(() => {
-      this.currentIndex = null;
-      this.items = params.items || this.items;
-      this.options = params.options || this.options;
+      this.renderedList = this._renderList();
+    });
+  }
 
-      this._updateMenuItems();
+  @Watch('isOpen')
+  stateWatcher() {
+    this.dropdownStateChange.emit(this.isOpen);
+  }
+
+  @Watch('index')
+  handleIndexChange(index) {
+    requestAnimationFrame(() => {
       this._updateStatusText();
+
+      this._listItems.forEach((item, itemIndex) => {
+        item?.classList.toggle('active', index === itemIndex);
+
+        if (index === itemIndex) {
+          item?.focus();
+        }
+      });
     });
   }
 
@@ -121,9 +127,9 @@ export class CDropdown {
    * @private
    */
   @Method()
-  async focusDropdown() {
+  async setStatusText(text: string) {
     requestAnimationFrame(() => {
-      this._listElement.focus();
+      this.statusText = text;
     });
   }
 
@@ -131,314 +137,138 @@ export class CDropdown {
    * @private
    */
   @Method()
-  async open(focusList = false) {
-    this._onOpen();
-    this._createEventListeners();
+  async focusItem(index: number) {
+    requestAnimationFrame(() => {
+      this._listItems[index]?.focus();
+    });
+  }
+
+  /**
+   * Open dropdown
+   */
+  @Method()
+  async open() {
+    if (this._dialog.open) return;
 
     this._outsideClickFn = this._handleOutsideClick.bind(this);
 
+    window.addEventListener('click', this._outsideClickFn);
+
     requestAnimationFrame(() => {
-      if (focusList) {
-        this._listElement.focus();
-
-        if (this.type === 'autocomplete') {
-          this.currentIndex = 0;
-        }
-
-        this._handleCurrentIndexChange();
-      }
+      this.isOpen = true;
 
       this._positionMenu();
-
-      window.addEventListener('click', this._outsideClickFn);
     });
   }
 
   /**
-   * @private
+   * Open dropdown
    */
   @Method()
   async close() {
-    this._openedOnTop = false;
-    this._onClose();
+    this._dialog.close();
+
+    this.isOpen = false;
+
+    this._inputElement.slot = 'default';
+
+    this._inputElement.hideDetails = this._hideDetails;
+
+    this._dummyElement.style.width = '0';
+    this._dummyElement.style.display = 'none';
+    this._dialog.style.width = '0';
 
     window.removeEventListener('click', this._outsideClickFn);
   }
 
-  /**
-   * @private
-   */
-  @Method()
-  async focusItem(type: number) {
-    requestAnimationFrame(() => {
-      this.currentIndex = type;
+  private _setIsMobile() {
+    this._isMobile = window.matchMedia(
+      'only screen and (max-width: 760px)',
+    ).matches;
+  }
 
-      this._itemRefs[this.currentIndex].focus();
+  componentDidLoad() {
+    this._setIsMobile();
+
+    this._hideDetails = this.parent.hideDetails;
+
+    this._inputElement = this.el.querySelector('c-input');
+
+    this._resizeObserver = new ResizeObserver((entries) => {
+      requestAnimationFrame(() => {
+        if (!Array.isArray(entries) || !entries.length) return;
+
+        this._setIsMobile();
+
+        if (!this._dialog.open) return;
+
+        this.close();
+      });
+    });
+
+    this._resizeObserver.observe(window.document.body);
+
+    requestAnimationFrame(() => {
+      this.renderedList = this._renderList();
     });
   }
 
-  @Watch('currentIndex')
-  onCurrentIndexChange() {
-    this._handleCurrentIndexChange();
+  /**
+   * Select item
+   * @returns the disabled status of the input
+   */
+  @Method()
+  async selectItem(index: number) {
+    const item = this._listItems[index];
+
+    if (item.classList.contains('disabled')) {
+      return true;
+    }
+
+    this._listItems[index].click();
+
+    return false;
   }
 
-  private _debounce = null;
+  /**
+   * Update list items
+   */
+  @Method()
+  async updateList() {
+    requestAnimationFrame(() => {
+      this.renderedList = this._renderList();
+    });
+  }
 
-  private _itemRefs: HTMLLIElement[] = [];
+  private _handleOutsideClick(event) {
+    if (!this.isOpen) return;
 
-  private _lastKeyPressTime = null;
+    if (!event.composedPath().includes(this._dialog)) {
+      this.close();
+    }
+  }
 
-  private _listElement: HTMLUListElement;
-
-  private _dialogElement: HTMLDialogElement;
+  private _inputSize = {
+    height: 0,
+    width: 0,
+  };
 
   private _openedOnTop = false;
 
-  private _searchString = '';
-
-  private _resizeObserver: ResizeObserver;
-
-  private _outsideClickFn: () => void;
-
-  private get _listSize() {
-    return this.items.length || 0;
-  }
-
-  private get _firstSelectableIndex() {
-    return this.items.findIndex((item) => !item.disabled);
-  }
-
-  private get _lastSelectableIndex() {
-    return this.items.findLastIndex((item) => !item.disabled);
-  }
-
-  private _observer = new IntersectionObserver(
-    (entries, observer) => {
-      entries.forEach((entry) => {
-        if (!entry.isIntersecting) {
-          entry.target.scrollIntoView({
-            block: 'nearest',
-            inline: 'nearest',
-          });
-          observer.unobserve(entry.target);
-        } else {
-          observer.unobserve(entry.target);
-        }
-      });
-    },
-    { threshold: 1 },
-  );
+  private _hideDetails = false;
 
   private _highlightMatchingText(value: string) {
-    if (
-      this.type === 'select' ||
-      (this.parent as HTMLCAutocompleteElement).query === ''
-    )
-      return value;
+    const { query } = this.parent as HTMLCAutocompleteElement;
 
-    const regex = new RegExp(
-      (this.parent as HTMLCAutocompleteElement).query,
-      'gi',
-    );
+    if (this.parent.tagName === 'C-SELECT' || query === '') return value;
+
+    const regex = new RegExp(query, 'gi');
 
     const highlighted = value
       .replace(/(<([^>]+)>)/gi, '')
       .replace(regex, (match) => `<mark>${match}</mark>`);
 
     return highlighted;
-  }
-
-  private _renderMenuItem = (item: CSelectItem, index: number) => {
-    const isActive = this.items[this.currentIndex]?.value === item.value;
-
-    let itemId = 'none';
-
-    if (typeof item?.value === 'string') {
-      itemId = item.value.replace(/[^a-zA-Z0-9-_]/g, '');
-    }
-
-    itemId = `item_${this.inputId}--${itemId}`;
-
-    if (isActive) {
-      this.currentIndex = index;
-      this.parent.setActiveDescendant(itemId);
-    }
-
-    const listItem = document.createElement('li');
-
-    // a11y
-    listItem.role = 'option';
-    listItem.ariaPosInSet = (index + 1).toString();
-    listItem.ariaSetSize = this.items.length.toString();
-
-    listItem.ariaSelected = isActive.toString();
-
-    listItem.id = itemId;
-    listItem.dataset.value = item.name;
-    listItem.setAttribute('tabindex', '-1');
-
-    listItem.classList.toggle('disabled', !!item.disabled);
-
-    listItem.addEventListener('click', (event: MouseEvent) => {
-      const isDisabled = this._itemRefs[index].classList.contains('disabled');
-
-      if (isDisabled) {
-        event.preventDefault();
-
-        return;
-      }
-
-      this.currentIndex = index;
-      this._onSelect(index);
-    });
-
-    listItem.addEventListener('focus', () => {
-      listItem.classList.add('active');
-    });
-
-    listItem.addEventListener('blur', () => {
-      listItem.classList.remove('active');
-    });
-
-    this._itemRefs.push(listItem);
-
-    if (Object.keys(this.options).length) {
-      requestAnimationFrame(() => {
-        const option = this.options[item.value as string];
-
-        if (!option) return;
-
-        if (
-          (this.parent as HTMLCAutocompleteElement).query?.length &&
-          this.type === 'autocomplete'
-        ) {
-          const optionValue = option.querySelector('c-option-value');
-
-          if (optionValue) {
-            optionValue.innerHTML = this._highlightMatchingText(
-              optionValue.textContent,
-            );
-          }
-        }
-
-        listItem.appendChild(option);
-
-        this._listElement.appendChild(listItem);
-      });
-
-      return;
-    }
-
-    const span = document.createElement('span');
-    span.innerHTML = this._highlightMatchingText(item.name);
-
-    listItem.appendChild(span);
-
-    this._listElement.appendChild(listItem);
-  };
-
-  private _renderEmptyItem() {
-    const emptyElement = document.createElement('li');
-    emptyElement.tabIndex = -1;
-
-    const icon = document.createElement('c-icon');
-    icon.path = mdiAlert;
-    icon.size = 18;
-    icon.color = 'var(--c-warning-600)';
-
-    emptyElement.appendChild(icon);
-    emptyElement.append('No suggestions found');
-
-    this._listElement.replaceChildren(emptyElement);
-  }
-
-  private _updateMenuItems() {
-    if (!this.items.length) {
-      this._renderEmptyItem();
-
-      return;
-    }
-
-    this._listElement.replaceChildren();
-    this._itemRefs.length = 0;
-
-    this.items.map((item, index) => this._renderMenuItem(item, index));
-
-    requestAnimationFrame(() => {
-      this._positionMenu();
-    });
-  }
-
-  private _renderMenu() {
-    this._id = `${this.inputId}--items`;
-
-    const dialogElement = document.createElement('dialog');
-
-    const listElement = document.createElement('ul');
-
-    // a11y
-    listElement.role = `listbox`;
-    listElement.ariaExpanded = this.isVisible.toString();
-    listElement.tabIndex = -1;
-
-    listElement.id = this._id;
-
-    this._dialogElement = dialogElement;
-
-    this._listElement = listElement;
-
-    this._dialogElement.appendChild(listElement);
-
-    this.host.shadowRoot.appendChild(dialogElement);
-
-    this.items.map((item, index) => this._renderMenuItem(item, index));
-
-    this._listElement.addEventListener(
-      'keydown',
-      this._onKeyboardNavigation.bind(this),
-    );
-
-    this._listElement.addEventListener('keyup', this._onKeyDown.bind(this));
-  }
-
-  private _onOpen() {
-    this.parent.shadowRoot.querySelector('.c-input').classList.add('active');
-    this._listElement.classList.add('active');
-    this.isOpen = true;
-    this._listElement.ariaExpanded = 'true';
-    this._listElement.tabIndex = 0;
-    this._dialogElement.showModal();
-  }
-
-  private _onClose(focusInput = false) {
-    this.parent.onHideMenu();
-    this.parent.shadowRoot.querySelector('.c-input').classList.remove('active');
-    this._listElement.classList.remove('active');
-    this._listElement.ariaExpanded = 'false';
-    this._listElement.tabIndex = -1;
-    this.isOpen = false;
-    this.currentIndex = this.index;
-    this._dialogElement.close();
-
-    if (focusInput) {
-      this.parent.shadowRoot.querySelector('input').focus();
-    }
-  }
-
-  private _onSelect(index: number, focusInput = false) {
-    if (index === null) return;
-
-    const isDisabled = this._itemRefs[index].classList.contains('disabled');
-
-    if (isDisabled) return;
-
-    this.parent.onItemSelection(index);
-    this.index = index;
-    this._onClose(focusInput);
-
-    this._itemRefs.forEach((item, i) => {
-      item.ariaSelected = (i === index).toString();
-    });
   }
 
   private _getParentPosition() {
@@ -450,210 +280,158 @@ export class CDropdown {
   private _positionMenu() {
     const { innerWidth, innerHeight } = window;
 
-    const {
-      bottom: parentBottom,
-      left: parentLeft,
-      width: parentWidth,
-      top: parentTop,
-    } = this._getParentPosition();
+    this._dialog.style.width = 'auto';
+    this._dialog.style.opacity = '0';
 
-    this._dialogElement.style.width = `${parentWidth}px`;
-    this._dialogElement.style.top = `${parentBottom}px`;
-    this._dialogElement.style.bottom = 'auto';
-    this._dialogElement.style.left = `${parentLeft}px`;
-
-    this._dialogElement.style.removeProperty('transform');
-
-    const { bottom, right, height, width } =
-      this._dialogElement.getBoundingClientRect();
-
-    const isInView = {
-      x: right < innerWidth,
-      y: bottom < innerHeight,
-    };
-
-    const fitsOnTop = parentTop - height > 0;
-
-    if (!fitsOnTop && !isInView.y) {
-      this._dialogElement.style.maxHeight = `${parentTop}px`;
-    }
-
-    if (!isInView.y || this._openedOnTop) {
-      this._openedOnTop = true;
-
-      this._dialogElement.style.top = 'auto';
-      this._dialogElement.style.bottom = `${innerHeight - parentTop}px`;
-    }
-
-    this.topPosition = parentBottom;
-
-    if (!isInView.x) {
-      this._dialogElement.style.left = `${
-        parseFloat(this._dialogElement.style.left) - width + parentWidth
-      }px`;
-    }
-  }
-
-  private _createEventListeners() {
-    requestAnimationFrame(async () => {
-      this._listElement.classList.add('active');
-    });
-  }
-
-  private _scrollToElement() {
-    if (this.items.length > this.itemsPerPage) {
-      const itemRef = this._itemRefs[this.currentIndex];
-
-      if (!!itemRef) {
-        this._observer.observe(itemRef);
-      }
-    }
-  }
-
-  private _onKeyDown(event: KeyboardEvent) {
-    event.preventDefault();
-    event.stopPropagation();
-  }
-
-  private _onKeyboardNavigation(event: KeyboardEvent) {
-    this.wasClicked = false;
-
-    const letterNumber = /^[0-9a-zA-Z]+$/;
-
-    if (
-      (event.key.match(letterNumber) && event.key.length === 1) ||
-      event.key === 'Backspace'
-    ) {
-      if (this.type === 'autocomplete') {
-        const { query } = this.parent as HTMLCAutocompleteElement;
-
-        let updatedQuery = '';
-
-        if (event.key === 'Backspace') {
-          updatedQuery = query.slice(0, -1);
-        } else {
-          updatedQuery = `${query}${event.key}`;
-        }
-
-        (this.parent as HTMLCAutocompleteElement).updateQuery(updatedQuery);
-
-        return;
-      }
-
-      if (
-        Date.now() - this._lastKeyPressTime > 3000 ||
-        this._searchString.length > 2
-      ) {
-        this._searchString = event.key;
-      } else {
-        this._searchString = `${this._searchString}${event.key}`;
-      }
-
-      this._lastKeyPressTime = Date.now();
-
-      const selectedItem = this.items.find((i) =>
-        i.name.toLowerCase().startsWith(this._searchString),
-      );
-
-      if (selectedItem) {
-        this.currentIndex = this.items.findIndex(
-          (element) => element === selectedItem,
-        );
-
-        if (this.isOpen) {
-          this._scrollToElement();
-        } else {
-          this._onSelect(this.currentIndex, true);
-        }
-      }
-    }
-
-    if (event.key === 'Enter') {
-      this._onSelect(this.currentIndex, true);
-    }
-
-    if (event.key === ' ' && !this.isOpen) {
-      event.preventDefault();
-
-      this.isOpen = true;
-    }
-
-    if ('Tab' === event.key) {
-      this._onClose();
-    }
-
-    if (event.key === 'Escape') {
-      this._onClose(true);
-    }
-
-    if (event.key === 'ArrowDown') {
-      event.preventDefault();
-      event.stopPropagation();
-
-      if (this.currentIndex === null) {
-        this.currentIndex = 0;
-      } else if (this.isOpen && this.currentIndex + 1 < this._listSize) {
-        this.currentIndex += 1;
-      }
-
-      this.isOpen = true;
-    }
-
-    if (event.key === 'ArrowUp') {
-      event.preventDefault();
-      event.stopPropagation();
-
-      if (this.isOpen && this.currentIndex === 0) {
-        this.currentIndex = null;
-        this._onClose(true);
-
-        return;
-      } else if (this.isOpen && this.currentIndex > 0) {
-        this.currentIndex -= 1;
-      } else if (this.currentIndex === null) {
-        this.currentIndex = this._listSize - 1;
-      }
-
-      this.isOpen = true;
-    }
-
-    if (event.key === 'Home' && this.isOpen) {
-      event.preventDefault();
-
-      this.currentIndex = this._firstSelectableIndex;
-    }
-
-    if (event.key === 'End' && this.isOpen) {
-      event.preventDefault();
-
-      this.currentIndex = this._lastSelectableIndex;
-    }
-  }
-
-  private _handleCurrentIndexChange() {
-    if (this.currentIndex === null) {
-      this.parent?.setActiveDescendant('');
-
-      return;
-    }
-
-    this._updateStatusText();
+    this._dialog.showModal();
 
     requestAnimationFrame(() => {
-      const item = this._itemRefs[this.currentIndex];
+      let inputSlot = 'input-top';
 
-      if (!item) return;
+      if (!this._isMobile) {
+        const { top: parentTop, width } = this._getParentPosition();
 
-      item?.focus();
+        const inputSize = this.el.getBoundingClientRect();
 
-      this.parent?.setActiveDescendant(item.id ?? null);
+        this._inputSize = {
+          height: inputSize.height,
+          width: inputSize.width,
+        };
+
+        this._dialog.style.width = `${width}px`;
+        this._dialog.style.top = `${inputSize.top}px`;
+        this._dialog.style.bottom = 'auto';
+        this._dialog.style.left = `${inputSize.left}px`;
+
+        const { bottom, right, height } = this._dialog.getBoundingClientRect();
+
+        const isInView = {
+          x: right < innerWidth,
+          y: bottom < innerHeight,
+        };
+
+        const fitsOnTop = parentTop - height > 0;
+
+        if (!fitsOnTop && !isInView.y) {
+          this._dialog.style.maxHeight = `${parentTop}px`;
+        }
+
+        if (!isInView.y || this._openedOnTop) {
+          this._openedOnTop = true;
+
+          this._inputElement.hideDetails = true;
+          inputSlot = 'input-bottom';
+
+          this._dialog.style.top = 'auto';
+          this._dialog.style.bottom = `${innerHeight - inputSize.top - 44}px`;
+          this._inputElement.scrollIntoView();
+        }
+
+        this._dummyElement.style.width = `${this._getParentPosition().width}px`;
+        this._dummyElement.style.height = `${this._inputSize.height}px`;
+        this._dummyElement.style.display = 'block';
+      }
+
+      this._dummyElement.slot = 'default';
+
+      this._inputElement.slot = inputSlot;
+
+      this._inputElement.hideDetails = true;
+
+      this._dialog.style.opacity = '1';
+
+      const input = this.parent.shadowRoot.querySelector('input');
+
+      input.focus();
     });
   }
 
-  private _handleOutsideClick(event) {
-    if (!event.composedPath().includes(this._dialogElement)) {
-      this.close();
-    }
+  private _emptyItem = (
+    <li>
+      <c-icon path={mdiAlert} size={18} color="var(--c-warning-600)"></c-icon>
+      No suggestions found
+    </li>
+  );
+
+  private _renderList() {
+    return this.itemType === 'option'
+      ? this._renderOptionsList()
+      : this._renderItemsList();
+  }
+
+  private _renderOptionsList() {
+    if (!this.items.length) return this._emptyItem;
+
+    const options = Array.from(this.items) as HTMLCOptionElement[];
+
+    this._listItems.length = 0;
+
+    return options.map((option, index) => {
+      const optionValue = option.querySelector('c-option-value');
+
+      if (optionValue) {
+        optionValue.innerHTML = this._highlightMatchingText(
+          optionValue.textContent,
+        );
+      }
+
+      return (
+        <li
+          ref={(el) => this._listItems.push(el)}
+          id={`${this.hostId}-option-${option.value}`}
+          tabindex="-1"
+          role="option"
+          aria-set-size={this.items.length.toString()}
+          aria-pos-in-set={(index + 1).toString()}
+          aria-selected={(!!option.selected).toString()}
+          class={{ disabled: !!option.disabled }}
+          data-name={option.name}
+          onClick={(event) => {
+            if (option.disabled) {
+              event.preventDefault();
+
+              return;
+            }
+
+            this.selectOption.emit({ name: option.name, value: option.value });
+          }}
+          innerHTML={option.outerHTML}
+        ></li>
+      );
+    });
+  }
+
+  private _renderItemsList() {
+    if (!this.items.length) return this._emptyItem;
+
+    this._listItems.length = 0;
+
+    return (this.items as unknown as CAutocompleteItem[]).map((item, index) => {
+      return (
+        <li
+          ref={(el) => this._listItems.push(el)}
+          id={`${this.hostId}-option-${item.value}`}
+          tabindex="-1"
+          role="option"
+          aria-set-size={this.items.length.toString()}
+          aria-pos-in-set={(index + 1).toString()}
+          aria-selected={(this.index === index).toString()}
+          class={{ disabled: !!item.disabled }}
+          data-name={item.name}
+          onClick={(event) => {
+            if (item.disabled) {
+              event.preventDefault();
+
+              return;
+            }
+
+            this.selectOption.emit({ name: item.name, value: item.value });
+          }}
+        >
+          <span innerHTML={this._highlightMatchingText(item.name)}></span>
+        </li>
+      );
+    });
   }
 
   private _updateStatusText() {
@@ -663,21 +441,25 @@ export class CDropdown {
     }
 
     this._debounce = window.setTimeout(() => {
-      const selection = this._itemRefs[this.currentIndex];
+      const selection = this._listItems[this.index];
 
       const ending = !!this.items.length
         ? ', to navigate use up and down arrows'
         : '';
+
+      const total = this._listItems.length;
+
+      const position = this.index + 1;
 
       const isDisabled = !!selection?.classList?.contains('disabled');
 
       const beginning = isDisabled ? 'Disabled option - ' : '';
 
       let selectionText = !!selection
-        ? `${beginning}${selection.dataset.value} -  ${selection.ariaPosInSet} of ${selection.ariaSetSize} is highlighted`
+        ? `${beginning}${selection.dataset.name} -  ${position} of ${total} is highlighted`
         : null;
 
-      if (this.currentIndex === null && this.type === 'autocomplete') {
+      if (this.index === null && this.type === 'autocomplete') {
         selectionText = this.items.length
           ? `${this.items.length} result${
               this.items.length !== 1 ? 's' : ''
@@ -691,45 +473,60 @@ export class CDropdown {
     }, 1400);
   }
 
-  componentDidLoad() {
-    this._renderMenu();
-
-    this.currentIndex = this.index;
-
-    this._resizeObserver = new ResizeObserver(() => {
-      if (!this.isOpen) return;
-
-      this._positionMenu();
-    });
-
-    this._resizeObserver.observe(window.document.body);
-  }
-
-  disconnectedCallback() {
-    this._resizeObserver.disconnect();
-  }
-
   render() {
     if (
-      this._dialogElement &&
+      !this._isMobile &&
+      this._dialog &&
       this.itemsPerPage &&
       this.itemsPerPage > 0 &&
       this.items.length > this.itemsPerPage
     ) {
-      this._dialogElement.style.maxHeight =
-        42 * (this.itemsPerPage + 0.5) + 'px';
+      this._dialog.style.maxHeight = 42 * (this.itemsPerPage + 0.5) + 60 + 'px';
+      this._list.style.maxHeight = 42 * (this.itemsPerPage + 0.5) + 'px';
     }
 
     return (
       <Host>
-        <div
-          id={'announce-' + this._id}
-          class="visuallyhidden"
-          aria-live="polite"
-          aria-atomic="true"
+        <slot name="default"></slot>
+
+        <div class="dummy" ref={(el) => (this._dummyElement = el)}></div>
+
+        <dialog
+          tabindex="-1"
+          ref={(el) => (this._dialog = el)}
+          class={{ mobile: this._isMobile }}
+          onCancel={() => this.close()}
         >
-          {this.statusText}
-        </div>
+          <div
+            id={'announce-' + this.hostId}
+            class="visuallyhidden"
+            aria-live="polite"
+            aria-atomic="true"
+          >
+            {this.statusText}
+          </div>
+
+          <div class="input-top-wrapper">
+            <slot name="input-top"></slot>
+          </div>
+
+          <ul
+            ref={(el) => (this._list = el)}
+            id={`${this.hostId}--results`}
+            role="listbox"
+            aria-expanded={this.isOpen.toString()}
+            class={{ active: this.isOpen, mobile: this._isMobile }}
+            tabindex="-1"
+          >
+            {this.renderedList}
+          </ul>
+
+          <div
+            class={{ active: this._openedOnTop, 'input-bottom-wrapper': true }}
+          >
+            <slot name="input-bottom"></slot>
+          </div>
+        </dialog>
       </Host>
     );
   }

@@ -1,6 +1,6 @@
 <template>
   <component-example rows name="return-value">
-    <template #title>Usage with 'return-value'</template>
+    <template #title>Basic usage</template>
 
     <c-row gap="8">
       <c-autocomplete
@@ -11,8 +11,7 @@
         :items="filteredItems"
         :query="query"
         :items-per-page="10"
-        return-value
-        @input="onQueryChange($event)"
+        @changeQuery="onQueryChange($event)"
       >
         <c-icon slot="pre" :path="mdiEarth" size="16" />
       </c-autocomplete>

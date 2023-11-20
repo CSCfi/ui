@@ -10,8 +10,8 @@
       label="Partition"
       placeholder="Choose partition..."
       style="max-width: 360px"
+      clearable
       hide-details
-      return-value
       option-as-selection
     >
       <c-option value="normal" name="normal">

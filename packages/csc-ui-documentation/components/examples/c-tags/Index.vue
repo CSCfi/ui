@@ -17,5 +17,9 @@ import Closeable from './Closeable.vue';
 import Fit from './Fit.vue';
 import Block from './Block.vue';
 
+defineOptions({
+  inheritAttrs: false,
+});
+
 usePageTitles();
 </script>

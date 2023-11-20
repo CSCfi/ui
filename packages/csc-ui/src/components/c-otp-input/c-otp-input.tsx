@@ -218,7 +218,7 @@ export class COtpInput {
   private _renderInput(index: number) {
     return (
       <input
-        id={`c-otp-input--${COtpInput._uniqueId}-${index + 1}`}
+        id={`${this.id}--input-${index + 1}`}
         ref={(el) => (this._inputs[index] = el as HTMLInputElement)}
         aria-label={`Enter code - digit number - ${index + 1} of ${
           this.length
