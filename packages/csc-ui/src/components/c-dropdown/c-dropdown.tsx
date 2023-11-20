@@ -346,12 +346,18 @@ export class CDropdown {
     });
   }
 
-  private _emptyItem = (
-    <li>
-      <c-icon path={mdiAlert} size={18} color="var(--c-warning-600)"></c-icon>
-      No suggestions found
-    </li>
-  );
+  private _emptyItem() {
+    const { query, loading } = this.parent as HTMLCAutocompleteElement;
+
+    if (!query || loading) return;
+
+    return (
+      <li>
+        <c-icon path={mdiAlert} size={18} color="var(--c-warning-600)"></c-icon>
+        No suggestions found
+      </li>
+    );
+  }
 
   private _renderList() {
     return this.itemType === 'option'
@@ -360,7 +366,7 @@ export class CDropdown {
   }
 
   private _renderOptionsList() {
-    if (!this.items.length) return this._emptyItem;
+    if (!this.items.length) return this._emptyItem();
 
     const options = Array.from(this.items) as HTMLCOptionElement[];
 
@@ -402,7 +408,7 @@ export class CDropdown {
   }
 
   private _renderItemsList() {
-    if (!this.items.length) return this._emptyItem;
+    if (!this.items.length) return this._emptyItem();
 
     this._listItems.length = 0;
 

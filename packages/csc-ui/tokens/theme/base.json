@@ -34,31 +34,31 @@
     },
     "error": {
       "100": {
-        "value": "#f8e6e9ff"
+        "value": "#fce7e7ff"
       },
       "200": {
-        "value": "#f1cdd4ff"
+        "value": "#f8ceceff"
       },
       "300": {
-        "value": "#e39ca9ff"
+        "value": "#f19e9eff"
       },
       "400": {
-        "value": "#d56a7fff"
+        "value": "#eb6d6dff"
       },
       "500": {
-        "value": "#c73954ff"
+        "value": "#e43d3dff"
       },
       "600": {
-        "value": "#b90729ff"
+        "value": "#dd0c0cff"
       },
       "700": {
-        "value": "#940621ff"
+        "value": "#ae0909ff"
       },
       "800": {
-        "value": "#6f0419ff"
+        "value": "#7e0707ff"
       },
       "900": {
-        "value": "#4a0310ff"
+        "value": "#4d0404ff"
       }
     },
     "info": {

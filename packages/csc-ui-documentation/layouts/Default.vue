@@ -175,7 +175,10 @@ const components = computed(() =>
   parsedData.value
     .filter((component) => {
       if (query.value) {
-        return component.docsTags.length && component.tag.includes(query.value);
+        return (
+          component.docsTags.length &&
+          component.tag.includes(query.value.toLowerCase())
+        );
       }
 
       return component.docsTags.length;
