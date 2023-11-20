@@ -1,5 +1,15 @@
 # Changelog
 
+## [1.0.18](https://github.com/CSCfi/ui/compare/v1.0.17...v1.0.18) (2023-11-20)
+
+
+### Bug Fixes
+
+* c-autocomplete, c-select: Fix flashing transition when clicked ([58b364b](https://github.com/CSCfi/ui/commit/58b364b61199f609291ac1b2a2f18dba6d8868e2))
+* c-autocomplete: Do not show suggestions if query is empty or in loading state. ([1ca874b](https://github.com/CSCfi/ui/commit/1ca874b75f2a4069c13e4092b053be9ba445d792))
+* c-tabs: prevent crash when disabled prop is not set ([5b67097](https://github.com/CSCfi/ui/commit/5b670971f98d13ec2f7be9157545254796be1ccd))
+* Theme: Better error color. ([1b8f930](https://github.com/CSCfi/ui/commit/1b8f9309f0fd08f6f6d012e658a65b20b8bbcfb5))
+
 ## [1.0.17](https://github.com/CSCfi/ui/compare/v1.0.16...v1.0.17) (2023-11-20)
 
 
