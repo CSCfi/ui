@@ -449,8 +449,6 @@ export class CInput {
       'c-input--shadow': this.shadow,
       'c-input--textarea': this.rows > 1,
       'c-input--error': !this.valid,
-      'c-input--jorma': this.isFocused,
-      'c-input--keino': this.active,
       'c-input--active': this.isFocused || this.active,
       filled: !!this.value,
       [`c-input--${this.variant}`]: true,

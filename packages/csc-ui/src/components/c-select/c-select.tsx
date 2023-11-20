@@ -234,7 +234,7 @@ export class CSelect {
     }
 
     if (event.key === 'Escape') {
-      // this._preventDialogOpen = true;
+      this._preventDialogOpen = true;
       this._dropdownElement.close();
       this._inputElement.focus();
 
@@ -381,7 +381,7 @@ export class CSelect {
 
       this._onReset(event);
 
-      // this._preventDialogOpen = true;
+      this._preventDialogOpen = true;
 
       requestAnimationFrame(() => {
         this._inputElement.focus();
@@ -405,7 +405,7 @@ export class CSelect {
     this._selectionElement.classList.remove('c-input-menu__selection--show');
     this._selectionElement.replaceChildren(null);
 
-    // this._preventDialogOpen = true;
+    this._preventDialogOpen = true;
 
     this._cInputElement.reset();
 
