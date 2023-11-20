@@ -9,7 +9,6 @@
       placeholder="Choose partition..."
       style="max-width: 360px"
       hide-details
-      return-value
     >
       <c-option value="normal" name="Normal">
         <c-row align="center" justify="space-between">

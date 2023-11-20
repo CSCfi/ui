@@ -17,6 +17,10 @@ c-login-card {
   display: flex;
   background: var(--_c-login-card-background-color);
   border-radius: 6px;
+
+  article {
+    width: 100%;
+  }
 }
 
 .c-login-card {

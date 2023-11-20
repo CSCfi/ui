@@ -1,5 +1,4 @@
-:root,
-:host {
+:host(c-input) {
   --_c-input-inactive-color: var(--c-tertiary-600);
   --_c-input-active-color: var(--c-primary-600);
   --_c-input-background-color: var(--c-transparent);
@@ -102,6 +101,7 @@
 
   input:focus,
   input:active,
+  input[aria-expanded="true"],
   textarea:focus,
   textarea:active {
     outline: none;
@@ -111,6 +111,15 @@
     align-items: center;
     display: flex;
     width: 100%;
+
+    slot {
+      display: none;
+    }
+
+    c-icon-button {
+      aspect-ratio: 1;
+      margin-right: -6px;
+    }
   }
 
   &__control {
@@ -279,7 +288,7 @@
   }
 
   &:focus-within,
-  &.active,
+  &--active,
   &:not(.c-input--disabled):active {
     --_c-input-border-width: 2px;
 

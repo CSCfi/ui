@@ -145,10 +145,12 @@
 
 ### Used by
 
+ - [c-autocomplete](../c-autocomplete)
  - [c-card](../c-card)
  - [c-data-table](../c-data-table)
  - [c-navigation-button](../c-navigation-button)
  - [c-pagination](../c-pagination)
+ - [c-select](../c-select)
  - [c-side-navigation](../c-side-navigation)
  - [c-swiper](../c-swiper)
  - [c-tabs](../c-tabs)
@@ -166,10 +168,12 @@ graph TD;
   c-icon-button --> c-badge
   c-icon-button --> c-spinner
   c-icon-button --> c-ripple
+  c-autocomplete --> c-icon-button
   c-card --> c-icon-button
   c-data-table --> c-icon-button
   c-navigation-button --> c-icon-button
   c-pagination --> c-icon-button
+  c-select --> c-icon-button
   c-side-navigation --> c-icon-button
   c-swiper --> c-icon-button
   c-tabs --> c-icon-button

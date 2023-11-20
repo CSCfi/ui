@@ -8,5 +8,9 @@
 import Automatic from './Automatic.vue';
 import Manual from './Manual.vue';
 
+defineOptions({
+  inheritAttrs: false,
+});
+
 usePageTitles();
 </script>

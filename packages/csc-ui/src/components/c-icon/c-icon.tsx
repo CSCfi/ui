@@ -30,11 +30,11 @@ export class CIcon {
     return (
       <Host
         style={{
-          height: `${this.size}px`,
-          '--c-icon-default-color': this.color,
+          '--_c-icon-size': `${this.size}px`,
+          '--_c-icon-default-color': this.color,
         }}
       >
-        <svg width={this.size} height={this.size} viewBox="0 0 24 24">
+        <svg viewBox="0 0 24 24">
           <path d={this.path} />
         </svg>
       </Host>

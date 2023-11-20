@@ -8,5 +8,9 @@
 import Default from './Default.vue';
 import JustifyAlign from './JustifyAlign.vue';
 
+defineOptions({
+  inheritAttrs: false,
+});
+
 usePageTitles();
 </script>

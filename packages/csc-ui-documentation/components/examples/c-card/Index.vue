@@ -8,5 +8,9 @@
 import Basic from './Basic.vue';
 import Fullscreen from './Fullscreen.vue';
 
+defineOptions({
+  inheritAttrs: false,
+});
+
 usePageTitles();
 </script>

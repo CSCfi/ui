@@ -1,18 +1,22 @@
 <template>
   <component-example rows name="basic">
-    <template #title>Basic usage</template>
+    <template #title>Usage with an array of objects</template>
+
+    <template #subtitle>Returning an object on selection</template>
 
     <c-row gap="8">
       <c-autocomplete
-        id="listOfCountries"
+        id="listOfCountriesBasic"
         v-model="selection"
         v-control
         label="Countries"
-        hide-details
+        placeholder="Choose a country"
         :items="filteredItems"
         :query="query"
-        :items-per-page="10"
-        @input="onQueryChange($event)"
+        style="flex: 1"
+        hide-details
+        return-object
+        @changeQuery="onQueryChange"
       >
         <c-icon slot="pre" :path="mdiEarth" size="16" />
       </c-autocomplete>
@@ -20,7 +24,7 @@
       <c-button @click="onAddTag()" @keyup.enter="onAddTag()">Add</c-button>
     </c-row>
 
-    <c-tags class="mt-3">
+    <c-tags v-if="tags.length" class="mt-3">
       <c-tag
         v-for="(tag, index) of tags"
         :key="index"

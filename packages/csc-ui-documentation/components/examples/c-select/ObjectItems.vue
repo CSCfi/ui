@@ -6,9 +6,11 @@
       v-model="value"
       v-control
       label="Country"
-      return-value
-      :items="items"
       placeholder="Choose country..."
+      style="max-width: 360px"
+      hide-details
+      return-object
+      :items="items"
     />
 
     <p class="mt-3">Selected country: {{ value || 'None' }}</p>

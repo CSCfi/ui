@@ -1,4 +1,4 @@
-# c-dropdown
+# c-dropdown-options
 
 
 
@@ -7,35 +7,30 @@
 
 ## Properties
 
-| Property       | Attribute        | Description                         | Type                                             | Default     |
-| -------------- | ---------------- | ----------------------------------- | ------------------------------------------------ | ----------- |
-| `focusList`    | `focus-list`     | Focus dropdown on open              | `boolean`                                        | `undefined` |
-| `index`        | `index`          | Initial value index                 | `number`                                         | `undefined` |
-| `inputId`      | `input-id`       | Id of the input element             | `string`                                         | `undefined` |
-| `isOpen`       | `is-open`        | Dropdown open state                 | `boolean`                                        | `false`     |
-| `items`        | --               | Dropdown items                      | `CAutocompleteItem[] \| CSelectItem[]`           | `[]`        |
-| `itemsPerPage` | `items-per-page` | Items per page before adding scroll | `number`                                         | `undefined` |
-| `options`      | --               | Dropdown options                    | `{ [x: string]: HTMLCOptionElement; }`           | `undefined` |
-| `parent`       | --               | Dropdown parent                     | `HTMLCAutocompleteElement \| HTMLCSelectElement` | `undefined` |
-| `type`         | `type`           | Type of the parent element          | `"autocomplete" \| "select"`                     | `undefined` |
-| `wasClicked`   | `was-clicked`    |                                     | `boolean`                                        | `false`     |
+| Property       | Attribute        | Description                         | Type                                                                     | Default     |
+| -------------- | ---------------- | ----------------------------------- | ------------------------------------------------------------------------ | ----------- |
+| `hostId`       | `id`             | Id of the element                   | `string`                                                                 | `undefined` |
+| `index`        | `index`          | Current index value                 | `number`                                                                 | `undefined` |
+| `itemType`     | `item-type`      | Type of items                       | `"item" \| "option"`                                                     | `undefined` |
+| `items`        | --               | Dropdown options                    | `CAutocompleteItem[] \| CSelectItem[] \| NodeListOf<HTMLCOptionElement>` | `undefined` |
+| `itemsPerPage` | `items-per-page` | Items per page before adding scroll | `number`                                                                 | `undefined` |
+| `parent`       | --               | Dropdown parent                     | `HTMLCAutocompleteElement \| HTMLCSelectElement`                         | `undefined` |
+| `type`         | `type`           | Type of the parent element          | `"autocomplete" \| "select"`                                             | `undefined` |
+
+
+## Events
+
+| Event                 | Description                             | Type                   |
+| --------------------- | --------------------------------------- | ---------------------- |
+| `dropdownStateChange` | Triggered when dropdown opens or closes | `CustomEvent<boolean>` |
+| `selectOption`        | Triggered when option is selected       | `CustomEvent<any>`     |
 
 
 ## Methods
 
 ### `close() => Promise<void>`
 
-
-
-#### Returns
-
-Type: `Promise<void>`
-
-
-
-### `focusDropdown() => Promise<void>`
-
-
+Open dropdown
 
 #### Returns
 
@@ -43,7 +38,7 @@ Type: `Promise<void>`
 
 
 
-### `focusItem(type: number) => Promise<void>`
+### `focusItem(index: number) => Promise<void>`
 
 
 
@@ -53,7 +48,27 @@ Type: `Promise<void>`
 
 
 
-### `open(focusList?: boolean) => Promise<void>`
+### `open() => Promise<void>`
+
+Open dropdown
+
+#### Returns
+
+Type: `Promise<void>`
+
+
+
+### `selectItem(index: number) => Promise<boolean>`
+
+Select item
+
+#### Returns
+
+Type: `Promise<boolean>`
+
+the disabled status of the input
+
+### `setStatusText(text: string) => Promise<void>`
 
 
 
@@ -63,9 +78,9 @@ Type: `Promise<void>`
 
 
 
-### `updateDropdown(params: _CDropdownUpdateParams) => Promise<void>`
+### `updateList() => Promise<void>`
 
-
+Update list items
 
 #### Returns
 

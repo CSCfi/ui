@@ -76,14 +76,6 @@
       },
       "attributes": [
         {
-          "name": "autofocus",
-          "description": "Auto focus the input"
-        },
-        {
-          "name": "dense",
-          "description": "Dense variant"
-        },
-        {
           "name": "disabled",
           "description": "Disable the input"
         },
@@ -108,12 +100,12 @@
           "description": "Element label"
         },
         {
-          "name": "name",
-          "description": "Input field name"
+          "name": "loading",
+          "description": "Show loading state"
         },
         {
-          "name": "option-as-selection",
-          "description": "display the option as selection (works only when c-option elements are used)"
+          "name": "name",
+          "description": "Input field name"
         },
         {
           "name": "placeholder",
@@ -128,8 +120,8 @@
           "description": "Show required validation"
         },
         {
-          "name": "return-value",
-          "description": "Return only the item value rather than the whole item object"
+          "name": "return-object",
+          "description": "Return object instead of value"
         },
         {
           "name": "shadow",
@@ -489,20 +481,24 @@
       },
       "attributes": [
         {
-          "name": "focus-list",
-          "description": "Focus dropdown on open"
+          "name": "id",
+          "description": "Id of the element"
         },
         {
           "name": "index",
-          "description": "Initial value index"
+          "description": "Current index value"
         },
         {
-          "name": "input-id",
-          "description": "Id of the input element"
-        },
-        {
-          "name": "is-open",
-          "description": "Dropdown open state"
+          "name": "item-type",
+          "description": "Type of items",
+          "values": [
+            {
+              "name": "item"
+            },
+            {
+              "name": "option"
+            }
+          ]
         },
         {
           "name": "items-per-page",
@@ -519,10 +515,6 @@
               "name": "select"
             }
           ]
-        },
-        {
-          "name": "was-clicked",
-          "description": ""
         }
       ]
     },
@@ -614,6 +606,10 @@
         "value": ""
       },
       "attributes": [
+        {
+          "name": "active",
+          "description": "Active state"
+        },
         {
           "name": "autofocus",
           "description": "Auto focus the input"
@@ -1112,6 +1108,10 @@
       },
       "attributes": [
         {
+          "name": "disable-backdrop-blur",
+          "description": "Disable backdrop blur effect"
+        },
+        {
           "name": "dismissable",
           "description": "Dismissed when touching/clicking outside the content"
         },
@@ -1421,8 +1421,8 @@
       },
       "attributes": [
         {
-          "name": "autofocus",
-          "description": "Auto focus the input"
+          "name": "clearable",
+          "description": "Make the selected value clearable"
         },
         {
           "name": "disabled",
@@ -1449,6 +1449,10 @@
           "description": "Element label"
         },
         {
+          "name": "loading",
+          "description": "Show loading state"
+        },
+        {
           "name": "name",
           "description": "Input field name"
         },
@@ -1462,11 +1466,11 @@
         },
         {
           "name": "required",
-          "description": "Set as required"
+          "description": "Show required validation"
         },
         {
-          "name": "return-value",
-          "description": "Return only the item value rather than the whole item object"
+          "name": "return-object",
+          "description": "Return object instead of value"
         },
         {
           "name": "shadow",
@@ -1474,7 +1478,7 @@
         },
         {
           "name": "valid",
-          "description": "Set the validity of the input"
+          "description": "Set the validíty of the input"
         },
         {
           "name": "validate",
