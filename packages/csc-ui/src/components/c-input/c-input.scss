@@ -179,7 +179,7 @@
       transform-origin: top left;
       transform: translateX(var(--_c-input-label-position)) translateY(0)
         scale(1);
-      transition: 0.3s cubic-bezier(0.25, 0.8, 0.5, 1);
+      transition: 0.3s cubic-bezier(0.25, 0.8, 0.5, 1) 0.08s;
       white-space: nowrap;
 
       &.active {
