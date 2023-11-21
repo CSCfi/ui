@@ -1,5 +1,18 @@
 # Changelog
 
+## [1.1.0](https://github.com/CSCfi/ui/compare/v1.0.18...v1.1.0) (2023-11-21)
+
+
+### Features
+
+* c-radio-group: Return value by default. Added return object prop. ([5de552e](https://github.com/CSCfi/ui/commit/5de552ef3e405520003f5039e7c7d13aa631be77))
+
+
+### Bug Fixes
+
+* c-modal: Handle initial value ([de8ec61](https://github.com/CSCfi/ui/commit/de8ec61a9205862e1f040dc2adb5dbb511b4554d))
+* c-select: shadow variant background colors ([f9aab61](https://github.com/CSCfi/ui/commit/f9aab6181a3def4b27e7a96a3a2cd59099a2532c))
+
 ## [1.0.18](https://github.com/CSCfi/ui/compare/v1.0.17...v1.0.18) (2023-11-20)
 
 
