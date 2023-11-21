@@ -4,7 +4,7 @@
 
     <c-text-field
       label="Hint and error "
-      hint="This is a hint messsage"
+      hint="This is a hint message"
       :valid="!hasErrors"
       validation="This is an error message"
       required
