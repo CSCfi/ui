@@ -33,12 +33,11 @@
   }
 
   dialog {
-    background-color: white;
     border-radius: 4px;
+    background-color: transparent;
     border: none;
-    box-shadow: 2px 4px 10px #00000029;
     margin: -4px 0 0;
-    overflow: hidden;
+    overflow: visible;
     padding: 4px 0 0;
     position: fixed;
 
@@ -69,6 +68,7 @@
 
   ul {
     background-color: var(--_c-dropdown-background-color);
+    box-shadow: 2px 4px 10px #00000029;
     border-radius: 4px;
     list-style: none;
     margin: 0;

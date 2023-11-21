@@ -187,7 +187,7 @@
       }
 
       span {
-        color: var(--_c-input-error-color);
+        color: var(--c-error-600);
       }
     }
   }
@@ -325,18 +325,18 @@
   }
 
   &--error {
-    color: var(--_c-input-error-color);
+    color: var(--c-error-600);
 
     fieldset {
-      border-color: var(--_c-input-error-color) !important;
+      border-color: var(--c-error-600) !important;
     }
 
     label {
-      color: var(--_c-input-error-color) !important;
+      color: var(--c-error-600) !important;
     }
 
     &:focus-within {
-      color: var(--_c-input-error-color);
+      color: var(--c-error-600);
     }
   }
 }

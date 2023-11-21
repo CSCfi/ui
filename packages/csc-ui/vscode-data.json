@@ -1335,8 +1335,8 @@
           "description": "Set as required"
         },
         {
-          "name": "return-value",
-          "description": "Return only the item value rather than the whole item object"
+          "name": "return-object",
+          "description": "Return the whole item object"
         },
         {
           "name": "valid",

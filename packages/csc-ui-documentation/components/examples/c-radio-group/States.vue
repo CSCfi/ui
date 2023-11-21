@@ -9,7 +9,6 @@
       :valid="isValid"
       hint="Please select a value"
       validation="This is a required value"
-      return-value
     >
       Inline radio buttons
     </c-radio-group>

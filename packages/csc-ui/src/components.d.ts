@@ -1123,9 +1123,9 @@ export namespace Components {
          */
         "required": boolean;
         /**
-          * Return only the item value rather than the whole item object
+          * Return the whole item object
          */
-        "returnValue": boolean;
+        "returnObject": boolean;
         /**
           * Set the validity of the input
          */
@@ -4057,9 +4057,9 @@ declare namespace LocalJSX {
          */
         "required"?: boolean;
         /**
-          * Return only the item value rather than the whole item object
+          * Return the whole item object
          */
-        "returnValue"?: boolean;
+        "returnObject"?: boolean;
         /**
           * Set the validity of the input
          */

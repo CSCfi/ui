@@ -17,7 +17,6 @@
       :items="types"
       hide-details
       inline
-      return-value
     />
   </component-example>
 </template>
