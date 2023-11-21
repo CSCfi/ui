@@ -157,6 +157,10 @@ export class CModal {
 
   componentDidLoad() {
     this._handleClickOutside();
+
+    if (this.value) {
+      this._handleShow();
+    }
   }
 
   render() {
