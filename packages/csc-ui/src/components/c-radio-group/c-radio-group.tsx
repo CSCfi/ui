@@ -67,9 +67,9 @@ export class CRadioGroup {
   @Prop() disabled = false;
 
   /**
-   * Return only the item value rather than the whole item object
+   * Return the whole item object
    */
-  @Prop() returnValue = false;
+  @Prop() returnObject = false;
 
   /**
    * Set as required
@@ -157,10 +157,10 @@ export class CRadioGroup {
       this._containers[index],
       true,
     );
-    this.value = this.returnValue ? item?.value : item;
+    this.value = !this.returnObject ? item?.value : item;
     this.changeValue.emit(this.value);
 
-    const value = this.returnValue
+    const value = !this.returnObject
       ? this.value
       : (this.value as CRadioGroupItem).value;
 
@@ -175,7 +175,7 @@ export class CRadioGroup {
     const radios = this.el.querySelectorAll('c-radio');
 
     if (radios.length) {
-      this.returnValue = true;
+      this.returnObject = false;
 
       this.items = [
         ...Array.from(radios).map((radio) => {
@@ -199,7 +199,7 @@ export class CRadioGroup {
   private _getRadioButton = (item, index) => {
     const itemId = item.value.toString().replace(/[^a-zA-Z0-9-_]/g, '');
 
-    const isChecked = this.returnValue
+    const isChecked = !this.returnObject
       ? this.items?.find((i) => i.value === item.value)?.value === this.value
       : (this.value as CRadioGroupItem)?.value === item.value;
 
@@ -270,7 +270,7 @@ export class CRadioGroup {
     CRadioGroup._uniqueId += 1;
 
     if (this.value) {
-      const value = this.returnValue
+      const value = !this.returnObject
         ? this.value
         : (this.value as CRadioGroupItem).value;
 

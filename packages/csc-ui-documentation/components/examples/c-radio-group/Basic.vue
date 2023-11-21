@@ -2,7 +2,13 @@
   <component-example name="basic" rows>
     <template #title>Basic usage</template>
 
-    <c-radio-group v-model="selectedItem" v-control :items="items" hide-details>
+    <c-radio-group
+      v-model="selectedItem"
+      v-control
+      :items="items"
+      hide-details
+      return-object
+    >
       Example radio buttons with a
       <c-link underline>link</c-link>
       in the label
@@ -15,7 +21,6 @@
       v-control
       :items="items"
       label="Label with a prop and return value"
-      return-value
       hide-details
     />
 

@@ -7,7 +7,6 @@
       v-control
       :items="items"
       inline
-      return-value
       hide-details
     >
       Inline radio buttons

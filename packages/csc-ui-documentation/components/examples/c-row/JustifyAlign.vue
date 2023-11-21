@@ -8,7 +8,6 @@
       label="Justify"
       :items="justifyItems"
       inline
-      return-value
     />
 
     <c-radio-group
@@ -17,7 +16,6 @@
       label="Align"
       :items="alignItems"
       inline
-      return-value
     />
 
     <c-row gap="8" :justify="justify" :align="align">

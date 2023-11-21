@@ -30,7 +30,6 @@
       :items="options"
       inline
       hide-details
-      return-value
     >
       Change the tab placement
     </c-radio-group>

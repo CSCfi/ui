@@ -42,7 +42,6 @@
             label="Type (optional)"
             :items="types"
             hint="Default: 'Info'"
-            return-value
           />
 
           <c-checkbox v-model="persistent" v-control hint="Default: false">
@@ -71,7 +70,6 @@
             label="Vertical position"
             :items="verticalOptions"
             hint="Default: 'Bottom'"
-            return-value
           />
 
           <c-select
@@ -80,7 +78,6 @@
             label="Horizontal position"
             :items="horizontalOptions"
             hint="Default: 'Right'"
-            return-value
           />
 
           <c-checkbox v-model="absolute" v-control hint="Default: false">
