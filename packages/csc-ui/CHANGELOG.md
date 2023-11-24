@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.2.0](https://github.com/CSCfi/ui/compare/v1.1.1...v1.2.0) (2023-11-24)
+
+
+### Features
+
+* c-slider: New component ([8411454](https://github.com/CSCfi/ui/commit/84114547821d9ffc35ebb5358a2fa0c07690eef8))
+
 ## [1.1.1](https://github.com/CSCfi/ui/compare/v1.1.0...v1.1.1) (2023-11-24)
 
 
