@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.1.1](https://github.com/CSCfi/ui/compare/v1.1.0...v1.1.1) (2023-11-24)
+
+
+### Bug Fixes
+
+* c-select, c-autocomplete: Fixed background color in mobile ([cd5f4b1](https://github.com/CSCfi/ui/commit/cd5f4b150a16835bb5578ca5aad096218c04c3e9))
+
 ## [1.1.0](https://github.com/CSCfi/ui/compare/v1.0.18...v1.1.0) (2023-11-21)
 
 
