@@ -1299,6 +1299,67 @@ export namespace Components {
     interface CSideNavigationTitle {
     }
     /**
+     * @group Form
+     */
+    interface CSlider {
+        /**
+          * Aria label
+         */
+        "ariaLabel": string;
+        /**
+          * Disable tooltip
+         */
+        "disableTooltip": boolean;
+        /**
+          * Disable the slider
+         */
+        "disabled": boolean;
+        /**
+          * Id of the element
+         */
+        "hostId": string;
+        /**
+          * Id of the element
+         */
+        "hostName": string;
+        /**
+          * Label of the slider
+         */
+        "label": string;
+        /**
+          * Max value
+         */
+        "max": string;
+        /**
+          * Min value
+         */
+        "min": string;
+        /**
+          * Segment count
+         */
+        "segments": string;
+        /**
+          * Show tick labels
+         */
+        "showLabels": boolean;
+        /**
+          * Step
+         */
+        "step": string;
+        /**
+          * Thow ticks
+         */
+        "ticks": boolean;
+        /**
+          * Unit
+         */
+        "unit": string;
+        /**
+          * Value
+         */
+        "value": string | number;
+    }
+    /**
      * Spacer component for flex containers
      * @group Layout
      */
@@ -1837,6 +1898,10 @@ export interface CSelectCustomEvent<T> extends CustomEvent<T> {
 export interface CSideNavigationItemCustomEvent<T> extends CustomEvent<T> {
     detail: T;
     target: HTMLCSideNavigationItemElement;
+}
+export interface CSliderCustomEvent<T> extends CustomEvent<T> {
+    detail: T;
+    target: HTMLCSliderElement;
 }
 export interface CStepsCustomEvent<T> extends CustomEvent<T> {
     detail: T;
@@ -2491,6 +2556,26 @@ declare global {
     var HTMLCSideNavigationTitleElement: {
         prototype: HTMLCSideNavigationTitleElement;
         new (): HTMLCSideNavigationTitleElement;
+    };
+    interface HTMLCSliderElementEventMap {
+        "changeValue": any;
+    }
+    /**
+     * @group Form
+     */
+    interface HTMLCSliderElement extends Components.CSlider, HTMLStencilElement {
+        addEventListener<K extends keyof HTMLCSliderElementEventMap>(type: K, listener: (this: HTMLCSliderElement, ev: CSliderCustomEvent<HTMLCSliderElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions): void;
+        removeEventListener<K extends keyof HTMLCSliderElementEventMap>(type: K, listener: (this: HTMLCSliderElement, ev: CSliderCustomEvent<HTMLCSliderElementEventMap[K]>) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | EventListenerOptions): void;
+    }
+    var HTMLCSliderElement: {
+        prototype: HTMLCSliderElement;
+        new (): HTMLCSliderElement;
     };
     /**
      * Spacer component for flex containers
@@ -4234,6 +4319,71 @@ declare namespace LocalJSX {
     interface CSideNavigationTitle {
     }
     /**
+     * @group Form
+     */
+    interface CSlider {
+        /**
+          * Aria label
+         */
+        "ariaLabel"?: string;
+        /**
+          * Disable tooltip
+         */
+        "disableTooltip"?: boolean;
+        /**
+          * Disable the slider
+         */
+        "disabled"?: boolean;
+        /**
+          * Id of the element
+         */
+        "hostId"?: string;
+        /**
+          * Id of the element
+         */
+        "hostName"?: string;
+        /**
+          * Label of the slider
+         */
+        "label"?: string;
+        /**
+          * Max value
+         */
+        "max"?: string;
+        /**
+          * Min value
+         */
+        "min"?: string;
+        /**
+          * Emit value changes to parent
+         */
+        "onChangeValue"?: (event: CSliderCustomEvent<any>) => void;
+        /**
+          * Segment count
+         */
+        "segments"?: string;
+        /**
+          * Show tick labels
+         */
+        "showLabels"?: boolean;
+        /**
+          * Step
+         */
+        "step"?: string;
+        /**
+          * Thow ticks
+         */
+        "ticks"?: boolean;
+        /**
+          * Unit
+         */
+        "unit"?: string;
+        /**
+          * Value
+         */
+        "value"?: string | number;
+    }
+    /**
      * Spacer component for flex containers
      * @group Layout
      */
@@ -4802,6 +4952,7 @@ declare namespace LocalJSX {
         "c-side-navigation": CSideNavigation;
         "c-side-navigation-item": CSideNavigationItem;
         "c-side-navigation-title": CSideNavigationTitle;
+        "c-slider": CSlider;
         "c-spacer": CSpacer;
         "c-spinner": CSpinner;
         "c-status": CStatus;
@@ -5013,6 +5164,10 @@ declare module "@stencil/core" {
              * @parent c-side-navigation
              */
             "c-side-navigation-title": LocalJSX.CSideNavigationTitle & JSXBase.HTMLAttributes<HTMLCSideNavigationTitleElement>;
+            /**
+             * @group Form
+             */
+            "c-slider": LocalJSX.CSlider & JSXBase.HTMLAttributes<HTMLCSliderElement>;
             /**
              * Spacer component for flex containers
              * @group Layout
