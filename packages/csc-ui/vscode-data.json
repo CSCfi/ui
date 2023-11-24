@@ -1549,6 +1549,71 @@
       "attributes": []
     },
     {
+      "name": "c-slider",
+      "description": {
+        "kind": "markdown",
+        "value": ""
+      },
+      "attributes": [
+        {
+          "name": "aria-label",
+          "description": "Aria label"
+        },
+        {
+          "name": "disable-tooltip",
+          "description": "Disable tooltip"
+        },
+        {
+          "name": "disabled",
+          "description": "Disable the slider"
+        },
+        {
+          "name": "id",
+          "description": "Id of the element"
+        },
+        {
+          "name": "name",
+          "description": "Id of the element"
+        },
+        {
+          "name": "label",
+          "description": "Label of the slider"
+        },
+        {
+          "name": "max",
+          "description": "Max value"
+        },
+        {
+          "name": "min",
+          "description": "Min value"
+        },
+        {
+          "name": "segments",
+          "description": "Segment count"
+        },
+        {
+          "name": "show-labels",
+          "description": "Show tick labels"
+        },
+        {
+          "name": "step",
+          "description": "Step"
+        },
+        {
+          "name": "ticks",
+          "description": "Thow ticks"
+        },
+        {
+          "name": "unit",
+          "description": "Unit"
+        },
+        {
+          "name": "value",
+          "description": "Value"
+        }
+      ]
+    },
+    {
       "name": "c-spacer",
       "description": {
         "kind": "markdown",

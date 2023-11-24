@@ -1,0 +1,275 @@
+:host(c-slider) {
+  /**
+   * @prop --c-slider-background-color: Slider background color
+   * @prop --c-slider-background-color-active: Slider active background color
+   * @prop --c-slider-thumb-background-color: Slider thumb background color
+   * @prop --c-slider-thumb-background-color-hover: Slider thumb background color on hover
+   * @prop --c-slider-tooltip-background-color: Slider tooltip background color
+   * @prop --c-slider-tooltip-text-color: Slider tooltip text color
+   * @prop --c-slider-tick-color: Slider tick color
+   * @prop --c-slider-tick-color-active: Slider active tick color
+   * @prop --_c-slider-background-color-disabled: Disabled slider background color
+   * @prop --_c-slider-background-color-active-disabled: Active disabled slider background color
+   * @prop --_c-slider-thumb-background-color-disabled: Disabled slider thumb background color
+   */
+  --_c-slider-background-color: var(--c-slider-background-color, rgba(var(--c-tertiary-rgb), 0.2));
+  --_c-slider-background-color-active: var(--c-slider-background-color-active, var(--c-primary-500));
+  --_c-slider-thumb-background-color: var(--c-slider-thumb-background-color, var(--c-primary-600));
+  --_c-slider-thumb-background-color-hover: var(--c-slider-thumb-background-color-hover, rgba(var(--c-primary-rgb), 0.2));
+  --_c-slider-tooltip-background-color: var(--c-slider-tooltip-background-color, var(--c-primary-900));
+  --_c-slider-tooltip-text-color: var(--c-slider-tooltip-text-color, var(--c-white));
+  --_c-slider-tick-color: var(--c-slider-tick-color, var(--c-tertiary-500));
+  --_c-slider-tick-color-active: var(--c-slider-tick-color-active, var(--c-white));
+  --_c-slider-background-color-disabled: var(--c-slider-background-color-disabled, rgba(var(--c-tertiary-rgb), 0.2));
+  --_c-slider-background-color-active-disabled: var(--c-slider-background-color-active-disabled, var(--c-tertiary-400));
+  --_c-slider-thumb-background-color-disabled: var(--c-slider-thumb-background-color-disabled, var(--c-tertiary-500));
+  
+  // private
+  --_c-slider-tooltip-opacity: 0;
+  --_c-slider-tooltip-y: -4px;
+  --_c-slider-outline: none;
+  --_c-slider-thumb-scale: 1;
+  --_c-slider-thumb-shadow-size: 8px;
+
+  $this: &;
+
+  display: block;
+  isolation: isolate;
+
+  .c-slider__label {
+    display: block;
+    margin-bottom: 16px;
+
+    span.required {
+      color: var(--c-error-600);
+    }
+  }
+
+  .c-slider__wrapper {
+    position: relative;
+    padding-inline: 10px;
+
+    /** Mozilla Firefox */
+    @-moz-document url-prefix() {
+      padding-inline: 0;
+    }
+  }
+  
+  input[type="range"] {
+    margin: 0;
+    width: 100%;
+    appearance: none;
+    position: relative;
+    background-color: transparent;
+    height: 8px;
+    display: flex;
+    align-items: center;
+
+    &:focus-visible {
+      --_c-slider-outline: 2px var(--_c-slider-thumb-background-color) solid;
+      
+      outline: none;
+    }
+
+    &::-webkit-slider-runnable-track {
+      width: calc(100% - 20px);
+      margin: 0 -20px;
+    }
+
+    &:active {
+      --_c-slider-thumb-scale: 1.33;
+      --_c-slider-thumb-shadow-size: 0;
+    }
+    
+    &::-webkit-slider-container {
+      display: flex;
+      padding: 0 10px;
+    }
+  
+    &::-webkit-slider-thumb {
+      background-color: var(--_c-slider-thumb-background-color);
+      border-radius: 100%;
+      cursor: pointer;
+      height: 24px;
+      width: 24px;
+      appearance: none;
+      outline: var(--_c-slider-outline);
+      outline-offset: 4px;
+      transform: scale(var(--_c-slider-thumb-scale));
+      transform-origin: center;
+      transition:
+        box-shadow .3s cubic-bezier(0.075, 0.82, 0.165, 1),
+        transform .3s cubic-bezier(0.075, 0.82, 0.165, 1);
+      z-index: 1;
+      position: relative;
+        
+      &:hover {
+        box-shadow: 0 0 0 var(--_c-slider-thumb-shadow-size) var(--_c-slider-thumb-background-color-hover);
+      }
+    }
+
+    &[disabled] {
+      --_c-slider-background-color: var(--_c-slider-background-color-disabled);
+      --_c-slider-background-color-active: var(--_c-slider-background-color-active-disabled);
+      --_c-slider-thumb-background-color: var(--_c-slider-thumb-background-color-disabled);
+
+      pointer-events: none;
+    }
+  }
+
+  /** Mozilla Firefox */
+  @-moz-document url-prefix() {
+    input[type="range"]::-moz-range-thumb {
+      border: 0;
+      background-color: var(--_c-slider-thumb-background-color);
+      border-radius: 100%;
+      cursor: pointer;
+      height: 24px;
+      width: 24px;
+      appearance: none;
+      outline: var(--_c-slider-outline);
+      outline-offset: 2px;
+      transform: scale(var(--_c-slider-thumb-scale));
+      transform-origin: center;
+      transition:
+        box-shadow .3s cubic-bezier(0.075, 0.82, 0.165, 1),
+        transform .3s cubic-bezier(0.075, 0.82, 0.165, 1);
+      z-index: 1;
+      position: relative;
+        
+      &:hover {
+        box-shadow: 0 0 0 var(--_c-slider-thumb-shadow-size) var(--_c-slider-thumb-background-color-hover);
+      }
+    }
+  }
+
+  // tooltip
+  .c-slider__tooltip-wrapper {
+    position: relative;
+    height: 0;
+    margin-inline: 2px;
+    
+    /** Mozilla Firefox */
+    @-moz-document url-prefix() {
+      margin-inline: 12px;
+    }
+
+    span {
+      transform: translate(-50%, var(--_c-slider-tooltip-y));
+      position: absolute;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      left: calc(1% * var(--_c-slider-position));
+      box-sizing: border-box;
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      opacity: var(--_c-slider-tooltip-opacity);
+      transition:
+        opacity .3s cubic-bezier(0.075, 0.82, 0.165, 1),
+        transform .3s cubic-bezier(0.075, 0.82, 0.165, 1);
+      pointer-events: none;
+
+      &::before {
+        content: attr(data-tooltip);
+        position: absolute;
+        bottom: 100%;
+        color: var(--_c-slider-tooltip-text-color);
+        background: var(--_c-slider-tooltip-background-color);
+        border-radius: 4px;
+        padding: 6px;
+        height: 30px;
+        display: inline-flex;
+        flex-wrap: nowrap;
+        white-space: nowrap;
+        top: -42px;
+        align-items: center;
+      }
+
+      &::after {
+        position: absolute;
+        content: "";
+        width: 0;
+        height: 0;
+        left: 50%;
+        margin: -42px 0 0 -6px;
+        border-left: 6px solid transparent;
+        border-right: 6px solid transparent;
+        border-top: 6px solid var(--_c-slider-tooltip-background-color);
+      }
+    }
+  }
+
+  .c-slider__ticks {
+    --c-slider-tick-color: var(--c-tertiary-400);
+
+    justify-content: space-between;
+    pointer-events: none;
+    margin: -8px auto 0;
+    width: calc(100% - 16px);
+    height: 8px;
+    display: flex;
+    align-items: center;
+    border-radius: 100vw;
+    position: relative;
+    background: linear-gradient(
+      to right,
+      var(--_c-slider-background-color-active) calc(1% * var(--_c-slider-position)),
+      var(--_c-slider-background-color) calc(1% * var(--_c-slider-position)),
+    );
+    z-index: -1;
+
+    /** Mozilla Firefox */
+    @-moz-document url-prefix() {
+      width: calc(100% - 20px);
+    }
+
+    &--disabled {
+      --_c-slider-background-color-active: var(--_c-slider-background-color-active-disabled);
+    }
+
+    span {
+      height: 4px;
+      padding: 0;
+      width: 4px;
+      position: relative;
+      font-size: 12px;
+      border-radius: 50%;
+      
+      
+      &.ticks {
+        background-color: var(--_c-slider-tick-color);
+
+        &.active {
+          background-color: var(--_c-slider-tick-color-active);
+        }
+
+        &:first-child,
+        &:last-child {
+          background-color: transparent;
+        }
+      }
+
+      &.labels {
+        &::after {
+          content: attr(data-value);
+          position: absolute;
+          transform: translate(-50%);
+          top: 16px;
+          left: 2px;
+        }
+      }
+    }
+  }
+}
+
+:host(c-slider.c-slider--labels) {
+  padding-bottom: 20px;
+}
+
+:host(c-slider:focus-within),
+:host(c-slider:hover) {
+  --_c-slider-tooltip-opacity: 1;
+  --_c-slider-tooltip-y: -8px;
+}
