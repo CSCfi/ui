@@ -1327,6 +1327,10 @@ export namespace Components {
          */
         "label": string;
         /**
+          * Show tick labels
+         */
+        "labels": boolean;
+        /**
           * Max value
          */
         "max": string;
@@ -1338,10 +1342,6 @@ export namespace Components {
           * Segment count
          */
         "segments": string;
-        /**
-          * Show tick labels
-         */
-        "showLabels": boolean;
         /**
           * Step
          */
@@ -2943,6 +2943,7 @@ declare global {
         "c-side-navigation": HTMLCSideNavigationElement;
         "c-side-navigation-item": HTMLCSideNavigationItemElement;
         "c-side-navigation-title": HTMLCSideNavigationTitleElement;
+        "c-slider": HTMLCSliderElement;
         "c-spacer": HTMLCSpacerElement;
         "c-spinner": HTMLCSpinnerElement;
         "c-status": HTMLCStatusElement;
@@ -4347,6 +4348,10 @@ declare namespace LocalJSX {
          */
         "label"?: string;
         /**
+          * Show tick labels
+         */
+        "labels"?: boolean;
+        /**
           * Max value
          */
         "max"?: string;
@@ -4362,10 +4367,6 @@ declare namespace LocalJSX {
           * Segment count
          */
         "segments"?: string;
-        /**
-          * Show tick labels
-         */
-        "showLabels"?: boolean;
         /**
           * Step
          */

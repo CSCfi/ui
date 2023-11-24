@@ -25,7 +25,7 @@
       v-control
       label="Monthly usage"
       class="flex-1"
-      :show-labels="showLabels"
+      :labels="showLabels"
       :disable-tooltip="!showTooltip"
       :disabled="isDisabled"
       :ticks="showTicks"

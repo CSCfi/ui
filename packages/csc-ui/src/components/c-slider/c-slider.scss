@@ -1,44 +1,46 @@
 :host(c-slider) {
   /**
-   * @prop --c-slider-background-color: Slider background color
+   * @prop --c-slider-background-color-active-disabled: Active disabled slider background color
    * @prop --c-slider-background-color-active: Slider active background color
-   * @prop --c-slider-thumb-background-color: Slider thumb background color
+   * @prop --c-slider-background-color-disabled: Disabled slider background color
+   * @prop --c-slider-background-color: Slider background color
+   * @prop --c-slider-thumb-background-color-disabled: Disabled slider thumb background color
    * @prop --c-slider-thumb-background-color-hover: Slider thumb background color on hover
+   * @prop --c-slider-thumb-background-color: Slider thumb background color
+   * @prop --c-slider-tick-color-active: Slider active tick color
+   * @prop --c-slider-tick-color: Slider tick color
    * @prop --c-slider-tooltip-background-color: Slider tooltip background color
    * @prop --c-slider-tooltip-text-color: Slider tooltip text color
-   * @prop --c-slider-tick-color: Slider tick color
-   * @prop --c-slider-tick-color-active: Slider active tick color
-   * @prop --_c-slider-background-color-disabled: Disabled slider background color
-   * @prop --_c-slider-background-color-active-disabled: Active disabled slider background color
-   * @prop --_c-slider-thumb-background-color-disabled: Disabled slider thumb background color
    */
-  --_c-slider-background-color: var(--c-slider-background-color, rgba(var(--c-tertiary-rgb), 0.2));
+  --_c-slider-background-color-active-disabled: var(--c-slider-background-color-active-disabled, var(--c-tertiary-400));
   --_c-slider-background-color-active: var(--c-slider-background-color-active, var(--c-primary-500));
-  --_c-slider-thumb-background-color: var(--c-slider-thumb-background-color, var(--c-primary-600));
+  --_c-slider-background-color-disabled: var(--c-slider-background-color-disabled, rgba(var(--c-tertiary-rgb), 0.2));
+  --_c-slider-background-color: var(--c-slider-background-color, rgba(var(--c-tertiary-rgb), 0.2));
+  --_c-slider-thumb-background-color-disabled: var(--c-slider-thumb-background-color-disabled, var(--c-tertiary-500));
   --_c-slider-thumb-background-color-hover: var(--c-slider-thumb-background-color-hover, rgba(var(--c-primary-rgb), 0.2));
+  --_c-slider-thumb-background-color: var(--c-slider-thumb-background-color, var(--c-primary-600));
+  --_c-slider-tick-color-active: var(--c-slider-tick-color-active, var(--c-white));
+  --_c-slider-tick-color: var(--c-slider-tick-color, var(--c-tertiary-500));
   --_c-slider-tooltip-background-color: var(--c-slider-tooltip-background-color, var(--c-primary-900));
   --_c-slider-tooltip-text-color: var(--c-slider-tooltip-text-color, var(--c-white));
-  --_c-slider-tick-color: var(--c-slider-tick-color, var(--c-tertiary-500));
-  --_c-slider-tick-color-active: var(--c-slider-tick-color-active, var(--c-white));
-  --_c-slider-background-color-disabled: var(--c-slider-background-color-disabled, rgba(var(--c-tertiary-rgb), 0.2));
-  --_c-slider-background-color-active-disabled: var(--c-slider-background-color-active-disabled, var(--c-tertiary-400));
-  --_c-slider-thumb-background-color-disabled: var(--c-slider-thumb-background-color-disabled, var(--c-tertiary-500));
   
   // private
-  --_c-slider-tooltip-opacity: 0;
-  --_c-slider-tooltip-y: -4px;
   --_c-slider-outline: none;
   --_c-slider-thumb-scale: 1;
   --_c-slider-thumb-shadow-size: 8px;
+  --_c-slider-tooltip-opacity: 0;
+  --_c-slider-tooltip-y: -4px;
 
   $this: &;
 
   display: block;
   isolation: isolate;
+  padding-block: 8px;
 
   .c-slider__label {
     display: block;
     margin-bottom: 16px;
+    margin-top: -8px;
 
     span.required {
       color: var(--c-error-600);
@@ -46,8 +48,8 @@
   }
 
   .c-slider__wrapper {
-    position: relative;
     padding-inline: 10px;
+    position: relative;
 
     /** Mozilla Firefox */
     @-moz-document url-prefix() {
@@ -56,14 +58,14 @@
   }
   
   input[type="range"] {
-    margin: 0;
-    width: 100%;
-    appearance: none;
-    position: relative;
-    background-color: transparent;
-    height: 8px;
-    display: flex;
     align-items: center;
+    appearance: none;
+    background-color: transparent;
+    display: flex;
+    height: 8px;
+    margin: 0;
+    position: relative;
+    width: 100%;
 
     &:focus-visible {
       --_c-slider-outline: 2px var(--_c-slider-thumb-background-color) solid;
@@ -87,21 +89,21 @@
     }
   
     &::-webkit-slider-thumb {
+      appearance: none;
       background-color: var(--_c-slider-thumb-background-color);
       border-radius: 100%;
       cursor: pointer;
       height: 24px;
-      width: 24px;
-      appearance: none;
-      outline: var(--_c-slider-outline);
       outline-offset: 4px;
-      transform: scale(var(--_c-slider-thumb-scale));
+      outline: var(--_c-slider-outline);
+      position: relative;
       transform-origin: center;
+      transform: scale(var(--_c-slider-thumb-scale));
       transition:
         box-shadow .3s cubic-bezier(0.075, 0.82, 0.165, 1),
         transform .3s cubic-bezier(0.075, 0.82, 0.165, 1);
+      width: 24px;
       z-index: 1;
-      position: relative;
         
       &:hover {
         box-shadow: 0 0 0 var(--_c-slider-thumb-shadow-size) var(--_c-slider-thumb-background-color-hover);
@@ -120,22 +122,22 @@
   /** Mozilla Firefox */
   @-moz-document url-prefix() {
     input[type="range"]::-moz-range-thumb {
-      border: 0;
+      appearance: none;
       background-color: var(--_c-slider-thumb-background-color);
       border-radius: 100%;
+      border: 0;
       cursor: pointer;
       height: 24px;
-      width: 24px;
-      appearance: none;
-      outline: var(--_c-slider-outline);
       outline-offset: 2px;
-      transform: scale(var(--_c-slider-thumb-scale));
+      outline: var(--_c-slider-outline);
+      position: relative;
       transform-origin: center;
+      transform: scale(var(--_c-slider-thumb-scale));
       transition:
         box-shadow .3s cubic-bezier(0.075, 0.82, 0.165, 1),
         transform .3s cubic-bezier(0.075, 0.82, 0.165, 1);
+      width: 24px;
       z-index: 1;
-      position: relative;
         
       &:hover {
         box-shadow: 0 0 0 var(--_c-slider-thumb-shadow-size) var(--_c-slider-thumb-background-color-hover);
@@ -145,9 +147,9 @@
 
   // tooltip
   .c-slider__tooltip-wrapper {
-    position: relative;
     height: 0;
     margin-inline: 2px;
+    position: relative;
     
     /** Mozilla Firefox */
     @-moz-document url-prefix() {
@@ -155,48 +157,48 @@
     }
 
     span {
-      transform: translate(-50%, var(--_c-slider-tooltip-y));
-      position: absolute;
-      display: inline-flex;
       align-items: center;
+      border-radius: 50%;
+      box-sizing: border-box;
+      display: inline-flex;
+      height: 24px;
       justify-content: center;
       left: calc(1% * var(--_c-slider-position));
-      box-sizing: border-box;
-      width: 24px;
-      height: 24px;
-      border-radius: 50%;
       opacity: var(--_c-slider-tooltip-opacity);
+      pointer-events: none;
+      position: absolute;
+      transform: translate(-50%, var(--_c-slider-tooltip-y));
       transition:
         opacity .3s cubic-bezier(0.075, 0.82, 0.165, 1),
         transform .3s cubic-bezier(0.075, 0.82, 0.165, 1);
-      pointer-events: none;
+      width: 24px;
 
       &::before {
-        content: attr(data-tooltip);
-        position: absolute;
-        bottom: 100%;
-        color: var(--_c-slider-tooltip-text-color);
+        align-items: center;
         background: var(--_c-slider-tooltip-background-color);
         border-radius: 4px;
-        padding: 6px;
-        height: 30px;
+        bottom: 100%;
+        color: var(--_c-slider-tooltip-text-color);
+        content: attr(data-tooltip);
         display: inline-flex;
         flex-wrap: nowrap;
-        white-space: nowrap;
+        height: 30px;
+        padding: 6px;
+        position: absolute;
         top: -42px;
-        align-items: center;
+        white-space: nowrap;
       }
 
       &::after {
-        position: absolute;
-        content: "";
-        width: 0;
-        height: 0;
-        left: 50%;
-        margin: -42px 0 0 -6px;
         border-left: 6px solid transparent;
         border-right: 6px solid transparent;
         border-top: 6px solid var(--_c-slider-tooltip-background-color);
+        content: "";
+        height: 0;
+        left: 50%;
+        margin: -42px 0 0 -6px;
+        position: absolute;
+        width: 0;
       }
     }
   }
@@ -204,20 +206,20 @@
   .c-slider__ticks {
     --c-slider-tick-color: var(--c-tertiary-400);
 
-    justify-content: space-between;
-    pointer-events: none;
-    margin: -8px auto 0;
-    width: calc(100% - 16px);
-    height: 8px;
-    display: flex;
     align-items: center;
-    border-radius: 100vw;
-    position: relative;
     background: linear-gradient(
       to right,
       var(--_c-slider-background-color-active) calc(1% * var(--_c-slider-position)),
       var(--_c-slider-background-color) calc(1% * var(--_c-slider-position)),
     );
+    border-radius: 100vw;
+    display: flex;
+    height: 8px;
+    justify-content: space-between;
+    margin: -8px auto 0;
+    pointer-events: none;
+    position: relative;
+    width: calc(100% - 16px);
     z-index: -1;
 
     /** Mozilla Firefox */
@@ -230,12 +232,12 @@
     }
 
     span {
+      border-radius: 50%;
+      font-size: 12px;
       height: 4px;
       padding: 0;
-      width: 4px;
       position: relative;
-      font-size: 12px;
-      border-radius: 50%;
+      width: 4px;
       
       
       &.ticks {
@@ -254,10 +256,10 @@
       &.labels {
         &::after {
           content: attr(data-value);
-          position: absolute;
-          transform: translate(-50%);
-          top: 16px;
           left: 2px;
+          position: absolute;
+          top: 16px;
+          transform: translate(-50%);
         }
       }
     }
@@ -265,7 +267,7 @@
 }
 
 :host(c-slider.c-slider--labels) {
-  padding-bottom: 20px;
+  padding-bottom: 24px;
 }
 
 :host(c-slider:focus-within),

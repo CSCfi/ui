@@ -66,7 +66,7 @@ export class CSlider {
   /**
    * Show tick labels
    */
-  @Prop() showLabels = false;
+  @Prop() labels = false;
 
   /**
    * Disable tooltip
@@ -144,7 +144,7 @@ export class CSlider {
   }
 
   private _isActive(value: number) {
-    return this.trackPosition >= value;
+    return this.trackPosition >= (100 / +this.max) * value;
   }
 
   componentWillLoad() {
@@ -164,7 +164,7 @@ export class CSlider {
   render() {
     const classes = {
       'c-slider': true,
-      'c-slider--labels': this.showLabels,
+      'c-slider--labels': this.labels,
     };
 
     const styles = {
@@ -216,9 +216,9 @@ export class CSlider {
               class={{
                 active: this._isActive(Math.round(+position)),
                 ticks: this.ticks,
-                labels: this.showLabels,
+                labels: this.labels,
               }}
-              data-value={Math.round(+position)}
+              data-value={this._formatNumber(Math.round(+position))}
             ></span>
           ))}
         </div>
