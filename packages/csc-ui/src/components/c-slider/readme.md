@@ -34,19 +34,19 @@
 
 ## CSS Custom Properties
 
-| Name                                           | Description                             |
-| ---------------------------------------------- | --------------------------------------- |
-| `--_c-slider-background-color-active-disabled` | Active disabled slider background color |
-| `--_c-slider-background-color-disabled`        | Disabled slider background color        |
-| `--_c-slider-thumb-background-color-disabled`  | Disabled slider thumb background color  |
-| `--c-slider-background-color`                  | Slider background color                 |
-| `--c-slider-background-color-active`           | Slider active background color          |
-| `--c-slider-thumb-background-color`            | Slider thumb background color           |
-| `--c-slider-thumb-background-color-hover`      | Slider thumb background color on hover  |
-| `--c-slider-tick-color`                        | Slider tick color                       |
-| `--c-slider-tick-color-active`                 | Slider active tick color                |
-| `--c-slider-tooltip-background-color`          | Slider tooltip background color         |
-| `--c-slider-tooltip-text-color`                | Slider tooltip text color               |
+| Name                                          | Description                             |
+| --------------------------------------------- | --------------------------------------- |
+| `--c-slider-background-color`                 | Slider background color                 |
+| `--c-slider-background-color-active`          | Slider active background color          |
+| `--c-slider-background-color-active-disabled` | Active disabled slider background color |
+| `--c-slider-background-color-disabled`        | Disabled slider background color        |
+| `--c-slider-thumb-background-color`           | Slider thumb background color           |
+| `--c-slider-thumb-background-color-disabled`  | Disabled slider thumb background color  |
+| `--c-slider-thumb-background-color-hover`     | Slider thumb background color on hover  |
+| `--c-slider-tick-color`                       | Slider tick color                       |
+| `--c-slider-tick-color-active`                | Slider active tick color                |
+| `--c-slider-tooltip-background-color`         | Slider tooltip background color         |
+| `--c-slider-tooltip-text-color`               | Slider tooltip text color               |
 
 
 ----------------------------------------------
