@@ -1580,6 +1580,10 @@
           "description": "Label of the slider"
         },
         {
+          "name": "labels",
+          "description": "Show tick labels"
+        },
+        {
           "name": "max",
           "description": "Max value"
         },
@@ -1590,10 +1594,6 @@
         {
           "name": "segments",
           "description": "Segment count"
-        },
-        {
-          "name": "show-labels",
-          "description": "Show tick labels"
         },
         {
           "name": "step",

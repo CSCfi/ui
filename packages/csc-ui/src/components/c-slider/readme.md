@@ -15,10 +15,10 @@
 | `hostId`         | `id`              | Id of the element   | `string`           | `undefined` |
 | `hostName`       | `name`            | Id of the element   | `string`           | `undefined` |
 | `label`          | `label`           | Label of the slider | `string`           | `undefined` |
+| `labels`         | `labels`          | Show tick labels    | `boolean`          | `false`     |
 | `max`            | `max`             | Max value           | `string`           | `'100'`     |
 | `min`            | `min`             | Min value           | `string`           | `'0'`       |
 | `segments`       | `segments`        | Segment count       | `string`           | `'10'`      |
-| `showLabels`     | `show-labels`     | Show tick labels    | `boolean`          | `false`     |
 | `step`           | `step`            | Step                | `string`           | `'1'`       |
 | `ticks`          | `ticks`           | Thow ticks          | `boolean`          | `false`     |
 | `unit`           | `unit`            | Unit                | `string`           | `'%'`       |
