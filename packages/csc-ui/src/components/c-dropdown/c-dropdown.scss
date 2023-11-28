@@ -118,12 +118,18 @@
       width: 100%;
     }
 
-    &:not(.disabled):hover,
-    &:not(.disabled):focus,
+    &:hover,
+    &:focus,
     &.active {
       background: var(--_c-dropdown-background-color-hover);
       color: var(--_c-dropdown-text-color-active);
       box-shadow: inset 0 0 0 1px var(--_c-dropdown-text-color-active);
+    }
+
+    &:not(.disabled, :hover, :focus)[aria-selected="true"] {
+      background: var(--_c-dropdown-background-color-hover);
+      color: var(--_c-dropdown-text-color-active);
+      border-radius: 0;
     }
 
     &.disabled {

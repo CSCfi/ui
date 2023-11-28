@@ -1,4 +1,5 @@
 import {
+  AttachInternals,
   Component,
   Host,
   h,
@@ -21,9 +22,13 @@ import { mdiChevronDown, mdiClose } from '@mdi/js';
   tag: 'c-autocomplete',
   styleUrl: 'c-autocomplete.scss',
   shadow: true,
+  formAssociated: true,
 })
 export class CAutocomplete {
   @Element() el: HTMLCAutocompleteElement;
+
+  // eslint-disable-next-line
+  @AttachInternals() internals: ElementInternals;
 
   private static _uniqueId = 0;
 
@@ -167,6 +172,8 @@ export class CAutocomplete {
 
     this.changeValue.emit(null);
 
+    this.internals.setFormValue(null);
+
     this.changeQuery.emit('');
 
     this._dropdownElement.updateList();
@@ -289,15 +296,27 @@ export class CAutocomplete {
   onSelectOption(event: CustomEvent<{ name: string; value: string }>) {
     this._dropdownElement.close();
 
-    this.changeValue.emit(
-      this.returnObject ? event.detail : event.detail.value,
-    );
+    const { name, value } = event.detail;
 
-    this.query = event.detail.name;
+    this.value = this.returnObject ? event.detail : value;
 
-    this.changeQuery.emit(event.detail.name);
+    this.changeValue.emit(this.value);
+
+    this.internals.setFormValue(value);
+
+    this.query = name;
+
+    this.changeQuery.emit(name);
 
     this._preventDialogOpen = true;
+
+    if (this.optionElementsExist) {
+      Array.from(this.optionElements).forEach((item) => {
+        item.selected = item.value === value && item.name === name;
+      });
+
+      this._dropdownElement.updateList();
+    }
 
     this._inputElement.focus();
   }
@@ -319,6 +338,24 @@ export class CAutocomplete {
 
   private _handleSlotChange = () => {
     this.optionElements = this.el.querySelectorAll('c-option');
+
+    const selection = Array.from(this.optionElements).find(
+      (option) => option.selected,
+    );
+
+    if (selection) {
+      this.value = this.returnObject
+        ? { name: selection.name, value: selection.value }
+        : selection.value;
+
+      this.changeValue.emit(this.value);
+
+      this.query = selection.name.toString();
+
+      this.changeQuery.emit(selection.value);
+
+      this.internals.setFormValue(selection.value.toString());
+    }
 
     if (this.optionElements.length && !this.optionElementsExist) {
       this.optionElementsExist = true;
@@ -388,7 +425,11 @@ export class CAutocomplete {
 
     this.query = '';
 
+    this.value = null;
+
     this.changeValue.emit(null);
+
+    this.internals.setFormValue(null);
 
     this.changeQuery.emit('');
 

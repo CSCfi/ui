@@ -12,6 +12,7 @@ import {
   State,
 } from '@stencil/core';
 import { CAutocompleteItem, CSelectItem } from '../../types';
+import { getScrollParent } from '../../utils';
 
 @Component({
   tag: 'c-dropdown',
@@ -86,6 +87,8 @@ export class CDropdown {
 
   private _dummyElement: HTMLDivElement;
 
+  private _scrollParent: HTMLElement;
+
   private _isMobile = false;
 
   private _listItems: HTMLLIElement[] = [];
@@ -104,8 +107,12 @@ export class CDropdown {
   }
 
   @Watch('isOpen')
-  stateWatcher() {
-    this.dropdownStateChange.emit(this.isOpen);
+  async stateWatcher(isOpen) {
+    this.dropdownStateChange.emit(isOpen);
+
+    this._scrollParent = this._scrollParent || (await getScrollParent(this.el));
+
+    this._scrollParent.style.overflow = isOpen ? 'hidden' : null;
   }
 
   @Watch('index')
@@ -113,13 +120,7 @@ export class CDropdown {
     requestAnimationFrame(() => {
       this._updateStatusText();
 
-      this._listItems.forEach((item, itemIndex) => {
-        item?.classList.toggle('active', index === itemIndex);
-
-        if (index === itemIndex) {
-          item?.focus();
-        }
-      });
+      this._listItems[index]?.focus();
     });
   }
 
@@ -195,12 +196,12 @@ export class CDropdown {
     this._inputElement = this.el.querySelector('c-input');
 
     this._resizeObserver = new ResizeObserver((entries) => {
+      if (!this._dialog.open) return;
+
       requestAnimationFrame(() => {
         if (!Array.isArray(entries) || !entries.length) return;
 
         this._setIsMobile();
-
-        if (!this._dialog.open) return;
 
         this.close();
       });
@@ -288,16 +289,16 @@ export class CDropdown {
     requestAnimationFrame(() => {
       let inputSlot = 'input-top';
 
+      const { top: parentTop, width } = this._getParentPosition();
+
+      const inputSize = this.el.getBoundingClientRect();
+
+      this._inputSize = {
+        height: inputSize.height,
+        width: inputSize.width,
+      };
+
       if (!this._isMobile) {
-        const { top: parentTop, width } = this._getParentPosition();
-
-        const inputSize = this.el.getBoundingClientRect();
-
-        this._inputSize = {
-          height: inputSize.height,
-          width: inputSize.width,
-        };
-
         this._dialog.style.width = `${width}px`;
         this._dialog.style.top = `${inputSize.top}px`;
         this._dialog.style.bottom = 'auto';
@@ -326,12 +327,11 @@ export class CDropdown {
           this._dialog.style.bottom = `${innerHeight - inputSize.top - 44}px`;
           this._inputElement.scrollIntoView();
         }
-
-        this._dummyElement.style.width = `${this._getParentPosition().width}px`;
-        this._dummyElement.style.height = `${this._inputSize.height}px`;
-        this._dummyElement.style.display = 'block';
       }
 
+      this._dummyElement.style.width = `${this._getParentPosition().width}px`;
+      this._dummyElement.style.height = `${this._inputSize.height}px`;
+      this._dummyElement.style.display = 'block';
       this._dummyElement.slot = 'default';
 
       this._inputElement.slot = inputSlot;

@@ -11,6 +11,7 @@ import {
   Watch,
 } from '@stencil/core';
 import { CMenuOption } from '../../types';
+import { getScrollParent } from '../../utils';
 
 /**
  * @parent c-menu
@@ -231,7 +232,7 @@ export class CMenuItems {
 
       this._parentTop = parentTop;
 
-      this.scrollingParent = await this._getScrollParent(this.parent);
+      this.scrollingParent = await getScrollParent(this.parent);
 
       this._boundFn = this._onScroll.bind(this);
 
@@ -245,35 +246,6 @@ export class CMenuItems {
         },
         width,
       });
-    });
-  }
-
-  private async _getScrollParent(element): Promise<HTMLElement> {
-    return new Promise((resolve) => {
-      if (!element) {
-        resolve(undefined);
-      }
-
-      let parent = element.parentNode;
-
-      while (parent) {
-        if (parent.shadowRoot === undefined) {
-          parent = parent.host;
-        } else {
-          const { overflow, overflowX } = window.getComputedStyle(parent);
-
-          if (
-            overflowX !== 'scroll' &&
-            overflow.split(' ').every((o) => o === 'auto' || o === 'scroll')
-          ) {
-            resolve(parent);
-          }
-
-          parent = parent.parentNode;
-        }
-      }
-
-      resolve(document.documentElement);
     });
   }
 
