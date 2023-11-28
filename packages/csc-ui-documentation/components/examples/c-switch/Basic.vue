@@ -12,7 +12,7 @@
 
     <c-switch required>Required</c-switch>
 
-    <c-switch value="true" disabled>Disabled, active</c-switch>
+    <c-switch checked disabled>Disabled, active</c-switch>
 
     <c-switch disabled>Disabled</c-switch>
   </component-example>

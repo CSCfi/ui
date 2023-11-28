@@ -1,4 +1,5 @@
 import {
+  AttachInternals,
   Component,
   Element,
   Event,
@@ -21,9 +22,13 @@ import { mdiChevronDown, mdiClose } from '@mdi/js';
   tag: 'c-select',
   styleUrl: 'c-select.scss',
   shadow: true,
+  formAssociated: true,
 })
 export class CSelect {
   @Element() el: HTMLCSelectElement;
+
+  // eslint-disable-next-line
+  @AttachInternals() internals: ElementInternals;
 
   /**
    * Dropdown items
@@ -190,7 +195,7 @@ export class CSelect {
         ?.name;
     }
 
-    return (this._items as CSelectItem[])?.find(
+    return Array.from(this._items as CSelectItem[])?.find(
       (item) => item.value === (this.value as CSelectItem).value,
     )?.name;
   }
@@ -201,6 +206,8 @@ export class CSelect {
   @Method()
   async reset() {
     this.changeValue.emit(null);
+
+    this.internals.setFormValue(null);
 
     this._dropdownElement.updateList();
   }
@@ -243,8 +250,6 @@ export class CSelect {
 
     if (event.key === 'Tab') {
       this._dropdownElement.close();
-
-      return;
     }
 
     if (event.key === 'ArrowDown') {
@@ -252,22 +257,16 @@ export class CSelect {
 
       if (!this._items.length) return;
 
-      if (!this.dropdownVisible || this.currentIndex === null) {
-        this.currentIndex = 0;
+      if (!this.dropdownVisible) {
         this._dropdownElement.open();
-        this._dropdownElement.focusItem(this.currentIndex);
-
-        return;
       }
 
-      this.currentIndex = Math.min(
-        this.currentIndex + 1,
-        this._items.length - 1,
-      );
+      this.currentIndex =
+        this.currentIndex === null
+          ? 0
+          : Math.min(this.currentIndex + 1, this._items.length - 1);
 
       this._dropdownElement.focusItem(this.currentIndex);
-
-      return;
     }
 
     if (event.key === 'ArrowUp') {
@@ -278,15 +277,14 @@ export class CSelect {
         this._inputElement.focus();
       }
 
-      if (!this.dropdownVisible || this.currentIndex === null) {
-        this.currentIndex = this._items.length - 1;
+      if (!this.dropdownVisible) {
         this._dropdownElement.open();
-        this._dropdownElement.focusItem(this.currentIndex);
-
-        return;
       }
 
-      this.currentIndex = Math.max(this.currentIndex - 1, 0);
+      this.currentIndex =
+        this.currentIndex === null
+          ? this._items.length - 1
+          : Math.max(this.currentIndex - 1, 0);
 
       this._dropdownElement.focusItem(this.currentIndex);
     }
@@ -317,12 +315,6 @@ export class CSelect {
     const isOpen = event.detail;
 
     this.dropdownVisible = isOpen;
-
-    if (!isOpen) {
-      requestAnimationFrame(() => {
-        this.currentIndex = null;
-      });
-    }
   }
 
   @Listen('selectOption')
@@ -331,25 +323,46 @@ export class CSelect {
 
     const { name, value } = event.detail;
 
-    if (this.optionElementsExist && this.optionAsSelection) {
-      // const selection = this._cOptionElements[item.value.toString()];
-      const selection = Array.from(this.optionElements).find(
-        (item) => item.value === value && item.name === name,
-      );
+    const selection = this._setCurrentIndex({ name, value });
 
-      if (!selection) return;
-
-      const clone = selection.cloneNode(true);
+    if (this.optionElementsExist && this.optionAsSelection && selection) {
+      const clone = (selection as HTMLCOptionElement).cloneNode(true);
 
       this._selectionElement.classList.add('c-input-menu__selection--show');
       this._selectionElement.replaceChildren(clone);
     }
 
-    this.changeValue.emit(this.returnObject ? event.detail : value);
+    this._dropdownElement.updateList();
+
+    this.value = this.returnObject ? event.detail : value;
+
+    this.changeValue.emit(this.value);
+
+    this.internals.setFormValue(value);
 
     this._preventDialogOpen = true;
 
     this._inputElement.focus();
+  }
+
+  private _setCurrentIndex({ value, name }: { value: string; name: string }) {
+    let selection: HTMLCOptionElement | CSelectItem | null = null;
+
+    Array.from(this._items).forEach((item, index) => {
+      const selected = item.value === value && item.name === name;
+
+      if (this.optionElementsExist) {
+        (item as HTMLCOptionElement).selected = selected;
+      }
+
+      if (selected) {
+        this.currentIndex = index;
+
+        selection = item;
+      }
+    });
+
+    return selection;
   }
 
   private _toggleDropdown = (event) => {
@@ -395,12 +408,28 @@ export class CSelect {
     if (this.optionElements.length && !this.optionElementsExist) {
       this.optionElementsExist = true;
     }
+
+    const selection = Array.from(this.optionElements).find(
+      (option) => option.selected,
+    );
+
+    if (selection) {
+      this.value = this.returnObject
+        ? { name: selection.name, value: selection.value }
+        : selection.value;
+
+      this.changeValue.emit(this.value);
+
+      this.internals.setFormValue(selection.value.toString());
+    }
   };
 
   private _onReset = (event) => {
     event.stopPropagation();
 
     this.changeValue.emit(null);
+
+    this.internals.setFormValue(null);
 
     this._selectionElement.classList.remove('c-input-menu__selection--show');
     this._selectionElement.replaceChildren(null);
@@ -466,6 +495,26 @@ export class CSelect {
         /[^a-zA-Z0-9-_]/g,
         '',
       );
+  }
+
+  componentDidLoad() {
+    if (!this.value) return;
+
+    const selection = Array.from(this._items).find((item) => {
+      if (this.returnObject) {
+        return (
+          item.name === (this.value as CSelectItem).name &&
+          item.value === (this.value as CSelectItem).value
+        );
+      }
+
+      return item.value === this.value;
+    });
+
+    this._setCurrentIndex({
+      name: selection.name,
+      value: selection.value.toString(),
+    });
   }
 
   private _renderLoader() {
