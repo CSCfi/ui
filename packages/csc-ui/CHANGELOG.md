@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.2.2](https://github.com/CSCfi/ui/compare/v1.2.1...v1.2.2) (2023-11-28)
+
+
+### Bug Fixes
+
+* c-select & c-autocomplete - Various fixes ([62fb676](https://github.com/CSCfi/ui/commit/62fb676e4a1c95383fd1c20a67e098b20300fb05))
+
 ## [1.2.1](https://github.com/CSCfi/ui/compare/v1.2.0...v1.2.1) (2023-11-24)
 
 
