@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.2.1](https://github.com/CSCfi/ui/compare/v1.2.0...v1.2.1) (2023-11-24)
+
+
+### Bug Fixes
+
+* c-slider - fix element size ([cb9e66f](https://github.com/CSCfi/ui/commit/cb9e66f9c12731a762bbce6450b294e529860786))
+* c-slider - fix slider tick active state with custom max values ([103c759](https://github.com/CSCfi/ui/commit/103c7594435987af5af75b47615a13108be05a92))
+
 ## [1.2.0](https://github.com/CSCfi/ui/compare/v1.1.1...v1.2.0) (2023-11-24)
 
 
