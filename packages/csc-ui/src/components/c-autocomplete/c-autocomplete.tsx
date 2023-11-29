@@ -326,10 +326,10 @@ export class CAutocomplete {
     this._updateStatusText();
   }
 
-  private _updateInput(event: InputEvent) {
+  private _updateInput() {
     this._dropdownElement.open();
 
-    this.query = (event.target as HTMLInputElement).value;
+    this.query = this._inputElement.value;
 
     this.changeQuery.emit(this.query);
 
@@ -480,7 +480,7 @@ export class CAutocomplete {
           role="combobox"
           value={this.query}
           name={this.name ?? null}
-          onInput={(event) => this._updateInput(event)}
+          onInput={() => this._updateInput()}
           onFocus={() => this._onInputFocus()}
         />
       </div>
