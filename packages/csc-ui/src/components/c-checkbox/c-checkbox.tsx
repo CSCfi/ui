@@ -136,13 +136,11 @@ export class CCheckbox {
   }
 
   componentWillLoad() {
-    if (this.value === this.trueValue) {
-      this.checked = true;
-    }
+    this.checked = this.checked || this.value === this.trueValue;
 
-    if (this.checked) {
-      this.internals.setFormValue(this.value as string);
-    }
+    this.internals.setFormValue(
+      this.checked ? this.trueValue.toString() : this.falseValue.toString(),
+    );
   }
 
   componentDidLoad() {
@@ -179,15 +177,11 @@ export class CCheckbox {
 
     this.checked = !this.checked;
 
-    if (typeof this.value === 'string' && typeof this.trueValue === 'boolean') {
-      this.changeValue.emit(this.value);
-
-      this.internals.setFormValue(this.checked ? (this.value as string) : null);
-
-      return;
-    }
-
     this.changeValue.emit(this.checked ? this.trueValue : this.falseValue);
+
+    this.internals.setFormValue(
+      this.checked ? this.trueValue.toString() : this.falseValue.toString(),
+    );
   }
 
   private _renderMessages() {

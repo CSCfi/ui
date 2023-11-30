@@ -1,20 +1,22 @@
 <template>
   <c-table responsive>
-    <thead>
-      <tr>
-        <th>Name</th>
+    <table>
+      <thead>
+        <tr>
+          <th>Name</th>
 
-        <th>Description</th>
-      </tr>
-    </thead>
+          <th>Description</th>
+        </tr>
+      </thead>
 
-    <tbody>
-      <tr v-for="item in items" :key="item.name" class="border-b">
-        <td>{{ item.name }}</td>
+      <tbody>
+        <tr v-for="item in items" :key="item.name" class="border-b">
+          <td>{{ item.name }}</td>
 
-        <td>{{ item.docs }}</td>
-      </tr>
-    </tbody>
+          <td>{{ item.docs }}</td>
+        </tr>
+      </tbody>
+    </table>
   </c-table>
 </template>
 

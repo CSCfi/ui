@@ -20,6 +20,10 @@ table.c-table {
   padding: 0;
   width: 100%;
 
+  slot {
+    display: table;
+  }
+
   caption,
   tbody,
   tfoot,
