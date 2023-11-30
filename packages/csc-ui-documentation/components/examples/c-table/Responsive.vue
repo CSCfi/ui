@@ -3,21 +3,23 @@
     <template #title>Responsive table</template>
 
     <c-table responsive>
-      <thead>
-        <tr>
-          <th v-for="header in headers" :key="header">{{ header }}</th>
-        </tr>
-      </thead>
+      <table>
+        <thead>
+          <tr>
+            <th v-for="header in headers" :key="header">{{ header }}</th>
+          </tr>
+        </thead>
 
-      <tbody>
-        <tr v-for="user in users" :key="user.id">
-          <td>{{ user.id }}</td>
+        <tbody>
+          <tr v-for="user in users" :key="user.id">
+            <td>{{ user.id }}</td>
 
-          <td>{{ user.name }}</td>
+            <td>{{ user.name }}</td>
 
-          <td>{{ user.ssn }}</td>
-        </tr>
-      </tbody>
+            <td>{{ user.ssn }}</td>
+          </tr>
+        </tbody>
+      </table>
     </c-table>
   </component-example>
 </template>

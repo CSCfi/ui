@@ -1,4 +1,4 @@
-import { Component, Host, Prop, h } from '@stencil/core';
+import { Component, Element, Host, Prop, h } from '@stencil/core';
 
 /**
  * @group tables
@@ -9,6 +9,8 @@ import { Component, Host, Prop, h } from '@stencil/core';
   shadow: false,
 })
 export class CTable {
+  @Element() el: HTMLCTableElement;
+
   /**
    * Mobile breakpoint in pixels
    */
@@ -44,6 +46,9 @@ export class CTable {
   }
 
   componentWillLoad() {
+    this._tableElement = this.el.querySelector('table');
+    this._tableElement.classList.add('c-table');
+
     this._observer = new ResizeObserver(([entry]) => {
       const { width } = entry.contentRect;
 
@@ -64,9 +69,7 @@ export class CTable {
   render() {
     return (
       <Host>
-        <table ref={(el) => (this._tableElement = el)} class="c-table">
-          <slot></slot>
-        </table>
+        <slot></slot>
       </Host>
     );
   }
