@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.2.3](https://github.com/CSCfi/ui/compare/v1.2.2...v1.2.3) (2023-11-30)
+
+
+### Bug Fixes
+
+* c-autocomplete - fix changeQuery event payload in Firefox ([d12b237](https://github.com/CSCfi/ui/commit/d12b237a68524db38f9988c179c3363e96ca2d3b))
+* c-autocomplete & c-select - Fix keyboard navigation in Firefox ([9d29e63](https://github.com/CSCfi/ui/commit/9d29e635a2817dd6b4696b4fb624e5b946b0a0d2))
+
 ## [1.2.2](https://github.com/CSCfi/ui/compare/v1.2.1...v1.2.2) (2023-11-28)
 
 
