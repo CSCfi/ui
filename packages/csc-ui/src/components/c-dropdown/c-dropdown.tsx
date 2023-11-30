@@ -325,7 +325,6 @@ export class CDropdown {
 
           this._dialog.style.top = 'auto';
           this._dialog.style.bottom = `${innerHeight - inputSize.top - 44}px`;
-          this._inputElement.scrollIntoView();
         }
       }
 
