@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.2.4](https://github.com/CSCfi/ui/compare/v1.2.3...v1.2.4) (2023-11-30)
+
+
+### Bug Fixes
+
+* c-checkbox, c-switch & c-radio-group - Fix usage in html form ([d69b2cd](https://github.com/CSCfi/ui/commit/d69b2cd0f2ee09a80840fcd71ae899549a317846))
+* c-table - Fix content not rendering in a basic html page ([93ed5c9](https://github.com/CSCfi/ui/commit/93ed5c9644aa4c1dced28c4ed9a30fd257542e2a))
+
 ## [1.2.3](https://github.com/CSCfi/ui/compare/v1.2.2...v1.2.3) (2023-11-30)
 
 
