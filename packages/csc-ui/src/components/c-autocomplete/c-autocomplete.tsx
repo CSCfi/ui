@@ -179,8 +179,7 @@ export class CAutocomplete {
     this._dropdownElement.updateList();
   }
 
-  @Listen('keydown', { passive: true })
-  handleKeyDown(event: KeyboardEvent) {
+  private _handleKeyDown(event: KeyboardEvent) {
     const alphanumeric = /^[0-9a-zA-Z ]+$/;
 
     if (event.key.match(alphanumeric) && event.key.length === 1) {
@@ -326,10 +325,10 @@ export class CAutocomplete {
     this._updateStatusText();
   }
 
-  private _updateInput(event: InputEvent) {
+  private _updateInput() {
     this._dropdownElement.open();
 
-    this.query = (event.target as HTMLInputElement).value;
+    this.query = this._inputElement.value;
 
     this.changeQuery.emit(this.query);
 
@@ -350,9 +349,7 @@ export class CAutocomplete {
 
       this.changeValue.emit(this.value);
 
-      this.query = selection.name.toString();
-
-      this.changeQuery.emit(selection.value);
+      this.changeQuery.emit(this.query);
 
       this.internals.setFormValue(selection.value.toString());
     }
@@ -480,7 +477,7 @@ export class CAutocomplete {
           role="combobox"
           value={this.query}
           name={this.name ?? null}
-          onInput={(event) => this._updateInput(event)}
+          onInput={() => this._updateInput()}
           onFocus={() => this._onInputFocus()}
         />
       </div>
@@ -547,6 +544,7 @@ export class CAutocomplete {
           }
           parent={this.el}
           type="autocomplete"
+          onKeyDown={(event) => this._handleKeyDown(event)}
         >
           <c-input
             slot="default"

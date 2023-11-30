@@ -78,7 +78,7 @@ const onRemoveTag = (index: number) => {
   tags.value.splice(index, 1);
 };
 
-const onQueryChange = (event: InputEvent) => {
-  query.value = (event.target as HTMLCAutocompleteElement).query;
+const onQueryChange = (event: CustomEvent<string>) => {
+  query.value = event.detail;
 };
 </script>
