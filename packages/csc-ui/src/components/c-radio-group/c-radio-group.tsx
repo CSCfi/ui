@@ -269,7 +269,15 @@ export class CRadioGroup {
   componentWillLoad() {
     CRadioGroup._uniqueId += 1;
 
-    if (this.value) {
+    const radios = this.el.querySelectorAll('c-radio');
+
+    const checkedRadio = Array.from(radios).find((item) => item.checked);
+
+    if (checkedRadio) {
+      const value = checkedRadio.value;
+
+      this.internals.setFormValue(value as string);
+    } else if (this.value) {
       const value = !this.returnObject
         ? this.value
         : (this.value as CRadioGroupItem).value;
