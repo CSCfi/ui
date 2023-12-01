@@ -1,5 +1,17 @@
 # Changelog
 
+## [2.0.0](https://github.com/CSCfi/ui/compare/v1.2.4...v2.0.0) (2023-12-01)
+
+
+### ⚠ BREAKING CHANGES
+
+* c-main - Use dashboard layout by default
+
+### Features
+
+* c-main - Use dashboard layout by default ([d976d76](https://github.com/CSCfi/ui/commit/d976d7682836e2d414abb00a5bbcd66746282d45))
+* c-page - Add footer slot ([de1ccbd](https://github.com/CSCfi/ui/commit/de1ccbdbff03baecd2389530fd55884e0d995d85))
+
 ## [1.2.4](https://github.com/CSCfi/ui/compare/v1.2.3...v1.2.4) (2023-11-30)
 
 
