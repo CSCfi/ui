@@ -5,114 +5,182 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Html form test</title>
 
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@cscfi/csc-ui@1.2.0/dist/styles/css/theme.css"></link>
+  <link rel="stylesheet" href="../dist/styles/css/theme.css"></link>
 
   <script src="../dist/csc-ui/csc-ui.esm.js" type="module"></script>
 
   <style>
-    *, ::after, ::before {
+    /* *, ::after, ::before, body {
       box-sizing: border-box;
-    }
+      margin: 0;
+    } */
 
-    .container {
-      margin: 64px auto;
-      max-width: 900px;
-    }
-
-    .scroller {
-      max-height: 500px;
-      overflow-y: auto;
-      padding-top: 4px;
+    footer {
+      padding: 24px;
+      background-color: var(--c-tertiary-100);
+      width: 100%;
     }
   </style>
 </head>
 <body>
-  <div class="container">
-    <form>
+  <c-main>
+    <c-toolbar>
+      <c-csc-logo></c-csc-logo>
+
+      Application title
+
+      <c-spacer></c-spacer>
+
+      <c-navigation-button></c-navigation-button>
+    </c-toolbar>
+
+    <c-side-navigation>
+      <c-side-navigation-item>
+        About
+      </c-side-navigation-item>
+    
+      <c-side-navigation-title>Two level navigation</c-side-navigation-title>
+    
+      <c-side-navigation-item>
+        Examples
+    
+        <c-sub-navigation-item>
+          Html
+        </c-sub-navigation-item>
+    
+        <c-sub-navigation-item>
+          Javascript
+        </c-sub-navigation-item>
+      </c-side-navigation-item>
+    
+      <c-side-navigation-title>Three level navigation</c-side-navigation-title>
+    
+      <c-side-navigation-item>
+        Components
+    
+        <c-side-navigation-item>
+          Buttons
+    
+          <c-sub-navigation-item>
+            Button
+          </c-sub-navigation-item>
+    
+          <c-sub-navigation-item>
+            Icon Button
+          </c-sub-navigation-item>
+        </c-side-navigation-item>
+      </c-side-navigation-item>
+    
+      <c-side-navigation-item>
+        Settings
+    
+        <c-side-navigation-item>
+          Colors
+    
+          <c-sub-navigation-item>
+            Accent
+          </c-sub-navigation-item>
+    
+          <c-sub-navigation-item>
+            Secondary
+          </c-sub-navigation-item>
+        </c-side-navigation-item>
+      </c-side-navigation-item>
+    </c-side-navigation>
+
+    <c-page>
       <c-card>
         <c-card-title>Test form</c-card-title>
 
+        <form>
+          <c-card-content>
+            <c-select label="Test" name="select">
+              <c-option value="one" name="One" selected>One</c-option>
+              <c-option value="two" name="Two">Two</c-option>
+              <c-option value="three" name="Three">Three</c-option>
+              <c-option value="four" name="Four">Four</c-option>
+              <c-option value="five" name="Five">Five</c-option>
+            </c-select>
+
+            <c-autocomplete label="Test 2" name="autocomplete">
+              <c-option value="one" name="One">One</c-option>
+              <c-option value="two" name="Two">Two</c-option>
+              <c-option value="three" name="Three" selected>Three</c-option>
+              <c-option value="four" name="Four">Four</c-option>
+              <c-option value="five" name="Five">Five</c-option>
+            </c-autocomplete>
+
+            <c-text-field label="Text field" name="text-field"></c-text-field>
+
+            <c-checkbox name="checkbox" checked>Check me if you can</c-checkbox>
+
+            <c-radio-group name="radio-group" label="Radio Group with c-radio elements" inline>
+              <c-radio value="one">Radio one</c-radio>
+      
+              <c-radio value="two" checked>Radio two</c-radio>
+      
+              <c-radio value="three" disabled>Radio three</c-radio>
+            </c-radio-group>
+
+            <c-switch name="switch" checked>Switch</c-switch>
+
+            <c-otp-input name="otp"></c-otp-input>
+      
+          </c-card-content>
+
+          <c-card-actions>
+            <c-button type="submit">Submit</c-button>
+          </c-card-actions>
+        </form>
+        
+        <c-card-title>Table</c-card-title>
+        
         <c-card-content>
-          <c-select label="Test" name="select">
-            <c-option value="one" name="One" selected>One</c-option>
-            <c-option value="two" name="Two">Two</c-option>
-            <c-option value="three" name="Three">Three</c-option>
-            <c-option value="four" name="Four">Four</c-option>
-            <c-option value="five" name="Five">Five</c-option>
-          </c-select>
+          <c-table responsive>
+            <table>
+              <thead>
+                <tr>
+                  <th>Id</th>
+                  <th>Name</th>
+                  <th>Age</th>
+                </tr>
+              </thead>
 
-          <c-autocomplete label="Test 2" name="autocomplete">
-            <c-option value="one" name="One">One</c-option>
-            <c-option value="two" name="Two">Two</c-option>
-            <c-option value="three" name="Three" selected>Three</c-option>
-            <c-option value="four" name="Four">Four</c-option>
-            <c-option value="five" name="Five">Five</c-option>
-          </c-autocomplete>
+              <tbody>
+                <tr>
+                  <td>user-id-1</td>
+                  <td>Jason Miller</td>
+                  <td>23</td>
+                </tr>
 
-          <c-text-field label="Text field" name="text-field"></c-text-field>
+                <tr>
+                  <td>user-id-2</td>
+                  <td>Silvia Nyholm</td>
+                  <td>18</td>
+                </tr>
 
-          <c-checkbox name="checkbox" checked>Check me if you can</c-checkbox>
+                <tr>
+                  <td>user-id-3</td>
+                  <td>Mark Samsonov</td>
+                  <td>56</td>
+                </tr>
 
-          <c-radio-group name="radio-group" label="Radio Group with c-radio elements" inline>          
-            <c-radio value="one">Radio one</c-radio>
-          
-            <c-radio value="two" checked>Radio two</c-radio>
-          
-            <c-radio value="three" disabled>Radio three</c-radio>
-          </c-radio-group>
+                <tr>
+                  <td>user-id-4</td>
+                  <td>Michael Nielsen</td>
+                  <td>2</td>
+                </tr>
+              </tbody>
+            </table>
+          </c-table>
 
-          <c-switch name="switch" checked>Switch</c-switch>
-
-          <c-otp-input name="otp"></c-otp-input>
-          
+          <p>Lorem ipsum dolor sit, amet consectetur adipisicing elit. Voluptatem id repellat molestiae in numquam. Numquam provident distinctio, rem, totam possimus culpa molestiae, id ex aliquam fugiat officia. Voluptatem nam, autem obcaecati doloremque aliquam veritatis dolorem, laboriosam rerum quisquam eius cum, debitis perspiciatis. Possimus ab blanditiis vero quas reiciendis molestias temporibus voluptates, laudantium omnis ratione inventore voluptate sed dolorum quos dolores magni eaque aspernatur asperiores quidem alias ex veritatis repellat. Quis sint voluptate quas sunt quibusdam cupiditate, natus ipsam voluptas facilis nihil necessitatibus eum molestiae labore ducimus, amet, quia non ullam in impedit obcaecati quaerat ea harum! Rerum beatae suscipit commodi rem cum laborum, quisquam iste! Eligendi deleniti cum ab quibusdam at quos explicabo impedit doloremque, quam voluptatibus sequi enim non eos commodi nobis, dolores temporibus praesentium perspiciatis alias qui reiciendis voluptates quidem! Velit impedit, earum aspernatur dolor delectus odio atque neque fuga modi, aperiam vel non aliquam nemo. Architecto sed magnam quae aut voluptates perspiciatis blanditiis saepe assumenda, numquam quidem quis consectetur, laudantium totam minima quos praesentium velit doloribus aliquid! Accusantium labore, dicta at neque aperiam, rerum itaque accusamus iusto a rem distinctio, voluptas deleniti provident ipsam odit quibusdam reprehenderit. Dolorem, aperiam quisquam repudiandae vero, expedita maxime nemo qui suscipit quaerat sed in sapiente! Voluptatibus, asperiores deleniti! Perferendis dolorum nihil error tempore ducimus explicabo unde obcaecati nisi aliquam possimus sit eos iusto iste perspiciatis labore aliquid, voluptatem corporis porro libero reiciendis harum at reprehenderit. Fuga porro facilis quas rem consequatur quibusdam, optio architecto? Sunt repellat recusandae odio quaerat dolores iusto officia nam? Magni necessitatibus atque numquam. Nesciunt perferendis quae voluptates ipsum nam distinctio! Mollitia culpa optio cum amet, recusandae magni quod laudantium maxime, aliquid sequi autem. Saepe atque assumenda fugit repudiandae, quam pariatur beatae reprehenderit in quidem maiores enim quasi necessitatibus, quaerat praesentium at porro modi neque dolores minus? Vel soluta molestias eum quaerat accusamus officia veritatis possimus eligendi sint error consectetur quas corrupti earum voluptatem excepturi voluptas ipsum nesciunt adipisci dolorum voluptatum commodi reprehenderit, sit iste. Iure, vitae sed cumque rem officia reiciendis dolore laborum eos ipsum iste nam maxime animi optio. Possimus vitae natus a unde, sed voluptatum iusto quos tempore placeat est porro omnis dicta aperiam nemo veritatis ratione recusandae illum velit voluptates reiciendis iste. Id, tenetur? Ratione nihil exercitationem adipisci aspernatur magni amet eum dignissimos ab sed. Odio, eveniet molestiae aperiam accusamus, voluptatem iste veritatis minima nemo rerum expedita quibusdam ex illum, saepe ipsam cum obcaecati.</p>
         </c-card-content>
-
-        <c-card-actions>
-          <c-button type="submit">Submit</c-button>
-        </c-card-actions>
       </c-card>
-    </form>
 
-    <c-card>
-      <c-card-title>Table</c-card-title>
-
-      <c-card-content>
-        <c-table responsive>
-          <table>
-            <thead>
-              <tr>
-                <th>Id</th>
-                <th>Name</th>
-                <th>Age</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td>user-id-1</td>
-                <td>Jason Miller</td>
-                <td>23</td>
-              </tr>
-              <tr>
-                <td>user-id-2</td>
-                <td>Silvia Nyholm</td>
-                <td>18</td>
-              </tr>
-              <tr>
-                <td>user-id-3</td>
-                <td>Mark Samsonov</td>
-                <td>56</td>
-              </tr>
-              <tr>
-                <td>user-id-4</td>
-                <td>Michael Nielsen</td>
-                <td>2</td>
-              </tr>
-            </tbody>
-          </table>
-        </c-table>
-      </c-card-content>
-    </c-card>
-  </div>
+      <footer slot="footer">&copy; 2023 CSC</footer>
+    </c-page>
+  </c-main>
 
   <script>
     const form = document.querySelector("form");

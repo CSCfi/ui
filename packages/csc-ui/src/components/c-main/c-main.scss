@@ -1,4 +1,4 @@
-:host {
+:host(c-main) {
   /**
    * @prop --c-main-background-color: Background color
    * @prop --c-main-text-color: Text color
@@ -15,4 +15,30 @@
   ::slotted(*) {
     color: var(--_c-main-text-color);
   }
+
+  main.dashboard {
+    display: grid;
+    grid-template: "toolbar toolbar" auto "sidenav page" 1fr / auto 1fr;
+    gap: 0;
+    
+    ::slotted(c-toolbar) {
+      grid-area: toolbar;
+    }
+    
+    ::slotted(c-page) {
+      grid-area: page;
+    }
+    
+    ::slotted(c-side-navigation) {
+      grid-area: sidenav;
+    }
+  }
+}
+
+*,
+::after,
+::before,
+body {
+  box-sizing: border-box;
+  margin: 0;
 }
