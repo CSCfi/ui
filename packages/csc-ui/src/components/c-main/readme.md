@@ -9,6 +9,13 @@
 
 Wrapper component for the whole page
 
+## Properties
+
+| Property        | Attribute        | Description                          | Type      | Default |
+| --------------- | ---------------- | ------------------------------------ | --------- | ------- |
+| `disableLayout` | `disable-layout` | Disable the default dashboard layout | `boolean` | `false` |
+
+
 ## Slots
 
 | Slot             | Description          |
