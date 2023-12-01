@@ -17,6 +17,7 @@
 | Slot        | Description  |
 | ----------- | ------------ |
 | `"default"` | Default slot |
+| `"footer"`  | Footer slot  |
 
 
 ## CSS Custom Properties

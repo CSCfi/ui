@@ -3,6 +3,7 @@ import { Component, Element, Host, Prop, h } from '@stencil/core';
 /**
  * @group Layout
  * @slot default - Default slot
+ * @slot footer - Footer slot
  */
 @Component({
   tag: 'c-page',
@@ -46,6 +47,8 @@ export class CPage {
         <div class="c-page__container">
           <slot></slot>
         </div>
+
+        <slot name="footer"></slot>
       </Host>
     );
   }
