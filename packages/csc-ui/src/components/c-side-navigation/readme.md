@@ -11,6 +11,14 @@
 | `mobile`      | `mobile`       | Mobile version                 | `boolean` | `undefined` |
 
 
+## Slots
+
+| Slot             | Description               |
+| ---------------- | ------------------------- |
+| `"Default slot"` | Default slot              |
+| `"bottom"`       | Place items at the bottom |
+
+
 ## CSS Custom Properties
 
 | Name                                   | Description                      |

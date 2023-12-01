@@ -828,6 +828,10 @@ export namespace Components {
      * @group Layout
      */
     interface CMain {
+        /**
+          * Disable the default dashboard layout
+         */
+        "disableLayout": boolean;
     }
     /**
      * @group Navigation
@@ -3811,6 +3815,10 @@ declare namespace LocalJSX {
      * @group Layout
      */
     interface CMain {
+        /**
+          * Disable the default dashboard layout
+         */
+        "disableLayout"?: boolean;
     }
     /**
      * @group Navigation
