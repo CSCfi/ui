@@ -2,6 +2,8 @@ import { mdiArrowRight } from '@mdi/js';
 import { Component, Host, h, Prop, Listen, Element } from '@stencil/core';
 /**
  * @group Navigation
+ * @slot Default slot - Default slot
+ * @slot bottom - Place items at the bottom
  */
 @Component({
   tag: 'c-side-navigation',
@@ -101,7 +103,9 @@ export class CSideNavigation {
 
           <nav class={classes} role="menubar">
             <slot></slot>
+
             <div class="vertical-spacer"></div>
+
             <slot name="bottom"></slot>
           </nav>
         </div>

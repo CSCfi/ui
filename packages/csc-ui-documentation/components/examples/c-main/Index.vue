@@ -1,6 +1,10 @@
-<template>Example not available</template>
+<template>
+  <layout />
+</template>
 
 <script setup lang="ts">
+import Layout from './Layout.vue';
+
 defineOptions({
   inheritAttrs: false,
 });

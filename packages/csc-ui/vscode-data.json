@@ -1011,7 +1011,12 @@
         "kind": "markdown",
         "value": "Wrapper component for the whole page"
       },
-      "attributes": []
+      "attributes": [
+        {
+          "name": "disable-layout",
+          "description": "Disable the default dashboard layout"
+        }
+      ]
     },
     {
       "name": "c-menu",

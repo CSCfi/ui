@@ -1,4 +1,4 @@
-import { Component, h } from '@stencil/core';
+import { Component, Prop, h } from '@stencil/core';
 /**
  * Wrapper component for the whole page
  *
@@ -11,9 +11,14 @@ import { Component, h } from '@stencil/core';
   shadow: true,
 })
 export class CMain {
+  /**
+   * Disable the default dashboard layout
+   */
+  @Prop() disableLayout = false;
+
   render() {
     return (
-      <main>
+      <main class={{ dashboard: !this.disableLayout }}>
         <slot></slot>
       </main>
     );
