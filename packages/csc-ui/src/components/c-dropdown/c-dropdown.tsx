@@ -108,6 +108,8 @@ export class CDropdown {
 
   @Watch('isOpen')
   async stateWatcher(isOpen) {
+    if (isOpen) this._handleOpen();
+
     this.dropdownStateChange.emit(isOpen);
 
     this._scrollParent = this._scrollParent || (await getScrollParent(this.el));
@@ -188,6 +190,16 @@ export class CDropdown {
     ).matches;
   }
 
+  private _isOpening = false;
+
+  private _handleOpen() {
+    this._isOpening = true;
+
+    setTimeout(() => {
+      this._isOpening = false;
+    }, 500);
+  }
+
   componentDidLoad() {
     this._setIsMobile();
 
@@ -199,7 +211,8 @@ export class CDropdown {
       if (!this._dialog.open) return;
 
       requestAnimationFrame(() => {
-        if (!Array.isArray(entries) || !entries.length) return;
+        if (!Array.isArray(entries) || !entries.length || this._isOpening)
+          return;
 
         this._setIsMobile();
 
