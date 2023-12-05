@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.3.1](https://github.com/CSCfi/ui/compare/v1.3.0...v1.3.1) (2023-12-05)
+
+
+### Bug Fixes
+
+* c-select & c-autocomplete - prevent scrollbar visibility change from closing the dropdown on open ([3399c20](https://github.com/CSCfi/ui/commit/3399c2049f28a39dc5596df4663b20e0d0e89614))
+
 ## [1.3.0](https://github.com/CSCfi/ui/compare/v1.2.4...v1.3.0) (2023-12-01)
 
 
