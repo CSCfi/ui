@@ -5,7 +5,7 @@ test.beforeEach(async ({}, testInfo) => {
 });
 
 test('Default', async ({ page }) => {
-  await page.goto('http://localhost:4200/c-data-table');
+  await page.goto('http://localhost:3000/c-data-table');
 
   const table = page.locator('app-example[name="basic"] c-data-table').first();
 
@@ -14,7 +14,7 @@ test('Default', async ({ page }) => {
 });
 
 test('Row selection', async ({ page }) => {
-  await page.goto('http://localhost:4200/c-data-table');
+  await page.goto('http://localhost:3000/c-data-table');
 
   const table = page
     .locator('app-example[name="complex"] c-data-table')

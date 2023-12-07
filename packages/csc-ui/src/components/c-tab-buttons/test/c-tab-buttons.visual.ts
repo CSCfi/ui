@@ -1,7 +1,7 @@
 import { test, expect } from '@playwright/test';
 
 test.beforeEach(async ({ page }, testInfo) => {
-  await page.goto('http://localhost:4200/c-tab-buttons');
+  await page.goto('http://localhost:3000/c-tab-buttons');
 
   testInfo.snapshotSuffix = '';
 });

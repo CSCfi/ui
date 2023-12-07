@@ -13,6 +13,7 @@
   "scripts": {
     "build": "lerna run build",
     "publish": "lerna run tsc && lerna publish",
-    "prepare": "if [ \"$CI\" = true ]; then echo \"Skip Husky\"; else chmod +x ./node_modules/husky/lib/bin.js && husky install; fi"
+    "prepare": "if [ \"$CI\" = true ]; then echo \"Skip Husky\"; else chmod +x ./node_modules/husky/lib/bin.js && husky install; fi",
+    "test.visual": "docker run -it --rm -e --name csc-ui-playwright"
   }
 }

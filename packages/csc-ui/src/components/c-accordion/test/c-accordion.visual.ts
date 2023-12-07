@@ -5,7 +5,7 @@ test.beforeEach(async ({}, testInfo) => {
 });
 
 test('Default', async ({ page }) => {
-  await page.goto('http://localhost:4200/c-accordion');
+  await page.goto('http://localhost:3000/c-accordion');
 
   const accordion = page
     .locator('app-example[name="basic"] c-accordion')
@@ -30,7 +30,7 @@ test('Default', async ({ page }) => {
 });
 
 test('Mandatory selection', async ({ page }) => {
-  await page.goto('http://localhost:4200/c-accordion');
+  await page.goto('http://localhost:3000/c-accordion');
 
   const accordion = page
     .locator('app-example[name="mandatory"] c-accordion')
@@ -53,7 +53,7 @@ test('Mandatory selection', async ({ page }) => {
 });
 
 test('Multiple selection', async ({ page }) => {
-  await page.goto('http://localhost:4200/c-accordion');
+  await page.goto('http://localhost:3000/c-accordion');
 
   const accordion = page
     .locator('app-example[name="multiple"] c-accordion')
@@ -77,7 +77,7 @@ test('Multiple selection', async ({ page }) => {
 });
 
 test('Outlined', async ({ page }) => {
-  await page.goto('http://localhost:4200/c-accordion');
+  await page.goto('http://localhost:3000/c-accordion');
 
   const accordion = page
     .locator('app-example[name="outlined"] c-accordion')

@@ -1,7 +1,7 @@
 import { test, expect } from '@playwright/test';
 
 test.beforeEach(async ({ page }, testInfo) => {
-  await page.goto('http://localhost:4200/c-button');
+  await page.goto('http://localhost:3000/c-button');
 
   testInfo.snapshotSuffix = '';
 });
@@ -33,7 +33,7 @@ test('Outlined', async ({ page }) => {
 });
 
 test('Ghost', async ({ page }) => {
-  await page.goto('http://localhost:4200/c-button');
+  await page.goto('http://localhost:3000/c-button');
 
   let button = page.getByRole('button', { name: 'Ghost' }).first();
 

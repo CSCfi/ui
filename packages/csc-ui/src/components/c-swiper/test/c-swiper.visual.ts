@@ -1,7 +1,7 @@
 import { test, expect } from '@playwright/test';
 
 test.beforeEach(async ({ page }, testInfo) => {
-  await page.goto('http://localhost:4200/c-swiper');
+  await page.goto('http://localhost:3000/c-swiper');
 
   testInfo.snapshotSuffix = '';
 });

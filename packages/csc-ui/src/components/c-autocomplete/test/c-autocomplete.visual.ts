@@ -3,7 +3,7 @@ import { test, expect } from '@playwright/test';
 test.beforeEach(async ({ page }, testInfo) => {
   testInfo.snapshotSuffix = '';
 
-  await page.goto('http://localhost:4200/c-autocomplete');
+  await page.goto('http://localhost:3000/c-autocomplete');
 
   await page.waitForTimeout(500);
 });
