@@ -89,16 +89,6 @@ Type: `Promise<void>`
 
 
 
-## CSS Custom Properties
-
-| Name                                  | Description                      |
-| ------------------------------------- | -------------------------------- |
-| `--c-dropdown-background-color`       | Menu background color            |
-| `--c-dropdown-background-color-hover` | Menu item hover background color |
-| `--c-dropdown-text-color`             | Menu item text color             |
-| `--c-dropdown-text-color-active`      | Active menu item text color      |
-
-
 ## Dependencies
 
 ### Used by

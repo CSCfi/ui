@@ -1,4 +1,4 @@
-import { mdiAlert } from '@mdi/js';
+import { mdiAlert, mdiInformation } from '@mdi/js';
 import {
   Component,
   Host,
@@ -113,8 +113,6 @@ export class CDropdown {
     this.dropdownStateChange.emit(isOpen);
 
     this._scrollParent = this._scrollParent || (await getScrollParent(this.el));
-
-    this._scrollParent.style.overflow = isOpen ? 'hidden' : null;
   }
 
   @Watch('index')
@@ -155,7 +153,7 @@ export class CDropdown {
 
     this._outsideClickFn = this._handleOutsideClick.bind(this);
 
-    window.addEventListener('click', this._outsideClickFn);
+    this._dialog.addEventListener('click', this._outsideClickFn);
 
     requestAnimationFrame(() => {
       this.isOpen = true;
@@ -254,12 +252,10 @@ export class CDropdown {
     });
   }
 
-  private _handleOutsideClick(event) {
+  private _handleOutsideClick() {
     if (!this.isOpen) return;
 
-    if (!event.composedPath().includes(this._dialog)) {
-      this.close();
-    }
+    this.close();
   }
 
   private _inputSize = {
@@ -358,15 +354,37 @@ export class CDropdown {
     });
   }
 
+  private _minimumQueryItem() {
+    const { query, loading, minimumQueryLength, minimumQueryLengthMessage } =
+      this.parent as HTMLCAutocompleteElement;
+
+    if (query.length > minimumQueryLength || loading) return;
+
+    return (
+      <li>
+        <c-icon
+          path={mdiInformation}
+          size={18}
+          color="var(--c-info-600)"
+        ></c-icon>
+        {minimumQueryLengthMessage.replace(
+          '{n}',
+          minimumQueryLength.toString(),
+        )}
+      </li>
+    );
+  }
+
   private _emptyItem() {
-    const { query, loading } = this.parent as HTMLCAutocompleteElement;
+    const { query, loading, noMatchingItemsMessage } = this
+      .parent as HTMLCAutocompleteElement;
 
     if (!query || loading) return;
 
     return (
       <li>
         <c-icon path={mdiAlert} size={18} color="var(--c-warning-600)"></c-icon>
-        No suggestions found
+        {noMatchingItemsMessage}
       </li>
     );
   }
@@ -378,7 +396,8 @@ export class CDropdown {
   }
 
   private _renderOptionsList() {
-    if (!this.items.length) return this._emptyItem();
+    if (!this.items.length)
+      return this._minimumQueryItem() || this._emptyItem();
 
     const options = Array.from(this.items) as HTMLCOptionElement[];
 
@@ -420,7 +439,8 @@ export class CDropdown {
   }
 
   private _renderItemsList() {
-    if (!this.items.length) return this._emptyItem();
+    if (!this.items.length)
+      return this._minimumQueryItem() || this._emptyItem();
 
     this._listItems.length = 0;
 
@@ -515,34 +535,39 @@ export class CDropdown {
           class={{ mobile: this._isMobile }}
           onCancel={() => this.close()}
         >
-          <div
-            id={'announce-' + this.hostId}
-            class="visuallyhidden"
-            aria-live="polite"
-            aria-atomic="true"
-          >
-            {this.statusText}
-          </div>
+          <div onClick={(event) => event.stopPropagation()}>
+            <div
+              id={'announce-' + this.hostId}
+              class="visuallyhidden"
+              aria-live="polite"
+              aria-atomic="true"
+            >
+              {this.statusText}
+            </div>
 
-          <div class="input-top-wrapper">
-            <slot name="input-top"></slot>
-          </div>
+            <div class="input-top-wrapper">
+              <slot name="input-top"></slot>
+            </div>
 
-          <ul
-            ref={(el) => (this._list = el)}
-            id={`${this.hostId}--results`}
-            role="listbox"
-            aria-expanded={this.isOpen.toString()}
-            class={{ active: this.isOpen, mobile: this._isMobile }}
-            tabindex="-1"
-          >
-            {this.renderedList}
-          </ul>
+            <ul
+              ref={(el) => (this._list = el)}
+              id={`${this.hostId}--results`}
+              role="listbox"
+              aria-expanded={this.isOpen.toString()}
+              class={{ active: this.isOpen, mobile: this._isMobile }}
+              tabindex="-1"
+            >
+              {this.renderedList}
+            </ul>
 
-          <div
-            class={{ active: this._openedOnTop, 'input-bottom-wrapper': true }}
-          >
-            <slot name="input-bottom"></slot>
+            <div
+              class={{
+                active: this._openedOnTop,
+                'input-bottom-wrapper': true,
+              }}
+            >
+              <slot name="input-bottom"></slot>
+            </div>
           </div>
         </dialog>
       </Host>

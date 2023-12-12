@@ -102,9 +102,21 @@ export namespace Components {
          */
         "loading": boolean;
         /**
+          * Minimum query length
+         */
+        "minimumQueryLength": number;
+        /**
+          * Minimum query length message
+         */
+        "minimumQueryLengthMessage": string;
+        /**
           * Input field name
          */
         "name": string;
+        /**
+          * No matching items message
+         */
+        "noMatchingItemsMessage": string;
         /**
           * Placeholder text
          */
@@ -3075,9 +3087,21 @@ declare namespace LocalJSX {
          */
         "loading"?: boolean;
         /**
+          * Minimum query length
+         */
+        "minimumQueryLength"?: number;
+        /**
+          * Minimum query length message
+         */
+        "minimumQueryLengthMessage"?: string;
+        /**
           * Input field name
          */
         "name"?: string;
+        /**
+          * No matching items message
+         */
+        "noMatchingItemsMessage"?: string;
         /**
           * Triggered when text is typed
          */
