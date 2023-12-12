@@ -216,6 +216,8 @@ export class CSelect {
   handleKeyDown(event: KeyboardEvent) {
     const alphanumeric = /^[0-9a-zA-Z ]+$/;
 
+    if (this.disabled) return;
+
     if (event.key.match(alphanumeric) && event.key.length === 1) {
       if (this.dropdownVisible) return;
 
@@ -477,6 +479,8 @@ export class CSelect {
   }
 
   private _onInputFocus = () => {
+    if (this.disabled) return;
+
     if (!this._preventDialogOpen) {
       this._dropdownElement.open();
     }
@@ -531,6 +535,7 @@ export class CSelect {
       <c-icon-button
         size="x-small"
         class={classes}
+        disabled={this.disabled}
         text
         onClick={(event) => this._toggleDropdown(event)}
         onKeyDown={(event) => this._onButtonKeyDown('chevron', event)}
@@ -555,6 +560,7 @@ export class CSelect {
           role="combobox"
           value={this._value}
           name={this.name ?? null}
+          disabled={this.disabled}
           onInput={() => this._updateInput()}
           onFocus={() => this._onInputFocus()}
         />
@@ -572,6 +578,7 @@ export class CSelect {
       <c-icon-button
         aria-label=""
         size="x-small"
+        disabled={this.disabled}
         text
         onClick={(event) => this._onReset(event)}
         onKeyDown={(event) => this._onButtonKeyDown('reset', event)}
@@ -616,7 +623,7 @@ export class CSelect {
             validation={this.validation}
             value={this.value}
             variant="select"
-            onClick={() => this._dropdownElement.open()}
+            onClick={() => !this.disabled && this._dropdownElement.open()}
           >
             <slot name="pre" slot="pre"></slot>
 

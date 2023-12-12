@@ -423,6 +423,7 @@ export class CAutocomplete {
       <c-icon-button
         size="x-small"
         class={classes}
+        disabled={this.disabled}
         text
         onClick={(event) => this._toggleDropdown(event)}
         onKeyDown={(event) => this._onButtonKeyDown('chevron', event)}
@@ -459,6 +460,7 @@ export class CAutocomplete {
       <c-icon-button
         aria-label=""
         size="x-small"
+        disabled={this.disabled}
         text
         onClick={(event) => this._reset(event)}
         onKeyDown={(event) => this._onButtonKeyDown('reset', event)}
@@ -492,6 +494,7 @@ export class CAutocomplete {
           role="combobox"
           value={this.query}
           name={this.name ?? null}
+          disabled={this.disabled}
           onInput={() => this._updateInput()}
           onFocus={() => this._onInputFocus()}
         />
