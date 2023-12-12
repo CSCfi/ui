@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.3.3](https://github.com/CSCfi/ui/compare/v1.3.2...v1.3.3) (2023-12-12)
+
+
+### Bug Fixes
+
+* c-autocomplete & c-select - Fix inputs not being disabled when indicated to ([aa17125](https://github.com/CSCfi/ui/commit/aa1712526181ad3148fbaec4a4c36e4762e9b776))
+
 ## [1.3.2](https://github.com/CSCfi/ui/compare/v1.3.1...v1.3.2) (2023-12-12)
 
 
