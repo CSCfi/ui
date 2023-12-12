@@ -104,8 +104,20 @@
           "description": "Show loading state"
         },
         {
+          "name": "minimum-query-length",
+          "description": "Minimum query length"
+        },
+        {
+          "name": "minimum-query-length-message",
+          "description": "Minimum query length message"
+        },
+        {
           "name": "name",
           "description": "Input field name"
+        },
+        {
+          "name": "no-matching-items-message",
+          "description": "No matching items message"
         },
         {
           "name": "placeholder",

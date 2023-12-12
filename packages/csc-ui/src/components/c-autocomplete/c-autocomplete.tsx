@@ -153,6 +153,21 @@ export class CAutocomplete {
    */
   @Prop() itemsPerPage = 6;
 
+  /**
+   * Minimum query length
+   */
+  @Prop() minimumQueryLength = 0;
+
+  /**
+   * Minimum query length message
+   */
+  @Prop() minimumQueryLengthMessage = 'Type at least {n} characters';
+
+  /**
+   * No matching items message
+   */
+  @Prop() noMatchingItemsMessage = 'No suggestions found';
+
   @State() optionElements: NodeListOf<HTMLCOptionElement>;
 
   @State() currentIndex: number = null;
