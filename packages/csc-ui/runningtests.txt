@@ -1,0 +1,14 @@
+1. build Docker image in the project root
+  - 'docker build -t csc-ui-playwright .'
+
+2. run 'npm run test.visual' in packages/csc-ui
+  - Docker container should remain open
+
+3. Run tests inside the container
+  - 'npx playwright test {testName, ie. c-button}'
+
+4. Show test report outside the container
+  - 'npm run show-report' in packages/csc-ui
+
+5. Fix tests and update screenshots inside the container
+  - 'npx playwright test {testName, ie. c-button} -u'

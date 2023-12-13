@@ -14,6 +14,6 @@
     "build": "lerna run build",
     "publish": "lerna run tsc && lerna publish",
     "prepare": "if [ \"$CI\" = true ]; then echo \"Skip Husky\"; else chmod +x ./node_modules/husky/lib/bin.js && husky install; fi",
-    "test.visual": "docker run -it --rm -e --name csc-ui-playwright"
+    "test.visual": "docker run -it -v $(pwd)/packages/csc-ui:/e2e/packages/csc-ui --rm -e --name csc-ui-playwright"
   }
 }

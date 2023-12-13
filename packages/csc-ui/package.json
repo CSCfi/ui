@@ -86,8 +86,9 @@
     "test": "stencil test --spec --e2e",
     "test.e2e": "stencil test --e2e --watchAll",
     "test.screenshot": "stencil test --e2e --screenshot",
-    "test.visual": "docker run -v $PWD:/e2e -w /e2e/ -it --rm -e --name csc-ui-playwright",
-    "test.watch": "stencil test --spec --watchAll"
+    "test.visual": "docker run -v $PWD:/e2e -w /e2e/ -it -e --name csc-ui-playwright",
+    "test.watch": "stencil test --spec --watchAll",
+    "show-report": "npx playwright show-report"
   },
   "types": "dist/types/index.d.ts",
   "unpkg": "dist/csc-ui/csc-ui.esm.js",

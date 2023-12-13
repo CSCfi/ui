@@ -1,6 +1,6 @@
 FROM mcr.microsoft.com/playwright:v1.39.0-jammy
 
-RUN mkdir -p /e2e/packages/csc-ui
+RUN mkdir -p /e2e/packages/csc-ui/playwright-report
 RUN mkdir -p /e2e/packages/csc-ui-documentation
 RUN mkdir -p /e2e/packages/csc-ui-vue
 RUN mkdir -p /e2e/packages/csc-ui-vue2
@@ -25,4 +25,4 @@ COPY . /e2e/
 RUN cd ./packages/csc-ui && npx playwright install
 
 # Run playwright test
-CMD cd packages/csc-ui && npx playwright test --reporter=list
+# CMD cd packages/csc-ui && npx playwright test c-accordion.visual.ts --reporter=html

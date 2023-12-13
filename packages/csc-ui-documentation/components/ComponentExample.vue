@@ -1,5 +1,5 @@
 <template>
-  <div class="component-example flex flex-col gap-6">
+  <div class="component-example flex flex-col gap-6" :data-test="name">
     <div>
       <h2 v-if="slots.title" class="font-medium text-xl text-primary-600">
         <slot name="title" />
