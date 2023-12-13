@@ -42,7 +42,7 @@
     position: fixed;
 
     &::backdrop {
-      display: none;
+      opacity: 0;
     }
 
     &[open].mobile {
