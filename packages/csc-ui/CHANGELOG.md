@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.3.4](https://github.com/CSCfi/ui/compare/v1.3.3...v1.3.4) (2023-12-14)
+
+
+### Bug Fixes
+
+* c-checkbox - Fix checkbox reactivity ([8bce735](https://github.com/CSCfi/ui/commit/8bce735117282e34cc66319a64d6e34ceee96eeb))
+
 ## [1.3.3](https://github.com/CSCfi/ui/compare/v1.3.2...v1.3.3) (2023-12-12)
 
 
