@@ -127,6 +127,15 @@ export class CCheckbox {
     this._handleValidation(valid || this.valid);
   }
 
+  @Watch('value')
+  onValueChange(value: string | boolean) {
+    this.checked = this.trueValue === value;
+
+    this.internals.setFormValue(
+      this.checked ? this.trueValue.toString() : this.falseValue.toString(),
+    );
+  }
+
   @Listen('keydown', { passive: true })
   handleKeyDown(event: KeyboardEvent) {
     if (['Space'].includes(event.code)) {
