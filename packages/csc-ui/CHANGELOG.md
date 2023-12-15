@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.3.5](https://github.com/CSCfi/ui/compare/v1.3.4...v1.3.5) (2023-12-15)
+
+
+### Bug Fixes
+
+* c-text-field - Fix negative number input ([8fb9271](https://github.com/CSCfi/ui/commit/8fb927158b999d30113db9a215c74f1a28d5a5f5))
+
 ## [1.3.4](https://github.com/CSCfi/ui/compare/v1.3.3...v1.3.4) (2023-12-14)
 
 
