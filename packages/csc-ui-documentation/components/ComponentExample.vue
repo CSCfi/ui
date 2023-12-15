@@ -12,7 +12,11 @@
 
     <p v-if="slots.description"><slot name="description" /></p>
 
-    <div class="gap-4 flex w-full" :class="rows ? 'flex-col' : 'flex-wrap'">
+    <div
+      class="gap-4 flex w-full"
+      :class="rows ? 'flex-col' : 'flex-wrap'"
+      data-test-content
+    >
       <slot />
     </div>
 
