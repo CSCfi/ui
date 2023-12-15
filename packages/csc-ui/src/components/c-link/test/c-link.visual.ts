@@ -1,19 +1,20 @@
-import { test, expect } from '@playwright/test';
+import { test } from '@playwright/test';
+import { takeScreenshots } from '../../../utils/test/takeScreenshot';
 
 test.beforeEach(async ({ page }, testInfo) => {
-  await page.goto('http://localhost:3000/c-link');
+  await page.goto('http://localhost:3000/components/c-link');
 
   testInfo.snapshotSuffix = '';
 });
 
-test('Default', async ({ page }) => {
-  const links = page.locator('app-example[name="basic"]');
-
-  await expect(links).toHaveScreenshot();
+test('Variants', async ({ page }) => {
+  await takeScreenshots(page, 'variants', 'c-link');
 });
 
-test('Variants', async ({ page }) => {
-  const links = page.locator('app-example[name="variants"]');
+test('Basic', async ({ page }) => {
+  await takeScreenshots(page, 'basic', 'c-link');
+});
 
-  await expect(links).toHaveScreenshot();
+test('Index', async ({ page }) => {
+  await takeScreenshots(page, 'index', 'c-link');
 });

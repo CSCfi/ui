@@ -1,31 +1,28 @@
-import { test, expect } from '@playwright/test';
+import { test } from '@playwright/test';
+import { takeScreenshots } from '../../../utils/test/takeScreenshot';
 
 test.beforeEach(async ({ page }, testInfo) => {
-  await page.goto('http://localhost:3000/c-icon-button');
+  await page.goto('http://localhost:3000/components/c-icon-button');
 
   testInfo.snapshotSuffix = '';
 });
 
-test('Default', async ({ page }) => {
-  const iconButtons = page.locator('app-example[name="basic"]');
-
-  await expect(iconButtons).toHaveScreenshot();
+test('Variants', async ({ page }) => {
+  await takeScreenshots(page, 'variants', 'c-icon-button');
 });
 
-test('Ghost', async ({ page }) => {
-  const iconButtons = page.locator('app-example[name="ghost"]');
-
-  await expect(iconButtons).toHaveScreenshot();
+test('Disabled', async ({ page }) => {
+  await takeScreenshots(page, 'disabled', 'c-icon-button');
 });
 
-test('Text', async ({ page }) => {
-  const iconButtons = page.locator('app-example[name="text"]');
-
-  await expect(iconButtons).toHaveScreenshot();
+test('Sizes', async ({ page }) => {
+  await takeScreenshots(page, 'sizes', 'c-icon-button');
 });
 
-test('Outlined', async ({ page }) => {
-  const iconButtons = page.locator('app-example[name="outlined"]');
+test('Badges', async ({ page }) => {
+  await takeScreenshots(page, 'badges', 'c-icon-button');
+});
 
-  await expect(iconButtons).toHaveScreenshot();
+test('Inverted', async ({ page }) => {
+  await takeScreenshots(page, 'inverted', 'c-icon-button');
 });
