@@ -92,13 +92,6 @@ export class CTextField {
   @Prop() name: string;
 
   /**
-   * Numeric input
-   *
-   * @deprecated Use type="number" instead
-   */
-  @Prop() number = false;
-
-  /**
    * Placeholder of the input
    */
   @Prop() placeholder: string;
@@ -131,7 +124,7 @@ export class CTextField {
   /**
    * Type of the input
    */
-  @Prop() type: string;
+  @Prop() type = 'text';
 
   /**
    * Set the validity of the input
@@ -209,6 +202,10 @@ export class CTextField {
   }
 
   private _handleChange = (event) => {
+    if (this.type === 'number' && !event.target.value && event.key === '-') {
+      return;
+    }
+
     this.value = this.trimWhitespace
       ? event.target.value.trim()
       : event.target.value;
@@ -237,12 +234,13 @@ export class CTextField {
         disabled: this.disabled,
         readonly: this.readonly,
         value: this.value,
-        onInput: this._handleChange,
+        // onInput: this._handleChange,
+        onkeyup: this._handleChange,
         onChange: this._handleChange,
         onBlur: this._handleBlur,
       },
       input: {
-        type: this.number ? 'number' : this.type || 'text',
+        type: this.type,
         min: this.min,
         max: this.max,
         step: this.step,
