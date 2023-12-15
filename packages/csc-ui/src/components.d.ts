@@ -1753,11 +1753,6 @@ export namespace Components {
          */
         "name": string;
         /**
-          * Numeric input
-          * @deprecated Use type="number" instead
-         */
-        "number": boolean;
-        /**
           * Placeholder of the input
          */
         "placeholder": string;
@@ -4839,11 +4834,6 @@ declare namespace LocalJSX {
           * Name of the input
          */
         "name"?: string;
-        /**
-          * Numeric input
-          * @deprecated Use type="number" instead
-         */
-        "number"?: boolean;
         /**
           * Emit changes to the parent
          */
