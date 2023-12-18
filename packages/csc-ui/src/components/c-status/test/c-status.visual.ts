@@ -10,7 +10,3 @@ test.beforeEach(async ({ page }, testInfo) => {
 test('Basic', async ({ page }) => {
   await takeScreenshots(page, 'basic', 'c-status');
 });
-
-test('Index', async ({ page }) => {
-  await takeScreenshots(page, 'index', 'c-status');
-});
