@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.3.6](https://github.com/CSCfi/ui/compare/v1.3.5...v1.3.6) (2023-12-19)
+
+
+### Bug Fixes
+
+* c-text-field - Use onInput event for value emitting ([05eb741](https://github.com/CSCfi/ui/commit/05eb741f1d8ff2dbacd018164e2765c3d043b9f0))
+
 ## [1.3.5](https://github.com/CSCfi/ui/compare/v1.3.4...v1.3.5) (2023-12-15)
 
 
