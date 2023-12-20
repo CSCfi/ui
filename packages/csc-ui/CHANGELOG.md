@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.3.7](https://github.com/CSCfi/ui/compare/v1.3.6...v1.3.7) (2023-12-20)
+
+
+### Bug Fixes
+
+* c-icon - make c-icon render correctly inside c-option ([1e15b5f](https://github.com/CSCfi/ui/commit/1e15b5f98c42a33801b6139f1ce2b338d9bb7f5f))
+
 ## [1.3.6](https://github.com/CSCfi/ui/compare/v1.3.5...v1.3.6) (2023-12-19)
 
 
