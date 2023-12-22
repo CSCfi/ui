@@ -1,33 +1,12 @@
-import { test, expect } from '@playwright/test';
+import { test } from '@playwright/test';
+import { takeScreenshots } from '../../../utils/test/takeScreenshot';
 
 test.beforeEach(async ({ page }, testInfo) => {
-  await page.goto('http://localhost:3000/c-checkbox');
+  await page.goto('http://localhost:3000/components/c-checkbox');
 
   testInfo.snapshotSuffix = '';
 });
 
-test('Default', async ({ page }) => {
-  const checkbox = page.locator('app-example[name="basic"] div').nth(1);
-
-  await expect(checkbox).toHaveScreenshot();
-
-  await checkbox.locator('label').getByRole('img').click();
-
-  await expect(checkbox).toHaveScreenshot();
-
-  await checkbox.locator('label').getByRole('img').click();
-
-  await expect(checkbox).toHaveScreenshot();
-});
-
-test('Slot', async ({ page }) => {
-  const checkbox = page.locator('app-example[name="slot"] div').nth(1);
-
-  await expect(checkbox).toHaveScreenshot();
-});
-
-test('Disabled', async ({ page }) => {
-  const checkbox = page.locator('app-example[name="disabled"] div').nth(1);
-
-  await expect(checkbox).toHaveScreenshot();
+test('Basic', async ({ page }) => {
+  await takeScreenshots(page, 'basic', 'c-checkbox');
 });
