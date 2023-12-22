@@ -1,25 +1,28 @@
 import { test, expect } from '@playwright/test';
+import { takeScreenshots } from '../../../utils/test/takeScreenshot';
 
 test.beforeEach(async ({ page }, testInfo) => {
-  await page.goto('http://localhost:3000/c-card');
+  await page.goto('http://localhost:3000/components/c-card');
 
   testInfo.snapshotSuffix = '';
 });
 
-test('Default', async ({ page }) => {
-  const card = page.locator('app-example[name="basic"] div').nth(1);
-
-  await expect(card).toHaveScreenshot();
-});
-
-test('Card with columns and right aligned action buttons', async ({ page }) => {
-  const card = page.locator('app-example[name="columns"] div').nth(1);
-
-  await expect(card).toHaveScreenshot();
+test('Basic', async ({ page }) => {
+  await takeScreenshots(page, 'basic', 'c-card');
 });
 
 test('Fullscreen', async ({ page }) => {
-  const card = page.locator('app-example[name="fullscreen"] div').nth(1);
+  await takeScreenshots(page, 'fullscreen', 'c-card');
 
-  await expect(card).toHaveScreenshot();
+  const card = await page.waitForSelector('c-card');
+
+  const fullscreenButton = await card.waitForSelector(
+    '.c-card__fullscreen-toggle',
+  );
+
+  await fullscreenButton.click();
+
+  await page.waitForTimeout(1000);
+
+  await takeScreenshots(page, 'fullscreen', 'c-card');
 });
