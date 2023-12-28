@@ -1,27 +1,16 @@
-import { test, expect } from '@playwright/test';
+import { test } from '@playwright/test';
+import { takeScreenshots } from '../../../utils/test/takeScreenshot';
 
 test.beforeEach(async ({ page }, testInfo) => {
-  await page.goto('http://localhost:3000/c-swiper');
+  await page.goto('http://localhost:3000/components/c-swiper');
 
   testInfo.snapshotSuffix = '';
 });
 
-test('Default', async ({ page }) => {
-  const swiper = page.locator('app-example[name="basic"] div').nth(1);
+test('Basic', async ({ page }) => {
+  await takeScreenshots(page, 'basic', 'c-swiper');
+});
 
-  await expect(swiper).toHaveScreenshot();
-
-  await page
-    .getByRole('tab', {
-      name: 'Two Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
-    })
-    .locator('div')
-    .nth(1)
-    .click();
-
-  await expect(swiper).toHaveScreenshot();
-
-  await page.getByRole('button', { name: 'Next page' }).click();
-
-  await expect(swiper).toHaveScreenshot();
+test('String', async ({ page }) => {
+  await takeScreenshots(page, 'string', 'c-swiper');
 });
