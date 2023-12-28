@@ -1,37 +1,37 @@
-import { test, expect } from '@playwright/test';
+import { test } from '@playwright/test';
+import { takeScreenshots } from '../../../utils/test/takeScreenshot';
 
 test.beforeEach(async ({ page }, testInfo) => {
-  await page.goto('http://localhost:3000/c-tag');
+  await page.goto('http://localhost:3000/components/c-tags');
 
   testInfo.snapshotSuffix = '';
 });
 
-test('Default', async ({ page }) => {
-  const tags = page.locator('app-example[name="basic"] div').nth(1);
-
-  await expect(tags).toHaveScreenshot();
+test('Basic', async ({ page }) => {
+  await takeScreenshots(page, 'basic', 'c-tags');
 });
 
-test('Flat', async ({ page }) => {
-  const tags = page.locator('app-example[name="flat"] div').nth(1);
-
-  await expect(tags).toHaveScreenshot();
+test('Block', async ({ page }) => {
+  await takeScreenshots(page, 'block', 'c-tags');
 });
 
 test('Closeable', async ({ page }) => {
-  const tags = page.locator('app-example[name="closeable"] div').nth(1);
+  await takeScreenshots(page, 'closeable', 'c-tags');
 
-  await expect(tags).toHaveScreenshot();
-});
+  await page
+    .locator('c-tag')
+    .filter({ hasText: 'Tag Two' })
+    .locator('c-icon-button')
+    .first()
+    .click();
 
-test('With badges', async ({ page }) => {
-  const tags = page.locator('app-example[name="badges"] div').nth(1);
-
-  await expect(tags).toHaveScreenshot();
+  await takeScreenshots(page, 'closeable', 'c-tags');
 });
 
 test('Fit', async ({ page }) => {
-  const tags = page.locator('app-example[name="fit"] div').nth(1);
+  await takeScreenshots(page, 'fit', 'c-tags');
+});
 
-  await expect(tags).toHaveScreenshot();
+test('Flat', async ({ page }) => {
+  await takeScreenshots(page, 'flat', 'c-tags');
 });
