@@ -1,66 +1,28 @@
-import { test, expect } from '@playwright/test';
+import { test } from '@playwright/test';
+import { takeScreenshots } from '../../../utils/test/takeScreenshot';
 
 test.beforeEach(async ({ page }, testInfo) => {
-  await page.goto('http://localhost:3000/c-tab-buttons');
+  await page.goto('http://localhost:3000/components/c-tab-buttons');
 
   testInfo.snapshotSuffix = '';
 });
 
-test('Default', async ({ page }) => {
-  const tabButtons = page.locator('app-example[name="basic"] div').nth(1);
+test('Basic', async ({ page }) => {
+  await takeScreenshots(page, 'basic', 'c-tab-buttons');
 
-  await expect(tabButtons).toHaveScreenshot();
+  await page.locator('c-tab-buttons').locator('button').first().click();
 
-  await page
-    .getByTitle('Basic usage')
-    .getByRole('button', { name: 'One' })
-    .click();
-
-  await expect(tabButtons).toHaveScreenshot();
-
-  await page
-    .getByTitle('Basic usage')
-    .getByRole('button', { name: 'One' })
-    .click();
-
-  await expect(tabButtons).toHaveScreenshot();
-});
-
-test('Mandatory', async ({ page }) => {
-  const tabButtons = page.locator('app-example[name="mandatory"] div').nth(1);
-
-  await expect(tabButtons).toHaveScreenshot();
-
-  await page
-    .getByTitle('Basic usage')
-    .getByRole('button', { name: 'One' })
-    .click();
-
-  await expect(tabButtons).toHaveScreenshot();
+  await takeScreenshots(page, 'basic', 'c-tab-buttons');
 });
 
 test('Disabled', async ({ page }) => {
-  const tabButtons = page.locator('app-example[name="disabled"] div').nth(1);
-
-  await expect(tabButtons).toHaveScreenshot();
+  await takeScreenshots(page, 'disabled', 'c-tab-buttons');
 });
 
-test('Small', async ({ page }) => {
-  const tabButtons = page.locator('app-example[name="small"] div').nth(1);
-
-  await expect(tabButtons).toHaveScreenshot();
+test('Mandatory', async ({ page }) => {
+  await takeScreenshots(page, 'mandatory', 'c-tab-buttons');
 });
 
-test('Large', async ({ page }) => {
-  const tabButtons = page.locator('app-example[name="large"] div').nth(1);
-
-  await expect(tabButtons).toHaveScreenshot();
-});
-
-test('Descriptions', async ({ page }) => {
-  const tabButtons = page
-    .locator('app-example[name="descriptions"] div')
-    .nth(1);
-
-  await expect(tabButtons).toHaveScreenshot();
+test('Tabs', async ({ page }) => {
+  await takeScreenshots(page, 'tabs', 'c-tab-buttons');
 });
