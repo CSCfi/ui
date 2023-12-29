@@ -1,23 +1,59 @@
-import { test, expect } from '@playwright/test';
+import { test } from '@playwright/test';
+import { takeScreenshots } from '../../../utils/test/takeScreenshot';
 
 test.beforeEach(async ({ page }, testInfo) => {
-  await page.goto('http://localhost:3000/c-tabs');
+  await page.goto('http://localhost:3000/components/c-tabs');
 
   testInfo.snapshotSuffix = '';
 });
 
-test('Default', async ({ page }) => {
-  const tabs = page.locator('app-example[name="basic"] div').nth(1);
-
-  await expect(tabs).toHaveScreenshot();
-
-  await tabs.getByRole('tab', { name: 'Two' }).click();
-
-  await expect(tabs).toHaveScreenshot();
+test('Basic', async ({ page }) => {
+  await takeScreenshots(page, 'basic', 'c-tabs');
 });
 
-test('No border', async ({ page }) => {
-  const tabs = page.locator('app-example[name="borderless"] div').nth(1);
-
-  await expect(tabs).toHaveScreenshot();
+test('Justification Start', async ({ page }) => {
+  await takeScreenshots(page, 'justification', 'c-tabs');
 });
+
+test('Justification Center', async ({ page }) => {
+  await page
+    .locator('label')
+    .filter({ hasText: 'Center' })
+    .locator('span')
+    .first()
+    .click();
+
+  await takeScreenshots(page, 'justification', 'c-tabs');
+});
+
+test('Justification End', async ({ page }) => {
+  await page
+    .locator('label')
+    .filter({ hasText: 'End' })
+    .locator('span')
+    .first()
+    .click();
+
+  await takeScreenshots(page, 'justification', 'c-tabs');
+});
+
+test('Justification Stretch', async ({ page }) => {
+  await page
+    .locator('label')
+    .filter({ hasText: 'Stretch' })
+    .locator('span')
+    .first()
+    .click();
+
+  await takeScreenshots(page, 'justification', 'c-tabs');
+});
+
+test('No Border', async ({ page }) => {
+  await takeScreenshots(page, 'no-border', 'c-tabs');
+});
+
+test('Vertical', async ({ page }) => {
+  await takeScreenshots(page, 'vertical', 'c-tabs');
+});
+
+// TO DO: tests for no-animation?
