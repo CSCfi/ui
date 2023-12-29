@@ -1,71 +1,53 @@
 import { test, expect } from '@playwright/test';
+import { takeScreenshots } from '../../../utils/test/takeScreenshot';
 
 test.beforeEach(async ({ page }, testInfo) => {
-  await page.goto('http://localhost:3000/c-menu');
+  await page.goto('http://localhost:3000/components/c-menu');
 
   testInfo.snapshotSuffix = '';
 });
 
-test('Default', async ({ page }) => {
-  const menu = page.locator('app-example[name="basic"] c-menu');
-
-  await expect(menu).toHaveScreenshot();
-
-  await menu.locator('button').click();
-
-  await expect(menu).toHaveScreenshot();
-
-  const menuItems = page.locator('c-menu-items');
-
-  await expect(menuItems).toHaveScreenshot();
+test('Variants', async ({ page }) => {
+  await takeScreenshots(page, 'basic', 'c-menu');
 });
 
-test('Without hover', async ({ page }) => {
-  const menu = page.locator('app-example[name="nohover"] c-menu');
+test('Basic open', async ({ page }) => {
+  const basicButton = page.locator('c-menu').first();
 
-  await menu.locator('button').click();
+  await page
+    .locator('c-menu')
+    .filter({ hasText: 'Basic' })
+    .locator('button')
+    .first()
+    .click();
 
-  await expect(menu).toHaveScreenshot();
+  await expect(basicButton).toHaveScreenshot();
 });
 
-test('Small', async ({ page }) => {
-  const menu = page.locator('app-example[name="small"] c-menu');
+test('Flat open', async ({ page }) => {
+  const flatButton = page.locator('c-menu').nth(1);
 
-  await expect(menu).toHaveScreenshot();
+  await page
+    .locator('c-menu')
+    .filter({ hasText: 'Flat' })
+    .locator('button')
+    .first()
+    .click();
 
-  await menu.locator('button').click();
-
-  await expect(menu).toHaveScreenshot();
-
-  const menuItems = page.locator('c-menu-items');
-
-  await expect(menuItems).toHaveScreenshot();
+  await expect(flatButton).toHaveScreenshot();
 });
 
-test('Simple', async ({ page }) => {
-  const menu = page.locator('app-example[name="simple"] c-menu');
+test('Small open', async ({ page }) => {
+  const smallButton = page.locator('c-menu').nth(2);
 
-  await expect(menu).toHaveScreenshot();
+  await page
+    .locator('c-menu')
+    .filter({ hasText: 'Small' })
+    .locator('button')
+    .first()
+    .click();
 
-  await menu.locator('c-icon-button').click();
-
-  await expect(menu).toHaveScreenshot();
-
-  const menuItems = page.locator('c-menu-items');
-
-  await expect(menuItems).toHaveScreenshot();
+  await expect(smallButton).toHaveScreenshot();
 });
 
-test('Programmatic variant', async ({ page }) => {
-  const menu = page.locator('app-example[name="custom"] c-menu');
-
-  await expect(menu).toHaveScreenshot();
-
-  await menu.locator('c-button').click();
-
-  await expect(menu).toHaveScreenshot();
-
-  const menuItems = page.locator('c-menu-items');
-
-  await expect(menuItems).toHaveScreenshot();
-});
+// TO DO: icon-menu doesn't have visual tests as there is no clear indicator when the menu is open
