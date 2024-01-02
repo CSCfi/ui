@@ -247,6 +247,7 @@ export class CDataTable {
   async clearSelections() {
     this._selections = [];
     this._emitChange();
+    this._setIndeterminateStatus();
   }
 
   /**

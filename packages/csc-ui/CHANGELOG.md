@@ -1,5 +1,33 @@
 # Changelog
 
+## [1.3.7](https://github.com/CSCfi/ui/compare/v1.3.6...v1.3.7) (2023-12-20)
+
+
+### Bug Fixes
+
+* c-icon - make c-icon render correctly inside c-option ([1e15b5f](https://github.com/CSCfi/ui/commit/1e15b5f98c42a33801b6139f1ce2b338d9bb7f5f))
+
+## [1.3.6](https://github.com/CSCfi/ui/compare/v1.3.5...v1.3.6) (2023-12-19)
+
+
+### Bug Fixes
+
+* c-text-field - Use onInput event for value emitting ([05eb741](https://github.com/CSCfi/ui/commit/05eb741f1d8ff2dbacd018164e2765c3d043b9f0))
+
+## [1.3.5](https://github.com/CSCfi/ui/compare/v1.3.4...v1.3.5) (2023-12-15)
+
+
+### Bug Fixes
+
+* c-text-field - Fix negative number input ([8fb9271](https://github.com/CSCfi/ui/commit/8fb927158b999d30113db9a215c74f1a28d5a5f5))
+
+## [1.3.4](https://github.com/CSCfi/ui/compare/v1.3.3...v1.3.4) (2023-12-14)
+
+
+### Bug Fixes
+
+* c-checkbox - Fix checkbox reactivity ([8bce735](https://github.com/CSCfi/ui/commit/8bce735117282e34cc66319a64d6e34ceee96eeb))
+
 ## [1.3.3](https://github.com/CSCfi/ui/compare/v1.3.2...v1.3.3) (2023-12-12)
 
 
