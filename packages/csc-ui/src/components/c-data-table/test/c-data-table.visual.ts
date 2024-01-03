@@ -1,53 +1,31 @@
-import { test, expect } from '@playwright/test';
+import { test } from '@playwright/test';
+import { takeScreenshots } from '../../../utils/test/takeScreenshot';
 
-test.beforeEach(async ({}, testInfo) => {
+test.beforeEach(async ({ page }, testInfo) => {
+  await page.goto('http://localhost:3000/components/c-data-table');
+
   testInfo.snapshotSuffix = '';
 });
 
-test('Default', async ({ page }) => {
-  await page.goto('http://localhost:3000/c-data-table');
-
-  const table = page.locator('app-example[name="basic"] c-data-table').first();
-
-  // Expect initial visual appearance
-  await expect(table).toHaveScreenshot();
+test('Basic', async ({ page }) => {
+  await takeScreenshots(page, 'basic', 'c-data-table');
 });
 
-test('Row selection', async ({ page }) => {
-  await page.goto('http://localhost:3000/c-data-table');
+test('Complex, button press', async ({ page }) => {
+  await takeScreenshots(page, 'complex', 'c-data-table');
 
-  const table = page
-    .locator('app-example[name="complex"] c-data-table')
-    .first();
+  await page.locator('td').locator('c-checkbox').first().click();
 
-  await table.scrollIntoViewIfNeeded();
+  await takeScreenshots(page, 'complex', 'c-data-table');
+});
 
+test('Complex, selection', async ({ page }) => {
   await page
-    .getByTitle('Complex example')
-    .getByText('Items per page: 10')
+    .locator('tr')
+    .filter({ hasText: 'Elvera' })
+    .locator('td')
+    .nth(1)
     .click();
 
-  await page.getByRole('menuitem', { name: '5', exact: true }).click();
-
-  await table.scrollIntoViewIfNeeded();
-
-  // select all
-  await table.locator('c-checkbox').first().click();
-
-  await expect(table).toHaveScreenshot();
-
-  // de-select all
-  await table.locator('c-checkbox').first().click();
-
-  const checkbox = table.locator('c-checkbox').nth(1);
-
-  await checkbox.click();
-
-  // Expect first row to be selected on checkbox click
-  await expect(table).toHaveScreenshot();
-
-  await checkbox.click();
-
-  // Expect first row to be de-selected on another checkbox click
-  await expect(table).toHaveScreenshot();
+  await takeScreenshots(page, 'complex', 'c-data-table');
 });
