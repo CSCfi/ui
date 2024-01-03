@@ -1,35 +1,33 @@
-import { test, expect } from '@playwright/test';
+import { test } from '@playwright/test';
+import { takeScreenshots } from '../../../utils/test/takeScreenshot';
 
 test.beforeEach(async ({ page }, testInfo) => {
-  await page.goto('http://localhost:3000/c-radio-group');
+  await page.goto('http://localhost:3000/components/c-radio-group');
 
   testInfo.snapshotSuffix = '';
 });
 
-test('Default', async ({ page }) => {
-  const radioGroup = page.locator('app-example[name="basic"] div').nth(1);
-
-  await expect(radioGroup).toHaveScreenshot();
-
-  await radioGroup.locator('#three span').nth(1).click();
-
-  await expect(radioGroup).toHaveScreenshot();
+test('Basic', async ({ page }) => {
+  await takeScreenshots(page, 'basic', 'c-radio-group');
 });
 
 test('Inline', async ({ page }) => {
-  const radioGroup = page.locator('app-example[name="inline"] div').nth(1);
-
-  await expect(radioGroup).toHaveScreenshot();
+  await takeScreenshots(page, 'inline', 'c-radio-group');
 });
 
-test('Slot', async ({ page }) => {
-  const radioGroup = page.locator('app-example[name="slot"] div').nth(1);
+test.only('States', async ({ page }) => {
+  await takeScreenshots(page, 'states', 'c-radio-group');
 
-  await expect(radioGroup).toHaveScreenshot();
+  await page
+    .locator('c-switch')
+    .filter({ hasText: 'Toggle' })
+    .locator('span')
+    .first()
+    .click();
+
+  await takeScreenshots(page, 'states', 'c-radio-group');
 });
 
-test('Disabled', async ({ page }) => {
-  const radioGroup = page.locator('app-example[name="disabled"] div').nth(1);
-
-  await expect(radioGroup).toHaveScreenshot();
+test('Radio buttons', async ({ page }) => {
+  await takeScreenshots(page, 'radio-buttons', 'c-radio-group');
 });
