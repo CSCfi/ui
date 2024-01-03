@@ -13,4 +13,70 @@ test('Default', async ({ page }) => {
 
 test('Justify align', async ({ page }) => {
   await takeScreenshots(page, 'justify-align', 'c-row');
+
+  await page
+    .locator('c-radio-group')
+    .filter({ hasText: 'Justify' })
+    .locator('label')
+    .filter({ hasText: 'End' })
+    .locator('span')
+    .first()
+    .click();
+
+  await takeScreenshots(page, 'justify-align', 'c-row');
+
+  await page
+    .locator('c-radio-group')
+    .filter({ hasText: 'Justify' })
+    .locator('label')
+    .filter({ hasText: 'Center' })
+    .locator('span')
+    .first()
+    .click();
+
+  await takeScreenshots(page, 'justify-align', 'c-row');
+
+  await page
+    .locator('c-radio-group')
+    .filter({ hasText: 'Justify' })
+    .locator('label')
+    .filter({ hasText: 'Space between' })
+    .locator('span')
+    .first()
+    .click();
+
+  await takeScreenshots(page, 'justify-align', 'c-row');
+
+  await page
+    .locator('c-radio-group')
+    .filter({ hasText: 'Justify' })
+    .locator('label')
+    .filter({ hasText: 'Space around' })
+    .locator('span')
+    .first()
+    .click();
+
+  await takeScreenshots(page, 'justify-align', 'c-row');
+
+  await page
+    .locator('c-radio-group')
+    .filter({ hasText: 'Align' })
+    .locator('label')
+    .filter({ hasText: 'End' })
+    .locator('span')
+    .first()
+    .click();
+
+  await takeScreenshots(page, 'justify-align', 'c-row');
+
+  await page
+    .locator('c-radio-group')
+    .filter({ hasText: 'Align' })
+    .locator('label')
+    .filter({ hasText: 'Center' })
+    .locator('span')
+    .first()
+    .click();
+
+  await takeScreenshots(page, 'justify-align', 'c-row');
 });
