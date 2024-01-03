@@ -7,7 +7,7 @@ test.beforeEach(async ({ page }, testInfo) => {
   testInfo.snapshotSuffix = '';
 });
 
-test.only('Basic', async ({ page }) => {
+test('Basic', async ({ page }) => {
   const pagination = page.locator('div').filter({ hasText: 'Default' }).first();
 
   await expect(pagination).toHaveScreenshot();
