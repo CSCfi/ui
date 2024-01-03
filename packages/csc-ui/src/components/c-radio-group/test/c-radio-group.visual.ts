@@ -15,7 +15,7 @@ test('Inline', async ({ page }) => {
   await takeScreenshots(page, 'inline', 'c-radio-group');
 });
 
-test.only('States', async ({ page }) => {
+test('States', async ({ page }) => {
   await takeScreenshots(page, 'states', 'c-radio-group');
 
   await page
