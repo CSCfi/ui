@@ -1,51 +1,38 @@
 import { test, expect } from '@playwright/test';
+import { takeScreenshots } from '../../../utils/test/takeScreenshot';
 
 test.beforeEach(async ({ page }, testInfo) => {
+  await page.goto('http://localhost:3000/components/c-autocomplete');
+
   testInfo.snapshotSuffix = '';
-
-  await page.goto('http://localhost:3000/c-autocomplete');
-
-  await page.waitForTimeout(500);
 });
 
-test('Default', async ({ page }) => {
-  const example = page.locator('app-example[name="angular"]').first();
+test('Basic', async ({ page }) => {
+  await takeScreenshots(page, 'basic', 'c-autocomplete');
 
-  const autocomplete = example.locator('c-autocomplete').first();
+  await page.locator('c-autocomplete').first().click();
 
-  await expect(example).toHaveScreenshot();
+  const list = page.locator('c-autocomplete').locator('dialog').first();
 
-  await autocomplete.locator('.c-input-menu__input').first().click();
-  await autocomplete.getByRole('combobox', { name: 'Countries' }).fill('fin');
+  await expect(list).toHaveScreenshot();
 
-  await page.waitForTimeout(350);
+  const input = page.locator('c-autocomplete').locator('input').first();
 
-  await expect(example).toHaveScreenshot();
-
-  await autocomplete.getByRole('option', { name: 'Finland' }).click();
+  await input.fill('fi');
 
   await page.waitForTimeout(350);
 
-  await expect(example).toHaveScreenshot();
+  await expect(list).toHaveScreenshot();
+
+  await page.locator('c-autocomplete').locator('ul li').nth(1).click();
+
+  await expect(input).toHaveScreenshot();
 });
 
-test('Custom menu items', async ({ page }) => {
-  const example = page.locator('app-example[name="customMenu"]').first();
+test('Options', async ({ page }) => {
+  await takeScreenshots(page, 'options', 'c-autocomplete');
+});
 
-  const autocomplete = example.locator('c-autocomplete').first();
-
-  await expect(example).toHaveScreenshot();
-
-  await autocomplete.locator('.c-input-menu__input').first().click();
-  await autocomplete.getByRole('combobox', { name: 'Countries' }).fill('fin');
-
-  await page.waitForTimeout(350);
-
-  await expect(example).toHaveScreenshot();
-
-  await page.getByText('Country 1Finland').click();
-
-  await page.waitForTimeout(350);
-
-  await expect(example).toHaveScreenshot();
+test('Return value', async ({ page }) => {
+  await takeScreenshots(page, 'return-value', 'c-autocomplete');
 });

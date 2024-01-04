@@ -14,7 +14,7 @@ test('Basic', async ({ page }) => {
 
   await textField.getByLabel('Text field', { exact: true }).fill('Example');
 
-  await page.waitForTimeout(1000);
+  await page.waitForTimeout(350);
 
   await takeScreenshots(page, 'basic', 'c-text-field');
 });
@@ -26,7 +26,7 @@ test('Date', async ({ page }) => {
 
   await textField.getByLabel('Date field', { exact: true }).fill('2024-01-01');
 
-  await page.waitForTimeout(1000);
+  await page.waitForTimeout(350);
 
   await takeScreenshots(page, 'date', 'c-text-field');
 });
