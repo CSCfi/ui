@@ -163,7 +163,7 @@ export class CDropdown {
   }
 
   /**
-   * Open dropdown
+   * Close dropdown
    */
   @Method()
   async close() {

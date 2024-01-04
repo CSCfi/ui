@@ -323,10 +323,9 @@ export class CInput {
   private _onBlur = () => {
     // delay the blur event to prevent the label from 'flashing' on c-select selection
     setTimeout(() => {
-      if (!this.active) {
-        this.isFocused = false;
-        this._hasBlurred = true;
-      }
+      this.isFocused = false;
+
+      this._hasBlurred = true;
 
       // show the label if there's no label or value
       this._onReset();
