@@ -54,7 +54,7 @@ const cdn = computed(() => {
   return (
     '<script src="https://cdn.jsdelivr.net/npm/@cscfi/csc-ui@' +
     version.value +
-    '/dist/csc-ui/csc-ui.esm.js"></' +
+    '/dist/csc-ui/csc-ui.esm.js" type="module"></' +
     'script>'
   );
 });
@@ -63,7 +63,7 @@ const css = computed(() => {
   return (
     '<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@cscfi/csc-ui@' +
     version.value +
-    '/dist/styles/css/theme.css"></link>'
+    '/dist/styles/css/theme.css">'
   );
 });
 </script>
