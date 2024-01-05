@@ -1,29 +1,20 @@
-import { test, expect } from '@playwright/test';
+import { test } from '@playwright/test';
+import { takeScreenshots } from '../../../utils/test/takeScreenshot';
 
 test.beforeEach(async ({ page }, testInfo) => {
-  await page.goto('http://localhost:3000/c-steps');
+  await page.goto('http://localhost:3000/components/c-steps');
 
   testInfo.snapshotSuffix = '';
 });
 
-test('Default', async ({ page }) => {
-  const steps = page.locator('app-example[name="basic"] c-steps');
+test('Basic', async ({ page }) => {
+  await takeScreenshots(page, 'basic', 'c-steps');
 
-  await expect(steps).toHaveScreenshot();
+  await page.locator('c-icon-button').nth(1).click();
+
+  await takeScreenshots(page, 'basic', 'c-steps');
 });
 
-test('Step changes', async ({ page }) => {
-  const stepsWrapper = page.locator('app-example[name="angular"]');
-
-  const steps = stepsWrapper.locator('c-steps');
-
-  await expect(steps).toHaveScreenshot();
-
-  await stepsWrapper.locator('c-icon-button').nth(1).click();
-
-  await expect(steps).toHaveScreenshot();
-
-  await stepsWrapper.locator('c-icon-button').nth(1).click({ clickCount: 2 });
-
-  await expect(steps).toHaveScreenshot();
+test('Mobile', async ({ page }) => {
+  await takeScreenshots(page, 'mobile', 'c-steps');
 });
