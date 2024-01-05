@@ -1,25 +1,30 @@
-import { test, expect } from '@playwright/test';
+import { test } from '@playwright/test';
+import { takeScreenshots } from '../../../utils/test/takeScreenshot';
 
 test.beforeEach(async ({ page }, testInfo) => {
-  await page.goto('http://localhost:3000/c-login-card');
+  await page.goto('http://localhost:3000/components/c-login-card');
 
   testInfo.snapshotSuffix = '';
 });
 
-test('With custom image', async ({ page }) => {
-  const loginCard = page.locator('app-example[name="basic"] div').nth(1);
+test('Basic', async ({ page }) => {
+  await takeScreenshots(page, 'basic', 'c-login-card');
 
-  await expect(loginCard).toHaveScreenshot();
+  const textField = page.locator('c-login-card').locator('input').first();
+
+  await textField.fill('Example');
+
+  await page.waitForTimeout(350);
+
+  const passwordField = page.locator('c-login-card').locator('input').nth(1);
+
+  await passwordField.fill('Example');
+
+  await page.waitForTimeout(350);
+
+  await takeScreenshots(page, 'basic', 'c-login-card');
 });
 
-test('Overlay', async ({ page }) => {
-  const loginCard = page.locator('app-example[name="overlay"] div').nth(1);
-
-  await expect(loginCard).toHaveScreenshot();
-});
-
-test('Default CSC background', async ({ page }) => {
-  const loginCard = page.locator('app-example[name="basicCSC"] div').nth(1);
-
-  await expect(loginCard).toHaveScreenshot();
+test('Colored', async ({ page }) => {
+  await takeScreenshots(page, 'colored', 'c-login-card');
 });
