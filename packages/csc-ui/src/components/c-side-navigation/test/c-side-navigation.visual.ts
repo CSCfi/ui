@@ -1,27 +1,26 @@
 import { test, expect } from '@playwright/test';
+import { takeScreenshots } from '../../../utils/test/takeScreenshot';
 
 test.beforeEach(async ({ page }, testInfo) => {
-  await page.goto('http://localhost:3000/c-side-navigation');
+  await page.goto('http://localhost:3000/components/c-side-navigation');
 
   testInfo.snapshotSuffix = '';
 });
 
-test('Default', async ({ page }) => {
-  const sideNavigation = page.locator(
-    'app-example[name="basic"] c-side-navigation',
-  );
+test('Basic', async ({ page }) => {
+  await takeScreenshots(page, 'basic', 'c-side-navigation');
 
-  await expect(sideNavigation).toHaveScreenshot();
+  const sideNav = page.locator('[data-test="basic"] c-side-navigation').first();
 
-  await sideNavigation.locator('c-side-navigation-item').nth(1).click();
+  await sideNav.locator('c-side-navigation-item').nth(2).click();
 
-  await expect(sideNavigation).toHaveScreenshot();
+  await expect(sideNav).toHaveScreenshot();
 
-  await sideNavigation.locator('c-side-navigation-item').nth(1).click();
+  await sideNav
+    .locator('c-side-navigation-item')
+    .locator('c-side-navigation-item')
+    .first()
+    .click();
 
-  await expect(sideNavigation).toHaveScreenshot();
-
-  await sideNavigation.locator('c-side-navigation-item').first().click();
-
-  await expect(sideNavigation).toHaveScreenshot();
+  await expect(sideNav).toHaveScreenshot();
 });
