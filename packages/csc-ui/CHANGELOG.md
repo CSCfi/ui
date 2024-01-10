@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.3.8](https://github.com/CSCfi/ui/compare/v1.3.7...v1.3.8) (2024-01-10)
+
+
+### Bug Fixes
+
+* c-autocomplete: Clicking outside de-activates the field properly ([3fe1486](https://github.com/CSCfi/ui/commit/3fe1486f0f7a65de37730d56510489db6bdb94a0))
+
 ## [1.3.7](https://github.com/CSCfi/ui/compare/v1.3.6...v1.3.7) (2023-12-20)
 
 
