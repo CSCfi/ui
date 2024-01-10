@@ -436,7 +436,7 @@ export namespace Components {
     }
     interface CDropdown {
         /**
-          * Open dropdown
+          * Close dropdown
          */
         "close": () => Promise<void>;
         /**

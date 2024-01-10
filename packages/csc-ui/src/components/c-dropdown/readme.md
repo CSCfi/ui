@@ -30,7 +30,7 @@
 
 ### `close() => Promise<void>`
 
-Open dropdown
+Close dropdown
 
 #### Returns
 
