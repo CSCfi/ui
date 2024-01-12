@@ -1014,6 +1014,10 @@ export namespace Components {
          */
         "length": number;
         /**
+          * Reset input value
+         */
+        "reset": () => Promise<void>;
+        /**
           * Set the validíty of the input
          */
         "valid": boolean;
@@ -1021,6 +1025,10 @@ export namespace Components {
           * Custom validation message
          */
         "validation": string;
+        /**
+          * Value of the input
+         */
+        "value": string;
     }
     /**
      * @group Layout
@@ -4044,6 +4052,10 @@ declare namespace LocalJSX {
           * Custom validation message
          */
         "validation"?: string;
+        /**
+          * Value of the input
+         */
+        "value"?: string;
     }
     /**
      * @group Layout

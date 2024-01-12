@@ -1217,6 +1217,10 @@
         {
           "name": "validation",
           "description": "Custom validation message"
+        },
+        {
+          "name": "value",
+          "description": "Value of the input"
         }
       ]
     },

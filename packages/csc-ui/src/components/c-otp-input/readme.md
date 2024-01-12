@@ -15,6 +15,7 @@
 | `length`                 | `length`       | Length of the OTP code           | `number`  | `6`                |
 | `valid`                  | `valid`        | Set the validíty of the input    | `boolean` | `true`             |
 | `validation`             | `validation`   | Custom validation message        | `string`  | `'Required field'` |
+| `value`                  | `value`        | Value of the input               | `string`  | `undefined`        |
 
 
 ## Events
@@ -23,6 +24,19 @@
 | ------------- | --------------------------------------------- | --------------------- |
 | `changeValue` | Run on input - returns the current value      | `CustomEvent<string>` |
 | `completion`  | Run on completion - returns the current value | `CustomEvent<string>` |
+
+
+## Methods
+
+### `reset() => Promise<void>`
+
+Reset input value
+
+#### Returns
+
+Type: `Promise<void>`
+
+
 
 
 ## CSS Custom Properties

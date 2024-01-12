@@ -4,6 +4,7 @@ import {
   Event,
   EventEmitter,
   Host,
+  Method,
   Prop,
   State,
   Watch,
@@ -54,6 +55,11 @@ export class COtpInput {
   @Prop() validation = 'Required field';
 
   /**
+   * Value of the input
+   */
+  @Prop({ mutable: true }) value: string;
+
+  /**
    * Run on input - returns the current value
    */
   @Event({ bubbles: false }) changeValue: EventEmitter<string>;
@@ -65,6 +71,18 @@ export class COtpInput {
 
   @State() statusText = '';
 
+  /**
+   * Reset input value
+   */
+  @Method()
+  async reset() {
+    this.value = '';
+
+    this._handleValueChange(this.value, true);
+
+    this.internals.setFormValue(this.value);
+  }
+
   private _backSpacePressed = false;
 
   private _debounce = null;
@@ -75,26 +93,30 @@ export class COtpInput {
 
   private static _uniqueId = 0;
 
-  private _value = '';
-
   @Watch('validation')
   onValidationMessageChange() {
     this._updateStatusText();
   }
 
+  @Watch('value')
+  onValueChange(value: string) {
+    this._handleValueChange(value);
+    this._updateStatusText();
+  }
+
   private _emitValue() {
     requestAnimationFrame(() => {
-      this._value = [...this._inputs].map((input) => input.value).join('');
+      this.value = [...this._inputs].map((input) => input.value).join('');
 
-      const isFullyFilled = this._value.length === this.length;
+      const isFullyFilled = this.value.length === this.length;
 
-      this.changeValue.emit(isFullyFilled ? this._value : null);
+      this.changeValue.emit(isFullyFilled ? this.value : null);
 
       if (isFullyFilled) {
-        this.completion.emit(this._value || null);
+        this.completion.emit(this.value || null);
       }
 
-      this.internals.setFormValue(this._value);
+      this.internals.setFormValue(this.value);
 
       this._updateStatusText();
     });
@@ -205,14 +227,26 @@ export class COtpInput {
     }
 
     this._debounce = window.setTimeout(() => {
+      const value = [...this._inputs].map((input) => input.value).join('');
+
       this.statusText = this.valid ? '' : `Error: ${this.validation} `;
-      this.statusText += `Currently entered - ${this._value
-        .split('')
-        .join(' - ')}`;
+      this.statusText += `Currently entered - ${
+        !value.length ? 'nothing' : value.split('').join(' - ')
+      }`;
       this.statusText = this.statusText.trim();
 
       this._debounce = null;
     }, 1400);
+  }
+
+  private _handleValueChange(value: string | null, forceEmpty = false) {
+    if (!value && !forceEmpty) return;
+
+    const digits = value.split('');
+
+    this._inputs.map((input, index) => (input.value = digits[index] || ''));
+
+    this.internals.setFormValue(value);
   }
 
   private _renderInput(index: number) {
@@ -235,8 +269,12 @@ export class COtpInput {
 
   componentWillLoad() {
     COtpInput._uniqueId += 1;
+  }
 
-    this.internals.setFormValue(this._value);
+  componentDidLoad() {
+    this._handleValueChange(this.value);
+
+    this.internals.setFormValue(this.value);
   }
 
   render() {
