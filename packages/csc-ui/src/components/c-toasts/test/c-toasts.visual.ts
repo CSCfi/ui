@@ -1,5 +1,4 @@
-import { test } from '@playwright/test';
-import { takeScreenshots } from '../../../utils/test/takeScreenshot';
+import { test, expect } from '@playwright/test';
 
 test.beforeEach(async ({ page }, testInfo) => {
   await page.goto('http://localhost:3000/components/c-toasts');
@@ -8,42 +7,89 @@ test.beforeEach(async ({ page }, testInfo) => {
 });
 
 test('Basic', async ({ page }) => {
-  const toastsWrapper = page.locator('app-example[name="basic"] div').nth(1);
+  const addButton = page
+    .locator('c-card')
+    .locator('c-button')
+    .filter({ hasText: 'Add toast' })
+    .first();
 
-  await toastsWrapper.getByRole('button', { name: 'Add toast' }).click();
+  addButton.click();
 
-  await takeScreenshots(page, 'basic', 'c-toasts');
+  const toast = page.locator('c-toast').first();
+
+  await expect(toast).toHaveScreenshot();
+
+  await page
+    .locator('c-card')
+    .locator('c-input')
+    .getByLabel('Message')
+    .fill('Example');
+
+  await page
+    .locator('c-card')
+    .locator('c-input')
+    .getByLabel('Title')
+    .fill('Title');
+
+  await page
+    .locator('c-card')
+    .locator('c-input')
+    .getByLabel('Close text')
+    .fill('Close here');
+
+  addButton.click();
+
+  await expect(toast).toHaveScreenshot();
+
+  const list = page.locator('c-card').locator('c-input').nth(4);
+
+  await list.click();
+
+  const dialog = page.locator('c-select').locator('dialog').first();
+
+  await dialog
+    .locator('ul')
+    .locator('li')
+    .filter({ hasText: 'Success' })
+    .locator('span')
+    .first()
+    .click();
+
+  await page.waitForTimeout(6000);
+
+  addButton.click();
+
+  await expect(toast).toHaveScreenshot();
+
+  await list.click();
+
+  await dialog
+    .locator('ul')
+    .locator('li')
+    .filter({ hasText: 'Warning' })
+    .locator('span')
+    .first()
+    .click();
+
+  await page.waitForTimeout(6000);
+
+  addButton.click();
+
+  await expect(toast).toHaveScreenshot();
+
+  await list.click();
+
+  await dialog
+    .locator('ul')
+    .locator('li')
+    .filter({ hasText: 'Error' })
+    .locator('span')
+    .first()
+    .click();
+
+  await page.waitForTimeout(6000);
+
+  addButton.click();
+
+  await expect(toast).toHaveScreenshot();
 });
-
-// test('Default', async ({ page }) => {
-
-//   await toasts.locator('c-icon-button').click();
-
-//   await toastsWrapper.locator('.c-input-menu__input').first().click();
-
-//   await toastsWrapper.getByRole('option', { name: 'Success' }).click();
-
-//   await toastsWrapper.getByRole('button', { name: 'Add toast' }).click();
-
-//   await expect(toasts).toHaveScreenshot();
-
-//   await toasts.locator('c-icon-button').click();
-
-//   await toastsWrapper.locator('.c-input-menu__input').first().click();
-
-//   await toastsWrapper.getByRole('option', { name: 'Warning' }).click();
-
-//   await toastsWrapper.getByRole('button', { name: 'Add toast' }).click();
-
-//   await expect(toasts).toHaveScreenshot();
-
-//   await toasts.locator('c-icon-button').click();
-
-//   await toastsWrapper.locator('.c-input-menu__input').first().click();
-
-//   await toastsWrapper.getByRole('option', { name: 'Error' }).click();
-
-//   await toastsWrapper.getByRole('button', { name: 'Add toast' }).click();
-
-//   await expect(toasts).toHaveScreenshot();
-// });
