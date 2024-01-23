@@ -1702,11 +1702,19 @@ export namespace Components {
           * Remove the hover effect
          */
         "flat": boolean;
+        /**
+          * Size of the tag
+         */
+        "size": 'default' | 'small';
     }
     /**
      * @group buttons
      */
     interface CTags {
+        /**
+          * Size of the tags
+         */
+        "size": 'default' | 'small';
     }
     /**
      * @group Form
@@ -4788,11 +4796,19 @@ declare namespace LocalJSX {
           * Emit close event on close icon click
          */
         "onClose"?: (event: CTagCustomEvent<any>) => void;
+        /**
+          * Size of the tag
+         */
+        "size"?: 'default' | 'small';
     }
     /**
      * @group buttons
      */
     interface CTags {
+        /**
+          * Size of the tags
+         */
+        "size"?: 'default' | 'small';
     }
     /**
      * @group Form

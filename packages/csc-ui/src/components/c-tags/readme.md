@@ -5,6 +5,13 @@
 <!-- Auto Generated Below -->
 
 
+## Properties
+
+| Property | Attribute | Description      | Type                   | Default     |
+| -------- | --------- | ---------------- | ---------------------- | ----------- |
+| `size`   | `size`    | Size of the tags | `"default" \| "small"` | `'default'` |
+
+
 ## Slots
 
 | Slot             | Description  |

@@ -42,6 +42,11 @@ export class CTag {
   @Prop() badge: string | number = null;
 
   /**
+   * Size of the tag
+   */
+  @Prop() size: 'default' | 'small' = 'default';
+
+  /**
    * Emit close event on close icon click
    */
   @Event() close: EventEmitter;
@@ -61,6 +66,7 @@ export class CTag {
       'c-tag--block': this.block,
       'c-tag--fit': this.fit,
       'c-tag--flat': this.flat,
+      'c-tag--small': this.size === 'small',
     };
 
     const hostParams = {

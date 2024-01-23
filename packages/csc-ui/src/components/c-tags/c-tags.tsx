@@ -1,4 +1,4 @@
-import { Component, Host, h } from '@stencil/core';
+import { Component, Element, Host, Prop, h } from '@stencil/core';
 
 /**
  * @group buttons
@@ -10,6 +10,23 @@ import { Component, Host, h } from '@stencil/core';
   shadow: true,
 })
 export class CTags {
+  @Element() el: HTMLCTagsElement;
+
+  /**
+   * Size of the tags
+   */
+  @Prop() size: 'default' | 'small' = 'default';
+
+  componentDidLoad() {
+    if (this.size === 'small') {
+      const tags = this.el.querySelectorAll('c-tag');
+
+      [...tags].forEach((tag) => {
+        tag.size = 'small';
+      });
+    }
+  }
+
   render() {
     return (
       <Host>
