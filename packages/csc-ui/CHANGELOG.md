@@ -1,5 +1,16 @@
 # Changelog
 
+## [1.3.9](https://github.com/CSCfi/ui/compare/v1.3.8...v1.3.9) (2024-01-23)
+
+
+### Bug Fixes
+
+* c-button - prevent content overflow ([3035a25](https://github.com/CSCfi/ui/commit/3035a2508eb22e2ee694d3ee98f42cdee5270463))
+* c-navigation-item - allow the long labels to wrap ([3d39c48](https://github.com/CSCfi/ui/commit/3d39c48f6c333345a65f3b006f709afcf8cd8af2))
+* c-otp-input - use value prop, add reset method ([089c915](https://github.com/CSCfi/ui/commit/089c91548aff6c5cb707728c18190f7afc595b5a))
+* c-select & c-autocomplete - Disable page scroll on open ([2ec055d](https://github.com/CSCfi/ui/commit/2ec055d92386f90b9f6f92dc848d3696bf9e544d))
+* c-tags - add small variant ([d6cd89d](https://github.com/CSCfi/ui/commit/d6cd89dd0f598c1c475ba9ff3802444d0a5ba878))
+
 ## [1.3.8](https://github.com/CSCfi/ui/compare/v1.3.7...v1.3.8) (2024-01-10)
 
 
