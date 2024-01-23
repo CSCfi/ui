@@ -12,7 +12,6 @@ import {
   State,
 } from '@stencil/core';
 import { CAutocompleteItem, CSelectItem } from '../../types';
-import { getScrollParent } from '../../utils';
 
 @Component({
   tag: 'c-dropdown',
@@ -87,11 +86,11 @@ export class CDropdown {
 
   private _dummyElement: HTMLDivElement;
 
-  private _scrollParent: HTMLElement;
-
   private _isMobile = false;
 
   private _listItems: HTMLLIElement[] = [];
+
+  private _originalOverflowValue: string;
 
   @State() renderedList = null;
 
@@ -108,11 +107,18 @@ export class CDropdown {
 
   @Watch('isOpen')
   async stateWatcher(isOpen) {
-    if (isOpen) this._handleOpen();
+    this._originalOverflowValue =
+      this._originalOverflowValue ||
+      window.getComputedStyle(document.body).overflow;
+
+    if (isOpen) {
+      this._handleOpen();
+      this._disableScroll();
+    } else {
+      this._enableScroll();
+    }
 
     this.dropdownStateChange.emit(isOpen);
-
-    this._scrollParent = this._scrollParent || (await getScrollParent(this.el));
   }
 
   @Watch('index')
@@ -196,6 +202,23 @@ export class CDropdown {
     setTimeout(() => {
       this._isOpening = false;
     }, 500);
+  }
+
+  private _disableScroll() {
+    document.body.style.overflow = 'hidden';
+  }
+
+  private _enableScroll() {
+    if (
+      this._originalOverflowValue &&
+      this._originalOverflowValue !== 'visible'
+    ) {
+      document.body.style.overflow = this._originalOverflowValue;
+
+      return;
+    }
+
+    document.body.style.removeProperty('overflow');
   }
 
   componentDidLoad() {

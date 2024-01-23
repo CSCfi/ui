@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Html form test</title>
+
+  <link rel="stylesheet" href="../dist/styles/css/theme.css"></link>
+
+  <script src="../dist/csc-ui/csc-ui.esm.js" type="module"></script>
+
+  <style>
+    :root {
+      --c-primary-100: #e6dff7;
+      --c-primary-200: #cebfef;
+      --c-primary-300: #b5a0e6;
+      --c-primary-400: #9d80de;
+      --c-primary-500: #8460d6;
+      --c-primary-600: #6a4dab;
+      --c-primary-700: #4f3a80;
+      --c-primary-800: #352656;
+      --c-primary-900: #1a132b;
+      --c-primary-rgb: 132, 96, 214;
+    }
+
+    html, body {
+      background-color: var(--c-primary-100);
+    }
+
+    .page {
+      display: grid;
+      place-items: center;
+      padding: 64px;
+      min-height: 100vh;
+    }
+
+    .container {
+      max-width: 1044px;
+      display: grid;
+      gap: 24px;
+    }
+
+    .card-content form {
+      display: grid;
+      gap: 24px;
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <div class="container">
+      <c-card>
+        <c-card-title class="card-header">
+          Testing the library without the c-page wrapper
+        </c-card-title>
+
+        <form>
+          <c-card-content class="card-content">
+            <c-select label="Test" name="select">
+              <c-option value="one" name="One" selected>One</c-option>
+              <c-option value="two" name="Two">Two</c-option>
+              <c-option value="three" name="Three">Three</c-option>
+              <c-option value="four" name="Four">Four</c-option>
+              <c-option value="five" name="Five">Five</c-option>
+            </c-select>
+
+            <c-autocomplete label="Test 2" name="autocomplete">
+              <c-option value="one" name="One">One</c-option>
+              <c-option value="two" name="Two">Two</c-option>
+              <c-option value="three" name="Three" selected>Three</c-option>
+              <c-option value="four" name="Four">Four</c-option>
+              <c-option value="five" name="Five">Five</c-option>
+            </c-autocomplete>
+
+            <c-text-field label="Text field" name="text-field"></c-text-field>
+
+            <c-checkbox name="checkbox" checked>Check me if you can</c-checkbox>
+
+            <c-radio-group name="radio-group" label="Radio Group with c-radio elements" inline>
+              <c-radio value="one">Radio one</c-radio>
+      
+              <c-radio value="two" checked>Radio two</c-radio>
+      
+              <c-radio value="three" disabled>Radio three</c-radio>
+            </c-radio-group>
+
+            <c-switch name="switch" checked>Switch</c-switch>
+
+            <c-otp-input name="otp"></c-otp-input>
+          </c-card-content>
+
+          <c-card-actions>
+            <c-button type="submit">Submit</c-button>
+            <c-button ghost id="otp-button">Reverse otp</c-button>
+            <c-button outlined id="otp-button-2">Set otp to 654321</c-button>
+            <c-button danger id="otp-button-3">Reset otp</c-button>
+          </c-card-actions>
+        </form>
+      </c-card>
+
+      <c-card>
+        <c-card-content>
+          <c-menu>Basic menu</c-menu>
+
+          <c-table responsive>
+            <table>
+              <thead>
+                <tr>
+                  <th>Id</th>
+                  <th>Name</th>
+                  <th>Age</th>
+                </tr>
+              </thead>
+        
+              <tbody>
+                <tr>
+                  <td>user-id-1</td>
+                  <td>Jason Miller</td>
+                  <td>23</td>
+                </tr>
+        
+                <tr>
+                  <td>user-id-2</td>
+                  <td>Silvia Nyholm</td>
+                  <td>18</td>
+                </tr>
+        
+                <tr>
+                  <td>user-id-3</td>
+                  <td>Mark Samsonov</td>
+                  <td>56</td>
+                </tr>
+        
+                <tr>
+                  <td>user-id-4</td>
+                  <td>Michael Nielsen</td>
+                  <td>2</td>
+                </tr>
+              </tbody>
+            </table>
+          </c-table>
+        
+          <p>Lorem ipsum dolor sit, amet consectetur adipisicing elit. Voluptatem id repellat molestiae in numquam. Numquam provident distinctio, rem, totam possimus culpa molestiae, id ex aliquam fugiat officia. Voluptatem nam, autem obcaecati doloremque aliquam veritatis dolorem, laboriosam rerum quisquam eius cum, debitis perspiciatis. Possimus ab blanditiis vero quas reiciendis molestias temporibus voluptates, laudantium omnis ratione inventore voluptate sed dolorum quos dolores magni eaque aspernatur asperiores quidem alias ex veritatis repellat. Quis sint voluptate quas sunt quibusdam cupiditate, natus ipsam voluptas facilis nihil necessitatibus eum molestiae labore ducimus, amet, quia non ullam in impedit obcaecati quaerat ea harum! Rerum beatae suscipit commodi rem cum laborum, quisquam iste! Eligendi deleniti cum ab quibusdam at quos explicabo impedit doloremque, quam voluptatibus sequi enim non eos commodi nobis, dolores temporibus praesentium perspiciatis alias qui reiciendis voluptates quidem! Velit impedit, earum aspernatur dolor delectus odio atque neque fuga modi, aperiam vel non aliquam nemo. Architecto sed magnam quae aut voluptates perspiciatis blanditiis saepe assumenda, numquam quidem quis consectetur, laudantium totam minima quos praesentium velit doloribus aliquid! Accusantium labore, dicta at neque aperiam, rerum itaque accusamus iusto a rem distinctio, voluptas deleniti provident ipsam odit quibusdam reprehenderit. Dolorem, aperiam quisquam repudiandae vero, expedita maxime nemo qui suscipit quaerat sed in sapiente! Voluptatibus, asperiores deleniti! Perferendis dolorum nihil error tempore ducimus explicabo unde obcaecati nisi aliquam possimus sit eos iusto iste perspiciatis labore aliquid, voluptatem corporis porro libero reiciendis harum at reprehenderit. Fuga porro facilis quas rem consequatur quibusdam, optio architecto? Sunt repellat recusandae odio quaerat dolores iusto officia nam? Magni necessitatibus atque numquam. Nesciunt perferendis quae voluptates ipsum nam distinctio! Mollitia culpa optio cum amet, recusandae magni quod laudantium maxime, aliquid sequi autem. Saepe atque assumenda fugit repudiandae, quam pariatur beatae reprehenderit in quidem maiores enim quasi necessitatibus, quaerat praesentium at porro modi neque dolores minus? Vel soluta molestias eum quaerat accusamus officia veritatis possimus eligendi sint error consectetur quas corrupti earum voluptatem excepturi voluptas ipsum nesciunt adipisci dolorum voluptatum commodi reprehenderit, sit iste. Iure, vitae sed cumque rem officia reiciendis dolore laborum eos ipsum iste nam maxime animi optio. Possimus vitae natus a unde, sed voluptatum iusto quos tempore placeat est porro omnis dicta aperiam nemo veritatis ratione recusandae illum velit voluptates reiciendis iste. Id, tenetur? Ratione nihil exercitationem adipisci aspernatur magni amet eum dignissimos ab sed. Odio, eveniet molestiae aperiam accusamus, voluptatem iste veritatis minima nemo rerum expedita quibusdam ex illum, saepe ipsam cum obcaecati.</p>
+          <p>Lorem ipsum dolor sit, amet consectetur adipisicing elit. Voluptatem id repellat molestiae in numquam. Numquam provident distinctio, rem, totam possimus culpa molestiae, id ex aliquam fugiat officia. Voluptatem nam, autem obcaecati doloremque aliquam veritatis dolorem, laboriosam rerum quisquam eius cum, debitis perspiciatis. Possimus ab blanditiis vero quas reiciendis molestias temporibus voluptates, laudantium omnis ratione inventore voluptate sed dolorum quos dolores magni eaque aspernatur asperiores quidem alias ex veritatis repellat. Quis sint voluptate quas sunt quibusdam cupiditate, natus ipsam voluptas facilis nihil necessitatibus eum molestiae labore ducimus, amet, quia non ullam in impedit obcaecati quaerat ea harum! Rerum beatae suscipit commodi rem cum laborum, quisquam iste! Eligendi deleniti cum ab quibusdam at quos explicabo impedit doloremque, quam voluptatibus sequi enim non eos commodi nobis, dolores temporibus praesentium perspiciatis alias qui reiciendis voluptates quidem! Velit impedit, earum aspernatur dolor delectus odio atque neque fuga modi, aperiam vel non aliquam nemo. Architecto sed magnam quae aut voluptates perspiciatis blanditiis saepe assumenda, numquam quidem quis consectetur, laudantium totam minima quos praesentium velit doloribus aliquid! Accusantium labore, dicta at neque aperiam, rerum itaque accusamus iusto a rem distinctio, voluptas deleniti provident ipsam odit quibusdam reprehenderit. Dolorem, aperiam quisquam repudiandae vero, expedita maxime nemo qui suscipit quaerat sed in sapiente! Voluptatibus, asperiores deleniti! Perferendis dolorum nihil error tempore ducimus explicabo unde obcaecati nisi aliquam possimus sit eos iusto iste perspiciatis labore aliquid, voluptatem corporis porro libero reiciendis harum at reprehenderit. Fuga porro facilis quas rem consequatur quibusdam, optio architecto? Sunt repellat recusandae odio quaerat dolores iusto officia nam? Magni necessitatibus atque numquam. Nesciunt perferendis quae voluptates ipsum nam distinctio! Mollitia culpa optio cum amet, recusandae magni quod laudantium maxime, aliquid sequi autem. Saepe atque assumenda fugit repudiandae, quam pariatur beatae reprehenderit in quidem maiores enim quasi necessitatibus, quaerat praesentium at porro modi neque dolores minus? Vel soluta molestias eum quaerat accusamus officia veritatis possimus eligendi sint error consectetur quas corrupti earum voluptatem excepturi voluptas ipsum nesciunt adipisci dolorum voluptatum commodi reprehenderit, sit iste. Iure, vitae sed cumque rem officia reiciendis dolore laborum eos ipsum iste nam maxime animi optio. Possimus vitae natus a unde, sed voluptatum iusto quos tempore placeat est porro omnis dicta aperiam nemo veritatis ratione recusandae illum velit voluptates reiciendis iste. Id, tenetur? Ratione nihil exercitationem adipisci aspernatur magni amet eum dignissimos ab sed. Odio, eveniet molestiae aperiam accusamus, voluptatem iste veritatis minima nemo rerum expedita quibusdam ex illum, saepe ipsam cum obcaecati.</p>
+          <p>Lorem ipsum dolor sit, amet consectetur adipisicing elit. Voluptatem id repellat molestiae in numquam. Numquam provident distinctio, rem, totam possimus culpa molestiae, id ex aliquam fugiat officia. Voluptatem nam, autem obcaecati doloremque aliquam veritatis dolorem, laboriosam rerum quisquam eius cum, debitis perspiciatis. Possimus ab blanditiis vero quas reiciendis molestias temporibus voluptates, laudantium omnis ratione inventore voluptate sed dolorum quos dolores magni eaque aspernatur asperiores quidem alias ex veritatis repellat. Quis sint voluptate quas sunt quibusdam cupiditate, natus ipsam voluptas facilis nihil necessitatibus eum molestiae labore ducimus, amet, quia non ullam in impedit obcaecati quaerat ea harum! Rerum beatae suscipit commodi rem cum laborum, quisquam iste! Eligendi deleniti cum ab quibusdam at quos explicabo impedit doloremque, quam voluptatibus sequi enim non eos commodi nobis, dolores temporibus praesentium perspiciatis alias qui reiciendis voluptates quidem! Velit impedit, earum aspernatur dolor delectus odio atque neque fuga modi, aperiam vel non aliquam nemo. Architecto sed magnam quae aut voluptates perspiciatis blanditiis saepe assumenda, numquam quidem quis consectetur, laudantium totam minima quos praesentium velit doloribus aliquid! Accusantium labore, dicta at neque aperiam, rerum itaque accusamus iusto a rem distinctio, voluptas deleniti provident ipsam odit quibusdam reprehenderit. Dolorem, aperiam quisquam repudiandae vero, expedita maxime nemo qui suscipit quaerat sed in sapiente! Voluptatibus, asperiores deleniti! Perferendis dolorum nihil error tempore ducimus explicabo unde obcaecati nisi aliquam possimus sit eos iusto iste perspiciatis labore aliquid, voluptatem corporis porro libero reiciendis harum at reprehenderit. Fuga porro facilis quas rem consequatur quibusdam, optio architecto? Sunt repellat recusandae odio quaerat dolores iusto officia nam? Magni necessitatibus atque numquam. Nesciunt perferendis quae voluptates ipsum nam distinctio! Mollitia culpa optio cum amet, recusandae magni quod laudantium maxime, aliquid sequi autem. Saepe atque assumenda fugit repudiandae, quam pariatur beatae reprehenderit in quidem maiores enim quasi necessitatibus, quaerat praesentium at porro modi neque dolores minus? Vel soluta molestias eum quaerat accusamus officia veritatis possimus eligendi sint error consectetur quas corrupti earum voluptatem excepturi voluptas ipsum nesciunt adipisci dolorum voluptatum commodi reprehenderit, sit iste. Iure, vitae sed cumque rem officia reiciendis dolore laborum eos ipsum iste nam maxime animi optio. Possimus vitae natus a unde, sed voluptatum iusto quos tempore placeat est porro omnis dicta aperiam nemo veritatis ratione recusandae illum velit voluptates reiciendis iste. Id, tenetur? Ratione nihil exercitationem adipisci aspernatur magni amet eum dignissimos ab sed. Odio, eveniet molestiae aperiam accusamus, voluptatem iste veritatis minima nemo rerum expedita quibusdam ex illum, saepe ipsam cum obcaecati.</p>
+        </c-card-content>
+      </c-card-title>
+    </div>
+  </div>
+
+
+
+  <script>
+    const form = document.querySelector("form");
+
+    const otp = document.querySelector('c-otp-input');
+  
+    // otp.value = '1234567';
+
+    const textField = document.querySelector('c-text-field');
+
+    window.onload = () => {    
+      const items = [
+        { name: 'Item 1', action: () => console.log('Item 1 selected') },
+        { name: 'Item 2', action: () => console.log('Item 2 selected') },
+        {
+          name: 'Item 3',
+          action: () => console.log('Item 3 selected'),
+          disabled: true,
+        },
+        {
+          name: 'Item 4',
+          action: () => console.log('Item 4 selected'),
+        },
+        { name: 'Item 5', action: () => console.log('Item 5 selected') },
+        { name: 'Item 6', action: () => console.log('Item 6 selected') },
+        { name: 'Item 7', action: () => console.log('Item 7 selected') },
+        { name: 'Item 8', action: () => console.log('Item 8 selected') },
+        { name: 'Item 9', action: () => console.log('Item 9 selected') },
+        { name: 'Item 10', action: () => console.log('Item 10 selected') },
+        { name: 'Item 11', action: () => console.log('Item 11 selected') },
+        { name: 'Item 12', action: () => console.log('Item 12 selected') },
+        { name: 'Item 13', action: () => console.log('Item 13 selected') },
+        { name: 'Item 14', action: () => console.log('Item 14 selected') },
+        { name: 'Item 15', action: () => console.log('Item 15 selected') },
+        { name: 'Item 16', action: () => console.log('Item 16 selected') },
+        { name: 'Item 17', action: () => console.log('Item 17 selected') },
+        { name: 'Item 18', action: () => console.log('Item 18 selected') },
+        { name: 'Item 19', action: () => console.log('Item 19 selected') },
+        { name: 'Item 20', action: () => console.log('Item 20 selected') },
+      ];
+      
+      requestAnimationFrame(() => {
+        const menu = document.querySelector('c-menu');
+        
+        console.log('SET ITEMS', menu, items);
+
+        menu.items = items;
+      });
+    };
+
+    textField.value = 'Hello World!';
+
+    form.onsubmit = function(e) {
+      e.preventDefault();
+
+      const formData = new FormData(form);
+
+      console.log("~~ current form state ~~ ", otp.value)
+      for (let entry of formData.entries()) {
+        console.log(`${entry[0]}: ${entry[1]}`);
+      }
+    }
+
+    document.querySelector('#otp-button').addEventListener('click', () => {
+      otp.value = otp.value.split('').reverse().join('');
+    });
+
+    document.querySelector('#otp-button-2').addEventListener('click', () => {
+      otp.value = '654321';
+    });
+
+    document.querySelector('#otp-button-3').addEventListener('click', () => {
+      otp.reset();
+    });
+  </script>
+</body>
+</html>

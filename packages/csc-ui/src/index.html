@@ -130,6 +130,9 @@
 
           <c-card-actions>
             <c-button type="submit">Submit</c-button>
+            <c-button ghost id="otp-button">Reverse otp</c-button>
+            <c-button outlined id="otp-button-2">Set otp to 654321</c-button>
+            <c-button danger id="otp-button-3">Reset otp</c-button>
           </c-card-actions>
         </form>
         
@@ -178,22 +181,43 @@
         </c-card-content>
       </c-card>
 
-      <footer slot="footer">&copy; 2023 CSC</footer>
+      <footer slot="footer">&copy; 2024 CSC</footer>
     </c-page>
   </c-main>
 
   <script>
     const form = document.querySelector("form");
 
+    const otp = document.querySelector('c-otp-input');
+  
+    // otp.value = '1234567';
+
+    const textField = document.querySelector('c-text-field');
+
+    textField.value = 'Hello World!';
+
     form.onsubmit = function(e) {
       e.preventDefault();
+
       const formData = new FormData(form);
 
-      console.log("~~ current form state ~~")
+      console.log("~~ current form state ~~ ", otp.value)
       for (let entry of formData.entries()) {
         console.log(`${entry[0]}: ${entry[1]}`);
       }
     }
+
+    document.querySelector('#otp-button').addEventListener('click', () => {
+      otp.value = otp.value.split('').reverse().join('');
+    });
+
+    document.querySelector('#otp-button-2').addEventListener('click', () => {
+      otp.value = '654321';
+    });
+
+    document.querySelector('#otp-button-3').addEventListener('click', () => {
+      otp.reset();
+    });
   </script>
 </body>
 </html>

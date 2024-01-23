@@ -1,6 +1,6 @@
 <template>
   <component-example name="automatic" rows>
-    <template #title>Automatic submitting</template>
+    <template #title>Automatic submit</template>
 
     <c-otp-input
       id="automatic-submit-example"

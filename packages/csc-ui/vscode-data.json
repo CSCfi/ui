@@ -1217,6 +1217,10 @@
         {
           "name": "validation",
           "description": "Custom validation message"
+        },
+        {
+          "name": "value",
+          "description": "Value of the input"
         }
       ]
     },
@@ -2034,6 +2038,18 @@
         {
           "name": "flat",
           "description": "Remove the hover effect"
+        },
+        {
+          "name": "size",
+          "description": "Size of the tag",
+          "values": [
+            {
+              "name": "default"
+            },
+            {
+              "name": "small"
+            }
+          ]
         }
       ]
     },
@@ -2043,7 +2059,20 @@
         "kind": "markdown",
         "value": ""
       },
-      "attributes": []
+      "attributes": [
+        {
+          "name": "size",
+          "description": "Size of the tags",
+          "values": [
+            {
+              "name": "default"
+            },
+            {
+              "name": "small"
+            }
+          ]
+        }
+      ]
     },
     {
       "name": "c-text-field",

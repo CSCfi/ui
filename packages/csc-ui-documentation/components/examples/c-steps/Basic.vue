@@ -2,7 +2,7 @@
   <component-example name="basic" rows>
     <template #title>Basic usage</template>
 
-    <c-steps v-model="step" v-control>
+    <c-steps v-model="step">
       <c-step>Step number 1</c-step>
 
       <c-step>Step number 2</c-step>

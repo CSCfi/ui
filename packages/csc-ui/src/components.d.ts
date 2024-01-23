@@ -1014,6 +1014,10 @@ export namespace Components {
          */
         "length": number;
         /**
+          * Reset input value
+         */
+        "reset": () => Promise<void>;
+        /**
           * Set the validíty of the input
          */
         "valid": boolean;
@@ -1021,6 +1025,10 @@ export namespace Components {
           * Custom validation message
          */
         "validation": string;
+        /**
+          * Value of the input
+         */
+        "value": string;
     }
     /**
      * @group Layout
@@ -1694,11 +1702,19 @@ export namespace Components {
           * Remove the hover effect
          */
         "flat": boolean;
+        /**
+          * Size of the tag
+         */
+        "size": 'default' | 'small';
     }
     /**
      * @group buttons
      */
     interface CTags {
+        /**
+          * Size of the tags
+         */
+        "size": 'default' | 'small';
     }
     /**
      * @group Form
@@ -4044,6 +4060,10 @@ declare namespace LocalJSX {
           * Custom validation message
          */
         "validation"?: string;
+        /**
+          * Value of the input
+         */
+        "value"?: string;
     }
     /**
      * @group Layout
@@ -4776,11 +4796,19 @@ declare namespace LocalJSX {
           * Emit close event on close icon click
          */
         "onClose"?: (event: CTagCustomEvent<any>) => void;
+        /**
+          * Size of the tag
+         */
+        "size"?: 'default' | 'small';
     }
     /**
      * @group buttons
      */
     interface CTags {
+        /**
+          * Size of the tags
+         */
+        "size"?: 'default' | 'small';
     }
     /**
      * @group Form

@@ -188,9 +188,7 @@ export class CSideNavigationItem {
           }}
         >
           {this._slotHasContent && (
-            <svg width="22" height="22" viewBox="0 0 24 24" class="svg">
-              <path d={mdiChevronRight} />
-            </svg>
+            <c-icon class="svg" path={mdiChevronRight}></c-icon>
           )}
           <div class="c-side-navigation-item__slot">
             <slot></slot>

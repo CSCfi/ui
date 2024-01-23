@@ -10,14 +10,14 @@
         @keyup.enter="onNavigation('about')"
         @click="onNavigation('about')"
       >
-        <c-icon :path="mdiInformationOutline" size="18" />
+        <c-icon :path="mdiInformationOutline" size="20" />
         About
       </c-side-navigation-item>
 
       <c-side-navigation-title>Two level navigation</c-side-navigation-title>
 
       <c-side-navigation-item :active="false">
-        <c-icon :path="mdiEye" size="18" />
+        <c-icon :path="mdiEye" size="20" />
         Examples
 
         <c-sub-navigation-item
@@ -25,7 +25,7 @@
           @keyup.enter="onNavigation('html')"
           @click="onNavigation('html')"
         >
-          <c-icon :path="mdiLanguageHtml5" size="18" />
+          <c-icon :path="mdiLanguageHtml5" size="20" />
           Html
         </c-sub-navigation-item>
 
@@ -34,7 +34,7 @@
           @keyup.enter="onNavigation('js')"
           @click="onNavigation('js')"
         >
-          <c-icon :path="mdiLanguageJavascript" size="18" />
+          <c-icon :path="mdiLanguageJavascript" size="20" />
           Javascript
         </c-sub-navigation-item>
       </c-side-navigation-item>
@@ -42,11 +42,11 @@
       <c-side-navigation-title>Three level navigation</c-side-navigation-title>
 
       <c-side-navigation-item :active="false">
-        <c-icon :path="mdiPackageVariantClosed" size="18" />
+        <c-icon :path="mdiPackageVariantClosed" size="20" />
         Components
 
         <c-side-navigation-item :active="false">
-          <c-icon :path="mdiButtonCursor" size="18" />
+          <c-icon :path="mdiButtonCursor" size="20" />
           Buttons
 
           <c-sub-navigation-item
@@ -68,11 +68,11 @@
       </c-side-navigation-item>
 
       <c-side-navigation-item :active="false">
-        <c-icon :path="mdiCog" size="18" />
+        <c-icon :path="mdiCog" size="20" />
         Settings
 
         <c-side-navigation-item :active="false">
-          <c-icon :path="mdiPalette" size="18" />
+          <c-icon :path="mdiPalette" size="20" />
           Colors
 
           <c-sub-navigation-item
