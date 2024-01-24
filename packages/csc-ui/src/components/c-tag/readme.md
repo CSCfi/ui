@@ -45,6 +45,7 @@
 | `--c-tag-badge-text-color`              | Tag badge text color                 |
 | `--c-tag-badge-text-color-active`       | Active tag badge text color          |
 | `--c-tag-border-color`                  | Tag border color                     |
+| `--c-tag-border-radius`                 | Tag border radius                    |
 | `--c-tag-text-color`                    | Tag text color                       |
 | `--c-tag-text-color-active`             | Active tag text color                |
 

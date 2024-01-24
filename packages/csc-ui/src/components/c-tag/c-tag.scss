@@ -11,6 +11,7 @@
    * @prop --c-tag-border-color: Tag border color
    * @prop --c-tag-text-color-active: Active tag text color
    * @prop --c-tag-text-color: Tag text color
+   * @prop --c-tag-border-radius: Tag border radius
    */
   --_c-tag-background-color-active-hover: var(--c-tag-background-color-active-hover, var(--c-primary-400));
   --_c-tag-background-color-active: var(--c-tag-background-color-active, var(--_c-tag-text-color));
@@ -23,16 +24,19 @@
   --_c-tag-border-color: var(--c-tag-border-color, var(--_c-tag-text-color));
   --_c-tag-text-color-active: var(--c-tag-text-color-active, var(--c-white));
   --_c-tag-text-color: var(--c-tag-text-color, var(--c-primary-600));
+  --_c-tag-border-radius: var(--c-tag-border-radius, 999px);
 
   // private
   --c-tag-min-height: 28px;
-  --c-tag-padding: 4px 12px;
+  --c-tag-padding-y: 4px;
+  --c-tag-padding-x: 12px;
+  --c-tag-padding: var(--c-tag-padding-y) var(--c-tag-padding-x);
   --c-tag-badge-size: 20px;
   --c-tag-icon-button-offset: 0;
 
   align-items: center;
   background: var(--_c-tag-background-color);
-  border-radius: 999px;
+  border-radius: var(--_c-tag-border-radius);
   box-shadow: inset 0 0 0 1px var(--_c-tag-border-color);
   color: var(--_c-tag-text-color);
   cursor: pointer;
@@ -69,12 +73,12 @@
 }
 
 :host([data-badge]) {
-  padding-left: 4px;
+  padding-left: var(--c-tag-padding-y);
 
   &::before {
     content: attr(data-badge);
     background-color: var(--_c-tag-badge-background-color);
-    border-radius: 999px;
+    border-radius: calc(var(--_c-tag-border-radius) - var(--c-tag-padding-y));
     color: var(--_c-tag-badge-text-color);
     display: inline-grid;
     font-size: 12px;
@@ -94,7 +98,7 @@
 }
 
 :host(.c-tag--closeable) {
-  padding-right: 4px;
+  padding-right: var(--c-tag-padding-y);
 }
 
 :host(.c-tag--block) {
@@ -111,7 +115,8 @@
 
 :host(.c-tag--small) {
   --c-tag-min-height: 20px;
-  --c-tag-padding: 0 8px;
+  --c-tag-padding-y: 2px;
+  --c-tag-padding-x: 8px;
   --c-tag-badge-size: 16px;
   --c-tag-icon-button-offset: 1px 0 0;
   
@@ -122,11 +127,7 @@
 }
 
 :host([data-badge].c-tag--small) {
-  padding-left: 2px;
-}
-
-:host(.c-tag--small.c-tag--closeable) {
-  padding-right: 2px;
+  padding-left: var(--c-tag-padding-y);
 }
 
 :host(:focus) {

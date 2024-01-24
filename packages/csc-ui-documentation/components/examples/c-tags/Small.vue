@@ -2,23 +2,14 @@
   <component-example name="small">
     <template #title>Small variant</template>
 
-    <c-tags>
-      <c-tag
-        :active="activeTags[0]"
-        size="small"
-        badge="8"
-        @click="onToggleActive(0)"
-      >
+    <c-tags size="small">
+      <c-tag :active="activeTags[0]" badge="8" @click="onToggleActive(0)">
         One
       </c-tag>
 
-      <c-tag :active="activeTags[1]" size="small" @click="onToggleActive(1)">
-        Two
-      </c-tag>
+      <c-tag :active="activeTags[1]" @click="onToggleActive(1)">Two</c-tag>
 
-      <c-tag :active="activeTags[2]" size="small" @click="onToggleActive(2)">
-        Three
-      </c-tag>
+      <c-tag :active="activeTags[2]" @click="onToggleActive(2)">Three</c-tag>
     </c-tags>
   </component-example>
 </template>
