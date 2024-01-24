@@ -3,6 +3,8 @@
 
   <flat />
 
+  <badge />
+
   <closeable />
 
   <fit />
@@ -19,6 +21,7 @@ import Closeable from './Closeable.vue';
 import Fit from './Fit.vue';
 import Block from './Block.vue';
 import SmallVariant from './Small.vue';
+import Badge from './Badge.vue';
 
 defineOptions({
   inheritAttrs: false,
