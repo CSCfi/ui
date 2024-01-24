@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.3.11](https://github.com/CSCfi/ui/compare/v1.3.10...v1.3.11) (2024-01-24)
+
+
+### Bug Fixes
+
+* c-tag - expose the tag border radius as a css variable ([bb860de](https://github.com/CSCfi/ui/commit/bb860def4be0b204d0a481e5ddce871164cfa045))
+
 ## [1.3.10](https://github.com/CSCfi/ui/compare/v1.3.9...v1.3.10) (2024-01-24)
 
 
