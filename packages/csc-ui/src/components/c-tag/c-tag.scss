@@ -28,7 +28,6 @@
   --c-tag-min-height: 28px;
   --c-tag-padding: 4px 12px;
   --c-tag-badge-size: 20px;
-  --c-tag-offset: 0;
   --c-tag-icon-button-offset: 0;
 
   align-items: center;
@@ -46,6 +45,7 @@
   min-height: var(--c-tag-min-height);
   min-width: 48px;
   padding: var(--c-tag-padding);
+  transform: translate3d(0, 0, 0);
   transition: background-color 0.2s ease;
   user-select: none;
 
@@ -83,7 +83,6 @@
     min-width: var(--c-tag-badge-size);
     padding: 0 4px;
     place-content: center;
-    margin: var(--c-tag-offset);
   }
 }
 
@@ -114,13 +113,20 @@
   --c-tag-min-height: 20px;
   --c-tag-padding: 0 8px;
   --c-tag-badge-size: 16px;
-  --c-tag-offset: 1px -2px 0 -2px;
   --c-tag-icon-button-offset: 1px 0 0;
-
+  
   c-icon-button {
     --_c-icon-button-height: 16px;
     --_c-icon-button-width: 16px;
   }
+}
+
+:host([data-badge].c-tag--small) {
+  padding-left: 2px;
+}
+
+:host(.c-tag--small.c-tag--closeable) {
+  padding-right: 2px;
 }
 
 :host(:focus) {
