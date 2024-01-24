@@ -19,14 +19,18 @@
 
 ### Used by
 
+ - [c-checkbox](../c-checkbox)
  - [c-input](../c-input)
  - [c-otp-input](../c-otp-input)
+ - [c-radio-group](../c-radio-group)
 
 ### Graph
 ```mermaid
 graph TD;
+  c-checkbox --> c-message
   c-input --> c-message
   c-otp-input --> c-message
+  c-radio-group --> c-message
   style c-message fill:#f9f,stroke:#333,stroke-width:4px
 ```
 

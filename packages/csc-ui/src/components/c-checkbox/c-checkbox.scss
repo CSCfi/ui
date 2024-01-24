@@ -20,51 +20,6 @@
   position: relative;
   width: fit-content;
 
-  &__details {
-    line-height: 1;
-    padding: 0 12px;
-
-    &.active {
-      #{$this} {
-        &__message {
-          opacity: 1;
-          transform: translateY(0);
-        }
-      }
-    }
-  }
-
-  &__message {
-    font-size: 12px;
-    opacity: 0;
-    transform: translateY(-4px);
-    transition: all 0.2s cubic-bezier(0.25, 0.8, 0.5, 1);
-
-    &--hint {
-      color: var(--c-tertiary-500);
-    }
-
-    &--error {
-      color: var(--_c-checkbox-color-error);
-    }
-
-    span {
-      align-items: flex-start;
-      color: currentColor;
-      display: flex;
-      gap: 4px;
-      height: 16px;
-    }
-
-    svg {
-      fill: currentColor;
-      min-height: 16px;
-      min-width: 16px;
-      position: relative;
-      top: -2px;
-    }
-  }
-
   &__label-content {
     padding-top: 10px;
     text-align: left;

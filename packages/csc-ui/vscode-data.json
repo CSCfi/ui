@@ -370,6 +370,10 @@
           "description": "Hint text for the input"
         },
         {
+          "name": "id",
+          "description": "Id of the element"
+        },
+        {
           "name": "name",
           "description": "Name of the input\n- Only used when the checkbox participates in a native `<form>`"
         },
@@ -1342,6 +1346,10 @@
         {
           "name": "hint",
           "description": "Hint text for the input"
+        },
+        {
+          "name": "id",
+          "description": "Id of the element"
         },
         {
           "name": "inline",

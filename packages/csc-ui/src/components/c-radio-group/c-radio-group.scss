@@ -118,58 +118,6 @@
     }
   }
 
-  &__details {
-    line-height: 1;
-    padding: 0 12px;
-
-    &.active {
-      #{$this} {
-        &__message {
-          opacity: 1;
-          transform: translateY(0);
-        }
-      }
-    }
-  }
-
-  &__message {
-    font-size: 12px;
-    opacity: 0;
-    transform: translateY(-4px);
-    transition: all 0.2s cubic-bezier(0.25, 0.8, 0.5, 1);
-
-    &--hint {
-      color: var(--c-tertiary-500);
-    }
-
-    &--error {
-      color: var(--_c-radio-group-error-color) !important;
-    }
-
-    span {
-      align-items: flex-start;
-      display: flex;
-      gap: 4px;
-      height: 16px;
-
-      &.error {
-        color: var(--_c-radio-group-error-color);
-      }
-
-      &.hint {
-        color: var(--c-tertiary-500);
-      }
-    }
-
-    svg {
-      fill: currentColor;
-      min-height: 16px;
-      min-width: 16px;
-      position: relative;
-      top: -2px;
-    }
-  }
-
   &__label {
     padding-top: 12px;
   }

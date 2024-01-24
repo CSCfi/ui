@@ -5,11 +5,8 @@ import {
   Event,
   EventEmitter,
   Element,
-  State,
-  Watch,
   AttachInternals,
 } from '@stencil/core';
-import { mdiCloseCircle } from '@mdi/js';
 import { CRadioGroupItem } from '../../types';
 
 /**
@@ -57,6 +54,11 @@ export class CRadioGroup {
   @Prop() color = '';
 
   /**
+   * Id of the element
+   */
+  @Prop({ attribute: 'id' }) hostId: string;
+
+  /**
    * Radio group items
    */
   @Prop() items: CRadioGroupItem[] = [];
@@ -93,31 +95,15 @@ export class CRadioGroup {
 
   @Element() el: HTMLCRadioGroupElement;
 
-  @State() messageOptions = {
-    show: true,
-    type: 'hint',
-    content: '',
-  };
-
-  @Watch('validation')
-  onValidationMessageChange(message: string) {
-    this.onValidChange(message.length === 0);
-  }
-
-  @Watch('valid')
-  onValidChange(valid: boolean) {
-    this._handleValidation(valid || this.valid);
-  }
-
-  componentDidLoad() {
-    this._handleValidation(this.valid, 0);
-  }
-
   private _containers?: HTMLDivElement[] = [];
 
   private _rippleElements: HTMLCRippleElement[] = [];
 
   private static _uniqueId = 0;
+
+  private get _id() {
+    return this.hostId || `radio-group_${CRadioGroup._uniqueId}`;
+  }
 
   private _handleKeyDown(event: KeyboardEvent, item, index) {
     if (['Space', 'Enter'].includes(event.code)) {
@@ -125,28 +111,6 @@ export class CRadioGroup {
 
       this._select(event, item, index);
     }
-  }
-
-  private _handleValidation(valid: boolean, timeout = 200) {
-    this.messageOptions = {
-      ...this.messageOptions,
-      show: false,
-    };
-
-    setTimeout(() => {
-      this.messageOptions = {
-        ...this.messageOptions,
-        type: valid ? 'hint' : 'error',
-        show: true,
-        content: valid ? (
-          <span>{this.hint}</span>
-        ) : (
-          <span>
-            {this._validationIcon} {this.validation}
-          </span>
-        ),
-      };
-    }, timeout);
   }
 
   private _select(event, item, index) {
@@ -206,7 +170,7 @@ export class CRadioGroup {
     const classes = {
       'c-radio': true,
       'c-radio--disabled': !!item.disabled || this.disabled,
-      'c-radio--error': this.messageOptions.type === 'error',
+      'c-radio--error': !this.valid,
     };
 
     return (
@@ -240,32 +204,6 @@ export class CRadioGroup {
     );
   };
 
-  private _renderMessages() {
-    if (this.hideDetails) return;
-
-    const classes = {
-      'c-radio__details': true,
-      active: this.messageOptions.show,
-    };
-
-    const messageClasses = {
-      'c-radio__message': true,
-      [`c-radio__message--${this.messageOptions.type}`]: true,
-    };
-
-    return (
-      <div class={classes}>
-        <div class={messageClasses}>{this.messageOptions.content}</div>
-      </div>
-    );
-  }
-
-  private _validationIcon = (
-    <svg height="16px" width="16px" viewBox="0 0 24 24">
-      <path d={mdiCloseCircle} />
-    </svg>
-  );
-
   componentWillLoad() {
     CRadioGroup._uniqueId += 1;
 
@@ -293,7 +231,7 @@ export class CRadioGroup {
       'c-radio-group': true,
       'c-radio-group--disabled': this.disabled,
       'c-radio-group--inline': this.inline,
-      'c-radio-group--error': this.messageOptions.type === 'error',
+      'c-radio-group--error': !this.valid,
     };
 
     return (
@@ -316,7 +254,14 @@ export class CRadioGroup {
           {this.items.map((item, index) => this._getRadioButton(item, index))}
         </div>
 
-        {this._renderMessages()}
+        {!this.hideDetails && (
+          <c-message
+            hint={this.hint}
+            inputId={this._id}
+            valid={this.valid}
+            validation={this.validation}
+          />
+        )}
       </div>
     );
   }
