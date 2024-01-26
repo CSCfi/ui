@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.3.12](https://github.com/CSCfi/ui/compare/v1.3.11...v1.3.12) (2024-01-26)
+
+
+### Bug Fixes
+
+* c-checkbox & c-radio-group - Use c-message to display error and hint messages ([243a8bc](https://github.com/CSCfi/ui/commit/243a8bcd75aa27e871caad6cd1bc360b5baae264))
+
 ## [1.3.11](https://github.com/CSCfi/ui/compare/v1.3.10...v1.3.11) (2024-01-24)
 
 
