@@ -14,6 +14,7 @@
 | `falseValue`    | `false-value`   | The value when the checkbox is unchecked                                          | `boolean \| string` | `false`            |
 | `hideDetails`   | `hide-details`  | Hide the hint and error messages                                                  | `boolean`           | `false`            |
 | `hint`          | `hint`          | Hint text for the input                                                           | `string`            | `''`               |
+| `hostId`        | `id`            | Id of the element                                                                 | `string`            | `undefined`        |
 | `hostName`      | `name`          | Name of the input - Only used when the checkbox participates in a native `<form>` | `string`            | `undefined`        |
 | `indeterminate` | `indeterminate` | Indeterminate state                                                               | `boolean`           | `false`            |
 | `label`         | `label`         | Element label                                                                     | `string`            | `''`               |
@@ -57,11 +58,13 @@
 ### Depends on
 
 - [c-ripple](../c-ripple)
+- [c-message](../c-message)
 
 ### Graph
 ```mermaid
 graph TD;
   c-checkbox --> c-ripple
+  c-checkbox --> c-message
   c-data-table --> c-checkbox
   style c-checkbox fill:#f9f,stroke:#333,stroke-width:4px
 ```

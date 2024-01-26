@@ -28,7 +28,14 @@
       Required with hint
     </c-checkbox>
 
-    <c-checkbox :valid="false" validation="This input has an error" required>
+    <c-checkbox
+      v-model="requiredInput"
+      v-control
+      :valid="requiredInput"
+      validation="This input has an error"
+      hint="Uncheck to return to the error state"
+      required
+    >
       Error state
     </c-checkbox>
 
@@ -47,4 +54,6 @@ const checkbox1 = ref('on');
 const checkbox2 = ref(true);
 
 const checkbox3 = ref(true);
+
+const requiredInput = ref(false);
 </script>

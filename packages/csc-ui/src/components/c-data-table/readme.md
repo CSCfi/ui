@@ -105,6 +105,7 @@ graph TD;
   c-data-table --> c-icon
   c-data-table --> c-spacer
   c-checkbox --> c-ripple
+  c-checkbox --> c-message
   c-pagination --> c-menu
   c-pagination --> c-icon-button
   c-pagination --> c-icon

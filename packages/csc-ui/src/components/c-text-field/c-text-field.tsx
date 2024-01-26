@@ -162,12 +162,6 @@ export class CTextField {
 
   @State() preSlotWidth = 0;
 
-  @State() messageOptions = {
-    show: true,
-    type: 'hint',
-    content: '',
-  };
-
   @Element() hiddenEl!: HTMLCTextFieldElement;
 
   private _inputElement: HTMLInputElement;

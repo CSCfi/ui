@@ -6,12 +6,10 @@ import {
   Prop,
   Event,
   EventEmitter,
-  State,
   Watch,
   Element,
   AttachInternals,
 } from '@stencil/core';
-import { mdiCloseCircle } from '@mdi/js';
 
 /**
  * @group Form
@@ -48,6 +46,11 @@ export class CCheckbox {
    * Hint text for the input
    */
   @Prop() hint = '';
+
+  /**
+   * Id of the element
+   */
+  @Prop({ attribute: 'id' }) hostId: string;
 
   /**
    * Indeterminate state
@@ -101,30 +104,14 @@ export class CCheckbox {
    */
   @Event({ bubbles: false }) changeValue: EventEmitter;
 
-  @State() messageOptions = {
-    show: false,
-    type: 'hint',
-    content: '',
-  };
-
   private _container: HTMLDivElement;
 
   private _rippleElement: HTMLCRippleElement;
 
-  private _validationIcon = (
-    <svg height="16px" width="16px" viewBox="0 0 24 24">
-      <path d={mdiCloseCircle} />
-    </svg>
-  );
+  private static _uniqueId = 0;
 
-  @Watch('validation')
-  onValidationMessageChange(message: string) {
-    this.onValidChange(message.length === 0);
-  }
-
-  @Watch('valid')
-  onValidChange(valid: boolean) {
-    this._handleValidation(valid || this.valid);
+  private get _id() {
+    return this.hostId || `checkbox_${CCheckbox._uniqueId}`;
   }
 
   @Watch('value')
@@ -145,38 +132,13 @@ export class CCheckbox {
   }
 
   componentWillLoad() {
+    CCheckbox._uniqueId += 1;
+
     this.checked = this.checked || this.value === this.trueValue;
 
     this.internals.setFormValue(
       this.checked ? this.trueValue.toString() : this.falseValue.toString(),
     );
-  }
-
-  componentDidLoad() {
-    this._handleMessageOptions(this.valid);
-  }
-
-  private _handleMessageOptions(valid: boolean) {
-    requestAnimationFrame(() => {
-      this.messageOptions = {
-        ...this.messageOptions,
-        type: valid ? 'hint' : 'error',
-        show: true,
-        content: valid ? (
-          <span>{this.hint}</span>
-        ) : (
-          <span>
-            {this._validationIcon} {this.validation}
-          </span>
-        ),
-      };
-    });
-  }
-
-  private _handleValidation(valid: boolean, timeout = 200) {
-    setTimeout(() => {
-      this._handleMessageOptions(valid);
-    }, timeout);
   }
 
   private _toggleState(event) {
@@ -193,31 +155,11 @@ export class CCheckbox {
     );
   }
 
-  private _renderMessages() {
-    if (this.hideDetails) return;
-
-    const classes = {
-      'c-checkbox__details': true,
-      active: this.messageOptions.show,
-    };
-
-    const messageClasses = {
-      'c-checkbox__message': true,
-      [`c-checkbox__message--${this.messageOptions.type}`]: true,
-    };
-
-    return (
-      <div class={classes}>
-        <div class={messageClasses}>{this.messageOptions.content}</div>
-      </div>
-    );
-  }
-
   render() {
     const wrapperClasses = {
       'c-checkbox': true,
       'c-checkbox--disabled': this.disabled,
-      'c-checkbox--error': this.messageOptions.type === 'error',
+      'c-checkbox--error': !this.valid,
     };
 
     const labelClasses = {
@@ -271,7 +213,14 @@ export class CCheckbox {
           </label>
         </div>
 
-        {this._renderMessages()}
+        {!this.hideDetails && (
+          <c-message
+            hint={this.hint}
+            inputId={this._id}
+            valid={this.valid}
+            validation={this.validation}
+          />
+        )}
       </Host>
     );
   }

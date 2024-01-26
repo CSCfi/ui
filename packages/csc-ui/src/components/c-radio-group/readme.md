@@ -13,6 +13,7 @@
 | `disabled`     | `disabled`      | Disable the radio group          | `boolean`                                                                            | `false`            |
 | `hideDetails`  | `hide-details`  | Hide the hint and error messages | `boolean`                                                                            | `false`            |
 | `hint`         | `hint`          | Hint text for the input          | `string`                                                                             | `''`               |
+| `hostId`       | `id`            | Id of the element                | `string`                                                                             | `undefined`        |
 | `inline`       | `inline`        | Display radio buttons inline     | `boolean`                                                                            | `false`            |
 | `items`        | --              | Radio group items                | `CRadioGroupItem[]`                                                                  | `[]`               |
 | `label`        | `label`         | Label of the radio group         | `string`                                                                             | `undefined`        |
@@ -52,11 +53,13 @@
 ### Depends on
 
 - [c-ripple](../c-ripple)
+- [c-message](../c-message)
 
 ### Graph
 ```mermaid
 graph TD;
   c-radio-group --> c-ripple
+  c-radio-group --> c-message
   style c-radio-group fill:#f9f,stroke:#333,stroke-width:4px
 ```
 

@@ -312,6 +312,10 @@ export namespace Components {
          */
         "hint": string;
         /**
+          * Id of the element
+         */
+        "hostId": string;
+        /**
           * Name of the input - Only used when the checkbox participates in a native `<form>`
          */
         "hostName": string;
@@ -1130,6 +1134,10 @@ export namespace Components {
           * Hint text for the input
          */
         "hint": string;
+        /**
+          * Id of the element
+         */
+        "hostId": string;
         /**
           * Display radio buttons inline
          */
@@ -3317,6 +3325,10 @@ declare namespace LocalJSX {
          */
         "hint"?: string;
         /**
+          * Id of the element
+         */
+        "hostId"?: string;
+        /**
           * Name of the input - Only used when the checkbox participates in a native `<form>`
          */
         "hostName"?: string;
@@ -4169,6 +4181,10 @@ declare namespace LocalJSX {
           * Hint text for the input
          */
         "hint"?: string;
+        /**
+          * Id of the element
+         */
+        "hostId"?: string;
         /**
           * Display radio buttons inline
          */
