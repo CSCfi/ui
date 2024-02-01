@@ -1,5 +1,26 @@
 # Changelog
 
+## [2.0.0](https://github.com/CSCfi/ui/compare/v1.3.12...v2.0.0) (2024-02-01)
+
+
+### ⚠ BREAKING CHANGES
+
+* **c-pagination:** Renamed and moved page sizes to options object. PageSizes should be defined in pagination object instead of the footerOptions object in c-data-table.
+* **c-pagination:** Renamed and moved page sizes to options object
+
+### Features
+
+* **c-pagination:** Renamed and moved page sizes to options object ([89f7434](https://github.com/CSCfi/ui/commit/89f74343acb00476827a40fc65e002cd4cf0a9da))
+
+
+### Bug Fixes
+
+* **c-pagination:** Possibility to override text color ([cf766a2](https://github.com/CSCfi/ui/commit/cf766a22253205bb95874569c669ba6288887e5e))
+* **c-pagination:** Possibility to override text color ([08c098e](https://github.com/CSCfi/ui/commit/08c098e5f5b71bf6743f134e5d845ca1d95253d7))
+* **c-pagination:** Renamed and moved page sizes to options object ([aa8dfea](https://github.com/CSCfi/ui/commit/aa8dfeaef8d9179cefa34b79bca5ccb588bded6f))
+* **c-toolbar:** Possibility to override z-index ([167a3f7](https://github.com/CSCfi/ui/commit/167a3f7fde6870f4b7dda403ac5d33398022457a))
+* **c-toolbar:** Possibility to override z-index ([c81eb6f](https://github.com/CSCfi/ui/commit/c81eb6f93404e8205c1d33c20f7c489a235ada6f))
+
 ## [1.3.12](https://github.com/CSCfi/ui/compare/v1.3.11...v1.3.12) (2024-01-26)
 
 
