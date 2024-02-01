@@ -24,10 +24,9 @@ const filteredCountries = computed(() =>
 
 const options = ref<CPaginationOptions>({
   itemCount: countriesList.length,
-  itemsPerPage: 15,
+  itemsPerPage: 25,
   currentPage: 1,
   startFrom: 0,
   endTo: 24,
-  pageSizes: [5, 10, 15, 25, 50],
 });
 </script>
