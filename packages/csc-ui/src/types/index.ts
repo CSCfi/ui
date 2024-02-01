@@ -7,7 +7,6 @@ export type CPaginationOptions = {
   endTo?: number;
   locale?: string;
   textOverrides?: CPaginationTextOverrides;
-  pageSizes?: number[];
 };
 
 export type CPaginationTextOverrides = {
@@ -35,6 +34,7 @@ export type CRadioGroupItem = {
 };
 
 export type CDataTableFooterOptions = {
+  itemsPerPageOptions?: number[];
   hideDetails?: boolean;
   simple?: boolean;
   hideRange?: boolean;

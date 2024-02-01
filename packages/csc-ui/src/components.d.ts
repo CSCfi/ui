@@ -1056,6 +1056,10 @@ export namespace Components {
          */
         "hideRange": boolean;
         /**
+          * Items per page options
+         */
+        "itemsPerPageOptions": number[];
+        /**
           * Hide page number buttons
          */
         "simple": boolean;
@@ -4094,6 +4098,10 @@ declare namespace LocalJSX {
           * Hide range indicator
          */
         "hideRange"?: boolean;
+        /**
+          * Items per page options
+         */
+        "itemsPerPageOptions"?: number[];
         /**
           * Triggered when values are changed
          */

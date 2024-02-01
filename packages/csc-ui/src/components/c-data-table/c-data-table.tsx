@@ -73,6 +73,7 @@ export class CDataTable {
    * Items per page options
    */
   @Prop() footerOptions: CDataTableFooterOptions = {
+    itemsPerPageOptions: [5, 25, 50, 100],
     hideDetails: false,
     simple: false,
     hideRange: false,

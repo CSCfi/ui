@@ -6,8 +6,6 @@
   --_c-toolbar-background-color: var(--c-toolbar-background-color, var(--c-white));
   --_c-toolbar-text-color: var(--c-toolbar-text-color, var(--c-text-system));
 
-  z-index: 1;
-
   .c-toolbar {
     align-items: center;
     background: var(--_c-toolbar-background-color);
@@ -20,6 +18,7 @@
     padding-right: 16px;
     position: fixed;
     width: 100%;
+    z-index: 9;
   }
 
   .spacer {

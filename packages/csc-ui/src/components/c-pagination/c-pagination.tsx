@@ -49,8 +49,6 @@ export class CPagination {
 
   @State() private _itemsPerPage;
 
-  @State() private _pageSizes;
-
   @State() private _totalVisible;
 
   /**
@@ -62,6 +60,11 @@ export class CPagination {
    * Hide range indicator
    */
   @Prop() hideRange = false;
+
+  /**
+   * Items per page options
+   */
+  @Prop() itemsPerPageOptions: number[] = [5, 25, 50, 100];
 
   @State() tick = '';
 
@@ -118,8 +121,6 @@ export class CPagination {
 
     this._totalVisible = this.value.totalVisible || 7;
 
-    this._pageSizes = this.value.pageSizes || [5, 25, 50, 100];
-
     this.value.startFrom =
       this._currentPage * this._itemsPerPage - this._itemsPerPage;
 
@@ -139,14 +140,16 @@ export class CPagination {
   }
 
   private _renderMenu() {
-    const pageSizes: CMenuOption[] = this._pageSizes.map((i) => ({
-      name: i.toString(),
-      action: () => {
-        this._itemsPerPage = i;
-        this._currentPage = 1;
-        this._valueChangeHandler();
-      },
-    }));
+    const itemsPerPageOptions: CMenuOption[] = this.itemsPerPageOptions.map(
+      (i) => ({
+        name: i.toString(),
+        action: () => {
+          this._itemsPerPage = i;
+          this._currentPage = 1;
+          this._valueChangeHandler();
+        },
+      }),
+    );
 
     const onMenuClick = (event) => {
       event.stopPropagation();
@@ -156,7 +159,7 @@ export class CPagination {
       <div class="c-pagination__items-per-page">
         {this._getText('itemsPerPageText')}
 
-        <c-menu items={pageSizes} onClick={onMenuClick}>
+        <c-menu items={itemsPerPageOptions} onClick={onMenuClick}>
           <div>
             <span class="items-per-page">{this._itemsPerPage}</span>
           </div>
