@@ -1,5 +1,18 @@
 # Changelog
 
+## [2.0.0](https://github.com/CSCfi/ui/compare/v1.3.12...v2.0.0) (2024-02-01)
+
+
+### ⚠ BREAKING CHANGES
+
+* **c-pagination:** Renamed and moved page sizes to options object
+
+### Bug Fixes
+
+* **c-pagination:** Possibility to override text color ([08c098e](https://github.com/CSCfi/ui/commit/08c098e5f5b71bf6743f134e5d845ca1d95253d7))
+* **c-pagination:** Renamed and moved page sizes to options object ([aa8dfea](https://github.com/CSCfi/ui/commit/aa8dfeaef8d9179cefa34b79bca5ccb588bded6f))
+* **c-toolbar:** Possibility to override z-index ([c81eb6f](https://github.com/CSCfi/ui/commit/c81eb6f93404e8205c1d33c20f7c489a235ada6f))
+
 ## [1.3.12](https://github.com/CSCfi/ui/compare/v1.3.11...v1.3.12) (2024-01-26)
 
 
