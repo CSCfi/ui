@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.0.1](https://github.com/CSCfi/ui/compare/v2.0.0...v2.0.1) (2024-02-09)
+
+
+### Bug Fixes
+
+* **c-tabs:** Update content properly on external change ([1166937](https://github.com/CSCfi/ui/commit/1166937ac9b4b3dbc1a3e1310a4fa97da03246bd))
+
 ## [2.0.0](https://github.com/CSCfi/ui/compare/v1.3.12...v2.0.0) (2024-02-01)
 
 
