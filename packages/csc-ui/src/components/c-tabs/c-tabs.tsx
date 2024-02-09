@@ -94,6 +94,8 @@ export class CTabs {
     this._handleActiveTab();
 
     this.changeValue.emit(this.value);
+
+    this._updateItemsValue();
   }
 
   @Listen('tabFocus', { passive: true })
@@ -113,8 +115,6 @@ export class CTabs {
     event.stopPropagation();
 
     this.value = event.detail.value;
-
-    this._updateItemsValue();
   }
 
   @Listen('keydown', { capture: true })
