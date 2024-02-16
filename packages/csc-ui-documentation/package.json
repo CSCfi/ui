@@ -27,6 +27,12 @@
     "vue": "^3.4.14",
     "vue-router": "^4.2.5"
   },
+  "optionalDependencies": {
+    "@nx/nx-darwin-arm64": "^18.0.4",
+    "@nx/nx-darwin-x64": "^18.0.4",
+    "@nx/nx-linux-x64-gnu": "^18.0.4",
+    "@nx/nx-win32-x64-msvc": "^18.0.4"
+  },
   "name": "@cscfi/csc-ui-documentation",
   "scripts": {
     "build": "node scripts/updateVersion.js && npm run build:examples && nuxt build",
