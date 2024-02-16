@@ -70,7 +70,7 @@
   "main": "dist/index.cjs.js",
   "module": "dist/index.js",
   "name": "@cscfi/csc-ui",
-  "repository": "CSCfi/csc-ui",
+  "repository": "CSCfi/ui",
   "scripts": {
     "build": "rimraf ./dist && npm run style-dictionary:build && stencil build --docs-readme",
     "build:visual-testing": "docker build -t csc-ui-playwright .",
