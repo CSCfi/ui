@@ -91,5 +91,5 @@
   },
   "types": "dist/types/index.d.ts",
   "unpkg": "dist/csc-ui/csc-ui.esm.js",
-  "version": "2.0.1"
+  "version": "2.0.2"
 }

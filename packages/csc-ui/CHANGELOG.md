@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.0.2](https://github.com/CSCfi/ui/compare/v2.0.1...v2.0.2) (2024-02-16)
+
+
+### Bug Fixes
+
+* Corrected repository location ([27a8087](https://github.com/CSCfi/ui/commit/27a808790cad6308a662932b2d55c41c031c0ea9))
+
 ## [2.0.1](https://github.com/CSCfi/ui/compare/v2.0.0...v2.0.1) (2024-02-09)
 
 
