@@ -9,6 +9,7 @@
         :active="tag.active"
         closeable
         @click="tag.active = !tag.active"
+        @keyup.enter="tag.active = !tag.active"
         @close="onRemoveTag(tag.id)"
       >
         {{ tag.label }}

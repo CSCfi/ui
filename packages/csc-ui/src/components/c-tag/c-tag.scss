@@ -34,6 +34,8 @@
   --c-tag-badge-size: 20px;
   --c-tag-icon-button-offset: 0;
 
+  --c-icon-button-outline-offset: 0;
+
   align-items: center;
   background: var(--_c-tag-background-color);
   border-radius: var(--_c-tag-border-radius);
@@ -119,7 +121,7 @@
   --c-tag-padding-x: 8px;
   --c-tag-badge-size: 16px;
   --c-tag-icon-button-offset: 1px 0 0;
-  
+
   c-icon-button {
     --_c-icon-button-height: 16px;
     --_c-icon-button-width: 16px;
@@ -143,6 +145,8 @@
 :host(.c-tag--active) {
   background: var(--_c-tag-background-color-active);
   color: var(--_c-tag-text-color-active);
+
+  --c-icon-button-outline-color: var(--c-white);
 }
 
 :host(.c-tag--active .c-tag__badge) {

@@ -22,6 +22,7 @@
   --_c-icon-button-loader-color: var(--_c-icon-button-text-color);
   --_c-icon-button-height: 40px;
   --_c-icon-button-width: 40px;
+  --_c-icon-button-outline-offset: var(--c-icon-button-outline-offset, 2px);
 
   display: block;
   position: relative;
@@ -143,7 +144,7 @@
 
 :host(.c-icon-button) button:focus-visible {
   outline: 2px var(--_c-icon-button-outline-color) solid;
-  outline-offset: 2px;
+  outline-offset: var(--_c-icon-button-outline-offset);
 }
 
 :host(.c-icon-button--inverted) {
