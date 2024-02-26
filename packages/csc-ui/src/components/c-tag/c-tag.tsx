@@ -70,7 +70,7 @@ export class CTag {
     };
 
     const hostParams = {
-      tabindex: 0,
+      tabindex: this.flat ? -1 : 0,
       ...(!this.flat && {
         role: 'button',
       }),
@@ -78,7 +78,7 @@ export class CTag {
     };
 
     return (
-      <Host tabindex="0" {...hostParams} class={hostClasses}>
+      <Host {...hostParams} class={hostClasses}>
         <slot></slot>
 
         {this.closeable && (
