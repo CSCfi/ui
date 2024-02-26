@@ -6,7 +6,7 @@
       <c-accordion-item value="one">
         <div slot="header" class="flex gap-3 py-2 items-center">
           <div
-            class="size-3 rounded-full transition-all"
+            class="rounded-full transition-all"
             :class="{
               'bg-primary/50 size-1': activeItem !== 'one',
               'bg-primary-600 size-3 -m-1': activeItem === 'one',
@@ -59,7 +59,7 @@
       <c-accordion-item value="three">
         <div slot="header" class="flex gap-3 py-2 items-center">
           <div
-            class="size-3 rounded-full transition-all"
+            class="rounded-full transition-all"
             :class="{
               'bg-primary/50 size-1': activeItem !== 'three',
               'bg-primary-600 size-3 -m-1': activeItem === 'three',
