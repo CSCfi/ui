@@ -13,6 +13,7 @@ import { mdiChevronRight } from '@mdi/js';
 /**
  * @parent c-accordion
  * @slot Default slot - Default slot
+ * @slot header - Custom header slot
  */
 @Component({
   tag: 'c-accordion-item',
@@ -117,6 +118,8 @@ export class CAccordionItem {
   private _collapse() {
     this._isCollapsing = true;
 
+    this.expanded = false;
+
     const startHeight = `${this._accordionElement.offsetHeight}px`;
 
     const endHeight = `${this._collapsedHeight}px`;
@@ -184,6 +187,15 @@ export class CAccordionItem {
     CAccordionItem._uniqueId += 1;
   }
 
+  private _hasCustomHeader = false;
+
+  private _hasIcon = false;
+
+  componentDidLoad() {
+    this._hasCustomHeader = !!this.el.querySelector('[slot="header"]');
+    this._hasIcon = !!this.el.querySelector('[slot="icon"]');
+  }
+
   render() {
     const accordionClasses = {
       'c-accordion-item': true,
@@ -195,6 +207,7 @@ export class CAccordionItem {
       'c-accordion-item__header': true,
       'c-accordion-item__header--collapsable': this.collapsable,
       'c-accordion-item__header--expanded': this.expanded,
+      'c-accordion-item__header--has-icon': this._hasIcon,
     };
 
     const indicatorClasses = {
@@ -215,11 +228,17 @@ export class CAccordionItem {
             class={headerClasses}
             onClick={(event) => this._onToggleAccordion(event)}
           >
-            <div class="c-accordion-item__icon" aria-visible="hidden">
-              <slot name="icon"></slot>
-            </div>
+            {this._hasIcon && (
+              <div class="c-accordion-item__icon" aria-visible="hidden">
+                <slot name="icon"></slot>
+              </div>
+            )}
 
-            <div class="c-accordion-item__title">{this.heading}</div>
+            {this._hasCustomHeader && <slot name="header"></slot>}
+
+            {!this._hasCustomHeader && (
+              <div class="c-accordion-item__title">{this.heading}</div>
+            )}
 
             <div class={indicatorClasses}>
               <c-icon

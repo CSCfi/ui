@@ -55,12 +55,16 @@
     padding: 0 var(--_c-accordion-item-padding);
     border-radius: var(--_c-accordion-item-border-radius);
     cursor: pointer;
-    grid-template-columns: auto 1fr auto;
+    grid-template-columns: 1fr auto;
     border: none;
     text-align: left;
     margin: 0;
     font-family: var(--c-font-family);
     position: relative;
+
+    &--has-icon {
+      grid-template-columns: auto 1fr auto;
+    }
 
     &--expanded {
       cursor: default;
@@ -122,6 +126,7 @@
     display: flex;
     align-items: center;
     color: var(--_c-accordion-item-text-color);
+    justify-self: end;
 
     c-icon {
       width: 24px;
