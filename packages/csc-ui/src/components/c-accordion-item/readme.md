@@ -25,9 +25,10 @@
 
 ## Slots
 
-| Slot             | Description  |
-| ---------------- | ------------ |
-| `"Default slot"` | Default slot |
+| Slot             | Description        |
+| ---------------- | ------------------ |
+| `"Default slot"` | Default slot       |
+| `"header"`       | Custom header slot |
 
 
 ## CSS Custom Properties
