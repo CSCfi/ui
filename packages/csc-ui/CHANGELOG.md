@@ -1,5 +1,18 @@
 # Changelog
 
+## [2.1.0](https://github.com/CSCfi/ui/compare/v2.0.2...v2.1.0) (2024-02-27)
+
+
+### Features
+
+* **c-accordion:** add custom header slot ([a93a5ce](https://github.com/CSCfi/ui/commit/a93a5ce6499b83fa20045a3788a8ede87f29e37f))
+
+
+### Bug Fixes
+
+* **c-tag:** fix the outline color of the close button on keyboard focus ([8d69052](https://github.com/CSCfi/ui/commit/8d69052b9b12759f606bf5789acb249762d9f3a5))
+* **c-tag:** fix the tabindex value of the flat variant ([fd47ecf](https://github.com/CSCfi/ui/commit/fd47ecf79a4514fac7bc25db2a6a44fa0008093c))
+
 ## [2.0.2](https://github.com/CSCfi/ui/compare/v2.0.1...v2.0.2) (2024-02-16)
 
 
