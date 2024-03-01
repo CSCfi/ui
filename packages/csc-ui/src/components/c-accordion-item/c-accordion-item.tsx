@@ -7,6 +7,7 @@ import {
   Listen,
   Element,
   Host,
+  State,
 } from '@stencil/core';
 import { mdiChevronRight } from '@mdi/js';
 
@@ -187,13 +188,13 @@ export class CAccordionItem {
     CAccordionItem._uniqueId += 1;
   }
 
-  private _hasCustomHeader = false;
+  @State() hasCustomHeader = false;
 
-  private _hasIcon = false;
+  @State() hasIcon = false;
 
   componentDidLoad() {
-    this._hasCustomHeader = !!this.el.querySelector('[slot="header"]');
-    this._hasIcon = !!this.el.querySelector('[slot="icon"]');
+    this.hasCustomHeader = !!this.el.querySelector('[slot="header"]');
+    this.hasIcon = !!this.el.querySelector('[slot="icon"]');
   }
 
   render() {
@@ -207,7 +208,7 @@ export class CAccordionItem {
       'c-accordion-item__header': true,
       'c-accordion-item__header--collapsable': this.collapsable,
       'c-accordion-item__header--expanded': this.expanded,
-      'c-accordion-item__header--has-icon': this._hasIcon,
+      'c-accordion-item__header--has-icon': this.hasIcon,
     };
 
     const indicatorClasses = {
@@ -228,15 +229,15 @@ export class CAccordionItem {
             class={headerClasses}
             onClick={(event) => this._onToggleAccordion(event)}
           >
-            {this._hasIcon && (
+            {this.hasIcon && (
               <div class="c-accordion-item__icon" aria-visible="hidden">
                 <slot name="icon"></slot>
               </div>
             )}
 
-            {this._hasCustomHeader && <slot name="header"></slot>}
+            {this.hasCustomHeader && <slot name="header"></slot>}
 
-            {!this._hasCustomHeader && (
+            {!this.hasCustomHeader && (
               <div class="c-accordion-item__title">{this.heading}</div>
             )}
 
