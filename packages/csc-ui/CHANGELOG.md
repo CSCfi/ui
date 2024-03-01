@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.1.1](https://github.com/CSCfi/ui/compare/v2.1.0...v2.1.1) (2024-03-01)
+
+
+### Bug Fixes
+
+* **c-accordion-item:** Fix header slot content not rendering when added dynamically ([4add81e](https://github.com/CSCfi/ui/commit/4add81e509d0efe27590061d9957516e8bd6be52))
+
 ## [2.1.0](https://github.com/CSCfi/ui/compare/v2.0.2...v2.1.0) (2024-02-27)
 
 
