@@ -81,6 +81,7 @@
     grid-template-columns: 1fr;
     min-height: 46px;
     padding: 8px 12px;
+    text-decoration: none;
 
     &--expandable {
       grid-template-columns: auto 1fr;

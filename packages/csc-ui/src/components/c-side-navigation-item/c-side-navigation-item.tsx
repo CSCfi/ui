@@ -96,14 +96,6 @@ export class CSideNavigationItem {
         const sidenav = document.querySelector('c-side-navigation');
         sidenav.menuVisible = false;
       }
-
-      if (this.href) {
-        if (this.target) {
-          window.open(this.href, this.target);
-        } else {
-          window.location.href = this.href;
-        }
-      }
     }
   }
 
@@ -174,6 +166,12 @@ export class CSideNavigationItem {
       a11y['aria-current'] = 'page';
     }
 
+    const Tag = !!this.href ? 'a' : 'div';
+
+    const itemParams = {
+      ...(!!this.href ? { href: this.href, target: this.target } : {}),
+    };
+
     return (
       <Host
         {...a11y}
@@ -181,7 +179,8 @@ export class CSideNavigationItem {
         onClick={(e) => this._redirect(e)}
         onKeyDown={(e) => this._redirect(e)}
       >
-        <div
+        <Tag
+          {...itemParams}
           class={{
             'c-side-navigation-item__header': true,
             'c-side-navigation-item__header--expandable': this._slotHasContent,
@@ -193,7 +192,7 @@ export class CSideNavigationItem {
           <div class="c-side-navigation-item__slot">
             <slot></slot>
           </div>
-        </div>
+        </Tag>
 
         {this._slotHasContent && (
           <nav
