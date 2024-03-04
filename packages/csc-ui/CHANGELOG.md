@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.1.2](https://github.com/CSCfi/ui/compare/v2.1.1...v2.1.2) (2024-03-04)
+
+
+### Bug Fixes
+
+* **c-navigation-item:** Use anchor element if href prop is set ([818a18a](https://github.com/CSCfi/ui/commit/818a18a39443a25ed3e901b045e04fcbd5b46b3f))
+
 ## [2.1.1](https://github.com/CSCfi/ui/compare/v2.1.0...v2.1.1) (2024-03-01)
 
 
