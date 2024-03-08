@@ -198,11 +198,13 @@ export class CTabs {
   );
 
   private _updateItemsValue() {
-    this.tabItems.value = this.value;
+    requestAnimationFrame(() => {
+      this.tabItems.value = this.value;
 
-    if (this._tabButtons) {
-      this._tabButtons.value = this.value;
-    }
+      if (this._tabButtons) {
+        this._tabButtons.value = this.value;
+      }
+    });
   }
 
   componentWillLoad() {
