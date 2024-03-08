@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.1.3](https://github.com/CSCfi/ui/compare/v2.1.2...v2.1.3) (2024-03-08)
+
+
+### Bug Fixes
+
+* **c-tabs:** Handle race condition in initial value handling ([820740d](https://github.com/CSCfi/ui/commit/820740d9ad0b93a863be02e6b98e4aaf1fa52376))
+
 ## [2.1.2](https://github.com/CSCfi/ui/compare/v2.1.1...v2.1.2) (2024-03-04)
 
 
