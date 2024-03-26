@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.1.4](https://github.com/CSCfi/ui/compare/v2.1.3...v2.1.4) (2024-03-26)
+
+
+### Bug Fixes
+
+* **c-progress-bar:** Fix appearance in Safari ([2a8fd30](https://github.com/CSCfi/ui/commit/2a8fd30820faf9d04c91f470e612957de2d586ba))
+
 ## [2.1.3](https://github.com/CSCfi/ui/compare/v2.1.2...v2.1.3) (2024-03-08)
 
 
