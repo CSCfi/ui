@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.1.6](https://github.com/CSCfi/ui/compare/v2.1.5...v2.1.6) (2024-04-11)
+
+
+### Bug Fixes
+
+* **c-select:** Prevent errors in watcher when mounted ([d81b5b1](https://github.com/CSCfi/ui/commit/d81b5b11f214d305abab10d3582a8dc229dc2abd))
+
 ## [2.1.5](https://github.com/CSCfi/ui/compare/v2.1.4...v2.1.5) (2024-04-11)
 
 
