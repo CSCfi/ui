@@ -323,7 +323,7 @@ export class CSelect {
   @Watch('value')
   onValueChanged() {
     if (!this.value && this.optionAsSelection) {
-      this._selectionElement.replaceChildren();
+      this._selectionElement?.replaceChildren();
     }
   }
 
