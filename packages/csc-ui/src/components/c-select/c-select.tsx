@@ -5,6 +5,7 @@ import {
   Event,
   EventEmitter,
   Host,
+  Watch,
   Listen,
   Method,
   Prop,
@@ -317,6 +318,13 @@ export class CSelect {
     const isOpen = event.detail;
 
     this.dropdownVisible = isOpen;
+  }
+
+  @Watch('value')
+  onValueChanged() {
+    if (!this.value && this.optionAsSelection) {
+      this._selectionElement.replaceChildren();
+    }
   }
 
   @Listen('selectOption')
