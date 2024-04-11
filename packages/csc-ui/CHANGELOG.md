@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.1.5](https://github.com/CSCfi/ui/compare/v2.1.4...v2.1.5) (2024-04-11)
+
+
+### Bug Fixes
+
+* **c-select:** Clear option as selection when value is cleared externally ([7462e2f](https://github.com/CSCfi/ui/commit/7462e2f333bd0575da2aa52a1fb39441b5975d08))
+
 ## [2.1.4](https://github.com/CSCfi/ui/compare/v2.1.3...v2.1.4) (2024-03-26)
 
 
