@@ -118,7 +118,7 @@ export class CSideNavigation {
               </div>
             )}
 
-            <div>
+            <div class="c-side-navigation__wrapper">
               <slot></slot>
 
               <div class="vertical-spacer"></div>
