@@ -1299,6 +1299,10 @@ export namespace Components {
           * Mobile version
          */
         "mobile": boolean;
+        /**
+          * Background styles
+         */
+        "styles": { [key: string]: string };
     }
     /**
      * @parent c-side-navigation
@@ -4342,6 +4346,10 @@ declare namespace LocalJSX {
           * Mobile version
          */
         "mobile"?: boolean;
+        /**
+          * Background styles
+         */
+        "styles"?: { [key: string]: string };
     }
     /**
      * @parent c-side-navigation

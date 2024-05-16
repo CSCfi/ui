@@ -12,6 +12,11 @@ import { Component, Host, h, Prop, Listen, Element } from '@stencil/core';
 })
 export class CSideNavigation {
   /**
+   * Background styles
+   */
+  @Prop() styles: { [key: string]: string };
+
+  /**
    * Mobile version
    */
   @Prop() mobile: boolean;
@@ -20,6 +25,8 @@ export class CSideNavigation {
    * Mobile version menu visibility
    */
   @Prop({ mutable: true }) menuVisible: boolean = false; // eslint-disable-line
+
+  private _containerElement: HTMLElement;
 
   @Element() host: HTMLCSideNavigationElement;
 
@@ -68,6 +75,11 @@ export class CSideNavigation {
         }
       });
     });
+
+    const addStyles = (el: HTMLElement, styles: { [key: string]: string }) =>
+      Object.assign(el.style, styles);
+
+    addStyles(this._containerElement, this.styles);
   }
 
   private _closeMenu() {
@@ -92,21 +104,27 @@ export class CSideNavigation {
     return (
       <Host class={{ desktop: !this.mobile }}>
         <div class={containerClasses}>
-          {this.mobile && (
-            <div class="c-side-navigation__burger">
-              <c-icon-button inverted text onClick={() => this._closeMenu()}>
-                <span class="visuallyhidden">Close sidemenu</span>
-                <c-icon path={mdiArrowRight}></c-icon>
-              </c-icon-button>
+          <nav
+            ref={(el) => (this._containerElement = el)}
+            class={classes}
+            role="menubar"
+          >
+            {this.mobile && (
+              <div class="c-side-navigation__burger">
+                <c-icon-button text inverted onClick={() => this._closeMenu()}>
+                  <span class="visuallyhidden">Close sidemenu</span>
+                  <c-icon path={mdiArrowRight}></c-icon>
+                </c-icon-button>
+              </div>
+            )}
+
+            <div>
+              <slot></slot>
+
+              <div class="vertical-spacer"></div>
+
+              <slot name="bottom"></slot>
             </div>
-          )}
-
-          <nav class={classes} role="menubar">
-            <slot></slot>
-
-            <div class="vertical-spacer"></div>
-
-            <slot name="bottom"></slot>
           </nav>
         </div>
 
