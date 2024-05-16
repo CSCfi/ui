@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.1.8](https://github.com/CSCfi/ui/compare/v2.1.7...v2.1.8) (2024-05-16)
+
+
+### Bug Fixes
+
+* **c-side-navigation:** Fix bottom slot position ([51fd134](https://github.com/CSCfi/ui/commit/51fd1348b2f13145c48c4f219351a1400591c23e))
+
 ## [2.1.7](https://github.com/CSCfi/ui/compare/v2.1.6...v2.1.7) (2024-05-16)
 
 
