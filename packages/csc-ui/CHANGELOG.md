@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.1.7](https://github.com/CSCfi/ui/compare/v2.1.6...v2.1.7) (2024-05-16)
+
+
+### Bug Fixes
+
+* **c-side-navigation:** Allow setting a custom background ([92dbe4c](https://github.com/CSCfi/ui/commit/92dbe4cd59d20af69f7aa128f9349f996e555ebe))
+
 ## [2.1.6](https://github.com/CSCfi/ui/compare/v2.1.5...v2.1.6) (2024-04-11)
 
 
