@@ -5,10 +5,11 @@
 
 ## Properties
 
-| Property      | Attribute      | Description                    | Type      | Default     |
-| ------------- | -------------- | ------------------------------ | --------- | ----------- |
-| `menuVisible` | `menu-visible` | Mobile version menu visibility | `boolean` | `false`     |
-| `mobile`      | `mobile`       | Mobile version                 | `boolean` | `undefined` |
+| Property      | Attribute      | Description                    | Type                         | Default     |
+| ------------- | -------------- | ------------------------------ | ---------------------------- | ----------- |
+| `menuVisible` | `menu-visible` | Mobile version menu visibility | `boolean`                    | `false`     |
+| `mobile`      | `mobile`       | Mobile version                 | `boolean`                    | `undefined` |
+| `styles`      | --             | Background styles              | `{ [key: string]: string; }` | `undefined` |
 
 
 ## Slots

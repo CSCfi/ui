@@ -70,16 +70,17 @@
 
       <c-side-navigation-title>Components</c-side-navigation-title>
 
-      <c-text-field
-        v-model="query"
-        v-control
-        class="mr-6 mb-2"
-        placeholder="Search for a component"
-        hide-details
-        shadow
-      >
-        <c-icon slot="pre" :path="mdiMagnify" size="16" />
-      </c-text-field>
+      <div class="pr-6 pb-2">
+        <c-text-field
+          v-model="query"
+          v-control
+          placeholder="Search for a component"
+          hide-details
+          shadow
+        >
+          <c-icon slot="pre" :path="mdiMagnify" size="16" />
+        </c-text-field>
+      </div>
 
       <c-side-navigation-item
         v-for="component in components"

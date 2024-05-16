@@ -37,6 +37,8 @@
   transition: transform 0.3s ease;
   width: 100%;
   z-index: 8;
+  max-height: 100%;
+  overflow-y: auto;
 
   &__content {
     $content: &;
@@ -71,7 +73,6 @@
   }
 
   &__burger {
-    background-color: var(--_c-side-navigation-background-color);
     display: flex;
     justify-content: flex-end;
     padding: 8px 16px;
