@@ -118,7 +118,12 @@ export class CSideNavigation {
               </div>
             )}
 
-            <div class="c-side-navigation__wrapper">
+            <div
+              class={{
+                'c-side-navigation__wrapper': true,
+                'c-side-navigation__wrapper--mobile': !!this.mobile,
+              }}
+            >
               <slot></slot>
 
               <div class="vertical-spacer"></div>

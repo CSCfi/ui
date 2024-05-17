@@ -45,6 +45,10 @@
     flex-direction: column;
     flex-shrink: 0;
     min-height: 100%;
+
+    &--mobile {
+      min-height: calc(100% - 60px);
+    }
   }
 
   &__content {
