@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.1.9](https://github.com/CSCfi/ui/compare/v2.1.8...v2.1.9) (2024-05-17)
+
+
+### Bug Fixes
+
+* **c-side-navigation:** Prevent the bottom slot from overflowing the container in mobile ([8f46b09](https://github.com/CSCfi/ui/commit/8f46b0935a224d21eaabe583d16d487b5226105b))
+
 ## [2.1.8](https://github.com/CSCfi/ui/compare/v2.1.7...v2.1.8) (2024-05-16)
 
 
