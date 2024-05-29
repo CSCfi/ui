@@ -59,6 +59,8 @@ export class CModal {
 
   private _debounce = null;
 
+  private _animationsDisabled = false;
+
   @Watch('value')
   onValueChange(value: boolean) {
     if (value) {
@@ -71,33 +73,37 @@ export class CModal {
   }
 
   private _handleShow = () => {
-    if (this._dialog) {
-      this._dialog.addEventListener('animationend', this._onDialogOpened);
-      this._dialog.classList.add('opening');
-      this._dialog.showModal();
+    if (!this._animationsDisabled) {
+      this._dialog?.addEventListener('animationend', this._onDialogOpened);
+      this._dialog?.classList.add('opening');
     }
+
+    this._dialog?.showModal();
   };
 
   private _onDialogOpened = () => {
-    if (this._dialog) {
-      this._dialog.removeEventListener('animationend', this._onDialogOpened);
-      this._dialog.classList.remove('opening');
-    }
+    this._dialog?.removeEventListener('animationend', this._onDialogOpened);
+    this._dialog?.classList.remove('opening');
   };
 
   private _handleClose = () => {
-    if (this._dialog) {
-      this._dialog.addEventListener('animationend', this._onDialogClosed);
-      this._dialog.classList.add('closing');
+    if (this._animationsDisabled) {
+      this._onDialogClosed();
+
+      return;
     }
+
+    this._dialog?.addEventListener('animationend', this._onDialogClosed);
+    this._dialog?.classList.add('closing');
   };
 
   private _onDialogClosed = () => {
-    if (this._dialog) {
-      this._dialog.removeEventListener('animationend', this._onDialogClosed);
-      this._dialog.classList.remove('closing');
-      this._dialog.close();
+    if (!this._animationsDisabled) {
+      this._dialog?.removeEventListener('animationend', this._onDialogClosed);
+      this._dialog?.classList.remove('closing');
     }
+
+    this._dialog?.close();
 
     if (!document.fullscreenElement) return;
 
@@ -156,6 +162,10 @@ export class CModal {
   }
 
   componentDidLoad() {
+    const query = window.matchMedia('(prefers-reduced-motion: reduce)');
+
+    this._animationsDisabled = query.matches;
+
     this._handleClickOutside();
 
     if (this.value) {
