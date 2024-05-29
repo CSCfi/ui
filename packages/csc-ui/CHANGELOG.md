@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.1.10](https://github.com/CSCfi/ui/compare/v2.1.9...v2.1.10) (2024-05-29)
+
+
+### Bug Fixes
+
+* **c-modal:** Fix closing the modal when user has reduced motion enabled ([e651385](https://github.com/CSCfi/ui/commit/e651385c66784611b26136d04187986244eff726))
+
 ## [2.1.9](https://github.com/CSCfi/ui/compare/v2.1.8...v2.1.9) (2024-05-17)
 
 
