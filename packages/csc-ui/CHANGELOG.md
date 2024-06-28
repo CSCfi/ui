@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.1.11](https://github.com/CSCfi/ui/compare/v2.1.10...v2.1.11) (2024-06-28)
+
+
+### Bug Fixes
+
+* **c-text-field:** Fix Firefox not creating  a new line on enter press in the textarea ([e3d0594](https://github.com/CSCfi/ui/commit/e3d059428bb0a334b4f9034cb7c41eed71b50127))
+
 ## [2.1.10](https://github.com/CSCfi/ui/compare/v2.1.9...v2.1.10) (2024-05-29)
 
 
