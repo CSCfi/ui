@@ -381,7 +381,12 @@ export class CDropdown {
     const { query, loading, minimumQueryLength, minimumQueryLengthMessage } =
       this.parent as HTMLCAutocompleteElement;
 
-    if (query.length > minimumQueryLength || loading) return;
+    if (
+      this.type !== 'autocomplete' ||
+      query?.length > minimumQueryLength ||
+      loading
+    )
+      return;
 
     return (
       <li>
