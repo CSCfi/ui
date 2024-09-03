@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.1.12](https://github.com/CSCfi/ui/compare/v2.1.11...v2.1.12) (2024-09-03)
+
+
+### Bug Fixes
+
+* **c-dropdown:** Prevent an error when using c-dropdown in c-select ([a28dd19](https://github.com/CSCfi/ui/commit/a28dd1995f2d32d8714a7e020fd191d5d15c81dc))
+
 ## [2.1.11](https://github.com/CSCfi/ui/compare/v2.1.10...v2.1.11) (2024-06-28)
 
 
