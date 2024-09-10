@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.1.13](https://github.com/CSCfi/ui/compare/v2.1.12...v2.1.13) (2024-09-10)
+
+
+### Bug Fixes
+
+* **c-data-table:** Prevent crash when null values exist in the data ([2cacae9](https://github.com/CSCfi/ui/commit/2cacae9f710552b6007d43fb7273173272c75134))
+
 ## [2.1.12](https://github.com/CSCfi/ui/compare/v2.1.11...v2.1.12) (2024-09-03)
 
 
