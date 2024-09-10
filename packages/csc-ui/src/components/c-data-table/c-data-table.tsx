@@ -543,10 +543,16 @@ export class CDataTable {
     if (!this.sortBy || this.externalData) return data;
 
     const sorted = data.sort((a, b) => {
-      const valueA = a[this.sortBy].value;
-      const valueB = b[this.sortBy].value;
+      const valueA = a[this.sortBy]?.value ?? null;
+      const valueB = b[this.sortBy]?.value ?? null;
 
-      if (typeof valueA === 'string') {
+      if (valueA === null && valueB === null) return 0;
+
+      if (valueA === null) return this.sortDirection === 'asc' ? 1 : -1;
+
+      if (valueB === null) return this.sortDirection === 'asc' ? -1 : 1;
+
+      if (typeof valueA === 'string' && typeof valueB === 'string') {
         if (this.sortDirection === 'asc') {
           return valueA.toLowerCase().localeCompare(valueB.toLowerCase());
         }
@@ -554,13 +560,15 @@ export class CDataTable {
         return valueB.toLowerCase().localeCompare(valueA.toLowerCase());
       }
 
-      if (typeof valueA === 'number') {
+      if (typeof valueA === 'number' && typeof valueB === 'number') {
         if (this.sortDirection === 'asc') {
           return valueA - valueB;
         }
 
         return valueB - valueA;
       }
+
+      return 0;
     });
 
     this._sortedData = sorted.map((row) => {
