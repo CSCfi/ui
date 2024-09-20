@@ -16,11 +16,42 @@
 }
 
 .c-card-title {
+  $this: &;
+
+  &__header {
+    p {
+      margin: 0;
+    }
+  }
+
+  &--actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: start;
+    flex: 0 0 auto;
+    gap: 8px;
+
+    &#{$this}--wrapped {
+      #{$this}__actions {
+        justify-content: start;
+      }
+    }
+  }
+
   &__underline {
     background-color: var(--_c-card-title-underline-color);
     border-radius: 4px;
     height: 4px;
     margin-top: 10px;
     width: 44px;
+  }
+
+  &__actions {
+    justify-content: end;
+    align-items: center;
+    display: flex;
+    flex-wrap: wrap-reverse;
+    gap: 8px;
+    flex: 1;
   }
 }

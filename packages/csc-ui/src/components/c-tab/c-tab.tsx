@@ -121,9 +121,9 @@ export class CTab {
         class={classes}
         onClick={this._onClick}
       >
-        <span>
+        <div class="c-tab__content">
           <slot></slot>
-        </span>
+        </div>
 
         <c-ripple ref={(el) => (this._rippleElement = el)}></c-ripple>
       </Host>
