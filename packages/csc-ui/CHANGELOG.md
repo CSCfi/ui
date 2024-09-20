@@ -1,5 +1,19 @@
 # Changelog
 
+## [2.2.0](https://github.com/CSCfi/ui/compare/v2.1.13...v2.2.0) (2024-09-20)
+
+
+### Features
+
+* **c-card-title:** Allow placing actions at end of c-title ([e467398](https://github.com/CSCfi/ui/commit/e4673986aa15b46814500b97889ebc3f15cc35bd))
+
+
+### Bug Fixes
+
+* **c-data-table:** Make the 'no data' row height match a normal row ([c552d1e](https://github.com/CSCfi/ui/commit/c552d1ecbc81da9a98003cec0215e92e4ad251ed))
+* **c-select:** Prevent an error in the console when nothing is selected on page load ([6058d6b](https://github.com/CSCfi/ui/commit/6058d6b32cd5df68564b4742239ea2fc2413ee39))
+* **c-tab:** Change the inner container on c-tab for better tab decoration ie. adding badges ([b8982cd](https://github.com/CSCfi/ui/commit/b8982cd867c228fbf35f3a46bef8ed03730cae1c))
+
 ## [2.1.13](https://github.com/CSCfi/ui/compare/v2.1.12...v2.1.13) (2024-09-10)
 
 
