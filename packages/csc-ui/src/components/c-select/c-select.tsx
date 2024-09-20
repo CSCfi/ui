@@ -523,10 +523,12 @@ export class CSelect {
       return item.value === this.value;
     });
 
-    this._setCurrentIndex({
-      name: selection.name,
-      value: selection.value.toString(),
-    });
+    if (selection) {
+      this._setCurrentIndex({
+        name: selection.name,
+        value: selection.value.toString(),
+      });
+    }
   }
 
   private _renderLoader() {
