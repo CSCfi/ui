@@ -212,7 +212,9 @@
 
       &.info {
         > div {
-          height: 108px;
+          background-color: var(--c-white);
+          border-top-width: 0;
+          border: 1px solid var(--_c-data-table-border-color);
           justify-content: center;
         }
       }
