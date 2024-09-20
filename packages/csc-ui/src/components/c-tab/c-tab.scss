@@ -13,14 +13,20 @@
   display: block;
   user-select: none;
   min-width: min-content;
-  padding-inline: 12px;
   flex-grow: 1;
 
-  span {
+  div.c-tab__content {
+    align-items: center;
+    justify-content: center;
+    display: flex;
+    height: 100%;
+    width: 100%;
     max-width: 100%;
-    white-space: nowrap;
     overflow: hidden;
+    padding-inline: 12px;
+    position: relative;
     text-overflow: ellipsis;
+    white-space: nowrap;
   }
 }
 

@@ -3,7 +3,16 @@
     <template #title>Tab placement</template>
 
     <c-tabs v-model="tab" v-control :justify="justifyTabs">
-      <c-tab value="tab1">One</c-tab>
+      <c-tab value="tab1">
+        <div class="relative px-2">
+          One
+          <div
+            class="absolute -top-2 -right-2 bg-red-400 text-white w-4 min-h-4 rounded-full grid place-content-center text-xs"
+          >
+            1
+          </div>
+        </div>
+      </c-tab>
 
       <c-tab value="tab2">Two</c-tab>
 
