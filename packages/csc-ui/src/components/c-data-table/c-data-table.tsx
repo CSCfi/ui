@@ -266,7 +266,7 @@ export class CDataTable {
   }
 
   componentDidLoad() {
-    this._tableElement.style.visibility = 'hidden';
+    this._handleResize();
 
     if (!this.horizontalScrolling) {
       this._rootIntersectionObserver = new IntersectionObserver(([entry]) => {
@@ -283,8 +283,6 @@ export class CDataTable {
 
       this._rootIntersectionObserver.observe(this.element);
     } else {
-      this._tableElement.style.visibility = 'visible';
-
       const [firstCell] = this._headerKeys;
       const lastCell = this._headerKeys[this._headerKeys.length - 1];
 
@@ -380,16 +378,12 @@ export class CDataTable {
   }
 
   private _handleResponsiveHeaders() {
-    this._tableElement.style.position = 'absolute';
-
     const { width: rootWidth, x } = this.element.getBoundingClientRect();
 
     if (this._debounce !== null) {
       clearTimeout(this._debounce);
       this._debounce = null;
     }
-
-    this._tableElement.style.position = 'relative';
 
     const { width: tableWidth } = this._tableElement.getBoundingClientRect();
 
@@ -437,8 +431,6 @@ export class CDataTable {
         this._isPaginationSimple = false;
       }
     }, 200);
-
-    this._tableElement.style.visibility = 'visible';
   }
 
   private _addHeaderRef(key: string, el: HTMLElement) {
@@ -1374,23 +1366,27 @@ export class CDataTable {
 
     return (
       <Host>
-        <table
-          class={tableClasses}
-          ref={(el) => (this._tableElement = el as HTMLTableElement)}
-        >
-          <colgroup>
-            {[
-              ...(this.selectable ? ['_selection'] : []),
-              ...(this.hiddenHeaders.length ? ['_hidden'] : []),
-              ...this._headerKeys,
-            ].map((key) => (
-              <col class={this.sortBy === key && 'sorted-column'}></col>
-            ))}
-          </colgroup>
-          {this._renderTableHeader()}
-          {this._renderTableBody()}
-          {!this.hideFooter && this._renderTableFooter()}
-        </table>
+        <div class="c-data-table__wrapper">
+          <div class="c-data-table__table-wrapper">
+            <table
+              class={tableClasses}
+              ref={(el) => (this._tableElement = el as HTMLTableElement)}
+            >
+              <colgroup>
+                {[
+                  ...(this.selectable ? ['_selection'] : []),
+                  ...(this.hiddenHeaders.length ? ['_hidden'] : []),
+                  ...this._headerKeys,
+                ].map((key) => (
+                  <col class={this.sortBy === key && 'sorted-column'}></col>
+                ))}
+              </colgroup>
+              {this._renderTableHeader()}
+              {this._renderTableBody()}
+              {!this.hideFooter && this._renderTableFooter()}
+            </table>
+          </div>
+        </div>
       </Host>
     );
   }
