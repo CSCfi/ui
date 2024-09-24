@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.2.1](https://github.com/CSCfi/ui/compare/v2.2.0...v2.2.1) (2024-09-24)
+
+
+### Bug Fixes
+
+* **c-data-table:** Render colors correctly with certain sub elements ([141214e](https://github.com/CSCfi/ui/commit/141214ebac16b9e7d0362f6e35066c14f08c240b))
+
 ## [2.2.0](https://github.com/CSCfi/ui/compare/v2.1.13...v2.2.0) (2024-09-20)
 
 
