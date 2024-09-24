@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.2.2](https://github.com/CSCfi/ui/compare/v2.2.1...v2.2.2) (2024-09-24)
+
+
+### Bug Fixes
+
+* **c-data-table:** Fix resizing issues ([3b6743f](https://github.com/CSCfi/ui/commit/3b6743ff142ba1cf61eeba8c579e5a9b36ea93a4))
+
 ## [2.2.1](https://github.com/CSCfi/ui/compare/v2.2.0...v2.2.1) (2024-09-24)
 
 
