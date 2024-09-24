@@ -959,7 +959,7 @@ export class CDataTable {
           <li>
             {!!key && (
               <div class="title">
-                <span>{key}:</span>
+                <span class="label">{key}:</span>
                 {this._renderCellData(id, options, index, index)}
               </div>
             )}
