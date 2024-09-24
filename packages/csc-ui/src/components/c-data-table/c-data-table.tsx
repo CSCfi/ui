@@ -266,6 +266,8 @@ export class CDataTable {
   }
 
   componentDidLoad() {
+    this._tableElement.style.visibility = 'hidden';
+
     if (!this.horizontalScrolling) {
       this._rootIntersectionObserver = new IntersectionObserver(([entry]) => {
         if (entry.isIntersecting) {
@@ -281,6 +283,8 @@ export class CDataTable {
 
       this._rootIntersectionObserver.observe(this.element);
     } else {
+      this._tableElement.style.visibility = 'visible';
+
       const [firstCell] = this._headerKeys;
       const lastCell = this._headerKeys[this._headerKeys.length - 1];
 
@@ -376,13 +380,18 @@ export class CDataTable {
   }
 
   private _handleResponsiveHeaders() {
-    const { width: tableWidth } = this._tableElement.getBoundingClientRect();
+    this._tableElement.style.position = 'absolute';
+
     const { width: rootWidth, x } = this.element.getBoundingClientRect();
 
     if (this._debounce !== null) {
       clearTimeout(this._debounce);
       this._debounce = null;
     }
+
+    this._tableElement.style.position = 'relative';
+
+    const { width: tableWidth } = this._tableElement.getBoundingClientRect();
 
     if (rootWidth < tableWidth) {
       this.breakpoints = [...new Set([...this.breakpoints, tableWidth])];
@@ -428,6 +437,8 @@ export class CDataTable {
         this._isPaginationSimple = false;
       }
     }, 200);
+
+    this._tableElement.style.visibility = 'visible';
   }
 
   private _addHeaderRef(key: string, el: HTMLElement) {
