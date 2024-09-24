@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.2.3](https://github.com/CSCfi/ui/compare/v2.2.2...v2.2.3) (2024-09-24)
+
+
+### Bug Fixes
+
+* **c-data-table:** Fix automatic resizing when the table is not in view ([06698bc](https://github.com/CSCfi/ui/commit/06698bc3365c9ede6ddf5d22bc2c18ee3107da7b))
+
 ## [2.2.2](https://github.com/CSCfi/ui/compare/v2.2.1...v2.2.2) (2024-09-24)
 
 
