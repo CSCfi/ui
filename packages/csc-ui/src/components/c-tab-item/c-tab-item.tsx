@@ -47,7 +47,7 @@ export class CTabItem {
   }
 
   disconnectedCallback() {
-    this._resizeObserver.disconnect();
+    this._resizeObserver?.disconnect();
   }
 
   private _handleResize() {
