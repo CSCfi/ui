@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.2.4](https://github.com/CSCfi/ui/compare/v2.2.3...v2.2.4) (2024-09-25)
+
+
+### Bug Fixes
+
+* **c-tab-item:** Prevent error in the console in some edge cases ([96938e1](https://github.com/CSCfi/ui/commit/96938e1983b4c4252a4fe0edfc994b88cacd3506))
+
 ## [2.2.3](https://github.com/CSCfi/ui/compare/v2.2.2...v2.2.3) (2024-09-24)
 
 
