@@ -7,6 +7,7 @@ import {
   Event,
   EventEmitter,
   AttachInternals,
+  Watch,
 } from '@stencil/core';
 
 /**
@@ -62,6 +63,15 @@ export class CSwitch {
   @Element() host: HTMLCSwitchElement;
 
   @State() hasLabel = false;
+
+  @Watch('value')
+  onValueChange(value: string | boolean) {
+    this.checked = this.trueValue === value;
+
+    this.internals.setFormValue(
+      this.checked ? this.trueValue.toString() : this.falseValue.toString(),
+    );
+  }
 
   /**
    * Emit inner value change to parent
