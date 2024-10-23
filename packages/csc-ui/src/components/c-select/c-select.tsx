@@ -327,8 +327,6 @@ export class CSelect {
       this._selectionElement?.replaceChildren();
     }
 
-    console.log('VALUE VAIHTUS', v);
-
     this._selectOption(this.returnObject ? v : { name: v, value: v });
   }
 
@@ -338,7 +336,6 @@ export class CSelect {
   }
 
   private _selectOption({ value, name }: { value: string; name: string }) {
-    console.log('selecteerataan', value, name);
     this._dropdownElement.close();
 
     const selection = this._setCurrentIndex({ name, value });
