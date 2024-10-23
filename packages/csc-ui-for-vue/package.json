@@ -1,0 +1,42 @@
+{
+  "author": "My CSC Team <suiteamsui@gmail.com>",
+  "dependencies": {
+    "@cscfi/csc-ui": "*"
+  },
+  "description": "CSC UI components for Vue",
+  "devDependencies": {
+    "@stencil/vue-output-target": "^0.9.0",
+    "vue": "^3.5.12"
+  },
+  "directories": {
+    "lib": "lib",
+    "test": "__tests__"
+  },
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    },
+    "./css/*": "./dist/styles/css/*",
+    "./scss/*": "./dist/styles/css/*",
+    "./tailwind": "./dist/styles/tailwind/theme.js",
+    "./tailwind/*": "./dist/styles/tailwind/*"
+  },
+  "files": [
+    "dist"
+  ],
+  "homepage": "",
+  "license": "MIT",
+  "main": "dist/index.js",
+  "name": "@cscfi/csc-ui-for-vue",
+  "publishConfig": {
+    "access": "public"
+  },
+  "scripts": {
+    "build": "npm run tsc",
+    "test": "echo \"Error: run tests from root\" && exit 1",
+    "tsc": "tsc -p . --outDir ./dist"
+  },
+  "types": "dist/index.d.ts",
+  "version": "0.0.1"
+}

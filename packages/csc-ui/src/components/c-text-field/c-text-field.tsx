@@ -1,3 +1,4 @@
+/* eslint-disable @stencil-community/reserved-member-names */
 import {
   AttachInternals,
   Component,

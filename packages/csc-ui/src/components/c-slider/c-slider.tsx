@@ -31,6 +31,7 @@ export class CSlider {
   /**
    * Aria label
    */
+  // eslint-disable-next-line @stencil-community/reserved-member-names
   @Prop({ attribute: 'aria-label' }) ariaLabel: string;
 
   /**

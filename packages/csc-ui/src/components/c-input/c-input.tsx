@@ -31,6 +31,7 @@ export class CInput {
   /**
    * Auto focus the input
    */
+  // eslint-disable-next-line @stencil-community/reserved-member-names
   @Prop() autofocus = false;
 
   /**

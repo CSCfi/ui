@@ -556,7 +556,7 @@ export class CAutocomplete {
           id={`${this._id}-dropdown`}
           index={this.currentIndex}
           items-per-page={this.itemsPerPage}
-          item-type={itemType}
+          dropdown-item-type={itemType}
           items={
             this._items as NodeListOf<HTMLCOptionElement> & CAutocompleteItem[]
           }

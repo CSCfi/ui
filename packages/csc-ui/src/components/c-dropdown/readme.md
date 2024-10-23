@@ -42,6 +42,12 @@ Type: `Promise<void>`
 
 
 
+#### Parameters
+
+| Name    | Type     | Description |
+| ------- | -------- | ----------- |
+| `index` | `number` |             |
+
 #### Returns
 
 Type: `Promise<void>`
@@ -62,6 +68,12 @@ Type: `Promise<void>`
 
 Select item
 
+#### Parameters
+
+| Name    | Type     | Description |
+| ------- | -------- | ----------- |
+| `index` | `number` |             |
+
 #### Returns
 
 Type: `Promise<boolean>`
@@ -71,6 +83,12 @@ the disabled status of the input
 ### `setStatusText(text: string) => Promise<void>`
 
 
+
+#### Parameters
+
+| Name   | Type     | Description |
+| ------ | -------- | ----------- |
+| `text` | `string` |             |
 
 #### Returns
 

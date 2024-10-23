@@ -9,6 +9,7 @@ src/styles/*
 
 # Automatically generated files
 docs.json
+components/*
 
 .npmrc
 

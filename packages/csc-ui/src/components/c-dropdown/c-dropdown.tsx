@@ -62,7 +62,7 @@ export class CDropdown {
   /**
    * Type of items
    */
-  @Prop() itemType: 'option' | 'item';
+  @Prop() dropdownItemType: 'option' | 'item';
 
   /**
    * Triggered when dropdown opens or closes
@@ -418,7 +418,7 @@ export class CDropdown {
   }
 
   private _renderList() {
-    return this.itemType === 'option'
+    return this.dropdownItemType === 'option'
       ? this._renderOptionsList()
       : this._renderItemsList();
   }
