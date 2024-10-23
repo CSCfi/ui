@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.2.7](https://github.com/CSCfi/ui/compare/v2.2.6...v2.2.7) (2024-10-23)
+
+
+### Bug Fixes
+
+* **csc-ui:** Fix styles missing from the npm package ([dd3e7ca](https://github.com/CSCfi/ui/commit/dd3e7cad4a4fe54b1efa5818eac407e8a015ee54))
+
 ## [2.2.6](https://github.com/CSCfi/ui/compare/v2.2.5...v2.2.6) (2024-10-23)
 
 
