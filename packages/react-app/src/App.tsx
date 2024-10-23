@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import './App.css';
 import { CButton, COption, CSelect, CSwitch, CCheckbox, CCard, CCardTitle, CCardContent, CCardActions, CSlider, CTag } from '@cscfi/csc-ui-react';
-import { CSelectItem } from '../../csc-ui/dist/types/types';
+import { CSelectItem } from '@cscfi/csc-ui';
 
 function App() {
   const [count, setCount] = useState(0);

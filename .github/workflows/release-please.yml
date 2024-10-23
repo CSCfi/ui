@@ -38,9 +38,9 @@ jobs:
           npm run build
           npm publish
           cd ../csc-ui-react
-          npm version ${{ steps.release.outputs.major }}.${{ steps.release.outputs.minor }}.${{ steps.release.outputs.patch }}
           npm ci
           npm run build
+          (version="$(node ../csc-ui/scripts/getLatestVersion.js)"; npm --no-git-tag-version version ${version})
           npm publish
         env:
           NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
