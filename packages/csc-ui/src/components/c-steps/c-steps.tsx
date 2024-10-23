@@ -30,7 +30,8 @@ export class CSteps {
   /**
    * Emit changes to the parent
    */
-  @Event({ bubbles: false }) changeValue: EventEmitter<number | string>;
+  @Event({ bubbles: false })
+  changeValue: EventEmitter<number | string>;
 
   @State() isMobile = false;
 

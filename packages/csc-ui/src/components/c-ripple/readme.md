@@ -11,6 +11,14 @@
 
 Creates a ripple
 
+#### Parameters
+
+| Name     | Type          | Description |
+| -------- | ------------- | ----------- |
+| `event`  | `MouseEvent`  |             |
+| `parent` | `HTMLElement` |             |
+| `center` | `boolean`     |             |
+
 #### Returns
 
 Type: `Promise<void>`

@@ -146,7 +146,8 @@ export class CAutocomplete {
   /**
    * Triggered when option is selected
    */
-  @Event({ bubbles: false }) changeValue: EventEmitter;
+  @Event({ bubbles: false })
+  changeValue: EventEmitter;
 
   /**
    * Items per page before adding scroll
@@ -556,7 +557,7 @@ export class CAutocomplete {
           id={`${this._id}-dropdown`}
           index={this.currentIndex}
           items-per-page={this.itemsPerPage}
-          item-type={itemType}
+          dropdown-item-type={itemType}
           items={
             this._items as NodeListOf<HTMLCOptionElement> & CAutocompleteItem[]
           }

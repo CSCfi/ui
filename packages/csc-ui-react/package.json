@@ -1,0 +1,39 @@
+{
+  "author": "My CSC Team <suiteamsui@gmail.com>",
+  "dependencies": {
+    "@cscfi/csc-ui": "*",
+    "@stencil/react-output-target": "^0.7.1"
+  },
+  "description": "CSC UI components for React",
+  "devDependencies": {
+    "typescript": "^5.5.4"
+  },
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "types": "./dist/types/index.d.ts"
+    },
+    "./css/*": "./dist/styles/css/*",
+    "./scss/*": "./dist/styles/css/*",
+    "./tailwind": "./dist/styles/tailwind/theme.js",
+    "./tailwind/*": "./dist/styles/tailwind/*"
+  },
+  "files": [
+    "dist"
+  ],
+  "homepage": "",
+  "license": "MIT",
+  "main": "dist/index.js",
+  "module": "dist/index.js",
+  "name": "@cscfi/csc-ui-react",
+  "publishConfig": {
+    "access": "public"
+  },
+  "scripts": {
+    "build": "npm run tsc",
+    "test": "node ./__tests__/react-library.test.js",
+    "tsc": "tsc -p . --outDir ./dist"
+  },
+  "types": "dist/types/index.d.ts",
+  "version": "0.0.1"
+}

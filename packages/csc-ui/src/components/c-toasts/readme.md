@@ -20,6 +20,12 @@
 
 Add a new message
 
+#### Parameters
+
+| Name      | Type                                                                                                                                                                                                                          | Description |
+| --------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------- |
+| `message` | `{ message: string; title?: string; type?: CToastType; duration?: number; persistent?: boolean; position?: CToastPosition; id?: string; closeText?: string; indeterminate?: boolean; progress?: boolean; custom?: boolean; }` |             |
+
 #### Returns
 
 Type: `Promise<void>`
@@ -29,6 +35,12 @@ Type: `Promise<void>`
 ### `removeToast(id: string) => Promise<void>`
 
 Remove a message by id (id should be specified in the addToast params)
+
+#### Parameters
+
+| Name | Type     | Description |
+| ---- | -------- | ----------- |
+| `id` | `string` |             |
 
 #### Returns
 

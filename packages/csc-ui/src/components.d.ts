@@ -444,6 +444,10 @@ export namespace Components {
          */
         "close": () => Promise<void>;
         /**
+          * Type of items
+         */
+        "dropdownItemType": 'option' | 'item';
+        /**
           * @private
          */
         "focusItem": (index: number) => Promise<void>;
@@ -455,10 +459,6 @@ export namespace Components {
           * Current index value
          */
         "index": number;
-        /**
-          * Type of items
-         */
-        "itemType": 'option' | 'item';
         /**
           * Dropdown options
          */
@@ -3465,6 +3465,10 @@ declare namespace LocalJSX {
     }
     interface CDropdown {
         /**
+          * Type of items
+         */
+        "dropdownItemType"?: 'option' | 'item';
+        /**
           * Id of the element
          */
         "hostId"?: string;
@@ -3472,10 +3476,6 @@ declare namespace LocalJSX {
           * Current index value
          */
         "index"?: number;
-        /**
-          * Type of items
-         */
-        "itemType"?: 'option' | 'item';
         /**
           * Dropdown options
          */

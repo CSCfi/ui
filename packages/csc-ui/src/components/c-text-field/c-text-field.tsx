@@ -1,3 +1,4 @@
+/* eslint-disable @stencil-community/reserved-member-names */
 import {
   AttachInternals,
   Component,
@@ -154,7 +155,8 @@ export class CTextField {
   /**
    * Emit changes to the parent
    */
-  @Event({ bubbles: false }) changeValue: EventEmitter;
+  @Event({ bubbles: false })
+  changeValue: EventEmitter;
 
   @State() isFocused = false;
 

@@ -31,6 +31,7 @@ export class CInput {
   /**
    * Auto focus the input
    */
+  // eslint-disable-next-line @stencil-community/reserved-member-names
   @Prop() autofocus = false;
 
   /**
@@ -161,7 +162,8 @@ export class CInput {
   /**
    * Emit changes to the parent
    */
-  @Event({ bubbles: false }) changeValue: EventEmitter;
+  @Event({ bubbles: false })
+  changeValue: EventEmitter;
 
   /**
    * Emit click to the parent

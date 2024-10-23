@@ -60,29 +60,9 @@ interface ComponentCompilerEventComplexType {
 }
 interface ComponentCompilerMethodComplexType {
   signature: string;
-  parameters: CompilerJsDoc[];
+  parameters: JsonDocMethodParameter[];
   references: ComponentCompilerTypeReferences;
   return: string;
-}
-interface CompilerJsDoc {
-  /**
-   * The text associated with the JSDoc
-   */
-  text: string;
-  /**
-   * Tags included in the JSDoc
-   */
-  tags: CompilerJsDocTagInfo[];
-}
-interface CompilerJsDocTagInfo {
-  /**
-   * The name of the tag - e.g. `@deprecated`
-   */
-  name: string;
-  /**
-   * Additional text that is associated with the tag - e.g. `@deprecated use v2 of this API`
-   */
-  text?: string;
 }
 /**
  * The Type Library holds information about the types which are used in a
@@ -367,10 +347,26 @@ export interface JsonDocsEvent {
   deprecation?: string;
   detail: string;
 }
+/**
+ * Type describing a CSS Style, as described by a JSDoc-style comment
+ */
 export interface JsonDocsStyle {
+  /**
+   * The name of the style
+   */
   name: string;
+  /**
+   * The type/description associated with the style
+   */
   docs: string;
+  /**
+   * The annotation used in the JSDoc of the style (e.g. `@prop`)
+   */
   annotation: string;
+  /**
+   * The mode associated with the style
+   */
+  mode: string | undefined;
 }
 export interface JsonDocsListener {
   event: string;
@@ -409,10 +405,28 @@ export interface JsonDocsPart {
    */
   docs: string;
 }
+/**
+ * Represents a parsed block comment in a CSS, Sass, etc. file for a custom property.
+ */
 export interface StyleDoc {
+  /**
+   * The name of the CSS property
+   */
   name: string;
+  /**
+   * The user-defined description of the CSS property
+   */
   docs: string;
+  /**
+   * The JSDoc-style annotation (e.g. `@prop`) that was used in the block comment to detect the comment.
+   * Used to inform Stencil where the start of a new property's description starts (and where the previous description
+   * ends).
+   */
   annotation: "prop";
+  /**
+   * The Stencil style-mode that is associated with this property.
+   */
+  mode: string | undefined;
 }
 
 export {};

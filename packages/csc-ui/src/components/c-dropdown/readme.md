@@ -7,15 +7,15 @@
 
 ## Properties
 
-| Property       | Attribute        | Description                         | Type                                                                     | Default     |
-| -------------- | ---------------- | ----------------------------------- | ------------------------------------------------------------------------ | ----------- |
-| `hostId`       | `id`             | Id of the element                   | `string`                                                                 | `undefined` |
-| `index`        | `index`          | Current index value                 | `number`                                                                 | `undefined` |
-| `itemType`     | `item-type`      | Type of items                       | `"item" \| "option"`                                                     | `undefined` |
-| `items`        | --               | Dropdown options                    | `CAutocompleteItem[] \| CSelectItem[] \| NodeListOf<HTMLCOptionElement>` | `undefined` |
-| `itemsPerPage` | `items-per-page` | Items per page before adding scroll | `number`                                                                 | `undefined` |
-| `parent`       | --               | Dropdown parent                     | `HTMLCAutocompleteElement \| HTMLCSelectElement`                         | `undefined` |
-| `type`         | `type`           | Type of the parent element          | `"autocomplete" \| "select"`                                             | `undefined` |
+| Property           | Attribute            | Description                         | Type                                                                     | Default     |
+| ------------------ | -------------------- | ----------------------------------- | ------------------------------------------------------------------------ | ----------- |
+| `dropdownItemType` | `dropdown-item-type` | Type of items                       | `"item" \| "option"`                                                     | `undefined` |
+| `hostId`           | `id`                 | Id of the element                   | `string`                                                                 | `undefined` |
+| `index`            | `index`              | Current index value                 | `number`                                                                 | `undefined` |
+| `items`            | --                   | Dropdown options                    | `CAutocompleteItem[] \| CSelectItem[] \| NodeListOf<HTMLCOptionElement>` | `undefined` |
+| `itemsPerPage`     | `items-per-page`     | Items per page before adding scroll | `number`                                                                 | `undefined` |
+| `parent`           | --                   | Dropdown parent                     | `HTMLCAutocompleteElement \| HTMLCSelectElement`                         | `undefined` |
+| `type`             | `type`               | Type of the parent element          | `"autocomplete" \| "select"`                                             | `undefined` |
 
 
 ## Events
@@ -42,6 +42,12 @@ Type: `Promise<void>`
 
 
 
+#### Parameters
+
+| Name    | Type     | Description |
+| ------- | -------- | ----------- |
+| `index` | `number` |             |
+
 #### Returns
 
 Type: `Promise<void>`
@@ -62,6 +68,12 @@ Type: `Promise<void>`
 
 Select item
 
+#### Parameters
+
+| Name    | Type     | Description |
+| ------- | -------- | ----------- |
+| `index` | `number` |             |
+
 #### Returns
 
 Type: `Promise<boolean>`
@@ -71,6 +83,12 @@ the disabled status of the input
 ### `setStatusText(text: string) => Promise<void>`
 
 
+
+#### Parameters
+
+| Name   | Type     | Description |
+| ------ | -------- | ----------- |
+| `text` | `string` |             |
 
 #### Returns
 

@@ -497,15 +497,7 @@
       },
       "attributes": [
         {
-          "name": "id",
-          "description": "Id of the element"
-        },
-        {
-          "name": "index",
-          "description": "Current index value"
-        },
-        {
-          "name": "item-type",
+          "name": "dropdown-item-type",
           "description": "Type of items",
           "values": [
             {
@@ -515,6 +507,14 @@
               "name": "option"
             }
           ]
+        },
+        {
+          "name": "id",
+          "description": "Id of the element"
+        },
+        {
+          "name": "index",
+          "description": "Current index value"
         },
         {
           "name": "items-per-page",

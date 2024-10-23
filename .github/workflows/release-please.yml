@@ -13,7 +13,7 @@ jobs:
   release-please:
     runs-on: ubuntu-latest
     steps:
-      - uses: google-github-actions/release-please-action@v3
+      - uses: googleapis/release-please-action@v4
         id: release
         with:
           release-type: node
@@ -34,6 +34,11 @@ jobs:
       - name: Install dependencies & publish NPM package
         run: |
           cd packages/csc-ui
+          npm ci
+          npm run build
+          npm publish
+          cd ../csc-ui-react
+          npm version ${{ steps.release.outputs.major }}.${{ steps.release.outputs.minor }}.${{ steps.release.outputs.patch }}
           npm ci
           npm run build
           npm publish

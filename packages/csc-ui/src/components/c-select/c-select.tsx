@@ -134,7 +134,8 @@ export class CSelect {
   /**
    * Triggered when option is selected
    */
-  @Event({ bubbles: false }) changeValue: EventEmitter;
+  @Event({ bubbles: false })
+  changeValue: EventEmitter;
 
   @State() optionElements: NodeListOf<HTMLCOptionElement>;
 
@@ -321,17 +322,24 @@ export class CSelect {
   }
 
   @Watch('value')
-  onValueChanged() {
+  onValueChanged(v) {
     if (!this.value && this.optionAsSelection) {
       this._selectionElement?.replaceChildren();
     }
+
+    console.log('VALUE VAIHTUS', v);
+
+    this._selectOption(this.returnObject ? v : { name: v, value: v });
   }
 
   @Listen('selectOption')
   onSelectOption(event: CustomEvent<{ name: string; value: string }>) {
-    this._dropdownElement.close();
+    this._setValue(event.detail);
+  }
 
-    const { name, value } = event.detail;
+  private _selectOption({ value, name }: { value: string; name: string }) {
+    console.log('selecteerataan', value, name);
+    this._dropdownElement.close();
 
     const selection = this._setCurrentIndex({ name, value });
 
@@ -344,15 +352,17 @@ export class CSelect {
 
     this._dropdownElement.updateList();
 
-    this.value = this.returnObject ? event.detail : value;
+    this._preventDialogOpen = true;
+
+    this._inputElement.focus();
+  }
+
+  private _setValue({ value, name }: { value: string; name: string }) {
+    this.value = this.returnObject ? { name, value } : value;
 
     this.changeValue.emit(this.value);
 
     this.internals.setFormValue(value);
-
-    this._preventDialogOpen = true;
-
-    this._inputElement.focus();
   }
 
   private _setCurrentIndex({ value, name }: { value: string; name: string }) {
@@ -608,7 +618,7 @@ export class CSelect {
           id={`${this._id}-dropdown`}
           index={this.currentIndex}
           items-per-page={this.itemsPerPage}
-          item-type={itemType}
+          dropdown-item-type={itemType}
           items={this._items as NodeListOf<HTMLCOptionElement> & CSelectItem[]}
           parent={this.el}
           type="select"

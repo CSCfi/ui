@@ -31,6 +31,7 @@ export class CSlider {
   /**
    * Aria label
    */
+  // eslint-disable-next-line @stencil-community/reserved-member-names
   @Prop({ attribute: 'aria-label' }) ariaLabel: string;
 
   /**
@@ -91,7 +92,8 @@ export class CSlider {
   /**
    * Emit value changes to parent
    */
-  @Event({ bubbles: false }) changeValue: EventEmitter;
+  @Event({ bubbles: false })
+  changeValue: EventEmitter;
 
   @State() trackPosition: number;
 

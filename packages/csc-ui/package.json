@@ -9,8 +9,8 @@
   "collection": "dist/collection/collection-manifest.json",
   "collection:main": "dist/collection/index.js",
   "dependencies": {
-    "@mdi/js": "^7.3.67",
-    "@stencil/core": "^4.7.2",
+    "@mdi/js": "^7.4.47",
+    "@stencil/core": "^4.22.1",
     "@types/node": "^20.8.9",
     "normalize.css": "^8.0.1",
     "stencil-click-outside": "^1.8.0",
@@ -20,21 +20,22 @@
   "description": "CSC UI components",
   "devDependencies": {
     "@auto-it/all-contributors": "^10.46.0",
-    "@playwright/test": "^1.39.0",
-    "@stencil-community/eslint-plugin": "^0.5.0",
-    "@stencil/sass": "^3.0.7",
+    "@playwright/test": "^1.48.1",
+    "@stencil-community/eslint-plugin": "^0.8.0",
+    "@stencil/react-output-target": "^0.7.3",
+    "@stencil/sass": "^3.0.12",
     "@types/jest": "^27.0.3",
     "auto": "^10.46.0",
     "eslint-config-airbnb": "^19.0.4",
     "eslint-config-node": "^4.1.0",
     "eslint-config-prettier": "^8.8.0",
-    "eslint-plugin-import": "^2.29.0",
+    "eslint-plugin-import": "^2.31.0",
     "eslint-plugin-node": "^11.1.0",
     "eslint-plugin-prettier": "^4.2.1",
     "husky": "^8.0.3",
     "jest": "^27.0.3",
     "jest-cli": "^27.4.5",
-    "postcss": "^8.4.31",
+    "postcss": "^8.4.47",
     "postcss-scss": "^4.0.9",
     "prettier": "^2.8.8",
     "puppeteer": "^20.7.3",
@@ -51,11 +52,12 @@
   "exports": {
     ".": {
       "import": "./dist/index.js",
-      "types": "./dist/types/index.d.ts"
+      "types": "./dist/types/components.d.ts"
     },
+    "./components/*": "./dist/components/*",
     "./css/*": "./dist/styles/css/*",
-    "./loader": "./dist/loader/index.js",
-    "./loader/*": "./dist/loader/*",
+    "./loader": "./loader/index.js",
+    "./loader/*": "./loader/*",
     "./scss/*": "./dist/styles/css/*",
     "./tailwind": "./dist/styles/tailwind/theme.js",
     "./tailwind/*": "./dist/styles/tailwind/*"
@@ -79,6 +81,8 @@
     "generate": "stencil generate",
     "lint": "eslint src/**/*{.ts,.tsx}",
     "lint:styles": "stylelint --allow-empty-input \"**/*.{css,scss}\"",
+    "move-styles": "node scripts/move-styles.js",
+    "postbuild": "npm run move-styles",
     "pre-commit": "npm run lint",
     "start": "stencil build --dev --watch --serve",
     "style-dictionary:build": "style-dictionary build --config ./style-dictionary.config.js",
@@ -89,7 +93,7 @@
     "test.visual": "docker run -v $PWD:/e2e -w /e2e/ -it --rm -e --name csc-ui-playwright",
     "test.watch": "stencil test --spec --watchAll"
   },
-  "types": "dist/types/index.d.ts",
+  "types": "dist/types/components.d.ts",
   "unpkg": "dist/csc-ui/csc-ui.esm.js",
   "version": "2.2.5"
 }
