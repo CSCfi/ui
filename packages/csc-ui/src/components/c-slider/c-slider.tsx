@@ -92,7 +92,7 @@ export class CSlider {
   /**
    * Emit value changes to parent
    */
-  @Event({ bubbles: false, eventName: 'change-value' })
+  @Event({ bubbles: false })
   changeValue: EventEmitter;
 
   @State() trackPosition: number;

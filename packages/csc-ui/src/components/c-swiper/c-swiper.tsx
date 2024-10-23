@@ -39,7 +39,7 @@ export class CSwiper {
   /**
    * Emit value change to the parent
    */
-  @Event({ bubbles: false, eventName: 'change-value' })
+  @Event({ bubbles: false })
   changeValue: EventEmitter<number | string>;
 
   private _container?: HTMLDivElement;

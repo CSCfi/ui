@@ -42,7 +42,7 @@
 
 | Event           | Description                | Type               |
 | --------------- | -------------------------- | ------------------ |
-| `change-value`  | Emit changes to the parent | `CustomEvent<any>` |
+| `changeValue`   | Emit changes to the parent | `CustomEvent<any>` |
 | `dropdownClose` | Emit close to the parent   | `CustomEvent<any>` |
 | `itemClick`     | Emit click to the parent   | `CustomEvent<any>` |
 

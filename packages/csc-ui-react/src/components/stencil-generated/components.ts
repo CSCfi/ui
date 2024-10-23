@@ -89,7 +89,7 @@ export const CAccordion: StencilReactComponent<CAccordionElement, CAccordionEven
     elementClass: CAccordionElement,
     // @ts-ignore - React type of Stencil Output Target may differ from the React version used in the Nuxt.js project, this can be ignored.
     react: React,
-    events: { onChangeValue: 'change-value' } as CAccordionEvents,
+    events: { onChangeValue: 'changeValue' } as CAccordionEvents,
     defineCustomElement: defineCAccordion
 });
 
@@ -127,7 +127,7 @@ export const CAutocomplete: StencilReactComponent<CAutocompleteElement, CAutocom
     react: React,
     events: {
         onChangeQuery: 'changeQuery',
-        onChangeValue: 'change-value'
+        onChangeValue: 'changeValue'
     } as CAutocompleteEvents,
     defineCustomElement: defineCAutocomplete
 });
@@ -214,7 +214,7 @@ export const CCheckbox: StencilReactComponent<CCheckboxElement, CCheckboxEvents>
     elementClass: CCheckboxElement,
     // @ts-ignore - React type of Stencil Output Target may differ from the React version used in the Nuxt.js project, this can be ignored.
     react: React,
-    events: { onChangeValue: 'change-value' } as CCheckboxEvents,
+    events: { onChangeValue: 'changeValue' } as CCheckboxEvents,
     defineCustomElement: defineCCheckbox
 });
 
@@ -301,7 +301,7 @@ export const CInput: StencilReactComponent<CInputElement, CInputEvents> = /*@__P
     // @ts-ignore - React type of Stencil Output Target may differ from the React version used in the Nuxt.js project, this can be ignored.
     react: React,
     events: {
-        onChangeValue: 'change-value',
+        onChangeValue: 'changeValue',
         onItemClick: 'itemClick',
         onDropdownClose: 'dropdownClose'
     } as CInputEvents,
@@ -493,7 +493,7 @@ export const CModal: StencilReactComponent<CModalElement, CModalEvents> = /*@__P
     elementClass: CModalElement,
     // @ts-ignore - React type of Stencil Output Target may differ from the React version used in the Nuxt.js project, this can be ignored.
     react: React,
-    events: { onChangeValue: 'change-value' } as CModalEvents,
+    events: { onChangeValue: 'changeValue' } as CModalEvents,
     defineCustomElement: defineCModal
 });
 
@@ -541,7 +541,7 @@ export const COtpInput: StencilReactComponent<COtpInputElement, COtpInputEvents>
     // @ts-ignore - React type of Stencil Output Target may differ from the React version used in the Nuxt.js project, this can be ignored.
     react: React,
     events: {
-        onChangeValue: 'change-value',
+        onChangeValue: 'changeValue',
         onCompletion: 'completion'
     } as COtpInputEvents,
     defineCustomElement: defineCOtpInput
@@ -565,7 +565,7 @@ export const CPagination: StencilReactComponent<CPaginationElement, CPaginationE
     elementClass: CPaginationElement,
     // @ts-ignore - React type of Stencil Output Target may differ from the React version used in the Nuxt.js project, this can be ignored.
     react: React,
-    events: { onChangeValue: 'change-value' } as CPaginationEvents,
+    events: { onChangeValue: 'changeValue' } as CPaginationEvents,
     defineCustomElement: defineCPagination
 });
 
@@ -598,7 +598,7 @@ export const CRadioGroup: StencilReactComponent<CRadioGroupElement, CRadioGroupE
     elementClass: CRadioGroupElement,
     // @ts-ignore - React type of Stencil Output Target may differ from the React version used in the Nuxt.js project, this can be ignored.
     react: React,
-    events: { onChangeValue: 'change-value' } as CRadioGroupEvents,
+    events: { onChangeValue: 'changeValue' } as CRadioGroupEvents,
     defineCustomElement: defineCRadioGroup
 });
 
@@ -631,7 +631,7 @@ export const CSelect: StencilReactComponent<CSelectElement, CSelectEvents> = /*@
     elementClass: CSelectElement,
     // @ts-ignore - React type of Stencil Output Target may differ from the React version used in the Nuxt.js project, this can be ignored.
     react: React,
-    events: { onChangeValue: 'change-value' } as CSelectEvents,
+    events: { onChangeValue: 'changeValue' } as CSelectEvents,
     defineCustomElement: defineCSelect
 });
 
@@ -675,7 +675,7 @@ export const CSlider: StencilReactComponent<CSliderElement, CSliderEvents> = /*@
     elementClass: CSliderElement,
     // @ts-ignore - React type of Stencil Output Target may differ from the React version used in the Nuxt.js project, this can be ignored.
     react: React,
-    events: { onChangeValue: 'change-value' } as CSliderEvents,
+    events: { onChangeValue: 'changeValue' } as CSliderEvents,
     defineCustomElement: defineCSlider
 });
 
@@ -730,7 +730,7 @@ export const CSteps: StencilReactComponent<CStepsElement, CStepsEvents> = /*@__P
     elementClass: CStepsElement,
     // @ts-ignore - React type of Stencil Output Target may differ from the React version used in the Nuxt.js project, this can be ignored.
     react: React,
-    events: { onChangeValue: 'change-value' } as CStepsEvents,
+    events: { onChangeValue: 'changeValue' } as CStepsEvents,
     defineCustomElement: defineCSteps
 });
 
@@ -752,7 +752,7 @@ export const CSwiper: StencilReactComponent<CSwiperElement, CSwiperEvents> = /*@
     elementClass: CSwiperElement,
     // @ts-ignore - React type of Stencil Output Target may differ from the React version used in the Nuxt.js project, this can be ignored.
     react: React,
-    events: { onChangeValue: 'change-value' } as CSwiperEvents,
+    events: { onChangeValue: 'changeValue' } as CSwiperEvents,
     defineCustomElement: defineCSwiper
 });
 
@@ -774,7 +774,7 @@ export const CSwitch: StencilReactComponent<CSwitchElement, CSwitchEvents> = /*@
     elementClass: CSwitchElement,
     // @ts-ignore - React type of Stencil Output Target may differ from the React version used in the Nuxt.js project, this can be ignored.
     react: React,
-    events: { onChangeValue: 'change-value' } as CSwitchEvents,
+    events: { onChangeValue: 'changeValue' } as CSwitchEvents,
     defineCustomElement: defineCSwitch
 });
 
@@ -805,7 +805,7 @@ export const CTabButtons: StencilReactComponent<CTabButtonsElement, CTabButtonsE
     elementClass: CTabButtonsElement,
     // @ts-ignore - React type of Stencil Output Target may differ from the React version used in the Nuxt.js project, this can be ignored.
     react: React,
-    events: { onChangeValue: 'change-value' } as CTabButtonsEvents,
+    events: { onChangeValue: 'changeValue' } as CTabButtonsEvents,
     defineCustomElement: defineCTabButtons
 });
 
@@ -849,7 +849,7 @@ export const CTabs: StencilReactComponent<CTabsElement, CTabsEvents> = /*@__PURE
     elementClass: CTabsElement,
     // @ts-ignore - React type of Stencil Output Target may differ from the React version used in the Nuxt.js project, this can be ignored.
     react: React,
-    events: { onChangeValue: 'change-value' } as CTabsEvents,
+    events: { onChangeValue: 'changeValue' } as CTabsEvents,
     defineCustomElement: defineCTabs
 });
 
@@ -882,7 +882,7 @@ export const CTextField: StencilReactComponent<CTextFieldElement, CTextFieldEven
     elementClass: CTextFieldElement,
     // @ts-ignore - React type of Stencil Output Target may differ from the React version used in the Nuxt.js project, this can be ignored.
     react: React,
-    events: { onChangeValue: 'change-value' } as CTextFieldEvents,
+    events: { onChangeValue: 'changeValue' } as CTextFieldEvents,
     defineCustomElement: defineCTextField
 });
 

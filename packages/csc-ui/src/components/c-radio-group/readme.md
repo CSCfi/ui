@@ -26,9 +26,9 @@
 
 ## Events
 
-| Event          | Description                     | Type               |
-| -------------- | ------------------------------- | ------------------ |
-| `change-value` | Emit value change to the parent | `CustomEvent<any>` |
+| Event         | Description                     | Type               |
+| ------------- | ------------------------------- | ------------------ |
+| `changeValue` | Emit value change to the parent | `CustomEvent<any>` |
 
 
 ## Slots

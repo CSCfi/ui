@@ -76,7 +76,7 @@ export class CSwitch {
   /**
    * Emit inner value change to parent
    */
-  @Event({ bubbles: false, eventName: 'change-value' })
+  @Event({ bubbles: false })
   changeValue: EventEmitter;
 
   componentWillLoad() {

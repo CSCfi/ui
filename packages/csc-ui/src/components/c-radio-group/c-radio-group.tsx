@@ -91,7 +91,7 @@ export class CRadioGroup {
   /**
    * Emit value change to the parent
    */
-  @Event({ bubbles: false, eventName: 'change-value' })
+  @Event({ bubbles: false })
   changeValue: EventEmitter;
 
   @Element() el: HTMLCRadioGroupElement;

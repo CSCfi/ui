@@ -1984,7 +1984,7 @@ export interface CToastCustomEvent<T> extends CustomEvent<T> {
 }
 declare global {
     interface HTMLCAccordionElementEventMap {
-        "change-value": number | string;
+        "changeValue": number | string;
     }
     /**
      * @group Content Selectors
@@ -2034,7 +2034,7 @@ declare global {
     };
     interface HTMLCAutocompleteElementEventMap {
         "changeQuery": any;
-        "change-value": any;
+        "changeValue": any;
     }
     /**
      * @group Form
@@ -2123,7 +2123,7 @@ declare global {
         new (): HTMLCCardTitleElement;
     };
     interface HTMLCCheckboxElementEventMap {
-        "change-value": any;
+        "changeValue": any;
     }
     /**
      * @group Form
@@ -2211,7 +2211,7 @@ declare global {
         new (): HTMLCIconButtonElement;
     };
     interface HTMLCInputElementEventMap {
-        "change-value": any;
+        "changeValue": any;
         "itemClick": any;
         "dropdownClose": any;
     }
@@ -2384,7 +2384,7 @@ declare global {
         new (): HTMLCMessageElement;
     };
     interface HTMLCModalElementEventMap {
-        "change-value": boolean;
+        "changeValue": boolean;
     }
     /**
      * @group Popups
@@ -2428,7 +2428,7 @@ declare global {
         new (): HTMLCOptionValueElement;
     };
     interface HTMLCOtpInputElementEventMap {
-        "change-value": string;
+        "changeValue": string;
         "completion": string;
     }
     /**
@@ -2458,7 +2458,7 @@ declare global {
         new (): HTMLCPageElement;
     };
     interface HTMLCPaginationElementEventMap {
-        "change-value": CPaginationOptions;
+        "changeValue": CPaginationOptions;
     }
     /**
      * @group Navigation
@@ -2496,7 +2496,7 @@ declare global {
         new (): HTMLCRadioElement;
     };
     interface HTMLCRadioGroupElementEventMap {
-        "change-value": any;
+        "changeValue": any;
     }
     /**
      * @group Form
@@ -2535,7 +2535,7 @@ declare global {
         new (): HTMLCRowElement;
     };
     interface HTMLCSelectElementEventMap {
-        "change-value": any;
+        "changeValue": any;
     }
     /**
      * @group Form
@@ -2593,7 +2593,7 @@ declare global {
         new (): HTMLCSideNavigationTitleElement;
     };
     interface HTMLCSliderElementEventMap {
-        "change-value": any;
+        "changeValue": any;
     }
     /**
      * @group Form
@@ -2651,7 +2651,7 @@ declare global {
         new (): HTMLCStepElement;
     };
     interface HTMLCStepsElementEventMap {
-        "change-value": number | string;
+        "changeValue": number | string;
     }
     /**
      * @group Indicators
@@ -2680,7 +2680,7 @@ declare global {
         new (): HTMLCSubNavigationItemElement;
     };
     interface HTMLCSwiperElementEventMap {
-        "change-value": number | string;
+        "changeValue": number | string;
     }
     /**
      * @group Content Selectors
@@ -2720,7 +2720,7 @@ declare global {
         new (): HTMLCSwiperTabElement;
     };
     interface HTMLCSwitchElementEventMap {
-        "change-value": any;
+        "changeValue": any;
     }
     /**
      * @group Form
@@ -2765,7 +2765,7 @@ declare global {
         new (): HTMLCTabElement;
     };
     interface HTMLCTabButtonsElementEventMap {
-        "change-value": number | string;
+        "changeValue": number | string;
     }
     /**
      * @group Content Selectors
@@ -2823,7 +2823,7 @@ declare global {
         new (): HTMLCTableElement;
     };
     interface HTMLCTabsElementEventMap {
-        "change-value": any;
+        "changeValue": any;
     }
     /**
      * @group Content Selectors
@@ -2872,7 +2872,7 @@ declare global {
         new (): HTMLCTagsElement;
     };
     interface HTMLCTextFieldElementEventMap {
-        "change-value": any;
+        "changeValue": any;
     }
     /**
      * @group Form
@@ -3018,7 +3018,7 @@ declare namespace LocalJSX {
         /**
           * Emit changes to the parent
          */
-        "onChange-value"?: (event: CAccordionCustomEvent<number | string>) => void;
+        "onChangeValue"?: (event: CAccordionCustomEvent<number | string>) => void;
         /**
           * Show an outline around expanded items
          */
@@ -3122,13 +3122,13 @@ declare namespace LocalJSX {
          */
         "noMatchingItemsMessage"?: string;
         /**
-          * Triggered when option is selected
-         */
-        "onChange-value"?: (event: CAutocompleteCustomEvent<any>) => void;
-        /**
           * Triggered when text is typed
          */
         "onChangeQuery"?: (event: CAutocompleteCustomEvent<any>) => void;
+        /**
+          * Triggered when option is selected
+         */
+        "onChangeValue"?: (event: CAutocompleteCustomEvent<any>) => void;
         /**
           * Placeholder text
          */
@@ -3343,7 +3343,7 @@ declare namespace LocalJSX {
         /**
           * Triggered when element is checked or unchecked
          */
-        "onChange-value"?: (event: CCheckboxCustomEvent<any>) => void;
+        "onChangeValue"?: (event: CCheckboxCustomEvent<any>) => void;
         /**
           * Set as required
          */
@@ -3628,7 +3628,7 @@ declare namespace LocalJSX {
         /**
           * Emit changes to the parent
          */
-        "onChange-value"?: (event: CInputCustomEvent<any>) => void;
+        "onChangeValue"?: (event: CInputCustomEvent<any>) => void;
         /**
           * Emit close to the parent
           * @private
@@ -3994,7 +3994,7 @@ declare namespace LocalJSX {
         /**
           * Triggered when value is changed
          */
-        "onChange-value"?: (event: CModalCustomEvent<boolean>) => void;
+        "onChangeValue"?: (event: CModalCustomEvent<boolean>) => void;
         /**
           * Is the modal visible
          */
@@ -4059,7 +4059,7 @@ declare namespace LocalJSX {
         /**
           * Run on input - returns the current value
          */
-        "onChange-value"?: (event: COtpInputCustomEvent<string>) => void;
+        "onChangeValue"?: (event: COtpInputCustomEvent<string>) => void;
         /**
           * Run on completion - returns the current value
          */
@@ -4101,7 +4101,7 @@ declare namespace LocalJSX {
         /**
           * Triggered when values are changed
          */
-        "onChange-value"?: (event: CPaginationCustomEvent<CPaginationOptions>) => void;
+        "onChangeValue"?: (event: CPaginationCustomEvent<CPaginationOptions>) => void;
         /**
           * Hide page number buttons
          */
@@ -4196,7 +4196,7 @@ declare namespace LocalJSX {
         /**
           * Emit value change to the parent
          */
-        "onChange-value"?: (event: CRadioGroupCustomEvent<any>) => void;
+        "onChangeValue"?: (event: CRadioGroupCustomEvent<any>) => void;
         /**
           * Set as required
          */
@@ -4292,7 +4292,7 @@ declare namespace LocalJSX {
         /**
           * Triggered when option is selected
          */
-        "onChange-value"?: (event: CSelectCustomEvent<any>) => void;
+        "onChangeValue"?: (event: CSelectCustomEvent<any>) => void;
         /**
           * display the option as selection (works only when c-option elements are used)
          */
@@ -4425,7 +4425,7 @@ declare namespace LocalJSX {
         /**
           * Emit value changes to parent
          */
-        "onChange-value"?: (event: CSliderCustomEvent<any>) => void;
+        "onChangeValue"?: (event: CSliderCustomEvent<any>) => void;
         /**
           * Segment count
          */
@@ -4502,7 +4502,7 @@ declare namespace LocalJSX {
         /**
           * Emit changes to the parent
          */
-        "onChange-value"?: (event: CStepsCustomEvent<number | string>) => void;
+        "onChangeValue"?: (event: CStepsCustomEvent<number | string>) => void;
         /**
           * Value of the accordion (current step number)
          */
@@ -4544,7 +4544,7 @@ declare namespace LocalJSX {
         /**
           * Emit value change to the parent
          */
-        "onChange-value"?: (event: CSwiperCustomEvent<number | string>) => void;
+        "onChangeValue"?: (event: CSwiperCustomEvent<number | string>) => void;
         /**
           * Value of the swiper
          */
@@ -4613,7 +4613,7 @@ declare namespace LocalJSX {
         /**
           * Emit inner value change to parent
          */
-        "onChange-value"?: (event: CSwitchCustomEvent<any>) => void;
+        "onChangeValue"?: (event: CSwitchCustomEvent<any>) => void;
         /**
           * Set as required
          */
@@ -4687,7 +4687,7 @@ declare namespace LocalJSX {
         /**
           * Emit changes to the parent
          */
-        "onChange-value"?: (event: CTabButtonsCustomEvent<number | string>) => void;
+        "onChangeValue"?: (event: CTabButtonsCustomEvent<number | string>) => void;
         /**
           * Size of the buttons
          */
@@ -4770,7 +4770,7 @@ declare namespace LocalJSX {
         /**
           * Emit changes to the parent
          */
-        "onChange-value"?: (event: CTabsCustomEvent<any>) => void;
+        "onChangeValue"?: (event: CTabsCustomEvent<any>) => void;
         /**
           * Currently active tab
          */
@@ -4881,7 +4881,7 @@ declare namespace LocalJSX {
         /**
           * Emit changes to the parent
          */
-        "onChange-value"?: (event: CTextFieldCustomEvent<any>) => void;
+        "onChangeValue"?: (event: CTextFieldCustomEvent<any>) => void;
         /**
           * Placeholder of the input
          */

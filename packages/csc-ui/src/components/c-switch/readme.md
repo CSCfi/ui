@@ -20,9 +20,9 @@
 
 ## Events
 
-| Event          | Description                       | Type               |
-| -------------- | --------------------------------- | ------------------ |
-| `change-value` | Emit inner value change to parent | `CustomEvent<any>` |
+| Event         | Description                       | Type               |
+| ------------- | --------------------------------- | ------------------ |
+| `changeValue` | Emit inner value change to parent | `CustomEvent<any>` |
 
 
 ## Slots

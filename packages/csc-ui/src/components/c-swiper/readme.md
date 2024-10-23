@@ -15,9 +15,9 @@
 
 ## Events
 
-| Event          | Description                     | Type                            |
-| -------------- | ------------------------------- | ------------------------------- |
-| `change-value` | Emit value change to the parent | `CustomEvent<number \| string>` |
+| Event         | Description                     | Type                            |
+| ------------- | ------------------------------- | ------------------------------- |
+| `changeValue` | Emit value change to the parent | `CustomEvent<number \| string>` |
 
 
 ## Slots

@@ -146,7 +146,7 @@ export class CAutocomplete {
   /**
    * Triggered when option is selected
    */
-  @Event({ bubbles: false, eventName: 'change-value' })
+  @Event({ bubbles: false })
   changeValue: EventEmitter;
 
   /**

@@ -51,7 +51,7 @@ export class CModal {
   /**
    * Triggered when value is changed
    */
-  @Event({ bubbles: false, eventName: 'change-value' })
+  @Event({ bubbles: false })
   changeValue: EventEmitter<boolean>;
 
   @State() innerValue = false;

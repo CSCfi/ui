@@ -1059,7 +1059,7 @@ export class CDataTable {
             <c-checkbox
               value={isSelected}
               hide-details
-              onChange-value={() => this._onSelection(selectionValue)}
+              onChangeValue={() => this._onSelection(selectionValue)}
             ></c-checkbox>
           </div>
         </td>
@@ -1172,7 +1172,7 @@ export class CDataTable {
                   {...this.footerOptions}
                   value={this.pagination}
                   simple={this._isPaginationSimple}
-                  onChange-value={(e) => this._onPaginationChange(e)}
+                  onChangeValue={(e) => this._onPaginationChange(e)}
                 ></c-pagination>
               </div>
             </td>

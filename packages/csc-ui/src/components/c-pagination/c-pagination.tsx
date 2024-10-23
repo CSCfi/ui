@@ -56,7 +56,7 @@ export class CPagination {
   /**
    * Triggered when values are changed
    */
-  @Event({ bubbles: false, eventName: 'change-value' })
+  @Event({ bubbles: false })
   changeValue: EventEmitter<CPaginationOptions>;
 
   /**

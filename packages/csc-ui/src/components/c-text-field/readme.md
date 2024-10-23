@@ -38,9 +38,9 @@
 
 ## Events
 
-| Event          | Description                | Type               |
-| -------------- | -------------------------- | ------------------ |
-| `change-value` | Emit changes to the parent | `CustomEvent<any>` |
+| Event         | Description                | Type               |
+| ------------- | -------------------------- | ------------------ |
+| `changeValue` | Emit changes to the parent | `CustomEvent<any>` |
 
 
 ## Slots
