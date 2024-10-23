@@ -62,7 +62,8 @@ export class COtpInput {
   /**
    * Run on input - returns the current value
    */
-  @Event({ bubbles: false }) changeValue: EventEmitter<string>;
+  @Event({ bubbles: false, eventName: 'change-value' })
+  changeValue: EventEmitter<string>;
 
   /**
    * Run on completion - returns the current value

@@ -1,21 +1,17 @@
 {
   "author": "My CSC Team <suiteamsui@gmail.com>",
   "dependencies": {
-    "@cscfi/csc-ui": "*"
+    "@cscfi/csc-ui": "*",
+    "@stencil/react-output-target": "^0.7.1"
   },
-  "description": "CSC UI components for Vue",
+  "description": "CSC UI components for React",
   "devDependencies": {
-    "@stencil/vue-output-target": "^0.9.0",
-    "vue": "^3.5.12"
-  },
-  "directories": {
-    "lib": "lib",
-    "test": "__tests__"
+    "typescript": "^5.5.4"
   },
   "exports": {
     ".": {
       "import": "./dist/index.js",
-      "types": "./dist/index.d.ts"
+      "types": "./dist/types/index.d.ts"
     },
     "./css/*": "./dist/styles/css/*",
     "./scss/*": "./dist/styles/css/*",
@@ -28,15 +24,16 @@
   "homepage": "",
   "license": "MIT",
   "main": "dist/index.js",
-  "name": "@cscfi/csc-ui-for-vue",
+  "module": "dist/index.js",
+  "name": "@cscfi/csc-ui-react",
   "publishConfig": {
     "access": "public"
   },
   "scripts": {
     "build": "npm run tsc",
-    "test": "echo \"Error: run tests from root\" && exit 1",
+    "test": "node ./__tests__/react-library.test.js",
     "tsc": "tsc -p . --outDir ./dist"
   },
-  "types": "dist/index.d.ts",
+  "types": "dist/types/index.d.ts",
   "version": "0.0.1"
 }

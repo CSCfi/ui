@@ -1,8 +1,7 @@
 const fs = require('fs');
 
 const dirs = [
-  '../csc-ui-for-react/dist/styles',
-  '../csc-ui-for-vue/dist/styles',
+  '../csc-ui-react/dist/styles',
 ];
 
 for (const dir of dirs) {

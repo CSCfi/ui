@@ -134,7 +134,8 @@ export class CSelect {
   /**
    * Triggered when option is selected
    */
-  @Event({ bubbles: false }) changeValue: EventEmitter;
+  @Event({ bubbles: false, eventName: 'change-value' })
+  changeValue: EventEmitter;
 
   @State() optionElements: NodeListOf<HTMLCOptionElement>;
 

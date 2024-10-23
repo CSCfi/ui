@@ -146,7 +146,8 @@ export class CAutocomplete {
   /**
    * Triggered when option is selected
    */
-  @Event({ bubbles: false }) changeValue: EventEmitter;
+  @Event({ bubbles: false, eventName: 'change-value' })
+  changeValue: EventEmitter;
 
   /**
    * Items per page before adding scroll

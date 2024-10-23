@@ -27,9 +27,9 @@
 
 ## Events
 
-| Event         | Description                                    | Type               |
-| ------------- | ---------------------------------------------- | ------------------ |
-| `changeValue` | Triggered when element is checked or unchecked | `CustomEvent<any>` |
+| Event          | Description                                    | Type               |
+| -------------- | ---------------------------------------------- | ------------------ |
+| `change-value` | Triggered when element is checked or unchecked | `CustomEvent<any>` |
 
 
 ## Slots

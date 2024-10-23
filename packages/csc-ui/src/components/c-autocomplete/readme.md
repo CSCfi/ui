@@ -33,10 +33,10 @@
 
 ## Events
 
-| Event         | Description                       | Type               |
-| ------------- | --------------------------------- | ------------------ |
-| `changeQuery` | Triggered when text is typed      | `CustomEvent<any>` |
-| `changeValue` | Triggered when option is selected | `CustomEvent<any>` |
+| Event          | Description                       | Type               |
+| -------------- | --------------------------------- | ------------------ |
+| `change-value` | Triggered when option is selected | `CustomEvent<any>` |
+| `changeQuery`  | Triggered when text is typed      | `CustomEvent<any>` |
 
 
 ## Methods

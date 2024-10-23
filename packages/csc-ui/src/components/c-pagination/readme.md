@@ -18,9 +18,9 @@
 
 ## Events
 
-| Event         | Description                       | Type                                                                                                                                                                                                                           |
-| ------------- | --------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `changeValue` | Triggered when values are changed | `CustomEvent<{ itemCount: number; currentPage?: number; totalVisible?: number; itemsPerPage?: number; startFrom?: number; endTo?: number; locale?: string; textOverrides?: CPaginationTextOverrides; pageSizes?: number[]; }>` |
+| Event          | Description                       | Type                                                                                                                                                                                                                           |
+| -------------- | --------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `change-value` | Triggered when values are changed | `CustomEvent<{ itemCount: number; currentPage?: number; totalVisible?: number; itemsPerPage?: number; startFrom?: number; endTo?: number; locale?: string; textOverrides?: CPaginationTextOverrides; pageSizes?: number[]; }>` |
 
 
 ## CSS Custom Properties

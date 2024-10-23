@@ -102,7 +102,8 @@ export class CCheckbox {
   /**
    * Triggered when element is checked or unchecked
    */
-  @Event({ bubbles: false }) changeValue: EventEmitter;
+  @Event({ bubbles: false, eventName: 'change-value' })
+  changeValue: EventEmitter;
 
   private _container: HTMLDivElement;
 

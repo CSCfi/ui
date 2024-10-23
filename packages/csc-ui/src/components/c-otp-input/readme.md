@@ -20,10 +20,10 @@
 
 ## Events
 
-| Event         | Description                                   | Type                  |
-| ------------- | --------------------------------------------- | --------------------- |
-| `changeValue` | Run on input - returns the current value      | `CustomEvent<string>` |
-| `completion`  | Run on completion - returns the current value | `CustomEvent<string>` |
+| Event          | Description                                   | Type                  |
+| -------------- | --------------------------------------------- | --------------------- |
+| `change-value` | Run on input - returns the current value      | `CustomEvent<string>` |
+| `completion`   | Run on completion - returns the current value | `CustomEvent<string>` |
 
 
 ## Methods

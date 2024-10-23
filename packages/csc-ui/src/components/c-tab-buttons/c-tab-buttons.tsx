@@ -49,7 +49,8 @@ export class CTabButtons {
   /**
    * Emit changes to the parent
    */
-  @Event({ bubbles: false }) changeValue: EventEmitter<number | string>;
+  @Event({ bubbles: false, eventName: 'change-value' })
+  changeValue: EventEmitter<number | string>;
 
   @Element() el: HTMLCTabButtonsElement;
 

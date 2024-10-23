@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import './App.css';
-import { CButton, COption, CSelect, CSwitch, CCheckbox, CCard, CCardTitle, CCardContent, CCardActions, CSlider, CTag } from '@cscfi/csc-ui-for-react';
+import { CButton, COption, CSelect, CSwitch, CCheckbox, CCard, CCardTitle, CCardContent, CCardActions, CSlider, CTag } from '@cscfi/csc-ui-react';
 import { CSelectItem } from '../../csc-ui/dist/types/types';
 
 function App() {
@@ -8,7 +8,7 @@ function App() {
   const [isSelected, setIsSelected] = useState(false);
   const [sliderValue, setSliderValue] = useState(25);
 
-  const [user, setUser] = useState<CSelectItem>({ name: 'Julle', value: 'julle' });
+  const [user, setUser] = useState<CSelectItem>({ name: 'Leah', value: 'leah' });
 
   return (
     <>
@@ -16,11 +16,11 @@ function App() {
         <pre>Current user: name - {user.name}, value - {user.value}</pre>
         <pre>Is selected: {isSelected ? 'True' : 'False'}</pre>
 
-        <CCheckbox value={isSelected} onChangeValue={(event: CustomEvent<boolean>) => setIsSelected(event.detail)}>is aappina</CCheckbox>
+        <CCheckbox value={isSelected} onChangeValue={(event: CustomEvent<boolean>) => setIsSelected(event.detail)}>is selected</CCheckbox>
 
-        <CSwitch value={isSelected} onChangeValue={(event: CustomEvent<boolean>) => setIsSelected(event.detail)}>is aappina</CSwitch>
+        <CSwitch value={isSelected} onChangeValue={(event: CustomEvent<boolean>) => setIsSelected(event.detail)}>is selected</CSwitch>
 
-        <CButton onClick={() => setUser({ name: 'Jason', value: 'jason' })}>{user.name}</CButton>
+        <CButton onClick={() => setUser({ name: 'Mary', value: 'mary' })}>{user.name}</CButton>
 
         <CSelect label="User" value={user} onChangeValue={(event: CustomEvent<CSelectItem>) => setUser(event.detail)} return-object>
           <COption name="Jones" value="jones">Jones</COption>

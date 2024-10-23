@@ -1,6 +1,6 @@
 {
   "dependencies": {
-    "@cscfi/csc-ui-for-react": "*",
+    "@cscfi/csc-ui-react": "*",
     "react": "^18.3.1",
     "react-dom": "^18.3.1"
   },

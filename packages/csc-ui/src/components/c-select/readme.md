@@ -33,9 +33,9 @@
 
 ## Events
 
-| Event         | Description                       | Type               |
-| ------------- | --------------------------------- | ------------------ |
-| `changeValue` | Triggered when option is selected | `CustomEvent<any>` |
+| Event          | Description                       | Type               |
+| -------------- | --------------------------------- | ------------------ |
+| `change-value` | Triggered when option is selected | `CustomEvent<any>` |
 
 
 ## Methods

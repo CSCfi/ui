@@ -27,9 +27,9 @@
 
 ## Events
 
-| Event         | Description                  | Type               |
-| ------------- | ---------------------------- | ------------------ |
-| `changeValue` | Emit value changes to parent | `CustomEvent<any>` |
+| Event          | Description                  | Type               |
+| -------------- | ---------------------------- | ------------------ |
+| `change-value` | Emit value changes to parent | `CustomEvent<any>` |
 
 
 ## CSS Custom Properties

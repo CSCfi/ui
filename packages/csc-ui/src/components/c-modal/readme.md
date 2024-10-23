@@ -18,9 +18,9 @@
 
 ## Events
 
-| Event         | Description                     | Type                   |
-| ------------- | ------------------------------- | ---------------------- |
-| `changeValue` | Triggered when value is changed | `CustomEvent<boolean>` |
+| Event          | Description                     | Type                   |
+| -------------- | ------------------------------- | ---------------------- |
+| `change-value` | Triggered when value is changed | `CustomEvent<boolean>` |
 
 
 ----------------------------------------------
