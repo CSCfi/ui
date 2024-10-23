@@ -8,19 +8,12 @@ export const config: Config = {
     {
       type: 'dist',
       esmLoaderPath: '../loader',
-      copy: [{ src: 'styles', dest: 'dist/', keepDirStructure: true }],
+      copy: [{ src: 'styles', dest: '../', keepDirStructure: true }],
     },
 
     {
       type: 'dist-custom-elements',
       dir: 'dist/components',
-      copy: [
-        {
-          src: 'styles',
-          dest: 'dist/components/',
-          keepDirStructure: true,
-        },
-      ],
       customElementsExportBehavior: 'single-export-module',
       externalRuntime: false,
     },

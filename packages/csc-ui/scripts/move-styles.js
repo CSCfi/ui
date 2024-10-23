@@ -9,7 +9,7 @@ for (const dir of dirs) {
     fs.mkdirSync(dir, { recursive: true });
   }
 
-  fs.cp('./dist/components/styles', dir, { recursive: true }, (err) => {
+  fs.cp('./dist/styles', dir, { recursive: true }, (err) => {
     if (err) {
       console.error(err);
     }
