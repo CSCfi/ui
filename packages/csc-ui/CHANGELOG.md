@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.2.6](https://github.com/CSCfi/ui/compare/v2.2.5...v2.2.6) (2024-10-23)
+
+
+### Bug Fixes
+
+* **c-checkbox:** Revert label vertical alignment fix ([3c961d5](https://github.com/CSCfi/ui/commit/3c961d579131d2dbafa82cf02bd422cec12060bf))
+
 ## [2.2.5](https://github.com/CSCfi/ui/compare/v2.2.4...v2.2.5) (2024-10-23)
 
 
