@@ -1,5 +1,13 @@
 # Changelog
 
+## [2.2.5](https://github.com/CSCfi/ui/compare/v2.2.4...v2.2.5) (2024-10-23)
+
+
+### Bug Fixes
+
+* **c-checkbox:** Fix the label vertical alignment ([fa62b97](https://github.com/CSCfi/ui/commit/fa62b972c72dc005af71dd128269e4ae020288b7))
+* **c-switch:** Fix an error where c-switch does not react to external model changes ([f94b7de](https://github.com/CSCfi/ui/commit/f94b7de2e16598d0435a4d74d897ba03cb0dcc10))
+
 ## [2.2.4](https://github.com/CSCfi/ui/compare/v2.2.3...v2.2.4) (2024-09-25)
 
 
