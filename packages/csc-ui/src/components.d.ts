@@ -568,15 +568,11 @@ export namespace Components {
         /**
           * Auto focus the input
          */
-        "autofocus": boolean;
+        "automaticFocus": boolean;
         /**
           * Disable the input
          */
         "disabled": boolean;
-        /**
-          * Render a hidden input outside the shadow dom
-         */
-        "form": boolean;
         /**
           * Hide the hint and error messages
          */
@@ -1337,7 +1333,7 @@ export namespace Components {
         /**
           * Aria label
          */
-        "ariaLabel": string;
+        "ariaLabelInternal": string;
         /**
           * Disable tooltip
          */
@@ -1729,10 +1725,6 @@ export namespace Components {
      */
     interface CTextField {
         /**
-          * HTML input autocapitalize
-         */
-        "autocapitalize": string;
-        /**
           * HTML input autocomplete
          */
         "autocomplete": string;
@@ -1741,9 +1733,13 @@ export namespace Components {
          */
         "autocorrect": string;
         /**
+          * HTML input autocapitalize
+         */
+        "automaticCapitalize": string;
+        /**
           * Auto focus the input
          */
-        "autofocus": boolean;
+        "automaticFocus": boolean;
         /**
           * Disable the input
          */
@@ -3576,15 +3572,11 @@ declare namespace LocalJSX {
         /**
           * Auto focus the input
          */
-        "autofocus"?: boolean;
+        "automaticFocus"?: boolean;
         /**
           * Disable the input
          */
         "disabled"?: boolean;
-        /**
-          * Render a hidden input outside the shadow dom
-         */
-        "form"?: boolean;
         /**
           * Hide the hint and error messages
          */
@@ -4389,7 +4381,7 @@ declare namespace LocalJSX {
         /**
           * Aria label
          */
-        "ariaLabel"?: string;
+        "ariaLabelInternal"?: string;
         /**
           * Disable tooltip
          */
@@ -4831,10 +4823,6 @@ declare namespace LocalJSX {
      */
     interface CTextField {
         /**
-          * HTML input autocapitalize
-         */
-        "autocapitalize"?: string;
-        /**
           * HTML input autocomplete
          */
         "autocomplete"?: string;
@@ -4843,9 +4831,13 @@ declare namespace LocalJSX {
          */
         "autocorrect"?: string;
         /**
+          * HTML input autocapitalize
+         */
+        "automaticCapitalize"?: string;
+        /**
           * Auto focus the input
          */
-        "autofocus"?: boolean;
+        "automaticFocus"?: boolean;
         /**
           * Disable the input
          */

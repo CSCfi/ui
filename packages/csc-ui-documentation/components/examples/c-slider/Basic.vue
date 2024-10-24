@@ -23,6 +23,7 @@
     <c-slider
       v-model="sliderValue"
       v-control
+      aria-label="Taunos slider"
       label="Monthly usage"
       class="flex-1"
       :labels="showLabels"
