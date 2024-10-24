@@ -31,18 +31,12 @@ export class CInput {
   /**
    * Auto focus the input
    */
-  // eslint-disable-next-line @stencil-community/reserved-member-names
-  @Prop() autofocus = false;
+  @Prop({ attribute: 'autofocus' }) automaticFocus = false;
 
   /**
    * Disable the input
    */
   @Prop() disabled = false;
-
-  /**
-   * Render a hidden input outside the shadow dom
-   */
-  @Prop() form = false;
 
   /**
    * Hide the hint and error messages
@@ -228,7 +222,7 @@ export class CInput {
   }
 
   componentDidLoad() {
-    if (this.autofocus) {
+    if (this.automaticFocus) {
       setTimeout(() => {
         this._onFocus(false);
       }, 500);

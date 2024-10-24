@@ -7,22 +7,22 @@
 
 ## Properties
 
-| Property         | Attribute         | Description         | Type               | Default     |
-| ---------------- | ----------------- | ------------------- | ------------------ | ----------- |
-| `ariaLabel`      | `aria-label`      | Aria label          | `string`           | `undefined` |
-| `disableTooltip` | `disable-tooltip` | Disable tooltip     | `boolean`          | `false`     |
-| `disabled`       | `disabled`        | Disable the slider  | `boolean`          | `false`     |
-| `hostId`         | `id`              | Id of the element   | `string`           | `undefined` |
-| `hostName`       | `name`            | Id of the element   | `string`           | `undefined` |
-| `label`          | `label`           | Label of the slider | `string`           | `undefined` |
-| `labels`         | `labels`          | Show tick labels    | `boolean`          | `false`     |
-| `max`            | `max`             | Max value           | `string`           | `'100'`     |
-| `min`            | `min`             | Min value           | `string`           | `'0'`       |
-| `segments`       | `segments`        | Segment count       | `string`           | `'10'`      |
-| `step`           | `step`            | Step                | `string`           | `'1'`       |
-| `ticks`          | `ticks`           | Thow ticks          | `boolean`          | `false`     |
-| `unit`           | `unit`            | Unit                | `string`           | `'%'`       |
-| `value`          | `value`           | Value               | `number \| string` | `'50'`      |
+| Property            | Attribute         | Description         | Type               | Default     |
+| ------------------- | ----------------- | ------------------- | ------------------ | ----------- |
+| `ariaLabelInternal` | `aria-label`      | Aria label          | `string`           | `undefined` |
+| `disableTooltip`    | `disable-tooltip` | Disable tooltip     | `boolean`          | `false`     |
+| `disabled`          | `disabled`        | Disable the slider  | `boolean`          | `false`     |
+| `hostId`            | `id`              | Id of the element   | `string`           | `undefined` |
+| `hostName`          | `name`            | Id of the element   | `string`           | `undefined` |
+| `label`             | `label`           | Label of the slider | `string`           | `undefined` |
+| `labels`            | `labels`          | Show tick labels    | `boolean`          | `false`     |
+| `max`               | `max`             | Max value           | `string`           | `'100'`     |
+| `min`               | `min`             | Min value           | `string`           | `'0'`       |
+| `segments`          | `segments`        | Segment count       | `string`           | `'10'`      |
+| `step`              | `step`            | Step                | `string`           | `'1'`       |
+| `ticks`             | `ticks`           | Thow ticks          | `boolean`          | `false`     |
+| `unit`              | `unit`            | Unit                | `string`           | `'%'`       |
+| `value`             | `value`           | Value               | `number \| string` | `'50'`      |
 
 
 ## Events

@@ -49,6 +49,16 @@
 
         <c-sub-navigation-item
           class="capitalize"
+          :active="route?.name === 'getting-started-react'"
+          @keyup.enter="navigateTo('/getting-started/react')"
+          @click="navigateTo('/getting-started/react')"
+        >
+          <c-icon :path="mdiReact" />
+          React
+        </c-sub-navigation-item>
+
+        <c-sub-navigation-item
+          class="capitalize"
           :active="route?.name === 'getting-started-vue3'"
           @keyup.enter="navigateTo('/getting-started/vue3')"
           @click="navigateTo('/getting-started/vue3')"
@@ -140,6 +150,7 @@ import {
   mdiLanguageTypescript,
   mdiMagnify,
   mdiPalette,
+  mdiReact,
   mdiVuejs,
 } from '@mdi/js';
 import { storeToRefs } from 'pinia';

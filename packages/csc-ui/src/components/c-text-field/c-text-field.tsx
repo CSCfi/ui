@@ -1,4 +1,3 @@
-/* eslint-disable @stencil-community/reserved-member-names */
 import {
   AttachInternals,
   Component,
@@ -30,12 +29,12 @@ export class CTextField {
   /**
    * Auto focus the input
    */
-  @Prop() autofocus = false;
+  @Prop({ attribute: 'autofocus' }) automaticFocus = false;
 
   /**
    * HTML input autocapitalize
    */
-  @Prop() autocapitalize = '';
+  @Prop({ attribute: 'autocapitalize' }) automaticCapitalize = '';
 
   /**
    * HTML input autocorrect
@@ -240,7 +239,9 @@ export class CTextField {
         max: this.max,
         step: this.step,
         ...(!!this.autocomplete && { autocomplete: this.autocomplete }),
-        ...(!!this.autocapitalize && { autocapitalize: this.autocapitalize }),
+        ...(!!this.automaticCapitalize && {
+          autocapitalize: this.automaticCapitalize,
+        }),
         ...(!!this.autocorrect && { autocorrect: this.autocorrect }),
       },
       textArea: {
@@ -324,7 +325,7 @@ export class CTextField {
     return (
       <Host>
         <c-input
-          autofocus={this.autofocus}
+          autofocus={this.automaticFocus}
           disabled={this.disabled}
           hide-details={this.hideDetails}
           hint={this.hint}

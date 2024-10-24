@@ -635,10 +635,6 @@
           "description": "Disable the input"
         },
         {
-          "name": "form",
-          "description": "Render a hidden input outside the shadow dom"
-        },
-        {
           "name": "hide-details",
           "description": "Hide the hint and error messages"
         },
@@ -2090,16 +2086,16 @@
       },
       "attributes": [
         {
-          "name": "autocapitalize",
-          "description": "HTML input autocapitalize"
-        },
-        {
           "name": "autocomplete",
           "description": "HTML input autocomplete"
         },
         {
           "name": "autocorrect",
           "description": "HTML input autocorrect"
+        },
+        {
+          "name": "autocapitalize",
+          "description": "HTML input autocapitalize"
         },
         {
           "name": "autofocus",
