@@ -52,7 +52,7 @@
   "exports": {
     ".": {
       "import": "./dist/index.js",
-      "types": "./dist/types/components.d.ts"
+      "types": "./dist/types/additional-types.d.ts"
     },
     "./components/*": "./dist/components/*",
     "./css/*": "./dist/styles/css/*",
@@ -93,7 +93,7 @@
     "test.visual": "docker run -v $PWD:/e2e -w /e2e/ -it --rm -e --name csc-ui-playwright",
     "test.watch": "stencil test --spec --watchAll"
   },
-  "types": "dist/types/components.d.ts",
+  "types": "dist/types/additional-types.d.ts",
   "unpkg": "dist/csc-ui/csc-ui.esm.js",
   "version": "2.2.7"
 }
