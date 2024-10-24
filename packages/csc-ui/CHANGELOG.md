@@ -1,5 +1,13 @@
 # Changelog
 
+## [2.2.9](https://github.com/CSCfi/ui/compare/v2.2.8...v2.2.9) (2024-10-24)
+
+
+### Bug Fixes
+
+* **Attributes:** Override reserved attributes correctly ([6b60956](https://github.com/CSCfi/ui/commit/6b60956527ee1a6ca4b758d3d5ee3cf028824604))
+* **Attributes:** Override reserved attributes correctly ([3a42b4d](https://github.com/CSCfi/ui/commit/3a42b4d79bbb15e22bce648c2b664862d8810edf))
+
 ## [2.2.8](https://github.com/CSCfi/ui/compare/v2.2.7...v2.2.8) (2024-10-24)
 
 
