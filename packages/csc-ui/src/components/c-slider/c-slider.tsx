@@ -31,8 +31,7 @@ export class CSlider {
   /**
    * Aria label
    */
-  // eslint-disable-next-line @stencil-community/reserved-member-names
-  @Prop({ attribute: 'aria-label' }) ariaLabel: string;
+  @Prop({ attribute: 'aria-label' }) ariaLabelInternal: string;
 
   /**
    * Max value
@@ -176,7 +175,9 @@ export class CSlider {
     return (
       <Host class={classes} style={styles}>
         {!!this.label && (
-          <label class="c-slider__label">{!!this.label && this.label}</label>
+          <label class="c-slider__label">
+            {!!this.label && this.label} {this.ariaLabelInternal}
+          </label>
         )}
 
         <div class="c-slider__wrapper">
@@ -190,7 +191,7 @@ export class CSlider {
 
           <input
             ref={(el) => (this._inputElement = el)}
-            aria-label={this.ariaLabel || this.label}
+            aria-label={this.ariaLabelInternal || this.label}
             aria-valuenow={this.value}
             aria-valuetext={`${this.value}${this.unit}`}
             aria-valuemin={this.min}
