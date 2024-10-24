@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.2.8](https://github.com/CSCfi/ui/compare/v2.2.7...v2.2.8) (2024-10-24)
+
+
+### Bug Fixes
+
+* **Types:** Workaround to include missing types ([5b52cde](https://github.com/CSCfi/ui/commit/5b52cdef46f87744582cb9d19ea4d15722717530))
+
 ## [2.2.7](https://github.com/CSCfi/ui/compare/v2.2.6...v2.2.7) (2024-10-23)
 
 
