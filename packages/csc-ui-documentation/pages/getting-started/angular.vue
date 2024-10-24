@@ -8,9 +8,9 @@
       <p><strong>1. Install the required dependencies</strong></p>
 
       <code-block
-        code="npm install @cscfi/csc-ui csc-ui-accessor"
         theme="atom-one-dark"
-        lang="bash"
+        lang="html"
+        code="npm install @cscfi/csc-ui"
         code-block-radius="6px"
         highlightjs
         persistent-copy-button
@@ -19,49 +19,11 @@
       <p>
         This command will install the CSC Design system component library
         <code>@cscfi/csc-ui</code>
-        and the control value accessor
-        <code>csc-ui-accessor</code>
-        which allows the components to support 2-way model binding.
+        .
       </p>
-
-      <p class="mt-6">
-        <strong>
-          2. Add the following lines to
-          <code>main.ts</code>
-        </strong>
-      </p>
-
-      <code-block
-        :code="mainUsage"
-        theme="atom-one-dark"
-        lang="typescript"
-        code-block-radius="6px"
-        highlightjs
-        persistent-copy-button
-      />
-
-      <p class="mt-6">
-        <strong>
-          3. Configure
-          <code>AppModule</code>
-          to use the control value accessor and CUSTOM_ELEMENTS_SCHEMA.
-        </strong>
-      </p>
-
-      <code-block
-        :code="accessorUsage"
-        theme="atom-one-dark"
-        lang="typescript"
-        code-block-radius="6px"
-        highlightjs
-        persistent-copy-button
-      />
 
       <p>
-        <strong>
-          4. Add the following line to
-          <code>styles.scss</code>
-        </strong>
+        <strong>2. Add the following line to your css file.</strong>
       </p>
 
       <code-block
@@ -74,37 +36,23 @@
       />
 
       <p>
-        Now you should be able to use the CSC Design system components in your
-        project. Please note that the components require the control value
-        accessor
-        <code>cControl</code>
-        as an additional attribute to enable 2-way binding with
-        <code>[(ngModel)]</code>
-        or
-        <strong>Angular reactive forms</strong>
-        .
+        <strong>Working example with 2-way binding</strong>
       </p>
+
+      <div id="angular-example" />
     </c-card-content>
   </c-card>
 </template>
 
 <script setup lang="ts">
-const mainUsage = `import { applyPolyfills, defineCustomElements } from '@cscfi/csc-ui/loader';
+import sdk from '@stackblitz/sdk';
 
-// ...
-
-applyPolyfills().then(() => {
-  defineCustomElements(window);
+onMounted(() => {
+  sdk.embedProjectId('angular-example', 'stackblitz-starters-guwpru', {
+    forceEmbedLayout: true,
+    openFile: 'src/main.ts',
+    height: '1000px',
+    view: 'preview',
+  });
 });
-`;
-
-const accessorUsage = `import { NgModule, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
-import { CscUiAccessorModule } from 'csc-ui-accessor';
-
-@NgModule({
-  imports: [CscUiAccessorModule],
-  schemas: [CUSTOM_ELEMENTS_SCHEMA],
-})
-export class AppModule { }
-`;
 </script>
