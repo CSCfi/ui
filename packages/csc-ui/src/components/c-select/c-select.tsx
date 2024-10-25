@@ -246,14 +246,14 @@ export class CSelect {
 
     if (event.key === 'Escape') {
       this._preventDialogOpen = true;
-      this._dropdownElement.close();
+      this._dropdownElement?.close();
       this._inputElement.focus();
 
       return;
     }
 
     if (event.key === 'Tab') {
-      this._dropdownElement.close();
+      this._dropdownElement?.close();
     }
 
     if (event.key === 'ArrowDown') {
@@ -277,7 +277,7 @@ export class CSelect {
       event.preventDefault();
 
       if (this.currentIndex === 0) {
-        this._dropdownElement.close();
+        this._dropdownElement?.close();
         this._inputElement.focus();
       }
 
@@ -332,11 +332,22 @@ export class CSelect {
 
   @Listen('selectOption')
   onSelectOption(event: CustomEvent<{ name: string; value: string }>) {
+    if (
+      this.returnObject &&
+      (this.value as CSelectItem).value === event.detail.value
+    ) {
+      this._dropdownElement?.close();
+    }
+
+    if (!this.returnObject && this.value === event.detail.value) {
+      this._dropdownElement?.close();
+    }
+
     this._setValue(event.detail);
   }
 
   private _selectOption({ value, name }: { value: string; name: string }) {
-    this._dropdownElement.close();
+    this._dropdownElement?.close();
 
     const selection = this._setCurrentIndex({ name, value });
 
@@ -386,7 +397,7 @@ export class CSelect {
     event.stopPropagation();
 
     if (this.dropdownVisible) {
-      this._dropdownElement.close();
+      this._dropdownElement?.close();
 
       return;
     }
