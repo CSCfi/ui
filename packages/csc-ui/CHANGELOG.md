@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.2.10](https://github.com/CSCfi/ui/compare/v2.2.9...v2.2.10) (2024-10-25)
+
+
+### Bug Fixes
+
+* **c-select:** Close dropdown even if value does not change on selection ([9002f72](https://github.com/CSCfi/ui/commit/9002f72a9629f46fc49a3a978b4ba6d7292a8cdb))
+
 ## [2.2.9](https://github.com/CSCfi/ui/compare/v2.2.8...v2.2.9) (2024-10-24)
 
 
