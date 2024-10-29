@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.2.11](https://github.com/CSCfi/ui/compare/v2.2.10...v2.2.11) (2024-10-29)
+
+
+### Bug Fixes
+
+* **c-select:** Prevent errors in the log on component load ([59b84bb](https://github.com/CSCfi/ui/commit/59b84bb07e263e00e17a4596d0cbc57b82065bd3))
+
 ## [2.2.10](https://github.com/CSCfi/ui/compare/v2.2.9...v2.2.10) (2024-10-25)
 
 
