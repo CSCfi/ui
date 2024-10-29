@@ -358,11 +358,11 @@ export class CSelect {
       this._selectionElement.replaceChildren(clone);
     }
 
-    this._dropdownElement.updateList();
+    this._dropdownElement?.updateList();
 
     this._preventDialogOpen = true;
 
-    this._inputElement.focus();
+    this._inputElement?.focus();
   }
 
   private _setValue({ value, name }: { value: string; name: string }) {
