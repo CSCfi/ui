@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.2.12](https://github.com/CSCfi/ui/compare/v2.2.11...v2.2.12) (2024-11-06)
+
+
+### Bug Fixes
+
+* **theme:** Add :host to theme definition ([17c3361](https://github.com/CSCfi/ui/commit/17c3361a2dc90f670ef793630412ca43b5bfca06))
+
 ## [2.2.11](https://github.com/CSCfi/ui/compare/v2.2.10...v2.2.11) (2024-10-29)
 
 
