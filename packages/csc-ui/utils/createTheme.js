@@ -3,8 +3,8 @@ const getRgbValue = require('./getRgbValue');
 
 const formats = {
   css: {
-    fileStart: ':root {',
-    fileEnd: '\n};\n',
+    fileStart: ':root, :host {',
+    fileEnd: '\n}\n',
     prefix: '\n\t--c',
     postfix: '',
   },
