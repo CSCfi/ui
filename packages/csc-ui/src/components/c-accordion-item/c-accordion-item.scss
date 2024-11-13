@@ -18,7 +18,7 @@
 .c-accordion-item {
   $this: &;
 
-  --_c-accordion-item-indicator-rotation: rotate(0deg);
+  --_c-accordion-item-indicator-rotation: rotate(-90deg);
   --_c-accordion-item-content-height: 0;
   --_c-accordion-item-min-height: 46px;
   --_c-accordion-item-border-radius: 6px;
