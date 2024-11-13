@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.2.13](https://github.com/CSCfi/ui/compare/v2.2.12...v2.2.13) (2024-11-13)
+
+
+### Bug Fixes
+
+* **c-accordion:** Fix the status indicator direction on a closed item ([a020140](https://github.com/CSCfi/ui/commit/a02014062aee0843f0174a2fa43e12c172dc5550))
+
 ## [2.2.12](https://github.com/CSCfi/ui/compare/v2.2.11...v2.2.12) (2024-11-06)
 
 
