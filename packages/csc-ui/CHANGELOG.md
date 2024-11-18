@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.3.0](https://github.com/CSCfi/ui/compare/v2.2.13...v2.3.0) (2024-11-18)
+
+
+### Features
+
+* **c-switch:** Add loading state ([10fef56](https://github.com/CSCfi/ui/commit/10fef5683f897c402fb70921eaa215ae6c47ab52))
+
 ## [2.2.13](https://github.com/CSCfi/ui/compare/v2.2.12...v2.2.13) (2024-11-13)
 
 
