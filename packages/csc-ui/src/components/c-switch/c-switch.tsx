@@ -51,6 +51,11 @@ export class CSwitch {
   @Prop({ attribute: 'disabled' }) hostDisabled = false;
 
   /**
+   * Loading state
+   */
+  @Prop() loading = false;
+
+  /**
    * Id for the element
    */
   @Prop({ attribute: 'id' }) hostId: string;
@@ -115,6 +120,7 @@ export class CSwitch {
     const sliderClasses = {
       'c-switch__slider': true,
       'c-switch__slider--disabled': !!this.hostDisabled,
+      'c-switch__slider--loading': !!this.loading,
     };
 
     return (
@@ -129,7 +135,9 @@ export class CSwitch {
             checked={this.checked ? true : undefined}
             onChange={() => this._toggleState()}
           />
-          <span class={sliderClasses}></span>
+          <span class={sliderClasses}>
+            <c-spinner size={14} width={2} color="#fff"></c-spinner>
+          </span>
         </div>
         {this.hasLabel ? (
           <div class="c-switch__label">

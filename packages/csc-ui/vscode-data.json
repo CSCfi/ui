@@ -1831,6 +1831,10 @@
           "description": "Id for the element"
         },
         {
+          "name": "loading",
+          "description": "Loading state"
+        },
+        {
           "name": "required",
           "description": "Set as required"
         },

@@ -30,6 +30,7 @@
  - [c-icon-button](../c-icon-button)
  - [c-loader](../c-loader)
  - [c-select](../c-select)
+ - [c-switch](../c-switch)
 
 ### Graph
 ```mermaid
@@ -39,6 +40,7 @@ graph TD;
   c-icon-button --> c-spinner
   c-loader --> c-spinner
   c-select --> c-spinner
+  c-switch --> c-spinner
   style c-spinner fill:#f9f,stroke:#333,stroke-width:4px
 ```
 

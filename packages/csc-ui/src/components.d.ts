@@ -1538,6 +1538,10 @@ export namespace Components {
          */
         "hostId": string;
         /**
+          * Loading state
+         */
+        "loading": boolean;
+        /**
           * Set as required
          */
         "required": boolean;
@@ -4602,6 +4606,10 @@ declare namespace LocalJSX {
           * Id for the element
          */
         "hostId"?: string;
+        /**
+          * Loading state
+         */
+        "loading"?: boolean;
         /**
           * Emit inner value change to parent
          */

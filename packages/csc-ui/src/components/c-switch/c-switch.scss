@@ -67,6 +67,10 @@
     --c-error-600: var(--c-tertiary-400);
 
     color: var(--c-tertiary-500);
+
+    c-spinner {
+      --c-color: var(--_c-switch-handle-color-disabled) !important;
+    }
   }
 
   &--label {
@@ -107,6 +111,27 @@
       transition: 0.3s cubic-bezier(0.25, 0.8, 0.5, 1);
       width: var(--_c-switch-handle-size);
     }
+
+    c-spinner {
+      --c-color: var(--_c-switch-handle-color) !important;
+      pointer-events: none;
+      z-index: 2;
+      position: absolute;
+      left: 4px;
+      top: 0;
+      opacity: 0;
+      transition: all 0.3s cubic-bezier(0.25, 0.8, 0.5, 1);
+    }
+
+    &--loading {
+      c-spinner {
+        opacity: 1;
+      }
+
+      &::before {
+        opacity: 0;
+      }
+    }
   }
 
   input {
@@ -126,10 +151,21 @@
               transform: translateX(var(--_c-switch-handle-position-active));
             }
 
+            c-spinner {
+              --c-color: var(--_c-switch-handle-color-active) !important;
+
+              transform: translateX(var(--_c-switch-handle-position-active));
+            }
+
             &--disabled {
               --_c-switch-handle-color: var(--_c-switch-handle-color-active-disabled);
               --_c-switch-slider-color: var(--_c-switch-slider-color-active-disabled);
               --_c-switch-border-color: var(--_c-switch-border-color-active-disabled);
+
+              c-spinner {
+                --c-color: var(--_c-switch-handle-color-active-disabled) !important;
+
+              }
             }
           }
         }

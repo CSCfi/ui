@@ -13,6 +13,7 @@
 | `falseValue`   | `false-value` | The value when the checkbox is unchecked                                        | `boolean \| string` | `false`     |
 | `hostDisabled` | `disabled`    | Disable the switch                                                              | `boolean`           | `false`     |
 | `hostId`       | `id`          | Id for the element                                                              | `string`            | `undefined` |
+| `loading`      | `loading`     | Loading state                                                                   | `boolean`           | `false`     |
 | `required`     | `required`    | Set as required                                                                 | `boolean`           | `false`     |
 | `trueValue`    | `true-value`  | The value when the checkbox is checked                                          | `boolean \| string` | `true`      |
 | `value`        | `value`       | The input value - Only used when the checkbox participates in a native `<form>` | `boolean \| string` | `false`     |
@@ -49,6 +50,19 @@
 | `--c-switch-slider-color-active-disabled` | Disabled active background color |
 | `--c-switch-slider-color-disabled`        | Disabled background color        |
 
+
+## Dependencies
+
+### Depends on
+
+- [c-spinner](../c-spinner)
+
+### Graph
+```mermaid
+graph TD;
+  c-switch --> c-spinner
+  style c-switch fill:#f9f,stroke:#333,stroke-width:4px
+```
 
 ----------------------------------------------
 
