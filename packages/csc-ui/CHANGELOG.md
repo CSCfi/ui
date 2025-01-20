@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.3.1](https://github.com/CSCfi/ui/compare/v2.3.0...v2.3.1) (2025-01-20)
+
+
+### Bug Fixes
+
+* **c-checkbox:** Fix keyboard selection bug ([88b2ce7](https://github.com/CSCfi/ui/commit/88b2ce7b8efcaeb73148e25d380e94c5752d03a3))
+
 ## [2.3.0](https://github.com/CSCfi/ui/compare/v2.2.13...v2.3.0) (2024-11-18)
 
 
