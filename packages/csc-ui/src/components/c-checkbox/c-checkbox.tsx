@@ -2,7 +2,6 @@ import {
   Component,
   Host,
   h,
-  Listen,
   Prop,
   Event,
   EventEmitter,
@@ -122,14 +121,6 @@ export class CCheckbox {
     this.internals.setFormValue(
       this.checked ? this.trueValue.toString() : this.falseValue.toString(),
     );
-  }
-
-  @Listen('keydown', { passive: true })
-  handleKeyDown(event: KeyboardEvent) {
-    if (['Space'].includes(event.code)) {
-      event.preventDefault();
-      this._toggleState(event);
-    }
   }
 
   componentWillLoad() {
