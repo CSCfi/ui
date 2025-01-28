@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.3.2](https://github.com/CSCfi/ui/compare/v2.3.1...v2.3.2) (2025-01-28)
+
+
+### Bug Fixes
+
+* **c-data-table:** Fix horizontal scrolling with a trackpad ([678aae0](https://github.com/CSCfi/ui/commit/678aae09c5d7f24105a9db98a17499c1b0d9ad67))
+
 ## [2.3.1](https://github.com/CSCfi/ui/compare/v2.3.0...v2.3.1) (2025-01-20)
 
 
