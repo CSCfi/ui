@@ -11,6 +11,7 @@
       :data="data"
       :headers="headers"
       :single-selection="singleSelection"
+      horizontal-scrolling
       selectable
     />
   </component-example>
