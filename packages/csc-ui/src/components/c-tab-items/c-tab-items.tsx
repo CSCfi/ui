@@ -42,8 +42,6 @@ export class CTabItems {
   @Listen('contentChange', { passive: true })
   tabContentChangeHandler(e: CustomEvent) {
     e.stopPropagation();
-
-    this.el.style.setProperty('--_c-tab-items-height', 'auto');
   }
 
   private _resizeObserver: ResizeObserver;
@@ -68,11 +66,6 @@ export class CTabItems {
 
       tab.classList.toggle('active', tab.value === this.value);
     });
-
-    this.el.style.setProperty(
-      '--_c-tab-items-height',
-      `${this.activeTab.scrollHeight}px`,
-    );
 
     requestAnimationFrame(() => {
       this.el.style.setProperty(

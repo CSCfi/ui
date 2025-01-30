@@ -7,20 +7,19 @@
   display: block;
   min-width: 100%;
   padding: var(--_c-tab-item-padding);
-  height: 0;
   user-select: none;
 }
 
-:host([active="true"]) {
-  height: auto;
+:host([active='true']) {
+  height: calc-size(auto, size);
   user-select: auto;
 }
 
-:host([active="false"]) > div {
+:host([active='false']) > div {
   display: none;
 }
 
-:host([disabled="true"]) {
+:host([disabled='true']) {
   min-width: 0;
   width: 0;
   overflow: hidden;
