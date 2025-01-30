@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.3.3](https://github.com/CSCfi/ui/compare/v2.3.2...v2.3.3) (2025-01-30)
+
+
+### Bug Fixes
+
+* **c-tabs:** Remove un-necessary height animation and prevent flicker when resizing window ([9fc4c5d](https://github.com/CSCfi/ui/commit/9fc4c5d924175d393b391cfe5c98b31a2fd09805))
+
 ## [2.3.2](https://github.com/CSCfi/ui/compare/v2.3.1...v2.3.2) (2025-01-28)
 
 
