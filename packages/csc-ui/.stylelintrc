@@ -1,32 +1,20 @@
 {
-  "ignoreFiles": [
-    "dist/**/*.*",
-    "src/styles/**/*.scss",
-    "src/styles/**/*.css"
-  ],
+  "ignoreFiles": ["dist/**/*.*", "src/styles/**/*.scss", "src/styles/**/*.css"],
   "overrides": [
     {
       "customSyntax": "postcss-scss",
-      "extends": [
-        "stylelint-config-standard-scss"
-      ],
-      "files": [
-        "src/components/**/*.scss"
-      ],
+      "extends": ["stylelint-config-standard-scss"],
+      "files": ["src/components/**/*.scss"],
       "rules": {
         "alpha-value-notation": "number",
         "at-rule-empty-line-before": [
           "always",
           {
-            "ignore": [
-              "after-comment"
-            ],
-            "ignoreAtRules": [
-              "import",
-              "first-nested"
-            ]
+            "ignore": ["after-comment"],
+            "ignoreAtRules": ["import", "first-nested"]
           }
         ],
+        "at-rule-no-unknown": [true, { "ignoreAtRules": ["starting-style"] }],
         "at-rule-name-case": "lower",
         "block-closing-brace-empty-line-before": "never",
         "block-closing-brace-newline-before": "always",
@@ -39,9 +27,7 @@
         "comment-empty-line-before": [
           "always",
           {
-            "except": [
-              "first-nested"
-            ]
+            "except": ["first-nested"]
           }
         ],
         "comment-whitespace-inside": "always",
@@ -55,10 +41,7 @@
         "declaration-empty-line-before": [
           "always",
           {
-            "except": [
-              "first-nested",
-              "after-declaration"
-            ]
+            "except": ["first-nested", "after-declaration"]
           }
         ],
         "function-comma-space-after": "always-single-line",
@@ -74,12 +57,8 @@
         "rule-empty-line-before": [
           "always",
           {
-            "except": [
-              "first-nested"
-            ],
-            "ignore": [
-              "after-comment"
-            ]
+            "except": ["first-nested"],
+            "ignore": ["after-comment"]
           }
         ],
         "selector-attribute-quotes": "always",
