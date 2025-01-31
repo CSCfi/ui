@@ -546,7 +546,6 @@ export class CTabs {
 
     const content = this.el.shadowRoot.querySelector('.c-tabs__scroll');
     const container = this.el.shadowRoot.querySelector('.c-tabs__tabs');
-
     const contentSize = content.scrollWidth;
     const containerSize = container.clientWidth;
 
