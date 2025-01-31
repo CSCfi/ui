@@ -298,23 +298,29 @@ export class CTabs {
 
   private _handleActiveTab() {
     requestAnimationFrame(() => {
-      let position = 0;
+      const position = 0;
 
       const oldTab =
         (this.el.querySelector('[aria-selected="true"]') as HTMLCTabElement) ??
         this.tabs[0];
 
-      this.tabs.forEach(
-        (tab: HTMLCTabElement | HTMLCButtonElement, index: number) => {
-          if (!tab.disabled) {
-            position += 1;
-          }
+      const tabItems = Array.from(
+        this.tabItems.querySelectorAll(':scope > c-tab-item'),
+      ) as HTMLCTabItemElement[];
 
-          const isActive = tab.value === this.value;
+      tabItems.forEach((item, index) => {
+        const tab = this.tabs.find((tab) => tab.value === item.value);
 
+        const tabItemId = `c-tab-item-${CTabs._uniqueId}-${index + 1}`;
+
+        const isActive = item.value === this.value;
+
+        if (tab) {
           const tabId = `c-tab-${CTabs._uniqueId}-${index + 1}`;
 
-          const tabItemId = `c-tab-item-${CTabs._uniqueId}-${index + 1}`;
+          item.setAttribute('disabled', (!!tab.disabled).toString());
+
+          item.setAttribute('aria-labelledby', tabId);
 
           tab.setAttribute('id', tabId);
           tab.setAttribute('aria-controls', tabItemId);
@@ -324,19 +330,6 @@ export class CTabs {
           } else if (isActive) {
             this._tabButtons.value = tab.value;
           }
-
-          const item = (
-            Array.from(
-              this.tabItems.querySelectorAll(':scope > c-tab-item'),
-            ) as HTMLCTabItemElement[]
-          ).find((child) => child.value === tab.value);
-
-          item.setAttribute('disabled', (!!tab.disabled).toString());
-
-          item.setAttribute('id', tabItemId);
-          item.setAttribute('aria-labelledby', tabId);
-          item.active = isActive;
-          item.setAttribute('active', isActive.toString());
 
           if (!tab.disabled) {
             tab.setAttribute('aria-posinset', position.toString());
@@ -368,8 +361,12 @@ export class CTabs {
           if (isActive && this._isDirty) {
             tab.focus();
           }
-        },
-      );
+        }
+
+        item.setAttribute('id', tabItemId);
+        item.active = isActive;
+        item.setAttribute('active', isActive.toString());
+      });
     });
   }
 
