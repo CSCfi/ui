@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.3.4](https://github.com/CSCfi/ui/compare/v2.3.3...v2.3.4) (2025-01-31)
+
+
+### Bug Fixes
+
+* **c-tabs:** Handle c-tab-item height when not using c-tab elements ([f1e9b89](https://github.com/CSCfi/ui/commit/f1e9b89bdf197455f905e7e0bcfe2a4b5d903ebc))
+
 ## [2.3.3](https://github.com/CSCfi/ui/compare/v2.3.2...v2.3.3) (2025-01-30)
 
 
