@@ -1,9 +1,9 @@
 :host {
   display: block;
-  padding: 0 var(--_c-card-gap, 24px);
 }
 
 .c-card-content {
+  padding: 0 var(--_c-card-gap, 24px);
   display: flex;
   flex-direction: column;
   gap: var(--_c-card-gap);
