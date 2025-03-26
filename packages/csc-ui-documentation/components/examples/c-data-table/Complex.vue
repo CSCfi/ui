@@ -19,7 +19,7 @@
 
 <script setup lang="ts">
 import { mdiDelete, mdiHeartPlus } from '@mdi/js';
-import { CDataTableData, CDataTableHeader } from '@cscfi/csc-ui';
+import type { CDataTableData, CDataTableHeader } from '@cscfi/csc-ui';
 import users from '../../data/mock-users';
 
 const data = ref<CDataTableData[]>(users);

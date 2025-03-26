@@ -12,7 +12,7 @@
 </template>
 
 <script setup lang="ts">
-import { CDataTableData, CDataTableHeader } from '@cscfi/csc-ui';
+import type { CDataTableData, CDataTableHeader } from '@cscfi/csc-ui';
 import { mdiEarth, mdiFlag } from '@mdi/js';
 
 const basicData: CDataTableData[] = [

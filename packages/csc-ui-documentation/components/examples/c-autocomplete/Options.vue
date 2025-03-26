@@ -49,7 +49,7 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue';
 import { mdiEarth } from '@mdi/js';
-import { CAutocompleteItem } from '@cscfi/csc-ui';
+import type { CAutocompleteItem } from '@cscfi/csc-ui';
 import countries from '../../data/countries.json';
 
 const selection = ref();

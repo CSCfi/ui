@@ -23,7 +23,7 @@
 
 <script setup lang="ts">
 import { ref } from 'vue';
-import { CAlertType, CRadioGroupItem } from '@cscfi/csc-ui';
+import { CAlertType, type CRadioGroupItem } from '@cscfi/csc-ui';
 
 const type = ref<CAlertType>(CAlertType.Info);
 
