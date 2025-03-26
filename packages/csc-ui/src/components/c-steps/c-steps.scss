@@ -44,7 +44,7 @@
     flex: 1;
     background-color: var(--_c-steps-color);
     width: var(--c-steps-divider-width);
-    margin: var(--c-steps-divider-margin);
+    margin: var(--c-steps-divider-margin) !important;
   }
 
   ::slotted(.divider.complete) {

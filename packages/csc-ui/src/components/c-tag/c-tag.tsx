@@ -74,18 +74,19 @@ export class CTag {
       ...(!this.flat && {
         role: 'button',
       }),
-      ...(hasBadge ? { 'data-badge': this.badge } : {}),
     };
 
     return (
       <Host {...hostParams} class={hostClasses}>
-        <slot></slot>
+        <div {...(hasBadge ? { 'data-badge': this.badge } : {})}>
+          <slot></slot>
 
-        {this.closeable && (
-          <c-icon-button onClick={() => this._onClose()}>
-            <c-icon size={16} path={mdiClose}></c-icon>
-          </c-icon-button>
-        )}
+          {this.closeable && (
+            <c-icon-button onClick={() => this._onClose()}>
+              <c-icon size={16} path={mdiClose}></c-icon>
+            </c-icon-button>
+          )}
+        </div>
       </Host>
     );
   }

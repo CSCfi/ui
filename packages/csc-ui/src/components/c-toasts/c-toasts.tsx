@@ -132,7 +132,9 @@ export class CToasts {
           [this.horizontal]: true,
         }}
       >
-        {this.messages.map((message) => this._renderMessage(message))}
+        <div>
+          {this.messages.map((message) => this._renderMessage(message))}
+        </div>
       </Host>
     );
   }

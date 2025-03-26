@@ -143,43 +143,45 @@ export class CToast {
         onMouseEnter={() => this._onMouseEnter()}
         onMouseLeave={() => this._onMouseLeave()}
       >
-        <span class="visuallyhidden">{this.message.type} notification</span>
+        <div>
+          <span class="visuallyhidden">{this.message.type} notification</span>
 
-        {this.message.custom ? (
-          <div class="c-toast__custom-item">
-            <div class="c-toast__content">
-              <slot></slot>
+          {this.message.custom ? (
+            <div class="c-toast__custom-item">
+              <div class="c-toast__content">
+                <slot></slot>
+              </div>
             </div>
-          </div>
-        ) : (
-          <div class="c-toast__item">
-            <svg viewBox="0 0 24 24">
-              <path d={this._icons[this.message.type]}></path>
-            </svg>
+          ) : (
+            <div class="c-toast__item">
+              <svg viewBox="0 0 24 24">
+                <path d={this._icons[this.message.type]}></path>
+              </svg>
 
-            <div class="c-toast__content">
-              {!!this.message.title && <p>{this.message.title}</p>}
+              <div class="c-toast__content">
+                {!!this.message.title && <p>{this.message.title}</p>}
 
-              {this.message.message}
+                {this.message.message}
+              </div>
+
+              {!this.message.indeterminate && this._renderCloseButton()}
             </div>
+          )}
 
-            {!this.message.indeterminate && this._renderCloseButton()}
-          </div>
-        )}
-
-        {showProgressBar && (
-          <div
-            class="c-toast__progress"
-            style={{ '--_c-toast-duration': `${this.message.duration}ms` }}
-          >
+          {showProgressBar && (
             <div
-              class={{
-                'c-toast__progress__bar': true,
-                indeterminate: this.message.indeterminate,
-              }}
-            ></div>
-          </div>
-        )}
+              class="c-toast__progress"
+              style={{ '--_c-toast-duration': `${this.message.duration}ms` }}
+            >
+              <div
+                class={{
+                  'c-toast__progress__bar': true,
+                  indeterminate: this.message.indeterminate,
+                }}
+              ></div>
+            </div>
+          )}
+        </div>
       </Host>
     );
   }

@@ -174,56 +174,60 @@ export class CSlider {
 
     return (
       <Host class={classes} style={styles}>
-        {!!this.label && (
-          <label class="c-slider__label">
-            {!!this.label && this.label} {this.ariaLabelInternal}
-          </label>
-        )}
-
-        <div class="c-slider__wrapper">
-          {!this.disableTooltip && (
-            <div class="c-slider__tooltip-wrapper" aria-hidden="true">
-              <span
-                data-tooltip={`${this._formatNumber(+this.value)}${this.unit}`}
-              ></span>
-            </div>
+        <div>
+          {!!this.label && (
+            <label class="c-slider__label">
+              {!!this.label && this.label} {this.ariaLabelInternal}
+            </label>
           )}
 
-          <input
-            ref={(el) => (this._inputElement = el)}
-            aria-label={this.ariaLabelInternal || this.label}
-            aria-valuenow={this.value}
-            aria-valuetext={`${this.value}${this.unit}`}
-            aria-valuemin={this.min}
-            aria-valuemax={this.max}
-            type="range"
-            name={this.hostName}
-            id={this.hostId || `c-slider__${CSlider._uniqueId}`}
-            min={this.min}
-            max={this.max}
-            step={this.step}
-            disabled={this.disabled}
-            onInput={(event) => this._onInput(event)}
-          />
-        </div>
+          <div class="c-slider__wrapper">
+            {!this.disableTooltip && (
+              <div class="c-slider__tooltip-wrapper" aria-hidden="true">
+                <span
+                  data-tooltip={`${this._formatNumber(+this.value)}${
+                    this.unit
+                  }`}
+                ></span>
+              </div>
+            )}
 
-        <div
-          class={{
-            'c-slider__ticks': true,
-            'c-slider__ticks--disabled': this.disabled,
-          }}
-          aria-hidden="true"
-        >
-          {this.tickPositions.map((position) => (
-            <span
-              class={{
-                active: this._isActive(Math.round(+position)),
-                ticks: this.ticks,
-                labels: this.labels,
-              }}
-              data-value={this._formatNumber(Math.round(+position))}
-            ></span>
-          ))}
+            <input
+              ref={(el) => (this._inputElement = el)}
+              aria-label={this.ariaLabelInternal || this.label}
+              aria-valuenow={this.value}
+              aria-valuetext={`${this.value}${this.unit}`}
+              aria-valuemin={this.min}
+              aria-valuemax={this.max}
+              type="range"
+              name={this.hostName}
+              id={this.hostId || `c-slider__${CSlider._uniqueId}`}
+              min={this.min}
+              max={this.max}
+              step={this.step}
+              disabled={this.disabled}
+              onInput={(event) => this._onInput(event)}
+            />
+          </div>
+
+          <div
+            class={{
+              'c-slider__ticks': true,
+              'c-slider__ticks--disabled': this.disabled,
+            }}
+            aria-hidden="true"
+          >
+            {this.tickPositions.map((position) => (
+              <span
+                class={{
+                  active: this._isActive(Math.round(+position)),
+                  ticks: this.ticks,
+                  labels: this.labels,
+                }}
+                data-value={this._formatNumber(Math.round(+position))}
+              ></span>
+            ))}
+          </div>
         </div>
       </Host>
     );
