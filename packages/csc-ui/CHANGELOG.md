@@ -1,5 +1,16 @@
 # Changelog
 
+## [3.0.0](https://github.com/CSCfi/ui/compare/v2.3.4...v3.0.0) (2025-03-27)
+
+
+### ⚠ BREAKING CHANGES
+
+* Move padding and margin declarations away from the host element.
+
+### Features
+
+* Move padding and margin declarations away from the host element. ([573eb2e](https://github.com/CSCfi/ui/commit/573eb2e562b0e3ccf5d241800e113179a1d12387))
+
 ## [2.3.4](https://github.com/CSCfi/ui/compare/v2.3.3...v2.3.4) (2025-01-31)
 
 
