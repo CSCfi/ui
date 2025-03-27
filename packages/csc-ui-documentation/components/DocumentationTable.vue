@@ -19,7 +19,7 @@
 <script setup lang="ts">
 import { storeToRefs } from 'pinia';
 import ErrorComponent from './ErrorComponent.vue';
-import { ComponentData } from '~/types/docs';
+import type { ComponentData } from '~/types/docs';
 
 const props = defineProps<{ component: string }>();
 

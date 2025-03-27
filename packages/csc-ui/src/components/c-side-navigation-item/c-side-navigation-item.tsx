@@ -179,37 +179,40 @@ export class CSideNavigationItem {
         onClick={(e) => this._redirect(e)}
         onKeyDown={(e) => this._redirect(e)}
       >
-        <Tag
-          {...itemParams}
-          class={{
-            'c-side-navigation-item__header': true,
-            'c-side-navigation-item__header--expandable': this._slotHasContent,
-          }}
-        >
-          {this._slotHasContent && (
-            <c-icon class="svg" path={mdiChevronRight}></c-icon>
-          )}
-          <div class="c-side-navigation-item__slot">
-            <slot></slot>
-          </div>
-        </Tag>
-
-        {this._slotHasContent && (
-          <nav
-            role="menubar"
-            aria-label={this._ariaLabel}
-            aria-expanded={(!!this.active)?.toString()}
-            class={subNavigationClasses}
+        <div>
+          <Tag
+            {...itemParams}
+            class={{
+              'c-side-navigation-item__header': true,
+              'c-side-navigation-item__header--expandable':
+                this._slotHasContent,
+            }}
           >
-            <slot name="sub-item"></slot>
-          </nav>
-        )}
+            {this._slotHasContent && (
+              <c-icon class="svg" path={mdiChevronRight}></c-icon>
+            )}
+            <div class="c-side-navigation-item__slot">
+              <slot></slot>
+            </div>
+          </Tag>
 
-        <c-loader
-          size={32}
-          hide={!this.loading}
-          style={{ pointerEvents: 'none' }}
-        ></c-loader>
+          {this._slotHasContent && (
+            <nav
+              role="menubar"
+              aria-label={this._ariaLabel}
+              aria-expanded={(!!this.active)?.toString()}
+              class={subNavigationClasses}
+            >
+              <slot name="sub-item"></slot>
+            </nav>
+          )}
+
+          <c-loader
+            size={32}
+            hide={!this.loading}
+            style={{ pointerEvents: 'none' }}
+          ></c-loader>
+        </div>
       </Host>
     );
   }

@@ -1,6 +1,136 @@
 @import url('https://fonts.googleapis.com/css2?family=Noto+Sans:wght@400;500;600;700&display=swap');
 @import url('@cscfi/csc-ui/css/theme.css');
 
+@layer theme, base, components, utilities /* <- ignored, as it was already declared earlier */;
+@import "tailwindcss/theme.css" layer(theme);
+@import "tailwindcss/preflight.css" layer(base);
+@import "tailwindcss/utilities.css" layer(utilities);
+
+:host {
+  margin: initial;
+  padding: initial;
+}
+
+@theme {
+  --font-sans: "Noto Sans", sans-serif;
+  --text-body: var(--c-primary-900);
+  --text-system: var(--c-tertiary-600);
+
+  /* colors ------------------- */
+
+  --color-accent-100: #e5f9f7ff;
+  --color-accent-200: #ccf4f0ff;
+  --color-accent-300: #99e9e0ff;
+  --color-accent-400: #66ddd1ff;
+  --color-accent-500: #33d2c1ff;
+  --color-accent-600: #00c7b2ff;
+  --color-accent-700: #009f8eff;
+  --color-accent-800: #00776bff;
+  --color-accent-900: #005047ff;
+  --color-accent: #00c7b2ff;
+
+  --color-error-100: #fce7e7ff;
+  --color-error-200: #f8ceceff;
+  --color-error-300: #f19e9eff;
+  --color-error-400: #eb6d6dff;
+  --color-error-500: #e43d3dff;
+  --color-error-600: #dd0c0cff;
+  --color-error-700: #ae0909ff;
+  --color-error-800: #7e0707ff;
+  --color-error-900: #4d0404ff;
+  --color-error: #dd0c0cff;
+
+  --color-info-100: #e5f2f8ff;
+  --color-info-200: #cce6f1ff;
+  --color-info-300: #99cde4ff;
+  --color-info-400: #66b4d6ff;
+  --color-info-500: #339bc9ff;
+  --color-info-600: #0082bbff;
+  --color-info-700: #006896ff;
+  --color-info-800: #004e70ff;
+  --color-info-900: #00344bff;
+  --color-info: #0082bbff;
+
+  --color-info-100: #e5eaefff;
+  --color-info-200: #ccd5dfff;
+  --color-info-300: #99acbfff;
+  --color-info-400: #66829fff;
+  --color-info-500: #33597fff;
+  --color-info-600: #002f5fff;
+  --color-info-700: #00264cff;
+  --color-info-800: #001c39ff;
+  --color-info-900: #001326ff;
+  --color-info: #002f5fff;
+
+  --color-primary-100: #e6f0f2ff;
+  --color-primary-200: #cce1e4ff;
+  --color-primary-300: #99c2c9ff;
+  --color-primary-400: #66a4aeff;
+  --color-primary-500: #338593ff;
+  --color-primary-600: #006778ff;
+  --color-primary-700: #005260ff;
+  --color-primary-800: #003e48ff;
+  --color-primary-900: #002930ff;
+  --color-primary: #006778ff;
+
+  --color-secondary-100: #f3e5eeff;
+  --color-secondary-200: #e6ccdcff;
+  --color-secondary-300: #cd99b9ff;
+  --color-secondary-400: #b56697ff;
+  --color-secondary-500: #9c3374ff;
+  --color-secondary-600: #830051ff;
+  --color-secondary-700: #690041ff;
+  --color-secondary-800: #4f0031ff;
+  --color-secondary-900: #340020ff;
+  --color-secondary: #830051ff;
+
+  --color-success-100: #edf7e7ff;
+  --color-success-200: #dceeceff;
+  --color-success-300: #b9dc9cff;
+  --color-success-400: #97cb6bff;
+  --color-success-500: #74b939ff;
+  --color-success-600: #51a808ff;
+  --color-success-700: #418606ff;
+  --color-success-800: #316505ff;
+  --color-success-900: #204303ff;
+  --color-success: #51a808ff;
+
+  --color-tertiary-100: #eff0f1ff;
+  --color-tertiary-200: #dfe1e3ff;
+  --color-tertiary-300: #bfc3c6ff;
+  --color-tertiary-400: #9ea6aaff;
+  --color-tertiary-500: #7d888aff;
+  --color-tertiary-600: #5b6468ff;
+  --color-tertiary-700: #484c4fff;
+  --color-tertiary-800: #36383aff;
+  --color-tertiary-900: #242629ff;
+  --color-tertiary: #5b6468ff;
+
+  --color-warning-100: #fff3e5ff;
+  --color-warning-200: #ffebccff;
+  --color-warning-300: #ffd9a9ff;
+  --color-warning-400: #ffc186ff;
+  --color-warning-500: #ffad63ff;
+  --color-warning-600: #ff9931ff;
+  --color-warning-700: #ff7a00ff;
+  --color-warning-800: #ff6000ff;
+  --color-warning-900: #ff4500ff;
+  --color-warning: #ff9931ff;
+}
+
+/* Utilities -------------------- */
+@utility grid-cols-auto-1 {
+  grid-template-columns: auto 1fr;
+}
+
+@utility grid-cols-1-auto {
+  grid-template-columns: 1fr auto;
+}
+
+@utility grid-cols-auto-1-auto {
+  grid-template-columns: auto 1fr auto;
+}
+
 .page-enter-active,
 .page-leave-active {
   @apply origin-center transition-all duration-300 ease-in-out absolute left-0 top-0 w-full;

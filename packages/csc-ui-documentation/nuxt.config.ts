@@ -1,11 +1,11 @@
-// https://nuxt.com/docs/api/configuration/nuxt-config
+import tailwindcss from '@tailwindcss/vite';
 
 export default defineNuxtConfig({
   ssr: false,
 
   devtools: { enabled: false },
 
-  modules: ['@nuxtjs/tailwindcss', '@pinia/nuxt', '@vueuse/nuxt'],
+  modules: ['@pinia/nuxt', '@vueuse/nuxt'],
 
   build: {
     transpile: ['csc-ui/loader', '@cscfi/csc-ui-vue'],
@@ -35,5 +35,12 @@ export default defineNuxtConfig({
   // @ts-ignore
   pinia: {
     autoImports: ['defineStore', 'acceptHMRUpdate'],
+  },
+
+  vite: {
+    plugins: [
+      // @ts-ignore
+      tailwindcss(),
+    ],
   },
 });

@@ -29,7 +29,7 @@
   --_c-side-navigation-item-sub-item-text-color: var(--c-side-navigation-item-sub-item-text-color, var(--c-primary-600));
 }
 
-:host(.c-side-navigation-item) {
+:host(.c-side-navigation-item) > div {
   align-items: center;
   backface-visibility: hidden;
   border-radius: 4px 0 0 4px;
@@ -45,30 +45,32 @@
   user-select: none;
 }
 
-:host(.c-side-navigation-item:hover) {
+:host(.c-side-navigation-item:hover) > div {
   background-color: var(--_c-side-navigation-item-background-color-hover);
 }
 
-:host(.c-side-navigation-item:focus) {
+:host(.c-side-navigation-item:focus) > div {
   outline: none;
 }
 
-:host(.c-side-navigation-item:focus-visible) {
+:host(.c-side-navigation-item:focus-visible) > div {
   outline: 2px var(--_c-side-navigation-item-outline-color) solid;
   outline-offset: 2px;
 }
 
 :host(.c-side-navigation-item.active) {
-  background-color: var(--_c-side-navigation-item-background-color-active);
-  color: var(--_c-side-navigation-item-text-color-active);
-
-  .svg {
-    fill: var(--_c-side-navigation-item-text-color-active);
-    transform: rotate(90deg);
-  }
-
-  .c-side-navigation-item__header {
+  > div {
+    background-color: var(--_c-side-navigation-item-background-color-active);
     color: var(--_c-side-navigation-item-text-color-active);
+  
+    .svg {
+      fill: var(--_c-side-navigation-item-text-color-active);
+      transform: rotate(90deg);
+    }
+  
+    .c-side-navigation-item__header {
+      color: var(--_c-side-navigation-item-text-color-active);
+    }
   }
 }
 
@@ -98,7 +100,9 @@
 }
 
 :host(.c-side-navigation-item--parent.active) {
-  padding-bottom: 4px;
+  > div {
+    padding-bottom: 4px;
+  }
 }
 
 ::slotted(span),
@@ -151,6 +155,8 @@
   --_c-side-navigation-item-background-color-active: var(--c-side-navigation-item-background-color-active, var(--_c-side-navigation-item-sub-item-background-color-active));
   --_c-side-navigation-item-outline-color: var(--c-side-navigation-item-outline-color, var(--_c-side-navigation-item-sub-item-outline-color));
 
-  border-radius: 4px;
-  margin: 0 8px 4px;
+  > div {
+    border-radius: 4px;
+    margin: 0 8px 4px;
+  }
 }

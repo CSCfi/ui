@@ -33,9 +33,12 @@
 
   $this: &;
 
-  display: block;
-  isolation: isolate;
-  padding-block: 8px;
+  > div {
+    display: block;
+    isolation: isolate;
+    padding-block: 8px;
+  }
+
 
   .c-slider__label {
     display: block;
@@ -266,7 +269,7 @@
   }
 }
 
-:host(c-slider.c-slider--labels) {
+:host(c-slider.c-slider--labels) > div {
   padding-bottom: 24px;
 }
 

@@ -46,7 +46,7 @@
 </template>
 
 <script setup lang="ts">
-import { CRadioGroupItem, CTabsJustify } from '@cscfi/csc-ui';
+import type { CRadioGroupItem, CTabsJustify } from '@cscfi/csc-ui';
 import { ref } from 'vue';
 
 type Tab = 'tab1' | 'tab2' | 'tab3';

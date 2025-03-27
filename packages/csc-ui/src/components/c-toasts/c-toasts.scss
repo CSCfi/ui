@@ -1,16 +1,19 @@
 :host {
-  display: grid;
-  gap: 12px;
-  grid-template-columns: 1fr;
   left: 0;
   max-width: 100%;
   min-width: 30vw;
-  padding: 12px;
   pointer-events: none;
   position: fixed;
   right: 0;
   width: 640px;
   z-index: 10000;
+}
+
+:host > div {
+  display: grid;
+  gap: 12px;
+  grid-template-columns: 1fr;
+  padding: 12px;
 }
 
 :host(.absolute) {
@@ -39,5 +42,5 @@
 
 :host(.center) {
   justify-content: center;
-  margin: 0 auto;
+  margin: 0 auto !important;
 }

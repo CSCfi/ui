@@ -9,7 +9,6 @@
   display: flex;
   border-radius: 6px;
   box-shadow: rgba(0, 0, 0, 0.15) 0 10px 20px, rgba(0, 0, 0, 0.2) 0 5px 5px;
-  padding-block: var(--_c-card-gap);
   position: relative;
   background-color: var(--_c-card-background-color);
 
@@ -19,6 +18,7 @@
     flex: 1;
     gap: var(--_c-card-gap);
     max-width: 100%;
+    padding-block: var(--_c-card-gap);
   }
 }
 

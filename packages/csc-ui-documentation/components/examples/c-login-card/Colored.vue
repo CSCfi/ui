@@ -51,7 +51,7 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 
-import { CSelectItem } from '@cscfi/csc-ui';
+import type { CSelectItem } from '@cscfi/csc-ui';
 
 const blendModes: CSelectItem[] = [
   { value: 'normal', name: 'normal' },

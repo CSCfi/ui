@@ -1,10 +1,13 @@
 :host {
-  padding: 0 var(--_c-card-gap, 24px);
   display: block;
-
+  
   menu {
     margin: 0;
     padding: 0;
+  }
+
+  footer {
+    padding: 0 var(--_c-card-gap, 24px);
   }
 }
 

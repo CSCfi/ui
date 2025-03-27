@@ -36,7 +36,7 @@
 
 <script setup lang="ts">
 import { mdiStar } from '@mdi/js';
-import { CRadioGroupItem, CRowAlign, CRowJustify } from '@cscfi/csc-ui';
+import type { CRadioGroupItem, CRowAlign, CRowJustify } from '@cscfi/csc-ui';
 
 const justifyItems: CRadioGroupItem[] = [
   { name: 'Start', value: 'start' },

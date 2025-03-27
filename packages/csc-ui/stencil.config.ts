@@ -44,6 +44,7 @@ export const config: Config = {
   ],
   plugins: [
     sass({
+      silenceDeprecations: ['import'],
       injectGlobalPaths: ['src/assets/global.scss'],
     }),
   ],

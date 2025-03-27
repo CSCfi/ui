@@ -1,4 +1,4 @@
-import { CDataTableData, CDataTableFunctionParams } from '@cscfi/csc-ui';
+import type { CDataTableData, CDataTableFunctionParams } from '@cscfi/csc-ui';
 
 const users: CDataTableData[] = [
   {

@@ -103,7 +103,7 @@
 </template>
 
 <script setup lang="ts">
-import { CSelectItem, CToastMessage, CToastType } from '@cscfi/csc-ui';
+import { type CSelectItem, type CToastMessage, CToastType } from '@cscfi/csc-ui';
 import { ref } from 'vue';
 
 const toasts = ref<HTMLCToastsElement | null>(null);

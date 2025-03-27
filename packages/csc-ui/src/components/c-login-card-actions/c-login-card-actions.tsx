@@ -30,7 +30,7 @@ export class CLoginCardActions {
       <c-card-actions
         align={this.align}
         justify={this.justify}
-        style={{ padding: '0px' }}
+        style={{ '--_c-card-gap': '0' }}
       >
         <slot></slot>
       </c-card-actions>
