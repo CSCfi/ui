@@ -3,12 +3,12 @@
     "@cscfi/csc-ui": "*",
     "@cscfi/csc-ui-vue": "*",
     "@mdi/js": "^7.4.47",
-    "@pinia/nuxt": "^0.4.11",
+    "@pinia/nuxt": "^0.10.1",
     "@stackblitz/sdk": "^1.11.0",
     "@vueuse/nuxt": "^10.7.2",
     "nuxt-stencil": "^0.1.1",
-    "pinia": "^2.1.7",
-    "tailwindcss": "^4.0.15",
+    "pinia": "^3.0.1",
+    "tailwindcss": "^4.0.17",
     "vue3-code-block": "^2.2.12"
   },
   "devDependencies": {
@@ -16,7 +16,7 @@
     "@nuxtjs/eslint-config-typescript": "^12.1.0",
     "@nuxtjs/stylelint-module": "^5.1.0",
     "@nuxtjs/tailwindcss": "^6.10.4",
-    "@tailwindcss/vite": "^4.0.15",
+    "@tailwindcss/vite": "^4.0.17",
     "@typescript-eslint/parser": "^6.19.0",
     "@vitejs/plugin-vue": "^5.0.4",
     "eslint": "^8.56.0",
@@ -24,11 +24,11 @@
     "eslint-import-resolver-typescript": "^3.6.1",
     "eslint-plugin-import": "^2.29.1",
     "eslint-plugin-prettier": "^5.1.3",
-    "nuxt": "^3.15.4",
+    "nuxt": "^3.16.1",
     "prettier": "^3.2.2",
     "sass": "^1.69.7",
-    "vue": "^3.4.14",
-    "vue-router": "^4.2.5"
+    "vue": "^3.5.13",
+    "vue-router": "^4.5.0"
   },
   "name": "@cscfi/csc-ui-documentation",
   "optionalDependencies": {
