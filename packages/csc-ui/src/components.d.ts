@@ -163,6 +163,15 @@ export namespace Components {
         "value": string | number | CAutocompleteItem;
     }
     /**
+     * @parent None
+     */
+    interface CBackdrop {
+        /**
+          * Disable backdrop blur effect
+         */
+        "disableBackdropBlur": boolean;
+    }
+    /**
      * @parent none
      */
     interface CBadge {
@@ -2054,6 +2063,15 @@ declare global {
         new (): HTMLCAutocompleteElement;
     };
     /**
+     * @parent None
+     */
+    interface HTMLCBackdropElement extends Components.CBackdrop, HTMLStencilElement {
+    }
+    var HTMLCBackdropElement: {
+        prototype: HTMLCBackdropElement;
+        new (): HTMLCBackdropElement;
+    };
+    /**
      * @parent none
      */
     interface HTMLCBadgeElement extends Components.CBadge, HTMLStencilElement {
@@ -2934,6 +2952,7 @@ declare global {
         "c-accordion-item": HTMLCAccordionItemElement;
         "c-alert": HTMLCAlertElement;
         "c-autocomplete": HTMLCAutocompleteElement;
+        "c-backdrop": HTMLCBackdropElement;
         "c-badge": HTMLCBadgeElement;
         "c-button": HTMLCButtonElement;
         "c-card": HTMLCCardElement;
@@ -3169,6 +3188,15 @@ declare namespace LocalJSX {
           * Selected item
          */
         "value"?: string | number | CAutocompleteItem;
+    }
+    /**
+     * @parent None
+     */
+    interface CBackdrop {
+        /**
+          * Disable backdrop blur effect
+         */
+        "disableBackdropBlur"?: boolean;
     }
     /**
      * @parent none
@@ -4975,6 +5003,7 @@ declare namespace LocalJSX {
         "c-accordion-item": CAccordionItem;
         "c-alert": CAlert;
         "c-autocomplete": CAutocomplete;
+        "c-backdrop": CBackdrop;
         "c-badge": CBadge;
         "c-button": CButton;
         "c-card": CCard;
@@ -5063,6 +5092,10 @@ declare module "@stencil/core" {
              * @group Form
              */
             "c-autocomplete": LocalJSX.CAutocomplete & JSXBase.HTMLAttributes<HTMLCAutocompleteElement>;
+            /**
+             * @parent None
+             */
+            "c-backdrop": LocalJSX.CBackdrop & JSXBase.HTMLAttributes<HTMLCBackdropElement>;
             /**
              * @parent none
              */

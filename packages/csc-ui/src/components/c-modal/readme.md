@@ -23,6 +23,19 @@
 | `changeValue` | Triggered when value is changed | `CustomEvent<boolean>` |
 
 
+## Dependencies
+
+### Depends on
+
+- [c-backdrop](../c-backdrop)
+
+### Graph
+```mermaid
+graph TD;
+  c-modal --> c-backdrop
+  style c-modal fill:#f9f,stroke:#333,stroke-width:4px
+```
+
 ----------------------------------------------
 
 *Built with [StencilJS](https://stenciljs.com/)*

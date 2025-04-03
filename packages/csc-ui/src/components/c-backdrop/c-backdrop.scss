@@ -1,0 +1,49 @@
+:host(c-backdrop) {
+  .c-backdrop {
+    display: block;
+    position: fixed;
+    inset: 0;
+    z-index: 1000;
+    background-color: rgba(0, 0, 0, 0.5);
+    opacity: 0;
+    pointer-events: none;
+
+    &.c-backdrop--blur {
+      backdrop-filter: blur(4px);
+    }
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  :host(c-backdrop) {
+    .c-backdrop {
+      &.opening {
+        animation: backdrop-fadein 0.3s cubic-bezier(0.25, 0.8, 0.5, 1) forwards;
+      }
+
+      &.closing {
+        animation: backdrop-fadeout 0.3s cubic-bezier(0.25, 0.8, 0.5, 1) forwards;
+      }
+    }
+  }
+}
+
+@keyframes backdrop-fadein {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes backdrop-fadeout {
+  from {
+    opacity: 1;
+  }
+
+  to {
+    opacity: 0;
+  }
+}
