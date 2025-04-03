@@ -706,6 +706,10 @@ export namespace Components {
      */
     interface CList {
         /**
+          * Show border arount the list items
+         */
+        "bordered": boolean;
+        /**
           * Disable the list
          */
         "disabled": boolean;
@@ -3742,6 +3746,10 @@ declare namespace LocalJSX {
      * @group Other
      */
     interface CList {
+        /**
+          * Show border arount the list items
+         */
+        "bordered"?: boolean;
         /**
           * Disable the list
          */
