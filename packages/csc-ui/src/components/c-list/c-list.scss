@@ -1,4 +1,20 @@
 .c-list {
+  /**
+   * @prop --c-list-gap: Gap between list items
+   * @prop --c-list-border-color: Border color of the list items when bordered
+   * @prop --c-list-border-color-active: Border color of the active list items when bordered
+   */
+
+  --_c-list-gap: var(--c-list-gap, 4px);
+  --_c-list-border-color: var(--c-list-border-color, var(--c-tertiary-200));
+  --_c-list-border-color-active: var(--c-list-border-color-active, var(--c-primary-600));
+
   display: grid;
-  gap: 4px;
+  gap: var(--_c-list-gap);
+
+  &--bordered {
+    .c-list-item {
+      border: 1px solid var(--_c-list-border-color);
+    }
+  }
 }

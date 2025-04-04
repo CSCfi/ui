@@ -73,13 +73,41 @@ export class CModal {
     this._handleClose();
   }
 
-  private _handleShow = () => {
-    if (!this._animationsDisabled) {
-      this._dialog?.addEventListener('animationend', this._onDialogOpened);
-      this._dialog?.classList.add('opening');
+  private _backdropElement: HTMLCBackdropElement;
+
+  private _handleBackdrop = () => {
+    const existingBackdrop = document.body.querySelector('c-backdrop');
+
+    if (!existingBackdrop) {
+      const backdrop = document.createElement('c-backdrop');
+
+      document.body.appendChild(backdrop);
+
+      this._backdropElement = backdrop;
+
+      return;
     }
 
-    this._dialog?.showModal();
+    this._backdropElement = existingBackdrop;
+  };
+
+  private _handleShow = () => {
+    requestAnimationFrame(() => {
+      this._backdropElement.setAttribute(
+        'disable-backdrop-blur',
+        this.disableBackdropBlur.toString(),
+      );
+
+      if (!this._animationsDisabled) {
+        this._dialog?.addEventListener('animationend', this._onDialogOpened);
+        this._dialog?.classList.add('opening');
+        this._backdropElement?.shadowRoot
+          ?.querySelector('.c-backdrop')
+          ?.classList.add('opening');
+      }
+
+      this._dialog?.showModal();
+    });
   };
 
   private _onDialogOpened = () => {
@@ -96,12 +124,22 @@ export class CModal {
 
     this._dialog?.addEventListener('animationend', this._onDialogClosed);
     this._dialog?.classList.add('closing');
+
+    this._backdropElement?.shadowRoot
+      ?.querySelector('.c-backdrop')
+      ?.classList.remove('opening');
+    this._backdropElement?.shadowRoot
+      ?.querySelector('.c-backdrop')
+      ?.classList.add('closing');
   };
 
   private _onDialogClosed = () => {
     if (!this._animationsDisabled) {
       this._dialog?.removeEventListener('animationend', this._onDialogClosed);
       this._dialog?.classList.remove('closing');
+      this._backdropElement?.shadowRoot
+        ?.querySelector('.c-backdrop')
+        ?.classList.remove('closing');
     }
 
     this._dialog?.close();
@@ -168,6 +206,8 @@ export class CModal {
     this._animationsDisabled = query.matches;
 
     this._handleClickOutside();
+
+    this._handleBackdrop();
 
     if (this.value) {
       this._handleShow();

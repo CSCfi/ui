@@ -15,6 +15,11 @@ export class CList {
    */
   @Prop() disabled = false;
 
+  /**
+   * Show border arount the list items
+   */
+  @Prop() bordered = false;
+
   @Watch('disabled')
   onDisabledChange(disabled) {
     this._items.forEach((item) => {
@@ -41,6 +46,7 @@ export class CList {
     const classes = {
       'c-list': true,
       'c-list--disabled': this.disabled,
+      'c-list--bordered': this.bordered,
     };
 
     return <Host role="list" class={classes}></Host>;

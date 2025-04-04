@@ -162,6 +162,19 @@
       ]
     },
     {
+      "name": "c-backdrop",
+      "description": {
+        "kind": "markdown",
+        "value": ""
+      },
+      "attributes": [
+        {
+          "name": "disable-backdrop-blur",
+          "description": "Disable backdrop blur effect"
+        }
+      ]
+    },
+    {
       "name": "c-badge",
       "description": {
         "kind": "markdown",
@@ -764,6 +777,10 @@
         "value": ""
       },
       "attributes": [
+        {
+          "name": "bordered",
+          "description": "Show border arount the list items"
+        },
         {
           "name": "disabled",
           "description": "Disable the list"

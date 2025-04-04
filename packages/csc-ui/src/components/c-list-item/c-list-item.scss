@@ -60,6 +60,7 @@
 
 :host(.c-list-item--active) {
   --_c-list-item-text-color: var(--_c-list-item-text-color-active);
+  --_c-list-border-color: var(--_c-list-border-color-active);
 
   background-color: var(--_c-list-item-background-color-active);
 }

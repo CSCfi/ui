@@ -12,6 +12,7 @@ import { CAccordionItem as CAccordionItemElement, defineCustomElement as defineC
 import { CAccordion as CAccordionElement, defineCustomElement as defineCAccordion } from "@cscfi/csc-ui/components/c-accordion.js";
 import { CAlert as CAlertElement, defineCustomElement as defineCAlert } from "@cscfi/csc-ui/components/c-alert.js";
 import { CAutocomplete as CAutocompleteElement, defineCustomElement as defineCAutocomplete } from "@cscfi/csc-ui/components/c-autocomplete.js";
+import { CBackdrop as CBackdropElement, defineCustomElement as defineCBackdrop } from "@cscfi/csc-ui/components/c-backdrop.js";
 import { CBadge as CBadgeElement, defineCustomElement as defineCBadge } from "@cscfi/csc-ui/components/c-badge.js";
 import { CButton as CButtonElement, defineCustomElement as defineCButton } from "@cscfi/csc-ui/components/c-button.js";
 import { CCardActions as CCardActionsElement, defineCustomElement as defineCCardActions } from "@cscfi/csc-ui/components/c-card-actions.js";
@@ -130,6 +131,17 @@ export const CAutocomplete: StencilReactComponent<CAutocompleteElement, CAutocom
         onChangeValue: 'changeValue'
     } as CAutocompleteEvents,
     defineCustomElement: defineCAutocomplete
+});
+
+type CBackdropEvents = NonNullable<unknown>;
+
+export const CBackdrop: StencilReactComponent<CBackdropElement, CBackdropEvents> = /*@__PURE__*/ createComponent<CBackdropElement, CBackdropEvents>({
+    tagName: 'c-backdrop',
+    elementClass: CBackdropElement,
+    // @ts-ignore - React type of Stencil Output Target may differ from the React version used in the Nuxt.js project, this can be ignored.
+    react: React,
+    events: {} as CBackdropEvents,
+    defineCustomElement: defineCBackdrop
 });
 
 type CBadgeEvents = NonNullable<unknown>;
