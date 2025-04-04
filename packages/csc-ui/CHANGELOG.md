@@ -1,5 +1,13 @@
 # Changelog
 
+## [3.0.1](https://github.com/CSCfi/ui/compare/v3.0.0...v3.0.1) (2025-04-04)
+
+
+### Bug Fixes
+
+* **c-list:** Allow bordered items and customisable gap between items ([6b3c455](https://github.com/CSCfi/ui/commit/6b3c455ca99c170511aa9dd7e060483c4b050c8a))
+* **c-modal:** Open the modal backdrop below the browser top layer to enable showing toast messages above it ([26cf828](https://github.com/CSCfi/ui/commit/26cf828177b0f8ed2fecde9135b78e80cd71a7e2))
+
 ## [3.0.0](https://github.com/CSCfi/ui/compare/v2.3.4...v3.0.0) (2025-03-27)
 
 
