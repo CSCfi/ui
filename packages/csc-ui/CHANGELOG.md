@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.0.2](https://github.com/CSCfi/ui/compare/v3.0.1...v3.0.2) (2025-04-30)
+
+
+### Bug Fixes
+
+* **c-otp-input:** Added autofocus ([44d215f](https://github.com/CSCfi/ui/commit/44d215f09cdbdaf6115a557076809168741332f6))
+
 ## [3.0.1](https://github.com/CSCfi/ui/compare/v3.0.0...v3.0.1) (2025-04-04)
 
 
