@@ -27,6 +27,7 @@ export class CSwiper {
 
   /**
    * Id of the swiper element
+   * @name id
    */
   @Prop({ attribute: 'id' }) elementId!: string;
 

@@ -25,6 +25,12 @@ export class COtpInput {
   @AttachInternals() internals: ElementInternals;
 
   /**
+   * Auto focus
+   * @name autofocus
+   */
+  @Prop({ attribute: 'autofocus' }) hasAutofocus = false;
+
+  /**
    * Hide the hint and error messages
    */
   @Prop() hideDetails = false;
@@ -36,6 +42,7 @@ export class COtpInput {
 
   /**
    * Id of the element
+   * @name id
    */
   @Prop({ attribute: 'id' }) elementId!: string;
 
@@ -260,6 +267,7 @@ export class COtpInput {
         }`}
         type="tel"
         maxlength="1"
+        autofocus={this.hasAutofocus && index === 0}
         onFocus={() => this._onFocus(index)}
         onInput={(event) => this._onInput(event)}
         onKeyDown={(event) => this._onKeyDown(event)}

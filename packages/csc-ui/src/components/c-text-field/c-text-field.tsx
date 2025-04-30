@@ -28,11 +28,13 @@ export class CTextField {
 
   /**
    * Auto focus the input
+   * @name autofocus
    */
   @Prop({ attribute: 'autofocus' }) automaticFocus = false;
 
   /**
    * HTML input autocapitalize
+   * @name autocapitalize
    */
   @Prop({ attribute: 'autocapitalize' }) automaticCapitalize = '';
 
@@ -63,6 +65,7 @@ export class CTextField {
 
   /**
    * Id of the input
+   * @name id
    */
   @Prop({ attribute: 'id' }) hostId: string;
 

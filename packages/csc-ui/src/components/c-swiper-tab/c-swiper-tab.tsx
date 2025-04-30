@@ -37,6 +37,7 @@ export class CSwiperTab {
 
   /**
    * Id of the button
+   * @name id
    */
   @Prop({ attribute: 'id' }) hostId: string;
 

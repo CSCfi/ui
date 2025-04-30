@@ -55,6 +55,7 @@ export class CRadioGroup {
 
   /**
    * Id of the element
+   * @name id
    */
   @Prop({ attribute: 'id' }) hostId: string;
 

@@ -10,6 +10,7 @@
 | Property                 | Attribute      | Description                      | Type      | Default            |
 | ------------------------ | -------------- | -------------------------------- | --------- | ------------------ |
 | `elementId` _(required)_ | `id`           | Id of the element                | `string`  | `undefined`        |
+| `hasAutofocus`           | `autofocus`    | Auto focus                       | `boolean` | `false`            |
 | `hideDetails`            | `hide-details` | Hide the hint and error messages | `boolean` | `false`            |
 | `hint`                   | `hint`         | Hint text for the input          | `string`  | `''`               |
 | `length`                 | `length`       | Length of the OTP code           | `number`  | `6`                |

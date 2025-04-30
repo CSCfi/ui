@@ -83,6 +83,7 @@ export namespace Components {
         "hint": string;
         /**
           * Id of the element
+          * @name id
          */
         "hostId": string;
         /**
@@ -203,6 +204,7 @@ export namespace Components {
         "grouped": boolean;
         /**
           * Id of the button
+          * @name id
          */
         "hostId": string;
         /**
@@ -322,10 +324,12 @@ export namespace Components {
         "hint": string;
         /**
           * Id of the element
+          * @name id
          */
         "hostId": string;
         /**
           * Name of the input - Only used when the checkbox participates in a native `<form>`
+          * @name name
          */
         "hostName": string;
         /**
@@ -462,6 +466,7 @@ export namespace Components {
         "focusItem": (index: number) => Promise<void>;
         /**
           * Id of the element
+          * @name id
          */
         "hostId": string;
         /**
@@ -576,6 +581,7 @@ export namespace Components {
         "active": boolean;
         /**
           * Auto focus the input
+          * @name autofocus
          */
         "automaticFocus": boolean;
         /**
@@ -592,6 +598,7 @@ export namespace Components {
         "hint": string;
         /**
           * Id of the input
+          * @name id
          */
         "hostId": string;
         /**
@@ -1012,8 +1019,14 @@ export namespace Components {
     interface COtpInput {
         /**
           * Id of the element
+          * @name id
          */
         "elementId": string;
+        /**
+          * Auto focus
+          * @name autofocus
+         */
+        "hasAutofocus": boolean;
         /**
           * Hide the hint and error messages
          */
@@ -1141,6 +1154,7 @@ export namespace Components {
         "hint": string;
         /**
           * Id of the element
+          * @name id
          */
         "hostId": string;
         /**
@@ -1229,6 +1243,7 @@ export namespace Components {
         "hint": string;
         /**
           * Id of the element
+          * @name id
          */
         "hostId": string;
         /**
@@ -1345,6 +1360,7 @@ export namespace Components {
     interface CSlider {
         /**
           * Aria label
+          * @name aria-label
          */
         "ariaLabelInternal": string;
         /**
@@ -1357,10 +1373,12 @@ export namespace Components {
         "disabled": boolean;
         /**
           * Id of the element
+          * @name id
          */
         "hostId": string;
         /**
           * Id of the element
+          * @name name
          */
         "hostName": string;
         /**
@@ -1488,6 +1506,7 @@ export namespace Components {
     interface CSwiper {
         /**
           * Id of the swiper element
+          * @name id
          */
         "elementId": string;
         /**
@@ -1509,6 +1528,7 @@ export namespace Components {
         "disabled": boolean;
         /**
           * Id of the button
+          * @name id
          */
         "hostId": string;
         /**
@@ -1544,6 +1564,7 @@ export namespace Components {
         "falseValue": boolean | string;
         /**
           * Disable the switch
+          * @name disabled
          */
         "hostDisabled": boolean;
         /**
@@ -1582,6 +1603,7 @@ export namespace Components {
         "disabled": boolean;
         /**
           * Id of the tab
+          * @name id
          */
         "hostId": string;
         /**
@@ -1605,6 +1627,7 @@ export namespace Components {
     interface CTabButtons {
         /**
           * Disable tab buttons
+          * @name disabled
          */
         "hostDisabled": boolean;
         /**
@@ -1751,10 +1774,12 @@ export namespace Components {
         "autocorrect": string;
         /**
           * HTML input autocapitalize
+          * @name autocapitalize
          */
         "automaticCapitalize": string;
         /**
           * Auto focus the input
+          * @name autofocus
          */
         "automaticFocus": boolean;
         /**
@@ -1771,6 +1796,7 @@ export namespace Components {
         "hint": string;
         /**
           * Id of the input
+          * @name id
          */
         "hostId": string;
         /**
@@ -3110,6 +3136,7 @@ declare namespace LocalJSX {
         "hint"?: string;
         /**
           * Id of the element
+          * @name id
          */
         "hostId"?: string;
         /**
@@ -3234,6 +3261,7 @@ declare namespace LocalJSX {
         "grouped"?: boolean;
         /**
           * Id of the button
+          * @name id
          */
         "hostId"?: string;
         /**
@@ -3358,10 +3386,12 @@ declare namespace LocalJSX {
         "hint"?: string;
         /**
           * Id of the element
+          * @name id
          */
         "hostId"?: string;
         /**
           * Name of the input - Only used when the checkbox participates in a native `<form>`
+          * @name name
          */
         "hostName"?: string;
         /**
@@ -3502,6 +3532,7 @@ declare namespace LocalJSX {
         "dropdownItemType"?: 'option' | 'item';
         /**
           * Id of the element
+          * @name id
          */
         "hostId"?: string;
         /**
@@ -3607,6 +3638,7 @@ declare namespace LocalJSX {
         "active"?: boolean;
         /**
           * Auto focus the input
+          * @name autofocus
          */
         "automaticFocus"?: boolean;
         /**
@@ -3623,6 +3655,7 @@ declare namespace LocalJSX {
         "hint"?: string;
         /**
           * Id of the input
+          * @name id
          */
         "hostId"?: string;
         /**
@@ -4074,8 +4107,14 @@ declare namespace LocalJSX {
     interface COtpInput {
         /**
           * Id of the element
+          * @name id
          */
         "elementId": string;
+        /**
+          * Auto focus
+          * @name autofocus
+         */
+        "hasAutofocus"?: boolean;
         /**
           * Hide the hint and error messages
          */
@@ -4211,6 +4250,7 @@ declare namespace LocalJSX {
         "hint"?: string;
         /**
           * Id of the element
+          * @name id
          */
         "hostId"?: string;
         /**
@@ -4299,6 +4339,7 @@ declare namespace LocalJSX {
         "hint"?: string;
         /**
           * Id of the element
+          * @name id
          */
         "hostId"?: string;
         /**
@@ -4420,6 +4461,7 @@ declare namespace LocalJSX {
     interface CSlider {
         /**
           * Aria label
+          * @name aria-label
          */
         "ariaLabelInternal"?: string;
         /**
@@ -4432,10 +4474,12 @@ declare namespace LocalJSX {
         "disabled"?: boolean;
         /**
           * Id of the element
+          * @name id
          */
         "hostId"?: string;
         /**
           * Id of the element
+          * @name name
          */
         "hostName"?: string;
         /**
@@ -4571,6 +4615,7 @@ declare namespace LocalJSX {
     interface CSwiper {
         /**
           * Id of the swiper element
+          * @name id
          */
         "elementId": string;
         /**
@@ -4596,6 +4641,7 @@ declare namespace LocalJSX {
         "disabled"?: boolean;
         /**
           * Id of the button
+          * @name id
          */
         "hostId"?: string;
         /**
@@ -4636,6 +4682,7 @@ declare namespace LocalJSX {
         "falseValue"?: boolean | string;
         /**
           * Disable the switch
+          * @name disabled
          */
         "hostDisabled"?: boolean;
         /**
@@ -4678,6 +4725,7 @@ declare namespace LocalJSX {
         "disabled"?: boolean;
         /**
           * Id of the tab
+          * @name id
          */
         "hostId"?: string;
         /**
@@ -4714,6 +4762,7 @@ declare namespace LocalJSX {
     interface CTabButtons {
         /**
           * Disable tab buttons
+          * @name disabled
          */
         "hostDisabled"?: boolean;
         /**
@@ -4876,10 +4925,12 @@ declare namespace LocalJSX {
         "autocorrect"?: string;
         /**
           * HTML input autocapitalize
+          * @name autocapitalize
          */
         "automaticCapitalize"?: string;
         /**
           * Auto focus the input
+          * @name autofocus
          */
         "automaticFocus"?: boolean;
         /**
@@ -4896,6 +4947,7 @@ declare namespace LocalJSX {
         "hint"?: string;
         /**
           * Id of the input
+          * @name id
          */
         "hostId"?: string;
         /**

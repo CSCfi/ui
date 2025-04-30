@@ -9,9 +9,17 @@ export const useExampleStore = defineStore('example', () => {
 
   const parseChild = (child: ComponentData) => ({
     ...child,
-    props: child.props.filter((e) =>
-      e.docsTags.every((tag: any) => tag.name !== 'private'),
-    ),
+    props: child.props
+      .filter((e) => e.docsTags.every((tag: any) => tag.name !== 'private'))
+      .map((prop) => {
+        const name = prop.docsTags.find((docsTag) => docsTag.name === 'name');
+
+        if (name) {
+          prop.name = name.text || prop.name;
+        }
+
+        return prop;
+      }),
     events: child.events.filter((e) =>
       e.docsTags.every((tag) => tag.name !== 'private'),
     ),
