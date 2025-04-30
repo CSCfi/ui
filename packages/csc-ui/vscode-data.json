@@ -1216,6 +1216,10 @@
           "description": "Id of the element"
         },
         {
+          "name": "autofocus",
+          "description": "Auto focus"
+        },
+        {
           "name": "hide-details",
           "description": "Hide the hint and error messages"
         },

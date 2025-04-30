@@ -43,6 +43,7 @@ export class CTabButtons {
 
   /**
    * Disable tab buttons
+   * @name disabled
    */
   @Prop({ attribute: 'disabled' }) hostDisabled = false;
 

@@ -30,6 +30,7 @@ export class CInput {
 
   /**
    * Auto focus the input
+   * @name autofocus
    */
   @Prop({ attribute: 'autofocus' }) automaticFocus = false;
 
@@ -50,6 +51,7 @@ export class CInput {
 
   /**
    * Id of the input
+   * @name id
    */
   @Prop({ attribute: 'id' }) hostId: string;
 

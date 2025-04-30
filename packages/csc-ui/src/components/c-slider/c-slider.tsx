@@ -20,16 +20,19 @@ import {
 export class CSlider {
   /**
    * Id of the element
+   * @name id
    */
   @Prop({ attribute: 'id' }) hostId: string;
 
   /**
    * Id of the element
+   * @name name
    */
   @Prop({ attribute: 'name' }) hostName: string;
 
   /**
    * Aria label
+   * @name aria-label
    */
   @Prop({ attribute: 'aria-label' }) ariaLabelInternal: string;
 

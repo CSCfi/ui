@@ -47,6 +47,7 @@ export class CSwitch {
 
   /**
    * Disable the switch
+   * @name disabled
    */
   @Prop({ attribute: 'disabled' }) hostDisabled = false;
 

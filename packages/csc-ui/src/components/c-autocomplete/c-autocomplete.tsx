@@ -65,6 +65,7 @@ export class CAutocomplete {
 
   /**
    * Id of the element
+   * @name id
    */
   @Prop({ attribute: 'id' }) hostId: string;
 

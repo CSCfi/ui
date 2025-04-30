@@ -48,6 +48,7 @@ export class CCheckbox {
 
   /**
    * Id of the element
+   * @name id
    */
   @Prop({ attribute: 'id' }) hostId: string;
 
@@ -95,6 +96,7 @@ export class CCheckbox {
   /**
    * Name of the input
    * - Only used when the checkbox participates in a native `<form>`
+   * @name name
    */
   @Prop({ attribute: 'name' }) hostName: string;
 

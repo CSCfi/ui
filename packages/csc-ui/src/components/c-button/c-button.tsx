@@ -85,6 +85,7 @@ export class CButton {
 
   /**
    * Id of the button
+   * @name id
    */
   @Prop({ attribute: 'id' }) hostId: string;
 

@@ -34,6 +34,7 @@ export class CTab {
 
   /**
    * Id of the tab
+   * @name id
    */
   @Prop({ attribute: 'id' }) hostId: string;
 

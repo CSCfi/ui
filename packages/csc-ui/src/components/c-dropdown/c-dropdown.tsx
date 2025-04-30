@@ -46,6 +46,7 @@ export class CDropdown {
 
   /**
    * Id of the element
+   * @name id
    */
   @Prop({ attribute: 'id' }) hostId: string;
 
