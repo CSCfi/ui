@@ -76,23 +76,15 @@ export class CModal {
   private _backdropElement: HTMLCBackdropElement;
 
   private _handleBackdrop = () => {
-    const existingBackdrop = document.body.querySelector('c-backdrop');
-
-    if (!existingBackdrop) {
-      const backdrop = document.createElement('c-backdrop');
-
-      document.body.appendChild(backdrop);
-
-      this._backdropElement = backdrop;
-
-      return;
-    }
-
-    this._backdropElement = existingBackdrop;
+    this._backdropElement ||= document.body
+      .querySelector('c-main')
+      .shadowRoot.querySelector('c-backdrop');
   };
 
   private _handleShow = () => {
     requestAnimationFrame(() => {
+      this._handleBackdrop();
+
       this._backdropElement.setAttribute(
         'disable-backdrop-blur',
         this.disableBackdropBlur.toString(),
@@ -206,8 +198,6 @@ export class CModal {
     this._animationsDisabled = query.matches;
 
     this._handleClickOutside();
-
-    this._handleBackdrop();
 
     if (this.value) {
       this._handleShow();

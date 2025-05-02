@@ -14,7 +14,7 @@ export class CBackdrop {
    */
   @Prop() disableBackdropBlur = false;
 
-  @State() blur = false;
+  @State() blur = true;
 
   @Watch('disableBackdropBlur')
   onValueChange(value: boolean) {

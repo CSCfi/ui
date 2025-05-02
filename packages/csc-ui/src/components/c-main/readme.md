@@ -31,6 +31,19 @@ Wrapper component for the whole page
 | `--c-main-text-color`       | Text color       |
 
 
+## Dependencies
+
+### Depends on
+
+- [c-backdrop](../c-backdrop)
+
+### Graph
+```mermaid
+graph TD;
+  c-main --> c-backdrop
+  style c-main fill:#f9f,stroke:#333,stroke-width:4px
+```
+
 ----------------------------------------------
 
 *Built with [StencilJS](https://stenciljs.com/)*

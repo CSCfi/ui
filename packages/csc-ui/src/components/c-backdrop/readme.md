@@ -16,12 +16,12 @@
 
 ### Used by
 
- - [c-modal](../c-modal)
+ - [c-main](../c-main)
 
 ### Graph
 ```mermaid
 graph TD;
-  c-modal --> c-backdrop
+  c-main --> c-backdrop
   style c-backdrop fill:#f9f,stroke:#333,stroke-width:4px
 ```
 
