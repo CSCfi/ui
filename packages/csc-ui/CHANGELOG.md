@@ -1,5 +1,14 @@
 # Changelog
 
+## [3.0.4](https://github.com/CSCfi/ui/compare/v3.0.3...v3.0.4) (2025-05-02)
+
+
+### Bug Fixes
+
+* **c-card-title:** Add text wrap balance ([69d7d93](https://github.com/CSCfi/ui/commit/69d7d936bde51105315084c3e25698ccfd21dce8))
+* **c-login-card-title:** Add text wrap balance ([fa8cc7c](https://github.com/CSCfi/ui/commit/fa8cc7c4d8471f4fe73a851984d22d98cfa8c22e))
+* **c-modal:** Prevent the backdrop from staying open in some cases when the dialog closes ([78f7c8b](https://github.com/CSCfi/ui/commit/78f7c8b2a4f953f046e500efadecd7bd97cd11ac))
+
 ## [3.0.3](https://github.com/CSCfi/ui/compare/v3.0.2...v3.0.3) (2025-05-02)
 
 
