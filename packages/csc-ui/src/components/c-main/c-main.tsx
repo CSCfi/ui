@@ -20,6 +20,7 @@ export class CMain {
     return (
       <main class={{ dashboard: !this.disableLayout }}>
         <slot></slot>
+        <c-backdrop></c-backdrop>
       </main>
     );
   }
