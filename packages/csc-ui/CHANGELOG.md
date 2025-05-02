@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.0.3](https://github.com/CSCfi/ui/compare/v3.0.2...v3.0.3) (2025-05-02)
+
+
+### Bug Fixes
+
+* **c-modal:** Fixed backdrop visibility ([ad588e3](https://github.com/CSCfi/ui/commit/ad588e3a721310883a50d44064080482117cb70f))
+
 ## [3.0.2](https://github.com/CSCfi/ui/compare/v3.0.1...v3.0.2) (2025-04-30)
 
 
