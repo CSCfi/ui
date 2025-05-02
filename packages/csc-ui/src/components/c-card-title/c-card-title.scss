@@ -12,11 +12,12 @@
   font-size: 1rem;
   font-weight: 500;
   text-transform: uppercase;
+  text-wrap: balance;
 }
 
 .c-card-title {
   $this: &;
-  
+
   padding-inline: var(--_c-card-gap, 24px);
 
   &__header {
