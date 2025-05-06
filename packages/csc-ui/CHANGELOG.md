@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.0.5](https://github.com/CSCfi/ui/compare/v3.0.4...v3.0.5) (2025-05-06)
+
+
+### Bug Fixes
+
+* **c-modal:** Prevent c-modal from crashing if used outside c-main ([502fa96](https://github.com/CSCfi/ui/commit/502fa968c3840f58680eaa71ad1d2a0a2d021207))
+
 ## [3.0.4](https://github.com/CSCfi/ui/compare/v3.0.3...v3.0.4) (2025-05-02)
 
 
