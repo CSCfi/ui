@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.0.6](https://github.com/CSCfi/ui/compare/v3.0.5...v3.0.6) (2025-05-06)
+
+
+### Bug Fixes
+
+* **c-modal:** Add missing css class ([4566ec1](https://github.com/CSCfi/ui/commit/4566ec145a177b1a29387a5befaa748a834afaa3))
+
 ## [3.0.5](https://github.com/CSCfi/ui/compare/v3.0.4...v3.0.5) (2025-05-06)
 
 
