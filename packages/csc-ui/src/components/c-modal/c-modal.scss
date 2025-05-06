@@ -17,6 +17,16 @@ dialog {
   &::backdrop {
     background-color: transparent;
   }
+
+  &--standalone {
+    &::backdrop {
+      background-color: rgba(0, 0, 0, 0.5);
+    }
+
+    &.c-modal--backdrop-blur::backdrop {
+      backdrop-filter: blur(4px);
+    }
+  }
 }
 
 @media (prefers-reduced-motion: no-preference) {

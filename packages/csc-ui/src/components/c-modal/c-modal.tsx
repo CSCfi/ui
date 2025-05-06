@@ -58,6 +58,9 @@ export class CModal {
 
   @State() animateModal = false;
 
+  // Not used inside c-main
+  @State() standaloneMode = false;
+
   private _debounce = null;
 
   private _animationsDisabled = false;
@@ -76,9 +79,21 @@ export class CModal {
   private _backdropElement: HTMLCBackdropElement;
 
   private _handleBackdrop = () => {
-    this._backdropElement ||= document.body
-      .querySelector('c-main')
-      .shadowRoot.querySelector('c-backdrop');
+    const cMain = document.body.querySelector('c-main');
+
+    if (!cMain) {
+      this.standaloneMode = true;
+
+      return;
+    }
+
+    this.standaloneMode = false;
+
+    this._backdropElement ||= cMain.shadowRoot.querySelector('c-backdrop');
+
+    if (!this._backdropElement) {
+      return;
+    }
 
     this._backdropElement.setAttribute(
       'disable-backdrop-blur',
@@ -228,7 +243,9 @@ export class CModal {
     };
 
     const classes = {
-      'backdrop-blur': !this.disableBackdropBlur,
+      'c-modal': true,
+      'c-modal--standalone': this.standaloneMode,
+      'c-modal--backdrop-blur': !this.disableBackdropBlur,
     };
 
     return (
