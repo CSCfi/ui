@@ -507,7 +507,7 @@ export namespace Components {
         /**
           * Update list items
          */
-        "updateList": () => Promise<void>;
+        "updateList": (reset?: boolean) => Promise<void>;
     }
     /**
      * @group Other

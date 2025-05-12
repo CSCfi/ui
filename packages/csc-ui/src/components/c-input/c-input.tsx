@@ -327,7 +327,7 @@ export class CInput {
 
       // show the label if there's no label or value
       this._onReset();
-    }, 100);
+    }, 200);
   };
 
   private _onFocus = (click = true) => {
@@ -353,22 +353,24 @@ export class CInput {
   };
 
   private _onReset() {
-    if (this.inputField) {
-      if (
-        !!this.placeholder &&
-        !this.value &&
-        (this.active || this.isFocused)
-      ) {
-        this.inputField.placeholder = this.placeholder;
+    requestAnimationFrame(() => {
+      if (this.inputField) {
+        if (
+          !!this.placeholder &&
+          !this.value &&
+          (this.active || this.isFocused)
+        ) {
+          this.inputField.placeholder = this.placeholder;
 
-        return;
+          return;
+        }
+
+        this.inputField.placeholder =
+          !this.label && !this.value && !!this.placeholder
+            ? this.placeholder
+            : '';
       }
-
-      this.inputField.placeholder =
-        !this.label && !this.value && !!this.placeholder
-          ? this.placeholder
-          : '';
-    }
+    });
   }
 
   /**
