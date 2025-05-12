@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.0.7](https://github.com/CSCfi/ui/compare/v3.0.6...v3.0.7) (2025-05-12)
+
+
+### Bug Fixes
+
+* **c-select:** Fix keyboard navigation ([69bc65c](https://github.com/CSCfi/ui/commit/69bc65c191eb8b4b702f1efefbba7229c13ee05e))
+
 ## [3.0.6](https://github.com/CSCfi/ui/compare/v3.0.5...v3.0.6) (2025-05-06)
 
 
