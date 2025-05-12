@@ -11,6 +11,7 @@
       hide-details
       return-object
       :items="items"
+      clearable
     />
 
     <p class="mt-3">Selected country: {{ value || 'None' }}</p>

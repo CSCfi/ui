@@ -96,9 +96,15 @@ Type: `Promise<void>`
 
 
 
-### `updateList() => Promise<void>`
+### `updateList(reset?: boolean) => Promise<void>`
 
 Update list items
+
+#### Parameters
+
+| Name    | Type      | Description |
+| ------- | --------- | ----------- |
+| `reset` | `boolean` |             |
 
 #### Returns
 

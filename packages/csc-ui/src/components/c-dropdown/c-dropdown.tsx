@@ -1,4 +1,4 @@
-import { mdiAlert, mdiInformation } from '@mdi/js';
+import { mdiAlert, mdiCheck, mdiInformation } from '@mdi/js';
 import {
   Component,
   Host,
@@ -270,7 +270,11 @@ export class CDropdown {
    * Update list items
    */
   @Method()
-  async updateList() {
+  async updateList(reset = false) {
+    if (reset) {
+      this.index = 0;
+    }
+
     requestAnimationFrame(() => {
       this.renderedList = this._renderList();
     });
@@ -484,6 +488,7 @@ export class CDropdown {
           aria-pos-in-set={(index + 1).toString()}
           aria-selected={(this.index === index).toString()}
           class={{ disabled: !!item.disabled }}
+          title={item.name}
           data-name={item.name}
           onClick={(event) => {
             if (item.disabled) {
@@ -495,6 +500,8 @@ export class CDropdown {
             this.selectOption.emit({ name: item.name, value: item.value });
           }}
         >
+          {this.index === index && <c-icon path={mdiCheck} size={16} />}
+
           <span innerHTML={this._highlightMatchingText(item.name)}></span>
         </li>
       );

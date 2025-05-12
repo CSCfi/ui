@@ -160,8 +160,6 @@ export class CSelect {
 
   private _inputId: string;
 
-  private _preventDialogOpen = false;
-
   private _debounce = null;
 
   private _lastKeyPressTime = null;
@@ -212,7 +210,7 @@ export class CSelect {
 
     this.internals.setFormValue(null);
 
-    this._dropdownElement.updateList();
+    this._dropdownElement.updateList(true);
   }
 
   @Listen('keydown', { passive: true })
@@ -222,33 +220,34 @@ export class CSelect {
     if (this.disabled) return;
 
     if (event.key.match(alphanumeric) && event.key.length === 1) {
-      if (this.dropdownVisible) return;
-
-      if (Date.now() - this._lastKeyPressTime > 3000) {
-        this._searchString = event.key;
-      } else {
-        this._searchString += event.key;
+      if (!this.dropdownVisible) {
+        this._dropdownElement.open();
       }
 
-      this._lastKeyPressTime = Date.now();
+      requestAnimationFrame(() => {
+        if (Date.now() - this._lastKeyPressTime > 3000) {
+          this._searchString = event.key;
+        } else {
+          this._searchString += event.key;
+        }
 
-      const selectionIndex = Array.from(this._items).findIndex((i) =>
-        i.name.toLowerCase().startsWith(this._searchString),
-      );
+        this._lastKeyPressTime = Date.now();
 
-      this.currentIndex = selectionIndex >= 0 ? selectionIndex : null;
+        const selectionIndex = this._getSelectionIndex(this._searchString);
 
-      if (this.currentIndex !== null) {
-        this._dropdownElement.selectItem(this.currentIndex);
-      }
+        this.currentIndex = selectionIndex >= 0 ? selectionIndex : null;
 
-      return;
+        return;
+      });
     }
 
     if (event.key === 'Escape') {
-      this._preventDialogOpen = true;
       this._dropdownElement?.close();
       this._inputElement.focus();
+
+      if (!this.value) {
+        this.currentIndex = null;
+      }
 
       return;
     }
@@ -264,14 +263,22 @@ export class CSelect {
 
       if (!this.dropdownVisible) {
         this._dropdownElement.open();
+
+        if (this.value) {
+          this.currentIndex = this._getSelectionIndex(this._value);
+        }
+
+        return;
       }
 
-      this.currentIndex =
-        this.currentIndex === null
-          ? 0
-          : Math.min(this.currentIndex + 1, this._items.length - 1);
+      requestAnimationFrame(() => {
+        this.currentIndex =
+          this.currentIndex === null
+            ? 0
+            : Math.min(this.currentIndex + 1, this._items.length - 1);
 
-      this._dropdownElement.focusItem(this.currentIndex);
+        this._dropdownElement.focusItem(this.currentIndex);
+      });
     }
 
     if (event.key === 'ArrowUp') {
@@ -284,6 +291,12 @@ export class CSelect {
 
       if (!this.dropdownVisible) {
         this._dropdownElement.open();
+
+        if (this.value) {
+          this.currentIndex = this._getSelectionIndex(this._value);
+        }
+
+        return;
       }
 
       this.currentIndex =
@@ -323,12 +336,16 @@ export class CSelect {
   }
 
   @Watch('value')
-  onValueChanged(v) {
-    if (!this.value && this.optionAsSelection) {
-      this._selectionElement?.replaceChildren();
+  onValueChanged(value) {
+    if (!value) {
+      if (this.optionAsSelection) this._selectionElement?.replaceChildren();
+
+      return;
     }
 
-    this._selectOption(this.returnObject ? v : { name: v, value: v });
+    this._selectOption(
+      this.returnObject ? value : { name: value, value: value },
+    );
   }
 
   @Listen('selectOption')
@@ -347,6 +364,12 @@ export class CSelect {
     this._setValue(event.detail);
   }
 
+  private _getSelectionIndex(searchString: string) {
+    return Array.from(this._items).findIndex((i) =>
+      i.name.toLowerCase().startsWith(searchString.toLowerCase()),
+    );
+  }
+
   private _selectOption({ value, name }: { value: string; name: string }) {
     this._dropdownElement?.close();
 
@@ -360,8 +383,6 @@ export class CSelect {
     }
 
     this._dropdownElement?.updateList();
-
-    this._preventDialogOpen = true;
 
     this._inputElement?.focus();
   }
@@ -423,8 +444,6 @@ export class CSelect {
 
       this._onReset(event);
 
-      this._preventDialogOpen = true;
-
       requestAnimationFrame(() => {
         this._inputElement.focus();
       });
@@ -460,16 +479,16 @@ export class CSelect {
 
     this.internals.setFormValue(null);
 
+    this.currentIndex = null;
+
     this._selectionElement.classList.remove('c-input-menu__selection--show');
     this._selectionElement.replaceChildren(null);
-
-    this._preventDialogOpen = true;
 
     this._cInputElement.reset();
 
     this._inputElement.focus();
 
-    this._dropdownElement.updateList();
+    this._dropdownElement.updateList(true);
   };
 
   private _updateInput() {
@@ -508,13 +527,7 @@ export class CSelect {
   private _onInputFocus = () => {
     if (this.disabled) return;
 
-    if (!this._preventDialogOpen) {
-      this._dropdownElement.open();
-    }
-
     this._updateStatusText();
-
-    this._preventDialogOpen = false;
   };
 
   componentWillLoad() {
@@ -569,7 +582,7 @@ export class CSelect {
         onClick={(event) => this._toggleDropdown(event)}
         onKeyDown={(event) => this._onButtonKeyDown('chevron', event)}
       >
-        <c-icon path={mdiChevronDown} size={24} />
+        <c-icon path={mdiChevronDown} size={24} key="c-select--chevron-icon" />
       </c-icon-button>
     );
   }
@@ -612,7 +625,7 @@ export class CSelect {
         onClick={(event) => this._onReset(event)}
         onKeyDown={(event) => this._onButtonKeyDown('reset', event)}
       >
-        <c-icon path={mdiClose} size={20} />
+        <c-icon path={mdiClose} size={20} key="c-select--reset-icon" />
       </c-icon-button>
     );
   }
