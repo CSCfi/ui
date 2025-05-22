@@ -163,8 +163,8 @@
   }
 }
 
-:host(.c-tabs--borderless) ::slotted(c-tab) {
-  box-shadow: none;
+:host(.c-tabs--borderless) {
+  --_c-tabs-border-color: transparent;
 }
 
 :host(.c-tabs.c-tabs--initialized) {
