@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.0.8](https://github.com/CSCfi/ui/compare/v3.0.7...v3.0.8) (2025-05-22)
+
+
+### Bug Fixes
+
+* **c-tabs:** Fix borderless version ([0dc9376](https://github.com/CSCfi/ui/commit/0dc93761257c9449c783bc91cae01b52d4b0339a))
+
 ## [3.0.7](https://github.com/CSCfi/ui/compare/v3.0.6...v3.0.7) (2025-05-12)
 
 
