@@ -101,6 +101,10 @@ table.c-table {
   td {
     font-size: 16px;
     color: var(--c-text-body);
+
+    span.c-table__mobile-label {
+      display: none;
+    }
   }
 
   &--mobile {
@@ -131,12 +135,11 @@ table.c-table {
       display: grid;
       gap: 4px;
       padding: 12px;
-      min-height: 62px;
+      min-height: 48px;
 
-      &::before {
+      span.c-table__mobile-label {
         font-size: 14px;
         color: var(--_c-table-header-text-color);
-        content: attr(data-title);
         display: inline-block;
         text-align: start;
         padding-right: 8px;

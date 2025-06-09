@@ -1688,6 +1688,10 @@ export namespace Components {
           * Should the table be responsive
          */
         "responsive": boolean;
+        /**
+          * Update mobile labels after content change when using responsive table
+         */
+        "updateMobileLabels": () => Promise<void>;
     }
     /**
      * @group Content Selectors
