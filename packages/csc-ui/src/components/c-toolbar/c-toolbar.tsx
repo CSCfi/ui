@@ -15,6 +15,7 @@ export class CToolbar {
         <div class="c-toolbar">
           <slot></slot>
         </div>
+
         <div class="spacer"></div>
       </Host>
     );

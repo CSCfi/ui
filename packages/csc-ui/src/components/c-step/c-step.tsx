@@ -47,6 +47,7 @@ export class CStep {
             </div>
           )}
         </div>
+
         <div class="c-step__label">
           <slot></slot>
         </div>

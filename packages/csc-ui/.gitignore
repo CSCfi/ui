@@ -11,8 +11,6 @@ src/styles/*
 docs.json
 components/*
 
-.npmrc
-
 playground/**/node_modules
 .env
 yarn-error.log
