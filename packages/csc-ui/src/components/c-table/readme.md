@@ -13,6 +13,19 @@
 | `responsive`       | `responsive`        | Should the table be responsive | `boolean` | `false` |
 
 
+## Methods
+
+### `updateMobileLabels() => Promise<void>`
+
+Update mobile labels after content change when using responsive table
+
+#### Returns
+
+Type: `Promise<void>`
+
+
+
+
 ## CSS Custom Properties
 
 | Name                                    | Description                                      |

@@ -2,32 +2,77 @@
   <component-example name="responsive" rows>
     <template #title>Responsive table</template>
 
-    <c-table responsive>
-      <table>
-        <thead>
-          <tr>
-            <th v-for="header in headers" :key="header">{{ header }}</th>
-          </tr>
-        </thead>
+    <div class="flex justify-start">
+      <c-tab-buttons v-model="displayType" v-control size="small" mandatory>
+        <c-button value="desktop">
+          <c-icon :size="20" :path="mdiMonitor" />
+          Desktop
+        </c-button>
 
-        <tbody>
-          <tr v-for="user in users" :key="user.id">
-            <td>{{ user.id }}</td>
+        <c-button value="mobile">
+          <c-icon :size="20" :path="mdiCellphone" />
+          Mobile
+        </c-button>
+      </c-tab-buttons>
+    </div>
 
-            <td>{{ user.name }}</td>
+    <div
+      :style="{ maxWidth: displayType === 'desktop' ? '100%' : '600px' }"
+      class="grid gap-4"
+    >
+      <c-table ref="tableElementRef" responsive>
+        <table>
+          <thead>
+            <tr>
+              <th v-for="header in headers" :key="header">{{ header }}</th>
+            </tr>
+          </thead>
 
-            <td>{{ user.ssn }}</td>
-          </tr>
-        </tbody>
-      </table>
-    </c-table>
+          <tbody>
+            <tr v-if="!users.length" no-mobile-labels>
+              <td colspan="4">
+                <div class="grid place-content-center p-4 gap-4">
+                  No users found
+                  <c-button @click="onReset()">Reset</c-button>
+                </div>
+              </td>
+            </tr>
+
+            <tr v-for="user in users" :key="user.id">
+              <td>{{ user.id }}</td>
+
+              <td>{{ user.name }}</td>
+
+              <td>{{ user.ssn }}</td>
+
+              <td class="text-right">
+                <c-button size="small" ghost @click="onRemoveUser(user.id)">
+                  <c-icon :path="mdiDelete" :size="20" />
+                  Remove
+                </c-button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </c-table>
+
+      <c-button class="justify-self-start" @click="onAddUser()">
+        Add user
+      </c-button>
+    </div>
   </component-example>
 </template>
 
 <script setup lang="ts">
-const headers = ['Id', 'Name', 'Ssn'];
+import { mdiCellphone, mdiDelete, mdiMonitor } from '@mdi/js';
 
-const users = [
+const displayType = ref<'desktop' | 'mobile'>('desktop');
+
+const tableElementRef = useTemplateRef<HTMLCTableElement>('tableElementRef');
+
+const headers = ['Id', 'Name', 'Ssn', ''];
+
+const defaultUsers = [
   {
     id: '19-9985829',
     name: 'Trueman Stoving',
@@ -54,4 +99,31 @@ const users = [
     ssn: '442-24-1083',
   },
 ];
+
+const users = ref([...defaultUsers]);
+
+const onRemoveUser = (id: string) => {
+  users.value = users.value.filter((user) => user.id !== id);
+};
+
+const onAddUser = () => {
+  users.value = [
+    ...users.value,
+    {
+      id: 'user_' + Date.now(),
+      name: 'New User',
+      ssn: 'some-ssn',
+    },
+  ];
+
+  // Update mobile labels when adding data
+  tableElementRef.value?.updateMobileLabels();
+};
+
+const onReset = () => {
+  users.value = [...defaultUsers];
+
+  // Update mobile labels when adding data
+  tableElementRef.value?.updateMobileLabels();
+};
 </script>
