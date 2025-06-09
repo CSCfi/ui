@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.0.11](https://github.com/CSCfi/ui/compare/v3.0.10...v3.0.11) (2025-06-09)
+
+
+### Bug Fixes
+
+* Fix formatting ([ac104fc](https://github.com/CSCfi/ui/commit/ac104fc95e9d7a0c59bb41cda11bd346bd29601c))
+
 ## [3.0.10](https://github.com/CSCfi/ui/compare/v3.0.9...v3.0.10) (2025-06-09)
 
 
