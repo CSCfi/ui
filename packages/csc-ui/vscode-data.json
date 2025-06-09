@@ -100,10 +100,6 @@
           "description": "Element label"
         },
         {
-          "name": "label-on-top",
-          "description": "Label on top of the input"
-        },
-        {
           "name": "loading",
           "description": "Show loading state"
         },

@@ -74,8 +74,8 @@ const items = computed<CAutocompleteItem[]>(() =>
 const filteredItems = computed(() => {
   if (!query.value) return items.value;
 
-  return items.value.filter(
-    (i) => i.name?.toLowerCase().includes(query.value?.toLowerCase()),
+  return items.value.filter((i) =>
+    i.name?.toLowerCase().includes(query.value?.toLowerCase()),
   );
 });
 

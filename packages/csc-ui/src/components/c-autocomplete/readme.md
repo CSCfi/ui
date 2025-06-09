@@ -14,7 +14,6 @@
 | `items`                     | --                             | Dropdown items                      | `CAutocompleteItem[]`                                      | `[]`                             |
 | `itemsPerPage`              | `items-per-page`               | Items per page before adding scroll | `number`                                                   | `6`                              |
 | `label`                     | `label`                        | Element label                       | `string`                                                   | `undefined`                      |
-| `labelOnTop`                | `label-on-top`                 | Label on top of the input           | `boolean`                                                  | `false`                          |
 | `loading`                   | `loading`                      | Show loading state                  | `boolean`                                                  | `false`                          |
 | `minimumQueryLength`        | `minimum-query-length`         | Minimum query length                | `number`                                                   | `0`                              |
 | `minimumQueryLengthMessage` | `minimum-query-length-message` | Minimum query length message        | `string`                                                   | `'Type at least {n} characters'` |

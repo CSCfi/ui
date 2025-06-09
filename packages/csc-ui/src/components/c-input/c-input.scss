@@ -3,7 +3,7 @@
   --_c-input-active-color: var(--c-primary-600);
   --_c-input-background-color: var(--c-transparent);
   --_c-input-text-color: var(--c-text-body);
-  --_c-input-placeholder-color: var(--c-tertiary-500);
+  --_c-input-placeholder-color: var(--c-tertiary-400);
   --_c-input-shadow-active-color: var(--_c-input-active-color);
   --_c-input-shadow-background-color: var(--c-white);
   --_c-input-shadow-text-color: var(--_c-input-text-color);
@@ -195,8 +195,15 @@
   &--label-on-top {
     padding-top: 20px;
 
+    input::placeholder,
+    textarea::placeholder {
+      color: var(--_c-input-placeholder-color);
+      opacity: 1;
+    }
+
     #{$this} {
       &__field label {
+        color: var(--_c-input-active-color);
         transform: translateY(-36px) translateX(-16px) scale(0.875);
       }
     }

@@ -250,7 +250,7 @@ export class CInput {
     );
 
     // hide the placeholder text initially if there is a label
-    if (this.inputField) {
+    if (this.inputField && !this.labelOnTop) {
       this.inputField.placeholder =
         !!this.label || !this.placeholder ? '' : this.placeholder;
 
@@ -265,6 +265,10 @@ export class CInput {
 
         container.dataset.placeholder = this.placeholder;
       });
+    }
+
+    if (this.labelOnTop && this.placeholder && this.inputField) {
+      this.inputField.placeholder = this.placeholder;
     }
   }
 
@@ -351,7 +355,7 @@ export class CInput {
     }
 
     // show the label if there's no value
-    if (this.inputField) {
+    if (this.inputField && !this.labelOnTop) {
       this.inputField.placeholder =
         !!this.value || !this.placeholder ? '' : this.placeholder;
     }
@@ -359,7 +363,7 @@ export class CInput {
 
   private _onReset() {
     requestAnimationFrame(() => {
-      if (this.inputField) {
+      if (this.inputField && !this.labelOnTop) {
         if (
           !!this.placeholder &&
           !this.value &&

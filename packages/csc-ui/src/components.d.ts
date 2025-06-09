@@ -99,10 +99,6 @@ export namespace Components {
          */
         "label": string;
         /**
-          * Label on top of the input
-         */
-        "labelOnTop": boolean;
-        /**
           * Show loading state
          */
         "loading": boolean;
@@ -3171,10 +3167,6 @@ declare namespace LocalJSX {
           * Element label
          */
         "label"?: string;
-        /**
-          * Label on top of the input
-         */
-        "labelOnTop"?: boolean;
         /**
           * Show loading state
          */

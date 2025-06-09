@@ -1,15 +1,9 @@
 <template>
-  <component-example name="labelOnTop" rows>
+  <component-example name="label-on-top" rows>
     <template #title>Label on top</template>
 
     <c-text-field label="Text field" label-on-top />
 
-    <c-text-field label="Text area" rows="8" label-on-top />
-
-    <c-select label="Select" label-on-top>
-      <c-option value="one">One</c-option>
-
-      <c-option value="two">Two</c-option>
-    </c-select>
+    <c-text-field label="Text area" rows="6" label-on-top />
   </component-example>
 </template>
