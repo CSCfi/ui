@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.0.9](https://github.com/CSCfi/ui/compare/v3.0.8...v3.0.9) (2025-06-09)
+
+
+### Bug Fixes
+
+* **c-table:** Fix mobile labels not working correctly when using the responsive table ([d7bb9f4](https://github.com/CSCfi/ui/commit/d7bb9f47a4a2006b6943e2007d66affc709ec58a))
+
 ## [3.0.8](https://github.com/CSCfi/ui/compare/v3.0.7...v3.0.8) (2025-05-22)
 
 
