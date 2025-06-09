@@ -4,7 +4,6 @@ npm-debug.log
 packages/*/lib
 packages/*/dist
 .idea
-.npmrc
 **/.DS_Store
 
 # Local Netlify folder
