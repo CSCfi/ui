@@ -36,12 +36,13 @@ jobs:
           cd packages/csc-ui
           npm ci
           npm run build
-          npm publish
+          npm whoami || true
+          npm publish --loglevel verbose
           cd ../csc-ui-react
           npm ci
           npm run build
           (version="$(node ../csc-ui/scripts/getLatestVersion.js)"; npm --no-git-tag-version version ${version})
-          npm publish
+          npm publish --loglevel verbose
         env:
           NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
         if: ${{ steps.release.outputs.releases_created }}
