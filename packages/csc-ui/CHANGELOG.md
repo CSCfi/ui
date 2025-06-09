@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.0.10](https://github.com/CSCfi/ui/compare/v3.0.9...v3.0.10) (2025-06-09)
+
+
+### Bug Fixes
+
+* **c-textfield:** Add 'Label on top' variant ([d1e0930](https://github.com/CSCfi/ui/commit/d1e09300b72a04f303a9331b06ff0de7961a3a5f))
+
 ## [3.0.9](https://github.com/CSCfi/ui/compare/v3.0.8...v3.0.9) (2025-06-09)
 
 
