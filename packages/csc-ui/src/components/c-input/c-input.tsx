@@ -76,6 +76,11 @@ export class CInput {
   @Prop() label: string;
 
   /**
+   * Label on top of the input
+   */
+  @Prop() labelOnTop = false;
+
+  /**
    * Maximum value on a numeric input
    */
   @Prop() max: number = null;
@@ -245,7 +250,7 @@ export class CInput {
     );
 
     // hide the placeholder text initially if there is a label
-    if (this.inputField) {
+    if (this.inputField && !this.labelOnTop) {
       this.inputField.placeholder =
         !!this.label || !this.placeholder ? '' : this.placeholder;
 
@@ -260,6 +265,10 @@ export class CInput {
 
         container.dataset.placeholder = this.placeholder;
       });
+    }
+
+    if (this.labelOnTop && this.placeholder && this.inputField) {
+      this.inputField.placeholder = this.placeholder;
     }
   }
 
@@ -346,7 +355,7 @@ export class CInput {
     }
 
     // show the label if there's no value
-    if (this.inputField) {
+    if (this.inputField && !this.labelOnTop) {
       this.inputField.placeholder =
         !!this.value || !this.placeholder ? '' : this.placeholder;
     }
@@ -354,7 +363,7 @@ export class CInput {
 
   private _onReset() {
     requestAnimationFrame(() => {
-      if (this.inputField) {
+      if (this.inputField && !this.labelOnTop) {
         if (
           !!this.placeholder &&
           !this.value &&
@@ -389,6 +398,7 @@ export class CInput {
 
     const classes = {
       active: this.isActive || this.active,
+      'label-on-top': this.labelOnTop,
     };
 
     return (
@@ -410,6 +420,7 @@ export class CInput {
 
     const classes = {
       active: this.isActive,
+      'label-on-top': this.labelOnTop,
     };
 
     return (
@@ -448,6 +459,7 @@ export class CInput {
       'c-input': true,
       'c-input--disabled': this.disabled,
       'c-input--shadow': this.shadow,
+      'c-input--label-on-top': this.labelOnTop,
       'c-input--textarea': this.rows > 1,
       'c-input--error': !this.valid,
       'c-input--active': this.isFocused || this.active,

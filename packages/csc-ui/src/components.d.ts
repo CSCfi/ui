@@ -618,6 +618,10 @@ export namespace Components {
          */
         "label": string;
         /**
+          * Label on top of the input
+         */
+        "labelOnTop": boolean;
+        /**
           * Maximum value on a numeric input
          */
         "max": number;
@@ -1259,6 +1263,10 @@ export namespace Components {
          */
         "label": string;
         /**
+          * Label on top of the input
+         */
+        "labelOnTop": boolean;
+        /**
           * Show loading state
          */
         "loading": boolean;
@@ -1807,6 +1815,10 @@ export namespace Components {
           * Label of the input
          */
         "label": string;
+        /**
+          * Label on top of the input
+         */
+        "labelOnTop": boolean;
         /**
           * Maximum value on a numeric input
          */
@@ -3679,6 +3691,10 @@ declare namespace LocalJSX {
          */
         "label"?: string;
         /**
+          * Label on top of the input
+         */
+        "labelOnTop"?: boolean;
+        /**
           * Maximum value on a numeric input
          */
         "max"?: number;
@@ -4359,6 +4375,10 @@ declare namespace LocalJSX {
          */
         "label"?: string;
         /**
+          * Label on top of the input
+         */
+        "labelOnTop"?: boolean;
+        /**
           * Show loading state
          */
         "loading"?: boolean;
@@ -4958,6 +4978,10 @@ declare namespace LocalJSX {
           * Label of the input
          */
         "label"?: string;
+        /**
+          * Label on top of the input
+         */
+        "labelOnTop"?: boolean;
         /**
           * Maximum value on a numeric input
          */

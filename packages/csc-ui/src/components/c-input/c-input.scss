@@ -3,7 +3,7 @@
   --_c-input-active-color: var(--c-primary-600);
   --_c-input-background-color: var(--c-transparent);
   --_c-input-text-color: var(--c-text-body);
-  --_c-input-placeholder-color: var(--c-tertiary-500);
+  --_c-input-placeholder-color: var(--c-tertiary-400);
   --_c-input-shadow-active-color: var(--_c-input-active-color);
   --_c-input-shadow-background-color: var(--c-white);
   --_c-input-shadow-text-color: var(--_c-input-text-color);
@@ -177,18 +177,34 @@
       right: auto;
       text-overflow: ellipsis;
       top: 12px;
-      transform-origin: top left;
-      transform: translateX(var(--_c-input-label-position)) translateY(0)
-        scale(1);
-      transition: 0.3s cubic-bezier(0.25, 0.8, 0.5, 1) 0.08s;
       white-space: nowrap;
 
-      &.active {
-        transform: translateY(-18px) scale(0.75);
+      &:not(.label-on-top) {
+        transform-origin: top left;
+        transform: translateX(var(--_c-input-label-position)) translateY(0)
+          scale(1);
+        transition: 0.3s cubic-bezier(0.25, 0.8, 0.5, 1) 0.08s;
       }
 
       span {
         color: var(--c-error-600);
+      }
+    }
+  }
+
+  &--label-on-top {
+    padding-top: 20px;
+
+    input::placeholder,
+    textarea::placeholder {
+      color: var(--_c-input-placeholder-color);
+      opacity: 1;
+    }
+
+    #{$this} {
+      &__field label {
+        color: var(--_c-input-active-color);
+        transform: translateY(-36px) translateX(-16px) scale(0.875);
       }
     }
   }
@@ -230,7 +246,7 @@
       transition: width 0.3s cubic-bezier(0.25, 0.8, 0.5, 1);
       width: 0;
 
-      &.active {
+      &.active:not(.label-on-top) {
         width: var(--_c-input-legend-width);
       }
     }
@@ -299,12 +315,12 @@
       border-color: var(--_c-input-active-color);
     }
 
-    label {
+    label:not(.label-on-top) {
       color: var(--_c-input-active-color);
       transform: translateX(0) translateY(-18px) scale(0.75);
     }
 
-    legend {
+    legend:not(.label-on-top) {
       width: var(--_c-input-legend-width);
     }
   }

@@ -18,6 +18,7 @@
 | `hint`                | `hint`             | Hint text for the input               | `string`  | `''`               |
 | `hostId`              | `id`               | Id of the input                       | `string`  | `undefined`        |
 | `label`               | `label`            | Label of the input                    | `string`  | `undefined`        |
+| `labelOnTop`          | `label-on-top`     | Label on top of the input             | `boolean` | `false`            |
 | `max`                 | `max`              | Maximum value on a numeric input      | `number`  | `null`             |
 | `min`                 | `min`              | Minimum value on a numeric input      | `number`  | `null`             |
 | `name`                | `name`             | Name of the input                     | `string`  | `undefined`        |
