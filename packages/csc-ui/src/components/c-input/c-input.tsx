@@ -76,6 +76,11 @@ export class CInput {
   @Prop() label: string;
 
   /**
+   * Label on top of the input
+   */
+  @Prop() labelOnTop = false;
+
+  /**
    * Maximum value on a numeric input
    */
   @Prop() max: number = null;
@@ -389,6 +394,7 @@ export class CInput {
 
     const classes = {
       active: this.isActive || this.active,
+      'label-on-top': this.labelOnTop,
     };
 
     return (
@@ -410,6 +416,7 @@ export class CInput {
 
     const classes = {
       active: this.isActive,
+      'label-on-top': this.labelOnTop,
     };
 
     return (
@@ -448,6 +455,7 @@ export class CInput {
       'c-input': true,
       'c-input--disabled': this.disabled,
       'c-input--shadow': this.shadow,
+      'c-input--label-on-top': this.labelOnTop,
       'c-input--textarea': this.rows > 1,
       'c-input--error': !this.valid,
       'c-input--active': this.isFocused || this.active,

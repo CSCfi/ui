@@ -80,6 +80,11 @@ export class CTextField {
   @Prop() label: string;
 
   /**
+   * Label on top of the input
+   */
+  @Prop() labelOnTop = false;
+
+  /**
    * Maximum value on a numeric input
    */
   @Prop() max: number = null;
@@ -335,6 +340,7 @@ export class CTextField {
           id={this.hostId}
           input-id={this._inputId}
           label={this.label}
+          label-on-top={this.labelOnTop}
           name={this.name}
           placeholder={this.placeholder}
           readonly={this.readonly}

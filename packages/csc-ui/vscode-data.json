@@ -100,6 +100,10 @@
           "description": "Element label"
         },
         {
+          "name": "label-on-top",
+          "description": "Label on top of the input"
+        },
+        {
           "name": "loading",
           "description": "Show loading state"
         },
@@ -670,6 +674,10 @@
         {
           "name": "label",
           "description": "Label of the input"
+        },
+        {
+          "name": "label-on-top",
+          "description": "Label on top of the input"
         },
         {
           "name": "max",
@@ -1495,6 +1503,10 @@
           "description": "Element label"
         },
         {
+          "name": "label-on-top",
+          "description": "Label on top of the input"
+        },
+        {
           "name": "loading",
           "description": "Show loading state"
         },
@@ -2145,6 +2157,10 @@
         {
           "name": "label",
           "description": "Label of the input"
+        },
+        {
+          "name": "label-on-top",
+          "description": "Label on top of the input"
         },
         {
           "name": "max",

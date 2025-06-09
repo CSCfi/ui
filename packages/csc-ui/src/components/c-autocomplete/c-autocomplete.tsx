@@ -80,6 +80,11 @@ export class CAutocomplete {
   @Prop() label: string;
 
   /**
+   * Label on top of the input
+   */
+  @Prop() labelOnTop = false;
+
+  /**
    * Input field name
    */
   @Prop() name: string;
@@ -576,6 +581,7 @@ export class CAutocomplete {
             id={this.hostId}
             input-id={this._inputId}
             label={this.label}
+            label-on-top={this.labelOnTop}
             name={this.name}
             placeholder={this.placeholder}
             required={this.required}
