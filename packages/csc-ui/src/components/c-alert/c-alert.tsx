@@ -46,6 +46,7 @@ export class CAlert {
           )}
           <div class="c-alert__content">
             <slot name="title"></slot>
+
             <slot></slot>
           </div>
         </div>
