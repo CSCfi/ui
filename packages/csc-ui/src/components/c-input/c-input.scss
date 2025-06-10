@@ -193,12 +193,21 @@
   }
 
   &--label-on-top {
-    padding-top: 20px;
+    display: grid;
+    gap: 4px;
 
     input::placeholder,
     textarea::placeholder {
       color: var(--_c-input-placeholder-color);
       opacity: 1;
+    }
+
+    label {
+      font-size: 14px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      max-width: 100%;
     }
 
     #{$this} {
@@ -323,6 +332,10 @@
     legend:not(.label-on-top) {
       width: var(--_c-input-legend-width);
     }
+  }
+
+  label:not(.label-on-top).filled {
+    transform: translateX(0) translateY(-18px) scale(0.75);
   }
 
   &.active:not(.filled) {

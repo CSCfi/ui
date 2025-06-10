@@ -420,6 +420,7 @@ export class CInput {
 
     const classes = {
       active: this.isActive,
+      filled: !!this.value || typeof this.value === 'boolean',
       'label-on-top': this.labelOnTop,
     };
 
@@ -479,6 +480,8 @@ export class CInput {
         </div>
 
         <div class={containerClasses}>
+          {this.labelOnTop && this._renderLabel()}
+
           <div class="c-input__control">
             <div class="c-input__slot" onClick={() => this._onFocus()}>
               {this._renderBorders()}
@@ -491,7 +494,7 @@ export class CInput {
               >
                 <slot name="pre"></slot>
 
-                {this._renderLabel()}
+                {!this.labelOnTop && this._renderLabel()}
 
                 <slot></slot>
               </div>
