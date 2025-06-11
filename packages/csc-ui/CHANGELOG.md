@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.0.13](https://github.com/CSCfi/ui/compare/v3.0.12...v3.0.13) (2025-06-11)
+
+
+### Bug Fixes
+
+* **c-text-field:** Fix labels not working correctly after latest release ([01554e9](https://github.com/CSCfi/ui/commit/01554e993c173a38c115135c5f75f159b1d2f9bd))
+
 ## [3.0.12](https://github.com/CSCfi/ui/compare/v3.0.11...v3.0.12) (2025-06-09)
 
 
