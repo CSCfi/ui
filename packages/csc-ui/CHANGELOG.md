@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.0.14](https://github.com/CSCfi/ui/compare/v3.0.13...v3.0.14) (2025-06-12)
+
+
+### Bug Fixes
+
+* **c-text-field:** Fix label on top color customization ([9eed296](https://github.com/CSCfi/ui/commit/9eed29668c61359ee37bace9eed9115ba6a67cfc))
+
 ## [3.0.13](https://github.com/CSCfi/ui/compare/v3.0.12...v3.0.13) (2025-06-11)
 
 
