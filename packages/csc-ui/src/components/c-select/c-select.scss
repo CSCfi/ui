@@ -21,12 +21,14 @@
   --_c-select-shadow-background-color: var(--c-select-shadow-background-color, var(--c-white));
   --_c-select-shadow-text-color: var(--c-select-shadow-text-color, var(--_c-select-text-color));
   --_c-select-shadow-placeholder-color: var(--c-select-shadow-placeholder-color, var(--_c-select-placeholder-color));
+  --_c-select-label-color: var(--c-select-label-color, var(--_c-select-text-color));
 
   // private
   --_c-input-active-color: var(--_c-select-active-color);
   --_c-input-inactive-color: var(--_c-select-inactive-color);
   --_c-input-background-color: var(--_c-select-background-color);
   --_c-input-text-color: var(--_c-select-text-color);
+  --_c-input-label-color: var(--_c-select-label-color);
   --_c-input-placeholder-color: var(--_c-select-placeholder-color);
   --_c-input-shadow-active-color: var(--_c-select-shadow-active-color);
   --_c-input-shadow-background-color: var(--_c-select-shadow-background-color);

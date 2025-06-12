@@ -35,5 +35,5 @@
     "tsc": "tsc -p . --outDir ./dist"
   },
   "types": "dist/types/index.d.ts",
-  "version": "3.0.12"
+  "version": "3.0.13"
 }
