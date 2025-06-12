@@ -8,6 +8,7 @@
   --_c-input-shadow-background-color: var(--c-white);
   --_c-input-shadow-text-color: var(--_c-input-text-color);
   --_c-input-shadow-placeholder-color: var(--_c-input-placeholder-color);
+  --_c-input-label-color: var(--_c-input-label-color);
 
   // private
   --_c-input-error-color: var(--c-error-600);
@@ -39,6 +40,10 @@
   letter-spacing: normal;
   max-width: 100%;
   text-align: left;
+
+  label {
+    color: var(--_c-input-inactive-color);
+  }
 
   input,
   select,
@@ -193,6 +198,8 @@
   }
 
   &--label-on-top {
+    --c-message-padding: 0;
+
     display: grid;
     gap: 4px;
 
@@ -208,6 +215,7 @@
       text-overflow: ellipsis;
       white-space: nowrap;
       max-width: 100%;
+      color: var(--_c-input-label-color);
     }
 
     #{$this} {
@@ -290,6 +298,8 @@
   }
 
   &--disabled {
+    opacity: 0.75;
+
     input,
     textarea,
     fieldset,
@@ -297,6 +307,12 @@
       --_c-input-error-color: var(--c-tertiary-500);
 
       color: var(--c-tertiary-500);
+    }
+
+    #{$this} {
+      &__slot, &__slot * {
+        cursor: not-allowed !important;
+      }
     }
   }
 

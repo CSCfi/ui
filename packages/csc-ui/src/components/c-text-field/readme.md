@@ -54,17 +54,18 @@
 
 ## CSS Custom Properties
 
-| Name                                      | Description                          |
-| ----------------------------------------- | ------------------------------------ |
-| `--c-text-field-active-color`             | Active text field color              |
-| `--c-text-field-background-color`         | Inactive text field background color |
-| `--c-text-field-inactive-color`           | Inactive text field color            |
-| `--c-text-field-placeholder-color`        | Text field placeholder color         |
-| `--c-text-field-shadow-active-color`      | Shadow text field active color       |
-| `--c-text-field-shadow-background-color`  | Shadow text field background color   |
-| `--c-text-field-shadow-placeholder-color` | Shadow text field placeholder color  |
-| `--c-text-field-shadow-text-color`        | Shadow text field text color         |
-| `--c-text-field-text-color`               | Text field text color                |
+| Name                                      | Description                                             |
+| ----------------------------------------- | ------------------------------------------------------- |
+| `--c-text-field-active-color`             | Active text field color                                 |
+| `--c-text-field-background-color`         | Inactive text field background color                    |
+| `--c-text-field-inactive-color`           | Inactive text field color                               |
+| `--c-text-field-label-color`              | Text field label color (works only with `label-on-top`) |
+| `--c-text-field-placeholder-color`        | Text field placeholder color                            |
+| `--c-text-field-shadow-active-color`      | Shadow text field active color                          |
+| `--c-text-field-shadow-background-color`  | Shadow text field background color                      |
+| `--c-text-field-shadow-placeholder-color` | Shadow text field placeholder color                     |
+| `--c-text-field-shadow-text-color`        | Shadow text field text color                            |
+| `--c-text-field-text-color`               | Text field text color                                   |
 
 
 ## Dependencies

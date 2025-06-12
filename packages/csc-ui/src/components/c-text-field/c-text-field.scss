@@ -10,6 +10,7 @@
    * @prop --c-text-field-shadow-background-color: Shadow text field background color
    * @prop --c-text-field-shadow-text-color: Shadow text field text color
    * @prop --c-text-field-shadow-placeholder-color: Shadow text field placeholder color
+   * @prop --c-text-field-label-color: Text field label color (works only with `label-on-top`)
    */
   --_c-text-field-active-color: var(--c-text-field-active-color, var(--c-primary-600));
   --_c-text-field-inactive-color: var(--c-text-field-inactive-color, var(--c-tertiary-600));
@@ -20,6 +21,7 @@
   --_c-text-field-shadow-background-color: var(--c-text-field-shadow-background-color, var(--c-white));
   --_c-text-field-shadow-text-color: var(--c-text-field-shadow-text-color, var(--_c-text-field-text-color));
   --_c-text-field-shadow-placeholder-color: var(--c-text-field-shadow-placeholder-color, var(--_c-text-field-placeholder-color));
+  --_c-text-field-label-color: var(--c-text-field-label-color, var(--_c-text-field-text-color));
 }
 
 .c-input {
@@ -27,6 +29,7 @@
   --_c-input-inactive-color: var(--_c-text-field-inactive-color);
   --_c-input-background-color: var(--_c-text-field-background-color);
   --_c-input-text-color: var(--_c-text-field-text-color);
+  --_c-input-label-color: var(--_c-text-field-label-color);
   --_c-input-placeholder-color: var(--_c-text-field-placeholder-color);
   --_c-input-shadow-active-color: var(--_c-text-field-shadow-active-color);
   --_c-input-shadow-background-color: var(--_c-text-field-shadow-background-color);
