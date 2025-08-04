@@ -139,13 +139,17 @@ export class CModal {
 
     this._dialog?.classList.add('closing');
 
-    this._backdropElement?.shadowRoot
-      ?.querySelector('.c-backdrop')
-      ?.classList.remove('opening');
+    const numberOfOpenModals = this._getOpenDialogsFromCustomElements();
 
-    this._backdropElement?.shadowRoot
-      ?.querySelector('.c-backdrop')
-      ?.classList.add('closing');
+    if (numberOfOpenModals === 1) {
+      this._backdropElement?.shadowRoot
+        ?.querySelector('.c-backdrop')
+        ?.classList.remove('opening');
+
+      this._backdropElement?.shadowRoot
+        ?.querySelector('.c-backdrop')
+        ?.classList.add('closing');
+    }
   };
 
   private _onDialogClosed = () => {
@@ -207,6 +211,33 @@ export class CModal {
       this._handleClose();
       this.changeValue.emit(false);
     }
+  };
+
+  private _getOpenDialogsInShadowRoot = (
+    shadowRoot: ShadowRoot,
+  ): HTMLDialogElement[] => {
+    const dialogs = shadowRoot.querySelectorAll(
+      'dialog',
+    ) as NodeListOf<HTMLDialogElement>;
+
+    return Array.from(dialogs).filter((dialog) => dialog.open);
+  };
+
+  private _getOpenDialogsFromCustomElements = (): number => {
+    let count = 0;
+
+    const customElements = document.querySelectorAll('c-modal');
+
+    customElements.forEach((element) => {
+      if (element.shadowRoot) {
+        const openDialogs = this._getOpenDialogsInShadowRoot(
+          element.shadowRoot,
+        );
+        count += openDialogs.length;
+      }
+    });
+
+    return count;
   };
 
   componentWillLoad() {
