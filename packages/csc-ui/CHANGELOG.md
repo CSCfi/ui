@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.0.16](https://github.com/CSCfi/ui/compare/v3.0.15...v3.0.16) (2025-09-02)
+
+
+### Bug Fixes
+
+* **c-modal:** Prevent the backdrop from remaining open on dialog close ([3b1665f](https://github.com/CSCfi/ui/commit/3b1665f613d6568759de53230695259b42e779b6))
+
 ## [3.0.15](https://github.com/CSCfi/ui/compare/v3.0.14...v3.0.15) (2025-08-04)
 
 
