@@ -139,17 +139,19 @@ export class CModal {
 
     this._dialog?.classList.add('closing');
 
-    const numberOfOpenModals = this._getOpenDialogsFromCustomElements();
+    requestAnimationFrame(() => {
+      const numberOfOpenModals = this._getOpenDialogsFromCustomElements();
 
-    if (numberOfOpenModals === 1) {
-      this._backdropElement?.shadowRoot
-        ?.querySelector('.c-backdrop')
-        ?.classList.remove('opening');
+      if (numberOfOpenModals <= 1) {
+        this._backdropElement?.shadowRoot
+          ?.querySelector('.c-backdrop')
+          ?.classList.remove('opening');
 
-      this._backdropElement?.shadowRoot
-        ?.querySelector('.c-backdrop')
-        ?.classList.add('closing');
-    }
+        this._backdropElement?.shadowRoot
+          ?.querySelector('.c-backdrop')
+          ?.classList.add('closing');
+      }
+    });
   };
 
   private _onDialogClosed = () => {
