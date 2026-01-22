@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.0.17](https://github.com/CSCfi/ui/compare/v3.0.16...v3.0.17) (2026-01-22)
+
+
+### Bug Fixes
+
+* **c-button:** Reduced disabled text variant contrast ([b7e18ee](https://github.com/CSCfi/ui/commit/b7e18ee145990ba010d1a6313c95a53e2ad7c46d))
+
 ## [3.0.16](https://github.com/CSCfi/ui/compare/v3.0.15...v3.0.16) (2025-09-02)
 
 
