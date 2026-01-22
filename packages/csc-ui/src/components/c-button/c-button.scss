@@ -613,11 +613,6 @@
 }
 
 // ==========================================================================
-
-// :host(.c-button--active) {
-//   --_c-button-text-color: var(--c-white);
-// }
-
 :host(.c-button:focus) {
   z-index: 2;
 }
