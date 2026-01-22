@@ -281,7 +281,7 @@
    * @prop --c-button-text-disabled-text-color: Disabled text button text color
    */
   --_c-button-text-disabled-background-color: var(--c-button-text-disabled-background-color, var(--c-transparent));
-  --_c-button-text-disabled-text-color: var(--c-button-text-disabled-text-color, var(--c-tertiary-500));
+  --_c-button-text-disabled-text-color: var(--c-button-text-disabled-text-color, var(--c-tertiary-400));
 
   background-color: var(--_c-button-text-disabled-background-color);
   color: var(--_c-button-text-disabled-text-color);
