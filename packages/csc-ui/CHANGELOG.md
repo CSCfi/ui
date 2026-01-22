@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.0.18](https://github.com/CSCfi/ui/compare/v3.0.17...v3.0.18) (2026-01-22)
+
+
+### Bug Fixes
+
+* **c-button:** Removed unused styles ([480a77e](https://github.com/CSCfi/ui/commit/480a77e867dde14da2e511beeafee89afeb88ccc))
+
 ## [3.0.17](https://github.com/CSCfi/ui/compare/v3.0.16...v3.0.17) (2026-01-22)
 
 
