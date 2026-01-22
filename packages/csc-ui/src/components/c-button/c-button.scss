@@ -22,10 +22,19 @@
    * @prop --c-button-loader-color: Default button loader color
    * @prop --c-button-outline-color: Default button outline color
    */
-  --_c-button-background-color: var(--c-button-background-color, var(--c-primary-600));
+  --_c-button-background-color: var(
+    --c-button-background-color,
+    var(--c-primary-600)
+  );
   --_c-button-text-color: var(--c-button-text-color, var(--c-white));
-  --_c-button-loader-color: var(--c-button-loader-color, var(--_c-button-text-color));
-  --_c-button-outline-color: var(--c-button-outline-color, var(--_c-button-background-color));
+  --_c-button-loader-color: var(
+    --c-button-loader-color,
+    var(--_c-button-text-color)
+  );
+  --_c-button-outline-color: var(
+    --c-button-outline-color,
+    var(--_c-button-background-color)
+  );
 
   background-color: var(--_c-button-background-color);
   color: var(--_c-button-text-color);
@@ -44,14 +53,17 @@
 }
 
 :host(.c-button--description) {
-  height: "auto";
+  height: 'auto';
 }
 
 :host(:host:hover) {
   /**
   * @prop --c-button-background-color-hover: Default button hover background color
   */
-  --_c-button-background-color-hover: var(--c-button-background-color-hover, var(--c-primary-400));
+  --_c-button-background-color-hover: var(
+    --c-button-background-color-hover,
+    var(--c-primary-400)
+  );
 
   background-color: var(--_c-button-background-color-hover);
 }
@@ -61,8 +73,14 @@
    * @prop --c-button-inverted-background-color: Inverted default button background color
    * @prop --c-button-inverted-text-color: Inverted default button text color
    */
-  --_c-button-inverted-background-color: var(--c-button-inverted-background-color, var(--c-white));
-  --_c-button-inverted-text-color: var(--c-button-inverted-text-color, var(--c-primary-600));
+  --_c-button-inverted-background-color: var(
+    --c-button-inverted-background-color,
+    var(--c-white)
+  );
+  --_c-button-inverted-text-color: var(
+    --c-button-inverted-text-color,
+    var(--c-primary-600)
+  );
 
   // private
   --_c-button-outline-color: var(--_c-button-inverted-background-color);
@@ -75,7 +93,10 @@
   /**
    * @prop --c-button-inverted-background-color-hover: Inverted default button hover background color
    */
-  --_c-button-inverted-background-color-hover: var(--c-button-inverted-background-color-hover, var(--c-primary-200));
+  --_c-button-inverted-background-color-hover: var(
+    --c-button-inverted-background-color-hover,
+    var(--c-primary-200)
+  );
 
   background-color: var(--_c-button-inverted-background-color-hover);
 }
@@ -85,8 +106,14 @@
    * @prop --c-button-inverted-disabled-background-color: Inverted disabled default button background color
    * @prop --c-button-inverted-disabled-text-color: Inverted disabled default button text color
    */
-  --_c-button-inverted-disabled-background-color: var(--c-button-inverted-disabled-background-color, var(--_c-button-disabled-background-color));
-  --_c-button-inverted-disabled-text-color: var(--c-button-inverted-disabled-text-color, var(--c-tertiary-500));
+  --_c-button-inverted-disabled-background-color: var(
+    --c-button-inverted-disabled-background-color,
+    var(--_c-button-disabled-background-color)
+  );
+  --_c-button-inverted-disabled-text-color: var(
+    --c-button-inverted-disabled-text-color,
+    var(--c-tertiary-500)
+  );
 
   background-color: var(--_c-button-inverted-disabled-background-color);
   color: var(--_c-button-inverted-disabled-text-color);
@@ -100,9 +127,18 @@
    * @prop --c-button-danger-text-color: Danger button text color
    * @prop --c-button-danger-loader-color: Danger button loader color
    */
-  --_c-button-danger-background-color: var(--c-button-danger-background-color, var(--c-error-600));
-  --_c-button-danger-text-color: var(--c-button-danger-text-color, var(--c-white));
-  --_c-button-danger-loader-color: var(--c-button-danger-loader-color, var(--_c-button-danger-text-color));
+  --_c-button-danger-background-color: var(
+    --c-button-danger-background-color,
+    var(--c-error-600)
+  );
+  --_c-button-danger-text-color: var(
+    --c-button-danger-text-color,
+    var(--c-white)
+  );
+  --_c-button-danger-loader-color: var(
+    --c-button-danger-loader-color,
+    var(--_c-button-danger-text-color)
+  );
 
   // private
   --_c-button-loader-color: var(--_c-button-danger-loader-color);
@@ -116,7 +152,10 @@
   /**
    * @prop --c-button-danger-background-color-hover: Danger button hover background color
    */
-  --_c-button-danger-background-color-hover: var(--c-button-danger-background-color-hover, var(--c-error-400));
+  --_c-button-danger-background-color-hover: var(
+    --c-button-danger-background-color-hover,
+    var(--c-error-400)
+  );
 
   background-color: var(--_c-button-danger-background-color-hover);
 }
@@ -126,8 +165,14 @@
    * @prop --c-button-danger-disabled-background-color: Disabled danger button background color
    * @prop --c-button-danger-disabled-text-color: Disabled danger button text color
    */
-  --_c-button-danger-disabled-background-color: var(--c-button-danger-disabled-background-color, var(--_c-button-disabled-background-color));
-  --_c-button-danger-disabled-text-color: var(--c-button-danger-disabled-text-color, var(--_c-button-disabled-text-color));
+  --_c-button-danger-disabled-background-color: var(
+    --c-button-danger-disabled-background-color,
+    var(--_c-button-disabled-background-color)
+  );
+  --_c-button-danger-disabled-text-color: var(
+    --c-button-danger-disabled-text-color,
+    var(--_c-button-disabled-text-color)
+  );
 
   background-color: var(--_c-button-danger-disabled-background-color);
   color: var(--_c-button-danger-disabled-text-color);
@@ -138,8 +183,14 @@
    * @prop --c-button-danger-inverted-background-color: Inverted danger button background color
    * @prop --c-button-danger-inverted-text-color: Inverted danger button text color
    */
-  --_c-button-danger-inverted-text-color: var(--c-button-danger-inverted-text-color, var(--c-error-600));
-  --_c-button-danger-inverted-background-color: var(--c-button-danger-inverted-background-color, var(--c-white));
+  --_c-button-danger-inverted-text-color: var(
+    --c-button-danger-inverted-text-color,
+    var(--c-error-600)
+  );
+  --_c-button-danger-inverted-background-color: var(
+    --c-button-danger-inverted-background-color,
+    var(--c-white)
+  );
 
   // private
   --_c-button-outline-color: var(--_c-button-danger-inverted-background-color);
@@ -152,7 +203,10 @@
   /**
    * @prop --c-button-danger-inverted-background-color-hover: Inverted danger button hover background color
    */
-  --_c-button-danger-inverted-background-color-hover: var(--c-button-danger-inverted-background-color-hover, var(--c-error-100));
+  --_c-button-danger-inverted-background-color-hover: var(
+    --c-button-danger-inverted-background-color-hover,
+    var(--c-error-100)
+  );
 
   background-color: var(--_c-button-danger-inverted-background-color-hover);
 }
@@ -162,8 +216,14 @@
    * @prop --c-button-danger-inverted-disabled-background-color: Disabled inverted danger button background color
    * @prop --c-button-danger-inverted-disabled-text-color: Disabled inverted danger button text color
    */
-  --_c-button-danger-inverted-disabled-background-color: var(--c-button-danger-inverted-disabled-background-color, var(--_c-button-disabled-background-color));
-  --_c-button-danger-inverted-disabled-text-color: var(--c-button-danger-inverted-disabled-text-color, var(--_c-button-disabled-text-color));
+  --_c-button-danger-inverted-disabled-background-color: var(
+    --c-button-danger-inverted-disabled-background-color,
+    var(--_c-button-disabled-background-color)
+  );
+  --_c-button-danger-inverted-disabled-text-color: var(
+    --c-button-danger-inverted-disabled-text-color,
+    var(--_c-button-disabled-text-color)
+  );
 
   background-color: var(--_c-button-danger-inverted-disabled-background-color);
   color: var(--_c-button-danger-inverted-disabled-text-color);
@@ -177,9 +237,18 @@
    * @prop --c-button-ghost-text-color: Ghost button text color
    * @prop --c-button-ghost-loader-color: Ghost button loader color
    */
-  --_c-button-ghost-background-color: var(--c-button-ghost-background-color, var(--c-primary-200));
-  --_c-button-ghost-text-color: var(--c-button-ghost-text-color, var(--c-primary-600));
-  --_c-button-ghost-loader-color: var(--c-button-ghost-loader-color, var(--_c-button-ghost-text-color));
+  --_c-button-ghost-background-color: var(
+    --c-button-ghost-background-color,
+    var(--c-primary-200)
+  );
+  --_c-button-ghost-text-color: var(
+    --c-button-ghost-text-color,
+    var(--c-primary-600)
+  );
+  --_c-button-ghost-loader-color: var(
+    --c-button-ghost-loader-color,
+    var(--_c-button-ghost-text-color)
+  );
 
   // private
   --_c-button-loader-color: var(--_c-button-ghost-loader-color);
@@ -193,7 +262,10 @@
   /**
    * @prop --c-button-ghost-background-color-hover: Ghost button hover background color
    */
-  --_c-button-ghost-background-color-hover: var(--c-button-ghost-background-color-hover, var(--c-primary-100));
+  --_c-button-ghost-background-color-hover: var(
+    --c-button-ghost-background-color-hover,
+    var(--c-primary-100)
+  );
 
   background-color: var(--_c-button-ghost-background-color-hover);
 }
@@ -203,8 +275,14 @@
    * @prop --c-button-ghost-disabled-background-color: Disabled ghost button background color
    * @prop --c-button-ghost-disabled-text-color: Disabled ghost button text color
    */
-  --_c-button-ghost-disabled-background-color: var(--c-button-ghost-disabled-background-color, var(--_c-button-disabled-background-color));
-  --_c-button-ghost-disabled-text-color: var(--c-button-ghost-disabled-text-color, var(--_c-button-disabled-text-color));
+  --_c-button-ghost-disabled-background-color: var(
+    --c-button-ghost-disabled-background-color,
+    var(--_c-button-disabled-background-color)
+  );
+  --_c-button-ghost-disabled-text-color: var(
+    --c-button-ghost-disabled-text-color,
+    var(--_c-button-disabled-text-color)
+  );
 
   background-color: var(--_c-button-ghost-disabled-background-color);
   color: var(--_c-button-ghost-disabled-text-color);
@@ -215,8 +293,14 @@
    * @prop --c-button-ghost-inverted-background-color: Inverted ghost button background color
    * @prop --c-button-ghost-inverted-text-color: Inverted ghost button text color
    */
-  --_c-button-ghost-inverted-background-color: var(--c-button-ghost-inverted-background-color, rgba(var(--c-white-rgb), 0.2));
-  --_c-button-ghost-inverted-text-color: var(--c-button-ghost-inverted-text-color, var(--c-white));
+  --_c-button-ghost-inverted-background-color: var(
+    --c-button-ghost-inverted-background-color,
+    rgba(var(--c-white-rgb), 0.2)
+  );
+  --_c-button-ghost-inverted-text-color: var(
+    --c-button-ghost-inverted-text-color,
+    var(--c-white)
+  );
 
   // private
   --_c-button-outline-color: var(--_c-button-ghost-inverted-text-color);
@@ -229,7 +313,10 @@
   /**
    * @prop --c-button-ghost-inverted-background-color-hover: Inverted ghost button hover text color
    */
-  --_c-button-ghost-inverted-background-color-hover: var(--c-button-ghost-inverted-background-color-hover, rgba(var(--c-white-rgb), 0.3));
+  --_c-button-ghost-inverted-background-color-hover: var(
+    --c-button-ghost-inverted-background-color-hover,
+    rgba(var(--c-white-rgb), 0.3)
+  );
 
   background-color: var(--_c-button-ghost-inverted-background-color-hover);
 }
@@ -239,8 +326,14 @@
    * @prop --c-button-ghost-inverted-disabled-background-color: Disabled inverted ghost button background color
    * @prop --c-button-ghost-inverted-disabled-text-color: Disabled inverted ghost button text color
    */
-  --_c-button-ghost-inverted-disabled-background-color: var(--c-button-ghost-inverted-disabled-background-color, rgba(var(--c-white-rgb), 0.05));
-  --_c-button-ghost-inverted-disabled-text-color: var(--c-button-ghost-inverted-disabled-text-color, var(--c-tertiary-400));
+  --_c-button-ghost-inverted-disabled-background-color: var(
+    --c-button-ghost-inverted-disabled-background-color,
+    rgba(var(--c-white-rgb), 0.05)
+  );
+  --_c-button-ghost-inverted-disabled-text-color: var(
+    --c-button-ghost-inverted-disabled-text-color,
+    var(--c-tertiary-400)
+  );
 
   background-color: var(--_c-button-ghost-inverted-disabled-background-color);
   color: var(--_c-button-ghost-inverted-disabled-text-color);
@@ -254,9 +347,18 @@
    * @prop --c-button-text-text-color: Text button text color
    * @prop --c-button-text-loader-color: Text button loader color
    */
-  --_c-button-text-background-color: var(--c-button-text-background-color, var(--c-transparent));
-  --_c-button-text-text-color: var(--c-button-text-text-color, var(--c-primary-600));
-  --_c-button-text-loader-color: var(--c-button-text-loader-color, var(--_c-button-text-text-color));
+  --_c-button-text-background-color: var(
+    --c-button-text-background-color,
+    var(--c-transparent)
+  );
+  --_c-button-text-text-color: var(
+    --c-button-text-text-color,
+    var(--c-primary-600)
+  );
+  --_c-button-text-loader-color: var(
+    --c-button-text-loader-color,
+    var(--_c-button-text-text-color)
+  );
 
   // private
   --_c-button-loader-color: var(--_c-button-text-loader-color);
@@ -270,7 +372,10 @@
   /**
    * @prop --c-button-text-background-color-hover: Text button hover background color
    */
-  --_c-button-text-background-color-hover: var(--c-button-text-background-color-hover, var(--c-primary-100));
+  --_c-button-text-background-color-hover: var(
+    --c-button-text-background-color-hover,
+    var(--c-primary-100)
+  );
 
   background-color: var(--_c-button-text-background-color-hover);
 }
@@ -280,8 +385,14 @@
    * @prop --c-button-text-disabled-background-color: Disabled text button background color
    * @prop --c-button-text-disabled-text-color: Disabled text button text color
    */
-  --_c-button-text-disabled-background-color: var(--c-button-text-disabled-background-color, var(--c-transparent));
-  --_c-button-text-disabled-text-color: var(--c-button-text-disabled-text-color, var(--c-tertiary-400));
+  --_c-button-text-disabled-background-color: var(
+    --c-button-text-disabled-background-color,
+    var(--c-transparent)
+  );
+  --_c-button-text-disabled-text-color: var(
+    --c-button-text-disabled-text-color,
+    var(--c-tertiary-400)
+  );
 
   background-color: var(--_c-button-text-disabled-background-color);
   color: var(--_c-button-text-disabled-text-color);
@@ -292,8 +403,14 @@
    * @prop --c-button-text-inverted-background-color: Inverted text button background color
    * @prop --c-button-text-inverted-text-color: Inverted text button text color
    */
-  --_c-button-text-inverted-background-color: var(--c-button-text-inverted-background-color, var(--c-transparent));
-  --_c-button-text-inverted-text-color: var(--c-button-text-inverted-text-color, var(--c-white));
+  --_c-button-text-inverted-background-color: var(
+    --c-button-text-inverted-background-color,
+    var(--c-transparent)
+  );
+  --_c-button-text-inverted-text-color: var(
+    --c-button-text-inverted-text-color,
+    var(--c-white)
+  );
 
   // private
   --_c-button-outline-color: var(--_c-button-text-inverted-text-color);
@@ -306,7 +423,10 @@
   /**
    * @prop --c-button-text-inverted-background-color-hover: Inverted text button hover background color
    */
-  --_c-button-text-inverted-background-color-hover: var(--c-button-text-inverted-background-color-hover, rgba(var(--c-white-rgb), 0.3));
+  --_c-button-text-inverted-background-color-hover: var(
+    --c-button-text-inverted-background-color-hover,
+    rgba(var(--c-white-rgb), 0.3)
+  );
 
   background-color: var(--_c-button-text-inverted-background-color-hover);
 }
@@ -316,8 +436,14 @@
    * @prop --c-button-text-inverted-disabled-background-color: Disabled inverted text button background color
    * @prop --c-button-text-inverted-disabled-text-color: Disabled inverted text button text color
    */
-  --_c-button-text-inverted-disabled-background-color: var(--c-button-text-inverted-disabled-background-color, var(--c-transparent));
-  --_c-button-text-inverted-disabled-text-color: var(--c-button-text-inverted-disabled-text-color, var(--c-tertiary-400));
+  --_c-button-text-inverted-disabled-background-color: var(
+    --c-button-text-inverted-disabled-background-color,
+    var(--c-transparent)
+  );
+  --_c-button-text-inverted-disabled-text-color: var(
+    --c-button-text-inverted-disabled-text-color,
+    var(--c-tertiary-400)
+  );
 
   background-color: var(--_c-button-text-inverted-disabled-background-color);
   color: var(--_c-button-text-inverted-disabled-text-color);
@@ -332,10 +458,22 @@
    * @prop --c-button-outlined-text-color: Outlined button text color
    * @prop --c-button-outlined-loader-color: Outlined button loader color
    */
-  --_c-button-outlined-text-color: var(--c-button-outlined-text-color, var(--c-primary-600));
-  --_c-button-outlined-border-color: var(--c-button-outlined-border-color, var(--_c-button-outlined-text-color));
-  --_c-button-outlined-background-color: var(--c-button-outlined-background-color, var(--c-transparent));
-  --_c-button-outlined-loader-color: var(--c-button-outlined-loader-color, var(--_c-button-outlined-text-color));
+  --_c-button-outlined-text-color: var(
+    --c-button-outlined-text-color,
+    var(--c-primary-600)
+  );
+  --_c-button-outlined-border-color: var(
+    --c-button-outlined-border-color,
+    var(--_c-button-outlined-text-color)
+  );
+  --_c-button-outlined-background-color: var(
+    --c-button-outlined-background-color,
+    var(--c-transparent)
+  );
+  --_c-button-outlined-loader-color: var(
+    --c-button-outlined-loader-color,
+    var(--_c-button-outlined-text-color)
+  );
 
   // private
   --_c-button-loader-color: var(--_c-button-outlined-loader-color);
@@ -351,7 +489,10 @@
   /**
    * @prop --c-button-outlined-background-color-hover: Outlined button hover background color
    */
-  --_c-button-outlined-background-color-hover: var(--c-button-outlined-background-color-hover, var(--c-primary-200));
+  --_c-button-outlined-background-color-hover: var(
+    --c-button-outlined-background-color-hover,
+    var(--c-primary-200)
+  );
 
   background-color: var(--_c-button-outlined-background-color-hover);
 }
@@ -362,9 +503,18 @@
    * @prop --c-button-outlined-disabled-border-color: Disabled outlined button border color
    * @prop --c-button-outlined-disabled-text-color: Disabled outlined button text color
    */
-  --_c-button-outlined-disabled-text-color: var(--c-button-outlined-disabled-text-color, var(--c-tertiary-500));
-  --_c-button-outlined-disabled-background-color: var(--c-button-outlined-disabled-background-color, var(--_c-button-outlined-background-color));
-  --_c-button-outlined-disabled-border-color: var(--c-button-outlined-disabled-border-color, var(--c-tertiary-400));
+  --_c-button-outlined-disabled-text-color: var(
+    --c-button-outlined-disabled-text-color,
+    var(--c-tertiary-500)
+  );
+  --_c-button-outlined-disabled-background-color: var(
+    --c-button-outlined-disabled-background-color,
+    var(--_c-button-outlined-background-color)
+  );
+  --_c-button-outlined-disabled-border-color: var(
+    --c-button-outlined-disabled-border-color,
+    var(--c-tertiary-400)
+  );
 
   // private
   --_c-outline-color: var(--_c-button-outlined-disabled-border-color);
@@ -379,9 +529,18 @@
    * @prop --c-button-outlined-inverted-border-color: Inverted outlined button border color
    * @prop --c-button-outlined-inverted-text-color: Inverted outlined button text color
    */
-  --_c-button-outlined-inverted-text-color: var(--c-button-outlined-inverted-text-color, var(--c-white));
-  --_c-button-outlined-inverted-border-color: var(--c-button-outlined-inverted-border-color, var(--_c-button-outlined-inverted-text-color));
-  --_c-button-outlined-inverted-background-color: var(--c-button-outlined-inverted-background-color, var(--_c-button-outlined-background-color));
+  --_c-button-outlined-inverted-text-color: var(
+    --c-button-outlined-inverted-text-color,
+    var(--c-white)
+  );
+  --_c-button-outlined-inverted-border-color: var(
+    --c-button-outlined-inverted-border-color,
+    var(--_c-button-outlined-inverted-text-color)
+  );
+  --_c-button-outlined-inverted-background-color: var(
+    --c-button-outlined-inverted-background-color,
+    var(--_c-button-outlined-background-color)
+  );
 
   // private
   --_c-outline-color: var(--_c-button-outlined-inverted-border-color);
@@ -395,7 +554,10 @@
   /**
    * @prop --c-button-outlined-background-color-hover: Outlined button hover background color
    */
-  --_c-button-outlined-inverted-background-color-hover: var(--c-button-outlined-inverted-background-color-hover, rgba(var(--c-white-rgb), 0.3));
+  --_c-button-outlined-inverted-background-color-hover: var(
+    --c-button-outlined-inverted-background-color-hover,
+    rgba(var(--c-white-rgb), 0.3)
+  );
 
   background-color: var(--_c-button-outlined-inverted-background-color-hover);
 }
@@ -406,14 +568,25 @@
    * @prop --c-button-outlined-inverted-disabled-border-color: Disabled inverted outlined button border color
    * @prop --c-button-outlined-inverted-disabled-text-color: Disabled inverted outlined button text color
    */
-  --_c-button-outlined-inverted-disabled-border-color: var(--c-button-outlined-inverted-disabled-border-color, var(--c-tertiary-400));
-  --_c-button-outlined-inverted-disabled-text-color: var(--c-button-outlined-inverted-disabled-text-color, var(--c-tertiary-400));
-  --_c-button-outlined-inverted-disabled-background-color: var(--c-button-outlined-inverted-disabled-background-color, var(--_c-button-outlined-background-color));
+  --_c-button-outlined-inverted-disabled-border-color: var(
+    --c-button-outlined-inverted-disabled-border-color,
+    var(--c-tertiary-400)
+  );
+  --_c-button-outlined-inverted-disabled-text-color: var(
+    --c-button-outlined-inverted-disabled-text-color,
+    var(--c-tertiary-400)
+  );
+  --_c-button-outlined-inverted-disabled-background-color: var(
+    --c-button-outlined-inverted-disabled-background-color,
+    var(--_c-button-outlined-background-color)
+  );
 
   // private
   --_c-outline-color: var(--_c-button-outlined-inverted-disabled-border-color);
 
-  background-color: var(--_c-button-outlined-inverted-disabled-background-color);
+  background-color: var(
+    --_c-button-outlined-inverted-disabled-background-color
+  );
   color: var(--_c-button-outlined-inverted-disabled-text-color);
 }
 
@@ -422,8 +595,14 @@
   * @prop --c-button-disabled-background-color: Disabled button background color
   * @prop --c-button-disabled-text-color: Disabled button text color
   */
-  --_c-button-disabled-background-color: var(--c-button-disabled-background-color, var(--c-tertiary-100));
-  --_c-button-disabled-text-color: var(--c-button-disabled-text-color, var(--c-tertiary-600));
+  --_c-button-disabled-background-color: var(
+    --c-button-disabled-background-color,
+    var(--c-tertiary-100)
+  );
+  --_c-button-disabled-text-color: var(
+    --c-button-disabled-text-color,
+    var(--c-tertiary-600)
+  );
 
   // private
   --_c-button-loader-color: var(--_c-button-disabled-text-color);
@@ -471,7 +650,7 @@
   width: 100%;
 }
 
-::slotted([slot="icon"]) {
+::slotted([slot='icon']) {
   font-size: var(--_c-button-icon-size);
 }
 
@@ -616,7 +795,7 @@ a {
 .hide-text {
   color: transparent !important;
 
-  ::slotted([slot="icon"]) {
+  ::slotted([slot='icon']) {
     opacity: 0;
   }
 
