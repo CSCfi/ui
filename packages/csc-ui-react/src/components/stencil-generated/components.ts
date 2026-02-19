@@ -75,6 +75,7 @@ import { CTable as CTableElement, defineCustomElement as defineCTable } from "@c
 import { CTabs as CTabsElement, defineCustomElement as defineCTabs } from "@cscfi/csc-ui/components/c-tabs.js";
 import { CTag as CTagElement, defineCustomElement as defineCTag } from "@cscfi/csc-ui/components/c-tag.js";
 import { CTags as CTagsElement, defineCustomElement as defineCTags } from "@cscfi/csc-ui/components/c-tags.js";
+import { CTextFieldOpen as CTextFieldOpenElement, defineCustomElement as defineCTextFieldOpen } from "@cscfi/csc-ui/components/c-text-field-open.js";
 import { CTextField as CTextFieldElement, defineCustomElement as defineCTextField } from "@cscfi/csc-ui/components/c-text-field.js";
 import { CToast as CToastElement, defineCustomElement as defineCToast } from "@cscfi/csc-ui/components/c-toast.js";
 import { CToasts as CToastsElement, defineCustomElement as defineCToasts } from "@cscfi/csc-ui/components/c-toasts.js";
@@ -896,6 +897,17 @@ export const CTextField: StencilReactComponent<CTextFieldElement, CTextFieldEven
     react: React,
     events: { onChangeValue: 'changeValue' } as CTextFieldEvents,
     defineCustomElement: defineCTextField
+});
+
+type CTextFieldOpenEvents = { onChangeValue: EventName<CustomEvent<any>> };
+
+export const CTextFieldOpen: StencilReactComponent<CTextFieldOpenElement, CTextFieldOpenEvents> = /*@__PURE__*/ createComponent<CTextFieldOpenElement, CTextFieldOpenEvents>({
+    tagName: 'c-text-field-open',
+    elementClass: CTextFieldOpenElement,
+    // @ts-ignore - React type of Stencil Output Target may differ from the React version used in the Nuxt.js project, this can be ignored.
+    react: React,
+    events: { onChangeValue: 'changeValue' } as CTextFieldOpenEvents,
+    defineCustomElement: defineCTextFieldOpen
 });
 
 type CToastEvents = { onClose: EventName<CToastCustomEvent<CToastMessage>> };

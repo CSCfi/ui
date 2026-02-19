@@ -2225,6 +2225,123 @@
       ]
     },
     {
+      "name": "c-text-field-open",
+      "description": {
+        "kind": "markdown",
+        "value": "Text field component without shadow dom"
+      },
+      "attributes": [
+        {
+          "name": "autocomplete",
+          "description": "HTML input autocomplete"
+        },
+        {
+          "name": "autocorrect",
+          "description": "HTML input autocorrect"
+        },
+        {
+          "name": "autocapitalize",
+          "description": "HTML input autocapitalize"
+        },
+        {
+          "name": "autofocus",
+          "description": "Auto focus the input"
+        },
+        {
+          "name": "disabled",
+          "description": "Disable the input"
+        },
+        {
+          "name": "hide-details",
+          "description": "Hide the hint and error messages"
+        },
+        {
+          "name": "hint",
+          "description": "Hint text for the input"
+        },
+        {
+          "name": "id",
+          "description": "Id of the input"
+        },
+        {
+          "name": "label",
+          "description": "Label of the input"
+        },
+        {
+          "name": "label-on-top",
+          "description": "Label on top of the input"
+        },
+        {
+          "name": "max",
+          "description": "Maximum value on a numeric input"
+        },
+        {
+          "name": "min",
+          "description": "Minimum value on a numeric input"
+        },
+        {
+          "name": "name",
+          "description": "Name of the input"
+        },
+        {
+          "name": "placeholder",
+          "description": "Placeholder of the input"
+        },
+        {
+          "name": "readonly",
+          "description": "Mark as readonly"
+        },
+        {
+          "name": "render-outside-shadow",
+          "description": "Render input element outside shadow DOM for maximum compatibility"
+        },
+        {
+          "name": "required",
+          "description": "Set the input as required"
+        },
+        {
+          "name": "rows",
+          "description": "Rows on the input"
+        },
+        {
+          "name": "shadow",
+          "description": "Shadow variant of the input"
+        },
+        {
+          "name": "step",
+          "description": "Step size on a numeric input"
+        },
+        {
+          "name": "trim-whitespace",
+          "description": "Trim whitespace from the return value"
+        },
+        {
+          "name": "type",
+          "description": "Type of the input"
+        },
+        {
+          "name": "valid",
+          "description": "Set the validity of the input"
+        },
+        {
+          "name": "validate",
+          "description": "Manual validation"
+        },
+        {
+          "name": "validate-on-blur",
+          "description": "Validate the input on blur"
+        },
+        {
+          "name": "validation",
+          "description": "Custom validation message"
+        },
+        {
+          "name": "value",
+          "description": "Value of the input"
+        }
+      ]
+    },
+    {
       "name": "c-toast",
       "description": {
         "kind": "markdown",

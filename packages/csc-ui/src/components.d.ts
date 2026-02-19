@@ -1885,6 +1885,123 @@ export namespace Components {
         "value": string;
     }
     /**
+     * Text field component without shadow dom
+     * @group Form
+     */
+    interface CTextFieldOpen {
+        /**
+          * HTML input autocomplete
+         */
+        "autocomplete": string;
+        /**
+          * HTML input autocorrect
+         */
+        "autocorrect": string;
+        /**
+          * HTML input autocapitalize
+          * @name autocapitalize
+         */
+        "automaticCapitalize": string;
+        /**
+          * Auto focus the input
+          * @name autofocus
+         */
+        "automaticFocus": boolean;
+        /**
+          * Disable the input
+         */
+        "disabled": boolean;
+        /**
+          * Hide the hint and error messages
+         */
+        "hideDetails": boolean;
+        /**
+          * Hint text for the input
+         */
+        "hint": string;
+        /**
+          * Id of the input
+          * @name id
+         */
+        "hostId": string;
+        /**
+          * Label of the input
+         */
+        "label": string;
+        /**
+          * Label on top of the input
+         */
+        "labelOnTop": boolean;
+        /**
+          * Maximum value on a numeric input
+         */
+        "max": number;
+        /**
+          * Minimum value on a numeric input
+         */
+        "min": number;
+        /**
+          * Name of the input
+         */
+        "name": string;
+        /**
+          * Placeholder of the input
+         */
+        "placeholder": string;
+        /**
+          * Mark as readonly
+         */
+        "readonly": boolean;
+        /**
+          * Render input element outside shadow DOM for maximum compatibility
+         */
+        "renderOutsideShadow": boolean;
+        /**
+          * Set the input as required
+         */
+        "required": boolean;
+        /**
+          * Rows on the input
+         */
+        "rows": number;
+        /**
+          * Shadow variant of the input
+         */
+        "shadow": boolean;
+        /**
+          * Step size on a numeric input
+         */
+        "step": number;
+        /**
+          * Trim whitespace from the return value
+         */
+        "trimWhitespace": boolean;
+        /**
+          * Type of the input
+         */
+        "type": string;
+        /**
+          * Set the validity of the input
+         */
+        "valid": boolean;
+        /**
+          * Manual validation
+         */
+        "validate": boolean;
+        /**
+          * Validate the input on blur
+         */
+        "validateOnBlur": boolean;
+        /**
+          * Custom validation message
+         */
+        "validation": string;
+        /**
+          * Value of the input
+         */
+        "value": string;
+    }
+    /**
      * @parent none
      */
     interface CToast {
@@ -2032,6 +2149,10 @@ export interface CTagCustomEvent<T> extends CustomEvent<T> {
 export interface CTextFieldCustomEvent<T> extends CustomEvent<T> {
     detail: T;
     target: HTMLCTextFieldElement;
+}
+export interface CTextFieldOpenCustomEvent<T> extends CustomEvent<T> {
+    detail: T;
+    target: HTMLCTextFieldOpenElement;
 }
 export interface CToastCustomEvent<T> extends CustomEvent<T> {
     detail: T;
@@ -2955,6 +3076,27 @@ declare global {
         prototype: HTMLCTextFieldElement;
         new (): HTMLCTextFieldElement;
     };
+    interface HTMLCTextFieldOpenElementEventMap {
+        "changeValue": any;
+    }
+    /**
+     * Text field component without shadow dom
+     * @group Form
+     */
+    interface HTMLCTextFieldOpenElement extends Components.CTextFieldOpen, HTMLStencilElement {
+        addEventListener<K extends keyof HTMLCTextFieldOpenElementEventMap>(type: K, listener: (this: HTMLCTextFieldOpenElement, ev: CTextFieldOpenCustomEvent<HTMLCTextFieldOpenElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions): void;
+        removeEventListener<K extends keyof HTMLCTextFieldOpenElementEventMap>(type: K, listener: (this: HTMLCTextFieldOpenElement, ev: CTextFieldOpenCustomEvent<HTMLCTextFieldOpenElementEventMap[K]>) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | EventListenerOptions): void;
+    }
+    var HTMLCTextFieldOpenElement: {
+        prototype: HTMLCTextFieldOpenElement;
+        new (): HTMLCTextFieldOpenElement;
+    };
     interface HTMLCToastElementEventMap {
         "close": CToastMessage;
     }
@@ -3062,6 +3204,7 @@ declare global {
         "c-tag": HTMLCTagElement;
         "c-tags": HTMLCTagsElement;
         "c-text-field": HTMLCTextFieldElement;
+        "c-text-field-open": HTMLCTextFieldOpenElement;
         "c-toast": HTMLCToastElement;
         "c-toasts": HTMLCToastsElement;
         "c-toolbar": HTMLCToolbarElement;
@@ -5052,6 +5195,127 @@ declare namespace LocalJSX {
         "value"?: string;
     }
     /**
+     * Text field component without shadow dom
+     * @group Form
+     */
+    interface CTextFieldOpen {
+        /**
+          * HTML input autocomplete
+         */
+        "autocomplete"?: string;
+        /**
+          * HTML input autocorrect
+         */
+        "autocorrect"?: string;
+        /**
+          * HTML input autocapitalize
+          * @name autocapitalize
+         */
+        "automaticCapitalize"?: string;
+        /**
+          * Auto focus the input
+          * @name autofocus
+         */
+        "automaticFocus"?: boolean;
+        /**
+          * Disable the input
+         */
+        "disabled"?: boolean;
+        /**
+          * Hide the hint and error messages
+         */
+        "hideDetails"?: boolean;
+        /**
+          * Hint text for the input
+         */
+        "hint"?: string;
+        /**
+          * Id of the input
+          * @name id
+         */
+        "hostId"?: string;
+        /**
+          * Label of the input
+         */
+        "label"?: string;
+        /**
+          * Label on top of the input
+         */
+        "labelOnTop"?: boolean;
+        /**
+          * Maximum value on a numeric input
+         */
+        "max"?: number;
+        /**
+          * Minimum value on a numeric input
+         */
+        "min"?: number;
+        /**
+          * Name of the input
+         */
+        "name"?: string;
+        /**
+          * Emit changes to the parent
+         */
+        "onChangeValue"?: (event: CTextFieldOpenCustomEvent<any>) => void;
+        /**
+          * Placeholder of the input
+         */
+        "placeholder"?: string;
+        /**
+          * Mark as readonly
+         */
+        "readonly"?: boolean;
+        /**
+          * Render input element outside shadow DOM for maximum compatibility
+         */
+        "renderOutsideShadow"?: boolean;
+        /**
+          * Set the input as required
+         */
+        "required"?: boolean;
+        /**
+          * Rows on the input
+         */
+        "rows"?: number;
+        /**
+          * Shadow variant of the input
+         */
+        "shadow"?: boolean;
+        /**
+          * Step size on a numeric input
+         */
+        "step"?: number;
+        /**
+          * Trim whitespace from the return value
+         */
+        "trimWhitespace"?: boolean;
+        /**
+          * Type of the input
+         */
+        "type"?: string;
+        /**
+          * Set the validity of the input
+         */
+        "valid"?: boolean;
+        /**
+          * Manual validation
+         */
+        "validate"?: boolean;
+        /**
+          * Validate the input on blur
+         */
+        "validateOnBlur"?: boolean;
+        /**
+          * Custom validation message
+         */
+        "validation"?: string;
+        /**
+          * Value of the input
+         */
+        "value"?: string;
+    }
+    /**
      * @parent none
      */
     interface CToast {
@@ -5155,6 +5419,7 @@ declare namespace LocalJSX {
         "c-tag": CTag;
         "c-tags": CTags;
         "c-text-field": CTextField;
+        "c-text-field-open": CTextFieldOpen;
         "c-toast": CToast;
         "c-toasts": CToasts;
         "c-toolbar": CToolbar;
@@ -5431,6 +5696,11 @@ declare module "@stencil/core" {
              * @group Form
              */
             "c-text-field": LocalJSX.CTextField & JSXBase.HTMLAttributes<HTMLCTextFieldElement>;
+            /**
+             * Text field component without shadow dom
+             * @group Form
+             */
+            "c-text-field-open": LocalJSX.CTextFieldOpen & JSXBase.HTMLAttributes<HTMLCTextFieldOpenElement>;
             /**
              * @parent none
              */
