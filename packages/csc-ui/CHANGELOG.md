@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.0.19](https://github.com/CSCfi/ui/compare/v3.0.18...v3.0.19) (2026-02-19)
+
+
+### Bug Fixes
+
+* **c-text-field-open:** Use correct class name ([5cf0f97](https://github.com/CSCfi/ui/commit/5cf0f97e9fd3ae9d38628804c1a771a8572847bf))
+
 ## [3.0.18](https://github.com/CSCfi/ui/compare/v3.0.17...v3.0.18) (2026-01-22)
 
 
