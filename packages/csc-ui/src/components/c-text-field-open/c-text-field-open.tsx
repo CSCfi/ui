@@ -24,7 +24,7 @@ import { mdiCalendar, mdiEye, mdiEyeOff } from '@mdi/js';
   shadow: false,
   formAssociated: true,
 })
-export class CTextField {
+export class CTextFieldOpen {
   // eslint-disable-next-line
   @AttachInternals() internals: ElementInternals;
 
@@ -189,7 +189,7 @@ export class CTextField {
   private static _uniqueId = 0;
 
   componentWillLoad() {
-    CTextField._uniqueId += 1;
+    CTextFieldOpen._uniqueId += 1;
 
     this._originalType = this.type;
 
@@ -198,7 +198,7 @@ export class CTextField {
       this.label ||
       this.placeholder ||
       ''
-    ).replace(/[^a-zA-Z0-9-_]/g, '')}_${CTextField._uniqueId}`;
+    ).replace(/[^a-zA-Z0-9-_]/g, '')}_${CTextFieldOpen._uniqueId}`;
 
     this.internals.setFormValue(this.value);
   }
