@@ -1,5 +1,5 @@
 <template>
-  <component-example name="basic" rows>
+  <component-example name="form" rows>
     <template #title>Form usage</template>
 
     <form action="/" method="post">
