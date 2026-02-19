@@ -67,6 +67,7 @@ Type: `Promise<void>`
  - [c-autocomplete](../c-autocomplete)
  - [c-select](../c-select)
  - [c-text-field](../c-text-field)
+ - [c-text-field-open](../c-text-field-open)
 
 ### Depends on
 
@@ -79,6 +80,7 @@ graph TD;
   c-autocomplete --> c-input
   c-select --> c-input
   c-text-field --> c-input
+  c-text-field-open --> c-input
   style c-input fill:#f9f,stroke:#333,stroke-width:4px
 ```
 
