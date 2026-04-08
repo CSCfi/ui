@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.0.20](https://github.com/CSCfi/ui/compare/v3.0.19...v3.0.20) (2026-04-08)
+
+
+### Bug Fixes
+
+* **c-table:** Handle undefined _observer in c-table disconnectedCallback ([ad2c13b](https://github.com/CSCfi/ui/commit/ad2c13b27190314fd241064d15c325b897287ee0))
+
 ## [3.0.19](https://github.com/CSCfi/ui/compare/v3.0.18...v3.0.19) (2026-02-19)
 
 
