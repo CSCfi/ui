@@ -11,8 +11,9 @@
     "tab.activeBorder": "#f9e64f",
 
     "activityBar.activeBorder": "#f9e64f",
-    "activityBarBadge.background": "#f94fa7",
+    "activityBarBadge.background": "#f94fa7"
   },
   "peacock.color": "#d968c9",
-  "typescript.tsdk": "node_modules/typescript/lib"
+  "typescript.tsdk": "node_modules/typescript/lib",
+  "js/ts.tsdk.path": "node_modules/typescript/lib"
 }
