@@ -1,0 +1,10 @@
+{
+  "theme": "dark",
+  "permissions": {
+    "deny": [
+      "Read(./**/.env)",
+      "Edit(./**/.env)",
+      "Bash(git push *)"
+    ]
+  }
+}

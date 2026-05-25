@@ -1,0 +1,36 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(python3 -c \"import json,sys; d=json.load\\(sys.stdin\\); c=d['components'][0]; print\\(json.dumps\\({'events': c['events'], 'methods': c['methods'], 'slots': c['slots'], 'styles': c['styles']}, indent=2\\)\\)\")",
+      "Bash(python3 -c \"import json,sys; d=json.load\\(sys.stdin\\); print\\(len\\(d['components']\\)\\)\")",
+      "Bash(python3 -c \"import json,sys; d=json.load\\(sys.stdin\\); print\\(d.get\\('version'\\)\\)\")",
+      "Bash(python3 -c \"import json; d=json.load\\(open\\('/workspace/packages/csc-ui/vscode-data.json'\\)\\); print\\(list\\(d.keys\\(\\)\\)\\); print\\(json.dumps\\(list\\(d.values\\(\\)\\)[0][:1] if isinstance\\(list\\(d.values\\(\\)\\)[0], list\\) else {}, indent=2\\)\\)\")",
+      "Bash(python3 -c ' *)",
+      "Bash(npm run *)",
+      "Bash(node -e \"const { parse } = require\\('vue-docgen-api'\\); parse\\('/workspace/packages/csc-ui/src/components/c-button/CButton.ce.vue'\\).then\\(r => console.log\\(JSON.stringify\\({ tag: r.tags, description: r.description, props: r.props?.slice\\(0,2\\), events: r.events?.slice\\(0,2\\), slots: r.slots?.slice\\(0,2\\), expose: r.expose?.slice\\(0,2\\) }, null, 2\\)\\)\\)\")",
+      "Bash(node -e \"const { parse } = require\\('vue-docgen-api'\\); parse\\('/workspace/packages/csc-ui/src/components/c-button/CButton.ce.vue'\\).then\\(r => console.log\\(JSON.stringify\\({ slots: r.slots, expose: r.expose?.slice\\(0,3\\) }, null, 2\\)\\)\\)\")",
+      "Bash(node -e \"const { parse } = require\\('vue-docgen-api'\\); parse\\('/workspace/packages/csc-ui/src/components/c-select/CSelect.ce.vue'\\).then\\(r => console.log\\(JSON.stringify\\({ expose: r.expose?.slice\\(0,3\\), events: r.events?.slice\\(0,3\\) }, null, 2\\)\\)\\)\")",
+      "Bash(node -e \"const { parse } = require\\('vue-docgen-api'\\); parse\\('/workspace/packages/csc-ui/src/components/c-button/CButton.ce.vue'\\).then\\(r => console.log\\(JSON.stringify\\(r.tags, null, 2\\)\\)\\)\")",
+      "Bash(npm list *)",
+      "Bash(npx tsx *)",
+      "Bash(node -e ' *)",
+      "Bash(node -e \"const m = require\\('/workspace/packages/csc-ui/dist/components/c-button.js'\\); console.log\\(Object.keys\\(m\\)\\)\")",
+      "Bash(npm install *)",
+      "Bash(pnpm add *)",
+      "Bash(npx tsc *)",
+      "Bash(node -e \"const { createComponent } = require\\('@lit/react'\\); console.log\\(createComponent.length, createComponent.toString\\(\\).slice\\(0,200\\)\\)\")",
+      "Bash(pnpm install *)",
+      "Bash(/workspace/node_modules/.bin/tsc --version)",
+      "Bash(/workspace/packages/csc-ui/node_modules/.bin/tsc --version)",
+      "Bash(/workspace/packages/csc-ui/node_modules/.bin/tsc)",
+      "Bash(npx nuxt *)",
+      "Bash(git checkout *)",
+      "Read(//tmp/**)",
+      "Read(//home/claudeuser/.local/share/pnpm/**)",
+      "Bash(pnpm view *)",
+      "Bash(pnpm run *)",
+      "Bash(pnpm config *)",
+      "Bash(PUPPETEER_SKIP_DOWNLOAD=1 pnpm run build)"
+    ]
+  }
+}

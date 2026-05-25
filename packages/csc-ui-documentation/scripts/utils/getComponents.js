@@ -6,7 +6,7 @@ const __filename = fileURLToPath(import.meta.url);
 
 const __dirname = path.dirname(__filename);
 
-const directory = path.resolve(__dirname, '../../components/examples');
+const directory = path.resolve(__dirname, '../../app/components/examples');
 
 const components = fs.readdirSync(directory);
 

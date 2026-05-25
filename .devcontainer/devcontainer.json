@@ -1,0 +1,32 @@
+{
+  "build": {
+    // Path is relative to the devcontainer.json file.
+    "dockerfile": "Dockerfile"
+  },
+  "features": {
+    "ghcr.io/devcontainers-extra/features/pnpm:2": {},
+    "ghcr.io/w3cj/devcontainer-features/firewall:latest": {
+      "verbose": true,
+      "githubIps": true,
+      "claudeCode": true,
+      "npmRegistry": true,
+      "hosts": "json.schemastore.org"
+    }
+  },
+  "mounts": [
+    "source=${localEnv:HOME}/.claude,target=/home/claudeuser/.claude,type=bind,consistency=cached",
+    "source=${localEnv:HOME}/.claude.json,target=/home/claudeuser/.claude.json,type=bind",
+    "source=my-project-node-modules,target=${containerWorkspaceFolder}/node_modules,type=volume"
+  ],
+  // "postCreateCommand": "pnpm install",
+  "remoteUser": "claudeuser",
+  // required to make claude login work
+  "runArgs": ["--sysctl", "net.ipv6.conf.all.disable_ipv6=1"],
+  "workspaceMount": "source=${localWorkspaceFolder},target=/workspace,type=bind,consistency=delegated",
+  "workspaceFolder": "/workspace",
+  "customizations": {
+    "vscode": {
+      "extensions": ["anthropic.claude-code"]
+    }
+  }
+}

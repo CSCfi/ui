@@ -5,7 +5,13 @@ export default defineNuxtConfig({
 
   devtools: { enabled: false },
 
-  modules: ['@pinia/nuxt', '@vueuse/nuxt'],
+  modules: ['@pinia/nuxt', '@vueuse/nuxt', '@nuxt/eslint'],
+
+  eslint: {
+    config: {
+      stylistic: false,
+    },
+  },
 
   build: {
     transpile: ['csc-ui/loader', '@cscfi/csc-ui-vue'],
@@ -28,19 +34,11 @@ export default defineNuxtConfig({
 
   css: ['~/assets/css/main.css'],
 
-  imports: {
-    dirs: ['./stores', './composables'],
-  },
-
-  // @ts-ignore
   pinia: {
     autoImports: ['defineStore', 'acceptHMRUpdate'],
   },
 
   vite: {
-    plugins: [
-      // @ts-ignore
-      tailwindcss(),
-    ],
+    plugins: [tailwindcss()],
   },
 });

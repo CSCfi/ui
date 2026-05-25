@@ -22,7 +22,11 @@ jobs:
           changelog-path: 'CHANGELOG.md'
 
       - name: Checkout repository
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
+        if: ${{ steps.release.outputs.releases_created }}
+
+      - name: Enable corepack (pnpm)
+        run: corepack enable
         if: ${{ steps.release.outputs.releases_created }}
 
       - uses: actions/setup-node@v4
@@ -31,18 +35,25 @@ jobs:
           registry-url: 'https://registry.npmjs.org'
         if: ${{ steps.release.outputs.releases_created }}
 
-      - name: Install dependencies & publish NPM package
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+        if: ${{ steps.release.outputs.releases_created }}
+
+      - name: Build & publish csc-ui
         run: |
-          cd packages/csc-ui
-          npm ci
-          npm run build
-          npm whoami || true
-          npm publish --loglevel verbose
-          cd ../csc-ui-react
-          npm ci
-          npm run build
-          (version="$(node ../csc-ui/scripts/getLatestVersion.js)"; npm --no-git-tag-version version ${version})
-          npm publish --loglevel verbose
+          pnpm --filter @cscfi/csc-ui run build
+          pnpm --filter @cscfi/csc-ui publish --no-git-checks
         env:
-          NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+        if: ${{ steps.release.outputs.releases_created }}
+
+      - name: Build & publish csc-ui-react
+        run: |
+          pnpm --filter @cscfi/csc-ui-react run build
+          cd packages/csc-ui-react
+          version="$(node ../csc-ui/scripts/getLatestVersion.js)"
+          pnpm version "$version" --no-git-tag-version
+          pnpm publish --no-git-checks
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
         if: ${{ steps.release.outputs.releases_created }}

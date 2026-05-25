@@ -30,7 +30,7 @@
     "access": "public"
   },
   "scripts": {
-    "build": "npm run tsc",
+    "build": "pnpm run tsc",
     "test": "node ./__tests__/react-library.test.js",
     "tsc": "tsc -p . --outDir ./dist"
   },

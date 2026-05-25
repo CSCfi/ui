@@ -14,14 +14,17 @@ export namespace Components {
     interface CAccordion {
         /**
           * Disallow collapsing all the items
+          * @default false
          */
         "mandatory": boolean;
         /**
           * Allow expanding multiple items
+          * @default false
          */
         "multiple": boolean;
         /**
           * Show an outline around expanded items
+          * @default false
          */
         "outlined": boolean;
         /**
@@ -35,11 +38,13 @@ export namespace Components {
     interface CAccordionItem {
         /**
           * Marks the item as collapsable
-          * @private
+          * @private 
+          * @default false
          */
         "collapsable": boolean;
         /**
           * Expansion status of the item
+          * @default false
          */
         "expanded": boolean;
         /**
@@ -48,7 +53,8 @@ export namespace Components {
         "heading": string;
         /**
           * Show an outline around the expanded item
-          * @private
+          * @private 
+          * @default false
          */
         "outlined": boolean;
         /**
@@ -71,14 +77,17 @@ export namespace Components {
     interface CAutocomplete {
         /**
           * Disable the input
+          * @default false
          */
         "disabled": boolean;
         /**
           * Hide the hint and error messages
+          * @default false
          */
         "hideDetails": boolean;
         /**
           * Hint text for the input
+          * @default ''
          */
         "hint": string;
         /**
@@ -88,10 +97,12 @@ export namespace Components {
         "hostId": string;
         /**
           * Dropdown items
+          * @default []
          */
         "items": CAutocompleteItem[];
         /**
           * Items per page before adding scroll
+          * @default 6
          */
         "itemsPerPage": number;
         /**
@@ -100,14 +111,17 @@ export namespace Components {
         "label": string;
         /**
           * Show loading state
+          * @default false
          */
         "loading": boolean;
         /**
           * Minimum query length
+          * @default 0
          */
         "minimumQueryLength": number;
         /**
           * Minimum query length message
+          * @default 'Type at least {n} characters'
          */
         "minimumQueryLengthMessage": string;
         /**
@@ -116,18 +130,22 @@ export namespace Components {
         "name": string;
         /**
           * No matching items message
+          * @default 'No suggestions found'
          */
         "noMatchingItemsMessage": string;
         /**
           * Placeholder text
+          * @default ''
          */
         "placeholder": string;
         /**
           * Search string
+          * @default null
          */
         "query": string;
         /**
           * Show required validation
+          * @default false
          */
         "required": boolean;
         /**
@@ -136,30 +154,37 @@ export namespace Components {
         "reset": () => Promise<void>;
         /**
           * Return object instead of value
+          * @default false
          */
         "returnObject": boolean;
         /**
           * Shadow variant
+          * @default false
          */
         "shadow": boolean;
         /**
           * Set the validíty of the input
+          * @default true
          */
         "valid": boolean;
         /**
           * Manual validation
+          * @default false
          */
         "validate": boolean;
         /**
           * Validate the input on blur
+          * @default false
          */
         "validateOnBlur": boolean;
         /**
           * Custom validation message
+          * @default 'Required field'
          */
         "validation": string;
         /**
           * Selected item
+          * @default null
          */
         "value": string | number | CAutocompleteItem;
     }
@@ -169,6 +194,7 @@ export namespace Components {
     interface CBackdrop {
         /**
           * Disable backdrop blur effect
+          * @default false
          */
         "disableBackdropBlur": boolean;
     }
@@ -183,23 +209,28 @@ export namespace Components {
     interface CButton {
         /**
           * Danger variant style
+          * @default false
          */
         "danger": boolean;
         /**
           * Disable the button
+          * @default false
          */
         "disabled": boolean;
         /**
           * Fit width to containing element
+          * @default false
          */
         "fit": boolean;
         /**
           * Light button background
+          * @default false
          */
         "ghost": boolean;
         /**
           * True when used as a tab button
-          * @private
+          * @private 
+          * @default false
          */
         "grouped": boolean;
         /**
@@ -213,39 +244,48 @@ export namespace Components {
         "href": string;
         /**
           * Inverted button style for dark backgrounds
+          * @default false
          */
         "inverted": boolean;
         /**
           * Display loader on the button
+          * @default false
          */
         "loading": boolean;
         /**
           * Remove the default border radius
+          * @default false
          */
         "noRadius": boolean;
         /**
           * Outlined button style
+          * @default false
          */
         "outlined": boolean;
         /**
           * Size of the button
+          * @default 'default'
          */
         "size": 'default' | 'small' | 'large';
         /**
           * Used a s atab button
-          * @private
+          * @private 
+          * @default false
          */
         "tabs": boolean;
         /**
           * Hyperlink target
+          * @default '_blank'
          */
         "target": string;
         /**
           * Transparent button background
+          * @default false
          */
         "text": boolean;
         /**
           * Button type
+          * @default 'button'
          */
         "type": 'button' | 'submit';
         /**
@@ -267,6 +307,7 @@ export namespace Components {
         "exitFullscreen": () => Promise<void>;
         /**
           * Enable the fullscreen toggle button
+          * @default false
          */
         "fullscreen": boolean;
     }
@@ -276,10 +317,12 @@ export namespace Components {
     interface CCardActions {
         /**
           * Align the actions
+          * @default 'center'
          */
         "align": 'start' | 'center' | 'end';
         /**
           * Justify the actions
+          * @default 'start'
          */
         "justify": | 'start'
     | 'center'
@@ -304,22 +347,27 @@ export namespace Components {
     interface CCheckbox {
         /**
           * If `true`, the checkbox is selected.
+          * @default false
          */
         "checked": boolean;
         /**
           * Disable the checkbox
+          * @default false
          */
         "disabled": boolean;
         /**
           * The value when the checkbox is unchecked
+          * @default false
          */
         "falseValue": boolean | string;
         /**
           * Hide the hint and error messages
+          * @default false
          */
         "hideDetails": boolean;
         /**
           * Hint text for the input
+          * @default ''
          */
         "hint": string;
         /**
@@ -334,30 +382,37 @@ export namespace Components {
         "hostName": string;
         /**
           * Indeterminate state
+          * @default false
          */
         "indeterminate": boolean;
         /**
           * Element label
+          * @default ''
          */
         "label": string;
         /**
           * Set as required
+          * @default false
          */
         "required": boolean;
         /**
           * The value when the checkbox is checked
+          * @default true
          */
         "trueValue": boolean | string;
         /**
           * Set the validity of the input
+          * @default true
          */
         "valid": boolean;
         /**
           * Custom validation message
+          * @default 'Required field'
          */
         "validation": string;
         /**
           * The input value - Only used when the checkbox participates in a native `<form>`
+          * @default false
          */
         "value": string | boolean;
     }
@@ -367,6 +422,7 @@ export namespace Components {
     interface CCscLogo {
         /**
           * Logo width in pixels
+          * @default 60
          */
         "width": number;
     }
@@ -380,14 +436,17 @@ export namespace Components {
         "clearSelections": () => Promise<void>;
         /**
           * Data of the table
+          * @default []
          */
         "data": CDataTableData[];
         /**
           * Externally sorted and paginated data
+          * @default false
          */
         "externalData": boolean;
         /**
           * Items per page options
+          * @default {     hideDetails: false,     simple: false,     hideRange: false,     size: 'default',   }
          */
         "footerOptions": CDataTableFooterOptions;
         /**
@@ -396,26 +455,32 @@ export namespace Components {
         "getData": () => Promise<Record<string, string | number | boolean>[]>;
         /**
           * Headers of the table
+          * @default []
          */
         "headers": CDataTableHeader[];
         /**
           * Hide the footer
+          * @default false
          */
         "hideFooter": boolean;
         /**
           * Use horizontal scrolling
+          * @default false
          */
         "horizontalScrolling": boolean;
         /**
           * Show a loader on top of the table
+          * @default false
          */
         "loading": boolean;
         /**
           * Text shown when there is no data and the table is loading
+          * @default 'Loading data'
          */
         "loadingText": string;
         /**
           * Text shown when there are no data available
+          * @default 'No data'
          */
         "noDataText": string;
         /**
@@ -424,30 +489,37 @@ export namespace Components {
         "pagination": CPaginationOptions;
         /**
           * Make rows selectable
+          * @default false
          */
         "selectable": boolean;
         /**
           * Property used in selections
+          * @default null
          */
         "selectionProperty": string;
         /**
           * Allow only a single row expanded at a time
+          * @default false
          */
         "singleExpansion": boolean;
         /**
           * Select only a single row at a time
+          * @default false
          */
         "singleSelection": boolean;
         /**
           * Sort data by
+          * @default null
          */
         "sortBy": any;
         /**
           * Sorting direction
+          * @default null
          */
         "sortDirection": 'asc' | 'desc' | null;
         /**
           * Use sticky header
+          * @default false
          */
         "stickyHeader": boolean;
     }
@@ -515,6 +587,7 @@ export namespace Components {
     interface CIcon {
         /**
           * Fill color
+          * @default 'currentColor'
          */
         "color": string;
         /**
@@ -523,6 +596,7 @@ export namespace Components {
         "path": string;
         /**
           * Icon size in pixels
+          * @default 24
          */
         "size": number;
     }
@@ -536,38 +610,47 @@ export namespace Components {
         "badge": string;
         /**
           * Danger variant of the button
+          * @default false
          */
         "danger": boolean;
         /**
           * Disable the button
+          * @default false
          */
         "disabled": boolean;
         /**
           * Ghost variant of the button
+          * @default false
          */
         "ghost": boolean;
         /**
           * Inverted color for dark backgrounds
+          * @default false
          */
         "inverted": boolean;
         /**
           * Loading variant of the button
+          * @default false
          */
         "loading": boolean;
         /**
           * Outlined variant of the button
+          * @default false
          */
         "outlined": boolean;
         /**
           * Path for the svg icon
+          * @default null
          */
         "path": string;
         /**
           * Size of the button
+          * @default 'default'
          */
         "size": 'default' | 'x-small' | 'small';
         /**
           * Text variant of the button
+          * @default false
          */
         "text": boolean;
     }
@@ -577,23 +660,28 @@ export namespace Components {
     interface CInput {
         /**
           * Active state
+          * @default false
          */
         "active": boolean;
         /**
           * Auto focus the input
           * @name autofocus
+          * @default false
          */
         "automaticFocus": boolean;
         /**
           * Disable the input
+          * @default false
          */
         "disabled": boolean;
         /**
           * Hide the hint and error messages
+          * @default false
          */
         "hideDetails": boolean;
         /**
           * Hint text for the input
+          * @default ''
          */
         "hint": string;
         /**
@@ -611,6 +699,7 @@ export namespace Components {
         "items": CSelectItem[];
         /**
           * Items per page before adding scroll
+          * @default 6
          */
         "itemsPerPage": number;
         /**
@@ -619,14 +708,17 @@ export namespace Components {
         "label": string;
         /**
           * Label on top of the input
+          * @default false
          */
         "labelOnTop": boolean;
         /**
           * Maximum value on a numeric input
+          * @default null
          */
         "max": number;
         /**
           * Minimum value on a numeric input
+          * @default null
          */
         "min": number;
         /**
@@ -639,10 +731,12 @@ export namespace Components {
         "placeholder": string;
         /**
           * Mark as readonly
+          * @default false
          */
         "readonly": boolean;
         /**
           * Set the input as required
+          * @default false
          */
         "required": boolean;
         /**
@@ -651,14 +745,17 @@ export namespace Components {
         "reset": () => Promise<void>;
         /**
           * Rows on the input
+          * @default 1
          */
         "rows": number;
         /**
           * Shadow variant of the input
+          * @default false
          */
         "shadow": boolean;
         /**
           * Step size on a numeric input
+          * @default null
          */
         "step": number;
         /**
@@ -667,18 +764,22 @@ export namespace Components {
         "type": string;
         /**
           * Set the validíty of the input
+          * @default true
          */
         "valid": boolean;
         /**
           * Manual validation
+          * @default false
          */
         "validate": boolean;
         /**
           * Validate the input on blur
+          * @default false
          */
         "validateOnBlur": boolean;
         /**
           * Custom validation message
+          * @default 'Required field'
          */
         "validation": string;
         /**
@@ -687,6 +788,7 @@ export namespace Components {
         "value": string | number | boolean | CSelectItem | CAutocompleteItem;
         /**
           * Variant
+          * @default 'text'
          */
         "variant": 'text' | 'select';
     }
@@ -697,18 +799,22 @@ export namespace Components {
     interface CLink {
         /**
           * Url of link
+          * @default null
          */
         "href": string;
         /**
           * regular target attribute of a hyperlink
+          * @default null
          */
         "target": string;
         /**
           * Display line under the link
+          * @default false
          */
         "underline": boolean;
         /**
           * Customisable font weight
+          * @default '600'
          */
         "weight": string;
     }
@@ -718,29 +824,35 @@ export namespace Components {
     interface CList {
         /**
           * Show border arount the list items
+          * @default false
          */
         "bordered": boolean;
         /**
           * Disable the list
+          * @default false
          */
         "disabled": boolean;
     }
     interface CListItem {
         /**
           * Set the item active
+          * @default false
          */
         "active": boolean;
         /**
           * Disable the item
+          * @default false
          */
         "disabled": boolean;
         /**
           * Disabled by the parent list
-          * @private
+          * @private 
+          * @default false
          */
         "disabledByParent": boolean;
         /**
           * Display background color on hover
+          * @default false
          */
         "hoverable": boolean;
         /**
@@ -749,16 +861,19 @@ export namespace Components {
         "href"?: string;
         /**
           * Add ripple effect to the item
+          * @default false
          */
         "ripple": boolean;
         /**
           * Hyperlink target
+          * @default '_blank'
          */
         "target": string;
     }
     interface CListItemTitle {
         /**
           * Set the title active
+          * @default false
          */
         "active": boolean;
     }
@@ -769,18 +884,22 @@ export namespace Components {
     interface CLoader {
         /**
           * Delay in seconds of showing the contents in the slot of the loader
+          * @default 0
          */
         "contentdelay": number;
         /**
           * Hide the loader
+          * @default false
          */
         "hide": boolean;
         /**
           * Size of the loader
+          * @default 48
          */
         "size": number;
         /**
           * Width of the loader
+          * @default 4
          */
         "width": number;
     }
@@ -790,10 +909,12 @@ export namespace Components {
     interface CLoginButton {
         /**
           * Alt description for logo
+          * @default ''
          */
         "alt": string;
         /**
           * Login provider link. Do not set if using a javascript click handler
+          * @default ''
          */
         "href"?: string;
         /**
@@ -812,22 +933,27 @@ export namespace Components {
     interface CLoginCard {
         /**
           * Background position (css background-position)
+          * @default 'bottom right'
          */
         "backgroundPosition": string;
         /**
           * Mobile breakpoint in pixels
+          * @default 600
          */
         "mobileBreakpoint": number;
         /**
           * Add colored overlay to the background image
+          * @default false
          */
         "overlay": boolean;
         /**
           * Add colored overlay to the background image
+          * @default 'multiply'
          */
         "overlayBlendMode": CLoginCardBlendMode;
         /**
           * Background image
+          * @default ''
          */
         "src": string;
     }
@@ -837,10 +963,12 @@ export namespace Components {
     interface CLoginCardActions {
         /**
           * Align the actions
+          * @default 'center'
          */
         "align": 'start' | 'center' | 'end';
         /**
           * Justify the actions
+          * @default 'start'
          */
         "justify": | 'start'
     | 'center'
@@ -866,6 +994,7 @@ export namespace Components {
     interface CMain {
         /**
           * Disable the default dashboard layout
+          * @default false
          */
         "disableLayout": boolean;
     }
@@ -875,26 +1004,32 @@ export namespace Components {
     interface CMenu {
         /**
           * Menu content css class
+          * @default ''
          */
         "contentClass": string;
         /**
           * No chevron and background, E.g. when a button is the activator
+          * @default false
          */
         "custom": boolean;
         /**
           * No hover background
+          * @default false
          */
         "flat": boolean;
         /**
           * Menu items
+          * @default []
          */
         "items": CMenuOption[];
         /**
           * Items per page before adding scroll
+          * @default 6
          */
         "itemsPerPage": number;
         /**
           * Small variant
+          * @default false
          */
         "small": boolean;
     }
@@ -904,22 +1039,26 @@ export namespace Components {
     interface CMenuItems {
         /**
           * Menu is opened and positioned
-          * @private
+          * @private 
+          * @default false
          */
         "active": boolean;
         /**
           * is active
-          * @private
+          * @private 
+          * @default null
          */
         "index": number | null;
         /**
           * Menu items
-          * @private
+          * @private 
+          * @default []
          */
         "items": CMenuOption[];
         /**
           * Items per page before adding scroll
-          * @private
+          * @private 
+          * @default 6
          */
         "itemsPerPage": number;
         /**
@@ -929,17 +1068,20 @@ export namespace Components {
         "parent": HTMLCMenuElement;
         /**
           * Type of parent
-          * @private
+          * @private 
+          * @default 'menu'
          */
         "parentType": string;
         /**
           * Small variant
-          * @private
+          * @private 
+          * @default false
          */
         "small": boolean;
         /**
           * Initial top position
-          * @private
+          * @private 
+          * @default 0
          */
         "top": number;
     }
@@ -949,6 +1091,7 @@ export namespace Components {
     interface CMessage {
         /**
           * Hint text for the input
+          * @default ''
          */
         "hint": string;
         /**
@@ -957,10 +1100,12 @@ export namespace Components {
         "inputId": string;
         /**
           * Parent validíty
+          * @default true
          */
         "valid": boolean;
         /**
           * Custom validation message
+          * @default 'Required field'
          */
         "validation": string;
     }
@@ -970,22 +1115,27 @@ export namespace Components {
     interface CModal {
         /**
           * Disable backdrop blur effect
+          * @default false
          */
         "disableBackdropBlur": boolean;
         /**
           * Dismissed when touching/clicking outside the content
+          * @default false
          */
         "dismissable": boolean;
         /**
           * Is the modal visible
+          * @default false
          */
         "value": boolean;
         /**
           * Width of the dialog. Numeric value is considered as pixel value (400 -> 400px)
+          * @default 600
          */
         "width": string | number;
         /**
           * Z-index of the modal
+          * @default 10
          */
         "zIndex": number;
     }
@@ -1000,6 +1150,7 @@ export namespace Components {
     interface COption {
         /**
           * Set option as disabled
+          * @default false
          */
         "disabled": boolean;
         /**
@@ -1008,6 +1159,7 @@ export namespace Components {
         "name": string;
         /**
           * Set option as selected
+          * @default false
          */
         "selected": boolean;
         /**
@@ -1029,18 +1181,22 @@ export namespace Components {
         /**
           * Auto focus
           * @name autofocus
+          * @default false
          */
         "hasAutofocus": boolean;
         /**
           * Hide the hint and error messages
+          * @default false
          */
         "hideDetails": boolean;
         /**
           * Hint text for the input
+          * @default ''
          */
         "hint": string;
         /**
           * Length of the OTP code
+          * @default 6
          */
         "length": number;
         /**
@@ -1049,10 +1205,12 @@ export namespace Components {
         "reset": () => Promise<void>;
         /**
           * Set the validíty of the input
+          * @default true
          */
         "valid": boolean;
         /**
           * Custom validation message
+          * @default 'Required field'
          */
         "validation": string;
         /**
@@ -1066,6 +1224,7 @@ export namespace Components {
     interface CPage {
         /**
           * Display scroll indicator
+          * @default false
          */
         "scrollIndicator": boolean;
     }
@@ -1075,22 +1234,27 @@ export namespace Components {
     interface CPagination {
         /**
           * Hide details (per page dropdown and the 'x - y of n pages' text)
+          * @default false
          */
         "hideDetails": boolean;
         /**
           * Hide range indicator
+          * @default false
          */
         "hideRange": boolean;
         /**
           * Hide page number buttons
+          * @default false
          */
         "simple": boolean;
         /**
           * Hide details (per page dropdown and the 'x - y of n pages' text)
+          * @default 'default'
          */
         "size": 'default' | 'small';
         /**
           * Object containing values that are needed for pagination.  Note! startFrom and endTo are assigned automatically to the object based on other values
+          * @default {     itemCount: 0,   }
          */
         "value": CPaginationOptions;
     }
@@ -1100,22 +1264,27 @@ export namespace Components {
     interface CProgressBar {
         /**
           * Hide the percentage display
+          * @default false
          */
         "hideDetails": boolean;
         /**
           * Indeterminate state of the progress bar
+          * @default false
          */
         "indeterminate": boolean;
         /**
           * Optional details message next to percentage display
+          * @default ''
          */
         "label": string;
         /**
           * Place details next to progress bar
+          * @default false
          */
         "singleLine": boolean;
         /**
           * Progress bar value in percentage (0 to 100)
+          * @default 0
          */
         "value": number;
     }
@@ -1125,10 +1294,12 @@ export namespace Components {
     interface CRadio {
         /**
           * Set option as checked
+          * @default false
          */
         "checked": boolean;
         /**
           * Disable the radio button
+          * @default false
          */
         "disabled": boolean;
         /**
@@ -1142,18 +1313,22 @@ export namespace Components {
     interface CRadioGroup {
         /**
           * Color of the radio group
+          * @default ''
          */
         "color": string;
         /**
           * Disable the radio group
+          * @default false
          */
         "disabled": boolean;
         /**
           * Hide the hint and error messages
+          * @default false
          */
         "hideDetails": boolean;
         /**
           * Hint text for the input
+          * @default ''
          */
         "hint": string;
         /**
@@ -1163,10 +1338,12 @@ export namespace Components {
         "hostId": string;
         /**
           * Display radio buttons inline
+          * @default false
          */
         "inline": boolean;
         /**
           * Radio group items
+          * @default []
          */
         "items": CRadioGroupItem[];
         /**
@@ -1175,18 +1352,22 @@ export namespace Components {
         "label": string;
         /**
           * Set as required
+          * @default false
          */
         "required": boolean;
         /**
           * Return the whole item object
+          * @default false
          */
         "returnObject": boolean;
         /**
           * Set the validity of the input
+          * @default true
          */
         "valid": boolean;
         /**
           * Custom validation message
+          * @default 'Required field'
          */
         "validation": string;
         /**
@@ -1214,6 +1395,7 @@ export namespace Components {
         "align": CRowAlign;
         /**
           * Gap between items in px
+          * @default 0
          */
         "gap": number;
         /**
@@ -1222,6 +1404,7 @@ export namespace Components {
         "justify": CRowJustify;
         /**
           * Disable flex wrap
+          * @default false
          */
         "nowrap": boolean;
     }
@@ -1231,18 +1414,22 @@ export namespace Components {
     interface CSelect {
         /**
           * Make the selected value clearable
+          * @default false
          */
         "clearable": boolean;
         /**
           * Disable the input
+          * @default false
          */
         "disabled": boolean;
         /**
           * Hide the hint and error messages
+          * @default false
          */
         "hideDetails": boolean;
         /**
           * Hint text for the input
+          * @default ''
          */
         "hint": string;
         /**
@@ -1252,10 +1439,12 @@ export namespace Components {
         "hostId": string;
         /**
           * Dropdown items
+          * @default []
          */
         "items": CSelectItem[];
         /**
           * Items per page before adding scroll
+          * @default 6
          */
         "itemsPerPage": number;
         /**
@@ -1264,10 +1453,12 @@ export namespace Components {
         "label": string;
         /**
           * Label on top of the input
+          * @default false
          */
         "labelOnTop": boolean;
         /**
           * Show loading state
+          * @default false
          */
         "loading": boolean;
         /**
@@ -1280,10 +1471,12 @@ export namespace Components {
         "optionAsSelection": false;
         /**
           * Placeholder text
+          * @default ''
          */
         "placeholder": string;
         /**
           * Show required validation
+          * @default false
          */
         "required": boolean;
         /**
@@ -1292,30 +1485,37 @@ export namespace Components {
         "reset": () => Promise<void>;
         /**
           * Return object instead of value
+          * @default false
          */
         "returnObject": boolean;
         /**
           * Shadow variant
+          * @default false
          */
         "shadow": boolean;
         /**
           * Set the validíty of the input
+          * @default true
          */
         "valid": boolean;
         /**
           * Manual validation
+          * @default false
          */
         "validate": boolean;
         /**
           * Validate the input on blur
+          * @default false
          */
         "validateOnBlur": boolean;
         /**
           * Custom validation message
+          * @default 'Required field'
          */
         "validation": string;
         /**
           * Selected item
+          * @default null
          */
         "value": string | number | CSelectItem;
     }
@@ -1325,6 +1525,7 @@ export namespace Components {
     interface CSideNavigation {
         /**
           * Mobile version menu visibility
+          * @default false
          */
         "menuVisible": boolean;
         /**
@@ -1350,10 +1551,12 @@ export namespace Components {
         "href": string;
         /**
           * Loading state
+          * @default false
          */
         "loading": boolean;
         /**
           * Hyperlink target
+          * @default null
          */
         "target": string;
     }
@@ -1373,10 +1576,12 @@ export namespace Components {
         "ariaLabelInternal": string;
         /**
           * Disable tooltip
+          * @default false
          */
         "disableTooltip": boolean;
         /**
           * Disable the slider
+          * @default false
          */
         "disabled": boolean;
         /**
@@ -1395,34 +1600,42 @@ export namespace Components {
         "label": string;
         /**
           * Show tick labels
+          * @default false
          */
         "labels": boolean;
         /**
           * Max value
+          * @default '100'
          */
         "max": string;
         /**
           * Min value
+          * @default '0'
          */
         "min": string;
         /**
           * Segment count
+          * @default '10'
          */
         "segments": string;
         /**
           * Step
+          * @default '1'
          */
         "step": string;
         /**
           * Thow ticks
+          * @default false
          */
         "ticks": boolean;
         /**
           * Unit
+          * @default '%'
          */
         "unit": string;
         /**
           * Value
+          * @default '50'
          */
         "value": string | number;
     }
@@ -1438,14 +1651,17 @@ export namespace Components {
     interface CSpinner {
         /**
           * Color of the spinner
+          * @default 'var(--c-primary-600)'
          */
         "color": string;
         /**
           * Size of the spinner
+          * @default 24
          */
         "size": number;
         /**
           * Width of the spinner
+          * @default 2
          */
         "width": number;
     }
@@ -1465,12 +1681,14 @@ export namespace Components {
     interface CStep {
         /**
           * Mark step as complete
-          * @private
+          * @private 
+          * @default false
          */
         "complete": boolean;
         /**
           * Mark step as current
-          * @private
+          * @private 
+          * @default false
          */
         "current": boolean;
     }
@@ -1493,6 +1711,7 @@ export namespace Components {
         "active": boolean;
         /**
           * Element is visible and focusable
+          * @default false
          */
         "focusable": boolean;
         /**
@@ -1501,10 +1720,12 @@ export namespace Components {
         "href": string;
         /**
           * Loading state
+          * @default false
          */
         "loading": boolean;
         /**
           * Link target
+          * @default null
          */
         "target": string;
     }
@@ -1528,10 +1749,12 @@ export namespace Components {
     interface CSwiperTab {
         /**
           * Mark as active
+          * @default false
          */
         "active": boolean;
         /**
           * Disable button
+          * @default false
          */
         "disabled": boolean;
         /**
@@ -1564,15 +1787,18 @@ export namespace Components {
     interface CSwitch {
         /**
           * If `true`, the checkbox is selected.
+          * @default false
          */
         "checked": boolean;
         /**
           * The value when the checkbox is unchecked
+          * @default false
          */
         "falseValue": boolean | string;
         /**
           * Disable the switch
           * @name disabled
+          * @default false
          */
         "hostDisabled": boolean;
         /**
@@ -1581,18 +1807,22 @@ export namespace Components {
         "hostId": string;
         /**
           * Loading state
+          * @default false
          */
         "loading": boolean;
         /**
           * Set as required
+          * @default false
          */
         "required": boolean;
         /**
           * The value when the checkbox is checked
+          * @default true
          */
         "trueValue": boolean | string;
         /**
           * The input value - Only used when the checkbox participates in a native `<form>`
+          * @default false
          */
         "value": string | boolean;
     }
@@ -1603,10 +1833,12 @@ export namespace Components {
     interface CTab {
         /**
           * Mark tab as active
+          * @default false
          */
         "active": boolean;
         /**
           * Mark tab as disabled
+          * @default false
          */
         "disabled": boolean;
         /**
@@ -1636,23 +1868,28 @@ export namespace Components {
         /**
           * Disable tab buttons
           * @name disabled
+          * @default false
          */
         "hostDisabled": boolean;
         /**
           * Always require a selection
+          * @default false
          */
         "mandatory": boolean;
         /**
           * Size of the buttons
+          * @default 'default'
          */
         "size": 'default' | 'small';
         /**
           * Used as controller for c-tabs
-          * @private
+          * @private 
+          * @default false
          */
         "tabs": boolean;
         /**
           * Value of tab buttons
+          * @default 0
          */
         "value": number | string;
     }
@@ -1662,7 +1899,8 @@ export namespace Components {
     interface CTabItem {
         /**
           * Active
-          * @private
+          * @private 
+          * @default false
          */
         "active": boolean;
         /**
@@ -1676,7 +1914,8 @@ export namespace Components {
     interface CTabItems {
         /**
           * Disable animation
-          * @private
+          * @private 
+          * @default false
          */
         "disableAnimation": boolean;
         /**
@@ -1690,10 +1929,12 @@ export namespace Components {
     interface CTable {
         /**
           * Mobile breakpoint in pixels
+          * @default 600
          */
         "mobileBreakpoint": number;
         /**
           * Should the table be responsive
+          * @default false
          */
         "responsive": boolean;
         /**
@@ -1707,18 +1948,22 @@ export namespace Components {
     interface CTabs {
         /**
           * Disable the bottom border
+          * @default false
          */
         "borderless": boolean;
         /**
           * Disable animation
+          * @default false
          */
         "disableAnimation": boolean;
         /**
           * Justification of the children
+          * @default 'stretch'
          */
         "justify": CTabsJustify;
         /**
           * Mobile breakpoint in pixels - affects the content stacking with the vertical tabs
+          * @default 640
          */
         "mobileBreakpoint": number;
         /**
@@ -1727,6 +1972,7 @@ export namespace Components {
         "value": number | string;
         /**
           * Vertical tabs
+          * @default false
          */
         "vertical": boolean;
     }
@@ -1736,30 +1982,37 @@ export namespace Components {
     interface CTag {
         /**
           * Mark tag as active
+          * @default false
          */
         "active": boolean;
         /**
           * Display an optional badge at the start of the tag
+          * @default null
          */
         "badge": string | number;
         /**
           * Stretch to fill the container row
+          * @default false
          */
         "block": boolean;
         /**
           * Mark tag as closeable
+          * @default false
          */
         "closeable": boolean;
         /**
           * Stretch to fill the container
+          * @default false
          */
         "fit": boolean;
         /**
           * Remove the hover effect
+          * @default false
          */
         "flat": boolean;
         /**
           * Size of the tag
+          * @default 'default'
          */
         "size": 'default' | 'small';
     }
@@ -1769,6 +2022,7 @@ export namespace Components {
     interface CTags {
         /**
           * Size of the tags
+          * @default 'default'
          */
         "size": 'default' | 'small';
     }
@@ -1778,32 +2032,39 @@ export namespace Components {
     interface CTextField {
         /**
           * HTML input autocomplete
+          * @default ''
          */
         "autocomplete": string;
         /**
           * HTML input autocorrect
+          * @default ''
          */
         "autocorrect": string;
         /**
           * HTML input autocapitalize
           * @name autocapitalize
+          * @default ''
          */
         "automaticCapitalize": string;
         /**
           * Auto focus the input
           * @name autofocus
+          * @default false
          */
         "automaticFocus": boolean;
         /**
           * Disable the input
+          * @default false
          */
         "disabled": boolean;
         /**
           * Hide the hint and error messages
+          * @default false
          */
         "hideDetails": boolean;
         /**
           * Hint text for the input
+          * @default ''
          */
         "hint": string;
         /**
@@ -1817,14 +2078,17 @@ export namespace Components {
         "label": string;
         /**
           * Label on top of the input
+          * @default false
          */
         "labelOnTop": boolean;
         /**
           * Maximum value on a numeric input
+          * @default null
          */
         "max": number;
         /**
           * Minimum value on a numeric input
+          * @default null
          */
         "min": number;
         /**
@@ -1837,46 +2101,57 @@ export namespace Components {
         "placeholder": string;
         /**
           * Mark as readonly
+          * @default false
          */
         "readonly": boolean;
         /**
           * Set the input as required
+          * @default false
          */
         "required": boolean;
         /**
           * Rows on the input
+          * @default 1
          */
         "rows": number;
         /**
           * Shadow variant of the input
+          * @default false
          */
         "shadow": boolean;
         /**
           * Step size on a numeric input
+          * @default null
          */
         "step": number;
         /**
           * Trim whitespace from the return value
+          * @default false
          */
         "trimWhitespace": boolean;
         /**
           * Type of the input
+          * @default 'text'
          */
         "type": string;
         /**
           * Set the validity of the input
+          * @default true
          */
         "valid": boolean;
         /**
           * Manual validation
+          * @default false
          */
         "validate": boolean;
         /**
           * Validate the input on blur
+          * @default false
          */
         "validateOnBlur": boolean;
         /**
           * Custom validation message
+          * @default 'Required field'
          */
         "validation": string;
         /**
@@ -1891,32 +2166,39 @@ export namespace Components {
     interface CTextFieldOpen {
         /**
           * HTML input autocomplete
+          * @default ''
          */
         "autocomplete": string;
         /**
           * HTML input autocorrect
+          * @default ''
          */
         "autocorrect": string;
         /**
           * HTML input autocapitalize
           * @name autocapitalize
+          * @default ''
          */
         "automaticCapitalize": string;
         /**
           * Auto focus the input
           * @name autofocus
+          * @default false
          */
         "automaticFocus": boolean;
         /**
           * Disable the input
+          * @default false
          */
         "disabled": boolean;
         /**
           * Hide the hint and error messages
+          * @default false
          */
         "hideDetails": boolean;
         /**
           * Hint text for the input
+          * @default ''
          */
         "hint": string;
         /**
@@ -1930,14 +2212,17 @@ export namespace Components {
         "label": string;
         /**
           * Label on top of the input
+          * @default false
          */
         "labelOnTop": boolean;
         /**
           * Maximum value on a numeric input
+          * @default null
          */
         "max": number;
         /**
           * Minimum value on a numeric input
+          * @default null
          */
         "min": number;
         /**
@@ -1950,50 +2235,62 @@ export namespace Components {
         "placeholder": string;
         /**
           * Mark as readonly
+          * @default false
          */
         "readonly": boolean;
         /**
           * Render input element outside shadow DOM for maximum compatibility
+          * @default false
          */
         "renderOutsideShadow": boolean;
         /**
           * Set the input as required
+          * @default false
          */
         "required": boolean;
         /**
           * Rows on the input
+          * @default 1
          */
         "rows": number;
         /**
           * Shadow variant of the input
+          * @default false
          */
         "shadow": boolean;
         /**
           * Step size on a numeric input
+          * @default null
          */
         "step": number;
         /**
           * Trim whitespace from the return value
+          * @default false
          */
         "trimWhitespace": boolean;
         /**
           * Type of the input
+          * @default 'text'
          */
         "type": string;
         /**
           * Set the validity of the input
+          * @default true
          */
         "valid": boolean;
         /**
           * Manual validation
+          * @default false
          */
         "validate": boolean;
         /**
           * Validate the input on blur
+          * @default false
          */
         "validateOnBlur": boolean;
         /**
           * Custom validation message
+          * @default 'Required field'
          */
         "validation": string;
         /**
@@ -2021,6 +2318,7 @@ export namespace Components {
     interface CToasts {
         /**
           * Use absolute positioning
+          * @default false
          */
         "absolute": boolean;
         /**
@@ -2029,6 +2327,7 @@ export namespace Components {
         "addToast": (message: CToastMessage) => Promise<void>;
         /**
           * Horizontal position
+          * @default 'center'
          */
         "horizontal": 'left' | 'center' | 'right';
         /**
@@ -2037,6 +2336,7 @@ export namespace Components {
         "removeToast": (id: string) => Promise<void>;
         /**
           * Vertical position
+          * @default 'bottom'
          */
         "vertical": 'top' | 'bottom';
     }
@@ -3211,16 +3511,20 @@ declare global {
     }
 }
 declare namespace LocalJSX {
+    type OneOf<K extends string, PropT, AttrT = PropT> = { [P in K]: PropT } & { [P in `attr:${K}` | `prop:${K}`]?: never } | { [P in `attr:${K}`]: AttrT } & { [P in K | `prop:${K}`]?: never } | { [P in `prop:${K}`]: PropT } & { [P in K | `attr:${K}`]?: never };
+
     /**
      * @group Content Selectors
      */
     interface CAccordion {
         /**
           * Disallow collapsing all the items
+          * @default false
          */
         "mandatory"?: boolean;
         /**
           * Allow expanding multiple items
+          * @default false
          */
         "multiple"?: boolean;
         /**
@@ -3229,6 +3533,7 @@ declare namespace LocalJSX {
         "onChangeValue"?: (event: CAccordionCustomEvent<number | string>) => void;
         /**
           * Show an outline around expanded items
+          * @default false
          */
         "outlined"?: boolean;
         /**
@@ -3242,11 +3547,13 @@ declare namespace LocalJSX {
     interface CAccordionItem {
         /**
           * Marks the item as collapsable
-          * @private
+          * @private 
+          * @default false
          */
         "collapsable"?: boolean;
         /**
           * Expansion status of the item
+          * @default false
          */
         "expanded"?: boolean;
         /**
@@ -3260,7 +3567,8 @@ declare namespace LocalJSX {
         "onItemChange"?: (event: CAccordionItemCustomEvent<any>) => void;
         /**
           * Show an outline around the expanded item
-          * @private
+          * @private 
+          * @default false
          */
         "outlined"?: boolean;
         /**
@@ -3283,14 +3591,21 @@ declare namespace LocalJSX {
     interface CAutocomplete {
         /**
           * Disable the input
+          * @default false
          */
         "disabled"?: boolean;
         /**
+          * The `id` of a `<form>` element to associate this element with.
+         */
+        "form"?: string;
+        /**
           * Hide the hint and error messages
+          * @default false
          */
         "hideDetails"?: boolean;
         /**
           * Hint text for the input
+          * @default ''
          */
         "hint"?: string;
         /**
@@ -3300,10 +3615,12 @@ declare namespace LocalJSX {
         "hostId"?: string;
         /**
           * Dropdown items
+          * @default []
          */
         "items"?: CAutocompleteItem[];
         /**
           * Items per page before adding scroll
+          * @default 6
          */
         "itemsPerPage"?: number;
         /**
@@ -3312,14 +3629,17 @@ declare namespace LocalJSX {
         "label"?: string;
         /**
           * Show loading state
+          * @default false
          */
         "loading"?: boolean;
         /**
           * Minimum query length
+          * @default 0
          */
         "minimumQueryLength"?: number;
         /**
           * Minimum query length message
+          * @default 'Type at least {n} characters'
          */
         "minimumQueryLengthMessage"?: string;
         /**
@@ -3328,6 +3648,7 @@ declare namespace LocalJSX {
         "name"?: string;
         /**
           * No matching items message
+          * @default 'No suggestions found'
          */
         "noMatchingItemsMessage"?: string;
         /**
@@ -3340,42 +3661,52 @@ declare namespace LocalJSX {
         "onChangeValue"?: (event: CAutocompleteCustomEvent<any>) => void;
         /**
           * Placeholder text
+          * @default ''
          */
         "placeholder"?: string;
         /**
           * Search string
+          * @default null
          */
         "query"?: string;
         /**
           * Show required validation
+          * @default false
          */
         "required"?: boolean;
         /**
           * Return object instead of value
+          * @default false
          */
         "returnObject"?: boolean;
         /**
           * Shadow variant
+          * @default false
          */
         "shadow"?: boolean;
         /**
           * Set the validíty of the input
+          * @default true
          */
         "valid"?: boolean;
         /**
           * Manual validation
+          * @default false
          */
         "validate"?: boolean;
         /**
           * Validate the input on blur
+          * @default false
          */
         "validateOnBlur"?: boolean;
         /**
           * Custom validation message
+          * @default 'Required field'
          */
         "validation"?: string;
         /**
           * Selected item
+          * @default null
          */
         "value"?: string | number | CAutocompleteItem;
     }
@@ -3385,6 +3716,7 @@ declare namespace LocalJSX {
     interface CBackdrop {
         /**
           * Disable backdrop blur effect
+          * @default false
          */
         "disableBackdropBlur"?: boolean;
     }
@@ -3399,23 +3731,28 @@ declare namespace LocalJSX {
     interface CButton {
         /**
           * Danger variant style
+          * @default false
          */
         "danger"?: boolean;
         /**
           * Disable the button
+          * @default false
          */
         "disabled"?: boolean;
         /**
           * Fit width to containing element
+          * @default false
          */
         "fit"?: boolean;
         /**
           * Light button background
+          * @default false
          */
         "ghost"?: boolean;
         /**
           * True when used as a tab button
-          * @private
+          * @private 
+          * @default false
          */
         "grouped"?: boolean;
         /**
@@ -3429,14 +3766,17 @@ declare namespace LocalJSX {
         "href"?: string;
         /**
           * Inverted button style for dark backgrounds
+          * @default false
          */
         "inverted"?: boolean;
         /**
           * Display loader on the button
+          * @default false
          */
         "loading"?: boolean;
         /**
           * Remove the default border radius
+          * @default false
          */
         "noRadius"?: boolean;
         /**
@@ -3454,27 +3794,33 @@ declare namespace LocalJSX {
         "onTabFocus"?: (event: CButtonCustomEvent<number | string>) => void;
         /**
           * Outlined button style
+          * @default false
          */
         "outlined"?: boolean;
         /**
           * Size of the button
+          * @default 'default'
          */
         "size"?: 'default' | 'small' | 'large';
         /**
           * Used a s atab button
-          * @private
+          * @private 
+          * @default false
          */
         "tabs"?: boolean;
         /**
           * Hyperlink target
+          * @default '_blank'
          */
         "target"?: string;
         /**
           * Transparent button background
+          * @default false
          */
         "text"?: boolean;
         /**
           * Button type
+          * @default 'button'
          */
         "type"?: 'button' | 'submit';
         /**
@@ -3488,6 +3834,7 @@ declare namespace LocalJSX {
     interface CCard {
         /**
           * Enable the fullscreen toggle button
+          * @default false
          */
         "fullscreen"?: boolean;
     }
@@ -3497,10 +3844,12 @@ declare namespace LocalJSX {
     interface CCardActions {
         /**
           * Align the actions
+          * @default 'center'
          */
         "align"?: 'start' | 'center' | 'end';
         /**
           * Justify the actions
+          * @default 'start'
          */
         "justify"?: | 'start'
     | 'center'
@@ -3525,22 +3874,31 @@ declare namespace LocalJSX {
     interface CCheckbox {
         /**
           * If `true`, the checkbox is selected.
+          * @default false
          */
         "checked"?: boolean;
         /**
           * Disable the checkbox
+          * @default false
          */
         "disabled"?: boolean;
         /**
           * The value when the checkbox is unchecked
+          * @default false
          */
         "falseValue"?: boolean | string;
         /**
+          * The `id` of a `<form>` element to associate this element with.
+         */
+        "form"?: string;
+        /**
           * Hide the hint and error messages
+          * @default false
          */
         "hideDetails"?: boolean;
         /**
           * Hint text for the input
+          * @default ''
          */
         "hint"?: string;
         /**
@@ -3555,34 +3913,45 @@ declare namespace LocalJSX {
         "hostName"?: string;
         /**
           * Indeterminate state
+          * @default false
          */
         "indeterminate"?: boolean;
         /**
           * Element label
+          * @default ''
          */
         "label"?: string;
+        /**
+          * The name of the element, used when submitting an HTML form.
+         */
+        "name"?: string;
         /**
           * Triggered when element is checked or unchecked
          */
         "onChangeValue"?: (event: CCheckboxCustomEvent<any>) => void;
         /**
           * Set as required
+          * @default false
          */
         "required"?: boolean;
         /**
           * The value when the checkbox is checked
+          * @default true
          */
         "trueValue"?: boolean | string;
         /**
           * Set the validity of the input
+          * @default true
          */
         "valid"?: boolean;
         /**
           * Custom validation message
+          * @default 'Required field'
          */
         "validation"?: string;
         /**
           * The input value - Only used when the checkbox participates in a native `<form>`
+          * @default false
          */
         "value"?: string | boolean;
     }
@@ -3592,6 +3961,7 @@ declare namespace LocalJSX {
     interface CCscLogo {
         /**
           * Logo width in pixels
+          * @default 60
          */
         "width"?: number;
     }
@@ -3601,38 +3971,47 @@ declare namespace LocalJSX {
     interface CDataTable {
         /**
           * Data of the table
+          * @default []
          */
         "data"?: CDataTableData[];
         /**
           * Externally sorted and paginated data
+          * @default false
          */
         "externalData"?: boolean;
         /**
           * Items per page options
+          * @default {     hideDetails: false,     simple: false,     hideRange: false,     size: 'default',   }
          */
         "footerOptions"?: CDataTableFooterOptions;
         /**
           * Headers of the table
+          * @default []
          */
         "headers"?: CDataTableHeader[];
         /**
           * Hide the footer
+          * @default false
          */
         "hideFooter"?: boolean;
         /**
           * Use horizontal scrolling
+          * @default false
          */
         "horizontalScrolling"?: boolean;
         /**
           * Show a loader on top of the table
+          * @default false
          */
         "loading"?: boolean;
         /**
           * Text shown when there is no data and the table is loading
+          * @default 'Loading data'
          */
         "loadingText"?: string;
         /**
           * Text shown when there are no data available
+          * @default 'No data'
          */
         "noDataText"?: string;
         /**
@@ -3657,30 +4036,37 @@ declare namespace LocalJSX {
         "pagination"?: CPaginationOptions;
         /**
           * Make rows selectable
+          * @default false
          */
         "selectable"?: boolean;
         /**
           * Property used in selections
+          * @default null
          */
         "selectionProperty"?: string;
         /**
           * Allow only a single row expanded at a time
+          * @default false
          */
         "singleExpansion"?: boolean;
         /**
           * Select only a single row at a time
+          * @default false
          */
         "singleSelection"?: boolean;
         /**
           * Sort data by
+          * @default null
          */
         "sortBy"?: any;
         /**
           * Sorting direction
+          * @default null
          */
         "sortDirection"?: 'asc' | 'desc' | null;
         /**
           * Use sticky header
+          * @default false
          */
         "stickyHeader"?: boolean;
     }
@@ -3731,6 +4117,7 @@ declare namespace LocalJSX {
     interface CIcon {
         /**
           * Fill color
+          * @default 'currentColor'
          */
         "color"?: string;
         /**
@@ -3739,6 +4126,7 @@ declare namespace LocalJSX {
         "path"?: string;
         /**
           * Icon size in pixels
+          * @default 24
          */
         "size"?: number;
     }
@@ -3752,38 +4140,47 @@ declare namespace LocalJSX {
         "badge"?: string;
         /**
           * Danger variant of the button
+          * @default false
          */
         "danger"?: boolean;
         /**
           * Disable the button
+          * @default false
          */
         "disabled"?: boolean;
         /**
           * Ghost variant of the button
+          * @default false
          */
         "ghost"?: boolean;
         /**
           * Inverted color for dark backgrounds
+          * @default false
          */
         "inverted"?: boolean;
         /**
           * Loading variant of the button
+          * @default false
          */
         "loading"?: boolean;
         /**
           * Outlined variant of the button
+          * @default false
          */
         "outlined"?: boolean;
         /**
           * Path for the svg icon
+          * @default null
          */
         "path"?: string;
         /**
           * Size of the button
+          * @default 'default'
          */
         "size"?: 'default' | 'x-small' | 'small';
         /**
           * Text variant of the button
+          * @default false
          */
         "text"?: boolean;
     }
@@ -3793,23 +4190,28 @@ declare namespace LocalJSX {
     interface CInput {
         /**
           * Active state
+          * @default false
          */
         "active"?: boolean;
         /**
           * Auto focus the input
           * @name autofocus
+          * @default false
          */
         "automaticFocus"?: boolean;
         /**
           * Disable the input
+          * @default false
          */
         "disabled"?: boolean;
         /**
           * Hide the hint and error messages
+          * @default false
          */
         "hideDetails"?: boolean;
         /**
           * Hint text for the input
+          * @default ''
          */
         "hint"?: string;
         /**
@@ -3827,6 +4229,7 @@ declare namespace LocalJSX {
         "items"?: CSelectItem[];
         /**
           * Items per page before adding scroll
+          * @default 6
          */
         "itemsPerPage"?: number;
         /**
@@ -3835,14 +4238,17 @@ declare namespace LocalJSX {
         "label"?: string;
         /**
           * Label on top of the input
+          * @default false
          */
         "labelOnTop"?: boolean;
         /**
           * Maximum value on a numeric input
+          * @default null
          */
         "max"?: number;
         /**
           * Minimum value on a numeric input
+          * @default null
          */
         "min"?: number;
         /**
@@ -3869,22 +4275,27 @@ declare namespace LocalJSX {
         "placeholder"?: string;
         /**
           * Mark as readonly
+          * @default false
          */
         "readonly"?: boolean;
         /**
           * Set the input as required
+          * @default false
          */
         "required"?: boolean;
         /**
           * Rows on the input
+          * @default 1
          */
         "rows"?: number;
         /**
           * Shadow variant of the input
+          * @default false
          */
         "shadow"?: boolean;
         /**
           * Step size on a numeric input
+          * @default null
          */
         "step"?: number;
         /**
@@ -3893,18 +4304,22 @@ declare namespace LocalJSX {
         "type"?: string;
         /**
           * Set the validíty of the input
+          * @default true
          */
         "valid"?: boolean;
         /**
           * Manual validation
+          * @default false
          */
         "validate"?: boolean;
         /**
           * Validate the input on blur
+          * @default false
          */
         "validateOnBlur"?: boolean;
         /**
           * Custom validation message
+          * @default 'Required field'
          */
         "validation"?: string;
         /**
@@ -3913,6 +4328,7 @@ declare namespace LocalJSX {
         "value"?: string | number | boolean | CSelectItem | CAutocompleteItem;
         /**
           * Variant
+          * @default 'text'
          */
         "variant"?: 'text' | 'select';
     }
@@ -3923,18 +4339,22 @@ declare namespace LocalJSX {
     interface CLink {
         /**
           * Url of link
+          * @default null
          */
         "href"?: string;
         /**
           * regular target attribute of a hyperlink
+          * @default null
          */
         "target"?: string;
         /**
           * Display line under the link
+          * @default false
          */
         "underline"?: boolean;
         /**
           * Customisable font weight
+          * @default '600'
          */
         "weight"?: string;
     }
@@ -3944,29 +4364,35 @@ declare namespace LocalJSX {
     interface CList {
         /**
           * Show border arount the list items
+          * @default false
          */
         "bordered"?: boolean;
         /**
           * Disable the list
+          * @default false
          */
         "disabled"?: boolean;
     }
     interface CListItem {
         /**
           * Set the item active
+          * @default false
          */
         "active"?: boolean;
         /**
           * Disable the item
+          * @default false
          */
         "disabled"?: boolean;
         /**
           * Disabled by the parent list
-          * @private
+          * @private 
+          * @default false
          */
         "disabledByParent"?: boolean;
         /**
           * Display background color on hover
+          * @default false
          */
         "hoverable"?: boolean;
         /**
@@ -3975,16 +4401,19 @@ declare namespace LocalJSX {
         "href"?: string;
         /**
           * Add ripple effect to the item
+          * @default false
          */
         "ripple"?: boolean;
         /**
           * Hyperlink target
+          * @default '_blank'
          */
         "target"?: string;
     }
     interface CListItemTitle {
         /**
           * Set the title active
+          * @default false
          */
         "active"?: boolean;
     }
@@ -3995,18 +4424,22 @@ declare namespace LocalJSX {
     interface CLoader {
         /**
           * Delay in seconds of showing the contents in the slot of the loader
+          * @default 0
          */
         "contentdelay"?: number;
         /**
           * Hide the loader
+          * @default false
          */
         "hide"?: boolean;
         /**
           * Size of the loader
+          * @default 48
          */
         "size"?: number;
         /**
           * Width of the loader
+          * @default 4
          */
         "width"?: number;
     }
@@ -4016,10 +4449,12 @@ declare namespace LocalJSX {
     interface CLoginButton {
         /**
           * Alt description for logo
+          * @default ''
          */
         "alt"?: string;
         /**
           * Login provider link. Do not set if using a javascript click handler
+          * @default ''
          */
         "href"?: string;
         /**
@@ -4038,22 +4473,27 @@ declare namespace LocalJSX {
     interface CLoginCard {
         /**
           * Background position (css background-position)
+          * @default 'bottom right'
          */
         "backgroundPosition"?: string;
         /**
           * Mobile breakpoint in pixels
+          * @default 600
          */
         "mobileBreakpoint"?: number;
         /**
           * Add colored overlay to the background image
+          * @default false
          */
         "overlay"?: boolean;
         /**
           * Add colored overlay to the background image
+          * @default 'multiply'
          */
         "overlayBlendMode"?: CLoginCardBlendMode;
         /**
           * Background image
+          * @default ''
          */
         "src"?: string;
     }
@@ -4063,10 +4503,12 @@ declare namespace LocalJSX {
     interface CLoginCardActions {
         /**
           * Align the actions
+          * @default 'center'
          */
         "align"?: 'start' | 'center' | 'end';
         /**
           * Justify the actions
+          * @default 'start'
          */
         "justify"?: | 'start'
     | 'center'
@@ -4092,6 +4534,7 @@ declare namespace LocalJSX {
     interface CMain {
         /**
           * Disable the default dashboard layout
+          * @default false
          */
         "disableLayout"?: boolean;
     }
@@ -4101,26 +4544,32 @@ declare namespace LocalJSX {
     interface CMenu {
         /**
           * Menu content css class
+          * @default ''
          */
         "contentClass"?: string;
         /**
           * No chevron and background, E.g. when a button is the activator
+          * @default false
          */
         "custom"?: boolean;
         /**
           * No hover background
+          * @default false
          */
         "flat"?: boolean;
         /**
           * Menu items
+          * @default []
          */
         "items"?: CMenuOption[];
         /**
           * Items per page before adding scroll
+          * @default 6
          */
         "itemsPerPage"?: number;
         /**
           * Small variant
+          * @default false
          */
         "small"?: boolean;
     }
@@ -4130,22 +4579,26 @@ declare namespace LocalJSX {
     interface CMenuItems {
         /**
           * Menu is opened and positioned
-          * @private
+          * @private 
+          * @default false
          */
         "active"?: boolean;
         /**
           * is active
-          * @private
+          * @private 
+          * @default null
          */
         "index"?: number | null;
         /**
           * Menu items
-          * @private
+          * @private 
+          * @default []
          */
         "items"?: CMenuOption[];
         /**
           * Items per page before adding scroll
-          * @private
+          * @private 
+          * @default 6
          */
         "itemsPerPage"?: number;
         /**
@@ -4172,17 +4625,20 @@ declare namespace LocalJSX {
         "parent"?: HTMLCMenuElement;
         /**
           * Type of parent
-          * @private
+          * @private 
+          * @default 'menu'
          */
         "parentType"?: string;
         /**
           * Small variant
-          * @private
+          * @private 
+          * @default false
          */
         "small"?: boolean;
         /**
           * Initial top position
-          * @private
+          * @private 
+          * @default 0
          */
         "top"?: number;
     }
@@ -4192,6 +4648,7 @@ declare namespace LocalJSX {
     interface CMessage {
         /**
           * Hint text for the input
+          * @default ''
          */
         "hint"?: string;
         /**
@@ -4200,10 +4657,12 @@ declare namespace LocalJSX {
         "inputId"?: string;
         /**
           * Parent validíty
+          * @default true
          */
         "valid"?: boolean;
         /**
           * Custom validation message
+          * @default 'Required field'
          */
         "validation"?: string;
     }
@@ -4213,10 +4672,12 @@ declare namespace LocalJSX {
     interface CModal {
         /**
           * Disable backdrop blur effect
+          * @default false
          */
         "disableBackdropBlur"?: boolean;
         /**
           * Dismissed when touching/clicking outside the content
+          * @default false
          */
         "dismissable"?: boolean;
         /**
@@ -4225,14 +4686,17 @@ declare namespace LocalJSX {
         "onChangeValue"?: (event: CModalCustomEvent<boolean>) => void;
         /**
           * Is the modal visible
+          * @default false
          */
         "value"?: boolean;
         /**
           * Width of the dialog. Numeric value is considered as pixel value (400 -> 400px)
+          * @default 600
          */
         "width"?: string | number;
         /**
           * Z-index of the modal
+          * @default 10
          */
         "zIndex"?: number;
     }
@@ -4247,6 +4711,7 @@ declare namespace LocalJSX {
     interface COption {
         /**
           * Set option as disabled
+          * @default false
          */
         "disabled"?: boolean;
         /**
@@ -4255,6 +4720,7 @@ declare namespace LocalJSX {
         "name"?: string;
         /**
           * Set option as selected
+          * @default false
          */
         "selected"?: boolean;
         /**
@@ -4269,27 +4735,43 @@ declare namespace LocalJSX {
      */
     interface COtpInput {
         /**
+          * If `true`, the user cannot interact with the element.
+         */
+        "disabled"?: boolean;
+        /**
           * Id of the element
           * @name id
          */
         "elementId": string;
         /**
+          * The `id` of a `<form>` element to associate this element with.
+         */
+        "form"?: string;
+        /**
           * Auto focus
           * @name autofocus
+          * @default false
          */
         "hasAutofocus"?: boolean;
         /**
           * Hide the hint and error messages
+          * @default false
          */
         "hideDetails"?: boolean;
         /**
           * Hint text for the input
+          * @default ''
          */
         "hint"?: string;
         /**
           * Length of the OTP code
+          * @default 6
          */
         "length"?: number;
+        /**
+          * The name of the element, used when submitting an HTML form.
+         */
+        "name"?: string;
         /**
           * Run on input - returns the current value
          */
@@ -4300,10 +4782,12 @@ declare namespace LocalJSX {
         "onCompletion"?: (event: COtpInputCustomEvent<string>) => void;
         /**
           * Set the validíty of the input
+          * @default true
          */
         "valid"?: boolean;
         /**
           * Custom validation message
+          * @default 'Required field'
          */
         "validation"?: string;
         /**
@@ -4317,6 +4801,7 @@ declare namespace LocalJSX {
     interface CPage {
         /**
           * Display scroll indicator
+          * @default false
          */
         "scrollIndicator"?: boolean;
     }
@@ -4326,10 +4811,12 @@ declare namespace LocalJSX {
     interface CPagination {
         /**
           * Hide details (per page dropdown and the 'x - y of n pages' text)
+          * @default false
          */
         "hideDetails"?: boolean;
         /**
           * Hide range indicator
+          * @default false
          */
         "hideRange"?: boolean;
         /**
@@ -4338,14 +4825,17 @@ declare namespace LocalJSX {
         "onChangeValue"?: (event: CPaginationCustomEvent<CPaginationOptions>) => void;
         /**
           * Hide page number buttons
+          * @default false
          */
         "simple"?: boolean;
         /**
           * Hide details (per page dropdown and the 'x - y of n pages' text)
+          * @default 'default'
          */
         "size"?: 'default' | 'small';
         /**
           * Object containing values that are needed for pagination.  Note! startFrom and endTo are assigned automatically to the object based on other values
+          * @default {     itemCount: 0,   }
          */
         "value"?: CPaginationOptions;
     }
@@ -4355,22 +4845,27 @@ declare namespace LocalJSX {
     interface CProgressBar {
         /**
           * Hide the percentage display
+          * @default false
          */
         "hideDetails"?: boolean;
         /**
           * Indeterminate state of the progress bar
+          * @default false
          */
         "indeterminate"?: boolean;
         /**
           * Optional details message next to percentage display
+          * @default ''
          */
         "label"?: string;
         /**
           * Place details next to progress bar
+          * @default false
          */
         "singleLine"?: boolean;
         /**
           * Progress bar value in percentage (0 to 100)
+          * @default 0
          */
         "value"?: number;
     }
@@ -4380,10 +4875,12 @@ declare namespace LocalJSX {
     interface CRadio {
         /**
           * Set option as checked
+          * @default false
          */
         "checked"?: boolean;
         /**
           * Disable the radio button
+          * @default false
          */
         "disabled"?: boolean;
         /**
@@ -4397,18 +4894,26 @@ declare namespace LocalJSX {
     interface CRadioGroup {
         /**
           * Color of the radio group
+          * @default ''
          */
         "color"?: string;
         /**
           * Disable the radio group
+          * @default false
          */
         "disabled"?: boolean;
         /**
+          * The `id` of a `<form>` element to associate this element with.
+         */
+        "form"?: string;
+        /**
           * Hide the hint and error messages
+          * @default false
          */
         "hideDetails"?: boolean;
         /**
           * Hint text for the input
+          * @default ''
          */
         "hint"?: string;
         /**
@@ -4418,10 +4923,12 @@ declare namespace LocalJSX {
         "hostId"?: string;
         /**
           * Display radio buttons inline
+          * @default false
          */
         "inline"?: boolean;
         /**
           * Radio group items
+          * @default []
          */
         "items"?: CRadioGroupItem[];
         /**
@@ -4429,23 +4936,31 @@ declare namespace LocalJSX {
          */
         "label"?: string;
         /**
+          * The name of the element, used when submitting an HTML form.
+         */
+        "name"?: string;
+        /**
           * Emit value change to the parent
          */
         "onChangeValue"?: (event: CRadioGroupCustomEvent<any>) => void;
         /**
           * Set as required
+          * @default false
          */
         "required"?: boolean;
         /**
           * Return the whole item object
+          * @default false
          */
         "returnObject"?: boolean;
         /**
           * Set the validity of the input
+          * @default true
          */
         "valid"?: boolean;
         /**
           * Custom validation message
+          * @default 'Required field'
          */
         "validation"?: string;
         /**
@@ -4469,6 +4984,7 @@ declare namespace LocalJSX {
         "align"?: CRowAlign;
         /**
           * Gap between items in px
+          * @default 0
          */
         "gap"?: number;
         /**
@@ -4477,6 +4993,7 @@ declare namespace LocalJSX {
         "justify"?: CRowJustify;
         /**
           * Disable flex wrap
+          * @default false
          */
         "nowrap"?: boolean;
     }
@@ -4486,18 +5003,26 @@ declare namespace LocalJSX {
     interface CSelect {
         /**
           * Make the selected value clearable
+          * @default false
          */
         "clearable"?: boolean;
         /**
           * Disable the input
+          * @default false
          */
         "disabled"?: boolean;
         /**
+          * The `id` of a `<form>` element to associate this element with.
+         */
+        "form"?: string;
+        /**
           * Hide the hint and error messages
+          * @default false
          */
         "hideDetails"?: boolean;
         /**
           * Hint text for the input
+          * @default ''
          */
         "hint"?: string;
         /**
@@ -4507,10 +5032,12 @@ declare namespace LocalJSX {
         "hostId"?: string;
         /**
           * Dropdown items
+          * @default []
          */
         "items"?: CSelectItem[];
         /**
           * Items per page before adding scroll
+          * @default 6
          */
         "itemsPerPage"?: number;
         /**
@@ -4519,10 +5046,12 @@ declare namespace LocalJSX {
         "label"?: string;
         /**
           * Label on top of the input
+          * @default false
          */
         "labelOnTop"?: boolean;
         /**
           * Show loading state
+          * @default false
          */
         "loading"?: boolean;
         /**
@@ -4539,38 +5068,47 @@ declare namespace LocalJSX {
         "optionAsSelection"?: false;
         /**
           * Placeholder text
+          * @default ''
          */
         "placeholder"?: string;
         /**
           * Show required validation
+          * @default false
          */
         "required"?: boolean;
         /**
           * Return object instead of value
+          * @default false
          */
         "returnObject"?: boolean;
         /**
           * Shadow variant
+          * @default false
          */
         "shadow"?: boolean;
         /**
           * Set the validíty of the input
+          * @default true
          */
         "valid"?: boolean;
         /**
           * Manual validation
+          * @default false
          */
         "validate"?: boolean;
         /**
           * Validate the input on blur
+          * @default false
          */
         "validateOnBlur"?: boolean;
         /**
           * Custom validation message
+          * @default 'Required field'
          */
         "validation"?: string;
         /**
           * Selected item
+          * @default null
          */
         "value"?: string | number | CSelectItem;
     }
@@ -4580,6 +5118,7 @@ declare namespace LocalJSX {
     interface CSideNavigation {
         /**
           * Mobile version menu visibility
+          * @default false
          */
         "menuVisible"?: boolean;
         /**
@@ -4605,6 +5144,7 @@ declare namespace LocalJSX {
         "href"?: string;
         /**
           * Loading state
+          * @default false
          */
         "loading"?: boolean;
         /**
@@ -4614,6 +5154,7 @@ declare namespace LocalJSX {
         "onItemChange"?: (event: CSideNavigationItemCustomEvent<any>) => void;
         /**
           * Hyperlink target
+          * @default null
          */
         "target"?: string;
     }
@@ -4633,10 +5174,12 @@ declare namespace LocalJSX {
         "ariaLabelInternal"?: string;
         /**
           * Disable tooltip
+          * @default false
          */
         "disableTooltip"?: boolean;
         /**
           * Disable the slider
+          * @default false
          */
         "disabled"?: boolean;
         /**
@@ -4655,14 +5198,17 @@ declare namespace LocalJSX {
         "label"?: string;
         /**
           * Show tick labels
+          * @default false
          */
         "labels"?: boolean;
         /**
           * Max value
+          * @default '100'
          */
         "max"?: string;
         /**
           * Min value
+          * @default '0'
          */
         "min"?: string;
         /**
@@ -4671,22 +5217,27 @@ declare namespace LocalJSX {
         "onChangeValue"?: (event: CSliderCustomEvent<any>) => void;
         /**
           * Segment count
+          * @default '10'
          */
         "segments"?: string;
         /**
           * Step
+          * @default '1'
          */
         "step"?: string;
         /**
           * Thow ticks
+          * @default false
          */
         "ticks"?: boolean;
         /**
           * Unit
+          * @default '%'
          */
         "unit"?: string;
         /**
           * Value
+          * @default '50'
          */
         "value"?: string | number;
     }
@@ -4702,14 +5253,17 @@ declare namespace LocalJSX {
     interface CSpinner {
         /**
           * Color of the spinner
+          * @default 'var(--c-primary-600)'
          */
         "color"?: string;
         /**
           * Size of the spinner
+          * @default 24
          */
         "size"?: number;
         /**
           * Width of the spinner
+          * @default 2
          */
         "width"?: number;
     }
@@ -4729,12 +5283,14 @@ declare namespace LocalJSX {
     interface CStep {
         /**
           * Mark step as complete
-          * @private
+          * @private 
+          * @default false
          */
         "complete"?: boolean;
         /**
           * Mark step as current
-          * @private
+          * @private 
+          * @default false
          */
         "current"?: boolean;
     }
@@ -4761,6 +5317,7 @@ declare namespace LocalJSX {
         "active"?: boolean;
         /**
           * Element is visible and focusable
+          * @default false
          */
         "focusable"?: boolean;
         /**
@@ -4769,10 +5326,12 @@ declare namespace LocalJSX {
         "href"?: string;
         /**
           * Loading state
+          * @default false
          */
         "loading"?: boolean;
         /**
           * Link target
+          * @default null
          */
         "target"?: string;
     }
@@ -4800,10 +5359,12 @@ declare namespace LocalJSX {
     interface CSwiperTab {
         /**
           * Mark as active
+          * @default false
          */
         "active"?: boolean;
         /**
           * Disable button
+          * @default false
          */
         "disabled"?: boolean;
         /**
@@ -4841,15 +5402,26 @@ declare namespace LocalJSX {
     interface CSwitch {
         /**
           * If `true`, the checkbox is selected.
+          * @default false
          */
         "checked"?: boolean;
         /**
+          * If `true`, the user cannot interact with the element.
+         */
+        "disabled"?: boolean;
+        /**
           * The value when the checkbox is unchecked
+          * @default false
          */
         "falseValue"?: boolean | string;
         /**
+          * The `id` of a `<form>` element to associate this element with.
+         */
+        "form"?: string;
+        /**
           * Disable the switch
           * @name disabled
+          * @default false
          */
         "hostDisabled"?: boolean;
         /**
@@ -4858,22 +5430,30 @@ declare namespace LocalJSX {
         "hostId"?: string;
         /**
           * Loading state
+          * @default false
          */
         "loading"?: boolean;
+        /**
+          * The name of the element, used when submitting an HTML form.
+         */
+        "name"?: string;
         /**
           * Emit inner value change to parent
          */
         "onChangeValue"?: (event: CSwitchCustomEvent<any>) => void;
         /**
           * Set as required
+          * @default false
          */
         "required"?: boolean;
         /**
           * The value when the checkbox is checked
+          * @default true
          */
         "trueValue"?: boolean | string;
         /**
           * The input value - Only used when the checkbox participates in a native `<form>`
+          * @default false
          */
         "value"?: string | boolean;
     }
@@ -4884,10 +5464,12 @@ declare namespace LocalJSX {
     interface CTab {
         /**
           * Mark tab as active
+          * @default false
          */
         "active"?: boolean;
         /**
           * Mark tab as disabled
+          * @default false
          */
         "disabled"?: boolean;
         /**
@@ -4930,10 +5512,12 @@ declare namespace LocalJSX {
         /**
           * Disable tab buttons
           * @name disabled
+          * @default false
          */
         "hostDisabled"?: boolean;
         /**
           * Always require a selection
+          * @default false
          */
         "mandatory"?: boolean;
         /**
@@ -4942,15 +5526,18 @@ declare namespace LocalJSX {
         "onChangeValue"?: (event: CTabButtonsCustomEvent<number | string>) => void;
         /**
           * Size of the buttons
+          * @default 'default'
          */
         "size"?: 'default' | 'small';
         /**
           * Used as controller for c-tabs
-          * @private
+          * @private 
+          * @default false
          */
         "tabs"?: boolean;
         /**
           * Value of tab buttons
+          * @default 0
          */
         "value"?: number | string;
     }
@@ -4960,7 +5547,8 @@ declare namespace LocalJSX {
     interface CTabItem {
         /**
           * Active
-          * @private
+          * @private 
+          * @default false
          */
         "active"?: boolean;
         /**
@@ -4978,7 +5566,8 @@ declare namespace LocalJSX {
     interface CTabItems {
         /**
           * Disable animation
-          * @private
+          * @private 
+          * @default false
          */
         "disableAnimation"?: boolean;
         /**
@@ -4992,10 +5581,12 @@ declare namespace LocalJSX {
     interface CTable {
         /**
           * Mobile breakpoint in pixels
+          * @default 600
          */
         "mobileBreakpoint"?: number;
         /**
           * Should the table be responsive
+          * @default false
          */
         "responsive"?: boolean;
     }
@@ -5005,18 +5596,22 @@ declare namespace LocalJSX {
     interface CTabs {
         /**
           * Disable the bottom border
+          * @default false
          */
         "borderless"?: boolean;
         /**
           * Disable animation
+          * @default false
          */
         "disableAnimation"?: boolean;
         /**
           * Justification of the children
+          * @default 'stretch'
          */
         "justify"?: CTabsJustify;
         /**
           * Mobile breakpoint in pixels - affects the content stacking with the vertical tabs
+          * @default 640
          */
         "mobileBreakpoint"?: number;
         /**
@@ -5029,6 +5624,7 @@ declare namespace LocalJSX {
         "value": number | string;
         /**
           * Vertical tabs
+          * @default false
          */
         "vertical"?: boolean;
     }
@@ -5038,26 +5634,32 @@ declare namespace LocalJSX {
     interface CTag {
         /**
           * Mark tag as active
+          * @default false
          */
         "active"?: boolean;
         /**
           * Display an optional badge at the start of the tag
+          * @default null
          */
         "badge"?: string | number;
         /**
           * Stretch to fill the container row
+          * @default false
          */
         "block"?: boolean;
         /**
           * Mark tag as closeable
+          * @default false
          */
         "closeable"?: boolean;
         /**
           * Stretch to fill the container
+          * @default false
          */
         "fit"?: boolean;
         /**
           * Remove the hover effect
+          * @default false
          */
         "flat"?: boolean;
         /**
@@ -5066,6 +5668,7 @@ declare namespace LocalJSX {
         "onClose"?: (event: CTagCustomEvent<any>) => void;
         /**
           * Size of the tag
+          * @default 'default'
          */
         "size"?: 'default' | 'small';
     }
@@ -5075,6 +5678,7 @@ declare namespace LocalJSX {
     interface CTags {
         /**
           * Size of the tags
+          * @default 'default'
          */
         "size"?: 'default' | 'small';
     }
@@ -5084,32 +5688,43 @@ declare namespace LocalJSX {
     interface CTextField {
         /**
           * HTML input autocomplete
+          * @default ''
          */
         "autocomplete"?: string;
         /**
           * HTML input autocorrect
+          * @default ''
          */
         "autocorrect"?: string;
         /**
           * HTML input autocapitalize
           * @name autocapitalize
+          * @default ''
          */
         "automaticCapitalize"?: string;
         /**
           * Auto focus the input
           * @name autofocus
+          * @default false
          */
         "automaticFocus"?: boolean;
         /**
           * Disable the input
+          * @default false
          */
         "disabled"?: boolean;
         /**
+          * The `id` of a `<form>` element to associate this element with.
+         */
+        "form"?: string;
+        /**
           * Hide the hint and error messages
+          * @default false
          */
         "hideDetails"?: boolean;
         /**
           * Hint text for the input
+          * @default ''
          */
         "hint"?: string;
         /**
@@ -5123,14 +5738,17 @@ declare namespace LocalJSX {
         "label"?: string;
         /**
           * Label on top of the input
+          * @default false
          */
         "labelOnTop"?: boolean;
         /**
           * Maximum value on a numeric input
+          * @default null
          */
         "max"?: number;
         /**
           * Minimum value on a numeric input
+          * @default null
          */
         "min"?: number;
         /**
@@ -5147,46 +5765,57 @@ declare namespace LocalJSX {
         "placeholder"?: string;
         /**
           * Mark as readonly
+          * @default false
          */
         "readonly"?: boolean;
         /**
           * Set the input as required
+          * @default false
          */
         "required"?: boolean;
         /**
           * Rows on the input
+          * @default 1
          */
         "rows"?: number;
         /**
           * Shadow variant of the input
+          * @default false
          */
         "shadow"?: boolean;
         /**
           * Step size on a numeric input
+          * @default null
          */
         "step"?: number;
         /**
           * Trim whitespace from the return value
+          * @default false
          */
         "trimWhitespace"?: boolean;
         /**
           * Type of the input
+          * @default 'text'
          */
         "type"?: string;
         /**
           * Set the validity of the input
+          * @default true
          */
         "valid"?: boolean;
         /**
           * Manual validation
+          * @default false
          */
         "validate"?: boolean;
         /**
           * Validate the input on blur
+          * @default false
          */
         "validateOnBlur"?: boolean;
         /**
           * Custom validation message
+          * @default 'Required field'
          */
         "validation"?: string;
         /**
@@ -5201,32 +5830,43 @@ declare namespace LocalJSX {
     interface CTextFieldOpen {
         /**
           * HTML input autocomplete
+          * @default ''
          */
         "autocomplete"?: string;
         /**
           * HTML input autocorrect
+          * @default ''
          */
         "autocorrect"?: string;
         /**
           * HTML input autocapitalize
           * @name autocapitalize
+          * @default ''
          */
         "automaticCapitalize"?: string;
         /**
           * Auto focus the input
           * @name autofocus
+          * @default false
          */
         "automaticFocus"?: boolean;
         /**
           * Disable the input
+          * @default false
          */
         "disabled"?: boolean;
         /**
+          * The `id` of a `<form>` element to associate this element with.
+         */
+        "form"?: string;
+        /**
           * Hide the hint and error messages
+          * @default false
          */
         "hideDetails"?: boolean;
         /**
           * Hint text for the input
+          * @default ''
          */
         "hint"?: string;
         /**
@@ -5240,14 +5880,17 @@ declare namespace LocalJSX {
         "label"?: string;
         /**
           * Label on top of the input
+          * @default false
          */
         "labelOnTop"?: boolean;
         /**
           * Maximum value on a numeric input
+          * @default null
          */
         "max"?: number;
         /**
           * Minimum value on a numeric input
+          * @default null
          */
         "min"?: number;
         /**
@@ -5264,50 +5907,62 @@ declare namespace LocalJSX {
         "placeholder"?: string;
         /**
           * Mark as readonly
+          * @default false
          */
         "readonly"?: boolean;
         /**
           * Render input element outside shadow DOM for maximum compatibility
+          * @default false
          */
         "renderOutsideShadow"?: boolean;
         /**
           * Set the input as required
+          * @default false
          */
         "required"?: boolean;
         /**
           * Rows on the input
+          * @default 1
          */
         "rows"?: number;
         /**
           * Shadow variant of the input
+          * @default false
          */
         "shadow"?: boolean;
         /**
           * Step size on a numeric input
+          * @default null
          */
         "step"?: number;
         /**
           * Trim whitespace from the return value
+          * @default false
          */
         "trimWhitespace"?: boolean;
         /**
           * Type of the input
+          * @default 'text'
          */
         "type"?: string;
         /**
           * Set the validity of the input
+          * @default true
          */
         "valid"?: boolean;
         /**
           * Manual validation
+          * @default false
          */
         "validate"?: boolean;
         /**
           * Validate the input on blur
+          * @default false
          */
         "validateOnBlur"?: boolean;
         /**
           * Custom validation message
+          * @default 'Required field'
          */
         "validation"?: string;
         /**
@@ -5334,14 +5989,17 @@ declare namespace LocalJSX {
     interface CToasts {
         /**
           * Use absolute positioning
+          * @default false
          */
         "absolute"?: boolean;
         /**
           * Horizontal position
+          * @default 'center'
          */
         "horizontal"?: 'left' | 'center' | 'right';
         /**
           * Vertical position
+          * @default 'bottom'
          */
         "vertical"?: 'top' | 'bottom';
     }
@@ -5350,78 +6008,578 @@ declare namespace LocalJSX {
      */
     interface CToolbar {
     }
+
+    interface CAccordionAttributes {
+        "value": string;
+        "mandatory": boolean;
+        "multiple": boolean;
+        "outlined": boolean;
+    }
+    interface CAccordionItemAttributes {
+        "collapsable": boolean;
+        "heading": string;
+        "value": string;
+        "expanded": boolean;
+        "outlined": boolean;
+    }
+    interface CAlertAttributes {
+        "type": CAlertType;
+    }
+    interface CAutocompleteAttributes {
+        "value": string;
+        "query": string;
+        "hostId": string;
+        "disabled": boolean;
+        "label": string;
+        "name": string;
+        "placeholder": string;
+        "hideDetails": boolean;
+        "hint": string;
+        "loading": boolean;
+        "required": boolean;
+        "valid": boolean;
+        "validate": boolean;
+        "validateOnBlur": boolean;
+        "validation": string;
+        "shadow": boolean;
+        "returnObject": boolean;
+        "itemsPerPage": number;
+        "minimumQueryLength": number;
+        "minimumQueryLengthMessage": string;
+        "noMatchingItemsMessage": string;
+    }
+    interface CBackdropAttributes {
+        "disableBackdropBlur": boolean;
+    }
+    interface CButtonAttributes {
+        "inverted": boolean;
+        "outlined": boolean;
+        "ghost": boolean;
+        "danger": boolean;
+        "grouped": boolean;
+        "text": boolean;
+        "loading": boolean;
+        "fit": boolean;
+        "noRadius": boolean;
+        "type": 'button' | 'submit';
+        "disabled": boolean;
+        "value": string;
+        "hostId": string;
+        "size": 'default' | 'small' | 'large';
+        "href": string;
+        "target": string;
+        "tabs": boolean;
+    }
+    interface CCardAttributes {
+        "fullscreen": boolean;
+    }
+    interface CCardActionsAttributes {
+        "align": 'start' | 'center' | 'end';
+        "justify": | 'start'
+    | 'center'
+    | 'end'
+    | 'space-between'
+    | 'stretch'
+    | 'space-around';
+    }
+    interface CCheckboxAttributes {
+        "checked": boolean;
+        "disabled": boolean;
+        "hideDetails": boolean;
+        "hint": string;
+        "hostId": string;
+        "indeterminate": boolean;
+        "label": string;
+        "required": boolean;
+        "valid": boolean;
+        "validation": string;
+        "value": string;
+        "trueValue": string;
+        "falseValue": string;
+        "hostName": string;
+    }
+    interface CCscLogoAttributes {
+        "width": number;
+    }
+    interface CDataTableAttributes {
+        "externalData": boolean;
+        "hideFooter": boolean;
+        "loading": boolean;
+        "loadingText": string;
+        "noDataText": string;
+        "selectable": boolean;
+        "singleSelection": boolean;
+        "selectionProperty": string;
+        "singleExpansion": boolean;
+        "sortBy": string;
+        "sortDirection": 'asc' | 'desc' | null;
+        "stickyHeader": boolean;
+        "horizontalScrolling": boolean;
+    }
+    interface CDropdownAttributes {
+        "itemsPerPage": number;
+        "index": number;
+        "hostId": string;
+        "type": 'select' | 'autocomplete';
+        "dropdownItemType": 'option' | 'item';
+    }
+    interface CIconAttributes {
+        "path": string;
+        "size": number;
+        "color": string;
+    }
+    interface CIconButtonAttributes {
+        "badge": string;
+        "danger": boolean;
+        "loading": boolean;
+        "text": boolean;
+        "inverted": boolean;
+        "outlined": boolean;
+        "path": string;
+        "ghost": boolean;
+        "disabled": boolean;
+        "size": 'default' | 'x-small' | 'small';
+    }
+    interface CInputAttributes {
+        "active": boolean;
+        "automaticFocus": boolean;
+        "disabled": boolean;
+        "hideDetails": boolean;
+        "hint": string;
+        "hostId": string;
+        "inputId": string;
+        "itemsPerPage": number;
+        "label": string;
+        "labelOnTop": boolean;
+        "max": number;
+        "min": number;
+        "name": string;
+        "placeholder": string;
+        "readonly": boolean;
+        "required": boolean;
+        "rows": number;
+        "shadow": boolean;
+        "step": number;
+        "type": string;
+        "valid": boolean;
+        "validate": boolean;
+        "validateOnBlur": boolean;
+        "validation": string;
+        "value": string;
+        "variant": 'text' | 'select';
+    }
+    interface CLinkAttributes {
+        "href": string;
+        "underline": boolean;
+        "target": string;
+        "weight": string;
+    }
+    interface CListAttributes {
+        "disabled": boolean;
+        "bordered": boolean;
+    }
+    interface CListItemAttributes {
+        "active": boolean;
+        "disabled": boolean;
+        "disabledByParent": boolean;
+        "hoverable": boolean;
+        "ripple": boolean;
+        "href": string;
+        "target": string;
+    }
+    interface CListItemTitleAttributes {
+        "active": boolean;
+    }
+    interface CLoaderAttributes {
+        "contentdelay": number;
+        "hide": boolean;
+        "size": number;
+        "width": number;
+    }
+    interface CLoginButtonAttributes {
+        "href": string;
+        "src": string;
+        "alt": string;
+    }
+    interface CLoginCardAttributes {
+        "backgroundPosition": string;
+        "mobileBreakpoint": number;
+        "overlay": boolean;
+        "overlayBlendMode": CLoginCardBlendMode;
+        "src": string;
+    }
+    interface CLoginCardActionsAttributes {
+        "align": 'start' | 'center' | 'end';
+        "justify": | 'start'
+    | 'center'
+    | 'end'
+    | 'space-between'
+    | 'stretch'
+    | 'space-around';
+    }
+    interface CMainAttributes {
+        "disableLayout": boolean;
+    }
+    interface CMenuAttributes {
+        "contentClass": string;
+        "custom": boolean;
+        "small": boolean;
+        "flat": boolean;
+        "itemsPerPage": number;
+    }
+    interface CMenuItemsAttributes {
+        "small": boolean;
+        "active": boolean;
+        "parentType": string;
+        "top": number;
+        "index": number | null;
+        "itemsPerPage": number;
+    }
+    interface CMessageAttributes {
+        "hint": string;
+        "inputId": string;
+        "valid": boolean;
+        "validation": string;
+    }
+    interface CModalAttributes {
+        "value": boolean;
+        "dismissable": boolean;
+        "width": string;
+        "zIndex": number;
+        "disableBackdropBlur": boolean;
+    }
+    interface COptionAttributes {
+        "selected": boolean;
+        "disabled": boolean;
+        "name": string;
+        "value": string;
+    }
+    interface COtpInputAttributes {
+        "hasAutofocus": boolean;
+        "hideDetails": boolean;
+        "hint": string;
+        "elementId": string;
+        "length": number;
+        "valid": boolean;
+        "validation": string;
+        "value": string;
+    }
+    interface CPageAttributes {
+        "scrollIndicator": boolean;
+    }
+    interface CPaginationAttributes {
+        "hideDetails": boolean;
+        "simple": boolean;
+        "size": 'default' | 'small';
+        "hideRange": boolean;
+    }
+    interface CProgressBarAttributes {
+        "value": number;
+        "hideDetails": boolean;
+        "singleLine": boolean;
+        "label": string;
+        "indeterminate": boolean;
+    }
+    interface CRadioAttributes {
+        "checked": boolean;
+        "disabled": boolean;
+        "value": string;
+    }
+    interface CRadioGroupAttributes {
+        "value": string;
+        "hideDetails": boolean;
+        "hint": string;
+        "inline": boolean;
+        "label": string;
+        "color": string;
+        "hostId": string;
+        "disabled": boolean;
+        "returnObject": boolean;
+        "required": boolean;
+        "valid": boolean;
+        "validation": string;
+    }
+    interface CRowAttributes {
+        "gap": number;
+        "nowrap": boolean;
+        "align": CRowAlign;
+        "justify": CRowJustify;
+    }
+    interface CSelectAttributes {
+        "value": string;
+        "hostId": string;
+        "clearable": boolean;
+        "disabled": boolean;
+        "label": string;
+        "labelOnTop": boolean;
+        "name": string;
+        "placeholder": string;
+        "hideDetails": boolean;
+        "hint": string;
+        "loading": boolean;
+        "required": boolean;
+        "valid": boolean;
+        "validate": boolean;
+        "validateOnBlur": boolean;
+        "validation": string;
+        "shadow": boolean;
+        "returnObject": boolean;
+        "itemsPerPage": number;
+        "optionAsSelection": false;
+    }
+    interface CSideNavigationAttributes {
+        "mobile": boolean;
+        "menuVisible": boolean;
+    }
+    interface CSideNavigationItemAttributes {
+        "active": boolean;
+        "href": string;
+        "target": string;
+        "loading": boolean;
+    }
+    interface CSliderAttributes {
+        "hostId": string;
+        "hostName": string;
+        "ariaLabelInternal": string;
+        "max": string;
+        "min": string;
+        "step": string;
+        "value": string;
+        "unit": string;
+        "ticks": boolean;
+        "labels": boolean;
+        "disableTooltip": boolean;
+        "label": string;
+        "disabled": boolean;
+        "segments": string;
+    }
+    interface CSpinnerAttributes {
+        "color": string;
+        "size": number;
+        "width": number;
+    }
+    interface CStatusAttributes {
+        "type": 'info' | 'warning' | 'error' | 'success';
+    }
+    interface CStepAttributes {
+        "complete": boolean;
+        "current": boolean;
+    }
+    interface CStepsAttributes {
+        "value": string;
+    }
+    interface CSubNavigationItemAttributes {
+        "active": boolean;
+        "focusable": boolean;
+        "href": string;
+        "target": string;
+        "loading": boolean;
+    }
+    interface CSwiperAttributes {
+        "value": string;
+        "elementId": string;
+    }
+    interface CSwiperTabAttributes {
+        "disabled": boolean;
+        "active": boolean;
+        "label": string;
+        "hostId": string;
+        "setsize": number;
+        "position": number;
+        "value": string;
+    }
+    interface CSwitchAttributes {
+        "checked": boolean;
+        "value": string;
+        "trueValue": string;
+        "falseValue": string;
+        "hostDisabled": boolean;
+        "loading": boolean;
+        "hostId": string;
+        "required": boolean;
+    }
+    interface CTabAttributes {
+        "active": boolean;
+        "disabled": boolean;
+        "hostId": string;
+        "position": number;
+        "setsize": number;
+        "value": string;
+    }
+    interface CTabButtonsAttributes {
+        "value": string;
+        "mandatory": boolean;
+        "tabs": boolean;
+        "size": 'default' | 'small';
+        "hostDisabled": boolean;
+    }
+    interface CTabItemAttributes {
+        "value": string;
+        "active": boolean;
+    }
+    interface CTabItemsAttributes {
+        "value": string;
+        "disableAnimation": boolean;
+    }
+    interface CTableAttributes {
+        "mobileBreakpoint": number;
+        "responsive": boolean;
+    }
+    interface CTabsAttributes {
+        "value": string;
+        "borderless": boolean;
+        "disableAnimation": boolean;
+        "justify": CTabsJustify;
+        "mobileBreakpoint": number;
+        "vertical": boolean;
+    }
+    interface CTagAttributes {
+        "active": boolean;
+        "block": boolean;
+        "fit": boolean;
+        "flat": boolean;
+        "closeable": boolean;
+        "badge": string;
+        "size": 'default' | 'small';
+    }
+    interface CTagsAttributes {
+        "size": 'default' | 'small';
+    }
+    interface CTextFieldAttributes {
+        "automaticFocus": boolean;
+        "automaticCapitalize": string;
+        "autocorrect": string;
+        "autocomplete": string;
+        "disabled": boolean;
+        "hideDetails": boolean;
+        "hint": string;
+        "hostId": string;
+        "trimWhitespace": boolean;
+        "label": string;
+        "labelOnTop": boolean;
+        "max": number;
+        "min": number;
+        "name": string;
+        "placeholder": string;
+        "readonly": boolean;
+        "required": boolean;
+        "rows": number;
+        "shadow": boolean;
+        "step": number;
+        "type": string;
+        "valid": boolean;
+        "validate": boolean;
+        "validateOnBlur": boolean;
+        "validation": string;
+        "value": string;
+    }
+    interface CTextFieldOpenAttributes {
+        "automaticFocus": boolean;
+        "automaticCapitalize": string;
+        "autocorrect": string;
+        "autocomplete": string;
+        "disabled": boolean;
+        "hideDetails": boolean;
+        "hint": string;
+        "hostId": string;
+        "trimWhitespace": boolean;
+        "label": string;
+        "labelOnTop": boolean;
+        "max": number;
+        "min": number;
+        "name": string;
+        "placeholder": string;
+        "readonly": boolean;
+        "required": boolean;
+        "rows": number;
+        "shadow": boolean;
+        "step": number;
+        "type": string;
+        "valid": boolean;
+        "validate": boolean;
+        "validateOnBlur": boolean;
+        "validation": string;
+        "value": string;
+        "renderOutsideShadow": boolean;
+    }
+    interface CToastsAttributes {
+        "absolute": boolean;
+        "horizontal": 'left' | 'center' | 'right';
+        "vertical": 'top' | 'bottom';
+    }
+
     interface IntrinsicElements {
-        "c-accordion": CAccordion;
-        "c-accordion-item": CAccordionItem;
-        "c-alert": CAlert;
-        "c-autocomplete": CAutocomplete;
-        "c-backdrop": CBackdrop;
+        "c-accordion": Omit<CAccordion, keyof CAccordionAttributes> & { [K in keyof CAccordion & keyof CAccordionAttributes]?: CAccordion[K] } & { [K in keyof CAccordion & keyof CAccordionAttributes as `attr:${K}`]?: CAccordionAttributes[K] } & { [K in keyof CAccordion & keyof CAccordionAttributes as `prop:${K}`]?: CAccordion[K] } & OneOf<"value", CAccordion["value"], CAccordionAttributes["value"]>;
+        "c-accordion-item": Omit<CAccordionItem, keyof CAccordionItemAttributes> & { [K in keyof CAccordionItem & keyof CAccordionItemAttributes]?: CAccordionItem[K] } & { [K in keyof CAccordionItem & keyof CAccordionItemAttributes as `attr:${K}`]?: CAccordionItemAttributes[K] } & { [K in keyof CAccordionItem & keyof CAccordionItemAttributes as `prop:${K}`]?: CAccordionItem[K] };
+        "c-alert": Omit<CAlert, keyof CAlertAttributes> & { [K in keyof CAlert & keyof CAlertAttributes]?: CAlert[K] } & { [K in keyof CAlert & keyof CAlertAttributes as `attr:${K}`]?: CAlertAttributes[K] } & { [K in keyof CAlert & keyof CAlertAttributes as `prop:${K}`]?: CAlert[K] };
+        "c-autocomplete": Omit<CAutocomplete, keyof CAutocompleteAttributes> & { [K in keyof CAutocomplete & keyof CAutocompleteAttributes]?: CAutocomplete[K] } & { [K in keyof CAutocomplete & keyof CAutocompleteAttributes as `attr:${K}`]?: CAutocompleteAttributes[K] } & { [K in keyof CAutocomplete & keyof CAutocompleteAttributes as `prop:${K}`]?: CAutocomplete[K] };
+        "c-backdrop": Omit<CBackdrop, keyof CBackdropAttributes> & { [K in keyof CBackdrop & keyof CBackdropAttributes]?: CBackdrop[K] } & { [K in keyof CBackdrop & keyof CBackdropAttributes as `attr:${K}`]?: CBackdropAttributes[K] } & { [K in keyof CBackdrop & keyof CBackdropAttributes as `prop:${K}`]?: CBackdrop[K] };
         "c-badge": CBadge;
-        "c-button": CButton;
-        "c-card": CCard;
-        "c-card-actions": CCardActions;
+        "c-button": Omit<CButton, keyof CButtonAttributes> & { [K in keyof CButton & keyof CButtonAttributes]?: CButton[K] } & { [K in keyof CButton & keyof CButtonAttributes as `attr:${K}`]?: CButtonAttributes[K] } & { [K in keyof CButton & keyof CButtonAttributes as `prop:${K}`]?: CButton[K] };
+        "c-card": Omit<CCard, keyof CCardAttributes> & { [K in keyof CCard & keyof CCardAttributes]?: CCard[K] } & { [K in keyof CCard & keyof CCardAttributes as `attr:${K}`]?: CCardAttributes[K] } & { [K in keyof CCard & keyof CCardAttributes as `prop:${K}`]?: CCard[K] };
+        "c-card-actions": Omit<CCardActions, keyof CCardActionsAttributes> & { [K in keyof CCardActions & keyof CCardActionsAttributes]?: CCardActions[K] } & { [K in keyof CCardActions & keyof CCardActionsAttributes as `attr:${K}`]?: CCardActionsAttributes[K] } & { [K in keyof CCardActions & keyof CCardActionsAttributes as `prop:${K}`]?: CCardActions[K] };
         "c-card-content": CCardContent;
         "c-card-title": CCardTitle;
-        "c-checkbox": CCheckbox;
-        "c-csc-logo": CCscLogo;
-        "c-data-table": CDataTable;
-        "c-dropdown": CDropdown;
-        "c-icon": CIcon;
-        "c-icon-button": CIconButton;
-        "c-input": CInput;
-        "c-link": CLink;
-        "c-list": CList;
-        "c-list-item": CListItem;
-        "c-list-item-title": CListItemTitle;
-        "c-loader": CLoader;
-        "c-login-button": CLoginButton;
+        "c-checkbox": Omit<CCheckbox, keyof CCheckboxAttributes> & { [K in keyof CCheckbox & keyof CCheckboxAttributes]?: CCheckbox[K] } & { [K in keyof CCheckbox & keyof CCheckboxAttributes as `attr:${K}`]?: CCheckboxAttributes[K] } & { [K in keyof CCheckbox & keyof CCheckboxAttributes as `prop:${K}`]?: CCheckbox[K] };
+        "c-csc-logo": Omit<CCscLogo, keyof CCscLogoAttributes> & { [K in keyof CCscLogo & keyof CCscLogoAttributes]?: CCscLogo[K] } & { [K in keyof CCscLogo & keyof CCscLogoAttributes as `attr:${K}`]?: CCscLogoAttributes[K] } & { [K in keyof CCscLogo & keyof CCscLogoAttributes as `prop:${K}`]?: CCscLogo[K] };
+        "c-data-table": Omit<CDataTable, keyof CDataTableAttributes> & { [K in keyof CDataTable & keyof CDataTableAttributes]?: CDataTable[K] } & { [K in keyof CDataTable & keyof CDataTableAttributes as `attr:${K}`]?: CDataTableAttributes[K] } & { [K in keyof CDataTable & keyof CDataTableAttributes as `prop:${K}`]?: CDataTable[K] };
+        "c-dropdown": Omit<CDropdown, keyof CDropdownAttributes> & { [K in keyof CDropdown & keyof CDropdownAttributes]?: CDropdown[K] } & { [K in keyof CDropdown & keyof CDropdownAttributes as `attr:${K}`]?: CDropdownAttributes[K] } & { [K in keyof CDropdown & keyof CDropdownAttributes as `prop:${K}`]?: CDropdown[K] };
+        "c-icon": Omit<CIcon, keyof CIconAttributes> & { [K in keyof CIcon & keyof CIconAttributes]?: CIcon[K] } & { [K in keyof CIcon & keyof CIconAttributes as `attr:${K}`]?: CIconAttributes[K] } & { [K in keyof CIcon & keyof CIconAttributes as `prop:${K}`]?: CIcon[K] };
+        "c-icon-button": Omit<CIconButton, keyof CIconButtonAttributes> & { [K in keyof CIconButton & keyof CIconButtonAttributes]?: CIconButton[K] } & { [K in keyof CIconButton & keyof CIconButtonAttributes as `attr:${K}`]?: CIconButtonAttributes[K] } & { [K in keyof CIconButton & keyof CIconButtonAttributes as `prop:${K}`]?: CIconButton[K] };
+        "c-input": Omit<CInput, keyof CInputAttributes> & { [K in keyof CInput & keyof CInputAttributes]?: CInput[K] } & { [K in keyof CInput & keyof CInputAttributes as `attr:${K}`]?: CInputAttributes[K] } & { [K in keyof CInput & keyof CInputAttributes as `prop:${K}`]?: CInput[K] };
+        "c-link": Omit<CLink, keyof CLinkAttributes> & { [K in keyof CLink & keyof CLinkAttributes]?: CLink[K] } & { [K in keyof CLink & keyof CLinkAttributes as `attr:${K}`]?: CLinkAttributes[K] } & { [K in keyof CLink & keyof CLinkAttributes as `prop:${K}`]?: CLink[K] };
+        "c-list": Omit<CList, keyof CListAttributes> & { [K in keyof CList & keyof CListAttributes]?: CList[K] } & { [K in keyof CList & keyof CListAttributes as `attr:${K}`]?: CListAttributes[K] } & { [K in keyof CList & keyof CListAttributes as `prop:${K}`]?: CList[K] };
+        "c-list-item": Omit<CListItem, keyof CListItemAttributes> & { [K in keyof CListItem & keyof CListItemAttributes]?: CListItem[K] } & { [K in keyof CListItem & keyof CListItemAttributes as `attr:${K}`]?: CListItemAttributes[K] } & { [K in keyof CListItem & keyof CListItemAttributes as `prop:${K}`]?: CListItem[K] };
+        "c-list-item-title": Omit<CListItemTitle, keyof CListItemTitleAttributes> & { [K in keyof CListItemTitle & keyof CListItemTitleAttributes]?: CListItemTitle[K] } & { [K in keyof CListItemTitle & keyof CListItemTitleAttributes as `attr:${K}`]?: CListItemTitleAttributes[K] } & { [K in keyof CListItemTitle & keyof CListItemTitleAttributes as `prop:${K}`]?: CListItemTitle[K] };
+        "c-loader": Omit<CLoader, keyof CLoaderAttributes> & { [K in keyof CLoader & keyof CLoaderAttributes]?: CLoader[K] } & { [K in keyof CLoader & keyof CLoaderAttributes as `attr:${K}`]?: CLoaderAttributes[K] } & { [K in keyof CLoader & keyof CLoaderAttributes as `prop:${K}`]?: CLoader[K] };
+        "c-login-button": Omit<CLoginButton, keyof CLoginButtonAttributes> & { [K in keyof CLoginButton & keyof CLoginButtonAttributes]?: CLoginButton[K] } & { [K in keyof CLoginButton & keyof CLoginButtonAttributes as `attr:${K}`]?: CLoginButtonAttributes[K] } & { [K in keyof CLoginButton & keyof CLoginButtonAttributes as `prop:${K}`]?: CLoginButton[K] } & OneOf<"src", CLoginButton["src"], CLoginButtonAttributes["src"]>;
         "c-login-buttons": CLoginButtons;
-        "c-login-card": CLoginCard;
-        "c-login-card-actions": CLoginCardActions;
+        "c-login-card": Omit<CLoginCard, keyof CLoginCardAttributes> & { [K in keyof CLoginCard & keyof CLoginCardAttributes]?: CLoginCard[K] } & { [K in keyof CLoginCard & keyof CLoginCardAttributes as `attr:${K}`]?: CLoginCardAttributes[K] } & { [K in keyof CLoginCard & keyof CLoginCardAttributes as `prop:${K}`]?: CLoginCard[K] };
+        "c-login-card-actions": Omit<CLoginCardActions, keyof CLoginCardActionsAttributes> & { [K in keyof CLoginCardActions & keyof CLoginCardActionsAttributes]?: CLoginCardActions[K] } & { [K in keyof CLoginCardActions & keyof CLoginCardActionsAttributes as `attr:${K}`]?: CLoginCardActionsAttributes[K] } & { [K in keyof CLoginCardActions & keyof CLoginCardActionsAttributes as `prop:${K}`]?: CLoginCardActions[K] };
         "c-login-card-content": CLoginCardContent;
         "c-login-card-title": CLoginCardTitle;
-        "c-main": CMain;
-        "c-menu": CMenu;
-        "c-menu-items": CMenuItems;
-        "c-message": CMessage;
-        "c-modal": CModal;
+        "c-main": Omit<CMain, keyof CMainAttributes> & { [K in keyof CMain & keyof CMainAttributes]?: CMain[K] } & { [K in keyof CMain & keyof CMainAttributes as `attr:${K}`]?: CMainAttributes[K] } & { [K in keyof CMain & keyof CMainAttributes as `prop:${K}`]?: CMain[K] };
+        "c-menu": Omit<CMenu, keyof CMenuAttributes> & { [K in keyof CMenu & keyof CMenuAttributes]?: CMenu[K] } & { [K in keyof CMenu & keyof CMenuAttributes as `attr:${K}`]?: CMenuAttributes[K] } & { [K in keyof CMenu & keyof CMenuAttributes as `prop:${K}`]?: CMenu[K] };
+        "c-menu-items": Omit<CMenuItems, keyof CMenuItemsAttributes> & { [K in keyof CMenuItems & keyof CMenuItemsAttributes]?: CMenuItems[K] } & { [K in keyof CMenuItems & keyof CMenuItemsAttributes as `attr:${K}`]?: CMenuItemsAttributes[K] } & { [K in keyof CMenuItems & keyof CMenuItemsAttributes as `prop:${K}`]?: CMenuItems[K] };
+        "c-message": Omit<CMessage, keyof CMessageAttributes> & { [K in keyof CMessage & keyof CMessageAttributes]?: CMessage[K] } & { [K in keyof CMessage & keyof CMessageAttributes as `attr:${K}`]?: CMessageAttributes[K] } & { [K in keyof CMessage & keyof CMessageAttributes as `prop:${K}`]?: CMessage[K] };
+        "c-modal": Omit<CModal, keyof CModalAttributes> & { [K in keyof CModal & keyof CModalAttributes]?: CModal[K] } & { [K in keyof CModal & keyof CModalAttributes as `attr:${K}`]?: CModalAttributes[K] } & { [K in keyof CModal & keyof CModalAttributes as `prop:${K}`]?: CModal[K] };
         "c-navigation-button": CNavigationButton;
-        "c-option": COption;
+        "c-option": Omit<COption, keyof COptionAttributes> & { [K in keyof COption & keyof COptionAttributes]?: COption[K] } & { [K in keyof COption & keyof COptionAttributes as `attr:${K}`]?: COptionAttributes[K] } & { [K in keyof COption & keyof COptionAttributes as `prop:${K}`]?: COption[K] };
         "c-option-value": COptionValue;
-        "c-otp-input": COtpInput;
-        "c-page": CPage;
-        "c-pagination": CPagination;
-        "c-progress-bar": CProgressBar;
-        "c-radio": CRadio;
-        "c-radio-group": CRadioGroup;
+        "c-otp-input": Omit<COtpInput, keyof COtpInputAttributes> & { [K in keyof COtpInput & keyof COtpInputAttributes]?: COtpInput[K] } & { [K in keyof COtpInput & keyof COtpInputAttributes as `attr:${K}`]?: COtpInputAttributes[K] } & { [K in keyof COtpInput & keyof COtpInputAttributes as `prop:${K}`]?: COtpInput[K] } & OneOf<"elementId", COtpInput["elementId"], COtpInputAttributes["elementId"]>;
+        "c-page": Omit<CPage, keyof CPageAttributes> & { [K in keyof CPage & keyof CPageAttributes]?: CPage[K] } & { [K in keyof CPage & keyof CPageAttributes as `attr:${K}`]?: CPageAttributes[K] } & { [K in keyof CPage & keyof CPageAttributes as `prop:${K}`]?: CPage[K] };
+        "c-pagination": Omit<CPagination, keyof CPaginationAttributes> & { [K in keyof CPagination & keyof CPaginationAttributes]?: CPagination[K] } & { [K in keyof CPagination & keyof CPaginationAttributes as `attr:${K}`]?: CPaginationAttributes[K] } & { [K in keyof CPagination & keyof CPaginationAttributes as `prop:${K}`]?: CPagination[K] };
+        "c-progress-bar": Omit<CProgressBar, keyof CProgressBarAttributes> & { [K in keyof CProgressBar & keyof CProgressBarAttributes]?: CProgressBar[K] } & { [K in keyof CProgressBar & keyof CProgressBarAttributes as `attr:${K}`]?: CProgressBarAttributes[K] } & { [K in keyof CProgressBar & keyof CProgressBarAttributes as `prop:${K}`]?: CProgressBar[K] };
+        "c-radio": Omit<CRadio, keyof CRadioAttributes> & { [K in keyof CRadio & keyof CRadioAttributes]?: CRadio[K] } & { [K in keyof CRadio & keyof CRadioAttributes as `attr:${K}`]?: CRadioAttributes[K] } & { [K in keyof CRadio & keyof CRadioAttributes as `prop:${K}`]?: CRadio[K] };
+        "c-radio-group": Omit<CRadioGroup, keyof CRadioGroupAttributes> & { [K in keyof CRadioGroup & keyof CRadioGroupAttributes]?: CRadioGroup[K] } & { [K in keyof CRadioGroup & keyof CRadioGroupAttributes as `attr:${K}`]?: CRadioGroupAttributes[K] } & { [K in keyof CRadioGroup & keyof CRadioGroupAttributes as `prop:${K}`]?: CRadioGroup[K] };
         "c-ripple": CRipple;
-        "c-row": CRow;
-        "c-select": CSelect;
-        "c-side-navigation": CSideNavigation;
-        "c-side-navigation-item": CSideNavigationItem;
+        "c-row": Omit<CRow, keyof CRowAttributes> & { [K in keyof CRow & keyof CRowAttributes]?: CRow[K] } & { [K in keyof CRow & keyof CRowAttributes as `attr:${K}`]?: CRowAttributes[K] } & { [K in keyof CRow & keyof CRowAttributes as `prop:${K}`]?: CRow[K] };
+        "c-select": Omit<CSelect, keyof CSelectAttributes> & { [K in keyof CSelect & keyof CSelectAttributes]?: CSelect[K] } & { [K in keyof CSelect & keyof CSelectAttributes as `attr:${K}`]?: CSelectAttributes[K] } & { [K in keyof CSelect & keyof CSelectAttributes as `prop:${K}`]?: CSelect[K] };
+        "c-side-navigation": Omit<CSideNavigation, keyof CSideNavigationAttributes> & { [K in keyof CSideNavigation & keyof CSideNavigationAttributes]?: CSideNavigation[K] } & { [K in keyof CSideNavigation & keyof CSideNavigationAttributes as `attr:${K}`]?: CSideNavigationAttributes[K] } & { [K in keyof CSideNavigation & keyof CSideNavigationAttributes as `prop:${K}`]?: CSideNavigation[K] };
+        "c-side-navigation-item": Omit<CSideNavigationItem, keyof CSideNavigationItemAttributes> & { [K in keyof CSideNavigationItem & keyof CSideNavigationItemAttributes]?: CSideNavigationItem[K] } & { [K in keyof CSideNavigationItem & keyof CSideNavigationItemAttributes as `attr:${K}`]?: CSideNavigationItemAttributes[K] } & { [K in keyof CSideNavigationItem & keyof CSideNavigationItemAttributes as `prop:${K}`]?: CSideNavigationItem[K] };
         "c-side-navigation-title": CSideNavigationTitle;
-        "c-slider": CSlider;
+        "c-slider": Omit<CSlider, keyof CSliderAttributes> & { [K in keyof CSlider & keyof CSliderAttributes]?: CSlider[K] } & { [K in keyof CSlider & keyof CSliderAttributes as `attr:${K}`]?: CSliderAttributes[K] } & { [K in keyof CSlider & keyof CSliderAttributes as `prop:${K}`]?: CSlider[K] };
         "c-spacer": CSpacer;
-        "c-spinner": CSpinner;
-        "c-status": CStatus;
-        "c-step": CStep;
-        "c-steps": CSteps;
-        "c-sub-navigation-item": CSubNavigationItem;
-        "c-swiper": CSwiper;
-        "c-swiper-tab": CSwiperTab;
-        "c-switch": CSwitch;
-        "c-tab": CTab;
-        "c-tab-buttons": CTabButtons;
-        "c-tab-item": CTabItem;
-        "c-tab-items": CTabItems;
-        "c-table": CTable;
-        "c-tabs": CTabs;
-        "c-tag": CTag;
-        "c-tags": CTags;
-        "c-text-field": CTextField;
-        "c-text-field-open": CTextFieldOpen;
+        "c-spinner": Omit<CSpinner, keyof CSpinnerAttributes> & { [K in keyof CSpinner & keyof CSpinnerAttributes]?: CSpinner[K] } & { [K in keyof CSpinner & keyof CSpinnerAttributes as `attr:${K}`]?: CSpinnerAttributes[K] } & { [K in keyof CSpinner & keyof CSpinnerAttributes as `prop:${K}`]?: CSpinner[K] };
+        "c-status": Omit<CStatus, keyof CStatusAttributes> & { [K in keyof CStatus & keyof CStatusAttributes]?: CStatus[K] } & { [K in keyof CStatus & keyof CStatusAttributes as `attr:${K}`]?: CStatusAttributes[K] } & { [K in keyof CStatus & keyof CStatusAttributes as `prop:${K}`]?: CStatus[K] };
+        "c-step": Omit<CStep, keyof CStepAttributes> & { [K in keyof CStep & keyof CStepAttributes]?: CStep[K] } & { [K in keyof CStep & keyof CStepAttributes as `attr:${K}`]?: CStepAttributes[K] } & { [K in keyof CStep & keyof CStepAttributes as `prop:${K}`]?: CStep[K] };
+        "c-steps": Omit<CSteps, keyof CStepsAttributes> & { [K in keyof CSteps & keyof CStepsAttributes]?: CSteps[K] } & { [K in keyof CSteps & keyof CStepsAttributes as `attr:${K}`]?: CStepsAttributes[K] } & { [K in keyof CSteps & keyof CStepsAttributes as `prop:${K}`]?: CSteps[K] } & OneOf<"value", CSteps["value"], CStepsAttributes["value"]>;
+        "c-sub-navigation-item": Omit<CSubNavigationItem, keyof CSubNavigationItemAttributes> & { [K in keyof CSubNavigationItem & keyof CSubNavigationItemAttributes]?: CSubNavigationItem[K] } & { [K in keyof CSubNavigationItem & keyof CSubNavigationItemAttributes as `attr:${K}`]?: CSubNavigationItemAttributes[K] } & { [K in keyof CSubNavigationItem & keyof CSubNavigationItemAttributes as `prop:${K}`]?: CSubNavigationItem[K] };
+        "c-swiper": Omit<CSwiper, keyof CSwiperAttributes> & { [K in keyof CSwiper & keyof CSwiperAttributes]?: CSwiper[K] } & { [K in keyof CSwiper & keyof CSwiperAttributes as `attr:${K}`]?: CSwiperAttributes[K] } & { [K in keyof CSwiper & keyof CSwiperAttributes as `prop:${K}`]?: CSwiper[K] } & OneOf<"elementId", CSwiper["elementId"], CSwiperAttributes["elementId"]>;
+        "c-swiper-tab": Omit<CSwiperTab, keyof CSwiperTabAttributes> & { [K in keyof CSwiperTab & keyof CSwiperTabAttributes]?: CSwiperTab[K] } & { [K in keyof CSwiperTab & keyof CSwiperTabAttributes as `attr:${K}`]?: CSwiperTabAttributes[K] } & { [K in keyof CSwiperTab & keyof CSwiperTabAttributes as `prop:${K}`]?: CSwiperTab[K] };
+        "c-switch": Omit<CSwitch, keyof CSwitchAttributes> & { [K in keyof CSwitch & keyof CSwitchAttributes]?: CSwitch[K] } & { [K in keyof CSwitch & keyof CSwitchAttributes as `attr:${K}`]?: CSwitchAttributes[K] } & { [K in keyof CSwitch & keyof CSwitchAttributes as `prop:${K}`]?: CSwitch[K] };
+        "c-tab": Omit<CTab, keyof CTabAttributes> & { [K in keyof CTab & keyof CTabAttributes]?: CTab[K] } & { [K in keyof CTab & keyof CTabAttributes as `attr:${K}`]?: CTabAttributes[K] } & { [K in keyof CTab & keyof CTabAttributes as `prop:${K}`]?: CTab[K] };
+        "c-tab-buttons": Omit<CTabButtons, keyof CTabButtonsAttributes> & { [K in keyof CTabButtons & keyof CTabButtonsAttributes]?: CTabButtons[K] } & { [K in keyof CTabButtons & keyof CTabButtonsAttributes as `attr:${K}`]?: CTabButtonsAttributes[K] } & { [K in keyof CTabButtons & keyof CTabButtonsAttributes as `prop:${K}`]?: CTabButtons[K] };
+        "c-tab-item": Omit<CTabItem, keyof CTabItemAttributes> & { [K in keyof CTabItem & keyof CTabItemAttributes]?: CTabItem[K] } & { [K in keyof CTabItem & keyof CTabItemAttributes as `attr:${K}`]?: CTabItemAttributes[K] } & { [K in keyof CTabItem & keyof CTabItemAttributes as `prop:${K}`]?: CTabItem[K] } & OneOf<"value", CTabItem["value"], CTabItemAttributes["value"]>;
+        "c-tab-items": Omit<CTabItems, keyof CTabItemsAttributes> & { [K in keyof CTabItems & keyof CTabItemsAttributes]?: CTabItems[K] } & { [K in keyof CTabItems & keyof CTabItemsAttributes as `attr:${K}`]?: CTabItemsAttributes[K] } & { [K in keyof CTabItems & keyof CTabItemsAttributes as `prop:${K}`]?: CTabItems[K] } & OneOf<"value", CTabItems["value"], CTabItemsAttributes["value"]>;
+        "c-table": Omit<CTable, keyof CTableAttributes> & { [K in keyof CTable & keyof CTableAttributes]?: CTable[K] } & { [K in keyof CTable & keyof CTableAttributes as `attr:${K}`]?: CTableAttributes[K] } & { [K in keyof CTable & keyof CTableAttributes as `prop:${K}`]?: CTable[K] };
+        "c-tabs": Omit<CTabs, keyof CTabsAttributes> & { [K in keyof CTabs & keyof CTabsAttributes]?: CTabs[K] } & { [K in keyof CTabs & keyof CTabsAttributes as `attr:${K}`]?: CTabsAttributes[K] } & { [K in keyof CTabs & keyof CTabsAttributes as `prop:${K}`]?: CTabs[K] } & OneOf<"value", CTabs["value"], CTabsAttributes["value"]>;
+        "c-tag": Omit<CTag, keyof CTagAttributes> & { [K in keyof CTag & keyof CTagAttributes]?: CTag[K] } & { [K in keyof CTag & keyof CTagAttributes as `attr:${K}`]?: CTagAttributes[K] } & { [K in keyof CTag & keyof CTagAttributes as `prop:${K}`]?: CTag[K] };
+        "c-tags": Omit<CTags, keyof CTagsAttributes> & { [K in keyof CTags & keyof CTagsAttributes]?: CTags[K] } & { [K in keyof CTags & keyof CTagsAttributes as `attr:${K}`]?: CTagsAttributes[K] } & { [K in keyof CTags & keyof CTagsAttributes as `prop:${K}`]?: CTags[K] };
+        "c-text-field": Omit<CTextField, keyof CTextFieldAttributes> & { [K in keyof CTextField & keyof CTextFieldAttributes]?: CTextField[K] } & { [K in keyof CTextField & keyof CTextFieldAttributes as `attr:${K}`]?: CTextFieldAttributes[K] } & { [K in keyof CTextField & keyof CTextFieldAttributes as `prop:${K}`]?: CTextField[K] };
+        "c-text-field-open": Omit<CTextFieldOpen, keyof CTextFieldOpenAttributes> & { [K in keyof CTextFieldOpen & keyof CTextFieldOpenAttributes]?: CTextFieldOpen[K] } & { [K in keyof CTextFieldOpen & keyof CTextFieldOpenAttributes as `attr:${K}`]?: CTextFieldOpenAttributes[K] } & { [K in keyof CTextFieldOpen & keyof CTextFieldOpenAttributes as `prop:${K}`]?: CTextFieldOpen[K] };
         "c-toast": CToast;
-        "c-toasts": CToasts;
+        "c-toasts": Omit<CToasts, keyof CToastsAttributes> & { [K in keyof CToasts & keyof CToastsAttributes]?: CToasts[K] } & { [K in keyof CToasts & keyof CToastsAttributes as `attr:${K}`]?: CToastsAttributes[K] } & { [K in keyof CToasts & keyof CToastsAttributes as `prop:${K}`]?: CToasts[K] };
         "c-toolbar": CToolbar;
     }
 }
@@ -5432,287 +6590,287 @@ declare module "@stencil/core" {
             /**
              * @group Content Selectors
              */
-            "c-accordion": LocalJSX.CAccordion & JSXBase.HTMLAttributes<HTMLCAccordionElement>;
+            "c-accordion": LocalJSX.IntrinsicElements["c-accordion"] & JSXBase.HTMLAttributes<HTMLCAccordionElement>;
             /**
              * @parent c-accordion
              */
-            "c-accordion-item": LocalJSX.CAccordionItem & JSXBase.HTMLAttributes<HTMLCAccordionItemElement>;
+            "c-accordion-item": LocalJSX.IntrinsicElements["c-accordion-item"] & JSXBase.HTMLAttributes<HTMLCAccordionItemElement>;
             /**
              * @group Indicators
              */
-            "c-alert": LocalJSX.CAlert & JSXBase.HTMLAttributes<HTMLCAlertElement>;
+            "c-alert": LocalJSX.IntrinsicElements["c-alert"] & JSXBase.HTMLAttributes<HTMLCAlertElement>;
             /**
              * @group Form
              */
-            "c-autocomplete": LocalJSX.CAutocomplete & JSXBase.HTMLAttributes<HTMLCAutocompleteElement>;
+            "c-autocomplete": LocalJSX.IntrinsicElements["c-autocomplete"] & JSXBase.HTMLAttributes<HTMLCAutocompleteElement>;
             /**
              * @parent None
              */
-            "c-backdrop": LocalJSX.CBackdrop & JSXBase.HTMLAttributes<HTMLCBackdropElement>;
+            "c-backdrop": LocalJSX.IntrinsicElements["c-backdrop"] & JSXBase.HTMLAttributes<HTMLCBackdropElement>;
             /**
              * @parent none
              */
-            "c-badge": LocalJSX.CBadge & JSXBase.HTMLAttributes<HTMLCBadgeElement>;
+            "c-badge": LocalJSX.IntrinsicElements["c-badge"] & JSXBase.HTMLAttributes<HTMLCBadgeElement>;
             /**
              * @group Buttons
              */
-            "c-button": LocalJSX.CButton & JSXBase.HTMLAttributes<HTMLCButtonElement>;
+            "c-button": LocalJSX.IntrinsicElements["c-button"] & JSXBase.HTMLAttributes<HTMLCButtonElement>;
             /**
              * @group Cards
              */
-            "c-card": LocalJSX.CCard & JSXBase.HTMLAttributes<HTMLCCardElement>;
+            "c-card": LocalJSX.IntrinsicElements["c-card"] & JSXBase.HTMLAttributes<HTMLCCardElement>;
             /**
              * @parent c-card
              */
-            "c-card-actions": LocalJSX.CCardActions & JSXBase.HTMLAttributes<HTMLCCardActionsElement>;
+            "c-card-actions": LocalJSX.IntrinsicElements["c-card-actions"] & JSXBase.HTMLAttributes<HTMLCCardActionsElement>;
             /**
              * @parent c-card
              */
-            "c-card-content": LocalJSX.CCardContent & JSXBase.HTMLAttributes<HTMLCCardContentElement>;
+            "c-card-content": LocalJSX.IntrinsicElements["c-card-content"] & JSXBase.HTMLAttributes<HTMLCCardContentElement>;
             /**
              * @parent c-card
              */
-            "c-card-title": LocalJSX.CCardTitle & JSXBase.HTMLAttributes<HTMLCCardTitleElement>;
+            "c-card-title": LocalJSX.IntrinsicElements["c-card-title"] & JSXBase.HTMLAttributes<HTMLCCardTitleElement>;
             /**
              * @group Form
              */
-            "c-checkbox": LocalJSX.CCheckbox & JSXBase.HTMLAttributes<HTMLCCheckboxElement>;
+            "c-checkbox": LocalJSX.IntrinsicElements["c-checkbox"] & JSXBase.HTMLAttributes<HTMLCCheckboxElement>;
             /**
              * @parent c-toolbar
              */
-            "c-csc-logo": LocalJSX.CCscLogo & JSXBase.HTMLAttributes<HTMLCCscLogoElement>;
+            "c-csc-logo": LocalJSX.IntrinsicElements["c-csc-logo"] & JSXBase.HTMLAttributes<HTMLCCscLogoElement>;
             /**
              * @group Tables
              */
-            "c-data-table": LocalJSX.CDataTable & JSXBase.HTMLAttributes<HTMLCDataTableElement>;
-            "c-dropdown": LocalJSX.CDropdown & JSXBase.HTMLAttributes<HTMLCDropdownElement>;
+            "c-data-table": LocalJSX.IntrinsicElements["c-data-table"] & JSXBase.HTMLAttributes<HTMLCDataTableElement>;
+            "c-dropdown": LocalJSX.IntrinsicElements["c-dropdown"] & JSXBase.HTMLAttributes<HTMLCDropdownElement>;
             /**
              * @group Other
              */
-            "c-icon": LocalJSX.CIcon & JSXBase.HTMLAttributes<HTMLCIconElement>;
+            "c-icon": LocalJSX.IntrinsicElements["c-icon"] & JSXBase.HTMLAttributes<HTMLCIconElement>;
             /**
              * @group Buttons
              */
-            "c-icon-button": LocalJSX.CIconButton & JSXBase.HTMLAttributes<HTMLCIconButtonElement>;
+            "c-icon-button": LocalJSX.IntrinsicElements["c-icon-button"] & JSXBase.HTMLAttributes<HTMLCIconButtonElement>;
             /**
              * @parent None
              */
-            "c-input": LocalJSX.CInput & JSXBase.HTMLAttributes<HTMLCInputElement>;
+            "c-input": LocalJSX.IntrinsicElements["c-input"] & JSXBase.HTMLAttributes<HTMLCInputElement>;
             /**
              * Basic hyperlink component
              * @group Buttons
              */
-            "c-link": LocalJSX.CLink & JSXBase.HTMLAttributes<HTMLCLinkElement>;
+            "c-link": LocalJSX.IntrinsicElements["c-link"] & JSXBase.HTMLAttributes<HTMLCLinkElement>;
             /**
              * @group Other
              */
-            "c-list": LocalJSX.CList & JSXBase.HTMLAttributes<HTMLCListElement>;
-            "c-list-item": LocalJSX.CListItem & JSXBase.HTMLAttributes<HTMLCListItemElement>;
-            "c-list-item-title": LocalJSX.CListItemTitle & JSXBase.HTMLAttributes<HTMLCListItemTitleElement>;
+            "c-list": LocalJSX.IntrinsicElements["c-list"] & JSXBase.HTMLAttributes<HTMLCListElement>;
+            "c-list-item": LocalJSX.IntrinsicElements["c-list-item"] & JSXBase.HTMLAttributes<HTMLCListItemElement>;
+            "c-list-item-title": LocalJSX.IntrinsicElements["c-list-item-title"] & JSXBase.HTMLAttributes<HTMLCListItemTitleElement>;
             /**
              * A loader component that fills the nearest containing element that has css-property position set to 'relative'
              * @group Indicators
              */
-            "c-loader": LocalJSX.CLoader & JSXBase.HTMLAttributes<HTMLCLoaderElement>;
+            "c-loader": LocalJSX.IntrinsicElements["c-loader"] & JSXBase.HTMLAttributes<HTMLCLoaderElement>;
             /**
              * @parent c-login-buttons
              */
-            "c-login-button": LocalJSX.CLoginButton & JSXBase.HTMLAttributes<HTMLCLoginButtonElement>;
+            "c-login-button": LocalJSX.IntrinsicElements["c-login-button"] & JSXBase.HTMLAttributes<HTMLCLoginButtonElement>;
             /**
              * @group buttons
              */
-            "c-login-buttons": LocalJSX.CLoginButtons & JSXBase.HTMLAttributes<HTMLCLoginButtonsElement>;
+            "c-login-buttons": LocalJSX.IntrinsicElements["c-login-buttons"] & JSXBase.HTMLAttributes<HTMLCLoginButtonsElement>;
             /**
              * @group Cards
              */
-            "c-login-card": LocalJSX.CLoginCard & JSXBase.HTMLAttributes<HTMLCLoginCardElement>;
+            "c-login-card": LocalJSX.IntrinsicElements["c-login-card"] & JSXBase.HTMLAttributes<HTMLCLoginCardElement>;
             /**
              * @parent c-login-card
              */
-            "c-login-card-actions": LocalJSX.CLoginCardActions & JSXBase.HTMLAttributes<HTMLCLoginCardActionsElement>;
+            "c-login-card-actions": LocalJSX.IntrinsicElements["c-login-card-actions"] & JSXBase.HTMLAttributes<HTMLCLoginCardActionsElement>;
             /**
              * @parent c-login-card
              */
-            "c-login-card-content": LocalJSX.CLoginCardContent & JSXBase.HTMLAttributes<HTMLCLoginCardContentElement>;
+            "c-login-card-content": LocalJSX.IntrinsicElements["c-login-card-content"] & JSXBase.HTMLAttributes<HTMLCLoginCardContentElement>;
             /**
              * @parent c-login-card
              */
-            "c-login-card-title": LocalJSX.CLoginCardTitle & JSXBase.HTMLAttributes<HTMLCLoginCardTitleElement>;
+            "c-login-card-title": LocalJSX.IntrinsicElements["c-login-card-title"] & JSXBase.HTMLAttributes<HTMLCLoginCardTitleElement>;
             /**
              * Wrapper component for the whole page
              * @group Layout
              */
-            "c-main": LocalJSX.CMain & JSXBase.HTMLAttributes<HTMLCMainElement>;
+            "c-main": LocalJSX.IntrinsicElements["c-main"] & JSXBase.HTMLAttributes<HTMLCMainElement>;
             /**
              * @group Navigation
              */
-            "c-menu": LocalJSX.CMenu & JSXBase.HTMLAttributes<HTMLCMenuElement>;
+            "c-menu": LocalJSX.IntrinsicElements["c-menu"] & JSXBase.HTMLAttributes<HTMLCMenuElement>;
             /**
              * @parent c-menu
              */
-            "c-menu-items": LocalJSX.CMenuItems & JSXBase.HTMLAttributes<HTMLCMenuItemsElement>;
+            "c-menu-items": LocalJSX.IntrinsicElements["c-menu-items"] & JSXBase.HTMLAttributes<HTMLCMenuItemsElement>;
             /**
              * @parent None
              */
-            "c-message": LocalJSX.CMessage & JSXBase.HTMLAttributes<HTMLCMessageElement>;
+            "c-message": LocalJSX.IntrinsicElements["c-message"] & JSXBase.HTMLAttributes<HTMLCMessageElement>;
             /**
              * @group Popups
              */
-            "c-modal": LocalJSX.CModal & JSXBase.HTMLAttributes<HTMLCModalElement>;
+            "c-modal": LocalJSX.IntrinsicElements["c-modal"] & JSXBase.HTMLAttributes<HTMLCModalElement>;
             /**
              * @parent c-toolbar
              */
-            "c-navigation-button": LocalJSX.CNavigationButton & JSXBase.HTMLAttributes<HTMLCNavigationButtonElement>;
+            "c-navigation-button": LocalJSX.IntrinsicElements["c-navigation-button"] & JSXBase.HTMLAttributes<HTMLCNavigationButtonElement>;
             /**
              * @parent c-select
              */
-            "c-option": LocalJSX.COption & JSXBase.HTMLAttributes<HTMLCOptionElement>;
-            "c-option-value": LocalJSX.COptionValue & JSXBase.HTMLAttributes<HTMLCOptionValueElement>;
+            "c-option": LocalJSX.IntrinsicElements["c-option"] & JSXBase.HTMLAttributes<HTMLCOptionElement>;
+            "c-option-value": LocalJSX.IntrinsicElements["c-option-value"] & JSXBase.HTMLAttributes<HTMLCOptionValueElement>;
             /**
              * @group Form
              */
-            "c-otp-input": LocalJSX.COtpInput & JSXBase.HTMLAttributes<HTMLCOtpInputElement>;
+            "c-otp-input": LocalJSX.IntrinsicElements["c-otp-input"] & JSXBase.HTMLAttributes<HTMLCOtpInputElement>;
             /**
              * @group Layout
              */
-            "c-page": LocalJSX.CPage & JSXBase.HTMLAttributes<HTMLCPageElement>;
+            "c-page": LocalJSX.IntrinsicElements["c-page"] & JSXBase.HTMLAttributes<HTMLCPageElement>;
             /**
              * @group Navigation
              */
-            "c-pagination": LocalJSX.CPagination & JSXBase.HTMLAttributes<HTMLCPaginationElement>;
+            "c-pagination": LocalJSX.IntrinsicElements["c-pagination"] & JSXBase.HTMLAttributes<HTMLCPaginationElement>;
             /**
              * @group Indicators
              */
-            "c-progress-bar": LocalJSX.CProgressBar & JSXBase.HTMLAttributes<HTMLCProgressBarElement>;
+            "c-progress-bar": LocalJSX.IntrinsicElements["c-progress-bar"] & JSXBase.HTMLAttributes<HTMLCProgressBarElement>;
             /**
              * @parent c-radio-group
              */
-            "c-radio": LocalJSX.CRadio & JSXBase.HTMLAttributes<HTMLCRadioElement>;
+            "c-radio": LocalJSX.IntrinsicElements["c-radio"] & JSXBase.HTMLAttributes<HTMLCRadioElement>;
             /**
              * @group Form
              */
-            "c-radio-group": LocalJSX.CRadioGroup & JSXBase.HTMLAttributes<HTMLCRadioGroupElement>;
+            "c-radio-group": LocalJSX.IntrinsicElements["c-radio-group"] & JSXBase.HTMLAttributes<HTMLCRadioGroupElement>;
             /**
              * @parent None
              */
-            "c-ripple": LocalJSX.CRipple & JSXBase.HTMLAttributes<HTMLCRippleElement>;
+            "c-ripple": LocalJSX.IntrinsicElements["c-ripple"] & JSXBase.HTMLAttributes<HTMLCRippleElement>;
             /**
              * Generic flex row component
              * @group Layout
              */
-            "c-row": LocalJSX.CRow & JSXBase.HTMLAttributes<HTMLCRowElement>;
+            "c-row": LocalJSX.IntrinsicElements["c-row"] & JSXBase.HTMLAttributes<HTMLCRowElement>;
             /**
              * @group Form
              */
-            "c-select": LocalJSX.CSelect & JSXBase.HTMLAttributes<HTMLCSelectElement>;
+            "c-select": LocalJSX.IntrinsicElements["c-select"] & JSXBase.HTMLAttributes<HTMLCSelectElement>;
             /**
              * @group Navigation
              */
-            "c-side-navigation": LocalJSX.CSideNavigation & JSXBase.HTMLAttributes<HTMLCSideNavigationElement>;
+            "c-side-navigation": LocalJSX.IntrinsicElements["c-side-navigation"] & JSXBase.HTMLAttributes<HTMLCSideNavigationElement>;
             /**
              * @parent c-side-navigation
              */
-            "c-side-navigation-item": LocalJSX.CSideNavigationItem & JSXBase.HTMLAttributes<HTMLCSideNavigationItemElement>;
+            "c-side-navigation-item": LocalJSX.IntrinsicElements["c-side-navigation-item"] & JSXBase.HTMLAttributes<HTMLCSideNavigationItemElement>;
             /**
              * @parent c-side-navigation
              */
-            "c-side-navigation-title": LocalJSX.CSideNavigationTitle & JSXBase.HTMLAttributes<HTMLCSideNavigationTitleElement>;
+            "c-side-navigation-title": LocalJSX.IntrinsicElements["c-side-navigation-title"] & JSXBase.HTMLAttributes<HTMLCSideNavigationTitleElement>;
             /**
              * @group Form
              */
-            "c-slider": LocalJSX.CSlider & JSXBase.HTMLAttributes<HTMLCSliderElement>;
+            "c-slider": LocalJSX.IntrinsicElements["c-slider"] & JSXBase.HTMLAttributes<HTMLCSliderElement>;
             /**
              * Spacer component for flex containers
              * @group Layout
              */
-            "c-spacer": LocalJSX.CSpacer & JSXBase.HTMLAttributes<HTMLCSpacerElement>;
+            "c-spacer": LocalJSX.IntrinsicElements["c-spacer"] & JSXBase.HTMLAttributes<HTMLCSpacerElement>;
             /**
              * @group indicators
              */
-            "c-spinner": LocalJSX.CSpinner & JSXBase.HTMLAttributes<HTMLCSpinnerElement>;
+            "c-spinner": LocalJSX.IntrinsicElements["c-spinner"] & JSXBase.HTMLAttributes<HTMLCSpinnerElement>;
             /**
              * @group Indicators
              */
-            "c-status": LocalJSX.CStatus & JSXBase.HTMLAttributes<HTMLCStatusElement>;
+            "c-status": LocalJSX.IntrinsicElements["c-status"] & JSXBase.HTMLAttributes<HTMLCStatusElement>;
             /**
              * @group Indicators
              * @parent c-steps
              */
-            "c-step": LocalJSX.CStep & JSXBase.HTMLAttributes<HTMLCStepElement>;
+            "c-step": LocalJSX.IntrinsicElements["c-step"] & JSXBase.HTMLAttributes<HTMLCStepElement>;
             /**
              * @group Indicators
              */
-            "c-steps": LocalJSX.CSteps & JSXBase.HTMLAttributes<HTMLCStepsElement>;
+            "c-steps": LocalJSX.IntrinsicElements["c-steps"] & JSXBase.HTMLAttributes<HTMLCStepsElement>;
             /**
              * @parent c-side-navigation
              */
-            "c-sub-navigation-item": LocalJSX.CSubNavigationItem & JSXBase.HTMLAttributes<HTMLCSubNavigationItemElement>;
+            "c-sub-navigation-item": LocalJSX.IntrinsicElements["c-sub-navigation-item"] & JSXBase.HTMLAttributes<HTMLCSubNavigationItemElement>;
             /**
              * @group Content Selectors
              */
-            "c-swiper": LocalJSX.CSwiper & JSXBase.HTMLAttributes<HTMLCSwiperElement>;
+            "c-swiper": LocalJSX.IntrinsicElements["c-swiper"] & JSXBase.HTMLAttributes<HTMLCSwiperElement>;
             /**
              * @parent c-swiper
              */
-            "c-swiper-tab": LocalJSX.CSwiperTab & JSXBase.HTMLAttributes<HTMLCSwiperTabElement>;
+            "c-swiper-tab": LocalJSX.IntrinsicElements["c-swiper-tab"] & JSXBase.HTMLAttributes<HTMLCSwiperTabElement>;
             /**
              * @group Form
              */
-            "c-switch": LocalJSX.CSwitch & JSXBase.HTMLAttributes<HTMLCSwitchElement>;
+            "c-switch": LocalJSX.IntrinsicElements["c-switch"] & JSXBase.HTMLAttributes<HTMLCSwitchElement>;
             /**
              * @group Tabs
              * @parent c-tabs
              */
-            "c-tab": LocalJSX.CTab & JSXBase.HTMLAttributes<HTMLCTabElement>;
+            "c-tab": LocalJSX.IntrinsicElements["c-tab"] & JSXBase.HTMLAttributes<HTMLCTabElement>;
             /**
              * @group Content Selectors
              */
-            "c-tab-buttons": LocalJSX.CTabButtons & JSXBase.HTMLAttributes<HTMLCTabButtonsElement>;
+            "c-tab-buttons": LocalJSX.IntrinsicElements["c-tab-buttons"] & JSXBase.HTMLAttributes<HTMLCTabButtonsElement>;
             /**
              * @parent c-tabs
              */
-            "c-tab-item": LocalJSX.CTabItem & JSXBase.HTMLAttributes<HTMLCTabItemElement>;
+            "c-tab-item": LocalJSX.IntrinsicElements["c-tab-item"] & JSXBase.HTMLAttributes<HTMLCTabItemElement>;
             /**
              * @parent c-tabs
              */
-            "c-tab-items": LocalJSX.CTabItems & JSXBase.HTMLAttributes<HTMLCTabItemsElement>;
+            "c-tab-items": LocalJSX.IntrinsicElements["c-tab-items"] & JSXBase.HTMLAttributes<HTMLCTabItemsElement>;
             /**
              * @group tables
              */
-            "c-table": LocalJSX.CTable & JSXBase.HTMLAttributes<HTMLCTableElement>;
+            "c-table": LocalJSX.IntrinsicElements["c-table"] & JSXBase.HTMLAttributes<HTMLCTableElement>;
             /**
              * @group Content Selectors
              */
-            "c-tabs": LocalJSX.CTabs & JSXBase.HTMLAttributes<HTMLCTabsElement>;
+            "c-tabs": LocalJSX.IntrinsicElements["c-tabs"] & JSXBase.HTMLAttributes<HTMLCTabsElement>;
             /**
              * @parent c-tags
              */
-            "c-tag": LocalJSX.CTag & JSXBase.HTMLAttributes<HTMLCTagElement>;
+            "c-tag": LocalJSX.IntrinsicElements["c-tag"] & JSXBase.HTMLAttributes<HTMLCTagElement>;
             /**
              * @group buttons
              */
-            "c-tags": LocalJSX.CTags & JSXBase.HTMLAttributes<HTMLCTagsElement>;
+            "c-tags": LocalJSX.IntrinsicElements["c-tags"] & JSXBase.HTMLAttributes<HTMLCTagsElement>;
             /**
              * @group Form
              */
-            "c-text-field": LocalJSX.CTextField & JSXBase.HTMLAttributes<HTMLCTextFieldElement>;
+            "c-text-field": LocalJSX.IntrinsicElements["c-text-field"] & JSXBase.HTMLAttributes<HTMLCTextFieldElement>;
             /**
              * Text field component without shadow dom
              * @group Form
              */
-            "c-text-field-open": LocalJSX.CTextFieldOpen & JSXBase.HTMLAttributes<HTMLCTextFieldOpenElement>;
+            "c-text-field-open": LocalJSX.IntrinsicElements["c-text-field-open"] & JSXBase.HTMLAttributes<HTMLCTextFieldOpenElement>;
             /**
              * @parent none
              */
-            "c-toast": LocalJSX.CToast & JSXBase.HTMLAttributes<HTMLCToastElement>;
+            "c-toast": LocalJSX.IntrinsicElements["c-toast"] & JSXBase.HTMLAttributes<HTMLCToastElement>;
             /**
              * @group Popups
              */
-            "c-toasts": LocalJSX.CToasts & JSXBase.HTMLAttributes<HTMLCToastsElement>;
+            "c-toasts": LocalJSX.IntrinsicElements["c-toasts"] & JSXBase.HTMLAttributes<HTMLCToastsElement>;
             /**
              * @group Navigation
              */
-            "c-toolbar": LocalJSX.CToolbar & JSXBase.HTMLAttributes<HTMLCToolbarElement>;
+            "c-toolbar": LocalJSX.IntrinsicElements["c-toolbar"] & JSXBase.HTMLAttributes<HTMLCToolbarElement>;
         }
     }
 }

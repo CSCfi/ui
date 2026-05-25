@@ -12,7 +12,7 @@ export default async (component, folder) => {
   try {
     const directory = path.resolve(
       __dirname,
-      `../../components/examples/${component}`,
+      `../../app/components/examples/${component}`,
     );
 
     const examples = fs.readdirSync(directory);
@@ -58,7 +58,7 @@ export default async (component, folder) => {
         input: fs.createReadStream(
           path.resolve(
             __dirname,
-            `../../components/examples/${component}/${example}`,
+            `../../app/components/examples/${component}/${example}`,
           ),
         ),
         crlfDelay: Infinity,
