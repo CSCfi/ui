@@ -10,6 +10,16 @@ import CAccordion from './components/c-accordion/CAccordion.vue';
 import CAccordionItem from './components/c-accordion-item/CAccordionItem.vue';
 import CInput from './components/c-input/CInput.vue';
 import CTextField from './components/c-text-field/CTextField.vue';
+import CSpinner from './components/c-spinner/CSpinner.vue';
+import CLoader from './components/c-loader/CLoader.vue';
+import CIconButton from './components/c-icon-button/CIconButton.vue';
+import CLink from './components/c-link/CLink.vue';
+import CTag from './components/c-tag/CTag.vue';
+import CTags from './components/c-tags/CTags.vue';
+import CProgressBar from './components/c-progress-bar/CProgressBar.vue';
+import CRadio from './components/c-radio/CRadio.vue';
+import CRadioGroup from './components/c-radio-group/CRadioGroup.vue';
+import CSwitch from './components/c-switch/CSwitch.vue';
 
 /**
  * Map of custom-element tag → Vue SFC component. The single source of
@@ -28,6 +38,16 @@ const components: Array<[string, unknown]> = [
   ['c-accordion-item', CAccordionItem],
   ['c-input', CInput],
   ['c-text-field', CTextField],
+  ['c-spinner', CSpinner],
+  ['c-loader', CLoader],
+  ['c-icon-button', CIconButton],
+  ['c-link', CLink],
+  ['c-tag', CTag],
+  ['c-tags', CTags],
+  ['c-progress-bar', CProgressBar],
+  ['c-radio', CRadio],
+  ['c-radio-group', CRadioGroup],
+  ['c-switch', CSwitch],
 ];
 
 /**
