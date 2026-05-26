@@ -1,0 +1,38 @@
+{
+  "name": "@cscfi/csc-ui-next",
+  "version": "0.0.1",
+  "description": "Vue 3-based replacement for @cscfi/csc-ui — same custom element tag names, Vue v-model contract.",
+  "type": "module",
+  "main": "./dist/csc-ui-next.js",
+  "module": "./dist/csc-ui-next.js",
+  "types": "./dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "exports": {
+    ".": {
+      "import": "./dist/csc-ui-next.js",
+      "types": "./dist/index.d.ts"
+    }
+  },
+  "scripts": {
+    "build": "vite build",
+    "build:watch": "vite build --watch",
+    "dev": "vite build --watch"
+  },
+  "dependencies": {
+    "@mdi/js": "^7.4.47",
+    "vue": "^3.5.0"
+  },
+  "devDependencies": {
+    "@tailwindcss/vite": "^4.3.0",
+    "@types/node": "^20.0.0",
+    "@vitejs/plugin-vue": "^5.2.4",
+    "tailwindcss": "^4.3.0",
+    "typescript": "^4.9.5",
+    "vite": "^7.3.3"
+  },
+  "license": "MIT",
+  "repository": "CSCfi/ui",
+  "homepage": "https://design-system.csc.fi"
+}

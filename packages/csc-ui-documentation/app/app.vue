@@ -7,7 +7,17 @@
 </template>
 
 <script lang="ts" setup>
-import { defineCustomElements } from '@cscfi/csc-ui/loader';
+import { defineCustomElements as defineStencilElements } from '@cscfi/csc-ui/loader';
 
-defineCustomElements();
+const config = useRuntimeConfig();
+
+if (config.public.cscUiImpl === 'next') {
+  // Register the Vue-built migrated components first. The Stencil loader
+  // skips tags already in the registry, so unmigrated components fall
+  // back to Stencil without extra coordination.
+  const { defineCustomElements: defineNextElements } = await import('@cscfi/csc-ui-next');
+  defineNextElements();
+}
+
+defineStencilElements();
 </script>

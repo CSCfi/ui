@@ -136,6 +136,9 @@ importers:
       '@cscfi/csc-ui':
         specifier: '*'
         version: 3.0.19
+      '@cscfi/csc-ui-next':
+        specifier: workspace:*
+        version: link:../csc-ui-next
       '@cscfi/csc-ui-vue':
         specifier: '*'
         version: 0.0.2
@@ -219,6 +222,34 @@ importers:
       '@nx/nx-win32-x64-msvc':
         specifier: ^18.0.4
         version: 18.3.5
+
+  packages/csc-ui-next:
+    dependencies:
+      '@mdi/js':
+        specifier: ^7.4.47
+        version: 7.4.47
+      vue:
+        specifier: ^3.5.0
+        version: 3.5.34(typescript@4.9.5)
+    devDependencies:
+      '@tailwindcss/vite':
+        specifier: ^4.3.0
+        version: 4.3.0(vite@7.3.3(@types/node@20.19.41)(jiti@2.7.0)(lightningcss@1.32.0)(sass-embedded@1.100.0)(sass@1.100.0)(terser@5.48.0)(yaml@2.9.0))
+      '@types/node':
+        specifier: ^20.0.0
+        version: 20.19.41
+      '@vitejs/plugin-vue':
+        specifier: ^5.2.4
+        version: 5.2.4(vite@7.3.3(@types/node@20.19.41)(jiti@2.7.0)(lightningcss@1.32.0)(sass-embedded@1.100.0)(sass@1.100.0)(terser@5.48.0)(yaml@2.9.0))(vue@3.5.34(typescript@4.9.5))
+      tailwindcss:
+        specifier: ^4.3.0
+        version: 4.3.0
+      typescript:
+        specifier: ^4.9.5
+        version: 4.9.5
+      vite:
+        specifier: ^7.0.0
+        version: 7.3.3(@types/node@20.19.41)(jiti@2.7.0)(lightningcss@1.32.0)(sass-embedded@1.100.0)(sass@1.100.0)(terser@5.48.0)(yaml@2.9.0)
 
   packages/csc-ui-react:
     dependencies:

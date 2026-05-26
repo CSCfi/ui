@@ -1,0 +1,7 @@
+@import 'tailwindcss';
+
+/*
+ * Components live inside shadow roots, so Tailwind's auto-detection
+ * needs an explicit pointer at the SFC sources.
+ */
+@source './components/**/*.vue';

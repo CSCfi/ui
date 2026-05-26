@@ -14,7 +14,18 @@ export default defineNuxtConfig({
   },
 
   build: {
-    transpile: ['csc-ui/loader', '@cscfi/csc-ui-vue'],
+    transpile: ['csc-ui/loader', '@cscfi/csc-ui-vue', '@cscfi/csc-ui-next'],
+  },
+
+  runtimeConfig: {
+    public: {
+      // Selects which implementation backend registers `c-*` custom
+      // elements. `stencil` keeps today's behaviour; `next` registers
+      // the Vue-built versions from `@cscfi/csc-ui-next` first and lets
+      // the Stencil loader fill in the rest. Override per build with
+      // `CSC_UI_IMPL=next pnpm run dev` (or `build`).
+      cscUiImpl: process.env.CSC_UI_IMPL || 'stencil',
+    },
   },
 
   vue: {

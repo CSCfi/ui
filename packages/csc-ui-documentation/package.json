@@ -1,6 +1,7 @@
 {
   "dependencies": {
     "@cscfi/csc-ui": "*",
+    "@cscfi/csc-ui-next": "workspace:*",
     "@cscfi/csc-ui-vue": "*",
     "@mdi/js": "^7.4.47",
     "@pinia/nuxt": "^0.11.0",
