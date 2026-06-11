@@ -1,0 +1,20 @@
+<template>
+  <header>
+    <slot />
+  </header>
+</template>
+
+<style>
+:host {
+  --_c-login-card-title-color: var(--c-login-card-title-color, var(--c-primary-600));
+
+  display: block;
+  color: var(--_c-login-card-title-color);
+  font-family: var(--c-font-family);
+  font-size: 40px;
+  font-weight: 700;
+  line-height: 1.375;
+  margin: 0 0 12px;
+  text-wrap: balance;
+}
+</style>

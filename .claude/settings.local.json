@@ -30,7 +30,9 @@
       "Bash(pnpm view *)",
       "Bash(pnpm run *)",
       "Bash(pnpm config *)",
-      "Bash(PUPPETEER_SKIP_DOWNLOAD=1 pnpm run build)"
+      "Bash(PUPPETEER_SKIP_DOWNLOAD=1 pnpm run build)",
+      "Bash(sed -i \"s/'ShadowRoot','DocumentFragment'/'ShadowRoot','DocumentFragment','Element','Text','Comment','HTMLTemplateElement'/\" run2.mjs)",
+      "Bash(node run2.mjs)"
     ]
   }
 }

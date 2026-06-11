@@ -39,6 +39,7 @@
     "build": "node scripts/updateVersion.js && pnpm run build:examples && nuxt build",
     "build:examples": "node ./scripts/build-examples.js",
     "dev": "pnpm run build:examples && nuxt dev",
+    "dev:next": "pnpm run build:examples && CSC_UI_IMPL=next nuxt dev",
     "generate": "nuxt generate",
     "lint": "pnpm run lint:js && pnpm run lint:prettier",
     "lint:fix": "prettier --write --list-different . && pnpm run lint:js --fix",

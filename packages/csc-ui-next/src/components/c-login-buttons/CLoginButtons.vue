@@ -1,0 +1,11 @@
+<template>
+  <slot />
+</template>
+
+<style>
+:host {
+  display: grid;
+  grid-gap: clamp(1rem, 2vw, 1.5rem);
+  grid-template-columns: repeat(auto-fill, minmax(12rem, 1fr));
+}
+</style>

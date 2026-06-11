@@ -46,7 +46,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref, useTemplateRef } from 'vue';
+import { computed, onMounted, ref, useHost, useTemplateRef } from 'vue';
 import { useHasSlot } from '../../shared/useHasSlot';
 
 const props = defineProps({
@@ -65,10 +65,32 @@ const props = defineProps({
   target: { type: String, default: '_blank' },
   hostId: { type: String, default: '' },
   value: { type: [String, Number], default: undefined },
+  // Used when the button acts as a tab inside <c-tab-buttons>.
+  tabs: { type: Boolean, default: false },
 });
 
 const root = useTemplateRef<HTMLElement>('root');
 const hasDescription = useHasSlot(root, 'description');
+const host = useHost();
+
+// Resolve the tab value: explicit `value` prop, else the data-index that
+// c-tab-buttons stamps onto each button.
+const tabValue = () => props.value ?? host?.dataset.index;
+
+const emitTab = (name: string, detail: unknown) => {
+  host?.dispatchEvent(
+    new CustomEvent(name, { detail, bubbles: true, composed: true }),
+  );
+};
+
+// In tabs mode, mirror the Stencil c-button: emit tabFocus on focus so
+// the parent <c-tab-buttons> can drive arrow-key navigation.
+onMounted(() => {
+  if (!host || !props.tabs) return;
+  host.addEventListener('focus', () => emitTab('tabFocus', tabValue()), {
+    passive: true,
+  });
+});
 
 const spinnerSize = computed(() => {
   if (props.size === 'small') return 20;
@@ -124,6 +146,9 @@ const onClick = (event: MouseEvent) => {
     return;
   }
   spawnRipple(event);
+  if (props.tabs) {
+    emitTab('tabChange', { value: tabValue(), element: host });
+  }
 };
 
 const onKeydown = (event: KeyboardEvent) => {
