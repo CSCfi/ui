@@ -13,7 +13,7 @@
         :items-per-page="10"
         @changeQuery="onQueryChange($event)"
       >
-        <c-icon slot="pre" :path="mdiEarth" size="16" />
+        <c-icon slot="pre" :path="mdiEarth" :size="16" />
       </c-autocomplete>
 
       <c-button @click="onAddTag()" @keyup.enter="onAddTag()">Add</c-button>

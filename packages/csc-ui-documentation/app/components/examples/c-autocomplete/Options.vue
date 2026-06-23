@@ -16,7 +16,7 @@
         :loading="loading"
         @changeQuery="onQueryChange"
       >
-        <c-icon slot="pre" :path="mdiEarth" size="16" />
+        <c-icon slot="pre" :path="mdiEarth" :size="16" />
 
         <c-option
           v-for="(item, index) in filteredItems"

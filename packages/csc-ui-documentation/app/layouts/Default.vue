@@ -88,7 +88,7 @@
           hide-details
           shadow
         >
-          <c-icon slot="pre" :path="mdiMagnify" size="16" />
+          <c-icon slot="pre" :path="mdiMagnify" :size="16" />
         </c-text-field>
       </div>
 
@@ -101,6 +101,14 @@
         @click="onNavigateToComponent(component.tag)"
       >
         {{ component.name }}
+
+        <c-icon
+          v-if="component.usesOldImpl"
+          :path="mdiAlertCircle"
+          :size="16"
+          title="Still uses the old (Stencil) implementation"
+          style="color: var(--c-warning-color, #d6601f); margin-left: 4px"
+        />
       </c-side-navigation-item>
 
       <c-side-navigation-title>Design tokens</c-side-navigation-title>
@@ -110,7 +118,7 @@
         @keyup.enter="navigateTo('/design-tokens/color')"
         @click="navigateTo('/design-tokens/color')"
       >
-        <c-icon :path="mdiPalette" size="16" />
+        <c-icon :path="mdiPalette" :size="16" />
         Color
       </c-side-navigation-item>
 
@@ -119,7 +127,7 @@
         @keyup.enter="navigateTo('/design-tokens/customization')"
         @click="navigateTo('/design-tokens/customization')"
       >
-        <c-icon :path="mdiFormatPaint" size="16" />
+        <c-icon :path="mdiFormatPaint" :size="16" />
         Customization
       </c-side-navigation-item>
 
@@ -130,7 +138,7 @@
         @keyup.enter="navigateTo('/types')"
         @click="navigateTo('/types')"
       >
-        <c-icon :path="mdiLanguageTypescript" size="16" />
+        <c-icon :path="mdiLanguageTypescript" :size="16" />
         Types
       </c-side-navigation-item>
     </c-side-navigation>
@@ -143,6 +151,7 @@
 
 <script lang="ts" setup>
 import {
+  mdiAlertCircle,
   mdiAngular,
   mdiFormatPaint,
   mdiInformationOutline,
@@ -154,9 +163,18 @@ import {
   mdiVuejs,
 } from '@mdi/js';
 import { storeToRefs } from 'pinia';
+import { migratedTags } from '@cscfi/csc-ui-next';
 import packageJson from '../../package.json';
 
 const version = ref(packageJson.version);
+
+// In `next` mode, components whose tag isn't in `migratedTags` fall back to
+// the old Stencil implementation. Flag them in the sidebar so migration
+// progress is visible at a glance. In `stencil` mode everything is old, so
+// the marker is suppressed.
+const config = useRuntimeConfig();
+const isNextImpl = config.public.cscUiImpl === 'next';
+const migratedSet = new Set(migratedTags);
 
 const query = ref('');
 
@@ -196,6 +214,7 @@ const components = computed(() =>
     .map((data) => ({
       tag: data.tag,
       name: data.name,
+      usesOldImpl: isNextImpl && !migratedSet.has(data.tag),
     })),
 );
 

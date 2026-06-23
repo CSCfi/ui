@@ -13,6 +13,11 @@
 <script setup lang="ts">
 import { onBeforeUnmount, onMounted, useHost, useTemplateRef } from 'vue';
 
+// Multi-root template (fragment) — keep consumer fallthrough attrs
+// (class/style) on the host element instead of tripping the "renders
+// fragment" warning.
+defineOptions({ inheritAttrs: false });
+
 const props = defineProps({
   scrollIndicator: { type: Boolean, default: false },
 });

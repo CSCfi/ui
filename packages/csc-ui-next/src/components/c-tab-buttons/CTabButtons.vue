@@ -6,6 +6,10 @@
 import { onMounted, ref, useHost, watch } from 'vue';
 import { coerceBoolean } from '../../shared/coerceBoolean';
 
+// `<slot />` root (fragment) + we write to the host below — keep fallthrough
+// attrs on the host element instead of tripping the "renders fragment" warning.
+defineOptions({ inheritAttrs: false });
+
 const props = defineProps({
   value: { type: [Number, String], default: 0 },
   mandatory: { type: Boolean, default: false },
@@ -72,7 +76,10 @@ const applyActive = (value: number | string | null) => {
     if (b.disabled) return;
     const shouldOutline = b !== active;
     b.outlined = shouldOutline;
-    if (shouldOutline) b.setAttribute('outlined', 'true');
+    // Mirror the boolean prop to the attribute the way Vue's
+    // defineCustomElement reflects it: present-and-empty for true. A literal
+    // `'true'` string would fail c-button's Boolean prop validator.
+    if (shouldOutline) b.setAttribute('outlined', '');
     else b.removeAttribute('outlined');
   });
 };
@@ -119,7 +126,9 @@ onMounted(() => {
     if (!button.disabled) {
       const shouldOutline = !isActive;
       button.outlined = shouldOutline;
-      if (shouldOutline) button.setAttribute('outlined', 'true');
+      // Empty attribute (not the string 'true') so c-button's Boolean prop
+      // validator doesn't reject it — see applyActive above.
+      if (shouldOutline) button.setAttribute('outlined', '');
       else button.removeAttribute('outlined');
     }
 

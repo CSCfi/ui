@@ -39,6 +39,11 @@ import {
   watchEffect,
 } from 'vue';
 
+// Multi-root template (fragment) + we write to the host below — keep
+// fallthrough attrs on the host element instead of tripping the "renders
+// fragment" warning.
+defineOptions({ inheritAttrs: false });
+
 const props = defineProps({
   styles: { type: Object as () => Record<string, string>, default: null },
   mobile: { type: Boolean, default: false },

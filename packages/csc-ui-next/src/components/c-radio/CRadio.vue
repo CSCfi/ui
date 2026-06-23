@@ -3,6 +3,10 @@
 </template>
 
 <script setup lang="ts">
+// `<slot />` root (fragment) — keep consumer fallthrough attrs (class/style)
+// on the host element instead of tripping the "renders fragment" warning.
+defineOptions({ inheritAttrs: false });
+
 defineProps({
   checked: { type: Boolean, default: false },
   disabled: { type: Boolean, default: false },

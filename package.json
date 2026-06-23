@@ -12,6 +12,7 @@
   "scripts": {
     "build": "pnpm -r run build",
     "prepare": "sh prepare-husky.sh",
-    "dev": "concurrently --names \"ui,docs\" --prefix-colors \"magenta.bold,green.bold\" \"cd packages/csc-ui && pnpm run build:watch\" \"cd packages/csc-ui-documentation && pnpm run dev\""
+    "dev": "concurrently --names \"ui,docs\" --prefix-colors \"magenta.bold,green.bold\" \"cd packages/csc-ui && pnpm run build:watch\" \"cd packages/csc-ui-documentation && pnpm run dev\"",
+    "dev:next": "concurrently --names \"ui,docs\" --prefix-colors \"magenta.bold,green.bold\" \"cd packages/csc-ui-next && pnpm build:watch\" \"cd packages/csc-ui-documentation && pnpm dev:next\""
   }
 }

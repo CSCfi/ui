@@ -30,7 +30,7 @@
           <legend
             class="c-input__legend"
             :class="{
-              'c-input__legend--active': isActiveResolved && !labelOnTop,
+              'c-input__legend--active': (isActiveResolved || filled) && !labelOnTop,
             }"
             :style="{ '--_c-input-legend-width': legendWidth + 'px' }"
           >

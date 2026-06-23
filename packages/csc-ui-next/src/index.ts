@@ -62,6 +62,10 @@ import CSwiperTab from './components/c-swiper-tab/CSwiperTab.vue';
 import CSwiper from './components/c-swiper/CSwiper.vue';
 import CSlider from './components/c-slider/CSlider.vue';
 import COtpInput from './components/c-otp-input/COtpInput.vue';
+import COptionValue from './components/c-option-value/COptionValue.vue';
+import COption from './components/c-option/COption.vue';
+import CDropdown from './components/c-dropdown/CDropdown.vue';
+import CSelect from './components/c-select/CSelect.vue';
 
 /**
  * Map of custom-element tag → Vue SFC component. The single source of
@@ -132,6 +136,12 @@ const components: Array<[string, unknown]> = [
   ['c-swiper', CSwiper],
   ['c-slider', CSlider],
   ['c-otp-input', COtpInput],
+  // Dropdown stack: leaf elements must register before c-select so the
+  // option/dropdown tags are defined when c-select renders them.
+  ['c-option-value', COptionValue],
+  ['c-option', COption],
+  ['c-dropdown', CDropdown],
+  ['c-select', CSelect],
 ];
 
 /**

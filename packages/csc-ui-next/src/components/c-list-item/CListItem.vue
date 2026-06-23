@@ -55,7 +55,10 @@ onMounted(() => {
     host.classList.toggle('c-list-item--hoverable', isHoverable.value);
     host.classList.toggle('c-list-item--ripple', props.ripple);
     host.classList.toggle('c-list-item--active', props.active);
-    if (props.disabled) host.setAttribute('disabled', 'true');
+    // Empty attribute (not the string 'true') so re-reading it via the
+    // custom-element wrapper doesn't fail this component's Boolean `disabled`
+    // prop validator.
+    if (props.disabled) host.setAttribute('disabled', '');
     else host.removeAttribute('disabled');
     if (props.disabledByParent) host.setAttribute('data-disabled', 'true');
     else host.removeAttribute('data-disabled');

@@ -5,6 +5,12 @@
 <script setup lang="ts">
 import { onMounted, useHost, watchEffect } from 'vue';
 
+// Template is a bare `<slot />` (fragment root) and we write `--_c-row-gap`
+// to the host's inline style below — which the custom-element wrapper reflects
+// back as a `style` fallthrough attr. Opt out so it stays on the host (the
+// flex container) instead of tripping the "renders fragment" warning.
+defineOptions({ inheritAttrs: false });
+
 const props = defineProps({
   gap: { type: Number, default: 0 },
   nowrap: { type: Boolean, default: false },

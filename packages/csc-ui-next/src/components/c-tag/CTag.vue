@@ -113,11 +113,10 @@ const onClose = () => {
   z-index: 1;
 }
 
-:host([active]) {
-  --_c-tag-background-color: var(--_c-tag-background-color-active);
-  --_c-tag-text-color: var(--_c-tag-text-color-active);
-}
-
+/* Don't redefine `--_c-tag-text-color` here — `--_c-tag-background-color-active`
+ * falls back through `var(--_c-tag-text-color)`, so overriding the text color
+ * would cascade back into the background and make the active tag render white.
+ * Apply background/color directly on the inner div, matching the Stencil port. */
 :host([active]) .c-tag__inner {
   background: var(--_c-tag-background-color-active);
   color: var(--_c-tag-text-color-active);

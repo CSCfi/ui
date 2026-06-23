@@ -19,6 +19,11 @@ import {
   watch,
 } from "vue";
 
+// Multi-root template (fragment) + we write to the host below — keep
+// fallthrough attrs on the host element instead of tripping the "renders
+// fragment" warning.
+defineOptions({ inheritAttrs: false });
+
 const props = defineProps({
   value: { type: [Number, String], default: 1 },
 });

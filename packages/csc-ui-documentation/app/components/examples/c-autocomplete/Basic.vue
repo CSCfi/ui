@@ -18,7 +18,7 @@
         return-object
         @changeQuery="onQueryChange"
       >
-        <c-icon slot="pre" :path="mdiEarth" size="16" />
+        <c-icon slot="pre" :path="mdiEarth" :size="16" />
       </c-autocomplete>
 
       <c-button @click="onAddTag()" @keyup.enter="onAddTag()">Add</c-button>

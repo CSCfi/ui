@@ -50,6 +50,12 @@ import {
 } from 'vue';
 import { coerceBoolean } from '../../shared/coerceBoolean';
 
+// Two root nodes (`.c-tabs__container` + `.c-tabs__content`) make this a
+// fragment root, and we write `class`/`role`/style to the host below — keep
+// those (and any consumer fallthrough attrs) on the host element instead of
+// tripping the "renders fragment" warning.
+defineOptions({ inheritAttrs: false });
+
 const arrowLeft = mdiArrowLeft;
 const arrowRight = mdiArrowRight;
 

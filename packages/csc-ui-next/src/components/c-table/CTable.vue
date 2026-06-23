@@ -13,6 +13,10 @@
 <script setup lang="ts">
 import { onBeforeUnmount, onMounted, useHost, useTemplateRef, watch } from 'vue';
 
+// `<slot />` root (fragment) + we write to the host below — keep fallthrough
+// attrs on the host element instead of tripping the "renders fragment" warning.
+defineOptions({ inheritAttrs: false });
+
 const props = defineProps({
   mobileBreakpoint: { type: Number, default: 600 },
   responsive: { type: Boolean, default: false },

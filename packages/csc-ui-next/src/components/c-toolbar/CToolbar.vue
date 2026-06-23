@@ -5,7 +5,12 @@
   <div class="c-toolbar__spacer" />
 </template>
 
-<script setup lang="ts"></script>
+<script setup lang="ts">
+// Multi-root template (fragment) — keep consumer fallthrough attrs
+// (class/style) on the host element instead of tripping the "renders
+// fragment" warning.
+defineOptions({ inheritAttrs: false });
+</script>
 
 <style>
 :host {

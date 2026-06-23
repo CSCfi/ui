@@ -32,7 +32,28 @@
       "Bash(pnpm config *)",
       "Bash(PUPPETEER_SKIP_DOWNLOAD=1 pnpm run build)",
       "Bash(sed -i \"s/'ShadowRoot','DocumentFragment'/'ShadowRoot','DocumentFragment','Element','Text','Comment','HTMLTemplateElement'/\" run2.mjs)",
-      "Bash(node run2.mjs)"
+      "Bash(node run2.mjs)",
+      "Bash(node -e \"console.log\\(require.resolve\\('jsdom'\\)\\)\")",
+      "Bash(sed -i \"s#from 'happy-dom'#from '/workspace/node_modules/.pnpm/happy-dom@20.9.0/node_modules/happy-dom/lib/index.js'#\" /tmp/claude-1000/-workspace/4024f587-994d-4bd4-8c20-f56dc325bd26/scratchpad/repro.mjs)",
+      "Bash(node /tmp/claude-1000/-workspace/4024f587-994d-4bd4-8c20-f56dc325bd26/scratchpad/repro.mjs)",
+      "Read(//home/claudeuser/.cache/ms-playwright/**)",
+      "Read(//root/.cache/**)",
+      "Bash(find / -path \"*ms-playwright*headless*chrome*\" -type f)",
+      "Bash(DROPDOWN_INHERIT=1 SELECT_INHERIT=1 node repro2.mjs)",
+      "Bash(DROPDOWN_INHERIT=0 SELECT_INHERIT=1 node repro2.mjs)",
+      "Bash(DROPDOWN_INHERIT=0 SELECT_INHERIT=0 node repro2.mjs)",
+      "Bash(cp src/components/c-dropdown/CDropdown.vue /tmp/claude-1000/-workspace/4024f587-994d-4bd4-8c20-f56dc325bd26/scratchpad/CDropdown.bak.vue)",
+      "Bash(sed -i \"s/^defineOptions\\({ inheritAttrs: false }\\);/\\\\/\\\\/ TEMP-DISABLED defineOptions\\({ inheritAttrs: false }\\);/\" src/components/c-dropdown/CDropdown.vue)",
+      "Bash(awk '/<template>/{flag=1}/<\\\\/template>/{print;flag=0}flag' c-tag/CTag.vue)",
+      "Bash(awk '/<template>/{flag=1}/<\\\\/template>/{print;flag=0}flag' c-button/CButton.vue)",
+      "Bash(git check-ignore *)",
+      "Bash(cp src/components/c-list-item/CListItem.vue /tmp/cli.bak)",
+      "Bash(sed -i \"s/host.setAttribute\\('disabled', ''\\);/host.setAttribute\\('disabled', 'true'\\);/\" src/components/c-list-item/CListItem.vue)",
+      "Bash(node /tmp/claude-1000/-workspace/4024f587-994d-4bd4-8c20-f56dc325bd26/scratchpad/repro4.mjs)",
+      "Bash(cp /tmp/cli.bak src/components/c-list-item/CListItem.vue)",
+      "Bash(rm /tmp/cli.bak)",
+      "Bash(node -e \"console.log\\(require.resolve\\('@vue/compiler-sfc'\\)\\)\")",
+      "Bash(ls -d /workspace/node_modules/.pnpm/@vue+compiler-sfc@3.5.34/node_modules/@vue/compiler-sfc/dist/compiler-sfc.cjs.js)"
     ]
   }
 }

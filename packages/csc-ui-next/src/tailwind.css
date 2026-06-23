@@ -5,3 +5,158 @@
  * needs an explicit pointer at the SFC sources.
  */
 @source './components/**/*.vue';
+
+/*
+ * Design-token → Tailwind utility map (ADR-0004).
+ *
+ * `inline` is required because this stylesheet is inlined into every
+ * component's *shadow root*, where the `:root` selector matches nothing.
+ * With `inline`, Tailwind substitutes the value directly into each utility
+ * (e.g. `.bg-primary-600 { background-color: var(--c-primary-600) }`) instead
+ * of referencing a `--color-*` custom property that would never be defined
+ * inside the shadow tree. The `--c-*` tokens themselves are declared on the
+ * document `:root` by `@cscfi/csc-ui` and inherit across the shadow boundary,
+ * so a consumer overriding `--c-primary-600` still re-themes at runtime.
+ */
+@theme inline {
+  --color-primary-100: var(--c-primary-100);
+  --color-primary-200: var(--c-primary-200);
+  --color-primary-300: var(--c-primary-300);
+  --color-primary-400: var(--c-primary-400);
+  --color-primary-500: var(--c-primary-500);
+  --color-primary-600: var(--c-primary-600);
+  --color-primary-700: var(--c-primary-700);
+  --color-primary-800: var(--c-primary-800);
+  --color-primary-900: var(--c-primary-900);
+  --color-secondary-100: var(--c-secondary-100);
+  --color-secondary-200: var(--c-secondary-200);
+  --color-secondary-300: var(--c-secondary-300);
+  --color-secondary-400: var(--c-secondary-400);
+  --color-secondary-500: var(--c-secondary-500);
+  --color-secondary-600: var(--c-secondary-600);
+  --color-secondary-700: var(--c-secondary-700);
+  --color-secondary-800: var(--c-secondary-800);
+  --color-secondary-900: var(--c-secondary-900);
+  --color-accent-100: var(--c-accent-100);
+  --color-accent-200: var(--c-accent-200);
+  --color-accent-300: var(--c-accent-300);
+  --color-accent-400: var(--c-accent-400);
+  --color-accent-500: var(--c-accent-500);
+  --color-accent-600: var(--c-accent-600);
+  --color-accent-700: var(--c-accent-700);
+  --color-accent-800: var(--c-accent-800);
+  --color-accent-900: var(--c-accent-900);
+  --color-success-100: var(--c-success-100);
+  --color-success-200: var(--c-success-200);
+  --color-success-300: var(--c-success-300);
+  --color-success-400: var(--c-success-400);
+  --color-success-500: var(--c-success-500);
+  --color-success-600: var(--c-success-600);
+  --color-success-700: var(--c-success-700);
+  --color-success-800: var(--c-success-800);
+  --color-success-900: var(--c-success-900);
+  --color-info-100: var(--c-info-100);
+  --color-info-200: var(--c-info-200);
+  --color-info-300: var(--c-info-300);
+  --color-info-400: var(--c-info-400);
+  --color-info-500: var(--c-info-500);
+  --color-info-600: var(--c-info-600);
+  --color-info-700: var(--c-info-700);
+  --color-info-800: var(--c-info-800);
+  --color-info-900: var(--c-info-900);
+  --color-warning-100: var(--c-warning-100);
+  --color-warning-200: var(--c-warning-200);
+  --color-warning-300: var(--c-warning-300);
+  --color-warning-400: var(--c-warning-400);
+  --color-warning-500: var(--c-warning-500);
+  --color-warning-600: var(--c-warning-600);
+  --color-warning-700: var(--c-warning-700);
+  --color-warning-800: var(--c-warning-800);
+  --color-warning-900: var(--c-warning-900);
+  --color-error-100: var(--c-error-100);
+  --color-error-200: var(--c-error-200);
+  --color-error-300: var(--c-error-300);
+  --color-error-400: var(--c-error-400);
+  --color-error-500: var(--c-error-500);
+  --color-error-600: var(--c-error-600);
+  --color-error-700: var(--c-error-700);
+  --color-error-800: var(--c-error-800);
+  --color-error-900: var(--c-error-900);
+  --color-link-100: var(--c-link-100);
+  --color-link-200: var(--c-link-200);
+  --color-link-300: var(--c-link-300);
+  --color-link-400: var(--c-link-400);
+  --color-link-500: var(--c-link-500);
+  --color-link-600: var(--c-link-600);
+  --color-link-700: var(--c-link-700);
+  --color-link-800: var(--c-link-800);
+  --color-link-900: var(--c-link-900);
+  --color-tertiary-100: var(--c-tertiary-100);
+  --color-tertiary-200: var(--c-tertiary-200);
+  --color-tertiary-300: var(--c-tertiary-300);
+  --color-tertiary-400: var(--c-tertiary-400);
+  --color-tertiary-500: var(--c-tertiary-500);
+  --color-tertiary-600: var(--c-tertiary-600);
+  --color-tertiary-700: var(--c-tertiary-700);
+  --color-tertiary-800: var(--c-tertiary-800);
+  --color-tertiary-900: var(--c-tertiary-900);
+  --color-white: var(--c-white);
+  --color-black: var(--c-black);
+  --color-transparent: var(--c-transparent);
+}
+
+/*
+ * Override surface for the `classes` prop (ADR-0004).
+ *
+ * Consumer overrides supply Tailwind color utilities, but this stylesheet is
+ * built at *library* build time and only contains utilities the library's own
+ * components use — so a token colour the library never happens to use (e.g.
+ * `bg-tertiary-500`) would have NO rule inside the shadow root and render
+ * transparent. Safelisting the full design-token palette across the
+ * colourable properties guarantees any token colour works in `classes`.
+ * `{hover:,}` also covers hover-state overrides.
+ */
+/* Colours: full design-token palette across the colourable properties. */
+@source inline("{hover:,focus-visible:,}{bg,text,border,ring,fill,outline}-{primary,secondary,accent,success,info,warning,error,link,tertiary}-{100,200,300,400,500,600,700,800,900}");
+@source inline("{hover:,focus-visible:,}{bg,text,border,ring,fill,outline}-{white,black,transparent}");
+
+/* Typography: size, weight, alignment, leading, tracking. */
+@source inline("text-{xs,sm,base,lg,xl,2xl,3xl,4xl,5xl,6xl,7xl,8xl,9xl}");
+@source inline("text-{left,center,right,justify}");
+@source inline("font-{thin,extralight,light,normal,medium,semibold,bold,extrabold,black}");
+@source inline("italic,not-italic,underline,line-through,no-underline,uppercase,lowercase,capitalize,normal-case,truncate");
+@source inline("leading-{none,tight,snug,normal,relaxed,loose,3,4,5,6,7,8,9,10}");
+@source inline("tracking-{tighter,tight,normal,wide,wider,widest}");
+
+/* Border radius (all corners + per-side/corner). */
+@source inline("rounded{,-t,-r,-b,-l,-tl,-tr,-br,-bl}{,-none,-sm,-md,-lg,-xl,-2xl,-3xl,-full}");
+
+/* Spacing: padding / margin / gap across the common scale. */
+@source inline("{p,px,py,pt,pr,pb,pl,m,mx,my,mt,mr,mb,ml,gap,gap-x,gap-y}-{0,0.5,1,1.5,2,2.5,3,3.5,4,5,6,7,8,9,10,11,12,14,16,20,24}");
+
+/* Sizing, display, flex/grid alignment — the layout knobs consumers reach for. */
+@source inline("{w,h,min-w,min-h,max-w,max-h}-{0,full,auto,fit,min,max,px,1,2,4,6,8,10,12,16,20,24,32,40,48,64}");
+@source inline("{block,inline-block,inline,flex,inline-flex,grid,inline-grid,contents,hidden}");
+@source inline("{flex-row,flex-col,flex-wrap,flex-nowrap}");
+@source inline("items-{start,center,end,stretch,baseline}");
+@source inline("justify-{start,center,end,between,around,evenly}");
+@source inline("place-items-{start,center,end,stretch}");
+@source inline("{static,relative,absolute,fixed,sticky}");
+
+/* Effects consumers commonly override. */
+@source inline("shadow-{sm,md,lg,xl,2xl,inner,none}");
+@source inline("opacity-{0,5,10,20,25,30,40,50,60,70,75,80,90,95,100}");
+@source inline("{,hover:}cursor-{pointer,default,not-allowed,wait,text,move}");
+
+/*
+ * The single irreducible per-component CSS rule (ADR-0004, decision A).
+ *
+ * Utility classes cannot target a shadow host, so the host is layout-only:
+ * `display: contents` removes it from the box tree entirely, and each
+ * component's `root` element (the first child inside the shadow root) carries
+ * all visual styling and sizing. This is the only `:host`/style rule that
+ * lives outside a `tailwind-variants` config.
+ */
+:host {
+  display: contents;
+}

@@ -3,7 +3,7 @@
     <template #title>Slots</template>
 
     <c-text-field placeholder="Search for something..." shadow>
-      <c-icon slot="pre" :path="mdiMagnify" size="16" />
+      <c-icon slot="pre" :path="mdiMagnify" :size="16" />
 
       <c-button slot="post" size="small" ghost>Search</c-button>
     </c-text-field>

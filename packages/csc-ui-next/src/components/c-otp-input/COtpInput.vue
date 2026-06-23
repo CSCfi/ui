@@ -45,6 +45,11 @@
 <script setup lang="ts">
 import { computed, onMounted, ref, useHost, watch } from 'vue';
 
+// Multi-root template (fragment) + we write to the host below — keep
+// fallthrough attrs on the host element instead of tripping the "renders
+// fragment" warning.
+defineOptions({ inheritAttrs: false });
+
 const props = defineProps({
   hasAutofocus: { type: Boolean, default: false },
   hideDetails: { type: Boolean, default: false },
