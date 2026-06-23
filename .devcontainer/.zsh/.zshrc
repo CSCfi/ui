@@ -9,4 +9,4 @@ source "$HOME/.zsh-functions.zsh"
 
 antidote load
 
-toilet -f smblock --filter border ' MyCSC Development container '
+toilet -f smblock --filter border ' CSC-UI Devcontainer '
