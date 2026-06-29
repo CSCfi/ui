@@ -1,10 +1,12 @@
 <template>
-  <div class="c-alert" :class="type ? `c-alert--${type}` : null">
-    <svg v-if="type" width="22" height="22" viewBox="0 0 24 24">
+  <div :class="ui.root()" part="root">
+    <svg v-if="isIconType" :class="ui.icon()" part="icon" viewBox="0 0 24 24">
       <path :d="icon" />
     </svg>
-    <div class="c-alert__content">
+
+    <div :class="ui.content()" part="content">
       <slot name="title" />
+
       <slot />
     </div>
   </div>
@@ -16,74 +18,90 @@ import {
   mdiCheckCircle,
   mdiCloseCircle,
   mdiInformation,
-} from "@mdi/js";
-import { computed } from "vue";
+} from '@mdi/js';
+import { tv } from 'tailwind-variants';
+import { computed } from 'vue';
 
-const props = defineProps({
-  type: { type: String, default: "" },
+/**
+ * Styling lives entirely in this `tailwind-variants` config (ADR-0004): the
+ * `slots` are the component's parts and the `type` `variants` replace the
+ * original `.c-alert--<type>` colour classes. The old `--c-alert-color`
+ * indirection var is dropped — each type maps straight to a design token
+ * (`text-info-600`, `text-error-600`, …) and the border/icon inherit it via
+ * `currentColor`. Consumer customization is via `::part()` (ADR-0006).
+ *
+ * The accent colour is carried by `text-*` on `root`; the box border uses
+ * `border-current` and the icon `fill-current`, so a single type token paints
+ * border + icon at once (matching the original `currentColor` cascade).
+ */
+const alert = tv({
+  defaultVariants: {
+    type: 'default',
+  },
+  slots: {
+    content: 'grid items-center gap-2 text-[rgba(0,0,0,0.87)]',
+    icon: 'fill-current size-6 self-start shrink-0',
+    root: 'grid gap-4 border-2 border-current border-l-[12px] rounded-csc-md p-3 text-primary-600',
+  },
+  variants: {
+    type: {
+      default: {},
+      error: { root: 'grid-cols-[auto_1fr] text-error-600' },
+      info: { root: 'grid-cols-[auto_1fr] text-info-600' },
+      success: { root: 'grid-cols-[auto_1fr] text-success-600' },
+      warning: { root: 'grid-cols-[auto_1fr] text-warning-600' },
+    },
+  },
 });
 
-const icons: Record<string, string> = {
-  warning: mdiAlert,
+// The four icon types carry an icon + accent colour + two-column layout.
+// "Default" is represented by anything else: '' (how the design system / docs
+// express it — CAlertType has no `Default` member), 'default', or undefined.
+type CAlertIconType = 'error' | 'info' | 'success' | 'warning';
+
+interface CAlertProps {
+  type?: CAlertType;
+}
+
+type CAlertType = '' | 'default' | CAlertIconType;
+
+const props = withDefaults(defineProps<CAlertProps>(), {
+  type: 'default',
+});
+
+const icons: Record<CAlertIconType, string> = {
   error: mdiCloseCircle,
-  success: mdiCheckCircle,
   info: mdiInformation,
+  success: mdiCheckCircle,
+  warning: mdiAlert,
 };
 
-const icon = computed(() => icons[props.type] || "");
+// Truthy-type check mirrors the original `!!this.type`: only a real icon type
+// shows the icon and switches to the two-column grid. A falsy/unknown `type`
+// (e.g. the docs' `''` Default) must NOT render an empty icon — doing so left a
+// stray icon row above the content, which read as a strange padding-top.
+const isIconType = computed((): boolean => props.type in icons);
+
+const ui = computed(() =>
+  alert({
+    type: isIconType.value ? (props.type as CAlertIconType) : 'default',
+  }),
+);
+
+const icon = computed(() =>
+  isIconType.value ? icons[props.type as CAlertIconType] : '',
+);
 </script>
 
+<!--
+  Escape-hatch CSS (ADR-0007): only constructs Tailwind utilities cannot
+  express. The visible box (border/grid/colour) lives in the `tv` config above;
+  here remains the `::slotted([slot="title"])` rule, which styles
+  consumer-provided light-DOM title content and cannot be reached by a utility
+  class on a shadow-DOM node.
+-->
 <style>
-:host {
-  display: block;
-}
-
-.c-alert {
-  --c-alert-color: var(--c-primary-600);
-
-  display: grid;
-  gap: 16px;
-  grid-template-columns: 1fr;
-  color: var(--c-alert-color);
-  border: 2px solid currentColor;
-  border-left-width: 12px;
-  border-radius: 6px;
-  padding: 12px;
-}
-
-.c-alert--info,
-.c-alert--error,
-.c-alert--success,
-.c-alert--warning {
-  grid-template-columns: auto 1fr;
-}
-
-.c-alert--info {
-  --c-alert-color: var(--c-info-600);
-}
-.c-alert--error {
-  --c-alert-color: var(--c-error-600);
-}
-.c-alert--success {
-  --c-alert-color: var(--c-success-600);
-}
-.c-alert--warning {
-  --c-alert-color: var(--c-warning-600);
-}
-
-.c-alert__content {
-  color: rgba(0, 0, 0, 0.87);
-  display: grid;
-  align-items: center;
-  grid-template-columns: 1fr;
-  gap: 8px;
-}
-
-svg {
-  fill: currentColor;
-}
-
-::slotted(*[slot="title"]) {
+::slotted(*[slot='title']) {
   margin: 0 !important;
   font-size: 18px;
   font-weight: 600;

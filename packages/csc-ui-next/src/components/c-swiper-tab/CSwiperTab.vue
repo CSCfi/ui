@@ -1,6 +1,6 @@
 <template>
   <div :id="hostId || undefined" :class="classes">
-    <div ref="container" class="c-swiper-tab__content">
+    <div ref="containerRef" class="c-swiper-tab__content">
       <div class="c-swiper-tab__header">
         {{ label }}
         <slot name="icon" />
@@ -13,28 +13,41 @@
       <span
         v-for="r in ripples"
         :key="r.id"
-        class="c-swiper-tab__ripple"
         :style="r.style"
+        class="c-swiper-tab__ripple"
       />
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { computed, onMounted, ref, useHost, useTemplateRef, watch } from 'vue';
+import { computed, onMounted, useHost, useTemplateRef, watch } from 'vue';
 
-const props = defineProps({
-  disabled: { type: Boolean, default: false },
-  active: { type: Boolean, default: false },
-  label: { type: String, default: '' },
-  hostId: { type: String, default: '' },
-  setsize: { type: Number, default: undefined },
-  position: { type: Number, default: undefined },
-  value: { type: [Number, String], default: undefined },
+import { useRipple } from '../../shared/useRipple';
+
+interface CSwiperTabProps {
+  active?: boolean;
+  disabled?: boolean;
+  hostId?: string;
+  label?: string;
+  position?: number;
+  setsize?: number;
+  value?: number | string;
+}
+
+const props = withDefaults(defineProps<CSwiperTabProps>(), {
+  active: false,
+  disabled: false,
+  hostId: '',
+  label: '',
+  position: undefined,
+  setsize: undefined,
+  value: undefined,
 });
 
 const host = useHost();
-const container = useTemplateRef<HTMLElement>('container');
+
+const containerRef = useTemplateRef<HTMLElement>('containerRef');
 
 const classes = computed(() => ({
   'c-swiper-tab': true,
@@ -47,38 +60,20 @@ const syncHostAttrs = () => {
   if (!host) return;
   host.setAttribute('role', 'tab');
   host.setAttribute('aria-selected', props.active ? 'true' : 'false');
+
   if (props.setsize !== undefined)
     host.setAttribute('aria-setsize', String(props.setsize));
+
   if (props.position !== undefined)
     host.setAttribute('aria-posinset', String(props.position));
   host.setAttribute('tabindex', props.active ? '0' : '-1');
 };
 
-interface Ripple { id: number; style: Record<string, string> }
-const ripples = ref<Ripple[]>([]);
-let rippleId = 0;
-const RIPPLE_DURATION_MS = 600;
-
-const spawnRipple = (event: MouseEvent) => {
-  if (!container.value) return;
-  const rect = container.value.getBoundingClientRect();
-  const size = Math.max(rect.width, rect.height) * 2;
-  const x = event.clientX - rect.left - size / 2;
-  const y = event.clientY - rect.top - size / 2;
-  const id = ++rippleId;
-  ripples.value.push({
-    id,
-    style: {
-      left: `${x}px`,
-      top: `${y}px`,
-      width: `${size}px`,
-      height: `${size}px`,
-    },
-  });
-  setTimeout(() => {
-    ripples.value = ripples.value.filter((r) => r.id !== id);
-  }, RIPPLE_DURATION_MS);
-};
+// Material-style click ripple (shared logic in useRipple); the
+// `.c-swiper-tab__ripple` CSS class carries the transition that tweens it.
+const { ripples, spawn: spawnRipple } = useRipple({
+  container: () => containerRef.value,
+});
 
 onMounted(() => {
   if (!host) return;
@@ -88,10 +83,10 @@ onMounted(() => {
     spawnRipple(e as MouseEvent);
     host.dispatchEvent(
       new CustomEvent('changeValue', {
-        detail: props.value,
         bubbles: true,
-        composed: true,
         cancelable: true,
+        composed: true,
+        detail: props.value,
       }),
     );
   });
@@ -105,13 +100,34 @@ watch(
 
 <style>
 :host {
-  --_c-swiper-tab-background-color-active: var(--c-swiper-tab-background-color-active, var(--c-primary-600));
-  --_c-swiper-tab-background-color-disabled: var(--c-swiper-tab-background-color-disabled, var(--c-tertiary-100));
-  --_c-swiper-tab-background-color: var(--c-swiper-tab-background-color, var(--c-primary-200));
-  --_c-swiper-tab-hover-color: var(--c-swiper-tab-hover-color, var(--c-primary-100));
-  --_c-swiper-tab-text-color-active: var(--c-swiper-tab-text-color-active, var(--c-white));
-  --_c-swiper-tab-text-color-disabled: var(--c-swiper-tab-text-color-disabled, var(--c-tertiary-600));
-  --_c-swiper-tab-text-color: var(--c-swiper-tab-text-color, var(--c-primary-600));
+  --_c-swiper-tab-background-color-active: var(
+    --c-swiper-tab-background-color-active,
+    var(--c-primary-600)
+  );
+  --_c-swiper-tab-background-color-disabled: var(
+    --c-swiper-tab-background-color-disabled,
+    var(--c-tertiary-100)
+  );
+  --_c-swiper-tab-background-color: var(
+    --c-swiper-tab-background-color,
+    var(--c-primary-200)
+  );
+  --_c-swiper-tab-hover-color: var(
+    --c-swiper-tab-hover-color,
+    var(--c-primary-100)
+  );
+  --_c-swiper-tab-text-color-active: var(
+    --c-swiper-tab-text-color-active,
+    var(--c-white)
+  );
+  --_c-swiper-tab-text-color-disabled: var(
+    --c-swiper-tab-text-color-disabled,
+    var(--c-tertiary-600)
+  );
+  --_c-swiper-tab-text-color: var(
+    --c-swiper-tab-text-color,
+    var(--c-primary-600)
+  );
 
   border-radius: 8px;
   width: 100%;
@@ -135,7 +151,8 @@ watch(
   height: 100%;
 }
 
-.c-swiper-tab:hover:not(.c-swiper-tab--active):not(.c-swiper-tab--disabled) .c-swiper-tab__content {
+.c-swiper-tab:hover:not(.c-swiper-tab--active):not(.c-swiper-tab--disabled)
+  .c-swiper-tab__content {
   background-color: var(--_c-swiper-tab-hover-color);
 }
 
@@ -193,17 +210,15 @@ watch(
   width: 38px;
 }
 
+/* Scale/opacity are JS-driven (useRipple) and tweened by this transition,
+ * matching the shared transition-based ripple primitive (ADR-0004). */
 .c-swiper-tab__ripple {
   position: absolute;
   border-radius: 50%;
   background-color: currentColor;
-  opacity: 0.25;
   pointer-events: none;
-  transform: scale(0);
-  animation: c-swiper-tab-ripple 0.6s ease-out forwards;
-}
-
-@keyframes c-swiper-tab-ripple {
-  to { transform: scale(1); opacity: 0; }
+  transition:
+    transform 0.6s ease-out,
+    opacity 0.6s ease-out;
 }
 </style>

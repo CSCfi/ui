@@ -71,6 +71,48 @@
 
     <c-card-content class="mt-6">
       <h2 class="text-xl text-primary">
+        Customizing converted components with <code>::part()</code>
+      </h2>
+
+      <p>
+        Components converted to the Tailwind-variants styling system no longer
+        expose <code>--c-*</code> override variables. Instead, each component
+        stamps its public regions as
+        <a
+          href="https://developer.mozilla.org/en-US/docs/Web/CSS/::part"
+          target="_blank"
+          rel="noopener"
+          >CSS parts</a
+        >
+        (<code>root</code>, <code>content</code>, …), which you can target from
+        your own global stylesheet to restyle every instance at once — no prop
+        needed on each element.
+      </p>
+
+      <code-block
+        :code="partOverride"
+        theme="atom-one-dark"
+        lang="css"
+        code-block-radius="6px"
+        highlightjs
+        persistent-copy-button
+      />
+
+      <p>
+        The live example below is scoped to a wrapper so it doesn't affect the
+        other buttons on this page; dropping the wrapper selector applies it
+        site-wide.
+      </p>
+    </c-card-content>
+
+    <c-card-content>
+      <div class="part-demo">
+        <c-button>Rounded button</c-button>
+      </div>
+    </c-card-content>
+
+    <c-card-content class="mt-6">
+      <h2 class="text-xl text-primary">
         Customizing a component with a CSC class
       </h2>
 
@@ -179,6 +221,11 @@ const componentOverride = `:root {
   ${componentOverrideVariables}
 }`;
 
+const partOverride = `/* Targets the root part of every <c-button> instance */
+c-button::part(root) {
+  border-radius: 9999px;
+}`;
+
 const classOverride = `.custom-button {
   /**
    * We're using the properties from the c-button,
@@ -215,5 +262,9 @@ const fontOverrideHtml = `<c-button class="custom-font">I should look different 
 
 .custom-font {
   --c-font-family: cursive;
+}
+
+.part-demo c-button::part(root) {
+  border-radius: 9999px;
 }
 </style>

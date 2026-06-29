@@ -1,28 +1,36 @@
 <template>
-  <article class="c-card-content">
+  <article :class="ui.root()" part="root">
     <slot />
   </article>
 </template>
 
-<script setup lang="ts"></script>
+<script setup lang="ts">
+import { tv } from 'tailwind-variants';
+import { computed } from 'vue';
 
+/**
+ * Styling lives entirely in this `tailwind-variants` config (ADR-0004) and the
+ * `root` is the public part (ADR-0006). Horizontal padding and the vertical
+ * gap both key off `--_c-card-gap` (the shared spacing contract the parent
+ * c-card sets on its inner element; it inherits across the shadow boundary
+ * into this slotted child). It falls back to 24px when used outside a c-card.
+ * `::slotted(*)` clamping consumer content stays in the escape-hatch <style>
+ * (ADR-0007) — utilities cannot target slotted light-DOM children.
+ */
+const cardContent = tv({
+  slots: {
+    root: 'flex flex-col gap-[var(--_c-card-gap,24px)] px-[var(--_c-card-gap,24px)]',
+  },
+});
+
+const ui = computed(() => cardContent());
+</script>
+
+<!--
+  Escape-hatch CSS (ADR-0007): `::slotted(...)` styles consumer-provided
+  light-DOM children, which Tailwind utilities cannot target.
+-->
 <style>
-/* Ported from packages/csc-ui/src/components/c-card-content/c-card-content.scss.
- * Horizontal padding mirrors c-card-title's `padding-inline` so content
- * aligns with the title under the same `--_c-card-gap` value. Children
- * of the slot are laid out vertically with the same gap. */
-
-:host {
-  display: block;
-}
-
-.c-card-content {
-  padding: 0 var(--_c-card-gap, 24px);
-  display: flex;
-  flex-direction: column;
-  gap: var(--_c-card-gap, 24px);
-}
-
 ::slotted(*) {
   max-width: 100%;
 }

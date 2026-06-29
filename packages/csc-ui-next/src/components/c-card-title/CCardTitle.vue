@@ -1,93 +1,58 @@
 <template>
-  <header
-    ref="root"
-    class="c-card-title"
-    :class="{ 'c-card-title--actions': hasActions }"
-  >
-    <div class="c-card-title__header">
-      <p class="c-card-title__heading"><slot /></p>
-      <div class="c-card-title__underline" />
+  <header ref="rootRef" :class="ui.root()" part="root">
+    <div :class="ui.header()" part="header">
+      <p :class="ui.heading()" part="heading"><slot /></p>
+
+      <div :class="ui.underline()" part="underline" />
     </div>
-    <div v-show="hasActions" class="c-card-title__actions">
+
+    <div v-show="hasActions" :class="ui.actions()" part="actions">
       <slot name="actions" />
     </div>
   </header>
 </template>
 
 <script setup lang="ts">
-import { useTemplateRef } from 'vue';
+import { tv } from 'tailwind-variants';
+import { computed, useTemplateRef } from 'vue';
+
 import { useHasSlot } from '../../shared/useHasSlot';
 
-const root = useTemplateRef<HTMLElement>('root');
-const hasActions = useHasSlot(root, 'actions');
+/**
+ * Styling lives entirely in this `tailwind-variants` config (ADR-0004); the
+ * stamped parts (`root`, `header`, `heading`, `underline`, `actions`) are the
+ * public customization surface (ADR-0006). The typography that the original
+ * carried on `:host` now lives on the `root` element. Colours come straight
+ * from the global tokens (`--c-text-system` text, `--c-primary-600` underline)
+ * — the old `--c-card-title-color` / `--c-card-title-underline-color` override
+ * indirection is dropped. `padding-inline` keys off `--_c-card-gap` (the shared
+ * spacing contract the parent c-card sets, inheriting across the shadow
+ * boundary) with a 24px fallback. The `actions` variant turns the header row
+ * into a side-by-side flex layout when the `actions` slot has content.
+ */
+const cardTitle = tv({
+  defaultVariants: {
+    actions: false,
+  },
+  slots: {
+    actions: 'flex flex-wrap-reverse items-center justify-end gap-2 flex-1',
+    header: '',
+    heading: 'm-0',
+    root: 'block px-[var(--_c-card-gap,24px)] uppercase text-balance font-medium text-base text-[var(--c-text-system)] [font-family:var(--c-font-family)]',
+    underline: 'mt-2.5 h-1 w-11 rounded bg-primary-600',
+  },
+  variants: {
+    actions: {
+      true: {
+        root: 'flex flex-wrap items-start flex-[0_0_auto] gap-2',
+      },
+    },
+  },
+});
+
+const rootRef = useTemplateRef<HTMLElement>('rootRef');
+
+const hasActions = useHasSlot(rootRef, 'actions');
+
+const ui = computed(() => cardTitle({ actions: hasActions.value }));
 </script>
-
-<style>
-/* Ported from packages/csc-ui/src/components/c-card-title/c-card-title.scss.
- * The host carries the typography (uppercase, 500 weight, 1rem). The
- * `--c-card-title-color` and `--c-card-title-underline-color` are the
- * public override variables. Layout details:
- *   - `.c-card-title` is `padding-inline` driven by `--_c-card-gap`
- *     (set on the parent c-card, inherits via CSS custom-property cascade).
- *   - When the `actions` slot has content, `.c-card-title--actions` makes
- *     the row a flex container with gap:8px so header + actions sit side-
- *     by-side with a gap.
- *   - `.c-card-title__actions` itself is also a flex container with
- *     gap:8px so multiple actions inside the slot are spaced. */
-
-:host {
-  --_c-card-title-color: var(--c-card-title-color, var(--c-text-system));
-  --_c-card-title-underline-color: var(
-    --c-card-title-underline-color,
-    var(--c-primary-600)
-  );
-
-  color: var(--_c-card-title-color);
-  display: block;
-  font-family: var(--c-font-family);
-  font-size: 1rem;
-  font-weight: 500;
-  text-transform: uppercase;
-  text-wrap: balance;
-}
-
-.c-card-title {
-  /* Falls back to 24px when not rendered inside a c-card. Inside a c-card
-   * `--_c-card-gap` is set on the parent and cascades down through the
-   * shadow boundary via CSS custom-property inheritance. */
-  padding-inline: var(--_c-card-gap, 24px);
-}
-
-.c-card-title--actions {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: start;
-  flex: 0 0 auto;
-  gap: 8px;
-}
-
-.c-card-title__header p {
-  margin: 0;
-}
-
-.c-card-title__heading {
-  margin: 0;
-}
-
-.c-card-title__underline {
-  background-color: var(--_c-card-title-underline-color);
-  border-radius: 4px;
-  height: 4px;
-  margin-top: 10px;
-  width: 44px;
-}
-
-.c-card-title__actions {
-  display: flex;
-  flex-wrap: wrap-reverse;
-  align-items: center;
-  justify-content: end;
-  gap: 8px;
-  flex: 1;
-}
-</style>

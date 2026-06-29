@@ -1,70 +1,70 @@
 <template>
   <c-dropdown
-    ref="dropdownRef"
-    :parent="host"
     :id="`${id}-dropdown`"
+    ref="dropdownRef"
+    :dropdown-item-type="optionElementsExist ? 'option' : 'item'"
     :host-id="`${id}-dropdown`"
     :index="currentIndex"
-    :items-per-page="itemsPerPage"
-    :dropdown-item-type="optionElementsExist ? 'option' : 'item'"
     :items="dropdownItems"
+    :items-per-page
+    :parent="host"
     type="select"
   >
     <c-input
       ref="cInputRef"
       :active="dropdownVisible"
+      :data-hide-details="String(hideDetailsResolved)"
+      :disabled
       :filled="!!value"
-      :disabled="disabled"
-      :hide-details="hideDetails"
-      :hint="hint"
-      :label="label"
-      :label-on-top="labelOnTop"
-      :required="required"
-      :shadow="shadow"
-      :valid="valid"
-      :validation="validation"
-      :input-id="inputId"
+      :hint
+      :input-id
+      :label
+      :label-on-top
+      :required
+      :shadow
+      :valid
+      :validation
       @click="onInputClick"
     >
-      <span
-        v-if="hasConsumerPre"
-        slot="pre"
-        style="display: contents"
-      ><slot name="pre" /></span>
+      <span v-if="hasConsumerPre" slot="pre" style="display: contents">
+        <slot name="pre" />
+      </span>
 
-      <div class="c-input__content">
-        <div class="c-input-menu__input">
+      <div :class="ui.content()" class="c-input__content">
+        <div :class="ui.inputWrap()" class="c-input-menu__input">
           <input
             ref="inputRef"
-            type="text"
-            readonly
-            :aria-expanded="String(dropdownVisible)"
+            :aria-expanded="dropdownVisible"
             :aria-owns="inputId + '-items'"
+            :class="ui.input()"
+            :disabled
+            :name="name || undefined"
+            :value="displayValue"
             aria-autocomplete="list"
             autocomplete="off"
             class="c-input__input"
             role="combobox"
-            :value="displayValue"
-            :name="name || undefined"
-            :disabled="disabled"
-            @input="onUpdateInput"
+            type="text"
+            readonly
             @focus="onInputFocus"
-          >
+            @input="onUpdateInput"
+          />
 
-          <div ref="selectionRef" class="c-input-menu__selection" />
+          <div
+            ref="selectionRef"
+            :class="ui.selection()"
+            class="c-input-menu__selection"
+          />
         </div>
 
-        <c-spinner
-          v-if="loading"
-          :size="20"
-          color="var(--_c-select-active-color)"
-        />
+        <c-spinner v-if="loading" :size="20" color="var(--c-primary-600)" />
 
         <c-icon-button
           v-else-if="value && clearable"
+          :class="ui.iconButton()"
+          :disabled
           aria-label=""
           size="x-small"
-          :disabled="disabled"
           text
           @click="onReset"
           @keydown="onButtonKeyDown('reset', $event)"
@@ -74,10 +74,9 @@
 
         <c-icon-button
           v-else
+          :class="ui.chevron()"
+          :disabled
           size="x-small"
-          class="c-input-menu__chevron"
-          :class="{ 'c-input-menu__chevron--active': dropdownVisible }"
-          :disabled="disabled"
           text
           @click="toggleDropdown"
           @keydown="onButtonKeyDown('chevron', $event)"
@@ -85,31 +84,76 @@
           <c-icon :path="mdiChevronDown" :size="24" />
         </c-icon-button>
 
-        <!-- Consumer's <c-option> elements: data source only, hidden via
-             `.c-input__content slot { display: none }`. The dropdown renders
-             clones; we read the originals through host.querySelectorAll. -->
+        <!-- Consumer's <c-option> elements: data source only, hidden via the
+             `.c-input__content slot { display: none }` escape-hatch rule. The
+             dropdown renders clones; we read the originals through
+             host.querySelectorAll. -->
         <slot />
       </div>
 
-      <span
-        v-if="hasConsumerPost"
-        slot="post"
-        style="display: contents"
-      ><slot name="post" /></span>
+      <span v-if="hasConsumerPost" slot="post" style="display: contents">
+        <slot name="post" />
+      </span>
     </c-input>
   </c-dropdown>
 </template>
 
 <script setup lang="ts">
 import { mdiChevronDown, mdiClose } from '@mdi/js';
+import { tv } from 'tailwind-variants';
 import {
   computed,
   onBeforeUnmount,
   onMounted,
   ref,
   useHost,
+  useId,
+  useTemplateRef,
   watch,
 } from 'vue';
+
+import { coerceBoolean } from '../../shared/coerceBoolean';
+import { emitModelValue } from '../../shared/emitModelValue';
+
+/**
+ * Styling lives in this `tailwind-variants` config (ADR-0004): the slots are
+ * the select's internal regions (the flex content row, the readonly combobox
+ * `input`, the rich-selection overlay, the chevron toggle). The
+ * `chevronActive` / `selectionShown` variants replace the
+ * `.c-input-menu__chevron--active` / `.c-input-menu__selection--show` classes.
+ * The per-component `--c-select-*` override-variable layer is dropped in favour
+ * of the global design tokens (`text-primary-600` for the active colour,
+ * `text-[var(--c-text-body)]` for text, `text-tertiary-500` for placeholder);
+ * consumer customization is via `::part()` (ADR-0006), there is no `override`
+ * prop.
+ *
+ * Child recolouring (cross-component contract): the chevron/clear `c-icon` and
+ * the loading `c-spinner` inherit colour from `currentColor`, so a `text-*`
+ * utility on their wrapper themes them — no `--c-icon-*` / `--c-spinner-*` vars.
+ * The wrapped `c-input` is not yet on tv and still reads its `--c-input-*`
+ * vars; its defaults already match the select defaults except for the floating
+ * label colour, so a single `--c-input-label-color` bridge remains in the
+ * escape-hatch <style> below (ADR-0007), alongside the host box, the projected
+ * `<slot>` hiding and the `:has()`/`::placeholder` selectors utilities can't
+ * express.
+ */
+const select = tv({
+  defaultVariants: { chevronActive: false },
+  slots: {
+    chevron:
+      'aspect-square -mr-1.5 rotate-0 transition-transform duration-300 ease-in-out',
+    content: 'flex items-center w-full',
+    // The clear button / spinner wrappers share the icon-button box metrics.
+    iconButton: 'aspect-square -mr-1.5',
+    input:
+      'max-h-8 py-2 bg-transparent border-0 text-[var(--c-text-body)] flex-[1_1_auto] [font-family:var(--c-font-family)] text-base leading-5 max-w-full min-w-0 w-full cursor-pointer outline-none focus:outline-none active:outline-none placeholder:text-tertiary-500 placeholder:opacity-100',
+    inputWrap: 'w-full flex justify-items-stretch',
+    selection: 'hidden pointer-events-none',
+  },
+  variants: {
+    chevronActive: { true: { chevron: 'rotate-180' } },
+  },
+});
 
 // Port of c-select (Stencil). Thin orchestrator over c-dropdown + c-input:
 // owns the readonly combobox input, the chevron/clear buttons, keyboard
@@ -119,10 +163,10 @@ import {
 // csc-ui-next form components, which rely on event-based binding + v-control.
 
 type SelectItem = {
-  name: string;
-  value: string | number;
   disabled?: boolean;
+  name: string;
   selected?: boolean;
+  value: number | string;
 };
 
 // The single root is the internal <c-dropdown>; every prop it needs is bound
@@ -134,71 +178,116 @@ type SelectItem = {
 // `style`/`class` apply there as the consumer intends) instead of leaking in.
 defineOptions({ inheritAttrs: false });
 
-const props = defineProps({
-  /** Dropdown items (when not using <c-option> elements) */
-  items: { type: Array, default: () => [] },
-  /** Selected value (scalar, or object when return-object is set) */
-  value: { type: [String, Number, Object], default: null },
-  /** Id of the element */
-  hostId: { type: String, default: '' },
+interface CSelectProps {
   /** Make the selected value clearable */
-  clearable: { type: Boolean, default: false },
+  clearable?: boolean;
   /** Disable the input */
-  disabled: { type: Boolean, default: false },
-  /** Element label */
-  label: { type: String, default: '' },
-  /** Label on top of the input */
-  labelOnTop: { type: Boolean, default: false },
-  /** Input field name */
-  name: { type: String, default: '' },
-  /** Placeholder text */
-  placeholder: { type: String, default: '' },
+  disabled?: boolean;
   /** Hide the hint and error messages */
-  hideDetails: { type: Boolean, default: false },
+  hideDetails?: boolean;
   /** Hint text for the input */
-  hint: { type: String, default: '' },
-  /** Show loading state */
-  loading: { type: Boolean, default: false },
-  /** Show required validation */
-  required: { type: Boolean, default: false },
-  /** Set the validity of the input */
-  valid: { type: Boolean, default: true },
-  /** Manual validation */
-  validate: { type: Boolean, default: false },
-  /** Validate the input on blur */
-  validateOnBlur: { type: Boolean, default: false },
-  /** Custom validation message */
-  validation: { type: String, default: 'Required field' },
-  /** Shadow variant */
-  shadow: { type: Boolean, default: false },
-  /** Return object instead of value */
-  returnObject: { type: Boolean, default: false },
+  hint?: string;
+  /** Id of the element */
+  hostId?: string;
+  /** Dropdown items (when not using <c-option> elements) */
+  items?: SelectItem[];
   /** Items per page before adding scroll */
-  itemsPerPage: { type: Number, default: 6 },
+  itemsPerPage?: number;
+  /** Element label */
+  label?: string;
+  /** Label on top of the input */
+  labelOnTop?: boolean;
+  /** Show loading state */
+  loading?: boolean;
+  /** Input field name */
+  name?: string;
   /** Display the option as selection (only with <c-option> elements) */
-  optionAsSelection: { type: Boolean, default: false },
+  optionAsSelection?: boolean;
+  /** Placeholder text */
+  placeholder?: string;
+  /** Show required validation */
+  required?: boolean;
+  /** Return object instead of value */
+  returnObject?: boolean;
+  /** Shadow variant */
+  shadow?: boolean;
+  /** Set the validity of the input */
+  valid?: boolean;
+  /** Manual validation */
+  validate?: boolean;
+  /** Validate the input on blur */
+  validateOnBlur?: boolean;
+  /** Custom validation message */
+  validation?: string;
+  /** Selected value (scalar, or object when return-object is set) */
+  value?: null | number | SelectItem | string;
+}
+
+const props = withDefaults(defineProps<CSelectProps>(), {
+  clearable: false,
+  disabled: false,
+  hideDetails: false,
+  hint: '',
+  hostId: '',
+  items: () => [],
+  itemsPerPage: 6,
+  label: '',
+  labelOnTop: false,
+  loading: false,
+  name: '',
+  optionAsSelection: false,
+  placeholder: '',
+  required: false,
+  returnObject: false,
+  shadow: false,
+  valid: true,
+  validate: false,
+  validateOnBlur: false,
+  validation: 'Required field',
+  value: null,
 });
 
 const host = useHost();
 
-const dropdownRef = ref<
-  | (HTMLElement & {
-      open: () => void;
-      close: () => void;
-      updateList: (reset?: boolean) => void;
-      focusItem: (i: number) => void;
-      selectItem: (i: number) => boolean;
-      setStatusText: (t: string) => void;
-    })
-  | null
->(null);
-const cInputRef = ref<HTMLElement | null>(null);
-const inputRef = ref<HTMLInputElement | null>(null);
-const selectionRef = ref<HTMLDivElement | null>(null);
+// `hide-details` is forwarded to the inner `c-input` and must survive the
+// select's frequent re-renders (it re-renders on every value change). Two Vue
+// `defineCustomElement` quirks bite here:
+//   1. A Boolean prop supplied via *attribute* (`<c-select hide-details>`) is
+//      reset to its default on re-render — the host attribute persists, but
+//      `props.hideDetails` flips to `false`. So we resolve from the stable host
+//      attribute when present, falling back to the prop otherwise.
+//   2. Binding `hide-details` to the nested `c-input` in the template is mangled
+//      on update — the key matches `c-input`'s declared `hideDetails` prop, so
+//      Vue treats it as a property, and the reset above reflects back out and
+//      removes the attribute on re-render. So we forward it through a plain
+//      `data-*` attribute instead (no declared-prop collision → Vue patches it
+//      reliably), and `c-input` reads that channel back.
+const hideDetailsResolved = computed(() =>
+  host?.hasAttribute('hide-details')
+    ? coerceBoolean(host.getAttribute('hide-details'))
+    : coerceBoolean(props.hideDetails),
+);
+
+const dropdownRef = useTemplateRef<
+  {
+    close: () => void;
+    focusItem: (i: number) => void;
+    open: () => void;
+    selectItem: (i: number) => boolean;
+    setStatusText: (t: string) => void;
+    updateList: (reset?: boolean) => void;
+  } & HTMLElement
+>('dropdownRef');
+
+const cInputRef = useTemplateRef<HTMLElement>('cInputRef');
+
+const inputRef = useTemplateRef<HTMLInputElement>('inputRef');
+
+const selectionRef = useTemplateRef<HTMLDivElement>('selectionRef');
 
 // Local mirror of `value` — Stencil mutates its own @Prop; Vue props are
 // readonly, so selection updates flow through this ref and out via events.
-const value = ref<string | number | SelectItem | null>(props.value);
+const value = ref<null | number | SelectItem | string>(props.value);
 watch(
   () => props.value,
   (v) => {
@@ -207,29 +296,36 @@ watch(
   },
 );
 
-const currentIndex = ref<number | null>(null);
+const currentIndex = ref<null | number>(null);
+
 const dropdownVisible = ref(false);
+
+const ui = computed(() => select({ chevronActive: dropdownVisible.value }));
+
 const optionElements = ref<HTMLElement[]>([]);
+
 const optionElementsExist = ref(false);
 
 const hasConsumerPre = ref(false);
+
 const hasConsumerPost = ref(false);
 
-let uid = 0;
 let searchString = '';
-let lastKeyPressTime = 0;
-let statusDebounce: number | null = null;
 
-let _uniqueId = 0;
-const id = computed(() => props.hostId || `select_${_uniqueId}`);
+let lastKeyPressTime = 0;
+
+let statusDebounce: null | number = null;
+
+const autoId = useId();
+
+const id = computed(() => props.hostId || autoId);
 
 const inputId = computed(
   () =>
-    'input_' +
-    (props.hostId || props.label || props.placeholder).replace(
+    `input_${(props.hostId || props.label || props.placeholder).replace(
       /[^a-zA-Z0-9-_]/g,
       '',
-    ),
+    )}`,
 );
 
 // Either the projected <c-option> elements or the `items` prop array.
@@ -242,31 +338,37 @@ const dropdownItems = computed<SelectItem[]>(() =>
 // Display name for the current value (mirrors Stencil's `_value` getter).
 const displayValue = computed(() => {
   const v = value.value;
+
   if (!v) return '';
+
   if (!props.returnObject && !['number', 'string'].includes(typeof v)) {
     console.warn(
       `[C-SELECT] The value should be of type 'number' or 'string' when return-object is not used.`,
     );
+
     return '';
   }
+
   const items = dropdownItems.value ?? [];
+
   if (!props.returnObject) {
     return items.find((item) => item.value === v)?.name ?? '';
   }
-  return items.find((item) => item.value === (v as SelectItem).value)?.name ?? '';
+
+  return (
+    items.find((item) => item.value === (v as SelectItem).value)?.name ?? ''
+  );
 });
 
 // ---- value plumbing -----------------------------------------------------
 
-const dispatch = (name: string, detail: unknown) =>
-  host?.dispatchEvent(new CustomEvent(name, { detail, bubbles: false }));
-
-const emitValue = (next: string | number | SelectItem | null) => {
+const emitValue = (next: null | number | SelectItem | string) => {
   value.value = next;
-  // changeValue drives v-control / v-model; update:value mirrors the other
-  // csc-ui-next form components.
-  dispatch('changeValue', next);
-  dispatch('update:value', next);
+  // changeValue/update:value (non-bubbling) + native `input` (so a plain
+  // `v-model` works without `v-control`) + host `value` mirror. The value watch
+  // runs onValueChanged/selectOption (visuals-only), so writing the property
+  // doesn't loop.
+  emitModelValue(host, next);
 };
 
 const getSelectionIndex = (search: string) =>
@@ -275,34 +377,38 @@ const getSelectionIndex = (search: string) =>
   );
 
 const setCurrentIndex = ({
-  value: v,
   name,
+  value: v,
 }: {
-  value: string | number;
   name: string;
-}): SelectItem | null => {
-  let selection: SelectItem | null = null;
+  value: number | string;
+}): null | SelectItem => {
+  let selection: null | SelectItem = null;
   dropdownItems.value.forEach((item, index) => {
     const selected = item.value === v && item.name === name;
+
     if (optionElementsExist.value) {
-      (item as SelectItem & { selected: boolean }).selected = selected;
+      (item as { selected: boolean } & SelectItem).selected = selected;
     }
+
     if (selected) {
       currentIndex.value = index;
       selection = item;
     }
   });
+
   return selection;
 };
 
 const selectOption = ({
-  value: v,
   name,
+  value: v,
 }: {
-  value: string | number;
   name: string;
+  value: number | string;
 }) => {
   dropdownRef.value?.close();
+
   const selection = setCurrentIndex({ name, value: v });
 
   if (optionElementsExist.value && props.optionAsSelection && selection) {
@@ -316,11 +422,11 @@ const selectOption = ({
 };
 
 const setValue = ({
-  value: v,
   name,
+  value: v,
 }: {
-  value: string | number;
   name: string;
+  value: number | string;
 }) => {
   emitValue(props.returnObject ? { name, value: v } : v);
 };
@@ -328,8 +434,10 @@ const setValue = ({
 const onValueChanged = (v: unknown) => {
   if (!v) {
     if (props.optionAsSelection) selectionRef.value?.replaceChildren();
+
     return;
   }
+
   selectOption(
     props.returnObject
       ? (v as { name: string; value: string })
@@ -341,13 +449,17 @@ const onValueChanged = (v: unknown) => {
 
 const onSelectOption = (event: Event) => {
   const detail = (event as CustomEvent<{ name: string; value: string }>).detail;
+
   const v = value.value;
+
   if (props.returnObject && (v as SelectItem)?.value === detail.value) {
     dropdownRef.value?.close();
   }
+
   if (!props.returnObject && v === detail.value) {
     dropdownRef.value?.close();
   }
+
   setValue(detail);
 };
 
@@ -359,21 +471,28 @@ const onDropdownStateChange = (event: Event) => {
 
 const toggleDropdown = (event: Event) => {
   event.stopPropagation();
+
   if (dropdownVisible.value) {
     dropdownRef.value?.close();
+
     return;
   }
+
   dropdownRef.value?.open();
 };
 
 const onButtonKeyDown = (src: 'chevron' | 'reset', event: KeyboardEvent) => {
   event.stopPropagation();
+
   if (event.key !== 'Tab') event.preventDefault();
-  if (['Enter', ' '].includes(event.key)) {
+
+  if ([' ', 'Enter'].includes(event.key)) {
     if (src === 'chevron') {
       toggleDropdown(event);
+
       return;
     }
+
     onReset(event);
     requestAnimationFrame(() => inputRef.value?.focus());
   }
@@ -403,14 +522,18 @@ const updateStatusText = () => {
     clearTimeout(statusDebounce);
     statusDebounce = null;
   }
+
   statusDebounce = window.setTimeout(() => {
     const items = dropdownItems.value;
+
     let statusText = '';
+
     if (currentIndex.value === null) {
       statusText = items.length
         ? `${items.length} option${items.length !== 1 ? 's' : ''} available`
         : 'No options available';
     }
+
     const ending = items.length
       ? ', navigate using the up and down arrows'
       : '';
@@ -428,19 +551,24 @@ const onInputFocus = () => {
 
 const handleKeyDown = (event: KeyboardEvent) => {
   const alphanumeric = /^[0-9a-zA-Z ]+$/;
+
   const items = dropdownItems.value;
+
   if (props.disabled) return;
 
   if (event.key.match(alphanumeric) && event.key.length === 1) {
     if (!dropdownVisible.value) dropdownRef.value?.open();
     requestAnimationFrame(() => {
       const now = performance.now();
+
       if (now - lastKeyPressTime > 3000) {
         searchString = event.key;
       } else {
         searchString += event.key;
       }
+
       lastKeyPressTime = now;
+
       const selectionIndex = getSelectionIndex(searchString);
       currentIndex.value = selectionIndex >= 0 ? selectionIndex : null;
     });
@@ -449,7 +577,9 @@ const handleKeyDown = (event: KeyboardEvent) => {
   if (event.key === 'Escape') {
     dropdownRef.value?.close();
     inputRef.value?.focus();
+
     if (!value.value) currentIndex.value = null;
+
     return;
   }
 
@@ -459,12 +589,18 @@ const handleKeyDown = (event: KeyboardEvent) => {
 
   if (event.key === 'ArrowDown') {
     event.preventDefault();
+
     if (!items.length) return;
+
     if (!dropdownVisible.value) {
       dropdownRef.value?.open();
-      if (value.value) currentIndex.value = getSelectionIndex(displayValue.value);
+
+      if (value.value)
+        currentIndex.value = getSelectionIndex(displayValue.value);
+
       return;
     }
+
     requestAnimationFrame(() => {
       currentIndex.value =
         currentIndex.value === null
@@ -476,15 +612,21 @@ const handleKeyDown = (event: KeyboardEvent) => {
 
   if (event.key === 'ArrowUp') {
     event.preventDefault();
+
     if (currentIndex.value === 0) {
       dropdownRef.value?.close();
       inputRef.value?.focus();
     }
+
     if (!dropdownVisible.value) {
       dropdownRef.value?.open();
-      if (value.value) currentIndex.value = getSelectionIndex(displayValue.value);
+
+      if (value.value)
+        currentIndex.value = getSelectionIndex(displayValue.value);
+
       return;
     }
+
     currentIndex.value =
       currentIndex.value === null
         ? items.length - 1
@@ -498,6 +640,7 @@ const handleKeyDown = (event: KeyboardEvent) => {
 
   if (event.key === 'Enter') {
     event.preventDefault();
+
     if (currentIndex.value === null) return;
     dropdownRef.value?.selectItem(currentIndex.value);
   }
@@ -524,19 +667,23 @@ defineExpose({ reset });
 
 const refreshOptions = () => {
   if (!host) return;
+
   const options = Array.from(
     host.querySelectorAll('c-option'),
   ) as HTMLElement[];
   optionElements.value = options;
+
   if (options.length && !optionElementsExist.value) {
     optionElementsExist.value = true;
   }
+
   hasConsumerPre.value = !!host.querySelector(':scope > [slot="pre"]');
   hasConsumerPost.value = !!host.querySelector(':scope > [slot="post"]');
 
   const selection = options.find(
-    (o) => (o as HTMLElement & { selected?: boolean }).selected,
-  ) as (HTMLElement & { name: string; value: string | number }) | undefined;
+    (o) => (o as { selected?: boolean } & HTMLElement).selected,
+  ) as ({ name: string; value: number | string } & HTMLElement) | undefined;
+
   if (selection) {
     emitValue(
       props.returnObject
@@ -549,20 +696,21 @@ const refreshOptions = () => {
 let childObserver: MutationObserver | null = null;
 
 onMounted(() => {
-  _uniqueId += 1;
-  uid += 1;
-
   // Guarantee the dropdown has its parent reference even if the template
   // property bind didn't land before the child mounted.
   if (dropdownRef.value && host) {
-    (dropdownRef.value as HTMLElement & { parent?: HTMLElement }).parent = host;
+    (dropdownRef.value as { parent?: HTMLElement } & HTMLElement).parent = host;
     dropdownRef.value.addEventListener('selectOption', onSelectOption);
-    dropdownRef.value.addEventListener('dropdownStateChange', onDropdownStateChange);
+    dropdownRef.value.addEventListener(
+      'dropdownStateChange',
+      onDropdownStateChange,
+    );
   }
 
   host?.addEventListener('keydown', handleKeyDown, { passive: false });
 
   refreshOptions();
+
   if (host && typeof MutationObserver !== 'undefined') {
     childObserver = new MutationObserver(refreshOptions);
     childObserver.observe(host, { childList: true, subtree: true });
@@ -576,6 +724,7 @@ onMounted(() => {
           item.value === (value.value as SelectItem).value
         : item.value === value.value,
     );
+
     if (selection) {
       setCurrentIndex({
         name: selection.name,
@@ -588,71 +737,45 @@ onMounted(() => {
 onBeforeUnmount(() => {
   childObserver?.disconnect();
   host?.removeEventListener('keydown', handleKeyDown);
+
   if (statusDebounce !== null) clearTimeout(statusDebounce);
   dropdownRef.value?.removeEventListener('selectOption', onSelectOption);
-  dropdownRef.value?.removeEventListener('dropdownStateChange', onDropdownStateChange);
+  dropdownRef.value?.removeEventListener(
+    'dropdownStateChange',
+    onDropdownStateChange,
+  );
 });
 </script>
 
+<!--
+  Escape-hatch CSS (ADR-0007): only constructs Tailwind utilities cannot
+  express. The select's internal regions (content row, readonly input, chevron,
+  selection overlay) are styled by the `tv` config above against global design
+  tokens. What remains here:
+    - The host box: `:host{display:block;cursor:text}` overrides the global
+      `:host{display:contents}` so the field is a real box hosting the
+      light-DOM c-input. Utilities can't target the host.
+      The former `--c-input-*` theming bridges are all dropped: c-input is now
+      on tv (ADR-0004) and no longer reads them. The floating label therefore
+      uses c-input's own default colour (tertiary-600) — a standard floating-
+      label look; re-pinning it isn't possible via `::part()` (c-input sits two
+      shadow boundaries deep, inside c-dropdown) and a new override var would
+      violate ADR-0006, so the default is accepted.
+    - `.c-input__content slot{display:none}`: a `<slot>` is a shadow node Vue
+      renders with no class hook; the projected <c-option> data source must
+      never paint.
+    - `.c-input-menu__selection--show`: shown imperatively (JS toggles this
+      literal class) and read by the `:has()` rule — the visible rich-selection
+      overlay, recoloured to the active colour.
+    - The `:has()` rule hiding the duplicate readonly input in
+      option-as-selection mode, and `input::placeholder` (a native
+      pseudo-element) — neither is expressible as a utility on this element.
+  Authored against global design tokens only.
+-->
 <style>
 :host {
-  /**
-   * @prop --c-select-active-color: Active select color
-   * @prop --c-select-inactive-color: Inactive select color
-   * @prop --c-select-background-color: Inactive select background color
-   * @prop --c-select-text-color: Select text color
-   * @prop --c-select-placeholder-color: Select placeholder color
-   * @prop --c-select-option-background-color: Select option background color
-   * @prop --c-select-option-background-color-hover: Select option hover background color
-   * @prop --c-select-option-text-color: Select option text color
-   */
-  --_c-select-active-color: var(--c-select-active-color, var(--c-primary-600));
-  --_c-select-inactive-color: var(
-    --c-select-inactive-color,
-    var(--c-tertiary-600)
-  );
-  --_c-select-background-color: var(
-    --c-select-background-color,
-    var(--c-transparent)
-  );
-  --_c-select-text-color: var(--c-select-text-color, var(--c-text-body));
-  --_c-select-placeholder-color: var(
-    --c-select-placeholder-color,
-    var(--c-tertiary-500)
-  );
-  --_c-select-option-background-color: var(
-    --c-select-option-background-color,
-    var(--c-white)
-  );
-  --_c-select-option-background-color-hover: var(
-    --c-select-option-background-color-hover,
-    var(--c-primary-100)
-  );
-  --_c-select-option-text-color: var(
-    --c-select-option-text-color,
-    var(--c-text-body)
-  );
-  --_c-select-label-color: var(
-    --c-select-label-color,
-    var(--_c-select-text-color)
-  );
-
-  /* Bridge select tokens into the c-input custom properties. */
-  --c-input-active-color: var(--_c-select-active-color);
-  --c-input-inactive-color: var(--_c-select-inactive-color);
-  --c-input-background-color: var(--_c-select-background-color);
-  --c-input-text-color: var(--_c-select-text-color);
-  --c-input-label-color: var(--_c-select-label-color);
-  --c-input-placeholder-color: var(--_c-select-placeholder-color);
-
   display: block;
   cursor: text;
-}
-
-.c-input__content {
-  align-items: center;
-  display: flex;
-  width: 100%;
 }
 
 /* The default slot only carries the <c-option> data source — never paint it. */
@@ -660,68 +783,22 @@ onBeforeUnmount(() => {
   display: none;
 }
 
-.c-input__content c-icon-button {
-  aspect-ratio: 1;
-  margin-right: -6px;
-}
-
-.c-input-menu__input {
-  width: 100%;
-  display: flex;
-  justify-items: stretch;
-}
-
-.c-input-menu__selection {
-  display: none;
-  pointer-events: none;
-}
-
+/* option-as-selection mode: the rich <c-option> clone is the visible value, so
+ * reveal the overlay and recolour it to the active colour. */
 .c-input-menu__selection--show {
   align-items: center;
   display: flex;
   width: 100%;
-  color: var(--_c-select-active-color);
+  color: var(--c-primary-600);
 }
 
-/* option-as-selection mode: the rich <c-option> clone in `.c-input-menu__selection`
- * is the visible value, so hide the readonly text input that would otherwise
- * sit beside it as a duplicate label. */
+/* …and hide the readonly text input that would otherwise sit beside it. */
 .c-input-menu__input:has(.c-input-menu__selection--show) input.c-input__input {
   display: none;
 }
 
-.c-input-menu__chevron {
-  transform: rotate(0deg);
-  transition: transform 0.3s ease-in-out;
-}
-
-.c-input-menu__chevron--active {
-  transform: rotate(180deg);
-}
-
-input.c-input__input {
-  max-height: 32px;
-  padding: 8px 0;
-  background-color: transparent;
-  border: none;
-  color: var(--_c-select-text-color);
-  flex: 1 1 auto;
-  font-family: var(--c-font-family);
-  font-size: 16px;
-  line-height: 20px;
-  max-width: 100%;
-  min-width: 0;
-  width: 100%;
-  cursor: pointer;
-}
-
-input.c-input__input:focus,
-input.c-input__input:active {
-  outline: none;
-}
-
 input.c-input__input::placeholder {
-  color: var(--_c-select-placeholder-color);
+  color: var(--c-tertiary-500);
   opacity: 1;
 }
 </style>

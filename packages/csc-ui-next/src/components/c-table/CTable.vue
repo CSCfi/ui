@@ -7,25 +7,39 @@
        <table> into this shadow root on mount — it then becomes a real
        shadow descendant and every nested selector below works as
        written, without leaking styles into the document. -->
-  <div ref="mount" />
+  <div ref="mountRef" />
 </template>
 
 <script setup lang="ts">
-import { onBeforeUnmount, onMounted, useHost, useTemplateRef, watch } from 'vue';
+import {
+  onBeforeUnmount,
+  onMounted,
+  useHost,
+  useTemplateRef,
+  watch,
+} from 'vue';
 
 // `<slot />` root (fragment) + we write to the host below — keep fallthrough
 // attrs on the host element instead of tripping the "renders fragment" warning.
 defineOptions({ inheritAttrs: false });
 
-const props = defineProps({
-  mobileBreakpoint: { type: Number, default: 600 },
-  responsive: { type: Boolean, default: false },
+interface CTableProps {
+  mobileBreakpoint?: number;
+  responsive?: boolean;
+}
+
+const props = withDefaults(defineProps<CTableProps>(), {
+  mobileBreakpoint: 600,
+  responsive: false,
 });
 
 const host = useHost();
-const mount = useTemplateRef<HTMLElement>('mount');
+
+const mountRef = useTemplateRef<HTMLElement>('mountRef');
+
 let tableEl: HTMLTableElement | null = null;
-let observer: ResizeObserver | null = null;
+
+let observer: null | ResizeObserver = null;
 
 const headers = () =>
   tableEl
@@ -34,22 +48,27 @@ const headers = () =>
 
 const rows = () =>
   tableEl
-    ? (Array.from(tableEl.querySelectorAll('tr')) as HTMLTableRowElement[])
-        .filter((row) => !row.hasAttribute('no-mobile-labels'))
+    ? (
+        Array.from(tableEl.querySelectorAll('tr')) as HTMLTableRowElement[]
+      ).filter((row) => !row.hasAttribute('no-mobile-labels'))
     : [];
 
 // Prepend a <span.c-table__mobile-label> to each <td> with the matching
 // header text. Idempotent — skip cells that already have a label.
 const createMobileLabels = () => {
   const cols = headers();
+
   if (!cols.length) return;
   rows().forEach((row) => {
     let cellIndex = 0;
     Array.from(row.querySelectorAll('td')).forEach((cell) => {
       if (cell.querySelector('.c-table__mobile-label')) return;
+
       const heading = cols[cellIndex % cols.length];
       cellIndex += cell.colSpan ?? 1;
+
       if (!heading) return;
+
       const span = document.createElement('span');
       span.classList.add('c-table__mobile-label');
       span.innerHTML = heading;
@@ -80,15 +99,17 @@ const stopObserving = () => {
 const updateMobileLabels = () => createMobileLabels();
 
 onMounted(() => {
-  if (!host || !mount.value) return;
+  if (!host || !mountRef.value) return;
+
   // The user wrote `<c-table><table>...</table></c-table>`. The table is
   // currently a light-DOM child. Move it into the shadow root so our
   // shadow-scoped CSS below can reach its descendants.
   const lightTable = host.querySelector(':scope > table');
+
   if (!(lightTable instanceof HTMLTableElement)) return;
   tableEl = lightTable;
   tableEl.classList.add('c-table');
-  mount.value.appendChild(tableEl);
+  mountRef.value.appendChild(tableEl);
 
   (host as unknown as { updateMobileLabels: () => void }).updateMobileLabels =
     updateMobileLabels;
@@ -115,16 +136,21 @@ watch(
 onBeforeUnmount(() => observer?.disconnect());
 </script>
 
+<!--
+  Escape-hatch CSS (ADR-0007): this whole block is unavoidably escape-hatch.
+  The styled <table>/thead/tbody/tr/th/td are the user's light-DOM table that is
+  physically MOVED into this shadow root on mount (see onMounted) — they are not
+  rendered by this template, so they can't carry `tv` `:class` bindings. The
+  styling therefore stays as shadow-scoped descendant selectors keyed off the
+  `.c-table` / `.c-table--mobile` classes the script toggles. Per ADR-0004 the
+  per-component `--c-*` indirection vars are dropped: rules author directly
+  against the global design tokens. `:host{display:block}` is kept because the
+  host must be a real box that contains the moved table; the rest are
+  descendant / `:nth-of-type` / `@supports` selectors and the mobile-label
+  `::before`-style span — none of which utilities can express.
+-->
 <style>
-/* All rules apply inside the shadow root — the user's <table> was moved
- * here on mount, so descendant selectors (`table.c-table thead th` etc.)
- * resolve normally with no global leakage. */
-
 :host {
-  --_c-table-border-color: var(--c-table-border-color, var(--c-tertiary-200));
-  --_c-table-header-text-color: var(--c-table-header-text-color, var(--c-text-system));
-  --_c-table-row-background-color-mobile: var(--c-table-row-background-color-mobile, rgba(var(--c-primary-rgb), 0.05));
-
   display: block;
 }
 
@@ -159,31 +185,43 @@ table.c-table thead {
 }
 
 table.c-table thead th {
-  border-bottom: 2px solid var(--_c-table-border-color);
+  border-bottom: 2px solid var(--c-tertiary-200);
   text-align: left;
 }
 
 table.c-table tbody {
   box-shadow:
-    inset 1px 0 0 0 var(--_c-table-border-color),
-    inset -1px 0 0 0 var(--_c-table-border-color),
-    inset 0 1px 0 0 var(--_c-table-border-color),
-    inset 0 -1px 0 0 var(--_c-table-border-color);
+    inset 1px 0 0 0 var(--c-tertiary-200),
+    inset -1px 0 0 0 var(--c-tertiary-200),
+    inset 0 1px 0 0 var(--c-tertiary-200),
+    inset 0 -1px 0 0 var(--c-tertiary-200);
 }
 
 @supports (-webkit-hyphens: none) {
-  table.c-table tbody { border: 1px solid var(--_c-table-border-color); }
-  table.c-table tbody tr { border-bottom: 1px solid var(--_c-table-border-color); }
+  table.c-table tbody {
+    border: 1px solid var(--c-tertiary-200);
+  }
+  table.c-table tbody tr {
+    border-bottom: 1px solid var(--c-tertiary-200);
+  }
 }
 
 table.c-table tbody tr {
-  box-shadow: inset 0 1px 0 0 var(--_c-table-border-color);
+  box-shadow: inset 0 1px 0 0 var(--c-tertiary-200);
 }
 
-table.c-table tfoot { background-color: var(--c-white); }
-table.c-table tfoot tr { box-shadow: inset 0 1px 0 0 var(--_c-table-border-color); }
-table.c-table tfoot td { min-height: 48px; }
-table.c-table tfoot c-pagination { flex: 1; }
+table.c-table tfoot {
+  background-color: var(--c-white);
+}
+table.c-table tfoot tr {
+  box-shadow: inset 0 1px 0 0 var(--c-tertiary-200);
+}
+table.c-table tfoot td {
+  min-height: 48px;
+}
+table.c-table tfoot c-pagination {
+  flex: 1;
+}
 
 table.c-table th,
 table.c-table td {
@@ -196,7 +234,7 @@ table.c-table td {
 table.c-table th {
   height: 48px;
   font-size: 14px;
-  color: var(--_c-table-header-text-color);
+  color: var(--c-text-system);
 }
 
 table.c-table td {
@@ -204,16 +242,20 @@ table.c-table td {
   color: var(--c-text-body);
 }
 
-table.c-table td span.c-table__mobile-label { display: none; }
+table.c-table td span.c-table__mobile-label {
+  display: none;
+}
 
 table.c-table.c-table--mobile {
   border-spacing: 0 16px;
   border-collapse: separate;
 }
-table.c-table.c-table--mobile tbody { box-shadow: none; }
+table.c-table.c-table--mobile tbody {
+  box-shadow: none;
+}
 table.c-table.c-table--mobile tbody tr {
   border-radius: 4px;
-  box-shadow: inset 0 0 0 1px var(--_c-table-border-color);
+  box-shadow: inset 0 0 0 1px var(--c-tertiary-200);
 }
 @supports (-webkit-hyphens: none) {
   table.c-table.c-table--mobile tbody tr {
@@ -222,7 +264,9 @@ table.c-table.c-table--mobile tbody tr {
     border: none;
   }
 }
-table.c-table.c-table--mobile thead { display: none; }
+table.c-table.c-table--mobile thead {
+  display: none;
+}
 table.c-table.c-table--mobile td {
   display: grid;
   gap: 4px;
@@ -231,12 +275,12 @@ table.c-table.c-table--mobile td {
 }
 table.c-table.c-table--mobile td span.c-table__mobile-label {
   font-size: 14px;
-  color: var(--_c-table-header-text-color);
+  color: var(--c-text-system);
   display: inline-block;
   text-align: start;
   padding-right: 8px;
 }
 table.c-table.c-table--mobile td:nth-of-type(even) {
-  background-color: var(--_c-table-row-background-color-mobile);
+  background-color: rgba(var(--c-primary-rgb), 0.05);
 }
 </style>

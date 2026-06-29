@@ -1,5 +1,5 @@
 <template>
-  <div class="c-tabs__container">
+  <div :class="ui.container()" class="c-tabs__container" part="container">
     <c-icon-button
       v-if="isOverflowing && !vertical"
       size="x-small"
@@ -10,13 +10,15 @@
     </c-icon-button>
 
     <div
-      ref="tabsEl"
+      ref="tabsRef"
+      :class="ui.tabs()"
       class="c-tabs__tabs"
-      @touchstart="onTouchStart"
-      @touchmove="onTouchMove"
+      part="tabs"
       @touchend="onTouchEnd"
+      @touchmove="onTouchMove"
+      @touchstart="onTouchStart"
     >
-      <div ref="scrollEl" class="c-tabs__scroll">
+      <div ref="scrollRef" :class="ui.scroll()" class="c-tabs__scroll">
         <slot />
       </div>
     </div>
@@ -31,24 +33,58 @@
     </c-icon-button>
   </div>
 
-  <div class="c-tabs__content">
+  <div :class="ui.content()" class="c-tabs__content" part="content">
     <slot name="items" />
   </div>
 </template>
 
 <script setup lang="ts">
 import { mdiArrowLeft, mdiArrowRight } from '@mdi/js';
+import { tv } from 'tailwind-variants';
 import {
   computed,
   onBeforeUnmount,
   onMounted,
   ref,
   useHost,
+  useId,
   useTemplateRef,
   watch,
   watchEffect,
 } from 'vue';
+
 import { coerceBoolean } from '../../shared/coerceBoolean';
+import { emitModelValue } from '../../shared/emitModelValue';
+
+/**
+ * Styling lives in this `tailwind-variants` config (ADR-0004) for the parts
+ * whose layout is static utilities; customization is via `::part()` (ADR-0006).
+ *
+ * The rest of this component is irreducibly escape-hatch (ADR-0007), kept in
+ * the <style> block below: the host must be a real box (the whole grid/flex
+ * layout, the `vertical`/`justify`/`overflow`/`mobile`/`borderless` state, and
+ * the active-tab indicator all hang off it); the sliding indicator is an
+ * `::after`/`::before` pseudo-element animated via `--_c-tabs-indicator-*` vars
+ * the script sets imperatively (and whose `transitionend` the script listens
+ * for); the `--_c-tabs-scroll-position-x` / `--_c-tabs-transition-speed`
+ * var-driven transforms can't be static utilities; and `::slotted(...)` rules
+ * style the consumer-provided c-tab / c-tab-buttons / c-tab-items children.
+ * The structural class names (`c-tabs__tabs`, `c-tabs__scroll`,
+ * `c-tabs__container`) are also DOM hooks the script queries in the shadow
+ * root, so they are retained alongside the part/tv classes.
+ */
+const tabs = tv({
+  slots: {
+    // base container layout; the overflow/vertical reshaping lives on the host
+    // selectors in the escape-hatch <style>.
+    container: 'grid items-center gap-1',
+    content: 'flex',
+    scroll: 'flex m-0 p-0 relative grow',
+    tabs: 'flex overflow-hidden p-1 relative -m-1',
+  },
+});
+
+const ui = tabs();
 
 // Two root nodes (`.c-tabs__container` + `.c-tabs__content`) make this a
 // fragment root, and we write `class`/`role`/style to the host below — keep
@@ -57,53 +93,80 @@ import { coerceBoolean } from '../../shared/coerceBoolean';
 defineOptions({ inheritAttrs: false });
 
 const arrowLeft = mdiArrowLeft;
+
 const arrowRight = mdiArrowRight;
 
-const props = defineProps({
-  value: { type: [Number, String], default: 0 },
-  borderless: { type: Boolean, default: false },
-  disableAnimation: { type: Boolean, default: false },
-  justify: { type: String, default: 'stretch' },
-  mobileBreakpoint: { type: Number, default: 640 },
-  vertical: { type: Boolean, default: false },
+interface CTabsProps {
+  borderless?: boolean;
+  disableAnimation?: boolean;
+  justify?: string;
+  mobileBreakpoint?: number;
+  value?: number | string;
+  vertical?: boolean;
+}
+
+const props = withDefaults(defineProps<CTabsProps>(), {
+  borderless: false,
+  disableAnimation: false,
+  justify: 'stretch',
+  mobileBreakpoint: 640,
+  value: 0,
+  vertical: false,
 });
 
 const host = useHost();
-const tabsEl = useTemplateRef<HTMLElement>('tabsEl');
-const scrollEl = useTemplateRef<HTMLElement>('scrollEl');
 
-const dispatchValue = (value: unknown) => {
-  host?.dispatchEvent(new CustomEvent('changeValue', { detail: value }));
-  host?.dispatchEvent(new CustomEvent('update:value', { detail: value }));
-};
+const tabsRef = useTemplateRef<HTMLElement>('tabsRef');
 
-let uid = 0;
+const scrollRef = useTemplateRef<HTMLElement>('scrollRef');
+
+// changeValue/update:value + native `input` (so a plain `v-model` works without
+// `v-control`) + host `value` mirror. Called only from interaction handlers;
+// the value/internalValue watches are visuals-only (+ push-down), so no loop.
+const dispatchValue = (value: unknown) => emitModelValue(host, value);
+
+const autoId = useId();
+
 const internalValue = ref<number | string>(props.value);
+
 const isOverflowing = ref(false);
+
 const isMobile = ref(false);
+
 const scrollOffset = ref(0);
 
 let initialized = false;
+
 let isDirty = false;
+
 let focusedTabValue: number | string = props.value;
+
 let previousWidth = 0;
+
 let maxScrollOffset = 0;
-let moveDebounce: ReturnType<typeof setTimeout> | null = null;
-let debounce: ReturnType<typeof setTimeout> | null = null;
-let resizeObserver: ResizeObserver | null = null;
+
+let moveDebounce: null | ReturnType<typeof setTimeout> = null;
+
+let debounce: null | ReturnType<typeof setTimeout> = null;
+
+let resizeObserver: null | ResizeObserver = null;
+
 let startX = 0;
+
 let touchOffset = 0;
 
-type CTabEl = HTMLElement & {
-  value: number | string;
-  disabled?: boolean;
+type CTabButtonsEl = { value: number | string } & HTMLElement;
+
+type CTabEl = {
   active?: boolean;
-};
-type CTabItemsEl = HTMLElement & {
+  disabled?: boolean;
   value: number | string;
+} & HTMLElement;
+
+type CTabItemsEl = {
   disableAnimation?: boolean;
-};
-type CTabButtonsEl = HTMLElement & { value: number | string };
+  value: number | string;
+} & HTMLElement;
 
 // Vue defineCustomElement leaks the raw attribute string (e.g. "" for
 // `<c-tabs disable-animation>`) instead of coercing to Boolean. Combine
@@ -112,16 +175,23 @@ type CTabButtonsEl = HTMLElement & { value: number | string };
 // for the initial markup intent).
 const boolFromHost = (attr: string): boolean => {
   if (!host) return false;
+
   if (!host.hasAttribute(attr)) return false;
+
   const v = host.getAttribute(attr);
+
   return v !== 'false';
 };
+
 const disableAnimation = computed(
-  () => coerceBoolean(props.disableAnimation) || boolFromHost('disable-animation'),
+  () =>
+    coerceBoolean(props.disableAnimation) || boolFromHost('disable-animation'),
 );
+
 const borderless = computed(
   () => coerceBoolean(props.borderless) || boolFromHost('borderless'),
 );
+
 const vertical = computed(
   () => coerceBoolean(props.vertical) || boolFromHost('vertical'),
 );
@@ -132,26 +202,29 @@ const prefersReducedMotion = () =>
 
 const tabItemsEl = () =>
   host?.querySelector('c-tab-items') as CTabItemsEl | null;
+
 const tabButtonsEl = () =>
   host?.querySelector(':scope > c-tab-buttons') as CTabButtonsEl | null;
 
-const tabs = (): CTabEl[] => {
+const tabsList = (): CTabEl[] => {
   const tb = tabButtonsEl();
+
   if (tb) {
     return Array.from(tb.querySelectorAll(':scope > c-button')) as CTabEl[];
   }
+
   return Array.from(host?.querySelectorAll(':scope > c-tab') ?? []) as CTabEl[];
 };
 
-const availableValues = () => tabs().map((t) => t.value);
-const getTabIndex = (value: string | number) =>
+const availableValues = () => tabsList().map((t) => t.value);
+
+const getTabIndex = (value: number | string) =>
   availableValues().findIndex((v) => v === value);
 
 const setIndicatorVar = (name: string, value: string) => {
-  (host?.shadowRoot?.querySelector('.c-tabs__tabs') as HTMLElement)?.style.setProperty(
-    name,
-    value,
-  );
+  (
+    host?.shadowRoot?.querySelector('.c-tabs__tabs') as HTMLElement
+  )?.style.setProperty(name, value);
 };
 
 // Push the current value down to c-tab-items and c-tab-buttons
@@ -163,18 +236,25 @@ const setIndicatorVar = (name: string, value: string) => {
 // sees the correct value by the time its onMounted runs.
 const updateItemsValue = () => {
   const items = tabItemsEl();
+
   if (items) items.value = internalValue.value;
+
   const tb = tabButtonsEl();
+
   if (tb) tb.value = internalValue.value;
 };
 
 const handleOverflow = () => {
   if (tabButtonsEl()) {
     isOverflowing.value = false;
+
     return;
   }
+
   const content = host?.shadowRoot?.querySelector('.c-tabs__scroll');
+
   const container = host?.shadowRoot?.querySelector('.c-tabs__tabs');
+
   if (!content || !container) return;
   isOverflowing.value = container.clientWidth + 1 < content.scrollWidth;
 };
@@ -186,9 +266,11 @@ const moveIndicator = (oldTab: HTMLElement, newTab: HTMLElement) => {
       const content = host?.shadowRoot?.querySelector(
         '.c-tabs__scroll',
       ) as HTMLElement;
+
       const container = host?.shadowRoot?.querySelector(
         '.c-tabs__tabs',
       ) as HTMLElement;
+
       if (!content || !container) return;
 
       if (initialized && !prefersReducedMotion()) {
@@ -196,11 +278,15 @@ const moveIndicator = (oldTab: HTMLElement, newTab: HTMLElement) => {
       }
 
       const buttonOffset = isOverflowing.value ? 32 : 0;
+
       const newTabWidth = newTab.offsetWidth / content.offsetWidth;
+
       const newTabHeight = newTab.offsetHeight / content.offsetHeight;
+
       const newTabPosition = oldTab.compareDocumentPosition(newTab);
 
       let transitionWidth = 0;
+
       // DOCUMENT_POSITION_FOLLOWING (4) = new tab is after the old one.
       if (newTabPosition === 4) {
         transitionWidth = vertical.value
@@ -210,8 +296,14 @@ const moveIndicator = (oldTab: HTMLElement, newTab: HTMLElement) => {
         transitionWidth = vertical.value
           ? oldTab.offsetTop + oldTab.offsetHeight - newTab.offsetTop
           : oldTab.offsetLeft + oldTab.offsetWidth - newTab.offsetLeft;
-        setIndicatorVar('--_c-tabs-indicator-left', `${newTab.offsetLeft - buttonOffset}px`);
-        setIndicatorVar('--_c-tabs-indicator-top', `${newTab.offsetTop - buttonOffset}px`);
+        setIndicatorVar(
+          '--_c-tabs-indicator-left',
+          `${newTab.offsetLeft - buttonOffset}px`,
+        );
+        setIndicatorVar(
+          '--_c-tabs-indicator-top',
+          `${newTab.offsetTop - buttonOffset}px`,
+        );
       }
 
       setIndicatorVar(
@@ -225,18 +317,27 @@ const moveIndicator = (oldTab: HTMLElement, newTab: HTMLElement) => {
 
       const onTransitionEnd = (event: TransitionEvent) => {
         if (event.propertyName !== 'scale') return;
-        setIndicatorVar('--_c-tabs-indicator-left', `${newTab.offsetLeft - buttonOffset}px`);
-        setIndicatorVar('--_c-tabs-indicator-top', `${newTab.offsetTop - buttonOffset}px`);
+        setIndicatorVar(
+          '--_c-tabs-indicator-left',
+          `${newTab.offsetLeft - buttonOffset}px`,
+        );
+        setIndicatorVar(
+          '--_c-tabs-indicator-top',
+          `${newTab.offsetTop - buttonOffset}px`,
+        );
         setIndicatorVar(
           '--_c-tabs-indicator-width',
           String(vertical.value ? newTabHeight : newTabWidth),
         );
         content.removeEventListener('transitionend', onTransitionEnd);
+
         if (!initialized) host?.classList.add('c-tabs--initialized');
         initialized = true;
       };
+
       content.addEventListener('transitionend', onTransitionEnd);
     });
+
     if (moveDebounce !== null) clearTimeout(moveDebounce);
     moveDebounce = null;
   }, 200);
@@ -245,21 +346,28 @@ const moveIndicator = (oldTab: HTMLElement, newTab: HTMLElement) => {
 const handleActiveTab = () => {
   requestAnimationFrame(() => {
     const items = tabItemsEl();
+
     if (!items) return;
+
     const oldTab =
-      (host?.querySelector('[aria-selected="true"]') as HTMLElement) ?? tabs()[0];
+      (host?.querySelector('[aria-selected="true"]') as HTMLElement) ??
+      tabsList()[0];
+
     const tabItems = Array.from(
       items.querySelectorAll(':scope > c-tab-item'),
-    ) as (HTMLElement & { value: number | string; active: boolean })[];
+    ) as ({ active: boolean; value: number | string } & HTMLElement)[];
+
     const tb = tabButtonsEl();
 
     tabItems.forEach((item, index) => {
-      const tab = tabs().find((t) => t.value === item.value);
-      const tabItemId = `c-tab-item-${uid}-${index + 1}`;
+      const tab = tabsList().find((t) => t.value === item.value);
+
+      const tabItemId = `c-tab-item-${autoId}-${index + 1}`;
+
       const isActive = item.value === internalValue.value;
 
       if (tab) {
-        const tabId = `c-tab-${uid}-${index + 1}`;
+        const tabId = `c-tab-${autoId}-${index + 1}`;
         item.setAttribute('aria-labelledby', tabId);
         tab.setAttribute('id', tabId);
         tab.setAttribute('aria-controls', tabItemId);
@@ -274,11 +382,15 @@ const handleActiveTab = () => {
           moveIndicator(oldTab, tab);
           requestAnimationFrame(() => {
             if (!isOverflowing.value) return;
+
             const selected = host?.querySelector(
               'c-tab[aria-selected="true"]',
             ) as HTMLElement;
             moveToTab(selected);
-            tabsEl.value?.style.setProperty('--_c-tabs-transition-speed', '200ms');
+            tabsRef.value?.style.setProperty(
+              '--_c-tabs-transition-speed',
+              '200ms',
+            );
           });
         }
 
@@ -292,61 +404,82 @@ const handleActiveTab = () => {
 };
 
 const getDimensions = (item: HTMLElement) => {
-  const { x, width } = item.getBoundingClientRect();
-  const tEl = tabsEl.value as HTMLElement;
-  const { x: containerX, width: containerWidth } = tEl.getBoundingClientRect();
-  return { x, width, containerWidth, containerX };
+  const { width, x } = item.getBoundingClientRect();
+
+  const tEl = tabsRef.value as HTMLElement;
+
+  const { width: containerWidth, x: containerX } = tEl.getBoundingClientRect();
+
+  return { containerWidth, containerX, width, x };
 };
 
 const moveToTab = (tab: HTMLElement) => {
   if (!tab) return;
+
   const onTransitionEnd = () => {
     tab?.focus();
-    scrollEl.value?.removeEventListener('transitionend', onTransitionEnd);
+    scrollRef.value?.removeEventListener('transitionend', onTransitionEnd);
   };
+
   requestAnimationFrame(() => {
     const tabIndex = getTabIndex((tab.dataset.value as string) ?? '');
+
     if (tabIndex === 0) {
       scrollOffset.value = 0;
+
       return;
     }
+
     if (tabIndex === availableValues().length - 1) {
       scrollOffset.value = maxScrollOffset - 8;
+
       return;
     }
-    const { x, width, containerWidth, containerX } = getDimensions(tab);
+
+    const { containerWidth, containerX, width, x } = getDimensions(tab);
+
     const tabEnd = x + width;
+
     const containerEnd = containerX + containerWidth;
+
     if (x < containerX) {
       const tabInside = tabEnd - containerX;
       scrollOffset.value = scrollOffset.value - (tabInside - width) + 4;
     }
+
     if (tabEnd > containerEnd) {
       scrollOffset.value -= tabEnd - containerEnd + 4;
     }
   });
-  scrollEl.value?.addEventListener('transitionend', onTransitionEnd);
+  scrollRef.value?.addEventListener('transitionend', onTransitionEnd);
 };
 
-const focusTab = (value: string | number) => {
+const focusTab = (value: number | string) => {
   if (tabButtonsEl()) return;
   requestAnimationFrame(() => {
-    const item = tabs().find((t) => t.value === value) as HTMLElement;
+    const item = tabsList().find((t) => t.value === value) as HTMLElement;
+
     if (!item) return;
-    const { x, width, containerX, containerWidth } = getDimensions(item);
+
+    const { containerWidth, containerX, width, x } = getDimensions(item);
+
     if (x >= containerX && x + width <= containerX + containerWidth) {
       item.focus();
+
       return;
     }
+
     moveToTab(item);
   });
 };
 
 const handleResize = (width: number) => {
   if (moveDebounce !== null) return;
+
   if (debounce !== null) clearTimeout(debounce);
   debounce = setTimeout(() => {
     const content = host?.shadowRoot?.querySelector('.c-tabs__scroll');
+
     const container = host?.shadowRoot?.querySelector('.c-tabs__tabs');
     requestAnimationFrame(() => {
       if (width === previousWidth || !content || !container) return;
@@ -362,37 +495,48 @@ const handleResize = (width: number) => {
 /* --- touch dragging (horizontal only) --- */
 const onTouchStart = (event: TouchEvent) => {
   handleOverflow();
+
   if (!isOverflowing.value) return;
   touchOffset = scrollOffset.value * -1;
   startX = event.touches[0].clientX;
 };
+
 const onTouchMove = (event: TouchEvent) => {
   if (vertical.value) return;
   event.preventDefault();
-  tabsEl.value?.style.setProperty('--_c-tabs-transition-speed', '0ms');
+  tabsRef.value?.style.setProperty('--_c-tabs-transition-speed', '0ms');
+
   const offset = -1 * (touchOffset + startX - event.touches[0].clientX);
+
   if (offset <= 0 && offset >= maxScrollOffset) scrollOffset.value = offset;
   else if (offset > 0 || !isOverflowing.value) scrollOffset.value = 0;
   else if (offset < maxScrollOffset) scrollOffset.value = maxScrollOffset;
 };
+
 const onTouchEnd = () => {
-  tabsEl.value?.style.setProperty('--_c-tabs-transition-speed', '200ms');
+  tabsRef.value?.style.setProperty('--_c-tabs-transition-speed', '200ms');
 };
 
 const onBackClick = () => {
-  const step = (tabsEl.value?.clientWidth ?? 0) / 2;
+  const step = (tabsRef.value?.clientWidth ?? 0) / 2;
   scrollOffset.value = Math.min(scrollOffset.value + step, 0);
 };
+
 const onForwardClick = () => {
   const max =
-    ((scrollEl.value?.scrollWidth ?? 0) - (tabsEl.value?.clientWidth ?? 0)) * -1;
-  const step = (tabsEl.value?.clientWidth ?? 0) / 2;
+    ((scrollRef.value?.scrollWidth ?? 0) - (tabsRef.value?.clientWidth ?? 0)) *
+    -1;
+
+  const step = (tabsRef.value?.clientWidth ?? 0) / 2;
   scrollOffset.value = Math.max(-1 * step + scrollOffset.value, max);
 };
 
 /* --- reactive wiring --- */
 watch(scrollOffset, (offset) => {
-  tabsEl.value?.style.setProperty('--_c-tabs-scroll-position-x', `${offset}px`);
+  tabsRef.value?.style.setProperty(
+    '--_c-tabs-scroll-position-x',
+    `${offset}px`,
+  );
 });
 
 watch(
@@ -424,7 +568,6 @@ watchEffect(() => {
 
 onMounted(() => {
   if (!host) return;
-  uid += 1;
   host.setAttribute('role', 'tablist');
 
   // Defer reaching into slotted/light-DOM children: c-tabs.onMounted
@@ -434,8 +577,11 @@ onMounted(() => {
   // updateItemsValue (called below) also uses rAF, so we line up with it.
   requestAnimationFrame(() => {
     const items = tabItemsEl();
+
     if (items) items.disableAnimation = prefersReducedMotion();
+
     const tb = tabButtonsEl();
+
     if (tb) {
       host.classList.add('c-tabs--buttons');
       // Set the property (Boolean) rather than the attribute (string).
@@ -466,8 +612,11 @@ onMounted(() => {
     'keydown',
     (e) => {
       const ev = e as KeyboardEvent;
+
       const target = ev.target as CTabEl;
-      if (!tabs().includes(target) || target.disabled) return;
+
+      if (!tabsList().includes(target) || target.disabled) return;
+
       if (ev.key === 'Enter' || ev.code === 'Space') {
         internalValue.value = target.value;
         dispatchValue(internalValue.value);
@@ -480,20 +629,32 @@ onMounted(() => {
     (e) => {
       const ev = e as KeyboardEvent;
       isDirty = true;
-      if (!tabs().includes(ev.target as CTabEl)) return;
+
+      if (!tabsList().includes(ev.target as CTabEl)) return;
+
       const isLeft = ev.key === 'ArrowLeft';
+
       const isRight = ev.key === 'ArrowRight';
+
       if (!isLeft && !isRight) return;
+
       const values = availableValues();
+
       const idx = getTabIndex(focusedTabValue);
+
       const first = values.at(0);
+
       const last = values.at(-1);
+
       const isBeginning = focusedTabValue === first;
+
       const isEnd = focusedTabValue === last;
+
       if (isLeft) {
         if (isBeginning) return;
         focusTab(isBeginning ? last! : values[idx - 1]);
       }
+
       if (isRight) {
         if (isEnd) return;
         focusTab(isEnd ? first! : values[idx + 1]);
@@ -516,32 +677,38 @@ onBeforeUnmount(() => {
 });
 </script>
 
+<!--
+  Escape-hatch CSS (ADR-0007). c-tabs is irreducibly host-box + pseudo-element +
+  ::slotted driven:
+   - The host must be a real box: its display/grid drives the whole layout and
+     all the `c-tabs--vertical/justify-*/overflow/mobile/borderless/buttons/
+     initialized` state classes (toggled imperatively by the script) reshape it.
+   - The active-tab indicator is a `.c-tabs__scroll::after` (horizontal) /
+     `::before` (vertical) pseudo-element animated through `--_c-tabs-indicator-*`
+     vars the script sets, with a `transitionend` the script listens for.
+   - The scroll track transform reads `--_c-tabs-scroll-position-x` /
+     `--_c-tabs-transition-speed` set imperatively.
+   - `::slotted(...)` rules style the consumer's c-tab / c-tab-buttons /
+     c-tab-items light-DOM children.
+  None of these are expressible as static utilities. Token colours are authored
+  directly (ADR-0004): the `--c-tabs-*` indirection vars were dropped in favour
+  of the design tokens, the dead `--c-icon-button-border-radius` override was
+  removed (c-icon-button owns its own radius now), and `--c-tabs-border-color` /
+  `--c-tabs-indicator-color` were reduced to a `borderless` toggle var + the
+  tertiary-200 / primary-600 tokens. This :host overrides the global
+  `:host{display:contents}`; the per-type sheet wins as it is adopted last. The
+  custom easing (ease-out-quart curve) intentionally differs from the shared
+  `ease-standard`.
+-->
 <style>
 :host(.c-tabs) {
-  --_c-tabs-border-color: var(--c-tabs-border-color, var(--c-tertiary-200));
-  --_c-tabs-indicator-color: var(--c-tabs-indicator-color, var(--c-primary-600));
+  --_c-tabs-border-color: var(--c-tertiary-200);
   --_c-tabs-transition-speed: 0.001ms;
 
   display: block;
   width: 100%;
   transform: translateX(0%);
   max-width: 100%;
-}
-
-.c-tabs__container {
-  display: grid;
-  grid-template-columns: 1fr;
-  align-items: center;
-  gap: 4px;
-  --c-icon-button-border-radius: 4px;
-}
-
-.c-tabs__tabs {
-  display: flex;
-  overflow: hidden;
-  padding: 4px;
-  position: relative;
-  margin: -4px;
 }
 
 .c-tabs__tabs::after {
@@ -555,12 +722,8 @@ onBeforeUnmount(() => {
 
 .c-tabs__scroll {
   transform: translateX(var(--_c-tabs-scroll-position-x));
-  transition: transform var(--_c-tabs-transition-speed) cubic-bezier(0.075, 0.82, 0.165, 1);
-  display: flex;
-  margin: 0;
-  padding: 0;
-  position: relative;
-  flex-grow: 1;
+  transition: transform var(--_c-tabs-transition-speed)
+    cubic-bezier(0.075, 0.82, 0.165, 1);
 }
 
 .c-tabs__scroll::after {
@@ -576,12 +739,9 @@ onBeforeUnmount(() => {
   transform-origin: left;
   transition:
     scale var(--_c-tabs-transition-speed) cubic-bezier(0.075, 0.82, 0.165, 1),
-    translate var(--_c-tabs-transition-speed) cubic-bezier(0.075, 0.82, 0.165, 1);
-  background: var(--_c-tabs-indicator-color);
-}
-
-.c-tabs__content {
-  display: flex;
+    translate var(--_c-tabs-transition-speed)
+      cubic-bezier(0.075, 0.82, 0.165, 1);
+  background: var(--c-primary-600);
 }
 
 ::slotted(c-tab-buttons) {
@@ -650,8 +810,9 @@ onBeforeUnmount(() => {
   transform-origin: top left;
   transition:
     scale var(--_c-tabs-transition-speed) cubic-bezier(0.075, 0.82, 0.165, 1),
-    translate var(--_c-tabs-transition-speed) cubic-bezier(0.075, 0.82, 0.165, 1);
-  background: var(--_c-tabs-indicator-color);
+    translate var(--_c-tabs-transition-speed)
+      cubic-bezier(0.075, 0.82, 0.165, 1);
+  background: var(--c-primary-600);
 }
 
 :host(.c-tabs--vertical) ::slotted(c-tab) {

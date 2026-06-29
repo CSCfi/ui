@@ -1,115 +1,188 @@
 <template>
-  <div ref="root" class="c-loader" :style="loaderStyle">
-    <c-spinner
-      :color="'var(--_c-loader-color)'"
-      :size="size"
-      :width="width"
-    />
-    <div
-      v-show="hasSlotContent"
-      class="c-loader__slot"
-      :style="{ animationDelay: `${contentdelay}s` }"
-    >
-      <slot />
+  <div ref="rootRef" :class="ui.root({ active })" part="root">
+    <div :class="ui.inner({ active })">
+      <!-- color="currentColor" so the spinner inherits the loader's text
+           colour (text-primary-600 / any override) rather than the spinner's
+           own primary-600 prop default. -->
+      <c-spinner :size :width color="currentColor" />
+      <!-- The content-reveal animation (max-height grow, delayed by
+           `contentdelay`) is gated on `active` so it (re)starts each time the
+           loader is shown. Without this it would run once when the element
+           first renders — which, now the loader stays mounted and is toggled
+           via `visible`, means at page load, leaving `contentdelay` with no
+           visible effect. -->
+      <div
+        v-show="hasSlotContent"
+        :class="[ui.content(), { 'c-loader-fadein': active }]"
+        :style="{
+          animationDelay: `${contentdelay}s`,
+          top: `calc(50% + ${size / 2 + 8}px)`,
+        }"
+        part="content"
+      >
+        <slot />
+      </div>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { computed, onMounted, useHost, useTemplateRef, watchEffect } from 'vue';
+import { tv } from 'tailwind-variants';
+import {
+  computed,
+  onMounted,
+  ref,
+  useTemplateRef,
+  watch,
+  watchEffect,
+} from 'vue';
+
 import { useHasSlot } from '../../shared/useHasSlot';
 
-const props = defineProps({
-  contentdelay: { type: Number, default: 0 },
-  hide: { type: Boolean, default: false },
-  size: { type: Number, default: 48 },
-  width: { type: Number, default: 4 },
+/**
+ * Styling lives in this `tailwind-variants` config (ADR-0004); the old
+ * `--_c-loader-*` indirection layer is dropped and authored directly against
+ * the design tokens. Customization is via `::part()` (ADR-0006).
+ *
+ * The box lives on an inner `root` element (host stays `display:contents`),
+ * positioned `absolute inset-0` over the parent container it overlays. The
+ * `active` variant replaces the JS-toggled `:host(.c-loader--active)` state;
+ * JS still defers activation by one frame so the opacity/scale transition
+ * plays on first appearance.
+ *
+ * COLOUR CONTRACT (child primitive): the child `<c-spinner>` is given
+ * `color="currentColor"` so the loader's `text-primary-600` (or any inherited
+ * colour) cascades into it. (The spinner's own prop default is primary-600, so
+ * passing currentColor is what re-opens inheritance here.) The removed
+ * `--c-loader-color` / `--c-spinner-color` override vars are NOT reintroduced.
+ */
+const loader = tv({
+  defaultVariants: {
+    active: false,
+  },
+  slots: {
+    // The message is taken OUT of flow (`absolute`) and anchored just below the
+    // centred spinner (the inline `top` offsets it by half the spinner + gap),
+    // so revealing it does NOT push the spinner up — only the spinner
+    // participates in the flex centring. Hidden by default (`opacity-0`); the
+    // `c-loader-fadein` animation (gated on `active`) fades it in. Text colour
+    // was var(--c-text-system); no text-system utility exists.
+    content:
+      'block absolute inset-x-0 opacity-0 text-center text-sm leading-6 font-medium text-[var(--c-text-system)]',
+    // `relative` so the absolutely-positioned content anchors to it.
+    inner:
+      'relative flex flex-col items-center justify-center h-full w-full scale-50 transition-transform duration-300 ease-in-out py-4',
+    // Background was rgba(var(--c-white-rgb), 0.8) → bg-white/80.
+    // `visibility` is in the transition list (alongside opacity/transform) so
+    // the LEAVE is smooth: CSS `visibility` uses its special interpolation —
+    // when either endpoint is `visible` it stays visible for the whole duration
+    // and only flips to `hidden` at the end. Without it, `invisible` applied
+    // instantly on leave and cut off the opacity/scale fade-out.
+    root: 'absolute inset-0 z-[6] w-full bg-white/80 rounded-[inherit] invisible opacity-0 transition-[opacity,transform,visibility] duration-300 ease-in-out text-primary-600',
+  },
+  variants: {
+    active: {
+      true: {
+        inner: 'scale-100',
+        root: 'visible opacity-100',
+      },
+    },
+  },
 });
 
-const root = useTemplateRef<HTMLElement>('root');
-const hasSlotContent = useHasSlot(root, '');
-const host = useHost();
+interface CLoaderProps {
+  contentdelay?: number;
+  size?: number;
+  /**
+   * Whether the loader is shown. Toggling this drives the fade-in / smooth
+   * fade-out — keep the element mounted and bind `visible` rather than using
+   * `v-if`, which would unmount it and skip the leave transition.
+   *
+   * For imperative control (non-Vue consumers holding an element ref) the
+   * element also exposes `show()` / `hide()` methods. The prop is named
+   * `visible` (not `show`) so it doesn't collide with the `show()` method —
+   * mirroring native `<dialog>` (`open` property + `show()`/`close()` methods).
+   *
+   * NOTE: this replaces the original Stencil `hide` prop with its inverse, so
+   * the default (`true` = shown) preserves the original default behaviour.
+   */
+  visible?: boolean;
+  width?: number;
+}
 
-// Match Stencil's deferred activation: start hidden, then add the
-// `c-loader--active` class on the next frame. This way the
-// opacity/scale CSS transition plays on first appearance instead of the
-// loader popping in fully visible.
+const props = withDefaults(defineProps<CLoaderProps>(), {
+  contentdelay: 0,
+  size: 48,
+  visible: true,
+  width: 4,
+});
+
+const rootRef = useTemplateRef<HTMLElement>('rootRef');
+
+const hasSlotContent = useHasSlot(rootRef, '');
+
+// Visibility source of truth: initialised from the `visible` prop and kept in
+// sync with it, but also settable imperatively via the exposed show()/hide()
+// methods (for non-Vue consumers holding an element ref). A later prop change
+// wins, as expected for a controlled prop.
+const isVisible = ref(props.visible);
+watch(
+  () => props.visible,
+  (v) => {
+    isVisible.value = v;
+  },
+);
+
+// Match Stencil's deferred activation: start hidden, then flip `active` on the
+// next frame so the opacity/scale/visibility transition plays on appearance and
+// on every toggle instead of the loader snapping in/out.
+const active = ref(false);
 onMounted(() => {
-  if (!host) return;
   watchEffect(() => {
-    const wantActive = !props.hide;
+    const wantActive = isVisible.value;
     requestAnimationFrame(() => {
-      host.classList.toggle('c-loader--active', wantActive);
+      active.value = wantActive;
     });
   });
 });
 
-const loaderStyle = computed(() => ({
-  '--c-loader-size': `${props.size}px`,
-}));
+/** Imperatively show the loader (plays the fade-in). */
+const show = () => {
+  isVisible.value = true;
+};
+
+/** Imperatively hide the loader (plays the smooth fade-out). */
+const hide = () => {
+  isVisible.value = false;
+};
+
+defineExpose({ hide, show });
+
+const ui = computed(() => loader());
 </script>
 
+<!--
+  Escape-hatch CSS (ADR-0007): the message appear @keyframes + the rule that
+  applies it. Keyframes (vs a transition) are used so the reveal is a one-shot
+  that restarts each time the `c-loader-fadein` class is (re)added on show, and
+  so it honours the `animation-delay` set inline from `contentdelay`. A gentle
+  opacity + rise (ease-out) reads smoother than the old linear max-height clip;
+  max-height is no longer needed since the message is positioned out of flow.
+  The static slot styling lives in the `tv` config above.
+-->
 <style>
-:host {
-  --_c-loader-color: var(--c-loader-color, var(--c-primary-600));
-  --_c-loader-background-color: var(
-    --c-loader-background-color,
-    rgba(var(--c-white-rgb), 0.8)
-  );
-  --_c-loader-text-color: var(--c-loader-text-color, var(--c-text-system));
-
-  width: 100%;
-  position: absolute;
-  inset: 0;
-  z-index: 6;
-  background: var(--_c-loader-background-color);
-  border-radius: inherit;
-  visibility: hidden;
-  opacity: 0;
-  transition: opacity 0.3s ease-in-out, transform 0.3s ease-in-out;
-}
-
-/* Activation is driven by JS toggling this class on the host element —
- * matches Stencil's componentDidLoad + requestAnimationFrame so the
- * opacity/scale transition plays on first appearance. */
-:host(.c-loader--active) {
-  opacity: 1;
-  visibility: visible;
-}
-
-:host(.c-loader--active) .c-loader {
-  transform: scale(1);
-}
-
-.c-loader {
-  height: 100%;
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  transform: scale(0.5);
-  transition: transform 0.3s ease-in-out;
-}
-
-.c-loader__slot {
-  line-height: 40px;
-  font-size: 14px;
-  color: var(--_c-loader-text-color);
-  text-align: center;
-  font-weight: 500;
-  display: block;
-  max-height: 0;
-  overflow: hidden;
-  animation-duration: 4s;
-  animation-direction: forwards;
-  animation-iteration-count: 1;
-  animation-name: c-loader-fadein;
-  animation-fill-mode: forwards;
+.c-loader-fadein {
+  animation: c-loader-fadein 0.45s cubic-bezier(0.25, 0.8, 0.5, 1) forwards;
 }
 
 @keyframes c-loader-fadein {
-  0% { max-height: 0; }
-  100% { max-height: 300px; }
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 </style>

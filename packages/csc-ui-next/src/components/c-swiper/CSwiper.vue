@@ -2,21 +2,21 @@
   <div class="c-swiper">
     <div
       :id="`announce-${resolvedId}`"
-      class="visuallyhidden"
-      aria-live="polite"
       aria-atomic="true"
+      aria-live="polite"
+      class="visuallyhidden"
     >
       {{ statusText }}
     </div>
 
     <div
-      ref="container"
+      ref="containerRef"
       class="swiper-container"
       role="tablist"
+      @pointercancel="endDrag"
       @pointerdown="onPointerDown"
       @pointermove="onPointerMove"
       @pointerup="endDrag"
-      @pointercancel="endDrag"
       @scroll.passive="onScroll"
     >
       <slot />
@@ -25,28 +25,36 @@
     <div class="c-swiper__navigation">
       <c-icon-button
         :aria-disabled="atStart ? 'true' : 'false'"
-        aria-label="previous page"
         :disabled="atStart || undefined"
+        aria-label="previous page"
         size="small"
         ghost
         @click="page(-1)"
       >
-        <span class="visuallyhidden">Previous<span>page</span></span>
-        <svg width="24" height="24" viewBox="0 0 24 24">
+        <span class="visuallyhidden">
+          Previous
+          <span>page</span>
+        </span>
+
+        <svg height="24" viewBox="0 0 24 24" width="24">
           <path :d="arrowLeft" />
         </svg>
       </c-icon-button>
 
       <c-icon-button
         :aria-disabled="atEnd ? 'true' : 'false'"
-        aria-label="next page"
         :disabled="atEnd || undefined"
+        aria-label="next page"
         size="small"
         ghost
         @click="page(1)"
       >
-        <span class="visuallyhidden">Next<span>page</span></span>
-        <svg width="24" height="24" viewBox="0 0 24 24">
+        <span class="visuallyhidden">
+          Next
+          <span>page</span>
+        </span>
+
+        <svg height="24" viewBox="0 0 24 24" width="24">
           <path :d="arrowRight" />
         </svg>
       </c-icon-button>
@@ -56,36 +64,57 @@
 
 <script setup lang="ts">
 import { mdiChevronLeft, mdiChevronRight } from '@mdi/js';
-import { computed, onBeforeUnmount, onMounted, ref, useHost, useTemplateRef, watch } from 'vue';
+import {
+  computed,
+  onBeforeUnmount,
+  onMounted,
+  ref,
+  useHost,
+  useId,
+  useTemplateRef,
+  watch,
+} from 'vue';
 
-const props = defineProps({
-  value: { type: [Number, String], default: undefined },
-  elementId: { type: String, default: '' },
+import { emitModelValue } from '../../shared/emitModelValue';
+
+interface CSwiperProps {
+  elementId?: string;
+  value?: number | string;
+}
+
+const props = withDefaults(defineProps<CSwiperProps>(), {
+  elementId: '',
+  value: undefined,
 });
 
 const arrowLeft = mdiChevronLeft;
+
 const arrowRight = mdiChevronRight;
 
 const host = useHost();
-const container = useTemplateRef<HTMLElement>('container');
 
-let uid = 0;
+const containerRef = useTemplateRef<HTMLElement>('containerRef');
+
+const autoId = useId();
+
 const internalValue = ref<number | string | undefined>(props.value);
-const atStart = ref(true);
-const atEnd = ref(false);
-const statusText = ref('');
-const resolvedId = computed(
-  () => props.elementId || `c-swiper--${uid}`,
-);
 
-type SwiperTabEl = HTMLElement & {
-  value?: number | string;
+const atStart = ref(true);
+
+const atEnd = ref(false);
+
+const statusText = ref('');
+
+const resolvedId = computed(() => props.elementId || `c-swiper--${autoId}`);
+
+type SwiperTabEl = {
   active?: boolean;
+  disabled?: boolean;
   label?: string;
   position?: number;
   setsize?: number;
-  disabled?: boolean;
-};
+  value?: number | string;
+} & HTMLElement;
 
 // The c-swiper-tab elements are LIGHT-DOM children of the host, slotted
 // into our shadow root. Reading shadow children would only give us the
@@ -94,7 +123,8 @@ const tabs = (): SwiperTabEl[] =>
   host ? (Array.from(host.children) as SwiperTabEl[]) : [];
 
 const updateEdges = () => {
-  const el = container.value;
+  const el = containerRef.value;
+
   if (!el) return;
   atStart.value = el.scrollLeft <= 1;
   atEnd.value = el.scrollLeft + el.clientWidth >= el.scrollWidth - 1;
@@ -104,9 +134,10 @@ const updateEdges = () => {
 // behaviour does the slide animation natively; scroll-snap snaps to the
 // nearest item afterwards.
 const page = (direction: -1 | 1) => {
-  const el = container.value;
+  const el = containerRef.value;
+
   if (!el) return;
-  el.scrollBy({ left: direction * el.clientWidth, behavior: 'smooth' });
+  el.scrollBy({ behavior: 'smooth', left: direction * el.clientWidth });
 };
 
 const onScroll = () => updateEdges();
@@ -114,14 +145,20 @@ const onScroll = () => updateEdges();
 // Pointer-drag scrolling (mouse only; touch already drag-scrolls
 // natively because the container has overflow-x: auto).
 let dragStartX = 0;
+
 let dragStartScroll = 0;
+
 let dragging = false;
+
 let dragMoved = false;
+
 const DRAG_THRESHOLD = 4;
 
 const onPointerDown = (e: PointerEvent) => {
   if (e.pointerType !== 'mouse' || e.button !== 0) return;
-  const el = container.value;
+
+  const el = containerRef.value;
+
   if (!el) return;
   dragging = true;
   dragMoved = false;
@@ -131,14 +168,19 @@ const onPointerDown = (e: PointerEvent) => {
 
 const onPointerMove = (e: PointerEvent) => {
   if (!dragging) return;
-  const el = container.value;
+
+  const el = containerRef.value;
+
   if (!el) return;
+
   const dx = e.clientX - dragStartX;
+
   if (!dragMoved && Math.abs(dx) > DRAG_THRESHOLD) {
     dragMoved = true;
     el.classList.add('is-dragging');
     el.setPointerCapture(e.pointerId);
   }
+
   if (dragMoved) {
     el.scrollLeft = dragStartScroll - dx;
     e.preventDefault();
@@ -148,8 +190,11 @@ const onPointerMove = (e: PointerEvent) => {
 const endDrag = (e: PointerEvent) => {
   if (!dragging) return;
   dragging = false;
-  const el = container.value;
+
+  const el = containerRef.value;
+
   if (!el) return;
+
   if (dragMoved) {
     // Swallow the click that fires on pointerup at the end of a drag
     // so we don't accidentally activate the tab under the cursor.
@@ -157,17 +202,23 @@ const endDrag = (e: PointerEvent) => {
       ev.stopPropagation();
       ev.preventDefault();
     };
+
     window.addEventListener('click', swallow, { capture: true, once: true });
     el.classList.remove('is-dragging');
-    try { el.releasePointerCapture(e.pointerId); } catch { /* already released */ }
+    try {
+      el.releasePointerCapture(e.pointerId);
+    } catch {
+      /* already released */
+    }
   }
+
   dragMoved = false;
 };
 
-const dispatchValue = (v: unknown) => {
-  host?.dispatchEvent(new CustomEvent('changeValue', { detail: v }));
-  host?.dispatchEvent(new CustomEvent('update:value', { detail: v }));
-};
+// changeValue/update:value + native `input` (plain v-model) + host `value`
+// mirror. Called only from user interactions; the value watch runs `setActive`
+// (visuals-only), so there is no loop.
+const dispatchValue = (v: unknown) => emitModelValue(host, v);
 
 // IMPORTANT: We do NOT touch `child.active` here. `active` is the
 // consumer's :active binding on the child — it represents the
@@ -178,22 +229,29 @@ const dispatchValue = (v: unknown) => {
 // caused the consumer's choice (e.g. tab6) to be wiped on mount.
 const setActive = (v: number | string | undefined) => {
   internalValue.value = v;
+
   const items = tabs();
+
   const focused = items.find((t) => t.value === v);
-  if (focused && container.value) {
+
+  if (focused && containerRef.value) {
     const r = focused.getBoundingClientRect();
-    const c = container.value.getBoundingClientRect();
+
+    const c = containerRef.value.getBoundingClientRect();
+
     if (r.left < c.left || r.right > c.right) {
       focused.scrollIntoView({
         behavior: 'smooth',
-        inline: 'start',
         block: 'nearest',
+        inline: 'start',
       });
     }
   }
+
   statusText.value = '';
   setTimeout(() => {
-    if (focused?.label) statusText.value = `Currently selected - ${focused.label}`;
+    if (focused?.label)
+      statusText.value = `Currently selected - ${focused.label}`;
   }, 1400);
 };
 
@@ -213,14 +271,20 @@ const refreshTabs = () => {
 // child's active flag is mutated.
 const syncFromActiveChild = () => {
   const items = tabs();
+
   const isActive = (t: SwiperTabEl) =>
     Boolean(t.active) || t.hasAttribute('active');
+
   const activeChild = items.find(isActive);
+
   if (activeChild) {
     internalValue.value = activeChild.value;
+
     return;
   }
+
   const v = internalValue.value;
+
   if (
     v !== undefined &&
     v !== null &&
@@ -233,7 +297,6 @@ const syncFromActiveChild = () => {
 };
 
 onMounted(() => {
-  uid += 1;
   refreshTabs();
   syncFromActiveChild();
   setActive(internalValue.value);
@@ -250,6 +313,7 @@ onMounted(() => {
   // Children emit changeValue when clicked.
   host?.addEventListener('changeValue', (e) => {
     const ev = e as CustomEvent<number | string>;
+
     if (e.target === host) return;
     ev.stopPropagation();
     setActive(ev.detail);
@@ -257,32 +321,44 @@ onMounted(() => {
   });
 
   // Arrow-key navigation.
-  host?.addEventListener('keyup', (e) => {
-    const ev = e as KeyboardEvent;
-    const items = tabs();
-    const idx = items.indexOf(ev.target as SwiperTabEl);
-    if (idx < 0) return;
-    if (ev.key === 'ArrowLeft' && idx > 0) {
-      setActive(items[idx - 1].value);
-      items[idx - 1].focus();
-      dispatchValue(internalValue.value);
-    } else if (ev.key === 'ArrowRight' && idx < items.length - 1) {
-      setActive(items[idx + 1].value);
-      items[idx + 1].focus();
-      dispatchValue(internalValue.value);
-    }
-  }, true);
+  host?.addEventListener(
+    'keyup',
+    (e) => {
+      const ev = e as KeyboardEvent;
+
+      const items = tabs();
+
+      const idx = items.indexOf(ev.target as SwiperTabEl);
+
+      if (idx < 0) return;
+
+      if (ev.key === 'ArrowLeft' && idx > 0) {
+        setActive(items[idx - 1].value);
+        items[idx - 1].focus();
+        dispatchValue(internalValue.value);
+      } else if (ev.key === 'ArrowRight' && idx < items.length - 1) {
+        setActive(items[idx + 1].value);
+        items[idx + 1].focus();
+        dispatchValue(internalValue.value);
+      }
+    },
+    true,
+  );
 
   // Re-evaluate edges whenever the container resizes (responsive layouts
   // change which tabs fit, so the end edge moves).
   resizeObserver = new ResizeObserver(updateEdges);
-  if (container.value) resizeObserver.observe(container.value);
+
+  if (containerRef.value) resizeObserver.observe(containerRef.value);
 });
 
-let resizeObserver: ResizeObserver | null = null;
+let resizeObserver: null | ResizeObserver = null;
 onBeforeUnmount(() => resizeObserver?.disconnect());
 
-watch(() => props.value, (v) => setActive(v));
+watch(
+  () => props.value,
+  (v) => setActive(v),
+);
 </script>
 
 <style>
@@ -320,10 +396,9 @@ watch(() => props.value, (v) => setActive(v));
    * scroll container and skip the cross-axis stretch. */
   display: grid;
   grid-auto-flow: column;
-  grid-auto-columns:
-    calc(
-      (100% - (var(--c-swiper-per-view) - 1) * 8px) / var(--c-swiper-per-view)
-    );
+  grid-auto-columns: calc(
+    (100% - (var(--c-swiper-per-view) - 1) * 8px) / var(--c-swiper-per-view)
+  );
   gap: 8px;
   overflow-x: auto;
   overflow-y: hidden;
@@ -333,7 +408,9 @@ watch(() => props.value, (v) => setActive(v));
   cursor: grab;
   -ms-overflow-style: none;
 }
-.swiper-container::-webkit-scrollbar { display: none; }
+.swiper-container::-webkit-scrollbar {
+  display: none;
+}
 
 .swiper-container.is-dragging {
   cursor: grabbing;
@@ -350,13 +427,19 @@ watch(() => props.value, (v) => setActive(v));
 }
 
 @container c-swiper (min-width: 480px) {
-  .c-swiper { --c-swiper-per-view: 2; }
+  .c-swiper {
+    --c-swiper-per-view: 2;
+  }
 }
 @container c-swiper (min-width: 720px) {
-  .c-swiper { --c-swiper-per-view: 3; }
+  .c-swiper {
+    --c-swiper-per-view: 3;
+  }
 }
 @container c-swiper (min-width: 960px) {
-  .c-swiper { --c-swiper-per-view: 4; }
+  .c-swiper {
+    --c-swiper-per-view: 4;
+  }
 }
 
 .c-swiper__navigation {

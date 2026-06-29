@@ -12,7 +12,7 @@
 
     <p v-if="slots.description"><slot name="description" /></p>
 
-    <div class="gap-4 flex w-full" :class="rows ? 'flex-col' : 'flex-wrap'">
+    <div class="gap-4 flex flex-wrap w-full" :class="rows ? 'flex-col' : ''">
       <slot />
     </div>
 
@@ -22,15 +22,24 @@
 
         <div class="flex justify-start mb-4">
           <c-tab-buttons v-model="exampleType" v-control size="small" mandatory>
-            <c-button value="template">
-              <c-icon :path="mdiLanguageHtml5" />
+            <!--
+              `next` builds manage children via <c-tab-button> (sizing, active
+              indicator, tabChange). The Stencil build has no such element and
+              drives plain <c-button> children instead, so pick per impl mode.
+            -->
+            <component :is="tabButtonTag" value="template">
+              <c-icon :size="20" :path="mdiLanguageHtml5" />
               Template
-            </c-button>
+            </component>
 
-            <c-button v-show="exampleScript" value="script">
-              <c-icon :path="mdiLanguageTypescript" />
+            <component
+              :is="tabButtonTag"
+              v-show="exampleScript"
+              value="script"
+            >
+              <c-icon :size="20" :path="mdiLanguageTypescript" />
               Script
-            </c-button>
+            </component>
           </c-tab-buttons>
         </div>
 
@@ -68,6 +77,13 @@ const props = defineProps<{
 }>();
 
 const slots = useSlots();
+
+const config = useRuntimeConfig();
+
+// The migrated (`next`) c-tab-buttons only manages <c-tab-button> children;
+// the Stencil build uses plain <c-button>. See template comment.
+const tabButtonTag =
+  config.public.cscUiImpl === 'next' ? 'c-tab-button' : 'c-button';
 
 const exampleType = ref<'template' | 'script'>('template');
 
@@ -107,6 +123,35 @@ onMounted(() => {
 </script>
 
 <style scoped lang="scss">
+.code-examples {
+  c-accordion-item {
+    &::part(root) {
+      --tw-ring-color: var(--c-tertiary-800);
+    }
+
+    &::part(header) {
+      background-color: var(--c-tertiary-800);
+      color: #fff;
+    }
+  }
+
+  c-tab-buttons {
+    &::part(root) {
+      background-color: var(--c-tertiary-100);
+    }
+
+    &::part(indicator) {
+      background-color: var(--c-tertiary-800);
+    }
+  }
+
+  c-tab-button:not([active]) {
+    &::part(root) {
+      color: var(--c-tertiary-800);
+    }
+  }
+}
+
 c-accordion.code-examples c-accordion-item {
   --c-accordion-item-header-background-color: var(--c-tertiary-800);
   --c-accordion-item-outline-color: var(--c-tertiary-800);

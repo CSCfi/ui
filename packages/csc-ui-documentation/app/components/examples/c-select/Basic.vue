@@ -4,7 +4,6 @@
 
     <c-select
       v-model="selectedItem"
-      v-control
       label="Partition"
       placeholder="Choose partition..."
       style="max-width: 360px"

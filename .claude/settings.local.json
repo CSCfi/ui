@@ -53,7 +53,8 @@
       "Bash(cp /tmp/cli.bak src/components/c-list-item/CListItem.vue)",
       "Bash(rm /tmp/cli.bak)",
       "Bash(node -e \"console.log\\(require.resolve\\('@vue/compiler-sfc'\\)\\)\")",
-      "Bash(ls -d /workspace/node_modules/.pnpm/@vue+compiler-sfc@3.5.34/node_modules/@vue/compiler-sfc/dist/compiler-sfc.cjs.js)"
+      "Bash(ls -d /workspace/node_modules/.pnpm/@vue+compiler-sfc@3.5.34/node_modules/@vue/compiler-sfc/dist/compiler-sfc.cjs.js)",
+      "Bash(xargs cat)"
     ]
   }
 }

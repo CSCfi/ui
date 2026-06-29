@@ -48,6 +48,8 @@ const isValid = ref(true);
 
 const onReset = () => {
   otpInput.value?.reset();
+  errorMessage.value = '';
+  isValid.value = true;
 };
 
 const onManualCompletion = () => {

@@ -1,34 +1,125 @@
 <template>
-  <div class="c-tag__inner" :data-badge="hasBadge ? badge : null">
+  <div :class="ui.root()" :data-badge="hasBadge ? badge : null" part="root">
     <slot />
+
     <c-icon-button
       v-if="closeable"
+      :class="ui.close()"
       size="x-small"
-      :path="closeIcon"
+      text
       @click="onClose"
-    />
+    >
+      <c-icon :path="mdiClose" :size="16" />
+    </c-icon-button>
   </div>
 </template>
 
 <script setup lang="ts">
 import { mdiClose } from '@mdi/js';
+import { tv } from 'tailwind-variants';
 import { computed, onMounted, useHost, watchEffect } from 'vue';
 
-const props = defineProps({
-  active: { type: Boolean, default: false },
-  block: { type: Boolean, default: false },
-  fit: { type: Boolean, default: false },
-  flat: { type: Boolean, default: false },
-  closeable: { type: Boolean, default: false },
-  badge: { type: [String, Number], default: null },
-  size: { type: String, default: 'default' },
+/**
+ * Styling lives entirely in this `tailwind-variants` config (ADR-0004): the
+ * `root` slot is the tag's inner box and the `active`/`size`/
+ * `flat`/`closeable`/`badged` variants replace the original `:host([attr])`
+ * cascade. Consumer customization is via `::part(root)` (ADR-0006); there is no
+ * `override` prop. The per-component `--c-tag-*` indirection vars are dropped in
+ * favour of global design tokens, resolved through their fallback chains:
+ *   text-color            var(--c-primary-600)        -> text-primary-600
+ *   text-color-active     var(--c-white)              -> text-white
+ *   background-color      var(--c-transparent)        -> bg-transparent
+ *   background-hover      rgba(--c-primary-rgb,.1)    -> bg-primary-600/10
+ *   background-active     == text-color              -> bg-primary-600
+ *   background-active-hov var(--c-primary-400)        -> bg-primary-400
+ *   border-color          == text-color              -> ring-primary-600
+ *
+ * The badge is the inner box's `::before` (content: attr(data-badge)),
+ * converted to `before:` utilities. The close button is a child <c-icon-button>:
+ * its colour vars are gone, so it inherits the tag's text colour via the `color`
+ * property (`close` slot's `text-*`) and is sized via its own `size` prop.
+ *
+ * The host's hover/focus-visible styling can't be a variant (positional/state
+ * `:host(...)`); it stays in the escape-hatch <style> below (ADR-0007), which
+ * also restores the host box.
+ */
+const tag = tv({
+  compoundVariants: [
+    // closeable trims the trailing padding to the vertical padding value.
+    { class: { root: 'pr-1' }, closeable: true, size: 'default' },
+    { class: { root: 'pr-0.5' }, closeable: true, size: 'small' },
+    // small tag tightens the badge's left padding to match (padding-y = 2px).
+    { badged: true, class: { root: 'pl-0.5' }, size: 'small' },
+  ],
+  defaultVariants: {
+    active: false,
+    badged: false,
+    closeable: false,
+    flat: false,
+    size: 'default',
+  },
+  slots: {
+    // Child c-icon-button: recolour via inherited `color`, not the dead vars.
+    close: 'text-primary-600',
+    // The tag's visible box. The host stays a real box (see <style>) so that
+    // :host(:hover) can recolour this inner element via descendant selectors.
+    root:
+      'inline-flex items-center justify-center select-none cursor-pointer rounded-full min-w-12 gap-2 text-sm font-normal leading-none [transform:translate3d(0,0,0)] transition-colors duration-200 ease-in-out bg-transparent text-primary-600 ring-1 ring-inset ring-primary-600 ' +
+      // badge ::before defaults — hidden until the `badged` variant reveals it
+      // with `before:grid`. (Keep only ONE display utility per state: a base
+      // `before:grid` here would let tailwind-merge drop `before:hidden`, so the
+      // pill would always show.)
+      'before:content-[attr(data-badge)] before:hidden before:place-content-center before:rounded-full before:px-1 before:text-xs before:leading-none before:bg-primary-600 before:text-white',
+  },
+  variants: {
+    active: {
+      true: {
+        close: 'text-white',
+        root: 'bg-primary-600 text-white ring-primary-600 before:bg-white before:text-primary-600',
+      },
+    },
+    // data-badge present: reveal the ::before pill (grid centres the value) and
+    // add left padding.
+    badged: { true: { root: 'before:grid pl-1' } },
+    closeable: { true: {} },
+    flat: { true: { root: 'pointer-events-none' } },
+    size: {
+      default: { root: 'min-h-7 py-1 px-3 before:h-5 before:min-w-5' },
+      small: { root: 'min-h-5 py-0.5 px-2 before:h-4 before:min-w-4' },
+    },
+  },
 });
 
-const closeIcon = mdiClose;
+interface CTagProps {
+  active?: boolean;
+  badge?: null | number | string;
+  closeable?: boolean;
+  flat?: boolean;
+  size?: string;
+}
+
+const props = withDefaults(defineProps<CTagProps>(), {
+  active: false,
+  badge: null,
+  closeable: false,
+  flat: false,
+  size: 'default',
+});
+
 const host = useHost();
 
 const hasBadge = computed(
   () => props.badge !== null && props.badge !== '' && props.badge !== undefined,
+);
+
+const ui = computed(() =>
+  tag({
+    active: props.active,
+    badged: hasBadge.value,
+    closeable: props.closeable,
+    flat: props.flat,
+    size: props.size === 'small' ? 'small' : 'default',
+  }),
 );
 
 // Stencil version exposes tabindex + role=button on the host so a tag is
@@ -52,55 +143,32 @@ const onClose = () => {
 };
 </script>
 
+<!--
+  Escape-hatch CSS (ADR-0007): only constructs Tailwind utilities cannot
+  express. The tag's box and all variant colours live in the `tv` config above.
+  What remains:
+    - The host must be a real box so it can be focused/hovered as a unit and so
+      its state selectors can recolour the inner `root` element. This `:host`
+      overrides the global `:host{display:contents}` (per-type sheet wins).
+    - Positional/state `:host(:hover)`, `:host(:focus)`, `:host(:focus-visible)`
+      — utilities can't target the host. Hover recolours the inner box;
+      focus-visible draws the outline. Authored against global tokens only.
+-->
 <style>
 :host {
-  --_c-tag-background-color-active-hover: var(--c-tag-background-color-active-hover, var(--c-primary-400));
-  --_c-tag-background-color-active: var(--c-tag-background-color-active, var(--_c-tag-text-color));
-  --_c-tag-background-color-hover: var(--c-tag-background-color-hover, rgba(var(--c-primary-rgb), 0.1));
-  --_c-tag-background-color: var(--c-tag-background-color, var(--c-transparent));
-  --_c-tag-badge-background-color-active: var(--c-tag-badge-background-color-active, var(--_c-tag-text-color-active));
-  --_c-tag-badge-background-color: var(--c-tag-badge-background-color, var(--_c-tag-background-color-active));
-  --_c-tag-badge-text-color-active: var(--c-tag-badge-text-color-active, var(--_c-tag-text-color));
-  --_c-tag-badge-text-color: var(--c-tag-badge-text-color, var(--_c-tag-text-color-active));
-  --_c-tag-border-color: var(--c-tag-border-color, var(--_c-tag-text-color));
-  --_c-tag-text-color-active: var(--c-tag-text-color-active, var(--c-white));
-  --_c-tag-text-color: var(--c-tag-text-color, var(--c-primary-600));
-  --_c-tag-border-radius: var(--c-tag-border-radius, 999px);
-
-  --c-tag-min-height: 28px;
-  --c-tag-padding-y: 4px;
-  --c-tag-padding-x: 12px;
-  --c-tag-padding: var(--c-tag-padding-y) var(--c-tag-padding-x);
-  --c-tag-badge-size: 20px;
-  --c-tag-icon-button-offset: 0;
-
   display: inline-flex;
-  border-radius: var(--_c-tag-border-radius);
+  border-radius: 999px;
 }
 
-.c-tag__inner {
-  align-items: center;
-  background: var(--_c-tag-background-color);
-  border-radius: var(--_c-tag-border-radius);
-  box-shadow: inset 0 0 0 1px var(--_c-tag-border-color);
-  color: var(--_c-tag-text-color);
-  cursor: pointer;
-  display: inline-flex;
-  font-size: 14px;
-  font-weight: 400;
-  gap: 8px;
-  justify-content: center;
-  line-height: 1;
-  min-height: var(--c-tag-min-height);
-  min-width: 48px;
-  padding: var(--c-tag-padding);
-  transform: translate3d(0, 0, 0);
-  transition: background-color 0.2s ease;
-  user-select: none;
+/* Non-active hover: light primary tint (rgba(--c-primary-rgb, 0.1)). */
+:host(:hover) [part='root'] {
+  background-color: rgba(var(--c-primary-rgb), 0.1);
 }
 
-:host(:hover) .c-tag__inner {
-  background-color: var(--_c-tag-background-color-hover);
+/* Active hover: solid primary-400, and drop the inset ring (box-shadow). */
+:host([active]:hover) [part='root'] {
+  background-color: var(--c-primary-400);
+  box-shadow: none;
 }
 
 :host(:focus) {
@@ -108,88 +176,23 @@ const onClose = () => {
 }
 
 :host(:focus-visible) {
-  outline: 2px var(--_c-tag-border-color) solid;
+  outline: 2px var(--c-primary-600) solid;
   outline-offset: 2px;
   z-index: 1;
 }
 
-/* Don't redefine `--_c-tag-text-color` here — `--_c-tag-background-color-active`
- * falls back through `var(--_c-tag-text-color)`, so overriding the text color
- * would cascade back into the background and make the active tag render white.
- * Apply background/color directly on the inner div, matching the Stencil port. */
-:host([active]) .c-tag__inner {
-  background: var(--_c-tag-background-color-active);
-  color: var(--_c-tag-text-color-active);
+/* The close button was a fixed 20px (16px on small tags) via the old
+ * c-icon-button size vars, which are removed (ADR-0004). The smallest size
+ * variant is x-small (28px), so re-pin the box through ::part() — the
+ * sanctioned child-customization mechanism (ADR-0006). Keeps a small tag from
+ * being forced taller by an oversized close button. */
+c-icon-button::part(root) {
+  width: 20px;
+  height: 20px;
 }
 
-:host([active]:hover) .c-tag__inner {
-  background: var(--_c-tag-background-color-active-hover);
-  box-shadow: none;
-}
-
-:host([block]) .c-tag__inner {
-  flex-basis: 100%;
-}
-
-:host([fit]) .c-tag__inner {
-  flex-grow: 1;
-}
-
-:host([flat]) .c-tag__inner {
-  pointer-events: none;
-}
-
-:host([closeable]) .c-tag__inner {
-  padding-right: var(--c-tag-padding-y);
-}
-
-:host([size='small']) {
-  --c-tag-min-height: 20px;
-  --c-tag-padding-y: 2px;
-  --c-tag-padding-x: 8px;
-  --c-tag-badge-size: 16px;
-  --c-tag-icon-button-offset: 1px 0 0;
-}
-
-.c-tag__inner[data-badge] {
-  padding-left: var(--c-tag-padding-y);
-}
-
-.c-tag__inner[data-badge]::before {
-  content: attr(data-badge);
-  background-color: var(--_c-tag-badge-background-color);
-  border-radius: calc(var(--_c-tag-border-radius) - var(--c-tag-padding-y));
-  color: var(--_c-tag-badge-text-color);
-  display: inline-grid;
-  font-size: 12px;
-  height: var(--c-tag-badge-size);
-  line-height: 1;
-  min-width: var(--c-tag-badge-size);
-  padding: 0 4px;
-  place-content: center;
-}
-
-:host([active]) .c-tag__inner[data-badge]::before {
-  background-color: var(--_c-tag-badge-background-color-active);
-  color: var(--_c-tag-badge-text-color-active);
-}
-
-/* The slotted close button (c-icon-button) needs to inherit the tag's
- * colour palette. Mirror the Stencil rules. */
-c-icon-button {
-  --_c-icon-button-height: 20px;
-  --_c-icon-button-width: 20px;
-  --_c-icon-button-background-color: transparent;
-  --_c-icon-button-text-color: var(--_c-tag-text-color);
-  margin: var(--c-tag-icon-button-offset);
-}
-
-:host([size='small']) c-icon-button {
-  --_c-icon-button-height: 16px;
-  --_c-icon-button-width: 16px;
-}
-
-:host([active]) c-icon-button {
-  --_c-icon-button-text-color: var(--_c-tag-text-color-active);
+:host([size='small']) c-icon-button::part(root) {
+  width: 16px;
+  height: 16px;
 }
 </style>

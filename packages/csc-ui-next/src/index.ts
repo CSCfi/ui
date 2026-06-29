@@ -1,71 +1,71 @@
-import { defineElement } from './shared/defineElement';
-import CIcon from './components/c-icon/CIcon.vue';
+import CAccordionItem from './components/c-accordion-item/CAccordionItem.vue';
+import CAccordion from './components/c-accordion/CAccordion.vue';
+import CAlert from './components/c-alert/CAlert.vue';
+import CBackdrop from './components/c-backdrop/CBackdrop.vue';
+import CBadge from './components/c-badge/CBadge.vue';
 import CButton from './components/c-button/CButton.vue';
-import CCheckbox from './components/c-checkbox/CCheckbox.vue';
-import CCard from './components/c-card/CCard.vue';
 import CCardActions from './components/c-card-actions/CCardActions.vue';
 import CCardContent from './components/c-card-content/CCardContent.vue';
 import CCardTitle from './components/c-card-title/CCardTitle.vue';
-import CAccordion from './components/c-accordion/CAccordion.vue';
-import CAccordionItem from './components/c-accordion-item/CAccordionItem.vue';
-import CInput from './components/c-input/CInput.vue';
-import CTextField from './components/c-text-field/CTextField.vue';
-import CSpinner from './components/c-spinner/CSpinner.vue';
-import CLoader from './components/c-loader/CLoader.vue';
-import CIconButton from './components/c-icon-button/CIconButton.vue';
-import CLink from './components/c-link/CLink.vue';
-import CTag from './components/c-tag/CTag.vue';
-import CTags from './components/c-tags/CTags.vue';
-import CProgressBar from './components/c-progress-bar/CProgressBar.vue';
-import CRadio from './components/c-radio/CRadio.vue';
-import CRadioGroup from './components/c-radio-group/CRadioGroup.vue';
-import CSwitch from './components/c-switch/CSwitch.vue';
-import CSpacer from './components/c-spacer/CSpacer.vue';
+import CCard from './components/c-card/CCard.vue';
+import CCheckbox from './components/c-checkbox/CCheckbox.vue';
 import CCscLogo from './components/c-csc-logo/CCscLogo.vue';
-import CBadge from './components/c-badge/CBadge.vue';
-import CStatus from './components/c-status/CStatus.vue';
-import CRow from './components/c-row/CRow.vue';
-import CToolbar from './components/c-toolbar/CToolbar.vue';
-import CMain from './components/c-main/CMain.vue';
-import CPage from './components/c-page/CPage.vue';
-import CMessage from './components/c-message/CMessage.vue';
-import CAlert from './components/c-alert/CAlert.vue';
-import CToast from './components/c-toast/CToast.vue';
-import CToasts from './components/c-toasts/CToasts.vue';
-import CBackdrop from './components/c-backdrop/CBackdrop.vue';
-import CModal from './components/c-modal/CModal.vue';
-import CStep from './components/c-step/CStep.vue';
-import CSteps from './components/c-steps/CSteps.vue';
-import CList from './components/c-list/CList.vue';
-import CListItem from './components/c-list-item/CListItem.vue';
+import CDropdown from './components/c-dropdown/CDropdown.vue';
+import CIconButton from './components/c-icon-button/CIconButton.vue';
+import CIcon from './components/c-icon/CIcon.vue';
+import CInput from './components/c-input/CInput.vue';
+import CLink from './components/c-link/CLink.vue';
 import CListItemTitle from './components/c-list-item-title/CListItemTitle.vue';
-import CTabs from './components/c-tabs/CTabs.vue';
-import CTab from './components/c-tab/CTab.vue';
-import CTabButtons from './components/c-tab-buttons/CTabButtons.vue';
-import CTabItems from './components/c-tab-items/CTabItems.vue';
-import CTabItem from './components/c-tab-item/CTabItem.vue';
-import CPagination from './components/c-pagination/CPagination.vue';
-import CNavigationButton from './components/c-navigation-button/CNavigationButton.vue';
-import CSideNavigationTitle from './components/c-side-navigation-title/CSideNavigationTitle.vue';
-import CSubNavigationItem from './components/c-sub-navigation-item/CSubNavigationItem.vue';
-import CSideNavigationItem from './components/c-side-navigation-item/CSideNavigationItem.vue';
-import CSideNavigation from './components/c-side-navigation/CSideNavigation.vue';
-import CLoginCard from './components/c-login-card/CLoginCard.vue';
-import CLoginCardTitle from './components/c-login-card-title/CLoginCardTitle.vue';
-import CLoginCardContent from './components/c-login-card-content/CLoginCardContent.vue';
-import CLoginCardActions from './components/c-login-card-actions/CLoginCardActions.vue';
+import CListItem from './components/c-list-item/CListItem.vue';
+import CList from './components/c-list/CList.vue';
+import CLoader from './components/c-loader/CLoader.vue';
 import CLoginButton from './components/c-login-button/CLoginButton.vue';
 import CLoginButtons from './components/c-login-buttons/CLoginButtons.vue';
-import CRipple from './components/c-ripple/CRipple.vue';
-import CTable from './components/c-table/CTable.vue';
-import CSwiperTab from './components/c-swiper-tab/CSwiperTab.vue';
-import CSwiper from './components/c-swiper/CSwiper.vue';
-import CSlider from './components/c-slider/CSlider.vue';
-import COtpInput from './components/c-otp-input/COtpInput.vue';
+import CLoginCardActions from './components/c-login-card-actions/CLoginCardActions.vue';
+import CLoginCardContent from './components/c-login-card-content/CLoginCardContent.vue';
+import CLoginCardTitle from './components/c-login-card-title/CLoginCardTitle.vue';
+import CLoginCard from './components/c-login-card/CLoginCard.vue';
+import CMain from './components/c-main/CMain.vue';
+import CMessage from './components/c-message/CMessage.vue';
+import CModal from './components/c-modal/CModal.vue';
+import CNavigationButton from './components/c-navigation-button/CNavigationButton.vue';
 import COptionValue from './components/c-option-value/COptionValue.vue';
 import COption from './components/c-option/COption.vue';
-import CDropdown from './components/c-dropdown/CDropdown.vue';
+import COtpInput from './components/c-otp-input/COtpInput.vue';
+import CPage from './components/c-page/CPage.vue';
+import CPagination from './components/c-pagination/CPagination.vue';
+import CProgressBar from './components/c-progress-bar/CProgressBar.vue';
+import CRadioGroup from './components/c-radio-group/CRadioGroup.vue';
+import CRadio from './components/c-radio/CRadio.vue';
+import CRow from './components/c-row/CRow.vue';
 import CSelect from './components/c-select/CSelect.vue';
+import CSideNavigationItem from './components/c-side-navigation-item/CSideNavigationItem.vue';
+import CSideNavigationTitle from './components/c-side-navigation-title/CSideNavigationTitle.vue';
+import CSideNavigation from './components/c-side-navigation/CSideNavigation.vue';
+import CSlider from './components/c-slider/CSlider.vue';
+import CSpacer from './components/c-spacer/CSpacer.vue';
+import CSpinner from './components/c-spinner/CSpinner.vue';
+import CStatus from './components/c-status/CStatus.vue';
+import CStep from './components/c-step/CStep.vue';
+import CSteps from './components/c-steps/CSteps.vue';
+import CSubNavigationItem from './components/c-sub-navigation-item/CSubNavigationItem.vue';
+import CSwiperTab from './components/c-swiper-tab/CSwiperTab.vue';
+import CSwiper from './components/c-swiper/CSwiper.vue';
+import CSwitch from './components/c-switch/CSwitch.vue';
+import CTabButton from './components/c-tab-button/CTabButton.vue';
+import CTabButtons from './components/c-tab-buttons/CTabButtons.vue';
+import CTabItem from './components/c-tab-item/CTabItem.vue';
+import CTabItems from './components/c-tab-items/CTabItems.vue';
+import CTab from './components/c-tab/CTab.vue';
+import CTable from './components/c-table/CTable.vue';
+import CTabs from './components/c-tabs/CTabs.vue';
+import CTag from './components/c-tag/CTag.vue';
+import CTags from './components/c-tags/CTags.vue';
+import CTextField from './components/c-text-field/CTextField.vue';
+import CToast from './components/c-toast/CToast.vue';
+import CToasts from './components/c-toasts/CToasts.vue';
+import CToolbar from './components/c-toolbar/CToolbar.vue';
+import { defineElement } from './shared/defineElement';
 
 /**
  * Map of custom-element tag → Vue SFC component. The single source of
@@ -115,6 +115,7 @@ const components: Array<[string, unknown]> = [
   ['c-list-item-title', CListItemTitle],
   ['c-tabs', CTabs],
   ['c-tab', CTab],
+  ['c-tab-button', CTabButton],
   ['c-tab-buttons', CTabButtons],
   ['c-tab-items', CTabItems],
   ['c-tab-item', CTabItem],
@@ -130,7 +131,6 @@ const components: Array<[string, unknown]> = [
   ['c-login-card-actions', CLoginCardActions],
   ['c-login-button', CLoginButton],
   ['c-login-buttons', CLoginButtons],
-  ['c-ripple', CRipple],
   ['c-table', CTable],
   ['c-swiper-tab', CSwiperTab],
   ['c-swiper', CSwiper],
@@ -157,3 +157,80 @@ export function defineCustomElements(): void {
 
 /** List of tags this package will register. Useful for docs/tests. */
 export const migratedTags: ReadonlyArray<string> = components.map(([t]) => t);
+
+/**
+ * Tags converted to the tailwind-variants styling system (ADR-0004).
+ * Append a tag as each component is migrated. Used by the docs to mark
+ * conversion progress in the side navigation.
+ */
+export const tailwindVariantTags: ReadonlyArray<string> = [
+  'c-button',
+  'c-accordion',
+  'c-accordion-item',
+  // Wave A — layout / wrapper components.
+  'c-spacer',
+  'c-row',
+  'c-main',
+  'c-page',
+  'c-toolbar',
+  'c-backdrop',
+  'c-csc-logo',
+  'c-icon',
+  'c-card',
+  'c-card-actions',
+  'c-card-content',
+  'c-card-title',
+  'c-list',
+  'c-list-item',
+  'c-list-item-title',
+  // Wave B — display / feedback components.
+  'c-spinner',
+  'c-loader',
+  'c-icon-button',
+  'c-link',
+  'c-badge',
+  'c-status',
+  'c-tag',
+  'c-tags',
+  'c-alert',
+  'c-message',
+  'c-toast',
+  'c-toasts',
+  'c-progress-bar',
+  'c-login-button',
+  'c-login-buttons',
+  'c-navigation-button',
+  'c-side-navigation-title',
+  'c-login-card',
+  'c-login-card-title',
+  'c-login-card-content',
+  'c-login-card-actions',
+  // Wave C — navigation / tabs / steps components.
+  'c-tabs',
+  'c-tab',
+  'c-tab-button',
+  'c-tab-buttons',
+  'c-tab-items',
+  'c-tab-item',
+  'c-steps',
+  'c-step',
+  'c-pagination',
+  'c-side-navigation',
+  'c-side-navigation-item',
+  'c-sub-navigation-item',
+  // Wave D — form controls, modal, table (hybrid; heavy ADR-0007 escape-hatch).
+  'c-checkbox',
+  'c-radio',
+  'c-radio-group',
+  'c-switch',
+  'c-input',
+  'c-text-field',
+  'c-otp-input',
+  'c-slider',
+  'c-select',
+  'c-option',
+  'c-option-value',
+  'c-dropdown',
+  'c-modal',
+  'c-table',
+];

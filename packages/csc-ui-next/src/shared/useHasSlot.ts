@@ -27,16 +27,21 @@ export function useHasSlot(
   name: string,
 ): Ref<boolean> {
   const has = ref(false);
+
   let slot: HTMLSlotElement | null = null;
+
   const update = () => {
     has.value = !!slot && slot.assignedNodes({ flatten: true }).length > 0;
   };
 
   onMounted(() => {
     const el = container.value;
+
     if (!el) return;
+
     const selector = name ? `slot[name="${name}"]` : 'slot:not([name])';
     slot = el.querySelector<HTMLSlotElement>(selector);
+
     if (!slot) return;
     slot.addEventListener('slotchange', update);
     update();

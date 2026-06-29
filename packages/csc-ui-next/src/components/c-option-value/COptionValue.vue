@@ -14,6 +14,14 @@
 defineOptions({ inheritAttrs: false });
 </script>
 
+<!--
+  Escape-hatch CSS (ADR-0007): this component renders a bare `<slot />` with no
+  element to hang a utility class on, and its only style is the host box itself.
+  `:host{display:block}` overrides the global `:host{display:contents}` so the
+  wrapper is a real block box (c-dropdown's autocomplete code targets the
+  `c-option-value` element and writes its innerHTML) — utilities can't target
+  the host. No tv config: there is no inner region to style.
+-->
 <style>
 :host {
   display: block;

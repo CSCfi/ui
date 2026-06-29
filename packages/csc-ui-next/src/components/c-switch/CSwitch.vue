@@ -1,65 +1,166 @@
 <template>
   <label
-    ref="root"
-    class="c-switch"
-    :class="{
-      'c-switch--disabled': disabled,
-      'c-switch--label': hasSlotContent,
-    }"
+    ref="rootRef"
+    :class="[
+      ui.root(),
+      {
+        'c-switch--disabled': disabled,
+      },
+    ]"
     :for="inputId"
+    class="c-switch"
+    part="root"
   >
-    <div class="c-switch__input">
+    <div :class="ui.inputWrap()">
       <input
         :id="inputId"
-        type="checkbox"
-        role="switch"
+        :aria-checked="internalChecked"
         :checked="internalChecked || undefined"
-        :disabled="disabled"
-        :aria-checked="String(internalChecked)"
+        :class="ui.input()"
+        :disabled
+        role="switch"
+        type="checkbox"
         @change="toggle"
-      >
+      />
+
       <span
+        :class="[
+          ui.slider(),
+          {
+            'c-switch__slider--disabled': disabled,
+            'c-switch__slider--loading': loading,
+          },
+        ]"
         class="c-switch__slider"
-        :class="{
-          'c-switch__slider--disabled': disabled,
-          'c-switch__slider--loading': loading,
-        }"
+        part="slider"
       >
-        <c-spinner :size="14" :width="2" />
+        <span :class="ui.spinner()" class="c-switch__spinner">
+          <!-- color="currentColor" so the spinner tracks the slider's colour
+               (tertiary-600 off → white on); the spinner prop default is
+               primary-600, which would otherwise ignore the slider colour. -->
+          <c-spinner :size="14" :width="2" color="currentColor" />
+        </span>
       </span>
     </div>
-    <div v-show="hasSlotContent" class="c-switch__label">
+
+    <div v-show="hasSlotContent" :class="ui.label()" part="label">
       <slot />
-      <span v-if="required" class="c-switch__required" aria-hidden="true">&nbsp;*</span>
+
+      <span v-if="required" :class="ui.required()" aria-hidden="true">
+        &nbsp;*
+      </span>
     </div>
   </label>
 </template>
 
 <script setup lang="ts">
-import { computed, ref, useHost, useTemplateRef, watch } from 'vue';
+import { tv } from 'tailwind-variants';
+import { computed, ref, useHost, useId, useTemplateRef, watch } from 'vue';
+
+import { emitModelValue } from '../../shared/emitModelValue';
 import { useHasSlot } from '../../shared/useHasSlot';
 
-const props = defineProps({
-  checked: { type: Boolean, default: false },
-  value: { type: [Boolean, String, Number], default: false },
-  trueValue: { type: [Boolean, String, Number], default: true },
-  falseValue: { type: [Boolean, String, Number], default: false },
-  disabled: { type: Boolean, default: false },
-  loading: { type: Boolean, default: false },
-  hostId: { type: String, default: '' },
-  required: { type: Boolean, default: false },
+/**
+ * Styling lives in this `tailwind-variants` config (ADR-0004); the old
+ * `--_c-switch-*` indirection layer is dropped. Customization is via
+ * `::part()` (ADR-0006); there is no `override` prop.
+ *
+ * The track (`slider`) and the round handle (`slider::before`) make up the
+ * toggle. The handle's ON position (`translateX`) and the ON/OFF/disabled
+ * COLOURS are sibling-driven (`input:checked + .slider …`) — they depend on
+ * the live `:checked`/`:focus-visible` of the sibling input, which `tv`
+ * variants cannot observe — so they remain in the escape-hatch `<style>`
+ * below (ADR-0007). The static track/handle geometry lives here in `tv`.
+ *
+ * SPINNER RECOLOUR: <c-spinner> is passed `color="currentColor"` (its prop
+ * default is primary-600), so it tracks the inherited colour. The escape-hatch
+ * sets `color` on `.c-switch__slider` equal to the current
+ * handle colour (tertiary-600 off → white on → tertiary-500/white when
+ * disabled), and the handle `::before` paints with `background:currentColor`.
+ * So both the handle and the spinner inherit the same colour and stay in sync
+ * across off/on/disabled states without any `--c-spinner-color` var (dead).
+ */
+const cSwitch = tv({
+  defaultVariants: {
+    disabled: false,
+    hasLabel: false,
+  },
+  slots: {
+    input: 'h-0 opacity-0 w-0 absolute',
+    inputWrap: 'h-5.5 relative w-11 self-start',
+    label: 'self-center',
+    required: 'text-[var(--c-error-600)]',
+    // Track geometry: 22x44, pill radius, gap to label. The on/off colours and
+    // handle position are sibling-driven in the escape-hatch below.
+    root: 'inline-grid h-5.5 relative items-center gap-3 transform-gpu [backface-visibility:hidden]',
+    // The track. Border drawn as an inset ring; colours flipped on state in
+    // escape-hatch. Handle is the `::before` (also escape-hatch, sibling-driven
+    // for its translate). The slider's `color` (set in escape-hatch) is what
+    // the nested c-spinner inherits via `currentColor`.
+    slider:
+      'absolute inset-0 rounded-full cursor-pointer origin-center transition-[box-shadow,background-color] duration-300 ease-[cubic-bezier(0.25,0.8,0.5,1)]',
+    // Spinner wrapper: hidden by default, revealed by the --loading state class.
+    // These utilities sit on a wrapper <span> (not the <c-spinner> element)
+    // because the nested <c-spinner> host is `display:contents` (global host
+    // sheet) — a 0x0 box on which `absolute`/`opacity`/`transform` are inert.
+    // The span owns the box; the c-spinner inside renders its svg and inherits
+    // `color` (currentColor) from the slider (see header).
+    spinner:
+      'block pointer-events-none z-2 absolute left-1 top-1 opacity-0 transition-all duration-300 ease-[cubic-bezier(0.25,0.8,0.5,1)]',
+  },
+  variants: {
+    disabled: {
+      false: {},
+      true: {
+        root: 'text-[var(--c-tertiary-500)]',
+        slider: 'cursor-default',
+      },
+    },
+    hasLabel: {
+      false: {},
+      true: { root: 'grid-cols-[auto_auto]' },
+    },
+  },
+});
+
+interface CSwitchProps {
+  checked?: boolean;
+  disabled?: boolean;
+  falseValue?: boolean | number | string;
+  hostId?: string;
+  loading?: boolean;
+  required?: boolean;
+  trueValue?: boolean | number | string;
+  value?: boolean | number | string;
+}
+
+const props = withDefaults(defineProps<CSwitchProps>(), {
+  checked: false,
+  disabled: false,
+  falseValue: false,
+  hostId: '',
+  loading: false,
+  required: false,
+  trueValue: true,
+  value: false,
 });
 
 const host = useHost();
-const dispatchValue = (name: string, value: unknown) => {
-  host?.dispatchEvent(new CustomEvent(name, { detail: value }));
-};
 
-const root = useTemplateRef<HTMLElement>('root');
-const hasSlotContent = useHasSlot(root, '');
+const rootRef = useTemplateRef<HTMLElement>('rootRef');
 
-let uid = 0;
-const inputId = computed(() => props.hostId || `c-switch-${++uid}`);
+const hasSlotContent = useHasSlot(rootRef, '');
+
+const ui = computed(() =>
+  cSwitch({
+    disabled: props.disabled,
+    hasLabel: hasSlotContent.value,
+  }),
+);
+
+const autoId = useId();
+
+const inputId = computed(() => props.hostId || `c-switch-${autoId}`);
 
 const internalChecked = ref(props.checked || props.value === props.trueValue);
 
@@ -79,87 +180,63 @@ watch(
 const toggle = () => {
   if (props.disabled) return;
   internalChecked.value = !internalChecked.value;
+
   const next = internalChecked.value ? props.trueValue : props.falseValue;
-  dispatchValue('update:value', next);
-  dispatchValue('changeValue', next);
+  // Emits changeValue/update:value + native `input` (for plain v-model) and
+  // mirrors `value` onto the host. The value watch above is visuals-only, so no
+  // loop. The native `change` is kept for @change listeners.
+  emitModelValue(host, next);
   host?.dispatchEvent(new Event('change', { bubbles: true, composed: true }));
 };
 </script>
 
+<!--
+  Escape-hatch CSS (ADR-0007): only constructs Tailwind utilities cannot
+  express. Static track/handle geometry lives in the `tv` config above. What
+  remains here:
+
+  - `:host{display:inline-block}` — restores a box on the host (the global
+    sheet sets `:host{display:contents}`). Targets the host, not a tv element.
+  - The handle `::before` and all sibling-driven state: the OFF/ON/disabled
+    track + border + handle COLOURS and the handle's `translateX` on
+    `input:checked + .slider`, plus the focus-visible outline. These depend on
+    the live `:checked`/`:focus-visible` of the sibling input, which tv
+    variants cannot observe.
+  - The slider's `color` carries the handle colour so the nested <c-spinner>
+    (which reads `currentColor`) tracks the handle across states; the handle
+    `::before` paints with `background:currentColor`. The loading state toggles
+    spinner opacity and hides the handle.
+  Geometry is kept in CSS vars so the handle size/position stay in one place.
+  Tokens only (plus the spec'd transparent fallbacks).
+-->
 <style>
 :host {
-  --_c-switch-border-color: var(--c-switch-border-color, var(--c-tertiary-600));
-  --_c-switch-handle-color: var(--c-switch-handle-color, var(--c-tertiary-600));
-  --_c-switch-slider-color: var(--c-switch-slider-color, transparent);
-
-  --_c-switch-border-color-disabled: var(--c-switch-border-color-disabled, transparent);
-  --_c-switch-handle-color-disabled: var(--c-switch-handle-color-disabled, var(--c-tertiary-500));
-  --_c-switch-slider-color-disabled: var(--c-switch-slider-color-disabled, var(--c-tertiary-200));
-
-  --_c-switch-border-color-active: var(--c-switch-border-color-active, var(--c-primary-600));
-  --_c-switch-handle-color-active: var(--c-switch-handle-color-active, var(--c-white));
-  --_c-switch-slider-color-active: var(--c-switch-slider-color-active, var(--c-primary-600));
-
-  --_c-switch-border-color-active-disabled: var(--c-switch-border-color-active-disabled, var(--c-tertiary-400));
-  --_c-switch-handle-color-active-disabled: var(--c-switch-handle-color-active-disabled, var(--c-white));
-  --_c-switch-slider-color-active-disabled: var(--c-switch-slider-color-active-disabled, var(--c-tertiary-400));
-
   display: inline-block;
 }
 
 .c-switch {
   --_c-switch-handle-margin: 5px;
-  --_c-switch-pointer: pointer;
   --_c-switch-height: 22px;
   --_c-switch-width: 44px;
-  --_c-switch-handle-size: calc(var(--_c-switch-height) - 2 * var(--_c-switch-handle-margin));
-  --_c-switch-handle-position-active: calc(
-    var(--_c-switch-width) - var(--_c-switch-handle-size) - 2 * var(--_c-switch-handle-margin)
+  --_c-switch-handle-size: calc(
+    var(--_c-switch-height) - 2 * var(--_c-switch-handle-margin)
   );
-
-  backface-visibility: hidden;
-  transform: translate3d(0, 0, 0);
-  display: inline-grid;
-  height: var(--_c-switch-height);
-  position: relative;
-  grid-template-columns: 1fr;
-  gap: 12px;
-  align-items: center;
+  --_c-switch-handle-position-active: calc(
+    var(--_c-switch-width) - var(--_c-switch-handle-size) - 2 *
+      var(--_c-switch-handle-margin)
+  );
 }
 
-.c-switch--label {
-  grid-template-columns: var(--_c-switch-width) auto;
-}
-
-.c-switch--disabled {
-  --_c-switch-pointer: default;
-  --_c-switch-handle-color: var(--_c-switch-handle-color-disabled);
-  --_c-switch-slider-color: var(--_c-switch-slider-color-disabled);
-  --_c-switch-border-color: var(--_c-switch-border-color-disabled);
-
-  color: var(--c-tertiary-500);
-}
-
-.c-switch__input {
-  height: var(--_c-switch-height);
-  position: relative;
-  width: var(--_c-switch-width);
-  align-self: start;
-}
-
+/* OFF state: track transparent, border tertiary-600, handle colour
+ * tertiary-600 (carried via `color`, inherited by the handle + spinner). */
 .c-switch__slider {
-  background-color: var(--_c-switch-slider-color);
-  border-radius: var(--_c-switch-height);
-  box-shadow: inset 0 0 0 2px var(--_c-switch-border-color);
-  inset: 0;
-  cursor: var(--_c-switch-pointer);
-  position: absolute;
-  transform-origin: 50% 50%;
-  transition: 0.3s cubic-bezier(0.25, 0.8, 0.5, 1);
+  color: var(--c-tertiary-600);
+  background-color: transparent;
+  box-shadow: inset 0 0 0 2px var(--c-tertiary-600);
 }
 
 .c-switch__slider::before {
-  background-color: var(--_c-switch-handle-color);
+  background-color: currentColor;
   border-radius: 50%;
   bottom: var(--_c-switch-handle-margin);
   content: '';
@@ -170,57 +247,39 @@ const toggle = () => {
   width: var(--_c-switch-handle-size);
 }
 
-.c-switch__slider c-spinner {
-  /* Use the public `--c-spinner-color` override rather than `--c-color`
-   * — c-spinner writes `--c-color` as an inline style on its host from
-   * the `color` prop default, which would beat any cascade-set value.
-   * The public override variable wins in the var-chain without needing
-   * !important. Tracks the handle colour so it stays visible against
-   * the slider background. */
-  --c-spinner-color: var(--_c-switch-handle-color);
-  pointer-events: none;
-  z-index: 2;
-  position: absolute;
-  left: 4px;
-  top: 4px;
-  opacity: 0;
-  transition: all 0.3s cubic-bezier(0.25, 0.8, 0.5, 1);
+/* OFF + disabled: border transparent, handle tertiary-500. */
+.c-switch__slider--disabled {
+  color: var(--c-tertiary-500);
+  background-color: var(--c-tertiary-200);
+  box-shadow: none;
 }
 
-.c-switch__slider--loading c-spinner {
-  opacity: 1;
-}
-
+/* Loading: hide the handle, reveal the spinner (it inherits the slider color). */
 .c-switch__slider--loading::before {
   opacity: 0;
 }
 
-input {
-  height: 0;
-  opacity: 0;
-  width: 0;
-  position: absolute;
+.c-switch__slider--loading .c-switch__spinner {
+  opacity: 1;
 }
 
+/* ON state — sibling-driven. Track + border primary-600, handle white. */
 input:checked + .c-switch__slider {
-  --_c-switch-handle-color: var(--_c-switch-handle-color-active);
-  --_c-switch-slider-color: var(--_c-switch-slider-color-active);
-  --_c-switch-border-color: var(--_c-switch-border-color-active);
+  color: var(--c-white);
+  background-color: var(--c-primary-600);
+  box-shadow: inset 0 0 0 2px var(--c-primary-600);
 }
 
-input:checked + .c-switch__slider::before {
+input:checked + .c-switch__slider::before,
+input:checked + .c-switch__slider .c-switch__spinner {
   transform: translateX(var(--_c-switch-handle-position-active));
 }
 
-input:checked + .c-switch__slider c-spinner {
-  --c-spinner-color: var(--_c-switch-handle-color-active);
-  transform: translateX(var(--_c-switch-handle-position-active));
-}
-
+/* ON + disabled. */
 input:checked + .c-switch__slider--disabled {
-  --_c-switch-handle-color: var(--_c-switch-handle-color-active-disabled);
-  --_c-switch-slider-color: var(--_c-switch-slider-color-active-disabled);
-  --_c-switch-border-color: var(--_c-switch-border-color-active-disabled);
+  color: var(--c-white);
+  background-color: var(--c-tertiary-400);
+  box-shadow: inset 0 0 0 2px var(--c-tertiary-400);
 }
 
 input:focus + .c-switch__slider {
@@ -230,13 +289,5 @@ input:focus + .c-switch__slider {
 input:focus-visible + .c-switch__slider {
   outline: 2px var(--c-primary-600) solid;
   outline-offset: 2px;
-}
-
-.c-switch__label {
-  align-self: center;
-}
-
-.c-switch__required {
-  color: var(--c-error-600);
 }
 </style>

@@ -1,35 +1,85 @@
 <template>
-  <slot />
+  <div :class="ui.root()" part="root">
+    <slot />
+  </div>
 </template>
 
 <script setup lang="ts">
-import { onBeforeUnmount, onMounted, useHost, watchEffect } from 'vue';
+import { tv } from 'tailwind-variants';
+import {
+  computed,
+  onBeforeUnmount,
+  onMounted,
+  useHost,
+  watchEffect,
+} from 'vue';
 
-// `<slot />` root (fragment) + we write to the host below — keep fallthrough
-// attrs on the host element instead of tripping the "renders fragment" warning.
-defineOptions({ inheritAttrs: false });
-
-const props = defineProps({
-  disabled: { type: Boolean, default: false },
-  bordered: { type: Boolean, default: false },
+/**
+ * Styling lives in this `tailwind-variants` config (ADR-0004): the `root` slot
+ * is the public grid container that lays out the list items. Consumer
+ * customization is via `::part()` (ADR-0006); there is no `override` prop. The
+ * per-component `--c-*` indirection vars are dropped in favour of global design
+ * tokens.
+ *
+ * The `bordered` outline targets consumer-provided `<c-list-item>` children via
+ * `::slotted(...)`, which utilities cannot express — that rule stays in the
+ * escape-hatch <style> below (ADR-0007).
+ */
+const list = tv({
+  slots: {
+    root: 'grid gap-1',
+  },
 });
+
+interface CListProps {
+  bordered?: boolean;
+  disabled?: boolean;
+}
+
+const props = withDefaults(defineProps<CListProps>(), {
+  bordered: false,
+  disabled: false,
+});
+
+const ui = computed(() => list());
 
 const host = useHost();
 
-// Propagate the list's disabled state down to each child <c-list-item>.
-// Items that were *explicitly* disabled by the consumer (have a
-// `disabled` attribute but no `data-disabled` marker) are left alone so
-// re-enabling the list doesn't re-enable them.
+// Propagate the list's disabled state to its <c-list-item> children WITHOUT ever
+// clobbering an item the CONSUMER disabled. The sync is non-destructive: it only
+// re-enables items the LIST itself disabled (tracked via `disabledByParent`).
+//
+// The previous approach set `item.disabled = props.disabled` for every item it
+// didn't recognise as consumer-disabled — but recognition raced the child: Vue
+// sets the item's `disabled` prop during patch (as a property, like it does for
+// c-icon-button), yet for a brief window the item isn't yet seen as disabled, so
+// a consumer-disabled item got reset to the list's `disabled` (false) and never
+// recovered. Never setting `disabled = false` on an item we didn't disable
+// removes the race entirely.
+type CListItemEl = {
+  disabled?: boolean;
+  disabledByParent?: boolean;
+} & HTMLElement;
+
 const syncDisabled = () => {
   if (!host) return;
-  const items = Array.from(host.querySelectorAll('c-list-item')) as HTMLElement[];
+
+  const items = Array.from(
+    host.querySelectorAll('c-list-item'),
+  ) as CListItemEl[];
   items.forEach((item) => {
-    const explicitlyDisabled =
-      item.hasAttribute('disabled') && !item.hasAttribute('data-disabled');
-    if (!explicitlyDisabled) {
-      (item as unknown as { disabled: boolean }).disabled = props.disabled;
-      (item as unknown as { disabledByParent: boolean }).disabledByParent =
-        props.disabled;
+    if (props.disabled) {
+      // List disabled: disable items that aren't already disabled, and remember
+      // we own those so we can restore exactly them. A consumer-disabled item
+      // (already disabled) is left untouched — not marked as ours.
+      if (!item.disabled) {
+        item.disabled = true;
+        item.disabledByParent = true;
+      }
+    } else if (item.disabledByParent) {
+      // List enabled: restore ONLY items the list disabled.
+      item.disabled = false;
+      item.disabledByParent = false;
     }
   });
 };
@@ -46,28 +96,28 @@ onMounted(() => {
 onBeforeUnmount(() => observer?.disconnect());
 </script>
 
+<!--
+  Escape-hatch CSS (ADR-0007): the `bordered` outline targets consumer-provided
+  light-DOM <c-list-item> children, which only `::slotted(...)` can reach — the
+  shadow-root `*` reset never touches light DOM and no utility can express it.
+  The grid layout itself lives in the `tv` config above. Authored against global
+  design tokens only.
+-->
 <style>
-:host {
-  --_c-list-gap: var(--c-list-gap, 4px);
-  --_c-list-border-color: var(--c-list-border-color, var(--c-tertiary-200));
-  --_c-list-border-color-active: var(
-    --c-list-border-color-active,
-    var(--c-primary-600)
-  );
-
-  display: grid;
-  gap: var(--_c-list-gap);
-}
-
-/* `bordered` outlines each item. Slotted elements live in the light DOM,
- * so the shadow-root `*` reset never touches them and ::slotted targets
- * them directly. */
+/*
+  `!important` is required, not stylistic: the docs/app ship Tailwind's preflight
+  (`*,::before,::after{border-width:0}`) at the document level, and the slotted
+  c-list-item physically lives in that outer (light DOM) tree. Per CSS Scoping,
+  NORMAL declarations from the outer tree beat `::slotted` rules from this inner
+  tree regardless of specificity — so a plain border here is overridden to 0.
+  `!important` flips the cross-tree precedence back to the inner tree.
+*/
 :host([bordered]) ::slotted(c-list-item) {
-  border: 1px solid var(--_c-list-border-color);
+  border: 1px solid var(--c-tertiary-200) !important;
   border-radius: 4px;
 }
 
 :host([bordered]) ::slotted(c-list-item.c-list-item--active) {
-  border-color: var(--_c-list-border-color-active);
+  border-color: var(--c-primary-600) !important;
 }
 </style>

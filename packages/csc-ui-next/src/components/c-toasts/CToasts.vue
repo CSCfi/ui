@@ -1,5 +1,5 @@
 <template>
-  <div ref="containerRef">
+  <div ref="containerRef" :class="ui.root()" part="root">
     <c-toast
       v-for="msg in messages"
       :key="msg.id"
@@ -13,51 +13,97 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, ref, useHost, useTemplateRef, watchEffect } from 'vue';
+import { tv } from 'tailwind-variants';
+import {
+  computed,
+  onMounted,
+  ref,
+  useHost,
+  useTemplateRef,
+  watchEffect,
+} from 'vue';
 
-interface ToastMessage {
-  message: string;
-  title?: string;
-  type?: 'info' | 'warning' | 'error' | 'success';
-  duration?: number;
-  persistent?: boolean;
-  id?: string;
-  closeText?: string;
-  indeterminate?: boolean;
-  progress?: boolean;
-  custom?: boolean;
+// Placement state (`absolute`/`top`/`bottom`/`left`/`right`/`center`) is toggled
+// imperatively as classes on the HOST so the `:host(.absolute)` etc. rules below
+// can match it. Without this, Vue mirrors the host's `class` onto the single
+// template root (`[part="root"]`) via attribute fallthrough — and because
+// `absolute` is also a Tailwind utility, the inner grid would inherit
+// `position: absolute`, collapse out of the host's flow, shrink-wrap to its
+// content and spill out of the container. Keep host classes on the host only.
+defineOptions({ inheritAttrs: false });
+
+/**
+ * Styling lives in this `tailwind-variants` config (ADR-0004). Only the inner
+ * container grid is a utility region (`root`); the host itself is the fixed
+ * positioned overlay whose placement is driven by the `absolute` / `vertical`
+ * / `horizontal` props. Those `:host(.absolute|.top|.bottom|.left|.right
+ * |.center)` rules are positional host state toggled imperatively as classes,
+ * so they stay in the escape-hatch sheet below (ADR-0007). Consumer
+ * customization is via `::part()` (ADR-0006).
+ */
+const toasts = tv({
+  slots: {
+    root: 'grid gap-3 grid-cols-[1fr] p-3',
+  },
+});
+
+interface CToastsProps {
+  absolute?: boolean;
+  horizontal?: string;
+  vertical?: string;
 }
 
-const props = defineProps({
-  absolute: { type: Boolean, default: false },
-  horizontal: { type: String, default: 'center' },
-  vertical: { type: String, default: 'bottom' },
+interface ToastMessage {
+  closeText?: string;
+  custom?: boolean;
+  duration?: number;
+  id?: string;
+  indeterminate?: boolean;
+  message: string;
+  persistent?: boolean;
+  progress?: boolean;
+  title?: string;
+  type?: 'error' | 'info' | 'success' | 'warning';
+}
+
+const props = withDefaults(defineProps<CToastsProps>(), {
+  absolute: false,
+  horizontal: 'center',
+  vertical: 'bottom',
 });
 
 const host = useHost();
+
 const containerRef = useTemplateRef<HTMLElement>('containerRef');
+
 const messages = ref<ToastMessage[]>([]);
 
+const ui = computed(() => toasts());
+
 let nextId = 0;
+
 const defaultOptions = () => ({
-  type: 'info' as const,
   duration: 6000,
-  persistent: false,
-  indeterminate: false,
-  progress: false,
   id: `c-toast-item-${++nextId}`,
+  indeterminate: false,
+  persistent: false,
+  progress: false,
+  type: 'info' as const,
 });
 
 // Public method: append a new toast. Custom toasts are limited to 1 at
 // a time because slot reflection can only project to one place.
 const addToast = (message: ToastMessage) => {
   const hasCustom = messages.value.some((m) => m.custom);
+
   if (message.custom && hasCustom) {
     console.warn(
       'Custom toast messages are restricted to 1 visible message due to slot reflection limitations.',
     );
+
     return;
   }
+
   requestAnimationFrame(() => {
     const defaults = defaultOptions();
     messages.value = [
@@ -78,18 +124,22 @@ const addToast = (message: ToastMessage) => {
 // rendered c-toast's exposed `closeToast` method (set via defineExpose
 // in CToast.vue).
 const removeToast = (id: string) => {
-  const toast = containerRef.value?.querySelector(
-    `#c-toast--${id}`,
-  ) as (HTMLElement & { closeToast?: () => void }) | null;
+  const toast = containerRef.value?.querySelector(`#c-toast--${id}`) as
+    | ({ closeToast?: () => void } & HTMLElement)
+    | null;
   toast?.closeToast?.();
 };
 
 const onChildClose = (event: CustomEvent<ToastMessage>) => {
   const id = event.detail?.id;
+
   if (!id) return;
+
   const toast = containerRef.value?.querySelector(`#c-toast--${id}`);
   toast?.remove();
+
   const remaining = containerRef.value?.querySelectorAll('c-toast').length || 0;
+
   if (remaining === 0) {
     messages.value = [];
   }
@@ -110,28 +160,40 @@ onMounted(() => {
 });
 </script>
 
+<!--
+  Escape-hatch CSS (ADR-0007): only constructs Tailwind utilities cannot
+  express. The inner container grid lives in the `tv` `root` slot above; here
+  remains the host itself, which must be a real fixed/absolute positioned
+  overlay box (utilities can't target the host, and this host is the structural
+  positioning anchor for the toast stack). `display:block` is REQUIRED to
+  override the global `:host{display:contents}`: a `display:contents` host
+  generates no box, so `position:fixed/absolute` is ignored and the stack falls
+  into normal flow (below the page content). The per-type sheet is adopted after
+  the shared sheet, so this wins. The placement variants are positional host
+  state toggled imperatively as classes.
+-->
 <style>
 :host {
+  display: block;
+  position: fixed;
   left: 0;
+  right: 0;
+  width: 640px;
   max-width: 100%;
   min-width: 30vw;
   pointer-events: none;
-  position: fixed;
-  right: 0;
-  width: 640px;
   z-index: 10000;
 }
 
-:host > div {
-  display: grid;
-  gap: 12px;
-  grid-template-columns: 1fr;
-  padding: 12px;
+:host(.absolute) {
+  position: absolute;
 }
-
-:host(.absolute) { position: absolute; }
-:host(.bottom) { bottom: 0; }
-:host(.top) { top: 0; }
+:host(.bottom) {
+  bottom: 0;
+}
+:host(.top) {
+  top: 0;
+}
 :host(.right) {
   justify-content: end;
   left: auto;

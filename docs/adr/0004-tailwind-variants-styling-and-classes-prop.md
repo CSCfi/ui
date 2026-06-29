@@ -1,3 +1,13 @@
+---
+status: >
+  partially superseded by ADR-0006 — the `override` prop and the `@source inline`
+  safelist are removed; the `tailwind-variants` authoring system, dropped `--c-*`
+  vars, parts, `@theme` token map, and `:host` rule still stand.
+  Amended by ADR-0007 — the "no per-component CSS" / "re-architect un-Tailwind-able
+  CSS away" decisions are relaxed to allow a narrow escape-hatch `<style>` block
+  (::slotted, positional :host, @keyframes, native pseudo-elements)
+---
+
 # Tailwind-variants styling, dropped `--c-*` override vars, and the `override` prop
 
 _(Filename slug retains "classes-prop" for link stability; the prop was renamed `classes` → `override`.)_

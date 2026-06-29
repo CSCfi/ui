@@ -1,18 +1,18 @@
 <template>
   <c-input
-    :label="label"
-    :label-on-top="labelOnTop"
-    :hint="hint"
-    :validation="validation"
-    :hide-details="hideDetails"
-    :valid="valid"
-    :disabled="disabled"
-    :required="required"
-    :shadow="shadow"
     :active="isActiveForInput"
+    :data-hide-details="String(hideDetailsResolved)"
+    :disabled
     :filled="isFilledForInput"
+    :hint
+    :input-id
     :is-textarea="rows > 1"
-    :input-id="inputId"
+    :label
+    :label-on-top
+    :required
+    :shadow
+    :valid
+    :validation
   >
     <!-- Pre slot: forwarded from the consumer's `pre` slot. We only
          render the wrapper when the consumer has actually provided pre
@@ -22,57 +22,56 @@
          direct flex item of c-input's `.c-input__pre` and centres
          vertically there (otherwise the wrapper's inline line-height
          would push the icon to the top of its line). -->
-    <span
-      v-if="hasConsumerPre"
-      slot="pre"
-      style="display: contents"
-    ><slot name="pre" /></span>
+    <span v-if="hasConsumerPre" slot="pre" class="contents">
+      <slot name="pre" />
+    </span>
 
     <textarea
       v-if="rows > 1"
       :id="inputId"
-      ref="inputEl"
-      class="c-text-field__input"
+      ref="inputRef"
+      :aria-invalid="!valid"
+      :autocapitalize="automaticCapitalize || undefined"
+      :autocomplete="autocomplete || undefined"
+      :autocorrect="autocorrect || undefined"
+      :class="ui.textarea()"
+      :disabled
       :name="name || undefined"
       :placeholder="effectivePlaceholder"
-      :disabled="disabled"
-      :readonly="readonly"
-      :required="required"
-      :rows="rows"
-      :autocomplete="autocomplete || undefined"
-      :autocapitalize="automaticCapitalize || undefined"
-      :autocorrect="autocorrect || undefined"
+      :readonly
+      :required
+      :rows
       :value="value ?? ''"
-      :aria-invalid="!valid"
-      @input="onInput"
+      @blur="onBlur"
       @change="onChange"
       @focus="onFocus"
-      @blur="onBlur"
+      @input="onInput"
     />
+
     <input
       v-else
       :id="inputId"
-      ref="inputEl"
-      class="c-text-field__input"
-      :type="currentType"
+      ref="inputRef"
+      :aria-invalid="!valid"
+      :autocapitalize="automaticCapitalize || undefined"
+      :autocomplete="autocomplete || undefined"
+      :autocorrect="autocorrect || undefined"
+      :class="ui.input()"
+      :disabled
+      :max="max ?? undefined"
+      :min="min ?? undefined"
       :name="name || undefined"
       :placeholder="effectivePlaceholder"
-      :disabled="disabled"
-      :readonly="readonly"
-      :required="required"
-      :min="min ?? undefined"
-      :max="max ?? undefined"
+      :readonly
+      :required
       :step="step ?? undefined"
-      :autocomplete="autocomplete || undefined"
-      :autocapitalize="automaticCapitalize || undefined"
-      :autocorrect="autocorrect || undefined"
+      :type="currentType"
       :value="value ?? ''"
-      :aria-invalid="!valid"
-      @input="onInput"
+      @blur="onBlur"
       @change="onChange"
       @focus="onFocus"
-      @blur="onBlur"
-    >
+      @input="onInput"
+    />
 
     <!-- Post slot: type-specific toggles (password / date) plus the
          consumer's `post` slot, all projected into c-input's `post`.
@@ -80,34 +79,31 @@
          as the pre wrapper. `display: contents` flattens the wrapper so
          the toggle buttons + slotted content centre as direct flex
          items of c-input's `.c-input__post`. -->
-    <span
-      v-if="hasToggle || hasConsumerPost"
-      slot="post"
-      class="c-text-field__post"
-      style="display: contents"
-    >
+    <span v-if="hasToggle || hasConsumerPost" slot="post" :class="ui.post()">
       <button
         v-if="originalType === 'password'"
+        :aria-label="
+          currentType === 'password' ? 'Show password' : 'Hide password'
+        "
+        :class="ui.toggle()"
+        :disabled
         type="button"
-        class="c-text-field__toggle"
-        :disabled="disabled"
-        :aria-label="currentType === 'password' ? 'Show password' : 'Hide password'"
         @click="togglePassword"
       >
-        <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true">
+        <svg :class="ui.toggleIcon()" aria-hidden="true" viewBox="0 0 24 24">
           <path :d="passwordIcon" fill="currentColor" />
         </svg>
       </button>
 
       <button
         v-if="originalType === 'date' && !isFirefox"
-        type="button"
-        class="c-text-field__toggle"
-        :disabled="disabled"
+        :class="ui.toggle()"
+        :disabled
         aria-label="Open date picker"
+        type="button"
         @click="openPicker"
       >
-        <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true">
+        <svg :class="ui.toggleIcon()" aria-hidden="true" viewBox="0 0 24 24">
           <path :d="calendarIcon" fill="currentColor" />
         </svg>
       </button>
@@ -119,58 +115,152 @@
 
 <script setup lang="ts">
 import { mdiCalendar, mdiEye, mdiEyeOff } from '@mdi/js';
-import { computed, onBeforeUnmount, onMounted, ref, useHost } from 'vue';
+import { tv } from 'tailwind-variants';
+import {
+  computed,
+  onBeforeUnmount,
+  onMounted,
+  ref,
+  useHost,
+  useId,
+  useTemplateRef,
+} from 'vue';
 
-const props = defineProps({
-  value: { type: String, default: '' },
-  type: { type: String, default: 'text' },
-  label: { type: String, default: '' },
-  labelOnTop: { type: Boolean, default: false },
-  placeholder: { type: String, default: '' },
-  hint: { type: String, default: '' },
-  hideDetails: { type: Boolean, default: false },
-  hostId: { type: String, default: '' },
-  name: { type: String, default: '' },
-  disabled: { type: Boolean, default: false },
-  readonly: { type: Boolean, default: false },
-  required: { type: Boolean, default: false },
-  rows: { type: Number, default: 1 },
-  min: { type: Number, default: null },
-  max: { type: Number, default: null },
-  step: { type: Number, default: null },
-  shadow: { type: Boolean, default: false },
-  valid: { type: Boolean, default: true },
-  validate: { type: Boolean, default: false },
-  validateOnBlur: { type: Boolean, default: false },
-  validation: { type: String, default: 'Required field' },
-  trimWhitespace: { type: Boolean, default: false },
-  autocomplete: { type: String, default: '' },
-  automaticCapitalize: { type: String, default: '' },
-  autocorrect: { type: String, default: '' },
+import { coerceBoolean } from '../../shared/coerceBoolean';
+import { emitModelValue } from '../../shared/emitModelValue';
+
+/**
+ * c-text-field is a thin orchestrator around <c-input>: it owns the
+ * <input>/<textarea> element (so type-specific behaviour like password-toggle
+ * and date-picker live here) and passes label / validation / state props to
+ * c-input, which renders the outlined Material border + floating-label visuals.
+ *
+ * Styling lives in this `tailwind-variants` config (ADR-0004). The native
+ * input/textarea and toggle buttons are real elements we render in *this*
+ * shadow root, so they take utilities directly. The few native pseudo-elements
+ * (`::placeholder`, the WebKit date-picker internals) can't be utilities and
+ * stay in the escape-hatch <style> below (ADR-0007). Customization via
+ * `::part()` (ADR-0006).
+ */
+const textField = tv({
+  slots: {
+    // Shared input/textarea reset + typography. `font: inherit` then an
+    // explicit 16px/20px to match the original; caret colour is the active
+    // token. Tailwind's preflight zeroes input padding, so padding is set
+    // explicitly per element below.
+    //
+    // The value text colour is set EXPLICITLY to the body token (not
+    // `text-[inherit]`): c-input drives an inheritable `color` on its root for
+    // the inactive/active/error state cascade (border + label), and inheriting
+    // it would tint the typed value — turning it primary on focus and, most
+    // visibly, RED in the error state. The original gives the input/textarea
+    // their own `color: var(--_c-input-text-color)` for exactly this reason.
+    // `disabled:` matches the original's tertiary disabled value colour.
+    input:
+      'c-text-field__input bg-transparent border-0 outline-none m-0 [font:inherit] text-base leading-5 text-[var(--c-text-body)] disabled:text-[var(--c-tertiary-500)] [caret-color:var(--c-primary-600)] flex-auto min-w-0 w-full max-w-full py-2 max-h-8',
+    post: 'inline-flex items-center gap-1',
+    textarea:
+      'c-text-field__textarea bg-transparent border-0 outline-none [font:inherit] text-base leading-5 text-[var(--c-text-body)] disabled:text-[var(--c-tertiary-500)] [caret-color:var(--c-primary-600)] flex-auto min-w-0 w-full max-w-full m-0 pt-3 pr-3 pb-2 pl-0 min-h-11 resize-y whitespace-pre-wrap',
+    toggle:
+      'inline-flex items-center justify-center size-7 p-0 border-none bg-transparent text-[inherit] cursor-pointer rounded-full transition-colors duration-200 ease-in-out hover:not-disabled:bg-primary-100 focus:outline-none focus-visible:outline-2 focus-visible:outline-solid focus-visible:outline-primary-600 focus-visible:outline-offset-2 disabled:cursor-not-allowed disabled:opacity-50',
+    toggleIcon: 'size-5',
+  },
 });
 
+interface CTextFieldProps {
+  autocomplete?: string;
+  autocorrect?: string;
+  automaticCapitalize?: string;
+  disabled?: boolean;
+  hideDetails?: boolean;
+  hint?: string;
+  hostId?: string;
+  label?: string;
+  labelOnTop?: boolean;
+  max?: null | number;
+  min?: null | number;
+  name?: string;
+  placeholder?: string;
+  readonly?: boolean;
+  required?: boolean;
+  rows?: number;
+  shadow?: boolean;
+  step?: null | number;
+  trimWhitespace?: boolean;
+  type?: string;
+  valid?: boolean;
+  validate?: boolean;
+  validateOnBlur?: boolean;
+  validation?: string;
+  value?: string;
+}
+
+const props = withDefaults(defineProps<CTextFieldProps>(), {
+  autocomplete: '',
+  autocorrect: '',
+  automaticCapitalize: '',
+  disabled: false,
+  hideDetails: false,
+  hint: '',
+  hostId: '',
+  label: '',
+  labelOnTop: false,
+  max: null,
+  min: null,
+  name: '',
+  placeholder: '',
+  readonly: false,
+  required: false,
+  rows: 1,
+  shadow: false,
+  step: null,
+  trimWhitespace: false,
+  type: 'text',
+  valid: true,
+  validate: false,
+  validateOnBlur: false,
+  validation: 'Required field',
+  value: '',
+});
+
+const ui = computed(() => textField());
+
 const host = useHost();
-const dispatchValue = (name: string, value: string) => {
-  host?.dispatchEvent(new CustomEvent(name, { detail: value }));
-};
 
-const inputEl = ref<HTMLInputElement | HTMLTextAreaElement | null>(null);
+// Forward `hide-details` to `c-input` through a `data-*` channel (resolved from
+// the stable host attribute), not a direct `:hide-details` binding: that key
+// collides with c-input's declared `hideDetails` prop and Vue mangles/removes
+// it on re-render (the field re-renders on every keystroke). See the matching
+// note in CSelect.vue and the resolver in CInput.vue.
+const hideDetailsResolved = computed(() =>
+  host?.hasAttribute('hide-details')
+    ? coerceBoolean(host.getAttribute('hide-details'))
+    : coerceBoolean(props.hideDetails),
+);
 
-let uid = 0;
-const inputId = computed(() => props.hostId || `c-text-field-${++uid}`);
+const inputRef = useTemplateRef<HTMLInputElement | HTMLTextAreaElement>(
+  'inputRef',
+);
+
+const autoId = useId();
+
+const inputId = computed(() => props.hostId || autoId);
 
 const isFocused = ref(false);
 
 const originalType = props.type;
+
 const currentType = ref(props.type);
 
 // Date inputs render a permanent "mm/dd/yyyy" format hint inside the
 // field, so the floating label has to stay lifted from the start —
 // otherwise it overlaps the format hint. Treat date as always-filled.
 const isDateType = originalType === 'date';
+
 const isActiveForInput = computed(
   () => isFocused.value || !!props.value || isDateType,
 );
+
 const isFilledForInput = computed(() => !!props.value || isDateType);
 
 // Detect consumer-provided slotted content. We need this at the
@@ -179,10 +269,11 @@ const isFilledForInput = computed(() => !!props.value || isDateType);
 // the wrapper when there's real consumer content, c-input's hasPreSlot
 // stays false and no flex gap is drawn before the input.
 const hasConsumerPre = ref(false);
+
 const hasConsumerPost = ref(false);
+
 const hasToggle = computed(
-  () =>
-    originalType === 'password' || (originalType === 'date' && !isFirefox),
+  () => originalType === 'password' || (originalType === 'date' && !isFirefox),
 );
 
 const refreshConsumerSlots = () => {
@@ -194,6 +285,7 @@ const refreshConsumerSlots = () => {
 let childObserver: MutationObserver | null = null;
 onMounted(() => {
   refreshConsumerSlots();
+
   if (host && typeof MutationObserver !== 'undefined') {
     childObserver = new MutationObserver(refreshConsumerSlots);
     childObserver.observe(host, { childList: true });
@@ -209,14 +301,20 @@ onBeforeUnmount(() => {
 // always visible since the label is above the field there.
 const effectivePlaceholder = computed(() => {
   if (!props.placeholder) return undefined;
+
   if (props.labelOnTop) return props.placeholder;
+
   if (props.label && !isFocused.value && !props.value) return undefined;
+
   return props.placeholder;
 });
+
 const passwordIcon = computed(() =>
   currentType.value === 'password' ? mdiEye : mdiEyeOff,
 );
+
 const calendarIcon = mdiCalendar;
+
 const isFirefox = /firefox|fxios/i.test(
   typeof navigator !== 'undefined' ? navigator.userAgent : '',
 );
@@ -227,24 +325,27 @@ const togglePassword = () => {
 };
 
 const openPicker = () => {
-  const el = inputEl.value as HTMLInputElement | null;
+  const el = inputRef.value as HTMLInputElement | null;
+
   if (el && typeof el.showPicker === 'function') el.showPicker();
 };
 
 const onInput = (event: Event) => {
   const target = event.target as HTMLInputElement | HTMLTextAreaElement;
+
   const next = props.trimWhitespace ? target.value.trim() : target.value;
-  dispatchValue('update:value', next);
-  dispatchValue('changeValue', next);
-  host?.dispatchEvent(new Event('input', { bubbles: true, composed: true }));
+  // changeValue/update:value + native `input` (so a plain `v-model` works
+  // without `v-control`) + host `value` mirror. The inner input is bound via
+  // template `:value`, so mirroring the just-typed value is idempotent.
+  emitModelValue(host, next);
   void event;
 };
 
 const onChange = (event: Event) => {
   const target = event.target as HTMLInputElement | HTMLTextAreaElement;
+
   const next = props.trimWhitespace ? target.value.trim() : target.value;
-  dispatchValue('update:value', next);
-  dispatchValue('changeValue', next);
+  emitModelValue(host, next);
   host?.dispatchEvent(new Event('change', { bubbles: true, composed: true }));
   void event;
 };
@@ -255,6 +356,7 @@ const onFocus = () => {
 
 const onBlur = (event: Event) => {
   isFocused.value = false;
+
   if (props.trimWhitespace) {
     const target = event.target as HTMLInputElement;
     target.value = target.value.trim();
@@ -262,124 +364,50 @@ const onBlur = (event: Event) => {
 };
 </script>
 
+<!--
+  Escape-hatch CSS (ADR-0007): only constructs Tailwind utilities cannot
+  express. All static styling lives in the `tv` config above. What remains:
+    - `:host { display: block }` — the host must be a real box (the global
+      `:host{display:contents}` would collapse the field).
+    - `::placeholder` — a native pseudo-element on the input/textarea we own;
+      not addressable by a utility class.
+    - The WebKit date-input internals (`::-webkit-calendar-picker-indicator`
+      etc.) we hide because we render our own date toggle, plus the date
+      padding tweak that aligns the date text with regular text inputs —
+      attribute-selector + pseudo-element rules with no utility equivalent.
+  Tokens only; no hardcoded colours.
+-->
 <style>
-/* c-text-field is a thin orchestrator around <c-input>. It owns the
- * <input>/<textarea> element (so type-specific behaviour like password-
- * toggle and date-picker live here), and passes through the label /
- * validation / state props to c-input which renders the outlined Material
- * border + floating-label visuals. */
-
 :host {
   display: block;
 }
 
-/* Tailwind's preflight resets `input, textarea { padding: 0 }` with a
- * universal selector, and that reset is injected into our shadow root
- * alongside c-text-field's own styles. We re-apply the input/textarea
- * padding here (and explicitly, not via `::slotted()`, because the
- * input lives in *this* shadow root — only the c-input's shadow root
- * sees it as a slotted element). */
-
-.c-text-field__input {
-  background: transparent;
-  border: 0;
-  outline: 0;
-  margin: 0;
-  font: inherit;
-  font-size: 16px;
-  line-height: 20px;
-  color: inherit;
-  caret-color: var(--c-primary-600);
-  flex: 1 1 auto;
-  min-width: 0;
-  width: 100%;
-  max-width: 100%;
-}
-
-input.c-text-field__input {
-  padding: 8px 0;
-  max-height: 32px;
-}
-
-textarea.c-text-field__input {
-  /* Vertical padding above the cursor matches Stencil's
-   * `padding: 8px 12px 8px 0` plus `margin-top: 4px`, totalling 12px
-   * from the slot's top edge — the same spot where the lifted label
-   * once sat, so the cursor lines up where the label used to be. */
-  padding: 12px 12px 8px 0;
-  margin: 0;
-  min-height: 44px;
-  resize: vertical;
-  white-space: pre-wrap;
-}
-
-.c-text-field__input::placeholder {
+.c-text-field__input::placeholder,
+.c-text-field__textarea::placeholder {
   color: var(--c-tertiary-400);
   opacity: 1;
 }
 
 /* Date type: hide the native browser calendar picker indicator + inner
- * spin button. We render our own calendar toggle button in the post slot
- * (a c-icon-button style). Also flatten the WebKit datetime-edit padding
- * so the date text starts at the same x-position as a regular text input. */
+ * spin button. We render our own calendar toggle button in the post slot.
+ * Also flatten the WebKit datetime-edit padding so the date text starts at
+ * the same x-position as a regular text input. */
 
-input[type='date'].c-text-field__input::-webkit-calendar-picker-indicator,
-input[type='date'].c-text-field__input::-webkit-inner-spin-button,
-input[type='date'].c-text-field__input::-webkit-clear-button {
+input[type='date']::-webkit-calendar-picker-indicator,
+input[type='date']::-webkit-inner-spin-button,
+input[type='date']::-webkit-clear-button {
   display: none;
   -webkit-appearance: none;
   appearance: none;
 }
 
-input[type='date'].c-text-field__input::-webkit-datetime-edit {
+input[type='date']::-webkit-datetime-edit,
+input[type='date']::-webkit-datetime-edit-fields-wrapper {
   padding: 0;
 }
 
-input[type='date'].c-text-field__input::-webkit-datetime-edit-fields-wrapper {
-  padding: 0;
-}
-
-input[type='date'].c-text-field__input {
+input[type='date'] {
   padding-left: 0;
   text-indent: 0;
-}
-
-.c-text-field__post {
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-}
-
-.c-text-field__toggle {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 28px;
-  height: 28px;
-  padding: 0;
-  border: none;
-  background: transparent;
-  color: inherit;
-  cursor: pointer;
-  border-radius: 50%;
-  transition: background-color 0.2s ease;
-}
-
-.c-text-field__toggle:hover:not(:disabled) {
-  background-color: var(--c-primary-100);
-}
-
-.c-text-field__toggle:focus {
-  outline: none;
-}
-
-.c-text-field__toggle:focus-visible {
-  outline: 2px solid var(--c-primary-600);
-  outline-offset: 2px;
-}
-
-.c-text-field__toggle:disabled {
-  cursor: not-allowed;
-  opacity: 0.5;
 }
 </style>

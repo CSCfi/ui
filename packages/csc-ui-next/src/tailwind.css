@@ -106,47 +106,26 @@
 }
 
 /*
- * Override surface for the `classes` prop (ADR-0004).
- *
- * Consumer overrides supply Tailwind color utilities, but this stylesheet is
- * built at *library* build time and only contains utilities the library's own
- * components use — so a token colour the library never happens to use (e.g.
- * `bg-tertiary-500`) would have NO rule inside the shadow root and render
- * transparent. Safelisting the full design-token palette across the
- * colourable properties guarantees any token colour works in `classes`.
- * `{hover:,}` also covers hover-state overrides.
+ * Shared motion tokens. The CSC standard easing (Material "standard" curve) is
+ * repeated across ~15 components; exposing it as `--ease-standard` lets every
+ * `tailwind-variants` config author `ease-standard` instead of inlining the
+ * arbitrary cubic-bezier. The value is a literal (not a `var(--c-*)`), so it
+ * substitutes directly into the `ease-standard` utility and resolves inside
+ * shadow roots without an `@source inline` safelist entry.
  */
-/* Colours: full design-token palette across the colourable properties. */
-@source inline("{hover:,focus-visible:,}{bg,text,border,ring,fill,outline}-{primary,secondary,accent,success,info,warning,error,link,tertiary}-{100,200,300,400,500,600,700,800,900}");
-@source inline("{hover:,focus-visible:,}{bg,text,border,ring,fill,outline}-{white,black,transparent}");
+@theme {
+  --ease-standard: cubic-bezier(0.25, 0.8, 0.5, 1);
+}
 
-/* Typography: size, weight, alignment, leading, tracking. */
-@source inline("text-{xs,sm,base,lg,xl,2xl,3xl,4xl,5xl,6xl,7xl,8xl,9xl}");
-@source inline("text-{left,center,right,justify}");
-@source inline("font-{thin,extralight,light,normal,medium,semibold,bold,extrabold,black}");
-@source inline("italic,not-italic,underline,line-through,no-underline,uppercase,lowercase,capitalize,normal-case,truncate");
-@source inline("leading-{none,tight,snug,normal,relaxed,loose,3,4,5,6,7,8,9,10}");
-@source inline("tracking-{tighter,tight,normal,wide,wider,widest}");
-
-/* Border radius (all corners + per-side/corner). */
-@source inline("rounded{,-t,-r,-b,-l,-tl,-tr,-br,-bl}{,-none,-sm,-md,-lg,-xl,-2xl,-3xl,-full}");
-
-/* Spacing: padding / margin / gap across the common scale. */
-@source inline("{p,px,py,pt,pr,pb,pl,m,mx,my,mt,mr,mb,ml,gap,gap-x,gap-y}-{0,0.5,1,1.5,2,2.5,3,3.5,4,5,6,7,8,9,10,11,12,14,16,20,24}");
-
-/* Sizing, display, flex/grid alignment — the layout knobs consumers reach for. */
-@source inline("{w,h,min-w,min-h,max-w,max-h}-{0,full,auto,fit,min,max,px,1,2,4,6,8,10,12,16,20,24,32,40,48,64}");
-@source inline("{block,inline-block,inline,flex,inline-flex,grid,inline-grid,contents,hidden}");
-@source inline("{flex-row,flex-col,flex-wrap,flex-nowrap}");
-@source inline("items-{start,center,end,stretch,baseline}");
-@source inline("justify-{start,center,end,between,around,evenly}");
-@source inline("place-items-{start,center,end,stretch}");
-@source inline("{static,relative,absolute,fixed,sticky}");
-
-/* Effects consumers commonly override. */
-@source inline("shadow-{sm,md,lg,xl,2xl,inner,none}");
-@source inline("opacity-{0,5,10,20,25,30,40,50,60,70,75,80,90,95,100}");
-@source inline("{,hover:}cursor-{pointer,default,not-allowed,wait,text,move}");
+/*
+ * No consumer override safelist (ADR-0006). Customization is via `::part()`
+ * from the consumer's own stylesheet, so the inlined sheet only needs the
+ * utilities the library's own components actually use — those are auto-detected
+ * from the `@source` SFC glob above. Token utilities (`bg-primary-600`, …) and
+ * built-ins (`animate-spin`, …) the library uses are generated automatically;
+ * anything else a consumer wants is reached through `::part()`, which their own
+ * stylesheet resolves with no build-time safelist and full CSS power.
+ */
 
 /*
  * The single irreducible per-component CSS rule (ADR-0004, decision A).
@@ -159,4 +138,20 @@
  */
 :host {
   display: contents;
+}
+
+@utility rounded-csc-sm {
+  @apply supports-corner-shape:[corner-shape:squircle] supports-corner-shape:rounded-md not-supports-corner-shape:rounded-sm;
+}
+
+@utility rounded-csc-md {
+  @apply supports-corner-shape:[corner-shape:squircle] supports-corner-shape:rounded-xl not-supports-corner-shape:rounded-md;
+}
+
+@utility rounded-csc-l-md {
+  @apply supports-corner-shape:[corner-shape:squircle] supports-corner-shape:rounded-l-xl not-supports-corner-shape:rounded-l-md;
+}
+
+@utility rounded-csc-lg {
+  @apply supports-corner-shape:[corner-shape:squircle] supports-corner-shape:rounded-2xl not-supports-corner-shape:rounded-lg;
 }

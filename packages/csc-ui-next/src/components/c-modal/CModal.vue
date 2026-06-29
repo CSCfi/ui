@@ -1,41 +1,81 @@
 <template>
   <dialog
-    ref="dialogEl"
-    class="c-modal"
-    :class="{
-      'c-modal--standalone': standaloneMode,
-      'c-modal--backdrop-blur': !disableBackdropBlur,
-    }"
+    ref="dialogRef"
+    :class="[
+      ui.root(),
+      {
+        'c-modal--standalone': standaloneMode,
+        'c-modal--backdrop-blur': !disableBackdropBlur,
+      },
+    ]"
     :style="{ zIndex: String(zIndex) }"
-    @keydown="onKeyDown"
+    class="c-modal"
+    part="root"
     @click="onClick"
+    @keydown="onKeyDown"
   >
     <slot />
   </dialog>
 </template>
 
 <script setup lang="ts">
-import { onMounted, ref, useHost, useTemplateRef, watch } from 'vue';
+import { tv } from 'tailwind-variants';
+import { computed, onMounted, ref, useHost, useTemplateRef, watch } from 'vue';
 
-const props = defineProps({
-  value: { type: Boolean, default: false },
-  dismissable: { type: Boolean, default: false },
-  width: { type: [String, Number], default: 600 },
-  zIndex: { type: Number, default: 10 },
-  disableBackdropBlur: { type: Boolean, default: false },
+import { emitModelValue } from '../../shared/emitModelValue';
+
+/**
+ * Styling lives in this `tailwind-variants` config (ADR-0004); consumer
+ * customization is via `::part()` (ADR-0006).
+ *
+ * The dialog box look (centred, transparent, dynamic width) is authored as
+ * utilities here. The static `.c-modal` (plus `.c-modal--standalone` /
+ * `.c-modal--backdrop-blur`) class and the `.opening` / `.closing` / `.nudging`
+ * hooks are RETAINED: they are toggled imperatively by the script and targeted
+ * by the escape-hatch `<style>` below, which owns the things utilities can't
+ * express — the native `::backdrop` pseudo-element, the `:not([open])` closed
+ * state, and the open/close/nudge `@keyframes`.
+ *
+ * `--_c-modal-width` is still set imperatively on the host from the `width`
+ * prop; the `root` utility reads it (with a 600px fallback) via `w-[…]`.
+ */
+const modal = tv({
+  slots: {
+    // The native <dialog> is the positioned overlay box. It must not be
+    // `display:contents`, so the box lives on this element (not the host).
+    root: 'block fixed inset-0 m-auto p-0 border-0 bg-transparent overflow-visible max-w-[calc(100%-32px)] w-[var(--_c-modal-width,600px)] text-[var(--c-text-body)]',
+  },
+});
+
+const ui = computed(() => modal());
+
+interface CModalProps {
+  disableBackdropBlur?: boolean;
+  dismissable?: boolean;
+  value?: boolean;
+  width?: number | string;
+  zIndex?: number;
+}
+
+const props = withDefaults(defineProps<CModalProps>(), {
+  disableBackdropBlur: false,
+  dismissable: false,
+  value: false,
+  width: 600,
+  zIndex: 10,
 });
 
 const host = useHost();
-const dispatchValue = (name: string, value: unknown) => {
-  host?.dispatchEvent(new CustomEvent(name, { detail: value }));
-};
 
-const dialogEl = useTemplateRef<HTMLDialogElement>('dialogEl');
+const dialogRef = useTemplateRef<HTMLDialogElement>('dialogRef');
+
 const standaloneMode = ref(false);
 
 let animationsDisabled = false;
+
 let backdropEl: HTMLElement | null = null;
-let nudgeTimer: ReturnType<typeof setTimeout> | null = null;
+
+let nudgeTimer: null | ReturnType<typeof setTimeout> = null;
 
 // `c-main` renders a shared `<c-backdrop>` in its shadow root so all
 // modals in the page share one dimmer. If the page isn't wrapped in
@@ -43,59 +83,78 @@ let nudgeTimer: ReturnType<typeof setTimeout> | null = null;
 // ::backdrop pseudo-element which we style in CSS.
 const resolveBackdrop = () => {
   const cMain = document.body.querySelector('c-main');
+
   if (!cMain) {
     standaloneMode.value = true;
+
     return null;
   }
+
   standaloneMode.value = false;
+
   if (!backdropEl) {
     backdropEl =
       (cMain.shadowRoot?.querySelector('c-backdrop') as HTMLElement | null) ||
       null;
   }
-  backdropEl?.setAttribute(
-    'disable-backdrop-blur',
-    String(props.disableBackdropBlur),
-  );
+
+  // Set the PROPERTY, not an attribute: c-backdrop's `disableBackdropBlur` is a
+  // Boolean custom-element prop, and Vue coerces the attribute string "false"
+  // to truthy `true` — which would silently disable the blur. Assigning the
+  // real boolean drives the reactive prop correctly.
+  if (backdropEl) {
+    (
+      backdropEl as unknown as { disableBackdropBlur: boolean }
+    ).disableBackdropBlur = props.disableBackdropBlur;
+  }
+
   const inner = backdropEl?.shadowRoot?.querySelector('.c-backdrop');
   inner?.classList.remove('closing');
+
   return backdropEl;
 };
 
 const openDialog = () => {
   requestAnimationFrame(() => {
     resolveBackdrop();
+
     if (!animationsDisabled) {
       const onAnimEnd = () => {
-        dialogEl.value?.removeEventListener('animationend', onAnimEnd);
-        dialogEl.value?.classList.remove('opening');
+        dialogRef.value?.removeEventListener('animationend', onAnimEnd);
+        dialogRef.value?.classList.remove('opening');
       };
-      dialogEl.value?.addEventListener('animationend', onAnimEnd);
-      dialogEl.value?.classList.add('opening');
+
+      dialogRef.value?.addEventListener('animationend', onAnimEnd);
+      dialogRef.value?.classList.add('opening');
       backdropEl?.shadowRoot
         ?.querySelector('.c-backdrop')
         ?.classList.add('opening');
     }
-    dialogEl.value?.showModal();
+
+    dialogRef.value?.showModal();
   });
 };
 
 const closeDialog = () => {
   if (animationsDisabled) {
     finalizeClose();
+
     return;
   }
+
   const onAnimEnd = () => {
-    dialogEl.value?.removeEventListener('animationend', onAnimEnd);
+    dialogRef.value?.removeEventListener('animationend', onAnimEnd);
     finalizeClose();
   };
-  dialogEl.value?.addEventListener('animationend', onAnimEnd);
-  dialogEl.value?.classList.add('closing');
+
+  dialogRef.value?.addEventListener('animationend', onAnimEnd);
+  dialogRef.value?.classList.add('closing');
 
   requestAnimationFrame(() => {
     // Count modals still open across the page; only remove backdrop
     // when this is the last one closing.
     const customs = document.querySelectorAll('c-modal');
+
     let openCount = 0;
     customs.forEach((el) => {
       const dialogs = el.shadowRoot?.querySelectorAll('dialog');
@@ -103,6 +162,7 @@ const closeDialog = () => {
         if ((d as HTMLDialogElement).open) openCount += 1;
       });
     });
+
     if (openCount <= 1) {
       const inner = backdropEl?.shadowRoot?.querySelector('.c-backdrop');
       inner?.classList.remove('opening');
@@ -112,11 +172,12 @@ const closeDialog = () => {
 };
 
 const finalizeClose = () => {
-  dialogEl.value?.classList.remove('closing');
+  dialogRef.value?.classList.remove('closing');
   backdropEl?.shadowRoot
     ?.querySelector('.c-backdrop')
     ?.classList.remove('closing');
-  dialogEl.value?.close();
+  dialogRef.value?.close();
+
   if (document.fullscreenElement) document.exitFullscreen();
 };
 
@@ -125,36 +186,44 @@ const finalizeClose = () => {
 // dialog rect and compare against pointer coords.
 const onClick = (e: MouseEvent) => {
   if (e.clientX === 0 && e.clientY === 0) return;
-  if (!dialogEl.value) return;
-  const rect = dialogEl.value.getBoundingClientRect();
+
+  if (!dialogRef.value) return;
+
+  const rect = dialogRef.value.getBoundingClientRect();
+
   const outside =
     e.clientX < rect.left ||
     e.clientX > rect.right ||
     e.clientY < rect.top ||
     e.clientY > rect.bottom;
+
   if (!outside) return;
+
   if (!props.dismissable) {
     // Non-dismissable: nudge animation to signal "you can't close
     // this", then revert.
-    dialogEl.value.classList.add('nudging');
+    dialogRef.value.classList.add('nudging');
+
     if (nudgeTimer !== null) clearTimeout(nudgeTimer);
     nudgeTimer = setTimeout(() => {
-      dialogEl.value?.classList.remove('nudging');
+      dialogRef.value?.classList.remove('nudging');
       nudgeTimer = null;
     }, 150);
+
     return;
   }
+
   closeDialog();
-  dispatchValue('changeValue', false);
-  dispatchValue('update:value', false);
+  // changeValue/update:value + native `input` (plain v-model) + host `value`
+  // mirror. The value watch is visuals-only (open/close), so no loop.
+  emitModelValue(host, false);
 };
 
 const onKeyDown = (e: KeyboardEvent) => {
   if (e.key === 'Escape') {
     e.preventDefault();
     closeDialog();
-    dispatchValue('changeValue', false);
-    dispatchValue('update:value', false);
+    emitModelValue(host, false);
   }
 };
 
@@ -182,19 +251,14 @@ onMounted(() => {
 });
 </script>
 
+<!--
+  Escape-hatch CSS (ADR-0007): constructs Tailwind utilities cannot express —
+  the native `::backdrop` pseudo-element (standalone dimmer / blur), the
+  `:not([open])` closed state of the native <dialog>, and the open / close /
+  nudge `@keyframes` toggled imperatively via the `.opening` / `.closing` /
+  `.nudging` class hooks. The dialog box look lives in the `tv` config above.
+-->
 <style>
-dialog.c-modal {
-  background-color: transparent;
-  border: none;
-  color: var(--c-text-body);
-  inset: 0;
-  margin: auto;
-  max-width: calc(100% - 32px);
-  overflow: visible;
-  padding: 0;
-  width: var(--_c-modal-width, 600px);
-}
-
 dialog.c-modal:not([open]) {
   pointer-events: none;
   opacity: 0;
@@ -227,17 +291,29 @@ dialog.c-modal--standalone.c-modal--backdrop-blur::backdrop {
 }
 
 @keyframes c-modal-nudge {
-  0% { transform: scale(1); }
-  50% { transform: scale(1.03); }
-  100% { transform: scale(1); }
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.03);
+  }
+  100% {
+    transform: scale(1);
+  }
 }
 
 @keyframes c-modal-open {
-  from { transform: scale(0); }
-  to { transform: scale(1); }
+  from {
+    transform: scale(0);
+  }
+  to {
+    transform: scale(1);
+  }
 }
 
 @keyframes c-modal-close {
-  to { transform: scale(0); }
+  to {
+    transform: scale(0);
+  }
 }
 </style>

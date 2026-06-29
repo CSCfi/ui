@@ -1,29 +1,75 @@
 <template>
-  <article class="c-card__article">
+  <article :class="ui.root()" part="root">
     <button
       v-if="fullscreen"
-      class="c-card__fullscreen-toggle"
       :aria-label="isFullscreen ? 'Exit fullscreen' : 'Enter fullscreen'"
+      :class="ui.fullscreenToggle()"
       :title="isFullscreen ? 'Exit fullscreen' : 'Enter fullscreen'"
+      part="fullscreen-toggle"
       @click="onFullscreen"
     >
-      <svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true">
-        <path :d="isFullscreen ? mdiFullscreenExit : mdiFullscreen" fill="currentColor" />
+      <svg aria-hidden="true" height="24" viewBox="0 0 24 24" width="24">
+        <path
+          :d="isFullscreen ? mdiFullscreenExit : mdiFullscreen"
+          fill="currentColor"
+        />
       </svg>
     </button>
+
     <slot />
   </article>
 </template>
 
 <script setup lang="ts">
 import { mdiFullscreen, mdiFullscreenExit } from '@mdi/js';
-import { onMounted, onBeforeUnmount, ref, useHost } from 'vue';
+import { tv } from 'tailwind-variants';
+import { computed, onBeforeUnmount, onMounted, ref, useHost } from 'vue';
 
-defineProps({
-  fullscreen: { type: Boolean, default: false },
+/**
+ * Styling lives in this `tailwind-variants` config (ADR-0004). The inner
+ * `<article>` (`root` part) is the card's visible box: it stacks the card
+ * sections vertically with gap + block padding AND carries the card's visual
+ * surface — background, border-radius and `overflow-hidden` here, plus the drop
+ * shadow as plain CSS in the escape-hatch <style> (Tailwind doesn't emit a rule
+ * for the multi-layer arbitrary `shadow-[...]` value in this setup). All of it
+ * lives on the part (not `:host`) so consumers can restyle the whole box through
+ * `c-card::part(root) { … }` (ADR-0006); the host is no longer the styled
+ * surface. The `fullscreen-toggle` is the 40px circular button, anchored to
+ * `root` (`relative`).
+ *
+ * The old `--c-card-background-color` / `--c-card-gap` public override vars are
+ * dropped; the background is the `bg-white` token and the gap is the design
+ * value `clamp(1rem,2vw,1.5rem)` exposed once as `--_c-card-gap` on the host
+ * (see the escape-hatch <style>) so the slotted child sections (c-card-title /
+ * c-card-content / c-card-actions) can read the same spacing across their
+ * shadow boundaries.
+ *
+ * The host stays a real box only for structure: it must override the global
+ * `:host{display:contents}` so it can size to / be sized by `root`, and it is
+ * the element `requestFullscreen()` acts on. The positional `:host(:fullscreen)`
+ * reset (which targets `root`) cannot be a utility, so it stays in the
+ * escape-hatch <style> below (ADR-0007).
+ */
+const card = tv({
+  slots: {
+    fullscreenToggle:
+      'absolute top-[calc(var(--_c-card-gap)-8px)] right-[calc(var(--_c-card-gap)-8px)] z-[1] flex items-center justify-center size-10 p-0 border-0 rounded-full bg-transparent text-primary-600 cursor-pointer transition-colors duration-300 ease-standard hover:bg-primary-100 focus:outline-none focus-visible:outline-2 focus-visible:outline-solid focus-visible:outline-primary-600 focus-visible:outline-offset-2',
+    root: 'relative flex flex-col flex-1 max-w-full gap-[var(--_c-card-gap)] py-[var(--_c-card-gap)] bg-white rounded-csc-lg overflow-hidden',
+  },
 });
 
+interface CCardProps {
+  fullscreen?: boolean;
+}
+
+withDefaults(defineProps<CCardProps>(), {
+  fullscreen: false,
+});
+
+const ui = computed(() => card());
+
 const isFullscreen = ref(false);
+
 const host = useHost();
 
 // `fullscreenchange` fires reliably on `document` — listening on the
@@ -79,82 +125,42 @@ onBeforeUnmount(() => {
 defineExpose({ enterFullscreen, exitFullscreen });
 </script>
 
+<!--
+  Escape-hatch CSS (ADR-0007): only what utilities and `::part` cannot express.
+  The card's visible surface (background / radius / shadow / overflow) now lives
+  on the `root` part above so it is consumer-customizable. What remains here:
+
+  - `:host{display:flex}` — a real box that overrides the global
+    `:host{display:contents}` (the per-type sheet is adopted after the shared
+    one, so it wins). The host is an invisible wrapper sized to `root` in normal
+    flow and the element `requestFullscreen()` targets; `root` (flex-1) fills it.
+  - `--_c-card-gap` — the single shared spacing contract (a responsive design
+    value, not a token) defined on the host so the slotted card sections inherit
+    it across their shadow boundaries.
+  - `:host(:fullscreen) [part='root']` — a positional `:host(...)` selector that
+    flattens the (now part-owned) radius and lets the filled box scroll when the
+    host is blown up to the full screen.
+-->
 <style>
-/* Ported from packages/csc-ui/src/components/c-card/c-card.scss.
- * `--c-card-gap` (vertical spacing between sections and block padding)
- * and `--c-card-background-color` are the public override variables.
- * Border-radius and box-shadow are part of the design, not overridable. */
-
 :host {
-  --_c-card-gap: var(--c-card-gap, clamp(1rem, 2vw, 1.5rem));
-  --_c-card-background-color: var(--c-card-background-color, var(--c-white));
+  --_c-card-gap: clamp(1rem, 2vw, 1.5rem);
 
   display: flex;
-  border-radius: 6px;
-  box-shadow: rgba(0, 0, 0, 0.15) 0 10px 20px,
-    rgba(0, 0, 0, 0.2) 0 5px 5px;
-  position: relative;
-  background-color: var(--_c-card-background-color);
-  overflow: hidden;
 }
 
-/* The inner <article> stacks card-title / card-content / card-actions
- * vertically with `gap` between them, and adds top/bottom padding equal
- * to `--_c-card-gap`. Horizontal padding lives on the children
- * (c-card-title's padding-inline and c-card-content's horizontal
- * padding) so they can each control their own alignment relative to the
- * card edge. */
-.c-card__article {
-  display: flex;
-  flex-direction: column;
-  flex: 1;
-  gap: var(--_c-card-gap);
-  max-width: 100%;
-  padding-block: var(--_c-card-gap);
-}
-
-/* The original Stencil c-card uses <c-icon-button text> for this — a
- * 40px circular button with primary text colour, transparent default
- * background, and primary-100 hover background. Inlined here to avoid
- * pulling in the full c-icon-button (not part of v0). */
-.c-card__fullscreen-toggle {
-  position: absolute;
-  top: calc(var(--_c-card-gap) - 8px);
-  right: calc(var(--_c-card-gap) - 8px);
-  z-index: 1;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 40px;
-  height: 40px;
-  padding: 0;
-  border: none;
-  border-radius: 50%;
-  background-color: transparent;
-  color: var(--c-primary-600);
-  cursor: pointer;
-  transition: background-color 0.3s cubic-bezier(0.25, 0.8, 0.5, 1),
-    color 0.3s cubic-bezier(0.25, 0.8, 0.5, 1);
-}
-
-.c-card__fullscreen-toggle:hover {
-  background-color: var(--c-primary-100);
-}
-
-.c-card__fullscreen-toggle:focus {
-  outline: none;
-}
-
-.c-card__fullscreen-toggle:focus-visible {
-  outline: 2px solid var(--c-primary-600);
-  outline-offset: 2px;
-}
-
-:host(:fullscreen) {
-  --c-icon-button-text-background-color: var(--c-white);
+:host(:fullscreen) [part='root'] {
   border-radius: 0;
-  height: 100%;
-  width: 100%;
   overflow: auto;
+}
+
+/* The drop shadow is plain CSS, not a `shadow-[...]` utility: the multi-layer
+   arbitrary shadow utility did not paint in this adopted-stylesheet shadow-DOM
+   setup, whereas a direct `box-shadow` is reliable (and matches the original).
+   Authored on the `root` part (not the host) so it stays consumer-overridable
+   via `::part(root)` (ADR-0006). */
+[part='root'] {
+  box-shadow:
+    rgba(0, 0, 0, 0.15) 0 10px 20px,
+    rgba(0, 0, 0, 0.2) 0 5px 5px;
 }
 </style>

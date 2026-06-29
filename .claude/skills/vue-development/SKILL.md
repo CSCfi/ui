@@ -14,31 +14,17 @@ description: Vue development best practices. Use when creating or modifying vue 
 
 ```
 // Type-based props with defaults
-type CMenuProps {
+type CMenuProps = {
   label: string;
   variant?: "primary" | "secondary";
   disabled?: boolean;
   items: Item[];
-}
+};
 
 const props = withDefaults(defineProps<CMenuProps>(), {
   variant: "primary",
   disabled: false,
 });
-```
-
-## Events
-
-- Use kebab-case in templates (@update:model-value).
-- Use camelCase in script (emit("update:modelValue", val)).
-- Always define events the "Typescript way"
-
-```
-const emit = defineEmits<{
-  submit: [];
-  "update:modelValue": [value: string];
-  select: [id: string, index: number];
-}>();
 ```
 
 ## Template Refs

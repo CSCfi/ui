@@ -3,7 +3,9 @@
     <template #title>Delayed message</template>
 
     <c-card>
-      <c-loader v-if="loader" contentdelay="2">
+      <!-- Toggle `visible` (not `v-if`) so the CSS leave transition can play;
+           `v-if` would unmount the loader instantly and skip the fade-out. -->
+      <c-loader :visible="loader" contentdelay="2">
         This loader will disappear soon
       </c-loader>
 

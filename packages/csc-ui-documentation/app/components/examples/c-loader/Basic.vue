@@ -3,7 +3,11 @@
     <template #title>Basic usage</template>
 
     <c-card>
-      <c-loader v-if="loader">Loading...</c-loader>
+      <!-- Keep the loader mounted and toggle its `visible` prop so the CSS
+           leave transition can play. `v-if` would unmount the element
+           instantly, skipping the fade-out. (The element also exposes
+           imperative `show()` / `hide()` methods.) -->
+      <c-loader :visible="loader">Loading...</c-loader>
 
       <c-card-title>Loader card</c-card-title>
 

@@ -1,32 +1,34 @@
 <template>
   <div
     :id="`announce-${resolvedId}`"
-    class="visuallyhidden"
-    aria-live="polite"
+    :class="ui.visuallyHidden()"
     aria-atomic="true"
+    aria-live="polite"
   >
     {{ statusText }}
   </div>
 
-  <div :class="containerClasses">
+  <div :class="ui.root()" part="root">
     <input
       v-for="i in length"
-      :key="i"
-      :ref="setInputRef(i - 1)"
       :id="`${resolvedId}--input-${i}`"
+      :key="i"
+      ref="inputsRef"
       :aria-label="`Enter code - digit number - ${i} of ${length}`"
-      type="tel"
-      maxlength="1"
-      inputmode="numeric"
+      :autofocus="hasAutofocus && i === 1 ? true : undefined"
+      :class="ui.input()"
+      :name="`${resolvedId}--digit-${i}`"
+      autocapitalize="off"
       autocomplete="off"
       autocorrect="off"
-      autocapitalize="off"
-      spellcheck="false"
+      data-1p-ignore=""
       data-form-type="other"
       data-lpignore="true"
-      data-1p-ignore=""
-      :name="`${resolvedId}--digit-${i}`"
-      :autofocus="hasAutofocus && i === 1 ? true : undefined"
+      inputmode="numeric"
+      maxlength="1"
+      part="input"
+      spellcheck="false"
+      type="tel"
       @focus="onFocus(i - 1)"
       @input="onInput($event as InputEvent)"
       @keydown="onKeyDown($event as KeyboardEvent)"
@@ -34,69 +36,136 @@
     />
 
     <c-message
-      :hint="hint"
+      :class="ui.message()"
+      :hint
       :input-id="elementId"
-      :valid="valid"
-      :validation="validation"
+      :valid
+      :validation
     />
   </div>
 </template>
 
 <script setup lang="ts">
-import { computed, onMounted, ref, useHost, watch } from 'vue';
+import { tv } from 'tailwind-variants';
+import {
+  computed,
+  onMounted,
+  ref,
+  useHost,
+  useId,
+  useTemplateRef,
+  watch,
+} from 'vue';
 
 // Multi-root template (fragment) + we write to the host below — keep
 // fallthrough attrs on the host element instead of tripping the "renders
 // fragment" warning.
 defineOptions({ inheritAttrs: false });
 
-const props = defineProps({
-  hasAutofocus: { type: Boolean, default: false },
-  hideDetails: { type: Boolean, default: false },
-  hint: { type: String, default: '' },
-  elementId: { type: String, default: '' },
-  length: { type: Number, default: 6 },
-  valid: { type: Boolean, default: true },
-  validation: { type: String, default: 'Required field' },
-  value: { type: String, default: '' },
+/**
+ * Styling lives in this `tailwind-variants` config (ADR-0004): the old
+ * `--_c-otp-input-*` indirection vars are dropped in favour of token-mapped
+ * utilities, and the `:host(.error)` border colour swap becomes the `valid`
+ * variant. Consumer customization is via `::part()` (ADR-0006).
+ *
+ * The digit `<input>`s live in *this* shadow root (not slotted), so the
+ * box-shadow notch border is authored as an inset `ring`: `ring-1` inactive,
+ * `ring-2` on focus. The `valid` variant recolours both states to error red.
+ */
+const otp = tv({
+  defaultVariants: {
+    hideDetails: false,
+    valid: true,
+  },
+  slots: {
+    input:
+      'rounded-csc-md border-0 text-center w-full min-w-6 max-w-[42px] h-14 text-2xl text-[var(--c-text-body)] ring-1 ring-inset ring-tertiary-500 outline-none focus:ring-2 focus:ring-inset focus:ring-primary-600',
+    message: '',
+    // `display: inline-grid` with a column-per-digit auto track (the
+    // `grid-auto-columns: minmax(auto, 42px)` original). The c-message spans
+    // the full width via the escape-hatch rule below (dynamic span count).
+    root: 'c-otp-input inline-grid gap-2 mb-2 grid-flow-col grid-cols-[repeat(var(--_c-otp-input-count),minmax(auto,42px))] [backface-visibility:hidden] [transform:translate3d(0,0,0)]',
+    visuallyHidden:
+      'absolute w-px h-px m-[-1px] p-0 overflow-hidden whitespace-nowrap border-0 [clip:rect(0_0_0_0)]',
+  },
+  variants: {
+    hideDetails: {
+      true: { root: 'mb-0' },
+    },
+    valid: {
+      false: {
+        input: 'ring-error-600 focus:ring-error-600',
+      },
+    },
+  },
+});
+
+interface COtpInputProps {
+  elementId?: string;
+  hasAutofocus?: boolean;
+  hideDetails?: boolean;
+  hint?: string;
+  length?: number;
+  valid?: boolean;
+  validation?: string;
+  value?: string;
+}
+
+const props = withDefaults(defineProps<COtpInputProps>(), {
+  elementId: '',
+  hasAutofocus: false,
+  hideDetails: false,
+  hint: '',
+  length: 6,
+  valid: true,
+  validation: 'Required field',
+  value: '',
 });
 
 const host = useHost();
-let uid = 0;
-const resolvedId = computed(
-  () => props.elementId || `c-otp-input--${uid}`,
+
+const autoId = useId();
+
+const resolvedId = computed(() => props.elementId || autoId);
+
+const ui = computed(() =>
+  otp({ hideDetails: props.hideDetails, valid: props.valid }),
 );
 
 const statusText = ref('');
-const inputs: Array<HTMLInputElement | null> = [];
 
-const setInputRef = (index: number) => (el: unknown) => {
-  inputs[index] = el as HTMLInputElement | null;
-};
+// `ref="inputsRef"` on the v-for collects the digit <input>s into an array
+// in document order (Vue 3.5 useTemplateRef).
+const inputsRef = useTemplateRef<HTMLInputElement[]>('inputsRef');
 
-const containerClasses = computed(() => ({
-  'c-otp-input': true,
-  'c-otp-input--hide-details': props.hideDetails,
-}));
+const inputs = (): HTMLInputElement[] => inputsRef.value ?? [];
 
-const dispatchChange = (val: string | null) =>
+const dispatchChange = (val: null | string) =>
   host?.dispatchEvent(new CustomEvent('changeValue', { detail: val }));
-const dispatchCompletion = (val: string | null) =>
+
+const dispatchCompletion = (val: null | string) =>
   host?.dispatchEvent(new CustomEvent('completion', { detail: val }));
+
 const dispatchUpdate = (val: string) =>
   host?.dispatchEvent(new CustomEvent('update:value', { detail: val }));
 
 let backspacePressed = false;
+
 let isPasting = false;
-let statusDebounce: ReturnType<typeof setTimeout> | null = null;
+
+let statusDebounce: null | ReturnType<typeof setTimeout> = null;
 
 const updateStatusText = () => {
   if (statusDebounce !== null) {
     clearTimeout(statusDebounce);
     statusDebounce = null;
   }
+
   statusDebounce = setTimeout(() => {
-    const value = inputs.map((i) => i?.value ?? '').join('');
+    const value = inputs()
+      .map((i) => i?.value ?? '')
+      .join('');
+
     let text = props.valid ? '' : `Error: ${props.validation} `;
     text += `Currently entered - ${
       !value.length ? 'nothing' : value.split('').join(' - ')
@@ -108,31 +177,53 @@ const updateStatusText = () => {
 
 const emitValue = () => {
   requestAnimationFrame(() => {
-    const value = inputs.map((i) => i?.value ?? '').join('');
+    const value = inputs()
+      .map((i) => i?.value ?? '')
+      .join('');
+
     const isFull = value.length === props.length;
-    dispatchChange(isFull ? value : null);
+
+    const modelValue = isFull ? value : null;
+    dispatchChange(modelValue);
     dispatchUpdate(value);
+
     if (isFull) dispatchCompletion(value || null);
+
+    // Native v-model bridge (works without `v-control`): mirror the model value
+    // (null until complete, matching `changeValue`) onto the host's `value` and
+    // fire a native `input`. The value watch no-ops on null, so partial typing
+    // is not disturbed.
+    if (host) {
+      (host as { value?: unknown } & HTMLElement).value = modelValue;
+      host.dispatchEvent(new Event('input', { bubbles: true }));
+    }
+
     updateStatusText();
   });
 };
 
-const handleValueChange = (value: string | null, forceEmpty = false) => {
+const handleValueChange = (value: null | string, forceEmpty = false) => {
   if (!value && !forceEmpty) return;
+
   const digits = (value ?? '').split('');
-  inputs.forEach((input, index) => {
+  inputs().forEach((input, index) => {
     if (input) input.value = digits[index] || '';
   });
 };
 
-const onFocus = (index: number) => inputs[index]?.select();
+const onFocus = (index: number) => inputs()[index]?.select();
 
 const onKeyDown = (event: KeyboardEvent) => {
   backspacePressed = false;
+
   const target = event.target as HTMLInputElement;
-  const previousElement = target.previousElementSibling as HTMLInputElement | null;
+
+  const previousElement =
+    target.previousElementSibling as HTMLInputElement | null;
+
   if (event.key === 'Backspace') {
     backspacePressed = true;
+
     if (previousElement && !target.value) previousElement.focus();
     emitValue();
   }
@@ -140,18 +231,26 @@ const onKeyDown = (event: KeyboardEvent) => {
 
 const onInput = (event: InputEvent) => {
   const target = event.target as HTMLInputElement;
+
   const next = target.nextElementSibling as HTMLInputElement | null;
+
   const prev = target.previousElementSibling as HTMLInputElement | null;
+
   if (isNaN(+target.value)) {
     event.preventDefault();
     target.value = '';
+
     return;
   }
+
   if (isPasting) {
     isPasting = false;
+
     return;
   }
+
   if (backspacePressed) return;
+
   if (event.data) next?.focus();
   else prev?.focus();
   emitValue();
@@ -159,26 +258,31 @@ const onInput = (event: InputEvent) => {
 
 const onPaste = (event: ClipboardEvent) => {
   event.preventDefault();
+
   const paste = event.clipboardData?.getData('text') ?? '';
+
   if (isNaN(+paste)) return;
   isPasting = true;
   paste.split('').forEach((char, index) => {
-    if (index >= inputs.length) return;
-    const input = inputs[index];
+    if (index >= inputs().length) return;
+
+    const input = inputs()[index];
+
     if (!input) return;
     input.value = '';
     input.value = char;
   });
+
   const nextIndex = Math.min(props.length, paste.length) - 1;
   requestAnimationFrame(() => {
-    inputs[nextIndex]?.focus();
+    inputs()[nextIndex]?.focus();
     emitValue();
   });
 };
 
 // Expose a public reset() like Stencil's @Method().
 const reset = () => {
-  inputs.forEach((i) => {
+  inputs().forEach((i) => {
     if (i) i.value = '';
   });
   emitValue();
@@ -194,7 +298,6 @@ watch(
 );
 
 onMounted(() => {
-  uid += 1;
   if (!host) return;
   host.id = resolvedId.value;
   host.classList.toggle('error', !props.valid);
@@ -209,67 +312,20 @@ watch(
 );
 </script>
 
+<!--
+  Escape-hatch CSS (ADR-0007): only constructs Tailwind utilities cannot
+  express. The static styling lives in the `tv` config above. What remains:
+    - `:host { display: block }` — the host must be a real box so the
+      inline-grid root lays out (the global `:host{display:contents}` would
+      otherwise collapse it); the per-type sheet is adopted after the shared
+      sheet, so it wins.
+    - The c-message grid placement: it must span every digit column, but the
+      column count is dynamic (`--_c-otp-input-count`, set imperatively), so
+      `grid-column: 1 / span var(...)` can't be a static utility.
+-->
 <style>
 :host {
-  --_c-otp-input-border-color: var(--c-otp-input-border-color, var(--c-tertiary-500));
-  --_c-otp-input-border-color-active: var(--c-otp-input-border-color-active, var(--c-primary-600));
-  --_c-otp-input-height: var(--c-otp-input-height, 56px);
-  --_c-otp-input-width: var(--c-otp-input-width, 42px);
-  --_c-otp-input-font-size: var(--c-otp-input-font-size, 24px);
-  --_c-otp-input-text-color: var(--c-otp-input-text-color, var(--c-text-body));
-  --_c-otp-input-border-width: 1px;
-
   display: block;
-}
-
-:host(.error) {
-  --_c-otp-input-border-color: var(--c-error-600);
-  --_c-otp-input-border-color-active: var(--c-error-600);
-}
-
-.visuallyhidden {
-  border: 0;
-  clip: rect(0 0 0 0);
-  height: 1px;
-  margin: -1px;
-  overflow: hidden;
-  padding: 0;
-  position: absolute;
-  white-space: nowrap;
-  width: 1px;
-}
-
-.c-otp-input {
-  backface-visibility: hidden;
-  display: inline-grid;
-  gap: 8px;
-  grid-auto-columns: minmax(auto, var(--_c-otp-input-width));
-  grid-auto-flow: column;
-  margin-bottom: 8px;
-  transform: translate3d(0, 0, 0);
-}
-
-.c-otp-input--hide-details {
-  margin-bottom: 0;
-}
-
-.c-otp-input input {
-  border-radius: 4px;
-  border: none;
-  box-shadow: inset 0 0 0 var(--_c-otp-input-border-width) var(--_c-otp-input-border-color);
-  color: var(--_c-otp-input-text-color);
-  font-size: var(--_c-otp-input-font-size);
-  height: var(--_c-otp-input-height);
-  max-width: var(--_c-otp-input-width);
-  min-width: 24px;
-  text-align: center;
-  width: 100%;
-}
-
-.c-otp-input input:focus {
-  --_c-otp-input-border-width: 2px;
-  --_c-otp-input-border-color: var(--_c-otp-input-border-color-active);
-  outline: none;
 }
 
 .c-otp-input c-message {

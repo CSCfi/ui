@@ -1,20 +1,31 @@
 <template>
   <component
     :is="href ? 'a' : 'div'"
-    ref="content"
-    class="c-list-item__content"
+    ref="contentRef"
+    :class="ui.root()"
     :href="href || undefined"
     :target="href ? target : undefined"
+    part="root"
   >
-    <slot v-if="hasPre" name="pre" />
-    <slot />
-    <slot v-if="hasPost" name="post" />
+    <!--
+      The slot must stay in the DOM so useHasSlot can find it and read its
+      assignedNodes (gating the slot itself with v-if/v-show is a chicken-and-
+      egg: it'd never render, so content is never detected). Vue forbids v-show
+      on a <slot> outlet, so wrap it in a display:contents span (layout-neutral:
+      the <slot> remains the flex item) and v-show that — collapsing the empty
+      pre/post slot avoids a phantom gap from the root's `gap-4`.
+    -->
+    <span v-show="hasPre" :class="ui.slotWrap()"><slot name="pre" /></span>
 
-    <span v-if="ripple" class="c-list-item__ripples" aria-hidden="true">
+    <slot />
+
+    <span v-show="hasPost" :class="ui.slotWrap()"><slot name="post" /></span>
+
+    <span v-if="ripple" :class="ui.ripples()" aria-hidden="true">
       <span
         v-for="r in ripples"
         :key="r.id"
-        class="c-list-item__ripple"
+        :class="ui.ripple()"
         :style="r.style"
       />
     </span>
@@ -22,23 +33,73 @@
 </template>
 
 <script setup lang="ts">
-import { computed, onMounted, ref, useHost, useTemplateRef, watchEffect } from 'vue';
-import { useHasSlot } from '../../shared/useHasSlot';
+import { tv } from 'tailwind-variants';
+import { computed, onMounted, useHost, useTemplateRef, watchEffect } from 'vue';
 
-const props = defineProps({
-  active: { type: Boolean, default: false },
-  disabled: { type: Boolean, default: false },
-  disabledByParent: { type: Boolean, default: false },
-  hoverable: { type: Boolean, default: false },
-  ripple: { type: Boolean, default: false },
-  href: { type: String, default: '' },
-  target: { type: String, default: '_blank' },
+import { useHasSlot } from '../../shared/useHasSlot';
+import { useRipple } from '../../shared/useRipple';
+
+/**
+ * Styling lives in this `tailwind-variants` config (ADR-0004): the `root` slot
+ * is the public content box and the `active` variant replaces the
+ * `:host(.c-list-item--active)` text-color cascade. Consumer customization is
+ * via `::part()` (ADR-0006); there is no `override` prop. The per-component
+ * `--c-*` indirection vars are dropped in favour of global design tokens.
+ *
+ * The host box itself (background, hover/active/disabled/focus states) and the
+ * projected `<slot>` layout cannot be expressed as utilities and remain in the
+ * escape-hatch <style> below (ADR-0007); the ripple is the shared transition
+ * primitive (useRipple + transition utilities, ADR-0004).
+ */
+const listItem = tv({
+  defaultVariants: {
+    active: false,
+  },
+  slots: {
+    ripple:
+      'absolute rounded-full bg-current pointer-events-none transition-[transform,opacity] duration-[600ms] ease-out',
+    ripples:
+      'absolute inset-0 overflow-hidden pointer-events-none rounded-[inherit]',
+    root: 'flex items-center gap-4 min-h-[42px] p-3 w-full relative overflow-hidden rounded text-[var(--c-text-system)] no-underline',
+    // Layout-neutral wrapper: display:contents so the wrapped <slot> is itself
+    // the flex item of `root`. Only exists so v-show can collapse an empty
+    // named slot (Vue forbids v-show on a <slot> outlet directly).
+    slotWrap: 'contents',
+  },
+  variants: {
+    active: { true: { root: 'text-primary-600' } },
+  },
 });
 
+interface CListItemProps {
+  active?: boolean;
+  disabled?: boolean;
+  disabledByParent?: boolean;
+  hoverable?: boolean;
+  href?: string;
+  ripple?: boolean;
+  target?: string;
+}
+
+const props = withDefaults(defineProps<CListItemProps>(), {
+  active: false,
+  disabled: false,
+  disabledByParent: false,
+  hoverable: false,
+  href: '',
+  ripple: false,
+  target: '_blank',
+});
+
+const ui = computed(() => listItem({ active: props.active }));
+
 const host = useHost();
-const content = useTemplateRef<HTMLElement>('content');
-const hasPre = useHasSlot(content, 'pre');
-const hasPost = useHasSlot(content, 'post');
+
+const contentRef = useTemplateRef<HTMLElement>('contentRef');
+
+const hasPre = useHasSlot(contentRef, 'pre');
+
+const hasPost = useHasSlot(contentRef, 'post');
 
 const isHoverable = computed(
   () => props.ripple || !!props.href || props.hoverable,
@@ -55,11 +116,13 @@ onMounted(() => {
     host.classList.toggle('c-list-item--hoverable', isHoverable.value);
     host.classList.toggle('c-list-item--ripple', props.ripple);
     host.classList.toggle('c-list-item--active', props.active);
+
     // Empty attribute (not the string 'true') so re-reading it via the
     // custom-element wrapper doesn't fail this component's Boolean `disabled`
     // prop validator.
     if (props.disabled) host.setAttribute('disabled', '');
     else host.removeAttribute('disabled');
+
     if (props.disabledByParent) host.setAttribute('data-disabled', 'true');
     else host.removeAttribute('data-disabled');
 
@@ -72,46 +135,26 @@ onMounted(() => {
     // Propagate active state to a nested c-list-item-title (mirrors the
     // Stencil @Watch('active') handler).
     const title = host.querySelector('c-list-item-title');
+
     if (title) (title as unknown as { active: boolean }).active = props.active;
   });
 });
 
-interface Ripple {
-  id: number;
-  style: Record<string, string>;
-}
-const ripples = ref<Ripple[]>([]);
-let rippleId = 0;
-const RIPPLE_DURATION_MS = 600;
-
-const spawnRipple = (event: MouseEvent, center: boolean) => {
-  const target = content.value;
-  if (!target) return;
-  const rect = target.getBoundingClientRect();
-  const size = Math.max(rect.width, rect.height) * 2;
-  const isKeyboard =
-    center || (event.detail === 0 && event.clientX === 0 && event.clientY === 0);
-  const originX = isKeyboard ? rect.left + rect.width / 2 : event.clientX;
-  const originY = isKeyboard ? rect.top + rect.height / 2 : event.clientY;
-  const x = originX - rect.left - size / 2;
-  const y = originY - rect.top - size / 2;
-  const id = ++rippleId;
-  ripples.value.push({
-    id,
-    style: { left: `${x}px`, top: `${y}px`, width: `${size}px`, height: `${size}px` },
-  });
-  setTimeout(() => {
-    ripples.value = ripples.value.filter((r) => r.id !== id);
-  }, RIPPLE_DURATION_MS);
-};
+// Material-style click ripple (shared logic in useRipple); measured against
+// the content box. Only rendered/spawned when the `ripple` prop is set.
+const { ripples, spawn: spawnRipple } = useRipple({
+  container: () => contentRef.value,
+});
 
 const onClick = (event: MouseEvent, center = false) => {
   if (props.disabled) {
     event.preventDefault();
+
     return;
   }
+
   if (!props.ripple) return;
-  spawnRipple(event, center);
+  spawnRipple(event, { center });
 };
 
 const onKeyup = (event: KeyboardEvent) => {
@@ -129,62 +172,51 @@ onMounted(() => {
 });
 </script>
 
+<!--
+  Escape-hatch CSS (ADR-0007): only constructs Tailwind utilities cannot
+  express. The content-box styling, ripple-dot statics and the `active` text
+  color live in the `tv` config above. What remains here:
+    - The host box itself and its positional/contextual state selectors
+      (`:host(:focus-visible)`, `:host(.c-list-item--hoverable:hover)`,
+      `:host(.c-list-item--active)`, `:host(.c-list-item--ripple)`,
+      `:host([disabled])`) — utilities can't target the host.
+    - `::slotted(c-icon)` recolouring inside a disabled item.
+    - Layout of the projected `<slot>` elements (a `<slot>` is a shadow-tree
+      node Vue renders without a class hook).
+  Authored against global design tokens only.
+-->
 <style>
 :host {
-  --_c-list-item-text-color: var(--c-list-item-text-color, var(--c-text-system));
-  --_c-list-item-text-color-active: var(--c-list-item-text-color-active, var(--c-primary-600));
-  --_c-list-item-background-color: var(--c-list-item-background-color, var(--c-transparent));
-  --_c-list-item-background-color-active: var(--c-list-item-background-color-active, rgba(var(--c-primary-rgb), 0.1));
-  --_c-list-item-background-color-hover: var(--c-list-item-background-color-hover, rgba(var(--c-primary-rgb), 0.2));
-  --_c-list-item-outline-color: var(--c-list-item-outline-color, var(--c-primary-600));
-  --_c-list-item-border-radius: 4px;
-
   display: block;
-  background-color: var(--_c-list-item-background-color);
-  border-radius: var(--_c-list-item-border-radius);
+  background-color: transparent;
+  border-radius: 4px;
 }
 
-.c-list-item__content {
-  align-items: center;
-  border-radius: var(--_c-list-item-border-radius);
-  color: var(--_c-list-item-text-color);
-  display: flex;
-  gap: 16px;
-  min-height: 42px;
-  padding: 12px;
-  width: 100%;
-  position: relative;
-  overflow: hidden;
-}
-
-.c-list-item__content slot {
+/* Layout for the projected light-DOM content. Every `<slot>` stacks its
+ * children as a small grid; the default (unnamed) slot grows to fill the row.
+ * Equivalent to the original `.c-list-item__content slot` rules — the slots
+ * only ever render inside the content box. */
+slot {
   display: grid;
   gap: 4px;
   line-height: 1.5;
 }
 
-.c-list-item__content slot:not([name]) {
+slot:not([name]) {
   flex: 1;
 }
 
-a.c-list-item__content {
-  text-decoration: none;
-  border-radius: var(--_c-list-item-border-radius);
-}
-
 :host(:focus-visible) {
-  outline: 2px var(--_c-list-item-outline-color) solid;
+  outline: 2px var(--c-primary-600) solid;
   outline-offset: 2px;
 }
 
 :host(.c-list-item--hoverable:hover) {
-  background-color: var(--_c-list-item-background-color-hover);
+  background-color: rgba(var(--c-primary-rgb), 0.2);
 }
 
 :host(.c-list-item--active) {
-  --_c-list-item-text-color: var(--_c-list-item-text-color-active);
-
-  background-color: var(--_c-list-item-background-color-active);
+  background-color: rgba(var(--c-primary-rgb), 0.1);
 }
 
 :host(.c-list-item--ripple) {
@@ -198,32 +230,11 @@ a.c-list-item__content {
   pointer-events: none;
 }
 
+/* Grey a disabled item's slotted icon. c-icon applies its `color` prop as the
+ * path's own inline fill, which inherited `color` cannot override, so use
+ * c-icon's `--c-icon-color` override hook (it inherits across the shadow
+ * boundary and wins over the prop fallback). */
 :host([disabled]) ::slotted(c-icon) {
   --c-icon-color: var(--c-tertiary-400) !important;
-}
-
-.c-list-item__ripples {
-  position: absolute;
-  inset: 0;
-  overflow: hidden;
-  pointer-events: none;
-  border-radius: inherit;
-}
-
-.c-list-item__ripple {
-  position: absolute;
-  border-radius: 50%;
-  background-color: currentColor;
-  opacity: 0.15;
-  pointer-events: none;
-  transform: scale(0);
-  animation: c-list-item-ripple 0.6s ease-out forwards;
-}
-
-@keyframes c-list-item-ripple {
-  to {
-    transform: scale(1);
-    opacity: 0;
-  }
 }
 </style>

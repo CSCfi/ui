@@ -18,7 +18,10 @@
  */
 export const coerceBoolean = (v: unknown): boolean => {
   if (typeof v === 'boolean') return v;
+
   if (v === '' || v === 'true') return true;
+
   if (v == null || v === 'false') return false;
+
   return Boolean(v);
 };

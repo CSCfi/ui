@@ -1,20 +1,41 @@
 <template>
-  <div class="c-accordion">
+  <div :class="accordion().root()" part="root">
     <slot />
   </div>
 </template>
 
 <script setup lang="ts">
+import { tv } from 'tailwind-variants';
 import { onBeforeUnmount, onMounted, ref, useHost, watch } from 'vue';
 
+import { emitModelValue } from '../../shared/emitModelValue';
+
 type AccordionPrimitive = number | string;
+
 type AccordionValue = AccordionPrimitive | AccordionPrimitive[] | null;
 
-const props = defineProps({
-  value: { type: [Number, String, Array], default: null },
-  mandatory: { type: Boolean, default: false },
-  multiple: { type: Boolean, default: false },
-  outlined: { type: Boolean, default: false },
+// Styling lives in `tailwind-variants` (ADR-0004): no `<style>` block, no
+// `--c-*` override vars. The accordion is layout-only — the visual styling
+// lives on c-accordion-item. Consumer customization is via `::part(root)`
+// (ADR-0006); there is no `override` prop.
+const accordion = tv({
+  slots: {
+    root: 'flex flex-col gap-2 max-w-full',
+  },
+});
+
+interface CAccordionProps {
+  mandatory?: boolean;
+  multiple?: boolean;
+  outlined?: boolean;
+  value?: AccordionValue;
+}
+
+const props = withDefaults(defineProps<CAccordionProps>(), {
+  mandatory: false,
+  multiple: false,
+  outlined: false,
+  value: null,
 });
 
 const host = useHost();
@@ -36,23 +57,30 @@ const internalValue = ref<AccordionValue>(props.value as AccordionValue);
 
 const isExpanded = (itemValue: AccordionPrimitive) => {
   const v = internalValue.value;
+
   if (Array.isArray(v)) return v.includes(itemValue);
+
   return v === itemValue;
 };
 
 const isLastExpanded = (itemValue: AccordionPrimitive) => {
   const v = internalValue.value;
+
   if (Array.isArray(v)) return v.length === 1 && v[0] === itemValue;
+
   return v === itemValue;
 };
 
 const applyExpansionToItems = () => {
   if (!host) return;
+
   // c-accordion-item children live in the LIGHT DOM (children of host),
   // not in the shadow root — the slot just projects them.
   const items = Array.from(host.children) as HTMLElement[];
+
   for (const item of items) {
     if (item.tagName?.toLowerCase() !== 'c-accordion-item') continue;
+
     const itemValue = (item as unknown as { value: AccordionPrimitive }).value;
     (item as unknown as { collapsable: boolean }).collapsable =
       !props.mandatory || !isLastExpanded(itemValue);
@@ -63,30 +91,41 @@ const applyExpansionToItems = () => {
 
 const onItemChange = (event: Event) => {
   const ce = event as CustomEvent<{
-    value: AccordionPrimitive;
     expanded: boolean;
+    value: AccordionPrimitive;
   }>;
-  const { value: itemValue, expanded } = ce.detail;
+
+  const { expanded, value: itemValue } = ce.detail;
+
   let next: AccordionValue;
+
   if (props.multiple) {
     const current = internalValue.value;
-    const arr: AccordionPrimitive[] = Array.isArray(current) ? [...current] : [];
+
+    const arr: AccordionPrimitive[] = Array.isArray(current)
+      ? [...current]
+      : [];
+
     if (expanded) {
       if (!arr.includes(itemValue)) arr.push(itemValue);
     } else {
       const i = arr.indexOf(itemValue);
+
       if (i >= 0) arr.splice(i, 1);
     }
+
     next = arr;
   } else {
     next = expanded ? itemValue : null;
   }
+
   internalValue.value = next;
-  dispatchValue('update:value', next);
+  // changeValue/update:value + native `input` (so a plain `v-model` works
+  // without `v-control`) + host `value` mirror. The value watch is
+  // visuals-only, so writing the property doesn't loop.
+  emitModelValue(host, next);
+  // Domain `change` event (bare value) for non-v-model consumers.
   dispatchValue('change', next);
-  // Transitional bridge for legacy `v-control` directive (Stencil-era
-  // `changeValue` event). ADR 0003 drops this at v1.
-  dispatchValue('changeValue', next);
 };
 
 // `item-change` is dispatched on the child c-accordion-item's host element
@@ -115,15 +154,3 @@ watch(internalValue, applyExpansionToItems, { deep: true });
 watch(() => props.outlined, applyExpansionToItems);
 watch(() => props.mandatory, applyExpansionToItems);
 </script>
-
-<style>
-:host {
-  display: block;
-}
-
-.c-accordion {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-</style>

@@ -38,7 +38,6 @@
     "postcss": "^8.5.3",
     "postcss-scss": "^4.0.9",
     "prettier": "^2.8.8",
-    "puppeteer": "^20.7.3",
     "rimraf": "^5.0.5",
     "style-dictionary": "^3.9.0",
     "stylelint": "^16.14.1",

@@ -1,59 +1,86 @@
 <template>
-  <footer class="c-login-card-actions__footer">
-    <menu class="c-login-card-actions" :class="actionClasses">
+  <footer :class="ui.root()" part="root">
+    <menu :class="ui.actions()" part="actions">
       <slot />
     </menu>
   </footer>
 </template>
 
 <script setup lang="ts">
+import { tv } from 'tailwind-variants';
 import { computed } from 'vue';
 
-const props = defineProps({
-  align: { type: String, default: 'center' },
-  justify: { type: String, default: 'start' },
+/**
+ * Styling lives entirely in this `tailwind-variants` config (ADR-0004); `root`
+ * (the <footer>) and `actions` (the flex <menu> row) are the public parts
+ * (ADR-0006). The Stencil version delegated to <c-card-actions> with
+ * `--_c-card-gap: 0`; the layout is inlined here so we don't nest a second
+ * custom element (and its shadow boundary) just to zero a single var. The host
+ * stays `display:contents` (global) and the box lives on the `root` element.
+ * The `align`/`justify` props drive the flex alignment via variants.
+ * `::slotted(...)` stretch rules stay in the escape-hatch <style> (ADR-0007):
+ * they target consumer light-DOM children.
+ */
+const loginCardActions = tv({
+  defaultVariants: {
+    align: 'center',
+    justify: 'start',
+  },
+  slots: {
+    actions: 'm-0 p-0 flex gap-2 items-center',
+    root: 'block p-0',
+  },
+  variants: {
+    align: {
+      center: { actions: 'items-center' },
+      end: { actions: 'items-end' },
+      start: { actions: 'items-start' },
+    },
+    justify: {
+      center: { actions: 'justify-center' },
+      end: { actions: 'justify-end' },
+      'space-around': { actions: 'justify-around' },
+      'space-between': { actions: 'justify-between' },
+      start: { actions: 'justify-start' },
+      // `actions--stretch` is the marker hook the ::slotted(*) escape-hatch
+      // rule below targets to make every action child grow.
+      stretch: { actions: 'actions--stretch justify-stretch' },
+    },
+  },
 });
 
-const actionClasses = computed(() => ({
-  [`c-login-card-actions--align-${props.align}`]: true,
-  [`c-login-card-actions--justify-${props.justify}`]: true,
-}));
+interface CLoginCardActionsProps {
+  align?: string;
+  justify?: string;
+}
+
+const props = withDefaults(defineProps<CLoginCardActionsProps>(), {
+  align: 'center',
+  justify: 'start',
+});
+
+const ui = computed(() =>
+  loginCardActions({
+    align: props.align as 'center' | 'end' | 'start',
+    justify: props.justify as
+      | 'center'
+      | 'end'
+      | 'space-around'
+      | 'space-between'
+      | 'start'
+      | 'stretch',
+  }),
+);
 </script>
 
+<!--
+  Escape-hatch CSS (ADR-0007): `::slotted(...)` rules style consumer-provided
+  light-DOM children (a contextual selector Tailwind utilities cannot express).
+  When the row is `justify=stretch`, every action grows; a `c-button[fit]`
+  always grows regardless of justify.
+-->
 <style>
-/* The Stencil version delegated to <c-card-actions> with --_c-card-gap: 0.
- * Inline the layout here (footer + flex menu) so we don't nest custom
- * elements just to override a single CSS variable, which would also
- * introduce a second shadow boundary that CSS overrides have to cross. */
-
-:host {
-  display: block;
-}
-
-.c-login-card-actions__footer {
-  padding: 0;
-}
-
-.c-login-card-actions {
-  margin: 0;
-  padding: 0;
-  display: flex;
-  gap: 8px;
-  align-items: center;
-}
-
-.c-login-card-actions--align-start { align-items: flex-start; }
-.c-login-card-actions--align-center { align-items: center; }
-.c-login-card-actions--align-end { align-items: flex-end; }
-
-.c-login-card-actions--justify-start { justify-content: flex-start; }
-.c-login-card-actions--justify-center { justify-content: center; }
-.c-login-card-actions--justify-end { justify-content: flex-end; }
-.c-login-card-actions--justify-space-between { justify-content: space-between; }
-.c-login-card-actions--justify-space-around { justify-content: space-around; }
-.c-login-card-actions--justify-stretch { justify-content: stretch; }
-
-.c-login-card-actions--justify-stretch ::slotted(*) {
+.actions--stretch ::slotted(*) {
   flex: 1;
 }
 

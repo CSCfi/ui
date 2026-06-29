@@ -1,45 +1,51 @@
 <template>
-  <div class="c-toolbar">
+  <div :class="ui.root()" part="root">
     <slot />
   </div>
-  <div class="c-toolbar__spacer" />
+
+  <div :class="ui.spacer()" />
 </template>
 
 <script setup lang="ts">
+import { tv } from 'tailwind-variants';
+import { computed } from 'vue';
+
+/**
+ * Styling lives entirely in this `tailwind-variants` config (ADR-0004); the
+ * per-component `--c-toolbar-*` override variables are dropped in favour of the
+ * global design tokens (`bg-white`, `--c-text-system`). Consumer customization
+ * is via `::part()` (ADR-0006).
+ *
+ * The host is `display:contents` globally, so the fixed bar lives on the inner
+ * `root` element. The only thing that can't be a utility — the contextual
+ * `:host(.relative) .c-toolbar` selector that flips the bar to in-flow
+ * positioning — stays in the escape-hatch <style> below (ADR-0007).
+ */
+const toolbar = tv({
+  slots: {
+    // Fixed bar pinned to the top, full width, with the CSC drop shadow.
+    root: 'fixed z-[1] flex w-full h-[60px] items-center gap-x-3 px-4 bg-white text-[var(--c-text-system)] shadow-[2px_4px_10px_#00000029]',
+    // Spacer reserves the bar's height in normal flow so content isn't hidden
+    // beneath the fixed bar.
+    spacer: 'h-[60px] w-full',
+  },
+});
+
 // Multi-root template (fragment) — keep consumer fallthrough attrs
 // (class/style) on the host element instead of tripping the "renders
 // fragment" warning.
 defineOptions({ inheritAttrs: false });
+
+const ui = computed(() => toolbar());
 </script>
 
+<!--
+  Escape-hatch CSS (ADR-0007): only the contextual host selector that Tailwind
+  utilities cannot express. When the consumer adds `.relative` to the host,
+  the bar switches from fixed to in-flow and pulls the following spacer back up.
+-->
 <style>
-:host {
-  --_c-toolbar-background-color: var(--c-toolbar-background-color, var(--c-white));
-  --_c-toolbar-text-color: var(--c-toolbar-text-color, var(--c-text-system));
-
-  z-index: 1;
-}
-
-.c-toolbar {
-  align-items: center;
-  background: var(--_c-toolbar-background-color);
-  box-shadow: 2px 4px 10px #00000029;
-  color: var(--_c-toolbar-text-color);
-  column-gap: 12px;
-  display: flex;
-  height: 60px;
-  padding-left: 16px;
-  padding-right: 16px;
-  position: fixed;
-  width: 100%;
-}
-
-.c-toolbar__spacer {
-  height: 60px;
-  width: 100%;
-}
-
-:host(.relative) .c-toolbar {
+:host(.relative) [part='root'] {
   position: relative;
   margin-bottom: -60px;
 }

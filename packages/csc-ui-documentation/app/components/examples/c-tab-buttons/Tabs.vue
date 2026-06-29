@@ -4,11 +4,11 @@
 
     <c-tabs v-model="tab" v-control borderless>
       <c-tab-buttons>
-        <c-button value="tab1">One</c-button>
+        <c-tab-button value="tab1">One</c-tab-button>
 
-        <c-button value="tab2">Two</c-button>
+        <c-tab-button value="tab2">Two</c-tab-button>
 
-        <c-button value="tab3">Three</c-button>
+        <c-tab-button value="tab3">Three</c-tab-button>
       </c-tab-buttons>
 
       <c-tab-items slot="items">

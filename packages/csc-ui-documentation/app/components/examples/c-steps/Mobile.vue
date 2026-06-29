@@ -2,7 +2,7 @@
   <component-example name="mobile" rows>
     <template #title>Mobile labels</template>
 
-    <c-card style="max-width: 520px">
+    <c-card style="max-width: 480px">
       <c-card-title>Mobile labels</c-card-title>
 
       <c-card-content>

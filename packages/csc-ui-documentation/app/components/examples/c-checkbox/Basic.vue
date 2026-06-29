@@ -41,7 +41,7 @@
 
     <c-checkbox hint="Please agree to the terms and conditions">
       I agree to the
-      <c-link href="https://csc.fi" underline>terms and conditions</c-link>
+      <c-link href="https://csc.fi" underline @click.stop>terms and conditions</c-link>
     </c-checkbox>
   </component-example>
 </template>

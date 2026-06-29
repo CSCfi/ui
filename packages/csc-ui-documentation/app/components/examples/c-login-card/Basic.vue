@@ -3,7 +3,7 @@
     <template #title>Basic usage</template>
 
     <c-login-card background-position="50% 0%" src="/img/bg.png">
-      <c-login-card-title>Login to service</c-login-card-title>
+      <c-login-card-title>Login to a service</c-login-card-title>
 
       <c-login-card-content>
         <div>

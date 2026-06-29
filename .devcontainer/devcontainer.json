@@ -10,7 +10,7 @@
       "githubIps": true,
       "claudeCode": true,
       "npmRegistry": true,
-      "hosts": "json.schemastore.org"
+      "hosts": "json.schemastore.org,34.104.35.123"
     }
   },
   "mounts": [
@@ -26,7 +26,16 @@
   "workspaceFolder": "/workspace",
   "customizations": {
     "vscode": {
-      "extensions": ["anthropic.claude-code"]
+      "extensions": [
+        "anthropic.claude-code",
+        "esbenp.prettier-vscode@11.0.3",
+        "dbaeumer.vscode-eslint",
+        "Vue.volar",
+        "mrmlnc.vscode-duplicate",
+        "usernamehw.errorlens",
+        "quicktype.quicktype",
+        "zengxingxin.sort-js-object-keys"
+      ]
     }
   }
 }

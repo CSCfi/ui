@@ -1,16 +1,19 @@
 <template>
-  <nav role="navigation" aria-label="pagination">
-    <div v-if="!hideDetails" class="c-pagination__details">
-      <div class="c-pagination__items-per-page">
+  <nav :class="ui.root()" aria-label="pagination" part="root" role="navigation">
+    <div v-if="!hideDetails" :class="ui.details()" part="details">
+      <div :class="ui.itemsPerPage()" part="items-per-page">
         {{ itemsPerPageText }}
         <c-menu :items="pageSizeItems" @click="onMenuClick">
-          <div><span class="items-per-page">{{ itemsPerPage }}</span></div>
+          <div>
+            <span :class="ui.itemsPerPageValue()">{{ itemsPerPage }}</span>
+          </div>
         </c-menu>
       </div>
-      <span :class="{ range: !simple }">{{ rangeText }}</span>
+
+      <span :class="ui.rangeText({ range: !simple })">{{ rangeText }}</span>
     </div>
 
-    <ul v-if="value.itemCount">
+    <ul v-if="value.itemCount" :class="ui.pages()" part="pages">
       <li>
         <c-icon-button
           :aria-label="prevPageText"
@@ -19,7 +22,8 @@
           text
           @click="decreasePage"
         >
-          <span class="visuallyhidden">{{ prevPageText }}</span>
+          <span class="sr-only">{{ prevPageText }}</span>
+
           <c-icon :path="chevronLeft" />
         </c-icon-button>
       </li>
@@ -28,25 +32,28 @@
         <li v-for="(btn, i) in pageButtons" :key="i">
           <c-icon-button
             v-if="btn.type === 'separator'"
-            aria-disabled="true"
             :size="buttonSize"
-            tabindex="-1"
+            aria-disabled="true"
             role="separator"
+            tabindex="-1"
             disabled
             text
           >
-            <svg width="16" height="16" viewBox="0 0 24 24">
+            <svg height="16" viewBox="0 0 24 24" width="16">
               <path :d="dotsIcon" fill="currentColor" />
             </svg>
           </c-icon-button>
+
           <c-icon-button
             v-else
-            :text="currentPage !== btn.number"
-            :size="buttonSize"
             :aria-current="currentPage === btn.number ? 'page' : undefined"
+            :size="buttonSize"
+            :text="currentPage !== btn.number"
             @click="setPage(btn.number!)"
           >
-            <span :aria-label="`page ${btn.number} of ${totalPages}`">{{ btn.number }}</span>
+            <span :aria-label="`page ${btn.number} of ${totalPages}`">
+              {{ btn.number }}
+            </span>
           </c-icon-button>
         </li>
       </template>
@@ -59,7 +66,8 @@
           text
           @click="increasePage"
         >
-          <span class="visuallyhidden">{{ nextPageText }}</span>
+          <span class="sr-only">{{ nextPageText }}</span>
+
           <c-icon :path="chevronRight" />
         </c-icon-button>
       </li>
@@ -69,44 +77,122 @@
 
 <script setup lang="ts">
 import { mdiChevronLeft, mdiChevronRight, mdiDotsHorizontal } from '@mdi/js';
+import { tv } from 'tailwind-variants';
 import { computed, onMounted, ref, useHost, watch, watchEffect } from 'vue';
 
-interface PaginationOptions {
-  itemCount: number;
-  currentPage?: number;
-  totalVisible?: number;
-  itemsPerPage?: number;
-  startFrom?: number;
-  endTo?: number;
-  pageSizes?: number[];
-  textOverrides?: Record<string, unknown>;
-}
+import { emitModelValue } from '../../shared/emitModelValue';
 
-const props = defineProps({
-  value: { type: Object as () => PaginationOptions, default: () => ({ itemCount: 0 }) },
-  hideDetails: { type: Boolean, default: false },
-  simple: { type: Boolean, default: false },
-  size: { type: String, default: 'default' },
-  hideRange: { type: Boolean, default: false },
+/**
+ * Styling lives entirely in this `tailwind-variants` config (ADR-0004): the
+ * old per-component `--_c-pagination-*` override-variable layer is dropped and
+ * authored directly against the design tokens. Customization is via `::part()`
+ * (ADR-0006); there is no `override` prop.
+ *
+ * The box lives on the inner `<nav>` (`part="root"`); the host stays
+ * `display:contents`.
+ *
+ * CHILD CONTRACT: the page controls are <c-icon-button>s. Their colour is no
+ * longer themed via the removed `--c-icon-button-*` vars — the active page uses
+ * the icon-button DEFAULT appearance (primary-600 bg / white text) and every
+ * other control uses its `text` appearance (transparent / primary-600 text).
+ * The c-menu vars are likewise gone; the menu styles itself. Body text uses the
+ * design token directly (`text-[var(--c-text-system)]` — no `text-system`
+ * utility exists in this theme).
+ *
+ * The `:host(.c-pagination--simple|--small) ul` positional host rules map
+ * directly to the `simple`/`size` props, so they become tv variants on `pages`.
+ */
+const pagination = tv({
+  defaultVariants: {
+    range: false,
+    simple: false,
+    size: 'default',
+  },
+  slots: {
+    details:
+      'flex flex-auto flex-wrap items-center justify-between text-[var(--c-text-system)]',
+    itemsPerPage:
+      'flex items-center gap-1 text-sm text-right whitespace-nowrap text-[var(--c-text-system)]',
+    itemsPerPageValue: '',
+    pages: 'flex items-center justify-center list-none m-0 p-0 gap-1',
+    rangeText: 'text-sm text-right whitespace-nowrap',
+    root: 'flex flex-wrap items-center justify-center w-full gap-x-6 gap-y-0',
+  },
+  variants: {
+    // `range` is applied per-call on the rangeText span (original `.range`).
+    range: {
+      true: { rangeText: 'min-w-[132px]' },
+    },
+    simple: {
+      true: { pages: 'flex-1 justify-end' },
+    },
+    size: {
+      default: {},
+      small: { pages: 'gap-0.5' },
+    },
+  },
 });
 
+interface CPaginationProps {
+  hideDetails?: boolean;
+  hideRange?: boolean;
+  simple?: boolean;
+  size?: string;
+  value?: PaginationOptions;
+}
+
+interface PaginationOptions {
+  currentPage?: number;
+  endTo?: number;
+  itemCount: number;
+  itemsPerPage?: number;
+  pageSizes?: number[];
+  startFrom?: number;
+  textOverrides?: Record<string, unknown>;
+  totalVisible?: number;
+}
+
+const props = withDefaults(defineProps<CPaginationProps>(), {
+  hideDetails: false,
+  hideRange: false,
+  simple: false,
+  size: 'default',
+  value: () => ({ itemCount: 0 }),
+});
+
+const ui = computed(() =>
+  pagination({
+    simple: props.simple,
+    size: props.size as 'default' | 'small',
+  }),
+);
+
 const chevronLeft = mdiChevronLeft;
+
 const chevronRight = mdiChevronRight;
+
 const dotsIcon = mdiDotsHorizontal;
 
 const host = useHost();
-const dispatchValue = (value: unknown) => {
-  host?.dispatchEvent(new CustomEvent('changeValue', { detail: value }));
-  host?.dispatchEvent(new CustomEvent('update:value', { detail: value }));
-};
+
+// changeValue/update:value + native `input` (so a plain `v-model` works without
+// `v-control`). The value is the same object reference the consumer holds
+// (mutated in place with the computed range), so the helper's identity guard
+// skips re-writing `host.value` and there is no loop with the value watch.
+const dispatchValue = (value: unknown) => emitModelValue(host, value);
 
 const currentPage = ref(1);
+
 const itemsPerPage = ref(25);
+
 const totalVisible = ref(7);
+
 const pageSizes = ref<number[]>([5, 25, 50, 100]);
 
 const itemsPerPageText = 'Items per page:';
+
 const prevPageText = 'Previous page';
+
 const nextPageText = 'Next page';
 
 const totalPages = computed(() =>
@@ -116,6 +202,14 @@ const totalPages = computed(() =>
 const buttonSize = computed(() =>
   props.size === 'small' ? 'x-small' : 'small',
 );
+
+/*
+  We intentionally mutate `props.value` in place here. The value is the same
+  object reference the consumer holds, and `emitModelValue`'s identity guard
+  depends on that identity to skip re-writing `host.value` (no update loop —
+  see the dispatchValue comment above). Cloning would break that contract.
+*/
+/* eslint-disable vue/no-mutating-props -- write-back-by-identity contract */
 
 // Recompute the visible window + write startFrom/endTo back onto the
 // value object, then notify the consumer — mirrors Stencil's _setRange.
@@ -137,16 +231,20 @@ const commit = () => {
   setRange();
 };
 
+/* eslint-enable vue/no-mutating-props */
+
 const setPage = (n: number) => {
   currentPage.value = n;
   commit();
 };
+
 const increasePage = () => {
   if (currentPage.value < totalPages.value) {
     currentPage.value += 1;
     commit();
   }
 };
+
 const decreasePage = () => {
   if (currentPage.value > 1) {
     currentPage.value -= 1;
@@ -156,12 +254,12 @@ const decreasePage = () => {
 
 const pageSizeItems = computed(() =>
   pageSizes.value.map((i) => ({
-    name: i.toString(),
     action: () => {
       itemsPerPage.value = i;
       currentPage.value = 1;
       commit();
     },
+    name: i.toString(),
   })),
 );
 
@@ -169,26 +267,35 @@ const onMenuClick = (event: Event) => event.stopPropagation();
 
 const rangeText = computed(() => {
   if (props.hideRange || !props.value.itemCount) return '';
+
   const end = Math.min(
     currentPage.value * itemsPerPage.value,
     props.value.itemCount,
   );
+
   const start = (props.value.startFrom ?? 0) + 1;
+
   return `${start} - ${end} of ${props.value.itemCount} items`;
 });
 
 // Build the page-button window (with leading/trailing separators) the
 // same way the Stencil component does.
 interface Btn {
-  type: 'page' | 'separator';
   number?: number;
+  type: 'page' | 'separator';
 }
+
 const pageButtons = computed<Btn[]>(() => {
   const total = totalPages.value;
+
   const visible = totalVisible.value;
+
   const buttons: Btn[] = [];
+
   let buttonStart = 0;
+
   let buttonCount = total + 1;
+
   const more = total > visible;
 
   if (more) {
@@ -204,13 +311,16 @@ const pageButtons = computed<Btn[]>(() => {
   }
 
   if (buttonStart > 1) {
-    buttons.push({ type: 'page', number: 1 });
+    buttons.push({ number: 1, type: 'page' });
     buttons.push({ type: 'separator' });
   }
+
   for (let index = 1; index < buttonCount; index++) {
-    buttons.push({ type: 'page', number: buttonStart + index });
+    buttons.push({ number: buttonStart + index, type: 'page' });
   }
+
   const allVisible = total <= visible;
+
   if (
     (currentPage.value < visible - 1 ||
       currentPage.value < total - visible + 4) &&
@@ -218,7 +328,8 @@ const pageButtons = computed<Btn[]>(() => {
   ) {
     buttons.push({ type: 'separator' });
   }
-  if (more) buttons.push({ type: 'page', number: total });
+
+  if (more) buttons.push({ number: total, type: 'page' });
 
   return buttons;
 });
@@ -241,106 +352,3 @@ onMounted(() => {
   });
 });
 </script>
-
-<style>
-:host {
-  --_c-pagination-button-active-background-color: var(--c-pagination-button-active-background-color, var(--c-primary-600));
-  --_c-pagination-button-active-background-color-hover: var(--c-pagination-button-active-background-color-hover, var(--c-primary-400));
-  --_c-pagination-button-active-text-color: var(--c-pagination-button-active-text-color, var(--c-white));
-  --_c-pagination-button-background-color: var(--c-pagination-button-background-color, var(--c-transparent));
-  --_c-pagination-button-background-color-hover: var(--c-pagination-button-background-color-hover, rgba(var(--c-primary-rgb), 0.1));
-  --_c-pagination-button-text-color: var(--c-pagination-button-text-color, var(--_c-pagination-button-active-background-color));
-  --_c-pagination-text-color: var(--c-pagination-text-color, var(--c-text-system));
-  --_c-pagination-menu-text-color: var(--c-pagination-menu-text-color, var(--c-text-system));
-  --_c-pagination-menu-text-color-active: var(--c-pagination-menu-text-color-active, var(--c-primary-600));
-  --_c-pagination-menu-background-color-hover: var(--c-pagination-menu-background-color-hover, var(--c-primary-200));
-  --_c-pagination-menu-outline-color: var(--c-pagination-menu-outline-color, var(--c-primary-600));
-
-  display: block;
-}
-
-c-icon-button {
-  --c-icon-button-background-color: var(--_c-pagination-button-active-background-color);
-  --c-icon-button-background-color-hover: var(--_c-pagination-button-active-background-color-hover);
-  --c-icon-button-text-color: var(--_c-pagination-button-active-text-color);
-  --c-icon-button-text-background-color: var(--_c-pagination-button-background-color);
-  --c-icon-button-text-background-color-hover: var(--_c-pagination-button-background-color-hover);
-  --c-icon-button-text-text-color: var(--_c-pagination-button-text-color);
-}
-
-c-menu {
-  --c-menu-text-color: var(--_c-pagination-menu-text-color);
-  --c-menu-text-color-active: var(--_c-pagination-menu-text-color-active);
-  --c-menu-background-color-hover: var(--_c-pagination-menu-background-color-hover);
-  --c-menu-outline-color: var(--_c-pagination-menu-outline-color);
-}
-
-span {
-  font-size: 14px;
-  text-align: right;
-  white-space: nowrap;
-}
-
-.range {
-  min-width: 132px;
-}
-
-nav {
-  align-items: center;
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0 24px;
-  justify-content: center;
-  width: 100%;
-}
-
-ul {
-  align-items: center;
-  display: flex;
-  gap: 4px;
-  justify-content: center;
-  list-style: none;
-  margin: 0;
-  padding: 0;
-}
-
-.c-pagination__details {
-  color: var(--_c-pagination-text-color);
-  align-items: center;
-  display: flex;
-  flex-wrap: wrap;
-  flex: auto;
-  justify-content: space-between;
-}
-
-.c-pagination__items-per-page {
-  color: var(--_c-pagination-text-color);
-  font-size: 14px;
-  text-align: right;
-  white-space: nowrap;
-  display: flex;
-  align-items: center;
-  gap: 4px;
-}
-
-:host(.c-pagination--simple) ul {
-  flex: 1;
-  justify-content: flex-end;
-}
-
-:host(.c-pagination--small) ul {
-  gap: 2px;
-}
-
-.visuallyhidden {
-  border: 0;
-  clip: rect(0 0 0 0);
-  height: 1px;
-  margin: -1px;
-  overflow: hidden;
-  padding: 0;
-  position: absolute;
-  white-space: nowrap;
-  width: 1px;
-}
-</style>

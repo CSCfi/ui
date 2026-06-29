@@ -1,36 +1,75 @@
 <template>
-  <Transition name="c-message" mode="out-in">
-    <div
-      v-if="visible"
-      :key="messageKey"
-      class="c-message-item"
-      :class="`c-message-item--${valid ? 'hint' : 'error'}`"
-    >
-      <span v-if="!valid">
-        <svg viewBox="0 0 24 24" aria-hidden="true">
+  <transition mode="out-in" name="c-message">
+    <div v-if="visible" :key="messageKey" :class="ui.root()" part="root">
+      <span v-if="!valid" :class="ui.line()">
+        <svg :class="ui.icon()" aria-hidden="true" viewBox="0 0 24 24">
           <path :d="errorIconPath" />
         </svg>
-        <span class="visuallyhidden">Error: </span>
+
+        <span :class="ui.visuallyHidden()">Error:</span>
+
         <span>{{ validation }}</span>
       </span>
-      <span v-else>
-        <span class="visuallyhidden">Hint: </span>
+
+      <span v-else :class="ui.line()">
+        <span :class="ui.visuallyHidden()">Hint:</span>
+
         <span>{{ hint }}</span>
       </span>
     </div>
-  </Transition>
+  </transition>
 </template>
 
 <script setup lang="ts">
 import { mdiCloseCircle } from '@mdi/js';
+import { tv } from 'tailwind-variants';
 import { computed } from 'vue';
 
-const props = defineProps({
-  hint: { type: String, default: '' },
-  inputId: { type: String, default: '' },
-  valid: { type: Boolean, default: true },
-  validation: { type: String, default: 'Required field' },
+/**
+ * Styling lives in this `tailwind-variants` config (ADR-0004). The old
+ * `--_c-message-*` indirection vars are dropped: the hint colour maps to the
+ * system-text token and the error colour to `text-error-600`, selected by the
+ * `valid` variant. Consumer customization is via `::part()` (ADR-0006).
+ *
+ * Note there is no `text-system` utility in this package's theme, so the hint
+ * colour uses the arbitrary `text-[var(--c-text-system)]` form (matches
+ * c-loader / c-list-item).
+ */
+const message = tv({
+  defaultVariants: {
+    valid: true,
+  },
+  slots: {
+    icon: 'fill-current size-4 relative -top-0.5 shrink-0',
+    line: 'flex items-start gap-1 min-h-4 text-current',
+    root: 'text-xs min-h-4 px-3 leading-none',
+    // Visually-hidden but screen-reader accessible.
+    visuallyHidden:
+      'absolute w-px h-px m-[-1px] p-0 overflow-hidden whitespace-nowrap border-0 [clip:rect(0_0_0_0)]',
+  },
+  variants: {
+    valid: {
+      false: { root: 'text-error-600' },
+      true: { root: 'text-[var(--c-text-system)]' },
+    },
+  },
 });
+
+interface CMessageProps {
+  hint?: string;
+  inputId?: string;
+  valid?: boolean;
+  validation?: string;
+}
+
+const props = withDefaults(defineProps<CMessageProps>(), {
+  hint: '',
+  inputId: '',
+  valid: true,
+  validation: 'Required field',
+});
+
+const ui = computed(() => message({ valid: props.valid }));
 
 const errorIconPath = mdiCloseCircle;
 
@@ -43,61 +82,25 @@ const messageKey = computed(() =>
 );
 </script>
 
+<!--
+  Escape-hatch CSS (ADR-0007): only constructs Tailwind utilities cannot
+  express. The static styling lives in the `tv` config above; here remain:
+    - `:host{display:block}` — restores a real box on the host (the global
+      sheet sets `:host{display:contents}`, which would otherwise collapse the
+      element so it can't be positioned by a parent — e.g. c-otp-input places
+      it as a grid item via `grid-column`/`grid-row`, which a `display:contents`
+      box ignores). Matches the original c-message `:host{display:block}`. The
+      per-type sheet is adopted after the shared sheet, so it wins.
+    - the Vue <Transition> enter/leave classes (Vue toggles these on the
+      transitioning element, so they can't be a tv slot) implementing the
+      vertical slide + fade between the hint and error states — same pattern as
+      the inline message in c-checkbox / c-radio-group.
+-->
 <style>
 :host {
-  --_c-message-error-color: var(--c-message-error-color, var(--c-error-600));
-  --_c-message-hint-color: var(--c-message-hint-color, var(--c-text-system));
-  --_c-message-padding: var(--c-message-padding, 0 12px);
-
   display: block;
-  line-height: 1;
-  padding: var(--_c-message-padding);
 }
 
-.c-message-item {
-  font-size: 12px;
-  min-height: 16px;
-}
-
-.c-message-item--hint {
-  color: var(--_c-message-hint-color);
-}
-
-.c-message-item--error {
-  color: var(--_c-message-error-color);
-}
-
-.c-message-item > span {
-  align-items: flex-start;
-  color: currentColor;
-  display: flex;
-  gap: 4px;
-  min-height: 16px;
-}
-
-.c-message-item svg {
-  fill: currentColor;
-  height: 16px;
-  width: 16px;
-  position: relative;
-  top: -2px;
-  flex-shrink: 0;
-}
-
-.visuallyhidden {
-  border: 0;
-  clip: rect(0 0 0 0);
-  height: 1px;
-  margin: -1px;
-  overflow: hidden;
-  padding: 0;
-  position: absolute;
-  white-space: nowrap;
-  width: 1px;
-}
-
-/* Vertical slide + fade between hint and error — same pattern as the
- * inline message in c-checkbox/c-radio-group. */
 .c-message-enter-active,
 .c-message-leave-active {
   transition:

@@ -1,49 +1,45 @@
 <template>
-  <div :style="cssVars">
-    <label v-if="label" class="c-slider__label">
+  <div :class="ui.root()" :style="cssVars" part="root">
+    <label v-if="label" :class="ui.label()" part="label">
       {{ label }} {{ ariaLabelInternal }}
     </label>
 
-    <div class="c-slider__wrapper">
+    <div :class="ui.wrapper()">
       <div
         v-if="!disableTooltip"
-        class="c-slider__tooltip-wrapper"
+        :class="ui.tooltipWrapper()"
         aria-hidden="true"
       >
-        <span :data-tooltip="`${formatNumber(+value)}${unit}`" />
+        <span
+          :class="ui.tooltip()"
+          :data-tooltip="`${formatNumber(+value)}${unit}`"
+        />
       </div>
 
       <input
-        ref="input"
-        type="range"
+        :id="hostId || generatedId"
+        ref="inputRef"
         :aria-label="ariaLabelInternal || label"
+        :aria-valuemax="max"
+        :aria-valuemin="min"
         :aria-valuenow="value"
         :aria-valuetext="`${value}${unit}`"
-        :aria-valuemin="min"
-        :aria-valuemax="max"
-        :name="hostName || undefined"
-        :id="hostId || generatedId"
-        :min="min"
-        :max="max"
-        :step="step"
+        :class="ui.input()"
         :disabled="disabled || undefined"
+        :max
+        :min
+        :name="hostName || undefined"
+        :step
+        type="range"
         @input="onInput"
       />
     </div>
 
-    <div
-      class="c-slider__ticks"
-      :class="{ 'c-slider__ticks--disabled': disabled }"
-      aria-hidden="true"
-    >
+    <div :class="ui.ticks()" aria-hidden="true" part="ticks">
       <span
         v-for="(pos, i) in tickPositions"
         :key="i"
-        :class="{
-          active: isActive(Math.round(+pos)),
-          ticks: ticks,
-          labels: labels,
-        }"
+        :class="ui.tick({ active: isActive(Math.round(+pos)) })"
         :data-value="formatNumber(Math.round(+pos))"
       />
     </div>
@@ -51,31 +47,137 @@
 </template>
 
 <script setup lang="ts">
-import { computed, onMounted, ref, useHost, useTemplateRef, watch } from 'vue';
+import { tv } from 'tailwind-variants';
+import {
+  computed,
+  onMounted,
+  ref,
+  useHost,
+  useId,
+  useTemplateRef,
+  watch,
+} from 'vue';
 
-const props = defineProps({
-  hostId: { type: String, default: '' },
-  hostName: { type: String, default: '' },
-  ariaLabelInternal: { type: String, default: '' },
-  max: { type: [String, Number], default: '100' },
-  min: { type: [String, Number], default: '0' },
-  step: { type: [String, Number], default: '1' },
-  value: { type: [String, Number], default: '50' },
-  unit: { type: String, default: '%' },
-  ticks: { type: Boolean, default: false },
-  labels: { type: Boolean, default: false },
-  disableTooltip: { type: Boolean, default: false },
-  label: { type: String, default: '' },
-  disabled: { type: Boolean, default: false },
-  segments: { type: [String, Number], default: '10' },
+import { emitModelValue } from '../../shared/emitModelValue';
+
+/**
+ * Styling lives in this `tailwind-variants` config (ADR-0004); customization is
+ * via `::part()` against the stamped part names (ADR-0006), not `--c-*` override
+ * vars. The native `<input type=range>` pseudo-elements (thumb / track /
+ * progress) and the tooltip bubble's `::before`/`::after` callout — none of
+ * which Tailwind utilities can target — stay in the escape-hatch <style> below
+ * (ADR-0007), authored directly against design tokens.
+ *
+ * The `c-slider__input` / `c-slider__tooltip` / `c-slider__ticks` marker
+ * classes are the hooks those pseudo-element rules and the runtime-state CSS
+ * vars (`--_c-slider-position`) target.
+ */
+const slider = tv({
+  compoundVariants: [
+    // An active tick is white, but only when ticks are actually rendered.
+    {
+      active: true,
+      class: { tick: 'bg-white' },
+      ticks: true,
+    },
+  ],
+  defaultVariants: {
+    active: false,
+    disabled: false,
+    labels: false,
+    ticks: false,
+  },
+  slots: {
+    // The native range input; thumb/track styled via pseudo-elements (escape-hatch).
+    input:
+      'c-slider__input flex items-center appearance-none bg-transparent h-2 m-0 relative w-full',
+    label: 'block mb-4 -mt-2',
+    // `group` is the hover/focus-within anchor for the tooltip reveal below.
+    root: 'c-slider__root group block isolate py-2',
+    tick: 'c-slider__tick relative size-1 rounded-full text-xs',
+    // The visual track: a gradient fill driven by --_c-slider-position.
+    ticks:
+      'c-slider__ticks flex items-center justify-between h-2 rounded-[100vw] -mt-2 mx-auto pointer-events-none relative -z-10 w-[calc(100%-16px)]',
+    // The bubble: a circle that follows the thumb. It reveals on root
+    // hover/focus-within via the `group` anchor on `root` (group-hover /
+    // group-focus-within). Its horizontal `left` follows the thumb via the
+    // runtime var --_c-slider-position; that lives in the escape-hatch <style>
+    // (not a Tailwind arbitrary value), because a CSS-var underscore can't
+    // survive the JS-string→class round-trip a `[...]` utility needs. The
+    // ::before/::after callout also lives in the escape-hatch.
+    tooltip:
+      'c-slider__tooltip absolute inline-flex items-center justify-center size-6 rounded-full box-border pointer-events-none opacity-0 -translate-x-1/2 -translate-y-1 transition-[opacity,transform] duration-300 ease-[cubic-bezier(0.075,0.82,0.165,1)] group-hover:opacity-100 group-hover:-translate-y-2 group-focus-within:opacity-100 group-focus-within:-translate-y-2',
+    tooltipWrapper: 'relative h-0 mx-0.5',
+    wrapper: 'relative px-2.5',
+  },
+  variants: {
+    active: {
+      true: {},
+    },
+    disabled: {
+      true: { ticks: 'c-slider__ticks--disabled' },
+    },
+    labels: {
+      true: { root: 'pb-6', tick: 'c-slider__tick--labels' },
+    },
+    ticks: {
+      true: { tick: 'c-slider__tick--ticks bg-tertiary-500' },
+    },
+  },
 });
 
+interface CSliderProps {
+  ariaLabelInternal?: string;
+  disabled?: boolean;
+  disableTooltip?: boolean;
+  hostId?: string;
+  hostName?: string;
+  label?: string;
+  labels?: boolean;
+  max?: number | string;
+  min?: number | string;
+  segments?: number | string;
+  step?: number | string;
+  ticks?: boolean;
+  unit?: string;
+  value?: number | string;
+}
+
+const props = withDefaults(defineProps<CSliderProps>(), {
+  ariaLabelInternal: '',
+  disabled: false,
+  disableTooltip: false,
+  hostId: '',
+  hostName: '',
+  label: '',
+  labels: false,
+  max: '100',
+  min: '0',
+  segments: '10',
+  step: '1',
+  ticks: false,
+  unit: '%',
+  value: '50',
+});
+
+const ui = computed(() =>
+  slider({
+    disabled: props.disabled,
+    labels: props.labels,
+    ticks: props.ticks,
+  }),
+);
+
 const host = useHost();
-const input = useTemplateRef<HTMLInputElement>('input');
-let uid = 0;
-const generatedId = computed(() => `c-slider__${uid}`);
+
+const inputRef = useTemplateRef<HTMLInputElement>('inputRef');
+
+const autoId = useId();
+
+const generatedId = computed(() => `c-slider__${autoId}`);
 
 const trackPosition = ref(0);
+
 const tickPositions = ref<string[]>([]);
 
 const formatNumber = (n: number, decimals = 0) =>
@@ -102,20 +204,17 @@ const cssVars = computed(() => ({
   '--_c-slider-position': `${trackPosition.value}`,
 }));
 
-const dispatchValue = (value: unknown) => {
-  host?.dispatchEvent(new CustomEvent('changeValue', { detail: value }));
-  host?.dispatchEvent(new CustomEvent('update:value', { detail: value }));
-};
-
 const onInput = (e: Event) => {
   const v = (e.target as HTMLInputElement).value;
+
   const next = typeof props.value === 'number' ? +v : v;
-  dispatchValue(next);
+  // changeValue/update:value + native `input` (plain v-model) + host `value`
+  // mirror. The value watch is visuals-only, so no loop.
+  emitModelValue(host, next);
   // Don't wait for the consumer to push value back — update the track
   // fill immediately so the gradient and tooltip stay in sync with the
   // thumb during drag.
-  trackPosition.value =
-    ((+v - +props.min) / (+props.max - +props.min)) * 100;
+  trackPosition.value = ((+v - +props.min) / (+props.max - +props.min)) * 100;
 };
 
 watch(() => props.segments, calculateTickPositions);
@@ -124,100 +223,68 @@ watch(
   (v) => {
     calculateTrackPosition();
     requestAnimationFrame(() => {
-      if (input.value) input.value.value = String(v);
+      if (inputRef.value) inputRef.value.value = String(v);
     });
   },
 );
 
 onMounted(() => {
-  uid += 1;
-  if (host) host.classList.toggle('c-slider--labels', props.labels);
   calculateTrackPosition();
   calculateTickPositions();
   requestAnimationFrame(() => {
-    if (input.value) input.value.value = String(props.value);
+    if (inputRef.value) inputRef.value.value = String(props.value);
   });
 });
 </script>
 
-<style>
-:host {
-  --_c-slider-background-color-active-disabled: var(--c-slider-background-color-active-disabled, var(--c-tertiary-400));
-  --_c-slider-background-color-active: var(--c-slider-background-color-active, var(--c-primary-500));
-  --_c-slider-background-color-disabled: var(--c-slider-background-color-disabled, rgba(var(--c-tertiary-rgb), 0.2));
-  --_c-slider-background-color: var(--c-slider-background-color, rgba(var(--c-tertiary-rgb), 0.2));
-  --_c-slider-thumb-background-color-disabled: var(--c-slider-thumb-background-color-disabled, var(--c-tertiary-500));
-  --_c-slider-thumb-background-color-hover: var(--c-slider-thumb-background-color-hover, rgba(var(--c-primary-rgb), 0.2));
-  --_c-slider-thumb-background-color: var(--c-slider-thumb-background-color, var(--c-primary-600));
-  --_c-slider-tick-color-active: var(--c-slider-tick-color-active, var(--c-white));
-  --_c-slider-tick-color: var(--c-slider-tick-color, var(--c-tertiary-500));
-  --_c-slider-tooltip-background-color: var(--c-slider-tooltip-background-color, var(--c-primary-900));
-  --_c-slider-tooltip-text-color: var(--c-slider-tooltip-text-color, var(--c-white));
+<!--
+  Escape-hatch CSS (ADR-0007): only constructs Tailwind utilities cannot
+  express, authored directly against design tokens (ADR-0004) — no `--c-*`
+  override-var indirection layer.
 
+  What lives here and why:
+  - Native range pseudo-elements (`::-webkit-slider-thumb`,
+    `::-webkit-slider-runnable-track`, `::-webkit-slider-container`,
+    `::-moz-range-thumb`) — form-control internals Tailwind can't target.
+  - The track's `linear-gradient` progress fill, driven by the runtime-state
+    var `--_c-slider-position` (set imperatively by the script; this is live
+    value state, NOT the dropped theming-indirection layer).
+  - The `input:active` / `input:focus-visible` state vars (`--_c-slider-outline`,
+    `--_c-slider-thumb-scale`, `--_c-slider-thumb-shadow-size`) — they only feed
+    the pseudo-elements above, so they belong with them.
+  - The tooltip bubble's `::before`/`::after` callout (label box + arrow), a
+    `content: attr(data-tooltip)` pseudo-element with layout.
+-->
+<style>
+.c-slider__input {
   --_c-slider-outline: none;
   --_c-slider-thumb-scale: 1;
   --_c-slider-thumb-shadow-size: 8px;
-  --_c-slider-tooltip-opacity: 0;
-  --_c-slider-tooltip-y: -4px;
-
-  display: block;
 }
 
-:host > div { isolation: isolate; padding-block: 8px; }
-
-:host(.c-slider--labels) > div { padding-bottom: 24px; }
-
-:host(:focus-within),
-:host(:hover) {
-  --_c-slider-tooltip-opacity: 1;
-  --_c-slider-tooltip-y: -8px;
-}
-
-.c-slider__label {
-  display: block;
-  margin-bottom: 16px;
-  margin-top: -8px;
-}
-
-.c-slider__wrapper {
-  padding-inline: 10px;
-  position: relative;
-}
-
-input[type='range'] {
-  align-items: center;
-  appearance: none;
-  background-color: transparent;
-  display: flex;
-  height: 8px;
-  margin: 0;
-  position: relative;
-  width: 100%;
-}
-
-input[type='range']:focus-visible {
-  --_c-slider-outline: 2px var(--_c-slider-thumb-background-color) solid;
+.c-slider__input:focus-visible {
+  --_c-slider-outline: 2px var(--c-primary-600) solid;
   outline: none;
 }
 
-input[type='range']::-webkit-slider-runnable-track {
-  width: calc(100% - 20px);
-  margin: 0 -20px;
-}
-
-input[type='range']:active {
+.c-slider__input:active {
   --_c-slider-thumb-scale: 1.33;
   --_c-slider-thumb-shadow-size: 0;
 }
 
-input[type='range']::-webkit-slider-container {
+.c-slider__input::-webkit-slider-runnable-track {
+  width: calc(100% - 20px);
+  margin: 0 -20px;
+}
+
+.c-slider__input::-webkit-slider-container {
   display: flex;
   padding: 0 10px;
 }
 
-input[type='range']::-webkit-slider-thumb {
+.c-slider__input::-webkit-slider-thumb {
   appearance: none;
-  background-color: var(--_c-slider-thumb-background-color);
+  background-color: var(--c-primary-600);
   border-radius: 100%;
   cursor: pointer;
   height: 24px;
@@ -233,14 +300,14 @@ input[type='range']::-webkit-slider-thumb {
   z-index: 1;
 }
 
-input[type='range']::-webkit-slider-thumb:hover {
+.c-slider__input::-webkit-slider-thumb:hover {
   box-shadow: 0 0 0 var(--_c-slider-thumb-shadow-size)
-    var(--_c-slider-thumb-background-color-hover);
+    rgba(var(--c-primary-rgb), 0.2);
 }
 
-input[type='range']::-moz-range-thumb {
+.c-slider__input::-moz-range-thumb {
   appearance: none;
-  background-color: var(--_c-slider-thumb-background-color);
+  background-color: var(--c-primary-600);
   border-radius: 100%;
   border: 0;
   cursor: pointer;
@@ -256,43 +323,63 @@ input[type='range']::-moz-range-thumb {
   z-index: 1;
 }
 
-input[type='range'][disabled] {
-  --_c-slider-background-color: var(--_c-slider-background-color-disabled);
-  --_c-slider-background-color-active: var(--_c-slider-background-color-active-disabled);
-  --_c-slider-thumb-background-color: var(--_c-slider-thumb-background-color-disabled);
+.c-slider__input[disabled]::-webkit-slider-thumb {
+  background-color: var(--c-tertiary-500);
+}
+
+.c-slider__input[disabled]::-moz-range-thumb {
+  background-color: var(--c-tertiary-500);
+}
+
+.c-slider__input[disabled] {
   pointer-events: none;
 }
 
-.c-slider__tooltip-wrapper {
-  height: 0;
-  margin-inline: 2px;
-  position: relative;
+/* Track progress fill, driven by the live --_c-slider-position state var. */
+.c-slider__ticks {
+  background: linear-gradient(
+    to right,
+    var(--c-primary-500) calc(1% * var(--_c-slider-position)),
+    rgba(var(--c-tertiary-rgb), 0.2) calc(1% * var(--_c-slider-position))
+  );
 }
 
-.c-slider__tooltip-wrapper span {
-  align-items: center;
-  border-radius: 50%;
-  box-sizing: border-box;
-  display: inline-flex;
-  height: 24px;
-  justify-content: center;
-  left: calc(1% * var(--_c-slider-position));
-  opacity: var(--_c-slider-tooltip-opacity);
-  pointer-events: none;
+.c-slider__ticks--disabled {
+  background: linear-gradient(
+    to right,
+    var(--c-tertiary-400) calc(1% * var(--_c-slider-position)),
+    rgba(var(--c-tertiary-rgb), 0.2) calc(1% * var(--_c-slider-position))
+  );
+}
+
+.c-slider__tick--ticks:first-child,
+.c-slider__tick--ticks:last-child {
+  background-color: transparent;
+}
+
+.c-slider__tick--labels::after {
+  content: attr(data-value);
+  left: 2px;
   position: absolute;
-  transform: translate(-50%, var(--_c-slider-tooltip-y));
-  transition:
-    opacity 0.3s cubic-bezier(0.075, 0.82, 0.165, 1),
-    transform 0.3s cubic-bezier(0.075, 0.82, 0.165, 1);
-  width: 24px;
+  top: 16px;
+  transform: translate(-50%);
 }
 
-.c-slider__tooltip-wrapper span::before {
+/* Tooltip horizontal position follows the thumb via the live
+ * --_c-slider-position state var. Lives here (not a Tailwind `left-[...]`
+ * utility) because the var's leading underscore can't round-trip through a
+ * JS-string class into a matching generated selector. */
+.c-slider__tooltip {
+  left: calc(1% * var(--_c-slider-position));
+}
+
+/* Tooltip callout: label box + arrow, a content:attr() pseudo with layout. */
+.c-slider__tooltip::before {
   align-items: center;
-  background: var(--_c-slider-tooltip-background-color);
+  background: var(--c-primary-900);
   border-radius: 4px;
   bottom: 100%;
-  color: var(--_c-slider-tooltip-text-color);
+  color: var(--c-white);
   content: attr(data-tooltip);
   display: inline-flex;
   flex-wrap: nowrap;
@@ -301,70 +388,22 @@ input[type='range'][disabled] {
   position: absolute;
   top: -42px;
   white-space: nowrap;
+
+  @supports (corner-shape: squircle) {
+    corner-shape: squircle;
+    border-radius: 16px;
+  }
 }
 
-.c-slider__tooltip-wrapper span::after {
+.c-slider__tooltip::after {
   border-left: 6px solid transparent;
   border-right: 6px solid transparent;
-  border-top: 6px solid var(--_c-slider-tooltip-background-color);
+  border-top: 6px solid var(--c-primary-900);
   content: '';
   height: 0;
   left: 50%;
   margin: -42px 0 0 -6px;
   position: absolute;
   width: 0;
-}
-
-.c-slider__ticks {
-  --c-slider-tick-color: var(--c-tertiary-400);
-  align-items: center;
-  background: linear-gradient(
-    to right,
-    var(--_c-slider-background-color-active) calc(1% * var(--_c-slider-position)),
-    var(--_c-slider-background-color) calc(1% * var(--_c-slider-position))
-  );
-  border-radius: 100vw;
-  display: flex;
-  height: 8px;
-  justify-content: space-between;
-  margin: -8px auto 0;
-  pointer-events: none;
-  position: relative;
-  width: calc(100% - 16px);
-  z-index: -1;
-}
-
-.c-slider__ticks--disabled {
-  --_c-slider-background-color-active: var(--_c-slider-background-color-active-disabled);
-}
-
-.c-slider__ticks span {
-  border-radius: 50%;
-  font-size: 12px;
-  height: 4px;
-  padding: 0;
-  position: relative;
-  width: 4px;
-}
-
-.c-slider__ticks span.ticks {
-  background-color: var(--_c-slider-tick-color);
-}
-
-.c-slider__ticks span.ticks.active {
-  background-color: var(--_c-slider-tick-color-active);
-}
-
-.c-slider__ticks span.ticks:first-child,
-.c-slider__ticks span.ticks:last-child {
-  background-color: transparent;
-}
-
-.c-slider__ticks span.labels::after {
-  content: attr(data-value);
-  left: 2px;
-  position: absolute;
-  top: 16px;
-  transform: translate(-50%);
 }
 </style>

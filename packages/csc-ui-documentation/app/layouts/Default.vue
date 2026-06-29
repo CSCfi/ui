@@ -1,5 +1,5 @@
 <template>
-  <c-main ref="pageElement" class="h-100vh">
+  <c-main class="h-100vh">
     <c-toolbar>
       <c-csc-logo />
 
@@ -109,6 +109,14 @@
           title="Still uses the old (Stencil) implementation"
           style="color: var(--c-warning-color, #d6601f); margin-left: 4px"
         />
+
+        <c-icon
+          v-if="component.usesTailwindVariants"
+          :path="mdiCheckCircle"
+          :size="16"
+          title="Converted to Tailwind variants"
+          style="color: var(--c-success-color, #25a35a); margin-left: 4px"
+        />
       </c-side-navigation-item>
 
       <c-side-navigation-title>Design tokens</c-side-navigation-title>
@@ -153,6 +161,7 @@
 import {
   mdiAlertCircle,
   mdiAngular,
+  mdiCheckCircle,
   mdiFormatPaint,
   mdiInformationOutline,
   mdiLanguageHtml5,
@@ -163,7 +172,7 @@ import {
   mdiVuejs,
 } from '@mdi/js';
 import { storeToRefs } from 'pinia';
-import { migratedTags } from '@cscfi/csc-ui-next';
+import { migratedTags, tailwindVariantTags } from '@cscfi/csc-ui-next';
 import packageJson from '../../package.json';
 
 const version = ref(packageJson.version);
@@ -175,6 +184,7 @@ const version = ref(packageJson.version);
 const config = useRuntimeConfig();
 const isNextImpl = config.public.cscUiImpl === 'next';
 const migratedSet = new Set(migratedTags);
+const tailwindSet = new Set(tailwindVariantTags);
 
 const query = ref('');
 
@@ -182,19 +192,24 @@ const route = useRoute();
 
 const { currentComponent, parsedData } = storeToRefs(useExampleStore());
 
-const pageElement = ref<HTMLCMainElement | null>(null);
+// `isMobile` is a viewport breakpoint, so measure the window directly. We used
+// to ResizeObserver the `c-main` element, but its host is now `display:contents`
+// (ADR-0004) and generates no box — its measured width is always 0, which would
+// pin `isMobile` to `true` and hide the desktop side navigation entirely.
+// Default to a desktop width so SSR renders the desktop layout; corrected on mount.
+const width = ref(1280);
 
-const width = ref(0);
-
-const observer = new ResizeObserver((entries) => {
-  entries.forEach((entry) => {
-    const cr = entry.contentRect;
-    width.value = cr.width;
-  });
-});
+const updateWidth = () => {
+  width.value = window.innerWidth;
+};
 
 onMounted(() => {
-  observer.observe(pageElement.value as HTMLCMainElement);
+  updateWidth();
+  window.addEventListener('resize', updateWidth);
+});
+
+onBeforeUnmount(() => {
+  window.removeEventListener('resize', updateWidth);
 });
 
 const isMobile = computed(() => width.value < 1280);
@@ -215,6 +230,7 @@ const components = computed(() =>
       tag: data.tag,
       name: data.name,
       usesOldImpl: isNextImpl && !migratedSet.has(data.tag),
+      usesTailwindVariants: isNextImpl && tailwindSet.has(data.tag),
     })),
 );
 

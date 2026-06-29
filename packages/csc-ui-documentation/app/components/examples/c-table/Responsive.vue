@@ -3,16 +3,16 @@
     <template #title>Responsive table</template>
 
     <div class="flex justify-start">
-      <c-tab-buttons v-model="displayType" v-control size="small" mandatory>
-        <c-button value="desktop">
+      <c-tab-buttons v-model="displayType" mandatory>
+        <c-tab-button value="desktop">
           <c-icon :size="20" :path="mdiMonitor" />
           Desktop
-        </c-button>
+        </c-tab-button>
 
-        <c-button value="mobile">
+        <c-tab-button value="mobile">
           <c-icon :size="20" :path="mdiCellphone" />
           Mobile
-        </c-button>
+        </c-tab-button>
       </c-tab-buttons>
     </div>
 
@@ -56,9 +56,11 @@
         </table>
       </c-table>
 
-      <c-button class="justify-self-start" @click="onAddUser()">
-        Add user
-      </c-button>
+      <div>
+        <c-button @click="onAddUser()">
+          Add user
+        </c-button>
+      </div>
     </div>
   </component-example>
 </template>

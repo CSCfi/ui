@@ -1,102 +1,98 @@
 <template>
-  <div
-    ref="root"
-    class="c-input"
-    :class="{
-      'c-input--disabled': disabled,
-      'c-input--shadow': shadow,
-      'c-input--label-on-top': labelOnTop,
-      'c-input--textarea': isTextarea,
-      'c-input--error': !valid,
-      'c-input--active': isActiveResolved,
-      'c-input--filled': filled,
-    }"
-  >
+  <div ref="rootRef" :class="ui.root()" part="root">
     <label
       v-if="labelOnTop && label"
       ref="labelTopRef"
+      :class="ui.labelTop()"
       :for="inputId || undefined"
-      class="c-input__label c-input__label--top"
+      part="label"
     >
-      {{ label
-      }}<span v-if="required" class="c-input__required" aria-hidden="true"
-        >&nbsp;*</span
-      >
+      {{ label }}
+      <span v-if="required" :class="ui.required()" aria-hidden="true">
+        &nbsp;*
+      </span>
     </label>
 
-    <div class="c-input__control">
-      <div class="c-input__slot" @click="focusInput">
-        <fieldset v-if="!shadow" class="c-input__fieldset" aria-hidden="true">
+    <div :class="ui.control()">
+      <div :class="ui.slot()" @click="focusInput">
+        <fieldset v-if="!shadow" :class="ui.fieldset()" aria-hidden="true">
           <legend
-            class="c-input__legend"
-            :class="{
-              'c-input__legend--active': (isActiveResolved || filled) && !labelOnTop,
-            }"
+            :class="ui.legend()"
+            :data-active="
+              ((isActiveResolved || filled) && !labelOnTop) || undefined
+            "
             :style="{ '--_c-input-legend-width': legendWidth + 'px' }"
           >
-            <span class="notranslate"></span>
+            <span class="notranslate" />
           </legend>
         </fieldset>
 
         <div
-          class="c-input__field"
+          :class="ui.field()"
           :style="{ '--_c-input-label-position': preSlotWidth + 'px' }"
         >
           <span
             v-show="hasPreSlot"
-            ref="preSlotWrapper"
-            class="c-input__pre"
-            ><slot name="pre"
-          /></span>
+            ref="preSlotWrapperRef"
+            :class="ui.pre()"
+            part="pre"
+          >
+            <slot name="pre" />
+          </span>
 
           <label
             v-if="!labelOnTop && label"
             ref="labelInlineRef"
+            :class="ui.labelFloating()"
+            :data-lifted="isActiveResolved || filled || undefined"
             :for="inputId || undefined"
-            class="c-input__label c-input__label--floating"
-            :class="{
-              'c-input__label--lifted': isActiveResolved || filled,
-            }"
+            part="label"
           >
-            {{ label
-            }}<span v-if="required" class="c-input__required" aria-hidden="true"
-              >&nbsp;*</span
-            >
+            {{ label }}
+            <span v-if="required" :class="ui.required()" aria-hidden="true">
+              &nbsp;*
+            </span>
           </label>
 
           <slot />
 
-          <span v-show="hasPostSlot" class="c-input__post"><slot name="post" /></span>
+          <span v-show="hasPostSlot" :class="ui.post()" part="post">
+            <slot name="post" />
+          </span>
         </div>
       </div>
 
-      <Transition name="c-input-message" mode="out-in">
-        <span
-          v-if="!hideDetails && messageVisible"
-          :key="messageKey"
-          class="c-input__message"
-          :class="{ 'c-input__message--error': !valid }"
-        >
-          <svg
-            v-if="!valid"
-            class="c-input__message-icon"
-            viewBox="0 0 24 24"
-            aria-hidden="true"
+      <div v-if="!isHideDetails()" :class="ui.message()" part="message">
+        <transition mode="out-in" name="c-input-message">
+          <span
+            v-if="messageVisible"
+            :key="messageKey"
+            :class="ui.messageLine()"
           >
-            <path :d="errorIconPath" />
-          </svg>
-          <span class="visuallyhidden">{{
-            !valid ? "Error: " : "Hint: "
-          }}</span>
-          <span>{{ !valid && validation ? validation : hint }}</span>
-        </span>
-      </Transition>
+            <svg
+              v-if="!valid"
+              :class="ui.messageIcon()"
+              aria-hidden="true"
+              viewBox="0 0 24 24"
+            >
+              <path :d="errorIconPath" />
+            </svg>
+
+            <span :class="ui.visuallyHidden()">
+              {{ !valid ? 'Error: ' : 'Hint: ' }}
+            </span>
+
+            <span>{{ !valid && validation ? validation : hint }}</span>
+          </span>
+        </transition>
+      </div>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { mdiCloseCircle } from "@mdi/js";
+import { mdiCloseCircle } from '@mdi/js';
+import { tv } from 'tailwind-variants';
 import {
   computed,
   onBeforeUnmount,
@@ -106,94 +102,271 @@ import {
   useShadowRoot,
   useTemplateRef,
   watch,
-} from "vue";
-import { useHasSlot } from "../../shared/useHasSlot";
+} from 'vue';
 
-const props = defineProps({
-  label: { type: String, default: "" },
-  labelOnTop: { type: Boolean, default: false },
-  hint: { type: String, default: "" },
-  validation: { type: String, default: "Required field" },
-  hideDetails: { type: Boolean, default: false },
-  valid: { type: Boolean, default: true },
-  disabled: { type: Boolean, default: false },
-  required: { type: Boolean, default: false },
-  shadow: { type: Boolean, default: false },
+import { coerceBoolean } from '../../shared/coerceBoolean';
+import { useHasSlot } from '../../shared/useHasSlot';
+
+/**
+ * Styling lives in this `tailwind-variants` config (ADR-0004). The old
+ * `--_c-input-*` indirection layer is dropped: colours map to design-token
+ * utilities. Consumer customization is via `::part()` (ADR-0006).
+ *
+ * The STATIC structure / layout (control, slot box, field, floating label
+ * resting transform, message) is authored here as utilities. The
+ * inactive→active→error colour precedence is `active`/`error` variants:
+ * `active` folds in native focus via `isActiveResolved` (so the old
+ * `:focus-within` selector is gone) and `error` is declared after `active` so
+ * tailwind-merge lets it win the shared root-colour / fieldset-border (the old
+ * `!important` is gone). Only two things stay in the escape-hatch <style> below
+ * (ADR-0007): the runtime-var-driven bits — the legend "notch" width and the
+ * floating-label lift transform (keyed off the internal `data-lifted` /
+ * `data-active` hooks the script still sets on those elements) — and the
+ * slotted `<input>`/`<textarea>` (which we don't own) via `::slotted(...)`.
+ */
+const input = tv({
+  defaultVariants: {
+    active: false,
+    disabled: false,
+    error: false,
+    labelOnTop: false,
+    shadow: false,
+    textarea: false,
+  },
+  slots: {
+    control: 'flex flex-col gap-2 relative min-w-0 w-full',
+    field: 'c-input__field flex flex-auto items-center gap-2 relative',
+    fieldset:
+      'c-input__fieldset absolute inset-0 m-0 py-0 pr-0 pl-2 rounded-csc-md border border-solid border-tertiary-600 bg-transparent pointer-events-none [border-collapse:collapse] [transition:border-color_0.15s_cubic-bezier(0.25,0.8,0.25,1)]',
+    // The resting transform (translateX preslot shift + the Noto-metric
+    // vertical nudge) lives in the escape-hatch <style>: it reads the
+    // underscored runtime var `--_c-input-label-position`, which a Tailwind
+    // arbitrary value mangles (the leading `_` becomes a space). Only
+    // transform-origin + the transition stay here as utilities.
+    labelFloating:
+      'c-input__label--floating absolute top-3 left-0 right-auto h-5 leading-5 text-base max-w-[90%] overflow-hidden text-ellipsis whitespace-nowrap pointer-events-none origin-top-left [transition:0.3s_var(--ease-standard)_0.08s]',
+    labelTop:
+      'c-input__label--top text-sm font-medium overflow-hidden text-ellipsis whitespace-nowrap max-w-full',
+    legend:
+      'c-input__legend float-none leading-[11px] -ml-px p-0 text-left w-0 [transition:width_0.3s_var(--ease-standard)]',
+    // Outer message AREA: reserved whenever details aren't hidden (the `min-h-4`
+    // holds 16px even with no hint/error) so a hint-less field keeps the same
+    // height as one with a message and the layout doesn't shift when a message
+    // appears — matching the original c-message, which always reserved its
+    // min-height. The actual hint/error line (`messageLine`) fades in/out inside.
+    message:
+      'c-input__message px-3 text-xs leading-none min-h-4 text-[var(--c-text-system)]',
+    messageIcon: 'fill-current size-4 shrink-0 relative -top-0.5',
+    // Inner hint/error line: lays out the (optional) error icon + text.
+    messageLine: 'flex items-start gap-1',
+    post: 'c-input__post inline-flex items-center empty:hidden',
+    pre: 'c-input__pre inline-flex items-center empty:hidden',
+    required: 'text-error-600',
+    // `c-input` is the DOM hook the escape-hatch <style> still uses for the
+    // legend-notch width + the floating-label transform. The base inactive
+    // colour lives here too (the slotted input + labels inherit it); the
+    // active/error variants below override it, with tailwind-merge picking the
+    // winner so no `!important` is needed.
+    root: 'c-input flex flex-col items-stretch rounded text-base max-w-full text-left text-tertiary-600',
+    slot: 'c-input__slot relative flex items-stretch min-h-11 px-3 rounded-csc-md bg-transparent cursor-text transition-all duration-300 ease-standard',
+    visuallyHidden:
+      'absolute w-px h-px m-[-1px] p-0 overflow-hidden whitespace-nowrap border-0 [clip:rect(0_0_0_0)]',
+  },
+  variants: {
+    // Active state (driven by the `active` prop OR native focus, both folded
+    // into `isActiveResolved` — which replaces the old `:focus-within` selector):
+    // the root recolours to primary (labels + slotted text inherit it) and the
+    // fieldset border thickens. The label LIFT transform is handled separately by
+    // the `data-lifted` hook in the escape-hatch <style>.
+    active: {
+      true: {
+        fieldset: 'border-2 border-primary-600',
+        root: 'text-primary-600',
+      },
+    },
+    disabled: {
+      true: { root: 'opacity-75', slot: 'cursor-not-allowed' },
+    },
+    // Error state. Declared AFTER `active` so tailwind-merge resolves the
+    // overlapping root colour and fieldset border-colour to the error token
+    // (this replaces the original `!important` that made error beat focus). The
+    // fieldset keeps active's 2px width when both apply, matching the original.
+    error: {
+      true: {
+        fieldset: 'border-error-600',
+        message: 'text-error-600',
+        root: 'text-error-600',
+      },
+    },
+    labelOnTop: {
+      true: { message: 'px-0', root: 'gap-1' },
+    },
+    // Shadow style: the slot becomes a white, drop-shadowed box that draws a
+    // primary outline on focus instead of the fieldset notch (the fieldset
+    // isn't rendered in shadow mode — see the template `v-if="!shadow"`).
+    shadow: {
+      true: {
+        slot: 'bg-white [box-shadow:rgba(0,0,0,0.15)_0_5px_15px_0] focus-within:outline-2 focus-within:outline-solid focus-within:outline-primary-600',
+      },
+    },
+    textarea: {
+      true: { field: '-mr-3' },
+    },
+  },
+});
+
+interface CInputProps {
   /** Set by the wrapping form component when its input has focus or holds a value. */
-  active: { type: Boolean, default: false },
+  active?: boolean;
+  disabled?: boolean;
   /** Set by the wrapping form component when its input holds a value. */
-  filled: { type: Boolean, default: false },
-  /** Renders textarea-specific spacing tweaks. */
-  isTextarea: { type: Boolean, default: false },
+  filled?: boolean;
+  hideDetails?: boolean;
+  hint?: string;
   /** id of the inner input element (for the label's htmlFor). */
-  inputId: { type: String, default: "" },
+  inputId?: string;
+  /** Renders textarea-specific spacing tweaks. */
+  isTextarea?: boolean;
+  label?: string;
+  labelOnTop?: boolean;
+  required?: boolean;
+  shadow?: boolean;
+  valid?: boolean;
+  validation?: string;
+}
+
+const props = withDefaults(defineProps<CInputProps>(), {
+  active: false,
+  disabled: false,
+  filled: false,
+  hideDetails: false,
+  hint: '',
+  inputId: '',
+  isTextarea: false,
+  label: '',
+  labelOnTop: false,
+  required: false,
+  shadow: false,
+  valid: true,
+  validation: 'Required field',
 });
 
 const errorIconPath = mdiCloseCircle;
 
 const host = useHost();
+
 const shadowRoot = useShadowRoot();
-const root = useTemplateRef<HTMLElement>("root");
-const labelInlineRef = useTemplateRef<HTMLLabelElement>("labelInlineRef");
-const labelTopRef = useTemplateRef<HTMLLabelElement>("labelTopRef");
-const preSlotWrapper = useTemplateRef<HTMLElement>("preSlotWrapper");
+
+// Resolve `hideDetails` at render time, robust to Vue's `defineCustomElement`
+// resetting the inner Boolean prop to false on re-render. Order:
+//   1. `data-hide-details` — the channel wrapper components (c-select, …)
+//      forward through. A plain `data-*` attr doesn't collide with the declared
+//      `hideDetails` prop, so Vue patches it reliably across the wrapper's
+//      re-renders (a direct `hide-details` binding gets mangled/removed).
+//   2. the host `hide-details` attribute — direct attribute usage.
+//   3. the `hideDetails` prop — property usage.
+// Called as a function in the template so it re-reads every render rather than
+// caching like a computed.
+const isHideDetails = (): boolean => {
+  const data = host?.getAttribute('data-hide-details');
+
+  if (data != null) return coerceBoolean(data);
+
+  if (host?.hasAttribute('hide-details'))
+    return coerceBoolean(host.getAttribute('hide-details'));
+
+  return coerceBoolean(props.hideDetails);
+};
+
+const rootRef = useTemplateRef<HTMLElement>('rootRef');
+
+const labelInlineRef = useTemplateRef<HTMLLabelElement>('labelInlineRef');
+
+const labelTopRef = useTemplateRef<HTMLLabelElement>('labelTopRef');
+
+const preSlotWrapperRef = useTemplateRef<HTMLElement>('preSlotWrapperRef');
 
 const isFocused = ref(false);
+
 const isActiveResolved = computed(() => props.active || isFocused.value);
+
+const ui = computed(() =>
+  input({
+    active: isActiveResolved.value,
+    disabled: props.disabled,
+    error: !props.valid,
+    labelOnTop: props.labelOnTop,
+    shadow: props.shadow,
+    textarea: props.isTextarea,
+  }),
+);
 
 // Detect whether the pre/post slots have any projected content.
 // Without this, the always-rendered wrapper spans would still consume a
 // flex `gap` from the parent layout (the `:empty` CSS selector doesn't
 // fire because the wrapper contains a <slot> child node).
-const hasPreSlot = useHasSlot(root, "pre");
-const hasPostSlot = useHasSlot(root, "post");
+const hasPreSlot = useHasSlot(rootRef, 'pre');
+
+const hasPostSlot = useHasSlot(rootRef, 'post');
 
 // Label width drives the legend's "notch" cutout in the fieldset border.
 // Stencil computes it as scrollWidth × 0.75 (the active label scale factor)
 // plus a 6px breathing room. Re-measure on label-text change and on any
 // font-load that changes the rendered size, via ResizeObserver.
 const labelWidth = ref(0);
+
 const legendWidth = computed(() =>
   isActiveResolved.value || props.filled ? labelWidth.value : 0,
 );
+
 const measureLabel = () => {
   const el = labelInlineRef.value || labelTopRef.value;
+
   if (el) labelWidth.value = el.scrollWidth * 0.75 + 6;
 };
 
 // preSlotWidth shifts the floating label rightwards to align with the
 // input's text start when the consumer has projected pre-slot content.
 const preSlotWidth = ref(0);
+
 const measurePreSlot = () => {
-  preSlotWidth.value = preSlotWrapper.value?.offsetWidth ?? 0;
+  preSlotWidth.value = preSlotWrapperRef.value?.offsetWidth ?? 0;
 };
 
 const messageKey = computed(() =>
   !props.valid ? `error:${props.validation}` : `hint:${props.hint}`,
 );
+
 const messageVisible = computed(() =>
   Boolean(props.hint || (!props.valid && props.validation)),
 );
 
-let labelObserver: ResizeObserver | null = null;
-let preSlotObserver: ResizeObserver | null = null;
+let labelObserver: null | ResizeObserver = null;
+
+let preSlotObserver: null | ResizeObserver = null;
 
 const focusInput = () => {
   // Click on the slot area (not directly on the input) should still focus
   // the projected input. The default slot lives in our shadow root, so we
   // walk its assignedElements and focus the first focusable native input.
   const slot = shadowRoot?.querySelector(
-    "slot:not([name])",
+    'slot:not([name])',
   ) as HTMLSlotElement | null;
+
   if (!slot) return;
+
   for (const el of slot.assignedElements({ flatten: true })) {
     if (el instanceof HTMLInputElement || el instanceof HTMLTextAreaElement) {
       el.focus();
+
       return;
     }
-    const inner = (el as HTMLElement).querySelector?.("input, textarea");
+
+    const inner = (el as HTMLElement).querySelector?.('input, textarea');
+
     if (inner) {
       (inner as HTMLInputElement | HTMLTextAreaElement).focus();
+
       return;
     }
   }
@@ -202,6 +375,7 @@ const focusInput = () => {
 const onFocusIn = () => {
   isFocused.value = true;
 };
+
 const onFocusOut = () => {
   isFocused.value = false;
 };
@@ -209,28 +383,32 @@ const onFocusOut = () => {
 onMounted(() => {
   measureLabel();
   measurePreSlot();
-  if (typeof ResizeObserver !== "undefined") {
+
+  if (typeof ResizeObserver !== 'undefined') {
     const el = labelInlineRef.value || labelTopRef.value;
+
     if (el) {
       labelObserver = new ResizeObserver(measureLabel);
       labelObserver.observe(el);
     }
-    if (preSlotWrapper.value) {
+
+    if (preSlotWrapperRef.value) {
       preSlotObserver = new ResizeObserver(measurePreSlot);
-      preSlotObserver.observe(preSlotWrapper.value);
+      preSlotObserver.observe(preSlotWrapperRef.value);
     }
   }
+
   // focusin/focusout bubble across shadow boundaries when the slotted
   // input gains/loses focus, so listening on the host catches them.
-  host?.addEventListener("focusin", onFocusIn);
-  host?.addEventListener("focusout", onFocusOut);
+  host?.addEventListener('focusin', onFocusIn);
+  host?.addEventListener('focusout', onFocusOut);
 });
 
 onBeforeUnmount(() => {
   labelObserver?.disconnect();
   preSlotObserver?.disconnect();
-  host?.removeEventListener("focusin", onFocusIn);
-  host?.removeEventListener("focusout", onFocusOut);
+  host?.removeEventListener('focusin', onFocusIn);
+  host?.removeEventListener('focusout', onFocusOut);
 });
 
 watch(
@@ -239,213 +417,31 @@ watch(
 );
 </script>
 
+<!--
+  Escape-hatch CSS (ADR-0007): only constructs Tailwind utilities cannot
+  express. The static structure/layout lives in the `tv` config above. What
+  remains here, tokens-only:
+    - `:host` — the host must be a real box (overriding the global
+      `:host{display:contents}`), and it sets the inheritable `font-family`
+      + base text colour the slotted `<input>`/`<textarea>` pick up via
+      `color: inherit`.
+    - `::slotted(input|textarea)` + their `::placeholder` — we don't own the
+      projected control, so it can only be reached via `::slotted(...)`.
+    - The two runtime-var-driven transforms keyed on internal `data-*` hooks the
+      script sets directly on the legend/label: the legend "notch" width
+      (`--_c-input-legend-width`) and the floating-label resting/lifted transform
+      (`--_c-input-label-position`, `data-lifted`). These read underscored runtime
+      vars a Tailwind arbitrary value would mangle. The active/error colour states
+      moved to `active`/`error` tv variants (see the config above).
+-->
 <style>
-/* Ported from packages/csc-ui/src/components/c-input/c-input.scss with
- * the structure adapted for shadow-DOM custom-element usage:
- *   - The original c-input was Stencil light-DOM (`shadow: false`) so its
- *     CSS targeted slotted `input`/`textarea` directly. In shadow DOM we
- *     use `::slotted(...)` for the projected input + a small set of
- *     custom-property bridges so the consumer's input picks up our text /
- *     placeholder colours.
- *   - The outlined Material-style border is rendered via <fieldset> +
- *     <legend>; the legend grows from width:0 to the cached
- *     `--_c-input-legend-width` on focus/fill, producing the "notch"
- *     cutout for the floating label.
- *   - Floating label transforms: idle = translateX(preSlotWidth) at
- *     scale(1); active/filled = translateX(0) translateY(-18px) scale(0.75)
- *     sitting in the legend notch. Same easing/timing as the original. */
-
 :host {
-  --_c-input-inactive-color: var(
-    --c-input-inactive-color,
-    var(--c-tertiary-600)
-  );
-  --_c-input-active-color: var(--c-input-active-color, var(--c-primary-600));
-  --_c-input-background-color: var(
-    --c-input-background-color,
-    var(--c-transparent)
-  );
-  --_c-input-text-color: var(--c-input-text-color, var(--c-text-body));
-  --_c-input-placeholder-color: var(
-    --c-input-placeholder-color,
-    var(--c-tertiary-400)
-  );
-  --_c-input-label-color: var(
-    --c-input-label-color,
-    var(--_c-input-inactive-color)
-  );
-  --_c-input-error-color: var(--c-error-600);
-  --_c-input-shadow-active-color: var(
-    --c-input-shadow-active-color,
-    var(--_c-input-active-color)
-  );
-  --_c-input-shadow-background-color: var(
-    --c-input-shadow-background-color,
-    var(--c-white)
-  );
-
   display: block;
   font-family: var(--c-font-family);
-  color: var(--_c-input-text-color);
-}
-
-/* Expose the inactive / active / error colour to slotted inputs via
- * inheritable custom properties — the input itself just uses
- * `color: inherit` and `caret-color: var(--_c-input-active-color)`. */
-
-.visuallyhidden {
-  border: 0;
-  clip: rect(0 0 0 0);
-  height: 1px;
-  margin: -1px;
-  overflow: hidden;
-  padding: 0;
-  position: absolute;
-  white-space: nowrap;
-  width: 1px;
-}
-
-.c-input {
-  --_c-input-border-width: 1px;
-  --_c-input-border-radius: 4px;
-
-  display: flex;
-  flex-direction: column;
-  align-items: stretch;
-  border-radius: var(--_c-input-border-radius);
-  font-size: 16px;
-  max-width: 100%;
-  text-align: left;
-  color: var(--_c-input-inactive-color);
-}
-
-.c-input--label-on-top {
-  gap: 4px;
-}
-
-/* ---- top label -------------------------------------------------------- */
-
-.c-input__label--top {
-  font-size: 14px;
-  font-weight: 500;
-  color: var(--_c-input-label-color);
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  max-width: 100%;
-}
-
-/* ---- control / slot --------------------------------------------------- */
-
-.c-input__control {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  position: relative;
-  min-width: 0;
-  width: 100%;
-}
-
-.c-input__slot {
-  position: relative;
-  display: flex;
-  align-items: stretch;
-  min-height: 44px;
-  padding: 0 12px;
-  border-radius: var(--_c-input-border-radius);
-  background: transparent;
-  cursor: text;
-  transition: 0.3s cubic-bezier(0.25, 0.8, 0.5, 1);
-}
-
-.c-input--disabled .c-input__slot {
-  cursor: not-allowed;
-}
-
-.c-input__field {
-  display: flex;
-  flex: 1 1 auto;
-  align-items: center;
-  gap: 8px;
-  position: relative;
-}
-
-.c-input__pre,
-.c-input__post {
-  display: inline-flex;
-  align-items: center;
-}
-
-.c-input__pre:empty,
-.c-input__post:empty {
-  display: none;
-}
-
-/* ---- outlined fieldset + legend (Material notch) ---------------------- */
-
-.c-input__fieldset {
-  position: absolute;
-  inset: 0;
-  margin: 0;
-  padding: 0 0 0 8px;
-  border-collapse: collapse;
-  border-color: var(--_c-input-inactive-color);
-  /* Set explicitly (not `inherit`) — the inheritance chain through
-   * `.c-input__control` (no border-radius set) would resolve to 0. */
-  border-radius: var(--_c-input-border-radius);
-  border-style: solid;
-  border-width: var(--_c-input-border-width);
-  background-color: var(--_c-input-background-color);
-  pointer-events: none;
-  transition: border-color 0.15s cubic-bezier(0.25, 0.8, 0.25, 1);
-}
-
-.c-input__legend {
-  float: none;
-  line-height: 11px;
-  margin-left: -1px;
-  padding: 0;
-  text-align: left;
-  width: 0;
-  transition: width 0.3s cubic-bezier(0.25, 0.8, 0.5, 1);
-}
-
-.c-input__legend--active {
-  width: var(--_c-input-legend-width);
-}
-
-/* ---- floating label inside the field ---------------------------------- */
-
-.c-input__label--floating {
-  position: absolute;
-  top: 12px;
-  left: 0;
-  right: auto;
-  height: 20px;
-  line-height: 20px;
-  font-size: 16px;
-  max-width: 90%;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  pointer-events: none;
-  color: var(--_c-input-inactive-color);
-  transform-origin: top left;
-  transform: translateX(var(--_c-input-label-position, 0px)) translateY(0)
-    scale(1);
-  transition: 0.3s cubic-bezier(0.25, 0.8, 0.5, 1) 0.08s;
-}
-
-.c-input__label--lifted {
-  transform: translateX(0) translateY(-18px) scale(0.75);
-}
-
-.c-input__required {
-  color: var(--c-error-600);
+  color: var(--c-text-body);
 }
 
 /* ---- slotted input / textarea (we don't own the element) -------------- */
-
 ::slotted(input),
 ::slotted(textarea) {
   background: transparent;
@@ -457,7 +453,7 @@ watch(
   font-size: 16px;
   line-height: 20px;
   color: inherit;
-  caret-color: var(--_c-input-active-color);
+  caret-color: var(--c-primary-600);
   flex: 1 1 auto;
   min-width: 0;
   width: 100%;
@@ -474,99 +470,30 @@ watch(
 
 ::slotted(input)::placeholder,
 ::slotted(textarea)::placeholder {
-  color: var(--_c-input-placeholder-color);
+  color: var(--c-tertiary-400);
   opacity: 1;
 }
 
-/* ---- active state ----------------------------------------------------- */
-
-.c-input--active,
-.c-input:focus-within {
-  --_c-input-border-width: 2px;
-  color: var(--_c-input-active-color);
+/* ---- legend notch width (runtime var) --------------------------------- */
+.c-input__legend[data-active] {
+  width: var(--_c-input-legend-width);
 }
 
-.c-input--active .c-input__fieldset,
-.c-input:focus-within .c-input__fieldset {
-  border-color: var(--_c-input-active-color);
+/* Resting (unfocused, empty) label. translateX shifts it past any pre-slot
+ * content (the runtime var); translateY(-2px) raises it ~2px so the default
+ * Noto Sans glyphs — which sit low in the line-box — centre vertically in the
+ * field instead of hanging below centre. Lifted rules below override this. */
+.c-input__label--floating {
+  transform: translateX(var(--_c-input-label-position, 0px)) translateY(-2px)
+    scale(1);
 }
 
-.c-input--active .c-input__label--floating,
-.c-input:focus-within .c-input__label--floating {
-  color: var(--_c-input-active-color);
-  transform: translateX(0) translateY(-18px) scale(0.75);
-}
-
-.c-input--filled .c-input__label--floating {
-  transform: translateX(0) translateY(-18px) scale(0.75);
-}
-
-/* ---- error state ------------------------------------------------------ */
-
-.c-input--error {
-  color: var(--_c-input-error-color);
-}
-
-.c-input--error .c-input__fieldset {
-  border-color: var(--_c-input-error-color) !important;
-}
-
-.c-input--error .c-input__label,
-.c-input--error .c-input__label--floating {
-  color: var(--_c-input-error-color) !important;
-}
-
-/* ---- shadow variant --------------------------------------------------- */
-
-.c-input--shadow .c-input__slot {
-  background-color: var(--_c-input-shadow-background-color);
-  box-shadow: rgba(0, 0, 0, 0.15) 0 5px 15px 0;
-}
-
-.c-input--shadow .c-input__slot:focus-within {
-  outline: 2px solid var(--_c-input-shadow-active-color);
-}
-
-/* ---- disabled --------------------------------------------------------- */
-
-.c-input--disabled {
-  opacity: 0.75;
-}
-
-/* ---- textarea --------------------------------------------------------- */
-
-.c-input--textarea .c-input__field {
-  margin-right: -12px;
-}
-
-/* ---- message ---------------------------------------------------------- */
-
-.c-input__message {
-  display: flex;
-  align-items: flex-start;
-  gap: 4px;
-  padding: 0 12px;
-  font-size: 12px;
-  line-height: 1;
-  min-height: 16px;
-  color: var(--c-message-hint-color, var(--c-text-system));
-}
-
-.c-input--label-on-top .c-input__message {
-  padding: 0;
-}
-
-.c-input__message--error {
-  color: var(--c-message-error-color, var(--_c-input-error-color));
-}
-
-.c-input__message-icon {
-  fill: currentColor;
-  width: 16px;
-  height: 16px;
-  flex-shrink: 0;
-  position: relative;
-  top: -2px;
+/* The lifted label straddles the top border. translateY centres the label's
+ * glyphs on the border line; -20px (not the geometric -18px) compensates for
+ * the default Noto Sans metrics, whose glyphs sit low in the line-box and would
+ * otherwise leave the text hanging below the border. */
+.c-input__label--floating[data-lifted] {
+  transform: translateX(0) translateY(-20px) scale(0.75);
 }
 
 /* Same 200ms slide+fade transition the c-checkbox uses, so hint↔error
@@ -574,8 +501,8 @@ watch(
 .c-input-message-enter-active,
 .c-input-message-leave-active {
   transition:
-    opacity 0.2s cubic-bezier(0.25, 0.8, 0.5, 1),
-    transform 0.2s cubic-bezier(0.25, 0.8, 0.5, 1);
+    opacity 0.2s var(--ease-standard),
+    transform 0.2s var(--ease-standard);
 }
 
 .c-input-message-enter-from,

@@ -10,8 +10,8 @@
       {{ switch2 ? 'Active' : 'Inactive' }}
     </c-switch>
 
-    <c-switch v-model="switch3" v-control :loading="switch2">
-      {{ switch3 ? 'Active, loading' : 'Inactive, loading' }}
+    <c-switch v-model="switch3" :loading="isLoading" @input="onLoad">
+      Show loading indicator on change (simulates async functionality)
     </c-switch>
 
     <c-switch required>Required</c-switch>
@@ -32,4 +32,18 @@ const switch1 = ref(false);
 const switch2 = ref(true);
 
 const switch3 = ref(true);
+
+const isLoading = ref(true);
+
+const timer = ref<NodeJS.Timeout>();
+
+const onLoad = () => {
+  isLoading.value = true;
+
+  clearTimeout(timer.value);
+
+  timer.value = setTimeout(() => {
+    isLoading.value = false;
+  }, 2500);
+};
 </script>

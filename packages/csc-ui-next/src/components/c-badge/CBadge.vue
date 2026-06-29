@@ -1,35 +1,26 @@
 <template>
-  <slot />
+  <span :class="badge()" part="root">
+    <slot />
+  </span>
 </template>
 
 <script setup lang="ts">
-// `<slot />` root (fragment) — keep consumer fallthrough attrs (class/style)
-// on the host element instead of tripping the "renders fragment" warning.
-defineOptions({ inheritAttrs: false });
+import { tv } from 'tailwind-variants';
+
+/**
+ * Styling lives entirely in this `tailwind-variants` config (ADR-0004). The
+ * badge's box (background, border ring, size, absolute positioning) is rendered
+ * on an inner `root` element rather than the host, so the global
+ * `:host{display:contents}` is left untouched. Consumer customization is via
+ * `::part(root)` (ADR-0006); there is no `override` prop. The per-component
+ * `--c-badge-*` indirection vars are dropped in favour of global design tokens:
+ *   var(--c-warning-600) -> bg-warning-600, var(--c-white) -> text-white,
+ *   box-shadow 0 0 0 2px var(--c-white) -> ring-2 ring-white.
+ */
+const badge = tv({
+  base: 'absolute -right-1.5 -top-1.5 z-[2] flex items-center justify-center min-w-4 h-4 px-1 rounded-2xl text-xs leading-none pointer-events-none bg-warning-600 text-white ring-2 ring-white',
+});
+
+// `<slot />`-only authoring previously kept fallthrough attrs on the host; we
+// now render a real `root` box, so the default fallthrough (onto root) is fine.
 </script>
-
-<style>
-:host {
-  --_c-badge-background-color: var(--c-badge-background-color, var(--c-warning-600));
-  --_c-badge-text-color: var(--c-badge-text-color, var(--c-white));
-  --_c-badge-border-color: var(--c-badge-border-color, var(--c-white));
-
-  align-items: center;
-  background-color: var(--_c-badge-background-color);
-  border-radius: 16px;
-  box-shadow: 0 0 0 2px var(--_c-badge-border-color);
-  color: var(--_c-badge-text-color);
-  display: flex;
-  font-size: 12px;
-  height: 16px;
-  justify-content: center;
-  line-height: 1;
-  min-width: 16px;
-  padding: 0 4px;
-  pointer-events: none;
-  position: absolute;
-  right: -6px;
-  top: -6px;
-  z-index: 2;
-}
-</style>

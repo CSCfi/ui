@@ -1,36 +1,25 @@
 <template>
-  <div
-    ref="root"
-    class="c-accordion-item"
-    :class="{
-      'c-accordion-item--outlined': outlined,
-      'c-accordion-item--expanded': expanded,
-    }"
-  >
+  <div ref="rootRef" :class="ui.root()" part="root">
     <button
       :id="headerId"
-      type="button"
-      class="c-accordion-item__header"
-      :class="{
-        'c-accordion-item__header--has-icon': hasIcon,
-        'c-accordion-item__header--expanded': expanded,
-        'c-accordion-item__header--collapsable': collapsable,
-      }"
-      :aria-expanded="expanded"
       :aria-controls="contentId"
       :aria-disabled="!collapsable && expanded ? 'true' : undefined"
+      :aria-expanded="expanded"
+      :class="ui.header()"
+      part="header"
+      type="button"
       @click="onToggle"
     >
-      <div v-show="hasIcon" class="c-accordion-item__icon" aria-hidden="true">
+      <div v-show="hasIcon" :class="ui.icon()" aria-hidden="true">
         <slot name="icon" />
       </div>
 
       <slot name="header">
-        <div class="c-accordion-item__title">{{ heading }}</div>
+        <div :class="ui.title()">{{ heading }}</div>
       </slot>
 
-      <span class="c-accordion-item__indicator" aria-hidden="true">
-        <svg viewBox="0 0 24 24" width="24" height="24">
+      <span :class="ui.indicator()" aria-hidden="true" part="indicator">
+        <svg height="24" viewBox="0 0 24 24" width="24">
           <path :d="chevronPath" fill="currentColor" />
         </svg>
       </span>
@@ -38,14 +27,13 @@
 
     <div
       :id="contentId"
-      role="region"
-      :aria-labelledby="headerId"
       :aria-hidden="!expanded"
+      :aria-labelledby="headerId"
+      :class="ui.contentWrapper()"
       :inert="!expanded"
-      class="c-accordion-item__content-wrapper"
-      :class="{ 'is-expanded': expanded }"
+      role="region"
     >
-      <div class="c-accordion-item__content">
+      <div :class="ui.content()" part="content">
         <slot />
       </div>
     </div>
@@ -54,25 +42,97 @@
 
 <script setup lang="ts">
 import { mdiChevronRight } from '@mdi/js';
-import { useTemplateRef, useHost } from 'vue';
+import { tv } from 'tailwind-variants';
+import { computed, useHost, useId, useTemplateRef } from 'vue';
+
 import { useHasSlot } from '../../shared/useHasSlot';
 
-const props = defineProps({
-  collapsable: { type: Boolean, default: false },
-  heading: { type: String, default: '' },
-  value: { type: [Number, String], default: undefined },
-  expanded: { type: Boolean, default: false },
-  outlined: { type: Boolean, default: false },
+// Styling lives in `tailwind-variants` (ADR-0004): no `<style>` block and the
+// public `--c-accordion-item-*` override vars are dropped — theming now flows
+// through global design tokens, and consumer customization through `::part()`
+// (ADR-0006; there is no `override` prop). The grid-template-rows
+// collapse, chevron rotate and inset outline are all expressible as utilities,
+// so no bespoke CSS remains. `root` deliberately has no `overflow-hidden`
+// (that would clip the header's focus outline); clipping lives on the content
+// wrapper + content. The `*:` child variant on `icon` reproduces the old
+// `.icon > *` sizing without `::slotted`.
+const accordionItem = tv({
+  compoundVariants: [
+    { class: { header: 'cursor-default' }, collapsable: false, expanded: true },
+  ],
+  defaultVariants: {
+    collapsable: false,
+    expanded: false,
+    hasIcon: false,
+    outlined: false,
+  },
+  slots: {
+    content: 'min-h-0 overflow-hidden p-4 text-current',
+    contentWrapper:
+      'grid grid-rows-[minmax(0,0fr)] overflow-hidden transition-[grid-template-rows] duration-300 ease-standard',
+    header:
+      'bg-primary-200 min-h-[46px] text-primary-600 select-none grid grid-cols-[1fr_auto] gap-x-2 items-center px-3 rounded-csc-md cursor-pointer text-left m-0 [font:inherit] text-inherit border-0 w-full relative focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-600',
+    icon: 'h-6 text-2xl text-current flex items-center *:h-6 *:flex *:items-center',
+    indicator:
+      'flex items-center text-current -rotate-90 transition-transform duration-300 ease-standard',
+    root: 'block max-w-full rounded-csc-md',
+    title: 'm-0 font-medium text-base leading-none text-current',
+  },
+  variants: {
+    collapsable: {
+      true: '',
+    },
+    expanded: {
+      true: {
+        contentWrapper: 'grid-rows-[minmax(0,1fr)]',
+        indicator: 'rotate-90',
+      },
+    },
+    hasIcon: {
+      true: { header: 'grid-cols-[auto_1fr_auto]' },
+    },
+    outlined: {
+      true: { root: 'ring-2 ring-inset ring-primary-200' },
+    },
+  },
 });
 
-const root = useTemplateRef<HTMLElement>('root');
-const hasIcon = useHasSlot(root, 'icon');
+interface CAccordionItemProps {
+  collapsable?: boolean;
+  expanded?: boolean;
+  heading?: string;
+  outlined?: boolean;
+  value?: number | string;
+}
+
+const props = withDefaults(defineProps<CAccordionItemProps>(), {
+  collapsable: false,
+  expanded: false,
+  heading: '',
+  outlined: false,
+  value: undefined,
+});
+
+const rootRef = useTemplateRef<HTMLElement>('rootRef');
+
+const hasIcon = useHasSlot(rootRef, 'icon');
+
 const chevronPath = mdiChevronRight;
 
-let __uid = 0;
-const uid = ++__uid;
-const headerId = `c-accordion-item-header-${uid}`;
-const contentId = `c-accordion-item-content-${uid}`;
+const ui = computed(() =>
+  accordionItem({
+    collapsable: props.collapsable,
+    expanded: props.expanded,
+    hasIcon: hasIcon.value,
+    outlined: props.outlined,
+  }),
+);
+
+const autoId = useId();
+
+const headerId = `c-accordion-item-header-${autoId}`;
+
+const contentId = `c-accordion-item-content-${autoId}`;
 
 const host = useHost();
 
@@ -82,7 +142,7 @@ const dispatchItemChange = (expanded: boolean) => {
     new CustomEvent('item-change', {
       bubbles: true,
       composed: true,
-      detail: { value: props.value, expanded },
+      detail: { expanded, value: props.value },
     }),
   );
 };
@@ -92,150 +152,3 @@ const onToggle = () => {
   dispatchItemChange(!props.expanded);
 };
 </script>
-
-<style>
-/* Ported from packages/csc-ui-next/src/components/c-accordion-item with the
- * native <details>/<summary> swapped for <div> + <button>. The
- * grid-template-rows trick collapses/expands a CSS-only animated container
- * — <details> would synchronously toggle display:none on the body and
- * block any transition. Aria semantics (expanded / controls / region /
- * labelledby / hidden + inert) are wired up explicitly to compensate for
- * losing the native disclosure-widget semantics. */
-
-:host {
-  --_c-accordion-item-header-background-color: var(
-    --c-accordion-item-header-background-color,
-    var(--c-primary-200)
-  );
-  --_c-accordion-item-outline-color: var(
-    --c-accordion-item-outline-color,
-    var(--c-primary-600)
-  );
-  --_c-accordion-item-text-color: var(
-    --c-accordion-item-text-color,
-    var(--c-primary-600)
-  );
-
-  --_c-accordion-item-min-height: 46px;
-  --_c-accordion-item-border-radius: 6px;
-  --_c-accordion-item-padding: 12px;
-  --_c-accordion-item-transition-duration: 0.3s;
-  --_c-accordion-item-transition-easing: cubic-bezier(0.25, 0.8, 0.5, 1);
-
-  display: block;
-  max-width: 100%;
-  color: var(--_c-accordion-item-text-color);
-}
-
-:host([outlined]) {
-  display: block;
-  box-shadow: inset 0 0 0 2px var(--_c-accordion-item-header-background-color);
-  border-radius: var(--_c-accordion-item-border-radius);
-}
-
-/* Note: NO `overflow: hidden` here — that would clip the header's focus
- * outline (which extends 2px outside the header via outline-offset). The
- * collapse animation is masked by `.c-accordion-item__content`'s own
- * `overflow: hidden`, so the outer wrapper can stay overflow:visible. */
-.c-accordion-item {
-  display: block;
-  border-radius: var(--_c-accordion-item-border-radius);
-}
-
-.c-accordion-item__header {
-  background-color: var(--_c-accordion-item-header-background-color);
-  min-height: var(--_c-accordion-item-min-height);
-  user-select: none;
-  display: grid;
-  grid-template-columns: 1fr auto;
-  column-gap: 8px;
-  align-items: center;
-  padding: 0 var(--_c-accordion-item-padding);
-  border-radius: var(--_c-accordion-item-border-radius);
-  cursor: pointer;
-  text-align: left;
-  margin: 0;
-  font-family: var(--c-font-family);
-  font: inherit;
-  color: inherit;
-  border: none;
-  width: 100%;
-  position: relative;
-}
-
-.c-accordion-item__header--has-icon {
-  grid-template-columns: auto 1fr auto;
-}
-
-.c-accordion-item__header--expanded:not(.c-accordion-item__header--collapsable) {
-  cursor: default;
-}
-
-.c-accordion-item__header:focus-visible {
-  outline: 2px solid var(--_c-accordion-item-outline-color);
-  outline-offset: 2px;
-}
-
-.c-accordion-item__title {
-  margin: 0;
-  font-weight: 500;
-  font-size: 16px;
-  line-height: 1;
-  color: var(--_c-accordion-item-text-color);
-}
-
-.c-accordion-item__icon {
-  height: 24px;
-  font-size: 24px;
-  color: var(--_c-accordion-item-text-color);
-  display: flex;
-  align-items: center;
-}
-
-.c-accordion-item__icon > * {
-  height: 24px;
-  display: flex;
-  align-items: center;
-}
-
-.c-accordion-item__indicator {
-  display: flex;
-  align-items: center;
-  color: var(--_c-accordion-item-text-color);
-  transform: rotate(-90deg);
-  transition: transform var(--_c-accordion-item-transition-duration)
-    var(--_c-accordion-item-transition-easing);
-}
-
-.c-accordion-item__header--expanded .c-accordion-item__indicator {
-  transform: rotate(90deg);
-}
-
-/* Collapsed: grid track is 0fr, child has min-height:0 and overflow:hidden
- * so it visually disappears while staying in the document. Expanded: track
- * grows to 1fr. The grid-template-rows property is interpolatable, so the
- * change animates. */
-/* `minmax(0, ...)` forces the grid track's min size to 0 — without it, the
- * track would expand to fit the content's min-content size (including
- * padding), so collapsed items would leak ~32px of vertical space.
- * `overflow: hidden` lives here (not on the outer .c-accordion-item) so
- * the body is clipped during the collapse animation, while the header's
- * focus outline (which extends above the header) stays visible. */
-.c-accordion-item__content-wrapper {
-  display: grid;
-  grid-template-rows: minmax(0, 0fr);
-  overflow: hidden;
-  transition: grid-template-rows var(--_c-accordion-item-transition-duration)
-    var(--_c-accordion-item-transition-easing);
-}
-
-.c-accordion-item__content-wrapper.is-expanded {
-  grid-template-rows: minmax(0, 1fr);
-}
-
-.c-accordion-item__content {
-  min-height: 0;
-  overflow: hidden;
-  padding: 16px;
-}
-</style>

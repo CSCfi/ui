@@ -19,15 +19,22 @@ import { onMounted, useHost } from 'vue';
 // box — instead of tripping the "renders fragment" warning.
 defineOptions({ inheritAttrs: false });
 
-defineProps({
-  /** Set option as selected */
-  selected: { type: Boolean, default: false },
+interface COptionProps {
   /** Set option as disabled */
-  disabled: { type: Boolean, default: false },
+  disabled?: boolean;
   /** Option name (display label fallback) */
-  name: { type: String, default: undefined },
+  name?: string;
+  /** Set option as selected */
+  selected?: boolean;
   /** Option value */
-  value: { type: [String, Number], default: undefined },
+  value?: number | string;
+}
+
+withDefaults(defineProps<COptionProps>(), {
+  disabled: false,
+  name: undefined,
+  selected: false,
+  value: undefined,
 });
 
 const host = useHost();
@@ -37,6 +44,15 @@ const host = useHost();
 onMounted(() => host?.setAttribute('tabindex', '-1'));
 </script>
 
+<!--
+  Escape-hatch CSS (ADR-0007): this component renders a bare `<slot />` with no
+  element to hang a utility class on, and its only styling is the host box
+  itself. `:host{display:block;width:100%;padding:8px 0}` overrides the global
+  `:host{display:contents}` so the option is a real padded block — utilities
+  can't target the host, and c-select/c-dropdown read this element's outerHTML
+  to render the list, so the box must live on the host. No tv config: there is
+  no inner region to style. Authored against global design tokens only.
+-->
 <style>
 :host {
   display: block;

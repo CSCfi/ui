@@ -1,19 +1,19 @@
 <template>
-  <div :class="containerClasses">
-    <nav ref="container" :class="navClasses" role="menubar">
-      <div v-if="mobile" class="c-side-navigation__burger">
-        <c-icon-button text inverted @click="closeMenu">
-          <span class="visuallyhidden">Close sidemenu</span>
+  <div :class="ui.content()" part="root">
+    <nav ref="containerRef" :class="ui.nav()" part="nav" role="menubar">
+      <div v-if="mobile" :class="ui.burger()">
+        <c-icon-button inverted text @click="closeMenu">
+          <span :class="ui.srOnly()">Close sidemenu</span>
+
           <c-icon :path="arrowRight" />
         </c-icon-button>
       </div>
 
-      <div
-        class="c-side-navigation__wrapper"
-        :class="{ 'c-side-navigation__wrapper--mobile': mobile }"
-      >
+      <div :class="ui.wrapper()">
         <slot />
-        <div class="vertical-spacer" />
+
+        <div :class="ui.spacer()" />
+
         <slot name="bottom" />
       </div>
     </nav>
@@ -28,6 +28,7 @@
 
 <script setup lang="ts">
 import { mdiArrowRight } from '@mdi/js';
+import { tv } from 'tailwind-variants';
 import {
   computed,
   onBeforeUnmount,
@@ -44,21 +45,106 @@ import {
 // fragment" warning.
 defineOptions({ inheritAttrs: false });
 
-const props = defineProps({
-  styles: { type: Object as () => Record<string, string>, default: null },
-  mobile: { type: Boolean, default: false },
-  menuVisible: { type: Boolean, default: false },
+/**
+ * Styling lives in this `tailwind-variants` config (ADR-0004): each visual
+ * region is a slot and the `mobile` variant replaces the
+ * `.c-side-navigation__content--mobile/--desktop` and `--mobile` wrapper
+ * cascades. The per-component `--c-*` indirection vars are dropped in favour of
+ * the global design tokens. Consumer customization is via `::part()` (ADR-0006).
+ *
+ * The host box itself (the `.desktop` / `.autoheight` host states, which carry
+ * background/flex/min-width and can't be expressed as utilities on the host),
+ * the `.c-overlay` backdrop + its fade-in `@keyframes`, and the
+ * `::slotted(...)` `display:contents` rule remain in the escape-hatch <style>
+ * below (ADR-0007).
+ */
+const sideNavigation = tv({
+  compoundVariants: [
+    // Mobile drawer slides off-screen when hidden.
+    { class: { content: 'translate-x-full' }, hidden: true, mobile: true },
+    // Mobile nav drops the top padding / min-height (original
+    // `.c-side-navigation__content--mobile > nav`).
+    { class: { nav: 'min-h-[auto] pt-0' }, mobile: true },
+  ],
+  defaultVariants: {
+    hidden: false,
+    mobile: false,
+  },
+  slots: {
+    burger: 'flex justify-end px-4 py-2',
+    // The outer drawer container.
+    content: 'flex flex-col flex-[1_2_260px] w-80',
+    nav: 'relative flex flex-col flex-nowrap flex-1 gap-1 min-h-fit max-h-full w-full overflow-y-auto pt-6 pr-0 pb-6 pl-6 z-[8] bg-primary-600 transition-transform duration-300 ease-[ease]',
+    spacer: 'flex-1 mb-2',
+    srOnly:
+      'absolute w-px h-px p-0 -m-px overflow-hidden whitespace-nowrap border-0 [clip:rect(0_0_0_0)]',
+    wrapper: 'flex flex-col shrink-0 min-h-full',
+  },
+  variants: {
+    hidden: {
+      true: {},
+    },
+    mobile: {
+      true: {
+        content:
+          'h-screen max-w-80 overflow-y-scroll fixed right-0 top-0 z-[999] transition-transform duration-200 ease-standard translate-x-0',
+        wrapper: 'min-h-[calc(100%-60px)]',
+      },
+    },
+  },
+});
+
+interface CSideNavigationProps {
+  menuVisible?: boolean;
+  mobile?: boolean;
+  styles?: null | Record<string, string>;
+}
+
+const props = withDefaults(defineProps<CSideNavigationProps>(), {
+  menuVisible: false,
+  mobile: false,
+  styles: null,
 });
 
 const arrowRight = mdiArrowRight;
+
 const host = useHost();
-const container = useTemplateRef<HTMLElement>('container');
+
+const containerRef = useTemplateRef<HTMLElement>('containerRef');
+
 const menuVisibleInternal = ref(props.menuVisible);
+
+const ui = computed(() =>
+  sideNavigation({
+    hidden: !menuVisibleInternal.value,
+    mobile: !!props.mobile,
+  }),
+);
+
+// Keep the internal render state and the reflected custom-element `menuVisible`
+// property in lockstep. The nav button toggles visibility through internal
+// state, but nav items close the drawer by setting the `menuVisible` *property*
+// on the host (`document.querySelector('c-side-navigation').menuVisible = false`).
+// If the property lagged behind internal state, that write could be a no-op
+// (false -> false) and leave the drawer open — so mirror every change back to
+// the host property too. The watcher below then closes the loop without
+// recursing (both assignments are guarded by an equality check).
+const setMenuVisible = (value: boolean) => {
+  if (menuVisibleInternal.value !== value) {
+    menuVisibleInternal.value = value;
+  }
+
+  const el = host as ({ menuVisible?: boolean } & HTMLElement) | null;
+
+  if (el && el.menuVisible !== value) {
+    el.menuVisible = value;
+  }
+};
 
 watch(
   () => props.menuVisible,
   (v) => {
-    menuVisibleInternal.value = v;
+    setMenuVisible(v);
   },
 );
 
@@ -68,21 +154,27 @@ watch(
 // prop; the watcher above keeps internal state in sync when consumers
 // pass the prop reactively.
 const closeMenu = () => {
-  menuVisibleInternal.value = false;
+  setMenuVisible(false);
   host?.dispatchEvent(new CustomEvent('update:menuVisible', { detail: false }));
-  host?.dispatchEvent(new CustomEvent('update:menu-visible', { detail: false }));
+  host?.dispatchEvent(
+    new CustomEvent('update:menu-visible', { detail: false }),
+  );
 };
 
 // Reflect c-side-navigation-item's itemChange: when a top-level item is
 // activated, deactivate any other parent (an "accordion"-style behaviour).
 const handleItemChange = (event: Event) => {
   if (!host) return;
-  const target = event.target as (HTMLElement & { active: boolean });
+
+  const target = event.target as { active: boolean } & HTMLElement;
+
   const wasActive = target.active;
+
   const items = host.querySelectorAll('c-side-navigation-item');
 
   items.forEach((item) => {
-    const el = item as HTMLElement & { active: boolean };
+    const el = item as { active: boolean } & HTMLElement;
+
     if (el.querySelector('c-sub-navigation-item[slot="sub-item"]')) {
       el.active = false;
     }
@@ -95,29 +187,17 @@ const handleItemChange = (event: Event) => {
   }
 };
 
-const containerClasses = computed(() => ({
-  'c-side-navigation__content': true,
-  'c-side-navigation__content--hidden': !menuVisibleInternal.value,
-  'c-side-navigation__content--mobile': !!props.mobile,
-  'c-side-navigation__content--desktop': !props.mobile,
-}));
-
-const navClasses = computed(() => ({
-  'c-side-navigation': true,
-  'hide-menu': !menuVisibleInternal.value,
-  mobile: !!props.mobile,
-  desktop: !props.mobile,
-}));
-
 // Global click/keyup listener: c-navigation-button anywhere on the page
 // toggles the side navigation. Matches Stencil's componentDidLoad.
 const onDocEvent = (e: Event) => {
   const t = e.target as HTMLElement;
+
   if (!t?.matches?.('c-navigation-button')) return;
+
   if (e.type === 'click') {
-    menuVisibleInternal.value = !menuVisibleInternal.value;
+    setMenuVisible(!menuVisibleInternal.value);
   } else if (e instanceof KeyboardEvent && e.key === 'Enter') {
-    menuVisibleInternal.value = !menuVisibleInternal.value;
+    setMenuVisible(!menuVisibleInternal.value);
   }
 };
 
@@ -135,8 +215,8 @@ onMounted(() => {
   assignSubItemSlots();
   host.addEventListener('itemChange', handleItemChange);
 
-  if (props.styles && container.value) {
-    Object.assign(container.value.style, props.styles);
+  if (props.styles && containerRef.value) {
+    Object.assign(containerRef.value.style, props.styles);
   }
 
   host.classList.toggle('desktop', !props.mobile);
@@ -155,18 +235,20 @@ onBeforeUnmount(() => {
 });
 </script>
 
+<!--
+  Escape-hatch CSS (ADR-0007): only constructs Tailwind utilities cannot
+  express. The drawer layout (content/nav/wrapper/burger) lives in the `tv`
+  config above. What remains here:
+    - The host box and its `.desktop` / `.autoheight` host states — utilities
+      can't target `:host`, and these carry the desktop background/flex/min-width
+      and the autoheight scroll container. The global `:host{display:contents}`
+      is overridden per state (the per-type sheet is adopted after the shared
+      sheet, so it wins).
+    - The `.c-overlay` mobile backdrop and its fade-in `@keyframes`.
+    - `::slotted(...)` `display:contents` for projected nav items.
+  Authored against global design tokens only.
+-->
 <style>
-:host {
-  --_c-side-navigation-background-color: var(
-    --c-side-navigation-background-color,
-    var(--c-primary-600)
-  );
-  --_c-side-navigation-overlay-color: var(
-    --c-side-navigation-overlay-color,
-    rgba(var(--c-black), 0.5)
-  );
-}
-
 :host(.autoheight) {
   height: calc(100vh - 60px);
   overflow-y: auto;
@@ -174,79 +256,13 @@ onBeforeUnmount(() => {
 }
 
 :host(.desktop) {
-  background-color: var(--_c-side-navigation-background-color);
+  background-color: var(--c-primary-600);
   display: flex;
   min-width: clamp(300px, 20vw, 340px);
 }
 
-.c-side-navigation {
-  background-color: var(--_c-side-navigation-background-color);
-  display: flex;
-  flex-flow: column nowrap;
-  flex: 1;
-  gap: 4px;
-  min-height: fit-content;
-  padding: 24px 0 24px 24px;
-  position: relative;
-  transition: transform 0.3s ease;
-  width: 100%;
-  z-index: 8;
-  max-height: 100%;
-  overflow-y: auto;
-}
-
-.c-side-navigation__wrapper {
-  display: flex;
-  flex-direction: column;
-  flex-shrink: 0;
-  min-height: 100%;
-}
-
-.c-side-navigation__wrapper--mobile {
-  min-height: calc(100% - 60px);
-}
-
-.c-side-navigation__content {
-  display: flex;
-  flex-direction: column;
-  flex: 1 2 260px;
-  width: 320px;
-}
-
-.c-side-navigation__content--mobile {
-  height: 100vh;
-  max-width: 320px;
-  overflow-y: scroll;
-  position: fixed;
-  right: 0;
-  top: 0;
-  transition: transform 0.2s cubic-bezier(0.25, 0.8, 0.5, 1);
-  transform: translateX(0%);
-  z-index: 999;
-}
-
-.c-side-navigation__content--mobile.c-side-navigation__content--hidden {
-  transform: translateX(100%);
-}
-
-.c-side-navigation__content--mobile > nav {
-  min-height: auto;
-  padding-top: 0;
-}
-
-.c-side-navigation__burger {
-  display: flex;
-  justify-content: flex-end;
-  padding: 8px 16px;
-}
-
-.vertical-spacer {
-  flex: 1;
-  margin-bottom: 8px;
-}
-
 .c-overlay {
-  background: var(--_c-side-navigation-overlay-color);
+  background: rgba(var(--c-black), 0.5);
   backdrop-filter: blur(4px);
   inset: 0;
   position: fixed;
@@ -254,8 +270,12 @@ onBeforeUnmount(() => {
 }
 
 @keyframes c-side-nav-fade-in {
-  0% { opacity: 0; }
-  100% { opacity: 1; }
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
 }
 
 .c-fade-in {
@@ -268,17 +288,5 @@ onBeforeUnmount(() => {
 ::slotted(c-side-navigation-item),
 ::slotted(c-sub-navigation-item) {
   display: contents;
-}
-
-.visuallyhidden {
-  border: 0;
-  clip: rect(0 0 0 0);
-  height: 1px;
-  margin: -1px;
-  overflow: hidden;
-  padding: 0;
-  position: absolute;
-  white-space: nowrap;
-  width: 1px;
 }
 </style>

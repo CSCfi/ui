@@ -6,11 +6,12 @@
 
     <c-login-card
       background-position="50% 0%"
+      class="secondary-card"
       src="/img/wall2.jpg"
       :overlay="showOverlay"
-      :overlay-blend-mode="blendMode.value"
+      :overlay-blend-mode="blendMode"
     >
-      <c-login-card-title>Login to service</c-login-card-title>
+      <c-login-card-title>Login to a service</c-login-card-title>
 
       <c-login-card-content>
         <div>
@@ -34,17 +35,16 @@
       <c-link href="http://csc.fi" underline>Forgot password?</c-link>
     </c-login-card>
 
-    <c-row gap="8">
+    <flex class="flex gap-2">
       <c-button @click="showOverlay = !showOverlay">Toggle overlay</c-button>
 
       <c-select
         v-model="blendMode"
-        v-control
         :items="blendModes"
         label="Overlay blend mode"
         hide-details
       />
-    </c-row>
+    </flex>
   </component-example>
 </template>
 
@@ -72,7 +72,21 @@ const blendModes: CSelectItem[] = [
   { value: 'luminosity', name: 'luminosity' },
 ];
 
-const blendMode = ref(blendModes[1]);
+const blendMode = ref('multiply');
 
 const showOverlay = ref(true);
 </script>
+
+<style>
+c-login-card.secondary-card::part(image) {
+  background-color: var(--c-secondary-500);
+}
+
+c-login-card.secondary-card c-button::part(root) {
+  background-color: var(--c-secondary-500);
+}
+
+c-login-card.secondary-card c-login-card-title::part(root) {
+  color: var(--c-secondary-500);
+}
+</style>

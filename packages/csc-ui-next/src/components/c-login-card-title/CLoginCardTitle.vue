@@ -1,20 +1,30 @@
 <template>
-  <header>
+  <header :class="ui.root()" part="root">
     <slot />
   </header>
 </template>
 
-<style>
-:host {
-  --_c-login-card-title-color: var(--c-login-card-title-color, var(--c-primary-600));
+<script setup lang="ts">
+import { tv } from 'tailwind-variants';
+import { computed } from 'vue';
 
-  display: block;
-  color: var(--_c-login-card-title-color);
-  font-family: var(--c-font-family);
-  font-size: 40px;
-  font-weight: 700;
-  line-height: 1.375;
-  margin: 0 0 12px;
-  text-wrap: balance;
-}
-</style>
+/**
+ * Styling lives entirely in this `tailwind-variants` config (ADR-0004); the
+ * inner `<header>` (`root` part) is the public customization surface
+ * (ADR-0006). The typography the original carried on `:host` now lives on the
+ * `root` element: 40px/700 balanced heading in the primary colour. The old
+ * `--c-login-card-title-color` override indirection is dropped — the colour
+ * comes straight from the `--c-primary-600` token. The font-size keys off the
+ * `--_c-login-card-title-font-size` contract var (40px default) so the parent
+ * c-login-card can shrink it to 32px in mobile layout — it sets that var via
+ * `::slotted(c-login-card-title)` and it inherits across the shadow boundary
+ * into this `root` element.
+ */
+const cardTitle = tv({
+  slots: {
+    root: 'block m-0 text-[length:var(--_c-login-card-title-font-size,40px)]/[1.375] font-bold text-balance text-primary-600 [font-family:var(--c-font-family)]',
+  },
+});
+
+const ui = computed(() => cardTitle());
+</script>

@@ -1,52 +1,138 @@
 <template>
-  <div>
+  <div :class="ui.root()" part="root">
     <component
       :is="href ? 'a' : 'div'"
-      class="c-side-navigation-item__header"
-      :class="{ 'c-side-navigation-item__header--expandable': slotHasContent }"
+      :class="ui.header()"
       :href="href || undefined"
       :target="href ? target : undefined"
+      part="header"
     >
-      <c-icon v-if="slotHasContent" class="svg" :path="chevronIcon" />
-      <div class="c-side-navigation-item__slot">
+      <c-icon v-if="slotHasContent" :class="ui.chevron()" :path="chevronIcon" />
+
+      <div :class="ui.slot()">
         <slot />
       </div>
     </component>
 
     <nav
       v-if="slotHasContent"
+      :aria-expanded="!!active"
+      :aria-label
+      :class="ui.subNav()"
+      part="sub-nav"
       role="menubar"
-      :aria-label="ariaLabel"
-      :aria-expanded="String(!!active)"
-      :class="{ subnavactive: active, 'sub-item': !active }"
     >
       <slot name="sub-item" />
     </nav>
 
-    <c-loader
-      :size="32"
-      :hide="!loading"
-      style="pointer-events: none"
-    />
+    <c-loader :size="32" :visible="loading" style="pointer-events: none" />
   </div>
 </template>
 
 <script setup lang="ts">
 import { mdiChevronRight } from '@mdi/js';
-import { onMounted, ref, useHost, watchEffect } from 'vue';
+import { tv } from 'tailwind-variants';
+import { computed, onMounted, ref, useHost, watchEffect } from 'vue';
 
-const props = defineProps({
-  active: { type: Boolean, default: false },
-  href: { type: String, default: '' },
-  target: { type: String, default: '' },
-  loading: { type: Boolean, default: false },
+/**
+ * Styling lives in this `tailwind-variants` config (ADR-0004): each visual
+ * region is a slot, and the `expandable` / `active` / `subItem` variants replace
+ * the `:host(.active)`, `--parent` and `[slot='sub-item']` selector cascades.
+ * The per-component `--c-*` indirection vars are dropped in favour of the global
+ * design tokens. Consumer customization is via `::part()` (ADR-0006).
+ *
+ * The host `:focus-visible` outline (utilities can't target `:host`) and the
+ * `::slotted(span)/(c-icon)` sizing of consumer light-DOM children remain in the
+ * escape-hatch <style> below (ADR-0007). Hover is a `hover:` utility on `root`
+ * because the `display:contents` host shares its hover region with the box.
+ *
+ * Hover lives in `active: { false }` (NOT the base slot): the original cascade
+ * lets the active state win over hover, but a base `hover:bg-*` and the active
+ * variant's `bg-*` don't conflict under tailwind-merge, so both would apply and
+ * hover would wrongly override the active background. Sub-item mode (`[slot=
+ * sub-item]`) is its own palette (white box / primary-600 text, hover
+ * primary-100), mirroring the original `[slot='sub-item']` var remap.
+ */
+const sideNavigationItem = tv({
+  compoundVariants: [
+    // Parent (expandable) + active gets extra bottom padding (original
+    // `:host(.c-side-navigation-item--parent.active) > div`).
+    { active: true, class: { root: 'pb-1' }, expandable: true },
+    // Sub-item hover is primary-100 (overrides the top-level primary-500 from
+    // `active:false`); merged after the variants so it wins.
+    { active: false, class: { root: 'hover:bg-primary-100' }, subItem: true },
+  ],
+  defaultVariants: {
+    active: false,
+    expandable: false,
+    subItem: false,
+  },
+  slots: {
+    chevron: 'self-center transition-transform duration-300 ease-[ease]',
+    // The clickable header row (icon + label).
+    header:
+      'grid items-center min-h-[46px] gap-2 px-3 py-2 no-underline text-current',
+    // The outer box (the original `:host(.c-side-navigation-item) > div`) that
+    // wraps the header + sub-nav and carries the bg/color/state. Its `color`
+    // cascades into the rendered chevron c-icon (currentColor contract, ADR-0004).
+    root: 'grid items-center relative overflow-hidden rounded-csc-l-md cursor-pointer font-normal select-none [backface-visibility:hidden] [transform:translate3d(0,0,0)] bg-transparent text-white',
+    slot: 'flex items-center gap-2 max-w-full leading-normal',
+    subNav:
+      'w-full overflow-y-hidden h-0 transition-all duration-500 ease-[ease]',
+  },
+  variants: {
+    active: {
+      // Only a non-active item reacts to hover (active bg must win).
+      false: { root: 'hover:bg-primary-500' },
+      true: {
+        chevron: 'rotate-90',
+        root: 'bg-primary-200 text-primary-600',
+        subNav: 'h-max',
+      },
+    },
+    expandable: {
+      true: { header: 'grid-cols-[auto_1fr]' },
+    },
+    subItem: {
+      // Sub-item palette: white box, primary-600 text (declared after `active`
+      // so it also overrides the active bg for an active sub-item, matching the
+      // original sub-item-active-bg = white).
+      true: { root: 'rounded-csc-md m-0 mx-2 mb-1 bg-white text-primary-600' },
+    },
+  },
+});
+
+interface CSideNavigationItemProps {
+  active?: boolean;
+  href?: string;
+  loading?: boolean;
+  target?: string;
+}
+
+const props = withDefaults(defineProps<CSideNavigationItemProps>(), {
+  active: false,
+  href: '',
+  loading: false,
+  target: '',
 });
 
 const chevronIcon = mdiChevronRight;
+
 const host = useHost();
+
 const slotHasContent = ref(false);
+
 const isSubItem = ref(false);
+
 const ariaLabel = ref('');
+
+const ui = computed(() =>
+  sideNavigationItem({
+    active: props.active,
+    expandable: slotHasContent.value,
+    subItem: isSubItem.value,
+  }),
+);
 
 // Move nested c-side-navigation-item children into the "sub-item" named
 // slot. Mirrors Stencil's _assignSubItemSlots — consumers write nested
@@ -73,33 +159,39 @@ const handleChildClasses = () => {
 // in the tab order.
 const handleChildFocusableChange = (focusable: boolean) => {
   if (!slotHasContent.value || !host) return;
-  host
-    .querySelectorAll('[slot="sub-item"]')
-    .forEach((child: Element) => {
-      const c = child as HTMLElement & { focusable?: boolean };
-      c.setAttribute('aria-hidden', String(!focusable));
-      c.focusable = focusable;
-    });
+  host.querySelectorAll('[slot="sub-item"]').forEach((child: Element) => {
+    const c = child as { focusable?: boolean } & HTMLElement;
+    c.setAttribute('aria-hidden', String(!focusable));
+    c.focusable = focusable;
+  });
 };
 
 const dispatchItemChange = (event: Event) => {
   host?.dispatchEvent(
-    new CustomEvent('itemChange', { detail: event, bubbles: true, composed: true }),
+    new CustomEvent('itemChange', {
+      bubbles: true,
+      composed: true,
+      detail: event,
+    }),
   );
 };
 
-const redirect = (event: KeyboardEvent | Event) => {
+const redirect = (event: Event | KeyboardEvent) => {
   if (event instanceof KeyboardEvent && event.key !== 'Enter') return;
+
   if (isSubItem.value) {
     event.stopPropagation();
     event.stopImmediatePropagation?.();
     event.preventDefault();
   }
+
   dispatchItemChange(event);
+
   if (!slotHasContent.value) {
     const sidenav = document.querySelector('c-side-navigation') as
-      | (HTMLElement & { menuVisible: boolean })
+      | ({ menuVisible: boolean } & HTMLElement)
       | null;
+
     if (sidenav) sidenav.menuVisible = false;
   }
 };
@@ -140,8 +232,12 @@ onMounted(() => {
 
   watchEffect(() => {
     host.classList.toggle('c-side-navigation-item', true);
-    host.classList.toggle('c-side-navigation-item--parent', slotHasContent.value);
+    host.classList.toggle(
+      'c-side-navigation-item--parent',
+      slotHasContent.value,
+    );
     host.classList.toggle('active', props.active);
+
     if (slotHasContent.value) {
       host.setAttribute('aria-expanded', String(!!props.active));
       host.removeAttribute('aria-current');
@@ -152,135 +248,36 @@ onMounted(() => {
       host.removeAttribute('aria-current');
       host.removeAttribute('aria-expanded');
     }
+
     handleChildFocusableChange(props.active);
   });
 });
 </script>
 
+<!--
+  Escape-hatch CSS (ADR-0007): only constructs Tailwind utilities cannot
+  express. The header box, chevron, slot layout, active/expandable/sub-item
+  states and the sub-nav height transition live in the `tv` config above. What
+  remains here:
+    - The host `:focus-visible` outline on the header — the host carries the
+      tabindex/focus, so focus-visible can't be a `focus-visible:` utility on
+      the (non-focusable) header div.
+    - `::slotted(span)/(c-icon)` sizing of consumer light-DOM children, and the
+      layout of the projected `<slot>` element (shadow node, no class hook).
+  Authored against global design tokens only.
+-->
 <style>
-:host {
-  --_c-side-navigation-item-background-color-active: var(--c-side-navigation-item-background-color-active, var(--c-primary-200));
-  --_c-side-navigation-item-background-color-hover: var(--c-side-navigation-item-background-color-hover, var(--c-primary-500));
-  --_c-side-navigation-item-background-color: var(--c-side-navigation-item-background-color, var(--c-transparent));
-  --_c-side-navigation-item-outline-color: var(--c-side-navigation-item-outline-color, var(--c-white));
-  --_c-side-navigation-item-text-color-active: var(--c-side-navigation-item-text-color-active, var(--c-primary-600));
-  --_c-side-navigation-item-text-color: var(--c-side-navigation-item-text-color, var(--c-white));
-
-  --_c-side-navigation-item-sub-item-background-color-active: var(--c-side-navigation-item-sub-item-background-color-active, var(--c-white));
-  --_c-side-navigation-item-sub-item-background-color-hover: var(--c-side-navigation-item-sub-item-background-color-hover, var(--c-primary-100));
-  --_c-side-navigation-item-sub-item-background-color: var(--c-side-navigation-item-sub-item-background-color, var(--c-white));
-  --_c-side-navigation-item-sub-item-outline-color: var(--c-side-navigation-item-sub-item-outline-color, var(--c-primary-600));
-  --_c-side-navigation-item-sub-item-text-color-active: var(--c-side-navigation-item-sub-item-text-color-active, var(--c-primary-600));
-  --_c-side-navigation-item-sub-item-text-color: var(--c-side-navigation-item-sub-item-text-color, var(--c-primary-600));
-}
-
-:host(.c-side-navigation-item) > div {
-  align-items: center;
-  backface-visibility: hidden;
-  border-radius: 4px 0 0 4px;
-  background-color: var(--_c-side-navigation-item-background-color);
-  color: var(--_c-side-navigation-item-text-color);
-  cursor: pointer;
-  display: grid;
-  grid-template-columns: 1fr;
-  font-weight: 400;
-  overflow: hidden;
-  position: relative;
-  transform: translate3d(0, 0, 0);
-  user-select: none;
-}
-
-:host(.c-side-navigation-item:hover) > div {
-  background-color: var(--_c-side-navigation-item-background-color-hover);
-}
-
-:host(.c-side-navigation-item:focus) > div {
+:host(.c-side-navigation-item:focus) [part='root'] {
   outline: none;
 }
 
-:host(.c-side-navigation-item:focus-visible) > div {
-  outline: 2px var(--_c-side-navigation-item-outline-color) solid;
+:host(.c-side-navigation-item:focus-visible) [part='root'] {
+  outline: 2px var(--c-white) solid;
   outline-offset: 2px;
-}
-
-:host(.c-side-navigation-item.active) > div {
-  background-color: var(--_c-side-navigation-item-background-color-active);
-  color: var(--_c-side-navigation-item-text-color-active);
-}
-
-:host(.c-side-navigation-item.active) > div .svg {
-  fill: var(--_c-side-navigation-item-text-color-active);
-  transform: rotate(90deg);
-}
-
-:host(.c-side-navigation-item.active) > div .c-side-navigation-item__header {
-  color: var(--_c-side-navigation-item-text-color-active);
-}
-
-.c-side-navigation-item__header {
-  align-items: center;
-  color: var(--_c-side-navigation-item-text-color);
-  display: grid;
-  gap: 8px;
-  grid-template-columns: 1fr;
-  min-height: 46px;
-  padding: 8px 12px;
-  text-decoration: none;
-}
-
-.c-side-navigation-item__header--expandable {
-  grid-template-columns: auto 1fr;
-}
-
-.c-side-navigation-item__slot {
-  align-items: center;
-  display: flex;
-  gap: 8px;
-  line-height: normal;
-  max-width: 100%;
-}
-
-:host(.c-side-navigation-item--parent.active) > div {
-  padding-bottom: 4px;
 }
 
 ::slotted(span),
 ::slotted(c-icon) {
   font-size: 20px;
-}
-
-.sub-item {
-  height: 0;
-  overflow-y: hidden;
-  transition: all 500ms ease;
-  width: 100%;
-}
-
-.subnavactive {
-  height: max-content;
-  width: 100%;
-}
-
-.svg {
-  align-self: center;
-  fill: var(--_c-side-navigation-item-text-color);
-  transition: transform 0.3s ease;
-}
-
-/* Sub-item variant: nested c-side-navigation-item rendered inside the
- * "sub-item" slot of its parent. Re-points the palette to the lighter
- * sub-item one and adds margin/border-radius. */
-:host([slot='sub-item']) {
-  --_c-side-navigation-item-text-color: var(--c-side-navigation-item-text-color, var(--_c-side-navigation-item-sub-item-text-color));
-  --_c-side-navigation-item-background-color: var(--c-side-navigation-item-background-color, var(--_c-side-navigation-item-sub-item-background-color));
-  --_c-side-navigation-item-background-color-hover: var(--c-side-navigation-item-background-color-hover, var(--_c-side-navigation-item-sub-item-background-color-hover));
-  --_c-side-navigation-item-text-color-active: var(--c-side-navigation-item-text-color-active, var(--_c-side-navigation-item-sub-item-text-color-active));
-  --_c-side-navigation-item-background-color-active: var(--c-side-navigation-item-background-color-active, var(--_c-side-navigation-item-sub-item-background-color-active));
-  --_c-side-navigation-item-outline-color: var(--c-side-navigation-item-outline-color, var(--_c-side-navigation-item-sub-item-outline-color));
-}
-
-:host([slot='sub-item']) > div {
-  border-radius: 4px;
-  margin: 0 8px 4px;
 }
 </style>
