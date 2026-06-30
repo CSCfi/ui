@@ -1,0 +1,52 @@
+{
+  "_comment": "Semantic token → palette step map for LIGHT mode (ADR-0010). Values are palette-step keys; the generator wraps each as var(--c-<step>). Provisional — finalised against WCAG AA in the contrast pass (plan phase 7). Keep keys in sync with dark.json.",
+
+  "surface": "white",
+  "surface-raised": "white",
+  "surface-overlay": "white",
+  "surface-muted": "tertiary-100",
+  "on-surface": "primary-900",
+  "on-surface-muted": "tertiary-500",
+  "border": "tertiary-200",
+  "ring": "primary-600",
+
+  "primary": "primary-600",
+  "on-primary": "white",
+  "primary-subtle": "primary-100",
+  "on-primary-subtle": "primary-700",
+
+  "secondary": "secondary-600",
+  "on-secondary": "white",
+  "secondary-subtle": "secondary-100",
+  "on-secondary-subtle": "secondary-700",
+
+  "accent": "accent-600",
+  "on-accent": "white",
+  "accent-subtle": "accent-100",
+  "on-accent-subtle": "accent-700",
+
+  "success": "success-600",
+  "on-success": "white",
+  "success-subtle": "success-100",
+  "on-success-subtle": "success-700",
+
+  "info": "info-600",
+  "on-info": "white",
+  "info-subtle": "info-100",
+  "on-info-subtle": "info-700",
+
+  "warning": "warning-600",
+  "on-warning": "white",
+  "warning-subtle": "warning-100",
+  "on-warning-subtle": "warning-700",
+
+  "error": "error-600",
+  "on-error": "white",
+  "error-subtle": "error-100",
+  "on-error-subtle": "error-700",
+
+  "link": "link-600",
+  "on-link": "white",
+  "link-subtle": "link-100",
+  "on-link-subtle": "link-700"
+}

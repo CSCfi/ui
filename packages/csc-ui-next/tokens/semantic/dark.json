@@ -1,0 +1,52 @@
+{
+  "_comment": "Semantic token → palette step map for DARK mode (ADR-0010). Engineering-designed remap of existing ramp steps (no new hexes). Provisional — finalised against WCAG AA in the contrast pass (plan phase 7). Keep keys in sync with light.json.",
+
+  "surface": "tertiary-900",
+  "surface-raised": "tertiary-800",
+  "surface-overlay": "tertiary-700",
+  "surface-muted": "tertiary-800",
+  "on-surface": "white",
+  "on-surface-muted": "tertiary-300",
+  "border": "tertiary-700",
+  "ring": "primary-400",
+
+  "primary": "primary-300",
+  "on-primary": "primary-900",
+  "primary-subtle": "primary-900",
+  "on-primary-subtle": "primary-200",
+
+  "secondary": "secondary-300",
+  "on-secondary": "secondary-900",
+  "secondary-subtle": "secondary-900",
+  "on-secondary-subtle": "secondary-200",
+
+  "accent": "accent-300",
+  "on-accent": "accent-900",
+  "accent-subtle": "accent-900",
+  "on-accent-subtle": "accent-200",
+
+  "success": "success-300",
+  "on-success": "success-900",
+  "success-subtle": "success-900",
+  "on-success-subtle": "success-200",
+
+  "info": "info-300",
+  "on-info": "info-900",
+  "info-subtle": "info-900",
+  "on-info-subtle": "info-200",
+
+  "warning": "warning-300",
+  "on-warning": "warning-900",
+  "warning-subtle": "warning-900",
+  "on-warning-subtle": "warning-200",
+
+  "error": "error-300",
+  "on-error": "error-900",
+  "error-subtle": "error-900",
+  "on-error-subtle": "error-200",
+
+  "link": "link-300",
+  "on-link": "link-900",
+  "link-subtle": "link-900",
+  "on-link-subtle": "link-200"
+}

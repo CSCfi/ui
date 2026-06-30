@@ -1,41 +1,52 @@
 const StyleDictionaryPackage = require('style-dictionary');
 const createTheme = require('./utils/createTheme.cjs');
+const createSemanticTheme = require('./utils/createSemanticTheme.cjs');
+const semanticLight = require('./tokens/semantic/light.json');
+const semanticDark = require('./tokens/semantic/dark.json');
 
 /**
  * Token pipeline for `@cscfi/csc-ui-next` (ADR-0010).
  *
  * Duplicated from `@cscfi/csc-ui` so `next` owns its tokens ahead of the
- * eventual removal of the Stencil package. Trimmed to the single output `next`
- * needs today: the `--c-*` palette as document-level custom properties. The
- * semantic + dark token groups (ADR-0010) are layered on in a later phase.
+ * eventual removal of the Stencil package. Emits a single document-level
+ * `tokens.css` the consumer imports, containing:
  *
- * The palette ramp is mode-independent (a brand constant). It is declared on
- * `:root, :host` and inherits across shadow boundaries, where the `@theme
- * inline` map in `src/tailwind.css` resolves token utilities (`bg-primary-600`)
- * to `var(--c-primary-600)`.
+ *   1. the `--c-*` palette (mode-independent brand ramp), and
+ *   2. the semantic-token layer (role → palette step, switched per theme mode).
+ *
+ * Both are declared on the document root and inherit across shadow boundaries,
+ * where the `@theme inline` map in `src/tailwind.css` resolves the utilities
+ * (`bg-primary-600`, `bg-surface`, …) against them.
+ *
+ * `source` is narrowed to `tokens/theme` (the palette) so style-dictionary does
+ * not try to parse the semantic maps as design tokens — those are plain
+ * role→step lookup tables consumed directly by `createSemanticTheme`.
  */
 
-// Emit the `--c-*` custom properties for the CSC palette (prefix `theme` → `c`).
+// Emit the palette `--c-*` properties followed by the semantic-token layer.
 StyleDictionaryPackage.registerFormat({
-  name: 'css/theme/variables',
+  name: 'css/tokens',
   formatter({ dictionary }) {
-    return createTheme(dictionary, 'css');
+    const palette = createTheme(dictionary, 'css');
+    const semantic = createSemanticTheme(semanticLight, semanticDark);
+
+    return `${palette}\n${semantic}`;
   },
 });
 
 module.exports = {
-  source: ['tokens/**/*.json'],
+  source: ['tokens/theme/**/*.json'],
 
   platforms: {
-    // CSS palette custom properties → src/styles/css/theme.css
+    // Palette + semantic tokens → src/styles/css/tokens.css
     // (copied into dist/styles/css by `scripts/copy-styles.js` post-build).
-    'css/theme': {
+    'css/tokens': {
       transformGroup: 'css',
       buildPath: 'src/styles/css/',
       files: [
         {
-          destination: 'theme.css',
-          format: 'css/theme/variables',
+          destination: 'tokens.css',
+          format: 'css/tokens',
           filter: {
             attributes: {
               category: 'theme',
