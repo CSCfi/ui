@@ -11,7 +11,7 @@
  * to avoid clobbering consumer custom properties) and points at a palette token
  * via `var(--c-<step>)`, so a mode change re-themes the whole tree through token
  * inheritance with no per-component work. The matching `@theme inline` map in
- * `src/tailwind.css` exposes them as utilities (`bg-surface`, `bg-primary`, …).
+ * `src/tailwind.css` exposes them as the per-role color utilities.
  */
 
 const decls = (map, indent) =>
@@ -29,7 +29,7 @@ module.exports = (light, dark) => {
     '/*',
     ' * Semantic tokens (ADR-0010). Role-named properties that resolve to a',
     ' * different palette step per theme mode; components author against the',
-    ' * matching utilities (bg-surface, text-on-surface, bg-primary).',
+    ' * per-role color utilities the @theme inline map in tailwind.css exposes.',
     ' */',
     ':root,\n:root[data-theme=\'light\'] {',
     lightDecls,

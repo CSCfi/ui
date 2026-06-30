@@ -1,8 +1,12 @@
-@import 'tailwindcss';
+@import 'tailwindcss' source(none);
 
 /*
- * Components live inside shadow roots, so Tailwind's auto-detection
- * needs an explicit pointer at the SFC sources.
+ * Components live inside shadow roots and SFCs are the only place utilities are
+ * authored, so Tailwind's automatic content detection is disabled
+ * (`source(none)`) and pointed solely at the SFC sources. This keeps the
+ * inlined sheet to the utilities components actually use (ADR-0006) and stops
+ * class-like tokens in comments of sibling .ts/.cjs/.css files (and in the
+ * previous build's bundle) from emitting stray, unused rules.
  */
 @source './components/**/*.vue';
 
@@ -103,6 +107,76 @@
   --color-white: var(--c-white);
   --color-black: var(--c-black);
   --color-transparent: var(--c-transparent);
+}
+
+/*
+ * Semantic-token to utility map (ADR-0010). Exposes the role tokens defined in
+ * tokens.css as background / text / border / ring color utilities (one per
+ * role). "inline" substitutes the value directly, so a background utility for
+ * the surface role compiles to background-color:var(--c-surface) and resolves
+ * *inside* shadow roots via inheritance of --c-surface from the document :root
+ * (where tokens.css declares and theme-switches it).
+ *
+ * This is the layer components author against; direct palette-step color
+ * utilities are forbidden in SFCs (CI-guarded, plan phase 4).
+ *
+ * KEEP IN SYNC with tokens/semantic/{light,dark}.json: every role there needs
+ * an entry here or its utility is never generated. (Candidate for generation
+ * from the same maps if this drifts.)
+ *
+ * NOTE: avoid writing literal class names (the prefixed forms) in comments
+ * within files Tailwind scans — it extracts them as candidates and emits unused
+ * rules.
+ */
+@theme inline {
+  --color-surface: var(--c-surface);
+  --color-surface-raised: var(--c-surface-raised);
+  --color-surface-overlay: var(--c-surface-overlay);
+  --color-surface-muted: var(--c-surface-muted);
+  --color-on-surface: var(--c-on-surface);
+  --color-on-surface-muted: var(--c-on-surface-muted);
+  --color-border: var(--c-border);
+  --color-ring: var(--c-ring);
+
+  --color-primary: var(--c-primary);
+  --color-on-primary: var(--c-on-primary);
+  --color-primary-subtle: var(--c-primary-subtle);
+  --color-on-primary-subtle: var(--c-on-primary-subtle);
+
+  --color-secondary: var(--c-secondary);
+  --color-on-secondary: var(--c-on-secondary);
+  --color-secondary-subtle: var(--c-secondary-subtle);
+  --color-on-secondary-subtle: var(--c-on-secondary-subtle);
+
+  --color-accent: var(--c-accent);
+  --color-on-accent: var(--c-on-accent);
+  --color-accent-subtle: var(--c-accent-subtle);
+  --color-on-accent-subtle: var(--c-on-accent-subtle);
+
+  --color-success: var(--c-success);
+  --color-on-success: var(--c-on-success);
+  --color-success-subtle: var(--c-success-subtle);
+  --color-on-success-subtle: var(--c-on-success-subtle);
+
+  --color-info: var(--c-info);
+  --color-on-info: var(--c-on-info);
+  --color-info-subtle: var(--c-info-subtle);
+  --color-on-info-subtle: var(--c-on-info-subtle);
+
+  --color-warning: var(--c-warning);
+  --color-on-warning: var(--c-on-warning);
+  --color-warning-subtle: var(--c-warning-subtle);
+  --color-on-warning-subtle: var(--c-on-warning-subtle);
+
+  --color-error: var(--c-error);
+  --color-on-error: var(--c-on-error);
+  --color-error-subtle: var(--c-error-subtle);
+  --color-on-error-subtle: var(--c-on-error-subtle);
+
+  --color-link: var(--c-link);
+  --color-on-link: var(--c-on-link);
+  --color-link-subtle: var(--c-link-subtle);
+  --color-on-link-subtle: var(--c-on-link-subtle);
 }
 
 /*
