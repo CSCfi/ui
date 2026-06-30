@@ -39,10 +39,11 @@ consumer custom properties: the CSS variable is `--c-surface`, the Tailwind util
 `bg-surface` (via `@theme inline { --color-surface: var(--c-surface) }`). The ADR/CONTEXT
 examples write `--surface` illustratively; **the `--c-` prefix is authoritative.**
 
-## Proposed token set (provisional — dark steps pending contrast pass)
+## Token set (implemented; dark steps still provisional pending contrast pass)
 
-Neutrals use the `tertiary` ramp as the dark grey scale. Dark steps below are a **starting
-point**; Phase 4 validates every foreground/background pair at WCAG AA.
+Neutrals use the `tertiary` ramp as the dark grey scale. Dark steps below are validated
+visually but **finalised** against WCAG AA in phase 7. The brand/status set was expanded in the
+`CButton` pilot (phase 3) to six tokens per role + a mode-invariant `inverse-*` family — see below.
 
 ### Neutrals
 
@@ -62,9 +63,20 @@ point**; Phase 4 validates every foreground/background pair at WCAG AA.
 | Semantic token | Light → palette | Dark → palette | Replaces |
 |---|---|---|---|
 | `--c-<role>` | `--c-<role>-600` | `--c-<role>-300` | `text-/bg-/ring-<role>-600` |
+| `--c-<role>-hover` | `--c-<role>-400` | `--c-<role>-200` | `hover:bg-<role>-400` (solid hover) |
 | `--c-on-<role>` | `--c-white` | `--c-<role>-900` | `text-white` on a fill |
-| `--c-<role>-subtle` | `--c-<role>-100` | `--c-<role>-900` | `bg-<role>-100/200` tints |
+| `--c-<role>-subtle` | `--c-<role>-200` | `--c-<role>-800` | `bg-<role>-200` tint fill |
+| `--c-<role>-subtle-hover` | `--c-<role>-100` | `--c-<role>-900` | `hover:bg-<role>-100` (tint hover) |
 | `--c-on-<role>-subtle` | `--c-<role>-700` | `--c-<role>-200` | text on a subtle tint |
+
+### Mode-invariant `inverse-*` (identical light & dark; for the `inverted` variants)
+
+| Semantic token | Value (both modes) | Replaces |
+|---|---|---|
+| `--c-inverse-surface` | `--c-white` | inverted solid face (`bg-white`) |
+| `--c-inverse-on` | `--c-white` | inverted fg / translucent fills (`text-white`, `bg-white/20`) |
+| `--c-inverse-primary` | `--c-primary-600` | inverted-default text (`text-primary-600` on white) |
+| `--c-inverse-error` | `--c-error-600` | inverted-danger text (`text-error-600` on white) |
 
 > The `subtle` pair is only generated for roles that actually have tint usages (audit in
 > Phase 3 confirms which). Don't emit unused tokens.
@@ -180,14 +192,18 @@ Phase 4 guard to blocking once the last batch lands.
 - **Visual**: each migrated component in light + dark via the docs toggle.
 - **Guard**: Phase 4 check green across `src/components`.
 
-## Open questions (resolve during execution, not blocking)
+## Open questions
 
-1. **`tokens.css` shape** — single file (palette + semantic + dark) vs palette kept separate.
-   Leaning single-file for the cleaner consumer import.
-2. **Final sub-role list** — which roles actually need `*-subtle` / `*-muted` (driven by the
-   Phase 3/5 audit; don't emit unused tokens).
-3. **Disabled & focus states in dark** — confirm `*-muted` + `ring` cover them or add
-   `--c-disabled` / `--c-on-disabled`.
+1. ~~**`tokens.css` shape**~~ — RESOLVED (phase 1): single `tokens.css` (palette + semantic +
+   dark), one consumer import.
+2. ~~**Final sub-role list**~~ — RESOLVED (phase 3 pilot): six tokens per role (`<role>`,
+   `-hover`, `on-<role>`, `-subtle`, `-subtle-hover`, `on-<role>-subtle`) + mode-invariant
+   `inverse-*` family. Generated for all 8 roles for consistency; unused ones are negligible CSS
+   vars (and emit no utility unless a component uses it). Revisit only if phase 5 needs more.
+3. **Disabled & focus states in dark** — pilot used `surface-muted` / `on-surface-muted` /
+   `border` for disabled and the appearance colour for focus outline; no dedicated `disabled`
+   token needed so far. Watch in phase 5 (esp. disabled on a `surface-raised`/`surface-overlay`
+   panel, where `surface-muted` can collide in dark — may want a `disabled` token then).
 4. **Keep or drop** the Stencil-only style-dictionary outputs (`tailwind/theme.js`, scss) in
    `next`'s copied config — depends on whether the docs site still consumes them.
 
