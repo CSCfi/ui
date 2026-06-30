@@ -195,6 +195,14 @@
   --color-link-subtle-hover: var(--c-link-subtle-hover);
   --color-on-link-subtle: var(--c-on-link-subtle);
 
+  /* Navigation chrome (c-side-navigation*): a themed brand surface that is the
+   * brand primary in light and a dark neutral panel in dark, so the sidebar
+   * adapts to the theme instead of staying a fixed brand island. The accents
+   * (active pill, sub-item box) reuse the primary-subtle / surface-raised roles. */
+  --color-nav-surface: var(--c-nav-surface);
+  --color-nav-surface-hover: var(--c-nav-surface-hover);
+  --color-on-nav: var(--c-on-nav);
+
   /* Mode-invariant inverse family (content on a fixed brand/dark backdrop). */
   --color-inverse-surface: var(--c-inverse-surface);
   --color-inverse-on: var(--c-inverse-on);

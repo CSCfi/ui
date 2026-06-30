@@ -38,8 +38,11 @@ import { computed, onMounted, ref, useHost, watchEffect } from 'vue';
  * Styling lives in this `tailwind-variants` config (ADR-0004): each visual
  * region is a slot, and the `expandable` / `active` / `subItem` variants replace
  * the `:host(.active)`, `--parent` and `[slot='sub-item']` selector cascades.
- * The per-component `--c-*` indirection vars are dropped in favour of the global
- * design tokens. Consumer customization is via `::part()` (ADR-0006).
+ * The per-component `--c-*` indirection vars are dropped in favour of the
+ * semantic design tokens (ADR-0010): items sit on the themed nav surface, so
+ * their foreground is `on-nav`, hover is `nav-surface-hover`, the active pill is
+ * `primary-subtle`/`on-primary-subtle`, and a sub-item box is `surface-raised`.
+ * Consumer customization is via `::part()` (ADR-0006).
  *
  * The host `:focus-visible` outline (utilities can't target `:host`) and the
  * `::slotted(span)/(c-icon)` sizing of consumer light-DOM children remain in the
@@ -50,17 +53,22 @@ import { computed, onMounted, ref, useHost, watchEffect } from 'vue';
  * lets the active state win over hover, but a base `hover:bg-*` and the active
  * variant's `bg-*` don't conflict under tailwind-merge, so both would apply and
  * hover would wrongly override the active background. Sub-item mode (`[slot=
- * sub-item]`) is its own palette (white box / primary-600 text, hover
- * primary-100), mirroring the original `[slot='sub-item']` var remap.
+ * sub-item]`) is its own palette (a `surface-raised` box with `primary` text,
+ * hover `primary-subtle-hover`), mirroring the original `[slot='sub-item']` var
+ * remap.
  */
 const sideNavigationItem = tv({
   compoundVariants: [
     // Parent (expandable) + active gets extra bottom padding (original
     // `:host(.c-side-navigation-item--parent.active) > div`).
     { active: true, class: { root: 'pb-1' }, expandable: true },
-    // Sub-item hover is primary-100 (overrides the top-level primary-500 from
-    // `active:false`); merged after the variants so it wins.
-    { active: false, class: { root: 'hover:bg-primary-100' }, subItem: true },
+    // Sub-item hover is primary-subtle-hover (overrides the top-level
+    // nav-surface-hover from `active:false`); merged after the variants so it wins.
+    {
+      active: false,
+      class: { root: 'hover:bg-primary-subtle-hover' },
+      subItem: true,
+    },
   ],
   defaultVariants: {
     active: false,
@@ -75,7 +83,7 @@ const sideNavigationItem = tv({
     // The outer box (the original `:host(.c-side-navigation-item) > div`) that
     // wraps the header + sub-nav and carries the bg/color/state. Its `color`
     // cascades into the rendered chevron c-icon (currentColor contract, ADR-0004).
-    root: 'grid items-center relative overflow-hidden rounded-csc-l-md cursor-pointer font-normal select-none [backface-visibility:hidden] [transform:translate3d(0,0,0)] bg-transparent text-white',
+    root: 'grid items-center relative overflow-hidden rounded-csc-l-md cursor-pointer font-normal select-none [backface-visibility:hidden] [transform:translate3d(0,0,0)] bg-transparent text-on-nav',
     slot: 'flex items-center gap-2 max-w-full leading-normal',
     subNav:
       'w-full overflow-y-hidden h-0 transition-all duration-500 ease-[ease]',
@@ -83,10 +91,10 @@ const sideNavigationItem = tv({
   variants: {
     active: {
       // Only a non-active item reacts to hover (active bg must win).
-      false: { root: 'hover:bg-primary-500' },
+      false: { root: 'hover:bg-nav-surface-hover' },
       true: {
         chevron: 'rotate-90',
-        root: 'bg-primary-200 text-primary-600',
+        root: 'bg-primary-subtle text-on-primary-subtle',
         subNav: 'h-max',
       },
     },
@@ -94,10 +102,12 @@ const sideNavigationItem = tv({
       true: { header: 'grid-cols-[auto_1fr]' },
     },
     subItem: {
-      // Sub-item palette: white box, primary-600 text (declared after `active`
-      // so it also overrides the active bg for an active sub-item, matching the
-      // original sub-item-active-bg = white).
-      true: { root: 'rounded-csc-md m-0 mx-2 mb-1 bg-white text-primary-600' },
+      // Sub-item palette: a surface-raised box with primary text (declared after
+      // `active` so it also overrides the active bg for an active sub-item,
+      // matching the original sub-item-active-bg = the raised surface).
+      true: {
+        root: 'rounded-csc-md m-0 mx-2 mb-1 bg-surface-raised text-primary',
+      },
     },
   },
 });
@@ -272,7 +282,7 @@ onMounted(() => {
 }
 
 :host(.c-side-navigation-item:focus-visible) [part='root'] {
-  outline: 2px var(--c-white) solid;
+  outline: 2px var(--c-on-nav) solid;
   outline-offset: 2px;
 }
 

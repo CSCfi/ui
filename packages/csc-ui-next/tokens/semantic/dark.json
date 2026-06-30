@@ -65,5 +65,9 @@
   "on-link": "link-900",
   "link-subtle": "link-800",
   "link-subtle-hover": "link-900",
-  "on-link-subtle": "link-200"
+  "on-link-subtle": "link-200",
+
+  "nav-surface": "tertiary-800",
+  "nav-surface-hover": "tertiary-700",
+  "on-nav": "white"
 }

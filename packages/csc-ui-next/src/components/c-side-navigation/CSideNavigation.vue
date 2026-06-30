@@ -50,7 +50,9 @@ defineOptions({ inheritAttrs: false });
  * region is a slot and the `mobile` variant replaces the
  * `.c-side-navigation__content--mobile/--desktop` and `--mobile` wrapper
  * cascades. The per-component `--c-*` indirection vars are dropped in favour of
- * the global design tokens. Consumer customization is via `::part()` (ADR-0006).
+ * the semantic design tokens (ADR-0010): the drawer is the themed `nav-surface`
+ * role (brand primary in light, a dark neutral panel in dark, so it adapts to
+ * the theme). Consumer customization is via `::part()` (ADR-0006).
  *
  * The host box itself (the `.desktop` / `.autoheight` host states, which carry
  * background/flex/min-width and can't be expressed as utilities on the host),
@@ -74,7 +76,7 @@ const sideNavigation = tv({
     burger: 'flex justify-end px-4 py-2',
     // The outer drawer container.
     content: 'flex flex-col flex-[1_2_260px] w-80',
-    nav: 'relative flex flex-col flex-nowrap flex-1 gap-1 min-h-fit max-h-full w-full overflow-y-auto pt-6 pr-0 pb-6 pl-6 z-[8] bg-primary-600 transition-transform duration-300 ease-[ease]',
+    nav: 'relative flex flex-col flex-nowrap flex-1 gap-1 min-h-fit max-h-full w-full overflow-y-auto pt-6 pr-0 pb-6 pl-6 z-[8] bg-nav-surface transition-transform duration-300 ease-[ease]',
     spacer: 'flex-1 mb-2',
     srOnly:
       'absolute w-px h-px p-0 -m-px overflow-hidden whitespace-nowrap border-0 [clip:rect(0_0_0_0)]',
@@ -256,13 +258,13 @@ onBeforeUnmount(() => {
 }
 
 :host(.desktop) {
-  background-color: var(--c-primary-600);
+  background-color: var(--c-nav-surface);
   display: flex;
   min-width: clamp(300px, 20vw, 340px);
 }
 
 .c-overlay {
-  background: rgba(var(--c-black), 0.5);
+  background: color-mix(in srgb, var(--c-scrim) 50%, transparent);
   backdrop-filter: blur(4px);
   inset: 0;
   position: fixed;

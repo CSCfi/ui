@@ -65,5 +65,9 @@
   "on-link": "white",
   "link-subtle": "link-200",
   "link-subtle-hover": "link-100",
-  "on-link-subtle": "link-700"
+  "on-link-subtle": "link-700",
+
+  "nav-surface": "primary-600",
+  "nav-surface-hover": "primary-500",
+  "on-nav": "white"
 }

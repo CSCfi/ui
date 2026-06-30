@@ -11,7 +11,8 @@ import { computed } from 'vue';
 /**
  * Styling lives entirely in this `tailwind-variants` config (ADR-0004). The
  * old per-component `--c-side-navigation-title-*` indirection vars are dropped;
- * the title is authored directly against the `white` design token. Consumer
+ * the title is authored against the `on-nav` semantic role (ADR-0010) — the
+ * foreground colour for content on the themed nav surface. Consumer
  * customization is via `::part(root)` (ADR-0006).
  *
  * The host stays `display:contents` (global) and the visual box lives on the
@@ -20,7 +21,7 @@ import { computed } from 'vue';
  */
 const sideNavigationTitle = tv({
   slots: {
-    root: 'flex items-center gap-2 mt-5 mb-4 py-1 text-white shadow-[0_1px_0_0_var(--c-white)]',
+    root: 'flex items-center gap-2 mt-5 mb-4 py-1 text-on-nav shadow-[0_1px_0_0_var(--c-on-nav)]',
   },
 });
 

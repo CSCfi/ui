@@ -37,12 +37,13 @@ const subNavigationItem = tv({
       active: true,
       class: { item: 'before:[transform:translateZ(0)_translateX(0)]' },
     },
-    // 3rd-level active background is primary-100 (not white) so it reads as a
-    // distinct level against the white sub-item parent. Declared after the
-    // `active` variant's `bg-white` so tailwind-merge lets it win.
+    // 3rd-level active background is primary-subtle-hover (not the raised
+    // surface) so it reads as a distinct level against the surface-raised
+    // sub-item parent. Declared after the `active` variant's `bg-surface-raised`
+    // so tailwind-merge lets it win.
     {
       active: true,
-      class: { item: 'bg-primary-100' },
+      class: { item: 'bg-primary-subtle-hover' },
       subLevel: true,
     },
   ],
@@ -54,12 +55,14 @@ const subNavigationItem = tv({
     content:
       'flex items-center overflow-hidden whitespace-nowrap text-ellipsis',
     // `hover:bg-*` lives in `active: { false }`, not here: the original cascade
-    // lets the active background (white) win over hover, but a base `hover:bg-*`
-    // and the active variant's `bg-white` don't conflict under tailwind-merge,
-    // so both would apply and hover would wrongly override the active bg.
-    // `hover:text-primary-600` stays unguarded (the original recolours the text
-    // on hover regardless of active state).
-    item: 'flex items-center cursor-pointer font-normal leading-[46px] rounded-csc-md mx-2 px-0 pl-[34px] relative overflow-hidden select-none transition-colors duration-200 ease-in bg-transparent text-[var(--c-text-body)] hover:text-primary-600 before:content-[""] before:absolute before:top-0 before:left-0 before:h-full before:w-2 before:bg-primary-600 before:[transform:translateZ(0)_translateX(-8px)] before:transition-transform before:duration-200 before:ease-in-out',
+    // lets the active background (the raised surface) win over hover, but a base
+    // `hover:bg-*` and the active variant's `bg-surface-raised` don't conflict
+    // under tailwind-merge, so both would apply and hover would wrongly override
+    // the active bg. `hover:text-primary` stays unguarded (the original recolours
+    // the text on hover regardless of active state). Resting text is
+    // `on-primary-subtle` — the foreground for the active parent's primary-subtle
+    // region these items sit in.
+    item: 'flex items-center cursor-pointer font-normal leading-[46px] rounded-csc-md mx-2 px-0 pl-[34px] relative overflow-hidden select-none transition-colors duration-200 ease-in bg-transparent text-on-primary-subtle hover:text-primary before:content-[""] before:absolute before:top-0 before:left-0 before:h-full before:w-2 before:bg-primary before:[transform:translateZ(0)_translateX(-8px)] before:transition-transform before:duration-200 before:ease-in-out',
     root: 'py-0.5',
     slot: 'overflow-hidden whitespace-nowrap text-ellipsis',
     srOnly:
@@ -68,18 +71,19 @@ const subNavigationItem = tv({
   variants: {
     active: {
       // Only a non-active item reacts to hover (active bg must win).
-      false: { item: 'hover:bg-primary-100' },
+      false: { item: 'hover:bg-primary-subtle-hover' },
       true: {
-        item: 'bg-white',
+        item: 'bg-surface-raised',
         // reveal the leading indicator bar
       },
     },
     // The sub-level palette (a 3rd-level item nested inside another
-    // sub-navigation-item) differs from the 2nd-level base in ONE place: the
-    // original remaps its *active* background to `--c-primary-100` (vs the base's
-    // white). Non-active bg stays transparent and hover stays primary-100, so the
-    // active-state override below is the whole story. Without it an active
-    // 3rd-level item renders white — indistinguishable from its white parent box.
+    // sub-navigation-item) differs from the 2nd-level base in ONE place: it
+    // remaps its *active* background to `primary-subtle-hover` (vs the base's
+    // `surface-raised`). Non-active bg stays transparent and hover stays
+    // `primary-subtle-hover`, so the active-state override below is the whole
+    // story. Without it an active 3rd-level item renders as the raised surface —
+    // indistinguishable from its surface-raised parent box.
     subLevel: { true: { item: '' } },
   },
 });
@@ -176,7 +180,7 @@ slot {
 }
 
 :host(:focus-visible) [part='root'] {
-  outline: 2px var(--c-primary-600) solid;
+  outline: 2px var(--c-primary) solid;
   outline-offset: 2px;
 }
 
