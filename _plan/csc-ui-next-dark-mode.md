@@ -171,6 +171,20 @@ comments was simpler than a custom ESLint rule and good enough.
 
 ### Phase 5 — Batch migrate remaining 71 components
 
+**Progress (commits on `vue-migration`):**
+- 5a surfaces/layout — c-page, c-main, c-toolbar, c-backdrop, c-divider, c-card, c-card-title ✅
+- 5b popover/list — c-menu(+item/label), c-dropdown, c-list(+item/item-title) ✅
+- 5c value-select — c-autocomplete, c-select ✅
+- 5d status/feedback — c-alert, c-status, c-badge, c-message, c-tag, c-progress-bar, c-loader, c-toast ✅
+- 5e form fields — c-input, c-text-field, c-otp-input, c-slider ✅ (added neutral role **`border-strong`** for control outlines)
+- 5e2 toggles — c-checkbox, c-radio-group, c-switch, c-spinner ✅
+- **Guard tightened**: now also catches arbitrary-value (`text-[var(--c-error-600)]`) and
+  escape-hatch (`var(--c-primary-600)`, `var(--c-…-rgb)`) palette refs — true surface was
+  under-reported. After 5e2: **134 refs in 18 SFCs** remaining.
+- **Remaining (5f, nav/structure + table)**: c-icon-button, c-tab(+tabs/tab-buttons), c-step(+steps),
+  c-accordion-item, c-side-navigation(+item/title), c-sub-navigation-item, c-link, c-login(+button/card/card-title),
+  c-table. **Skip** c-swiper / c-swiper-tab (confirmed in `_todo` "Remove these" — will stay as guard hits until deleted).
+
 Convert in reviewable batches; suggested grouping by colour complexity:
 1. **Containers / surfaces** (highest payoff for the ladder): `c-card*`, `c-modal`, `c-menu*`,
    `c-toast*`, `c-autocomplete`, `c-dropdown`, `c-backdrop`, `c-page`, `c-main`, `c-toolbar`,
