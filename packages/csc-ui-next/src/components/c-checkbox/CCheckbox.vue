@@ -132,17 +132,17 @@ const checkbox = tv({
     // base text colour). Ordered after `disabled` so error wins for the box.
     {
       class: {
-        message: 'text-[var(--c-error-600)]',
-        ripple: 'before:border-[var(--c-error-600)]',
-        rippleEffect: 'bg-[var(--c-error-600)]',
-        root: 'text-[var(--c-error-600)]',
+        message: 'text-error',
+        ripple: 'before:border-error',
+        rippleEffect: 'bg-error',
+        root: 'text-error',
       },
       disabled: false,
       error: true,
     },
     {
       class: {
-        message: 'text-[var(--c-error-600)]',
+        message: 'text-error',
       },
       disabled: true,
       error: true,
@@ -150,7 +150,7 @@ const checkbox = tv({
     {
       class: {
         label: 'cursor-default',
-        root: 'text-[var(--c-tertiary-500)] opacity-75',
+        root: 'text-on-surface-muted opacity-75',
       },
       disabled: true,
     },
@@ -167,9 +167,9 @@ const checkbox = tv({
     label: 'flex gap-1 relative cursor-pointer select-none',
     labelContent: 'pt-[10px] text-left select-none',
     message:
-      'flex items-start gap-1 px-3 text-xs leading-none min-h-4 text-[var(--c-text-system)]',
+      'flex items-start gap-1 px-3 text-xs leading-none min-h-4 text-on-surface-muted',
     messageIcon: 'fill-current h-4 w-4 relative -top-0.5 shrink-0',
-    required: 'text-[var(--c-error-600)]',
+    required: 'text-error',
     // 42px circular ripple surface. The checkbox box is the `before:` pseudo:
     // an 18x18 square at (12,12) with 2px radius + transparent fill; its
     // colours flip on :checked via the escape-hatch sibling rule below.
@@ -180,7 +180,7 @@ const checkbox = tv({
     // full). Like c-button, it tweens scale/opacity via the `transition` util
     // rather than a bespoke @keyframes (ADR-0004). Colour follows state.
     rippleEffect:
-      'pointer-events-none absolute rounded-full bg-[var(--c-primary-600)] transition-[transform,opacity] duration-[600ms] ease-out',
+      'pointer-events-none absolute rounded-full bg-primary transition-[transform,opacity] duration-[600ms] ease-out',
     root: 'relative w-fit',
     slotWrapper: '',
     svg: 'absolute top-[14px] left-[14px] h-[14px] w-[14px] z-[1]',
@@ -193,10 +193,10 @@ const checkbox = tv({
     // CHECKED-state fill of the box/check stays sibling-driven in escape-hatch.
     disabled: {
       false: {
-        ripple: 'before:border-[var(--c-primary-600)]',
+        ripple: 'before:border-primary',
       },
       true: {
-        ripple: 'before:border-[var(--c-tertiary-500)]',
+        ripple: 'before:border-border-strong',
       },
     },
     error: {
@@ -361,40 +361,46 @@ const onChange = (_event: Event) => {
  * reveal the white check. Sibling-input selector — input precedes label. */
 input:checked + label .c-checkbox__ripple::before,
 input:indeterminate + label .c-checkbox__ripple::before {
-  background-color: var(--c-primary-600);
-  border-color: var(--c-primary-600);
+  background-color: var(--c-primary);
+  border-color: var(--c-primary);
 }
 
 .c-checkbox--error input:checked + label .c-checkbox__ripple::before,
 .c-checkbox--error input:indeterminate + label .c-checkbox__ripple::before {
-  background-color: var(--c-error-600);
-  border-color: var(--c-error-600);
+  background-color: var(--c-error);
+  border-color: var(--c-error);
 }
 
 input:checked + label .c-checkbox__path,
 input:indeterminate + label .c-checkbox__path {
-  stroke: #ffffff;
-  fill: #ffffff;
+  stroke: var(--c-on-primary);
+  fill: var(--c-on-primary);
+}
+
+.c-checkbox--error input:checked + label .c-checkbox__path,
+.c-checkbox--error input:indeterminate + label .c-checkbox__path {
+  stroke: var(--c-on-error);
+  fill: var(--c-on-error);
 }
 
 input:indeterminate + label .c-checkbox__path--indeterminate {
-  fill: #ffffff;
+  fill: var(--c-on-primary);
   stroke: transparent;
 }
 
 /* Hover: tint only the circular ripple, never the box itself. */
 label:hover .c-checkbox__ripple {
-  background-color: rgba(var(--c-primary-rgb), 0.1);
+  background-color: color-mix(in srgb, var(--c-primary) 10%, transparent);
 }
 
 /* Focus-visible: 2px ring around the ripple circle. */
 input:focus-visible + label .c-checkbox__ripple {
-  outline: 2px solid var(--c-primary-600);
+  outline: 2px solid var(--c-primary);
   outline-offset: -1px;
 }
 
 .c-checkbox--error input:focus-visible + label .c-checkbox__ripple {
-  outline-color: var(--c-error-600);
+  outline-color: var(--c-error);
 }
 
 /* Disabled recolours the sibling-driven indicator and suppresses the hover
@@ -406,13 +412,13 @@ input:focus-visible + label .c-checkbox__ripple {
 }
 
 .c-checkbox--disabled input:focus-visible + label .c-checkbox__ripple {
-  outline-color: var(--c-tertiary-500);
+  outline-color: var(--c-border-strong);
 }
 
 .c-checkbox--disabled input:checked + label .c-checkbox__ripple::before,
 .c-checkbox--disabled input:indeterminate + label .c-checkbox__ripple::before {
-  background-color: var(--c-tertiary-500);
-  border-color: var(--c-tertiary-500);
+  background-color: var(--c-border-strong);
+  border-color: var(--c-border-strong);
 }
 
 /* Vertical slide + fade between hint and error messages. */

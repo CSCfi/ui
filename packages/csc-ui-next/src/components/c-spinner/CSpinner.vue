@@ -33,9 +33,9 @@ import { computed } from 'vue';
  * COLOUR CONTRACT: the stroke/fill come from `currentColor`
  * (`stroke-current` / `fill-current`), and the `color` prop is applied inline
  * on the SVG root as that element's `color`. The prop DEFAULTS TO
- * `var(--c-primary-600)` — faithful to the original Stencil default — so a
- * standalone spinner is the brand blue, not the ambient text colour.
- *   - an explicit `color` prop still wins (e.g. c-select passes primary-600);
+ * `var(--c-primary)` — the semantic primary role (ADR-0010), so a standalone
+ * spinner is the brand colour in either theme, not the ambient text colour.
+ *   - an explicit `color` prop still wins (e.g. c-select passes the primary role);
  *   - a PARENT that wants the spinner to TRACK its own colour passes
  *     `color="currentColor"` (c-switch's slider, c-loader's container do this),
  *     re-opening inheritance across the shadow boundary.
@@ -63,7 +63,7 @@ interface CSpinnerProps {
 }
 
 const props = withDefaults(defineProps<CSpinnerProps>(), {
-  color: 'var(--c-primary-600)',
+  color: 'var(--c-primary)',
   size: 24,
   width: 2,
 });

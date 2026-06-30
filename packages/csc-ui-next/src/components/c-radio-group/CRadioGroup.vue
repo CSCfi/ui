@@ -136,17 +136,17 @@ const radioGroup = tv({
   compoundVariants: [
     {
       class: {
-        message: 'text-[var(--c-error-600)]',
-        required: 'text-[var(--c-error-600)]',
-        ripple: 'text-[var(--c-error-600)]',
-        root: 'text-[var(--c-error-600)]',
+        message: 'text-error',
+        required: 'text-error',
+        ripple: 'text-error',
+        root: 'text-error',
       },
       disabled: false,
       error: true,
     },
     {
       class: {
-        message: 'text-[var(--c-error-600)]',
+        message: 'text-error',
       },
       disabled: true,
       error: true,
@@ -162,15 +162,15 @@ const radioGroup = tv({
     items: 'flex flex-wrap',
     label: 'text-left',
     message:
-      'flex items-start gap-1 px-3 text-xs leading-none min-h-4 text-[var(--c-text-system)]',
+      'flex items-start gap-1 px-3 text-xs leading-none min-h-4 text-on-surface-muted',
     messageIcon: 'fill-current h-4 w-4 relative -top-0.5 shrink-0',
     radio:
       'flex items-start relative cursor-pointer text-base select-none gap-1 leading-[1.2]',
     radioLabel: 'pt-3',
-    required: 'text-[var(--c-error-600)]',
+    required: 'text-error',
     // 42px circular ripple surface around the radio ring.
     ripple:
-      'inline-block relative h-[42px] w-[42px] min-w-[42px] rounded-full overflow-hidden text-[var(--c-primary-600)] transition-colors duration-200 ease-in-out',
+      'inline-block relative h-[42px] w-[42px] min-w-[42px] rounded-full overflow-hidden text-primary transition-colors duration-200 ease-in-out',
     // Material click ripple: an absolutely-positioned circle, always centred in
     // the 42px surface (which clips via overflow-hidden + rounded-full). Tweens
     // scale/opacity via the `transition` util (ADR-0004, no bespoke @keyframes).
@@ -192,8 +192,8 @@ const radioGroup = tv({
     disabled: {
       false: {},
       true: {
-        ripple: 'text-[var(--c-tertiary-500)]',
-        root: 'text-[var(--c-tertiary-500)] opacity-75 cursor-default',
+        ripple: 'text-on-surface-muted',
+        root: 'text-on-surface-muted opacity-75 cursor-default',
       },
     },
     error: {
@@ -446,7 +446,7 @@ onBeforeUnmount(() => {
 
 /* Hover tint on the ripple (skipped when the item is disabled). */
 .c-radio:not(.c-radio--disabled) .c-radio__ripple:hover {
-  background-color: rgba(var(--c-primary-rgb), 0.1);
+  background-color: color-mix(in srgb, var(--c-primary) 10%, transparent);
 }
 
 .c-radio input:focus {
@@ -454,11 +454,11 @@ onBeforeUnmount(() => {
 }
 
 .c-radio input:focus-visible + .c-radio__ripple {
-  outline: 2px var(--c-primary-600) solid;
+  outline: 2px var(--c-primary) solid;
 }
 
 .c-radio--error input:focus-visible + .c-radio__ripple {
-  outline-color: var(--c-error-600);
+  outline-color: var(--c-error);
 }
 
 /* Disabled item: dim the WHOLE item — the ring/dot AND the text label — and
@@ -467,21 +467,21 @@ onBeforeUnmount(() => {
  * variant does not reach. Matches the original `.c-radio--disabled` which set
  * colour + opacity on the whole `.c-radio`. The label text inherits this
  * `color`; the ripple needs its own override because its tv slot hardcodes
- * `text-primary-600`. Opacity lives only here (not also on the ripple) to avoid
+ * the primary role. Opacity lives only here (not also on the ripple) to avoid
  * double-dimming. */
 .c-radio--disabled {
-  color: var(--c-tertiary-500);
+  color: var(--c-on-surface-muted);
   cursor: default;
   opacity: 0.75;
 }
 
 .c-radio--disabled .c-radio__ripple {
-  color: var(--c-tertiary-500);
+  color: var(--c-on-surface-muted);
   cursor: default;
 }
 
 .c-radio--error:not(.c-radio--disabled) .c-radio__ripple {
-  color: var(--c-error-600);
+  color: var(--c-error);
 }
 
 /* Vertical slide + fade between hint and error messages. */

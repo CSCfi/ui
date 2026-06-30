@@ -89,7 +89,7 @@ const cSwitch = tv({
     input: 'h-0 opacity-0 w-0 absolute',
     inputWrap: 'h-5.5 relative w-11 self-start',
     label: 'self-center',
-    required: 'text-[var(--c-error-600)]',
+    required: 'text-error',
     // Track geometry: 22x44, pill radius, gap to label. The on/off colours and
     // handle position are sibling-driven in the escape-hatch below.
     root: 'inline-grid h-5.5 relative items-center gap-3 transform-gpu [backface-visibility:hidden]',
@@ -112,7 +112,7 @@ const cSwitch = tv({
     disabled: {
       false: {},
       true: {
-        root: 'text-[var(--c-tertiary-500)]',
+        root: 'text-on-surface-muted',
         slider: 'cursor-default',
       },
     },
@@ -230,9 +230,9 @@ const toggle = () => {
 /* OFF state: track transparent, border tertiary-600, handle colour
  * tertiary-600 (carried via `color`, inherited by the handle + spinner). */
 .c-switch__slider {
-  color: var(--c-tertiary-600);
+  color: var(--c-border-strong);
   background-color: transparent;
-  box-shadow: inset 0 0 0 2px var(--c-tertiary-600);
+  box-shadow: inset 0 0 0 2px var(--c-border-strong);
 }
 
 .c-switch__slider::before {
@@ -249,8 +249,8 @@ const toggle = () => {
 
 /* OFF + disabled: border transparent, handle tertiary-500. */
 .c-switch__slider--disabled {
-  color: var(--c-tertiary-500);
-  background-color: var(--c-tertiary-200);
+  color: var(--c-border-strong);
+  background-color: var(--c-surface-muted);
   box-shadow: none;
 }
 
@@ -265,9 +265,9 @@ const toggle = () => {
 
 /* ON state — sibling-driven. Track + border primary-600, handle white. */
 input:checked + .c-switch__slider {
-  color: var(--c-white);
-  background-color: var(--c-primary-600);
-  box-shadow: inset 0 0 0 2px var(--c-primary-600);
+  color: var(--c-on-primary);
+  background-color: var(--c-primary);
+  box-shadow: inset 0 0 0 2px var(--c-primary);
 }
 
 input:checked + .c-switch__slider::before,
@@ -277,9 +277,9 @@ input:checked + .c-switch__slider .c-switch__spinner {
 
 /* ON + disabled. */
 input:checked + .c-switch__slider--disabled {
-  color: var(--c-white);
-  background-color: var(--c-tertiary-400);
-  box-shadow: inset 0 0 0 2px var(--c-tertiary-400);
+  color: var(--c-surface);
+  background-color: var(--c-border-strong);
+  box-shadow: inset 0 0 0 2px var(--c-border-strong);
 }
 
 input:focus + .c-switch__slider {
@@ -287,7 +287,7 @@ input:focus + .c-switch__slider {
 }
 
 input:focus-visible + .c-switch__slider {
-  outline: 2px var(--c-primary-600) solid;
+  outline: 2px var(--c-primary) solid;
   outline-offset: 2px;
 }
 </style>
