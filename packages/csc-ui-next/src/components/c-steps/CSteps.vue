@@ -205,7 +205,7 @@ watch(() => props.value, handleDividers);
 }
 
 :host(:focus-visible) {
-  outline: 2px var(--c-primary-600) solid;
+  outline: 2px var(--c-primary) solid;
   outline-offset: 2px;
 }
 
@@ -223,13 +223,13 @@ watch(() => props.value, handleDividers);
 ::slotted(.divider) {
   height: 2px;
   flex: 1;
-  background-color: var(--c-tertiary-500);
+  background-color: var(--c-border-strong);
   width: var(--c-steps-divider-width);
   margin: var(--c-steps-divider-margin) !important;
 }
 
 ::slotted(.divider.complete) {
-  background-color: var(--c-primary-600);
+  background-color: var(--c-primary);
   height: 4px;
   margin-top: 9px;
 }

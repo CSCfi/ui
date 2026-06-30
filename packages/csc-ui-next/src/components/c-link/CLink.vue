@@ -24,15 +24,17 @@ import { computed } from 'vue';
  * the design tokens. Customization is via `::part(root)` (ADR-0006). The host
  * stays `display:contents`; the real box is the inner `a` (`part="root"`).
  *
- * Colour: `text-info-700` (was `--c-link-color` fallback `--c-info-700`); the
- * hover background reproduces the original `--c-accent-200` swap.
+ * Colour: the `link` semantic role (ADR-0010) — the purpose-built link token,
+ * which themes in dark mode. The pre-migration code used `--c-info-700` only
+ * because no dedicated link token existed in csc-ui-next yet; the hover
+ * background is the `link-subtle` role (was the `--c-accent-200` swap).
  */
 const link = tv({
   defaultVariants: {
     underline: false,
   },
   slots: {
-    root: 'inline-flex items-center justify-start gap-2 bg-transparent text-info-700 text-[length:inherit] no-underline cursor-pointer transition-colors duration-300 ease-in-out hover:bg-accent-200 outline-none focus-visible:outline-2 focus-visible:outline-info-700 focus-visible:outline-offset-4 focus-visible:rounded-[2px]',
+    root: 'inline-flex items-center justify-start gap-2 bg-transparent text-link text-[length:inherit] no-underline cursor-pointer transition-colors duration-300 ease-in-out hover:bg-link-subtle outline-none focus-visible:outline-2 focus-visible:outline-link focus-visible:outline-offset-4 focus-visible:rounded-[2px]',
   },
   variants: {
     underline: { true: { root: 'underline' } },

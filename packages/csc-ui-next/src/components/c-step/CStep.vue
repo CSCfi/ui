@@ -36,11 +36,11 @@ import { computed } from 'vue';
  * `:host(.mobile)` collapse live in the escape-hatch <style> below (ADR-0007);
  * everything else is utilities.
  *
- * Indicator colours:
- *  - incomplete dot: `inset` ring in tertiary-500 (current → primary-600 ring
- *    + a centred primary-600 `::before` pip).
- *  - complete: primary-600 filled circle with a white check (SVG stroke/fill
- *    use `currentColor`, set white via `text-white` on the container).
+ * Indicator colours (semantic roles, ADR-0010):
+ *  - incomplete dot: `inset` ring in `border-strong` (current → `primary` ring
+ *    + a centred `primary` `::before` pip).
+ *  - complete: `primary` filled circle with an `on-primary` check (SVG
+ *    stroke/fill use `currentColor`, set via `text-on-primary` on the container).
  */
 const step = tv({
   defaultVariants: {
@@ -52,9 +52,9 @@ const step = tv({
     checkSvg: 'relative size-full',
     // complete: primary-600 filled circle holding the white check SVG.
     complete:
-      'relative flex items-center justify-center box-border size-[22px] rounded-full bg-primary-600 p-1 text-white',
-    // incomplete: white circle with a 2px inset tertiary-500 ring.
-    dot: 'relative size-[22px] rounded-full bg-white shadow-[inset_0_0_0_2px_var(--c-tertiary-500)]',
+      'relative flex items-center justify-center box-border size-[22px] rounded-full bg-primary p-1 text-on-primary',
+    // incomplete: surface circle with a 2px inset border-strong ring.
+    dot: 'relative size-[22px] rounded-full bg-surface shadow-[inset_0_0_0_2px_var(--c-border-strong)]',
     indicator: 'box-border',
     label: 'px-2',
     root: 'relative grid justify-items-center p-0 gap-2 box-border',
@@ -63,7 +63,7 @@ const step = tv({
     current: {
       // current ring (primary-600, 3px inset) + centred pip via ::before.
       true: {
-        dot: "shadow-[inset_0_0_0_3px_var(--c-primary-600)] before:content-[''] before:absolute before:size-2.5 before:rounded-full before:bg-primary-600 before:top-1.5 before:left-1.5",
+        dot: "shadow-[inset_0_0_0_3px_var(--c-primary)] before:content-[''] before:absolute before:size-2.5 before:rounded-full before:bg-primary before:top-1.5 before:left-1.5",
       },
     },
   },

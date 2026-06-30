@@ -60,17 +60,17 @@ const tabButtons = tv({
     // button's measured box; `top-1 bottom-1` matches the root's `p-1` so it
     // covers the button vertically. Radius matches c-button's `rounded-xl`.
     indicator:
-      'pointer-events-none absolute left-0 -z-10 w-0 origin-left rounded-csc-md bg-primary-600 opacity-0 transition-[transform,width,opacity] duration-300 ease-out',
+      'pointer-events-none absolute left-0 -z-10 w-0 origin-left rounded-csc-md bg-primary opacity-0 transition-[transform,width,opacity] duration-300 ease-out',
     // `relative isolate` so the `-z-10` indicator is contained in this box's
     // stacking context and paints above the root background but below the
     // (transparent) buttons.
-    root: 'relative isolate flex auto-cols-fr rounded-csc-lg bg-primary-100',
+    root: 'relative isolate flex auto-cols-fr rounded-csc-lg bg-primary-subtle-hover',
   },
   variants: {
     disabled: {
       true: {
-        indicator: 'bg-tertiary-400',
-        root: 'bg-tertiary-200 pointer-events-none',
+        indicator: 'bg-border-strong',
+        root: 'bg-surface-muted pointer-events-none',
       },
     },
     size: {

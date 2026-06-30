@@ -139,7 +139,7 @@ const onClick = (event: MouseEvent, center = false) => {
 
 :host(:focus-visible) {
   border-radius: 4px;
-  outline: 2px var(--c-primary-600) solid;
+  outline: 2px var(--c-primary) solid;
   outline-offset: 2px;
 }
 
@@ -153,7 +153,7 @@ slot {
 
 :host(.c-tab) {
   align-items: center;
-  color: var(--c-primary-600);
+  color: var(--c-primary);
   cursor: pointer;
   display: inline-flex;
   font-weight: 600;
@@ -164,7 +164,7 @@ slot {
 }
 
 :host(.c-tab:hover) {
-  background-color: var(--c-primary-100);
+  background-color: var(--c-primary-subtle-hover);
 }
 
 :host(.c-tab--active:hover) {
@@ -172,7 +172,7 @@ slot {
 }
 
 :host(.c-tab--disabled) {
-  color: var(--c-tertiary-500);
+  color: var(--c-on-surface-muted);
   cursor: default;
   opacity: 0.75;
   pointer-events: none;

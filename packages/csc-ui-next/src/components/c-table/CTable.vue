@@ -180,41 +180,41 @@ table.c-table td {
 }
 
 table.c-table thead {
-  background-color: var(--c-white);
+  background-color: var(--c-surface);
   position: relative;
 }
 
 table.c-table thead th {
-  border-bottom: 2px solid var(--c-tertiary-200);
+  border-bottom: 2px solid var(--c-border);
   text-align: left;
 }
 
 table.c-table tbody {
   box-shadow:
-    inset 1px 0 0 0 var(--c-tertiary-200),
-    inset -1px 0 0 0 var(--c-tertiary-200),
-    inset 0 1px 0 0 var(--c-tertiary-200),
-    inset 0 -1px 0 0 var(--c-tertiary-200);
+    inset 1px 0 0 0 var(--c-border),
+    inset -1px 0 0 0 var(--c-border),
+    inset 0 1px 0 0 var(--c-border),
+    inset 0 -1px 0 0 var(--c-border);
 }
 
 @supports (-webkit-hyphens: none) {
   table.c-table tbody {
-    border: 1px solid var(--c-tertiary-200);
+    border: 1px solid var(--c-border);
   }
   table.c-table tbody tr {
-    border-bottom: 1px solid var(--c-tertiary-200);
+    border-bottom: 1px solid var(--c-border);
   }
 }
 
 table.c-table tbody tr {
-  box-shadow: inset 0 1px 0 0 var(--c-tertiary-200);
+  box-shadow: inset 0 1px 0 0 var(--c-border);
 }
 
 table.c-table tfoot {
-  background-color: var(--c-white);
+  background-color: var(--c-surface);
 }
 table.c-table tfoot tr {
-  box-shadow: inset 0 1px 0 0 var(--c-tertiary-200);
+  box-shadow: inset 0 1px 0 0 var(--c-border);
 }
 table.c-table tfoot td {
   min-height: 48px;
@@ -234,12 +234,12 @@ table.c-table td {
 table.c-table th {
   height: 48px;
   font-size: 14px;
-  color: var(--c-text-system);
+  color: var(--c-on-surface-muted);
 }
 
 table.c-table td {
   font-size: 16px;
-  color: var(--c-text-body);
+  color: var(--c-on-surface);
 }
 
 table.c-table td span.c-table__mobile-label {
@@ -255,7 +255,7 @@ table.c-table.c-table--mobile tbody {
 }
 table.c-table.c-table--mobile tbody tr {
   border-radius: 4px;
-  box-shadow: inset 0 0 0 1px var(--c-tertiary-200);
+  box-shadow: inset 0 0 0 1px var(--c-border);
 }
 @supports (-webkit-hyphens: none) {
   table.c-table.c-table--mobile tbody tr {
@@ -275,12 +275,12 @@ table.c-table.c-table--mobile td {
 }
 table.c-table.c-table--mobile td span.c-table__mobile-label {
   font-size: 14px;
-  color: var(--c-text-system);
+  color: var(--c-on-surface-muted);
   display: inline-block;
   text-align: start;
   padding-right: 8px;
 }
 table.c-table.c-table--mobile td:nth-of-type(even) {
-  background-color: rgba(var(--c-primary-rgb), 0.05);
+  background-color: color-mix(in srgb, var(--c-primary) 5%, transparent);
 }
 </style>

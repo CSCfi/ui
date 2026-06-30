@@ -695,14 +695,14 @@ onBeforeUnmount(() => {
   of the design tokens, the dead `--c-icon-button-border-radius` override was
   removed (c-icon-button owns its own radius now), and `--c-tabs-border-color` /
   `--c-tabs-indicator-color` were reduced to a `borderless` toggle var + the
-  tertiary-200 / primary-600 tokens. This :host overrides the global
+  `border` / `primary` semantic roles. This :host overrides the global
   `:host{display:contents}`; the per-type sheet wins as it is adopted last. The
   custom easing (ease-out-quart curve) intentionally differs from the shared
   `ease-standard`.
 -->
 <style>
 :host(.c-tabs) {
-  --_c-tabs-border-color: var(--c-tertiary-200);
+  --_c-tabs-border-color: var(--c-border);
   --_c-tabs-transition-speed: 0.001ms;
 
   display: block;
@@ -741,7 +741,7 @@ onBeforeUnmount(() => {
     scale var(--_c-tabs-transition-speed) cubic-bezier(0.075, 0.82, 0.165, 1),
     translate var(--_c-tabs-transition-speed)
       cubic-bezier(0.075, 0.82, 0.165, 1);
-  background: var(--c-primary-600);
+  background: var(--c-primary);
 }
 
 ::slotted(c-tab-buttons) {
@@ -812,7 +812,7 @@ onBeforeUnmount(() => {
     scale var(--_c-tabs-transition-speed) cubic-bezier(0.075, 0.82, 0.165, 1),
     translate var(--_c-tabs-transition-speed)
       cubic-bezier(0.075, 0.82, 0.165, 1);
-  background: var(--c-primary-600);
+  background: var(--c-primary);
 }
 
 :host(.c-tabs--vertical) ::slotted(c-tab) {

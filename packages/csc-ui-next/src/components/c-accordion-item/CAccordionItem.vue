@@ -71,7 +71,7 @@ const accordionItem = tv({
     contentWrapper:
       'grid grid-rows-[minmax(0,0fr)] overflow-hidden transition-[grid-template-rows] duration-300 ease-standard',
     header:
-      'bg-primary-200 min-h-[46px] text-primary-600 select-none grid grid-cols-[1fr_auto] gap-x-2 items-center px-3 rounded-csc-md cursor-pointer text-left m-0 [font:inherit] text-inherit border-0 w-full relative focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-600',
+      'bg-primary-subtle min-h-[46px] text-primary select-none grid grid-cols-[1fr_auto] gap-x-2 items-center px-3 rounded-csc-md cursor-pointer text-left m-0 [font:inherit] text-inherit border-0 w-full relative focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary',
     icon: 'h-6 text-2xl text-current flex items-center *:h-6 *:flex *:items-center',
     indicator:
       'flex items-center text-current -rotate-90 transition-transform duration-300 ease-standard',
@@ -92,7 +92,7 @@ const accordionItem = tv({
       true: { header: 'grid-cols-[auto_1fr_auto]' },
     },
     outlined: {
-      true: { root: 'ring-2 ring-inset ring-primary-200' },
+      true: { root: 'ring-2 ring-inset ring-primary-subtle' },
     },
   },
 });

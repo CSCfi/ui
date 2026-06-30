@@ -27,8 +27,8 @@ import { computed, onBeforeUnmount, onMounted, ref, useTemplateRef } from 'vue';
  * stamped parts (`root`, `card`, `image`, `content`) are the public
  * customization surface (ADR-0006). The old `--c-login-card-background-color` /
  * `--c-login-card-overlay-color` override indirection is dropped: the card
- * background comes from the `bg-white` token and the overlay tint from
- * `bg-primary-600`.
+ * background comes from the `surface` role and the overlay tint from
+ * the `primary` role.
  *
  * The host stays `display:contents` (global) and the box moves to the inner
  * `<article>` (`root`) which carries the background + radius; `card` is the
@@ -55,7 +55,7 @@ const loginCard = tv({
     content: 'flex w-full max-w-[85%] flex-col gap-6 p-[72px] mb-8',
     image:
       "absolute top-0 left-0 h-full w-full overflow-hidden rounded-csc-lg bg-cover [clip-path:url('#cLoginClipPath')]",
-    root: 'flex w-full rounded-csc-lg bg-white',
+    root: 'flex w-full rounded-csc-lg bg-surface',
   },
   variants: {
     hasImage: {
@@ -75,7 +75,7 @@ const loginCard = tv({
     overlay: {
       true: {
         image:
-          'bg-primary-600 [background-blend-mode:var(--_c-login-card-overlay-mode)]',
+          'bg-primary [background-blend-mode:var(--_c-login-card-overlay-mode)]',
       },
     },
   },

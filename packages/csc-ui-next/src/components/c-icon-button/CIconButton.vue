@@ -69,7 +69,7 @@ const iconButton = tv({
     // ---- default (no appearance flag) -----------------------------------
     {
       class: {
-        root: 'bg-primary-600 text-white hover:bg-primary-400 focus-visible:outline-primary-600',
+        root: 'bg-primary text-on-primary hover:bg-primary-hover focus-visible:outline-primary',
       },
       danger: false,
       ghost: false,
@@ -79,7 +79,7 @@ const iconButton = tv({
     },
     {
       class: {
-        root: 'bg-white text-primary-600 hover:bg-primary-200 focus-visible:outline-primary-600',
+        root: 'bg-inverse-surface text-inverse-primary hover:bg-inverse-primary/15 focus-visible:outline-inverse-on',
       },
       danger: false,
       ghost: false,
@@ -90,21 +90,21 @@ const iconButton = tv({
     // ---- danger ----------------------------------------------------------
     {
       class: {
-        root: 'bg-error-600 text-white hover:bg-error-400 focus-visible:outline-primary-600',
+        root: 'bg-error text-on-error hover:bg-error-hover focus-visible:outline-error',
       },
       danger: true,
     },
     // ---- ghost -----------------------------------------------------------
     {
       class: {
-        root: 'bg-primary-600/20 text-primary-600 hover:bg-primary-600/30 focus-visible:outline-primary-600',
+        root: 'bg-primary-subtle text-primary hover:bg-primary-subtle-hover focus-visible:outline-primary',
       },
       ghost: true,
       inverted: false,
     },
     {
       class: {
-        root: 'bg-white/20 text-white hover:bg-white/30 focus-visible:outline-primary-600',
+        root: 'bg-inverse-on/20 text-inverse-on hover:bg-inverse-on/30 focus-visible:outline-inverse-on',
       },
       ghost: true,
       inverted: true,
@@ -112,14 +112,14 @@ const iconButton = tv({
     // ---- text ------------------------------------------------------------
     {
       class: {
-        root: 'bg-transparent text-primary-600 hover:bg-primary-100 focus-visible:outline-primary-600',
+        root: 'bg-transparent text-primary hover:bg-primary-subtle-hover focus-visible:outline-primary',
       },
       inverted: false,
       text: true,
     },
     {
       class: {
-        root: 'bg-transparent text-white hover:bg-white/20 focus-visible:outline-primary-600',
+        root: 'bg-transparent text-inverse-on hover:bg-inverse-on/30 focus-visible:outline-inverse-on',
       },
       inverted: true,
       text: true,
@@ -127,14 +127,14 @@ const iconButton = tv({
     // ---- outlined --------------------------------------------------------
     {
       class: {
-        root: 'bg-transparent text-primary-600 ring-2 ring-inset ring-primary-600 hover:bg-primary-600/10 focus-visible:outline-primary-600',
+        root: 'bg-transparent text-primary ring-2 ring-inset ring-primary hover:bg-primary-subtle focus-visible:outline-primary',
       },
       inverted: false,
       outlined: true,
     },
     {
       class: {
-        root: 'bg-transparent text-white ring-2 ring-inset ring-white hover:bg-white/20 focus-visible:outline-primary-600',
+        root: 'bg-transparent text-inverse-on ring-2 ring-inset ring-inverse-on hover:bg-inverse-on/30 focus-visible:outline-inverse-on',
       },
       inverted: true,
       outlined: true,
@@ -144,7 +144,7 @@ const iconButton = tv({
     // compoundVariants in source order; last-matching wins). One per appearance,
     // mirroring c-button's disabled palette.
     {
-      class: { root: 'bg-tertiary-100 text-tertiary-600' },
+      class: { root: 'bg-surface-muted text-on-surface-muted' },
       danger: false,
       disabled: true,
       ghost: false,
@@ -153,7 +153,7 @@ const iconButton = tv({
       text: false,
     },
     {
-      class: { root: 'bg-tertiary-100 text-tertiary-500' },
+      class: { root: 'bg-inverse-on/10 text-inverse-on/40' },
       danger: false,
       disabled: true,
       ghost: false,
@@ -162,30 +162,30 @@ const iconButton = tv({
       text: false,
     },
     {
-      class: { root: 'bg-tertiary-100 text-tertiary-600' },
+      class: { root: 'bg-surface-muted text-on-surface-muted' },
       danger: true,
       disabled: true,
     },
     {
-      class: { root: 'bg-tertiary-100 text-tertiary-600' },
+      class: { root: 'bg-surface-muted text-on-surface-muted' },
       disabled: true,
       ghost: true,
       inverted: false,
     },
     {
-      class: { root: 'bg-white/5 text-tertiary-400' },
+      class: { root: 'bg-inverse-on/10 text-inverse-on/40' },
       disabled: true,
       ghost: true,
       inverted: true,
     },
     {
-      class: { root: 'bg-transparent text-tertiary-400' },
+      class: { root: 'bg-transparent text-on-surface-muted' },
       disabled: true,
       text: true,
     },
     {
       class: {
-        root: 'bg-transparent text-tertiary-500 ring-2 ring-inset ring-tertiary-400',
+        root: 'bg-transparent text-on-surface-muted ring-2 ring-inset ring-border',
       },
       disabled: true,
       inverted: false,
@@ -193,7 +193,7 @@ const iconButton = tv({
     },
     {
       class: {
-        root: 'bg-transparent text-tertiary-400 ring-2 ring-inset ring-tertiary-400',
+        root: 'bg-transparent text-inverse-on/40 ring-2 ring-inset ring-inverse-on/40',
       },
       disabled: true,
       inverted: true,
@@ -211,7 +211,7 @@ const iconButton = tv({
   },
   slots: {
     badge:
-      'absolute -top-1 -right-1 z-[2] min-w-[18px] h-[18px] px-1 inline-flex items-center justify-center rounded-full border-2 border-white bg-warning-600 text-white text-[11px] leading-[14px] font-semibold pointer-events-none',
+      'absolute -top-1 -right-1 z-[2] min-w-[18px] h-[18px] px-1 inline-flex items-center justify-center rounded-full border-2 border-surface bg-warning text-on-warning text-[11px] leading-[14px] font-semibold pointer-events-none',
     inner:
       'relative flex items-center justify-center size-full inset-0 overflow-hidden transform-gpu',
     ripple:

@@ -15,8 +15,8 @@ import { computed } from 'vue';
 /**
  * Styling lives entirely in this `tailwind-variants` config (ADR-0004). The old
  * `--c-login-button-*` indirection vars are dropped and the card is authored
- * directly against design tokens (`bg-white`, `tertiary-*`, `primary-600`,
- * `--c-text-system`). The host stays `display:contents` (global); the anchor is
+ * directly against the semantic design tokens (`bg-surface`, `border`,
+ * `primary`, `on-surface-muted`). The host stays `display:contents` (global); the anchor is
  * the `root` box. Consumer customization is via the stamped parts (ADR-0006).
  *
  * Hover and focus-visible states are authored as `hover:`/`focus-visible:`
@@ -26,9 +26,8 @@ import { computed } from 'vue';
 const loginButton = tv({
   slots: {
     image: 'place-self-center max-h-30 max-w-50 px-6 py-2',
-    root: 'grid grid-rows-[1fr_auto] grid-cols-1 h-full min-h-42 rounded-csc-md border border-solid overflow-hidden border-tertiary-200 bg-white text-[var(--c-text-system)] text-center no-underline cursor-pointer outline outline-1 outline-transparent hover:border-primary-600 hover:outline-primary-600 focus-visible:outline-2 focus-visible:outline-primary-600 focus-visible:outline-offset-2',
-    title:
-      'bg-tertiary-100 p-1 text-sm shadow-[0_-1px_0_0_var(--c-tertiary-200)]',
+    root: 'grid grid-rows-[1fr_auto] grid-cols-1 h-full min-h-42 rounded-csc-md border border-solid overflow-hidden border-border bg-surface text-on-surface-muted text-center no-underline cursor-pointer outline outline-1 outline-transparent hover:border-primary hover:outline-primary focus-visible:outline-2 focus-visible:outline-primary focus-visible:outline-offset-2',
+    title: 'bg-surface-muted p-1 text-sm shadow-[0_-1px_0_0_var(--c-border)]',
   },
 });
 
