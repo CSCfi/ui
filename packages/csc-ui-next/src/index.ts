@@ -10,6 +10,7 @@ import CCardTitle from './components/c-card-title/CCardTitle.vue';
 import CCard from './components/c-card/CCard.vue';
 import CCheckbox from './components/c-checkbox/CCheckbox.vue';
 import CCscLogo from './components/c-csc-logo/CCscLogo.vue';
+import CDivider from './components/c-divider/CDivider.vue';
 import CDropdown from './components/c-dropdown/CDropdown.vue';
 import CIconButton from './components/c-icon-button/CIconButton.vue';
 import CIcon from './components/c-icon/CIcon.vue';
@@ -26,6 +27,9 @@ import CLoginCardContent from './components/c-login-card-content/CLoginCardConte
 import CLoginCardTitle from './components/c-login-card-title/CLoginCardTitle.vue';
 import CLoginCard from './components/c-login-card/CLoginCard.vue';
 import CMain from './components/c-main/CMain.vue';
+import CMenuItem from './components/c-menu-item/CMenuItem.vue';
+import CMenuLabel from './components/c-menu-label/CMenuLabel.vue';
+import CMenu from './components/c-menu/CMenu.vue';
 import CMessage from './components/c-message/CMessage.vue';
 import CModal from './components/c-modal/CModal.vue';
 import CNavigationButton from './components/c-navigation-button/CNavigationButton.vue';
@@ -142,6 +146,12 @@ const components: Array<[string, unknown]> = [
   ['c-option', COption],
   ['c-dropdown', CDropdown],
   ['c-select', CSelect],
+  // Menu stack: leaf elements register before c-menu so item/label/divider
+  // tags are defined when c-menu's slotted content upgrades.
+  ['c-divider', CDivider],
+  ['c-menu-label', CMenuLabel],
+  ['c-menu-item', CMenuItem],
+  ['c-menu', CMenu],
 ];
 
 /**
@@ -233,4 +243,9 @@ export const tailwindVariantTags: ReadonlyArray<string> = [
   'c-dropdown',
   'c-modal',
   'c-table',
+  // Wave E — menu family (Popover API + CSS anchor positioning, ADR-0008).
+  'c-divider',
+  'c-menu-label',
+  'c-menu-item',
+  'c-menu',
 ];

@@ -23,6 +23,28 @@ _Avoid_: Binding, integration, shim
 **`v-control`**:
 Legacy Vue directive bridging Stencil's `changeValue` event to Vue's v-model. Made obsolete by `csc-ui-next`'s native Vue v-model contract. Do not extend; do not depend on for new code.
 
+### Menu
+
+**Menu** (`c-menu`):
+A **command menu** — a transient panel of actions/navigation choices revealed from a trigger (the WAI-ARIA menu-button pattern). Items are authored declaratively as slotted markup. Activating a leaf item fires a one-off `select` event and closes the menu; the menu holds **no persistent selected value**. This is **not** the same as `c-dropdown` (below) — different role, different events.
+_Avoid_: Dropdown (that is a distinct value-selection component), popup, context menu, listbox
+
+**Dropdown** (`c-dropdown`):
+The **value-selection** surface behind `c-select` / `c-autocomplete`: a `role="listbox"` of options that has a current value and emits `update:value` / `change`. A menu, by contrast, is a list of `role="menuitem"` commands. Keep the two distinct — "the dropdown's select event" is a category error; menus emit `select`, dropdowns emit `update:value`.
+_Avoid_: Menu (a menu is the command-list component; a dropdown is the value picker)
+
+**Trigger**:
+The consumer-supplied element (typically a `c-button`) projected into a `c-menu`'s `trigger` slot that toggles the menu open/closed. The menu mirrors `aria-haspopup` / `aria-expanded` onto it but does not own it.
+_Avoid_: Activator, anchor (the *anchor* is the internal positioning reference, a separate concept), toggle button
+
+**Submenu**:
+A nested second-level (or deeper) menu owned by a `c-menu-item`, authored via that item's `submenu` slot and revealed beside its parent. Opening a submenu does not select anything; it expands.
+_Avoid_: Nested dropdown, flyout, child menu
+
+**Separator** (`c-divider`):
+A general-purpose `role="separator"` line dividing groups of content. Used to partition menu sections but not menu-specific. A **menu label** (`c-menu-label`) is the complementary heading for a group of items; a separator is the line between groups.
+_Avoid_: Spacer (`c-spacer` is a flex-grow layout filler, not a visible rule), rule, hr
+
 ### Styling (`csc-ui-next`)
 
 **Part**:
