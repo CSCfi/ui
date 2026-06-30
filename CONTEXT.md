@@ -67,6 +67,28 @@ _Avoid_: Host (the host is the custom element; the root element is its first chi
 The per-component prop accepting an object keyed by **part** name, whose values are Tailwind class strings. Values **merge** with the component's default classes with **consumer-wins** conflict resolution (via `tailwind-variants`, which bundles `tailwind-merge`) — they augment, not replace, the defaults. Keyed only by public **parts** (not internal slots). Each component's base classes, variants, and compound variants are authored as a `tailwind-variants` config whose `slots` are the component's parts plus its internal regions.
 _Avoid_: classes, classNames, ui, parts, styles
 
+### Theming & dark mode (`csc-ui-next`)
+
+**Palette token**:
+A raw brand-ramp custom property — one hue at one fixed step, e.g. `--c-primary-600`, `--c-white`. Mode-independent: its value is a brand constant that does **not** change between light and dark. Components must **not** author directly against palette tokens for any colour that flips between modes; those go through a **semantic token**. (Source of truth is the style-dictionary palette, being duplicated into `csc-ui-next`'s own token pipeline — see ADR.)
+_Avoid_: Colour token, theme token (a palette token is the mode-independent ramp value; a semantic token is the mode-dependent role)
+
+**Semantic token**:
+A role-named custom property whose value **resolves to a different palette token in light vs dark mode** — e.g. `--c-surface`, `--c-on-surface`, `--c-primary`. The CSS variable carries the `--c-` namespace prefix (like palette tokens, to avoid clobbering consumer custom properties); the Tailwind utility drops it (`bg-surface`, `text-on-surface`, `bg-primary`). This is the layer dark mode switches; components author against the semantic utilities so a mode change re-themes them with no per-component dark variants. Defined at the document `:root` (so it inherits across shadow boundaries) and mapped into Tailwind via `@theme inline` (`--color-surface: var(--c-surface)`) so the utility resolves inside shadow roots. The role set keeps the existing CSC brand/status names (`primary`, `secondary`, `accent`, `success`, `info`, `warning`, `error`, `link`) — now mode-aware — and **adds** neutral roles (the **surface ladder**, `on-*` foregrounds, `border`, `ring`). **Direct palette-step utilities (`bg-primary-600`, `text-white`) are forbidden in component SFCs** (CI-guarded); every component colour flows through a semantic token, so a stray palette-step utility is a build failure rather than a latent dark-mode bug.
+_Avoid_: Role token, alias token, palette token (a semantic token points *at* a palette token; it is not itself a ramp value)
+
+**Surface ladder**:
+The three mode-aware neutral background roles ordered by elevation: `surface` (page background), `surface-raised` (cards/panels), `surface-overlay` (floating layers — popovers, menus, modals, toasts). In light mode they are all near-white and depth reads from shadow; in dark mode each step is progressively lighter so elevation reads **without** relying on shadows. Each pairs with an **`on-` token** for its foreground.
+_Avoid_: Layer, z-level, elevation token (the ladder *is* the elevation model; don't introduce a parallel term)
+
+**`on-` token** (foreground role):
+A semantic token naming the **content colour that sits on** a given surface or fill — `on-surface` (text/icons on `surface`), `on-primary` (label on a `primary` fill), etc. Its light/dark values flip to preserve contrast (e.g. `on-primary` is white on the light-mode `primary` fill but dark on the lighter dark-mode `primary` fill). The reason a single mode-independent text colour is insufficient and the semantic layer is required.
+_Avoid_: Foreground, contrast colour, text token (use `on-<role>`)
+
+**Theme mode**:
+The light-or-dark state that selects which palette tokens the **semantic tokens** resolve to. Controlled by the consumer at the document root and read by the whole component tree through token inheritance; an explicit consumer choice wins over the user's OS preference, which is the fallback when no explicit choice is set. _Light_ is the default/unset state.
+_Avoid_: Theme (a "theme" implies a full named palette swap; a mode is specifically the light/dark axis), colour scheme, skin
+
 ### Flagged ambiguities
 
 - **"Vue version"** is ambiguous: it can mean (a) the `@cscfi/csc-ui-vue` directive, (b) a component implemented in Vue inside `csc-ui-next`, or (c) the Vue.js framework version. Prefer **"`csc-ui-next` component"** for (b), **"`v-control` directive"** for (a), and **"Vue 3"/"Vue 2"** explicitly for (c).
