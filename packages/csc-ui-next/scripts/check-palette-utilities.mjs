@@ -61,6 +61,20 @@ const FORBIDDEN = new RegExp(
   'g',
 );
 
+// Palette steps also leak in two non-utility forms the utility regex can't see,
+// both of which equally fail to theme in dark mode:
+//   - arbitrary-value utilities: text-[var(--c-error-600)], bg-[var(--c-primary-600)]
+//   - escape-hatch <style> refs:  color: var(--c-primary-600); rgba(var(--c-primary-rgb),…)
+// Both contain a literal `var(--c-<hue>-<step>)` / `var(--c-white|black)` /
+// `var(--c-…-rgb)`, so one var-level regex catches them. Semantic tokens
+// (var(--c-primary), var(--c-on-surface), var(--c-primary-subtle),
+// var(--c-border-strong), …) never match: a hue must be followed by a numeric
+// step or `rgb`, which the semantic role names never are.
+const FORBIDDEN_VAR = new RegExp(
+  `var\\(--c-(?:(?:${HUES.join('|')})-(?:\\d+|rgb)|(?:white|black)(?:-rgb)?)\\)`,
+  'g',
+);
+
 /** Blank out comments, preserving newlines so reported line numbers stay true. */
 const stripComments = (src) =>
   src
@@ -83,8 +97,11 @@ for (const file of vueFiles) {
   const hits = [];
 
   lines.forEach((line, i) => {
-    const matches = line.match(FORBIDDEN);
-    if (matches) hits.push({ line: i + 1, tokens: [...new Set(matches)] });
+    const matches = [
+      ...(line.match(FORBIDDEN) ?? []),
+      ...(line.match(FORBIDDEN_VAR) ?? []),
+    ];
+    if (matches.length) hits.push({ line: i + 1, tokens: [...new Set(matches)] });
   });
 
   if (hits.length) {
@@ -99,7 +116,7 @@ for (const file of vueFiles) {
 }
 
 console.log(
-  `\n${hitCount} palette-step utilit${hitCount === 1 ? 'y' : 'ies'} in ${fileCount} of ${vueFiles.length} SFCs.`,
+  `\n${hitCount} palette-step reference${hitCount === 1 ? '' : 's'} in ${fileCount} of ${vueFiles.length} SFCs.`,
 );
 
 if (hitCount === 0) {
