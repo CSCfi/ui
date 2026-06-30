@@ -136,6 +136,7 @@
   --color-on-surface: var(--c-on-surface);
   --color-on-surface-muted: var(--c-on-surface-muted);
   --color-border: var(--c-border);
+  --color-border-strong: var(--c-border-strong);
   --color-ring: var(--c-ring);
 
   --color-primary: var(--c-primary);

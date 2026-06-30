@@ -77,7 +77,7 @@ const slider = tv({
     // An active tick is white, but only when ticks are actually rendered.
     {
       active: true,
-      class: { tick: 'bg-white' },
+      class: { tick: 'bg-on-primary' },
       ticks: true,
     },
   ],
@@ -121,7 +121,7 @@ const slider = tv({
       true: { root: 'pb-6', tick: 'c-slider__tick--labels' },
     },
     ticks: {
-      true: { tick: 'c-slider__tick--ticks bg-tertiary-500' },
+      true: { tick: 'c-slider__tick--ticks bg-border-strong' },
     },
   },
 });
@@ -263,7 +263,7 @@ onMounted(() => {
 }
 
 .c-slider__input:focus-visible {
-  --_c-slider-outline: 2px var(--c-primary-600) solid;
+  --_c-slider-outline: 2px var(--c-primary) solid;
   outline: none;
 }
 
@@ -284,7 +284,7 @@ onMounted(() => {
 
 .c-slider__input::-webkit-slider-thumb {
   appearance: none;
-  background-color: var(--c-primary-600);
+  background-color: var(--c-primary);
   border-radius: 100%;
   cursor: pointer;
   height: 24px;
@@ -302,12 +302,12 @@ onMounted(() => {
 
 .c-slider__input::-webkit-slider-thumb:hover {
   box-shadow: 0 0 0 var(--_c-slider-thumb-shadow-size)
-    rgba(var(--c-primary-rgb), 0.2);
+    color-mix(in srgb, var(--c-primary) 20%, transparent);
 }
 
 .c-slider__input::-moz-range-thumb {
   appearance: none;
-  background-color: var(--c-primary-600);
+  background-color: var(--c-primary);
   border-radius: 100%;
   border: 0;
   cursor: pointer;
@@ -324,11 +324,11 @@ onMounted(() => {
 }
 
 .c-slider__input[disabled]::-webkit-slider-thumb {
-  background-color: var(--c-tertiary-500);
+  background-color: var(--c-border-strong);
 }
 
 .c-slider__input[disabled]::-moz-range-thumb {
-  background-color: var(--c-tertiary-500);
+  background-color: var(--c-border-strong);
 }
 
 .c-slider__input[disabled] {
@@ -339,16 +339,16 @@ onMounted(() => {
 .c-slider__ticks {
   background: linear-gradient(
     to right,
-    var(--c-primary-500) calc(1% * var(--_c-slider-position)),
-    rgba(var(--c-tertiary-rgb), 0.2) calc(1% * var(--_c-slider-position))
+    var(--c-primary) calc(1% * var(--_c-slider-position)),
+    var(--c-surface-muted) calc(1% * var(--_c-slider-position))
   );
 }
 
 .c-slider__ticks--disabled {
   background: linear-gradient(
     to right,
-    var(--c-tertiary-400) calc(1% * var(--_c-slider-position)),
-    rgba(var(--c-tertiary-rgb), 0.2) calc(1% * var(--_c-slider-position))
+    var(--c-border-strong) calc(1% * var(--_c-slider-position)),
+    var(--c-surface-muted) calc(1% * var(--_c-slider-position))
   );
 }
 
@@ -376,10 +376,10 @@ onMounted(() => {
 /* Tooltip callout: label box + arrow, a content:attr() pseudo with layout. */
 .c-slider__tooltip::before {
   align-items: center;
-  background: var(--c-primary-900);
+  background: var(--c-on-surface);
   border-radius: 4px;
   bottom: 100%;
-  color: var(--c-white);
+  color: var(--c-surface);
   content: attr(data-tooltip);
   display: inline-flex;
   flex-wrap: nowrap;
@@ -398,7 +398,7 @@ onMounted(() => {
 .c-slider__tooltip::after {
   border-left: 6px solid transparent;
   border-right: 6px solid transparent;
-  border-top: 6px solid var(--c-primary-900);
+  border-top: 6px solid var(--c-on-surface);
   content: '';
   height: 0;
   left: 50%;

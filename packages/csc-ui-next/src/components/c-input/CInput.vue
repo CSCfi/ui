@@ -137,7 +137,7 @@ const input = tv({
     control: 'flex flex-col gap-2 relative min-w-0 w-full',
     field: 'c-input__field flex flex-auto items-center gap-2 relative',
     fieldset:
-      'c-input__fieldset absolute inset-0 m-0 py-0 pr-0 pl-2 rounded-csc-md border border-solid border-tertiary-600 bg-transparent pointer-events-none [border-collapse:collapse] [transition:border-color_0.15s_cubic-bezier(0.25,0.8,0.25,1)]',
+      'c-input__fieldset absolute inset-0 m-0 py-0 pr-0 pl-2 rounded-csc-md border border-solid border-border-strong bg-transparent pointer-events-none [border-collapse:collapse] [transition:border-color_0.15s_cubic-bezier(0.25,0.8,0.25,1)]',
     // The resting transform (translateX preslot shift + the Noto-metric
     // vertical nudge) lives in the escape-hatch <style>: it reads the
     // underscored runtime var `--_c-input-label-position`, which a Tailwind
@@ -155,19 +155,19 @@ const input = tv({
     // appears — matching the original c-message, which always reserved its
     // min-height. The actual hint/error line (`messageLine`) fades in/out inside.
     message:
-      'c-input__message px-3 text-xs leading-none min-h-4 text-[var(--c-text-system)]',
+      'c-input__message px-3 text-xs leading-none min-h-4 text-on-surface-muted',
     messageIcon: 'fill-current size-4 shrink-0 relative -top-0.5',
     // Inner hint/error line: lays out the (optional) error icon + text.
     messageLine: 'flex items-start gap-1',
     post: 'c-input__post inline-flex items-center empty:hidden',
     pre: 'c-input__pre inline-flex items-center empty:hidden',
-    required: 'text-error-600',
+    required: 'text-error',
     // `c-input` is the DOM hook the escape-hatch <style> still uses for the
     // legend-notch width + the floating-label transform. The base inactive
     // colour lives here too (the slotted input + labels inherit it); the
     // active/error variants below override it, with tailwind-merge picking the
     // winner so no `!important` is needed.
-    root: 'c-input flex flex-col items-stretch rounded text-base max-w-full text-left text-tertiary-600',
+    root: 'c-input flex flex-col items-stretch rounded text-base max-w-full text-left text-on-surface-muted',
     slot: 'c-input__slot relative flex items-stretch min-h-11 px-3 rounded-csc-md bg-transparent cursor-text transition-all duration-300 ease-standard',
     visuallyHidden:
       'absolute w-px h-px m-[-1px] p-0 overflow-hidden whitespace-nowrap border-0 [clip:rect(0_0_0_0)]',
@@ -180,8 +180,8 @@ const input = tv({
     // the `data-lifted` hook in the escape-hatch <style>.
     active: {
       true: {
-        fieldset: 'border-2 border-primary-600',
-        root: 'text-primary-600',
+        fieldset: 'border-2 border-primary',
+        root: 'text-primary',
       },
     },
     disabled: {
@@ -193,9 +193,9 @@ const input = tv({
     // fieldset keeps active's 2px width when both apply, matching the original.
     error: {
       true: {
-        fieldset: 'border-error-600',
-        message: 'text-error-600',
-        root: 'text-error-600',
+        fieldset: 'border-error',
+        message: 'text-error',
+        root: 'text-error',
       },
     },
     labelOnTop: {
@@ -206,7 +206,7 @@ const input = tv({
     // isn't rendered in shadow mode — see the template `v-if="!shadow"`).
     shadow: {
       true: {
-        slot: 'bg-white [box-shadow:rgba(0,0,0,0.15)_0_5px_15px_0] focus-within:outline-2 focus-within:outline-solid focus-within:outline-primary-600',
+        slot: 'bg-surface [box-shadow:rgba(0,0,0,0.15)_0_5px_15px_0] focus-within:outline-2 focus-within:outline-solid focus-within:outline-primary',
       },
     },
     textarea: {
@@ -453,7 +453,7 @@ watch(
 :host {
   display: block;
   font-family: var(--c-font-family);
-  color: var(--c-text-body);
+  color: var(--c-on-surface);
 }
 
 /* ---- slotted input / textarea (we don't own the element) -------------- */
@@ -468,7 +468,7 @@ watch(
   font-size: 16px;
   line-height: 20px;
   color: inherit;
-  caret-color: var(--c-primary-600);
+  caret-color: var(--c-primary);
   flex: 1 1 auto;
   min-width: 0;
   width: 100%;
@@ -485,7 +485,7 @@ watch(
 
 ::slotted(input)::placeholder,
 ::slotted(textarea)::placeholder {
-  color: var(--c-tertiary-400);
+  color: var(--c-on-surface-muted);
   opacity: 1;
 }
 

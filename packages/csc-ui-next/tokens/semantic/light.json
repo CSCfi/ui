@@ -8,6 +8,7 @@
   "on-surface": "primary-900",
   "on-surface-muted": "tertiary-500",
   "border": "tertiary-200",
+  "border-strong": "tertiary-600",
   "ring": "primary-600",
 
   "primary": "primary-600",

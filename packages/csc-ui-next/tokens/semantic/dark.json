@@ -8,6 +8,7 @@
   "on-surface": "white",
   "on-surface-muted": "tertiary-300",
   "border": "tertiary-700",
+  "border-strong": "tertiary-500",
   "ring": "primary-400",
 
   "primary": "primary-300",

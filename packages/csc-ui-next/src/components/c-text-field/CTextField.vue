@@ -157,12 +157,12 @@ const textField = tv({
     // their own `color: var(--_c-input-text-color)` for exactly this reason.
     // `disabled:` matches the original's tertiary disabled value colour.
     input:
-      'c-text-field__input bg-transparent border-0 outline-none m-0 [font:inherit] text-base leading-5 text-[var(--c-text-body)] disabled:text-[var(--c-tertiary-500)] [caret-color:var(--c-primary-600)] flex-auto min-w-0 w-full max-w-full py-2 max-h-8',
+      'c-text-field__input bg-transparent border-0 outline-none m-0 [font:inherit] text-base leading-5 text-on-surface disabled:text-on-surface-muted [caret-color:var(--c-primary)] flex-auto min-w-0 w-full max-w-full py-2 max-h-8',
     post: 'inline-flex items-center gap-1',
     textarea:
-      'c-text-field__textarea bg-transparent border-0 outline-none [font:inherit] text-base leading-5 text-[var(--c-text-body)] disabled:text-[var(--c-tertiary-500)] [caret-color:var(--c-primary-600)] flex-auto min-w-0 w-full max-w-full m-0 pt-3 pr-3 pb-2 pl-0 min-h-11 resize-y whitespace-pre-wrap',
+      'c-text-field__textarea bg-transparent border-0 outline-none [font:inherit] text-base leading-5 text-on-surface disabled:text-on-surface-muted [caret-color:var(--c-primary)] flex-auto min-w-0 w-full max-w-full m-0 pt-3 pr-3 pb-2 pl-0 min-h-11 resize-y whitespace-pre-wrap',
     toggle:
-      'inline-flex items-center justify-center size-7 p-0 border-none bg-transparent text-[inherit] cursor-pointer rounded-full transition-colors duration-200 ease-in-out hover:not-disabled:bg-primary-100 focus:outline-none focus-visible:outline-2 focus-visible:outline-solid focus-visible:outline-primary-600 focus-visible:outline-offset-2 disabled:cursor-not-allowed disabled:opacity-50',
+      'inline-flex items-center justify-center size-7 p-0 border-none bg-transparent text-[inherit] cursor-pointer rounded-full transition-colors duration-200 ease-in-out hover:not-disabled:bg-primary-subtle-hover focus:outline-none focus-visible:outline-2 focus-visible:outline-solid focus-visible:outline-primary focus-visible:outline-offset-2 disabled:cursor-not-allowed disabled:opacity-50',
     toggleIcon: 'size-5',
   },
 });

@@ -79,7 +79,7 @@ const otp = tv({
   },
   slots: {
     input:
-      'rounded-csc-md border-0 text-center w-full min-w-6 max-w-[42px] h-14 text-2xl text-[var(--c-text-body)] ring-1 ring-inset ring-tertiary-500 outline-none focus:ring-2 focus:ring-inset focus:ring-primary-600',
+      'rounded-csc-md border-0 text-center w-full min-w-6 max-w-[42px] h-14 text-2xl text-on-surface ring-1 ring-inset ring-border-strong outline-none focus:ring-2 focus:ring-inset focus:ring-primary',
     message: '',
     // `display: inline-grid` with a column-per-digit auto track (the
     // `grid-auto-columns: minmax(auto, 42px)` original). The c-message spans
@@ -94,7 +94,7 @@ const otp = tv({
     },
     valid: {
       false: {
-        input: 'ring-error-600 focus:ring-error-600',
+        input: 'ring-error focus:ring-error',
       },
     },
   },
