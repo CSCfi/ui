@@ -60,14 +60,14 @@ const listItem = tv({
       'absolute rounded-full bg-current pointer-events-none transition-[transform,opacity] duration-[600ms] ease-out',
     ripples:
       'absolute inset-0 overflow-hidden pointer-events-none rounded-[inherit]',
-    root: 'flex items-center gap-4 min-h-[42px] p-3 w-full relative overflow-hidden rounded text-[var(--c-text-system)] no-underline',
+    root: 'flex items-center gap-4 min-h-[42px] p-3 w-full relative overflow-hidden rounded text-on-surface-muted no-underline',
     // Layout-neutral wrapper: display:contents so the wrapped <slot> is itself
     // the flex item of `root`. Only exists so v-show can collapse an empty
     // named slot (Vue forbids v-show on a <slot> outlet directly).
     slotWrap: 'contents',
   },
   variants: {
-    active: { true: { root: 'text-primary-600' } },
+    active: { true: { root: 'text-primary' } },
   },
 });
 
@@ -207,16 +207,16 @@ slot:not([name]) {
 }
 
 :host(:focus-visible) {
-  outline: 2px var(--c-primary-600) solid;
+  outline: 2px var(--c-primary) solid;
   outline-offset: 2px;
 }
 
 :host(.c-list-item--hoverable:hover) {
-  background-color: rgba(var(--c-primary-rgb), 0.2);
+  background-color: var(--c-primary-subtle-hover);
 }
 
 :host(.c-list-item--active) {
-  background-color: rgba(var(--c-primary-rgb), 0.1);
+  background-color: var(--c-primary-subtle);
 }
 
 :host(.c-list-item--ripple) {
@@ -224,7 +224,7 @@ slot:not([name]) {
 }
 
 :host([disabled]) {
-  background-color: rgba(var(--c-tertiary-rgb), 0.05);
+  background-color: var(--c-surface-muted);
   cursor: default;
   opacity: 0.75;
   pointer-events: none;
@@ -235,6 +235,6 @@ slot:not([name]) {
  * c-icon's `--c-icon-color` override hook (it inherits across the shadow
  * boundary and wins over the prop fallback). */
 :host([disabled]) ::slotted(c-icon) {
-  --c-icon-color: var(--c-tertiary-400) !important;
+  --c-icon-color: var(--c-on-surface-muted) !important;
 }
 </style>

@@ -79,7 +79,7 @@ const item = tv({
     // re-assert the neutral disabled colour over the danger red.
     {
       class: {
-        root: 'text-[var(--c-text-system)] hover:text-[var(--c-text-system)]',
+        root: 'text-on-surface-muted hover:text-on-surface-muted',
       },
       danger: true,
       disabled: true,
@@ -93,9 +93,9 @@ const item = tv({
     // shortcut hint) with `ml-auto` / `justify-between`, instead of it sticking
     // to the label.
     content: 'flex flex-1 items-center gap-2 min-w-0',
-    root: 'flex items-center justify-between gap-3 min-h-10 px-3 rounded-csc-sm text-sm cursor-pointer select-none outline-none whitespace-nowrap text-[var(--c-text-body)] hover:bg-primary-200 hover:text-primary-600 hover:ring-1 hover:ring-primary-600',
+    root: 'flex items-center justify-between gap-3 min-h-10 px-3 rounded-csc-sm text-sm cursor-pointer select-none outline-none whitespace-nowrap text-on-surface hover:bg-primary-subtle hover:text-primary hover:ring-1 hover:ring-primary',
     submenu:
-      'list-none m-0 p-1 min-w-45 w-max max-h-[80vh] overflow-y-auto rounded-csc-sm bg-white shadow-[2px_4px_10px_#00000029] outline-none',
+      'list-none m-0 p-1 min-w-45 w-max max-h-[80vh] overflow-y-auto rounded-csc-sm bg-surface-overlay shadow-[2px_4px_10px_#00000029] outline-none',
     submenuPanel:
       'fixed m-0 p-0 border-0 bg-transparent overflow-visible [inset:auto]',
   },
@@ -105,12 +105,12 @@ const item = tv({
     // <style> since it must target the host attribute.
     danger: {
       true: {
-        root: 'text-error-600 hover:bg-error-100 hover:text-error-600 hover:ring-error-600',
+        root: 'text-error hover:bg-error-subtle hover:text-error hover:ring-error',
       },
     },
     disabled: {
       true: {
-        root: 'cursor-default pointer-events-none opacity-60 text-[var(--c-text-system)] hover:bg-transparent hover:text-[var(--c-text-system)]',
+        root: 'cursor-default pointer-events-none opacity-60 text-on-surface-muted hover:bg-transparent hover:text-on-surface-muted',
       },
     },
   },
@@ -273,14 +273,14 @@ onBeforeUnmount(() => {
 }
 
 :host([data-active]) [part='root'] {
-  background-color: var(--c-primary-200);
-  box-shadow: inset 0 0 0 1px var(--c-primary-600);
-  color: var(--c-primary-600);
+  background-color: var(--c-primary-subtle);
+  box-shadow: inset 0 0 0 1px var(--c-primary);
+  color: var(--c-primary);
 }
 
 :host([data-active][data-danger]) [part='root'] {
-  background-color: var(--c-error-100);
-  box-shadow: inset 0 0 0 1px var(--c-error-600);
-  color: var(--c-error-600);
+  background-color: var(--c-error-subtle);
+  box-shadow: inset 0 0 0 1px var(--c-error);
+  color: var(--c-error);
 }
 </style>

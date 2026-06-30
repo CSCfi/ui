@@ -113,11 +113,11 @@ onBeforeUnmount(() => observer?.disconnect());
   `!important` flips the cross-tree precedence back to the inner tree.
 */
 :host([bordered]) ::slotted(c-list-item) {
-  border: 1px solid var(--c-tertiary-200) !important;
+  border: 1px solid var(--c-border) !important;
   border-radius: 4px;
 }
 
 :host([bordered]) ::slotted(c-list-item.c-list-item--active) {
-  border-color: var(--c-primary-600) !important;
+  border-color: var(--c-primary) !important;
 }
 </style>

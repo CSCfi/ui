@@ -131,8 +131,8 @@ import {
  * the menu's visual regions (`dialog`, `list`, `item`, the info/empty row and
  * its icon, the selected-row check). `variants.disabled` replaces the
  * `li.disabled` cascade. The per-component `--c-dropdown-*` override-variable
- * layer is dropped in favour of the global design tokens (`bg-white`,
- * `bg-primary-200`, `text-primary-600`, …); consumer customization is via
+ * layer is dropped in favour of the semantic design tokens (the overlay
+ * surface and the primary item-state roles, ADR-0010); customization is via
  * `::part()` (ADR-0006), there is no `override` prop.
  *
  * What can't be a utility stays in the escape-hatch <style> below (ADR-0007):
@@ -150,12 +150,12 @@ const dropdown = tv({
     // top/left/width/maxHeight the JS writes inline drive placement.
     dialog:
       'rounded border-0 bg-transparent m-0 mt-[-4px] p-0 pt-1 overflow-visible fixed',
-    info: 'flex items-center flex-nowrap gap-2 text-sm min-h-[42px] px-[10px] w-full cursor-default pointer-events-none whitespace-nowrap text-[var(--c-text-system)]',
+    info: 'flex items-center flex-nowrap gap-2 text-sm min-h-[42px] px-[10px] w-full cursor-default pointer-events-none whitespace-nowrap text-on-surface-muted',
     infoIcon: 'w-[18px] h-[18px] shrink-0 fill-current',
-    item: 'flex items-center flex-nowrap gap-3 cursor-pointer text-sm min-h-[42px] outline-none px-[10px] pointer-events-auto whitespace-nowrap w-full rounded select-none hover:bg-primary-200 hover:text-primary-600 hover:ring-1 hover:ring-inset hover:ring-primary-600 focus:bg-primary-200 focus:text-primary-600 focus:ring-1 focus:ring-inset focus:ring-primary-600 aria-selected:bg-primary-200 aria-selected:text-primary-600 aria-selected:rounded-none hover:aria-selected:rounded focus:aria-selected:rounded',
+    item: 'flex items-center flex-nowrap gap-3 cursor-pointer text-sm min-h-[42px] outline-none px-[10px] pointer-events-auto whitespace-nowrap w-full rounded select-none hover:bg-primary-subtle hover:text-primary hover:ring-1 hover:ring-inset hover:ring-primary focus:bg-primary-subtle focus:text-primary focus:ring-1 focus:ring-inset focus:ring-primary aria-selected:bg-primary-subtle aria-selected:text-primary aria-selected:rounded-none hover:aria-selected:rounded focus:aria-selected:rounded',
     // Static list look; visibility + fade-in (`.active`) and the mobile
     // full-screen layout stay in the escape-hatch <style>.
-    list: 'list-none m-0 p-0 outline-none pointer-events-auto w-full h-max overflow-y-scroll rounded bg-white shadow-[2px_4px_10px_#00000029]',
+    list: 'list-none m-0 p-0 outline-none pointer-events-auto w-full h-max overflow-y-scroll rounded bg-surface-overlay shadow-[2px_4px_10px_#00000029]',
     visuallyHidden:
       'absolute w-px h-px p-0 overflow-hidden border-0 [clip:rect(1px,1px,1px,1px)]',
   },
@@ -166,7 +166,7 @@ const dropdown = tv({
       true: {
         // pointer-events-none means :hover/:focus never fire on a disabled
         // row, so only the aria-selected branch needs neutralising here.
-        item: 'cursor-default pointer-events-none bg-tertiary-600/5 [filter:grayscale(1)_opacity(0.75)] aria-selected:bg-tertiary-600/5 aria-selected:text-inherit aria-selected:ring-0 aria-selected:rounded',
+        item: 'cursor-default pointer-events-none bg-on-surface/5 [filter:grayscale(1)_opacity(0.75)] aria-selected:bg-on-surface/5 aria-selected:text-inherit aria-selected:ring-0 aria-selected:rounded',
       },
     },
   },
@@ -705,7 +705,7 @@ onBeforeUnmount(() => {
 
 :host(c-dropdown) mark {
   background-color: transparent;
-  box-shadow: 0 2px 0 0 var(--c-primary-600);
+  box-shadow: 0 2px 0 0 var(--c-primary);
   color: inherit;
 }
 
@@ -714,7 +714,7 @@ dialog::backdrop {
 }
 
 dialog[open].mobile {
-  background-color: var(--c-white);
+  background-color: var(--c-surface-overlay);
   width: 100vw;
   max-width: 100vw;
   height: 100vh;
