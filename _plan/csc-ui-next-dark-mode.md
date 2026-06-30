@@ -209,13 +209,31 @@ Convert in reviewable batches; suggested grouping by colour complexity:
 Each component: map palette steps → roles, add any missing token, verify light+dark. Flip the
 Phase 4 guard to blocking once the last batch lands.
 
-### Phase 6 — Docs & consumer API
+### Phase 6 — Docs & consumer API ✅ (commit b20c0216)
 
-- Update getting-started (`vue3`/`react`/`angular`) to import `@cscfi/csc-ui-next/css/tokens.css`
-  and document `data-theme` activation + the `prefers-color-scheme` fallback.
-- Add a dark-mode toggle to the documentation site shell so every component example is viewable
-  in both modes.
-- Refresh/extend the design-tokens page to show semantic tokens (currently shows palette only).
+Docs site is `packages/csc-ui-documentation` (Nuxt 4), serving both impls via `CSC_UI_IMPL`.
+Dark mode is a `next`-only feature, so all wiring is gated to `isNextImpl`.
+
+- ✅ `app.vue`: import `@cscfi/csc-ui-next/css/tokens.css` in next mode + resolve persisted/OS theme on mount.
+- ✅ `useTheme` composable: owns `data-theme` on `<html>` + localStorage; light/dark + OS fallback.
+- ✅ `Default.vue`: sun/moon toggle in the toolbar + "Dark mode" nav entry.
+- ✅ `main.css`: body/code/text roles → semantic tokens **with palette-step fallbacks** (stencil mode unchanged).
+- ✅ New `design-tokens/dark-mode.vue`: documents the tokens.css import, the 3 `data-theme` states, a
+  toggle snippet, AND a live semantic-role swatch grid (satisfies "show semantic tokens"). This is the
+  canonical, framework-agnostic dark-mode reference.
+- ✅ `getting-started/vue3`: optional dark-mode step (import + data-theme) linking to the Dark mode page.
+  **Scoping note**: did NOT duplicate the contract into react/angular/vue2/html getting-started pages —
+  those still document the Stencil install; the dedicated page is the single source. Revisit when
+  csc-ui-next gets its own install flow.
+
+Verification: docs build transforms all phase-6 modules cleanly; light Nuxt render confirmed (toggle +
+133 swatches present); semantic roles flip correctly in dark (incl. `nav-surface`). Headless screenshots
+of the live SPA via CDP were flaky in this env — dark was confirmed via the static-HTML token method instead.
+
+**Pre-existing, unrelated build breakage found**: `nuxi build` fails on
+`example-data/c-autocomplete/customfilter.script.js` (malformed comment in a generated example-extraction
+artifact, from the c-autocomplete work) — after transforming all other modules. Not caused by phase 6;
+worth fixing separately so the docs build is green.
 
 ### Phase 7 — Verification
 
