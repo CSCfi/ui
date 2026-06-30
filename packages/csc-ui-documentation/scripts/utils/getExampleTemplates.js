@@ -120,7 +120,17 @@ export default async (component, folder) => {
 
         if (isExample) {
           row += 1;
-          writeline(line, row > 1);
+          // The template body is emitted inside a template literal
+          // (`export default ` ... ``), so any backtick, `${` or backslash in
+          // the example markup would otherwise terminate/interpolate that
+          // literal and produce invalid JS. Escape them; the template literal
+          // un-escapes on read, so the consumed markup string is unchanged.
+          const escaped = line
+            .replace(/\\/g, '\\\\')
+            .replace(/`/g, '\\`')
+            .replace(/\$\{/g, '\\${');
+
+          writeline(escaped, row > 1);
         }
       });
 
