@@ -199,6 +199,9 @@
   --color-inverse-on: var(--c-inverse-on);
   --color-inverse-primary: var(--c-inverse-primary);
   --color-inverse-error: var(--c-inverse-error);
+
+  /* Mode-invariant overlay scrim (dims content behind modals/backdrops). */
+  --color-scrim: var(--c-scrim);
 }
 
 /*

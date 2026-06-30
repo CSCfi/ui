@@ -17,17 +17,17 @@ import { computed } from 'vue';
  * layout. The `disableLayout` prop is a `variant` that swaps the default flex
  * column for the dashboard CSS grid (replacing the old `main.dashboard` rule).
  *
- * The per-component `--c-main-*` override vars are dropped (ADR-0004): the
- * background authors directly against the `primary-200` design token. Text
- * colour uses `--c-text-body` directly (no Tailwind token utility exists for
- * it). Customization is via `::part(root)` (ADR-0006).
+ * The per-component `--c-main-*` override vars are dropped (ADR-0004). The
+ * tinted page background and body text author against semantic tokens
+ * (`primary-subtle` / `on-surface`, ADR-0010) so they theme in dark mode.
+ * Customization is via `::part(root)` (ADR-0006).
  */
 const main = tv({
   defaultVariants: {
     disableLayout: false,
   },
   slots: {
-    root: 'flex flex-col h-screen bg-primary-200 text-[var(--c-text-body)]',
+    root: 'flex flex-col h-screen bg-primary-subtle text-on-surface',
   },
   variants: {
     disableLayout: {
@@ -58,7 +58,7 @@ const ui = computed(() => main({ disableLayout: props.disableLayout }));
 -->
 <style>
 ::slotted(*) {
-  color: var(--c-text-body);
+  color: var(--c-on-surface);
 }
 
 main ::slotted(c-toolbar) {

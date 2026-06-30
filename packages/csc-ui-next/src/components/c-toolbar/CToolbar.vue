@@ -24,7 +24,7 @@ import { computed } from 'vue';
 const toolbar = tv({
   slots: {
     // Fixed bar pinned to the top, full width, with the CSC drop shadow.
-    root: 'fixed z-[1] flex w-full h-[60px] items-center gap-x-3 px-4 bg-white text-[var(--c-text-system)] shadow-[2px_4px_10px_#00000029]',
+    root: 'fixed z-[1] flex w-full h-[60px] items-center gap-x-3 px-4 bg-surface-raised text-on-surface-muted shadow-[2px_4px_10px_#00000029]',
     // Spacer reserves the bar's height in normal flow so content isn't hidden
     // beneath the fixed bar.
     spacer: 'h-[60px] w-full',

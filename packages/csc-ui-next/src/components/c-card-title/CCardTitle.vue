@@ -38,8 +38,8 @@ const cardTitle = tv({
     actions: 'flex flex-wrap-reverse items-center justify-end gap-2 flex-1',
     header: '',
     heading: 'm-0',
-    root: 'block px-[var(--_c-card-gap,24px)] uppercase text-balance font-medium text-base text-[var(--c-text-system)] [font-family:var(--c-font-family)]',
-    underline: 'mt-2.5 h-1 w-11 rounded bg-primary-600',
+    root: 'block px-[var(--_c-card-gap,24px)] uppercase text-balance font-medium text-base text-on-surface-muted [font-family:var(--c-font-family)]',
+    underline: 'mt-2.5 h-1 w-11 rounded bg-primary',
   },
   variants: {
     actions: {

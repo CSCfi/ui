@@ -23,7 +23,7 @@ const backdrop = tv({
   slots: {
     // Full-screen overlay, initially transparent and click-through; c-modal
     // fades it in/out via the .opening/.closing classes.
-    root: 'block fixed inset-0 z-[1000] bg-black/50 opacity-0 pointer-events-none',
+    root: 'block fixed inset-0 z-[1000] bg-scrim/50 opacity-0 pointer-events-none',
   },
   variants: {
     blur: { true: { root: 'backdrop-blur-[4px]' } },

@@ -22,7 +22,7 @@ import { coerceBoolean } from '../../shared/coerceBoolean';
  * so it lays out directly inside its parent.
  */
 const divider = tv({
-  base: 'border-0 bg-tertiary-300',
+  base: 'border-0 bg-border',
   defaultVariants: { vertical: false },
   variants: {
     vertical: {

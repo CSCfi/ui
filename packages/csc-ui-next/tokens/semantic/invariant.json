@@ -4,5 +4,6 @@
   "inverse-surface": "white",
   "inverse-on": "white",
   "inverse-primary": "primary-600",
-  "inverse-error": "error-600"
+  "inverse-error": "error-600",
+  "scrim": "black"
 }

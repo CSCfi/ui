@@ -43,7 +43,7 @@ const page = tv({
   slots: {
     container: 'relative w-full h-full max-w-[1280px] p-2 sm:p-3 md:p-4',
     // Fixed 4px progress bar pinned to the top of the viewport.
-    scrollIndicator: 'z-[9] fixed top-0 left-0 h-1 w-0 bg-primary-600',
+    scrollIndicator: 'z-[9] fixed top-0 left-0 h-1 w-0 bg-primary',
   },
 });
 
