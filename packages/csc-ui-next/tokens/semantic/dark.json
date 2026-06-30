@@ -6,7 +6,7 @@
   "surface-overlay": "tertiary-700",
   "surface-muted": "tertiary-800",
   "on-surface": "white",
-  "on-surface-muted": "tertiary-300",
+  "on-surface-muted": "tertiary-200",
   "border": "tertiary-700",
   "border-strong": "tertiary-500",
   "ring": "primary-400",
