@@ -7,8 +7,9 @@
       emits no select event, and is skipped by keyboard navigation
     </template>
 
-    <c-menu @select="onSelect">
+    <c-menu @select="onSelect">      
       <c-button slot="trigger" text>
+        <c-icon :path="mdiAccount" />
         Account
         <c-icon :path="mdiChevronDown" />
       </c-button>
@@ -31,7 +32,7 @@
 </template>
 
 <script setup lang="ts">
-import { mdiChevronDown } from '@mdi/js';
+import { mdiAccount, mdiChevronDown } from '@mdi/js';
 import { ref } from 'vue';
 
 const selected = ref<null | string>(null);
