@@ -2,90 +2,67 @@
   <component-example rows name="options">
     <template #title>Usage with c-option elements</template>
 
-    <template #subtitle>Use c-option-value for match highlighting</template>
+    <template #subtitle>
+      Author options declaratively; c-option-value marks the displayed label
+    </template>
 
-    <c-row gap="8" nowrap align="start">
-      <c-autocomplete
-        ref="autocomplete"
-        v-model="selection"
-        v-control
-        style="flex: 1"
-        label="Countries"
-        :query="query"
-        :items-per-page="10"
-        :loading="loading"
-        @changeQuery="onQueryChange"
-      >
-        <c-icon slot="pre" :path="mdiEarth" :size="16" />
+    <c-autocomplete
+      v-model="status"
+      class="max-w-90"
+      label="Status"
+      placeholder="Search..."
+      clearable
+      hide-details
+    >
+      <c-option value="backlog" name="Backlog">
+        <div class="flex gap-2 items-center justify-between">
+          Backlog
 
-        <c-option
-          v-for="(item, index) in filteredItems"
-          :key="item.value"
-          :value="item.value"
-          :name="item.name"
-          :disabled="index === 3"
-        >
-          <c-row align="center" gap="16" nowrap>
-            <c-tag active flat>{{ item.value }}</c-tag>
+          <c-tag active flat>backlog</c-tag>
+        </div>
+      </c-option>
 
-            <c-option-value>{{ item.name }}</c-option-value>
-          </c-row>
-        </c-option>
-      </c-autocomplete>
+      <c-option value="todo" name="Todo">
+        <div class="flex gap-2 items-center justify-between">
+          Todo
 
-      <c-button :disabled="!selection" @click="add()" @keyup.enter="add()">
-        Add
-      </c-button>
-    </c-row>
+          <c-tag active flat>todo</c-tag>
+        </div>
+      </c-option>
 
-    <c-tags>
-      <c-tag v-for="country in selections" :key="country">
-        {{ country }}
-      </c-tag>
-    </c-tags>
+      <c-option value="in-progress" name="In Progress">
+        <div class="flex gap-2 items-center justify-between">
+          In Progress
+
+          <c-tag active flat>in-progress</c-tag>
+        </div>
+      </c-option>
+
+      <c-option value="in-review" name="In Review" disabled>
+        <div class="flex gap-2 items-center justify-between">
+          In Review
+
+          <c-tag active flat>in-review</c-tag>
+        </div>
+      </c-option>
+
+      <c-option value="done" name="Done">
+        <div class="flex gap-2 items-center justify-between">
+          Done
+
+          <c-tag active flat>done</c-tag>
+        </div>
+      </c-option>
+    </c-autocomplete>
+
+    <p style="margin: 16px 0 0">
+      Selected status: <c-tag flat>{{ status || 'none' }}</c-tag>
+    </p>
   </component-example>
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from 'vue';
-import { mdiEarth } from '@mdi/js';
-import type { CAutocompleteItem } from '@cscfi/csc-ui';
-import countries from '../../data/countries.json';
+import { ref } from 'vue';
 
-const selection = ref();
-
-const query = ref('');
-
-const selections = ref<string[]>([]);
-
-const loading = ref(false);
-
-const autocomplete = ref<HTMLCAutocompleteElement | null>(null);
-
-const items = computed<CAutocompleteItem[]>(() =>
-  Object.keys(countries)
-    .map((key) => ({
-      value: key,
-      name: countries[key as keyof typeof countries],
-    }))
-    .sort((a, b) => a.name.localeCompare(b.name)),
-);
-
-const filteredItems = computed(() => {
-  if (!query.value) return items.value;
-
-  return items.value.filter((i) =>
-    i.name?.toLowerCase().includes(query.value?.toLowerCase()),
-  );
-});
-
-const onQueryChange = (event: InputEvent) => {
-  query.value = event.detail.toString();
-};
-
-const add = () => {
-  selections.value.push(selection.value);
-
-  autocomplete.value?.reset();
-};
+const status = ref('');
 </script>

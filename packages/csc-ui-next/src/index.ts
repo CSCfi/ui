@@ -1,6 +1,7 @@
 import CAccordionItem from './components/c-accordion-item/CAccordionItem.vue';
 import CAccordion from './components/c-accordion/CAccordion.vue';
 import CAlert from './components/c-alert/CAlert.vue';
+import CAutocomplete from './components/c-autocomplete/CAutocomplete.vue';
 import CBackdrop from './components/c-backdrop/CBackdrop.vue';
 import CBadge from './components/c-badge/CBadge.vue';
 import CButton from './components/c-button/CButton.vue';
@@ -70,6 +71,15 @@ import CToast from './components/c-toast/CToast.vue';
 import CToasts from './components/c-toasts/CToasts.vue';
 import CToolbar from './components/c-toolbar/CToolbar.vue';
 import { defineElement } from './shared/defineElement';
+
+// Public component types, re-exported so consumers can import them from the
+// package root: `import type { CAutocompleteItem } from '@cscfi/csc-ui-next'`.
+export type {
+  CAutocompleteFilter,
+  CAutocompleteItem,
+  CAutocompleteOption,
+  CSelectItem,
+} from './types';
 
 /**
  * Map of custom-element tag → Vue SFC component. The single source of
@@ -146,6 +156,9 @@ const components: Array<[string, unknown]> = [
   ['c-option', COption],
   ['c-dropdown', CDropdown],
   ['c-select', CSelect],
+  // c-autocomplete reuses c-option (registered above) as its data source and
+  // builds its own popover panel (ADR-0009); register after the option leaves.
+  ['c-autocomplete', CAutocomplete],
   // Menu stack: leaf elements register before c-menu so item/label/divider
   // tags are defined when c-menu's slotted content upgrades.
   ['c-divider', CDivider],
@@ -241,6 +254,7 @@ export const tailwindVariantTags: ReadonlyArray<string> = [
   'c-option',
   'c-option-value',
   'c-dropdown',
+  'c-autocomplete',
   'c-modal',
   'c-table',
   // Wave E — menu family (Popover API + CSS anchor positioning, ADR-0008).

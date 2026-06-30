@@ -8,15 +8,14 @@
       <c-autocomplete
         id="listOfCountriesBasic"
         v-model="selection"
-        v-control
+        class="max-w-90"
         label="Countries"
         placeholder="Choose a country"
-        :items="filteredItems"
-        :query="query"
+        :items="items"
         style="flex: 1"
         hide-details
+        clearable
         return-object
-        @changeQuery="onQueryChange"
       >
         <c-icon slot="pre" :path="mdiEarth" :size="16" />
       </c-autocomplete>
@@ -41,12 +40,10 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue';
 import { mdiEarth } from '@mdi/js';
-import type { CAutocompleteItem } from '@cscfi/csc-ui';
+import type { CAutocompleteItem } from '@cscfi/csc-ui-next';
 import countries from '../../data/countries.json';
 
-const selection = ref();
-
-const query = ref('');
+const selection = ref<CAutocompleteItem | null>(null);
 
 const items = computed<CAutocompleteItem[]>(() =>
   Object.keys(countries)
@@ -57,28 +54,15 @@ const items = computed<CAutocompleteItem[]>(() =>
     .sort((a, b) => a.name.localeCompare(b.name)),
 );
 
-const filteredItems = computed(() => {
-  if (!query.value) return items.value;
-
-  return items.value.filter((i) =>
-    i.name?.toLowerCase().includes(query.value?.toLowerCase()),
-  );
-});
-
 const tags = ref<CAutocompleteItem[]>([]);
 
 const onAddTag = () => {
   if (selection.value) tags.value.push(selection.value);
 
   selection.value = null;
-  query.value = '';
 };
 
 const onRemoveTag = (index: number) => {
   tags.value.splice(index, 1);
-};
-
-const onQueryChange = (event: CustomEvent<string>) => {
-  query.value = event.detail;
 };
 </script>

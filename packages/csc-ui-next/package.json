@@ -5,20 +5,22 @@
   "type": "module",
   "main": "./dist/csc-ui-next.js",
   "module": "./dist/csc-ui-next.js",
-  "types": "./dist/index.d.ts",
+  "types": "./dist-types/index.d.ts",
   "files": [
-    "dist"
+    "dist",
+    "dist-types"
   ],
   "exports": {
     ".": {
-      "import": "./dist/csc-ui-next.js",
-      "types": "./dist/index.d.ts"
+      "types": "./dist-types/index.d.ts",
+      "import": "./dist/csc-ui-next.js"
     }
   },
   "scripts": {
-    "build": "vite build",
-    "build:watch": "vite build --watch",
-    "dev": "vite build --watch",
+    "build": "vite build && vue-tsc -p tsconfig.build.json",
+    "build:types": "vue-tsc -p tsconfig.build.json",
+    "build:watch": "vue-tsc -p tsconfig.build.json && vite build --watch",
+    "dev": "vue-tsc -p tsconfig.build.json && vite build --watch",
     "type-check": "vue-tsc --build --force"
   },
   "dependencies": {

@@ -126,11 +126,16 @@ export function defineElement(tag: string, component: Component): void {
 
   const sfcStyles = (component as { styles?: string[] }).styles || [];
 
+  // Vue's `defineCustomElement` overloads don't accept the broad `Component`
+  // union directly (it includes constructor forms that fail the options
+  // overload); cast to the form it expects. Runtime behaviour is unchanged.
+  const vueComponent = component as Parameters<typeof defineCustomElement>[0];
+
   if (!supportsAdopted) {
     // Fallback: let Vue inject the styles per instance, as before. The merge is
     // deliberate — Vue's `styles` option replaces (not appends to) the SFC's
     // `.styles` array, so we concatenate Tailwind with the SFC styles ourselves.
-    const Element = defineCustomElement(component, {
+    const Element = defineCustomElement(vueComponent, {
       styles: [tailwindStyles, ...sfcStyles],
     });
     customElements.define(tag, Element);
@@ -140,7 +145,7 @@ export function defineElement(tag: string, component: Component): void {
 
   // Pass empty `styles` so Vue injects nothing (`_applyStyles` no-ops on an
   // empty array); we adopt shared sheets in connectedCallback instead.
-  const Base = defineCustomElement(component, { styles: [] });
+  const Base = defineCustomElement(vueComponent, { styles: [] });
 
   const typeSheet = getSfcSheet(tag, sfcStyles);
 

@@ -45,7 +45,15 @@ export default typescriptEslint.config(
         'warn',
         {
           blankLine: 'always',
-          next: ['interface', 'type', 'if', 'for', 'const', 'let', 'export'],
+          next: [
+            'interface',
+            'type',
+            'if',
+            'for',
+            'const',
+            'let',
+            'export',
+          ],
           prev: '*',
         },
         {

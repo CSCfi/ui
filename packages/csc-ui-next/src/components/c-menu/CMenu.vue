@@ -201,7 +201,9 @@ const parentItemOf = (item: HTMLElement): HTMLElement | null => {
 
   let p = item.parentElement;
 
-  while (p && p !== host && !isMenuItem(p)) p = p.parentElement;
+  // Walk up with a direct tag check (not `!isMenuItem(p)`): negating the
+  // `el is HTMLElement` predicate narrows `p` to `never` in the loop body.
+  while (p && p !== host && p.tagName !== 'C-MENU-ITEM') p = p.parentElement;
 
   return isMenuItem(p) ? p : null;
 };

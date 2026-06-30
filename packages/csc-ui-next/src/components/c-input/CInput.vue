@@ -330,7 +330,22 @@ const measureLabel = () => {
 const preSlotWidth = ref(0);
 
 const measurePreSlot = () => {
-  preSlotWidth.value = preSlotWrapperRef.value?.offsetWidth ?? 0;
+  const el = preSlotWrapperRef.value;
+
+  const width = el?.offsetWidth ?? 0;
+
+  // The pre-slot icon and the input are flex siblings separated by the field's
+  // column-gap, so the input text starts one gap past the icon. Shift the
+  // resting label by that same gap so it lines up with the value (and the
+  // lifted label sits above it), instead of resting flush against the icon.
+  // Only when pre content exists — with no icon the label rests at the field
+  // origin, already aligned with the input.
+  const gap =
+    width && el?.parentElement
+      ? parseFloat(getComputedStyle(el.parentElement).columnGap) || 0
+      : 0;
+
+  preSlotWidth.value = width ? width + gap : 0;
 };
 
 const messageKey = computed(() =>

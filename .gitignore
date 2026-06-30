@@ -3,6 +3,7 @@ lerna-debug.log
 npm-debug.log
 packages/*/lib
 packages/*/dist
+packages/*/dist-types
 .idea
 **/.DS_Store
 .pnpm-store/*

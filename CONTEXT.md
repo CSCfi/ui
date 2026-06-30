@@ -30,8 +30,16 @@ A **command menu** — a transient panel of actions/navigation choices revealed 
 _Avoid_: Dropdown (that is a distinct value-selection component), popup, context menu, listbox
 
 **Dropdown** (`c-dropdown`):
-The **value-selection** surface behind `c-select` / `c-autocomplete`: a `role="listbox"` of options that has a current value and emits `update:value` / `change`. A menu, by contrast, is a list of `role="menuitem"` commands. Keep the two distinct — "the dropdown's select event" is a category error; menus emit `select`, dropdowns emit `update:value`.
+The **value-selection** surface behind `c-select`: a `role="listbox"` of options that has a current value and emits `update:value` / `change`. A menu, by contrast, is a list of `role="menuitem"` commands. Keep the two distinct — "the dropdown's select event" is a category error; menus emit `select`, dropdowns emit `update:value`. (`c-autocomplete` is also value-selection but does **not** sit on `c-dropdown` — it renders its own popover panel; see **Autocomplete**.)
 _Avoid_: Menu (a menu is the command-list component; a dropdown is the value picker)
+
+**Autocomplete** (`c-autocomplete`):
+A **filterable value-selection** component: like `c-select` it holds a persistent selected value and emits `update:value` / `change` over `role="listbox"`/`role="option"` rows, but its options can be narrowed with a text query. Its distinguishing trait is a dedicated **search input** living *inside* the open panel (above the options), separate from the readonly value field. It is built on the popover + CSS-anchor pattern (the same visuals as `c-menu`'s panel), **not** on `c-dropdown`, and reuses only those popover visuals — never `c-menu-item` or the menu role/event contract.
+_Avoid_: Combobox (reserve for the ARIA role, not the component name), typeahead, suggest, filter menu
+
+**Search input**:
+The text `<input role="combobox">` rendered inside `c-autocomplete`'s open panel that filters the options. Distinct from the **value field** (the readonly `c-input` trigger that displays the current selection). DOM focus stays in the search input while the panel is open; option highlighting is virtual (`aria-activedescendant`), never real DOM focus.
+_Avoid_: Query field, filter box (use _search input_)
 
 **Trigger**:
 The consumer-supplied element (typically a `c-button`) projected into a `c-menu`'s `trigger` slot that toggles the menu open/closed. The menu mirrors `aria-haspopup` / `aria-expanded` onto it but does not own it.
