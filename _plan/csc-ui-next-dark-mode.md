@@ -148,16 +148,26 @@ palette-step to semantic utilities:
   a gap in the token set; add the token, don't reach for a palette step.
 - Manually verify CButton in light and dark (`data-theme` toggle) before proceeding.
 
-### Phase 4 — CI guard (semantic-only)
+### Phase 4 — CI guard (semantic-only) — DONE
 
-Add a check that fails the build on palette-step colour utilities in SFCs:
-```
-grep -rnE '\b(bg|text|border|ring|fill|outline|from|via|to)-(primary|secondary|accent|tertiary|success|info|warning|error|link|white|black)(-[0-9]+)?\b' packages/csc-ui-next/src/components
-```
-- Allow an explicit, reviewed escape comment if a provably mode-invariant case ever appears
-  (none expected). Prefer a tiny ESLint rule over grep if false-positives (e.g. in comments)
-  bite. Wire into `lint` + CI. Run it green only **after** the batch migration (Phase 5) — until
-  then it's informational (reports the remaining work).
+Implemented as `scripts/check-palette-utilities.mjs` (npm script `lint:tokens`). It flags colour
+utilities whose colour is a brand/status hue **with a numeric step** (`bg-primary-600`) or
+`white`/`black` (`text-white`, incl. `/opacity`), while allowing the bare semantic tokens
+(`bg-primary`, `primary-hover`, `primary-subtle`, `surface`, `inverse-*`, …) and
+`current`/`transparent`. **Comments are stripped first** (newlines preserved) so explanatory
+comments mentioning palette steps don't false-positive — verified against the existing migration
+notes in CLoginCard/CTag.
+
+A plain grep was rejected because those comment references trip it; a node script that strips
+comments was simpler than a custom ESLint rule and good enough.
+
+- Default: report + exit 0 (informational — doubles as the phase-5 worklist).
+- `--strict`: exit 1 on any violation. **Flip `lint:tokens --strict` into CI/lint once phase 5
+  lands.**
+- **Baseline (after the CButton pilot): 191 palette-step utilities across 38 of 72 SFCs;
+  CButton is clean.**
+- Not covered: arbitrary-value var refs like `text-[var(--c-text-body)]` (a few components use
+  them). Out of scope for the utility-class guard; sweep separately in phase 5 if needed.
 
 ### Phase 5 — Batch migrate remaining 71 components
 
