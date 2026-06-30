@@ -13,12 +13,14 @@ import { tv } from 'tailwind-variants';
  * on an inner `root` element rather than the host, so the global
  * `:host{display:contents}` is left untouched. Consumer customization is via
  * `::part(root)` (ADR-0006); there is no `override` prop. The per-component
- * `--c-badge-*` indirection vars are dropped in favour of global design tokens:
- *   var(--c-warning-600) -> bg-warning-600, var(--c-white) -> text-white,
- *   box-shadow 0 0 0 2px var(--c-white) -> ring-2 ring-white.
+ * `--c-badge-*` indirection vars are dropped in favour of semantic tokens
+ * (ADR-0010): the warning status role for the fill + its on-colour text, and a
+ * `surface`-coloured ring so the badge reads as a cut-out against whatever
+ * surface it sits on (the ring tracks the theme instead of being hardcoded
+ * white).
  */
 const badge = tv({
-  base: 'absolute -right-1.5 -top-1.5 z-[2] flex items-center justify-center min-w-4 h-4 px-1 rounded-2xl text-xs leading-none pointer-events-none bg-warning-600 text-white ring-2 ring-white',
+  base: 'absolute -right-1.5 -top-1.5 z-[2] flex items-center justify-center min-w-4 h-4 px-1 rounded-2xl text-xs leading-none pointer-events-none bg-warning text-on-warning ring-2 ring-surface',
 });
 
 // `<slot />`-only authoring previously kept fallthrough attrs on the host; we

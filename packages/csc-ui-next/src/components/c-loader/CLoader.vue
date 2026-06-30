@@ -51,9 +51,9 @@ import { useHasSlot } from '../../shared/useHasSlot';
  * plays on first appearance.
  *
  * COLOUR CONTRACT (child primitive): the child `<c-spinner>` is given
- * `color="currentColor"` so the loader's `text-primary-600` (or any inherited
- * colour) cascades into it. (The spinner's own prop default is primary-600, so
- * passing currentColor is what re-opens inheritance here.) The removed
+ * `color="currentColor"` so the loader's primary text colour (or any inherited
+ * colour) cascades into it. (The spinner's own prop default is the primary role,
+ * so passing currentColor is what re-opens inheritance here.) The removed
  * `--c-loader-color` / `--c-spinner-color` override vars are NOT reintroduced.
  */
 const loader = tv({
@@ -66,19 +66,20 @@ const loader = tv({
     // so revealing it does NOT push the spinner up — only the spinner
     // participates in the flex centring. Hidden by default (`opacity-0`); the
     // `c-loader-fadein` animation (gated on `active`) fades it in. Text colour
-    // was var(--c-text-system); no text-system utility exists.
+    // is the muted on-surface role (ADR-0010).
     content:
-      'block absolute inset-x-0 opacity-0 text-center text-sm leading-6 font-medium text-[var(--c-text-system)]',
+      'block absolute inset-x-0 opacity-0 text-center text-sm leading-6 font-medium text-on-surface-muted',
     // `relative` so the absolutely-positioned content anchors to it.
     inner:
       'relative flex flex-col items-center justify-center h-full w-full scale-50 transition-transform duration-300 ease-in-out py-4',
-    // Background was rgba(var(--c-white-rgb), 0.8) → bg-white/80.
+    // Background is the surface role at 80% (a theme-aware scrim over the
+    // overlaid container; was an opaque-ish white veil).
     // `visibility` is in the transition list (alongside opacity/transform) so
     // the LEAVE is smooth: CSS `visibility` uses its special interpolation —
     // when either endpoint is `visible` it stays visible for the whole duration
     // and only flips to `hidden` at the end. Without it, `invisible` applied
     // instantly on leave and cut off the opacity/scale fade-out.
-    root: 'absolute inset-0 z-[6] w-full bg-white/80 rounded-[inherit] invisible opacity-0 transition-[opacity,transform,visibility] duration-300 ease-in-out text-primary-600',
+    root: 'absolute inset-0 z-[6] w-full bg-surface/80 rounded-[inherit] invisible opacity-0 transition-[opacity,transform,visibility] duration-300 ease-in-out text-primary',
   },
   variants: {
     active: {

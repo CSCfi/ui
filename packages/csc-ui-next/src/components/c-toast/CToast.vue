@@ -95,13 +95,13 @@ const toast = tv({
     type: 'info',
   },
   slots: {
-    box: 'grid items-center min-h-[52px] w-full box-border p-2 px-3 rounded-csc-md bg-white text-[var(--c-text-system)] border-2 border-l-[12px]',
+    box: 'grid items-center min-h-[52px] w-full box-border p-2 px-3 rounded-csc-md bg-surface-raised text-on-surface-muted border-2 border-l-[12px]',
     content: '',
     custom: '',
     icon: 'size-6',
     item: 'grid items-center gap-3 grid-cols-[24px_1fr] auto-cols-auto grid-flow-col font-light',
     progress:
-      'bg-tertiary-200 rounded-lg h-1.5 mt-2 overflow-hidden [transform:translateZ(0)]',
+      'bg-surface-muted rounded-lg h-1.5 mt-2 overflow-hidden [transform:translateZ(0)]',
     // The animation (keyframes + host-hover-driven play-state) lives in the
     // escape-hatch sheet keyed off the static `.c-toast__progress__bar` class.
     progressBar: 'h-1.5 w-full rounded-lg',
@@ -112,27 +112,27 @@ const toast = tv({
   variants: {
     // Accent only — border + leading-icon fill + progress bar. Body text stays
     // system-text. Info is the fallback for an untyped toast, matching the
-    // original `var(--_c-toast-color, var(--c-info-600))` border fallback.
+    // original `var(--_c-toast-color, var(--c-info))` border fallback.
     type: {
       error: {
-        box: 'border-error-600',
-        icon: 'fill-error-600',
-        progressBar: 'bg-error-600',
+        box: 'border-error',
+        icon: 'fill-error',
+        progressBar: 'bg-error',
       },
       info: {
-        box: 'border-info-600',
-        icon: 'fill-info-600',
-        progressBar: 'bg-info-600',
+        box: 'border-info',
+        icon: 'fill-info',
+        progressBar: 'bg-info',
       },
       success: {
-        box: 'border-success-600',
-        icon: 'fill-success-600',
-        progressBar: 'bg-success-600',
+        box: 'border-success',
+        icon: 'fill-success',
+        progressBar: 'bg-success',
       },
       warning: {
-        box: 'border-warning-600',
-        icon: 'fill-warning-600',
-        progressBar: 'bg-warning-600',
+        box: 'border-warning',
+        icon: 'fill-warning',
+        progressBar: 'bg-warning',
       },
     },
   },
@@ -171,14 +171,15 @@ const icons: Record<string, string> = {
 
 // Accent colour for the close icon. `c-icon`'s `color` prop sets the SVG
 // `fill` directly, so it can't inherit `currentColor` from the icon-button
-// (which paints itself primary). Map the toast type to its accent token var
-// (the toast's `box` is `text-<type>-600`, but the close icon lives inside a
-// nested custom element and so can't pick that up via the cascade).
+// (which paints itself primary). Map the toast type to its semantic status
+// role var (the toast's `box` border is the same role, but the close icon
+// lives inside a nested custom element and so can't pick that up via the
+// cascade).
 const ACCENT_VAR: Record<string, string> = {
-  error: 'var(--c-error-600)',
-  info: 'var(--c-info-600)',
-  success: 'var(--c-success-600)',
-  warning: 'var(--c-warning-600)',
+  error: 'var(--c-error)',
+  info: 'var(--c-info)',
+  success: 'var(--c-success)',
+  warning: 'var(--c-warning)',
 };
 
 const accentColor = computed(

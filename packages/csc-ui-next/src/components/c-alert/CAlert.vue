@@ -26,8 +26,8 @@ import { computed } from 'vue';
  * Styling lives entirely in this `tailwind-variants` config (ADR-0004): the
  * `slots` are the component's parts and the `type` `variants` replace the
  * original `.c-alert--<type>` colour classes. The old `--c-alert-color`
- * indirection var is dropped — each type maps straight to a design token
- * (`text-info-600`, `text-error-600`, …) and the border/icon inherit it via
+ * indirection var is dropped — each type maps straight to its semantic status
+ * role (info / error / …, ADR-0010) and the border/icon inherit it via
  * `currentColor`. Consumer customization is via `::part()` (ADR-0006).
  *
  * The accent colour is carried by `text-*` on `root`; the box border uses
@@ -39,17 +39,17 @@ const alert = tv({
     type: 'default',
   },
   slots: {
-    content: 'grid items-center gap-2 text-[rgba(0,0,0,0.87)]',
+    content: 'grid items-center gap-2 text-on-surface',
     icon: 'fill-current size-6 self-start shrink-0',
-    root: 'grid gap-4 border-2 border-current border-l-[12px] rounded-csc-md p-3 text-primary-600',
+    root: 'grid gap-4 border-2 border-current border-l-[12px] rounded-csc-md p-3 text-primary',
   },
   variants: {
     type: {
       default: {},
-      error: { root: 'grid-cols-[auto_1fr] text-error-600' },
-      info: { root: 'grid-cols-[auto_1fr] text-info-600' },
-      success: { root: 'grid-cols-[auto_1fr] text-success-600' },
-      warning: { root: 'grid-cols-[auto_1fr] text-warning-600' },
+      error: { root: 'grid-cols-[auto_1fr] text-error' },
+      info: { root: 'grid-cols-[auto_1fr] text-info' },
+      success: { root: 'grid-cols-[auto_1fr] text-success' },
+      warning: { root: 'grid-cols-[auto_1fr] text-warning' },
     },
   },
 });

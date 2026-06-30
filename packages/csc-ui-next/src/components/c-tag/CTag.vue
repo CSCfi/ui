@@ -25,14 +25,11 @@ import { computed, onMounted, useHost, watchEffect } from 'vue';
  * `flat`/`closeable`/`badged` variants replace the original `:host([attr])`
  * cascade. Consumer customization is via `::part(root)` (ADR-0006); there is no
  * `override` prop. The per-component `--c-tag-*` indirection vars are dropped in
- * favour of global design tokens, resolved through their fallback chains:
- *   text-color            var(--c-primary-600)        -> text-primary-600
- *   text-color-active     var(--c-white)              -> text-white
- *   background-color      var(--c-transparent)        -> bg-transparent
- *   background-hover      rgba(--c-primary-rgb,.1)    -> bg-primary-600/10
- *   background-active     == text-color              -> bg-primary-600
- *   background-active-hov var(--c-primary-400)        -> bg-primary-400
- *   border-color          == text-color              -> ring-primary-600
+ * favour of the semantic primary role (ADR-0010):
+ *   resting text + border  -> the primary role colour (text + inset ring)
+ *   active fill            -> the primary role; active text -> its on-colour
+ *   resting hover tint     -> the primary subtle fill
+ *   active hover fill      -> the primary hover step
  *
  * The badge is the inner box's `::before` (content: attr(data-badge)),
  * converted to `before:` utilities. The close button is a child <c-icon-button>:
@@ -60,22 +57,22 @@ const tag = tv({
   },
   slots: {
     // Child c-icon-button: recolour via inherited `color`, not the dead vars.
-    close: 'text-primary-600',
+    close: 'text-primary',
     // The tag's visible box. The host stays a real box (see <style>) so that
     // :host(:hover) can recolour this inner element via descendant selectors.
     root:
-      'inline-flex items-center justify-center select-none cursor-pointer rounded-full min-w-12 gap-2 text-sm font-normal leading-none [transform:translate3d(0,0,0)] transition-colors duration-200 ease-in-out bg-transparent text-primary-600 ring-1 ring-inset ring-primary-600 ' +
+      'inline-flex items-center justify-center select-none cursor-pointer rounded-full min-w-12 gap-2 text-sm font-normal leading-none [transform:translate3d(0,0,0)] transition-colors duration-200 ease-in-out bg-transparent text-primary ring-1 ring-inset ring-primary ' +
       // badge ::before defaults — hidden until the `badged` variant reveals it
       // with `before:grid`. (Keep only ONE display utility per state: a base
       // `before:grid` here would let tailwind-merge drop `before:hidden`, so the
       // pill would always show.)
-      'before:content-[attr(data-badge)] before:hidden before:place-content-center before:rounded-full before:px-1 before:text-xs before:leading-none before:bg-primary-600 before:text-white',
+      'before:content-[attr(data-badge)] before:hidden before:place-content-center before:rounded-full before:px-1 before:text-xs before:leading-none before:bg-primary before:text-on-primary',
   },
   variants: {
     active: {
       true: {
-        close: 'text-white',
-        root: 'bg-primary-600 text-white ring-primary-600 before:bg-white before:text-primary-600',
+        close: 'text-on-primary',
+        root: 'bg-primary text-on-primary ring-primary before:bg-surface before:text-primary',
       },
     },
     // data-badge present: reveal the ::before pill (grid centres the value) and
@@ -160,14 +157,14 @@ const onClose = () => {
   border-radius: 999px;
 }
 
-/* Non-active hover: light primary tint (rgba(--c-primary-rgb, 0.1)). */
+/* Non-active hover: the primary subtle tint. */
 :host(:hover) [part='root'] {
-  background-color: rgba(var(--c-primary-rgb), 0.1);
+  background-color: var(--c-primary-subtle);
 }
 
-/* Active hover: solid primary-400, and drop the inset ring (box-shadow). */
+/* Active hover: the primary hover step, and drop the inset ring (box-shadow). */
 :host([active]:hover) [part='root'] {
-  background-color: var(--c-primary-400);
+  background-color: var(--c-primary-hover);
   box-shadow: none;
 }
 
@@ -176,7 +173,7 @@ const onClose = () => {
 }
 
 :host(:focus-visible) {
-  outline: 2px var(--c-primary-600) solid;
+  outline: 2px var(--c-primary) solid;
   outline-offset: 2px;
   z-index: 1;
 }

@@ -13,8 +13,9 @@ import { computed } from 'vue';
  * `root` slot is the status pill and the `type` variant replaces the
  * `.c-status--<type>` colour cascade. Consumer customization is via
  * `::part(root)` (ADR-0006); there is no `override` prop. The per-component
- * `--c-status-*` indirection vars are dropped in favour of global design tokens
- * (e.g. var(--c-info-200) -> bg-info-200, var(--c-info-800) -> text-info-800).
+ * `--c-status-*` indirection vars are dropped in favour of the semantic status
+ * roles (ADR-0010): the pill is the role's `subtle` fill with its `on-*-subtle`
+ * text (e.g. info -> bg-info-subtle / text-on-info-subtle).
  *
  * `box-shadow: inset 0 0 0 1px currentColor` -> `ring-1 ring-inset ring-current`
  * so the 1px inner outline tracks the variant's text colour, matching the source.
@@ -24,15 +25,15 @@ const status = tv({
     type: '',
   },
   slots: {
-    root: 'inline-flex items-center justify-center overflow-hidden relative min-h-6 min-w-[88px] px-4 py-1 rounded-csc-md text-sm leading-none ring-1 ring-inset ring-current bg-primary-200 text-primary-800',
+    root: 'inline-flex items-center justify-center overflow-hidden relative min-h-6 min-w-[88px] px-4 py-1 rounded-csc-md text-sm leading-none ring-1 ring-inset ring-current bg-primary-subtle text-on-primary-subtle',
   },
   variants: {
     type: {
       '': '',
-      error: { root: 'bg-error-200 text-error-800' },
-      info: { root: 'bg-info-200 text-info-800' },
-      success: { root: 'bg-success-200 text-success-800' },
-      warning: { root: 'bg-warning-200 text-warning-800' },
+      error: { root: 'bg-error-subtle text-on-error-subtle' },
+      info: { root: 'bg-info-subtle text-on-info-subtle' },
+      success: { root: 'bg-success-subtle text-on-success-subtle' },
+      warning: { root: 'bg-warning-subtle text-on-warning-subtle' },
     },
   },
 });

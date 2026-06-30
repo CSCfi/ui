@@ -28,12 +28,9 @@ import { computed } from 'vue';
 /**
  * Styling lives in this `tailwind-variants` config (ADR-0004). The old
  * `--_c-message-*` indirection vars are dropped: the hint colour maps to the
- * system-text token and the error colour to `text-error-600`, selected by the
- * `valid` variant. Consumer customization is via `::part()` (ADR-0006).
- *
- * Note there is no `text-system` utility in this package's theme, so the hint
- * colour uses the arbitrary `text-[var(--c-text-system)]` form (matches
- * c-loader / c-list-item).
+ * muted on-surface token and the error colour to the error status role, selected
+ * by the `valid` variant (ADR-0010). Consumer customization is via `::part()`
+ * (ADR-0006).
  */
 const message = tv({
   defaultVariants: {
@@ -49,8 +46,8 @@ const message = tv({
   },
   variants: {
     valid: {
-      false: { root: 'text-error-600' },
-      true: { root: 'text-[var(--c-text-system)]' },
+      false: { root: 'text-error' },
+      true: { root: 'text-on-surface-muted' },
     },
   },
 });

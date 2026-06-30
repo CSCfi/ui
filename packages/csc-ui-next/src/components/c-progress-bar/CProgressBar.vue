@@ -42,8 +42,9 @@ defineOptions({ inheritAttrs: false });
  * flex wrapper, the `bar` (label) box, and the `details` percentage line, with
  * the `singleLine` / `negative` states as variants. The old per-component
  * `--c-progress-bar-*` indirection vars are dropped; values are authored
- * directly against design tokens (`tertiary-200`, `primary-600`, `error-600`)
- * and the literal 16px height / 4px border the defaults resolved to.
+ * directly against semantic tokens (the muted surface track, the primary fill
+ * and the error role for a negative value, ADR-0010) and the literal 16px
+ * height / 4px border the defaults resolved to.
  *
  * The native `<progress>` element (with its `::-webkit-*` / `::-moz-*`
  * pseudo-elements) and the indeterminate `::before` + `@keyframes` are not
@@ -59,14 +60,14 @@ const progress = tv({
     singleLine: false,
   },
   slots: {
-    bar: 'relative basis-full h-2 w-[calc(100%-8px)] m-1 overflow-hidden rounded-2xl opacity-75 transform-gpu bg-tertiary-200 shadow-[0_0_0_4px_var(--c-tertiary-200)] focus-within:outline-2 focus-within:outline-solid focus-within:outline-primary-600 focus-within:outline-offset-6',
+    bar: 'relative basis-full h-2 w-[calc(100%-8px)] m-1 overflow-hidden rounded-2xl opacity-75 transform-gpu bg-surface-muted shadow-[0_0_0_4px_var(--c-surface-muted)] focus-within:outline-2 focus-within:outline-solid focus-within:outline-primary focus-within:outline-offset-6',
     details: 'basis-full mt-0.5 pl-4 text-sm text-end whitespace-nowrap',
     // 16px design height minus 2×4px border = 8px (h-2); 100% minus 2×4px (w-...).
     root: 'flex flex-wrap items-center',
   },
   variants: {
     negative: {
-      true: { details: 'text-error-600' },
+      true: { details: 'text-error' },
     },
     singleLine: {
       true: {
@@ -126,7 +127,7 @@ onMounted(() => {
 -->
 <style>
 .c-progress progress {
-  background-color: var(--c-tertiary-200);
+  background-color: var(--c-surface-muted);
   border-radius: 16px;
   width: 100%;
   overflow: hidden;
@@ -146,7 +147,7 @@ onMounted(() => {
 
 .c-progress progress::-webkit-progress-value {
   transition: width 0.3s ease-in-out;
-  background-color: var(--c-primary-600);
+  background-color: var(--c-primary);
   border-radius: 16px;
 }
 
@@ -154,7 +155,7 @@ onMounted(() => {
   transition: padding-bottom 1s;
   padding-left: 60px;
   padding-bottom: var(--_c-progress-bar-value);
-  background-color: var(--c-primary-600);
+  background-color: var(--c-primary);
   height: 0;
   transform-origin: 0 0;
   transform: rotate(-90deg) translateX(-60px);
@@ -168,7 +169,7 @@ onMounted(() => {
   content: '';
   z-index: 1;
   position: absolute;
-  background-color: var(--c-primary-600);
+  background-color: var(--c-primary);
   border-radius: 16px;
   left: -100%;
   height: 100%;
