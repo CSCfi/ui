@@ -407,6 +407,12 @@ const selectOption = ({
   name: string;
   value: number | string;
 }) => {
+  // Whether this value change came from the user interacting with this select
+  // (dropdown open, or focus already inside the component) rather than a
+  // programmatic/initial value. Capture it before close() can move focus.
+  const fromInteraction =
+    dropdownVisible.value || !!host?.matches(':focus-within');
+
   dropdownRef.value?.close();
 
   const selection = setCurrentIndex({ name, value: v });
@@ -418,7 +424,12 @@ const selectOption = ({
   }
 
   dropdownRef.value?.updateList();
-  inputRef.value?.focus();
+
+  // Return focus to the input only when the user was interacting. Focusing on
+  // a programmatic value change — e.g. an initial v-model value arriving after
+  // the custom element upgrades — steals focus and scrolls the page to the
+  // select on load.
+  if (fromInteraction) inputRef.value?.focus();
 };
 
 const setValue = ({
