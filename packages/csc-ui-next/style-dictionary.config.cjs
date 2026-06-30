@@ -3,6 +3,7 @@ const createTheme = require('./utils/createTheme.cjs');
 const createSemanticTheme = require('./utils/createSemanticTheme.cjs');
 const semanticLight = require('./tokens/semantic/light.json');
 const semanticDark = require('./tokens/semantic/dark.json');
+const semanticInvariant = require('./tokens/semantic/invariant.json');
 
 /**
  * Token pipeline for `@cscfi/csc-ui-next` (ADR-0010).
@@ -28,7 +29,11 @@ StyleDictionaryPackage.registerFormat({
   name: 'css/tokens',
   formatter({ dictionary }) {
     const palette = createTheme(dictionary, 'css');
-    const semantic = createSemanticTheme(semanticLight, semanticDark);
+    const semantic = createSemanticTheme(
+      semanticLight,
+      semanticDark,
+      semanticInvariant,
+    );
 
     return `${palette}\n${semantic}`;
   },

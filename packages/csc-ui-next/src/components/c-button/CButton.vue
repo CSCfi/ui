@@ -72,7 +72,7 @@ const button = tv({
     // ---- default (no appearance flag) -----------------------------------
     {
       class: {
-        root: 'bg-primary-600 text-white hover:bg-primary-400 focus-visible:outline-primary-600',
+        root: 'bg-primary text-on-primary hover:bg-primary-hover focus-visible:outline-primary',
       },
       danger: false,
       ghost: false,
@@ -82,7 +82,7 @@ const button = tv({
     },
     {
       class: {
-        root: 'bg-white text-primary-600 hover:bg-primary-200 focus-visible:outline-white',
+        root: 'bg-inverse-surface text-inverse-primary hover:bg-inverse-primary/15 focus-visible:outline-inverse-on',
       },
       danger: false,
       ghost: false,
@@ -93,14 +93,14 @@ const button = tv({
     // ---- danger ----------------------------------------------------------
     {
       class: {
-        root: 'bg-error-600 text-white hover:bg-error-400 focus-visible:outline-error-600',
+        root: 'bg-error text-on-error hover:bg-error-hover focus-visible:outline-error',
       },
       danger: true,
       inverted: false,
     },
     {
       class: {
-        root: 'bg-white text-error-600 hover:bg-error-100 focus-visible:outline-white',
+        root: 'bg-inverse-surface text-inverse-error hover:bg-inverse-error/10 focus-visible:outline-inverse-on',
       },
       danger: true,
       inverted: true,
@@ -108,14 +108,14 @@ const button = tv({
     // ---- ghost -----------------------------------------------------------
     {
       class: {
-        root: 'bg-primary-200 text-primary-600 hover:bg-primary-100 focus-visible:outline-primary-600',
+        root: 'bg-primary-subtle text-primary hover:bg-primary-subtle-hover focus-visible:outline-primary',
       },
       ghost: true,
       inverted: false,
     },
     {
       class: {
-        root: 'bg-white/20 text-white hover:bg-white/30 focus-visible:outline-white',
+        root: 'bg-inverse-on/20 text-inverse-on hover:bg-inverse-on/30 focus-visible:outline-inverse-on',
       },
       ghost: true,
       inverted: true,
@@ -123,14 +123,14 @@ const button = tv({
     // ---- text ------------------------------------------------------------
     {
       class: {
-        root: 'bg-transparent text-primary-600 hover:bg-primary-100 focus-visible:outline-primary-600',
+        root: 'bg-transparent text-primary hover:bg-primary-subtle-hover focus-visible:outline-primary',
       },
       inverted: false,
       text: true,
     },
     {
       class: {
-        root: 'bg-transparent text-white hover:bg-white/30 focus-visible:outline-white',
+        root: 'bg-transparent text-inverse-on hover:bg-inverse-on/30 focus-visible:outline-inverse-on',
       },
       inverted: true,
       text: true,
@@ -138,21 +138,23 @@ const button = tv({
     // ---- outlined --------------------------------------------------------
     {
       class: {
-        root: 'bg-transparent text-primary-600 ring-2 ring-inset ring-primary-600 hover:bg-primary-200 focus-visible:outline-primary-600',
+        root: 'bg-transparent text-primary ring-2 ring-inset ring-primary hover:bg-primary-subtle focus-visible:outline-primary',
       },
       inverted: false,
       outlined: true,
     },
     {
       class: {
-        root: 'bg-transparent text-white ring-2 ring-inset ring-white hover:bg-white/30 focus-visible:outline-white',
+        root: 'bg-transparent text-inverse-on ring-2 ring-inset ring-inverse-on hover:bg-inverse-on/30 focus-visible:outline-inverse-on',
       },
       inverted: true,
       outlined: true,
     },
     // ---- disabled (overrides appearance bg/text/border) ------------------
+    // Non-inverted disabled is the muted neutral surface; inverted disabled
+    // dims the mode-invariant inverse foreground (it sits on a dark backdrop).
     {
-      class: { root: 'bg-tertiary-100 text-tertiary-600' },
+      class: { root: 'bg-surface-muted text-on-surface-muted' },
       danger: false,
       disabled: true,
       ghost: false,
@@ -161,7 +163,7 @@ const button = tv({
       text: false,
     },
     {
-      class: { root: 'bg-tertiary-100 text-tertiary-500' },
+      class: { root: 'bg-inverse-on/10 text-inverse-on/40' },
       danger: false,
       disabled: true,
       ghost: false,
@@ -170,30 +172,30 @@ const button = tv({
       text: false,
     },
     {
-      class: { root: 'bg-tertiary-100 text-tertiary-600' },
+      class: { root: 'bg-surface-muted text-on-surface-muted' },
       danger: true,
       disabled: true,
     },
     {
-      class: { root: 'bg-tertiary-100 text-tertiary-600' },
+      class: { root: 'bg-surface-muted text-on-surface-muted' },
       disabled: true,
       ghost: true,
       inverted: false,
     },
     {
-      class: { root: 'bg-white/5 text-tertiary-400' },
+      class: { root: 'bg-inverse-on/10 text-inverse-on/40' },
       disabled: true,
       ghost: true,
       inverted: true,
     },
     {
-      class: { root: 'bg-transparent text-tertiary-400' },
+      class: { root: 'bg-transparent text-on-surface-muted' },
       disabled: true,
       text: true,
     },
     {
       class: {
-        root: 'bg-transparent text-tertiary-500 ring-2 ring-inset ring-tertiary-400',
+        root: 'bg-transparent text-on-surface-muted ring-2 ring-inset ring-border',
       },
       disabled: true,
       inverted: false,
@@ -201,7 +203,7 @@ const button = tv({
     },
     {
       class: {
-        root: 'bg-transparent text-tertiary-400 ring-2 ring-inset ring-tertiary-400',
+        root: 'bg-transparent text-inverse-on/40 ring-2 ring-inset ring-inverse-on/40',
       },
       disabled: true,
       inverted: true,

@@ -20,10 +20,11 @@ const decls = (map, indent) =>
     .map(([role, step]) => `${indent}--c-${role}: var(--c-${step});`)
     .join('\n');
 
-module.exports = (light, dark) => {
+module.exports = (light, dark, invariant) => {
   const lightDecls = decls(light, '\t');
   const darkDecls = decls(dark, '\t');
   const darkDeclsNested = decls(dark, '\t\t');
+  const invariantDecls = decls(invariant, '\t');
 
   return [
     '/*',
@@ -31,6 +32,12 @@ module.exports = (light, dark) => {
     ' * different palette step per theme mode; components author against the',
     ' * per-role color utilities the @theme inline map in tailwind.css exposes.',
     ' */',
+    '',
+    '/* Mode-invariant roles (identical in light and dark). */',
+    ':root {',
+    invariantDecls,
+    '}',
+    '',
     ':root,\n:root[data-theme=\'light\'] {',
     lightDecls,
     '}',

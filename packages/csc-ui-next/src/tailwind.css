@@ -139,44 +139,66 @@
   --color-ring: var(--c-ring);
 
   --color-primary: var(--c-primary);
+  --color-primary-hover: var(--c-primary-hover);
   --color-on-primary: var(--c-on-primary);
   --color-primary-subtle: var(--c-primary-subtle);
+  --color-primary-subtle-hover: var(--c-primary-subtle-hover);
   --color-on-primary-subtle: var(--c-on-primary-subtle);
 
   --color-secondary: var(--c-secondary);
+  --color-secondary-hover: var(--c-secondary-hover);
   --color-on-secondary: var(--c-on-secondary);
   --color-secondary-subtle: var(--c-secondary-subtle);
+  --color-secondary-subtle-hover: var(--c-secondary-subtle-hover);
   --color-on-secondary-subtle: var(--c-on-secondary-subtle);
 
   --color-accent: var(--c-accent);
+  --color-accent-hover: var(--c-accent-hover);
   --color-on-accent: var(--c-on-accent);
   --color-accent-subtle: var(--c-accent-subtle);
+  --color-accent-subtle-hover: var(--c-accent-subtle-hover);
   --color-on-accent-subtle: var(--c-on-accent-subtle);
 
   --color-success: var(--c-success);
+  --color-success-hover: var(--c-success-hover);
   --color-on-success: var(--c-on-success);
   --color-success-subtle: var(--c-success-subtle);
+  --color-success-subtle-hover: var(--c-success-subtle-hover);
   --color-on-success-subtle: var(--c-on-success-subtle);
 
   --color-info: var(--c-info);
+  --color-info-hover: var(--c-info-hover);
   --color-on-info: var(--c-on-info);
   --color-info-subtle: var(--c-info-subtle);
+  --color-info-subtle-hover: var(--c-info-subtle-hover);
   --color-on-info-subtle: var(--c-on-info-subtle);
 
   --color-warning: var(--c-warning);
+  --color-warning-hover: var(--c-warning-hover);
   --color-on-warning: var(--c-on-warning);
   --color-warning-subtle: var(--c-warning-subtle);
+  --color-warning-subtle-hover: var(--c-warning-subtle-hover);
   --color-on-warning-subtle: var(--c-on-warning-subtle);
 
   --color-error: var(--c-error);
+  --color-error-hover: var(--c-error-hover);
   --color-on-error: var(--c-on-error);
   --color-error-subtle: var(--c-error-subtle);
+  --color-error-subtle-hover: var(--c-error-subtle-hover);
   --color-on-error-subtle: var(--c-on-error-subtle);
 
   --color-link: var(--c-link);
+  --color-link-hover: var(--c-link-hover);
   --color-on-link: var(--c-on-link);
   --color-link-subtle: var(--c-link-subtle);
+  --color-link-subtle-hover: var(--c-link-subtle-hover);
   --color-on-link-subtle: var(--c-on-link-subtle);
+
+  /* Mode-invariant inverse family (content on a fixed brand/dark backdrop). */
+  --color-inverse-surface: var(--c-inverse-surface);
+  --color-inverse-on: var(--c-inverse-on);
+  --color-inverse-primary: var(--c-inverse-primary);
+  --color-inverse-error: var(--c-inverse-error);
 }
 
 /*
