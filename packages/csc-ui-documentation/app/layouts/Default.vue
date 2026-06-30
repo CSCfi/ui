@@ -7,6 +7,22 @@
 
       <c-spacer />
 
+      <c-icon-button
+        v-if="isNextImpl"
+        text
+        :title="
+          themeMode === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'
+        "
+        :aria-label="
+          themeMode === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'
+        "
+        @click="toggleTheme"
+      >
+        <c-icon
+          :path="themeMode === 'dark' ? mdiWeatherSunny : mdiWeatherNight"
+        />
+      </c-icon-button>
+
       <c-tag active flat>v{{ version }}</c-tag>
 
       <c-navigation-button v-if="isMobile" />
@@ -139,6 +155,15 @@
         Customization
       </c-side-navigation-item>
 
+      <c-side-navigation-item
+        :active="route?.name === 'design-tokens-dark-mode'"
+        @keyup.enter="navigateTo('/design-tokens/dark-mode')"
+        @click="navigateTo('/design-tokens/dark-mode')"
+      >
+        <c-icon :path="mdiThemeLightDark" :size="16" />
+        Dark mode
+      </c-side-navigation-item>
+
       <c-side-navigation-title>Miscellaneous</c-side-navigation-title>
 
       <c-side-navigation-item
@@ -169,7 +194,10 @@ import {
   mdiMagnify,
   mdiPalette,
   mdiReact,
+  mdiThemeLightDark,
   mdiVuejs,
+  mdiWeatherNight,
+  mdiWeatherSunny,
 } from '@mdi/js';
 import { storeToRefs } from 'pinia';
 import { migratedTags, tailwindVariantTags } from '@cscfi/csc-ui-next';
@@ -183,6 +211,10 @@ const version = ref(packageJson.version);
 // the marker is suppressed.
 const config = useRuntimeConfig();
 const isNextImpl = config.public.cscUiImpl === 'next';
+
+// Dark-mode toggle (next impl only — the Stencil theme is light-only).
+const { mode: themeMode, toggle: toggleTheme } = useTheme();
+
 const migratedSet = new Set(migratedTags);
 const tailwindSet = new Set(tailwindVariantTags);
 

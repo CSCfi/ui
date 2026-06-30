@@ -13,8 +13,11 @@
 
 @theme {
   --font-sans: 'Noto Sans', sans-serif;
-  --text-body: var(--c-primary-900);
-  --text-system: var(--c-tertiary-600);
+  /* Prefer the semantic foreground roles (csc-ui-next), so docs prose flips in
+   * dark mode; fall back to the fixed palette steps in stencil (light-only) mode
+   * where the semantic layer isn't loaded. */
+  --text-body: var(--c-on-surface, var(--c-primary-900));
+  --text-system: var(--c-on-surface-muted, var(--c-tertiary-600));
 
   /* colors ------------------- */
 
@@ -143,11 +146,12 @@
 }
 
 code {
-  background-color: var(--c-tertiary-100);
+  background-color: var(--c-surface-muted, var(--c-tertiary-100));
+  color: var(--c-on-surface, var(--c-primary-900));
   border-radius: 4px;
   font-size: 14px;
   padding: 2px;
-  box-shadow: 0 0 0 1px var(--c-tertiary-200);
+  box-shadow: 0 0 0 1px var(--c-border, var(--c-tertiary-200));
 }
 
 *,
@@ -162,6 +166,13 @@ code {
 
 body {
   overscroll-behavior: none;
+  /* Themed page surface in csc-ui-next mode; the fallbacks keep stencil mode
+   * (no semantic layer loaded) on today's white/dark-text look. */
+  background-color: var(--c-surface, var(--c-white));
+  color: var(--c-on-surface, var(--c-primary-900));
+  transition:
+    background-color 0.2s ease,
+    color 0.2s ease;
 }
 
 /* c-button::part(root) {

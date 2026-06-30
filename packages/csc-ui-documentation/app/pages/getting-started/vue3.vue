@@ -77,6 +77,42 @@
         Now you should be able to use the CSC Design system components in your
         project.
       </p>
+
+      <p class="mt-6">
+        <strong>5. (Optional) Enable dark mode</strong>
+      </p>
+
+      <p>
+        When using
+        <code>@cscfi/csc-ui-next</code>,
+        also import the semantic-token stylesheet, which carries the dark-mode
+        values:
+      </p>
+
+      <code-block
+        theme="atom-one-dark"
+        lang="css"
+        code="@import url('@cscfi/csc-ui-next/css/tokens.css');"
+        code-block-radius="6px"
+        highlightjs
+        persistent-copy-button
+      />
+
+      <p>
+        Then set the
+        <code>data-theme</code>
+        attribute on
+        <code>&lt;html&gt;</code>
+        to
+        <code>dark</code>
+        or
+        <code>light</code>
+        — or omit it to follow the operating system. See the
+        <nuxt-link class="text-info-700 underline" to="/design-tokens/dark-mode">
+          Dark mode
+        </nuxt-link>
+        page for the full contract and a live token preview.
+      </p>
     </c-card-content>
   </c-card>
 </template>
