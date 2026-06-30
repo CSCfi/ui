@@ -57,7 +57,7 @@
           />
         </div>
 
-        <c-spinner v-if="loading" :size="20" color="var(--c-primary-600)" />
+        <c-spinner v-if="loading" :size="20" color="var(--c-primary)" />
 
         <c-icon-button
           v-else-if="value && clearable"
@@ -146,7 +146,7 @@ const select = tv({
     // The clear button / spinner wrappers share the icon-button box metrics.
     iconButton: 'aspect-square -mr-1.5',
     input:
-      'max-h-8 py-2 bg-transparent border-0 text-[var(--c-text-body)] flex-[1_1_auto] [font-family:var(--c-font-family)] text-base leading-5 max-w-full min-w-0 w-full cursor-pointer outline-none focus:outline-none active:outline-none placeholder:text-tertiary-500 placeholder:opacity-100',
+      'max-h-8 py-2 bg-transparent border-0 text-on-surface flex-[1_1_auto] [font-family:var(--c-font-family)] text-base leading-5 max-w-full min-w-0 w-full cursor-pointer outline-none focus:outline-none active:outline-none placeholder:text-on-surface-muted placeholder:opacity-100',
     inputWrap: 'w-full flex justify-items-stretch',
     selection: 'hidden pointer-events-none',
   },
@@ -800,7 +800,7 @@ onBeforeUnmount(() => {
   align-items: center;
   display: flex;
   width: 100%;
-  color: var(--c-primary-600);
+  color: var(--c-primary);
 }
 
 /* …and hide the readonly text input that would otherwise sit beside it. */
@@ -809,7 +809,7 @@ onBeforeUnmount(() => {
 }
 
 input.c-input__input::placeholder {
-  color: var(--c-tertiary-500);
+  color: var(--c-on-surface-muted);
   opacity: 1;
 }
 </style>

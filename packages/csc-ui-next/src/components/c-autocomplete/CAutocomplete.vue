@@ -46,7 +46,7 @@
           @keydown="onFieldKeyDown"
         />
 
-        <c-spinner v-if="loading" :size="20" color="var(--c-primary-600)" />
+        <c-spinner v-if="loading" :size="20" color="var(--c-primary)" />
 
         <c-icon-button
           v-else-if="value && clearable"
@@ -226,25 +226,25 @@ import { emitModelValue } from '../../shared/emitModelValue';
 const autocomplete = tv({
   defaultVariants: { chevronActive: false, disabled: false },
   slots: {
-    card: 'flex flex-col min-w-[180px] max-h-[80vh] overflow-hidden rounded-csc-md bg-white shadow-[2px_4px_10px_#00000029]',
-    check: 'w-4 h-4 shrink-0 fill-current ml-auto text-primary-600',
+    card: 'flex flex-col min-w-[180px] max-h-[80vh] overflow-hidden rounded-csc-md bg-surface-overlay shadow-[2px_4px_10px_#00000029]',
+    check: 'w-4 h-4 shrink-0 fill-current ml-auto text-primary',
     chevron:
       'aspect-square -mr-1.5 rotate-0 transition-transform duration-300 ease-in-out',
     content: 'flex items-center w-full',
     iconButton: 'aspect-square -mr-1.5',
-    info: 'flex items-center flex-nowrap gap-2 text-sm min-h-[42px] px-[10px] w-full cursor-default whitespace-nowrap text-[var(--c-text-system)]',
-    infoIcon: 'w-[18px] h-[18px] shrink-0 fill-current text-warning-600',
+    info: 'flex items-center flex-nowrap gap-2 text-sm min-h-[42px] px-[10px] w-full cursor-default whitespace-nowrap text-on-surface-muted',
+    infoIcon: 'w-[18px] h-[18px] shrink-0 fill-current text-warning',
     input:
-      'max-h-8 py-2 bg-transparent border-0 text-[var(--c-text-body)] flex-[1_1_auto] [font-family:var(--c-font-family)] text-base leading-5 max-w-full min-w-0 w-full cursor-pointer outline-none focus:outline-none active:outline-none placeholder:text-tertiary-500 placeholder:opacity-100',
-    item: 'flex items-center flex-nowrap gap-3 cursor-pointer text-sm min-h-[42px] outline-none px-[10px] whitespace-nowrap w-full rounded select-none data-[active]:bg-primary-200 data-[active]:text-primary-600 data-[active]:ring-1 data-[active]:ring-inset data-[active]:ring-primary-600',
+      'max-h-8 py-2 bg-transparent border-0 text-on-surface flex-[1_1_auto] [font-family:var(--c-font-family)] text-base leading-5 max-w-full min-w-0 w-full cursor-pointer outline-none focus:outline-none active:outline-none placeholder:text-on-surface-muted placeholder:opacity-100',
+    item: 'flex items-center flex-nowrap gap-3 cursor-pointer text-sm min-h-[42px] outline-none px-[10px] whitespace-nowrap w-full rounded select-none data-[active]:bg-primary-subtle data-[active]:text-primary data-[active]:ring-1 data-[active]:ring-inset data-[active]:ring-primary',
     itemLabel: 'flex-auto overflow-hidden text-ellipsis whitespace-nowrap',
     list: 'list-none m-0 p-1 outline-none overflow-y-auto w-full',
     panel:
       'fixed m-0 p-0 border-0 bg-transparent overflow-visible [inset:auto]',
     search:
-      'flex items-center min-h-11 px-3 border-b border-solid border-tertiary-300',
+      'flex items-center min-h-11 px-3 border-b border-solid border-border',
     searchInput:
-      'bg-transparent border-0 outline-none w-full py-2 text-base leading-5 text-[var(--c-text-body)] [font-family:var(--c-font-family)] [caret-color:var(--c-primary-600)] placeholder:text-tertiary-500 placeholder:opacity-100',
+      'bg-transparent border-0 outline-none w-full py-2 text-base leading-5 text-on-surface [font-family:var(--c-font-family)] [caret-color:var(--c-primary)] placeholder:text-on-surface-muted placeholder:opacity-100',
     visuallyHidden:
       'absolute w-px h-px p-0 overflow-hidden border-0 [clip:rect(1px,1px,1px,1px)]',
   },
@@ -252,7 +252,7 @@ const autocomplete = tv({
     chevronActive: { true: { chevron: 'rotate-180' } },
     disabled: {
       true: {
-        item: 'cursor-default pointer-events-none bg-tertiary-600/5 [filter:grayscale(1)_opacity(0.75)] data-[active]:bg-tertiary-600/5 data-[active]:text-inherit data-[active]:ring-0',
+        item: 'cursor-default pointer-events-none bg-on-surface/5 [filter:grayscale(1)_opacity(0.75)] data-[active]:bg-on-surface/5 data-[active]:text-inherit data-[active]:ring-0',
       },
     },
   },
@@ -897,7 +897,7 @@ onBeforeUnmount(() => {
 }
 
 input.c-input__input::placeholder {
-  color: var(--c-tertiary-500);
+  color: var(--c-on-surface-muted);
   opacity: 1;
 }
 
