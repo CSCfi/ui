@@ -277,6 +277,9 @@ importers:
       prettier:
         specifier: ^3.8.5
         version: 3.8.5
+      style-dictionary:
+        specifier: ^3.9.0
+        version: 3.9.2
       tailwindcss:
         specifier: ^4.3.1
         version: 4.3.1
