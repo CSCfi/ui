@@ -1,3 +1,4 @@
+import { statSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import tailwindcss from '@tailwindcss/vite';
 
@@ -7,6 +8,17 @@ import tailwindcss from '@tailwindcss/vite';
 // watches the dist dir directly, drops the stale module from the graph, and
 // forces a full page reload — which is the only way changed custom elements
 // take effect, since the custom-element registry can't be redefined in place.
+//
+// Reliability matters here: small source edits were intermittently not picked
+// up. Two root causes, both handled below:
+//   1. The lib build rewrites a ~550KB `csc-ui-next.js` (Vue is bundled in).
+//      Reloading on the first `change` event raced the flush, so the browser
+//      re-fetched a half-written/stale bundle. We wait for each file's size to
+//      stop changing first (Vite's watcher has no `awaitWriteFinish`).
+//   2. Content-hashed chunks change filename between builds, which chokidar
+//      reports as `unlink`+`add` — not `change`. We listen to all three.
+// A short debounce coalesces the multi-file writes of a single rebuild into
+// one reload.
 const cscUiNextDist = fileURLToPath(
   new URL('../csc-ui-next/dist', import.meta.url),
 );
@@ -17,13 +29,54 @@ function reloadOnCscUiNextRebuild() {
     apply: 'serve' as const,
     configureServer(server: any) {
       server.watcher.add(cscUiNextDist);
-      server.watcher.on('change', (file: string) => {
-        if (!file.startsWith(cscUiNextDist)) return;
-        for (const mod of server.moduleGraph.getModulesByFile(file) ?? []) {
-          server.moduleGraph.invalidateModule(mod);
-        }
-        server.ws.send({ type: 'full-reload' });
-      });
+
+      const changed = new Set<string>();
+      let debounce: ReturnType<typeof setTimeout> | undefined;
+
+      // Resolve once the file's size is stable across two consecutive reads
+      // (or it has been removed), so we never reload mid-write.
+      const waitForStableSize = (file: string) =>
+        new Promise<void>((resolve) => {
+          let last = -1;
+          let tries = 0;
+          const poll = () => {
+            let size: number;
+            try {
+              size = statSync(file).size;
+            } catch {
+              return resolve(); // removed mid-rebuild — nothing to wait for
+            }
+            if ((size === last && size > 0) || tries++ > 50) return resolve();
+            last = size;
+            setTimeout(poll, 30);
+          };
+          poll();
+        });
+
+      const scheduleReload = () => {
+        clearTimeout(debounce);
+        debounce = setTimeout(async () => {
+          const files = [...changed];
+          changed.clear();
+          await Promise.all(files.map(waitForStableSize));
+          for (const file of files) {
+            for (const mod of server.moduleGraph.getModulesByFile(file) ?? []) {
+              server.moduleGraph.invalidateModule(mod);
+            }
+          }
+          server.ws.send({ type: 'full-reload' });
+        }, 80);
+      };
+
+      const onEvent = (file: string) => {
+        if (!file.startsWith(cscUiNextDist) || !file.endsWith('.js')) return;
+        changed.add(file);
+        scheduleReload();
+      };
+
+      server.watcher.on('add', onEvent);
+      server.watcher.on('change', onEvent);
+      server.watcher.on('unlink', onEvent);
     },
   };
 }
