@@ -25,6 +25,13 @@ import { computed, onMounted, useHost, useTemplateRef, watch } from 'vue';
 
 import { useRipple } from '../../shared/useRipple';
 
+// The host is the real focusable tab: role/tabindex/aria-* are set on it
+// imperatively (syncHostAttrs). Vue's defineCustomElement mirrors non-prop host
+// attributes into `$attrs`, which would otherwise fall through onto the shadow
+// root `[part=root]` div — a duplicate role/tabindex (second tab stop) and id.
+// Keep them on the host only.
+defineOptions({ inheritAttrs: false });
+
 interface CSwiperTabProps {
   active?: boolean;
   disabled?: boolean;

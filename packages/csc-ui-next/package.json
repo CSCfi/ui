@@ -22,6 +22,7 @@
     "build:types": "vue-tsc -p tsconfig.build.json",
     "build:watch": "pnpm run style-dictionary:build && vue-tsc -p tsconfig.build.json && vite build --watch",
     "dev": "pnpm run style-dictionary:build && vue-tsc -p tsconfig.build.json && vite build --watch",
+    "lint:a11y": "node scripts/check-host-attr-fallthrough.mjs",
     "lint:contrast": "node scripts/audit-contrast.mjs",
     "lint:tokens": "node scripts/check-palette-utilities.mjs",
     "style-dictionary:build": "style-dictionary build --config ./style-dictionary.config.cjs",
