@@ -233,16 +233,14 @@ c-button::part(root) {
   corner-shape: unset;
 }`;
 
-const classOverride = `.custom-button {
-  /**
-   * We're using the properties from the c-button,
-   * but the same effect could be achieved by customizing the theme
-   * inside here just like we did in the first example globally.
-   */
-  --c-button-background-color: var(--c-info-400);
-  --c-button-text-color: var(--c-info-900);
-  --c-button-background-color-hover: var(--c-accent-400);
-  --c-button-border-radius: 100vw;
+const classOverride = `.custom-button::part(root) {
+  background-color: var(--c-info-400);
+  color: var(--c-info-900);
+  border-radius: 2px;
+}
+  
+.custom-button:hover::part(root) {
+  background-color: var(--c-info-500);
 }`;
 
 const scssOverride = `.custom-button {

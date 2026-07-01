@@ -257,10 +257,11 @@ const button = tv({
     ripples:
       'absolute inset-0 overflow-hidden pointer-events-none rounded-[inherit]',
     // `root` is the public part; the host itself is `display:contents`.
-    // `font-family: inherit` only — native buttons don't inherit it. Font
-    // *size* is owned by the `size` variant's `text-*` (and consumer
-    // overrides); inheriting the whole `font` shorthand would reset it.
-    root: 'inline-grid place-items-center relative min-w-max overflow-hidden min-w-22 rounded-csc-md border-0 m-0 p-0 [font-family:inherit] no-underline cursor-pointer transform-gpu transition-colors duration-300 ease-in-out outline-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-solid',
+    // Set only `font-family` (via the `--c-font-family` token, consistent with
+    // every other component) — native buttons don't inherit it. Font *size* is
+    // owned by the `size` variant's `text-*` (and consumer overrides);
+    // inheriting the whole `font` shorthand would reset it.
+    root: 'inline-grid place-items-center relative min-w-max overflow-hidden min-w-22 rounded-csc-md border-0 m-0 p-0 [font-family:var(--c-font-family)] no-underline cursor-pointer transform-gpu transition-colors duration-300 ease-in-out outline-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-solid',
     spinner:
       'inline-block border-2 border-solid border-current border-r-transparent rounded-full animate-spin',
   },
