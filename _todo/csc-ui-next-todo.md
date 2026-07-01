@@ -7,16 +7,6 @@
 - Utilize tanstack table?
 - simplify data structure
 
-### CAutoComplete
-- use only value / v-model, remove separate query binding
-- filter internally
-- maybe a separate search field?
-- show every option on open, center on the selected item (if selected)
-
-### CMenu
-- use anchor positioning
-- allow setting position with a prop
-
 ### CModal
 - get rid of the top-layer implementation
 - do not loose the accessibility
@@ -27,7 +17,10 @@
 - dark mode
 - accessibility check / approvements
 - type exports / refactor
-- documentation page without csc-ui and the components.json it generated
+  - define types in the components (export them)
+  - no 'string' types for values that are a set of accepted values like "'warning' | 'success' | 'error' | 'info'"
+- new documentation site without csc-ui and the components.json it generated
+  - examples for ts/vue/angular/react
 
 ---
 

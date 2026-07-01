@@ -108,8 +108,8 @@
         or
         <code>light</code>
         — or omit it to follow the operating system. See the
-        <nuxt-link class="text-info-700 underline" to="/design-tokens/dark-mode">
-          Dark mode
+        <nuxt-link to="/design-tokens/dark-mode">
+          <c-link underline>Dark mode</c-link>
         </nuxt-link>
         page for the full contract and a live token preview.
       </p>

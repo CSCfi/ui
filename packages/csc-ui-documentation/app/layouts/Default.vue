@@ -96,7 +96,7 @@
 
       <c-side-navigation-title>Components</c-side-navigation-title>
 
-      <div class="pr-6 pb-2">
+      <div class="pb-2">
         <c-text-field
           v-model="query"
           v-control
@@ -260,9 +260,9 @@ watch(
   (currentRoute) => {
     if (!currentRoute.path.includes('components')) return;
 
-    const [component] = currentRoute.params.slug;
+    const [component] = [currentRoute.params.slug].flat();
 
-    currentComponent.value = component;
+    currentComponent.value = component || '';
   },
   { immediate: true },
 );

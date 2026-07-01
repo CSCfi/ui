@@ -80,7 +80,7 @@ const sideNavigation = tv({
     spacer: 'flex-1 mb-2',
     srOnly:
       'absolute w-px h-px p-0 -m-px overflow-hidden whitespace-nowrap border-0 [clip:rect(0_0_0_0)]',
-    wrapper: 'flex flex-col shrink-0 min-h-full',
+    wrapper: 'flex flex-col shrink-0 min-h-full gap-px',
   },
   variants: {
     hidden: {
