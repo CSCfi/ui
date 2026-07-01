@@ -89,6 +89,14 @@ _Avoid_: Foreground, contrast colour, text token (use `on-<role>`)
 The light-or-dark state that selects which palette tokens the **semantic tokens** resolve to. Controlled by the consumer at the document root and read by the whole component tree through token inheritance; an explicit consumer choice wins over the user's OS preference, which is the fallback when no explicit choice is set. _Light_ is the default/unset state.
 _Avoid_: Theme (a "theme" implies a full named palette swap; a mode is specifically the light/dark axis), colour scheme, skin
 
+**Family**:
+One of the eight chromatic brand/status ramps a consumer may re-brand — `primary`, `secondary`, `accent`, `success`, `info`, `warning`, `error`, `link`. A family spans the full step ramp (`50`–`950`) whose steps are **palette tokens**. The neutral ladders (`tertiary`, `slate`) and `white`/`black` are not families (they are hand-tuned, not consumer-overridable). See **Seed** and ADR-0011.
+_Avoid_: Colour, type (the consumer-facing word for these was "type" — prefer _family_), palette (one step of a family is a palette token; the family is the whole ramp)
+
+**Seed**:
+The single step-`500` colour value that anchors a **family**'s generated ramp. Step 500 reproduces the seed exactly; steps `50`–`950` are derived from it perceptually (OKLCH). Consumers supply one seed per family they override (via `applyTheme` / `themeToCss`) and the whole ramp — and every **semantic token** that resolves to it, in both modes — regenerates. See ADR-0011.
+_Avoid_: Base colour, brand colour (ambiguous — a "brand colour" could mean any step; the seed is specifically step 500)
+
 ### Flagged ambiguities
 
 - **"Vue version"** is ambiguous: it can mean (a) the `@cscfi/csc-ui-vue` directive, (b) a component implemented in Vue inside `csc-ui-next`, or (c) the Vue.js framework version. Prefer **"`csc-ui-next` component"** for (b), **"`v-control` directive"** for (a), and **"Vue 3"/"Vue 2"** explicitly for (c).

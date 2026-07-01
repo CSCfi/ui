@@ -41,107 +41,123 @@
    * where the semantic layer isn't loaded. */
   --text-body: var(--c-on-surface, var(--c-primary-900));
   --text-system: var(--c-on-surface-muted, var(--c-tertiary-600));
+}
 
-  /* colors ------------------- */
+/*
+ * Map the docs' palette utilities (text-primary-600, bg-accent, …) onto the
+ * csc-ui-next design tokens instead of hardcoded hexes, so the docs chrome
+ * (headings, links, etc.) tracks the canonical library ramp AND re-themes live
+ * when a consumer overrides a brand seed via `applyTheme` (see the Customization
+ * page). `inline` mirrors the library's own tailwind.css: the utility inlines
+ * `var(--c-*)`, which is declared on :root and inherited across shadow
+ * boundaries, so a runtime override at <html> cascades in with no rebuild.
+ *
+ * Each family's palette steps point at the mode-independent `--c-<family>-<step>`
+ * ramp; the bare `--color-<family>` DEFAULT points at the mode-aware semantic
+ * token (`--c-<family>`) so text-primary/bg-primary flip in dark mode, with a
+ * palette-step fallback for stencil mode where the semantic layer isn't loaded.
+ */
+@theme inline {
+  --color-primary-100: var(--c-primary-100);
+  --color-primary-200: var(--c-primary-200);
+  --color-primary-300: var(--c-primary-300);
+  --color-primary-400: var(--c-primary-400);
+  --color-primary-500: var(--c-primary-500);
+  --color-primary-600: var(--c-primary-600);
+  --color-primary-700: var(--c-primary-700);
+  --color-primary-800: var(--c-primary-800);
+  --color-primary-900: var(--c-primary-900);
+  --color-primary: var(--c-primary, var(--c-primary-500));
 
-  --color-accent-100: #e5f9f7ff;
-  --color-accent-200: #ccf4f0ff;
-  --color-accent-300: #99e9e0ff;
-  --color-accent-400: #66ddd1ff;
-  --color-accent-500: #33d2c1ff;
-  --color-accent-600: #00c7b2ff;
-  --color-accent-700: #009f8eff;
-  --color-accent-800: #00776bff;
-  --color-accent-900: #005047ff;
-  --color-accent: #00c7b2ff;
+  --color-secondary-100: var(--c-secondary-100);
+  --color-secondary-200: var(--c-secondary-200);
+  --color-secondary-300: var(--c-secondary-300);
+  --color-secondary-400: var(--c-secondary-400);
+  --color-secondary-500: var(--c-secondary-500);
+  --color-secondary-600: var(--c-secondary-600);
+  --color-secondary-700: var(--c-secondary-700);
+  --color-secondary-800: var(--c-secondary-800);
+  --color-secondary-900: var(--c-secondary-900);
+  --color-secondary: var(--c-secondary, var(--c-secondary-500));
 
-  --color-error-100: #fce7e7ff;
-  --color-error-200: #f8ceceff;
-  --color-error-300: #f19e9eff;
-  --color-error-400: #eb6d6dff;
-  --color-error-500: #e43d3dff;
-  --color-error-600: #dd0c0cff;
-  --color-error-700: #ae0909ff;
-  --color-error-800: #7e0707ff;
-  --color-error-900: #4d0404ff;
-  --color-error: #dd0c0cff;
+  --color-accent-100: var(--c-accent-100);
+  --color-accent-200: var(--c-accent-200);
+  --color-accent-300: var(--c-accent-300);
+  --color-accent-400: var(--c-accent-400);
+  --color-accent-500: var(--c-accent-500);
+  --color-accent-600: var(--c-accent-600);
+  --color-accent-700: var(--c-accent-700);
+  --color-accent-800: var(--c-accent-800);
+  --color-accent-900: var(--c-accent-900);
+  --color-accent: var(--c-accent, var(--c-accent-500));
 
-  --color-info-100: #e5f2f8ff;
-  --color-info-200: #cce6f1ff;
-  --color-info-300: #99cde4ff;
-  --color-info-400: #66b4d6ff;
-  --color-info-500: #339bc9ff;
-  --color-info-600: #0082bbff;
-  --color-info-700: #006896ff;
-  --color-info-800: #004e70ff;
-  --color-info-900: #00344bff;
-  --color-info: #0082bbff;
+  --color-success-100: var(--c-success-100);
+  --color-success-200: var(--c-success-200);
+  --color-success-300: var(--c-success-300);
+  --color-success-400: var(--c-success-400);
+  --color-success-500: var(--c-success-500);
+  --color-success-600: var(--c-success-600);
+  --color-success-700: var(--c-success-700);
+  --color-success-800: var(--c-success-800);
+  --color-success-900: var(--c-success-900);
+  --color-success: var(--c-success, var(--c-success-500));
 
-  --color-info-100: #e5eaefff;
-  --color-info-200: #ccd5dfff;
-  --color-info-300: #99acbfff;
-  --color-info-400: #66829fff;
-  --color-info-500: #33597fff;
-  --color-info-600: #002f5fff;
-  --color-info-700: #00264cff;
-  --color-info-800: #001c39ff;
-  --color-info-900: #001326ff;
-  --color-info: #002f5fff;
+  --color-info-100: var(--c-info-100);
+  --color-info-200: var(--c-info-200);
+  --color-info-300: var(--c-info-300);
+  --color-info-400: var(--c-info-400);
+  --color-info-500: var(--c-info-500);
+  --color-info-600: var(--c-info-600);
+  --color-info-700: var(--c-info-700);
+  --color-info-800: var(--c-info-800);
+  --color-info-900: var(--c-info-900);
+  --color-info: var(--c-info, var(--c-info-500));
 
-  --color-primary-100: #e6f0f2ff;
-  --color-primary-200: #cce1e4ff;
-  --color-primary-300: #99c2c9ff;
-  --color-primary-400: #66a4aeff;
-  --color-primary-500: #338593ff;
-  --color-primary-600: #006778ff;
-  --color-primary-700: #005260ff;
-  --color-primary-800: #003e48ff;
-  --color-primary-900: #002930ff;
-  --color-primary: #006778ff;
+  --color-link-100: var(--c-link-100);
+  --color-link-200: var(--c-link-200);
+  --color-link-300: var(--c-link-300);
+  --color-link-400: var(--c-link-400);
+  --color-link-500: var(--c-link-500);
+  --color-link-600: var(--c-link-600);
+  --color-link-700: var(--c-link-700);
+  --color-link-800: var(--c-link-800);
+  --color-link-900: var(--c-link-900);
+  --color-link: var(--c-link, var(--c-link-500));
 
-  --color-secondary-100: #f3e5eeff;
-  --color-secondary-200: #e6ccdcff;
-  --color-secondary-300: #cd99b9ff;
-  --color-secondary-400: #b56697ff;
-  --color-secondary-500: #9c3374ff;
-  --color-secondary-600: #830051ff;
-  --color-secondary-700: #690041ff;
-  --color-secondary-800: #4f0031ff;
-  --color-secondary-900: #340020ff;
-  --color-secondary: #830051ff;
+  --color-warning-100: var(--c-warning-100);
+  --color-warning-200: var(--c-warning-200);
+  --color-warning-300: var(--c-warning-300);
+  --color-warning-400: var(--c-warning-400);
+  --color-warning-500: var(--c-warning-500);
+  --color-warning-600: var(--c-warning-600);
+  --color-warning-700: var(--c-warning-700);
+  --color-warning-800: var(--c-warning-800);
+  --color-warning-900: var(--c-warning-900);
+  --color-warning: var(--c-warning, var(--c-warning-500));
 
-  --color-success-100: #edf7e7ff;
-  --color-success-200: #dceeceff;
-  --color-success-300: #b9dc9cff;
-  --color-success-400: #97cb6bff;
-  --color-success-500: #74b939ff;
-  --color-success-600: #51a808ff;
-  --color-success-700: #418606ff;
-  --color-success-800: #316505ff;
-  --color-success-900: #204303ff;
-  --color-success: #51a808ff;
+  --color-error-100: var(--c-error-100);
+  --color-error-200: var(--c-error-200);
+  --color-error-300: var(--c-error-300);
+  --color-error-400: var(--c-error-400);
+  --color-error-500: var(--c-error-500);
+  --color-error-600: var(--c-error-600);
+  --color-error-700: var(--c-error-700);
+  --color-error-800: var(--c-error-800);
+  --color-error-900: var(--c-error-900);
+  --color-error: var(--c-error, var(--c-error-500));
 
-  --color-tertiary-100: #eff0f1ff;
-  --color-tertiary-200: #dfe1e3ff;
-  --color-tertiary-300: #bfc3c6ff;
-  --color-tertiary-400: #9ea6aaff;
-  --color-tertiary-500: #7d888aff;
-  --color-tertiary-600: #5b6468ff;
-  --color-tertiary-700: #484c4fff;
-  --color-tertiary-800: #36383aff;
-  --color-tertiary-900: #242629ff;
-  --color-tertiary: #5b6468ff;
-
-  --color-warning-100: #fff3e5ff;
-  --color-warning-200: #ffebccff;
-  --color-warning-300: #ffd9a9ff;
-  --color-warning-400: #ffc186ff;
-  --color-warning-500: #ffad63ff;
-  --color-warning-600: #ff9931ff;
-  --color-warning-700: #ff7a00ff;
-  --color-warning-800: #ff6000ff;
-  --color-warning-900: #ff4500ff;
-  --color-warning: #ff9931ff;
+  /* Tertiary is a neutral ladder, not a consumer-overridable family — mapped
+   * only so the docs' grey utilities share the one canonical ramp. */
+  --color-tertiary-100: var(--c-tertiary-100);
+  --color-tertiary-200: var(--c-tertiary-200);
+  --color-tertiary-300: var(--c-tertiary-300);
+  --color-tertiary-400: var(--c-tertiary-400);
+  --color-tertiary-500: var(--c-tertiary-500);
+  --color-tertiary-600: var(--c-tertiary-600);
+  --color-tertiary-700: var(--c-tertiary-700);
+  --color-tertiary-800: var(--c-tertiary-800);
+  --color-tertiary-900: var(--c-tertiary-900);
+  --color-tertiary: var(--c-tertiary-600);
 }
 
 /* Utilities -------------------- */

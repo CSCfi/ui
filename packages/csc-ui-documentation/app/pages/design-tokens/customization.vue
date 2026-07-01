@@ -43,6 +43,131 @@
     </c-card-content>
 
     <c-card-content class="mt-6">
+      <h2 class="text-xl text-primary">Customizing a theme color at runtime</h2>
+
+      <p>
+        The override above works, but you must restate every ramp step (
+        <code>50</code>
+
+        –
+        <code>950</code>
+        ) by hand — miss one and the hover, subtle and dark-mode states keep the
+        old brand. Instead, give
+        <code>applyTheme</code>
+
+        just the base (
+        <code>500</code>
+        ) seed for the families you want to rebrand; it regenerates each full
+        ramp with the same perceptual OKLCH generator the library ships with,
+        and re-themes every component in both light and dark mode.
+      </p>
+
+      <code-block
+        :code="applyThemeExample"
+        theme="atom-one-dark"
+        lang="ts"
+        code-block-radius="6px"
+        highlightjs
+        persistent-copy-button
+      />
+
+      <h3 class="text-lg text-primary mt-4">Try it live</h3>
+
+      <p>
+        Pick a base colour or choose a preset — the whole page re-themes from
+        the single seed, in the current mode. (This demo resets when you leave
+        the page.)
+      </p>
+
+      <div class="theme-playground grid gap-6">
+        <label class="theme-playground__picker">
+          <span>Primary seed</span>
+
+          <input v-model="primarySeed" type="color" />
+
+          <code>{{ primarySeed }}</code>
+
+          <c-button size="small" outlined @click="applySeed()">Apply theme</c-button>
+        </label>
+
+      </div>
+
+      <c-row gap="8">
+        <button
+          v-for="swatch in swatches"
+          :key="swatch"
+          class="size-7 supports-corner-shape:[corner-shape:squircle] supports-corner-shape:rounded-xl not-supports-corner-shape:rounded-md cursor-pointer"
+          :style="`background-color: ${swatch}`"
+          @click="applySeed(swatch)"
+        />
+
+        <c-button size="small" outlined @click="resetSeeds">Reset</c-button>
+      </c-row>
+
+      <div class="theme-preview">
+        <c-button>Solid</c-button>
+
+        <c-button outlined>Outlined</c-button>
+
+        <c-switch>Switch</c-switch>
+
+        <c-checkbox hide-details>Checkbox</c-checkbox>
+
+        <c-tags>
+          <c-tag>Tag</c-tag>
+
+          <c-tag active>Active</c-tag>
+        </c-tags>
+      </div>
+
+      <p>
+        The overridable families are
+        <code>primary</code>
+        ,
+        <code>secondary</code>
+
+        ,
+        <code>accent</code>
+
+        ,
+        <code>success</code>
+        ,
+        <code>info</code>
+
+        ,
+        <code>warning</code>
+
+        ,
+        <code>error</code>
+        and
+        <code>link</code>
+        . Neutrals (surfaces, borders) stay fixed so the audited contrast holds.
+        Call
+        <code>resetTheme()</code>
+        to revert.
+      </p>
+
+      <p>
+        For server-rendered apps, avoid a flash of the default palette by
+        generating the CSS on the server and injecting it into
+        <code>&lt;head&gt;</code>
+
+        with
+        <code>themeToCss</code>
+        :
+      </p>
+
+      <code-block
+        :code="themeToCssExample"
+        theme="atom-one-dark"
+        lang="ts"
+        code-block-radius="6px"
+        highlightjs
+        persistent-copy-button
+      />
+    </c-card-content>
+
+    <c-card-content class="mt-6">
       <h2 class="text-xl text-primary">Customizing components globally</h2>
 
       <code-block
@@ -71,27 +196,31 @@
 
     <c-card-content class="mt-6">
       <h2 class="text-xl text-primary">
-        Customizing converted components with <code>::part()</code>
+        Customizing converted components with
+        <code>::part()</code>
       </h2>
 
       <p>
         Components converted to the Tailwind-variants styling system no longer
-        expose <code>--c-*</code> override variables. Instead, each component
-        stamps its public regions as
+        expose
+        <code>--c-*</code>
+        override variables. Instead, each component stamps its public regions as
         <c-link
           href="https://developer.mozilla.org/en-US/docs/Web/CSS/::part"
           target="_blank"
           rel="noopener"
           underline
-          >
+        >
           CSS parts
         </c-link>
 
-        (<code>root</code>
+        (
+        <code>root</code>
 
-        , <code>content</code>, …), which you can target from
-        your own global stylesheet to restyle every instance at once — no prop
-        needed on each element.
+        ,
+        <code>content</code>
+        , …), which you can target from your own global stylesheet to restyle
+        every instance at once — no prop needed on each element.
       </p>
 
       <code-block
@@ -196,6 +325,30 @@
 
 <script setup lang="ts">
 import { mdiStar } from '@mdi/js';
+import { applyTheme, resetTheme } from '@cscfi/csc-ui-next';
+
+const DEFAULT_PRIMARY = '#006778';
+
+const primarySeed = ref(DEFAULT_PRIMARY);
+
+const applySeed = (hex?: string) => {
+  if (hex) {
+    primarySeed.value = hex;
+  }
+
+  applyTheme({ primary: primarySeed.value });
+};
+
+const resetSeeds = () => {
+  primarySeed.value = DEFAULT_PRIMARY;
+  resetTheme();
+};
+
+const swatches = ref(['#ff595e', '#ffca3a', '#8ac926', '#1982c4', '#6a4c93', '#e500a4']);
+
+// applyTheme writes to <html>, so it re-themes the whole site — revert when
+// leaving this page so the live demo doesn't tint the rest of the docs.
+// onUnmounted(() => resetTheme());
 
 const themeOverrideVariables = `--c-primary-100: var(--c-link-100);
   --c-primary-200: var(--c-link-200);
@@ -211,6 +364,26 @@ const themeOverrideVariables = `--c-primary-100: var(--c-link-100);
 const themeOverride = `:root {
   ${themeOverrideVariables}
 }`;
+
+const applyThemeExample = `import { applyTheme } from '@cscfi/csc-ui-next';
+
+// Supply only the base (500) seed per family you want to override.
+applyTheme({
+  primary: '#7c3aed',
+  error: '#e11d48',
+});
+
+// Revert to the defaults later:
+// resetTheme();`;
+
+const themeToCssExample = `import { themeToCss } from '@cscfi/csc-ui-next';
+
+// Pure — safe to run on the server. Returns a ':root { … }' string.
+const css = themeToCss({ primary: '#7c3aed' });
+
+// Inject into <head> before first paint (e.g. Nuxt useHead / Next metadata)
+// so the branded palette is present on the very first render:
+//   <style>{ css }</style>`;
 
 const componentOverrideVariables = `/* customize the c-switch */
   --c-switch-border-color: var(--c-black);
@@ -263,7 +436,7 @@ const fontOverrideHtml = `<c-button class="custom-font">I should look different 
   color: var(--c-info-900);
   border-radius: 2px;
 }
-  
+
 .custom-button:hover::part(root) {
   background-color: var(--c-info-500);
 }
@@ -275,5 +448,37 @@ const fontOverrideHtml = `<c-button class="custom-font">I should look different 
 .part-demo c-button::part(root) {
   border-radius: 9999px;
   corner-shape: unset;
+}
+
+.theme-playground {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 16px;
+  margin: 12px 0;
+}
+
+.theme-playground__picker {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.theme-playground__picker input[type='color'] {
+  inline-size: 40px;
+  block-size: 32px;
+  padding: 0;
+  border: 1px solid var(--c-border);
+  border-radius: 6px;
+  background: none;
+  cursor: pointer;
+}
+
+.theme-preview {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 16px;
+  margin-top: 12px;
 }
 </style>

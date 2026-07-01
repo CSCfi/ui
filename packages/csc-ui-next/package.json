@@ -24,6 +24,7 @@
     "dev": "pnpm run style-dictionary:build && vue-tsc -p tsconfig.build.json && vite build --watch",
     "lint:a11y": "node scripts/check-host-attr-fallthrough.mjs",
     "lint:contrast": "node scripts/audit-contrast.mjs",
+    "lint:ramp": "node scripts/check-ramp-parity.mjs",
     "lint:tokens": "node scripts/check-palette-utilities.mjs",
     "style-dictionary:build": "style-dictionary build --config ./style-dictionary.config.cjs",
     "type-check": "vue-tsc --build --force"
@@ -31,6 +32,7 @@
   "dependencies": {
     "@mdi/js": "^7.4.47",
     "@oddbird/css-anchor-positioning": "^0.9.0",
+    "culori": "^4.0.2",
     "tailwind-merge": "^3.6.0",
     "tailwind-variants": "^3.2.2",
     "vue": "^3.5.39"
@@ -41,7 +43,6 @@
     "@tailwindcss/vite": "^4.3.1",
     "@types/node": "^20.0.0",
     "@vitejs/plugin-vue": "^6.0.7",
-    "culori": "^4.0.2",
     "eslint": "^9.28.0",
     "eslint-config-prettier": "^10.0.0",
     "eslint-import-resolver-typescript": "^4.4.5",

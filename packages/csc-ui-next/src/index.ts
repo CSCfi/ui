@@ -72,6 +72,13 @@ import CToasts from './components/c-toasts/CToasts.vue';
 import CToolbar from './components/c-toolbar/CToolbar.vue';
 import { defineElement } from './shared/defineElement';
 
+// Runtime consumer theming: rebrand chromatic families by supplying their
+// step-500 seed; the full ramp regenerates and re-themes every component in
+// both light and dark mode (ADR-0011).
+export { applyTheme, resetTheme, themeToCss } from './theme/applyTheme';
+
+export type { Family, ThemeSeeds } from './theme/applyTheme';
+
 // Public component types, re-exported so consumers can import them from the
 // package root: `import type { CAutocompleteItem } from '@cscfi/csc-ui-next'`.
 export type {
