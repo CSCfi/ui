@@ -24,6 +24,13 @@ const tabItem = tv({
 
 const ui = tabItem();
 
+// `role="tabpanel"` is set on the host, and c-tabs sets `id`/`aria-labelledby`
+// on it too (the tab's aria-controls points at that host id). Vue's
+// defineCustomElement mirrors non-prop host attributes into `$attrs`, which
+// would otherwise fall through onto the shadow root `[part=root]` div — nesting
+// a duplicate `role="tabpanel"` and duplicating the id. Keep them on the host.
+defineOptions({ inheritAttrs: false });
+
 interface CTabItemProps {
   active?: boolean;
   value?: number | string;

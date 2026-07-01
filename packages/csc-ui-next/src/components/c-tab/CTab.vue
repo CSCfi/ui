@@ -40,6 +40,15 @@ const tab = tv({
 
 const ui = tab();
 
+// The host is the real `role="tab"` box: role/tabindex/id/aria-* are set on it
+// imperatively (below, and by c-tabs). Vue's defineCustomElement mirrors every
+// non-prop host attribute into `$attrs`, which would otherwise fall through onto
+// the shadow root `[part=root]` div — giving it a *duplicate* role="tab",
+// tabindex="0" and id. That produces a second keyboard tab stop per tab and a
+// duplicated id (breaking aria-controls/labelledby). Suppress the fallthrough so
+// these attributes live only on the host. (Same fix as c-toasts.)
+defineOptions({ inheritAttrs: false });
+
 interface CTabProps {
   active?: boolean;
   disabled?: boolean;

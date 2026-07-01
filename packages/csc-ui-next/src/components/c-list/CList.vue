@@ -31,6 +31,12 @@ const list = tv({
   },
 });
 
+// `role="list"` is set on the host imperatively. Vue's defineCustomElement
+// mirrors non-prop host attributes into `$attrs`, which would otherwise fall
+// through onto the shadow root `[part=root]` div — nesting a duplicate
+// `role="list"` inside the host's list. Keep the role on the host only.
+defineOptions({ inheritAttrs: false });
+
 interface CListProps {
   bordered?: boolean;
   disabled?: boolean;

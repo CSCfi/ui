@@ -1,6 +1,12 @@
 <template>
   <div :class="ui.root()">
-    <div :class="ui.item()" part="root">
+    <div
+      :class="ui.item()"
+      part="root"
+      role="menuitem"
+      :tabindex="focusable ? 0 : -1"
+      :aria-current="active ? 'page' : undefined"
+    >
       <div :class="ui.content()" part="content">
         <div :class="ui.slot()">
           <slot />
@@ -26,9 +32,10 @@ import { computed, onMounted, ref, useHost, watchEffect } from 'vue';
  * the global design tokens. Consumer customization is via `::part()` (ADR-0006);
  * there is no `override` prop.
  *
- * The host-level `:focus-visible` outline (utilities can't target `:host`) and
- * the `::slotted(span)` rule (consumer light-DOM children) remain in the
- * escape-hatch <style> below (ADR-0007).
+ * The keyboard focus ring and the `::slotted(span)` rule (consumer light-DOM
+ * children) remain in the escape-hatch <style> below (ADR-0007). tabindex/role/
+ * aria live on the rendered `[part=root]` box, not the host: a `display:contents`
+ * host is unfocusable, so a host-level `:focus-visible` ring never fired.
  */
 const subNavigationItem = tv({
   compoundVariants: [
@@ -62,7 +69,7 @@ const subNavigationItem = tv({
     // the text on hover regardless of active state). Resting text is
     // `on-primary-subtle` — the foreground for the active parent's primary-subtle
     // region these items sit in.
-    item: 'flex items-center cursor-pointer font-normal leading-[46px] rounded-csc-md mx-2 px-0 pl-[34px] relative overflow-hidden select-none transition-colors duration-200 ease-in bg-transparent text-on-primary-subtle hover:text-primary before:content-[""] before:absolute before:top-0 before:left-0 before:h-full before:w-2 before:bg-primary before:[transform:translateZ(0)_translateX(-8px)] before:transition-transform before:duration-200 before:ease-in-out',
+    item: 'flex items-center cursor-pointer font-normal leading-[46px] rounded-csc-md mx-2 px-0 pl-[34px] relative overflow-hidden select-none outline-none transition-colors duration-200 ease-in bg-transparent text-on-primary-subtle hover:text-primary before:content-[""] before:absolute before:top-0 before:left-0 before:h-full before:w-2 before:bg-primary before:[transform:translateZ(0)_translateX(-8px)] before:transition-transform before:duration-200 before:ease-in-out',
     root: 'py-0.5',
     slot: 'overflow-hidden whitespace-nowrap text-ellipsis',
     srOnly:
@@ -132,15 +139,14 @@ const redirect = (event: Event) => {
 
 onMounted(() => {
   if (!host) return;
-  host.setAttribute('role', 'menuitem');
+  // role/tabindex/aria-current + the focus ring live on the rendered
+  // [part=root] box (see template), not the `display:contents` host — a
+  // display:contents element is focusable by neither Tab nor .focus().
+  // Listeners stay on the host; events bubble through it normally.
   host.addEventListener('click', redirect);
   host.addEventListener('keydown', redirect);
   watchEffect(() => {
-    host.setAttribute('tabindex', props.focusable ? '0' : '-1');
     host.classList.toggle('active', props.active);
-
-    if (props.active) host.setAttribute('aria-current', 'page');
-    else host.removeAttribute('aria-current');
   });
 
   // The `sub-level` palette is toggled by the parent c-side-navigation-item
@@ -161,7 +167,8 @@ onMounted(() => {
   Escape-hatch CSS (ADR-0007): only constructs Tailwind utilities cannot
   express. The item box, hover/active states and the leading indicator
   (`::before`) live in the `tv` config above. What remains here:
-    - The host-level `:focus(-visible)` outline — utilities can't target `:host`.
+    - The keyboard focus ring: `[part='root']:focus-visible` with a negative
+      outline-offset (inset), so it isn't clipped by the parent row's overflow.
     - `::slotted(span)` sizing of consumer light-DOM children.
     - Layout of the projected `<slot>` element (a shadow-tree node Vue renders
       without a class hook).
@@ -174,14 +181,13 @@ slot {
   align-items: center;
 }
 
-:host(:focus),
-:host(:focus) [part='root'] {
-  outline: none;
-}
-
-:host(:focus-visible) [part='root'] {
+/* Keyboard focus ring. tabindex/role live on the rendered [part=root] box (the
+   `:host` is display:contents and is unfocusable). Negative outline-offset
+   draws the ring inside the box so it isn't clipped by the parent row's
+   `overflow:hidden`. */
+[part='root']:focus-visible {
   outline: 2px var(--c-primary) solid;
-  outline-offset: 2px;
+  outline-offset: -2px;
 }
 
 ::slotted(span) {

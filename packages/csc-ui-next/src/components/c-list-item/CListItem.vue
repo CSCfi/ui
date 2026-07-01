@@ -71,6 +71,13 @@ const listItem = tv({
   },
 });
 
+// The host is the real box: role="listitem"/tabindex/aria-*/disabled are set on
+// it imperatively (below). Vue's defineCustomElement mirrors every non-prop host
+// attribute into `$attrs`, which would otherwise fall through onto the shadow
+// root `[part=root]` div — giving it a duplicate role, id and (for ripple items)
+// tabindex="0", i.e. a second keyboard tab stop. Keep those on the host only.
+defineOptions({ inheritAttrs: false });
+
 interface CListItemProps {
   active?: boolean;
   disabled?: boolean;

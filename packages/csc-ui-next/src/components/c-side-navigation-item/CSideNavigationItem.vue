@@ -2,9 +2,12 @@
   <div :class="ui.root()" part="root">
     <component
       :is="href ? 'a' : 'div'"
+      ref="headerRef"
       :class="ui.header()"
       :href="href || undefined"
       :target="href ? target : undefined"
+      :tabindex="focusable ? 0 : -1"
+      role="menuitem"
       part="header"
     >
       <c-icon v-if="slotHasContent" :class="ui.chevron()" :path="chevronIcon" />
@@ -48,10 +51,12 @@ import { computed, onMounted, ref, useHost, watchEffect } from 'vue';
  * same steps, so its tinted pill is unchanged.)
  * Consumer customization is via `::part()` (ADR-0006).
  *
- * The host `:focus-visible` outline (utilities can't target `:host`) and the
- * `::slotted(span)/(c-icon)` sizing of consumer light-DOM children remain in the
- * escape-hatch <style> below (ADR-0007). Hover is a `hover:` utility on `root`
- * because the `display:contents` host shares its hover region with the box.
+ * The keyboard focus ring and the `::slotted(span)/(c-icon)` sizing of consumer
+ * light-DOM children remain in the escape-hatch <style> below (ADR-0007). The
+ * tabindex/role/aria live on the rendered `header` element, not the host: a
+ * `display:contents` host is skipped by sequential focus, so a host-level
+ * `:focus-visible` ring never triggered on Tab. Hover is a `hover:` utility on
+ * `root` because the `display:contents` host shares its hover region with the box.
  *
  * Hover lives in `active: { false }` (NOT the base slot): the original cascade
  * lets the active state win over hover, but a base `hover:bg-*` and the active
@@ -81,9 +86,12 @@ const sideNavigationItem = tv({
   },
   slots: {
     chevron: 'self-center transition-transform duration-300 ease-[ease]',
-    // The clickable header row (icon + label).
+    // The clickable header row (icon + label). It is the focusable menuitem
+    // (tabindex/role bound in the template) — the `display:contents` host is
+    // skipped by sequential focus, so focus must live on a rendered box. Its own
+    // native outline is suppressed; the visible ring is drawn on `root`.
     header:
-      'grid items-center min-h-[46px] gap-2 px-3 py-2 no-underline text-current',
+      'grid items-center min-h-[46px] gap-2 px-3 py-2 no-underline text-current outline-none',
     // The outer box (the original `:host(.c-side-navigation-item) > div`) that
     // wraps the header + sub-nav and carries the bg/color/state. Its `color`
     // cascades into the rendered chevron c-icon (currentColor contract, ADR-0004).
@@ -98,7 +106,7 @@ const sideNavigationItem = tv({
       false: { root: 'hover:bg-nav-surface-hover' },
       true: {
         chevron: 'rotate-90',
-        root: 'bg-nav-active text-on-nav-active',
+        root: 'bg-nav-active text-on-nav-active ring ring-border',
         subNav: 'h-max',
       },
     },
@@ -118,6 +126,10 @@ const sideNavigationItem = tv({
 
 interface CSideNavigationItemProps {
   active?: boolean;
+  // Whether this item participates in the keyboard tab order. A parent sets it
+  // false on its collapsed sub-items (via `handleChildFocusableChange`) so
+  // hidden sub-items aren't Tab-reachable; drives the header's `tabindex`.
+  focusable?: boolean;
   href?: string;
   loading?: boolean;
   target?: string;
@@ -125,6 +137,7 @@ interface CSideNavigationItemProps {
 
 const props = withDefaults(defineProps<CSideNavigationItemProps>(), {
   active: false,
+  focusable: true,
   href: '',
   loading: false,
   target: '',
@@ -133,6 +146,10 @@ const props = withDefaults(defineProps<CSideNavigationItemProps>(), {
 const chevronIcon = mdiChevronRight;
 
 const host = useHost();
+
+// The rendered header element carries the tabindex/role/aria (the focusable
+// menuitem); `display:contents` on the host keeps it out of the focus order.
+const headerRef = ref<HTMLElement>();
 
 const slotHasContent = ref(false);
 
@@ -225,8 +242,8 @@ onMounted(() => {
     }
   }
 
-  host.setAttribute('role', 'menuitem');
-  host.setAttribute('tabindex', '0');
+  // role/tabindex/aria live on the rendered `header` element (see headerRef),
+  // not the `display:contents` host which is skipped by sequential focus.
   host.addEventListener('click', redirect);
   host.addEventListener('keydown', redirect);
   // A nested item bubbling its own itemChange shouldn't toggle the
@@ -252,15 +269,19 @@ onMounted(() => {
     );
     host.classList.toggle('active', props.active);
 
-    if (slotHasContent.value) {
-      host.setAttribute('aria-expanded', String(!!props.active));
-      host.removeAttribute('aria-current');
-    } else if (props.active) {
-      host.setAttribute('aria-current', 'page');
-      host.removeAttribute('aria-expanded');
-    } else {
-      host.removeAttribute('aria-current');
-      host.removeAttribute('aria-expanded');
+    // aria state belongs on the menuitem (the header), not the host.
+    const header = headerRef.value;
+    if (header) {
+      if (slotHasContent.value) {
+        header.setAttribute('aria-expanded', String(!!props.active));
+        header.removeAttribute('aria-current');
+      } else if (props.active) {
+        header.setAttribute('aria-current', 'page');
+        header.removeAttribute('aria-expanded');
+      } else {
+        header.removeAttribute('aria-current');
+        header.removeAttribute('aria-expanded');
+      }
     }
 
     handleChildFocusableChange(props.active);
@@ -273,21 +294,24 @@ onMounted(() => {
   express. The header box, chevron, slot layout, active/expandable/sub-item
   states and the sub-nav height transition live in the `tv` config above. What
   remains here:
-    - The host `:focus-visible` outline on the header — the host carries the
-      tabindex/focus, so focus-visible can't be a `focus-visible:` utility on
-      the (non-focusable) header div.
+    - The keyboard focus ring: painted on `[part='root']` via `:has(:focus-visible)`
+      (reacting to the focusable `header`), with a negative `outline-offset` so a
+      nested sub-item's ring isn't clipped by its parent row's `overflow:hidden`.
     - `::slotted(span)/(c-icon)` sizing of consumer light-DOM children, and the
       layout of the projected `<slot>` element (shadow node, no class hook).
   Authored against global design tokens only.
 -->
 <style>
-:host(.c-side-navigation-item:focus) [part='root'] {
-  outline: none;
-}
-
-:host(.c-side-navigation-item:focus-visible) [part='root'] {
+/* Keyboard focus ring. tabindex/role live on the rendered `header` (a real
+   box); the `:host` is `display:contents` and is skipped by sequential focus,
+   so the old `:host(:focus-visible)` ring never fired on Tab. The ring is
+   painted on `[part='root']`, reacting to the header's `:focus-visible` via
+   `:has`, with a NEGATIVE `outline-offset` so it draws inside the box — an
+   outset ring would be clipped by the `overflow:hidden` on a nested sub-item's
+   parent row. */
+[part='root']:has(:focus-visible) {
   outline: 2px var(--c-on-nav) solid;
-  outline-offset: 2px;
+  outline-offset: -2px;
 }
 
 ::slotted(span),

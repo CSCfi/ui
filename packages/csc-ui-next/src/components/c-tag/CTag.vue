@@ -88,6 +88,13 @@ const tag = tv({
   },
 });
 
+// The host is the real focusable box: role="button"/tabindex are set on it
+// imperatively (below). Vue's defineCustomElement mirrors every non-prop host
+// attribute into `$attrs`, which would otherwise fall through onto the shadow
+// root `[part=root]` div — giving it a duplicate role="button", tabindex="0"
+// and id, i.e. a second keyboard tab stop per tag. Keep those on the host only.
+defineOptions({ inheritAttrs: false });
+
 interface CTagProps {
   active?: boolean;
   badge?: null | number | string;

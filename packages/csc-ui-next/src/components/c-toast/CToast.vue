@@ -138,6 +138,13 @@ const toast = tv({
   },
 });
 
+// `role`/`aria-live`/`aria-atomic` are set on the host (the live region). Vue's
+// defineCustomElement mirrors non-prop host attributes into `$attrs`, which
+// would otherwise fall through onto the shadow root `[part=root]` div — nesting
+// a duplicate live region (role=alert + aria-live) inside the host and risking a
+// double announcement. Keep the live-region attributes on the host only.
+defineOptions({ inheritAttrs: false });
+
 interface CToastProps {
   message?: null | ToastMessage;
 }

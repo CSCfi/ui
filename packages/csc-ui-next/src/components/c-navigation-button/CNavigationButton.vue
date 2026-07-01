@@ -7,7 +7,7 @@
 <script setup lang="ts">
 import { mdiMenu } from '@mdi/js';
 import { tv } from 'tailwind-variants';
-import { computed, onMounted, useHost } from 'vue';
+import { computed } from 'vue';
 
 /**
  * Styling lives entirely in this `tailwind-variants` config (ADR-0004). The
@@ -24,11 +24,15 @@ const navigationButton = tv({
   },
 });
 
+// The `root` is a `<c-icon-button>` which renders a real, natively-focusable
+// `<button>` — so keyboard access is already covered. The host is
+// `display:contents` (unfocusable), so a host-level `tabindex="0"` did nothing
+// on its own but, via defineCustomElement's attribute fallthrough, leaked onto
+// `<c-icon-button>` and turned it into a *second* tab stop (host id leaked the
+// same way). Don't set tabindex here, and suppress the fallthrough entirely.
+defineOptions({ inheritAttrs: false });
+
 const ui = computed(() => navigationButton());
 
 const menuIcon = mdiMenu;
-
-const host = useHost();
-
-onMounted(() => host?.setAttribute('tabindex', '0'));
 </script>
