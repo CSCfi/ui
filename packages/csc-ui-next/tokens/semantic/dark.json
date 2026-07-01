@@ -8,6 +8,7 @@
   "surface-sunken": "slate-950",
   "on-surface": "white",
   "on-surface-muted": "slate-100",
+  "on-surface-faint": "slate-400",
   "on-surface-sunken": "primary-200",
   "border": "slate-700",
   "border-strong": "slate-400",
@@ -62,8 +63,8 @@
   "error-subtle-hover": "error-900",
   "on-error-subtle": "error-200",
 
-  "link": "link-300",
-  "link-hover": "link-200",
+  "link": "link-200",
+  "link-hover": "accent-900",
   "on-link": "link-900",
   "link-subtle": "link-800",
   "link-subtle-hover": "link-900",

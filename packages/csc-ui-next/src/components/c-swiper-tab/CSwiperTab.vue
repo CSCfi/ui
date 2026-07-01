@@ -100,33 +100,37 @@ watch(
 
 <style>
 :host {
+  /* Defaults draw from the semantic-token layer (ADR-0010) so the tab strip
+   * follows the theme — including dark mode — instead of being pinned to
+   * light-mode palette steps. The outer `var(--c-swiper-tab-*, …)` keeps the
+   * per-instance consumer override intact. */
   --_c-swiper-tab-background-color-active: var(
     --c-swiper-tab-background-color-active,
-    var(--c-primary-600)
+    var(--c-primary)
   );
   --_c-swiper-tab-background-color-disabled: var(
     --c-swiper-tab-background-color-disabled,
-    var(--c-tertiary-100)
+    var(--c-surface-muted)
   );
   --_c-swiper-tab-background-color: var(
     --c-swiper-tab-background-color,
-    var(--c-primary-200)
+    var(--c-primary-subtle)
   );
   --_c-swiper-tab-hover-color: var(
     --c-swiper-tab-hover-color,
-    var(--c-primary-100)
+    var(--c-primary-subtle-hover)
   );
   --_c-swiper-tab-text-color-active: var(
     --c-swiper-tab-text-color-active,
-    var(--c-white)
+    var(--c-on-primary)
   );
   --_c-swiper-tab-text-color-disabled: var(
     --c-swiper-tab-text-color-disabled,
-    var(--c-tertiary-600)
+    var(--c-on-surface-muted)
   );
   --_c-swiper-tab-text-color: var(
     --c-swiper-tab-text-color,
-    var(--c-primary-600)
+    var(--c-on-primary-subtle)
   );
 
   border-radius: 8px;

@@ -15,23 +15,23 @@
 
       <c-tab-items slot="items">
         <c-tab-item value="tab1">
-          <div class="bg-primary-100 size-full rounded p-4">This is the content for the first tab</div>
+          <div class="bg-primary-100 size-full rounded p-4 text-primary-500 dark:bg-primary-500 dark:text-primary-100">This is the content for the first tab</div>
         </c-tab-item>
 
         <c-tab-item value="tab2">
-          <div class="bg-secondary-100 size-full rounded p-4">This is the content for the second tab</div>
+          <div class="bg-secondary-100 size-full rounded p-4 text-secondary-500 dark:bg-secondary-500 dark:text-secondary-100">This is the content for the second tab</div>
         </c-tab-item>
 
         <c-tab-item value="tab3">
-          <div class="bg-accent-100 size-full rounded p-4">This is the content for the third tab</div>
+          <div class="bg-accent-100 size-full rounded p-4 text-accent-600 dark:bg-accent-500 dark:text-white">This is the content for the third tab</div>
         </c-tab-item>
 
         <c-tab-item value="tab4">
-          <div class="bg-error-100 size-full rounded p-4">This is the content for the fourth tab</div>
+          <div class="bg-error-100 size-full rounded p-4 text-error-500 dark:bg-error-500 dark:text-white">This is the content for the fourth tab</div>
         </c-tab-item>
 
         <c-tab-item value="tab5">
-          <div class="bg-success-100 size-full rounded p-4">This is the content for the fifth tab</div>
+          <div class="bg-success-100 size-full rounded p-4 text-success-500 dark:bg-success-500 dark:text-white">This is the content for the fifth tab</div>
         </c-tab-item>
       </c-tab-items>
     </c-tabs>

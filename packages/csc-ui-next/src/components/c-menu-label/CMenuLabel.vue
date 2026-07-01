@@ -16,6 +16,6 @@ import { tv } from 'tailwind-variants';
  * menu list.
  */
 const label = tv({
-  base: 'block px-[10px] pt-2 pb-1 text-xs font-semibold tracking-wide uppercase select-none pointer-events-none text-on-surface-muted',
+  base: 'block px-[10px] pt-2 pb-1 text-xs font-semibold tracking-wide uppercase select-none pointer-events-none text-on-surface-faint',
 });
 </script>

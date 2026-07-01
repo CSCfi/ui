@@ -16,7 +16,10 @@ const formats = {
   },
 };
 
-const baseColor = '600';
+// The default/brand step. Ramps are anchored here (see scripts/generate-ramps.mjs)
+// and the semantic default roles (--c-primary, …) point at it. Tokens ending in
+// this step also emit an `--c-<family>-rgb` variant for alpha compositing.
+const baseColor = '500';
 
 module.exports = (dictionary, type) => {
   const config = formats[type];

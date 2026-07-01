@@ -34,7 +34,7 @@ const link = tv({
     underline: false,
   },
   slots: {
-    root: 'inline-flex items-center justify-start gap-2 bg-transparent text-link text-[length:inherit] no-underline cursor-pointer transition-colors duration-300 ease-in-out hover:bg-link-subtle outline-none focus-visible:outline-2 focus-visible:outline-link focus-visible:outline-offset-4 focus-visible:rounded-[2px]',
+    root: 'inline-flex items-center justify-start gap-2 bg-transparent text-link text-[length:inherit] no-underline cursor-pointer transition-colors duration-300 ease-in-out hover:bg-link-hover outline-none focus-visible:outline-2 focus-visible:outline-link focus-visible:outline-offset-4 focus-visible:rounded-[2px]',
   },
   variants: {
     underline: { true: { root: 'underline' } },

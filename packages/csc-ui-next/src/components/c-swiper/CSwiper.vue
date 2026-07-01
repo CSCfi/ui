@@ -363,14 +363,6 @@ watch(
 
 <style>
 :host {
-  --c-swiper-background-color: var(--c-primary-200);
-  --c-swiper-hover-color: var(--c-primary-100);
-  --c-swiper-text-color: var(--c-primary-600);
-  --c-swiper-active-background-color: var(--c-primary-600);
-  --c-swiper-active-text-color: var(--c-white);
-  --c-swiper-disabled-background-color: var(--c-tertiary-100);
-  --c-swiper-disabled-text-color: var(--c-tertiary-600);
-
   /* `@container` queries the nearest container ancestor — never the
    * element itself. So the container lives on the host and the
    * per-view variable below is applied to a DESCENDANT (.c-swiper). */

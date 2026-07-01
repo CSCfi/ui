@@ -23,6 +23,7 @@
  * so a consumer overriding `--c-primary-600` still re-themes at runtime.
  */
 @theme inline {
+  --color-primary-50: var(--c-primary-50);
   --color-primary-100: var(--c-primary-100);
   --color-primary-200: var(--c-primary-200);
   --color-primary-300: var(--c-primary-300);
@@ -33,6 +34,7 @@
   --color-primary-800: var(--c-primary-800);
   --color-primary-900: var(--c-primary-900);
   --color-primary-950: var(--c-primary-950);
+  --color-secondary-50: var(--c-secondary-50);
   --color-secondary-100: var(--c-secondary-100);
   --color-secondary-200: var(--c-secondary-200);
   --color-secondary-300: var(--c-secondary-300);
@@ -43,6 +45,7 @@
   --color-secondary-800: var(--c-secondary-800);
   --color-secondary-900: var(--c-secondary-900);
   --color-secondary-950: var(--c-secondary-950);
+  --color-accent-50: var(--c-accent-50);
   --color-accent-100: var(--c-accent-100);
   --color-accent-200: var(--c-accent-200);
   --color-accent-300: var(--c-accent-300);
@@ -53,6 +56,7 @@
   --color-accent-800: var(--c-accent-800);
   --color-accent-900: var(--c-accent-900);
   --color-accent-950: var(--c-accent-950);
+  --color-success-50: var(--c-success-50);
   --color-success-100: var(--c-success-100);
   --color-success-200: var(--c-success-200);
   --color-success-300: var(--c-success-300);
@@ -63,6 +67,7 @@
   --color-success-800: var(--c-success-800);
   --color-success-900: var(--c-success-900);
   --color-success-950: var(--c-success-950);
+  --color-info-50: var(--c-info-50);
   --color-info-100: var(--c-info-100);
   --color-info-200: var(--c-info-200);
   --color-info-300: var(--c-info-300);
@@ -73,6 +78,7 @@
   --color-info-800: var(--c-info-800);
   --color-info-900: var(--c-info-900);
   --color-info-950: var(--c-info-950);
+  --color-warning-50: var(--c-warning-50);
   --color-warning-100: var(--c-warning-100);
   --color-warning-200: var(--c-warning-200);
   --color-warning-300: var(--c-warning-300);
@@ -83,6 +89,7 @@
   --color-warning-800: var(--c-warning-800);
   --color-warning-900: var(--c-warning-900);
   --color-warning-950: var(--c-warning-950);
+  --color-error-50: var(--c-error-50);
   --color-error-100: var(--c-error-100);
   --color-error-200: var(--c-error-200);
   --color-error-300: var(--c-error-300);
@@ -93,6 +100,7 @@
   --color-error-800: var(--c-error-800);
   --color-error-900: var(--c-error-900);
   --color-error-950: var(--c-error-950);
+  --color-link-50: var(--c-link-50);
   --color-link-100: var(--c-link-100);
   --color-link-200: var(--c-link-200);
   --color-link-300: var(--c-link-300);
@@ -155,6 +163,7 @@
   --color-surface-sunken: var(--c-surface-sunken);
   --color-on-surface: var(--c-on-surface);
   --color-on-surface-muted: var(--c-on-surface-muted);
+  --color-on-surface-faint: var(--c-on-surface-faint);
   --color-on-surface-sunken: var(--c-on-surface-sunken);
   --color-border: var(--c-border);
   --color-border-strong: var(--c-border-strong);

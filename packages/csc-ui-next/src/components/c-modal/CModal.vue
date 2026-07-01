@@ -43,7 +43,7 @@ const modal = tv({
   slots: {
     // The native <dialog> is the positioned overlay box. It must not be
     // `display:contents`, so the box lives on this element (not the host).
-    root: 'block fixed inset-0 m-auto p-0 border-0 bg-transparent overflow-visible max-w-[calc(100%-32px)] w-[var(--_c-modal-width,600px)] text-[var(--c-text-body)]',
+    root: 'block fixed inset-0 m-auto p-0 border-0 bg-transparent overflow-visible max-w-[calc(100%-32px)] w-[var(--_c-modal-width,600px)] text-on-surface-muted',
   },
 });
 

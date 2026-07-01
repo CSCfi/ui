@@ -22,8 +22,8 @@ import { useHasSlot } from '../../shared/useHasSlot';
  * Styling lives entirely in this `tailwind-variants` config (ADR-0004); the
  * stamped parts (`root`, `header`, `heading`, `underline`, `actions`) are the
  * public customization surface (ADR-0006). The typography that the original
- * carried on `:host` now lives on the `root` element. Colours come straight
- * from the global tokens (`--c-text-system` text, `--c-primary-600` underline)
+ * carried on `:host` now lives on the `root` element. Colours come from the
+ * semantic-token layer (`on-surface-muted` text, `primary` underline)
  * — the old `--c-card-title-color` / `--c-card-title-underline-color` override
  * indirection is dropped. `padding-inline` keys off `--_c-card-gap` (the shared
  * spacing contract the parent c-card sets, inheriting across the shadow
