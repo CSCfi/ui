@@ -64,7 +64,7 @@ const tabButtons = tv({
     // `relative isolate` so the `-z-10` indicator is contained in this box's
     // stacking context and paints above the root background but below the
     // (transparent) buttons.
-    root: 'relative isolate flex auto-cols-fr rounded-csc-lg bg-primary-subtle-hover',
+    root: 'relative isolate flex auto-cols-fr rounded-csc-lg bg-surface-sunken',
   },
   variants: {
     disabled: {

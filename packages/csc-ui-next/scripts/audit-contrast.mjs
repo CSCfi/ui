@@ -72,6 +72,7 @@ for (const r of ROLES) {
 // nav chrome
 add('on-nav', 'nav-surface', TEXT, 'on-nav / nav-surface');
 add('on-nav', 'nav-surface-hover', TEXT, 'on-nav / nav-surface-hover');
+add('on-nav-active', 'nav-active', TEXT, 'on-nav-active / nav-active');
 // inverse family (mode-invariant; values identical both modes)
 add('inverse-on', 'inverse-primary', TEXT, 'inverse-on / inverse-primary');
 add('inverse-primary', 'inverse-surface', TEXT, 'inverse-primary / inverse-surface');

@@ -35,18 +35,21 @@ import { computed } from 'vue';
  * Styling lives in this `tailwind-variants` config (ADR-0004). The host is
  * `display:contents` globally, so the SVG itself is the `root` element and
  * carries the `display:block` + top margin. The original `svg .cls-*` fill
- * rules become per-element `fill-*` utilities; the brand hex colours are not in
- * the design-token palette, so they're authored as arbitrary `fill-[#…]`
- * values. The `clip-path` is applied as an SVG attribute on the <g> instead of
- * a CSS rule, which removes the need for any <style> block.
+ * rules become per-element `fill-*` utilities routed through dedicated semantic
+ * roles (`logo-wordmark` / `logo-teal` / `logo-magenta`, ADR-0010): in light
+ * they resolve to the brand colours (tertiary-600 / primary-600 / secondary-600),
+ * in dark they all resolve to white so the logo reads as a monochrome mark on the
+ * dark header. Theming has to go through inherited tokens because a `dark:`
+ * selector can't cross the shadow boundary to the document's `data-theme`. The
+ * `clip-path` is an SVG attribute on the <g>, so no <style> block is needed.
  */
 const logo = tv({
   slots: {
     clipRect: 'fill-none',
-    magentaMark: 'fill-[#830051]',
+    magentaMark: 'fill-logo-magenta',
     root: 'block mt-1',
-    tealMark: 'fill-[#066778]',
-    wordmark: 'fill-[#5e6a71]',
+    tealMark: 'fill-logo-teal',
+    wordmark: 'fill-logo-wordmark',
   },
 });
 

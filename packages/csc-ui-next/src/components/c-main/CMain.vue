@@ -19,15 +19,18 @@ import { computed } from 'vue';
  *
  * The per-component `--c-main-*` override vars are dropped (ADR-0004). The
  * tinted page background and body text author against semantic tokens
- * (`primary-subtle` / `on-surface`, ADR-0010) so they theme in dark mode.
- * Customization is via `::part(root)` (ADR-0006).
+ * (`surface-sunken` / `on-surface`, ADR-0010) so they theme in dark mode.
+ * `surface-sunken` is the recessed page-canvas role (the backdrop that raised
+ * surfaces sit on); it is shared with the active root-level side-nav item so the
+ * selection reads as contiguous with the page. Customization is via
+ * `::part(root)` (ADR-0006).
  */
 const main = tv({
   defaultVariants: {
     disableLayout: false,
   },
   slots: {
-    root: 'flex flex-col h-screen bg-primary-subtle text-on-surface',
+    root: 'flex flex-col h-screen bg-surface-sunken text-on-surface',
   },
   variants: {
     disableLayout: {

@@ -13,6 +13,15 @@
         is the numeric value of the desired shade.
       </p>
 
+      <c-alert v-if="isNextImpl" type="info" class="mb-4">
+        The
+        <code>950</code>
+        step is the deepest shade in each ramp, added for dark-mode surfaces.
+        It is available in
+        <code>@cscfi/csc-ui-next</code>
+        only.
+      </c-alert>
+
       <div
         class="grid grid-cols-1 md:grid-cols-[auto_1fr] gap-x-8 md:gap-y-4 align-top"
       >
@@ -23,7 +32,13 @@
             <p>--c-{{ color.name }}-{n}</p>
           </div>
 
-          <div :class="{ 'mt-4': index > 0 }" class="grid grid-cols-9 gap-2">
+          <div
+            class="grid gap-2"
+            :class="[
+              isNextImpl ? 'grid-cols-10' : 'grid-cols-9',
+              { 'mt-4': index > 0 },
+            ]"
+          >
             <div
               v-for="shade in color.shades"
               :key="`${color.name}-${shade}`"
@@ -205,6 +220,13 @@ const sortOrder = [
   'error',
 ];
 
+// The shade list is sourced from the Stencil package's Tailwind theme
+// (100–900). The deeper `950` step exists only in `@cscfi/csc-ui-next`'s
+// runtime tokens (imported in next mode), so it is appended — and rendered —
+// only when the docs run against that implementation.
+const config = useRuntimeConfig();
+const isNextImpl = config.public.cscUiImpl === 'next';
+
 const themeColors = computed(() => {
   const order = Object.fromEntries(sortOrder.map((k, i) => [k, i + 1]));
 
@@ -213,14 +235,13 @@ const themeColors = computed(() => {
       (items, item) => {
         if (typeof theme.colors[item] === 'string') return items;
 
-        const color = {
-          name: item,
-          shades: Object.keys(theme.colors[item])
-            .filter((key) => key !== 'DEFAULT')
-            .map((key) => key),
-        };
+        const shades = Object.keys(theme.colors[item])
+          .filter((key) => key !== 'DEFAULT')
+          .map((key) => key);
 
-        items.push(color);
+        if (isNextImpl && !shades.includes('950')) shades.push('950');
+
+        items.push({ name: item, shades });
 
         return items;
       },

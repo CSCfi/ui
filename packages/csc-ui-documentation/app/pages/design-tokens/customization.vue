@@ -78,13 +78,18 @@
         Components converted to the Tailwind-variants styling system no longer
         expose <code>--c-*</code> override variables. Instead, each component
         stamps its public regions as
-        <a
+        <c-link
           href="https://developer.mozilla.org/en-US/docs/Web/CSS/::part"
           target="_blank"
           rel="noopener"
-          >CSS parts</a
-        >
-        (<code>root</code>, <code>content</code>, …), which you can target from
+          underline
+          >
+          CSS parts
+        </c-link>
+
+        (<code>root</code>
+
+        , <code>content</code>, …), which you can target from
         your own global stylesheet to restyle every instance at once — no prop
         needed on each element.
       </p>
@@ -224,6 +229,8 @@ const componentOverride = `:root {
 const partOverride = `/* Targets the root part of every <c-button> instance */
 c-button::part(root) {
   border-radius: 9999px;
+  /* Unset the corner-shape from the default (squircle) */
+  corner-shape: unset;
 }`;
 
 const classOverride = `.custom-button {
@@ -253,11 +260,14 @@ const fontOverrideHtml = `<c-button class="custom-font">I should look different 
 </script>
 
 <style>
-.custom-button {
-  --c-button-background-color: var(--c-info-400);
-  --c-button-text-color: var(--c-info-900);
-  --c-button-background-color-hover: var(--c-accent-400);
-  --c-button-border-radius: 100vw;
+.custom-button::part(root) {
+  background-color: var(--c-info-400);
+  color: var(--c-info-900);
+  border-radius: 2px;
+}
+  
+.custom-button:hover::part(root) {
+  background-color: var(--c-info-500);
 }
 
 .custom-font {
@@ -266,5 +276,6 @@ const fontOverrideHtml = `<c-button class="custom-font">I should look different 
 
 .part-demo c-button::part(root) {
   border-radius: 9999px;
+  corner-shape: unset;
 }
 </style>

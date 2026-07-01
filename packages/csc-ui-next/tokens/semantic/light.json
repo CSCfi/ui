@@ -5,8 +5,10 @@
   "surface-raised": "white",
   "surface-overlay": "white",
   "surface-muted": "tertiary-100",
+  "surface-sunken": "primary-200",
   "on-surface": "primary-900",
   "on-surface-muted": "tertiary-500",
+  "on-surface-sunken": "primary-700",
   "border": "tertiary-200",
   "border-strong": "tertiary-600",
   "ring": "primary-600",
@@ -69,5 +71,11 @@
 
   "nav-surface": "primary-600",
   "nav-surface-hover": "primary-500",
-  "on-nav": "white"
+  "on-nav": "white",
+  "nav-active": "primary-200",
+  "on-nav-active": "primary-700",
+
+  "logo-wordmark": "tertiary-600",
+  "logo-teal": "primary-600",
+  "logo-magenta": "secondary-600"
 }

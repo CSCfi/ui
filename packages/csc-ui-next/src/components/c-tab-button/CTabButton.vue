@@ -164,8 +164,22 @@ watch(
   background-color: transparent;
 }
 
-:host(:not([active])) c-button::part(root):hover {
-  background-color: rgba(255, 255, 255, 0.75);
+:host(:not([active])) c-button:not([disabled])::part(root):hover {
+  /*
+    Elevate the button off the sunken track (c-tab-buttons' `bg-surface-sunken`)
+    on hover. Authored against the semantic `surface-raised` token so it themes
+    itself — white in light, slate-900 in dark — via the inherited `--c-*` vars,
+    covering both the data-theme and prefers-color-scheme activation paths. (A
+    shadow-local `[data-theme='dark']` rule can't work: data-theme lives on the
+    document root, outside this shadow tree.)
+
+    `c-button:not([disabled])` is required: c-button no longer sets
+    `pointer-events:none` when disabled (so its not-allowed cursor can show), so
+    this outer ::part hover would otherwise override a disabled tab button's
+    muted bg. c-button reflects `disabled` to an attribute, so the guard engages.
+  */
+  background-color: var(--c-surface-raised);
+  color: var(--c-on-raised);
 }
 
 :host c-button::part(root) {

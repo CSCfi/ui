@@ -64,8 +64,16 @@ import { useRipple } from '../../shared/useRipple';
  *
  * `compoundVariants` are ordered to mirror the original c-button.scss source
  * order so tailwind-merge's last-wins resolution reproduces the cascade.
- * Hover utilities are unguarded because the disabled state sets
- * `pointer-events-none`, so a disabled button never receives :hover.
+ * Appearance hover utilities are cancelled in the disabled compoundVariants
+ * (each re-declares `hover:bg-*` to match its own disabled bg, and wins via
+ * tailwind-merge last-wins ordering). The disabled state deliberately does NOT
+ * set `pointer-events-none`: that suppressed `:hover` but also removed the
+ * element from hit-testing, which silently killed `cursor-not-allowed` (the
+ * pointer is never "over" a `pointer-events:none` element). Interaction on a
+ * disabled control is instead blocked by the native `disabled` attribute (the
+ * `<button>` case) and by the guarded `onClick` / `onKeydown` handlers (the
+ * `<a href>` case, which has no native disabled), so the not-allowed cursor
+ * shows in both.
  */
 const button = tv({
   compoundVariants: [
@@ -153,8 +161,13 @@ const button = tv({
     // ---- disabled (overrides appearance bg/text/border) ------------------
     // Non-inverted disabled is the muted neutral surface; inverted disabled
     // dims the mode-invariant inverse foreground (it sits on a dark backdrop).
+    // Each re-declares `hover:bg-*` matching its own bg so the appearance hover
+    // (all `hover:bg-*`) is neutralised now that disabled no longer relies on
+    // `pointer-events-none` for hover suppression (see the tv header comment).
     {
-      class: { root: 'bg-surface-muted text-on-surface-muted' },
+      class: {
+        root: 'bg-surface-muted text-on-surface-muted hover:bg-surface-muted',
+      },
       danger: false,
       disabled: true,
       ghost: false,
@@ -163,7 +176,9 @@ const button = tv({
       text: false,
     },
     {
-      class: { root: 'bg-inverse-on/10 text-inverse-on/40' },
+      class: {
+        root: 'bg-inverse-on/10 text-inverse-on/40 hover:bg-inverse-on/10',
+      },
       danger: false,
       disabled: true,
       ghost: false,
@@ -172,30 +187,38 @@ const button = tv({
       text: false,
     },
     {
-      class: { root: 'bg-surface-muted text-on-surface-muted' },
+      class: {
+        root: 'bg-surface-muted text-on-surface-muted hover:bg-surface-muted',
+      },
       danger: true,
       disabled: true,
     },
     {
-      class: { root: 'bg-surface-muted text-on-surface-muted' },
+      class: {
+        root: 'bg-surface-muted text-on-surface-muted hover:bg-surface-muted',
+      },
       disabled: true,
       ghost: true,
       inverted: false,
     },
     {
-      class: { root: 'bg-inverse-on/10 text-inverse-on/40' },
+      class: {
+        root: 'bg-inverse-on/10 text-inverse-on/40 hover:bg-inverse-on/10',
+      },
       disabled: true,
       ghost: true,
       inverted: true,
     },
     {
-      class: { root: 'bg-transparent text-on-surface-muted' },
+      class: {
+        root: 'bg-transparent text-on-surface-muted hover:bg-transparent',
+      },
       disabled: true,
       text: true,
     },
     {
       class: {
-        root: 'bg-transparent text-on-surface-muted ring-2 ring-inset ring-border',
+        root: 'bg-transparent text-on-surface-muted ring-2 ring-inset ring-border hover:bg-transparent',
       },
       disabled: true,
       inverted: false,
@@ -203,7 +226,7 @@ const button = tv({
     },
     {
       class: {
-        root: 'bg-transparent text-inverse-on/40 ring-2 ring-inset ring-inverse-on/40',
+        root: 'bg-transparent text-inverse-on/40 ring-2 ring-inset ring-inverse-on/40 hover:bg-transparent',
       },
       disabled: true,
       inverted: true,
@@ -243,7 +266,7 @@ const button = tv({
   },
   variants: {
     danger: { true: '' },
-    disabled: { true: { root: 'cursor-not-allowed pointer-events-none' } },
+    disabled: { true: { root: 'cursor-not-allowed' } },
     fit: { true: { root: 'w-full' } },
     ghost: { true: '' },
     // Appearance flags: base look set in compoundVariants below so the
@@ -389,6 +412,13 @@ const onClick = (event: MouseEvent) => {
 };
 
 const onKeydown = (event: KeyboardEvent) => {
+  if (props.disabled || props.loading) {
+    event.preventDefault();
+    event.stopPropagation();
+
+    return;
+  }
+
   if (event.code === 'Space' || event.code === 'Enter') {
     if (props.href) {
       window.open(props.href, props.target);

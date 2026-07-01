@@ -14,12 +14,12 @@
           />
 
           <div class="grid items-center flex-1">
-            <p class="font-semibold text-primary">Custom header one</p>
+            <p class="font-semibold text-primary dark:text-white">Custom header one</p>
 
-            <p>Subheader</p>
+            <p class="text-sm dark:text-primary-400">Subheader</p>
           </div>
 
-          <c-tags style="--c-tag-border-radius: 6px">
+          <c-tags>
             <c-tag badge="1" active flat>Tag One</c-tag>
 
             <c-tag badge="7" active flat>Tag Two</c-tag>
@@ -40,12 +40,12 @@
           />
 
           <div class="grid items-center flex-1">
-            <p class="font-semibold text-primary">Custom header two</p>
+            <p class="font-semibold text-primary dark:text-white">Custom header two</p>
 
-            <p>Subheader</p>
+            <p class="text-sm dark:text-primary-400">Subheader</p>
           </div>
 
-          <c-tags style="--c-tag-border-radius: 6px">
+          <c-tags>
             <c-tag badge="13" active flat>Tag One</c-tag>
 
             <c-tag badge="10" active flat>Tag Two</c-tag>
@@ -67,12 +67,12 @@
           />
 
           <div class="grid items-center flex-1">
-            <p class="font-semibold text-primary">Custom header three</p>
+            <p class="font-semibold text-primary dark:text-white">Custom header three</p>
 
-            <p>Subheader</p>
+            <p class="text-sm dark:text-primary-400">Subheader</p>
           </div>
 
-          <c-tags style="--c-tag-border-radius: 6px">
+          <c-tags>
             <c-tag badge="0" active flat>Tag One</c-tag>
 
             <c-tag badge="1" active flat>Tag Two</c-tag>

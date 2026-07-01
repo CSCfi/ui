@@ -18,7 +18,7 @@
     "./css/*": "./dist/styles/css/*"
   },
   "scripts": {
-    "build": "pnpm run style-dictionary:build && vite build && node scripts/copy-styles.js && vue-tsc -p tsconfig.build.json",
+    "build": "pnpm run style-dictionary:build && vite build && vue-tsc -p tsconfig.build.json",
     "build:types": "vue-tsc -p tsconfig.build.json",
     "build:watch": "pnpm run style-dictionary:build && vue-tsc -p tsconfig.build.json && vite build --watch",
     "dev": "pnpm run style-dictionary:build && vue-tsc -p tsconfig.build.json && vite build --watch",

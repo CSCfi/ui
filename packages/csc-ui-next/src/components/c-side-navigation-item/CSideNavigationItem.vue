@@ -41,7 +41,11 @@ import { computed, onMounted, ref, useHost, watchEffect } from 'vue';
  * The per-component `--c-*` indirection vars are dropped in favour of the
  * semantic design tokens (ADR-0010): items sit on the themed nav surface, so
  * their foreground is `on-nav`, hover is `nav-surface-hover`, the active pill is
- * `primary-subtle`/`on-primary-subtle`, and a sub-item box is `surface-raised`.
+ * the dedicated `nav-active`/`on-nav-active` role, and a sub-item box is
+ * `surface-raised`. (The active pill was previously the `surface-sunken`
+ * page-canvas role — decoupled so dark mode can style the selection independently
+ * of the page background instead of receding into it. Light still maps to the
+ * same steps, so its tinted pill is unchanged.)
  * Consumer customization is via `::part()` (ADR-0006).
  *
  * The host `:focus-visible` outline (utilities can't target `:host`) and the
@@ -83,7 +87,7 @@ const sideNavigationItem = tv({
     // The outer box (the original `:host(.c-side-navigation-item) > div`) that
     // wraps the header + sub-nav and carries the bg/color/state. Its `color`
     // cascades into the rendered chevron c-icon (currentColor contract, ADR-0004).
-    root: 'grid items-center relative overflow-hidden rounded-csc-l-md cursor-pointer font-normal select-none [backface-visibility:hidden] [transform:translate3d(0,0,0)] bg-transparent text-on-nav',
+    root: 'grid items-center relative overflow-hidden rounded-csc-md cursor-pointer font-normal select-none [backface-visibility:hidden] [transform:translate3d(0,0,0)] bg-transparent text-on-nav',
     slot: 'flex items-center gap-2 max-w-full leading-normal',
     subNav:
       'w-full overflow-y-hidden h-0 transition-all duration-500 ease-[ease]',
@@ -94,7 +98,7 @@ const sideNavigationItem = tv({
       false: { root: 'hover:bg-nav-surface-hover' },
       true: {
         chevron: 'rotate-90',
-        root: 'bg-primary-subtle text-on-primary-subtle',
+        root: 'bg-nav-active text-on-nav-active',
         subNav: 'h-max',
       },
     },

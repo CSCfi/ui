@@ -76,7 +76,7 @@ const sideNavigation = tv({
     burger: 'flex justify-end px-4 py-2',
     // The outer drawer container.
     content: 'flex flex-col flex-[1_2_260px] w-80',
-    nav: 'relative flex flex-col flex-nowrap flex-1 gap-1 min-h-fit max-h-full w-full overflow-y-auto pt-6 pr-0 pb-6 pl-6 z-[8] bg-nav-surface transition-transform duration-300 ease-[ease]',
+    nav: 'relative flex flex-col flex-nowrap flex-1 gap-1 min-h-fit max-h-full w-full overflow-y-auto p-6 z-[8] bg-nav-surface transition-transform duration-300 ease-[ease]',
     spacer: 'flex-1 mb-2',
     srOnly:
       'absolute w-px h-px p-0 -m-px overflow-hidden whitespace-nowrap border-0 [clip:rect(0_0_0_0)]',

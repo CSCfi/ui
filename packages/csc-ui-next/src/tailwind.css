@@ -32,6 +32,7 @@
   --color-primary-700: var(--c-primary-700);
   --color-primary-800: var(--c-primary-800);
   --color-primary-900: var(--c-primary-900);
+  --color-primary-950: var(--c-primary-950);
   --color-secondary-100: var(--c-secondary-100);
   --color-secondary-200: var(--c-secondary-200);
   --color-secondary-300: var(--c-secondary-300);
@@ -41,6 +42,7 @@
   --color-secondary-700: var(--c-secondary-700);
   --color-secondary-800: var(--c-secondary-800);
   --color-secondary-900: var(--c-secondary-900);
+  --color-secondary-950: var(--c-secondary-950);
   --color-accent-100: var(--c-accent-100);
   --color-accent-200: var(--c-accent-200);
   --color-accent-300: var(--c-accent-300);
@@ -50,6 +52,7 @@
   --color-accent-700: var(--c-accent-700);
   --color-accent-800: var(--c-accent-800);
   --color-accent-900: var(--c-accent-900);
+  --color-accent-950: var(--c-accent-950);
   --color-success-100: var(--c-success-100);
   --color-success-200: var(--c-success-200);
   --color-success-300: var(--c-success-300);
@@ -59,6 +62,7 @@
   --color-success-700: var(--c-success-700);
   --color-success-800: var(--c-success-800);
   --color-success-900: var(--c-success-900);
+  --color-success-950: var(--c-success-950);
   --color-info-100: var(--c-info-100);
   --color-info-200: var(--c-info-200);
   --color-info-300: var(--c-info-300);
@@ -68,6 +72,7 @@
   --color-info-700: var(--c-info-700);
   --color-info-800: var(--c-info-800);
   --color-info-900: var(--c-info-900);
+  --color-info-950: var(--c-info-950);
   --color-warning-100: var(--c-warning-100);
   --color-warning-200: var(--c-warning-200);
   --color-warning-300: var(--c-warning-300);
@@ -77,6 +82,7 @@
   --color-warning-700: var(--c-warning-700);
   --color-warning-800: var(--c-warning-800);
   --color-warning-900: var(--c-warning-900);
+  --color-warning-950: var(--c-warning-950);
   --color-error-100: var(--c-error-100);
   --color-error-200: var(--c-error-200);
   --color-error-300: var(--c-error-300);
@@ -86,6 +92,7 @@
   --color-error-700: var(--c-error-700);
   --color-error-800: var(--c-error-800);
   --color-error-900: var(--c-error-900);
+  --color-error-950: var(--c-error-950);
   --color-link-100: var(--c-link-100);
   --color-link-200: var(--c-link-200);
   --color-link-300: var(--c-link-300);
@@ -95,6 +102,7 @@
   --color-link-700: var(--c-link-700);
   --color-link-800: var(--c-link-800);
   --color-link-900: var(--c-link-900);
+  --color-link-950: var(--c-link-950);
   --color-tertiary-100: var(--c-tertiary-100);
   --color-tertiary-200: var(--c-tertiary-200);
   --color-tertiary-300: var(--c-tertiary-300);
@@ -104,6 +112,17 @@
   --color-tertiary-700: var(--c-tertiary-700);
   --color-tertiary-800: var(--c-tertiary-800);
   --color-tertiary-900: var(--c-tertiary-900);
+  --color-tertiary-950: var(--c-tertiary-950);
+  --color-slate-100: var(--c-slate-100);
+  --color-slate-200: var(--c-slate-200);
+  --color-slate-300: var(--c-slate-300);
+  --color-slate-400: var(--c-slate-400);
+  --color-slate-500: var(--c-slate-500);
+  --color-slate-600: var(--c-slate-600);
+  --color-slate-700: var(--c-slate-700);
+  --color-slate-800: var(--c-slate-800);
+  --color-slate-900: var(--c-slate-900);
+  --color-slate-950: var(--c-slate-950);
   --color-white: var(--c-white);
   --color-black: var(--c-black);
   --color-transparent: var(--c-transparent);
@@ -133,8 +152,10 @@
   --color-surface-raised: var(--c-surface-raised);
   --color-surface-overlay: var(--c-surface-overlay);
   --color-surface-muted: var(--c-surface-muted);
+  --color-surface-sunken: var(--c-surface-sunken);
   --color-on-surface: var(--c-on-surface);
   --color-on-surface-muted: var(--c-on-surface-muted);
+  --color-on-surface-sunken: var(--c-on-surface-sunken);
   --color-border: var(--c-border);
   --color-border-strong: var(--c-border-strong);
   --color-ring: var(--c-ring);
@@ -202,6 +223,12 @@
   --color-nav-surface: var(--c-nav-surface);
   --color-nav-surface-hover: var(--c-nav-surface-hover);
   --color-on-nav: var(--c-on-nav);
+  --color-nav-active: var(--c-nav-active);
+  --color-on-nav-active: var(--c-on-nav-active);
+
+  --color-logo-wordmark: var(--c-logo-wordmark);
+  --color-logo-teal: var(--c-logo-teal);
+  --color-logo-magenta: var(--c-logo-magenta);
 
   /* Mode-invariant inverse family (content on a fixed brand/dark backdrop). */
   --color-inverse-surface: var(--c-inverse-surface);
@@ -262,4 +289,8 @@
 
 @utility rounded-csc-lg {
   @apply supports-corner-shape:[corner-shape:squircle] supports-corner-shape:rounded-2xl not-supports-corner-shape:rounded-lg;
+}
+
+@utility rounded-csc-xl {
+  @apply supports-corner-shape:[corner-shape:squircle] supports-corner-shape:rounded-3xl not-supports-corner-shape:rounded-xl;
 }

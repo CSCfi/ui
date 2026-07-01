@@ -6,6 +6,29 @@
 @import 'tailwindcss/preflight.css' layer(base);
 @import 'tailwindcss/utilities.css' layer(utilities);
 
+/*
+ * Make the `dark:` variant follow the docs theme switcher (the `data-theme`
+ * attribute `useTheme` writes on <html>) instead of Tailwind's default
+ * `prefers-color-scheme` media query — otherwise `dark:` tracks the OS while the
+ * rest of the UI (csc-ui-next semantic tokens) tracks the switcher.
+ *
+ * Mirrors tokens.css exactly: dark when an explicit `data-theme="dark"` is set,
+ * OR — when NO `data-theme` is present at all — when the OS prefers dark. The
+ * `:not([data-theme])` guard is what makes an explicit light choice beat an OS
+ * dark preference.
+ */
+@custom-variant dark {
+  &:where([data-theme='dark'], [data-theme='dark'] *) {
+    @slot;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    &:where(:root:not([data-theme]), :root:not([data-theme]) *) {
+      @slot;
+    }
+  }
+}
+
 :host {
   margin: initial;
   padding: initial;

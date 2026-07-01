@@ -21,7 +21,7 @@ import { computed } from 'vue';
  */
 const sideNavigationTitle = tv({
   slots: {
-    root: 'flex items-center gap-2 mt-5 mb-4 py-1 text-on-nav shadow-[0_1px_0_0_var(--c-on-nav)]',
+    root: 'flex items-center gap-2 mt-5 mb-2 pb-3 pt-1 px-2 text-on-nav border-b border-border uppercase text-xs',
   },
 });
 

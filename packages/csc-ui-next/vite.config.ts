@@ -3,6 +3,20 @@ import vue from '@vitejs/plugin-vue';
 import { resolve } from 'node:path';
 import { defineConfig } from 'vite';
 
+import { copyStyles } from './scripts/copy-styles.js';
+
+// `vite build` empties `dist` on every (re)build, including each incremental
+// watch rebuild. The style-dictionary output lives in `src/styles` and must be
+// copied back into `dist/styles` *after* each write — otherwise the package's
+// `./css/*` export (→ `dist/styles/css/*`) 404s in watch mode. `writeBundle`
+// fires once per completed build, after the output has been written.
+const copyStylesPlugin = () => ({
+  name: 'csc-copy-styles',
+  writeBundle() {
+    copyStyles();
+  },
+});
+
 export default defineConfig({
   build: {
     cssCodeSplit: false,
@@ -45,5 +59,6 @@ export default defineConfig({
       },
     }),
     tailwindcss(),
+    copyStylesPlugin(),
   ],
 });

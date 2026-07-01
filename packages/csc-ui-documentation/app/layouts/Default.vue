@@ -102,7 +102,7 @@
           v-control
           placeholder="Search for a component"
           hide-details
-          shadow
+          :shadow="themeMode === 'light'"
         >
           <c-icon slot="pre" :path="mdiMagnify" :size="16" />
         </c-text-field>
@@ -124,14 +124,6 @@
           :size="16"
           title="Still uses the old (Stencil) implementation"
           style="color: var(--c-warning-color, #d6601f); margin-left: 4px"
-        />
-
-        <c-icon
-          v-if="component.usesTailwindVariants"
-          :path="mdiCheckCircle"
-          :size="16"
-          title="Converted to Tailwind variants"
-          style="color: var(--c-success-color, #25a35a); margin-left: 4px"
         />
       </c-side-navigation-item>
 
@@ -186,7 +178,6 @@
 import {
   mdiAlertCircle,
   mdiAngular,
-  mdiCheckCircle,
   mdiFormatPaint,
   mdiInformationOutline,
   mdiLanguageHtml5,
@@ -200,7 +191,7 @@ import {
   mdiWeatherSunny,
 } from '@mdi/js';
 import { storeToRefs } from 'pinia';
-import { migratedTags, tailwindVariantTags } from '@cscfi/csc-ui-next';
+import { migratedTags } from '@cscfi/csc-ui-next';
 import packageJson from '../../package.json';
 
 const version = ref(packageJson.version);
@@ -216,7 +207,6 @@ const isNextImpl = config.public.cscUiImpl === 'next';
 const { mode: themeMode, toggle: toggleTheme } = useTheme();
 
 const migratedSet = new Set(migratedTags);
-const tailwindSet = new Set(tailwindVariantTags);
 
 const query = ref('');
 
@@ -262,7 +252,6 @@ const components = computed(() =>
       tag: data.tag,
       name: data.name,
       usesOldImpl: isNextImpl && !migratedSet.has(data.tag),
-      usesTailwindVariants: isNextImpl && tailwindSet.has(data.tag),
     })),
 );
 

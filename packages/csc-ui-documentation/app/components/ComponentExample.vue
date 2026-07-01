@@ -1,7 +1,7 @@
 <template>
   <div class="component-example flex flex-col gap-6">
     <div>
-      <h2 v-if="slots.title" class="font-medium text-xl text-primary-600">
+      <h2 v-if="slots.title" class="font-medium text-xl text-primary-600 dark:text-primary-400">
         <slot name="title" />
       </h2>
 
@@ -133,37 +133,25 @@ onMounted(() => {
       background-color: var(--c-tertiary-800);
       color: #fff;
     }
-  }
+  }  
+}
 
-  c-tab-buttons {
-    &::part(root) {
-      background-color: var(--c-tertiary-100);
-    }
-
-    &::part(indicator) {
-      background-color: var(--c-tertiary-800);
-    }
-  }
-
+[data-theme="light"] {
   c-tab-button:not([active]) {
     &::part(root) {
       color: var(--c-tertiary-800);
     }
   }
+  c-tab-buttons {
+    &::part(indicator) {
+      background-color: var(--c-tertiary-800);
+    }
+    &::part(root) {
+      background-color: var(--c-tertiary-100);
+    }
+  }
 }
 
-c-accordion.code-examples c-accordion-item {
-  --c-accordion-item-header-background-color: var(--c-tertiary-800);
-  --c-accordion-item-outline-color: var(--c-tertiary-800);
-  --c-accordion-item-text-color: var(--c-white);
-}
-
-c-tab-buttons {
-  --_c-tab-buttons-background-color-active: var(--c-tertiary-800);
-  --_c-tab-buttons-border-color: var(--c-tertiary-800);
-  --_c-tab-buttons-text-color: var(--c-tertiary-800);
-  --_c-tab-buttons-background-color-active-hover: var(--c-tertiary-500);
-}
 .component-example {
   transform: translateX(0);
 }

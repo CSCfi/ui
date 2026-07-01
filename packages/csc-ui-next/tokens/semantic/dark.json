@@ -1,22 +1,24 @@
 {
-  "_comment": "Semantic token → palette step map for DARK mode (ADR-0010). Engineering-designed remap of existing ramp steps (no new hexes). Provisional — finalised against WCAG AA in the contrast pass (plan phase 7). Keep keys in sync with light.json. Mode-invariant roles (inverse-*) live in invariant.json.",
+  "_comment": "Semantic token → palette step map for DARK mode (ADR-0010). Brand/status roles remap existing ramp steps; the surface ladder + neutral borders/muted-text draw from the dedicated dark-neutral `slate` ramp (added to base.json when the original ramps proved too light/washed for dark surfaces). Finalised against WCAG AA in the contrast pass. Keep keys in sync with light.json. Mode-invariant roles (inverse-*) live in invariant.json.",
 
-  "surface": "tertiary-900",
-  "surface-raised": "tertiary-800",
-  "surface-overlay": "tertiary-700",
-  "surface-muted": "tertiary-800",
+  "surface": "slate-900",
+  "surface-raised": "slate-900",
+  "surface-overlay": "slate-800",
+  "surface-muted": "slate-800",
+  "surface-sunken": "slate-950",
   "on-surface": "white",
-  "on-surface-muted": "tertiary-200",
-  "border": "tertiary-700",
-  "border-strong": "tertiary-500",
+  "on-surface-muted": "slate-100",
+  "on-surface-sunken": "primary-200",
+  "border": "slate-700",
+  "border-strong": "slate-400",
   "ring": "primary-400",
 
-  "primary": "primary-300",
-  "primary-hover": "primary-200",
+  "primary": "primary-400",
+  "primary-hover": "primary-300",
   "on-primary": "primary-900",
   "primary-subtle": "primary-800",
   "primary-subtle-hover": "primary-900",
-  "on-primary-subtle": "primary-200",
+  "on-primary-subtle": "white",
 
   "secondary": "secondary-300",
   "secondary-hover": "secondary-200",
@@ -67,7 +69,13 @@
   "link-subtle-hover": "link-900",
   "on-link-subtle": "link-200",
 
-  "nav-surface": "tertiary-800",
-  "nav-surface-hover": "tertiary-700",
-  "on-nav": "white"
+  "nav-surface": "slate-900",
+  "nav-surface-hover": "slate-800",
+  "on-nav": "slate-200",
+  "nav-active": "slate-800",
+  "on-nav-active": "white",
+
+  "logo-wordmark": "white",
+  "logo-teal": "white",
+  "logo-magenta": "white"
 }

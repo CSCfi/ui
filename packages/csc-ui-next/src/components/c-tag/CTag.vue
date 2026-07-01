@@ -45,8 +45,9 @@ const tag = tv({
     // closeable trims the trailing padding to the vertical padding value.
     { class: { root: 'pr-1' }, closeable: true, size: 'default' },
     { class: { root: 'pr-0.5' }, closeable: true, size: 'small' },
-    // small tag tightens the badge's left padding to match (padding-y = 2px).
+    // badge trims the left padding to the vertical padding value
     { badged: true, class: { root: 'pl-0.5' }, size: 'small' },
+    { badged: true, class: { root: 'pl-1' }, size: 'default' },
   ],
   defaultVariants: {
     active: false,
