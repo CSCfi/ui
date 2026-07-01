@@ -10,3 +10,6 @@ packages/*/dist-types
 
 # Local Netlify folder
 .netlify
+
+# Scratch / temporary files
+temp/
