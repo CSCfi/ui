@@ -198,6 +198,10 @@ body {
     color 0.2s ease;
 }
 
+/* c-side-navigation-title::part(divider-root) {
+  background-color: red;
+} */
+
 /* c-button::part(root) {
   border-radius: 9999px;
 }

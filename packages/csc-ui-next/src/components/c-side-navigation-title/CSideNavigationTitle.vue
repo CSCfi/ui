@@ -1,6 +1,15 @@
 <template>
   <div :class="ui.root()" part="root">
-    <slot />
+    <div :class="ui.label()" part="label">
+      <slot />
+    </div>
+
+    <!-- Forward the divider's parts outward under the `<child>-<part>` naming
+         convention (ADR-0006) so consumers can reach them via
+         `c-side-navigation-title::part(divider-root)`; `::part` doesn't pierce
+         nested shadow roots, and the bare `root` name is already taken by this
+         component's own root part. -->
+    <c-divider exportparts="root:divider-root" />
   </div>
 </template>
 
@@ -21,7 +30,9 @@ import { computed } from 'vue';
  */
 const sideNavigationTitle = tv({
   slots: {
-    root: 'flex items-center gap-2 mt-5 mb-2 pb-3 pt-1 px-2 text-on-nav border-b border-border uppercase text-xs',
+    label:
+      'flex items-center gap-2 px-2 text-on-nav uppercase text-xs tracking-widest',
+    root: 'grid gap-2 mt-6 mb-2',
   },
 });
 
