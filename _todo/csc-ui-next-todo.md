@@ -14,7 +14,6 @@
 ---
 
 ## Missing features
-- dark mode
 - accessibility check / approvements
 - type exports / refactor
   - define types in the components (export them)

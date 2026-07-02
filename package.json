@@ -14,6 +14,7 @@
     "prepare": "sh prepare-husky.sh",
     "dev": "concurrently --names \"ui,docs\" --prefix-colors \"magenta.bold,green.bold\" \"cd packages/csc-ui && pnpm run build:watch\" \"cd packages/csc-ui-documentation && pnpm run dev\"",
     "dev:next": "concurrently --names \"ui,docs\" --prefix-colors \"magenta.bold,green.bold\" \"cd packages/csc-ui-next && pnpm build:watch\" \"cd packages/csc-ui-documentation && pnpm dev:next\"",
+    "dev:docs-next": "concurrently --names \"ui,docs\" --prefix-colors \"magenta.bold,green.bold\" \"cd packages/csc-ui-next && pnpm build:watch\" \"cd packages/csc-ui-documentation-next && pnpm dev\"",
     "ui": "pnpm --filter csc-ui-next",
     "clean": "rm -rf node_modules && pnpm -r clean"
   }

@@ -1,0 +1,29 @@
+{
+  "name": "@cscfi/csc-ui-documentation-next",
+  "version": "0.0.1",
+  "private": true,
+  "description": "Documentation site for @cscfi/csc-ui-next, generated from the library's Custom Elements Manifest (ADR-0012).",
+  "type": "module",
+  "scripts": {
+    "build": "nuxt build",
+    "dev": "nuxt dev",
+    "generate": "nuxt generate",
+    "postinstall": "nuxt prepare",
+    "preview": "nuxt preview",
+    "typecheck": "nuxt typecheck"
+  },
+  "dependencies": {
+    "@cscfi/csc-ui-next": "workspace:*",
+    "@mdi/js": "^7.4.47",
+    "markdown-it": "^14.1.0"
+  },
+  "devDependencies": {
+    "@types/markdown-it": "^14.1.2",
+    "nuxt": "^4.0.0",
+    "typescript": "^6.0.3",
+    "vue": "^3.5.39",
+    "vue-tsc": "^3.3.5"
+  },
+  "license": "MIT",
+  "repository": "CSCfi/ui"
+}
