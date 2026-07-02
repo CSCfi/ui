@@ -3,6 +3,13 @@
 </template>
 
 <script setup lang="ts">
+/**
+ * Spacer component for flex containers
+ *
+ * @csspart root - The flex-filler element that grows to consume the free space
+ *
+ * @seeded from csc-ui — verify
+ */
 import { tv } from 'tailwind-variants';
 
 /**

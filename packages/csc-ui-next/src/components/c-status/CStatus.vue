@@ -5,6 +5,13 @@
 </template>
 
 <script setup lang="ts">
+/**
+ * @slot default - Status text
+ *
+ * @csspart root - The status pill wrapping the slotted text
+ *
+ * @seeded from csc-ui — verify
+ */
 import { tv } from 'tailwind-variants';
 import { computed } from 'vue';
 
@@ -39,6 +46,11 @@ const status = tv({
 });
 
 interface CStatusProps {
+  /**
+   * Status type
+   *
+   * @seeded from csc-ui — verify
+   */
   type?: string;
 }
 

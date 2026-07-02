@@ -15,9 +15,23 @@
 </template>
 
 <script setup lang="ts">
+/**
+ * @slot default - Default slot
+ * @csspart root - The tag's visible pill-shaped box
+ *
+ * @seeded from csc-ui — verify
+ */
 import { mdiClose } from '@mdi/js';
 import { tv } from 'tailwind-variants';
 import { computed, onMounted, useHost, watchEffect } from 'vue';
+
+import { useHostEmit } from '../../shared/useHostEmit';
+
+/** Events dispatched by `<c-tag>`. */
+interface CTagEvents {
+  /** Fired when the tag's close button is activated. */
+  close: void;
+}
 
 /**
  * Styling lives entirely in this `tailwind-variants` config (ADR-0004): the
@@ -96,10 +110,35 @@ const tag = tv({
 defineOptions({ inheritAttrs: false });
 
 interface CTagProps {
+  /**
+   * Mark tag as active
+   *
+   * @seeded from csc-ui — verify
+   */
   active?: boolean;
+  /**
+   * Display an optional badge at the start of the tag
+   *
+   * @seeded from csc-ui — verify
+   */
   badge?: null | number | string;
+  /**
+   * Mark tag as closeable
+   *
+   * @seeded from csc-ui — verify
+   */
   closeable?: boolean;
+  /**
+   * Remove the hover effect
+   *
+   * @seeded from csc-ui — verify
+   */
   flat?: boolean;
+  /**
+   * Size of the tag
+   *
+   * @seeded from csc-ui — verify
+   */
   size?: string;
 }
 
@@ -112,6 +151,8 @@ const props = withDefaults(defineProps<CTagProps>(), {
 });
 
 const host = useHost();
+
+const emit = useHostEmit<CTagEvents>();
 
 const hasBadge = computed(
   () => props.badge !== null && props.badge !== '' && props.badge !== undefined,
@@ -144,7 +185,7 @@ onMounted(() => {
 });
 
 const onClose = () => {
-  host?.dispatchEvent(new CustomEvent('close'));
+  emit('close');
 };
 </script>
 

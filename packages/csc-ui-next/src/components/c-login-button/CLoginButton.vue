@@ -9,6 +9,15 @@
 </template>
 
 <script setup lang="ts">
+/**
+ * @slot default - Default slot
+ *
+ * @csspart root - The anchor element forming the whole clickable card
+ * @csspart image - The provider logo image centered in the card
+ * @csspart title - The bottom title bar wrapping the slotted label
+ *
+ * @seeded from csc-ui — verify
+ */
 import { tv } from 'tailwind-variants';
 import { computed } from 'vue';
 
@@ -34,8 +43,23 @@ const loginButton = tv({
 const ui = computed(() => loginButton());
 
 interface CLoginButtonProps {
+  /**
+   * Alt description for logo
+   *
+   * @seeded from csc-ui — verify
+   */
   alt?: string;
+  /**
+   * Login provider link. Do not set if using a javascript click handler
+   *
+   * @seeded from csc-ui — verify
+   */
   href?: string;
+  /**
+   * Login provider logo url
+   *
+   * @seeded from csc-ui — verify
+   */
   src?: string;
 }
 

@@ -46,6 +46,10 @@
 </template>
 
 <script setup lang="ts">
+/**
+ * @csspart root - The inline-grid wrapper laying out the digit inputs and the message
+ * @csspart input - Each single-digit `<input>` box (one per digit)
+ */
 import { tv } from 'tailwind-variants';
 import {
   computed,
@@ -56,6 +60,30 @@ import {
   useTemplateRef,
   watch,
 } from 'vue';
+
+import { useHostEmit } from '../../shared/useHostEmit';
+
+/** Events dispatched by `<c-otp-input>`. */
+interface COtpInputEvents {
+  /**
+   * Fired on every digit change with the complete code once all digits are
+   * filled, or `null` while the code is still incomplete (legacy value-change
+   * event).
+   */
+  changeValue: null | string;
+  /** Fired when the last digit is filled, carrying the complete code. */
+  completion: null | string;
+  /**
+   * Native bubbling input event for plain `v-model`; carries no detail — the
+   * model value is mirrored onto the host's `value` property.
+   */
+  input: void;
+  /**
+   * Fired on every digit change with the currently entered digits (v-model
+   * contract).
+   */
+  'update:value': string;
+}
 
 // Multi-root template (fragment) + we write to the host below — keep
 // fallthrough attrs on the host element instead of tripping the "renders
@@ -101,13 +129,53 @@ const otp = tv({
 });
 
 interface COtpInputProps {
+  /**
+   * Id of the element
+   *
+   * @seeded from csc-ui — verify
+   */
   elementId?: string;
+  /**
+   * Auto focus
+   *
+   * @seeded from csc-ui — verify
+   */
   hasAutofocus?: boolean;
+  /**
+   * Hide the hint and error messages
+   *
+   * @seeded from csc-ui — verify
+   */
   hideDetails?: boolean;
+  /**
+   * Hint text for the input
+   *
+   * @seeded from csc-ui — verify
+   */
   hint?: string;
+  /**
+   * Length of the OTP code
+   *
+   * @seeded from csc-ui — verify
+   */
   length?: number;
+  /**
+   * Set the validíty of the input
+   *
+   * @seeded from csc-ui — verify
+   */
   valid?: boolean;
+  /**
+   * Custom validation message
+   *
+   * @seeded from csc-ui — verify
+   */
   validation?: string;
+  /**
+   * Value of the input
+   *
+   * @seeded from csc-ui — verify
+   */
   value?: string;
 }
 
@@ -124,6 +192,8 @@ const props = withDefaults(defineProps<COtpInputProps>(), {
 
 const host = useHost();
 
+const emit = useHostEmit<COtpInputEvents>();
+
 const autoId = useId();
 
 const resolvedId = computed(() => props.elementId || autoId);
@@ -139,15 +209,6 @@ const statusText = ref('');
 const inputsRef = useTemplateRef<HTMLInputElement[]>('inputsRef');
 
 const inputs = (): HTMLInputElement[] => inputsRef.value ?? [];
-
-const dispatchChange = (val: null | string) =>
-  host?.dispatchEvent(new CustomEvent('changeValue', { detail: val }));
-
-const dispatchCompletion = (val: null | string) =>
-  host?.dispatchEvent(new CustomEvent('completion', { detail: val }));
-
-const dispatchUpdate = (val: string) =>
-  host?.dispatchEvent(new CustomEvent('update:value', { detail: val }));
 
 let backspacePressed = false;
 
@@ -184,10 +245,10 @@ const emitValue = () => {
     const isFull = value.length === props.length;
 
     const modelValue = isFull ? value : null;
-    dispatchChange(modelValue);
-    dispatchUpdate(value);
+    emit('changeValue', modelValue);
+    emit('update:value', value);
 
-    if (isFull) dispatchCompletion(value || null);
+    if (isFull) emit('completion', value || null);
 
     // Native v-model bridge (works without `v-control`): mirror the model value
     // (null until complete, matching `changeValue`) onto the host's `value` and
@@ -195,7 +256,7 @@ const emitValue = () => {
     // is not disturbed.
     if (host) {
       (host as { value?: unknown } & HTMLElement).value = modelValue;
-      host.dispatchEvent(new Event('input', { bubbles: true }));
+      emit('input', undefined, { bubbles: true });
     }
 
     updateStatusText();

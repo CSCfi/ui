@@ -54,11 +54,44 @@
 </template>
 
 <script setup lang="ts">
+/**
+ * @slot default - The visible label of the switch
+ *
+ * @csspart root - The `<label>` element wrapping the toggle and the label text
+ * @csspart slider - The toggle track (its `::before` pseudo-element is the handle)
+ * @csspart label - Wrapper around the slotted label content
+ */
 import { tv } from 'tailwind-variants';
 import { computed, ref, useHost, useId, useTemplateRef, watch } from 'vue';
 
 import { emitModelValue } from '../../shared/emitModelValue';
 import { useHasSlot } from '../../shared/useHasSlot';
+import { useHostEmit } from '../../shared/useHostEmit';
+
+/** Events dispatched by `<c-switch>`. */
+interface CSwitchEvents {
+  /**
+   * Standard bubbling DOM change event, re-dispatched from the host when the
+   * switch is toggled (the inner input's change does not cross the shadow
+   * boundary). No detail; read the new value from the host's `value` property.
+   */
+  change: void;
+  /**
+   * Fired when the switch is toggled, carrying the new value —
+   * `trueValue` when on, `falseValue` when off.
+   */
+  changeValue: boolean | number | string;
+  /**
+   * Native bubbling input event fired on toggle so a plain Vue `v-model`
+   * works without the `v-control` directive. No detail.
+   */
+  input: void;
+  /**
+   * v-model contract event fired on toggle, carrying the new value —
+   * `trueValue` when on, `falseValue` when off.
+   */
+  'update:value': boolean | number | string;
+}
 
 /**
  * Styling lives in this `tailwind-variants` config (ADR-0004); the old
@@ -124,13 +157,52 @@ const cSwitch = tv({
 });
 
 interface CSwitchProps {
+  /**
+   * If `true`, the checkbox is selected.
+   *
+   * @seeded from csc-ui — verify
+   */
   checked?: boolean;
+  /**
+   * If `true`, the switch is disabled and cannot be toggled
+   */
   disabled?: boolean;
+  /**
+   * The value when the checkbox is unchecked
+   *
+   * @seeded from csc-ui — verify
+   */
   falseValue?: boolean | number | string;
+  /**
+   * Id for the element
+   *
+   * @seeded from csc-ui — verify
+   */
   hostId?: string;
+  /**
+   * Loading state
+   *
+   * @seeded from csc-ui — verify
+   */
   loading?: boolean;
+  /**
+   * Set as required
+   *
+   * @seeded from csc-ui — verify
+   */
   required?: boolean;
+  /**
+   * The value when the checkbox is checked
+   *
+   * @seeded from csc-ui — verify
+   */
   trueValue?: boolean | number | string;
+  /**
+   * The input value
+   * - Only used when the checkbox participates in a native `<form>`
+   *
+   * @seeded from csc-ui — verify
+   */
   value?: boolean | number | string;
 }
 
@@ -146,6 +218,8 @@ const props = withDefaults(defineProps<CSwitchProps>(), {
 });
 
 const host = useHost();
+
+const emit = useHostEmit<CSwitchEvents>();
 
 const rootRef = useTemplateRef<HTMLElement>('rootRef');
 
@@ -186,7 +260,7 @@ const toggle = () => {
   // mirrors `value` onto the host. The value watch above is visuals-only, so no
   // loop. The native `change` is kept for @change listeners.
   emitModelValue(host, next);
-  host?.dispatchEvent(new Event('change', { bubbles: true, composed: true }));
+  emit('change', undefined, { bubbles: true, composed: true });
 };
 </script>
 

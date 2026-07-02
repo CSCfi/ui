@@ -27,6 +27,16 @@
 </template>
 
 <script setup lang="ts">
+/**
+ * A loader component that fills the nearest containing element that has css-property position set to 'relative'
+ *
+ * @slot default - Message text revealed below the spinner after `contentdelay`
+ *
+ * @csspart root - The overlay element covering the containing element (scrim, fade transition)
+ * @csspart content - The message wrapper anchored below the spinner
+ *
+ * @seeded from csc-ui — verify
+ */
 import { tv } from 'tailwind-variants';
 import {
   computed,
@@ -92,7 +102,17 @@ const loader = tv({
 });
 
 interface CLoaderProps {
+  /**
+   * Delay in seconds of showing the contents in the slot of the loader
+   *
+   * @seeded from csc-ui — verify
+   */
   contentdelay?: number;
+  /**
+   * Size of the loader
+   *
+   * @seeded from csc-ui — verify
+   */
   size?: number;
   /**
    * Whether the loader is shown. Toggling this drives the fade-in / smooth
@@ -108,6 +128,11 @@ interface CLoaderProps {
    * the default (`true` = shown) preserves the original default behaviour.
    */
   visible?: boolean;
+  /**
+   * Width of the loader
+   *
+   * @seeded from csc-ui — verify
+   */
   width?: number;
 }
 

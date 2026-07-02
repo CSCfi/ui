@@ -5,6 +5,9 @@
 </template>
 
 <script setup lang="ts">
+/**
+ * @csspart root - The inner c-icon-button carrying the menu icon
+ */
 import { mdiMenu } from '@mdi/js';
 import { tv } from 'tailwind-variants';
 import { computed } from 'vue';

@@ -3,6 +3,11 @@
 </template>
 
 <script setup lang="ts">
+/**
+ * @slot default - Default slot
+ *
+ * @seeded from csc-ui — verify
+ */
 // `<slot />` root (fragment) — keep consumer fallthrough attrs (class/style)
 // on the host element instead of tripping the "renders fragment" warning.
 defineOptions({ inheritAttrs: false });

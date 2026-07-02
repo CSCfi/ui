@@ -3,6 +3,13 @@
 </template>
 
 <script setup lang="ts">
+/**
+ * Generic flex row component
+ *
+ * @slot default - Should contain items to be displayed in the row
+ *
+ * @seeded from csc-ui — verify
+ */
 import { onMounted, useHost, watchEffect } from 'vue';
 
 // Template is a bare `<slot />` (fragment root) and we write `--_c-row-gap`
@@ -12,9 +19,29 @@ import { onMounted, useHost, watchEffect } from 'vue';
 defineOptions({ inheritAttrs: false });
 
 interface CRowProps {
+  /**
+   * Align items vertically
+   *
+   * @seeded from csc-ui — verify
+   */
   align?: string;
+  /**
+   * Gap between items in px
+   *
+   * @seeded from csc-ui — verify
+   */
   gap?: number;
+  /**
+   * Justify content horizontally
+   *
+   * @seeded from csc-ui — verify
+   */
   justify?: string;
+  /**
+   * Disable flex wrap
+   *
+   * @seeded from csc-ui — verify
+   */
   nowrap?: boolean;
 }
 

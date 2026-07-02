@@ -183,6 +183,20 @@
 </template>
 
 <script setup lang="ts">
+/**
+ * A filterable value-selection component: a readonly value field that opens a
+ * popover panel with a search input above the matching options.
+ *
+ * @slot pre - Content placed before the value field inside the input row
+ * @slot default - The c-option elements used as the data source (never rendered in place)
+ * @slot post - Content placed after the value field inside the input row
+ *
+ * @csspart panel - The top-layer popover container anchored below the field
+ * @csspart card - The elevated surface inside the panel holding the search row and the list
+ * @csspart search - The search-input row at the top of the panel
+ * @csspart list - The scrollable options listbox
+ * @csspart info - The no-results row shown when the query matches no options
+ */
 import { mdiAlert, mdiCheck, mdiChevronDown, mdiClose } from '@mdi/js';
 import { tv } from 'tailwind-variants';
 import {
@@ -205,6 +219,34 @@ import type {
 import { ensureAnchorPositioning } from '../../shared/anchorPolyfill';
 import { coerceBoolean } from '../../shared/coerceBoolean';
 import { emitModelValue } from '../../shared/emitModelValue';
+import { useHostEmit } from '../../shared/useHostEmit';
+
+/** Events dispatched by `<c-autocomplete>`. */
+interface CAutocompleteEvents {
+  /**
+   * Native change event (no detail) dispatched whenever a selection is
+   * committed or cleared; bubbles through the shadow boundary for
+   * form-style listeners.
+   */
+  change: void;
+  /**
+   * Fired when the selected value changes (an option is committed or the
+   * selection is cleared), carrying the new value — the option's value, or
+   * the whole `{ name, value }` item when `return-object` is set; `null`
+   * when cleared.
+   */
+  changeValue: CAutocompleteItem | null | number | string;
+  /**
+   * Native bubbling input event dispatched alongside every value change so a
+   * plain `v-model` stays in sync. Carries no detail.
+   */
+  input: void;
+  /**
+   * Fired alongside `changeValue` with the same detail — the `v-model`
+   * contract.
+   */
+  'update:value': CAutocompleteItem | null | number | string;
+}
 
 /**
  * c-autocomplete is a filterable value-selection component (CONTEXT.md:
@@ -342,6 +384,8 @@ const props = withDefaults(defineProps<CAutocompleteProps>(), {
 });
 
 const host = useHost();
+
+const emit = useHostEmit<CAutocompleteEvents>();
 
 const anchorRef = useTemplateRef<HTMLElement>('anchorRef');
 
@@ -504,7 +548,7 @@ const commit = (opt: NormalizedOption) => {
 
   value.value = next;
   emitModelValue(host, next);
-  host?.dispatchEvent(new Event('change', { bubbles: true, composed: true }));
+  emit('change', undefined, { bubbles: true, composed: true });
 
   // Mirror selection onto the live <c-option> elements for consistency with
   // c-select (external code may read `.selected`).
@@ -526,7 +570,7 @@ const onReset = (event?: Event) => {
   value.value = null;
   query.value = '';
   emitModelValue(host, null);
-  host?.dispatchEvent(new Event('change', { bubbles: true, composed: true }));
+  emit('change', undefined, { bubbles: true, composed: true });
 
   if (optionElementsExist.value) {
     optionElements.value.forEach(
@@ -537,6 +581,11 @@ const onReset = (event?: Event) => {
   fieldRef.value?.focus();
 };
 
+/**
+ * Reset autocomplete state
+ *
+ * @seeded from csc-ui — verify
+ */
 const reset = () => onReset();
 
 defineExpose({ reset });

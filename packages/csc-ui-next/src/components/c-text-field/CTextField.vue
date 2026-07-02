@@ -114,6 +114,12 @@
 </template>
 
 <script setup lang="ts">
+/**
+ * @slot pre - Content added before the input
+ * @slot post - Content added after the input
+ *
+ * @seeded from csc-ui — verify
+ */
 import { mdiCalendar, mdiEye, mdiEyeOff } from '@mdi/js';
 import { tv } from 'tailwind-variants';
 import {
@@ -128,6 +134,33 @@ import {
 
 import { coerceBoolean } from '../../shared/coerceBoolean';
 import { emitModelValue } from '../../shared/emitModelValue';
+import { useHostEmit } from '../../shared/useHostEmit';
+
+/** Events dispatched by `<c-text-field>`. */
+interface CTextFieldEvents {
+  /**
+   * Standard bubbling DOM change event, re-dispatched from the host when the
+   * inner input/textarea fires its native change (which does not cross the
+   * shadow boundary). No detail; read the current text from the host's
+   * `value` property.
+   */
+  change: void;
+  /**
+   * Fired on every keystroke (and on native change), carrying the current
+   * text — trimmed when `trim-whitespace` is set.
+   */
+  changeValue: string;
+  /**
+   * Native bubbling input event fired alongside every value change so a
+   * plain Vue `v-model` works without the `v-control` directive. No detail.
+   */
+  input: void;
+  /**
+   * v-model contract event fired on every keystroke (and on native change),
+   * carrying the current text — trimmed when `trim-whitespace` is set.
+   */
+  'update:value': string;
+}
 
 /**
  * c-text-field is a thin orchestrator around <c-input>: it owns the
@@ -168,30 +201,155 @@ const textField = tv({
 });
 
 interface CTextFieldProps {
+  /**
+   * HTML input autocomplete
+   *
+   * @seeded from csc-ui — verify
+   */
   autocomplete?: string;
+  /**
+   * HTML input autocorrect
+   *
+   * @seeded from csc-ui — verify
+   */
   autocorrect?: string;
+  /**
+   * HTML input autocapitalize
+   *
+   * @seeded from csc-ui — verify
+   */
   automaticCapitalize?: string;
+  /**
+   * Disable the input
+   *
+   * @seeded from csc-ui — verify
+   */
   disabled?: boolean;
+  /**
+   * Hide the hint and error messages
+   *
+   * @seeded from csc-ui — verify
+   */
   hideDetails?: boolean;
+  /**
+   * Hint text for the input
+   *
+   * @seeded from csc-ui — verify
+   */
   hint?: string;
+  /**
+   * Id of the input
+   *
+   * @seeded from csc-ui — verify
+   */
   hostId?: string;
+  /**
+   * Label of the input
+   *
+   * @seeded from csc-ui — verify
+   */
   label?: string;
+  /**
+   * Label on top of the input
+   *
+   * @seeded from csc-ui — verify
+   */
   labelOnTop?: boolean;
+  /**
+   * Maximum value on a numeric input
+   *
+   * @seeded from csc-ui — verify
+   */
   max?: null | number;
+  /**
+   * Minimum value on a numeric input
+   *
+   * @seeded from csc-ui — verify
+   */
   min?: null | number;
+  /**
+   * Name of the input
+   *
+   * @seeded from csc-ui — verify
+   */
   name?: string;
+  /**
+   * Placeholder of the input
+   *
+   * @seeded from csc-ui — verify
+   */
   placeholder?: string;
+  /**
+   * Mark as readonly
+   *
+   * @seeded from csc-ui — verify
+   */
   readonly?: boolean;
+  /**
+   * Set the input as required
+   *
+   * @seeded from csc-ui — verify
+   */
   required?: boolean;
+  /**
+   * Rows on the input
+   *
+   * @seeded from csc-ui — verify
+   */
   rows?: number;
+  /**
+   * Shadow variant of the input
+   *
+   * @seeded from csc-ui — verify
+   */
   shadow?: boolean;
+  /**
+   * Step size on a numeric input
+   *
+   * @seeded from csc-ui — verify
+   */
   step?: null | number;
+  /**
+   * Trim whitespace from the return value
+   *
+   * @seeded from csc-ui — verify
+   */
   trimWhitespace?: boolean;
+  /**
+   * Type of the input
+   *
+   * @seeded from csc-ui — verify
+   */
   type?: string;
+  /**
+   * Set the validity of the input
+   *
+   * @seeded from csc-ui — verify
+   */
   valid?: boolean;
+  /**
+   * Manual validation
+   *
+   * @seeded from csc-ui — verify
+   */
   validate?: boolean;
+  /**
+   * Validate the input on blur
+   *
+   * @seeded from csc-ui — verify
+   */
   validateOnBlur?: boolean;
+  /**
+   * Custom validation message
+   *
+   * @seeded from csc-ui — verify
+   */
   validation?: string;
+  /**
+   * Value of the input
+   *
+   * @seeded from csc-ui — verify
+   */
   value?: string;
 }
 
@@ -226,6 +384,8 @@ const props = withDefaults(defineProps<CTextFieldProps>(), {
 const ui = computed(() => textField());
 
 const host = useHost();
+
+const emit = useHostEmit<CTextFieldEvents>();
 
 // Forward `hide-details` to `c-input` through a `data-*` channel (resolved from
 // the stable host attribute), not a direct `:hide-details` binding: that key
@@ -346,7 +506,7 @@ const onChange = (event: Event) => {
 
   const next = props.trimWhitespace ? target.value.trim() : target.value;
   emitModelValue(host, next);
-  host?.dispatchEvent(new Event('change', { bubbles: true, composed: true }));
+  emit('change', undefined, { bubbles: true, composed: true });
   void event;
 };
 

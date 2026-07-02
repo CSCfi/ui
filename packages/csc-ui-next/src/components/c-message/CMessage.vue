@@ -21,6 +21,9 @@
 </template>
 
 <script setup lang="ts">
+/**
+ * @csspart root - The message row showing the hint or validation error text
+ */
 import { mdiCloseCircle } from '@mdi/js';
 import { tv } from 'tailwind-variants';
 import { computed } from 'vue';
@@ -53,9 +56,29 @@ const message = tv({
 });
 
 interface CMessageProps {
+  /**
+   * Hint text for the input
+   *
+   * @seeded from csc-ui — verify
+   */
   hint?: string;
+  /**
+   * Id of the related input element
+   *
+   * @seeded from csc-ui — verify
+   */
   inputId?: string;
+  /**
+   * Parent validíty
+   *
+   * @seeded from csc-ui — verify
+   */
   valid?: boolean;
+  /**
+   * Custom validation message
+   *
+   * @seeded from csc-ui — verify
+   */
   validation?: string;
 }
 

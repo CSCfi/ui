@@ -19,10 +19,35 @@
 </template>
 
 <script setup lang="ts">
+/**
+ * @slot default - The modal contents (typically a c-card)
+ *
+ * @csspart root - The native dialog element forming the modal box
+ */
 import { tv } from 'tailwind-variants';
 import { computed, onMounted, ref, useHost, useTemplateRef, watch } from 'vue';
 
 import { emitModelValue } from '../../shared/emitModelValue';
+
+/** Events dispatched by `<c-modal>`. */
+interface CModalEvents {
+  /**
+   * Fired when the modal dismisses itself — a backdrop click on a
+   * `dismissable` modal, or the Escape key. The detail is the new open
+   * state, always `false`.
+   */
+  changeValue: boolean;
+  /**
+   * Native bubbling input event dispatched alongside every value change so a
+   * plain `v-model` stays in sync. Carries no detail.
+   */
+  input: void;
+  /**
+   * Fired alongside `changeValue` with the same detail — the `v-model`
+   * contract.
+   */
+  'update:value': boolean;
+}
 
 /**
  * Styling lives in this `tailwind-variants` config (ADR-0004); consumer
@@ -50,10 +75,35 @@ const modal = tv({
 const ui = computed(() => modal());
 
 interface CModalProps {
+  /**
+   * Disable backdrop blur effect
+   *
+   * @seeded from csc-ui — verify
+   */
   disableBackdropBlur?: boolean;
+  /**
+   * Dismissed when touching/clicking outside the content
+   *
+   * @seeded from csc-ui — verify
+   */
   dismissable?: boolean;
+  /**
+   * Is the modal visible
+   *
+   * @seeded from csc-ui — verify
+   */
   value?: boolean;
+  /**
+   * Width of the dialog. Numeric value is considered as pixel value (400 -> 400px)
+   *
+   * @seeded from csc-ui — verify
+   */
   width?: number | string;
+  /**
+   * Z-index of the modal
+   *
+   * @seeded from csc-ui — verify
+   */
   zIndex?: number;
 }
 
@@ -66,6 +116,11 @@ const props = withDefaults(defineProps<CModalProps>(), {
 });
 
 const host = useHost();
+
+// changeValue/update:value + native `input` (plain v-model) + host `value`
+// mirror. The value watch is visuals-only (open/close), so no loop.
+const dispatchValue = (value: CModalEvents['changeValue']) =>
+  emitModelValue(host, value);
 
 const dialogRef = useTemplateRef<HTMLDialogElement>('dialogRef');
 
@@ -214,16 +269,14 @@ const onClick = (e: MouseEvent) => {
   }
 
   closeDialog();
-  // changeValue/update:value + native `input` (plain v-model) + host `value`
-  // mirror. The value watch is visuals-only (open/close), so no loop.
-  emitModelValue(host, false);
+  dispatchValue(false);
 };
 
 const onKeyDown = (e: KeyboardEvent) => {
   if (e.key === 'Escape') {
     e.preventDefault();
     closeDialog();
-    emitModelValue(host, false);
+    dispatchValue(false);
   }
 };
 

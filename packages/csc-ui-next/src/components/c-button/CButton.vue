@@ -49,11 +49,43 @@
 </template>
 
 <script setup lang="ts">
+/**
+ * Button for user actions. Renders a native `<button>` — or an `<a>` when
+ * `href` is set — inside the shadow root.
+ *
+ * @slot default - Button label content.
+ * @slot icon - Leading icon, vertically centered before the label.
+ * @slot description - Secondary text rendered below the label.
+ *
+ * @csspart root - The native `<button>` / `<a>` element carrying the visual styling.
+ * @csspart content - Layout wrapper for the label, icon and description.
+ * @csspart description - Wrapper of the `description` slot.
+ *
+ * @cssprop --c-font-family - Font stack applied to the label (native buttons do not inherit it).
+ */
 import { tv } from 'tailwind-variants';
 import { computed, onMounted, useHost, useTemplateRef } from 'vue';
 
 import { useHasSlot } from '../../shared/useHasSlot';
+import { useHostEmit } from '../../shared/useHostEmit';
 import { useRipple } from '../../shared/useRipple';
+
+/** Events dispatched by `<c-button>`. */
+interface CButtonEvents {
+  /**
+   * Fired when the button is activated in tabs mode (inside
+   * `<c-tab-buttons>`), carrying the button element and its resolved value.
+   */
+  tabChange: {
+    element: HTMLElement | null;
+    value: number | string | undefined;
+  };
+  /**
+   * Fired when the button receives focus in tabs mode, so the parent
+   * `<c-tab-buttons>` can drive arrow-key navigation.
+   */
+  tabFocus: number | string | undefined;
+}
 
 /**
  * Styling lives entirely in this `tailwind-variants` config (ADR-0004): the
@@ -300,24 +332,100 @@ const button = tv({
 });
 
 interface CButtonProps {
+  /**
+   * Danger variant style
+   *
+   * @seeded from csc-ui — verify
+   */
   danger?: boolean;
+  /**
+   * Disable the button
+   *
+   * @seeded from csc-ui — verify
+   */
   disabled?: boolean;
+  /**
+   * Fit width to containing element
+   *
+   * @seeded from csc-ui — verify
+   */
   fit?: boolean;
+  /**
+   * Light button background
+   *
+   * @seeded from csc-ui — verify
+   */
   ghost?: boolean;
+  /**
+   * Id of the button
+   *
+   * @seeded from csc-ui — verify
+   */
   hostId?: string;
+  /**
+   * Hyperlink url
+   *
+   * @seeded from csc-ui — verify
+   */
   href?: string;
+  /**
+   * Inverted button style for dark backgrounds
+   *
+   * @seeded from csc-ui — verify
+   */
   inverted?: boolean;
+  /**
+   * Display loader on the button
+   *
+   * @seeded from csc-ui — verify
+   */
   loading?: boolean;
+  /**
+   * Remove the default border radius
+   *
+   * @seeded from csc-ui — verify
+   */
   noRadius?: boolean;
   /** Suppress the click ripple (e.g. when a wrapper owns the press feedback). */
   noRipple?: boolean;
+  /**
+   * Outlined button style
+   *
+   * @seeded from csc-ui — verify
+   */
   outlined?: boolean;
+  /**
+   * Size of the button
+   *
+   * @seeded from csc-ui — verify
+   */
   size?: string;
   /** Used when the button acts as a tab inside <c-tab-buttons>. */
   tabs?: boolean;
+  /**
+   * Hyperlink target
+   *
+   * @seeded from csc-ui — verify
+   */
   target?: string;
+  /**
+   * Transparent button background
+   *
+   * @seeded from csc-ui — verify
+   */
   text?: boolean;
+  /**
+   * Button type
+   *
+   * @seeded from csc-ui — verify
+   */
   type?: string;
+  /**
+   * Value for the button
+   * - for use in the c-tab-buttons
+   *
+   * @seeded from csc-ui — verify
+   */
   value?: number | string;
 }
 
@@ -364,21 +472,19 @@ const hasDescription = useHasSlot(rootRef, 'description');
 
 const host = useHost();
 
+const emit = useHostEmit<CButtonEvents>();
+
 // Resolve the tab value: explicit `value` prop, else the data-index that
 // c-tab-buttons stamps onto each button.
 const tabValue = () => props.value ?? host?.dataset.index;
 
-const emitTab = (name: string, detail: unknown) => {
-  host?.dispatchEvent(
-    new CustomEvent(name, { bubbles: true, composed: true, detail }),
-  );
-};
+const bubbling = { bubbles: true, composed: true };
 
 // In tabs mode, mirror the Stencil c-button: emit tabFocus on focus so
 // the parent <c-tab-buttons> can drive arrow-key navigation.
 onMounted(() => {
   if (!host || !props.tabs) return;
-  host.addEventListener('focus', () => emitTab('tabFocus', tabValue()), {
+  host.addEventListener('focus', () => emit('tabFocus', tabValue(), bubbling), {
     passive: true,
   });
 });
@@ -408,7 +514,7 @@ const onClick = (event: MouseEvent) => {
   if (!props.noRipple) spawnRipple(event);
 
   if (props.tabs) {
-    emitTab('tabChange', { element: host, value: tabValue() });
+    emit('tabChange', { element: host, value: tabValue() }, bubbling);
   }
 };
 

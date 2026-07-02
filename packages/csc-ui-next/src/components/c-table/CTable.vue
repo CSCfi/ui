@@ -24,7 +24,17 @@ import {
 defineOptions({ inheritAttrs: false });
 
 interface CTableProps {
+  /**
+   * Mobile breakpoint in pixels
+   *
+   * @seeded from csc-ui — verify
+   */
   mobileBreakpoint?: number;
+  /**
+   * Should the table be responsive
+   *
+   * @seeded from csc-ui — verify
+   */
   responsive?: boolean;
 }
 

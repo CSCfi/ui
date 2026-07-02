@@ -91,6 +91,17 @@
 </template>
 
 <script setup lang="ts">
+/**
+ * @slot pre - Leading content (e.g. an icon) inside the field, before the input
+ * @slot default - The native `<input>` / `<textarea>` element the field wraps
+ * @slot post - Trailing content (e.g. an icon or button) inside the field, after the input
+ *
+ * @csspart root - The outer wrapper of the whole input control
+ * @csspart label - The label element — the on-top label or the floating in-field label, depending on `labelOnTop`
+ * @csspart pre - Wrapper around the `pre` slot content
+ * @csspart post - Wrapper around the `post` slot content
+ * @csspart message - The hint / validation message area below the field
+ */
 import { mdiCloseCircle } from '@mdi/js';
 import { tv } from 'tailwind-variants';
 import {
@@ -231,20 +242,65 @@ const input = tv({
 interface CInputProps {
   /** Set by the wrapping form component when its input has focus or holds a value. */
   active?: boolean;
+  /**
+   * Disable the input
+   *
+   * @seeded from csc-ui — verify
+   */
   disabled?: boolean;
   /** Set by the wrapping form component when its input holds a value. */
   filled?: boolean;
+  /**
+   * Hide the hint and error messages
+   *
+   * @seeded from csc-ui — verify
+   */
   hideDetails?: boolean;
+  /**
+   * Hint text for the input
+   *
+   * @seeded from csc-ui — verify
+   */
   hint?: string;
   /** id of the inner input element (for the label's htmlFor). */
   inputId?: string;
   /** Renders textarea-specific spacing tweaks. */
   isTextarea?: boolean;
+  /**
+   * Label of the input
+   *
+   * @seeded from csc-ui — verify
+   */
   label?: string;
+  /**
+   * Label on top of the input
+   *
+   * @seeded from csc-ui — verify
+   */
   labelOnTop?: boolean;
+  /**
+   * Set the input as required
+   *
+   * @seeded from csc-ui — verify
+   */
   required?: boolean;
+  /**
+   * Shadow variant of the input
+   *
+   * @seeded from csc-ui — verify
+   */
   shadow?: boolean;
+  /**
+   * Set the validíty of the input
+   *
+   * @seeded from csc-ui — verify
+   */
   valid?: boolean;
+  /**
+   * Custom validation message
+   *
+   * @seeded from csc-ui — verify
+   */
   validation?: string;
 }
 

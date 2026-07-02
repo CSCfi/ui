@@ -1,11 +1,11 @@
 <template>
   <div :class="ui.root()">
     <div
+      :aria-current="active ? 'page' : undefined"
       :class="ui.item()"
+      :tabindex="focusable ? 0 : -1"
       part="root"
       role="menuitem"
-      :tabindex="focusable ? 0 : -1"
-      :aria-current="active ? 'page' : undefined"
     >
       <div :class="ui.content()" part="content">
         <div :class="ui.slot()">
@@ -21,6 +21,12 @@
 </template>
 
 <script setup lang="ts">
+/**
+ * @slot default - The visible content of the navigation item
+ *
+ * @csspart root - The focusable menu-item row carrying the hover/active styling and the leading indicator
+ * @csspart content - Wrapper around the slotted content inside the row
+ */
 import { tv } from 'tailwind-variants';
 import { computed, onMounted, ref, useHost, watchEffect } from 'vue';
 
@@ -96,10 +102,35 @@ const subNavigationItem = tv({
 });
 
 interface CSubNavigationItemProps {
+  /**
+   * Active state
+   *
+   * @seeded from csc-ui — verify
+   */
   active?: boolean;
+  /**
+   * Element is visible and focusable
+   *
+   * @seeded from csc-ui — verify
+   */
   focusable?: boolean;
+  /**
+   * Link url
+   *
+   * @seeded from csc-ui — verify
+   */
   href?: string;
+  /**
+   * Loading state
+   *
+   * @seeded from csc-ui — verify
+   */
   loading?: boolean;
+  /**
+   * Link target
+   *
+   * @seeded from csc-ui — verify
+   */
   target?: string;
 }
 

@@ -3,13 +3,31 @@
 </template>
 
 <script setup lang="ts">
+/**
+ * @slot default - The radio button's label text, read by the parent c-radio-group
+ */
 // `<slot />` root (fragment) — keep consumer fallthrough attrs (class/style)
 // on the host element instead of tripping the "renders fragment" warning.
 defineOptions({ inheritAttrs: false });
 
 interface CRadioProps {
+  /**
+   * Set option as checked
+   *
+   * @seeded from csc-ui — verify
+   */
   checked?: boolean;
+  /**
+   * Disable the radio button
+   *
+   * @seeded from csc-ui — verify
+   */
   disabled?: boolean;
+  /**
+   * Radio button value
+   *
+   * @seeded from csc-ui — verify
+   */
   value?: string;
 }
 

@@ -5,14 +5,47 @@
 </template>
 
 <script setup lang="ts">
+/**
+ * @slot default - Default slot for the c-accordion-item components
+ *
+ * @csspart root - The outer wrapper stacking the accordion items vertically
+ *
+ * @seeded from csc-ui — verify
+ */
 import { tv } from 'tailwind-variants';
 import { onBeforeUnmount, onMounted, ref, useHost, watch } from 'vue';
 
 import { emitModelValue } from '../../shared/emitModelValue';
+import { useHostEmit } from '../../shared/useHostEmit';
 
 type AccordionPrimitive = number | string;
 
 type AccordionValue = AccordionPrimitive | AccordionPrimitive[] | null;
+
+/** Events dispatched by `<c-accordion>`. */
+interface CAccordionEvents {
+  /**
+   * Fired when the expansion state changes, carrying the new value as a bare
+   * `detail`: the expanded item's value, an array of values in `multiple`
+   * mode, or `null` when everything is collapsed.
+   */
+  change: AccordionValue;
+  /**
+   * Legacy value-change event carrying the new expansion value (kept for
+   * existing `@changeValue` listeners and the `v-control` directive).
+   */
+  changeValue: AccordionValue;
+  /**
+   * Native bubbling input event dispatched alongside `changeValue` so a plain
+   * `v-model` works without `v-control`; carries no detail.
+   */
+  input: void;
+  /**
+   * Fired with the new expansion value whenever an item is toggled — the
+   * `v-model` contract.
+   */
+  'update:value': AccordionValue;
+}
 
 // Styling lives in `tailwind-variants` (ADR-0004): no `<style>` block, no
 // `--c-*` override vars. The accordion is layout-only — the visual styling
@@ -25,9 +58,29 @@ const accordion = tv({
 });
 
 interface CAccordionProps {
+  /**
+   * Disallow collapsing all the items
+   *
+   * @seeded from csc-ui — verify
+   */
   mandatory?: boolean;
+  /**
+   * Allow expanding multiple items
+   *
+   * @seeded from csc-ui — verify
+   */
   multiple?: boolean;
+  /**
+   * Show an outline around expanded items
+   *
+   * @seeded from csc-ui — verify
+   */
   outlined?: boolean;
+  /**
+   * Value of the accordion
+   *
+   * @seeded from csc-ui — verify
+   */
   value?: AccordionValue;
 }
 
@@ -40,15 +93,11 @@ const props = withDefaults(defineProps<CAccordionProps>(), {
 
 const host = useHost();
 
-// Event emissions go through manual `host.dispatchEvent` instead of
-// Vue's `emit()`. Vue's defineCustomElement emit wraps every emit's
-// args into `detail: [...args]` (always an array), which breaks
-// consumers like the legacy `v-control` directive that do
-// `el.value = event.detail`. Manual dispatch keeps `detail` as the
-// bare value. See c-checkbox for the same pattern.
-const dispatchValue = (name: string, value: AccordionValue) => {
-  host?.dispatchEvent(new CustomEvent(name, { detail: value }));
-};
+// Events go through useHostEmit (not Vue's `emit()`) so `detail` stays the
+// bare value — Vue's defineCustomElement emit wraps args into
+// `detail: [...args]` (always an array), which breaks consumers like the
+// legacy `v-control` directive that do `el.value = event.detail`.
+const emit = useHostEmit<CAccordionEvents>();
 
 // Internal state lets the accordion work without v-model. We mirror the
 // `value` prop in, then mutate this on item-change events so the UI updates
@@ -125,7 +174,7 @@ const onItemChange = (event: Event) => {
   // visuals-only, so writing the property doesn't loop.
   emitModelValue(host, next);
   // Domain `change` event (bare value) for non-v-model consumers.
-  dispatchValue('change', next);
+  emit('change', next);
 };
 
 // `item-change` is dispatched on the child c-accordion-item's host element

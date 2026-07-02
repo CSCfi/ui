@@ -39,6 +39,15 @@
 </template>
 
 <script setup lang="ts">
+/**
+ * @slot default - Default slot
+ * @slot items - The c-tab-items container holding the tab content panels
+ * @csspart container - The header row wrapping the tab list and the overflow scroll buttons
+ * @csspart tabs - The clipping viewport the tab list scrolls inside
+ * @csspart content - Wrapper around the slotted tab content panels
+ *
+ * @seeded from csc-ui — verify
+ */
 import { mdiArrowLeft, mdiArrowRight } from '@mdi/js';
 import { tv } from 'tailwind-variants';
 import {
@@ -55,6 +64,22 @@ import {
 
 import { coerceBoolean } from '../../shared/coerceBoolean';
 import { emitModelValue } from '../../shared/emitModelValue';
+
+/** Events dispatched by `<c-tabs>`. */
+interface CTabsEvents {
+  /**
+   * Fired when the user activates a tab (click, or Enter/Space on a focused
+   * tab), carrying the newly selected tab value. Legacy value-change event.
+   */
+  changeValue: number | string;
+  /** Native bubbling input event dispatched for plain `v-model` support; carries no detail. */
+  input: void;
+  /**
+   * Fired alongside `changeValue` with the newly selected tab value; fulfills
+   * the `v-model`/`v-control` contract.
+   */
+  'update:value': number | string;
+}
 
 /**
  * Styling lives in this `tailwind-variants` config (ADR-0004) for the parts
@@ -97,11 +122,42 @@ const arrowLeft = mdiArrowLeft;
 const arrowRight = mdiArrowRight;
 
 interface CTabsProps {
+  /**
+   * Disable the bottom border
+   *
+   * @seeded from csc-ui — verify
+   */
   borderless?: boolean;
+  /**
+   * Disable animation
+   *
+   * @seeded from csc-ui — verify
+   */
   disableAnimation?: boolean;
+  /**
+   * Justification of the children
+   *
+   * @seeded from csc-ui — verify
+   */
   justify?: string;
+  /**
+   * Mobile breakpoint in pixels
+   * - affects the content stacking with the vertical tabs
+   *
+   * @seeded from csc-ui — verify
+   */
   mobileBreakpoint?: number;
+  /**
+   * Currently active tab
+   *
+   * @seeded from csc-ui — verify
+   */
   value?: number | string;
+  /**
+   * Vertical tabs
+   *
+   * @seeded from csc-ui — verify
+   */
   vertical?: boolean;
 }
 
@@ -123,7 +179,8 @@ const scrollRef = useTemplateRef<HTMLElement>('scrollRef');
 // changeValue/update:value + native `input` (so a plain `v-model` works without
 // `v-control`) + host `value` mirror. Called only from interaction handlers;
 // the value/internalValue watches are visuals-only (+ push-down), so no loop.
-const dispatchValue = (value: unknown) => emitModelValue(host, value);
+const dispatchValue = (value: CTabsEvents['changeValue']) =>
+  emitModelValue(host, value);
 
 const autoId = useId();
 

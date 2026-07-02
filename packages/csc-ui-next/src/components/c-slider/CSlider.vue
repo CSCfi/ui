@@ -47,6 +47,11 @@
 </template>
 
 <script setup lang="ts">
+/**
+ * @csspart root - The outer wrapper containing the label, range input and track
+ * @csspart label - The label element rendered above the slider
+ * @csspart ticks - The visible track below the input, carrying the progress fill and tick marks
+ */
 import { tv } from 'tailwind-variants';
 import {
   computed,
@@ -59,6 +64,26 @@ import {
 } from 'vue';
 
 import { emitModelValue } from '../../shared/emitModelValue';
+
+/** Events dispatched by `<c-slider>`. */
+interface CSliderEvents {
+  /**
+   * Fired on every thumb movement, carrying the new slider value — a number
+   * when the current `value` prop is a number, otherwise a string.
+   */
+  changeValue: number | string;
+  /**
+   * Native bubbling input event fired on every thumb movement so a plain Vue
+   * `v-model` works without the `v-control` directive. No detail.
+   */
+  input: void;
+  /**
+   * v-model contract event fired on every thumb movement, carrying the new
+   * slider value — a number when the current `value` prop is a number,
+   * otherwise a string.
+   */
+  'update:value': number | string;
+}
 
 /**
  * Styling lives in this `tailwind-variants` config (ADR-0004); customization is
@@ -127,19 +152,89 @@ const slider = tv({
 });
 
 interface CSliderProps {
+  /**
+   * Aria label
+   *
+   * @seeded from csc-ui — verify
+   */
   ariaLabelInternal?: string;
+  /**
+   * Disable the slider
+   *
+   * @seeded from csc-ui — verify
+   */
   disabled?: boolean;
+  /**
+   * Disable tooltip
+   *
+   * @seeded from csc-ui — verify
+   */
   disableTooltip?: boolean;
+  /**
+   * Id of the element
+   *
+   * @seeded from csc-ui — verify
+   */
   hostId?: string;
+  /**
+   * Id of the element
+   *
+   * @seeded from csc-ui — verify
+   */
   hostName?: string;
+  /**
+   * Label of the slider
+   *
+   * @seeded from csc-ui — verify
+   */
   label?: string;
+  /**
+   * Show tick labels
+   *
+   * @seeded from csc-ui — verify
+   */
   labels?: boolean;
+  /**
+   * Max value
+   *
+   * @seeded from csc-ui — verify
+   */
   max?: number | string;
+  /**
+   * Min value
+   *
+   * @seeded from csc-ui — verify
+   */
   min?: number | string;
+  /**
+   * Segment count
+   *
+   * @seeded from csc-ui — verify
+   */
   segments?: number | string;
+  /**
+   * Step
+   *
+   * @seeded from csc-ui — verify
+   */
   step?: number | string;
+  /**
+   * Thow ticks
+   *
+   * @seeded from csc-ui — verify
+   */
   ticks?: boolean;
+  /**
+   * Unit
+   *
+   * @seeded from csc-ui — verify
+   */
   unit?: string;
+  /**
+   * Value
+   *
+   * @seeded from csc-ui — verify
+   */
   value?: number | string;
 }
 
@@ -207,7 +302,9 @@ const cssVars = computed(() => ({
 const onInput = (e: Event) => {
   const v = (e.target as HTMLInputElement).value;
 
-  const next = typeof props.value === 'number' ? +v : v;
+  // Typed against the event map so the emitted detail is compile-checked.
+  const next: CSliderEvents['changeValue'] =
+    typeof props.value === 'number' ? +v : v;
   // changeValue/update:value + native `input` (plain v-model) + host `value`
   // mirror. The value watch is visuals-only, so no loop.
   emitModelValue(host, next);

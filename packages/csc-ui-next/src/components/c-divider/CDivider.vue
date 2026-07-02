@@ -8,6 +8,9 @@
 </template>
 
 <script setup lang="ts">
+/**
+ * @csspart root - The separator line element itself
+ */
 import { tv } from 'tailwind-variants';
 import { computed } from 'vue';
 

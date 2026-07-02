@@ -28,6 +28,9 @@
 </template>
 
 <script setup lang="ts">
+/**
+ * @csspart root - The `<svg>` element rendering the CSC logo
+ */
 import { tv } from 'tailwind-variants';
 import { computed } from 'vue';
 
@@ -54,6 +57,11 @@ const logo = tv({
 });
 
 interface CCscLogoProps {
+  /**
+   * Logo width in pixels
+   *
+   * @seeded from csc-ui — verify
+   */
   width?: number;
 }
 

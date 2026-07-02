@@ -38,6 +38,16 @@
 </template>
 
 <script setup lang="ts">
+/**
+ * @slot default - Menu title / activator element (simple variant)
+ * @slot trigger - The element that opens the menu (e.g. a c-button)
+ *
+ * @csspart trigger - The inline wrapper around the slotted trigger, serving as the panel's anchor
+ * @csspart panel - The floating popover positioned against the trigger
+ * @csspart list - The menu list surface inside the panel
+ *
+ * @seeded from csc-ui — verify
+ */
 import { tv } from 'tailwind-variants';
 import {
   computed,
@@ -51,6 +61,21 @@ import {
 
 import { ensureAnchorPositioning } from '../../shared/anchorPolyfill';
 import { coerceBoolean } from '../../shared/coerceBoolean';
+import { useHostEmit } from '../../shared/useHostEmit';
+
+/** Events dispatched by `<c-menu>`. */
+interface CMenuEvents {
+  /**
+   * Fired when a leaf menu item is selected, carrying the item's `value`;
+   * bubbles out of the menu so a single listener can handle the whole tree.
+   */
+  select: { value: unknown };
+  /**
+   * Fired whenever the menu opens or closes, carrying the new open state —
+   * the `v-model:open` contract.
+   */
+  'update:open': boolean;
+}
 
 /**
  * Declarative, slot-based command menu (the WAI-ARIA menu-button pattern).
@@ -424,10 +449,7 @@ const closeAllSubmenus = () => {
 
 // ---- open / close --------------------------------------------------------
 
-const dispatch = (name: string, detail?: unknown, bubbles = true) =>
-  host?.dispatchEvent(
-    new CustomEvent(name, { bubbles, composed: bubbles, detail }),
-  );
+const emit = useHostEmit<CMenuEvents>();
 
 const openMenu = (focus: 'first' | 'last' | 'none' = 'first') => {
   pendingOpenFocus = focus;
@@ -458,7 +480,7 @@ const activateLeaf = (item: HTMLElement) => {
     item.getAttribute('value') ??
     undefined;
 
-  dispatch('select', { value });
+  emit('select', { value }, { bubbles: true, composed: true });
   closeMenu(true);
 };
 
@@ -467,7 +489,7 @@ const onToggle = (event: Event) => {
 
   isOpen.value = nowOpen;
   getTriggerEl()?.setAttribute('aria-expanded', String(nowOpen));
-  dispatch('update:open', nowOpen, false);
+  emit('update:open', nowOpen);
 
   if (nowOpen) {
     void ensureAnchorPositioning(host?.shadowRoot);

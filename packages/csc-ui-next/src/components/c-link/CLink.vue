@@ -15,6 +15,15 @@
 </template>
 
 <script setup lang="ts">
+/**
+ * Basic hyperlink component
+ *
+ * @slot default - The visible content of the link
+ *
+ * @csspart root - The native `<a>` element carrying the link styling
+ *
+ * @seeded from csc-ui — verify
+ */
 import { tv } from 'tailwind-variants';
 import { computed } from 'vue';
 
@@ -42,9 +51,29 @@ const link = tv({
 });
 
 interface CLinkProps {
+  /**
+   * Url of link
+   *
+   * @seeded from csc-ui — verify
+   */
   href?: string;
+  /**
+   * regular target attribute of a hyperlink
+   *
+   * @seeded from csc-ui — verify
+   */
   target?: string;
+  /**
+   * Display line under the link
+   *
+   * @seeded from csc-ui — verify
+   */
   underline?: boolean;
+  /**
+   * Customisable font weight
+   *
+   * @seeded from csc-ui — verify
+   */
   weight?: number | string;
 }
 

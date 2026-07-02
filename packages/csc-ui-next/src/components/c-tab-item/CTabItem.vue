@@ -5,8 +5,26 @@
 </template>
 
 <script setup lang="ts">
+/**
+ * @slot default - Default slot
+ *
+ * @csspart root - The panel's padded content wrapper
+ *
+ * @seeded from csc-ui — verify
+ */
 import { tv } from 'tailwind-variants';
 import { onBeforeUnmount, onMounted, useHost, useTemplateRef } from 'vue';
+
+import { useHostEmit } from '../../shared/useHostEmit';
+
+/** Events dispatched by `<c-tab-item>`. */
+interface CTabItemEvents {
+  /**
+   * Fired whenever the panel's content is resized, so the parent
+   * `<c-tab-items>` can re-measure and keep the slide position correct.
+   */
+  contentChange: void;
+}
 
 /**
  * Styling lives in this `tailwind-variants` config (ADR-0004); customization
@@ -32,7 +50,17 @@ const ui = tabItem();
 defineOptions({ inheritAttrs: false });
 
 interface CTabItemProps {
+  /**
+   * Active
+   *
+   * @seeded from csc-ui — verify
+   */
   active?: boolean;
+  /**
+   * Tab value
+   *
+   * @seeded from csc-ui — verify
+   */
   value?: number | string;
 }
 
@@ -45,6 +73,8 @@ const host = useHost();
 
 const innerRef = useTemplateRef<HTMLElement>('innerRef');
 
+const emit = useHostEmit<CTabItemEvents>();
+
 // Notify c-tab-items when our content resizes so it can re-measure the
 // active panel offset and keep the slide position correct.
 let resizeObserver: null | ResizeObserver = null;
@@ -54,9 +84,7 @@ onMounted(() => {
 
   if (innerRef.value) {
     resizeObserver = new ResizeObserver(() => {
-      host?.dispatchEvent(
-        new CustomEvent('contentChange', { bubbles: true, composed: true }),
-      );
+      emit('contentChange', undefined, { bubbles: true, composed: true });
     });
     resizeObserver.observe(innerRef.value);
   }

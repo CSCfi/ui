@@ -33,6 +33,13 @@
 </template>
 
 <script setup lang="ts">
+/**
+ * @slot pre - Leading content (e.g. an icon) shown before the item's main content
+ * @slot default - Main content of the item, e.g. a c-list-item-title
+ * @slot post - Trailing content (e.g. an icon or action) shown after the item's main content
+ *
+ * @csspart root - The item's content box — a `<div>`, or an `<a>` when `href` is set
+ */
 import { tv } from 'tailwind-variants';
 import { computed, onMounted, useHost, useTemplateRef, watchEffect } from 'vue';
 
@@ -79,12 +86,47 @@ const listItem = tv({
 defineOptions({ inheritAttrs: false });
 
 interface CListItemProps {
+  /**
+   * Set the item active
+   *
+   * @seeded from csc-ui — verify
+   */
   active?: boolean;
+  /**
+   * Disable the item
+   *
+   * @seeded from csc-ui — verify
+   */
   disabled?: boolean;
+  /**
+   * Disabled by the parent list
+   *
+   * @seeded from csc-ui — verify
+   */
   disabledByParent?: boolean;
+  /**
+   * Display background color on hover
+   *
+   * @seeded from csc-ui — verify
+   */
   hoverable?: boolean;
+  /**
+   * Hyperlink url
+   *
+   * @seeded from csc-ui — verify
+   */
   href?: string;
+  /**
+   * Add ripple effect to the item
+   *
+   * @seeded from csc-ui — verify
+   */
   ripple?: boolean;
+  /**
+   * Hyperlink target
+   *
+   * @seeded from csc-ui — verify
+   */
   target?: string;
 }
 

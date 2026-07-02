@@ -38,6 +38,17 @@
 </template>
 
 <script setup lang="ts">
+/**
+ * A single command in a `c-menu`.
+ *
+ * @slot default - The item's content: label text plus optional icons or shortcut hint
+ * @slot submenu - c-menu-item components for the nested submenu
+ *
+ * @csspart root - The item row containing the content and the submenu chevron
+ * @csspart content - The flex wrapper around the default-slot content
+ * @csspart submenu-panel - The floating popover holding the submenu
+ * @csspart submenu - The submenu list surface inside the popover
+ */
 import { mdiChevronRight } from '@mdi/js';
 import { tv } from 'tailwind-variants';
 import {

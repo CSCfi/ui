@@ -13,6 +13,13 @@
 </template>
 
 <script setup lang="ts">
+/**
+ * Overlay container that stacks and manages c-toast notifications via its
+ * `addToast` / `removeToast` methods
+ *
+ * @slot default - Content of a custom toast message, projected into the single `custom`-flagged c-toast
+ * @csspart root - The grid container the toast items stack in
+ */
 import { tv } from 'tailwind-variants';
 import {
   computed,
@@ -48,8 +55,23 @@ const toasts = tv({
 });
 
 interface CToastsProps {
+  /**
+   * Use absolute positioning
+   *
+   * @seeded from csc-ui — verify
+   */
   absolute?: boolean;
+  /**
+   * Horizontal position
+   *
+   * @seeded from csc-ui — verify
+   */
   horizontal?: string;
+  /**
+   * Vertical position
+   *
+   * @seeded from csc-ui — verify
+   */
   vertical?: string;
 }
 
@@ -93,6 +115,11 @@ const defaultOptions = () => ({
 
 // Public method: append a new toast. Custom toasts are limited to 1 at
 // a time because slot reflection can only project to one place.
+/**
+ * Add a new message
+ *
+ * @seeded from csc-ui — verify
+ */
 const addToast = (message: ToastMessage) => {
   const hasCustom = messages.value.some((m) => m.custom);
 
@@ -123,6 +150,11 @@ const addToast = (message: ToastMessage) => {
 // Public method: imperatively close a toast by id. Reaches into the
 // rendered c-toast's exposed `closeToast` method (set via defineExpose
 // in CToast.vue).
+/**
+ * Remove a message by id (id should be specified in the addToast params)
+ *
+ * @seeded from csc-ui — verify
+ */
 const removeToast = (id: string) => {
   const toast = containerRef.value?.querySelector(`#c-toast--${id}`) as
     | ({ closeToast?: () => void } & HTMLElement)

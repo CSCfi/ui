@@ -7,6 +7,14 @@
 </template>
 
 <script setup lang="ts">
+/**
+ * @slot default - Card actions
+ *
+ * @csspart root - The padded footer wrapping the actions row
+ * @csspart actions - The flex row laying out the slotted action elements
+ *
+ * @seeded from csc-ui — verify
+ */
 import { tv } from 'tailwind-variants';
 import { computed } from 'vue';
 
@@ -49,7 +57,17 @@ const cardActions = tv({
 });
 
 interface CCardActionsProps {
+  /**
+   * Align the actions
+   *
+   * @seeded from csc-ui — verify
+   */
   align?: string;
+  /**
+   * Justify the actions
+   *
+   * @seeded from csc-ui — verify
+   */
   justify?: string;
 }
 

@@ -3,6 +3,9 @@
 </template>
 
 <script setup lang="ts">
+/**
+ * @slot default - The displayed option text, targeted by c-dropdown when highlighting autocomplete matches
+ */
 // Faithful port of c-option-value (Stencil). A presentational wrapper the
 // consumer places inside a <c-option> to mark the displayed text; c-dropdown
 // targets it (`c-option-value`) when highlighting matched query text in

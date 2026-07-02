@@ -114,6 +114,11 @@
 </template>
 
 <script setup lang="ts">
+/**
+ * @slot default - The anchor c-input of the parent select / autocomplete, rendered inline while the menu is closed
+ * @slot input-top - Target the c-input is moved into when the menu opens below the field
+ * @slot input-bottom - Target the c-input is moved into when the menu opens above the field
+ */
 import { mdiAlert, mdiCheck, mdiInformation } from '@mdi/js';
 import { tv } from 'tailwind-variants';
 import {
@@ -125,6 +130,22 @@ import {
   useTemplateRef,
   watch,
 } from 'vue';
+
+import { useHostEmit } from '../../shared/useHostEmit';
+
+/** Events dispatched by `<c-dropdown>`. */
+interface CDropdownEvents {
+  /**
+   * Fired when the dropdown menu opens or closes; the detail is the new open
+   * state.
+   */
+  dropdownStateChange: boolean;
+  /**
+   * Fired when the user selects an option row, carrying the option's name
+   * and value for the parent (c-select) to commit.
+   */
+  selectOption: { name: string; value: number | string };
+}
 
 /**
  * Styling lives in this `tailwind-variants` config (ADR-0004): the slots are
@@ -351,10 +372,10 @@ const emptyItem = computed(() => {
 
 // ---- events -------------------------------------------------------------
 
-const emit = (name: string, detail?: unknown) =>
-  host?.dispatchEvent(
-    new CustomEvent(name, { bubbles: true, composed: true, detail }),
-  );
+const emit = useHostEmit<CDropdownEvents>();
+
+// Both dropdown events cross the shadow boundary to the parent select.
+const bubbling = { bubbles: true, composed: true };
 
 const onSelect = (item: DropdownItem, event: Event) => {
   if (item.disabled) {
@@ -363,7 +384,7 @@ const onSelect = (item: DropdownItem, event: Event) => {
     return;
   }
 
-  emit('selectOption', { name: item.name, value: item.value });
+  emit('selectOption', { name: item.name, value: item.value }, bubbling);
 };
 
 // ---- scroll lock + positioning ------------------------------------------
@@ -509,6 +530,11 @@ const updateStatusText = () => {
 
 // ---- exposed imperative API (called by c-select) ------------------------
 
+/**
+ * Open dropdown
+ *
+ * @seeded from csc-ui — verify
+ */
 const open = () => {
   const dialog = dialogRef.value;
 
@@ -521,6 +547,11 @@ const open = () => {
   });
 };
 
+/**
+ * Close dropdown
+ *
+ * @seeded from csc-ui — verify
+ */
 const close = () => {
   const dialog = dialogRef.value;
 
@@ -562,6 +593,11 @@ const focusItem = (index: number) => {
   });
 };
 
+/**
+ * Select item
+ *
+ * @seeded from csc-ui — verify
+ */
 const selectItem = (index: number) => {
   const lis = listRef.value?.querySelectorAll('li[role="option"]');
 
@@ -575,6 +611,11 @@ const selectItem = (index: number) => {
   return false;
 };
 
+/**
+ * Update list items
+ *
+ * @seeded from csc-ui — verify
+ */
 const updateList = (reset = false) => {
   if (reset) {
     // index is owned by the parent; mirror Stencil's reset by re-reading.
@@ -618,7 +659,7 @@ watch(isOpen, (value) => {
     enableScroll();
   }
 
-  emit('dropdownStateChange', value);
+  emit('dropdownStateChange', value, bubbling);
 });
 
 // Apply itemsPerPage max-height once items exceed the page size (desktop).

@@ -36,6 +36,15 @@
 </template>
 
 <script setup lang="ts">
+/**
+ * @slot default - Default slot for the icon
+ *
+ * @csspart root - The native `<button>` element carrying the visual styling
+ * @csspart content - Inner wrapper around the slotted icon or loading spinner
+ * @csspart badge - The badge bubble shown in the button's corner
+ *
+ * @seeded from csc-ui — verify
+ */
 import { tv } from 'tailwind-variants';
 import { computed, useTemplateRef } from 'vue';
 
@@ -254,15 +263,65 @@ const iconButton = tv({
 });
 
 interface CIconButtonProps {
+  /**
+   * Show a badge on top of the icon
+   *
+   * @seeded from csc-ui — verify
+   */
   badge?: null | number | string;
+  /**
+   * Danger variant of the button
+   *
+   * @seeded from csc-ui — verify
+   */
   danger?: boolean;
+  /**
+   * Disable the button
+   *
+   * @seeded from csc-ui — verify
+   */
   disabled?: boolean;
+  /**
+   * Ghost variant of the button
+   *
+   * @seeded from csc-ui — verify
+   */
   ghost?: boolean;
+  /**
+   * Inverted color for dark backgrounds
+   *
+   * @seeded from csc-ui — verify
+   */
   inverted?: boolean;
+  /**
+   * Loading variant of the button
+   *
+   * @seeded from csc-ui — verify
+   */
   loading?: boolean;
+  /**
+   * Outlined variant of the button
+   *
+   * @seeded from csc-ui — verify
+   */
   outlined?: boolean;
+  /**
+   * Path for the svg icon
+   *
+   * @seeded from csc-ui — verify
+   */
   path?: string;
+  /**
+   * Size of the button
+   *
+   * @seeded from csc-ui — verify
+   */
   size?: string;
+  /**
+   * Text variant of the button
+   *
+   * @seeded from csc-ui — verify
+   */
   text?: boolean;
 }
 

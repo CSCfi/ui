@@ -12,6 +12,13 @@
 </template>
 
 <script setup lang="ts">
+/**
+ * @slot default - Default slot for the c-button elements
+ * @csspart root - The segmented-control box that frames the buttons and hosts the sliding indicator
+ * @csspart indicator - The single sliding fill that highlights the active button
+ *
+ * @seeded from csc-ui — verify
+ */
 import { tv } from 'tailwind-variants';
 import {
   computed,
@@ -25,6 +32,24 @@ import {
 
 import { coerceBoolean } from '../../shared/coerceBoolean';
 import { emitModelValue } from '../../shared/emitModelValue';
+
+/** Events dispatched by `<c-tab-buttons>`. */
+interface CTabButtonsEvents {
+  /**
+   * Fired when the user selects a tab button, carrying the newly selected
+   * value (`null` in index-based mode / `''` in value-based mode when the
+   * active button is toggled off and `mandatory` is not set). Legacy
+   * value-change event.
+   */
+  changeValue: null | number | string;
+  /** Native bubbling input event dispatched for plain `v-model` support; carries no detail. */
+  input: void;
+  /**
+   * Fired alongside `changeValue` with the newly selected value; fulfills the
+   * `v-model`/`v-control` contract.
+   */
+  'update:value': null | number | string;
+}
 
 // We write to the host (classList, child <c-button> props) below — keep
 // fallthrough attrs on the host element rather than the inner `root` div, so
@@ -87,11 +112,27 @@ const tabButtons = tv({
 });
 
 interface CTabButtonsProps {
+  /** Disable the whole group — every child c-tab-button is disabled and the selection can no longer be changed. */
   disabled?: boolean;
+  /**
+   * Always require a selection
+   *
+   * @seeded from csc-ui — verify
+   */
   mandatory?: boolean;
+  /**
+   * Size of the buttons
+   *
+   * @seeded from csc-ui — verify
+   */
   size?: 'default' | 'small';
   /** Set by c-tabs when this acts as its tab controller. */
   tabs?: boolean;
+  /**
+   * Value of tab buttons
+   *
+   * @seeded from csc-ui — verify
+   */
   value?: number | string;
 }
 
@@ -260,7 +301,7 @@ const applyActive = (value: null | number | string) => {
 // then emit. Emission lives here — on interaction only — never in the
 // `props.value` watch, so parent/programmatic value changes don't echo back as
 // events (which would loop with v-model).
-const commitValue = (resolved: null | number | string) => {
+const commitValue = (resolved: CTabButtonsEvents['changeValue']) => {
   internalValue.value = resolved;
   applyActive(resolved);
   emitModelValue(host, resolved);

@@ -21,9 +21,23 @@
 </template>
 
 <script setup lang="ts">
+/**
+ * @slot default - Description text shown below the tab's label
+ * @slot icon - Icon shown next to the label in the tab header
+ */
 import { computed, onMounted, useHost, useTemplateRef, watch } from 'vue';
 
+import { useHostEmit } from '../../shared/useHostEmit';
 import { useRipple } from '../../shared/useRipple';
+
+/** Events dispatched by `<c-swiper-tab>`. */
+interface CSwiperTabEvents {
+  /**
+   * Fired when an inactive, enabled tab is clicked, carrying the tab's value.
+   * Bubbles up to the parent `<c-swiper>`, which uses it to select the tab.
+   */
+  changeValue: number | string | undefined;
+}
 
 // The host is the real focusable tab: role/tabindex/aria-* are set on it
 // imperatively (syncHostAttrs). Vue's defineCustomElement mirrors non-prop host
@@ -33,12 +47,47 @@ import { useRipple } from '../../shared/useRipple';
 defineOptions({ inheritAttrs: false });
 
 interface CSwiperTabProps {
+  /**
+   * Mark as active
+   *
+   * @seeded from csc-ui — verify
+   */
   active?: boolean;
+  /**
+   * Disable button
+   *
+   * @seeded from csc-ui — verify
+   */
   disabled?: boolean;
+  /**
+   * Id of the button
+   *
+   * @seeded from csc-ui — verify
+   */
   hostId?: string;
+  /**
+   * Label of the button
+   *
+   * @seeded from csc-ui — verify
+   */
   label?: string;
+  /**
+   * Position in the set
+   *
+   * @seeded from csc-ui — verify
+   */
   position?: number;
+  /**
+   * Size of the set
+   *
+   * @seeded from csc-ui — verify
+   */
   setsize?: number;
+  /**
+   * Value of the button
+   *
+   * @seeded from csc-ui — verify
+   */
   value?: number | string;
 }
 
@@ -53,6 +102,8 @@ const props = withDefaults(defineProps<CSwiperTabProps>(), {
 });
 
 const host = useHost();
+
+const emit = useHostEmit<CSwiperTabEvents>();
 
 const containerRef = useTemplateRef<HTMLElement>('containerRef');
 
@@ -88,14 +139,11 @@ onMounted(() => {
   host.addEventListener('click', (e) => {
     if (props.active || props.disabled) return;
     spawnRipple(e as MouseEvent);
-    host.dispatchEvent(
-      new CustomEvent('changeValue', {
-        bubbles: true,
-        cancelable: true,
-        composed: true,
-        detail: props.value,
-      }),
-    );
+    emit('changeValue', props.value, {
+      bubbles: true,
+      cancelable: true,
+      composed: true,
+    });
   });
 });
 

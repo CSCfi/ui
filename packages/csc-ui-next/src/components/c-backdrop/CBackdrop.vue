@@ -3,6 +3,9 @@
 </template>
 
 <script setup lang="ts">
+/**
+ * @csspart root - The full-screen overlay element that dims and blurs the page behind it
+ */
 import { tv } from 'tailwind-variants';
 import { computed } from 'vue';
 
@@ -31,6 +34,11 @@ const backdrop = tv({
 });
 
 interface CBackdropProps {
+  /**
+   * Disable backdrop blur effect
+   *
+   * @seeded from csc-ui — verify
+   */
   disableBackdropBlur?: boolean;
 }
 

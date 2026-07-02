@@ -41,11 +41,34 @@
 </template>
 
 <script setup lang="ts">
+/**
+ * @slot header - Custom header slot
+ * @slot icon - Icon shown in the header before the heading
+ * @slot default - Default slot
+ *
+ * @csspart root - The outer wrapper of the item, carries the rounding and the outline when outlined
+ * @csspart header - The toggle button row containing the icon, heading and indicator
+ * @csspart indicator - The rotating chevron at the end of the header
+ * @csspart content - The padded wrapper around the slotted content inside the collapsing region
+ *
+ * @seeded from csc-ui — verify
+ */
 import { mdiChevronRight } from '@mdi/js';
 import { tv } from 'tailwind-variants';
-import { computed, useHost, useId, useTemplateRef } from 'vue';
+import { computed, useId, useTemplateRef } from 'vue';
 
 import { useHasSlot } from '../../shared/useHasSlot';
+import { useHostEmit } from '../../shared/useHostEmit';
+
+/** Events dispatched by `<c-accordion-item>`. */
+interface CAccordionItemEvents {
+  /**
+   * Fired when the header is toggled, carrying the requested expansion state
+   * and the item's `value`; bubbles so the parent `<c-accordion>` can update
+   * its model.
+   */
+  'item-change': { expanded: boolean; value: number | string | undefined };
+}
 
 // Styling lives in `tailwind-variants` (ADR-0004): no `<style>` block and the
 // public `--c-accordion-item-*` override vars are dropped — theming now flows
@@ -98,10 +121,35 @@ const accordionItem = tv({
 });
 
 interface CAccordionItemProps {
+  /**
+   * Marks the item as collapsable
+   *
+   * @seeded from csc-ui — verify
+   */
   collapsable?: boolean;
+  /**
+   * Expansion status of the item
+   *
+   * @seeded from csc-ui — verify
+   */
   expanded?: boolean;
+  /**
+   * Heading of the accordion item
+   *
+   * @seeded from csc-ui — verify
+   */
   heading?: string;
+  /**
+   * Show an outline around the expanded item
+   *
+   * @seeded from csc-ui — verify
+   */
   outlined?: boolean;
+  /**
+   * Value of the accordion item
+   *
+   * @seeded from csc-ui — verify
+   */
   value?: number | string;
 }
 
@@ -134,21 +182,14 @@ const headerId = `c-accordion-item-header-${autoId}`;
 
 const contentId = `c-accordion-item-content-${autoId}`;
 
-const host = useHost();
-
-const dispatchItemChange = (expanded: boolean) => {
-  if (!host) return;
-  host.dispatchEvent(
-    new CustomEvent('item-change', {
-      bubbles: true,
-      composed: true,
-      detail: { expanded, value: props.value },
-    }),
-  );
-};
+const emit = useHostEmit<CAccordionItemEvents>();
 
 const onToggle = () => {
   if (!props.collapsable && props.expanded) return;
-  dispatchItemChange(!props.expanded);
+  emit(
+    'item-change',
+    { expanded: !props.expanded, value: props.value },
+    { bubbles: true, composed: true },
+  );
 };
 </script>

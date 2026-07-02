@@ -5,6 +5,11 @@
 </template>
 
 <script setup lang="ts">
+/**
+ * @slot default - The badge content, typically a short count or label
+ *
+ * @csspart root - The badge pill itself, absolutely positioned at the top right corner of its parent
+ */
 import { tv } from 'tailwind-variants';
 
 /**

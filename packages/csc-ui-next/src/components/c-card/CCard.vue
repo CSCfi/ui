@@ -21,6 +21,14 @@
 </template>
 
 <script setup lang="ts">
+/**
+ * @slot default - Card components
+ *
+ * @csspart root - The card's visible surface, carries the background, radius, shadow and section spacing
+ * @csspart fullscreen-toggle - The circular fullscreen toggle button shown when the fullscreen prop is set
+ *
+ * @seeded from csc-ui — verify
+ */
 import { mdiFullscreen, mdiFullscreenExit } from '@mdi/js';
 import { tv } from 'tailwind-variants';
 import { computed, onBeforeUnmount, onMounted, ref, useHost } from 'vue';
@@ -59,6 +67,11 @@ const card = tv({
 });
 
 interface CCardProps {
+  /**
+   * Enable the fullscreen toggle button
+   *
+   * @seeded from csc-ui — verify
+   */
   fullscreen?: boolean;
 }
 
@@ -96,6 +109,11 @@ const onFullscreen = async (event: MouseEvent) => {
   }
 };
 
+/**
+ * Enter fullscreen from the outside
+ *
+ * @seeded from csc-ui — verify
+ */
 const enterFullscreen = async () => {
   if (!host || document.fullscreenElement) return;
   try {
@@ -105,6 +123,11 @@ const enterFullscreen = async () => {
   }
 };
 
+/**
+ * Exit fullscreen from the outside
+ *
+ * @seeded from csc-ui — verify
+ */
 const exitFullscreen = async () => {
   if (!document.fullscreenElement) return;
   try {

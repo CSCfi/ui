@@ -3,6 +3,11 @@
 </template>
 
 <script setup lang="ts">
+/**
+ * @slot default - Default slot
+ *
+ * @seeded from csc-ui — verify
+ */
 import { onMounted, toRefs, useHost, watch } from 'vue';
 
 // `<slot />` root (fragment) + we write to the host below — keep fallthrough
@@ -10,6 +15,11 @@ import { onMounted, toRefs, useHost, watch } from 'vue';
 defineOptions({ inheritAttrs: false });
 
 interface CTagsProps {
+  /**
+   * Size of the tags
+   *
+   * @seeded from csc-ui — verify
+   */
   size?: string;
 }
 

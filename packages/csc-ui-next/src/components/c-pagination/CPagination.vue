@@ -76,11 +76,37 @@
 </template>
 
 <script setup lang="ts">
+/**
+ * @csspart root - The `<nav>` element wrapping the whole pagination bar
+ * @csspart details - The details area holding the items-per-page selector and range text
+ * @csspart items-per-page - The items-per-page row (label text and page-size menu)
+ * @csspart pages - The `<ul>` list of page buttons and the prev/next controls
+ */
 import { mdiChevronLeft, mdiChevronRight, mdiDotsHorizontal } from '@mdi/js';
 import { tv } from 'tailwind-variants';
 import { computed, onMounted, ref, useHost, watch, watchEffect } from 'vue';
 
 import { emitModelValue } from '../../shared/emitModelValue';
+
+/** Events dispatched by `<c-pagination>`. */
+interface CPaginationEvents {
+  /**
+   * Fired when the user changes the page or the page size, carrying the
+   * pagination options object with the recomputed `currentPage`,
+   * `itemsPerPage`, `startFrom` and `endTo` fields.
+   */
+  changeValue: PaginationOptions;
+  /**
+   * Native bubbling input event dispatched alongside every value change so a
+   * plain `v-model` stays in sync. Carries no detail.
+   */
+  input: void;
+  /**
+   * Fired alongside `changeValue` with the same detail — the `v-model`
+   * contract.
+   */
+  'update:value': PaginationOptions;
+}
 
 /**
  * Styling lives entirely in this `tailwind-variants` config (ADR-0004): the
@@ -134,10 +160,37 @@ const pagination = tv({
 });
 
 interface CPaginationProps {
+  /**
+   * Hide details (per page dropdown and the 'x - y of n pages' text)
+   *
+   * @seeded from csc-ui — verify
+   */
   hideDetails?: boolean;
+  /**
+   * Hide range indicator
+   *
+   * @seeded from csc-ui — verify
+   */
   hideRange?: boolean;
+  /**
+   * Hide page number buttons
+   *
+   * @seeded from csc-ui — verify
+   */
   simple?: boolean;
+  /**
+   * Hide details (per page dropdown and the 'x - y of n pages' text)
+   *
+   * @seeded from csc-ui — verify
+   */
   size?: string;
+  /**
+   * Object containing values that are needed for pagination.
+   *
+   * Note! startFrom and endTo are assigned automatically to the object based on other values
+   *
+   * @seeded from csc-ui — verify
+   */
   value?: PaginationOptions;
 }
 
@@ -179,7 +232,8 @@ const host = useHost();
 // `v-control`). The value is the same object reference the consumer holds
 // (mutated in place with the computed range), so the helper's identity guard
 // skips re-writing `host.value` and there is no loop with the value watch.
-const dispatchValue = (value: unknown) => emitModelValue(host, value);
+const dispatchValue = (value: CPaginationEvents['changeValue']) =>
+  emitModelValue(host, value);
 
 const currentPage = ref(1);
 

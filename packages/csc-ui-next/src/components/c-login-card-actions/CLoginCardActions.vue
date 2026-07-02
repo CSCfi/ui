@@ -7,6 +7,14 @@
 </template>
 
 <script setup lang="ts">
+/**
+ * @slot default - Login card actions
+ *
+ * @csspart root - The outer footer element
+ * @csspart actions - The flex menu row laying out the slotted actions
+ *
+ * @seeded from csc-ui — verify
+ */
 import { tv } from 'tailwind-variants';
 import { computed } from 'vue';
 
@@ -50,7 +58,17 @@ const loginCardActions = tv({
 });
 
 interface CLoginCardActionsProps {
+  /**
+   * Align the actions
+   *
+   * @seeded from csc-ui — verify
+   */
   align?: string;
+  /**
+   * Justify the actions
+   *
+   * @seeded from csc-ui — verify
+   */
   justify?: string;
 }
 

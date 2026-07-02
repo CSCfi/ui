@@ -3,6 +3,9 @@
 </template>
 
 <script setup lang="ts">
+/**
+ * @slot default - The option's visible label content, shown in the c-select dropdown list
+ */
 import { onMounted, useHost } from 'vue';
 
 // Faithful port of c-option (Stencil). Declarative item for <c-select>:

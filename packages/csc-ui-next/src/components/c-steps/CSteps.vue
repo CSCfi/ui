@@ -11,6 +11,14 @@
 </template>
 
 <script setup lang="ts">
+/**
+ * @slot default - Default slot
+ *
+ * @csspart root - The flex row laying out the projected c-step children and their dividers
+ * @csspart label - The current step's label shown below the row in the collapsed (mobile) layout
+ *
+ * @seeded from csc-ui — verify
+ */
 import { tv } from 'tailwind-variants';
 import {
   computed,
@@ -50,6 +58,11 @@ const steps = tv({
 });
 
 interface CStepsProps {
+  /**
+   * Value of the accordion (current step number)
+   *
+   * @seeded from csc-ui — verify
+   */
   value?: number | string;
 }
 

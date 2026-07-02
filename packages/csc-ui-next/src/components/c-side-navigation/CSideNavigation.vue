@@ -27,6 +27,15 @@
 </template>
 
 <script setup lang="ts">
+/**
+ * @slot default - Default slot
+ * @slot bottom - Place items at the bottom
+ *
+ * @csspart root - The outer drawer container
+ * @csspart nav - The scrollable `<nav>` element holding the navigation items
+ *
+ * @seeded from csc-ui — verify
+ */
 import { mdiArrowRight } from '@mdi/js';
 import { tv } from 'tailwind-variants';
 import {
@@ -39,6 +48,25 @@ import {
   watch,
   watchEffect,
 } from 'vue';
+
+import { useHostEmit } from '../../shared/useHostEmit';
+
+/** Events dispatched by `<c-side-navigation>`. */
+interface CSideNavigationEvents {
+  /**
+   * Fired when the drawer is closed from within (the mobile close button or
+   * the backdrop overlay), carrying the new visibility (`false`). Same payload
+   * as `update:menuVisible` — this kebab-case twin exists for attribute-style
+   * listener compatibility.
+   */
+  'update:menu-visible': boolean;
+  /**
+   * Fired when the drawer is closed from within (the mobile close button or
+   * the backdrop overlay), carrying the new visibility (`false`) — the
+   * `v-model:menu-visible` contract.
+   */
+  'update:menuVisible': boolean;
+}
 
 // Multi-root template (fragment) + we write to the host below — keep
 // fallthrough attrs on the host element instead of tripping the "renders
@@ -97,8 +125,23 @@ const sideNavigation = tv({
 });
 
 interface CSideNavigationProps {
+  /**
+   * Mobile version menu visibility
+   *
+   * @seeded from csc-ui — verify
+   */
   menuVisible?: boolean;
+  /**
+   * Mobile version
+   *
+   * @seeded from csc-ui — verify
+   */
   mobile?: boolean;
+  /**
+   * Background styles
+   *
+   * @seeded from csc-ui — verify
+   */
   styles?: null | Record<string, string>;
 }
 
@@ -111,6 +154,8 @@ const props = withDefaults(defineProps<CSideNavigationProps>(), {
 const arrowRight = mdiArrowRight;
 
 const host = useHost();
+
+const emit = useHostEmit<CSideNavigationEvents>();
 
 const containerRef = useTemplateRef<HTMLElement>('containerRef');
 
@@ -157,10 +202,8 @@ watch(
 // pass the prop reactively.
 const closeMenu = () => {
   setMenuVisible(false);
-  host?.dispatchEvent(new CustomEvent('update:menuVisible', { detail: false }));
-  host?.dispatchEvent(
-    new CustomEvent('update:menu-visible', { detail: false }),
-  );
+  emit('update:menuVisible', false);
+  emit('update:menu-visible', false);
 };
 
 // Reflect c-side-navigation-item's itemChange: when a top-level item is

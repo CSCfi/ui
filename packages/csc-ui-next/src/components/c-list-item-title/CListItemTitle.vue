@@ -5,6 +5,11 @@
 </template>
 
 <script setup lang="ts">
+/**
+ * @slot default - The title text of the list item
+ *
+ * @csspart root - The element wrapping the title text
+ */
 import { tv } from 'tailwind-variants';
 import { computed } from 'vue';
 
@@ -29,6 +34,11 @@ const listItemTitle = tv({
 });
 
 interface CListItemTitleProps {
+  /**
+   * Set the title active
+   *
+   * @seeded from csc-ui — verify
+   */
   active?: boolean;
 }
 

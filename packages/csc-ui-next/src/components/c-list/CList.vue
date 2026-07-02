@@ -5,6 +5,11 @@
 </template>
 
 <script setup lang="ts">
+/**
+ * @slot default - c-list-item components of the list
+ *
+ * @csspart root - The grid container laying out the list items
+ */
 import { tv } from 'tailwind-variants';
 import {
   computed,
@@ -38,7 +43,17 @@ const list = tv({
 defineOptions({ inheritAttrs: false });
 
 interface CListProps {
+  /**
+   * Show border arount the list items
+   *
+   * @seeded from csc-ui — verify
+   */
   bordered?: boolean;
+  /**
+   * Disable the list
+   *
+   * @seeded from csc-ui — verify
+   */
   disabled?: boolean;
 }
 

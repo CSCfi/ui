@@ -14,6 +14,15 @@
 </template>
 
 <script setup lang="ts">
+/**
+ * @slot default - Default slot
+ * @slot footer - Footer slot
+ *
+ * @csspart scroll-indicator - The fixed progress bar at the top of the viewport tracking scroll position
+ * @csspart container - The max-width content wrapper around the default slot
+ *
+ * @seeded from csc-ui — verify
+ */
 import { tv } from 'tailwind-variants';
 import {
   computed,
@@ -48,6 +57,11 @@ const page = tv({
 });
 
 interface CPageProps {
+  /**
+   * Display scroll indicator
+   *
+   * @seeded from csc-ui — verify
+   */
   scrollIndicator?: boolean;
 }
 

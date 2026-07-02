@@ -30,6 +30,11 @@
 </template>
 
 <script setup lang="ts">
+/**
+ * @csspart root - The outer flex wrapper around the bar and the details line
+ * @csspart bar - The visible track of the progress bar, wrapping the native `<progress>` element
+ * @csspart details - The percentage and label text line
+ */
 import { tv } from 'tailwind-variants';
 import { computed, onMounted, useHost, watchEffect } from 'vue';
 
@@ -81,10 +86,35 @@ const progress = tv({
 const ui = computed(() => progress());
 
 interface CProgressBarProps {
+  /**
+   * Hide the percentage display
+   *
+   * @seeded from csc-ui — verify
+   */
   hideDetails?: boolean;
+  /**
+   * Indeterminate state of the progress bar
+   *
+   * @seeded from csc-ui — verify
+   */
   indeterminate?: boolean;
+  /**
+   * Optional details message next to percentage display
+   *
+   * @seeded from csc-ui — verify
+   */
   label?: string;
+  /**
+   * Place details next to progress bar
+   *
+   * @seeded from csc-ui — verify
+   */
   singleLine?: boolean;
+  /**
+   * Progress bar value in percentage (0 to 100)
+   *
+   * @seeded from csc-ui — verify
+   */
   value?: number;
 }
 

@@ -5,6 +5,13 @@
 </template>
 
 <script setup lang="ts">
+/**
+ * Section label for a group of `c-menu-item`s.
+ *
+ * @slot default - The label text for the menu section
+ *
+ * @csspart root - The label element inside the menu list
+ */
 import { tv } from 'tailwind-variants';
 
 /**

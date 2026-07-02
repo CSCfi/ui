@@ -14,7 +14,36 @@
 </template>
 
 <script setup lang="ts">
+/**
+ * A single tab button inside c-tab-buttons — a thin behavioural wrapper around
+ * c-button
+ *
+ * @slot default - Label content of the tab button
+ * @csspart root - The native button element, forwarded from the wrapped c-button
+ * @csspart content - Layout wrapper for the label, icon and description, forwarded from the wrapped c-button
+ * @csspart description - Wrapper of the wrapped c-button's description slot, forwarded from the wrapped c-button
+ */
 import { computed, onMounted, useHost, useTemplateRef, watch } from 'vue';
+
+import { useHostEmit } from '../../shared/useHostEmit';
+
+/** Events dispatched by `<c-tab-button>`. */
+interface CTabButtonEvents {
+  /**
+   * Fired when the tab button is activated, carrying the button element and
+   * its resolved value; the parent `<c-tab-buttons>` listens for it to switch
+   * the selection.
+   */
+  tabChange: {
+    element: HTMLElement | null;
+    value: number | string | undefined;
+  };
+  /**
+   * Fired when the tab button receives focus, so the parent `<c-tab-buttons>`
+   * can drive arrow-key navigation.
+   */
+  tabFocus: number | string | undefined;
+}
 
 /**
  * A single button inside <c-tab-buttons>. It is a thin behavioural wrapper
@@ -38,7 +67,9 @@ import { computed, onMounted, useHost, useTemplateRef, watch } from 'vue';
 interface CTabButtonProps {
   /** Active (selected) state — set by the parent c-tab-buttons. */
   active?: boolean;
+  /** Disable the button, preventing it from being selected — also set by the parent c-tab-buttons when the whole group is disabled. */
   disabled?: boolean;
+  /** Size of the button ('small' | 'default' | 'large') — drives the button's min-height; set by the parent c-tab-buttons. */
   size?: string;
   /** Tab value. Falls back to the data-index stamped by c-tab-buttons. */
   value?: number | string;
@@ -79,10 +110,9 @@ const nativeControl = (): HTMLElement | null =>
 const tabValue = (): number | string | undefined =>
   props.value ?? host?.dataset.index;
 
-const emitTab = (name: string, detail: unknown) =>
-  host?.dispatchEvent(
-    new CustomEvent(name, { bubbles: true, composed: true, detail }),
-  );
+const emit = useHostEmit<CTabButtonEvents>();
+
+const bubbling = { bubbles: true, composed: true };
 
 // Roving tabindex: only the active button is in the tab order; arrow-key
 // navigation focuses the others programmatically (works even at tabindex -1).
@@ -114,9 +144,11 @@ onMounted(() => {
   // exactly one emission per interaction.
   host.addEventListener('click', () => {
     if (props.disabled) return;
-    emitTab('tabChange', { element: host, value: tabValue() });
+    emit('tabChange', { element: host, value: tabValue() }, bubbling);
   });
-  host.addEventListener('focusin', () => emitTab('tabFocus', tabValue()));
+  host.addEventListener('focusin', () =>
+    emit('tabFocus', tabValue(), bubbling),
+  );
 });
 
 watch(

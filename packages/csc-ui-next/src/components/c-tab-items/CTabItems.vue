@@ -5,6 +5,13 @@
 </template>
 
 <script setup lang="ts">
+/**
+ * @slot default - Default slot
+ *
+ * @csspart root - The sliding track that lays out the c-tab-item panels
+ *
+ * @seeded from csc-ui — verify
+ */
 import { tv } from 'tailwind-variants';
 import { onBeforeUnmount, onMounted, useHost, watch } from 'vue';
 
@@ -29,7 +36,17 @@ const tabItems = tv({
 const ui = tabItems();
 
 interface CTabItemsProps {
+  /**
+   * Disable animation
+   *
+   * @seeded from csc-ui — verify
+   */
   disableAnimation?: boolean;
+  /**
+   * Currently active tab
+   *
+   * @seeded from csc-ui — verify
+   */
   value?: number | string;
 }
 

@@ -99,6 +99,16 @@
 </template>
 
 <script setup lang="ts">
+/**
+ * @slot default - Default slot for the label
+ *
+ * @csspart root - The radiogroup wrapper element carrying the disabled/error states
+ * @csspart label - The group label above the radio buttons
+ * @csspart items - The wrapper around the rendered radio button rows
+ * @csspart message - The hint/error message line below the radios
+ *
+ * @seeded from csc-ui — verify
+ */
 import { mdiCloseCircle } from '@mdi/js';
 import { tv } from 'tailwind-variants';
 import {
@@ -114,6 +124,25 @@ import {
 
 import { emitModelValue } from '../../shared/emitModelValue';
 import { useRipple } from '../../shared/useRipple';
+
+/** Events dispatched by `<c-radio-group>`. */
+interface CRadioGroupEvents {
+  /**
+   * Fired when a radio option is selected, carrying the selected item's
+   * value — or the whole item object when `return-object` is set.
+   */
+  changeValue: number | RadioItem | string;
+  /**
+   * Native bubbling input event fired on selection so a plain Vue `v-model`
+   * works without the `v-control` directive. No detail.
+   */
+  input: void;
+  /**
+   * v-model contract event fired on selection, carrying the selected item's
+   * value — or the whole item object when `return-object` is set.
+   */
+  'update:value': number | RadioItem | string;
+}
 
 /**
  * Styling lives in this `tailwind-variants` config (ADR-0004); the old
@@ -209,18 +238,83 @@ const radioGroup = tv({
 });
 
 interface CRadioGroupProps {
+  /**
+   * Color of the radio group
+   *
+   * @seeded from csc-ui — verify
+   */
   color?: string;
+  /**
+   * Disable the radio group
+   *
+   * @seeded from csc-ui — verify
+   */
   disabled?: boolean;
+  /**
+   * Hide the hint and error messages
+   *
+   * @seeded from csc-ui — verify
+   */
   hideDetails?: boolean;
+  /**
+   * Hint text for the input
+   *
+   * @seeded from csc-ui — verify
+   */
   hint?: string;
+  /**
+   * Id of the element
+   *
+   * @seeded from csc-ui — verify
+   */
   hostId?: string;
+  /**
+   * Display radio buttons inline
+   *
+   * @seeded from csc-ui — verify
+   */
   inline?: boolean;
+  /**
+   * Radio group items
+   *
+   * @seeded from csc-ui — verify
+   */
   items?: RadioItem[];
+  /**
+   * Label of the radio group
+   *
+   * @seeded from csc-ui — verify
+   */
   label?: string;
+  /**
+   * Set as required
+   *
+   * @seeded from csc-ui — verify
+   */
   required?: boolean;
+  /**
+   * Return the whole item object
+   *
+   * @seeded from csc-ui — verify
+   */
   returnObject?: boolean;
+  /**
+   * Set the validity of the input
+   *
+   * @seeded from csc-ui — verify
+   */
   valid?: boolean;
+  /**
+   * Custom validation message
+   *
+   * @seeded from csc-ui — verify
+   */
   validation?: string;
+  /**
+   * Value of the radio group
+   *
+   * @seeded from csc-ui — verify
+   */
   value?: null | number | RadioItem | string;
 }
 
@@ -337,7 +431,9 @@ const select = (item: RadioItem, index: number) => {
     group: index,
   });
 
-  const next = !slotMode.value && props.returnObject ? item : item.value;
+  // Typed against the event map so the emitted detail is compile-checked.
+  const next: CRadioGroupEvents['changeValue'] =
+    !slotMode.value && props.returnObject ? item : item.value;
   internalValue.value = next;
   // changeValue/update:value + native `input` (plain v-model) + host `value`
   // mirror. The value watch above is visuals-only, so no loop.

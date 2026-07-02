@@ -10,6 +10,9 @@
 </template>
 
 <script setup lang="ts">
+/**
+ * @csspart root - The `<svg>` element rendering the icon
+ */
 import { tv } from 'tailwind-variants';
 import { computed } from 'vue';
 

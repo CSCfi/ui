@@ -99,6 +99,13 @@
 </template>
 
 <script setup lang="ts">
+/**
+ * @slot default - Use c-option elements only
+ * @slot pre - Leading content forwarded to the inner c-input, rendered before the select's value
+ * @slot post - Trailing content forwarded to the inner c-input, rendered after the select's controls
+ *
+ * @seeded from csc-ui — verify
+ */
 import { mdiChevronDown, mdiClose } from '@mdi/js';
 import { tv } from 'tailwind-variants';
 import {
@@ -114,6 +121,26 @@ import {
 
 import { coerceBoolean } from '../../shared/coerceBoolean';
 import { emitModelValue } from '../../shared/emitModelValue';
+
+/** Events dispatched by `<c-select>`. */
+interface CSelectEvents {
+  /**
+   * Fired when the selection changes (an option is picked or the value is
+   * cleared), carrying the new value — the option's value, or the whole
+   * `{ name, value }` item when `return-object` is set; `null` when cleared.
+   */
+  changeValue: null | number | SelectItem | string;
+  /**
+   * Native bubbling input event dispatched alongside every value change so a
+   * plain `v-model` stays in sync. Carries no detail.
+   */
+  input: void;
+  /**
+   * Fired alongside `changeValue` with the same detail — the `v-model`
+   * contract.
+   */
+  'update:value': null | number | SelectItem | string;
+}
 
 /**
  * Styling lives in this `tailwind-variants` config (ADR-0004): the slots are
@@ -362,7 +389,7 @@ const displayValue = computed(() => {
 
 // ---- value plumbing -----------------------------------------------------
 
-const emitValue = (next: null | number | SelectItem | string) => {
+const emitValue = (next: CSelectEvents['update:value']) => {
   value.value = next;
   // changeValue/update:value (non-bubbling) + native `input` (so a plain
   // `v-model` works without `v-control`) + host `value` mirror. The value watch
@@ -667,6 +694,11 @@ const handleKeyDown = (event: KeyboardEvent) => {
 
 // ---- public method ------------------------------------------------------
 
+/**
+ * Reset select state
+ *
+ * @seeded from csc-ui — verify
+ */
 const reset = () => {
   emitValue(null);
   dropdownRef.value?.updateList(true);

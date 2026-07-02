@@ -7,6 +7,12 @@
 </template>
 
 <script setup lang="ts">
+/**
+ * @slot default - Content of toolbar
+ * @csspart root - The toolbar bar itself, fixed to the top of the viewport
+ *
+ * @seeded from csc-ui — verify
+ */
 import { tv } from 'tailwind-variants';
 import { computed } from 'vue';
 

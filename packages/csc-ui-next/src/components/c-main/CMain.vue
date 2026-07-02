@@ -7,6 +7,15 @@
 </template>
 
 <script setup lang="ts">
+/**
+ * Wrapper component for the whole page
+ *
+ * @slot default - Contents of the page
+ *
+ * @csspart root - The main element carrying the page background and dashboard grid layout
+ *
+ * @seeded from csc-ui — verify
+ */
 import { tv } from 'tailwind-variants';
 import { computed } from 'vue';
 
@@ -43,6 +52,11 @@ const main = tv({
 });
 
 interface CMainProps {
+  /**
+   * Disable the default dashboard layout
+   *
+   * @seeded from csc-ui — verify
+   */
   disableLayout?: boolean;
 }
 

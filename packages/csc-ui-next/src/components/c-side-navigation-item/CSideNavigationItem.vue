@@ -5,10 +5,10 @@
       ref="headerRef"
       :class="ui.header()"
       :href="href || undefined"
-      :target="href ? target : undefined"
       :tabindex="focusable ? 0 : -1"
-      role="menuitem"
+      :target="href ? target : undefined"
       part="header"
+      role="menuitem"
     >
       <c-icon v-if="slotHasContent" :class="ui.chevron()" :path="chevronIcon" />
 
@@ -33,9 +33,36 @@
 </template>
 
 <script setup lang="ts">
+/**
+ * @slot default - The item's label content (text and an optional c-icon)
+ * @slot sub-item - Nested c-side-navigation-item components; assigned automatically to nested items
+ *
+ * @csspart root - The outer box wrapping the header and sub-navigation, carrying the background and state styling
+ * @csspart header - The clickable header row (an `<a>` when `href` is set) holding the chevron and label
+ * @csspart sub-nav - The collapsible `<nav>` container for the sub-items
+ */
 import { mdiChevronRight } from '@mdi/js';
 import { tv } from 'tailwind-variants';
-import { computed, onMounted, ref, useHost, watchEffect } from 'vue';
+import {
+  computed,
+  onMounted,
+  ref,
+  useHost,
+  useTemplateRef,
+  watchEffect,
+} from 'vue';
+
+import { useHostEmit } from '../../shared/useHostEmit';
+
+/** Events dispatched by `<c-side-navigation-item>`. */
+interface CSideNavigationItemEvents {
+  /**
+   * Fired when the item is activated (click or Enter), carrying the
+   * originating DOM event; bubbles so the parent `<c-side-navigation>` can
+   * coordinate which item is active.
+   */
+  itemChange: Event;
+}
 
 /**
  * Styling lives in this `tailwind-variants` config (ADR-0004): each visual
@@ -125,13 +152,31 @@ const sideNavigationItem = tv({
 });
 
 interface CSideNavigationItemProps {
+  /**
+   * Indicate active state
+   *
+   * @seeded from csc-ui — verify
+   */
   active?: boolean;
-  // Whether this item participates in the keyboard tab order. A parent sets it
-  // false on its collapsed sub-items (via `handleChildFocusableChange`) so
-  // hidden sub-items aren't Tab-reachable; drives the header's `tabindex`.
+  /** Whether the item is in the keyboard tab order — a parent item sets this to false on its collapsed sub-items so hidden items aren't Tab-reachable */
   focusable?: boolean;
+  /**
+   * Hyperlink url
+   *
+   * @seeded from csc-ui — verify
+   */
   href?: string;
+  /**
+   * Loading state
+   *
+   * @seeded from csc-ui — verify
+   */
   loading?: boolean;
+  /**
+   * Hyperlink target
+   *
+   * @seeded from csc-ui — verify
+   */
   target?: string;
 }
 
@@ -149,7 +194,7 @@ const host = useHost();
 
 // The rendered header element carries the tabindex/role/aria (the focusable
 // menuitem); `display:contents` on the host keeps it out of the focus order.
-const headerRef = ref<HTMLElement>();
+const headerRef = useTemplateRef<HTMLElement>('headerRef');
 
 const slotHasContent = ref(false);
 
@@ -197,15 +242,7 @@ const handleChildFocusableChange = (focusable: boolean) => {
   });
 };
 
-const dispatchItemChange = (event: Event) => {
-  host?.dispatchEvent(
-    new CustomEvent('itemChange', {
-      bubbles: true,
-      composed: true,
-      detail: event,
-    }),
-  );
-};
+const emit = useHostEmit<CSideNavigationItemEvents>();
 
 const redirect = (event: Event | KeyboardEvent) => {
   if (event instanceof KeyboardEvent && event.key !== 'Enter') return;
@@ -216,7 +253,7 @@ const redirect = (event: Event | KeyboardEvent) => {
     event.preventDefault();
   }
 
-  dispatchItemChange(event);
+  emit('itemChange', event, { bubbles: true, composed: true });
 
   if (!slotHasContent.value) {
     const sidenav = document.querySelector('c-side-navigation') as
@@ -271,6 +308,7 @@ onMounted(() => {
 
     // aria state belongs on the menuitem (the header), not the host.
     const header = headerRef.value;
+
     if (header) {
       if (slotHasContent.value) {
         header.setAttribute('aria-expanded', String(!!props.active));

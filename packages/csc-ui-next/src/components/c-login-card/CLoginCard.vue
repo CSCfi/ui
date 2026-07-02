@@ -19,6 +19,16 @@
 </template>
 
 <script setup lang="ts">
+/**
+ * @slot default - Login Card contents
+ *
+ * @csspart root - The outer article carrying the card background and radius
+ * @csspart card - The shadowed, positioned container inside the root
+ * @csspart image - The clipped background-image layer of the card
+ * @csspart content - The padded column wrapping the slotted contents
+ *
+ * @seeded from csc-ui — verify
+ */
 import { tv } from 'tailwind-variants';
 import { computed, onBeforeUnmount, onMounted, ref, useTemplateRef } from 'vue';
 
@@ -100,10 +110,35 @@ type CLoginCardBlendMode =
   | 'soft-light';
 
 interface CLoginCardProps {
+  /**
+   * Background position (css background-position)
+   *
+   * @seeded from csc-ui — verify
+   */
   backgroundPosition?: string;
+  /**
+   * Mobile breakpoint in pixels
+   *
+   * @seeded from csc-ui — verify
+   */
   mobileBreakpoint?: number;
+  /**
+   * Add colored overlay to the background image
+   *
+   * @seeded from csc-ui — verify
+   */
   overlay?: boolean;
+  /**
+   * Add colored overlay to the background image
+   *
+   * @seeded from csc-ui — verify
+   */
   overlayBlendMode?: CLoginCardBlendMode;
+  /**
+   * Background image
+   *
+   * @seeded from csc-ui — verify
+   */
   src?: string;
 }
 

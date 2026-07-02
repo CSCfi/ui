@@ -22,6 +22,9 @@
 </template>
 
 <script setup lang="ts">
+/**
+ * @csspart root - The `<svg>` element that draws the spinning circle
+ */
 import { tv } from 'tailwind-variants';
 import { computed } from 'vue';
 
@@ -57,8 +60,23 @@ const spinner = tv({
 });
 
 interface CSpinnerProps {
+  /**
+   * Color of the spinner
+   *
+   * @seeded from csc-ui — verify
+   */
   color?: string;
+  /**
+   * Size of the spinner
+   *
+   * @seeded from csc-ui — verify
+   */
   size?: number;
+  /**
+   * Width of the spinner
+   *
+   * @seeded from csc-ui — verify
+   */
   width?: number;
 }
 

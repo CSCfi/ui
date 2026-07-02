@@ -63,6 +63,11 @@
 </template>
 
 <script setup lang="ts">
+/**
+ * @slot default - Default slot for the c-swiper-tab elements
+ *
+ * @seeded from csc-ui — verify
+ */
 import { mdiChevronLeft, mdiChevronRight } from '@mdi/js';
 import {
   computed,
@@ -77,8 +82,37 @@ import {
 
 import { emitModelValue } from '../../shared/emitModelValue';
 
+/** Events dispatched by `<c-swiper>`. */
+interface CSwiperEvents {
+  /**
+   * Fired when a tab is selected via click or arrow-key navigation, carrying
+   * the selected tab's value (legacy value-change event).
+   */
+  changeValue: number | string;
+  /**
+   * Native bubbling input event for plain `v-model`; carries no detail — the
+   * selected value is mirrored onto the host's `value` property.
+   */
+  input: void;
+  /**
+   * Fired when a tab is selected via click or arrow-key navigation, carrying
+   * the selected tab's value (v-model contract).
+   */
+  'update:value': number | string;
+}
+
 interface CSwiperProps {
+  /**
+   * Id of the swiper element
+   *
+   * @seeded from csc-ui — verify
+   */
   elementId?: string;
+  /**
+   * Value of the swiper
+   *
+   * @seeded from csc-ui — verify
+   */
   value?: number | string;
 }
 
@@ -218,7 +252,8 @@ const endDrag = (e: PointerEvent) => {
 // changeValue/update:value + native `input` (plain v-model) + host `value`
 // mirror. Called only from user interactions; the value watch runs `setActive`
 // (visuals-only), so there is no loop.
-const dispatchValue = (v: unknown) => emitModelValue(host, v);
+const dispatchValue = (v: CSwiperEvents['changeValue'] | undefined) =>
+  emitModelValue(host, v);
 
 // IMPORTANT: We do NOT touch `child.active` here. `active` is the
 // consumer's :active binding on the child — it represents the

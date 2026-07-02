@@ -5,6 +5,13 @@
 </template>
 
 <script setup lang="ts">
+/**
+ * @slot default - Login card title text
+ *
+ * @csspart root - The inner header element carrying the heading typography
+ *
+ * @seeded from csc-ui — verify
+ */
 import { tv } from 'tailwind-variants';
 import { computed } from 'vue';
 

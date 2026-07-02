@@ -13,6 +13,18 @@
 </template>
 
 <script setup lang="ts">
+/**
+ * @slot default - Card title text
+ * @slot actions - Action controls shown to the right of the title
+ *
+ * @csspart root - The outer header element carrying the title typography and padding
+ * @csspart header - The wrapper around the heading and its underline
+ * @csspart heading - The paragraph holding the slotted title text
+ * @csspart underline - The decorative accent bar under the heading
+ * @csspart actions - The wrapper around the slotted action controls
+ *
+ * @seeded from csc-ui — verify
+ */
 import { tv } from 'tailwind-variants';
 import { computed, useTemplateRef } from 'vue';
 

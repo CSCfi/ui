@@ -53,6 +53,16 @@
 </template>
 
 <script setup lang="ts">
+/**
+ * A single toast notification, rendered and managed by c-toasts
+ *
+ * @slot default - Custom toast content, shown when the message is flagged `custom`
+ * @csspart root - The toast's outer box carrying the accent border and shadow
+ * @csspart custom - Wrapper shown for custom messages in place of the standard item layout
+ * @csspart content - The message body holding the title and text, or the slotted custom content
+ * @csspart item - Row layout of a standard toast: type icon, message body and close button
+ * @csspart progress - The track of the auto-close progress bar
+ */
 import {
   mdiAlert,
   mdiCheckCircle,
@@ -69,6 +79,18 @@ import {
   watch,
   watchEffect,
 } from 'vue';
+
+import { useHostEmit } from '../../shared/useHostEmit';
+
+/** Events dispatched by `<c-toast>`. */
+interface CToastEvents {
+  /**
+   * Fired once the toast's leave transition has finished (after a manual
+   * dismiss or the auto-close timer), carrying the dismissed toast's message
+   * object.
+   */
+  close: null | ToastMessage;
+}
 
 /**
  * Styling lives in this `tailwind-variants` config (ADR-0004). The old
@@ -146,6 +168,11 @@ const toast = tv({
 defineOptions({ inheritAttrs: false });
 
 interface CToastProps {
+  /**
+   * Messages
+   *
+   * @seeded from csc-ui — verify
+   */
   message?: null | ToastMessage;
 }
 
@@ -167,6 +194,8 @@ const props = withDefaults(defineProps<CToastProps>(), {
 });
 
 const host = useHost();
+
+const emit = useHostEmit<CToastEvents>();
 
 const icons: Record<string, string> = {
   close: mdiClose,
@@ -220,7 +249,7 @@ const close = () => {
 
   const onEnd = () => {
     host.removeEventListener('transitionend', onEnd);
-    host.dispatchEvent(new CustomEvent('close', { detail: props.message }));
+    emit('close', props.message);
   };
 
   host.addEventListener('transitionend', onEnd);

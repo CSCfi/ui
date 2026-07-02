@@ -5,6 +5,13 @@
 </template>
 
 <script setup lang="ts">
+/**
+ * @slot default - Login card content
+ *
+ * @csspart root - The inner article stacking the slotted content vertically
+ *
+ * @seeded from csc-ui — verify
+ */
 import { tv } from 'tailwind-variants';
 import { computed } from 'vue';
 

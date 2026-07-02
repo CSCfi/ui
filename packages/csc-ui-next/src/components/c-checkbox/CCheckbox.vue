@@ -101,13 +101,50 @@
 </template>
 
 <script setup lang="ts">
+/**
+ * @slot default - Default slot for the label
+ *
+ * @csspart root - The outer wrapper containing the checkbox, label and message
+ * @csspart label - The `<label>` element wrapping the indicator and the label content
+ * @csspart indicator - The circular ripple surface holding the checkbox box and checkmark
+ * @csspart content - Wrapper around the label text or slotted label content
+ * @csspart message - The hint / validation message line below the checkbox
+ *
+ * @seeded from csc-ui — verify
+ */
 import { mdiCloseCircle } from '@mdi/js';
 import { tv } from 'tailwind-variants';
 import { computed, ref, useHost, useId, useTemplateRef, watch } from 'vue';
 
 import { emitModelValue } from '../../shared/emitModelValue';
 import { useHasSlot } from '../../shared/useHasSlot';
+import { useHostEmit } from '../../shared/useHostEmit';
 import { useRipple } from '../../shared/useRipple';
+
+/** Events dispatched by `<c-checkbox>`. */
+interface CCheckboxEvents {
+  /**
+   * Standard bubbling DOM change event, re-dispatched from the host when the
+   * checkbox is toggled (the inner input's change does not cross the shadow
+   * boundary). No detail; read the new value from the host's `value` property.
+   */
+  change: void;
+  /**
+   * Fired when the checkbox is toggled, carrying the new value —
+   * `trueValue` when checked, `falseValue` when unchecked.
+   */
+  changeValue: boolean | number | string;
+  /**
+   * Native bubbling input event fired on toggle so a plain Vue `v-model`
+   * works without the `v-control` directive. No detail.
+   */
+  input: void;
+  /**
+   * v-model contract event fired on toggle, carrying the new value —
+   * `trueValue` when checked, `falseValue` when unchecked.
+   */
+  'update:value': boolean | number | string;
+}
 
 /**
  * Styling lives in this `tailwind-variants` config (ADR-0004); the old
@@ -209,19 +246,91 @@ const checkbox = tv({
 const errorIconPath = mdiCloseCircle;
 
 interface CCheckboxProps {
+  /**
+   * If `true`, the checkbox is selected.
+   *
+   * @seeded from csc-ui — verify
+   */
   checked?: boolean;
+  /**
+   * Disable the checkbox
+   *
+   * @seeded from csc-ui — verify
+   */
   disabled?: boolean;
+  /**
+   * The value when the checkbox is unchecked
+   *
+   * @seeded from csc-ui — verify
+   */
   falseValue?: boolean | number | string;
+  /**
+   * Hide the hint and error messages
+   *
+   * @seeded from csc-ui — verify
+   */
   hideDetails?: boolean;
+  /**
+   * Hint text for the input
+   *
+   * @seeded from csc-ui — verify
+   */
   hint?: string;
+  /**
+   * Id of the element
+   *
+   * @seeded from csc-ui — verify
+   */
   hostId?: string;
+  /**
+   * Name of the input
+   * - Only used when the checkbox participates in a native `<form>`
+   *
+   * @seeded from csc-ui — verify
+   */
   hostName?: string;
+  /**
+   * Indeterminate state
+   *
+   * @seeded from csc-ui — verify
+   */
   indeterminate?: boolean;
+  /**
+   * Element label
+   *
+   * @seeded from csc-ui — verify
+   */
   label?: string;
+  /**
+   * Set as required
+   *
+   * @seeded from csc-ui — verify
+   */
   required?: boolean;
+  /**
+   * The value when the checkbox is checked
+   *
+   * @seeded from csc-ui — verify
+   */
   trueValue?: boolean | number | string;
+  /**
+   * Set the validity of the input
+   *
+   * @seeded from csc-ui — verify
+   */
   valid?: boolean;
+  /**
+   * Custom validation message
+   *
+   * @seeded from csc-ui — verify
+   */
   validation?: string;
+  /**
+   * The input value
+   * - Only used when the checkbox participates in a native `<form>`
+   *
+   * @seeded from csc-ui — verify
+   */
   value?: boolean | number | string;
 }
 
@@ -256,6 +365,8 @@ const ui = computed(() =>
 // directive that do `el.value = event.detail`. Manual dispatch keeps
 // `detail` as the bare value, matching the Stencil component's behaviour.
 const host = useHost();
+
+const emit = useHostEmit<CCheckboxEvents>();
 
 const rootRef = useTemplateRef<HTMLElement>('rootRef');
 
@@ -317,7 +428,7 @@ const onChange = (_event: Event) => {
   // Standard DOM change for non-Vue consumers; re-dispatched from the
   // host because the inner <input>'s native change event doesn't escape
   // the shadow root (composed: false by default).
-  host?.dispatchEvent(new Event('change', { bubbles: true, composed: true }));
+  emit('change', undefined, { bubbles: true, composed: true });
 };
 </script>
 

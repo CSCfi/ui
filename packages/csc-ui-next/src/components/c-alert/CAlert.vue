@@ -13,6 +13,16 @@
 </template>
 
 <script setup lang="ts">
+/**
+ * @slot title - Title slot
+ * @slot default - Default slot
+ *
+ * @csspart root - The outer bordered box carrying the type's accent color
+ * @csspart icon - The status icon svg shown for the error/info/success/warning types
+ * @csspart content - The wrapper around the slotted title and message content
+ *
+ * @seeded from csc-ui — verify
+ */
 import {
   mdiAlert,
   mdiCheckCircle,
@@ -60,6 +70,11 @@ const alert = tv({
 type CAlertIconType = 'error' | 'info' | 'success' | 'warning';
 
 interface CAlertProps {
+  /**
+   * Type of the alert
+   *
+   * @seeded from csc-ui — verify
+   */
   type?: CAlertType;
 }
 
