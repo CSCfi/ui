@@ -29,12 +29,14 @@ import path from 'node:path';
  */
 
 const ROOT = path.resolve(import.meta.dirname, '../src/components');
+
 const REPORT_ONLY = process.argv.includes('--report');
 
 // `host.setAttribute('role'|'tabindex'|'id'|'aria-*', …)` — the host binding is
 // `const host = useHost()` by convention across these SFCs. Optional-chaining
 // (`host?.setAttribute`) and whitespace variants are tolerated.
-const HOST_ATTR = /\bhost\s*\??\.\s*setAttribute\(\s*(['"`])(role|tabindex|id|aria-[a-z-]+)\1/g;
+const HOST_ATTR =
+  /\bhost\s*\??\.\s*setAttribute\(\s*(['"`])(role|tabindex|id|aria-[a-z-]+)\1/g;
 
 const INHERIT_ATTRS_FALSE = /inheritAttrs\s*:\s*false/;
 
@@ -44,7 +46,10 @@ const stripComments = (src) =>
     .replace(/\/\*[\s\S]*?\*\//g, (m) => m.replace(/[^\n]/g, ' '))
     .replace(/<!--[\s\S]*?-->/g, (m) => m.replace(/[^\n]/g, ' '))
     // line comments to EOL, but not the // in http:// (preceded by ':')
-    .replace(/(^|[^:])\/\/[^\n]*/g, (m, p1) => p1 + ' '.repeat(m.length - p1.length));
+    .replace(
+      /(^|[^:])\/\/[^\n]*/g,
+      (m, p1) => p1 + ' '.repeat(m.length - p1.length),
+    );
 
 const vueFiles = fs
   .readdirSync(ROOT, { recursive: true })
@@ -53,6 +58,7 @@ const vueFiles = fs
   .sort();
 
 let fileCount = 0;
+
 let hitCount = 0;
 
 for (const file of vueFiles) {
@@ -60,10 +66,12 @@ for (const file of vueFiles) {
 
   // Only components that set a host a11y attribute are in scope.
   const lines = src.split('\n');
+
   const hits = [];
 
   lines.forEach((line, i) => {
     const attrs = [...line.matchAll(HOST_ATTR)].map((m) => m[2]);
+
     if (attrs.length) hits.push({ attrs: [...new Set(attrs)], line: i + 1 });
   });
 
@@ -73,9 +81,11 @@ for (const file of vueFiles) {
   if (INHERIT_ATTRS_FALSE.test(src)) continue;
 
   fileCount += 1;
+
   const rel = path.relative(path.resolve(import.meta.dirname, '..'), file);
   console.log(`\n${rel}  (missing \`defineOptions({ inheritAttrs: false })\`)`);
-  for (const { line, attrs } of hits) {
+
+  for (const { attrs, line } of hits) {
     hitCount += attrs.length;
     console.log(`  ${line}: host.setAttribute → ${attrs.join(', ')}`);
   }
@@ -86,7 +96,9 @@ console.log(
 );
 
 if (hitCount === 0) {
-  console.log('✓ every SFC that sets host role/tabindex/id/aria has inheritAttrs:false.');
+  console.log(
+    '✓ every SFC that sets host role/tabindex/id/aria has inheritAttrs:false.',
+  );
 } else if (REPORT_ONLY) {
   console.log('(informational — omit --report to fail the build)');
 } else {

@@ -24,6 +24,7 @@ import path from 'node:path';
  */
 
 const ROOT = path.resolve(import.meta.dirname, '../src/components');
+
 const STRICT = process.argv.includes('--strict');
 
 const COLOR_PREFIXES = [
@@ -44,6 +45,7 @@ const COLOR_PREFIXES = [
   'to',
   'shadow',
 ];
+
 const HUES = [
   'primary',
   'secondary',
@@ -81,7 +83,10 @@ const stripComments = (src) =>
     .replace(/\/\*[\s\S]*?\*\//g, (m) => m.replace(/[^\n]/g, ' '))
     .replace(/<!--[\s\S]*?-->/g, (m) => m.replace(/[^\n]/g, ' '))
     // line comments to EOL, but not the // in http:// (preceded by ':')
-    .replace(/(^|[^:])\/\/[^\n]*/g, (m, p1) => p1 + ' '.repeat(m.length - p1.length));
+    .replace(
+      /(^|[^:])\/\/[^\n]*/g,
+      (m, p1) => p1 + ' '.repeat(m.length - p1.length),
+    );
 
 const vueFiles = fs
   .readdirSync(ROOT, { recursive: true })
@@ -90,10 +95,12 @@ const vueFiles = fs
   .sort();
 
 let fileCount = 0;
+
 let hitCount = 0;
 
 for (const file of vueFiles) {
   const lines = stripComments(fs.readFileSync(file, 'utf8')).split('\n');
+
   const hits = [];
 
   lines.forEach((line, i) => {
@@ -101,13 +108,17 @@ for (const file of vueFiles) {
       ...(line.match(FORBIDDEN) ?? []),
       ...(line.match(FORBIDDEN_VAR) ?? []),
     ];
-    if (matches.length) hits.push({ line: i + 1, tokens: [...new Set(matches)] });
+
+    if (matches.length)
+      hits.push({ line: i + 1, tokens: [...new Set(matches)] });
   });
 
   if (hits.length) {
     fileCount += 1;
+
     const rel = path.relative(path.resolve(import.meta.dirname, '..'), file);
     console.log(`\n${rel}`);
+
     for (const { line, tokens } of hits) {
       hitCount += tokens.length;
       console.log(`  ${line}: ${tokens.join(' ')}`);

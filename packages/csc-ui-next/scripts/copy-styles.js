@@ -20,9 +20,12 @@ const pkgRoot = path.resolve(fileURLToPath(import.meta.url), '../..');
 
 const copyDir = (from, to) => {
   fs.mkdirSync(to, { recursive: true });
+
   for (const entry of fs.readdirSync(from, { withFileTypes: true })) {
     const fromPath = path.join(from, entry.name);
+
     const toPath = path.join(to, entry.name);
+
     if (entry.isDirectory()) {
       copyDir(fromPath, toPath);
     } else {
@@ -34,15 +37,20 @@ const copyDir = (from, to) => {
 /** Copy `src/styles` → `dist/styles`. Returns false (and warns) if no source. */
 export const copyStyles = () => {
   const src = path.join(pkgRoot, 'src/styles');
+
   const dest = path.join(pkgRoot, 'dist/styles');
+
   if (!fs.existsSync(src)) {
     console.error(
       `[copy-styles] ${src} not found — run style-dictionary:build first.`,
     );
+
     return false;
   }
+
   copyDir(src, dest);
   console.log('[copy-styles] src/styles → dist/styles');
+
   return true;
 };
 
