@@ -56,16 +56,16 @@ _Avoid_: Spacer (`c-spacer` is a flex-grow layout filler, not a visible rule), r
 ### Styling (`csc-ui-next`)
 
 **Part**:
-A named, publicly overridable region of a migrated component's shadow DOM (e.g. `root`, `content`, `description`). The curated public set per component — not every internal node; purely internal regions (loader, spinner, ripple) are styled via the component's own `tailwind-variants` slots but are **not** parts and carry no `part=` attribute. Identified by a flat, logical name (not BEM) that is used both as a key in the `override` prop and as the element's `part="<name>"` attribute, so the prop and CSS `::part()` share one vocabulary.
+A named, publicly overridable region of a migrated component's shadow DOM (e.g. `root`, `content`, `description`). The curated public set per component — not every internal node; purely internal regions (loader, spinner, ripple) are styled via the component's own `tailwind-variants` slots but are **not** parts and carry no `part=` attribute. Identified by a flat, logical name (not BEM) stamped as the element's `part="<name>"` attribute; `::part()` against these names is the **sole** consumer customization API (ADR-0006), so a component's part set is its customization contract.
 _Avoid_: Slot (a slot is a content-projection hole, a part is a stylable element), element, node, section
 
 **Root element**:
 The single styled element a migrated component renders directly inside its shadow root, carrying all visual Tailwind utilities. The host (`<c-button>`) itself is layout-only (one shared `:host` display rule); visual styling lives on the root element, which is the `root` part.
 _Avoid_: Host (the host is the custom element; the root element is its first child), container, wrapper
 
-**`override` prop**:
-The per-component prop accepting an object keyed by **part** name, whose values are Tailwind class strings. Values **merge** with the component's default classes with **consumer-wins** conflict resolution (via `tailwind-variants`, which bundles `tailwind-merge`) — they augment, not replace, the defaults. Keyed only by public **parts** (not internal slots). Each component's base classes, variants, and compound variants are authored as a `tailwind-variants` config whose `slots` are the component's parts plus its internal regions.
-_Avoid_: classes, classNames, ui, parts, styles
+**`override` prop** (retired):
+A removed customization prop (ADR-0006). Historical only — consumer restyling goes through `::part()`; do not reintroduce per-component class props.
+_Avoid_: using this term for anything current
 
 ### Theming & dark mode (`csc-ui-next`)
 
@@ -96,6 +96,20 @@ _Avoid_: Colour, type (the consumer-facing word for these was "type" — prefer 
 **Seed**:
 The single step-`500` colour value that anchors a **family**'s generated ramp. Step 500 reproduces the seed exactly; steps `50`–`950` are derived from it perceptually (OKLCH). Consumers supply one seed per family they override (via `applyTheme` / `themeToCss`) and the whole ramp — and every **semantic token** that resolves to it, in both modes — regenerates. See ADR-0011.
 _Avoid_: Base colour, brand colour (ambiguous — a "brand colour" could mean any step; the seed is specifically step 500)
+
+### Documentation (`csc-ui-next`)
+
+**Manifest**:
+The machine-readable API description of the component library — a `custom-elements.json` in the Custom Elements Manifest (CEM) schema, generated from component source at build time: props/attributes, events, slots, methods, CSS **parts**, CSS custom properties. Consumed by the docs site and IDE integrations; generated, never hand-edited.
+_Avoid_: docs.json / components.json (the Stencil-era artifacts), schema, metadata file
+
+**Event map**:
+The JSDoc-annotated TypeScript interface each component declares listing every event it dispatches on its host (name → `detail` type). The single source of truth for runtime emission (via the typed emit helper), consumer typings, and the **manifest**'s event section. An event not in the map cannot be dispatched.
+_Avoid_: emits (Vue `defineEmits` is not used in this library), event list
+
+**Usage doc**:
+The hand-written markdown file colocated with a component (`usage.md` beside the SFC) holding consumer-facing prose — purpose, guidelines, accessibility notes. Flows to the docs site at build time; complements, never duplicates, the generated API tables.
+_Avoid_: readme (GitHub-facing), description (a description is the one-liner on a single API member)
 
 ### Flagged ambiguities
 

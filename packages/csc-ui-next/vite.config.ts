@@ -1,5 +1,6 @@
 import tailwindcss from '@tailwindcss/vite';
 import vue from '@vitejs/plugin-vue';
+import { spawn } from 'node:child_process';
 import { resolve } from 'node:path';
 import { defineConfig } from 'vite';
 
@@ -14,6 +15,22 @@ const copyStylesPlugin = () => ({
   name: 'csc-copy-styles',
   writeBundle() {
     copyStyles();
+  },
+});
+
+// Same dist-wipe problem for the docs pipeline: `dist/custom-elements.json`
+// and `dist/docs/` (ADR-0012) are produced by the analyzer, not by vite, so
+// every (re)build deletes them — and the docs site's dev server fails to
+// resolve `@cscfi/csc-ui-next/custom-elements.json`. Regenerate after each
+// write. Non-strict and quiet here (mid-edit sources may transiently fail
+// lint); the `build` script's separate `docs:manifest:strict` run is the gate.
+const docsManifestPlugin = () => ({
+  name: 'csc-docs-manifest',
+  writeBundle() {
+    spawn(process.execPath, [resolve(__dirname, 'scripts/analyzer/index.mjs')], {
+      cwd: __dirname,
+      stdio: 'ignore',
+    });
   },
 });
 
@@ -60,5 +77,6 @@ export default defineConfig({
     }),
     tailwindcss(),
     copyStylesPlugin(),
+    docsManifestPlugin(),
   ],
 });

@@ -6,6 +6,7 @@
   "main": "./dist/csc-ui-next.js",
   "module": "./dist/csc-ui-next.js",
   "types": "./dist-types/index.d.ts",
+  "customElements": "./dist/custom-elements.json",
   "files": [
     "dist",
     "dist-types"
@@ -15,10 +16,14 @@
       "types": "./dist-types/index.d.ts",
       "import": "./dist/csc-ui-next.js"
     },
-    "./css/*": "./dist/styles/css/*"
+    "./css/*": "./dist/styles/css/*",
+    "./custom-elements.json": "./dist/custom-elements.json"
   },
   "scripts": {
-    "build": "pnpm run style-dictionary:build && vite build && vue-tsc -p tsconfig.build.json",
+    "build": "pnpm run style-dictionary:build && vite build && vue-tsc -p tsconfig.build.json && pnpm run docs:manifest:strict",
+    "docs:manifest": "node scripts/analyzer/index.mjs",
+    "docs:manifest:strict": "node scripts/analyzer/index.mjs --strict",
+    "docs:seed": "node scripts/seed-descriptions.mjs",
     "build:types": "vue-tsc -p tsconfig.build.json",
     "build:watch": "pnpm run style-dictionary:build && vue-tsc -p tsconfig.build.json && vite build --watch",
     "dev": "pnpm run style-dictionary:build && vue-tsc -p tsconfig.build.json && vite build --watch",
