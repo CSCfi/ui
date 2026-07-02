@@ -1,0 +1,38 @@
+<template>
+  <div class="example-row">
+    <c-menu @select="onSelect">
+      <c-button slot="trigger" ghost>
+        Export
+        <c-icon :path="mdiChevronDown" />
+      </c-button>
+
+      <c-menu-item value="documents">
+        Documents
+
+        <c-menu-item slot="submenu" value="pdf">
+          <c-icon :path="mdiFilePdfBox" />
+          PDF
+        </c-menu-item>
+
+        <c-menu-item slot="submenu" value="docx">
+          <c-icon :path="mdiFileDocument" />
+          Word document
+        </c-menu-item>
+      </c-menu-item>
+
+      <c-menu-item value="settings">Export settings…</c-menu-item>
+    </c-menu>
+
+    <span>Selected: {{ selected ?? '—' }}</span>
+  </div>
+</template>
+
+<script setup lang="ts">
+import { mdiChevronDown, mdiFileDocument, mdiFilePdfBox } from '@mdi/js';
+
+const selected = ref<null | string>(null);
+
+const onSelect = (event: Event) => {
+  selected.value = (event as CustomEvent<{ value: string }>).detail.value;
+};
+</script>

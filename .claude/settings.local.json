@@ -54,7 +54,24 @@
       "Bash(rm /tmp/cli.bak)",
       "Bash(node -e \"console.log\\(require.resolve\\('@vue/compiler-sfc'\\)\\)\")",
       "Bash(ls -d /workspace/node_modules/.pnpm/@vue+compiler-sfc@3.5.34/node_modules/@vue/compiler-sfc/dist/compiler-sfc.cjs.js)",
-      "Bash(xargs cat)"
+      "Bash(xargs cat)",
+      "Bash(node scripts/analyzer/index.mjs --only c-button)",
+      "Bash(npx eslint *)",
+      "Bash(node scripts/analyzer/index.mjs)",
+      "Bash(grep -v \"^--$\")",
+      "Bash(node scripts/analyzer/index.mjs --only c-autocomplete)",
+      "Bash(git stash *)",
+      "Bash(node scripts/analyzer/index.mjs --only c-modal)",
+      "Bash(node scripts/analyzer/index.mjs --only c-pagination)",
+      "Bash(echo \"eslint exit: $?\")",
+      "Bash(node scripts/analyzer/index.mjs --only c-select)",
+      "Bash(node scripts/analyzer/index.mjs --only c-dropdown)",
+      "Bash(echo \"modified: $?\")",
+      "Bash(node *)",
+      "Bash(echo \"exit: $?\")",
+      "Bash(awk '/<script setup/,/^import/' src/components/c-autocomplete/CAutocomplete.vue)",
+      "Bash(awk '/<script setup/,/^import/' src/components/c-step/CStep.vue)",
+      "Bash(npx nuxi *)"
     ]
   }
 }
