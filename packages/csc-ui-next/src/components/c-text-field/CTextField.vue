@@ -384,7 +384,7 @@ const onBlur = (event: Event) => {
 
 .c-text-field__input::placeholder,
 .c-text-field__textarea::placeholder {
-  color: var(--c-on-surface-muted);
+  color: var(--c-on-surface-faint);
   opacity: 1;
 }
 

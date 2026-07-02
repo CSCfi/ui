@@ -125,6 +125,19 @@ import { useHasSlot } from '../../shared/useHasSlot';
  * slotted `<input>`/`<textarea>` (which we don't own) via `::slotted(...)`.
  */
 const input = tv({
+  compoundVariants: [
+    // Color the label on active field only if the 'labelOnTop' is set to 'false'
+    {
+      active: true,
+      class: {
+        root: 'text-primary',
+      },
+      disabled: false,
+      error: false,
+      labelOnTop: false,
+      shadow: false,
+    },
+  ],
   defaultVariants: {
     active: false,
     disabled: false,
@@ -181,7 +194,7 @@ const input = tv({
     active: {
       true: {
         fieldset: 'border-2 border-primary',
-        root: 'text-primary',
+        // root: 'text-primary',
       },
     },
     disabled: {
@@ -206,7 +219,7 @@ const input = tv({
     // isn't rendered in shadow mode — see the template `v-if="!shadow"`).
     shadow: {
       true: {
-        slot: 'bg-surface [box-shadow:rgba(0,0,0,0.15)_0_5px_15px_0] focus-within:outline-2 focus-within:outline-solid focus-within:outline-primary',
+        slot: 'bg-surface-overlay [box-shadow:rgba(0,0,0,0.15)_0_5px_15px_0] focus-within:outline-2 focus-within:outline-solid focus-within:outline-primary',
       },
     },
     textarea: {
@@ -486,7 +499,7 @@ watch(
 ::slotted(input)::placeholder,
 ::slotted(textarea)::placeholder {
   color: var(--c-on-surface-muted);
-  opacity: 1;
+  opacity: 0.5;
 }
 
 /* ---- legend notch width (runtime var) --------------------------------- */
