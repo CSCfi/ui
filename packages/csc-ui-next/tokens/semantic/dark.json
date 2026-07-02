@@ -70,10 +70,10 @@
   "link-subtle-hover": "link-900",
   "on-link-subtle": "link-200",
 
-  "nav-surface": "slate-900",
-  "nav-surface-hover": "slate-800",
-  "on-nav": "slate-200",
-  "nav-active": "slate-800",
+  "nav-surface": "primary-900",
+  "nav-surface-hover": "primary-800",
+  "on-nav": "primary-200",
+  "nav-active": "primary-800",
   "on-nav-active": "white",
 
   "logo-wordmark": "white",

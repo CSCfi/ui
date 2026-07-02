@@ -2,11 +2,11 @@
   <c-card ref="cardRef">
     <c-card-content>
       <div class="example-headings">
-        <h1 class="text-4xl capitalize font-bold text-primary-600 dark:text-primary-400">
+        <h1 class="text-4xl capitalize font-bold text-primary-500 dark:text-primary-300">
           {{ pageTitles?.title }}
         </h1>
 
-        <h2 class="text-xl text-tertiary-500  dark:text-tertiary-400">{{ pageTitles?.subtitle }}</h2>
+        <h2 class="text-xl text-tertiary-500 dark:text-tertiary-400">{{ pageTitles?.subtitle }}</h2>
       </div>
 
       <p v-if="!!componentData?.docs">{{ componentData.docs }}</p>

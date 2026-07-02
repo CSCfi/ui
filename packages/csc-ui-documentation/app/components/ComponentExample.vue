@@ -1,7 +1,7 @@
 <template>
   <div class="component-example flex flex-col gap-6">
     <div>
-      <h2 v-if="slots.title" class="font-medium text-xl text-primary-600 dark:text-primary-500">
+      <h2 v-if="slots.title" class="font-medium text-xl text-primary-500 dark:text-primary-300">
         <slot name="title" />
       </h2>
 
