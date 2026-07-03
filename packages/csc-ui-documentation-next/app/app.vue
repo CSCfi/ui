@@ -15,7 +15,7 @@
         <p class="site-nav-heading">Components</p>
 
         <NuxtLink
-          v-for="component in components"
+          v-for="component in navComponents"
           :key="component.tagName"
           class="site-nav-link"
           :to="`/components/${component.tagName}`"
@@ -32,5 +32,5 @@
 </template>
 
 <script setup lang="ts">
-const { components } = useManifest();
+const { navComponents } = useManifest();
 </script>

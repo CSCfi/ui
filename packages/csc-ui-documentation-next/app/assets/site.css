@@ -336,3 +336,188 @@ td:first-child code {
     padding: 1.5rem 1.25rem 3rem;
   }
 }
+
+/* ── ADR-0013: grouped API pages, right-side TOC rail, Shiki highlighting ── */
+
+.doc-section {
+  margin-top: 2.5rem;
+}
+
+.doc-section > h2 {
+  border-bottom: 1px solid var(--c-border);
+  padding-bottom: 0.375rem;
+}
+
+/* three-column: left nav (app.vue) | content | sticky right rail */
+.page-with-rail {
+  display: flex;
+  gap: 2.5rem;
+  align-items: flex-start;
+}
+
+.page-with-rail > article {
+  flex: 1;
+  min-width: 0;
+}
+
+.toc {
+  order: 2;
+  width: 14rem;
+  flex-shrink: 0;
+  position: sticky;
+  top: 1.5rem;
+  max-height: calc(100vh - 3rem);
+  overflow-y: auto;
+  font-size: 0.8125rem;
+}
+
+.toc-heading {
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--c-on-surface-faint);
+  font-size: 0.6875rem;
+  margin: 0 0 0.5rem;
+}
+
+.toc nav {
+  display: flex;
+  flex-direction: column;
+  border-left: 1px solid var(--c-border);
+}
+
+.toc-link {
+  padding: 0.15rem 0.75rem;
+  color: var(--c-on-surface-muted);
+  text-decoration: none;
+  border-left: 2px solid transparent;
+  margin-left: -1px;
+}
+
+.toc-link:hover {
+  color: var(--c-on-surface);
+  border-left-color: var(--c-border-strong);
+}
+
+.toc-component {
+  font-weight: 600;
+  margin-top: 0.5rem;
+  font-family: ui-monospace, 'SFMono-Regular', Menlo, Consolas, monospace;
+  font-size: 0.78rem;
+}
+
+.toc-sub {
+  padding-left: 1.5rem;
+}
+
+/* one component's API block within a family page */
+.component-api {
+  margin-top: 2rem;
+  padding-top: 1.25rem;
+  border-top: 1px dashed var(--c-border);
+}
+
+.component-api:first-of-type {
+  border-top: none;
+}
+
+.component-api-heading {
+  font-size: 1.35rem;
+  margin: 0 0 0.25rem;
+}
+
+.component-api-desc {
+  color: var(--c-on-surface-muted);
+  margin-top: 0;
+}
+
+.component-api h4 {
+  margin: 1.5rem 0 0.5rem;
+  color: var(--c-on-surface-faint);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  font-size: 0.75rem;
+}
+
+/* Shiki: dual-theme output. Default = light values (inline); swap to the dark
+   CSS vars when the dark theme is active (explicit toggle or OS default). */
+.shiki {
+  margin: 0;
+  padding: 1rem 1.25rem;
+  border-radius: 8px;
+  overflow-x: auto;
+  font-size: 0.8125rem;
+  border: 1px solid var(--c-border);
+}
+
+.shiki code {
+  background: none;
+  padding: 0;
+  font-size: inherit;
+}
+
+:root[data-theme='dark'] .shiki,
+:root[data-theme='dark'] .shiki span {
+  color: var(--shiki-dark) !important;
+  background-color: var(--shiki-dark-bg) !important;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme]) .shiki,
+  :root:not([data-theme]) .shiki span {
+    color: var(--shiki-dark) !important;
+    background-color: var(--shiki-dark-bg) !important;
+  }
+}
+
+.example-shiki .shiki,
+.usage .shiki {
+  border-radius: 0;
+  border: none;
+}
+
+.usage .shiki {
+  border-radius: 8px;
+}
+
+/* tab bar sits above the (now theme-aware) code block */
+.example-tabs {
+  display: flex;
+  gap: 0.25rem;
+  padding: 0.375rem 0.5rem 0;
+  background: var(--c-surface-muted);
+  border-top: 1px solid var(--c-border);
+}
+
+.example-tab {
+  border: none;
+  background: none;
+  color: var(--c-on-surface-muted);
+  font: inherit;
+  font-size: 0.8125rem;
+  padding: 0.375rem 0.75rem;
+  cursor: pointer;
+  border-radius: 6px 6px 0 0;
+}
+
+.example-tab.active {
+  color: var(--c-on-surface);
+  background: var(--c-surface);
+}
+
+@media (max-width: 64rem) {
+  .toc {
+    display: none;
+  }
+}
+
+/* Flash-of-un-upgraded-content: custom elements register client-side (the
+   csc-ui plugin runs after hydration), so on reload an overlay element that is
+   closed by default would briefly render its light-DOM children inline before
+   it upgrades. Hide the closed-by-default overlays until they are :defined —
+   their shadow `:not([open])` styles take over once upgraded. (Their triggers
+   live outside the element, so they stay visible.) */
+c-modal:not(:defined),
+c-toasts:not(:defined) {
+  display: none;
+}

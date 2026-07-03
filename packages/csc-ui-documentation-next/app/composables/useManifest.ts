@@ -36,7 +36,7 @@ export interface CemMember {
 
 export interface CemDeclaration {
   attributes?: CemAttribute[];
-  csc?: { usage?: string };
+  csc?: { subcomponents?: string[]; usage?: string };
   cssParts?: CemNamed[];
   cssProperties?: CemNamed[];
   customElement?: boolean;
@@ -69,6 +69,10 @@ export interface Cem {
 
 const manifest = rawManifest as unknown as Cem;
 
+// Elements the consumer never authors (instantiated internally by a parent).
+// They get no nav entry and no page (ADR-0013).
+const INTERNAL_ONLY = new Set(['c-dropdown']);
+
 const components = manifest.modules
   .flatMap((module) => module.declarations)
   .filter(
@@ -79,8 +83,147 @@ const components = manifest.modules
 
 const byTag = new Map(components.map((component) => [component.tagName, component]));
 
+// child tag -> the parent whose page documents it (first declaring parent wins;
+// only c-option is shared today). Used to redirect a folded child's old route.
+const parentByChild = new Map<string, string>();
+
+for (const component of components) {
+  for (const child of component.csc?.subcomponents ?? []) {
+    if (!parentByChild.has(child)) parentByChild.set(child, component.tagName);
+  }
+}
+
+// Standalone components keep a nav entry and a page: everything that is neither
+// a composed child nor internal-only.
+const navComponents = components.filter(
+  (component) =>
+    !parentByChild.has(component.tagName) &&
+    !INTERNAL_ONLY.has(component.tagName),
+);
+
+/**
+ * The ordered list of components documented on a parent's page: the parent
+ * first, then its composed children in declared order (internal-only or
+ * unknown tags skipped). A standalone leaf resolves to just itself.
+ */
+type ResolvedComponent = CemDeclaration & { tagName: string };
+
+const resolveGroup = (tag: string): ResolvedComponent[] => {
+  const parent = byTag.get(tag);
+
+  if (!parent) return [];
+
+  const children = (parent.csc?.subcomponents ?? [])
+    .filter((child) => !INTERNAL_ONLY.has(child))
+    .map((child) => byTag.get(child))
+    .filter((child): child is ResolvedComponent => Boolean(child));
+
+  return [parent, ...children];
+};
+
+export interface PropView {
+  attribute: null | string;
+  default?: string;
+  description?: string;
+  name: string;
+  type: string;
+}
+
+export interface EventView {
+  description?: string;
+  detail: string;
+  name: string;
+}
+
+export interface MethodView {
+  description?: string;
+  name: string;
+  signature: string;
+}
+
+export interface ComponentView {
+  cssParts: CemNamed[];
+  cssProperties: CemNamed[];
+  description?: string;
+  events: EventView[];
+  methods: MethodView[];
+  props: PropView[];
+  sections: { id: string; label: string }[];
+  slots: CemNamed[];
+  tagName: string;
+}
+
+/** Flatten one manifest declaration into the render/TOC view for its page group. */
+export const toComponentView = (c: CemDeclaration): ComponentView => {
+  const tag = c.tagName ?? c.name;
+
+  // Fields hold the property-side truth; the attributes array is the
+  // attribute-compatible subset — join them so both names show.
+  const attributeByField = new Map(
+    (c.attributes ?? []).map((a) => [a.fieldName, a.name]),
+  );
+
+  const props: PropView[] = (c.members ?? [])
+    .filter((m) => m.kind === 'field')
+    .map((m) => ({
+      attribute: attributeByField.get(m.name) ?? null,
+      default: m.default,
+      description: m.description,
+      name: m.name,
+      type: m.type?.text ?? '',
+    }));
+
+  const events: EventView[] = (c.events ?? []).map((e) => ({
+    description: e.description,
+    detail: e.type?.text.replace(/^CustomEvent<([\s\S]*)>$/, '$1') ?? 'void',
+    name: e.name,
+  }));
+
+  const methods: MethodView[] = (c.members ?? [])
+    .filter((m) => m.kind === 'method')
+    .map((m) => ({
+      description: m.description,
+      name: m.name,
+      signature: m.csc?.signature ?? '()',
+    }));
+
+  const cssParts = c.cssParts ?? [];
+
+  const cssProperties = c.cssProperties ?? [];
+
+  const slots = c.slots ?? [];
+
+  const sections = [
+    props.length && { id: `${tag}--properties`, label: 'Properties' },
+    events.length && { id: `${tag}--events`, label: 'Events' },
+    methods.length && { id: `${tag}--methods`, label: 'Methods' },
+    slots.length && { id: `${tag}--slots`, label: 'Slots' },
+    cssParts.length && { id: `${tag}--css-parts`, label: 'CSS parts' },
+    cssProperties.length && {
+      id: `${tag}--css-properties`,
+      label: 'CSS custom properties',
+    },
+  ].filter(Boolean) as { id: string; label: string }[];
+
+  return {
+    cssParts,
+    cssProperties,
+    description: c.description,
+    events,
+    methods,
+    props,
+    sections,
+    slots,
+    tagName: tag,
+  };
+};
+
 export const useManifest = () => ({
   components,
   findComponent: (tag: string) => byTag.get(tag) ?? null,
+  navComponents,
+  // The parent page a folded child's route should redirect to, or null.
+  parentOf: (tag: string) => parentByChild.get(tag) ?? null,
+  resolveGroup,
   sharedTypes: manifest.csc?.types ?? [],
 });

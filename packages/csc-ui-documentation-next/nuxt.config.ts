@@ -1,3 +1,4 @@
+import { readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 
 // The site is a pure consumer of the csc-ui-next build output: the Custom
@@ -5,6 +6,33 @@ import { fileURLToPath } from 'node:url';
 // dist/docs/<tag>/usage.md for the hand-written usage prose (ADR-0012).
 // Pages are prerendered (SSG); the custom elements themselves upgrade on the
 // client via the csc-ui plugin.
+
+// Composed children (ADR-0013) have no page of their own: redirect their old
+// route to the parent page anchor. Derived from the manifest so the mapping has
+// a single source of truth (the @subcomponents docblock tags).
+const manifest = JSON.parse(
+  readFileSync(
+    fileURLToPath(
+      new URL('../csc-ui-next/dist/custom-elements.json', import.meta.url),
+    ),
+    'utf8',
+  ),
+);
+
+const childRedirects: Record<string, { redirect: string }> = {};
+
+for (const module of manifest.modules ?? []) {
+  for (const declaration of module.declarations ?? []) {
+    const parent = declaration.tagName;
+
+    for (const child of declaration.csc?.subcomponents ?? []) {
+      childRedirects[`/components/${child}`] ??= {
+        redirect: `/components/${parent}#${child}`,
+      };
+    }
+  }
+}
+
 export default defineNuxtConfig({
   app: {
     head: {
@@ -29,6 +57,7 @@ export default defineNuxtConfig({
       routes: ['/'],
     },
   },
+  routeRules: childRedirects,
   ssr: true,
   vite: {
     resolve: {

@@ -15,7 +15,8 @@
   "dependencies": {
     "@cscfi/csc-ui-next": "workspace:*",
     "@mdi/js": "^7.4.47",
-    "markdown-it": "^14.1.0"
+    "markdown-it": "^14.1.0",
+    "shiki": "^4.3.0"
   },
   "devDependencies": {
     "@types/markdown-it": "^14.1.2",

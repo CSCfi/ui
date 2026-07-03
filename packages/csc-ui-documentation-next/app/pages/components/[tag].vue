@@ -1,206 +1,119 @@
 <template>
-  <article v-if="component">
-    <h1><code>&lt;{{ component.tagName }}&gt;</code></h1>
+  <div v-if="parentView" class="page-with-rail">
+    <article>
+      <h1><code>&lt;{{ parentView.tagName }}&gt;</code></h1>
 
-    <p v-if="component.description" class="lead preline">{{ component.description }}</p>
-
-    <section v-if="usageHtml" class="api-section">
-      <h2 id="usage">Usage</h2>
-      <!-- eslint-disable-next-line vue/no-v-html — our own markdown, html disabled in the renderer -->
-      <div class="usage" v-html="usageHtml" />
-    </section>
-
-    <section v-if="examples.length" class="api-section">
-      <h2 id="examples">Examples</h2>
-      <ExampleBlock
-        v-for="example in examples"
-        :key="example.name"
-        :example="example"
-      />
-    </section>
-
-    <section v-if="props.length" class="api-section">
-      <h2 id="properties">Properties</h2>
-      <div class="table-wrap">
-        <table>
-          <thead>
-            <tr>
-              <th>Property</th>
-              <th>Attribute</th>
-              <th>Type</th>
-              <th>Default</th>
-              <th>Description</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr v-for="prop in props" :key="prop.name">
-              <td><code>{{ prop.name }}</code></td>
-              <td>
-                <code v-if="prop.attribute">{{ prop.attribute }}</code>
-                <span v-else class="muted">—</span>
-              </td>
-              <td><code>{{ prop.type }}</code></td>
-              <td>
-                <code v-if="prop.default">{{ prop.default }}</code>
-                <span v-else class="muted">—</span>
-              </td>
-              <td class="preline">{{ prop.description }}</td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-    </section>
-
-    <section v-if="component.events?.length" class="api-section">
-      <h2 id="events">Events</h2>
-      <div class="table-wrap">
-        <table>
-          <thead>
-            <tr>
-              <th>Event</th>
-              <th>Detail</th>
-              <th>Description</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr v-for="event in component.events" :key="event.name">
-              <td><code>{{ event.name }}</code></td>
-              <td><code>{{ eventDetail(event) }}</code></td>
-              <td class="preline">{{ event.description }}</td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-    </section>
-
-    <section v-if="methods.length" class="api-section">
-      <h2 id="methods">Methods</h2>
-      <div class="table-wrap">
-        <table>
-          <thead>
-            <tr>
-              <th>Method</th>
-              <th>Signature</th>
-              <th>Description</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr v-for="method in methods" :key="method.name">
-              <td><code>{{ method.name }}</code></td>
-              <td><code>{{ method.csc?.signature ?? '()' }}</code></td>
-              <td class="preline">{{ method.description }}</td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-    </section>
-
-    <section v-if="component.slots?.length" class="api-section">
-      <h2 id="slots">Slots</h2>
-      <div class="table-wrap">
-        <table>
-          <thead>
-            <tr>
-              <th>Slot</th>
-              <th>Description</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr v-for="slot in component.slots" :key="slot.name">
-              <td><code>{{ slot.name }}</code></td>
-              <td class="preline">{{ slot.description }}</td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-    </section>
-
-    <section v-if="component.cssParts?.length" class="api-section">
-      <h2 id="css-parts">CSS parts</h2>
-      <p class="muted">
-        Style these from the outside with
-        <code>{{ component.tagName }}::part(name)</code> — parts are the
-        library's only styling customization API.
+      <p v-if="parentView.description" class="lead preline">
+        {{ parentView.description }}
       </p>
-      <div class="table-wrap">
-        <table>
-          <thead>
-            <tr>
-              <th>Part</th>
-              <th>Description</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr v-for="part in component.cssParts" :key="part.name">
-              <td><code>{{ part.name }}</code></td>
-              <td class="preline">{{ part.description }}</td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-    </section>
 
-    <section v-if="component.cssProperties?.length" class="api-section">
-      <h2 id="css-properties">CSS custom properties</h2>
-      <div class="table-wrap">
-        <table>
-          <thead>
-            <tr>
-              <th>Property</th>
-              <th>Description</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr v-for="cssProp in component.cssProperties" :key="cssProp.name">
-              <td><code>{{ cssProp.name }}</code></td>
-              <td class="preline">{{ cssProp.description }}</td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-    </section>
-  </article>
+      <section v-if="usageHtml" class="doc-section">
+        <h2 id="usage">Usage</h2>
+        <!-- eslint-disable-next-line vue/no-v-html — our markdown, html disabled, code Shiki-highlighted at prerender -->
+        <div class="usage" v-html="usageHtml" />
+      </section>
+
+      <section v-if="examples.length" class="doc-section">
+        <h2 id="examples">Examples</h2>
+        <ExampleBlock
+          v-for="example in examples"
+          :key="example.name"
+          :example="example"
+          :html="examplesHtml[example.name]"
+        />
+      </section>
+
+      <section class="doc-section">
+        <h2 id="api">API reference</h2>
+        <ApiComponent v-for="view in views" :key="view.tagName" :view="view" />
+      </section>
+    </article>
+
+    <aside class="toc" aria-label="On this page">
+      <p class="toc-heading">On this page</p>
+      <nav>
+        <a v-if="usageHtml" class="toc-link" href="#usage">Usage</a>
+        <a v-if="examples.length" class="toc-link" href="#examples">Examples</a>
+        <a class="toc-link" href="#api">API reference</a>
+        <template v-for="view in views" :key="view.tagName">
+          <a class="toc-link toc-component" :href="`#${view.tagName}`">
+            {{ view.tagName }}
+          </a>
+          <a
+            v-for="section in view.sections"
+            :key="section.id"
+            class="toc-link toc-sub"
+            :href="`#${section.id}`"
+          >
+            {{ section.label }}
+          </a>
+        </template>
+      </nav>
+    </aside>
+  </div>
 </template>
 
 <script setup lang="ts">
-import type { CemEvent } from '~/composables/useManifest';
+import { toComponentView, useManifest } from '~/composables/useManifest';
 
 const route = useRoute();
 
-const { findComponent } = useManifest();
+const tag = String(route.params.tag);
 
-const component = findComponent(String(route.params.tag));
+const { findComponent, parentOf, resolveGroup } = useManifest();
 
-if (!component) {
-  throw createError({ fatal: true, statusCode: 404, statusMessage: 'Unknown component' });
+// A folded composed child has no page of its own — send it to its parent's
+// group (ADR-0013). routeRules also covers direct static hits.
+const parent = parentOf(tag);
+
+if (parent) {
+  await navigateTo(`/components/${parent}#${tag}`, { redirectCode: 301 });
 }
 
-// Fields carry the property-side truth; the attributes array only lists the
-// attribute-compatible subset — join them so the table shows both names.
-const attributeByField = new Map(
-  (component.attributes ?? []).map((attribute) => [attribute.fieldName, attribute.name]),
-);
+const group = resolveGroup(tag);
 
-const props = (component.members ?? [])
-  .filter((member) => member.kind === 'field')
-  .map((member) => ({
-    attribute: attributeByField.get(member.name) ?? null,
-    default: member.default,
-    description: member.description,
-    name: member.name,
-    type: member.type?.text ?? '',
-  }));
+if (!parent && (!group.length || !findComponent(tag))) {
+  throw createError({
+    fatal: true,
+    statusCode: 404,
+    statusMessage: 'Unknown component',
+  });
+}
 
-const methods = (component.members ?? []).filter((member) => member.kind === 'method');
+const views = group.map(toComponentView);
 
-const eventDetail = (event: CemEvent) =>
-  event.type?.text.replace(/^CustomEvent<(.*)>$/s, '$1') ?? 'void';
+const parentView = views[0];
 
-const examples = useExamples(component.tagName);
+const examples = useExamples(group.map((c) => c.tagName));
 
-const usageMarkdown = useUsageDoc(component.tagName);
+const usageSource = useUsageDoc(tag);
 
-const usageHtml = usageMarkdown ? renderMarkdown(usageMarkdown) : null;
+// Highlight (Shiki) + render markdown at prerender; serialized into the static
+// payload so the client ships no highlighter. See utils/highlight.ts.
+const { data } = await useAsyncData(`page-${tag}`, async () => {
+  const { highlightCode, renderMarkdown } = await import('~/utils/highlight');
 
-useHead({ title: `${component.tagName} — CSC Design System` });
+  const examplesHtml: Record<string, Record<string, string>> = {};
+
+  for (const example of examples) {
+    const byLabel: Record<string, string> = {};
+
+    for (const t of example.tabs) {
+      byLabel[t.label] = await highlightCode(t.code, t.lang);
+    }
+
+    examplesHtml[example.name] = byLabel;
+  }
+
+  return {
+    examplesHtml,
+    usageHtml: usageSource ? await renderMarkdown(usageSource) : null,
+  };
+});
+
+const examplesHtml = computed(() => data.value?.examplesHtml ?? {});
+
+const usageHtml = computed(() => data.value?.usageHtml ?? null);
+
+useHead({ title: `${tag} — CSC Design System` });
 </script>
