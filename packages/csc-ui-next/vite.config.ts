@@ -34,9 +34,18 @@ const docsManifestPlugin = () => ({
   },
 });
 
+// In watch mode, do NOT empty `dist` on each rebuild. vite would otherwise
+// delete every file (including `styles/css/*` and `custom-elements.json`, which
+// are regenerated afterwards in `writeBundle`) leaving a sub-second window where
+// they 404 — the docs dev server hits this on HMR when it re-resolves the global
+// token CSS. Overwriting in place removes the window. A one-shot production
+// build still empties for a clean output.
+const isWatch = process.argv.includes('--watch');
+
 export default defineConfig({
   build: {
     cssCodeSplit: false,
+    emptyOutDir: !isWatch,
     lib: {
       entry: resolve(__dirname, 'src/index.ts'),
       fileName: 'csc-ui-next',
