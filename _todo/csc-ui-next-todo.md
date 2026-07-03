@@ -18,6 +18,9 @@
 - type exports / refactor
   - define types in the components (export them)
   - no 'string' types for values that are a set of accepted values like "'warning' | 'success' | 'error' | 'info'"
+  - see ADR-0015 for the decided mechanism (component-owned unions, expanded types in the manifest, generated VS Code/JetBrains data, `@freeform` lint)
+  - remove dead `color` prop on c-radio-group (declared, defaults to `''`, never read by template or script — seeded from Stencil)
+  - c-spinner's `color` is NOT dead (template binds it via `:style` shorthand) — it's a freeform CSS-color passthrough, tag `@freeform`, don't convert to a union
 - new documentation site without csc-ui and the components.json it generated
   - examples for ts/vue/angular/react
 

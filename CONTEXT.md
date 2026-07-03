@@ -133,6 +133,14 @@ _Avoid_: docs.json / components.json (the Stencil-era artifacts), schema, metada
 The JSDoc-annotated TypeScript interface each component declares listing every event it dispatches on its host (name → `detail` type). The single source of truth for runtime emission (via the typed emit helper), consumer typings, and the **manifest**'s event section. An event not in the map cannot be dispatched.
 _Avoid_: emits (Vue `defineEmits` is not used in this library), event list
 
+**Component-owned type**:
+A public TypeScript type that belongs to exactly one component (its prop unions, option shapes, filter predicates). Declared in that component and exported from the package entry for consumers, named `C<Component><Concept>` (`CButtonSize`, `CAlertType`). Two components' types looking alike does **not** make the type shared — coincidentally equal value sets stay component-owned so they can diverge (see **Shared type**).
+_Avoid_: local type (it is public, not local), component type (too easily read as "the type of the component")
+
+**Shared type**:
+A public TypeScript type whose **value crosses a component boundary** — one component emits or accepts what another produces (e.g. `CSelectItem`, accepted by both `c-select` and `c-autocomplete`). Lives centrally in `src/types.ts`, which holds *only* these. Textual equality is not sharing: two components declaring the same union is heritage, not contract, and each keeps its own **component-owned type**.
+_Avoid_: common type, global type, public type (both shared and component-owned types are public; shared is specifically the crosses-a-boundary case)
+
 **Usage doc**:
 The hand-written markdown file colocated with a component (`usage.md` beside the SFC) holding consumer-facing prose — purpose, guidelines, accessibility notes. Flows to the docs site at build time; complements, never duplicates, the generated API tables.
 _Avoid_: readme (GitHub-facing), description (a description is the one-liner on a single API member)
