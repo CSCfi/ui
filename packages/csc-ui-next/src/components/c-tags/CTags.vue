@@ -7,6 +7,8 @@
  * @slot default - Default slot
  *
  * @seeded from csc-ui — verify
+ *
+ * @subcomponents c-tag
  */
 import { onMounted, toRefs, useHost, watch } from 'vue';
 

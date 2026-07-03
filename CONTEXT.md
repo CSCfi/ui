@@ -111,6 +111,14 @@ _Avoid_: emits (Vue `defineEmits` is not used in this library), event list
 The hand-written markdown file colocated with a component (`usage.md` beside the SFC) holding consumer-facing prose — purpose, guidelines, accessibility notes. Flows to the docs site at build time; complements, never duplicates, the generated API tables.
 _Avoid_: readme (GitHub-facing), description (a description is the one-liner on a single API member)
 
+**Composed child**:
+A component the consumer authors only inside a specific parent's markup (`c-tag` inside `c-tags`, `c-card-title` inside `c-card`). Declared by the parent via a `@subcomponents` docblock tag, emitted into the **manifest**, and folded into the parent on the docs site — no top-level nav entry or standalone page of its own; its examples and API tables live under the parent, **grouped by component**. Distinct from an _internal-only element_ (e.g. `c-dropdown`), which the consumer never authors at all and which is documented nowhere.
+_Avoid_: sub-component (imprecise — conflates composed children with internal-only elements), nested component
+
+**Standalone component**:
+A component the consumer uses on its own — it keeps a top-level nav entry and its own page. The complement of a **composed child**. A standalone can still be a parent that owns composed children.
+_Avoid_: top-level component, root component, main component
+
 ### Flagged ambiguities
 
 - **"Vue version"** is ambiguous: it can mean (a) the `@cscfi/csc-ui-vue` directive, (b) a component implemented in Vue inside `csc-ui-next`, or (c) the Vue.js framework version. Prefer **"`csc-ui-next` component"** for (b), **"`v-control` directive"** for (a), and **"Vue 3"/"Vue 2"** explicitly for (c).

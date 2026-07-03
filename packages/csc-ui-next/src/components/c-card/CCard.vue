@@ -28,6 +28,8 @@
  * @csspart fullscreen-toggle - The circular fullscreen toggle button shown when the fullscreen prop is set
  *
  * @seeded from csc-ui — verify
+ *
+ * @subcomponents c-card-title, c-card-content, c-card-actions
  */
 import { mdiFullscreen, mdiFullscreenExit } from '@mdi/js';
 import { tv } from 'tailwind-variants';

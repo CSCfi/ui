@@ -35,6 +35,8 @@
  * @csspart nav - The scrollable `<nav>` element holding the navigation items
  *
  * @seeded from csc-ui — verify
+ *
+ * @subcomponents c-side-navigation-item, c-side-navigation-title, c-sub-navigation-item
  */
 import { mdiArrowRight } from '@mdi/js';
 import { tv } from 'tailwind-variants';

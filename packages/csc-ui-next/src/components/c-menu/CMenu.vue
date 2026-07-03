@@ -47,6 +47,8 @@
  * @csspart list - The menu list surface inside the panel
  *
  * @seeded from csc-ui — verify
+ *
+ * @subcomponents c-menu-item, c-menu-label
  */
 import { tv } from 'tailwind-variants';
 import {

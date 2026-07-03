@@ -9,6 +9,8 @@
  * @slot default - c-list-item components of the list
  *
  * @csspart root - The grid container laying out the list items
+ *
+ * @subcomponents c-list-item, c-list-item-title
  */
 import { tv } from 'tailwind-variants';
 import {

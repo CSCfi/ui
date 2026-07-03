@@ -28,6 +28,8 @@
  * @csspart content - The padded column wrapping the slotted contents
  *
  * @seeded from csc-ui — verify
+ *
+ * @subcomponents c-login-card-title, c-login-card-content, c-login-card-actions
  */
 import { tv } from 'tailwind-variants';
 import { computed, onBeforeUnmount, onMounted, ref, useTemplateRef } from 'vue';

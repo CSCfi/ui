@@ -196,6 +196,8 @@
  * @csspart search - The search-input row at the top of the panel
  * @csspart list - The scrollable options listbox
  * @csspart info - The no-results row shown when the query matches no options
+ *
+ * @subcomponents c-option, c-option-value
  */
 import { mdiAlert, mdiCheck, mdiChevronDown, mdiClose } from '@mdi/js';
 import { tv } from 'tailwind-variants';

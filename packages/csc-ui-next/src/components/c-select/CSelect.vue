@@ -105,6 +105,8 @@
  * @slot post - Trailing content forwarded to the inner c-input, rendered after the select's controls
  *
  * @seeded from csc-ui — verify
+ *
+ * @subcomponents c-option
  */
 import { mdiChevronDown, mdiClose } from '@mdi/js';
 import { tv } from 'tailwind-variants';

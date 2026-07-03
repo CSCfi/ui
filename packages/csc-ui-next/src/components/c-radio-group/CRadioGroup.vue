@@ -108,6 +108,8 @@
  * @csspart message - The hint/error message line below the radios
  *
  * @seeded from csc-ui — verify
+ *
+ * @subcomponents c-radio
  */
 import { mdiCloseCircle } from '@mdi/js';
 import { tv } from 'tailwind-variants';

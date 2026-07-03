@@ -12,6 +12,8 @@
  *     single source of truth
  *   - an `emitModelValue` caller whose event map is missing the
  *     `changeValue` / `update:value` / `input` triple that helper dispatches
+ *   - an `@subcomponents` tag naming an unknown tag, or the component itself
+ *     (ADR-0013 — the composed-children list must resolve to real components)
  *
  * Warnings (best-effort surface):
  *   - `@cssprop` naming a custom property never referenced in the SFC source
@@ -22,12 +24,13 @@
  *   - missing `usage.md`
  */
 
-export const lintComponent = (component) => {
+export const lintComponent = (component, knownTags = new Set()) => {
   const errors = [];
 
   const warnings = [];
 
-  const { docTags, source, template, usagePath } = component;
+  const { docTags, source, subcomponents, tagName, template, usagePath } =
+    component;
 
   const tagged = (tag) =>
     docTags.filter((t) => t.tag === tag).map((t) => t.name);
@@ -89,6 +92,14 @@ export const lintComponent = (component) => {
           `emitModelValue is used but "${name}" is missing from the event map`,
         );
       }
+    }
+  }
+
+  for (const child of subcomponents ?? []) {
+    if (child === tagName) {
+      errors.push(`@subcomponents lists the component itself ("${child}")`);
+    } else if (!knownTags.has(child)) {
+      errors.push(`@subcomponents "${child}" is not a known component`);
     }
   }
 

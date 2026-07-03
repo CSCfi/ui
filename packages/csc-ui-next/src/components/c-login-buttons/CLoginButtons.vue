@@ -7,6 +7,8 @@
  * @slot default - Default slot
  *
  * @seeded from csc-ui — verify
+ *
+ * @subcomponents c-login-button
  */
 // `<slot />` root (fragment) — keep consumer fallthrough attrs (class/style)
 // on the host element instead of tripping the "renders fragment" warning.

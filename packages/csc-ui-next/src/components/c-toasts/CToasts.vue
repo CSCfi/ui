@@ -19,6 +19,8 @@
  *
  * @slot default - Content of a custom toast message, projected into the single `custom`-flagged c-toast
  * @csspart root - The grid container the toast items stack in
+ *
+ * @subcomponents c-toast
  */
 import { tv } from 'tailwind-variants';
 import {

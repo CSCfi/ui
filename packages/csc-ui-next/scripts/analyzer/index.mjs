@@ -77,6 +77,14 @@ const analyzeComponent = (tagName) => {
 
   const { description, tags: docTags } = parseDocblock(scriptApi.docblock);
 
+  // `@subcomponents c-a, c-b` lists the composed children folded into this
+  // parent's docs page (ADR-0013). The docblock parser splits name/description
+  // at the first token, so rejoin and split the whole list on commas/space.
+  const subcomponents = docTags
+    .filter((t) => t.tag === 'subcomponents')
+    .flatMap((t) => `${t.name} ${t.description}`.split(/[\s,]+/))
+    .filter(Boolean);
+
   const template = analyzeTemplate(descriptor.template?.ast);
 
   const usageSource = path.join(dir, 'usage.md');
@@ -94,6 +102,7 @@ const analyzeComponent = (tagName) => {
     props: scriptApi.props,
     script: script?.content ?? '',
     source,
+    subcomponents,
     tagName,
     template,
     usagePath: hasUsage ? `docs/${tagName}/usage.md` : null,
@@ -103,11 +112,16 @@ const analyzeComponent = (tagName) => {
 
 // ---- analyze ----------------------------------------------------------------
 
-const tags = readdirSync(componentsDir, { withFileTypes: true })
+const allTags = readdirSync(componentsDir, { withFileTypes: true })
   .filter((entry) => entry.isDirectory())
   .map((entry) => entry.name)
-  .filter((tag) => !only || tag === only)
   .sort();
+
+// The full component universe, independent of --only, so @subcomponents
+// validation resolves children even when analyzing a single component.
+const knownTags = new Set(allTags);
+
+const tags = allTags.filter((tag) => !only || tag === only);
 
 if (only && !tags.length) {
   console.error(`unknown component "${only}"`);
@@ -139,7 +153,7 @@ const documented = { events: 0, props: 0, totalEvents: 0, totalProps: 0 };
 let seededCount = 0;
 
 for (const component of components) {
-  const { errors, warnings } = lintComponent(component);
+  const { errors, warnings } = lintComponent(component, knownTags);
 
   errorCount += errors.length;
   warningCount += warnings.length;
@@ -197,7 +211,7 @@ if (!only) {
 }
 
 console.log(
-  `lint: ${errorCount} errors, ${warningCount} warnings — props described ${documented.props}/${documented.totalProps}, events described ${documented.events}/${documented.totalEvents}, event maps ${components.filter((c) => c.hasEventMap).length}/${components.length}, usage docs ${components.filter((c) => c.usagePath).length}/${components.length}, seeded pending review ${seededCount}`,
+  `lint: ${errorCount} errors, ${warningCount} warnings — props described ${documented.props}/${documented.totalProps}, events described ${documented.events}/${documented.totalEvents}, event maps ${components.filter((c) => c.hasEventMap).length}/${components.length}, usage docs ${components.filter((c) => c.usagePath).length}/${components.length}, families ${components.filter((c) => c.subcomponents.length).length}, seeded pending review ${seededCount}`,
 );
 
 if (failures.length || (strict && errorCount)) process.exit(1);

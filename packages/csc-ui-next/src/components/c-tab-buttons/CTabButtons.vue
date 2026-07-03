@@ -18,6 +18,8 @@
  * @csspart indicator - The single sliding fill that highlights the active button
  *
  * @seeded from csc-ui — verify
+ *
+ * @subcomponents c-tab-button
  */
 import { tv } from 'tailwind-variants';
 import {

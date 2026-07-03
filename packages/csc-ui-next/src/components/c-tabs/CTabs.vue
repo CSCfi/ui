@@ -47,6 +47,8 @@
  * @csspart content - Wrapper around the slotted tab content panels
  *
  * @seeded from csc-ui — verify
+ *
+ * @subcomponents c-tab, c-tab-items, c-tab-item
  */
 import { mdiArrowLeft, mdiArrowRight } from '@mdi/js';
 import { tv } from 'tailwind-variants';

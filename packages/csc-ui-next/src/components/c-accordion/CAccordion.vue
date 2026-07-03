@@ -11,6 +11,8 @@
  * @csspart root - The outer wrapper stacking the accordion items vertically
  *
  * @seeded from csc-ui — verify
+ *
+ * @subcomponents c-accordion-item
  */
 import { tv } from 'tailwind-variants';
 import { onBeforeUnmount, onMounted, ref, useHost, watch } from 'vue';

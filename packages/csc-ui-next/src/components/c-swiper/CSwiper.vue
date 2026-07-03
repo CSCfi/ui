@@ -67,6 +67,8 @@
  * @slot default - Default slot for the c-swiper-tab elements
  *
  * @seeded from csc-ui — verify
+ *
+ * @subcomponents c-swiper-tab
  */
 import { mdiChevronLeft, mdiChevronRight } from '@mdi/js';
 import {

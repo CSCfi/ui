@@ -4,7 +4,9 @@
  * Shapes the per-component analysis into the CEM schema
  * (https://github.com/webcomponents/custom-elements-manifest). Everything
  * CSC-specific rides in a single `csc` vendor-extension object:
- *   - declaration-level: `csc.usage` (dist-relative path of the usage doc)
+ *   - declaration-level: `csc.usage` (dist-relative path of the usage doc),
+ *                        `csc.subcomponents` (composed children folded into
+ *                        this parent's docs page, ADR-0013)
  *   - manifest-level:    `csc.types` (shared public types from src/types.ts,
  *                        which CEM has no first-class kind for)
  */
@@ -43,6 +45,15 @@ const docTagEntries = (docTags, tag) =>
       ...(t.description ? { description: t.description } : {}),
     }));
 
+const declarationCsc = (c) => {
+  const csc = {
+    ...(c.usagePath ? { usage: c.usagePath } : {}),
+    ...(c.subcomponents.length ? { subcomponents: c.subcomponents } : {}),
+  };
+
+  return Object.keys(csc).length ? { csc } : {};
+};
+
 export const buildManifest = (components, sharedTypes) => ({
   schemaVersion: '1.0.0',
   ...(sharedTypes.length ? { csc: { types: sharedTypes } } : {}),
@@ -54,7 +65,7 @@ export const buildManifest = (components, sharedTypes) => ({
         name: c.className,
         tagName: c.tagName,
         ...(c.description ? { description: c.description } : {}),
-        ...(c.usagePath ? { csc: { usage: c.usagePath } } : {}),
+        ...declarationCsc(c),
         attributes: c.props
           .filter((p) => isAttributeCompatible(p.type))
           .map(attribute),

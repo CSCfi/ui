@@ -18,6 +18,8 @@
  * @csspart label - The current step's label shown below the row in the collapsed (mobile) layout
  *
  * @seeded from csc-ui — verify
+ *
+ * @subcomponents c-step
  */
 import { tv } from 'tailwind-variants';
 import {
