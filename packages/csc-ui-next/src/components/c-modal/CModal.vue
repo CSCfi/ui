@@ -191,6 +191,13 @@ const openDialog = () => {
 };
 
 const closeDialog = () => {
+  // Nothing to close. Guards against a spurious close animation: the dialog is
+  // `display:block` even when closed (only `:not([open])` opacity hides it), so
+  // adding `.closing` to a never-opened dialog would play the close keyframe
+  // from a visible state — a flash on load when the `value` watch fires false
+  // during prop initialization.
+  if (!dialogRef.value?.open) return;
+
   if (animationsDisabled) {
     finalizeClose();
 
@@ -299,6 +306,15 @@ onMounted(() => {
       ? `${props.width}px`
       : String(props.width);
   host?.style.setProperty('--_c-modal-width', width);
+
+  // Settle `standaloneMode` now, before the first open. It feeds the dialog's
+  // reactive `:class`, and `openDialog()` adds the `.opening` animation class
+  // imperatively. If the first open were also the moment `standaloneMode`
+  // flips (false → true in standalone usage), Vue would re-render and rewrite
+  // the dialog's whole className from its vdom — stripping `.opening` a
+  // microtask later and killing the open animation. Resolving here means the
+  // first open changes no Vue-owned class, so the imperative class survives.
+  resolveBackdrop();
 
   if (props.value) openDialog();
 });

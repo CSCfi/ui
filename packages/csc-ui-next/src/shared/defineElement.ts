@@ -103,6 +103,68 @@ interface ConnectableElement extends HTMLElement {
   connectedCallback?(): void;
 }
 
+const hyphenate = (key: string) =>
+  key.replace(/([a-z0-9])([A-Z])/g, '$1-$2').toLowerCase();
+
+/**
+ * Prop keys declared as exactly `Boolean` — not a union like
+ * `boolean | string`, where the literal string "false" could be meaningful.
+ */
+const booleanPropKeys = (component: Component): string[] => {
+  const props = (component as { props?: Record<string, unknown> }).props ?? {};
+
+  return Object.keys(props).filter((key) => {
+    const decl = props[key];
+
+    const type =
+      decl && typeof decl === 'object' && 'type' in decl
+        ? (decl as { type: unknown }).type
+        : decl;
+
+    return (
+      type === Boolean ||
+      (Array.isArray(type) && type.length === 1 && type[0] === Boolean)
+    );
+  });
+};
+
+/**
+ * Normalize server-serialized boolean attributes before Vue reads them.
+ *
+ * Vue SSR renders a bound boolean prop on a custom element as a literal
+ * attribute — `:value.prop="false"` becomes `value="false"` in the HTML. On
+ * upgrade, Vue's custom-element wrapper only casts the empty string to `true`;
+ * `"true"`/`"false"` stay raw strings, so a Boolean prop receives the TRUTHY
+ * string "false" (this genuinely opened `<c-modal value="false">` on page
+ * load). Stencil coerced these strings, so SSR consumers rely on it.
+ *
+ * Must run BEFORE Vue's def resolution (before `super.connectedCallback()`):
+ * the component mounts inside it, and lifecycle hooks would otherwise observe
+ * the raw string. An own instance property set here is picked up by Vue's
+ * pre-upgrade-props pass and wins over the attribute (which also makes this
+ * correct for Boolean props whose default is `true`); a property the consumer
+ * already set pre-connect is respected. Connect-time only by design — runtime
+ * `setAttribute(name, 'true')` after connect still feeds the raw string; set
+ * properties (or `''`) instead.
+ */
+const normalizeBooleanAttributes = (
+  el: ConnectableElement,
+  keys: string[],
+): void => {
+  for (const key of keys) {
+    if (Object.prototype.hasOwnProperty.call(el, key)) continue;
+
+    for (const attr of new Set([hyphenate(key), key.toLowerCase()])) {
+      const raw = el.getAttribute(attr);
+
+      if (raw === 'true' || raw === 'false') {
+        (el as unknown as Record<string, boolean>)[key] = raw === 'true';
+        break;
+      }
+    }
+  }
+};
+
 /**
  * Register a Vue SFC as a custom element under `tag`, with the shared Tailwind
  * utility stylesheet applied to its shadow root alongside the SFC's own styles.
@@ -131,14 +193,24 @@ export function defineElement(tag: string, component: Component): void {
   // overload); cast to the form it expects. Runtime behaviour is unchanged.
   const vueComponent = component as Parameters<typeof defineCustomElement>[0];
 
+  const booleanKeys = booleanPropKeys(component);
+
   if (!supportsAdopted) {
     // Fallback: let Vue inject the styles per instance, as before. The merge is
     // deliberate — Vue's `styles` option replaces (not appends to) the SFC's
     // `.styles` array, so we concatenate Tailwind with the SFC styles ourselves.
-    const Element = defineCustomElement(vueComponent, {
+    const Base = defineCustomElement(vueComponent, {
       styles: [tailwindStyles, ...sfcStyles],
     });
-    customElements.define(tag, Element);
+
+    class Element extends (Base as unknown as { new (): ConnectableElement }) {
+      connectedCallback() {
+        normalizeBooleanAttributes(this, booleanKeys);
+        super.connectedCallback?.();
+      }
+    }
+
+    customElements.define(tag, Element as unknown as CustomElementConstructor);
 
     return;
   }
@@ -151,6 +223,10 @@ export function defineElement(tag: string, component: Component): void {
 
   class Element extends (Base as unknown as { new (): ConnectableElement }) {
     connectedCallback() {
+      // Coerce SSR'd "true"/"false" boolean attributes before Vue resolves
+      // props (the component mounts inside super.connectedCallback).
+      normalizeBooleanAttributes(this, booleanKeys);
+
       // Vue creates the shadow root in its constructor and renders content
       // here; run that first, then attach the shared sheets.
       super.connectedCallback?.();
