@@ -108,6 +108,7 @@ interface CSwiperProps {
    * Id of the swiper element
    *
    * @seeded from csc-ui — verify
+   * @freeform
    */
   elementId?: string;
   /**

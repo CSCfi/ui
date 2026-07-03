@@ -102,6 +102,7 @@ interface CProgressBarProps {
    * Optional details message next to percentage display
    *
    * @seeded from csc-ui — verify
+   * @freeform
    */
   label?: string;
   /**

@@ -92,6 +92,7 @@ interface CTabProps {
    * Id of the tab
    *
    * @seeded from csc-ui — verify
+   * @freeform
    */
   hostId?: string;
   /**

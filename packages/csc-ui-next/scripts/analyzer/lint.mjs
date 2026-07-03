@@ -14,6 +14,10 @@
  *     `changeValue` / `update:value` / `input` triple that helper dispatches
  *   - an `@subcomponents` tag naming an unknown tag, or the component itself
  *     (ADR-0013 — the composed-children list must resolve to real components)
+ *   - a prop typed bare `string` without an `@freeform` tag (ADR-0015 —
+ *     set-of-accepted-values props must be named exported unions; genuinely
+ *     open-ended props declare it explicitly), or an `@freeform` tag on a
+ *     prop that is not a bare `string`
  *
  * Warnings (best-effort surface):
  *   - `@cssprop` naming a custom property never referenced in the SFC source
@@ -92,6 +96,20 @@ export const lintComponent = (component, knownTags = new Set()) => {
           `emitModelValue is used but "${name}" is missing from the event map`,
         );
       }
+    }
+  }
+
+  for (const prop of component.props) {
+    if (prop.type === 'string' && !prop.freeform) {
+      errors.push(
+        `prop "${prop.name}" is a bare string — give it a union type or tag it @freeform (ADR-0015)`,
+      );
+    }
+
+    if (prop.freeform && prop.type !== 'string') {
+      errors.push(
+        `prop "${prop.name}" is tagged @freeform but is not a bare string`,
+      );
     }
   }
 

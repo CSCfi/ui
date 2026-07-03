@@ -72,7 +72,8 @@
       "Bash(awk '/<script setup/,/^import/' src/components/c-autocomplete/CAutocomplete.vue)",
       "Bash(awk '/<script setup/,/^import/' src/components/c-step/CStep.vue)",
       "Bash(npx nuxi *)",
-      "Bash(git add *)"
+      "Bash(git add *)",
+      "Bash(npx vue-tsc *)"
     ]
   }
 }

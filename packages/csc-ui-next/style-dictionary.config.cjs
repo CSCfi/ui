@@ -24,6 +24,41 @@ const semanticInvariant = require('./tokens/semantic/invariant.json');
  * role→step lookup tables consumed directly by `createSemanticTheme`.
  */
 
+/**
+ * Pre-upgrade placeholders for the form-field shells.
+ *
+ * In server-rendered / static HTML the custom elements exist as plain unknown
+ * elements until the library's JS runs: they render inline with no shadow
+ * content, and `c-input`'s slotted light-DOM `<input>` paints with raw UA
+ * chrome (its native border). On upgrade the styled field mounts and the page
+ * reflows — a visible flash plus a layout shift.
+ *
+ * These `:not(:defined)` rules ship in the same `tokens.css` the consumer
+ * already imports (the only document-level stylesheet we own), hiding the raw
+ * content and reserving the field's resting geometry so upgrade does not
+ * shift the layout: 44px field row + 8px gap + 16px details row = 68px, or
+ * just the field row when `hide-details` is set.
+ */
+const preUpgradePlaceholders = `
+/* Pre-upgrade placeholders: hide raw slotted content and reserve the field's
+   resting height until the custom element upgrades. */
+c-autocomplete:not(:defined),
+c-input:not(:defined),
+c-select:not(:defined),
+c-text-field:not(:defined) {
+  display: block;
+  visibility: hidden;
+  min-height: 68px;
+}
+
+c-autocomplete[hide-details]:not(:defined),
+c-input[hide-details]:not(:defined),
+c-select[hide-details]:not(:defined),
+c-text-field[hide-details]:not(:defined) {
+  min-height: 44px;
+}
+`;
+
 // Emit the palette `--c-*` properties followed by the semantic-token layer.
 StyleDictionaryPackage.registerFormat({
   name: 'css/tokens',
@@ -35,7 +70,7 @@ StyleDictionaryPackage.registerFormat({
       semanticInvariant,
     );
 
-    return `${palette}\n${semantic}`;
+    return `${palette}\n${semantic}\n${preUpgradePlaceholders}`;
   },
 });
 

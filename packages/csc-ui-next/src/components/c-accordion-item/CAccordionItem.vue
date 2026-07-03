@@ -137,6 +137,7 @@ interface CAccordionItemProps {
    * Heading of the accordion item
    *
    * @seeded from csc-ui — verify
+   * @freeform
    */
   heading?: string;
   /**

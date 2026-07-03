@@ -45,15 +45,7 @@ export default typescriptEslint.config(
         'warn',
         {
           blankLine: 'always',
-          next: [
-            'interface',
-            'type',
-            'if',
-            'for',
-            'const',
-            'let',
-            'export',
-          ],
+          next: ['interface', 'type', 'if', 'for', 'const', 'let', 'export'],
           prev: '*',
         },
         {
@@ -107,7 +99,7 @@ export default typescriptEslint.config(
       'vue/block-order': [
         'error',
         {
-          order: ['template', 'script[setup]', 'script:not([setup])', 'style'],
+          order: ['template', 'script:not([setup])', 'script[setup]', 'style'],
         },
       ],
       'vue/component-name-in-template-casing': [

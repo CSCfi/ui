@@ -35,6 +35,78 @@
   </button>
 </template>
 
+<script lang="ts">
+export interface CIconButtonProps {
+  /**
+   * Show a badge on top of the icon
+   *
+   * @seeded from csc-ui — verify
+   */
+  badge?: null | number | string;
+  /**
+   * Danger variant of the button
+   *
+   * @seeded from csc-ui — verify
+   */
+  danger?: boolean;
+  /**
+   * Disable the button
+   *
+   * @seeded from csc-ui — verify
+   */
+  disabled?: boolean;
+  /**
+   * Ghost variant of the button
+   *
+   * @seeded from csc-ui — verify
+   */
+  ghost?: boolean;
+  /**
+   * Inverted color for dark backgrounds
+   *
+   * @seeded from csc-ui — verify
+   */
+  inverted?: boolean;
+  /**
+   * Loading variant of the button
+   *
+   * @seeded from csc-ui — verify
+   */
+  loading?: boolean;
+  /**
+   * Outlined variant of the button
+   *
+   * @seeded from csc-ui — verify
+   */
+  outlined?: boolean;
+  /**
+   * Path for the svg icon
+   *
+   * @seeded from csc-ui — verify
+   * @freeform SVG path data
+   */
+  path?: string;
+  /**
+   * Size of the button
+   *
+   * @seeded from csc-ui — verify
+   */
+  size?: CIconButtonSize;
+  /**
+   * Text variant of the button
+   *
+   * @seeded from csc-ui — verify
+   */
+  text?: boolean;
+}
+
+/**
+ * Size of the icon button. `small` and `x-small` render progressively more
+ * compact buttons; omitting the attribute renders the default size.
+ */
+export type CIconButtonSize = 'default' | 'small' | 'x-small';
+</script>
+
 <script setup lang="ts">
 /**
  * @slot default - Default slot for the icon
@@ -73,6 +145,14 @@ import { useRipple } from '../../shared/useRipple';
  * Hover utilities are unguarded because the disabled variant sets
  * `pointer-events-none`, so a disabled button never receives :hover.
  */
+// Hoisted so the runtime guard below can test membership; the `satisfies`
+// keeps the map complete against the public union (ADR-0015).
+const sizeVariants = {
+  default: { root: 'size-10' },
+  small: { root: 'size-8' },
+  'x-small': { root: 'size-7' },
+} satisfies Record<CIconButtonSize, object>;
+
 const iconButton = tv({
   compoundVariants: [
     // ---- default (no appearance flag) -----------------------------------
@@ -253,77 +333,10 @@ const iconButton = tv({
       },
     },
     outlined: { true: '' },
-    size: {
-      default: { root: 'size-10' },
-      small: { root: 'size-8' },
-      'x-small': { root: 'size-7' },
-    },
+    size: sizeVariants,
     text: { true: '' },
   },
 });
-
-interface CIconButtonProps {
-  /**
-   * Show a badge on top of the icon
-   *
-   * @seeded from csc-ui — verify
-   */
-  badge?: null | number | string;
-  /**
-   * Danger variant of the button
-   *
-   * @seeded from csc-ui — verify
-   */
-  danger?: boolean;
-  /**
-   * Disable the button
-   *
-   * @seeded from csc-ui — verify
-   */
-  disabled?: boolean;
-  /**
-   * Ghost variant of the button
-   *
-   * @seeded from csc-ui — verify
-   */
-  ghost?: boolean;
-  /**
-   * Inverted color for dark backgrounds
-   *
-   * @seeded from csc-ui — verify
-   */
-  inverted?: boolean;
-  /**
-   * Loading variant of the button
-   *
-   * @seeded from csc-ui — verify
-   */
-  loading?: boolean;
-  /**
-   * Outlined variant of the button
-   *
-   * @seeded from csc-ui — verify
-   */
-  outlined?: boolean;
-  /**
-   * Path for the svg icon
-   *
-   * @seeded from csc-ui — verify
-   */
-  path?: string;
-  /**
-   * Size of the button
-   *
-   * @seeded from csc-ui — verify
-   */
-  size?: string;
-  /**
-   * Text variant of the button
-   *
-   * @seeded from csc-ui — verify
-   */
-  text?: boolean;
-}
 
 const props = withDefaults(defineProps<CIconButtonProps>(), {
   badge: null,
@@ -338,6 +351,8 @@ const props = withDefaults(defineProps<CIconButtonProps>(), {
   text: false,
 });
 
+// Attributes can deliver any string at runtime; unknown values fall back to
+// the default size (ADR-0015).
 const ui = computed(() =>
   iconButton({
     danger: props.danger,
@@ -346,7 +361,7 @@ const ui = computed(() =>
     inverted: props.inverted,
     loading: props.loading,
     outlined: props.outlined,
-    size: props.size as 'default' | 'small' | 'x-small',
+    size: props.size in sizeVariants ? props.size : 'default',
     text: props.text,
   }),
 );

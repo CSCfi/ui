@@ -64,6 +64,7 @@ interface CSpinnerProps {
    * Color of the spinner
    *
    * @seeded from csc-ui — verify
+   * @freeform any CSS color value
    */
   color?: string;
   /**

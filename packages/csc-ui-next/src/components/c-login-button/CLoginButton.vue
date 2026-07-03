@@ -47,18 +47,21 @@ interface CLoginButtonProps {
    * Alt description for logo
    *
    * @seeded from csc-ui — verify
+   * @freeform any image alt text
    */
   alt?: string;
   /**
    * Login provider link. Do not set if using a javascript click handler
    *
    * @seeded from csc-ui — verify
+   * @freeform any URL
    */
   href?: string;
   /**
    * Login provider logo url
    *
    * @seeded from csc-ui — verify
+   * @freeform any image URL
    */
   src?: string;
 }

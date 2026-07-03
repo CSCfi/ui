@@ -12,6 +12,39 @@
   </div>
 </template>
 
+<script lang="ts">
+/**
+ * Horizontal placement of the toast stack.
+ */
+export type CToastsHorizontal = 'center' | 'left' | 'right';
+
+export interface CToastsProps {
+  /**
+   * Use absolute positioning
+   *
+   * @seeded from csc-ui — verify
+   */
+  absolute?: boolean;
+  /**
+   * Horizontal position
+   *
+   * @seeded from csc-ui — verify
+   */
+  horizontal?: CToastsHorizontal;
+  /**
+   * Vertical position
+   *
+   * @seeded from csc-ui — verify
+   */
+  vertical?: CToastsVertical;
+}
+
+/**
+ * Vertical placement of the toast stack.
+ */
+export type CToastsVertical = 'bottom' | 'top';
+</script>
+
 <script setup lang="ts">
 /**
  * Overlay container that stacks and manages c-toast notifications via its
@@ -31,6 +64,8 @@ import {
   useTemplateRef,
   watchEffect,
 } from 'vue';
+
+import type { CToastMessage } from '../../types';
 
 import { TOAST_BAND } from '../../shared/modalStack';
 
@@ -58,40 +93,6 @@ const toasts = tv({
   },
 });
 
-interface CToastsProps {
-  /**
-   * Use absolute positioning
-   *
-   * @seeded from csc-ui — verify
-   */
-  absolute?: boolean;
-  /**
-   * Horizontal position
-   *
-   * @seeded from csc-ui — verify
-   */
-  horizontal?: string;
-  /**
-   * Vertical position
-   *
-   * @seeded from csc-ui — verify
-   */
-  vertical?: string;
-}
-
-interface ToastMessage {
-  closeText?: string;
-  custom?: boolean;
-  duration?: number;
-  id?: string;
-  indeterminate?: boolean;
-  message: string;
-  persistent?: boolean;
-  progress?: boolean;
-  title?: string;
-  type?: 'error' | 'info' | 'success' | 'warning';
-}
-
 const props = withDefaults(defineProps<CToastsProps>(), {
   absolute: false,
   horizontal: 'center',
@@ -102,7 +103,7 @@ const host = useHost();
 
 const containerRef = useTemplateRef<HTMLElement>('containerRef');
 
-const messages = ref<ToastMessage[]>([]);
+const messages = ref<CToastMessage[]>([]);
 
 const ui = computed(() => toasts());
 
@@ -124,7 +125,7 @@ const defaultOptions = () => ({
  *
  * @seeded from csc-ui — verify
  */
-const addToast = (message: ToastMessage) => {
+const addToast = (message: CToastMessage) => {
   const hasCustom = messages.value.some((m) => m.custom);
 
   if (message.custom && hasCustom) {
@@ -166,7 +167,7 @@ const removeToast = (id: string) => {
   toast?.closeToast?.();
 };
 
-const onChildClose = (event: CustomEvent<ToastMessage>) => {
+const onChildClose = (event: CustomEvent<CToastMessage>) => {
   const id = event.detail?.id;
 
   if (!id) return;
@@ -183,6 +184,17 @@ const onChildClose = (event: CustomEvent<ToastMessage>) => {
 
 defineExpose({ addToast, removeToast });
 
+// Attributes can deliver any string at runtime; unknown placements fall back
+// to the default center/bottom (ADR-0015) — otherwise an invalid `vertical`
+// would leave the stack with no anchor class at all.
+const horizontal = computed(() =>
+  props.horizontal === 'left' || props.horizontal === 'right'
+    ? props.horizontal
+    : 'center',
+);
+
+const vertical = computed(() => (props.vertical === 'top' ? 'top' : 'bottom'));
+
 onMounted(() => {
   if (!host) return;
 
@@ -194,11 +206,11 @@ onMounted(() => {
 
   watchEffect(() => {
     host.classList.toggle('absolute', props.absolute);
-    host.classList.toggle('top', props.vertical === 'top');
-    host.classList.toggle('bottom', props.vertical === 'bottom');
-    host.classList.toggle('left', props.horizontal === 'left');
-    host.classList.toggle('right', props.horizontal === 'right');
-    host.classList.toggle('center', props.horizontal === 'center');
+    host.classList.toggle('top', vertical.value === 'top');
+    host.classList.toggle('bottom', vertical.value === 'bottom');
+    host.classList.toggle('left', horizontal.value === 'left');
+    host.classList.toggle('right', horizontal.value === 'right');
+    host.classList.toggle('center', horizontal.value === 'center');
   });
 });
 </script>

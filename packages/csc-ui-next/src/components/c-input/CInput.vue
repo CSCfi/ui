@@ -21,7 +21,10 @@
             :data-active="
               ((isActiveResolved || filled) && !labelOnTop) || undefined
             "
-            :style="{ '--_c-input-legend-width': legendWidth + 'px' }"
+            :style="{
+              '--_c-input-legend-width': legendWidth + 'px',
+              ...(transitionsReady ? {} : { transition: 'none' }),
+            }"
           >
             <span class="notranslate" />
           </legend>
@@ -46,6 +49,7 @@
             :class="ui.labelFloating()"
             :data-lifted="isActiveResolved || filled || undefined"
             :for="inputId || undefined"
+            :style="transitionsReady ? undefined : { transition: 'none' }"
             part="label"
           >
             {{ label }}
@@ -260,9 +264,14 @@ interface CInputProps {
    * Hint text for the input
    *
    * @seeded from csc-ui — verify
+   * @freeform
    */
   hint?: string;
-  /** id of the inner input element (for the label's htmlFor). */
+  /**
+   * id of the inner input element (for the label's htmlFor).
+   *
+   * @freeform
+   */
   inputId?: string;
   /** Renders textarea-specific spacing tweaks. */
   isTextarea?: boolean;
@@ -270,6 +279,7 @@ interface CInputProps {
    * Label of the input
    *
    * @seeded from csc-ui — verify
+   * @freeform
    */
   label?: string;
   /**
@@ -300,6 +310,7 @@ interface CInputProps {
    * Custom validation message
    *
    * @seeded from csc-ui — verify
+   * @freeform
    */
   validation?: string;
 }
@@ -394,6 +405,14 @@ const measureLabel = () => {
   if (el) labelWidth.value = el.scrollWidth * 0.75 + 6;
 };
 
+// The legend/label transitions are enabled one frame AFTER mount. The mount
+// measurements read `scrollWidth`/`offsetWidth`, forcing a reflow that
+// establishes the pre-measurement values (legend width 0) as transition start
+// states — without this gate, a field that mounts already filled paints with
+// the top border running through its lifted label and the notch visibly
+// animating open.
+const transitionsReady = ref(false);
+
 // preSlotWidth shifts the floating label rightwards to align with the
 // input's text start when the consumer has projected pre-slot content.
 const preSlotWidth = ref(0);
@@ -467,6 +486,10 @@ const onFocusOut = () => {
 onMounted(() => {
   measureLabel();
   measurePreSlot();
+
+  requestAnimationFrame(() => {
+    transitionsReady.value = true;
+  });
 
   if (typeof ResizeObserver !== 'undefined') {
     const el = labelInlineRef.value || labelTopRef.value;

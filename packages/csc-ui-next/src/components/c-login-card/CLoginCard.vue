@@ -18,6 +18,65 @@
   </article>
 </template>
 
+<script lang="ts">
+/**
+ * CSS `mix-blend-mode` applied to the primary-coloured overlay drawn over
+ * the background image when `overlay` is set.
+ */
+export type CLoginCardBlendMode =
+  | 'color-burn'
+  | 'color-dodge'
+  | 'color'
+  | 'darken'
+  | 'difference'
+  | 'exclusion'
+  | 'hard-light'
+  | 'hue'
+  | 'lighten'
+  | 'luminosity'
+  | 'multiply'
+  | 'normal'
+  | 'overlay'
+  | 'saturation'
+  | 'screen'
+  | 'soft-light';
+
+export interface CLoginCardProps {
+  /**
+   * Background position (css background-position)
+   *
+   * @seeded from csc-ui — verify
+   * @freeform any CSS background-position value
+   */
+  backgroundPosition?: string;
+  /**
+   * Mobile breakpoint in pixels
+   *
+   * @seeded from csc-ui — verify
+   */
+  mobileBreakpoint?: number;
+  /**
+   * Add colored overlay to the background image
+   *
+   * @seeded from csc-ui — verify
+   */
+  overlay?: boolean;
+  /**
+   * Add colored overlay to the background image
+   *
+   * @seeded from csc-ui — verify
+   */
+  overlayBlendMode?: CLoginCardBlendMode;
+  /**
+   * Background image
+   *
+   * @seeded from csc-ui — verify
+   * @freeform any image URL
+   */
+  src?: string;
+}
+</script>
+
 <script setup lang="ts">
 /**
  * @slot default - Login Card contents
@@ -92,57 +151,6 @@ const loginCard = tv({
     },
   },
 });
-
-type CLoginCardBlendMode =
-  | 'color-burn'
-  | 'color-dodge'
-  | 'color'
-  | 'darken'
-  | 'difference'
-  | 'exclusion'
-  | 'hard-light'
-  | 'hue'
-  | 'lighten'
-  | 'luminosity'
-  | 'multiply'
-  | 'normal'
-  | 'overlay'
-  | 'saturation'
-  | 'screen'
-  | 'soft-light';
-
-interface CLoginCardProps {
-  /**
-   * Background position (css background-position)
-   *
-   * @seeded from csc-ui — verify
-   */
-  backgroundPosition?: string;
-  /**
-   * Mobile breakpoint in pixels
-   *
-   * @seeded from csc-ui — verify
-   */
-  mobileBreakpoint?: number;
-  /**
-   * Add colored overlay to the background image
-   *
-   * @seeded from csc-ui — verify
-   */
-  overlay?: boolean;
-  /**
-   * Add colored overlay to the background image
-   *
-   * @seeded from csc-ui — verify
-   */
-  overlayBlendMode?: CLoginCardBlendMode;
-  /**
-   * Background image
-   *
-   * @seeded from csc-ui — verify
-   */
-  src?: string;
-}
 
 const props = withDefaults(defineProps<CLoginCardProps>(), {
   backgroundPosition: 'bottom right',

@@ -1,8 +1,10 @@
 /**
- * Shared public types (`src/types.ts`) for the manifest's `csc.types`
- * vendor extension (ADR-0012 — CEM has no first-class type-alias kind).
- * The docs site renders these as the Types page and cross-links them from
- * prop/event type text.
+ * Public type extraction for the manifest's `csc.types` vendor extension
+ * (ADR-0012 — CEM has no first-class type-alias kind; ADR-0015 — component-
+ * owned types live in each SFC's plain `<script>` block, shared types in
+ * `src/types.ts`). The docs site renders these as the Types page and
+ * cross-links them from prop/event type text. Component-owned entries carry
+ * an `owner` tag name; shared entries have none.
  */
 
 import { readFileSync } from 'node:fs';
@@ -28,11 +30,9 @@ const jsDocDescription = (node) => {
 const isExported = (node) =>
   node.modifiers?.some((m) => m.kind === ts.SyntaxKind.ExportKeyword);
 
-export const extractSharedTypes = (filePath) => {
-  const content = readFileSync(filePath, 'utf8');
-
+export const extractExportedTypes = (content, fileName, owner = null) => {
   const sf = ts.createSourceFile(
-    filePath,
+    fileName,
     content,
     ts.ScriptTarget.Latest,
     true,
@@ -44,24 +44,22 @@ export const extractSharedTypes = (filePath) => {
   for (const statement of sf.statements) {
     if (!isExported(statement)) continue;
 
-    if (ts.isTypeAliasDeclaration(statement)) {
+    if (
+      ts.isTypeAliasDeclaration(statement) ||
+      ts.isInterfaceDeclaration(statement)
+    ) {
       types.push({
         declaration: statement.getText(sf),
         description: jsDocDescription(statement),
-        kind: 'type-alias',
+        kind: ts.isTypeAliasDeclaration(statement) ? 'type-alias' : 'interface',
         name: statement.name.text,
-      });
-    }
-
-    if (ts.isInterfaceDeclaration(statement)) {
-      types.push({
-        declaration: statement.getText(sf),
-        description: jsDocDescription(statement),
-        kind: 'interface',
-        name: statement.name.text,
+        ...(owner ? { owner } : {}),
       });
     }
   }
 
   return types;
 };
+
+export const extractSharedTypes = (filePath) =>
+  extractExportedTypes(readFileSync(filePath, 'utf8'), filePath);

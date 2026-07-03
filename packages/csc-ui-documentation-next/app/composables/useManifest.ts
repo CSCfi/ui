@@ -25,7 +25,7 @@ export interface CemNamed {
 }
 
 export interface CemMember {
-  csc?: { signature?: string };
+  csc?: { freeform?: boolean | string; signature?: string; typeAlias?: string };
   default?: string;
   description?: string;
   kind: 'field' | 'method';
@@ -54,6 +54,8 @@ export interface CemSharedType {
   description?: string;
   kind: string;
   name: string;
+  /** Owning component tag for component-owned types (ADR-0015); absent for shared types. */
+  owner?: string;
 }
 
 export interface CemModule {
@@ -127,6 +129,9 @@ export interface PropView {
   description?: string;
   name: string;
   type: string;
+  /** Alias name behind the expanded `type` text — links to the type's
+   *  declaration in the Types section on the same page. */
+  typeAlias?: string;
 }
 
 export interface EventView {
@@ -151,11 +156,76 @@ export interface ComponentView {
   sections: { id: string; label: string }[];
   slots: CemNamed[];
   tagName: string;
+  /** Public types documented under this component: its owned types plus any
+   *  shared type its API references (rendered on every referencing page —
+   *  the ADR-0013 self-containment rule applied to types). */
+  types: CemSharedType[];
 }
 
-/** Flatten one manifest declaration into the render/TOC view for its page group. */
-export const toComponentView = (c: CemDeclaration): ComponentView => {
+const publicTypes: CemSharedType[] = manifest.csc?.types ?? [];
+
+const sharedPublicTypes = publicTypes.filter((t) => !t.owner);
+
+/**
+ * The types documented under one component: everything it owns, plus every
+ * shared type reachable from its API text (prop/event/method types and the
+ * declarations of already-included types — `CToastMessage` pulls in
+ * `CToastType`).
+ */
+const typesFor = (c: CemDeclaration): CemSharedType[] => {
   const tag = c.tagName ?? c.name;
+
+  const included = publicTypes.filter((t) => t.owner === tag);
+
+  const apiText = [
+    ...(c.members ?? []).flatMap((m) => [
+      m.type?.text ?? '',
+      m.csc?.typeAlias ?? '',
+      m.csc?.signature ?? '',
+    ]),
+    ...(c.events ?? []).map((e) => e.type?.text ?? ''),
+  ].join('\n');
+
+  // Fixpoint over declaration texts so transitive references resolve.
+  let grew = true;
+
+  while (grew) {
+    grew = false;
+
+    const corpus = `${apiText}\n${included.map((t) => t.declaration).join('\n')}`;
+
+    for (const shared of sharedPublicTypes) {
+      if (included.includes(shared)) continue;
+
+      if (new RegExp(`\\b${shared.name}\\b`).test(corpus)) {
+        included.push(shared);
+        grew = true;
+      }
+    }
+  }
+
+  return included;
+};
+
+/**
+ * Flatten one manifest declaration into the render/TOC view for its page
+ * group. `claimedTypes` dedupes types across the group's views — a type
+ * renders once per page, under the first (parent-first) component that
+ * documents it.
+ */
+export const toComponentView = (
+  c: CemDeclaration,
+  claimedTypes: Set<string> = new Set(),
+): ComponentView => {
+  const tag = c.tagName ?? c.name;
+
+  const types = typesFor(c).filter((t) => {
+    if (claimedTypes.has(t.name)) return false;
+
+    claimedTypes.add(t.name);
+
+    return true;
+  });
 
   // Fields hold the property-side truth; the attributes array is the
   // attribute-compatible subset — join them so both names show.
@@ -171,6 +241,7 @@ export const toComponentView = (c: CemDeclaration): ComponentView => {
       description: m.description,
       name: m.name,
       type: m.type?.text ?? '',
+      typeAlias: m.csc?.typeAlias,
     }));
 
   const events: EventView[] = (c.events ?? []).map((e) => ({
@@ -203,6 +274,7 @@ export const toComponentView = (c: CemDeclaration): ComponentView => {
       id: `${tag}--css-properties`,
       label: 'CSS custom properties',
     },
+    types.length && { id: `${tag}--types`, label: 'Types' },
   ].filter(Boolean) as { id: string; label: string }[];
 
   return {
@@ -215,6 +287,7 @@ export const toComponentView = (c: CemDeclaration): ComponentView => {
     sections,
     slots,
     tagName: tag,
+    types,
   };
 };
 

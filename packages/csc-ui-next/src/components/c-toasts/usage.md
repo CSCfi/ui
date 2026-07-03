@@ -17,7 +17,7 @@ progress — stacked and managed by a single `c-toasts` container via its
 Place the default (fixed-position) `c-toasts` as a direct child of `body` or
 `c-main`. So placed, toasts are guaranteed to paint **above any open modal**
 and stay fully interactive — close buttons and hover-to-pause keep working
-while a modal blocks the rest of the page (ADR-0014).
+while a modal blocks the rest of the page.
 
 The `absolute` variant positions the stack inside a container for
 in-container notifications. It lives inside your page's stacking contexts,

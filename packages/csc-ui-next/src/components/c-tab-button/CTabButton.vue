@@ -13,6 +13,48 @@
   </c-button>
 </template>
 
+<script lang="ts">
+/*
+ * A single button inside <c-tab-buttons>. It is a thin behavioural wrapper
+ * around c-button (ADR-0006): it reuses c-button's ripple / a11y / sizing and
+ * forwards its `part`s via `exportparts`, while exposing a clean, semantic
+ * surface to both the parent and the consumer:
+ *
+ *  - The parent c-tab-buttons sets `active` / `value` / `size` / `disabled` and
+ *    listens for the `tabChange` / `tabFocus` events emitted here. It no longer
+ *    reaches into c-button internals.
+ *  - Consumers style per state with `c-tab-button[active]::part(root)` /
+ *    `c-tab-button:not([active])::part(root)` (shape/layout/arbitrary values),
+ *    and re-theme colour via `--c-*` tokens (ADR-0004/0006).
+ *
+ * The host stays `display:contents` (global) and carries no styling of its own.
+ * The button itself is always the transparent `text` variant of c-button: the
+ * solid active fill is drawn ONCE by the parent c-tab-buttons as a single
+ * absolutely-positioned indicator that slides between buttons (so the fill can
+ * animate between selections). Here we only flip the *text colour* on `active`.
+ *
+ * (Plain block comment, not JSDoc: attached JSDoc here would become the
+ * exported interface's consumer-facing description in the manifest.)
+ */
+export interface CTabButtonProps {
+  /** Active (selected) state — set by the parent c-tab-buttons. */
+  active?: boolean;
+  /** Disable the button, preventing it from being selected — also set by the parent c-tab-buttons when the whole group is disabled. */
+  disabled?: boolean;
+  /** Size of the button — drives the button's min-height; set by the parent c-tab-buttons. */
+  size?: CTabButtonSize;
+  /** Tab value. Falls back to the data-index stamped by c-tab-buttons. */
+  value?: number | string;
+}
+
+/**
+ * Size of the tab button. `small` renders a more compact button, `large` a
+ * taller one; the value is normally set by the parent `<c-tab-buttons>` from
+ * its own size.
+ */
+export type CTabButtonSize = 'default' | 'large' | 'small';
+</script>
+
 <script setup lang="ts">
 /**
  * A single tab button inside c-tab-buttons — a thin behavioural wrapper around
@@ -43,36 +85,6 @@ interface CTabButtonEvents {
    * can drive arrow-key navigation.
    */
   tabFocus: number | string | undefined;
-}
-
-/**
- * A single button inside <c-tab-buttons>. It is a thin behavioural wrapper
- * around c-button (ADR-0006): it reuses c-button's ripple / a11y / sizing and
- * forwards its `part`s via `exportparts`, while exposing a clean, semantic
- * surface to both the parent and the consumer:
- *
- *  - The parent c-tab-buttons sets `active` / `value` / `size` / `disabled` and
- *    listens for the `tabChange` / `tabFocus` events emitted here. It no longer
- *    reaches into c-button internals.
- *  - Consumers style per state with `c-tab-button[active]::part(root)` /
- *    `c-tab-button:not([active])::part(root)` (shape/layout/arbitrary values),
- *    and re-theme colour via `--c-*` tokens (ADR-0004/0006).
- *
- * The host stays `display:contents` (global) and carries no styling of its own.
- * The button itself is always the transparent `text` variant of c-button: the
- * solid active fill is drawn ONCE by the parent c-tab-buttons as a single
- * absolutely-positioned indicator that slides between buttons (so the fill can
- * animate between selections). Here we only flip the *text colour* on `active`.
- */
-interface CTabButtonProps {
-  /** Active (selected) state — set by the parent c-tab-buttons. */
-  active?: boolean;
-  /** Disable the button, preventing it from being selected — also set by the parent c-tab-buttons when the whole group is disabled. */
-  disabled?: boolean;
-  /** Size of the button ('small' | 'default' | 'large') — drives the button's min-height; set by the parent c-tab-buttons. */
-  size?: string;
-  /** Tab value. Falls back to the data-index stamped by c-tab-buttons. */
-  value?: number | string;
 }
 
 const props = withDefaults(defineProps<CTabButtonProps>(), {

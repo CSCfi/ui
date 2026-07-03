@@ -31,10 +31,12 @@ import { parse } from 'vue/compiler-sfc';
 
 import { buildManifest } from './cem.mjs';
 import { parseDocblock } from './docblock.mjs';
+import { emitIdeData } from './ide-data.mjs';
 import { lintComponent } from './lint.mjs';
 import { analyzeScript } from './script-api.mjs';
-import { extractSharedTypes } from './shared-types.mjs';
+import { extractExportedTypes, extractSharedTypes } from './shared-types.mjs';
 import { analyzeTemplate } from './template.mjs';
+import { buildAliasTable } from './type-expansion.mjs';
 
 const packageRoot = path.resolve(fileURLToPath(import.meta.url), '../../..');
 
@@ -49,6 +51,12 @@ const strict = args.includes('--strict');
 const only = args.includes('--only') ? args[args.indexOf('--only') + 1] : null;
 
 const verbose = args.includes('--verbose') || Boolean(only);
+
+const sharedTypesPath = path.join(packageRoot, 'src/types.ts');
+
+const sharedTypesSource = existsSync(sharedTypesPath)
+  ? readFileSync(sharedTypesPath, 'utf8')
+  : '';
 
 const analyzeComponent = (tagName) => {
   const dir = path.join(componentsDir, tagName);
@@ -71,9 +79,32 @@ const analyzeComponent = (tagName) => {
 
   const script = descriptor.scriptSetup ?? descriptor.script;
 
+  // The plain `<script>` block holds the exported component-owned types and
+  // the props interface (ADR-0015); it only counts as a separate block when a
+  // `<script setup>` also exists.
+  const plainScript = descriptor.scriptSetup ? descriptor.script : null;
+
+  // Aliases resolvable from this component's props: its own two script blocks
+  // plus the shared types file. Used to expand literal unions into `type.text`
+  // (ADR-0015).
+  const aliasTable = buildAliasTable([
+    { content: sharedTypesSource, fileName: sharedTypesPath },
+    { content: plainScript?.content ?? '', fileName: `${sfcPath}#plain` },
+    { content: script?.content ?? '', fileName: sfcPath },
+  ]);
+
   const scriptApi = script
-    ? analyzeScript(script.content, sfcPath, className)
+    ? analyzeScript(script.content, sfcPath, className, {
+        aliasTable,
+        plainContent: plainScript?.content ?? '',
+      })
     : { docblock: '', events: [], hasEventMap: false, methods: [], props: [] };
+
+  // Exported component-owned types (ADR-0015), tagged with their owner for
+  // the manifest's `csc.types` and the docs Types page.
+  const ownedTypes = plainScript
+    ? extractExportedTypes(plainScript.content, `${sfcPath}#plain`, tagName)
+    : [];
 
   const { description, tags: docTags } = parseDocblock(scriptApi.docblock);
 
@@ -99,8 +130,11 @@ const analyzeComponent = (tagName) => {
     hasEventMap: scriptApi.hasEventMap,
     methods: scriptApi.methods,
     modulePath: path.relative(packageRoot, sfcPath),
+    ownedTypes,
     props: scriptApi.props,
-    script: script?.content ?? '',
+    script: [plainScript?.content, script?.content]
+      .filter(Boolean)
+      .join('\n'),
     source,
     subcomponents,
     tagName,
@@ -181,20 +215,46 @@ for (const component of components) {
 
 for (const failure of failures) console.error(`analyze error: ${failure}`);
 
+// ---- re-export completeness (ADR-0015) --------------------------------------
+// Every public type — shared (src/types.ts) or component-owned (SFC plain
+// script blocks) — must be re-exported from the package entry, or consumers
+// cannot import it.
+
+const sharedTypes = sharedTypesSource
+  ? extractSharedTypes(sharedTypesPath)
+  : [];
+
+const publicTypes = [
+  ...sharedTypes,
+  ...components.flatMap((c) => c.ownedTypes),
+];
+
+if (!only) {
+  const entrySource = readFileSync(path.join(packageRoot, 'src/index.ts'), 'utf8');
+
+  for (const type of publicTypes) {
+    if (!new RegExp(`\\b${type.name}\\b`).test(entrySource)) {
+      errorCount += 1;
+      console.log(
+        `index.ts    error    public type "${type.name}" (${type.owner ?? 'shared'}) is not re-exported from src/index.ts`,
+      );
+    }
+  }
+}
+
 // ---- emit -------------------------------------------------------------------
 
 if (!only) {
-  const sharedTypesPath = path.join(packageRoot, 'src/types.ts');
-
-  const sharedTypes = existsSync(sharedTypesPath)
-    ? extractSharedTypes(sharedTypesPath)
-    : [];
+  const manifest = buildManifest(components, publicTypes);
 
   mkdirSync(distDir, { recursive: true });
   writeFileSync(
     path.join(distDir, 'custom-elements.json'),
-    `${JSON.stringify(buildManifest(components, sharedTypes), null, 2)}\n`,
+    `${JSON.stringify(manifest, null, 2)}\n`,
   );
+
+  // IDE completion data derived from the manifest (ADR-0015).
+  emitIdeData(manifest, distDir);
 
   for (const component of components) {
     if (!component.usageSource) continue;
@@ -206,7 +266,7 @@ if (!only) {
   }
 
   console.log(
-    `\ncustom-elements.json: ${components.length} components, ${sharedTypes.length} shared types`,
+    `\ncustom-elements.json: ${components.length} components, ${sharedTypes.length} shared types, ${publicTypes.length - sharedTypes.length} component-owned types`,
   );
 }
 

@@ -48,7 +48,7 @@ a layout shift when the scrollbar disappears.
 
 ## Layering
 
-Modals do **not** use the browser top layer (ADR-0014): fixed-position
+Modals do **not** use the browser top layer: fixed-position
 `c-toasts` placed at or near body level always paint above every modal and
 remain fully interactive. Transient popovers (menus, selects, autocomplete
 panels) use the top layer and paint above everything, including modals they

@@ -182,6 +182,114 @@
   </div>
 </template>
 
+<script lang="ts">
+import type { CSelectItem } from '../../types';
+
+/**
+ * Custom filter predicate for `c-autocomplete`. Return `true` to keep the
+ * option for the current query. The default matches the start of the label.
+ */
+export type CAutocompleteFilter = (
+  option: CAutocompleteOption,
+  query: string,
+) => boolean;
+
+/**
+ * A `c-autocomplete` item. Identical shape to {@link CSelectItem}; aliased for
+ * a name that reads naturally at the autocomplete call site.
+ */
+export type CAutocompleteItem = CSelectItem;
+
+/**
+ * The normalized option handed to a `c-autocomplete` `filter` predicate. `label`
+ * is the option's `name` (or its trimmed text content when authored as a
+ * slotted `<c-option>`).
+ */
+export interface CAutocompleteOption {
+  /** Whether the option is disabled. */
+  disabled: boolean;
+  /** The option's display label. */
+  label: string;
+  /** The option's value. */
+  value: number | string;
+}
+
+export interface CAutocompleteProps {
+  /** Make the selected value clearable */
+  clearable?: boolean;
+  /** Disable the input */
+  disabled?: boolean;
+  /** Custom filter predicate; receives a normalized option + the query */
+  filter?: CAutocompleteFilter;
+  /** Hide the hint and error messages */
+  hideDetails?: boolean;
+  /**
+   * Hint text for the input
+   *
+   * @freeform
+   */
+  hint?: string;
+  /**
+   * Id of the element
+   *
+   * @freeform
+   */
+  hostId?: string;
+  /** Dropdown items (when not using <c-option> elements) */
+  items?: CAutocompleteItem[];
+  /** Items per page before the list scrolls */
+  itemsPerPage?: number;
+  /**
+   * Element label
+   *
+   * @freeform
+   */
+  label?: string;
+  /** Label on top of the input */
+  labelOnTop?: boolean;
+  /** Show loading state */
+  loading?: boolean;
+  /**
+   * Input field name
+   *
+   * @freeform
+   */
+  name?: string;
+  /**
+   * Message shown when the query matches no options
+   *
+   * @freeform
+   */
+  noResultsText?: string;
+  /**
+   * Placeholder for the in-panel search input
+   *
+   * @freeform
+   */
+  placeholder?: string;
+  /** Show required validation */
+  required?: boolean;
+  /** Return object instead of value */
+  returnObject?: boolean;
+  /** Shadow variant */
+  shadow?: boolean;
+  /** Set the validity of the input */
+  valid?: boolean;
+  /** Manual validation */
+  validate?: boolean;
+  /** Validate the input on blur */
+  validateOnBlur?: boolean;
+  /**
+   * Custom validation message
+   *
+   * @freeform
+   */
+  validation?: string;
+  /** Selected value (scalar, or object when return-object is set) */
+  value?: CAutocompleteItem | null | number | string;
+}
+</script>
+
 <script setup lang="ts">
 /**
  * A filterable value-selection component: a readonly value field that opens a
@@ -211,12 +319,6 @@ import {
   useTemplateRef,
   watch,
 } from 'vue';
-
-import type {
-  CAutocompleteFilter,
-  CAutocompleteItem,
-  CAutocompleteOption,
-} from '../../types';
 
 import { ensureAnchorPositioning } from '../../shared/anchorPolyfill';
 import { coerceBoolean } from '../../shared/coerceBoolean';
@@ -307,53 +409,6 @@ const autocomplete = tv({
 // <c-autocomplete> stay on the host (which is `display:block`) instead of
 // leaking onto an internal node / tripping the "renders fragment" warning.
 defineOptions({ inheritAttrs: false });
-
-interface CAutocompleteProps {
-  /** Make the selected value clearable */
-  clearable?: boolean;
-  /** Disable the input */
-  disabled?: boolean;
-  /** Custom filter predicate; receives a normalized option + the query */
-  filter?: CAutocompleteFilter;
-  /** Hide the hint and error messages */
-  hideDetails?: boolean;
-  /** Hint text for the input */
-  hint?: string;
-  /** Id of the element */
-  hostId?: string;
-  /** Dropdown items (when not using <c-option> elements) */
-  items?: CAutocompleteItem[];
-  /** Items per page before the list scrolls */
-  itemsPerPage?: number;
-  /** Element label */
-  label?: string;
-  /** Label on top of the input */
-  labelOnTop?: boolean;
-  /** Show loading state */
-  loading?: boolean;
-  /** Input field name */
-  name?: string;
-  /** Message shown when the query matches no options */
-  noResultsText?: string;
-  /** Placeholder for the in-panel search input */
-  placeholder?: string;
-  /** Show required validation */
-  required?: boolean;
-  /** Return object instead of value */
-  returnObject?: boolean;
-  /** Shadow variant */
-  shadow?: boolean;
-  /** Set the validity of the input */
-  valid?: boolean;
-  /** Manual validation */
-  validate?: boolean;
-  /** Validate the input on blur */
-  validateOnBlur?: boolean;
-  /** Custom validation message */
-  validation?: string;
-  /** Selected value (scalar, or object when return-object is set) */
-  value?: CAutocompleteItem | null | number | string;
-}
 
 type NormalizedOption = {
   el?: HTMLElement;

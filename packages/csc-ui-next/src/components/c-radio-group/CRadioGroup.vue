@@ -241,12 +241,6 @@ const radioGroup = tv({
 
 interface CRadioGroupProps {
   /**
-   * Color of the radio group
-   *
-   * @seeded from csc-ui — verify
-   */
-  color?: string;
-  /**
    * Disable the radio group
    *
    * @seeded from csc-ui — verify
@@ -262,12 +256,14 @@ interface CRadioGroupProps {
    * Hint text for the input
    *
    * @seeded from csc-ui — verify
+   * @freeform
    */
   hint?: string;
   /**
    * Id of the element
    *
    * @seeded from csc-ui — verify
+   * @freeform
    */
   hostId?: string;
   /**
@@ -286,6 +282,7 @@ interface CRadioGroupProps {
    * Label of the radio group
    *
    * @seeded from csc-ui — verify
+   * @freeform
    */
   label?: string;
   /**
@@ -310,6 +307,7 @@ interface CRadioGroupProps {
    * Custom validation message
    *
    * @seeded from csc-ui — verify
+   * @freeform
    */
   validation?: string;
   /**
@@ -327,7 +325,6 @@ interface RadioItem {
 }
 
 const props = withDefaults(defineProps<CRadioGroupProps>(), {
-  color: '',
   disabled: false,
   hideDetails: false,
   hint: '',

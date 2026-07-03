@@ -41,9 +41,17 @@ const icon = tv({
 });
 
 interface CIconProps {
-  /** Fill color. */
+  /**
+   * Fill color.
+   *
+   * @freeform any CSS color value
+   */
   color?: string;
-  /** Svg `path` `d` attribute value. */
+  /**
+   * Svg `path` `d` attribute value.
+   *
+   * @freeform SVG path data
+   */
   path: string;
   /** Icon size in pixels. */
   size?: number;

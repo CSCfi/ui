@@ -156,6 +156,7 @@ interface CSliderProps {
    * Aria label
    *
    * @seeded from csc-ui — verify
+   * @freeform
    */
   ariaLabelInternal?: string;
   /**
@@ -174,18 +175,21 @@ interface CSliderProps {
    * Id of the element
    *
    * @seeded from csc-ui — verify
+   * @freeform
    */
   hostId?: string;
   /**
    * Id of the element
    *
    * @seeded from csc-ui — verify
+   * @freeform
    */
   hostName?: string;
   /**
    * Label of the slider
    *
    * @seeded from csc-ui — verify
+   * @freeform
    */
   label?: string;
   /**
@@ -228,6 +232,7 @@ interface CSliderProps {
    * Unit
    *
    * @seeded from csc-ui — verify
+   * @freeform
    */
   unit?: string;
   /**

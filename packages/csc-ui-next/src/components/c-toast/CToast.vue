@@ -12,7 +12,7 @@
 
     <div v-else :class="ui.item()" part="item">
       <svg :class="ui.icon()" viewBox="0 0 24 24">
-        <path :d="icons[message?.type || 'info']" />
+        <path :d="icons[toastType]" />
       </svg>
 
       <div :class="ui.content()" part="content">
@@ -52,6 +52,19 @@
   </div>
 </template>
 
+<script lang="ts">
+import type { CToastMessage, CToastType } from '../../types';
+
+export interface CToastProps {
+  /**
+   * Messages
+   *
+   * @seeded from csc-ui — verify
+   */
+  message?: CToastMessage | null;
+}
+</script>
+
 <script setup lang="ts">
 /**
  * A single toast notification, rendered and managed by c-toasts
@@ -89,7 +102,7 @@ interface CToastEvents {
    * dismiss or the auto-close timer), carrying the dismissed toast's message
    * object.
    */
-  close: null | ToastMessage;
+  close: CToastMessage | null;
 }
 
 /**
@@ -156,7 +169,7 @@ const toast = tv({
         icon: 'fill-warning',
         progressBar: 'bg-warning',
       },
-    },
+    } satisfies Record<CToastType, object>,
   },
 });
 
@@ -166,28 +179,6 @@ const toast = tv({
 // a duplicate live region (role=alert + aria-live) inside the host and risking a
 // double announcement. Keep the live-region attributes on the host only.
 defineOptions({ inheritAttrs: false });
-
-interface CToastProps {
-  /**
-   * Messages
-   *
-   * @seeded from csc-ui — verify
-   */
-  message?: null | ToastMessage;
-}
-
-interface ToastMessage {
-  closeText?: string;
-  custom?: boolean;
-  duration?: number;
-  id?: string;
-  indeterminate?: boolean;
-  message: string;
-  persistent?: boolean;
-  progress?: boolean;
-  title?: string;
-  type?: 'error' | 'info' | 'success' | 'warning';
-}
 
 const props = withDefaults(defineProps<CToastProps>(), {
   message: null,
@@ -211,18 +202,24 @@ const icons: Record<string, string> = {
 // role var (the toast's `box` border is the same role, but the close icon
 // lives inside a nested custom element and so can't pick that up via the
 // cascade).
-const ACCENT_VAR: Record<string, string> = {
+const ACCENT_VAR: Record<CToastType, string> = {
   error: 'var(--c-error)',
   info: 'var(--c-info)',
   success: 'var(--c-success)',
   warning: 'var(--c-warning)',
 };
 
-const accentColor = computed(
-  () => ACCENT_VAR[props.message?.type || 'info'] || ACCENT_VAR.info,
-);
+// A message object can carry any string at runtime; unknown types fall back
+// to `info` (ADR-0015), matching the original `var(--c-info)` fallback.
+const toastType = computed<CToastType>(() => {
+  const type = props.message?.type;
 
-const ui = computed(() => toast({ type: props.message?.type || 'info' }));
+  return type && type in ACCENT_VAR ? type : 'info';
+});
+
+const accentColor = computed(() => ACCENT_VAR[toastType.value]);
+
+const ui = computed(() => toast({ type: toastType.value }));
 
 const progressStyle = computed(() => ({
   '--_c-toast-duration': `${props.message?.duration}ms`,
@@ -277,7 +274,7 @@ const onMouseLeave = () => {
 // the @Method() decorator on the original Stencil component.
 defineExpose({ closeToast: close });
 
-const TYPES = ['info', 'success', 'warning', 'error'];
+const TYPES: readonly CToastType[] = ['error', 'info', 'success', 'warning'];
 
 // Show animation + auto-close timer. Runs exactly once, the first time
 // `message` is available.
@@ -310,7 +307,7 @@ onMounted(() => {
   watchEffect(() => {
     if (!props.message) return;
     host.id = `c-toast--${props.message.id || ''}`;
-    TYPES.forEach((t) => host.classList.toggle(t, props.message?.type === t));
+    TYPES.forEach((t) => host.classList.toggle(t, toastType.value === t));
   });
 
   if (props.message) {

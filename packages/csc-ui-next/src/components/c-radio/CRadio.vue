@@ -27,6 +27,7 @@ interface CRadioProps {
    * Radio button value
    *
    * @seeded from csc-ui — verify
+   * @freeform
    */
   value?: string;
 }

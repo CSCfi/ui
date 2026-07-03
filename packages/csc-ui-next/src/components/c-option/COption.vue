@@ -25,7 +25,11 @@ defineOptions({ inheritAttrs: false });
 interface COptionProps {
   /** Set option as disabled */
   disabled?: boolean;
-  /** Option name (display label fallback) */
+  /**
+   * Option name (display label fallback)
+   *
+   * @freeform
+   */
   name?: string;
   /** Set option as selected */
   selected?: boolean;

@@ -121,6 +121,8 @@ import {
   watch,
 } from 'vue';
 
+import type { CSelectItem } from '../../types';
+
 import { coerceBoolean } from '../../shared/coerceBoolean';
 import { emitModelValue } from '../../shared/emitModelValue';
 
@@ -131,7 +133,7 @@ interface CSelectEvents {
    * cleared), carrying the new value — the option's value, or the whole
    * `{ name, value }` item when `return-object` is set; `null` when cleared.
    */
-  changeValue: null | number | SelectItem | string;
+  changeValue: CSelectItem | null | number | string;
   /**
    * Native bubbling input event dispatched alongside every value change so a
    * plain `v-model` stays in sync. Carries no detail.
@@ -141,7 +143,7 @@ interface CSelectEvents {
    * Fired alongside `changeValue` with the same detail — the `v-model`
    * contract.
    */
-  'update:value': null | number | SelectItem | string;
+  'update:value': CSelectItem | null | number | string;
 }
 
 /**
@@ -191,12 +193,10 @@ const select = tv({
 // @AttachInternals) is intentionally dropped to match the rest of the
 // csc-ui-next form components, which rely on event-based binding + v-control.
 
-type SelectItem = {
-  disabled?: boolean;
-  name: string;
-  selected?: boolean;
-  value: number | string;
-};
+// The consumer-facing item shape is the shared CSelectItem; `selected` is
+// internal bookkeeping this component stamps onto items when the value
+// changes — never supplied by the consumer.
+type SelectItem = { selected?: boolean } & CSelectItem;
 
 // The single root is the internal <c-dropdown>; every prop it needs is bound
 // explicitly below. Fallthrough attrs a consumer puts on <c-select> (notably
@@ -214,25 +214,45 @@ interface CSelectProps {
   disabled?: boolean;
   /** Hide the hint and error messages */
   hideDetails?: boolean;
-  /** Hint text for the input */
+  /**
+   * Hint text for the input
+   *
+   * @freeform
+   */
   hint?: string;
-  /** Id of the element */
+  /**
+   * Id of the element
+   *
+   * @freeform
+   */
   hostId?: string;
   /** Dropdown items (when not using <c-option> elements) */
-  items?: SelectItem[];
+  items?: CSelectItem[];
   /** Items per page before adding scroll */
   itemsPerPage?: number;
-  /** Element label */
+  /**
+   * Element label
+   *
+   * @freeform
+   */
   label?: string;
   /** Label on top of the input */
   labelOnTop?: boolean;
   /** Show loading state */
   loading?: boolean;
-  /** Input field name */
+  /**
+   * Input field name
+   *
+   * @freeform
+   */
   name?: string;
   /** Display the option as selection (only with <c-option> elements) */
   optionAsSelection?: boolean;
-  /** Placeholder text */
+  /**
+   * Placeholder text
+   *
+   * @freeform
+   */
   placeholder?: string;
   /** Show required validation */
   required?: boolean;
@@ -246,10 +266,14 @@ interface CSelectProps {
   validate?: boolean;
   /** Validate the input on blur */
   validateOnBlur?: boolean;
-  /** Custom validation message */
+  /**
+   * Custom validation message
+   *
+   * @freeform
+   */
   validation?: string;
   /** Selected value (scalar, or object when return-object is set) */
-  value?: null | number | SelectItem | string;
+  value?: CSelectItem | null | number | string;
 }
 
 const props = withDefaults(defineProps<CSelectProps>(), {

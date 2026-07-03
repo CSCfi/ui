@@ -63,12 +63,14 @@ interface CSwiperTabProps {
    * Id of the button
    *
    * @seeded from csc-ui — verify
+   * @freeform
    */
   hostId?: string;
   /**
    * Label of the button
    *
    * @seeded from csc-ui — verify
+   * @freeform
    */
   label?: string;
   /**

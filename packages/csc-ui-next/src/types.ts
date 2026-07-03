@@ -1,43 +1,11 @@
 /**
- * Public TypeScript types for csc-ui-next components.
+ * Shared public types for csc-ui-next (ADR-0015): types whose value crosses a
+ * component boundary, so no single component owns them. Component-owned types
+ * live in their component's SFC; everything here and there is re-exported from
+ * the package entry (`src/index.ts`):
  *
- * Re-exported from the package entry (`src/index.ts`) so consumers can type the
- * value they bind / the items they pass without redeclaring the shapes:
- *
- *   import type { CAutocompleteItem } from '@cscfi/csc-ui-next';
- *
- * These describe the public API only (the selected value, the items, the filter
- * predicate); internal component state is not exported.
+ *   import type { CSelectItem } from '@cscfi/csc-ui-next';
  */
-
-/**
- * Custom filter predicate for `c-autocomplete`. Return `true` to keep the
- * option for the current query. The default matches the start of the label.
- */
-export type CAutocompleteFilter = (
-  option: CAutocompleteOption,
-  query: string,
-) => boolean;
-
-/**
- * A `c-autocomplete` item. Identical shape to {@link CSelectItem}; aliased for
- * a name that reads naturally at the autocomplete call site.
- */
-export type CAutocompleteItem = CSelectItem;
-
-/**
- * The normalized option handed to a `c-autocomplete` `filter` predicate. `label`
- * is the option's `name` (or its trimmed text content when authored as a
- * slotted `<c-option>`).
- */
-export interface CAutocompleteOption {
-  /** Whether the option is disabled. */
-  disabled: boolean;
-  /** The option's display label. */
-  label: string;
-  /** The option's value. */
-  value: number | string;
-}
 
 /**
  * A selectable item for the value-selection components (`c-select`,
@@ -52,3 +20,35 @@ export interface CSelectItem {
   /** The value emitted via v-model when the item is selected. */
   value: number | string;
 }
+
+/**
+ * A toast notification: the argument to `c-toasts`' `addToast` method,
+ * rendered by the composed `c-toast` child.
+ */
+export interface CToastMessage {
+  /** Label of the toast's close button. */
+  closeText?: string;
+  /** Render the slotted custom content instead of `message`. */
+  custom?: boolean;
+  /** How long the toast stays visible, in milliseconds. Defaults to 6000. */
+  duration?: number;
+  /** Identifier used to remove the toast via `removeToast`. */
+  id?: string;
+  /** Show an indeterminate progress bar instead of the countdown. */
+  indeterminate?: boolean;
+  /** The message text. */
+  message: string;
+  /** Keep the toast visible until it is explicitly closed. */
+  persistent?: boolean;
+  /** Show a progress bar counting down the toast's remaining duration. */
+  progress?: boolean;
+  /** Optional title rendered above the message. */
+  title?: string;
+  /** Status type of the toast. Defaults to `info`. */
+  type?: CToastType;
+}
+
+/**
+ * Status type of a toast notification, selecting the accent colour and icon.
+ */
+export type CToastType = 'error' | 'info' | 'success' | 'warning';

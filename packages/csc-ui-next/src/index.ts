@@ -71,6 +71,95 @@ import CToasts from './components/c-toasts/CToasts.vue';
 import CToolbar from './components/c-toolbar/CToolbar.vue';
 import { defineElement } from './shared/defineElement';
 
+export type {
+  CAlertIconType,
+  CAlertProps,
+  CAlertType,
+} from './components/c-alert/CAlert.vue';
+
+export type {
+  CAutocompleteFilter,
+  CAutocompleteItem,
+  CAutocompleteOption,
+  CAutocompleteProps,
+} from './components/c-autocomplete/CAutocomplete.vue';
+
+export type {
+  CButtonProps,
+  CButtonSize,
+  CButtonType,
+} from './components/c-button/CButton.vue';
+
+export type {
+  CCardActionsAlign,
+  CCardActionsJustify,
+  CCardActionsProps,
+} from './components/c-card-actions/CCardActions.vue';
+
+export type {
+  CIconButtonProps,
+  CIconButtonSize,
+} from './components/c-icon-button/CIconButton.vue';
+
+export type {
+  CLoginCardActionsAlign,
+  CLoginCardActionsJustify,
+  CLoginCardActionsProps,
+} from './components/c-login-card-actions/CLoginCardActions.vue';
+
+export type {
+  CLoginCardBlendMode,
+  CLoginCardProps,
+} from './components/c-login-card/CLoginCard.vue';
+
+export type {
+  CPaginationOptions,
+  CPaginationProps,
+  CPaginationSize,
+} from './components/c-pagination/CPagination.vue';
+
+export type {
+  CRowAlign,
+  CRowJustify,
+  CRowProps,
+} from './components/c-row/CRow.vue';
+
+export type {
+  CStatusProps,
+  CStatusType,
+} from './components/c-status/CStatus.vue';
+
+export type {
+  CTabButtonProps,
+  CTabButtonSize,
+} from './components/c-tab-button/CTabButton.vue';
+
+export type {
+  CTabButtonsProps,
+  CTabButtonsSize,
+} from './components/c-tab-buttons/CTabButtons.vue';
+
+export type { CTabsJustify, CTabsProps } from './components/c-tabs/CTabs.vue';
+
+export type { CTagProps, CTagSize } from './components/c-tag/CTag.vue';
+
+export type { CTagsProps, CTagsSize } from './components/c-tags/CTags.vue';
+
+export type {
+  CTextFieldAutocapitalize,
+  CTextFieldAutocorrect,
+  CTextFieldProps,
+  CTextFieldType,
+} from './components/c-text-field/CTextField.vue';
+
+export type { CToastProps } from './components/c-toast/CToast.vue';
+
+export type {
+  CToastsHorizontal,
+  CToastsProps,
+  CToastsVertical,
+} from './components/c-toasts/CToasts.vue';
+
 // Runtime consumer theming: rebrand chromatic families by supplying their
 // step-500 seed; the full ramp regenerates and re-themes every component in
 // both light and dark mode (ADR-0011).
@@ -78,14 +167,11 @@ export { applyTheme, resetTheme, themeToCss } from './theme/applyTheme';
 
 export type { Family, ThemeSeeds } from './theme/applyTheme';
 
-// Public component types, re-exported so consumers can import them from the
-// package root: `import type { CAutocompleteItem } from '@cscfi/csc-ui-next'`.
-export type {
-  CAutocompleteFilter,
-  CAutocompleteItem,
-  CAutocompleteOption,
-  CSelectItem,
-} from './types';
+// Public component types (ADR-0015), re-exported so consumers can import them
+// from the package root: `import type { CAlertType } from '@cscfi/csc-ui-next'`.
+// Shared types (value crosses a component boundary) come from src/types.ts;
+// component-owned types come from their owning SFC.
+export type { CSelectItem, CToastMessage, CToastType } from './types';
 
 /**
  * Map of custom-element tag → Vue SFC component. The single source of

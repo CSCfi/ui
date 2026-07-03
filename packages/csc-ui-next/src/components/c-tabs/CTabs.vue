@@ -38,6 +38,54 @@
   </div>
 </template>
 
+<script lang="ts">
+/**
+ * Justification of the tab headers along the tab row. `stretch` grows the
+ * tabs to fill the full row width.
+ */
+export type CTabsJustify = 'center' | 'end' | 'start' | 'stretch';
+
+export interface CTabsProps {
+  /**
+   * Disable the bottom border
+   *
+   * @seeded from csc-ui — verify
+   */
+  borderless?: boolean;
+  /**
+   * Disable animation
+   *
+   * @seeded from csc-ui — verify
+   */
+  disableAnimation?: boolean;
+  /**
+   * Justification of the children
+   *
+   * @seeded from csc-ui — verify
+   */
+  justify?: CTabsJustify;
+  /**
+   * Mobile breakpoint in pixels
+   * - affects the content stacking with the vertical tabs
+   *
+   * @seeded from csc-ui — verify
+   */
+  mobileBreakpoint?: number;
+  /**
+   * Currently active tab
+   *
+   * @seeded from csc-ui — verify
+   */
+  value?: number | string;
+  /**
+   * Vertical tabs
+   *
+   * @seeded from csc-ui — verify
+   */
+  vertical?: boolean;
+}
+</script>
+
 <script setup lang="ts">
 /**
  * @slot default - Default slot
@@ -123,46 +171,6 @@ const arrowLeft = mdiArrowLeft;
 
 const arrowRight = mdiArrowRight;
 
-interface CTabsProps {
-  /**
-   * Disable the bottom border
-   *
-   * @seeded from csc-ui — verify
-   */
-  borderless?: boolean;
-  /**
-   * Disable animation
-   *
-   * @seeded from csc-ui — verify
-   */
-  disableAnimation?: boolean;
-  /**
-   * Justification of the children
-   *
-   * @seeded from csc-ui — verify
-   */
-  justify?: string;
-  /**
-   * Mobile breakpoint in pixels
-   * - affects the content stacking with the vertical tabs
-   *
-   * @seeded from csc-ui — verify
-   */
-  mobileBreakpoint?: number;
-  /**
-   * Currently active tab
-   *
-   * @seeded from csc-ui — verify
-   */
-  value?: number | string;
-  /**
-   * Vertical tabs
-   *
-   * @seeded from csc-ui — verify
-   */
-  vertical?: boolean;
-}
-
 const props = withDefaults(defineProps<CTabsProps>(), {
   borderless: false,
   disableAnimation: false,
@@ -171,6 +179,19 @@ const props = withDefaults(defineProps<CTabsProps>(), {
   value: 0,
   vertical: false,
 });
+
+const justifyValues = [
+  'center',
+  'end',
+  'start',
+  'stretch',
+] as const satisfies readonly CTabsJustify[];
+
+// Attributes can deliver any string at runtime; unknown values fall back to
+// stretch (ADR-0015).
+const justify = computed<CTabsJustify>(() =>
+  justifyValues.includes(props.justify) ? props.justify : 'stretch',
+);
 
 const host = useHost();
 
@@ -610,7 +631,7 @@ watch(internalValue, () => {
   updateItemsValue();
 });
 
-watch(() => props.justify, handleActiveTab);
+watch(justify, handleActiveTab);
 
 // Host class list reflects the current variant/state set.
 watchEffect(() => {
@@ -620,8 +641,8 @@ watchEffect(() => {
   host.classList.toggle('c-tabs--vertical', vertical.value);
   host.classList.toggle('c-tabs--overflow', isOverflowing.value);
   host.classList.toggle('c-tabs--mobile', isMobile.value);
-  ['stretch', 'start', 'end', 'center'].forEach((j) =>
-    host.classList.toggle(`c-tabs--justify-${j}`, props.justify === j),
+  justifyValues.forEach((j) =>
+    host.classList.toggle(`c-tabs--justify-${j}`, justify.value === j),
   );
 });
 

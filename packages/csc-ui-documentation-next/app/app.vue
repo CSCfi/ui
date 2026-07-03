@@ -10,8 +10,6 @@
 
     <div class="site-body">
       <nav aria-label="Components" class="site-nav">
-        <NuxtLink class="site-nav-link" to="/types">Shared types</NuxtLink>
-
         <p class="site-nav-heading">Components</p>
 
         <NuxtLink

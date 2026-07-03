@@ -60,12 +60,14 @@ interface CMessageProps {
    * Hint text for the input
    *
    * @seeded from csc-ui — verify
+   * @freeform
    */
   hint?: string;
   /**
    * Id of the related input element
    *
    * @seeded from csc-ui — verify
+   * @freeform
    */
   inputId?: string;
   /**
@@ -78,6 +80,7 @@ interface CMessageProps {
    * Custom validation message
    *
    * @seeded from csc-ui — verify
+   * @freeform
    */
   validation?: string;
 }

@@ -207,10 +207,20 @@ defineOptions({ inheritAttrs: false });
 // light DOM), so positioning reads `.c-input__slot` through the c-input's
 // own shadowRoot rather than the parent select's shadowRoot.
 
+// Internal-only element (never consumer-authored), so these unions stay
+// local and unexported — c-select / c-autocomplete are the only callers.
+type CDropdownItemType = 'item' | 'option';
+
+type CDropdownParentType = 'autocomplete' | 'select';
+
 interface CDropdownProps {
   /** Whether items are <c-option> elements or plain objects */
-  dropdownItemType?: string;
-  /** Id used to build option/announce element ids */
+  dropdownItemType?: CDropdownItemType;
+  /**
+   * Id used to build option/announce element ids
+   *
+   * @freeform
+   */
   hostId?: string;
   /** Current highlighted index */
   index?: null | number;
@@ -221,7 +231,7 @@ interface CDropdownProps {
   /** Dropdown parent (the c-select / c-autocomplete host element) */
   parent?: HTMLElement | null;
   /** Parent type — drives autocomplete-only behaviour (highlight, messages) */
-  type?: string;
+  type?: CDropdownParentType;
 }
 
 type DropdownItem = {

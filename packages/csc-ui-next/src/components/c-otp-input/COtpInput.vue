@@ -133,6 +133,7 @@ interface COtpInputProps {
    * Id of the element
    *
    * @seeded from csc-ui — verify
+   * @freeform
    */
   elementId?: string;
   /**
@@ -151,6 +152,7 @@ interface COtpInputProps {
    * Hint text for the input
    *
    * @seeded from csc-ui — verify
+   * @freeform
    */
   hint?: string;
   /**
@@ -169,12 +171,14 @@ interface COtpInputProps {
    * Custom validation message
    *
    * @seeded from csc-ui — verify
+   * @freeform
    */
   validation?: string;
   /**
    * Value of the input
    *
    * @seeded from csc-ui — verify
+   * @freeform
    */
   value?: string;
 }

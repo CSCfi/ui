@@ -55,12 +55,14 @@ interface CLinkProps {
    * Url of link
    *
    * @seeded from csc-ui — verify
+   * @freeform any URL
    */
   href?: string;
   /**
    * regular target attribute of a hyperlink
    *
    * @seeded from csc-ui — verify
+   * @freeform any browsing-context name (e.g. _blank, _self)
    */
   target?: string;
   /**

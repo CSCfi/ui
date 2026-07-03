@@ -29,7 +29,15 @@
  * @csspart root - The native dialog element forming the modal box
  */
 import { tv } from 'tailwind-variants';
-import { computed, onBeforeUnmount, onMounted, ref, useHost, useTemplateRef, watch } from 'vue';
+import {
+  computed,
+  onBeforeUnmount,
+  onMounted,
+  ref,
+  useHost,
+  useTemplateRef,
+  watch,
+} from 'vue';
 
 import { emitModelValue } from '../../shared/emitModelValue';
 import {

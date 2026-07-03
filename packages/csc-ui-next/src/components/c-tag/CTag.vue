@@ -14,6 +14,47 @@
   </div>
 </template>
 
+<script lang="ts">
+export interface CTagProps {
+  /**
+   * Mark tag as active
+   *
+   * @seeded from csc-ui — verify
+   */
+  active?: boolean;
+  /**
+   * Display an optional badge at the start of the tag
+   *
+   * @seeded from csc-ui — verify
+   */
+  badge?: null | number | string;
+  /**
+   * Mark tag as closeable
+   *
+   * @seeded from csc-ui — verify
+   */
+  closeable?: boolean;
+  /**
+   * Remove the hover effect
+   *
+   * @seeded from csc-ui — verify
+   */
+  flat?: boolean;
+  /**
+   * Size of the tag
+   *
+   * @seeded from csc-ui — verify
+   */
+  size?: CTagSize;
+}
+
+/**
+ * Size of the tag. `small` renders a more compact pill; omitting the
+ * attribute renders the default size.
+ */
+export type CTagSize = 'default' | 'small';
+</script>
+
 <script setup lang="ts">
 /**
  * @slot default - Default slot
@@ -54,6 +95,13 @@ interface CTagEvents {
  * `:host(...)`); it stays in the escape-hatch <style> below (ADR-0007), which
  * also restores the host box.
  */
+// Hoisted so the runtime guard below can test membership; the `satisfies`
+// keeps the map complete against the public union (ADR-0015).
+const sizeVariants = {
+  default: { root: 'min-h-7 py-1 px-3 before:h-5 before:min-w-5' },
+  small: { root: 'min-h-5 py-0.5 px-2 before:h-4 before:min-w-4' },
+} satisfies Record<CTagSize, object>;
+
 const tag = tv({
   compoundVariants: [
     // closeable trims the trailing padding to the vertical padding value.
@@ -95,10 +143,7 @@ const tag = tv({
     badged: { true: { root: 'before:grid pl-1' } },
     closeable: { true: {} },
     flat: { true: { root: 'pointer-events-none' } },
-    size: {
-      default: { root: 'min-h-7 py-1 px-3 before:h-5 before:min-w-5' },
-      small: { root: 'min-h-5 py-0.5 px-2 before:h-4 before:min-w-4' },
-    },
+    size: sizeVariants,
   },
 });
 
@@ -108,39 +153,6 @@ const tag = tv({
 // root `[part=root]` div — giving it a duplicate role="button", tabindex="0"
 // and id, i.e. a second keyboard tab stop per tag. Keep those on the host only.
 defineOptions({ inheritAttrs: false });
-
-interface CTagProps {
-  /**
-   * Mark tag as active
-   *
-   * @seeded from csc-ui — verify
-   */
-  active?: boolean;
-  /**
-   * Display an optional badge at the start of the tag
-   *
-   * @seeded from csc-ui — verify
-   */
-  badge?: null | number | string;
-  /**
-   * Mark tag as closeable
-   *
-   * @seeded from csc-ui — verify
-   */
-  closeable?: boolean;
-  /**
-   * Remove the hover effect
-   *
-   * @seeded from csc-ui — verify
-   */
-  flat?: boolean;
-  /**
-   * Size of the tag
-   *
-   * @seeded from csc-ui — verify
-   */
-  size?: string;
-}
 
 const props = withDefaults(defineProps<CTagProps>(), {
   active: false,
@@ -158,13 +170,15 @@ const hasBadge = computed(
   () => props.badge !== null && props.badge !== '' && props.badge !== undefined,
 );
 
+// Attributes can deliver any string at runtime; unknown values fall back to
+// the default size (ADR-0015).
 const ui = computed(() =>
   tag({
     active: props.active,
     badged: hasBadge.value,
     closeable: props.closeable,
     flat: props.flat,
-    size: props.size === 'small' ? 'small' : 'default',
+    size: props.size in sizeVariants ? props.size : 'default',
   }),
 );
 

@@ -25,7 +25,13 @@
 
       <section class="doc-section">
         <h2 id="api">API reference</h2>
-        <ApiComponent v-for="view in views" :key="view.tagName" :view="view" />
+        <ApiComponent
+          v-for="view in views"
+          :key="view.tagName"
+          :linkable-types="pageTypeNames"
+          :types-html="typesHtml"
+          :view="view"
+        />
       </section>
     </article>
 
@@ -80,7 +86,15 @@ if (!parent && (!group.length || !findComponent(tag))) {
   });
 }
 
-const views = group.map(toComponentView);
+// Types dedupe across the group: a type renders once per page, under the
+// first (parent-first) component that documents it.
+const claimedTypes = new Set<string>();
+
+const views = group.map((c) => toComponentView(c, claimedTypes));
+
+// Every type rendered somewhere on this page — type names appearing in prop
+// type text link to these same-page anchors.
+const pageTypeNames = [...claimedTypes];
 
 const parentView = views[0];
 
@@ -105,13 +119,24 @@ const { data } = await useAsyncData(`page-${tag}`, async () => {
     examplesHtml[example.name] = byLabel;
   }
 
+  const typesHtml: Record<string, string> = {};
+
+  for (const view of views) {
+    for (const apiType of view.types) {
+      typesHtml[apiType.name] = await highlightCode(apiType.declaration, 'ts');
+    }
+  }
+
   return {
     examplesHtml,
+    typesHtml,
     usageHtml: usageSource ? await renderMarkdown(usageSource) : null,
   };
 });
 
 const examplesHtml = computed(() => data.value?.examplesHtml ?? {});
+
+const typesHtml = computed(() => data.value?.typesHtml ?? {});
 
 const usageHtml = computed(() => data.value?.usageHtml ?? null);
 

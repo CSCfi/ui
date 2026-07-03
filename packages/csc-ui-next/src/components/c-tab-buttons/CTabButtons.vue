@@ -11,6 +11,40 @@
   </div>
 </template>
 
+<script lang="ts">
+export interface CTabButtonsProps {
+  /** Disable the whole group — every child c-tab-button is disabled and the selection can no longer be changed. */
+  disabled?: boolean;
+  /**
+   * Always require a selection
+   *
+   * @seeded from csc-ui — verify
+   */
+  mandatory?: boolean;
+  /**
+   * Size of the buttons
+   *
+   * @seeded from csc-ui — verify
+   */
+  size?: CTabButtonsSize;
+  /** Set by c-tabs when this acts as its tab controller. */
+  tabs?: boolean;
+  /**
+   * Value of tab buttons
+   *
+   * @seeded from csc-ui — verify
+   */
+  value?: number | string;
+}
+
+/**
+ * Size of the button group. `small` renders a more compact control; the size
+ * is also propagated to every slotted `<c-tab-button>`. Omitting the attribute
+ * renders the default size.
+ */
+export type CTabButtonsSize = 'default' | 'small';
+</script>
+
 <script setup lang="ts">
 /**
  * @slot default - Default slot for the c-button elements
@@ -78,6 +112,19 @@ defineOptions({ inheritAttrs: false });
  * forwards its parts via `exportparts`, so consumers customize a button with
  * `c-tab-button[active]::part(root)` / `:not([active])::part(root)` (ADR-0006).
  */
+// Hoisted so the runtime guard below can test membership; the `satisfies`
+// keeps the map complete against the public union (ADR-0015).
+const sizeVariants = {
+  default: {
+    indicator: 'top-1 bottom-1',
+    root: 'p-1 gap-1',
+  },
+  small: {
+    indicator: 'top-0.5 bottom-0.5',
+    root: 'p-0.5 gap-0.5',
+  },
+} satisfies Record<CTabButtonsSize, object>;
+
 const tabButtons = tv({
   defaultVariants: {
     disabled: false,
@@ -100,43 +147,9 @@ const tabButtons = tv({
         root: 'bg-surface-muted pointer-events-none',
       },
     },
-    size: {
-      default: {
-        indicator: 'top-1 bottom-1',
-        root: 'p-1 gap-1',
-      },
-      small: {
-        indicator: 'top-0.5 bottom-0.5',
-        root: 'p-0.5 gap-0.5',
-      },
-    },
+    size: sizeVariants,
   },
 });
-
-interface CTabButtonsProps {
-  /** Disable the whole group — every child c-tab-button is disabled and the selection can no longer be changed. */
-  disabled?: boolean;
-  /**
-   * Always require a selection
-   *
-   * @seeded from csc-ui — verify
-   */
-  mandatory?: boolean;
-  /**
-   * Size of the buttons
-   *
-   * @seeded from csc-ui — verify
-   */
-  size?: 'default' | 'small';
-  /** Set by c-tabs when this acts as its tab controller. */
-  tabs?: boolean;
-  /**
-   * Value of tab buttons
-   *
-   * @seeded from csc-ui — verify
-   */
-  value?: number | string;
-}
 
 const props = withDefaults(defineProps<CTabButtonsProps>(), {
   disabled: false,
@@ -148,8 +161,13 @@ const props = withDefaults(defineProps<CTabButtonsProps>(), {
 
 const host = useHost();
 
+// Attributes can deliver any string at runtime; unknown values fall back to
+// the default size (ADR-0015).
 const ui = computed(() =>
-  tabButtons({ disabled: coerceBoolean(props.disabled), size: props.size }),
+  tabButtons({
+    disabled: coerceBoolean(props.disabled),
+    size: props.size in sizeVariants ? props.size : 'default',
+  }),
 );
 
 const rootRef = useTemplateRef<HTMLElement>('rootRef');

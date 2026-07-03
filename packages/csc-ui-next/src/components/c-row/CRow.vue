@@ -2,6 +2,52 @@
   <slot />
 </template>
 
+<script lang="ts">
+/**
+ * Vertical alignment of the row's items (`align-items`). Omitting the
+ * attribute keeps the default stretch alignment.
+ */
+export type CRowAlign = 'center' | 'end' | 'start';
+
+/**
+ * Horizontal distribution of the row's items (`justify-content`). Omitting
+ * the attribute keeps the default start packing.
+ */
+export type CRowJustify =
+  | 'center'
+  | 'end'
+  | 'space-around'
+  | 'space-between'
+  | 'start';
+
+export interface CRowProps {
+  /**
+   * Align items vertically
+   *
+   * @seeded from csc-ui — verify
+   */
+  align?: CRowAlign;
+  /**
+   * Gap between items in px
+   *
+   * @seeded from csc-ui — verify
+   */
+  gap?: number;
+  /**
+   * Justify content horizontally
+   *
+   * @seeded from csc-ui — verify
+   */
+  justify?: CRowJustify;
+  /**
+   * Disable flex wrap
+   *
+   * @seeded from csc-ui — verify
+   */
+  nowrap?: boolean;
+}
+</script>
+
 <script setup lang="ts">
 /**
  * Generic flex row component
@@ -18,37 +64,13 @@ import { onMounted, useHost, watchEffect } from 'vue';
 // flex container) instead of tripping the "renders fragment" warning.
 defineOptions({ inheritAttrs: false });
 
-interface CRowProps {
-  /**
-   * Align items vertically
-   *
-   * @seeded from csc-ui — verify
-   */
-  align?: string;
-  /**
-   * Gap between items in px
-   *
-   * @seeded from csc-ui — verify
-   */
-  gap?: number;
-  /**
-   * Justify content horizontally
-   *
-   * @seeded from csc-ui — verify
-   */
-  justify?: string;
-  /**
-   * Disable flex wrap
-   *
-   * @seeded from csc-ui — verify
-   */
-  nowrap?: boolean;
-}
-
+// The align/justify styling is pure `:host([attr='…'])` CSS below — an
+// unknown attribute value matches no rule and falls back to the base flex
+// layout (ADR-0015), so no runtime guard is needed here.
 const props = withDefaults(defineProps<CRowProps>(), {
-  align: '',
+  align: undefined,
   gap: 0,
-  justify: '',
+  justify: undefined,
   nowrap: false,
 });
 

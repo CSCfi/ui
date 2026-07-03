@@ -7,6 +7,7 @@
   "module": "./dist/csc-ui-next.js",
   "types": "./dist-types/index.d.ts",
   "customElements": "./dist/custom-elements.json",
+  "web-types": "./dist/web-types.json",
   "files": [
     "dist",
     "dist-types"
@@ -48,6 +49,8 @@
     "@tailwindcss/vite": "^4.3.1",
     "@types/node": "^20.0.0",
     "@vitejs/plugin-vue": "^6.0.7",
+    "custom-element-jet-brains-integration": "^1.7.0",
+    "custom-element-vs-code-integration": "^1.5.0",
     "eslint": "^9.28.0",
     "eslint-config-prettier": "^10.0.0",
     "eslint-import-resolver-typescript": "^4.4.5",

@@ -164,6 +164,7 @@ interface CSideNavigationItemProps {
    * Hyperlink url
    *
    * @seeded from csc-ui — verify
+   * @freeform any URL
    */
   href?: string;
   /**
@@ -176,6 +177,7 @@ interface CSideNavigationItemProps {
    * Hyperlink target
    *
    * @seeded from csc-ui — verify
+   * @freeform any browsing-context name (e.g. _blank, _self)
    */
   target?: string;
 }

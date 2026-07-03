@@ -4,6 +4,23 @@
   </div>
 </template>
 
+<script lang="ts">
+export interface CStatusProps {
+  /**
+   * Status type
+   *
+   * @seeded from csc-ui — verify
+   */
+  type?: CStatusType;
+}
+
+/**
+ * Status type of the pill. Each value paints the matching semantic status
+ * colours; omitting the attribute renders the neutral primary pill.
+ */
+export type CStatusType = 'error' | 'info' | 'success' | 'warning';
+</script>
+
 <script setup lang="ts">
 /**
  * @slot default - Status text
@@ -27,6 +44,15 @@ import { computed } from 'vue';
  * `box-shadow: inset 0 0 0 1px currentColor` -> `ring-1 ring-inset ring-current`
  * so the 1px inner outline tracks the variant's text colour, matching the source.
  */
+// Hoisted so the runtime guard below can test membership; the `satisfies`
+// keeps the map complete against the public union (ADR-0015).
+const typeVariants = {
+  error: { root: 'bg-error-subtle text-on-error-subtle' },
+  info: { root: 'bg-info-subtle text-on-info-subtle' },
+  success: { root: 'bg-success-subtle text-on-success-subtle' },
+  warning: { root: 'bg-warning-subtle text-on-warning-subtle' },
+} satisfies Record<CStatusType, object>;
+
 const status = tv({
   defaultVariants: {
     type: '',
@@ -37,30 +63,18 @@ const status = tv({
   variants: {
     type: {
       '': '',
-      error: { root: 'bg-error-subtle text-on-error-subtle' },
-      info: { root: 'bg-info-subtle text-on-info-subtle' },
-      success: { root: 'bg-success-subtle text-on-success-subtle' },
-      warning: { root: 'bg-warning-subtle text-on-warning-subtle' },
+      ...typeVariants,
     },
   },
 });
 
-interface CStatusProps {
-  /**
-   * Status type
-   *
-   * @seeded from csc-ui — verify
-   */
-  type?: string;
-}
+const props = defineProps<CStatusProps>();
 
-const props = withDefaults(defineProps<CStatusProps>(), {
-  type: '',
-});
-
+// Attributes can deliver any string at runtime; unknown values fall back to
+// the neutral pill (ADR-0015).
 const ui = computed(() =>
   status({
-    type: props.type as '' | 'error' | 'info' | 'success' | 'warning',
+    type: props.type && props.type in typeVariants ? props.type : '',
   }),
 );
 </script>

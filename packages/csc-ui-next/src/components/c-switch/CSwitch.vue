@@ -177,6 +177,7 @@ interface CSwitchProps {
    * Id for the element
    *
    * @seeded from csc-ui — verify
+   * @freeform
    */
   hostId?: string;
   /**

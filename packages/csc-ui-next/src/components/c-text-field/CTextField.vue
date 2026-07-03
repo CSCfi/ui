@@ -113,6 +113,200 @@
   </c-input>
 </template>
 
+<script lang="ts">
+/**
+ * Native `autocapitalize` behaviour of the input.
+ */
+export type CTextFieldAutocapitalize =
+  | 'characters'
+  | 'none'
+  | 'off'
+  | 'on'
+  | 'sentences'
+  | 'words';
+
+/**
+ * Native `autocorrect` behaviour of the input (Safari).
+ */
+export type CTextFieldAutocorrect = 'off' | 'on';
+
+export interface CTextFieldProps {
+  /**
+   * HTML input autocomplete
+   *
+   * @seeded from csc-ui — verify
+   * @freeform any HTML autocomplete token list
+   */
+  autocomplete?: string;
+  /**
+   * HTML input autocorrect
+   *
+   * @seeded from csc-ui — verify
+   */
+  autocorrect?: CTextFieldAutocorrect;
+  /**
+   * HTML input autocapitalize
+   *
+   * @seeded from csc-ui — verify
+   */
+  automaticCapitalize?: CTextFieldAutocapitalize;
+  /**
+   * Disable the input
+   *
+   * @seeded from csc-ui — verify
+   */
+  disabled?: boolean;
+  /**
+   * Hide the hint and error messages
+   *
+   * @seeded from csc-ui — verify
+   */
+  hideDetails?: boolean;
+  /**
+   * Hint text for the input
+   *
+   * @seeded from csc-ui — verify
+   * @freeform
+   */
+  hint?: string;
+  /**
+   * Id of the input
+   *
+   * @seeded from csc-ui — verify
+   * @freeform
+   */
+  hostId?: string;
+  /**
+   * Label of the input
+   *
+   * @seeded from csc-ui — verify
+   * @freeform
+   */
+  label?: string;
+  /**
+   * Label on top of the input
+   *
+   * @seeded from csc-ui — verify
+   */
+  labelOnTop?: boolean;
+  /**
+   * Maximum value on a numeric input
+   *
+   * @seeded from csc-ui — verify
+   */
+  max?: null | number;
+  /**
+   * Minimum value on a numeric input
+   *
+   * @seeded from csc-ui — verify
+   */
+  min?: null | number;
+  /**
+   * Name of the input
+   *
+   * @seeded from csc-ui — verify
+   * @freeform
+   */
+  name?: string;
+  /**
+   * Placeholder of the input
+   *
+   * @seeded from csc-ui — verify
+   * @freeform
+   */
+  placeholder?: string;
+  /**
+   * Mark as readonly
+   *
+   * @seeded from csc-ui — verify
+   */
+  readonly?: boolean;
+  /**
+   * Set the input as required
+   *
+   * @seeded from csc-ui — verify
+   */
+  required?: boolean;
+  /**
+   * Rows on the input
+   *
+   * @seeded from csc-ui — verify
+   */
+  rows?: number;
+  /**
+   * Shadow variant of the input
+   *
+   * @seeded from csc-ui — verify
+   */
+  shadow?: boolean;
+  /**
+   * Step size on a numeric input
+   *
+   * @seeded from csc-ui — verify
+   */
+  step?: null | number;
+  /**
+   * Trim whitespace from the return value
+   *
+   * @seeded from csc-ui — verify
+   */
+  trimWhitespace?: boolean;
+  /**
+   * Type of the input
+   *
+   * @seeded from csc-ui — verify
+   */
+  type?: CTextFieldType;
+  /**
+   * Set the validity of the input
+   *
+   * @seeded from csc-ui — verify
+   */
+  valid?: boolean;
+  /**
+   * Manual validation
+   *
+   * @seeded from csc-ui — verify
+   */
+  validate?: boolean;
+  /**
+   * Validate the input on blur
+   *
+   * @seeded from csc-ui — verify
+   */
+  validateOnBlur?: boolean;
+  /**
+   * Custom validation message
+   *
+   * @seeded from csc-ui — verify
+   * @freeform
+   */
+  validation?: string;
+  /**
+   * Value of the input
+   *
+   * @seeded from csc-ui — verify
+   * @freeform
+   */
+  value?: string;
+}
+
+/**
+ * Type of the input. `password` gets a reveal toggle, `date` a picker button,
+ * `number` honours `min`/`max`/`step`; the rest map straight to the native
+ * input type.
+ */
+export type CTextFieldType =
+  | 'date'
+  | 'email'
+  | 'number'
+  | 'password'
+  | 'search'
+  | 'tel'
+  | 'text'
+  | 'url';
+</script>
+
 <script setup lang="ts">
 /**
  * @slot pre - Content added before the input
@@ -200,163 +394,10 @@ const textField = tv({
   },
 });
 
-interface CTextFieldProps {
-  /**
-   * HTML input autocomplete
-   *
-   * @seeded from csc-ui — verify
-   */
-  autocomplete?: string;
-  /**
-   * HTML input autocorrect
-   *
-   * @seeded from csc-ui — verify
-   */
-  autocorrect?: string;
-  /**
-   * HTML input autocapitalize
-   *
-   * @seeded from csc-ui — verify
-   */
-  automaticCapitalize?: string;
-  /**
-   * Disable the input
-   *
-   * @seeded from csc-ui — verify
-   */
-  disabled?: boolean;
-  /**
-   * Hide the hint and error messages
-   *
-   * @seeded from csc-ui — verify
-   */
-  hideDetails?: boolean;
-  /**
-   * Hint text for the input
-   *
-   * @seeded from csc-ui — verify
-   */
-  hint?: string;
-  /**
-   * Id of the input
-   *
-   * @seeded from csc-ui — verify
-   */
-  hostId?: string;
-  /**
-   * Label of the input
-   *
-   * @seeded from csc-ui — verify
-   */
-  label?: string;
-  /**
-   * Label on top of the input
-   *
-   * @seeded from csc-ui — verify
-   */
-  labelOnTop?: boolean;
-  /**
-   * Maximum value on a numeric input
-   *
-   * @seeded from csc-ui — verify
-   */
-  max?: null | number;
-  /**
-   * Minimum value on a numeric input
-   *
-   * @seeded from csc-ui — verify
-   */
-  min?: null | number;
-  /**
-   * Name of the input
-   *
-   * @seeded from csc-ui — verify
-   */
-  name?: string;
-  /**
-   * Placeholder of the input
-   *
-   * @seeded from csc-ui — verify
-   */
-  placeholder?: string;
-  /**
-   * Mark as readonly
-   *
-   * @seeded from csc-ui — verify
-   */
-  readonly?: boolean;
-  /**
-   * Set the input as required
-   *
-   * @seeded from csc-ui — verify
-   */
-  required?: boolean;
-  /**
-   * Rows on the input
-   *
-   * @seeded from csc-ui — verify
-   */
-  rows?: number;
-  /**
-   * Shadow variant of the input
-   *
-   * @seeded from csc-ui — verify
-   */
-  shadow?: boolean;
-  /**
-   * Step size on a numeric input
-   *
-   * @seeded from csc-ui — verify
-   */
-  step?: null | number;
-  /**
-   * Trim whitespace from the return value
-   *
-   * @seeded from csc-ui — verify
-   */
-  trimWhitespace?: boolean;
-  /**
-   * Type of the input
-   *
-   * @seeded from csc-ui — verify
-   */
-  type?: string;
-  /**
-   * Set the validity of the input
-   *
-   * @seeded from csc-ui — verify
-   */
-  valid?: boolean;
-  /**
-   * Manual validation
-   *
-   * @seeded from csc-ui — verify
-   */
-  validate?: boolean;
-  /**
-   * Validate the input on blur
-   *
-   * @seeded from csc-ui — verify
-   */
-  validateOnBlur?: boolean;
-  /**
-   * Custom validation message
-   *
-   * @seeded from csc-ui — verify
-   */
-  validation?: string;
-  /**
-   * Value of the input
-   *
-   * @seeded from csc-ui — verify
-   */
-  value?: string;
-}
-
 const props = withDefaults(defineProps<CTextFieldProps>(), {
   autocomplete: '',
-  autocorrect: '',
-  automaticCapitalize: '',
+  autocorrect: undefined,
+  automaticCapitalize: undefined,
   disabled: false,
   hideDetails: false,
   hint: '',

@@ -16,25 +16,50 @@ const kebab = (name) =>
 
 /**
  * Props whose type can meaningfully round-trip through an HTML attribute.
- * Functions / objects / arrays are property-only.
+ * Functions / objects / arrays are property-only. Tested against the
+ * *resolved* type when the prop is typed via an alias (ADR-0015) so e.g. a
+ * function-typed alias is not mistaken for an attribute.
  */
 const isAttributeCompatible = (type) => !/=>|\{|\[\]|Record<|Array</.test(type);
+
+/**
+ * The manifest's standard `type.text` carries the expanded literal union so
+ * third-party IDE-data generators can derive value completions; the alias
+ * name and the `@freeform` marker ride in the `csc` vendor extension
+ * (ADR-0015).
+ */
+const typeCsc = (prop) => {
+  const csc = {
+    ...(prop.typeAlias ? { typeAlias: prop.typeAlias } : {}),
+    ...(prop.freeform ? { freeform: prop.freeform } : {}),
+  };
+
+  return Object.keys(csc).length ? { csc } : {};
+};
+
+const typeEntry = (prop) => {
+  const text = prop.typeExpanded ?? prop.type;
+
+  return text ? { type: { text } } : {};
+};
 
 const field = (prop) => ({
   kind: 'field',
   name: prop.name,
   privacy: 'public',
   ...(prop.description ? { description: prop.description } : {}),
-  ...(prop.type ? { type: { text: prop.type } } : {}),
+  ...typeEntry(prop),
   ...(prop.default !== undefined ? { default: prop.default } : {}),
+  ...typeCsc(prop),
 });
 
 const attribute = (prop) => ({
   fieldName: prop.name,
   name: kebab(prop.name),
   ...(prop.description ? { description: prop.description } : {}),
-  ...(prop.type ? { type: { text: prop.type } } : {}),
+  ...typeEntry(prop),
   ...(prop.default !== undefined ? { default: prop.default } : {}),
+  ...typeCsc(prop),
 });
 
 const docTagEntries = (docTags, tag) =>
@@ -67,7 +92,7 @@ export const buildManifest = (components, sharedTypes) => ({
         ...(c.description ? { description: c.description } : {}),
         ...declarationCsc(c),
         attributes: c.props
-          .filter((p) => isAttributeCompatible(p.type))
+          .filter((p) => isAttributeCompatible(p.typeResolved ?? p.type))
           .map(attribute),
         cssParts: docTagEntries(c.docTags, 'csspart'),
         cssProperties: docTagEntries(c.docTags, 'cssprop').map((entry) => ({

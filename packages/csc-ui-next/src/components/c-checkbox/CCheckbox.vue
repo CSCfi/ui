@@ -274,12 +274,14 @@ interface CCheckboxProps {
    * Hint text for the input
    *
    * @seeded from csc-ui — verify
+   * @freeform
    */
   hint?: string;
   /**
    * Id of the element
    *
    * @seeded from csc-ui — verify
+   * @freeform
    */
   hostId?: string;
   /**
@@ -287,6 +289,7 @@ interface CCheckboxProps {
    * - Only used when the checkbox participates in a native `<form>`
    *
    * @seeded from csc-ui — verify
+   * @freeform
    */
   hostName?: string;
   /**
@@ -299,6 +302,7 @@ interface CCheckboxProps {
    * Element label
    *
    * @seeded from csc-ui — verify
+   * @freeform
    */
   label?: string;
   /**
@@ -323,6 +327,7 @@ interface CCheckboxProps {
    * Custom validation message
    *
    * @seeded from csc-ui — verify
+   * @freeform
    */
   validation?: string;
   /**

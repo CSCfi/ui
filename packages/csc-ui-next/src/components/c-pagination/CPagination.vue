@@ -75,6 +75,59 @@
   </nav>
 </template>
 
+<script lang="ts">
+export interface CPaginationOptions {
+  currentPage?: number;
+  endTo?: number;
+  itemCount: number;
+  itemsPerPage?: number;
+  pageSizes?: number[];
+  startFrom?: number;
+  textOverrides?: Record<string, unknown>;
+  totalVisible?: number;
+}
+
+export interface CPaginationProps {
+  /**
+   * Hide details (per page dropdown and the 'x - y of n pages' text)
+   *
+   * @seeded from csc-ui — verify
+   */
+  hideDetails?: boolean;
+  /**
+   * Hide range indicator
+   *
+   * @seeded from csc-ui — verify
+   */
+  hideRange?: boolean;
+  /**
+   * Hide page number buttons
+   *
+   * @seeded from csc-ui — verify
+   */
+  simple?: boolean;
+  /**
+   * Hide details (per page dropdown and the 'x - y of n pages' text)
+   *
+   * @seeded from csc-ui — verify
+   */
+  size?: CPaginationSize;
+  /**
+   * Object containing values that are needed for pagination.
+   *
+   * Note! startFrom and endTo are assigned automatically to the object based on other values
+   *
+   * @seeded from csc-ui — verify
+   */
+  value?: CPaginationOptions;
+}
+
+/**
+ * Size of the pagination controls. `small` renders the compact page buttons.
+ */
+export type CPaginationSize = 'default' | 'small';
+</script>
+
 <script setup lang="ts">
 /**
  * @csspart root - The `<nav>` element wrapping the whole pagination bar
@@ -95,7 +148,7 @@ interface CPaginationEvents {
    * pagination options object with the recomputed `currentPage`,
    * `itemsPerPage`, `startFrom` and `endTo` fields.
    */
-  changeValue: PaginationOptions;
+  changeValue: CPaginationOptions;
   /**
    * Native bubbling input event dispatched alongside every value change so a
    * plain `v-model` stays in sync. Carries no detail.
@@ -105,7 +158,7 @@ interface CPaginationEvents {
    * Fired alongside `changeValue` with the same detail — the `v-model`
    * contract.
    */
-  'update:value': PaginationOptions;
+  'update:value': CPaginationOptions;
 }
 
 /**
@@ -128,6 +181,13 @@ interface CPaginationEvents {
  * The `:host(.c-pagination--simple|--small) ul` positional host rules map
  * directly to the `simple`/`size` props, so they become tv variants on `pages`.
  */
+// Hoisted so the runtime guard below can test membership; the `satisfies`
+// keeps the map complete against the public union (ADR-0015).
+const sizeVariants = {
+  default: {},
+  small: { pages: 'gap-0.5' },
+} satisfies Record<CPaginationSize, object>;
+
 const pagination = tv({
   defaultVariants: {
     range: false,
@@ -152,58 +212,9 @@ const pagination = tv({
     simple: {
       true: { pages: 'flex-1 justify-end' },
     },
-    size: {
-      default: {},
-      small: { pages: 'gap-0.5' },
-    },
+    size: sizeVariants,
   },
 });
-
-interface CPaginationProps {
-  /**
-   * Hide details (per page dropdown and the 'x - y of n pages' text)
-   *
-   * @seeded from csc-ui — verify
-   */
-  hideDetails?: boolean;
-  /**
-   * Hide range indicator
-   *
-   * @seeded from csc-ui — verify
-   */
-  hideRange?: boolean;
-  /**
-   * Hide page number buttons
-   *
-   * @seeded from csc-ui — verify
-   */
-  simple?: boolean;
-  /**
-   * Hide details (per page dropdown and the 'x - y of n pages' text)
-   *
-   * @seeded from csc-ui — verify
-   */
-  size?: string;
-  /**
-   * Object containing values that are needed for pagination.
-   *
-   * Note! startFrom and endTo are assigned automatically to the object based on other values
-   *
-   * @seeded from csc-ui — verify
-   */
-  value?: PaginationOptions;
-}
-
-interface PaginationOptions {
-  currentPage?: number;
-  endTo?: number;
-  itemCount: number;
-  itemsPerPage?: number;
-  pageSizes?: number[];
-  startFrom?: number;
-  textOverrides?: Record<string, unknown>;
-  totalVisible?: number;
-}
 
 const props = withDefaults(defineProps<CPaginationProps>(), {
   hideDetails: false,
@@ -213,10 +224,12 @@ const props = withDefaults(defineProps<CPaginationProps>(), {
   value: () => ({ itemCount: 0 }),
 });
 
+// Attributes can deliver any string at runtime; unknown values fall back to
+// the default size (ADR-0015).
 const ui = computed(() =>
   pagination({
     simple: props.simple,
-    size: props.size as 'default' | 'small',
+    size: props.size in sizeVariants ? props.size : 'default',
   }),
 );
 

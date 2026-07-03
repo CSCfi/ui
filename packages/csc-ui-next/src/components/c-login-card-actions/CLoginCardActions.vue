@@ -6,6 +6,40 @@
   </footer>
 </template>
 
+<script lang="ts">
+/**
+ * Cross-axis alignment of the slotted actions within the row.
+ */
+export type CLoginCardActionsAlign = 'center' | 'end' | 'start';
+
+/**
+ * Main-axis distribution of the slotted actions. `stretch` makes every action
+ * grow to fill the row.
+ */
+export type CLoginCardActionsJustify =
+  | 'center'
+  | 'end'
+  | 'space-around'
+  | 'space-between'
+  | 'start'
+  | 'stretch';
+
+export interface CLoginCardActionsProps {
+  /**
+   * Align the actions
+   *
+   * @seeded from csc-ui — verify
+   */
+  align?: CLoginCardActionsAlign;
+  /**
+   * Justify the actions
+   *
+   * @seeded from csc-ui — verify
+   */
+  justify?: CLoginCardActionsJustify;
+}
+</script>
+
 <script setup lang="ts">
 /**
  * @slot default - Login card actions
@@ -29,6 +63,25 @@ import { computed } from 'vue';
  * `::slotted(...)` stretch rules stay in the escape-hatch <style> (ADR-0007):
  * they target consumer light-DOM children.
  */
+// Hoisted so the runtime guards below can test membership; the `satisfies`
+// keeps the maps complete against the public unions (ADR-0015).
+const alignVariants = {
+  center: { actions: 'items-center' },
+  end: { actions: 'items-end' },
+  start: { actions: 'items-start' },
+} satisfies Record<CLoginCardActionsAlign, object>;
+
+const justifyVariants = {
+  center: { actions: 'justify-center' },
+  end: { actions: 'justify-end' },
+  'space-around': { actions: 'justify-around' },
+  'space-between': { actions: 'justify-between' },
+  start: { actions: 'justify-start' },
+  // `actions--stretch` is the marker hook the ::slotted(*) escape-hatch
+  // rule below targets to make every action child grow.
+  stretch: { actions: 'actions--stretch justify-stretch' },
+} satisfies Record<CLoginCardActionsJustify, object>;
+
 const loginCardActions = tv({
   defaultVariants: {
     align: 'center',
@@ -39,54 +92,22 @@ const loginCardActions = tv({
     root: 'block p-0',
   },
   variants: {
-    align: {
-      center: { actions: 'items-center' },
-      end: { actions: 'items-end' },
-      start: { actions: 'items-start' },
-    },
-    justify: {
-      center: { actions: 'justify-center' },
-      end: { actions: 'justify-end' },
-      'space-around': { actions: 'justify-around' },
-      'space-between': { actions: 'justify-between' },
-      start: { actions: 'justify-start' },
-      // `actions--stretch` is the marker hook the ::slotted(*) escape-hatch
-      // rule below targets to make every action child grow.
-      stretch: { actions: 'actions--stretch justify-stretch' },
-    },
+    align: alignVariants,
+    justify: justifyVariants,
   },
 });
-
-interface CLoginCardActionsProps {
-  /**
-   * Align the actions
-   *
-   * @seeded from csc-ui — verify
-   */
-  align?: string;
-  /**
-   * Justify the actions
-   *
-   * @seeded from csc-ui — verify
-   */
-  justify?: string;
-}
 
 const props = withDefaults(defineProps<CLoginCardActionsProps>(), {
   align: 'center',
   justify: 'start',
 });
 
+// Attributes can deliver any string at runtime; unknown values fall back to
+// the defaults (ADR-0015).
 const ui = computed(() =>
   loginCardActions({
-    align: props.align as 'center' | 'end' | 'start',
-    justify: props.justify as
-      | 'center'
-      | 'end'
-      | 'space-around'
-      | 'space-between'
-      | 'start'
-      | 'stretch',
+    align: props.align in alignVariants ? props.align : 'center',
+    justify: props.justify in justifyVariants ? props.justify : 'start',
   }),
 );
 </script>

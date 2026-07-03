@@ -12,6 +12,29 @@
   </div>
 </template>
 
+<script lang="ts">
+/**
+ * The alert types that render a status icon and carry that status's accent
+ * colour.
+ */
+export type CAlertIconType = 'error' | 'info' | 'success' | 'warning';
+
+export interface CAlertProps {
+  /**
+   * Type of the alert
+   *
+   * @seeded from csc-ui — verify
+   */
+  type?: CAlertType;
+}
+
+/**
+ * Type of the alert. `default` — equivalently, omitting the attribute —
+ * renders the neutral box without a status icon.
+ */
+export type CAlertType = 'default' | CAlertIconType;
+</script>
+
 <script setup lang="ts">
 /**
  * @slot title - Title slot
@@ -60,25 +83,9 @@ const alert = tv({
       info: { root: 'grid-cols-[auto_1fr] text-info' },
       success: { root: 'grid-cols-[auto_1fr] text-success' },
       warning: { root: 'grid-cols-[auto_1fr] text-warning' },
-    },
+    } satisfies Record<CAlertType, object>,
   },
 });
-
-// The four icon types carry an icon + accent colour + two-column layout.
-// "Default" is represented by anything else: '' (how the design system / docs
-// express it — CAlertType has no `Default` member), 'default', or undefined.
-type CAlertIconType = 'error' | 'info' | 'success' | 'warning';
-
-interface CAlertProps {
-  /**
-   * Type of the alert
-   *
-   * @seeded from csc-ui — verify
-   */
-  type?: CAlertType;
-}
-
-type CAlertType = '' | 'default' | CAlertIconType;
 
 const props = withDefaults(defineProps<CAlertProps>(), {
   type: 'default',
@@ -91,10 +98,10 @@ const icons: Record<CAlertIconType, string> = {
   warning: mdiAlert,
 };
 
-// Truthy-type check mirrors the original `!!this.type`: only a real icon type
-// shows the icon and switches to the two-column grid. A falsy/unknown `type`
-// (e.g. the docs' `''` Default) must NOT render an empty icon — doing so left a
-// stray icon row above the content, which read as a strange padding-top.
+// Only a real icon type shows the icon and switches to the two-column grid.
+// Attributes can deliver any string at runtime (including the legacy `''`),
+// so unknown values fall back to the default look (ADR-0015) — rendering an
+// empty icon would leave a stray icon row that reads as odd padding-top.
 const isIconType = computed((): boolean => props.type in icons);
 
 const ui = computed(() =>

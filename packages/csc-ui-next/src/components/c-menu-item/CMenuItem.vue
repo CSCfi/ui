@@ -132,7 +132,11 @@ interface CMenuItemProps {
   danger?: boolean;
   /** Disables the item — it is skipped by keyboard nav and emits no select. */
   disabled?: boolean;
-  /** Value reported in the menu's `select` event when this item is chosen. */
+  /**
+   * Value reported in the menu's `select` event when this item is chosen.
+   *
+   * @freeform
+   */
   value?: string;
 }
 

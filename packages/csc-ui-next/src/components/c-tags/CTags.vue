@@ -2,6 +2,23 @@
   <slot />
 </template>
 
+<script lang="ts">
+export interface CTagsProps {
+  /**
+   * Size of the tags
+   *
+   * @seeded from csc-ui — verify
+   */
+  size?: CTagsSize;
+}
+
+/**
+ * Size propagated to every slotted `<c-tag>`. `small` renders compact tags;
+ * omitting the attribute leaves the tags at their default size.
+ */
+export type CTagsSize = 'default' | 'small';
+</script>
+
 <script setup lang="ts">
 /**
  * @slot default - Default slot
@@ -15,15 +32,6 @@ import { onMounted, toRefs, useHost, watch } from 'vue';
 // `<slot />` root (fragment) + we write to the host below — keep fallthrough
 // attrs on the host element instead of tripping the "renders fragment" warning.
 defineOptions({ inheritAttrs: false });
-
-interface CTagsProps {
-  /**
-   * Size of the tags
-   *
-   * @seeded from csc-ui — verify
-   */
-  size?: string;
-}
 
 const props = withDefaults(defineProps<CTagsProps>(), {
   size: 'default',

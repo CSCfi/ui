@@ -7,7 +7,7 @@
     :disabled="href ? undefined : disabled || undefined"
     :href="href || undefined"
     :target="href ? target : undefined"
-    :type="href ? undefined : type"
+    :type="href ? undefined : buttonType"
     part="root"
     @click="onClick"
     @keydown="onKeydown"
@@ -47,6 +47,120 @@
     </span>
   </component>
 </template>
+
+<script lang="ts">
+export interface CButtonProps {
+  /**
+   * Danger variant style
+   *
+   * @seeded from csc-ui — verify
+   */
+  danger?: boolean;
+  /**
+   * Disable the button
+   *
+   * @seeded from csc-ui — verify
+   */
+  disabled?: boolean;
+  /**
+   * Fit width to containing element
+   *
+   * @seeded from csc-ui — verify
+   */
+  fit?: boolean;
+  /**
+   * Light button background
+   *
+   * @seeded from csc-ui — verify
+   */
+  ghost?: boolean;
+  /**
+   * Id of the button
+   *
+   * @seeded from csc-ui — verify
+   * @freeform
+   */
+  hostId?: string;
+  /**
+   * Hyperlink url
+   *
+   * @seeded from csc-ui — verify
+   * @freeform any URL
+   */
+  href?: string;
+  /**
+   * Inverted button style for dark backgrounds
+   *
+   * @seeded from csc-ui — verify
+   */
+  inverted?: boolean;
+  /**
+   * Display loader on the button
+   *
+   * @seeded from csc-ui — verify
+   */
+  loading?: boolean;
+  /**
+   * Remove the default border radius
+   *
+   * @seeded from csc-ui — verify
+   */
+  noRadius?: boolean;
+  /** Suppress the click ripple (e.g. when a wrapper owns the press feedback). */
+  noRipple?: boolean;
+  /**
+   * Outlined button style
+   *
+   * @seeded from csc-ui — verify
+   */
+  outlined?: boolean;
+  /**
+   * Size of the button
+   *
+   * @seeded from csc-ui — verify
+   */
+  size?: CButtonSize;
+  /** Used when the button acts as a tab inside <c-tab-buttons>. */
+  tabs?: boolean;
+  /**
+   * Hyperlink target
+   *
+   * @seeded from csc-ui — verify
+   * @freeform any browsing-context name (e.g. _blank, _self)
+   */
+  target?: string;
+  /**
+   * Transparent button background
+   *
+   * @seeded from csc-ui — verify
+   */
+  text?: boolean;
+  /**
+   * Button type
+   *
+   * @seeded from csc-ui — verify
+   */
+  type?: CButtonType;
+  /**
+   * Value for the button
+   * - for use in the c-tab-buttons
+   *
+   * @seeded from csc-ui — verify
+   */
+  value?: number | string;
+}
+
+/**
+ * Size of the button.
+ */
+export type CButtonSize = 'default' | 'large' | 'small';
+
+/**
+ * Native `type` of the underlying `<button>` element. Ignored when `href`
+ * turns the component into a link.
+ */
+export type CButtonType = 'button' | 'reset' | 'submit';
+</script>
 
 <script setup lang="ts">
 /**
@@ -107,6 +221,26 @@ interface CButtonEvents {
  * `<a href>` case, which has no native disabled), so the not-allowed cursor
  * shows in both.
  */
+// Hoisted so the runtime guard below can test membership; the `satisfies`
+// keeps the map complete against the public union (ADR-0015).
+const sizeVariants = {
+  default: {
+    contentInner: 'h-full px-4',
+    iconWrap: 'text-2xl',
+    root: 'min-h-11 text-base',
+  },
+  large: {
+    contentInner: 'h-full px-6',
+    iconWrap: 'text-2xl',
+    root: 'min-h-13 text-lg',
+  },
+  small: {
+    contentInner: 'h-full px-3',
+    iconWrap: 'text-xl',
+    root: 'min-h-7 text-sm',
+  },
+} satisfies Record<CButtonSize, object>;
+
 const button = tv({
   compoundVariants: [
     // ---- default (no appearance flag) -----------------------------------
@@ -310,124 +444,10 @@ const button = tv({
     },
     noRadius: { true: { root: 'rounded-none' } },
     outlined: { true: '' },
-    size: {
-      default: {
-        contentInner: 'h-full px-4',
-        iconWrap: 'text-2xl',
-        root: 'min-h-11 text-base',
-      },
-      large: {
-        contentInner: 'h-full px-6',
-        iconWrap: 'text-2xl',
-        root: 'min-h-13 text-lg',
-      },
-      small: {
-        contentInner: 'h-full px-3',
-        iconWrap: 'text-xl',
-        root: 'min-h-7 text-sm',
-      },
-    },
+    size: sizeVariants,
     text: { true: '' },
   },
 });
-
-interface CButtonProps {
-  /**
-   * Danger variant style
-   *
-   * @seeded from csc-ui — verify
-   */
-  danger?: boolean;
-  /**
-   * Disable the button
-   *
-   * @seeded from csc-ui — verify
-   */
-  disabled?: boolean;
-  /**
-   * Fit width to containing element
-   *
-   * @seeded from csc-ui — verify
-   */
-  fit?: boolean;
-  /**
-   * Light button background
-   *
-   * @seeded from csc-ui — verify
-   */
-  ghost?: boolean;
-  /**
-   * Id of the button
-   *
-   * @seeded from csc-ui — verify
-   */
-  hostId?: string;
-  /**
-   * Hyperlink url
-   *
-   * @seeded from csc-ui — verify
-   */
-  href?: string;
-  /**
-   * Inverted button style for dark backgrounds
-   *
-   * @seeded from csc-ui — verify
-   */
-  inverted?: boolean;
-  /**
-   * Display loader on the button
-   *
-   * @seeded from csc-ui — verify
-   */
-  loading?: boolean;
-  /**
-   * Remove the default border radius
-   *
-   * @seeded from csc-ui — verify
-   */
-  noRadius?: boolean;
-  /** Suppress the click ripple (e.g. when a wrapper owns the press feedback). */
-  noRipple?: boolean;
-  /**
-   * Outlined button style
-   *
-   * @seeded from csc-ui — verify
-   */
-  outlined?: boolean;
-  /**
-   * Size of the button
-   *
-   * @seeded from csc-ui — verify
-   */
-  size?: string;
-  /** Used when the button acts as a tab inside <c-tab-buttons>. */
-  tabs?: boolean;
-  /**
-   * Hyperlink target
-   *
-   * @seeded from csc-ui — verify
-   */
-  target?: string;
-  /**
-   * Transparent button background
-   *
-   * @seeded from csc-ui — verify
-   */
-  text?: boolean;
-  /**
-   * Button type
-   *
-   * @seeded from csc-ui — verify
-   */
-  type?: string;
-  /**
-   * Value for the button
-   * - for use in the c-tab-buttons
-   *
-   * @seeded from csc-ui — verify
-   */
-  value?: number | string;
-}
 
 const props = withDefaults(defineProps<CButtonProps>(), {
   danger: false,
@@ -449,6 +469,8 @@ const props = withDefaults(defineProps<CButtonProps>(), {
   value: undefined,
 });
 
+// Attributes can deliver any string at runtime; unknown values fall back to
+// the defaults (ADR-0015).
 const ui = computed(() =>
   button({
     danger: props.danger,
@@ -459,9 +481,22 @@ const ui = computed(() =>
     loading: props.loading,
     noRadius: props.noRadius,
     outlined: props.outlined,
-    size: props.size as 'default' | 'large' | 'small',
+    size: props.size in sizeVariants ? props.size : 'default',
     text: props.text,
   }),
+);
+
+// Guard the native passthrough too: an invalid `type` attribute would
+// otherwise hit the browser default state, which is `submit` — not our
+// declared default of `button` (ADR-0015).
+const buttonTypes: Record<CButtonType, true> = {
+  button: true,
+  reset: true,
+  submit: true,
+};
+
+const buttonType = computed(() =>
+  props.type in buttonTypes ? props.type : 'button',
 );
 
 const rootRef = useTemplateRef<HTMLElement>('rootRef');

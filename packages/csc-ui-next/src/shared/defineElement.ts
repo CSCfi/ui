@@ -227,17 +227,28 @@ export function defineElement(tag: string, component: Component): void {
       // props (the component mounts inside super.connectedCallback).
       normalizeBooleanAttributes(this, booleanKeys);
 
-      // Vue creates the shadow root in its constructor and renders content
-      // here; run that first, then attach the shared sheets.
+      // Adopt the sheets BEFORE Vue mounts the shadow content: Vue flushes
+      // `mounted` hooks synchronously inside super.connectedCallback(), and a
+      // hook that reads layout (e.g. c-input's label measurement) forces a
+      // reflow. When that reflow ran before the sheets existed, the UNSTYLED
+      // computed values became the start state for every `transition-*`
+      // utility — the field visibly animated its padding/size in from nothing
+      // on first paint. Vue creates the shadow root in its constructor, so it
+      // already exists here; the post-super call is a safety net for the case
+      // where the root only appears during super.connectedCallback().
+      this.adoptSheets();
       super.connectedCallback?.();
+      this.adoptSheets();
+    }
 
+    private adoptSheets() {
       const root = this.shadowRoot;
 
       if (!root) return;
 
       const shared = getSharedTailwindSheet();
 
-      // Idempotent across reconnects.
+      // Idempotent across reconnects and the pre/post-super double call.
       if (root.adoptedStyleSheets.includes(shared)) return;
       root.adoptedStyleSheets = [
         shared,

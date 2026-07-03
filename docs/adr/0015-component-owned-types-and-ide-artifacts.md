@@ -23,7 +23,7 @@ The analyzer extracts exported types from both locations; `src/index.ts` re-expo
 
 ## Manifest representation
 
-The manifest's standard `type.text` field carries the **transitively expanded literal union** (`"'default' | 'error' | 'info' | 'success' | 'warning'"`); the alias name moves to the `csc` vendor extension for the docs site's Types-page cross-links. Rule: standard fields carry maximally standard content (third-party generators parse `type.text` for value sets and cannot see our extensions); our quirks ride in `csc`. Only literal unions are expanded — interfaces, functions, and object shapes keep their names (they are property-only and never become attributes).
+The manifest's standard `type.text` field carries the **transitively expanded literal union** (`"'default' | 'error' | 'info' | 'success' | 'warning'"`); the alias name moves to the `csc` vendor extension for the docs site's type cross-links *(originally a central Types page; amended 2026-07-03 — types render in a Types section on their owning component's page, shared types duplicated onto every referencing page per ADR-0013's self-containment rule, and prop-table links become same-page anchors)*. Rule: standard fields carry maximally standard content (third-party generators parse `type.text` for value sets and cannot see our extensions); our quirks ride in `csc`. Only literal unions are expanded — interfaces, functions, and object shapes keep their names (they are property-only and never become attributes).
 
 ## IDE artifacts
 
