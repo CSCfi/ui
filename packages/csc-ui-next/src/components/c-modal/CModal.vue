@@ -1,18 +1,21 @@
 <template>
+  <div
+    :class="ui.backdrop()"
+    :style="{ zIndex: String(layerZ - 1) }"
+    part="backdrop"
+    @click="onBackdropClick"
+  />
+
   <dialog
     ref="dialogRef"
-    :class="[
-      ui.root(),
-      {
-        'c-modal--standalone': standaloneMode,
-        'c-modal--backdrop-blur': !disableBackdropBlur,
-      },
-    ]"
-    :style="{ zIndex: String(zIndex) }"
+    :aria-label="dialogLabel || undefined"
+    :class="ui.root()"
+    :style="{ zIndex: String(layerZ) }"
+    aria-modal="true"
     class="c-modal"
     part="root"
-    @click="onClick"
-    @keydown="onKeyDown"
+    tabindex="-1"
+    @close="onNativeClose"
   >
     <slot />
   </dialog>
@@ -22,19 +25,28 @@
 /**
  * @slot default - The modal contents (typically a c-card)
  *
+ * @csspart backdrop - The dimming overlay under the dialog; visible only while this modal is the active (topmost) one
  * @csspart root - The native dialog element forming the modal box
  */
 import { tv } from 'tailwind-variants';
-import { computed, onMounted, ref, useHost, useTemplateRef, watch } from 'vue';
+import { computed, onBeforeUnmount, onMounted, ref, useHost, useTemplateRef, watch } from 'vue';
 
 import { emitModelValue } from '../../shared/emitModelValue';
+import {
+  closeModal,
+  focusInitialElement,
+  MODAL_BAND_BASE,
+  type ModalStackEntry,
+  openModal,
+} from '../../shared/modalStack';
 
 /** Events dispatched by `<c-modal>`. */
 interface CModalEvents {
   /**
-   * Fired when the modal dismisses itself — a backdrop click on a
-   * `dismissable` modal, or the Escape key. The detail is the new open
-   * state, always `false`.
+   * Fired when the modal dismisses itself — a backdrop click or the Escape
+   * key on a `dismissable` modal, or a platform-initiated close (e.g. a
+   * slotted `<form method="dialog">`). The detail is the new open state,
+   * always `false`.
    */
   changeValue: boolean;
   /**
@@ -49,62 +61,78 @@ interface CModalEvents {
   'update:value': boolean;
 }
 
+// The template is a fragment (backdrop + dialog): host attribute fallthrough
+// would land on BOTH roots, duplicating e.g. the consumer's aria-label onto
+// the backdrop div. The dialog mirrors what it needs explicitly.
+defineOptions({ inheritAttrs: false });
+
 /**
  * Styling lives in this `tailwind-variants` config (ADR-0004); consumer
  * customization is via `::part()` (ADR-0006).
  *
- * The dialog box look (centred, transparent, dynamic width) is authored as
- * utilities here. The static `.c-modal` (plus `.c-modal--standalone` /
- * `.c-modal--backdrop-blur`) class and the `.opening` / `.closing` / `.nudging`
+ * The dialog is NOT in the browser top layer: it is opened with `.show()` and
+ * modality (inert, focus, Escape, scroll lock, paint order) is implemented by
+ * the shared modal stack controller — see ADR-0014 and
+ * `src/shared/modalStack.ts`. That is what lets toasts paint above any modal
+ * and stay interactive.
+ *
+ * The backdrop is this modal's own element (the retired shared `c-backdrop` /
+ * native `::backdrop` are gone); the controller keeps exactly one backdrop —
+ * the active modal's — visible, so its `visible`/`instant` variants are
+ * controller-driven state.
+ *
+ * The static `.c-modal` class and the `.opening` / `.closing` / `.nudging`
  * hooks are RETAINED: they are toggled imperatively by the script and targeted
  * by the escape-hatch `<style>` below, which owns the things utilities can't
- * express — the native `::backdrop` pseudo-element, the `:not([open])` closed
- * state, and the open/close/nudge `@keyframes`.
+ * express — the `:not([open])` closed state and the open/close/nudge
+ * `@keyframes`.
  *
  * `--_c-modal-width` is still set imperatively on the host from the `width`
  * prop; the `root` utility reads it (with a 600px fallback) via `w-[…]`.
  */
 const modal = tv({
   slots: {
+    // Dimming overlay painting the `scrim` colour role. Fades via the opacity
+    // transition for the first-in / last-out modal; switches within a stack
+    // are instant (see `instant` variant) so the dim level stays flat.
+    backdrop:
+      'fixed inset-0 bg-scrim/50 opacity-0 pointer-events-none transition-opacity duration-300 motion-reduce:transition-none',
     // The native <dialog> is the positioned overlay box. It must not be
     // `display:contents`, so the box lives on this element (not the host).
     root: 'block fixed inset-0 m-auto p-0 border-0 bg-transparent overflow-visible max-w-[calc(100%-32px)] w-[var(--_c-modal-width,600px)] text-on-surface-muted',
   },
+  variants: {
+    blur: {
+      true: { backdrop: 'backdrop-blur-[4px]' },
+    },
+    instant: {
+      true: { backdrop: 'transition-none' },
+    },
+    visible: {
+      true: { backdrop: 'opacity-100 pointer-events-auto' },
+    },
+  },
 });
-
-const ui = computed(() => modal());
 
 interface CModalProps {
   /**
    * Disable backdrop blur effect
-   *
-   * @seeded from csc-ui — verify
    */
   disableBackdropBlur?: boolean;
   /**
-   * Dismissed when touching/clicking outside the content
-   *
-   * @seeded from csc-ui — verify
+   * Dismissed when touching/clicking outside the content or pressing Escape.
+   * A non-dismissable modal responds to either gesture with a nudge animation
+   * instead of closing.
    */
   dismissable?: boolean;
   /**
    * Is the modal visible
-   *
-   * @seeded from csc-ui — verify
    */
   value?: boolean;
   /**
    * Width of the dialog. Numeric value is considered as pixel value (400 -> 400px)
-   *
-   * @seeded from csc-ui — verify
    */
   width?: number | string;
-  /**
-   * Z-index of the modal
-   *
-   * @seeded from csc-ui — verify
-   */
-  zIndex?: number;
 }
 
 const props = withDefaults(defineProps<CModalProps>(), {
@@ -112,7 +140,6 @@ const props = withDefaults(defineProps<CModalProps>(), {
   dismissable: false,
   value: false,
   width: 600,
-  zIndex: 10,
 });
 
 const host = useHost();
@@ -124,70 +151,98 @@ const dispatchValue = (value: CModalEvents['changeValue']) =>
 
 const dialogRef = useTemplateRef<HTMLDialogElement>('dialogRef');
 
-const standaloneMode = ref(false);
+// Controller-assigned paint order within the modal stacking band (ADR-0014);
+// the backdrop sits directly beneath the dialog at `layerZ - 1`.
+const layerZ = ref(MODAL_BAND_BASE + 1);
+
+const backdropVisible = ref(false);
+
+const backdropInstant = ref(false);
+
+const dialogLabel = ref<null | string>(null);
+
+const ui = computed(() =>
+  modal({
+    blur: !props.disableBackdropBlur,
+    instant: backdropInstant.value,
+    visible: backdropVisible.value,
+  }),
+);
 
 let animationsDisabled = false;
 
-let backdropEl: HTMLElement | null = null;
-
 let nudgeTimer: null | ReturnType<typeof setTimeout> = null;
 
-// `c-main` renders a shared `<c-backdrop>` in its shadow root so all
-// modals in the page share one dimmer. If the page isn't wrapped in
-// `<c-main>` (standalone usage), fall through to the dialog's native
-// ::backdrop pseudo-element which we style in CSS.
-const resolveBackdrop = () => {
-  const cMain = document.body.querySelector('c-main');
+// True while `finalizeClose` runs `dialog.close()`, so the native `close`
+// listener can tell our own teardown apart from a platform-initiated close.
+let internalClose = false;
 
-  if (!cMain) {
-    standaloneMode.value = true;
+const nudge = () => {
+  dialogRef.value?.classList.add('nudging');
 
-    return null;
-  }
+  if (nudgeTimer !== null) clearTimeout(nudgeTimer);
+  nudgeTimer = setTimeout(() => {
+    dialogRef.value?.classList.remove('nudging');
+    nudgeTimer = null;
+  }, 150);
+};
 
-  standaloneMode.value = false;
+const entry: ModalStackEntry = {
+  get host() {
+    return host as HTMLElement;
+  },
+  onEscape: () => {
+    if (!props.dismissable) {
+      nudge();
 
-  if (!backdropEl) {
-    backdropEl =
-      (cMain.shadowRoot?.querySelector('c-backdrop') as HTMLElement | null) ||
-      null;
-  }
+      return;
+    }
 
-  // Set the PROPERTY, not an attribute: c-backdrop's `disableBackdropBlur` is a
-  // Boolean custom-element prop, and Vue coerces the attribute string "false"
-  // to truthy `true` — which would silently disable the blur. Assigning the
-  // real boolean drives the reactive prop correctly.
-  if (backdropEl) {
-    (
-      backdropEl as unknown as { disableBackdropBlur: boolean }
-    ).disableBackdropBlur = props.disableBackdropBlur;
-  }
-
-  const inner = backdropEl?.shadowRoot?.querySelector('.c-backdrop');
-  inner?.classList.remove('closing');
-
-  return backdropEl;
+    closeDialog();
+    dispatchValue(false);
+  },
+  setBackdropVisible: (visible, animate) => {
+    backdropInstant.value = !animate;
+    backdropVisible.value = visible;
+  },
+  setLayer: (zIndex) => {
+    layerZ.value = zIndex;
+  },
 };
 
 const openDialog = () => {
-  requestAnimationFrame(() => {
-    resolveBackdrop();
+  if (!dialogRef.value || dialogRef.value.open || !host) return;
 
-    if (!animationsDisabled) {
-      const onAnimEnd = () => {
-        dialogRef.value?.removeEventListener('animationend', onAnimEnd);
-        dialogRef.value?.classList.remove('opening');
-      };
+  // Register first: the controller captures the currently focused element
+  // (for restore on close) before focus moves into the dialog, then applies
+  // layers, backdrop, inert, scroll lock and Escape routing.
+  openModal(entry);
 
-      dialogRef.value?.addEventListener('animationend', onAnimEnd);
-      dialogRef.value?.classList.add('opening');
-      backdropEl?.shadowRoot
-        ?.querySelector('.c-backdrop')
-        ?.classList.add('opening');
-    }
+  // Accessible name: mirrored from the host, since `aria-labelledby` cannot
+  // reference the slotted (light DOM) title across the shadow boundary.
+  dialogLabel.value = host.getAttribute('aria-label');
 
-    dialogRef.value?.showModal();
-  });
+  if (!dialogLabel.value) {
+    console.warn(
+      '<c-modal> opened without an accessible name. Set aria-label on the c-modal element.',
+    );
+  }
+
+  if (!animationsDisabled) {
+    const onAnimEnd = () => {
+      dialogRef.value?.removeEventListener('animationend', onAnimEnd);
+      dialogRef.value?.classList.remove('opening');
+    };
+
+    dialogRef.value.addEventListener('animationend', onAnimEnd);
+    dialogRef.value.classList.add('opening');
+  }
+
+  // `.show()`, NOT `.showModal()` — modality without the top layer
+  // (ADR-0014), so toasts can paint above the modal and stay interactive.
+  dialogRef.value.show();
+
+  focusInitialElement(host, dialogRef.value);
 };
 
 const closeDialog = () => {
@@ -197,6 +252,10 @@ const closeDialog = () => {
   // from a visible state — a flash on load when the `value` watch fires false
   // during prop initialization.
   if (!dialogRef.value?.open) return;
+
+  // Unregister at close *start*: inert lifts, focus restores and Escape
+  // re-routes immediately; only the exit animation is still playing.
+  closeModal(entry);
 
   if (animationsDisabled) {
     finalizeClose();
@@ -209,82 +268,45 @@ const closeDialog = () => {
     finalizeClose();
   };
 
-  dialogRef.value?.addEventListener('animationend', onAnimEnd);
-  dialogRef.value?.classList.add('closing');
-
-  requestAnimationFrame(() => {
-    // Count modals still open across the page; only remove backdrop
-    // when this is the last one closing.
-    const customs = document.querySelectorAll('c-modal');
-
-    let openCount = 0;
-    customs.forEach((el) => {
-      const dialogs = el.shadowRoot?.querySelectorAll('dialog');
-      dialogs?.forEach((d) => {
-        if ((d as HTMLDialogElement).open) openCount += 1;
-      });
-    });
-
-    if (openCount <= 1) {
-      const inner = backdropEl?.shadowRoot?.querySelector('.c-backdrop');
-      inner?.classList.remove('opening');
-      inner?.classList.add('closing');
-    }
-  });
+  dialogRef.value.addEventListener('animationend', onAnimEnd);
+  dialogRef.value.classList.add('closing');
 };
 
 const finalizeClose = () => {
   dialogRef.value?.classList.remove('closing');
-  backdropEl?.shadowRoot
-    ?.querySelector('.c-backdrop')
-    ?.classList.remove('closing');
-  dialogRef.value?.close();
 
-  if (document.fullscreenElement) document.exitFullscreen();
+  internalClose = true;
+  dialogRef.value?.close();
+  internalClose = false;
 };
 
-// Backdrop click detection. The native <dialog> swallows clicks on its
-// ::backdrop pseudo as clicks on the dialog itself, so we get the
-// dialog rect and compare against pointer coords.
-const onClick = (e: MouseEvent) => {
-  if (e.clientX === 0 && e.clientY === 0) return;
+/**
+ * Convergence point for platform-initiated closes — a slotted
+ * `<form method="dialog">` or a direct `dialog.close()` call fires this
+ * without going through `closeDialog()`. Run the same teardown so the stack,
+ * inert state and the consumer's `value` never desync.
+ */
+const onNativeClose = () => {
+  if (internalClose) return;
 
-  if (!dialogRef.value) return;
+  closeModal(entry);
+  dialogRef.value?.classList.remove('opening', 'closing');
+  dispatchValue(false);
+};
 
-  const rect = dialogRef.value.getBoundingClientRect();
-
-  const outside =
-    e.clientX < rect.left ||
-    e.clientX > rect.right ||
-    e.clientY < rect.top ||
-    e.clientY > rect.bottom;
-
-  if (!outside) return;
-
+// The backdrop is a real element beneath the dialog box, so an outside
+// click lands on it directly — no rect math against the dialog needed.
+const onBackdropClick = () => {
   if (!props.dismissable) {
     // Non-dismissable: nudge animation to signal "you can't close
     // this", then revert.
-    dialogRef.value.classList.add('nudging');
-
-    if (nudgeTimer !== null) clearTimeout(nudgeTimer);
-    nudgeTimer = setTimeout(() => {
-      dialogRef.value?.classList.remove('nudging');
-      nudgeTimer = null;
-    }, 150);
+    nudge();
 
     return;
   }
 
   closeDialog();
   dispatchValue(false);
-};
-
-const onKeyDown = (e: KeyboardEvent) => {
-  if (e.key === 'Escape') {
-    e.preventDefault();
-    closeDialog();
-    dispatchValue(false);
-  }
 };
 
 watch(
@@ -307,44 +329,30 @@ onMounted(() => {
       : String(props.width);
   host?.style.setProperty('--_c-modal-width', width);
 
-  // Settle `standaloneMode` now, before the first open. It feeds the dialog's
-  // reactive `:class`, and `openDialog()` adds the `.opening` animation class
-  // imperatively. If the first open were also the moment `standaloneMode`
-  // flips (false → true in standalone usage), Vue would re-render and rewrite
-  // the dialog's whole className from its vdom — stripping `.opening` a
-  // microtask later and killing the open animation. Resolving here means the
-  // first open changes no Vue-owned class, so the imperative class survives.
-  resolveBackdrop();
-
   if (props.value) openDialog();
+});
+
+onBeforeUnmount(() => {
+  // A modal removed from the DOM while open must release the stack (inert,
+  // scroll lock, Escape routing) or the page stays locked forever.
+  closeModal(entry);
+
+  if (nudgeTimer !== null) clearTimeout(nudgeTimer);
 });
 </script>
 
 <!--
   Escape-hatch CSS (ADR-0007): constructs Tailwind utilities cannot express —
-  the native `::backdrop` pseudo-element (standalone dimmer / blur), the
-  `:not([open])` closed state of the native <dialog>, and the open / close /
+  the `:not([open])` closed state of the native <dialog> and the open / close /
   nudge `@keyframes` toggled imperatively via the `.opening` / `.closing` /
-  `.nudging` class hooks. The dialog box look lives in the `tv` config above.
+  `.nudging` class hooks. The dialog box and backdrop looks live in the `tv`
+  config above. (No `::backdrop` rules: the dialog is opened with `.show()`,
+  which has no native backdrop — the backdrop is a real element, ADR-0014.)
 -->
 <style>
 dialog.c-modal:not([open]) {
   pointer-events: none;
   opacity: 0;
-}
-
-dialog.c-modal::backdrop {
-  background-color: transparent;
-}
-
-/* Standalone (no <c-main>): rely on native ::backdrop for the dimmer
- * instead of the shared c-backdrop element. */
-dialog.c-modal--standalone::backdrop {
-  background-color: rgba(0, 0, 0, 0.5);
-}
-
-dialog.c-modal--standalone.c-modal--backdrop-blur::backdrop {
-  backdrop-filter: blur(4px);
 }
 
 @media (prefers-reduced-motion: no-preference) {

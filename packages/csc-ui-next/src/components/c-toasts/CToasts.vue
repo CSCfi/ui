@@ -32,6 +32,8 @@ import {
   watchEffect,
 } from 'vue';
 
+import { TOAST_BAND } from '../../shared/modalStack';
+
 // Placement state (`absolute`/`top`/`bottom`/`left`/`right`/`center`) is toggled
 // imperatively as classes on the HOST so the `:host(.absolute)` etc. rules below
 // can match it. Without this, Vue mirrors the host's `class` onto the single
@@ -183,6 +185,13 @@ defineExpose({ addToast, removeToast });
 
 onMounted(() => {
   if (!host) return;
+
+  // Toast stacking band (ADR-0014): above the modal band, below the browser
+  // top layer. Set from the shared constant so modal and toast paint order
+  // have a single source of truth. The modal stack controller additionally
+  // exempts c-toasts from inerting, so toasts stay interactive over modals.
+  host.style.zIndex = String(TOAST_BAND);
+
   watchEffect(() => {
     host.classList.toggle('absolute', props.absolute);
     host.classList.toggle('top', props.vertical === 'top');
@@ -216,7 +225,7 @@ onMounted(() => {
   max-width: 100%;
   min-width: 30vw;
   pointer-events: none;
-  z-index: 10000;
+  /* z-index is set imperatively from the shared TOAST_BAND constant. */
 }
 
 :host(.absolute) {

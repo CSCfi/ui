@@ -1,8 +1,6 @@
 <template>
   <main :class="ui.root()" part="root">
     <slot />
-
-    <c-backdrop />
   </main>
 </template>
 

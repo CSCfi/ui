@@ -615,6 +615,11 @@ const handleKeyDown = (event: KeyboardEvent) => {
   }
 
   if (event.key === 'Escape') {
+    // Consume the Escape only when it actually closes the dropdown, so an
+    // enclosing modal (whose stack controller skips defaultPrevented events)
+    // stays open; a second press then reaches the modal.
+    if (dropdownVisible.value) event.preventDefault();
+
     dropdownRef.value?.close();
     inputRef.value?.focus();
 

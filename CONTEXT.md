@@ -53,6 +53,32 @@ _Avoid_: Nested dropdown, flyout, child menu
 A general-purpose `role="separator"` line dividing groups of content. Used to partition menu sections but not menu-specific. A **menu label** (`c-menu-label`) is the complementary heading for a group of items; a separator is the line between groups.
 _Avoid_: Spacer (`c-spacer` is a flex-grow layout filler, not a visible rule), rule, hr
 
+### Overlays (`csc-ui-next`)
+
+**Top layer**:
+The browser-managed paint layer above every author stacking context — nothing an author z-indexes can paint above it, and while a *modal dialog* occupies it the rest of the document is inert. In this library only **transient** popovers live there: the menu family and autocomplete panels (ADR-0008). Modals deliberately do **not** (ADR-0014) — a top-layer modal would paint over and inert the toasts.
+_Avoid_: Overlay (an overlay is any floating surface; the top layer is a specific browser mechanism), portal
+
+**Stacking band**:
+A library-owned paint-order range that overlay surfaces are assigned to: page content sits below the **modal stack**'s band, toasts sit in a band above it, and the **top layer** sits above everything. Bands are internal — consumers do not interleave with them. Distinct from the **surface ladder**, which is the *colour* elevation model: a modal paints `surface-overlay` regardless of which band it occupies.
+_Avoid_: z-index scale (the band is the concept; a z-index is its implementation), layer
+
+**Modal stack**:
+The ordered set of currently open `c-modal`s. Only the topmost — the **active modal** — is interactive; it owns the **backdrop** and receives Escape. Everything below it (page and lower modals alike) is inert. Toasts are exempt: they stay above and interactive regardless of the stack.
+_Avoid_: dialog stack, open modals (use _modal stack_ when the ordering/activeness matters)
+
+**Active modal**:
+The topmost member of the **modal stack** — the only modal the user can interact with at any moment. Opening a new modal makes it the active one; closing it re-activates the one beneath.
+_Avoid_: current modal, focused modal (focus is a consequence, not the definition)
+
+**Backdrop**:
+The single dimming overlay rendered directly beneath the **active modal**, painting the `scrim` colour role. There is exactly one visible backdrop no matter how deep the modal stack is. The `scrim` token is the colour it paints with, not the element.
+_Avoid_: Scrim (that is the colour token), dimmer, overlay, `::backdrop` (the retired native pseudo-element)
+
+**Dismissable**:
+A modal property governing *both* light-dismiss gestures — backdrop click **and** Escape. A non-dismissable modal responds to either with a nudge animation instead of closing; it can only be closed by an explicit action inside it.
+_Avoid_: persistent (the inverse framing; canonical axis is _dismissable_), closable
+
 ### Styling (`csc-ui-next`)
 
 **Part**:

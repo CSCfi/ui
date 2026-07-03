@@ -366,7 +366,6 @@ onBeforeUnmount(() => {
     opacity 0.5s ease,
     transform 0.5s ease;
   will-change: opacity, transform;
-  z-index: 10001;
 }
 
 :host(.show) {

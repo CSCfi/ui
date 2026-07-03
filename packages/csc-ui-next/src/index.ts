@@ -2,7 +2,6 @@ import CAccordionItem from './components/c-accordion-item/CAccordionItem.vue';
 import CAccordion from './components/c-accordion/CAccordion.vue';
 import CAlert from './components/c-alert/CAlert.vue';
 import CAutocomplete from './components/c-autocomplete/CAutocomplete.vue';
-import CBackdrop from './components/c-backdrop/CBackdrop.vue';
 import CBadge from './components/c-badge/CBadge.vue';
 import CButton from './components/c-button/CButton.vue';
 import CCardActions from './components/c-card-actions/CCardActions.vue';
@@ -121,7 +120,6 @@ const components: Array<[string, unknown]> = [
   ['c-status', CStatus],
   ['c-row', CRow],
   ['c-toolbar', CToolbar],
-  ['c-backdrop', CBackdrop],
   ['c-main', CMain],
   ['c-page', CPage],
   ['c-message', CMessage],
@@ -203,7 +201,6 @@ export const tailwindVariantTags: ReadonlyArray<string> = [
   'c-main',
   'c-page',
   'c-toolbar',
-  'c-backdrop',
   'c-csc-logo',
   'c-icon',
   'c-card',
