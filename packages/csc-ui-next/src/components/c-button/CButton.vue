@@ -412,7 +412,7 @@ const button = tv({
     text: false,
   },
   slots: {
-    content: 'relative grid items-stretch w-full font-bold select-none',
+    content: 'grid items-stretch w-full font-bold select-none',
     contentInner:
       'flex items-center justify-center gap-2 whitespace-nowrap transition-opacity duration-200',
     description: 'font-normal text-xs px-3 pb-3 text-left',
@@ -427,7 +427,7 @@ const button = tv({
     // every other component) — native buttons don't inherit it. Font *size* is
     // owned by the `size` variant's `text-*` (and consumer overrides);
     // inheriting the whole `font` shorthand would reset it.
-    root: 'inline-grid place-items-center relative min-w-max overflow-hidden min-w-22 rounded-csc-md border-0 m-0 p-0 [font-family:var(--c-font-family)] no-underline cursor-pointer transform-gpu transition-colors duration-300 ease-in-out outline-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-solid',
+    root: 'inline-grid place-items-center relative min-w-max min-w-22 rounded-csc-md border-0 m-0 p-0 [font-family:var(--c-font-family)] no-underline cursor-pointer transform-gpu transition-colors duration-300 ease-in-out outline-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-solid',
     spinner:
       'inline-block border-2 border-solid border-current border-r-transparent rounded-full animate-spin',
   },

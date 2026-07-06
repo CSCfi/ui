@@ -302,7 +302,7 @@ const iconButton = tv({
     badge:
       'absolute -top-1 -right-1 z-[2] min-w-[18px] h-[18px] px-1 inline-flex items-center justify-center rounded-full border-2 border-surface bg-warning text-on-warning text-[11px] leading-[14px] font-semibold pointer-events-none',
     inner:
-      'relative flex items-center justify-center size-full inset-0 overflow-hidden transform-gpu',
+      'relative flex items-center justify-center size-full inset-0 transform-gpu',
     ripple:
       'absolute rounded-full bg-current pointer-events-none transition-[transform,opacity] duration-[600ms] ease-out',
     ripples:

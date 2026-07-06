@@ -24,7 +24,7 @@ const LANGS = [
   'md',
 ];
 
-const THEMES = { dark: 'github-dark', light: 'github-light' } as const;
+const THEMES = { dark: 'one-dark-pro', light: 'one-light' } as const;
 
 let highlighterPromise: null | Promise<Highlighter> = null;
 
