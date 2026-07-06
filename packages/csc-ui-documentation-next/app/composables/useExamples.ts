@@ -13,6 +13,11 @@ import type { Component } from 'vue';
  * <name>.<framework>.<ext> (e.g. basic.react.tsx) — hand-written for now; a
  * source-to-source transformer from the Vue canon slots in here later.
  */
+// Live demo components. They are client-only (rendered inside <ClientOnly> in
+// ExampleBlock, and the csc-ui elements only upgrade on the client). In the
+// server build these SFCs are stubbed to an empty module by the
+// `stub-example-demos-in-ssr` Vite plugin (nuxt.config.ts), because
+// @vue/compiler-ssr cannot compile `v-model` on a custom element.
 const demoModules = import.meta.glob('../examples/*/*.vue');
 
 const vueSources = import.meta.glob('../examples/*/*.vue', {

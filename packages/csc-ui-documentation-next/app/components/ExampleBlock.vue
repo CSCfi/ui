@@ -3,7 +3,12 @@
     <figcaption class="example-title">{{ example.title }}</figcaption>
 
     <div class="example-demo">
-      <component :is="example.demo" />
+      <!-- Interactive demos are client-only: the csc-ui custom elements upgrade
+           only on the client, and Vue's SSR compiler (@vue/compiler-ssr) errors
+           on `v-model` on a custom element when `isCustomElement` is set. -->
+      <ClientOnly>
+        <component :is="example.demo" />
+      </ClientOnly>
     </div>
 
     <div class="example-code">

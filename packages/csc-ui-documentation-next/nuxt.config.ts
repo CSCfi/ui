@@ -10,14 +10,55 @@ import { fileURLToPath } from 'node:url';
 // Composed children (ADR-0013) have no page of their own: redirect their old
 // route to the parent page anchor. Derived from the manifest so the mapping has
 // a single source of truth (the @subcomponents docblock tags).
-const manifest = JSON.parse(
-  readFileSync(
-    fileURLToPath(
-      new URL('../csc-ui-next/dist/custom-elements.json', import.meta.url),
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+let manifest: any;
+
+try {
+  manifest = JSON.parse(
+    readFileSync(
+      fileURLToPath(
+        new URL('../csc-ui-next/dist/custom-elements.json', import.meta.url),
+      ),
+      'utf8',
     ),
-    'utf8',
-  ),
-);
+  );
+} catch {
+  // The manifest is a csc-ui-next build artifact (dist/ is gitignored), so it
+  // is absent on a fresh clone and until the sibling package is built. Config
+  // load runs during `pnpm install` (postinstall: nuxt prepare) and on a cold
+  // `nuxt dev`, both of which may precede that build — so fall back to an empty
+  // manifest instead of crashing. Child redirects are skipped until the build
+  // runs (`pnpm dev:docs-next` regenerates the manifest before serving).
+  console.warn(
+    '[nuxt.config] csc-ui-next has not been built yet — skipping child-component route redirects. Run `pnpm --filter @cscfi/csc-ui-next docs:manifest` to populate them.',
+  );
+  manifest = { modules: [] };
+}
+
+// @vue/compiler-ssr cannot compile `v-model` on a custom element: once
+// `isCustomElement` (below) classifies a c-* tag as an element, the SSR
+// compiler throws "v-model can only be used on <input>, <textarea> and <select>
+// elements." (the client compiler-dom handles it fine via vModelText). The
+// interactive demos under app/examples are client-only anyway — ExampleBlock
+// wraps them in <ClientOnly>, and the csc-ui elements upgrade only on the
+// client — so resolve their SFCs to an empty module in the SSR build. The
+// server never renders them, `isCustomElement` stays intact for the real c-*
+// usage on pages, and the `?raw` source imports (code tabs, which DO render
+// server-side) are left untouched because they carry a query string.
+const stubExampleDemosInSsr: import('vite').Plugin = {
+  enforce: 'pre',
+  load(id) {
+    if (id === '\0csc-example-demo-stub') return 'export default {}';
+    return null;
+  },
+  name: 'csc-docs:stub-example-demos-in-ssr',
+  resolveId(source, _importer, options) {
+    if (options?.ssr && /\/examples\/[^?]+\.vue$/.test(source)) {
+      return '\0csc-example-demo-stub';
+    }
+    return null;
+  },
+};
 
 const childRedirects: Record<string, { redirect: string }> = {};
 
@@ -60,6 +101,7 @@ export default defineNuxtConfig({
   routeRules: childRedirects,
   ssr: true,
   vite: {
+    plugins: [stubExampleDemosInSsr],
     resolve: {
       alias: {
         // usage.md files are read from the sibling workspace package's build
