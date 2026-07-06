@@ -3,10 +3,29 @@
     <div v-if="!hideDetails" :class="ui.details()" part="details">
       <div :class="ui.itemsPerPage()" part="items-per-page">
         {{ itemsPerPageText }}
-        <c-menu :items="pageSizeItems" @click="onMenuClick">
-          <div>
-            <span :class="ui.itemsPerPageValue()">{{ itemsPerPage }}</span>
-          </div>
+        <!-- The migrated c-menu is slot-based (ADR-0008): the trigger goes in
+             the `trigger` slot and options are c-menu-item children; the
+             Stencil-era `items` prop no longer exists. -->
+        <c-menu @select="onPageSizeSelect">
+          <c-button
+            slot="trigger"
+            :aria-label="itemsPerPageText"
+            :class="ui.itemsPerPageValue()"
+            size="small"
+            text
+          >
+            {{ itemsPerPage }}
+
+            <c-icon :path="mdiChevronDown" />
+          </c-button>
+
+          <c-menu-item
+            v-for="sizeOption in pageSizes"
+            :key="sizeOption"
+            :value="String(sizeOption)"
+          >
+            {{ sizeOption }}
+          </c-menu-item>
         </c-menu>
       </div>
 
@@ -135,7 +154,12 @@ export type CPaginationSize = 'default' | 'small';
  * @csspart items-per-page - The items-per-page row (label text and page-size menu)
  * @csspart pages - The `<ul>` list of page buttons and the prev/next controls
  */
-import { mdiChevronLeft, mdiChevronRight, mdiDotsHorizontal } from '@mdi/js';
+import {
+  mdiChevronDown,
+  mdiChevronLeft,
+  mdiChevronRight,
+  mdiDotsHorizontal,
+} from '@mdi/js';
 import { tv } from 'tailwind-variants';
 import { computed, onMounted, ref, useHost, watch, watchEffect } from 'vue';
 
@@ -200,6 +224,7 @@ const pagination = tv({
     itemsPerPage:
       'flex items-center gap-1 text-sm text-right whitespace-nowrap text-[var(--c-text-system)]',
     itemsPerPageValue: '',
+    // 'cursor-pointer border-0 bg-transparent p-0 text-sm text-primary underline decoration-dotted underline-offset-4 [font-family:inherit]',
     pages: 'flex items-center justify-center list-none m-0 p-0 gap-1',
     rangeText: 'text-sm text-right whitespace-nowrap',
     root: 'flex flex-wrap items-center justify-center w-full gap-x-6 gap-y-0',
@@ -319,18 +344,14 @@ const decreasePage = () => {
   }
 };
 
-const pageSizeItems = computed(() =>
-  pageSizes.value.map((i) => ({
-    action: () => {
-      itemsPerPage.value = i;
-      currentPage.value = 1;
-      commit();
-    },
-    name: i.toString(),
-  })),
-);
+const onPageSizeSelect = (event: Event) => {
+  const size = Number((event as CustomEvent<{ value: unknown }>).detail?.value);
 
-const onMenuClick = (event: Event) => event.stopPropagation();
+  if (!Number.isFinite(size) || size === itemsPerPage.value) return;
+  itemsPerPage.value = size;
+  currentPage.value = 1;
+  commit();
+};
 
 const rangeText = computed(() => {
   if (props.hideRange || !props.value.itemCount) return '';
@@ -419,3 +440,9 @@ onMounted(() => {
   });
 });
 </script>
+
+<style>
+c-menu c-button::part(root) {
+  min-width: 0;
+}
+</style>

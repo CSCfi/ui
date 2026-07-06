@@ -107,10 +107,14 @@ const hyphenate = (key: string) =>
   key.replace(/([a-z0-9])([A-Z])/g, '$1-$2').toLowerCase();
 
 /**
- * Prop keys declared as exactly `Boolean` — not a union like
- * `boolean | string`, where the literal string "false" could be meaningful.
+ * Prop keys declared as exactly the given constructor — not a union like
+ * `boolean | string` / `number | string`, where a string value could be
+ * meaningful and must not be coerced.
  */
-const booleanPropKeys = (component: Component): string[] => {
+const propKeysOfType = (
+  component: Component,
+  ctor: BooleanConstructor | NumberConstructor,
+): string[] => {
   const props = (component as { props?: Record<string, unknown> }).props ?? {};
 
   return Object.keys(props).filter((key) => {
@@ -122,11 +126,21 @@ const booleanPropKeys = (component: Component): string[] => {
         : decl;
 
     return (
-      type === Boolean ||
-      (Array.isArray(type) && type.length === 1 && type[0] === Boolean)
+      type === ctor ||
+      (Array.isArray(type) && type.length === 1 && type[0] === ctor)
     );
   });
 };
+
+const booleanPropKeys = (component: Component): string[] =>
+  propKeysOfType(component, Boolean);
+
+/**
+ * Prop keys declared as exactly `Number` — not a union like
+ * `number | string`, where a string value is meaningful.
+ */
+const numberPropKeys = (component: Component): string[] =>
+  propKeysOfType(component, Number);
 
 /**
  * Normalize server-serialized boolean attributes before Vue reads them.
@@ -166,6 +180,45 @@ const normalizeBooleanAttributes = (
 };
 
 /**
+ * Normalize string values sitting in pre-upgrade NUMBER properties before Vue
+ * reads them.
+ *
+ * A Vue consumer writing a plain attribute for a declared numeric prop
+ * (`<c-data-table page-size="4">`) does NOT go through the attribute path:
+ * Vue's `patchProp` detects a declared prop on a Vue custom element and
+ * assigns it as a DOM property with the raw template string — before the
+ * element is connected, i.e. as a plain own property (`el.pageSize = '4'`).
+ * Vue's own number casting exists only on the attribute path, and its
+ * `_resolveProps` copies the own property verbatim AFTER the resolve-time
+ * cast pass, so the component receives the string `'4'`. Downstream numeric
+ * arithmetic then silently degrades (`4 + '4' === '44'` — this genuinely made
+ * c-data-table's middle pages render every remaining row).
+ *
+ * Like the boolean normalizer above, this must run BEFORE
+ * `super.connectedCallback()`: the re-assigned own property is what Vue's
+ * pre-upgrade-props pass reads. Only props declared exactly `Number` are
+ * touched, and only when the value is a clean numeric string.
+ */
+const normalizeNumberProperties = (
+  el: ConnectableElement,
+  keys: string[],
+): void => {
+  for (const key of keys) {
+    if (!Object.prototype.hasOwnProperty.call(el, key)) continue;
+
+    const raw = (el as unknown as Record<string, unknown>)[key];
+
+    if (typeof raw !== 'string' || raw.trim() === '') continue;
+
+    const parsed = Number(raw);
+
+    if (!Number.isNaN(parsed)) {
+      (el as unknown as Record<string, number>)[key] = parsed;
+    }
+  }
+};
+
+/**
  * Register a Vue SFC as a custom element under `tag`, with the shared Tailwind
  * utility stylesheet applied to its shadow root alongside the SFC's own styles.
  *
@@ -195,6 +248,8 @@ export function defineElement(tag: string, component: Component): void {
 
   const booleanKeys = booleanPropKeys(component);
 
+  const numberKeys = numberPropKeys(component);
+
   if (!supportsAdopted) {
     // Fallback: let Vue inject the styles per instance, as before. The merge is
     // deliberate — Vue's `styles` option replaces (not appends to) the SFC's
@@ -206,6 +261,7 @@ export function defineElement(tag: string, component: Component): void {
     class Element extends (Base as unknown as { new (): ConnectableElement }) {
       connectedCallback() {
         normalizeBooleanAttributes(this, booleanKeys);
+        normalizeNumberProperties(this, numberKeys);
         super.connectedCallback?.();
       }
     }
@@ -223,9 +279,11 @@ export function defineElement(tag: string, component: Component): void {
 
   class Element extends (Base as unknown as { new (): ConnectableElement }) {
     connectedCallback() {
-      // Coerce SSR'd "true"/"false" boolean attributes before Vue resolves
-      // props (the component mounts inside super.connectedCallback).
+      // Coerce SSR'd "true"/"false" boolean attributes and string values in
+      // pre-upgrade Number properties before Vue resolves props (the
+      // component mounts inside super.connectedCallback).
       normalizeBooleanAttributes(this, booleanKeys);
+      normalizeNumberProperties(this, numberKeys);
 
       // Adopt the sheets BEFORE Vue mounts the shadow content: Vue flushes
       // `mounted` hooks synchronously inside super.connectedCallback(), and a

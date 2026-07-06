@@ -68,15 +68,17 @@ import { useHostEmit } from '../../shared/useHostEmit';
 /** Events dispatched by `<c-menu>`. */
 interface CMenuEvents {
   /**
+   * Fired whenever the menu opens or closes, carrying the new open state.
+   * Named `change:open`, not `update:open`: Vue's runtime silently drops
+   * `onUpdate:*` listeners on custom elements (`isModelListener`), so a
+   * template `@update:open` would never be attached (ADR-0017).
+   */
+  'change:open': boolean;
+  /**
    * Fired when a leaf menu item is selected, carrying the item's `value`;
    * bubbles out of the menu so a single listener can handle the whole tree.
    */
   select: { value: unknown };
-  /**
-   * Fired whenever the menu opens or closes, carrying the new open state —
-   * the `v-model:open` contract.
-   */
-  'update:open': boolean;
 }
 
 /**
@@ -112,7 +114,7 @@ const menu = tv({
 const ui = menu();
 
 interface CMenuProps {
-  /** Whether the menu is open. Two-way: emits `update:open` (v-model:open). */
+  /** Whether the menu is open. Two-way: emits `change:open`. */
   open?: boolean;
   /** Preferred placement of the panel relative to the trigger. */
   position?: Placement;
@@ -491,7 +493,7 @@ const onToggle = (event: Event) => {
 
   isOpen.value = nowOpen;
   getTriggerEl()?.setAttribute('aria-expanded', String(nowOpen));
-  emit('update:open', nowOpen);
+  emit('change:open', nowOpen);
 
   if (nowOpen) {
     void ensureAnchorPositioning(host?.shadowRoot);

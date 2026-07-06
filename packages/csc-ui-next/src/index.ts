@@ -10,6 +10,7 @@ import CCardTitle from './components/c-card-title/CCardTitle.vue';
 import CCard from './components/c-card/CCard.vue';
 import CCheckbox from './components/c-checkbox/CCheckbox.vue';
 import CCscLogo from './components/c-csc-logo/CCscLogo.vue';
+import CDataTable from './components/c-data-table/CDataTable.vue';
 import CDivider from './components/c-divider/CDivider.vue';
 import CDropdown from './components/c-dropdown/CDropdown.vue';
 import CIconButton from './components/c-icon-button/CIconButton.vue';
@@ -97,6 +98,23 @@ export type {
 } from './components/c-card-actions/CCardActions.vue';
 
 export type {
+  CDataTableAlign,
+  CDataTableCellContent,
+  CDataTableCellContext,
+  CDataTableColumn,
+  CDataTableColumnExpansion,
+  CDataTableColumnPin,
+  CDataTableExpandedContext,
+  CDataTableFooterContext,
+  CDataTableProps,
+  CDataTableRow,
+  CDataTableSelectionMode,
+  CDataTableSort,
+  CDataTableSortDirection,
+  CDataTableTexts,
+} from './components/c-data-table/CDataTable.vue';
+
+export type {
   CIconButtonProps,
   CIconButtonSize,
 } from './components/c-icon-button/CIconButton.vue';
@@ -172,6 +190,12 @@ export type { Family, ThemeSeeds } from './theme/applyTheme';
 // Shared types (value crosses a component boundary) come from src/types.ts;
 // component-owned types come from their owning SFC.
 export type { CSelectItem, CToastMessage, CToastType } from './types';
+
+// Vue's `h`, re-exported so consumers author c-data-table cell/footer/expanded
+// render functions without a direct `vue` dependency (ADR-0016).
+export { h } from 'vue';
+
+export type { VNode, VNodeChild } from 'vue';
 
 /**
  * Map of custom-element tag → Vue SFC component. The single source of
@@ -256,6 +280,9 @@ const components: Array<[string, unknown]> = [
   ['c-menu-label', CMenuLabel],
   ['c-menu-item', CMenuItem],
   ['c-menu', CMenu],
+  // c-data-table renders c-checkbox, c-pagination (itself using c-menu),
+  // c-icon-button, c-icon and c-button — register after all of them.
+  ['c-data-table', CDataTable],
 ];
 
 /**
@@ -352,4 +379,6 @@ export const tailwindVariantTags: ReadonlyArray<string> = [
   'c-menu-label',
   'c-menu-item',
   'c-menu',
+  // New components (born tailwind-variants; no Stencil-era styles to convert).
+  'c-data-table',
 ];

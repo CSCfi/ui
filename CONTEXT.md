@@ -123,6 +123,28 @@ _Avoid_: Colour, type (the consumer-facing word for these was "type" — prefer 
 The single step-`500` colour value that anchors a **family**'s generated ramp. Step 500 reproduces the seed exactly; steps `50`–`950` are derived from it perceptually (OKLCH). Consumers supply one seed per family they override (via `applyTheme` / `themeToCss`) and the whole ramp — and every **semantic token** that resolves to it, in both modes — regenerates. See ADR-0011.
 _Avoid_: Base colour, brand colour (ambiguous — a "brand colour" could mean any step; the seed is specifically step 500)
 
+### Data table (`csc-ui-next`)
+
+**Column**:
+A consumer-authored definition in `c-data-table`'s `columns` prop (a `CDataTableColumn`): key/accessor, header content, renderers, and behavioral flags. The old Stencil API called these "headers" (`CDataTableHeader`) — in the new vocabulary the column is the definition; the **header** is only the rendered top cell.
+_Avoid_: Header (that is the rendered cell at the top of a column, not the definition), field
+
+**Pinned column**:
+A column stuck to the left or right edge of the scroll viewport during horizontal scroll (the TanStack sense). A pinned column is never autohidden. **This is not the old Stencil meaning** — old `pinned` meant "exempt from autohide", which is now the column's expansion policy `'never'`. The selection and expander utility columns are always pinned left.
+_Avoid_: Frozen, fixed, sticky column (sticky is reserved for the header/footer rows), the old autohide-exemption sense
+
+**Expansion row**:
+The extra full-width row revealed beneath a data row, holding (in order) the auto-rendered cells of columns currently in the expansion row, then the consumer's custom expanded content. During horizontal scroll its content stays sticky at the width of the visible table area.
+_Avoid_: Detail row, child row, expandable (a row is expandable; the revealed thing is the expansion row)
+
+**Expansion policy**:
+A column's tri-state answer to "when do this column's cells live in the expansion row": `auto` (moved there only when **autohide** overflows, the default), `never` (always a real column), `always` (never a real column — replaces the old `hidden` flag). One axis, so contradictory flag combinations are unrepresentable.
+_Avoid_: hidden/hideable (the old two-boolean shape), visibility (CSS connotation)
+
+**Autohide**:
+The opt-in overflow strategy where columns whose policy is `auto` move, rightmost first, into the **expansion row** until the table fits its container. The alternative (default) strategy is horizontal scrolling. A table-level mode, not a per-column property.
+_Avoid_: Responsive mode, collapse
+
 ### Documentation (`csc-ui-next`)
 
 **Manifest**:

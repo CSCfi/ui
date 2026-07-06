@@ -57,17 +57,13 @@ import { useHostEmit } from '../../shared/useHostEmit';
 interface CSideNavigationEvents {
   /**
    * Fired when the drawer is closed from within (the mobile close button or
-   * the backdrop overlay), carrying the new visibility (`false`). Same payload
-   * as `update:menuVisible` — this kebab-case twin exists for attribute-style
-   * listener compatibility.
+   * the backdrop overlay), carrying the new visibility (`false`).
+   * Named `change:menu-visible`, not `update:menuVisible`: Vue's runtime
+   * silently drops `onUpdate:*` listeners on custom elements
+   * (`isModelListener`), so a template `@update:menu-visible` would never be
+   * attached (ADR-0017).
    */
-  'update:menu-visible': boolean;
-  /**
-   * Fired when the drawer is closed from within (the mobile close button or
-   * the backdrop overlay), carrying the new visibility (`false`) — the
-   * `v-model:menu-visible` contract.
-   */
-  'update:menuVisible': boolean;
+  'change:menu-visible': boolean;
 }
 
 // Multi-root template (fragment) + we write to the host below — keep
@@ -204,8 +200,7 @@ watch(
 // pass the prop reactively.
 const closeMenu = () => {
   setMenuVisible(false);
-  emit('update:menuVisible', false);
-  emit('update:menu-visible', false);
+  emit('change:menu-visible', false);
 };
 
 // Reflect c-side-navigation-item's itemChange: when a top-level item is

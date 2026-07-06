@@ -38,6 +38,7 @@
   "dependencies": {
     "@mdi/js": "^7.4.47",
     "@oddbird/css-anchor-positioning": "^0.9.0",
+    "@tanstack/vue-table": "^8.21.3",
     "culori": "^4.0.2",
     "tailwind-merge": "^3.6.0",
     "tailwind-variants": "^3.2.2",
