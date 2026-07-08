@@ -33,7 +33,7 @@
       :aria-invalid="!valid"
       :autocapitalize="automaticCapitalize || undefined"
       :autocomplete="autocomplete || undefined"
-      :autocorrect="autocorrect || undefined"
+      :autocorrect="autocorrect === undefined ? undefined : autocorrect ? 'on' : 'off'"
       :class="ui.textarea()"
       :disabled
       :name="name || undefined"
@@ -55,7 +55,7 @@
       :aria-invalid="!valid"
       :autocapitalize="automaticCapitalize || undefined"
       :autocomplete="autocomplete || undefined"
-      :autocorrect="autocorrect || undefined"
+      :autocorrect="autocorrect === undefined ? undefined : autocorrect ? 'on' : 'off'"
       :class="ui.input()"
       :disabled
       :max="max ?? undefined"
@@ -125,11 +125,6 @@ export type CTextFieldAutocapitalize =
   | 'sentences'
   | 'words';
 
-/**
- * Native `autocorrect` behaviour of the input (Safari).
- */
-export type CTextFieldAutocorrect = 'off' | 'on';
-
 export interface CTextFieldProps {
   /**
    * HTML input autocomplete
@@ -139,11 +134,12 @@ export interface CTextFieldProps {
    */
   autocomplete?: string;
   /**
-   * HTML input autocorrect
-   *
-   * @seeded from csc-ui — verify
+   * Enable native input autocorrection (Safari). Maps to the input's
+   * `autocorrect="on"`/`"off"` attribute; left unset (browser default per
+   * input type) when not specified. Mirrors the platform
+   * `HTMLElement.autocorrect` boolean.
    */
-  autocorrect?: CTextFieldAutocorrect;
+  autocorrect?: boolean;
   /**
    * HTML input autocapitalize
    *

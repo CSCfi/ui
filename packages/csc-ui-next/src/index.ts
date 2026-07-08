@@ -165,7 +165,6 @@ export type { CTagsProps, CTagsSize } from './components/c-tags/CTags.vue';
 
 export type {
   CTextFieldAutocapitalize,
-  CTextFieldAutocorrect,
   CTextFieldProps,
   CTextFieldType,
 } from './components/c-text-field/CTextField.vue';

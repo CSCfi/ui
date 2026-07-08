@@ -1919,8 +1919,13 @@ export interface CTextFieldElementEventMap {
 export interface CTextFieldElement extends Omit<HTMLElement, 'autocomplete' | 'autocorrect' | 'automaticCapitalize' | 'disabled' | 'hideDetails' | 'hint' | 'hostId' | 'label' | 'labelOnTop' | 'max' | 'min' | 'name' | 'placeholder' | 'readonly' | 'required' | 'rows' | 'shadow' | 'step' | 'trimWhitespace' | 'type' | 'valid' | 'validate' | 'validateOnBlur' | 'validation' | 'value'> {
   /** HTML input autocomplete */
   autocomplete?: string;
-  /** HTML input autocorrect */
-  autocorrect?: 'off' | 'on';
+  /**
+   * Enable native input autocorrection (Safari). Maps to the input's
+   * `autocorrect="on"`/`"off"` attribute; left unset (browser default per
+   * input type) when not specified. Mirrors the platform
+   * `HTMLElement.autocorrect` boolean.
+   */
+  autocorrect?: boolean;
   /** HTML input autocapitalize */
   automaticCapitalize?: 'characters' | 'none' | 'off' | 'on' | 'sentences' | 'words';
   /** Disable the input */
