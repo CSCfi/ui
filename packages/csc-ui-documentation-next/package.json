@@ -5,9 +5,10 @@
   "description": "Documentation site for @cscfi/csc-ui-next, generated from the library's Custom Elements Manifest (ADR-0012).",
   "type": "module",
   "scripts": {
-    "build": "nuxt build",
+    "build": "pnpm run lint:examples && nuxt build",
     "dev": "nuxt dev",
-    "generate": "nuxt generate",
+    "generate": "pnpm run lint:examples && nuxt generate",
+    "lint:examples": "node scripts/check-example-parity.mjs",
     "postinstall": "nuxt prepare",
     "preview": "nuxt preview",
     "typecheck": "nuxt typecheck"
