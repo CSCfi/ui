@@ -21,7 +21,7 @@ A consumer swapping their app's dependency from `@cscfi/csc-ui` to `@cscfi/csc-u
 _Avoid_: using _migrate_ for the consumer's action (reserve _migrate_ for the internal port)
 
 **Wrapper package**:
-A framework-specific adapter that exposes csc-ui custom elements idiomatically — `@cscfi/csc-ui-react`, `@cscfi/csc-ui-angular`. Wrappers consume the canonical custom elements; they do **not** re-implement them. `@cscfi/csc-ui-vue` and `@cscfi/csc-ui-vue2` are special-case wrappers (just the `v-control` directive) being retired with the rewrite.
+A framework-specific adapter that exposes csc-ui custom elements idiomatically — `@cscfi/csc-ui-react`, `@cscfi/csc-ui-angular` (Stencil era), and `@cscfi/csc-ui-next-react` (generated from the **manifest** onto `@lit/react`, ADR-0019; React is the only framework that needs one for `csc-ui-next` — Angular and TypeScript consume the elements natively). Wrappers consume the canonical custom elements; they do **not** re-implement them. `@cscfi/csc-ui-vue` and `@cscfi/csc-ui-vue2` are special-case wrappers (just the `v-control` directive) being retired with the rewrite.
 _Avoid_: Binding, integration, shim
 
 **`v-control`**:
