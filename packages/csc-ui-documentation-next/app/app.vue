@@ -38,6 +38,13 @@
         <c-side-navigation-title>Guides</c-side-navigation-title>
 
         <c-side-navigation-item
+          :active.prop="route.path === '/getting-started'"
+          @itemChange="navigateTo('/getting-started')"
+        >
+          Getting started
+        </c-side-navigation-item>
+
+        <c-side-navigation-item
           :active.prop="route.path === '/migration'"
           @itemChange="navigateTo('/migration')"
         >
