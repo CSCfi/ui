@@ -76,7 +76,8 @@
   "nav-active": "primary-100",
   "on-nav-active": "primary-700",
 
+  "_comment-logo": "The CSC logo is a fixed brand mark: literal hex (not palette-step keys) so consumer re-seeding of primary/secondary via applyTheme cannot recolor it. Values equal the default primary-500/secondary-500.",
   "logo-wordmark": "tertiary-600",
-  "logo-teal": "primary-500",
-  "logo-magenta": "secondary-500"
+  "logo-teal": "#006778ff",
+  "logo-magenta": "#830051ff"
 }

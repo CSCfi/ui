@@ -1,17 +1,11 @@
 export type ThemePreference = 'dark' | 'light' | 'system';
 
-export const THEME_STORAGE_KEY = 'csc-docs-theme';
+export const THEME_STORAGE_KEY = 'csc-ui-docs-theme';
 
 // Shared across all component instances; initialized from localStorage by the
 // theme client plugin (the pre-paint inline script in nuxt.config.ts has
 // already set the data-theme attribute by then, so there is no flash).
 const preference = ref<ThemePreference>('system');
-
-const CYCLE: Record<ThemePreference, ThemePreference> = {
-  dark: 'system',
-  light: 'dark',
-  system: 'light',
-};
 
 const apply = (value: ThemePreference) => {
   const root = document.documentElement;
@@ -36,7 +30,6 @@ export const useTheme = () => {
   };
 
   return {
-    cycle: () => setPreference(CYCLE[preference.value]),
     preference: readonly(preference),
     setPreference,
   };

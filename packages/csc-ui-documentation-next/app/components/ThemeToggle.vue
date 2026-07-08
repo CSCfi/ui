@@ -2,22 +2,38 @@
   <!-- Rendered client-only: the label depends on localStorage, which the
        prerendered HTML cannot know. -->
   <ClientOnly>
-    <button
-      :aria-label="`Color theme: ${preference}. Switch to ${next}.`"
-      class="theme-toggle"
-      :title="`Theme: ${preference}`"
-      type="button"
-      @click="cycle"
-    >
-      <svg aria-hidden="true" height="20" viewBox="0 0 24 24" width="20">
-        <path :d="icon" fill="currentColor" />
-      </svg>
-      <span class="theme-toggle-label">{{ preference }}</span>
-    </button>
-
     <template #fallback>
-      <span class="theme-toggle theme-toggle-placeholder" />
+      <span
+        class="invisible inline-flex min-w-22 items-center gap-[0.4rem] rounded-full border px-3 py-1 text-[0.8125rem]"
+      />
     </template>
+
+    <c-menu
+      position="bottom-end"
+      @select="onSelect"
+    >
+      <c-button
+        :aria-label="`Color theme: ${preference}`"
+        slot="trigger"
+        size="small"
+        text
+      >
+        <c-icon aria-hidden="true" :path="icon" :size="20" />
+
+        <span class="capitalize">{{ preference }}</span>
+      </c-button>
+
+      <c-menu-label>Theme</c-menu-label>
+
+      <c-menu-item
+        v-for="option in THEME_OPTIONS"
+        :key="option.id"
+        :value="option.id"
+      >
+        <c-icon :path="option.icon" :size="16" />
+        {{ option.label }}
+      </c-menu-item>
+    </c-menu>
   </ClientOnly>
 </template>
 
@@ -28,21 +44,35 @@ import {
   mdiWhiteBalanceSunny,
 } from '@mdi/js';
 
-const { cycle, preference } = useTheme();
+const { preference, setPreference } = useTheme();
 
-const ICONS: Record<string, string> = {
+const ICONS = {
   dark: mdiWeatherNight,
   light: mdiWhiteBalanceSunny,
   system: mdiThemeLightDark,
-};
+} as const;
 
-const NEXT: Record<string, string> = {
-  dark: 'system',
-  light: 'dark',
-  system: 'light',
-};
+type ThemeOption = { id: ThemePreference; label: string; icon: string };
+
+const THEME_OPTIONS: ThemeOption[] = [
+  { id: 'dark', label: 'Dark', icon: mdiWeatherNight },
+  { id: 'light', label: 'Light', icon: mdiWhiteBalanceSunny },
+  { id: 'system', label: 'System', icon: mdiThemeLightDark },
+];
 
 const icon = computed(() => ICONS[preference.value] ?? mdiThemeLightDark);
 
-const next = computed(() => NEXT[preference.value] ?? 'light');
+const onSelect = (event: CustomEvent<{ value: ThemePreference }>) => {
+  setPreference(event.detail.value);
+};
 </script>
+
+<style scoped>
+c-button::part(root) {
+  color: var(--c-on-surface);
+}
+
+c-icon::part(root) {
+  color: var(--c-primary);
+}
+</style>

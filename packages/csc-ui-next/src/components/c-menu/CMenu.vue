@@ -114,6 +114,8 @@ const menu = tv({
 const ui = menu();
 
 interface CMenuProps {
+  /** Distance from the trigger to the panel, in pixels. Defaults to `0`. */
+  distance?: number | string;
   /** Whether the menu is open. Two-way: emits `change:open`. */
   open?: boolean;
   /** Preferred placement of the panel relative to the trigger. */
@@ -135,6 +137,7 @@ type Placement =
   | 'top';
 
 const props = withDefaults(defineProps<CMenuProps>(), {
+  distance: 0,
   open: false,
   position: 'bottom-start',
 });

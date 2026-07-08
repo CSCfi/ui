@@ -38,7 +38,8 @@ const resolve = (mode) => {
   for (const [role, s] of Object.entries(map)) {
     if (role.startsWith('_')) continue;
 
-    const hex = step(s);
+    // literal hex passes through (fixed brand marks, e.g. the logo roles)
+    const hex = s.startsWith('#') ? s : step(s);
 
     if (hex) out[role] = hex;
   }

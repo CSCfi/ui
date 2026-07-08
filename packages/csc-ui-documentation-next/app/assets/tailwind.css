@@ -1,0 +1,64 @@
+/*
+ * Docs-site Tailwind entry. Site chrome is authored as utilities against the
+ * library's semantic tokens; the residual rules utilities cannot express
+ * (prose from rendered markdown, Shiki spans, :not(:defined) guards, demo
+ * classes referenced by example SFCs) live in site.css.
+ *
+ * Import order is load-bearing: Tailwind defaults → palette wipe → library
+ * roles. Dropping the default palette makes the design system's semantic
+ * roles the only color utilities in the app, so a hardcoded default-palette
+ * class fails to compile instead of becoming a latent dark-mode bug
+ * (ADR-0010's rationale, enforced structurally).
+ */
+@import 'tailwindcss';
+@import './palette-reset.css';
+@import '@cscfi/csc-ui-next/css/tailwind-theme.css'; /* ADR-0018; pairs with tokens.css */
+
+/*
+ * Example SFCs are consumer-facing copy-paste code and stay Tailwind-free —
+ * excluding them from the scan means a utility class in an example simply
+ * does nothing, same as in a consumer app without Tailwind.
+ */
+@source not '../examples';
+
+@theme {
+  /* CSC brand font stack (site-loaded, not the library's concern) — preflight
+   * picks it up as the document default. */
+  --font-sans: 'museo-sans', system-ui, sans-serif;
+  /* Keep the exact mono stack the site chrome always used. */
+  --font-mono: ui-monospace, 'SFMono-Regular', Menlo, Consolas, monospace;
+
+  /* The old sheet declared font-size only, so every element inherited the
+   * body's 1.6 line-height; named text-* utilities pair a tighter default.
+   * Pin the pairs used by the chrome back to 1.6 to keep vertical rhythm. */
+  --text-xs--line-height: 1.6;
+  --text-sm--line-height: 1.6;
+  --text-lg--line-height: 1.6;
+  --text-2xl--line-height: 1.6;
+}
+
+@layer base {
+  body {
+    background-color: var(--c-surface);
+    color: var(--c-on-surface);
+    line-height: 1.6;
+  }
+
+  /* Inline code everywhere (templates and rendered markdown alike). Code
+   * blocks opt back out where needed (utilities or the .shiki rules). */
+  code {
+    font-size: 0.875em;
+    background: var(--c-surface-muted);
+    border-radius: 4px;
+    padding: 0.1em 0.35em;
+  }
+
+  /* Bare links keep browser styling — the old sheet never styled unclassed
+   * links (type links in API tables, links in rendered markdown). Preflight
+   * makes anchors inherit; revert restores the user-agent default, and
+   * utilities on classed links still win from the utilities layer. */
+  a {
+    color: revert;
+    text-decoration: revert;
+  }
+}

@@ -1,63 +1,71 @@
 <template>
-  <section class="component-api" :aria-labelledby="`${view.tagName}--heading`">
-    <h3 :id="view.tagName" class="component-api-heading">
+  <section
+    :aria-labelledby="`${view.tagName}--heading`"
+    class="mt-8 border-t border-dashed border-border pt-5 first-of-type:border-t-0"
+  >
+    <h3 :id="view.tagName" class="mb-1 text-[1.35rem] font-bold">
       <code>&lt;{{ view.tagName }}&gt;</code>
     </h3>
 
-    <p v-if="view.description" class="preline component-api-desc">
+    <p
+      v-if="view.description"
+      class="mb-[1em] whitespace-pre-line text-on-surface-muted"
+    >
       {{ view.description }}
     </p>
 
     <template v-if="view.props.length">
-      <h4 :id="`${view.tagName}--properties`">Properties</h4>
-      <div class="table-wrap">
-        <table>
+      <h4 :id="`${view.tagName}--properties`" :class="H4">Properties</h4>
+      <div class="overflow-x-auto">
+        <table class="w-full text-sm">
           <thead>
             <tr>
-              <th>Property</th>
-              <th>Attribute</th>
-              <th>Type</th>
-              <th>Default</th>
-              <th>Description</th>
+              <th :class="TH">Property</th>
+              <th :class="TH">Attribute</th>
+              <th :class="TH">Type</th>
+              <th :class="TH">Default</th>
+              <th :class="TH">Description</th>
             </tr>
           </thead>
           <tbody>
             <tr v-for="prop in view.props" :key="prop.name">
-              <td><code>{{ prop.name }}</code></td>
-              <td>
+              <td :class="TD"><code class="whitespace-nowrap">{{ prop.name }}</code></td>
+              <td :class="TD">
                 <code v-if="prop.attribute">{{ prop.attribute }}</code>
-                <span v-else class="muted">—</span>
+                <span v-else class="text-on-surface-faint">—</span>
               </td>
-              <td>
+              <td :class="TD">
                 <!-- Aliased types link to their declaration in the Types
                      section on this page; type.text itself carries the
                      expanded union and shows on hover. Compound type text
                      (`CSelectItem[]`, `CFoo | null`) links each public type
                      name it mentions to its same-page anchor. -->
-                <a
+                <c-link
                   v-if="prop.typeAlias"
                   :href="`#${prop.typeAlias}`"
                   :title="prop.type"
+                  underline
                 >
                   <code>{{ prop.typeAlias }}</code>
-                </a>
+                </c-link>
+
                 <code v-else>
                   <template
                     v-for="(segment, i) in typeSegments(prop.type)"
                     :key="i"
                   >
-                    <a v-if="segment.link" :href="`#${segment.text}`">{{
+                    <c-link v-if="segment.link" :href="`#${segment.text}`" underline>{{
                       segment.text
-                    }}</a>
+                    }}</c-link>
                     <template v-else>{{ segment.text }}</template>
                   </template>
                 </code>
               </td>
-              <td>
+              <td :class="TD">
                 <code v-if="prop.default">{{ prop.default }}</code>
-                <span v-else class="muted">—</span>
+                <span v-else class="text-on-surface-faint">—</span>
               </td>
-              <td class="preline">{{ prop.description }}</td>
+              <td :class="TD" class="whitespace-pre-line">{{ prop.description }}</td>
             </tr>
           </tbody>
         </table>
@@ -65,21 +73,21 @@
     </template>
 
     <template v-if="view.events.length">
-      <h4 :id="`${view.tagName}--events`">Events</h4>
-      <div class="table-wrap">
-        <table>
+      <h4 :id="`${view.tagName}--events`" :class="H4">Events</h4>
+      <div class="overflow-x-auto">
+        <table class="w-full text-sm">
           <thead>
             <tr>
-              <th>Event</th>
-              <th>Detail</th>
-              <th>Description</th>
+              <th :class="TH">Event</th>
+              <th :class="TH">Detail</th>
+              <th :class="TH">Description</th>
             </tr>
           </thead>
           <tbody>
             <tr v-for="event in view.events" :key="event.name">
-              <td><code>{{ event.name }}</code></td>
-              <td><code>{{ event.detail }}</code></td>
-              <td class="preline">{{ event.description }}</td>
+              <td :class="TD"><code class="whitespace-nowrap">{{ event.name }}</code></td>
+              <td :class="TD"><code>{{ event.detail }}</code></td>
+              <td :class="TD" class="whitespace-pre-line">{{ event.description }}</td>
             </tr>
           </tbody>
         </table>
@@ -87,21 +95,21 @@
     </template>
 
     <template v-if="view.methods.length">
-      <h4 :id="`${view.tagName}--methods`">Methods</h4>
-      <div class="table-wrap">
-        <table>
+      <h4 :id="`${view.tagName}--methods`" :class="H4">Methods</h4>
+      <div class="overflow-x-auto">
+        <table class="w-full text-sm">
           <thead>
             <tr>
-              <th>Method</th>
-              <th>Signature</th>
-              <th>Description</th>
+              <th :class="TH">Method</th>
+              <th :class="TH">Signature</th>
+              <th :class="TH">Description</th>
             </tr>
           </thead>
           <tbody>
             <tr v-for="method in view.methods" :key="method.name">
-              <td><code>{{ method.name }}</code></td>
-              <td><code>{{ method.signature }}</code></td>
-              <td class="preline">{{ method.description }}</td>
+              <td :class="TD"><code class="whitespace-nowrap">{{ method.name }}</code></td>
+              <td :class="TD"><code>{{ method.signature }}</code></td>
+              <td :class="TD" class="whitespace-pre-line">{{ method.description }}</td>
             </tr>
           </tbody>
         </table>
@@ -109,19 +117,19 @@
     </template>
 
     <template v-if="view.slots.length">
-      <h4 :id="`${view.tagName}--slots`">Slots</h4>
-      <div class="table-wrap">
-        <table>
+      <h4 :id="`${view.tagName}--slots`" :class="H4">Slots</h4>
+      <div class="overflow-x-auto">
+        <table class="w-full text-sm">
           <thead>
             <tr>
-              <th>Slot</th>
-              <th>Description</th>
+              <th :class="TH">Slot</th>
+              <th :class="TH">Description</th>
             </tr>
           </thead>
           <tbody>
             <tr v-for="slot in view.slots" :key="slot.name">
-              <td><code>{{ slot.name }}</code></td>
-              <td class="preline">{{ slot.description }}</td>
+              <td :class="TD"><code class="whitespace-nowrap">{{ slot.name }}</code></td>
+              <td :class="TD" class="whitespace-pre-line">{{ slot.description }}</td>
             </tr>
           </tbody>
         </table>
@@ -129,24 +137,24 @@
     </template>
 
     <template v-if="view.cssParts.length">
-      <h4 :id="`${view.tagName}--css-parts`">CSS parts</h4>
-      <p class="muted">
+      <h4 :id="`${view.tagName}--css-parts`" :class="H4">CSS parts</h4>
+      <p class="my-[1em] text-on-surface-faint">
         Style from outside with
         <code>{{ view.tagName }}::part(name)</code> — parts are the library's
         only styling customization API.
       </p>
-      <div class="table-wrap">
-        <table>
+      <div class="overflow-x-auto">
+        <table class="w-full text-sm">
           <thead>
             <tr>
-              <th>Part</th>
-              <th>Description</th>
+              <th :class="TH">Part</th>
+              <th :class="TH">Description</th>
             </tr>
           </thead>
           <tbody>
             <tr v-for="part in view.cssParts" :key="part.name">
-              <td><code>{{ part.name }}</code></td>
-              <td class="preline">{{ part.description }}</td>
+              <td :class="TD"><code class="whitespace-nowrap">{{ part.name }}</code></td>
+              <td :class="TD" class="whitespace-pre-line">{{ part.description }}</td>
             </tr>
           </tbody>
         </table>
@@ -154,19 +162,21 @@
     </template>
 
     <template v-if="view.cssProperties.length">
-      <h4 :id="`${view.tagName}--css-properties`">CSS custom properties</h4>
-      <div class="table-wrap">
-        <table>
+      <h4 :id="`${view.tagName}--css-properties`" :class="H4">
+        CSS custom properties
+      </h4>
+      <div class="overflow-x-auto">
+        <table class="w-full text-sm">
           <thead>
             <tr>
-              <th>Property</th>
-              <th>Description</th>
+              <th :class="TH">Property</th>
+              <th :class="TH">Description</th>
             </tr>
           </thead>
           <tbody>
             <tr v-for="cssProp in view.cssProperties" :key="cssProp.name">
-              <td><code>{{ cssProp.name }}</code></td>
-              <td class="preline">{{ cssProp.description }}</td>
+              <td :class="TD"><code class="whitespace-nowrap">{{ cssProp.name }}</code></td>
+              <td :class="TD" class="whitespace-pre-line">{{ cssProp.description }}</td>
             </tr>
           </tbody>
         </table>
@@ -174,18 +184,23 @@
     </template>
 
     <template v-if="view.types.length">
-      <h4 :id="`${view.tagName}--types`">Types</h4>
-      <p class="muted">
+      <h4 :id="`${view.tagName}--types`" :class="H4">Types</h4>
+      <p class="my-[1em] text-on-surface-faint">
         Importable from the package root:
         <code>import type { … } from '@cscfi/csc-ui-next'</code>
       </p>
-      <div v-for="apiType in view.types" :key="apiType.name" class="api-type">
-        <h5 :id="apiType.name" class="api-type-heading">
+      <div v-for="apiType in view.types" :key="apiType.name">
+        <h5 :id="apiType.name" class="my-[1.67em] text-[0.83em] font-bold">
           <code>{{ apiType.name }}</code>
-          <span v-if="!apiType.owner" class="muted api-type-badge">shared</span>
+          <span
+            v-if="!apiType.owner"
+            class="ml-[0.5em] rounded-full border border-border px-[0.6em] py-[0.1em] align-middle text-[0.7em] font-normal text-on-surface-faint"
+          >
+            shared
+          </span>
         </h5>
 
-        <p v-if="apiType.description" class="preline">
+        <p v-if="apiType.description" class="my-[1em] whitespace-pre-line">
           {{ apiType.description }}
         </p>
 
@@ -195,7 +210,10 @@
           class="example-shiki"
           v-html="typesHtml[apiType.name]"
         />
-        <pre v-else class="code-block"><code>{{ apiType.declaration }}</code></pre>
+        <pre
+          v-else
+          class="my-[1em] overflow-x-auto rounded-lg bg-[#0f172a] px-5 py-4 text-[#e2e8f0]"
+        ><code class="bg-transparent p-0 text-inherit">{{ apiType.declaration }}</code></pre>
       </div>
     </template>
   </section>
@@ -203,6 +221,16 @@
 
 <script setup lang="ts">
 import type { ComponentView } from '~/composables/useManifest';
+
+// Shared table-cell and section-heading utilities (Tailwind scans these
+// string literals like any template class attribute).
+const TH =
+  'border-b border-border px-3 py-2 text-left align-top font-semibold whitespace-nowrap text-on-surface-faint';
+
+const TD = 'border-b border-border px-3 py-2 text-left align-top';
+
+const H4 =
+  'mb-2 mt-6 text-xs font-bold uppercase tracking-[0.04em] text-on-surface-faint text-primary';
 
 const props = defineProps<{
   /** Names of every type rendered on this page — mentions of these in prop
@@ -230,15 +258,3 @@ const typeSegments = (text: string): { link?: boolean; text: string }[] => {
     );
 };
 </script>
-
-<style scoped>
-.api-type-heading .api-type-badge {
-  font-size: 0.7em;
-  font-weight: 400;
-  vertical-align: middle;
-  margin-left: 0.5em;
-  padding: 0.1em 0.6em;
-  border: 1px solid var(--c-border, #ccc);
-  border-radius: 999px;
-}
-</style>

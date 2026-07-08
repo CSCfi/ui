@@ -40,9 +40,10 @@ import { computed } from 'vue';
  * carries the `display:block` + top margin. The original `svg .cls-*` fill
  * rules become per-element `fill-*` utilities routed through dedicated semantic
  * roles (`logo-wordmark` / `logo-teal` / `logo-magenta`, ADR-0010): in light
- * they resolve to the brand colours (tertiary-600 / primary-600 / secondary-600),
- * in dark they all resolve to white so the logo reads as a monochrome mark on the
- * dark header. Theming has to go through inherited tokens because a `dark:`
+ * the wordmark resolves to tertiary-600 while the teal/magenta marks are pinned
+ * to literal brand hex in tokens.css — the logo is a fixed brand mark, so
+ * re-seeding primary/secondary via applyTheme must not recolor it. In dark they
+ * all resolve to white so the logo reads as a monochrome mark on the dark header. Theming has to go through inherited tokens because a `dark:`
  * selector can't cross the shadow boundary to the document's `data-theme`. The
  * `clip-path` is an SVG attribute on the <g>, so no <style> block is needed.
  */

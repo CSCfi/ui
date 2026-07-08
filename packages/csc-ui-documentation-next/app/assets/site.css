@@ -1,213 +1,63 @@
 /*
- * Site chrome is styled with the library's semantic tokens (tokens.css), so
- * light/dark follows the same data-theme attribute the components use: an
- * explicit `data-theme` on <html> wins, otherwise the OS preference applies.
- * Code panels are intentionally fixed dark in both modes.
+ * Residual stylesheet — only what Tailwind utilities cannot express (the
+ * docs-app analogue of the library's ADR-0007 escape hatch). Everything else
+ * is authored as utilities in the templates (see assets/tailwind.css for the
+ * entry and base layer). Qualifying rules:
+ *
+ *  - selectors over generated HTML we cannot put classes on (rendered
+ *    usage.md markdown, Shiki span trees)
+ *  - upgrade guards on not-yet-defined custom elements
+ *  - classes referenced from example SFCs, which stay Tailwind-free by
+ *    design (their source is consumer-facing copy-paste code)
+ *
+ * Site chrome is styled with the library's semantic tokens, so light/dark
+ * follows the same data-theme attribute the components use. Code panels are
+ * intentionally fixed dark in both modes.
  */
 
-*,
-*::before,
-*::after {
-  box-sizing: border-box;
+/* ── Rendered markdown (usage.md → v-html): restore user-agent styling that
+      preflight strips, since these elements cannot carry utility classes.
+      `revert` rolls back to the browser default past the author layers. ── */
+
+.usage :is(h1, h2, h3, h4, h5, h6) {
+  font-size: revert;
+  margin: revert;
 }
 
-body {
-  margin: 0;
-  font-family: 'museo-sans', system-ui, sans-serif;
-  color: var(--c-on-surface);
-  background: var(--c-surface);
-  line-height: 1.6;
+.usage :is(p, ul, ol, blockquote) {
+  margin: revert;
 }
 
-code {
-  font-family: ui-monospace, 'SFMono-Regular', Menlo, Consolas, monospace;
-  font-size: 0.875em;
-  background: var(--c-surface-muted);
-  border-radius: 4px;
-  padding: 0.1em 0.35em;
+.usage :is(ul, ol) {
+  list-style: revert;
+  padding: revert;
 }
 
-.site {
-  display: flex;
-  flex-direction: column;
-  min-height: 100vh;
-}
-
-.site-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 1rem;
-  padding: 0.75rem 1.5rem;
-  background: var(--c-nav-surface);
-}
-
-.site-title {
-  color: var(--c-on-nav);
-  font-weight: 700;
-  text-decoration: none;
-  font-size: 1.125rem;
-}
-
-.site-title-badge {
-  font-size: 0.75rem;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  background: var(--c-accent);
-  color: var(--c-on-accent);
-  border-radius: 999px;
-  padding: 0.1rem 0.5rem;
-  vertical-align: middle;
-  margin-left: 0.35rem;
-}
-
-.theme-toggle {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.4rem;
-  min-width: 5.5rem;
-  border: 1px solid color-mix(in srgb, var(--c-on-nav) 40%, transparent);
-  border-radius: 999px;
-  background: none;
-  color: var(--c-on-nav);
-  font: inherit;
-  font-size: 0.8125rem;
-  padding: 0.25rem 0.75rem;
-  cursor: pointer;
-}
-
-.theme-toggle:hover {
-  background: color-mix(in srgb, var(--c-on-nav) 15%, transparent);
-}
-
-.theme-toggle-label {
-  text-transform: capitalize;
-}
-
-.theme-toggle-placeholder {
-  visibility: hidden;
-}
-
-.site-body {
-  display: flex;
-  flex: 1;
-  min-height: 0;
-}
-
-.site-nav {
-  width: 15rem;
-  flex-shrink: 0;
-  border-right: 1px solid var(--c-border);
-  padding: 1rem 0;
-  overflow-y: auto;
-  position: sticky;
-  top: 0;
-  max-height: 100vh;
-}
-
-.site-nav-heading {
-  font-size: 0.75rem;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  color: var(--c-on-surface-faint);
-  padding: 0.75rem 1.25rem 0.25rem;
-  margin: 0;
-}
-
-.site-nav-link {
-  display: block;
-  padding: 0.2rem 1.25rem;
-  color: var(--c-on-surface-muted);
-  text-decoration: none;
-  font-size: 0.875rem;
-}
-
-.site-nav-link:hover {
-  background: var(--c-surface-muted);
-}
-
-.site-nav-link.router-link-active {
-  color: var(--c-on-primary-subtle);
-  font-weight: 600;
-  background: var(--c-primary-subtle);
-}
-
-.site-main {
-  flex: 1;
-  min-width: 0;
-  padding: 2rem 3rem 4rem;
-  max-width: 70rem;
-}
-
-h1 {
-  margin-top: 0;
-}
-
-.lead {
-  font-size: 1.0625rem;
-  color: var(--c-on-surface-muted);
-  max-width: 45rem;
-}
-
-.preline {
-  white-space: pre-line;
-}
-
-.muted {
-  color: var(--c-on-surface-faint);
-}
-
-.api-section {
-  margin-top: 2.5rem;
-}
-
-.api-section h2 {
-  border-bottom: 1px solid var(--c-border);
-  padding-bottom: 0.375rem;
-}
-
-.table-wrap {
-  overflow-x: auto;
-}
-
-table {
+/* Markdown tables keep the same treatment the API tables get as utilities. */
+.usage table {
   border-collapse: collapse;
   width: 100%;
   font-size: 0.875rem;
 }
 
-th,
-td {
+.usage th,
+.usage td {
   text-align: left;
   vertical-align: top;
   padding: 0.5rem 0.75rem;
   border-bottom: 1px solid var(--c-border);
 }
 
-th {
+.usage th {
   color: var(--c-on-surface-faint);
   font-weight: 600;
   white-space: nowrap;
 }
 
-td:first-child code {
-  white-space: nowrap;
-}
-
-.code-block {
-  background: #0f172a;
-  color: #e2e8f0;
-  border-radius: 8px;
-  padding: 1rem 1.25rem;
-  overflow-x: auto;
-}
-
-.code-block code {
-  background: none;
-  color: inherit;
-  padding: 0;
+/* Non-highlighted code fences (Shiki output carries .shiki instead — its own
+   margin: 0 below must keep winning, so the margin revert excludes it). */
+.usage pre:not(.shiki) {
+  margin: revert;
 }
 
 .usage pre {
@@ -223,224 +73,10 @@ td:first-child code {
   padding: 0;
 }
 
-.example {
-  margin: 1.5rem 0;
-  border: 1px solid var(--c-border);
-  border-radius: 8px;
-  overflow: hidden;
-}
+/* ── Shiki: dual-theme output. Default = light values (inline); swap to the
+      dark CSS vars when the dark theme is active (explicit toggle or OS
+      default). Generated span trees — utilities cannot reach them. ── */
 
-.example-title {
-  font-size: 0.8125rem;
-  font-weight: 600;
-  color: var(--c-on-surface-faint);
-  padding: 0.5rem 1rem;
-  border-bottom: 1px solid var(--c-border);
-  background: var(--c-surface-muted);
-}
-
-.example-demo {
-  padding: 1.5rem 1rem;
-}
-
-.example-row {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 0.75rem;
-}
-
-.example-code {
-  border-top: 1px solid var(--c-border);
-}
-
-.example-tabs {
-  display: flex;
-  gap: 0.25rem;
-  padding: 0.375rem 0.75rem 0;
-  background: #0f172a;
-}
-
-.example-tab {
-  border: none;
-  background: none;
-  color: #94a3b8;
-  font: inherit;
-  font-size: 0.8125rem;
-  padding: 0.375rem 0.75rem;
-  cursor: pointer;
-  border-radius: 6px 6px 0 0;
-}
-
-.example-tab.active {
-  color: #f8fafc;
-  background: #1e293b;
-}
-
-.example-code pre {
-  margin: 0;
-  background: #0f172a;
-  color: #e2e8f0;
-  padding: 1rem 1.25rem;
-  overflow-x: auto;
-  font-size: 0.8125rem;
-}
-
-.example-code pre code {
-  background: none;
-  padding: 0;
-}
-
-.component-grid {
-  list-style: none;
-  padding: 0;
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(16rem, 1fr));
-  gap: 0.75rem;
-}
-
-.component-card {
-  display: block;
-  border: 1px solid var(--c-border);
-  border-radius: 8px;
-  padding: 0.875rem 1rem;
-  text-decoration: none;
-  color: inherit;
-  height: 100%;
-}
-
-.component-card:hover {
-  border-color: var(--c-primary);
-}
-
-.component-card p {
-  margin: 0.375rem 0 0;
-  font-size: 0.8125rem;
-  color: var(--c-on-surface-faint);
-}
-
-@media (max-width: 48rem) {
-  .site-body {
-    flex-direction: column;
-  }
-
-  .site-nav {
-    width: 100%;
-    position: static;
-    max-height: none;
-    border-right: none;
-    border-bottom: 1px solid var(--c-border);
-  }
-
-  .site-main {
-    padding: 1.5rem 1.25rem 3rem;
-  }
-}
-
-/* ── ADR-0013: grouped API pages, right-side TOC rail, Shiki highlighting ── */
-
-.doc-section {
-  margin-top: 2.5rem;
-}
-
-.doc-section > h2 {
-  border-bottom: 1px solid var(--c-border);
-  padding-bottom: 0.375rem;
-}
-
-/* three-column: left nav (app.vue) | content | sticky right rail */
-.page-with-rail {
-  display: flex;
-  gap: 2.5rem;
-  align-items: flex-start;
-}
-
-.page-with-rail > article {
-  flex: 1;
-  min-width: 0;
-}
-
-.toc {
-  order: 2;
-  width: 14rem;
-  flex-shrink: 0;
-  position: sticky;
-  top: 1.5rem;
-  max-height: calc(100vh - 3rem);
-  overflow-y: auto;
-  font-size: 0.8125rem;
-}
-
-.toc-heading {
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  color: var(--c-on-surface-faint);
-  font-size: 0.6875rem;
-  margin: 0 0 0.5rem;
-}
-
-.toc nav {
-  display: flex;
-  flex-direction: column;
-  border-left: 1px solid var(--c-border);
-}
-
-.toc-link {
-  padding: 0.15rem 0.75rem;
-  color: var(--c-on-surface-muted);
-  text-decoration: none;
-  border-left: 2px solid transparent;
-  margin-left: -1px;
-}
-
-.toc-link:hover {
-  color: var(--c-on-surface);
-  border-left-color: var(--c-border-strong);
-}
-
-.toc-component {
-  font-weight: 600;
-  margin-top: 0.5rem;
-  font-family: ui-monospace, 'SFMono-Regular', Menlo, Consolas, monospace;
-  font-size: 0.78rem;
-}
-
-.toc-sub {
-  padding-left: 1.5rem;
-}
-
-/* one component's API block within a family page */
-.component-api {
-  margin-top: 2rem;
-  padding-top: 1.25rem;
-  border-top: 1px dashed var(--c-border);
-}
-
-.component-api:first-of-type {
-  border-top: none;
-}
-
-.component-api-heading {
-  font-size: 1.35rem;
-  margin: 0 0 0.25rem;
-}
-
-.component-api-desc {
-  color: var(--c-on-surface-muted);
-  margin-top: 0;
-}
-
-.component-api h4 {
-  margin: 1.5rem 0 0.5rem;
-  color: var(--c-on-surface-faint);
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
-  font-size: 0.75rem;
-}
-
-/* Shiki: dual-theme output. Default = light values (inline); swap to the dark
-   CSS vars when the dark theme is active (explicit toggle or OS default). */
 .shiki {
   margin: 0;
   padding: 1rem 1.25rem;
@@ -480,44 +116,50 @@ td:first-child code {
   border-radius: 8px;
 }
 
-/* tab bar sits above the (now theme-aware) code block */
-.example-tabs {
+/* ── Demo layout class used by example SFCs (app/examples/**), which stay
+      plain CSS/Tailwind-free — their source is shown as copy-paste code. ── */
+
+.example-row {
   display: flex;
-  gap: 0.25rem;
-  padding: 0.375rem 0.5rem 0;
-  background: var(--c-surface-muted);
-  border-top: 1px solid var(--c-border);
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.75rem;
 }
 
-.example-tab {
-  border: none;
-  background: none;
-  color: var(--c-on-surface-muted);
-  font: inherit;
-  font-size: 0.8125rem;
-  padding: 0.375rem 0.75rem;
-  cursor: pointer;
-  border-radius: 6px 6px 0 0;
+.example-grid {
+  display: grid;
+  gap: 0.75rem;
 }
 
-.example-tab.active {
-  color: var(--c-on-surface);
-  background: var(--c-surface);
-}
+/* ── Flash-of-un-upgraded-content: custom elements register client-side (the
+      csc-ui plugin runs after hydration), so on reload an overlay element that
+      is closed by default would briefly render its light-DOM children inline
+      before it upgrades. Hide the closed-by-default overlays until they are
+      :defined — their shadow `:not([open])` styles take over once upgraded.
+      (Their triggers live outside the element, so they stay visible.) ── */
 
-@media (max-width: 64rem) {
-  .toc {
-    display: none;
-  }
-}
-
-/* Flash-of-un-upgraded-content: custom elements register client-side (the
-   csc-ui plugin runs after hydration), so on reload an overlay element that is
-   closed by default would briefly render its light-DOM children inline before
-   it upgrades. Hide the closed-by-default overlays until they are :defined —
-   their shadow `:not([open])` styles take over once upgraded. (Their triggers
-   live outside the element, so they stay visible.) */
 c-modal:not(:defined),
 c-toasts:not(:defined) {
   display: none;
+}
+
+/* The side navigation's light-DOM items would flash as an inline run of plain
+   text until the elements upgrade. Below the drawer breakpoint (1024px, kept
+   in sync with `isMobile` in app.vue) it is a closed drawer, so hide it; on
+   desktop reserve the panel's box (the shadow `:host([data-desktop])` metrics) and
+   hide only the un-upgraded items inside it. */
+c-side-navigation:not(:defined) {
+  display: none;
+}
+
+@media (min-width: 1024px) {
+  c-side-navigation:not(:defined) {
+    display: block;
+    min-width: clamp(300px, 20vw, 340px);
+    background-color: var(--c-nav-surface);
+  }
+
+  c-side-navigation:not(:defined) > * {
+    display: none;
+  }
 }

@@ -1,3 +1,4 @@
+import tailwindcss from '@tailwindcss/vite';
 import { readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 
@@ -91,7 +92,11 @@ export default defineNuxtConfig({
     },
   },
   compatibilityDate: '2026-07-01',
-  css: ['@cscfi/csc-ui-next/css/tokens.css', '~/assets/site.css'],
+  css: [
+    '@cscfi/csc-ui-next/css/tokens.css',
+    '~/assets/tailwind.css',
+    '~/assets/site.css',
+  ],
   nitro: {
     prerender: {
       crawlLinks: true,
@@ -101,7 +106,7 @@ export default defineNuxtConfig({
   routeRules: childRedirects,
   ssr: true,
   vite: {
-    plugins: [stubExampleDemosInSsr],
+    plugins: [stubExampleDemosInSsr, tailwindcss()],
     resolve: {
       alias: {
         // usage.md files are read from the sibling workspace package's build

@@ -127,6 +127,10 @@ _Avoid_: Colour, type (the consumer-facing word for these was "type" — prefer 
 The single step-`500` colour value that anchors a **family**'s generated ramp. Step 500 reproduces the seed exactly; steps `50`–`950` are derived from it perceptually (OKLCH). Consumers supply one seed per family they override (via `applyTheme` / `themeToCss`) and the whole ramp — and every **semantic token** that resolves to it, in both modes — regenerates. See ADR-0011.
 _Avoid_: Base colour, brand colour (ambiguous — a "brand colour" could mean any step; the seed is specifically step 500)
 
+**Tailwind theme export**:
+The consumer-facing `@theme` mapping the library publishes (`@cscfi/csc-ui-next/css/tailwind-theme.css`) so a consumer's own Tailwind build gains utilities for the **semantic tokens**. Semantic roles **only**, by design — **palette tokens** are excluded because a palette-step utility cannot be mode-aware (ADR-0018). It is a mapping, not a stylesheet: it must be paired with the token definitions (`tokens.css`) to resolve.
+_Avoid_: Tailwind preset/config (Tailwind-v3 vocabulary), theme file (ambiguous with **theme mode** and `applyTheme`)
+
 ### Data table (`csc-ui-next`)
 
 **Column**:

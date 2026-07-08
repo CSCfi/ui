@@ -80,8 +80,9 @@ defineOptions({ inheritAttrs: false });
  * role (brand primary in light, a dark neutral panel in dark, so it adapts to
  * the theme). Consumer customization is via `::part()` (ADR-0006).
  *
- * The host box itself (the `.desktop` / `.autoheight` host states, which carry
- * background/flex/min-width and can't be expressed as utilities on the host),
+ * The host box itself (the `[data-desktop]` / `.autoheight` host states, which
+ * carry background/flex/min-width and can't be expressed as utilities on the
+ * host),
  * the `.c-overlay` backdrop + its fade-in `@keyframes`, and the
  * `::slotted(...)` `display:contents` rule remain in the escape-hatch <style>
  * below (ADR-0007).
@@ -261,13 +262,16 @@ onMounted(() => {
     Object.assign(containerRef.value.style, props.styles);
   }
 
-  host.classList.toggle('desktop', !props.mobile);
-
   document.body.addEventListener('click', onDocEvent);
   document.body.addEventListener('keyup', onDocEvent);
 
+  // Desktop mode is reflected as a host ATTRIBUTE (`data-desktop`), not a host
+  // class: Vue patches a consumer's `class` binding on the custom element
+  // wholesale (including once during hydration), which silently wiped an
+  // imperatively-added class and left the drawer `display:contents` on
+  // desktop. An attribute the consumer never binds survives those patches.
   watchEffect(() => {
-    host.classList.toggle('desktop', !props.mobile);
+    host.toggleAttribute('data-desktop', !props.mobile);
   });
 });
 
@@ -281,11 +285,13 @@ onBeforeUnmount(() => {
   Escape-hatch CSS (ADR-0007): only constructs Tailwind utilities cannot
   express. The drawer layout (content/nav/wrapper/burger) lives in the `tv`
   config above. What remains here:
-    - The host box and its `.desktop` / `.autoheight` host states — utilities
-      can't target `:host`, and these carry the desktop background/flex/min-width
-      and the autoheight scroll container. The global `:host{display:contents}`
-      is overridden per state (the per-type sheet is adopted after the shared
-      sheet, so it wins).
+    - The host box and its `[data-desktop]` / `.autoheight` host states —
+      utilities can't target `:host`, and these carry the desktop
+      background/flex/min-width and the autoheight scroll container. Desktop
+      mode is a data attribute (not a class) so a consumer's `class` patch
+      can't wipe it — see the watchEffect above. The global
+      `:host{display:contents}` is overridden per state (the per-type sheet is
+      adopted after the shared sheet, so it wins).
     - The `.c-overlay` mobile backdrop and its fade-in `@keyframes`.
     - `::slotted(...)` `display:contents` for projected nav items.
   Authored against global design tokens only.
@@ -297,7 +303,7 @@ onBeforeUnmount(() => {
   overflow-x: hidden;
 }
 
-:host(.desktop) {
+:host([data-desktop]) {
   background-color: var(--c-nav-surface);
   display: flex;
   min-width: clamp(300px, 20vw, 340px);

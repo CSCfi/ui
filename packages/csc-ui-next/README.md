@@ -9,7 +9,7 @@ npm install @cscfi/csc-ui-next
 
 ```ts
 import { defineCustomElements } from '@cscfi/csc-ui-next';
-import '@cscfi/csc-ui-next/css/theme.css';
+import '@cscfi/csc-ui-next/css/tokens.css';
 
 defineCustomElements();
 ```
