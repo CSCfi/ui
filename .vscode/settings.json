@@ -16,8 +16,10 @@
   "peacock.color": "#d968c9",
   "js/ts.tsdk.path": "node_modules/typescript/lib",
   "claudeCode.useTerminal": true,
-  "tailwindCSS.classAttributes": ["class", "overrides"],
-  "tailwindCSS.experimental.classRegex": [
-    ["overrides:\\s*{([^)]*)\\s*}", "(?:'|\"|`)([^']*)(?:'|\"|`)"]
+  "html.customData": [
+    "./node_modules/@cscfi/csc-ui-next/vscode.html-custom-data.json"
+  ],
+  "css.customData": [
+    "./node_modules/@cscfi/csc-ui-next/vscode.css-custom-data.json"
   ]
 }
