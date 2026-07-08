@@ -16,6 +16,10 @@ _Avoid_: Renderer, engine, driver
 A component that has a Vue version in `csc-ui-next`. Under `CSC_UI_IMPL=next`, migrated components register via Vue; the rest fall back to the Stencil loader.
 _Avoid_: Ported, converted, rewritten (use _migrated_ everywhere)
 
+**Upgrade** (consumer):
+A consumer swapping their app's dependency from `@cscfi/csc-ui` to `@cscfi/csc-ui-next`. Distinct from **migration**, which is the maintainers porting a component Stencil→Vue. "Migration guide" is the searchable page title, but its body describes an _upgrade_. An upgrade is all-at-once: the two packages register the same tags, so they cannot coexist in one app.
+_Avoid_: using _migrate_ for the consumer's action (reserve _migrate_ for the internal port)
+
 **Wrapper package**:
 A framework-specific adapter that exposes csc-ui custom elements idiomatically — `@cscfi/csc-ui-react`, `@cscfi/csc-ui-angular`. Wrappers consume the canonical custom elements; they do **not** re-implement them. `@cscfi/csc-ui-vue` and `@cscfi/csc-ui-vue2` are special-case wrappers (just the `v-control` directive) being retired with the rewrite.
 _Avoid_: Binding, integration, shim
