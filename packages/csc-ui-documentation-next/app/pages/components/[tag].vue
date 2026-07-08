@@ -1,20 +1,29 @@
 <template>
-  <div v-if="parentView" class="page-with-rail">
-    <article>
-      <h1><code>&lt;{{ parentView.tagName }}&gt;</code></h1>
+  <div v-if="parentView" class="flex items-start gap-10">
+    <article class="min-w-0 flex-1">
+      <h1 class="mb-[0.67em] text-[2rem] font-bold">
+        <code>&lt;{{ parentView.tagName }}&gt;</code>
+      </h1>
 
-      <p v-if="parentView.description" class="lead preline">
+      <p
+        v-if="parentView.description"
+        class="my-[1em] max-w-[45rem] whitespace-pre-line text-[1.0625rem] text-on-surface-muted"
+      >
         {{ parentView.description }}
       </p>
 
-      <section v-if="usageHtml" class="doc-section">
-        <h2 id="usage">Usage</h2>
+      <section v-if="usageHtml" class="mt-10">
+        <h2 id="usage" class="my-[0.83em] border-b border-border pb-1.5 text-2xl font-bold">
+          Usage
+        </h2>
         <!-- eslint-disable-next-line vue/no-v-html — our markdown, html disabled, code Shiki-highlighted at prerender -->
         <div class="usage" v-html="usageHtml" />
       </section>
 
-      <section v-if="examples.length" class="doc-section">
-        <h2 id="examples">Examples</h2>
+      <section v-if="examples.length" class="mt-10">
+        <h2 id="examples" class="my-[0.83em] border-b border-border pb-1.5 text-2xl font-bold">
+          Examples
+        </h2>
         <ExampleBlock
           v-for="example in examples"
           :key="example.name"
@@ -23,8 +32,10 @@
         />
       </section>
 
-      <section class="doc-section">
-        <h2 id="api">API reference</h2>
+      <section class="mt-10">
+        <h2 id="api" class="my-[0.83em] border-b border-border pb-1.5 text-2xl font-bold">
+          API reference
+        </h2>
         <ApiComponent
           v-for="view in views"
           :key="view.tagName"
@@ -35,20 +46,32 @@
       </section>
     </article>
 
-    <aside class="toc" aria-label="On this page">
-      <p class="toc-heading">On this page</p>
-      <nav>
-        <a v-if="usageHtml" class="toc-link" href="#usage">Usage</a>
-        <a v-if="examples.length" class="toc-link" href="#examples">Examples</a>
-        <a class="toc-link" href="#api">API reference</a>
+    <aside
+      aria-label="On this page"
+      class="sticky top-24 max-h-[calc(100vh-3rem)] w-56 shrink-0 overflow-y-auto text-[0.8125rem] max-lg:hidden"
+    >
+      <p
+        class="mb-2 text-[0.6875rem] font-bold uppercase tracking-wider text-primary"
+      >
+        On this page
+      </p>
+      <nav class="flex flex-col border-l border-border">
+        <a v-if="usageHtml" :class="TOC_LINK" href="#usage">Usage</a>
+        <a v-if="examples.length" :class="TOC_LINK" href="#examples">
+          Examples
+        </a>
+        <a :class="TOC_LINK" href="#api">API reference</a>
         <template v-for="view in views" :key="view.tagName">
-          <a class="toc-link toc-component" :href="`#${view.tagName}`">
+          <a
+            :class="[TOC_LINK, 'mt-2 font-mono text-[0.78rem] font-semibold']"
+            :href="`#${view.tagName}`"
+          >
             {{ view.tagName }}
           </a>
           <a
             v-for="section in view.sections"
             :key="section.id"
-            class="toc-link toc-sub"
+            :class="[TOC_LINK, 'pl-6']"
             :href="`#${section.id}`"
           >
             {{ section.label }}
@@ -61,6 +84,11 @@
 
 <script setup lang="ts">
 import { toComponentView, useManifest } from '~/composables/useManifest';
+
+// Shared by every rail link; component/sub links append their own utilities
+// (Tailwind orders pl-* after px-*, so the pl-6 override wins).
+const TOC_LINK =
+  '-ml-px border-l-2 border-l-transparent px-3 py-[0.15rem] text-on-surface-muted no-underline hover:border-l-primary hover:text-on-surface';
 
 const route = useRoute();
 
@@ -110,13 +138,13 @@ const { data } = await useAsyncData(`page-${tag}`, async () => {
   const examplesHtml: Record<string, Record<string, string>> = {};
 
   for (const example of examples) {
-    const byLabel: Record<string, string> = {};
+    const byFlavor: Record<string, string> = {};
 
     for (const t of example.tabs) {
-      byLabel[t.label] = await highlightCode(t.code, t.lang);
+      byFlavor[t.flavor] = await highlightCode(t.code, t.lang);
     }
 
-    examplesHtml[example.name] = byLabel;
+    examplesHtml[example.name] = byFlavor;
   }
 
   const typesHtml: Record<string, string> = {};

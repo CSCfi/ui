@@ -1,5 +1,7 @@
 import type { Component } from 'vue';
 
+import { FLAVORS, isFlavor, type Flavor } from './useFlavor';
+
 /**
  * Examples live in app/examples/<tag>/<name>.vue — plain Vue SFCs that are
  * both rendered live (imported as components) and shown as code (raw import).
@@ -9,9 +11,11 @@ import type { Component } from 'vue';
  * its composed children (ADR-0013). Exact-duplicate code (the composite an
  * agent copied into both parent and child dirs) is shown once.
  *
- * Framework tabs come from sibling override files named
- * <name>.<framework>.<ext> (e.g. basic.react.tsx) — hand-written for now; a
- * source-to-source transformer from the Vue canon slots in here later.
+ * Flavor tabs come from checked-in sibling variant files named
+ * <name>.<flavor>.<ext> (basic.react.tsx, basic.angular.ts,
+ * basic.typescript.ts) — generated from the Vue canon and kept complete by
+ * scripts/check-example-parity.mjs (ADR-0020). The live demo is always the
+ * Vue canon regardless of the selected flavor.
  */
 // Live demo components. They are client-only (rendered inside <ClientOnly> in
 // ExampleBlock, and the csc-ui elements only upgrade on the client). In the
@@ -35,13 +39,6 @@ const overrideSources = import.meta.glob(
   },
 ) as Record<string, string>;
 
-const FRAMEWORK_LABELS: Record<string, string> = {
-  angular: 'Angular',
-  html: 'HTML',
-  react: 'React',
-  vanilla: 'JavaScript',
-};
-
 const EXT_LANG: Record<string, string> = {
   html: 'html',
   js: 'js',
@@ -50,8 +47,14 @@ const EXT_LANG: Record<string, string> = {
   tsx: 'tsx',
 };
 
+const FLAVOR_ORDER = new Map(FLAVORS.map((flavor, index) => [flavor.id, index]));
+
+const FLAVOR_LABEL = new Map(FLAVORS.map((flavor) => [flavor.id, flavor.label]));
+
 export interface ExampleTab {
   code: string;
+  flavor: Flavor;
+  icon: string;
   label: string;
   lang: string;
 }
@@ -109,27 +112,46 @@ export const useExamples = (tags: string[]): DocExample[] => {
       .filter(([overridePath]) =>
         overridePath.startsWith(path.replace(/\.vue$/, '.')),
       )
-      .map(([overridePath, raw]) => {
+      .flatMap(([overridePath, raw]) => {
         const parts = (overridePath.split('/').at(-1) ?? '').split('.');
 
-        const framework = parts[1] ?? '';
+        const flavor = parts[1] ?? '';
+
+        // A sibling file outside the flavor set is a naming mistake, not a
+        // tab — surface it in dev rather than rendering a bogus label.
+        if (!isFlavor(flavor)) {
+          if (import.meta.dev) {
+            console.warn(`useExamples: unknown flavor variant ${overridePath}`);
+          }
+
+          return [];
+        }
 
         const ext = parts.at(-1) ?? '';
 
-        return {
-          code: stripTsNocheck(raw),
-          label: FRAMEWORK_LABELS[framework] ?? titleFromName(framework),
-          lang: EXT_LANG[ext] ?? 'text',
-        };
+        return [
+          {
+            code: stripTsNocheck(raw),
+            flavor,
+            label: FLAVOR_LABEL.get(flavor) ?? flavor,
+            lang: EXT_LANG[ext] ?? 'text',
+          },
+        ];
       })
-      .sort((a, b) => a.label.localeCompare(b.label));
+      .sort(
+        (a, b) =>
+          (FLAVOR_ORDER.get(a.flavor) ?? 99) - (FLAVOR_ORDER.get(b.flavor) ?? 99),
+      );
 
     const friendly = titleFromName(file);
 
     examples.push({
       demo: defineAsyncComponent(demoModules[path] as () => Promise<Component>),
       name: `${owner}/${file}`,
-      tabs: [{ code, label: 'Vue', lang: 'vue' }, ...overrides],
+      tabs: [
+        { code, flavor: 'vue' as const, label: 'Vue', lang: 'vue' },
+        ...overrides,
+        ].map(tab => ({ ...tab, icon: ICONS[tab.flavor] })),
       // Mark which component a folded child's example focuses on.
       title: owner === parent ? friendly : `${friendly} · ${owner}`,
     });

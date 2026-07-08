@@ -14,6 +14,8 @@
       </span>
 
       <div class="flex gap-2 items-center flex-1 justify-end">
+        <FlavorSwitcher class="max-md:hidden" />
+
         <ThemeToggle />
 
         <ColorSwitcher />

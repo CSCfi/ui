@@ -183,6 +183,14 @@ _Avoid_: sub-component (imprecise — conflates composed children with internal-
 A component the consumer uses on its own — it keeps a top-level nav entry and its own page. The complement of a **composed child**. A standalone can still be a parent that owns composed children.
 _Avoid_: top-level component, root component, main component
 
+**Flavor**:
+The reader's consumption dialect on the docs site: `vue | react | angular | typescript` (TypeScript = framework-free typed custom-element usage). One documentation-wide selection — clicking any example tab or the header switcher changes every example, and the getting-started code blocks, everywhere; persisted per reader (ADR-0020). Also the naming axis for **example variants** (`basic.react.tsx`).
+_Avoid_: Framework (TypeScript is not one), consumer (that is the person/app using the library), language, target
+
+**Example variant**:
+A checked-in per-**flavor** sibling of a canon example — `<name>.<flavor>.<ext>` beside `<name>.vue`. The Vue SFC stays the canon (ADR-0012): it alone renders as the live demo; variants differ in the source shown, not behavior. Generated from the canon and kept complete by the docs' example-parity check. A canon missing a variant falls back to showing the Vue tab.
+_Avoid_: Override (the variant adds a tab; it replaces nothing), translation, port
+
 ### Flagged ambiguities
 
 - **"Vue version"** is ambiguous: it can mean (a) the `@cscfi/csc-ui-vue` directive, (b) a component implemented in Vue inside `csc-ui-next`, or (c) the Vue.js framework version. Prefer **"`csc-ui-next` component"** for (b), **"`v-control` directive"** for (a), and **"Vue 3"/"Vue 2"** explicitly for (c).
