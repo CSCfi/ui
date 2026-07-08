@@ -1,29 +1,35 @@
-
 <template>
-<c-menu position="bottom-end" @select="onSelect">
-  <c-button slot="trigger" size="small" text>
-    <span class="size-3 rounded-full" :style="{ 'background-color': currentColor.value }"></span>
+  <c-menu position="bottom-end" @select="onSelect">
+    <c-button slot="trigger" size="small" text>
+      <span
+        class="size-3 rounded-full"
+        :style="{ 'background-color': currentColor.value }"
+      ></span>
 
-    {{ currentColor.label }}
-  </c-button>
+      {{ currentColor.label }}
+    </c-button>
 
-  <template v-for="color in colors" :key="color.value">
-    <template v-if="color.type === 'color'">
-      <c-menu-item :value="color">
-        <span class="size-4 rounded-full" :style="{ 'background-color': color.value }" />
-        <span class="text-accent">{{ color.label }}</span>
-      </c-menu-item>
+    <template v-for="color in colors" :key="color.value">
+      <template v-if="color.type === 'color'">
+        <c-menu-item :value="color">
+          <span
+            class="size-4 rounded-full"
+            :style="{ 'background-color': color.value }"
+          />
+
+          <span class="text-accent">{{ color.label }}</span>
+        </c-menu-item>
+      </template>
+
+      <template v-else-if="color.type === 'title'">
+        <c-menu-label>{{ color.label }}</c-menu-label>
+      </template>
+
+      <template v-else-if="color.type === 'divider'">
+        <c-divider></c-divider>
+      </template>
     </template>
-
-    <template v-else-if="color.type === 'title'">
-      <c-menu-label>{{ color.label }}</c-menu-label>
-    </template>
-
-    <template v-else-if="color.type === 'divider'">
-      <c-divider></c-divider>
-    </template>
-  </template>
-</c-menu>
+  </c-menu>
 </template>
 
 <script setup lang="ts">
@@ -46,7 +52,11 @@ const colors = ref([
 
 const currentColor = ref({ type: 'color', value: '#006778', label: 'Primary' });
 
-const onSelect = (event: CustomEvent<{ value: { type: 'color', value: string, label: string } }>) => {
+const onSelect = (
+  event: CustomEvent<{
+    value: { type: 'color'; value: string; label: string };
+  }>,
+) => {
   console.log(event.detail.value);
   currentColor.value = event.detail.value;
 

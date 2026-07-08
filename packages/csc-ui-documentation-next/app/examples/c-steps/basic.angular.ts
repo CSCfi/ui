@@ -15,7 +15,11 @@ import { Component, CUSTOM_ELEMENTS_SCHEMA, signal } from '@angular/core';
       </c-steps>
 
       <div class="example-row">
-        <c-button outlined [disabled]="step() === 1" (click)="step.set(step() - 1)">
+        <c-button
+          outlined
+          [disabled]="step() === 1"
+          (click)="step.set(step() - 1)"
+        >
           Previous
         </c-button>
         <c-button [disabled]="step() === 5" (click)="step.set(step() + 1)">

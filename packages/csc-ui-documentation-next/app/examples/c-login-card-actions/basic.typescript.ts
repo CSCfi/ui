@@ -9,7 +9,8 @@ title.textContent = 'Sign in to My CSC';
 
 const content = document.createElement('c-login-card-content');
 const description = document.createElement('p');
-description.textContent = 'Access your projects and services with your CSC account.';
+description.textContent =
+  'Access your projects and services with your CSC account.';
 content.append(description);
 
 const actions = document.createElement('c-login-card-actions');

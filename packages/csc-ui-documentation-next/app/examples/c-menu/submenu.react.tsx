@@ -28,12 +28,10 @@ export const Submenu = () => {
 
         <CMenuItem value="documents">
           Documents
-
           <CMenuItem slot="submenu" value="pdf">
             <CIcon path={mdiFilePdfBox} />
             PDF
           </CMenuItem>
-
           <CMenuItem slot="submenu" value="docx">
             <CIcon path={mdiFileDocument} />
             Word document
@@ -42,12 +40,10 @@ export const Submenu = () => {
 
         <CMenuItem value="images">
           Images
-
           <CMenuItem slot="submenu" value="png">
             <CIcon path={mdiFilePngBox} />
             PNG
           </CMenuItem>
-
           <CMenuItem slot="submenu" value="jpg">
             <CIcon path={mdiFileJpgBox} />
             JPEG

@@ -43,7 +43,13 @@ archivedProjects.addEventListener('keyup', (event) => {
 
 select('active');
 
-projects.append(icon, 'Projects', activeProjects, archivedProjects, serviceDescription);
+projects.append(
+  icon,
+  'Projects',
+  activeProjects,
+  archivedProjects,
+  serviceDescription,
+);
 navigation.append(projects);
 wrapper.append(navigation);
 document.body.append(wrapper);

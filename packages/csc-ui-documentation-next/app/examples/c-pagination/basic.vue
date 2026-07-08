@@ -1,6 +1,6 @@
 <template>
   <div>
-    <c-pagination :value.prop="options" @changeValue="onChange" />
+    <c-pagination :value.prop="options" @change-value="onChange" />
 
     <p>Current page: {{ page }}</p>
   </div>

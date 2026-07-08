@@ -1,6 +1,11 @@
 // @ts-nocheck — documentation code sample; shown as text, never compiled here
 import { mdiAccount, mdiBell, mdiChevronRight, mdiCog } from '@mdi/js';
-import { CIcon, CList, CListItem, CListItemTitle } from '@cscfi/csc-ui-next-react';
+import {
+  CIcon,
+  CList,
+  CListItem,
+  CListItemTitle,
+} from '@cscfi/csc-ui-next-react';
 
 export const Basic = () => {
   return (

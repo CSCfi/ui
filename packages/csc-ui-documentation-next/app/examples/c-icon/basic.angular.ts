@@ -10,7 +10,11 @@ import { mdiAccount, mdiBellOutline, mdiCheckCircle } from '@mdi/js';
     <div class="example-row">
       <c-icon [path]="mdiAccount"></c-icon>
       <c-icon [path]="mdiBellOutline" size="36"></c-icon>
-      <c-icon [path]="mdiCheckCircle" size="36" color="var(--c-success)"></c-icon>
+      <c-icon
+        [path]="mdiCheckCircle"
+        size="36"
+        color="var(--c-success)"
+      ></c-icon>
     </div>
   `,
 })

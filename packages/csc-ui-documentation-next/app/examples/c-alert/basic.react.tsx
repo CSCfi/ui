@@ -6,7 +6,6 @@ export const Basic = () => {
     <div>
       <CAlert type="warning">
         <div slot="title">Maintenance break</div>
-
         The service will be unavailable on Saturday between 10:00 and 12:00.
       </CAlert>
     </div>

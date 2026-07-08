@@ -2,7 +2,7 @@
   <div>
     <c-otp-input
       hint="Enter the 6-digit code we sent you"
-      @changeValue="onChange"
+      @change-value="onChange"
     />
 
     <span>Code: {{ code ?? 'incomplete' }}</span>

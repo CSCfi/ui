@@ -12,9 +12,9 @@
            Client-only: the csc-ui custom elements upgrade only on the client,
            and Vue's SSR compiler (@vue/compiler-ssr) errors on `v-model` on a
            custom element when `isCustomElement` is set. -->
-      <ClientOnly>
+      <client-only>
         <component :is="example.demo" />
-      </ClientOnly>
+      </client-only>
     </div>
 
     <div class="border-t border-border">
@@ -24,7 +24,7 @@
       >
         <!-- Changing a tab switches the documentation-wide flavor, not just
              this block (ADR-0020). -->
-        <c-tab-buttons mandatory @input="onFlavorChange" >
+        <c-tab-buttons mandatory @input="onFlavorChange">
           <c-tab-button
             v-for="tab in example.tabs"
             :key="tab.flavor"
@@ -32,7 +32,11 @@
             :active="tab.flavor === activeTab.flavor"
             :aria-selected="tab.flavor === activeTab.flavor"
           >
-            <c-icon :path="tab.icon" :size="16" :class="ICON_COLORS[tab.flavor]" />
+            <c-icon
+              :path="tab.icon"
+              :size="16"
+              :class="ICON_COLORS[tab.flavor]"
+            />
 
             {{ tab.label }}
           </c-tab-button>
@@ -41,6 +45,7 @@
 
       <!-- eslint-disable-next-line vue/no-v-html — Shiki output built at prerender from our own SFC source -->
       <div v-if="activeHtml" class="example-shiki" v-html="activeHtml" />
+
       <pre
         v-else
         class="m-0 overflow-x-auto bg-[#0f172a] px-5 py-4 text-[0.8125rem] text-[#e2e8f0]"
@@ -75,7 +80,9 @@ const onFlavorChange = (flavor: Event) => {
 };
 
 const currentIconColor = computed(() => {
-  return ICON_COLORS[activeTab.value.flavor].replace('text-[', '').replace(']', '');
+  return ICON_COLORS[activeTab.value.flavor]
+    .replace('text-[', '')
+    .replace(']', '');
 });
 </script>
 
@@ -86,7 +93,11 @@ c-tab-buttons {
   }
 
   &::part(indicator) {
-    background-color: color-mix(in srgb, v-bind(currentIconColor) 10%, transparent);
+    background-color: color-mix(
+      in srgb,
+      v-bind(currentIconColor) 10%,
+      transparent
+    );
     box-shadow: inset 0 0 0 1px v-bind(currentIconColor);
   }
 }

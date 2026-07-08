@@ -15,7 +15,11 @@ export const Basic = () => {
       </CSteps>
 
       <div className="example-row">
-        <CButton outlined disabled={step === 1} onClick={() => setStep(step - 1)}>
+        <CButton
+          outlined
+          disabled={step === 1}
+          onClick={() => setStep(step - 1)}
+        >
           Previous
         </CButton>
         <CButton disabled={step === 5} onClick={() => setStep(step + 1)}>

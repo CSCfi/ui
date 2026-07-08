@@ -32,7 +32,11 @@ const notificationsChevron = document.createElement('c-icon');
 notificationsChevron.slot = 'post';
 notificationsChevron.path = mdiChevronRight;
 
-notificationsItem.append(notificationsIcon, notificationsTitle, notificationsChevron);
+notificationsItem.append(
+  notificationsIcon,
+  notificationsTitle,
+  notificationsChevron,
+);
 
 const settingsItem = document.createElement('c-list-item');
 settingsItem.disabled = true;

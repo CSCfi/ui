@@ -11,7 +11,9 @@ import { Component, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
       <c-checkbox checked hide-details>Checked</c-checkbox>
       <c-checkbox indeterminate hide-details>Indeterminate</c-checkbox>
       <c-checkbox disabled hide-details>Disabled</c-checkbox>
-      <c-checkbox checked disabled hide-details>Checked and disabled</c-checkbox>
+      <c-checkbox checked disabled hide-details>
+        Checked and disabled
+      </c-checkbox>
     </div>
   `,
 })

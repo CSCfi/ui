@@ -9,6 +9,7 @@
         @click="selected = item.label"
       >
         <c-icon slot="pre" :path="item.icon" />
+
         <c-list-item-title>{{ item.label }}</c-list-item-title>
       </c-list-item>
     </c-list>

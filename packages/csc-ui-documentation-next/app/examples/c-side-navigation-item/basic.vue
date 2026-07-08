@@ -3,7 +3,7 @@
     <c-side-navigation>
       <c-side-navigation-item
         :active.prop="current === 'dashboard'"
-        @itemChange="current = 'dashboard'"
+        @item-change="current = 'dashboard'"
       >
         <c-icon :path="mdiViewDashboardOutline" />
         Dashboard

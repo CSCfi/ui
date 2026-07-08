@@ -38,7 +38,15 @@ forgetItem.value = 'forget';
 forgetItem.danger = true;
 forgetItem.textContent = 'Forget this device';
 
-menu.append(trigger, label, phoneItem, tabletItem, desktopItem, divider, forgetItem);
+menu.append(
+  trigger,
+  label,
+  phoneItem,
+  tabletItem,
+  desktopItem,
+  divider,
+  forgetItem,
+);
 
 const status = document.createElement('span');
 status.textContent = 'Selected: —';

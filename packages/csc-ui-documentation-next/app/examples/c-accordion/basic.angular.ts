@@ -6,7 +6,10 @@ import { Component, CUSTOM_ELEMENTS_SCHEMA, signal } from '@angular/core';
   standalone: true,
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
   template: `
-    <c-accordion [value]="expanded()" (changeValue)="expanded.set($any($event).detail)">
+    <c-accordion
+      [value]="expanded()"
+      (changeValue)="expanded.set($any($event).detail)"
+    >
       <c-accordion-item heading="Project billing" value="billing">
         <p>Billing units are deducted monthly based on the resources in use.</p>
       </c-accordion-item>

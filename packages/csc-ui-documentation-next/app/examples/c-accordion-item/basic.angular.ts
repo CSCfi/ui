@@ -11,7 +11,9 @@ import { mdiAccountGroup, mdiCreditCardOutline, mdiDatabase } from '@mdi/js';
       <c-accordion>
         <c-accordion-item heading="Project billing" value="billing">
           <c-icon slot="icon" [path]="mdiCreditCardOutline"></c-icon>
-          <p>Billing units are deducted monthly based on the resources in use.</p>
+          <p>
+            Billing units are deducted monthly based on the resources in use.
+          </p>
         </c-accordion-item>
         <c-accordion-item heading="Members and roles" value="members">
           <c-icon slot="icon" [path]="mdiAccountGroup"></c-icon>

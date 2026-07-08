@@ -3,7 +3,10 @@ const wrapper = document.createElement('div');
 
 // Typed via the HTMLElementTagNameMap augmentation from @cscfi/csc-ui-next.
 const field = document.createElement('c-input');
-field.setAttribute('hint', 'c-input is the field shell — you provide the native input');
+field.setAttribute(
+  'hint',
+  'c-input is the field shell — you provide the native input',
+);
 field.setAttribute('input-id', 'example-search');
 field.setAttribute('label', 'Search');
 field.filled = false;

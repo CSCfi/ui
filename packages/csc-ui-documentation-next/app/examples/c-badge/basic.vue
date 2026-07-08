@@ -2,11 +2,13 @@
   <div class="example-row">
     <span style="position: relative">
       <c-icon :path="mdiBellOutline" size="32" />
+
       <c-badge>3</c-badge>
     </span>
 
     <c-icon-button outlined>
       <c-icon :path="mdiEmailOutline" />
+
       <c-badge class="success-badge">1</c-badge>
     </c-icon-button>
 

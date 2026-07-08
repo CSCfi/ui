@@ -5,7 +5,7 @@
     <c-data-table
       :columns.prop="columns"
       :data.prop="data"
-      :getRowId.prop="getRowId"
+      :get-row-id.prop="getRowId"
       :selected.prop="selected"
       page-size="4"
       selection="multiple"

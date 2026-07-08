@@ -33,18 +33,27 @@ import {
   `,
   styles: [
     `
-      :root, :root[data-theme='light'] {
+      :root,
+      :root[data-theme='light'] {
         --accordion-content-background: var(--c-surface);
       }
 
       @media (prefers-color-scheme: dark) {
         :root:not([data-theme]) {
-          --accordion-content-background: color-mix(in srgb, var(--c-primary) 20%, transparent);
+          --accordion-content-background: color-mix(
+            in srgb,
+            var(--c-primary) 20%,
+            transparent
+          );
         }
       }
 
       :root[data-theme='dark'] {
-        --accordion-content-background: color-mix(in srgb, var(--c-primary) 20%, transparent);
+        --accordion-content-background: color-mix(
+          in srgb,
+          var(--c-primary) 20%,
+          transparent
+        );
       }
 
       c-accordion.custom-style {
@@ -66,7 +75,11 @@ import {
 
           &[expanded]::part(root) {
             border-color: var(--c-primary);
-            background-color: color-mix(in srgb, var(--c-primary) 10%, transparent);
+            background-color: color-mix(
+              in srgb,
+              var(--c-primary) 10%,
+              transparent
+            );
           }
         }
       }

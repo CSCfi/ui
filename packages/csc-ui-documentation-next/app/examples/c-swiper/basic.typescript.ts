@@ -8,8 +8,18 @@ const swiper = document.createElement('c-swiper');
 swiper.value = 'standard';
 
 const tabs = [
-  { value: 'standard', label: 'Standard', icon: mdiServer, specs: '4 cores, 8 GB RAM' },
-  { value: 'performance', label: 'Performance', icon: mdiMemory, specs: '8 cores, 32 GB RAM' },
+  {
+    value: 'standard',
+    label: 'Standard',
+    icon: mdiServer,
+    specs: '4 cores, 8 GB RAM',
+  },
+  {
+    value: 'performance',
+    label: 'Performance',
+    icon: mdiMemory,
+    specs: '8 cores, 32 GB RAM',
+  },
   { value: 'gpu', label: 'GPU', icon: mdiRocket, specs: '1 GPU, 112 GB RAM' },
 ];
 

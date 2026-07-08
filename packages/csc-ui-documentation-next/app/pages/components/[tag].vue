@@ -13,7 +13,10 @@
       </p>
 
       <section v-if="usageHtml" class="mt-10">
-        <h2 id="usage" class="my-[0.83em] border-b border-border pb-1.5 text-2xl font-bold">
+        <h2
+          id="usage"
+          class="my-[0.83em] border-b border-border pb-1.5 text-2xl font-bold"
+        >
           Usage
         </h2>
         <!-- eslint-disable-next-line vue/no-v-html — our markdown, html disabled, code Shiki-highlighted at prerender -->
@@ -21,10 +24,14 @@
       </section>
 
       <section v-if="examples.length" class="mt-10">
-        <h2 id="examples" class="my-[0.83em] border-b border-border pb-1.5 text-2xl font-bold">
+        <h2
+          id="examples"
+          class="my-[0.83em] border-b border-border pb-1.5 text-2xl font-bold"
+        >
           Examples
         </h2>
-        <ExampleBlock
+
+        <example-block
           v-for="example in examples"
           :key="example.name"
           :example="example"
@@ -33,10 +40,14 @@
       </section>
 
       <section class="mt-10">
-        <h2 id="api" class="my-[0.83em] border-b border-border pb-1.5 text-2xl font-bold">
+        <h2
+          id="api"
+          class="my-[0.83em] border-b border-border pb-1.5 text-2xl font-bold"
+        >
           API reference
         </h2>
-        <ApiComponent
+
+        <api-component
           v-for="view in views"
           :key="view.tagName"
           :linkable-types="pageTypeNames"
@@ -55,12 +66,16 @@
       >
         On this page
       </p>
+
       <nav class="flex flex-col border-l border-border">
         <a v-if="usageHtml" :class="TOC_LINK" href="#usage">Usage</a>
+
         <a v-if="examples.length" :class="TOC_LINK" href="#examples">
           Examples
         </a>
+
         <a :class="TOC_LINK" href="#api">API reference</a>
+
         <template v-for="view in views" :key="view.tagName">
           <a
             :class="[TOC_LINK, 'mt-2 font-mono text-[0.78rem] font-semibold']"
@@ -68,6 +83,7 @@
           >
             {{ view.tagName }}
           </a>
+
           <a
             v-for="section in view.sections"
             :key="section.id"

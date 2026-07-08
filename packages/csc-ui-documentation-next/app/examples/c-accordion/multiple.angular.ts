@@ -9,7 +9,9 @@ import { Component, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
     <div>
       <c-accordion multiple outlined>
         <c-accordion-item heading="Project billing" value="billing">
-          <p>Billing units are deducted monthly based on the resources in use.</p>
+          <p>
+            Billing units are deducted monthly based on the resources in use.
+          </p>
         </c-accordion-item>
 
         <c-accordion-item heading="Members and roles" value="members">

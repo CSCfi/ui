@@ -11,21 +11,25 @@ export type Flavor = 'angular' | 'react' | 'typescript' | 'vue';
 export const FLAVOR_STORAGE_KEY = 'csc-docs-flavor';
 
 export const ICONS: Record<Flavor, string> = {
-  'vue': mdiVuejs,
-  'react': mdiReact,
-  'angular': mdiAngular,
-  'typescript': mdiLanguageTypescript,
+  vue: mdiVuejs,
+  react: mdiReact,
+  angular: mdiAngular,
+  typescript: mdiLanguageTypescript,
 };
 
 export const ICON_COLORS: Record<Flavor, string> = {
-  'vue': 'text-[#42b883]',
-  'react': 'text-[#61dafb]',
-  'angular': 'text-[#dd0031]',
-  'typescript': 'text-[#3178c6]',
+  vue: 'text-[#42b883]',
+  react: 'text-[#61dafb]',
+  angular: 'text-[#dd0031]',
+  typescript: 'text-[#3178c6]',
 };
 
 /** Canonical display order: the Vue canon first (ADR-0012), then overrides. */
-export const FLAVORS: ReadonlyArray<{ id: Flavor; label: string; icon: string }> = [
+export const FLAVORS: ReadonlyArray<{
+  id: Flavor;
+  label: string;
+  icon: string;
+}> = [
   { id: 'vue', label: 'Vue', icon: ICONS.vue },
   { id: 'react', label: 'React', icon: ICONS.react },
   { id: 'angular', label: 'Angular', icon: ICONS.angular },

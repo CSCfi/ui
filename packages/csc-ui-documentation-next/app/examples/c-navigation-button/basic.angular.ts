@@ -7,7 +7,9 @@ import { Component, CUSTOM_ELEMENTS_SCHEMA, signal } from '@angular/core';
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
   template: `
     <div class="example-row">
-      <c-navigation-button (click)="menuVisible.set(!menuVisible())"></c-navigation-button>
+      <c-navigation-button
+        (click)="menuVisible.set(!menuVisible())"
+      ></c-navigation-button>
 
       <span>Menu {{ menuVisible() ? 'open' : 'closed' }}</span>
     </div>

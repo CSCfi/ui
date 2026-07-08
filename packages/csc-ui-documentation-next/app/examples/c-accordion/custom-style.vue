@@ -1,5 +1,5 @@
 <template>
-  <c-accordion class="custom-style" v-model="expanded">
+  <c-accordion v-model="expanded" class="custom-style">
     <c-accordion-item heading="Project billing" value="billing">
       <p>Billing units are deducted monthly based on the resources in use.</p>
     </c-accordion-item>
@@ -21,18 +21,27 @@ const expanded = ref<'billing' | 'members' | 'storage'>('billing');
 </script>
 
 <style>
-:root, :root[data-theme='light'] {
+:root,
+:root[data-theme='light'] {
   --accordion-content-background: var(--c-surface);
 }
 
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme]) {
-    --accordion-content-background: color-mix(in srgb, var(--c-primary) 20%, transparent);
+    --accordion-content-background: color-mix(
+      in srgb,
+      var(--c-primary) 20%,
+      transparent
+    );
   }
 }
 
 :root[data-theme='dark'] {
-  --accordion-content-background: color-mix(in srgb, var(--c-primary) 20%, transparent);
+  --accordion-content-background: color-mix(
+    in srgb,
+    var(--c-primary) 20%,
+    transparent
+  );
 }
 
 c-accordion.custom-style {

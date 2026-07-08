@@ -15,10 +15,18 @@ export const Basic = () => {
         placeholder="Choose a country"
         onChangeValue={(event) => setCountry(event.detail as string | null)}
       >
-        <COption name="Finland" value="fi">Finland</COption>
-        <COption name="Sweden" value="se">Sweden</COption>
-        <COption name="Norway" value="no">Norway</COption>
-        <COption name="Denmark" value="dk">Denmark</COption>
+        <COption name="Finland" value="fi">
+          Finland
+        </COption>
+        <COption name="Sweden" value="se">
+          Sweden
+        </COption>
+        <COption name="Norway" value="no">
+          Norway
+        </COption>
+        <COption name="Denmark" value="dk">
+          Denmark
+        </COption>
       </CSelect>
 
       <span>Value: {country ?? 'null'}</span>

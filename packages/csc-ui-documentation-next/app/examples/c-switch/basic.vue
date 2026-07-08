@@ -1,8 +1,6 @@
 <template>
   <div class="example-grid">
-    <c-switch v-model="enabled">
-      Notifications
-    </c-switch>
+    <c-switch v-model="enabled">Notifications</c-switch>
 
     <span>Value: {{ enabled }}</span>
   </div>

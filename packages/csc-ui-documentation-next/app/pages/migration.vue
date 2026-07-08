@@ -4,14 +4,18 @@
 
     <p class="my-[1em] max-w-[45rem] text-[1.0625rem] text-on-surface-muted">
       How to upgrade an app from the Stencil package
-      <code>@cscfi/csc-ui</code> to <code>@cscfi/csc-ui-next</code>. The
-      <code>&lt;c-*&gt;</code> tag names are unchanged; what changes is
-      installation, registration, two-way binding, customization, and theming.
-      Pick your flavor with the switcher in the header (or below on small
-      screens).
+      <code>@cscfi/csc-ui</code>
+
+      to
+      <code>@cscfi/csc-ui-next</code>
+      . The
+      <code>&lt;c-*&gt;</code>
+      tag names are unchanged; what changes is installation, registration,
+      two-way binding, customization, and theming. Pick your flavor with the
+      switcher in the header (or below on small screens).
     </p>
 
-    <FlavorSwitcher class="md:hidden" />
+    <flavor-switcher class="md:hidden" />
 
     <section v-for="section in sections" :key="section.id" class="mt-10">
       <h2
@@ -21,7 +25,9 @@
         {{ section.title }}
       </h2>
 
-      <p class="my-[1em] max-w-[45rem] whitespace-pre-line text-on-surface-muted">
+      <p
+        class="my-[1em] max-w-[45rem] whitespace-pre-line text-on-surface-muted"
+      >
         {{ section.intro[flavor] ?? section.intro.all }}
       </p>
 
@@ -43,6 +49,7 @@
           class="example-shiki"
           v-html="blocksHtml[`${section.id}:${flavor}:${index}`]"
         />
+
         <pre
           v-else
           class="m-0 overflow-x-auto bg-[#0f172a] px-5 py-4 text-[0.8125rem] text-[#e2e8f0]"
@@ -53,11 +60,7 @@
 </template>
 
 <script setup lang="ts">
-import type { Flavor } from '~/composables/useFlavor';
-import {
-  MIGRATION_SECTIONS,
-  type MigrationSection,
-} from '~/content/migration';
+import { MIGRATION_SECTIONS, type MigrationSection } from '~/content/migration';
 
 const sections: MigrationSection[] = MIGRATION_SECTIONS;
 

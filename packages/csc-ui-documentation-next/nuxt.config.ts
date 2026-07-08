@@ -50,6 +50,7 @@ const stubExampleDemosInSsr: import('vite').Plugin = {
   enforce: 'pre',
   load(id) {
     if (id === '\0csc-example-demo-stub') return 'export default {}';
+
     return null;
   },
   name: 'csc-docs:stub-example-demos-in-ssr',
@@ -57,6 +58,7 @@ const stubExampleDemosInSsr: import('vite').Plugin = {
     if (options?.ssr && /\/examples\/[^?]+\.vue$/.test(source)) {
       return '\0csc-example-demo-stub';
     }
+
     return null;
   },
 };
@@ -97,6 +99,7 @@ export default defineNuxtConfig({
     '~/assets/tailwind.css',
     '~/assets/site.css',
   ],
+  modules: ['@nuxt/eslint'],
   nitro: {
     prerender: {
       crawlLinks: true,

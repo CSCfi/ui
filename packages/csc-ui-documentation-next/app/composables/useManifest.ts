@@ -77,13 +77,14 @@ const INTERNAL_ONLY = new Set(['c-dropdown']);
 
 const components = manifest.modules
   .flatMap((module) => module.declarations)
-  .filter(
-    (declaration): declaration is CemDeclaration & { tagName: string } =>
-      Boolean(declaration.customElement && declaration.tagName),
+  .filter((declaration): declaration is CemDeclaration & { tagName: string } =>
+    Boolean(declaration.customElement && declaration.tagName),
   )
   .sort((a, b) => a.tagName.localeCompare(b.tagName));
 
-const byTag = new Map(components.map((component) => [component.tagName, component]));
+const byTag = new Map(
+  components.map((component) => [component.tagName, component]),
+);
 
 // child tag -> the parent whose page documents it (first declaring parent wins;
 // only c-option is shared today). Used to redirect a folded child's old route.

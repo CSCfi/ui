@@ -17,7 +17,9 @@ import { mdiAccount, mdiChevronDown } from '@mdi/js';
 
         <c-menu-item value="profile">View profile</c-menu-item>
 
-        <c-menu-item value="billing" disabled>Billing (unavailable)</c-menu-item>
+        <c-menu-item value="billing" disabled>
+          Billing (unavailable)
+        </c-menu-item>
 
         <c-menu-item value="invite">Invite teammate</c-menu-item>
 

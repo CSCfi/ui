@@ -47,9 +47,13 @@ const EXT_LANG: Record<string, string> = {
   tsx: 'tsx',
 };
 
-const FLAVOR_ORDER = new Map(FLAVORS.map((flavor, index) => [flavor.id, index]));
+const FLAVOR_ORDER = new Map(
+  FLAVORS.map((flavor, index) => [flavor.id, index]),
+);
 
-const FLAVOR_LABEL = new Map(FLAVORS.map((flavor) => [flavor.id, flavor.label]));
+const FLAVOR_LABEL = new Map(
+  FLAVORS.map((flavor) => [flavor.id, flavor.label]),
+);
 
 export interface ExampleTab {
   code: string;
@@ -140,7 +144,8 @@ export const useExamples = (tags: string[]): DocExample[] => {
       })
       .sort(
         (a, b) =>
-          (FLAVOR_ORDER.get(a.flavor) ?? 99) - (FLAVOR_ORDER.get(b.flavor) ?? 99),
+          (FLAVOR_ORDER.get(a.flavor) ?? 99) -
+          (FLAVOR_ORDER.get(b.flavor) ?? 99),
       );
 
     const friendly = titleFromName(file);
@@ -151,7 +156,7 @@ export const useExamples = (tags: string[]): DocExample[] => {
       tabs: [
         { code, flavor: 'vue' as const, label: 'Vue', lang: 'vue' },
         ...overrides,
-        ].map(tab => ({ ...tab, icon: ICONS[tab.flavor] })),
+      ].map((tab) => ({ ...tab, icon: ICONS[tab.flavor] })),
       // Mark which component a folded child's example focuses on.
       title: owner === parent ? friendly : `${friendly} · ${owner}`,
     });

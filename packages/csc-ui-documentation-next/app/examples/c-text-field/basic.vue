@@ -4,7 +4,7 @@
       :value="name"
       hint="Shown on your public profile"
       label="Display name"
-      @changeValue="onChange"
+      @change-value="onChange"
     />
 
     <span>Value: {{ name }}</span>

@@ -12,18 +12,19 @@
       class="my-[1em] grid grid-cols-[repeat(auto-fill,minmax(16rem,1fr))] gap-3"
     >
       <li v-for="component in navComponents" :key="component.tagName">
-        <NuxtLink
+        <nuxt-link
           class="block h-full rounded-lg border border-border px-4 py-[0.875rem] text-inherit no-underline hover:border-primary"
           :to="`/components/${component.tagName}`"
         >
           <code>&lt;{{ component.tagName }}&gt;</code>
+
           <p
             v-if="component.description"
             class="mt-1.5 text-[0.8125rem] text-on-surface-faint"
           >
             {{ firstSentence(component.description) }}
           </p>
-        </NuxtLink>
+        </nuxt-link>
       </li>
     </ul>
   </article>

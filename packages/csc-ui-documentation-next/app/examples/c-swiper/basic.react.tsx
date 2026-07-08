@@ -13,16 +13,13 @@ export const Basic = () => {
         onChangeValue={(event) => setFlavor(event.detail as number | string)}
       >
         <CSwiperTab value="standard" label="Standard">
-          <CIcon slot="icon" path={mdiServer} />
-          4 cores, 8 GB RAM
+          <CIcon slot="icon" path={mdiServer} />4 cores, 8 GB RAM
         </CSwiperTab>
         <CSwiperTab value="performance" label="Performance">
-          <CIcon slot="icon" path={mdiMemory} />
-          8 cores, 32 GB RAM
+          <CIcon slot="icon" path={mdiMemory} />8 cores, 32 GB RAM
         </CSwiperTab>
         <CSwiperTab value="gpu" label="GPU">
-          <CIcon slot="icon" path={mdiRocket} />
-          1 GPU, 112 GB RAM
+          <CIcon slot="icon" path={mdiRocket} />1 GPU, 112 GB RAM
         </CSwiperTab>
       </CSwiper>
 

@@ -1,6 +1,11 @@
 <template>
   <div>
-    <c-pagination :value.prop="options" hide-details simple @changeValue="onChange" />
+    <c-pagination
+      :value.prop="options"
+      hide-details
+      simple
+      @change-value="onChange"
+    />
 
     <p>Current page: {{ page }}</p>
   </div>

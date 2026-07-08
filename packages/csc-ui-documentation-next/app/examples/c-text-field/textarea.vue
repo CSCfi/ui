@@ -5,7 +5,7 @@
       hint="A rows value above 1 renders a textarea"
       label="Description"
       rows="4"
-      @changeValue="onChange"
+      @change-value="onChange"
     />
   </div>
 </template>

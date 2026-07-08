@@ -6,11 +6,14 @@
       hint="The list opens on click or with the arrow keys"
       label="Country"
       placeholder="Choose a country"
-      @changeValue="onChange"
+      @change-value="onChange"
     >
       <c-option name="Finland" value="fi">Finland</c-option>
+
       <c-option name="Sweden" value="se">Sweden</c-option>
+
       <c-option name="Norway" value="no">Norway</c-option>
+
       <c-option name="Denmark" value="dk">Denmark</c-option>
     </c-select>
 

@@ -6,11 +6,14 @@
       hint="Each c-option provides a name and a value"
       label="Country"
       placeholder="Choose a country"
-      @changeValue="onChange"
+      @change-value="onChange"
     >
       <c-option name="Finland" value="fi">Finland</c-option>
+
       <c-option name="Sweden" value="se">Sweden</c-option>
+
       <c-option name="Norway" value="no">Norway</c-option>
+
       <c-option name="Denmark" value="dk" disabled>Denmark</c-option>
     </c-select>
 

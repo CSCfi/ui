@@ -1,20 +1,17 @@
 <template>
   <!-- Rendered client-only: the label depends on localStorage, which the
        prerendered HTML cannot know. -->
-  <ClientOnly>
+  <client-only>
     <template #fallback>
       <span
         class="invisible inline-flex min-w-22 items-center gap-[0.4rem] rounded-full border px-3 py-1 text-[0.8125rem]"
       />
     </template>
 
-    <c-menu
-      position="bottom-end"
-      @select="onSelect"
-    >
+    <c-menu position="bottom-end" @select="onSelect">
       <c-button
-        :aria-label="`Color theme: ${preference}`"
         slot="trigger"
+        :aria-label="`Color theme: ${preference}`"
         size="small"
         text
       >
@@ -34,7 +31,7 @@
         {{ option.label }}
       </c-menu-item>
     </c-menu>
-  </ClientOnly>
+  </client-only>
 </template>
 
 <script setup lang="ts">

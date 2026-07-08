@@ -59,7 +59,9 @@ export const CustomStyle = () => {
         }
       >
         <CAccordionItem heading="Project billing" value="billing">
-          <p>Billing units are deducted monthly based on the resources in use.</p>
+          <p>
+            Billing units are deducted monthly based on the resources in use.
+          </p>
         </CAccordionItem>
 
         <CAccordionItem heading="Members and roles" value="members">

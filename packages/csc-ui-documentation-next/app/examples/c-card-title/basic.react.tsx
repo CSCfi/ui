@@ -1,5 +1,10 @@
 // @ts-nocheck — documentation code sample; shown as text, never compiled here
-import { CButton, CCard, CCardContent, CCardTitle } from '@cscfi/csc-ui-next-react';
+import {
+  CButton,
+  CCard,
+  CCardContent,
+  CCardTitle,
+} from '@cscfi/csc-ui-next-react';
 
 export const Basic = () => (
   <div>

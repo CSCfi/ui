@@ -2,11 +2,13 @@
   <c-main class="demo-shell">
     <c-toolbar class="relative">
       <c-csc-logo />
+
       <span>My Service</span>
     </c-toolbar>
 
     <c-page>
       <h2>Dashboard</h2>
+
       <p>Page content goes here.</p>
     </c-page>
   </c-main>

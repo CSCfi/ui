@@ -4,10 +4,12 @@
       :value="plan"
       hint="You can change the plan later"
       label="Subscription plan"
-      @changeValue="onChange"
+      @change-value="onChange"
     >
       <c-radio value="free">Free</c-radio>
+
       <c-radio value="pro">Pro</c-radio>
+
       <c-radio value="enterprise">Enterprise</c-radio>
     </c-radio-group>
   </div>

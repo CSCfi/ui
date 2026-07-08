@@ -1,6 +1,6 @@
 <template>
   <div>
-    <c-slider :value.prop="volume" label="Volume" @changeValue="onChange" />
+    <c-slider :value.prop="volume" label="Volume" @change-value="onChange" />
 
     <span>Value: {{ volume }} %</span>
   </div>

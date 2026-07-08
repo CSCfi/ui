@@ -8,7 +8,10 @@ import { mdiMemory, mdiRocket, mdiServer } from '@mdi/js';
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
   template: `
     <div>
-      <c-swiper [value]="flavor()" (changeValue)="flavor.set($any($event).detail)">
+      <c-swiper
+        [value]="flavor()"
+        (changeValue)="flavor.set($any($event).detail)"
+      >
         <c-swiper-tab value="standard" label="Standard">
           <c-icon slot="icon" [path]="mdiServer"></c-icon>
           4 cores, 8 GB RAM

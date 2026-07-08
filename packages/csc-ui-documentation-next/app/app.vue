@@ -1,9 +1,12 @@
 <template>
   <div class="flex min-h-screen flex-col">
     <c-toolbar>
-      <NuxtLink class="text-lg font-bold no-underline flex items-center" to="/">
+      <nuxt-link
+        class="text-lg font-bold no-underline flex items-center"
+        to="/"
+      >
         <c-csc-logo></c-csc-logo>
-      </NuxtLink>
+      </nuxt-link>
 
       CSC Design System
 
@@ -14,11 +17,11 @@
       </span>
 
       <div class="flex gap-2 items-center flex-1 justify-end">
-        <FlavorSwitcher class="max-md:hidden" />
+        <flavor-switcher class="max-md:hidden" />
 
-        <ThemeToggle />
+        <theme-toggle />
 
-        <ColorSwitcher />
+        <color-switcher />
 
         <c-navigation-button v-if="isMobile" />
       </div>
@@ -39,14 +42,14 @@
 
         <c-side-navigation-item
           :active.prop="route.path === '/getting-started'"
-          @itemChange="navigateTo('/getting-started')"
+          @item-change="navigateTo('/getting-started')"
         >
           Getting started
         </c-side-navigation-item>
 
         <c-side-navigation-item
           :active.prop="route.path === '/migration'"
-          @itemChange="navigateTo('/migration')"
+          @item-change="navigateTo('/migration')"
         >
           Migration guide
         </c-side-navigation-item>
@@ -57,7 +60,7 @@
           v-for="component in navComponents"
           :key="component.tagName"
           :active.prop="route.path === `/components/${component.tagName}`"
-          @itemChange="navigateTo(`/components/${component.tagName}`)"
+          @item-change="navigateTo(`/components/${component.tagName}`)"
         >
           {{ component.tagName }}
         </c-side-navigation-item>
@@ -66,7 +69,7 @@
       <main
         class="min-w-0 max-w-280 flex-1 px-5 pb-12 pt-6 md:px-12 md:pb-16 md:pt-8"
       >
-        <NuxtPage />
+        <nuxt-page />
       </main>
     </div>
   </div>
@@ -75,7 +78,7 @@
 <script setup lang="ts">
 useHead({
   htmlAttrs: {
-    class: 'scroll-smooth'
+    class: 'scroll-smooth',
   },
 });
 const { navComponents } = useManifest();

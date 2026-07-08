@@ -6,8 +6,8 @@
     <c-data-table
       :columns.prop="columns"
       :data.prop="data"
-      :expandedContent.prop="expandedContent"
-      :getRowId.prop="getRowId"
+      :expanded-content.prop="expandedContent"
+      :get-row-id.prop="getRowId"
       single-expansion
       @change:expanded="onExpanded"
     />
@@ -57,7 +57,11 @@ const getRowId = (row: CDataTableRow) => row.id as string;
 const expandedContent = ({ row }: CDataTableExpandedContext) =>
   h(
     'c-link',
-    { href: `https://docs.csc.fi/computing/systems-${row.id}/`, underline: true, style: 'padding-inline: 6px' },
+    {
+      href: `https://docs.csc.fi/computing/systems-${row.id}/`,
+      underline: true,
+      style: 'padding-inline: 6px',
+    },
     `Read more about ${row.name}`,
   );
 

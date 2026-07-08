@@ -5,10 +5,12 @@
       hide-details
       inline
       label="Email frequency"
-      @changeValue="onChange"
+      @change-value="onChange"
     >
       <c-radio value="daily">Daily</c-radio>
+
       <c-radio value="weekly">Weekly</c-radio>
+
       <c-radio value="never">Never</c-radio>
     </c-radio-group>
   </div>

@@ -3,7 +3,7 @@
     <c-checkbox
       :checked.prop="subscribed"
       hint="You can unsubscribe at any time"
-      @changeValue="onChange"
+      @change-value="onChange"
     >
       Subscribe to the newsletter
     </c-checkbox>

@@ -10,7 +10,7 @@
       step="1"
       ticks
       unit=""
-      @changeValue="onChange"
+      @change-value="onChange"
     />
   </div>
 </template>

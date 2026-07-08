@@ -16,12 +16,10 @@ export const Submenu = () => {
 
         <CMenuItem value="documents">
           Documents
-
           <CMenuItem slot="submenu" value="pdf">
             <CIcon path={mdiFilePdfBox} />
             PDF
           </CMenuItem>
-
           <CMenuItem slot="submenu" value="docx">
             <CIcon path={mdiFileDocument} />
             Word document

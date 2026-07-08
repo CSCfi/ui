@@ -29,7 +29,6 @@ export const Basic = () => {
         <CSideNavigationItem active>
           <CIcon path={mdiFolderOutline} />
           Projects
-
           <CSubNavigationItem
             active={current === 'active'}
             onClick={() => setCurrent('active')}
@@ -37,7 +36,6 @@ export const Basic = () => {
           >
             Active projects
           </CSubNavigationItem>
-
           <CSubNavigationItem
             active={current === 'archived'}
             onClick={() => setCurrent('archived')}

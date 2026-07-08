@@ -8,7 +8,9 @@ export const Basic = () => {
       <CAccordion>
         <CAccordionItem heading="Project billing" value="billing">
           <CIcon slot="icon" path={mdiCreditCardOutline} />
-          <p>Billing units are deducted monthly based on the resources in use.</p>
+          <p>
+            Billing units are deducted monthly based on the resources in use.
+          </p>
         </CAccordionItem>
         <CAccordionItem heading="Members and roles" value="members">
           <CIcon slot="icon" path={mdiAccountGroup} />
