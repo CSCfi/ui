@@ -11,6 +11,8 @@
 </template>
 
 <script setup lang="ts">
+import { ref } from 'vue';
+
 const view = ref<number | string>('week');
 
 const onChange = (event: Event) => {

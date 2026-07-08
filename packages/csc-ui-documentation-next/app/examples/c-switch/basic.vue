@@ -1,5 +1,5 @@
 <template>
-  <div class="example-row">
+  <div class="example-grid">
     <c-switch v-model="enabled">
       Notifications
     </c-switch>
@@ -9,5 +9,7 @@
 </template>
 
 <script setup lang="ts">
+import { ref } from 'vue';
+
 const enabled = ref(false);
 </script>

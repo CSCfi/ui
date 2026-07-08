@@ -1,6 +1,6 @@
 <template>
   <div>
-    <c-steps :value.prop="step">
+    <c-steps v-model="step">
       <c-step>Choose resources</c-step>
       <c-step>Billing details</c-step>
       <c-step>Review</c-step>
@@ -11,7 +11,7 @@
       <c-button outlined :disabled.prop="step === 1" @click="step--">
         Previous
       </c-button>
-      <c-button :disabled.prop="step === 4" @click="step++">Next</c-button>
+      <c-button :disabled.prop="step === 5" @click="step++">Next</c-button>
     </div>
   </div>
 </template>

@@ -1,6 +1,6 @@
 <template>
   <div>
-    <c-tabs :value.prop="tab" @changeValue="onChange">
+    <c-tabs v-model="tab">
       <c-tab value="summary">Summary</c-tab>
       <c-tab value="members">Members</c-tab>
       <c-tab value="settings">Settings</c-tab>
@@ -21,9 +21,5 @@
 </template>
 
 <script setup lang="ts">
-const tab = ref<number | string>('summary');
-
-const onChange = (event: Event) => {
-  tab.value = (event as CustomEvent<number | string>).detail;
-};
+const tab = ref<'summary' | 'members' | 'settings'>('summary');
 </script>
