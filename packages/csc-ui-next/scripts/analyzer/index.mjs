@@ -35,6 +35,7 @@ import { emitIdeData } from './ide-data.mjs';
 import { lintComponent } from './lint.mjs';
 import { analyzeScript } from './script-api.mjs';
 import { extractExportedTypes, extractSharedTypes } from './shared-types.mjs';
+import { emitTagNameMap } from './tag-map.mjs';
 import { analyzeTemplate } from './template.mjs';
 import { buildAliasTable } from './type-expansion.mjs';
 
@@ -47,6 +48,10 @@ const distDir = path.join(packageRoot, 'dist');
 const args = process.argv.slice(2);
 
 const strict = args.includes('--strict');
+
+// --tag-map: emit only src/tag-name-map.ts. Runs before vue-tsc in the build
+// (the map is package source; dist artifacts come later and vite wipes dist/).
+const tagMapOnly = args.includes('--tag-map');
 
 const only = args.includes('--only') ? args[args.indexOf('--only') + 1] : null;
 
@@ -132,9 +137,7 @@ const analyzeComponent = (tagName) => {
     modulePath: path.relative(packageRoot, sfcPath),
     ownedTypes,
     props: scriptApi.props,
-    script: [plainScript?.content, script?.content]
-      .filter(Boolean)
-      .join('\n'),
+    script: [plainScript?.content, script?.content].filter(Boolean).join('\n'),
     source,
     subcomponents,
     tagName,
@@ -230,7 +233,10 @@ const publicTypes = [
 ];
 
 if (!only) {
-  const entrySource = readFileSync(path.join(packageRoot, 'src/index.ts'), 'utf8');
+  const entrySource = readFileSync(
+    path.join(packageRoot, 'src/index.ts'),
+    'utf8',
+  );
 
   for (const type of publicTypes) {
     if (!new RegExp(`\\b${type.name}\\b`).test(entrySource)) {
@@ -243,6 +249,33 @@ if (!only) {
 }
 
 // ---- emit -------------------------------------------------------------------
+
+// The typed tag-name map is package source (vue-tsc emits its declarations),
+// so it is committed and drift-checked rather than built into dist.
+if (!only) {
+  const { changed, target } = emitTagNameMap(
+    components,
+    publicTypes,
+    packageRoot,
+  );
+
+  if (changed) {
+    const relative = path.relative(packageRoot, target);
+
+    if (strict) {
+      errorCount += 1;
+      console.log(
+        `tag-name-map    error    ${relative} was stale — regenerated, commit it and rebuild`,
+      );
+    } else {
+      console.log(`tag-name-map: regenerated ${relative}`);
+    }
+  }
+}
+
+if (tagMapOnly) {
+  process.exit(failures.length || (strict && errorCount) ? 1 : 0);
+}
 
 if (!only) {
   const manifest = buildManifest(components, publicTypes);
