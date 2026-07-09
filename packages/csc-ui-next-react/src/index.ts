@@ -8,3 +8,6 @@
  */
 
 export * from './components.js';
+
+export { applyTheme, resetTheme, themeToCss } from '@cscfi/csc-ui-next';
+export type { Family, ThemeSeeds } from '@cscfi/csc-ui-next';
