@@ -2,13 +2,7 @@
   <div :class="ui.root()" :data-badge="hasBadge ? badge : null" part="root">
     <slot />
 
-    <c-icon-button
-      v-if="closeable"
-      :class="ui.close()"
-      size="x-small"
-      text
-      @click="onClose"
-    >
+    <c-icon-button v-if="closeable" size="x-small" text @click="onClose">
       <c-icon :path="mdiClose" :size="16" />
     </c-icon-button>
   </div>
@@ -87,9 +81,12 @@ interface CTagEvents {
  *   active hover fill      -> the primary hover step
  *
  * The badge is the inner box's `::before` (content: attr(data-badge)),
- * converted to `before:` utilities. The close button is a child <c-icon-button>:
- * its colour vars are gone, so it inherits the tag's text colour via the `color`
- * property (`close` slot's `text-*`) and is sized via its own `size` prop.
+ * converted to `before:` utilities. The close button is a child <c-icon-button>
+ * rendered as its `text` variant — that variant sets an explicit `text-primary`
+ * on its own `part=root` button, which a `color` inherited from this host can't
+ * override. So the close icon is recoloured through `c-icon-button::part(root)`
+ * in the escape-hatch <style> below (ADR-0006), flipped to the primary
+ * on-colour on `:host([active])`. It is sized via its own `size` prop.
  *
  * The host's hover/focus-visible styling can't be a variant (positional/state
  * `:host(...)`); it stays in the escape-hatch <style> below (ADR-0007), which
@@ -119,8 +116,6 @@ const tag = tv({
     size: 'default',
   },
   slots: {
-    // Child c-icon-button: recolour via inherited `color`, not the dead vars.
-    close: 'text-primary',
     // The tag's visible box. The host stays a real box (see <style>) so that
     // :host(:hover) can recolour this inner element via descendant selectors.
     root:
@@ -134,7 +129,6 @@ const tag = tv({
   variants: {
     active: {
       true: {
-        close: 'text-on-primary',
         root: 'bg-primary text-on-primary ring-primary before:bg-surface before:text-primary',
       },
     },
@@ -249,6 +243,31 @@ const onClose = () => {
 c-icon-button::part(root) {
   width: 20px;
   height: 20px;
+  /* Recolour the close icon from here: the c-icon-button `text` variant sets an
+   * explicit `text-primary` on this part, so a `color` inherited from the host
+   * can't reach it. Outer-tree ::part rules beat the inner utility without
+   * !important (ADR-0006), and follow the tag's active state below. */
+  color: var(--c-primary);
+}
+
+:host([active]) c-icon-button::part(root) {
+  color: var(--c-on-primary);
+}
+
+/* Close-button hover: give it a solid, legible fill. The c-icon-button `text`
+ * variant's own hover (a light `primary-subtle` tint that never recolours the
+ * icon) is wrong here — on an active tag the icon is white, so a light tint
+ * would hide it. Mirror the Stencil c-tag: a filled circle whose colours invert
+ * the tag's resting pair. Outer-tree ::part rules win over the inner `hover:`
+ * utility without !important (ADR-0006). */
+c-icon-button::part(root):hover {
+  background-color: var(--c-primary);
+  color: var(--c-on-primary);
+}
+
+:host([active]) c-icon-button::part(root):hover {
+  background-color: var(--c-surface);
+  color: var(--c-primary);
 }
 
 :host([size='small']) c-icon-button::part(root) {
