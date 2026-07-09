@@ -215,12 +215,15 @@ const onClose = () => {
 }
 
 /* Non-active hover: the primary subtle tint. */
-:host(:hover) [part='root'] {
+/* `:not([flat])`: a flat tag is a non-interactive label — its whole purpose is
+ * to drop the hover effect. `pointer-events:none` on the root doesn't achieve
+ * that on its own because the host still receives :hover, so guard here. */
+:host(:not([flat]):hover) [part='root'] {
   background-color: var(--c-primary-subtle);
 }
 
 /* Active hover: the primary hover step, and drop the inset ring (box-shadow). */
-:host([active]:hover) [part='root'] {
+:host([active]:not([flat]):hover) [part='root'] {
   background-color: var(--c-primary-hover);
   box-shadow: none;
 }
