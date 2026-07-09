@@ -21,6 +21,8 @@ export interface MigrationSection {
   blocks: Record<Flavor, MigrationBlock[]>;
   id: string;
   intro: Partial<Record<Flavor | 'all', string>>;
+  /** Optional trailing cross-page link (intros are plain text). */
+  link?: { label: string; to: string };
   title: string;
 }
 
@@ -342,9 +344,11 @@ field.addEventListener('changeValue', (event) => {
     id: 'styling',
     title: 'Styling & customization',
     intro: {
-      all: `Per-component CSS custom properties are gone. Variables like --c-button-background-color, --c-button-text-color, or --c-button-border-radius no longer exist. ::part() is now the sole customization API: each component exposes a curated set of named parts (root, content, …), and a component's part set is its customization contract.
-
-Restyle a component by targeting its parts. Colours should still flow through the design tokens (see Theming) rather than hard-coded values.`,
+      all: `Per-component CSS custom properties are gone. Variables like --c-button-background-color or --c-button-border-radius no longer exist; ::part() is now the sole customization API, and a component's curated part set is its customization contract.`,
+    },
+    link: {
+      label: 'How ::part() restyling works',
+      to: '/customization#parts',
     },
     blocks: forAll([
       {
@@ -371,7 +375,11 @@ Restyle a component by targeting its parts. Colours should still flow through th
     intro: {
       all: `The flat, light-only ramp is replaced by a semantic-token layer with real dark-mode support. Components now follow the OS light/dark preference by default; set data-theme="light" or "dark" on <html> to pin a mode.
 
-To re-brand, stop overriding individual --c-* ramp variables. Instead hand applyTheme one step-500 seed colour per family you want to override — the whole 50–950 ramp and both light and dark modes regenerate from it. Tailwind users can additionally import @cscfi/csc-ui-next/css/tailwind-theme.css to get the semantic utilities (bg-surface, text-on-surface, …) in their own build.`,
+To re-brand, stop overriding individual --c-* ramp variables. Instead hand applyTheme one step-500 seed colour per family you want to override — the whole 50–950 ramp and both light and dark modes regenerate from it.`,
+    },
+    link: {
+      label: 'Full theming & dark-mode guide',
+      to: '/customization',
     },
     blocks: forAll([
       {

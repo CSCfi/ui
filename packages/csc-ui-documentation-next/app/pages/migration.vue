@@ -55,6 +55,12 @@
           class="m-0 overflow-x-auto bg-[#0f172a] px-5 py-4 text-[0.8125rem] text-[#e2e8f0]"
         ><code class="bg-transparent p-0">{{ block.code }}</code></pre>
       </figure>
+
+      <p v-if="section.link" class="my-[1em]">
+        <nuxt-link class="font-semibold underline" :to="section.link.to">
+          {{ section.link.label }} →
+        </nuxt-link>
+      </p>
     </section>
   </article>
 </template>

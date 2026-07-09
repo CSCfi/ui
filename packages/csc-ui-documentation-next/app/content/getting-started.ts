@@ -14,6 +14,8 @@ export interface GettingStartedSection {
   blocks: Record<Flavor, GettingStartedBlock[]>;
   id: string;
   intro: Partial<Record<Flavor | 'all', string>>;
+  /** Optional trailing cross-page link (intros are plain text). */
+  link?: { label: string; to: string };
   title: string;
 }
 
@@ -246,9 +248,11 @@ document.body.append(button, toggle);`,
     id: 'theming',
     title: 'Theming & dark mode',
     intro: {
-      all: `Components follow the OS light/dark preference by default; set data-theme="light" or "dark" on <html> to pin a mode explicitly.
-
-To re-brand, hand applyTheme one seed colour per family you want to override — the full ramp and both modes regenerate from it. Tailwind users can additionally import @cscfi/csc-ui-next/css/tailwind-theme.css to get the same semantic utilities (bg-surface, text-on-surface, …) in their own build.`,
+      all: `Components follow the OS light/dark preference by default; set data-theme="light" or "dark" on <html> to pin a mode explicitly. To re-brand, hand applyTheme one seed colour per family you want to override — the full ramp and both modes regenerate from it.`,
+    },
+    link: {
+      label: 'Customization guide — theming, dark mode, parts, Tailwind',
+      to: '/customization',
     },
     blocks: forAll([
       {

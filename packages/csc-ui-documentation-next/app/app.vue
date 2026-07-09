@@ -48,6 +48,13 @@
         </c-side-navigation-item>
 
         <c-side-navigation-item
+          :active.prop="route.path === '/customization'"
+          @item-change="navigateTo('/customization')"
+        >
+          Customization
+        </c-side-navigation-item>
+
+        <c-side-navigation-item
           :active.prop="route.path === '/migration'"
           @item-change="navigateTo('/migration')"
         >
