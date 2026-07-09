@@ -67,18 +67,34 @@
         On this page
       </p>
 
-      <nav class="flex flex-col border-l border-border">
-        <a v-if="usageHtml" :class="TOC_LINK" href="#usage">Usage</a>
+      <nav ref="navRef" class="relative flex flex-col border-l border-border">
+        <!-- Scroll-position indicator: slides along the rail to the link of
+             the section currently under the sticky toolbar. -->
+        <span
+          v-show="marker.visible"
+          aria-hidden="true"
+          class="absolute -left-px w-0.5 bg-primary transition-[top,height] duration-200"
+          :style="{ top: `${marker.top}px`, height: `${marker.height}px` }"
+        />
 
-        <a v-if="examples.length" :class="TOC_LINK" href="#examples">
+        <a v-if="usageHtml" :class="tocClass('usage')" href="#usage">Usage</a>
+
+        <a
+          v-if="examples.length"
+          :class="tocClass('examples')"
+          href="#examples"
+        >
           Examples
         </a>
 
-        <a :class="TOC_LINK" href="#api">API reference</a>
+        <a :class="tocClass('api')" href="#api">API reference</a>
 
         <template v-for="view in views" :key="view.tagName">
           <a
-            :class="[TOC_LINK, 'mt-2 font-mono text-[0.78rem] font-semibold']"
+            :class="[
+              tocClass(view.tagName),
+              'mt-2 font-mono text-[0.78rem] font-semibold',
+            ]"
             :href="`#${view.tagName}`"
           >
             {{ view.tagName }}
@@ -87,7 +103,7 @@
           <a
             v-for="section in view.sections"
             :key="section.id"
-            :class="[TOC_LINK, 'pl-6']"
+            :class="[tocClass(section.id), 'pl-6']"
             :href="`#${section.id}`"
           >
             {{ section.label }}
@@ -101,10 +117,20 @@
 <script setup lang="ts">
 import { toComponentView, useManifest } from '~/composables/useManifest';
 
+// The TOC target currently scrolled under the toolbar (see scrollspy below).
+const activeId = ref('');
+
 // Shared by every rail link; component/sub links append their own utilities
-// (Tailwind orders pl-* after px-*, so the pl-6 override wins).
+// (Tailwind orders pl-* after px-*, so the pl-6 override wins). The active
+// text color is composed per-link in tocClass — never put the conflicting
+// text utilities in one class list.
 const TOC_LINK =
-  '-ml-px border-l-2 border-l-transparent px-3 py-[0.15rem] text-on-surface-muted no-underline hover:border-l-primary hover:text-on-surface';
+  '-ml-px border-l-2 border-l-transparent px-3 py-[0.15rem] no-underline hover:border-l-primary hover:text-on-surface';
+
+const tocClass = (id: string) => [
+  TOC_LINK,
+  activeId.value === id ? 'text-on-surface' : 'text-on-surface-muted',
+];
 
 const route = useRoute();
 
@@ -183,6 +209,102 @@ const examplesHtml = computed(() => data.value?.examplesHtml ?? {});
 const typesHtml = computed(() => data.value?.typesHtml ?? {});
 
 const usageHtml = computed(() => data.value?.usageHtml ?? null);
+
+// ---- "On this page" scrollspy ----------------------------------------------
+// The active section is the last TOC target whose heading sits above the
+// sticky toolbar; the rail marker slides to its link.
+
+const navRef = useTemplateRef<HTMLElement>('navRef');
+
+const marker = reactive({ height: 0, top: 0, visible: false });
+
+// Every anchor the rail links to, in document order (mirrors the template).
+const tocIds = computed(() => {
+  const ids: string[] = [];
+
+  if (usageHtml.value) ids.push('usage');
+
+  if (examples.length) ids.push('examples');
+  ids.push('api');
+
+  for (const view of views) {
+    ids.push(view.tagName, ...view.sections.map((section) => section.id));
+  }
+
+  return ids;
+});
+
+// Sticky toolbar (60px) + the headings' scroll breathing room.
+const HEADER_OFFSET = 104;
+
+const positionMarker = () => {
+  const link = navRef.value?.querySelector<HTMLElement>(
+    `a[href="#${CSS.escape(activeId.value)}"]`,
+  );
+
+  if (!link) {
+    marker.visible = false;
+
+    return;
+  }
+
+  // offsetTop is relative to the nav (its offsetParent — it is `relative`).
+  marker.top = link.offsetTop;
+  marker.height = link.offsetHeight;
+  marker.visible = true;
+};
+
+const updateActive = () => {
+  let current = '';
+
+  for (const id of tocIds.value) {
+    const el = document.getElementById(id);
+
+    if (el && el.getBoundingClientRect().top <= HEADER_OFFSET) current = id;
+  }
+
+  // Pin the last section once the page is scrolled to the bottom (short tail
+  // sections could otherwise never reach the toolbar line).
+  const scrolledToBottom =
+    window.innerHeight + window.scrollY >=
+    document.documentElement.scrollHeight - 2;
+
+  if (scrolledToBottom) current = tocIds.value.at(-1) ?? current;
+
+  activeId.value = current || (tocIds.value[0] ?? '');
+  positionMarker();
+};
+
+let frame = 0;
+
+const scheduleUpdate = () => {
+  if (frame) return;
+
+  frame = requestAnimationFrame(() => {
+    frame = 0;
+    updateActive();
+  });
+};
+
+let resizeObserver: ResizeObserver | undefined;
+
+onMounted(() => {
+  window.addEventListener('scroll', scheduleUpdate, { passive: true });
+
+  // Content height changes without a scroll event (flavor switch swapping
+  // code blocks, example demos hydrating) — re-measure on any body resize.
+  resizeObserver = new ResizeObserver(scheduleUpdate);
+  resizeObserver.observe(document.body);
+
+  updateActive();
+});
+
+onBeforeUnmount(() => {
+  window.removeEventListener('scroll', scheduleUpdate);
+  resizeObserver?.disconnect();
+
+  if (frame) cancelAnimationFrame(frame);
+});
 
 useHead({ title: `${tag} — CSC Design System` });
 </script>
