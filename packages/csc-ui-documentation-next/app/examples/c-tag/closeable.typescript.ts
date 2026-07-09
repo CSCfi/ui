@@ -1,21 +1,58 @@
 // @ts-nocheck — documentation code sample; shown as text, never compiled here
-const row = document.createElement('div');
-row.className = 'example-row';
+interface Topic {
+  id: string;
+  label: string;
+  active: boolean;
+}
+
+const createTopics = (): Topic[] => [
+  { id: 'biosciences', label: 'Biosciences', active: false },
+  { id: 'chemistry', label: 'Chemistry', active: false },
+  { id: 'physics', label: 'Physics', active: false },
+];
+
+let topics = createTopics();
+
+const container = document.createElement('div');
+container.className = 'example-grid';
 
 // Typed via the HTMLElementTagNameMap augmentation from @cscfi/csc-ui-next.
 const tags = document.createElement('c-tags');
 
-for (const topic of ['Biosciences', 'Chemistry', 'Physics']) {
-  const tag = document.createElement('c-tag');
-  tag.setAttribute('closeable', '');
-  tag.textContent = topic;
+const render = () => {
+  tags.replaceChildren();
 
-  tag.addEventListener('close', () => {
-    tag.remove();
-  });
+  for (const topic of topics) {
+    const tag = document.createElement('c-tag');
+    tag.closeable = true;
+    tag.active = topic.active;
+    tag.textContent = topic.label;
 
-  tags.append(tag);
-}
+    tag.addEventListener('click', () => {
+      topic.active = !topic.active;
+      tag.active = topic.active;
+    });
 
-row.append(tags);
-document.body.append(row);
+    tag.addEventListener('close', () => {
+      topics = topics.filter((t) => t.id !== topic.id);
+      render();
+    });
+
+    tags.append(tag);
+  }
+};
+
+const resetButton = document.createElement('c-button');
+resetButton.textContent = 'Reset topics';
+resetButton.addEventListener('click', () => {
+  topics = createTopics();
+  render();
+});
+
+const actions = document.createElement('div');
+actions.append(resetButton);
+
+render();
+
+container.append(tags, actions);
+document.body.append(container);
