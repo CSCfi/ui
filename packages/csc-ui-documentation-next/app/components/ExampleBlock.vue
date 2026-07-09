@@ -23,13 +23,20 @@
         role="tablist"
       >
         <!-- Changing a tab switches the documentation-wide flavor, not just
-             this block (ADR-0020). -->
-        <c-tab-buttons mandatory @input="onFlavorChange">
+             this block (ADR-0020). Controlled via `:value`: the group owns the
+             active button + sliding indicator and re-syncs them from its
+             `value` watch, so a flavor change made elsewhere (e.g. the header
+             FlavorSwitcher) moves the indicator here too — a manual `:active`
+             per child only flips text colour, never the indicator. -->
+        <c-tab-buttons
+          mandatory
+          :value="activeTab.flavor"
+          @input="onFlavorChange"
+        >
           <c-tab-button
             v-for="tab in example.tabs"
             :key="tab.flavor"
             :value="tab.flavor"
-            :active="tab.flavor === activeTab.flavor"
             :aria-selected="tab.flavor === activeTab.flavor"
           >
             <c-icon
