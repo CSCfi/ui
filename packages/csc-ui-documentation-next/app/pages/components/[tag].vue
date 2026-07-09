@@ -15,7 +15,7 @@
       <section v-if="usageHtml" class="mt-10">
         <h2
           id="usage"
-          class="my-[0.83em] border-b border-border pb-1.5 text-2xl font-bold"
+          class="my-[0.83em] scroll-mt-20 border-b border-border pb-1.5 text-2xl font-bold"
         >
           Usage
         </h2>
@@ -26,7 +26,7 @@
       <section v-if="examples.length" class="mt-10">
         <h2
           id="examples"
-          class="my-[0.83em] border-b border-border pb-1.5 text-2xl font-bold"
+          class="my-[0.83em] scroll-mt-20 border-b border-border pb-1.5 text-2xl font-bold"
         >
           Examples
         </h2>
@@ -42,7 +42,7 @@
       <section class="mt-10">
         <h2
           id="api"
-          class="my-[0.83em] border-b border-border pb-1.5 text-2xl font-bold"
+          class="my-[0.83em] scroll-mt-20 border-b border-border pb-1.5 text-2xl font-bold"
         >
           API reference
         </h2>
@@ -85,6 +85,15 @@
           href="#examples"
         >
           Examples
+        </a>
+
+        <a
+          v-for="example in examples"
+          :key="example.name"
+          :class="[tocClass(exampleAnchor(example.name)), 'pl-6']"
+          :href="`#${exampleAnchor(example.name)}`"
+        >
+          {{ example.title }}
         </a>
 
         <a :class="tocClass('api')" href="#api">API reference</a>
@@ -224,7 +233,13 @@ const tocIds = computed(() => {
 
   if (usageHtml.value) ids.push('usage');
 
-  if (examples.length) ids.push('examples');
+  if (examples.length) {
+    ids.push(
+      'examples',
+      ...examples.map((example) => exampleAnchor(example.name)),
+    );
+  }
+
   ids.push('api');
 
   for (const view of views) {

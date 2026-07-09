@@ -1,5 +1,8 @@
 <template>
-  <figure class="my-6 overflow-hidden rounded-lg border border-border">
+  <figure
+    :id="exampleAnchor(example.name)"
+    class="my-6 scroll-mt-20 overflow-hidden rounded-lg border border-border"
+  >
     <figcaption
       class="border-b border-border bg-surface-muted px-4 py-2 text-[0.8125rem] font-semibold text-on-surface-faint"
     >

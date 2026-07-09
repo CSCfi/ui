@@ -3,7 +3,7 @@
     :aria-labelledby="`${view.tagName}--heading`"
     class="mt-8 border-t border-dashed border-border pt-5 first-of-type:border-t-0"
   >
-    <h3 :id="view.tagName" class="mb-1 text-[1.35rem] font-bold">
+    <h3 :id="view.tagName" class="mb-1 scroll-mt-20 text-[1.35rem] font-bold">
       <code>&lt;{{ view.tagName }}&gt;</code>
     </h3>
 
@@ -304,7 +304,7 @@ const TH =
 const TD = 'border-b border-border px-3 py-2 text-left align-top';
 
 const H4 =
-  'mb-2 mt-6 text-xs font-bold uppercase tracking-[0.04em] text-on-surface-faint text-primary';
+  'mb-2 mt-6 scroll-mt-20 text-xs font-bold uppercase tracking-[0.04em] text-on-surface-faint text-primary';
 
 const props = defineProps<{
   /** Names of every type rendered on this page — mentions of these in prop

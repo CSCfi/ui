@@ -70,6 +70,13 @@ export interface DocExample {
   title: string;
 }
 
+/**
+ * Anchor id for an example block (`name` is `<owner-tag>/<file>`), shared by
+ * the rendered figure and the "On this page" rail links.
+ */
+export const exampleAnchor = (name: string) =>
+  `example-${name.replace('/', '-')}`;
+
 const titleFromName = (name: string) =>
   name.replace(/-/g, ' ').replace(/^./, (c) => c.toUpperCase());
 
