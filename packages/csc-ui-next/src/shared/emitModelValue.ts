@@ -34,6 +34,9 @@ export const emitModelValue = (
   // so native v-model (which reads `el.value` in its handler) sees it.
   if (el.value !== value) el.value = value;
   host.dispatchEvent(new CustomEvent('changeValue', { detail: value }));
+  // Kebab-case twin (ADR-0021): Vue templates can only bind hyphenated
+  // listener names, so `@change-value` hears this one.
+  host.dispatchEvent(new CustomEvent('change-value', { detail: value }));
   host.dispatchEvent(new CustomEvent('update:value', { detail: value }));
   host.dispatchEvent(new Event('input', { bubbles: true }));
 };

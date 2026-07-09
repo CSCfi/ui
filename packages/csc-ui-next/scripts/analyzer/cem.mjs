@@ -99,11 +99,25 @@ export const buildManifest = (components, sharedTypes) => ({
           ...entry,
           name: entry.name,
         })),
-        events: c.events.map((e) => ({
-          name: e.name,
-          type: { text: `CustomEvent<${e.detailType || 'unknown'}>` },
-          ...(e.description ? { description: e.description } : {}),
-        })),
+        events: c.events.map((e) => {
+          // camelCase events dispatch a kebab-case twin at runtime
+          // (ADR-0021, useHostEmit) so Vue templates can bind them;
+          // surface the twin in the docs.
+          const twin = e.name.replace(/\B([A-Z])/g, '-$1').toLowerCase();
+          const note =
+            twin === e.name
+              ? ''
+              : `Also dispatched as \`${twin}\` — bind that name in Vue templates.`;
+          const description = [e.description, note]
+            .filter(Boolean)
+            .join(' ');
+
+          return {
+            name: e.name,
+            type: { text: `CustomEvent<${e.detailType || 'unknown'}>` },
+            ...(description ? { description } : {}),
+          };
+        }),
         members: [
           ...c.props.map(field),
           ...c.methods.map((m) => ({

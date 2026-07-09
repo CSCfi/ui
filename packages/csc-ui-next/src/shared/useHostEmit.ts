@@ -34,7 +34,17 @@ import { useHost } from 'vue';
  * `changeValue` / `update:value` / `input` triple (it also mirrors `host.value`
  * for native v-model). Declare those three events in the component's event map
  * anyway — the docs analyzer enforces this for every `emitModelValue` caller.
+ *
+ * camelCase events also dispatch a kebab-case twin (ADR-0021): Vue's runtime
+ * hyphenates every v-on listener name before calling addEventListener
+ * (`@item-change` and `@itemChange` both listen for "item-change"), so a
+ * camelCase name is unreachable from Vue templates. The camelCase event stays
+ * canonical for Angular/TypeScript/the React wrapper (Stencil-era compat);
+ * the twin carries the same `detail` and `EventInit`.
  */
+const hyphenate = (name: string): string =>
+  name.replace(/\B([A-Z])/g, '-$1').toLowerCase();
+
 export const useHostEmit = <EventMap extends object>() => {
   const host = useHost();
 
@@ -47,5 +57,11 @@ export const useHostEmit = <EventMap extends object>() => {
     const [detail, options] = rest;
 
     host?.dispatchEvent(new CustomEvent(name, { detail, ...options }));
+
+    const kebab = hyphenate(name);
+
+    if (kebab !== name) {
+      host?.dispatchEvent(new CustomEvent(kebab, { detail, ...options }));
+    }
   };
 };

@@ -163,6 +163,10 @@ _Avoid_: docs.json / components.json (the Stencil-era artifacts), schema, metada
 The JSDoc-annotated TypeScript interface each component declares listing every event it dispatches on its host (name → `detail` type). The single source of truth for runtime emission (via the typed emit helper), consumer typings, and the **manifest**'s event section. An event not in the map cannot be dispatched.
 _Avoid_: emits (Vue `defineEmits` is not used in this library), event list
 
+**Kebab-case twin**:
+The hyphenated duplicate (`item-change`, `change-value`) automatically dispatched alongside every grandfathered camelCase Stencil-era event (ADR-0021), because Vue hyphenates `v-on` listener names and can never hear a camelCase `CustomEvent`. The camelCase name stays canonical (event map, manifest, non-Vue consumers); Vue templates bind the twin. Only the grandfathered set has twins — new event names are all-lowercase per ADR-0017 and get none.
+_Avoid_: alias event, duplicate event, Vue event (the twin is a name variant, not a separate event)
+
 **Component-owned type**:
 A public TypeScript type that belongs to exactly one component (its prop unions, option shapes, filter predicates). Declared in that component and exported from the package entry for consumers, named `C<Component><Concept>` (`CButtonSize`, `CAlertType`). Two components' types looking alike does **not** make the type shared — coincidentally equal value sets stay component-owned so they can diverge (see **Shared type**).
 _Avoid_: local type (it is public, not local), component type (too easily read as "the type of the component")
