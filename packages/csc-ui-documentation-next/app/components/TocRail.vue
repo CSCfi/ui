@@ -1,7 +1,8 @@
 <template>
   <aside
+    ref="railRef"
     aria-label="On this page"
-    class="sticky top-24 max-h-[calc(100vh-3rem)] w-56 shrink-0 overflow-y-auto text-[0.8125rem] max-lg:hidden"
+    class="sticky top-24 max-h-[calc(100vh-7rem)] w-56 shrink-0 overflow-y-auto text-[0.8125rem] max-lg:hidden"
   >
     <p
       class="mb-2 text-[0.6875rem] font-bold uppercase tracking-wider text-primary"
@@ -62,6 +63,8 @@ const linkClass = (item: TocItem) => [
 // toolbar, pinned to the final item at the bottom of the page; the rail
 // marker slides to its link.
 
+const railRef = useTemplateRef<HTMLElement>('railRef');
+
 const navRef = useTemplateRef<HTMLElement>('navRef');
 
 const activeId = ref('');
@@ -71,7 +74,28 @@ const marker = reactive({ height: 0, top: 0, visible: false });
 // Sticky toolbar (60px) + the anchors' scroll breathing room.
 const HEADER_OFFSET = 104;
 
-const positionMarker = () => {
+// When a long rail overflows its own scrollport, keep the active link in
+// view (with some breathing room). Instant, not smooth — during a continuous
+// page scroll each restart of a smooth animation would lag behind.
+const scrollRailToLink = (link: HTMLElement) => {
+  const rail = railRef.value;
+
+  if (!rail || !navRef.value || rail.scrollHeight <= rail.clientHeight) return;
+
+  const margin = 32;
+
+  // The rail (sticky → positioned) is the nav's offsetParent.
+  const top = navRef.value.offsetTop + link.offsetTop;
+  const bottom = top + link.offsetHeight;
+
+  if (top < rail.scrollTop + margin) {
+    rail.scrollTop = Math.max(0, top - margin);
+  } else if (bottom > rail.scrollTop + rail.clientHeight - margin) {
+    rail.scrollTop = bottom - rail.clientHeight + margin;
+  }
+};
+
+const positionMarker = (activeChanged: boolean) => {
   const link = navRef.value?.querySelector<HTMLElement>(
     `a[href="#${CSS.escape(activeId.value)}"]`,
   );
@@ -86,6 +110,10 @@ const positionMarker = () => {
   marker.top = link.offsetTop;
   marker.height = link.offsetHeight;
   marker.visible = true;
+
+  // Auto-scroll only when the active target moves — never while the user is
+  // browsing the rail with the page (and the active link) standing still.
+  if (activeChanged) scrollRailToLink(link);
 };
 
 const updateActive = () => {
@@ -105,8 +133,12 @@ const updateActive = () => {
 
   if (scrolledToBottom) current = items.at(-1)?.id ?? current;
 
-  activeId.value = current || (items[0]?.id ?? '');
-  positionMarker();
+  const next = current || (items[0]?.id ?? '');
+
+  const activeChanged = next !== activeId.value;
+
+  activeId.value = next;
+  positionMarker(activeChanged);
 };
 
 let frame = 0;
