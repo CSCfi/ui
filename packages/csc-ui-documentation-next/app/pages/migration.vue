@@ -27,7 +27,7 @@
         </h2>
 
         <p
-          class="my-[1em] max-w-[45rem] whitespace-pre-line text-on-surface-muted"
+          class="my-[1em] max-w-180 whitespace-pre-line text-on-surface-muted"
         >
           {{ section.intro[flavor] ?? section.intro.all }}
         </p>
@@ -44,12 +44,13 @@
             {{ block.filename }}
           </figcaption>
 
-          <!-- eslint-disable-next-line vue/no-v-html — Shiki output built at prerender from our own snippets -->
+          <!-- eslint-disable vue/no-v-html — Shiki output built at prerender from our own snippets -->
           <div
             v-if="blocksHtml[`${section.id}:${flavor}:${index}`]"
             class="example-shiki"
             v-html="blocksHtml[`${section.id}:${flavor}:${index}`]"
           />
+          <!-- eslint-enable vue/no-v-html -->
 
           <pre
             v-else

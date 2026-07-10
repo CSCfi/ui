@@ -9,7 +9,7 @@
 
 ## Bugs in components
 - CAccordion
-  - wrong colors
+  - wrong colors in Light mode?
 
 ## Smaller changes
 - Components appear after a delay on reload
@@ -20,12 +20,10 @@
   - CLink
   - CTabButtons
   - CTable
-- Use v-model in the Vue examples!
-- Treat Vue examples in the documentation as if they were not running in Nuxt
-  - add imports even if not needed because of the Nuxt auto-imports
 - Provide the HTML in the TypeScript examples and wire the usage to the template
-  - Do not create the HTML with `createElement` calls
-- Show indicator on 'On this page' element based on scroll position
+  - Do not create the HTML with `document.createElement` calls
+- CDataTable header should not have a border
+- Rename 'validation' prop to 'errorMessage' in every applicable component
 
 ## Missing features
 1. ~~Documentation-wide flavor selection: Vue | React | Angular | Typescript~~
@@ -38,12 +36,13 @@
    parity guarded by `scripts/check-example-parity.mjs` in the docs build.
   - Add more comprehensive examples (still open)
 3. Provide LLMs.txt to agents
-4. Customization page
+4. ~~Customization page~~
+  DONE (2026-07-09): `/customization`
 5. Colors page
 6. ~~Getting started page with code-blocks for each consumer~~
    DONE (2026-07-08): `/getting-started`, flavor-aware blocks following the
    global selection.
 7. About page
 8. Search implementation
-
-## Ability to exlude
+9. Single component imports (ability to use only the components you need, without the full UI library)
+10. Skeleton loader version of components could be useful?
