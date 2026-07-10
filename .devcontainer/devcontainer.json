@@ -16,9 +16,11 @@
   "mounts": [
     "source=${localEnv:HOME}/.claude,target=/home/claudeuser/.claude,type=bind,consistency=cached",
     "source=${localEnv:HOME}/.claude.json,target=/home/claudeuser/.claude.json,type=bind",
-    "source=my-project-node-modules,target=${containerWorkspaceFolder}/node_modules,type=volume"
+    "source=my-project-node-modules,target=${containerWorkspaceFolder}/node_modules,type=volume",
+    "source=${localEnv:HOME}/.config/csc-ui-devcontainer/zsh_history,target=/home/claudeuser/.zsh_history,type=bind"
   ],
-  // "postCreateCommand": "pnpm install",
+  "initializeCommand": "mkdir -p ${localEnv:HOME}/.config/csc-ui-devcontainer && touch ${localEnv:HOME}/.config/csc-ui-devcontainer/zsh_history",
+  "postCreateCommand": "pnpm install",
   "remoteUser": "claudeuser",
   // required to make claude login work
   "runArgs": ["--sysctl", "net.ipv6.conf.all.disable_ipv6=1"],
