@@ -84,9 +84,11 @@ export default defineNuxtConfig({
         {
           // Apply the stored theme before first paint (prerendered pages
           // default to the OS preference otherwise) — must stay in sync with
-          // THEME_STORAGE_KEY in composables/useTheme.ts.
+          // THEME_STORAGE_KEY in composables/useTheme.ts ('csc-ui-docs-theme';
+          // this key drifted once and silently disabled theme restore on
+          // reload, so initThemeFromStorage() now also re-applies as backup).
           innerHTML:
-            "try{var t=localStorage.getItem('csc-docs-theme');if(t==='dark'||t==='light')document.documentElement.setAttribute('data-theme',t)}catch(e){}",
+            "try{var t=localStorage.getItem('csc-ui-docs-theme');if(t==='dark'||t==='light')document.documentElement.setAttribute('data-theme',t)}catch(e){}",
           tagPriority: 'critical',
         },
       ],

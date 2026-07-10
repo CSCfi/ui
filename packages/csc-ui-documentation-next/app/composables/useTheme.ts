@@ -35,11 +35,18 @@ export const useTheme = () => {
   };
 };
 
-/** Client-plugin hook: sync the ref with what the inline script applied. */
+/**
+ * Client-plugin hook: sync the ref with the stored preference — and re-apply
+ * the attribute. The pre-paint inline script (nuxt.config.ts) normally has
+ * already set it, so this is an idempotent no-op; but if the two ever drift
+ * (it happened: the script once read a stale storage key and reloads silently
+ * fell back to the OS preference), this keeps the stored choice honored.
+ */
 export const initThemeFromStorage = () => {
   const stored = localStorage.getItem(THEME_STORAGE_KEY);
 
   if (stored === 'dark' || stored === 'light') {
     preference.value = stored;
+    apply(stored);
   }
 };
