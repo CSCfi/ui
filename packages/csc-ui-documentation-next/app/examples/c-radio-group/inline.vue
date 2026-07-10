@@ -1,11 +1,10 @@
 <template>
   <div>
     <c-radio-group
-      :value="frequency"
+      v-model="frequency"
       hide-details
       inline
       label="Email frequency"
-      @change-value="onChange"
     >
       <c-radio value="daily">Daily</c-radio>
 
@@ -17,9 +16,7 @@
 </template>
 
 <script setup lang="ts">
-const frequency = ref('weekly');
+import { ref } from 'vue';
 
-const onChange = (event: Event) => {
-  frequency.value = (event as CustomEvent<string>).detail;
-};
+const frequency = ref('weekly');
 </script>

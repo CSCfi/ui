@@ -1,12 +1,14 @@
 <template>
   <div>
-    <c-pagination :value.prop="options" @change-value="onChange" />
+    <c-pagination v-model="options" />
 
-    <p>Current page: {{ page }}</p>
+    <p>Current page: {{ options.currentPage ?? 1 }}</p>
   </div>
 </template>
 
 <script setup lang="ts">
+import { ref } from 'vue';
+
 import type { CPaginationOptions } from '@cscfi/csc-ui-next';
 
 const options = ref<CPaginationOptions>({
@@ -14,11 +16,4 @@ const options = ref<CPaginationOptions>({
   itemsPerPage: 10,
   pageSizes: [10, 25, 50],
 });
-
-const page = ref(1);
-
-const onChange = (event: Event) => {
-  page.value =
-    (event as CustomEvent<CPaginationOptions>).detail.currentPage ?? 1;
-};
 </script>

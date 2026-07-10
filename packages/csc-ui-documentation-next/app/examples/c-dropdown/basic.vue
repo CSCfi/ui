@@ -1,12 +1,11 @@
 <template>
   <div>
     <c-select
-      :value.prop="country"
+      v-model="country"
       clearable
       hint="c-select renders its option list with an internal c-dropdown"
       label="Country"
       placeholder="Choose a country"
-      @change-value="onChange"
     >
       <c-option name="Finland" value="fi">Finland</c-option>
 
@@ -20,9 +19,7 @@
 </template>
 
 <script setup lang="ts">
-const country = ref<string | null>(null);
+import { ref } from 'vue';
 
-const onChange = (event: Event) => {
-  country.value = (event as CustomEvent<string | null>).detail;
-};
+const country = ref<string | null>(null);
 </script>

@@ -1,12 +1,11 @@
 <template>
   <div>
     <c-autocomplete
-      :value.prop="language"
+      v-model="language"
       clearable
       hint="Type to filter the options"
       label="Programming language"
       placeholder="Start typing to search"
-      @change-value="onChange"
     >
       <c-option value="js">
         <c-option-value>JavaScript</c-option-value>
@@ -30,9 +29,7 @@
 </template>
 
 <script setup lang="ts">
-const language = ref<string | null>(null);
+import { ref } from 'vue';
 
-const onChange = (event: Event) => {
-  language.value = (event as CustomEvent<string | null>).detail;
-};
+const language = ref<string | null>(null);
 </script>

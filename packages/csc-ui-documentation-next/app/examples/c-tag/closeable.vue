@@ -20,6 +20,8 @@
 </template>
 
 <script setup lang="ts">
+import { ref } from 'vue';
+
 const createTopics = () => {
   return [
     { id: 'biosciences', label: 'Biosciences', active: false },

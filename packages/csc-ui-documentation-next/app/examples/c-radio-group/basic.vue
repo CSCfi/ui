@@ -1,10 +1,9 @@
 <template>
   <div>
     <c-radio-group
-      :value="plan"
+      v-model="plan"
       hint="You can change the plan later"
       label="Subscription plan"
-      @change-value="onChange"
     >
       <c-radio value="free">Free</c-radio>
 
@@ -16,9 +15,7 @@
 </template>
 
 <script setup lang="ts">
-const plan = ref('free');
+import { ref } from 'vue';
 
-const onChange = (event: Event) => {
-  plan.value = (event as CustomEvent<string>).detail;
-};
+const plan = ref('free');
 </script>

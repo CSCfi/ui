@@ -21,5 +21,7 @@
 </template>
 
 <script setup lang="ts">
+import { ref } from 'vue';
+
 const step = ref(1);
 </script>

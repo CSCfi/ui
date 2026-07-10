@@ -17,6 +17,8 @@
 </template>
 
 <script setup lang="ts">
+import { ref } from 'vue';
+
 import { mdiAccount, mdiBell, mdiCog } from '@mdi/js';
 
 const items = [

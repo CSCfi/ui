@@ -13,6 +13,8 @@
 </template>
 
 <script setup lang="ts">
+import { ref } from 'vue';
+
 import type { CDataTableColumn, CDataTableSort } from '@cscfi/csc-ui-next';
 
 const columns: CDataTableColumn[] = [

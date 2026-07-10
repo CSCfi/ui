@@ -20,6 +20,8 @@
 </template>
 
 <script setup lang="ts">
+import { onMounted, ref } from 'vue';
+
 import type {
   CDataTableColumn,
   CDataTableRow,

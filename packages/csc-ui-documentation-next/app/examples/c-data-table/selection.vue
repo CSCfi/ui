@@ -17,6 +17,8 @@
 </template>
 
 <script setup lang="ts">
+import { ref } from 'vue';
+
 import type { CDataTableColumn, CDataTableRow } from '@cscfi/csc-ui-next';
 
 const columns: CDataTableColumn[] = [

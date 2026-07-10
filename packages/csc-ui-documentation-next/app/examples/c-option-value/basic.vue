@@ -1,12 +1,11 @@
 <template>
   <div>
     <c-autocomplete
-      :value.prop="language"
+      v-model="language"
       clearable
       hint="c-option-value marks the text that gets match highlighting"
       label="Programming language"
       placeholder="Start typing to search"
-      @change-value="onChange"
     >
       <c-option value="js">
         <c-option-value>JavaScript</c-option-value>
@@ -28,9 +27,7 @@
 </template>
 
 <script setup lang="ts">
-const language = ref<string | null>(null);
+import { ref } from 'vue';
 
-const onChange = (event: Event) => {
-  language.value = (event as CustomEvent<string | null>).detail;
-};
+const language = ref<string | null>(null);
 </script>

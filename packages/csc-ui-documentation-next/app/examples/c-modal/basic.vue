@@ -2,7 +2,7 @@
   <div class="example-row">
     <c-button @click="open = true">Open modal</c-button>
 
-    <c-modal :value.prop="open" dismissable @change-value="open = false">
+    <c-modal v-model="open" dismissable>
       <c-card>
         <c-card-title>Delete project</c-card-title>
 
@@ -21,5 +21,7 @@
 </template>
 
 <script setup lang="ts">
+import { ref } from 'vue';
+
 const open = ref(false);
 </script>

@@ -1,10 +1,6 @@
 <template>
   <div class="example-row">
-    <c-checkbox
-      :checked.prop="subscribed"
-      hint="You can unsubscribe at any time"
-      @change-value="onChange"
-    >
+    <c-checkbox v-model="subscribed" hint="You can unsubscribe at any time">
       Subscribe to the newsletter
     </c-checkbox>
 
@@ -13,9 +9,7 @@
 </template>
 
 <script setup lang="ts">
-const subscribed = ref(false);
+import { ref } from 'vue';
 
-const onChange = (event: Event) => {
-  subscribed.value = (event as CustomEvent<boolean>).detail;
-};
+const subscribed = ref(false);
 </script>

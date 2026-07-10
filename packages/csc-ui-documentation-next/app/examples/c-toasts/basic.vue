@@ -9,6 +9,8 @@
 </template>
 
 <script setup lang="ts">
+import { useTemplateRef } from 'vue';
+
 interface ToastMessage {
   duration?: number;
   message: string;

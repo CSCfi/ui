@@ -1,10 +1,9 @@
 <template>
   <div>
     <c-text-field
-      :value="name"
+      v-model="name"
       hint="Shown on your public profile"
       label="Display name"
-      @change-value="onChange"
     />
 
     <span>Value: {{ name }}</span>
@@ -12,9 +11,7 @@
 </template>
 
 <script setup lang="ts">
-const name = ref('');
+import { ref } from 'vue';
 
-const onChange = (event: Event) => {
-  name.value = (event as CustomEvent<string>).detail;
-};
+const name = ref('');
 </script>

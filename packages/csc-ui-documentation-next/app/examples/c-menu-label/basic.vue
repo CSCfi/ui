@@ -26,6 +26,8 @@
 </template>
 
 <script setup lang="ts">
+import { ref } from 'vue';
+
 import { mdiChevronDown } from '@mdi/js';
 
 const selected = ref<null | string>(null);

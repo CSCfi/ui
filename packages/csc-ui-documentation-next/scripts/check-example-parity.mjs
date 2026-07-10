@@ -11,9 +11,13 @@
  * Sibling files with an unknown flavor part are reported too (a naming
  * mistake would otherwise silently produce no tab). Runs as part of the docs
  * build so a coverage gap is a build failure, not silent documentation rot.
+ *
+ * Canon examples are also copy-paste targets for non-Nuxt apps, so their
+ * script blocks must not lean on Nuxt auto-imports: every Vue API and
+ * useXxx() composable they call has to be explicitly imported.
  */
 
-import { readdirSync } from 'node:fs';
+import { readFileSync, readdirSync } from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
@@ -35,12 +39,64 @@ const VARIANTS = new Map([
  */
 const INTERNAL_ONLY = new Set(['c-dropdown']);
 
+/** Vue APIs that Nuxt would auto-import; canon examples must import them. */
+const VUE_APIS = new Set([
+  'computed',
+  'defineAsyncComponent',
+  'defineComponent',
+  'inject',
+  'nextTick',
+  'onBeforeMount',
+  'onBeforeUnmount',
+  'onBeforeUpdate',
+  'onMounted',
+  'onUnmounted',
+  'onUpdated',
+  'provide',
+  'reactive',
+  'readonly',
+  'ref',
+  'shallowRef',
+  'toRef',
+  'toRefs',
+  'watch',
+  'watchEffect',
+]);
+
+/**
+ * Flag Vue APIs and useXxx() composables that a canon example calls without
+ * importing (compiles under Nuxt auto-imports, breaks when copied elsewhere).
+ */
+const findAutoImportReliance = (source) => {
+  const script = source.match(/<script[^>]*>([\s\S]*?)<\/script>/)?.[1];
+
+  if (!script) return [];
+
+  const imported = new Set(
+    [...script.matchAll(/import\s+(?:type\s+)?{([^}]*)}/g)].flatMap((m) =>
+      m[1].split(',').map((name) =>
+        name
+          .replace(/\btype\b/, '')
+          .replace(/^[\s\S]*\bas\b/, '')
+          .trim(),
+      ),
+    ),
+  );
+
+  const called = [...script.matchAll(/\b([a-zA-Z][a-zA-Z0-9]*)\s*[(<]/g)]
+    .map((m) => m[1])
+    .filter((name) => VUE_APIS.has(name) || /^use[A-Z]/.test(name));
+
+  return [...new Set(called)].filter((name) => !imported.has(name));
+};
+
 const problems = [];
 
 for (const dir of readdirSync(examplesDir, { withFileTypes: true })) {
-  if (!dir.isDirectory() || INTERNAL_ONLY.has(dir.name)) continue;
+  if (!dir.isDirectory()) continue;
 
   const files = readdirSync(path.join(examplesDir, dir.name));
+  const requireVariants = !INTERNAL_ONLY.has(dir.name);
 
   const canons = files
     .filter((f) => f.endsWith('.vue') && f.split('.').length === 2)
@@ -48,15 +104,30 @@ for (const dir of readdirSync(examplesDir, { withFileTypes: true })) {
 
   for (const canon of canons) {
     for (const [flavor, ext] of VARIANTS) {
+      if (!requireVariants) break;
+
       const expected = `${canon}.${flavor}.${ext}`;
 
       if (!files.includes(expected)) {
         problems.push(`${dir.name}/${expected} is missing`);
       }
     }
+
+    const source = readFileSync(
+      path.join(examplesDir, dir.name, `${canon}.vue`),
+      'utf8',
+    );
+
+    for (const name of findAutoImportReliance(source)) {
+      problems.push(
+        `${dir.name}/${canon}.vue: "${name}" relies on Nuxt auto-import — add an explicit import`,
+      );
+    }
   }
 
   for (const file of files) {
+    if (!requireVariants) break;
+
     const parts = file.split('.');
 
     if (parts.length < 3) continue;
@@ -79,4 +150,6 @@ if (problems.length) {
   process.exit(1);
 }
 
-console.log('example parity: every canon example has all flavor variants');
+console.log(
+  'example parity: every canon example has all flavor variants and explicit imports',
+);

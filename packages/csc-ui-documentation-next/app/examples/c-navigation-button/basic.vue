@@ -7,5 +7,7 @@
 </template>
 
 <script setup lang="ts">
+import { ref } from 'vue';
+
 const menuVisible = ref(false);
 </script>

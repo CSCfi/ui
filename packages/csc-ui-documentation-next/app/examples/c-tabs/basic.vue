@@ -25,5 +25,7 @@
 </template>
 
 <script setup lang="ts">
+import { ref } from 'vue';
+
 const tab = ref<'summary' | 'members' | 'settings'>('summary');
 </script>

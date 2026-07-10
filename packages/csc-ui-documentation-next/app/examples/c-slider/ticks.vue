@@ -1,7 +1,7 @@
 <template>
   <div>
     <c-slider
-      :value.prop="cores"
+      v-model="cores"
       label="CPU cores"
       labels
       max="8"
@@ -10,15 +10,12 @@
       step="1"
       ticks
       unit=""
-      @change-value="onChange"
     />
   </div>
 </template>
 
 <script setup lang="ts">
-const cores = ref(2);
+import { ref } from 'vue';
 
-const onChange = (event: Event) => {
-  cores.value = (event as CustomEvent<number>).detail;
-};
+const cores = ref(2);
 </script>

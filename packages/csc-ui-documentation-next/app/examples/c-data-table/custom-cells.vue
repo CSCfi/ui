@@ -7,6 +7,8 @@
 </template>
 
 <script setup lang="ts">
+import { ref } from 'vue';
+
 import { type CDataTableColumn, h } from '@cscfi/csc-ui-next';
 
 const message = ref('Open a project with the button in the last column');
