@@ -15,6 +15,7 @@
       <input
         :id="inputId"
         :aria-checked="internalChecked"
+        :aria-required="required || undefined"
         :checked="internalChecked || undefined"
         :class="ui.input()"
         :disabled
@@ -43,28 +44,32 @@
       </span>
     </div>
 
-    <div v-show="hasSlotContent" :class="ui.label()" part="label">
+    <form-label
+      v-show="!!label || hasSlotContent"
+      :class="ui.label()"
+      :label
+      :required
+      part="label"
+      tag="div"
+    >
       <slot />
-
-      <span v-if="required" :class="ui.required()" aria-hidden="true">
-        &nbsp;*
-      </span>
-    </div>
+    </form-label>
   </label>
 </template>
 
 <script setup lang="ts">
 /**
- * @slot default - The visible label of the switch
+ * @slot default - The visible label of the switch (fallback when the `label` prop is not set)
  *
  * @csspart root - The `<label>` element wrapping the toggle and the label text
  * @csspart slider - The toggle track (its `::before` pseudo-element is the handle)
- * @csspart label - Wrapper around the slotted label content
+ * @csspart label - Wrapper around the label text or slotted label content
  */
 import { tv } from 'tailwind-variants';
 import { computed, ref, useHost, useId, useTemplateRef, watch } from 'vue';
 
 import { emitModelValue } from '../../shared/emitModelValue';
+import FormLabel from '../../shared/FormLabel.vue';
 import { useHasSlot } from '../../shared/useHasSlot';
 import { useHostEmit } from '../../shared/useHostEmit';
 
@@ -122,7 +127,6 @@ const cSwitch = tv({
     input: 'h-0 opacity-0 w-0 absolute',
     inputWrap: 'h-5.5 relative w-11 self-start',
     label: 'self-center',
-    required: 'text-error',
     // Track geometry: 22x44, pill radius, gap to label. The on/off colours and
     // handle position are sibling-driven in the escape-hatch below.
     root: 'inline-grid h-5.5 relative items-center gap-3 transform-gpu [backface-visibility:hidden]',
@@ -181,6 +185,13 @@ interface CSwitchProps {
    */
   hostId?: string;
   /**
+   * Label of the switch, shown beside the toggle. Falls back to the default
+   * slot content when not set.
+   *
+   * @freeform
+   */
+  label?: string;
+  /**
    * Loading state
    *
    * @seeded from csc-ui — verify
@@ -212,6 +223,7 @@ const props = withDefaults(defineProps<CSwitchProps>(), {
   disabled: false,
   falseValue: false,
   hostId: '',
+  label: '',
   loading: false,
   required: false,
   trueValue: true,
@@ -229,7 +241,7 @@ const hasSlotContent = useHasSlot(rootRef, '');
 const ui = computed(() =>
   cSwitch({
     disabled: props.disabled,
-    hasLabel: hasSlotContent.value,
+    hasLabel: Boolean(props.label) || hasSlotContent.value,
   }),
 );
 

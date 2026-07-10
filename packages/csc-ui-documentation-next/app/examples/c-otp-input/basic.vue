@@ -1,8 +1,9 @@
 <template>
   <div>
     <c-otp-input
+      v-model="code"
+      label="OTP"
       hint="Enter the 6-digit code we sent you"
-      @change-value="onChange"
     />
 
     <span>Code: {{ code ?? 'incomplete' }}</span>
@@ -10,9 +11,7 @@
 </template>
 
 <script setup lang="ts">
-const code = ref<string | null>(null);
+import { ref } from 'vue';
 
-const onChange = (event: Event) => {
-  code.value = (event as CustomEvent<string | null>).detail;
-};
+const code = ref<string>();
 </script>

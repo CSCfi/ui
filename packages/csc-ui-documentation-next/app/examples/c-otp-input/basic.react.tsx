@@ -8,6 +8,7 @@ export const Basic = () => {
   return (
     <div>
       <COtpInput
+        label="OTP"
         hint="Enter the 6-digit code we sent you"
         onChangeValue={(event) => setCode(event.detail as string | null)}
       />

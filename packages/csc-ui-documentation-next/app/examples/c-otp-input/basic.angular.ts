@@ -8,6 +8,7 @@ import { Component, CUSTOM_ELEMENTS_SCHEMA, signal } from '@angular/core';
   template: `
     <div>
       <c-otp-input
+        label="OTP"
         hint="Enter the 6-digit code we sent you"
         (changeValue)="code.set($any($event).detail)"
       ></c-otp-input>

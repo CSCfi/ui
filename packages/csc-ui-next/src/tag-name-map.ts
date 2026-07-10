@@ -10,6 +10,7 @@
  */
 
 import type { CAutocompleteFilter, CAutocompleteItem } from './components/c-autocomplete/CAutocomplete.vue';
+import type { CButtonGroupValue } from './components/c-button-group/CButtonGroup.vue';
 import type { CDataTableCellContent, CDataTableColumn, CDataTableExpandedContext, CDataTableRow, CDataTableSort, CDataTableTexts } from './components/c-data-table/CDataTable.vue';
 import type { CPaginationOptions } from './components/c-pagination/CPagination.vue';
 import type { CSelectItem, CToastMessage } from './types';
@@ -241,25 +242,18 @@ export interface CAutocompleteElement extends Omit<HTMLElement, 'clearable' | 'd
 export interface CBadgeElement extends HTMLElement {
 }
 
-/** Events dispatched by `<c-button>`. */
-export interface CButtonElementEventMap {
-  /**
-   * Fired when the button is activated in tabs mode (inside
-   * `<c-tab-buttons>`), carrying the button element and its resolved value.
-   */
-  tabChange: CustomEvent<{ element: HTMLElement | null; value: number | string | undefined; }>;
-  /**
-   * Fired when the button receives focus in tabs mode, so the parent
-   * `<c-tab-buttons>` can drive arrow-key navigation.
-   */
-  tabFocus: CustomEvent<number | string | undefined>;
-}
-
 /**
  * Button for user actions. Renders a native `<button>` — or an `<a>` when
  * `href` is set — inside the shadow root.
  */
-export interface CButtonElement extends Omit<HTMLElement, 'danger' | 'disabled' | 'fit' | 'ghost' | 'hostId' | 'href' | 'inverted' | 'loading' | 'noRadius' | 'noRipple' | 'outlined' | 'size' | 'tabs' | 'target' | 'text' | 'type' | 'value'> {
+export interface CButtonElement extends Omit<HTMLElement, 'active' | 'danger' | 'disabled' | 'fit' | 'ghost' | 'hostId' | 'href' | 'inverted' | 'loading' | 'noRadius' | 'noRipple' | 'outlined' | 'size' | 'target' | 'text' | 'type' | 'value'> {
+  /**
+   * Pressed (toggle) state — renders the selected look and sets
+   * `aria-pressed`. Leave unset for regular action buttons: only a
+   * true/false value marks the button as a toggle. Driven by
+   * `c-button-group` on its slotted buttons.
+   */
+  active?: boolean;
   /** Danger variant style */
   danger?: boolean;
   /** Disable the button */
@@ -284,8 +278,6 @@ export interface CButtonElement extends Omit<HTMLElement, 'danger' | 'disabled' 
   outlined?: boolean;
   /** Size of the button */
   size?: 'default' | 'large' | 'small';
-  /** Used when the button acts as a tab inside <c-tab-buttons>. */
-  tabs?: boolean;
   /** Hyperlink target */
   target?: string;
   /** Transparent button background */
@@ -294,12 +286,65 @@ export interface CButtonElement extends Omit<HTMLElement, 'danger' | 'disabled' 
   type?: 'button' | 'reset' | 'submit';
   /**
    * Value for the button
-   * - for use in the c-tab-buttons
+   * - for use in the c-button-group
    */
   value?: number | string;
-  addEventListener<K extends keyof CButtonElementEventMap>(
+}
+
+/** Events dispatched by `<c-button-group>`. */
+export interface CButtonGroupElementEventMap {
+  /**
+   * Fired when the user changes the selection, carrying the new value:
+   * the activated button's value (or index), `null` when the active button
+   * is toggled off, or the array of active values in `multiple` mode.
+   */
+  change: CustomEvent<CButtonGroupValue>;
+  /** Native bubbling input event dispatched for plain `v-model` support; carries no detail. */
+  input: CustomEvent<void>;
+  /**
+   * Fired alongside `change` with the new selection; fulfills the `v-model`
+   * contract.
+   */
+  'update:value': CustomEvent<CButtonGroupValue>;
+}
+
+/**
+ * A group of buttons where activation carries a value — exclusive by
+ * default, cumulative with `multiple` (ADR-0023). The standalone, form-facing
+ * segmented control; for the tab strip of a `<c-tabs>` use `<c-tab-buttons>`,
+ * which wraps this component.
+ */
+export interface CButtonGroupElement extends Omit<HTMLElement, 'disabled' | 'label' | 'mandatory' | 'multiple' | 'required' | 'size' | 'value'> {
+  /** Disable the whole group — every slotted c-button is disabled and the selection can no longer be changed. */
+  disabled?: boolean;
+  /** Label of the button group, shown above the buttons */
+  label?: string;
+  /**
+   * The selection can never become empty: the active button (or, with
+   * `multiple`, the last active button) cannot be toggled off. Distinct from
+   * `required`: mandatory is a selection-behavior rule on the control, not a
+   * form-level demand for an answer.
+   */
+  mandatory?: boolean;
+  /**
+   * Allow several buttons to be active at once. The value becomes an array
+   * of the active buttons' values (in DOM order). Arrays have no attribute
+   * form — bind `value` as a DOM property (`:value.prop` in Vue).
+   */
+  multiple?: boolean;
+  /** Set as required — shows the required marker on the label */
+  required?: boolean;
+  /** Size of the buttons */
+  size?: 'default' | 'small';
+  /**
+   * Value of the group: the active button's `value` (or its index when no
+   * button declares one). `null` when nothing is selected. With `multiple`,
+   * an array of the active buttons' values.
+   */
+  value?: CButtonGroupValue;
+  addEventListener<K extends keyof CButtonGroupElementEventMap>(
     type: K,
-    listener: (this: CButtonElement, ev: CButtonElementEventMap[K]) => void,
+    listener: (this: CButtonGroupElement, ev: CButtonGroupElementEventMap[K]) => void,
     options?: boolean | AddEventListenerOptions,
   ): void;
   addEventListener(
@@ -307,9 +352,9 @@ export interface CButtonElement extends Omit<HTMLElement, 'danger' | 'disabled' 
     listener: EventListenerOrEventListenerObject,
     options?: boolean | AddEventListenerOptions,
   ): void;
-  removeEventListener<K extends keyof CButtonElementEventMap>(
+  removeEventListener<K extends keyof CButtonGroupElementEventMap>(
     type: K,
-    listener: (this: CButtonElement, ev: CButtonElementEventMap[K]) => void,
+    listener: (this: CButtonGroupElement, ev: CButtonGroupElementEventMap[K]) => void,
     options?: boolean | EventListenerOptions,
   ): void;
   removeEventListener(
@@ -937,7 +982,7 @@ export interface COtpInputElementEventMap {
   'update:value': CustomEvent<string>;
 }
 
-export interface COtpInputElement extends Omit<HTMLElement, 'elementId' | 'hasAutofocus' | 'hideDetails' | 'hint' | 'length' | 'valid' | 'validation' | 'value'> {
+export interface COtpInputElement extends Omit<HTMLElement, 'elementId' | 'hasAutofocus' | 'hideDetails' | 'hint' | 'label' | 'length' | 'required' | 'valid' | 'validation' | 'value'> {
   /** Id of the element */
   elementId?: string;
   /** Auto focus */
@@ -946,8 +991,12 @@ export interface COtpInputElement extends Omit<HTMLElement, 'elementId' | 'hasAu
   hideDetails?: boolean;
   /** Hint text for the input */
   hint?: string;
+  /** Label of the input group, shown above the digit inputs */
+  label?: string;
   /** Length of the OTP code */
   length?: number;
+  /** Set as required — shows the required marker on the label */
+  required?: boolean;
   /** Set the validíty of the input */
   valid?: boolean;
   /** Custom validation message */
@@ -1544,7 +1593,7 @@ export interface CSwitchElementEventMap {
   'update:value': CustomEvent<boolean | number | string>;
 }
 
-export interface CSwitchElement extends Omit<HTMLElement, 'checked' | 'disabled' | 'falseValue' | 'hostId' | 'loading' | 'required' | 'trueValue' | 'value'> {
+export interface CSwitchElement extends Omit<HTMLElement, 'checked' | 'disabled' | 'falseValue' | 'hostId' | 'label' | 'loading' | 'required' | 'trueValue' | 'value'> {
   /** If `true`, the checkbox is selected. */
   checked?: boolean;
   /** If `true`, the switch is disabled and cannot be toggled */
@@ -1553,6 +1602,11 @@ export interface CSwitchElement extends Omit<HTMLElement, 'checked' | 'disabled'
   falseValue?: boolean | number | string;
   /** Id for the element */
   hostId?: string;
+  /**
+   * Label of the switch, shown beside the toggle. Falls back to the default
+   * slot content when not set.
+   */
+  label?: string;
   /** Loading state */
   loading?: boolean;
   /** Set as required */
@@ -1639,86 +1693,29 @@ export interface CTabElement extends Omit<HTMLElement, 'active' | 'disabled' | '
   ): void;
 }
 
-/** Events dispatched by `<c-tab-button>`. */
-export interface CTabButtonElementEventMap {
-  /**
-   * Fired when the tab button is activated, carrying the button element and
-   * its resolved value; the parent `<c-tab-buttons>` listens for it to switch
-   * the selection.
-   */
-  tabChange: CustomEvent<{ element: HTMLElement | null; value: number | string | undefined; }>;
-  /**
-   * Fired when the tab button receives focus, so the parent `<c-tab-buttons>`
-   * can drive arrow-key navigation.
-   */
-  tabFocus: CustomEvent<number | string | undefined>;
-}
-
-/**
- * A single tab button inside c-tab-buttons — a thin behavioural wrapper around
- * c-button
- */
-export interface CTabButtonElement extends Omit<HTMLElement, 'active' | 'disabled' | 'size' | 'value'> {
-  /** Active (selected) state — set by the parent c-tab-buttons. */
-  active?: boolean;
-  /** Disable the button, preventing it from being selected — also set by the parent c-tab-buttons when the whole group is disabled. */
-  disabled?: boolean;
-  /** Size of the button — drives the button's min-height; set by the parent c-tab-buttons. */
-  size?: 'default' | 'large' | 'small';
-  /** Tab value. Falls back to the data-index stamped by c-tab-buttons. */
-  value?: number | string;
-  focusButton(): void;
-  getButtonRect(): DOMRect | null;
-  addEventListener<K extends keyof CTabButtonElementEventMap>(
-    type: K,
-    listener: (this: CTabButtonElement, ev: CTabButtonElementEventMap[K]) => void,
-    options?: boolean | AddEventListenerOptions,
-  ): void;
-  addEventListener(
-    type: string,
-    listener: EventListenerOrEventListenerObject,
-    options?: boolean | AddEventListenerOptions,
-  ): void;
-  removeEventListener<K extends keyof CTabButtonElementEventMap>(
-    type: K,
-    listener: (this: CTabButtonElement, ev: CTabButtonElementEventMap[K]) => void,
-    options?: boolean | EventListenerOptions,
-  ): void;
-  removeEventListener(
-    type: string,
-    listener: EventListenerOrEventListenerObject,
-    options?: boolean | EventListenerOptions,
-  ): void;
-}
-
 /** Events dispatched by `<c-tab-buttons>`. */
 export interface CTabButtonsElementEventMap {
   /**
-   * Fired when the user selects a tab button, carrying the newly selected
-   * value (`null` in index-based mode / `''` in value-based mode when the
-   * active button is toggled off and `mandatory` is not set). Legacy
-   * value-change event.
+   * Fired when the user activates a tab button, carrying the newly selected
+   * value. The parent `<c-tabs>` listens for it and pushes the accepted value
+   * back down; consumers should listen to `c-tabs` instead.
    */
-  changeValue: CustomEvent<null | number | string>;
-  /** Native bubbling input event dispatched for plain `v-model` support; carries no detail. */
-  input: CustomEvent<void>;
-  /**
-   * Fired alongside `changeValue` with the newly selected value; fulfills the
-   * `v-model`/`v-control` contract.
-   */
-  'update:value': CustomEvent<null | number | string>;
+  tabChange: CustomEvent<{ element: HTMLElement | null; value: number | string; }>;
 }
 
-export interface CTabButtonsElement extends Omit<HTMLElement, 'disabled' | 'mandatory' | 'size' | 'tabs' | 'value'> {
-  /** Disable the whole group — every child c-tab-button is disabled and the selection can no longer be changed. */
+/**
+ * The tab-strip adapter for `<c-tabs>` (ADR-0023): presents the tab list as a
+ * button group. Authored only inside `<c-tabs>`, with plain `<c-button>`
+ * children. It carries no form semantics — for a standalone value picker use
+ * `<c-button-group>`, which this component wraps. Selection is inherently
+ * mandatory: a tab strip always has an active tab.
+ */
+export interface CTabButtonsElement extends Omit<HTMLElement, 'disabled' | 'size' | 'value'> {
+  /** Disable the whole tab strip — every slotted c-button is disabled and the selection can no longer be changed. */
   disabled?: boolean;
-  /** Always require a selection */
-  mandatory?: boolean;
   /** Size of the buttons */
   size?: 'default' | 'small';
-  /** Set by c-tabs when this acts as its tab controller. */
-  tabs?: boolean;
-  /** Value of tab buttons */
+  /** Value of the active tab — pushed down by the parent c-tabs. */
   value?: number | string;
   addEventListener<K extends keyof CTabButtonsElementEventMap>(
     type: K,
@@ -1885,7 +1882,11 @@ export interface CTagElement extends Omit<HTMLElement, 'active' | 'badge' | 'clo
   ): void;
 }
 
-export interface CTagsElement extends Omit<HTMLElement, 'size'> {
+export interface CTagsElement extends Omit<HTMLElement, 'label' | 'required' | 'size'> {
+  /** Label of the tag group, shown above the tags */
+  label?: string;
+  /** Set as required — shows the required marker on the label */
+  required?: boolean;
   /** Size of the tags */
   size?: 'default' | 'small';
 }
@@ -2059,6 +2060,7 @@ declare global {
     'c-autocomplete': CAutocompleteElement;
     'c-badge': CBadgeElement;
     'c-button': CButtonElement;
+    'c-button-group': CButtonGroupElement;
     'c-card': CCardElement;
     'c-card-actions': CCardActionsElement;
     'c-card-content': CCardContentElement;
@@ -2113,7 +2115,6 @@ declare global {
     'c-swiper-tab': CSwiperTabElement;
     'c-switch': CSwitchElement;
     'c-tab': CTabElement;
-    'c-tab-button': CTabButtonElement;
     'c-tab-buttons': CTabButtonsElement;
     'c-tab-item': CTabItemElement;
     'c-tab-items': CTabItemsElement;

@@ -131,6 +131,40 @@ _Avoid_: Base colour, brand colour (ambiguous — a "brand colour" could mean an
 The consumer-facing `@theme` mapping the library publishes (`@cscfi/csc-ui-next/css/tailwind-theme.css`) so a consumer's own Tailwind build gains utilities for the **semantic tokens**. Semantic roles **only**, by design — **palette tokens** are excluded because a palette-step utility cannot be mode-aware (ADR-0018). It is a mapping, not a stylesheet: it must be paired with the token definitions (`tokens.css`) to resolve.
 _Avoid_: Tailwind preset/config (Tailwind-v3 vocabulary), theme file (ambiguous with **theme mode** and `applyTheme`)
 
+### Form fields (`csc-ui-next`)
+
+**Label**:
+The consumer-supplied name of a form control, rendered by the component itself (never authored as a sibling by the consumer). Every component a user operates inside a form is labelable — holding a submittable value is not a prerequisite (`c-tags` is labelable; it holds no value). Comes in exactly two association modes: **field label** and **group label**.
+_Avoid_: Title, caption, heading (a label is wired to the control for assistive technology; a heading is not)
+
+**Field label**:
+A **label** naming a *single* input, associated with it directly (the `for`/`id` pairing). The mode used by `c-input` and its text family, and by the inline controls `c-checkbox` and `c-switch`.
+_Avoid_: Inline label (placement, not association, is what defines it)
+
+**Group label**:
+A **label** naming a *set* of controls operated as one field — `c-radio-group`, `c-otp-input`, `c-button-group`, `c-tags`. Associated with the group container (`aria-labelledby`), not any single input inside it.
+_Avoid_: Legend (the native `<fieldset>` mechanism this library does not use), group title
+
+**Button group** (`c-button-group`):
+A standalone **labelable value control**: a segmented row of plain `c-button` children where activation carries the value — exclusive by default, cumulative with `multiple`. The form-facing component; it knows nothing about tabs. The group drives each child's **active** state.
+_Avoid_: Tab buttons (that is the `c-tabs` adapter, not a value control), toggle group / segmented control (foreign vocabulary for this same component), toolbar (a button group holds a value; a toolbar merely groups actions)
+
+**Tab buttons** (`c-tab-buttons`):
+The tab-strip adapter — a **composed child** of `c-tabs` that presents the tab list as a button group. Carries no form semantics (no label, no required, no **mandatory**) and cannot deselect: a tab strip inherently has an active tab. Standalone value-picking under this tag is Stencil-era usage; in `csc-ui-next` that job belongs to **button group**.
+_Avoid_: using it standalone as a value picker (that is `c-button-group`)
+
+**Active** (`c-button`):
+The public pressed state of a button — the selected look plus `aria-pressed`. Set by consumers for standalone toggle buttons, or driven by `c-button-group` on its children.
+_Avoid_: Selected, pressed (canonical prop name is `active`; _pressed_ is only the ARIA mechanism)
+
+**Required**:
+A field-level demand from the *form*: this field must be answered before submission. Surfaces as the asterisk on the **label** and `aria-required`. Purely declarative on the component — enforcement is the consumer's validation logic. Distinct from **mandatory**.
+_Avoid_: Mandatory (see below), obligatory
+
+**Mandatory** (`c-button-group`):
+A selection-behavior rule on the *control*: the selection can never become empty — the active choice (or, with `multiple`, the last active button) cannot be toggled off. Says nothing about whether the form demands an answer — a button group can be mandatory yet not **required**, or vice versa. Not a tab concept: tabs forbid deselection inherently, so `c-tab-buttons` has no such prop.
+_Avoid_: Required (the form-demand concept), forced
+
 ### Data table (`csc-ui-next`)
 
 **Column**:

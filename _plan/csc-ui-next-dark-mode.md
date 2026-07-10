@@ -270,6 +270,12 @@ light-mode palette contrast.
    `border` for disabled and the appearance colour for focus outline; no dedicated `disabled`
    token needed so far. Watch in phase 5 (esp. disabled on a `surface-raised`/`surface-overlay`
    panel, where `surface-muted` can collide in dark — may want a `disabled` token then).
+   - **2026-07-10: the predicted collision materialised for TEXT** — dark `on-surface-muted`
+     is pinned bright (slate-100) by the AA hint-contrast pass, so c-button's disabled label
+     read as enabled. Fixed by moving disabled text to the `on-surface-faint` tier (equal to
+     muted in light, slate-400 in dark; disabled text is AA-exempt). Other components'
+     disabled states still use `on-surface-muted` but layer `opacity-75`, so they read dim —
+     sweep them onto `faint` (or a dedicated `disabled` token) if more reports come in.
 4. **Keep or drop** the Stencil-only style-dictionary outputs (`tailwind/theme.js`, scss) in
    `next`'s copied config — depends on whether the docs site still consumes them.
 

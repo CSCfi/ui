@@ -1,8 +1,12 @@
 <template>
   <div :class="ui.root()" :style="cssVars" part="root">
-    <label v-if="label" :class="ui.label()" part="label">
-      {{ label }} {{ ariaLabelInternal }}
-    </label>
+    <form-label
+      v-if="label"
+      :class="ui.label()"
+      :html-for="hostId || generatedId"
+      :label="labelText"
+      part="label"
+    />
 
     <div :class="ui.wrapper()">
       <div
@@ -64,6 +68,7 @@ import {
 } from 'vue';
 
 import { emitModelValue } from '../../shared/emitModelValue';
+import FormLabel from '../../shared/FormLabel.vue';
 
 /** Events dispatched by `<c-slider>`. */
 interface CSliderEvents {
@@ -275,6 +280,11 @@ const inputRef = useTemplateRef<HTMLInputElement>('inputRef');
 const autoId = useId();
 
 const generatedId = computed(() => `c-slider__${autoId}`);
+
+// Preserves the seeded template's rendering of both texts in the visible label.
+const labelText = computed(() =>
+  `${props.label} ${props.ariaLabelInternal}`.trim(),
+);
 
 const trackPosition = ref(0);
 

@@ -16,7 +16,8 @@ import {
   type CAutocompleteElementEventMap,
   type CBadgeElement,
   type CButtonElement,
-  type CButtonElementEventMap,
+  type CButtonGroupElement,
+  type CButtonGroupElementEventMap,
   type CCardElement,
   type CCardActionsElement,
   type CCardContentElement,
@@ -85,8 +86,6 @@ import {
   type CSwitchElementEventMap,
   type CTabElement,
   type CTabElementEventMap,
-  type CTabButtonElement,
-  type CTabButtonElementEventMap,
   type CTabButtonsElement,
   type CTabButtonsElementEventMap,
   type CTabItemElement,
@@ -185,12 +184,26 @@ export const CBadge = createComponent({
 export const CButton = createComponent({
   displayName: 'CButton',
   elementClass: elementClass<CButtonElement>('c-button'),
-  events: {
-    onTabChange: 'tabChange' as EventName<CButtonElementEventMap['tabChange']>,
-    onTabFocus: 'tabFocus' as EventName<CButtonElementEventMap['tabFocus']>,
-  },
   react: React,
   tagName: 'c-button',
+});
+
+/**
+ * A group of buttons where activation carries a value — exclusive by
+ * default, cumulative with `multiple` (ADR-0023). The standalone, form-facing
+ * segmented control; for the tab strip of a `<c-tabs>` use `<c-tab-buttons>`,
+ * which wraps this component.
+ */
+export const CButtonGroup = createComponent({
+  displayName: 'CButtonGroup',
+  elementClass: elementClass<CButtonGroupElement>('c-button-group'),
+  events: {
+    onChange: 'change' as EventName<CButtonGroupElementEventMap['change']>,
+    onInput: 'input' as EventName<CButtonGroupElementEventMap['input']>,
+    onUpdateValue: 'update:value' as EventName<CButtonGroupElementEventMap['update:value']>,
+  },
+  react: React,
+  tagName: 'c-button-group',
 });
 
 export const CCard = createComponent({
@@ -644,27 +657,17 @@ export const CTab = createComponent({
 });
 
 /**
- * A single tab button inside c-tab-buttons — a thin behavioural wrapper around
- * c-button
+ * The tab-strip adapter for `<c-tabs>` (ADR-0023): presents the tab list as a
+ * button group. Authored only inside `<c-tabs>`, with plain `<c-button>`
+ * children. It carries no form semantics — for a standalone value picker use
+ * `<c-button-group>`, which this component wraps. Selection is inherently
+ * mandatory: a tab strip always has an active tab.
  */
-export const CTabButton = createComponent({
-  displayName: 'CTabButton',
-  elementClass: elementClass<CTabButtonElement>('c-tab-button'),
-  events: {
-    onTabChange: 'tabChange' as EventName<CTabButtonElementEventMap['tabChange']>,
-    onTabFocus: 'tabFocus' as EventName<CTabButtonElementEventMap['tabFocus']>,
-  },
-  react: React,
-  tagName: 'c-tab-button',
-});
-
 export const CTabButtons = createComponent({
   displayName: 'CTabButtons',
   elementClass: elementClass<CTabButtonsElement>('c-tab-buttons'),
   events: {
-    onChangeValue: 'changeValue' as EventName<CTabButtonsElementEventMap['changeValue']>,
-    onInput: 'input' as EventName<CTabButtonsElementEventMap['input']>,
-    onUpdateValue: 'update:value' as EventName<CTabButtonsElementEventMap['update:value']>,
+    onTabChange: 'tabChange' as EventName<CTabButtonsElementEventMap['tabChange']>,
   },
   react: React,
   tagName: 'c-tab-buttons',

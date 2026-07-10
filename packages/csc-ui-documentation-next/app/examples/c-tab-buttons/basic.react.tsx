@@ -1,23 +1,38 @@
 // @ts-nocheck — documentation code sample; shown as text, never compiled here
 import { useState } from 'react';
-import { CTabButton, CTabButtons } from '@cscfi/csc-ui-next-react';
+import {
+  CButton,
+  CTabButtons,
+  CTabItem,
+  CTabItems,
+  CTabs,
+} from '@cscfi/csc-ui-next-react';
 
 export const Basic = () => {
-  const [view, setView] = useState('week');
+  const [tab, setTab] = useState('overview');
 
   return (
-    <div className="example-row">
-      <CTabButtons
-        value={view}
-        mandatory
-        onChangeValue={(event) => setView(event.detail as string)}
-      >
-        <CTabButton value="day">Day</CTabButton>
-        <CTabButton value="week">Week</CTabButton>
-        <CTabButton value="month">Month</CTabButton>
+    <CTabs
+      value={tab}
+      onChangeValue={(event) => setTab(event.detail as string)}
+    >
+      <CTabButtons>
+        <CButton value="overview">Overview</CButton>
+        <CButton value="members">Members</CButton>
+        <CButton value="settings">Settings</CButton>
       </CTabButtons>
 
-      <span>Selected: {view}</span>
-    </div>
+      <CTabItems slot="items">
+        <CTabItem value="overview">
+          <p>Overview of the project and its recent activity.</p>
+        </CTabItem>
+        <CTabItem value="members">
+          <p>People with access to this project.</p>
+        </CTabItem>
+        <CTabItem value="settings">
+          <p>Project name, description and visibility.</p>
+        </CTabItem>
+      </CTabItems>
+    </CTabs>
   );
 };

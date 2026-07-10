@@ -1,26 +1,40 @@
 // @ts-nocheck — documentation code sample; shown as text, never compiled here
-const row = document.createElement('div');
-row.className = 'example-row';
-
 // Typed via the HTMLElementTagNameMap augmentation from @cscfi/csc-ui-next.
-const tabButtons = document.createElement('c-tab-buttons');
-tabButtons.value = 'week';
-tabButtons.setAttribute('mandatory', '');
+const tabs = document.createElement('c-tabs');
+tabs.value = 'overview';
 
-for (const value of ['day', 'week', 'month']) {
-  const button = document.createElement('c-tab-button');
+const tabButtons = document.createElement('c-tab-buttons');
+
+const items = document.createElement('c-tab-items');
+items.slot = 'items';
+
+const panels: Record<string, string> = {
+  overview: 'Overview of the project and its recent activity.',
+  members: 'People with access to this project.',
+  settings: 'Project name, description and visibility.',
+};
+
+for (const [value, text] of Object.entries(panels)) {
+  const button = document.createElement('c-button');
   button.setAttribute('value', value);
   button.textContent = value.charAt(0).toUpperCase() + value.slice(1);
 
   tabButtons.append(button);
+
+  const item = document.createElement('c-tab-item');
+  item.setAttribute('value', value);
+
+  const p = document.createElement('p');
+  p.textContent = text;
+
+  item.append(p);
+  items.append(item);
 }
 
-const status = document.createElement('span');
-status.textContent = 'Selected: week';
+tabs.append(tabButtons, items);
 
-tabButtons.addEventListener('changeValue', (event) => {
-  status.textContent = `Selected: ${event.detail}`;
+tabs.addEventListener('changeValue', (event) => {
+  console.log('active tab:', event.detail);
 });
 
-row.append(tabButtons, status);
-document.body.append(row);
+document.body.append(tabs);

@@ -31,12 +31,13 @@
              `value` watch, so a flavor change made elsewhere (e.g. the header
              FlavorSwitcher) moves the indicator here too — a manual `:active`
              per child only flips text colour, never the indicator. -->
-        <c-tab-buttons
+        <c-button-group
+          data-flavor-tabs
           mandatory
           :value="activeTab.flavor"
           @input="onFlavorChange"
         >
-          <c-tab-button
+          <c-button
             v-for="tab in example.tabs"
             :key="tab.flavor"
             :value="tab.flavor"
@@ -49,8 +50,8 @@
             />
 
             {{ tab.label }}
-          </c-tab-button>
-        </c-tab-buttons>
+          </c-button>
+        </c-button-group>
       </div>
 
       <!-- eslint-disable-next-line vue/no-v-html — Shiki output built at prerender from our own SFC source -->
@@ -97,7 +98,13 @@ const currentIconColor = computed(() => {
 </script>
 
 <style scoped>
-c-tab-buttons {
+/* Scope the flavor-tab restyle to the explicit [data-flavor-tabs] hook: a
+   bare `c-button-group` selector would also match an example DEMO whose
+   single root element is a c-button-group — Vue stamps this component's
+   scope id onto a child component's root, so the demo would inherit these
+   part overrides and render "broken". A data attribute (not a class) so
+   imperative host classes never trip Vue's hydration class-mismatch check. */
+c-button-group[data-flavor-tabs] {
   &::part(root) {
     background-color: var(--c-surface);
   }
@@ -112,7 +119,7 @@ c-tab-buttons {
   }
 }
 
-c-tab-button {
+c-button-group[data-flavor-tabs] c-button {
   &::part(root) {
     color: var(--c-on-surface);
   }

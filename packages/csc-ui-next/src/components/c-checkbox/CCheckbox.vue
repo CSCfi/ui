@@ -55,19 +55,16 @@
         </svg>
       </span>
 
-      <span
+      <form-label
         v-show="!!label || hasSlotContent"
         :class="ui.labelContent()"
+        :label
+        :required
         part="content"
+        tag="span"
       >
-        <span v-if="label">{{ label }}</span>
-
-        <span v-show="!label" :class="ui.slotWrapper()"><slot /></span>
-
-        <span v-if="required" :class="ui.required()" aria-hidden="true">
-          &nbsp;*
-        </span>
-      </span>
+        <slot />
+      </form-label>
     </label>
 
     <!-- Mode `out-in` mirrors the Stencil c-message lifecycle: the
@@ -117,6 +114,7 @@ import { tv } from 'tailwind-variants';
 import { computed, ref, useHost, useId, useTemplateRef, watch } from 'vue';
 
 import { emitModelValue } from '../../shared/emitModelValue';
+import FormLabel from '../../shared/FormLabel.vue';
 import { useHasSlot } from '../../shared/useHasSlot';
 import { useHostEmit } from '../../shared/useHostEmit';
 import { useRipple } from '../../shared/useRipple';
@@ -206,7 +204,6 @@ const checkbox = tv({
     message:
       'flex items-start gap-1 px-3 text-xs leading-none min-h-4 text-on-surface-muted',
     messageIcon: 'fill-current h-4 w-4 relative -top-0.5 shrink-0',
-    required: 'text-error',
     // 42px circular ripple surface. The checkbox box is the `before:` pseudo:
     // an 18x18 square at (12,12) with 2px radius + transparent fill; its
     // colours flip on :checked via the escape-hatch sibling rule below.
@@ -219,7 +216,6 @@ const checkbox = tv({
     rippleEffect:
       'pointer-events-none absolute rounded-full bg-primary transition-[transform,opacity] duration-[600ms] ease-out',
     root: 'relative w-fit',
-    slotWrapper: '',
     svg: 'absolute top-[14px] left-[14px] h-[14px] w-[14px] z-[1]',
     visuallyHidden:
       'absolute h-px w-px overflow-hidden border-0 p-0 [clip:rect(1px,1px,1px,1px)]',

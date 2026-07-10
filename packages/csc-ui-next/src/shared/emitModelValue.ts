@@ -40,3 +40,28 @@ export const emitModelValue = (
   host.dispatchEvent(new CustomEvent('update:value', { detail: value }));
   host.dispatchEvent(new Event('input', { bubbles: true }));
 };
+
+/**
+ * The `emitModelValue` counterpart for components born after ADR-0017/0023:
+ * new components carry no grandfathered `changeValue` (and thus no kebab
+ * twin) — their value-change event is the all-lowercase `change`. Same
+ * mechanics otherwise: mirror the host `value` property first (native
+ * v-model reads it inside the `input` handler), then `change` +
+ * `update:value` + a native bubbling `input`.
+ *
+ * The same re-entrancy rule applies: call ONLY from user-interaction
+ * handlers, never from a `props.value` watcher.
+ */
+export const emitModelChange = (
+  host: HTMLElement | null,
+  value: unknown,
+): void => {
+  if (!host) return;
+
+  const el = host as { value?: unknown } & HTMLElement;
+
+  if (el.value !== value) el.value = value;
+  host.dispatchEvent(new CustomEvent('change', { detail: value }));
+  host.dispatchEvent(new CustomEvent('update:value', { detail: value }));
+  host.dispatchEvent(new Event('input', { bubbles: true }));
+};

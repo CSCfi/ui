@@ -3,6 +3,7 @@ import CAccordion from './components/c-accordion/CAccordion.vue';
 import CAlert from './components/c-alert/CAlert.vue';
 import CAutocomplete from './components/c-autocomplete/CAutocomplete.vue';
 import CBadge from './components/c-badge/CBadge.vue';
+import CButtonGroup from './components/c-button-group/CButtonGroup.vue';
 import CButton from './components/c-button/CButton.vue';
 import CCardActions from './components/c-card-actions/CCardActions.vue';
 import CCardContent from './components/c-card-content/CCardContent.vue';
@@ -57,7 +58,6 @@ import CSubNavigationItem from './components/c-sub-navigation-item/CSubNavigatio
 import CSwiperTab from './components/c-swiper-tab/CSwiperTab.vue';
 import CSwiper from './components/c-swiper/CSwiper.vue';
 import CSwitch from './components/c-switch/CSwitch.vue';
-import CTabButton from './components/c-tab-button/CTabButton.vue';
 import CTabButtons from './components/c-tab-buttons/CTabButtons.vue';
 import CTabItem from './components/c-tab-item/CTabItem.vue';
 import CTabItems from './components/c-tab-items/CTabItems.vue';
@@ -84,6 +84,12 @@ export type {
   CAutocompleteOption,
   CAutocompleteProps,
 } from './components/c-autocomplete/CAutocomplete.vue';
+
+export type {
+  CButtonGroupProps,
+  CButtonGroupSize,
+  CButtonGroupValue,
+} from './components/c-button-group/CButtonGroup.vue';
 
 export type {
   CButtonProps,
@@ -148,11 +154,6 @@ export type {
 } from './components/c-status/CStatus.vue';
 
 export type {
-  CTabButtonProps,
-  CTabButtonSize,
-} from './components/c-tab-button/CTabButton.vue';
-
-export type {
   CTabButtonsProps,
   CTabButtonsSize,
 } from './components/c-tab-buttons/CTabButtons.vue';
@@ -210,6 +211,9 @@ export type { VNode, VNodeChild } from 'vue';
 const components: Array<[string, unknown]> = [
   ['c-icon', CIcon],
   ['c-button', CButton],
+  // c-tab-buttons (below) renders c-button-group in its shadow — the group
+  // must be defined before the adapter upgrades.
+  ['c-button-group', CButtonGroup],
   ['c-checkbox', CCheckbox],
   ['c-card', CCard],
   ['c-card-actions', CCardActions],
@@ -249,7 +253,6 @@ const components: Array<[string, unknown]> = [
   ['c-list-item-title', CListItemTitle],
   ['c-tabs', CTabs],
   ['c-tab', CTab],
-  ['c-tab-button', CTabButton],
   ['c-tab-buttons', CTabButtons],
   ['c-tab-items', CTabItems],
   ['c-tab-item', CTabItem],
@@ -353,7 +356,6 @@ export const tailwindVariantTags: ReadonlyArray<string> = [
   // Wave C — navigation / tabs / steps components.
   'c-tabs',
   'c-tab',
-  'c-tab-button',
   'c-tab-buttons',
   'c-tab-items',
   'c-tab-item',
@@ -386,4 +388,5 @@ export const tailwindVariantTags: ReadonlyArray<string> = [
   'c-menu',
   // New components (born tailwind-variants; no Stencil-era styles to convert).
   'c-data-table',
+  'c-button-group',
 ];

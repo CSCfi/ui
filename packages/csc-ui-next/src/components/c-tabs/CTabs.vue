@@ -96,7 +96,7 @@ export interface CTabsProps {
  *
  * @seeded from csc-ui — verify
  *
- * @subcomponents c-tab, c-tab-items, c-tab-item
+ * @subcomponents c-tab, c-tab-items, c-tab-item, c-tab-buttons
  */
 import { mdiArrowLeft, mdiArrowRight } from '@mdi/js';
 import { tv } from 'tailwind-variants';
@@ -289,6 +289,8 @@ const tabButtonsEl = () =>
 const tabsList = (): CTabEl[] => {
   const tb = tabButtonsEl();
 
+  // Buttons mode: the tabs are the adapter's slotted plain c-buttons
+  // (ADR-0023) — they stay light-DOM children of <c-tab-buttons>.
   if (tb) {
     return Array.from(tb.querySelectorAll(':scope > c-button')) as CTabEl[];
   }
@@ -662,14 +664,10 @@ onMounted(() => {
 
     const tb = tabButtonsEl();
 
-    if (tb) {
-      host.classList.add('c-tabs--buttons');
-      // Set the property (Boolean) rather than the attribute (string).
-      // Vue defineCustomElement's Boolean coercion warns about a string
-      // "true" coming in via setAttribute and may store it as a string,
-      // breaking `if (!props.tabs)` checks downstream.
-      (tb as unknown as { tabs: boolean }).tabs = true;
-    }
+    // The adapter needs no mode flag (ADR-0023): c-tab-buttons is always the
+    // tab-strip controller; only the host class for the indicator-suppressing
+    // styles below is ours to set.
+    if (tb) host.classList.add('c-tabs--buttons');
   });
 
   updateItemsValue();
@@ -687,10 +685,15 @@ onMounted(() => {
     focusedTabValue = ev.detail;
   });
 
-  // Keyboard: Enter/Space selects focused tab; arrows move focus.
+  // Keyboard: Enter/Space selects focused tab; arrows move focus. In buttons
+  // mode the adapter's wrapped c-button-group owns keyboard interaction
+  // (Space/Enter fire the native button click, arrows rove focus), so both
+  // handlers stand down to avoid double-dispatching changeValue.
   host.addEventListener(
     'keydown',
     (e) => {
+      if (tabButtonsEl()) return;
+
       const ev = e as KeyboardEvent;
 
       const target = ev.target as CTabEl;
@@ -707,6 +710,8 @@ onMounted(() => {
   host.addEventListener(
     'keyup',
     (e) => {
+      if (tabButtonsEl()) return;
+
       const ev = e as KeyboardEvent;
       isDirty = true;
 

@@ -99,6 +99,21 @@ export const lintComponent = (component, knownTags = new Set()) => {
     }
   }
 
+  // New-style components (ADR-0017/0023) use emitModelChange, which
+  // dispatches the all-lowercase `change` instead of the grandfathered
+  // `changeValue`.
+  if (scriptSource.includes('emitModelChange(')) {
+    const eventNames = component.events.map((e) => e.name);
+
+    for (const name of ['change', 'update:value', 'input']) {
+      if (!eventNames.includes(name)) {
+        errors.push(
+          `emitModelChange is used but "${name}" is missing from the event map`,
+        );
+      }
+    }
+  }
+
   for (const prop of component.props) {
     if (prop.type === 'string' && !prop.freeform) {
       errors.push(

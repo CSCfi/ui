@@ -3,6 +3,7 @@
     :is="href ? 'a' : 'button'"
     :id="hostId || undefined"
     ref="rootRef"
+    :aria-pressed="ariaPressed"
     :class="ui.root()"
     :disabled="href ? undefined : disabled || undefined"
     :href="href || undefined"
@@ -50,6 +51,13 @@
 
 <script lang="ts">
 export interface CButtonProps {
+  /**
+   * Pressed (toggle) state — renders the selected look and sets
+   * `aria-pressed`. Leave unset for regular action buttons: only a
+   * true/false value marks the button as a toggle. Driven by
+   * `c-button-group` on its slotted buttons.
+   */
+  active?: boolean;
   /**
    * Danger variant style
    *
@@ -120,8 +128,6 @@ export interface CButtonProps {
    * @seeded from csc-ui — verify
    */
   size?: CButtonSize;
-  /** Used when the button acts as a tab inside <c-tab-buttons>. */
-  tabs?: boolean;
   /**
    * Hyperlink target
    *
@@ -143,7 +149,7 @@ export interface CButtonProps {
   type?: CButtonType;
   /**
    * Value for the button
-   * - for use in the c-tab-buttons
+   * - for use in the c-button-group
    *
    * @seeded from csc-ui — verify
    */
@@ -178,28 +184,11 @@ export type CButtonType = 'button' | 'reset' | 'submit';
  * @cssprop --c-font-family - Font stack applied to the label (native buttons do not inherit it).
  */
 import { tv } from 'tailwind-variants';
-import { computed, onMounted, useHost, useTemplateRef } from 'vue';
+import { computed, useTemplateRef } from 'vue';
 
+import { coerceBoolean } from '../../shared/coerceBoolean';
 import { useHasSlot } from '../../shared/useHasSlot';
-import { useHostEmit } from '../../shared/useHostEmit';
 import { useRipple } from '../../shared/useRipple';
-
-/** Events dispatched by `<c-button>`. */
-interface CButtonEvents {
-  /**
-   * Fired when the button is activated in tabs mode (inside
-   * `<c-tab-buttons>`), carrying the button element and its resolved value.
-   */
-  tabChange: {
-    element: HTMLElement | null;
-    value: number | string | undefined;
-  };
-  /**
-   * Fired when the button receives focus in tabs mode, so the parent
-   * `<c-tab-buttons>` can drive arrow-key navigation.
-   */
-  tabFocus: number | string | undefined;
-}
 
 /**
  * Styling lives entirely in this `tailwind-variants` config (ADR-0004): the
@@ -324,15 +313,33 @@ const button = tv({
       inverted: true,
       outlined: true,
     },
+    // ---- active (pressed) --------------------------------------------------
+    // The selected/toggle look: a primary fill regardless of appearance flag.
+    // Authored through internal vars (with semantic-token fallbacks) so
+    // c-button-group can retarget the fill per selection mode — e.g. make it
+    // transparent while its sliding indicator paints the fill instead. Ordered
+    // after the appearance compounds (active wins) and before the disabled
+    // ones (disabled wins).
+    {
+      class: {
+        root: 'bg-[color:var(--_c-button-active-bg,var(--c-primary))] text-[color:var(--_c-button-active-fg,var(--c-on-primary))] hover:bg-[color:var(--_c-button-active-hover-bg,var(--c-primary-hover))]',
+      },
+      active: true,
+    },
     // ---- disabled (overrides appearance bg/text/border) ------------------
     // Non-inverted disabled is the muted neutral surface; inverted disabled
     // dims the mode-invariant inverse foreground (it sits on a dark backdrop).
+    // Disabled TEXT uses the faint tier, not muted: `on-surface-muted` is the
+    // hint-text role and is pinned bright in dark mode by the WCAG AA contrast
+    // pass, so on a disabled control it reads as enabled. `on-surface-faint`
+    // equals it in light mode (both tertiary-500) and is properly dim in dark
+    // (disabled text is exempt from AA contrast).
     // Each re-declares `hover:bg-*` matching its own bg so the appearance hover
     // (all `hover:bg-*`) is neutralised now that disabled no longer relies on
     // `pointer-events-none` for hover suppression (see the tv header comment).
     {
       class: {
-        root: 'bg-surface-muted text-on-surface-muted hover:bg-surface-muted',
+        root: 'bg-surface-muted text-on-surface-faint hover:bg-surface-muted',
       },
       danger: false,
       disabled: true,
@@ -354,14 +361,14 @@ const button = tv({
     },
     {
       class: {
-        root: 'bg-surface-muted text-on-surface-muted hover:bg-surface-muted',
+        root: 'bg-surface-muted text-on-surface-faint hover:bg-surface-muted',
       },
       danger: true,
       disabled: true,
     },
     {
       class: {
-        root: 'bg-surface-muted text-on-surface-muted hover:bg-surface-muted',
+        root: 'bg-surface-muted text-on-surface-faint hover:bg-surface-muted',
       },
       disabled: true,
       ghost: true,
@@ -377,14 +384,14 @@ const button = tv({
     },
     {
       class: {
-        root: 'bg-transparent text-on-surface-muted hover:bg-transparent',
+        root: 'bg-transparent text-on-surface-faint hover:bg-transparent',
       },
       disabled: true,
       text: true,
     },
     {
       class: {
-        root: 'bg-transparent text-on-surface-muted ring-2 ring-inset ring-border hover:bg-transparent',
+        root: 'bg-transparent text-on-surface-faint ring-2 ring-inset ring-border hover:bg-transparent',
       },
       disabled: true,
       inverted: false,
@@ -400,6 +407,7 @@ const button = tv({
     },
   ],
   defaultVariants: {
+    active: false,
     danger: false,
     disabled: false,
     fit: false,
@@ -432,6 +440,7 @@ const button = tv({
       'inline-block border-2 border-solid border-current border-r-transparent rounded-full animate-spin',
   },
   variants: {
+    active: { true: '' },
     danger: { true: '' },
     disabled: { true: { root: 'cursor-not-allowed' } },
     fit: { true: { root: 'w-full' } },
@@ -450,6 +459,12 @@ const button = tv({
 });
 
 const props = withDefaults(defineProps<CButtonProps>(), {
+  // `active` deliberately defaults to undefined — "not a toggle button" (no
+  // aria-pressed), which a false default could not express. The explicit
+  // entry matters: without ANY default, Vue's Boolean casting turns an
+  // absent prop into `false`, which would stamp aria-pressed="false" on
+  // every regular action button.
+  active: undefined,
   danger: false,
   disabled: false,
   fit: false,
@@ -462,7 +477,6 @@ const props = withDefaults(defineProps<CButtonProps>(), {
   noRipple: false,
   outlined: false,
   size: 'default',
-  tabs: false,
   target: '_blank',
   text: false,
   type: 'button',
@@ -473,6 +487,7 @@ const props = withDefaults(defineProps<CButtonProps>(), {
 // the defaults (ADR-0015).
 const ui = computed(() =>
   button({
+    active: props.active === undefined ? false : coerceBoolean(props.active),
     danger: props.danger,
     disabled: props.disabled,
     fit: props.fit,
@@ -505,24 +520,12 @@ const hasIcon = useHasSlot(rootRef, 'icon');
 
 const hasDescription = useHasSlot(rootRef, 'description');
 
-const host = useHost();
-
-const emit = useHostEmit<CButtonEvents>();
-
-// Resolve the tab value: explicit `value` prop, else the data-index that
-// c-tab-buttons stamps onto each button.
-const tabValue = () => props.value ?? host?.dataset.index;
-
-const bubbling = { bubbles: true, composed: true };
-
-// In tabs mode, mirror the Stencil c-button: emit tabFocus on focus so
-// the parent <c-tab-buttons> can drive arrow-key navigation.
-onMounted(() => {
-  if (!host || !props.tabs) return;
-  host.addEventListener('focus', () => emit('tabFocus', tabValue(), bubbling), {
-    passive: true,
-  });
-});
+// aria-pressed marks the button as a toggle, so it is stamped only when the
+// consumer (or c-button-group) has actually given `active` a value — a
+// regular action button must not carry aria-pressed="false".
+const ariaPressed = computed(() =>
+  props.active === undefined ? undefined : String(coerceBoolean(props.active)),
+);
 
 const spinnerSize = computed(() => {
   if (props.size === 'small') return 20;
@@ -547,10 +550,6 @@ const onClick = (event: MouseEvent) => {
   }
 
   if (!props.noRipple) spawnRipple(event);
-
-  if (props.tabs) {
-    emit('tabChange', { element: host, value: tabValue() }, bubbling);
-  }
 };
 
 const onKeydown = (event: KeyboardEvent) => {

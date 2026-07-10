@@ -1,5 +1,7 @@
 <template>
   <div
+    :aria-labelledby="label || hasLabelContent ? labelId : undefined"
+    :aria-required="required || undefined"
     :class="[
       ui.root(),
       {
@@ -7,25 +9,20 @@
         'c-radio-group--error': !valid,
       },
     ]"
-    aria-labelledby="c-radio-group__label"
     class="c-radio-group"
     part="root"
     role="radiogroup"
   >
-    <label
+    <form-label
       v-if="label || hasLabelContent"
-      id="c-radio-group__label"
       :class="ui.label()"
+      :label
+      :label-id
+      :required
       part="label"
     >
-      <span v-if="label">{{ label }}</span>
-
-      <span v-show="!label"><slot /></span>
-
-      <span v-if="required" :class="ui.required()" aria-hidden="true">
-        &nbsp;*
-      </span>
-    </label>
+      <slot />
+    </form-label>
 
     <div :class="ui.items()" part="items">
       <label
@@ -125,6 +122,7 @@ import {
 } from 'vue';
 
 import { emitModelValue } from '../../shared/emitModelValue';
+import FormLabel from '../../shared/FormLabel.vue';
 import { useRipple } from '../../shared/useRipple';
 
 /** Events dispatched by `<c-radio-group>`. */
@@ -168,7 +166,6 @@ const radioGroup = tv({
     {
       class: {
         message: 'text-error',
-        required: 'text-error',
         ripple: 'text-error',
         root: 'text-error',
       },
@@ -198,7 +195,6 @@ const radioGroup = tv({
     radio:
       'flex items-start relative cursor-pointer text-base select-none gap-1 leading-[1.2]',
     radioLabel: 'pt-3',
-    required: 'text-error',
     // 42px circular ripple surface around the radio ring.
     ripple:
       'inline-block relative h-[42px] w-[42px] min-w-[42px] rounded-full overflow-hidden text-primary transition-colors duration-200 ease-in-out',
@@ -391,6 +387,8 @@ const { ripples, spawn } = useRipple({});
 const autoId = useId();
 
 const radioName = computed(() => props.hostId || autoId);
+
+const labelId = `${autoId}-label`;
 
 // Items scanned from slotted <c-radio> children. When present, these take
 // precedence over the `items` prop — matches Stencil behaviour where the

@@ -436,6 +436,26 @@ const columns: CDataTableColumn<User>[] = [
 // "pinned" now means TanStack-style edge-sticky during horizontal scroll.`,
       },
       {
+        filename: 'c-tab-buttons — standalone use moves to c-button-group',
+        lang: 'html',
+        code: `<!-- Before: c-tab-buttons doubled as a standalone segmented value picker. -->
+<c-tab-buttons value="week" mandatory>
+  <c-button value="day">Day</c-button>
+  <c-button value="week">Week</c-button>
+</c-tab-buttons>
+
+<!-- After: same markup on the new c-button-group tag. c-tab-buttons now
+     exists only as the tab-strip adapter inside <c-tabs> (where nothing
+     changes for you). Differences on the new tag:
+     - events are change / update:value / native input — there is no
+       changeValue; deselecting emits null (was '')
+     - new: label + required, and a multiple mode (array value) -->
+<c-button-group value="week" mandatory>
+  <c-button value="day">Day</c-button>
+  <c-button value="week">Week</c-button>
+</c-button-group>`,
+      },
+      {
         filename: 'Other components',
         lang: 'md',
         code: `- c-autocomplete: no longer built on c-dropdown; it renders its own popover

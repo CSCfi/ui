@@ -8,32 +8,51 @@
     {{ statusText }}
   </div>
 
-  <div :class="ui.root()" part="root">
-    <input
-      v-for="i in length"
-      :id="`${resolvedId}--input-${i}`"
-      :key="i"
-      ref="inputsRef"
-      :aria-label="`Enter code - digit number - ${i} of ${length}`"
-      :autofocus="hasAutofocus && i === 1 ? true : undefined"
-      :class="ui.input()"
-      :name="`${resolvedId}--digit-${i}`"
-      autocapitalize="off"
-      autocomplete="off"
-      autocorrect="off"
-      data-1p-ignore=""
-      data-form-type="other"
-      data-lpignore="true"
-      inputmode="numeric"
-      maxlength="1"
-      part="input"
-      spellcheck="false"
-      type="tel"
-      @focus="onFocus(i - 1)"
-      @input="onInput($event as InputEvent)"
-      @keydown="onKeyDown($event as KeyboardEvent)"
-      @paste="i === 1 && onPaste($event as ClipboardEvent)"
-    />
+  <div
+    ref="rootRef"
+    :aria-labelledby="labelVisible ? labelId : undefined"
+    :class="ui.root()"
+    part="root"
+    role="group"
+  >
+    <form-label
+      v-show="labelVisible"
+      :class="ui.label()"
+      :label
+      :label-id
+      :required
+      part="label"
+    >
+      <slot />
+    </form-label>
+
+    <div :class="ui.digits()" part="digits">
+      <input
+        v-for="i in length"
+        :id="`${resolvedId}--input-${i}`"
+        :key="i"
+        ref="inputsRef"
+        :aria-label="`Enter code - digit number - ${i} of ${length}`"
+        :autofocus="hasAutofocus && i === 1 ? true : undefined"
+        :class="ui.input()"
+        :name="`${resolvedId}--digit-${i}`"
+        autocapitalize="off"
+        autocomplete="off"
+        autocorrect="off"
+        data-1p-ignore=""
+        data-form-type="other"
+        data-lpignore="true"
+        inputmode="numeric"
+        maxlength="1"
+        part="input"
+        spellcheck="false"
+        type="tel"
+        @focus="onFocus(i - 1)"
+        @input="onInput($event as InputEvent)"
+        @keydown="onKeyDown($event as KeyboardEvent)"
+        @paste="i === 1 && onPaste($event as ClipboardEvent)"
+      />
+    </div>
 
     <c-message
       :class="ui.message()"
@@ -47,7 +66,11 @@
 
 <script setup lang="ts">
 /**
- * @csspart root - The inline-grid wrapper laying out the digit inputs and the message
+ * @slot default - Fallback content for the group label when the `label` prop is not set
+ *
+ * @csspart root - The wrapper laying out the label, the digit inputs and the message
+ * @csspart label - The group label rendered above the digit inputs
+ * @csspart digits - The inline-grid wrapper around the digit inputs
  * @csspart input - Each single-digit `<input>` box (one per digit)
  */
 import { tv } from 'tailwind-variants';
@@ -61,6 +84,8 @@ import {
   watch,
 } from 'vue';
 
+import FormLabel from '../../shared/FormLabel.vue';
+import { useHasSlot } from '../../shared/useHasSlot';
 import { useHostEmit } from '../../shared/useHostEmit';
 
 /** Events dispatched by `<c-otp-input>`. */
@@ -106,13 +131,16 @@ const otp = tv({
     valid: true,
   },
   slots: {
+    // `display: inline-grid` with a column-per-digit auto track (the
+    // `grid-auto-columns: minmax(auto, 42px)` original).
+    digits:
+      'inline-grid gap-2 grid-flow-col grid-cols-[repeat(var(--_c-otp-input-count),minmax(auto,42px))] [backface-visibility:hidden] [transform:translate3d(0,0,0)]',
     input:
       'rounded-csc-md border-0 text-center w-full min-w-6 max-w-[42px] h-14 text-2xl text-on-surface ring-1 ring-inset ring-border-strong outline-none focus:ring-2 focus:ring-inset focus:ring-primary',
+    label: 'text-left',
     message: '',
-    // `display: inline-grid` with a column-per-digit auto track (the
-    // `grid-auto-columns: minmax(auto, 42px)` original). The c-message spans
-    // the full width via the escape-hatch rule below (dynamic span count).
-    root: 'c-otp-input inline-grid gap-2 mb-2 grid-flow-col grid-cols-[repeat(var(--_c-otp-input-count),minmax(auto,42px))] [backface-visibility:hidden] [transform:translate3d(0,0,0)]',
+    // Column layout stacking the group label, the digit grid and the message.
+    root: 'inline-flex flex-col gap-1 mb-2',
     visuallyHidden:
       'absolute w-px h-px m-[-1px] p-0 overflow-hidden whitespace-nowrap border-0 [clip:rect(0_0_0_0)]',
   },
@@ -156,11 +184,21 @@ interface COtpInputProps {
    */
   hint?: string;
   /**
+   * Label of the input group, shown above the digit inputs
+   *
+   * @freeform
+   */
+  label?: string;
+  /**
    * Length of the OTP code
    *
    * @seeded from csc-ui — verify
    */
   length?: number;
+  /**
+   * Set as required — shows the required marker on the label
+   */
+  required?: boolean;
   /**
    * Set the validíty of the input
    *
@@ -188,7 +226,9 @@ const props = withDefaults(defineProps<COtpInputProps>(), {
   hasAutofocus: false,
   hideDetails: false,
   hint: '',
+  label: '',
   length: 6,
+  required: false,
   valid: true,
   validation: 'Required field',
   value: '',
@@ -201,6 +241,19 @@ const emit = useHostEmit<COtpInputEvents>();
 const autoId = useId();
 
 const resolvedId = computed(() => props.elementId || autoId);
+
+const rootRef = useTemplateRef<HTMLElement>('rootRef');
+
+// Group-label slot fallback (like c-radio-group). The FormLabel is v-show'n —
+// not v-if'd — so the default <slot> always exists and slot detection isn't
+// circular with the label's own visibility.
+const hasSlotContent = useHasSlot(rootRef, '');
+
+const labelVisible = computed(
+  () => Boolean(props.label) || hasSlotContent.value,
+);
+
+const labelId = computed(() => `${resolvedId.value}-label`);
 
 const ui = computed(() =>
   otp({ hideDetails: props.hideDetails, valid: props.valid }),
@@ -381,20 +434,12 @@ watch(
   Escape-hatch CSS (ADR-0007): only constructs Tailwind utilities cannot
   express. The static styling lives in the `tv` config above. What remains:
     - `:host { display: block }` — the host must be a real box so the
-      inline-grid root lays out (the global `:host{display:contents}` would
+      flex-column root lays out (the global `:host{display:contents}` would
       otherwise collapse it); the per-type sheet is adopted after the shared
       sheet, so it wins.
-    - The c-message grid placement: it must span every digit column, but the
-      column count is dynamic (`--_c-otp-input-count`, set imperatively), so
-      `grid-column: 1 / span var(...)` can't be a static utility.
 -->
 <style>
 :host {
   display: block;
-}
-
-.c-otp-input c-message {
-  grid-column: 1 / span var(--_c-otp-input-count);
-  grid-row: 2;
 }
 </style>
