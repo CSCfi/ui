@@ -133,7 +133,7 @@ const sideNavigationItem = tv({
       false: { root: 'hover:bg-nav-surface-hover' },
       true: {
         chevron: 'rotate-90',
-        root: 'bg-nav-active text-on-nav-active ring ring-border',
+        root: 'bg-nav-active text-on-nav-active ring ring-primary',
         subNav: 'h-max',
       },
     },

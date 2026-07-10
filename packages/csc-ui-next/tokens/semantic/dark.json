@@ -72,8 +72,8 @@
 
   "nav-surface": "primary-900",
   "nav-surface-hover": "primary-800",
-  "on-nav": "primary-200",
-  "nav-active": "primary-800",
+  "on-nav": "primary-100",
+  "nav-active": "primary-700",
   "on-nav-active": "white",
 
   "logo-wordmark": "white",
