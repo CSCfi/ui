@@ -6,9 +6,9 @@ row.className = 'example-row';
 const hintMessage = document.createElement('c-message');
 hintMessage.hint = 'Use your organization email address';
 
-const validationMessage = document.createElement('c-message');
-validationMessage.valid = false;
-validationMessage.validation = 'Email is required';
+const errorMessage = document.createElement('c-message');
+errorMessage.valid = false;
+errorMessage.errorMessage = 'Email is required';
 
-row.append(hintMessage, validationMessage);
+row.append(hintMessage, errorMessage);
 document.body.append(row);

@@ -9,7 +9,7 @@ import { Component, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
     <div class="example-row">
       <c-message hint="Use your organization email address"></c-message>
 
-      <c-message [valid]="false" validation="Email is required"></c-message>
+      <c-message [valid]="false" error-message="Email is required"></c-message>
     </div>
   `,
 })

@@ -77,7 +77,7 @@
         part="message"
       >
         <svg
-          v-if="!valid"
+          v-if="showError"
           :class="ui.messageIcon()"
           aria-hidden="true"
           viewBox="0 0 24 24"
@@ -86,10 +86,10 @@
         </svg>
 
         <span :class="ui.visuallyHidden()">
-          {{ !valid ? 'Error: ' : 'Hint: ' }}
+          {{ showError ? 'Error: ' : 'Hint: ' }}
         </span>
 
-        <span>{{ !valid && validation ? validation : hint }}</span>
+        <span>{{ showError ? errorMessage : hint }}</span>
       </span>
     </transition>
   </div>
@@ -165,18 +165,10 @@ const radioGroup = tv({
   compoundVariants: [
     {
       class: {
-        message: 'text-error',
         ripple: 'text-error',
         root: 'text-error',
       },
       disabled: false,
-      error: true,
-    },
-    {
-      class: {
-        message: 'text-error',
-      },
-      disabled: true,
       error: true,
     },
   ],
@@ -184,6 +176,7 @@ const radioGroup = tv({
     disabled: false,
     error: false,
     inline: false,
+    messageError: false,
   },
   slots: {
     input: 'absolute opacity-0 cursor-pointer h-0 w-0',
@@ -232,6 +225,11 @@ const radioGroup = tv({
       // Column layout: items stack with a 2px gap. Inline: row with 12px gap.
       true: { items: 'flex-row gap-3' },
     },
+    // The message line recolours separately from the group: an invalid group
+    // with no `errorMessage` keeps showing its hint AS a hint (neutral).
+    messageError: {
+      true: { message: 'text-error' },
+    },
   },
 });
 
@@ -242,6 +240,12 @@ interface CRadioGroupProps {
    * @seeded from csc-ui — verify
    */
   disabled?: boolean;
+  /**
+   * Error message shown in place of the hint while the group is invalid
+   *
+   * @freeform
+   */
+  errorMessage?: string;
   /**
    * Hide the hint and error messages
    *
@@ -300,13 +304,6 @@ interface CRadioGroupProps {
    */
   valid?: boolean;
   /**
-   * Custom validation message
-   *
-   * @seeded from csc-ui — verify
-   * @freeform
-   */
-  validation?: string;
-  /**
    * Value of the radio group
    *
    * @seeded from csc-ui — verify
@@ -322,6 +319,7 @@ interface RadioItem {
 
 const props = withDefaults(defineProps<CRadioGroupProps>(), {
   disabled: false,
+  errorMessage: '',
   hideDetails: false,
   hint: '',
   hostId: '',
@@ -331,15 +329,17 @@ const props = withDefaults(defineProps<CRadioGroupProps>(), {
   required: false,
   returnObject: false,
   valid: true,
-  validation: 'Required field',
   value: null,
 });
+
+const showError = computed(() => !props.valid && Boolean(props.errorMessage));
 
 const ui = computed(() =>
   radioGroup({
     disabled: props.disabled,
     error: !props.valid,
     inline: props.inline,
+    messageError: showError.value,
   }),
 );
 
@@ -444,12 +444,10 @@ const onKeyDown = (event: KeyboardEvent, item: RadioItem, index: number) => {
   }
 };
 
-const messageVisible = computed(() =>
-  Boolean(props.hint || (!props.valid && props.validation)),
-);
+const messageVisible = computed(() => Boolean(props.hint || showError.value));
 
 const messageKey = computed(() =>
-  !props.valid ? `error:${props.validation}` : `hint:${props.hint}`,
+  showError.value ? `error:${props.errorMessage}` : `hint:${props.hint}`,
 );
 
 const scanChildren = () => {

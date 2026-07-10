@@ -3,6 +3,7 @@
     :active="isActiveForInput"
     :data-hide-details="String(hideDetailsResolved)"
     :disabled
+    :error-message
     :filled="isFilledForInput"
     :hint
     :input-id
@@ -12,7 +13,6 @@
     :required
     :shadow
     :valid
-    :validation
   >
     <!-- Pre slot: forwarded from the consumer's `pre` slot. We only
          render the wrapper when the consumer has actually provided pre
@@ -33,7 +33,9 @@
       :aria-invalid="!valid"
       :autocapitalize="automaticCapitalize || undefined"
       :autocomplete="autocomplete || undefined"
-      :autocorrect="autocorrect === undefined ? undefined : autocorrect ? 'on' : 'off'"
+      :autocorrect="
+        autocorrect === undefined ? undefined : autocorrect ? 'on' : 'off'
+      "
       :class="ui.textarea()"
       :disabled
       :name="name || undefined"
@@ -55,7 +57,9 @@
       :aria-invalid="!valid"
       :autocapitalize="automaticCapitalize || undefined"
       :autocomplete="autocomplete || undefined"
-      :autocorrect="autocorrect === undefined ? undefined : autocorrect ? 'on' : 'off'"
+      :autocorrect="
+        autocorrect === undefined ? undefined : autocorrect ? 'on' : 'off'
+      "
       :class="ui.input()"
       :disabled
       :max="max ?? undefined"
@@ -152,6 +156,12 @@ export interface CTextFieldProps {
    * @seeded from csc-ui — verify
    */
   disabled?: boolean;
+  /**
+   * Error message shown in place of the hint while the input is invalid
+   *
+   * @freeform
+   */
+  errorMessage?: string;
   /**
    * Hide the hint and error messages
    *
@@ -260,25 +270,6 @@ export interface CTextFieldProps {
    */
   valid?: boolean;
   /**
-   * Manual validation
-   *
-   * @seeded from csc-ui — verify
-   */
-  validate?: boolean;
-  /**
-   * Validate the input on blur
-   *
-   * @seeded from csc-ui — verify
-   */
-  validateOnBlur?: boolean;
-  /**
-   * Custom validation message
-   *
-   * @seeded from csc-ui — verify
-   * @freeform
-   */
-  validation?: string;
-  /**
    * Value of the input
    *
    * @seeded from csc-ui — verify
@@ -355,7 +346,7 @@ interface CTextFieldEvents {
 /**
  * c-text-field is a thin orchestrator around <c-input>: it owns the
  * <input>/<textarea> element (so type-specific behaviour like password-toggle
- * and date-picker live here) and passes label / validation / state props to
+ * and date-picker live here) and passes label / error-message / state props to
  * c-input, which renders the outlined Material border + floating-label visuals.
  *
  * Styling lives in this `tailwind-variants` config (ADR-0004). The native
@@ -395,6 +386,7 @@ const props = withDefaults(defineProps<CTextFieldProps>(), {
   autocorrect: undefined,
   automaticCapitalize: undefined,
   disabled: false,
+  errorMessage: '',
   hideDetails: false,
   hint: '',
   hostId: '',
@@ -412,9 +404,6 @@ const props = withDefaults(defineProps<CTextFieldProps>(), {
   trimWhitespace: false,
   type: 'text',
   valid: true,
-  validate: false,
-  validateOnBlur: false,
-  validation: 'Required field',
   value: '',
 });
 

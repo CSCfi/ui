@@ -170,11 +170,13 @@ export interface CAutocompleteElementEventMap {
  * A filterable value-selection component: a readonly value field that opens a
  * popover panel with a search input above the matching options.
  */
-export interface CAutocompleteElement extends Omit<HTMLElement, 'clearable' | 'disabled' | 'filter' | 'hideDetails' | 'hint' | 'hostId' | 'items' | 'itemsPerPage' | 'label' | 'labelOnTop' | 'loading' | 'name' | 'noResultsText' | 'placeholder' | 'required' | 'returnObject' | 'shadow' | 'valid' | 'validate' | 'validateOnBlur' | 'validation' | 'value'> {
+export interface CAutocompleteElement extends Omit<HTMLElement, 'clearable' | 'disabled' | 'errorMessage' | 'filter' | 'hideDetails' | 'hint' | 'hostId' | 'items' | 'itemsPerPage' | 'label' | 'labelOnTop' | 'loading' | 'name' | 'noResultsText' | 'placeholder' | 'required' | 'returnObject' | 'shadow' | 'valid' | 'value'> {
   /** Make the selected value clearable */
   clearable?: boolean;
   /** Disable the input */
   disabled?: boolean;
+  /** Error message shown in place of the hint while the autocomplete is invalid */
+  errorMessage?: string;
   /** Custom filter predicate; receives a normalized option + the query */
   filter?: CAutocompleteFilter;
   /** Hide the hint and error messages */
@@ -199,7 +201,7 @@ export interface CAutocompleteElement extends Omit<HTMLElement, 'clearable' | 'd
   noResultsText?: string;
   /** Placeholder for the in-panel search input */
   placeholder?: string;
-  /** Show required validation */
+  /** Set the autocomplete as required */
   required?: boolean;
   /** Return object instead of value */
   returnObject?: boolean;
@@ -207,12 +209,6 @@ export interface CAutocompleteElement extends Omit<HTMLElement, 'clearable' | 'd
   shadow?: boolean;
   /** Set the validity of the input */
   valid?: boolean;
-  /** Manual validation */
-  validate?: boolean;
-  /** Validate the input on blur */
-  validateOnBlur?: boolean;
-  /** Custom validation message */
-  validation?: string;
   /** Selected value (scalar, or object when return-object is set) */
   value?: CAutocompleteItem | null | number | string;
   /** Reset autocomplete state */
@@ -411,11 +407,13 @@ export interface CCheckboxElementEventMap {
   'update:value': CustomEvent<boolean | number | string>;
 }
 
-export interface CCheckboxElement extends Omit<HTMLElement, 'checked' | 'disabled' | 'falseValue' | 'hideDetails' | 'hint' | 'hostId' | 'hostName' | 'indeterminate' | 'label' | 'required' | 'trueValue' | 'valid' | 'validation' | 'value'> {
+export interface CCheckboxElement extends Omit<HTMLElement, 'checked' | 'disabled' | 'errorMessage' | 'falseValue' | 'hideDetails' | 'hint' | 'hostId' | 'hostName' | 'indeterminate' | 'label' | 'required' | 'trueValue' | 'valid' | 'value'> {
   /** If `true`, the checkbox is selected. */
   checked?: boolean;
   /** Disable the checkbox */
   disabled?: boolean;
+  /** Error message shown in place of the hint while the checkbox is invalid */
+  errorMessage?: string;
   /** The value when the checkbox is unchecked */
   falseValue?: boolean | number | string;
   /** Hide the hint and error messages */
@@ -439,8 +437,6 @@ export interface CCheckboxElement extends Omit<HTMLElement, 'checked' | 'disable
   trueValue?: boolean | number | string;
   /** Set the validity of the input */
   valid?: boolean;
-  /** Custom validation message */
-  validation?: string;
   /**
    * The input value
    * - Only used when the checkbox participates in a native `<form>`
@@ -673,11 +669,13 @@ export interface CIconButtonElement extends Omit<HTMLElement, 'badge' | 'danger'
   text?: boolean;
 }
 
-export interface CInputElement extends Omit<HTMLElement, 'active' | 'disabled' | 'filled' | 'hideDetails' | 'hint' | 'inputId' | 'isTextarea' | 'label' | 'labelOnTop' | 'required' | 'shadow' | 'valid' | 'validation'> {
+export interface CInputElement extends Omit<HTMLElement, 'active' | 'disabled' | 'errorMessage' | 'filled' | 'hideDetails' | 'hint' | 'inputId' | 'isTextarea' | 'label' | 'labelOnTop' | 'required' | 'shadow' | 'valid'> {
   /** Set by the wrapping form component when its input has focus or holds a value. */
   active?: boolean;
   /** Disable the input */
   disabled?: boolean;
+  /** Error message shown in place of the hint while the input is invalid */
+  errorMessage?: string;
   /** Set by the wrapping form component when its input holds a value. */
   filled?: boolean;
   /** Hide the hint and error messages */
@@ -698,8 +696,6 @@ export interface CInputElement extends Omit<HTMLElement, 'active' | 'disabled' |
   shadow?: boolean;
   /** Set the validíty of the input */
   valid?: boolean;
-  /** Custom validation message */
-  validation?: string;
 }
 
 /** Basic hyperlink component */
@@ -876,15 +872,15 @@ export interface CMenuItemElement extends Omit<HTMLElement, 'danger' | 'disabled
 export interface CMenuLabelElement extends HTMLElement {
 }
 
-export interface CMessageElement extends Omit<HTMLElement, 'hint' | 'inputId' | 'valid' | 'validation'> {
+export interface CMessageElement extends Omit<HTMLElement, 'errorMessage' | 'hint' | 'inputId' | 'valid'> {
+  /** Error message shown in place of the hint while the parent is invalid */
+  errorMessage?: string;
   /** Hint text for the input */
   hint?: string;
   /** Id of the related input element */
   inputId?: string;
   /** Parent validíty */
   valid?: boolean;
-  /** Custom validation message */
-  validation?: string;
 }
 
 /** Events dispatched by `<c-modal>`. */
@@ -982,9 +978,11 @@ export interface COtpInputElementEventMap {
   'update:value': CustomEvent<string>;
 }
 
-export interface COtpInputElement extends Omit<HTMLElement, 'elementId' | 'hasAutofocus' | 'hideDetails' | 'hint' | 'label' | 'length' | 'required' | 'valid' | 'validation' | 'value'> {
+export interface COtpInputElement extends Omit<HTMLElement, 'elementId' | 'errorMessage' | 'hasAutofocus' | 'hideDetails' | 'hint' | 'label' | 'length' | 'required' | 'valid' | 'value'> {
   /** Id of the element */
   elementId?: string;
+  /** Error message shown in place of the hint while the input is invalid */
+  errorMessage?: string;
   /** Auto focus */
   hasAutofocus?: boolean;
   /** Hide the hint and error messages */
@@ -999,8 +997,6 @@ export interface COtpInputElement extends Omit<HTMLElement, 'elementId' | 'hasAu
   required?: boolean;
   /** Set the validíty of the input */
   valid?: boolean;
-  /** Custom validation message */
-  validation?: string;
   /** Value of the input */
   value?: string;
   addEventListener<K extends keyof COtpInputElementEventMap>(
@@ -1128,9 +1124,11 @@ export interface CRadioGroupElementEventMap {
   'update:value': CustomEvent<number | RadioItem | string>;
 }
 
-export interface CRadioGroupElement extends Omit<HTMLElement, 'disabled' | 'hideDetails' | 'hint' | 'hostId' | 'inline' | 'items' | 'label' | 'required' | 'returnObject' | 'valid' | 'validation' | 'value'> {
+export interface CRadioGroupElement extends Omit<HTMLElement, 'disabled' | 'errorMessage' | 'hideDetails' | 'hint' | 'hostId' | 'inline' | 'items' | 'label' | 'required' | 'returnObject' | 'valid' | 'value'> {
   /** Disable the radio group */
   disabled?: boolean;
+  /** Error message shown in place of the hint while the group is invalid */
+  errorMessage?: string;
   /** Hide the hint and error messages */
   hideDetails?: boolean;
   /** Hint text for the input */
@@ -1149,8 +1147,6 @@ export interface CRadioGroupElement extends Omit<HTMLElement, 'disabled' | 'hide
   returnObject?: boolean;
   /** Set the validity of the input */
   valid?: boolean;
-  /** Custom validation message */
-  validation?: string;
   /** Value of the radio group */
   value?: null | number | RadioItem | string;
   addEventListener<K extends keyof CRadioGroupElementEventMap>(
@@ -1207,11 +1203,13 @@ export interface CSelectElementEventMap {
   'update:value': CustomEvent<CSelectItem | null | number | string>;
 }
 
-export interface CSelectElement extends Omit<HTMLElement, 'clearable' | 'disabled' | 'hideDetails' | 'hint' | 'hostId' | 'items' | 'itemsPerPage' | 'label' | 'labelOnTop' | 'loading' | 'name' | 'optionAsSelection' | 'placeholder' | 'required' | 'returnObject' | 'shadow' | 'valid' | 'validate' | 'validateOnBlur' | 'validation' | 'value'> {
+export interface CSelectElement extends Omit<HTMLElement, 'clearable' | 'disabled' | 'errorMessage' | 'hideDetails' | 'hint' | 'hostId' | 'items' | 'itemsPerPage' | 'label' | 'labelOnTop' | 'loading' | 'name' | 'optionAsSelection' | 'placeholder' | 'required' | 'returnObject' | 'shadow' | 'valid' | 'value'> {
   /** Make the selected value clearable */
   clearable?: boolean;
   /** Disable the input */
   disabled?: boolean;
+  /** Error message shown in place of the hint while the select is invalid */
+  errorMessage?: string;
   /** Hide the hint and error messages */
   hideDetails?: boolean;
   /** Hint text for the input */
@@ -1234,7 +1232,7 @@ export interface CSelectElement extends Omit<HTMLElement, 'clearable' | 'disable
   optionAsSelection?: boolean;
   /** Placeholder text */
   placeholder?: string;
-  /** Show required validation */
+  /** Set the select as required */
   required?: boolean;
   /** Return object instead of value */
   returnObject?: boolean;
@@ -1242,12 +1240,6 @@ export interface CSelectElement extends Omit<HTMLElement, 'clearable' | 'disable
   shadow?: boolean;
   /** Set the validity of the input */
   valid?: boolean;
-  /** Manual validation */
-  validate?: boolean;
-  /** Validate the input on blur */
-  validateOnBlur?: boolean;
-  /** Custom validation message */
-  validation?: string;
   /** Selected value (scalar, or object when return-object is set) */
   value?: CSelectItem | null | number | string;
   /** Reset select state */
@@ -1917,7 +1909,7 @@ export interface CTextFieldElementEventMap {
   'update:value': CustomEvent<string>;
 }
 
-export interface CTextFieldElement extends Omit<HTMLElement, 'autocomplete' | 'autocorrect' | 'automaticCapitalize' | 'disabled' | 'hideDetails' | 'hint' | 'hostId' | 'label' | 'labelOnTop' | 'max' | 'min' | 'name' | 'placeholder' | 'readonly' | 'required' | 'rows' | 'shadow' | 'step' | 'trimWhitespace' | 'type' | 'valid' | 'validate' | 'validateOnBlur' | 'validation' | 'value'> {
+export interface CTextFieldElement extends Omit<HTMLElement, 'autocomplete' | 'autocorrect' | 'automaticCapitalize' | 'disabled' | 'errorMessage' | 'hideDetails' | 'hint' | 'hostId' | 'label' | 'labelOnTop' | 'max' | 'min' | 'name' | 'placeholder' | 'readonly' | 'required' | 'rows' | 'shadow' | 'step' | 'trimWhitespace' | 'type' | 'valid' | 'value'> {
   /** HTML input autocomplete */
   autocomplete?: string;
   /**
@@ -1931,6 +1923,8 @@ export interface CTextFieldElement extends Omit<HTMLElement, 'autocomplete' | 'a
   automaticCapitalize?: 'characters' | 'none' | 'off' | 'on' | 'sentences' | 'words';
   /** Disable the input */
   disabled?: boolean;
+  /** Error message shown in place of the hint while the input is invalid */
+  errorMessage?: string;
   /** Hide the hint and error messages */
   hideDetails?: boolean;
   /** Hint text for the input */
@@ -1965,12 +1959,6 @@ export interface CTextFieldElement extends Omit<HTMLElement, 'autocomplete' | 'a
   type?: 'date' | 'email' | 'number' | 'password' | 'search' | 'tel' | 'text' | 'url';
   /** Set the validity of the input */
   valid?: boolean;
-  /** Manual validation */
-  validate?: boolean;
-  /** Validate the input on blur */
-  validateOnBlur?: boolean;
-  /** Custom validation message */
-  validation?: string;
   /** Value of the input */
   value?: string;
   addEventListener<K extends keyof CTextFieldElementEventMap>(

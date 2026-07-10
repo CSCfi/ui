@@ -1,14 +1,14 @@
 <template>
   <transition mode="out-in" name="c-message">
     <div v-if="visible" :key="messageKey" :class="ui.root()" part="root">
-      <span v-if="!valid" :class="ui.line()">
+      <span v-if="showError" :class="ui.line()">
         <svg :class="ui.icon()" aria-hidden="true" viewBox="0 0 24 24">
           <path :d="errorIconPath" />
         </svg>
 
         <span :class="ui.visuallyHidden()">Error:</span>
 
-        <span>{{ validation }}</span>
+        <span>{{ errorMessage }}</span>
       </span>
 
       <span v-else :class="ui.line()">
@@ -22,7 +22,7 @@
 
 <script setup lang="ts">
 /**
- * @csspart root - The message row showing the hint or validation error text
+ * @csspart root - The message row showing the hint or error message text
  */
 import { mdiCloseCircle } from '@mdi/js';
 import { tv } from 'tailwind-variants';
@@ -32,12 +32,13 @@ import { computed } from 'vue';
  * Styling lives in this `tailwind-variants` config (ADR-0004). The old
  * `--_c-message-*` indirection vars are dropped: the hint colour maps to the
  * muted on-surface token and the error colour to the error status role, selected
- * by the `valid` variant (ADR-0010). Consumer customization is via `::part()`
- * (ADR-0006).
+ * by the `error` variant (ADR-0010) — keyed on an error message actually being
+ * shown, not on `valid` alone, so an invalid parent with no message keeps its
+ * hint neutral. Consumer customization is via `::part()` (ADR-0006).
  */
 const message = tv({
   defaultVariants: {
-    valid: true,
+    error: false,
   },
   slots: {
     icon: 'fill-current size-4 relative -top-0.5 shrink-0',
@@ -48,14 +49,20 @@ const message = tv({
       'absolute w-px h-px m-[-1px] p-0 overflow-hidden whitespace-nowrap border-0 [clip:rect(0_0_0_0)]',
   },
   variants: {
-    valid: {
-      false: { root: 'text-error' },
-      true: { root: 'text-on-surface-muted' },
+    error: {
+      false: { root: 'text-on-surface-muted' },
+      true: { root: 'text-error' },
     },
   },
 });
 
 interface CMessageProps {
+  /**
+   * Error message shown in place of the hint while the parent is invalid
+   *
+   * @freeform
+   */
+  errorMessage?: string;
   /**
    * Hint text for the input
    *
@@ -76,32 +83,25 @@ interface CMessageProps {
    * @seeded from csc-ui — verify
    */
   valid?: boolean;
-  /**
-   * Custom validation message
-   *
-   * @seeded from csc-ui — verify
-   * @freeform
-   */
-  validation?: string;
 }
 
 const props = withDefaults(defineProps<CMessageProps>(), {
+  errorMessage: '',
   hint: '',
   inputId: '',
   valid: true,
-  validation: 'Required field',
 });
 
-const ui = computed(() => message({ valid: props.valid }));
+const showError = computed(() => !props.valid && Boolean(props.errorMessage));
+
+const ui = computed(() => message({ error: showError.value }));
 
 const errorIconPath = mdiCloseCircle;
 
-const visible = computed(() =>
-  Boolean(props.hint || (!props.valid && props.validation)),
-);
+const visible = computed(() => Boolean(props.hint || showError.value));
 
 const messageKey = computed(() =>
-  !props.valid ? `error:${props.validation}` : `hint:${props.hint}`,
+  showError.value ? `error:${props.errorMessage}` : `hint:${props.hint}`,
 );
 </script>
 

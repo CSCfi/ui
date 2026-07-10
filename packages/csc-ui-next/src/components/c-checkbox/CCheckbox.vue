@@ -79,7 +79,7 @@
         part="message"
       >
         <svg
-          v-if="!valid"
+          v-if="showError"
           :class="ui.messageIcon()"
           aria-hidden="true"
           viewBox="0 0 24 24"
@@ -88,10 +88,10 @@
         </svg>
 
         <span :class="ui.visuallyHidden()">
-          {{ !valid ? 'Error: ' : 'Hint: ' }}
+          {{ showError ? 'Error: ' : 'Hint: ' }}
         </span>
 
-        <span>{{ !valid && validation ? validation : hint }}</span>
+        <span>{{ showError ? errorMessage : hint }}</span>
       </span>
     </transition>
   </div>
@@ -105,7 +105,7 @@
  * @csspart label - The `<label>` element wrapping the indicator and the label content
  * @csspart indicator - The circular ripple surface holding the checkbox box and checkmark
  * @csspart content - Wrapper around the label text or slotted label content
- * @csspart message - The hint / validation message line below the checkbox
+ * @csspart message - The hint / error message line below the checkbox
  *
  * @seeded from csc-ui — verify
  */
@@ -167,19 +167,11 @@ const checkbox = tv({
     // base text colour). Ordered after `disabled` so error wins for the box.
     {
       class: {
-        message: 'text-error',
         ripple: 'before:border-error',
         rippleEffect: 'bg-error',
         root: 'text-error',
       },
       disabled: false,
-      error: true,
-    },
-    {
-      class: {
-        message: 'text-error',
-      },
-      disabled: true,
       error: true,
     },
     {
@@ -193,6 +185,7 @@ const checkbox = tv({
   defaultVariants: {
     disabled: false,
     error: false,
+    messageError: false,
   },
   slots: {
     // Visually hidden but keyboard/screen-reader accessible — standard pattern
@@ -236,6 +229,11 @@ const checkbox = tv({
       false: {},
       true: {},
     },
+    // The message line recolours separately from the box: an invalid checkbox
+    // with no `errorMessage` keeps showing its hint AS a hint (neutral).
+    messageError: {
+      true: { message: 'text-error' },
+    },
   },
 });
 
@@ -254,6 +252,12 @@ interface CCheckboxProps {
    * @seeded from csc-ui — verify
    */
   disabled?: boolean;
+  /**
+   * Error message shown in place of the hint while the checkbox is invalid
+   *
+   * @freeform
+   */
+  errorMessage?: string;
   /**
    * The value when the checkbox is unchecked
    *
@@ -320,13 +324,6 @@ interface CCheckboxProps {
    */
   valid?: boolean;
   /**
-   * Custom validation message
-   *
-   * @seeded from csc-ui — verify
-   * @freeform
-   */
-  validation?: string;
-  /**
    * The input value
    * - Only used when the checkbox participates in a native `<form>`
    *
@@ -338,6 +335,7 @@ interface CCheckboxProps {
 const props = withDefaults(defineProps<CCheckboxProps>(), {
   checked: false,
   disabled: false,
+  errorMessage: '',
   falseValue: false,
   hideDetails: false,
   hint: '',
@@ -348,14 +346,16 @@ const props = withDefaults(defineProps<CCheckboxProps>(), {
   required: false,
   trueValue: true,
   valid: true,
-  validation: 'Required field',
   value: false,
 });
+
+const showError = computed(() => !props.valid && Boolean(props.errorMessage));
 
 const ui = computed(() =>
   checkbox({
     disabled: props.disabled,
     error: !props.valid,
+    messageError: showError.value,
   }),
 );
 
@@ -391,12 +391,10 @@ const inputId = computed(() => props.hostId || autoId);
 // The Transition's `:key` swaps the element when message identity
 // changes (hint↔error or text changes), triggering the slide animation.
 const messageKey = computed(() =>
-  !props.valid ? `error:${props.validation}` : `hint:${props.hint}`,
+  showError.value ? `error:${props.errorMessage}` : `hint:${props.hint}`,
 );
 
-const messageVisible = computed(() =>
-  Boolean(props.hint || (!props.valid && props.validation)),
-);
+const messageVisible = computed(() => Boolean(props.hint || showError.value));
 
 const internalChecked = ref(props.checked || props.value === props.trueValue);
 

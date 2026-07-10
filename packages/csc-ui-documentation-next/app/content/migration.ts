@@ -456,6 +456,21 @@ const columns: CDataTableColumn<User>[] = [
 </c-button-group>`,
       },
       {
+        filename: 'Form controls — validation → error-message',
+        lang: 'html',
+        code: `<!-- Before: every form control had validation (default 'Required field')
+     shown while valid was false, plus inert validate / validate-on-blur. -->
+<c-text-field label="Email" validation="Email is required"></c-text-field>
+
+<!-- After: the prop is error-message (errorMessage in React / as a DOM
+     property) on c-text-field, c-select, c-autocomplete, c-checkbox,
+     c-radio-group, c-otp-input and c-message. There is NO default text:
+     an invalid control without an error-message keeps showing its hint,
+     styled as a hint. validate and validate-on-blur are removed — they
+     were never wired to anything; validation logic stays in your app. -->
+<c-text-field label="Email" error-message="Email is required"></c-text-field>`,
+      },
+      {
         filename: 'Other components',
         lang: 'md',
         code: `- c-autocomplete: no longer built on c-dropdown; it renders its own popover

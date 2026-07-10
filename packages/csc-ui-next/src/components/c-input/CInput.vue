@@ -74,7 +74,7 @@
             :class="ui.messageLine()"
           >
             <svg
-              v-if="!valid"
+              v-if="showError"
               :class="ui.messageIcon()"
               aria-hidden="true"
               viewBox="0 0 24 24"
@@ -83,10 +83,10 @@
             </svg>
 
             <span :class="ui.visuallyHidden()">
-              {{ !valid ? 'Error: ' : 'Hint: ' }}
+              {{ showError ? 'Error: ' : 'Hint: ' }}
             </span>
 
-            <span>{{ !valid && validation ? validation : hint }}</span>
+            <span>{{ showError ? errorMessage : hint }}</span>
           </span>
         </transition>
       </div>
@@ -104,7 +104,7 @@
  * @csspart label - The label element — the on-top label or the floating in-field label, depending on `labelOnTop`
  * @csspart pre - Wrapper around the `pre` slot content
  * @csspart post - Wrapper around the `post` slot content
- * @csspart message - The hint / validation message area below the field
+ * @csspart message - The hint / error message area below the field
  */
 import { mdiCloseCircle } from '@mdi/js';
 import { tv } from 'tailwind-variants';
@@ -158,6 +158,7 @@ const input = tv({
     disabled: false,
     error: false,
     labelOnTop: false,
+    messageError: false,
     shadow: false,
     textarea: false,
   },
@@ -222,12 +223,18 @@ const input = tv({
     error: {
       true: {
         fieldset: 'border-error',
-        message: 'text-error',
         root: 'text-error',
       },
     },
     labelOnTop: {
       true: { message: 'px-0', root: 'gap-1' },
+    },
+    // The message row recolours separately from the field: an invalid field
+    // with no `errorMessage` keeps showing its hint AS a hint (neutral).
+    messageError: {
+      true: {
+        message: 'text-error',
+      },
     },
     // Shadow style: the slot becomes a white, drop-shadowed box that draws a
     // primary outline on focus instead of the fieldset notch (the fieldset
@@ -252,6 +259,12 @@ interface CInputProps {
    * @seeded from csc-ui — verify
    */
   disabled?: boolean;
+  /**
+   * Error message shown in place of the hint while the input is invalid
+   *
+   * @freeform
+   */
+  errorMessage?: string;
   /** Set by the wrapping form component when its input holds a value. */
   filled?: boolean;
   /**
@@ -306,18 +319,12 @@ interface CInputProps {
    * @seeded from csc-ui — verify
    */
   valid?: boolean;
-  /**
-   * Custom validation message
-   *
-   * @seeded from csc-ui — verify
-   * @freeform
-   */
-  validation?: string;
 }
 
 const props = withDefaults(defineProps<CInputProps>(), {
   active: false,
   disabled: false,
+  errorMessage: '',
   filled: false,
   hideDetails: false,
   hint: '',
@@ -328,7 +335,6 @@ const props = withDefaults(defineProps<CInputProps>(), {
   required: false,
   shadow: false,
   valid: true,
-  validation: 'Required field',
 });
 
 const errorIconPath = mdiCloseCircle;
@@ -370,12 +376,15 @@ const isFocused = ref(false);
 
 const isActiveResolved = computed(() => props.active || isFocused.value);
 
+const showError = computed(() => !props.valid && Boolean(props.errorMessage));
+
 const ui = computed(() =>
   input({
     active: isActiveResolved.value,
     disabled: props.disabled,
     error: !props.valid,
     labelOnTop: props.labelOnTop,
+    messageError: showError.value,
     shadow: props.shadow,
     textarea: props.isTextarea,
   }),
@@ -437,12 +446,10 @@ const measurePreSlot = () => {
 };
 
 const messageKey = computed(() =>
-  !props.valid ? `error:${props.validation}` : `hint:${props.hint}`,
+  showError.value ? `error:${props.errorMessage}` : `hint:${props.hint}`,
 );
 
-const messageVisible = computed(() =>
-  Boolean(props.hint || (!props.valid && props.validation)),
-);
+const messageVisible = computed(() => Boolean(props.hint || showError.value));
 
 let labelObserver: null | ResizeObserver = null;
 

@@ -13,6 +13,7 @@
       :active="isOpen"
       :data-hide-details="String(hideDetailsResolved)"
       :disabled
+      :error-message
       :filled="!!value"
       :hint
       :input-id
@@ -21,7 +22,6 @@
       :required
       :shadow
       :valid
-      :validation
       @click="onFieldClick"
     >
       <span v-if="hasConsumerPre" slot="pre" style="display: contents">
@@ -219,6 +219,12 @@ export interface CAutocompleteProps {
   clearable?: boolean;
   /** Disable the input */
   disabled?: boolean;
+  /**
+   * Error message shown in place of the hint while the autocomplete is invalid
+   *
+   * @freeform
+   */
+  errorMessage?: string;
   /** Custom filter predicate; receives a normalized option + the query */
   filter?: CAutocompleteFilter;
   /** Hide the hint and error messages */
@@ -267,7 +273,7 @@ export interface CAutocompleteProps {
    * @freeform
    */
   placeholder?: string;
-  /** Show required validation */
+  /** Set the autocomplete as required */
   required?: boolean;
   /** Return object instead of value */
   returnObject?: boolean;
@@ -275,16 +281,6 @@ export interface CAutocompleteProps {
   shadow?: boolean;
   /** Set the validity of the input */
   valid?: boolean;
-  /** Manual validation */
-  validate?: boolean;
-  /** Validate the input on blur */
-  validateOnBlur?: boolean;
-  /**
-   * Custom validation message
-   *
-   * @freeform
-   */
-  validation?: string;
   /** Selected value (scalar, or object when return-object is set) */
   value?: CAutocompleteItem | null | number | string;
 }
@@ -418,6 +414,7 @@ type NormalizedOption = {
 const props = withDefaults(defineProps<CAutocompleteProps>(), {
   clearable: false,
   disabled: false,
+  errorMessage: '',
   filter: undefined,
   hideDetails: false,
   hint: '',
@@ -434,9 +431,6 @@ const props = withDefaults(defineProps<CAutocompleteProps>(), {
   returnObject: false,
   shadow: false,
   valid: true,
-  validate: false,
-  validateOnBlur: false,
-  validation: 'Required field',
   value: null,
 });
 

@@ -165,6 +165,14 @@ _Avoid_: Mandatory (see below), obligatory
 A selection-behavior rule on the *control*: the selection can never become empty — the active choice (or, with `multiple`, the last active button) cannot be toggled off. Says nothing about whether the form demands an answer — a button group can be mandatory yet not **required**, or vice versa. Not a tab concept: tabs forbid deselection inherently, so `c-tab-buttons` has no such prop.
 _Avoid_: Required (the form-demand concept), forced
 
+**Hint**:
+Neutral helper text under a form control, present regardless of validity. It describes how to answer, not what went wrong. When the control is invalid but no **error message** is supplied, the hint keeps rendering *as a hint* — it never inherits error presentation.
+_Avoid_: Helper text, description
+
+**Error message**:
+Consumer-supplied text explaining why a control is invalid, shown in place of the **hint** while the control is invalid. The component only *displays* it — validation itself (deciding validity, choosing the wording) is the consumer's job, which is why the prop is named for the message, not the process. Has no default: an invalid control without one shows error styling on the field but keeps its hint.
+_Avoid_: Validation (the Stencil-era prop name; validation is the consumer's activity, not this text), validation message
+
 ### Data table (`csc-ui-next`)
 
 **Column**:

@@ -56,10 +56,10 @@
 
     <c-message
       :class="ui.message()"
+      :error-message
       :hint
       :input-id="elementId"
       :valid
-      :validation
     />
   </div>
 </template>
@@ -165,6 +165,12 @@ interface COtpInputProps {
    */
   elementId?: string;
   /**
+   * Error message shown in place of the hint while the input is invalid
+   *
+   * @freeform
+   */
+  errorMessage?: string;
+  /**
    * Auto focus
    *
    * @seeded from csc-ui — verify
@@ -206,13 +212,6 @@ interface COtpInputProps {
    */
   valid?: boolean;
   /**
-   * Custom validation message
-   *
-   * @seeded from csc-ui — verify
-   * @freeform
-   */
-  validation?: string;
-  /**
    * Value of the input
    *
    * @seeded from csc-ui — verify
@@ -223,6 +222,7 @@ interface COtpInputProps {
 
 const props = withDefaults(defineProps<COtpInputProps>(), {
   elementId: '',
+  errorMessage: '',
   hasAutofocus: false,
   hideDetails: false,
   hint: '',
@@ -230,7 +230,6 @@ const props = withDefaults(defineProps<COtpInputProps>(), {
   length: 6,
   required: false,
   valid: true,
-  validation: 'Required field',
   value: '',
 });
 
@@ -284,7 +283,8 @@ const updateStatusText = () => {
       .map((i) => i?.value ?? '')
       .join('');
 
-    let text = props.valid ? '' : `Error: ${props.validation} `;
+    let text =
+      !props.valid && props.errorMessage ? `Error: ${props.errorMessage} ` : '';
     text += `Currently entered - ${
       !value.length ? 'nothing' : value.split('').join(' - ')
     }`;
@@ -406,7 +406,7 @@ const reset = () => {
   emitValue();
 };
 
-watch(() => props.validation, updateStatusText);
+watch(() => props.errorMessage, updateStatusText);
 watch(
   () => props.value,
   (v) => {

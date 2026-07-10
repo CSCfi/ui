@@ -15,6 +15,7 @@
       :active="dropdownVisible"
       :data-hide-details="String(hideDetailsResolved)"
       :disabled
+      :error-message
       :filled="!!value"
       :hint
       :input-id
@@ -23,7 +24,6 @@
       :required
       :shadow
       :valid
-      :validation
       @click="onInputClick"
     >
       <span v-if="hasConsumerPre" slot="pre" style="display: contents">
@@ -212,6 +212,12 @@ interface CSelectProps {
   clearable?: boolean;
   /** Disable the input */
   disabled?: boolean;
+  /**
+   * Error message shown in place of the hint while the select is invalid
+   *
+   * @freeform
+   */
+  errorMessage?: string;
   /** Hide the hint and error messages */
   hideDetails?: boolean;
   /**
@@ -254,7 +260,7 @@ interface CSelectProps {
    * @freeform
    */
   placeholder?: string;
-  /** Show required validation */
+  /** Set the select as required */
   required?: boolean;
   /** Return object instead of value */
   returnObject?: boolean;
@@ -262,16 +268,6 @@ interface CSelectProps {
   shadow?: boolean;
   /** Set the validity of the input */
   valid?: boolean;
-  /** Manual validation */
-  validate?: boolean;
-  /** Validate the input on blur */
-  validateOnBlur?: boolean;
-  /**
-   * Custom validation message
-   *
-   * @freeform
-   */
-  validation?: string;
   /** Selected value (scalar, or object when return-object is set) */
   value?: CSelectItem | null | number | string;
 }
@@ -279,6 +275,7 @@ interface CSelectProps {
 const props = withDefaults(defineProps<CSelectProps>(), {
   clearable: false,
   disabled: false,
+  errorMessage: '',
   hideDetails: false,
   hint: '',
   hostId: '',
@@ -294,9 +291,6 @@ const props = withDefaults(defineProps<CSelectProps>(), {
   returnObject: false,
   shadow: false,
   valid: true,
-  validate: false,
-  validateOnBlur: false,
-  validation: 'Required field',
   value: null,
 });
 
