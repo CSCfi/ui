@@ -475,7 +475,7 @@ export interface CDataTableTexts {
  * @slot caption - Table caption, rendered into the native `<caption>` element
  * @slot empty - Empty-state content shown when there are no rows
  *
- * @csspart root - The outer wrapper carrying the table border box
+ * @csspart root - The outer wrapper around the table and pagination
  * @csspart banner - The two-step select-all banner
  * @csspart viewport - The scroll container around the table
  * @csspart table - The `<table>` element
@@ -600,8 +600,8 @@ const ui = tv({
   slots: {
     banner:
       'flex min-h-10 items-center gap-3 border-b border-border bg-primary-subtle px-3 py-1 text-sm text-on-primary-subtle',
-    pagination: 'flex min-h-12 items-center border-t border-border px-2',
-    root: 'relative box-border block w-full max-w-full border border-border bg-surface text-base text-on-surface',
+    pagination: 'flex min-h-12 items-center px-2',
+    root: 'relative box-border block w-full max-w-full bg-surface text-base text-on-surface',
     viewport: 'max-w-full overflow-auto',
   },
 })();
@@ -995,6 +995,18 @@ const toggleExpanded = (id: string) => {
   emit('change:expanded', [...expandedIds.value]);
 };
 
+// Growing the table can empty the expansion panels: once autohide reveals
+// every column (and there is no expandedContent), the expander column is
+// gone, so an expanded row would keep its ring and an empty panel with no
+// way to close them. Reset the expansion state instead — and notify, so an
+// expanded-controlling consumer stays in sync.
+watch(expanderOn, (on) => {
+  if (!on && expandedIds.value.length) {
+    expandedIds.value = [];
+    emit('change:expanded', []);
+  }
+});
+
 const onRowClick = (row: Row<CDataTableRow>, event: MouseEvent) => {
   if (!expanderOn.value) return;
 
@@ -1242,10 +1254,18 @@ watch([() => props.columns, () => props.data, autohideOn, selectionOn], () => {
   - `border-collapse: separate` — collapse breaks `position: sticky` on
     header cells.
   - Row borders and selection/expansion rings live on the CELLS (segmented
-    across first/last-child), not the `<tr>`: every cell paints an opaque
-    row background (the custom-property indirection below) so sticky pinned
-    cells cover scrolled-under content, and an opaque cell background would
+    across first/last-child), not the `<tr>`: an opaque cell background would
     hide any `<tr>`-level box-shadow.
+
+  The table outline is segmented onto the cells the same way: first/last-column
+  body cells paint the left/right rails and the last row the bottom edge, while
+  header cells paint none of them — so the header row has no top/left/right
+  border and the outline visually starts at its bottom edge (matching the
+  Stencil original, where the thead background covered the table's inset
+  outline). A whole-table inset shadow cannot work here because every cell is
+  opaque. Bonus over the original: pinned-left/right columns render as
+  first/last cells, so the rails ride the viewport edges during horizontal
+  scroll.
 -->
 <style>
 :host {
@@ -1423,12 +1443,78 @@ table.c-data-table td.sorted {
   );
 }
 
-/* Row borders and rings are painted per-cell (see the block comment above).
-   Every body cell carries the 1px top border; the ring layers of the
-   selected/expanded states are added on top, segmented so the first cell
-   paints the left edge and the last cell the right edge. */
+/* Row borders, the table outline and the rings are painted per-cell (see the
+   block comment above). Every body cell carries the 1px top border; the
+   first/last cells add the outline's left/right rails, the last row its
+   bottom edge, and the ring layers of the selected/expanded states are
+   segmented the same way. Header cells paint no outline segments — the
+   header row "floats" with no top/left/right border. */
+/* Every structural pseudo-class is wrapped in `:where()` so ALL of these
+   rules stay at (0,0,3) — the same specificity as the base separator rule —
+   and later source order picks the right one per position. Any state rule
+   below (selected / expanded / expansion, all ≥ (0,1,3)) therefore always
+   wins over the structural outline and repaints its own edges. */
 table.c-data-table tbody td {
   box-shadow: inset 0 1px 0 0 var(--c-border);
+}
+
+table.c-data-table tbody td:where(:first-child) {
+  box-shadow:
+    inset 1px 0 0 0 var(--c-border),
+    inset 0 1px 0 0 var(--c-border);
+}
+
+table.c-data-table tbody td:where(:last-child) {
+  box-shadow:
+    inset -1px 0 0 0 var(--c-border),
+    inset 0 1px 0 0 var(--c-border);
+}
+
+/* Full-span cells (the empty row) carry both rails. */
+table.c-data-table tbody td:where(:first-child):where(:last-child) {
+  box-shadow:
+    inset 1px 0 0 0 var(--c-border),
+    inset -1px 0 0 0 var(--c-border),
+    inset 0 1px 0 0 var(--c-border);
+}
+
+/* The bottom edge lives on the last row — only when the tbody is the table's
+   last row group (with a tfoot, the footer paints it instead). */
+table.c-data-table tbody:where(:last-child) tr:where(:last-child) td {
+  box-shadow:
+    inset 0 1px 0 0 var(--c-border),
+    inset 0 -1px 0 0 var(--c-border);
+}
+
+table.c-data-table
+  tbody:where(:last-child)
+  tr:where(:last-child)
+  td:where(:first-child) {
+  box-shadow:
+    inset 1px 0 0 0 var(--c-border),
+    inset 0 1px 0 0 var(--c-border),
+    inset 0 -1px 0 0 var(--c-border);
+}
+
+table.c-data-table
+  tbody:where(:last-child)
+  tr:where(:last-child)
+  td:where(:last-child) {
+  box-shadow:
+    inset -1px 0 0 0 var(--c-border),
+    inset 0 1px 0 0 var(--c-border),
+    inset 0 -1px 0 0 var(--c-border);
+}
+
+table.c-data-table
+  tbody:where(:last-child)
+  tr:where(:last-child)
+  td:where(:first-child):where(:last-child) {
+  box-shadow:
+    inset 1px 0 0 0 var(--c-border),
+    inset -1px 0 0 0 var(--c-border),
+    inset 0 1px 0 0 var(--c-border),
+    inset 0 -1px 0 0 var(--c-border);
 }
 
 table.c-data-table tbody tr.interactive {
@@ -1448,6 +1534,17 @@ table.c-data-table tbody tr.selected td:first-child {
   box-shadow:
     inset 4px 0 0 var(--c-primary),
     inset 0 1px 0 0 var(--c-border);
+}
+
+/* A selected LAST row keeps the outline's bottom edge under its accent cell. */
+table.c-data-table
+  tbody:where(:last-child)
+  tr.selected:where(:last-child)
+  td:first-child {
+  box-shadow:
+    inset 4px 0 0 var(--c-primary),
+    inset 0 1px 0 0 var(--c-border),
+    inset 0 -1px 0 0 var(--c-border);
 }
 
 /* Expanded: 2px ring on the top + sides (the expansion row closes it). */
@@ -1548,8 +1645,26 @@ table.c-data-table tr.empty-row td > div.cell {
 
 /* --------------------------------------------------------------- footer -- */
 
+/* The footer row closes the outline: it paints the bottom edge and its
+   first/last cells the rails (the tbody stops painting them — see above). */
 table.c-data-table tfoot td {
-  box-shadow: inset 0 1px 0 0 var(--c-border);
+  box-shadow:
+    inset 0 1px 0 0 var(--c-border),
+    inset 0 -1px 0 0 var(--c-border);
+}
+
+table.c-data-table tfoot td:first-child {
+  box-shadow:
+    inset 1px 0 0 0 var(--c-border),
+    inset 0 1px 0 0 var(--c-border),
+    inset 0 -1px 0 0 var(--c-border);
+}
+
+table.c-data-table tfoot td:last-child {
+  box-shadow:
+    inset -1px 0 0 0 var(--c-border),
+    inset 0 1px 0 0 var(--c-border),
+    inset 0 -1px 0 0 var(--c-border);
 }
 
 table.c-data-table tfoot td > div.cell {
