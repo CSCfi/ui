@@ -22,7 +22,6 @@
   - CTable
 - Provide the HTML in the TypeScript examples and wire the usage to the template
   - Do not create the HTML with `document.createElement` calls
-- CDataTable header should not have a border
 
 ## Missing features
 1. ~~Documentation-wide flavor selection: Vue | React | Angular | Typescript~~
