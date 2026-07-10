@@ -68,7 +68,7 @@
 <script setup lang="ts">
 import type { DocExample, ExampleTab } from '~/composables/useExamples';
 
-const { example, html } = defineProps<{
+const { example, html = {} } = defineProps<{
   example: DocExample;
   // flavor id -> pre-highlighted HTML, keyed as produced on the page
   html?: Record<string, string>;
