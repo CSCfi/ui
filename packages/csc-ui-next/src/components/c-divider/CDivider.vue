@@ -30,7 +30,11 @@ const divider = tv({
   variants: {
     vertical: {
       false: 'block w-full h-px my-1',
-      true: 'inline-block self-stretch w-px min-h-[1em] h-full mx-1 align-middle',
+      // No explicit height: `self-stretch` only applies when the cross size
+      // is `auto` (a non-auto height makes flex fall back to start
+      // alignment); `min-h-[1em]` is the floor for inline flow, where
+      // stretching is inert.
+      true: 'inline-block self-stretch w-px min-h-[1em] mx-1 align-middle',
     },
   },
 });
