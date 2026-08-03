@@ -172,8 +172,16 @@ const input = tv({
     // underscored runtime var `--_c-input-label-position`, which a Tailwind
     // arbitrary value mangles (the leading `_` becomes a space). Only
     // transform-origin + the transition stay here as utilities.
+    //
+    // No fixed height / leading: the box must equal text-base's own line box
+    // (24px). A `leading-5` before `text-base` is silently dropped by
+    // tailwind-merge (font-size utilities set line-height in v4), and a 20px
+    // box under a 24px line box clips descenders. `overflow-x-clip` (not
+    // `overflow-hidden`) keeps the ellipsis, which only needs inline-axis
+    // clipping, while leaving the y axis visible so tall-metric fonts (Noto
+    // Sans' content area is ~1.36em) can never lose descender ink.
     labelFloating:
-      'c-input__label--floating absolute top-3 left-0 right-auto h-5 leading-5 text-base max-w-[90%] overflow-hidden text-ellipsis whitespace-nowrap pointer-events-none origin-top-left [transition:0.3s_var(--ease-standard)_0.08s]',
+      'c-input__label--floating absolute top-3 left-0 right-auto text-base max-w-[90%] overflow-x-clip text-ellipsis whitespace-nowrap pointer-events-none origin-top-left [transition:0.3s_var(--ease-standard)_0.08s]',
     labelTop:
       'c-input__label--top text-sm font-medium overflow-hidden text-ellipsis whitespace-nowrap max-w-full',
     legend:
