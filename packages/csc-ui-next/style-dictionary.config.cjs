@@ -1,3 +1,5 @@
+const { readdirSync } = require('node:fs');
+const path = require('node:path');
 const StyleDictionaryPackage = require('style-dictionary');
 const createTheme = require('./utils/createTheme.cjs');
 const createSemanticTheme = require('./utils/createSemanticTheme.cjs');
@@ -25,29 +27,76 @@ const semanticInvariant = require('./tokens/semantic/invariant.json');
  */
 
 /**
- * Pre-upgrade placeholders for the form-field shells.
+ * Pre-upgrade placeholders (see CONTEXT.md: pre-upgrade window / placeholder /
+ * fail-open reveal).
  *
  * In server-rendered / static HTML the custom elements exist as plain unknown
- * elements until the library's JS runs: they render inline with no shadow
- * content, and `c-input`'s slotted light-DOM `<input>` paints with raw UA
- * chrome (its native border). On upgrade the styled field mounts and the page
- * reflows — a visible flash plus a layout shift.
+ * elements until the library's JS runs: no shadow content renders, so slotted
+ * light DOM paints raw — bare text for most components, UA input chrome for
+ * the form fields. On upgrade the styled component mounts — a visible flash.
  *
- * These `:not(:defined)` rules ship in the same `tokens.css` the consumer
- * already imports (the only document-level stylesheet we own), hiding the raw
- * content and reserving the field's resting geometry so upgrade does not
- * shift the layout: 44px field row + 8px gap + 16px details row = 68px, or
- * just the field row when `hide-details` is set.
+ * These `:not(:defined)` rules ship in `tokens.css` (the only document-level
+ * stylesheet we own) and hide every component tag for the pre-upgrade window.
+ * Hide-only, not skeletons: the light DOM stays in the HTML (crawlers and the
+ * accessibility tree get it back the moment the element upgrades), it just
+ * doesn't paint. No `display` is forced — the catalog mixes inline (c-icon,
+ * c-tag, c-link) and block-ish components, so the UA inline default is the
+ * least-wrong generic box and any forced value would worsen the upgrade shift
+ * for half of them.
+ *
+ * Fail-open reveal: if the bundle never runs (network failure, blocked
+ * script, misconfigured build), hidden-forever would be strictly worse than
+ * the flash — so a zero-duration, 3s-delayed animation flips visibility back
+ * and the page degrades to readable unstyled content. CSS-only on purpose:
+ * it must work precisely when JS is what's missing. The delay is a constant,
+ * not a `--c-*` token — degradation tuning is not public API; a consumer with
+ * strong opinions can override the rule wholesale.
+ *
+ * The tag list is derived from `src/components/` directory names (the same
+ * dir-name-is-tag-name convention the docs analyzer trusts), so new
+ * components get a placeholder automatically and the list cannot drift.
+ *
+ * Rejected alternative: declarative-shadow-DOM SSR would style the first
+ * paint for real, but Vue's `defineCustomElement` has no server-rendering
+ * story (ADR-0003), so pre-upgrade is inherently unstyled.
+ *
+ * The form-field shells additionally reserve their resting geometry as
+ * explicit exceptions — they are the components with a fixed, knowable
+ * resting height, so upgrade does not shift the layout: 44px field row +
+ * 8px gap + 16px details row = 68px, or just the field row when
+ * `hide-details` is set.
  */
+const componentTags = readdirSync(path.join(__dirname, 'src/components'), {
+  withFileTypes: true,
+})
+  .filter((entry) => entry.isDirectory() && entry.name.startsWith('c-'))
+  .map((entry) => entry.name)
+  .sort();
+
 const preUpgradePlaceholders = `
-/* Pre-upgrade placeholders: hide raw slotted content and reserve the field's
-   resting height until the custom element upgrades. */
+/* Pre-upgrade placeholders: hide raw slotted content until the custom element
+   upgrades, failing open after 3s if it never does. */
+${componentTags.map((tag) => `${tag}:not(:defined)`).join(',\n')} {
+  visibility: hidden;
+  animation-name: c-pre-upgrade-reveal;
+  animation-duration: 0s;
+  animation-delay: 3s;
+  animation-fill-mode: forwards;
+}
+
+@keyframes c-pre-upgrade-reveal {
+  to {
+    visibility: visible;
+  }
+}
+
+/* Geometry exceptions: form-field shells reserve their resting height so
+   upgrade does not shift the layout. */
 c-autocomplete:not(:defined),
 c-input:not(:defined),
 c-select:not(:defined),
 c-text-field:not(:defined) {
   display: block;
-  visibility: hidden;
   min-height: 68px;
 }
 

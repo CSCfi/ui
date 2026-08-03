@@ -97,6 +97,18 @@ _Avoid_: Host (the host is the custom element; the root element is its first chi
 A removed customization prop (ADR-0006). Historical only — consumer restyling goes through `::part()`; do not reintroduce per-component class props.
 _Avoid_: using this term for anything current
 
+**Pre-upgrade window**:
+The period between HTML paint and a component's custom-element registration, during which the tag is an inert unknown element and only its slotted light DOM can render. Exists in any server-rendered or static page; ends when the consumer's JS registers the tags.
+_Avoid_: FOUC (names the symptom, not the period), hydration gap (nothing hydrates — elements upgrade)
+
+**Pre-upgrade placeholder**:
+The document-level CSS shipped with the design tokens that hides a component's raw light DOM during the **pre-upgrade window**. Generic for every component tag; a small set of components (the form-field shells) additionally reserve their resting geometry as explicit exceptions.
+_Avoid_: Skeleton (implies a painted stand-in; the placeholder paints nothing), loading state (that is a component's own post-upgrade concern)
+
+**Fail-open reveal**:
+The safety valve on the **pre-upgrade placeholder**: a component still unregistered after a fixed delay becomes visible again in its raw form, so a page whose JS never arrives degrades to readable unstyled content instead of staying blank. Purely CSS-driven — it must work precisely when JS is what's missing.
+_Avoid_: Timeout fallback (vague), graceful degradation (the general principle, not this mechanism)
+
 ### Theming & dark mode (`csc-ui-next`)
 
 **Palette token**:
