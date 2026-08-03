@@ -12,10 +12,10 @@
   "on-surface-sunken": "primary-200",
   "border": "slate-700",
   "border-strong": "slate-400",
-  "ring": "primary-400",
+  "ring": "primary-300",
 
-  "primary": "primary-400",
-  "primary-hover": "primary-300",
+  "primary": "primary-300",
+  "primary-hover": "primary-200",
   "on-primary": "primary-900",
   "primary-subtle": "primary-800",
   "primary-subtle-hover": "primary-900",
