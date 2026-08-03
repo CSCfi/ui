@@ -14,7 +14,7 @@ export const Basic = () => {
         Notifications
       </CSwitch>
 
-      <span>Value: {String(enabled)}</span>
+      <p>Value: {String(enabled)}</p>
     </div>
   );
 };

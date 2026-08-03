@@ -13,7 +13,7 @@ import { Component, CUSTOM_ELEMENTS_SCHEMA, signal } from '@angular/core';
         (changeValue)="code.set($any($event).detail)"
       ></c-otp-input>
 
-      <span>Code: {{ code() ?? 'incomplete' }}</span>
+      <p>Code: {{ code() ?? 'incomplete' }}</p>
     </div>
   `,
 })

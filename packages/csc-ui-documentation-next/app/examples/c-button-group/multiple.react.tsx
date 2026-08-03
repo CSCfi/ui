@@ -18,7 +18,7 @@ export const Multiple = () => {
         <CButton value="mushroom">Mushroom</CButton>
       </CButtonGroup>
 
-      <span>Selected: {toppings.length ? toppings.join(', ') : 'none'}</span>
+      <p>Selected: {toppings.length ? toppings.join(', ') : 'none'}</p>
     </div>
   );
 };

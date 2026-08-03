@@ -55,7 +55,7 @@ export const Submenu = () => {
         <CMenuItem value="settings">Export settings…</CMenuItem>
       </CMenu>
 
-      <span>Selected: {selected ?? '—'}</span>
+      <p>Selected: {selected ?? '—'}</p>
     </div>
   );
 };

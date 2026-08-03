@@ -14,7 +14,7 @@ export const Basic = () => {
         onChangeValue={(event) => setName(event.detail as string)}
       />
 
-      <span>Value: {name}</span>
+      <p>Value: {name}</p>
     </div>
   );
 };

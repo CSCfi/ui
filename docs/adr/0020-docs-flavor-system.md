@@ -6,6 +6,9 @@ Date: 2026-07-08
 
 Accepted
 
+Amended by ADR-0024: TypeScript flavor variants are now a two-part
+HTML-fragment + optional-script pair, not single imperative `.ts` modules.
+
 ## Context
 
 The docs-next site showed every example as a Vue SFC only, while the library's

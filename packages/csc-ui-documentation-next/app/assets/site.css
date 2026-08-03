@@ -126,6 +126,12 @@
   gap: 0.75rem;
 }
 
+/* Value read-outs are <p> elements: full-width so they wrap onto their own
+   row below the components instead of sitting inline beside them. */
+.example-row > p {
+  flex-basis: 100%;
+}
+
 .example-grid {
   display: grid;
   gap: 0.75rem;

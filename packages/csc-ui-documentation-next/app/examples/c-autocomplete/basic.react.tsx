@@ -29,7 +29,7 @@ export const Basic = () => {
         </COption>
       </CAutocomplete>
 
-      <span>Value: {language ?? 'null'}</span>
+      <p>Value: {language ?? 'null'}</p>
     </div>
   );
 };

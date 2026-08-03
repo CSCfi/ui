@@ -13,7 +13,7 @@ import { Component, CUSTOM_ELEMENTS_SCHEMA, signal } from '@angular/core';
         (changeValue)="volume.set($any($event).detail)"
       ></c-slider>
 
-      <span>Value: {{ volume() }} %</span>
+      <p>Value: {{ volume() }} %</p>
     </div>
   `,
 })

@@ -1,30 +1,21 @@
-// @ts-nocheck — documentation code sample; shown as text, never compiled here
-const row = document.createElement('div');
-row.className = 'example-row';
+const toasts = document.querySelector('c-toasts')!;
 
-const successButton = document.createElement('c-button');
-successButton.textContent = 'Show success toast';
+const [successButton, errorButton] = document.querySelectorAll('c-button');
 
-const errorButton = document.createElement('c-button');
-errorButton.textContent = 'Show error toast';
-
-// Typed via the HTMLElementTagNameMap augmentation from @cscfi/csc-ui-next.
-const toasts = document.createElement('c-toasts');
-
-const notify = (type: 'error' | 'success') => {
+successButton!.addEventListener('click', () => {
   toasts.addToast({
-    type,
-    title: type === 'success' ? 'Saved' : 'Upload failed',
-    message:
-      type === 'success'
-        ? 'Your changes have been saved.'
-        : 'The file could not be uploaded.',
+    type: 'success',
+    title: 'Saved',
+    message: 'Your changes have been saved.',
     progress: true,
   });
-};
+});
 
-successButton.addEventListener('click', () => notify('success'));
-errorButton.addEventListener('click', () => notify('error'));
-
-row.append(successButton, errorButton, toasts);
-document.body.append(row);
+errorButton!.addEventListener('click', () => {
+  toasts.addToast({
+    type: 'error',
+    title: 'Upload failed',
+    message: 'The file could not be uploaded.',
+    progress: true,
+  });
+});

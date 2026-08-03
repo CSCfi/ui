@@ -6,7 +6,9 @@
  *
  *   <name>.react.tsx        — @cscfi/csc-ui-next-react
  *   <name>.angular.ts       — standalone component, CUSTOM_ELEMENTS_SCHEMA
- *   <name>.typescript.ts    — imperative typed DOM
+ *   <name>.typescript.html  — markup fragment (ADR-0024)
+ *   <name>.typescript.ts    — optional querySelector wiring for the fragment;
+ *                             its absence documents that no script is needed
  *
  * Sibling files with an unknown flavor part are reported too (a naming
  * mistake would otherwise silently produce no tab). Runs as part of the docs
@@ -30,8 +32,14 @@ const examplesDir = path.resolve(
 const VARIANTS = new Map([
   ['react', 'tsx'],
   ['angular', 'ts'],
-  ['typescript', 'ts'],
+  ['typescript', 'html'],
 ]);
+
+/**
+ * flavor id → additional allowed sibling extensions (ADR-0024: the TypeScript
+ * flavor's optional script part).
+ */
+const OPTIONAL_EXTS = new Map([['typescript', new Set(['ts'])]]);
 
 /**
  * Internal-only elements (keep in sync with useManifest.ts): no docs page,
@@ -133,11 +141,19 @@ for (const dir of readdirSync(examplesDir, { withFileTypes: true })) {
     if (parts.length < 3) continue;
 
     const [name, flavor] = parts;
+    const ext = parts.at(-1);
 
     if (!VARIANTS.has(flavor)) {
       problems.push(`${dir.name}/${file}: unknown flavor "${flavor}"`);
     } else if (!canons.includes(name)) {
       problems.push(`${dir.name}/${file}: no canon ${name}.vue beside it`);
+    } else if (
+      VARIANTS.get(flavor) !== ext &&
+      !OPTIONAL_EXTS.get(flavor)?.has(ext)
+    ) {
+      problems.push(
+        `${dir.name}/${file}: extension ".${ext}" is not valid for the "${flavor}" flavor`,
+      );
     }
   }
 }

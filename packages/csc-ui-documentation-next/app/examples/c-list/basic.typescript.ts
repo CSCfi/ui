@@ -1,45 +1,13 @@
-// @ts-nocheck — documentation code sample; shown as text, never compiled here
 import { mdiAccount, mdiBell, mdiCog } from '@mdi/js';
 
-const items = [
-  { icon: mdiAccount, label: 'Profile' },
-  { icon: mdiBell, label: 'Notifications' },
-  { icon: mdiCog, label: 'Settings' },
-];
+const icons = [mdiAccount, mdiBell, mdiCog];
 
-let selected = 'Profile';
+const items = document.querySelectorAll('c-list-item');
 
-const wrapper = document.createElement('div');
+items.forEach((item, index) => {
+  item.querySelector('c-icon')!.path = icons[index]!;
 
-// Typed via the HTMLElementTagNameMap augmentation from @cscfi/csc-ui-next.
-const list = document.createElement('c-list');
-list.setAttribute('bordered', '');
-
-const listItems = items.map((item) => {
-  const listItem = document.createElement('c-list-item');
-  listItem.setAttribute('ripple', '');
-  listItem.active = selected === item.label;
-
-  const icon = document.createElement('c-icon');
-  icon.slot = 'pre';
-  icon.path = item.icon;
-
-  const title = document.createElement('c-list-item-title');
-  title.textContent = item.label;
-
-  listItem.append(icon, title);
-
-  listItem.addEventListener('click', () => {
-    selected = item.label;
-
-    listItems.forEach((el, index) => {
-      el.active = items[index].label === selected;
-    });
+  item.addEventListener('click', () => {
+    items.forEach((other) => (other.active = other === item));
   });
-
-  return listItem;
 });
-
-list.append(...listItems);
-wrapper.append(list);
-document.body.append(wrapper);

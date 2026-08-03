@@ -29,7 +29,7 @@ export const Basic = () => {
         </COption>
       </CSelect>
 
-      <span>Value: {country ?? 'null'}</span>
+      <p>Value: {country ?? 'null'}</p>
     </div>
   );
 };

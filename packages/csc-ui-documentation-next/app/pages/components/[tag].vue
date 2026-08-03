@@ -110,13 +110,15 @@ const usageSource = useUsageDoc(tag);
 const { data } = await useAsyncData(`page-${tag}`, async () => {
   const { highlightCode, renderMarkdown } = await import('~/utils/highlight');
 
-  const examplesHtml: Record<string, Record<string, string>> = {};
+  const examplesHtml: Record<string, Record<string, string[]>> = {};
 
   for (const example of examples) {
-    const byFlavor: Record<string, string> = {};
+    const byFlavor: Record<string, string[]> = {};
 
     for (const t of example.tabs) {
-      byFlavor[t.flavor] = await highlightCode(t.code, t.lang);
+      byFlavor[t.flavor] = await Promise.all(
+        t.panes.map((pane) => highlightCode(pane.code, pane.lang)),
+      );
     }
 
     examplesHtml[example.name] = byFlavor;

@@ -2,7 +2,7 @@
   <div>
     <c-slider v-model="volume" label="Volume" />
 
-    <span>Value: {{ volume }} %</span>
+    <p>Value: {{ volume }} %</p>
   </div>
 </template>
 

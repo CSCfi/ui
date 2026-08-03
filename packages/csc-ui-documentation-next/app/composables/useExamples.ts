@@ -13,9 +13,14 @@ import { FLAVORS, isFlavor, type Flavor } from './useFlavor';
  *
  * Flavor tabs come from checked-in sibling variant files named
  * <name>.<flavor>.<ext> (basic.react.tsx, basic.angular.ts,
- * basic.typescript.ts) — generated from the Vue canon and kept complete by
+ * basic.typescript.html) — generated from the Vue canon and kept complete by
  * scripts/check-example-parity.mjs (ADR-0020). The live demo is always the
  * Vue canon regardless of the selected flavor.
+ *
+ * The TypeScript flavor is two-part (ADR-0024): a required markup fragment
+ * (<name>.typescript.html) plus an optional querySelector-wiring script
+ * (<name>.typescript.ts), rendered as stacked panes with Template/Script
+ * chips. Other flavors are single-pane.
  */
 // Live demo components. They are client-only (rendered inside <ClientOnly> in
 // ExampleBlock, and the csc-ui elements only upgrade on the client). In the
@@ -55,12 +60,18 @@ const FLAVOR_LABEL = new Map(
   FLAVORS.map((flavor) => [flavor.id, flavor.label]),
 );
 
-export interface ExampleTab {
+export interface ExamplePane {
   code: string;
+  /** Chip label above the pane; only multi-pane flavors set it (ADR-0024). */
+  label?: string;
+  lang: string;
+}
+
+export interface ExampleTab {
   flavor: Flavor;
   icon: string;
   label: string;
-  lang: string;
+  panes: ExamplePane[];
 }
 
 export interface DocExample {
@@ -119,33 +130,74 @@ export const useExamples = (tags: string[]): DocExample[] => {
 
     const file = (path.split('/').at(-1) ?? '').replace(/\.vue$/, '');
 
-    const overrides = Object.entries(overrideSources)
-      .filter(([overridePath]) =>
-        overridePath.startsWith(path.replace(/\.vue$/, '.')),
-      )
-      .flatMap(([overridePath, raw]) => {
-        const parts = (overridePath.split('/').at(-1) ?? '').split('.');
+    // Group sibling variant files by flavor: single-pane flavors have one
+    // file; the TypeScript flavor pairs html (+ optional ts) into stacked
+    // panes (ADR-0024).
+    const byFlavor = new Map<Flavor, { code: string; ext: string }[]>();
 
-        const flavor = parts[1] ?? '';
+    for (const [overridePath, raw] of Object.entries(overrideSources)) {
+      if (!overridePath.startsWith(path.replace(/\.vue$/, '.'))) continue;
 
-        // A sibling file outside the flavor set is a naming mistake, not a
-        // tab — surface it in dev rather than rendering a bogus label.
-        if (!isFlavor(flavor)) {
-          if (import.meta.dev) {
-            console.warn(`useExamples: unknown flavor variant ${overridePath}`);
-          }
+      const parts = (overridePath.split('/').at(-1) ?? '').split('.');
 
-          return [];
+      const flavor = parts[1] ?? '';
+
+      // A sibling file outside the flavor set is a naming mistake, not a
+      // tab — surface it in dev rather than rendering a bogus label.
+      if (!isFlavor(flavor)) {
+        if (import.meta.dev) {
+          console.warn(`useExamples: unknown flavor variant ${overridePath}`);
         }
 
-        const ext = parts.at(-1) ?? '';
+        continue;
+      }
+
+      const files = byFlavor.get(flavor) ?? [];
+
+      files.push({ code: stripTsNocheck(raw), ext: parts.at(-1) ?? '' });
+      byFlavor.set(flavor, files);
+    }
+
+    const overrides = [...byFlavor.entries()]
+      .flatMap(([flavor, files]) => {
+        let panes: ExamplePane[];
+
+        if (flavor === 'typescript') {
+          const markup = files.find((f) => f.ext === 'html');
+          const script = files.find((f) => f.ext === 'ts');
+
+          // The markup fragment is the variant's anchor; a lone script file
+          // is a pre-ADR-0024 leftover the parity check reports — skip the
+          // tab (the block falls back to the Vue canon) rather than showing
+          // a script with no markup.
+          if (!markup) {
+            if (import.meta.dev) {
+              console.warn(
+                `useExamples: ${path} typescript variant lacks its .html markup part`,
+              );
+            }
+
+            return [];
+          }
+
+          panes = [
+            { code: markup.code, label: 'Template', lang: 'html' },
+            ...(script
+              ? [{ code: script.code, label: 'Script', lang: 'ts' }]
+              : []),
+          ];
+        } else {
+          panes = files.map(({ code, ext }) => ({
+            code,
+            lang: EXT_LANG[ext] ?? 'text',
+          }));
+        }
 
         return [
           {
-            code: stripTsNocheck(raw),
             flavor,
             label: FLAVOR_LABEL.get(flavor) ?? flavor,
-            lang: EXT_LANG[ext] ?? 'text',
+            panes,
           },
         ];
       })
@@ -161,7 +213,11 @@ export const useExamples = (tags: string[]): DocExample[] => {
       demo: defineAsyncComponent(demoModules[path] as () => Promise<Component>),
       name: `${owner}/${file}`,
       tabs: [
-        { code, flavor: 'vue' as const, label: 'Vue', lang: 'vue' },
+        {
+          flavor: 'vue' as const,
+          label: 'Vue',
+          panes: [{ code, lang: 'vue' }],
+        },
         ...overrides,
       ].map((tab) => ({ ...tab, icon: ICONS[tab.flavor] })),
       // Mark which component a folded child's example focuses on.

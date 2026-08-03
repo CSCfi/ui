@@ -29,7 +29,7 @@ import { mdiChevronDown } from '@mdi/js';
         <c-menu-item value="billing">Billing</c-menu-item>
       </c-menu>
 
-      <span>Selected: {{ selected() ?? '—' }}</span>
+      <p>Selected: {{ selected() ?? '—' }}</p>
     </div>
   `,
 })

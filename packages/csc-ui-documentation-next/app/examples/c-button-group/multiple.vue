@@ -8,7 +8,7 @@
       <c-button value="mushroom">Mushroom</c-button>
     </c-button-group>
 
-    <span>Selected: {{ toppings.length ? toppings.join(', ') : 'none' }}</span>
+    <p>Selected: {{ toppings.length ? toppings.join(', ') : 'none' }}</p>
   </div>
 </template>
 

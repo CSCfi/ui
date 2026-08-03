@@ -18,7 +18,7 @@
       <c-menu-item value="delete" danger>Delete account</c-menu-item>
     </c-menu>
 
-    <span>Selected: {{ selected ?? '—' }}</span>
+    <p>Selected: {{ selected ?? '—' }}</p>
   </div>
 </template>
 

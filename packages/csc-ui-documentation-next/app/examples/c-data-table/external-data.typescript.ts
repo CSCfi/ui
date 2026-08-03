@@ -1,4 +1,3 @@
-// @ts-nocheck — documentation code sample; shown as text, never compiled here
 import type {
   CDataTableColumn,
   CDataTableRow,
@@ -50,18 +49,9 @@ const query = {
   sort: { column: 'name', direction: 'asc' } as CDataTableSort | null,
 };
 
-const wrapper = document.createElement('div');
-
-// With the `external` attribute, the table renders `data` verbatim and only
-// emits state changes; sorting and paging here go through a simulated server
-// request. `itemCount` tells the pager the true total.
-// Typed via the HTMLElementTagNameMap augmentation from @cscfi/csc-ui-next.
-const table = document.createElement('c-data-table');
+const table = document.querySelector('c-data-table')!;
 table.columns = columns;
-table.data = [];
 table.itemCount = TOTAL;
-table.setAttribute('external', '');
-table.setAttribute('page-size', '5');
 
 const load = async () => {
   table.loading = true;
@@ -72,22 +62,19 @@ const load = async () => {
 };
 
 table.addEventListener('change:sort', (event) => {
-  query.sort = event.detail as CDataTableSort | null;
+  query.sort = event.detail;
   query.page = 1;
   load();
 });
 
 table.addEventListener('change:page', (event) => {
-  query.page = event.detail as number;
+  query.page = event.detail;
   load();
 });
 
 table.addEventListener('change:page-size', (event) => {
-  query.pageSize = event.detail as number;
+  query.pageSize = event.detail;
   load();
 });
-
-wrapper.append(table);
-document.body.append(wrapper);
 
 load();

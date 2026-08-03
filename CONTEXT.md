@@ -246,7 +246,7 @@ The reader's consumption dialect on the docs site: `vue | react | angular | type
 _Avoid_: Framework (TypeScript is not one), consumer (that is the person/app using the library), language, target
 
 **Example variant**:
-A checked-in per-**flavor** sibling of a canon example — `<name>.<flavor>.<ext>` beside `<name>.vue`. The Vue SFC stays the canon (ADR-0012): it alone renders as the live demo; variants differ in the source shown, not behavior. Generated from the canon and kept complete by the docs' example-parity check. A canon missing a variant falls back to showing the Vue tab.
+A checked-in per-**flavor** sibling of a canon example — `<name>.<flavor>.<ext>` beside `<name>.vue`. The Vue SFC stays the canon (ADR-0012): it alone renders as the live demo; variants differ in the source shown, not behavior. Generated from the canon and kept complete by the docs' example-parity check. A canon missing a variant falls back to showing the Vue tab. A variant is usually one file; the TypeScript flavor's is a markup part plus an optional script part shown as stacked panes (ADR-0024).
 _Avoid_: Override (the variant adds a tab; it replaces nothing), translation, port
 
 ### Flagged ambiguities

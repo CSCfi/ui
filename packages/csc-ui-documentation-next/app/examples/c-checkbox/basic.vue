@@ -4,7 +4,7 @@
       Subscribe to the newsletter
     </c-checkbox>
 
-    <span>Value: {{ subscribed }}</span>
+    <p>Value: {{ subscribed }}</p>
   </div>
 </template>
 

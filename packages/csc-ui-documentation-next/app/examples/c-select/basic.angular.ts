@@ -21,7 +21,7 @@ import { Component, CUSTOM_ELEMENTS_SCHEMA, signal } from '@angular/core';
         <c-option name="Denmark" value="dk">Denmark</c-option>
       </c-select>
 
-      <span>Value: {{ country() ?? 'null' }}</span>
+      <p>Value: {{ country() ?? 'null' }}</p>
     </div>
   `,
 })

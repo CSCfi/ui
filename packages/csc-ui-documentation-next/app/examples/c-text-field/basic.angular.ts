@@ -14,7 +14,7 @@ import { Component, CUSTOM_ELEMENTS_SCHEMA, signal } from '@angular/core';
         (changeValue)="name.set($any($event).detail)"
       ></c-text-field>
 
-      <span>Value: {{ name() }}</span>
+      <p>Value: {{ name() }}</p>
     </div>
   `,
 })

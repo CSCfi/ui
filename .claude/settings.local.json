@@ -73,7 +73,8 @@
       "Bash(awk '/<script setup/,/^import/' src/components/c-step/CStep.vue)",
       "Bash(npx nuxi *)",
       "Bash(git add *)",
-      "Bash(npx vue-tsc *)"
+      "Bash(npx vue-tsc *)",
+      "Bash(grep -v \"^$\")"
     ]
   }
 }

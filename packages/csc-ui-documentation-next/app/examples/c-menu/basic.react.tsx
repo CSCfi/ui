@@ -36,7 +36,7 @@ export const Basic = () => {
         </CMenuItem>
       </CMenu>
 
-      <span>Selected: {selected ?? '—'}</span>
+      <p>Selected: {selected ?? '—'}</p>
     </div>
   );
 };

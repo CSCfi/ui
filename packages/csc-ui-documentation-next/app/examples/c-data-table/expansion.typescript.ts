@@ -1,4 +1,3 @@
-// @ts-nocheck — documentation code sample; shown as text, never compiled here
 import {
   type CDataTableColumn,
   type CDataTableExpandedContext,
@@ -6,6 +5,9 @@ import {
   h,
 } from '@cscfi/csc-ui-next';
 
+// The description column has expansion: 'always' — it never renders as a
+// table column, its cells live in the expansion row. The custom
+// expandedContent renders after them.
 const columns: CDataTableColumn[] = [
   { header: 'Service', key: 'name' },
   { header: 'Category', key: 'category' },
@@ -47,26 +49,16 @@ const expandedContent = ({ row }: CDataTableExpandedContext) =>
     `Read more about ${row.name}`,
   );
 
-const wrapper = document.createElement('div');
-
-// The description column has expansion: 'always' — it never renders as a
-// table column, its cells live in the expansion row. The custom
-// expandedContent renders after them.
-// Typed via the HTMLElementTagNameMap augmentation from @cscfi/csc-ui-next.
-const table = document.createElement('c-data-table');
+const table = document.querySelector('c-data-table')!;
 table.columns = columns;
 table.data = data;
 table.expandedContent = expandedContent;
 table.getRowId = getRowId;
-table.setAttribute('single-expansion', '');
 
-const status = document.createElement('p');
-status.textContent = 'Expanded: —';
+const status = document.querySelector('p')!;
 
 table.addEventListener('change:expanded', (event) => {
-  const expanded = event.detail as string[];
+  const expanded = event.detail;
+
   status.textContent = `Expanded: ${expanded.length ? expanded.join(', ') : '—'}`;
 });
-
-wrapper.append(table, status);
-document.body.append(wrapper);

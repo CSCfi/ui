@@ -14,7 +14,7 @@ import { Component, CUSTOM_ELEMENTS_SCHEMA, signal } from '@angular/core';
         Notifications
       </c-switch>
 
-      <span>Value: {{ enabled() }}</span>
+      <p>Value: {{ enabled() }}</p>
     </div>
   `,
 })

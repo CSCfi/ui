@@ -29,7 +29,7 @@ import { Component, CUSTOM_ELEMENTS_SCHEMA, signal } from '@angular/core';
         </c-option>
       </c-autocomplete>
 
-      <span>Value: {{ language() ?? 'null' }}</span>
+      <p>Value: {{ language() ?? 'null' }}</p>
     </div>
   `,
 })

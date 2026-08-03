@@ -8,7 +8,7 @@
       <c-button value="right">Right</c-button>
     </c-button-group>
 
-    <span>Selected: {{ align }} — the active button cannot be toggled off</span>
+    <p>Selected: {{ align }} — the active button cannot be toggled off</p>
   </div>
 </template>
 

@@ -13,7 +13,7 @@ export const Basic = () => {
         onChangeValue={(event) => setVolume(event.detail as number)}
       />
 
-      <span>Value: {volume} %</span>
+      <p>Value: {volume} %</p>
     </div>
   );
 };

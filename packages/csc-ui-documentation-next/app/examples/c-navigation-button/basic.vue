@@ -2,7 +2,7 @@
   <div class="example-row">
     <c-navigation-button @click="menuVisible = !menuVisible" />
 
-    <span>Menu {{ menuVisible ? 'open' : 'closed' }}</span>
+    <p>Menu {{ menuVisible ? 'open' : 'closed' }}</p>
   </div>
 </template>
 

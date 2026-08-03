@@ -11,7 +11,7 @@ import { Component, CUSTOM_ELEMENTS_SCHEMA, signal } from '@angular/core';
         (click)="menuVisible.set(!menuVisible())"
       ></c-navigation-button>
 
-      <span>Menu {{ menuVisible() ? 'open' : 'closed' }}</span>
+      <p>Menu {{ menuVisible() ? 'open' : 'closed' }}</p>
     </div>
   `,
 })

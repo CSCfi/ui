@@ -19,7 +19,7 @@
       <c-menu-item value="forget" danger>Forget this device</c-menu-item>
     </c-menu>
 
-    <span>Selected: {{ selected ?? '—' }}</span>
+    <p>Selected: {{ selected ?? '—' }}</p>
   </div>
 </template>
 

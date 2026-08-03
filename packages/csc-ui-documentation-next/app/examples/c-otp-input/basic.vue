@@ -6,7 +6,7 @@
       hint="Enter the 6-digit code we sent you"
     />
 
-    <span>Code: {{ code ?? 'incomplete' }}</span>
+    <p>Code: {{ code ?? 'incomplete' }}</p>
   </div>
 </template>
 

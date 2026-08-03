@@ -15,7 +15,7 @@ export const Basic = () => {
         Subscribe to the newsletter
       </CCheckbox>
 
-      <span>Value: {String(subscribed)}</span>
+      <p>Value: {String(subscribed)}</p>
     </div>
   );
 };

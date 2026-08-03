@@ -1,5 +1,4 @@
-// @ts-nocheck — documentation code sample; shown as text, never compiled here
-import type { CDataTableColumn, CDataTableSort } from '@cscfi/csc-ui-next';
+import type { CDataTableColumn } from '@cscfi/csc-ui-next';
 
 const columns: CDataTableColumn[] = [
   { header: 'Project', key: 'name', sortable: true },
@@ -19,22 +18,15 @@ const data = [
   { created: '2026-05-23', facility: 'Allas', members: 9, name: 'Halo' },
 ];
 
-const wrapper = document.createElement('div');
-
-// Typed via the HTMLElementTagNameMap augmentation from @cscfi/csc-ui-next.
-const table = document.createElement('c-data-table');
+const table = document.querySelector('c-data-table')!;
 table.columns = columns;
 table.data = data;
 table.sort = { column: 'name', direction: 'asc' };
-table.setAttribute('page-size', '5');
 
-const status = document.createElement('p');
-status.textContent = 'Sorted by: name (asc)';
+const status = document.querySelector('p')!;
 
 table.addEventListener('change:sort', (event) => {
-  const sort = event.detail as CDataTableSort;
+  const sort = event.detail!;
+
   status.textContent = `Sorted by: ${sort.column} (${sort.direction})`;
 });
-
-wrapper.append(table, status);
-document.body.append(wrapper);

@@ -16,7 +16,7 @@ export const Basic = () => {
         <CButton value="month">Month</CButton>
       </CButtonGroup>
 
-      <span>Selected: {view ?? 'none'}</span>
+      <p>Selected: {view ?? 'none'}</p>
     </div>
   );
 };

@@ -39,7 +39,7 @@
       <c-menu-item value="settings">Export settings…</c-menu-item>
     </c-menu>
 
-    <span>Selected: {{ selected ?? '—' }}</span>
+    <p>Selected: {{ selected ?? '—' }}</p>
   </div>
 </template>
 

@@ -54,13 +54,33 @@
         </c-button-group>
       </div>
 
-      <!-- eslint-disable-next-line vue/no-v-html — Shiki output built at prerender from our own SFC source -->
-      <div v-if="activeHtml" class="example-shiki" v-html="activeHtml" />
+      <!-- Multi-pane variants (the TypeScript flavor's markup + wiring pair,
+           ADR-0024) stack one pane per part; the chip label carries the
+           parts' relationship — the code itself holds no linkage line. -->
+      <template
+        v-for="(pane, index) in activeTab.panes"
+        :key="pane.label ?? index"
+      >
+        <div
+          v-if="pane.label"
+          class="border-t border-border bg-surface-muted px-5 py-1.5 text-xs font-medium text-on-surface-faint"
+        >
+          {{ pane.label }}
+        </div>
 
-      <pre
-        v-else
-        class="m-0 overflow-x-auto bg-[#0f172a] px-5 py-4 text-[0.8125rem] text-[#e2e8f0]"
-      ><code class="bg-transparent p-0">{{ activeTab.code }}</code></pre>
+        <!-- eslint-disable vue/no-v-html — Shiki output built at prerender from our own example source -->
+        <div
+          v-if="activeHtml[index]"
+          class="example-shiki"
+          v-html="activeHtml[index]"
+        />
+        <!-- eslint-enable vue/no-v-html -->
+
+        <pre
+          v-else
+          class="m-0 overflow-x-auto bg-[#0f172a] px-5 py-4 text-[0.8125rem] text-[#e2e8f0]"
+        ><code class="bg-transparent p-0">{{ pane.code }}</code></pre>
+      </template>
     </div>
   </figure>
 </template>
@@ -70,8 +90,8 @@ import type { DocExample, ExampleTab } from '~/composables/useExamples';
 
 const { example, html = {} } = defineProps<{
   example: DocExample;
-  // flavor id -> pre-highlighted HTML, keyed as produced on the page
-  html?: Record<string, string>;
+  // flavor id -> pre-highlighted HTML per pane, keyed as produced on the page
+  html?: Record<string, string[]>;
 }>();
 
 const { flavor, setFlavor } = useFlavor();
@@ -84,7 +104,7 @@ const activeTab = computed<ExampleTab>(
     (example.tabs[0] as ExampleTab),
 );
 
-const activeHtml = computed(() => html?.[activeTab.value.flavor] ?? '');
+const activeHtml = computed(() => html?.[activeTab.value.flavor] ?? []);
 
 const onFlavorChange = (flavor: Event) => {
   setFlavor((flavor.target as HTMLInputElement).value as Flavor);

@@ -13,7 +13,7 @@ import { Component, CUSTOM_ELEMENTS_SCHEMA, signal } from '@angular/core';
         <c-button value="month">Month</c-button>
       </c-button-group>
 
-      <span>Selected: {{ view() ?? 'none' }}</span>
+      <p>Selected: {{ view() ?? 'none' }}</p>
     </div>
   `,
 })

@@ -24,7 +24,7 @@
       </c-option>
     </c-autocomplete>
 
-    <span>Value: {{ language ?? 'null' }}</span>
+    <p>Value: {{ language ?? 'null' }}</p>
   </div>
 </template>
 

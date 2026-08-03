@@ -1,10 +1,6 @@
-// @ts-nocheck — documentation code sample; shown as text, never compiled here
 import { type CDataTableColumn, h } from '@cscfi/csc-ui-next';
 
-const wrapper = document.createElement('div');
-
-const message = document.createElement('p');
-message.textContent = 'Open a project with the button in the last column';
+const message = document.querySelector('p')!;
 
 const data = [
   { name: 'Aurora', status: 'active', usage: 0.72 },
@@ -50,10 +46,6 @@ const columns: CDataTableColumn[] = [
   },
 ];
 
-// Typed via the HTMLElementTagNameMap augmentation from @cscfi/csc-ui-next.
-const table = document.createElement('c-data-table');
+const table = document.querySelector('c-data-table')!;
 table.columns = columns;
 table.data = data;
-
-wrapper.append(table, message);
-document.body.append(wrapper);

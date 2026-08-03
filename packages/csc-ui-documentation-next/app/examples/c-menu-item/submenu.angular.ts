@@ -31,7 +31,7 @@ import { mdiChevronDown, mdiFileDocument, mdiFilePdfBox } from '@mdi/js';
         <c-menu-item value="settings">Export settings…</c-menu-item>
       </c-menu>
 
-      <span>Selected: {{ selected() ?? '—' }}</span>
+      <p>Selected: {{ selected() ?? '—' }}</p>
     </div>
   `,
 })

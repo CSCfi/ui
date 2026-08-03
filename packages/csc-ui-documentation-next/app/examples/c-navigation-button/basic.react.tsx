@@ -9,7 +9,7 @@ export const Basic = () => {
     <div className="example-row">
       <CNavigationButton onClick={() => setMenuVisible(!menuVisible)} />
 
-      <span>Menu {menuVisible ? 'open' : 'closed'}</span>
+      <p>Menu {menuVisible ? 'open' : 'closed'}</p>
     </div>
   );
 };

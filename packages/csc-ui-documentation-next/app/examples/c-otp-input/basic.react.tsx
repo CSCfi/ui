@@ -13,7 +13,7 @@ export const Basic = () => {
         onChangeValue={(event) => setCode(event.detail as string | null)}
       />
 
-      <span>Code: {code ?? 'incomplete'}</span>
+      <p>Code: {code ?? 'incomplete'}</p>
     </div>
   );
 };

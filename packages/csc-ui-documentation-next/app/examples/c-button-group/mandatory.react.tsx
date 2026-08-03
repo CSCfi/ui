@@ -18,7 +18,7 @@ export const Mandatory = () => {
         <CButton value="right">Right</CButton>
       </CButtonGroup>
 
-      <span>Selected: {align} — the active button cannot be toggled off</span>
+      <p>Selected: {align} — the active button cannot be toggled off</p>
     </div>
   );
 };
