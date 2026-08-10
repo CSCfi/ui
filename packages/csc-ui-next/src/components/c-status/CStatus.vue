@@ -33,19 +33,19 @@ import { tv } from 'tailwind-variants';
 import { computed } from 'vue';
 
 /**
- * Styling lives entirely in this `tailwind-variants` config (ADR-0004): the
+ * Styling lives entirely in this `tailwind-variants` config: the
  * `root` slot is the status pill and the `type` variant replaces the
  * `.c-status--<type>` colour cascade. Consumer customization is via
- * `::part(root)` (ADR-0006); there is no `override` prop. The per-component
+ * `::part(root)`; there is no `override` prop. The per-component
  * `--c-status-*` indirection vars are dropped in favour of the semantic status
- * roles (ADR-0010): the pill is the role's `subtle` fill with its `on-*-subtle`
+ * roles: the pill is the role's `subtle` fill with its `on-*-subtle`
  * text (e.g. info -> bg-info-subtle / text-on-info-subtle).
  *
  * `box-shadow: inset 0 0 0 1px currentColor` -> `ring-1 ring-inset ring-current`
  * so the 1px inner outline tracks the variant's text colour, matching the source.
  */
 // Hoisted so the runtime guard below can test membership; the `satisfies`
-// keeps the map complete against the public union (ADR-0015).
+// keeps the map complete against the public union.
 const typeVariants = {
   error: { root: 'bg-error-subtle text-on-error-subtle' },
   info: { root: 'bg-info-subtle text-on-info-subtle' },
@@ -71,7 +71,7 @@ const status = tv({
 const props = defineProps<CStatusProps>();
 
 // Attributes can deliver any string at runtime; unknown values fall back to
-// the neutral pill (ADR-0015).
+// the neutral pill.
 const ui = computed(() =>
   status({
     type: props.type && props.type in typeVariants ? props.type : '',

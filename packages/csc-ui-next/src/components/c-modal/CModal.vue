@@ -75,14 +75,13 @@ interface CModalEvents {
 defineOptions({ inheritAttrs: false });
 
 /**
- * Styling lives in this `tailwind-variants` config (ADR-0004); consumer
- * customization is via `::part()` (ADR-0006).
+ * Styling lives in this `tailwind-variants` config; consumer
+ * customization is via `::part()`.
  *
  * The dialog is NOT in the browser top layer: it is opened with `.show()` and
  * modality (inert, focus, Escape, scroll lock, paint order) is implemented by
- * the shared modal stack controller — see ADR-0014 and
- * `src/shared/modalStack.ts`. That is what lets toasts paint above any modal
- * and stay interactive.
+ * the shared modal stack controller — see `src/shared/modalStack.ts`. That
+ * is what lets toasts paint above any modal and stay interactive.
  *
  * The backdrop is this modal's own element (the retired shared `c-backdrop` /
  * native `::backdrop` are gone); the controller keeps exactly one backdrop —
@@ -159,7 +158,7 @@ const dispatchValue = (value: CModalEvents['changeValue']) =>
 
 const dialogRef = useTemplateRef<HTMLDialogElement>('dialogRef');
 
-// Controller-assigned paint order within the modal stacking band (ADR-0014);
+// Controller-assigned paint order within the modal stacking band;
 // the backdrop sits directly beneath the dialog at `layerZ - 1`.
 const layerZ = ref(MODAL_BAND_BASE + 1);
 
@@ -246,8 +245,8 @@ const openDialog = () => {
     dialogRef.value.classList.add('opening');
   }
 
-  // `.show()`, NOT `.showModal()` — modality without the top layer
-  // (ADR-0014), so toasts can paint above the modal and stay interactive.
+  // `.show()`, NOT `.showModal()` — modality without the top layer,
+  // so toasts can paint above the modal and stay interactive.
   dialogRef.value.show();
 
   focusInitialElement(host, dialogRef.value);
@@ -350,12 +349,12 @@ onBeforeUnmount(() => {
 </script>
 
 <!--
-  Escape-hatch CSS (ADR-0007): constructs Tailwind utilities cannot express —
+  Escape-hatch CSS: constructs Tailwind utilities cannot express —
   the `:not([open])` closed state of the native <dialog> and the open / close /
   nudge `@keyframes` toggled imperatively via the `.opening` / `.closing` /
   `.nudging` class hooks. The dialog box and backdrop looks live in the `tv`
   config above. (No `::backdrop` rules: the dialog is opened with `.show()`,
-  which has no native backdrop — the backdrop is a real element, ADR-0014.)
+  which has no native backdrop — the backdrop is a real element.)
 -->
 <style>
 dialog.c-modal:not([open]) {

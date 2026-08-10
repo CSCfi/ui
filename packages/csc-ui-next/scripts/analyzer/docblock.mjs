@@ -1,5 +1,5 @@
 /**
- * Minimal JSDoc block parser for the component-level docblock (ADR-0012).
+ * Minimal JSDoc block parser for the component-level docblock.
  *
  * The analyzer only needs the free-text description plus the doc tags that
  * carry the slot / CSS-part / CSS-custom-property contract:

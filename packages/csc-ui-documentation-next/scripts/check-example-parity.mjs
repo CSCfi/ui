@@ -1,12 +1,12 @@
 /**
- * Example flavor parity check (ADR-0020).
+ * Example flavor parity check.
  *
  * Every canon example (app/examples/<tag>/<name>.vue) must ship all three
  * flavor variants beside it:
  *
  *   <name>.react.tsx        — @cscfi/csc-ui-next-react
  *   <name>.angular.ts       — standalone component, CUSTOM_ELEMENTS_SCHEMA
- *   <name>.typescript.html  — markup fragment (ADR-0024)
+ *   <name>.typescript.html  — markup fragment
  *   <name>.typescript.ts    — optional querySelector wiring for the fragment;
  *                             its absence documents that no script is needed
  *
@@ -36,8 +36,8 @@ const VARIANTS = new Map([
 ]);
 
 /**
- * flavor id → additional allowed sibling extensions (ADR-0024: the TypeScript
- * flavor's optional script part).
+ * flavor id → additional allowed sibling extensions (the TypeScript flavor's
+ * optional script part).
  */
 const OPTIONAL_EXTS = new Map([['typescript', new Set(['ts'])]]);
 

@@ -19,7 +19,7 @@ const copyStylesPlugin = () => ({
 });
 
 // Same dist-wipe problem for the docs pipeline: `dist/custom-elements.json`
-// and `dist/docs/` (ADR-0012) are produced by the analyzer, not by vite, so
+// and `dist/docs/` are produced by the analyzer, not by vite, so
 // every (re)build deletes them — and the docs site's dev server fails to
 // resolve `@cscfi/csc-ui-next/custom-elements.json`. Regenerate after each
 // write. Non-strict and quiet here (mid-edit sources may transiently fail

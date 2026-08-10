@@ -22,15 +22,15 @@ import {
 } from 'vue';
 
 /**
- * Styling lives in this `tailwind-variants` config (ADR-0004): the `root` slot
+ * Styling lives in this `tailwind-variants` config: the `root` slot
  * is the public grid container that lays out the list items. Consumer
- * customization is via `::part()` (ADR-0006); there is no `override` prop. The
+ * customization is via `::part()`; there is no `override` prop. The
  * per-component `--c-*` indirection vars are dropped in favour of global design
  * tokens.
  *
  * The `bordered` outline targets consumer-provided `<c-list-item>` children via
  * `::slotted(...)`, which utilities cannot express — that rule stays in the
- * escape-hatch <style> below (ADR-0007).
+ * escape-hatch <style> below.
  */
 const list = tv({
   slots: {
@@ -120,7 +120,7 @@ onBeforeUnmount(() => observer?.disconnect());
 </script>
 
 <!--
-  Escape-hatch CSS (ADR-0007): the `bordered` outline targets consumer-provided
+  Escape-hatch CSS: the `bordered` outline targets consumer-provided
   light-DOM <c-list-item> children, which only `::slotted(...)` can reach — the
   shadow-root `*` reset never touches light DOM and no utility can express it.
   The grid layout itself lives in the `tv` config above. Authored against global

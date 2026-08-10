@@ -53,18 +53,18 @@ import { tv } from 'tailwind-variants';
 import { computed } from 'vue';
 
 /**
- * Styling lives entirely in this `tailwind-variants` config (ADR-0004); `root`
- * (the <footer>) and `actions` (the flex <menu> row) are the public parts
- * (ADR-0006). The Stencil version delegated to <c-card-actions> with
+ * Styling lives entirely in this `tailwind-variants` config; `root`
+ * (the <footer>) and `actions` (the flex <menu> row) are the public parts.
+ * The Stencil version delegated to <c-card-actions> with
  * `--_c-card-gap: 0`; the layout is inlined here so we don't nest a second
  * custom element (and its shadow boundary) just to zero a single var. The host
  * stays `display:contents` (global) and the box lives on the `root` element.
  * The `align`/`justify` props drive the flex alignment via variants.
- * `::slotted(...)` stretch rules stay in the escape-hatch <style> (ADR-0007):
+ * `::slotted(...)` stretch rules stay in the escape-hatch <style>:
  * they target consumer light-DOM children.
  */
 // Hoisted so the runtime guards below can test membership; the `satisfies`
-// keeps the maps complete against the public unions (ADR-0015).
+// keeps the maps complete against the public unions.
 const alignVariants = {
   center: { actions: 'items-center' },
   end: { actions: 'items-end' },
@@ -103,7 +103,7 @@ const props = withDefaults(defineProps<CLoginCardActionsProps>(), {
 });
 
 // Attributes can deliver any string at runtime; unknown values fall back to
-// the defaults (ADR-0015).
+// the defaults.
 const ui = computed(() =>
   loginCardActions({
     align: props.align in alignVariants ? props.align : 'center',
@@ -113,7 +113,7 @@ const ui = computed(() =>
 </script>
 
 <!--
-  Escape-hatch CSS (ADR-0007): `::slotted(...)` rules style consumer-provided
+  Escape-hatch CSS: `::slotted(...)` rules style consumer-provided
   light-DOM children (a contextual selector Tailwind utilities cannot express).
   When the row is `justify=stretch`, every action grows; a `c-button[fit]`
   always grows regardless of justify.

@@ -5,5 +5,7 @@ owns the active value and pushes it down.
 
 This component carries no form semantics — no `label`, `required`, or
 `mandatory` — and the selection cannot be toggled off: a tab strip always
-has an active tab. For a standalone segmented control that holds a form
-value, use `c-button-group` (which this component wraps internally).
+has an active tab. The sliding indicator that glides to the active tab is
+this component's own affordance. For a standalone segmented control that
+holds a form value, use `c-button-group` (which this component wraps
+internally); there, active buttons paint their own fill and nothing slides.

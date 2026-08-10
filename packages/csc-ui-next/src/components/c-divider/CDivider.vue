@@ -19,8 +19,8 @@ import { coerceBoolean } from '../../shared/coerceBoolean';
 /**
  * General-purpose separator. Used by `c-menu` to divide sections, but usable
  * anywhere (cards, layouts, toolbars). Styling lives entirely in this
- * `tailwind-variants` config (ADR-0004); consumer customization is via
- * `::part(root)` (ADR-0006). No `<style>` block needed — the host stays
+ * `tailwind-variants` config; consumer customization is via
+ * `::part(root)`. No `<style>` block needed — the host stays
  * `display: contents` (the global rule) and the `root` box carries the line,
  * so it lays out directly inside its parent.
  */

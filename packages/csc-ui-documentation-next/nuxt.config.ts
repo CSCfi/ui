@@ -4,11 +4,11 @@ import { fileURLToPath } from 'node:url';
 
 // The site is a pure consumer of the csc-ui-next build output: the Custom
 // Elements Manifest (dist/custom-elements.json) for the API reference and
-// dist/docs/<tag>/usage.md for the hand-written usage prose (ADR-0012).
+// dist/docs/<tag>/usage.md for the hand-written usage prose.
 // Pages are prerendered (SSG); the custom elements themselves upgrade on the
 // client via the csc-ui plugin.
 
-// Composed children (ADR-0013) have no page of their own: redirect their old
+// Composed children have no page of their own: redirect their old
 // route to the parent page anchor. Derived from the manifest so the mapping has
 // a single source of truth (the @subcomponents docblock tags).
 // eslint-disable-next-line @typescript-eslint/no-explicit-any

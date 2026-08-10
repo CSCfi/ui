@@ -61,7 +61,7 @@ interface CSideNavigationEvents {
    * Named `change:menu-visible`, not `update:menuVisible`: Vue's runtime
    * silently drops `onUpdate:*` listeners on custom elements
    * (`isModelListener`), so a template `@update:menu-visible` would never be
-   * attached (ADR-0017).
+   * attached.
    */
   'change:menu-visible': boolean;
 }
@@ -72,20 +72,20 @@ interface CSideNavigationEvents {
 defineOptions({ inheritAttrs: false });
 
 /**
- * Styling lives in this `tailwind-variants` config (ADR-0004): each visual
+ * Styling lives in this `tailwind-variants` config: each visual
  * region is a slot and the `mobile` variant replaces the
  * `.c-side-navigation__content--mobile/--desktop` and `--mobile` wrapper
  * cascades. The per-component `--c-*` indirection vars are dropped in favour of
- * the semantic design tokens (ADR-0010): the drawer is the themed `nav-surface`
+ * the semantic design tokens: the drawer is the themed `nav-surface`
  * role (brand primary in light, a dark neutral panel in dark, so it adapts to
- * the theme). Consumer customization is via `::part()` (ADR-0006).
+ * the theme). Consumer customization is via `::part()`.
  *
  * The host box itself (the `[data-desktop]` / `.autoheight` host states, which
  * carry background/flex/min-width and can't be expressed as utilities on the
  * host),
  * the `.c-overlay` backdrop + its fade-in `@keyframes`, and the
  * `::slotted(...)` `display:contents` rule remain in the escape-hatch <style>
- * below (ADR-0007).
+ * below.
  */
 const sideNavigation = tv({
   compoundVariants: [
@@ -282,7 +282,7 @@ onBeforeUnmount(() => {
 </script>
 
 <!--
-  Escape-hatch CSS (ADR-0007): only constructs Tailwind utilities cannot
+  Escape-hatch CSS: only constructs Tailwind utilities cannot
   express. The drawer layout (content/nav/wrapper/burger) lives in the `tv`
   config above. What remains here:
     - The host box and its `[data-desktop]` / `.autoheight` host states —

@@ -31,9 +31,9 @@ import { computed, useTemplateRef } from 'vue';
 import { useHasSlot } from '../../shared/useHasSlot';
 
 /**
- * Styling lives entirely in this `tailwind-variants` config (ADR-0004); the
+ * Styling lives entirely in this `tailwind-variants` config; the
  * stamped parts (`root`, `header`, `heading`, `underline`, `actions`) are the
- * public customization surface (ADR-0006). The typography that the original
+ * public customization surface. The typography that the original
  * carried on `:host` now lives on the `root` element. Colours come from the
  * semantic-token layer (`on-surface-muted` text, `primary` underline)
  * — the old `--c-card-title-color` / `--c-card-title-underline-color` override

@@ -132,10 +132,10 @@ interface CTabsEvents {
 }
 
 /**
- * Styling lives in this `tailwind-variants` config (ADR-0004) for the parts
- * whose layout is static utilities; customization is via `::part()` (ADR-0006).
+ * Styling lives in this `tailwind-variants` config for the parts
+ * whose layout is static utilities; customization is via `::part()`.
  *
- * The rest of this component is irreducibly escape-hatch (ADR-0007), kept in
+ * The rest of this component is irreducibly escape-hatch, kept in
  * the <style> block below: the host must be a real box (the whole grid/flex
  * layout, the `vertical`/`justify`/`overflow`/`mobile`/`borderless` state, and
  * the active-tab indicator all hang off it); the sliding indicator is an
@@ -188,7 +188,7 @@ const justifyValues = [
 ] as const satisfies readonly CTabsJustify[];
 
 // Attributes can deliver any string at runtime; unknown values fall back to
-// stretch (ADR-0015).
+// stretch.
 const justify = computed<CTabsJustify>(() =>
   justifyValues.includes(props.justify) ? props.justify : 'stretch',
 );
@@ -290,7 +290,7 @@ const tabsList = (): CTabEl[] => {
   const tb = tabButtonsEl();
 
   // Buttons mode: the tabs are the adapter's slotted plain c-buttons
-  // (ADR-0023) — they stay light-DOM children of <c-tab-buttons>.
+  // — they stay light-DOM children of <c-tab-buttons>.
   if (tb) {
     return Array.from(tb.querySelectorAll(':scope > c-button')) as CTabEl[];
   }
@@ -664,7 +664,7 @@ onMounted(() => {
 
     const tb = tabButtonsEl();
 
-    // The adapter needs no mode flag (ADR-0023): c-tab-buttons is always the
+    // The adapter needs no mode flag: c-tab-buttons is always the
     // tab-strip controller; only the host class for the indicator-suppressing
     // styles below is ours to set.
     if (tb) host.classList.add('c-tabs--buttons');
@@ -763,7 +763,7 @@ onBeforeUnmount(() => {
 </script>
 
 <!--
-  Escape-hatch CSS (ADR-0007). c-tabs is irreducibly host-box + pseudo-element +
+  Escape-hatch CSS. c-tabs is irreducibly host-box + pseudo-element +
   ::slotted driven:
    - The host must be a real box: its display/grid drives the whole layout and
      all the `c-tabs--vertical/justify-*/overflow/mobile/borderless/buttons/
@@ -776,7 +776,7 @@ onBeforeUnmount(() => {
    - `::slotted(...)` rules style the consumer's c-tab / c-tab-buttons /
      c-tab-items light-DOM children.
   None of these are expressible as static utilities. Token colours are authored
-  directly (ADR-0004): the `--c-tabs-*` indirection vars were dropped in favour
+  directly: the `--c-tabs-*` indirection vars were dropped in favour
   of the design tokens, the dead `--c-icon-button-border-radius` override was
   removed (c-icon-button owns its own radius now), and `--c-tabs-border-color` /
   `--c-tabs-indicator-color` were reduced to a `borderless` toggle var + the

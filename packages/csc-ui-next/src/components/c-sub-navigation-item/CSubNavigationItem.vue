@@ -31,15 +31,15 @@ import { tv } from 'tailwind-variants';
 import { computed, onMounted, ref, useHost, watchEffect } from 'vue';
 
 /**
- * Styling lives in this `tailwind-variants` config (ADR-0004): each visual
+ * Styling lives in this `tailwind-variants` config: each visual
  * region is a slot, and the `active` / `subLevel` variants replace the
  * `:host(.active)` and `:host(.c-sub-navigation-item--sub-level)` selector
  * cascades. The per-component `--c-*` indirection vars are dropped in favour of
- * the global design tokens. Consumer customization is via `::part()` (ADR-0006);
+ * the global design tokens. Consumer customization is via `::part()`;
  * there is no `override` prop.
  *
  * The keyboard focus ring and the `::slotted(span)` rule (consumer light-DOM
- * children) remain in the escape-hatch <style> below (ADR-0007). tabindex/role/
+ * children) remain in the escape-hatch <style> below. tabindex/role/
  * aria live on the rendered `[part=root]` box, not the host: a `display:contents`
  * host is unfocusable, so a host-level `:focus-visible` ring never fired.
  */
@@ -197,7 +197,7 @@ onMounted(() => {
 </script>
 
 <!--
-  Escape-hatch CSS (ADR-0007): only constructs Tailwind utilities cannot
+  Escape-hatch CSS: only constructs Tailwind utilities cannot
   express. The item box, hover/active states and the leading indicator
   (`::before`) live in the `tv` config above. What remains here:
     - The keyboard focus ring: `[part='root']:focus-visible` with a negative

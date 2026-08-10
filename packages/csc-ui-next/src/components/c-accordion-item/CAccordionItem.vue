@@ -70,10 +70,10 @@ interface CAccordionItemEvents {
   'item-change': { expanded: boolean; value: number | string | undefined };
 }
 
-// Styling lives in `tailwind-variants` (ADR-0004): no `<style>` block and the
+// Styling lives in `tailwind-variants`: no `<style>` block and the
 // public `--c-accordion-item-*` override vars are dropped — theming now flows
 // through global design tokens, and consumer customization through `::part()`
-// (ADR-0006; there is no `override` prop). The grid-template-rows
+// (there is no `override` prop). The grid-template-rows
 // collapse, chevron rotate and inset outline are all expressible as utilities,
 // so no bespoke CSS remains. `root` deliberately has no `overflow-hidden`
 // (that would clip the header's focus outline); clipping lives on the content

@@ -1,12 +1,12 @@
 /**
- * Template-AST extraction for the docs analyzer (ADR-0012).
+ * Template-AST extraction for the docs analyzer.
  *
  * Walks a compiled SFC template AST and discovers the component's projection
  * and customization surface:
  *   - slots:        every `<slot>` element (default + named)
  *   - parts:        every static `part="…"` attribute (space-separated names)
  *   - exportparts:  nested parts re-exposed under the `<child>-<part>`
- *                   convention of ADR-0006 (the *exposed* name is public API)
+ *                   convention (the *exposed* name is public API)
  *
  * Dynamic bindings (`:name` on a slot, `:part`) can't be verified statically;
  * they are collected separately so the lint can warn instead of silently

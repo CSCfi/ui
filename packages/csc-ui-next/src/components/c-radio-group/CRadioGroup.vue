@@ -145,17 +145,17 @@ interface CRadioGroupEvents {
 }
 
 /**
- * Styling lives in this `tailwind-variants` config (ADR-0004); the old
+ * Styling lives in this `tailwind-variants` config; the old
  * `--_c-radio-group-*` indirection layer is dropped for direct token utilities.
- * Customization is via `::part()` (ADR-0006); there is no `override` prop.
+ * Customization is via `::part()`; there is no `override` prop.
  *
  * Each radio's ring is a `.c-radio__selection` box (ring via `box-shadow`) and
  * the filled dot is its `::after` pseudo. The dot's SELECTED state
  * (`input:checked ~ .ripple .selection::after { transform: scale(1) }`),
  * the hover tint, and the focus-visible outline are all sibling-driven (they
  * depend on the live `:checked`/`:focus-visible` of a sibling input) and so
- * cannot be `tv` variants — they remain in the escape-hatch `<style>` below
- * (ADR-0007). The STATIC dot look (`after:` size/position/scale-0/transition)
+ * cannot be `tv` variants — they remain in the escape-hatch `<style>` below.
+ * The STATIC dot look (`after:` size/position/scale-0/transition)
  * is authored here in `tv`.
  *
  * `inline`, `disabled`, and error (`!valid`) map to props, so the layout and
@@ -193,7 +193,7 @@ const radioGroup = tv({
       'inline-block relative h-[42px] w-[42px] min-w-[42px] rounded-full overflow-hidden text-primary transition-colors duration-200 ease-in-out',
     // Material click ripple: an absolutely-positioned circle, always centred in
     // the 42px surface (which clips via overflow-hidden + rounded-full). Tweens
-    // scale/opacity via the `transition` util (ADR-0004, no bespoke @keyframes).
+    // scale/opacity via the `transition` util (no bespoke @keyframes).
     // `bg-current` so it follows the ripple surface's state colour.
     rippleEffect:
       'pointer-events-none absolute rounded-full bg-current transition-[transform,opacity] duration-[600ms] ease-out',
@@ -506,7 +506,7 @@ onBeforeUnmount(() => {
 </script>
 
 <!--
-  Escape-hatch CSS (ADR-0007): only constructs Tailwind utilities cannot
+  Escape-hatch CSS: only constructs Tailwind utilities cannot
   express. Everything static lives in the `tv` config above. What remains:
 
   - `:host{display:flex;...}` — restores a box on the host (the global sheet

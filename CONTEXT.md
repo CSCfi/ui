@@ -158,12 +158,16 @@ A **label** naming a *set* of controls operated as one field — `c-radio-group`
 _Avoid_: Legend (the native `<fieldset>` mechanism this library does not use), group title
 
 **Button group** (`c-button-group`):
-A standalone **labelable value control**: a segmented row of plain `c-button` children where activation carries the value — exclusive by default, cumulative with `multiple`. The form-facing component; it knows nothing about tabs. The group drives each child's **active** state.
+A standalone **labelable value control**: a segmented row of plain `c-button` children where activation carries the value — exclusive by default, cumulative with `multiple`. The form-facing component; it knows nothing about tabs. The group drives each child's **active** state; every active child paints its own active look — the **sliding indicator** never appears here (ADR-0025).
 _Avoid_: Tab buttons (that is the `c-tabs` adapter, not a value control), toggle group / segmented control (foreign vocabulary for this same component), toolbar (a button group holds a value; a toolbar merely groups actions)
 
 **Tab buttons** (`c-tab-buttons`):
-The tab-strip adapter — a **composed child** of `c-tabs` that presents the tab list as a button group. Carries no form semantics (no label, no required, no **mandatory**) and cannot deselect: a tab strip inherently has an active tab. Standalone value-picking under this tag is Stencil-era usage; in `csc-ui-next` that job belongs to **button group**.
+The tab-strip adapter — a **composed child** of `c-tabs` that presents the tab list as a button group with the **sliding indicator**. Carries no form semantics (no label, no required, no **mandatory**) and cannot deselect: a tab strip inherently has an active tab. Standalone value-picking under this tag is Stencil-era usage; in `csc-ui-next` that job belongs to **button group**.
 _Avoid_: using it standalone as a value picker (that is `c-button-group`)
+
+**Sliding indicator** (`c-tab-buttons`):
+The single moving fill that glides to the active tab in a tab strip. A tab-switching affordance owned by **tab buttons** (ADR-0025) — a **button group** never shows it; there, each active button paints its own **active** look.
+_Avoid_: Pill (informal), active fill (that is a button's own selected look, not the shared moving one)
 
 **Active** (`c-button`):
 The public pressed state of a button — the selected look plus `aria-pressed`. Set by consumers for standalone toggle buttons, or driven by `c-button-group` on its children.
@@ -230,8 +234,8 @@ A public TypeScript type whose **value crosses a component boundary** — one co
 _Avoid_: common type, global type, public type (both shared and component-owned types are public; shared is specifically the crosses-a-boundary case)
 
 **Usage doc**:
-The hand-written markdown file colocated with a component (`usage.md` beside the SFC) holding consumer-facing prose — purpose, guidelines, accessibility notes. Flows to the docs site at build time; complements, never duplicates, the generated API tables.
-_Avoid_: readme (GitHub-facing), description (a description is the one-liner on a single API member)
+The hand-written markdown file colocated with a component (`usage.md` beside the SFC) holding consumer-facing prose — purpose, guidelines, accessibility notes. The *only* place a component is described: its first paragraph is the component's description everywhere the tag is described (docs-page intro, IDE hover, tag-map JSDoc — ADR-0026); the SFC docblock carries tags only, no prose. Flows to the docs site at build time; complements, never duplicates, the generated API tables.
+_Avoid_: readme (GitHub-facing), description (a description is the one-liner on a single API member; the *component* description is this file's first paragraph, not a separate text)
 
 **Composed child**:
 A component the consumer authors only inside a specific parent's markup (`c-tag` inside `c-tags`, `c-card-title` inside `c-card`). Declared by the parent via a `@subcomponents` docblock tag, emitted into the **manifest**, and folded into the parent on the docs site — no top-level nav entry or standalone page of its own; its examples and API tables live under the parent, **grouped by component**. Distinct from an _internal-only element_ (e.g. `c-dropdown`), which the consumer never authors at all and which is documented nowhere.

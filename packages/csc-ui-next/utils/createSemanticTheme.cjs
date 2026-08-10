@@ -1,5 +1,5 @@
 /**
- * Emit the semantic-token layer for `@cscfi/csc-ui-next` (ADR-0010).
+ * Emit the semantic-token layer for `@cscfi/csc-ui-next`.
  *
  * Takes the light/dark role→palette-step maps and produces three CSS blocks:
  *   1. `:root, :root[data-theme='light']`  — light is the default/unset mode
@@ -34,7 +34,7 @@ module.exports = (light, dark, invariant) => {
 
   return [
     '/*',
-    ' * Semantic tokens (ADR-0010). Role-named properties that resolve to a',
+    ' * Semantic tokens. Role-named properties that resolve to a',
     ' * different palette step per theme mode; components author against the',
     ' * per-role color utilities the @theme inline map in tailwind.css exposes.',
     ' */',

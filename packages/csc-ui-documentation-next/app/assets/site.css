@@ -1,6 +1,6 @@
 /*
  * Residual stylesheet — only what Tailwind utilities cannot express (the
- * docs-app analogue of the library's ADR-0007 escape hatch). Everything else
+ * docs-app analogue of the library's own escape hatch). Everything else
  * is authored as utilities in the templates (see assets/tailwind.css for the
  * entry and base layer). Qualifying rules:
  *

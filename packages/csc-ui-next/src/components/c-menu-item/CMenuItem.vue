@@ -15,7 +15,7 @@
   </div>
 
   <!-- Submenu surface: its own manual popover in the top layer, anchored to
-       this item's root via CSS anchor positioning (ADR-0008). Opened/closed
+       this item's root via CSS anchor positioning. Opened/closed
        on command from the controlling c-menu. Rendered only once a submenu
        has been detected so the empty case carries no popover. -->
   <div
@@ -39,8 +39,6 @@
 
 <script setup lang="ts">
 /**
- * A single command in a `c-menu`.
- *
  * @slot default - The item's content: label text plus optional icons or shortcut hint
  * @slot submenu - c-menu-item components for the nested submenu
  *
@@ -76,8 +74,8 @@ import { coerceBoolean } from '../../shared/coerceBoolean';
  * menu drives this item through the DOM (delegated events, roving `tabindex`)
  * and through the `openSubmenu`/`closeSubmenu` methods exposed below.
  *
- * Styling is in this `tailwind-variants` config (ADR-0004); `::part()` is the
- * customization surface (ADR-0006). The `<style>` block is the ADR-0007
+ * Styling is in this `tailwind-variants` config; `::part()` is the
+ * customization surface. The `<style>` block is the
  * escape hatch: the host must be a focusable box (`:host{display:block}`,
  * focusable because the controller calls `host.focus()`), and the active-row
  * highlight keys off `:host([data-active])` — a contextual host selector that
@@ -269,7 +267,7 @@ onBeforeUnmount(() => {
 </script>
 
 <!--
-  ADR-0007 escape-hatch CSS — constructs utilities cannot express:
+  Escape-hatch CSS — constructs utilities cannot express:
    - `:host{display:block}` makes the host a focusable box (the controller
      calls `host.focus()` for roving-tabindex navigation) and overrides the
      global `:host{display:contents}`.

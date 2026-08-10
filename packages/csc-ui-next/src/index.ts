@@ -186,19 +186,19 @@ export type * from './tag-name-map';
 
 // Runtime consumer theming: rebrand chromatic families by supplying their
 // step-500 seed; the full ramp regenerates and re-themes every component in
-// both light and dark mode (ADR-0011).
+// both light and dark mode.
 export { applyTheme, resetTheme, themeToCss } from './theme/applyTheme';
 
 export type { Family, ThemeSeeds } from './theme/applyTheme';
 
-// Public component types (ADR-0015), re-exported so consumers can import them
+// Public component types, re-exported so consumers can import them
 // from the package root: `import type { CAlertType } from '@cscfi/csc-ui-next'`.
 // Shared types (value crosses a component boundary) come from src/types.ts;
 // component-owned types come from their owning SFC.
 export type { CSelectItem, CToastMessage, CToastType } from './types';
 
 // Vue's `h`, re-exported so consumers author c-data-table cell/footer/expanded
-// render functions without a direct `vue` dependency (ADR-0016).
+// render functions without a direct `vue` dependency.
 export { h } from 'vue';
 
 export type { VNode, VNodeChild } from 'vue';
@@ -280,7 +280,7 @@ const components: Array<[string, unknown]> = [
   ['c-dropdown', CDropdown],
   ['c-select', CSelect],
   // c-autocomplete reuses c-option (registered above) as its data source and
-  // builds its own popover panel (ADR-0009); register after the option leaves.
+  // builds its own popover panel; register after the option leaves.
   ['c-autocomplete', CAutocomplete],
   // Menu stack: leaf elements register before c-menu so item/label/divider
   // tags are defined when c-menu's slotted content upgrades.
@@ -308,7 +308,7 @@ export function defineCustomElements(): void {
 export const migratedTags: ReadonlyArray<string> = components.map(([t]) => t);
 
 /**
- * Tags converted to the tailwind-variants styling system (ADR-0004).
+ * Tags converted to the tailwind-variants styling system.
  * Append a tag as each component is migrated. Used by the docs to mark
  * conversion progress in the side navigation.
  */
@@ -365,7 +365,7 @@ export const tailwindVariantTags: ReadonlyArray<string> = [
   'c-side-navigation',
   'c-side-navigation-item',
   'c-sub-navigation-item',
-  // Wave D — form controls, modal, table (hybrid; heavy ADR-0007 escape-hatch).
+  // Wave D — form controls, modal, table (hybrid; heavy escape-hatch `<style>` blocks).
   'c-checkbox',
   'c-radio',
   'c-radio-group',
@@ -381,7 +381,7 @@ export const tailwindVariantTags: ReadonlyArray<string> = [
   'c-autocomplete',
   'c-modal',
   'c-table',
-  // Wave E — menu family (Popover API + CSS anchor positioning, ADR-0008).
+  // Wave E — menu family (Popover API + CSS anchor positioning).
   'c-divider',
   'c-menu-label',
   'c-menu-item',

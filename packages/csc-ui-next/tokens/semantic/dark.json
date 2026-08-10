@@ -1,5 +1,5 @@
 {
-  "_comment": "Semantic token → palette step map for DARK mode (ADR-0010). Brand/status roles remap existing ramp steps; the surface ladder + neutral borders/muted-text draw from the dedicated dark-neutral `slate` ramp (added to base.json when the original ramps proved too light/washed for dark surfaces). Finalised against WCAG AA in the contrast pass. Keep keys in sync with light.json. Mode-invariant roles (inverse-*) live in invariant.json.",
+  "_comment": "Semantic token → palette step map for DARK mode. Brand/status roles remap existing ramp steps; the surface ladder + neutral borders/muted-text draw from the dedicated dark-neutral `slate` ramp (added to base.json when the original ramps proved too light/washed for dark surfaces). Finalised against WCAG AA in the contrast pass. Keep keys in sync with light.json. Mode-invariant roles (inverse-*) live in invariant.json.",
 
   "surface": "slate-900",
   "surface-raised": "slate-900",

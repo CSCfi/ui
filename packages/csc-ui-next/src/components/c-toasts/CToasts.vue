@@ -47,9 +47,6 @@ export type CToastsVertical = 'bottom' | 'top';
 
 <script setup lang="ts">
 /**
- * Overlay container that stacks and manages c-toast notifications via its
- * `addToast` / `removeToast` methods
- *
  * @slot default - Content of a custom toast message, projected into the single `custom`-flagged c-toast
  * @csspart root - The grid container the toast items stack in
  *
@@ -79,13 +76,13 @@ import { TOAST_BAND } from '../../shared/modalStack';
 defineOptions({ inheritAttrs: false });
 
 /**
- * Styling lives in this `tailwind-variants` config (ADR-0004). Only the inner
+ * Styling lives in this `tailwind-variants` config. Only the inner
  * container grid is a utility region (`root`); the host itself is the fixed
  * positioned overlay whose placement is driven by the `absolute` / `vertical`
  * / `horizontal` props. Those `:host(.absolute|.top|.bottom|.left|.right
  * |.center)` rules are positional host state toggled imperatively as classes,
- * so they stay in the escape-hatch sheet below (ADR-0007). Consumer
- * customization is via `::part()` (ADR-0006).
+ * so they stay in the escape-hatch sheet below. Consumer
+ * customization is via `::part()`.
  */
 const toasts = tv({
   slots: {
@@ -185,7 +182,7 @@ const onChildClose = (event: CustomEvent<CToastMessage>) => {
 defineExpose({ addToast, removeToast });
 
 // Attributes can deliver any string at runtime; unknown placements fall back
-// to the default center/bottom (ADR-0015) — otherwise an invalid `vertical`
+// to the default center/bottom — otherwise an invalid `vertical`
 // would leave the stack with no anchor class at all.
 const horizontal = computed(() =>
   props.horizontal === 'left' || props.horizontal === 'right'
@@ -198,7 +195,7 @@ const vertical = computed(() => (props.vertical === 'top' ? 'top' : 'bottom'));
 onMounted(() => {
   if (!host) return;
 
-  // Toast stacking band (ADR-0014): above the modal band, below the browser
+  // Toast stacking band: above the modal band, below the browser
   // top layer. Set from the shared constant so modal and toast paint order
   // have a single source of truth. The modal stack controller additionally
   // exempts c-toasts from inerting, so toasts stay interactive over modals.
@@ -216,7 +213,7 @@ onMounted(() => {
 </script>
 
 <!--
-  Escape-hatch CSS (ADR-0007): only constructs Tailwind utilities cannot
+  Escape-hatch CSS: only constructs Tailwind utilities cannot
   express. The inner container grid lives in the `tv` `root` slot above; here
   remains the host itself, which must be a real fixed/absolute positioned
   overlay box (utilities can't target the host, and this host is the structural

@@ -35,19 +35,19 @@ import { tv } from 'tailwind-variants';
 import { computed } from 'vue';
 
 /**
- * Styling lives entirely in this `tailwind-variants` config (ADR-0004): the
+ * Styling lives entirely in this `tailwind-variants` config: the
  * old per-component `--_c-step-*` override-variable layer is dropped and
  * authored directly against the design tokens; the `complete`/`current` prop
- * matrix becomes `variants`. Customization is via `::part()` (ADR-0006); there
+ * matrix becomes `variants`. Customization is via `::part()`; there
  * is no `override` prop.
  *
  * The host MUST stay a real box (the parent <c-steps> lays out each step plus
  * its sibling `.divider` in the host's light DOM as flex children, so the
  * host's width drives the layout). That `:host` box and the JS-toggled
- * `:host(.mobile)` collapse live in the escape-hatch <style> below (ADR-0007);
+ * `:host(.mobile)` collapse live in the escape-hatch <style> below;
  * everything else is utilities.
  *
- * Indicator colours (semantic roles, ADR-0010):
+ * Indicator colours (semantic roles):
  *  - incomplete dot: `inset` ring in `border-strong` (current → `primary` ring
  *    + a centred `primary` `::before` pip).
  *  - complete: `primary` filled circle with an `on-primary` check (SVG
@@ -104,7 +104,7 @@ const ui = computed(() => step({ current: props.current }));
 </script>
 
 <!--
-  Escape-hatch CSS (ADR-0007): constructs Tailwind utilities cannot express.
+  Escape-hatch CSS: constructs Tailwind utilities cannot express.
   - :host box — the host must be a real, sized box (180px wide) because the
     parent <c-steps> arranges each step and its sibling `.divider` as flex
     children in the host's light DOM. This deliberately overrides the global

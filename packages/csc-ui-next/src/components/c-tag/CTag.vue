@@ -69,12 +69,12 @@ interface CTagEvents {
 }
 
 /**
- * Styling lives entirely in this `tailwind-variants` config (ADR-0004): the
+ * Styling lives entirely in this `tailwind-variants` config: the
  * `root` slot is the tag's inner box and the `active`/`size`/
  * `flat`/`closeable`/`badged` variants replace the original `:host([attr])`
- * cascade. Consumer customization is via `::part(root)` (ADR-0006); there is no
+ * cascade. Consumer customization is via `::part(root)`; there is no
  * `override` prop. The per-component `--c-tag-*` indirection vars are dropped in
- * favour of the semantic primary role (ADR-0010):
+ * favour of the semantic primary role:
  *   resting text + border  -> the primary role colour (text + inset ring)
  *   active fill            -> the primary role; active text -> its on-colour
  *   resting hover tint     -> the primary subtle fill
@@ -85,15 +85,15 @@ interface CTagEvents {
  * rendered as its `text` variant — that variant sets an explicit `text-primary`
  * on its own `part=root` button, which a `color` inherited from this host can't
  * override. So the close icon is recoloured through `c-icon-button::part(root)`
- * in the escape-hatch <style> below (ADR-0006), flipped to the primary
+ * in the escape-hatch <style> below, flipped to the primary
  * on-colour on `:host([active])`. It is sized via its own `size` prop.
  *
  * The host's hover/focus-visible styling can't be a variant (positional/state
- * `:host(...)`); it stays in the escape-hatch <style> below (ADR-0007), which
+ * `:host(...)`); it stays in the escape-hatch <style> below, which
  * also restores the host box.
  */
 // Hoisted so the runtime guard below can test membership; the `satisfies`
-// keeps the map complete against the public union (ADR-0015).
+// keeps the map complete against the public union.
 const sizeVariants = {
   default: { root: 'min-h-7 py-1 px-3 before:h-5 before:min-w-5' },
   small: { root: 'min-h-5 py-0.5 px-2 before:h-4 before:min-w-4' },
@@ -165,7 +165,7 @@ const hasBadge = computed(
 );
 
 // Attributes can deliver any string at runtime; unknown values fall back to
-// the default size (ADR-0015).
+// the default size.
 const ui = computed(() =>
   tag({
     active: props.active,
@@ -198,7 +198,7 @@ const onClose = () => {
 </script>
 
 <!--
-  Escape-hatch CSS (ADR-0007): only constructs Tailwind utilities cannot
+  Escape-hatch CSS: only constructs Tailwind utilities cannot
   express. The tag's box and all variant colours live in the `tv` config above.
   What remains:
     - The host must be a real box so it can be focused/hovered as a unit and so
@@ -239,9 +239,9 @@ const onClose = () => {
 }
 
 /* The close button was a fixed 20px (16px on small tags) via the old
- * c-icon-button size vars, which are removed (ADR-0004). The smallest size
+ * c-icon-button size vars, which are removed. The smallest size
  * variant is x-small (28px), so re-pin the box through ::part() — the
- * sanctioned child-customization mechanism (ADR-0006). Keeps a small tag from
+ * sanctioned child-customization mechanism. Keeps a small tag from
  * being forced taller by an oversized close button. */
 c-icon-button::part(root) {
   width: 20px;
@@ -249,7 +249,7 @@ c-icon-button::part(root) {
   /* Recolour the close icon from here: the c-icon-button `text` variant sets an
    * explicit `text-primary` on this part, so a `color` inherited from the host
    * can't reach it. Outer-tree ::part rules beat the inner utility without
-   * !important (ADR-0006), and follow the tag's active state below. */
+   * !important, and follow the tag's active state below. */
   color: var(--c-primary);
 }
 
@@ -262,7 +262,7 @@ c-icon-button::part(root) {
  * icon) is wrong here — on an active tag the icon is white, so a light tint
  * would hide it. Mirror the Stencil c-tag: a filled circle whose colours invert
  * the tag's resting pair. Outer-tree ::part rules win over the inner `hover:`
- * utility without !important (ADR-0006). */
+ * utility without !important. */
 c-icon-button::part(root):hover {
   background-color: var(--c-primary);
   color: var(--c-on-primary);

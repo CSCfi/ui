@@ -1,6 +1,6 @@
 /**
- * IDE completion data (ADR-0015), generated from the CEM manifest by the
- * ecosystem generators — the reason ADR-0012 chose CEM over a bespoke schema.
+ * IDE completion data, generated from the CEM manifest by the ecosystem
+ * generators — the reason the analyzer chose CEM over a bespoke schema.
  *
  *   dist/vscode.html-custom-data.json  VS Code / Volar tag + attribute data
  *                                      (attribute value sets come from the

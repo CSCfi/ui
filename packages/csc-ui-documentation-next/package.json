@@ -2,7 +2,7 @@
   "name": "@cscfi/csc-ui-documentation-next",
   "version": "0.0.1",
   "private": true,
-  "description": "Documentation site for @cscfi/csc-ui-next, generated from the library's Custom Elements Manifest (ADR-0012).",
+  "description": "Documentation site for @cscfi/csc-ui-next, generated from the library's Custom Elements Manifest.",
   "type": "module",
   "scripts": {
     "build": "pnpm run lint:examples && nuxt build",

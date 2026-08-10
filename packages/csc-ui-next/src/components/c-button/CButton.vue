@@ -170,9 +170,6 @@ export type CButtonType = 'button' | 'reset' | 'submit';
 
 <script setup lang="ts">
 /**
- * Button for user actions. Renders a native `<button>` — or an `<a>` when
- * `href` is set — inside the shadow root.
- *
  * @slot default - Button label content.
  * @slot icon - Leading icon, vertically centered before the label.
  * @slot description - Secondary text rendered below the label.
@@ -191,10 +188,10 @@ import { useHasSlot } from '../../shared/useHasSlot';
 import { useRipple } from '../../shared/useRipple';
 
 /**
- * Styling lives entirely in this `tailwind-variants` config (ADR-0004): the
+ * Styling lives entirely in this `tailwind-variants` config: the
  * `slots` are the component's parts and `variants`/`compoundVariants` replace
  * the original `:host([…])` selector cascade. Consumer customization is via
- * `::part()` against the stamped part names (ADR-0006); there is no `override`
+ * `::part()` against the stamped part names; there is no `override`
  * prop.
  *
  * `compoundVariants` are ordered to mirror the original c-button.scss source
@@ -211,7 +208,7 @@ import { useRipple } from '../../shared/useRipple';
  * shows in both.
  */
 // Hoisted so the runtime guard below can test membership; the `satisfies`
-// keeps the map complete against the public union (ADR-0015).
+// keeps the map complete against the public union.
 const sizeVariants = {
   default: {
     contentInner: 'h-full px-4',
@@ -484,7 +481,7 @@ const props = withDefaults(defineProps<CButtonProps>(), {
 });
 
 // Attributes can deliver any string at runtime; unknown values fall back to
-// the defaults (ADR-0015).
+// the defaults.
 const ui = computed(() =>
   button({
     active: props.active === undefined ? false : coerceBoolean(props.active),
@@ -503,7 +500,7 @@ const ui = computed(() =>
 
 // Guard the native passthrough too: an invalid `type` attribute would
 // otherwise hit the browser default state, which is `submit` — not our
-// declared default of `button` (ADR-0015).
+// declared default of `button`.
 const buttonTypes: Record<CButtonType, true> = {
   button: true,
   reset: true,

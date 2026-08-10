@@ -1,5 +1,5 @@
 {
-  "_comment": "Mode-INVARIANT semantic tokens (ADR-0010): identical in light and dark. The 'inverse' family is for content placed on a fixed brand/dark backdrop (e.g. c-button inverted variants, hero overlays) that must keep its look regardless of theme. Emitted once under :root by the generator. Theme-flipping roles live in light.json / dark.json.",
+  "_comment": "Mode-INVARIANT semantic tokens: identical in light and dark. The 'inverse' family is for content placed on a fixed brand/dark backdrop (e.g. c-button inverted variants, hero overlays) that must keep its look regardless of theme. Emitted once under :root by the generator. Theme-flipping roles live in light.json / dark.json.",
 
   "inverse-surface": "white",
   "inverse-on": "white",

@@ -50,8 +50,6 @@ export interface CRowProps {
 
 <script setup lang="ts">
 /**
- * Generic flex row component
- *
  * @slot default - Should contain items to be displayed in the row
  *
  * @seeded from csc-ui — verify
@@ -66,7 +64,7 @@ defineOptions({ inheritAttrs: false });
 
 // The align/justify styling is pure `:host([attr='…'])` CSS below — an
 // unknown attribute value matches no rule and falls back to the base flex
-// layout (ADR-0015), so no runtime guard is needed here.
+// layout, so no runtime guard is needed here.
 const props = withDefaults(defineProps<CRowProps>(), {
   align: undefined,
   gap: 0,
@@ -87,7 +85,7 @@ onMounted(() => {
 </script>
 
 <!--
-  Escape-hatch CSS (ADR-0007): this component has no inner `root` element — the
+  Escape-hatch CSS: this component has no inner `root` element — the
   slotted children are the host's direct flex items, so the host itself MUST be
   the flex container. Utilities cannot target a shadow host, so the host layout,
   its positional `:host([attr])` variants (align/justify/nowrap), and the

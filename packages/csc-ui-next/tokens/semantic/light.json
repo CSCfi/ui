@@ -1,5 +1,5 @@
 {
-  "_comment": "Semantic token → palette step map for LIGHT mode (ADR-0010). Values are palette-step keys; the generator wraps each as var(--c-<step>). Chromatic ramps are anchored at step 500 (the brand/default). FILL roles sit one label below their pre-500 positions (the ramp shifted); `on-*` TEXT roles keep their darker label for legibility (chosen for contrast, not re-anchored). Neutral roles (tertiary-*) keep their labels (those ramps were not re-anchored). Finalised against WCAG AA in the contrast pass. Keep keys in sync with dark.json. Mode-invariant roles (inverse-*) live in invariant.json.",
+  "_comment": "Semantic token → palette step map for LIGHT mode. Values are palette-step keys; the generator wraps each as var(--c-<step>). Chromatic ramps are anchored at step 500 (the brand/default). FILL roles sit one label below their pre-500 positions (the ramp shifted); `on-*` TEXT roles keep their darker label for legibility (chosen for contrast, not re-anchored). Neutral roles (tertiary-*) keep their labels (those ramps were not re-anchored). Finalised against WCAG AA in the contrast pass. Keep keys in sync with dark.json. Mode-invariant roles (inverse-*) live in invariant.json.",
 
   "surface": "white",
   "surface-raised": "white",

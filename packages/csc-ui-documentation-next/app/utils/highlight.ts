@@ -1,5 +1,5 @@
 /**
- * Build-time syntax highlighting (ADR-0013). Shiki and markdown-it are pulled
+ * Build-time syntax highlighting. Shiki and markdown-it are pulled
  * in via dynamic import so they land in a server-only chunk: these functions
  * run inside `useAsyncData` handlers, which execute during SSG prerender and
  * whose results are serialized into the static payload — the client reads the

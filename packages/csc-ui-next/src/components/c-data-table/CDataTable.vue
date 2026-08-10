@@ -271,7 +271,7 @@ export type CDataTableAlign = 'center' | 'end' | 'start';
 /**
  * Content a data-table render function may return: a VNode (create with the
  * `h` re-exported from this package), a plain string/number rendered as text,
- * or an array of these. Strings render as text, never as HTML (ADR-0016).
+ * or an array of these. Strings render as text, never as HTML.
  */
 export type CDataTableCellContent = VNodeChild;
 
@@ -290,7 +290,7 @@ export interface CDataTableCellContext {
 }
 
 /**
- * A column definition — the component-owned column API (ADR-0016). Mapped to
+ * A column definition — the component-owned column API. Mapped to
  * TanStack's `ColumnDef` internally; TanStack types never leak to consumers.
  */
 export interface CDataTableColumn {
@@ -427,7 +427,7 @@ export interface CDataTableProps {
   texts?: CDataTableTexts;
 }
 
-/** A single data row — the consumer's own plain domain object (ADR-0016). */
+/** A single data row — the consumer's own plain domain object. */
 export type CDataTableRow = Record<string, unknown>;
 
 /** Row selection mode. Unset means rows are not selectable. */
@@ -554,7 +554,7 @@ const props = withDefaults(defineProps<CDataTableProps>(), {
  * native/custom elements (`isModelListener` in `patchProp`), so a template
  * `@update:page` listener would never be attached. Lowercase names also
  * survive Vue's hyphenate round-trip, so they work even in no-build in-DOM
- * templates (ADR-0017).
+ * templates.
  */
 interface CDataTableEvents {
   /** Fired when the expanded rows change, carrying the expanded row ids. */
@@ -1242,13 +1242,13 @@ watch([() => props.columns, () => props.data, autohideOn, selectionOn], () => {
 </script>
 
 <!--
-  Escape-hatch CSS (ADR-0007): table-structural styling — row borders and
+  Escape-hatch CSS: table-structural styling — row borders and
   selection/expansion rings as layered inset box-shadows (multi-layer shadow
   utilities are broken in shadow roots), sticky header/footer/pinned-column
   machinery, the row-background custom-property indirection that keeps pinned
   cells opaque, the loading keyframes, and `data-align` attribute selectors.
   None of these are expressible as element-bound utilities. All colours are
-  semantic tokens (ADR-0010).
+  semantic tokens.
 
   Two deliberate departures from the Stencil original:
   - `border-collapse: separate` — collapse breaks `position: sticky` on

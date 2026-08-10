@@ -18,12 +18,12 @@ import { onBeforeUnmount, onMounted, useHost, watch } from 'vue';
 import { coerceBoolean } from '../../shared/coerceBoolean';
 
 /**
- * Styling lives in this `tailwind-variants` config (ADR-0004); customization
- * is via `::part()` (ADR-0006). The `root` element is the sliding flex track.
+ * Styling lives in this `tailwind-variants` config; customization
+ * is via `::part()`. The `root` element is the sliding flex track.
  * Its var-driven `translate` + `transition` (fed `--_c-tab-items-position-left`
  * / `--_c-tab-items-animation-duration` imperatively from the script) and the
  * host box (`overflow:hidden` clips the slide) can't be utilities, so they
- * remain in the escape-hatch <style> below (ADR-0007).
+ * remain in the escape-hatch <style> below.
  */
 const tabItems = tv({
   slots: {
@@ -235,7 +235,7 @@ watch(() => props.value, setActiveTab);
 </script>
 
 <!--
-  Escape-hatch CSS (ADR-0007): the host must be a real box (`overflow:hidden`
+  Escape-hatch CSS: the host must be a real box (`overflow:hidden`
   clips the sliding track — a structural requirement), and the track's
   `translate`/`transition` read `--_c-tab-items-position-left` /
   `--_c-tab-items-position-top` / `--_c-tab-items-animation-duration` set

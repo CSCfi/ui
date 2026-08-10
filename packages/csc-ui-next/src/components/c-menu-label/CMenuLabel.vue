@@ -6,8 +6,6 @@
 
 <script setup lang="ts">
 /**
- * Section label for a group of `c-menu-item`s.
- *
  * @slot default - The label text for the menu section
  *
  * @csspart root - The label element inside the menu list
@@ -17,8 +15,8 @@ import { tv } from 'tailwind-variants';
 /**
  * Section label for a group of `c-menu-item`s. Presentational heading inside
  * the menu list; it is `role="presentation"` so it is not announced as an
- * interactive menuitem. Styling lives in this `tailwind-variants` config
- * (ADR-0004); customization via `::part(root)` (ADR-0006). No `<style>` block —
+ * interactive menuitem. Styling lives in this `tailwind-variants` config;
+ * customization via `::part(root)`. No `<style>` block —
  * the host stays `display: contents` and the `root` box lays out inline in the
  * menu list.
  */

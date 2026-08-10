@@ -18,7 +18,7 @@
 
 <script setup lang="ts">
 /**
- * Internal shared label anatomy (ADR-0022): the `label` prop text (or the
+ * Internal shared label anatomy: the `label` prop text (or the
  * host component's default-slot fallback passed through our slot) plus the
  * required asterisk. NOT a registered custom element — imported into a host
  * component's template and rendered inside its shadow root, so the stamped

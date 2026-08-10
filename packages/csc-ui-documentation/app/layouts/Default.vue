@@ -216,7 +216,7 @@ const { currentComponent, parsedData } = storeToRefs(useExampleStore());
 
 // `isMobile` is a viewport breakpoint, so measure the window directly. We used
 // to ResizeObserver the `c-main` element, but its host is now `display:contents`
-// (ADR-0004) and generates no box — its measured width is always 0, which would
+// and generates no box — its measured width is always 0, which would
 // pin `isMobile` to `true` and hide the desktop side navigation entirely.
 // Default to a desktop width so SSR renders the desktop layout; corrected on mount.
 const width = ref(1280);

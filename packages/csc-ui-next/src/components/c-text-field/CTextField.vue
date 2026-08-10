@@ -349,12 +349,12 @@ interface CTextFieldEvents {
  * and date-picker live here) and passes label / error-message / state props to
  * c-input, which renders the outlined Material border + floating-label visuals.
  *
- * Styling lives in this `tailwind-variants` config (ADR-0004). The native
+ * Styling lives in this `tailwind-variants` config. The native
  * input/textarea and toggle buttons are real elements we render in *this*
  * shadow root, so they take utilities directly. The few native pseudo-elements
  * (`::placeholder`, the WebKit date-picker internals) can't be utilities and
- * stay in the escape-hatch <style> below (ADR-0007). Customization via
- * `::part()` (ADR-0006).
+ * stay in the escape-hatch <style> below. Customization via
+ * `::part()`.
  */
 const textField = tv({
   slots: {
@@ -551,7 +551,7 @@ const onBlur = (event: Event) => {
 </script>
 
 <!--
-  Escape-hatch CSS (ADR-0007): only constructs Tailwind utilities cannot
+  Escape-hatch CSS: only constructs Tailwind utilities cannot
   express. All static styling lives in the `tv` config above. What remains:
     - `:host { display: block }` — the host must be a real box (the global
       `:host{display:contents}` would collapse the field).

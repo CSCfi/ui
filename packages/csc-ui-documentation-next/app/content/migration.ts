@@ -3,7 +3,7 @@ import type { Flavor } from '~/composables/useFlavor';
 /**
  * Upgrade-guide content for consumers moving an app from the old Stencil
  * package (@cscfi/csc-ui) to @cscfi/csc-ui-next. Same data shape as the
- * getting-started page (ADR-0020): one block set per flavor so the page can
+ * getting-started page: one block set per flavor so the page can
  * prerender-highlight every flavor and swap client-side.
  *
  * Note the vocabulary split (see CONTEXT.md): the maintainers "migrate"

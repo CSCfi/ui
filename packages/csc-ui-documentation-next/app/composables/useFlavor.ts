@@ -3,7 +3,7 @@ import { mdiAngular, mdiLanguageTypescript, mdiReact, mdiVuejs } from '@mdi/js';
 /**
  * The documentation-wide flavor: which consumption dialect (Vue | React |
  * Angular | TypeScript) every example tab, getting-started block, and the
- * header switcher show (ADR-0020). One global selection — clicking any
+ * header switcher show. One global selection — clicking any
  * example tab switches the whole site.
  */
 export type Flavor = 'angular' | 'react' | 'typescript' | 'vue';
@@ -24,7 +24,7 @@ export const ICON_COLORS: Record<Flavor, string> = {
   typescript: 'text-[#3178c6]',
 };
 
-/** Canonical display order: the Vue canon first (ADR-0012), then overrides. */
+/** Canonical display order: the Vue canon first, then overrides. */
 export const FLAVORS: ReadonlyArray<{
   id: Flavor;
   label: string;

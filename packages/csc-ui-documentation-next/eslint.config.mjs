@@ -10,10 +10,10 @@ export default withNuxt(
       '.output/',
       'dist/',
       '--port/',
-      // Hand-written React/Angular/TypeScript variants of the Vue examples
-      // (ADR-0012 flavor system) — shown as text in code tabs, never
-      // compiled or executed here, so this project's Vue-flavored rules
-      // (and TS type-checking, hence their `@ts-nocheck`) don't apply.
+      // Hand-written React/Angular/TypeScript flavor variants of the Vue
+      // examples — shown as text in code tabs, never compiled or executed
+      // here, so this project's Vue-flavored rules (and TS type-checking,
+      // hence their `@ts-nocheck`) don't apply.
       'app/examples/**/*.angular.ts',
       'app/examples/**/*.react.tsx',
       'app/examples/**/*.typescript.ts',

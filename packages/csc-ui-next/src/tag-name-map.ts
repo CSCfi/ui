@@ -166,10 +166,7 @@ export interface CAutocompleteElementEventMap {
   'update:value': CustomEvent<CAutocompleteItem | null | number | string>;
 }
 
-/**
- * A filterable value-selection component: a readonly value field that opens a
- * popover panel with a search input above the matching options.
- */
+/** A filterable value-selection component: a readonly value field that opens a popover panel with a search input above the matching options. */
 export interface CAutocompleteElement extends Omit<HTMLElement, 'clearable' | 'disabled' | 'errorMessage' | 'filter' | 'hideDetails' | 'hint' | 'hostId' | 'items' | 'itemsPerPage' | 'label' | 'labelOnTop' | 'loading' | 'name' | 'noResultsText' | 'placeholder' | 'required' | 'returnObject' | 'shadow' | 'valid' | 'value'> {
   /** Make the selected value clearable */
   clearable?: boolean;
@@ -238,10 +235,7 @@ export interface CAutocompleteElement extends Omit<HTMLElement, 'clearable' | 'd
 export interface CBadgeElement extends HTMLElement {
 }
 
-/**
- * Button for user actions. Renders a native `<button>` — or an `<a>` when
- * `href` is set — inside the shadow root.
- */
+/** Buttons trigger actions — submitting a form, opening a modal, confirming a choice. Use one primary (default appearance) button per view; secondary actions use the `outlined`, `ghost` or `text` appearances. */
 export interface CButtonElement extends Omit<HTMLElement, 'active' | 'danger' | 'disabled' | 'fit' | 'ghost' | 'hostId' | 'href' | 'inverted' | 'loading' | 'noRadius' | 'noRipple' | 'outlined' | 'size' | 'target' | 'text' | 'type' | 'value'> {
   /**
    * Pressed (toggle) state — renders the selected look and sets
@@ -304,12 +298,7 @@ export interface CButtonGroupElementEventMap {
   'update:value': CustomEvent<CButtonGroupValue>;
 }
 
-/**
- * A group of buttons where activation carries a value — exclusive by
- * default, cumulative with `multiple` (ADR-0023). The standalone, form-facing
- * segmented control; for the tab strip of a `<c-tabs>` use `<c-tab-buttons>`,
- * which wraps this component.
- */
+/** A button group is a segmented control: a compact group of choices rendered as plain `c-button` children, where activating a button takes effect immediately (switching a view, picking a billing period). Selection is exclusive by default; set `multiple` to let several buttons be active at once. Give the group a `label` when it acts as a form field so the choice it represents is named for every user. */
 export interface CButtonGroupElement extends Omit<HTMLElement, 'disabled' | 'label' | 'mandatory' | 'multiple' | 'required' | 'size' | 'value'> {
   /** Disable the whole group — every slotted c-button is disabled and the selection can no longer be changed. */
   disabled?: boolean;
@@ -817,7 +806,7 @@ export interface CMenuElementEventMap {
    * Fired whenever the menu opens or closes, carrying the new open state.
    * Named `change:open`, not `update:open`: Vue's runtime silently drops
    * `onUpdate:*` listeners on custom elements (`isModelListener`), so a
-   * template `@update:open` would never be attached (ADR-0017).
+   * template `@update:open` would never be attached.
    */
   'change:open': CustomEvent<boolean>;
   /**
@@ -904,6 +893,7 @@ export interface CModalElementEventMap {
   'update:value': CustomEvent<boolean>;
 }
 
+/** Modals interrupt the page for a task that must be completed (or explicitly cancelled) before continuing — confirmations, short forms, destructive-action warnings. The slotted content is typically a `c-card`. */
 export interface CModalElement extends Omit<HTMLElement, 'disableBackdropBlur' | 'dismissable' | 'value' | 'width'> {
   /** Disable backdrop blur effect */
   disableBackdropBlur?: boolean;
@@ -1274,7 +1264,7 @@ export interface CSideNavigationElementEventMap {
    * Named `change:menu-visible`, not `update:menuVisible`: Vue's runtime
    * silently drops `onUpdate:*` listeners on custom elements
    * (`isModelListener`), so a template `@update:menu-visible` would never be
-   * attached (ADR-0017).
+   * attached.
    */
   'change:menu-visible': CustomEvent<boolean>;
 }
@@ -1695,13 +1685,7 @@ export interface CTabButtonsElementEventMap {
   tabChange: CustomEvent<{ element: HTMLElement | null; value: number | string; }>;
 }
 
-/**
- * The tab-strip adapter for `<c-tabs>` (ADR-0023): presents the tab list as a
- * button group. Authored only inside `<c-tabs>`, with plain `<c-button>`
- * children. It carries no form semantics — for a standalone value picker use
- * `<c-button-group>`, which this component wraps. Selection is inherently
- * mandatory: a tab strip always has an active tab.
- */
+/** Tab buttons present a `c-tabs` tab list as a segmented control instead of the underlined tab row. Author it only inside `<c-tabs>`, with plain `<c-button>` children whose `value`s match the `c-tab-item` panels; `c-tabs` owns the active value and pushes it down. */
 export interface CTabButtonsElement extends Omit<HTMLElement, 'disabled' | 'size' | 'value'> {
   /** Disable the whole tab strip — every slotted c-button is disabled and the selection can no longer be changed. */
   disabled?: boolean;
@@ -2020,10 +2004,7 @@ export interface CToastElement extends Omit<HTMLElement, 'message'> {
   ): void;
 }
 
-/**
- * Overlay container that stacks and manages c-toast notifications via its
- * `addToast` / `removeToast` methods
- */
+/** Toasts are passive, transient notifications — operation results, background progress — stacked and managed by a single `c-toasts` container via its `addToast` / `removeToast` methods. */
 export interface CToastsElement extends Omit<HTMLElement, 'absolute' | 'horizontal' | 'vertical'> {
   /** Use absolute positioning */
   absolute?: boolean;

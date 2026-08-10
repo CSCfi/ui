@@ -49,10 +49,10 @@ interface CAccordionEvents {
   'update:value': AccordionValue;
 }
 
-// Styling lives in `tailwind-variants` (ADR-0004): no `<style>` block, no
+// Styling lives in `tailwind-variants`: no `<style>` block, no
 // `--c-*` override vars. The accordion is layout-only — the visual styling
-// lives on c-accordion-item. Consumer customization is via `::part(root)`
-// (ADR-0006); there is no `override` prop.
+// lives on c-accordion-item. Consumer customization is via `::part(root)`;
+// there is no `override` prop.
 const accordion = tv({
   slots: {
     root: 'flex flex-col gap-2 max-w-full',

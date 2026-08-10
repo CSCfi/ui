@@ -1,5 +1,5 @@
 /**
- * Shared public types for csc-ui-next (ADR-0015): types whose value crosses a
+ * Shared public types for csc-ui-next: types whose value crosses a
  * component boundary, so no single component owns them. Component-owned types
  * live in their component's SFC; everything here and there is re-exported from
  * the package entry (`src/index.ts`):

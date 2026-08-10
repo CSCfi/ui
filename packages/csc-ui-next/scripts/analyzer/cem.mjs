@@ -1,12 +1,12 @@
 /**
- * Custom Elements Manifest assembly (ADR-0012).
+ * Custom Elements Manifest assembly.
  *
  * Shapes the per-component analysis into the CEM schema
  * (https://github.com/webcomponents/custom-elements-manifest). Everything
  * CSC-specific rides in a single `csc` vendor-extension object:
  *   - declaration-level: `csc.usage` (dist-relative path of the usage doc),
  *                        `csc.subcomponents` (composed children folded into
- *                        this parent's docs page, ADR-0013)
+ *                        this parent's docs page)
  *   - manifest-level:    `csc.types` (shared public types from src/types.ts,
  *                        which CEM has no first-class kind for)
  */
@@ -17,7 +17,7 @@ const kebab = (name) =>
 /**
  * Props whose type can meaningfully round-trip through an HTML attribute.
  * Functions / objects / arrays are property-only. Tested against the
- * *resolved* type when the prop is typed via an alias (ADR-0015) so e.g. a
+ * *resolved* type when the prop is typed via an alias so e.g. a
  * function-typed alias is not mistaken for an attribute.
  */
 const isAttributeCompatible = (type) => !/=>|\{|\[\]|Record<|Array</.test(type);
@@ -25,8 +25,7 @@ const isAttributeCompatible = (type) => !/=>|\{|\[\]|Record<|Array</.test(type);
 /**
  * The manifest's standard `type.text` carries the expanded literal union so
  * third-party IDE-data generators can derive value completions; the alias
- * name and the `@freeform` marker ride in the `csc` vendor extension
- * (ADR-0015).
+ * name and the `@freeform` marker ride in the `csc` vendor extension.
  */
 const typeCsc = (prop) => {
   const csc = {
@@ -101,16 +100,16 @@ export const buildManifest = (components, sharedTypes) => ({
         })),
         events: c.events.map((e) => {
           // camelCase events dispatch a kebab-case twin at runtime
-          // (ADR-0021, useHostEmit) so Vue templates can bind them;
+          // (useHostEmit) so Vue templates can bind them;
           // surface the twin in the docs.
           const twin = e.name.replace(/\B([A-Z])/g, '-$1').toLowerCase();
+
           const note =
             twin === e.name
               ? ''
               : `Also dispatched as \`${twin}\` — bind that name in Vue templates.`;
-          const description = [e.description, note]
-            .filter(Boolean)
-            .join(' ');
+
+          const description = [e.description, note].filter(Boolean).join(' ');
 
           return {
             name: e.name,

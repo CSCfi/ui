@@ -3,7 +3,7 @@
     <div v-if="!hideDetails" :class="ui.details()" part="details">
       <div :class="ui.itemsPerPage()" part="items-per-page">
         {{ itemsPerPageText }}
-        <!-- The migrated c-menu is slot-based (ADR-0008): the trigger goes in
+        <!-- The migrated c-menu is slot-based: the trigger goes in
              the `trigger` slot and options are c-menu-item children; the
              Stencil-era `items` prop no longer exists. -->
         <c-menu @select="onPageSizeSelect">
@@ -186,10 +186,10 @@ interface CPaginationEvents {
 }
 
 /**
- * Styling lives entirely in this `tailwind-variants` config (ADR-0004): the
+ * Styling lives entirely in this `tailwind-variants` config: the
  * old per-component `--_c-pagination-*` override-variable layer is dropped and
- * authored directly against the design tokens. Customization is via `::part()`
- * (ADR-0006); there is no `override` prop.
+ * authored directly against the design tokens. Customization is via `::part()`;
+ * there is no `override` prop.
  *
  * The box lives on the inner `<nav>` (`part="root"`); the host stays
  * `display:contents`.
@@ -206,7 +206,7 @@ interface CPaginationEvents {
  * directly to the `simple`/`size` props, so they become tv variants on `pages`.
  */
 // Hoisted so the runtime guard below can test membership; the `satisfies`
-// keeps the map complete against the public union (ADR-0015).
+// keeps the map complete against the public union.
 const sizeVariants = {
   default: {},
   small: { pages: 'gap-0.5' },
@@ -250,7 +250,7 @@ const props = withDefaults(defineProps<CPaginationProps>(), {
 });
 
 // Attributes can deliver any string at runtime; unknown values fall back to
-// the default size (ADR-0015).
+// the default size.
 const ui = computed(() =>
   pagination({
     simple: props.simple,

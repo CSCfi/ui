@@ -2,7 +2,7 @@
 // from the brand seeds.
 //
 // The ramp math lives in the shared core (src/theme/ramp.js) so the runtime
-// theming API (applyTheme) produces byte-identical output — see ADR-0011. This
+// theming API (applyTheme) produces byte-identical output. This
 // script only wires that core to the token JSON on disk.
 //
 // Neutral ladders (slate, tertiary) and white/black are intentionally NOT

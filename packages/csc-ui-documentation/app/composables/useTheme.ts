@@ -1,7 +1,7 @@
 /**
  * Light/dark theme state for the docs shell.
  *
- * Dark mode is a `csc-ui-next` feature (ADR-0010): the semantic-token layer in
+ * Dark mode is a `csc-ui-next` feature: the semantic-token layer in
  * `@cscfi/csc-ui-next/css/tokens.css` re-points its roles under
  * `:root[data-theme='dark']`, with a `prefers-color-scheme` fallback when no
  * attribute is set. So switching themes is just writing `data-theme` onto the

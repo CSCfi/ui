@@ -38,10 +38,10 @@ import {
 defineOptions({ inheritAttrs: false });
 
 /**
- * Styling lives entirely in this `tailwind-variants` config (ADR-0004): the
+ * Styling lives entirely in this `tailwind-variants` config: the
  * old per-component `--_c-steps-*` override-variable layer is dropped and
- * authored directly against the design tokens. Customization is via `::part()`
- * (ADR-0006); there is no `override` prop.
+ * authored directly against the design tokens. Customization is via `::part()`;
+ * there is no `override` prop.
  *
  * The `c-steps` `root` keeps the `c-steps` marker class because the
  * imperatively-inserted `.divider` siblings are styled via `::slotted(.divider)`
@@ -195,7 +195,7 @@ watch(() => props.value, handleDividers);
 </script>
 
 <!--
-  Escape-hatch CSS (ADR-0007): constructs Tailwind utilities cannot express.
+  Escape-hatch CSS: constructs Tailwind utilities cannot express.
   - :host box + :host(:focus-visible) outline — the host is the focusable
     element (tabindex=0) and must be a real, sized box. This deliberately
     overrides the global `:host{display:contents}`; the per-type sheet is

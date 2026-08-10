@@ -94,9 +94,9 @@ import { tv } from 'tailwind-variants';
 import { computed, onBeforeUnmount, onMounted, ref, useTemplateRef } from 'vue';
 
 /**
- * Styling lives entirely in this `tailwind-variants` config (ADR-0004); the
+ * Styling lives entirely in this `tailwind-variants` config; the
  * stamped parts (`root`, `card`, `image`, `content`) are the public
- * customization surface (ADR-0006). The old `--c-login-card-background-color` /
+ * customization surface. The old `--c-login-card-background-color` /
  * `--c-login-card-overlay-color` override indirection is dropped: the card
  * background comes from the `surface` role and the overlay tint from
  * the `primary` role.
@@ -108,8 +108,8 @@ import { computed, onBeforeUnmount, onMounted, ref, useTemplateRef } from 'vue';
  * ResizeObserver against `mobileBreakpoint`) switches the image to a bottom
  * strip and relaxes the content padding/width.
  *
- * Two constructs can't be utilities and live in the escape-hatch <style>
- * (ADR-0007): `clip-path: url(#cLoginClipPath)` is authored as an arbitrary
+ * Two constructs can't be utilities and live in the escape-hatch <style>:
+ * `clip-path: url(#cLoginClipPath)` is authored as an arbitrary
  * utility, but the mobile font-size override of the slotted
  * `c-login-card-title` is a `::slotted(...)` rule. It sets the
  * `--_c-login-card-title-font-size` contract var so the title (which reads it
@@ -214,7 +214,7 @@ onBeforeUnmount(() => resizeObserver?.disconnect());
 </script>
 
 <!--
-  Escape-hatch CSS (ADR-0007): the mobile font-size override of the slotted
+  Escape-hatch CSS: the mobile font-size override of the slotted
   c-login-card-title is a `::slotted(...)` rule (a contextual selector targeting
   consumer light-DOM children that Tailwind utilities cannot express). It sets
   the `--_c-login-card-title-font-size` contract var (read by the title across

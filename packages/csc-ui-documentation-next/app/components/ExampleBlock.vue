@@ -26,11 +26,10 @@
         role="tablist"
       >
         <!-- Changing a tab switches the documentation-wide flavor, not just
-             this block (ADR-0020). Controlled via `:value`: the group owns the
-             active button + sliding indicator and re-syncs them from its
-             `value` watch, so a flavor change made elsewhere (e.g. the header
-             FlavorSwitcher) moves the indicator here too — a manual `:active`
-             per child only flips text colour, never the indicator. -->
+             this block. Controlled via `:value`: the group owns the active
+             button and re-syncs it from its `value` watch, so a flavor change
+             made elsewhere (e.g. the header FlavorSwitcher) updates this
+             block's active tab too. -->
         <c-button-group
           data-flavor-tabs
           mandatory
@@ -54,9 +53,9 @@
         </c-button-group>
       </div>
 
-      <!-- Multi-pane variants (the TypeScript flavor's markup + wiring pair,
-           ADR-0024) stack one pane per part; the chip label carries the
-           parts' relationship — the code itself holds no linkage line. -->
+      <!-- Multi-pane variants (the TypeScript flavor's markup + wiring pair)
+           stack one pane per part; the chip label carries the parts'
+           relationship — the code itself holds no linkage line. -->
       <template
         v-for="(pane, index) in activeTab.panes"
         :key="pane.label ?? index"
@@ -128,20 +127,22 @@ c-button-group[data-flavor-tabs] {
   &::part(root) {
     background-color: var(--c-surface);
   }
+}
 
-  &::part(indicator) {
+c-button-group[data-flavor-tabs] c-button {
+  &::part(root) {
+    color: var(--c-on-surface);
+  }
+
+  /* The group has no sliding indicator — each active button paints its own
+     fill, restyled here to the selected flavor's tint. */
+  &[active]::part(root) {
     background-color: color-mix(
       in srgb,
       v-bind(currentIconColor) 10%,
       transparent
     );
     box-shadow: inset 0 0 0 1px v-bind(currentIconColor);
-  }
-}
-
-c-button-group[data-flavor-tabs] c-button {
-  &::part(root) {
-    color: var(--c-on-surface);
   }
 
   &:not([active])::part(root):hover {

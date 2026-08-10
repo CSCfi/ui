@@ -14,14 +14,6 @@
     />
 
     <div ref="rootRef" :class="ui.root()" part="root">
-      <div
-        v-if="!isMultiple"
-        ref="indicatorRef"
-        :class="ui.indicator()"
-        aria-hidden="true"
-        part="indicator"
-      />
-
       <slot />
     </div>
   </div>
@@ -82,20 +74,13 @@ export type CButtonGroupValue = (number | string)[] | null | number | string;
 
 <script setup lang="ts">
 /**
- * A group of buttons where activation carries a value — exclusive by
- * default, cumulative with `multiple` (ADR-0023). The standalone, form-facing
- * segmented control; for the tab strip of a `<c-tabs>` use `<c-tab-buttons>`,
- * which wraps this component.
- *
  * @slot default - Default slot for the c-button elements
- * @csspart root - The segmented-control box that frames the buttons and hosts the sliding indicator
- * @csspart indicator - The single sliding fill that highlights the active button (single-select mode only)
+ * @csspart root - The segmented-control box that frames the buttons
  * @csspart label - The group label rendered above the buttons
  */
 import { tv } from 'tailwind-variants';
 import {
   computed,
-  onBeforeUnmount,
   onMounted,
   ref,
   useHost,
@@ -125,36 +110,31 @@ interface CButtonGroupEvents {
   'update:value': CButtonGroupValue;
 }
 
-// We write to the slotted <c-button> children (props, data-index, inline
-// `--_c-button-active-*` vars) below — keep fallthrough attrs on the host
-// element rather than the inner `root` div, so consumer attributes/styles
-// target the custom element as expected.
+// We write to the slotted <c-button> children (props, data-index) below —
+// keep fallthrough attrs on the host element rather than the inner `root`
+// div, so consumer attributes/styles target the custom element as expected.
 defineOptions({ inheritAttrs: false });
 
 /**
- * Styling lives in this `tailwind-variants` config (ADR-0004): the inner
- * `root` div is the styled segmented-control box, customizable via
- * `::part(root)` (ADR-0006). The host stays `display:contents` (global).
+ * Styling lives in this `tailwind-variants` config: the inner `root` div is
+ * the styled segmented-control box, customizable via `::part(root)`. The
+ * host stays `display:contents` (global).
  *
  * The frame and dividers are drawn entirely with the `root` background: the
  * padding shows it as the outer border and the grid gap shows it between
  * buttons. Children are plain `<c-button>`s slotted by the consumer; this
  * component imposes the transparent `text`/`no-ripple`/`fit` appearance and
- * drives each button's public `active` prop. In single-select mode the solid
- * fill is the single sliding `indicator` and the buttons' own active fill is
- * retargeted to transparent through the `--_c-button-active-*` vars (they
- * inherit across the shadow boundary); in `multiple` mode the indicator is
- * not rendered and each active button paints its own fill (ADR-0023).
+ * drives each button's public `active` prop. Every active button paints its
+ * own active fill — the sliding indicator is a tab-strip affordance and
+ * belongs to `c-tab-buttons`, never to this component.
  */
 // Hoisted so the runtime guard below can test membership; the `satisfies`
-// keeps the map complete against the public union (ADR-0015).
+// keeps the map complete against the public union.
 const sizeVariants = {
   default: {
-    indicator: 'top-1 bottom-1',
     root: 'p-1 gap-1',
   },
   small: {
-    indicator: 'top-0.5 bottom-0.5',
     root: 'p-0.5 gap-0.5',
   },
 } satisfies Record<CButtonGroupSize, object>;
@@ -164,33 +144,21 @@ const buttonGroup = tv({
     disabled: false,
   },
   slots: {
-    // The single sliding active fill (single-select mode). JS sets width +
-    // translateX to the active button's measured box; `top-1 bottom-1`
-    // matches the root's `p-1` so it covers the button vertically. Radius
-    // matches c-button's `rounded-csc-md`.
-    indicator:
-      'pointer-events-none absolute left-0 -z-10 w-0 origin-left rounded-csc-md bg-primary opacity-0 transition-[transform,width,opacity] duration-300 ease-out',
     label: 'text-left',
-    // `relative isolate` so the `-z-10` indicator is contained in this box's
-    // stacking context and paints above the root background but below the
-    // (transparent) buttons.
-    //
     // A real GRID with equal `auto-cols-fr` columns — not flex: each slotted
     // c-button host is `display:contents`, so the native button it wraps is
     // promoted into this grid and sized by the *track*. In a shrink-to-fit
     // context (e.g. a flex row) fr tracks all size to the longest label;
     // flex + w-full instead squeezed every button to an equal share smaller
     // than that, and the nowrap content overflowed the fill's right edge —
-    // visibly unbalanced horizontal padding on active buttons. The absolute
-    // indicator is out of flow and creates no track.
-    root: 'relative isolate grid grid-flow-col auto-cols-fr rounded-csc-lg bg-surface-sunken',
+    // visibly unbalanced horizontal padding on active buttons.
+    root: 'grid grid-flow-col auto-cols-fr rounded-csc-lg bg-surface-sunken',
     // Stacks the group label above the segmented-control frame.
     wrapper: 'flex flex-col gap-1',
   },
   variants: {
     disabled: {
       true: {
-        indicator: 'bg-border-strong',
         root: 'bg-surface-muted pointer-events-none',
       },
     },
@@ -217,7 +185,7 @@ const labelId = `${autoId}-label`;
 const isMultiple = computed(() => coerceBoolean(props.multiple));
 
 // Attributes can deliver any string at runtime; unknown values fall back to
-// the default size (ADR-0015).
+// the default size.
 const ui = computed(() =>
   buttonGroup({
     disabled: coerceBoolean(props.disabled),
@@ -226,8 +194,6 @@ const ui = computed(() =>
 );
 
 const rootRef = useTemplateRef<HTMLElement>('rootRef');
-
-const indicatorRef = useTemplateRef<HTMLElement>('indicatorRef');
 
 // The native slot outlet inside `root` (attributes on Vue's `<slot>` element
 // are slot props, so the element itself is looked up from the DOM instead).
@@ -268,8 +234,8 @@ const buttons = (): CButtonEl[] =>
   );
 
 // The focusable native control lives in the slotted c-button's shadow — used
-// for roving focus and for measuring the exact box the indicator must cover
-// (the c-button host itself is display:contents and has no box).
+// for roving focus (the c-button host itself is display:contents and has no
+// box).
 const nativeControlOf = (btn: CButtonEl): HTMLElement | null =>
   (btn.shadowRoot?.querySelector('button, a') as HTMLElement | null) ?? null;
 
@@ -289,75 +255,6 @@ const selectedValues = (value: CButtonGroupValue): (number | string)[] => {
 
 const isSelected = (value: CButtonGroupValue, btn: CButtonEl): boolean =>
   selectedValues(value).some((v) => valuesEqual(v, valueOf(btn)));
-
-/* --- indicator geometry (single-select mode) --- */
-
-// Slide the single active-fill indicator over the currently-active button.
-// `animate=false` (initial mount, resize) snaps without a transition so the
-// pill doesn't fly in from the left.
-const moveIndicator = (animate = true) => {
-  const root = rootRef.value;
-
-  const ind = indicatorRef.value;
-
-  if (!root || !ind) return;
-
-  const active = buttons().find((b) => b.hasAttribute('active'));
-
-  if (!active) {
-    ind.style.opacity = '0';
-
-    return;
-  }
-
-  const box =
-    nativeControlOf(active)?.getBoundingClientRect() ??
-    active.getBoundingClientRect();
-
-  if (!box || box.width === 0) return;
-
-  const rootBox = root.getBoundingClientRect();
-
-  // A hidden indicator (no prior selection) must snap to its first position,
-  // not animate from left-0/width-0.
-  const wasHidden = ind.style.opacity === '' || ind.style.opacity === '0';
-
-  const snap = !animate || wasHidden;
-
-  if (snap) ind.style.transition = 'none';
-  ind.style.width = `${box.width}px`;
-  ind.style.transform = `translateX(${box.left - rootBox.left}px)`;
-  ind.style.opacity = '1';
-
-  if (snap) {
-    // Force a reflow so the snapped geometry commits before transitions resume.
-    void ind.offsetWidth;
-    ind.style.transition = '';
-  }
-};
-
-// Re-snap the indicator (no animation) whenever geometry changes that the
-// `props.value` watch can't see: the viewport resizing, the panel that holds
-// us expanding from display:none, fonts loading, or a sibling button
-// appearing — which reflows the equal-width columns and shrinks the active
-// button.
-//
-// We observe the root AND each button's native control box: when a sibling
-// appears the root width is unchanged (it's the full container), only the
-// per-button column width shifts, so a root-only observer would miss it.
-let resizeObserver: null | ResizeObserver = null;
-
-const observeGeometry = () => {
-  if (!resizeObserver) return;
-  resizeObserver.disconnect();
-
-  if (rootRef.value) resizeObserver.observe(rootRef.value);
-  buttons().forEach((b) => {
-    const ctrl = nativeControlOf(b);
-
-    if (ctrl) resizeObserver!.observe(ctrl);
-  });
-};
 
 /* --- child driving --- */
 
@@ -381,12 +278,11 @@ const applyTabbable = () => {
   });
 };
 
-// Reflect the selection by flipping each button's public `active` prop (the
-// buttons stay transparent in single-select mode; the solid fill is the
-// sliding indicator). Touch both prop and attribute on every iteration
-// because Vue defineCustomElement reflects Boolean prop changes back to the
-// attribute; the empty attribute also drives consumers' `c-button[active]`
-// selectors.
+// Reflect the selection by flipping each button's public `active` prop —
+// every active button paints its own active fill. Touch both prop and
+// attribute on every iteration because Vue defineCustomElement reflects
+// Boolean prop changes back to the attribute; the empty attribute also
+// drives consumers' `c-button[active]` selectors.
 const applyActive = (value: CButtonGroupValue) => {
   buttons().forEach((b) => {
     const isActive = !b.disabled && isSelected(value, b);
@@ -396,9 +292,6 @@ const applyActive = (value: CButtonGroupValue) => {
     else b.removeAttribute('active');
   });
   applyTabbable();
-  // Animate the indicator to the new selection (after the attribute change
-  // has flipped the buttons' transparent/text state and layout is current).
-  requestAnimationFrame(() => moveIndicator(true));
 };
 
 // Impose the group appearance and wiring on every slotted button. Runs on
@@ -410,36 +303,17 @@ const setupButtons = () => {
   btns.forEach((button, index) => {
     button.setAttribute('data-index', String(index));
     // The group owns the buttons' appearance: transparent text variant on the
-    // sunken track, no per-button ripple (the moving fill is the feedback),
-    // equal-width columns via `fit`.
+    // sunken track (the active fill is each button's own), no per-button
+    // ripple, equal-width columns via `fit`.
     button.text = true;
     button.noRipple = true;
     button.fit = true;
     button.size = props.size in sizeVariants ? props.size : 'default';
 
     if (coerceBoolean(props.disabled)) button.disabled = true;
-
-    // Retarget c-button's own active fill per selection mode: in single-select
-    // the sliding indicator paints the fill, so the button keeps only its
-    // text flip (the vars inherit across the shadow boundary); in `multiple`
-    // the button's own active look stands.
-    const vars = [
-      '--_c-button-active-bg',
-      '--_c-button-active-hover-bg',
-      '--_c-button-active-fg',
-    ] as const;
-
-    if (isMultiple.value) {
-      vars.forEach((v) => button.style.removeProperty(v));
-    } else {
-      button.style.setProperty('--_c-button-active-bg', 'transparent');
-      button.style.setProperty('--_c-button-active-hover-bg', 'transparent');
-      button.style.setProperty('--_c-button-active-fg', 'var(--c-on-primary)');
-    }
   });
 
   applyActive(internalValue.value);
-  observeGeometry();
 };
 
 /* --- selection --- */
@@ -574,24 +448,11 @@ onMounted(() => {
     true,
   );
 
-  resizeObserver = new ResizeObserver(() => moveIndicator(false));
-
   // Late-appearing buttons (v-if'd/async children) re-run the driving pass.
   slotEl()?.addEventListener('slotchange', () => setupButtons());
 
-  // Place the indicator under the initial selection without animating it in.
-  // Double rAF so the buttons' shadow roots have laid out and report real
-  // boxes before we measure.
-  requestAnimationFrame(() =>
-    requestAnimationFrame(() => {
-      setupButtons();
-      moveIndicator(false);
-    }),
-  );
-});
-
-onBeforeUnmount(() => {
-  resizeObserver?.disconnect();
-  resizeObserver = null;
+  // Drive the initial selection. Double rAF so the slotted buttons' shadow
+  // roots exist before we reach into them for the roving tabindex.
+  requestAnimationFrame(() => requestAnimationFrame(() => setupButtons()));
 });
 </script>

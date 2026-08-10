@@ -16,8 +16,6 @@
 
 <script setup lang="ts">
 /**
- * Basic hyperlink component
- *
  * @slot default - The visible content of the link
  *
  * @csspart root - The native `<a>` element carrying the link styling
@@ -28,12 +26,12 @@ import { tv } from 'tailwind-variants';
 import { computed } from 'vue';
 
 /**
- * Styling lives entirely in this `tailwind-variants` config (ADR-0004): the
+ * Styling lives entirely in this `tailwind-variants` config: the
  * old `--_c-link-*` indirection layer is dropped and authored directly against
- * the design tokens. Customization is via `::part(root)` (ADR-0006). The host
+ * the design tokens. Customization is via `::part(root)`. The host
  * stays `display:contents`; the real box is the inner `a` (`part="root"`).
  *
- * Colour: the `link` semantic role (ADR-0010) — the purpose-built link token,
+ * Colour: the `link` semantic role — the purpose-built link token,
  * which themes in dark mode. The pre-migration code used `--c-info-700` only
  * because no dedicated link token existed in csc-ui-next yet; the hover
  * background is the `link-subtle` role (was the `--c-accent-200` swap).

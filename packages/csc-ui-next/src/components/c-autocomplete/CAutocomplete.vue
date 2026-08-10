@@ -1,7 +1,7 @@
 <template>
   <!-- Anchor wrapper: a shadow-DOM box around the value field. CSS anchor
        names are tree-scoped, so the anchor must live in the same shadow root
-       as the panel (ADR-0008). It carries `anchor-name`; the panel references
+       as the panel. It carries `anchor-name`; the panel references
        it, and it is the rect we measure to pin the panel width. -->
   <span
     ref="anchorRef"
@@ -288,9 +288,6 @@ export interface CAutocompleteProps {
 
 <script setup lang="ts">
 /**
- * A filterable value-selection component: a readonly value field that opens a
- * popover panel with a search input above the matching options.
- *
  * @slot pre - Content placed before the value field inside the input row
  * @slot default - The c-option elements used as the data source (never rendered in place)
  * @slot post - Content placed after the value field inside the input row
@@ -350,7 +347,7 @@ interface CAutocompleteEvents {
 
 /**
  * c-autocomplete is a filterable value-selection component (CONTEXT.md:
- * "Autocomplete"). Unlike c-select it is NOT built on c-dropdown (ADR-0009):
+ * "Autocomplete"). Unlike c-select it is NOT built on c-dropdown:
  * a readonly c-input value field stays in place and a popover panel below it
  * (Popover API + CSS anchor positioning, the c-menu mechanism) holds a
  * dedicated SEARCH INPUT above the options. v-model binds the selected value
@@ -361,9 +358,9 @@ interface CAutocompleteEvents {
  * options are highlighted virtually via `aria-activedescendant` (never real
  * focus). The list is role=listbox, rows role=option.
  *
- * Styling lives in this `tailwind-variants` config (ADR-0004): the field-row
+ * Styling lives in this `tailwind-variants` config: the field-row
  * recipe is shared with c-select, the panel/card/list/item with c-menu /
- * c-dropdown. Consumer customization is via `::part()` (ADR-0006).
+ * c-dropdown. Consumer customization is via `::part()`.
  */
 const autocomplete = tv({
   defaultVariants: { chevronActive: false, disabled: false },
@@ -959,7 +956,7 @@ onBeforeUnmount(() => {
 </script>
 
 <!--
-  Escape-hatch CSS (ADR-0007): only constructs Tailwind utilities cannot
+  Escape-hatch CSS: only constructs Tailwind utilities cannot
   express. The field row, panel, card, list and item recipes live in the `tv`
   config above. What remains, tokens-only:
     - `:host{display:block}` — the field is a real box (overrides the global

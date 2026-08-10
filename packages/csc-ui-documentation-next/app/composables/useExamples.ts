@@ -5,19 +5,19 @@ import { FLAVORS, isFlavor, type Flavor } from './useFlavor';
 /**
  * Examples live in app/examples/<tag>/<name>.vue — plain Vue SFCs that are
  * both rendered live (imported as components) and shown as code (raw import).
- * Vue is the canonical authoring format (ADR-0012).
+ * Vue is the canonical authoring format.
  *
  * A parent page aggregates the whole family's examples: its own plus those of
- * its composed children (ADR-0013). Exact-duplicate code (the composite an
+ * its composed children. Exact-duplicate code (the composite an
  * agent copied into both parent and child dirs) is shown once.
  *
  * Flavor tabs come from checked-in sibling variant files named
  * <name>.<flavor>.<ext> (basic.react.tsx, basic.angular.ts,
  * basic.typescript.html) — generated from the Vue canon and kept complete by
- * scripts/check-example-parity.mjs (ADR-0020). The live demo is always the
+ * scripts/check-example-parity.mjs. The live demo is always the
  * Vue canon regardless of the selected flavor.
  *
- * The TypeScript flavor is two-part (ADR-0024): a required markup fragment
+ * The TypeScript flavor is two-part: a required markup fragment
  * (<name>.typescript.html) plus an optional querySelector-wiring script
  * (<name>.typescript.ts), rendered as stacked panes with Template/Script
  * chips. Other flavors are single-pane.
@@ -62,7 +62,7 @@ const FLAVOR_LABEL = new Map(
 
 export interface ExamplePane {
   code: string;
-  /** Chip label above the pane; only multi-pane flavors set it (ADR-0024). */
+  /** Chip label above the pane; only multi-pane flavors set it. */
   label?: string;
   lang: string;
 }
@@ -132,7 +132,7 @@ export const useExamples = (tags: string[]): DocExample[] => {
 
     // Group sibling variant files by flavor: single-pane flavors have one
     // file; the TypeScript flavor pairs html (+ optional ts) into stacked
-    // panes (ADR-0024).
+    // panes.
     const byFlavor = new Map<Flavor, { code: string; ext: string }[]>();
 
     for (const [overridePath, raw] of Object.entries(overrideSources)) {
@@ -167,9 +167,9 @@ export const useExamples = (tags: string[]): DocExample[] => {
           const script = files.find((f) => f.ext === 'ts');
 
           // The markup fragment is the variant's anchor; a lone script file
-          // is a pre-ADR-0024 leftover the parity check reports — skip the
-          // tab (the block falls back to the Vue canon) rather than showing
-          // a script with no markup.
+          // is a leftover from before the two-part format that the parity
+          // check reports — skip the tab (the block falls back to the Vue
+          // canon) rather than showing a script with no markup.
           if (!markup) {
             if (import.meta.dev) {
               console.warn(

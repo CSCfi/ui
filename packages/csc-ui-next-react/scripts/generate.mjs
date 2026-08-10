@@ -1,5 +1,5 @@
 /**
- * React wrapper codegen (ADR-0019).
+ * React wrapper codegen.
  *
  * Reads the csc-ui-next Custom Elements Manifest and emits src/components.ts:
  * one `@lit/react` `createComponent` call per consumer-authorable component.

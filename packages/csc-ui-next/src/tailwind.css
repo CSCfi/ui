@@ -4,14 +4,14 @@
  * Components live inside shadow roots and SFCs are the only place utilities are
  * authored, so Tailwind's automatic content detection is disabled
  * (`source(none)`) and pointed solely at the SFC sources. This keeps the
- * inlined sheet to the utilities components actually use (ADR-0006) and stops
+ * inlined sheet to the utilities components actually use and stops
  * class-like tokens in comments of sibling .ts/.cjs/.css files (and in the
  * previous build's bundle) from emitting stray, unused rules.
  */
 @source './components/**/*.vue';
 
 /*
- * Design-token → Tailwind utility map (ADR-0004).
+ * Design-token → Tailwind utility map.
  *
  * `inline` is required because this stylesheet is inlined into every
  * component's *shadow root*, where the `:root` selector matches nothing.
@@ -137,13 +137,13 @@
 }
 
 /*
- * Semantic-token to utility map (ADR-0010). Exposes the role tokens defined in
+ * Semantic-token to utility map. Exposes the role tokens defined in
  * tokens.css as background / text / border / ring color utilities (one per
  * role). This is the layer components author against; direct palette-step
  * color utilities are forbidden in SFCs (CI-guarded, plan phase 4).
  *
  * The map itself lives in styles/css/tailwind-theme.css because it doubles as
- * the consumer-facing Tailwind theme export (ADR-0018) — copy-styles ships it
+ * the consumer-facing Tailwind theme export — copy-styles ships it
  * to dist, and this import keeps the library build on the same single source
  * of truth. Its "inline" substitution is what lets the generated utilities
  * resolve inside shadow roots via inheritance of the `--c-*` custom properties
@@ -164,7 +164,7 @@
 }
 
 /*
- * No consumer override safelist (ADR-0006). Customization is via `::part()`
+ * No consumer override safelist. Customization is via `::part()`
  * from the consumer's own stylesheet, so the inlined sheet only needs the
  * utilities the library's own components actually use — those are auto-detected
  * from the `@source` SFC glob above. Token utilities (`bg-primary-600`, …) and
@@ -174,7 +174,7 @@
  */
 
 /*
- * The single irreducible per-component CSS rule (ADR-0004, decision A).
+ * The single irreducible per-component CSS rule (decision A).
  *
  * Utility classes cannot target a shadow host, so the host is layout-only:
  * `display: contents` removes it from the box tree entirely, and each

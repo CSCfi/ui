@@ -36,14 +36,14 @@ import { tv } from 'tailwind-variants';
 import { computed, onBeforeUnmount, onMounted, ref, useHost } from 'vue';
 
 /**
- * Styling lives in this `tailwind-variants` config (ADR-0004). The inner
+ * Styling lives in this `tailwind-variants` config. The inner
  * `<article>` (`root` part) is the card's visible box: it stacks the card
  * sections vertically with gap + block padding AND carries the card's visual
  * surface — background, border-radius and `overflow-hidden` here, plus the drop
  * shadow as plain CSS in the escape-hatch <style> (Tailwind doesn't emit a rule
  * for the multi-layer arbitrary `shadow-[...]` value in this setup). All of it
  * lives on the part (not `:host`) so consumers can restyle the whole box through
- * `c-card::part(root) { … }` (ADR-0006); the host is no longer the styled
+ * `c-card::part(root) { … }`; the host is no longer the styled
  * surface. The `fullscreen-toggle` is the 40px circular button, anchored to
  * `root` (`relative`).
  *
@@ -58,7 +58,7 @@ import { computed, onBeforeUnmount, onMounted, ref, useHost } from 'vue';
  * `:host{display:contents}` so it can size to / be sized by `root`, and it is
  * the element `requestFullscreen()` acts on. The positional `:host(:fullscreen)`
  * reset (which targets `root`) cannot be a utility, so it stays in the
- * escape-hatch <style> below (ADR-0007).
+ * escape-hatch <style> below.
  */
 const card = tv({
   slots: {
@@ -151,7 +151,7 @@ defineExpose({ enterFullscreen, exitFullscreen });
 </script>
 
 <!--
-  Escape-hatch CSS (ADR-0007): only what utilities and `::part` cannot express.
+  Escape-hatch CSS: only what utilities and `::part` cannot express.
   The card's visible surface (background / radius / shadow / overflow) now lives
   on the `root` part above so it is consumer-customizable. What remains here:
 
@@ -182,7 +182,7 @@ defineExpose({ enterFullscreen, exitFullscreen });
    arbitrary shadow utility did not paint in this adopted-stylesheet shadow-DOM
    setup, whereas a direct `box-shadow` is reliable (and matches the original).
    Authored on the `root` part (not the host) so it stays consumer-overridable
-   via `::part(root)` (ADR-0006). */
+   via `::part(root)`. */
 [part='root'] {
   box-shadow:
     rgba(0, 0, 0, 0.15) 0 10px 20px,

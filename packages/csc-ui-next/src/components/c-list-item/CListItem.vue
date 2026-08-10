@@ -47,16 +47,16 @@ import { useHasSlot } from '../../shared/useHasSlot';
 import { useRipple } from '../../shared/useRipple';
 
 /**
- * Styling lives in this `tailwind-variants` config (ADR-0004): the `root` slot
+ * Styling lives in this `tailwind-variants` config: the `root` slot
  * is the public content box and the `active` variant replaces the
  * `:host(.c-list-item--active)` text-color cascade. Consumer customization is
- * via `::part()` (ADR-0006); there is no `override` prop. The per-component
+ * via `::part()`; there is no `override` prop. The per-component
  * `--c-*` indirection vars are dropped in favour of global design tokens.
  *
  * The host box itself (background, hover/active/disabled/focus states) and the
  * projected `<slot>` layout cannot be expressed as utilities and remain in the
- * escape-hatch <style> below (ADR-0007); the ripple is the shared transition
- * primitive (useRipple + transition utilities, ADR-0004).
+ * escape-hatch <style> below; the ripple is the shared transition
+ * primitive (useRipple + transition utilities).
  */
 const listItem = tv({
   defaultVariants: {
@@ -224,7 +224,7 @@ onMounted(() => {
 </script>
 
 <!--
-  Escape-hatch CSS (ADR-0007): only constructs Tailwind utilities cannot
+  Escape-hatch CSS: only constructs Tailwind utilities cannot
   express. The content-box styling, ripple-dot statics and the `active` text
   color live in the `tv` config above. What remains here:
     - The host box itself and its positional/contextual state selectors

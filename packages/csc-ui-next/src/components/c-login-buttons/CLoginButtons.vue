@@ -16,7 +16,7 @@ defineOptions({ inheritAttrs: false });
 </script>
 
 <!--
-  Escape-hatch CSS (ADR-0007): the host itself must be the grid container so the
+  Escape-hatch CSS: the host itself must be the grid container so the
   slotted light-DOM <c-login-button> children become its grid items — there is
   no inner element that could host the grid without breaking that parent/child
   relationship. This `:host{display:grid}` deliberately overrides the global

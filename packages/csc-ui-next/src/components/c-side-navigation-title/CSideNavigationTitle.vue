@@ -5,7 +5,7 @@
     </div>
 
     <!-- Forward the divider's parts outward under the `<child>-<part>` naming
-         convention (ADR-0006) so consumers can reach them via
+         convention so consumers can reach them via
          `c-side-navigation-title::part(divider-root)`; `::part` doesn't pierce
          nested shadow roots, and the bare `root` name is already taken by this
          component's own root part. -->
@@ -25,11 +25,11 @@ import { tv } from 'tailwind-variants';
 import { computed } from 'vue';
 
 /**
- * Styling lives entirely in this `tailwind-variants` config (ADR-0004). The
+ * Styling lives entirely in this `tailwind-variants` config. The
  * old per-component `--c-side-navigation-title-*` indirection vars are dropped;
- * the title is authored against the `on-nav` semantic role (ADR-0010) — the
+ * the title is authored against the `on-nav` semantic role — the
  * foreground colour for content on the themed nav surface. Consumer
- * customization is via `::part(root)` (ADR-0006).
+ * customization is via `::part(root)`.
  *
  * The host stays `display:contents` (global) and the visual box lives on the
  * inner `root` element. The 1px underline uses an arbitrary box-shadow because

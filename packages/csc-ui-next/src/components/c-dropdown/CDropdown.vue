@@ -148,15 +148,15 @@ interface CDropdownEvents {
 }
 
 /**
- * Styling lives in this `tailwind-variants` config (ADR-0004): the slots are
+ * Styling lives in this `tailwind-variants` config: the slots are
  * the menu's visual regions (`dialog`, `list`, `item`, the info/empty row and
  * its icon, the selected-row check). `variants.disabled` replaces the
  * `li.disabled` cascade. The per-component `--c-dropdown-*` override-variable
  * layer is dropped in favour of the semantic design tokens (the overlay
- * surface and the primary item-state roles, ADR-0010); customization is via
- * `::part()` (ADR-0006), there is no `override` prop.
+ * surface and the primary item-state roles); customization is via
+ * `::part()`, there is no `override` prop.
  *
- * What can't be a utility stays in the escape-hatch <style> below (ADR-0007):
+ * What can't be a utility stays in the escape-hatch <style> below:
  * the host box (`:host{display:block;position:relative}`), the imperative
  * state-class hooks the JS toggles (`ul.active` visibility + fade-in keyframe,
  * `.mobile` full-screen layout, `.input-bottom-wrapper.active` padding),
@@ -729,7 +729,7 @@ onBeforeUnmount(() => {
 </script>
 
 <!--
-  Escape-hatch CSS (ADR-0007): only constructs Tailwind utilities cannot
+  Escape-hatch CSS: only constructs Tailwind utilities cannot
   express. The static look of the dialog/list/item/info/check regions lives in
   the `tv` config above. What remains here, authored against global design
   tokens only:

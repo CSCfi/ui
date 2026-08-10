@@ -1,5 +1,5 @@
 /**
- * Modal stack controller (ADR-0014).
+ * Modal stack controller.
  *
  * `c-modal` opens its native `<dialog>` with `.show()` — NOT `showModal()` —
  * so modals never enter the browser top layer. The top layer cannot be
@@ -23,7 +23,7 @@
 /**
  * Stacking bands (see CONTEXT.md "Stacking band"). Library-owned paint-order
  * ranges: page content < modal band < toast band < browser top layer (menus,
- * autocomplete panels — ADR-0008). Internal constants by design; publishing
+ * autocomplete panels). Internal constants by design; publishing
  * them would invite the interleaving that breaks "toasts always on top".
  */
 export const MODAL_BAND_BASE = 1000;

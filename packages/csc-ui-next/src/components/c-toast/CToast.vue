@@ -67,8 +67,6 @@ export interface CToastProps {
 
 <script setup lang="ts">
 /**
- * A single toast notification, rendered and managed by c-toasts
- *
  * @slot default - Custom toast content, shown when the message is flagged `custom`
  * @csspart root - The toast's outer box carrying the accent border and shadow
  * @csspart custom - Wrapper shown for custom messages in place of the standard item layout
@@ -106,11 +104,11 @@ interface CToastEvents {
 }
 
 /**
- * Styling lives in this `tailwind-variants` config (ADR-0004). The old
+ * Styling lives in this `tailwind-variants` config. The old
  * `--_c-toast-*` indirection vars are dropped: the accent (`type`) maps
  * straight to a design token (`border-info-600`, `text-error-600`, …) selected
  * by the `type` variant, and the white background / system text are token
- * utilities. Consumer customization is via `::part()` (ADR-0006).
+ * utilities. Consumer customization is via `::part()`.
  *
  * Why the box (border/padding/bg/shadow) is on the `root` element and NOT the
  * host: this sheet ships Tailwind's preflight, whose `*` reset is injected into
@@ -210,7 +208,7 @@ const ACCENT_VAR: Record<CToastType, string> = {
 };
 
 // A message object can carry any string at runtime; unknown types fall back
-// to `info` (ADR-0015), matching the original `var(--c-info)` fallback.
+// to `info`, matching the original `var(--c-info)` fallback.
 const toastType = computed<CToastType>(() => {
   const type = props.message?.type;
 
@@ -333,7 +331,7 @@ onBeforeUnmount(() => {
 </script>
 
 <!--
-  Escape-hatch CSS (ADR-0007): only constructs Tailwind utilities cannot
+  Escape-hatch CSS: only constructs Tailwind utilities cannot
   express. The visible box, item layout, icon and progress bar live in the `tv`
   config above. What remains:
   - the `:host` enter/leave transition (opacity + translateY): JS toggles the

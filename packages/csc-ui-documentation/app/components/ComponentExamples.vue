@@ -149,7 +149,7 @@ const activeTab = ref(route.query.tab || tabs.value[0].value);
 }
 
 /* Tab panel content padding (16px top, 8px sides + bottom). c-tab-item defaults
-   to top-only; customize through its exposed `root` part (ADR-0006) rather than
+   to top-only; customize through its exposed `root` part rather than
    the removed `--c-tab-item-padding` var. */
 // c-tab-item::part(root) {
 //   padding: 16px 8px 8px;

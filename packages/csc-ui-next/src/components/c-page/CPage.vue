@@ -38,15 +38,15 @@ import {
 defineOptions({ inheritAttrs: false });
 
 /**
- * Styling lives in this `tailwind-variants` config (ADR-0004): the inner
+ * Styling lives in this `tailwind-variants` config: the inner
  * `scrollIndicator` and `container` regions are tv slots/parts. The host
  * itself must be the scrollable CSS grid (its slotted children are direct grid
  * items), so the host layout stays in the escape-hatch `<style>` below.
  *
- * The per-component `--c-page-*` override vars are dropped (ADR-0004): the
+ * The per-component `--c-page-*` override vars are dropped: the
  * container authors `max-w-[1280px]` directly and the responsive padding uses
  * Tailwind's `sm:`/`md:` breakpoints (640px/768px) which match the original
- * media queries. Customization is via `::part()` (ADR-0006).
+ * media queries. Customization is via `::part()`.
  */
 const page = tv({
   slots: {
@@ -96,7 +96,7 @@ onBeforeUnmount(() => {
 </script>
 
 <!--
-  Escape-hatch CSS (ADR-0007): this component has no inner `root` element — the
+  Escape-hatch CSS: this component has no inner `root` element — the
   slotted children are the host's direct grid items, so the host itself MUST be
   the scrollable CSS grid container. Utilities cannot target a shadow host, so
   the host layout lives here. This `:host` deliberately overrides the global

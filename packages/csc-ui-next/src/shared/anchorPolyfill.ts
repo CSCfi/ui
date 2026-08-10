@@ -1,5 +1,5 @@
 /**
- * Runtime loader for the OddBird CSS anchor-positioning polyfill (ADR-0008).
+ * Runtime loader for the OddBird CSS anchor-positioning polyfill.
  *
  * `c-menu` / `c-menu-item` position their popover panels with native CSS
  * anchor positioning (`anchor-name` / `position-anchor` / `position-area`).
@@ -7,7 +7,7 @@
  * not yet. Where the feature is missing we lazily load OddBird's polyfill and
  * run it against the calling component's shadow root.
  *
- * Notes / known limits (verify in Firefox — ADR-0008):
+ * Notes / known limits (verify in Firefox):
  *  - The polyfill's weakest area is shadow DOM + top-layer popovers. We pass
  *    the component's own ShadowRoot in `roots` so its anchor/target elements
  *    are discovered; the anchor name and target both live in that one root, so

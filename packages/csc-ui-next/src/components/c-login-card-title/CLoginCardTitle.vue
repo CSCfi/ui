@@ -16,9 +16,9 @@ import { tv } from 'tailwind-variants';
 import { computed } from 'vue';
 
 /**
- * Styling lives entirely in this `tailwind-variants` config (ADR-0004); the
- * inner `<header>` (`root` part) is the public customization surface
- * (ADR-0006). The typography the original carried on `:host` now lives on the
+ * Styling lives entirely in this `tailwind-variants` config; the
+ * inner `<header>` (`root` part) is the public customization surface.
+ * The typography the original carried on `:host` now lives on the
  * `root` element: 40px/700 balanced heading in the primary colour. The old
  * `--c-login-card-title-color` override indirection is dropped — the colour
  * comes straight from the `primary` semantic role. The font-size keys off the

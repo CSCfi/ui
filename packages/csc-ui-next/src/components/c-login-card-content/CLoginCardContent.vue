@@ -16,9 +16,9 @@ import { tv } from 'tailwind-variants';
 import { computed } from 'vue';
 
 /**
- * Styling lives entirely in this `tailwind-variants` config (ADR-0004); the
- * inner `<article>` (`root` part) is the public customization surface
- * (ADR-0006). It stacks its slotted content vertically with a fixed 24px gap.
+ * Styling lives entirely in this `tailwind-variants` config; the
+ * inner `<article>` (`root` part) is the public customization surface.
+ * It stacks its slotted content vertically with a fixed 24px gap.
  * The old `:host{display:block}` box is dropped — the host stays
  * `display:contents` and the `root` element carries the layout instead.
  */

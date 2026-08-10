@@ -35,11 +35,11 @@ import { tv } from 'tailwind-variants';
 import { computed } from 'vue';
 
 /**
- * Styling lives in this `tailwind-variants` config (ADR-0004). The host is
+ * Styling lives in this `tailwind-variants` config. The host is
  * `display:contents` globally, so the SVG itself is the `root` element and
  * carries the `display:block` + top margin. The original `svg .cls-*` fill
  * rules become per-element `fill-*` utilities routed through dedicated semantic
- * roles (`logo-wordmark` / `logo-teal` / `logo-magenta`, ADR-0010): in light
+ * roles (`logo-wordmark` / `logo-teal` / `logo-magenta`): in light
  * the wordmark resolves to tertiary-600 while the teal/magenta marks are pinned
  * to literal brand hex in tokens.css — the logo is a fixed brand mark, so
  * re-seeding primary/secondary via applyTheme must not recolor it. In dark they

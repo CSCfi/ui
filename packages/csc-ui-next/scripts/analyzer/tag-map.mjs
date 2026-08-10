@@ -1,5 +1,5 @@
 /**
- * Tag-name-map generator (ADR-0015 IDE artifacts, TypeScript flavor).
+ * Tag-name-map generator (IDE artifacts, TypeScript flavor).
  *
  * Emits src/tag-name-map.ts: one typed element interface per component
  * (props, exposed methods, typed add/removeEventListener from the event map)
@@ -92,7 +92,7 @@ const methodSignature = (signature) => {
 /** The manifest's display type: expanded literal union when available. */
 const fieldType = (prop) => prop.typeExpanded ?? prop.type;
 
-/** name → import path for every public package type (ADR-0015). */
+/** name → import path for every public package type. */
 const publicTypeOwners = (components, publicTypes) => {
   const owners = new Map();
 

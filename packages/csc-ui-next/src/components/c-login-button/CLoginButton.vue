@@ -22,11 +22,11 @@ import { tv } from 'tailwind-variants';
 import { computed } from 'vue';
 
 /**
- * Styling lives entirely in this `tailwind-variants` config (ADR-0004). The old
+ * Styling lives entirely in this `tailwind-variants` config. The old
  * `--c-login-button-*` indirection vars are dropped and the card is authored
  * directly against the semantic design tokens (`bg-surface`, `border`,
  * `primary`, `on-surface-muted`). The host stays `display:contents` (global); the anchor is
- * the `root` box. Consumer customization is via the stamped parts (ADR-0006).
+ * the `root` box. Consumer customization is via the stamped parts.
  *
  * Hover and focus-visible states are authored as `hover:`/`focus-visible:`
  * utilities on `root`. The single-side title underline uses an arbitrary

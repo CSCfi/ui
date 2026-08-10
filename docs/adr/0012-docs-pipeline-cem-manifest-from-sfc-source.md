@@ -13,7 +13,7 @@ status: accepted
 - **Slots, CSS parts, CSS custom properties**: JSDoc tags (`@slot`, `@csspart`, `@cssprop`) in a component-level docblock. The analyzer auto-discovers actual slot/part names from the template (including `exportparts` forwards under the `<child>-<part>` convention of ADR-0006) and enforces a 1:1 match with the tags — a mismatch fails the build. Because parts are the sole customization API (ADR-0006), this lint doubles as an API-change tripwire. `@cssprop` is checked best-effort only (usages hide inside Tailwind arbitrary-value strings) and warns instead of failing.
 - **Methods**: `defineExpose()` entries with JSDoc.
 - **Shared public types** (`src/types.ts`): extracted with JSDoc into a manifest vendor-extension field (CEM has no first-class type-alias kind); the docs site renders them as a Types page cross-linked from prop/event type text. *(Amended: ADR-0015 split types into component-owned + shared; a later decision (2026-07-03) moved rendering onto each component's page — a shared type renders on every referencing page, per ADR-0013's self-containment rule — and dropped the central Types page.)*
-- **Usage prose**: a hand-written `usage.md` beside each SFC — free-form markdown under conventional headings; a missing file is a build warning.
+- **Usage prose**: a hand-written `usage.md` beside each SFC — free-form markdown under conventional headings; a missing file is a build warning. *(Amended by ADR-0026: `usage.md` also became the source of the component-level description — its first paragraph feeds the manifest, IDE hovers, and the docs-page intro; the SFC docblock keeps only tags, no free-text prose.)*
 
 ## Seeding from the Stencil docs
 

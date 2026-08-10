@@ -43,21 +43,21 @@ import { computed, onMounted, useHost, watchEffect } from 'vue';
 defineOptions({ inheritAttrs: false });
 
 /**
- * Styling lives in this `tailwind-variants` config (ADR-0004): the `root`
+ * Styling lives in this `tailwind-variants` config: the `root`
  * flex wrapper, the `bar` (label) box, and the `details` percentage line, with
  * the `singleLine` / `negative` states as variants. The old per-component
  * `--c-progress-bar-*` indirection vars are dropped; values are authored
  * directly against semantic tokens (the muted surface track, the primary fill
- * and the error role for a negative value, ADR-0010) and the literal 16px
+ * and the error role for a negative value) and the literal 16px
  * height / 4px border the defaults resolved to.
  *
  * The native `<progress>` element (with its `::-webkit-*` / `::-moz-*`
  * pseudo-elements) and the indeterminate `::before` + `@keyframes` are not
- * expressible as utilities, so they remain in the escape-hatch <style> below
- * (ADR-0007). The `c-progress` / `c-progress--indeterminate` marker classes are
+ * expressible as utilities, so they remain in the escape-hatch <style> below.
+ * The `c-progress` / `c-progress--indeterminate` marker classes are
  * the hooks those rules target; `--_c-progress-bar-value` carries the dynamic
  * percentage into the Firefox/indeterminate rules. Customization is via the
- * stamped parts (ADR-0006).
+ * stamped parts.
  */
 const progress = tv({
   defaultVariants: {
@@ -146,7 +146,7 @@ onMounted(() => {
 </script>
 
 <!--
-  Escape-hatch CSS (ADR-0007): only constructs Tailwind utilities cannot
+  Escape-hatch CSS: only constructs Tailwind utilities cannot
   express. The box layout, colours and the singleLine/negative states live in
   the `tv` config above. Remaining here:
    - the native <progress> element and its `::-webkit-progress-*` /

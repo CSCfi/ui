@@ -1,8 +1,8 @@
 <template>
   <!-- Anchor wrapper: a shadow-DOM box around the slotted trigger. CSS anchor
        names are tree-scoped, so the anchor must live in the same shadow root
-       as the panel — we cannot anchor to the light-DOM trigger directly
-       (ADR-0008). The wrapper carries `anchor-name`; the panel references it. -->
+       as the panel — we cannot anchor to the light-DOM trigger directly.
+The wrapper carries `anchor-name`; the panel references it. -->
   <span
     ref="anchorRef"
     :class="ui.trigger()"
@@ -71,7 +71,7 @@ interface CMenuEvents {
    * Fired whenever the menu opens or closes, carrying the new open state.
    * Named `change:open`, not `update:open`: Vue's runtime silently drops
    * `onUpdate:*` listeners on custom elements (`isModelListener`), so a
-   * template `@update:open` would never be attached (ADR-0017).
+   * template `@update:open` would never be attached.
    */
   'change:open': boolean;
   /**
@@ -97,8 +97,8 @@ interface CMenuEvents {
  * and closed by calling the `openSubmenu`/`closeSubmenu` methods that
  * `c-menu-item` exposes.
  *
- * Styling is in this `tailwind-variants` config (ADR-0004); `::part()` is the
- * customization surface (ADR-0006). The `<style>` block is the ADR-0007 escape
+ * Styling is in this `tailwind-variants` config; `::part()` is the
+ * customization surface. The `<style>` block is the escape
  * hatch for the un-Tailwind-able anchor-positioning fallbacks and the
  * popover open animation.
  */
@@ -183,7 +183,7 @@ const panelStyle = computed(
 
 // Tracks open submenu items (across nested levels) so we can coordinate
 // dismissal — the browser does not auto-chain manual popovers across the
-// separate shadow roots each c-menu-item owns (ADR-0008 risk note).
+// separate shadow roots each c-menu-item owns.
 const openSubmenus = new Set<HTMLElement>();
 
 const submenuTimers = new Map<HTMLElement, { close?: number; open?: number }>();
@@ -744,7 +744,7 @@ onBeforeUnmount(() => {
 </script>
 
 <!--
-  ADR-0007 escape-hatch CSS — constructs utilities cannot express:
+  Escape-hatch CSS — constructs utilities cannot express:
    - `position-try-fallbacks` on the panel: native flip/shift when the
      preferred placement lacks room (the `position-area` itself is set inline
      from the `position` prop). Un-Tailwind-able at-rule-adjacent syntax.

@@ -8,7 +8,7 @@ const semanticDark = require('./tokens/semantic/dark.json');
 const semanticInvariant = require('./tokens/semantic/invariant.json');
 
 /**
- * Token pipeline for `@cscfi/csc-ui-next` (ADR-0010).
+ * Token pipeline for `@cscfi/csc-ui-next`.
  *
  * Duplicated from `@cscfi/csc-ui` so `next` owns its tokens ahead of the
  * eventual removal of the Stencil package. Emits a single document-level
@@ -58,7 +58,7 @@ const semanticInvariant = require('./tokens/semantic/invariant.json');
  *
  * Rejected alternative: declarative-shadow-DOM SSR would style the first
  * paint for real, but Vue's `defineCustomElement` has no server-rendering
- * story (ADR-0003), so pre-upgrade is inherently unstyled.
+ * story, so pre-upgrade is inherently unstyled.
  *
  * The form-field shells additionally reserve their resting geometry as
  * explicit exceptions — they are the components with a fixed, knowable

@@ -17,15 +17,15 @@ import { tv } from 'tailwind-variants';
 import { computed } from 'vue';
 
 /**
- * Styling lives entirely in this `tailwind-variants` config (ADR-0004); the
+ * Styling lives entirely in this `tailwind-variants` config; the
  * per-component `--c-toolbar-*` override variables are dropped in favour of the
  * global design tokens (`bg-white`, `--c-text-system`). Consumer customization
- * is via `::part()` (ADR-0006).
+ * is via `::part()`.
  *
  * The host is `display:contents` globally, so the fixed bar lives on the inner
  * `root` element. The only thing that can't be a utility — the contextual
  * `:host(.relative) .c-toolbar` selector that flips the bar to in-flow
- * positioning — stays in the escape-hatch <style> below (ADR-0007).
+ * positioning — stays in the escape-hatch <style> below.
  */
 const toolbar = tv({
   slots: {
@@ -46,7 +46,7 @@ const ui = computed(() => toolbar());
 </script>
 
 <!--
-  Escape-hatch CSS (ADR-0007): only the contextual host selector that Tailwind
+  Escape-hatch CSS: only the contextual host selector that Tailwind
   utilities cannot express. When the consumer adds `.relative` to the host,
   the bar switches from fixed to in-flow and pulls the following spacer back up.
 -->

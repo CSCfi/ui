@@ -1,8 +1,8 @@
 /**
- * Docs-contract lint (ADR-0012).
+ * Docs-contract lint.
  *
  * Hard errors (the template and the docblock must agree 1:1 — parts are the
- * customization API per ADR-0006, so an undocumented or phantom name is an API
+ * customization API, so an undocumented or phantom name is an API
  * defect):
  *   - template slot without an `@slot` tag / `@slot` naming no template slot
  *   - part (own or exportparts-exposed) without an `@csspart` tag /
@@ -13,9 +13,9 @@
  *   - an `emitModelValue` caller whose event map is missing the
  *     `changeValue` / `update:value` / `input` triple that helper dispatches
  *   - an `@subcomponents` tag naming an unknown tag, or the component itself
- *     (ADR-0013 — the composed-children list must resolve to real components)
- *   - a prop typed bare `string` without an `@freeform` tag (ADR-0015 —
- *     set-of-accepted-values props must be named exported unions; genuinely
+ *     (the composed-children list must resolve to real components)
+ *   - a prop typed bare `string` without an `@freeform` tag
+ *     (set-of-accepted-values props must be named exported unions; genuinely
  *     open-ended props declare it explicitly), or an `@freeform` tag on a
  *     prop that is not a bare `string`
  *
@@ -26,6 +26,8 @@
  *     per-component API and are never required to be tagged)
  *   - dynamic slot-name / part bindings the analyzer cannot verify
  *   - missing `usage.md`
+ *   - free text in the component docblock (the component description lives
+ *     in usage.md's first paragraph; the docblock carries tags only)
  */
 
 export const lintComponent = (component, knownTags = new Set()) => {
@@ -99,7 +101,7 @@ export const lintComponent = (component, knownTags = new Set()) => {
     }
   }
 
-  // New-style components (ADR-0017/0023) use emitModelChange, which
+  // New-style components use emitModelChange, which
   // dispatches the all-lowercase `change` instead of the grandfathered
   // `changeValue`.
   if (scriptSource.includes('emitModelChange(')) {
@@ -117,7 +119,7 @@ export const lintComponent = (component, knownTags = new Set()) => {
   for (const prop of component.props) {
     if (prop.type === 'string' && !prop.freeform) {
       errors.push(
-        `prop "${prop.name}" is a bare string — give it a union type or tag it @freeform (ADR-0015)`,
+        `prop "${prop.name}" is a bare string — give it a union type or tag it @freeform`,
       );
     }
 
@@ -148,6 +150,14 @@ export const lintComponent = (component, knownTags = new Set()) => {
 
   if (!usagePath) {
     warnings.push('no usage.md');
+  }
+
+  // The component description lives in usage.md (its first paragraph); the
+  // docblock carries tags only. Free text there is dead — it feeds nothing.
+  if (component.docblockProse) {
+    warnings.push(
+      'docblock free text is ignored — describe the component in usage.md',
+    );
   }
 
   return { errors, warnings };

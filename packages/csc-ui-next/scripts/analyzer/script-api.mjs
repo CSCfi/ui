@@ -1,5 +1,5 @@
 /**
- * `<script setup>` analysis for the docs analyzer (ADR-0012), via the
+ * `<script setup>` analysis for the docs analyzer, via the
  * TypeScript compiler API. Extracts:
  *
  *   - the component docblock: the `/**` block at the very top of the script
@@ -10,7 +10,7 @@
  *   - methods: `defineExpose({ … })` entries, resolved to their top-level
  *     declarations for JSDoc and signature text
  *   - events: the JSDoc-annotated event-map interface (`<Component>Events`,
- *     ADR-0012's typed emit-helper convention). Components not yet migrated to
+ *     the typed emit-helper convention). Components not yet migrated to
  *     the helper simply have no event map — the manifest section stays empty
  *     until they are.
  */
@@ -23,7 +23,7 @@ import { expandTypeNode } from './type-expansion.mjs';
 const typeText = (node, sf) =>
   node ? node.getText(sf).replace(/\s+/g, ' ').trim() : '';
 
-/** The `@freeform` member tag (ADR-0015): marks a `string`-typed prop as
+/** The `@freeform` member tag: marks a `string`-typed prop as
  *  intentionally open-ended. Returns the tag's comment (or `true`). */
 const freeformTag = (member) => {
   const tag = ts
@@ -114,7 +114,7 @@ const interfaceMembers = (
  * @param {string} className - e.g. `CButton`; selects the event-map interface
  * @param {object} [options]
  * @param {string} [options.plainContent] - the plain `<script>` block's source
- *   (exported component-owned types + props interface live there, ADR-0015)
+ *   (exported component-owned types + props interface live there)
  * @param {Map} [options.aliasTable] - name → declaration for type expansion
  */
 export const analyzeScript = (content, fileName, className, options = {}) => {

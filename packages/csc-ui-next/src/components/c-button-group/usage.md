@@ -21,15 +21,17 @@ it represents is named for every user.
 ## Single vs multiple
 
 Without `multiple` the group holds one value — the active button's `value`
-(or its index when no button declares one) — and shows the sliding
-indicator. Clicking the active button toggles it off (value `null`) unless
-`mandatory` is set.
+(or its index when no button declares one). Clicking the active button
+toggles it off (value `null`) unless `mandatory` is set.
 
 With `multiple` the value is an array of the active buttons' values in DOM
-order, and each active button paints its own fill instead of the sliding
-indicator. Arrays have no attribute form — bind `value` as a DOM property
+order. Arrays have no attribute form — bind `value` as a DOM property
 (`:value.prop` in Vue; the React wrapper and property assignment do this
 naturally).
+
+In both modes every active button paints its own fill. The sliding
+indicator that glides between choices is a tab-strip affordance — it
+belongs to `c-tab-buttons`, not to this component.
 
 ## Required vs mandatory
 

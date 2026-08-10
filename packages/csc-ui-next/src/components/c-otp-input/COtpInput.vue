@@ -116,10 +116,10 @@ interface COtpInputEvents {
 defineOptions({ inheritAttrs: false });
 
 /**
- * Styling lives in this `tailwind-variants` config (ADR-0004): the old
+ * Styling lives in this `tailwind-variants` config: the old
  * `--_c-otp-input-*` indirection vars are dropped in favour of token-mapped
  * utilities, and the `:host(.error)` border colour swap becomes the `valid`
- * variant. Consumer customization is via `::part()` (ADR-0006).
+ * variant. Consumer customization is via `::part()`.
  *
  * The digit `<input>`s live in *this* shadow root (not slotted), so the
  * box-shadow notch border is authored as an inset `ring`: `ring-1` inactive,
@@ -431,7 +431,7 @@ watch(
 </script>
 
 <!--
-  Escape-hatch CSS (ADR-0007): only constructs Tailwind utilities cannot
+  Escape-hatch CSS: only constructs Tailwind utilities cannot
   express. The static styling lives in the `tv` config above. What remains:
     - `:host { display: block }` — the host must be a real box so the
       flex-column root lays out (the global `:host{display:contents}` would

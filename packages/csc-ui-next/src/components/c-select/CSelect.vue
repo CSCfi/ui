@@ -147,7 +147,7 @@ interface CSelectEvents {
 }
 
 /**
- * Styling lives in this `tailwind-variants` config (ADR-0004): the slots are
+ * Styling lives in this `tailwind-variants` config: the slots are
  * the select's internal regions (the flex content row, the readonly combobox
  * `input`, the rich-selection overlay, the chevron toggle). The
  * `chevronActive` / `selectionShown` variants replace the
@@ -155,7 +155,7 @@ interface CSelectEvents {
  * The per-component `--c-select-*` override-variable layer is dropped in favour
  * of the global design tokens (`text-primary-600` for the active colour,
  * `text-[var(--c-text-body)]` for text, `text-tertiary-500` for placeholder);
- * consumer customization is via `::part()` (ADR-0006), there is no `override`
+ * consumer customization is via `::part()`, there is no `override`
  * prop.
  *
  * Child recolouring (cross-component contract): the chevron/clear `c-icon` and
@@ -164,7 +164,7 @@ interface CSelectEvents {
  * The wrapped `c-input` is not yet on tv and still reads its `--c-input-*`
  * vars; its defaults already match the select defaults except for the floating
  * label colour, so a single `--c-input-label-color` bridge remains in the
- * escape-hatch <style> below (ADR-0007), alongside the host box, the projected
+ * escape-hatch <style> below, alongside the host box, the projected
  * `<slot>` hiding and the `:has()`/`::placeholder` selectors utilities can't
  * express.
  */
@@ -816,7 +816,7 @@ onBeforeUnmount(() => {
 </script>
 
 <!--
-  Escape-hatch CSS (ADR-0007): only constructs Tailwind utilities cannot
+  Escape-hatch CSS: only constructs Tailwind utilities cannot
   express. The select's internal regions (content row, readonly input, chevron,
   selection overlay) are styled by the `tv` config above against global design
   tokens. What remains here:
@@ -824,11 +824,12 @@ onBeforeUnmount(() => {
       `:host{display:contents}` so the field is a real box hosting the
       light-DOM c-input. Utilities can't target the host.
       The former `--c-input-*` theming bridges are all dropped: c-input is now
-      on tv (ADR-0004) and no longer reads them. The floating label therefore
+      on tv and no longer reads them. The floating label therefore
       uses c-input's own default colour (tertiary-600) — a standard floating-
       label look; re-pinning it isn't possible via `::part()` (c-input sits two
       shadow boundaries deep, inside c-dropdown) and a new override var would
-      violate ADR-0006, so the default is accepted.
+      violate the `::part()`-only customization rule, so the default is
+      accepted.
     - `.c-input__content slot{display:none}`: a `<slot>` is a shadow node Vue
       renders with no class hook; the projected <c-option> data source must
       never paint.

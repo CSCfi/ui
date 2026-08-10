@@ -65,21 +65,21 @@ interface CSideNavigationItemEvents {
 }
 
 /**
- * Styling lives in this `tailwind-variants` config (ADR-0004): each visual
+ * Styling lives in this `tailwind-variants` config: each visual
  * region is a slot, and the `expandable` / `active` / `subItem` variants replace
  * the `:host(.active)`, `--parent` and `[slot='sub-item']` selector cascades.
  * The per-component `--c-*` indirection vars are dropped in favour of the
- * semantic design tokens (ADR-0010): items sit on the themed nav surface, so
+ * semantic design tokens: items sit on the themed nav surface, so
  * their foreground is `on-nav`, hover is `nav-surface-hover`, the active pill is
  * the dedicated `nav-active`/`on-nav-active` role, and a sub-item box is
  * `surface-raised`. (The active pill was previously the `surface-sunken`
  * page-canvas role — decoupled so dark mode can style the selection independently
  * of the page background instead of receding into it. Light still maps to the
  * same steps, so its tinted pill is unchanged.)
- * Consumer customization is via `::part()` (ADR-0006).
+ * Consumer customization is via `::part()`.
  *
  * The keyboard focus ring and the `::slotted(span)/(c-icon)` sizing of consumer
- * light-DOM children remain in the escape-hatch <style> below (ADR-0007). The
+ * light-DOM children remain in the escape-hatch <style> below. The
  * tabindex/role/aria live on the rendered `header` element, not the host: a
  * `display:contents` host is skipped by sequential focus, so a host-level
  * `:focus-visible` ring never triggered on Tab. Hover is a `hover:` utility on
@@ -121,7 +121,7 @@ const sideNavigationItem = tv({
       'grid items-center min-h-[46px] gap-2 px-3 py-2 no-underline text-current outline-none',
     // The outer box (the original `:host(.c-side-navigation-item) > div`) that
     // wraps the header + sub-nav and carries the bg/color/state. Its `color`
-    // cascades into the rendered chevron c-icon (currentColor contract, ADR-0004).
+    // cascades into the rendered chevron c-icon (currentColor contract).
     root: 'grid items-center relative overflow-hidden rounded-csc-md cursor-pointer font-normal select-none [backface-visibility:hidden] [transform:translate3d(0,0,0)] bg-transparent text-on-nav',
     slot: 'flex items-center gap-2 max-w-full leading-normal',
     subNav:
@@ -330,7 +330,7 @@ onMounted(() => {
 </script>
 
 <!--
-  Escape-hatch CSS (ADR-0007): only constructs Tailwind utilities cannot
+  Escape-hatch CSS: only constructs Tailwind utilities cannot
   express. The header box, chevron, slot layout, active/expandable/sub-item
   states and the sub-nav height transition live in the `tv` config above. What
   remains here:

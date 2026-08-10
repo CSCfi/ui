@@ -52,7 +52,7 @@ onMounted(() => host?.setAttribute('tabindex', '-1'));
 </script>
 
 <!--
-  Escape-hatch CSS (ADR-0007): this component renders a bare `<slot />` with no
+  Escape-hatch CSS: this component renders a bare `<slot />` with no
   element to hang a utility class on, and its only styling is the host box
   itself. `:host{display:block;width:100%;padding:8px 0}` overrides the global
   `:host{display:contents}` so the option is a real padded block — utilities

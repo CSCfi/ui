@@ -145,16 +145,16 @@ interface CCheckboxEvents {
 }
 
 /**
- * Styling lives in this `tailwind-variants` config (ADR-0004); the old
+ * Styling lives in this `tailwind-variants` config; the old
  * `--_c-checkbox-*` indirection layer is dropped in favour of direct token
- * utilities. Customization is via `::part()` against the stamped part names
- * (ADR-0006); there is no `override` prop.
+ * utilities. Customization is via `::part()` against the stamped part names;
+ * there is no `override` prop.
  *
  * The actual checkbox box is a `::before` pseudo-element on the `ripple` slot,
  * and the white check is an SVG `<path>`. Their CHECKED/INDETERMINATE state is
  * driven by sibling selectors (`input:checked + label .ripple::before`) which
  * depend on the live DOM `:checked` of a sibling input and therefore cannot be
- * `tv` variants — they live in the escape-hatch `<style>` below (ADR-0007).
+ * `tv` variants — they live in the escape-hatch `<style>` below.
  * The STATIC box look (size, border, radius, transition) is authored here as
  * `before:` utilities; the escape-hatch only flips colours on state change.
  *
@@ -205,7 +205,7 @@ const checkbox = tv({
     // Material click ripple: an absolutely-positioned circle, centred in the
     // 42px ripple surface (which already clips via overflow-hidden + rounded-
     // full). Like c-button, it tweens scale/opacity via the `transition` util
-    // rather than a bespoke @keyframes (ADR-0004). Colour follows state.
+    // rather than a bespoke @keyframes. Colour follows state.
     rippleEffect:
       'pointer-events-none absolute rounded-full bg-primary transition-[transform,opacity] duration-[600ms] ease-out',
     root: 'relative w-fit',
@@ -432,7 +432,7 @@ const onChange = (_event: Event) => {
 </script>
 
 <!--
-  Escape-hatch CSS (ADR-0007): only constructs Tailwind utilities cannot
+  Escape-hatch CSS: only constructs Tailwind utilities cannot
   express. Everything static lives in the `tv` config above. What remains:
 
   - `:host{display:inline-block}` — restores a box on the host (the global

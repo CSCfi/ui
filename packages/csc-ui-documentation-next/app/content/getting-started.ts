@@ -1,7 +1,7 @@
 import type { Flavor } from '~/composables/useFlavor';
 
 /**
- * Getting-started page content, one block set per flavor (ADR-0020). Kept as
+ * Getting-started page content, one block set per flavor. Kept as
  * data so the page can prerender-highlight every flavor and swap client-side.
  */
 export interface GettingStartedBlock {

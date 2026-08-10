@@ -56,12 +56,12 @@ import { tv } from 'tailwind-variants';
 import { computed } from 'vue';
 
 /**
- * Styling lives entirely in this `tailwind-variants` config (ADR-0004): the
+ * Styling lives entirely in this `tailwind-variants` config: the
  * `slots` are the component's parts and the `type` `variants` replace the
  * original `.c-alert--<type>` colour classes. The old `--c-alert-color`
  * indirection var is dropped — each type maps straight to its semantic status
- * role (info / error / …, ADR-0010) and the border/icon inherit it via
- * `currentColor`. Consumer customization is via `::part()` (ADR-0006).
+ * role (info / error / …) and the border/icon inherit it via
+ * `currentColor`. Consumer customization is via `::part()`.
  *
  * The accent colour is carried by `text-*` on `root`; the box border uses
  * `border-current` and the icon `fill-current`, so a single type token paints
@@ -100,7 +100,7 @@ const icons: Record<CAlertIconType, string> = {
 
 // Only a real icon type shows the icon and switches to the two-column grid.
 // Attributes can deliver any string at runtime (including the legacy `''`),
-// so unknown values fall back to the default look (ADR-0015) — rendering an
+// so unknown values fall back to the default look — rendering an
 // empty icon would leave a stray icon row that reads as odd padding-top.
 const isIconType = computed((): boolean => props.type in icons);
 
@@ -116,7 +116,7 @@ const icon = computed(() =>
 </script>
 
 <!--
-  Escape-hatch CSS (ADR-0007): only constructs Tailwind utilities cannot
+  Escape-hatch CSS: only constructs Tailwind utilities cannot
   express. The visible box (border/grid/colour) lives in the `tv` config above;
   here remains the `::slotted([slot="title"])` rule, which styles
   consumer-provided light-DOM title content and cannot be reached by a utility

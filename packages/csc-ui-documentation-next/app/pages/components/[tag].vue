@@ -72,7 +72,7 @@ const tag = String(route.params.tag);
 const { findComponent, parentOf, resolveGroup } = useManifest();
 
 // A folded composed child has no page of its own — send it to its parent's
-// group (ADR-0013). routeRules also covers direct static hits.
+// group. routeRules also covers direct static hits.
 const parent = parentOf(tag);
 
 if (parent) {
@@ -103,7 +103,9 @@ const parentView = views[0];
 
 const examples = useExamples(group.map((c) => c.tagName));
 
-const usageSource = useUsageDoc(tag);
+// The first paragraph is the component description, already rendered as the
+// intro under the H1 — the Usage section shows only what follows it.
+const usageSource = usageWithoutIntro(useUsageDoc(tag));
 
 // Highlight (Shiki) + render markdown at prerender; serialized into the static
 // payload so the client ships no highlighter. See utils/highlight.ts.

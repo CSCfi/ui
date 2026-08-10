@@ -147,12 +147,12 @@ onBeforeUnmount(() => observer?.disconnect());
 </script>
 
 <!--
-  Escape-hatch CSS (ADR-0007): this whole block is unavoidably escape-hatch.
+  Escape-hatch CSS: this whole block is unavoidably escape-hatch.
   The styled <table>/thead/tbody/tr/th/td are the user's light-DOM table that is
   physically MOVED into this shadow root on mount (see onMounted) — they are not
   rendered by this template, so they can't carry `tv` `:class` bindings. The
   styling therefore stays as shadow-scoped descendant selectors keyed off the
-  `.c-table` / `.c-table--mobile` classes the script toggles. Per ADR-0004 the
+  `.c-table` / `.c-table--mobile` classes the script toggles. The
   per-component `--c-*` indirection vars are dropped: rules author directly
   against the global design tokens. `:host{display:block}` is kept because the
   host must be a real box that contains the moved table; the rest are

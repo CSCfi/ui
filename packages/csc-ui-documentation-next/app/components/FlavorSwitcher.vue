@@ -1,5 +1,5 @@
 <template>
-  <!-- Documentation-wide flavor selection (ADR-0020). -->
+  <!-- Documentation-wide flavor selection. -->
   <c-menu position="bottom-end" @select="onSelect">
     <c-button slot="trigger" size="small" text>
       <c-icon

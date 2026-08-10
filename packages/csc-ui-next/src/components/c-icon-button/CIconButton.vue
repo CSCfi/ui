@@ -123,11 +123,11 @@ import { computed, useTemplateRef } from 'vue';
 import { useRipple } from '../../shared/useRipple';
 
 /**
- * Styling lives entirely in this `tailwind-variants` config (ADR-0004): the
+ * Styling lives entirely in this `tailwind-variants` config: the
  * old per-component `--_c-icon-button-*` override-variable layer is dropped and
  * authored directly against the design tokens; `variants`/`compoundVariants`
  * replace the original `:host([…])` selector cascade. Customization is via
- * `::part()` (ADR-0006); there is no `override` prop.
+ * `::part()`; there is no `override` prop.
  *
  * The box lives on the inner `<button>` (`part="root"`); the host stays
  * `display:contents`.
@@ -146,7 +146,7 @@ import { useRipple } from '../../shared/useRipple';
  * `pointer-events-none`, so a disabled button never receives :hover.
  */
 // Hoisted so the runtime guard below can test membership; the `satisfies`
-// keeps the map complete against the public union (ADR-0015).
+// keeps the map complete against the public union.
 const sizeVariants = {
   default: { root: 'size-10' },
   small: { root: 'size-8' },
@@ -352,7 +352,7 @@ const props = withDefaults(defineProps<CIconButtonProps>(), {
 });
 
 // Attributes can deliver any string at runtime; unknown values fall back to
-// the default size (ADR-0015).
+// the default size.
 const ui = computed(() =>
   iconButton({
     danger: props.danger,
@@ -395,12 +395,12 @@ const onClick = (event: MouseEvent) => {
 </script>
 
 <!--
-  Escape-hatch CSS (ADR-0007): constructs Tailwind utilities cannot express.
+  Escape-hatch CSS: constructs Tailwind utilities cannot express.
   - ::slotted(svg|i|span) — sizing consumer-provided light-DOM icon children
     (a slotted `<c-icon>` sizes itself via its own `size` prop and inherits
     colour via `currentColor`, so it needs no rule here).
   All static / variant styling lives in the `tv` config above; the ripple is
-  driven by the shared useRipple composable + transition utilities (ADR-0004).
+  driven by the shared useRipple composable + transition utilities.
 -->
 <style>
 ::slotted(svg),

@@ -13,12 +13,12 @@ import { tv } from 'tailwind-variants';
 import { computed } from 'vue';
 
 /**
- * Styling lives entirely in this `tailwind-variants` config (ADR-0004). The
+ * Styling lives entirely in this `tailwind-variants` config. The
  * old `--c-navigation-button-color` indirection (and the dead
  * `--c-icon-button-text-text-color` child var) are dropped: the colour is set
  * with a text-colour utility on the `root` element, which cascades into the
  * child `c-icon-button`/`c-icon` via `currentColor`. Customization is via
- * `::part(root)` (ADR-0006). The host stays `display:contents` (global); the
+ * `::part(root)`. The host stays `display:contents` (global); the
  * `root` element carries the visual box.
  */
 const navigationButton = tv({

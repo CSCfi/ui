@@ -1,12 +1,12 @@
 import type { Flavor } from '~/composables/useFlavor';
 
 /**
- * Customization page content, one block set per flavor (ADR-0020). Kept as
+ * Customization page content, one block set per flavor. Kept as
  * data so the page can prerender-highlight every flavor and swap client-side.
  *
  * This page is the single source of truth for the four consumer customization
- * surfaces: seed theming (ADR-0011), dark mode / semantic tokens (ADR-0010),
- * ::part() restyling (ADR-0006), and the Tailwind theme export (ADR-0018).
+ * surfaces: seed theming, dark mode / semantic tokens, ::part() restyling,
+ * and the Tailwind theme export.
  * The getting-started and migration guides keep only teasers that link here.
  */
 export interface CustomizationBlock {
@@ -411,7 +411,7 @@ export const TOKEN_GROUPS: TokenGroup[] = [
   },
 ];
 
-/** The eight themable chromatic families (ADR-0011). */
+/** The eight themable chromatic families. */
 export const ROLE_FAMILIES = [
   'primary',
   'secondary',

@@ -1,5 +1,5 @@
 /**
- * One-shot seeding script (ADR-0012): imports API descriptions from the old
+ * One-shot seeding script: imports API descriptions from the old
  * Stencil library's docs.json into the csc-ui-next SFC sources, so the
  * docblock rollout starts from reviewed-able text instead of blank lines.
  *

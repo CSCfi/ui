@@ -1,8 +1,7 @@
 import { useHost } from 'vue';
 
 /**
- * Typed host-event dispatch — the single dispatch path for component events
- * (ADR-0012).
+ * Typed host-event dispatch — the single dispatch path for component events.
  *
  * Each component declares an **event map** interface (event name → `detail`
  * type, `void` for detail-less events) with JSDoc per member, and dispatches
@@ -35,7 +34,7 @@ import { useHost } from 'vue';
  * for native v-model). Declare those three events in the component's event map
  * anyway — the docs analyzer enforces this for every `emitModelValue` caller.
  *
- * camelCase events also dispatch a kebab-case twin (ADR-0021): Vue's runtime
+ * camelCase events also dispatch a kebab-case twin: Vue's runtime
  * hyphenates every v-on listener name before calling addEventListener
  * (`@item-change` and `@itemChange` both listen for "item-change"), so a
  * camelCase name is unreachable from Vue templates. The camelCase event stays

@@ -1,5 +1,5 @@
 /**
- * Type-alias resolution for the manifest (ADR-0015).
+ * Type-alias resolution for the manifest.
  *
  * The manifest's standard `type.text` field carries the transitively expanded
  * literal union (third-party IDE-data generators parse it for attribute value
@@ -146,9 +146,7 @@ export const expandTypeNode = (node, sf, table) => {
   const expanded = members ? [...new Set(members)].join(' | ') : null;
 
   const alias =
-    expanded && ts.isTypeReferenceNode(node)
-      ? node.typeName.getText(sf)
-      : null;
+    expanded && ts.isTypeReferenceNode(node) ? node.typeName.getText(sf) : null;
 
   return {
     alias,

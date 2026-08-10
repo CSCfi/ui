@@ -9,6 +9,10 @@ Accepted
 Amends ADR-0022 (moves `c-tab-buttons` out of the group-label set, replaced
 by `c-button-group`).
 
+Amended by ADR-0025 (2026-08-10): the "single-select keeps the signature
+sliding indicator" split is reversed — `c-button-group` renders no indicator
+in any mode; the sliding indicator moves into `c-tab-buttons`.
+
 ## Context
 
 `c-tab-buttons` conflated three roles: a standalone segmented value picker

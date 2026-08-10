@@ -27,12 +27,12 @@ interface CTabItemEvents {
 }
 
 /**
- * Styling lives in this `tailwind-variants` config (ADR-0004); customization
- * is via `::part()` (ADR-0006). Only the inner `root` panel's padding is a
+ * Styling lives in this `tailwind-variants` config; customization
+ * is via `::part()`. Only the inner `root` panel's padding is a
  * utility. The host MUST stay a real box here (it is a slotted child whose
  * `min-width:100%` drives c-tab-items' slide math, and its `[active]`/
  * `.is-active`/`[disabled]` state toggles the panel visibility), so those
- * host-level rules remain in the escape-hatch <style> below (ADR-0007).
+ * host-level rules remain in the escape-hatch <style> below.
  */
 const tabItem = tv({
   slots: {
@@ -94,7 +94,7 @@ onBeforeUnmount(() => resizeObserver?.disconnect());
 </script>
 
 <!--
-  Escape-hatch CSS (ADR-0007): the host must be a real box because its
+  Escape-hatch CSS: the host must be a real box because its
   `min-width:100%` is what c-tab-items measures to slide the panel track, and
   its visibility is toggled via the `[active]` attribute (reflected by Vue's
   prop), the `.is-active` class (toggled imperatively by c-tab-items as a

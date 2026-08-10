@@ -1,4 +1,4 @@
-// WCAG contrast audit of the semantic-token pairs (ADR-0010 phase 7).
+// WCAG contrast audit of the semantic-token pairs.
 // Resolves each role to a hex per mode (light/dark) from the palette + semantic
 // maps, then checks foreground/background pairs against AA thresholds.
 // Informational by default; `--strict` exits 1 if any text pair is below AA.

@@ -3,7 +3,7 @@
 // Imported by BOTH the build-time generator (scripts/generate-ramps.mjs) and the
 // runtime theming API (src/theme/applyTheme.ts). Because both entry points run
 // this exact code, a consumer-supplied brand seed produces a ramp byte-for-byte
-// identical to the library's baked-in ones. See ADR-0011.
+// identical to the library's baked-in ones.
 //
 // Each ramp is derived from a single brand seed in a perceptual space (OKLCH).
 // The seed is anchored at step 500 — so 500 reproduces the brand color exactly

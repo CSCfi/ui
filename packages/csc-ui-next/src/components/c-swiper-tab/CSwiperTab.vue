@@ -157,7 +157,7 @@ watch(
 
 <style>
 :host {
-  /* Defaults draw from the semantic-token layer (ADR-0010) so the tab strip
+  /* Defaults draw from the semantic-token layer so the tab strip
    * follows the theme — including dark mode — instead of being pinned to
    * light-mode palette steps. The outer `var(--c-swiper-tab-*, …)` keeps the
    * per-instance consumer override intact. */
@@ -272,7 +272,7 @@ watch(
 }
 
 /* Scale/opacity are JS-driven (useRipple) and tweened by this transition,
- * matching the shared transition-based ripple primitive (ADR-0004). */
+ * matching the shared transition-based ripple primitive. */
 .c-swiper-tab__ripple {
   position: absolute;
   border-radius: 50%;

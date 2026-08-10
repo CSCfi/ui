@@ -1,5 +1,5 @@
 /**
- * React components for the `@cscfi/csc-ui-next` custom elements (ADR-0019).
+ * React components for the `@cscfi/csc-ui-next` custom elements.
  *
  * Importing this package registers the custom elements as a side effect and
  * exposes one typed React component per element. Prop and event `detail`

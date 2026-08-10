@@ -1,4 +1,4 @@
-// Runtime consumer theming API (ADR-0011).
+// Runtime consumer theming API.
 //
 // A consumer supplies just the step-500 *seed* for the chromatic families they
 // want to rebrand; the full 50–950 ramp (+ rgb triple) is regenerated with the

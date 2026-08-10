@@ -28,8 +28,6 @@
 
 <script setup lang="ts">
 /**
- * A loader component that fills the nearest containing element that has css-property position set to 'relative'
- *
  * @slot default - Message text revealed below the spinner after `contentdelay`
  *
  * @csspart root - The overlay element covering the containing element (scrim, fade transition)
@@ -50,9 +48,9 @@ import {
 import { useHasSlot } from '../../shared/useHasSlot';
 
 /**
- * Styling lives in this `tailwind-variants` config (ADR-0004); the old
+ * Styling lives in this `tailwind-variants` config; the old
  * `--_c-loader-*` indirection layer is dropped and authored directly against
- * the design tokens. Customization is via `::part()` (ADR-0006).
+ * the design tokens. Customization is via `::part()`.
  *
  * The box lives on an inner `root` element (host stays `display:contents`),
  * positioned `absolute inset-0` over the parent container it overlays. The
@@ -76,7 +74,7 @@ const loader = tv({
     // so revealing it does NOT push the spinner up — only the spinner
     // participates in the flex centring. Hidden by default (`opacity-0`); the
     // `c-loader-fadein` animation (gated on `active`) fades it in. Text colour
-    // is the muted on-surface role (ADR-0010).
+    // is the muted on-surface role.
     content:
       'block absolute inset-x-0 opacity-0 text-center text-sm leading-6 font-medium text-on-surface-muted',
     // `relative` so the absolutely-positioned content anchors to it.
@@ -188,7 +186,7 @@ const ui = computed(() => loader());
 </script>
 
 <!--
-  Escape-hatch CSS (ADR-0007): the message appear @keyframes + the rule that
+  Escape-hatch CSS: the message appear @keyframes + the rule that
   applies it. Keyframes (vs a transition) are used so the reveal is a one-shot
   that restarts each time the `c-loader-fadein` class is (re)added on show, and
   so it honours the `animation-delay` set inline from `contentdelay`. A gentle

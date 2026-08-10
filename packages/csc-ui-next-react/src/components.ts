@@ -190,7 +190,7 @@ export const CButton = createComponent({
 
 /**
  * A group of buttons where activation carries a value — exclusive by
- * default, cumulative with `multiple` (ADR-0023). The standalone, form-facing
+ * default, cumulative with `multiple`. The standalone, form-facing
  * segmented control; for the tab strip of a `<c-tabs>` use `<c-tab-buttons>`,
  * which wraps this component.
  */
@@ -657,7 +657,7 @@ export const CTab = createComponent({
 });
 
 /**
- * The tab-strip adapter for `<c-tabs>` (ADR-0023): presents the tab list as a
+ * The tab-strip adapter for `<c-tabs>`: presents the tab list as a
  * button group. Authored only inside `<c-tabs>`, with plain `<c-button>`
  * children. It carries no form semantics — for a standalone value picker use
  * `<c-button-group>`, which this component wraps. Selection is inherently

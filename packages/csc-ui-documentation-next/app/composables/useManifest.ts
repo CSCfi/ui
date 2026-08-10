@@ -54,7 +54,7 @@ export interface CemSharedType {
   description?: string;
   kind: string;
   name: string;
-  /** Owning component tag for component-owned types (ADR-0015); absent for shared types. */
+  /** Owning component tag for component-owned types; absent for shared types. */
   owner?: string;
 }
 
@@ -72,7 +72,7 @@ export interface Cem {
 const manifest = rawManifest as unknown as Cem;
 
 // Elements the consumer never authors (instantiated internally by a parent).
-// They get no nav entry and no page (ADR-0013).
+// They get no nav entry and no page.
 const INTERNAL_ONLY = new Set(['c-dropdown']);
 
 const components = manifest.modules
@@ -159,7 +159,7 @@ export interface ComponentView {
   tagName: string;
   /** Public types documented under this component: its owned types plus any
    *  shared type its API references (rendered on every referencing page —
-   *  the ADR-0013 self-containment rule applied to types). */
+   *  the pages' self-containment rule applied to types). */
   types: CemSharedType[];
 }
 

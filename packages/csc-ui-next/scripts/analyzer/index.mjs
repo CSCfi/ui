@@ -1,5 +1,5 @@
 /**
- * Docs analyzer entry point (ADR-0012).
+ * Docs analyzer entry point.
  *
  * Reads every component SFC under src/components/, extracts the documented API
  * surface (props/attributes, events via the typed event map, exposed methods,
@@ -57,6 +57,28 @@ const only = args.includes('--only') ? args[args.indexOf('--only') + 1] : null;
 
 const verbose = args.includes('--verbose') || Boolean(only);
 
+/**
+ * The first paragraph of a usage doc: leading blank lines skipped, lines
+ * joined up to the first blank one, hard-wrap newlines unwrapped to spaces
+ * (a markdown paragraph is one logical line). A doc that opens with a
+ * heading instead of prose yields '' — the intro paragraph is a convention
+ * the seed pass established for every component.
+ */
+const firstParagraph = (markdown) => {
+  const lines = [];
+
+  for (const line of markdown.split('\n')) {
+    if (!lines.length && !line.trim()) continue;
+
+    if (!line.trim()) break;
+
+    if (!lines.length && line.trimStart().startsWith('#')) return '';
+    lines.push(line.trim());
+  }
+
+  return lines.join(' ');
+};
+
 const sharedTypesPath = path.join(packageRoot, 'src/types.ts');
 
 const sharedTypesSource = existsSync(sharedTypesPath)
@@ -85,13 +107,12 @@ const analyzeComponent = (tagName) => {
   const script = descriptor.scriptSetup ?? descriptor.script;
 
   // The plain `<script>` block holds the exported component-owned types and
-  // the props interface (ADR-0015); it only counts as a separate block when a
+  // the props interface; it only counts as a separate block when a
   // `<script setup>` also exists.
   const plainScript = descriptor.scriptSetup ? descriptor.script : null;
 
   // Aliases resolvable from this component's props: its own two script blocks
-  // plus the shared types file. Used to expand literal unions into `type.text`
-  // (ADR-0015).
+  // plus the shared types file. Used to expand literal unions into `type.text`.
   const aliasTable = buildAliasTable([
     { content: sharedTypesSource, fileName: sharedTypesPath },
     { content: plainScript?.content ?? '', fileName: `${sfcPath}#plain` },
@@ -105,16 +126,18 @@ const analyzeComponent = (tagName) => {
       })
     : { docblock: '', events: [], hasEventMap: false, methods: [], props: [] };
 
-  // Exported component-owned types (ADR-0015), tagged with their owner for
+  // Exported component-owned types, tagged with their owner for
   // the manifest's `csc.types` and the docs Types page.
   const ownedTypes = plainScript
     ? extractExportedTypes(plainScript.content, `${sfcPath}#plain`, tagName)
     : [];
 
-  const { description, tags: docTags } = parseDocblock(scriptApi.docblock);
+  const { description: docblockProse, tags: docTags } = parseDocblock(
+    scriptApi.docblock,
+  );
 
   // `@subcomponents c-a, c-b` lists the composed children folded into this
-  // parent's docs page (ADR-0013). The docblock parser splits name/description
+  // parent's docs page. The docblock parser splits name/description
   // at the first token, so rejoin and split the whole list on commas/space.
   const subcomponents = docTags
     .filter((t) => t.tag === 'subcomponents')
@@ -127,9 +150,18 @@ const analyzeComponent = (tagName) => {
 
   const hasUsage = existsSync(usageSource);
 
+  // The component-level description is the usage doc's first paragraph — the
+  // single place a component is described. It flows from here into the
+  // manifest, the IDE data, and the generated tag-map JSDoc; the SFC docblock
+  // carries tags only (free text there is ignored and linted against).
+  const description = hasUsage
+    ? firstParagraph(readFileSync(usageSource, 'utf8'))
+    : '';
+
   return {
     className,
     description,
+    docblockProse,
     docTags,
     events: scriptApi.events,
     hasEventMap: scriptApi.hasEventMap,
@@ -218,7 +250,7 @@ for (const component of components) {
 
 for (const failure of failures) console.error(`analyze error: ${failure}`);
 
-// ---- re-export completeness (ADR-0015) --------------------------------------
+// ---- re-export completeness --------------------------------------
 // Every public type — shared (src/types.ts) or component-owned (SFC plain
 // script blocks) — must be re-exported from the package entry, or consumers
 // cannot import it.
@@ -286,7 +318,7 @@ if (!only) {
     `${JSON.stringify(manifest, null, 2)}\n`,
   );
 
-  // IDE completion data derived from the manifest (ADR-0015).
+  // IDE completion data derived from the manifest.
   emitIdeData(manifest, distDir);
 
   for (const component of components) {

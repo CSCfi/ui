@@ -99,16 +99,16 @@ interface CSwitchEvents {
 }
 
 /**
- * Styling lives in this `tailwind-variants` config (ADR-0004); the old
+ * Styling lives in this `tailwind-variants` config; the old
  * `--_c-switch-*` indirection layer is dropped. Customization is via
- * `::part()` (ADR-0006); there is no `override` prop.
+ * `::part()`; there is no `override` prop.
  *
  * The track (`slider`) and the round handle (`slider::before`) make up the
  * toggle. The handle's ON position (`translateX`) and the ON/OFF/disabled
  * COLOURS are sibling-driven (`input:checked + .slider …`) — they depend on
  * the live `:checked`/`:focus-visible` of the sibling input, which `tv`
  * variants cannot observe — so they remain in the escape-hatch `<style>`
- * below (ADR-0007). The static track/handle geometry lives here in `tv`.
+ * below. The static track/handle geometry lives here in `tv`.
  *
  * SPINNER RECOLOUR: <c-spinner> is passed `color="currentColor"` (its prop
  * default is primary-600), so it tracks the inherited colour. The escape-hatch
@@ -278,7 +278,7 @@ const toggle = () => {
 </script>
 
 <!--
-  Escape-hatch CSS (ADR-0007): only constructs Tailwind utilities cannot
+  Escape-hatch CSS: only constructs Tailwind utilities cannot
   express. Static track/handle geometry lives in the `tv` config above. What
   remains here:
 

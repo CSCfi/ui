@@ -1,8 +1,8 @@
 /**
  * Public type extraction for the manifest's `csc.types` vendor extension
- * (ADR-0012 — CEM has no first-class type-alias kind; ADR-0015 — component-
- * owned types live in each SFC's plain `<script>` block, shared types in
- * `src/types.ts`). The docs site renders these as the Types page and
+ * (CEM has no first-class type-alias kind; component-owned types live in
+ * each SFC's plain `<script>` block, shared types in `src/types.ts`). The
+ * docs site renders these as the Types page and
  * cross-links them from prop/event type text. Component-owned entries carry
  * an `owner` tag name; shared entries have none.
  */

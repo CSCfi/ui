@@ -46,14 +46,14 @@ interface CTabEvents {
 }
 
 /**
- * Styling lives in this `tailwind-variants` config (ADR-0004); customization
- * is via `::part()` (ADR-0006). The inner `root` content box, the ripple
+ * Styling lives in this `tailwind-variants` config; customization
+ * is via `::part()`. The inner `root` content box, the ripple
  * container and the ripple dots are utilities here. The host itself MUST be the
  * styled/positioned tab box (it is the real `role="tab"` element c-tabs queries
  * and measures, with imperatively-toggled `c-tab--active`/`c-tab--disabled`
  * state and `:hover`/`:focus-visible` pseudo states), so its styling stays in
  * the escape-hatch <style> below. The ripple itself is the shared transition
- * primitive (useRipple + transition utilities, ADR-0004).
+ * primitive (useRipple + transition utilities).
  */
 const tab = tv({
   slots: {
@@ -183,7 +183,7 @@ const onClick = (event: MouseEvent, center = false) => {
 </script>
 
 <!--
-  Escape-hatch CSS (ADR-0007): the host is the real `role="tab"` box c-tabs
+  Escape-hatch CSS: the host is the real `role="tab"` box c-tabs
   measures and drives. Its display/sizing/colour plus the imperatively-toggled
   `c-tab--active`/`c-tab--disabled` state classes and `:hover`/`:focus-visible`
   pseudo states are positional :host selectors utilities can't express, so they

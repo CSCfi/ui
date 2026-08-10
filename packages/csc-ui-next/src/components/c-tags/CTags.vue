@@ -69,7 +69,7 @@ import FormLabel from '../../shared/FormLabel.vue';
 defineOptions({ inheritAttrs: false });
 
 /**
- * Styling lives in this `tailwind-variants` config (ADR-0004). The `items` row
+ * Styling lives in this `tailwind-variants` config. The `items` row
  * is the flex-wrap container for the slotted tags: the `<slot>` itself is
  * `display: contents`, so the distributed <c-tag> children lay out as the
  * row's flex items (gap included) even though they live in the light DOM.
@@ -121,7 +121,7 @@ watch(size, propagate);
 </script>
 
 <!--
-  Escape-hatch CSS (ADR-0007): only the host display. The host needs a real
+  Escape-hatch CSS: only the host display. The host needs a real
   box (the global sheet sets `:host{display:contents}`) so consumer sizing on
   <c-tags> keeps applying; the flex layout itself lives on the tv slots above.
 -->

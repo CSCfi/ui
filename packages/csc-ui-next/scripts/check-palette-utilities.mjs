@@ -2,7 +2,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 
 /**
- * Guard for the semantic-only authoring rule (ADR-0010, dark mode).
+ * Guard for the semantic-only authoring rule (dark mode).
  *
  * Component SFCs must author colour through semantic tokens (bg-surface,
  * bg-primary, text-on-primary, …), never through palette-step utilities
@@ -134,7 +134,7 @@ if (hitCount === 0) {
   console.log('✓ all SFCs are semantic-only.');
 } else if (STRICT) {
   console.error(
-    '✗ semantic-only rule violated (ADR-0010). Replace palette-step utilities with semantic tokens.',
+    '✗ semantic-only rule violated. Replace palette-step utilities with semantic tokens.',
   );
   process.exit(1);
 } else {

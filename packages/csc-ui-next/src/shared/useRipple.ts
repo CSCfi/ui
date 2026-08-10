@@ -40,7 +40,7 @@ export interface UseRippleOptions {
  * Each spawn pushes a `<span>` descriptor onto the reactive `ripples` array;
  * the consumer renders them (`v-for`) with its own tv `ripple` slot, which must
  * carry the transition utilities (`scale-0 transition-[transform,opacity]
- * duration-[600ms] ease-out`). Per ADR-0004 there is no bespoke `@keyframes`:
+ * duration-[600ms] ease-out`). There is no bespoke `@keyframes`:
  * the dot starts at `scale(0)`/peak opacity and is mutated to `scale(1)`/0 on
  * the next painted frame, letting the CSS transition tween it.
  *

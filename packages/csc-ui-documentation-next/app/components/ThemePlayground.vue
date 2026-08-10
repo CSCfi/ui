@@ -32,7 +32,7 @@
 <script setup lang="ts">
 import { applyTheme, resetTheme, type Family } from '@cscfi/csc-ui-next';
 
-// The eight themable families (ADR-0011). Kept in sync by hand with FAMILIES
+// The eight themable families. Kept in sync by hand with FAMILIES
 // in csc-ui-next src/theme/ramp.js — DEFAULT_SEEDS/FAMILIES are not exported
 // from the package root, so the current seeds are read from the live tokens.
 const FAMILIES: Family[] = [

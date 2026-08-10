@@ -13,13 +13,13 @@
 import { tv } from 'tailwind-variants';
 
 /**
- * Styling lives entirely in this `tailwind-variants` config (ADR-0004). The
+ * Styling lives entirely in this `tailwind-variants` config. The
  * badge's box (background, border ring, size, absolute positioning) is rendered
  * on an inner `root` element rather than the host, so the global
  * `:host{display:contents}` is left untouched. Consumer customization is via
- * `::part(root)` (ADR-0006); there is no `override` prop. The per-component
- * `--c-badge-*` indirection vars are dropped in favour of semantic tokens
- * (ADR-0010): the warning status role for the fill + its on-colour text, and a
+ * `::part(root)`; there is no `override` prop. The per-component
+ * `--c-badge-*` indirection vars are dropped in favour of semantic tokens:
+ * the warning status role for the fill + its on-colour text, and a
  * `surface`-coloured ring so the badge reads as a cut-out against whatever
  * surface it sits on (the ring tracks the theme instead of being hardcoded
  * white).

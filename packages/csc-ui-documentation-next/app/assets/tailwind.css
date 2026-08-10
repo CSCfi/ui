@@ -8,11 +8,11 @@
  * roles. Dropping the default palette makes the design system's semantic
  * roles the only color utilities in the app, so a hardcoded default-palette
  * class fails to compile instead of becoming a latent dark-mode bug
- * (ADR-0010's rationale, enforced structurally).
+ * (the semantic-token dark-mode rationale, enforced structurally).
  */
 @import 'tailwindcss';
 @import './palette-reset.css';
-@import '@cscfi/csc-ui-next/css/tailwind-theme.css'; /* ADR-0018; pairs with tokens.css */
+@import '@cscfi/csc-ui-next/css/tailwind-theme.css'; /* consumer theme export; pairs with tokens.css */
 
 /*
  * Example SFCs are consumer-facing copy-paste code and stay Tailwind-free —

@@ -29,14 +29,14 @@ import { tv } from 'tailwind-variants';
 import { computed } from 'vue';
 
 /**
- * Styling lives in this `tailwind-variants` config (ADR-0004); the old
+ * Styling lives in this `tailwind-variants` config; the old
  * `--_c-spinner-*` indirection layer is dropped. Customization is via
- * `::part(root)` (ADR-0006).
+ * `::part(root)`.
  *
  * COLOUR CONTRACT: the stroke/fill come from `currentColor`
  * (`stroke-current` / `fill-current`), and the `color` prop is applied inline
  * on the SVG root as that element's `color`. The prop DEFAULTS TO
- * `var(--c-primary)` — the semantic primary role (ADR-0010), so a standalone
+ * `var(--c-primary)` — the semantic primary role, so a standalone
  * spinner is the brand colour in either theme, not the ambient text colour.
  *   - an explicit `color` prop still wins (e.g. c-select passes the primary role);
  *   - a PARENT that wants the spinner to TRACK its own colour passes
@@ -49,7 +49,7 @@ import { computed } from 'vue';
  *
  * The spin animation is a bespoke dash-offset + 1080deg rotation that cannot
  * be expressed as Tailwind's `animate-spin`, so it lives in the escape-hatch
- * `<style>` below (ADR-0007) keyed by the `c-spinner-circle` marker class.
+ * `<style>` below keyed by the `c-spinner-circle` marker class.
  */
 const spinner = tv({
   slots: {
@@ -98,7 +98,7 @@ const ui = computed(() => spinner());
 </script>
 
 <!--
-  Escape-hatch CSS (ADR-0007): only the bespoke spin @keyframes (a 1080deg
+  Escape-hatch CSS: only the bespoke spin @keyframes (a 1080deg
   rotation combined with an oscillating stroke-dashoffset) and the rule that
   applies it. This is NOT expressible as Tailwind's `animate-spin`. The
   dashoffset values scale with the spinner size, exposed via the

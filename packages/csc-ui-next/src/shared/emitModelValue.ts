@@ -34,7 +34,7 @@ export const emitModelValue = (
   // so native v-model (which reads `el.value` in its handler) sees it.
   if (el.value !== value) el.value = value;
   host.dispatchEvent(new CustomEvent('changeValue', { detail: value }));
-  // Kebab-case twin (ADR-0021): Vue templates can only bind hyphenated
+  // Kebab-case twin: Vue templates can only bind hyphenated
   // listener names, so `@change-value` hears this one.
   host.dispatchEvent(new CustomEvent('change-value', { detail: value }));
   host.dispatchEvent(new CustomEvent('update:value', { detail: value }));
@@ -42,11 +42,11 @@ export const emitModelValue = (
 };
 
 /**
- * The `emitModelValue` counterpart for components born after ADR-0017/0023:
- * new components carry no grandfathered `changeValue` (and thus no kebab
- * twin) — their value-change event is the all-lowercase `change`. Same
- * mechanics otherwise: mirror the host `value` property first (native
- * v-model reads it inside the `input` handler), then `change` +
+ * The `emitModelValue` counterpart for components born under the all-lowercase
+ * event convention: new components carry no grandfathered `changeValue` (and
+ * thus no kebab twin) — their value-change event is the all-lowercase
+ * `change`. Same mechanics otherwise: mirror the host `value` property first
+ * (native v-model reads it inside the `input` handler), then `change` +
  * `update:value` + a native bubbling `input`.
  *
  * The same re-entrancy rule applies: call ONLY from user-interaction

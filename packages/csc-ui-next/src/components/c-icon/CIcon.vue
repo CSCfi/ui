@@ -17,13 +17,12 @@ import { tv } from 'tailwind-variants';
 import { computed } from 'vue';
 
 /**
- * Styling lives in this `tailwind-variants` config (ADR-0004). The host is
+ * Styling lives in this `tailwind-variants` config. The host is
  * `display:contents` globally, so the SVG is the `root` element and carries the
  * `inline-flex` box. The old `--c-icon-*` / `--_c-icon-*` indirection variables
- * are dropped (ADR-0004): size and colour are dynamic props with arbitrary
+ * are dropped: size and colour are dynamic props with arbitrary
  * values, so they're applied directly as inline styles on the SVG / path rather
- * than enumerable `tv` variants. Consumer customization is via `::part()`
- * (ADR-0006).
+ * than enumerable `tv` variants. Consumer customization is via `::part()`.
  *
  * COLOUR OVERRIDE HOOK: the path fill is `var(--c-icon-color, <color prop>)`,
  * so the `color` prop is the default but an ANCESTOR can recolour a slotted icon

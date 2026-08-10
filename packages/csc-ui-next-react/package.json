@@ -1,7 +1,7 @@
 {
   "name": "@cscfi/csc-ui-next-react",
   "version": "0.0.1",
-  "description": "React components for the @cscfi/csc-ui-next custom elements, generated from the Custom Elements Manifest (ADR-0019).",
+  "description": "React components for the @cscfi/csc-ui-next custom elements, generated from the Custom Elements Manifest.",
   "author": "My CSC Team <suiteamsui@gmail.com>",
   "type": "module",
   "main": "./dist/index.js",

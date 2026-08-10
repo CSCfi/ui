@@ -91,12 +91,12 @@ interface CSliderEvents {
 }
 
 /**
- * Styling lives in this `tailwind-variants` config (ADR-0004); customization is
- * via `::part()` against the stamped part names (ADR-0006), not `--c-*` override
+ * Styling lives in this `tailwind-variants` config; customization is
+ * via `::part()` against the stamped part names, not `--c-*` override
  * vars. The native `<input type=range>` pseudo-elements (thumb / track /
  * progress) and the tooltip bubble's `::before`/`::after` callout — none of
- * which Tailwind utilities can target — stay in the escape-hatch <style> below
- * (ADR-0007), authored directly against design tokens.
+ * which Tailwind utilities can target — stay in the escape-hatch <style> below,
+ * authored directly against design tokens.
  *
  * The `c-slider__input` / `c-slider__tooltip` / `c-slider__ticks` marker
  * classes are the hooks those pseudo-element rules and the runtime-state CSS
@@ -350,8 +350,8 @@ onMounted(() => {
 </script>
 
 <!--
-  Escape-hatch CSS (ADR-0007): only constructs Tailwind utilities cannot
-  express, authored directly against design tokens (ADR-0004) — no `--c-*`
+  Escape-hatch CSS: only constructs Tailwind utilities cannot
+  express, authored directly against design tokens — no `--c-*`
   override-var indirection layer.
 
   What lives here and why:

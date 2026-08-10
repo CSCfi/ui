@@ -16,7 +16,7 @@ const isNextImpl = config.public.cscUiImpl === 'next';
 const { init: initTheme } = useTheme();
 
 if (isNextImpl) {
-  // Load the semantic-token layer (ADR-0010) so the migrated components theme
+  // Load the semantic-token layer so the migrated components theme
   // and dark mode can activate via `data-theme`. Only in `next` mode — the
   // Stencil theme (imported globally in main.css) stays the single source in
   // `stencil` mode.

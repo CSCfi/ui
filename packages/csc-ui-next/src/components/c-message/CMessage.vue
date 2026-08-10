@@ -29,12 +29,12 @@ import { tv } from 'tailwind-variants';
 import { computed } from 'vue';
 
 /**
- * Styling lives in this `tailwind-variants` config (ADR-0004). The old
+ * Styling lives in this `tailwind-variants` config. The old
  * `--_c-message-*` indirection vars are dropped: the hint colour maps to the
  * muted on-surface token and the error colour to the error status role, selected
- * by the `error` variant (ADR-0010) — keyed on an error message actually being
+ * by the `error` variant — keyed on an error message actually being
  * shown, not on `valid` alone, so an invalid parent with no message keeps its
- * hint neutral. Consumer customization is via `::part()` (ADR-0006).
+ * hint neutral. Consumer customization is via `::part()`.
  */
 const message = tv({
   defaultVariants: {
@@ -106,7 +106,7 @@ const messageKey = computed(() =>
 </script>
 
 <!--
-  Escape-hatch CSS (ADR-0007): only constructs Tailwind utilities cannot
+  Escape-hatch CSS: only constructs Tailwind utilities cannot
   express. The static styling lives in the `tv` config above; here remain:
     - `:host{display:block}` — restores a real box on the host (the global
       sheet sets `:host{display:contents}`, which would otherwise collapse the

@@ -123,9 +123,9 @@ import { coerceBoolean } from '../../shared/coerceBoolean';
 import { useHasSlot } from '../../shared/useHasSlot';
 
 /**
- * Styling lives in this `tailwind-variants` config (ADR-0004). The old
+ * Styling lives in this `tailwind-variants` config. The old
  * `--_c-input-*` indirection layer is dropped: colours map to design-token
- * utilities. Consumer customization is via `::part()` (ADR-0006).
+ * utilities. Consumer customization is via `::part()`.
  *
  * The STATIC structure / layout (control, slot box, field, floating label
  * resting transform, message) is authored here as utilities. The
@@ -133,8 +133,8 @@ import { useHasSlot } from '../../shared/useHasSlot';
  * `active` folds in native focus via `isActiveResolved` (so the old
  * `:focus-within` selector is gone) and `error` is declared after `active` so
  * tailwind-merge lets it win the shared root-colour / fieldset-border (the old
- * `!important` is gone). Only two things stay in the escape-hatch <style> below
- * (ADR-0007): the runtime-var-driven bits — the legend "notch" width and the
+ * `!important` is gone). Only two things stay in the escape-hatch <style> below:
+ * the runtime-var-driven bits — the legend "notch" width and the
  * floating-label lift transform (keyed off the internal `data-lifted` /
  * `data-active` hooks the script still sets on those elements) — and the
  * slotted `<input>`/`<textarea>` (which we don't own) via `::slotted(...)`.
@@ -540,7 +540,7 @@ watch(
 </script>
 
 <!--
-  Escape-hatch CSS (ADR-0007): only constructs Tailwind utilities cannot
+  Escape-hatch CSS: only constructs Tailwind utilities cannot
   express. The static structure/layout lives in the `tv` config above. What
   remains here, tokens-only:
     - `:host` — the host must be a real box (overriding the global
