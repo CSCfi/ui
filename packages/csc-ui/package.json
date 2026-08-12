@@ -1,98 +1,74 @@
 {
-  "author": "My CSC Team <suiteamsui@gmail.com>",
-  "auto": {
-    "plugins": [
-      "npm",
-      "all-contributors"
-    ]
-  },
-  "collection": "dist/collection/collection-manifest.json",
-  "collection:main": "dist/collection/index.js",
-  "dependencies": {
-    "@mdi/js": "^7.4.47",
-    "@stencil/core": "^4.28.2",
-    "@types/node": "^20.8.9",
-    "normalize.css": "^8.0.1",
-    "stencil-click-outside": "^1.8.0",
-    "swiper": "^9.4.1",
-    "uuid": "^9.0.1"
-  },
-  "description": "CSC UI components",
-  "devDependencies": {
-    "@auto-it/all-contributors": "^10.46.0",
-    "@playwright/test": "^1.48.1",
-    "@stencil-community/eslint-plugin": "^0.8.0",
-    "@stencil/react-output-target": "^0.8.2",
-    "@stencil/sass": "^3.2.0",
-    "@types/jest": "^27.0.3",
-    "auto": "^10.46.0",
-    "eslint-config-airbnb": "^19.0.4",
-    "eslint-config-node": "^4.1.0",
-    "eslint-config-prettier": "^8.8.0",
-    "eslint-plugin-import": "^2.31.0",
-    "eslint-plugin-node": "^11.1.0",
-    "eslint-plugin-prettier": "^4.2.1",
-    "husky": "^8.0.3",
-    "jest": "^27.0.3",
-    "jest-cli": "^27.4.5",
-    "postcss": "^8.5.3",
-    "postcss-scss": "^4.0.9",
-    "prettier": "^2.8.8",
-    "rimraf": "^5.0.5",
-    "style-dictionary": "^3.9.0",
-    "stylelint": "^16.14.1",
-    "stylelint-config-standard-scss": "^14.0.0"
-  },
-  "directories": {
-    "dist": "dist"
-  },
-  "es2015": "dist/esm/index.js",
-  "es2017": "dist/esm/index.js",
-  "exports": {
-    ".": {
-      "import": "./dist/index.js",
-      "types": "./dist/types/additional-types.d.ts"
-    },
-    "./components/*": "./dist/components/*",
-    "./css/*": "./dist/styles/css/*",
-    "./loader": "./loader/index.js",
-    "./loader/*": "./loader/*",
-    "./scss/*": "./dist/styles/css/*",
-    "./tailwind": "./dist/styles/tailwind/theme.js",
-    "./tailwind/*": "./dist/styles/tailwind/*"
-  },
+  "name": "@cscfi/csc-ui",
+  "version": "3.0.20",
+  "description": "Vue 3-based replacement for @cscfi/csc-ui — same custom element tag names, Vue v-model contract.",
+  "type": "module",
+  "main": "./dist/csc-ui.js",
+  "module": "./dist/csc-ui.js",
+  "types": "./dist-types/index.d.ts",
+  "customElements": "./dist/custom-elements.json",
+  "web-types": "./dist/web-types.json",
   "files": [
     "dist",
-    "vscode-data.json",
-    "loader"
+    "dist-types"
   ],
-  "homepage": "https://design-system.csc.fi",
-  "license": "MIT",
-  "main": "dist/index.cjs.js",
-  "module": "dist/index.js",
-  "name": "@cscfi/csc-ui",
-  "repository": "CSCfi/ui",
-  "scripts": {
-    "build": "rimraf ./dist && pnpm run style-dictionary:build && stencil build --docs-readme",
-    "build:visual-testing": "docker build -t csc-ui-playwright .",
-    "build:watch": "pnpm run style-dictionary:build && stencil build --docs --watch",
-    "deploy": "pnpm run build && pnpm run deploy:documentation",
-    "generate": "stencil generate",
-    "lint": "eslint src/**/*{.ts,.tsx}",
-    "lint:styles": "stylelint --allow-empty-input \"**/*.{css,scss}\"",
-    "move-styles": "node scripts/move-styles.js",
-    "postbuild": "pnpm run move-styles",
-    "pre-commit": "pnpm run lint",
-    "start": "stencil build --dev --watch --serve",
-    "style-dictionary:build": "style-dictionary build --config ./style-dictionary.config.js",
-    "style-dictionary:build:prod": "style-dictionary build --config ./style-dictionary.production.config.js",
-    "test": "stencil test --spec --e2e",
-    "test.e2e": "stencil test --e2e --watchAll",
-    "test.screenshot": "stencil test --e2e --screenshot",
-    "test.visual": "docker run -v $PWD:/e2e -w /e2e/ -it --rm -e --name csc-ui-playwright",
-    "test.watch": "stencil test --spec --watchAll"
+  "exports": {
+    ".": {
+      "types": "./dist-types/index.d.ts",
+      "import": "./dist/csc-ui.js"
+    },
+    "./css/*": "./dist/styles/css/*",
+    "./custom-elements.json": "./dist/custom-elements.json"
   },
-  "types": "dist/types/additional-types.d.ts",
-  "unpkg": "dist/csc-ui/csc-ui.esm.js",
-  "version": "3.0.20"
+  "scripts": {
+    "build": "pnpm run style-dictionary:build && pnpm run docs:tag-map && vite build && vue-tsc -p tsconfig.build.json && pnpm run docs:manifest:strict",
+    "docs:manifest": "node scripts/analyzer/index.mjs",
+    "docs:tag-map": "node scripts/analyzer/index.mjs --tag-map",
+    "docs:manifest:strict": "node scripts/analyzer/index.mjs --strict",
+    "docs:seed": "node scripts/seed-descriptions.mjs",
+    "build:types": "vue-tsc -p tsconfig.build.json",
+    "build:watch": "pnpm run style-dictionary:build && vue-tsc -p tsconfig.build.json && vite build --watch",
+    "dev": "pnpm run style-dictionary:build && vue-tsc -p tsconfig.build.json && vite build --watch",
+    "lint:a11y": "node scripts/check-host-attr-fallthrough.mjs",
+    "lint:contrast": "node scripts/audit-contrast.mjs",
+    "lint:ramp": "node scripts/check-ramp-parity.mjs",
+    "lint:tokens": "node scripts/check-palette-utilities.mjs",
+    "style-dictionary:build": "style-dictionary build --config ./style-dictionary.config.cjs",
+    "type-check": "vue-tsc --build --force"
+  },
+  "dependencies": {
+    "@mdi/js": "^7.4.47",
+    "@oddbird/css-anchor-positioning": "^0.9.0",
+    "@tanstack/vue-table": "^8.21.3",
+    "culori": "^4.0.2",
+    "tailwind-merge": "^3.6.0",
+    "tailwind-variants": "^3.2.2",
+    "vue": "^3.5.39"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.28.0",
+    "@stylistic/eslint-plugin": "^5.7.0",
+    "@tailwindcss/vite": "^4.3.1",
+    "@types/node": "^20.0.0",
+    "@vitejs/plugin-vue": "^6.0.7",
+    "custom-element-jet-brains-integration": "^1.7.0",
+    "custom-element-vs-code-integration": "^1.5.0",
+    "eslint": "^9.28.0",
+    "eslint-config-prettier": "^10.0.0",
+    "eslint-import-resolver-typescript": "^4.4.5",
+    "eslint-plugin-perfectionist": "^5.3.1",
+    "eslint-plugin-prettier": "^5.5.6",
+    "eslint-plugin-vue": "^10.9.2",
+    "globals": "^17.7.0",
+    "prettier": "^3.8.5",
+    "style-dictionary": "^3.9.0",
+    "tailwindcss": "^4.3.1",
+    "typescript": "^6.0.3",
+    "typescript-eslint": "^8.62.0",
+    "vite": "^8.1.0",
+    "vue-tsc": "^3.3.5"
+  },
+  "license": "MIT",
+  "repository": "CSCfi/ui",
+  "homepage": "https://design-system.csc.fi"
 }

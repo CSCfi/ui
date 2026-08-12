@@ -1,31 +1,23 @@
 # CSC UI
 
-A web-component design-system library, currently implemented in Stencil (`@cscfi/csc-ui`) and being rewritten as Vue SFCs compiled to custom elements (`@cscfi/csc-ui-next`). Framework-specific adapter packages exist for React, Angular, and Vue.
+A web-component design-system library implemented as Vue SFCs compiled to custom elements, published as `@cscfi/csc-ui` (4.x). Version 3.x and earlier were a Stencil implementation under the same name (ADR-0027); "Stencil-era" in this glossary refers to that line. A version-locked React wrapper (`@cscfi/csc-ui-react`) is the only framework adapter — Angular, Vue, and plain TypeScript consume the elements natively.
 
 ## Language
 
 **Component**:
-A reusable custom element with a stable tag name (e.g. `<c-button>`). The tag is the canonical identifier; the implementing package is a backend choice. Consumers depend on the tag, not the package.
+A reusable custom element with a stable tag name (e.g. `<c-button>`). The tag is the canonical identifier and survived the 3.x→4.x rewrite unchanged. Consumers depend on the tag, not the package internals.
 _Avoid_: Widget, control, element
 
-**Implementation backend** (also: **impl**):
-The package that registers a component's class. Either `stencil` (the existing `@cscfi/csc-ui`) or `next` (the upcoming `@cscfi/csc-ui-next`). Selected at docs build time via `CSC_UI_IMPL`. Transitional concept — disappears once Stencil is removed.
-_Avoid_: Renderer, engine, driver
-
-**Migrated component**:
-A component that has a Vue version in `csc-ui-next`. Under `CSC_UI_IMPL=next`, migrated components register via Vue; the rest fall back to the Stencil loader.
-_Avoid_: Ported, converted, rewritten (use _migrated_ everywhere)
-
 **Upgrade** (consumer):
-A consumer swapping their app's dependency from `@cscfi/csc-ui` to `@cscfi/csc-ui-next`. Distinct from **migration**, which is the maintainers porting a component Stencil→Vue. "Migration guide" is the searchable page title, but its body describes an _upgrade_. An upgrade is all-at-once: the two packages register the same tags, so they cannot coexist in one app.
-_Avoid_: using _migrate_ for the consumer's action (reserve _migrate_ for the internal port)
+A consumer moving their app from `@cscfi/csc-ui` 3.x (Stencil era) to 4.x. "Migration guide" is the searchable page title, but its body describes an _upgrade_. An upgrade is all-at-once: both majors register the same tags, so they cannot coexist in one app.
+_Avoid_: using _migrate_ for the consumer's action (historically, _migration_ was the maintainers' internal Stencil→Vue port of a component)
 
 **Wrapper package**:
-A framework-specific adapter that exposes csc-ui custom elements idiomatically — `@cscfi/csc-ui-react`, `@cscfi/csc-ui-angular` (Stencil era), and `@cscfi/csc-ui-next-react` (generated from the **manifest** onto `@lit/react`, ADR-0019; React is the only framework that needs one for `csc-ui-next` — Angular and TypeScript consume the elements natively). Wrappers consume the canonical custom elements; they do **not** re-implement them. `@cscfi/csc-ui-vue` and `@cscfi/csc-ui-vue2` are special-case wrappers (just the `v-control` directive) being retired with the rewrite.
+A framework-specific adapter that exposes csc-ui custom elements idiomatically. Exactly one exists: `@cscfi/csc-ui-react`, generated from the **manifest** onto `@lit/react` (ADR-0019) and version-locked to the core (ADR-0027) — React is the only framework that needs one; Angular and TypeScript consume the elements natively. Wrappers consume the canonical custom elements; they do **not** re-implement them. The Stencil-era `@cscfi/csc-ui-vue` and `@cscfi/csc-ui-vue2` (just the `v-control` directive) are retired and deprecated on npm.
 _Avoid_: Binding, integration, shim
 
-**`v-control`**:
-Legacy Vue directive bridging Stencil's `changeValue` event to Vue's v-model. Made obsolete by `csc-ui-next`'s native Vue v-model contract. Do not extend; do not depend on for new code.
+**`v-control`** (retired):
+Stencil-era Vue directive that bridged the `changeValue` event to Vue's v-model. Obsolete since 4.x's native Vue v-model contract; its wrapper packages are deprecated. Historical only.
 
 ### Menu
 
@@ -57,7 +49,7 @@ _Avoid_: Nested dropdown, flyout, child menu
 A general-purpose `role="separator"` line dividing groups of content. Used to partition menu sections but not menu-specific. A **menu label** (`c-menu-label`) is the complementary heading for a group of items; a separator is the line between groups.
 _Avoid_: Spacer (`c-spacer` is a flex-grow layout filler, not a visible rule), rule, hr
 
-### Overlays (`csc-ui-next`)
+### Overlays
 
 **Top layer**:
 The browser-managed paint layer above every author stacking context — nothing an author z-indexes can paint above it, and while a *modal dialog* occupies it the rest of the document is inert. In this library only **transient** popovers live there: the menu family and autocomplete panels (ADR-0008). Modals deliberately do **not** (ADR-0014) — a top-layer modal would paint over and inert the toasts.
@@ -83,7 +75,7 @@ _Avoid_: Scrim (that is the colour token), dimmer, overlay, `::backdrop` (the re
 A modal property governing *both* light-dismiss gestures — backdrop click **and** Escape. A non-dismissable modal responds to either with a nudge animation instead of closing; it can only be closed by an explicit action inside it.
 _Avoid_: persistent (the inverse framing; canonical axis is _dismissable_), closable
 
-### Styling (`csc-ui-next`)
+### Styling
 
 **Part**:
 A named, publicly overridable region of a migrated component's shadow DOM (e.g. `root`, `content`, `description`). The curated public set per component — not every internal node; purely internal regions (loader, spinner, ripple) are styled via the component's own `tailwind-variants` slots but are **not** parts and carry no `part=` attribute. Identified by a flat, logical name (not BEM) stamped as the element's `part="<name>"` attribute; `::part()` against these names is the **sole** consumer customization API (ADR-0006), so a component's part set is its customization contract.
@@ -109,10 +101,10 @@ _Avoid_: Skeleton (implies a painted stand-in; the placeholder paints nothing), 
 The safety valve on the **pre-upgrade placeholder**: a component still unregistered after a fixed delay becomes visible again in its raw form, so a page whose JS never arrives degrades to readable unstyled content instead of staying blank. Purely CSS-driven — it must work precisely when JS is what's missing.
 _Avoid_: Timeout fallback (vague), graceful degradation (the general principle, not this mechanism)
 
-### Theming & dark mode (`csc-ui-next`)
+### Theming & dark mode
 
 **Palette token**:
-A raw brand-ramp custom property — one hue at one fixed step, e.g. `--c-primary-600`, `--c-white`. Mode-independent: its value is a brand constant that does **not** change between light and dark. Components must **not** author directly against palette tokens for any colour that flips between modes; those go through a **semantic token**. (Source of truth is the style-dictionary palette, being duplicated into `csc-ui-next`'s own token pipeline — see ADR.)
+A raw brand-ramp custom property — one hue at one fixed step, e.g. `--c-primary-600`, `--c-white`. Mode-independent: its value is a brand constant that does **not** change between light and dark. Components must **not** author directly against palette tokens for any colour that flips between modes; those go through a **semantic token**. (Source of truth is the library's own style-dictionary token pipeline.)
 _Avoid_: Colour token, theme token (a palette token is the mode-independent ramp value; a semantic token is the mode-dependent role)
 
 **Semantic token**:
@@ -140,10 +132,10 @@ The single step-`500` colour value that anchors a **family**'s generated ramp. S
 _Avoid_: Base colour, brand colour (ambiguous — a "brand colour" could mean any step; the seed is specifically step 500)
 
 **Tailwind theme export**:
-The consumer-facing `@theme` mapping the library publishes (`@cscfi/csc-ui-next/css/tailwind-theme.css`) so a consumer's own Tailwind build gains utilities for the **semantic tokens**. Semantic roles **only**, by design — **palette tokens** are excluded because a palette-step utility cannot be mode-aware (ADR-0018). It is a mapping, not a stylesheet: it must be paired with the token definitions (`tokens.css`) to resolve.
+The consumer-facing `@theme` mapping the library publishes (`@cscfi/csc-ui/css/tailwind-theme.css`) so a consumer's own Tailwind build gains utilities for the **semantic tokens**. Semantic roles **only**, by design — **palette tokens** are excluded because a palette-step utility cannot be mode-aware (ADR-0018). It is a mapping, not a stylesheet: it must be paired with the token definitions (`tokens.css`) to resolve.
 _Avoid_: Tailwind preset/config (Tailwind-v3 vocabulary), theme file (ambiguous with **theme mode** and `applyTheme`)
 
-### Form fields (`csc-ui-next`)
+### Form fields
 
 **Label**:
 The consumer-supplied name of a form control, rendered by the component itself (never authored as a sibling by the consumer). Every component a user operates inside a form is labelable — holding a submittable value is not a prerequisite (`c-tags` is labelable; it holds no value). Comes in exactly two association modes: **field label** and **group label**.
@@ -162,7 +154,7 @@ A standalone **labelable value control**: a segmented row of plain `c-button` ch
 _Avoid_: Tab buttons (that is the `c-tabs` adapter, not a value control), toggle group / segmented control (foreign vocabulary for this same component), toolbar (a button group holds a value; a toolbar merely groups actions)
 
 **Tab buttons** (`c-tab-buttons`):
-The tab-strip adapter — a **composed child** of `c-tabs` that presents the tab list as a button group with the **sliding indicator**. Carries no form semantics (no label, no required, no **mandatory**) and cannot deselect: a tab strip inherently has an active tab. Standalone value-picking under this tag is Stencil-era usage; in `csc-ui-next` that job belongs to **button group**.
+The tab-strip adapter — a **composed child** of `c-tabs` that presents the tab list as a button group with the **sliding indicator**. Carries no form semantics (no label, no required, no **mandatory**) and cannot deselect: a tab strip inherently has an active tab. Standalone value-picking under this tag is Stencil-era usage; since 4.x that job belongs to **button group**.
 _Avoid_: using it standalone as a value picker (that is `c-button-group`)
 
 **Sliding indicator** (`c-tab-buttons`):
@@ -189,7 +181,7 @@ _Avoid_: Helper text, description
 Consumer-supplied text explaining why a control is invalid, shown in place of the **hint** while the control is invalid. The component only *displays* it — validation itself (deciding validity, choosing the wording) is the consumer's job, which is why the prop is named for the message, not the process. Has no default: an invalid control without one shows error styling on the field but keeps its hint.
 _Avoid_: Validation (the Stencil-era prop name; validation is the consumer's activity, not this text), validation message
 
-### Data table (`csc-ui-next`)
+### Data table
 
 **Column**:
 A consumer-authored definition in `c-data-table`'s `columns` prop (a `CDataTableColumn`): key/accessor, header content, renderers, and behavioral flags. The old Stencil API called these "headers" (`CDataTableHeader`) — in the new vocabulary the column is the definition; the **header** is only the rendered top cell.
@@ -211,7 +203,7 @@ _Avoid_: hidden/hideable (the old two-boolean shape), visibility (CSS connotatio
 The opt-in overflow strategy where columns whose policy is `auto` move, rightmost first, into the **expansion row** until the table fits its container. The alternative (default) strategy is horizontal scrolling. A table-level mode, not a per-column property.
 _Avoid_: Responsive mode, collapse
 
-### Documentation (`csc-ui-next`)
+### Documentation
 
 **Manifest**:
 The machine-readable API description of the component library — a `custom-elements.json` in the Custom Elements Manifest (CEM) schema, generated from component source at build time: props/attributes, events, slots, methods, CSS **parts**, CSS custom properties. Consumed by the docs site and IDE integrations; generated, never hand-edited.
@@ -255,14 +247,14 @@ _Avoid_: Override (the variant adds a tab; it replaces nothing), translation, po
 
 ### Flagged ambiguities
 
-- **"Vue version"** is ambiguous: it can mean (a) the `@cscfi/csc-ui-vue` directive, (b) a component implemented in Vue inside `csc-ui-next`, or (c) the Vue.js framework version. Prefer **"`csc-ui-next` component"** for (b), **"`v-control` directive"** for (a), and **"Vue 3"/"Vue 2"** explicitly for (c).
+- **"Vue version"** is ambiguous: it can mean (a) the retired `@cscfi/csc-ui-vue` directive package, (b) the fact that 4.x components are implemented in Vue, or (c) the Vue.js framework version. Prefer **"`v-control` directive"** for (a), plain **"component"** for (b) — since 4.x there is no other kind — and **"Vue 3"/"Vue 2"** explicitly for (c).
 
 ## Example dialogue
 
 > **Dev:** Should I add a `changeValue` listener for the new dropdown?
 >
-> **Lead:** No — `c-dropdown` is a migrated component in `csc-ui-next`. It emits `update:value` for v-model and `change` for everyone else. `changeValue` only exists on the Stencil backend.
+> **Lead:** No — `c-dropdown` emits `update:value` for v-model and `change` for everyone else. `changeValue` was the Stencil-era (3.x) event; if you see it in an app, that app hasn't upgraded yet.
 >
-> **Dev:** What about when `CSC_UI_IMPL=stencil`?
+> **Dev:** So what does a 3.x app listening to `changeValue` do when it upgrades?
 >
-> **Lead:** Then the Stencil version registers and you'd get `changeValue` instead. The docs handles both — pick the API for the current impl. External examples assume `next`.
+> **Lead:** It switches to `update:value` / `change` as part of the upgrade — the migration guide lists every renamed event. There's no compatibility shim; the upgrade is all-at-once.

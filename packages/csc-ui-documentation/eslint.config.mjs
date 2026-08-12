@@ -9,30 +9,19 @@ export default withNuxt(
       '.nuxt/',
       '.output/',
       'dist/',
-      'public/',
-      'example-data/',
-      'scripts/',
+      '--port/',
+      // Hand-written React/Angular/TypeScript flavor variants of the Vue
+      // examples — shown as text in code tabs, never compiled or executed
+      // here, so this project's Vue-flavored rules (and TS type-checking,
+      // hence their `@ts-nocheck`) don't apply.
+      'app/examples/**/*.angular.ts',
+      'app/examples/**/*.react.tsx',
+      'app/examples/**/*.typescript.ts',
     ],
   },
   {
     plugins: {
       '@stylistic': stylistic,
-    },
-    settings: {
-      'import/resolver': {
-        typescript: {
-          alwaysTryTypes: true,
-          extensions: ['.ts', '.tsx', '.d.ts', '.js', '.jsx', '.vue', '.json'],
-          project: [
-            './.nuxt/tsconfig.app.json',
-            './.nuxt/tsconfig.node.json',
-            './.nuxt/tsconfig.server.json',
-            './.nuxt/tsconfig.shared.json',
-          ],
-          noWarnOnMultipleProjects: true,
-        },
-      },
-      'import/core-modules': ['vue3-code-block'],
     },
     rules: {
       'no-restricted-syntax': 'off',
@@ -40,7 +29,6 @@ export default withNuxt(
       'no-param-reassign': 'off',
       'newline-before-return': 'error',
       'import/no-unresolved': 'off',
-      'import/prefer-default-export': 'off',
       'vue/no-deprecated-slot-attribute': 'off',
       'vue/multi-word-component-names': 'off',
       'vue/padding-line-between-blocks': 'error',
@@ -59,11 +47,6 @@ export default withNuxt(
         {
           order: ['template', 'script[setup]', 'script:not([setup])', 'style'],
         },
-      ],
-      'vue/v-on-event-hyphenation': [
-        'error',
-        'always',
-        { autofix: false, ignore: ['changeValue', 'changeQuery'] },
       ],
       'vue/component-name-in-template-casing': [
         'error',

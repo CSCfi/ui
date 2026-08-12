@@ -1,0 +1,11 @@
+{
+  "$schema": "https://unpkg.com/@changesets/config@3.1.1/schema.json",
+  "changelog": ["@changesets/changelog-github", { "repo": "CSCfi/ui" }],
+  "commit": false,
+  "fixed": [["@cscfi/csc-ui", "@cscfi/csc-ui-react"]],
+  "linked": [],
+  "access": "public",
+  "baseBranch": "main",
+  "updateInternalDependencies": "patch",
+  "ignore": ["@cscfi/csc-ui-documentation"]
+}

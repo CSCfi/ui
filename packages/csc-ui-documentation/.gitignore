@@ -3,26 +3,14 @@
 .data
 .nuxt
 .nitro
-.netlify
 .cache
 dist
-
-# Node dependencies
-node_modules
 
 # Logs
 logs
 *.log
 
-# Misc
-.DS_Store
-.fleet
-.idea
-
 # Local env files
 .env
 .env.*
 !.env.example
-
-# auto generated data for the examples
-example-data

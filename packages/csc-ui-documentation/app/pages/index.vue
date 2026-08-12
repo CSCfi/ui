@@ -1,48 +1,39 @@
 <template>
-  <c-card>
-    <c-card-content>
-      <c-row align="center" gap="16">
-        <c-csc-logo width="100" />
+  <article>
+    <h1 class="mb-[0.67em] text-[2rem] font-bold">Components</h1>
 
-        <div>
-          <h1 class="text-4xl capitalize mb-0 text-primary">
-            CSC Design System
-          </h1>
+    <p class="my-[1em] max-w-[45rem] text-[1.0625rem] text-on-surface-muted">
+      {{ navComponents.length }} components, documented straight from the
+      library's Custom Elements Manifest — the tables on every page are
+      generated from the same source the build verifies.
+    </p>
 
-          <h2 class="text-lg text-muted">
-            Web Component Library | version {{ version }}
-          </h2>
-        </div>
-      </c-row>
+    <ul
+      class="my-[1em] grid grid-cols-[repeat(auto-fill,minmax(16rem,1fr))] gap-3"
+    >
+      <li v-for="component in navComponents" :key="component.tagName">
+        <nuxt-link
+          class="block h-full rounded-lg border border-border px-4 py-[0.875rem] text-inherit no-underline hover:border-primary"
+          :to="`/components/${component.tagName}`"
+        >
+          <code>&lt;{{ component.tagName }}&gt;</code>
 
-      <p class="mt-3 text-muted">
-        CSC Design System is an accessible cross-platform UI Library for CSC
-        applications and services.
-      </p>
-
-      <ul>
-        <li>
-          <c-link href="https://www.npmjs.com/package/@cscfi/csc-ui">
-            NPM Package
-          </c-link>
-        </li>
-
-        <li>
-          <c-link href="https://github.com/CSCfi/ui">Github Repository</c-link>
-        </li>
-
-        <li>
-          <c-link href="https://csc.fi">CSC Website</c-link>
-        </li>
-      </ul>
-    </c-card-content>
-  </c-card>
+          <p
+            v-if="component.description"
+            class="mt-1.5 text-[0.8125rem] text-on-surface-faint"
+          >
+            {{ firstSentence(component.description) }}
+          </p>
+        </nuxt-link>
+      </li>
+    </ul>
+  </article>
 </template>
 
 <script setup lang="ts">
-import packageJson from '../../package.json';
+const { navComponents } = useManifest();
 
-const version = ref(packageJson.version);
+const firstSentence = (text: string) => text.split(/(?<=\.)\s/)[0];
+
+useHead({ title: 'Components — CSC Design System' });
 </script>
-
-<style lang="scss"></style>

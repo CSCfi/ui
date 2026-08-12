@@ -1,141 +1,131 @@
-import { statSync } from 'node:fs';
-import { fileURLToPath } from 'node:url';
 import tailwindcss from '@tailwindcss/vite';
+import { readFileSync } from 'node:fs';
+import { fileURLToPath } from 'node:url';
 
-// Dev-only Vite plugin: the docs consume `@cscfi/csc-ui-next` from its built
-// `dist` (rebuilt on save by the package's `build:watch`). Vite ignores
-// `node_modules` in its watcher, so it never sees those rebuilds. This plugin
-// watches the dist dir directly, drops the stale module from the graph, and
-// forces a full page reload — which is the only way changed custom elements
-// take effect, since the custom-element registry can't be redefined in place.
-//
-// Reliability matters here: small source edits were intermittently not picked
-// up. Two root causes, both handled below:
-//   1. The lib build rewrites a ~550KB `csc-ui-next.js` (Vue is bundled in).
-//      Reloading on the first `change` event raced the flush, so the browser
-//      re-fetched a half-written/stale bundle. We wait for each file's size to
-//      stop changing first (Vite's watcher has no `awaitWriteFinish`).
-//   2. Content-hashed chunks change filename between builds, which chokidar
-//      reports as `unlink`+`add` — not `change`. We listen to all three.
-// A short debounce coalesces the multi-file writes of a single rebuild into
-// one reload.
-const cscUiNextDist = fileURLToPath(
-  new URL('../csc-ui-next/dist', import.meta.url),
-);
+// The site is a pure consumer of the csc-ui build output: the Custom
+// Elements Manifest (dist/custom-elements.json) for the API reference and
+// dist/docs/<tag>/usage.md for the hand-written usage prose.
+// Pages are prerendered (SSG); the custom elements themselves upgrade on the
+// client via the csc-ui plugin.
 
-function reloadOnCscUiNextRebuild() {
-  return {
-    name: 'reload-on-csc-ui-next-rebuild',
-    apply: 'serve' as const,
-    configureServer(server: any) {
-      server.watcher.add(cscUiNextDist);
+// Composed children have no page of their own: redirect their old
+// route to the parent page anchor. Derived from the manifest so the mapping has
+// a single source of truth (the @subcomponents docblock tags).
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+let manifest: any;
 
-      const changed = new Set<string>();
-      let debounce: ReturnType<typeof setTimeout> | undefined;
+try {
+  manifest = JSON.parse(
+    readFileSync(
+      fileURLToPath(
+        new URL('../csc-ui/dist/custom-elements.json', import.meta.url),
+      ),
+      'utf8',
+    ),
+  );
+} catch {
+  // The manifest is a csc-ui build artifact (dist/ is gitignored), so it
+  // is absent on a fresh clone and until the sibling package is built. Config
+  // load runs during `pnpm install` (postinstall: nuxt prepare) and on a cold
+  // `nuxt dev`, both of which may precede that build — so fall back to an empty
+  // manifest instead of crashing. Child redirects are skipped until the build
+  // runs (`pnpm dev:docs-next` regenerates the manifest before serving).
+  console.warn(
+    '[nuxt.config] csc-ui has not been built yet — skipping child-component route redirects. Run `pnpm --filter @cscfi/csc-ui docs:manifest` to populate them.',
+  );
+  manifest = { modules: [] };
+}
 
-      // Resolve once the file's size is stable across two consecutive reads
-      // (or it has been removed), so we never reload mid-write.
-      const waitForStableSize = (file: string) =>
-        new Promise<void>((resolve) => {
-          let last = -1;
-          let tries = 0;
-          const poll = () => {
-            let size: number;
-            try {
-              size = statSync(file).size;
-            } catch {
-              return resolve(); // removed mid-rebuild — nothing to wait for
-            }
-            if ((size === last && size > 0) || tries++ > 50) return resolve();
-            last = size;
-            setTimeout(poll, 30);
-          };
-          poll();
-        });
+// @vue/compiler-ssr cannot compile `v-model` on a custom element: once
+// `isCustomElement` (below) classifies a c-* tag as an element, the SSR
+// compiler throws "v-model can only be used on <input>, <textarea> and <select>
+// elements." (the client compiler-dom handles it fine via vModelText). The
+// interactive demos under app/examples are client-only anyway — ExampleBlock
+// wraps them in <ClientOnly>, and the csc-ui elements upgrade only on the
+// client — so resolve their SFCs to an empty module in the SSR build. The
+// server never renders them, `isCustomElement` stays intact for the real c-*
+// usage on pages, and the `?raw` source imports (code tabs, which DO render
+// server-side) are left untouched because they carry a query string.
+const stubExampleDemosInSsr: import('vite').Plugin = {
+  enforce: 'pre',
+  load(id) {
+    if (id === '\0csc-example-demo-stub') return 'export default {}';
 
-      const scheduleReload = () => {
-        clearTimeout(debounce);
-        debounce = setTimeout(async () => {
-          const files = [...changed];
-          changed.clear();
-          await Promise.all(files.map(waitForStableSize));
-          for (const file of files) {
-            for (const mod of server.moduleGraph.getModulesByFile(file) ?? []) {
-              server.moduleGraph.invalidateModule(mod);
-            }
-          }
-          server.ws.send({ type: 'full-reload' });
-        }, 80);
+    return null;
+  },
+  name: 'csc-docs:stub-example-demos-in-ssr',
+  resolveId(source, _importer, options) {
+    if (options?.ssr && /\/examples\/[^?]+\.vue$/.test(source)) {
+      return '\0csc-example-demo-stub';
+    }
+
+    return null;
+  },
+};
+
+const childRedirects: Record<string, { redirect: string }> = {};
+
+for (const module of manifest.modules ?? []) {
+  for (const declaration of module.declarations ?? []) {
+    const parent = declaration.tagName;
+
+    for (const child of declaration.csc?.subcomponents ?? []) {
+      childRedirects[`/components/${child}`] ??= {
+        redirect: `/components/${parent}#${child}`,
       };
-
-      const onEvent = (file: string) => {
-        if (!file.startsWith(cscUiNextDist) || !file.endsWith('.js')) return;
-        changed.add(file);
-        scheduleReload();
-      };
-
-      server.watcher.on('add', onEvent);
-      server.watcher.on('change', onEvent);
-      server.watcher.on('unlink', onEvent);
-    },
-  };
+    }
+  }
 }
 
 export default defineNuxtConfig({
-  ssr: false,
-
-  devtools: { enabled: false },
-
-  modules: ['@pinia/nuxt', '@vueuse/nuxt', '@nuxt/eslint'],
-
-  eslint: {
-    config: {
-      stylistic: false,
+  app: {
+    head: {
+      script: [
+        {
+          // Apply the stored theme before first paint (prerendered pages
+          // default to the OS preference otherwise) — must stay in sync with
+          // THEME_STORAGE_KEY in composables/useTheme.ts ('csc-ui-docs-theme';
+          // this key drifted once and silently disabled theme restore on
+          // reload, so initThemeFromStorage() now also re-applies as backup).
+          innerHTML:
+            "try{var t=localStorage.getItem('csc-ui-docs-theme');if(t==='dark'||t==='light')document.documentElement.setAttribute('data-theme',t)}catch(e){}",
+          tagPriority: 'critical',
+        },
+      ],
+      title: 'CSC Design System',
     },
   },
-
-  build: {
-    transpile: ['csc-ui/loader', '@cscfi/csc-ui-vue', '@cscfi/csc-ui-next'],
-  },
-
-  runtimeConfig: {
-    public: {
-      // Selects which implementation backend registers `c-*` custom
-      // elements. `stencil` keeps today's behaviour; `next` registers
-      // the Vue-built versions from `@cscfi/csc-ui-next` first and lets
-      // the Stencil loader fill in the rest. Override per build with
-      // `CSC_UI_IMPL=next pnpm run dev` (or `build`).
-      cscUiImpl: process.env.CSC_UI_IMPL || 'stencil',
+  compatibilityDate: '2026-07-01',
+  css: [
+    '@cscfi/csc-ui/css/tokens.css',
+    '~/assets/tailwind.css',
+    '~/assets/site.css',
+  ],
+  modules: ['@nuxt/eslint'],
+  nitro: {
+    prerender: {
+      crawlLinks: true,
+      routes: ['/'],
     },
   },
-
+  routeRules: childRedirects,
+  ssr: true,
+  vite: {
+    plugins: [stubExampleDemosInSsr, tailwindcss()],
+    resolve: {
+      alias: {
+        // usage.md files are read from the sibling workspace package's build
+        // output (import.meta.glob cannot traverse package "exports").
+        '#library-docs': fileURLToPath(
+          new URL('../csc-ui/dist/docs', import.meta.url),
+        ),
+      },
+    },
+  },
   vue: {
     compilerOptions: {
+      // Every c-* tag is a csc-ui custom element, never a Vue component.
       isCustomElement: (tag) => tag.startsWith('c-'),
-    },
-  },
-
-  app: {
-    pageTransition: { name: 'page', mode: 'default' },
-    head: {
-      title: 'Design System - CSC',
-      charset: 'utf-8',
-      viewport: 'width=device-width, initial-scale=1',
-    },
-  },
-
-  css: ['~/assets/css/main.css'],
-
-  pinia: {
-    autoImports: ['defineStore', 'acceptHMRUpdate'],
-  },
-
-  vite: {
-    plugins: [tailwindcss(), reloadOnCscUiNextRebuild()],
-    // Exclude from dep pre-bundling so Vite serves the dist fresh from disk
-    // (not a cached esbuild bundle) on each reload triggered by the plugin.
-    optimizeDeps: {
-      exclude: ['@cscfi/csc-ui-next'],
     },
   },
 });

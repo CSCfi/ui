@@ -1,0 +1,54 @@
+name: Release
+
+# Changesets-driven releases (ADR-0028):
+# - Merges to main update a bot-maintained "Version packages" PR.
+# - Merging that PR builds and publishes @cscfi/csc-ui and
+#   @cscfi/csc-ui-react (version-locked, ADR-0027) to npm.
+# - Publishing uses npm trusted publishing (OIDC) — no NPM_TOKEN secret.
+#   Each package must be configured on npmjs.com to trust this workflow
+#   (Settings -> Trusted Publisher: CSCfi/ui, workflow release.yml).
+
+on:
+  push:
+    branches:
+      - main
+
+concurrency: release-${{ github.ref }}
+
+permissions:
+  contents: write # push the version commit and tags, create GitHub releases
+  pull-requests: write # maintain the "Version packages" PR
+  id-token: write # OIDC token exchange for npm trusted publishing
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Enable corepack (pnpm)
+        run: corepack enable
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          registry-url: 'https://registry.npmjs.org'
+
+      # Trusted publishing requires npm >= 11.5.1
+      - name: Update npm
+        run: npm install -g npm@latest
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Create release PR or publish to npm
+        uses: changesets/action@v1
+        with:
+          title: 'Chore: version packages'
+          commit: 'Chore: version packages'
+          publish: pnpm run release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
