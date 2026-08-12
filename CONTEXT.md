@@ -47,7 +47,7 @@ _Avoid_: Nested dropdown, flyout, child menu
 
 **Separator** (`c-divider`):
 A general-purpose `role="separator"` line dividing groups of content. Used to partition menu sections but not menu-specific. A **menu label** (`c-menu-label`) is the complementary heading for a group of items; a separator is the line between groups.
-_Avoid_: Spacer (`c-spacer` is a flex-grow layout filler, not a visible rule), rule, hr
+_Avoid_: Spacer (the Stencil-era `c-spacer` flex-grow filler, removed in 4.x — not a visible rule), rule, hr
 
 ### Overlays
 

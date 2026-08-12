@@ -20,3 +20,5 @@ the migration guide in the documentation. Highlights:
 - Component API changes per the 4.x documentation (e.g. `c-menu-items` →
   `c-menu-item`/`c-menu-label`, `c-button-group` split out of
   `c-tab-buttons`, data-table column API reworked).
+- Removed components: `c-row`, `c-spacer` (use your own flexbox layout) and
+  `c-swiper`/`c-swiper-tab` (no replacement).

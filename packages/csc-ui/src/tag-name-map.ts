@@ -1161,18 +1161,6 @@ export interface CRadioGroupElement extends Omit<HTMLElement, 'disabled' | 'erro
   ): void;
 }
 
-/** Generic flex row component */
-export interface CRowElement extends Omit<HTMLElement, 'align' | 'gap' | 'justify' | 'nowrap'> {
-  /** Align items vertically */
-  align?: 'center' | 'end' | 'start';
-  /** Gap between items in px */
-  gap?: number;
-  /** Justify content horizontally */
-  justify?: 'center' | 'end' | 'space-around' | 'space-between' | 'start';
-  /** Disable flex wrap */
-  nowrap?: boolean;
-}
-
 /** Events dispatched by `<c-select>`. */
 export interface CSelectElementEventMap {
   /**
@@ -1415,10 +1403,6 @@ export interface CSliderElement extends Omit<HTMLElement, 'ariaLabelInternal' | 
   ): void;
 }
 
-/** Spacer component for flex containers */
-export interface CSpacerElement extends HTMLElement {
-}
-
 export interface CSpinnerElement extends Omit<HTMLElement, 'color' | 'size' | 'width'> {
   /** Color of the spinner */
   color?: string;
@@ -1456,98 +1440,6 @@ export interface CSubNavigationItemElement extends Omit<HTMLElement, 'active' | 
   loading?: boolean;
   /** Link target */
   target?: string;
-}
-
-/** Events dispatched by `<c-swiper>`. */
-export interface CSwiperElementEventMap {
-  /**
-   * Fired when a tab is selected via click or arrow-key navigation, carrying
-   * the selected tab's value (legacy value-change event).
-   */
-  changeValue: CustomEvent<number | string>;
-  /**
-   * Native bubbling input event for plain `v-model`; carries no detail — the
-   * selected value is mirrored onto the host's `value` property.
-   */
-  input: CustomEvent<void>;
-  /**
-   * Fired when a tab is selected via click or arrow-key navigation, carrying
-   * the selected tab's value (v-model contract).
-   */
-  'update:value': CustomEvent<number | string>;
-}
-
-export interface CSwiperElement extends Omit<HTMLElement, 'elementId' | 'value'> {
-  /** Id of the swiper element */
-  elementId?: string;
-  /** Value of the swiper */
-  value?: number | string;
-  addEventListener<K extends keyof CSwiperElementEventMap>(
-    type: K,
-    listener: (this: CSwiperElement, ev: CSwiperElementEventMap[K]) => void,
-    options?: boolean | AddEventListenerOptions,
-  ): void;
-  addEventListener(
-    type: string,
-    listener: EventListenerOrEventListenerObject,
-    options?: boolean | AddEventListenerOptions,
-  ): void;
-  removeEventListener<K extends keyof CSwiperElementEventMap>(
-    type: K,
-    listener: (this: CSwiperElement, ev: CSwiperElementEventMap[K]) => void,
-    options?: boolean | EventListenerOptions,
-  ): void;
-  removeEventListener(
-    type: string,
-    listener: EventListenerOrEventListenerObject,
-    options?: boolean | EventListenerOptions,
-  ): void;
-}
-
-/** Events dispatched by `<c-swiper-tab>`. */
-export interface CSwiperTabElementEventMap {
-  /**
-   * Fired when an inactive, enabled tab is clicked, carrying the tab's value.
-   * Bubbles up to the parent `<c-swiper>`, which uses it to select the tab.
-   */
-  changeValue: CustomEvent<number | string | undefined>;
-}
-
-export interface CSwiperTabElement extends Omit<HTMLElement, 'active' | 'disabled' | 'hostId' | 'label' | 'position' | 'setsize' | 'value'> {
-  /** Mark as active */
-  active?: boolean;
-  /** Disable button */
-  disabled?: boolean;
-  /** Id of the button */
-  hostId?: string;
-  /** Label of the button */
-  label?: string;
-  /** Position in the set */
-  position?: number;
-  /** Size of the set */
-  setsize?: number;
-  /** Value of the button */
-  value?: number | string;
-  addEventListener<K extends keyof CSwiperTabElementEventMap>(
-    type: K,
-    listener: (this: CSwiperTabElement, ev: CSwiperTabElementEventMap[K]) => void,
-    options?: boolean | AddEventListenerOptions,
-  ): void;
-  addEventListener(
-    type: string,
-    listener: EventListenerOrEventListenerObject,
-    options?: boolean | AddEventListenerOptions,
-  ): void;
-  removeEventListener<K extends keyof CSwiperTabElementEventMap>(
-    type: K,
-    listener: (this: CSwiperTabElement, ev: CSwiperTabElementEventMap[K]) => void,
-    options?: boolean | EventListenerOptions,
-  ): void;
-  removeEventListener(
-    type: string,
-    listener: EventListenerOrEventListenerObject,
-    options?: boolean | EventListenerOptions,
-  ): void;
 }
 
 /** Events dispatched by `<c-switch>`. */
@@ -2068,20 +1960,16 @@ declare global {
     'c-progress-bar': CProgressBarElement;
     'c-radio': CRadioElement;
     'c-radio-group': CRadioGroupElement;
-    'c-row': CRowElement;
     'c-select': CSelectElement;
     'c-side-navigation': CSideNavigationElement;
     'c-side-navigation-item': CSideNavigationItemElement;
     'c-side-navigation-title': CSideNavigationTitleElement;
     'c-slider': CSliderElement;
-    'c-spacer': CSpacerElement;
     'c-spinner': CSpinnerElement;
     'c-status': CStatusElement;
     'c-step': CStepElement;
     'c-steps': CStepsElement;
     'c-sub-navigation-item': CSubNavigationItemElement;
-    'c-swiper': CSwiperElement;
-    'c-swiper-tab': CSwiperTabElement;
     'c-switch': CSwitchElement;
     'c-tab': CTabElement;
     'c-tab-buttons': CTabButtonsElement;

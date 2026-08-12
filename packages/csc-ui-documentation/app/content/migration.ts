@@ -477,6 +477,9 @@ const columns: CDataTableColumn<User>[] = [
 - c-menu: authored declaratively with slotted c-menu-item / c-menu-label
   instead of a programmatic items array; leaf activation fires a select event.
 - c-swiper / c-swiper-tab: removed, no replacement.
+- c-row: removed — use your own flex container (display: flex plus gap).
+- c-spacer: removed — use margin-inline-start: auto on the element you want
+  pushed to the far edge, or your own flex-grow filler.
   c-backdrop / c-ripple were internal-only and are not part of the public API.`,
       },
     ]),

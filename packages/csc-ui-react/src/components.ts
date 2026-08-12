@@ -62,7 +62,6 @@ import {
   type CRadioElement,
   type CRadioGroupElement,
   type CRadioGroupElementEventMap,
-  type CRowElement,
   type CSelectElement,
   type CSelectElementEventMap,
   type CSideNavigationElement,
@@ -72,16 +71,11 @@ import {
   type CSideNavigationTitleElement,
   type CSliderElement,
   type CSliderElementEventMap,
-  type CSpacerElement,
   type CSpinnerElement,
   type CStatusElement,
   type CStepElement,
   type CStepsElement,
   type CSubNavigationItemElement,
-  type CSwiperElement,
-  type CSwiperElementEventMap,
-  type CSwiperTabElement,
-  type CSwiperTabElementEventMap,
   type CSwitchElement,
   type CSwitchElementEventMap,
   type CTabElement,
@@ -498,14 +492,6 @@ export const CRadioGroup = createComponent({
   tagName: 'c-radio-group',
 });
 
-/** Generic flex row component */
-export const CRow = createComponent({
-  displayName: 'CRow',
-  elementClass: elementClass<CRowElement>('c-row'),
-  react: React,
-  tagName: 'c-row',
-});
-
 export const CSelect = createComponent({
   displayName: 'CSelect',
   elementClass: elementClass<CSelectElement>('c-select'),
@@ -557,14 +543,6 @@ export const CSlider = createComponent({
   tagName: 'c-slider',
 });
 
-/** Spacer component for flex containers */
-export const CSpacer = createComponent({
-  displayName: 'CSpacer',
-  elementClass: elementClass<CSpacerElement>('c-spacer'),
-  react: React,
-  tagName: 'c-spacer',
-});
-
 export const CSpinner = createComponent({
   displayName: 'CSpinner',
   elementClass: elementClass<CSpinnerElement>('c-spinner'),
@@ -598,28 +576,6 @@ export const CSubNavigationItem = createComponent({
   elementClass: elementClass<CSubNavigationItemElement>('c-sub-navigation-item'),
   react: React,
   tagName: 'c-sub-navigation-item',
-});
-
-export const CSwiper = createComponent({
-  displayName: 'CSwiper',
-  elementClass: elementClass<CSwiperElement>('c-swiper'),
-  events: {
-    onChangeValue: 'changeValue' as EventName<CSwiperElementEventMap['changeValue']>,
-    onInput: 'input' as EventName<CSwiperElementEventMap['input']>,
-    onUpdateValue: 'update:value' as EventName<CSwiperElementEventMap['update:value']>,
-  },
-  react: React,
-  tagName: 'c-swiper',
-});
-
-export const CSwiperTab = createComponent({
-  displayName: 'CSwiperTab',
-  elementClass: elementClass<CSwiperTabElement>('c-swiper-tab'),
-  events: {
-    onChangeValue: 'changeValue' as EventName<CSwiperTabElementEventMap['changeValue']>,
-  },
-  react: React,
-  tagName: 'c-swiper-tab',
 });
 
 export const CSwitch = createComponent({

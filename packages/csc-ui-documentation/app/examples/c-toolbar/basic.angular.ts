@@ -11,8 +11,7 @@ import { Component, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
       <c-toolbar class="relative">
         <c-csc-logo></c-csc-logo>
         <span>My Service</span>
-        <c-spacer></c-spacer>
-        <c-button text>Log out</c-button>
+        <c-button style="margin-inline-start: auto" text>Log out</c-button>
       </c-toolbar>
     </div>
   `,

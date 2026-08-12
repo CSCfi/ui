@@ -43,20 +43,16 @@ import CPagination from './components/c-pagination/CPagination.vue';
 import CProgressBar from './components/c-progress-bar/CProgressBar.vue';
 import CRadioGroup from './components/c-radio-group/CRadioGroup.vue';
 import CRadio from './components/c-radio/CRadio.vue';
-import CRow from './components/c-row/CRow.vue';
 import CSelect from './components/c-select/CSelect.vue';
 import CSideNavigationItem from './components/c-side-navigation-item/CSideNavigationItem.vue';
 import CSideNavigationTitle from './components/c-side-navigation-title/CSideNavigationTitle.vue';
 import CSideNavigation from './components/c-side-navigation/CSideNavigation.vue';
 import CSlider from './components/c-slider/CSlider.vue';
-import CSpacer from './components/c-spacer/CSpacer.vue';
 import CSpinner from './components/c-spinner/CSpinner.vue';
 import CStatus from './components/c-status/CStatus.vue';
 import CStep from './components/c-step/CStep.vue';
 import CSteps from './components/c-steps/CSteps.vue';
 import CSubNavigationItem from './components/c-sub-navigation-item/CSubNavigationItem.vue';
-import CSwiperTab from './components/c-swiper-tab/CSwiperTab.vue';
-import CSwiper from './components/c-swiper/CSwiper.vue';
 import CSwitch from './components/c-switch/CSwitch.vue';
 import CTabButtons from './components/c-tab-buttons/CTabButtons.vue';
 import CTabItem from './components/c-tab-item/CTabItem.vue';
@@ -143,12 +139,6 @@ export type {
 } from './components/c-pagination/CPagination.vue';
 
 export type {
-  CRowAlign,
-  CRowJustify,
-  CRowProps,
-} from './components/c-row/CRow.vue';
-
-export type {
   CStatusProps,
   CStatusType,
 } from './components/c-status/CStatus.vue';
@@ -233,11 +223,9 @@ const components: Array<[string, unknown]> = [
   ['c-radio', CRadio],
   ['c-radio-group', CRadioGroup],
   ['c-switch', CSwitch],
-  ['c-spacer', CSpacer],
   ['c-csc-logo', CCscLogo],
   ['c-badge', CBadge],
   ['c-status', CStatus],
-  ['c-row', CRow],
   ['c-toolbar', CToolbar],
   ['c-main', CMain],
   ['c-page', CPage],
@@ -269,8 +257,6 @@ const components: Array<[string, unknown]> = [
   ['c-login-button', CLoginButton],
   ['c-login-buttons', CLoginButtons],
   ['c-table', CTable],
-  ['c-swiper-tab', CSwiperTab],
-  ['c-swiper', CSwiper],
   ['c-slider', CSlider],
   ['c-otp-input', COtpInput],
   // Dropdown stack: leaf elements must register before c-select so the
@@ -317,8 +303,6 @@ export const tailwindVariantTags: ReadonlyArray<string> = [
   'c-accordion',
   'c-accordion-item',
   // Wave A — layout / wrapper components.
-  'c-spacer',
-  'c-row',
   'c-main',
   'c-page',
   'c-toolbar',
