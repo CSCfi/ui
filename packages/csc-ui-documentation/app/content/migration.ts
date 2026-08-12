@@ -1,10 +1,10 @@
 import type { Flavor } from '~/composables/useFlavor';
 
 /**
- * Upgrade-guide content for consumers moving an app from the old Stencil
- * package (@cscfi/csc-ui) to @cscfi/csc-ui. Same data shape as the
- * getting-started page: one block set per flavor so the page can
- * prerender-highlight every flavor and swap client-side.
+ * Upgrade-guide content for consumers moving an app from the Stencil-based
+ * @cscfi/csc-ui 3.x line to the rewritten 4.x (same package name, ADR-0027).
+ * Same data shape as the getting-started page: one block set per flavor so
+ * the page can prerender-highlight every flavor and swap client-side.
  *
  * Note the vocabulary split (see CONTEXT.md): the maintainers "migrate"
  * components from Stencil to Vue; a consumer "upgrades" their dependency. The
@@ -40,53 +40,50 @@ export const MIGRATION_SECTIONS: MigrationSection[] = [
     id: 'before-you-start',
     title: 'Before you start',
     intro: {
-      all: `The tag names are stable: every <c-*> element keeps the same name, so your existing markup mostly stays put. What changes is everything around the tags — how you install and register the library, how two-way binding and events work, how you customize and theme components.
+      all: `Version 4 is a complete rewrite of the library under the same package name: the tag names are stable — every <c-*> element keeps its name, so your existing markup mostly stays put. What changes is everything around the tags — how you register the library, how two-way binding and events work, how you customize and theme components.
 
-This is an all-at-once upgrade. You cannot run @cscfi/csc-ui and @cscfi/csc-ui side by side: both register the same custom-element tags, and the second defineCustomElements() call throws a "already defined" error. Swap the whole dependency in one change rather than component by component.
+This is an all-at-once upgrade. You cannot run 3.x and 4.x side by side: both register the same custom-element tags, and the second defineCustomElements() call throws a "already defined" error. Bump the whole dependency in one change rather than component by component.
 
-@cscfi/csc-ui is ESM-only, so a bundler (Vite, webpack, etc.) is assumed.`,
+@cscfi/csc-ui 4.x is ESM-only, so a bundler (Vite, webpack, etc.) is assumed.`,
     },
     blocks: forAll([]),
   },
   {
     id: 'packages',
-    title: 'Swap the packages',
+    title: 'Update the packages',
     intro: {
-      vue: 'Remove the old core package and the v-control directive package (@cscfi/csc-ui-vue / -vue2) — the new elements support plain v-model natively, so the directive is gone.',
+      vue: 'Bump the core package to 4.x and remove the v-control directive package (@cscfi/csc-ui-vue, or @cscfi/csc-ui-vue2 on Vue 2) — the 4.x elements support plain v-model natively, so the directive is gone.',
       react:
-        'Swap the core package, and replace @cscfi/csc-ui-react with @cscfi/csc-ui-react (typed React components generated from the same source). Note the package name changes — it is not just a version bump.',
+        'Bump both packages to 4.x. The names are unchanged, but @cscfi/csc-ui-react is reimplemented (typed React components generated from the custom-elements manifest) and is now always released with the exact same version number as the core.',
       angular:
-        'Remove the old core package and add the new one. Angular consumes the custom elements natively — no wrapper package.',
+        'Bump the core package to 4.x. Angular consumes the custom elements natively — no wrapper package.',
       typescript:
-        'Remove the old core package and add the new one. TypeScript consumes the custom elements natively — no wrapper package.',
+        'Bump the core package to 4.x. TypeScript consumes the custom elements natively — no wrapper package.',
     },
     blocks: {
       vue: [
         {
           lang: 'bash',
-          code: `pnpm remove @cscfi/csc-ui @cscfi/csc-ui-vue
-pnpm add @cscfi/csc-ui`,
+          code: `pnpm remove @cscfi/csc-ui-vue
+pnpm add @cscfi/csc-ui@^4`,
         },
       ],
       react: [
         {
           lang: 'bash',
-          code: `pnpm remove @cscfi/csc-ui @cscfi/csc-ui-react
-pnpm add @cscfi/csc-ui @cscfi/csc-ui-react`,
+          code: `pnpm add @cscfi/csc-ui@^4 @cscfi/csc-ui-react@^4`,
         },
       ],
       angular: [
         {
           lang: 'bash',
-          code: `pnpm remove @cscfi/csc-ui
-pnpm add @cscfi/csc-ui`,
+          code: `pnpm add @cscfi/csc-ui@^4`,
         },
       ],
       typescript: [
         {
           lang: 'bash',
-          code: `pnpm remove @cscfi/csc-ui
-pnpm add @cscfi/csc-ui`,
+          code: `pnpm add @cscfi/csc-ui@^4`,
         },
       ],
     },
@@ -95,18 +92,18 @@ pnpm add @cscfi/csc-ui`,
     id: 'registration',
     title: 'Update registration & imports',
     intro: {
-      vue: 'Drop applyPolyfills and the /loader subpath — the new package exports defineCustomElements() directly and registers every element eagerly. Remove the v-control directive registration. Switch the CSS import to css/tokens.css.',
+      vue: 'Drop applyPolyfills and the /loader subpath — 4.x exports defineCustomElements() directly and registers every element eagerly. Remove the v-control directive registration. Switch the CSS import to css/tokens.css.',
       react:
         'Drop applyPolyfills and the /loader subpath. With the React wrapper you no longer call defineCustomElements() yourself — importing anything from @cscfi/csc-ui-react registers the elements as a side effect. Switch the CSS import to css/tokens.css.',
       angular:
-        'Drop applyPolyfills and the /loader subpath — the new package exports defineCustomElements() directly. Switch the CSS import to css/tokens.css.',
+        'Drop applyPolyfills and the /loader subpath — 4.x exports defineCustomElements() directly. Switch the CSS import to css/tokens.css.',
       typescript:
-        'Drop applyPolyfills and the /loader subpath — the new package exports defineCustomElements() directly. Switch the CSS import to css/tokens.css.',
+        'Drop applyPolyfills and the /loader subpath — 4.x exports defineCustomElements() directly. Switch the CSS import to css/tokens.css.',
     },
     blocks: {
       vue: [
         {
-          filename: 'Before — @cscfi/csc-ui',
+          filename: 'Before — 3.x',
           lang: 'ts',
           code: `import '@cscfi/csc-ui/css/theme.css';
 
@@ -124,7 +121,7 @@ applyPolyfills().then(() => defineCustomElements());
 app.mount('#app');`,
         },
         {
-          filename: 'After — @cscfi/csc-ui',
+          filename: 'After — 4.x',
           lang: 'ts',
           code: `import '@cscfi/csc-ui/css/tokens.css';
 
@@ -140,7 +137,7 @@ createApp(App).mount('#app');`,
       ],
       react: [
         {
-          filename: 'Before — @cscfi/csc-ui-react',
+          filename: 'Before — 3.x',
           lang: 'tsx',
           code: `import '@cscfi/csc-ui-react/css/theme.css';
 
@@ -154,7 +151,7 @@ applyPolyfills().then(() => defineCustomElements());
 createRoot(document.getElementById('root')!).render(<App />);`,
         },
         {
-          filename: 'After — @cscfi/csc-ui-react',
+          filename: 'After — 4.x',
           lang: 'tsx',
           code: `import '@cscfi/csc-ui/css/tokens.css';
 
@@ -168,7 +165,7 @@ createRoot(document.getElementById('root')!).render(<App />);`,
       ],
       angular: [
         {
-          filename: 'Before — @cscfi/csc-ui',
+          filename: 'Before — 3.x',
           lang: 'ts',
           code: `import '@cscfi/csc-ui/css/theme.css';
 
@@ -182,7 +179,7 @@ applyPolyfills().then(() => defineCustomElements());
 bootstrapApplication(AppComponent);`,
         },
         {
-          filename: 'After — @cscfi/csc-ui',
+          filename: 'After — 4.x',
           lang: 'ts',
           code: `import '@cscfi/csc-ui/css/tokens.css';
 
@@ -198,7 +195,7 @@ bootstrapApplication(AppComponent);`,
       ],
       typescript: [
         {
-          filename: 'Before — @cscfi/csc-ui',
+          filename: 'Before — 3.x',
           lang: 'ts',
           code: `import '@cscfi/csc-ui/css/theme.css';
 import { applyPolyfills, defineCustomElements } from '@cscfi/csc-ui/loader';
@@ -206,7 +203,7 @@ import { applyPolyfills, defineCustomElements } from '@cscfi/csc-ui/loader';
 applyPolyfills().then(() => defineCustomElements());`,
         },
         {
-          filename: 'After — @cscfi/csc-ui',
+          filename: 'After — 4.x',
           lang: 'ts',
           code: `import '@cscfi/csc-ui/css/tokens.css';
 import { defineCustomElements } from '@cscfi/csc-ui';
@@ -230,7 +227,7 @@ Use plain v-model (no argument): the elements ride the native input event, so v-
     blocks: {
       vue: [
         {
-          filename: 'Before — @cscfi/csc-ui',
+          filename: 'Before — 3.x',
           lang: 'vue',
           code: `<template>
   <!-- v-control bridged Stencil's changeValue to v-model -->
@@ -246,7 +243,7 @@ const enabled = ref(false);
 </script>`,
         },
         {
-          filename: 'After — @cscfi/csc-ui',
+          filename: 'After — 4.x',
           lang: 'vue',
           code: `<template>
   <!-- plain v-model, no directive -->
@@ -281,7 +278,7 @@ const open = ref(false);
       ],
       react: [
         {
-          filename: 'After — @cscfi/csc-ui-react',
+          filename: 'After — 4.x',
           lang: 'tsx',
           code: `import { useState } from 'react';
 import { CTextField, CSwitch } from '@cscfi/csc-ui-react';
@@ -310,7 +307,7 @@ export const Form = () => {
       ],
       angular: [
         {
-          filename: 'After — @cscfi/csc-ui',
+          filename: 'After — 4.x',
           lang: 'html',
           code: `<c-text-field
   label="Name"
@@ -328,7 +325,7 @@ export const Form = () => {
       ],
       typescript: [
         {
-          filename: 'After — @cscfi/csc-ui',
+          filename: 'After — 4.x',
           lang: 'ts',
           code: `const field = document.querySelector('c-text-field')!;
 
@@ -352,7 +349,7 @@ field.addEventListener('changeValue', (event) => {
     },
     blocks: forAll([
       {
-        filename: 'Before — @cscfi/csc-ui',
+        filename: 'Before — 3.x',
         lang: 'css',
         code: `c-button {
   --c-button-background-color: #006efd;
@@ -360,7 +357,7 @@ field.addEventListener('changeValue', (event) => {
 }`,
       },
       {
-        filename: 'After — @cscfi/csc-ui',
+        filename: 'After — 4.x',
         lang: 'css',
         code: `c-button::part(root) {
   background: var(--c-primary);
@@ -383,7 +380,7 @@ To re-brand, stop overriding individual --c-* ramp variables. Instead hand apply
     },
     blocks: forAll([
       {
-        filename: 'Before — @cscfi/csc-ui',
+        filename: 'Before — 3.x',
         lang: 'css',
         code: `:root {
   /* Override individual ramp steps; light mode only. */
@@ -392,7 +389,7 @@ To re-brand, stop overriding individual --c-* ramp variables. Instead hand apply
 }`,
       },
       {
-        filename: 'After — @cscfi/csc-ui',
+        filename: 'After — 4.x',
         lang: 'ts',
         code: `import { applyTheme } from '@cscfi/csc-ui';
 

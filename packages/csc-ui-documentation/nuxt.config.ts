@@ -29,7 +29,7 @@ try {
   // load runs during `pnpm install` (postinstall: nuxt prepare) and on a cold
   // `nuxt dev`, both of which may precede that build — so fall back to an empty
   // manifest instead of crashing. Child redirects are skipped until the build
-  // runs (`pnpm dev:docs-next` regenerates the manifest before serving).
+  // runs (the root `pnpm dev` regenerates the manifest before serving).
   console.warn(
     '[nuxt.config] csc-ui has not been built yet — skipping child-component route redirects. Run `pnpm --filter @cscfi/csc-ui docs:manifest` to populate them.',
   );

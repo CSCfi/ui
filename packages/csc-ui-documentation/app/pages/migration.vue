@@ -4,15 +4,13 @@
       <h1 class="mb-[0.67em] text-[2rem] font-bold">Migration guide</h1>
 
       <p class="my-[1em] max-w-[45rem] text-[1.0625rem] text-on-surface-muted">
-        How to upgrade an app from the Stencil package
+        How to upgrade an app from
         <code>@cscfi/csc-ui</code>
-
-        to
-        <code>@cscfi/csc-ui</code>
-        . The
+        3.x (the Stencil implementation) to the rewritten 4.x — same package
+        name, new major version. The
         <code>&lt;c-*&gt;</code>
-        tag names are unchanged; what changes is installation, registration,
-        two-way binding, customization, and theming. Pick your flavor with the
+        tag names are unchanged; what changes is registration, two-way
+        binding, customization, and theming. Pick your flavor with the
         switcher in the header (or below on small screens).
       </p>
 
