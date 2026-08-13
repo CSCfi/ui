@@ -1,0 +1,118 @@
+/*
+ * Consumer-facing Tailwind v4 theme export: the semantic-token to
+ * utility map, semantic roles only — raw palette-step ramps are deliberately
+ * excluded (every palette-step utility is a latent dark-mode bug).
+ *
+ * This file is the single source of truth for the mapping. The library's own
+ * build imports it from src/tailwind.css, and copy-styles ships it to
+ * dist/styles/css/ where the "./css/*" package export exposes it as
+ * @cscfi/csc-ui/css/tailwind-theme.css. It is a mapping, not a standalone
+ * stylesheet: consumers must load tokens.css alongside it, and the generated
+ * utility names are a compatibility contract.
+ *
+ * `inline` substitutes each value directly into the generated utility, so the
+ * utilities resolve inside shadow roots via inheritance of the `--c-*` custom
+ * properties from the document :root (where tokens.css declares and
+ * theme-switches them).
+ *
+ * KEEP IN SYNC with tokens/semantic/{light,dark}.json: every role there needs
+ * an entry here or its utility is never generated. (Candidate for generation
+ * from the same maps if this drifts.)
+ *
+ * NOTE: avoid writing literal class names (the prefixed forms) in comments
+ * within files Tailwind scans — it extracts them as candidates and emits
+ * unused rules.
+ */
+@theme inline {
+  --color-surface: var(--c-surface);
+  --color-surface-raised: var(--c-surface-raised);
+  --color-surface-overlay: var(--c-surface-overlay);
+  --color-surface-muted: var(--c-surface-muted);
+  --color-surface-sunken: var(--c-surface-sunken);
+  --color-on-surface: var(--c-on-surface);
+  --color-on-surface-muted: var(--c-on-surface-muted);
+  --color-on-surface-faint: var(--c-on-surface-faint);
+  --color-on-surface-sunken: var(--c-on-surface-sunken);
+  --color-border: var(--c-border);
+  --color-border-strong: var(--c-border-strong);
+  --color-ring: var(--c-ring);
+
+  --color-primary: var(--c-primary);
+  --color-primary-hover: var(--c-primary-hover);
+  --color-on-primary: var(--c-on-primary);
+  --color-primary-subtle: var(--c-primary-subtle);
+  --color-primary-subtle-hover: var(--c-primary-subtle-hover);
+  --color-on-primary-subtle: var(--c-on-primary-subtle);
+
+  --color-secondary: var(--c-secondary);
+  --color-secondary-hover: var(--c-secondary-hover);
+  --color-on-secondary: var(--c-on-secondary);
+  --color-secondary-subtle: var(--c-secondary-subtle);
+  --color-secondary-subtle-hover: var(--c-secondary-subtle-hover);
+  --color-on-secondary-subtle: var(--c-on-secondary-subtle);
+
+  --color-accent: var(--c-accent);
+  --color-accent-hover: var(--c-accent-hover);
+  --color-on-accent: var(--c-on-accent);
+  --color-accent-subtle: var(--c-accent-subtle);
+  --color-accent-subtle-hover: var(--c-accent-subtle-hover);
+  --color-on-accent-subtle: var(--c-on-accent-subtle);
+
+  --color-success: var(--c-success);
+  --color-success-hover: var(--c-success-hover);
+  --color-on-success: var(--c-on-success);
+  --color-success-subtle: var(--c-success-subtle);
+  --color-success-subtle-hover: var(--c-success-subtle-hover);
+  --color-on-success-subtle: var(--c-on-success-subtle);
+
+  --color-info: var(--c-info);
+  --color-info-hover: var(--c-info-hover);
+  --color-on-info: var(--c-on-info);
+  --color-info-subtle: var(--c-info-subtle);
+  --color-info-subtle-hover: var(--c-info-subtle-hover);
+  --color-on-info-subtle: var(--c-on-info-subtle);
+
+  --color-warning: var(--c-warning);
+  --color-warning-hover: var(--c-warning-hover);
+  --color-on-warning: var(--c-on-warning);
+  --color-warning-subtle: var(--c-warning-subtle);
+  --color-warning-subtle-hover: var(--c-warning-subtle-hover);
+  --color-on-warning-subtle: var(--c-on-warning-subtle);
+
+  --color-error: var(--c-error);
+  --color-error-hover: var(--c-error-hover);
+  --color-on-error: var(--c-on-error);
+  --color-error-subtle: var(--c-error-subtle);
+  --color-error-subtle-hover: var(--c-error-subtle-hover);
+  --color-on-error-subtle: var(--c-on-error-subtle);
+
+  --color-link: var(--c-link);
+  --color-link-hover: var(--c-link-hover);
+  --color-on-link: var(--c-on-link);
+  --color-link-subtle: var(--c-link-subtle);
+  --color-link-subtle-hover: var(--c-link-subtle-hover);
+  --color-on-link-subtle: var(--c-on-link-subtle);
+
+  /* Navigation chrome (c-side-navigation*): a themed brand surface that is the
+   * brand primary in light and a dark neutral panel in dark, so the sidebar
+   * adapts to the theme instead of staying a fixed brand island. The accents
+   * (active pill, sub-item box) reuse the primary-subtle / surface-raised roles. */
+  --color-nav-surface: var(--c-nav-surface);
+  --color-nav-surface-hover: var(--c-nav-surface-hover);
+  --color-on-nav: var(--c-on-nav);
+  --color-nav-active: var(--c-nav-active);
+  --color-on-nav-active: var(--c-on-nav-active);
+
+  --color-logo-wordmark: var(--c-logo-wordmark);
+  --color-logo-teal: var(--c-logo-teal);
+  --color-logo-magenta: var(--c-logo-magenta);
+
+  /* Mode-invariant inverse family (content on a fixed brand/dark backdrop). */
+  --color-inverse-surface: var(--c-inverse-surface);
+  --color-inverse-on: var(--c-inverse-on);
+  --color-inverse-primary: var(--c-inverse-primary);
+  --color-inverse-error: var(--c-inverse-error);
+
+  /* Mode-invariant overlay scrim (dims content behind modals/backdrops). */
+  --color-scrim: var(--c-scrim);
+}

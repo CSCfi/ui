@@ -1,1 +1,0 @@
-export { getScrollParent } from './getScrollParent';

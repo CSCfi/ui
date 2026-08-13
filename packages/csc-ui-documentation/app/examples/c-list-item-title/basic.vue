@@ -1,0 +1,17 @@
+<template>
+  <div>
+    <c-list>
+      <c-list-item>
+        <c-list-item-title>Profile</c-list-item-title>
+      </c-list-item>
+
+      <c-list-item active>
+        <c-list-item-title>Notifications</c-list-item-title>
+      </c-list-item>
+
+      <c-list-item>
+        <c-list-item-title>Settings</c-list-item-title>
+      </c-list-item>
+    </c-list>
+  </div>
+</template>

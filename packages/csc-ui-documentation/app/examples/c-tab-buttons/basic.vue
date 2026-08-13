@@ -1,0 +1,31 @@
+<template>
+  <c-tabs v-model="tab">
+    <c-tab-buttons>
+      <c-button value="overview">Overview</c-button>
+
+      <c-button value="members">Members</c-button>
+
+      <c-button value="settings">Settings</c-button>
+    </c-tab-buttons>
+
+    <c-tab-items slot="items">
+      <c-tab-item value="overview">
+        <p>Overview of the project and its recent activity.</p>
+      </c-tab-item>
+
+      <c-tab-item value="members">
+        <p>People with access to this project.</p>
+      </c-tab-item>
+
+      <c-tab-item value="settings">
+        <p>Project name, description and visibility.</p>
+      </c-tab-item>
+    </c-tab-items>
+  </c-tabs>
+</template>
+
+<script setup lang="ts">
+import { ref } from 'vue';
+
+const tab = ref<'overview' | 'members' | 'settings'>('overview');
+</script>

@@ -1,0 +1,10 @@
+/*
+ * Wipe Tailwind's default color palette. Lives in its own file because the
+ * reset must land *between* the tailwindcss import (which defines the
+ * defaults) and the library theme import (which defines the only colors this
+ * app may use) — and CSS requires @import statements to precede other rules,
+ * so the ordering can only be expressed as three imports.
+ */
+@theme {
+  --color-*: initial;
+}

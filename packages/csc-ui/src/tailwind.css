@@ -1,0 +1,207 @@
+@import 'tailwindcss' source(none);
+
+/*
+ * Components live inside shadow roots and SFCs are the only place utilities are
+ * authored, so Tailwind's automatic content detection is disabled
+ * (`source(none)`) and pointed solely at the SFC sources. This keeps the
+ * inlined sheet to the utilities components actually use and stops
+ * class-like tokens in comments of sibling .ts/.cjs/.css files (and in the
+ * previous build's bundle) from emitting stray, unused rules.
+ */
+@source './components/**/*.vue';
+
+/*
+ * Design-token → Tailwind utility map.
+ *
+ * `inline` is required because this stylesheet is inlined into every
+ * component's *shadow root*, where the `:root` selector matches nothing.
+ * With `inline`, Tailwind substitutes the value directly into each utility
+ * (e.g. `.bg-primary-600 { background-color: var(--c-primary-600) }`) instead
+ * of referencing a `--color-*` custom property that would never be defined
+ * inside the shadow tree. The `--c-*` tokens themselves are declared on the
+ * document `:root` by `@cscfi/csc-ui` and inherit across the shadow boundary,
+ * so a consumer overriding `--c-primary-600` still re-themes at runtime.
+ */
+@theme inline {
+  --color-primary-50: var(--c-primary-50);
+  --color-primary-100: var(--c-primary-100);
+  --color-primary-200: var(--c-primary-200);
+  --color-primary-300: var(--c-primary-300);
+  --color-primary-400: var(--c-primary-400);
+  --color-primary-500: var(--c-primary-500);
+  --color-primary-600: var(--c-primary-600);
+  --color-primary-700: var(--c-primary-700);
+  --color-primary-800: var(--c-primary-800);
+  --color-primary-900: var(--c-primary-900);
+  --color-primary-950: var(--c-primary-950);
+  --color-secondary-50: var(--c-secondary-50);
+  --color-secondary-100: var(--c-secondary-100);
+  --color-secondary-200: var(--c-secondary-200);
+  --color-secondary-300: var(--c-secondary-300);
+  --color-secondary-400: var(--c-secondary-400);
+  --color-secondary-500: var(--c-secondary-500);
+  --color-secondary-600: var(--c-secondary-600);
+  --color-secondary-700: var(--c-secondary-700);
+  --color-secondary-800: var(--c-secondary-800);
+  --color-secondary-900: var(--c-secondary-900);
+  --color-secondary-950: var(--c-secondary-950);
+  --color-accent-50: var(--c-accent-50);
+  --color-accent-100: var(--c-accent-100);
+  --color-accent-200: var(--c-accent-200);
+  --color-accent-300: var(--c-accent-300);
+  --color-accent-400: var(--c-accent-400);
+  --color-accent-500: var(--c-accent-500);
+  --color-accent-600: var(--c-accent-600);
+  --color-accent-700: var(--c-accent-700);
+  --color-accent-800: var(--c-accent-800);
+  --color-accent-900: var(--c-accent-900);
+  --color-accent-950: var(--c-accent-950);
+  --color-success-50: var(--c-success-50);
+  --color-success-100: var(--c-success-100);
+  --color-success-200: var(--c-success-200);
+  --color-success-300: var(--c-success-300);
+  --color-success-400: var(--c-success-400);
+  --color-success-500: var(--c-success-500);
+  --color-success-600: var(--c-success-600);
+  --color-success-700: var(--c-success-700);
+  --color-success-800: var(--c-success-800);
+  --color-success-900: var(--c-success-900);
+  --color-success-950: var(--c-success-950);
+  --color-info-50: var(--c-info-50);
+  --color-info-100: var(--c-info-100);
+  --color-info-200: var(--c-info-200);
+  --color-info-300: var(--c-info-300);
+  --color-info-400: var(--c-info-400);
+  --color-info-500: var(--c-info-500);
+  --color-info-600: var(--c-info-600);
+  --color-info-700: var(--c-info-700);
+  --color-info-800: var(--c-info-800);
+  --color-info-900: var(--c-info-900);
+  --color-info-950: var(--c-info-950);
+  --color-warning-50: var(--c-warning-50);
+  --color-warning-100: var(--c-warning-100);
+  --color-warning-200: var(--c-warning-200);
+  --color-warning-300: var(--c-warning-300);
+  --color-warning-400: var(--c-warning-400);
+  --color-warning-500: var(--c-warning-500);
+  --color-warning-600: var(--c-warning-600);
+  --color-warning-700: var(--c-warning-700);
+  --color-warning-800: var(--c-warning-800);
+  --color-warning-900: var(--c-warning-900);
+  --color-warning-950: var(--c-warning-950);
+  --color-error-50: var(--c-error-50);
+  --color-error-100: var(--c-error-100);
+  --color-error-200: var(--c-error-200);
+  --color-error-300: var(--c-error-300);
+  --color-error-400: var(--c-error-400);
+  --color-error-500: var(--c-error-500);
+  --color-error-600: var(--c-error-600);
+  --color-error-700: var(--c-error-700);
+  --color-error-800: var(--c-error-800);
+  --color-error-900: var(--c-error-900);
+  --color-error-950: var(--c-error-950);
+  --color-link-50: var(--c-link-50);
+  --color-link-100: var(--c-link-100);
+  --color-link-200: var(--c-link-200);
+  --color-link-300: var(--c-link-300);
+  --color-link-400: var(--c-link-400);
+  --color-link-500: var(--c-link-500);
+  --color-link-600: var(--c-link-600);
+  --color-link-700: var(--c-link-700);
+  --color-link-800: var(--c-link-800);
+  --color-link-900: var(--c-link-900);
+  --color-link-950: var(--c-link-950);
+  --color-tertiary-100: var(--c-tertiary-100);
+  --color-tertiary-200: var(--c-tertiary-200);
+  --color-tertiary-300: var(--c-tertiary-300);
+  --color-tertiary-400: var(--c-tertiary-400);
+  --color-tertiary-500: var(--c-tertiary-500);
+  --color-tertiary-600: var(--c-tertiary-600);
+  --color-tertiary-700: var(--c-tertiary-700);
+  --color-tertiary-800: var(--c-tertiary-800);
+  --color-tertiary-900: var(--c-tertiary-900);
+  --color-tertiary-950: var(--c-tertiary-950);
+  --color-slate-100: var(--c-slate-100);
+  --color-slate-200: var(--c-slate-200);
+  --color-slate-300: var(--c-slate-300);
+  --color-slate-400: var(--c-slate-400);
+  --color-slate-500: var(--c-slate-500);
+  --color-slate-600: var(--c-slate-600);
+  --color-slate-700: var(--c-slate-700);
+  --color-slate-800: var(--c-slate-800);
+  --color-slate-900: var(--c-slate-900);
+  --color-slate-950: var(--c-slate-950);
+  --color-white: var(--c-white);
+  --color-black: var(--c-black);
+  --color-transparent: var(--c-transparent);
+}
+
+/*
+ * Semantic-token to utility map. Exposes the role tokens defined in
+ * tokens.css as background / text / border / ring color utilities (one per
+ * role). This is the layer components author against; direct palette-step
+ * color utilities are forbidden in SFCs (CI-guarded, plan phase 4).
+ *
+ * The map itself lives in styles/css/tailwind-theme.css because it doubles as
+ * the consumer-facing Tailwind theme export — copy-styles ships it
+ * to dist, and this import keeps the library build on the same single source
+ * of truth. Its "inline" substitution is what lets the generated utilities
+ * resolve inside shadow roots via inheritance of the `--c-*` custom properties
+ * from the document root.
+ */
+@import './styles/css/tailwind-theme.css';
+
+/*
+ * Shared motion tokens. The CSC standard easing (Material "standard" curve) is
+ * repeated across ~15 components; exposing it as `--ease-standard` lets every
+ * `tailwind-variants` config author `ease-standard` instead of inlining the
+ * arbitrary cubic-bezier. The value is a literal (not a `var(--c-*)`), so it
+ * substitutes directly into the `ease-standard` utility and resolves inside
+ * shadow roots without an `@source inline` safelist entry.
+ */
+@theme {
+  --ease-standard: cubic-bezier(0.25, 0.8, 0.5, 1);
+}
+
+/*
+ * No consumer override safelist. Customization is via `::part()`
+ * from the consumer's own stylesheet, so the inlined sheet only needs the
+ * utilities the library's own components actually use — those are auto-detected
+ * from the `@source` SFC glob above. Token utilities (`bg-primary-600`, …) and
+ * built-ins (`animate-spin`, …) the library uses are generated automatically;
+ * anything else a consumer wants is reached through `::part()`, which their own
+ * stylesheet resolves with no build-time safelist and full CSS power.
+ */
+
+/*
+ * The single irreducible per-component CSS rule (decision A).
+ *
+ * Utility classes cannot target a shadow host, so the host is layout-only:
+ * `display: contents` removes it from the box tree entirely, and each
+ * component's `root` element (the first child inside the shadow root) carries
+ * all visual styling and sizing. This is the only `:host`/style rule that
+ * lives outside a `tailwind-variants` config.
+ */
+:host {
+  display: contents;
+}
+
+@utility rounded-csc-sm {
+  @apply supports-corner-shape:[corner-shape:squircle] supports-corner-shape:rounded-md not-supports-corner-shape:rounded-sm;
+}
+
+@utility rounded-csc-md {
+  @apply supports-corner-shape:[corner-shape:squircle] supports-corner-shape:rounded-xl not-supports-corner-shape:rounded-md;
+}
+
+@utility rounded-csc-l-md {
+  @apply supports-corner-shape:[corner-shape:squircle] supports-corner-shape:rounded-l-xl not-supports-corner-shape:rounded-l-md;
+}
+
+@utility rounded-csc-lg {
+  @apply supports-corner-shape:[corner-shape:squircle] supports-corner-shape:rounded-2xl not-supports-corner-shape:rounded-lg;
+}
+
+@utility rounded-csc-xl {
+  @apply supports-corner-shape:[corner-shape:squircle] supports-corner-shape:rounded-3xl not-supports-corner-shape:rounded-xl;
+}

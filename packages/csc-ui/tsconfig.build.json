@@ -1,0 +1,18 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "noEmit": false,
+    "declaration": true,
+    "emitDeclarationOnly": true,
+    // Emit to a dir Vite does NOT manage: `vite build` (and `build:watch`)
+    // empties `dist` on every run, which would delete the declarations during
+    // dev. `dist-types` survives those rebuilds.
+    "outDir": "dist-types",
+    "rootDir": "src",
+    // `.at()` (used in c-tabs/c-tab-buttons) is ES2022. Widen the lib for the
+    // declaration pass so it type-checks; only adds available APIs.
+    "lib": ["ES2022", "DOM", "DOM.Iterable"]
+  },
+  "include": ["src/**/*.ts", "src/**/*.vue"],
+  "exclude": ["vite.config.ts"]
+}

@@ -1,0 +1,23 @@
+<template>
+  <div style="display: grid; gap: 1rem">
+    <c-tags>
+      <c-tag active>All</c-tag>
+
+      <c-tag>Biosciences</c-tag>
+
+      <c-tag>Chemistry</c-tag>
+
+      <c-tag>Physics</c-tag>
+    </c-tags>
+
+    <c-tags size="small">
+      <c-tag active>All</c-tag>
+
+      <c-tag>Biosciences</c-tag>
+
+      <c-tag>Chemistry</c-tag>
+
+      <c-tag>Physics</c-tag>
+    </c-tags>
+  </div>
+</template>
