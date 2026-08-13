@@ -1,6 +1,6 @@
 {
   "name": "@cscfi/csc-ui",
-  "version": "3.0.20",
+  "version": "4.0.0-alpha.0",
   "description": "Vue 3-based replacement for @cscfi/csc-ui — same custom element tag names, Vue v-model contract.",
   "type": "module",
   "main": "./dist/csc-ui.js",
