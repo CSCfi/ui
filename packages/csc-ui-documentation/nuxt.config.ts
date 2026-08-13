@@ -78,6 +78,10 @@ for (const module of manifest.modules ?? []) {
 }
 
 export default defineNuxtConfig({
+  devServer: {
+    port: 3500,
+  },
+
   app: {
     head: {
       script: [
