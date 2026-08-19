@@ -37,24 +37,9 @@
         role="listbox"
         tabindex="-1"
       >
-        <!-- Empty states (autocomplete only) -->
-        <li v-if="!itemsArray.length && minimumQueryItem" :class="ui.info()">
-          <svg :class="ui.infoIcon()" aria-hidden="true" viewBox="0 0 24 24">
-            <path :d="mdiInformation" />
-          </svg>
-          {{ minimumQueryItem }}
-        </li>
-
-        <li v-else-if="!itemsArray.length && emptyItem" :class="ui.info()">
-          <svg :class="ui.infoIcon()" aria-hidden="true" viewBox="0 0 24 24">
-            <path :d="mdiAlert" />
-          </svg>
-          {{ emptyItem }}
-        </li>
-
         <!-- Option mode: <c-option> elements projected by the consumer.
              Render each option's outerHTML, mirroring Stencil. -->
-        <template v-else-if="dropdownItemType === 'option'">
+        <template v-if="dropdownItemType === 'option'">
           <li
             v-for="(opt, i) in itemsArray"
             :key="`option-${i}`"
@@ -69,7 +54,7 @@
             role="option"
             tabindex="-1"
             @click="onSelect(opt, $event)"
-            v-html="optionHtml(opt)"
+            v-html="opt.outerHTML"
           />
         </template>
 
@@ -101,7 +86,7 @@
               <path :d="mdiCheck" />
             </svg>
 
-            <span v-html="highlightMatchingText(item.name)" />
+            <span>{{ item.name }}</span>
           </li>
         </template>
       </ul>
@@ -119,7 +104,7 @@
  * @slot input-top - Target the c-input is moved into when the menu opens below the field
  * @slot input-bottom - Target the c-input is moved into when the menu opens above the field
  */
-import { mdiAlert, mdiCheck, mdiInformation } from '@mdi/js';
+import { mdiCheck } from '@mdi/js';
 import { tv } from 'tailwind-variants';
 import {
   computed,
@@ -149,8 +134,8 @@ interface CDropdownEvents {
 
 /**
  * Styling lives in this `tailwind-variants` config: the slots are
- * the menu's visual regions (`dialog`, `list`, `item`, the info/empty row and
- * its icon, the selected-row check). `variants.disabled` replaces the
+ * the menu's visual regions (`dialog`, `list`, `item`, the selected-row
+ * check). `variants.disabled` replaces the
  * `li.disabled` cascade. The per-component `--c-dropdown-*` override-variable
  * layer is dropped in favour of the semantic design tokens (the overlay
  * surface and the primary item-state roles); customization is via
@@ -171,8 +156,6 @@ const dropdown = tv({
     // top/left/width/maxHeight the JS writes inline drive placement.
     dialog:
       'rounded border-0 bg-transparent m-0 mt-[-4px] p-0 pt-1 overflow-visible fixed',
-    info: 'flex items-center flex-nowrap gap-2 text-sm min-h-[42px] px-[10px] w-full cursor-default pointer-events-none whitespace-nowrap text-on-surface-muted',
-    infoIcon: 'w-[18px] h-[18px] shrink-0 fill-current',
     item: 'flex items-center flex-nowrap gap-3 cursor-pointer text-sm min-h-[42px] outline-none px-[10px] pointer-events-auto whitespace-nowrap w-full rounded select-none hover:bg-primary-subtle hover:text-primary hover:ring-1 hover:ring-inset hover:ring-primary focus:bg-primary-subtle focus:text-primary focus:ring-1 focus:ring-inset focus:ring-primary aria-selected:bg-primary-subtle aria-selected:text-primary aria-selected:rounded-none hover:aria-selected:rounded focus:aria-selected:rounded',
     // Static list look; visibility + fade-in (`.active`) and the mobile
     // full-screen layout stay in the escape-hatch <style>.
@@ -238,7 +221,6 @@ type DropdownItem = {
   disabled?: boolean;
   name: string;
   outerHTML?: string;
-  querySelector?: (s: string) => Element | null;
   selected?: boolean;
   value: number | string;
 };
@@ -304,81 +286,6 @@ const setIsMobile = () => {
     'only screen and (max-width: 760px)',
   ).matches;
 };
-
-// ---- query-driven highlight + empty messages (autocomplete only) --------
-
-const highlightMatchingText = (value: string) => {
-  const query = (props.parent as { query?: string } | null)?.query ?? '';
-
-  if (props.type !== 'autocomplete' || query === '') return value;
-
-  const regex = new RegExp(query, 'gi');
-
-  return value
-    .replace(/(<([^>]+)>)/gi, '')
-    .replace(regex, (match) => `<mark>${match}</mark>`);
-};
-
-const optionHtml = (opt: DropdownItem) => {
-  // For autocomplete, highlight matched text inside the option-value.
-  if (props.type === 'autocomplete' && opt.querySelector) {
-    const optionValue = opt.querySelector('c-option-value');
-
-    if (optionValue) {
-      optionValue.innerHTML = highlightMatchingText(
-        optionValue.textContent ?? '',
-      );
-    }
-  }
-
-  return opt.outerHTML ?? '';
-};
-
-const minimumQueryItem = computed(() => {
-  const p = props.parent as {
-    loading?: boolean;
-    minimumQueryLength?: number;
-    minimumQueryLengthMessage?: string;
-    query?: string;
-  } | null;
-
-  if (!p) return '';
-
-  const {
-    loading,
-    minimumQueryLength = 0,
-    minimumQueryLengthMessage = '',
-    query,
-  } = p;
-
-  if (
-    props.type !== 'autocomplete' ||
-    (query?.length ?? 0) > minimumQueryLength ||
-    loading
-  )
-    return '';
-
-  return minimumQueryLengthMessage.replace(
-    '{n}',
-    minimumQueryLength.toString(),
-  );
-});
-
-const emptyItem = computed(() => {
-  const p = props.parent as {
-    loading?: boolean;
-    noMatchingItemsMessage?: string;
-    query?: string;
-  } | null;
-
-  if (!p) return '';
-
-  const { loading, noMatchingItemsMessage = '', query } = p;
-
-  if (!query || loading) return '';
-
-  return noMatchingItemsMessage;
-});
 
 // ---- events -------------------------------------------------------------
 
@@ -737,10 +644,8 @@ onBeforeUnmount(() => {
       anchors the (position:fixed) dialog and the slotted light-DOM c-input,
       and overrides the global `:host{display:contents}`. Utilities can't
       target the host.
-    - `<mark>` — injected via `v-html` (autocomplete query highlight), so Vue
-      can't put a class on it; the active-colour underline is a box-shadow.
-    - `li span / li c-option-value` ellipsis — those nodes come from `v-html`
-      (option outerHTML / item name), again unreachable by a class.
+    - `li c-option-value` ellipsis — those nodes come from `v-html`
+      (option outerHTML), unreachable by a class; `li span` shares the rule.
     - Imperative state-class hooks the JS/positioning toggles: `dialog.mobile`
       full-screen layout, `ul.active` visibility + the `fade-in` reveal, the
       mobile list sizing, and the `.input-*-wrapper` paddings — these are
@@ -752,12 +657,6 @@ onBeforeUnmount(() => {
 :host(c-dropdown) {
   display: block;
   position: relative;
-}
-
-:host(c-dropdown) mark {
-  background-color: transparent;
-  box-shadow: 0 2px 0 0 var(--c-primary);
-  color: inherit;
 }
 
 dialog::backdrop {
@@ -802,7 +701,8 @@ ul.active.mobile {
   max-height: calc(100svh - 60px);
 }
 
-/* `v-html`-injected option/item text — no element for a utility class. */
+/* `v-html`-injected option text (and the plain item-name span) — no element
+ * for a utility class. */
 li span,
 li c-option-value {
   overflow: hidden;

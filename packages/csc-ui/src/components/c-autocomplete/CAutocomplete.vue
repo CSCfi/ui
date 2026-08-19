@@ -136,9 +136,20 @@
         role="listbox"
         tabindex="-1"
       >
+        <!-- Loading row: only while fetching with nothing to show — options
+             already on screen stay rendered during a refresh (no flicker). -->
+        <li
+          v-if="loading && !filteredOptions.length"
+          :class="ui.info()"
+          part="info"
+        >
+          <c-spinner :size="18" color="var(--c-primary)" />
+          Loading
+        </li>
+
         <!-- No-results row: only when a query is entered and nothing matches. -->
         <li
-          v-if="query && !filteredOptions.length"
+          v-else-if="query && !filteredOptions.length"
           :class="ui.info()"
           part="info"
         >
@@ -225,7 +236,13 @@ export interface CAutocompleteProps {
    * @freeform
    */
   errorMessage?: string;
-  /** Custom filter predicate; receives a normalized option + the query */
+  /**
+   * The consumer owns filtering: the component renders its options verbatim
+   * and only emits `change:query` as the user types. Pair with `loading` and
+   * an async data source feeding `items`
+   */
+  external?: boolean;
+  /** Custom filter predicate; receives a normalized option + the query. Ignored when `external` is set */
   filter?: CAutocompleteFilter;
   /** Hide the hint and error messages */
   hideDetails?: boolean;
@@ -296,7 +313,7 @@ export interface CAutocompleteProps {
  * @csspart card - The elevated surface inside the panel holding the search row and the list
  * @csspart search - The search-input row at the top of the panel
  * @csspart list - The scrollable options listbox
- * @csspart info - The no-results row shown when the query matches no options
+ * @csspart info - The info row: loading while `loading` with an empty list, otherwise no-results when the query matches no options
  *
  * @subcomponents c-option, c-option-value
  */
@@ -327,6 +344,13 @@ interface CAutocompleteEvents {
    */
   change: void;
   /**
+   * Fired whenever the query changes — on every keystroke in the search
+   * input, and with an empty string when the panel opens. Carries the query
+   * string. With `external`, drive your data source from this (debounce on
+   * your side) and feed the results back via `items`.
+   */
+  'change:query': string;
+  /**
    * Fired when the selected value changes (an option is committed or the
    * selection is cleared), carrying the new value — the option's value, or
    * the whole `{ name, value }` item when `return-object` is set; `null`
@@ -352,7 +376,9 @@ interface CAutocompleteEvents {
  * (Popover API + CSS anchor positioning, the c-menu mechanism) holds a
  * dedicated SEARCH INPUT above the options. v-model binds the selected value
  * (scalar, or {name,value} with return-object); the query is internal,
- * client-side state filtered through the `filter` predicate.
+ * client-side state filtered through the `filter` predicate — or, with
+ * `external` (ADR-0029), forwarded to the consumer via `change:query` while
+ * the options render verbatim.
  *
  * a11y: an editable combobox — DOM focus stays in the search input while open;
  * options are highlighted virtually via `aria-activedescendant` (never real
@@ -412,6 +438,7 @@ const props = withDefaults(defineProps<CAutocompleteProps>(), {
   clearable: false,
   disabled: false,
   errorMessage: '',
+  external: false,
   filter: undefined,
   hideDetails: false,
   hint: '',
@@ -459,6 +486,15 @@ watch(
 );
 
 const query = ref('');
+
+// Single write-path for user-driven query changes so the emission can never
+// drift from the state; the panel-open reset emits separately (always).
+const setQuery = (next: string) => {
+  if (query.value === next) return;
+
+  query.value = next;
+  emit('change:query', next);
+};
 
 const isOpen = ref(false);
 
@@ -555,10 +591,14 @@ const filterFn = computed<CAutocompleteFilter>(
     ((option, q) => option.label.toLowerCase().startsWith(q.toLowerCase())),
 );
 
+// With `external` the consumer owns filtering (c-data-table's contract): the
+// options render verbatim and `change:query` is the only filtering signal.
+const externalOn = computed(() => coerceBoolean(props.external));
+
 const filteredOptions = computed<NormalizedOption[]>(() => {
   const q = query.value;
 
-  if (!q) return normalizedOptions.value;
+  if (externalOn.value || !q) return normalizedOptions.value;
 
   const fn = filterFn.value;
 
@@ -578,13 +618,33 @@ const selectedValue = computed(() => {
 const isSelected = (opt: NormalizedOption) =>
   selectedValue.value != null && opt.value === selectedValue.value;
 
-const displayLabel = computed(() => {
-  if (selectedValue.value == null) return '';
+// Label of the last committed option, keyed on its value: with `external`
+// the current option list may no longer contain the selection, so the closed
+// field's label must survive `items` swaps.
+const committedLabel = ref<{ label: string; value: number | string } | null>(
+  null,
+);
 
-  return (
-    normalizedOptions.value.find((o) => o.value === selectedValue.value)
-      ?.label ?? ''
-  );
+const displayLabel = computed(() => {
+  const sel = selectedValue.value;
+
+  if (sel == null) return '';
+
+  const fromOptions = normalizedOptions.value.find(
+    (o) => o.value === sel,
+  )?.label;
+
+  if (fromOptions != null) return fromOptions;
+
+  if (committedLabel.value?.value === sel) return committedLabel.value.label;
+
+  // Programmatically-set values the options can't resolve: an object value
+  // carries its own label; a scalar renders as-is.
+  const v = value.value;
+
+  if (v && typeof v === 'object') return (v as CAutocompleteItem).name;
+
+  return String(sel);
 });
 
 // ---- value plumbing -----------------------------------------------------
@@ -595,6 +655,7 @@ const commit = (opt: NormalizedOption) => {
     : opt.value;
 
   value.value = next;
+  committedLabel.value = { label: opt.label, value: opt.value };
   emitModelValue(host, next);
   emit('change', undefined, { bubbles: true, composed: true });
 
@@ -616,7 +677,8 @@ const onSelect = (opt: NormalizedOption) => {
 const onReset = (event?: Event) => {
   event?.stopPropagation();
   value.value = null;
-  query.value = '';
+  committedLabel.value = null;
+  setQuery('');
   emitModelValue(host, null);
   emit('change', undefined, { bubbles: true, composed: true });
 
@@ -669,7 +731,11 @@ const onToggle = (event: Event) => {
   if (nowOpen) {
     void ensureAnchorPositioning(host?.shadowRoot);
     addDismissListeners();
+
+    // Reset the query and tell the consumer — always, even when it was
+    // already empty: with `external` this is what loads the default list.
     query.value = '';
+    emit('change:query', '');
 
     // Seed the active option from the current selection, else the first
     // enabled option.
@@ -756,7 +822,7 @@ const onFieldKeyDown = (event: KeyboardEvent) => {
   ) {
     openPanel();
     requestAnimationFrame(() => {
-      query.value = event.key;
+      setQuery(event.key);
 
       if (searchRef.value) searchRef.value.value = event.key;
       activeIndex.value = filteredOptions.value.findIndex((o) => !o.disabled);
@@ -784,7 +850,7 @@ const moveActive = (dir: -1 | 1) => {
 };
 
 const onSearchInput = (event: Event) => {
-  query.value = (event.target as HTMLInputElement).value;
+  setQuery((event.target as HTMLInputElement).value);
   // Re-seed the active option to the first match so Enter selects something
   // sensible and the aria-activedescendant stays valid.
   requestAnimationFrame(() => {
@@ -873,12 +939,33 @@ const updateStatusText = () => {
   statusDebounce = window.setTimeout(() => {
     const n = filteredOptions.value.length;
 
-    statusText.value = n
-      ? `${n} result${n !== 1 ? 's' : ''} available, navigate using the up and down arrows`
-      : 'No search results available';
+    statusText.value =
+      props.loading && !n
+        ? 'Loading results'
+        : n
+          ? `${n} result${n !== 1 ? 's' : ''} available, navigate using the up and down arrows`
+          : 'No search results available';
     statusDebounce = null;
   }, 1400);
 };
+
+// With `external`, options arrive asynchronously after the query event: keep
+// the virtual highlight (`aria-activedescendant`) pointing at a live enabled
+// row and re-announce the count when the fresh list lands.
+watch([filteredOptions, () => props.loading], () => {
+  if (!isOpen.value) return;
+
+  const opts = filteredOptions.value;
+
+  const active = opts[activeIndex.value];
+
+  if (!active || active.disabled) {
+    activeIndex.value = opts.findIndex((o) => !o.disabled);
+    scrollActiveIntoView();
+  }
+
+  updateStatusText();
+});
 
 // ---- light-dismiss ------------------------------------------------------
 

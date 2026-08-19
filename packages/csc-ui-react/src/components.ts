@@ -153,6 +153,7 @@ export const CAutocomplete = createComponent({
   elementClass: elementClass<CAutocompleteElement>('c-autocomplete'),
   events: {
     onChange: 'change' as EventName<CAutocompleteElementEventMap['change']>,
+    onChangeQuery: 'change:query' as EventName<CAutocompleteElementEventMap['change:query']>,
     onChangeValue: 'changeValue' as EventName<CAutocompleteElementEventMap['changeValue']>,
     onInput: 'input' as EventName<CAutocompleteElementEventMap['input']>,
     onUpdateValue: 'update:value' as EventName<CAutocompleteElementEventMap['update:value']>,

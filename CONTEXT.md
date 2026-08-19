@@ -26,16 +26,24 @@ A **command menu** — a transient panel of actions/navigation choices revealed 
 _Avoid_: Dropdown (that is a distinct value-selection component), popup, context menu, listbox
 
 **Dropdown** (`c-dropdown`):
-The **value-selection** surface behind `c-select`: a `role="listbox"` of options that has a current value and emits `update:value` / `change`. A menu, by contrast, is a list of `role="menuitem"` commands. Keep the two distinct — "the dropdown's select event" is a category error; menus emit `select`, dropdowns emit `update:value`. (`c-autocomplete` is also value-selection but does **not** sit on `c-dropdown` — it renders its own popover panel; see **Autocomplete**.)
+The **value-selection** surface behind `c-select`: a `role="listbox"` of options that has a current value and emits the value events — the grandfathered `changeValue` with its `change-value` **kebab-case twin**, plus `update:value` (ADR-0017/0021). A menu, by contrast, is a list of `role="menuitem"` commands. Keep the two distinct — "the dropdown's select event" is a category error; menus emit `select`, dropdowns emit the value events. (`c-autocomplete` is also value-selection but does **not** sit on `c-dropdown` — it renders its own popover panel; see **Autocomplete**.)
 _Avoid_: Menu (a menu is the command-list component; a dropdown is the value picker)
 
 **Autocomplete** (`c-autocomplete`):
-A **filterable value-selection** component: like `c-select` it holds a persistent selected value and emits `update:value` / `change` over `role="listbox"`/`role="option"` rows, but its options can be narrowed with a text query. Its distinguishing trait is a dedicated **search input** living *inside* the open panel (above the options), separate from the readonly value field. It is built on the popover + CSS-anchor pattern (the same visuals as `c-menu`'s panel), **not** on `c-dropdown`, and reuses only those popover visuals — never `c-menu-item` or the menu role/event contract.
+A **filterable value-selection** component: like `c-select` it holds a persistent selected value and emits the value events (`changeValue` + twin, `update:value`, and a bare `change`) over `role="listbox"`/`role="option"` rows, but its options can be narrowed with a text **query** — filtered by the component itself, or by the consumer in **external** mode. Its distinguishing trait is a dedicated **search input** living *inside* the open panel (above the options), separate from the readonly value field. It is built on the popover + CSS-anchor pattern (the same visuals as `c-menu`'s panel), **not** on `c-dropdown`, and reuses only those popover visuals — never `c-menu-item` or the menu role/event contract.
 _Avoid_: Combobox (reserve for the ARIA role, not the component name), typeahead, suggest, filter menu
 
 **Search input**:
 The text `<input role="combobox">` rendered inside `c-autocomplete`'s open panel that filters the options. Distinct from the **value field** (the readonly `c-input` trigger that displays the current selection). DOM focus stays in the search input while the panel is open; option highlighting is virtual (`aria-activedescendant`), never real DOM focus.
 _Avoid_: Query field, filter box (use _search input_)
+
+**Query**:
+The transient text currently typed into the **search input** — the narrowing criterion, distinct from the committed selected value. It resets to empty whenever the panel opens, and every change (the open-reset included) is announced via the `change:query` event; in **external** mode that event is the consumer's signal to refresh the options.
+_Avoid_: Search term, filter string (one word for this concept — _query_), value (the query is never the selected value)
+
+**External** (mode):
+The contract where the consumer owns a component's data operation — filtering, sorting, paging, typically because a server does the work: with the `external` prop set, the component renders the data it is given verbatim and only emits state-change events (`change:query`, `change:sort`, …) for the consumer to act on. Shared vocabulary of `c-data-table` and `c-autocomplete` (ADR-0029).
+_Avoid_: Server-side mode (the owner need not be a server), no-filter (foreign Vuetify vocabulary), manual (TanStack's internal word)
 
 **Trigger**:
 The consumer-supplied element (typically a `c-button`) projected into a `c-menu`'s `trigger` slot that toggles the menu open/closed. The menu mirrors `aria-haspopup` / `aria-expanded` onto it but does not own it.
@@ -253,8 +261,8 @@ _Avoid_: Override (the variant adds a tab; it replaces nothing), translation, po
 
 > **Dev:** Should I add a `changeValue` listener for the new dropdown?
 >
-> **Lead:** No — `c-dropdown` emits `update:value` for v-model and `change` for everyone else. `changeValue` was the Stencil-era (3.x) event; if you see it in an app, that app hasn't upgraded yet.
+> **Lead:** You can — `changeValue` is still the canonical value event. It's a grandfathered Stencil-era name (ADR-0017), so it dispatches its `change-value` kebab-case twin and `update:value` alongside; a Vue template binds the twin, or just uses `v-model`.
 >
-> **Dev:** So what does a 3.x app listening to `changeValue` do when it upgrades?
+> **Dev:** So what actually broke for a 3.x app on upgrade?
 >
-> **Lead:** It switches to `update:value` / `change` as part of the upgrade — the migration guide lists every renamed event. There's no compatibility shim; the upgrade is all-at-once.
+> **Lead:** The value events survived; the autocomplete's query API didn't — `changeQuery` is gone, and its replacement `change:query` follows the new all-lowercase convention, so it gets no twin. There's no compatibility shim; the upgrade is all-at-once.
