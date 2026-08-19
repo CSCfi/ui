@@ -23,7 +23,7 @@ A **pnpm workspaces monorepo** (ADR-0001, no Lerna):
 ```bash
 # From the root
 pnpm build          # build all packages (topological)
-pnpm dev            # watch csc-ui + docs dev server (http://localhost:3000)
+pnpm dev            # watch csc-ui + docs dev server (http://localhost:3500)
 pnpm ui <script>    # run a script in packages/csc-ui
 
 # In packages/csc-ui

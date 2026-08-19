@@ -18,6 +18,8 @@ input without a rewrite.
   correct pattern when a persistent text input is present.
 - `c-dropdown`'s existing `type="autocomplete"` mode (query highlight, empty /
   minimum-query messages) goes unused by this component; it remains for any
-  future dialog-style autocomplete.
+  future dialog-style autocomplete. *(Amended by ADR-0029 (2026-08-19): async
+  data is now `c-autocomplete`'s external mode, foreclosing that future — the
+  unused machinery is deleted from `c-dropdown`.)*
 - Some positioning/empty-state logic is duplicated rather than shared. Accepted
   as the cost of matching the reference UX and the ADR-0008 popover direction.
