@@ -6,5 +6,7 @@
     "@cscfi/csc-ui-documentation": "0.0.1",
     "@cscfi/csc-ui-react": "3.0.20"
   },
-  "changesets": []
+  "changesets": [
+    "vue-rewrite-major"
+  ]
 }
