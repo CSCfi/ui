@@ -55,9 +55,9 @@ import { computed } from 'vue';
 /**
  * Styling lives entirely in this `tailwind-variants` config; `root`
  * (the padded <footer>) and `actions` (the flex row) are the public parts.
- * Horizontal padding keys off `--_c-card-gap` (the shared spacing
+ * Horizontal padding keys off `--_c-card-padding-inline` (the shared spacing
  * contract the parent c-card sets, inheriting across the shadow boundary) with
- * a 24px fallback. Vertical padding is intentionally absent — the parent card's
+ * a 28px fallback. Vertical padding is intentionally absent — the parent card's
  * article already supplies `padding-block`. The `align`/`justify` props drive
  * the flex alignment via variants. `::slotted(...)` stretch rules stay in the
  * escape-hatch <style>: they target consumer light-DOM children.
@@ -88,7 +88,7 @@ const cardActions = tv({
   },
   slots: {
     actions: 'm-0 p-0 flex gap-2',
-    root: 'px-[var(--_c-card-gap,24px)]',
+    root: 'px-[var(--_c-card-padding-inline,28px)]',
   },
   variants: {
     align: alignVariants,

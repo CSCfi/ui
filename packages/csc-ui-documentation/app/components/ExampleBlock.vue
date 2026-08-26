@@ -9,7 +9,10 @@
       {{ example.title }}
     </figcaption>
 
-    <div class="px-4 py-6">
+    <!-- Demo pane: white in light mode, the c-main app canvas in dark, so
+         examples render against the surface they'd meet in a real app
+         (see .example-demo in assets/site.css). -->
+    <div class="example-demo px-4 py-6">
       <!-- The live demo is always the Vue canon (compiled SFC), whatever the
            selected flavor — the variants differ in source, not behavior.
            Client-only: the csc-ui custom elements upgrade only on the client,

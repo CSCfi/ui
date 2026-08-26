@@ -75,13 +75,20 @@ interface CAccordionItemEvents {
 // through global design tokens, and consumer customization through `::part()`
 // (there is no `override` prop). The grid-template-rows
 // collapse, chevron rotate and inset outline are all expressible as utilities,
-// so no bespoke CSS remains. `root` deliberately has no `overflow-hidden`
+// so no bespoke CSS remains. The header follows the MyCSC accordion anatomy:
+// `primary-subtle` fill with a `primary-subtle-hover` hairline border (the
+// hover tone doubles as the resting border, so hovering closes the gap),
+// `on-surface` heading, and `on-primary-subtle` icon/chevron accents. `root` deliberately has no `overflow-hidden`
 // (that would clip the header's focus outline); clipping lives on the content
 // wrapper + content. The `*:` child variant on `icon` reproduces the old
 // `.icon > *` sizing without `::slotted`.
 const accordionItem = tv({
   compoundVariants: [
-    { class: { header: 'cursor-default' }, collapsable: false, expanded: true },
+    {
+      class: { header: 'cursor-default hover:bg-primary-subtle' },
+      collapsable: false,
+      expanded: true,
+    },
   ],
   defaultVariants: {
     collapsable: false,
@@ -90,16 +97,16 @@ const accordionItem = tv({
     outlined: false,
   },
   slots: {
-    content: 'min-h-0 overflow-hidden p-4 text-current',
+    content: 'min-h-0 overflow-hidden p-4 text-on-surface-muted',
     contentWrapper:
       'grid grid-rows-[minmax(0,0fr)] overflow-hidden transition-[grid-template-rows] duration-300 ease-standard',
     header:
-      'bg-primary-subtle min-h-[46px] text-primary select-none grid grid-cols-[1fr_auto] gap-x-2 items-center px-3 rounded-csc-md cursor-pointer text-left m-0 [font:inherit] text-inherit border-0 w-full relative focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary',
+      'bg-primary-subtle hover:bg-primary-subtle-hover transition-colors duration-200 ease-standard min-h-[46px] text-on-primary-subtle select-none grid grid-cols-[1fr_auto] gap-x-2 items-center px-3 rounded-csc-md cursor-pointer text-left m-0 [font:inherit] border border-solid border-primary-subtle-hover w-full relative focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary',
     icon: 'h-6 text-2xl text-current flex items-center *:h-6 *:flex *:items-center',
     indicator:
       'flex items-center text-current -rotate-90 transition-transform duration-300 ease-standard',
     root: 'block max-w-full rounded-csc-md',
-    title: 'm-0 font-medium text-base leading-none text-current',
+    title: 'm-0 font-medium text-base leading-none text-on-surface',
   },
   variants: {
     collapsable: {

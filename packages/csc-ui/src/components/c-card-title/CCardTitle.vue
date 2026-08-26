@@ -34,13 +34,15 @@ import { useHasSlot } from '../../shared/useHasSlot';
  * Styling lives entirely in this `tailwind-variants` config; the
  * stamped parts (`root`, `header`, `heading`, `underline`, `actions`) are the
  * public customization surface. The typography that the original
- * carried on `:host` now lives on the `root` element. Colours come from the
- * semantic-token layer (`on-surface-muted` text, `primary` underline)
+ * carried on `:host` now lives on the `root` element and follows the MyCSC
+ * design spec's section-title anatomy (13.5px/700 uppercase, 1.2px tracking,
+ * 42×3px accent bar 8px below). Colours come from the semantic-token layer
+ * (`on-surface` heading — the spec's headings role — `primary` underline)
  * — the old `--c-card-title-color` / `--c-card-title-underline-color` override
- * indirection is dropped. `padding-inline` keys off `--_c-card-gap` (the shared
- * spacing contract the parent c-card sets, inheriting across the shadow
- * boundary) with a 24px fallback. The `actions` variant turns the header row
- * into a side-by-side flex layout when the `actions` slot has content.
+ * indirection is dropped. `padding-inline` keys off `--_c-card-padding-inline`
+ * (the shared spacing contract the parent c-card sets, inheriting across the
+ * shadow boundary) with a 28px fallback. The `actions` variant turns the header
+ * row into a side-by-side flex layout when the `actions` slot has content.
  */
 const cardTitle = tv({
   defaultVariants: {
@@ -50,8 +52,8 @@ const cardTitle = tv({
     actions: 'flex flex-wrap-reverse items-center justify-end gap-2 flex-1',
     header: '',
     heading: 'm-0',
-    root: 'block px-[var(--_c-card-gap,24px)] uppercase text-balance font-medium text-base text-on-surface-muted [font-family:var(--c-font-family)]',
-    underline: 'mt-2.5 h-1 w-11 rounded bg-primary',
+    root: 'block px-[var(--_c-card-padding-inline,28px)] uppercase text-balance font-bold text-[13.5px] tracking-[1.2px] text-on-surface [font-family:var(--c-font-family)]',
+    underline: 'mt-2 h-[3px] w-[42px] rounded-[2px] bg-primary',
   },
   variants: {
     actions: {
