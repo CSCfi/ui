@@ -471,7 +471,12 @@ const columns: CDataTableColumn<User>[] = [
         filename: 'Other components',
         lang: 'md',
         code: `- c-autocomplete: no longer built on c-dropdown; it renders its own popover
-  panel with an internal search input. Option/value events are unchanged.
+  panel with an internal search input. Option/value events are unchanged, but
+  the 3.x query API is not: the query prop, the changeQuery event and the
+  minimum-query-length / minimum-query-length-message props are removed. For
+  an async data source, set external and listen to change:query (detail: the
+  query string) — see the c-autocomplete external example. A custom match is
+  the filter prop; no-matching-items-message is now no-results-text.
 - c-modal: no native top layer / ::backdrop. New vocabulary — the scrim token
   and a dismissable prop (governs both backdrop-click and Escape).
 - c-menu: authored declaratively with slotted c-menu-item / c-menu-label

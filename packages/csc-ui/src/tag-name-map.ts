@@ -24,7 +24,6 @@ type DropdownItem = {
   disabled?: boolean;
   name: string;
   outerHTML?: string;
-  querySelector?: (s: string) => Element | null;
   selected?: boolean;
   value: number | string;
 };
@@ -148,6 +147,13 @@ export interface CAutocompleteElementEventMap {
    */
   change: CustomEvent<void>;
   /**
+   * Fired whenever the query changes — on every keystroke in the search
+   * input, and with an empty string when the panel opens. Carries the query
+   * string. With `external`, drive your data source from this (debounce on
+   * your side) and feed the results back via `items`.
+   */
+  'change:query': CustomEvent<string>;
+  /**
    * Fired when the selected value changes (an option is committed or the
    * selection is cleared), carrying the new value — the option's value, or
    * the whole `{ name, value }` item when `return-object` is set; `null`
@@ -167,14 +173,20 @@ export interface CAutocompleteElementEventMap {
 }
 
 /** A filterable value-selection component: a readonly value field that opens a popover panel with a search input above the matching options. */
-export interface CAutocompleteElement extends Omit<HTMLElement, 'clearable' | 'disabled' | 'errorMessage' | 'filter' | 'hideDetails' | 'hint' | 'hostId' | 'items' | 'itemsPerPage' | 'label' | 'labelOnTop' | 'loading' | 'name' | 'noResultsText' | 'placeholder' | 'required' | 'returnObject' | 'shadow' | 'valid' | 'value'> {
+export interface CAutocompleteElement extends Omit<HTMLElement, 'clearable' | 'disabled' | 'errorMessage' | 'external' | 'filter' | 'hideDetails' | 'hint' | 'hostId' | 'items' | 'itemsPerPage' | 'label' | 'labelOnTop' | 'loading' | 'name' | 'noResultsText' | 'placeholder' | 'required' | 'returnObject' | 'shadow' | 'valid' | 'value'> {
   /** Make the selected value clearable */
   clearable?: boolean;
   /** Disable the input */
   disabled?: boolean;
   /** Error message shown in place of the hint while the autocomplete is invalid */
   errorMessage?: string;
-  /** Custom filter predicate; receives a normalized option + the query */
+  /**
+   * The consumer owns filtering: the component renders its options verbatim
+   * and only emits `change:query` as the user types. Pair with `loading` and
+   * an async data source feeding `items`
+   */
+  external?: boolean;
+  /** Custom filter predicate; receives a normalized option + the query. Ignored when `external` is set */
   filter?: CAutocompleteFilter;
   /** Hide the hint and error messages */
   hideDetails?: boolean;
