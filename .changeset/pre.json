@@ -7,7 +7,10 @@
     "@cscfi/csc-ui-react": "3.0.20"
   },
   "changesets": [
+    "accordion-mycsc-colors",
     "autocomplete-external-mode",
+    "card-mycsc-anatomy",
+    "dark-mode-mycsc-retune",
     "vue-rewrite-major"
   ]
 }
