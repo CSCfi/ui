@@ -24,7 +24,7 @@
 /**
  * @slot default - Card components
  *
- * @csspart root - The card's visible surface, carries the background, radius, shadow and section spacing
+ * @csspart root - The card's visible surface, carries the background, border, radius, shadow and section spacing
  * @csspart fullscreen-toggle - The circular fullscreen toggle button shown when the fullscreen prop is set
  *
  * @seeded from csc-ui — verify
@@ -39,20 +39,22 @@ import { computed, onBeforeUnmount, onMounted, ref, useHost } from 'vue';
  * Styling lives in this `tailwind-variants` config. The inner
  * `<article>` (`root` part) is the card's visible box: it stacks the card
  * sections vertically with gap + block padding AND carries the card's visual
- * surface — background, border-radius and `overflow-hidden` here, plus the drop
- * shadow as plain CSS in the escape-hatch <style> (Tailwind doesn't emit a rule
- * for the multi-layer arbitrary `shadow-[...]` value in this setup). All of it
+ * surface — background, hairline border, border-radius and `overflow-hidden`
+ * here, plus the drop shadow as plain CSS in the escape-hatch <style>
+ * (arbitrary `shadow-[...]` values don't emit reliably in this setup). All of it
  * lives on the part (not `:host`) so consumers can restyle the whole box through
  * `c-card::part(root) { … }`; the host is no longer the styled
  * surface. The `fullscreen-toggle` is the 40px circular button, anchored to
  * `root` (`relative`).
  *
  * The old `--c-card-background-color` / `--c-card-gap` public override vars are
- * dropped; the background is the `bg-white` token and the gap is the design
- * value `clamp(1rem,2vw,1.5rem)` exposed once as `--_c-card-gap` on the host
- * (see the escape-hatch <style>) so the slotted child sections (c-card-title /
- * c-card-content / c-card-actions) can read the same spacing across their
- * shadow boundaries.
+ * dropped; the background/border are semantic tokens and the spacing contract
+ * lives in two private host vars (see the escape-hatch <style>) the slotted
+ * child sections (c-card-title / c-card-content / c-card-actions) read across
+ * their shadow boundaries: `--_c-card-gap` (block padding + section gap,
+ * `clamp(1rem,2vw,1.5rem)` → 24px) and `--_c-card-padding-inline`
+ * (`clamp(1rem,2.33vw,1.75rem)` → 28px), matching the 24px/28px card padding
+ * of the MyCSC design spec.
  *
  * The host stays a real box only for structure: it must override the global
  * `:host{display:contents}` so it can size to / be sized by `root`, and it is
@@ -63,8 +65,8 @@ import { computed, onBeforeUnmount, onMounted, ref, useHost } from 'vue';
 const card = tv({
   slots: {
     fullscreenToggle:
-      'absolute top-[calc(var(--_c-card-gap)-8px)] right-[calc(var(--_c-card-gap)-8px)] z-[1] flex items-center justify-center size-10 p-0 border-0 rounded-full bg-transparent text-primary cursor-pointer transition-colors duration-300 ease-standard hover:bg-primary-subtle-hover focus:outline-none focus-visible:outline-2 focus-visible:outline-solid focus-visible:outline-primary focus-visible:outline-offset-2',
-    root: 'relative flex flex-col flex-1 max-w-full gap-[var(--_c-card-gap)] py-[var(--_c-card-gap)] bg-surface-raised rounded-csc-xl overflow-hidden',
+      'absolute top-[calc(var(--_c-card-gap)-8px)] right-[calc(var(--_c-card-padding-inline)-8px)] z-[1] flex items-center justify-center size-10 p-0 border-0 rounded-full bg-transparent text-primary cursor-pointer transition-colors duration-300 ease-standard hover:bg-primary-subtle-hover focus:outline-none focus-visible:outline-2 focus-visible:outline-solid focus-visible:outline-primary focus-visible:outline-offset-2',
+    root: 'relative flex flex-col flex-1 max-w-full gap-[var(--_c-card-gap)] py-[var(--_c-card-gap)] bg-surface-raised border border-solid border-border rounded-csc-xl overflow-hidden',
   },
 });
 
@@ -159,9 +161,9 @@ defineExpose({ enterFullscreen, exitFullscreen });
     `:host{display:contents}` (the per-type sheet is adopted after the shared
     one, so it wins). The host is an invisible wrapper sized to `root` in normal
     flow and the element `requestFullscreen()` targets; `root` (flex-1) fills it.
-  - `--_c-card-gap` — the single shared spacing contract (a responsive design
-    value, not a token) defined on the host so the slotted card sections inherit
-    it across their shadow boundaries.
+  - `--_c-card-gap` / `--_c-card-padding-inline` — the shared spacing contract
+    (responsive design values, not tokens) defined on the host so the slotted
+    card sections inherit them across their shadow boundaries.
   - `:host(:fullscreen) [part='root']` — a positional `:host(...)` selector that
     flattens the (now part-owned) radius and lets the filled box scroll when the
     host is blown up to the full screen.
@@ -169,6 +171,7 @@ defineExpose({ enterFullscreen, exitFullscreen });
 <style>
 :host {
   --_c-card-gap: clamp(1rem, 2vw, 1.5rem);
+  --_c-card-padding-inline: clamp(1rem, 2.33vw, 1.75rem);
 
   display: flex;
 }
@@ -178,14 +181,13 @@ defineExpose({ enterFullscreen, exitFullscreen });
   overflow: auto;
 }
 
-/* The drop shadow is plain CSS, not a `shadow-[...]` utility: the multi-layer
-   arbitrary shadow utility did not paint in this adopted-stylesheet shadow-DOM
-   setup, whereas a direct `box-shadow` is reliable (and matches the original).
-   Authored on the `root` part (not the host) so it stays consumer-overridable
-   via `::part(root)`. */
+/* The drop shadow is plain CSS, not a `shadow-[...]` utility: arbitrary shadow
+   utilities did not paint reliably in this adopted-stylesheet shadow-DOM setup,
+   whereas a direct `box-shadow` is. A single soft layer: elevation is expressed
+   primarily by the surface + 1px border (per the design spec), not by a heavy
+   shadow. Authored on the `root` part (not the host) so it stays
+   consumer-overridable via `::part(root)`. */
 [part='root'] {
-  box-shadow:
-    rgba(0, 0, 0, 0.15) 0 10px 20px,
-    rgba(0, 0, 0, 0.2) 0 5px 5px;
+  box-shadow: rgba(0, 0, 0, 0.25) 0 2px 8px;
 }
 </style>

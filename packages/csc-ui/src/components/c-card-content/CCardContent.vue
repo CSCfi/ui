@@ -17,16 +17,17 @@ import { computed } from 'vue';
 
 /**
  * Styling lives entirely in this `tailwind-variants` config and the
- * `root` is the public part. Horizontal padding and the vertical
- * gap both key off `--_c-card-gap` (the shared spacing contract the parent
- * c-card sets on its inner element; it inherits across the shadow boundary
- * into this slotted child). It falls back to 24px when used outside a c-card.
+ * `root` is the public part. Horizontal padding keys off
+ * `--_c-card-padding-inline` and the vertical gap off `--_c-card-gap` (the
+ * shared spacing contract the parent c-card sets on its inner element; both
+ * inherit across the shadow boundary into this slotted child), falling back
+ * to 28px/24px when used outside a c-card.
  * `::slotted(*)` clamping consumer content stays in the escape-hatch <style>
  * — utilities cannot target slotted light-DOM children.
  */
 const cardContent = tv({
   slots: {
-    root: 'flex flex-col gap-[var(--_c-card-gap,24px)] px-[var(--_c-card-gap,24px)]',
+    root: 'flex flex-col gap-[var(--_c-card-gap,24px)] px-[var(--_c-card-padding-inline,28px)]',
   },
 });
 

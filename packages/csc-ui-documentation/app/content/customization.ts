@@ -292,31 +292,31 @@ export const TOKEN_GROUPS: TokenGroup[] = [
       {
         token: 'surface',
         light: 'white',
-        dark: 'slate-900',
+        dark: 'slate-800',
         purpose: 'Default page and app background.',
       },
       {
         token: 'surface-raised',
         light: 'white',
-        dark: 'slate-900',
+        dark: 'slate-800',
         purpose: 'Cards and other blocks lifted off the page.',
       },
       {
         token: 'surface-overlay',
         light: 'white',
-        dark: 'slate-800',
+        dark: 'slate-700',
         purpose: 'Floating layers: menus, popovers, modals.',
       },
       {
         token: 'surface-muted',
         light: 'tertiary-100',
-        dark: 'slate-800',
+        dark: 'slate-850',
         purpose: 'Subdued fills: wells, code captions, table stripes.',
       },
       {
         token: 'surface-sunken',
         light: 'primary-100',
-        dark: 'slate-950',
+        dark: 'slate-900',
         purpose: 'Recessed areas set below the page.',
       },
     ],
@@ -327,13 +327,13 @@ export const TOKEN_GROUPS: TokenGroup[] = [
       {
         token: 'on-surface',
         light: 'primary-900',
-        dark: 'white',
+        dark: 'slate-100',
         purpose: 'Default body text and icons.',
       },
       {
         token: 'on-surface-muted',
         light: 'tertiary-500',
-        dark: 'slate-100',
+        dark: 'slate-300',
         purpose: 'Secondary text.',
       },
       {
@@ -345,7 +345,7 @@ export const TOKEN_GROUPS: TokenGroup[] = [
       {
         token: 'on-surface-sunken',
         light: 'primary-700',
-        dark: 'primary-200',
+        dark: 'slate-100',
         purpose: 'Text on the sunken surface.',
       },
     ],
@@ -368,7 +368,7 @@ export const TOKEN_GROUPS: TokenGroup[] = [
       {
         token: 'ring',
         light: 'primary-500',
-        dark: 'primary-400',
+        dark: 'accent-400',
         purpose: 'Keyboard focus ring.',
       },
     ],

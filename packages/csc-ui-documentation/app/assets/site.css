@@ -169,3 +169,22 @@ c-side-navigation:not(:defined) {
     display: none;
   }
 }
+
+/* ── Example demo pane: white in light mode, the c-main app canvas
+      (surface-sunken) in dark. No single semantic token flips this way and
+      the docs has no data-theme-aware `dark:` variant, so it follows the
+      same three-state selector pattern as the Shiki rules above. ── */
+
+.example-demo {
+  background-color: var(--c-white);
+}
+
+:root[data-theme='dark'] .example-demo {
+  background-color: var(--c-surface-sunken);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme]) .example-demo {
+    background-color: var(--c-surface-sunken);
+  }
+}
