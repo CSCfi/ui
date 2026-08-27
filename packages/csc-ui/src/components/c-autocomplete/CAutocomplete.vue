@@ -21,6 +21,7 @@
       :label-on-top
       :required
       :shadow
+      :size
       :valid
       @click="onFieldClick"
     >
@@ -194,7 +195,7 @@
 </template>
 
 <script lang="ts">
-import type { CSelectItem } from '../../types';
+import type { CFieldSize, CSelectItem } from '../../types';
 
 /**
  * Custom filter predicate for `c-autocomplete`. Return `true` to keep the
@@ -296,6 +297,8 @@ export interface CAutocompleteProps {
   returnObject?: boolean;
   /** Shadow variant */
   shadow?: boolean;
+  /** Field height: the 44px default or the 36px `small` box */
+  size?: CFieldSize;
   /** Set the validity of the input */
   valid?: boolean;
   /** Selected value (scalar, or object when return-object is set) */
@@ -403,7 +406,7 @@ const autocomplete = tv({
       'max-h-8 py-2 bg-transparent border-0 text-on-surface flex-[1_1_auto] [font-family:var(--c-font-family)] text-base leading-5 max-w-full min-w-0 w-full cursor-pointer outline-none focus:outline-none active:outline-none placeholder:text-on-surface-muted placeholder:opacity-100',
     item: 'flex items-center flex-nowrap gap-3 cursor-pointer text-sm min-h-[42px] outline-none px-[10px] whitespace-nowrap w-full rounded select-none data-[active]:bg-primary-subtle data-[active]:text-primary data-[active]:ring-1 data-[active]:ring-inset data-[active]:ring-primary text-on-surface',
     itemLabel: 'flex-auto overflow-hidden text-ellipsis whitespace-nowrap',
-    list: 'list-none m-0 p-1 outline-none overflow-y-auto w-full',
+    list: 'list-none m-0 p-1 outline-none overflow-y-auto w-full [scrollbar-width:none] [&::-webkit-scrollbar]:hidden',
     panel:
       'fixed m-0 p-0 border-0 bg-transparent overflow-visible [inset:auto]',
     search:
@@ -454,6 +457,7 @@ const props = withDefaults(defineProps<CAutocompleteProps>(), {
   required: false,
   returnObject: false,
   shadow: false,
+  size: 'default',
   valid: true,
   value: null,
 });
@@ -538,10 +542,18 @@ const hideDetailsResolved = computed(() =>
 
 const ui = computed(() => autocomplete({ chevronActive: isOpen.value }));
 
+// The anchor wrapper spans the whole inner c-input, INCLUDING its hint /
+// error message area (which is reserved unless `hide-details` is set). The
+// panel must sit flush under the field itself, so the message area's height
+// is measured on open and pulled back with a negative block-start margin.
+const messageOffset = ref(0);
+
 const panelStyle = computed(() => {
   const w = panelWidth.value ? `width:${panelWidth.value}px;` : '';
 
-  return `position-anchor:--c-autocomplete-anchor;position-area:bottom span-right;inset:auto;${w}`;
+  const m = messageOffset.value ? `margin-top:-${messageOffset.value}px;` : '';
+
+  return `position-anchor:--c-autocomplete-anchor;position-area:bottom span-right;inset:auto;${w}${m}`;
 });
 
 // Cap the list height at itemsPerPage rows (42px each) before scrolling.
@@ -709,6 +721,14 @@ const openPanel = () => {
 
   // Pin the panel width to the field before showing so it lines up.
   panelWidth.value = anchorRef.value?.getBoundingClientRect().width ?? 0;
+
+  // Anchor to the bottom of the FIELD, not the c-input's message area.
+  const inputEl = cInputRef.value;
+
+  const message =
+    inputEl?.shadowRoot?.querySelector<HTMLElement>("[part='message']");
+
+  messageOffset.value = message?.getBoundingClientRect().height ?? 0;
 
   if (typeof p.showPopover === 'function') p.showPopover();
 };
@@ -1069,11 +1089,22 @@ onBeforeUnmount(() => {
   display: none;
 }
 
+/* When flipped above the field the message-area offset (a negative
+ * margin-top set inline) must not apply: the panel's bottom edge then meets
+ * the anchor's top edge, which IS the field's top. */
+@position-try --c-autocomplete-above {
+  position-area: top span-right;
+  margin-top: 0;
+}
+
+@position-try --c-autocomplete-above-left {
+  position-area: top span-left;
+  margin-top: 0;
+}
+
 [part='panel'] {
   position-try-fallbacks:
-    flip-block,
-    flip-inline,
-    flip-block flip-inline;
+    --c-autocomplete-above, flip-inline, --c-autocomplete-above-left;
 }
 
 [part='panel']:popover-open {

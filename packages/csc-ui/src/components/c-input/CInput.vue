@@ -1,5 +1,5 @@
 <template>
-  <div ref="rootRef" :class="ui.root()" part="root">
+  <div ref="rootRef" :class="ui.root()" :data-size="sizeResolved" part="root">
     <label
       v-if="labelOnTop && label"
       ref="labelTopRef"
@@ -119,6 +119,8 @@ import {
   watch,
 } from 'vue';
 
+import type { CFieldSize } from '../../types';
+
 import { coerceBoolean } from '../../shared/coerceBoolean';
 import { useHasSlot } from '../../shared/useHasSlot';
 
@@ -139,6 +141,21 @@ import { useHasSlot } from '../../shared/useHasSlot';
  * `data-active` hooks the script still sets on those elements) — and the
  * slotted `<input>`/`<textarea>` (which we don't own) via `::slotted(...)`.
  */
+// Hoisted so the runtime guard below can test membership; the `satisfies`
+// keeps the map complete against the public union. `small` shrinks the field
+// box to 36px and rests the floating label accordingly (its lifted transform
+// is keyed off `data-size` in the escape-hatch <style>).
+const sizeVariants = {
+  default: {},
+  small: {
+    // Same 16px label as the default box (the lifted 0.75 scale gives the
+    // same 12px legend text); only its resting offset changes so the 24px
+    // line box centres in the 36px field.
+    labelFloating: 'top-2',
+    slot: 'min-h-9',
+  },
+} satisfies Record<CFieldSize, object>;
+
 const input = tv({
   compoundVariants: [
     // Color the label on active field only if the 'labelOnTop' is set to 'false'
@@ -160,6 +177,7 @@ const input = tv({
     labelOnTop: false,
     messageError: false,
     shadow: false,
+    size: 'default',
     textarea: false,
   },
   slots: {
@@ -252,6 +270,7 @@ const input = tv({
         slot: 'bg-surface-overlay [box-shadow:rgba(0,0,0,0.15)_0_5px_15px_0] focus-within:outline-2 focus-within:outline-solid focus-within:outline-primary',
       },
     },
+    size: sizeVariants,
     textarea: {
       true: { field: '-mr-3' },
     },
@@ -321,6 +340,8 @@ interface CInputProps {
    * @seeded from csc-ui — verify
    */
   shadow?: boolean;
+  /** Field height: the 44px default or the 36px `small` box */
+  size?: CFieldSize;
   /**
    * Set the validíty of the input
    *
@@ -342,6 +363,7 @@ const props = withDefaults(defineProps<CInputProps>(), {
   labelOnTop: false,
   required: false,
   shadow: false,
+  size: 'default',
   valid: true,
 });
 
@@ -386,6 +408,12 @@ const isActiveResolved = computed(() => props.active || isFocused.value);
 
 const showError = computed(() => !props.valid && Boolean(props.errorMessage));
 
+// Attributes can deliver any string at runtime; unknown values fall back to
+// the default size.
+const sizeResolved = computed<CFieldSize>(() =>
+  props.size in sizeVariants ? props.size : 'default',
+);
+
 const ui = computed(() =>
   input({
     active: isActiveResolved.value,
@@ -394,6 +422,7 @@ const ui = computed(() =>
     labelOnTop: props.labelOnTop,
     messageError: showError.value,
     shadow: props.shadow,
+    size: sizeResolved.value,
     textarea: props.isTextarea,
   }),
 );
@@ -616,6 +645,13 @@ watch(
  * otherwise leave the text hanging below the border. */
 .c-input__label--floating[data-lifted] {
   transform: translateX(0) translateY(-20px) scale(0.75);
+}
+
+/* Small (36px) field: the label rests at top 8px (line-box centre at 20px),
+ * so a 16px lift lands its glyphs on the border line (same Noto-metric
+ * compensation as above). */
+[data-size='small'] .c-input__label--floating[data-lifted] {
+  transform: translateX(0) translateY(-16px) scale(0.75);
 }
 
 /* Same 200ms slide+fade transition the c-checkbox uses, so hint↔error

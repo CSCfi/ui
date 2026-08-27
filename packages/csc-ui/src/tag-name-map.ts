@@ -173,7 +173,7 @@ export interface CAutocompleteElementEventMap {
 }
 
 /** A filterable value-selection component: a readonly value field that opens a popover panel with a search input above the matching options. */
-export interface CAutocompleteElement extends Omit<HTMLElement, 'clearable' | 'disabled' | 'errorMessage' | 'external' | 'filter' | 'hideDetails' | 'hint' | 'hostId' | 'items' | 'itemsPerPage' | 'label' | 'labelOnTop' | 'loading' | 'name' | 'noResultsText' | 'placeholder' | 'required' | 'returnObject' | 'shadow' | 'valid' | 'value'> {
+export interface CAutocompleteElement extends Omit<HTMLElement, 'clearable' | 'disabled' | 'errorMessage' | 'external' | 'filter' | 'hideDetails' | 'hint' | 'hostId' | 'items' | 'itemsPerPage' | 'label' | 'labelOnTop' | 'loading' | 'name' | 'noResultsText' | 'placeholder' | 'required' | 'returnObject' | 'shadow' | 'size' | 'valid' | 'value'> {
   /** Make the selected value clearable */
   clearable?: boolean;
   /** Disable the input */
@@ -216,6 +216,8 @@ export interface CAutocompleteElement extends Omit<HTMLElement, 'clearable' | 'd
   returnObject?: boolean;
   /** Shadow variant */
   shadow?: boolean;
+  /** Field height: the 44px default or the 36px `small` box */
+  size?: 'default' | 'small';
   /** Set the validity of the input */
   valid?: boolean;
   /** Selected value (scalar, or object when return-object is set) */
@@ -670,7 +672,7 @@ export interface CIconButtonElement extends Omit<HTMLElement, 'badge' | 'danger'
   text?: boolean;
 }
 
-export interface CInputElement extends Omit<HTMLElement, 'active' | 'disabled' | 'errorMessage' | 'filled' | 'hideDetails' | 'hint' | 'inputId' | 'isTextarea' | 'label' | 'labelOnTop' | 'required' | 'shadow' | 'valid'> {
+export interface CInputElement extends Omit<HTMLElement, 'active' | 'disabled' | 'errorMessage' | 'filled' | 'hideDetails' | 'hint' | 'inputId' | 'isTextarea' | 'label' | 'labelOnTop' | 'required' | 'shadow' | 'size' | 'valid'> {
   /** Set by the wrapping form component when its input has focus or holds a value. */
   active?: boolean;
   /** Disable the input */
@@ -695,6 +697,8 @@ export interface CInputElement extends Omit<HTMLElement, 'active' | 'disabled' |
   required?: boolean;
   /** Shadow variant of the input */
   shadow?: boolean;
+  /** Field height: the 44px default or the 36px `small` box */
+  size?: 'default' | 'small';
   /** Set the validíty of the input */
   valid?: boolean;
 }
@@ -1193,7 +1197,7 @@ export interface CSelectElementEventMap {
   'update:value': CustomEvent<CSelectItem | null | number | string>;
 }
 
-export interface CSelectElement extends Omit<HTMLElement, 'clearable' | 'disabled' | 'errorMessage' | 'hideDetails' | 'hint' | 'hostId' | 'items' | 'itemsPerPage' | 'label' | 'labelOnTop' | 'loading' | 'name' | 'optionAsSelection' | 'placeholder' | 'required' | 'returnObject' | 'shadow' | 'valid' | 'value'> {
+export interface CSelectElement extends Omit<HTMLElement, 'clearable' | 'disabled' | 'errorMessage' | 'hideDetails' | 'hint' | 'hostId' | 'items' | 'itemsPerPage' | 'label' | 'labelOnTop' | 'loading' | 'name' | 'optionAsSelection' | 'placeholder' | 'required' | 'returnObject' | 'shadow' | 'size' | 'valid' | 'value'> {
   /** Make the selected value clearable */
   clearable?: boolean;
   /** Disable the input */
@@ -1228,6 +1232,8 @@ export interface CSelectElement extends Omit<HTMLElement, 'clearable' | 'disable
   returnObject?: boolean;
   /** Shadow variant */
   shadow?: boolean;
+  /** Field height: the 44px default or the 36px `small` box */
+  size?: 'default' | 'small';
   /** Set the validity of the input */
   valid?: boolean;
   /** Selected value (scalar, or object when return-object is set) */
@@ -1797,7 +1803,7 @@ export interface CTextFieldElementEventMap {
   'update:value': CustomEvent<string>;
 }
 
-export interface CTextFieldElement extends Omit<HTMLElement, 'autocomplete' | 'autocorrect' | 'automaticCapitalize' | 'disabled' | 'errorMessage' | 'hideDetails' | 'hint' | 'hostId' | 'label' | 'labelOnTop' | 'max' | 'min' | 'name' | 'placeholder' | 'readonly' | 'required' | 'rows' | 'shadow' | 'step' | 'trimWhitespace' | 'type' | 'valid' | 'value'> {
+export interface CTextFieldElement extends Omit<HTMLElement, 'autocomplete' | 'autocorrect' | 'automaticCapitalize' | 'disabled' | 'errorMessage' | 'hideDetails' | 'hint' | 'hostId' | 'label' | 'labelOnTop' | 'max' | 'min' | 'name' | 'placeholder' | 'readonly' | 'required' | 'rows' | 'shadow' | 'size' | 'step' | 'trimWhitespace' | 'type' | 'valid' | 'value'> {
   /** HTML input autocomplete */
   autocomplete?: string;
   /**
@@ -1839,6 +1845,8 @@ export interface CTextFieldElement extends Omit<HTMLElement, 'autocomplete' | 'a
   rows?: number;
   /** Shadow variant of the input */
   shadow?: boolean;
+  /** Field height: the 44px default or the 36px `small` box (single-line fields) */
+  size?: 'default' | 'small';
   /** Step size on a numeric input */
   step?: null | number;
   /** Trim whitespace from the return value */

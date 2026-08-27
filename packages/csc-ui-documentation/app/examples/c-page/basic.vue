@@ -1,3 +1,5 @@
+<docs>surface: canvas</docs>
+
 <template>
   <c-page class="demo-page">
     <h2>Reports</h2>

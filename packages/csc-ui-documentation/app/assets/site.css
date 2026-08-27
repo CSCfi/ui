@@ -170,21 +170,16 @@ c-side-navigation:not(:defined) {
   }
 }
 
-/* ── Example demo pane: white in light mode, the c-main app canvas
-      (surface-sunken) in dark. No single semantic token flips this way and
-      the docs has no data-theme-aware `dark:` variant, so it follows the
-      same three-state selector pattern as the Shiki rules above. ── */
+/* ── Example demo pane: the surface the component meets in a real app.
+      `card` (default) is the c-card surface, `canvas` is what c-main paints;
+      an example opts into `canvas` via `<docs>surface: canvas</docs>` in its
+      canon SFC (see useExamples.ts). Both are semantic tokens that already
+      flip for dark mode, so no theme selectors are needed here. ── */
 
-.example-demo {
-  background-color: var(--c-white);
+.example-demo[data-surface='card'] {
+  background-color: var(--c-surface-raised);
 }
 
-:root[data-theme='dark'] .example-demo {
+.example-demo[data-surface='canvas'] {
   background-color: var(--c-surface-sunken);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root:not([data-theme]) .example-demo {
-    background-color: var(--c-surface-sunken);
-  }
 }

@@ -1,3 +1,5 @@
+<docs>surface: canvas</docs>
+
 <template>
   <c-main class="demo-shell">
     <c-toolbar class="relative">

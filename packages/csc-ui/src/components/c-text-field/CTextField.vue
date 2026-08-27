@@ -12,6 +12,7 @@
     :label-on-top
     :required
     :shadow
+    :size
     :valid
   >
     <!-- Pre slot: forwarded from the consumer's `pre` slot. We only
@@ -245,6 +246,8 @@ export interface CTextFieldProps {
    * @seeded from csc-ui — verify
    */
   shadow?: boolean;
+  /** Field height: the 44px default or the 36px `small` box (single-line fields) */
+  size?: CFieldSize;
   /**
    * Step size on a numeric input
    *
@@ -312,6 +315,8 @@ import {
   useId,
   useTemplateRef,
 } from 'vue';
+
+import type { CFieldSize } from '../../types';
 
 import { coerceBoolean } from '../../shared/coerceBoolean';
 import { emitModelValue } from '../../shared/emitModelValue';
@@ -400,6 +405,7 @@ const props = withDefaults(defineProps<CTextFieldProps>(), {
   required: false,
   rows: 1,
   shadow: false,
+  size: 'default',
   step: null,
   trimWhitespace: false,
   type: 'text',
@@ -443,11 +449,19 @@ const currentType = ref(props.type);
 // otherwise it overlaps the format hint. Treat date as always-filled.
 const isDateType = originalType === 'date';
 
-const isActiveForInput = computed(
-  () => isFocused.value || !!props.value || isDateType,
+// A field "has a value" when it holds anything but the empty string — `0`
+// (a numeric property binding on a `type="number"` field) counts. A plain
+// truthiness check would leave the label un-floated over a typed zero.
+const hasValue = computed(
+  () => props.value !== '' && props.value !== null && props.value !== undefined,
 );
 
-const isFilledForInput = computed(() => !!props.value || isDateType);
+// `active` colours the border/label primary and must track focus ONLY — a
+// filled-but-blurred field keeps the resting border colour. Lifting the label
+// over an existing value is the separate `filled` flag.
+const isActiveForInput = computed(() => isFocused.value);
+
+const isFilledForInput = computed(() => hasValue.value || isDateType);
 
 // Detect consumer-provided slotted content. We need this at the
 // c-text-field level (rather than c-input via `useHasSlot`) because
@@ -490,7 +504,7 @@ const effectivePlaceholder = computed(() => {
 
   if (props.labelOnTop) return props.placeholder;
 
-  if (props.label && !isFocused.value && !props.value) return undefined;
+  if (props.label && !isFocused.value && !hasValue.value) return undefined;
 
   return props.placeholder;
 });

@@ -1,3 +1,5 @@
+<docs>surface: canvas</docs>
+
 <template>
   <div>
     <c-side-navigation>

@@ -21,6 +21,13 @@ import { FLAVORS, isFlavor, type Flavor } from './useFlavor';
  * (<name>.typescript.html) plus an optional querySelector-wiring script
  * (<name>.typescript.ts), rendered as stacked panes with Template/Script
  * chips. Other flavors are single-pane.
+ *
+ * A canon may carry a `<docs>` custom block with `surface: canvas` to render
+ * its demo on the app canvas (`surface-sunken`, what c-main paints) instead
+ * of the default card surface (`surface-raised`) — for the components that
+ * sit directly on the page (c-card, c-main, navigation chrome) rather than
+ * inside a card like most others. Vue ignores custom blocks when compiling
+ * the demo; the block is stripped from the displayed source.
  */
 // Live demo components. They are client-only (rendered inside <ClientOnly> in
 // ExampleBlock, and the csc-ui elements only upgrade on the client). In the
@@ -74,9 +81,13 @@ export interface ExampleTab {
   panes: ExamplePane[];
 }
 
+/** The background a demo renders on — see the `<docs>` block note above. */
+export type ExampleSurface = 'canvas' | 'card';
+
 export interface DocExample {
   demo: Component;
   name: string;
+  surface: ExampleSurface;
   tabs: ExampleTab[];
   title: string;
 }
@@ -95,6 +106,16 @@ const titleFromName = (name: string) =>
 // deps, e.g. react, are deliberately not installed here); strip it for display.
 const stripTsNocheck = (code: string) =>
   code.replace(/^\/\/ @ts-nocheck[^\n]*\n/, '');
+
+const DOCS_BLOCK = /^\s*<docs>([\s\S]*?)<\/docs>\s*\n?/;
+
+/** `surface:` from the canon's `<docs>` block; anything else is `card`. */
+const surfaceOf = (source: string): ExampleSurface =>
+  /^\s*surface:\s*canvas\s*$/m.test(source.match(DOCS_BLOCK)?.[1] ?? '')
+    ? 'canvas'
+    : 'card';
+
+const stripDocsBlock = (source: string) => source.replace(DOCS_BLOCK, '');
 
 const dirOf = (path: string) => path.split('/').at(-2) ?? '';
 
@@ -121,7 +142,9 @@ export const useExamples = (tags: string[]): DocExample[] => {
     });
 
   for (const path of paths) {
-    const code = vueSources[path] ?? '';
+    const source = vueSources[path] ?? '';
+
+    const code = stripDocsBlock(source);
 
     if (seenCode.has(code)) continue;
     seenCode.add(code);
@@ -212,6 +235,7 @@ export const useExamples = (tags: string[]): DocExample[] => {
     examples.push({
       demo: defineAsyncComponent(demoModules[path] as () => Promise<Component>),
       name: `${owner}/${file}`,
+      surface: surfaceOf(source),
       tabs: [
         {
           flavor: 'vue' as const,

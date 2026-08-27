@@ -8,6 +8,13 @@
  */
 
 /**
+ * Field height of the form controls built on `c-input`. `default` is the 44px
+ * field; `small` is the 36px field. Owned here because the value passes from
+ * the wrapping control (`c-select`) into `c-input`.
+ */
+export type CFieldSize = 'default' | 'small';
+
+/**
  * A selectable item for the value-selection components (`c-select`,
  * `c-autocomplete`) when options are supplied via the `items` prop instead of
  * slotted `<c-option>` elements.

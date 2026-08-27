@@ -67,33 +67,34 @@
       </form-label>
     </label>
 
-    <!-- Mode `out-in` mirrors the Stencil c-message lifecycle: the
-         outgoing message slides up + fades out, then 200ms later the new
-         message slides down + fades in. `:key` forces a re-mount whenever
-         the message identity (hint vs error, or text content) changes. -->
-    <transition mode="out-in" name="c-checkbox-message">
-      <span
-        v-if="!hideDetails && messageVisible"
-        :key="messageKey"
-        :class="ui.message()"
-        part="message"
-      >
-        <svg
-          v-if="showError"
-          :class="ui.messageIcon()"
-          aria-hidden="true"
-          viewBox="0 0 24 24"
-        >
-          <path :d="errorIconPath" />
-        </svg>
+    <!-- The message AREA is always in the flow (unless `hide-details`), the
+         same as c-input: it reserves its min-height so a validation error
+         appearing at runtime doesn't push the content below it down. Only the
+         inner line mounts/unmounts. Mode `out-in` mirrors the Stencil
+         c-message lifecycle: the outgoing message slides up + fades out, then
+         200ms later the new message slides down + fades in. `:key` forces a
+         re-mount whenever the message identity (hint vs error, or text
+         content) changes. -->
+    <div v-if="!hideDetails" :class="ui.message()" part="message">
+      <transition mode="out-in" name="c-checkbox-message">
+        <span v-if="messageVisible" :key="messageKey" :class="ui.messageLine()">
+          <svg
+            v-if="showError"
+            :class="ui.messageIcon()"
+            aria-hidden="true"
+            viewBox="0 0 24 24"
+          >
+            <path :d="errorIconPath" />
+          </svg>
 
-        <span :class="ui.visuallyHidden()">
-          {{ showError ? 'Error: ' : 'Hint: ' }}
+          <span :class="ui.visuallyHidden()">
+            {{ showError ? 'Error: ' : 'Hint: ' }}
+          </span>
+
+          <span>{{ showError ? errorMessage : hint }}</span>
         </span>
-
-        <span>{{ showError ? errorMessage : hint }}</span>
-      </span>
-    </transition>
+      </transition>
+    </div>
   </div>
 </template>
 
@@ -105,7 +106,7 @@
  * @csspart label - The `<label>` element wrapping the indicator and the label content
  * @csspart indicator - The circular ripple surface holding the checkbox box and checkmark
  * @csspart content - Wrapper around the label text or slotted label content
- * @csspart message - The hint / error message line below the checkbox
+ * @csspart message - The hint / error message area below the checkbox (always reserved unless `hide-details`)
  *
  * @seeded from csc-ui — verify
  */
@@ -194,9 +195,11 @@ const checkbox = tv({
       'absolute h-px w-px overflow-hidden border-0 p-0 [clip:rect(1px,1px,1px,1px)]',
     label: 'flex gap-1 relative cursor-pointer select-none',
     labelContent: 'pt-[10px] text-left select-none',
-    message:
-      'flex items-start gap-1 px-3 text-xs leading-none min-h-4 text-on-surface-muted',
+    // Outer message AREA (reserved, see the template) + the inner hint/error
+    // line that fades in/out inside it.
+    message: 'px-3 text-xs leading-none min-h-4 text-on-surface-muted',
     messageIcon: 'fill-current h-4 w-4 relative -top-0.5 shrink-0',
+    messageLine: 'flex items-start gap-1',
     // 42px circular ripple surface. The checkbox box is the `before:` pseudo:
     // an 18x18 square at (12,12) with 2px radius + transparent fill; its
     // colours flip on :checked via the escape-hatch sibling rule below.

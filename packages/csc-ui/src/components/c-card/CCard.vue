@@ -39,8 +39,8 @@ import { computed, onBeforeUnmount, onMounted, ref, useHost } from 'vue';
  * Styling lives in this `tailwind-variants` config. The inner
  * `<article>` (`root` part) is the card's visible box: it stacks the card
  * sections vertically with gap + block padding AND carries the card's visual
- * surface — background, hairline border, border-radius and `overflow-hidden`
- * here, plus the drop shadow as plain CSS in the escape-hatch <style>
+ * surface — background, hairline border and border-radius here (no overflow
+ * clipping: popovers, tooltips and focus rings may extend past the box), plus the drop shadow as plain CSS in the escape-hatch <style>
  * (arbitrary `shadow-[...]` values don't emit reliably in this setup). All of it
  * lives on the part (not `:host`) so consumers can restyle the whole box through
  * `c-card::part(root) { … }`; the host is no longer the styled
@@ -66,7 +66,7 @@ const card = tv({
   slots: {
     fullscreenToggle:
       'absolute top-[calc(var(--_c-card-gap)-8px)] right-[calc(var(--_c-card-padding-inline)-8px)] z-[1] flex items-center justify-center size-10 p-0 border-0 rounded-full bg-transparent text-primary cursor-pointer transition-colors duration-300 ease-standard hover:bg-primary-subtle-hover focus:outline-none focus-visible:outline-2 focus-visible:outline-solid focus-visible:outline-primary focus-visible:outline-offset-2',
-    root: 'relative flex flex-col flex-1 max-w-full gap-[var(--_c-card-gap)] py-[var(--_c-card-gap)] bg-surface-raised border border-solid border-border rounded-csc-xl overflow-hidden',
+    root: 'relative flex flex-col flex-1 max-w-full gap-[var(--_c-card-gap)] py-[var(--_c-card-gap)] bg-surface-raised border border-solid border-border rounded-csc-xl',
   },
 });
 

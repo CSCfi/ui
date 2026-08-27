@@ -185,7 +185,12 @@ export type { Family, ThemeSeeds } from './theme/applyTheme';
 // from the package root: `import type { CAlertType } from '@cscfi/csc-ui'`.
 // Shared types (value crosses a component boundary) come from src/types.ts;
 // component-owned types come from their owning SFC.
-export type { CSelectItem, CToastMessage, CToastType } from './types';
+export type {
+  CFieldSize,
+  CSelectItem,
+  CToastMessage,
+  CToastType,
+} from './types';
 
 // Vue's `h`, re-exported so consumers author c-data-table cell/footer/expanded
 // render functions without a direct `vue` dependency.
