@@ -106,7 +106,7 @@ const modal = tv({
       'fixed inset-0 bg-scrim/50 opacity-0 pointer-events-none transition-opacity duration-300 motion-reduce:transition-none',
     // The native <dialog> is the positioned overlay box. It must not be
     // `display:contents`, so the box lives on this element (not the host).
-    root: 'block fixed inset-0 m-auto p-0 border-0 bg-transparent overflow-visible max-w-[calc(100%-32px)] w-[var(--_c-modal-width,600px)] text-on-surface-muted',
+    root: 'block fixed inset-0 m-auto p-0 border-0 bg-transparent overflow-visible rounded-csc-xl max-w-[calc(100%-32px)] w-[var(--_c-modal-width,600px)] text-on-surface-muted',
   },
   variants: {
     blur: {

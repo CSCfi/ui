@@ -1,3 +1,5 @@
+<docs>surface: canvas</docs>
+
 <template>
   <div>
     <!-- The relative class keeps the toolbar in flow; by default it is fixed to the top of the viewport -->

@@ -3,7 +3,7 @@
     :is="href ? 'a' : 'button'"
     :id="hostId || undefined"
     ref="rootRef"
-    :aria-pressed="ariaPressed"
+    :aria-pressed
     :class="ui.root()"
     :disabled="href ? undefined : disabled || undefined"
     :href="href || undefined"
@@ -213,7 +213,10 @@ const sizeVariants = {
   default: {
     contentInner: 'h-full px-4',
     iconWrap: 'text-2xl',
-    root: 'min-h-11 text-base',
+    // `--_c-button-min-height` is an INTERNAL hook (not consumer API): a
+    // wrapping c-button-group sets it on its frame so the buttons plus the
+    // 4px frame padding total the 44px field height of c-text-field.
+    root: 'min-h-[var(--_c-button-min-height,2.75rem)] text-base',
   },
   large: {
     contentInner: 'h-full px-6',
@@ -318,10 +321,10 @@ const button = tv({
     // after the appearance compounds (active wins) and before the disabled
     // ones (disabled wins).
     {
+      active: true,
       class: {
         root: 'bg-[color:var(--_c-button-active-bg,var(--c-primary))] text-[color:var(--_c-button-active-fg,var(--c-on-primary))] hover:bg-[color:var(--_c-button-active-hover-bg,var(--c-primary-hover))]',
       },
-      active: true,
     },
     // ---- disabled (overrides appearance bg/text/border) ------------------
     // Non-inverted disabled is the muted neutral surface; inverted disabled

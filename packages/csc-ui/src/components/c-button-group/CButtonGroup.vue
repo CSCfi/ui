@@ -132,7 +132,11 @@ defineOptions({ inheritAttrs: false });
 // keeps the map complete against the public union.
 const sizeVariants = {
   default: {
-    root: 'p-1 gap-1',
+    // 4px frame + 36px buttons = 44px, the same height as a c-text-field
+    // field, so a group sits level beside one. The button height is driven
+    // through c-button's internal `--_c-button-min-height` hook, inherited
+    // by the slotted buttons from this frame.
+    root: 'p-1 gap-1 [--_c-button-min-height:2.25rem]',
   },
   small: {
     root: 'p-0.5 gap-0.5',

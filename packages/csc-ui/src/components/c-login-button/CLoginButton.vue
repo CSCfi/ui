@@ -1,6 +1,10 @@
 <template>
   <a :class="ui.root()" :href="href || undefined" part="root" tabindex="0">
-    <img :alt :class="ui.image()" :src="src || ''" part="image" />
+    <div :class="ui.imageWrap()" part="image-wrap">
+      <slot name="image">
+        <img :alt :class="ui.image()" :src="src || ''" part="image" />
+      </slot>
+    </div>
 
     <div :class="ui.title()" part="title">
       <slot />
@@ -10,10 +14,12 @@
 
 <script setup lang="ts">
 /**
- * @slot default - Default slot
+ * @slot default - The title shown in the bottom bar
+ * @slot image - Custom provider logo markup (an inline `<svg>`, a `<picture>`, …) replacing the default `<img>` rendered from `src`
  *
  * @csspart root - The anchor element forming the whole clickable card
- * @csspart image - The provider logo image centered in the card
+ * @csspart image-wrap - The area above the title bar that centers the logo (default image or slotted content)
+ * @csspart image - The default provider logo `<img>` (absent when the `image` slot is used)
  * @csspart title - The bottom title bar wrapping the slotted label
  *
  * @seeded from csc-ui — verify
@@ -34,7 +40,8 @@ import { computed } from 'vue';
  */
 const loginButton = tv({
   slots: {
-    image: 'place-self-center max-h-30 max-w-50 px-6 py-2',
+    image: 'max-h-30 max-w-50 px-6 py-2',
+    imageWrap: 'flex items-center justify-center min-h-0',
     root: 'grid grid-rows-[1fr_auto] grid-cols-1 h-full min-h-42 rounded-csc-md border border-solid overflow-hidden border-border bg-surface text-on-surface-muted text-center no-underline cursor-pointer outline outline-1 outline-transparent hover:border-primary hover:outline-primary focus-visible:outline-2 focus-visible:outline-primary focus-visible:outline-offset-2',
     title: 'bg-surface-muted p-1 text-sm shadow-[0_-1px_0_0_var(--c-border)]',
   },

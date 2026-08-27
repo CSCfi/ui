@@ -8,6 +8,7 @@
     :items="dropdownItems"
     :items-per-page
     :parent="host"
+    exportparts="menu, list, item"
     type="select"
   >
     <c-input
@@ -23,6 +24,7 @@
       :label-on-top
       :required
       :shadow
+      :size
       :valid
       @click="onInputClick"
     >
@@ -107,6 +109,10 @@
  * @seeded from csc-ui — verify
  *
  * @subcomponents c-option
+ *
+ * @csspart menu - The dropdown surface (the positioned dialog) holding the field and the list
+ * @csspart list - The scrolling listbox of options
+ * @csspart item - One option row in the list. Any `part` attribute set on content inside a slotted `<c-option>` is exported too, so `c-select::part(<name>)` reaches the consumer's own option markup
  */
 import { mdiChevronDown, mdiClose } from '@mdi/js';
 import { tv } from 'tailwind-variants';
@@ -121,7 +127,7 @@ import {
   watch,
 } from 'vue';
 
-import type { CSelectItem } from '../../types';
+import type { CFieldSize, CSelectItem } from '../../types';
 
 import { coerceBoolean } from '../../shared/coerceBoolean';
 import { emitModelValue } from '../../shared/emitModelValue';
@@ -266,6 +272,8 @@ interface CSelectProps {
   returnObject?: boolean;
   /** Shadow variant */
   shadow?: boolean;
+  /** Field height: the 44px default or the 36px `small` box */
+  size?: CFieldSize;
   /** Set the validity of the input */
   valid?: boolean;
   /** Selected value (scalar, or object when return-object is set) */
@@ -290,6 +298,7 @@ const props = withDefaults(defineProps<CSelectProps>(), {
   required: false,
   returnObject: false,
   shadow: false,
+  size: 'default',
   valid: true,
   value: null,
 });
@@ -733,6 +742,26 @@ defineExpose({ reset });
 
 // ---- slotted <c-option> discovery ---------------------------------------
 
+// Parts exported through the inner c-dropdown. The dropdown renders CLONES of
+// the consumer's <c-option> markup inside its own shadow root, so the
+// consumer's page styles can't reach that content; forwarding every `part`
+// name found inside the options lets `c-select::part(<name>)` style it.
+// The static `exportparts="menu, list, item"` in the template is the
+// verifiable contract; the consumer names are appended imperatively (Vue never
+// re-patches a static attribute, so the extension survives re-renders).
+const STATIC_EXPORTED_PARTS = ['menu', 'list', 'item'];
+
+const syncExportedParts = (extra: string[]) => {
+  const el = dropdownRef.value as unknown as HTMLElement | null;
+
+  if (!el || typeof el.setAttribute !== 'function') return;
+
+  el.setAttribute(
+    'exportparts',
+    [...STATIC_EXPORTED_PARTS, ...extra].join(', '),
+  );
+};
+
 const refreshOptions = () => {
   if (!host) return;
 
@@ -740,6 +769,18 @@ const refreshOptions = () => {
     host.querySelectorAll('c-option'),
   ) as HTMLElement[];
   optionElements.value = options;
+
+  syncExportedParts(
+    Array.from(
+      new Set(
+        Array.from(host.querySelectorAll('c-option [part]')).flatMap((el) =>
+          (el.getAttribute('part') ?? '').split(/\s+/).filter(Boolean),
+        ),
+      ),
+    )
+      .filter((name) => !STATIC_EXPORTED_PARTS.includes(name))
+      .sort(),
+  );
 
   if (options.length && !optionElementsExist.value) {
     optionElementsExist.value = true;

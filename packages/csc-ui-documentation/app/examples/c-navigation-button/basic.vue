@@ -1,3 +1,5 @@
+<docs>surface: canvas</docs>
+
 <template>
   <div class="example-row">
     <c-navigation-button @click="menuVisible = !menuVisible" />

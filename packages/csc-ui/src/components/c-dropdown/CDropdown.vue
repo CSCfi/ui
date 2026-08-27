@@ -12,6 +12,7 @@
   <dialog
     ref="dialogRef"
     :class="[ui.dialog(), isMobile ? 'mobile' : '']"
+    part="menu"
     tabindex="-1"
     @cancel="close"
   >
@@ -34,6 +35,7 @@
         ref="listRef"
         :aria-expanded="isOpen"
         :class="[ui.list(), isOpen ? 'active' : '', isMobile ? 'mobile' : '']"
+        part="list"
         role="listbox"
         tabindex="-1"
       >
@@ -51,6 +53,7 @@
               opt.disabled ? 'disabled' : '',
             ]"
             :data-name="opt.name"
+            part="item"
             role="option"
             tabindex="-1"
             @click="onSelect(opt, $event)"
@@ -72,6 +75,7 @@
             ]"
             :data-name="item.name"
             :title="item.name"
+            part="item"
             role="option"
             tabindex="-1"
             @click="onSelect(item, $event)"
@@ -101,6 +105,10 @@
 <script setup lang="ts">
 /**
  * @slot default - The anchor c-input of the parent select / autocomplete, rendered inline while the menu is closed
+ *
+ * @csspart menu - The positioned dialog surface holding the field and the list
+ * @csspart list - The scrolling listbox
+ * @csspart item - One option row
  * @slot input-top - Target the c-input is moved into when the menu opens below the field
  * @slot input-bottom - Target the c-input is moved into when the menu opens above the field
  */
@@ -159,7 +167,7 @@ const dropdown = tv({
     item: 'flex items-center flex-nowrap gap-3 cursor-pointer text-sm min-h-[42px] outline-none px-[10px] pointer-events-auto whitespace-nowrap w-full rounded select-none hover:bg-primary-subtle hover:text-primary hover:ring-1 hover:ring-inset hover:ring-primary focus:bg-primary-subtle focus:text-primary focus:ring-1 focus:ring-inset focus:ring-primary aria-selected:bg-primary-subtle aria-selected:text-primary aria-selected:rounded-none hover:aria-selected:rounded focus:aria-selected:rounded',
     // Static list look; visibility + fade-in (`.active`) and the mobile
     // full-screen layout stay in the escape-hatch <style>.
-    list: 'list-none m-0 p-0 outline-none pointer-events-auto w-full h-max overflow-y-scroll rounded bg-surface-overlay shadow-[2px_4px_10px_#00000029]',
+    list: 'list-none m-0 p-0 outline-none pointer-events-auto w-full h-max overflow-y-scroll rounded bg-surface-overlay text-on-surface shadow-[2px_4px_10px_#00000029]',
     visuallyHidden:
       'absolute w-px h-px p-0 overflow-hidden border-0 [clip:rect(1px,1px,1px,1px)]',
   },
@@ -320,6 +328,19 @@ const enableScroll = () => {
   document.body.style.removeProperty('overflow');
 };
 
+// The parent select forwards `hide-details` to its c-input through the
+// `data-hide-details` attribute, which c-input resolves AHEAD of its
+// `hideDetails` prop (see c-input). Setting only the prop here therefore had
+// no effect: the field kept its message area while moved into the dialog and
+// the list rendered below that gap instead of flush under the field. Drive
+// both channels.
+const setInputHideDetails = (value: boolean) => {
+  if (!inputElement) return;
+
+  inputElement.hideDetails = value;
+  inputElement.dataset.hideDetails = String(value);
+};
+
 const getParentSlotRect = (): DOMRect => {
   // Adaptation: c-input is now shadow DOM, so reach its `.c-input__slot`
   // through the c-input element's own shadowRoot. Fall back to the host.
@@ -367,10 +388,12 @@ const positionMenu = () => {
       if (!isInView.y || openedOnTop.value) {
         openedOnTop.value = true;
 
-        if (inputElement) inputElement.hideDetails = true;
+        setInputHideDetails(true);
         inputSlot = 'input-bottom';
         dialog.style.top = 'auto';
-        dialog.style.bottom = `${innerHeight - size.top - 44}px`;
+        // Anchor the dialog's bottom edge to the field's bottom edge (the
+        // field is 44px by default, 36px for `size="small"`).
+        dialog.style.bottom = `${innerHeight - size.top - getParentSlotRect().height}px`;
       }
     }
 
@@ -382,7 +405,7 @@ const positionMenu = () => {
 
     if (inputElement) {
       inputElement.slot = inputSlot;
-      inputElement.hideDetails = true;
+      setInputHideDetails(true);
     }
 
     dialog.style.opacity = '1';
@@ -481,7 +504,7 @@ const close = () => {
     // unnamed native <slot>, so we revert to that by clearing the attribute
     // — `slot="default"` would no longer match the projected slot.
     inputElement.slot = '';
-    inputElement.hideDetails = hideDetails;
+    setInputHideDetails(hideDetails);
   }
 
   if (dummyRef.value) {
