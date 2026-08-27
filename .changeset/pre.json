@@ -11,6 +11,7 @@
     "autocomplete-external-mode",
     "card-mycsc-anatomy",
     "dark-mode-mycsc-retune",
+    "fix-autocomplete-textfield-states",
     "vue-rewrite-major"
   ]
 }
