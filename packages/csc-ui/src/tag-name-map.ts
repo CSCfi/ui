@@ -28,12 +28,6 @@ type DropdownItem = {
   value: number | string;
 };
 
-interface RadioItem {
-  disabled?: boolean;
-  name: string;
-  value: number | string;
-}
-
 /** Events dispatched by `<c-accordion>`. */
 export interface CAccordionElementEventMap {
   /**
@@ -1153,35 +1147,63 @@ export interface CProgressBarElement extends Omit<HTMLElement, 'hideDetails' | '
   value?: number;
 }
 
-export interface CRadioElement extends Omit<HTMLElement, 'checked' | 'disabled' | 'value'> {
-  /** Set option as checked */
-  checked?: boolean;
+/** Events dispatched by `<c-radio>`. */
+export interface CRadioElementEventMap {
+  /**
+   * Fired when the radio is selected by the user, carrying its `value`.
+   * Bubbles composed so the parent `<c-radio-group>` — whose shadow root a
+   * light-DOM event never enters — catches it on its host; a consumer
+   * listening on the group hears it too, with the radio as `target`.
+   */
+  change: CustomEvent<string>;
+}
+
+/** A single radio option inside a `c-radio-group`: a native radio input whose default slot is its clickable, announced label. */
+export interface CRadioElement extends Omit<HTMLElement, 'disabled' | 'value'> {
   /** Disable the radio button */
   disabled?: boolean;
   /** Radio button value */
   value?: string;
+  addEventListener<K extends keyof CRadioElementEventMap>(
+    type: K,
+    listener: (this: CRadioElement, ev: CRadioElementEventMap[K]) => void,
+    options?: boolean | AddEventListenerOptions,
+  ): void;
+  addEventListener(
+    type: string,
+    listener: EventListenerOrEventListenerObject,
+    options?: boolean | AddEventListenerOptions,
+  ): void;
+  removeEventListener<K extends keyof CRadioElementEventMap>(
+    type: K,
+    listener: (this: CRadioElement, ev: CRadioElementEventMap[K]) => void,
+    options?: boolean | EventListenerOptions,
+  ): void;
+  removeEventListener(
+    type: string,
+    listener: EventListenerOrEventListenerObject,
+    options?: boolean | EventListenerOptions,
+  ): void;
 }
 
 /** Events dispatched by `<c-radio-group>`. */
 export interface CRadioGroupElementEventMap {
-  /**
-   * Fired when a radio option is selected, carrying the selected item's
-   * value — or the whole item object when `return-object` is set.
-   */
-  changeValue: CustomEvent<number | RadioItem | string>;
+  /** Fired when a radio is selected, carrying the selected radio's value. */
+  changeValue: CustomEvent<string>;
   /**
    * Native bubbling input event fired on selection so a plain Vue `v-model`
    * works without the `v-control` directive. No detail.
    */
   input: CustomEvent<void>;
   /**
-   * v-model contract event fired on selection, carrying the selected item's
-   * value — or the whole item object when `return-object` is set.
+   * v-model contract event fired on selection, carrying the selected radio's
+   * value.
    */
-  'update:value': CustomEvent<number | RadioItem | string>;
+  'update:value': CustomEvent<string>;
 }
 
-export interface CRadioGroupElement extends Omit<HTMLElement, 'disabled' | 'errorMessage' | 'hideDetails' | 'hint' | 'hostId' | 'inline' | 'items' | 'label' | 'required' | 'returnObject' | 'valid' | 'value'> {
+/** A radio group is a set of mutually exclusive choices where exactly one can be selected, authored as slotted `c-radio` children. Give the group a `label` so the choice it represents is named for every user, and a `hint` describing how to answer. */
+export interface CRadioGroupElement extends Omit<HTMLElement, 'disabled' | 'errorMessage' | 'hideDetails' | 'hint' | 'inline' | 'label' | 'required' | 'valid' | 'value'> {
   /** Disable the radio group */
   disabled?: boolean;
   /** Error message shown in place of the hint while the group is invalid */
@@ -1190,22 +1212,19 @@ export interface CRadioGroupElement extends Omit<HTMLElement, 'disabled' | 'erro
   hideDetails?: boolean;
   /** Hint text for the input */
   hint?: string;
-  /** Id of the element */
-  hostId?: string;
   /** Display radio buttons inline */
   inline?: boolean;
-  /** Radio group items */
-  items?: RadioItem[];
   /** Label of the radio group */
   label?: string;
   /** Set as required */
   required?: boolean;
-  /** Return the whole item object */
-  returnObject?: boolean;
   /** Set the validity of the input */
   valid?: boolean;
-  /** Value of the radio group */
-  value?: null | number | RadioItem | string;
+  /**
+   * Value of the radio group; matched against each radio's `value` by strict
+   * string equality
+   */
+  value?: null | string;
   addEventListener<K extends keyof CRadioGroupElementEventMap>(
     type: K,
     listener: (this: CRadioGroupElement, ev: CRadioGroupElementEventMap[K]) => void,

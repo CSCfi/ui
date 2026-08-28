@@ -23,7 +23,12 @@ import path from 'node:path';
  * `--strict`: exit 1 if any violation is found (wire into CI once phase 5 lands).
  */
 
-const ROOT = path.resolve(import.meta.dirname, '../src/components');
+// Both SFC homes: registered components and the internal shared SFCs
+// (FormLabel, FieldMessage) rendered into their shadow roots.
+const ROOTS = [
+  path.resolve(import.meta.dirname, '../src/components'),
+  path.resolve(import.meta.dirname, '../src/shared'),
+];
 
 const STRICT = process.argv.includes('--strict');
 
@@ -88,11 +93,12 @@ const stripComments = (src) =>
       (m, p1) => p1 + ' '.repeat(m.length - p1.length),
     );
 
-const vueFiles = fs
-  .readdirSync(ROOT, { recursive: true })
-  .filter((f) => typeof f === 'string' && f.endsWith('.vue'))
-  .map((f) => path.join(ROOT, f))
-  .sort();
+const vueFiles = ROOTS.flatMap((root) =>
+  fs
+    .readdirSync(root, { recursive: true })
+    .filter((f) => typeof f === 'string' && f.endsWith('.vue'))
+    .map((f) => path.join(root, f)),
+).sort();
 
 let fileCount = 0;
 

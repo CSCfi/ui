@@ -12,6 +12,16 @@ it is now the tabs-only adapter and is not labelable. Its place in the set
 `c-button-group`, which also inherits the `mandatory` ≠ `required`
 distinction below.
 
+Amended by ADR-0031 (2026-08-28): the named `slot="label"`, rejected below,
+is sanctioned narrowly as the label fallback for a group-labeled component
+whose default slot is the children's home — currently `c-radio-group` only;
+the `label` prop stays primary. The "third pattern" objection weakened when
+ADR-0031 deleted the filtered default slot it counted: `c-radio-group`'s
+default slot is now exclusively the radios' home, and the label-source
+patterns remain at three (prop-primary everywhere; default-slot fallback on
+`c-checkbox`/`c-switch`/`c-otp-input`; named-slot fallback on
+`c-radio-group`).
+
 ## Context
 
 Label rendering in `csc-ui-next` had forked into two ad-hoc patterns: the

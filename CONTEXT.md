@@ -102,7 +102,7 @@ The period between HTML paint and a component's custom-element registration, dur
 _Avoid_: FOUC (names the symptom, not the period), hydration gap (nothing hydrates — elements upgrade)
 
 **Pre-upgrade placeholder**:
-The document-level CSS shipped with the design tokens that hides a component's raw light DOM during the **pre-upgrade window**. Generic for every component tag; a small set of components (the form-field shells) additionally reserve their resting geometry as explicit exceptions.
+The document-level CSS shipped with the design tokens that hides a component's raw light DOM during the **pre-upgrade window**. Generic for every component tag; a small set of components with a fixed resting geometry (the form-field shells, `c-radio`) additionally reserve it as explicit exceptions.
 _Avoid_: Skeleton (implies a painted stand-in; the placeholder paints nothing), loading state (that is a component's own post-upgrade concern)
 
 **Fail-open reveal**:
@@ -168,7 +168,7 @@ A **label** naming a *single* input, associated with it directly (the `for`/`id`
 _Avoid_: Inline label (placement, not association, is what defines it)
 
 **Group label**:
-A **label** naming a *set* of controls operated as one field — `c-radio-group`, `c-otp-input`, `c-button-group`, `c-tags`. Associated with the group container (`aria-labelledby`), not any single input inside it.
+A **label** naming a *set* of controls operated as one field — `c-radio-group`, `c-otp-input`, `c-button-group`, `c-tags`. Associated with the group container (`aria-labelledby`), not any single input inside it. Sourced from the `label` prop; where the default slot is the children's home (`c-radio-group`), a named `slot="label"` is the fallback for rich label content (ADR-0031, prop wins).
 _Avoid_: Legend (the native `<fieldset>` mechanism this library does not use), group title
 
 **Button group** (`c-button-group`):

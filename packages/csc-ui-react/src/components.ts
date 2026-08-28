@@ -12,6 +12,7 @@ import {
   type CAccordionItemElement,
   type CAccordionItemElementEventMap,
   type CAlertElement,
+  type CAlertElementEventMap,
   type CAutocompleteElement,
   type CAutocompleteElementEventMap,
   type CBadgeElement,
@@ -60,6 +61,7 @@ import {
   type CPaginationElementEventMap,
   type CProgressBarElement,
   type CRadioElement,
+  type CRadioElementEventMap,
   type CRadioGroupElement,
   type CRadioGroupElementEventMap,
   type CSelectElement,
@@ -143,6 +145,9 @@ export const CAccordionItem = createComponent({
 export const CAlert = createComponent({
   displayName: 'CAlert',
   elementClass: elementClass<CAlertElement>('c-alert'),
+  events: {
+    onDismiss: 'dismiss' as EventName<CAlertElementEventMap['dismiss']>,
+  },
   react: React,
   tagName: 'c-alert',
 });
@@ -474,13 +479,18 @@ export const CProgressBar = createComponent({
   tagName: 'c-progress-bar',
 });
 
+/** A single radio option inside a `c-radio-group`: a native radio input whose default slot is its clickable, announced label. */
 export const CRadio = createComponent({
   displayName: 'CRadio',
   elementClass: elementClass<CRadioElement>('c-radio'),
+  events: {
+    onChange: 'change' as EventName<CRadioElementEventMap['change']>,
+  },
   react: React,
   tagName: 'c-radio',
 });
 
+/** A radio group is a set of mutually exclusive choices where exactly one can be selected, authored as slotted `c-radio` children. Give the group a `label` so the choice it represents is named for every user, and a `hint` describing how to answer. */
 export const CRadioGroup = createComponent({
   displayName: 'CRadioGroup',
   elementClass: elementClass<CRadioGroupElement>('c-radio-group'),
