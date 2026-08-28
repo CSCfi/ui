@@ -14,6 +14,15 @@
   "border-strong": "slate-400",
   "ring": "accent-400",
 
+  "_comment-inverted": "Inverted-surface tier (ADR-0032): white pill on the dark page. Each status *-inverted role is the family's accent ink on white (coloured icon + alpha-wash halo — the wash lands on the pale subtle tint the light-mode alerts use); neutral inks reuse light mode's on-surface neutrals. Keep keys in sync with light.json.",
+  "surface-inverted": "white",
+  "on-surface-inverted": "slate-900",
+  "on-surface-inverted-muted": "tertiary-600",
+  "success-inverted": "success-600",
+  "info-inverted": "info-600",
+  "warning-inverted": "warning-600",
+  "error-inverted": "error-600",
+
   "primary": "accent-500",
   "primary-hover": "accent-400",
   "on-primary": "primary-950",

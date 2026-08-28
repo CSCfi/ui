@@ -117,6 +117,32 @@ add(
   TEXT,
   'inverse-primary / inverse-surface',
 );
+// inverted-surface tier (ADR-0032; mode-aware contrast flip). Neutral inks are
+// text (4.5); the status badge pairs are icon glyphs and badge-vs-ground
+// adjacency, so non-text UI (3.0) applies.
+add(
+  'on-surface-inverted',
+  'surface-inverted',
+  TEXT,
+  'on-surface-inverted / surface-inverted',
+);
+add(
+  'on-surface-inverted-muted',
+  'surface-inverted',
+  TEXT,
+  'on-surface-inverted-muted / surface-inverted',
+);
+// Each status accent ink is the coloured icon on the inverted ground; its
+// halo is an alpha wash of the same role, so the ink is audited against the
+// ground it effectively sits on. Icons are non-text UI (3.0).
+for (const r of ['success', 'info', 'warning', 'error']) {
+  add(
+    `${r}-inverted`,
+    'surface-inverted',
+    UI,
+    `${r}-inverted / surface-inverted (status icon)`,
+  );
+}
 // non-text UI (3:1): outlines, focus ring, primary fill/icon on surface
 add(
   'border-strong',

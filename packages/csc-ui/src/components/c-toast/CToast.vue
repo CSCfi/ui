@@ -11,35 +11,30 @@
     </div>
 
     <div v-else :class="ui.item()" part="item">
-      <svg :class="ui.icon()" viewBox="0 0 24 24">
-        <path :d="icons[toastType]" />
-      </svg>
+      <span :class="ui.badge()" part="badge">
+        <svg :class="ui.icon()" viewBox="0 0 24 24">
+          <path :d="icons[toastType]" />
+        </svg>
+      </span>
 
       <div :class="ui.content()" part="content">
         <p v-if="message?.title" :class="ui.title()">{{ message.title }}</p>
         {{ message?.message }}
       </div>
 
-      <c-icon-button
-        v-if="!message?.indeterminate && !message?.closeText"
-        aria-label="close"
-        size="small"
-        text
+      <button
+        v-if="!message?.indeterminate"
+        :aria-label="message?.closeText ? undefined : 'close'"
+        :class="ui.dismiss()"
+        part="dismiss"
+        type="button"
         @click="close"
       >
-        <c-icon :color="accentColor" :path="icons.close" />
-      </c-icon-button>
-
-      <c-button
-        v-if="!message?.indeterminate && message?.closeText"
-        aria-label="close"
-        size="small"
-        text
-        @click="close"
-      >
-        <c-icon slot="icon" :color="accentColor" :path="icons.close" />
-        {{ message.closeText }}
-      </c-button>
+        <svg class="size-4 fill-current" viewBox="0 0 24 24">
+          <path :d="icons.close" />
+        </svg>
+        <span v-if="message?.closeText">{{ message.closeText }}</span>
+      </button>
     </div>
 
     <div v-if="showProgress" :class="ui.progress()" part="progress">
@@ -68,10 +63,12 @@ export interface CToastProps {
 <script setup lang="ts">
 /**
  * @slot default - Custom toast content, shown when the message is flagged `custom`
- * @csspart root - The toast's outer box carrying the accent border and shadow
+ * @csspart root - The toast's outer box: the inverted-surface pill carrying the shadow
  * @csspart custom - Wrapper shown for custom messages in place of the standard item layout
  * @csspart content - The message body holding the title and text, or the slotted custom content
- * @csspart item - Row layout of a standard toast: type icon, message body and close button
+ * @csspart item - Row layout of a standard toast: status badge, message body and dismiss button
+ * @csspart badge - The circular tinted badge holding the status icon
+ * @csspart dismiss - The dismiss button (icon-only, or labelled when the message sets `closeText`)
  * @csspart progress - The track of the auto-close progress bar
  */
 import {
@@ -104,68 +101,72 @@ interface CToastEvents {
 }
 
 /**
- * Styling lives in this `tailwind-variants` config. The old
- * `--_c-toast-*` indirection vars are dropped: the accent (`type`) maps
- * straight to a design token (`border-info-600`, `text-error-600`, …) selected
- * by the `type` variant, and the white background / system text are token
- * utilities. Consumer customization is via `::part()`.
+ * Styling lives in this `tailwind-variants` config, per the toast design
+ * spec (ADR-0032): a borderless **inverted-surface** pill — the contrast
+ * flip makes the toast stand apart from every other surface in both modes —
+ * with the status (`type`) carried solely by the circular tinted badge
+ * around the leading icon (the `*-inverted` status roles). Body copy wears
+ * the muted inverted ink, the title the full ink; the dismiss button and the
+ * progress bar are neutral. Consumer customization is via `::part()`.
  *
- * Why the box (border/padding/bg/shadow) is on the `root` element and NOT the
+ * Why the box (padding/bg/shadow) is on the `root` element and NOT the
  * host: this sheet ships Tailwind's preflight, whose `*` reset is injected into
  * every shadow root. A <c-toast> renders inside <c-toasts>'s shadow root, so
- * c-toasts' own `*` rule matches the c-toast host; a `:host` border/padding
+ * c-toasts' own `*` rule matches the c-toast host; a `:host` background/padding
  * would lose to that outer-tree `*` reset. A class-selected inner element lives
  * in c-toast's OWN shadow root (invisible to the parent's `*`) and a class
  * outranks the same-tree `*`, so the box paints correctly there.
- *
- * The body text stays the system-text token; the accent (`type`) paints the
- * box border, the leading icon's fill and the progress bar only — matching the
- * original split where `--_c-toast-text-color` was the body text and
- * `--_c-toast-color` (the accent) was used solely for border/icon/progress.
  */
 const toast = tv({
   defaultVariants: {
     type: 'info',
   },
   slots: {
-    box: 'grid items-center min-h-[52px] w-full box-border p-2 px-3 rounded-csc-md bg-surface-raised text-on-surface-muted border-2 border-l-[12px]',
-    content: '',
+    badge: 'grid size-8 shrink-0 place-items-center rounded-full',
+    box: 'grid items-center min-h-[52px] w-full box-border p-2 pl-3 rounded-csc-lg bg-surface-inverted text-on-surface-inverted',
+    content: 'text-on-surface-inverted-muted',
     custom: '',
-    icon: 'size-6',
-    item: 'grid items-center gap-3 grid-cols-[24px_1fr] auto-cols-auto grid-flow-col font-light',
+    dismiss:
+      'grid size-8 shrink-0 cursor-pointer place-items-center rounded-full border-0 bg-transparent p-0 text-on-surface-inverted-muted transition-colors duration-150 hover:bg-on-surface-inverted/10 hover:text-on-surface-inverted focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-on-surface-inverted',
+    icon: 'size-5 shrink-0',
+    item: 'grid items-center gap-3 grid-cols-[32px_1fr] auto-cols-auto grid-flow-col',
     progress:
-      'bg-surface-muted rounded-lg h-1.5 mt-2 overflow-hidden [transform:translateZ(0)]',
+      'bg-on-surface-inverted/15 rounded-lg h-1.5 mt-2 overflow-hidden [transform:translateZ(0)]',
     // The animation (keyframes + host-hover-driven play-state) lives in the
     // escape-hatch sheet keyed off the static `.c-toast__progress__bar` class.
-    progressBar: 'h-1.5 w-full rounded-lg',
-    title: 'm-0 font-semibold',
+    // Neutral on purpose: the badge carries the status colour.
+    progressBar: 'h-1.5 w-full rounded-lg bg-on-surface-inverted',
+    title: 'm-0 font-semibold text-on-surface-inverted',
     visuallyHidden:
       'absolute w-px h-px overflow-hidden p-0 border-0 [clip:rect(1px,1px,1px,1px)]',
   },
   variants: {
-    // Accent only — border + leading-icon fill + progress bar. Body text stays
-    // system-text. Info is the fallback for an untyped toast, matching the
-    // original `var(--_c-toast-color, var(--c-info))` border fallback.
+    // The dismiss button grows from an icon circle into a labelled pill when
+    // the message sets `closeText`.
+    labelled: {
+      true: {
+        dismiss: 'flex w-auto items-center gap-1.5 px-2.5',
+      },
+    },
+    // Status accent — the coloured icon plus a translucent same-colour halo
+    // circle (the filled mdi glyphs knock the symbol out of the shape, so the
+    // accent ink IS the badge). Info is the fallback for an untyped toast.
     type: {
       error: {
-        box: 'border-error',
-        icon: 'fill-error',
-        progressBar: 'bg-error',
+        badge: 'bg-error-inverted/20',
+        icon: 'fill-error-inverted',
       },
       info: {
-        box: 'border-info',
-        icon: 'fill-info',
-        progressBar: 'bg-info',
+        badge: 'bg-info-inverted/20',
+        icon: 'fill-info-inverted',
       },
       success: {
-        box: 'border-success',
-        icon: 'fill-success',
-        progressBar: 'bg-success',
+        badge: 'bg-success-inverted/20',
+        icon: 'fill-success-inverted',
       },
       warning: {
-        box: 'border-warning',
-        icon: 'fill-warning',
-        progressBar: 'bg-warning',
+        badge: 'bg-warning-inverted/20',
+        icon: 'fill-warning-inverted',
       },
     } satisfies Record<CToastType, object>,
   },
@@ -194,30 +195,21 @@ const icons: Record<string, string> = {
   warning: mdiAlert,
 };
 
-// Accent colour for the close icon. `c-icon`'s `color` prop sets the SVG
-// `fill` directly, so it can't inherit `currentColor` from the icon-button
-// (which paints itself primary). Map the toast type to its semantic status
-// role var (the toast's `box` border is the same role, but the close icon
-// lives inside a nested custom element and so can't pick that up via the
-// cascade).
-const ACCENT_VAR: Record<CToastType, string> = {
-  error: 'var(--c-error)',
-  info: 'var(--c-info)',
-  success: 'var(--c-success)',
-  warning: 'var(--c-warning)',
-};
+const TYPES: readonly CToastType[] = ['error', 'info', 'success', 'warning'];
 
 // A message object can carry any string at runtime; unknown types fall back
 // to `info`, matching the original `var(--c-info)` fallback.
 const toastType = computed<CToastType>(() => {
   const type = props.message?.type;
 
-  return type && type in ACCENT_VAR ? type : 'info';
+  return type && (TYPES as readonly string[]).includes(type)
+    ? (type as CToastType)
+    : 'info';
 });
 
-const accentColor = computed(() => ACCENT_VAR[toastType.value]);
-
-const ui = computed(() => toast({ type: toastType.value }));
+const ui = computed(() =>
+  toast({ labelled: Boolean(props.message?.closeText), type: toastType.value }),
+);
 
 const progressStyle = computed(() => ({
   '--_c-toast-duration': `${props.message?.duration}ms`,
@@ -271,8 +263,6 @@ const onMouseLeave = () => {
 // specific toast by querying its host and calling the method — matches
 // the @Method() decorator on the original Stencil component.
 defineExpose({ closeToast: close });
-
-const TYPES: readonly CToastType[] = ['error', 'info', 'success', 'warning'];
 
 // Show animation + auto-close timer. Runs exactly once, the first time
 // `message` is available.
@@ -349,6 +339,11 @@ onBeforeUnmount(() => {
     nothing. Kept on the `root` part so it stays `::part(root)`-customizable.
 -->
 <style>
+/* The enter/exit offset comes from the parent c-toasts stack via the
+ * inherited `--_c-toast-enter-y` custom property (20px for a bottom-anchored
+ * stack, -20px for a top-anchored one), so a toast always slides in from —
+ * and retreats toward — the edge its stack is anchored to. The fallback
+ * keeps the bottom behaviour for a bare c-toast. */
 :host {
   display: block;
   position: relative;
@@ -356,7 +351,7 @@ onBeforeUnmount(() => {
   text-align: left;
   pointer-events: all;
   opacity: 0;
-  transform: translateY(20px);
+  transform: translateY(var(--_c-toast-enter-y, 20px));
   transition:
     opacity 0.5s ease,
     transform 0.5s ease;
@@ -366,6 +361,17 @@ onBeforeUnmount(() => {
 :host(.show) {
   opacity: 1;
   transform: translateY(0);
+}
+
+/* Reduced motion: a plain, quicker cross-fade — no slide. The close flow
+ * waits for `transitionend` on the host, so an opacity transition must
+ * remain (only the transform goes). */
+@media (prefers-reduced-motion: reduce) {
+  :host {
+    transform: none;
+    transition: opacity 0.2s ease;
+    will-change: opacity;
+  }
 }
 
 [part='root'] {

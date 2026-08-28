@@ -37,6 +37,16 @@
   --color-border-strong: var(--c-border-strong);
   --color-ring: var(--c-ring);
 
+  /* Inverted-surface tier (ADR-0032): mode-aware contrast flip — not the
+   * mode-invariant inverse-* family below. */
+  --color-surface-inverted: var(--c-surface-inverted);
+  --color-on-surface-inverted: var(--c-on-surface-inverted);
+  --color-on-surface-inverted-muted: var(--c-on-surface-inverted-muted);
+  --color-success-inverted: var(--c-success-inverted);
+  --color-info-inverted: var(--c-info-inverted);
+  --color-warning-inverted: var(--c-warning-inverted);
+  --color-error-inverted: var(--c-error-inverted);
+
   --color-primary: var(--c-primary);
   --color-primary-hover: var(--c-primary-hover);
   --color-on-primary: var(--c-on-primary);
