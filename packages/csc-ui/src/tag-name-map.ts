@@ -133,9 +133,43 @@ export interface CAccordionItemElement extends Omit<HTMLElement, 'collapsable' |
   ): void;
 }
 
-export interface CAlertElement extends Omit<HTMLElement, 'type'> {
+/** Events dispatched by `<c-alert>`. */
+export interface CAlertElementEventMap {
+  /**
+   * Fired when the dismiss button is pressed. The alert does not hide
+   * itself — the consumer owns removal.
+   */
+  dismiss: CustomEvent<void>;
+}
+
+export interface CAlertElement extends Omit<HTMLElement, 'dismissible' | 'type'> {
+  /**
+   * Show a dismiss button. The alert only emits `dismiss` — removing it from
+   * the page stays the consumer's job.
+   */
+  dismissible?: boolean;
   /** Type of the alert */
   type?: 'default' | 'error' | 'info' | 'success' | 'warning';
+  addEventListener<K extends keyof CAlertElementEventMap>(
+    type: K,
+    listener: (this: CAlertElement, ev: CAlertElementEventMap[K]) => void,
+    options?: boolean | AddEventListenerOptions,
+  ): void;
+  addEventListener(
+    type: string,
+    listener: EventListenerOrEventListenerObject,
+    options?: boolean | AddEventListenerOptions,
+  ): void;
+  removeEventListener<K extends keyof CAlertElementEventMap>(
+    type: K,
+    listener: (this: CAlertElement, ev: CAlertElementEventMap[K]) => void,
+    options?: boolean | EventListenerOptions,
+  ): void;
+  removeEventListener(
+    type: string,
+    listener: EventListenerOrEventListenerObject,
+    options?: boolean | EventListenerOptions,
+  ): void;
 }
 
 /** Events dispatched by `<c-autocomplete>`. */
@@ -862,11 +896,28 @@ export interface CMenuElement extends Omit<HTMLElement, 'distance' | 'open' | 'p
 }
 
 /** A single command in a `c-menu`. */
-export interface CMenuItemElement extends Omit<HTMLElement, 'danger' | 'disabled' | 'value'> {
+export interface CMenuItemElement extends Omit<HTMLElement, 'active' | 'activeIcon' | 'danger' | 'disabled' | 'icon' | 'value'> {
+  /**
+   * Marks the item as the currently selected choice: renders the trailing
+   * indicator icon and stamps `role="menuitemradio"` + `aria-checked`. Leave
+   * unset for regular command items — only a true/false value marks the item
+   * as a selectable choice. The state is consumer-owned: the menu emits
+   * `select` as usual and never toggles this itself. Distinct from the
+   * keyboard highlight (the `data-active` attribute the controlling menu
+   * moves between rows).
+   */
+  active?: boolean;
+  /**
+   * SVG path for the trailing indicator shown while `active`; defaults to a
+   * check mark.
+   */
+  activeIcon?: string;
   /** Marks the action as destructive (renders in the error colour). */
   danger?: boolean;
   /** Disables the item — it is skipped by keyboard nav and emits no select. */
   disabled?: boolean;
+  /** SVG path for a leading icon rendered before the item's content. */
+  icon?: string;
   /** Value reported in the menu's `select` event when this item is chosen. */
   value?: string;
   closeSubmenu(): void;

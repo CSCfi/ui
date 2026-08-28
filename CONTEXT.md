@@ -143,6 +143,20 @@ _Avoid_: Base colour, brand colour (ambiguous — a "brand colour" could mean an
 The consumer-facing `@theme` mapping the library publishes (`@cscfi/csc-ui/css/tailwind-theme.css`) so a consumer's own Tailwind build gains utilities for the **semantic tokens**. Semantic roles **only**, by design — **palette tokens** are excluded because a palette-step utility cannot be mode-aware (ADR-0018). It is a mapping, not a stylesheet: it must be paired with the token definitions (`tokens.css`) to resolve.
 _Avoid_: Tailwind preset/config (Tailwind-v3 vocabulary), theme file (ambiguous with **theme mode** and `applyTheme`)
 
+### Data visualization
+
+**Chart token**:
+The dataviz subset of the semantic tokens: twelve **series slots** plus the chart anatomy roles (`chart-surface`, `chart-grid`, `chart-axis`). Mode-aware like every semantic token, but the series slots are **frozen** — consumer re-seeding re-themes components, never charts, because the slots are validated as a set (ADR-0030) and a silent shift would void that guarantee. The chart surface equals the raised card surface, which is the background the slots are validated against.
+_Avoid_: Chart color (a color is a slot's current value; the token is the role), viz palette, dataviz token
+
+**Series slot**:
+One of the twelve ordered positions (`chart-1` … `chart-12`) a chart series wears. Assignment is by sequence — series *n* wears slot *n* — never cycled, never skipped, and never re-assigned when filtering changes the series count: color follows the entity, not its rank. The order itself is the accessibility mechanism (adjacent slots are the validated pairs), and a slot keeps the same hue in both theme modes. Beyond six visible series, fold into "Other" or facet rather than reaching for the tail slots.
+_Avoid_: Series color (the value, not the position), palette index, color 1–12
+
+**Relief channel**:
+An alternative way to read a mark's value — direct labels, tooltips, or an accompanying table view — required wherever a series slot sits below 3:1 contrast on the chart surface (a documented, deliberate state for some dark-mode slots; the narrow dark lightness band makes full contrast unattainable). A sub-3:1 mark with no relief channel is an accessibility failure, not a stylistic choice.
+_Avoid_: Fallback (relief supplements the mark; nothing replaces it), workaround
+
 ### Form fields
 
 **Label**:

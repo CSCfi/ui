@@ -186,7 +186,7 @@ const iconButton = tv({
     // ---- ghost -----------------------------------------------------------
     {
       class: {
-        root: 'bg-primary-subtle text-primary hover:bg-primary-subtle-hover focus-visible:outline-primary',
+        root: 'bg-primary/8 text-primary hover:bg-primary/15 active:bg-primary/22 focus-visible:outline-primary',
       },
       ghost: true,
       inverted: false,
@@ -201,7 +201,7 @@ const iconButton = tv({
     // ---- text ------------------------------------------------------------
     {
       class: {
-        root: 'bg-transparent text-primary hover:bg-primary-subtle-hover focus-visible:outline-primary',
+        root: 'bg-transparent text-primary hover:bg-primary/15 focus-visible:outline-primary',
       },
       inverted: false,
       text: true,
@@ -216,7 +216,7 @@ const iconButton = tv({
     // ---- outlined --------------------------------------------------------
     {
       class: {
-        root: 'bg-transparent text-primary ring-2 ring-inset ring-primary hover:bg-primary-subtle focus-visible:outline-primary',
+        root: 'bg-transparent text-primary ring-2 ring-inset ring-primary hover:bg-primary/15 focus-visible:outline-primary',
       },
       inverted: false,
       outlined: true,

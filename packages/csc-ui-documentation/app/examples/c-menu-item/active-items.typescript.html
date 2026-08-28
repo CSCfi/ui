@@ -1,0 +1,26 @@
+<div class="example-row">
+  <c-menu id="theme-menu">
+    <c-button slot="trigger" text>
+      <c-icon id="theme-trigger-icon"></c-icon>
+      Theme: <span id="theme-value">dark</span>
+      <c-icon class="chevron"></c-icon>
+    </c-button>
+
+    <c-menu-label>Theme</c-menu-label>
+
+    <c-menu-item id="theme-dark" value="dark">Dark</c-menu-item>
+    <c-menu-item id="theme-light" value="light">Light</c-menu-item>
+    <c-menu-item id="theme-system" value="system">System</c-menu-item>
+  </c-menu>
+
+  <c-menu id="sort-menu">
+    <c-button slot="trigger" text>
+      Sort by: <span id="sort-value">name</span>
+      <c-icon class="chevron"></c-icon>
+    </c-button>
+
+    <c-menu-item value="name">name</c-menu-item>
+    <c-menu-item value="size">size</c-menu-item>
+    <c-menu-item value="date">date</c-menu-item>
+  </c-menu>
+</div>

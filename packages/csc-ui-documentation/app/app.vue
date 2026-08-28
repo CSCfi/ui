@@ -55,6 +55,13 @@
         </c-side-navigation-item>
 
         <c-side-navigation-item
+          :active.prop="route.path === '/data-visualization'"
+          @item-change="navigateTo('/data-visualization')"
+        >
+          Data visualization
+        </c-side-navigation-item>
+
+        <c-side-navigation-item
           :active.prop="route.path === '/migration'"
           @item-change="navigateTo('/migration')"
         >

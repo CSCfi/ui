@@ -174,12 +174,27 @@ const isOpen = ref(false);
 
 const currentItem = ref<HTMLElement | null>(null);
 
-const panelStyle = computed(
-  () =>
-    `position-anchor:--c-menu-anchor;position-area:${
-      POSITION_AREA[props.position] ?? POSITION_AREA['bottom-start']
-    };inset:auto;`,
-);
+// The trigger→panel gap. Applied on the placement's axis (both sides, so the
+// gap survives the position-try flip fallbacks) and published as an inherited
+// custom property so every (nested) submenu panel leaves the identical gap
+// from its parent — provide/inject cannot cross the custom-element boundary,
+// but an inherited property can.
+const distancePx = computed(() => `${Number(props.distance) || 0}px`);
+
+const panelStyle = computed(() => {
+  const axis =
+    props.position.startsWith('left') || props.position.startsWith('right')
+      ? 'inline'
+      : 'block';
+
+  return `position-anchor:--c-menu-anchor;position-area:${
+    POSITION_AREA[props.position] ?? POSITION_AREA['bottom-start']
+  };inset:auto;margin-${axis}:var(--_c-menu-distance,0px);`;
+});
+
+watch(distancePx, (px) => {
+  host?.style.setProperty('--_c-menu-distance', px);
+});
 
 // Tracks open submenu items (across nested levels) so we can coordinate
 // dismissal — the browser does not auto-chain manual popovers across the
@@ -716,6 +731,8 @@ watch(
 
 onMounted(() => {
   if (!host) return;
+
+  host.style.setProperty('--_c-menu-distance', distancePx.value);
 
   host.addEventListener('click', onClick);
   host.addEventListener('keydown', onKeydown);

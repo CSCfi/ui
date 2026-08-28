@@ -107,6 +107,26 @@
   --color-logo-teal: var(--c-logo-teal);
   --color-logo-magenta: var(--c-logo-magenta);
 
+  /* Chart tokens (ADR-0030): 12 frozen categorical series slots — assign in
+   * slot order, never cycle — plus the chart anatomy roles (plot background,
+   * gridlines, axis labels). Validated as a set per mode; see the docs
+   * data-visualization guide for the folding and relief rules. */
+  --color-chart-1: var(--c-chart-1);
+  --color-chart-2: var(--c-chart-2);
+  --color-chart-3: var(--c-chart-3);
+  --color-chart-4: var(--c-chart-4);
+  --color-chart-5: var(--c-chart-5);
+  --color-chart-6: var(--c-chart-6);
+  --color-chart-7: var(--c-chart-7);
+  --color-chart-8: var(--c-chart-8);
+  --color-chart-9: var(--c-chart-9);
+  --color-chart-10: var(--c-chart-10);
+  --color-chart-11: var(--c-chart-11);
+  --color-chart-12: var(--c-chart-12);
+  --color-chart-surface: var(--c-chart-surface);
+  --color-chart-grid: var(--c-chart-grid);
+  --color-chart-axis: var(--c-chart-axis);
+
   /* Mode-invariant inverse family (content on a fixed brand/dark backdrop). */
   --color-inverse-surface: var(--c-inverse-surface);
   --color-inverse-on: var(--c-inverse-on);
