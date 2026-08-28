@@ -277,8 +277,6 @@ let isOpening = false;
 
 let originalOverflowValue = '';
 
-let hideDetails = false;
-
 const inputSize = { height: 0, width: 0 };
 
 const itemsArray = computed<DropdownItem[]>(() => {
@@ -341,6 +339,41 @@ const setInputHideDetails = (value: boolean) => {
   inputElement.dataset.hideDetails = String(value);
 };
 
+// What the c-input carried before the open-state override above, so close()
+// can put back exactly what the parent had rendered. Recomputing the
+// parent's setting here instead (the old `!!parent.hideDetails` mount-time
+// snapshot) mis-read a valueless `hide-details` attribute — the host
+// property holds the raw empty string, which is falsy — and stamping that
+// stale `data-hide-details="false"` onto the c-input silently overrode the
+// parent's binding for good (Vue's vnode diff never sees imperative writes).
+// Captured on open, `null` while nothing is overridden.
+let inputHideDetailsBeforeOpen: {
+  attr: string | undefined;
+  prop: boolean | undefined;
+} | null = null;
+
+const captureInputHideDetails = () => {
+  if (!inputElement || inputHideDetailsBeforeOpen) return;
+
+  inputHideDetailsBeforeOpen = {
+    attr: inputElement.dataset.hideDetails,
+    prop: inputElement.hideDetails,
+  };
+};
+
+const restoreInputHideDetails = () => {
+  if (!inputElement || !inputHideDetailsBeforeOpen) return;
+
+  const { attr, prop } = inputHideDetailsBeforeOpen;
+
+  inputElement.hideDetails = prop;
+
+  if (attr === undefined) delete inputElement.dataset.hideDetails;
+  else inputElement.dataset.hideDetails = attr;
+
+  inputHideDetailsBeforeOpen = null;
+};
+
 const getParentSlotRect = (): DOMRect => {
   // Adaptation: c-input is now shadow DOM, so reach its `.c-input__slot`
   // through the c-input element's own shadowRoot. Fall back to the host.
@@ -353,6 +386,8 @@ const positionMenu = () => {
   const dialog = dialogRef.value;
 
   if (!dialog || !host) return;
+
+  captureInputHideDetails();
 
   const { innerHeight, innerWidth } = window;
 
@@ -504,7 +539,7 @@ const close = () => {
     // unnamed native <slot>, so we revert to that by clearing the attribute
     // — `slot="default"` would no longer match the projected slot.
     inputElement.slot = '';
-    setInputHideDetails(hideDetails);
+    restoreInputHideDetails();
   }
 
   if (dummyRef.value) {
@@ -627,8 +662,6 @@ watch(
 onMounted(() => {
   if (!host) return;
   setIsMobile();
-  hideDetails = !!(props.parent as { hideDetails?: boolean } | null)
-    ?.hideDetails;
   inputElement = host.querySelector('c-input') as typeof inputElement;
 
   resizeObserver = new ResizeObserver((entries) => {

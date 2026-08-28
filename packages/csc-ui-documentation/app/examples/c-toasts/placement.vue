@@ -1,12 +1,12 @@
 <template>
   <div class="example-row">
-    <c-select v-model="vertical" label="Vertical">
+    <c-select v-model="vertical" label="Vertical" hide-details>
       <c-option name="Bottom" value="bottom">Bottom</c-option>
 
       <c-option name="Top" value="top">Top</c-option>
     </c-select>
 
-    <c-select v-model="horizontal" label="Horizontal">
+    <c-select v-model="horizontal" label="Horizontal" hide-details>
       <c-option name="Left" value="left">Left</c-option>
 
       <c-option name="Center" value="center">Center</c-option>
