@@ -1,8 +1,6 @@
 A single radio option inside a `c-radio-group`: a native radio input whose
 default slot is its clickable, announced label.
 
-## Usage
-
 Author one `c-radio` per option, with a unique `value` and the option's
 label content in the default slot. Selection state belongs to the group —
 a radio has no checked prop; set the group's `value` (or `v-model`)

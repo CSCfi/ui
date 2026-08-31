@@ -1,7 +1,5 @@
 A click-opened, non-modal surface anchored to its trigger, floating in the top layer; its content may be interactive.
 
-## Usage
-
 Put the element that opens the popover in the `trigger` slot and the content in the default slot. An optional `heading` prop renders a heading and doubles as the panel's accessible name (it is not called `title` — a `title` attribute would trigger the browser's native tooltip). The popover is deliberately minimal: compose footers, actions, or a close button from existing components (e.g. `c-button`) inside the body.
 
 ## When to use
