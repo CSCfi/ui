@@ -67,6 +67,7 @@ Spec resolved in a grilling session 2026-08-31; boundaries are recorded in
 
 ## Follow-ups surfaced during grilling (separate from this component)
 
-- `CProgressBar.vue:143` writes `aria-busy` as `(!indeterminate)` — busy=true
-  when *determinate*, which looks inverted. Fix separately; do not clone.
+- ~~`CProgressBar.vue:143` writes `aria-busy` as `(!indeterminate)` — busy=true
+  when *determinate*, which looks inverted. Fix separately; do not clone.~~
+  **Fixed 2026-08-31**: busy now tracks `indeterminate`.
 - `c-progress-bar` and `c-spinner` have no `usage.md` despite ADR-0026.
