@@ -1,5 +1,5 @@
 {
-  "_comment": "Semantic token → palette step map for DARK mode, retuned to the approved MyCSC dark theme v2 spec (neutral dark-gray surfaces, no near-blacks; elevation reads from progressively lighter surfaces + hairline borders, not shadows). The surface ladder + neutral borders/text draw from the hand-tuned dark-neutral `slate` ramp (values are the spec's neutrals verbatim; `slate-850` was added for the inset/muted tier). Bright interactive teal (fills, links, focus) draws from the ACCENT family's generated steps — the pre-anchor primary steps are chroma-tapered for light-mode use and read washed on dark surfaces, while accent-500/400/300 land on the spec's #3BB8B0/#56CFC8/#8AE0DA almost exactly; deep navy-teal fills (nav chrome, subtle fills) stay on primary steps, one step lighter than before. Trade-off vs ADR-0011: re-seeding `primary` rebrands dark nav/subtle but not the bright fills — re-seed `accent` to move those. Verified with scripts/audit-contrast.mjs. Keep keys in sync with light.json. Mode-invariant roles (inverse-*) live in invariant.json.",
+  "_comment": "Semantic token → palette step map for DARK mode, retuned to the approved MyCSC dark theme v2 spec (neutral dark-gray surfaces, no near-blacks; elevation reads from progressively lighter surfaces + hairline borders, not shadows). The surface ladder + neutral borders/text draw from the hand-tuned dark-neutral `slate` ramp (values are the spec's neutrals verbatim; `slate-850` was added for the inset/muted tier). Interactive roles draw from THEIR OWN family's lightened steps (primary fills/ring on primary-300/200, links on link-200/100), same shape as the status families — NOT from the spec's vivid accent teal (ADR-0034): borrowing accent-500/400/300 matched the MyCSC dark v2 spec's #3BB8B0/#56CFC8/#8AE0DA but broke ADR-0011's per-family re-theming (re-seeding `primary` could not move dark fills). Deep navy-teal fills (nav chrome, subtle fills) stay on primary steps, one step lighter than light mode. Verified with scripts/audit-contrast.mjs. Keep keys in sync with light.json. Mode-invariant roles (inverse-*) live in invariant.json.",
 
   "surface": "slate-800",
   "surface-raised": "slate-800",
@@ -12,7 +12,7 @@
   "on-surface-sunken": "slate-100",
   "border": "slate-700",
   "border-strong": "slate-400",
-  "ring": "accent-400",
+  "ring": "primary-300",
 
   "_comment-inverted": "Inverted-surface tier (ADR-0032): white pill on the dark page. Each status *-inverted role is the family's accent ink on white (coloured icon + alpha-wash halo — the wash lands on the pale subtle tint the light-mode alerts use); neutral inks reuse light mode's on-surface neutrals. Keep keys in sync with light.json.",
   "surface-inverted": "white",
@@ -23,12 +23,12 @@
   "warning-inverted": "warning-600",
   "error-inverted": "error-600",
 
-  "primary": "accent-500",
-  "primary-hover": "accent-400",
+  "primary": "primary-300",
+  "primary-hover": "primary-200",
   "on-primary": "primary-950",
   "primary-subtle": "primary-800",
   "primary-subtle-hover": "primary-700",
-  "on-primary-subtle": "accent-300",
+  "on-primary-subtle": "primary-200",
 
   "secondary": "secondary-300",
   "secondary-hover": "secondary-200",
@@ -72,8 +72,8 @@
   "error-subtle-hover": "error-700",
   "on-error-subtle": "error-200",
 
-  "link": "accent-400",
-  "link-hover": "accent-300",
+  "link": "link-200",
+  "link-hover": "link-100",
   "on-link": "link-900",
   "link-subtle": "link-800",
   "link-subtle-hover": "link-700",

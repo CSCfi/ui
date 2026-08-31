@@ -1,7 +1,5 @@
 A non-interactive text hint shown when its trigger is hovered or keyboard-focused, floating in the top layer on the inverted surface tier.
 
-## Usage
-
 Put the element the tooltip describes in the `trigger` slot and the hint in the `text` prop. For formatted content, use the `content` slot instead — it overrides the prop but must stay non-interactive: a tooltip is never focusable and can hold no links or buttons. If the content needs to be clicked, use `c-popover`.
 
 The tooltip shows after a short hover delay (configurable via the `delay` prop) and immediately on keyboard focus. The trigger must be focusable for keyboard and screen-reader users to reach the hint — a `c-icon-button` or `c-button` qualifies; a bare `<span>` does not.

@@ -1182,6 +1182,7 @@ export interface CPopoverElement extends Omit<HTMLElement, 'distance' | 'heading
   ): void;
 }
 
+/** A horizontal progress bar that fills a track to a known completion percentage, with an optional details line showing the value and a label. */
 export interface CProgressBarElement extends Omit<HTMLElement, 'hideDetails' | 'indeterminate' | 'label' | 'singleLine' | 'value'> {
   /** Hide the percentage display */
   hideDetails?: boolean;
@@ -1193,6 +1194,19 @@ export interface CProgressBarElement extends Omit<HTMLElement, 'hideDetails' | '
   singleLine?: boolean;
   /** Progress bar value in percentage (0 to 100) */
   value?: number;
+}
+
+/** A circular progress indicator that draws a known completion percentage as an arc around a track — the circular counterpart of `c-progress-bar`. */
+export interface CProgressCircleElement extends Omit<HTMLElement, 'size' | 'value' | 'width'> {
+  /** Diameter of the circle in pixels */
+  size?: number;
+  /** Progress value in percentage (0 to 100) */
+  value?: number;
+  /**
+   * Stroke width of the track in pixels; the value arc draws at half this
+   * width, inset within the track
+   */
+  width?: number;
 }
 
 /** Events dispatched by `<c-radio>`. */
@@ -1539,6 +1553,7 @@ export interface CSliderElement extends Omit<HTMLElement, 'ariaLabelInternal' | 
   ): void;
 }
 
+/** A circular indeterminate activity indicator — pure motion with no value, for waits of unknown duration. */
 export interface CSpinnerElement extends Omit<HTMLElement, 'color' | 'size' | 'width'> {
   /** Color of the spinner */
   color?: string;
@@ -2149,6 +2164,7 @@ declare global {
     'c-pagination': CPaginationElement;
     'c-popover': CPopoverElement;
     'c-progress-bar': CProgressBarElement;
+    'c-progress-circle': CProgressCircleElement;
     'c-radio': CRadioElement;
     'c-radio-group': CRadioGroupElement;
     'c-select': CSelectElement;
