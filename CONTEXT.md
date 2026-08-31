@@ -91,6 +91,20 @@ _Avoid_: Scrim (that is the colour token), dimmer, overlay, `::backdrop` (the re
 A modal property governing *both* light-dismiss gestures — backdrop click **and** Escape. A non-dismissable modal responds to either with a nudge animation instead of closing; it can only be closed by an explicit action inside it.
 _Avoid_: persistent (the inverse framing; canonical axis is _dismissable_), closable
 
+### Progress & loading
+
+**Progress circle** (`c-progress-circle`):
+The circular counterpart of `c-progress-bar`, for **determinate** progress only — it always renders a known value and has no indeterminate mode. Unknown-duration waiting is the **spinner**'s job; the boundary is the axis (known value vs pure activity), not the shape.
+_Avoid_: Progress circular (Vuetify vocabulary), progress ring, spinner (that is the indeterminate indicator), donut (dataviz vocabulary)
+
+**Spinner** (`c-spinner`):
+The circular **indeterminate** activity indicator — motion with no value. The only circular unknown-progress surface (a **progress circle** never spins); also the primitive other components embed for their busy states.
+_Avoid_: Loader (that is the overlay component), circular progress, indeterminate progress circle
+
+**Loader** (`c-loader`):
+The container-covering overlay (scrim + **spinner** + optional message) that blocks a region while it loads. Not a synonym for the spinner it contains, nor for a progress component.
+_Avoid_: Spinner (the primitive inside it), overlay (any floating surface), progress (a loader shows no value)
+
 ### Styling
 
 **Part**:

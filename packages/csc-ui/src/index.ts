@@ -42,6 +42,7 @@ import CPage from './components/c-page/CPage.vue';
 import CPagination from './components/c-pagination/CPagination.vue';
 import CPopover from './components/c-popover/CPopover.vue';
 import CProgressBar from './components/c-progress-bar/CProgressBar.vue';
+import CProgressCircle from './components/c-progress-circle/CProgressCircle.vue';
 import CRadioGroup from './components/c-radio-group/CRadioGroup.vue';
 import CRadio from './components/c-radio/CRadio.vue';
 import CSelect from './components/c-select/CSelect.vue';
@@ -142,6 +143,8 @@ export type {
 
 export type { CPopoverProps } from './components/c-popover/CPopover.vue';
 
+export type { CProgressCircleProps } from './components/c-progress-circle/CProgressCircle.vue';
+
 export type {
   CStatusProps,
   CStatusType,
@@ -232,6 +235,7 @@ const components: Array<[string, unknown]> = [
   ['c-tag', CTag],
   ['c-tags', CTags],
   ['c-progress-bar', CProgressBar],
+  ['c-progress-circle', CProgressCircle],
   ['c-radio', CRadio],
   ['c-radio-group', CRadioGroup],
   ['c-switch', CSwitch],
@@ -391,4 +395,5 @@ export const tailwindVariantTags: ReadonlyArray<string> = [
   'c-button-group',
   'c-tooltip',
   'c-popover',
+  'c-progress-circle',
 ];

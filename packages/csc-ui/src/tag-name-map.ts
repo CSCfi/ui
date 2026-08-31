@@ -1195,6 +1195,19 @@ export interface CProgressBarElement extends Omit<HTMLElement, 'hideDetails' | '
   value?: number;
 }
 
+/** A circular progress indicator that draws a known completion percentage as an arc around a track — the circular counterpart of `c-progress-bar`. */
+export interface CProgressCircleElement extends Omit<HTMLElement, 'size' | 'value' | 'width'> {
+  /** Diameter of the circle in pixels */
+  size?: number;
+  /** Progress value in percentage (0 to 100) */
+  value?: number;
+  /**
+   * Stroke width of the track in pixels; the value arc draws at half this
+   * width, inset within the track
+   */
+  width?: number;
+}
+
 /** Events dispatched by `<c-radio>`. */
 export interface CRadioElementEventMap {
   /**
@@ -2149,6 +2162,7 @@ declare global {
     'c-pagination': CPaginationElement;
     'c-popover': CPopoverElement;
     'c-progress-bar': CProgressBarElement;
+    'c-progress-circle': CProgressCircleElement;
     'c-radio': CRadioElement;
     'c-radio-group': CRadioGroupElement;
     'c-select': CSelectElement;

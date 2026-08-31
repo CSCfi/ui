@@ -62,6 +62,7 @@ import {
   type CPopoverElement,
   type CPopoverElementEventMap,
   type CProgressBarElement,
+  type CProgressCircleElement,
   type CRadioElement,
   type CRadioElementEventMap,
   type CRadioGroupElement,
@@ -492,6 +493,14 @@ export const CProgressBar = createComponent({
   elementClass: elementClass<CProgressBarElement>('c-progress-bar'),
   react: React,
   tagName: 'c-progress-bar',
+});
+
+/** A circular progress indicator that draws a known completion percentage as an arc around a track — the circular counterpart of `c-progress-bar`. */
+export const CProgressCircle = createComponent({
+  displayName: 'CProgressCircle',
+  elementClass: elementClass<CProgressCircleElement>('c-progress-circle'),
+  react: React,
+  tagName: 'c-progress-circle',
 });
 
 /** A single radio option inside a `c-radio-group`: a native radio input whose default slot is its clickable, announced label. */
