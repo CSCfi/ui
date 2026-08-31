@@ -74,7 +74,7 @@ import {
   mdiInformation,
 } from '@mdi/js';
 import { tv } from 'tailwind-variants';
-import { computed, onMounted, watch, useHost } from 'vue';
+import { computed, onMounted, useHost, watch } from 'vue';
 
 import { coerceBoolean } from '../../shared/coerceBoolean';
 import { useHostEmit } from '../../shared/useHostEmit';
@@ -146,6 +146,11 @@ const props = withDefaults(defineProps<CAlertProps>(), {
   type: 'default',
 });
 
+// The host carries the imperative `role`; without this, Vue mirrors it (and
+// any consumer aria-*) into $attrs and onto [part=root], duplicating the
+// live-region role (`pnpm lint:a11y`).
+defineOptions({ inheritAttrs: false });
+
 const icons: Record<CAlertType, string> = {
   default: mdiInformation,
   error: mdiCloseCircle,
@@ -156,8 +161,8 @@ const icons: Record<CAlertType, string> = {
 
 // Attributes can deliver any string at runtime (including the legacy `''`),
 // so unknown values fall back to the default look.
-const normalizedType = computed((): CAlertType =>
-  props.type in icons ? props.type : 'default',
+const normalizedType = computed(
+  (): CAlertType => (props.type in icons ? props.type : 'default'),
 );
 
 const isDismissible = computed(() => coerceBoolean(props.dismissible));

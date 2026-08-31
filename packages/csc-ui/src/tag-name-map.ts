@@ -1134,6 +1134,54 @@ export interface CPaginationElement extends Omit<HTMLElement, 'hideDetails' | 'h
   ): void;
 }
 
+/** Events dispatched by `<c-popover>`. */
+export interface CPopoverElementEventMap {
+  /**
+   * Fired whenever the popover opens or closes, carrying the new open state.
+   * Named `change:open`, not `update:open`: Vue's runtime silently drops
+   * `onUpdate:*` listeners on custom elements (`isModelListener`), so a
+   * template `@update:open` would never be attached.
+   */
+  'change:open': CustomEvent<boolean>;
+}
+
+/** A click-opened, non-modal surface anchored to its trigger, floating in the top layer; its content may be interactive. */
+export interface CPopoverElement extends Omit<HTMLElement, 'distance' | 'heading' | 'open' | 'position'> {
+  /** Distance from the trigger to the panel, in pixels. Defaults to `0`. */
+  distance?: number | string;
+  /**
+   * Heading rendered at the top of the panel, doubling as its accessible
+   * name. Without it, set `aria-label` on the host. Named `heading`, not
+   * `title`: a `title` attribute on the host would trigger the browser's
+   * native tooltip and collides with `HTMLElement.title`.
+   */
+  heading?: string;
+  /** Whether the popover is open. Two-way: emits `change:open`. */
+  open?: boolean;
+  /** Preferred placement of the panel relative to the trigger. */
+  position?: 'bottom-end' | 'bottom-start' | 'bottom' | 'left-end' | 'left-start' | 'left' | 'right-end' | 'right-start' | 'right' | 'top-end' | 'top-start' | 'top';
+  addEventListener<K extends keyof CPopoverElementEventMap>(
+    type: K,
+    listener: (this: CPopoverElement, ev: CPopoverElementEventMap[K]) => void,
+    options?: boolean | AddEventListenerOptions,
+  ): void;
+  addEventListener(
+    type: string,
+    listener: EventListenerOrEventListenerObject,
+    options?: boolean | AddEventListenerOptions,
+  ): void;
+  removeEventListener<K extends keyof CPopoverElementEventMap>(
+    type: K,
+    listener: (this: CPopoverElement, ev: CPopoverElementEventMap[K]) => void,
+    options?: boolean | EventListenerOptions,
+  ): void;
+  removeEventListener(
+    type: string,
+    listener: EventListenerOrEventListenerObject,
+    options?: boolean | EventListenerOptions,
+  ): void;
+}
+
 export interface CProgressBarElement extends Omit<HTMLElement, 'hideDetails' | 'indeterminate' | 'label' | 'singleLine' | 'value'> {
   /** Hide the percentage display */
   hideDetails?: boolean;
@@ -2003,6 +2051,58 @@ export interface CToastsElement extends Omit<HTMLElement, 'absolute' | 'horizont
 export interface CToolbarElement extends HTMLElement {
 }
 
+/** Events dispatched by `<c-tooltip>`. */
+export interface CTooltipElementEventMap {
+  /**
+   * Fired whenever the tooltip shows or hides, carrying the new open state.
+   * Named `change:open`, not `update:open`: Vue's runtime silently drops
+   * `onUpdate:*` listeners on custom elements (`isModelListener`), so a
+   * template `@update:open` would never be attached.
+   */
+  'change:open': CustomEvent<boolean>;
+}
+
+/** A non-interactive text hint shown when its trigger is hovered or keyboard-focused, floating in the top layer on the inverted surface tier. */
+export interface CTooltipElement extends Omit<HTMLElement, 'delay' | 'distance' | 'open' | 'position' | 'text'> {
+  /**
+   * Delay before the tooltip shows on hover, in milliseconds. Keyboard focus
+   * shows the tooltip immediately, regardless of this value. Defaults to
+   * `400`.
+   */
+  delay?: number | string;
+  /** Distance from the trigger to the tooltip, in pixels. Defaults to `4`. */
+  distance?: number | string;
+  /** Whether the tooltip is open. Two-way: emits `change:open`. */
+  open?: boolean;
+  /** Preferred placement of the tooltip relative to the trigger. */
+  position?: 'bottom-end' | 'bottom-start' | 'bottom' | 'left-end' | 'left-start' | 'left' | 'right-end' | 'right-start' | 'right' | 'top-end' | 'top-start' | 'top';
+  /**
+   * The tooltip text. Overridden by the `content` slot when that is
+   * populated.
+   */
+  text?: string;
+  addEventListener<K extends keyof CTooltipElementEventMap>(
+    type: K,
+    listener: (this: CTooltipElement, ev: CTooltipElementEventMap[K]) => void,
+    options?: boolean | AddEventListenerOptions,
+  ): void;
+  addEventListener(
+    type: string,
+    listener: EventListenerOrEventListenerObject,
+    options?: boolean | AddEventListenerOptions,
+  ): void;
+  removeEventListener<K extends keyof CTooltipElementEventMap>(
+    type: K,
+    listener: (this: CTooltipElement, ev: CTooltipElementEventMap[K]) => void,
+    options?: boolean | EventListenerOptions,
+  ): void;
+  removeEventListener(
+    type: string,
+    listener: EventListenerOrEventListenerObject,
+    options?: boolean | EventListenerOptions,
+  ): void;
+}
+
 declare global {
   interface HTMLElementTagNameMap {
     'c-accordion': CAccordionElement;
@@ -2047,6 +2147,7 @@ declare global {
     'c-otp-input': COtpInputElement;
     'c-page': CPageElement;
     'c-pagination': CPaginationElement;
+    'c-popover': CPopoverElement;
     'c-progress-bar': CProgressBarElement;
     'c-radio': CRadioElement;
     'c-radio-group': CRadioGroupElement;
@@ -2073,5 +2174,6 @@ declare global {
     'c-toast': CToastElement;
     'c-toasts': CToastsElement;
     'c-toolbar': CToolbarElement;
+    'c-tooltip': CTooltipElement;
   }
 }

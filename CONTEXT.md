@@ -46,7 +46,7 @@ The contract where the consumer owns a component's data operation — filtering,
 _Avoid_: Server-side mode (the owner need not be a server), no-filter (foreign Vuetify vocabulary), manual (TanStack's internal word)
 
 **Trigger**:
-The consumer-supplied element (typically a `c-button`) projected into a `c-menu`'s `trigger` slot that toggles the menu open/closed. The menu mirrors `aria-haspopup` / `aria-expanded` onto it but does not own it.
+The consumer-supplied element (typically a `c-button`) projected into an anchored overlay component's `trigger` slot — `c-menu`, `c-tooltip`, `c-popover` — that opens it. The component mirrors the relevant ARIA attributes (`aria-haspopup` / `aria-expanded` / `aria-description`) onto it but does not own it.
 _Avoid_: Activator, anchor (the *anchor* is the internal positioning reference, a separate concept), toggle button
 
 **Submenu**:
@@ -59,8 +59,16 @@ _Avoid_: Spacer (the Stencil-era `c-spacer` flex-grow filler, removed in 4.x —
 
 ### Overlays
 
+**Tooltip** (`c-tooltip`):
+A non-interactive text hint shown on hover or keyboard focus of its **trigger**, painting the **inverted surface** (ADR-0032). It never contains focusable content — interactive floating content is a **popover**'s job (ADR-0033). Its content reaches assistive tech as an `aria-description` mirrored onto the trigger, not via `aria-describedby` (ID references cannot cross the shadow boundary, ADR-0033).
+_Avoid_: Hint, title (the native attribute), popup
+
+**Popover** (`c-popover`):
+The click-opened, **non-modal** interactive surface component anchored to its **trigger** — light-dismissed, never trapping focus (ADR-0033); blocking flows go to `c-modal`, plain hints to `c-tooltip`. Distinct from the lowercase *native popover*, which is the browser mechanism: any element put in the **top layer** via the Popover API (menu panels, autocomplete panels, and tooltips are all native popovers; only `c-popover` is the Popover *component*).
+_Avoid_: Flyout, popup, overlay (as a name for this component)
+
 **Top layer**:
-The browser-managed paint layer above every author stacking context — nothing an author z-indexes can paint above it, and while a *modal dialog* occupies it the rest of the document is inert. In this library only **transient** popovers live there: the menu family and autocomplete panels (ADR-0008). Modals deliberately do **not** (ADR-0014) — a top-layer modal would paint over and inert the toasts.
+The browser-managed paint layer above every author stacking context — nothing an author z-indexes can paint above it, and while a *modal dialog* occupies it the rest of the document is inert. In this library only **transient** surfaces live there, as native popovers: the menu family, autocomplete panels, `c-tooltip`, and `c-popover` (ADR-0008). Modals deliberately do **not** (ADR-0014) — a top-layer modal would paint over and inert the toasts.
 _Avoid_: Overlay (an overlay is any floating surface; the top layer is a specific browser mechanism), portal
 
 **Stacking band**:
@@ -120,7 +128,7 @@ A role-named custom property whose value **resolves to a different palette token
 _Avoid_: Role token, alias token, palette token (a semantic token points *at* a palette token; it is not itself a ramp value)
 
 **Surface ladder**:
-The four mode-aware neutral background roles ordered by elevation: `surface` (page background), `surface-raised` (cards/panels), `surface-overlay` (floating layers — popovers, menus, modals), and the **inverted surface** (`surface-inverted`, maximum-emphasis transient layers — toasts, a future tooltip). In light mode the first three are all near-white and depth reads from shadow; in dark mode each step is progressively lighter so elevation reads **without** relying on shadows. The inverted tier flips instead of climbing — see **Inverted surface**. Each rung pairs with an **`on-` token** for its foreground.
+The four mode-aware neutral background roles ordered by elevation: `surface` (page background), `surface-raised` (cards/panels), `surface-overlay` (floating layers — popovers, menus, modals), and the **inverted surface** (`surface-inverted`, maximum-emphasis transient layers — toasts, tooltips). In light mode the first three are all near-white and depth reads from shadow; in dark mode each step is progressively lighter so elevation reads **without** relying on shadows. The inverted tier flips instead of climbing — see **Inverted surface**. Each rung pairs with an **`on-` token** for its foreground.
 _Avoid_: Layer, z-level, elevation token (the ladder *is* the elevation model; don't introduce a parallel term)
 
 **Inverted surface**:

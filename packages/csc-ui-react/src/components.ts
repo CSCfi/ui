@@ -59,6 +59,8 @@ import {
   type CPageElement,
   type CPaginationElement,
   type CPaginationElementEventMap,
+  type CPopoverElement,
+  type CPopoverElementEventMap,
   type CProgressBarElement,
   type CRadioElement,
   type CRadioElementEventMap,
@@ -99,6 +101,8 @@ import {
   type CToastElementEventMap,
   type CToastsElement,
   type CToolbarElement,
+  type CTooltipElement,
+  type CTooltipElementEventMap,
 } from '@cscfi/csc-ui';
 import * as React from 'react';
 
@@ -472,6 +476,17 @@ export const CPagination = createComponent({
   tagName: 'c-pagination',
 });
 
+/** A click-opened, non-modal surface anchored to its trigger, floating in the top layer; its content may be interactive. */
+export const CPopover = createComponent({
+  displayName: 'CPopover',
+  elementClass: elementClass<CPopoverElement>('c-popover'),
+  events: {
+    onChangeOpen: 'change:open' as EventName<CPopoverElementEventMap['change:open']>,
+  },
+  react: React,
+  tagName: 'c-popover',
+});
+
 export const CProgressBar = createComponent({
   displayName: 'CProgressBar',
   elementClass: elementClass<CProgressBarElement>('c-progress-bar'),
@@ -714,4 +729,15 @@ export const CToolbar = createComponent({
   elementClass: elementClass<CToolbarElement>('c-toolbar'),
   react: React,
   tagName: 'c-toolbar',
+});
+
+/** A non-interactive text hint shown when its trigger is hovered or keyboard-focused, floating in the top layer on the inverted surface tier. */
+export const CTooltip = createComponent({
+  displayName: 'CTooltip',
+  elementClass: elementClass<CTooltipElement>('c-tooltip'),
+  events: {
+    onChangeOpen: 'change:open' as EventName<CTooltipElementEventMap['change:open']>,
+  },
+  react: React,
+  tagName: 'c-tooltip',
 });
