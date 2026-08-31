@@ -1,6 +1,6 @@
 {
   "name": "@cscfi/csc-ui-react",
-  "version": "4.0.0-alpha.3",
+  "version": "4.0.0-alpha.4",
   "description": "React components for the @cscfi/csc-ui custom elements, generated from the Custom Elements Manifest.",
   "author": "My CSC Team <suiteamsui@gmail.com>",
   "type": "module",

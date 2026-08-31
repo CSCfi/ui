@@ -7,11 +7,20 @@
     "@cscfi/csc-ui-react": "3.0.20"
   },
   "changesets": [
+    "accordion-header-slot-color",
     "accordion-mycsc-colors",
+    "alert-mycsc-redesign",
     "autocomplete-external-mode",
     "card-mycsc-anatomy",
+    "chart-tokens",
     "dark-mode-mycsc-retune",
+    "dropdown-hide-details-restore",
     "fix-autocomplete-textfield-states",
+    "ghost-soft-tint",
+    "menu-item-active-and-icon",
+    "radio-self-rendering",
+    "toast-inverted-surface",
+    "tooltip-popover-components",
     "vue-rewrite-major"
   ]
 }
