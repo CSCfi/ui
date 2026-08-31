@@ -98,6 +98,9 @@ export const buildManifest = (components, sharedTypes) => ({
           ...entry,
           name: entry.name,
         })),
+        // Host custom states (`:state()` selectors, ADR-0035). `cssStates` is
+        // the CEM 2.x field name; harmless extra data under schema 1.0.0.
+        cssStates: docTagEntries(c.docTags, 'cssstate'),
         events: c.events.map((e) => {
           // camelCase events dispatch a kebab-case twin at runtime
           // (useHostEmit) so Vue templates can bind them;

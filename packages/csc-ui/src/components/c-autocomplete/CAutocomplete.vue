@@ -419,7 +419,7 @@ const autocomplete = tv({
     panel:
       'fixed m-0 p-0 border-0 bg-transparent overflow-visible [inset:auto]',
     search:
-      'flex items-center gap-2 min-h-11 px-3 border-b border-solid border-border',
+      'flex items-center gap-2 min-h-11 px-3 border-b border-solid border-divider',
     searchIcon: 'w-[18px] h-[18px] shrink-0 fill-current text-on-surface-muted',
     searchInput:
       'bg-transparent border-0 outline-none w-full py-2 text-base leading-5 text-on-surface [font-family:var(--c-font-family)] [caret-color:var(--c-primary)] placeholder:text-on-surface-muted placeholder:opacity-100',

@@ -16,12 +16,14 @@
 
 // A role value is normally a palette-step key, referenced via var(--c-<step>).
 // A literal color (e.g. the fixed logo brand mark, kept off the palette so
-// consumer re-seeding cannot recolor it) is emitted verbatim.
+// consumer re-seeding cannot recolor it) and a functional value (e.g. the
+// translucent divider ink's color-mix(), ADR-0036) are emitted verbatim.
 const decls = (map, indent) =>
   Object.entries(map)
     .filter(([role]) => !role.startsWith('_'))
     .map(([role, value]) => {
-      const resolved = value.startsWith('#') ? value : `var(--c-${value})`;
+      const isVerbatim = value.startsWith('#') || value.includes('(');
+      const resolved = isVerbatim ? value : `var(--c-${value})`;
       return `${indent}--c-${role}: ${resolved};`;
     })
     .join('\n');

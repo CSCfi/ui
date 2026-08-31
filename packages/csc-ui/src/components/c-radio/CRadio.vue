@@ -1,18 +1,14 @@
 <template>
   <label :class="ui.root()" part="root">
     <input
+      ref="inputRef"
       :class="ui.input()"
       :disabled="isDisabled"
       type="radio"
       @change="onChange"
     />
 
-    <span
-      ref="indicatorRef"
-      :class="ui.indicator()"
-      class="c-radio__indicator"
-      part="indicator"
-    >
+    <span ref="surfaceRef" :class="ui.surface()" class="c-radio__indicator">
       <span
         v-for="r in ripples"
         :key="r.id"
@@ -21,7 +17,11 @@
         aria-hidden="true"
       />
 
-      <span :class="ui.selection()" class="c-radio__selection" />
+      <span
+        :class="ui.indicator()"
+        class="c-radio__selection"
+        part="indicator"
+      />
     </span>
 
     <span :class="ui.content()" part="content"><slot /></span>
@@ -33,14 +33,18 @@
  * @slot default - The radio's label content, rendered inside the shadow `<label>` so it stays click-associated and announced
  *
  * @csspart root - The `<label>` row wrapping the input, indicator and label content
- * @csspart indicator - The circular ripple surface holding the radio ring and dot
+ * @csspart indicator - The radio ring itself; the selection dot is its `::after` — both follow `currentColor`, so `color` recolours the whole indicator
  * @csspart content - Wrapper around the slotted label content
+ *
+ * @cssstate checked - Present while the radio is the selected option (standalone or group-driven)
+ * @cssstate disabled - Present while the radio is disabled, by its own prop or by its group
  */
 import { tv } from 'tailwind-variants';
-import { computed, useTemplateRef } from 'vue';
+import { computed, useTemplateRef, watch } from 'vue';
 
 import { coerceBoolean } from '../../shared/coerceBoolean';
 import { useHostEmit } from '../../shared/useHostEmit';
+import { useHostStates } from '../../shared/useHostStates';
 import { useRipple } from '../../shared/useRipple';
 
 // The shadow <label> is this component's root part; consumer fallthrough
@@ -63,8 +67,11 @@ interface CRadioEvents {
  * Styling lives in this `tailwind-variants` config; customization is via
  * `::part()`.
  *
- * Each radio's ring is a `.c-radio__selection` box (ring via `box-shadow`) and
- * the filled dot is its `::after` pseudo. The dot's SELECTED state
+ * Each radio's ring is the `indicator` slot (the `indicator` part, ring via
+ * `box-shadow`) and the filled dot is its `::after` pseudo. The checked and
+ * disabled states are republished on the host via `ElementInternals` so
+ * consumers get per-state `::part()` styling
+ * (`c-radio:state(checked)::part(indicator)`, ADR-0035). The dot's SELECTED state
  * (`input:checked ~ … .selection::after { transform: scale(1) }`), the hover
  * tint, the focus-visible outline, and the disabled dimming are all driven by
  * the live state of the sibling `<input>` and so cannot be `tv` variants —
@@ -79,11 +86,16 @@ interface CRadioEvents {
 const radio = tv({
   slots: {
     content: 'pt-3 text-left',
-    // 42px circular ripple surface around the radio ring. Colour comes from
-    // the escape-hatch `--_c-radio-color` rule (a var() fallback chain is not
-    // a utility).
+    // The radio ring (the `indicator` part): 20x20 ring (box-shadow inset)
+    // with the selection dot as a hidden `::after`; the dot is revealed by the
+    // sibling-driven escape-hatch rule on :checked. Ring and dot both follow
+    // `currentColor`, so a consumer `color` on `::part(indicator)` recolours
+    // the whole indicator. Resting state uses `after:[transform:scale(0)]`
+    // (NOT `after:scale-0`, which sets the separate CSS `scale` property and
+    // would survive the escape-hatch `transform: scale(1)`, pinning the dot
+    // permanently invisible).
     indicator:
-      'inline-block relative h-[42px] w-[42px] min-w-[42px] rounded-full overflow-hidden transition-colors duration-200 ease-in-out',
+      "absolute top-[11px] left-[11px] h-5 w-5 bg-transparent rounded-full shadow-[inset_0_0_0_2px_currentColor] transition-shadow duration-150 ease-in-out after:content-[''] after:absolute after:top-[5px] after:left-[5px] after:h-2.5 after:w-2.5 after:rounded-full after:bg-current after:[transform:scale(0)] after:transition-transform after:duration-150 after:ease-in-out",
     // Visually hidden but keyboard/screen-reader accessible — standard pattern
     // for hiding the underlying native radio.
     input:
@@ -91,17 +103,15 @@ const radio = tv({
     // Material click ripple: an absolutely-positioned circle, always centred
     // in the 42px surface (which clips via overflow-hidden + rounded-full).
     // Tweens scale/opacity via the `transition` util (no bespoke @keyframes).
-    // `bg-current` so it follows the indicator's state colour.
+    // `bg-current` so it follows the surface's state colour.
     rippleEffect:
       'pointer-events-none absolute rounded-full bg-current transition-[transform,opacity] duration-[600ms] ease-out',
     root: 'flex items-start relative cursor-pointer text-base select-none gap-1 leading-[1.2]',
-    // 20x20 ring (box-shadow inset) with a hidden dot `::after`; the dot is
-    // revealed by the sibling-driven escape-hatch rule on :checked.
-    // Resting state uses `after:[transform:scale(0)]` (NOT `after:scale-0`,
-    // which sets the separate CSS `scale` property and would survive the
-    // escape-hatch `transform: scale(1)`, pinning the dot permanently invisible).
-    selection:
-      "absolute top-[11px] left-[11px] h-5 w-5 bg-transparent rounded-full shadow-[inset_0_0_0_2px_currentColor] transition-shadow duration-150 ease-in-out after:content-[''] after:absolute after:top-[5px] after:left-[5px] after:h-2.5 after:w-2.5 after:rounded-full after:bg-current after:[transform:scale(0)] after:transition-transform after:duration-150 after:ease-in-out",
+    // 42px circular ripple surface around the radio ring. Purely internal (no
+    // part). Colour comes from the escape-hatch `--_c-radio-color` rule (a
+    // var() fallback chain is not a utility).
+    surface:
+      'inline-block relative h-[42px] w-[42px] min-w-[42px] rounded-full overflow-hidden transition-colors duration-200 ease-in-out',
   },
 });
 
@@ -131,24 +141,60 @@ const isDisabled = computed(() => coerceBoolean(props.disabled));
 
 const emit = useHostEmit<CRadioEvents>();
 
-const indicatorRef = useTemplateRef<HTMLElement>('indicatorRef');
+const surfaceRef = useTemplateRef<HTMLElement>('surfaceRef');
+
+const inputRef = useTemplateRef<HTMLInputElement>('inputRef');
 
 // Material-style ripple, always centred in the 42px surface (the change event
 // carries no pointer coordinates). `sizeFactor: 1` keeps it inside the fixed
 // circular surface.
 const { ripples, spawn: spawnRipple } = useRipple({
-  container: () => indicatorRef.value,
+  container: () => surfaceRef.value,
   sizeFactor: 1,
 });
 
+// Republish checked/disabled as host custom states so consumers can write
+// per-state ::part() rules: c-radio:state(checked)::part(indicator). Both
+// live on the inner input (where a parent group writes them imperatively),
+// so they are synced from every write path: the prop watch below, the user
+// change handler, and the group's `_syncGroupState` calls.
+const setState = useHostStates();
+
+watch(isDisabled, (on) => setState('disabled', on), { immediate: true });
+
+// Group-driven state sync — INTERNAL contract with <c-radio-group>, not
+// public API (the `_` prefix keeps it out of the manifest). The group owns
+// exclusivity, combined disabling and the roving tabindex; this hook lets the
+// radio mirror those writes onto its input AND its host custom states, so the
+// group never reaches into this shadow root. NEVER emits (programmatic
+// writes are not user interaction).
+const _syncGroupState = (state: {
+  checked: boolean;
+  disabled: boolean;
+  tabIndex: number;
+}) => {
+  const input = inputRef.value;
+
+  if (!input) return;
+  input.checked = state.checked;
+  input.disabled = state.disabled;
+  input.tabIndex = state.tabIndex;
+  setState('checked', state.checked);
+  setState('disabled', state.disabled);
+};
+
+defineExpose({ _syncGroupState });
+
 // The inner input fires native `change` only on genuine user interaction —
-// never on the programmatic `.checked` writes a parent <c-radio-group> makes
-// while coordinating the group — so re-dispatching here upholds the library's
-// emit-only-on-interaction rule structurally. Checked state is NOT tracked
-// here: a grouped radio is driven by the group; a standalone one keeps the
-// input's own native state.
+// never on the programmatic writes a parent <c-radio-group> makes via
+// `_syncGroupState` while coordinating the group — so re-dispatching here
+// upholds the library's emit-only-on-interaction rule structurally. Checked
+// state is NOT tracked here: a grouped radio is driven by the group; a
+// standalone one keeps the input's own native state (and can only ever be
+// selected, so `checked` is set, never cleared, outside a group).
 const onChange = () => {
   spawnRipple();
+  setState('checked', true);
   emit('change', props.value, { bubbles: true, composed: true });
 };
 </script>

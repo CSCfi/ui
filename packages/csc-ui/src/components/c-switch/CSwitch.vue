@@ -64,6 +64,8 @@
  * @csspart root - The `<label>` element wrapping the toggle and the label text
  * @csspart slider - The toggle track (its `::before` pseudo-element is the handle)
  * @csspart label - Wrapper around the label text or slotted label content
+ *
+ * @cssstate checked - Present while the switch is on
  */
 import { tv } from 'tailwind-variants';
 import { computed, ref, useHost, useId, useTemplateRef, watch } from 'vue';
@@ -72,6 +74,7 @@ import { emitModelValue } from '../../shared/emitModelValue';
 import FormLabel from '../../shared/FormLabel.vue';
 import { useHasSlot } from '../../shared/useHasSlot';
 import { useHostEmit } from '../../shared/useHostEmit';
+import { useHostStates } from '../../shared/useHostStates';
 
 /** Events dispatched by `<c-switch>`. */
 interface CSwitchEvents {
@@ -250,6 +253,12 @@ const autoId = useId();
 const inputId = computed(() => props.hostId || `c-switch-${autoId}`);
 
 const internalChecked = ref(props.checked || props.value === props.trueValue);
+
+// Republish the on/off state as a host custom state so consumers can write
+// per-state ::part() rules: c-switch:state(checked)::part(slider).
+const setState = useHostStates();
+
+watch(internalChecked, (on) => setState('checked', on), { immediate: true });
 
 watch(
   () => props.checked,

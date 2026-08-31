@@ -39,6 +39,7 @@ export interface CemDeclaration {
   csc?: { subcomponents?: string[]; usage?: string };
   cssParts?: CemNamed[];
   cssProperties?: CemNamed[];
+  cssStates?: CemNamed[];
   customElement?: boolean;
   description?: string;
   events?: CemEvent[];
@@ -150,6 +151,7 @@ export interface MethodView {
 export interface ComponentView {
   cssParts: CemNamed[];
   cssProperties: CemNamed[];
+  cssStates: CemNamed[];
   description?: string;
   events: EventView[];
   methods: MethodView[];
@@ -263,6 +265,8 @@ export const toComponentView = (
 
   const cssProperties = c.cssProperties ?? [];
 
+  const cssStates = c.cssStates ?? [];
+
   const slots = c.slots ?? [];
 
   const sections = [
@@ -271,6 +275,7 @@ export const toComponentView = (
     methods.length && { id: `${tag}--methods`, label: 'Methods' },
     slots.length && { id: `${tag}--slots`, label: 'Slots' },
     cssParts.length && { id: `${tag}--css-parts`, label: 'CSS parts' },
+    cssStates.length && { id: `${tag}--css-states`, label: 'Custom states' },
     cssProperties.length && {
       id: `${tag}--css-properties`,
       label: 'CSS custom properties',
@@ -281,6 +286,7 @@ export const toComponentView = (
   return {
     cssParts,
     cssProperties,
+    cssStates,
     description: c.description,
     events,
     methods,

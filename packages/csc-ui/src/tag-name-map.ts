@@ -438,6 +438,7 @@ export interface CCheckboxElementEventMap {
   'update:value': CustomEvent<boolean | number | string>;
 }
 
+/** A form control for a single on/off choice: a native checkbox with a label, an optional hint, and validation messaging. */
 export interface CCheckboxElement extends Omit<HTMLElement, 'checked' | 'disabled' | 'errorMessage' | 'falseValue' | 'hideDetails' | 'hint' | 'hostId' | 'hostName' | 'indeterminate' | 'label' | 'required' | 'trueValue' | 'valid' | 'value'> {
   /** If `true`, the checkbox is selected. */
   checked?: boolean;
@@ -1618,6 +1619,7 @@ export interface CSwitchElementEventMap {
   'update:value': CustomEvent<boolean | number | string>;
 }
 
+/** A toggle for a binary setting that takes effect immediately: a native switch control with a label, an optional hint, and validation messaging. */
 export interface CSwitchElement extends Omit<HTMLElement, 'checked' | 'disabled' | 'falseValue' | 'hostId' | 'label' | 'loading' | 'required' | 'trueValue' | 'value'> {
   /** If `true`, the checkbox is selected. */
   checked?: boolean;

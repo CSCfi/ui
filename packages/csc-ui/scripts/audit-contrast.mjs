@@ -30,6 +30,11 @@ const dark = read('../tokens/semantic/dark.json');
 
 const inv = read('../tokens/semantic/invariant.json');
 
+// Translucent ink authored as a color-mix over transparent (the divider role,
+// ADR-0036): captures the referenced palette step and its percentage.
+const COLOR_MIX =
+  /^color-mix\(in srgb, var\(--c-([a-z0-9-]+)\) (\d+(?:\.\d+)?)%, transparent\)$/;
+
 const resolve = (mode) => {
   const map = { ...inv, ...mode };
 
@@ -37,6 +42,17 @@ const resolve = (mode) => {
 
   for (const [role, s] of Object.entries(map)) {
     if (role.startsWith('_')) continue;
+
+    // translucent ink resolves to { alpha, hex } and is composited over its
+    // paired background before the ratio is computed
+    const mix = s.match(COLOR_MIX);
+
+    if (mix) {
+      const hex = step(mix[1]);
+
+      if (hex) out[role] = { alpha: Number(mix[2]) / 100, hex };
+      continue;
+    }
 
     // literal hex passes through (fixed brand marks, e.g. the logo roles)
     const hex = s.startsWith('#') ? s : step(s);
@@ -68,6 +84,21 @@ const ratio = (a, b) => {
   return (la + 0.05) / (lb + 0.05);
 };
 
+// flatten a translucent ink onto an opaque background: a·fg + (1−a)·bg
+const composite = (ink, bgHex) => {
+  const fg = srgb(ink.hex);
+
+  const bg = srgb(bgHex);
+
+  return `#${fg
+    .map((c, i) =>
+      Math.round((ink.alpha * c + (1 - ink.alpha) * bg[i]) * 255)
+        .toString(16)
+        .padStart(2, '0'),
+    )
+    .join('')}`;
+};
+
 // --- pairs ----------------------------------------------------------------
 const ROLES = [
   'primary',
@@ -83,6 +114,12 @@ const ROLES = [
 const TEXT = 4.5; // AA normal text
 
 const UI = 3.0; // AA large text / non-text UI
+
+// Regression floor for translucent hairlines (ADR-0036): a hairline is
+// decorative and cannot meet 3:1 by design — the reference light-mode divider
+// reads ~1.3:1. This floor only guards against the vanishing-line failure
+// (border ≡ surface-overlay shipped at 1.00:1). Gated under --strict.
+const HAIRLINE = 1.25;
 
 const pairs = [];
 
@@ -153,6 +190,16 @@ add(
 add('ring', 'surface', UI, 'ring / surface (focus)');
 add('primary', 'surface', UI, 'primary / surface (icon/fill)');
 
+// hairline divider on every surface-ladder rung (composited, ADR-0036)
+for (const bg of [
+  'surface',
+  'surface-raised',
+  'surface-overlay',
+  'surface-muted',
+]) {
+  add('divider', bg, HAIRLINE, `divider / ${bg} (hairline)`);
+}
+
 // --- run ------------------------------------------------------------------
 const modes = { dark: resolve(dark), light: resolve(light) };
 
@@ -160,16 +207,25 @@ let failures = 0;
 
 let textFailures = 0;
 
+let hairlineFailures = 0;
+
 for (const [name, res] of Object.entries(modes)) {
   console.log(`\n=== ${name.toUpperCase()} ===`);
 
   for (const { bg, fg, label, min } of pairs) {
-    if (!res[fg] || !res[bg]) {
+    const bgHex = res[bg];
+
+    // a background must be opaque; a translucent one cannot be a pair's ground
+    let fgHex = res[fg];
+
+    if (!fgHex || !bgHex || typeof bgHex === 'object') {
       console.log(`  ?  ${label} — missing role (${fg} or ${bg})`);
       continue;
     }
 
-    const r = ratio(res[fg], res[bg]);
+    if (typeof fgHex === 'object') fgHex = composite(fgHex, bgHex);
+
+    const r = ratio(fgHex, bgHex);
 
     const ok = r >= min;
 
@@ -177,19 +233,25 @@ for (const [name, res] of Object.entries(modes)) {
       failures++;
 
       if (min === TEXT) textFailures++;
+
+      if (min === HAIRLINE) hairlineFailures++;
     }
 
     const mark = ok ? '✓' : '✗';
     console.log(
       `  ${mark} ${r.toFixed(2)}:1 (need ${min})  ${label}${
-        ok ? '' : `   [${res[fg]} on ${res[bg]}]`
+        ok ? '' : `   [${fgHex} on ${bgHex}]`
       }`,
     );
   }
 }
 
 console.log(
-  `\n${failures} pair(s) below threshold (${textFailures} text pairs below AA 4.5).`,
+  `\n${failures} pair(s) below threshold (${textFailures} text pairs below AA 4.5, ${hairlineFailures} hairlines below the visibility floor).`,
 );
 
-if (process.argv.includes('--strict') && textFailures > 0) process.exit(1);
+if (
+  process.argv.includes('--strict') &&
+  (textFailures > 0 || hairlineFailures > 0)
+)
+  process.exit(1);

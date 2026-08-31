@@ -228,6 +228,7 @@ export const CCardTitle = createComponent({
   tagName: 'c-card-title',
 });
 
+/** A form control for a single on/off choice: a native checkbox with a label, an optional hint, and validation messaging. */
 export const CCheckbox = createComponent({
   displayName: 'CCheckbox',
   elementClass: elementClass<CCheckboxElement>('c-checkbox'),
@@ -488,6 +489,7 @@ export const CPopover = createComponent({
   tagName: 'c-popover',
 });
 
+/** A horizontal progress bar that fills a track to a known completion percentage, with an optional details line showing the value and a label. */
 export const CProgressBar = createComponent({
   displayName: 'CProgressBar',
   elementClass: elementClass<CProgressBarElement>('c-progress-bar'),
@@ -578,6 +580,7 @@ export const CSlider = createComponent({
   tagName: 'c-slider',
 });
 
+/** A circular indeterminate activity indicator — pure motion with no value, for waits of unknown duration. */
 export const CSpinner = createComponent({
   displayName: 'CSpinner',
   elementClass: elementClass<CSpinnerElement>('c-spinner'),
@@ -613,6 +616,7 @@ export const CSubNavigationItem = createComponent({
   tagName: 'c-sub-navigation-item',
 });
 
+/** A toggle for a binary setting that takes effect immediately: a native switch control with a label, an optional hint, and validation messaging. */
 export const CSwitch = createComponent({
   displayName: 'CSwitch',
   elementClass: elementClass<CSwitchElement>('c-switch'),

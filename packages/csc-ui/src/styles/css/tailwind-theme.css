@@ -35,6 +35,7 @@
   --color-on-surface-sunken: var(--c-on-surface-sunken);
   --color-border: var(--c-border);
   --color-border-strong: var(--c-border-strong);
+  --color-divider: var(--c-divider);
   --color-ring: var(--c-ring);
 
   /* Inverted-surface tier (ADR-0032): mode-aware contrast flip — not the
