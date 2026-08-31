@@ -11,7 +11,10 @@
 
     <template v-for="color in colors" :key="color.value">
       <template v-if="color.type === 'color'">
-        <c-menu-item :value="color">
+        <c-menu-item
+          :active="color.value === currentColor.value"
+          :value="color"
+        >
           <span
             class="size-4 rounded-full"
             :style="{ 'background-color': color.value }"

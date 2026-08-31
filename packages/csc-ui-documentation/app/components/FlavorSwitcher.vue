@@ -13,7 +13,12 @@
 
     <c-menu-label>Flavour</c-menu-label>
 
-    <c-menu-item v-for="option in FLAVORS" :key="option.id" :value="option.id">
+    <c-menu-item
+      v-for="option in FLAVORS"
+      :key="option.id"
+      :value="option.id"
+      :active="option.id === currentFlavor?.id"
+    >
       <c-icon :path="option.icon" :size="16" :class="ICON_COLORS[option.id]" />
       {{ option.label }}
     </c-menu-item>

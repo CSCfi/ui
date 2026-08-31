@@ -26,6 +26,7 @@
         v-for="option in THEME_OPTIONS"
         :key="option.id"
         :value="option.id"
+        :active="option.id === preference"
       >
         <c-icon :path="option.icon" :size="16" />
         {{ option.label }}
