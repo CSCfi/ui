@@ -1,5 +1,138 @@
 # @cscfi/csc-ui-react
 
+## 4.0.0-alpha.4
+
+### Minor Changes
+
+- [#252](https://github.com/CSCfi/ui/pull/252) [`11d0dcb`](https://github.com/CSCfi/ui/commit/11d0dcb71be11827f6f55083fae3903c980a1846) Thanks [@villeerikssoncsc](https://github.com/villeerikssoncsc)! - Redesign c-alert per the MyCSC alert spec:
+
+  - The box is now a tinted container: a 10% wash of the type's role colour
+    with a 40% hairline border and a solid 4px accent edge on the left,
+    replacing the old 2px outline + 12px edge look.
+  - Severity is carried by the icon, the title and the accent edge (the
+    role's `on-*-subtle` ink); body copy stays high-contrast `on-surface`.
+    Slotted titles now render at body size in the type's ink (previously
+    18px neutral).
+  - The `default` type now renders an icon and the brand-primary look
+    (previously icon-less).
+  - New `dismissible` prop renders a dismiss button (`aria-label="Dismiss"`)
+    that emits the new `dismiss` event; the alert never removes itself — the
+    consumer owns that. New `dismiss` CSS part.
+  - Alerts now carry an ARIA live-region role: `role="alert"` (assertive) for
+    warning/error, `role="status"` (polite) for neutral/info/success.
+
+- [#252](https://github.com/CSCfi/ui/pull/252) [`11d0dcb`](https://github.com/CSCfi/ui/commit/11d0dcb71be11827f6f55083fae3903c980a1846) Thanks [@villeerikssoncsc](https://github.com/villeerikssoncsc)! - Add a validated dataviz palette as semantic chart tokens: twelve categorical
+  series slots (`--c-chart-1` … `--c-chart-12`) plus chart anatomy roles
+  (`--c-chart-surface`, `--c-chart-grid`, `--c-chart-axis`), in light and dark
+  mode, exposed in the Tailwind theme export as `chart-*` color roles.
+
+  - The 12 slots pass the computable accessibility checks as a set, per mode,
+    against the chart surface (which equals the raised card surface): CVD
+    separation on adjacent pairs, a normal-vision separation floor, OKLCH
+    lightness band and chroma floor, and contrast (with documented dark-mode
+    relief slots).
+  - Series slots are frozen viz-owned values (ADR-0030): `applyTheme`
+    re-seeding re-themes components but never charts, so the validated
+    guarantee cannot be silently broken. Override `--c-chart-*` directly to
+    opt out and own re-validation.
+  - Slot order is part of the contract: assign series in slot order, never
+    cycle or re-rank; scatter/bubble/map forms cap at slots 1–3.
+  - New docs guide "Data visualization" documents the palette and shows
+    dependency-free SVG bar and line charts on a `c-card`.
+
+- [#252](https://github.com/CSCfi/ui/pull/252) [`11d0dcb`](https://github.com/CSCfi/ui/commit/11d0dcb71be11827f6f55083fae3903c980a1846) Thanks [@villeerikssoncsc](https://github.com/villeerikssoncsc)! - Redesign the ghost variant per the "soft tint" ghost design: instead of the
+  solid `primary-subtle` slab (which read as a third solid style and barely
+  separated from dark surfaces), ghost buttons now rest on an 8% `primary`
+  wash that deepens to 15% on hover and 22% while pressed, with the `primary`
+  text color carrying the accent. Applies to `c-button` and `c-icon-button`
+  `ghost` variants; the `c-accordion-item` header adopts the same treatment
+  (soft-tint fill ladder, `primary` text and chevron, hairline border removed)
+  so accordions match ghost buttons. The `text` and `outlined` variants of both
+  buttons adopt the same 15% `primary` hover wash, replacing the old
+  `primary-subtle-hover` / `primary-subtle` hover fills, so all three quiet
+  variants share one hover treatment. Focus keeps the offset outline ring.
+
+- [#252](https://github.com/CSCfi/ui/pull/252) [`11d0dcb`](https://github.com/CSCfi/ui/commit/11d0dcb71be11827f6f55083fae3903c980a1846) Thanks [@villeerikssoncsc](https://github.com/villeerikssoncsc)! - Add selectable-choice support and leading icons to c-menu-item:
+
+  - New `active` prop marks an item as the currently selected choice: it
+    renders a trailing indicator icon (a check mark by default) and stamps
+    `role="menuitemradio"` + `aria-checked`. The state is consumer-owned — the
+    menu still emits `select` and never toggles it. Leave `active` unset for
+    regular command items (tri-state like c-button's `active`).
+  - New `activeIcon` prop overrides the indicator's SVG path.
+  - New `icon` prop renders a leading icon (SVG path data) before the item's
+    content, following the row color through hover/highlight/danger/disabled
+    states.
+  - New `icon` and `check` CSS parts for customization.
+  - Fix: c-menu's `distance` prop (documented but previously inert) now works —
+    it offsets the panel from the trigger on the placement's axis (surviving
+    the flip fallbacks) and is inherited by every submenu, which leaves the
+    identical gap from its parent surface instead of overlapping it. Default
+    stays `0`: surfaces touch, no gap.
+
+- [#252](https://github.com/CSCfi/ui/pull/252) [`9b42b11`](https://github.com/CSCfi/ui/commit/9b42b111e91967b0ef532d8b570b332ac06b00e1) Thanks [@villeerikssoncsc](https://github.com/villeerikssoncsc)! - Refactor `c-radio` / `c-radio-group` onto semantic HTML: each `c-radio` now
+  renders its own native radio input with its default slot as the clickable,
+  announced label, so radios can be wrapped in arbitrary layout markup at any
+  depth inside the group — custom option-card layouts are now plain HTML. The
+  group implements the standard radio-group keyboard pattern (one tab stop on
+  the checked radio, arrow keys move and select, wrapping and skipping
+  disabled; Enter no longer selects, leaving it to form submission), gains a
+  `label` slot for rich label content (the `label` prop stays primary), and
+  reserves the message row's height so a runtime validation error no longer
+  shifts the layout. `c-radio` emits a bubbling `change` event carrying its
+  value. Removed: the group's `items`, `return-object`, and `host-id` props
+  (author slotted `c-radio` children; values are strings matched against the
+  group's `value`) and `c-radio`'s `checked` prop (set the group's `value`
+  instead).
+
+- [#252](https://github.com/CSCfi/ui/pull/252) [`603ed29`](https://github.com/CSCfi/ui/commit/603ed2979cf820117401af3dcd0d8052f07929e0) Thanks [@villeerikssoncsc](https://github.com/villeerikssoncsc)! - Redesign toasts as inverted-surface notifications: a borderless
+  contrast-flipping pill (near-black in light mode, white in dark mode) with
+  the status carried by a circular tinted icon badge, a neutral dismiss button
+  (new `badge` and `dismiss` CSS parts) and a neutral progress bar. Adds the
+  inverted-surface semantic tokens (`surface-inverted`,
+  `on-surface-inverted(-muted)` and the `*-inverted` status roles) to the
+  token set and the Tailwind theme export. Toast enter/exit motion now follows
+  the stack's placement (top-anchored stacks slide from the top edge) and
+  respects `prefers-reduced-motion` (cross-fade instead of a slide).
+
+- [#252](https://github.com/CSCfi/ui/pull/252) [`c580279`](https://github.com/CSCfi/ui/commit/c580279271f396b1d4ca3495b8dbf36fc5908e44) Thanks [@villeerikssoncsc](https://github.com/villeerikssoncsc)! - Add two new anchor-positioned overlay components:
+
+  - `c-tooltip` — a non-interactive text hint shown on hover or keyboard focus
+    of its slotted trigger, on the inverted surface tier. Content via the
+    `text` prop or the `content` slot; WCAG 1.4.13 behaviour (hoverable panel,
+    Escape dismiss, configurable show `delay`).
+  - `c-popover` — a click-opened, non-modal interactive surface anchored to its
+    slotted trigger, with light dismiss and Escape. Optional `heading`; body
+    via the default slot.
+
+  Both float in the top layer via the native Popover API + CSS anchor
+  positioning (no z-index management needed), support `position` (12
+  placements, new shared `CPlacement` type), `distance`, and a controlled
+  `open` prop with a `change:open` event, and are customizable via
+  `::part(trigger)` / `::part(panel)` (+ `::part(heading)` on the popover) and
+  the semantic tokens.
+
+  Also fixes `c-alert` mirroring its live-region `role` onto the shadow root
+  element (duplicate role for assistive tech).
+
+### Patch Changes
+
+- [#252](https://github.com/CSCfi/ui/pull/252) [`11d0dcb`](https://github.com/CSCfi/ui/commit/11d0dcb71be11827f6f55083fae3903c980a1846) Thanks [@villeerikssoncsc](https://github.com/villeerikssoncsc)! - Fix c-accordion-item header text color inconsistency: content in the `header`
+  slot inherited the icon/chevron accent tone instead of the heading color, so
+  a slotted header rendered a different color than the `heading` prop (teal vs
+  white in dark mode). The header button now sets the text color on itself so
+  both paths render identically, and the icon/indicator accents are set
+  explicitly rather than via `currentColor`.
+
+- [#252](https://github.com/CSCfi/ui/pull/252) [`517ae71`](https://github.com/CSCfi/ui/commit/517ae712a8d423b9aef56992b9359fcf3e9a7acc) Thanks [@villeerikssoncsc](https://github.com/villeerikssoncsc)! - Fix `hide-details` being silently overridden on `c-select` and
+  `c-autocomplete`: the dropdown restored its own stale snapshot of the
+  setting onto the field when it closed — which also ran on an initial
+  `v-model` value arriving at mount — permanently re-showing the message
+  area. The dropdown now captures the field's state when it opens and puts
+  exactly that back on close.
+- Updated dependencies [[`11d0dcb`](https://github.com/CSCfi/ui/commit/11d0dcb71be11827f6f55083fae3903c980a1846), [`11d0dcb`](https://github.com/CSCfi/ui/commit/11d0dcb71be11827f6f55083fae3903c980a1846), [`11d0dcb`](https://github.com/CSCfi/ui/commit/11d0dcb71be11827f6f55083fae3903c980a1846), [`517ae71`](https://github.com/CSCfi/ui/commit/517ae712a8d423b9aef56992b9359fcf3e9a7acc), [`11d0dcb`](https://github.com/CSCfi/ui/commit/11d0dcb71be11827f6f55083fae3903c980a1846), [`11d0dcb`](https://github.com/CSCfi/ui/commit/11d0dcb71be11827f6f55083fae3903c980a1846), [`9b42b11`](https://github.com/CSCfi/ui/commit/9b42b111e91967b0ef532d8b570b332ac06b00e1), [`603ed29`](https://github.com/CSCfi/ui/commit/603ed2979cf820117401af3dcd0d8052f07929e0), [`c580279`](https://github.com/CSCfi/ui/commit/c580279271f396b1d4ca3495b8dbf36fc5908e44)]:
+  - @cscfi/csc-ui@4.0.0-alpha.4
+
 ## 4.0.0-alpha.3
 
 ### Patch Changes
