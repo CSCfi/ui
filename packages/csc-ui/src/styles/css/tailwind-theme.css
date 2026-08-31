@@ -37,6 +37,16 @@
   --color-border-strong: var(--c-border-strong);
   --color-ring: var(--c-ring);
 
+  /* Inverted-surface tier (ADR-0032): mode-aware contrast flip — not the
+   * mode-invariant inverse-* family below. */
+  --color-surface-inverted: var(--c-surface-inverted);
+  --color-on-surface-inverted: var(--c-on-surface-inverted);
+  --color-on-surface-inverted-muted: var(--c-on-surface-inverted-muted);
+  --color-success-inverted: var(--c-success-inverted);
+  --color-info-inverted: var(--c-info-inverted);
+  --color-warning-inverted: var(--c-warning-inverted);
+  --color-error-inverted: var(--c-error-inverted);
+
   --color-primary: var(--c-primary);
   --color-primary-hover: var(--c-primary-hover);
   --color-on-primary: var(--c-on-primary);
@@ -106,6 +116,26 @@
   --color-logo-wordmark: var(--c-logo-wordmark);
   --color-logo-teal: var(--c-logo-teal);
   --color-logo-magenta: var(--c-logo-magenta);
+
+  /* Chart tokens (ADR-0030): 12 frozen categorical series slots — assign in
+   * slot order, never cycle — plus the chart anatomy roles (plot background,
+   * gridlines, axis labels). Validated as a set per mode; see the docs
+   * data-visualization guide for the folding and relief rules. */
+  --color-chart-1: var(--c-chart-1);
+  --color-chart-2: var(--c-chart-2);
+  --color-chart-3: var(--c-chart-3);
+  --color-chart-4: var(--c-chart-4);
+  --color-chart-5: var(--c-chart-5);
+  --color-chart-6: var(--c-chart-6);
+  --color-chart-7: var(--c-chart-7);
+  --color-chart-8: var(--c-chart-8);
+  --color-chart-9: var(--c-chart-9);
+  --color-chart-10: var(--c-chart-10);
+  --color-chart-11: var(--c-chart-11);
+  --color-chart-12: var(--c-chart-12);
+  --color-chart-surface: var(--c-chart-surface);
+  --color-chart-grid: var(--c-chart-grid);
+  --color-chart-axis: var(--c-chart-axis);
 
   /* Mode-invariant inverse family (content on a fixed brand/dark backdrop). */
   --color-inverse-surface: var(--c-inverse-surface);

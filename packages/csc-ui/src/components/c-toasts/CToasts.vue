@@ -234,6 +234,11 @@ onMounted(() => {
   max-width: 100%;
   min-width: 30vw;
   pointer-events: none;
+  /* Enter/exit offset for the child c-toasts: anchored surfaces slide in
+   * from — and retreat toward — the edge they are anchored to. The custom
+   * property inherits across the shadow boundary into each c-toast host,
+   * whose transition reads it; `.top` flips the direction. */
+  --_c-toast-enter-y: 20px;
   /* z-index is set imperatively from the shared TOAST_BAND constant. */
 }
 
@@ -245,6 +250,7 @@ onMounted(() => {
 }
 :host(.top) {
   top: 0;
+  --_c-toast-enter-y: -20px;
 }
 :host(.right) {
   justify-content: end;

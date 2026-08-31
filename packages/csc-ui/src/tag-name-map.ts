@@ -28,12 +28,6 @@ type DropdownItem = {
   value: number | string;
 };
 
-interface RadioItem {
-  disabled?: boolean;
-  name: string;
-  value: number | string;
-}
-
 /** Events dispatched by `<c-accordion>`. */
 export interface CAccordionElementEventMap {
   /**
@@ -133,9 +127,43 @@ export interface CAccordionItemElement extends Omit<HTMLElement, 'collapsable' |
   ): void;
 }
 
-export interface CAlertElement extends Omit<HTMLElement, 'type'> {
+/** Events dispatched by `<c-alert>`. */
+export interface CAlertElementEventMap {
+  /**
+   * Fired when the dismiss button is pressed. The alert does not hide
+   * itself — the consumer owns removal.
+   */
+  dismiss: CustomEvent<void>;
+}
+
+export interface CAlertElement extends Omit<HTMLElement, 'dismissible' | 'type'> {
+  /**
+   * Show a dismiss button. The alert only emits `dismiss` — removing it from
+   * the page stays the consumer's job.
+   */
+  dismissible?: boolean;
   /** Type of the alert */
   type?: 'default' | 'error' | 'info' | 'success' | 'warning';
+  addEventListener<K extends keyof CAlertElementEventMap>(
+    type: K,
+    listener: (this: CAlertElement, ev: CAlertElementEventMap[K]) => void,
+    options?: boolean | AddEventListenerOptions,
+  ): void;
+  addEventListener(
+    type: string,
+    listener: EventListenerOrEventListenerObject,
+    options?: boolean | AddEventListenerOptions,
+  ): void;
+  removeEventListener<K extends keyof CAlertElementEventMap>(
+    type: K,
+    listener: (this: CAlertElement, ev: CAlertElementEventMap[K]) => void,
+    options?: boolean | EventListenerOptions,
+  ): void;
+  removeEventListener(
+    type: string,
+    listener: EventListenerOrEventListenerObject,
+    options?: boolean | EventListenerOptions,
+  ): void;
 }
 
 /** Events dispatched by `<c-autocomplete>`. */
@@ -862,11 +890,28 @@ export interface CMenuElement extends Omit<HTMLElement, 'distance' | 'open' | 'p
 }
 
 /** A single command in a `c-menu`. */
-export interface CMenuItemElement extends Omit<HTMLElement, 'danger' | 'disabled' | 'value'> {
+export interface CMenuItemElement extends Omit<HTMLElement, 'active' | 'activeIcon' | 'danger' | 'disabled' | 'icon' | 'value'> {
+  /**
+   * Marks the item as the currently selected choice: renders the trailing
+   * indicator icon and stamps `role="menuitemradio"` + `aria-checked`. Leave
+   * unset for regular command items — only a true/false value marks the item
+   * as a selectable choice. The state is consumer-owned: the menu emits
+   * `select` as usual and never toggles this itself. Distinct from the
+   * keyboard highlight (the `data-active` attribute the controlling menu
+   * moves between rows).
+   */
+  active?: boolean;
+  /**
+   * SVG path for the trailing indicator shown while `active`; defaults to a
+   * check mark.
+   */
+  activeIcon?: string;
   /** Marks the action as destructive (renders in the error colour). */
   danger?: boolean;
   /** Disables the item — it is skipped by keyboard nav and emits no select. */
   disabled?: boolean;
+  /** SVG path for a leading icon rendered before the item's content. */
+  icon?: string;
   /** Value reported in the menu's `select` event when this item is chosen. */
   value?: string;
   closeSubmenu(): void;
@@ -1089,6 +1134,54 @@ export interface CPaginationElement extends Omit<HTMLElement, 'hideDetails' | 'h
   ): void;
 }
 
+/** Events dispatched by `<c-popover>`. */
+export interface CPopoverElementEventMap {
+  /**
+   * Fired whenever the popover opens or closes, carrying the new open state.
+   * Named `change:open`, not `update:open`: Vue's runtime silently drops
+   * `onUpdate:*` listeners on custom elements (`isModelListener`), so a
+   * template `@update:open` would never be attached.
+   */
+  'change:open': CustomEvent<boolean>;
+}
+
+/** A click-opened, non-modal surface anchored to its trigger, floating in the top layer; its content may be interactive. */
+export interface CPopoverElement extends Omit<HTMLElement, 'distance' | 'heading' | 'open' | 'position'> {
+  /** Distance from the trigger to the panel, in pixels. Defaults to `0`. */
+  distance?: number | string;
+  /**
+   * Heading rendered at the top of the panel, doubling as its accessible
+   * name. Without it, set `aria-label` on the host. Named `heading`, not
+   * `title`: a `title` attribute on the host would trigger the browser's
+   * native tooltip and collides with `HTMLElement.title`.
+   */
+  heading?: string;
+  /** Whether the popover is open. Two-way: emits `change:open`. */
+  open?: boolean;
+  /** Preferred placement of the panel relative to the trigger. */
+  position?: 'bottom-end' | 'bottom-start' | 'bottom' | 'left-end' | 'left-start' | 'left' | 'right-end' | 'right-start' | 'right' | 'top-end' | 'top-start' | 'top';
+  addEventListener<K extends keyof CPopoverElementEventMap>(
+    type: K,
+    listener: (this: CPopoverElement, ev: CPopoverElementEventMap[K]) => void,
+    options?: boolean | AddEventListenerOptions,
+  ): void;
+  addEventListener(
+    type: string,
+    listener: EventListenerOrEventListenerObject,
+    options?: boolean | AddEventListenerOptions,
+  ): void;
+  removeEventListener<K extends keyof CPopoverElementEventMap>(
+    type: K,
+    listener: (this: CPopoverElement, ev: CPopoverElementEventMap[K]) => void,
+    options?: boolean | EventListenerOptions,
+  ): void;
+  removeEventListener(
+    type: string,
+    listener: EventListenerOrEventListenerObject,
+    options?: boolean | EventListenerOptions,
+  ): void;
+}
+
 export interface CProgressBarElement extends Omit<HTMLElement, 'hideDetails' | 'indeterminate' | 'label' | 'singleLine' | 'value'> {
   /** Hide the percentage display */
   hideDetails?: boolean;
@@ -1102,35 +1195,63 @@ export interface CProgressBarElement extends Omit<HTMLElement, 'hideDetails' | '
   value?: number;
 }
 
-export interface CRadioElement extends Omit<HTMLElement, 'checked' | 'disabled' | 'value'> {
-  /** Set option as checked */
-  checked?: boolean;
+/** Events dispatched by `<c-radio>`. */
+export interface CRadioElementEventMap {
+  /**
+   * Fired when the radio is selected by the user, carrying its `value`.
+   * Bubbles composed so the parent `<c-radio-group>` — whose shadow root a
+   * light-DOM event never enters — catches it on its host; a consumer
+   * listening on the group hears it too, with the radio as `target`.
+   */
+  change: CustomEvent<string>;
+}
+
+/** A single radio option inside a `c-radio-group`: a native radio input whose default slot is its clickable, announced label. */
+export interface CRadioElement extends Omit<HTMLElement, 'disabled' | 'value'> {
   /** Disable the radio button */
   disabled?: boolean;
   /** Radio button value */
   value?: string;
+  addEventListener<K extends keyof CRadioElementEventMap>(
+    type: K,
+    listener: (this: CRadioElement, ev: CRadioElementEventMap[K]) => void,
+    options?: boolean | AddEventListenerOptions,
+  ): void;
+  addEventListener(
+    type: string,
+    listener: EventListenerOrEventListenerObject,
+    options?: boolean | AddEventListenerOptions,
+  ): void;
+  removeEventListener<K extends keyof CRadioElementEventMap>(
+    type: K,
+    listener: (this: CRadioElement, ev: CRadioElementEventMap[K]) => void,
+    options?: boolean | EventListenerOptions,
+  ): void;
+  removeEventListener(
+    type: string,
+    listener: EventListenerOrEventListenerObject,
+    options?: boolean | EventListenerOptions,
+  ): void;
 }
 
 /** Events dispatched by `<c-radio-group>`. */
 export interface CRadioGroupElementEventMap {
-  /**
-   * Fired when a radio option is selected, carrying the selected item's
-   * value — or the whole item object when `return-object` is set.
-   */
-  changeValue: CustomEvent<number | RadioItem | string>;
+  /** Fired when a radio is selected, carrying the selected radio's value. */
+  changeValue: CustomEvent<string>;
   /**
    * Native bubbling input event fired on selection so a plain Vue `v-model`
    * works without the `v-control` directive. No detail.
    */
   input: CustomEvent<void>;
   /**
-   * v-model contract event fired on selection, carrying the selected item's
-   * value — or the whole item object when `return-object` is set.
+   * v-model contract event fired on selection, carrying the selected radio's
+   * value.
    */
-  'update:value': CustomEvent<number | RadioItem | string>;
+  'update:value': CustomEvent<string>;
 }
 
-export interface CRadioGroupElement extends Omit<HTMLElement, 'disabled' | 'errorMessage' | 'hideDetails' | 'hint' | 'hostId' | 'inline' | 'items' | 'label' | 'required' | 'returnObject' | 'valid' | 'value'> {
+/** A radio group is a set of mutually exclusive choices where exactly one can be selected, authored as slotted `c-radio` children. Give the group a `label` so the choice it represents is named for every user, and a `hint` describing how to answer. */
+export interface CRadioGroupElement extends Omit<HTMLElement, 'disabled' | 'errorMessage' | 'hideDetails' | 'hint' | 'inline' | 'label' | 'required' | 'valid' | 'value'> {
   /** Disable the radio group */
   disabled?: boolean;
   /** Error message shown in place of the hint while the group is invalid */
@@ -1139,22 +1260,19 @@ export interface CRadioGroupElement extends Omit<HTMLElement, 'disabled' | 'erro
   hideDetails?: boolean;
   /** Hint text for the input */
   hint?: string;
-  /** Id of the element */
-  hostId?: string;
   /** Display radio buttons inline */
   inline?: boolean;
-  /** Radio group items */
-  items?: RadioItem[];
   /** Label of the radio group */
   label?: string;
   /** Set as required */
   required?: boolean;
-  /** Return the whole item object */
-  returnObject?: boolean;
   /** Set the validity of the input */
   valid?: boolean;
-  /** Value of the radio group */
-  value?: null | number | RadioItem | string;
+  /**
+   * Value of the radio group; matched against each radio's `value` by strict
+   * string equality
+   */
+  value?: null | string;
   addEventListener<K extends keyof CRadioGroupElementEventMap>(
     type: K,
     listener: (this: CRadioGroupElement, ev: CRadioGroupElementEventMap[K]) => void,
@@ -1933,6 +2051,58 @@ export interface CToastsElement extends Omit<HTMLElement, 'absolute' | 'horizont
 export interface CToolbarElement extends HTMLElement {
 }
 
+/** Events dispatched by `<c-tooltip>`. */
+export interface CTooltipElementEventMap {
+  /**
+   * Fired whenever the tooltip shows or hides, carrying the new open state.
+   * Named `change:open`, not `update:open`: Vue's runtime silently drops
+   * `onUpdate:*` listeners on custom elements (`isModelListener`), so a
+   * template `@update:open` would never be attached.
+   */
+  'change:open': CustomEvent<boolean>;
+}
+
+/** A non-interactive text hint shown when its trigger is hovered or keyboard-focused, floating in the top layer on the inverted surface tier. */
+export interface CTooltipElement extends Omit<HTMLElement, 'delay' | 'distance' | 'open' | 'position' | 'text'> {
+  /**
+   * Delay before the tooltip shows on hover, in milliseconds. Keyboard focus
+   * shows the tooltip immediately, regardless of this value. Defaults to
+   * `400`.
+   */
+  delay?: number | string;
+  /** Distance from the trigger to the tooltip, in pixels. Defaults to `4`. */
+  distance?: number | string;
+  /** Whether the tooltip is open. Two-way: emits `change:open`. */
+  open?: boolean;
+  /** Preferred placement of the tooltip relative to the trigger. */
+  position?: 'bottom-end' | 'bottom-start' | 'bottom' | 'left-end' | 'left-start' | 'left' | 'right-end' | 'right-start' | 'right' | 'top-end' | 'top-start' | 'top';
+  /**
+   * The tooltip text. Overridden by the `content` slot when that is
+   * populated.
+   */
+  text?: string;
+  addEventListener<K extends keyof CTooltipElementEventMap>(
+    type: K,
+    listener: (this: CTooltipElement, ev: CTooltipElementEventMap[K]) => void,
+    options?: boolean | AddEventListenerOptions,
+  ): void;
+  addEventListener(
+    type: string,
+    listener: EventListenerOrEventListenerObject,
+    options?: boolean | AddEventListenerOptions,
+  ): void;
+  removeEventListener<K extends keyof CTooltipElementEventMap>(
+    type: K,
+    listener: (this: CTooltipElement, ev: CTooltipElementEventMap[K]) => void,
+    options?: boolean | EventListenerOptions,
+  ): void;
+  removeEventListener(
+    type: string,
+    listener: EventListenerOrEventListenerObject,
+    options?: boolean | EventListenerOptions,
+  ): void;
+}
+
 declare global {
   interface HTMLElementTagNameMap {
     'c-accordion': CAccordionElement;
@@ -1977,6 +2147,7 @@ declare global {
     'c-otp-input': COtpInputElement;
     'c-page': CPageElement;
     'c-pagination': CPaginationElement;
+    'c-popover': CPopoverElement;
     'c-progress-bar': CProgressBarElement;
     'c-radio': CRadioElement;
     'c-radio-group': CRadioGroupElement;
@@ -2003,5 +2174,6 @@ declare global {
     'c-toast': CToastElement;
     'c-toasts': CToastsElement;
     'c-toolbar': CToolbarElement;
+    'c-tooltip': CTooltipElement;
   }
 }

@@ -304,7 +304,7 @@ const CANDIDATE_SELECTOR = [
   'c-select:not([disabled])',
   'c-autocomplete:not([disabled])',
   'c-checkbox:not([disabled])',
-  'c-radio-group:not([disabled])',
+  'c-radio:not([disabled])',
   'c-switch:not([disabled])',
 ].join(', ');
 

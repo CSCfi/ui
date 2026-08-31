@@ -15,6 +15,26 @@
 export type CFieldSize = 'default' | 'small';
 
 /**
+ * Preferred placement of a floating panel relative to its anchor, shared by
+ * the anchor-positioned overlay components (`c-menu`, `c-tooltip`,
+ * `c-popover`). The side names the panel's position; `-start`/`-end` align
+ * the panel's edge with the anchor's on the cross axis.
+ */
+export type CPlacement =
+  | 'bottom-end'
+  | 'bottom-start'
+  | 'bottom'
+  | 'left-end'
+  | 'left-start'
+  | 'left'
+  | 'right-end'
+  | 'right-start'
+  | 'right'
+  | 'top-end'
+  | 'top-start'
+  | 'top';
+
+/**
  * A selectable item for the value-selection components (`c-select`,
  * `c-autocomplete`) when options are supplied via the `items` prop instead of
  * slotted `<c-option>` elements.

@@ -9,6 +9,7 @@
  * previous build's bundle) from emitting stray, unused rules.
  */
 @source './components/**/*.vue';
+@source './shared/**/*.vue';
 
 /*
  * Design-token → Tailwind utility map.

@@ -30,9 +30,8 @@
  * via the fallthrough `class`; only the asterisk colour is owned here.
  *
  * No `<style>` block on purpose: a non-element SFC has no shadow root of its
- * own to adopt a per-type sheet into. Semantic-token utilities only (the
- * palette-step CI guard scans `src/components/` — do not sneak palette steps
- * in here).
+ * own to adopt a per-type sheet into. Semantic-token utilities only
+ * (CI-guarded).
  */
 import { tv } from 'tailwind-variants';
 

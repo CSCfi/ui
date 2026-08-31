@@ -61,8 +61,11 @@ import {
   watch,
 } from 'vue';
 
+import type { CPlacement } from '../../types';
+
 import { ensureAnchorPositioning } from '../../shared/anchorPolyfill';
 import { coerceBoolean } from '../../shared/coerceBoolean';
+import { placementAxis, POSITION_AREA } from '../../shared/positionArea';
 import { useHostEmit } from '../../shared/useHostEmit';
 
 /** Events dispatched by `<c-menu>`. */
@@ -119,22 +122,8 @@ interface CMenuProps {
   /** Whether the menu is open. Two-way: emits `change:open`. */
   open?: boolean;
   /** Preferred placement of the panel relative to the trigger. */
-  position?: Placement;
+  position?: CPlacement;
 }
-
-type Placement =
-  | 'bottom-end'
-  | 'bottom-start'
-  | 'bottom'
-  | 'left-end'
-  | 'left-start'
-  | 'left'
-  | 'right-end'
-  | 'right-start'
-  | 'right'
-  | 'top-end'
-  | 'top-start'
-  | 'top';
 
 const props = withDefaults(defineProps<CMenuProps>(), {
   distance: 0,
@@ -144,23 +133,6 @@ const props = withDefaults(defineProps<CMenuProps>(), {
 
 // Anchor wrapper + panel are two root nodes; opt out of attr fallthrough.
 defineOptions({ inheritAttrs: false });
-
-// Placement → CSS `position-area`. Native flip/shift comes from the
-// `position-try-fallbacks` declared in the escape-hatch <style>.
-const POSITION_AREA: Record<Placement, string> = {
-  bottom: 'bottom',
-  'bottom-end': 'bottom span-left',
-  'bottom-start': 'bottom span-right',
-  left: 'left',
-  'left-end': 'left span-top',
-  'left-start': 'left span-bottom',
-  right: 'right',
-  'right-end': 'right span-top',
-  'right-start': 'right span-bottom',
-  top: 'top',
-  'top-end': 'top span-left',
-  'top-start': 'top span-right',
-};
 
 const host = useHost();
 
@@ -174,12 +146,23 @@ const isOpen = ref(false);
 
 const currentItem = ref<HTMLElement | null>(null);
 
+// The trigger→panel gap. Applied on the placement's axis (both sides, so the
+// gap survives the position-try flip fallbacks) and published as an inherited
+// custom property so every (nested) submenu panel leaves the identical gap
+// from its parent — provide/inject cannot cross the custom-element boundary,
+// but an inherited property can.
+const distancePx = computed(() => `${Number(props.distance) || 0}px`);
+
 const panelStyle = computed(
   () =>
     `position-anchor:--c-menu-anchor;position-area:${
       POSITION_AREA[props.position] ?? POSITION_AREA['bottom-start']
-    };inset:auto;`,
+    };inset:auto;margin-${placementAxis(props.position)}:var(--_c-menu-distance,0px);`,
 );
+
+watch(distancePx, (px) => {
+  host?.style.setProperty('--_c-menu-distance', px);
+});
 
 // Tracks open submenu items (across nested levels) so we can coordinate
 // dismissal — the browser does not auto-chain manual popovers across the
@@ -716,6 +699,8 @@ watch(
 
 onMounted(() => {
   if (!host) return;
+
+  host.style.setProperty('--_c-menu-distance', distancePx.value);
 
   host.addEventListener('click', onClick);
   host.addEventListener('keydown', onKeydown);

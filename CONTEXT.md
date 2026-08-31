@@ -46,7 +46,7 @@ The contract where the consumer owns a component's data operation — filtering,
 _Avoid_: Server-side mode (the owner need not be a server), no-filter (foreign Vuetify vocabulary), manual (TanStack's internal word)
 
 **Trigger**:
-The consumer-supplied element (typically a `c-button`) projected into a `c-menu`'s `trigger` slot that toggles the menu open/closed. The menu mirrors `aria-haspopup` / `aria-expanded` onto it but does not own it.
+The consumer-supplied element (typically a `c-button`) projected into an anchored overlay component's `trigger` slot — `c-menu`, `c-tooltip`, `c-popover` — that opens it. The component mirrors the relevant ARIA attributes (`aria-haspopup` / `aria-expanded` / `aria-description`) onto it but does not own it.
 _Avoid_: Activator, anchor (the *anchor* is the internal positioning reference, a separate concept), toggle button
 
 **Submenu**:
@@ -59,8 +59,16 @@ _Avoid_: Spacer (the Stencil-era `c-spacer` flex-grow filler, removed in 4.x —
 
 ### Overlays
 
+**Tooltip** (`c-tooltip`):
+A non-interactive text hint shown on hover or keyboard focus of its **trigger**, painting the **inverted surface** (ADR-0032). It never contains focusable content — interactive floating content is a **popover**'s job (ADR-0033). Its content reaches assistive tech as an `aria-description` mirrored onto the trigger, not via `aria-describedby` (ID references cannot cross the shadow boundary, ADR-0033).
+_Avoid_: Hint, title (the native attribute), popup
+
+**Popover** (`c-popover`):
+The click-opened, **non-modal** interactive surface component anchored to its **trigger** — light-dismissed, never trapping focus (ADR-0033); blocking flows go to `c-modal`, plain hints to `c-tooltip`. Distinct from the lowercase *native popover*, which is the browser mechanism: any element put in the **top layer** via the Popover API (menu panels, autocomplete panels, and tooltips are all native popovers; only `c-popover` is the Popover *component*).
+_Avoid_: Flyout, popup, overlay (as a name for this component)
+
 **Top layer**:
-The browser-managed paint layer above every author stacking context — nothing an author z-indexes can paint above it, and while a *modal dialog* occupies it the rest of the document is inert. In this library only **transient** popovers live there: the menu family and autocomplete panels (ADR-0008). Modals deliberately do **not** (ADR-0014) — a top-layer modal would paint over and inert the toasts.
+The browser-managed paint layer above every author stacking context — nothing an author z-indexes can paint above it, and while a *modal dialog* occupies it the rest of the document is inert. In this library only **transient** surfaces live there, as native popovers: the menu family, autocomplete panels, `c-tooltip`, and `c-popover` (ADR-0008). Modals deliberately do **not** (ADR-0014) — a top-layer modal would paint over and inert the toasts.
 _Avoid_: Overlay (an overlay is any floating surface; the top layer is a specific browser mechanism), portal
 
 **Stacking band**:
@@ -102,7 +110,7 @@ The period between HTML paint and a component's custom-element registration, dur
 _Avoid_: FOUC (names the symptom, not the period), hydration gap (nothing hydrates — elements upgrade)
 
 **Pre-upgrade placeholder**:
-The document-level CSS shipped with the design tokens that hides a component's raw light DOM during the **pre-upgrade window**. Generic for every component tag; a small set of components (the form-field shells) additionally reserve their resting geometry as explicit exceptions.
+The document-level CSS shipped with the design tokens that hides a component's raw light DOM during the **pre-upgrade window**. Generic for every component tag; a small set of components with a fixed resting geometry (the form-field shells, `c-radio`) additionally reserve it as explicit exceptions.
 _Avoid_: Skeleton (implies a painted stand-in; the placeholder paints nothing), loading state (that is a component's own post-upgrade concern)
 
 **Fail-open reveal**:
@@ -120,8 +128,12 @@ A role-named custom property whose value **resolves to a different palette token
 _Avoid_: Role token, alias token, palette token (a semantic token points *at* a palette token; it is not itself a ramp value)
 
 **Surface ladder**:
-The three mode-aware neutral background roles ordered by elevation: `surface` (page background), `surface-raised` (cards/panels), `surface-overlay` (floating layers — popovers, menus, modals, toasts). In light mode they are all near-white and depth reads from shadow; in dark mode each step is progressively lighter so elevation reads **without** relying on shadows. Each pairs with an **`on-` token** for its foreground.
+The four mode-aware neutral background roles ordered by elevation: `surface` (page background), `surface-raised` (cards/panels), `surface-overlay` (floating layers — popovers, menus, modals), and the **inverted surface** (`surface-inverted`, maximum-emphasis transient layers — toasts, tooltips). In light mode the first three are all near-white and depth reads from shadow; in dark mode each step is progressively lighter so elevation reads **without** relying on shadows. The inverted tier flips instead of climbing — see **Inverted surface**. Each rung pairs with an **`on-` token** for its foreground.
 _Avoid_: Layer, z-level, elevation token (the ladder *is* the elevation model; don't introduce a parallel term)
+
+**Inverted surface**:
+The top rung of the **surface ladder** (`surface-inverted`): a background that takes the *opposite* mode's ground — near-black in light mode, near-white in dark mode — so a maximum-emphasis transient layer stands apart from every other surface instead of blending one shade above it. Content on it uses the matching inverted roles (`on-surface-inverted`, the `*-inverted` status roles), which likewise borrow the opposite mode's look. Mode-**aware** (it flips with the mode) — not to be confused with the mode-**invariant** `inverse-*` family, which keeps one fixed look on a fixed brand/dark backdrop regardless of mode.
+_Avoid_: Inverse surface (collides with the invariant `inverse-*` family), dark surface (only true in light mode), contrast surface
 
 **`on-` token** (foreground role):
 A semantic token naming the **content colour that sits on** a given surface or fill — `on-surface` (text/icons on `surface`), `on-primary` (label on a `primary` fill), etc. Its light/dark values flip to preserve contrast (e.g. `on-primary` is white on the light-mode `primary` fill but dark on the lighter dark-mode `primary` fill). The reason a single mode-independent text colour is insufficient and the semantic layer is required.
@@ -143,6 +155,20 @@ _Avoid_: Base colour, brand colour (ambiguous — a "brand colour" could mean an
 The consumer-facing `@theme` mapping the library publishes (`@cscfi/csc-ui/css/tailwind-theme.css`) so a consumer's own Tailwind build gains utilities for the **semantic tokens**. Semantic roles **only**, by design — **palette tokens** are excluded because a palette-step utility cannot be mode-aware (ADR-0018). It is a mapping, not a stylesheet: it must be paired with the token definitions (`tokens.css`) to resolve.
 _Avoid_: Tailwind preset/config (Tailwind-v3 vocabulary), theme file (ambiguous with **theme mode** and `applyTheme`)
 
+### Data visualization
+
+**Chart token**:
+The dataviz subset of the semantic tokens: twelve **series slots** plus the chart anatomy roles (`chart-surface`, `chart-grid`, `chart-axis`). Mode-aware like every semantic token, but the series slots are **frozen** — consumer re-seeding re-themes components, never charts, because the slots are validated as a set (ADR-0030) and a silent shift would void that guarantee. The chart surface equals the raised card surface, which is the background the slots are validated against.
+_Avoid_: Chart color (a color is a slot's current value; the token is the role), viz palette, dataviz token
+
+**Series slot**:
+One of the twelve ordered positions (`chart-1` … `chart-12`) a chart series wears. Assignment is by sequence — series *n* wears slot *n* — never cycled, never skipped, and never re-assigned when filtering changes the series count: color follows the entity, not its rank. The order itself is the accessibility mechanism (adjacent slots are the validated pairs), and a slot keeps the same hue in both theme modes. Beyond six visible series, fold into "Other" or facet rather than reaching for the tail slots.
+_Avoid_: Series color (the value, not the position), palette index, color 1–12
+
+**Relief channel**:
+An alternative way to read a mark's value — direct labels, tooltips, or an accompanying table view — required wherever a series slot sits below 3:1 contrast on the chart surface (a documented, deliberate state for some dark-mode slots; the narrow dark lightness band makes full contrast unattainable). A sub-3:1 mark with no relief channel is an accessibility failure, not a stylistic choice.
+_Avoid_: Fallback (relief supplements the mark; nothing replaces it), workaround
+
 ### Form fields
 
 **Label**:
@@ -154,7 +180,7 @@ A **label** naming a *single* input, associated with it directly (the `for`/`id`
 _Avoid_: Inline label (placement, not association, is what defines it)
 
 **Group label**:
-A **label** naming a *set* of controls operated as one field — `c-radio-group`, `c-otp-input`, `c-button-group`, `c-tags`. Associated with the group container (`aria-labelledby`), not any single input inside it.
+A **label** naming a *set* of controls operated as one field — `c-radio-group`, `c-otp-input`, `c-button-group`, `c-tags`. Associated with the group container (`aria-labelledby`), not any single input inside it. Sourced from the `label` prop; where the default slot is the children's home (`c-radio-group`), a named `slot="label"` is the fallback for rich label content (ADR-0031, prop wins).
 _Avoid_: Legend (the native `<fieldset>` mechanism this library does not use), group title
 
 **Button group** (`c-button-group`):

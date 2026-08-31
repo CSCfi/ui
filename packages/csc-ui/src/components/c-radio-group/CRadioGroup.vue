@@ -1,172 +1,104 @@
 <template>
   <div
-    :aria-labelledby="label || hasLabelContent ? labelId : undefined"
-    :aria-required="required || undefined"
-    :class="[
-      ui.root(),
-      {
-        'c-radio-group--disabled': disabled,
-        'c-radio-group--error': !valid,
-      },
-    ]"
-    class="c-radio-group"
+    ref="rootRef"
+    :aria-labelledby="labelVisible ? labelId : undefined"
+    :aria-required="isRequired || undefined"
+    :class="ui.root()"
     part="root"
     role="radiogroup"
   >
     <form-label
-      v-if="label || hasLabelContent"
+      v-show="labelVisible"
       :class="ui.label()"
       :label
       :label-id
-      :required
+      :required="isRequired"
       part="label"
     >
-      <slot />
+      <slot name="label" />
     </form-label>
 
     <div :class="ui.items()" part="items">
-      <label
-        v-for="(item, index) in resolvedItems"
-        :key="String(item.value) + index"
-        :class="[
-          ui.radio(),
-          {
-            'c-radio--disabled': item.disabled || disabled,
-            'c-radio--error': !valid,
-          },
-        ]"
-        class="c-radio"
-        @keydown="onKeyDown($event, item, index)"
-      >
-        <input
-          :aria-checked="isChecked(item)"
-          :aria-disabled="item.disabled || disabled"
-          :checked="isChecked(item)"
-          :class="ui.input()"
-          :disabled="item.disabled || disabled"
-          :name="radioName"
-          type="radio"
-          @change="select(item, index)"
-        />
-
-        <span
-          :ref="(el) => setRippleRef(el, index)"
-          :class="ui.ripple()"
-          class="c-radio__ripple"
-        >
-          <span
-            v-for="r in ripples.filter((rp) => rp.group === index)"
-            :key="r.id"
-            :class="ui.rippleEffect()"
-            :style="r.style"
-            aria-hidden="true"
-          />
-
-          <span :class="ui.selection()" class="c-radio__selection" />
-        </span>
-
-        <div :class="ui.radioLabel()">{{ item.name }}</div>
-      </label>
+      <slot />
     </div>
 
-    <transition mode="out-in" name="c-radio-group-message">
-      <span
-        v-if="!hideDetails && messageVisible"
-        :key="messageKey"
-        :class="ui.message()"
-        part="message"
-      >
-        <svg
-          v-if="showError"
-          :class="ui.messageIcon()"
-          aria-hidden="true"
-          viewBox="0 0 24 24"
-        >
-          <path :d="errorIconPath" />
-        </svg>
-
-        <span :class="ui.visuallyHidden()">
-          {{ showError ? 'Error: ' : 'Hint: ' }}
-        </span>
-
-        <span>{{ showError ? errorMessage : hint }}</span>
-      </span>
-    </transition>
+    <field-message
+      :error-message
+      :hide-details
+      :hint
+      :valid
+      part="message"
+    />
   </div>
 </template>
 
 <script setup lang="ts">
 /**
- * @slot default - Default slot for the label
+ * @slot default - The radios' home: `<c-radio>` children, wrappable in arbitrary layout elements at any depth
+ * @slot label - Group label content, used when the `label` prop is not set
  *
- * @csspart root - The radiogroup wrapper element carrying the disabled/error states
+ * @csspart root - The radiogroup wrapper element
  * @csspart label - The group label above the radio buttons
- * @csspart items - The wrapper around the rendered radio button rows
- * @csspart message - The hint/error message line below the radios
- *
- * @seeded from csc-ui — verify
+ * @csspart items - The container the radios are slotted into
+ * @csspart message - The hint/error message area below the radios (always reserved unless `hide-details`)
  *
  * @subcomponents c-radio
  */
-import { mdiCloseCircle } from '@mdi/js';
 import { tv } from 'tailwind-variants';
 import {
-  type ComponentPublicInstance,
   computed,
   onBeforeUnmount,
   onMounted,
   ref,
   useHost,
   useId,
+  useTemplateRef,
   watch,
 } from 'vue';
 
+import { coerceBoolean } from '../../shared/coerceBoolean';
 import { emitModelValue } from '../../shared/emitModelValue';
+import FieldMessage from '../../shared/FieldMessage.vue';
 import FormLabel from '../../shared/FormLabel.vue';
-import { useRipple } from '../../shared/useRipple';
+import { useHasSlot } from '../../shared/useHasSlot';
 
 /** Events dispatched by `<c-radio-group>`. */
 interface CRadioGroupEvents {
   /**
-   * Fired when a radio option is selected, carrying the selected item's
-   * value — or the whole item object when `return-object` is set.
+   * Fired when a radio is selected, carrying the selected radio's value.
    */
-  changeValue: number | RadioItem | string;
+  changeValue: string;
   /**
    * Native bubbling input event fired on selection so a plain Vue `v-model`
    * works without the `v-control` directive. No detail.
    */
   input: void;
   /**
-   * v-model contract event fired on selection, carrying the selected item's
-   * value — or the whole item object when `return-object` is set.
+   * v-model contract event fired on selection, carrying the selected radio's
+   * value.
    */
-  'update:value': number | RadioItem | string;
+  'update:value': string;
 }
 
 /**
- * Styling lives in this `tailwind-variants` config; the old
- * `--_c-radio-group-*` indirection layer is dropped for direct token utilities.
+ * Styling lives in this `tailwind-variants` config; the radios themselves are
+ * slotted `<c-radio>` elements that carry their own styling — the group only
+ * lays them out (`items`) and recolours them across the shadow boundary via
+ * the inherited `--_c-radio-color` custom property (error/disabled), which
+ * each radio's ring/dot/focus ring resolves with a primary-role fallback.
  * Customization is via `::part()`; there is no `override` prop.
  *
- * Each radio's ring is a `.c-radio__selection` box (ring via `box-shadow`) and
- * the filled dot is its `::after` pseudo. The dot's SELECTED state
- * (`input:checked ~ .ripple .selection::after { transform: scale(1) }`),
- * the hover tint, and the focus-visible outline are all sibling-driven (they
- * depend on the live `:checked`/`:focus-visible` of a sibling input) and so
- * cannot be `tv` variants — they remain in the escape-hatch `<style>` below.
- * The STATIC dot look (`after:` size/position/scale-0/transition)
- * is authored here in `tv`.
- *
  * `inline`, `disabled`, and error (`!valid`) map to props, so the layout and
- * colour changes they drive are `tv` variants/compoundVariants here.
+ * colour changes they drive are `tv` variants/compoundVariants here. The
+ * dimming of individual radios is each radio's own concern (driven by its
+ * input's live `:disabled`, which `syncRadios` sets for group-level
+ * disabling) — the group deliberately adds no opacity of its own on top.
  */
 const radioGroup = tv({
   compoundVariants: [
     {
       class: {
-        ripple: 'text-error',
-        root: 'text-error',
+        items: 'text-error [--_c-radio-color:var(--c-error)]',
       },
       disabled: false,
       error: true,
@@ -176,44 +108,18 @@ const radioGroup = tv({
     disabled: false,
     error: false,
     inline: false,
-    messageError: false,
   },
   slots: {
-    input: 'absolute opacity-0 cursor-pointer h-0 w-0',
     items: 'flex flex-wrap',
     label: 'text-left',
-    message:
-      'flex items-start gap-1 px-3 text-xs leading-none min-h-4 text-on-surface-muted',
-    messageIcon: 'fill-current h-4 w-4 relative -top-0.5 shrink-0',
-    radio:
-      'flex items-start relative cursor-pointer text-base select-none gap-1 leading-[1.2]',
-    radioLabel: 'pt-3',
-    // 42px circular ripple surface around the radio ring.
-    ripple:
-      'inline-block relative h-[42px] w-[42px] min-w-[42px] rounded-full overflow-hidden text-primary transition-colors duration-200 ease-in-out',
-    // Material click ripple: an absolutely-positioned circle, always centred in
-    // the 42px surface (which clips via overflow-hidden + rounded-full). Tweens
-    // scale/opacity via the `transition` util (no bespoke @keyframes).
-    // `bg-current` so it follows the ripple surface's state colour.
-    rippleEffect:
-      'pointer-events-none absolute rounded-full bg-current transition-[transform,opacity] duration-[600ms] ease-out',
     root: 'flex flex-col gap-1 w-fit',
-    // 20x20 ring (box-shadow inset) with a hidden dot `::after`; the dot is
-    // revealed by the sibling-driven escape-hatch rule on :checked.
-    // Resting state uses `after:[transform:scale(0)]` (NOT `after:scale-0`,
-    // which sets the separate CSS `scale` property and would survive the
-    // escape-hatch `transform: scale(1)`, pinning the dot permanently invisible).
-    selection:
-      "absolute top-[11px] left-[11px] h-5 w-5 bg-transparent rounded-full shadow-[inset_0_0_0_2px_currentColor] transition-shadow duration-150 ease-in-out after:content-[''] after:absolute after:top-[5px] after:left-[5px] after:h-2.5 after:w-2.5 after:rounded-full after:bg-current after:[transform:scale(0)] after:transition-transform after:duration-150 after:ease-in-out",
-    visuallyHidden:
-      'absolute h-px w-px overflow-hidden border-0 p-0 [clip:rect(1px,1px,1px,1px)]',
   },
   variants: {
     disabled: {
       false: {},
       true: {
-        ripple: 'text-on-surface-muted',
-        root: 'text-on-surface-muted opacity-75 cursor-default',
+        items: 'text-on-surface-muted [--_c-radio-color:var(--c-on-surface-muted)]',
+        root: 'text-on-surface-muted cursor-default',
       },
     },
     error: {
@@ -225,19 +131,12 @@ const radioGroup = tv({
       // Column layout: items stack with a 2px gap. Inline: row with 12px gap.
       true: { items: 'flex-row gap-3' },
     },
-    // The message line recolours separately from the group: an invalid group
-    // with no `errorMessage` keeps showing its hint AS a hint (neutral).
-    messageError: {
-      true: { message: 'text-error' },
-    },
   },
 });
 
 interface CRadioGroupProps {
   /**
    * Disable the radio group
-   *
-   * @seeded from csc-ui — verify
    */
   disabled?: boolean;
   /**
@@ -248,73 +147,37 @@ interface CRadioGroupProps {
   errorMessage?: string;
   /**
    * Hide the hint and error messages
-   *
-   * @seeded from csc-ui — verify
    */
   hideDetails?: boolean;
   /**
    * Hint text for the input
    *
-   * @seeded from csc-ui — verify
    * @freeform
    */
   hint?: string;
   /**
-   * Id of the element
-   *
-   * @seeded from csc-ui — verify
-   * @freeform
-   */
-  hostId?: string;
-  /**
    * Display radio buttons inline
-   *
-   * @seeded from csc-ui — verify
    */
   inline?: boolean;
   /**
-   * Radio group items
-   *
-   * @seeded from csc-ui — verify
-   */
-  items?: RadioItem[];
-  /**
    * Label of the radio group
    *
-   * @seeded from csc-ui — verify
    * @freeform
    */
   label?: string;
   /**
    * Set as required
-   *
-   * @seeded from csc-ui — verify
    */
   required?: boolean;
   /**
-   * Return the whole item object
-   *
-   * @seeded from csc-ui — verify
-   */
-  returnObject?: boolean;
-  /**
    * Set the validity of the input
-   *
-   * @seeded from csc-ui — verify
    */
   valid?: boolean;
   /**
-   * Value of the radio group
-   *
-   * @seeded from csc-ui — verify
+   * Value of the radio group; matched against each radio's `value` by strict
+   * string equality
    */
-  value?: null | number | RadioItem | string;
-}
-
-interface RadioItem {
-  disabled?: boolean;
-  name: string;
-  value: number | string;
+  value?: null | string;
 }
 
 const props = withDefaults(defineProps<CRadioGroupProps>(), {
@@ -322,205 +185,210 @@ const props = withDefaults(defineProps<CRadioGroupProps>(), {
   errorMessage: '',
   hideDetails: false,
   hint: '',
-  hostId: '',
   inline: false,
-  items: () => [],
   label: '',
   required: false,
-  returnObject: false,
   valid: true,
   value: null,
 });
 
-const showError = computed(() => !props.valid && Boolean(props.errorMessage));
+// Boolean attribute presence can reach a declared Boolean prop as the raw
+// string "" (falsy) — coerce before any conditional logic or tv lookup.
+const isGroupDisabled = computed(() => coerceBoolean(props.disabled));
+
+const isRequired = computed(() => coerceBoolean(props.required));
 
 const ui = computed(() =>
   radioGroup({
-    disabled: props.disabled,
-    error: !props.valid,
-    inline: props.inline,
-    messageError: showError.value,
+    disabled: isGroupDisabled.value,
+    error: !coerceBoolean(props.valid),
+    inline: coerceBoolean(props.inline),
   }),
 );
 
-const errorIconPath = mdiCloseCircle;
-
 const host = useHost();
 
-// Whether the default slot carries actual LABEL content. We inspect the host's
-// light-DOM children directly rather than the rendered `<slot>` because the slot
-// only renders when the label is shown — querying it would be circular (the
-// label's v-if depends on this flag). Slotted <c-radio> children are the radio
-// items, not label content, so they're excluded. Kept in sync by the same
-// MutationObserver that scans the radios (childList + characterData + subtree).
-const hasLabelContent = ref(false);
+const rootRef = useTemplateRef<HTMLElement>('rootRef');
 
-const updateHasLabel = () => {
-  if (!host) return;
-  hasLabelContent.value = Array.from(host.childNodes).some((node) => {
-    if (node.nodeType === Node.TEXT_NODE) {
-      return (node.textContent ?? '').trim().length > 0;
-    }
+// Group-label slot fallback. The FormLabel is v-show'n — not v-if'd — so the
+// label <slot> always exists and slot detection isn't circular with the
+// label's own visibility (c-otp-input precedent).
+const hasLabelSlot = useHasSlot(rootRef, 'label');
 
-    if (node.nodeType === Node.ELEMENT_NODE) {
-      return (node as Element).tagName !== 'C-RADIO';
-    }
-
-    return false;
-  });
-};
-
-// One ripple composable drives every item: the surface is resolved per-spawn
-// from the per-index container ref, and each ripple is tagged with its item
-// index (`group`) so the template renders it into the right surface.
-const rippleContainers = ref<(HTMLElement | null)[]>([]);
-
-const setRippleRef = (
-  el: ComponentPublicInstance | Element | null,
-  index: number,
-) => {
-  rippleContainers.value[index] = el instanceof HTMLElement ? el : null;
-};
-
-const { ripples, spawn } = useRipple({});
+const labelVisible = computed(
+  () => Boolean(props.label) || hasLabelSlot.value,
+);
 
 const autoId = useId();
 
-const radioName = computed(() => props.hostId || autoId);
-
 const labelId = `${autoId}-label`;
 
-// Items scanned from slotted <c-radio> children. When present, these take
-// precedence over the `items` prop — matches Stencil behaviour where the
-// slot wins. Returning objects is forced off in slot mode because <c-radio>
-// only carries a primitive `value`.
-const scannedItems = ref<RadioItem[]>([]);
-
-const slotMode = ref(false);
-
-const resolvedItems = computed<RadioItem[]>(() =>
-  slotMode.value ? scannedItems.value : props.items,
+// Internal value mirror: `props.value` is only updated by the parent
+// asynchronously (after the native `input` round trip), so the sync pass
+// reads this mirror. Selection is matched by strict string equality.
+const internalValue = ref<null | string>(
+  props.value == null ? null : String(props.value),
 );
 
-const internalValue = ref<null | number | RadioItem | string>(props.value);
+type CRadioEl = { disabled?: boolean; value?: string } & HTMLElement;
+
+// Slotted radios at ANY depth — consumers may wrap <c-radio> in arbitrary
+// layout elements — in document order, scoped to this group so nested groups
+// each own only their descendants. Read as live elements: `value`/`disabled`
+// are DOM properties (the React wrapper sets properties, never attributes).
+const radios = (): CRadioEl[] =>
+  host
+    ? (Array.from(host.querySelectorAll('c-radio')) as CRadioEl[]).filter(
+        (r) => r.closest('c-radio-group') === host,
+      )
+    : [];
+
+// The focusable native control lives in the slotted c-radio's shadow root —
+// native radio `name` grouping never crosses shadow boundaries, so checked
+// state, disabling and the roving tabindex are all coordinated here by
+// writing into each radio's input directly.
+const inputOf = (r: CRadioEl): HTMLInputElement | null =>
+  r.shadowRoot?.querySelector('input') ?? null;
+
+const isSelected = (r: CRadioEl): boolean =>
+  internalValue.value !== null && String(r.value ?? '') === internalValue.value;
+
+const isEnabled = (r: CRadioEl): boolean =>
+  !isGroupDisabled.value && !coerceBoolean(r.disabled);
+
+// Drive the slotted radios: exclusivity (checked), combined group/per-radio
+// disabling, and the WAI-ARIA roving tabindex — the checked radio is the
+// group's single tab stop, else the first enabled one. NEVER emits: model
+// events fire only from user interaction (the host `change` listener below).
+const syncRadios = () => {
+  const rs = radios();
+
+  const tabStop =
+    rs.find((r) => isSelected(r) && isEnabled(r)) ?? rs.find(isEnabled);
+
+  for (const r of rs) {
+    const input = inputOf(r);
+
+    // Pre-upgrade child without a shadow root yet; the mount double-rAF or
+    // the MutationObserver re-runs this pass once it exists.
+    if (!input) continue;
+    input.checked = isSelected(r);
+    input.disabled = !isEnabled(r);
+    input.tabIndex = r === tabStop ? 0 : -1;
+  }
+};
+
+// Commit a user-driven selection arriving as a slotted radio's composed
+// bubbling `change` (a light-DOM event never enters this shadow root, so the
+// listener sits on the host — c-accordion precedent). Emits the grandfathered
+// changeValue/update:value + native `input` triple and mirrors host `value`.
+const onRadioChange = (event: Event) => {
+  const target = event.target as CRadioEl;
+
+  if (!radios().includes(target)) return;
+
+  const next = String((event as CustomEvent<string>).detail ?? '');
+  internalValue.value = next;
+  emitModelValue(host, next);
+  syncRadios();
+};
+
+// WAI-ARIA radio group keyboard pattern: arrows move focus AND select,
+// wrapping and skipping disabled radios. Selection goes through the target
+// input's programmatic click() so the native change fires and reuses the
+// single up-flow path (ripple + emit + sync) — no duplicated commit logic.
+// Space is the input's own native behaviour; Enter is deliberately NOT
+// intercepted (it belongs to form submission, as with native radios).
+const onKeyDown = (event: KeyboardEvent) => {
+  const prev = event.key === 'ArrowUp' || event.key === 'ArrowLeft';
+
+  const next = event.key === 'ArrowDown' || event.key === 'ArrowRight';
+
+  if (!prev && !next) return;
+
+  const rs = radios();
+
+  // Keyboard events are composed, so they bubble out of the focused radio's
+  // shadow root with the radio on the composed path.
+  const from = event
+    .composedPath()
+    .find((n): n is CRadioEl => rs.includes(n as CRadioEl));
+
+  if (!from) return;
+
+  const enabled = rs.filter((r) => isEnabled(r));
+
+  if (enabled.length === 0) return;
+  event.preventDefault();
+
+  const index = enabled.indexOf(from);
+
+  const target =
+    enabled[(index + (next ? 1 : -1) + enabled.length) % enabled.length];
+
+  const input = inputOf(target);
+  input?.focus();
+  input?.click();
+};
+
+// Visuals-only: re-sync when the parent (or our own emitModelValue host
+// `value` mirror) changes the value; never emit here (would loop with
+// v-model).
 watch(
   () => props.value,
   (v) => {
-    internalValue.value = v;
+    internalValue.value = v == null ? null : String(v);
+    syncRadios();
   },
 );
 
-const isChecked = (item: RadioItem) => {
-  if (slotMode.value || !props.returnObject) {
-    return internalValue.value === item.value;
-  }
-
-  return (internalValue.value as null | RadioItem)?.value === item.value;
-};
-
-const select = (item: RadioItem, index: number) => {
-  if (item.disabled || props.disabled) return;
-  // Click ripple, always centred in the item's 42px surface (matches the
-  // original which passed `center: true` for both pointer and keyboard).
-  spawn(null, {
-    center: true,
-    container: () => rippleContainers.value[index],
-    group: index,
-  });
-
-  // Typed against the event map so the emitted detail is compile-checked.
-  const next: CRadioGroupEvents['changeValue'] =
-    !slotMode.value && props.returnObject ? item : item.value;
-  internalValue.value = next;
-  // changeValue/update:value + native `input` (plain v-model) + host `value`
-  // mirror. The value watch above is visuals-only, so no loop.
-  emitModelValue(host, next);
-};
-
-const onKeyDown = (event: KeyboardEvent, item: RadioItem, index: number) => {
-  if (event.code === 'Space' || event.code === 'Enter') {
-    event.preventDefault();
-    select(item, index);
-  }
-};
-
-const messageVisible = computed(() => Boolean(props.hint || showError.value));
-
-const messageKey = computed(() =>
-  showError.value ? `error:${props.errorMessage}` : `hint:${props.hint}`,
+watch(
+  () => props.disabled,
+  () => syncRadios(),
 );
-
-const scanChildren = () => {
-  if (!host) return;
-
-  const radios = Array.from(
-    host.querySelectorAll(':scope > c-radio'),
-  ) as HTMLElement[];
-
-  if (radios.length === 0) {
-    slotMode.value = false;
-
-    return;
-  }
-
-  slotMode.value = true;
-  scannedItems.value = radios.map((r) => {
-    if (r.hasAttribute('checked') && internalValue.value == null) {
-      const v = r.getAttribute('value') ?? '';
-      internalValue.value = v;
-      // Surface the slotted default through both legacy events and native
-      // v-model (input + host `value`).
-      emitModelValue(host, v);
-    }
-
-    return {
-      disabled: r.hasAttribute('disabled'),
-      name: (r.textContent || '').trim(),
-      value: r.getAttribute('value') ?? '',
-    };
-  });
-};
-
-const syncFromLightDom = () => {
-  scanChildren();
-  updateHasLabel();
-};
 
 let observer: MutationObserver | null = null;
 onMounted(() => {
-  syncFromLightDom();
+  if (!host) return;
+  host.addEventListener('change', onRadioChange);
+  host.addEventListener('keydown', onKeyDown);
 
-  if (host && typeof MutationObserver !== 'undefined') {
-    observer = new MutationObserver(syncFromLightDom);
+  if (typeof MutationObserver !== 'undefined') {
+    // Radios appearing/disappearing anywhere in the slotted tree, or changing
+    // their `value`/`disabled` (Vue defineCustomElement reflects primitive
+    // prop writes back to attributes, so property changes land here too).
+    // The filter keeps consumer wrapper-element mutations (class churn etc.)
+    // from re-running the pass.
+    observer = new MutationObserver(() => {
+      syncRadios();
+      // A just-inserted <c-radio> may not have rendered its shadow input yet.
+      requestAnimationFrame(() => syncRadios());
+    });
     observer.observe(host, {
+      attributeFilter: ['disabled', 'value'],
       attributes: true,
-      characterData: true,
       childList: true,
       subtree: true,
     });
   }
+
+  // Drive the initial state. Double rAF so the slotted radios' shadow roots
+  // exist before we reach into them (c-button-group precedent).
+  requestAnimationFrame(() => requestAnimationFrame(() => syncRadios()));
 });
 onBeforeUnmount(() => {
   observer?.disconnect();
+  host?.removeEventListener('change', onRadioChange);
+  host?.removeEventListener('keydown', onKeyDown);
 });
 </script>
 
 <!--
-  Escape-hatch CSS: only constructs Tailwind utilities cannot
-  express. Everything static lives in the `tv` config above. What remains:
-
-  - `:host{display:flex;...}` — restores a box on the host (the global sheet
-    sets `:host{display:contents}`) so the group lays out as a flex column with
-    a 4px gap and fit-content width. Targets the host, not a `tv` element.
-  - The sibling-driven dot reveal `input:checked ~ .ripple .selection::after
-    { transform: scale(1) }`, the per-item hover tint, and the focus-visible
-    outline — all depend on the live `:checked`/`:focus-visible` of a SIBLING
-    input, which `tv` variants cannot observe. The static dot look is in `tv`.
-  - The disabled per-item recolour of the sibling-driven dot/ring, scoped via
-    the `.c-radio--disabled` / `.c-radio--error` state classes the template
-    stamps on each item.
-  - The hint/error message slide Transition keyframes (Vue transition classes).
-  Tokens only.
+  Escape-hatch CSS: only the host box rule remains — everything else moved
+  into <c-radio> (which owns its own visuals now) or FieldMessage. `:host`
+  restores a box (the global sheet sets `:host{display:contents}`) so the
+  group lays out as a flex column with a 4px gap and fit-content width.
+  Targets the host, not a `tv` element.
 -->
 <style>
 :host {
@@ -528,64 +396,5 @@ onBeforeUnmount(() => {
   flex-direction: column;
   gap: 4px;
   width: fit-content;
-}
-
-/* Selected: reveal the filled dot. Sibling-input selector. */
-.c-radio input:checked ~ .c-radio__ripple .c-radio__selection::after {
-  transform: scale(1);
-}
-
-/* Hover tint on the ripple (skipped when the item is disabled). */
-.c-radio:not(.c-radio--disabled) .c-radio__ripple:hover {
-  background-color: color-mix(in srgb, var(--c-primary) 10%, transparent);
-}
-
-.c-radio input:focus {
-  outline: none;
-}
-
-.c-radio input:focus-visible + .c-radio__ripple {
-  outline: 2px var(--c-primary) solid;
-}
-
-.c-radio--error input:focus-visible + .c-radio__ripple {
-  outline-color: var(--c-error);
-}
-
-/* Disabled item: dim the WHOLE item — the ring/dot AND the text label — and
- * drop the pointer cursor. This covers the per-item disabled case (a single
- * `disabled` radio in an enabled group), which the group-level tv `disabled`
- * variant does not reach. Matches the original `.c-radio--disabled` which set
- * colour + opacity on the whole `.c-radio`. The label text inherits this
- * `color`; the ripple needs its own override because its tv slot hardcodes
- * the primary role. Opacity lives only here (not also on the ripple) to avoid
- * double-dimming. */
-.c-radio--disabled {
-  color: var(--c-on-surface-muted);
-  cursor: default;
-  opacity: 0.75;
-}
-
-.c-radio--disabled .c-radio__ripple {
-  color: var(--c-on-surface-muted);
-  cursor: default;
-}
-
-.c-radio--error:not(.c-radio--disabled) .c-radio__ripple {
-  color: var(--c-error);
-}
-
-/* Vertical slide + fade between hint and error messages. */
-.c-radio-group-message-enter-active,
-.c-radio-group-message-leave-active {
-  transition:
-    opacity 0.2s cubic-bezier(0.25, 0.8, 0.5, 1),
-    transform 0.2s cubic-bezier(0.25, 0.8, 0.5, 1);
-}
-
-.c-radio-group-message-enter-from,
-.c-radio-group-message-leave-to {
-  opacity: 0;
-  transform: translateY(-4px);
 }
 </style>

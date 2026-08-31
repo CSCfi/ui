@@ -60,11 +60,11 @@ const semanticInvariant = require('./tokens/semantic/invariant.json');
  * paint for real, but Vue's `defineCustomElement` has no server-rendering
  * story, so pre-upgrade is inherently unstyled.
  *
- * The form-field shells additionally reserve their resting geometry as
- * explicit exceptions — they are the components with a fixed, knowable
- * resting height, so upgrade does not shift the layout: 44px field row +
- * 8px gap + 16px details row = 68px, or just the field row when
- * `hide-details` is set.
+ * Components with a fixed, knowable resting height additionally reserve
+ * their resting geometry as explicit exceptions, so upgrade does not shift
+ * the layout: the form-field shells (44px field row + 8px gap + 16px
+ * details row = 68px, or just the field row when `hide-details` is set)
+ * and c-radio (its 42px indicator row).
  */
 const componentTags = readdirSync(path.join(__dirname, 'src/components'), {
   withFileTypes: true,
@@ -105,6 +105,14 @@ c-input[hide-details]:not(:defined),
 c-select[hide-details]:not(:defined),
 c-text-field[hide-details]:not(:defined) {
   min-height: 44px;
+}
+
+/* Each radio row has a fixed resting height (the 42px indicator), so the
+   reservation is exact per row; the group itself stays generic (its height
+   depends on item count/label/hint). */
+c-radio:not(:defined) {
+  display: block;
+  min-height: 42px;
 }
 `;
 
