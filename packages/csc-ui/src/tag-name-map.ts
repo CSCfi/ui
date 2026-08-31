@@ -1182,6 +1182,7 @@ export interface CPopoverElement extends Omit<HTMLElement, 'distance' | 'heading
   ): void;
 }
 
+/** A horizontal progress bar that fills a track to a known completion percentage, with an optional details line showing the value and a label. */
 export interface CProgressBarElement extends Omit<HTMLElement, 'hideDetails' | 'indeterminate' | 'label' | 'singleLine' | 'value'> {
   /** Hide the percentage display */
   hideDetails?: boolean;
@@ -1552,6 +1553,7 @@ export interface CSliderElement extends Omit<HTMLElement, 'ariaLabelInternal' | 
   ): void;
 }
 
+/** A circular indeterminate activity indicator — pure motion with no value, for waits of unknown duration. */
 export interface CSpinnerElement extends Omit<HTMLElement, 'color' | 'size' | 'width'> {
   /** Color of the spinner */
   color?: string;
