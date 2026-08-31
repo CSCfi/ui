@@ -147,6 +147,7 @@ export const CAccordionItem = createComponent({
   tagName: 'c-accordion-item',
 });
 
+/** A persistent, in-flow status message: a tinted box whose type carries a status family's colours through the icon, heading and accent edge, while the body copy stays neutral. */
 export const CAlert = createComponent({
   displayName: 'CAlert',
   elementClass: elementClass<CAlertElement>('c-alert'),

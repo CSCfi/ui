@@ -136,12 +136,18 @@ export interface CAlertElementEventMap {
   dismiss: CustomEvent<void>;
 }
 
-export interface CAlertElement extends Omit<HTMLElement, 'dismissible' | 'type'> {
+/** A persistent, in-flow status message: a tinted box whose type carries a status family's colours through the icon, heading and accent edge, while the body copy stays neutral. */
+export interface CAlertElement extends Omit<HTMLElement, 'dismissible' | 'heading' | 'type'> {
   /**
    * Show a dismiss button. The alert only emits `dismiss` — removing it from
    * the page stays the consumer's job.
    */
   dismissible?: boolean;
+  /**
+   * Heading rendered above the message. The `heading` slot overrides it for
+   * rich content.
+   */
+  heading?: string;
   /** Type of the alert */
   type?: 'default' | 'error' | 'info' | 'success' | 'warning';
   addEventListener<K extends keyof CAlertElementEventMap>(

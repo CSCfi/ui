@@ -1,8 +1,6 @@
 <template>
   <div>
-    <c-alert type="warning">
-      <div slot="title">Maintenance break</div>
-
+    <c-alert heading="Maintenance break" type="warning">
       The service will be unavailable on Saturday between 10:00 and 12:00.
     </c-alert>
   </div>

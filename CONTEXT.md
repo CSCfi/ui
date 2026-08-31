@@ -19,6 +19,10 @@ _Avoid_: Binding, integration, shim
 **`v-control`** (retired):
 Stencil-era Vue directive that bridged the `changeValue` event to Vue's v-model. Obsolete since 4.x's native Vue v-model contract; its wrapper packages are deprecated. Historical only.
 
+**Heading**:
+The visible caption naming a component's content region — a popover panel, an accordion item, an alert. Purely visual hierarchy: unlike a **label**, a heading is not wired to any control for assistive technology. Supplied by the consumer as prose; components accept it under the name `heading`, prop and slot alike.
+_Avoid_: Title (`title` is the native tooltip attribute — a global on every element, including hosts), caption, header (a header is a region that may *contain* a heading)
+
 ### Menu
 
 **Menu** (`c-menu`):
