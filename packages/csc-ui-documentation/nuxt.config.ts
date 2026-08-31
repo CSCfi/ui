@@ -128,6 +128,11 @@ export default defineNuxtConfig({
   routeRules: childRedirects,
   ssr: true,
   vite: {
+    optimizeDeps: {
+      include: [
+        '@mdi/js',
+      ]
+    },
     plugins: [stubExampleDemosInSsr, ignoreExampleDocsBlocks, tailwindcss()],
     resolve: {
       alias: {

@@ -113,6 +113,7 @@
         <svg :class="ui.searchIcon()" aria-hidden="true" viewBox="0 0 24 24">
           <path :d="mdiMagnify" />
         </svg>
+
         <input
           ref="searchRef"
           :aria-activedescendant="
