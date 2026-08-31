@@ -60,10 +60,7 @@ const onSelect = (
     value: { type: 'color'; value: string; label: string };
   }>,
 ) => {
-  console.log(event.detail.value);
   currentColor.value = event.detail.value;
-
-  console.log('current color', currentColor.value);
 
   applyTheme({ primary: event.detail.value.value });
 };
