@@ -18,6 +18,8 @@
     "fix-autocomplete-textfield-states",
     "ghost-soft-tint",
     "menu-item-active-and-icon",
+    "progress-bar-aria-busy",
+    "progress-circle-component",
     "radio-self-rendering",
     "toast-inverted-surface",
     "tooltip-popover-components",
