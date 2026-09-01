@@ -1,5 +1,60 @@
 # @cscfi/csc-ui
 
+## 4.0.0-alpha.6
+
+### Minor Changes
+
+- [#256](https://github.com/CSCfi/ui/pull/256) [`444e2d9`](https://github.com/CSCfi/ui/commit/444e2d9f4ba67d44f6bbfdafc567a129e7388ce5) Thanks [@villeerikssoncsc](https://github.com/villeerikssoncsc)! - c-alert heading API:
+
+  - New `heading` string prop renders the alert heading; the slot overrides
+    it for rich content. New `heading` CSS part on the prop-rendered heading.
+  - The `title` slot is renamed to `heading` (`slot="heading"`) — `title` is
+    avoided across the library because the native `title` attribute triggers
+    the browser tooltip.
+
+- [#256](https://github.com/CSCfi/ui/pull/256) [`b30f342`](https://github.com/CSCfi/ui/commit/b30f3425b9ee541b8ac481591cdd63ee05acf67a) Thanks [@villeerikssoncsc](https://github.com/villeerikssoncsc)! - Selection controls are now stylable per state from consumer CSS (ADR-0035).
+  `c-checkbox`, `c-radio` and `c-switch` expose their interaction state as
+  custom states (`c-checkbox:state(checked)`, `:state(indeterminate)`,
+  `c-radio:state(checked)`, `:state(disabled)`, `c-switch:state(checked)`),
+  and the `indicator` part now targets the actual visual control — the
+  checkbox box (with the new `mark` part for the check glyph) and the radio
+  ring (its dot is the ring's `::after`) — so rules like
+  `c-checkbox:state(checked)::part(indicator) { background: green }` work.
+
+  BREAKING: `::part(indicator)` no longer targets the circular ripple/hover
+  surface on `c-checkbox`/`c-radio`; that surface is internal and no longer
+  stylable. Also fixes the indeterminate checkbox never filling its box.
+
+- [#256](https://github.com/CSCfi/ui/pull/256) [`692cf41`](https://github.com/CSCfi/ui/commit/692cf41b387b8119e92a4b7c7a40953bfb2ebcc8) Thanks [@villeerikssoncsc](https://github.com/villeerikssoncsc)! - c-table now leaves your `<table>` in your own DOM instead of moving it into
+  its shadow root:
+
+  - Your page CSS and `::part()` selectors now reach everything inside the
+    table — e.g. a `c-tag` in a cell can be styled with
+    `c-tag.status::part(root) { … }`, matching how other components customize.
+  - c-table installs its table styling once per page as a scoped stylesheet
+    (`c-table > table.c-table …`). Note that your own global table resets can
+    now also reach the table, which the shadow boundary previously blocked.
+  - Responsive mobile labels are cloned from the header cells as live nodes
+    instead of serialized HTML, and header lookup now only considers
+    `<th>` elements inside `<thead>`.
+  - A `<table>` slotted in after mount is now picked up automatically.
+
+### Patch Changes
+
+- [#256](https://github.com/CSCfi/ui/pull/256) [`284e9ec`](https://github.com/CSCfi/ui/commit/284e9ec98461d45473c562ca3e0d41168e9c4420) Thanks [@villeerikssoncsc](https://github.com/villeerikssoncsc)! - `c-autocomplete`'s in-panel search input now shows a magnifying-glass icon
+  in front of the input as a "type to filter" affordance. The glyph is
+  decorative (hidden from assistive technology) and inherits its color from
+  the search row, so `::part(search)` color overrides apply to it as well.
+  The options list also gained a small gap below the search row's divider.
+
+- [#256](https://github.com/CSCfi/ui/pull/256) [`b30f342`](https://github.com/CSCfi/ui/commit/b30f3425b9ee541b8ac481591cdd63ee05acf67a) Thanks [@villeerikssoncsc](https://github.com/villeerikssoncsc)! - Separator lines are now visible on dark-mode overlay surfaces (ADR-0036).
+  `c-divider` inside `c-menu` and the search-row line in `c-autocomplete`'s
+  panel used the `border` token, which in dark mode resolves to the same color
+  as the panel background. Both now paint a new `divider` semantic token — a
+  translucent ink (black @ 12% in light mode, white @ 12% in dark) that reads
+  consistently on every surface. The token is exported as `--c-divider` and,
+  via the Tailwind theme export, as the `divider` color utilities.
+
 ## 4.0.0-alpha.5
 
 ### Minor Changes
