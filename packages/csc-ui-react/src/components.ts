@@ -670,6 +670,7 @@ export const CTabItems = createComponent({
   tagName: 'c-tab-items',
 });
 
+/** A styled wrapper for a table you author yourself: slot in a plain `<table>` and c-table gives it the CSC look plus an optional responsive card layout on narrow screens. The table stays in your own DOM — your stylesheets, your framework's rendering, and `::part()` selectors on components nested in cells (a `c-tag` status chip, a `c-pagination` footer) all keep working. */
 export const CTable = createComponent({
   displayName: 'CTable',
   elementClass: elementClass<CTableElement>('c-table'),

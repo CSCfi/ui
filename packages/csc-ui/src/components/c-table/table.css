@@ -1,0 +1,148 @@
+/*
+ * c-table's table styling — a DOCUMENT-level sheet, not a shadow sheet.
+ *
+ * The consumer's <table> is slotted light DOM (see CTable.vue / ADR-0037):
+ * shadow-scoped CSS cannot reach its descendants (::slotted matches only the
+ * top-level assigned node), so these rules are injected once into
+ * document.head by injectTableStyles.ts.
+ *
+ * Every selector is scoped `c-table > table.c-table …` — the child combinator
+ * plus the class the component stamps keep the rules off any other table on
+ * the page (including tables the consumer nests inside a cell). Deliberately
+ * UNLAYERED: inside @layer these defaults would lose to any consumer reset
+ * (`td { padding: 0 }`); at specificity (0,1,3) they beat generic resets
+ * while targeted consumer selectors can still override (ADR-0037).
+ *
+ * Colours go through the global semantic tokens only (tokens.css is already
+ * a document sheet).
+ */
+
+c-table > table.c-table {
+  border-collapse: collapse;
+  border-spacing: 0;
+  border: 0;
+  font-size: 100%;
+  font-family: var(--c-font-family);
+  margin: 0;
+  padding: 0;
+  width: 100%;
+}
+
+c-table > table.c-table caption,
+c-table > table.c-table tbody,
+c-table > table.c-table tfoot,
+c-table > table.c-table thead,
+c-table > table.c-table tr,
+c-table > table.c-table th,
+c-table > table.c-table td {
+  border: 0;
+  font-size: 100%;
+  font-family: var(--c-font-family);
+  margin: 0;
+  padding: 0;
+}
+
+c-table > table.c-table thead {
+  background-color: var(--c-surface);
+  position: relative;
+}
+
+c-table > table.c-table thead th {
+  border-bottom: 2px solid var(--c-border);
+  text-align: left;
+}
+
+c-table > table.c-table tbody {
+  box-shadow:
+    inset 1px 0 0 0 var(--c-border),
+    inset -1px 0 0 0 var(--c-border),
+    inset 0 1px 0 0 var(--c-border),
+    inset 0 -1px 0 0 var(--c-border);
+}
+
+@supports (-webkit-hyphens: none) {
+  c-table > table.c-table tbody {
+    border: 1px solid var(--c-border);
+  }
+  c-table > table.c-table tbody tr {
+    border-bottom: 1px solid var(--c-border);
+  }
+}
+
+c-table > table.c-table tbody tr {
+  box-shadow: inset 0 1px 0 0 var(--c-border);
+}
+
+c-table > table.c-table tfoot {
+  background-color: var(--c-surface);
+}
+c-table > table.c-table tfoot tr {
+  box-shadow: inset 0 1px 0 0 var(--c-border);
+}
+c-table > table.c-table tfoot td {
+  min-height: 48px;
+}
+c-table > table.c-table tfoot c-pagination {
+  flex: 1;
+}
+
+c-table > table.c-table th,
+c-table > table.c-table td {
+  font-weight: 400;
+  box-sizing: border-box;
+  line-height: normal;
+  padding: 16px;
+}
+
+c-table > table.c-table th {
+  height: 48px;
+  font-size: 14px;
+  color: var(--c-on-surface-muted);
+}
+
+c-table > table.c-table td {
+  font-size: 16px;
+  color: var(--c-on-surface);
+}
+
+c-table > table.c-table td span.c-table__mobile-label {
+  display: none;
+}
+
+c-table > table.c-table.c-table--mobile {
+  border-spacing: 0 16px;
+  border-collapse: separate;
+}
+c-table > table.c-table.c-table--mobile tbody {
+  box-shadow: none;
+}
+c-table > table.c-table.c-table--mobile tbody tr {
+  border-radius: 4px;
+  box-shadow: inset 0 0 0 1px var(--c-border);
+}
+@supports (-webkit-hyphens: none) {
+  c-table > table.c-table.c-table--mobile tbody tr {
+    display: grid;
+    margin-bottom: 16px;
+    border: none;
+  }
+}
+c-table > table.c-table.c-table--mobile thead {
+  display: none;
+}
+c-table > table.c-table.c-table--mobile td {
+  display: grid;
+  gap: 4px;
+  padding: 12px;
+  min-height: 48px;
+}
+c-table > table.c-table.c-table--mobile td span.c-table__mobile-label {
+  font-size: 14px;
+  color: var(--c-on-surface-muted);
+  display: inline-block;
+  text-align: start;
+  padding-right: 8px;
+}
+c-table > table.c-table.c-table--mobile td:nth-of-type(even) {
+  background-color: color-mix(in srgb, var(--c-primary) 5%, transparent);
+}
