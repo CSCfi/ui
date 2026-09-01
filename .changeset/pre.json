@@ -9,11 +9,14 @@
   "changesets": [
     "accordion-header-slot-color",
     "accordion-mycsc-colors",
+    "alert-heading-prop",
     "alert-mycsc-redesign",
     "autocomplete-external-mode",
+    "autocomplete-search-magnifier",
     "card-mycsc-anatomy",
     "chart-tokens",
     "dark-mode-mycsc-retune",
+    "divider-token-dark-mode",
     "dropdown-hide-details-restore",
     "fix-autocomplete-textfield-states",
     "ghost-soft-tint",
@@ -21,6 +24,8 @@
     "progress-bar-aria-busy",
     "progress-circle-component",
     "radio-self-rendering",
+    "selection-control-state-styling",
+    "table-light-dom-styling",
     "toast-inverted-surface",
     "tooltip-popover-components",
     "vue-rewrite-major"
