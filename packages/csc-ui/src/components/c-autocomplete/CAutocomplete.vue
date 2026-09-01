@@ -110,6 +110,10 @@
       </div>
 
       <div :class="ui.search()" part="search">
+        <svg :class="ui.searchIcon()" aria-hidden="true" viewBox="0 0 24 24">
+          <path :d="mdiMagnify" />
+        </svg>
+
         <input
           ref="searchRef"
           :aria-activedescendant="
@@ -320,7 +324,13 @@ export interface CAutocompleteProps {
  *
  * @subcomponents c-option, c-option-value
  */
-import { mdiAlert, mdiCheck, mdiChevronDown, mdiClose } from '@mdi/js';
+import {
+  mdiAlert,
+  mdiCheck,
+  mdiChevronDown,
+  mdiClose,
+  mdiMagnify,
+} from '@mdi/js';
 import { tv } from 'tailwind-variants';
 import {
   computed,
@@ -406,11 +416,12 @@ const autocomplete = tv({
       'max-h-8 py-2 bg-transparent border-0 text-on-surface flex-[1_1_auto] [font-family:var(--c-font-family)] text-base leading-5 max-w-full min-w-0 w-full cursor-pointer outline-none focus:outline-none active:outline-none placeholder:text-on-surface-muted placeholder:opacity-100',
     item: 'flex items-center flex-nowrap gap-3 cursor-pointer text-sm min-h-[42px] outline-none px-[10px] whitespace-nowrap w-full rounded select-none data-[active]:bg-primary-subtle data-[active]:text-primary data-[active]:ring-1 data-[active]:ring-inset data-[active]:ring-primary text-on-surface',
     itemLabel: 'flex-auto overflow-hidden text-ellipsis whitespace-nowrap',
-    list: 'list-none m-0 p-1 outline-none overflow-y-auto w-full [scrollbar-width:none] [&::-webkit-scrollbar]:hidden',
+    list: 'list-none m-0 mt-1 p-1 outline-none overflow-y-auto w-full [scrollbar-width:none] [&::-webkit-scrollbar]:hidden',
     panel:
       'fixed m-0 p-0 border-0 bg-transparent overflow-visible [inset:auto]',
     search:
-      'flex items-center min-h-11 px-3 border-b border-solid border-border',
+      'flex items-center gap-2 min-h-11 px-3 border-b border-solid border-divider',
+    searchIcon: 'w-[18px] h-[18px] shrink-0 fill-current text-on-surface-muted',
     searchInput:
       'bg-transparent border-0 outline-none w-full py-2 text-base leading-5 text-on-surface [font-family:var(--c-font-family)] [caret-color:var(--c-primary)] placeholder:text-on-surface-muted placeholder:opacity-100',
     visuallyHidden:

@@ -12,6 +12,7 @@
   "on-surface-sunken": "primary-700",
   "border": "tertiary-200",
   "border-strong": "tertiary-600",
+  "divider": "color-mix(in srgb, var(--c-black) 12%, transparent)",
   "ring": "primary-500",
 
   "_comment-inverted": "Inverted-surface tier (ADR-0032): the contrast-flipping top rung of the surface ladder (near-black in light mode, white in dark mode) for maximum-emphasis transient layers (toasts). Each status *-inverted role is the single ACCENT INK for that family on the flipped ground — the coloured status icon, with its halo painted as an alpha wash of the same role — vivid pre-anchor steps on the light mode's near-black, deeper post-anchor steps on the dark mode's white. Mode-AWARE — distinct from the mode-invariant inverse-* family in invariant.json.",

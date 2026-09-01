@@ -5,7 +5,11 @@
     </svg>
 
     <div :class="ui.content()" part="content">
-      <slot name="title" />
+      <slot name="heading">
+        <p v-if="heading" :class="ui.heading()" part="heading">
+          {{ heading }}
+        </p>
+      </slot>
 
       <slot />
     </div>
@@ -39,6 +43,13 @@ export interface CAlertProps {
    */
   dismissible?: boolean;
   /**
+   * Heading rendered above the message. The `heading` slot overrides it for
+   * rich content.
+   *
+   * @freeform
+   */
+  heading?: string;
+  /**
    * Type of the alert
    *
    * @seeded from csc-ui — verify
@@ -56,12 +67,13 @@ export type CAlertType = 'default' | CAlertIconType;
 
 <script setup lang="ts">
 /**
- * @slot title - Title slot
+ * @slot heading - Rich heading content; overrides the `heading` prop
  * @slot default - Default slot
  *
  * @csspart root - The tinted box carrying the type's wash, hairline border and accent edge
  * @csspart icon - The status icon svg
- * @csspart content - The wrapper around the slotted title and message content
+ * @csspart content - The wrapper around the heading and message content
+ * @csspart heading - The heading paragraph rendered from the `heading` prop
  * @csspart dismiss - The dismiss button rendered when `dismissible` is set
  *
  * @seeded from csc-ui — verify
@@ -92,11 +104,12 @@ interface CAlertEvents {
  * Styling lives entirely in this `tailwind-variants` config, per the MyCSC
  * alert spec: a wash of the type's role colour (10%) as the box tint with a
  * 40% hairline border and a solid 4px accent edge on the left; the icon and
- * the slotted title wear the role's `on-*-subtle` ink while body copy stays
+ * the heading wear the role's `on-*-subtle` ink while body copy stays
  * high-contrast `on-surface`, so severity is carried by icon + label + edge,
- * never body-text colour. `--_c-alert-ink` is a private per-type hook whose
- * only job is colouring the light-DOM title from the escape-hatch
- * `::slotted()` rule (a utility cannot reach slotted content).
+ * never body-text colour. `--_c-alert-ink` is a private per-type hook that
+ * colours the heading on both paths: the `heading` tv slot (the prop-rendered
+ * fallback) and the escape-hatch `::slotted()` rule for light-DOM heading
+ * content (a utility cannot reach slotted content).
  * Consumer customization is via `::part()`.
  */
 const alert = tv({
@@ -107,6 +120,8 @@ const alert = tv({
     content: 'flex min-w-0 flex-1 flex-col gap-0.5 pt-px text-on-surface',
     dismiss:
       'grid size-7 shrink-0 -my-0.5 -mr-1 cursor-pointer place-items-center rounded-csc-sm border-0 bg-transparent p-0 text-on-surface-muted transition-colors duration-150 focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-primary',
+    heading:
+      'm-0 text-[length:inherit] font-semibold leading-[1.4] text-(--_c-alert-ink)',
     icon: 'mt-px size-5 shrink-0 fill-current',
     root: 'flex items-start gap-3 rounded-csc-md border border-l-4 p-3.5 text-sm leading-normal',
   },
@@ -193,14 +208,15 @@ const onDismiss = () => emit('dismiss');
 <!--
   Escape-hatch CSS: only constructs Tailwind utilities cannot
   express. The visible box lives in the `tv` config above; here remains the
-  `::slotted([slot="title"])` rule, which styles consumer-provided light-DOM
-  title content and cannot be reached by a utility class on a shadow-DOM node.
-  The title wears the type's ink (`--_c-alert-ink`, set per type variant) at
-  the body size — severity label and accent edge carry the hue, body copy
-  stays neutral.
+  `::slotted([slot="heading"])` rule, which styles consumer-provided light-DOM
+  heading content and cannot be reached by a utility class on a shadow-DOM
+  node. It must stay visually identical to the `heading` tv slot (the
+  prop-rendered fallback): the type's ink (`--_c-alert-ink`, set per type
+  variant) at the body size — severity label and accent edge carry the hue,
+  body copy stays neutral.
 -->
 <style>
-::slotted(*[slot='title']) {
+::slotted(*[slot='heading']) {
   margin: 0 !important;
   font-size: inherit;
   font-weight: 600;

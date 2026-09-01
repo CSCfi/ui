@@ -136,12 +136,18 @@ export interface CAlertElementEventMap {
   dismiss: CustomEvent<void>;
 }
 
-export interface CAlertElement extends Omit<HTMLElement, 'dismissible' | 'type'> {
+/** A persistent, in-flow status message: a tinted box whose type carries a status family's colours through the icon, heading and accent edge, while the body copy stays neutral. */
+export interface CAlertElement extends Omit<HTMLElement, 'dismissible' | 'heading' | 'type'> {
   /**
    * Show a dismiss button. The alert only emits `dismiss` — removing it from
    * the page stays the consumer's job.
    */
   dismissible?: boolean;
+  /**
+   * Heading rendered above the message. The `heading` slot overrides it for
+   * rich content.
+   */
+  heading?: string;
   /** Type of the alert */
   type?: 'default' | 'error' | 'info' | 'success' | 'warning';
   addEventListener<K extends keyof CAlertElementEventMap>(
@@ -438,6 +444,7 @@ export interface CCheckboxElementEventMap {
   'update:value': CustomEvent<boolean | number | string>;
 }
 
+/** A form control for a single on/off choice: a native checkbox with a label, an optional hint, and validation messaging. */
 export interface CCheckboxElement extends Omit<HTMLElement, 'checked' | 'disabled' | 'errorMessage' | 'falseValue' | 'hideDetails' | 'hint' | 'hostId' | 'hostName' | 'indeterminate' | 'label' | 'required' | 'trueValue' | 'valid' | 'value'> {
   /** If `true`, the checkbox is selected. */
   checked?: boolean;
@@ -1618,6 +1625,7 @@ export interface CSwitchElementEventMap {
   'update:value': CustomEvent<boolean | number | string>;
 }
 
+/** A toggle for a binary setting that takes effect immediately: a native switch control with a label, an optional hint, and validation messaging. */
 export interface CSwitchElement extends Omit<HTMLElement, 'checked' | 'disabled' | 'falseValue' | 'hostId' | 'label' | 'loading' | 'required' | 'trueValue' | 'value'> {
   /** If `true`, the checkbox is selected. */
   checked?: boolean;
@@ -1801,6 +1809,7 @@ export interface CTabItemsElement extends Omit<HTMLElement, 'disableAnimation' |
   value?: number | string;
 }
 
+/** A styled wrapper for a table you author yourself: slot in a plain `<table>` and c-table gives it the CSC look plus an optional responsive card layout on narrow screens. The table stays in your own DOM — your stylesheets, your framework's rendering, and `::part()` selectors on components nested in cells (a `c-tag` status chip, a `c-pagination` footer) all keep working. */
 export interface CTableElement extends Omit<HTMLElement, 'mobileBreakpoint' | 'responsive'> {
   /** Mobile breakpoint in pixels */
   mobileBreakpoint?: number;

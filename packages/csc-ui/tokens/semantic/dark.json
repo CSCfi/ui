@@ -12,6 +12,7 @@
   "on-surface-sunken": "slate-100",
   "border": "slate-700",
   "border-strong": "slate-400",
+  "divider": "color-mix(in srgb, var(--c-white) 12%, transparent)",
   "ring": "primary-300",
 
   "_comment-inverted": "Inverted-surface tier (ADR-0032): white pill on the dark page. Each status *-inverted role is the family's accent ink on white (coloured icon + alpha-wash halo — the wash lands on the pale subtle tint the light-mode alerts use); neutral inks reuse light mode's on-surface neutrals. Keep keys in sync with light.json.",

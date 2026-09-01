@@ -223,6 +223,43 @@
       </div>
     </template>
 
+    <template v-if="view.cssStates.length">
+      <h4 :id="`${view.tagName}--css-states`" :class="H4">Custom states</h4>
+
+      <p class="my-[1em] text-on-surface-faint">
+        Select on the host's live state with
+        <code>{{ view.tagName }}:state(name)</code>
+
+        — combine with <code>::part()</code>
+ for per-state styling, e.g.
+        <code>{{ view.tagName }}:state(checked)::part(indicator)</code>.
+      </p>
+
+      <div class="overflow-x-auto">
+        <table class="w-full text-sm">
+          <thead>
+            <tr>
+              <th :class="TH">State</th>
+
+              <th :class="TH">Description</th>
+            </tr>
+          </thead>
+
+          <tbody>
+            <tr v-for="state in view.cssStates" :key="state.name">
+              <td :class="TD">
+                <code class="whitespace-nowrap">{{ state.name }}</code>
+              </td>
+
+              <td :class="TD" class="whitespace-pre-line">
+                {{ state.description }}
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </template>
+
     <template v-if="view.cssProperties.length">
       <h4 :id="`${view.tagName}--css-properties`" :class="H4">
         CSS custom properties

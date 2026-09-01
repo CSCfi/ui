@@ -7,6 +7,7 @@
  *   @slot <name> - <description>
  *   @csspart <name> - <description>
  *   @cssprop --<name> - <description>
+ *   @cssstate <name> - <description>
  *
  * The `- ` separator is optional; everything after the name is description.
  * Multi-line descriptions continue until the next `@tag` line.

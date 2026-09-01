@@ -7,6 +7,8 @@
  *   - template slot without an `@slot` tag / `@slot` naming no template slot
  *   - part (own or exportparts-exposed) without an `@csspart` tag /
  *     `@csspart` naming no part
+ *   - a `setState('<name>')` custom state without a `@cssstate` tag /
+ *     `@cssstate` naming a state the script never sets
  *   - a raw `new CustomEvent(` / `new Event(` in the SFC — events must go
  *     through `useHostEmit` (or `emitModelValue`) so the event map stays the
  *     single source of truth
@@ -79,6 +81,30 @@ export const lintComponent = (component, knownTags = new Set()) => {
   }
 
   const scriptSource = component.script ?? '';
+
+  // Custom states are customization API like parts: every `setState('<name>')`
+  // call must be documented with a `@cssstate` tag and vice versa. States are
+  // set from script (useHostStates), not stamped in the template, so the
+  // symmetry check reads the script's literal state names.
+  const taggedStates = tagged('cssstate');
+
+  const actualStates = [
+    ...new Set(
+      [...scriptSource.matchAll(/setState\(\s*'([^']+)'/g)].map((m) => m[1]),
+    ),
+  ];
+
+  for (const state of actualStates) {
+    if (!taggedStates.includes(state)) {
+      errors.push(`custom state "${state}" has no @cssstate tag`);
+    }
+  }
+
+  for (const state of taggedStates) {
+    if (!actualStates.includes(state)) {
+      errors.push(`@cssstate "${state}" is never set in the script`);
+    }
+  }
 
   const rawDispatches =
     scriptSource.match(/new (?:Custom)?Event\(/g)?.length ?? 0;

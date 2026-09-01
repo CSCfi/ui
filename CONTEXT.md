@@ -19,6 +19,10 @@ _Avoid_: Binding, integration, shim
 **`v-control`** (retired):
 Stencil-era Vue directive that bridged the `changeValue` event to Vue's v-model. Obsolete since 4.x's native Vue v-model contract; its wrapper packages are deprecated. Historical only.
 
+**Heading**:
+The visible caption naming a component's content region — a popover panel, an accordion item, an alert. Purely visual hierarchy: unlike a **label**, a heading is not wired to any control for assistive technology. Supplied by the consumer as prose; components accept it under the name `heading`, prop and slot alike.
+_Avoid_: Title (`title` is the native tooltip attribute — a global on every element, including hosts), caption, header (a header is a region that may *contain* a heading)
+
 ### Menu
 
 **Menu** (`c-menu`):
@@ -54,7 +58,7 @@ A nested second-level (or deeper) menu owned by a `c-menu-item`, authored via th
 _Avoid_: Nested dropdown, flyout, child menu
 
 **Separator** (`c-divider`):
-A general-purpose `role="separator"` line dividing groups of content. Used to partition menu sections but not menu-specific. A **menu label** (`c-menu-label`) is the complementary heading for a group of items; a separator is the line between groups.
+A general-purpose `role="separator"` line dividing groups of content. Used to partition menu sections but not menu-specific. A **menu label** (`c-menu-label`) is the complementary heading for a group of items; a separator is the line between groups. Paints the `divider` semantic token — a translucent ink that reads on every **surface ladder** rung (ADR-0036); the token role deliberately takes the tag's name, not this concept's.
 _Avoid_: Spacer (the Stencil-era `c-spacer` flex-grow filler, removed in 4.x — not a visible rule), rule, hr
 
 ### Overlays
@@ -111,6 +115,18 @@ _Avoid_: Spinner (the primitive inside it), overlay (any floating surface), prog
 A named, publicly overridable region of a migrated component's shadow DOM (e.g. `root`, `content`, `description`). The curated public set per component — not every internal node; purely internal regions (loader, spinner, ripple) are styled via the component's own `tailwind-variants` slots but are **not** parts and carry no `part=` attribute. Identified by a flat, logical name (not BEM) stamped as the element's `part="<name>"` attribute; `::part()` against these names is the **sole** consumer customization API (ADR-0006), so a component's part set is its customization contract.
 _Avoid_: Slot (a slot is a content-projection hole, a part is a stylable element), element, node, section
 
+**Custom state**:
+A host-exposed `ElementInternals` state (`checked`, `indeterminate`, `disabled`) a consumer selects with `:state(...)` to write per-state `::part()` rules (ADR-0035). The selector-side counterpart of **parts**: parts name *where* a rule applies, custom states name *when*. Curated public API like the part set, documented per component with `@cssstate` and listed in the **manifest**. Only otherwise-invisible internal state is exposed — consumer-set props (`valid`, a standalone `disabled`… ) are not mirrored.
+_Avoid_: Attribute (nothing is stamped on the host), state class (no class exists), reflected prop
+
+**Indicator** (selection controls):
+The state-showing visual control of a selection control — the checkbox box, the radio ring with its dot — stamped as the `indicator` part. NOT the circular hover/ripple surface around it (that is purely internal, carries no part). Distinct from the **sliding indicator**, which is tabs-only.
+_Avoid_: Box/ring (implementation shapes; indicator is the concept), ripple surface (internal), icon
+
+**Mark** (`c-checkbox`):
+The glyph revealed inside an **indicator** when it has something to show — the check or the indeterminate bar — stamped as the `mark` part. Draws with `currentColor`, so one `color` recolours it. The radio's dot is not a mark: it is part of the indicator itself (its `::after`).
+_Avoid_: Check(mark) only (it also renders the indeterminate bar), icon (not slottable, not an icon component)
+
 **Root element**:
 The single styled element a migrated component renders directly inside its shadow root, carrying all visual Tailwind utilities. The host (`<c-button>`) itself is layout-only (one shared `:host` display rule); visual styling lives on the root element, which is the `root` part.
 _Avoid_: Host (the host is the custom element; the root element is its first child), container, wrapper
@@ -138,7 +154,7 @@ A raw brand-ramp custom property — one hue at one fixed step, e.g. `--c-primar
 _Avoid_: Colour token, theme token (a palette token is the mode-independent ramp value; a semantic token is the mode-dependent role)
 
 **Semantic token**:
-A role-named custom property whose value **resolves to a different palette token in light vs dark mode** — e.g. `--c-surface`, `--c-on-surface`, `--c-primary`. The CSS variable carries the `--c-` namespace prefix (like palette tokens, to avoid clobbering consumer custom properties); the Tailwind utility drops it (`bg-surface`, `text-on-surface`, `bg-primary`). This is the layer dark mode switches; components author against the semantic utilities so a mode change re-themes them with no per-component dark variants. Defined at the document `:root` (so it inherits across shadow boundaries) and mapped into Tailwind via `@theme inline` (`--color-surface: var(--c-surface)`) so the utility resolves inside shadow roots. The role set keeps the existing CSC brand/status names (`primary`, `secondary`, `accent`, `success`, `info`, `warning`, `error`, `link`) — now mode-aware — and **adds** neutral roles (the **surface ladder**, `on-*` foregrounds, `border`, `ring`). **Direct palette-step utilities (`bg-primary-600`, `text-white`) are forbidden in component SFCs** (CI-guarded); every component colour flows through a semantic token, so a stray palette-step utility is a build failure rather than a latent dark-mode bug.
+A role-named custom property whose value **resolves to a different palette token in light vs dark mode** — e.g. `--c-surface`, `--c-on-surface`, `--c-primary`. The CSS variable carries the `--c-` namespace prefix (like palette tokens, to avoid clobbering consumer custom properties); the Tailwind utility drops it (`bg-surface`, `text-on-surface`, `bg-primary`). This is the layer dark mode switches; components author against the semantic utilities so a mode change re-themes them with no per-component dark variants. Defined at the document `:root` (so it inherits across shadow boundaries) and mapped into Tailwind via `@theme inline` (`--color-surface: var(--c-surface)`) so the utility resolves inside shadow roots. The role set keeps the existing CSC brand/status names (`primary`, `secondary`, `accent`, `success`, `info`, `warning`, `error`, `link`) — now mode-aware — and **adds** neutral roles (the **surface ladder**, `on-*` foregrounds, `border`, `divider`, `ring`). **Direct palette-step utilities (`bg-primary-600`, `text-white`) are forbidden in component SFCs** (CI-guarded); every component colour flows through a semantic token, so a stray palette-step utility is a build failure rather than a latent dark-mode bug.
 _Avoid_: Role token, alias token, palette token (a semantic token points *at* a palette token; it is not itself a ramp value)
 
 **Surface ladder**:

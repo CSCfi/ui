@@ -240,33 +240,38 @@ export const analyzeScript = (content, fileName, className, options = {}) => {
   }
 
   // ---- methods ---------------------------------------------------------------
-  const methods = exposedNames.map((name) => {
-    const found = topLevelDecls.get(name);
+  // `_`-prefixed exposed names are internal cross-component contracts (e.g.
+  // c-radio's group sync hook) — present on the element, absent from the
+  // public manifest surface.
+  const methods = exposedNames
+    .filter((name) => !name.startsWith('_'))
+    .map((name) => {
+      const found = topLevelDecls.get(name);
 
-    let description = '';
+      let description = '';
 
-    let signature = '';
+      let signature = '';
 
-    if (found) {
-      description = jsDocDescription(found.statement);
+      if (found) {
+        description = jsDocDescription(found.statement);
 
-      const init = ts.isVariableDeclaration(found.decl)
-        ? found.decl.initializer
-        : found.decl;
+        const init = ts.isVariableDeclaration(found.decl)
+          ? found.decl.initializer
+          : found.decl;
 
-      if (init && (ts.isArrowFunction(init) || ts.isFunctionLike(init))) {
-        const params = init.parameters
-          .map((p) => p.getText(sf).replace(/\s+/g, ' '))
-          .join(', ');
+        if (init && (ts.isArrowFunction(init) || ts.isFunctionLike(init))) {
+          const params = init.parameters
+            .map((p) => p.getText(sf).replace(/\s+/g, ' '))
+            .join(', ');
 
-        const ret = init.type ? `: ${typeText(init.type, sf)}` : '';
+          const ret = init.type ? `: ${typeText(init.type, sf)}` : '';
 
-        signature = `(${params})${ret}`;
+          signature = `(${params})${ret}`;
+        }
       }
-    }
 
-    return { description, name, signature };
-  });
+      return { description, name, signature };
+    });
 
   // ---- events (event map, when present) --------------------------------------
   const eventMapName = `${className}Events`;

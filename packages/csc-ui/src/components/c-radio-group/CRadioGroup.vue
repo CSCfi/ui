@@ -22,13 +22,7 @@
       <slot />
     </div>
 
-    <field-message
-      :error-message
-      :hide-details
-      :hint
-      :valid
-      part="message"
-    />
+    <field-message :error-message :hide-details :hint :valid part="message" />
   </div>
 </template>
 
@@ -118,7 +112,8 @@ const radioGroup = tv({
     disabled: {
       false: {},
       true: {
-        items: 'text-on-surface-muted [--_c-radio-color:var(--c-on-surface-muted)]',
+        items:
+          'text-on-surface-muted [--_c-radio-color:var(--c-on-surface-muted)]',
         root: 'text-on-surface-muted cursor-default',
       },
     },
@@ -215,9 +210,7 @@ const rootRef = useTemplateRef<HTMLElement>('rootRef');
 // label's own visibility (c-otp-input precedent).
 const hasLabelSlot = useHasSlot(rootRef, 'label');
 
-const labelVisible = computed(
-  () => Boolean(props.label) || hasLabelSlot.value,
-);
+const labelVisible = computed(() => Boolean(props.label) || hasLabelSlot.value);
 
 const autoId = useId();
 
@@ -230,7 +223,15 @@ const internalValue = ref<null | string>(
   props.value == null ? null : String(props.value),
 );
 
-type CRadioEl = { disabled?: boolean; value?: string } & HTMLElement;
+type CRadioEl = {
+  _syncGroupState?: (state: {
+    checked: boolean;
+    disabled: boolean;
+    tabIndex: number;
+  }) => void;
+  disabled?: boolean;
+  value?: string;
+} & HTMLElement;
 
 // Slotted radios at ANY depth — consumers may wrap <c-radio> in arbitrary
 // layout elements — in document order, scoped to this group so nested groups
@@ -245,8 +246,10 @@ const radios = (): CRadioEl[] =>
 
 // The focusable native control lives in the slotted c-radio's shadow root —
 // native radio `name` grouping never crosses shadow boundaries, so checked
-// state, disabling and the roving tabindex are all coordinated here by
-// writing into each radio's input directly.
+// state, disabling and the roving tabindex are all coordinated here. State
+// writes go through the radio's internal `_syncGroupState` hook (so the radio
+// also mirrors them onto its host custom states, ADR-0035); direct input
+// access remains only for focus/click interaction plumbing.
 const inputOf = (r: CRadioEl): HTMLInputElement | null =>
   r.shadowRoot?.querySelector('input') ?? null;
 
@@ -267,14 +270,13 @@ const syncRadios = () => {
     rs.find((r) => isSelected(r) && isEnabled(r)) ?? rs.find(isEnabled);
 
   for (const r of rs) {
-    const input = inputOf(r);
-
-    // Pre-upgrade child without a shadow root yet; the mount double-rAF or
-    // the MutationObserver re-runs this pass once it exists.
-    if (!input) continue;
-    input.checked = isSelected(r);
-    input.disabled = !isEnabled(r);
-    input.tabIndex = r === tabStop ? 0 : -1;
+    // Pre-upgrade child not mounted yet (no exposed hook); the mount
+    // double-rAF or the MutationObserver re-runs this pass once it exists.
+    r._syncGroupState?.({
+      checked: isSelected(r),
+      disabled: !isEnabled(r),
+      tabIndex: r === tabStop ? 0 : -1,
+    });
   }
 };
 

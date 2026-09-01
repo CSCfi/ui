@@ -25,3 +25,20 @@ Outside a group a radio still renders and operates — it can be selected but
 never unselected, like a native radio without siblings. Grouping behavior
 (exclusivity, arrow-key navigation, form value) requires the parent
 `c-radio-group`.
+
+## Customization
+
+Restyle via CSS parts from your own stylesheet. The `indicator` part is the
+radio ring; the selection dot is its `::after` pseudo-element. Ring and dot
+both draw with `currentColor`, so `color` recolours the whole indicator. The
+host exposes the `checked` and `disabled` custom states (both also cover
+group-driven selection and disabling):
+
+```css
+c-radio:state(checked)::part(indicator) {
+  color: var(--my-green);
+}
+```
+
+For app-wide recolouring prefer the design tokens (`--c-primary` seed) over
+per-component rules.
