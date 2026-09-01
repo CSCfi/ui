@@ -867,13 +867,22 @@ export interface CMenuElementEventMap {
   select: CustomEvent<{ value: unknown }>;
 }
 
-export interface CMenuElement extends Omit<HTMLElement, 'distance' | 'open' | 'position'> {
+export interface CMenuElement extends Omit<HTMLElement, 'distance' | 'open' | 'position' | 'trigger'> {
   /** Distance from the trigger to the panel, in pixels. Defaults to `0`. */
   distance?: number | string;
   /** Whether the menu is open. Two-way: emits `change:open`. */
   open?: boolean;
   /** Preferred placement of the panel relative to the trigger. */
   position?: 'bottom-end' | 'bottom-start' | 'bottom' | 'left-end' | 'left-start' | 'left' | 'right-end' | 'right-start' | 'right' | 'top-end' | 'top-start' | 'top';
+  /**
+   * Designated trigger: an element elsewhere in the document that opens the
+   * menu — its document ID, or the element itself. The same trigger concept
+   * as the `trigger` slot, supplied by reference: the menu wires
+   * click-to-toggle, arrow-key opening, ARIA and focus return onto it and
+   * anchors the panel to it. When both routes are supplied, this prop wins
+   * over the slot.
+   */
+  trigger?: HTMLElement | string;
   addEventListener<K extends keyof CMenuElementEventMap>(
     type: K,
     listener: (this: CMenuElement, ev: CMenuElementEventMap[K]) => void,
@@ -1153,7 +1162,7 @@ export interface CPopoverElementEventMap {
 }
 
 /** A click-opened, non-modal surface anchored to its trigger, floating in the top layer; its content may be interactive. */
-export interface CPopoverElement extends Omit<HTMLElement, 'distance' | 'heading' | 'open' | 'position'> {
+export interface CPopoverElement extends Omit<HTMLElement, 'distance' | 'heading' | 'open' | 'position' | 'trigger'> {
   /** Distance from the trigger to the panel, in pixels. Defaults to `0`. */
   distance?: number | string;
   /**
@@ -1167,6 +1176,14 @@ export interface CPopoverElement extends Omit<HTMLElement, 'distance' | 'heading
   open?: boolean;
   /** Preferred placement of the panel relative to the trigger. */
   position?: 'bottom-end' | 'bottom-start' | 'bottom' | 'left-end' | 'left-start' | 'left' | 'right-end' | 'right-start' | 'right' | 'top-end' | 'top-start' | 'top';
+  /**
+   * Designated trigger: an element elsewhere in the document that opens the
+   * popover — its document ID, or the element itself. The same trigger
+   * concept as the `trigger` slot, supplied by reference: the popover wires
+   * click-to-toggle, ARIA and focus return onto it and anchors the panel to
+   * it. When both routes are supplied, this prop wins over the slot.
+   */
+  trigger?: HTMLElement | string;
   addEventListener<K extends keyof CPopoverElementEventMap>(
     type: K,
     listener: (this: CPopoverElement, ev: CPopoverElementEventMap[K]) => void,
@@ -2087,7 +2104,7 @@ export interface CTooltipElementEventMap {
 }
 
 /** A non-interactive text hint shown when its trigger is hovered or keyboard-focused, floating in the top layer on the inverted surface tier. */
-export interface CTooltipElement extends Omit<HTMLElement, 'delay' | 'distance' | 'open' | 'position' | 'text'> {
+export interface CTooltipElement extends Omit<HTMLElement, 'delay' | 'distance' | 'open' | 'position' | 'text' | 'trigger'> {
   /**
    * Delay before the tooltip shows on hover, in milliseconds. Keyboard focus
    * shows the tooltip immediately, regardless of this value. Defaults to
@@ -2105,6 +2122,15 @@ export interface CTooltipElement extends Omit<HTMLElement, 'delay' | 'distance' 
    * populated.
    */
   text?: string;
+  /**
+   * Designated trigger: an element elsewhere in the document that the
+   * tooltip describes — its document ID, or the element itself. The same
+   * trigger concept as the `trigger` slot, supplied by reference: the
+   * tooltip wires hover/focus, mirrors `aria-description` onto it and
+   * anchors the bubble to it. When both routes are supplied, this prop wins
+   * over the slot.
+   */
+  trigger?: HTMLElement | string;
   addEventListener<K extends keyof CTooltipElementEventMap>(
     type: K,
     listener: (this: CTooltipElement, ev: CTooltipElementEventMap[K]) => void,

@@ -19,6 +19,17 @@
     <slot name="trigger" />
   </span>
 
+  <!-- Proxy anchor for a designated trigger (ADR-0038): anchor names are
+       tree-scoped, so the panel cannot anchor to an outer-tree element
+       directly. This inert box is pinned over the designated trigger's rect
+       while the panel is open; the panel's position-anchor switches to it. -->
+  <span
+    ref="proxyRef"
+    :class="ui.proxy()"
+    aria-hidden="true"
+    style="anchor-name: --c-tooltip-designated"
+  />
+
   <!-- Manual popover in the top layer: never clipped by overflow, no teleport,
        no z-index war; paints above modals, which is correct for a tooltip
        triggered from inside one. Positioned with CSS anchor positioning.
@@ -61,6 +72,15 @@ export interface CTooltipProps {
    * @freeform
    */
   text?: string;
+  /**
+   * Designated trigger: an element elsewhere in the document that the
+   * tooltip describes — its document ID, or the element itself. The same
+   * trigger concept as the `trigger` slot, supplied by reference: the
+   * tooltip wires hover/focus, mirrors `aria-description` onto it and
+   * anchors the bubble to it. When both routes are supplied, this prop wins
+   * over the slot.
+   */
+  trigger?: HTMLElement | string;
 }
 </script>
 
@@ -86,6 +106,7 @@ import {
 import { ensureAnchorPositioning } from '../../shared/anchorPolyfill';
 import { coerceBoolean } from '../../shared/coerceBoolean';
 import { placementAxis, POSITION_AREA } from '../../shared/positionArea';
+import { useDesignatedTrigger } from '../../shared/useDesignatedTrigger';
 import { useHostEmit } from '../../shared/useHostEmit';
 
 /** Events dispatched by `<c-tooltip>`. */
@@ -119,6 +140,7 @@ const tooltip = tv({
   slots: {
     panel:
       'fixed m-0 [inset:auto] box-border w-max max-w-xs overflow-visible rounded-csc-sm border-0 bg-surface-inverted px-2 py-1 text-sm text-on-surface-inverted shadow-[2px_4px_10px_#00000029]',
+    proxy: 'pointer-events-none fixed',
     trigger: 'inline-flex w-max max-w-full',
   },
 });
@@ -131,6 +153,7 @@ const props = withDefaults(defineProps<CTooltipProps>(), {
   open: false,
   position: 'top',
   text: '',
+  trigger: undefined,
 });
 
 // Anchor wrapper + panel are two root nodes; opt out of attr fallthrough.
@@ -141,6 +164,8 @@ const host = useHost();
 const anchorRef = useTemplateRef<HTMLElement>('anchorRef');
 
 const panelRef = useTemplateRef<HTMLElement>('panelRef');
+
+const proxyRef = useTemplateRef<HTMLElement>('proxyRef');
 
 const isOpen = ref(false);
 
@@ -164,9 +189,13 @@ const clearTimers = () => {
 // position-try flip fallbacks). Unlike c-menu there is no nested panel to
 // inherit it, so it is inlined directly instead of published as a custom
 // property.
+// With a designated trigger the panel anchors to the tracked proxy instead
+// of the trigger-slot wrapper (ADR-0038).
 const panelStyle = computed(
   () =>
-    `position-anchor:--c-tooltip-anchor;position-area:${
+    `position-anchor:${
+      designated.element.value ? '--c-tooltip-designated' : '--c-tooltip-anchor'
+    };position-area:${
       POSITION_AREA[props.position] ?? POSITION_AREA.top
     };inset:auto;margin-${placementAxis(props.position)}:${Number(props.distance) || 0}px;`,
 );
@@ -177,6 +206,13 @@ const emit = useHostEmit<CTooltipEvents>();
 
 const show = () => {
   clearTimers();
+
+  // Re-resolve a designated trigger ID (its element may have appeared since)
+  // and pin the proxy anchor before the panel shows, so the first paint is
+  // already in place.
+  if (props.trigger) designated.resolve();
+
+  designated.startTracking();
 
   const p = panelRef.value;
 
@@ -217,9 +253,15 @@ const scheduleHide = () => {
 
 // ---- interaction -----------------------------------------------------------
 
-const onTriggerPointerEnter = () => scheduleShow();
+// Prop wins: with a designated trigger the slotted element gets no wiring —
+// the wrapper's hover/focus events are ignored.
+const onTriggerPointerEnter = () => {
+  if (!designated.element.value) scheduleShow();
+};
 
-const onTriggerPointerLeave = () => scheduleHide();
+const onTriggerPointerLeave = () => {
+  if (!designated.element.value) scheduleHide();
+};
 
 const onPanelPointerEnter = () => {
   if (hideTimer !== null) clearTimeout(hideTimer);
@@ -231,9 +273,13 @@ const onPanelPointerLeave = () => scheduleHide();
 
 // Keyboard focus shows the tooltip immediately — the hover delay exists to
 // avoid flicker on pointer travel, which does not apply to focus.
-const onFocusIn = () => show();
+const onFocusIn = () => {
+  if (!designated.element.value) show();
+};
 
-const onFocusOut = () => hide();
+const onFocusOut = () => {
+  if (!designated.element.value) hide();
+};
 
 // WCAG 1.4.13 "dismissable": Escape hides the tooltip without moving focus.
 // `preventDefault` claims the key so an enclosing c-modal's controller peels
@@ -258,18 +304,51 @@ const onToggle = (event: Event) => {
     document.addEventListener('keydown', onDocKeydown, true);
   } else {
     document.removeEventListener('keydown', onDocKeydown, true);
+    designated.stopTracking();
   }
 };
 
 // ---- trigger a11y ----------------------------------------------------------
 
-const getTriggerEl = (): HTMLElement | null => {
+const getSlottedTriggerEl = (): HTMLElement | null => {
   const slot = anchorRef.value?.querySelector('slot');
 
   const assigned = (slot as HTMLSlotElement | null)?.assignedElements?.() ?? [];
 
   return (assigned[0] as HTMLElement) ?? null;
 };
+
+// ---- designated trigger (ADR-0038) -----------------------------------------
+
+let warnedBothRoutes = false;
+
+const warnIfBothRoutes = () => {
+  if (warnedBothRoutes) return;
+
+  warnedBothRoutes = true;
+  console.warn(
+    '<c-tooltip> received both a slotted trigger and the trigger prop; the prop wins and the slotted element gets no wiring.',
+  );
+};
+
+const designated = useDesignatedTrigger({
+  componentName: 'c-tooltip',
+  listeners: {
+    focusin: () => show(),
+    focusout: () => hide(),
+    pointerenter: () => scheduleShow(),
+    pointerleave: () => scheduleHide(),
+  },
+  onElementChange: (el, prev) => {
+    prev?.removeAttribute('aria-description');
+
+    if (el && getSlottedTriggerEl()) warnIfBothRoutes();
+
+    syncTriggerDescription();
+  },
+  proxy: proxyRef,
+  source: () => props.trigger,
+});
 
 const contentSlotText = (): string => {
   const slot = panelRef.value?.querySelector<HTMLSlotElement>(
@@ -285,12 +364,19 @@ const contentSlotText = (): string => {
     .trim();
 };
 
-// Mirror the tooltip content onto the slotted trigger as `aria-description`
-// (a plain string). `aria-describedby` cannot be used: ARIA ID references
-// are tree-scoped, so the light-DOM trigger cannot point at the shadow-DOM
-// panel (ADR-0033).
+// Mirror the tooltip content onto the trigger as `aria-description` (a plain
+// string). `aria-describedby` cannot be used: ARIA ID references are
+// tree-scoped, so a light-DOM trigger cannot point at the shadow-DOM panel
+// (ADR-0033). The prop wins over the slot: with a designated trigger the
+// description moves there and the slotted element is unwired.
 const syncTriggerDescription = () => {
-  const el = getTriggerEl();
+  const designatedEl = designated.element.value;
+
+  const slotted = getSlottedTriggerEl();
+
+  if (designatedEl && slotted) slotted.removeAttribute('aria-description');
+
+  const el = designatedEl ?? slotted;
 
   if (!el) return;
 
@@ -310,6 +396,8 @@ watch(
 );
 
 onMounted(() => {
+  designated.resolve();
+
   const triggerSlot = anchorRef.value?.querySelector('slot');
 
   triggerSlot?.addEventListener('slotchange', syncTriggerDescription);

@@ -12,6 +12,17 @@ The wrapper carries `anchor-name`; the panel references it. -->
     <slot name="trigger" />
   </span>
 
+  <!-- Proxy anchor for a designated trigger (ADR-0038): anchor names are
+       tree-scoped, so the panel cannot anchor to an outer-tree element
+       directly. This inert box is pinned over the designated trigger's rect
+       while the panel is open; the panel's position-anchor switches to it. -->
+  <span
+    ref="proxyRef"
+    :class="ui.proxy()"
+    aria-hidden="true"
+    style="anchor-name: --c-menu-designated"
+  />
+
   <!-- Manual popover in the top layer: never clipped by overflow, no teleport,
        no z-index war. Light-dismiss + submenu coordination are handled by this
        controller (manual, not auto, so cross-shadow submenu popovers don't
@@ -66,6 +77,7 @@ import type { CPlacement } from '../../types';
 import { ensureAnchorPositioning } from '../../shared/anchorPolyfill';
 import { coerceBoolean } from '../../shared/coerceBoolean';
 import { placementAxis, POSITION_AREA } from '../../shared/positionArea';
+import { useDesignatedTrigger } from '../../shared/useDesignatedTrigger';
 import { useHostEmit } from '../../shared/useHostEmit';
 
 /** Events dispatched by `<c-menu>`. */
@@ -110,6 +122,7 @@ const menu = tv({
     list: 'list-none m-0 p-1 min-w-[180px] w-max max-h-[80vh] overflow-y-auto rounded-csc-md bg-surface-overlay shadow-[2px_4px_10px_#00000029] outline-none',
     panel:
       'fixed m-0 p-0 border-0 bg-transparent overflow-visible [inset:auto]',
+    proxy: 'pointer-events-none fixed',
     trigger: 'inline-flex w-max max-w-full',
   },
 });
@@ -123,12 +136,22 @@ interface CMenuProps {
   open?: boolean;
   /** Preferred placement of the panel relative to the trigger. */
   position?: CPlacement;
+  /**
+   * Designated trigger: an element elsewhere in the document that opens the
+   * menu — its document ID, or the element itself. The same trigger concept
+   * as the `trigger` slot, supplied by reference: the menu wires
+   * click-to-toggle, arrow-key opening, ARIA and focus return onto it and
+   * anchors the panel to it. When both routes are supplied, this prop wins
+   * over the slot.
+   */
+  trigger?: HTMLElement | string;
 }
 
 const props = withDefaults(defineProps<CMenuProps>(), {
   distance: 0,
   open: false,
   position: 'bottom-start',
+  trigger: undefined,
 });
 
 // Anchor wrapper + panel are two root nodes; opt out of attr fallthrough.
@@ -142,6 +165,8 @@ const panelRef = useTemplateRef<HTMLElement>('panelRef');
 
 const listRef = useTemplateRef<HTMLElement>('listRef');
 
+const proxyRef = useTemplateRef<HTMLElement>('proxyRef');
+
 const isOpen = ref(false);
 
 const currentItem = ref<HTMLElement | null>(null);
@@ -153,9 +178,13 @@ const currentItem = ref<HTMLElement | null>(null);
 // but an inherited property can.
 const distancePx = computed(() => `${Number(props.distance) || 0}px`);
 
+// With a designated trigger the panel anchors to the tracked proxy instead
+// of the trigger-slot wrapper (ADR-0038).
 const panelStyle = computed(
   () =>
-    `position-anchor:--c-menu-anchor;position-area:${
+    `position-anchor:${
+      designated.element.value ? '--c-menu-designated' : '--c-menu-anchor'
+    };position-area:${
       POSITION_AREA[props.position] ?? POSITION_AREA['bottom-start']
     };inset:auto;margin-${placementAxis(props.position)}:var(--_c-menu-distance,0px);`,
 );
@@ -202,13 +231,78 @@ const isItemDisabled = (el: HTMLElement): boolean => {
 const hasSubmenu = (el: HTMLElement): boolean =>
   !!el.querySelector(':scope > [slot="submenu"]');
 
-const getTriggerEl = (): HTMLElement | null => {
+const getSlottedTriggerEl = (): HTMLElement | null => {
   const slot = anchorRef.value?.querySelector('slot');
 
   const assigned = (slot as HTMLSlotElement | null)?.assignedElements?.() ?? [];
 
   return (assigned[0] as HTMLElement) ?? null;
 };
+
+// ---- designated trigger (ADR-0038) ----------------------------------------
+
+let warnedBothRoutes = false;
+
+const warnIfBothRoutes = () => {
+  if (warnedBothRoutes) return;
+
+  warnedBothRoutes = true;
+  console.warn(
+    '<c-menu> received both a slotted trigger and the trigger prop; the prop wins and the slotted element gets no wiring.',
+  );
+};
+
+const setTriggerWiring = (el: HTMLElement | null, expanded: boolean) => {
+  if (!el) return;
+
+  el.setAttribute('aria-haspopup', 'menu');
+  el.setAttribute('aria-expanded', String(expanded));
+};
+
+const clearTriggerWiring = (el: HTMLElement | null) => {
+  el?.removeAttribute('aria-haspopup');
+  el?.removeAttribute('aria-expanded');
+};
+
+// Arrow keys on the designated trigger open the menu, mirroring the slotted
+// route's keyboard contract; once open, focus is on the items and the host's
+// delegated keydown takes over.
+const onDesignatedKeydown = (event: Event) => {
+  const { key } = event as KeyboardEvent;
+
+  if (!isOpen.value && (key === 'ArrowDown' || key === 'ArrowUp')) {
+    event.preventDefault();
+    openMenu(key === 'ArrowUp' ? 'last' : 'first');
+  }
+};
+
+const designated = useDesignatedTrigger({
+  componentName: 'c-menu',
+  listeners: {
+    click: () => toggle(),
+    keydown: onDesignatedKeydown,
+  },
+  onElementChange: (el, prev) => {
+    clearTriggerWiring(prev);
+    setTriggerWiring(el, isOpen.value);
+
+    const slotted = getSlottedTriggerEl();
+
+    if (el && slotted) {
+      // Prop wins: the slotted element renders but gets no wiring.
+      clearTriggerWiring(slotted);
+      warnIfBothRoutes();
+    } else if (!el) {
+      setTriggerWiring(slotted, isOpen.value);
+    }
+  },
+  proxy: proxyRef,
+  source: () => props.trigger,
+});
+
+/** The trigger, whichever route supplied it — the prop wins over the slot. */
+const getTriggerEl = (): HTMLElement | null =>
+  designated.element.value ?? getSlottedTriggerEl();
 
 /** The c-menu-item that owns the submenu `item` belongs to, else null. */
 const parentItemOf = (item: HTMLElement): HTMLElement | null => {
@@ -444,6 +538,13 @@ const emit = useHostEmit<CMenuEvents>();
 const openMenu = (focus: 'first' | 'last' | 'none' = 'first') => {
   pendingOpenFocus = focus;
 
+  // Re-resolve a designated trigger ID (its element may have appeared since)
+  // and pin the proxy anchor before the panel shows, so the first paint is
+  // already in place.
+  if (props.trigger) designated.resolve();
+
+  designated.startTracking();
+
   const p = panelRef.value;
 
   if (p && typeof p.showPopover === 'function' && !p.matches(':popover-open')) {
@@ -499,6 +600,7 @@ const onToggle = (event: Event) => {
     });
   } else {
     removeDismissListeners();
+    designated.stopTracking();
     closeAllSubmenus();
     clearActive();
 
@@ -513,7 +615,12 @@ const onToggle = (event: Event) => {
 const onClick = (event: MouseEvent) => {
   const path = event.composedPath();
 
-  if (anchorRef.value && path.includes(anchorRef.value)) {
+  // Prop wins: with a designated trigger the slotted element gets no wiring.
+  if (
+    !designated.element.value &&
+    anchorRef.value &&
+    path.includes(anchorRef.value)
+  ) {
     toggle();
 
     return;
@@ -538,7 +645,10 @@ const onClick = (event: MouseEvent) => {
 const onKeydown = (event: KeyboardEvent) => {
   const path = event.composedPath();
 
-  const onTrigger = !!anchorRef.value && path.includes(anchorRef.value);
+  const onTrigger =
+    !designated.element.value &&
+    !!anchorRef.value &&
+    path.includes(anchorRef.value);
 
   if (!isOpen.value) {
     if (onTrigger && (event.key === 'ArrowDown' || event.key === 'ArrowUp')) {
@@ -669,8 +779,13 @@ const onPointerOver = (event: PointerEvent) => {
 const onDocPointerDown = (event: Event) => {
   if (!isOpen.value || !host) return;
 
-  // Everything interactive lives inside the host's flattened subtree.
-  if (!event.composedPath().includes(host)) closeMenu(false);
+  // Everything interactive lives inside the host's flattened subtree — plus
+  // the designated trigger, which lives elsewhere in the document.
+  const path = event.composedPath();
+
+  const dt = designated.element.value;
+
+  if (!path.includes(host) && !(dt && path.includes(dt))) closeMenu(false);
 };
 
 const addDismissListeners = () => {
@@ -684,12 +799,17 @@ const removeDismissListeners = () => {
 // ---- lifecycle -----------------------------------------------------------
 
 const onSlotChange = () => {
-  const el = getTriggerEl();
+  const el = getSlottedTriggerEl();
 
   if (!el) return;
 
-  el.setAttribute('aria-haspopup', 'menu');
-  el.setAttribute('aria-expanded', String(isOpen.value));
+  if (designated.element.value) {
+    warnIfBothRoutes();
+
+    return;
+  }
+
+  setTriggerWiring(el, isOpen.value);
 };
 
 watch(
@@ -705,6 +825,8 @@ onMounted(() => {
   host.addEventListener('click', onClick);
   host.addEventListener('keydown', onKeydown);
   host.addEventListener('pointerover', onPointerOver as EventListener);
+
+  designated.resolve();
 
   const slot = anchorRef.value?.querySelector('slot');
 

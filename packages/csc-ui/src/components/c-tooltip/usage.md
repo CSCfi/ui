@@ -4,6 +4,8 @@ Put the element the tooltip describes in the `trigger` slot and the hint in the 
 
 The tooltip shows after a short hover delay (configurable via the `delay` prop) and immediately on keyboard focus. The trigger must be focusable for keyboard and screen-reader users to reach the hint — a `c-icon-button` or `c-button` qualifies; a bare `<span>` does not.
 
+When the described element cannot be slotted, point the `trigger` prop at it instead — its document ID, or the element itself via property binding. The tooltip then wires hover/focus onto that element, mirrors the `aria-description` there, and anchors the bubble to it. Supplying both routes is a misuse: the prop wins, the slotted element gets no wiring, and a console warning flags it.
+
 ## When to use
 
 - To name an icon-only control or clarify a truncated label.
@@ -17,7 +19,7 @@ The tooltip hides when the pointer leaves the trigger and panel, when focus leav
 
 The tooltip implements the WCAG 1.4.13 (Content on Hover or Focus) contract: dismissable, hoverable, persistent.
 
-The tooltip content is mirrored onto the slotted trigger as `aria-description`, so screen readers announce it with the trigger even while the bubble is closed. `aria-describedby` is not used because ARIA ID references cannot cross the shadow boundary between the light-DOM trigger and the shadow-DOM panel (ADR-0033).
+The tooltip content is mirrored onto the trigger (slotted or designated) as `aria-description`, so screen readers announce it with the trigger even while the bubble is closed. `aria-describedby` is not used because ARIA ID references cannot cross the shadow boundary between the light-DOM trigger and the shadow-DOM panel (ADR-0033).
 
 ## Layering
 
