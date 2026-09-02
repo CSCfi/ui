@@ -50,8 +50,8 @@ The contract where the consumer owns a component's data operation — filtering,
 _Avoid_: Server-side mode (the owner need not be a server), no-filter (foreign Vuetify vocabulary), manual (TanStack's internal word)
 
 **Trigger**:
-The consumer-supplied element (typically a `c-button`) projected into an anchored overlay component's `trigger` slot — `c-menu`, `c-tooltip`, `c-popover` — that opens it. The component mirrors the relevant ARIA attributes (`aria-haspopup` / `aria-expanded` / `aria-description`) onto it but does not own it.
-_Avoid_: Activator, anchor (the *anchor* is the internal positioning reference, a separate concept), toggle button
+The consumer-supplied element (typically a `c-button`) that opens an anchored overlay component — `c-menu`, `c-tooltip`, `c-popover`. Supplied by projecting it into the component's `trigger` slot, or by designating an element elsewhere in the document via the `trigger` prop (an ID or an element reference); the two routes are the same concept, not two kinds of trigger, and each component wires its usual opening interaction (click for `c-menu`/`c-popover`, hover/focus for `c-tooltip`) whichever route supplied it. Either way the component mirrors the relevant ARIA attributes (`aria-haspopup` / `aria-expanded` / `aria-description`) onto it but does not own it.
+_Avoid_: Activator, anchor (the *anchor* is the internal positioning reference, a separate concept), toggle button, external trigger (*external* is reserved for the consumer-owned data-operation mode)
 
 **Submenu**:
 A nested second-level (or deeper) menu owned by a `c-menu-item`, authored via that item's `submenu` slot and revealed beside its parent. Opening a submenu does not select anything; it expands.
@@ -71,7 +71,9 @@ _Avoid_: Hint, title (the native attribute), popup
 The click-opened, **non-modal** interactive surface component anchored to its **trigger** — light-dismissed, never trapping focus (ADR-0033); blocking flows go to `c-modal`, plain hints to `c-tooltip`. Distinct from the lowercase *native popover*, which is the browser mechanism: any element put in the **top layer** via the Popover API (menu panels, autocomplete panels, and tooltips are all native popovers; only `c-popover` is the Popover *component*).
 _Avoid_: Flyout, popup, overlay (as a name for this component)
 
-**Top layer**:
+**Popover chain**:
+The ordered set of currently open `c-popover`s, each logically nested in the one before it — a popover joins the chain when its **trigger** sits inside an open popover's panel, and replaces the chain otherwise, so siblings never coexist. Escape peels the innermost popover, one per press; light dismiss closes every popover that does not logically contain the pointer event; closing a popover closes its descendants. Containment is logical (the trigger relationship), not DOM ancestry — a popover whose host lives elsewhere still chains under the popover holding its trigger. Distinct from the **modal stack**: chain members below the innermost stay interactive, nothing goes inert.
+_Avoid_: Popover stack (reserve _stack_ for the modal stack's inert-lower-layers contract), nested popups
 The browser-managed paint layer above every author stacking context — nothing an author z-indexes can paint above it, and while a *modal dialog* occupies it the rest of the document is inert. In this library only **transient** surfaces live there, as native popovers: the menu family, autocomplete panels, `c-tooltip`, and `c-popover` (ADR-0008). Modals deliberately do **not** (ADR-0014) — a top-layer modal would paint over and inert the toasts.
 _Avoid_: Overlay (an overlay is any floating surface; the top layer is a specific browser mechanism), portal
 
@@ -126,6 +128,10 @@ _Avoid_: Box/ring (implementation shapes; indicator is the concept), ripple surf
 **Mark** (`c-checkbox`):
 The glyph revealed inside an **indicator** when it has something to show — the check or the indeterminate bar — stamped as the `mark` part. Draws with `currentColor`, so one `color` recolours it. The radio's dot is not a mark: it is part of the indicator itself (its `::after`).
 _Avoid_: Check(mark) only (it also renders the indeterminate bar), icon (not slottable, not an icon component)
+
+**Focus ring** (selection controls):
+The 2px keyboard-focus halo around a selection control's **indicator**, drawn by the indicator's own `::before` with `currentColor`, so it always matches the indicator's colour — including a consumer's `::part(indicator) { color }` (ADR-0039). Circular and 42px-scale like the ripple surface it visually encloses, but it belongs to the indicator, not the surface; hover tint and ripple stay on the internal colour. Not a **part**.
+_Avoid_: Outline (the CSS property, not the concept), ring (the semantic token role / the radio indicator's shape), focus outline
 
 **Root element**:
 The single styled element a migrated component renders directly inside its shadow root, carrying all visual Tailwind utilities. The host (`<c-button>`) itself is layout-only (one shared `:host` display rule); visual styling lives on the root element, which is the `root` part.
@@ -312,6 +318,8 @@ _Avoid_: Override (the variant adds a tab; it replaces nothing), translation, po
 ### Flagged ambiguities
 
 - **"Vue version"** is ambiguous: it can mean (a) the retired `@cscfi/csc-ui-vue` directive package, (b) the fact that 4.x components are implemented in Vue, or (c) the Vue.js framework version. Prefer **"`v-control` directive"** for (a), plain **"component"** for (b) — since 4.x there is no other kind — and **"Vue 3"/"Vue 2"** explicitly for (c).
+- **"Ring"** is overloaded: (a) the `ring` **semantic token** (the focus colour role — currently used by no component), (b) the radio indicator's shape, (c) Tailwind `ring-*` box-shadow utilities, (d) the keyboard **focus ring**. Say **"`ring` token"**, **"radio indicator"**, **"`ring-*` utility"** and **"focus ring"** respectively.
+- **"Themeable"** (docs copy: "themable") means *re-seedable* — one of the eight **families** a consumer may re-brand (ADR-0011). Restyling one component's colours from consumer CSS is **"recolour via `::part()`"**, never "theming".
 
 ## Example dialogue
 

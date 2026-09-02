@@ -106,7 +106,10 @@ const modal = tv({
       'fixed inset-0 bg-scrim/50 opacity-0 pointer-events-none transition-opacity duration-300 motion-reduce:transition-none',
     // The native <dialog> is the positioned overlay box. It must not be
     // `display:contents`, so the box lives on this element (not the host).
-    root: 'block fixed inset-0 m-auto p-0 border-0 bg-transparent overflow-visible rounded-csc-xl max-w-[calc(100%-32px)] w-[var(--_c-modal-width,600px)] text-on-surface-muted',
+    // `outline-none`: the dialog is a focus start point (tabindex="-1"
+    // fallback), not an interactive control — without it the UA paints a
+    // :focus-visible ring around the whole modal box.
+    root: 'block fixed inset-0 m-auto p-0 border-0 outline-none bg-transparent overflow-visible rounded-csc-xl max-w-[calc(100%-32px)] w-[var(--_c-modal-width,600px)] text-on-surface-muted',
   },
   variants: {
     blur: {
@@ -217,6 +220,32 @@ const entry: ModalStackEntry = {
   },
 };
 
+// Initial focus is deferred one frame: when `openDialog` runs from onMounted
+// (value set at mount), custom-element reactions run in tree order, so the
+// slotted c-button/c-input/… are connected but not yet mounted — their shadow
+// roots are empty, every candidate fails and focus lands on the dialog
+// itself. Both open paths defer for consistency.
+let focusFrame: null | number = null;
+
+const scheduleInitialFocus = () => {
+  cancelInitialFocus();
+
+  focusFrame = requestAnimationFrame(() => {
+    focusFrame = null;
+
+    if (host && dialogRef.value?.open) {
+      focusInitialElement(host, dialogRef.value);
+    }
+  });
+};
+
+const cancelInitialFocus = () => {
+  if (focusFrame !== null) {
+    cancelAnimationFrame(focusFrame);
+    focusFrame = null;
+  }
+};
+
 const openDialog = () => {
   if (!dialogRef.value || dialogRef.value.open || !host) return;
 
@@ -249,7 +278,7 @@ const openDialog = () => {
   // so toasts can paint above the modal and stay interactive.
   dialogRef.value.show();
 
-  focusInitialElement(host, dialogRef.value);
+  scheduleInitialFocus();
 };
 
 const closeDialog = () => {
@@ -259,6 +288,11 @@ const closeDialog = () => {
   // from a visible state — a flash on load when the `value` watch fires false
   // during prop initialization.
   if (!dialogRef.value?.open) return;
+
+  // A pending initial-focus frame must not fire after the controller has
+  // restored focus to the opener (the dialog stays `open` while the exit
+  // animation plays, so the frame's own guard would not catch it).
+  cancelInitialFocus();
 
   // Unregister at close *start*: inert lifts, focus restores and Escape
   // re-routes immediately; only the exit animation is still playing.
@@ -296,6 +330,7 @@ const finalizeClose = () => {
 const onNativeClose = () => {
   if (internalClose) return;
 
+  cancelInitialFocus();
   closeModal(entry);
   dialogRef.value?.classList.remove('opening', 'closing');
   dispatchValue(false);
@@ -344,6 +379,7 @@ onBeforeUnmount(() => {
   // scroll lock, Escape routing) or the page stays locked forever.
   closeModal(entry);
 
+  cancelInitialFocus();
   if (nudgeTimer !== null) clearTimeout(nudgeTimer);
 });
 </script>

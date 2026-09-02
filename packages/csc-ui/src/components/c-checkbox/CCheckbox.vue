@@ -1,10 +1,7 @@
 <template>
   <div
     ref="rootRef"
-    :class="[
-      ui.root(),
-      { 'c-checkbox--disabled': disabled, 'c-checkbox--error': !valid },
-    ]"
+    :class="[ui.root(), { 'c-checkbox--disabled': disabled }]"
     class="c-checkbox"
     part="root"
   >
@@ -30,13 +27,14 @@
         :class="ui.ripple()"
         class="c-checkbox__ripple"
       >
-        <span
-          v-for="r in ripples"
-          :key="r.id"
-          :class="ui.rippleEffect()"
-          :style="r.style"
-          aria-hidden="true"
-        />
+        <span :class="ui.rippleLayer()" aria-hidden="true">
+          <span
+            v-for="r in ripples"
+            :key="r.id"
+            :class="ui.rippleEffect()"
+            :style="r.style"
+          />
+        </span>
 
         <span
           :class="ui.indicator()"
@@ -114,7 +112,7 @@
  *
  * @csspart root - The outer wrapper containing the checkbox, label and message
  * @csspart label - The `<label>` element wrapping the indicator and the label content
- * @csspart indicator - The checkbox box itself — the bordered square that fills when checked
+ * @csspart indicator - The checkbox box itself — the bordered square that fills when checked; border, fill and the keyboard focus ring (its `::before`) all draw with `currentColor`, so `color` recolours them together
  * @csspart mark - The SVG check / indeterminate glyph revealed inside the indicator; draws with `currentColor`, so `color` recolours it
  * @csspart content - Wrapper around the label text or slotted label content
  * @csspart message - The hint / error message area below the checkbox (always reserved unless `hide-details`)
@@ -167,26 +165,32 @@ interface CCheckboxEvents {
  * there is no `override` prop.
  *
  * The actual checkbox box is the `indicator` slot (the `indicator` part), and
- * the white check is an SVG `<path>` (the `mark` part). Their
- * CHECKED/INDETERMINATE state is driven by sibling selectors
- * (`input:checked + label .c-checkbox__box`) which depend on the live DOM
- * `:checked` of a sibling input and therefore cannot be `tv` variants — they
- * live in the escape-hatch `<style>` below. The STATIC box look (size, border,
- * radius, transition) is authored here; the escape-hatch only flips colours on
- * state change. The same states are republished on the host via
- * `ElementInternals` so consumers get per-state `::part()` styling
- * (`c-checkbox:state(checked)::part(indicator)`, ADR-0035).
+ * the white check is an SVG `<path>` (the `mark` part). The indicator has ONE
+ * colour channel: its `text-*` utility sets `currentColor`, and its border
+ * (`border-current`), its checked fill (`background-color: currentColor` in
+ * the escape-hatch) and its keyboard focus ring (the `before:` halo, 2px
+ * `border-current`) all draw from it — so a consumer `color` on
+ * `::part(indicator)` recolours the three together (ADR-0039). The
+ * CHECKED/INDETERMINATE fill and the focus-ring reveal are driven by sibling
+ * selectors (`input:checked + label .c-checkbox__box`) which depend on the
+ * live DOM state of a sibling input and therefore cannot be `tv` variants —
+ * they live in the escape-hatch `<style>` below. The STATIC look (size,
+ * border, radius, halo geometry, transition) is authored here. The same
+ * states are republished on the host via `ElementInternals` so consumers get
+ * per-state `::part()` styling (`c-checkbox:state(checked)::part(indicator)`,
+ * ADR-0035).
  *
  * The `disabled` / error (`!valid`) recolouring DOES map to props, so it is
- * expressed here as `tv` variants on the box/check colours.
+ * expressed here as `tv` variants on the indicator's colour channel and the
+ * mark.
  */
 const checkbox = tv({
   compoundVariants: [
-    // Error overrides the box border colour (and applies even alongside the
-    // base text colour). Ordered after `disabled` so error wins for the box.
+    // Error recolours the indicator's colour channel (border, fill and focus
+    // ring follow) alongside the root text colour; only while not disabled.
     {
       class: {
-        indicator: 'border-error',
+        indicator: 'text-error',
         rippleEffect: 'bg-error',
         root: 'text-error',
       },
@@ -208,11 +212,17 @@ const checkbox = tv({
   },
   slots: {
     // The checkbox box: an 18x18 square at (12,12) inside the ripple surface,
-    // 2px radius, transparent fill. Its colours flip on :checked via the
-    // escape-hatch sibling rule below. A real element (not a pseudo) so it can
-    // carry the `indicator` part.
+    // 2px radius, transparent fill. A real element (not a pseudo) so it can
+    // carry the `indicator` part. ONE colour channel: `text-*` sets
+    // currentColor; the border (`border-current`), the :checked fill
+    // (escape-hatch `background-color: currentColor`) and the `before:` focus
+    // halo (44px outer / 40px inner — the former outline on the 42px surface;
+    // the -15px inset is measured from the padding box INSIDE the 2px border)
+    // all draw from it, so a consumer `color` on `::part(indicator)` recolours
+    // the three together (ADR-0039). `color` is in the transition list because
+    // a currentColor border no longer animates alone.
     indicator:
-      'absolute top-3 left-3 h-[18px] w-[18px] rounded-csc-sm border-2 bg-transparent transition-[background-color,border-color] duration-200 ease-out',
+      "absolute top-3 left-3 h-[18px] w-[18px] rounded-csc-sm border-2 border-current bg-transparent text-primary transition-[color,background-color,border-color] duration-200 ease-out before:content-[''] before:pointer-events-none before:absolute before:-inset-[15px] before:rounded-full before:border-2 before:border-current before:opacity-0",
     // Visually hidden but keyboard/screen-reader accessible — standard pattern
     // for hiding the underlying native checkbox.
     input:
@@ -225,15 +235,20 @@ const checkbox = tv({
     messageIcon: 'fill-current h-4 w-4 relative -top-0.5 shrink-0',
     messageLine: 'flex items-start gap-1',
     // 42px circular ripple surface holding the box, the check and the click
-    // ripple. Purely internal (no part).
+    // ripple. Purely internal (no part). Does NOT clip: the indicator's focus
+    // halo overhangs it by 2px; clipping is the `rippleLayer`'s job.
     ripple:
-      'grid place-content-center relative h-[42px] w-[42px] min-w-[42px] overflow-hidden rounded-full transform-gpu transition-colors duration-200 ease-in-out',
+      'grid place-content-center relative h-[42px] w-[42px] min-w-[42px] rounded-full transform-gpu transition-colors duration-200 ease-in-out',
     // Material click ripple: an absolutely-positioned circle, centred in the
-    // 42px ripple surface (which already clips via overflow-hidden + rounded-
-    // full). Like c-button, it tweens scale/opacity via the `transition` util
-    // rather than a bespoke @keyframes. Colour follows state.
+    // 42px ripple surface (clipped by the `rippleLayer`). Like c-button, it
+    // tweens scale/opacity via the `transition` util rather than a bespoke
+    // @keyframes. Colour follows state.
     rippleEffect:
       'pointer-events-none absolute rounded-full bg-primary transition-[transform,opacity] duration-[600ms] ease-out',
+    // Clips the ripple to the circle so the indicator's focus halo (which
+    // overhangs the surface by 2px) is not clipped with it.
+    rippleLayer:
+      'pointer-events-none absolute inset-0 rounded-full overflow-hidden',
     root: 'relative w-fit',
     // The check / indeterminate glyph (the `mark` part). Its paths draw with
     // `currentColor` (escape-hatch), so this `text-*` utility — or a consumer
@@ -245,15 +260,14 @@ const checkbox = tv({
       'absolute h-px w-px overflow-hidden border-0 p-0 [clip:rect(1px,1px,1px,1px)]',
   },
   variants: {
-    // Box + check colour. Default uses the primary token; disabled and error
-    // override. These map cleanly to props so they are `tv` variants. The
-    // CHECKED-state fill of the box/check stays sibling-driven in escape-hatch.
+    // Indicator colour channel + check colour. The base slot carries
+    // `text-primary`; disabled and error override the channel (border, fill
+    // and focus ring follow). These map cleanly to props so they are `tv`
+    // variants. The CHECKED-state fill stays sibling-driven in escape-hatch.
     disabled: {
-      false: {
-        indicator: 'border-primary',
-      },
+      false: {},
       true: {
-        indicator: 'border-border-strong',
+        indicator: 'text-border-strong',
       },
     },
     error: {
@@ -411,7 +425,8 @@ const rippleContainerRef = useTemplateRef<HTMLElement>('rippleContainerRef');
 // Material-style ripple (shared logic in useRipple), always centred in the 42px
 // surface (the change event carries no pointer coordinates, so centring is the
 // only sensible origin). `sizeFactor: 1` keeps the dot inside the fixed circular
-// surface; the `rippleEffect` slot's transition utilities tween it.
+// surface, the `rippleLayer` clips it there, and the `rippleEffect` slot's
+// transition utilities tween it.
 const { ripples, spawn: spawnRipple } = useRipple({
   container: () => rippleContainerRef.value,
   sizeFactor: 1,
@@ -484,15 +499,18 @@ const onChange = (_event: Event) => {
     sheet sets `:host{display:contents}`); needed so the component lays out as
     an inline-block. Targets the host, not a `tv` element.
   - The sibling-driven indicator state: `input:checked + label .c-checkbox__box`
-    (fill the box). It depends on the live `:checked`/`:indeterminate`/
-    `:focus-visible` state of a SIBLING <input>, which `tv` variants cannot
-    observe. The static box look is in `tv` (the `indicator` slot); here we
-    only flip colours on state.
+    (fill the box with currentColor) and `input:focus-visible + label
+    .c-checkbox__box::before` (reveal the focus halo). Both depend on the live
+    `:checked`/`:indeterminate`/`:focus-visible` state of a SIBLING <input>,
+    which `tv` variants cannot observe. The static look — box, halo geometry,
+    colour channel — is in `tv` (the `indicator` slot); here we only flip
+    state.
   - The `.c-checkbox__path` currentColor plumbing and SVG stroke geometry —
     stroke properties are not utilities; the colour itself is tv-driven on the
     svg (the `mark` part).
-  - Hover tint and focus-visible outline on the ripple surface, both driven
-    by sibling `:focus-visible` / descendant `:hover`.
+  - Hover tint on the ripple surface, driven by descendant `:hover`. (The
+    focus ring is NOT here: it is the indicator's `before:` halo, so it follows
+    the indicator's colour — ADR-0039.)
   - The hint/error message slide Transition keyframes (Vue transition classes).
   Tokens only; no hardcoded colours.
 -->
@@ -518,52 +536,32 @@ const onChange = (_event: Event) => {
   stroke: transparent;
 }
 
-/* Checked / indeterminate: fill the box (colour set on the ripple via the tv
- * `before:border-*` variant; here we fill with the same active colour) and
- * reveal the white check. Sibling-input selector — input precedes label. */
+/* Checked / indeterminate: fill the box with its own colour channel
+ * (currentColor — primary, error or disabled grey as set by the tv `text-*`
+ * utility, or a consumer `color` on `::part(indicator)`) and reveal the white
+ * check. Sibling-input selector — input precedes label. */
 input:checked + label .c-checkbox__box,
 input:indeterminate + label .c-checkbox__box {
-  background-color: var(--c-primary);
-  border-color: var(--c-primary);
+  background-color: currentColor;
 }
 
-.c-checkbox--error input:checked + label .c-checkbox__box,
-.c-checkbox--error input:indeterminate + label .c-checkbox__box {
-  background-color: var(--c-error);
-  border-color: var(--c-error);
-}
-
-/* Hover: tint only the circular ripple, never the box itself. */
+/* Hover: tint only the circular ripple, never the box itself. Stays on the
+ * internal primary channel (ADR-0039: hover looks remain internal). */
 label:hover .c-checkbox__ripple {
   background-color: color-mix(in srgb, var(--c-primary) 10%, transparent);
 }
 
-/* Focus-visible: 2px ring around the ripple circle. */
-input:focus-visible + label .c-checkbox__ripple {
-  outline: 2px solid var(--c-primary);
-  outline-offset: -1px;
+/* Focus-visible: reveal the indicator's `before:` halo (geometry and colour
+ * are tv-authored; it draws with the indicator's currentColor). */
+input:focus-visible + label .c-checkbox__box::before {
+  opacity: 1;
 }
 
-.c-checkbox--error input:focus-visible + label .c-checkbox__ripple {
-  outline-color: var(--c-error);
-}
-
-/* Disabled recolours the sibling-driven indicator and suppresses the hover
- * tint. The root carries `.c-checkbox--disabled` (set in the template) so these
- * compound sibling rules can scope to it; `tv` variants cannot reach the
- * `:checked + label ::before` sibling chain. Disabled wins over error. */
+/* Disabled suppresses the hover tint. The root carries `.c-checkbox--disabled`
+ * (set in the template) so this descendant rule can scope to it. Disabled
+ * colours (border, fill, ring) ride on the indicator's tv colour channel. */
 .c-checkbox--disabled label:hover .c-checkbox__ripple {
   background-color: transparent;
-}
-
-.c-checkbox--disabled input:focus-visible + label .c-checkbox__ripple {
-  outline-color: var(--c-border-strong);
-}
-
-.c-checkbox--disabled input:checked + label .c-checkbox__box,
-.c-checkbox--disabled input:indeterminate + label .c-checkbox__box {
-  background-color: var(--c-border-strong);
-  border-color: var(--c-border-strong);
 }
 
 /* Vertical slide + fade between hint and error messages. */
