@@ -1,5 +1,5 @@
 ---
-status: accepted
+status: accepted — amended by ADR-0039 (the focus ring now follows the indicator's colour)
 ---
 
 # Selection controls expose custom states via `:state()`; `indicator`/`mark` parts name the visual control
@@ -93,7 +93,8 @@ contract changes — made now, at `4.0.0-alpha.5`, while breaking is cheap.
 - **Breaking for any `::part(indicator)` consumer**: the part now targets
   the box/ring, not the 42px circle. The ripple surface is no longer
   consumer-stylable at all (per the glossary it never should have been);
-  hover/focus looks remain internal.
+  hover looks remain internal, and since ADR-0039 the focus ring follows the
+  indicator's colour.
 - Per-state styling requires `:state()` support; in older browsers the
   rules simply don't match and the control keeps its default look —
   fail-safe degradation.

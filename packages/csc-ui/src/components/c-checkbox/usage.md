@@ -26,23 +26,26 @@ entirely.
 ## Customization
 
 Restyle via CSS parts from your own stylesheet. The `indicator` part is the
-checkbox box and `mark` is the check glyph inside it; the host exposes the
-`checked` and `indeterminate` custom states, so the box is stylable per
-state:
+checkbox box and `mark` is the check glyph inside it. The indicator's border,
+its checked fill and its keyboard focus ring all draw with `currentColor`, so
+one `color` recolours the three together; the host exposes the `checked` and
+`indeterminate` custom states, so the box is also stylable per state:
 
 ```css
-c-checkbox:state(checked)::part(indicator) {
-  background: var(--my-green);
-  border-color: var(--my-green);
+/* Border, checked fill and focus ring follow `color`. */
+c-checkbox::part(indicator) {
+  color: var(--my-green);
 }
 
-c-checkbox:not(:state(checked))::part(indicator) {
-  border-color: gray;
-}
-
-/* The mark draws with currentColor — recolour it via `color`. */
+/* The mark draws with currentColor too — recolour it via `color`. */
 c-checkbox:state(checked)::part(mark) {
   color: black;
+}
+
+/* Finer control still works per property and per state (the focus ring
+   keeps following `color`, not these). */
+c-checkbox:not(:state(checked))::part(indicator) {
+  border-color: gray;
 }
 ```
 

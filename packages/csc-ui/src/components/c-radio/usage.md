@@ -29,9 +29,10 @@ never unselected, like a native radio without siblings. Grouping behavior
 ## Customization
 
 Restyle via CSS parts from your own stylesheet. The `indicator` part is the
-radio ring; the selection dot is its `::after` pseudo-element. Ring and dot
-both draw with `currentColor`, so `color` recolours the whole indicator. The
-host exposes the `checked` and `disabled` custom states (both also cover
+radio ring; the selection dot is its `::after` pseudo-element and the keyboard
+focus ring its `::before`. Ring, dot and focus ring all draw with
+`currentColor`, so `color` recolours the whole indicator, focus ring included.
+The host exposes the `checked` and `disabled` custom states (both also cover
 group-driven selection and disabling):
 
 ```css

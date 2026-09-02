@@ -9,13 +9,14 @@
     />
 
     <span ref="surfaceRef" :class="ui.surface()" class="c-radio__indicator">
-      <span
-        v-for="r in ripples"
-        :key="r.id"
-        :class="ui.rippleEffect()"
-        :style="r.style"
-        aria-hidden="true"
-      />
+      <span :class="ui.rippleLayer()" aria-hidden="true">
+        <span
+          v-for="r in ripples"
+          :key="r.id"
+          :class="ui.rippleEffect()"
+          :style="r.style"
+        />
+      </span>
 
       <span
         :class="ui.indicator()"
@@ -33,7 +34,7 @@
  * @slot default - The radio's label content, rendered inside the shadow `<label>` so it stays click-associated and announced
  *
  * @csspart root - The `<label>` row wrapping the input, indicator and label content
- * @csspart indicator - The radio ring itself; the selection dot is its `::after` — both follow `currentColor`, so `color` recolours the whole indicator
+ * @csspart indicator - The radio ring itself; the selection dot is its `::after` and the keyboard focus ring its `::before` — all three follow `currentColor`, so `color` recolours the whole indicator, focus ring included
  * @csspart content - Wrapper around the slotted label content
  *
  * @cssstate checked - Present while the radio is the selected option (standalone or group-driven)
@@ -68,15 +69,16 @@ interface CRadioEvents {
  * `::part()`.
  *
  * Each radio's ring is the `indicator` slot (the `indicator` part, ring via
- * `box-shadow`) and the filled dot is its `::after` pseudo. The checked and
- * disabled states are republished on the host via `ElementInternals` so
- * consumers get per-state `::part()` styling
- * (`c-radio:state(checked)::part(indicator)`, ADR-0035). The dot's SELECTED state
- * (`input:checked ~ … .selection::after { transform: scale(1) }`), the hover
- * tint, the focus-visible outline, and the disabled dimming are all driven by
- * the live state of the sibling `<input>` and so cannot be `tv` variants —
- * they live in the escape-hatch `<style>` below. The STATIC dot look
- * (`after:` size/position/scale-0/transition) is authored here in `tv`.
+ * `box-shadow`), the filled dot is its `::after` pseudo and the keyboard focus
+ * ring its `::before` halo (ADR-0039). The checked and disabled states are
+ * republished on the host via `ElementInternals` so consumers get per-state
+ * `::part()` styling (`c-radio:state(checked)::part(indicator)`, ADR-0035).
+ * The dot's SELECTED state (`input:checked ~ … .selection::after
+ * { transform: scale(1) }`), the hover tint, the focus-ring reveal, and the
+ * disabled dimming are all driven by the live state of the sibling `<input>`
+ * and so cannot be `tv` variants — they live in the escape-hatch `<style>`
+ * below. The STATIC dot and halo looks (`after:` / `before:` size, position,
+ * resting state) are authored here in `tv`.
  *
  * Colour resolves through the internal `--_c-radio-color` custom property so
  * a parent `<c-radio-group>` can recolour slotted radios (error/disabled)
@@ -87,31 +89,38 @@ const radio = tv({
   slots: {
     content: 'pt-3 text-left',
     // The radio ring (the `indicator` part): 20x20 ring (box-shadow inset)
-    // with the selection dot as a hidden `::after`; the dot is revealed by the
-    // sibling-driven escape-hatch rule on :checked. Ring and dot both follow
+    // with the selection dot as a hidden `::after` and the keyboard focus ring
+    // as a hidden `::before` halo (46px outer / 42px inner — the former outline
+    // on the 42px surface); both are revealed by sibling-driven escape-hatch
+    // rules (:checked / :focus-visible). Ring, dot and halo all follow
     // `currentColor`, so a consumer `color` on `::part(indicator)` recolours
-    // the whole indicator. Resting state uses `after:[transform:scale(0)]`
-    // (NOT `after:scale-0`, which sets the separate CSS `scale` property and
-    // would survive the escape-hatch `transform: scale(1)`, pinning the dot
-    // permanently invisible).
+    // the whole indicator, focus ring included (ADR-0039). Resting dot state
+    // uses `after:[transform:scale(0)]` (NOT `after:scale-0`, which sets the
+    // separate CSS `scale` property and would survive the escape-hatch
+    // `transform: scale(1)`, pinning the dot permanently invisible).
     indicator:
-      "absolute top-[11px] left-[11px] h-5 w-5 bg-transparent rounded-full shadow-[inset_0_0_0_2px_currentColor] transition-shadow duration-150 ease-in-out after:content-[''] after:absolute after:top-[5px] after:left-[5px] after:h-2.5 after:w-2.5 after:rounded-full after:bg-current after:[transform:scale(0)] after:transition-transform after:duration-150 after:ease-in-out",
+      "absolute top-[11px] left-[11px] h-5 w-5 bg-transparent rounded-full shadow-[inset_0_0_0_2px_currentColor] transition-shadow duration-150 ease-in-out before:content-[''] before:pointer-events-none before:absolute before:-inset-[13px] before:rounded-full before:border-2 before:border-current before:opacity-0 after:content-[''] after:absolute after:top-[5px] after:left-[5px] after:h-2.5 after:w-2.5 after:rounded-full after:bg-current after:[transform:scale(0)] after:transition-transform after:duration-150 after:ease-in-out",
     // Visually hidden but keyboard/screen-reader accessible — standard pattern
     // for hiding the underlying native radio.
     input:
       'absolute h-px w-px overflow-hidden border-0 p-0 [clip:rect(1px,1px,1px,1px)]',
     // Material click ripple: an absolutely-positioned circle, always centred
-    // in the 42px surface (which clips via overflow-hidden + rounded-full).
-    // Tweens scale/opacity via the `transition` util (no bespoke @keyframes).
-    // `bg-current` so it follows the surface's state colour.
+    // in the 42px surface (clipped by the `rippleLayer`). Tweens scale/opacity
+    // via the `transition` util (no bespoke @keyframes). `bg-current` so it
+    // follows the surface's state colour.
     rippleEffect:
       'pointer-events-none absolute rounded-full bg-current transition-[transform,opacity] duration-[600ms] ease-out',
+    // Clips the ripple to the circle so the indicator's focus halo (which
+    // overhangs the surface by 2px) is not clipped with it.
+    rippleLayer:
+      'pointer-events-none absolute inset-0 rounded-full overflow-hidden',
     root: 'flex items-start relative cursor-pointer text-base select-none gap-1 leading-[1.2]',
     // 42px circular ripple surface around the radio ring. Purely internal (no
     // part). Colour comes from the escape-hatch `--_c-radio-color` rule (a
-    // var() fallback chain is not a utility).
+    // var() fallback chain is not a utility). Does NOT clip: the indicator's
+    // focus halo overhangs it by 2px; clipping is the `rippleLayer`'s job.
     surface:
-      'inline-block relative h-[42px] w-[42px] min-w-[42px] rounded-full overflow-hidden transition-colors duration-200 ease-in-out',
+      'inline-block relative h-[42px] w-[42px] min-w-[42px] rounded-full transition-colors duration-200 ease-in-out',
   },
 });
 
@@ -147,7 +156,7 @@ const inputRef = useTemplateRef<HTMLInputElement>('inputRef');
 
 // Material-style ripple, always centred in the 42px surface (the change event
 // carries no pointer coordinates). `sizeFactor: 1` keeps it inside the fixed
-// circular surface.
+// circular surface; the `rippleLayer` clips it there.
 const { ripples, spawn: spawnRipple } = useRipple({
   container: () => surfaceRef.value,
   sizeFactor: 1,
@@ -210,9 +219,11 @@ const onChange = () => {
     var() fallback is not expressible as a semantic utility; the custom
     property inherits from a parent <c-radio-group> across the shadow boundary.
   - The sibling-driven dot reveal `input:checked ~ … ::after`, the hover tint,
-    and the focus-visible outline — all depend on the live
-    `:checked`/`:focus-visible` of the SIBLING input, which `tv` variants
-    cannot observe. The static dot look is in `tv`.
+    and the focus-ring reveal `input:focus-visible ~ … ::before` — all depend
+    on the live `:checked`/`:focus-visible` of the SIBLING input, which `tv`
+    variants cannot observe. The static dot and halo looks are in `tv`; the
+    halo sits on the indicator part so it draws with the indicator's colour
+    (ADR-0039).
   - The disabled dimming, driven by the input's live `:disabled` (which a
     parent group sets imperatively for group-level disabling) via `:has()` —
     also unreachable by `tv` variants.
@@ -246,8 +257,11 @@ input:focus {
   outline: none;
 }
 
-input:focus-visible ~ .c-radio__indicator {
-  outline: 2px solid var(--_c-radio-color, var(--c-primary));
+/* Focus-visible: reveal the indicator's `before:` halo (geometry and colour
+ * are tv-authored; it draws with the indicator's currentColor, which inherits
+ * the surface's colour chain above). */
+input:focus-visible ~ .c-radio__indicator .c-radio__selection::before {
+  opacity: 1;
 }
 
 /* Disabled: dim the WHOLE row — ring/dot AND label content — and drop the

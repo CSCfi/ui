@@ -129,6 +129,10 @@ _Avoid_: Box/ring (implementation shapes; indicator is the concept), ripple surf
 The glyph revealed inside an **indicator** when it has something to show — the check or the indeterminate bar — stamped as the `mark` part. Draws with `currentColor`, so one `color` recolours it. The radio's dot is not a mark: it is part of the indicator itself (its `::after`).
 _Avoid_: Check(mark) only (it also renders the indeterminate bar), icon (not slottable, not an icon component)
 
+**Focus ring** (selection controls):
+The 2px keyboard-focus halo around a selection control's **indicator**, drawn by the indicator's own `::before` with `currentColor`, so it always matches the indicator's colour — including a consumer's `::part(indicator) { color }` (ADR-0039). Circular and 42px-scale like the ripple surface it visually encloses, but it belongs to the indicator, not the surface; hover tint and ripple stay on the internal colour. Not a **part**.
+_Avoid_: Outline (the CSS property, not the concept), ring (the semantic token role / the radio indicator's shape), focus outline
+
 **Root element**:
 The single styled element a migrated component renders directly inside its shadow root, carrying all visual Tailwind utilities. The host (`<c-button>`) itself is layout-only (one shared `:host` display rule); visual styling lives on the root element, which is the `root` part.
 _Avoid_: Host (the host is the custom element; the root element is its first child), container, wrapper
@@ -314,6 +318,8 @@ _Avoid_: Override (the variant adds a tab; it replaces nothing), translation, po
 ### Flagged ambiguities
 
 - **"Vue version"** is ambiguous: it can mean (a) the retired `@cscfi/csc-ui-vue` directive package, (b) the fact that 4.x components are implemented in Vue, or (c) the Vue.js framework version. Prefer **"`v-control` directive"** for (a), plain **"component"** for (b) — since 4.x there is no other kind — and **"Vue 3"/"Vue 2"** explicitly for (c).
+- **"Ring"** is overloaded: (a) the `ring` **semantic token** (the focus colour role — currently used by no component), (b) the radio indicator's shape, (c) Tailwind `ring-*` box-shadow utilities, (d) the keyboard **focus ring**. Say **"`ring` token"**, **"radio indicator"**, **"`ring-*` utility"** and **"focus ring"** respectively.
+- **"Themeable"** (docs copy: "themable") means *re-seedable* — one of the eight **families** a consumer may re-brand (ADR-0011). Restyling one component's colours from consumer CSS is **"recolour via `::part()`"**, never "theming".
 
 ## Example dialogue
 
