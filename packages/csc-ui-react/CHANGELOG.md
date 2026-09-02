@@ -1,5 +1,43 @@
 # @cscfi/csc-ui-react
 
+## 4.0.0-alpha.7
+
+### Minor Changes
+
+- [#258](https://github.com/CSCfi/ui/pull/258) [`51a0521`](https://github.com/CSCfi/ui/commit/51a052127f844dc385597764f8f2627ab49f648c) Thanks [@villeerikssoncsc](https://github.com/villeerikssoncsc)! - Add designated triggers and popover nesting (ADR-0038).
+
+  - `c-popover`, `c-menu` and `c-tooltip` accept a new `trigger` prop — the
+    document ID of an element, or the element itself — for opening the overlay
+    from a trigger that cannot be slotted. The component wires its usual
+    opening interaction (click, or hover/focus for the tooltip), ARIA mirroring
+    and focus return onto the designated element and anchors the panel to it.
+    When both the slot and the prop are supplied, the prop wins and a console
+    warning flags it.
+  - `c-popover`s now nest: the open popovers form a chain where Escape closes
+    only the innermost popover (one press per layer), clicking outside closes
+    every popover that does not contain the click, and closing a popover closes
+    everything nested inside it. Previously a single Escape press closed every
+    open popover at once.
+
+- [#258](https://github.com/CSCfi/ui/pull/258) [`b0f195f`](https://github.com/CSCfi/ui/commit/b0f195f79c67ffd172a54bf894ed53821b6b7f04) Thanks [@villeerikssoncsc](https://github.com/villeerikssoncsc)! - The keyboard focus ring of `c-checkbox` and `c-radio` now follows the
+  indicator's colour (ADR-0039). It is drawn by the `indicator` part with
+  `currentColor`, and the checkbox indicator's border and checked fill draw with
+  `currentColor` too, so one rule recolours box, dot and focus ring together:
+  `c-checkbox::part(indicator) { color: green }`. Ring geometry is unchanged, the
+  hover tint stays on the primary colour, and `c-switch` is unchanged.
+
+### Patch Changes
+
+- [#258](https://github.com/CSCfi/ui/pull/258) [`5e501b9`](https://github.com/CSCfi/ui/commit/5e501b96f62b48b1cc6a1b5cf9280da888727ac1) Thanks [@villeerikssoncsc](https://github.com/villeerikssoncsc)! - Fix c-modal focus behaviour: the dialog box no longer shows a focus ring
+  (the native `<dialog>` root is a focus start point, not an interactive
+  control — it now suppresses the UA `:focus-visible` outline), and initial
+  focus reliably moves to the first focusable or `[autofocus]` element also
+  when the modal is open at mount. Previously the mount-time open path ran the
+  focus search before the slotted csc-ui elements had upgraded (their shadow
+  roots were still empty), so focus always fell back to the dialog itself.
+- Updated dependencies [[`51a0521`](https://github.com/CSCfi/ui/commit/51a052127f844dc385597764f8f2627ab49f648c), [`5e501b9`](https://github.com/CSCfi/ui/commit/5e501b96f62b48b1cc6a1b5cf9280da888727ac1), [`b0f195f`](https://github.com/CSCfi/ui/commit/b0f195f79c67ffd172a54bf894ed53821b6b7f04)]:
+  - @cscfi/csc-ui@4.0.0-alpha.7
+
 ## 4.0.0-alpha.6
 
 ### Minor Changes
