@@ -1,18 +1,22 @@
-const setValue = require('./setValue.cjs');
+// The runtime theming core is ESM; Node ≥ 22.12 loads it synchronously via
+// require(esm). Sharing cssColor() keeps tokens.css and applyTheme() output
+// byte-identical (checked by scripts/check-ramp-parity.mjs).
+const { cssColor } = require('../src/theme/ramp.js');
 const getRgbValue = require('./getRgbValue.cjs');
+const setValue = require('./setValue.cjs');
 
 const formats = {
   css: {
-    fileStart: ':root, :host {',
     fileEnd: '\n}\n',
-    prefix: '\n\t--c',
+    fileStart: ':root, :host {',
     postfix: '',
+    prefix: '\n\t--c',
   },
   scss: {
-    fileStart: '',
     fileEnd: '',
-    prefix: '$c',
+    fileStart: '',
     postfix: '\n',
+    prefix: '$c',
   },
 };
 
@@ -23,6 +27,7 @@ const baseColor = '500';
 
 module.exports = (dictionary, type) => {
   const config = formats[type];
+
   const cache = new Set();
 
   let theme = '';
@@ -46,8 +51,9 @@ module.exports = (dictionary, type) => {
 
           const name = token.name.replace('theme-', '');
 
+          // Colours are emitted as oklch() (ADR-0041); non-colour tokens verbatim.
           theme += `${config.prefix}-${name}: `;
-          theme += `${token.value};${config.postfix}`;
+          theme += `${cssColor(token.value)};${config.postfix}`;
 
           if (isBaseValue(name)) {
             theme += `${config.prefix}-${name.replace(

@@ -10,6 +10,12 @@
 // and 600–950 give progressively darker shades below it. Lightness follows a
 // perceptual curve; chroma follows a bell curve peaking in the mids (the "pop"
 // lever), then is gamut-mapped back into sRGB with culori's clampChroma.
+//
+// Ramps are computed and validated as sRGB hex (base.json, the contrast audit),
+// but every colour the library EMITS as a CSS value — tokens.css at build time,
+// applyTheme/themeToCss at runtime — goes through `cssColor()` and is written
+// as `oklch(L C H)` (ADR-0041). The two emitters share this one function so
+// the parity check can compare them byte for byte.
 import { clampChroma, converter, formatHex } from 'culori';
 
 // Brand seeds — the single source of truth per family. Each lands on step 500.
@@ -57,6 +63,44 @@ const L_LIGHT_END = 0.985; // target lightness at step 50
 const L_DARK_END = 0.2; // target lightness at step 950
 
 const oklch = converter('oklch');
+
+const rgb = converter('rgb');
+
+const HEX = /^#([0-9a-f]{6})([0-9a-f]{2})?$/i;
+
+/**
+ * The CSS value the library emits for a colour: an opaque or translucent hex
+ * becomes `oklch(L C H)` / `oklch(L C H / a)` at the smallest precision (from
+ * four decimals) that round-trips to exactly that hex, so the emitted colour is
+ * the validated colour and not a neighbour of it. Anything that is not a hex
+ * (keywords, `var()`, `color-mix()`, font stacks) passes through unchanged.
+ *
+ * @param {string} value
+ * @returns {string}
+ */
+export function cssColor(value) {
+  const m = HEX.exec(value.trim());
+
+  if (!m) return value;
+
+  const hex = `#${m[1].toLowerCase()}`;
+
+  const alpha = m[2] === undefined ? 255 : parseInt(m[2], 16);
+
+  const c = oklch(hex);
+
+  for (let dp = 4; dp <= 6; dp++) {
+    const lch = `${c.l.toFixed(dp)} ${(c.c ?? 0).toFixed(dp)} ${(c.h ?? 0).toFixed(dp)}`;
+
+    if (formatHex(rgb(`oklch(${lch})`)) !== hex) continue;
+
+    return alpha === 255
+      ? `oklch(${lch})`
+      : `oklch(${lch} / ${(alpha / 255).toFixed(4).replace(/0+$/, '').replace(/\.$/, '')})`;
+  }
+
+  throw new Error(`cssColor: ${value} does not round-trip through oklch()`);
+}
 
 const toHex = (c) =>
   `${formatHex(clampChroma({ ...c, mode: 'oklch' }, 'oklch'))}ff`;
@@ -114,8 +158,9 @@ const rgbTriple = (hex) =>
 
 /**
  * The `--c-<family>-*` custom-property map for one family from a seed: every
- * step plus the `--c-<family>-rgb` compositing triple (derived from step 500),
- * ordered to mirror the style-dictionary output (`-rgb` right after `-500`).
+ * step as an `oklch()` value (see `cssColor`) plus the `--c-<family>-rgb`
+ * compositing triple (derived from step 500), ordered to mirror the
+ * style-dictionary output (`-rgb` right after `-500`).
  *
  * @param {string} family
  * @param {string} seedHex
@@ -127,7 +172,7 @@ export function familyVars(family, seedHex) {
   const vars = {};
 
   for (const s of STEPS) {
-    vars[`--c-${family}-${s}`] = r[String(s)];
+    vars[`--c-${family}-${s}`] = cssColor(r[String(s)]);
 
     if (s === ANCHOR) vars[`--c-${family}-rgb`] = rgbTriple(r['500']);
   }

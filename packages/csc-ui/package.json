@@ -21,20 +21,22 @@
     "./custom-elements.json": "./dist/custom-elements.json"
   },
   "scripts": {
-    "build": "pnpm run style-dictionary:build && pnpm run docs:tag-map && vite build && vue-tsc -p tsconfig.build.json && pnpm run docs:manifest:strict",
+    "build": "pnpm run style-dictionary:build && pnpm run chart:generate && pnpm run docs:tag-map && vite build && pnpm run build:types && pnpm run docs:manifest:strict",
     "docs:manifest": "node scripts/analyzer/index.mjs",
     "docs:tag-map": "node scripts/analyzer/index.mjs --tag-map",
     "docs:manifest:strict": "node scripts/analyzer/index.mjs --strict",
     "docs:seed": "node scripts/seed-descriptions.mjs",
-    "build:types": "vue-tsc -p tsconfig.build.json",
-    "build:watch": "pnpm run style-dictionary:build && vue-tsc -p tsconfig.build.json && vite build --watch",
-    "dev": "pnpm run style-dictionary:build && vue-tsc -p tsconfig.build.json && vite build --watch",
+    "build:types": "vue-tsc -p tsconfig.build.json && node scripts/copy-declarations.mjs",
+    "build:watch": "pnpm run style-dictionary:build && pnpm run chart:generate && pnpm run build:types && vite build --watch",
+    "dev": "pnpm run style-dictionary:build && pnpm run chart:generate && pnpm run build:types && vite build --watch",
     "lint:a11y": "node scripts/check-host-attr-fallthrough.mjs",
     "lint:contrast": "node scripts/audit-contrast.mjs",
     "lint:ramp": "node scripts/check-ramp-parity.mjs",
     "lint:tokens": "node scripts/check-palette-utilities.mjs",
     "style-dictionary:build": "style-dictionary build --config ./style-dictionary.config.cjs",
-    "type-check": "vue-tsc --build --force"
+    "type-check": "vue-tsc --build --force",
+    "chart:generate": "node scripts/generate-chart-data.mjs",
+    "lint:chart": "node scripts/check-chart-parity.mjs"
   },
   "dependencies": {
     "@mdi/js": "^7.4.47",

@@ -14,24 +14,34 @@
  * `src/tailwind.css` exposes them as the per-role color utilities.
  */
 
+const { cssColor } = require('../src/theme/ramp.js');
+
 // A role value is normally a palette-step key, referenced via var(--c-<step>).
-// A literal color (e.g. the fixed logo brand mark, kept off the palette so
-// consumer re-seeding cannot recolor it) and a functional value (e.g. the
-// translucent divider ink's color-mix(), ADR-0036) are emitted verbatim.
+// A literal color (the fixed logo brand mark and the frozen chart slots, kept
+// off the palette so consumer re-seeding cannot recolor them) is emitted as
+// oklch() like every palette token (ADR-0041); a functional value (e.g. the
+// translucent divider ink's color-mix(), ADR-0036) is emitted verbatim.
 const decls = (map, indent) =>
   Object.entries(map)
     .filter(([role]) => !role.startsWith('_'))
     .map(([role, value]) => {
-      const isVerbatim = value.startsWith('#') || value.includes('(');
-      const resolved = isVerbatim ? value : `var(--c-${value})`;
+      const resolved = value.startsWith('#')
+        ? cssColor(value)
+        : value.includes('(')
+          ? value
+          : `var(--c-${value})`;
+
       return `${indent}--c-${role}: ${resolved};`;
     })
     .join('\n');
 
 module.exports = (light, dark, invariant) => {
   const lightDecls = decls(light, '\t');
+
   const darkDecls = decls(dark, '\t');
+
   const darkDeclsNested = decls(dark, '\t\t');
+
   const invariantDecls = decls(invariant, '\t');
 
   return [
@@ -46,12 +56,12 @@ module.exports = (light, dark, invariant) => {
     invariantDecls,
     '}',
     '',
-    ':root,\n:root[data-theme=\'light\'] {',
+    ":root,\n:root[data-theme='light'] {",
     lightDecls,
     '}',
     '',
     '/* Explicit dark mode (wins over the OS preference). */',
-    ':root[data-theme=\'dark\'] {',
+    ":root[data-theme='dark'] {",
     darkDecls,
     '}',
     '',

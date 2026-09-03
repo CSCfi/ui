@@ -103,8 +103,8 @@
   "chart-grid": "slate-700",
   "chart-axis": "slate-300",
 
-  "_comment-logo": "Dark logo per the MyCSC dark spec: near-white star + wordmark with the magenta kite kept as a brightened literal (fixed brand mark, like the light-mode literals — off the palette so consumer re-seeding cannot recolor it).",
-  "logo-wordmark": "slate-100",
-  "logo-teal": "slate-100",
-  "logo-magenta": "#c2447cff"
+  "_comment-logo": "Dark logo: a monochrome white mark — star, kite and wordmark all resolve to `white` (matches the c-csc-logo docblock). Off the chromatic ramps, so consumer re-seeding cannot recolor it; `white` is not consumer-seedable (ADR-0011).",
+  "logo-wordmark": "white",
+  "logo-teal": "white",
+  "logo-magenta": "white"
 }

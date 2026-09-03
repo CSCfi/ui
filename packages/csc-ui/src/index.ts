@@ -190,6 +190,28 @@ export { applyTheme, resetTheme, themeToCss } from './theme/applyTheme';
 
 export type { Family, ThemeSeeds } from './theme/applyTheme';
 
+// Chart tokens as importable data (ADR-0040): the frozen series slots and
+// anatomy roles per theme mode, in `oklch()` with a `#rrggbb` twin for chart
+// libraries that do their own colour maths in sRGB. `themeMode()` resolves
+// the mode on screen by the same cascade tokens.css uses.
+export {
+  chartAnatomy,
+  chartAnatomyHex,
+  chartSlots,
+  chartSlotsHex,
+} from './theme/chart-data';
+
+export type { ChartAnatomy, ChartSlots } from './theme/chart-data';
+
+// The built-in seeds and the themable family list, so a theme UI can start
+// from the defaults instead of reading `--c-*-500` back off the document
+// (token values are oklch() strings, ADR-0041 — not what a colour input takes).
+export { DEFAULT_SEEDS, FAMILIES } from './theme/ramp.js';
+
+export { themeMode } from './theme/themeMode';
+
+export type { ThemeMode } from './theme/themeMode';
+
 // Public component types, re-exported so consumers can import them
 // from the package root: `import type { CAlertType } from '@cscfi/csc-ui'`.
 // Shared types (value crosses a component boundary) come from src/types.ts;
