@@ -22,13 +22,23 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Require a changeset file in the PR
+      # Only a NEW changeset file counts (--diff-filter=A). Editing an existing
+      # one does not: once a changeset has been consumed by a "Version
+      # packages" release it is inert (in pre mode it stays on disk, listed in
+      # .changeset/pre.json), so a PR that merely amends it releases nothing.
+      - name: Require a new changeset file in the PR
         run: |
-          if git diff --name-only "origin/${{ github.base_ref }}...HEAD" \
+          base="origin/${{ github.base_ref }}"
+          added=$(git diff --name-only --diff-filter=A "$base...HEAD" \
               | grep -E '^\.changeset/.+\.md$' \
-              | grep -v '^\.changeset/README\.md$'; then
-            echo "Changeset found."
-          else
-            echo "::error::No changeset in this PR. Run 'pnpm changeset' to describe the release impact, or 'pnpm changeset --empty' for a change that should not release."
+              | grep -v '^\.changeset/README\.md$' || true)
+          if [ -z "$added" ]; then
+            if git diff --name-only "$base...HEAD" | grep -qE '^\.changeset/.+\.md$'; then
+              echo "::error::This PR only edits an existing changeset. A changeset that has already been released (see .changeset/pre.json) is inert — add a new one with 'pnpm changeset' (or 'pnpm changeset --empty' for a change that should not release)."
+            else
+              echo "::error::No changeset in this PR. Run 'pnpm changeset' to describe the release impact, or 'pnpm changeset --empty' for a change that should not release."
+            fi
             exit 1
           fi
+          echo "New changeset(s):"
+          echo "$added"
