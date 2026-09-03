@@ -18,9 +18,12 @@ still resolved inside each role's own family (ADR-0034).
 - Dark-mode status and accent fills move to the saturated `*-400` step
   (hover `*-300`, ink `*-950`). Primary, secondary and link fills stay where
   they are — their next step fails WCAG AA text with any ink.
-- Dark-mode subtle tints move from `*-800` to `*-700` (hover `*-600`) with
-  the near-white `*-50` ink. `*-800` sat within 1.0–1.6:1 of the slate-800
-  page and read as the page colour.
+- Dark-mode subtle tints move from `*-800` to `*-700` (hover `*-600`) for
+  primary, secondary, info, error and link; `*-800` sat within 1.0–1.6:1 of
+  the slate-800 page and read as the page colour. Accent, success and
+  warning stay on `*-800` (hover `*-700`) so their coloured `*-200`
+  `on-*-subtle` ink keeps AA — that ink is also what alerts paint their icon
+  and heading with, so it stays coloured rather than near-white.
 - Dark nav chrome moves one step lighter (`primary-700`, hover `primary-600`)
   and the active item becomes the brand `primary-500` under white ink.
 - The frozen chart slots (ADR-0030) are literals and do not move.
