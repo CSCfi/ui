@@ -1,5 +1,64 @@
 # @cscfi/csc-ui-react
 
+## 4.0.0-alpha.10
+
+### Minor Changes
+
+- [#265](https://github.com/CSCfi/ui/pull/265) [`db862f7`](https://github.com/CSCfi/ui/commit/db862f72a692d3904cd03cacab76fcc5c36b6ff9) Thanks [@villeerikssoncsc](https://github.com/villeerikssoncsc)! - Publish the chart tokens as importable data (ADR-0040), so canvas charts no
+  longer scrape `--c-chart-*` from the document.
+
+  - `chartSlots` and `chartAnatomy`: the twelve series slots and the chart
+    anatomy roles (`surface`, `grid`, `axis`) per theme mode, as `oklch()`
+    strings — the palette's own colour space, ready for CSS, SVG and canvas.
+  - `chartSlotsHex` and `chartAnatomyHex`: the same colours as `#rrggbb`, for
+    chart libraries that do their own colour maths in sRGB (ECharts, Chart.js)
+    and cannot parse `oklch()`.
+  - `themeMode()`: resolves the mode on screen by the same cascade tokens.css
+    uses (explicit `data-theme` wins, else the OS preference; light on the
+    server).
+
+  The data is generated from the semantic token maps at build time and guarded
+  by a parity lint, and it always reports the frozen, validated set — it never
+  follows a consumer's `--c-chart-*` overrides. Re-exported from
+  `@cscfi/csc-ui-react`.
+
+- [#265](https://github.com/CSCfi/ui/pull/265) [`db862f7`](https://github.com/CSCfi/ui/commit/db862f72a692d3904cd03cacab76fcc5c36b6ff9) Thanks [@villeerikssoncsc](https://github.com/villeerikssoncsc)! - Export `DEFAULT_SEEDS` and `FAMILIES` from the package root.
+
+  A theme UI (colour pickers, a brand switcher) can now start from the
+  library's built-in step-500 seeds and the list of themable families instead
+  of reading `--c-<family>-500` back off the document — those values are
+  `oklch()` strings since ADR-0041 and are not what an `<input type="color">`
+  accepts. `applyTheme` / `resetTheme` are unchanged.
+
+  The published typings now include the hand-written `ramp.d.ts`, so `Family`,
+  `ThemeSeeds`, `DEFAULT_SEEDS` and `FAMILIES` resolve to their real types for
+  consumers instead of falling through to an unresolved module.
+
+- [#265](https://github.com/CSCfi/ui/pull/265) [`db862f7`](https://github.com/CSCfi/ui/commit/db862f72a692d3904cd03cacab76fcc5c36b6ff9) Thanks [@villeerikssoncsc](https://github.com/villeerikssoncsc)! - Emit every colour token as `oklch()` (ADR-0041).
+
+  All `--c-*` custom properties in `tokens.css` — palette steps, semantic
+  roles' literal values (chart slots, logo marks) — and the ramps written by
+  `applyTheme` / `themeToCss` are now `oklch(L C H)` strings instead of
+  `#rrggbbff`. Colours are unchanged: each value is converted from the same
+  validated hex at a precision that round-trips exactly, and the build's ramp
+  parity check compares tokens.css and the runtime output byte for byte. The
+  `--c-<family>-rgb` compositing triples stay numeric.
+
+  Requires a browser with `oklch()` support (Chrome 111, Safari 15.4, Firefox
+  113 and later), which the library's custom-element and Tailwind v4 baseline
+  already implies. Consumers who read `--c-*` back and parsed hex should use
+  the exported chart data (`chartSlotsHex`) or the `-rgb` triples instead.
+
+### Patch Changes
+
+- [#265](https://github.com/CSCfi/ui/pull/265) [`db862f7`](https://github.com/CSCfi/ui/commit/db862f72a692d3904cd03cacab76fcc5c36b6ff9) Thanks [@villeerikssoncsc](https://github.com/villeerikssoncsc)! - `c-csc-logo` renders fully white in dark mode. The dark `logo-wordmark`,
+  `logo-teal` and `logo-magenta` roles all resolve to `white`; previously the
+  star and wordmark were near-white (`slate-100`) and the kite kept a
+  brightened magenta literal, so the mark read as two-tone on the dark header.
+  Light mode is unchanged.
+- Updated dependencies [[`db862f7`](https://github.com/CSCfi/ui/commit/db862f72a692d3904cd03cacab76fcc5c36b6ff9), [`db862f7`](https://github.com/CSCfi/ui/commit/db862f72a692d3904cd03cacab76fcc5c36b6ff9), [`db862f7`](https://github.com/CSCfi/ui/commit/db862f72a692d3904cd03cacab76fcc5c36b6ff9), [`db862f7`](https://github.com/CSCfi/ui/commit/db862f72a692d3904cd03cacab76fcc5c36b6ff9)]:
+  - @cscfi/csc-ui@4.0.0-alpha.10
+
 ## 4.0.0-alpha.9
 
 ### Patch Changes

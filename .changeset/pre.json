@@ -14,6 +14,7 @@
     "autocomplete-external-mode",
     "autocomplete-search-magnifier",
     "card-mycsc-anatomy",
+    "chart-data-export",
     "chart-slots-vivid",
     "chart-tokens",
     "dark-mode-mycsc-retune",
@@ -22,8 +23,10 @@
     "designated-trigger-popover-chain",
     "divider-token-dark-mode",
     "dropdown-hide-details-restore",
+    "export-default-seeds",
     "fix-autocomplete-textfield-states",
     "ghost-soft-tint",
+    "logo-white-in-dark",
     "menu-item-active-and-icon",
     "modal-focus-ring-and-initial-focus",
     "progress-bar-aria-busy",
@@ -33,6 +36,7 @@
     "selection-control-state-styling",
     "table-light-dom-styling",
     "toast-inverted-surface",
+    "tokens-emit-oklch",
     "tooltip-popover-components",
     "vue-rewrite-major"
   ]
