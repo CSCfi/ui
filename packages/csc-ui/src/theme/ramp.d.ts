@@ -30,3 +30,9 @@ export declare function familyVars(
   family: Family,
   seedHex: string,
 ): Record<string, string>;
+
+/**
+ * The CSS value the library emits for a colour: a hex becomes `oklch(L C H)`
+ * at a precision that round-trips exactly; non-hex values pass through.
+ */
+export declare function cssColor(value: string): string;

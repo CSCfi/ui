@@ -9,7 +9,7 @@
       {{ currentColor.label }}
     </c-button>
 
-    <template v-for="color in colors" :key="color.value">
+    <template v-for="(color, index) in colors" :key="index">
       <template v-if="color.type === 'color'">
         <c-menu-item
           :active="color.value === currentColor.value"
@@ -36,9 +36,11 @@
 </template>
 
 <script setup lang="ts">
-import { applyTheme } from '@cscfi/csc-ui';
+type Swatch = { type: 'color'; value: string; label: string };
 
-const colors = ref([
+type Entry = Swatch | { type: 'title'; label: string } | { type: 'divider' };
+
+const colors = ref<Entry[]>([
   { type: 'title', label: 'CSC UI Colors' },
   { type: 'color', value: '#006778', label: 'Primary' },
   { type: 'color', value: '#830051', label: 'Secondary' },
@@ -53,17 +55,19 @@ const colors = ref([
   { type: 'color', value: '#e500a4', label: 'Pink' },
 ]);
 
-const currentColor = ref({ type: 'color', value: '#006778', label: 'Primary' });
+// The primary seed is shared with the customization page's playground, so a
+// pick here shows up there and its "Reset to defaults" snaps this back.
+const { seeds, setSeed } = useThemeSeeds();
 
-const onSelect = (
-  event: CustomEvent<{
-    value: { type: 'color'; value: string; label: string };
-  }>,
-) => {
-  currentColor.value = event.detail.value;
+const currentColor = computed<Swatch>(
+  () =>
+    colors.value.find(
+      (c): c is Swatch => c.type === 'color' && c.value === seeds.primary,
+    ) ?? { type: 'color', value: seeds.primary, label: 'Custom' },
+);
 
-  applyTheme({ primary: event.detail.value.value });
-};
+const onSelect = (event: CustomEvent<{ value: Swatch }>) =>
+  setSeed('primary', event.detail.value.value);
 </script>
 
 <style scoped>

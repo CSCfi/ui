@@ -27,10 +27,11 @@ pnpm dev            # watch csc-ui + docs dev server (http://localhost:3500)
 pnpm ui <script>    # run a script in packages/csc-ui
 
 # In packages/csc-ui
-pnpm build          # tokens -> tag map -> vite build -> types -> strict manifest
+pnpm build          # tokens -> chart data -> tag map -> vite build -> types -> strict manifest
 pnpm docs:manifest  # regenerate custom-elements.json
 pnpm lint:tokens    # forbid direct palette-step utilities in SFCs
 pnpm lint:a11y      # host attribute fallthrough check
+pnpm lint:chart     # chart-data.ts matches the semantic maps (ADR-0040)
 
 # In packages/csc-ui-react
 pnpm build          # regenerate wrappers from the manifest, then tsc
@@ -49,7 +50,7 @@ Releases are driven by **changesets**, not commit messages:
 
 ## Conventions
 
-- **Styling**: Tailwind v4 + `tailwind-variants` inside SFCs. Consumer customization is exclusively CSS `::part()` (ADR-0006); every colour goes through semantic tokens (`bg-surface`, `text-on-primary`) — direct palette-step utilities (`bg-primary-600`) fail CI (ADR-0010).
+- **Styling**: Tailwind v4 + `tailwind-variants` inside SFCs. Consumer customization is exclusively CSS `::part()` (ADR-0006); every colour goes through semantic tokens (`bg-surface`, `text-on-primary`) — direct palette-step utilities (`bg-primary-600`) fail CI (ADR-0010). Token values are emitted as `oklch()` from validated hex via one `cssColor()` in the ramp core (ADR-0041); never write a colour value by hand in generated CSS.
 - **Events**: each component declares a JSDoc-annotated event-map interface — the single source of truth for emissions, typings, and the manifest. New event names are all-lowercase (ADR-0017); grandfathered camelCase events auto-dispatch a kebab-case twin (ADR-0021).
 - **Types**: component-owned types live in the component and are exported from the entry; only types whose values cross component boundaries live in `src/types.ts` (ADR-0015).
 - **Docs**: a component's description is the first paragraph of its `usage.md`; SFC docblocks carry tags only, no prose (ADR-0026).

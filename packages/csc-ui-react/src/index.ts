@@ -7,7 +7,22 @@
  * need (e.g. `CSelectItem`) from there.
  */
 
-export * from './components.js';
+export * from "./components.js";
 
-export { applyTheme, resetTheme, themeToCss } from '@cscfi/csc-ui';
-export type { Family, ThemeSeeds } from '@cscfi/csc-ui';
+export {
+  DEFAULT_SEEDS,
+  FAMILIES,
+  applyTheme,
+  resetTheme,
+  themeToCss,
+} from "@cscfi/csc-ui";
+export type { Family, ThemeSeeds } from "@cscfi/csc-ui";
+
+export {
+  chartAnatomy,
+  chartAnatomyHex,
+  chartSlots,
+  chartSlotsHex,
+  themeMode,
+} from "@cscfi/csc-ui";
+export type { ChartAnatomy, ChartSlots, ThemeMode } from "@cscfi/csc-ui";

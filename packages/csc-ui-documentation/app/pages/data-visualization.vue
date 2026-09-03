@@ -388,12 +388,16 @@
             such a form means faceting, not more colors.
           </li>
           <li>
-            <strong class="text-on-surface">Canvas-based chart libraries
-            can’t read CSS variables.</strong> SVG charts use
-            <code>var(--c-chart-1)</code> directly. Chart.js, ECharts and
-            other canvas renderers need resolved values — read them with
-            <code>getComputedStyle</code> and re-read on theme change (see
-            the snippet above).
+            <strong class="text-on-surface">Import the slots as data; scrape
+            only if you override.</strong> SVG uses
+            <code>var(--c-chart-1)</code> directly. Everything else imports
+            <code>chartSlots</code> and <code>chartAnatomy</code> (per mode,
+            as <code>oklch()</code> strings) or their <code>…Hex</code> twins
+            for ECharts and Chart.js, and picks the mode with
+            <code>themeMode()</code> — see the snippet above. The export is
+            the frozen, validated set: if you override
+            <code>--c-chart-*</code> yourself, read your values back with
+            <code>getComputedStyle</code> instead.
           </li>
         </ul>
       </section>
@@ -547,22 +551,35 @@ const CODE_BLOCKS = [
 </c-card>`,
   },
   {
-    filename: 'chart-colors.ts — canvas libraries need resolved values',
+    filename: 'chart-colors.ts — import the slots as data',
     lang: 'ts',
-    code: `// Chart.js, ECharts & co. render to canvas and cannot read CSS custom
-// properties. Resolve the chart tokens once, and again on theme change.
-const style = getComputedStyle(document.documentElement);
+    code: `import {
+  chartAnatomyHex,
+  chartSlots,
+  chartSlotsHex,
+  themeMode,
+} from '@cscfi/csc-ui';
 
-export const chartColors = (count: number) =>
-  Array.from({ length: count }, (_, i) =>
-    style.getPropertyValue(\`--c-chart-\${i + 1}\`).trim(),
-  );
+// themeMode() resolves the mode on screen the way tokens.css does:
+// an explicit data-theme wins, otherwise the OS preference.
+const mode = themeMode(); // 'light' | 'dark'
 
-// Re-read when the theme mode changes:
-new MutationObserver(() => rebuildChart(chartColors(4))).observe(
-  document.documentElement,
-  { attributeFilter: ['data-theme'] },
-);`,
+// CSS, SVG and raw canvas take the oklch() strings directly.
+const [first] = chartSlots[mode]; // 'oklch(0.6534 0.1710 247.9336)'
+
+// ECharts and Chart.js do their own colour maths in sRGB and cannot parse
+// oklch() — hand them the hex twin (same colours, same order).
+const option = {
+  color: [...chartSlotsHex[mode]],
+  xAxis: { axisLine: { lineStyle: { color: chartAnatomyHex[mode].grid } } },
+};
+
+// Re-resolve when the mode changes — the toggle or the OS preference:
+const rebuild = () => draw(chartSlotsHex[themeMode()]);
+new MutationObserver(rebuild).observe(document.documentElement, {
+  attributeFilter: ['data-theme'],
+});
+matchMedia('(prefers-color-scheme: dark)').addEventListener('change', rebuild);`,
   },
 ];
 
