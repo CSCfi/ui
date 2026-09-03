@@ -372,12 +372,13 @@
             (chart-axis, on-surface), never the series color.
           </li>
           <li>
-            <strong class="text-on-surface">Dark mode needs a relief
-            channel.</strong> On the dark chart surface, slots 2, 3, 4 and 6
-            sit below 3:1 contrast by design (the dark lightness band is
-            narrow). That is legal only when values are readable another way:
-            tooltips, direct labels, or an accompanying table view. The
-            example charts above carry tooltips for exactly this reason.
+            <strong class="text-on-surface">Every slot clears 3:1 on both
+            chart surfaces.</strong> No shipped slot needs a relief channel.
+            If you override <code>--c-chart-*</code> yourself, re-validate:
+            a mark below 3:1 is legal only when values are readable another
+            way — tooltips, direct labels, or an accompanying table view. The
+            example charts above carry tooltips regardless, because a table
+            or tooltip is the reader's way to the exact value.
           </li>
           <li>
             <strong class="text-on-surface">Scatter, bubble, and map forms cap
@@ -410,24 +411,25 @@ import type { TocItem } from '~/utils/toc';
  * live SVG examples are hand-written — there is no chart component whose
  * manifest could drive them.
  *
- * The palette below is the frozen chart-token set (ADR-0030). The hex columns
+ * The palette below is the frozen chart-token set (ADR-0030, amended
+ * 2026-09-03: twelve single hues, no shade pairs). The hex columns
  * are documentation of the shipped values; the swatches and charts render the
  * live tokens so they track theme mode.
  */
 
 const SLOTS = [
-  { n: 1, hue: 'blue', light: '#006b9b', dark: '#0082bb', origin: 'info ramp' },
-  { n: 2, hue: 'magenta', light: '#a63a71', dark: '#a63a71', origin: 'secondary ramp' },
-  { n: 3, hue: 'gold', light: '#866c02', dark: '#896f09', origin: 'viz-only' },
-  { n: 4, hue: 'purple', light: '#62488c', dark: '#7555a8', origin: 'viz-only' },
-  { n: 5, hue: 'teal', light: '#00a190', dark: '#00a190', origin: 'accent ramp' },
-  { n: 6, hue: 'rose', light: '#8b3b3b', dark: '#a74546', origin: 'viz-only' },
-  { n: 7, hue: 'cyan', light: '#04a3be', dark: '#0999b2', origin: 'viz-only' },
-  { n: 8, hue: 'rose, light', light: '#c06a68', dark: '#b96462', origin: 'viz-only' },
-  { n: 9, hue: 'blue, light', light: '#3f9bd1', dark: '#3f9bd1', origin: 'info ramp' },
-  { n: 10, hue: 'magenta, light', light: '#c56793', dark: '#c56793', origin: 'secondary ramp' },
-  { n: 11, hue: 'gold, light', light: '#af8f15', dark: '#af8f15', origin: 'viz-only' },
-  { n: 12, hue: 'purple, light', light: '#9076be', dark: '#8a70b8', origin: 'viz-only' },
+  { n: 1, hue: 'blue', light: '#1295f2', dark: '#1094f1', origin: 'info hue' },
+  { n: 2, hue: 'magenta', light: '#b75593', dark: '#b75693', origin: 'secondary hue' },
+  { n: 3, hue: 'gold', light: '#b5901d', dark: '#b5901a', origin: 'viz-only' },
+  { n: 4, hue: 'purple', light: '#905fc5', dark: '#9160c6', origin: 'viz-only' },
+  { n: 5, hue: 'teal', light: '#05a88c', dark: '#17ad92', origin: 'accent hue' },
+  { n: 6, hue: 'rose', light: '#b64655', dark: '#c3525f', origin: 'viz-only' },
+  { n: 7, hue: 'cyan', light: '#26a2bc', dark: '#1da6c1', origin: 'viz-only' },
+  { n: 8, hue: 'indigo', light: '#5165d4', dark: '#586edd', origin: 'viz-only' },
+  { n: 9, hue: 'orchid', light: '#ce6cb9', dark: '#ce6cb9', origin: 'viz-only' },
+  { n: 10, hue: 'olive', light: '#858d00', dark: '#848c00', origin: 'viz-only' },
+  { n: 11, hue: 'violet', light: '#8483ee', dark: '#8382ed', origin: 'viz-only' },
+  { n: 12, hue: 'aqua', light: '#008f90', dark: '#009293', origin: 'viz-only' },
 ];
 
 const ANATOMY = [
