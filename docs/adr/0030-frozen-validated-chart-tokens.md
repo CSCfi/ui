@@ -65,3 +65,36 @@ prevent.
 - **Library-only 6 hues × 2 shades (using status ramps):** satisfies "from the
   library" literally with zero minted colors, but green/orange/red series read
   as good/warning/bad next to any status UI. Rejected.
+
+## Amendment — 2026-09-03: twelve single hues, no shade pairs
+
+The original set was five hue pairs (a dark shade plus a light shade) and two
+singles, which parked most slots just above the 0.10 chroma floor and left
+four dark-mode slots below 3:1. It read flat, and the dark shades (slots 2,
+3, 4) read too dark. The set was re-derived under a different structure:
+
+- **Twelve single hues.** No slot is a shade of another. Every slot sits at
+  OKLCH L 0.55–0.67 (light) / 0.58–0.67 (dark), so all twelve clear 3:1 on
+  their chart surface in both modes — **no relief slots remain**.
+- **Slots 1–7 keep their hue identities** (blue, magenta, gold, purple, teal,
+  rose, cyan; each within 6° of the previous hue), so charts with seven or
+  fewer series keep the colours people know. Slots 1/2/5 stay on the
+  info/secondary/accent hues but no longer coincide with ramp steps (chroma
+  is higher than any ramp step at that lightness). **Slots 8–12 are new
+  viz-only hues**: indigo, orchid, olive, violet, aqua.
+- **Chroma to the gamut, under ceilings.** Blue/gold/teal/cyan are capped by
+  sRGB at these lightnesses; magenta, purple, rose and the yellows get
+  explicit ceilings so the set stays rich rather than neon.
+- **Status hue bands excluded** (reds and oranges for error/warning, greens
+  for success), so no series impersonates a status colour; the set leans
+  cool as a result, which is the brand's side of the wheel.
+- **Hues were fixed by construction, not searched.** Free-hue optimisation
+  collapses into a cluster of blues; only lightness, chroma and the order of
+  slots 8–12 were optimised against the validator.
+
+Validated as a set with the dataviz validator: light clears adjacent CVD
+ΔE 10.2 / normal 17.9, dark 8.7 / 16.9 (both above the 8 / 15 gates; the
+normal-vision margin is smaller than the paired set's 20.1 because separation
+now comes from hue alone). The all-pairs (scatter/map) safe prefix is
+unchanged at slots 1–3. Everything else in this ADR — frozen literals, slot
+order as API, anatomy roles, the escape hatch — stands.

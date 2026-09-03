@@ -202,7 +202,7 @@ One of the twelve ordered positions (`chart-1` … `chart-12`) a chart series we
 _Avoid_: Series color (the value, not the position), palette index, color 1–12
 
 **Relief channel**:
-An alternative way to read a mark's value — direct labels, tooltips, or an accompanying table view — required wherever a series slot sits below 3:1 contrast on the chart surface (a documented, deliberate state for some dark-mode slots; the narrow dark lightness band makes full contrast unattainable). A sub-3:1 mark with no relief channel is an accessibility failure, not a stylistic choice.
+An alternative way to read a mark's value — direct labels, tooltips, or an accompanying table view — required wherever a series slot sits below 3:1 contrast on the chart surface. The shipped slots all clear 3:1 in both modes (since the 2026-09-03 retune), so this applies to consumer overrides of `--c-chart-*`, and to any future slot that trades contrast for chroma. A sub-3:1 mark with no relief channel is an accessibility failure, not a stylistic choice.
 _Avoid_: Fallback (relief supplements the mark; nothing replaces it), workaround
 
 ### Form fields

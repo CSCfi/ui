@@ -32,12 +32,17 @@ export const STEPS = [50, 100, 200, 300, 400, 500, 600, 700, 800, 900, 950];
 const ANCHOR = 500; // step locked to the brand seed
 
 // Chroma multiplier relative to the seed's chroma. MUST be 1.0 at the anchor so
-// the anchor step reproduces the brand color exactly; bell-tapers to the ends.
+// the anchor step reproduces the brand color exactly; tapers to the ends. The
+// light side holds full chroma through steps 400–300 and tapers only from 200 up:
+// step 300 is the dark-mode fill for every family (ADR-0034) and 200 its hover,
+// and the earlier 0.78/0.55 taper left low-chroma seeds (primary's petrol)
+// reading grey on the dark surface. Seeds already at the sRGB gamut edge
+// (warning, error) are unaffected — clampChroma caps them either way.
 const C_FACTOR = {
   100: 0.35,
-  200: 0.55,
-  300: 0.78,
-  400: 0.92,
+  200: 0.72,
+  300: 1.0,
+  400: 1.0,
   50: 0.2,
   500: 1.0,
   600: 0.98,
