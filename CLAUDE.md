@@ -42,7 +42,7 @@ The React package build requires a built `packages/csc-ui` (it reads the manifes
 
 Releases are driven by **changesets**, not commit messages:
 
-- Every PR to `main` must include a changeset (`pnpm changeset`); use `pnpm changeset --empty` for changes that must not release. CI blocks PRs without one.
+- Every PR to `main` must include a **new** changeset file (`pnpm changeset`); use `pnpm changeset --empty` for changes that must not release. CI blocks PRs without one. Editing an existing changeset does not count: once a "Version packages" PR has consumed it, it is inert (in pre mode it stays on disk, listed in `.changeset/pre.json`), so a follow-up fix always needs its own changeset.
 - On merge to `main`, `.github/workflows/release.yml` maintains a "Version packages" PR; merging it builds and publishes `@cscfi/csc-ui` + `@cscfi/csc-ui-react` to npm (always the same version — a fixed group).
 - Publishing uses npm trusted publishing (OIDC); there is no npm token secret.
 - Never bump versions in `package.json` by hand.
