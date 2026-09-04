@@ -169,6 +169,7 @@ add(
   TEXT,
   'on-surface-inverted-muted / surface-inverted',
 );
+
 // Each status accent ink is the coloured icon on the inverted ground; its
 // halo is an alpha wash of the same role, so the ink is audited against the
 // ground it effectively sits on. Icons are non-text UI (3.0).
@@ -180,6 +181,7 @@ for (const r of ['success', 'info', 'warning', 'error']) {
     `${r}-inverted / surface-inverted (status icon)`,
   );
 }
+
 // non-text UI (3:1): outlines, focus ring, primary fill/icon on surface
 add(
   'border-strong',
@@ -189,13 +191,24 @@ add(
 );
 add('ring', 'surface', UI, 'ring / surface (focus)');
 add('primary', 'surface', UI, 'primary / surface (icon/fill)');
+// the unselected button-group / tab-buttons label is `primary` text sitting on
+// the opaque `surface-sunken` track fill (ADR-0042) — real text, AA applies
+add(
+  'primary',
+  'surface-sunken',
+  TEXT,
+  'primary / surface-sunken (button-group label on track)',
+);
 
-// hairline divider on every surface-ladder rung (composited, ADR-0036)
+// hairline divider on every surface-ladder rung (composited, ADR-0036),
+// including the canvas rung: the button-group track frame sits there
+// (ADR-0042)
 for (const bg of [
   'surface',
   'surface-raised',
   'surface-overlay',
   'surface-muted',
+  'surface-sunken',
 ]) {
   add('divider', bg, HAIRLINE, `divider / ${bg} (hairline)`);
 }

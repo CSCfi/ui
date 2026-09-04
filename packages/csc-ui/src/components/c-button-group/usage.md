@@ -49,6 +49,12 @@ A group can be `mandatory` without being `required` (a view switcher that
 always has a selection) or `required` without being `mandatory` (the user
 must answer, but may retract while deciding).
 
+## Placement
+
+The track keeps an opaque fill under its labels and a hairline frame that
+reads on any surface, so the group can sit on a card, a muted panel, or
+directly on the page canvas with no extra styling.
+
 ## Accessibility
 
 Setting `label` names the group for assistive technology (`role="group"` +
