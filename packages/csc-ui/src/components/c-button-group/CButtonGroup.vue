@@ -75,7 +75,7 @@ export type CButtonGroupValue = (number | string)[] | null | number | string;
 <script setup lang="ts">
 /**
  * @slot default - Default slot for the c-button elements
- * @csspart root - The segmented-control box that frames the buttons
+ * @csspart root - The track: the framed segmented-control box the buttons sit in
  * @csspart label - The group label rendered above the buttons
  */
 import { tv } from 'tailwind-variants';
@@ -117,29 +117,38 @@ defineOptions({ inheritAttrs: false });
 
 /**
  * Styling lives in this `tailwind-variants` config: the inner `root` div is
- * the styled segmented-control box, customizable via `::part(root)`. The
- * host stays `display:contents` (global).
+ * the track — the framed segmented-control box the buttons sit in,
+ * customizable via `::part(root)`. The host stays `display:contents` (global).
  *
- * The frame and dividers are drawn entirely with the `root` background: the
- * padding shows it as the outer border and the grid gap shows it between
- * buttons. Children are plain `<c-button>`s slotted by the consumer; this
- * component imposes the transparent `text`/`no-ripple`/`fit` appearance and
- * drives each button's public `active` prop. Every active button paints its
- * own active fill — the sliding indicator is a tab-strip affordance and
- * belongs to `c-tab-buttons`, never to this component.
+ * The track is an opaque fill plus a load-bearing hairline (ADR-0042). The
+ * fill stays opaque on purpose: the unselected labels are `primary` text
+ * sitting directly on it, and an opaque fill keeps their ground constant
+ * (AA on every surface) wherever the control is placed; the padding and the
+ * grid gap show the fill around an active button's own fill. The fill alone
+ * is invisible on nearby surface rungs (it *is* the `c-main` canvas colour),
+ * so the boundary is a 1px `divider` border clipped out of the background
+ * (padding-box clip) — the translucent ink composites over the parent, not
+ * the fill, which is what makes it read on every rung in both modes.
+ * Children are plain `<c-button>`s slotted by the consumer; this component
+ * imposes the transparent `text`/`no-ripple`/`fit` appearance and drives
+ * each button's public `active` prop. Every active button paints its own
+ * active fill — the sliding indicator is a tab-strip affordance and belongs
+ * to `c-tab-buttons`, never to this component.
  */
 // Hoisted so the runtime guard below can test membership; the `satisfies`
 // keeps the map complete against the public union.
 const sizeVariants = {
   default: {
-    // 4px frame + 36px buttons = 44px, the same height as a c-text-field
-    // field, so a group sits level beside one. The button height is driven
+    // 1px hairline + 3px padding + 36px buttons = 44px, the same height as a
+    // c-text-field field, so a group sits level beside one (the hairline
+    // replaces 1px of the former 4px padding). The button height is driven
     // through c-button's internal `--_c-button-min-height` hook, inherited
     // by the slotted buttons from this frame.
-    root: 'p-1 gap-1 [--_c-button-min-height:2.25rem]',
+    root: 'p-0.75 gap-1 [--_c-button-min-height:2.25rem]',
   },
   small: {
-    root: 'p-0.5 gap-0.5',
+    // 1px hairline + 1px padding: the former 2px frame.
+    root: 'p-0.25 gap-0.5',
   },
 } satisfies Record<CButtonGroupSize, object>;
 
@@ -156,7 +165,7 @@ const buttonGroup = tv({
     // flex + w-full instead squeezed every button to an equal share smaller
     // than that, and the nowrap content overflowed the fill's right edge —
     // visibly unbalanced horizontal padding on active buttons.
-    root: 'grid grid-flow-col auto-cols-fr rounded-csc-lg bg-surface-sunken',
+    root: 'grid grid-flow-col auto-cols-fr rounded-csc-lg border border-solid border-divider bg-clip-padding bg-surface-sunken',
     // Stacks the group label above the segmented-control frame.
     wrapper: 'flex flex-col gap-1',
   },

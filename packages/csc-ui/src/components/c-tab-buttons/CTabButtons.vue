@@ -88,8 +88,10 @@ defineOptions({ inheritAttrs: false });
  * sliding motion is a tab-strip affordance. This adapter therefore owns the
  * whole indicator composition:
  *
- * - `track` draws the sunken segmented-control background itself; the inner
- *   group's own `root` background is made transparent through the
+ * - `track` draws the sunken fill AND the 1px `divider` hairline frame
+ *   itself — the same opaque-fill + load-bearing-hairline construction as
+ *   the group (ADR-0042, see the group's tv header); the inner group's own
+ *   `root` box is made transparent and its frame neutralised through the
  *   `::part(root)` rule in the `<style>` block below (an outer-tree part rule
  *   beats the group's shadow styles for normal declarations).
  * - The pill is a `-z-10` child of the `isolate` track, so it paints above
@@ -104,12 +106,14 @@ defineOptions({ inheritAttrs: false });
 // keeps the map complete against the public union.
 const sizeVariants = {
   default: {
-    // Matches the group root's `p-1` so the pill covers the button
-    // vertically.
-    indicator: 'top-1 bottom-1',
+    // The buttons sit 3px inside this track's padding box: the wrapped
+    // group's 1px (transparent) border is pulled over this track's own
+    // border by the `::part(root)` margin below, leaving its 3px padding —
+    // so the pill covers the button vertically.
+    indicator: 'top-0.75 bottom-0.75',
   },
   small: {
-    indicator: 'top-0.5 bottom-0.5',
+    indicator: 'top-0.25 bottom-0.25',
   },
 } satisfies Record<CTabButtonsSize, object>;
 
@@ -125,8 +129,11 @@ const tabButtons = tv({
       'pointer-events-none absolute left-0 -z-10 w-0 origin-left rounded-csc-md bg-primary opacity-0 transition-[transform,width,opacity] duration-300 ease-out',
     // `relative isolate` so the `-z-10` pill is contained in this box's
     // stacking context and paints above this track background but below the
-    // (transparent) buttons inside the wrapped group.
-    track: 'relative isolate rounded-csc-lg bg-surface-sunken',
+    // (transparent) buttons inside the wrapped group. The border is the
+    // load-bearing hairline, clipped out of the fill so it composites over
+    // the parent surface and reads on every rung (ADR-0042).
+    track:
+      'relative isolate rounded-csc-lg border border-solid border-divider bg-clip-padding bg-surface-sunken',
   },
   variants: {
     disabled: {
@@ -220,7 +227,9 @@ const moveIndicator = (animate = true) => {
 
   if (snap) ind.style.transition = 'none';
   ind.style.width = `${box.width}px`;
-  ind.style.transform = `translateX(${box.left - trackBox.left}px)`;
+  // Absolute children are placed from the track's padding box, while
+  // `trackBox` is its border box — subtract the 1px hairline.
+  ind.style.transform = `translateX(${box.left - trackBox.left - track.clientLeft}px)`;
   ind.style.opacity = '1';
 
   if (snap) {
@@ -334,12 +343,18 @@ onBeforeUnmount(() => {
 </script>
 
 <style>
-/* The adapter owns the visible track; the wrapped group's own box must not
-   paint over the pill. An outer-tree ::part rule wins over the group's
-   shadow styles for normal declarations, in every state (the group's
-   disabled variant repaints its background too, so `background` — not
-   `background-color` shorthand mismatches — is overridden here). */
+/* The adapter owns the visible track — fill and hairline; the wrapped
+   group's own box must not paint over the pill nor draw a second frame. An
+   outer-tree ::part rule wins over the group's shadow styles for normal
+   declarations, in every state (the group's disabled variant repaints its
+   background too, so `background` — not `background-color` shorthand
+   mismatches — is overridden here). The group keeps its 1px border (made
+   transparent) and 3px padding; the -1px margin pulls its border box over
+   this track's own border, so the buttons land exactly where a standalone
+   group puts them and the pill offsets in `sizeVariants` stay true. */
 c-button-group::part(root) {
   background: transparent;
+  border-color: transparent;
+  margin: -1px;
 }
 </style>

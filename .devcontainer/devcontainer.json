@@ -19,6 +19,7 @@
     "source=my-project-node-modules,target=${containerWorkspaceFolder}/node_modules,type=volume",
     "source=${localEnv:HOME}/.config/csc-ui-devcontainer/zsh_history,target=/home/claudeuser/.zsh_history,type=bind"
   ],
+  "name": "CSC-UI",
   "initializeCommand": "mkdir -p ${localEnv:HOME}/.config/csc-ui-devcontainer && touch ${localEnv:HOME}/.config/csc-ui-devcontainer/zsh_history",
   "postCreateCommand": "pnpm install",
   "remoteUser": "claudeuser",

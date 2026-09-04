@@ -357,7 +357,15 @@ export const TOKEN_GROUPS: TokenGroup[] = [
         token: 'border',
         light: 'tertiary-200',
         dark: 'slate-700',
-        purpose: 'Default hairline borders and dividers.',
+        purpose:
+          'Opaque edges for frames that have another cue: card frames, toolbar edge, table grid lines.',
+      },
+      {
+        token: 'divider',
+        light: 'black @ 12%',
+        dark: 'white @ 12%',
+        purpose:
+          'Translucent hairline ink: separators and load-bearing control frames; reads on every surface.',
       },
       {
         token: 'border-strong',

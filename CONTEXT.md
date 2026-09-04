@@ -58,7 +58,7 @@ A nested second-level (or deeper) menu owned by a `c-menu-item`, authored via th
 _Avoid_: Nested dropdown, flyout, child menu
 
 **Separator** (`c-divider`):
-A general-purpose `role="separator"` line dividing groups of content. Used to partition menu sections but not menu-specific. A **menu label** (`c-menu-label`) is the complementary heading for a group of items; a separator is the line between groups. Paints the `divider` semantic token — a translucent ink that reads on every **surface ladder** rung (ADR-0036); the token role deliberately takes the tag's name, not this concept's.
+A general-purpose `role="separator"` line dividing groups of content. Used to partition menu sections but not menu-specific. A **menu label** (`c-menu-label`) is the complementary heading for a group of items; a separator is the line between groups. Paints the `divider` semantic token — a translucent ink that reads on every **surface ladder** rung (ADR-0036); the token role deliberately takes the tag's name, not this concept's, and since ADR-0042 it also paints every **load-bearing hairline**.
 _Avoid_: Spacer (the Stencil-era `c-spacer` flex-grow filler, removed in 4.x — not a visible rule), rule, hr
 
 ### Overlays
@@ -164,8 +164,12 @@ A role-named custom property whose value **resolves to a different palette token
 _Avoid_: Role token, alias token, palette token (a semantic token points *at* a palette token; it is not itself a ramp value)
 
 **Surface ladder**:
-The four mode-aware neutral background roles ordered by elevation: `surface` (page background), `surface-raised` (cards/panels), `surface-overlay` (floating layers — popovers, menus, modals), and the **inverted surface** (`surface-inverted`, maximum-emphasis transient layers — toasts, tooltips). In light mode the first three are all near-white and depth reads from shadow; in dark mode each step is progressively lighter so elevation reads **without** relying on shadows. The inverted tier flips instead of climbing — see **Inverted surface**. Each rung pairs with an **`on-` token** for its foreground.
+The mode-aware neutral background roles ordered by elevation: `surface` (page background), `surface-raised` (cards/panels), `surface-overlay` (floating layers — popovers, menus, modals), and the **inverted surface** (`surface-inverted`, maximum-emphasis transient layers — toasts, tooltips). In light mode the first three are all near-white and depth reads from shadow; in dark mode each step is progressively lighter so elevation reads **without** relying on shadows. The inverted tier flips instead of climbing — see **Inverted surface**. Below `surface` sit two recessed rungs — `surface-muted` (subdued in-component fills: disabled controls, progress tracks) and, lowest, `surface-sunken` (the page canvas `c-main` paints, and the **track** fill). Each rung pairs with an **`on-` token** for its foreground.
 _Avoid_: Layer, z-level, elevation token (the ladder *is* the elevation model; don't introduce a parallel term)
+
+**Load-bearing hairline**:
+A 1px edge that is the *only* cue separating a component from what it sits on — no shadow, no fill that already reads. It paints the translucent `divider` ink over the parent surface, the one ink audited to read on every **surface ladder** rung (ADR-0036, ADR-0042); an edge with another cue (a card's shadow) stays on the opaque `border` role. The **track**'s frame is one; a card's border is not.
+_Avoid_: Border (the opaque role), outline (the CSS property / focus concept), divider (the token, not this use of it)
 
 **Inverted surface**:
 The top rung of the **surface ladder** (`surface-inverted`): a background that takes the *opposite* mode's ground — near-black in light mode, near-white in dark mode — so a maximum-emphasis transient layer stands apart from every other surface instead of blending one shade above it. Content on it uses the matching inverted roles (`on-surface-inverted`, the `*-inverted` status roles), which likewise borrow the opposite mode's look. Mode-**aware** (it flips with the mode) — not to be confused with the mode-**invariant** `inverse-*` family, which keeps one fixed look on a fixed brand/dark backdrop regardless of mode.
@@ -221,7 +225,7 @@ _Avoid_: Legend (the native `<fieldset>` mechanism this library does not use), g
 
 **Button group** (`c-button-group`):
 A standalone **labelable value control**: a segmented row of plain `c-button` children where activation carries the value — exclusive by default, cumulative with `multiple`. The form-facing component; it knows nothing about tabs. The group drives each child's **active** state; every active child paints its own active look — the **sliding indicator** never appears here (ADR-0025).
-_Avoid_: Tab buttons (that is the `c-tabs` adapter, not a value control), toggle group / segmented control (foreign vocabulary for this same component), toolbar (a button group holds a value; a toolbar merely groups actions)
+_Avoid_: Tab buttons (that is the `c-tabs` adapter, not a value control), toggle group (foreign vocabulary for this same component), segmented control as the component's *name* (fine as a description of its shape — the usage doc's "a button group is a segmented control" — never as a synonym in API names or headings), toolbar (a button group holds a value; a toolbar merely groups actions)
 
 **Tab buttons** (`c-tab-buttons`):
 The tab-strip adapter — a **composed child** of `c-tabs` that presents the tab list as a button group with the **sliding indicator**. Carries no form semantics (no label, no required, no **mandatory**) and cannot deselect: a tab strip inherently has an active tab. Standalone value-picking under this tag is Stencil-era usage; since 4.x that job belongs to **button group**.
@@ -230,6 +234,10 @@ _Avoid_: using it standalone as a value picker (that is `c-button-group`)
 **Sliding indicator** (`c-tab-buttons`):
 The single moving fill that glides to the active tab in a tab strip. A tab-switching affordance owned by **tab buttons** (ADR-0025) — a **button group** never shows it; there, each active button paints its own **active** look.
 _Avoid_: Pill (informal), active fill (that is a button's own selected look, not the shared moving one)
+
+**Track** (`c-button-group`, `c-tab-buttons`):
+The recessed ground a control's choices sit on — the framed well the buttons of a **button group** or **tab buttons** sit in, stamped as that component's `root` part. It paints an opaque fill, so the labels on it keep one ground wherever the control is placed, and a **load-bearing hairline**, so its boundary reads on every **surface ladder** rung. In a tab strip the **sliding indicator** glides inside it.
+_Avoid_: Well, rail, background, box ("segmented-control box" describes its shape; the track is the concept)
 
 **Active** (`c-button`):
 The public pressed state of a button — the selected look plus `aria-pressed`. Set by consumers for standalone toggle buttons, or driven by `c-button-group` on its children.
