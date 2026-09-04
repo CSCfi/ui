@@ -99,7 +99,7 @@
     popover="manual"
     @toggle="onToggle"
   >
-    <div :class="ui.card()" part="card">
+    <div ref="cardRef" :class="ui.card()" part="card">
       <div
         :id="`${id}-status`"
         :class="ui.visuallyHidden()"
@@ -136,7 +136,6 @@
         :id="`${id}-listbox`"
         ref="listRef"
         :class="ui.list()"
-        :style="listStyle"
         part="list"
         role="listbox"
         tabindex="-1"
@@ -346,6 +345,7 @@ import {
 import { ensureAnchorPositioning } from '../../shared/anchorPolyfill';
 import { coerceBoolean } from '../../shared/coerceBoolean';
 import { emitModelValue } from '../../shared/emitModelValue';
+import { applyPeekCap } from '../../shared/peekCap';
 import { useHostEmit } from '../../shared/useHostEmit';
 
 /** Events dispatched by `<c-autocomplete>`. */
@@ -416,7 +416,7 @@ const autocomplete = tv({
       'max-h-8 py-2 bg-transparent border-0 text-on-surface flex-[1_1_auto] [font-family:var(--c-font-family)] text-base leading-5 max-w-full min-w-0 w-full cursor-pointer outline-none focus:outline-none active:outline-none placeholder:text-on-surface-muted placeholder:opacity-100',
     item: 'flex items-center flex-nowrap gap-3 cursor-pointer text-sm min-h-[42px] outline-none px-[10px] whitespace-nowrap w-full rounded select-none data-[active]:bg-primary-subtle data-[active]:text-primary data-[active]:ring-1 data-[active]:ring-inset data-[active]:ring-primary text-on-surface',
     itemLabel: 'flex-auto overflow-hidden text-ellipsis whitespace-nowrap',
-    list: 'list-none m-0 mt-1 p-1 outline-none overflow-y-auto w-full [scrollbar-width:none] [&::-webkit-scrollbar]:hidden',
+    list: 'list-none m-0 mt-1 p-1 outline-none overflow-y-auto scrollbar-hidden w-full',
     panel:
       'fixed m-0 p-0 border-0 bg-transparent overflow-visible [inset:auto]',
     search:
@@ -478,6 +478,8 @@ const host = useHost();
 const emit = useHostEmit<CAutocompleteEvents>();
 
 const anchorRef = useTemplateRef<HTMLElement>('anchorRef');
+
+const cardRef = useTemplateRef<HTMLElement>('cardRef');
 
 const cInputRef = useTemplateRef<HTMLElement>('cInputRef');
 
@@ -567,12 +569,30 @@ const panelStyle = computed(() => {
   return `position-anchor:--c-autocomplete-anchor;position-area:bottom span-right;inset:auto;${w}${m}`;
 });
 
-// Cap the list height at itemsPerPage rows (42px each) before scrolling.
-const listStyle = computed(() =>
-  props.itemsPerPage > 0
-    ? `max-height:${42 * (props.itemsPerPage + 0.5)}px;`
-    : '',
-);
+// ---- peek cap (ADR-0043) -------------------------------------------------
+
+// The list hides its scrollbar, so when it overflows it must end on a
+// half-visible row — the peek: `itemsPerPage` full rows first, and never past
+// what the card's `max-h-[80vh]` leaves under the search row. Measured from
+// the real rows.
+const applyListCap = () => {
+  const list = listRef.value;
+
+  const card = cardRef.value;
+
+  if (!list || !card) return;
+
+  const cardMax = parseFloat(getComputedStyle(card).maxHeight);
+
+  const above =
+    list.getBoundingClientRect().top - card.getBoundingClientRect().top;
+
+  applyPeekCap(list, {
+    ceiling: Number.isFinite(cardMax) ? cardMax - above : Infinity,
+    itemsPerPage: props.itemsPerPage,
+    rows: Array.from(list.querySelectorAll<HTMLElement>('li[role="option"]')),
+  });
+};
 
 // ---- options + filtering ------------------------------------------------
 
@@ -771,6 +791,7 @@ const onToggle = (event: Event) => {
     // Seed the active option from the current selection, else the first
     // enabled option.
     requestAnimationFrame(() => {
+      applyListCap();
       searchRef.value?.focus();
       seedActiveIndex();
       updateStatusText();
@@ -979,6 +1000,21 @@ const updateStatusText = () => {
     statusDebounce = null;
   }, 1400);
 };
+
+// Re-cap when the row set or the page size changes. Deferred a frame: a
+// `flush: 'post'` watcher on `filteredOptions` still ran ahead of the row
+// patch here and measured the outgoing rows.
+let capFrame = 0;
+
+watch([filteredOptions, () => props.itemsPerPage], () => {
+  if (!isOpen.value) return;
+
+  cancelAnimationFrame(capFrame);
+  capFrame = requestAnimationFrame(() => {
+    capFrame = 0;
+    applyListCap();
+  });
+});
 
 // With `external`, options arrive asynchronously after the query event: keep
 // the virtual highlight (`aria-activedescendant`) pointing at a live enabled

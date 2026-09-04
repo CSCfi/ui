@@ -45,6 +45,7 @@
     popover="manual"
   >
     <div
+      ref="submenuListRef"
       :class="ui.submenu()"
       aria-orientation="vertical"
       part="submenu"
@@ -81,6 +82,7 @@ import {
 
 import { ensureAnchorPositioning } from '../../shared/anchorPolyfill';
 import { coerceBoolean } from '../../shared/coerceBoolean';
+import { applyPeekCap } from '../../shared/peekCap';
 
 /**
  * A single command in a `c-menu`. Mostly presentational: it renders its row
@@ -130,7 +132,7 @@ const item = tv({
     content: 'flex flex-1 items-center gap-2 min-w-0',
     root: 'flex items-center justify-between gap-3 min-h-10 px-3 rounded-csc-sm text-sm cursor-pointer select-none outline-none whitespace-nowrap text-on-surface hover:bg-primary-subtle hover:text-primary hover:ring-1 hover:ring-primary',
     submenu:
-      'list-none m-0 p-1 min-w-45 w-max max-h-[80vh] overflow-y-auto rounded-csc-sm bg-surface-overlay shadow-[2px_4px_10px_#00000029] outline-none',
+      'list-none m-0 p-1 min-w-45 w-max max-h-[80vh] overflow-y-auto scrollbar-hidden rounded-csc-sm bg-surface-overlay shadow-[2px_4px_10px_#00000029] outline-none',
     // The panel anchors to the item ROW, which sits inside the parent
     // surface's 4px padding — the constant 4px only reaches the parent
     // panel's edge (surfaces touch). The visible gap on top of that is the
@@ -216,6 +218,8 @@ const rootRef = useTemplateRef<HTMLElement>('rootRef');
 
 const submenuRef = useTemplateRef<HTMLElement>('submenuRef');
 
+const submenuListRef = useTemplateRef<HTMLElement>('submenuListRef');
+
 const isDisabled = computed(() => coerceBoolean(props.disabled));
 
 const isDanger = computed(() => coerceBoolean(props.danger));
@@ -249,6 +253,28 @@ let observer: MutationObserver | null = null;
 const refreshSubmenu = () => {
   slotCount.value =
     host?.querySelectorAll(':scope > [slot="submenu"]').length ?? 0;
+
+  if (submenuRef.value?.matches(':popover-open')) applySubmenuCap();
+};
+
+// ---- peek cap (ADR-0043) -------------------------------------------------
+
+// The submenu list hides its scrollbar like the root menu's, so when it
+// overflows it must end on a half-visible item — the peek — measured from
+// this item's own `slot="submenu"` item children against the stylesheet
+// ceiling (`max-h-[80vh]`).
+const applySubmenuCap = () => {
+  const list = submenuListRef.value;
+
+  if (!list || !host) return;
+
+  applyPeekCap(list, {
+    rows: Array.from(
+      host.querySelectorAll<HTMLElement>(
+        ':scope > c-menu-item[slot="submenu"]',
+      ),
+    ),
+  });
 };
 
 // ---- exposed imperative API (called by the controlling c-menu) ----------
@@ -259,6 +285,8 @@ const openSubmenu = () => {
   if (!panel) return;
 
   if (!panel.matches(':popover-open')) panel.showPopover();
+
+  requestAnimationFrame(applySubmenuCap);
 
   host?.setAttribute('aria-expanded', 'true');
   void ensureAnchorPositioning(host?.shadowRoot);

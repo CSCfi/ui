@@ -26,3 +26,18 @@ label even when a later fetch no longer includes it: the label is remembered
 when the option is committed, and a programmatically set value resolves its
 label from the current options, or from the object's `name` when
 `return-object` is used.
+
+## Scrolling
+
+The panel shows `items-per-page` full rows (six by default) and then a
+half-visible row instead of a scrollbar: the cut row is the cue that more
+options follow, and the wheel, touch and arrow keys scroll as usual. Set
+`items-per-page="0"` to let the list grow to the space the panel allows; it
+still ends on a half row when it overflows. To bring the native scrollbar
+back:
+
+```css
+c-autocomplete::part(list) {
+  scrollbar-width: auto;
+}
+```

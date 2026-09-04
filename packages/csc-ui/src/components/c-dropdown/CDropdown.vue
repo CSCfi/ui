@@ -124,6 +124,7 @@ import {
   watch,
 } from 'vue';
 
+import { applyPeekCap } from '../../shared/peekCap';
 import { useHostEmit } from '../../shared/useHostEmit';
 
 /** Events dispatched by `<c-dropdown>`. */
@@ -167,7 +168,7 @@ const dropdown = tv({
     item: 'flex items-center flex-nowrap gap-3 cursor-pointer text-sm min-h-[42px] outline-none px-[10px] pointer-events-auto whitespace-nowrap w-full rounded select-none hover:bg-primary-subtle hover:text-primary hover:ring-1 hover:ring-inset hover:ring-primary focus:bg-primary-subtle focus:text-primary focus:ring-1 focus:ring-inset focus:ring-primary aria-selected:bg-primary-subtle aria-selected:text-primary aria-selected:rounded-none hover:aria-selected:rounded focus:aria-selected:rounded',
     // Static list look; visibility + fade-in (`.active`) and the mobile
     // full-screen layout stay in the escape-hatch <style>.
-    list: 'list-none m-0 p-0 outline-none pointer-events-auto w-full h-max overflow-y-scroll rounded bg-surface-overlay text-on-surface shadow-[2px_4px_10px_#00000029]',
+    list: 'list-none m-0 p-0 outline-none pointer-events-auto w-full h-max overflow-y-auto scrollbar-hidden rounded bg-surface-overlay text-on-surface shadow-[2px_4px_10px_#00000029]',
     visuallyHidden:
       'absolute w-px h-px p-0 overflow-hidden border-0 [clip:rect(1px,1px,1px,1px)]',
   },
@@ -276,6 +277,10 @@ let debounce: null | number = null;
 let isOpening = false;
 
 let originalOverflowValue = '';
+
+// The dialog's viewport-fit `max-height` while one applies (positionMenu),
+// else Infinity — the list's peek cap has to stay under it.
+let dialogCeiling = Infinity;
 
 const inputSize = { height: 0, width: 0 };
 
@@ -392,10 +397,17 @@ const positionMenu = () => {
   const { innerHeight, innerWidth } = window;
 
   dialog.style.width = 'auto';
+  // Drop a previous open's viewport-fit cap before measuring afresh.
+  dialog.style.maxHeight = '';
+  dialogCeiling = Infinity;
   dialog.style.opacity = '0';
   dialog.showModal();
 
   requestAnimationFrame(() => {
+    // Cap the list first (its rows are laid out now) so the dialog below is
+    // measured at its capped height.
+    applyListCap();
+
     let inputSlot = 'input-top';
 
     const { top: parentTop, width } = getParentSlotRect();
@@ -418,6 +430,7 @@ const positionMenu = () => {
 
       if (!fitsOnTop && !isInView.y) {
         dialog.style.maxHeight = `${parentTop}px`;
+        dialogCeiling = parentTop;
       }
 
       if (!isInView.y || openedOnTop.value) {
@@ -444,6 +457,10 @@ const positionMenu = () => {
     }
 
     dialog.style.opacity = '1';
+
+    // The field has just moved slots: re-cap the list next frame, once the
+    // dialog's chrome around it has its final height.
+    if (Number.isFinite(dialogCeiling)) requestAnimationFrame(applyListCap);
 
     (props.parent as HTMLElement | null)?.shadowRoot
       ?.querySelector('input')
@@ -532,6 +549,7 @@ const close = () => {
 
   if (!dialog) return;
   dialog.close();
+  dialogCeiling = Infinity;
   isOpen.value = false;
 
   if (inputElement) {
@@ -637,27 +655,54 @@ watch(isOpen, (value) => {
   emit('dropdownStateChange', value, bubbling);
 });
 
-// Apply itemsPerPage max-height once items exceed the page size (desktop).
-watch(
-  [itemsArray, isOpen],
-  () => {
-    const dialog = dialogRef.value;
+// ---- peek cap (ADR-0043) -------------------------------------------------
 
-    if (
-      isMobile.value ||
-      !dialog ||
-      !props.itemsPerPage ||
-      props.itemsPerPage <= 0 ||
-      itemsArray.value.length <= props.itemsPerPage
-    )
-      return;
-    dialog.style.maxHeight = `${42 * (props.itemsPerPage + 0.5) + 60}px`;
+// The list hides its scrollbar, so when it overflows it must end on a
+// half-visible row — the peek: `itemsPerPage` full rows first, and never past
+// what the dialog's viewport-fit cap leaves it. Measured from the real rows,
+// so taller <c-option> content sizes correctly. The mobile sheet fills the
+// screen and takes no cap.
+const applyListCap = () => {
+  const list = listRef.value;
 
-    if (listRef.value)
-      listRef.value.style.maxHeight = `${42 * (props.itemsPerPage + 0.5)}px`;
-  },
-  { flush: 'post' },
-);
+  const dialog = dialogRef.value;
+
+  if (!list || !dialog) return;
+
+  if (isMobile.value) {
+    list.style.maxHeight = '';
+
+    return;
+  }
+
+  // Under a viewport-fit cap the list gets what the dialog's other content
+  // (the moved field, paddings) leaves. `scrollHeight` measures that content
+  // even where the dialog's own box is capped and the list spills past it.
+  const ceiling = Number.isFinite(dialogCeiling)
+    ? dialogCeiling - (dialog.scrollHeight - list.offsetHeight)
+    : undefined;
+
+  applyPeekCap(list, {
+    ceiling,
+    itemsPerPage: props.itemsPerPage,
+    rows: Array.from(list.querySelectorAll<HTMLElement>('li[role="option"]')),
+  });
+};
+
+// Opening caps from positionMenu's measuring frame; item and breakpoint
+// changes while open re-cap a frame later, once the new rows are patched in
+// (a `flush: 'post'` watcher can still run ahead of the patch).
+let capFrame = 0;
+
+watch([itemsArray, isMobile], () => {
+  if (!isOpen.value) return;
+
+  cancelAnimationFrame(capFrame);
+  capFrame = requestAnimationFrame(() => {
+    capFrame = 0;
+    applyListCap();
+  });
+});
 
 onMounted(() => {
   if (!host) return;

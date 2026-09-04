@@ -76,6 +76,7 @@ import type { CPlacement } from '../../types';
 
 import { ensureAnchorPositioning } from '../../shared/anchorPolyfill';
 import { coerceBoolean } from '../../shared/coerceBoolean';
+import { applyPeekCap } from '../../shared/peekCap';
 import { placementAxis, POSITION_AREA } from '../../shared/positionArea';
 import { useDesignatedTrigger } from '../../shared/useDesignatedTrigger';
 import { useHostEmit } from '../../shared/useHostEmit';
@@ -119,7 +120,7 @@ interface CMenuEvents {
  */
 const menu = tv({
   slots: {
-    list: 'list-none m-0 p-1 min-w-[180px] w-max max-h-[80vh] overflow-y-auto rounded-csc-md bg-surface-overlay shadow-[2px_4px_10px_#00000029] outline-none',
+    list: 'list-none m-0 p-1 min-w-[180px] w-max max-h-[80vh] overflow-y-auto scrollbar-hidden rounded-csc-md bg-surface-overlay shadow-[2px_4px_10px_#00000029] outline-none',
     panel:
       'fixed m-0 p-0 border-0 bg-transparent overflow-visible [inset:auto]',
     proxy: 'pointer-events-none fixed',
@@ -332,6 +333,21 @@ const getLevelItems = (item: HTMLElement | null): HTMLElement[] => {
 };
 
 const getRootItems = (): HTMLElement[] => getLevelItems(null);
+
+// ---- peek cap (ADR-0043) -------------------------------------------------
+
+// The list hides its scrollbar, so an overflowing menu must end on a
+// half-visible item — the peek. Measured from the real item rows (labels and
+// dividers share the list) against the stylesheet ceiling (`max-h-[80vh]`).
+const applyListCap = () => {
+  const list = listRef.value;
+
+  if (list) applyPeekCap(list, { rows: getRootItems() });
+};
+
+const onListSlotChange = () => {
+  if (isOpen.value) applyListCap();
+};
 
 const itemFromPath = (path: EventTarget[]): HTMLElement | null => {
   for (const el of path) {
@@ -587,6 +603,8 @@ const onToggle = (event: Event) => {
     addDismissListeners();
 
     requestAnimationFrame(() => {
+      applyListCap();
+
       if (pendingOpenFocus === 'none') return;
 
       const items = getRootItems().filter((i) => !isItemDisabled(i));
@@ -833,6 +851,10 @@ onMounted(() => {
   slot?.addEventListener('slotchange', onSlotChange);
   onSlotChange();
 
+  listRef.value
+    ?.querySelector('slot')
+    ?.addEventListener('slotchange', onListSlotChange);
+
   if (coerceBoolean(props.open)) {
     requestAnimationFrame(() => openMenu('first'));
   }
@@ -843,6 +865,9 @@ onBeforeUnmount(() => {
   host?.removeEventListener('keydown', onKeydown);
   host?.removeEventListener('pointerover', onPointerOver as EventListener);
   removeDismissListeners();
+  listRef.value
+    ?.querySelector('slot')
+    ?.removeEventListener('slotchange', onListSlotChange);
 
   if (typeTimer !== null) clearTimeout(typeTimer);
 

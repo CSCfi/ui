@@ -207,3 +207,14 @@
 @utility rounded-csc-xl {
   @apply supports-corner-shape:[corner-shape:squircle] supports-corner-shape:rounded-3xl not-supports-corner-shape:rounded-xl;
 }
+
+/*
+ * Transient list panels hide their scrollbar (ADR-0043); the half-visible
+ * peek row is the overflow cue instead. Standard property only — every
+ * browser in the support matrix has it, and it leaves the documented
+ * `scrollbar-width: auto` restore route intact (a `::-webkit-scrollbar`
+ * hide would keep winning once the consumer sets `auto`).
+ */
+@utility scrollbar-hidden {
+  scrollbar-width: none;
+}

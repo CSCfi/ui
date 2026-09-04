@@ -867,6 +867,7 @@ export interface CMenuElementEventMap {
   select: CustomEvent<{ value: unknown }>;
 }
 
+/** A command menu: a transient panel of actions or navigation choices opened from a trigger (the WAI-ARIA menu-button pattern), authored declaratively with slotted `c-menu-item`, `c-menu-label` and `c-divider` elements. Activating an item fires a one-off `select` event and closes the menu; the menu holds no selected value — that is `c-select`'s job. */
 export interface CMenuElement extends Omit<HTMLElement, 'distance' | 'open' | 'position' | 'trigger'> {
   /** Distance from the trigger to the panel, in pixels. Defaults to `0`. */
   distance?: number | string;
@@ -1353,6 +1354,7 @@ export interface CSelectElementEventMap {
   'update:value': CustomEvent<CSelectItem | null | number | string>;
 }
 
+/** A value-selection field: a readonly field that opens a listbox of options — slotted `c-option` elements or an `items` array — and holds the picked value, emitting the value events that back `v-model`. */
 export interface CSelectElement extends Omit<HTMLElement, 'clearable' | 'disabled' | 'errorMessage' | 'hideDetails' | 'hint' | 'hostId' | 'items' | 'itemsPerPage' | 'label' | 'labelOnTop' | 'loading' | 'name' | 'optionAsSelection' | 'placeholder' | 'required' | 'returnObject' | 'shadow' | 'size' | 'valid' | 'value'> {
   /** Make the selected value clearable */
   clearable?: boolean;
