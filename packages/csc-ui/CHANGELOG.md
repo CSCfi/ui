@@ -1,5 +1,231 @@
 # @cscfi/csc-ui
 
+## 4.0.0-alpha.11
+
+### Patch Changes
+
+- [#267](https://github.com/CSCfi/ui/pull/267) [`eabb9fa`](https://github.com/CSCfi/ui/commit/eabb9fa1d57ea7cf19c805d59efca1ce4c83334c) Thanks [@villeerikssoncsc](https://github.com/villeerikssoncsc)! - `c-button-group` and `c-tab-buttons` now read on every surface (ADR-0042).
+  Their track was drawn only by an opaque fill, which disappeared on the page
+  canvas, on `surface-muted`, and on dark-mode cards. The track keeps its fill
+  and gains a 1px hairline frame painted with the `divider` token, so the
+  control is visible wherever it is placed. The height is unchanged: the frame
+  replaces 1px of the inner padding. The `root` part of both components now
+  carries a border; `::part(root)` overrides of `background` are unaffected.
+
+## 4.0.0-alpha.10
+
+### Minor Changes
+
+- [#265](https://github.com/CSCfi/ui/pull/265) [`db862f7`](https://github.com/CSCfi/ui/commit/db862f72a692d3904cd03cacab76fcc5c36b6ff9) Thanks [@villeerikssoncsc](https://github.com/villeerikssoncsc)! - Publish the chart tokens as importable data (ADR-0040), so canvas charts no
+  longer scrape `--c-chart-*` from the document.
+
+  - `chartSlots` and `chartAnatomy`: the twelve series slots and the chart
+    anatomy roles (`surface`, `grid`, `axis`) per theme mode, as `oklch()`
+    strings — the palette's own colour space, ready for CSS, SVG and canvas.
+  - `chartSlotsHex` and `chartAnatomyHex`: the same colours as `#rrggbb`, for
+    chart libraries that do their own colour maths in sRGB (ECharts, Chart.js)
+    and cannot parse `oklch()`.
+  - `themeMode()`: resolves the mode on screen by the same cascade tokens.css
+    uses (explicit `data-theme` wins, else the OS preference; light on the
+    server).
+
+  The data is generated from the semantic token maps at build time and guarded
+  by a parity lint, and it always reports the frozen, validated set — it never
+  follows a consumer's `--c-chart-*` overrides. Re-exported from
+  `@cscfi/csc-ui-react`.
+
+- [#265](https://github.com/CSCfi/ui/pull/265) [`db862f7`](https://github.com/CSCfi/ui/commit/db862f72a692d3904cd03cacab76fcc5c36b6ff9) Thanks [@villeerikssoncsc](https://github.com/villeerikssoncsc)! - Export `DEFAULT_SEEDS` and `FAMILIES` from the package root.
+
+  A theme UI (colour pickers, a brand switcher) can now start from the
+  library's built-in step-500 seeds and the list of themable families instead
+  of reading `--c-<family>-500` back off the document — those values are
+  `oklch()` strings since ADR-0041 and are not what an `<input type="color">`
+  accepts. `applyTheme` / `resetTheme` are unchanged.
+
+  The published typings now include the hand-written `ramp.d.ts`, so `Family`,
+  `ThemeSeeds`, `DEFAULT_SEEDS` and `FAMILIES` resolve to their real types for
+  consumers instead of falling through to an unresolved module.
+
+- [#265](https://github.com/CSCfi/ui/pull/265) [`db862f7`](https://github.com/CSCfi/ui/commit/db862f72a692d3904cd03cacab76fcc5c36b6ff9) Thanks [@villeerikssoncsc](https://github.com/villeerikssoncsc)! - Emit every colour token as `oklch()` (ADR-0041).
+
+  All `--c-*` custom properties in `tokens.css` — palette steps, semantic
+  roles' literal values (chart slots, logo marks) — and the ramps written by
+  `applyTheme` / `themeToCss` are now `oklch(L C H)` strings instead of
+  `#rrggbbff`. Colours are unchanged: each value is converted from the same
+  validated hex at a precision that round-trips exactly, and the build's ramp
+  parity check compares tokens.css and the runtime output byte for byte. The
+  `--c-<family>-rgb` compositing triples stay numeric.
+
+  Requires a browser with `oklch()` support (Chrome 111, Safari 15.4, Firefox
+  113 and later), which the library's custom-element and Tailwind v4 baseline
+  already implies. Consumers who read `--c-*` back and parsed hex should use
+  the exported chart data (`chartSlotsHex`) or the `-rgb` triples instead.
+
+### Patch Changes
+
+- [#265](https://github.com/CSCfi/ui/pull/265) [`db862f7`](https://github.com/CSCfi/ui/commit/db862f72a692d3904cd03cacab76fcc5c36b6ff9) Thanks [@villeerikssoncsc](https://github.com/villeerikssoncsc)! - `c-csc-logo` renders fully white in dark mode. The dark `logo-wordmark`,
+  `logo-teal` and `logo-magenta` roles all resolve to `white`; previously the
+  star and wordmark were near-white (`slate-100`) and the kite kept a
+  brightened magenta literal, so the mark read as two-tone on the dark header.
+  Light mode is unchanged.
+
+## 4.0.0-alpha.9
+
+### Patch Changes
+
+- [#263](https://github.com/CSCfi/ui/pull/263) [`e8d275b`](https://github.com/CSCfi/ui/commit/e8d275b53571ed519cd3185ae873459af848ba5d) Thanks [@villeerikssoncsc](https://github.com/villeerikssoncsc)! - Restore the coloured `on-*-subtle` ink in dark mode.
+
+  The dark-mode retune (alpha.8) moved the `on-*-subtle` ink to the near-white
+  `*-50` step, which turned alert icons and headings white: `c-alert` paints
+  them with that ink on an alpha wash over the surface, not on the solid
+  subtle fill. The ink returns to the coloured `*-200` step for every family.
+  Primary, secondary, info, error and link keep the `*-700` subtle fill; accent,
+  success and warning go back to `*-800` (hover `*-700`) so the pair still
+  clears WCAG AA. Every `on-*-subtle / *-subtle` pair passes the strict
+  contrast audit (4.74:1–6.49:1).
+
+## 4.0.0-alpha.8
+
+### Minor Changes
+
+- [#260](https://github.com/CSCfi/ui/pull/260) [`6f3ac93`](https://github.com/CSCfi/ui/commit/6f3ac93ea3c0670884c5e22d23b7a73fbfcc29b3) Thanks [@villeerikssoncsc](https://github.com/villeerikssoncsc)! - Re-derive the twelve chart series slots (`--c-chart-1` … `--c-chart-12`) as
+  vivid single hues (ADR-0030, amended).
+
+  - The previous set was five dark/light shade pairs plus two singles, parked
+    just above the chroma floor; it read flat, and the dark shades read too
+    dark. The new set is twelve single hues at a mid lightness (OKLCH L
+    0.55–0.67 light, 0.58–0.67 dark) with chroma pushed to the sRGB gamut under
+    per-hue ceilings.
+  - Slots 1–7 keep their hue identities (blue, magenta, gold, purple, teal,
+    rose, cyan) so charts with up to seven series keep familiar colours; slots
+    8–12 are new hues (indigo, orchid, olive, violet, aqua). Status hue bands
+    (reds, oranges, greens) are excluded.
+  - Every slot now clears 3:1 on both chart surfaces — the four dark-mode
+    relief slots are gone. The all-pairs safe prefix for scatter/bubble/map
+    forms stays at slots 1–3.
+  - Validated as a set with the dataviz validator: adjacent-pair CVD ΔE 10.2
+    (light) / 8.7 (dark), normal-vision floor 17.9 / 16.9.
+
+  Chart tokens are frozen literals, so this does not interact with
+  `applyTheme`; consumers who override `--c-chart-*` are unaffected.
+
+- [#260](https://github.com/CSCfi/ui/pull/260) [`6f3ac93`](https://github.com/CSCfi/ui/commit/6f3ac93ea3c0670884c5e22d23b7a73fbfcc29b3) Thanks [@villeerikssoncsc](https://github.com/villeerikssoncsc)! - Make dark mode more vibrant: saturated fills and visible subtle tints, all
+  still resolved inside each role's own family (ADR-0034).
+
+  - The ramp core (`src/theme/ramp.js`) now holds full seed chroma through
+    steps 400–300 and tapers only from 200 up (`C_FACTOR` 400/300/200:
+    0.92/0.78/0.55 → 1.0/1.0/0.72). Step 300 is every family's dark-mode fill
+    and 200 its hover, and the old taper left low-chroma seeds reading grey —
+    the dark primary button moves from `#67a2b0` to `#54a5b7` at the same
+    contrast. Every family's 200–400 steps shift accordingly in both modes
+    (light-mode hover fills get slightly richer); warning and error are at the
+    sRGB gamut edge and do not move. Consumer ramps from `applyTheme` /
+    `themeToCss` follow the same curve.
+  - Dark-mode status and accent fills move to the saturated `*-400` step
+    (hover `*-300`, ink `*-950`). Primary, secondary and link fills stay where
+    they are — their next step fails WCAG AA text with any ink.
+  - Dark-mode subtle tints move from `*-800` to `*-700` (hover `*-600`) with
+    the near-white `*-50` ink. `*-800` sat within 1.0–1.6:1 of the slate-800
+    page and read as the page colour.
+  - Dark nav chrome moves one step lighter (`primary-700`, hover `primary-600`)
+    and the active item becomes the brand `primary-500` under white ink.
+  - The frozen chart slots (ADR-0030) are literals and do not move.
+
+  Dark mode passes every audited text pair at AA and every non-text pair at
+  3:1 (`scripts/audit-contrast.mjs --strict`); ramp parity
+  (`scripts/check-ramp-parity.mjs`) holds.
+
+## 4.0.0-alpha.7
+
+### Minor Changes
+
+- [#258](https://github.com/CSCfi/ui/pull/258) [`51a0521`](https://github.com/CSCfi/ui/commit/51a052127f844dc385597764f8f2627ab49f648c) Thanks [@villeerikssoncsc](https://github.com/villeerikssoncsc)! - Add designated triggers and popover nesting (ADR-0038).
+
+  - `c-popover`, `c-menu` and `c-tooltip` accept a new `trigger` prop — the
+    document ID of an element, or the element itself — for opening the overlay
+    from a trigger that cannot be slotted. The component wires its usual
+    opening interaction (click, or hover/focus for the tooltip), ARIA mirroring
+    and focus return onto the designated element and anchors the panel to it.
+    When both the slot and the prop are supplied, the prop wins and a console
+    warning flags it.
+  - `c-popover`s now nest: the open popovers form a chain where Escape closes
+    only the innermost popover (one press per layer), clicking outside closes
+    every popover that does not contain the click, and closing a popover closes
+    everything nested inside it. Previously a single Escape press closed every
+    open popover at once.
+
+- [#258](https://github.com/CSCfi/ui/pull/258) [`b0f195f`](https://github.com/CSCfi/ui/commit/b0f195f79c67ffd172a54bf894ed53821b6b7f04) Thanks [@villeerikssoncsc](https://github.com/villeerikssoncsc)! - The keyboard focus ring of `c-checkbox` and `c-radio` now follows the
+  indicator's colour (ADR-0039). It is drawn by the `indicator` part with
+  `currentColor`, and the checkbox indicator's border and checked fill draw with
+  `currentColor` too, so one rule recolours box, dot and focus ring together:
+  `c-checkbox::part(indicator) { color: green }`. Ring geometry is unchanged, the
+  hover tint stays on the primary colour, and `c-switch` is unchanged.
+
+### Patch Changes
+
+- [#258](https://github.com/CSCfi/ui/pull/258) [`5e501b9`](https://github.com/CSCfi/ui/commit/5e501b96f62b48b1cc6a1b5cf9280da888727ac1) Thanks [@villeerikssoncsc](https://github.com/villeerikssoncsc)! - Fix c-modal focus behaviour: the dialog box no longer shows a focus ring
+  (the native `<dialog>` root is a focus start point, not an interactive
+  control — it now suppresses the UA `:focus-visible` outline), and initial
+  focus reliably moves to the first focusable or `[autofocus]` element also
+  when the modal is open at mount. Previously the mount-time open path ran the
+  focus search before the slotted csc-ui elements had upgraded (their shadow
+  roots were still empty), so focus always fell back to the dialog itself.
+
+## 4.0.0-alpha.6
+
+### Minor Changes
+
+- [#256](https://github.com/CSCfi/ui/pull/256) [`444e2d9`](https://github.com/CSCfi/ui/commit/444e2d9f4ba67d44f6bbfdafc567a129e7388ce5) Thanks [@villeerikssoncsc](https://github.com/villeerikssoncsc)! - c-alert heading API:
+
+  - New `heading` string prop renders the alert heading; the slot overrides
+    it for rich content. New `heading` CSS part on the prop-rendered heading.
+  - The `title` slot is renamed to `heading` (`slot="heading"`) — `title` is
+    avoided across the library because the native `title` attribute triggers
+    the browser tooltip.
+
+- [#256](https://github.com/CSCfi/ui/pull/256) [`b30f342`](https://github.com/CSCfi/ui/commit/b30f3425b9ee541b8ac481591cdd63ee05acf67a) Thanks [@villeerikssoncsc](https://github.com/villeerikssoncsc)! - Selection controls are now stylable per state from consumer CSS (ADR-0035).
+  `c-checkbox`, `c-radio` and `c-switch` expose their interaction state as
+  custom states (`c-checkbox:state(checked)`, `:state(indeterminate)`,
+  `c-radio:state(checked)`, `:state(disabled)`, `c-switch:state(checked)`),
+  and the `indicator` part now targets the actual visual control — the
+  checkbox box (with the new `mark` part for the check glyph) and the radio
+  ring (its dot is the ring's `::after`) — so rules like
+  `c-checkbox:state(checked)::part(indicator) { background: green }` work.
+
+  BREAKING: `::part(indicator)` no longer targets the circular ripple/hover
+  surface on `c-checkbox`/`c-radio`; that surface is internal and no longer
+  stylable. Also fixes the indeterminate checkbox never filling its box.
+
+- [#256](https://github.com/CSCfi/ui/pull/256) [`692cf41`](https://github.com/CSCfi/ui/commit/692cf41b387b8119e92a4b7c7a40953bfb2ebcc8) Thanks [@villeerikssoncsc](https://github.com/villeerikssoncsc)! - c-table now leaves your `<table>` in your own DOM instead of moving it into
+  its shadow root:
+
+  - Your page CSS and `::part()` selectors now reach everything inside the
+    table — e.g. a `c-tag` in a cell can be styled with
+    `c-tag.status::part(root) { … }`, matching how other components customize.
+  - c-table installs its table styling once per page as a scoped stylesheet
+    (`c-table > table.c-table …`). Note that your own global table resets can
+    now also reach the table, which the shadow boundary previously blocked.
+  - Responsive mobile labels are cloned from the header cells as live nodes
+    instead of serialized HTML, and header lookup now only considers
+    `<th>` elements inside `<thead>`.
+  - A `<table>` slotted in after mount is now picked up automatically.
+
+### Patch Changes
+
+- [#256](https://github.com/CSCfi/ui/pull/256) [`284e9ec`](https://github.com/CSCfi/ui/commit/284e9ec98461d45473c562ca3e0d41168e9c4420) Thanks [@villeerikssoncsc](https://github.com/villeerikssoncsc)! - `c-autocomplete`'s in-panel search input now shows a magnifying-glass icon
+  in front of the input as a "type to filter" affordance. The glyph is
+  decorative (hidden from assistive technology) and inherits its color from
+  the search row, so `::part(search)` color overrides apply to it as well.
+  The options list also gained a small gap below the search row's divider.
+
+- [#256](https://github.com/CSCfi/ui/pull/256) [`b30f342`](https://github.com/CSCfi/ui/commit/b30f3425b9ee541b8ac481591cdd63ee05acf67a) Thanks [@villeerikssoncsc](https://github.com/villeerikssoncsc)! - Separator lines are now visible on dark-mode overlay surfaces (ADR-0036).
+  `c-divider` inside `c-menu` and the search-row line in `c-autocomplete`'s
+  panel used the `border` token, which in dark mode resolves to the same color
+  as the panel background. Both now paint a new `divider` semantic token — a
+  translucent ink (black @ 12% in light mode, white @ 12% in dark) that reads
+  consistently on every surface. The token is exported as `--c-divider` and,
+  via the Tailwind theme export, as the `divider` color utilities.
+
 ## 4.0.0-alpha.5
 
 ### Minor Changes
