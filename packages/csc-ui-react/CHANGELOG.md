@@ -1,5 +1,19 @@
 # @cscfi/csc-ui-react
 
+## 4.0.0-alpha.11
+
+### Patch Changes
+
+- [#267](https://github.com/CSCfi/ui/pull/267) [`eabb9fa`](https://github.com/CSCfi/ui/commit/eabb9fa1d57ea7cf19c805d59efca1ce4c83334c) Thanks [@villeerikssoncsc](https://github.com/villeerikssoncsc)! - `c-button-group` and `c-tab-buttons` now read on every surface (ADR-0042).
+  Their track was drawn only by an opaque fill, which disappeared on the page
+  canvas, on `surface-muted`, and on dark-mode cards. The track keeps its fill
+  and gains a 1px hairline frame painted with the `divider` token, so the
+  control is visible wherever it is placed. The height is unchanged: the frame
+  replaces 1px of the inner padding. The `root` part of both components now
+  carries a border; `::part(root)` overrides of `background` are unaffected.
+- Updated dependencies [[`eabb9fa`](https://github.com/CSCfi/ui/commit/eabb9fa1d57ea7cf19c805d59efca1ce4c83334c)]:
+  - @cscfi/csc-ui@4.0.0-alpha.11
+
 ## 4.0.0-alpha.10
 
 ### Minor Changes
