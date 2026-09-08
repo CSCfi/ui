@@ -1,5 +1,57 @@
 # @cscfi/csc-ui
 
+## 4.0.0-alpha.12
+
+### Minor Changes
+
+- [#269](https://github.com/CSCfi/ui/pull/269) [`4c2f2b1`](https://github.com/CSCfi/ui/commit/4c2f2b12542d5643b8ea7e76c26d8396f8523d0c) Thanks [@razorfever](https://github.com/razorfever)! - c-option-value is the option's label region again (ADR-0045). In c-select and
+  c-autocomplete a slotted option's label — the closed field's text, its tag in
+  `multiple` mode, what the autocomplete filter matches — is its `name`, else
+  the text of its `c-option-value`, else the option's whole text, so an option
+  can carry a description or an icon beside its label. c-autocomplete marks the
+  runs of each label that equal the typed query with `<mark>` again, inside the
+  `c-option-value` of a slotted option or in an `items` entry's label; an option
+  without the wrapper renders exactly as authored. The marks are the new `match`
+  part (`c-autocomplete::part(match)`), and the query is matched literally, so
+  `c++` or `(` no longer throw as they did in 3.x.
+
+- [#269](https://github.com/CSCfi/ui/pull/269) [`d81a761`](https://github.com/CSCfi/ui/commit/d81a761ee30b60037f4d45827f3702dc74f8be11) Thanks [@razorfever](https://github.com/razorfever)! - c-select and c-autocomplete gain a `multiple` mode (ADR-0044). With the
+  `multiple` attribute set, `value` holds an array of the picked values (or
+  items with `return-object`), in the order they were picked, and the value
+  events carry that array — `v-model` keeps working. Every option row shows a
+  checkbox indicator and toggles without closing the list; the selections
+  render as removable tags inside the field, and Backspace in the closed field
+  removes the last one. `max-tags` folds the row: `N` shows the first N tags
+  and one "+X more" tag, `0` shows only "X selected". A new `texts` prop
+  localises those strings and the field's control labels (clear, toggle,
+  search, loading, no results) that were hardcoded before.
+  `c-select::part(indicator)` / `::part(mark)` recolour the row checkboxes the
+  same way they do on c-checkbox; the new `tags`, `tag` and `tag-root` parts
+  reach the tag row, and c-autocomplete's option rows gain the `item` part.
+
+  c-tag gains a `close-label` prop naming its close button for assistive
+  technology.
+
+  BREAKING: because `value` can now be an array, the manifest no longer lists a
+  `value` attribute on c-select and c-autocomplete — bind it as a property
+  (`v-model`, `:value.prop`, `element.value = …`); the single-value contract
+  is otherwise unchanged. c-autocomplete's `no-results-text` prop is removed:
+  set `texts.noResults` instead. A `closeable` c-tag's host is no longer a
+  `role="button"` tab stop — its close button is the interactive control — so
+  listen for `close` rather than key events on a closeable tag.
+
+### Patch Changes
+
+- [#269](https://github.com/CSCfi/ui/pull/269) [`8ef62d1`](https://github.com/CSCfi/ui/commit/8ef62d16494ad5fe0b0ac2651a5f8bb83b6dfcb9) Thanks [@razorfever](https://github.com/razorfever)! - `c-menu`, its submenus and `c-select` now hide the list scrollbar, as
+  `c-autocomplete` already did (ADR-0043). In its place an overflowing panel
+  always ends on a half-visible row — the peek — so it is clear that more items
+  follow. `items-per-page` keeps meaning that many full rows before the peek, and
+  menus cap at the viewport. The cap is now measured from the real rows, so
+  taller `c-option` rows and menus mixing items with labels and dividers cut
+  correctly. Restore the scrollbar with `scrollbar-width: auto` on
+  `c-select::part(list)`, `c-autocomplete::part(list)`, `c-menu::part(list)` or
+  `c-menu-item::part(submenu)`.
+
 ## 4.0.0-alpha.11
 
 ### Patch Changes
