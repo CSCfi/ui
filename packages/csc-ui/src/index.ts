@@ -82,6 +82,8 @@ export type {
   CAutocompleteItem,
   CAutocompleteOption,
   CAutocompleteProps,
+  CAutocompleteTexts,
+  CAutocompleteValue,
 } from './components/c-autocomplete/CAutocomplete.vue';
 
 export type {
@@ -144,6 +146,12 @@ export type {
 export type { CPopoverProps } from './components/c-popover/CPopover.vue';
 
 export type { CProgressCircleProps } from './components/c-progress-circle/CProgressCircle.vue';
+
+export type {
+  CSelectProps,
+  CSelectTexts,
+  CSelectValue,
+} from './components/c-select/CSelect.vue';
 
 export type {
   CStatusProps,

@@ -1,5 +1,37 @@
 A filterable value-selection component: a readonly value field that opens a popover panel with a search input above the matching options.
 
+## Options
+
+Options are slotted `c-option` elements or an `items` array of
+`{ name, value }` entries. A slotted option's label — the text shown in the
+closed field and in its tag, and the text the filter matches — is its `name`
+attribute, else the text of a `c-option-value` inside it, else the option's
+whole text. Wrap the label in `c-option-value` when an option carries more
+than its label, such as a description; the rest of the option's markup still
+renders in the row:
+
+```html
+<c-option value="ts">
+  <c-option-value>TypeScript</c-option-value>
+  <small>JavaScript with static types</small>
+</c-option>
+```
+
+While a query is typed, the runs of each option's label that equal it are
+marked: inside the `c-option-value` of a slotted option, or in the plain
+label of an `items` entry. A slotted option without the wrapper is rendered
+exactly as authored and never marked. Every occurrence of the literal query
+is marked, whatever the filter did — a fuzzy `filter`, or a `name` that
+differs from the wrapper's text, can leave a row unmarked — and the wrapper's
+content is treated as plain text while a query is active. The marks are the
+`match` part:
+
+```css
+c-autocomplete::part(match) {
+  font-weight: 600;
+}
+```
+
 ## Filtering
 
 By default the component filters its options itself: the query typed into the
@@ -26,3 +58,68 @@ label even when a later fetch no longer includes it: the label is remembered
 when the option is committed, and a programmatically set value resolves its
 label from the current options, or from the object's `name` when
 `return-object` is used.
+
+## Multiple selection
+
+Set `multiple` to let the user pick several options. The value is then an
+array of the picked options' values in the order they were picked (an array
+of `{ name, value }` items with `return-object`), and `[]` when nothing is
+picked. Arrays have no attribute form — bind `value` as a DOM property
+(`v-model` or `:value.prop` in Vue; the React wrapper and property
+assignment do this naturally). Picking an option toggles it and keeps the
+panel open; the search input keeps its query after a pick, so several
+matches can be picked in a row. `clearable` clears the whole selection.
+
+Each picked option shows as a tag inside the field, and the field grows as
+the tags wrap. A tag's close button removes that option; Backspace in the
+closed field removes the last one. Set `max-tags` to show only that many
+tags and fold the rest into a single "+N more" tag, or `max-tags="0"` to
+show no tags at all — the field then reads "N selected". Assistive
+technology always hears the full selection as the field's value. With
+`external`, a pick's label is remembered when it is made, so a later fetch
+that no longer lists it keeps its tag readable.
+
+The row checkboxes recolour like c-checkbox's (`::part(indicator)`,
+`::part(mark)`), and the tags are stylable through the `tags`, `tag` and
+`tag-root` parts:
+
+```css
+c-autocomplete::part(tag-root) {
+  background: var(--c-primary-subtle);
+}
+```
+
+## Texts
+
+Every built-in string — the clear and toggle button labels, the search
+input's placeholder and accessible label, the loading and no-results rows, a
+tag's remove label, the overflow and count texts — can be replaced for
+another language through the `texts` object, merged over the English
+defaults. Count and label texts are functions, so the object must be bound
+as a DOM property; the `placeholder` prop still wins over
+`texts.searchPlaceholder` when both are set:
+
+```vue
+<c-autocomplete
+  :texts.prop="{
+    noResults: 'Ei osumia',
+    remove: (label) => `Poista ${label}`,
+  }"
+  multiple
+/>
+```
+
+## Scrolling
+
+The panel shows `items-per-page` full rows (six by default) and then a
+half-visible row instead of a scrollbar: the cut row is the cue that more
+options follow, and the wheel, touch and arrow keys scroll as usual. Set
+`items-per-page="0"` to let the list grow to the space the panel allows; it
+still ends on a half row when it overflows. To bring the native scrollbar
+back:
+
+```css
+c-autocomplete::part(list) {
+  scrollbar-width: auto;
+}
+```

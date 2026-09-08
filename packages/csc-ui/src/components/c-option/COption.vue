@@ -4,7 +4,7 @@
 
 <script setup lang="ts">
 /**
- * @slot default - The option's visible label content, shown in the c-select dropdown list
+ * @slot default - The option's content, rendered in the list row; wrap the label text in c-option-value when the option carries more than its label
  */
 import { onMounted, useHost } from 'vue';
 

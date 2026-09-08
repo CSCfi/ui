@@ -9,10 +9,11 @@
  * return the typed element.
  */
 
-import type { CAutocompleteFilter, CAutocompleteItem } from './components/c-autocomplete/CAutocomplete.vue';
+import type { CAutocompleteFilter, CAutocompleteItem, CAutocompleteTexts, CAutocompleteValue } from './components/c-autocomplete/CAutocomplete.vue';
 import type { CButtonGroupValue } from './components/c-button-group/CButtonGroup.vue';
 import type { CDataTableCellContent, CDataTableColumn, CDataTableExpandedContext, CDataTableRow, CDataTableSort, CDataTableTexts } from './components/c-data-table/CDataTable.vue';
 import type { CPaginationOptions } from './components/c-pagination/CPagination.vue';
+import type { CSelectTexts, CSelectValue } from './components/c-select/CSelect.vue';
 import type { CSelectItem, CToastMessage } from './types';
 
 // Local (non-exported) types referenced by the interfaces, inlined.
@@ -21,7 +22,7 @@ type AccordionPrimitive = number | string;
 type AccordionValue = AccordionPrimitive | AccordionPrimitive[] | null;
 
 type DropdownItem = {
-  disabled?: boolean;
+  disabled?: boolean | string;
   name: string;
   outerHTML?: string;
   selected?: boolean;
@@ -191,9 +192,10 @@ export interface CAutocompleteElementEventMap {
    * Fired when the selected value changes (an option is committed or the
    * selection is cleared), carrying the new value — the option's value, or
    * the whole `{ name, value }` item when `return-object` is set; `null`
-   * when cleared.
+   * when cleared. In `multiple` mode the whole array of picked values, in
+   * pick order (`[]` when cleared).
    */
-  changeValue: CustomEvent<CAutocompleteItem | null | number | string>;
+  changeValue: CustomEvent<CAutocompleteValue>;
   /**
    * Native bubbling input event dispatched alongside every value change so a
    * plain `v-model` stays in sync. Carries no detail.
@@ -203,11 +205,11 @@ export interface CAutocompleteElementEventMap {
    * Fired alongside `changeValue` with the same detail — the `v-model`
    * contract.
    */
-  'update:value': CustomEvent<CAutocompleteItem | null | number | string>;
+  'update:value': CustomEvent<CAutocompleteValue>;
 }
 
 /** A filterable value-selection component: a readonly value field that opens a popover panel with a search input above the matching options. */
-export interface CAutocompleteElement extends Omit<HTMLElement, 'clearable' | 'disabled' | 'errorMessage' | 'external' | 'filter' | 'hideDetails' | 'hint' | 'hostId' | 'items' | 'itemsPerPage' | 'label' | 'labelOnTop' | 'loading' | 'name' | 'noResultsText' | 'placeholder' | 'required' | 'returnObject' | 'shadow' | 'size' | 'valid' | 'value'> {
+export interface CAutocompleteElement extends Omit<HTMLElement, 'clearable' | 'disabled' | 'errorMessage' | 'external' | 'filter' | 'hideDetails' | 'hint' | 'hostId' | 'items' | 'itemsPerPage' | 'label' | 'labelOnTop' | 'loading' | 'maxTags' | 'multiple' | 'name' | 'placeholder' | 'required' | 'returnObject' | 'shadow' | 'size' | 'texts' | 'valid' | 'value'> {
   /** Make the selected value clearable */
   clearable?: boolean;
   /** Disable the input */
@@ -238,10 +240,22 @@ export interface CAutocompleteElement extends Omit<HTMLElement, 'clearable' | 'd
   labelOnTop?: boolean;
   /** Show loading state */
   loading?: boolean;
+  /**
+   * In `multiple` mode, show at most this many selected-value tags and fold
+   * the rest into one "+N more" tag; `0` shows no tags and reads "N selected"
+   * instead; unset shows every tag
+   */
+  maxTags?: number;
+  /**
+   * Allow selecting several options: rows toggle, the panel stays open and
+   * keeps its query, `value` becomes an array of the selected values (items
+   * with `return-object`) in the order they were picked, and the picks show
+   * as tags inside the field. Arrays have no attribute form — bind `value` as
+   * a DOM property
+   */
+  multiple?: boolean;
   /** Input field name */
   name?: string;
-  /** Message shown when the query matches no options */
-  noResultsText?: string;
   /** Placeholder for the in-panel search input */
   placeholder?: string;
   /** Set the autocomplete as required */
@@ -252,10 +266,18 @@ export interface CAutocompleteElement extends Omit<HTMLElement, 'clearable' | 'd
   shadow?: boolean;
   /** Field height: the 44px default or the 36px `small` box */
   size?: 'default' | 'small';
+  /**
+   * UI text overrides (i18n), merged over the English defaults. Objects have
+   * no attribute form — bind as a DOM property (`:texts.prop` in Vue)
+   */
+  texts?: CAutocompleteTexts;
   /** Set the validity of the input */
   valid?: boolean;
-  /** Selected value (scalar, or object when return-object is set) */
-  value?: CAutocompleteItem | null | number | string;
+  /**
+   * Selected value: the option's value, or the whole item with
+   * `return-object`; an array of them in `multiple` mode
+   */
+  value?: CAutocompleteValue;
   /** Reset autocomplete state */
   reset(): void;
   addEventListener<K extends keyof CAutocompleteElementEventMap>(
@@ -628,7 +650,7 @@ export interface CDropdownElementEventMap {
   selectOption: CustomEvent<{ name: string; value: number | string }>;
 }
 
-export interface CDropdownElement extends Omit<HTMLElement, 'dropdownItemType' | 'hostId' | 'index' | 'items' | 'itemsPerPage' | 'parent' | 'type'> {
+export interface CDropdownElement extends Omit<HTMLElement, 'dropdownItemType' | 'hostId' | 'index' | 'items' | 'itemsPerPage' | 'multiple' | 'parent' | 'selected' | 'type'> {
   /** Whether items are <c-option> elements or plain objects */
   dropdownItemType?: 'item' | 'option';
   /** Id used to build option/announce element ids */
@@ -639,8 +661,18 @@ export interface CDropdownElement extends Omit<HTMLElement, 'dropdownItemType' |
   items?: ArrayLike<DropdownItem>;
   /** Items per page before adding scroll */
   itemsPerPage?: number;
+  /**
+   * Multi-select mode: rows toggle instead of committing, each carries a
+   * decorative checkbox indicator, and the listbox is `aria-multiselectable`
+   */
+  multiple?: boolean;
   /** Dropdown parent (the c-select / c-autocomplete host element) */
   parent?: HTMLElement | null;
+  /**
+   * Values of the currently selected items in `multiple` mode; drives each
+   * row's `aria-selected` and its indicator
+   */
+  selected?: (number | string)[];
   /** Parent type — drives autocomplete-only behaviour (highlight, messages) */
   type?: 'autocomplete' | 'select';
   /** Close dropdown */
@@ -867,6 +899,7 @@ export interface CMenuElementEventMap {
   select: CustomEvent<{ value: unknown }>;
 }
 
+/** A command menu: a transient panel of actions or navigation choices opened from a trigger (the WAI-ARIA menu-button pattern), authored declaratively with slotted `c-menu-item`, `c-menu-label` and `c-divider` elements. Activating an item fires a one-off `select` event and closes the menu; the menu holds no selected value — that is `c-select`'s job. */
 export interface CMenuElement extends Omit<HTMLElement, 'distance' | 'open' | 'position' | 'trigger'> {
   /** Distance from the trigger to the panel, in pixels. Defaults to `0`. */
   distance?: number | string;
@@ -1020,6 +1053,7 @@ export interface COptionElement extends Omit<HTMLElement, 'disabled' | 'name' | 
   value?: number | string;
 }
 
+/** The label region of a `c-option`: wraps the text that c-select and c-autocomplete use as the option's label — in the closed field, its tag and the autocomplete filter — so the option can carry a description or an icon beside its label, and the region in which c-autocomplete marks the runs equal to the query (`::part(match)`). */
 export interface COptionValueElement extends HTMLElement {
 }
 
@@ -1339,8 +1373,10 @@ export interface CSelectElementEventMap {
    * Fired when the selection changes (an option is picked or the value is
    * cleared), carrying the new value — the option's value, or the whole
    * `{ name, value }` item when `return-object` is set; `null` when cleared.
+   * In `multiple` mode the whole array of picked values, in pick order
+   * (`[]` when cleared).
    */
-  changeValue: CustomEvent<CSelectItem | null | number | string>;
+  changeValue: CustomEvent<CSelectValue>;
   /**
    * Native bubbling input event dispatched alongside every value change so a
    * plain `v-model` stays in sync. Carries no detail.
@@ -1350,10 +1386,11 @@ export interface CSelectElementEventMap {
    * Fired alongside `changeValue` with the same detail — the `v-model`
    * contract.
    */
-  'update:value': CustomEvent<CSelectItem | null | number | string>;
+  'update:value': CustomEvent<CSelectValue>;
 }
 
-export interface CSelectElement extends Omit<HTMLElement, 'clearable' | 'disabled' | 'errorMessage' | 'hideDetails' | 'hint' | 'hostId' | 'items' | 'itemsPerPage' | 'label' | 'labelOnTop' | 'loading' | 'name' | 'optionAsSelection' | 'placeholder' | 'required' | 'returnObject' | 'shadow' | 'size' | 'valid' | 'value'> {
+/** A value-selection field: a readonly field that opens a listbox of options — slotted `c-option` elements or an `items` array — and holds the picked value, emitting the value events that back `v-model`. */
+export interface CSelectElement extends Omit<HTMLElement, 'clearable' | 'disabled' | 'errorMessage' | 'hideDetails' | 'hint' | 'hostId' | 'items' | 'itemsPerPage' | 'label' | 'labelOnTop' | 'loading' | 'maxTags' | 'multiple' | 'name' | 'optionAsSelection' | 'placeholder' | 'required' | 'returnObject' | 'shadow' | 'size' | 'texts' | 'valid' | 'value'> {
   /** Make the selected value clearable */
   clearable?: boolean;
   /** Disable the input */
@@ -1376,6 +1413,20 @@ export interface CSelectElement extends Omit<HTMLElement, 'clearable' | 'disable
   labelOnTop?: boolean;
   /** Show loading state */
   loading?: boolean;
+  /**
+   * In `multiple` mode, show at most this many selected-value tags and fold
+   * the rest into one "+N more" tag; `0` shows no tags and reads "N selected"
+   * instead; unset shows every tag
+   */
+  maxTags?: number;
+  /**
+   * Allow selecting several options: rows toggle and the list stays open,
+   * `value` becomes an array of the selected values (items with
+   * `return-object`) in the order they were picked, and the picks show as
+   * tags inside the field. `option-as-selection` is ignored in this mode.
+   * Arrays have no attribute form — bind `value` as a DOM property
+   */
+  multiple?: boolean;
   /** Input field name */
   name?: string;
   /** Display the option as selection (only with <c-option> elements) */
@@ -1390,10 +1441,18 @@ export interface CSelectElement extends Omit<HTMLElement, 'clearable' | 'disable
   shadow?: boolean;
   /** Field height: the 44px default or the 36px `small` box */
   size?: 'default' | 'small';
+  /**
+   * UI text overrides (i18n), merged over the English defaults. Objects have
+   * no attribute form — bind as a DOM property (`:texts.prop` in Vue)
+   */
+  texts?: CSelectTexts;
   /** Set the validity of the input */
   valid?: boolean;
-  /** Selected value (scalar, or object when return-object is set) */
-  value?: CSelectItem | null | number | string;
+  /**
+   * Selected value: the option's value, or the whole item with
+   * `return-object`; an array of them in `multiple` mode
+   */
+  value?: CSelectValue;
   /** Reset select state */
   reset(): void;
   addEventListener<K extends keyof CSelectElementEventMap>(
@@ -1894,13 +1953,15 @@ export interface CTagElementEventMap {
   close: CustomEvent<void>;
 }
 
-export interface CTagElement extends Omit<HTMLElement, 'active' | 'badge' | 'closeable' | 'flat' | 'size'> {
+export interface CTagElement extends Omit<HTMLElement, 'active' | 'badge' | 'closeable' | 'closeLabel' | 'flat' | 'size'> {
   /** Mark tag as active */
   active?: boolean;
   /** Display an optional badge at the start of the tag */
   badge?: null | number | string;
   /** Mark tag as closeable */
   closeable?: boolean;
+  /** Accessible name of the close button rendered when `closeable` */
+  closeLabel?: string;
   /** Remove the hover effect */
   flat?: boolean;
   /** Size of the tag */

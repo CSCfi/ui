@@ -8,35 +8,39 @@ import { Component, CUSTOM_ELEMENTS_SCHEMA, signal } from '@angular/core';
   template: `
     <div>
       <c-autocomplete
-        [value]="language()"
+        [value]="languages()"
         clearable
-        hint="Only the c-option-value text is filtered, marked and used as the label"
-        label="Programming language"
+        hint="Type to filter, pick several"
+        label="Programming languages"
+        max-tags="3"
+        multiple
         placeholder="Start typing to search"
-        (changeValue)="language.set($any($event).detail)"
+        (changeValue)="languages.set($any($event).detail)"
       >
         <c-option value="js">
           <c-option-value>JavaScript</c-option-value>
-          <small>Web pages and Node.js</small>
         </c-option>
         <c-option value="ts">
           <c-option-value>TypeScript</c-option-value>
-          <small>JavaScript with static types</small>
         </c-option>
         <c-option value="py">
           <c-option-value>Python</c-option-value>
-          <small>Scripting and data science</small>
         </c-option>
         <c-option value="rs">
           <c-option-value>Rust</c-option-value>
-          <small>Systems programming</small>
+        </c-option>
+        <c-option value="go">
+          <c-option-value>Go</c-option-value>
+        </c-option>
+        <c-option value="rb">
+          <c-option-value>Ruby</c-option-value>
         </c-option>
       </c-autocomplete>
 
-      <p>Value: {{ language() ?? 'null' }}</p>
+      <p>Value: {{ languages().length ? languages().join(', ') : '[]' }}</p>
     </div>
   `,
 })
-export class BasicExampleComponent {
-  language = signal<string | null>(null);
+export class MultipleExampleComponent {
+  languages = signal<string[]>(['ts']);
 }

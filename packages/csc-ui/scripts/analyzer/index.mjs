@@ -146,6 +146,35 @@ const analyzeComponent = (tagName) => {
 
   const template = analyzeTemplate(descriptor.template?.ast);
 
+  // Parts stamped by an imported `src/shared/*.vue` SFC belong to this host's
+  // contract: a shared non-element SFC (FormLabel, SelectionIndicator, …) is
+  // rendered inside the host's shadow root, so its static `part="…"` names
+  // are reachable as `<host>::part(<name>)` and must be documented here. Only
+  // the static parts merge — a shared `<slot>` is not a host slot, and a
+  // dynamic `:part` is supplied by the host's own static attribute (already
+  // collected above).
+  for (const match of source.matchAll(
+    /import\s+\w+\s+from\s+['"]\.\.\/\.\.\/shared\/([\w-]+\.vue)['"]/g,
+  )) {
+    const sharedPath = path.join(packageRoot, 'src/shared', match[1]);
+
+    if (!existsSync(sharedPath)) continue;
+
+    const shared = parse(readFileSync(sharedPath, 'utf8'), {
+      filename: sharedPath,
+    });
+
+    if (shared.errors.length) {
+      throw new Error(
+        `${tagName}: shared SFC ${match[1]} parse failed — ${shared.errors[0].message}`,
+      );
+    }
+
+    for (const part of analyzeTemplate(shared.descriptor.template?.ast).parts) {
+      if (!template.parts.includes(part)) template.parts.push(part);
+    }
+  }
+
   const usageSource = path.join(dir, 'usage.md');
 
   const hasUsage = existsSync(usageSource);

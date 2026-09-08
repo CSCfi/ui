@@ -476,7 +476,12 @@ const columns: CDataTableColumn<User>[] = [
   minimum-query-length / minimum-query-length-message props are removed. For
   an async data source, set external and listen to change:query (detail: the
   query string) — see the c-autocomplete external example. A custom match is
-  the filter prop; no-matching-items-message is now no-results-text.
+  the filter prop; no-matching-items-message is now texts.noResults (the
+  texts object prop, bound as a property). c-option-value is the option's
+  label region again, in c-select too: a slotted option's label is name, else
+  the c-option-value text, else the option's whole text, and the runs of a
+  label equal to the query are marked as the match part
+  (c-autocomplete::part(match)); the 3.x mark element had no part.
 - c-modal: no native top layer / ::backdrop. New vocabulary — the scrim token
   and a dismissable prop (governs both backdrop-click and Escape).
 - c-menu: authored declaratively with slotted c-menu-item / c-menu-label

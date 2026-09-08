@@ -2,7 +2,13 @@
   <div :class="ui.root()" :data-badge="hasBadge ? badge : null" part="root">
     <slot />
 
-    <c-icon-button v-if="closeable" size="x-small" text @click="onClose">
+    <c-icon-button
+      v-if="closeable"
+      :aria-label="closeLabel"
+      size="x-small"
+      text
+      @click="onClose"
+    >
       <c-icon :path="mdiClose" :size="16" />
     </c-icon-button>
   </div>
@@ -28,6 +34,12 @@ export interface CTagProps {
    * @seeded from csc-ui — verify
    */
   closeable?: boolean;
+  /**
+   * Accessible name of the close button rendered when `closeable`
+   *
+   * @freeform
+   */
+  closeLabel?: string;
   /**
    * Remove the hover effect
    *
@@ -146,12 +158,14 @@ const tag = tv({
 // attribute into `$attrs`, which would otherwise fall through onto the shadow
 // root `[part=root]` div — giving it a duplicate role="button", tabindex="0"
 // and id, i.e. a second keyboard tab stop per tag. Keep those on the host only.
+// (Also keeps a parent's `part` / `exportparts` / `aria-hidden` on the host.)
 defineOptions({ inheritAttrs: false });
 
 const props = withDefaults(defineProps<CTagProps>(), {
   active: false,
   badge: null,
   closeable: false,
+  closeLabel: 'Remove',
   flat: false,
   size: 'default',
 });
@@ -178,12 +192,21 @@ const ui = computed(() =>
 
 // Stencil version exposes tabindex + role=button on the host so a tag is
 // keyboard-focusable like a button. `flat` tags skip both because they
-// are non-interactive labels.
+// are non-interactive labels. A `closeable` tag's only control is its close
+// button — the host must not be a second `role="button"` tab stop around it
+// (a nested interactive control, and two stops per tag in a `multiple`
+// field's tag row, ADR-0044); it stamps `data-closeable` so the escape-hatch
+// can drop the host focus ring that would otherwise double the button's own.
 onMounted(() => {
   if (!host) return;
   watchEffect(() => {
+    host.toggleAttribute('data-closeable', props.closeable && !props.flat);
+
     if (props.flat) {
       host.setAttribute('tabindex', '-1');
+      host.removeAttribute('role');
+    } else if (props.closeable) {
+      host.removeAttribute('tabindex');
       host.removeAttribute('role');
     } else {
       host.setAttribute('tabindex', '0');
@@ -236,6 +259,13 @@ const onClose = () => {
   outline: 2px var(--c-primary) solid;
   outline-offset: 2px;
   z-index: 1;
+}
+
+/* A closeable tag's host is not focusable itself, but `:focus-visible` still
+ * matches it while its close button holds focus; that button draws its own
+ * ring, so drop the host's. */
+:host([data-closeable]:focus-visible) {
+  outline: none;
 }
 
 /* The close button was a fixed 20px (16px on small tags) via the old

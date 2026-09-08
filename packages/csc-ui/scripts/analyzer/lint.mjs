@@ -5,8 +5,9 @@
  * customization API, so an undocumented or phantom name is an API
  * defect):
  *   - template slot without an `@slot` tag / `@slot` naming no template slot
- *   - part (own or exportparts-exposed) without an `@csspart` tag /
- *     `@csspart` naming no part
+ *   - part (own, stamped by an imported `src/shared/*.vue` SFC, or
+ *     exportparts-exposed) without an `@csspart` tag / `@csspart` naming no
+ *     part
  *   - a `setState('<name>')` custom state without a `@cssstate` tag /
  *     `@cssstate` naming a state the script never sets
  *   - a raw `new CustomEvent(` / `new Event(` in the SFC — events must go

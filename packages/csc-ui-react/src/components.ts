@@ -379,6 +379,7 @@ export const CMain = createComponent({
   tagName: 'c-main',
 });
 
+/** A command menu: a transient panel of actions or navigation choices opened from a trigger (the WAI-ARIA menu-button pattern), authored declaratively with slotted `c-menu-item`, `c-menu-label` and `c-divider` elements. Activating an item fires a one-off `select` event and closes the menu; the menu holds no selected value — that is `c-select`'s job. */
 export const CMenu = createComponent({
   displayName: 'CMenu',
   elementClass: elementClass<CMenuElement>('c-menu'),
@@ -440,6 +441,7 @@ export const COption = createComponent({
   tagName: 'c-option',
 });
 
+/** The label region of a `c-option`: wraps the text that c-select and c-autocomplete use as the option's label — in the closed field, its tag and the autocomplete filter — so the option can carry a description or an icon beside its label, and the region in which c-autocomplete marks the runs equal to the query (`::part(match)`). */
 export const COptionValue = createComponent({
   displayName: 'COptionValue',
   elementClass: elementClass<COptionValueElement>('c-option-value'),
@@ -530,6 +532,7 @@ export const CRadioGroup = createComponent({
   tagName: 'c-radio-group',
 });
 
+/** A value-selection field: a readonly field that opens a listbox of options — slotted `c-option` elements or an `items` array — and holds the picked value, emitting the value events that back `v-model`. */
 export const CSelect = createComponent({
   displayName: 'CSelect',
   elementClass: elementClass<CSelectElement>('c-select'),
