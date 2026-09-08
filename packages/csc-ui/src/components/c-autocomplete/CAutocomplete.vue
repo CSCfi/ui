@@ -14,7 +14,7 @@
       :data-hide-details="String(hideDetailsResolved)"
       :disabled
       :error-message
-      :filled="!!value"
+      :filled="hasSelection"
       :hint
       :input-id
       :label
@@ -30,14 +30,19 @@
       </span>
 
       <div :class="ui.content()" class="c-input__content">
+        <!-- The readonly combobox stays first in DOM order: in `multiple`
+             mode it is visually hidden behind the tag row (clip, never
+             display:none — it must keep taking focus) while its value carries
+             the whole selection for assistive technology. -->
         <input
           ref="fieldRef"
           :aria-controls="`${id}-listbox`"
           :aria-expanded="isOpen"
+          :aria-label="label || undefined"
           :class="ui.input()"
           :disabled
           :name="name || undefined"
-          :value="displayLabel"
+          :value="inputValue"
           aria-haspopup="listbox"
           autocomplete="off"
           class="c-input__input"
@@ -47,13 +52,44 @@
           @keydown="onFieldKeyDown"
         />
 
+        <!-- `multiple` mode: one closeable tag per picked option, in pick
+             order, folded by `max-tags`. The tag label is hidden from AT (the
+             combobox value already reads it); the close button is the tag's
+             only accessible — and focusable — control. -->
+        <div
+          v-if="tagsShown"
+          :class="ui.tags()"
+          part="tags"
+          @click="onTagsClick"
+        >
+          <c-tag
+            v-for="opt in visibleTags"
+            :key="String(opt.value)"
+            :close-label="t.remove(opt.label)"
+            :size
+            class="max-w-full"
+            exportparts="root:tag-root"
+            part="tag"
+            closeable
+            @close="removeValue(opt.value)"
+          >
+            <span :class="ui.tagLabel()" aria-hidden="true">
+              {{ opt.label }}
+            </span>
+          </c-tag>
+
+          <c-tag v-if="hiddenCount" :size aria-hidden="true" part="tag" flat>
+            {{ t.more(hiddenCount) }}
+          </c-tag>
+        </div>
+
         <c-spinner v-if="loading" :size="20" color="var(--c-primary)" />
 
         <c-icon-button
-          v-else-if="value && clearable"
+          v-else-if="hasSelection && clearable"
+          :aria-label="t.clearSelection"
           :class="ui.iconButton()"
           :disabled
-          aria-label="Clear selection"
           size="x-small"
           text
           @click="onReset"
@@ -64,9 +100,9 @@
 
         <c-icon-button
           v-else
+          :aria-label="t.toggleOptions"
           :class="ui.chevron()"
           :disabled
-          aria-label="Toggle options"
           size="x-small"
           text
           @click="onChevronClick"
@@ -120,11 +156,11 @@
             activeIndex >= 0 ? `${id}-opt-${activeIndex}` : undefined
           "
           :aria-controls="`${id}-listbox`"
+          :aria-label="t.filterOptions"
           :class="ui.searchInput()"
-          :placeholder="placeholder || 'Search...'"
+          :placeholder="placeholder || t.searchPlaceholder"
           :value="query"
           aria-autocomplete="list"
-          aria-label="Filter options"
           autocomplete="off"
           type="text"
           @input="onSearchInput"
@@ -135,6 +171,7 @@
       <ul
         :id="`${id}-listbox`"
         ref="listRef"
+        :aria-multiselectable="multipleOn ? 'true' : undefined"
         :class="ui.list()"
         part="list"
         role="listbox"
@@ -148,7 +185,7 @@
           part="info"
         >
           <c-spinner :size="18" color="var(--c-primary)" />
-          Loading
+          {{ t.loading }}
         </li>
 
         <!-- No-results row: only when a query is entered and nothing matches. -->
@@ -160,9 +197,11 @@
           <svg :class="ui.infoIcon()" aria-hidden="true" viewBox="0 0 24 24">
             <path :d="mdiAlert" />
           </svg>
-          {{ noResultsText }}
+          {{ t.noResults }}
         </li>
 
+        <!-- `mousedown.prevent`: a pointer pick must not move DOM focus from
+             the search input onto the row — highlighting is virtual. -->
         <li
           v-for="(opt, i) in filteredOptions"
           :id="`${id}-opt-${i}`"
@@ -174,17 +213,26 @@
             i === activeIndex ? 'c-autocomplete__item--active' : '',
           ]"
           :data-active="i === activeIndex || undefined"
+          part="item"
           role="option"
           tabindex="-1"
           @click="onSelect(opt)"
+          @mousedown.prevent
           @pointermove="activeIndex = i"
         >
+          <selection-indicator
+            v-if="multipleOn"
+            :checked="isSelected(opt)"
+            :disabled="opt.disabled"
+            class="relative"
+          />
+
           <span v-if="opt.html" :class="ui.itemLabel()" v-html="opt.html" />
 
           <span v-else :class="ui.itemLabel()">{{ opt.label }}</span>
 
           <svg
-            v-if="isSelected(opt)"
+            v-if="!multipleOn && isSelected(opt)"
             :class="ui.check()"
             aria-hidden="true"
             viewBox="0 0 24 24"
@@ -277,17 +325,25 @@ export interface CAutocompleteProps {
   /** Show loading state */
   loading?: boolean;
   /**
+   * In `multiple` mode, show at most this many selected-value tags and fold
+   * the rest into one "+N more" tag; `0` shows no tags and reads "N selected"
+   * instead; unset shows every tag
+   */
+  maxTags?: number;
+  /**
+   * Allow selecting several options: rows toggle, the panel stays open and
+   * keeps its query, `value` becomes an array of the selected values (items
+   * with `return-object`) in the order they were picked, and the picks show
+   * as tags inside the field. Arrays have no attribute form — bind `value` as
+   * a DOM property
+   */
+  multiple?: boolean;
+  /**
    * Input field name
    *
    * @freeform
    */
   name?: string;
-  /**
-   * Message shown when the query matches no options
-   *
-   * @freeform
-   */
-  noResultsText?: string;
   /**
    * Placeholder for the in-panel search input
    *
@@ -302,11 +358,65 @@ export interface CAutocompleteProps {
   shadow?: boolean;
   /** Field height: the 44px default or the 36px `small` box */
   size?: CFieldSize;
+  /**
+   * UI text overrides (i18n), merged over the English defaults. Objects have
+   * no attribute form — bind as a DOM property (`:texts.prop` in Vue)
+   */
+  texts?: CAutocompleteTexts;
   /** Set the validity of the input */
   valid?: boolean;
-  /** Selected value (scalar, or object when return-object is set) */
-  value?: CAutocompleteItem | null | number | string;
+  /**
+   * Selected value: the option's value, or the whole item with
+   * `return-object`; an array of them in `multiple` mode
+   */
+  value?: CAutocompleteValue;
 }
+
+/**
+ * UI texts of `c-autocomplete`, shallow-merged over the English defaults.
+ * Static labels are strings; count- or label-interpolated ones are
+ * functions.
+ */
+export interface CAutocompleteTexts {
+  /** Accessible label of the clear button. */
+  clearSelection?: string;
+  /** Accessible label of the search input inside the panel. */
+  filterOptions?: string;
+  /** Text of the loading row shown while `loading` with nothing to list. */
+  loading?: string;
+  /**
+   * Text of the overflow tag when `max-tags` folds the selection; receives the
+   * number of hidden tags.
+   */
+  more?: (count: number) => string;
+  /** Text of the row shown when the query matches no options. */
+  noResults?: string;
+  /** Accessible label of a tag's remove button; receives the option label. */
+  remove?: (label: string) => string;
+  /** Placeholder of the search input when the `placeholder` prop is empty. */
+  searchPlaceholder?: string;
+  /**
+   * Field text when `max-tags="0"` shows no tags; receives the selection
+   * count.
+   */
+  selected?: (count: number) => string;
+  /** Accessible label of the chevron button that opens and closes the panel. */
+  toggleOptions?: string;
+}
+
+/**
+ * Selection value of `c-autocomplete`: the committed option's value — or the
+ * whole `{ name, value }` item with `return-object` — and `null` when
+ * cleared. In `multiple` mode an array of them in the order they were
+ * picked, `[]` when empty.
+ */
+export type CAutocompleteValue =
+  | (number | string)[]
+  | CAutocompleteItem
+  | CAutocompleteItem[]
+  | null
+  | number
+  | string;
 </script>
 
 <script setup lang="ts">
@@ -319,7 +429,13 @@ export interface CAutocompleteProps {
  * @csspart card - The elevated surface inside the panel holding the search row and the list
  * @csspart search - The search-input row at the top of the panel
  * @csspart list - The scrollable options listbox
+ * @csspart item - One option row in the list
+ * @csspart indicator - The decorative checkbox box on an option row in `multiple` mode; border, fill and glyph draw with `currentColor`, so `color` recolours them together (the c-checkbox recipe)
+ * @csspart mark - The check glyph inside a row indicator; draws with `currentColor`
  * @csspart info - The info row: loading while `loading` with an empty list, otherwise no-results when the query matches no options
+ * @csspart tags - The row of selected-value tags inside the field (`multiple` mode)
+ * @csspart tag - One selected-value tag: the `c-tag` host, including the overflow tag
+ * @csspart tag-root - The pill box inside each tag (the `c-tag` `root` part), for colours and borders
  *
  * @subcomponents c-option, c-option-value
  */
@@ -346,6 +462,7 @@ import { ensureAnchorPositioning } from '../../shared/anchorPolyfill';
 import { coerceBoolean } from '../../shared/coerceBoolean';
 import { emitModelValue } from '../../shared/emitModelValue';
 import { applyPeekCap } from '../../shared/peekCap';
+import SelectionIndicator from '../../shared/SelectionIndicator.vue';
 import { useHostEmit } from '../../shared/useHostEmit';
 
 /** Events dispatched by `<c-autocomplete>`. */
@@ -367,9 +484,10 @@ interface CAutocompleteEvents {
    * Fired when the selected value changes (an option is committed or the
    * selection is cleared), carrying the new value — the option's value, or
    * the whole `{ name, value }` item when `return-object` is set; `null`
-   * when cleared.
+   * when cleared. In `multiple` mode the whole array of picked values, in
+   * pick order (`[]` when cleared).
    */
-  changeValue: CAutocompleteItem | null | number | string;
+  changeValue: CAutocompleteValue;
   /**
    * Native bubbling input event dispatched alongside every value change so a
    * plain `v-model` stays in sync. Carries no detail.
@@ -379,7 +497,7 @@ interface CAutocompleteEvents {
    * Fired alongside `changeValue` with the same detail — the `v-model`
    * contract.
    */
-  'update:value': CAutocompleteItem | null | number | string;
+  'update:value': CAutocompleteValue;
 }
 
 /**
@@ -402,19 +520,23 @@ interface CAutocompleteEvents {
  * c-dropdown. Consumer customization is via `::part()`.
  */
 const autocomplete = tv({
-  defaultVariants: { chevronActive: false, disabled: false },
+  defaultVariants: {
+    chevronActive: false,
+    disabled: false,
+    inputHidden: false,
+  },
   slots: {
     card: 'flex flex-col min-w-[180px] max-h-[80vh] overflow-hidden rounded-csc-md bg-surface-overlay shadow-[2px_4px_10px_#00000029]',
     check: 'w-4 h-4 shrink-0 fill-current ml-auto text-primary',
     chevron:
       'aspect-square -mr-1.5 rotate-0 transition-transform duration-300 ease-in-out',
-    content: 'flex items-center w-full',
+    content: 'relative flex items-center w-full min-w-0',
     iconButton: 'aspect-square -mr-1.5',
     info: 'flex items-center flex-nowrap gap-2 text-sm min-h-[42px] px-[10px] w-full cursor-default whitespace-nowrap text-on-surface-muted',
     infoIcon: 'w-[18px] h-[18px] shrink-0 fill-current text-warning',
     input:
       'max-h-8 py-2 bg-transparent border-0 text-on-surface flex-[1_1_auto] [font-family:var(--c-font-family)] text-base leading-5 max-w-full min-w-0 w-full cursor-pointer outline-none focus:outline-none active:outline-none placeholder:text-on-surface-muted placeholder:opacity-100',
-    item: 'flex items-center flex-nowrap gap-3 cursor-pointer text-sm min-h-[42px] outline-none px-[10px] whitespace-nowrap w-full rounded select-none data-[active]:bg-primary-subtle data-[active]:text-primary data-[active]:ring-1 data-[active]:ring-inset data-[active]:ring-primary text-on-surface',
+    item: 'flex items-center flex-nowrap gap-3 cursor-pointer text-sm min-h-[42px] outline-none px-[10px] py-2 whitespace-nowrap w-full rounded select-none data-[active]:bg-primary-subtle data-[active]:text-primary data-[active]:ring-1 data-[active]:ring-inset data-[active]:ring-primary text-on-surface',
     itemLabel: 'flex-auto overflow-hidden text-ellipsis whitespace-nowrap',
     list: 'list-none m-0 mt-1 p-1 outline-none overflow-y-auto scrollbar-hidden w-full',
     panel:
@@ -424,6 +546,13 @@ const autocomplete = tv({
     searchIcon: 'w-[18px] h-[18px] shrink-0 fill-current text-on-surface-muted',
     searchInput:
       'bg-transparent border-0 outline-none w-full py-2 text-base leading-5 text-on-surface [font-family:var(--c-font-family)] [caret-color:var(--c-primary)] placeholder:text-on-surface-muted placeholder:opacity-100',
+    // A long option label ellipsises inside its tag instead of blowing out
+    // the row.
+    tagLabel: 'truncate min-w-0',
+    // The tag row wraps; `py-2` keeps a one-row field at the 44px / 36px
+    // rhythm (default tag 28px + 16px, small tag 20px + 16px). Wrapping lives
+    // here, not on the content row, so the clear/chevron stay centred.
+    tags: 'flex flex-wrap items-center gap-1 py-2 flex-1 min-w-0',
     visuallyHidden:
       'absolute w-px h-px p-0 overflow-hidden border-0 [clip:rect(1px,1px,1px,1px)]',
   },
@@ -432,6 +561,14 @@ const autocomplete = tv({
     disabled: {
       true: {
         item: 'cursor-default pointer-events-none bg-on-surface/5 [filter:grayscale(1)_opacity(0.75)] data-[active]:bg-on-surface/5 data-[active]:text-inherit data-[active]:ring-0',
+      },
+    },
+    // While tags render, the readonly combobox is visually hidden (clip) but
+    // stays focusable and keeps its value for assistive technology.
+    inputHidden: {
+      true: {
+        input:
+          'absolute w-px h-px p-0 m-0 overflow-hidden whitespace-nowrap border-0 [clip:rect(0_0_0_0)]',
       },
     },
   },
@@ -462,13 +599,15 @@ const props = withDefaults(defineProps<CAutocompleteProps>(), {
   label: '',
   labelOnTop: false,
   loading: false,
+  maxTags: undefined,
+  multiple: false,
   name: '',
-  noResultsText: 'No matching data',
   placeholder: '',
   required: false,
   returnObject: false,
   shadow: false,
   size: 'default',
+  texts: () => ({}),
   valid: true,
   value: null,
 });
@@ -476,6 +615,20 @@ const props = withDefaults(defineProps<CAutocompleteProps>(), {
 const host = useHost();
 
 const emit = useHostEmit<CAutocompleteEvents>();
+
+const DEFAULT_TEXTS: Required<CAutocompleteTexts> = {
+  clearSelection: 'Clear selection',
+  filterOptions: 'Filter options',
+  loading: 'Loading',
+  more: (count) => `+${count} more`,
+  noResults: 'No matching data',
+  remove: (label) => `Remove ${label}`,
+  searchPlaceholder: 'Search...',
+  selected: (count) => `${count} selected`,
+  toggleOptions: 'Toggle options',
+};
+
+const t = computed(() => ({ ...DEFAULT_TEXTS, ...props.texts }));
 
 const anchorRef = useTemplateRef<HTMLElement>('anchorRef');
 
@@ -493,7 +646,7 @@ const listRef = useTemplateRef<HTMLUListElement>('listRef');
 
 // Local mirror of `value` (Vue props are readonly; selection flows out via
 // events). The watch keeps it in sync with external v-model updates.
-const value = ref<CAutocompleteItem | null | number | string>(props.value);
+const value = ref<CAutocompleteValue>(props.value);
 
 watch(
   () => props.value,
@@ -553,7 +706,17 @@ const hideDetailsResolved = computed(() =>
     : coerceBoolean(props.hideDetails),
 );
 
-const ui = computed(() => autocomplete({ chevronActive: isOpen.value }));
+// Same defineCustomElement Boolean-attribute quirk as `hide-details`: resolve
+// `multiple` from the stable host attribute first.
+const multipleOn = computed(() =>
+  host?.hasAttribute('multiple')
+    ? coerceBoolean(host.getAttribute('multiple'))
+    : coerceBoolean(props.multiple),
+);
+
+const ui = computed(() =>
+  autocomplete({ chevronActive: isOpen.value, inputHidden: tagsShown.value }),
+);
 
 // The anchor wrapper spans the whole inner c-input, INCLUDING its hint /
 // error message area (which is reserved unless `hide-details` is set). The
@@ -650,47 +813,190 @@ const filteredOptions = computed<NormalizedOption[]>(() => {
   );
 });
 
+type AutocompleteRawValue = CAutocompleteItem | number | string;
+
+// The scalar identity of a value: `return-object` items compare by their
+// `.value`. Duplicate option values are not distinguishable (as before).
+const valueOf = (v: AutocompleteRawValue): number | string =>
+  typeof v === 'object' && v !== null ? v.value : v;
+
+// Single-mode selection (null outside it, and in `multiple` mode).
 const selectedValue = computed(() => {
   const v = value.value;
 
-  if (v == null) return null;
+  if (multipleOn.value || v == null || Array.isArray(v)) return null;
 
-  return props.returnObject ? (v as CAutocompleteItem).value : v;
+  return props.returnObject
+    ? (v as CAutocompleteItem).value
+    : (v as number | string);
 });
 
-const isSelected = (opt: NormalizedOption) =>
-  selectedValue.value != null && opt.value === selectedValue.value;
+// ---- multiple-mode selection ---------------------------------------------
 
-// Label of the last committed option, keyed on its value: with `external`
-// the current option list may no longer contain the selection, so the closed
-// field's label must survive `items` swaps.
+const rawValues = computed<AutocompleteRawValue[]>(() =>
+  multipleOn.value && Array.isArray(value.value)
+    ? (value.value as AutocompleteRawValue[])
+    : [],
+);
+
+// Picked values in pick order (empty outside `multiple` mode).
+const selectedValues = computed(() => rawValues.value.map(valueOf));
+
+// `[]` is truthy, so every "is anything selected" site goes through this.
+const hasSelection = computed(() =>
+  multipleOn.value ? selectedValues.value.length > 0 : !!value.value,
+);
+
+const isSelected = (opt: NormalizedOption) =>
+  multipleOn.value
+    ? selectedValues.value.includes(opt.value)
+    : selectedValue.value != null && opt.value === selectedValue.value;
+
+// Labels remembered at commit time, keyed on value: with `external` the
+// current option list may no longer contain a selection, so the closed
+// field's labels (and the tags) must survive `items` swaps. Single mode
+// keeps one slot; `multiple` keeps one per pick.
 const committedLabel = ref<{ label: string; value: number | string } | null>(
   null,
 );
 
-const displayLabel = computed(() => {
-  const sel = selectedValue.value;
+const committedLabels = ref(new Map<number | string, string>());
 
-  if (sel == null) return '';
-
-  const fromOptions = normalizedOptions.value.find(
-    (o) => o.value === sel,
-  )?.label;
+// Label resolution chain (ADR-0029), per value: the current options → the
+// label remembered at commit → the object value's own `name` → the raw value.
+const labelFor = (v: number | string, raw?: AutocompleteRawValue): string => {
+  const fromOptions = normalizedOptions.value.find((o) => o.value === v)?.label;
 
   if (fromOptions != null) return fromOptions;
 
-  if (committedLabel.value?.value === sel) return committedLabel.value.label;
+  const remembered =
+    committedLabels.value.get(v) ??
+    (committedLabel.value?.value === v
+      ? committedLabel.value.label
+      : undefined);
 
-  // Programmatically-set values the options can't resolve: an object value
-  // carries its own label; a scalar renders as-is.
-  const v = value.value;
+  if (remembered != null) return remembered;
 
-  if (v && typeof v === 'object') return (v as CAutocompleteItem).name;
+  if (raw && typeof raw === 'object') return raw.name;
 
-  return String(sel);
+  return String(v);
+};
+
+const displayLabel = computed(() => {
+  const sel = selectedValue.value;
+
+  return sel == null ? '' : labelFor(sel, value.value as AutocompleteRawValue);
 });
 
+// The picks as `{ label, value }`, in pick order — what the tag row renders.
+const selectedOptions = computed(() =>
+  rawValues.value.map((raw) => {
+    const v = valueOf(raw);
+
+    return { label: labelFor(v, raw), value: v };
+  }),
+);
+
+const maxTagsResolved = computed(() =>
+  props.maxTags == null || Number(props.maxTags) < 0
+    ? Infinity
+    : Math.floor(Number(props.maxTags)),
+);
+
+const tagsShown = computed(
+  () =>
+    multipleOn.value &&
+    selectedOptions.value.length > 0 &&
+    maxTagsResolved.value > 0,
+);
+
+const visibleTags = computed(() =>
+  selectedOptions.value.slice(0, maxTagsResolved.value),
+);
+
+const hiddenCount = computed(
+  () => selectedOptions.value.length - visibleTags.value.length,
+);
+
+// What the readonly combobox holds: the single-mode label; in `multiple`
+// mode every picked label (the input is visually hidden behind the tags but
+// is what assistive technology reads), or the count summary when
+// `max-tags="0"` shows no tags.
+const inputValue = computed(() => {
+  if (!multipleOn.value) return displayLabel.value;
+
+  const n = selectedOptions.value.length;
+
+  if (!n) return '';
+
+  return tagsShown.value
+    ? selectedOptions.value.map((o) => o.label).join(', ')
+    : t.value.selected(n);
+});
+
+// Mirror the selection onto the live <c-option> elements for consistency
+// with c-select (external code may read `.selected`).
+const syncOptionElements = (selected: Set<number | string>) => {
+  if (!optionElementsExist.value) return;
+
+  normalizedOptions.value.forEach((o) => {
+    if (o.el)
+      (o.el as { selected?: boolean } & HTMLElement).selected = selected.has(
+        o.value,
+      );
+  });
+};
+
 // ---- value plumbing -----------------------------------------------------
+
+// `multiple` mode: tick appends (pick order), untick removes; the whole
+// array is emitted and the panel stays open with its query intact.
+const toggle = (opt: { label: string; value: number | string }) => {
+  const current = rawValues.value;
+
+  const idx = current.findIndex((item) => valueOf(item) === opt.value);
+
+  const next: AutocompleteRawValue[] =
+    idx >= 0
+      ? current.filter((_, i) => i !== idx)
+      : [
+          ...current,
+          props.returnObject
+            ? { name: opt.label, value: opt.value }
+            : opt.value,
+        ];
+
+  if (idx >= 0) committedLabels.value.delete(opt.value);
+  else committedLabels.value.set(opt.value, opt.label);
+
+  const committed = next as CAutocompleteValue;
+  value.value = committed;
+  emitModelValue(host, committed);
+  emit('change', undefined, { bubbles: true, composed: true });
+  syncOptionElements(new Set(next.map(valueOf)));
+};
+
+// A tag's close button / Backspace: remove one pick and keep focus in the
+// component (the removed button can no longer hold it).
+const removeValue = (v: number | string) => {
+  if (!selectedValues.value.includes(v)) return;
+
+  toggle({ label: labelFor(v), value: v });
+  requestAnimationFrame(() =>
+    (isOpen.value ? searchRef : fieldRef).value?.focus(),
+  );
+};
+
+// A click on a tag's close button must not bubble into the field's click
+// handler and toggle the panel; a click on the tag body keeps bubbling so it
+// opens the panel like any click in the field.
+const onTagsClick = (event: Event) => {
+  if (
+    event.composedPath().some((n) => (n as Element).tagName === 'C-ICON-BUTTON')
+  ) {
+    event.stopPropagation();
+  }
+};
 
 const commit = (opt: NormalizedOption) => {
   const next = props.returnObject
@@ -701,35 +1007,37 @@ const commit = (opt: NormalizedOption) => {
   committedLabel.value = { label: opt.label, value: opt.value };
   emitModelValue(host, next);
   emit('change', undefined, { bubbles: true, composed: true });
-
-  // Mirror selection onto the live <c-option> elements for consistency with
-  // c-select (external code may read `.selected`).
-  if (optionElementsExist.value) {
-    optionElements.value.forEach((el) => {
-      (el as { selected?: boolean } & HTMLElement).selected = el === opt.el;
-    });
-  }
+  syncOptionElements(new Set([opt.value]));
 };
 
 const onSelect = (opt: NormalizedOption) => {
   if (opt.disabled) return;
+
+  // `multiple`: toggle and stay open — focus stays in the search input, the
+  // query and the highlight are kept, so the next match is one keystroke away.
+  if (multipleOn.value) {
+    toggle(opt);
+    searchRef.value?.focus();
+    updateStatusText();
+
+    return;
+  }
+
   commit(opt);
   closePanel(true);
 };
 
 const onReset = (event?: Event) => {
   event?.stopPropagation();
-  value.value = null;
-  committedLabel.value = null;
-  setQuery('');
-  emitModelValue(host, null);
-  emit('change', undefined, { bubbles: true, composed: true });
 
-  if (optionElementsExist.value) {
-    optionElements.value.forEach(
-      (el) => ((el as { selected?: boolean } & HTMLElement).selected = false),
-    );
-  }
+  const cleared = multipleOn.value ? [] : null;
+  value.value = cleared;
+  committedLabel.value = null;
+  committedLabels.value.clear();
+  setQuery('');
+  emitModelValue(host, cleared);
+  emit('change', undefined, { bubbles: true, composed: true });
+  syncOptionElements(new Set());
 
   fieldRef.value?.focus();
 };
@@ -853,6 +1161,20 @@ const onButtonKeyDown = (src: 'chevron' | 'reset', event: KeyboardEvent) => {
 
 const onFieldKeyDown = (event: KeyboardEvent) => {
   if (props.disabled) return;
+
+  // `multiple`: Backspace on the (closed) readonly field removes the last
+  // pick. The search input has its own handler, where Backspace edits the
+  // query as usual.
+  if (event.key === 'Backspace') {
+    if (multipleOn.value && selectedOptions.value.length) {
+      event.preventDefault();
+      removeValue(
+        selectedOptions.value[selectedOptions.value.length - 1].value,
+      );
+    }
+
+    return;
+  }
 
   if (
     !isOpen.value &&
@@ -1069,16 +1391,38 @@ const refreshOptions = () => {
   hasConsumerPre.value = !!host.querySelector(':scope > [slot="pre"]');
   hasConsumerPost.value = !!host.querySelector(':scope > [slot="post"]');
 
-  const selection = options.find(
-    (o) => (o as { selected?: boolean } & HTMLElement).selected,
-  ) as ({ name?: string; value: number | string } & HTMLElement) | undefined;
+  type OptionEl = {
+    name?: string;
+    selected?: boolean | string;
+    value: number | string;
+  } & HTMLElement;
+
+  const labelOf = (o: OptionEl) => (o.name ?? o.textContent ?? '').trim();
+
+  // `multiple`: every `<c-option selected>` seeds the array (DOM order) —
+  // only while nothing is picked yet, so a later child mutation cannot
+  // re-seed a selection the user has cleared.
+  if (multipleOn.value) {
+    const picked = (options as OptionEl[]).filter((o) =>
+      coerceBoolean(o.selected ?? o.getAttribute('selected')),
+    );
+
+    if (picked.length && !selectedValues.value.length) {
+      value.value = picked.map((o) =>
+        props.returnObject ? { name: labelOf(o), value: o.value } : o.value,
+      ) as CAutocompleteValue;
+    }
+
+    return;
+  }
+
+  const selection = (options as OptionEl[]).find((o) =>
+    coerceBoolean(o.selected ?? o.getAttribute('selected')),
+  );
 
   if (selection && value.value == null) {
     value.value = props.returnObject
-      ? {
-          name: (selection.name ?? selection.textContent ?? '').trim(),
-          value: selection.value,
-        }
+      ? { name: labelOf(selection), value: selection.value }
       : selection.value;
   }
 };

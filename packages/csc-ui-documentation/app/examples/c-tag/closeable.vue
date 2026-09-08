@@ -1,12 +1,11 @@
 <template>
   <div class="example-grid">
+    <!-- A closeable tag's close button is its only control; it emits `close`. -->
     <c-tags>
       <c-tag
         v-for="topic in topics"
         :key="topic.id"
-        :active="topic.active"
         closeable
-        @click="topic.active = !topic.active"
         @close="onRemoveTopic(topic.id)"
       >
         {{ topic.label }}
@@ -24,9 +23,9 @@ import { ref } from 'vue';
 
 const createTopics = () => {
   return [
-    { id: 'biosciences', label: 'Biosciences', active: false },
-    { id: 'chemistry', label: 'Chemistry', active: false },
-    { id: 'physics', label: 'Physics', active: false },
+    { id: 'biosciences', label: 'Biosciences' },
+    { id: 'chemistry', label: 'Chemistry' },
+    { id: 'physics', label: 'Physics' },
   ];
 };
 

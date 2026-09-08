@@ -4,7 +4,10 @@
  * Walks a compiled SFC template AST and discovers the component's projection
  * and customization surface:
  *   - slots:        every `<slot>` element (default + named)
- *   - parts:        every static `part="…"` attribute (space-separated names)
+ *   - parts:        every static `part="…"` attribute (space-separated names);
+ *                   the analyzer entry also merges the static parts of any
+ *                   imported `src/shared/*.vue` SFC, which renders inside the
+ *                   host's shadow root and so stamps into its contract
  *   - exportparts:  nested parts re-exposed under the `<child>-<part>`
  *                   convention (the *exposed* name is public API)
  *

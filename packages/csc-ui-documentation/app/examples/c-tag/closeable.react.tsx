@@ -3,20 +3,13 @@ import { useState } from 'react';
 import { CButton, CTag, CTags } from '@cscfi/csc-ui-react';
 
 const createTopics = () => [
-  { id: 'biosciences', label: 'Biosciences', active: false },
-  { id: 'chemistry', label: 'Chemistry', active: false },
-  { id: 'physics', label: 'Physics', active: false },
+  { id: 'biosciences', label: 'Biosciences' },
+  { id: 'chemistry', label: 'Chemistry' },
+  { id: 'physics', label: 'Physics' },
 ];
 
 export const Closeable = () => {
   const [topics, setTopics] = useState(createTopics);
-
-  const toggle = (id: string) =>
-    setTopics((current) =>
-      current.map((topic) =>
-        topic.id === id ? { ...topic, active: !topic.active } : topic,
-      ),
-    );
 
   const remove = (id: string) =>
     setTopics((current) => current.filter((topic) => topic.id !== id));
@@ -27,13 +20,7 @@ export const Closeable = () => {
     <div className="example-grid">
       <CTags>
         {topics.map((topic) => (
-          <CTag
-            key={topic.id}
-            active={topic.active}
-            closeable
-            onClick={() => toggle(topic.id)}
-            onClose={() => remove(topic.id)}
-          >
+          <CTag key={topic.id} closeable onClose={() => remove(topic.id)}>
             {topic.label}
           </CTag>
         ))}

@@ -30,11 +30,11 @@ A **command menu** — a transient panel of actions/navigation choices revealed 
 _Avoid_: Dropdown (that is a distinct value-selection component), popup, context menu, listbox
 
 **Dropdown** (`c-dropdown`):
-The **value-selection** surface behind `c-select`: a `role="listbox"` of options that has a current value and emits the value events — the grandfathered `changeValue` with its `change-value` **kebab-case twin**, plus `update:value` (ADR-0017/0021). A menu, by contrast, is a list of `role="menuitem"` commands. Keep the two distinct — "the dropdown's select event" is a category error; menus emit `select`, dropdowns emit the value events. (`c-autocomplete` is also value-selection but does **not** sit on `c-dropdown` — it renders its own popover panel; see **Autocomplete**.)
+The **value-selection** surface behind `c-select`: a `role="listbox"` of options that has a current value — or, in **multiple** mode, an array of them — and emits the value events — the grandfathered `changeValue` with its `change-value` **kebab-case twin**, plus `update:value` (ADR-0017/0021). A menu, by contrast, is a list of `role="menuitem"` commands. Keep the two distinct — "the dropdown's select event" is a category error; menus emit `select`, dropdowns emit the value events. (`c-autocomplete` is also value-selection but does **not** sit on `c-dropdown` — it renders its own popover panel; see **Autocomplete**.)
 _Avoid_: Menu (a menu is the command-list component; a dropdown is the value picker)
 
 **Autocomplete** (`c-autocomplete`):
-A **filterable value-selection** component: like `c-select` it holds a persistent selected value and emits the value events (`changeValue` + twin, `update:value`, and a bare `change`) over `role="listbox"`/`role="option"` rows, but its options can be narrowed with a text **query** — filtered by the component itself, or by the consumer in **external** mode. Its distinguishing trait is a dedicated **search input** living *inside* the open panel (above the options), separate from the readonly value field. It is built on the popover + CSS-anchor pattern (the same visuals as `c-menu`'s panel), **not** on `c-dropdown`, and reuses only those popover visuals — never `c-menu-item` or the menu role/event contract.
+A **filterable value-selection** component: like `c-select` it holds a persistent selected value (an array of them in **multiple** mode) and emits the value events (`changeValue` + twin, `update:value`, and a bare `change`) over `role="listbox"`/`role="option"` rows, but its options can be narrowed with a text **query** — filtered by the component itself, or by the consumer in **external** mode. Its distinguishing trait is a dedicated **search input** living *inside* the open panel (above the options), separate from the readonly value field. It is built on the popover + CSS-anchor pattern (the same visuals as `c-menu`'s panel), **not** on `c-dropdown`, and reuses only those popover visuals — never `c-menu-item` or the menu role/event contract.
 _Avoid_: Combobox (reserve for the ARIA role, not the component name), typeahead, suggest, filter menu
 
 **Search input**:
@@ -230,7 +230,7 @@ A **label** naming a *set* of controls operated as one field — `c-radio-group`
 _Avoid_: Legend (the native `<fieldset>` mechanism this library does not use), group title
 
 **Button group** (`c-button-group`):
-A standalone **labelable value control**: a segmented row of plain `c-button` children where activation carries the value — exclusive by default, cumulative with `multiple`. The form-facing component; it knows nothing about tabs. The group drives each child's **active** state; every active child paints its own active look — the **sliding indicator** never appears here (ADR-0025).
+A standalone **labelable value control**: a segmented row of plain `c-button` children where activation carries the value — exclusive by default, cumulative in **multiple** mode. The form-facing component; it knows nothing about tabs. The group drives each child's **active** state; every active child paints its own active look — the **sliding indicator** never appears here (ADR-0025).
 _Avoid_: Tab buttons (that is the `c-tabs` adapter, not a value control), toggle group (foreign vocabulary for this same component), segmented control as the component's *name* (fine as a description of its shape — the usage doc's "a button group is a segmented control" — never as a synonym in API names or headings), toolbar (a button group holds a value; a toolbar merely groups actions)
 
 **Tab buttons** (`c-tab-buttons`):
@@ -256,6 +256,18 @@ _Avoid_: Mandatory (see below), obligatory
 **Mandatory** (`c-button-group`):
 A selection-behavior rule on the *control*: the selection can never become empty — the active choice (or, with `multiple`, the last active button) cannot be toggled off. Says nothing about whether the form demands an answer — a button group can be mandatory yet not **required**, or vice versa. Not a tab concept: tabs forbid deselection inherently, so `c-tab-buttons` has no such prop.
 _Avoid_: Required (the form-demand concept), forced
+
+**Multiple** (mode):
+The selection mode in which a value control holds *several* values at once — `c-button-group`, `c-select` and `c-autocomplete` with the `multiple` prop set. The `value` becomes an array (`[]` when empty), bound as a DOM property since arrays have no attribute form, and the same value events carry the whole array. The two fields keep it in selection order and show each pick as a **tag**; `c-button-group` keeps DOM order (ADR-0044). Picking a selected option unselects it and the panel stays open. Says nothing about how many are demanded (**required**) or whether it may empty out (**mandatory**).
+_Avoid_: multi, multiselect / multi-select (as a prop or mode name — fine as an adjective in prose), checkbox mode (the row indicator is decorative, never a `c-checkbox`), selection mode (that is `c-data-table`'s separate `selection` prop, which keeps its value in `selected`)
+
+**Tag** (`c-tag`):
+The pill-shaped chip component naming one item in a set — authored by the consumer inside `c-tags`, or rendered by `c-select` / `c-autocomplete` inside their field for each selected option in **multiple** mode. A **closeable** tag carries a × that removes it and is the tag's only interactive control. Not to be confused with an element's *tag name* (see Flagged ambiguities).
+_Avoid_: Chip (Material vocabulary), token, pill (its shape, not its name), badge (that is `c-badge` / the tag's own `badge` prop)
+
+**Overflow tag**:
+The single non-interactive tag ending a folded tag row in a **multiple** field — "+3 more" — standing in for the selections that `max-tags` hides. Rendered only when the cap is exceeded; with `max-tags="0"` no tags render at all and the field shows the summary text ("5 selected") instead.
+_Avoid_: More tag, counter, badge, "+N chip"
 
 **Hint**:
 Neutral helper text under a form control, present regardless of validity. It describes how to answer, not what went wrong. When the control is invalid but no **error message** is supplied, the hint keeps rendering *as a hint* — it never inherits error presentation.
@@ -333,6 +345,7 @@ _Avoid_: Override (the variant adds a tab; it replaces nothing), translation, po
 
 - **"Vue version"** is ambiguous: it can mean (a) the retired `@cscfi/csc-ui-vue` directive package, (b) the fact that 4.x components are implemented in Vue, or (c) the Vue.js framework version. Prefer **"`v-control` directive"** for (a), plain **"component"** for (b) — since 4.x there is no other kind — and **"Vue 3"/"Vue 2"** explicitly for (c).
 - **"Ring"** is overloaded: (a) the `ring` **semantic token** (the focus colour role — currently used by no component), (b) the radio indicator's shape, (c) Tailwind `ring-*` box-shadow utilities, (d) the keyboard **focus ring**. Say **"`ring` token"**, **"radio indicator"**, **"`ring-*` utility"** and **"focus ring"** respectively.
+- **"Tag"** is overloaded: (a) a component's *tag name* (`<c-button>` — the canonical identifier, see **Component**), (b) the **Tag** component `c-tag`, including the tags a **multiple** field renders for its selections (the `tag` part), (c) a docblock tag (`@csspart`). Say **"tag name"** for (a), plain **"tag"** only for (b) — the `max-tags` prop counts these — and **"docblock tag"** for (c).
 - **"Themeable"** (docs copy: "themable") means *re-seedable* — one of the eight **families** a consumer may re-brand (ADR-0011). Restyling one component's colours from consumer CSS is **"recolour via `::part()`"**, never "theming".
 
 ## Example dialogue

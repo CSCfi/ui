@@ -34,31 +34,43 @@
         :id="`${hostId}--results`"
         ref="listRef"
         :aria-expanded="isOpen"
+        :aria-multiselectable="multiple ? 'true' : undefined"
         :class="[ui.list(), isOpen ? 'active' : '', isMobile ? 'mobile' : '']"
         part="list"
         role="listbox"
         tabindex="-1"
       >
         <!-- Option mode: <c-option> elements projected by the consumer.
-             Render each option's outerHTML, mirroring Stencil. -->
+             Render each option's outerHTML, mirroring Stencil — inside a
+             wrapper span so the multiple-mode indicator can precede it. -->
         <template v-if="dropdownItemType === 'option'">
           <li
             v-for="(opt, i) in itemsArray"
             :key="`option-${i}`"
             :aria-pos-in-set="String(i + 1)"
-            :aria-selected="!!opt.selected"
+            :aria-selected="
+              multiple ? isSelectedValue(opt.value) : !!opt.selected
+            "
             :aria-set-size="String(itemsArray.length)"
             :class="[
-              dropdown({ disabled: !!opt.disabled }).item(),
-              opt.disabled ? 'disabled' : '',
+              dropdown({ disabled: isDisabled(opt) }).item(),
+              isDisabled(opt) ? 'disabled' : '',
             ]"
             :data-name="opt.name"
             part="item"
             role="option"
             tabindex="-1"
             @click="onSelect(opt, $event)"
-            v-html="opt.outerHTML"
-          />
+          >
+            <selection-indicator
+              v-if="multiple"
+              :checked="isSelectedValue(opt.value)"
+              :disabled="isDisabled(opt)"
+              class="relative"
+            />
+
+            <span class="c-dropdown__label" v-html="opt.outerHTML" />
+          </li>
         </template>
 
         <!-- Item mode: plain {name,value,disabled} objects. -->
@@ -67,11 +79,13 @@
             v-for="(item, i) in itemsArray"
             :key="`item-${i}`"
             :aria-pos-in-set="String(i + 1)"
-            :aria-selected="index === i"
+            :aria-selected="
+              multiple ? isSelectedValue(item.value) : index === i
+            "
             :aria-set-size="String(itemsArray.length)"
             :class="[
-              dropdown({ disabled: !!item.disabled }).item(),
-              item.disabled ? 'disabled' : '',
+              dropdown({ disabled: isDisabled(item) }).item(),
+              isDisabled(item) ? 'disabled' : '',
             ]"
             :data-name="item.name"
             :title="item.name"
@@ -80,8 +94,15 @@
             tabindex="-1"
             @click="onSelect(item, $event)"
           >
+            <selection-indicator
+              v-if="multiple"
+              :checked="isSelectedValue(item.value)"
+              :disabled="isDisabled(item)"
+              class="relative"
+            />
+
             <svg
-              v-if="index === i"
+              v-else-if="index === i"
               :class="ui.check()"
               aria-hidden="true"
               class="check"
@@ -90,7 +111,7 @@
               <path :d="mdiCheck" />
             </svg>
 
-            <span>{{ item.name }}</span>
+            <span class="c-dropdown__label">{{ item.name }}</span>
           </li>
         </template>
       </ul>
@@ -109,6 +130,8 @@
  * @csspart menu - The positioned dialog surface holding the field and the list
  * @csspart list - The scrolling listbox
  * @csspart item - One option row
+ * @csspart indicator - The decorative checkbox box on an option row in `multiple` mode; border, fill and glyph draw with `currentColor`, so `color` recolours them together
+ * @csspart mark - The check glyph inside a row indicator; draws with `currentColor`
  * @slot input-top - Target the c-input is moved into when the menu opens below the field
  * @slot input-bottom - Target the c-input is moved into when the menu opens above the field
  */
@@ -124,7 +147,9 @@ import {
   watch,
 } from 'vue';
 
+import { coerceBoolean } from '../../shared/coerceBoolean';
 import { applyPeekCap } from '../../shared/peekCap';
+import SelectionIndicator from '../../shared/SelectionIndicator.vue';
 import { useHostEmit } from '../../shared/useHostEmit';
 
 /** Events dispatched by `<c-dropdown>`. */
@@ -165,7 +190,7 @@ const dropdown = tv({
     // top/left/width/maxHeight the JS writes inline drive placement.
     dialog:
       'rounded border-0 bg-transparent m-0 mt-[-4px] p-0 pt-1 overflow-visible fixed',
-    item: 'flex items-center flex-nowrap gap-3 cursor-pointer text-sm min-h-[42px] outline-none px-[10px] pointer-events-auto whitespace-nowrap w-full rounded select-none hover:bg-primary-subtle hover:text-primary hover:ring-1 hover:ring-inset hover:ring-primary focus:bg-primary-subtle focus:text-primary focus:ring-1 focus:ring-inset focus:ring-primary aria-selected:bg-primary-subtle aria-selected:text-primary aria-selected:rounded-none hover:aria-selected:rounded focus:aria-selected:rounded',
+    item: 'flex items-center flex-nowrap gap-3 cursor-pointer text-sm min-h-[42px] outline-none px-[10px] py-2 pointer-events-auto whitespace-nowrap w-full rounded select-none hover:bg-primary-subtle hover:text-primary hover:ring-1 hover:ring-inset hover:ring-primary focus:bg-primary-subtle focus:text-primary focus:ring-1 focus:ring-inset focus:ring-primary aria-selected:bg-primary-subtle aria-selected:text-primary aria-selected:rounded-none hover:aria-selected:rounded focus:aria-selected:rounded',
     // Static list look; visibility + fade-in (`.active`) and the mobile
     // full-screen layout stay in the escape-hatch <style>.
     list: 'list-none m-0 p-0 outline-none pointer-events-auto w-full h-max overflow-y-auto scrollbar-hidden rounded bg-surface-overlay text-on-surface shadow-[2px_4px_10px_#00000029]',
@@ -220,14 +245,24 @@ interface CDropdownProps {
   items?: ArrayLike<DropdownItem>;
   /** Items per page before adding scroll */
   itemsPerPage?: number;
+  /**
+   * Multi-select mode: rows toggle instead of committing, each carries a
+   * decorative checkbox indicator, and the listbox is `aria-multiselectable`
+   */
+  multiple?: boolean;
   /** Dropdown parent (the c-select / c-autocomplete host element) */
   parent?: HTMLElement | null;
+  /**
+   * Values of the currently selected items in `multiple` mode; drives each
+   * row's `aria-selected` and its indicator
+   */
+  selected?: (number | string)[];
   /** Parent type — drives autocomplete-only behaviour (highlight, messages) */
   type?: CDropdownParentType;
 }
 
 type DropdownItem = {
-  disabled?: boolean;
+  disabled?: boolean | string;
   name: string;
   outerHTML?: string;
   selected?: boolean;
@@ -240,11 +275,21 @@ const props = withDefaults(defineProps<CDropdownProps>(), {
   index: null,
   items: () => [],
   itemsPerPage: 0,
+  multiple: false,
   parent: null,
+  selected: () => [],
   type: 'select',
 });
 
 const host = useHost();
+
+// Multiple-mode selection, keyed by value. A reactive prop (unlike the live
+// `.selected` flags on <c-option> elements), so `aria-selected` and the row
+// indicators re-render without an `updateList()` bump.
+const selectedSet = computed(() => new Set(props.selected));
+
+const isSelectedValue = (value: number | string) =>
+  selectedSet.value.has(value);
 
 const dialogRef = useTemplateRef<HTMLDialogElement>('dialogRef');
 
@@ -305,8 +350,13 @@ const emit = useHostEmit<CDropdownEvents>();
 // Both dropdown events cross the shadow boundary to the parent select.
 const bubbling = { bubbles: true, composed: true };
 
+// A <c-option disabled> in option mode delivers its Boolean attribute as `""`
+// (the defineCustomElement quirk coerceBoolean exists for), so never test
+// `disabled` by truthiness.
+const isDisabled = (item: DropdownItem) => coerceBoolean(item.disabled);
+
 const onSelect = (item: DropdownItem, event: Event) => {
-  if (item.disabled) {
+  if (isDisabled(item)) {
     event.preventDefault();
 
     return;
@@ -802,9 +852,11 @@ ul.active.mobile {
   max-height: calc(100svh - 60px);
 }
 
-/* `v-html`-injected option text (and the plain item-name span) — no element
- * for a utility class. */
-li span,
+/* The row's label wrapper (`v-html`-injected option markup, or the plain
+ * item-name span) and `v-html`-injected <c-option-value> nodes — unlayered so
+ * it wins over the injected content's own display; scoped by class so it
+ * never hits the indicator span before it. */
+li .c-dropdown__label,
 li c-option-value {
   overflow: hidden;
   text-overflow: ellipsis;
