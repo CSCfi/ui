@@ -30,15 +30,18 @@
     "logo-white-in-dark",
     "menu-item-active-and-icon",
     "modal-focus-ring-and-initial-focus",
+    "option-value-label-region",
     "progress-bar-aria-busy",
     "progress-circle-component",
     "radio-self-rendering",
+    "select-autocomplete-multiple",
     "selection-control-focus-ring",
     "selection-control-state-styling",
     "table-light-dom-styling",
     "toast-inverted-surface",
     "tokens-emit-oklch",
     "tooltip-popover-components",
+    "transient-panel-peek",
     "vue-rewrite-major"
   ]
 }
