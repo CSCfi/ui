@@ -152,9 +152,7 @@
 
         <input
           ref="searchRef"
-          :aria-activedescendant="
-            activeIndex >= 0 ? `${id}-opt-${activeIndex}` : undefined
-          "
+          :aria-activedescendant="activeDescendantId"
           :aria-controls="`${id}-listbox`"
           :aria-label="t.filterOptions"
           :class="ui.searchInput()"
@@ -177,6 +175,34 @@
         role="listbox"
         tabindex="-1"
       >
+        <!-- Select-all row (ADR-0046): pinned above the options, it toggles
+             every listed enabled option. A `role="option"` like the rows, but
+             never an item row — `data-select-all` keeps it out of the peek. -->
+        <li
+          v-if="selectAllShown"
+          :id="`${id}-select-all`"
+          :aria-selected="selectAllRowState === 'all'"
+          :class="autocomplete({ selectAll: true }).item()"
+          :data-active="isSelectAllActive || undefined"
+          data-select-all
+          part="select-all"
+          role="option"
+          tabindex="-1"
+          @click="onSelectAll"
+          @mousedown.prevent
+          @pointermove="activeIndex = SELECT_ALL_ROW"
+        >
+          <selection-indicator
+            :checked="selectAllRowState === 'all'"
+            :indeterminate="selectAllRowState === 'some'"
+            class="relative"
+          />
+
+          <span :class="ui.itemLabel()">
+            {{ t.selectAll(listedEnabled.length) }}
+          </span>
+        </li>
+
         <!-- Loading row: only while fetching with nothing to show — options
              already on screen stay rendered during a refresh (no flicker). -->
         <li
@@ -367,6 +393,14 @@ export interface CAutocompleteProps {
   required?: boolean;
   /** Return object instead of value */
   returnObject?: boolean;
+  /**
+   * In `multiple` mode, pin a select-all row at the top of the list. Its
+   * checkbox shows whether none, some or all enabled options currently listed
+   * — the matches while a query is typed, the given `items` with `external` —
+   * are selected; activating it selects them all, or, when all are selected,
+   * unselects them. Ignored in single mode
+   */
+  selectAll?: boolean;
   /** Shadow variant */
   shadow?: boolean;
   /** Field height: the 44px default or the 36px `small` box */
@@ -409,6 +443,11 @@ export interface CAutocompleteTexts {
   /** Placeholder of the search input when the `placeholder` prop is empty. */
   searchPlaceholder?: string;
   /**
+   * Label of the select-all row; receives the number of enabled options
+   * listed.
+   */
+  selectAll?: (count: number) => string;
+  /**
    * Field text when `max-tags="0"` shows no tags; receives the selection
    * count.
    */
@@ -443,6 +482,7 @@ export type CAutocompleteValue =
  * @csspart search - The search-input row at the top of the panel
  * @csspart list - The scrollable options listbox
  * @csspart item - One option row in the list
+ * @csspart select-all - The pinned select-all row at the top of the list (`multiple` mode with `select-all`); carries the same indicator / mark parts as an option row
  * @csspart indicator - The decorative checkbox box on an option row in `multiple` mode; border, fill and glyph draw with `currentColor`, so `color` recolours them together (the c-checkbox recipe)
  * @csspart mark - The check glyph inside a row indicator; draws with `currentColor`
  * @csspart match - A run of an option's label equal to the query, in the row; underlined in the primary colour, text inherits the row
@@ -477,6 +517,7 @@ import { coerceBoolean } from '../../shared/coerceBoolean';
 import { emitModelValue } from '../../shared/emitModelValue';
 import { optionLabel, optionValueElement } from '../../shared/optionLabel';
 import { applyPeekCap } from '../../shared/peekCap';
+import { selectAllState, toggleAllValues } from '../../shared/selectAll';
 import SelectionIndicator from '../../shared/SelectionIndicator.vue';
 import { type MatchSegment, splitMatches } from '../../shared/splitMatches';
 import { useHostEmit } from '../../shared/useHostEmit';
@@ -540,6 +581,7 @@ const autocomplete = tv({
     chevronActive: false,
     disabled: false,
     inputHidden: false,
+    selectAll: false,
   },
   slots: {
     card: 'flex flex-col min-w-[180px] max-h-[80vh] overflow-hidden rounded-csc-md bg-surface-overlay shadow-[2px_4px_10px_#00000029]',
@@ -554,7 +596,7 @@ const autocomplete = tv({
       'max-h-8 py-2 bg-transparent border-0 text-on-surface flex-[1_1_auto] [font-family:var(--c-font-family)] text-base leading-5 max-w-full min-w-0 w-full cursor-pointer outline-none focus:outline-none active:outline-none placeholder:text-on-surface-muted placeholder:opacity-100',
     item: 'flex items-center flex-nowrap gap-3 cursor-pointer text-sm min-h-[42px] outline-none px-[10px] py-2 whitespace-nowrap w-full rounded select-none data-[active]:bg-primary-subtle data-[active]:text-primary data-[active]:ring-1 data-[active]:ring-inset data-[active]:ring-primary text-on-surface',
     itemLabel: 'flex-auto overflow-hidden text-ellipsis whitespace-nowrap',
-    list: 'list-none m-0 mt-1 p-1 outline-none overflow-y-auto scrollbar-hidden w-full',
+    list: 'list-none m-0 mt-1 p-1 outline-none overflow-y-auto scrollbar-hidden w-full overscroll-none',
     panel:
       'fixed m-0 p-0 border-0 bg-transparent overflow-visible [inset:auto]',
     search:
@@ -577,6 +619,19 @@ const autocomplete = tv({
     disabled: {
       true: {
         item: 'cursor-default pointer-events-none bg-on-surface/5 [filter:grayscale(1)_opacity(0.75)] data-[active]:bg-on-surface/5 data-[active]:text-inherit data-[active]:ring-0',
+      },
+    },
+    // The pinned select-all row (ADR-0046): sticks to the list's top edge on
+    // an opaque fill with a hairline below. The list drops its top inset while
+    // the row is shown (Chromium sticks inside a scroll container's padding,
+    // so a padded list would rest the row 4px down); the row bleeds to the
+    // full list width (`-mx-1`, content re-aligned by `px-[14px]`) and
+    // restores the inset below itself (`mb-1`). `z-10` keeps the positioned
+    // row indicators that scroll beneath it from painting over it.
+    selectAll: {
+      true: {
+        item: 'sticky top-0 z-10 -mx-1 mb-1 w-auto px-[14px] rounded-none bg-surface-overlay border-b border-solid border-divider',
+        list: 'pt-0',
       },
     },
     // While tags render, the readonly combobox is visually hidden (clip) but
@@ -621,6 +676,7 @@ const props = withDefaults(defineProps<CAutocompleteProps>(), {
   placeholder: '',
   required: false,
   returnObject: false,
+  selectAll: false,
   shadow: false,
   size: 'default',
   texts: () => ({}),
@@ -640,6 +696,7 @@ const DEFAULT_TEXTS: Required<CAutocompleteTexts> = {
   noResults: 'No matching data',
   remove: (label) => `Remove ${label}`,
   searchPlaceholder: 'Search...',
+  selectAll: () => 'Select all',
   selected: (count) => `${count} selected`,
   toggleOptions: 'Toggle options',
 };
@@ -686,6 +743,11 @@ const isOpen = ref(false);
 
 const activeIndex = ref(-1);
 
+// `activeIndex` sentinel for the select-all row (ADR-0046); `-1` stays "no
+// highlight". Numeric, so any unhandled site fails closed: `filteredOptions[-2]`
+// is undefined and no option row's `i` ever equals it.
+const SELECT_ALL_ROW = -2;
+
 const statusText = ref('');
 
 const panelWidth = ref(0);
@@ -731,7 +793,11 @@ const multipleOn = computed(() =>
 );
 
 const ui = computed(() =>
-  autocomplete({ chevronActive: isOpen.value, inputHidden: tagsShown.value }),
+  autocomplete({
+    chevronActive: isOpen.value,
+    inputHidden: tagsShown.value,
+    selectAll: selectAllShown.value,
+  }),
 );
 
 // The anchor wrapper spans the whole inner c-input, INCLUDING its hint /
@@ -769,7 +835,11 @@ const applyListCap = () => {
   applyPeekCap(list, {
     ceiling: Number.isFinite(cardMax) ? cardMax - above : Infinity,
     itemsPerPage: props.itemsPerPage,
-    rows: Array.from(list.querySelectorAll<HTMLElement>('li[role="option"]')),
+    rows: Array.from(
+      list.querySelectorAll<HTMLElement>(
+        'li[role="option"]:not([data-select-all])',
+      ),
+    ),
   });
 };
 
@@ -827,6 +897,47 @@ const filteredOptions = computed<NormalizedOption[]>(() => {
     fn({ disabled: o.disabled, label: o.label, value: o.value }, q),
   );
 });
+
+// ---- select-all row (ADR-0046) -------------------------------------------
+
+// Same Boolean-attribute quirk as `multiple`.
+const selectAllOn = computed(() =>
+  host?.hasAttribute('select-all')
+    ? coerceBoolean(host.getAttribute('select-all'))
+    : coerceBoolean(props.selectAll),
+);
+
+// The options the row acts on: the enabled ones currently listed — the
+// matches while a query is typed, the verbatim `items` with `external`.
+const listedEnabled = computed(() =>
+  filteredOptions.value.filter((o) => !o.disabled),
+);
+
+const selectAllShown = computed(
+  () => multipleOn.value && selectAllOn.value && listedEnabled.value.length > 0,
+);
+
+const selectAllRowState = computed(() =>
+  selectAllState(
+    listedEnabled.value.map((o) => o.value),
+    new Set(selectedValues.value),
+  ),
+);
+
+const isSelectAllActive = computed(() => activeIndex.value === SELECT_ALL_ROW);
+
+const activeDescendantId = computed(() => {
+  if (isSelectAllActive.value) return `${id.value}-select-all`;
+
+  return activeIndex.value >= 0
+    ? `${id.value}-opt-${activeIndex.value}`
+    : undefined;
+});
+
+// Where the highlight lands by default: the first enabled option — never the
+// select-all row, so "type, Enter" still picks one match.
+const firstEnabledIndex = () =>
+  filteredOptions.value.findIndex((o) => !o.disabled);
 
 // ---- match marking (ADR-0045) --------------------------------------------
 
@@ -1011,6 +1122,16 @@ const syncOptionElements = (selected: Set<number | string>) => {
 
 // ---- value plumbing -----------------------------------------------------
 
+// The `multiple`-mode commit shared by a row toggle and the select-all row:
+// one emission of the whole array, panel and query untouched.
+const commitMultiple = (next: AutocompleteRawValue[]) => {
+  const committed = next as CAutocompleteValue;
+  value.value = committed;
+  emitModelValue(host, committed);
+  emit('change', undefined, { bubbles: true, composed: true });
+  syncOptionElements(new Set(next.map(valueOf)));
+};
+
 // `multiple` mode: tick appends (pick order), untick removes; the whole
 // array is emitted and the panel stays open with its query intact.
 const toggle = (opt: { label: string; value: number | string }) => {
@@ -1031,11 +1152,31 @@ const toggle = (opt: { label: string; value: number | string }) => {
   if (idx >= 0) committedLabels.value.delete(opt.value);
   else committedLabels.value.set(opt.value, opt.label);
 
-  const committed = next as CAutocompleteValue;
-  value.value = committed;
-  emitModelValue(host, committed);
-  emit('change', undefined, { bubbles: true, composed: true });
-  syncOptionElements(new Set(next.map(valueOf)));
+  commitMultiple(next);
+};
+
+// The select-all row (ADR-0046): every listed enabled option already picked →
+// unpick them (other picks keep their order); otherwise append the unpicked
+// ones in list order. Labels are remembered per pick exactly as in `toggle`.
+const toggleAll = () => {
+  const { added, next, removed } = toggleAllValues(
+    rawValues.value,
+    listedEnabled.value,
+    valueOf,
+    (o) => (props.returnObject ? { name: o.label, value: o.value } : o.value),
+  );
+
+  removed.forEach((v) => committedLabels.value.delete(v));
+  added.forEach((o) => committedLabels.value.set(o.value, o.label));
+  commitMultiple(next);
+};
+
+// Mirrors `onSelect`'s multiple path: toggle, keep focus in the search input,
+// re-announce.
+const onSelectAll = () => {
+  toggleAll();
+  searchRef.value?.focus();
+  updateStatusText();
 };
 
 // A tag's close button / Backspace: remove one pick and keep focus in the
@@ -1182,7 +1323,7 @@ const seedActiveIndex = () => {
   if (selIdx >= 0 && !filteredOptions.value[selIdx].disabled) {
     activeIndex.value = selIdx;
   } else {
-    activeIndex.value = filteredOptions.value.findIndex((o) => !o.disabled);
+    activeIndex.value = firstEnabledIndex();
   }
 
   scrollActiveIntoView();
@@ -1261,28 +1402,34 @@ const onFieldKeyDown = (event: KeyboardEvent) => {
       setQuery(event.key);
 
       if (searchRef.value) searchRef.value.value = event.key;
-      activeIndex.value = filteredOptions.value.findIndex((o) => !o.disabled);
+      activeIndex.value = firstEnabledIndex();
     });
   }
 };
 
+// Arrow navigation over the enabled rows, wrapping at both ends. The
+// select-all row is the topmost row of that cycle; from "none" the highlight
+// lands on the first option, never on the row (ADR-0046).
 const moveActive = (dir: -1 | 1) => {
-  const items = filteredOptions.value;
+  const order = [
+    ...(selectAllShown.value ? [SELECT_ALL_ROW] : []),
+    ...filteredOptions.value.flatMap((o, i) => (o.disabled ? [] : [i])),
+  ];
 
-  if (!items.length) return;
+  if (!order.length) return;
 
-  let idx = activeIndex.value;
+  const pos = order.indexOf(activeIndex.value);
 
-  for (let i = 0; i < items.length; i++) {
-    idx = (idx + dir + items.length) % items.length;
-
-    if (!items[idx].disabled) {
-      activeIndex.value = idx;
-      scrollActiveIntoView();
-
-      return;
-    }
+  if (pos < 0) {
+    activeIndex.value =
+      dir === 1
+        ? (order.find((i) => i !== SELECT_ALL_ROW) ?? order[0])
+        : order[order.length - 1];
+  } else {
+    activeIndex.value = order[(pos + dir + order.length) % order.length];
   }
+
+  scrollActiveIntoView();
 };
 
 const onSearchInput = (event: Event) => {
@@ -1290,7 +1437,7 @@ const onSearchInput = (event: Event) => {
   // Re-seed the active option to the first match so Enter selects something
   // sensible and the aria-activedescendant stays valid.
   requestAnimationFrame(() => {
-    activeIndex.value = filteredOptions.value.findIndex((o) => !o.disabled);
+    activeIndex.value = firstEnabledIndex();
     scrollActiveIntoView();
     updateStatusText();
   });
@@ -1329,6 +1476,12 @@ const onSearchKeyDown = (event: KeyboardEvent) => {
     case 'Enter': {
       event.preventDefault();
 
+      if (isSelectAllActive.value) {
+        onSelectAll();
+
+        break;
+      }
+
       const opt = filteredOptions.value[activeIndex.value];
 
       if (opt) onSelect(opt);
@@ -1344,7 +1497,9 @@ const onSearchKeyDown = (event: KeyboardEvent) => {
 
     case 'Home':
       event.preventDefault();
-      activeIndex.value = filteredOptions.value.findIndex((o) => !o.disabled);
+      activeIndex.value = selectAllShown.value
+        ? SELECT_ALL_ROW
+        : firstEnabledIndex();
       scrollActiveIntoView();
 
       break;
@@ -1357,6 +1512,9 @@ const onSearchKeyDown = (event: KeyboardEvent) => {
 };
 
 const scrollActiveIntoView = () => {
+  // The select-all row is pinned: always in view.
+  if (isSelectAllActive.value) return;
+
   requestAnimationFrame(() => {
     const li = listRef.value?.querySelector(
       `#${CSS.escape(`${id.value}-opt-${activeIndex.value}`)}`,
@@ -1375,12 +1533,21 @@ const updateStatusText = () => {
   statusDebounce = window.setTimeout(() => {
     const n = filteredOptions.value.length;
 
-    statusText.value =
-      props.loading && !n
-        ? 'Loading results'
-        : n
-          ? `${n} result${n !== 1 ? 's' : ''} available, navigate using the up and down arrows`
-          : 'No search results available';
+    if (isSelectAllActive.value && selectAllShown.value) {
+      const listed = listedEnabled.value.length;
+
+      const picked = listedEnabled.value.filter((o) => isSelected(o)).length;
+
+      statusText.value = `${t.value.selectAll(listed)}, ${picked} of ${listed} options selected`;
+    } else {
+      statusText.value =
+        props.loading && !n
+          ? 'Loading results'
+          : n
+            ? `${n} result${n !== 1 ? 's' : ''} available, navigate using the up and down arrows`
+            : 'No search results available';
+    }
+
     statusDebounce = null;
   }, 1400);
 };
@@ -1406,16 +1573,29 @@ watch([filteredOptions, () => props.itemsPerPage], () => {
 watch([filteredOptions, () => props.loading], () => {
   if (!isOpen.value) return;
 
-  const opts = filteredOptions.value;
+  if (isSelectAllActive.value) {
+    // The row left with the list (no matches, or none enabled): re-home.
+    if (!selectAllShown.value) {
+      activeIndex.value = firstEnabledIndex();
+      scrollActiveIntoView();
+    }
+  } else {
+    const active = filteredOptions.value[activeIndex.value];
 
-  const active = opts[activeIndex.value];
-
-  if (!active || active.disabled) {
-    activeIndex.value = opts.findIndex((o) => !o.disabled);
-    scrollActiveIntoView();
+    if (!active || active.disabled) {
+      activeIndex.value = firstEnabledIndex();
+      scrollActiveIntoView();
+    }
   }
 
   updateStatusText();
+});
+
+// Arriving on (or leaving) the select-all row re-announces: through
+// `aria-activedescendant` alone the row reads its name and selected state,
+// not the mixed count.
+watch(activeIndex, (now, before) => {
+  if (now === SELECT_ALL_ROW || before === SELECT_ALL_ROW) updateStatusText();
 });
 
 // ---- light-dismiss ------------------------------------------------------

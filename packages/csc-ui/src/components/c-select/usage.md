@@ -28,9 +28,16 @@ tags and fold the rest into a single "+N more" tag, or `max-tags="0"` to
 show no tags at all — the field then reads "N selected". Assistive
 technology always hears the full selection as the field's value.
 
+Set `select-all` to pin a select-all row at the top of the list. Its checkbox
+shows whether none, some or all enabled options are selected; activating it
+selects every enabled option, or unselects them all when they already are.
+Disabled options are left alone, and the row only appears while there is
+something to select. Its label is `texts.selectAll`, a function receiving the
+number of listed options.
+
 The row checkboxes recolour like c-checkbox's (`::part(indicator)`,
-`::part(mark)`), and the tags are stylable through the `tags`, `tag` and
-`tag-root` parts:
+`::part(mark)`), the select-all row is the `select-all` part, and the tags are
+stylable through the `tags`, `tag` and `tag-root` parts:
 
 ```css
 c-select::part(tag-root) {
@@ -41,7 +48,8 @@ c-select::part(tag-root) {
 ## Texts
 
 Every built-in string — the clear and toggle button labels, a tag's remove
-label, the overflow and count texts — can be replaced for another language
+label, the overflow and count texts, the select-all row's label — can be
+replaced for another language
 through the `texts` object, merged over the English defaults. Count and
 label texts are functions, so the object must be bound as a DOM property:
 

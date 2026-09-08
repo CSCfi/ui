@@ -21,6 +21,13 @@ type AccordionPrimitive = number | string;
 
 type AccordionValue = AccordionPrimitive | AccordionPrimitive[] | null;
 
+interface CDropdownSelectAllRow {
+  label: string;
+  selected: number;
+  state: 'all' | 'none' | 'some';
+  total: number;
+}
+
 type DropdownItem = {
   disabled?: boolean | string;
   name: string;
@@ -209,7 +216,7 @@ export interface CAutocompleteElementEventMap {
 }
 
 /** A filterable value-selection component: a readonly value field that opens a popover panel with a search input above the matching options. */
-export interface CAutocompleteElement extends Omit<HTMLElement, 'clearable' | 'disabled' | 'errorMessage' | 'external' | 'filter' | 'hideDetails' | 'hint' | 'hostId' | 'items' | 'itemsPerPage' | 'label' | 'labelOnTop' | 'loading' | 'maxTags' | 'multiple' | 'name' | 'placeholder' | 'required' | 'returnObject' | 'shadow' | 'size' | 'texts' | 'valid' | 'value'> {
+export interface CAutocompleteElement extends Omit<HTMLElement, 'clearable' | 'disabled' | 'errorMessage' | 'external' | 'filter' | 'hideDetails' | 'hint' | 'hostId' | 'items' | 'itemsPerPage' | 'label' | 'labelOnTop' | 'loading' | 'maxTags' | 'multiple' | 'name' | 'placeholder' | 'required' | 'returnObject' | 'selectAll' | 'shadow' | 'size' | 'texts' | 'valid' | 'value'> {
   /** Make the selected value clearable */
   clearable?: boolean;
   /** Disable the input */
@@ -262,6 +269,14 @@ export interface CAutocompleteElement extends Omit<HTMLElement, 'clearable' | 'd
   required?: boolean;
   /** Return object instead of value */
   returnObject?: boolean;
+  /**
+   * In `multiple` mode, pin a select-all row at the top of the list. Its
+   * checkbox shows whether none, some or all enabled options currently listed
+   * — the matches while a query is typed, the given `items` with `external` —
+   * are selected; activating it selects them all, or, when all are selected,
+   * unselects them. Ignored in single mode
+   */
+  selectAll?: boolean;
   /** Shadow variant */
   shadow?: boolean;
   /** Field height: the 44px default or the 36px `small` box */
@@ -648,14 +663,19 @@ export interface CDropdownElementEventMap {
    * and value for the parent (c-select) to commit.
    */
   selectOption: CustomEvent<{ name: string; value: number | string }>;
+  /**
+   * Fired when the select-all row is activated; the parent (c-select) toggles
+   * every listed enabled option.
+   */
+  selectall: CustomEvent<void>;
 }
 
-export interface CDropdownElement extends Omit<HTMLElement, 'dropdownItemType' | 'hostId' | 'index' | 'items' | 'itemsPerPage' | 'multiple' | 'parent' | 'selected' | 'type'> {
+export interface CDropdownElement extends Omit<HTMLElement, 'dropdownItemType' | 'hostId' | 'index' | 'items' | 'itemsPerPage' | 'multiple' | 'parent' | 'selectAllRow' | 'selected' | 'type'> {
   /** Whether items are <c-option> elements or plain objects */
   dropdownItemType?: 'item' | 'option';
   /** Id used to build option/announce element ids */
   hostId?: string;
-  /** Current highlighted index */
+  /** Current highlighted index; `-1` (`SELECT_ALL_INDEX`) is the select-all row */
   index?: null | number;
   /** Dropdown options: a NodeList of <c-option> or an array of items */
   items?: ArrayLike<DropdownItem>;
@@ -668,6 +688,11 @@ export interface CDropdownElement extends Omit<HTMLElement, 'dropdownItemType' |
   multiple?: boolean;
   /** Dropdown parent (the c-select / c-autocomplete host element) */
   parent?: HTMLElement | null;
+  /**
+   * The select-all row in `multiple` mode, as the parent computes it (label,
+   * tri-state, counts for the live region); `null` renders no row
+   */
+  selectAllRow?: CDropdownSelectAllRow | null;
   /**
    * Values of the currently selected items in `multiple` mode; drives each
    * row's `aria-selected` and its indicator
@@ -1390,7 +1415,7 @@ export interface CSelectElementEventMap {
 }
 
 /** A value-selection field: a readonly field that opens a listbox of options — slotted `c-option` elements or an `items` array — and holds the picked value, emitting the value events that back `v-model`. */
-export interface CSelectElement extends Omit<HTMLElement, 'clearable' | 'disabled' | 'errorMessage' | 'hideDetails' | 'hint' | 'hostId' | 'items' | 'itemsPerPage' | 'label' | 'labelOnTop' | 'loading' | 'maxTags' | 'multiple' | 'name' | 'optionAsSelection' | 'placeholder' | 'required' | 'returnObject' | 'shadow' | 'size' | 'texts' | 'valid' | 'value'> {
+export interface CSelectElement extends Omit<HTMLElement, 'clearable' | 'disabled' | 'errorMessage' | 'hideDetails' | 'hint' | 'hostId' | 'items' | 'itemsPerPage' | 'label' | 'labelOnTop' | 'loading' | 'maxTags' | 'multiple' | 'name' | 'optionAsSelection' | 'placeholder' | 'required' | 'returnObject' | 'selectAll' | 'shadow' | 'size' | 'texts' | 'valid' | 'value'> {
   /** Make the selected value clearable */
   clearable?: boolean;
   /** Disable the input */
@@ -1437,6 +1462,13 @@ export interface CSelectElement extends Omit<HTMLElement, 'clearable' | 'disable
   required?: boolean;
   /** Return object instead of value */
   returnObject?: boolean;
+  /**
+   * In `multiple` mode, pin a select-all row at the top of the list. Its
+   * checkbox shows whether none, some or all enabled options are selected;
+   * activating it selects every enabled option — or, when all are selected,
+   * unselects them. Ignored in single mode
+   */
+  selectAll?: boolean;
   /** Shadow variant */
   shadow?: boolean;
   /** Field height: the 44px default or the 36px `small` box */

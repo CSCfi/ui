@@ -79,9 +79,17 @@ technology always hears the full selection as the field's value. With
 `external`, a pick's label is remembered when it is made, so a later fetch
 that no longer lists it keeps its tag readable.
 
+Set `select-all` to pin a select-all row at the top of the list. It acts on
+the options currently listed — the matches while a query is typed, or the
+`items` you supply with `external`: activating it selects every enabled one
+of them, or unselects them all when they already are, and options outside
+the list keep their state. Disabled options are left alone, and the row only
+appears while there is something to select. Its label is `texts.selectAll`,
+a function receiving the number of listed options.
+
 The row checkboxes recolour like c-checkbox's (`::part(indicator)`,
-`::part(mark)`), and the tags are stylable through the `tags`, `tag` and
-`tag-root` parts:
+`::part(mark)`), the select-all row is the `select-all` part, and the tags are
+stylable through the `tags`, `tag` and `tag-root` parts:
 
 ```css
 c-autocomplete::part(tag-root) {
@@ -92,10 +100,10 @@ c-autocomplete::part(tag-root) {
 ## Texts
 
 Every built-in string — the clear and toggle button labels, the search
-input's placeholder and accessible label, the loading and no-results rows, a
-tag's remove label, the overflow and count texts — can be replaced for
-another language through the `texts` object, merged over the English
-defaults. Count and label texts are functions, so the object must be bound
+input's placeholder and accessible label, the loading and no-results rows,
+the select-all row's label, a tag's remove label, the overflow and count
+texts — can be replaced for another language through the `texts` object,
+merged over the English defaults. Count and label texts are functions, so the object must be bound
 as a DOM property; the `placeholder` prop still wins over
 `texts.searchPlaceholder` when both are set:
 
