@@ -203,7 +203,7 @@
         <!-- `mousedown.prevent`: a pointer pick must not move DOM focus from
              the search input onto the row — highlighting is virtual. -->
         <li
-          v-for="(opt, i) in filteredOptions"
+          v-for="(opt, i) in renderedOptions"
           :id="`${id}-opt-${i}`"
           :key="`opt-${i}`"
           :aria-disabled="opt.disabled || undefined"
@@ -229,7 +229,17 @@
 
           <span v-if="opt.html" :class="ui.itemLabel()" v-html="opt.html" />
 
-          <span v-else :class="ui.itemLabel()">{{ opt.label }}</span>
+          <!-- `items` rows: the label as plain runs and `<mark part="match">`
+               runs. This static `part="match"` is the one the analyzer sees
+               (the slotted rows' marks are built in JS), so it carries the
+               `@csspart match` contract for both paths. -->
+          <span v-else :class="ui.itemLabel()">
+            <template v-for="(seg, j) in opt.segments ?? []" :key="j">
+              <mark v-if="seg.match" part="match">{{ seg.text }}</mark>
+
+              <template v-else>{{ seg.text }}</template>
+            </template>
+          </span>
 
           <svg
             v-if="!multipleOn && isSelected(opt)"
@@ -271,7 +281,10 @@ export type CAutocompleteItem = CSelectItem;
 export interface CAutocompleteOption {
   /** Whether the option is disabled. */
   disabled: boolean;
-  /** The option's display label. */
+  /**
+   * The option's label: its `name`, else the text of its `c-option-value`,
+   * else its whole text content (for an `items` entry, its `name`).
+   */
   label: string;
   /** The option's value. */
   value: number | string;
@@ -432,6 +445,7 @@ export type CAutocompleteValue =
  * @csspart item - One option row in the list
  * @csspart indicator - The decorative checkbox box on an option row in `multiple` mode; border, fill and glyph draw with `currentColor`, so `color` recolours them together (the c-checkbox recipe)
  * @csspart mark - The check glyph inside a row indicator; draws with `currentColor`
+ * @csspart match - A run of an option's label equal to the query, in the row; underlined in the primary colour, text inherits the row
  * @csspart info - The info row: loading while `loading` with an empty list, otherwise no-results when the query matches no options
  * @csspart tags - The row of selected-value tags inside the field (`multiple` mode)
  * @csspart tag - One selected-value tag: the `c-tag` host, including the overflow tag
@@ -461,8 +475,10 @@ import {
 import { ensureAnchorPositioning } from '../../shared/anchorPolyfill';
 import { coerceBoolean } from '../../shared/coerceBoolean';
 import { emitModelValue } from '../../shared/emitModelValue';
+import { optionLabel, optionValueElement } from '../../shared/optionLabel';
 import { applyPeekCap } from '../../shared/peekCap';
 import SelectionIndicator from '../../shared/SelectionIndicator.vue';
+import { type MatchSegment, splitMatches } from '../../shared/splitMatches';
 import { useHostEmit } from '../../shared/useHostEmit';
 
 /** Events dispatched by `<c-autocomplete>`. */
@@ -770,7 +786,6 @@ const normalizedOptions = computed<NormalizedOption[]>(() => {
     return optionElements.value.map((el) => {
       const o = el as {
         disabled?: boolean;
-        name?: string;
         value?: number | string;
       } & HTMLElement;
 
@@ -778,7 +793,7 @@ const normalizedOptions = computed<NormalizedOption[]>(() => {
         disabled: coerceBoolean(o.disabled ?? el.getAttribute('disabled')),
         el,
         html: el.outerHTML,
-        label: (o.name ?? el.textContent ?? '').trim(),
+        label: optionLabel(el),
         value: o.value ?? (el.getAttribute('value') as string),
       };
     });
@@ -810,6 +825,53 @@ const filteredOptions = computed<NormalizedOption[]>(() => {
 
   return normalizedOptions.value.filter((o) =>
     fn({ disabled: o.disabled, label: o.label, value: o.value }, q),
+  );
+});
+
+// ---- match marking (ADR-0045) --------------------------------------------
+
+// A query-time copy of a slotted option whose first <c-option-value> — the
+// label region — is rebuilt as text runs and `<mark part="match">` runs, as
+// DOM nodes (no string escaping; the clone never connects, so the nested
+// custom elements construct but never mount). `null` when the option has no
+// wrapper: consumer markup is then rendered verbatim, never rewritten.
+const markedOptionHtml = (el: HTMLElement, q: string): null | string => {
+  if (!optionValueElement(el)) return null;
+
+  const clone = el.cloneNode(true) as HTMLElement;
+
+  const wrapper = optionValueElement(clone) as Element;
+
+  wrapper.replaceChildren(
+    ...splitMatches(wrapper.textContent ?? '', q).map((seg) => {
+      if (!seg.match) return document.createTextNode(seg.text);
+
+      const mark = document.createElement('mark');
+      mark.setAttribute('part', 'match');
+      mark.textContent = seg.text;
+
+      return mark;
+    }),
+  );
+
+  return clone.outerHTML;
+};
+
+type RenderedOption = { segments?: MatchSegment[] } & NormalizedOption;
+
+// The rows as drawn: `filteredOptions` positionally (row ids, `activeIndex`
+// and the cap/status watchers stay keyed on that array) plus the match
+// marking for the current query. A computed, not a template method: the
+// list re-renders on every `pointermove`, which would otherwise clone every
+// row per mouse event. With an empty query the rows are the verbatim
+// `outerHTML` / plain label.
+const renderedOptions = computed<RenderedOption[]>(() => {
+  const q = query.value;
+
+  return filteredOptions.value.map((o) =>
+    o.el
+      ? { ...o, html: (q && markedOptionHtml(o.el, q)) || o.html }
+      : { ...o, segments: splitMatches(o.label, q) },
   );
 });
 
@@ -1392,12 +1454,9 @@ const refreshOptions = () => {
   hasConsumerPost.value = !!host.querySelector(':scope > [slot="post"]');
 
   type OptionEl = {
-    name?: string;
     selected?: boolean | string;
     value: number | string;
   } & HTMLElement;
-
-  const labelOf = (o: OptionEl) => (o.name ?? o.textContent ?? '').trim();
 
   // `multiple`: every `<c-option selected>` seeds the array (DOM order) —
   // only while nothing is picked yet, so a later child mutation cannot
@@ -1409,7 +1468,7 @@ const refreshOptions = () => {
 
     if (picked.length && !selectedValues.value.length) {
       value.value = picked.map((o) =>
-        props.returnObject ? { name: labelOf(o), value: o.value } : o.value,
+        props.returnObject ? { name: optionLabel(o), value: o.value } : o.value,
       ) as CAutocompleteValue;
     }
 
@@ -1422,7 +1481,7 @@ const refreshOptions = () => {
 
   if (selection && value.value == null) {
     value.value = props.returnObject
-      ? { name: labelOf(selection), value: selection.value }
+      ? { name: optionLabel(selection), value: selection.value }
       : selection.value;
   }
 };
@@ -1434,7 +1493,13 @@ onMounted(() => {
 
   if (host && typeof MutationObserver !== 'undefined') {
     childObserver = new MutationObserver(refreshOptions);
-    childObserver.observe(host, { childList: true, subtree: true });
+    // `characterData`: a `{{ text }}` change inside a <c-option-value> is a
+    // text-node edit, not a childList mutation, and it changes the label.
+    childObserver.observe(host, {
+      characterData: true,
+      childList: true,
+      subtree: true,
+    });
   }
 });
 
@@ -1466,9 +1531,14 @@ onBeforeUnmount(() => {
       at-rule-adjacent syntax with no utility equivalent.
     - the popover open animation keyframe.
     - the readonly field `input::placeholder` (a native pseudo-element).
-    - `li c-option / li c-option-value` reset — those nodes come from `v-html`
+    - `li c-option / li c-option-value` — those nodes come from `v-html`
       (option outerHTML), so Vue can't hang a class on them; strip the
-      stand-alone option's block padding so it sits inline in the row.
+      stand-alone option's block padding so it sits inline in the row, and
+      ellipsise the label region (a block box of its own, so the wrapper
+      span's `text-ellipsis` cannot clip its text).
+    - `[part='match']` — the match marking around the query in a row label;
+      in slotted rows the `<mark>` is `v-html`-injected too, and the UA
+      `mark` default (black on yellow) is unreadable in dark mode.
 -->
 <style>
 :host {
@@ -1513,10 +1583,24 @@ li c-option {
   display: contents;
 }
 
+/* The label region: a block of its own, so a long label ellipsises here. */
 li c-option-value {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+}
+
+/* Match marking (ADR-0045): the runs of a label equal to the query, in both
+ * the slotted (`v-html`) and `items` rows. Text colour and background follow
+ * the row; the underline is the primary token, so it tracks the theme. A
+ * decoration rather than the 3.x box-shadow: it survives the label region's
+ * `overflow: hidden` and forced-colors mode. */
+[part='match'] {
+  background: transparent;
+  color: inherit;
+  text-decoration: underline 2px var(--c-primary);
+  text-decoration-skip-ink: none;
+  text-underline-offset: 0.15em;
 }
 
 @keyframes c-autocomplete-fade-in {

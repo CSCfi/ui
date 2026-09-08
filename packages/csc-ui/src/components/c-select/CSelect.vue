@@ -278,7 +278,7 @@ export type CSelectValue =
  *
  * @seeded from csc-ui — verify
  *
- * @subcomponents c-option
+ * @subcomponents c-option, c-option-value
  *
  * @csspart menu - The dropdown surface (the positioned dialog) holding the field and the list
  * @csspart list - The scrolling listbox of options
@@ -304,6 +304,7 @@ import {
 
 import { coerceBoolean } from '../../shared/coerceBoolean';
 import { emitModelValue } from '../../shared/emitModelValue';
+import { optionLabel } from '../../shared/optionLabel';
 
 /** Events dispatched by `<c-select>`. */
 interface CSelectEvents {
@@ -574,17 +575,20 @@ const dropdownItems = computed<SelectItem[]>(() =>
     : (props.items as SelectItem[]),
 );
 
-// Label of an option by value — its `name`, else its text content (slotted
-// <c-option> without `name`), else the raw value so a tag is never blank.
+// An option's label whichever source it comes from: an `items` entry's
+// `name`; for a slotted <c-option>, `optionLabel()` — its `name`, else the
+// text of its `c-option-value`, else its own text (ADR-0045).
+const nameOf = (item: SelectItem): string =>
+  optionElementsExist.value
+    ? optionLabel(item as unknown as HTMLElement)
+    : item.name;
+
+// Label of an option by value — `nameOf`, else the raw value so a tag is
+// never blank.
 const labelFor = (v: number | string, raw?: SelectRawValue): string => {
   const item = dropdownItems.value.find((i) => i.value === v);
 
-  if (item) {
-    const text =
-      item.name ?? ((item as unknown as HTMLElement).textContent ?? '').trim();
-
-    return text || String(v);
-  }
+  if (item) return nameOf(item) || String(v);
 
   if (raw && typeof raw === 'object') return raw.name;
 
@@ -633,13 +637,11 @@ const displayValue = computed(() => {
 
   const items = dropdownItems.value ?? [];
 
-  if (!props.returnObject) {
-    return items.find((item) => item.value === v)?.name ?? '';
-  }
+  const target = props.returnObject ? (v as SelectItem).value : v;
 
-  return (
-    items.find((item) => item.value === (v as SelectItem).value)?.name ?? ''
-  );
+  const found = items.find((item) => item.value === target);
+
+  return found ? nameOf(found) : '';
 });
 
 // What the readonly combobox holds: the single-mode label; in `multiple`
@@ -671,7 +673,7 @@ const emitValue = (next: CSelectEvents['update:value']) => {
 
 const getSelectionIndex = (search: string) =>
   dropdownItems.value.findIndex((i) =>
-    i.name.toLowerCase().startsWith(search.toLowerCase()),
+    nameOf(i).toLowerCase().startsWith(search.toLowerCase()),
   );
 
 const setCurrentIndex = ({
@@ -683,7 +685,7 @@ const setCurrentIndex = ({
 }): null | SelectItem => {
   let selection: null | SelectItem = null;
   dropdownItems.value.forEach((item, index) => {
-    const selected = item.value === v && item.name === name;
+    const selected = item.value === v && nameOf(item) === name;
 
     if (optionElementsExist.value) {
       (item as { selected: boolean } & SelectItem).selected = selected;
@@ -1177,7 +1179,6 @@ const refreshOptions = () => {
   hasConsumerPost.value = !!host.querySelector(':scope > [slot="post"]');
 
   type OptionEl = {
-    name: string;
     selected?: boolean | string;
     value: number | string;
   } & HTMLElement;
@@ -1193,7 +1194,9 @@ const refreshOptions = () => {
     if (picked.length && !selectedValues.value.length) {
       emitValue(
         picked.map((o) =>
-          props.returnObject ? { name: o.name, value: o.value } : o.value,
+          props.returnObject
+            ? { name: optionLabel(o), value: o.value }
+            : o.value,
         ) as CSelectValue,
       );
     }
@@ -1210,7 +1213,7 @@ const refreshOptions = () => {
   if (selection) {
     emitValue(
       props.returnObject
-        ? { name: selection.name, value: selection.value }
+        ? { name: optionLabel(selection), value: selection.value }
         : selection.value,
     );
   }
@@ -1236,7 +1239,13 @@ onMounted(() => {
 
   if (host && typeof MutationObserver !== 'undefined') {
     childObserver = new MutationObserver(refreshOptions);
-    childObserver.observe(host, { childList: true, subtree: true });
+    // `characterData`: a `{{ text }}` change inside a <c-option-value> is a
+    // text-node edit, not a childList mutation, and it changes the label.
+    childObserver.observe(host, {
+      characterData: true,
+      childList: true,
+      subtree: true,
+    });
   }
 
   // componentDidLoad: seed current index from an initial value.
@@ -1245,14 +1254,14 @@ onMounted(() => {
   } else if (value.value) {
     const selection = dropdownItems.value.find((item) =>
       props.returnObject
-        ? item.name === (value.value as SelectItem).name &&
+        ? nameOf(item) === (value.value as SelectItem).name &&
           item.value === (value.value as SelectItem).value
         : item.value === value.value,
     );
 
     if (selection) {
       setCurrentIndex({
-        name: selection.name,
+        name: nameOf(selection),
         value: selection.value,
       });
     }

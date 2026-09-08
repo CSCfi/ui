@@ -41,9 +41,21 @@ _Avoid_: Combobox (reserve for the ARIA role, not the component name), typeahead
 The text `<input role="combobox">` rendered inside `c-autocomplete`'s open panel that filters the options. Distinct from the **value field** (the readonly `c-input` trigger that displays the current selection). DOM focus stays in the search input while the panel is open; option highlighting is virtual (`aria-activedescendant`), never real DOM focus.
 _Avoid_: Query field, filter box (use _search input_)
 
+**Option label**:
+The text naming one option in `c-select` / `c-autocomplete`: shown in the row, in the closed **value field** and in the option's **tag**, and what the **query** is matched against. Resolved by `optionLabel()` as the option's `name`, else the text of its **label region** (`c-option-value`), else its whole text; for an `items` entry, its `name` (ADR-0045). Distinct from **label**, the form control's own name.
+_Avoid_: Option name (the `name` attribute is one source of it, not the concept), option text, display label
+
+**Label region** (`c-option-value`):
+The composed child a consumer wraps around the label text inside a `c-option`, so the option can carry more than its label (a description, an icon) without that content joining the **option label**. Its content is plain text; in `c-autocomplete` it is also where **match marking** happens. An option without it is rendered exactly as authored.
+_Avoid_: Option value (it is the label, not the `value`; the tag name is historical), wrapper, title
+
 **Query**:
 The transient text currently typed into the **search input** — the narrowing criterion, distinct from the committed selected value. It resets to empty whenever the panel opens, and every change (the open-reset included) is announced via the `change:query` event; in **external** mode that event is the consumer's signal to refresh the options.
 _Avoid_: Search term, filter string (one word for this concept — _query_), value (the query is never the selected value)
+
+**Match marking**:
+The `<mark part="match">` runs `c-autocomplete` draws around every occurrence of the **query** in an **option label** while a query is typed — inside the **label region** of a slotted option, or in an `items` entry's label; never in slotted markup that lacks the region. Matched literally and case-insensitively whatever the `filter` did, so a fuzzy filter can leave a row unmarked.
+_Avoid_: Highlighting (that is the virtual active row, `aria-activedescendant`), search-term emphasis, bolding
 
 **External** (mode):
 The contract where the consumer owns a component's data operation — filtering, sorting, paging, typically because a server does the work: with the `external` prop set, the component renders the data it is given verbatim and only emits state-change events (`change:query`, `change:sort`, …) for the consumer to act on. Shared vocabulary of `c-data-table` and `c-autocomplete` (ADR-0029).
@@ -326,7 +338,7 @@ The hand-written markdown file colocated with a component (`usage.md` beside the
 _Avoid_: readme (GitHub-facing), description (a description is the one-liner on a single API member; the *component* description is this file's first paragraph, not a separate text)
 
 **Composed child**:
-A component the consumer authors only inside a specific parent's markup (`c-tag` inside `c-tags`, `c-card-title` inside `c-card`). Declared by the parent via a `@subcomponents` docblock tag, emitted into the **manifest**, and folded into the parent on the docs site — no top-level nav entry or standalone page of its own; its examples and API tables live under the parent, **grouped by component**. Distinct from an _internal-only element_ (e.g. `c-dropdown`), which the consumer never authors at all and which is documented nowhere.
+A component the consumer authors only inside a specific parent's markup (`c-tag` inside `c-tags`, `c-card-title` inside `c-card`, `c-option-value` inside a `c-option`). Declared by the parent via a `@subcomponents` docblock tag, emitted into the **manifest**, and folded into the parent on the docs site — no top-level nav entry or standalone page of its own; its examples and API tables live under the parent, **grouped by component**. Distinct from an _internal-only element_ (e.g. `c-dropdown`), which the consumer never authors at all and which is documented nowhere.
 _Avoid_: sub-component (imprecise — conflates composed children with internal-only elements), nested component
 
 **Standalone component**:

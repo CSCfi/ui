@@ -1053,6 +1053,7 @@ export interface COptionElement extends Omit<HTMLElement, 'disabled' | 'name' | 
   value?: number | string;
 }
 
+/** The label region of a `c-option`: wraps the text that c-select and c-autocomplete use as the option's label — in the closed field, its tag and the autocomplete filter — so the option can carry a description or an icon beside its label, and the region in which c-autocomplete marks the runs equal to the query (`::part(match)`). */
 export interface COptionValueElement extends HTMLElement {
 }
 

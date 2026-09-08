@@ -1,5 +1,15 @@
 A value-selection field: a readonly field that opens a listbox of options — slotted `c-option` elements or an `items` array — and holds the picked value, emitting the value events that back `v-model`.
 
+## Options
+
+Options are slotted `c-option` elements or an `items` array of
+`{ name, value }` entries. A slotted option's label — the text shown in the
+closed field and, in `multiple` mode, in its tag — is its `name` attribute,
+else the text of a `c-option-value` inside it, else the option's whole text.
+Wrap the label in `c-option-value` when an option carries more than its
+label, such as a description; the rest of the option's markup still renders
+in the list row.
+
 ## Multiple selection
 
 Set `multiple` to let the user pick several options. The value is then an

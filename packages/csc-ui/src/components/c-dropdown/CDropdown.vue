@@ -56,7 +56,7 @@
               dropdown({ disabled: isDisabled(opt) }).item(),
               isDisabled(opt) ? 'disabled' : '',
             ]"
-            :data-name="opt.name"
+            :data-name="nameOf(opt)"
             part="item"
             role="option"
             tabindex="-1"
@@ -148,6 +148,7 @@ import {
 } from 'vue';
 
 import { coerceBoolean } from '../../shared/coerceBoolean';
+import { optionLabel } from '../../shared/optionLabel';
 import { applyPeekCap } from '../../shared/peekCap';
 import SelectionIndicator from '../../shared/SelectionIndicator.vue';
 import { useHostEmit } from '../../shared/useHostEmit';
@@ -179,8 +180,8 @@ interface CDropdownEvents {
  * the host box (`:host{display:block;position:relative}`), the imperative
  * state-class hooks the JS toggles (`ul.active` visibility + fade-in keyframe,
  * `.mobile` full-screen layout, `.input-bottom-wrapper.active` padding),
- * `<mark>` and `li span / li c-option-value` ellipsis rules (those nodes are
- * injected via `v-html`, so Vue can't put a class on them), and the keyframe.
+ * the `li span / li c-option-value` ellipsis rules (those nodes are injected
+ * via `v-html`, so Vue can't put a class on them), and the keyframe.
  */
 const dropdown = tv({
   defaultVariants: { disabled: false },
@@ -355,6 +356,13 @@ const bubbling = { bubbles: true, composed: true };
 // `disabled` by truthiness.
 const isDisabled = (item: DropdownItem) => coerceBoolean(item.disabled);
 
+// An option's label: its `name`, else — for a slotted <c-option> element —
+// the text of its `c-option-value` / its own text (ADR-0045). The `items`
+// array always carries `name`.
+const nameOf = (item: DropdownItem): string =>
+  (item.name as string | undefined) ??
+  (item instanceof HTMLElement ? optionLabel(item) : String(item.value));
+
 const onSelect = (item: DropdownItem, event: Event) => {
   if (isDisabled(item)) {
     event.preventDefault();
@@ -362,7 +370,7 @@ const onSelect = (item: DropdownItem, event: Event) => {
     return;
   }
 
-  emit('selectOption', { name: item.name, value: item.value }, bubbling);
+  emit('selectOption', { name: nameOf(item), value: item.value }, bubbling);
 };
 
 // ---- scroll lock + positioning ------------------------------------------

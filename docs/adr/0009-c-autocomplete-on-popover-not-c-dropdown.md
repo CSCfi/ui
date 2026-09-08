@@ -20,6 +20,8 @@ input without a rewrite.
   minimum-query messages) goes unused by this component; it remains for any
   future dialog-style autocomplete. *(Amended by ADR-0029 (2026-08-19): async
   data is now `c-autocomplete`'s external mode, foreclosing that future — the
-  unused machinery is deleted from `c-dropdown`.)*
+  unused machinery is deleted from `c-dropdown`.)* *(Amended by ADR-0045
+  (2026-09-08): the query marking is restored on `c-autocomplete` itself, with
+  `c-option-value` as the label region and `match` as the part.)*
 - Some positioning/empty-state logic is duplicated rather than shared. Accepted
   as the cost of matching the reference UX and the ADR-0008 popover direction.

@@ -10,24 +10,30 @@ export const Basic = () => {
       <CAutocomplete
         value={language}
         clearable
-        hint="c-option-value marks the text that gets match highlighting"
+        hint="Only the c-option-value text is filtered, marked and used as the label"
         label="Programming language"
         placeholder="Start typing to search"
         onChangeValue={(event) => setLanguage(event.detail as string | null)}
       >
         <COption value="js">
           <COptionValue>JavaScript</COptionValue>
+          <small>Web pages and Node.js</small>
         </COption>
         <COption value="ts">
           <COptionValue>TypeScript</COptionValue>
+          <small>JavaScript with static types</small>
         </COption>
         <COption value="py">
           <COptionValue>Python</COptionValue>
+          <small>Scripting and data science</small>
         </COption>
         <COption value="rs">
           <COptionValue>Rust</COptionValue>
+          <small>Systems programming</small>
         </COption>
       </CAutocomplete>
+
+      <p>Value: {language ?? 'null'}</p>
     </div>
   );
 };

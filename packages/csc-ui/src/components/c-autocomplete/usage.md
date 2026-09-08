@@ -1,5 +1,37 @@
 A filterable value-selection component: a readonly value field that opens a popover panel with a search input above the matching options.
 
+## Options
+
+Options are slotted `c-option` elements or an `items` array of
+`{ name, value }` entries. A slotted option's label — the text shown in the
+closed field and in its tag, and the text the filter matches — is its `name`
+attribute, else the text of a `c-option-value` inside it, else the option's
+whole text. Wrap the label in `c-option-value` when an option carries more
+than its label, such as a description; the rest of the option's markup still
+renders in the row:
+
+```html
+<c-option value="ts">
+  <c-option-value>TypeScript</c-option-value>
+  <small>JavaScript with static types</small>
+</c-option>
+```
+
+While a query is typed, the runs of each option's label that equal it are
+marked: inside the `c-option-value` of a slotted option, or in the plain
+label of an `items` entry. A slotted option without the wrapper is rendered
+exactly as authored and never marked. Every occurrence of the literal query
+is marked, whatever the filter did — a fuzzy `filter`, or a `name` that
+differs from the wrapper's text, can leave a row unmarked — and the wrapper's
+content is treated as plain text while a query is active. The marks are the
+`match` part:
+
+```css
+c-autocomplete::part(match) {
+  font-weight: 600;
+}
+```
+
 ## Filtering
 
 By default the component filters its options itself: the query typed into the
