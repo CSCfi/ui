@@ -17,6 +17,30 @@ renders in the row:
 </c-option>
 ```
 
+The row shows a copy of the option's markup, re-created from its HTML inside
+the panel. A component nested in an option — a `c-icon`, say — is therefore
+configured through attributes, or props with an attribute form (strings,
+numbers, booleans); object props and event listeners on option content do not
+carry over. Page CSS does not reach the copy either: give the content a `part`
+and style it through the field:
+
+```html
+<c-option value="ts">
+  <div part="language">
+    <c-option-value>TypeScript</c-option-value>
+    <c-icon path="…"></c-icon>
+  </div>
+</c-option>
+```
+
+```css
+c-autocomplete::part(language) {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+```
+
 While a query is typed, the runs of each option's label that equal it are
 marked: inside the `c-option-value` of a slotted option, or in the plain
 label of an `items` entry. A slotted option without the wrapper is rendered

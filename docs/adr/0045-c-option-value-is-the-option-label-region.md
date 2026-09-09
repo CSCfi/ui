@@ -94,6 +94,11 @@ a query such as `c++` or `(` threw.
   wrapper's text when it contains a `c-option-value` — the change consumers
   asked the wrapper for; without the wrapper nothing changes.
 - The option observers also watch `characterData`, so a `{{ text }}` change
-  inside a wrapper re-derives the label.
+  inside a wrapper re-derives the label. `c-autocomplete`'s also watches
+  `attributes` (amended 2026-09): its rows are cached `outerHTML` copies, and a
+  component nested in an option (a `c-icon` with a bound `path`) reflects that
+  prop to an attribute only in its own `connectedCallback` — after the field,
+  connected first, has already serialized the option — so without the
+  attribute mutation the row copy never caught up.
 - ADR-0009's consequence about `c-dropdown`'s unused autocomplete mode is
   amended: the query marking is back, on `c-autocomplete` itself.

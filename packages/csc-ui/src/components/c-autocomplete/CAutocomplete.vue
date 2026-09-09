@@ -846,7 +846,7 @@ const applyListCap = () => {
 // ---- options + filtering ------------------------------------------------
 
 // Bumped by the slot MutationObserver so the option-derived computed re-reads
-// when consumer <c-option> children change.
+// when consumer <c-option> children change — their set, text or attributes.
 const optionsVersion = ref(0);
 
 const normalizedOptions = computed<NormalizedOption[]>(() => {
@@ -1675,7 +1675,13 @@ onMounted(() => {
     childObserver = new MutationObserver(refreshOptions);
     // `characterData`: a `{{ text }}` change inside a <c-option-value> is a
     // text-node edit, not a childList mutation, and it changes the label.
+    // `attributes`: the rows are `outerHTML` copies, and a component nested in
+    // an option (a <c-icon> with a bound `path`) reflects its props to
+    // attributes only in its own connectedCallback — after this component,
+    // connected first, has already serialized it; an option's `disabled`,
+    // `value` and `name` are attribute-borne too.
     childObserver.observe(host, {
+      attributes: true,
       characterData: true,
       childList: true,
       subtree: true,

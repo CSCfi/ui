@@ -13,28 +13,20 @@
       multiple
       placeholder="Start typing to search"
     >
-      <c-option value="js">
-        <c-option-value>JavaScript</c-option-value>
-      </c-option>
+      <!-- An option can carry more than its label: wrap the label in
+           c-option-value and lay the rest out through a `part` — the row
+           shows a copy of this markup inside the panel, where page classes
+           do not reach. -->
+      <c-option
+        v-for="option in options"
+        :key="option.value"
+        :value="option.value"
+      >
+        <div part="language">
+          <c-option-value>{{ option.label }}</c-option-value>
 
-      <c-option value="ts">
-        <c-option-value>TypeScript</c-option-value>
-      </c-option>
-
-      <c-option value="py">
-        <c-option-value>Python</c-option-value>
-      </c-option>
-
-      <c-option value="rs">
-        <c-option-value>Rust</c-option-value>
-      </c-option>
-
-      <c-option value="go">
-        <c-option-value>Go</c-option-value>
-      </c-option>
-
-      <c-option value="rb">
-        <c-option-value>Ruby</c-option-value>
+          <c-icon :path="option.icon" />
+        </div>
       </c-option>
     </c-autocomplete>
 
@@ -43,7 +35,59 @@
 </template>
 
 <script setup lang="ts">
+import {
+  mdiLanguageGo,
+  mdiLanguageJavascript,
+  mdiLanguagePython,
+  mdiLanguageRuby,
+  mdiLanguageRust,
+  mdiLanguageTypescript,
+} from '@mdi/js';
 import { ref } from 'vue';
 
 const languages = ref<string[]>(['ts']);
+
+const options = [
+  {
+    value: 'js',
+    label: 'JavaScript',
+    icon: mdiLanguageJavascript,
+  },
+  {
+    value: 'ts',
+    label: 'TypeScript',
+    icon: mdiLanguageTypescript,
+  },
+  {
+    value: 'py',
+    label: 'Python',
+    icon: mdiLanguagePython,
+  },
+  {
+    value: 'rs',
+    label: 'Rust',
+    icon: mdiLanguageRust,
+  },
+  {
+    value: 'go',
+    label: 'Go',
+    icon: mdiLanguageGo,
+  },
+  {
+    value: 'rb',
+    label: 'Ruby',
+    icon: mdiLanguageRuby,
+  },
+];
 </script>
+
+<style>
+/* Option content is copied into the panel: page classes do not reach it,
+   the `part` does. */
+c-autocomplete::part(language) {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+</style>
