@@ -16,12 +16,42 @@ import {
 } from '@cscfi/csc-ui-react';
 
 const options = [
-  { value: 'js', label: 'JavaScript', icon: mdiLanguageJavascript },
-  { value: 'ts', label: 'TypeScript', icon: mdiLanguageTypescript },
-  { value: 'py', label: 'Python', icon: mdiLanguagePython },
-  { value: 'rs', label: 'Rust', icon: mdiLanguageRust },
-  { value: 'go', label: 'Go', icon: mdiLanguageGo },
-  { value: 'rb', label: 'Ruby', icon: mdiLanguageRuby },
+  {
+    value: 'js',
+    label: 'JavaScript',
+    icon: mdiLanguageJavascript,
+    color: '#F7DF1E',
+  },
+  {
+    value: 'ts',
+    label: 'TypeScript',
+    icon: mdiLanguageTypescript,
+    color: '#3178C6',
+  },
+  {
+    value: 'py',
+    label: 'Python',
+    icon: mdiLanguagePython,
+    color: '#3776AB',
+  },
+  {
+    value: 'rs',
+    label: 'Rust',
+    icon: mdiLanguageRust,
+    color: '#CE422B',
+  },
+  {
+    value: 'go',
+    label: 'Go',
+    icon: mdiLanguageGo,
+    color: '#00ADD8',
+  },
+  {
+    value: 'rb',
+    label: 'Ruby',
+    icon: mdiLanguageRuby,
+    color: '#CC342D',
+  },
 ];
 
 /* Option content is copied into the panel: page classes do not reach it,
@@ -56,7 +86,7 @@ export const Multiple = () => {
           <COption key={option.value} value={option.value}>
             <div part="language">
               <COptionValue>{option.label}</COptionValue>
-              <CIcon path={option.icon} />
+              <CIcon color={option.color} path={option.icon} />
             </div>
           </COption>
         ))}
