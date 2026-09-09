@@ -168,6 +168,7 @@ onMounted(() => {
 onBeforeUnmount(() => {
   window.removeEventListener('scroll', scheduleUpdate);
   resizeObserver?.disconnect();
+
   if (frame) cancelAnimationFrame(frame);
 });
 </script>

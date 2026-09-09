@@ -31,7 +31,11 @@ export const ActiveItems = () => {
 
         <CMenuLabel>Theme</CMenuLabel>
 
-        <CMenuItem active={theme === 'dark'} icon={mdiWeatherNight} value="dark">
+        <CMenuItem
+          active={theme === 'dark'}
+          icon={mdiWeatherNight}
+          value="dark"
+        >
           Dark
         </CMenuItem>
         <CMenuItem

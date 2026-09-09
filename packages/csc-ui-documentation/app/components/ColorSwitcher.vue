@@ -4,7 +4,7 @@
       <span
         class="size-3 rounded-full"
         :style="{ 'background-color': currentColor.value }"
-      ></span>
+      />
 
       {{ currentColor.label }}
     </c-button>
@@ -29,7 +29,7 @@
       </template>
 
       <template v-else-if="color.type === 'divider'">
-        <c-divider></c-divider>
+        <c-divider />
       </template>
     </template>
   </c-menu>

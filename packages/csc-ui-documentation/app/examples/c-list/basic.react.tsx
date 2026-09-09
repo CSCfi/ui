@@ -1,11 +1,6 @@
 // @ts-nocheck — documentation code sample; shown as text, never compiled here
 import { useState } from 'react';
-import {
-  CIcon,
-  CList,
-  CListItem,
-  CListItemTitle,
-} from '@cscfi/csc-ui-react';
+import { CIcon, CList, CListItem, CListItemTitle } from '@cscfi/csc-ui-react';
 import { mdiAccount, mdiBell, mdiCog } from '@mdi/js';
 
 const items = [

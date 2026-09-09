@@ -230,9 +230,11 @@
         Select on the host's live state with
         <code>{{ view.tagName }}:state(name)</code>
 
-        — combine with <code>::part()</code>
- for per-state styling, e.g.
-        <code>{{ view.tagName }}:state(checked)::part(indicator)</code>.
+        — combine with
+        <code>::part()</code>
+        for per-state styling, e.g.
+        <code>{{ view.tagName }}:state(checked)::part(indicator)</code>
+        targets the indicator only while checked.
       </p>
 
       <div class="overflow-x-auto">

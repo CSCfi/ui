@@ -1,5 +1,5 @@
 import withNuxt from './.nuxt/eslint.config.mjs';
-import prettierConfig from 'eslint-config-prettier';
+import eslintPluginPrettierRecommended from 'eslint-plugin-prettier/recommended';
 import stylistic from '@stylistic/eslint-plugin';
 
 export default withNuxt(
@@ -9,7 +9,6 @@ export default withNuxt(
       '.nuxt/',
       '.output/',
       'dist/',
-      '--port/',
       // Hand-written React/Angular/TypeScript flavor variants of the Vue
       // examples — shown as text in code tabs, never compiled or executed
       // here, so this project's Vue-flavored rules (and TS type-checking,
@@ -19,6 +18,12 @@ export default withNuxt(
       'app/examples/**/*.typescript.ts',
     ],
   },
+  // eslint-config-prettier (turns off rules that fight Prettier) plus
+  // prettier/prettier: error, so ESLint reports formatting diffs itself, as in
+  // packages/csc-ui. It must come BEFORE the rules block below: rules set there
+  // win over its disables (vue/html-self-closing, with the Prettier-compatible
+  // html.void option, is one it would otherwise switch off).
+  eslintPluginPrettierRecommended,
   {
     plugins: {
       '@stylistic': stylistic,
@@ -69,5 +74,4 @@ export default withNuxt(
       ],
     },
   },
-  prettierConfig,
 );
