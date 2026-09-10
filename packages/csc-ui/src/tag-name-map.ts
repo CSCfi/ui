@@ -694,8 +694,9 @@ export interface CDropdownElement extends Omit<HTMLElement, 'dropdownItemType' |
    */
   selectAllRow?: CDropdownSelectAllRow | null;
   /**
-   * Values of the currently selected items in `multiple` mode; drives each
-   * row's `aria-selected` and its indicator
+   * Values of the currently selected items — the picked values in `multiple`
+   * mode, the single value otherwise; drives each row's `aria-selected`, its
+   * indicator and the single-mode selected-row check
    */
   selected?: (number | string)[];
   /** Parent type — drives autocomplete-only behaviour (highlight, messages) */

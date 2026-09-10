@@ -67,15 +67,14 @@
 
         <!-- Option mode: <c-option> elements projected by the consumer.
              Render each option's outerHTML, mirroring Stencil — inside a
-             wrapper span so the multiple-mode indicator can precede it. -->
+             wrapper span so the multiple-mode indicator can precede it and
+             the single-mode selected-row check can follow it. -->
         <template v-if="dropdownItemType === 'option'">
           <li
             v-for="(opt, i) in itemsArray"
             :key="`option-${i}`"
             :aria-pos-in-set="String(i + 1)"
-            :aria-selected="
-              multiple ? isSelectedValue(opt.value) : !!opt.selected
-            "
+            :aria-selected="isSelectedValue(opt.value)"
             :aria-set-size="String(itemsArray.length)"
             :class="[
               dropdown({ disabled: isDisabled(opt) }).item(),
@@ -95,6 +94,16 @@
             />
 
             <span class="c-dropdown__label" v-html="opt.outerHTML" />
+
+            <svg
+              v-if="!multiple && isSelectedValue(opt.value)"
+              :class="ui.check()"
+              aria-hidden="true"
+              class="check"
+              viewBox="0 0 24 24"
+            >
+              <path :d="mdiCheck" />
+            </svg>
           </li>
         </template>
 
@@ -104,9 +113,7 @@
             v-for="(item, i) in itemsArray"
             :key="`item-${i}`"
             :aria-pos-in-set="String(i + 1)"
-            :aria-selected="
-              multiple ? isSelectedValue(item.value) : index === i
-            "
+            :aria-selected="isSelectedValue(item.value)"
             :aria-set-size="String(itemsArray.length)"
             :class="[
               dropdown({ disabled: isDisabled(item) }).item(),
@@ -126,8 +133,10 @@
               class="relative"
             />
 
+            <span class="c-dropdown__label">{{ item.name }}</span>
+
             <svg
-              v-else-if="index === i"
+              v-if="!multiple && isSelectedValue(item.value)"
               :class="ui.check()"
               aria-hidden="true"
               class="check"
@@ -135,8 +144,6 @@
             >
               <path :d="mdiCheck" />
             </svg>
-
-            <span class="c-dropdown__label">{{ item.name }}</span>
           </li>
         </template>
       </ul>
@@ -218,7 +225,9 @@ interface CDropdownEvents {
 const dropdown = tv({
   defaultVariants: { disabled: false, selectAll: false },
   slots: {
-    check: 'w-4 h-4 shrink-0 fill-current',
+    // The single-mode selected-row check: trails the label (`ml-auto`) and
+    // takes the row's colour (`fill-current`), so a disabled row greys it too.
+    check: 'w-4 h-4 shrink-0 fill-current ml-auto',
     // The positioned menu surface. `position:fixed` + the imperative
     // top/left/width/maxHeight the JS writes inline drive placement.
     dialog:
@@ -300,8 +309,9 @@ interface CDropdownProps {
    */
   selectAllRow?: CDropdownSelectAllRow | null;
   /**
-   * Values of the currently selected items in `multiple` mode; drives each
-   * row's `aria-selected` and its indicator
+   * Values of the currently selected items — the picked values in `multiple`
+   * mode, the single value otherwise; drives each row's `aria-selected`, its
+   * indicator and the single-mode selected-row check
    */
   selected?: (number | string)[];
   /** Parent type — drives autocomplete-only behaviour (highlight, messages) */
@@ -342,9 +352,10 @@ const props = withDefaults(defineProps<CDropdownProps>(), {
 
 const host = useHost();
 
-// Multiple-mode selection, keyed by value. A reactive prop (unlike the live
-// `.selected` flags on <c-option> elements), so `aria-selected` and the row
-// indicators re-render without an `updateList()` bump.
+// The selection, keyed by value (the single value too, not only `multiple`).
+// A reactive prop (unlike the live `.selected` flags on <c-option> elements),
+// so `aria-selected`, the row indicators and the selected-row check re-render
+// without an `updateList()` bump.
 const selectedSet = computed(() => new Set(props.selected));
 
 const isSelectedValue = (value: number | string) =>
