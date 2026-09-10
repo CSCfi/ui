@@ -1,46 +1,58 @@
 {
   "workbench.colorCustomizations": {
     "activityBar.activeBackground": "#c935b5",
-    "activityBar.activeForeground": "#fff",
     "activityBar.activeBorder": "#f9e64f",
+    "activityBar.activeForeground": "#fff",
     "activityBar.background": "#d968c9",
-    "activityBar.foreground": "#000",
-    "modernActivityBar.border": "#d968c9",
-    "activityBar.inactiveForeground": "#000",
+    "activityBar.foreground": "#fff",
+    "activityBar.inactiveForeground": "#ffffff99",
+  
+    "activityBarBadge.background": "#f9e64f",
+    "activityBarBadge.foreground": "#000000",
+  
     "activityBarTop.activeBackground": "#d968c9",
     "activityBarTop.background": "#d968c9",
-    "activityBarTop.foreground": "#000",
+    "activityBarTop.foreground": "#fff",
     "activityBarTop.inactiveForeground": "#15202b99",
+  
     "commandCenter.border": "#15202b99",
     "commandCenter.foreground": "#15202b",
+  
     "editorGroup.border": "#d968c9",
+  
+    "modernActivityBar.border": "#d968c9",
+    "modernActivityBarItem.hoverBackground": "#f9e64f",
+    "modernActivityBarItem.hoverForeground": "#000",
+  
     "panel.border": "#d968c9",
+  
     "panelTitle.activeBorder": "#f9e64f",
+
     "sash.hoverBorder": "#d968c9",
+
     "sideBar.border": "#d968c9",
+
+    "statusBar.background": "#d968c9",
+    "statusBar.foreground": "#ffffff",
+    "statusBarItem.hoverBackground": "#f9e64f",
+    "statusBarItem.hoverForeground": "#000",
+    "statusBarItem.remoteBackground": "#f9e64f",
+    "statusBarItem.remoteForeground": "#000000",
+
     "tab.activeBackground": "#50017b",
     "tab.activeBorder": "#d968c9",
+
     "titleBar.activeBackground": "#d968c9",
     "titleBar.activeForeground": "#fff",
     "titleBar.border": "#978a88",
     "titleBar.inactiveBackground": "#d968c9",
-    "titleBar.inactiveForeground": "#000000",
+    "titleBar.inactiveForeground": "#343434",
+    
     "window.activeBorder": "#d968c9",
     "window.inactiveBorder": "#978a88",
-
-    "statusBar.background": "#d968c9",
-    "statusBar.foreground": "#000",
-
-    "activityBarBadge.background": "#f9e64f",
-    "activityBarBadge.foreground": "#000000",
-    "statusBarItem.remoteBackground": "#f9e64f",
-    "statusBarItem.remoteForeground": "#000000"
   },
   "peacock.color": "#d968c9",
   "js/ts.tsdk.path": "node_modules/typescript/lib",
-  "editor.codeActionsOnSave": {
-    "source.fixAll.eslint": "explicit"
-  },
   "claudeCode.useTerminal": true,
   "html.customData": [
     "./node_modules/@cscfi/csc-ui-next/vscode.html-custom-data.json"
