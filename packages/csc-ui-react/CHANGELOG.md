@@ -1,5 +1,30 @@
 # @cscfi/csc-ui-react
 
+## 4.0.0-alpha.13
+
+### Minor Changes
+
+- [#271](https://github.com/CSCfi/ui/pull/271) [`5f0a398`](https://github.com/CSCfi/ui/commit/5f0a398aef3bf49ee211e1ad255a49562b8ba908) Thanks [@razorfever](https://github.com/razorfever)! - c-select and c-autocomplete gain a `select-all` attribute for `multiple` mode
+  (ADR-0046): a row pinned at the top of the list that selects every listed
+  enabled option — in c-autocomplete, the current matches — and unselects them
+  again when they are all selected, with a checkbox indicator that reads none,
+  some or all. Its label is `texts.selectAll`, a function receiving the number
+  of listed options (default "Select all"), and the row is stylable through
+  the new `select-all` part.
+
+  In a `multiple` c-select, Space now only toggles the focused row (and opens
+  the closed list, like Enter); it no longer also feeds the type-ahead, which
+  silently dropped the tracked highlight after every Space toggle.
+
+### Patch Changes
+
+- [#271](https://github.com/CSCfi/ui/pull/271) [`2d3d34b`](https://github.com/CSCfi/ui/commit/2d3d34b3b062eddffab19869e19430698eeff91e) Thanks [@razorfever](https://github.com/razorfever)! - Fix(c-autocomplete): a component nested in a slotted option — a `c-icon` with
+  a bound `path`, for instance — renders in the panel as soon as it opens, not
+  only after a query is typed. Changing an option's `disabled`, `value` or the
+  attributes of its content after mount now updates its row as well.
+- Updated dependencies [[`2d3d34b`](https://github.com/CSCfi/ui/commit/2d3d34b3b062eddffab19869e19430698eeff91e), [`5f0a398`](https://github.com/CSCfi/ui/commit/5f0a398aef3bf49ee211e1ad255a49562b8ba908)]:
+  - @cscfi/csc-ui@4.0.0-alpha.13
+
 ## 4.0.0-alpha.12
 
 ### Minor Changes
