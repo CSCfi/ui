@@ -13,28 +13,20 @@
       multiple
       placeholder="Start typing to search"
     >
-      <c-option value="js">
-        <c-option-value>JavaScript</c-option-value>
-      </c-option>
+      <!-- An option can carry more than its label: wrap the label in
+           c-option-value and lay the rest out through a `part` — the row
+           shows a copy of this markup inside the panel, where page classes
+           do not reach. The icon takes its brand colour through `color`. -->
+      <c-option
+        v-for="option in options"
+        :key="option.value"
+        :value="option.value"
+      >
+        <div part="language">
+          <c-option-value>{{ option.label }}</c-option-value>
 
-      <c-option value="ts">
-        <c-option-value>TypeScript</c-option-value>
-      </c-option>
-
-      <c-option value="py">
-        <c-option-value>Python</c-option-value>
-      </c-option>
-
-      <c-option value="rs">
-        <c-option-value>Rust</c-option-value>
-      </c-option>
-
-      <c-option value="go">
-        <c-option-value>Go</c-option-value>
-      </c-option>
-
-      <c-option value="rb">
-        <c-option-value>Ruby</c-option-value>
+          <c-icon :color="option.color" :path="option.icon" />
+        </div>
       </c-option>
     </c-autocomplete>
 
@@ -43,7 +35,65 @@
 </template>
 
 <script setup lang="ts">
+import {
+  mdiLanguageGo,
+  mdiLanguageJavascript,
+  mdiLanguagePython,
+  mdiLanguageRuby,
+  mdiLanguageRust,
+  mdiLanguageTypescript,
+} from '@mdi/js';
 import { ref } from 'vue';
 
 const languages = ref<string[]>(['ts']);
+
+const options = [
+  {
+    value: 'js',
+    label: 'JavaScript',
+    icon: mdiLanguageJavascript,
+    color: '#F7DF1E',
+  },
+  {
+    value: 'ts',
+    label: 'TypeScript',
+    icon: mdiLanguageTypescript,
+    color: '#3178C6',
+  },
+  {
+    value: 'py',
+    label: 'Python',
+    icon: mdiLanguagePython,
+    color: '#3776AB',
+  },
+  {
+    value: 'rs',
+    label: 'Rust',
+    icon: mdiLanguageRust,
+    color: '#CE422B',
+  },
+  {
+    value: 'go',
+    label: 'Go',
+    icon: mdiLanguageGo,
+    color: '#00ADD8',
+  },
+  {
+    value: 'rb',
+    label: 'Ruby',
+    icon: mdiLanguageRuby,
+    color: '#CC342D',
+  },
+];
 </script>
+
+<style>
+/* Option content is copied into the panel: page classes do not reach it,
+   the `part` does. */
+c-autocomplete::part(language) {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+</style>

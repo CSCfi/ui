@@ -270,7 +270,7 @@ A selection-behavior rule on the *control*: the selection can never become empty
 _Avoid_: Required (the form-demand concept), forced
 
 **Multiple** (mode):
-The selection mode in which a value control holds *several* values at once — `c-button-group`, `c-select` and `c-autocomplete` with the `multiple` prop set. The `value` becomes an array (`[]` when empty), bound as a DOM property since arrays have no attribute form, and the same value events carry the whole array. The two fields keep it in selection order and show each pick as a **tag**; `c-button-group` keeps DOM order (ADR-0044). Picking a selected option unselects it and the panel stays open. Says nothing about how many are demanded (**required**) or whether it may empty out (**mandatory**).
+The selection mode in which a value control holds *several* values at once — `c-button-group`, `c-select` and `c-autocomplete` with the `multiple` prop set. The `value` becomes an array (`[]` when empty), bound as a DOM property since arrays have no attribute form, and the same value events carry the whole array. The two fields keep it in selection order and show each pick as a **tag**; `c-button-group` keeps DOM order (ADR-0044). Picking a selected option unselects it and the panel stays open; an opt-in **select-all row** toggles every listed option at once. Says nothing about how many are demanded (**required**) or whether it may empty out (**mandatory**).
 _Avoid_: multi, multiselect / multi-select (as a prop or mode name — fine as an adjective in prose), checkbox mode (the row indicator is decorative, never a `c-checkbox`), selection mode (that is `c-data-table`'s separate `selection` prop, which keeps its value in `selected`)
 
 **Tag** (`c-tag`):
@@ -280,6 +280,10 @@ _Avoid_: Chip (Material vocabulary), token, pill (its shape, not its name), badg
 **Overflow tag**:
 The single non-interactive tag ending a folded tag row in a **multiple** field — "+3 more" — standing in for the selections that `max-tags` hides. Rendered only when the cap is exceeded; with `max-tags="0"` no tags render at all and the field shows the summary text ("5 selected") instead.
 _Avoid_: More tag, counter, badge, "+N chip"
+
+**Select-all row**:
+The pinned first row of a **multiple** field's list that toggles every *listed* enabled option at once — the **query**'s matches in `c-autocomplete`, the given items in **external** mode — and whose **indicator** reads none, some or all. Opt-in per field; it carries no value, so it is not an option, and the arrow keys reach it but never land on it by default.
+_Avoid_: Select-all item (an item is an `items` entry), select-all option (it holds no `value`), header checkbox (the data table's select-all affordance), check all
 
 **Hint**:
 Neutral helper text under a form control, present regardless of validity. It describes how to answer, not what went wrong. When the control is invalid but no **error message** is supplied, the hint keeps rendering *as a hint* — it never inherits error presentation.

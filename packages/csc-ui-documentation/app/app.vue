@@ -5,7 +5,7 @@
         class="text-lg font-bold no-underline flex items-center"
         to="/"
       >
-        <c-csc-logo></c-csc-logo>
+        <c-csc-logo />
       </nuxt-link>
 
       CSC Design System

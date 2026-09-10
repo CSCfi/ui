@@ -9,8 +9,9 @@
     :items-per-page
     :multiple="multipleOn"
     :parent="host"
+    :select-all-row="selectAllRow"
     :selected="selectedValues"
-    exportparts="menu, list, item, indicator, mark"
+    exportparts="menu, list, item, select-all, indicator, mark"
     type="select"
   >
     <c-input
@@ -214,6 +215,13 @@ export interface CSelectProps {
   required?: boolean;
   /** Return object instead of value */
   returnObject?: boolean;
+  /**
+   * In `multiple` mode, pin a select-all row at the top of the list. Its
+   * checkbox shows whether none, some or all enabled options are selected;
+   * activating it selects every enabled option — or, when all are selected,
+   * unselects them. Ignored in single mode
+   */
+  selectAll?: boolean;
   /** Shadow variant */
   shadow?: boolean;
   /** Field height: the 44px default or the 36px `small` box */
@@ -246,6 +254,11 @@ export interface CSelectTexts {
   more?: (count: number) => string;
   /** Accessible label of a tag's remove button; receives the option label. */
   remove?: (label: string) => string;
+  /**
+   * Label of the select-all row; receives the number of enabled options
+   * listed.
+   */
+  selectAll?: (count: number) => string;
   /**
    * Field text when `max-tags="0"` shows no tags; receives the selection
    * count.
@@ -283,6 +296,7 @@ export type CSelectValue =
  * @csspart menu - The dropdown surface (the positioned dialog) holding the field and the list
  * @csspart list - The scrolling listbox of options
  * @csspart item - One option row in the list. Any `part` attribute set on content inside a slotted `<c-option>` is exported too, so `c-select::part(<name>)` reaches the consumer's own option markup
+ * @csspart select-all - The pinned select-all row at the top of the list (`multiple` mode with `select-all`); carries the same indicator / mark parts as an option row
  * @csspart indicator - The decorative checkbox box on an option row in `multiple` mode; border, fill and glyph draw with `currentColor`, so `color` recolours them together (the c-checkbox recipe)
  * @csspart mark - The check glyph inside a row indicator; draws with `currentColor`
  * @csspart tags - The row of selected-value tags inside the field (`multiple` mode)
@@ -305,6 +319,11 @@ import {
 import { coerceBoolean } from '../../shared/coerceBoolean';
 import { emitModelValue } from '../../shared/emitModelValue';
 import { optionLabel } from '../../shared/optionLabel';
+import {
+  SELECT_ALL_INDEX,
+  selectAllState,
+  toggleAllValues,
+} from '../../shared/selectAll';
 
 /** Events dispatched by `<c-select>`. */
 interface CSelectEvents {
@@ -423,6 +442,7 @@ const props = withDefaults(defineProps<CSelectProps>(), {
   placeholder: '',
   required: false,
   returnObject: false,
+  selectAll: false,
   shadow: false,
   size: 'default',
   texts: () => ({}),
@@ -436,6 +456,7 @@ const DEFAULT_TEXTS: Required<CSelectTexts> = {
   clearSelection: 'Clear selection',
   more: (count) => `+${count} more`,
   remove: (label) => `Remove ${label}`,
+  selectAll: () => 'Select all',
   selected: (count) => `${count} selected`,
   toggleOptions: 'Toggle options',
 };
@@ -582,6 +603,43 @@ const nameOf = (item: SelectItem): string =>
   optionElementsExist.value
     ? optionLabel(item as unknown as HTMLElement)
     : item.name;
+
+// ---- select-all row (ADR-0046) -------------------------------------------
+
+// Same Boolean-attribute quirk as `multiple`.
+const selectAllOn = computed(() =>
+  host?.hasAttribute('select-all')
+    ? coerceBoolean(host.getAttribute('select-all'))
+    : coerceBoolean(props.selectAll),
+);
+
+// The options the row acts on: every enabled option in the list (a slotted
+// `<c-option disabled>` delivers `""`, hence coerceBoolean — c-dropdown's
+// own `isDisabled` test).
+const listedEnabled = computed(() =>
+  dropdownItems.value.filter((item) => !coerceBoolean(item.disabled)),
+);
+
+const selectAllShown = computed(
+  () => multipleOn.value && selectAllOn.value && listedEnabled.value.length > 0,
+);
+
+// What c-dropdown renders; `null` hides the row. State and counts are derived
+// here, next to the selection they describe — the dropdown stays dumb.
+const selectAllRow = computed(() => {
+  if (!selectAllShown.value) return null;
+
+  const listed = listedEnabled.value.map((item) => item.value);
+
+  const selected = new Set(selectedValues.value);
+
+  return {
+    label: t.value.selectAll(listed.length),
+    selected: listed.filter((v) => selected.has(v)).length,
+    state: selectAllState(listed, selected),
+    total: listed.length,
+  };
+});
 
 // Label of an option by value — `nameOf`, else the raw value so a tag is
 // never blank.
@@ -738,6 +796,24 @@ const toggleValue = ({
   syncMultiple();
 };
 
+// The select-all row (ADR-0046): every listed enabled option already picked →
+// unpick them (other picks keep their order); otherwise append the unpicked
+// ones in list order. One emission of the whole array.
+const toggleAll = () => {
+  const { next } = toggleAllValues(
+    rawValues.value,
+    listedEnabled.value.map((item) => ({
+      label: nameOf(item),
+      value: item.value,
+    })),
+    valueOf,
+    (o) => (props.returnObject ? { name: o.label, value: o.value } : o.value),
+  );
+
+  emitValue(next as CSelectValue);
+  syncMultiple();
+};
+
 // A tag's close button / Backspace: remove one pick and keep focus in the
 // field (the removed button can no longer hold it).
 const removeValue = (v: number | string) => {
@@ -839,8 +915,23 @@ const onSelectOption = (event: Event) => {
   setValue(detail);
 };
 
+// The select-all row was activated (click, Enter or Space on it): keep the
+// highlight on the row and toggle every listed enabled option.
+const onSelectAll = () => {
+  if (!multipleOn.value) return;
+
+  currentIndex.value = SELECT_ALL_INDEX;
+  toggleAll();
+};
+
 const onDropdownStateChange = (event: Event) => {
   dropdownVisible.value = (event as CustomEvent<boolean>).detail;
+
+  // The select-all row is never a remembered pick: forget the highlight on
+  // close so the next Enter re-opens instead of silently toggling everything.
+  if (!dropdownVisible.value && currentIndex.value === SELECT_ALL_INDEX) {
+    currentIndex.value = null;
+  }
 };
 
 // ---- interaction --------------------------------------------------------
@@ -999,7 +1090,14 @@ const handleKeyDown = (event: KeyboardEvent) => {
     return;
   }
 
-  if (event.key.match(alphanumeric) && event.key.length === 1) {
+  // `multiple`: Space is the toggle key (below), never type-ahead — a
+  // type-ahead miss would null the tracked highlight under the toggled row.
+  const typeAhead =
+    event.key.match(alphanumeric) &&
+    event.key.length === 1 &&
+    !(event.key === ' ' && multipleOn.value);
+
+  if (typeAhead) {
     if (!dropdownVisible.value) dropdownRef.value?.open();
     requestAnimationFrame(() => {
       const now = performance.now();
@@ -1059,9 +1157,15 @@ const handleKeyDown = (event: KeyboardEvent) => {
   if (event.key === 'ArrowUp') {
     event.preventDefault();
 
-    if (currentIndex.value === 0) {
+    // The topmost row: the select-all row when shown, else the first option.
+    // ArrowUp there closes the list.
+    const top = selectAllShown.value ? SELECT_ALL_INDEX : 0;
+
+    if (dropdownVisible.value && currentIndex.value === top) {
       dropdownRef.value?.close();
       inputRef.value?.focus();
+
+      return;
     }
 
     if (!dropdownVisible.value) {
@@ -1074,16 +1178,24 @@ const handleKeyDown = (event: KeyboardEvent) => {
     currentIndex.value =
       currentIndex.value === null
         ? items.length - 1
-        : Math.max(currentIndex.value - 1, 0);
+        : Math.max(currentIndex.value - 1, top);
     dropdownRef.value?.focusItem(currentIndex.value);
   }
 
   if (event.key === ' ') {
     event.preventDefault();
 
-    // `multiple`: Space toggles the row (the listbox convention); single mode
-    // keeps Enter as the only commit key.
-    if (multipleOn.value && dropdownVisible.value) toggleRowFromKey(event);
+    // `multiple`: Space toggles the row (the listbox convention) and opens
+    // the closed list like Enter does; single mode keeps Enter as the only
+    // commit key.
+    if (multipleOn.value) {
+      if (!dropdownVisible.value) {
+        dropdownRef.value?.open();
+        seedCurrentIndexFromSelection();
+      } else {
+        toggleRowFromKey(event);
+      }
+    }
   }
 
   if (event.key === 'Enter') {
@@ -1107,7 +1219,7 @@ const handleKeyDown = (event: KeyboardEvent) => {
   }
 
   if (event.key === 'Home' && dropdownVisible.value) {
-    currentIndex.value = 0;
+    currentIndex.value = selectAllShown.value ? SELECT_ALL_INDEX : 0;
   }
 
   if (event.key === 'End' && dropdownVisible.value) {
@@ -1138,7 +1250,14 @@ defineExpose({ reset });
 // The static `exportparts="menu, list, item"` in the template is the
 // verifiable contract; the consumer names are appended imperatively (Vue never
 // re-patches a static attribute, so the extension survives re-renders).
-const STATIC_EXPORTED_PARTS = ['menu', 'list', 'item', 'indicator', 'mark'];
+const STATIC_EXPORTED_PARTS = [
+  'menu',
+  'list',
+  'item',
+  'select-all',
+  'indicator',
+  'mark',
+];
 
 const syncExportedParts = (extra: string[]) => {
   const el = dropdownRef.value as unknown as HTMLElement | null;
@@ -1227,6 +1346,7 @@ onMounted(() => {
   if (dropdownRef.value && host) {
     (dropdownRef.value as { parent?: HTMLElement } & HTMLElement).parent = host;
     dropdownRef.value.addEventListener('selectOption', onSelectOption);
+    dropdownRef.value.addEventListener('selectall', onSelectAll);
     dropdownRef.value.addEventListener(
       'dropdownStateChange',
       onDropdownStateChange,
@@ -1274,6 +1394,7 @@ onBeforeUnmount(() => {
 
   if (statusDebounce !== null) clearTimeout(statusDebounce);
   dropdownRef.value?.removeEventListener('selectOption', onSelectOption);
+  dropdownRef.value?.removeEventListener('selectall', onSelectAll);
   dropdownRef.value?.removeEventListener(
     'dropdownStateChange',
     onDropdownStateChange,

@@ -9,9 +9,9 @@
         3.x (the Stencil implementation) to the rewritten 4.x — same package
         name, new major version. The
         <code>&lt;c-*&gt;</code>
-        tag names are unchanged; what changes is registration, two-way
-        binding, customization, and theming. Pick your flavor with the
-        switcher in the header (or below on small screens).
+        tag names are unchanged; what changes is registration, two-way binding,
+        customization, and theming. Pick your flavor with the switcher in the
+        header (or below on small screens).
       </p>
 
       <flavor-switcher class="md:hidden" />
@@ -24,9 +24,7 @@
           {{ section.title }}
         </h2>
 
-        <p
-          class="my-[1em] max-w-180 whitespace-pre-line text-on-surface-muted"
-        >
+        <p class="my-[1em] max-w-180 whitespace-pre-line text-on-surface-muted">
           {{ section.intro[flavor] ?? section.intro.all }}
         </p>
 

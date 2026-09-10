@@ -38,7 +38,9 @@ document.querySelector('#theme-menu')!.addEventListener('select', (event) => {
 });
 
 // Sort menu: override the default check indicator per item.
-const sortItems = document.querySelectorAll<CMenuItem>('#sort-menu c-menu-item');
+const sortItems = document.querySelectorAll<CMenuItem>(
+  '#sort-menu c-menu-item',
+);
 
 sortItems.forEach((item) => {
   item.activeIcon = mdiRadioboxMarked;

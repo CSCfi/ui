@@ -5,12 +5,11 @@
 
       <p class="my-[1em] max-w-[45rem] text-[1.0625rem] text-on-surface-muted">
         The library ships a validated categorical palette for bar and line
-        charts — twelve series slots plus the chart anatomy roles — as
-        semantic tokens that re-theme with light and dark mode like every
-        other token. The set is machine-checked per mode for color-vision
-        deficiency separation, lightness, chroma, and contrast against the
-        chart surface, so a chart built on these tokens is accessible by
-        construction.
+        charts — twelve series slots plus the chart anatomy roles — as semantic
+        tokens that re-theme with light and dark mode like every other token.
+        The set is machine-checked per mode for color-vision deficiency
+        separation, lightness, chroma, and contrast against the chart surface,
+        so a chart built on these tokens is accessible by construction.
       </p>
 
       <section class="mt-10">
@@ -18,12 +17,12 @@
 
         <p :class="INTRO">
           One slot per series, assigned in slot order — the order is the
-          accessibility mechanism. Never cycle back to slot 1, never skip
-          slots, and never re-assign colors when a filter changes the series
-          count: color follows the entity, not its rank. The slots are frozen
-          values owned by the chart palette (ADR-0030) — re-branding with
-          theme seeds re-themes components but deliberately never charts, so
-          the validated guarantees cannot be silently broken.
+          accessibility mechanism. Never cycle back to slot 1, never skip slots,
+          and never re-assign colors when a filter changes the series count:
+          color follows the entity, not its rank. The slots are frozen values
+          owned by the chart palette (ADR-0030) — re-branding with theme seeds
+          re-themes components but deliberately never charts, so the validated
+          guarantees cannot be silently broken.
         </p>
 
         <div class="overflow-x-auto">
@@ -31,10 +30,15 @@
             <thead>
               <tr>
                 <th :class="TH">Token</th>
+
                 <th :class="TH"><span class="sr-only">Swatch</span></th>
+
                 <th :class="TH">Hue</th>
+
                 <th :class="TH">Light</th>
+
                 <th :class="TH">Dark</th>
+
                 <th :class="TH">Origin</th>
               </tr>
             </thead>
@@ -71,9 +75,9 @@
         <p :class="INTRO" class="mt-4">
           Slots 1–6 are six distinct hues; slots 7–12 revisit five of them as
           lighter partners plus a cyan. A chart with more than six series is
-          usually better served by folding the tail into an “Other” series or
-          by small multiples — the extra slots exist so a stable entity keeps
-          its color across a dashboard, not to encourage twelve-line charts.
+          usually better served by folding the tail into an “Other” series or by
+          small multiples — the extra slots exist so a stable entity keeps its
+          color across a dashboard, not to encourage twelve-line charts.
         </p>
       </section>
 
@@ -81,11 +85,11 @@
         <h2 :id="'chart-anatomy'" :class="H2">Chart anatomy</h2>
 
         <p :class="INTRO">
-          The plot background, gridlines, and axis labels have their own
-          roles. The chart surface equals the raised card surface in both
-          modes, so a chart sits flush on a card — the series slots are
-          validated against exactly this background. Author charts entirely
-          in chart roles; don’t mix in palette steps or component roles.
+          The plot background, gridlines, and axis labels have their own roles.
+          The chart surface equals the raised card surface in both modes, so a
+          chart sits flush on a card — the series slots are validated against
+          exactly this background. Author charts entirely in chart roles; don’t
+          mix in palette steps or component roles.
         </p>
 
         <div class="overflow-x-auto">
@@ -93,9 +97,13 @@
             <thead>
               <tr>
                 <th :class="TH">Token</th>
+
                 <th :class="TH"><span class="sr-only">Swatch</span></th>
+
                 <th :class="TH">Light</th>
+
                 <th :class="TH">Dark</th>
+
                 <th :class="TH">Purpose</th>
               </tr>
             </thead>
@@ -133,10 +141,10 @@
 
         <p :class="INTRO">
           A grouped bar chart and a line chart on a card, drawn as plain SVG
-          with the chart tokens as CSS custom properties — no charting
-          library. Because the colors are semantic tokens, both charts flip
-          with the theme toggle above with no per-chart work. Marks carry
-          native tooltips; the line series are direct-labeled at their ends.
+          with the chart tokens as CSS custom properties — no charting library.
+          Because the colors are semantic tokens, both charts flip with the
+          theme toggle above with no per-chart work. Marks carry native
+          tooltips; the line series are direct-labeled at their ends.
         </p>
 
         <c-card class="my-6">
@@ -173,6 +181,7 @@
                   stroke="var(--c-chart-grid)"
                   stroke-width="1"
                 />
+
                 <text
                   :x="PAD.l - 6"
                   :y="tick.y + 3"
@@ -193,6 +202,7 @@
                   :height="baseY"
                 />
               </clipPath>
+
               <g clip-path="url(#bar-plot)">
                 <rect
                   v-for="bar in bars"
@@ -220,6 +230,7 @@
                 stroke="var(--c-chart-grid)"
                 stroke-width="1"
               />
+
               <text
                 v-for="group in barGroups"
                 :key="group.month"
@@ -254,6 +265,7 @@
                   stroke="var(--c-chart-grid)"
                   stroke-width="1"
                 />
+
                 <text
                   :x="PAD.l - 6"
                   :y="tick.y + 3"
@@ -285,6 +297,7 @@
                 >
                   <title>{{ line.name }}, week 8: {{ line.endValue }}</title>
                 </circle>
+
                 <text
                   :x="line.endX + 8"
                   :y="line.endY + 3"
@@ -303,6 +316,7 @@
                 stroke="var(--c-chart-grid)"
                 stroke-width="1"
               />
+
               <text
                 v-for="(week, i) in WEEKS"
                 :key="week"
@@ -351,53 +365,75 @@
         >
           <li>
             <strong class="text-on-surface">Fixed order, never cycled.</strong>
-            Series 1 wears slot 1, series 2 slot 2, and so on. A 13th series
-            is never a reused color — fold the smallest series into “Other”,
-            or split into small multiples. Prefer folding well before that:
-            more than ~6 visible series is usually a chart-design problem,
-            not a palette problem.
+            Series 1 wears slot 1, series 2 slot 2, and so on. A 13th series is
+            never a reused color — fold the smallest series into “Other”, or
+            split into small multiples. Prefer folding well before that: more
+            than ~6 visible series is usually a chart-design problem, not a
+            palette problem.
           </li>
+
           <li>
             <strong class="text-on-surface">Status colors are reserved.</strong>
-            When a series <em>means</em> good/bad (error rate, pass/fail), it
-            wears the status roles (success, warning, error) — and ships with
-            an icon and label. When it is just “series 4”, it wears a chart
-            slot. Never both meanings in one chart, and never a status ramp
-            as a series color.
+            When a series
+            <em>means</em>
+            good/bad (error rate, pass/fail), it wears the status roles
+            (success, warning, error) — and ships with an icon and label. When
+            it is just “series 4”, it wears a chart slot. Never both meanings in
+            one chart, and never a status ramp as a series color.
           </li>
+
           <li>
-            <strong class="text-on-surface">Legend and labels.</strong> Two or
-            more series always get a legend; a single series needs none — the
-            title names it. Value and axis text always wears text tokens
+            <strong class="text-on-surface">Legend and labels.</strong>
+            Two or more series always get a legend; a single series needs none —
+            the title names it. Value and axis text always wears text tokens
             (chart-axis, on-surface), never the series color.
           </li>
+
           <li>
-            <strong class="text-on-surface">Every slot clears 3:1 on both
-            chart surfaces.</strong> No shipped slot needs a relief channel.
-            If you override <code>--c-chart-*</code> yourself, re-validate:
-            a mark below 3:1 is legal only when values are readable another
-            way — tooltips, direct labels, or an accompanying table view. The
-            example charts above carry tooltips regardless, because a table
-            or tooltip is the reader's way to the exact value.
+            <strong class="text-on-surface">
+              Every slot clears 3:1 on both chart surfaces.
+            </strong>
+            No shipped slot needs a relief channel. If you override
+            <code>--c-chart-*</code>
+            yourself, re-validate: a mark below 3:1 is legal only when values
+            are readable another way — tooltips, direct labels, or an
+            accompanying table view. The example charts above carry tooltips
+            regardless, because a table or tooltip is the reader's way to the
+            exact value.
           </li>
+
           <li>
-            <strong class="text-on-surface">Scatter, bubble, and map forms cap
-            at three series.</strong> In those forms any two marks can touch,
-            so all pairs must be distinguishable, not just neighbors — and
-            only slots 1–3 pass that stricter test. More than three series in
-            such a form means faceting, not more colors.
+            <strong class="text-on-surface">
+              Scatter, bubble, and map forms cap at three series.
+            </strong>
+            In those forms any two marks can touch, so all pairs must be
+            distinguishable, not just neighbors — and only slots 1–3 pass that
+            stricter test. More than three series in such a form means faceting,
+            not more colors.
           </li>
+
           <li>
-            <strong class="text-on-surface">Import the slots as data; scrape
-            only if you override.</strong> SVG uses
-            <code>var(--c-chart-1)</code> directly. Everything else imports
-            <code>chartSlots</code> and <code>chartAnatomy</code> (per mode,
-            as <code>oklch()</code> strings) or their <code>…Hex</code> twins
-            for ECharts and Chart.js, and picks the mode with
-            <code>themeMode()</code> — see the snippet above. The export is
-            the frozen, validated set: if you override
-            <code>--c-chart-*</code> yourself, read your values back with
-            <code>getComputedStyle</code> instead.
+            <strong class="text-on-surface">
+              Import the slots as data; scrape only if you override.
+            </strong>
+            SVG uses
+            <code>var(--c-chart-1)</code>
+            directly. Everything else imports
+            <code>chartSlots</code>
+            and
+            <code>chartAnatomy</code>
+            (per mode, as
+            <code>oklch()</code>
+            strings) or their
+            <code>…Hex</code>
+            twins for ECharts and Chart.js, and picks the mode with
+            <code>themeMode()</code>
+            — see the snippet above. The export is the frozen, validated set: if
+            you override
+            <code>--c-chart-*</code>
+            yourself, read your values back with
+            <code>getComputedStyle</code>
+            instead.
           </li>
         </ul>
       </section>
@@ -423,16 +459,58 @@ import type { TocItem } from '~/utils/toc';
 
 const SLOTS = [
   { n: 1, hue: 'blue', light: '#1295f2', dark: '#1094f1', origin: 'info hue' },
-  { n: 2, hue: 'magenta', light: '#b75593', dark: '#b75693', origin: 'secondary hue' },
+  {
+    n: 2,
+    hue: 'magenta',
+    light: '#b75593',
+    dark: '#b75693',
+    origin: 'secondary hue',
+  },
   { n: 3, hue: 'gold', light: '#b5901d', dark: '#b5901a', origin: 'viz-only' },
-  { n: 4, hue: 'purple', light: '#905fc5', dark: '#9160c6', origin: 'viz-only' },
-  { n: 5, hue: 'teal', light: '#05a88c', dark: '#17ad92', origin: 'accent hue' },
+  {
+    n: 4,
+    hue: 'purple',
+    light: '#905fc5',
+    dark: '#9160c6',
+    origin: 'viz-only',
+  },
+  {
+    n: 5,
+    hue: 'teal',
+    light: '#05a88c',
+    dark: '#17ad92',
+    origin: 'accent hue',
+  },
   { n: 6, hue: 'rose', light: '#b64655', dark: '#c3525f', origin: 'viz-only' },
   { n: 7, hue: 'cyan', light: '#26a2bc', dark: '#1da6c1', origin: 'viz-only' },
-  { n: 8, hue: 'indigo', light: '#5165d4', dark: '#586edd', origin: 'viz-only' },
-  { n: 9, hue: 'orchid', light: '#ce6cb9', dark: '#ce6cb9', origin: 'viz-only' },
-  { n: 10, hue: 'olive', light: '#858d00', dark: '#848c00', origin: 'viz-only' },
-  { n: 11, hue: 'violet', light: '#8483ee', dark: '#8382ed', origin: 'viz-only' },
+  {
+    n: 8,
+    hue: 'indigo',
+    light: '#5165d4',
+    dark: '#586edd',
+    origin: 'viz-only',
+  },
+  {
+    n: 9,
+    hue: 'orchid',
+    light: '#ce6cb9',
+    dark: '#ce6cb9',
+    origin: 'viz-only',
+  },
+  {
+    n: 10,
+    hue: 'olive',
+    light: '#858d00',
+    dark: '#848c00',
+    origin: 'viz-only',
+  },
+  {
+    n: 11,
+    hue: 'violet',
+    light: '#8483ee',
+    dark: '#8382ed',
+    origin: 'viz-only',
+  },
   { n: 12, hue: 'aqua', light: '#008f90', dark: '#009293', origin: 'viz-only' },
 ];
 
@@ -484,9 +562,11 @@ const yTicks = [0, 2, 4, 6, 8].map((value) => ({
 }));
 
 const barGroups = BAR_MONTHS.map((month, m) => {
-  const groupWidth = BAR_SERIES.length * BAR_W + (BAR_SERIES.length - 1) * BAR_GAP;
+  const groupWidth =
+    BAR_SERIES.length * BAR_W + (BAR_SERIES.length - 1) * BAR_GAP;
   const slot = (W - PAD.l - PAD.r) / BAR_MONTHS.length;
   const x0 = PAD.l + slot * m + (slot - groupWidth) / 2;
+
   return { month, x0, cx: x0 + groupWidth / 2 };
 });
 
@@ -522,6 +602,7 @@ const lineY = (value: number) => baseY - (value / LINE_MAX) * (baseY - PAD.t);
 const lines = LINE_DATA.map((series, s) => {
   const coords = series.values.map((v, i) => [lineX(i), lineY(v)] as const);
   const end = coords[coords.length - 1]!;
+
   return {
     name: series.name,
     seriesIndex: s,
