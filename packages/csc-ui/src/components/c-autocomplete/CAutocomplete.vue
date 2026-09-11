@@ -15,10 +15,10 @@
       :hint
       :input-id
       :label
-      :label-on-top
+      :label-on-top="labelOnTopResolved"
       :required
-      :shadow
-      :size
+      :shadow="shadowResolved"
+      :size="sizeResolved"
       :valid
       @click="onFieldClick"
     >
@@ -63,7 +63,7 @@
             v-for="opt in visibleTags"
             :key="String(opt.value)"
             :close-label="t.remove(opt.label)"
-            :size
+            :size="sizeResolved"
             class="max-w-full"
             exportparts="root:tag-root"
             part="tag"
@@ -75,7 +75,13 @@
             </span>
           </c-tag>
 
-          <c-tag v-if="hiddenCount" :size aria-hidden="true" part="tag" flat>
+          <c-tag
+            v-if="hiddenCount"
+            :size="sizeResolved"
+            aria-hidden="true"
+            part="tag"
+            flat
+          >
             {{ t.more(hiddenCount) }}
           </c-tag>
         </div>
@@ -337,7 +343,11 @@ export interface CAutocompleteProps {
   external?: boolean;
   /** Custom filter predicate; receives a normalized option + the query. Ignored when `external` is set */
   filter?: CAutocompleteFilter;
-  /** Hide the hint and error messages */
+  /**
+   * Hide the hint and error messages
+   *
+   * @defaultable false
+   */
   hideDetails?: boolean;
   /**
    * Hint text for the input
@@ -353,7 +363,11 @@ export interface CAutocompleteProps {
   hostId?: string;
   /** Dropdown items (when not using <c-option> elements) */
   items?: CAutocompleteItem[];
-  /** Items per page before the list scrolls */
+  /**
+   * Items per page before the list scrolls
+   *
+   * @defaultable 6
+   */
   itemsPerPage?: number;
   /**
    * Element label
@@ -361,7 +375,11 @@ export interface CAutocompleteProps {
    * @freeform
    */
   label?: string;
-  /** Label on top of the input */
+  /**
+   * Label on top of the input
+   *
+   * @defaultable false
+   */
   labelOnTop?: boolean;
   /** Show loading state */
   loading?: boolean;
@@ -403,13 +421,23 @@ export interface CAutocompleteProps {
    * unselects them. Ignored in single mode
    */
   selectAll?: boolean;
-  /** Shadow variant */
+  /**
+   * Shadow variant
+   *
+   * @defaultable false
+   */
   shadow?: boolean;
-  /** Field height: the 44px default or the 36px `small` box */
+  /**
+   * Field height: the 44px default or the 36px `small` box
+   *
+   * @defaultable 'default'
+   */
   size?: CFieldSize;
   /**
    * UI text overrides (i18n), merged over the English defaults. Objects have
    * no attribute form — bind as a DOM property (`:texts.prop` in Vue)
+   *
+   * @defaultable {}
    */
   texts?: CAutocompleteTexts;
   /** Set the validity of the input */
@@ -514,6 +542,7 @@ import {
   watch,
 } from 'vue';
 
+import { useAppDefault } from '../../shared/appDefaults';
 import { coerceBoolean } from '../../shared/coerceBoolean';
 import { emitModelValue } from '../../shared/emitModelValue';
 import { optionLabel, optionValueElement } from '../../shared/optionLabel';
@@ -665,13 +694,13 @@ const props = withDefaults(defineProps<CAutocompleteProps>(), {
   errorMessage: '',
   external: false,
   filter: undefined,
-  hideDetails: false,
+  hideDetails: undefined,
   hint: '',
   hostId: '',
   items: () => [],
-  itemsPerPage: 6,
+  itemsPerPage: undefined,
   label: '',
-  labelOnTop: false,
+  labelOnTop: undefined,
   loading: false,
   maxTags: undefined,
   multiple: false,
@@ -680,9 +709,9 @@ const props = withDefaults(defineProps<CAutocompleteProps>(), {
   required: false,
   returnObject: false,
   selectAll: false,
-  shadow: false,
-  size: 'default',
-  texts: () => ({}),
+  shadow: undefined,
+  size: undefined,
+  texts: undefined,
   valid: true,
   value: null,
 });
@@ -690,6 +719,10 @@ const props = withDefaults(defineProps<CAutocompleteProps>(), {
 const host = useHost();
 
 const emit = useHostEmit<CAutocompleteEvents>();
+
+// Defaultable props resolve host attribute → own value → app default →
+// built-in (see src/shared/appDefaults.ts).
+const appDefault = useAppDefault('c-autocomplete', props);
 
 const DEFAULT_TEXTS: Required<CAutocompleteTexts> = {
   clearSelection: 'Clear selection',
@@ -704,7 +737,7 @@ const DEFAULT_TEXTS: Required<CAutocompleteTexts> = {
   toggleOptions: 'Toggle options',
 };
 
-const t = computed(() => ({ ...DEFAULT_TEXTS, ...props.texts }));
+const t = appDefault('texts', DEFAULT_TEXTS);
 
 const anchorRef = useTemplateRef<HTMLElement>('anchorRef');
 
@@ -769,15 +802,18 @@ const inputId = computed(
     )}`,
 );
 
-// `hide-details` is forwarded to the inner `c-input` through a `data-*`
-// channel (resolved from the stable host attribute), mirroring c-select: a
-// direct `:hide-details` binding collides with c-input's declared prop and
-// Vue mangles it on the field's frequent re-renders.
-const hideDetailsResolved = computed(() =>
-  host?.hasAttribute('hide-details')
-    ? coerceBoolean(host.getAttribute('hide-details'))
-    : coerceBoolean(props.hideDetails),
-);
+// `hide-details` reaches the inner `c-input` through the `data-hide-details`
+// channel — see src/shared/appDefaults.ts for the two defineCustomElement
+// quirks behind that and behind the attribute-first resolution.
+const hideDetailsResolved = appDefault('hideDetails', false);
+
+const itemsPerPageResolved = appDefault('itemsPerPage', 6);
+
+const labelOnTopResolved = appDefault('labelOnTop', false);
+
+const shadowResolved = appDefault('shadow', false);
+
+const sizeResolved = appDefault('size', 'default');
 
 // Same defineCustomElement Boolean-attribute quirk as `hide-details`: resolve
 // `multiple` from the stable host attribute first.
@@ -815,7 +851,7 @@ const applyListCap = () => {
 
   applyPeekCap(list, {
     ceiling: Number.isFinite(cardMax) ? cardMax - above : Infinity,
-    itemsPerPage: props.itemsPerPage,
+    itemsPerPage: itemsPerPageResolved.value,
     rows: Array.from(
       list.querySelectorAll<HTMLElement>(
         'li[role="option"]:not([data-select-all])',
@@ -1509,7 +1545,7 @@ const updateStatusText = () =>
 // patch here and measured the outgoing rows.
 let capFrame = 0;
 
-watch([filteredOptions, () => props.itemsPerPage], () => {
+watch([filteredOptions, itemsPerPageResolved], () => {
   if (!isOpen.value) return;
 
   cancelAnimationFrame(capFrame);

@@ -6,7 +6,8 @@
  *     (before the first statement), carrying the description and the
  *     `@slot` / `@csspart` / `@cssprop` tags
  *   - props: the type argument of `defineProps<T>()` (+ `withDefaults`
- *     defaults), with per-member JSDoc descriptions
+ *     defaults), with per-member JSDoc descriptions and the `@freeform` /
+ *     `@defaultable <built-in>` member tags
  *   - methods: `defineExpose({ … })` entries, resolved to their top-level
  *     declarations for JSDoc and signature text
  *   - events: the JSDoc-annotated event-map interface (`<Component>Events`,
@@ -23,12 +24,9 @@ import { expandTypeNode } from './type-expansion.mjs';
 const typeText = (node, sf) =>
   node ? node.getText(sf).replace(/\s+/g, ' ').trim() : '';
 
-/** The `@freeform` member tag: marks a `string`-typed prop as
- *  intentionally open-ended. Returns the tag's comment (or `true`). */
-const freeformTag = (member) => {
-  const tag = ts
-    .getJSDocTags(member)
-    .find((t) => t.tagName.text === 'freeform');
+/** A member JSDoc tag's comment (or `true` when the tag has none). */
+const memberTag = (member, name) => {
+  const tag = ts.getJSDocTags(member).find((t) => t.tagName.text === name);
 
   if (!tag) return undefined;
 
@@ -39,6 +37,19 @@ const freeformTag = (member) => {
 
   return comment.trim() || true;
 };
+
+/** The `@freeform` member tag: marks a `string`-typed prop as
+ *  intentionally open-ended. Returns the tag's comment (or `true`). */
+const freeformTag = (member) => memberTag(member, 'freeform');
+
+/**
+ * The `@defaultable <built-in>` member tag: the prop takes part in
+ * `applyDefaults()` (app-wide defaults). Its comment is the built-in default
+ * literal — the withDefaults entry must be `undefined` so "unset" is
+ * observable, so the documented default lives here instead. Returns the
+ * literal text (or `true` when missing, which lint rejects).
+ */
+const defaultableTag = (member) => memberTag(member, 'defaultable');
 
 const jsDocDescription = (node) => {
   const docs = ts.getJSDocCommentsAndTags(node).filter(ts.isJSDoc);
@@ -87,6 +98,7 @@ const interfaceMembers = (
   sf,
   defaults = new Map(),
   aliasTable = new Map(),
+  declared = new Map(),
 ) =>
   decl.members.filter(ts.isPropertySignature).map((member) => {
     const { alias, expanded, resolved } = expandTypeNode(
@@ -95,16 +107,28 @@ const interfaceMembers = (
       aliasTable,
     );
 
+    const name = memberName(member, sf);
+
+    const defaultable = defaultableTag(member);
+
     return {
-      default: defaults.get(memberName(member, sf)),
+      // A `@defaultable` prop's withDefaults entry is `undefined` by contract,
+      // so its documented default is the tag's literal.
+      default:
+        defaults.get(name) ??
+        (typeof defaultable === 'string' ? defaultable : undefined),
+      defaultable,
       description: jsDocDescription(member),
       freeform: freeformTag(member),
-      name: memberName(member, sf),
+      name,
       optional: Boolean(member.questionToken),
       type: typeText(member.type, sf),
       typeAlias: alias ?? undefined,
       typeExpanded: expanded ?? undefined,
       typeResolved: resolved ?? undefined,
+      // The raw withDefaults text including `undefined` (lint needs to tell
+      // an explicit `undefined` from a missing entry).
+      withDefault: declared.get(name),
     };
   });
 
@@ -153,6 +177,8 @@ export const analyzeScript = (content, fileName, className, options = {}) => {
 
   const defaults = new Map();
 
+  const declared = new Map();
+
   const exposedNames = [];
 
   const topLevelDecls = new Map();
@@ -177,6 +203,8 @@ export const analyzeScript = (content, fileName, className, options = {}) => {
         for (const prop of node.arguments[1].properties) {
           if (ts.isPropertyAssignment(prop)) {
             const value = prop.initializer.getText(sf);
+
+            declared.set(memberName(prop, sf), value);
 
             if (value !== 'undefined') {
               defaults.set(memberName(prop, sf), value);
@@ -231,11 +259,23 @@ export const analyzeScript = (content, fileName, className, options = {}) => {
       const iface = interfaces.get(definePropsType.typeName.getText(sf));
 
       if (iface) {
-        props = interfaceMembers(iface.decl, iface.sf, defaults, aliasTable);
+        props = interfaceMembers(
+          iface.decl,
+          iface.sf,
+          defaults,
+          aliasTable,
+          declared,
+        );
       }
     } else if (ts.isTypeLiteralNode(definePropsType)) {
       // A TypeLiteralNode has the same `.members` shape as an interface body.
-      props = interfaceMembers(definePropsType, sf, defaults, aliasTable);
+      props = interfaceMembers(
+        definePropsType,
+        sf,
+        defaults,
+        aliasTable,
+        declared,
+      );
     }
   }
 

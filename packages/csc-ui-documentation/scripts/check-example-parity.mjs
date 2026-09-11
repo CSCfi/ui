@@ -131,6 +131,15 @@ for (const dir of readdirSync(examplesDir, { withFileTypes: true })) {
         `${dir.name}/${canon}.vue: "${name}" relies on Nuxt auto-import — add an explicit import`,
       );
     }
+
+    // Vue sets every declared prop of a csc-ui element as a property on its
+    // own (camelizing hyphenated names); `.prop` forces the literal key, so
+    // `:level-labels.prop` writes a dead `el['level-labels']`.
+    for (const match of source.matchAll(/:[a-zA-Z-]+\.prop\b/g)) {
+      problems.push(
+        `${dir.name}/${canon}.vue: "${match[0]}" — ".prop" is unnecessary on csc-ui elements and silently breaks hyphenated names; bind plainly (:items="…")`,
+      );
+    }
   }
 
   for (const file of files) {

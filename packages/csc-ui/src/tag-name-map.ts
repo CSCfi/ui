@@ -6,7 +6,9 @@
  * Typed element interfaces for every registered custom element, plus the
  * global `HTMLElementTagNameMap` augmentation that makes
  * `document.createElement('c-button')` and `querySelector('c-button')`
- * return the typed element.
+ * return the typed element. Also the `AppDefaults` map (tag → props a
+ * consumer may set app-wide with `applyDefaults()`) and its runtime twin
+ * `DEFAULTABLE_PROPS`, both derived from the `@defaultable` prop tags.
  */
 
 import type { CAutocompleteFilter, CAutocompleteItem, CAutocompleteTexts, CAutocompleteValue } from './components/c-autocomplete/CAutocomplete.vue';
@@ -2361,6 +2363,29 @@ export interface CTreeSelectElement extends Omit<HTMLElement, 'allowBranch' | 'c
     options?: boolean | EventListenerOptions,
   ): void;
 }
+
+/**
+ * Props a consumer may set for every instance of a tag with
+ * `applyDefaults()` (`@defaultable` in the manifest), typed as the
+ * element's own members. An explicit per-instance attribute or property
+ * always wins over an app default.
+ */
+export interface AppDefaults {
+  'c-autocomplete'?: Partial<Pick<CAutocompleteElement, 'hideDetails' | 'itemsPerPage' | 'labelOnTop' | 'shadow' | 'size' | 'texts'>>;
+  'c-data-table'?: Partial<Pick<CDataTableElement, 'texts'>>;
+  'c-select'?: Partial<Pick<CSelectElement, 'hideDetails' | 'itemsPerPage' | 'labelOnTop' | 'shadow' | 'size' | 'texts'>>;
+  'c-text-field'?: Partial<Pick<CTextFieldElement, 'hideDetails' | 'labelOnTop' | 'shadow' | 'size'>>;
+  'c-tree-select'?: Partial<Pick<CTreeSelectElement, 'hideDetails' | 'itemsPerPage' | 'labelOnTop' | 'shadow' | 'size' | 'texts'>>;
+}
+
+/** Runtime allow-list behind `applyDefaults()` validation — the same data as `AppDefaults`. */
+export const DEFAULTABLE_PROPS = {
+  'c-autocomplete': ['hideDetails', 'itemsPerPage', 'labelOnTop', 'shadow', 'size', 'texts'],
+  'c-data-table': ['texts'],
+  'c-select': ['hideDetails', 'itemsPerPage', 'labelOnTop', 'shadow', 'size', 'texts'],
+  'c-text-field': ['hideDetails', 'labelOnTop', 'shadow', 'size'],
+  'c-tree-select': ['hideDetails', 'itemsPerPage', 'labelOnTop', 'shadow', 'size', 'texts'],
+} as const satisfies Record<keyof AppDefaults, readonly string[]>;
 
 declare global {
   interface HTMLElementTagNameMap {

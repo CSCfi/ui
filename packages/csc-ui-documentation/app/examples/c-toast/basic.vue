@@ -2,7 +2,7 @@
   <div>
     <!-- Toasts are normally created by c-toasts, which renders a c-toast for
          each message. A persistent message can be shown standalone. -->
-    <c-toast :message.prop="message" />
+    <c-toast :message="message" />
   </div>
 </template>
 

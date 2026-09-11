@@ -2,9 +2,9 @@
   <div>
     <c-tree-select
       v-model="field"
-      :items.prop="items"
-      :level-labels.prop="levelLabels"
-      :texts.prop="texts"
+      :items="items"
+      :level-labels="levelLabels"
+      :texts="texts"
       hint="Selaa tasoja tai hae"
       label="Tieteenala"
       clearable

@@ -4,9 +4,7 @@
 
     <!-- The loader fills the nearest position: relative ancestor -->
     <div style="position: relative; height: 160px; width: 100%">
-      <c-loader :visible.prop="loading" contentdelay="1">
-        Loading resources
-      </c-loader>
+      <c-loader :visible="loading" contentdelay="1">Loading resources</c-loader>
     </div>
   </div>
 </template>

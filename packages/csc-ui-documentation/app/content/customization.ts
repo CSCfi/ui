@@ -4,9 +4,9 @@ import type { Flavor } from '~/composables/useFlavor';
  * Customization page content, one block set per flavor. Kept as
  * data so the page can prerender-highlight every flavor and swap client-side.
  *
- * This page is the single source of truth for the four consumer customization
+ * This page is the single source of truth for the five consumer customization
  * surfaces: seed theming, dark mode / semantic tokens, ::part() restyling,
- * and the Tailwind theme export.
+ * app-wide prop defaults, and the Tailwind theme export.
  * The getting-started and migration guides keep only teasers that link here.
  */
 export interface CustomizationBlock {
@@ -48,16 +48,47 @@ applyTheme({ error: '#d61f26' });
 // Restore selected families to the defaults — or everything: resetTheme().
 resetTheme(['accent']);`;
 
+/* The applyDefaults/resetDefaults walkthrough is likewise identical in every
+   flavor except for the import source. */
+const appDefaultsCode = (importSource: string) => `import {
+  applyDefaults,
+  resetDefaults,
+} from '${importSource}';
+
+// Every text field labels on top; every select shows five rows before the peek.
+applyDefaults({
+  'c-text-field': { labelOnTop: true },
+  'c-select': { itemsPerPage: 5 },
+});
+
+// Later calls merge with earlier ones — the text-field default stays. One
+// texts object translates every select; a per-instance texts still wins key by key.
+applyDefaults({
+  'c-select': {
+    texts: { clearSelection: 'Tyhjennä valinta', toggleOptions: 'Näytä vaihtoehdot' },
+  },
+});
+
+// An instance overrides its app default the usual way:
+//   <c-text-field label-on-top="false">   or   field.labelOnTop = false
+
+// Clear one key (undefined), one tag, or everything.
+applyDefaults({ 'c-select': { itemsPerPage: undefined } });
+resetDefaults(['c-select']);
+resetDefaults();`;
+
 export const CUSTOMIZATION_SECTIONS: CustomizationSection[] = [
   {
     id: 'overview',
-    title: 'Two axes of customization',
+    title: 'Three axes of customization',
     intro: {
-      all: `Customization splits along two independent axes.
+      all: `Customization splits along three independent axes.
 
 Colours flow through the design tokens: you hand the library one seed colour per family, it regenerates the full palette ramp, and every semantic token — in both light and dark mode — follows automatically. You never restyle a component's colours directly.
 
 Structure flows through named parts: each component exposes a curated set of ::part() regions (root, content, …), and that part set is the component's customization contract.
+
+Behaviour presets flow through app-wide prop defaults: applyDefaults sets a preference prop — labels on top, hidden hint rows, the texts a component speaks — for every instance of a tag, and any instance can still override it.
 
 Per-component CSS custom properties like --c-button-background-color do not exist in this library — if you are upgrading from @cscfi/csc-ui, see the migration guide.`,
     },
@@ -233,6 +264,95 @@ c-button::part(root):hover {
 }`,
       },
     ]),
+  },
+  {
+    id: 'app-defaults',
+    title: 'App-wide prop defaults',
+    intro: {
+      all: `Some props are preferences rather than per-instance data: whether labels sit on top of fields, whether the hint row is hidden, the field size, how many rows a list shows, the texts a component speaks. applyDefaults sets such a prop once for every instance of a tag, so an app decides them in one place instead of on every element.
+
+Only defaultable props take part — each component page marks them with an "app default" badge in its Properties table, and TypeScript accepts nothing else. A prop resolves instance value → app default → built-in default, so an explicit attribute or property on an element always wins, and later calls merge with earlier ones. The registry is live: mounted elements re-render when the defaults change, which makes runtime language switching a single texts call. An object prop such as texts is stored whole and merged key by key with the built-in strings, so a partial translation keeps the English fallbacks.
+
+Validation is fail-loud: an unknown tag or a prop that is not defaultable throws. The inner c-input the fields compose is not covered in this release — set the defaults on the field component you use. Try it live below: the demo fields follow the toggles, and the defaults are cleared again when you leave the page.`,
+      react: `Some props are preferences rather than per-instance data: whether labels sit on top of fields, whether the hint row is hidden, the field size, how many rows a list shows, the texts a component speaks. applyDefaults sets such a prop once for every instance of a tag, so an app decides them in one place instead of on every element. Like the theming functions it is re-exported from @cscfi/csc-ui-react.
+
+Only defaultable props take part — each component page marks them with an "app default" badge in its Properties table, and TypeScript accepts nothing else. A prop resolves instance value → app default → built-in default, so an explicit attribute or property on an element always wins (an omitted or undefined React prop counts as unset), and later calls merge with earlier ones. The registry is live: mounted elements re-render when the defaults change, which makes runtime language switching a single texts call. An object prop such as texts is stored whole and merged key by key with the built-in strings, so a partial translation keeps the English fallbacks.
+
+Validation is fail-loud: an unknown tag or a prop that is not defaultable throws. The inner c-input the fields compose is not covered in this release — set the defaults on the field component you use. Try it live below: the demo fields follow the toggles, and the defaults are cleared again when you leave the page.`,
+    },
+    blocks: {
+      vue: [
+        { lang: 'ts', code: appDefaultsCode('@cscfi/csc-ui') },
+        {
+          filename: 'main.ts',
+          lang: 'ts',
+          code: `import { watch } from 'vue';
+import { applyDefaults, defineCustomElements } from '@cscfi/csc-ui';
+
+import { locale, messages } from './i18n';
+
+defineCustomElements();
+
+// The registry is live, so a locale change re-translates every mounted field.
+watch(
+  locale,
+  (code) => applyDefaults({ 'c-select': { texts: messages[code].select } }),
+  { immediate: true },
+);`,
+        },
+      ],
+      react: [
+        { lang: 'ts', code: appDefaultsCode('@cscfi/csc-ui-react') },
+        {
+          filename: 'App.tsx',
+          lang: 'tsx',
+          code: `import { useEffect } from 'react';
+import { applyDefaults } from '@cscfi/csc-ui-react';
+
+import { messages, useLocale } from './i18n';
+
+export function App() {
+  const locale = useLocale();
+
+  // Runs on mount and on every locale change; mounted fields follow.
+  useEffect(() => {
+    applyDefaults({ 'c-select': { texts: messages[locale].select } });
+  }, [locale]);
+
+  return <Routes />;
+}`,
+        },
+      ],
+      angular: [
+        { lang: 'ts', code: appDefaultsCode('@cscfi/csc-ui') },
+        {
+          filename: 'main.ts',
+          lang: 'ts',
+          code: `import { bootstrapApplication } from '@angular/platform-browser';
+import { applyDefaults, defineCustomElements } from '@cscfi/csc-ui';
+
+import { AppComponent } from './app/app.component';
+
+// Before the first element upgrades — or at any later point: the registry is live.
+applyDefaults({ 'c-text-field': { labelOnTop: true } });
+defineCustomElements();
+
+bootstrapApplication(AppComponent);`,
+        },
+      ],
+      typescript: [
+        { lang: 'ts', code: appDefaultsCode('@cscfi/csc-ui') },
+        {
+          filename: 'main.ts',
+          lang: 'ts',
+          code: `import { applyDefaults, defineCustomElements } from '@cscfi/csc-ui';
+
+// Before the first element upgrades — or at any later point: the registry is live.
+applyDefaults({ 'c-text-field': { labelOnTop: true } });
+defineCustomElements();`,
+        },
+      ],
+    },
   },
   {
     id: 'tailwind',

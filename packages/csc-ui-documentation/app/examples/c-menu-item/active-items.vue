@@ -10,7 +10,7 @@
       <c-menu-label>Theme</c-menu-label>
 
       <c-menu-item
-        :active.prop="theme === 'dark'"
+        :active="theme === 'dark'"
         :icon="mdiWeatherNight"
         value="dark"
       >
@@ -18,7 +18,7 @@
       </c-menu-item>
 
       <c-menu-item
-        :active.prop="theme === 'light'"
+        :active="theme === 'light'"
         :icon="mdiWeatherSunny"
         value="light"
       >
@@ -26,7 +26,7 @@
       </c-menu-item>
 
       <c-menu-item
-        :active.prop="theme === 'system'"
+        :active="theme === 'system'"
         :icon="mdiMonitor"
         value="system"
       >
@@ -43,7 +43,7 @@
       <c-menu-item
         v-for="key in sortKeys"
         :key="key"
-        :active.prop="sortBy === key"
+        :active="sortBy === key"
         :active-icon="mdiRadioboxMarked"
         :value="key"
       >

@@ -3,10 +3,10 @@
     <!-- With client-side data and pagination, selecting a full page offers a
          two-step "select all N rows" banner. -->
     <c-data-table
-      :columns.prop="columns"
-      :data.prop="data"
-      :get-row-id.prop="getRowId"
-      :selected.prop="selected"
+      :columns="columns"
+      :data="data"
+      :get-row-id="getRowId"
+      :selected="selected"
       page-size="4"
       selection="multiple"
       @change:selected="onSelection"
