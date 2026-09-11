@@ -141,6 +141,10 @@ as a DOM property; the `placeholder` prop still wins over
 />
 ```
 
+To translate every autocomplete at once, set `texts` app-wide with
+`applyDefaults({ 'c-autocomplete': { texts } })` (Customization → App-wide
+prop defaults); a per-instance `texts` still wins key by key.
+
 ## Scrolling
 
 The panel shows `items-per-page` full rows (six by default) and then a

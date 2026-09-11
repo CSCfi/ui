@@ -247,6 +247,20 @@ _Avoid_: Base colour, brand colour (ambiguous — a "brand colour" could mean an
 The consumer-facing `@theme` mapping the library publishes (`@cscfi/csc-ui/css/tailwind-theme.css`) so a consumer's own Tailwind build gains utilities for the **semantic tokens**. Semantic roles **only**, by design — **palette tokens** are excluded because a palette-step utility cannot be mode-aware (ADR-0018). It is a mapping, not a stylesheet: it must be paired with the token definitions (`tokens.css`) to resolve.
 _Avoid_: Tailwind preset/config (Tailwind-v3 vocabulary), theme file (ambiguous with **theme mode** and `applyTheme`)
 
+### App defaults
+
+**App default**:
+A prop value a consumer sets once for every instance of a tag through `applyDefaults({ 'c-text-field': { labelOnTop: true } })` — `labelOnTop` on every text field, one `texts` translation per list field. Live: mounted elements re-render when it changes. It sits between the instance and the **built-in default**: an explicit attribute or property on an element always wins over it. Cleared with `resetDefaults` or by setting the key to `undefined`. See ADR-0048.
+_Avoid_: Global prop / global default (nothing is global — it is per tag and per-instance overridable), preset, config/configuration (collides with Nuxt/Vite config), theme (colour only)
+
+**Built-in default**:
+The value a **defaultable prop** falls back to when neither an explicit instance value nor an **app default** exists — the library's own choice (`labelOnTop` `false`, `size` `'default'`, `itemsPerPage` `6`). It lives in the prop's `@defaultable <built-in>` tag (the documented default in the props table) and in the component's `appDefault('<name>', <built-in>)` call — never in `withDefaults`, which is `undefined` for these props so that "unset" stays observable.
+_Avoid_: Factory default, fallback (too generic), hard-coded default, `withDefaults` value (for a defaultable prop that value is `undefined`)
+
+**Defaultable prop**:
+A preference prop on the allow-list that accepts an **app default**: it carries the `@defaultable` tag in its SFC, appears in the generated `AppDefaults` type and `DEFAULTABLE_PROPS` list, and is badged "app default" in the props table. Preferences qualify (`labelOnTop`, `hideDetails`, `shadow`, `size`, `itemsPerPage`, `texts`); per-instance data (`value`, `label`, `items`) does not. Every defaultable prop resolves through `useAppDefault`: host attribute → own property → app default → built-in.
+_Avoid_: Configurable prop, overridable prop (every prop is overridable per instance), global prop
+
 ### Data visualization
 
 **Chart token**:
@@ -398,6 +412,7 @@ _Avoid_: Override (the variant adds a tab; it replaces nothing), translation, po
 - **"Tag"** is overloaded: (a) a component's *tag name* (`<c-button>` — the canonical identifier, see **Component**), (b) the **Tag** component `c-tag`, including the tags a **multiple** field renders for its selections (the `tag` part), (c) a docblock tag (`@csspart`). Say **"tag name"** for (a), plain **"tag"** only for (b) — the `max-tags` prop counts these — and **"docblock tag"** for (c).
 - **"Themeable"** (docs copy: "themable") means *re-seedable* — one of the eight **families** a consumer may re-brand (ADR-0011). Restyling one component's colours from consumer CSS is **"recolour via `::part()`"**, never "theming".
 - **"Path"** is overloaded: (a) an SVG path datum (`c-icon`'s `path` prop), (b) a tree-select item's ancestor chain (see **Path**), (c) a URL or file path. Say **"icon path"** for (a), plain **"path"** only in the tree-select sense, and **"URL"** / **"file path"** for (c).
+- **"Default"** is overloaded: (a) a **built-in default** (the library's value for an unset prop), (b) an **app default** (a consumer's per-tag value via `applyDefaults`), (c) the `'default'` member of a size union (`size="default"`), (d) a tailwind-variants `defaultVariants` entry. Say **"built-in default"** and **"app default"** for (a) and (b), **"the `default` size"** for (c), and **"variant default"** for (d).
 
 ## Example dialogue
 

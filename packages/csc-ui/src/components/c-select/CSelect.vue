@@ -6,7 +6,7 @@
     :host-id="`${id}-dropdown`"
     :index="currentIndex"
     :items="dropdownItems"
-    :items-per-page
+    :items-per-page="itemsPerPageResolved"
     :multiple="multipleOn"
     :parent="host"
     :select-all-row="selectAllRow"
@@ -24,10 +24,10 @@
       :hint
       :input-id
       :label
-      :label-on-top
+      :label-on-top="labelOnTopResolved"
       :required
-      :shadow
-      :size
+      :shadow="shadowResolved"
+      :size="sizeResolved"
       :valid
       @click="onInputClick"
     >
@@ -81,7 +81,7 @@
               v-for="opt in visibleTags"
               :key="String(opt.value)"
               :close-label="t.remove(opt.label)"
-              :size
+              :size="sizeResolved"
               class="max-w-full"
               exportparts="root:tag-root"
               part="tag"
@@ -93,7 +93,13 @@
               </span>
             </c-tag>
 
-            <c-tag v-if="hiddenCount" :size aria-hidden="true" part="tag" flat>
+            <c-tag
+              v-if="hiddenCount"
+              :size="sizeResolved"
+              aria-hidden="true"
+              part="tag"
+              flat
+            >
               {{ t.more(hiddenCount) }}
             </c-tag>
           </div>
@@ -155,7 +161,11 @@ export interface CSelectProps {
    * @freeform
    */
   errorMessage?: string;
-  /** Hide the hint and error messages */
+  /**
+   * Hide the hint and error messages
+   *
+   * @defaultable false
+   */
   hideDetails?: boolean;
   /**
    * Hint text for the input
@@ -171,7 +181,11 @@ export interface CSelectProps {
   hostId?: string;
   /** Dropdown items (when not using <c-option> elements) */
   items?: CSelectItem[];
-  /** Items per page before adding scroll */
+  /**
+   * Items per page before adding scroll
+   *
+   * @defaultable 6
+   */
   itemsPerPage?: number;
   /**
    * Element label
@@ -179,7 +193,11 @@ export interface CSelectProps {
    * @freeform
    */
   label?: string;
-  /** Label on top of the input */
+  /**
+   * Label on top of the input
+   *
+   * @defaultable false
+   */
   labelOnTop?: boolean;
   /** Show loading state */
   loading?: boolean;
@@ -222,13 +240,23 @@ export interface CSelectProps {
    * unselects them. Ignored in single mode
    */
   selectAll?: boolean;
-  /** Shadow variant */
+  /**
+   * Shadow variant
+   *
+   * @defaultable false
+   */
   shadow?: boolean;
-  /** Field height: the 44px default or the 36px `small` box */
+  /**
+   * Field height: the 44px default or the 36px `small` box
+   *
+   * @defaultable 'default'
+   */
   size?: CFieldSize;
   /**
    * UI text overrides (i18n), merged over the English defaults. Objects have
    * no attribute form — bind as a DOM property (`:texts.prop` in Vue)
+   *
+   * @defaultable {}
    */
   texts?: CSelectTexts;
   /** Set the validity of the input */
@@ -316,6 +344,7 @@ import {
   watch,
 } from 'vue';
 
+import { useAppDefault } from '../../shared/appDefaults';
 import { coerceBoolean } from '../../shared/coerceBoolean';
 import { emitModelValue } from '../../shared/emitModelValue';
 import { optionLabel } from '../../shared/optionLabel';
@@ -427,13 +456,13 @@ const props = withDefaults(defineProps<CSelectProps>(), {
   clearable: false,
   disabled: false,
   errorMessage: '',
-  hideDetails: false,
+  hideDetails: undefined,
   hint: '',
   hostId: '',
   items: () => [],
-  itemsPerPage: 6,
+  itemsPerPage: undefined,
   label: '',
-  labelOnTop: false,
+  labelOnTop: undefined,
   loading: false,
   maxTags: undefined,
   multiple: false,
@@ -443,14 +472,18 @@ const props = withDefaults(defineProps<CSelectProps>(), {
   required: false,
   returnObject: false,
   selectAll: false,
-  shadow: false,
-  size: 'default',
-  texts: () => ({}),
+  shadow: undefined,
+  size: undefined,
+  texts: undefined,
   valid: true,
   value: null,
 });
 
 const host = useHost();
+
+// Defaultable props resolve host attribute → own value → app default →
+// built-in (see src/shared/appDefaults.ts).
+const appDefault = useAppDefault('c-select', props);
 
 const DEFAULT_TEXTS: Required<CSelectTexts> = {
   clearSelection: 'Clear selection',
@@ -461,28 +494,23 @@ const DEFAULT_TEXTS: Required<CSelectTexts> = {
   toggleOptions: 'Toggle options',
 };
 
-const t = computed(() => ({ ...DEFAULT_TEXTS, ...props.texts }));
+const t = appDefault('texts', DEFAULT_TEXTS);
 
-// `hide-details` is forwarded to the inner `c-input` and must survive the
-// select's frequent re-renders (it re-renders on every value change). Two Vue
-// `defineCustomElement` quirks bite here:
-//   1. A Boolean prop supplied via *attribute* (`<c-select hide-details>`) is
-//      reset to its default on re-render — the host attribute persists, but
-//      `props.hideDetails` flips to `false`. So we resolve from the stable host
-//      attribute when present, falling back to the prop otherwise.
-//   2. Binding `hide-details` to the nested `c-input` in the template is mangled
-//      on update — the key matches `c-input`'s declared `hideDetails` prop, so
-//      Vue treats it as a property, and the reset above reflects back out and
-//      removes the attribute on re-render. So we forward it through a plain
-//      `data-*` attribute instead (no declared-prop collision → Vue patches it
-//      reliably), and `c-input` reads that channel back.
-const hideDetailsResolved = computed(() =>
-  host?.hasAttribute('hide-details')
-    ? coerceBoolean(host.getAttribute('hide-details'))
-    : coerceBoolean(props.hideDetails),
-);
+// `hide-details` reaches the inner `c-input` through the `data-hide-details`
+// channel — see src/shared/appDefaults.ts for the two defineCustomElement
+// quirks behind that and behind the attribute-first resolution.
+const hideDetailsResolved = appDefault('hideDetails', false);
 
-// Same quirk for `multiple`: resolve from the stable host attribute first.
+const itemsPerPageResolved = appDefault('itemsPerPage', 6);
+
+const labelOnTopResolved = appDefault('labelOnTop', false);
+
+const shadowResolved = appDefault('shadow', false);
+
+const sizeResolved = appDefault('size', 'default');
+
+// Same Boolean-attribute quirk for `multiple`: resolve from the stable host
+// attribute first.
 const multipleOn = computed(() =>
   host?.hasAttribute('multiple')
     ? coerceBoolean(host.getAttribute('multiple'))

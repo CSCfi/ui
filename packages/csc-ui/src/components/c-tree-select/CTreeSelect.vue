@@ -15,10 +15,10 @@
       :hint
       :input-id
       :label
-      :label-on-top
+      :label-on-top="labelOnTopResolved"
       :required
-      :shadow
-      :size
+      :shadow="shadowResolved"
+      :size="sizeResolved"
       :valid
       @click="onFieldClick"
     >
@@ -385,6 +385,8 @@ export interface CTreeSelectProps {
   filter?: CTreeSelectFilter;
   /**
    * Hide the hint and error messages
+   *
+   * @defaultable false
    */
   hideDetails?: boolean;
   /**
@@ -406,6 +408,8 @@ export interface CTreeSelectProps {
   items?: CTreeSelectItem[];
   /**
    * Items per page before the list scrolls
+   *
+   * @defaultable 6
    */
   itemsPerPage?: number;
   /**
@@ -416,6 +420,8 @@ export interface CTreeSelectProps {
   label?: string;
   /**
    * Label on top of the field
+   *
+   * @defaultable false
    */
   labelOnTop?: boolean;
   /**
@@ -447,15 +453,21 @@ export interface CTreeSelectProps {
   returnObject?: boolean;
   /**
    * Shadow variant
+   *
+   * @defaultable false
    */
   shadow?: boolean;
   /**
    * Field height: the 44px default or the 36px `small` box
+   *
+   * @defaultable 'default'
    */
   size?: CFieldSize;
   /**
    * UI text overrides (i18n), merged over the English defaults. Objects have
    * no attribute form — bind as a DOM property (`:texts.prop` in Vue)
+   *
+   * @defaultable {}
    */
   texts?: CTreeSelectTexts;
   /**
@@ -575,6 +587,7 @@ import {
 import { tv } from 'tailwind-variants';
 import { computed, ref, useHost, useId, useTemplateRef, watch } from 'vue';
 
+import { useAppDefault } from '../../shared/appDefaults';
 import { coerceBoolean } from '../../shared/coerceBoolean';
 import { emitModelChange } from '../../shared/emitModelValue';
 import { applyPeekCap } from '../../shared/peekCap';
@@ -698,21 +711,21 @@ const props = withDefaults(defineProps<CTreeSelectProps>(), {
   disabled: false,
   errorMessage: '',
   filter: undefined,
-  hideDetails: false,
+  hideDetails: undefined,
   hint: '',
   hostId: '',
   items: () => [],
-  itemsPerPage: 6,
+  itemsPerPage: undefined,
   label: '',
-  labelOnTop: false,
+  labelOnTop: undefined,
   levelLabels: undefined,
   name: '',
   placeholder: '',
   required: false,
   returnObject: false,
-  shadow: false,
-  size: 'default',
-  texts: () => ({}),
+  shadow: undefined,
+  size: undefined,
+  texts: undefined,
   valid: true,
   value: null,
 });
@@ -720,6 +733,10 @@ const props = withDefaults(defineProps<CTreeSelectProps>(), {
 const host = useHost();
 
 const emit = useHostEmit<CTreeSelectEvents>();
+
+// Defaultable props resolve host attribute → own value → app default →
+// built-in (see src/shared/appDefaults.ts).
+const appDefault = useAppDefault('c-tree-select', props);
 
 const DEFAULT_TEXTS: Required<CTreeSelectTexts> = {
   breadcrumb: 'Breadcrumb',
@@ -739,7 +756,7 @@ const DEFAULT_TEXTS: Required<CTreeSelectTexts> = {
   toggleOptions: 'Toggle options',
 };
 
-const t = computed(() => ({ ...DEFAULT_TEXTS, ...props.texts }));
+const t = appDefault('texts', DEFAULT_TEXTS);
 
 const anchorRef = useTemplateRef<HTMLElement>('anchorRef');
 
@@ -801,15 +818,18 @@ const inputId = computed(
     )}`,
 );
 
-// `hide-details` is forwarded to the inner `c-input` through a `data-*`
-// channel (resolved from the stable host attribute), mirroring c-select: a
-// direct `:hide-details` binding collides with c-input's declared prop and
-// Vue mangles it on the field's frequent re-renders.
-const hideDetailsResolved = computed(() =>
-  host?.hasAttribute('hide-details')
-    ? coerceBoolean(host.getAttribute('hide-details'))
-    : coerceBoolean(props.hideDetails),
-);
+// `hide-details` reaches the inner `c-input` through the `data-hide-details`
+// channel — see src/shared/appDefaults.ts for the two defineCustomElement
+// quirks behind that and behind the attribute-first resolution.
+const hideDetailsResolved = appDefault('hideDetails', false);
+
+const itemsPerPageResolved = appDefault('itemsPerPage', 6);
+
+const labelOnTopResolved = appDefault('labelOnTop', false);
+
+const shadowResolved = appDefault('shadow', false);
+
+const sizeResolved = appDefault('size', 'default');
 
 // Same defineCustomElement Boolean-attribute quirk as `hide-details`: resolve
 // `allow-branch` from the stable host attribute first.
@@ -1209,7 +1229,7 @@ const applyListCap = () => {
 
   applyPeekCap(list, {
     ceiling: Number.isFinite(cardMax) ? cardMax - above : Infinity,
-    itemsPerPage: props.itemsPerPage,
+    itemsPerPage: itemsPerPageResolved.value,
     rows: Array.from(
       list.querySelectorAll<HTMLElement>(
         'li[role="option"]:not([data-select-branch])',
@@ -1576,7 +1596,7 @@ const onSearchKeyDown = (event: KeyboardEvent) => {
 // element and would measure the outgoing rows.
 let capFrame = 0;
 
-watch([rows, () => props.itemsPerPage], () => {
+watch([rows, itemsPerPageResolved], () => {
   if (!isOpen.value) return;
 
   cancelAnimationFrame(capFrame);

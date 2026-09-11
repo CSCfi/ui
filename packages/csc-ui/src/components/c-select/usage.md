@@ -88,6 +88,10 @@ label texts are functions, so the object must be bound as a DOM property:
 />
 ```
 
+To translate every select at once, set `texts` app-wide with
+`applyDefaults({ 'c-select': { texts } })` (Customization → App-wide prop
+defaults); a per-instance `texts` still wins key by key.
+
 ## Scrolling
 
 The list shows `items-per-page` full rows (six by default) and then a

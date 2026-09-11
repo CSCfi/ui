@@ -103,7 +103,7 @@ interface ConnectableElement extends HTMLElement {
   connectedCallback?(): void;
 }
 
-const hyphenate = (key: string) =>
+export const hyphenate = (key: string) =>
   key.replace(/([a-z0-9])([A-Z])/g, '$1-$2').toLowerCase();
 
 /**

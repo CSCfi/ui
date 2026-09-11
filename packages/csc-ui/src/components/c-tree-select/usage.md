@@ -108,6 +108,10 @@ prop still wins over `texts.searchPlaceholder` when both are set:
 />
 ```
 
+To translate every tree select at once, set `texts` app-wide with
+`applyDefaults({ 'c-tree-select': { texts } })` (Customization → App-wide
+prop defaults); a per-instance `texts` still wins key by key.
+
 ## Scrolling
 
 The panel shows `items-per-page` full rows (six by default) and then a
