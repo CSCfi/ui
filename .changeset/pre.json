@@ -38,6 +38,7 @@
     "radio-self-rendering",
     "select-all-row",
     "select-autocomplete-multiple",
+    "select-selected-row-check",
     "selection-control-focus-ring",
     "selection-control-state-styling",
     "table-light-dom-styling",
@@ -45,6 +46,7 @@
     "tokens-emit-oklch",
     "tooltip-popover-components",
     "transient-panel-peek",
+    "tree-select-component",
     "vue-rewrite-major"
   ]
 }
