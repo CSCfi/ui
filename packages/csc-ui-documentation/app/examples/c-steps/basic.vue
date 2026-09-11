@@ -11,11 +11,11 @@
     </c-steps>
 
     <div class="example-row">
-      <c-button outlined :disabled.prop="step === 1" @click="step--">
+      <c-button outlined :disabled="step === 1" @click="step--">
         Previous
       </c-button>
 
-      <c-button :disabled.prop="step === 5" @click="step++">Next</c-button>
+      <c-button :disabled="step === 5" @click="step++">Next</c-button>
     </div>
   </div>
 </template>

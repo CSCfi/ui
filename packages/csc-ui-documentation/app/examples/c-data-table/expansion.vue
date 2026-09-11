@@ -4,10 +4,10 @@
          a table column, its cells live in the expansion row. The custom
          expandedContent renders after them. -->
     <c-data-table
-      :columns.prop="columns"
-      :data.prop="data"
-      :expanded-content.prop="expandedContent"
-      :get-row-id.prop="getRowId"
+      :columns="columns"
+      :data="data"
+      :expanded-content="expandedContent"
+      :get-row-id="getRowId"
       single-expansion
       @change:expanded="onExpanded"
     />

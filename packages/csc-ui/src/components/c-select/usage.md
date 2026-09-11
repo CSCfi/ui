@@ -41,7 +41,7 @@ Set `multiple` to let the user pick several options. The value is then an
 array of the picked options' values in the order they were picked (an array
 of `{ name, value }` items with `return-object`), and `[]` when nothing is
 picked. Arrays have no attribute form — bind `value` as a DOM property
-(`v-model` or `:value.prop` in Vue; the React wrapper and property
+(`v-model` or `:value="…"` in Vue; the React wrapper and property
 assignment do this naturally). Picking an option toggles it and keeps the
 list open; `clearable` clears the whole selection. `option-as-selection`
 has no effect in this mode.
@@ -80,7 +80,7 @@ label texts are functions, so the object must be bound as a DOM property:
 
 ```vue
 <c-select
-  :texts.prop="{
+  :texts="{
     more: (n) => `+${n} lisää`,
     remove: (label) => `Poista ${label}`,
   }"

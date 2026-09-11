@@ -7,7 +7,7 @@ an entry with a non-empty `children` array is a branch and any other entry is
 a leaf. Values must be unique across the whole tree. An optional `code` — a
 classification number, say — is shown before the name in a muted column and
 is matched by the search. Arrays have no attribute form, so bind `items` as a
-DOM property (`:items.prop` in Vue; the React wrapper and property assignment
+DOM property (`:items="…"` in Vue; the React wrapper and property assignment
 do this naturally):
 
 ```ts
@@ -100,7 +100,7 @@ prop still wins over `texts.searchPlaceholder` when both are set:
 
 ```vue
 <c-tree-select
-  :texts.prop="{
+  :texts="{
     root: 'Kaikki',
     choose: (level) => `Valitse ${level}`,
     children: (count) => `${count} alakohtaa`,

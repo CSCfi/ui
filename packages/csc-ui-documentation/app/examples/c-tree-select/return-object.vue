@@ -2,8 +2,8 @@
   <div>
     <c-tree-select
       v-model="field"
-      :items.prop="items"
-      :level-labels.prop="levelLabels"
+      :items="items"
+      :level-labels="levelLabels"
       hint="The value is the item with its path"
       label="Field of science"
       clearable

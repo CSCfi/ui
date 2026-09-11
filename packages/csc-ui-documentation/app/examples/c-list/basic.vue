@@ -5,7 +5,7 @@
         v-for="item in items"
         :key="item.label"
         ripple
-        :active.prop="selected === item.label"
+        :active="selected === item.label"
         @click="selected = item.label"
       >
         <c-icon slot="pre" :path="item.icon" />

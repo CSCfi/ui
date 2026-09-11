@@ -6,7 +6,7 @@
          as a property because it holds a function. -->
     <c-autocomplete
       v-model="languages"
-      :texts.prop="texts"
+      :texts="texts"
       clearable
       hint="Type to narrow the list, then select all matches"
       label="Programming languages"

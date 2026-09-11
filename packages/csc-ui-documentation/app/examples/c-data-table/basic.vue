@@ -1,9 +1,9 @@
 <template>
   <div>
     <c-data-table
-      :columns.prop="columns"
-      :data.prop="data"
-      :sort.prop="sort"
+      :columns="columns"
+      :data="data"
+      :sort="sort"
       page-size="5"
       @change:sort="onSort"
     />

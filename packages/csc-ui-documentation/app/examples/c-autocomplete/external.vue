@@ -7,7 +7,7 @@
          debounce — do it in the handler, as here. -->
     <c-autocomplete
       v-model="country"
-      :items.prop="items"
+      :items="items"
       :loading="loading"
       external
       hint="Options are fetched as you type"

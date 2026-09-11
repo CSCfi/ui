@@ -2,8 +2,8 @@
   <div>
     <c-tree-select
       v-model="field"
-      :items.prop="items"
-      :level-labels.prop="levelLabels"
+      :items="items"
+      :level-labels="levelLabels"
       hint="A main field or a field can be picked as well"
       label="Field of science"
       allow-branch

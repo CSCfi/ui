@@ -89,7 +89,7 @@ Set `multiple` to let the user pick several options. The value is then an
 array of the picked options' values in the order they were picked (an array
 of `{ name, value }` items with `return-object`), and `[]` when nothing is
 picked. Arrays have no attribute form — bind `value` as a DOM property
-(`v-model` or `:value.prop` in Vue; the React wrapper and property
+(`v-model` or `:value="…"` in Vue; the React wrapper and property
 assignment do this naturally). Picking an option toggles it and keeps the
 panel open; the search input keeps its query after a pick, so several
 matches can be picked in a row. `clearable` clears the whole selection.
@@ -133,7 +133,7 @@ as a DOM property; the `placeholder` prop still wins over
 
 ```vue
 <c-autocomplete
-  :texts.prop="{
+  :texts="{
     noResults: 'Ei osumia',
     remove: (label) => `Poista ${label}`,
   }"

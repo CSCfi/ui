@@ -1,6 +1,6 @@
 <template>
   <div>
-    <c-data-table :columns.prop="columns" :data.prop="data" />
+    <c-data-table :columns="columns" :data="data" />
 
     <p>{{ message }}</p>
   </div>
