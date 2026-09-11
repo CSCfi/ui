@@ -1,5 +1,48 @@
 # @cscfi/csc-ui
 
+## 4.0.0-alpha.14
+
+### Minor Changes
+
+- [#273](https://github.com/CSCfi/ui/pull/273) [`c3725b5`](https://github.com/CSCfi/ui/commit/c3725b501ae2ddc3e18ee876e1e7f8226592ad4d) Thanks [@razorfever](https://github.com/razorfever)! - Add `c-tree-select`, a single-value field for picking one item from nested
+  data of arbitrary depth (ADR-0047) — a stepped listbox in c-autocomplete's
+  field-plus-panel arrangement.
+
+  - The panel browses one level at a time: picking a branch lists its children,
+    a breadcrumb climbs back, and the header names the level (`level-labels`)
+    with a step counter while the depth is uniform.
+  - Typing into the in-panel search input lists matches from the whole tree
+    with their path; the query matches names and codes of an item and of its
+    ancestors, a `filter` predicate replaces the default, and matches are
+    marked (`::part(match)`).
+  - `items` (a DOM property) is the tree: `{ value, name, code?, disabled?,
+children? }`. The closed field shows the committed item's path above its
+    code and name; `return-object` emits `{ value, name, code, path }`.
+  - `allow-branch` lets a branch be committed through a pinned select-branch
+    row at the top of its level list.
+  - Value events follow the 4.x convention: `change` (with the value),
+    `update:value` and a native `input` — no `changeValue`. `change:query`
+    reports the query.
+  - Parts: `panel`, `card`, `search`, `breadcrumb`, `crumb`, `header`, `list`,
+    `item`, `select-branch`, `code`, `path`, `match`, `info`. Texts are
+    overridable through `texts`; keyboard: arrows, Enter, ArrowRight /
+    ArrowLeft / Backspace to move between levels, Escape.
+
+  Also in this change: the anchored-panel lifecycle and the live status region
+  c-autocomplete used inline are now shared internals it and c-tree-select
+  build on, and a click on a disabled option row in c-autocomplete no longer
+  moves keyboard focus out of the search input.
+
+### Patch Changes
+
+- [#273](https://github.com/CSCfi/ui/pull/273) [`d54ae8a`](https://github.com/CSCfi/ui/commit/d54ae8a9c05d7a4a0a9cd4a763dadad57d204653) Thanks [@razorfever](https://github.com/razorfever)! - Fix(c-select): the picked option's row ends in a check mark, as in
+  c-autocomplete — for slotted options and `items` alike. The mark follows the
+  value, not the keyboard highlight.
+
+  Fix(c-select): a value set from code (an initial `v-model`, say) now marks its
+  option like a click does, and opening the list with the mouse highlights the
+  picked option, so the arrow keys continue from it instead of the first row.
+
 ## 4.0.0-alpha.13
 
 ### Minor Changes
