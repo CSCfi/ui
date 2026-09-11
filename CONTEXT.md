@@ -30,7 +30,7 @@ A **command menu** — a transient panel of actions/navigation choices revealed 
 _Avoid_: Dropdown (that is a distinct value-selection component), popup, context menu, listbox
 
 **Dropdown** (`c-dropdown`):
-The **value-selection** surface behind `c-select`: a `role="listbox"` of options that has a current value — or, in **multiple** mode, an array of them — and emits the value events — the grandfathered `changeValue` with its `change-value` **kebab-case twin**, plus `update:value` (ADR-0017/0021). A menu, by contrast, is a list of `role="menuitem"` commands. Keep the two distinct — "the dropdown's select event" is a category error; menus emit `select`, dropdowns emit the value events. (`c-autocomplete` is also value-selection but does **not** sit on `c-dropdown` — it renders its own popover panel; see **Autocomplete**.)
+The **value-selection** surface behind `c-select`: a `role="listbox"` of options that has a current value — or, in **multiple** mode, an array of them — and emits the value events — the grandfathered `changeValue` with its `change-value` **kebab-case twin**, plus `update:value` (ADR-0017/0021). A menu, by contrast, is a list of `role="menuitem"` commands. Keep the two distinct — "the dropdown's select event" is a category error; menus emit `select`, dropdowns emit the value events. (`c-autocomplete` and `c-tree-select` are also value-selection but do **not** sit on `c-dropdown` — they render their own popover panels; see **Autocomplete** and **Tree select**.)
 _Avoid_: Menu (a menu is the command-list component; a dropdown is the value picker)
 
 **Autocomplete** (`c-autocomplete`):
@@ -73,6 +73,40 @@ _Avoid_: Nested dropdown, flyout, child menu
 A general-purpose `role="separator"` line dividing groups of content. Used to partition menu sections but not menu-specific. A **menu label** (`c-menu-label`) is the complementary heading for a group of items; a separator is the line between groups. Paints the `divider` semantic token — a translucent ink that reads on every **surface ladder** rung (ADR-0036); the token role deliberately takes the tag's name, not this concept's, and since ADR-0042 it also paints every **load-bearing hairline**.
 _Avoid_: Spacer (the Stencil-era `c-spacer` flex-grow filler, removed in 4.x — not a visible rule), rule, hr
 
+### Tree select
+
+**Tree select** (`c-tree-select`):
+A single-value **value-selection** field for nested **items** of arbitrary depth, presented as a **stepped listbox**: its panel shows one **level** at a time with a **breadcrumb** for climbing back, and a whole-tree **search** while a **query** is typed (ADR-0047). Shares the **autocomplete**'s arrangement (readonly **value field**, in-panel **search input**) and emits the 4.x value events (`change` carrying the value, `update:value`, `input` — no grandfathered `changeValue`). Takes its data from the `items` property only.
+_Avoid_: Tree view (a different pattern — expand/collapse in place, `role="tree"`), tree picker, cascader, nested select, hierarchical dropdown
+
+**Stepped listbox**:
+The arrangement in which a hierarchy is browsed one flat `role="listbox"` **level** at a time — activating a **branch** replaces the list with its children, the **breadcrumb** climbs back — rather than expanding items in place. `c-tree-select`'s panel arrangement (ADR-0047).
+_Avoid_: Stepper (a form-wizard pattern), drill-down, miller / cascading columns (several levels visible at once)
+
+**Branch** / **Leaf** (tree select):
+The two kinds of **item** in a tree: a branch has children and descends when activated in **browse** mode; a leaf has none and commits when activated. A branch can be committed only under `allow-branch`, via the **select-branch row**. "Leaf" means no `children` array or an empty one.
+_Avoid_: Node (the DOM sense everywhere else in this codebase), folder, parent/child as kinds (those are relations), category
+
+**Level** (tree select):
+The depth of an **item** in the tree, counted from 1 at the top. The **level list** is the panel's list of one level's items in **browse** mode. A consumer may name levels (`level-labels` — "Primary field", "Secondary field"); the names appear in the panel header.
+_Avoid_: Depth (zero-based implementation word), tier, step, layer
+
+**Path** (tree select):
+An **item**'s chain of ancestors, root-first. Shown under each search result and above the label in the closed **value field**; carried on the emitted selection under `return-object`. Distinct from the **query**.
+_Avoid_: Ancestry, trail, hierarchy, parents
+
+**Breadcrumb** / **Crumb** (tree select):
+The row of **crumbs** at the top of the panel naming the current **path** — a **root crumb** ("All") followed by one crumb per ancestor — each of which climbs back to that **level**. A navigation aid inside the panel; there is no page-level breadcrumb component.
+_Avoid_: Back button (there is none), path bar, trail
+
+**Browse** / **Search** (modes, tree select):
+The two panel modes: **browse** while the **query** is empty (the **level list** under the **breadcrumb**), **search** while a query is typed (a flat list of matches from the whole tree, each with its **path**). Clearing the query returns to the remembered level.
+_Avoid_: Stepper mode, navigate, filter mode (the query narrows nothing in browse mode)
+
+**Select-branch row** (tree select):
+The pinned first row of a **level list** inside a **branch**, present only under `allow-branch`, that commits the branch itself ("Select Natural sciences"). Like the **select-all row** it carries no value of its own and is not an item; it is the only way to commit a branch while browsing.
+_Avoid_: Select affordance, "select this level" button, row action
+
 ### Overlays
 
 **Tooltip** (`c-tooltip`):
@@ -88,11 +122,11 @@ The ordered set of currently open `c-popover`s, each logically nested in the one
 _Avoid_: Popover stack (reserve _stack_ for the modal stack's inert-lower-layers contract), nested popups
 
 **Top layer**:
-The browser-managed paint layer above every author stacking context — nothing an author z-indexes can paint above it, and while a *modal dialog* occupies it the rest of the document is inert. In this library only **transient** surfaces live there, as native popovers: the menu family, autocomplete panels, `c-tooltip`, and `c-popover` (ADR-0008). Modals deliberately do **not** (ADR-0014) — a top-layer modal would paint over and inert the toasts.
+The browser-managed paint layer above every author stacking context — nothing an author z-indexes can paint above it, and while a *modal dialog* occupies it the rest of the document is inert. In this library only **transient** surfaces live there, as native popovers: the menu family, the autocomplete and tree-select panels, `c-tooltip`, and `c-popover` (ADR-0008). Modals deliberately do **not** (ADR-0014) — a top-layer modal would paint over and inert the toasts.
 _Avoid_: Overlay (an overlay is any floating surface; the top layer is a specific browser mechanism), portal
 
 **Peek**:
-The half-visible last row of an overflowing **transient list panel** — a `c-menu` or **submenu** panel, `c-dropdown`'s listbox behind `c-select`, or `c-autocomplete`'s options list. Those panels hide their scrollbar, so the peek is the sole cue that more rows follow: an overflowing panel always ends at a row's midpoint (the `itemsPerPage`-th row where that prop caps the list, otherwise the last row under the panel's ceiling), never on a row boundary. Persistent scroll containers (data table, side navigation, page, card) keep native scrollbars and have no peek; `c-popover` has no scroll container at all.
+The half-visible last row of an overflowing **transient list panel** — a `c-menu` or **submenu** panel, `c-dropdown`'s listbox behind `c-select`, `c-autocomplete`'s options list, or `c-tree-select`'s level and results lists. Those panels hide their scrollbar, so the peek is the sole cue that more rows follow: an overflowing panel always ends at a row's midpoint (the `itemsPerPage`-th row where that prop caps the list, otherwise the last row under the panel's ceiling), never on a row boundary. Persistent scroll containers (data table, side navigation, page, card) keep native scrollbars and have no peek; `c-popover` has no scroll container at all.
 _Avoid_: Scroll hint, teaser, fade / scroll shadow (a peek is never a gradient), affordance
 
 **Stacking band**:
@@ -363,6 +397,7 @@ _Avoid_: Override (the variant adds a tab; it replaces nothing), translation, po
 - **"Ring"** is overloaded: (a) the `ring` **semantic token** (the focus colour role — currently used by no component), (b) the radio indicator's shape, (c) Tailwind `ring-*` box-shadow utilities, (d) the keyboard **focus ring**. Say **"`ring` token"**, **"radio indicator"**, **"`ring-*` utility"** and **"focus ring"** respectively.
 - **"Tag"** is overloaded: (a) a component's *tag name* (`<c-button>` — the canonical identifier, see **Component**), (b) the **Tag** component `c-tag`, including the tags a **multiple** field renders for its selections (the `tag` part), (c) a docblock tag (`@csspart`). Say **"tag name"** for (a), plain **"tag"** only for (b) — the `max-tags` prop counts these — and **"docblock tag"** for (c).
 - **"Themeable"** (docs copy: "themable") means *re-seedable* — one of the eight **families** a consumer may re-brand (ADR-0011). Restyling one component's colours from consumer CSS is **"recolour via `::part()`"**, never "theming".
+- **"Path"** is overloaded: (a) an SVG path datum (`c-icon`'s `path` prop), (b) a tree-select item's ancestor chain (see **Path**), (c) a URL or file path. Say **"icon path"** for (a), plain **"path"** only in the tree-select sense, and **"URL"** / **"file path"** for (c).
 
 ## Example dialogue
 

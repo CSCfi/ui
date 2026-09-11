@@ -10,7 +10,7 @@
     :multiple="multipleOn"
     :parent="host"
     :select-all-row="selectAllRow"
-    :selected="selectedValues"
+    :selected="dropdownSelected"
     exportparts="menu, list, item, select-all, indicator, mark"
     type="select"
   >
@@ -545,6 +545,17 @@ const hasSelection = computed(() =>
   multipleOn.value ? selectedValues.value.length > 0 : !!value.value,
 );
 
+// What the dropdown marks as selected: the picked values in `multiple` mode,
+// else the single value (its scalar identity with `return-object`). Drives
+// the rows' `aria-selected`, their indicators and the selected-row check.
+const dropdownSelected = computed<(number | string)[]>(() =>
+  multipleOn.value
+    ? selectedValues.value
+    : hasSelection.value
+      ? [valueOf(value.value as SelectRawValue)]
+      : [],
+);
+
 const firstSelectedIndex = () =>
   dropdownItems.value.findIndex((item) =>
     selectedValues.value.includes(item.value),
@@ -880,11 +891,21 @@ const onValueChanged = (v: unknown) => {
     return;
   }
 
-  selectOption(
-    props.returnObject
-      ? (v as { name: string; value: string })
-      : { name: v as string, value: v as string },
-  );
+  if (props.returnObject) {
+    selectOption(v as { name: string; value: number | string });
+
+    return;
+  }
+
+  // A scalar value carries no label — resolve it to its option so the row
+  // match (highlight, `.selected` mirror, `option-as-selection`) succeeds.
+  // An option list not observed yet is seeded by the mount hook instead.
+  const item = dropdownItems.value.find((i) => i.value === v);
+
+  selectOption({
+    name: item ? nameOf(item) : String(v),
+    value: v as number | string,
+  });
 };
 
 // ---- dropdown events ----------------------------------------------------
@@ -945,7 +966,7 @@ const toggleDropdown = (event: Event) => {
     return;
   }
 
-  dropdownRef.value?.open();
+  openDropdown();
 };
 
 const onButtonKeyDown = (src: 'chevron' | 'reset', event: KeyboardEvent) => {
@@ -994,7 +1015,7 @@ const onReset = (event: Event) => {
 };
 
 const onInputClick = () => {
-  if (!props.disabled) dropdownRef.value?.open();
+  if (!props.disabled) openDropdown();
 };
 
 const onUpdateInput = () => {
@@ -1034,8 +1055,8 @@ const onInputFocus = () => {
 
 // ---- keyboard navigation (host-level) -----------------------------------
 
-// Seed the highlight from the current selection when the list opens from the
-// keyboard: the (first) picked option, else nothing.
+// Seed the highlight from the current selection when the list opens: the
+// (first) picked option, else leave it.
 const seedCurrentIndexFromSelection = () => {
   if (!hasSelection.value) return;
 
@@ -1047,6 +1068,14 @@ const seedCurrentIndexFromSelection = () => {
   }
 
   currentIndex.value = getSelectionIndex(displayValue.value);
+};
+
+// Every way of opening the list — click, chevron, arrow or Enter/Space —
+// seeds the highlight from the selection, so the arrow keys continue from the
+// picked option rather than from a stale row.
+const openDropdown = () => {
+  dropdownRef.value?.open();
+  seedCurrentIndexFromSelection();
 };
 
 // `multiple`: the row a key toggles is the one holding DOM focus (arrow
@@ -1139,8 +1168,7 @@ const handleKeyDown = (event: KeyboardEvent) => {
     if (!items.length) return;
 
     if (!dropdownVisible.value) {
-      dropdownRef.value?.open();
-      seedCurrentIndexFromSelection();
+      openDropdown();
 
       return;
     }
@@ -1169,8 +1197,7 @@ const handleKeyDown = (event: KeyboardEvent) => {
     }
 
     if (!dropdownVisible.value) {
-      dropdownRef.value?.open();
-      seedCurrentIndexFromSelection();
+      openDropdown();
 
       return;
     }
@@ -1190,8 +1217,7 @@ const handleKeyDown = (event: KeyboardEvent) => {
     // commit key.
     if (multipleOn.value) {
       if (!dropdownVisible.value) {
-        dropdownRef.value?.open();
-        seedCurrentIndexFromSelection();
+        openDropdown();
       } else {
         toggleRowFromKey(event);
       }
@@ -1205,8 +1231,7 @@ const handleKeyDown = (event: KeyboardEvent) => {
       // Closed: open the list instead of re-clicking (and silently unticking)
       // the remembered row; open: toggle the row.
       if (!dropdownVisible.value) {
-        dropdownRef.value?.open();
-        seedCurrentIndexFromSelection();
+        openDropdown();
       } else {
         toggleRowFromKey(event);
       }

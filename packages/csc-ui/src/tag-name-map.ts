@@ -14,6 +14,7 @@ import type { CButtonGroupValue } from './components/c-button-group/CButtonGroup
 import type { CDataTableCellContent, CDataTableColumn, CDataTableExpandedContext, CDataTableRow, CDataTableSort, CDataTableTexts } from './components/c-data-table/CDataTable.vue';
 import type { CPaginationOptions } from './components/c-pagination/CPagination.vue';
 import type { CSelectTexts, CSelectValue } from './components/c-select/CSelect.vue';
+import type { CTreeSelectFilter, CTreeSelectItem, CTreeSelectTexts, CTreeSelectValue } from './components/c-tree-select/CTreeSelect.vue';
 import type { CSelectItem, CToastMessage } from './types';
 
 // Local (non-exported) types referenced by the interfaces, inlined.
@@ -694,8 +695,9 @@ export interface CDropdownElement extends Omit<HTMLElement, 'dropdownItemType' |
    */
   selectAllRow?: CDropdownSelectAllRow | null;
   /**
-   * Values of the currently selected items in `multiple` mode; drives each
-   * row's `aria-selected` and its indicator
+   * Values of the currently selected items — the picked values in `multiple`
+   * mode, the single value otherwise; drives each row's `aria-selected`, its
+   * indicator and the single-mode selected-row check
    */
   selected?: (number | string)[];
   /** Parent type — drives autocomplete-only behaviour (highlight, messages) */
@@ -2246,6 +2248,120 @@ export interface CTooltipElement extends Omit<HTMLElement, 'delay' | 'distance' 
   ): void;
 }
 
+/** Events dispatched by `<c-tree-select>`. */
+export interface CTreeSelectElementEventMap {
+  /**
+   * Fired when the selection changes — an item is committed or the selection
+   * is cleared — carrying the new value: the item's value, the
+   * `CTreeSelectSelection` with `return-object`, or `null` when cleared.
+   */
+  change: CustomEvent<CTreeSelectValue>;
+  /**
+   * Fired whenever the query changes — on every keystroke in the search
+   * input, and with an empty string when the panel opens. Carries the query
+   * string.
+   */
+  'change:query': CustomEvent<string>;
+  /**
+   * Native bubbling input event dispatched alongside every value change so a
+   * plain `v-model` stays in sync. Carries no detail.
+   */
+  input: CustomEvent<void>;
+  /** Fired alongside `change` with the same detail — the `v-model` contract. */
+  'update:value': CustomEvent<CTreeSelectValue>;
+}
+
+/** A hierarchical value-selection component: a readonly value field that opens a panel for browsing a tree one level at a time, or searching it as a whole, to commit one item. */
+export interface CTreeSelectElement extends Omit<HTMLElement, 'allowBranch' | 'clearable' | 'disabled' | 'errorMessage' | 'filter' | 'hideDetails' | 'hint' | 'hostId' | 'items' | 'itemsPerPage' | 'label' | 'labelOnTop' | 'levelLabels' | 'name' | 'placeholder' | 'required' | 'returnObject' | 'shadow' | 'size' | 'texts' | 'valid' | 'value'> {
+  /**
+   * Let a branch be committed as the value: a pinned select-branch row heads
+   * every level below the root, and matching branches are listed as search
+   * results
+   */
+  allowBranch?: boolean;
+  /** Make the selected value clearable */
+  clearable?: boolean;
+  /** Disable the field */
+  disabled?: boolean;
+  /** Error message shown in place of the hint while the field is invalid */
+  errorMessage?: string;
+  /**
+   * Custom search predicate; receives the item, the query and the item's
+   * ancestors. Functions have no attribute form — bind as a DOM property
+   */
+  filter?: CTreeSelectFilter;
+  /** Hide the hint and error messages */
+  hideDetails?: boolean;
+  /** Hint text for the field */
+  hint?: string;
+  /** Id of the element */
+  hostId?: string;
+  /**
+   * The tree to pick from. Arrays have no attribute form — bind as a DOM
+   * property (`:items.prop` in Vue)
+   */
+  items?: CTreeSelectItem[];
+  /** Items per page before the list scrolls */
+  itemsPerPage?: number;
+  /** Element label */
+  label?: string;
+  /** Label on top of the field */
+  labelOnTop?: boolean;
+  /**
+   * Names of the levels, top level first, shown in the panel header; a
+   * missing entry falls back to `texts.level(n)`. Arrays have no attribute
+   * form — bind as a DOM property
+   */
+  levelLabels?: string[];
+  /** Input field name */
+  name?: string;
+  /** Placeholder for the search input inside the panel */
+  placeholder?: string;
+  /** Set the field as required */
+  required?: boolean;
+  /**
+   * Emit the committed item with its path as a `CTreeSelectSelection` instead
+   * of its value
+   */
+  returnObject?: boolean;
+  /** Shadow variant */
+  shadow?: boolean;
+  /** Field height: the 44px default or the 36px `small` box */
+  size?: 'default' | 'small';
+  /**
+   * UI text overrides (i18n), merged over the English defaults. Objects have
+   * no attribute form — bind as a DOM property (`:texts.prop` in Vue)
+   */
+  texts?: CTreeSelectTexts;
+  /** Set the validity of the field */
+  valid?: boolean;
+  /**
+   * Selected value: the committed item's value, or the `CTreeSelectSelection`
+   * with `return-object`; `null` when nothing is selected
+   */
+  value?: CTreeSelectValue;
+  addEventListener<K extends keyof CTreeSelectElementEventMap>(
+    type: K,
+    listener: (this: CTreeSelectElement, ev: CTreeSelectElementEventMap[K]) => void,
+    options?: boolean | AddEventListenerOptions,
+  ): void;
+  addEventListener(
+    type: string,
+    listener: EventListenerOrEventListenerObject,
+    options?: boolean | AddEventListenerOptions,
+  ): void;
+  removeEventListener<K extends keyof CTreeSelectElementEventMap>(
+    type: K,
+    listener: (this: CTreeSelectElement, ev: CTreeSelectElementEventMap[K]) => void,
+    options?: boolean | EventListenerOptions,
+  ): void;
+  removeEventListener(
+    type: string,
+    listener: EventListenerOrEventListenerObject,
+    options?: boolean | EventListenerOptions,
+  ): void;
+}
+
 declare global {
   interface HTMLElementTagNameMap {
     'c-accordion': CAccordionElement;
@@ -2319,5 +2435,6 @@ declare global {
     'c-toasts': CToastsElement;
     'c-toolbar': CToolbarElement;
     'c-tooltip': CTooltipElement;
+    'c-tree-select': CTreeSelectElement;
   }
 }

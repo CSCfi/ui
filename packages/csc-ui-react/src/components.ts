@@ -104,6 +104,8 @@ import {
   type CToolbarElement,
   type CTooltipElement,
   type CTooltipElementEventMap,
+  type CTreeSelectElement,
+  type CTreeSelectElementEventMap,
 } from '@cscfi/csc-ui';
 import * as React from 'react';
 
@@ -758,4 +760,18 @@ export const CTooltip = createComponent({
   },
   react: React,
   tagName: 'c-tooltip',
+});
+
+/** A hierarchical value-selection component: a readonly value field that opens a panel for browsing a tree one level at a time, or searching it as a whole, to commit one item. */
+export const CTreeSelect = createComponent({
+  displayName: 'CTreeSelect',
+  elementClass: elementClass<CTreeSelectElement>('c-tree-select'),
+  events: {
+    onChange: 'change' as EventName<CTreeSelectElementEventMap['change']>,
+    onChangeQuery: 'change:query' as EventName<CTreeSelectElementEventMap['change:query']>,
+    onInput: 'input' as EventName<CTreeSelectElementEventMap['input']>,
+    onUpdateValue: 'update:value' as EventName<CTreeSelectElementEventMap['update:value']>,
+  },
+  react: React,
+  tagName: 'c-tree-select',
 });
