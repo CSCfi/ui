@@ -25,3 +25,10 @@ input without a rewrite.
   `c-option-value` as the label region and `match` as the part.)*
 - Some positioning/empty-state logic is duplicated rather than shared. Accepted
   as the cost of matching the reference UX and the ADR-0008 popover direction.
+  *(Amended 2026-09-11: the anchored-panel lifecycle — shadow-root anchor,
+  manual popover open/close, `toggle`-driven state, light dismiss, focus
+  return — and the debounced live status region are now the shared
+  `useAnchoredPanel()` / `useStatusAnnouncer()` composables in `src/shared/`,
+  extracted ahead of `c-tree-select` (ADR-0047), which builds on the same
+  field-plus-panel arrangement. What stays duplicated per component is the
+  few lines of per-shadow-root `@position-try` CSS and the empty-state rows.)*

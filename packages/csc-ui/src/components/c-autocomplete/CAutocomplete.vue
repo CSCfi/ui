@@ -1,13 +1,10 @@
 <template>
   <!-- Anchor wrapper: a shadow-DOM box around the value field. CSS anchor
        names are tree-scoped, so the anchor must live in the same shadow root
-       as the panel. It carries `anchor-name`; the panel references
-       it, and it is the rect we measure to pin the panel width. -->
-  <span
-    ref="anchorRef"
-    class="block w-full"
-    style="anchor-name: --c-autocomplete-anchor"
-  >
+       as the panel. `useAnchoredPanel` supplies its `anchor-name` and the
+       panel's matching `position-anchor`, and measures its rect to pin the
+       panel width. -->
+  <span ref="anchorRef" :style="anchorStyle" class="block w-full">
     <c-input
       ref="cInputRef"
       :active="isOpen"
@@ -166,6 +163,10 @@
         />
       </div>
 
+      <!-- `mousedown.prevent` on the list itself too: a press on a disabled
+           row (`pointer-events: none`) or on the list padding falls through to
+           this `tabindex="-1"` element, which must not take focus from the
+           search input. -->
       <ul
         :id="`${id}-listbox`"
         ref="listRef"
@@ -174,6 +175,7 @@
         part="list"
         role="listbox"
         tabindex="-1"
+        @mousedown.prevent
       >
         <!-- Select-all row (ADR-0046): pinned above the options, it toggles
              every listed enabled option. A `role="option"` like the rows, but
@@ -512,7 +514,6 @@ import {
   watch,
 } from 'vue';
 
-import { ensureAnchorPositioning } from '../../shared/anchorPolyfill';
 import { coerceBoolean } from '../../shared/coerceBoolean';
 import { emitModelValue } from '../../shared/emitModelValue';
 import { optionLabel, optionValueElement } from '../../shared/optionLabel';
@@ -520,7 +521,9 @@ import { applyPeekCap } from '../../shared/peekCap';
 import { selectAllState, toggleAllValues } from '../../shared/selectAll';
 import SelectionIndicator from '../../shared/SelectionIndicator.vue';
 import { type MatchSegment, splitMatches } from '../../shared/splitMatches';
+import { useAnchoredPanel } from '../../shared/useAnchoredPanel';
 import { useHostEmit } from '../../shared/useHostEmit';
+import { useStatusAnnouncer } from '../../shared/useStatusAnnouncer';
 
 /** Events dispatched by `<c-autocomplete>`. */
 interface CAutocompleteEvents {
@@ -739,18 +742,12 @@ const setQuery = (next: string) => {
   emit('change:query', next);
 };
 
-const isOpen = ref(false);
-
 const activeIndex = ref(-1);
 
 // `activeIndex` sentinel for the select-all row (ADR-0046); `-1` stays "no
 // highlight". Numeric, so any unhandled site fails closed: `filteredOptions[-2]`
 // is undefined and no option row's `i` ever equals it.
 const SELECT_ALL_ROW = -2;
-
-const statusText = ref('');
-
-const panelWidth = ref(0);
 
 const optionElements = ref<HTMLElement[]>([]);
 
@@ -759,8 +756,6 @@ const optionElementsExist = ref(false);
 const hasConsumerPre = ref(false);
 
 const hasConsumerPost = ref(false);
-
-let pendingReturnFocus = false;
 
 const autoId = useId();
 
@@ -799,20 +794,6 @@ const ui = computed(() =>
     selectAll: selectAllShown.value,
   }),
 );
-
-// The anchor wrapper spans the whole inner c-input, INCLUDING its hint /
-// error message area (which is reserved unless `hide-details` is set). The
-// panel must sit flush under the field itself, so the message area's height
-// is measured on open and pulled back with a negative block-start margin.
-const messageOffset = ref(0);
-
-const panelStyle = computed(() => {
-  const w = panelWidth.value ? `width:${panelWidth.value}px;` : '';
-
-  const m = messageOffset.value ? `margin-top:-${messageOffset.value}px;` : '';
-
-  return `position-anchor:--c-autocomplete-anchor;position-area:bottom span-right;inset:auto;${w}${m}`;
-});
 
 // ---- peek cap (ADR-0043) -------------------------------------------------
 
@@ -1256,44 +1237,25 @@ defineExpose({ reset });
 
 // ---- open / close -------------------------------------------------------
 
-const openPanel = () => {
-  const p = panelRef.value;
-
-  if (props.disabled || !p || p.matches(':popover-open')) return;
-
-  // Pin the panel width to the field before showing so it lines up.
-  panelWidth.value = anchorRef.value?.getBoundingClientRect().width ?? 0;
-
-  // Anchor to the bottom of the FIELD, not the c-input's message area.
-  const inputEl = cInputRef.value;
-
-  const message =
-    inputEl?.shadowRoot?.querySelector<HTMLElement>("[part='message']");
-
-  messageOffset.value = message?.getBoundingClientRect().height ?? 0;
-
-  if (typeof p.showPopover === 'function') p.showPopover();
-};
-
-const closePanel = (returnFocus = false) => {
-  pendingReturnFocus = returnFocus;
-
-  const p = panelRef.value;
-
-  if (p && typeof p.hidePopover === 'function' && p.matches(':popover-open')) {
-    p.hidePopover();
-  }
-};
-
-const onToggle = (event: Event) => {
-  const nowOpen = (event as ToggleEvent).newState === 'open';
-
-  isOpen.value = nowOpen;
-
-  if (nowOpen) {
-    void ensureAnchorPositioning(host?.shadowRoot);
-    addDismissListeners();
-
+// The anchored-panel lifecycle (anchor + popover + light dismiss + focus
+// return) is the shared composable; the hooks run synchronously inside the
+// native `toggle` handler, so `change:query` still fires within that event.
+const {
+  anchorStyle,
+  close: closePanel,
+  isOpen,
+  onToggle,
+  open: openPanel,
+  panelStyle,
+} = useAnchoredPanel({
+  anchor: anchorRef,
+  disabled: () => props.disabled,
+  field: cInputRef,
+  host,
+  onClosed: () => {
+    activeIndex.value = -1;
+  },
+  onOpened: () => {
     // Reset the query and tell the consumer — always, even when it was
     // already empty: with `external` this is what loads the default list.
     query.value = '';
@@ -1307,15 +1269,10 @@ const onToggle = (event: Event) => {
       seedActiveIndex();
       updateStatusText();
     });
-  } else {
-    removeDismissListeners();
-    activeIndex.value = -1;
-
-    if (pendingReturnFocus) fieldRef.value?.focus();
-
-    pendingReturnFocus = false;
-  }
-};
+  },
+  panel: panelRef,
+  returnFocusTo: fieldRef,
+});
 
 const seedActiveIndex = () => {
   const selIdx = filteredOptions.value.findIndex((o) => isSelected(o));
@@ -1525,12 +1482,11 @@ const scrollActiveIntoView = () => {
 
 // ---- status text (aria-live) --------------------------------------------
 
-let statusDebounce: null | number = null;
+const { announce: announceStatus, text: statusText } = useStatusAnnouncer();
 
-const updateStatusText = () => {
-  if (statusDebounce !== null) clearTimeout(statusDebounce);
-
-  statusDebounce = window.setTimeout(() => {
+// Composed when the debounce fires, so it reads the state current then.
+const updateStatusText = () =>
+  announceStatus(() => {
     const n = filteredOptions.value.length;
 
     if (isSelectAllActive.value && selectAllShown.value) {
@@ -1538,19 +1494,15 @@ const updateStatusText = () => {
 
       const picked = listedEnabled.value.filter((o) => isSelected(o)).length;
 
-      statusText.value = `${t.value.selectAll(listed)}, ${picked} of ${listed} options selected`;
-    } else {
-      statusText.value =
-        props.loading && !n
-          ? 'Loading results'
-          : n
-            ? `${n} result${n !== 1 ? 's' : ''} available, navigate using the up and down arrows`
-            : 'No search results available';
+      return `${t.value.selectAll(listed)}, ${picked} of ${listed} options selected`;
     }
 
-    statusDebounce = null;
-  }, 1400);
-};
+    return props.loading && !n
+      ? 'Loading results'
+      : n
+        ? `${n} result${n !== 1 ? 's' : ''} available, navigate using the up and down arrows`
+        : 'No search results available';
+  });
 
 // Re-cap when the row set or the page size changes. Deferred a frame: a
 // `flush: 'post'` watcher on `filteredOptions` still ran ahead of the row
@@ -1597,22 +1549,6 @@ watch([filteredOptions, () => props.loading], () => {
 watch(activeIndex, (now, before) => {
   if (now === SELECT_ALL_ROW || before === SELECT_ALL_ROW) updateStatusText();
 });
-
-// ---- light-dismiss ------------------------------------------------------
-
-const onDocPointerDown = (event: Event) => {
-  if (!isOpen.value || !host) return;
-
-  if (!event.composedPath().includes(host)) closePanel(false);
-};
-
-const addDismissListeners = () => {
-  document.addEventListener('pointerdown', onDocPointerDown, true);
-};
-
-const removeDismissListeners = () => {
-  document.removeEventListener('pointerdown', onDocPointerDown, true);
-};
 
 // ---- slotted <c-option> discovery ---------------------------------------
 
@@ -1691,16 +1627,6 @@ onMounted(() => {
 
 onBeforeUnmount(() => {
   childObserver?.disconnect();
-  removeDismissListeners();
-
-  if (statusDebounce !== null) clearTimeout(statusDebounce);
-
-  // Ensure the popover is torn down if we unmount while open.
-  const p = panelRef.value;
-
-  if (p?.matches(':popover-open')) p.hidePopover();
-
-  void cInputRef.value;
 });
 </script>
 
@@ -1713,8 +1639,11 @@ onBeforeUnmount(() => {
     - `.c-input__content slot{display:none}` — the projected <c-option> data
       source must never paint; a `<slot>` is a shadow node Vue can't class.
     - `[part='panel'] position-try-fallbacks` — native flip/shift when the
-      preferred placement lacks room (the `position-area` is set inline); an
-      at-rule-adjacent syntax with no utility equivalent.
+      preferred placement lacks room (the `position-area` is set inline by
+      `useAnchoredPanel`); an at-rule-adjacent syntax with no utility
+      equivalent. This block is the per-shadow-root half of that
+      composable's contract and stays identical in every consumer
+      (c-tree-select).
     - the popover open animation keyframe.
     - the readonly field `input::placeholder` (a native pseudo-element).
     - `li c-option / li c-option-value` — those nodes come from `v-html`
@@ -1739,19 +1668,19 @@ onBeforeUnmount(() => {
 /* When flipped above the field the message-area offset (a negative
  * margin-top set inline) must not apply: the panel's bottom edge then meets
  * the anchor's top edge, which IS the field's top. */
-@position-try --c-autocomplete-above {
+@position-try --c-field-panel-above {
   position-area: top span-right;
   margin-top: 0;
 }
 
-@position-try --c-autocomplete-above-left {
+@position-try --c-field-panel-above-left {
   position-area: top span-left;
   margin-top: 0;
 }
 
 [part='panel'] {
   position-try-fallbacks:
-    --c-autocomplete-above, flip-inline, --c-autocomplete-above-left;
+    --c-field-panel-above, flip-inline, --c-field-panel-above-left;
 }
 
 [part='panel']:popover-open {
