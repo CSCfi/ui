@@ -42,8 +42,10 @@ RUN mkdir -p /workspace/node_modules && chown -R ${USERNAME}:${USERNAME} /worksp
 # claudeuser lacks sudo and the firewall blocks the browser CDN, so the browser
 # must be baked into the image. Installed to a system path (not node_modules,
 # which is a named volume that would shadow it) and made world-readable so
-# claudeuser can launch it. Pinned to the `playwright` version in the repo
-# lockfile so the client API and the baked browser agree.
+# claudeuser can launch it. The version MUST equal `catalog.playwright` in
+# pnpm-workspace.yaml so the client API and the baked browser agree;
+# packages/csc-ui/src/test/toolchain.node.spec.ts fails when they drift. Bump
+# both together and rebuild the container.
 ENV PLAYWRIGHT_BROWSERS_PATH=/ms-playwright
 RUN npx -y playwright@1.60.0 install --with-deps chromium \
  && chmod -R a+rX /ms-playwright \

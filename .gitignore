@@ -13,3 +13,6 @@ packages/*/dist-types
 
 # Scratch / temporary files
 temp/
+
+# Vitest attachments (screenshot diffs)
+.vitest/

@@ -405,6 +405,28 @@ _Avoid_: Framework (TypeScript is not one), consumer (that is the person/app usi
 A checked-in per-**flavor** sibling of a canon example — `<name>.<flavor>.<ext>` beside `<name>.vue`. The Vue SFC stays the canon (ADR-0012): it alone renders as the live demo; variants differ in the source shown, not behavior. Generated from the canon and kept complete by the docs' example-parity check. A canon missing a variant falls back to showing the Vue tab. A variant is usually one file; the TypeScript flavor's is a markup part plus an optional script part shown as stacked panes (ADR-0024).
 _Avoid_: Override (the variant adds a tab; it replaces nothing), translation, port
 
+### Verification
+
+**Behaviour spec**:
+A browser test colocated with one component (`C<Name>.spec.ts` beside the SFC) asserting that component's interaction contract — keyboard, focus, value events, ARIA, upgrade timing — against the registered custom element, never a mounted SFC (ADR-0049).
+_Avoid_: unit test, e2e test, component test (ambiguous between the two)
+
+**Conformance suite**:
+A parametrised browser test that runs the shared contract of one component *kind* over every tag of that kind, enrolling tags automatically from generated data rather than a hand-kept list. Kinds: all components, **value controls**, anchored overlay components.
+_Avoid_: contract test, shared spec, generic test
+
+**Value control**:
+A component that holds a persistent `value` and reports changes through the value events (`update:value` with its `changeValue`/`change` siblings and a bubbling `input`) — the population a plain Vue `v-model` binds to. Emission happens only on user interaction, never when `value` is set programmatically. Includes the **value-selection** fields, the selection controls, `c-text-field`, `c-slider`, `c-tabs`, `c-button-group`, `c-accordion`, `c-modal`, `c-pagination`, `c-otp-input`.
+_Avoid_: value component, form control (a `c-button` is a control but holds no value), input
+
+**Example smoke**:
+The browser run that mounts every canon example from the docs site once and asserts a clean upgrade — no console error or warning, every `c-*` descendant defined. It asserts nothing about behaviour; the canons are fixtures, not specs.
+_Avoid_: docs test, example test, smoke test (unqualified)
+
+**API snapshot**:
+The committed, condensed rendering of the **manifest** (per tag: props, events, methods, slots, parts, states) that a node spec diffs the freshly generated manifest against, so an unintended public-API change fails a test instead of silently changing `custom-elements.json`. The strict analyzer checks the manifest is *consistent*; the API snapshot checks it is *unchanged*.
+_Avoid_: golden file, manifest snapshot, API baseline
+
 ### Flagged ambiguities
 
 - **"Vue version"** is ambiguous: it can mean (a) the retired `@cscfi/csc-ui-vue` directive package, (b) the fact that 4.x components are implemented in Vue, or (c) the Vue.js framework version. Prefer **"`v-control` directive"** for (a), plain **"component"** for (b) — since 4.x there is no other kind — and **"Vue 3"/"Vue 2"** explicitly for (c).
