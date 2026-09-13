@@ -7,7 +7,7 @@ import type { Locator, ScreenshotMatcherOptions } from 'vitest/browser';
  * attributes, light-DOM children, host events — never to Vue internals.
  */
 import { expect } from 'vitest';
-import { page } from 'vitest/browser';
+import { page, userEvent } from 'vitest/browser';
 
 import type { ThemeMode } from '../theme/themeMode';
 
@@ -70,6 +70,15 @@ export function setThemeMode(mode: ThemeMode): void {
 const missing = (what: string, where: string): Error =>
   new Error(`harness: no element matches "${what}" inside ${where}`);
 
+/**
+ * Browser notices that are not component faults. Chromium reports a
+ * ResizeObserver callback that changed layout in the same frame through the
+ * window `error` event; it is delivered as an error but is not one.
+ */
+export const BENIGN_BROWSER_NOTICES: readonly RegExp[] = [
+  /ResizeObserver loop completed with undelivered notifications/,
+];
+
 export interface ConsoleRecord {
   level: 'error' | 'warn';
   text: string;
@@ -82,6 +91,15 @@ export interface EventRecord {
   /** `event.target.value` at dispatch time — proves the host was updated before it emitted. */
   targetValue: unknown;
   type: string;
+}
+
+/** `document.activeElement` followed through open shadow roots. */
+export function deepActiveElement(): Element | null {
+  let active: Element | null = document.activeElement;
+  while (active?.shadowRoot?.activeElement)
+    active = active.shadowRoot.activeElement;
+
+  return active;
 }
 
 export async function mount<T extends HTMLElement = HTMLElement>(
@@ -113,6 +131,51 @@ export async function mount<T extends HTMLElement = HTMLElement>(
 
   await customElements.whenDefined(tag);
   await settle();
+
+  return wrap(host, stage);
+}
+
+/** Record host events. Attach `input` recorders to `document.body`: it bubbles. */
+export function recordEvents(target: EventTarget, names: readonly string[]) {
+  const records: EventRecord[] = [];
+
+  const handler = (event: Event): void => {
+    records.push({
+      bubbles: event.bubbles,
+      composed: event.composed,
+      detail: (event as CustomEvent).detail,
+      targetValue: (event.target as { value?: unknown } | null)?.value,
+      type: event.type,
+    });
+  };
+
+  for (const name of names) target.addEventListener(name, handler);
+
+  return {
+    clear: (): void => {
+      records.length = 0;
+    },
+    details: <D>(): D[] => records.map((r) => r.detail as D),
+    last: (): EventRecord | undefined => records.at(-1),
+    names: (): string[] => records.map((r) => r.type),
+    of: (
+      type: string,
+      filter?: (record: EventRecord) => boolean,
+    ): EventRecord[] =>
+      records.filter((r) => r.type === type && (!filter || filter(r))),
+    records,
+    stop: (): void => {
+      for (const name of names) target.removeEventListener(name, handler);
+    },
+  };
+}
+
+/** The shadow-root helpers of `mount()` for an element mounted some other way (e.g. by a Vue app). */
+export function wrap<T extends HTMLElement = HTMLElement>(
+  host: T,
+  stage: HTMLElement = host,
+): Mounted<T> {
+  const tag = host.localName;
 
   const root = (): ShadowRoot => {
     if (!host.shadowRoot)
@@ -151,41 +214,6 @@ export async function mount<T extends HTMLElement = HTMLElement>(
       Array.from(root().querySelectorAll<E>(selector)),
     stage,
     unmount: () => stage.remove(),
-  };
-}
-
-/** Record host events. Attach `input` recorders to `document.body`: it bubbles. */
-export function recordEvents(target: EventTarget, names: readonly string[]) {
-  const records: EventRecord[] = [];
-
-  const handler = (event: Event): void => {
-    records.push({
-      bubbles: event.bubbles,
-      composed: event.composed,
-      detail: (event as CustomEvent).detail,
-      targetValue: (event.target as { value?: unknown } | null)?.value,
-      type: event.type,
-    });
-  };
-
-  for (const name of names) target.addEventListener(name, handler);
-
-  return {
-    clear: (): void => {
-      records.length = 0;
-    },
-    details: <D>(): D[] => records.map((r) => r.detail as D),
-    last: (): EventRecord | undefined => records.at(-1),
-    names: (): string[] => records.map((r) => r.type),
-    of: (
-      type: string,
-      filter?: (record: EventRecord) => boolean,
-    ): EventRecord[] =>
-      records.filter((r) => r.type === type && (!filter || filter(r))),
-    records,
-    stop: (): void => {
-      for (const name of names) target.removeEventListener(name, handler);
-    },
   };
 }
 
@@ -233,17 +261,14 @@ export const consoleSpy = (() => {
       console.warn = originals.warn;
 
       return records.filter(
-        (r) => r.level === 'error' || r.text.startsWith('[Vue warn]'),
+        (r) =>
+          (r.level === 'error' || r.text.startsWith('[Vue warn]')) &&
+          !BENIGN_BROWSER_NOTICES.some((pattern) => pattern.test(r.text)),
       );
     },
   };
 })();
 
-/**
- * One visual baseline per theme mode: `<name>-light.png` and `<name>-dark.png`
- * beside the spec. Pass `mounted.stage` for a component, `page` for a
- * top-layer surface.
- */
 export async function matchScreenshotInBothModes(
   target: Element | Locator,
   name: string,
@@ -252,6 +277,8 @@ export async function matchScreenshotInBothModes(
   const locator =
     target instanceof Element ? page.elementLocator(target) : target;
 
+  await parkPointer();
+
   for (const mode of ['light', 'dark'] as const) {
     setThemeMode(mode);
     await settled();
@@ -259,4 +286,23 @@ export async function matchScreenshotInBothModes(
   }
 
   setThemeMode('light');
+}
+
+/**
+ * One visual baseline per theme mode: `<name>-light.png` and `<name>-dark.png`
+ * beside the spec. Pass `mounted.stage` for a component, `page` for a
+ * top-layer surface.
+ */
+/**
+ * Move the pointer to the top-left corner. Test files share one page, so the
+ * pointer left by another file's click can rest over the element under test
+ * and paint its hover state into a baseline.
+ */
+export async function parkPointer(): Promise<void> {
+  const park = document.createElement('div');
+
+  park.style.cssText = 'position:fixed;top:0;left:0;width:2px;height:2px';
+  document.body.append(park);
+  await userEvent.hover(park);
+  park.remove();
 }

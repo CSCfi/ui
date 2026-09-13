@@ -1,0 +1,31 @@
+{
+  "attributes": {
+    "absolute": "boolean = false",
+    "horizontal": "'center' | 'left' | 'right' = 'center'",
+    "vertical": "'bottom' | 'top' = 'bottom'"
+  },
+  "cssProperties": [],
+  "defaultable": [],
+  "events": {},
+  "methods": {
+    "addToast": "(message: CToastMessage)",
+    "removeToast": "(id: string)"
+  },
+  "parts": [
+    "root"
+  ],
+  "propertyOnly": [],
+  "props": {
+    "absolute": "boolean = false",
+    "horizontal": "'center' | 'left' | 'right' = 'center'",
+    "vertical": "'bottom' | 'top' = 'bottom'"
+  },
+  "slots": [
+    "default"
+  ],
+  "states": [],
+  "subcomponents": [
+    "c-toast"
+  ],
+  "tag": "c-toasts"
+}

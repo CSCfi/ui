@@ -1,0 +1,20 @@
+{
+  "attributes": {
+    "vertical": "boolean = false"
+  },
+  "cssProperties": [],
+  "defaultable": [],
+  "events": {},
+  "methods": {},
+  "parts": [
+    "root"
+  ],
+  "propertyOnly": [],
+  "props": {
+    "vertical": "boolean = false"
+  },
+  "slots": [],
+  "states": [],
+  "subcomponents": [],
+  "tag": "c-divider"
+}

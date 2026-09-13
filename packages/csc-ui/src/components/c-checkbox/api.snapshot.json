@@ -1,0 +1,61 @@
+{
+  "attributes": {
+    "checked": "boolean = false",
+    "disabled": "boolean = false",
+    "error-message": "string = ''",
+    "false-value": "boolean | number | string = false",
+    "hide-details": "boolean = false",
+    "hint": "string = ''",
+    "host-id": "string = ''",
+    "host-name": "string = ''",
+    "indeterminate": "boolean = false",
+    "label": "string = ''",
+    "required": "boolean = false",
+    "true-value": "boolean | number | string = true",
+    "valid": "boolean = true",
+    "value": "boolean | number | string = false"
+  },
+  "cssProperties": [],
+  "defaultable": [],
+  "events": {
+    "change": "CustomEvent<void>",
+    "changeValue": "CustomEvent<boolean | number | string>",
+    "input": "CustomEvent<void>",
+    "update:value": "CustomEvent<boolean | number | string>"
+  },
+  "methods": {},
+  "parts": [
+    "content",
+    "indicator",
+    "label",
+    "mark",
+    "message",
+    "root"
+  ],
+  "propertyOnly": [],
+  "props": {
+    "checked": "boolean = false",
+    "disabled": "boolean = false",
+    "errorMessage": "string = ''",
+    "falseValue": "boolean | number | string = false",
+    "hideDetails": "boolean = false",
+    "hint": "string = ''",
+    "hostId": "string = ''",
+    "hostName": "string = ''",
+    "indeterminate": "boolean = false",
+    "label": "string = ''",
+    "required": "boolean = false",
+    "trueValue": "boolean | number | string = true",
+    "valid": "boolean = true",
+    "value": "boolean | number | string = false"
+  },
+  "slots": [
+    "default"
+  ],
+  "states": [
+    "checked",
+    "indeterminate"
+  ],
+  "subcomponents": [],
+  "tag": "c-checkbox"
+}

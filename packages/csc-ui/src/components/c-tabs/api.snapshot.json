@@ -1,0 +1,44 @@
+{
+  "attributes": {
+    "borderless": "boolean = false",
+    "disable-animation": "boolean = false",
+    "justify": "'center' | 'end' | 'start' | 'stretch' = 'stretch'",
+    "mobile-breakpoint": "number = 640",
+    "value": "number | string = 0",
+    "vertical": "boolean = false"
+  },
+  "cssProperties": [],
+  "defaultable": [],
+  "events": {
+    "changeValue": "CustomEvent<number | string>",
+    "input": "CustomEvent<void>",
+    "update:value": "CustomEvent<number | string>"
+  },
+  "methods": {},
+  "parts": [
+    "container",
+    "content",
+    "tabs"
+  ],
+  "propertyOnly": [],
+  "props": {
+    "borderless": "boolean = false",
+    "disableAnimation": "boolean = false",
+    "justify": "'center' | 'end' | 'start' | 'stretch' = 'stretch'",
+    "mobileBreakpoint": "number = 640",
+    "value": "number | string = 0",
+    "vertical": "boolean = false"
+  },
+  "slots": [
+    "default",
+    "items"
+  ],
+  "states": [],
+  "subcomponents": [
+    "c-tab",
+    "c-tab-buttons",
+    "c-tab-item",
+    "c-tab-items"
+  ],
+  "tag": "c-tabs"
+}

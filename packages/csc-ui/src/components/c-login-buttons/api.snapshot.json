@@ -1,0 +1,18 @@
+{
+  "attributes": {},
+  "cssProperties": [],
+  "defaultable": [],
+  "events": {},
+  "methods": {},
+  "parts": [],
+  "propertyOnly": [],
+  "props": {},
+  "slots": [
+    "default"
+  ],
+  "states": [],
+  "subcomponents": [
+    "c-login-button"
+  ],
+  "tag": "c-login-buttons"
+}

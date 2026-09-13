@@ -1,0 +1,25 @@
+{
+  "attributes": {
+    "align": "'center' | 'end' | 'start' = 'center'",
+    "justify": "'center' | 'end' | 'space-around' | 'space-between' | 'start' | 'stretch' = 'start'"
+  },
+  "cssProperties": [],
+  "defaultable": [],
+  "events": {},
+  "methods": {},
+  "parts": [
+    "actions",
+    "root"
+  ],
+  "propertyOnly": [],
+  "props": {
+    "align": "'center' | 'end' | 'start' = 'center'",
+    "justify": "'center' | 'end' | 'space-around' | 'space-between' | 'start' | 'stretch' = 'start'"
+  },
+  "slots": [
+    "default"
+  ],
+  "states": [],
+  "subcomponents": [],
+  "tag": "c-card-actions"
+}

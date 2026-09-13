@@ -1,0 +1,95 @@
+{
+  "attributes": {
+    "clearable": "boolean = false",
+    "disabled": "boolean = false",
+    "error-message": "string = ''",
+    "hide-details": "boolean = false",
+    "hint": "string = ''",
+    "host-id": "string = ''",
+    "items-per-page": "number = 6",
+    "label": "string = ''",
+    "label-on-top": "boolean = false",
+    "loading": "boolean = false",
+    "max-tags": "number",
+    "multiple": "boolean = false",
+    "name": "string = ''",
+    "option-as-selection": "boolean = false",
+    "placeholder": "string = ''",
+    "required": "boolean = false",
+    "return-object": "boolean = false",
+    "select-all": "boolean = false",
+    "shadow": "boolean = false",
+    "size": "'default' | 'small' = 'default'",
+    "valid": "boolean = true"
+  },
+  "cssProperties": [],
+  "defaultable": [
+    "hideDetails",
+    "itemsPerPage",
+    "labelOnTop",
+    "shadow",
+    "size",
+    "texts"
+  ],
+  "events": {
+    "changeValue": "CustomEvent<CSelectValue>",
+    "input": "CustomEvent<void>",
+    "update:value": "CustomEvent<CSelectValue>"
+  },
+  "methods": {
+    "reset": "()"
+  },
+  "parts": [
+    "indicator",
+    "item",
+    "list",
+    "mark",
+    "menu",
+    "select-all",
+    "tag",
+    "tag-root",
+    "tags"
+  ],
+  "propertyOnly": [
+    "items",
+    "texts",
+    "value"
+  ],
+  "props": {
+    "clearable": "boolean = false",
+    "disabled": "boolean = false",
+    "errorMessage": "string = ''",
+    "hideDetails": "boolean = false",
+    "hint": "string = ''",
+    "hostId": "string = ''",
+    "items": "CSelectItem[] = () => []",
+    "itemsPerPage": "number = 6",
+    "label": "string = ''",
+    "labelOnTop": "boolean = false",
+    "loading": "boolean = false",
+    "maxTags": "number",
+    "multiple": "boolean = false",
+    "name": "string = ''",
+    "optionAsSelection": "boolean = false",
+    "placeholder": "string = ''",
+    "required": "boolean = false",
+    "returnObject": "boolean = false",
+    "selectAll": "boolean = false",
+    "shadow": "boolean = false",
+    "size": "'default' | 'small' = 'default'",
+    "texts": "CSelectTexts = {}",
+    "valid": "boolean = true",
+    "value": "CSelectValue = null"
+  },
+  "slots": [
+    "default",
+    "post",
+    "pre"
+  ],
+  "states": [],
+  "subcomponents": [
+    "c-option",
+    "c-option-value"
+  ],
+  "tag": "c-select"
+}

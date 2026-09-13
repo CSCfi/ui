@@ -1,0 +1,30 @@
+{
+  "attributes": {
+    "label": "string = ''",
+    "required": "boolean = false",
+    "size": "'default' | 'small' = 'default'"
+  },
+  "cssProperties": [],
+  "defaultable": [],
+  "events": {},
+  "methods": {},
+  "parts": [
+    "items",
+    "label",
+    "root"
+  ],
+  "propertyOnly": [],
+  "props": {
+    "label": "string = ''",
+    "required": "boolean = false",
+    "size": "'default' | 'small' = 'default'"
+  },
+  "slots": [
+    "default"
+  ],
+  "states": [],
+  "subcomponents": [
+    "c-tag"
+  ],
+  "tag": "c-tags"
+}

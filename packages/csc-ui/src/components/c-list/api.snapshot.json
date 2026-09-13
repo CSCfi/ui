@@ -1,0 +1,27 @@
+{
+  "attributes": {
+    "bordered": "boolean = false",
+    "disabled": "boolean = false"
+  },
+  "cssProperties": [],
+  "defaultable": [],
+  "events": {},
+  "methods": {},
+  "parts": [
+    "root"
+  ],
+  "propertyOnly": [],
+  "props": {
+    "bordered": "boolean = false",
+    "disabled": "boolean = false"
+  },
+  "slots": [
+    "default"
+  ],
+  "states": [],
+  "subcomponents": [
+    "c-list-item",
+    "c-list-item-title"
+  ],
+  "tag": "c-list"
+}

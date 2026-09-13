@@ -1,0 +1,35 @@
+{
+  "attributes": {
+    "distance": "number | string = 0",
+    "heading": "string = ''",
+    "open": "boolean = false",
+    "position": "'bottom-end' | 'bottom-start' | 'bottom' | 'left-end' | 'left-start' | 'left' | 'right-end' | 'right-start' | 'right' | 'top-end' | 'top-start' | 'top' = 'bottom'",
+    "trigger": "HTMLElement | string"
+  },
+  "cssProperties": [],
+  "defaultable": [],
+  "events": {
+    "change:open": "CustomEvent<boolean>"
+  },
+  "methods": {},
+  "parts": [
+    "heading",
+    "panel",
+    "trigger"
+  ],
+  "propertyOnly": [],
+  "props": {
+    "distance": "number | string = 0",
+    "heading": "string = ''",
+    "open": "boolean = false",
+    "position": "'bottom-end' | 'bottom-start' | 'bottom' | 'left-end' | 'left-start' | 'left' | 'right-end' | 'right-start' | 'right' | 'top-end' | 'top-start' | 'top' = 'bottom'",
+    "trigger": "HTMLElement | string"
+  },
+  "slots": [
+    "default",
+    "trigger"
+  ],
+  "states": [],
+  "subcomponents": [],
+  "tag": "c-popover"
+}

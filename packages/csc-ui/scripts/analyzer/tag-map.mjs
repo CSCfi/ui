@@ -336,6 +336,13 @@ export const renderTagNameMap = (components, publicTypes) => {
     }))
     .filter(({ keys }) => keys.length);
 
+  // The value controls (CONTEXT.md "Value control"): tags whose event map
+  // carries the v-model contract event. Drives the value-control conformance
+  // suite (ADR-0049), so a new value control is enrolled the day it registers.
+  const valueTags = sorted
+    .filter((c) => c.events.some((e) => e.name === 'update:value'))
+    .map((c) => `'${c.tagName}'`);
+
   const appDefaults = [
     '/**',
     ' * Props a consumer may set for every instance of a tag with',
@@ -357,6 +364,9 @@ export const renderTagNameMap = (components, publicTypes) => {
         `  '${tag}': [${keys.map((k) => `'${k}'`).join(', ')}],`,
     ),
     '} as const satisfies Record<keyof AppDefaults, readonly string[]>;',
+    '',
+    '/** Tags dispatching the v-model contract event `update:value` — the value controls (CONTEXT.md). */',
+    `export const VALUE_TAGS = [${valueTags.join(', ')}] as const;`,
     '',
   ].join('\n');
 

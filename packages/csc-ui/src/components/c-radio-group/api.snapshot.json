@@ -1,0 +1,48 @@
+{
+  "attributes": {
+    "disabled": "boolean = false",
+    "error-message": "string = ''",
+    "hide-details": "boolean = false",
+    "hint": "string = ''",
+    "inline": "boolean = false",
+    "label": "string = ''",
+    "required": "boolean = false",
+    "valid": "boolean = true",
+    "value": "null | string = null"
+  },
+  "cssProperties": [],
+  "defaultable": [],
+  "events": {
+    "changeValue": "CustomEvent<string>",
+    "input": "CustomEvent<void>",
+    "update:value": "CustomEvent<string>"
+  },
+  "methods": {},
+  "parts": [
+    "items",
+    "label",
+    "message",
+    "root"
+  ],
+  "propertyOnly": [],
+  "props": {
+    "disabled": "boolean = false",
+    "errorMessage": "string = ''",
+    "hideDetails": "boolean = false",
+    "hint": "string = ''",
+    "inline": "boolean = false",
+    "label": "string = ''",
+    "required": "boolean = false",
+    "valid": "boolean = true",
+    "value": "null | string = null"
+  },
+  "slots": [
+    "default",
+    "label"
+  ],
+  "states": [],
+  "subcomponents": [
+    "c-radio"
+  ],
+  "tag": "c-radio-group"
+}

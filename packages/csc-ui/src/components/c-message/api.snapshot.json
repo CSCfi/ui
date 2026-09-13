@@ -1,0 +1,26 @@
+{
+  "attributes": {
+    "error-message": "string = ''",
+    "hint": "string = ''",
+    "input-id": "string = ''",
+    "valid": "boolean = true"
+  },
+  "cssProperties": [],
+  "defaultable": [],
+  "events": {},
+  "methods": {},
+  "parts": [
+    "root"
+  ],
+  "propertyOnly": [],
+  "props": {
+    "errorMessage": "string = ''",
+    "hint": "string = ''",
+    "inputId": "string = ''",
+    "valid": "boolean = true"
+  },
+  "slots": [],
+  "states": [],
+  "subcomponents": [],
+  "tag": "c-message"
+}

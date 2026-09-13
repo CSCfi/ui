@@ -1,0 +1,28 @@
+{
+  "attributes": {
+    "complete": "boolean = false",
+    "current": "boolean = false"
+  },
+  "cssProperties": [],
+  "defaultable": [],
+  "events": {},
+  "methods": {},
+  "parts": [
+    "complete",
+    "dot",
+    "indicator",
+    "label",
+    "root"
+  ],
+  "propertyOnly": [],
+  "props": {
+    "complete": "boolean = false",
+    "current": "boolean = false"
+  },
+  "slots": [
+    "default"
+  ],
+  "states": [],
+  "subcomponents": [],
+  "tag": "c-step"
+}

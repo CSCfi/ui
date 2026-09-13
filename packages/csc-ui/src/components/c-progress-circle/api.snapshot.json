@@ -1,0 +1,29 @@
+{
+  "attributes": {
+    "size": "number = 32",
+    "value": "number = 0",
+    "width": "number = 6"
+  },
+  "cssProperties": [],
+  "defaultable": [],
+  "events": {},
+  "methods": {},
+  "parts": [
+    "bar",
+    "content",
+    "root",
+    "track"
+  ],
+  "propertyOnly": [],
+  "props": {
+    "size": "number = 32",
+    "value": "number = 0",
+    "width": "number = 6"
+  },
+  "slots": [
+    "default"
+  ],
+  "states": [],
+  "subcomponents": [],
+  "tag": "c-progress-circle"
+}

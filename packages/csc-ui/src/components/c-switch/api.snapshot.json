@@ -1,0 +1,47 @@
+{
+  "attributes": {
+    "checked": "boolean = false",
+    "disabled": "boolean = false",
+    "false-value": "boolean | number | string = false",
+    "host-id": "string = ''",
+    "label": "string = ''",
+    "loading": "boolean = false",
+    "required": "boolean = false",
+    "true-value": "boolean | number | string = true",
+    "value": "boolean | number | string = false"
+  },
+  "cssProperties": [],
+  "defaultable": [],
+  "events": {
+    "change": "CustomEvent<void>",
+    "changeValue": "CustomEvent<boolean | number | string>",
+    "input": "CustomEvent<void>",
+    "update:value": "CustomEvent<boolean | number | string>"
+  },
+  "methods": {},
+  "parts": [
+    "label",
+    "root",
+    "slider"
+  ],
+  "propertyOnly": [],
+  "props": {
+    "checked": "boolean = false",
+    "disabled": "boolean = false",
+    "falseValue": "boolean | number | string = false",
+    "hostId": "string = ''",
+    "label": "string = ''",
+    "loading": "boolean = false",
+    "required": "boolean = false",
+    "trueValue": "boolean | number | string = true",
+    "value": "boolean | number | string = false"
+  },
+  "slots": [
+    "default"
+  ],
+  "states": [
+    "checked"
+  ],
+  "subcomponents": [],
+  "tag": "c-switch"
+}

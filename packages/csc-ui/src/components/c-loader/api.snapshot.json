@@ -1,0 +1,32 @@
+{
+  "attributes": {
+    "contentdelay": "number = 0",
+    "size": "number = 48",
+    "visible": "boolean = true",
+    "width": "number = 4"
+  },
+  "cssProperties": [],
+  "defaultable": [],
+  "events": {},
+  "methods": {
+    "hide": "()",
+    "show": "()"
+  },
+  "parts": [
+    "content",
+    "root"
+  ],
+  "propertyOnly": [],
+  "props": {
+    "contentdelay": "number = 0",
+    "size": "number = 48",
+    "visible": "boolean = true",
+    "width": "number = 4"
+  },
+  "slots": [
+    "default"
+  ],
+  "states": [],
+  "subcomponents": [],
+  "tag": "c-loader"
+}

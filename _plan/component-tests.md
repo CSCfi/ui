@@ -237,3 +237,13 @@ Follow-ups recorded, not in scope: guard tests of the lint scripts; React wrappe
 8. After steps 4–5: the seeded specs pass; reverting `d54ae8a9`'s c-select change locally makes the check-mark spec fail (proves the regression is caught).
 9. After step 6: `pnpm --filter @cscfi/csc-ui-documentation test` → 122 canons green; re-adding one `.prop` binding to a canon fails the own-property assertion.
 10. Open a PR → `CI` green; push a temporary failing assertion → red; revert. Confirm the toolchain spec fails when the Dockerfile pin is edited.
+
+## Deviations pinned by the conformance suites (2026-09-13)
+
+Each is asserted in the inverse so that fixing the component forces the list in `src/test/conformance/kinds.ts` to shrink. A fix ships with the spec going green (CLAUDE.md policy).
+
+- **c-pagination emits on mount and on programmatic `value` change** (`KNOWN_PROGRAMMATIC_EMITTERS`): `onMounted → setRange()` and the `value` watch both dispatch the value events, against the "emit only on interaction" contract.
+- **c-checkbox / c-switch mount checked from a `null` v-model** (`KNOWN_EMPTY_VALUE_CHECKED`): `vModelText` writes `''` for a null model and Vue casts `''` to `true` for a prop typed `boolean | number | string`, so `'' === trueValue` and the control reads as checked. `''` must read as empty (glossary, **Value control**).
+- **c-menu drops focus to `<body>` on Escape with a slotted `c-button` trigger** (`KNOWN_FOCUS_LOSS_ON_CLOSE`): the return call is `trigger.focus()` on a `display: contents` host. c-button needs a `focus()` that delegates to its inner button, or the menu must focus the inner control.
+
+Harness facts learned: Vitest tiles test files in one page, so the pointer from one file's click can hover an element in another — `fileParallelism: false` and `parkPointer()` before captures; Chromium's "ResizeObserver loop completed with undelivered notifications" (c-login-card) is a benign notice filtered by `BENIGN_BROWSER_NOTICES`; c-tree-select's combobox is clipped by design, so field panels are opened by clicking the `c-input` box.

@@ -1,0 +1,33 @@
+{
+  "attributes": {
+    "disable-backdrop-blur": "boolean = false",
+    "dismissable": "boolean = false",
+    "value": "boolean = false",
+    "width": "number | string = 600"
+  },
+  "cssProperties": [],
+  "defaultable": [],
+  "events": {
+    "changeValue": "CustomEvent<boolean>",
+    "input": "CustomEvent<void>",
+    "update:value": "CustomEvent<boolean>"
+  },
+  "methods": {},
+  "parts": [
+    "backdrop",
+    "root"
+  ],
+  "propertyOnly": [],
+  "props": {
+    "disableBackdropBlur": "boolean = false",
+    "dismissable": "boolean = false",
+    "value": "boolean = false",
+    "width": "number | string = 600"
+  },
+  "slots": [
+    "default"
+  ],
+  "states": [],
+  "subcomponents": [],
+  "tag": "c-modal"
+}

@@ -1,0 +1,24 @@
+{
+  "attributes": {
+    "disable-animation": "boolean = false",
+    "value": "number | string = 0"
+  },
+  "cssProperties": [],
+  "defaultable": [],
+  "events": {},
+  "methods": {},
+  "parts": [
+    "root"
+  ],
+  "propertyOnly": [],
+  "props": {
+    "disableAnimation": "boolean = false",
+    "value": "number | string = 0"
+  },
+  "slots": [
+    "default"
+  ],
+  "states": [],
+  "subcomponents": [],
+  "tag": "c-tab-items"
+}

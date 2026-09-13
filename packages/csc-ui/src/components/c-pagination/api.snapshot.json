@@ -1,0 +1,36 @@
+{
+  "attributes": {
+    "hide-details": "boolean = false",
+    "hide-range": "boolean = false",
+    "simple": "boolean = false",
+    "size": "'default' | 'small' = 'default'"
+  },
+  "cssProperties": [],
+  "defaultable": [],
+  "events": {
+    "changeValue": "CustomEvent<CPaginationOptions>",
+    "input": "CustomEvent<void>",
+    "update:value": "CustomEvent<CPaginationOptions>"
+  },
+  "methods": {},
+  "parts": [
+    "details",
+    "items-per-page",
+    "pages",
+    "root"
+  ],
+  "propertyOnly": [
+    "value"
+  ],
+  "props": {
+    "hideDetails": "boolean = false",
+    "hideRange": "boolean = false",
+    "simple": "boolean = false",
+    "size": "'default' | 'small' = 'default'",
+    "value": "CPaginationOptions = () => ({ itemCount: 0 })"
+  },
+  "slots": [],
+  "states": [],
+  "subcomponents": [],
+  "tag": "c-pagination"
+}

@@ -1,0 +1,60 @@
+{
+  "attributes": {
+    "active": "boolean",
+    "danger": "boolean = false",
+    "disabled": "boolean = false",
+    "fit": "boolean = false",
+    "ghost": "boolean = false",
+    "host-id": "string = ''",
+    "href": "string = ''",
+    "inverted": "boolean = false",
+    "loading": "boolean = false",
+    "no-radius": "boolean = false",
+    "no-ripple": "boolean = false",
+    "outlined": "boolean = false",
+    "size": "'default' | 'large' | 'small' = 'default'",
+    "target": "string = '_blank'",
+    "text": "boolean = false",
+    "type": "'button' | 'reset' | 'submit' = 'button'",
+    "value": "number | string"
+  },
+  "cssProperties": [
+    "--c-font-family"
+  ],
+  "defaultable": [],
+  "events": {},
+  "methods": {},
+  "parts": [
+    "content",
+    "description",
+    "root"
+  ],
+  "propertyOnly": [],
+  "props": {
+    "active": "boolean",
+    "danger": "boolean = false",
+    "disabled": "boolean = false",
+    "fit": "boolean = false",
+    "ghost": "boolean = false",
+    "hostId": "string = ''",
+    "href": "string = ''",
+    "inverted": "boolean = false",
+    "loading": "boolean = false",
+    "noRadius": "boolean = false",
+    "noRipple": "boolean = false",
+    "outlined": "boolean = false",
+    "size": "'default' | 'large' | 'small' = 'default'",
+    "target": "string = '_blank'",
+    "text": "boolean = false",
+    "type": "'button' | 'reset' | 'submit' = 'button'",
+    "value": "number | string"
+  },
+  "slots": [
+    "default",
+    "description",
+    "icon"
+  ],
+  "states": [],
+  "subcomponents": [],
+  "tag": "c-button"
+}

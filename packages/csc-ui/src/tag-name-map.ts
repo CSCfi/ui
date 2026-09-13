@@ -2387,6 +2387,9 @@ export const DEFAULTABLE_PROPS = {
   'c-tree-select': ['hideDetails', 'itemsPerPage', 'labelOnTop', 'shadow', 'size', 'texts'],
 } as const satisfies Record<keyof AppDefaults, readonly string[]>;
 
+/** Tags dispatching the v-model contract event `update:value` — the value controls (CONTEXT.md). */
+export const VALUE_TAGS = ['c-accordion', 'c-autocomplete', 'c-button-group', 'c-checkbox', 'c-modal', 'c-otp-input', 'c-pagination', 'c-radio-group', 'c-select', 'c-slider', 'c-switch', 'c-tabs', 'c-text-field', 'c-tree-select'] as const;
+
 declare global {
   interface HTMLElementTagNameMap {
     'c-accordion': CAccordionElement;

@@ -1,0 +1,22 @@
+{
+  "attributes": {
+    "mobile-breakpoint": "number = 600",
+    "responsive": "boolean = false"
+  },
+  "cssProperties": [],
+  "defaultable": [],
+  "events": {},
+  "methods": {},
+  "parts": [],
+  "propertyOnly": [],
+  "props": {
+    "mobileBreakpoint": "number = 600",
+    "responsive": "boolean = false"
+  },
+  "slots": [
+    "default"
+  ],
+  "states": [],
+  "subcomponents": [],
+  "tag": "c-table"
+}

@@ -1,0 +1,34 @@
+{
+  "attributes": {
+    "active": "boolean = false",
+    "badge": "null | number | string = null",
+    "close-label": "string = 'Remove'",
+    "closeable": "boolean = false",
+    "flat": "boolean = false",
+    "size": "'default' | 'small' = 'default'"
+  },
+  "cssProperties": [],
+  "defaultable": [],
+  "events": {
+    "close": "CustomEvent<void>"
+  },
+  "methods": {},
+  "parts": [
+    "root"
+  ],
+  "propertyOnly": [],
+  "props": {
+    "active": "boolean = false",
+    "badge": "null | number | string = null",
+    "closeable": "boolean = false",
+    "closeLabel": "string = 'Remove'",
+    "flat": "boolean = false",
+    "size": "'default' | 'small' = 'default'"
+  },
+  "slots": [
+    "default"
+  ],
+  "states": [],
+  "subcomponents": [],
+  "tag": "c-tag"
+}

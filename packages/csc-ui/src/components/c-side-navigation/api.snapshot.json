@@ -1,0 +1,35 @@
+{
+  "attributes": {
+    "menu-visible": "boolean = false",
+    "mobile": "boolean = false"
+  },
+  "cssProperties": [],
+  "defaultable": [],
+  "events": {
+    "change:menu-visible": "CustomEvent<boolean>"
+  },
+  "methods": {},
+  "parts": [
+    "nav",
+    "root"
+  ],
+  "propertyOnly": [
+    "styles"
+  ],
+  "props": {
+    "menuVisible": "boolean = false",
+    "mobile": "boolean = false",
+    "styles": "null | Record<string, string> = null"
+  },
+  "slots": [
+    "bottom",
+    "default"
+  ],
+  "states": [],
+  "subcomponents": [
+    "c-side-navigation-item",
+    "c-side-navigation-title",
+    "c-sub-navigation-item"
+  ],
+  "tag": "c-side-navigation"
+}

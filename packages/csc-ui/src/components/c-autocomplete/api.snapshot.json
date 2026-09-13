@@ -1,0 +1,103 @@
+{
+  "attributes": {
+    "clearable": "boolean = false",
+    "disabled": "boolean = false",
+    "error-message": "string = ''",
+    "external": "boolean = false",
+    "hide-details": "boolean = false",
+    "hint": "string = ''",
+    "host-id": "string = ''",
+    "items-per-page": "number = 6",
+    "label": "string = ''",
+    "label-on-top": "boolean = false",
+    "loading": "boolean = false",
+    "max-tags": "number",
+    "multiple": "boolean = false",
+    "name": "string = ''",
+    "placeholder": "string = ''",
+    "required": "boolean = false",
+    "return-object": "boolean = false",
+    "select-all": "boolean = false",
+    "shadow": "boolean = false",
+    "size": "'default' | 'small' = 'default'",
+    "valid": "boolean = true"
+  },
+  "cssProperties": [],
+  "defaultable": [
+    "hideDetails",
+    "itemsPerPage",
+    "labelOnTop",
+    "shadow",
+    "size",
+    "texts"
+  ],
+  "events": {
+    "change": "CustomEvent<void>",
+    "change:query": "CustomEvent<string>",
+    "changeValue": "CustomEvent<CAutocompleteValue>",
+    "input": "CustomEvent<void>",
+    "update:value": "CustomEvent<CAutocompleteValue>"
+  },
+  "methods": {
+    "reset": "()"
+  },
+  "parts": [
+    "card",
+    "indicator",
+    "info",
+    "item",
+    "list",
+    "mark",
+    "match",
+    "panel",
+    "search",
+    "select-all",
+    "tag",
+    "tag-root",
+    "tags"
+  ],
+  "propertyOnly": [
+    "filter",
+    "items",
+    "texts",
+    "value"
+  ],
+  "props": {
+    "clearable": "boolean = false",
+    "disabled": "boolean = false",
+    "errorMessage": "string = ''",
+    "external": "boolean = false",
+    "filter": "CAutocompleteFilter",
+    "hideDetails": "boolean = false",
+    "hint": "string = ''",
+    "hostId": "string = ''",
+    "items": "CAutocompleteItem[] = () => []",
+    "itemsPerPage": "number = 6",
+    "label": "string = ''",
+    "labelOnTop": "boolean = false",
+    "loading": "boolean = false",
+    "maxTags": "number",
+    "multiple": "boolean = false",
+    "name": "string = ''",
+    "placeholder": "string = ''",
+    "required": "boolean = false",
+    "returnObject": "boolean = false",
+    "selectAll": "boolean = false",
+    "shadow": "boolean = false",
+    "size": "'default' | 'small' = 'default'",
+    "texts": "CAutocompleteTexts = {}",
+    "valid": "boolean = true",
+    "value": "CAutocompleteValue = null"
+  },
+  "slots": [
+    "default",
+    "post",
+    "pre"
+  ],
+  "states": [],
+  "subcomponents": [
+    "c-option",
+    "c-option-value"
+  ],
+  "tag": "c-autocomplete"
+}

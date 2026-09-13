@@ -1,0 +1,37 @@
+{
+  "attributes": {
+    "distance": "number | string = 0",
+    "open": "boolean = false",
+    "position": "'bottom-end' | 'bottom-start' | 'bottom' | 'left-end' | 'left-start' | 'left' | 'right-end' | 'right-start' | 'right' | 'top-end' | 'top-start' | 'top' = 'bottom-start'",
+    "trigger": "HTMLElement | string"
+  },
+  "cssProperties": [],
+  "defaultable": [],
+  "events": {
+    "change:open": "CustomEvent<boolean>",
+    "select": "CustomEvent<{ value: unknown }>"
+  },
+  "methods": {},
+  "parts": [
+    "list",
+    "panel",
+    "trigger"
+  ],
+  "propertyOnly": [],
+  "props": {
+    "distance": "number | string = 0",
+    "open": "boolean = false",
+    "position": "'bottom-end' | 'bottom-start' | 'bottom' | 'left-end' | 'left-start' | 'left' | 'right-end' | 'right-start' | 'right' | 'top-end' | 'top-start' | 'top' = 'bottom-start'",
+    "trigger": "HTMLElement | string"
+  },
+  "slots": [
+    "default",
+    "trigger"
+  ],
+  "states": [],
+  "subcomponents": [
+    "c-menu-item",
+    "c-menu-label"
+  ],
+  "tag": "c-menu"
+}

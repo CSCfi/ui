@@ -1,0 +1,33 @@
+{
+  "attributes": {
+    "dismissible": "boolean = false",
+    "heading": "string",
+    "type": "'default' | 'error' | 'info' | 'success' | 'warning' = 'default'"
+  },
+  "cssProperties": [],
+  "defaultable": [],
+  "events": {
+    "dismiss": "CustomEvent<void>"
+  },
+  "methods": {},
+  "parts": [
+    "content",
+    "dismiss",
+    "heading",
+    "icon",
+    "root"
+  ],
+  "propertyOnly": [],
+  "props": {
+    "dismissible": "boolean = false",
+    "heading": "string",
+    "type": "'default' | 'error' | 'info' | 'success' | 'warning' = 'default'"
+  },
+  "slots": [
+    "default",
+    "heading"
+  ],
+  "states": [],
+  "subcomponents": [],
+  "tag": "c-alert"
+}

@@ -1,0 +1,42 @@
+{
+  "attributes": {
+    "badge": "null | number | string = null",
+    "danger": "boolean = false",
+    "disabled": "boolean = false",
+    "ghost": "boolean = false",
+    "inverted": "boolean = false",
+    "loading": "boolean = false",
+    "outlined": "boolean = false",
+    "path": "string = ''",
+    "size": "'default' | 'small' | 'x-small' = 'default'",
+    "text": "boolean = false"
+  },
+  "cssProperties": [],
+  "defaultable": [],
+  "events": {},
+  "methods": {},
+  "parts": [
+    "badge",
+    "content",
+    "root"
+  ],
+  "propertyOnly": [],
+  "props": {
+    "badge": "null | number | string = null",
+    "danger": "boolean = false",
+    "disabled": "boolean = false",
+    "ghost": "boolean = false",
+    "inverted": "boolean = false",
+    "loading": "boolean = false",
+    "outlined": "boolean = false",
+    "path": "string = ''",
+    "size": "'default' | 'small' | 'x-small' = 'default'",
+    "text": "boolean = false"
+  },
+  "slots": [
+    "default"
+  ],
+  "states": [],
+  "subcomponents": [],
+  "tag": "c-icon-button"
+}

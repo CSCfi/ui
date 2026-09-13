@@ -1,0 +1,28 @@
+{
+  "attributes": {
+    "href": "string = ''",
+    "target": "string = ''",
+    "underline": "boolean = false",
+    "weight": "number | string = '600'"
+  },
+  "cssProperties": [],
+  "defaultable": [],
+  "events": {},
+  "methods": {},
+  "parts": [
+    "root"
+  ],
+  "propertyOnly": [],
+  "props": {
+    "href": "string = ''",
+    "target": "string = ''",
+    "underline": "boolean = false",
+    "weight": "number | string = '600'"
+  },
+  "slots": [
+    "default"
+  ],
+  "states": [],
+  "subcomponents": [],
+  "tag": "c-link"
+}

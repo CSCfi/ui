@@ -73,8 +73,16 @@ export default defineConfig({
       viewport: { height: 800, width: 1280 },
     },
     exclude: ['src/**/*.node.spec.ts', '**/node_modules/**', '**/dist/**'],
+    // Test files share one browser page (focus, pointer, keyboard). Run them
+    // one at a time so real input events cannot cross between files.
+    fileParallelism: false,
     include: ['src/**/*.spec.ts'],
     name: 'browser',
+    // Chromium's benign ResizeObserver notice arrives as an unhandled error.
+    onUnhandledError: (error) =>
+      !/ResizeObserver loop completed with undelivered notifications/.test(
+        error.message,
+      ),
     root: here,
     setupFiles: ['./src/test/setup.browser.ts'],
     testTimeout: 15_000,

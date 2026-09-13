@@ -1,0 +1,24 @@
+{
+  "attributes": {
+    "scroll-indicator": "boolean = false"
+  },
+  "cssProperties": [],
+  "defaultable": [],
+  "events": {},
+  "methods": {},
+  "parts": [
+    "container",
+    "scroll-indicator"
+  ],
+  "propertyOnly": [],
+  "props": {
+    "scrollIndicator": "boolean = false"
+  },
+  "slots": [
+    "default",
+    "footer"
+  ],
+  "states": [],
+  "subcomponents": [],
+  "tag": "c-page"
+}
