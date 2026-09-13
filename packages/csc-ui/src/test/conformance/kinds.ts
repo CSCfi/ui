@@ -39,8 +39,22 @@ export const FIXTURES: Record<string, MountOptions> = {
  * asserts the inverse for these so fixing one forces the list to shrink.
  */
 export const KNOWN_PROGRAMMATIC_EMITTERS: readonly string[] = [
+  // CModal.vue: `dialog.close()` fires its `close` event in a later task, after
+  // the `internalClose` flag is reset, so `onNativeClose` re-dispatches the
+  // value events for every close — including a programmatic `value = false`.
+  'c-modal',
   // CPagination.vue: `onMounted → setRange()` and a `value` watch both emit.
   'c-pagination',
+];
+
+/**
+ * Value controls that dispatch the value events TWICE for one interaction.
+ * Same inverse-assertion rule: fixing the component must shrink the list.
+ */
+export const KNOWN_DOUBLE_EMITTERS: readonly string[] = [
+  // CModal.vue: the interaction handler dispatches, then the native `close`
+  // event (see KNOWN_PROGRAMMATIC_EMITTERS) dispatches again.
+  'c-modal',
 ];
 
 /**

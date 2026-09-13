@@ -277,8 +277,6 @@ export async function matchScreenshotInBothModes(
   const locator =
     target instanceof Element ? page.elementLocator(target) : target;
 
-  await parkPointer();
-
   for (const mode of ['light', 'dark'] as const) {
     setThemeMode(mode);
     await settled();
@@ -295,8 +293,10 @@ export async function matchScreenshotInBothModes(
  */
 /**
  * Move the pointer to the top-left corner. Test files share one page, so the
- * pointer left by another file's click can rest over the element under test
- * and paint its hover state into a baseline.
+ * pointer left by another file's click would otherwise rest over the element
+ * under test and paint its hover state into a baseline. The setup file calls
+ * this before every test; call it again after a click when a later screenshot
+ * must not show hover — only while nothing modal or inert is open.
  */
 export async function parkPointer(): Promise<void> {
   const park = document.createElement('div');

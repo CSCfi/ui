@@ -6,14 +6,15 @@ import '../styles/css/tokens.css';
 import './harness.css';
 import { resetDefaults } from '../shared/appDefaults';
 import { resetTheme } from '../theme/applyTheme';
-import { consoleSpy, setThemeMode } from './harness';
+import { consoleSpy, parkPointer, setThemeMode } from './harness';
 
 // Registration is deliberately NOT done here: `mount()` registers on demand.
 // The dist smoke needs a registry the source build has not touched, and a spec
 // may want to observe the pre-upgrade window.
 
-beforeEach(() => {
+beforeEach(async () => {
   setThemeMode('light');
+  await parkPointer();
   consoleSpy.start();
 });
 

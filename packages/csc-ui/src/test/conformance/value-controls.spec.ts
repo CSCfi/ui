@@ -11,6 +11,7 @@ import type { Mounted } from '../harness';
 import { VALUE_TAGS } from '../../tag-name-map';
 import { defineAll, mount, recordEvents, settle, wrap } from '../harness';
 import {
+  KNOWN_DOUBLE_EMITTERS,
   KNOWN_EMPTY_VALUE_CHECKED,
   KNOWN_PROGRAMMATIC_EMITTERS,
   VALUE_RECIPES,
@@ -74,7 +75,11 @@ describe.each(VALUE_TAGS)('%s', (tag) => {
 
     const updates = host.of('update:value');
 
-    expect(updates).toHaveLength(1);
+    // A pinned double emitter dispatches twice; the assertion is inverted so
+    // the fix must shrink KNOWN_DOUBLE_EMITTERS.
+    const expectedCount = KNOWN_DOUBLE_EMITTERS.includes(tag) ? 2 : 1;
+
+    expect(updates, 'update:value dispatches').toHaveLength(expectedCount);
 
     const { detail } = updates[0];
 
@@ -89,7 +94,7 @@ describe.each(VALUE_TAGS)('%s', (tag) => {
 
     const libraryInputs = inputs.of('input', libraryInput);
 
-    expect(libraryInputs).toHaveLength(1);
+    expect(libraryInputs).toHaveLength(expectedCount);
     expect(libraryInputs[0].bubbles).toBe(true);
 
     const settledAt =
@@ -100,12 +105,12 @@ describe.each(VALUE_TAGS)('%s', (tag) => {
     if (recipe.family === 'change') {
       const changes = host.of('change');
 
-      expect(changes).toHaveLength(1);
+      expect(changes).toHaveLength(expectedCount);
       expect(changes[0].detail).toEqual(detail);
       expect(host.of('changeValue')).toHaveLength(0);
     } else {
-      expect(host.of('changeValue')).toHaveLength(1);
-      expect(host.of('change-value')).toHaveLength(1);
+      expect(host.of('changeValue')).toHaveLength(expectedCount);
+      expect(host.of('change-value')).toHaveLength(expectedCount);
       expect(host.of('changeValue')[0].detail).toEqual(detail);
       expect(host.of('change-value')[0].detail).toEqual(detail);
     }

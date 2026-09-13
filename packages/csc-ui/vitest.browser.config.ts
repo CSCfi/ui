@@ -58,7 +58,13 @@ export default defineConfig({
       headless: true,
       instances: [{ browser: 'chromium', name: 'browser' }],
       provider: playwright({
-        contextOptions: { colorScheme: 'light', deviceScaleFactor: 1 },
+        contextOptions: {
+          colorScheme: 'light',
+          deviceScaleFactor: 1,
+          // Components honour prefers-reduced-motion (c-modal, c-tabs): no
+          // open/close keyframes to wait for.
+          reducedMotion: 'reduce',
+        },
         launchOptions: {
           args: ['--font-render-hinting=none', '--force-device-scale-factor=1'],
           env: { ...process.env, FONTCONFIG_FILE: fontsConf },
