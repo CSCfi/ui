@@ -248,3 +248,20 @@ Each is asserted in the inverse so that fixing the component forces the list in 
 - **c-menu drops focus to `<body>` on Escape with a slotted `c-button` trigger** (`KNOWN_FOCUS_LOSS_ON_CLOSE`): the return call is `trigger.focus()` on a `display: contents` host. c-button needs a `focus()` that delegates to its inner button, or the menu must focus the inner control.
 
 Harness facts learned: Vitest tiles test files in one page, so the pointer from one file's click can hover an element in another — `fileParallelism: false` and `parkPointer()` before captures; Chromium's "ResizeObserver loop completed with undelivered notifications" (c-login-card) is a benign notice filtered by `BENIGN_BROWSER_NOTICES`; c-tree-select's combobox is clipped by design, so field panels are opened by clicking the `c-input` box.
+
+## Implementation status (2026-09-13)
+
+All six steps landed on `development` as six commits (each with an empty changeset), not pushed:
+
+| step | commit | what |
+|---|---|---|
+| 1 | harness | Vitest 5 browser + node projects, `src/test/harness.ts`, dist smoke, toolchain pin spec, c-button proof, ADR-0049, glossary Verification section, CLAUDE.md policy |
+| 2 | ci | `.github/workflows/ci.yml` — first run happens on the first push/PR |
+| 3 | conformance | all-components / value-controls / anchored-overlays suites, generated `VALUE_TAGS`, API snapshot (72 + entry) |
+| 4 | wave 1 | c-select, c-modal, c-menu, peekCap specs, 6 baselines |
+| 5 | wave 2 | c-autocomplete, c-tree-select, applyDefaults specs, 8 baselines |
+| 6 | smoke | docs `examples` project mounting all 122 canons, 28 curated baselines, shared `vitest.browser.shared.ts` |
+
+`pnpm test` at the root: 17 files, 704 passed, 2 expected fails (pinned deviations), ~80 s sequential in the devcontainer.
+
+Open follow-ups (not in scope here): fix the pinned deviations (each fix removes a list entry / flips an `it.fails`); guard tests of the lint scripts; React wrapper smoke; `runAnalyzer` extraction so the API snapshot needs no CLI spawn; csc-ui ESLint debt before ESLint can join CI; per-arch baselines only if the first CI run shows drift past the 1% tolerance.

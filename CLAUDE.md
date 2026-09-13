@@ -40,6 +40,9 @@ pnpm test:update    # rewrite the visual baselines of the browser project
 
 # In packages/csc-ui-react
 pnpm build          # regenerate wrappers from the manifest, then tsc
+
+# In packages/csc-ui-documentation
+pnpm test           # example smoke: mounts every canon against the built csc-ui
 ```
 
 The React package build requires a built `packages/csc-ui` (it reads the manifest from it).

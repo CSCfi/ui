@@ -5,6 +5,9 @@ import { defineConfig } from "vitest/config";
 // Vitest flattens it, so `pnpm test` here and `pnpm ui test` agree.
 export default defineConfig({
   test: {
-    projects: ["packages/csc-ui/vitest.config.ts"],
+    projects: [
+      "packages/csc-ui/vitest.config.ts",
+      "packages/csc-ui-documentation/vitest.config.ts",
+    ],
   },
 });
