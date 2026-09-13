@@ -1,0 +1,86 @@
+name: CI
+
+# The PR gate (ADR-0049). changeset-check.yml stays a separate job. Builds
+# first: the React wrapper reads the manifest, and the dist smoke imports the
+# built @cscfi/csc-ui. `pull_request` is unfiltered so PRs into `development`
+# run too.
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+env:
+  CI: true
+
+jobs:
+  build-lint-test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Enable corepack (pnpm)
+        run: corepack enable
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Build csc-ui (tokens → bundle → types → strict manifest)
+        run: pnpm --filter @cscfi/csc-ui run build
+
+      - name: Build csc-ui-react
+        run: pnpm --filter @cscfi/csc-ui-react run build
+
+      - name: Lint csc-ui (tokens --strict, a11y, ramp, chart)
+        run: pnpm --filter @cscfi/csc-ui run lint
+
+      - name: Type-check csc-ui (components, harness, specs)
+        run: pnpm --filter @cscfi/csc-ui run type-check
+
+      # Ten brand-colour pairs sit below AA and are design-owned: report only.
+      - name: Contrast audit (report only)
+        run: pnpm --filter @cscfi/csc-ui run lint:contrast
+        continue-on-error: true
+
+      - name: Lint docs
+        run: pnpm --filter @cscfi/csc-ui-documentation run lint
+
+      - name: Docs example parity
+        run: pnpm --filter @cscfi/csc-ui-documentation run lint:examples
+
+      - name: Read the pinned playwright version
+        id: pw
+        run: echo "version=$(node -p "require('playwright/package.json').version")" >> "$GITHUB_OUTPUT"
+
+      - name: Cache Playwright browsers
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/ms-playwright
+          key: playwright-${{ runner.os }}-${{ steps.pw.outputs.version }}
+
+      - name: Install Chromium (+ OS deps and fonts)
+        run: pnpm exec playwright install --with-deps chromium
+
+      - name: Test (csc-ui browser + node projects)
+        run: pnpm test
+
+      - name: Upload screenshot diffs
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: vitest-attachments
+          path: packages/**/.vitest/attachments/**
+          if-no-files-found: ignore
