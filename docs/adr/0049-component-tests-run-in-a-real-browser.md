@@ -37,4 +37,5 @@ The elements cannot be exercised outside a browser. happy-dom fails in `connecte
 - Every `Fix(` PR carries a behaviour spec that fails before the fix; every new component ships a spec and a visual baseline per theme mode (CLAUDE.md). Conformance suites enrol new tags automatically — fix the component, never opt out.
 - `tsconfig.build.json` excludes `src/**/*.spec.ts` and `src/test/**`; `tsconfig.json` gains the browser matcher types and type-checks specs with the components.
 - The docs package gains a Vitest project and `@vitejs/plugin-vue`; canons are now executed, not only parsed.
+- Visual baselines are compared only on Linux — the devcontainer and CI, where the fontconfig pins the glyphs. On another host (a macOS checkout) the visual step of a spec is skipped and its behaviour assertions still run; `test:update` cannot write a baseline there.
 - `src/tag-name-map.ts` gains a second value export, `VALUE_TAGS`.

@@ -5,7 +5,7 @@
  * bindings across 26 canons) is the class of fault this catches.
  */
 import { describe, expect, it } from 'vitest';
-import { page } from 'vitest/browser';
+import { page, server } from 'vitest/browser';
 import type { Component } from 'vue';
 import { createApp } from 'vue';
 
@@ -97,7 +97,9 @@ describe('canon', () => {
 
         expect(problems).toEqual([]);
 
-        if (SCREENSHOT.has(name)) {
+        // Baselines are compared on Linux only (devcontainer + CI, where the
+        // fonts are pinned); elsewhere the mount assertions above still run.
+        if (SCREENSHOT.has(name) && server.platform === 'linux') {
           for (const mode of ['light', 'dark'] as const) {
             document.documentElement.setAttribute('data-theme', mode);
             await settle(350);

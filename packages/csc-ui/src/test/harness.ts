@@ -7,7 +7,7 @@ import type { Locator, ScreenshotMatcherOptions } from 'vitest/browser';
  * attributes, light-DOM children, host events — never to Vue internals.
  */
 import { expect } from 'vitest';
-import { page, userEvent } from 'vitest/browser';
+import { page, server, userEvent } from 'vitest/browser';
 
 import type { ThemeMode } from '../theme/themeMode';
 
@@ -269,11 +269,33 @@ export const consoleSpy = (() => {
   };
 })();
 
+/**
+ * Visual baselines are authored in the devcontainer and compared in CI — both
+ * Linux, where `fonts.conf` pins every generic family to Liberation. No other
+ * host renders the same glyphs (macOS ignores fontconfig), so elsewhere the
+ * comparison is skipped and only the behaviour assertions around it run.
+ * `test:update` therefore never writes a baseline from a non-Linux checkout.
+ */
+export const VISUAL_BASELINES = server.platform === 'linux';
+
+let skipNoticed = false;
+
 export async function matchScreenshotInBothModes(
   target: Element | Locator,
   name: string,
   options?: ScreenshotMatcherOptions,
 ): Promise<void> {
+  if (!VISUAL_BASELINES) {
+    if (!skipNoticed) {
+      skipNoticed = true;
+      console.log(
+        `[csc-ui] visual baselines compare on linux only — skipped on ${server.platform}`,
+      );
+    }
+
+    return;
+  }
+
   const locator =
     target instanceof Element ? page.elementLocator(target) : target;
 
