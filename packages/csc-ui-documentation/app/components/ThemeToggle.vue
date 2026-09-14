@@ -17,7 +17,8 @@
       >
         <c-icon aria-hidden="true" :path="icon" :size="20" />
 
-        <span class="capitalize">{{ preference }}</span>
+        <!-- Icon-only below `md`: the toolbar has to fit a phone. -->
+        <span class="capitalize max-md:hidden">{{ preference }}</span>
       </c-button>
 
       <c-menu-label>Theme</c-menu-label>

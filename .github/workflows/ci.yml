@@ -77,6 +77,14 @@ jobs:
       - name: Test (csc-ui browser + node projects)
         run: pnpm test
 
+      # Every prerendered docs route must fit a 360px phone without page-level
+      # horizontal scroll or content cut off at the edge (needs the generated
+      # site and the Chromium installed above).
+      - name: Docs viewport smoke (360px phone)
+        run: |
+          pnpm --filter @cscfi/csc-ui-documentation run generate
+          pnpm --filter @cscfi/csc-ui-documentation run test:viewport
+
       - name: Upload screenshot diffs
         if: failure()
         uses: actions/upload-artifact@v4

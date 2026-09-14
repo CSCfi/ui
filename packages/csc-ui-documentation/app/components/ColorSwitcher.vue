@@ -1,12 +1,18 @@
 <template>
   <c-menu position="bottom-end" @select="onSelect">
-    <c-button slot="trigger" size="small" text>
+    <c-button
+      slot="trigger"
+      :aria-label="`Primary colour: ${currentColor.label}`"
+      size="small"
+      text
+    >
       <span
         class="size-3 rounded-full"
         :style="{ 'background-color': currentColor.value }"
       />
 
-      {{ currentColor.label }}
+      <!-- Swatch-only below `md`: the toolbar has to fit a phone. -->
+      <span class="max-md:hidden">{{ currentColor.label }}</span>
     </c-button>
 
     <template v-for="(color, index) in colors" :key="index">

@@ -13,7 +13,12 @@
          app — the card surface by default (most components live inside a
          c-card), or the c-main canvas for the canon examples that opt in via
          `<docs>surface: canvas</docs>` (see .example-demo in assets/site.css). -->
-    <div :data-surface="example.surface" class="example-demo px-4 py-6">
+    <!-- `overflow-x-auto`: a demo wider than a phone (a table, a data table)
+         scrolls sideways inside the pane instead of being cut by the figure. -->
+    <div
+      :data-surface="example.surface"
+      class="example-demo overflow-x-auto px-4 py-6"
+    >
       <!-- The live demo is always the Vue canon (compiled SFC), whatever the
            selected flavor — the variants differ in source, not behavior.
            Client-only: the csc-ui custom elements upgrade only on the client,
@@ -25,8 +30,11 @@
     </div>
 
     <div class="border-t border-border">
+      <!-- The four flavor tabs outgrow a 360px phone; the row scrolls
+           sideways inside itself rather than being cut by the figure's
+           `overflow-hidden`. -->
       <div
-        class="flex gap-1 border-t border-border bg-surface-muted p-2"
+        class="flex gap-1 overflow-x-auto border-t border-border bg-surface-muted p-2"
         role="tablist"
       >
         <!-- Changing a tab switches the documentation-wide flavor, not just
