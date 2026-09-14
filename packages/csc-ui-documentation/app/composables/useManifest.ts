@@ -25,7 +25,12 @@ export interface CemNamed {
 }
 
 export interface CemMember {
-  csc?: { freeform?: boolean | string; signature?: string; typeAlias?: string };
+  csc?: {
+    defaultable?: boolean;
+    freeform?: boolean | string;
+    signature?: string;
+    typeAlias?: string;
+  };
   default?: string;
   description?: string;
   kind: 'field' | 'method';
@@ -128,6 +133,8 @@ const resolveGroup = (tag: string): ResolvedComponent[] => {
 export interface PropView {
   attribute: null | string;
   default?: string;
+  /** Accepts an app-wide default via `applyDefaults()` (`@defaultable`). */
+  defaultable?: boolean;
   description?: string;
   name: string;
   type: string;
@@ -241,6 +248,7 @@ export const toComponentView = (
     .map((m) => ({
       attribute: attributeByField.get(m.name) ?? null,
       default: m.default,
+      defaultable: m.csc?.defaultable ?? false,
       description: m.description,
       name: m.name,
       type: m.type?.text ?? '',

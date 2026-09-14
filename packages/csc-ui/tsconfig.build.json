@@ -9,10 +9,11 @@
     // dev. `dist-types` survives those rebuilds.
     "outDir": "dist-types",
     "rootDir": "src",
-    // `.at()` (used in c-tabs/c-tab-buttons) is ES2022. Widen the lib for the
-    // declaration pass so it type-checks; only adds available APIs.
-    "lib": ["ES2022", "DOM", "DOM.Iterable"]
+    // The published declarations must not depend on the test toolchain.
+    "types": ["vite/client"]
   },
   "include": ["src/**/*.ts", "src/**/*.vue"],
-  "exclude": ["vite.config.ts"]
+  // Specs and the spec harness are type-checked by tsconfig.json (`type-check`)
+  // but must never be emitted into the published `dist-types` (ADR-0049).
+  "exclude": ["vite.config.ts", "src/**/*.spec.ts", "src/**/*.spec.d.ts", "src/test/**"]
 }

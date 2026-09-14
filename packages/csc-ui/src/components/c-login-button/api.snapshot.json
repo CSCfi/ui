@@ -1,0 +1,30 @@
+{
+  "attributes": {
+    "alt": "string = ''",
+    "href": "string = ''",
+    "src": "string = ''"
+  },
+  "cssProperties": [],
+  "defaultable": [],
+  "events": {},
+  "methods": {},
+  "parts": [
+    "image",
+    "image-wrap",
+    "root",
+    "title"
+  ],
+  "propertyOnly": [],
+  "props": {
+    "alt": "string = ''",
+    "href": "string = ''",
+    "src": "string = ''"
+  },
+  "slots": [
+    "default",
+    "image"
+  ],
+  "states": [],
+  "subcomponents": [],
+  "tag": "c-login-button"
+}

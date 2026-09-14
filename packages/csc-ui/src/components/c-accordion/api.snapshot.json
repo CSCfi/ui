@@ -1,0 +1,36 @@
+{
+  "attributes": {
+    "mandatory": "boolean = false",
+    "multiple": "boolean = false",
+    "outlined": "boolean = false"
+  },
+  "cssProperties": [],
+  "defaultable": [],
+  "events": {
+    "change": "CustomEvent<AccordionValue>",
+    "changeValue": "CustomEvent<AccordionValue>",
+    "input": "CustomEvent<void>",
+    "update:value": "CustomEvent<AccordionValue>"
+  },
+  "methods": {},
+  "parts": [
+    "root"
+  ],
+  "propertyOnly": [
+    "value"
+  ],
+  "props": {
+    "mandatory": "boolean = false",
+    "multiple": "boolean = false",
+    "outlined": "boolean = false",
+    "value": "AccordionValue = null"
+  },
+  "slots": [
+    "default"
+  ],
+  "states": [],
+  "subcomponents": [
+    "c-accordion-item"
+  ],
+  "tag": "c-accordion"
+}

@@ -1,0 +1,30 @@
+{
+  "attributes": {
+    "hide-details": "boolean = false",
+    "indeterminate": "boolean = false",
+    "label": "string = ''",
+    "single-line": "boolean = false",
+    "value": "number = 0"
+  },
+  "cssProperties": [],
+  "defaultable": [],
+  "events": {},
+  "methods": {},
+  "parts": [
+    "bar",
+    "details",
+    "root"
+  ],
+  "propertyOnly": [],
+  "props": {
+    "hideDetails": "boolean = false",
+    "indeterminate": "boolean = false",
+    "label": "string = ''",
+    "singleLine": "boolean = false",
+    "value": "number = 0"
+  },
+  "slots": [],
+  "states": [],
+  "subcomponents": [],
+  "tag": "c-progress-bar"
+}

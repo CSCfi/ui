@@ -1,0 +1,24 @@
+{
+  "attributes": {
+    "color": "string = 'currentColor'",
+    "path": "string",
+    "size": "number = 24"
+  },
+  "cssProperties": [],
+  "defaultable": [],
+  "events": {},
+  "methods": {},
+  "parts": [
+    "root"
+  ],
+  "propertyOnly": [],
+  "props": {
+    "color": "string = 'currentColor'",
+    "path": "string",
+    "size": "number = 24"
+  },
+  "slots": [],
+  "states": [],
+  "subcomponents": [],
+  "tag": "c-icon"
+}

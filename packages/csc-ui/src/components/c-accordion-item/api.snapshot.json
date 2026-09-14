@@ -1,0 +1,37 @@
+{
+  "attributes": {
+    "collapsable": "boolean = false",
+    "expanded": "boolean = false",
+    "heading": "string = ''",
+    "outlined": "boolean = false",
+    "value": "number | string"
+  },
+  "cssProperties": [],
+  "defaultable": [],
+  "events": {
+    "item-change": "CustomEvent<{ expanded: boolean; value: number | string | undefined }>"
+  },
+  "methods": {},
+  "parts": [
+    "content",
+    "header",
+    "indicator",
+    "root"
+  ],
+  "propertyOnly": [],
+  "props": {
+    "collapsable": "boolean = false",
+    "expanded": "boolean = false",
+    "heading": "string = ''",
+    "outlined": "boolean = false",
+    "value": "number | string"
+  },
+  "slots": [
+    "default",
+    "header",
+    "icon"
+  ],
+  "states": [],
+  "subcomponents": [],
+  "tag": "c-accordion-item"
+}

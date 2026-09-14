@@ -2,8 +2,8 @@
   <div>
     <c-tree-select
       v-model="field"
-      :items.prop="items"
-      :level-labels.prop="levelLabels"
+      :items="items"
+      :level-labels="levelLabels"
       label="Field of science"
       size="small"
       label-on-top

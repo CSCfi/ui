@@ -21,6 +21,18 @@
  *     (set-of-accepted-values props must be named exported unions; genuinely
  *     open-ended props declare it explicitly), or an `@freeform` tag on a
  *     prop that is not a bare `string`
+ *   - `@defaultable` (app-wide defaults via `applyDefaults()`) out of step
+ *     with the script: a tag without its built-in literal, a literal whose
+ *     shape disagrees with the prop type, a withDefaults entry that is not
+ *     `undefined` (an absent Boolean default resolves to `false`, so the app
+ *     default could never apply), a missing/mismatched
+ *     `appDefault('<name>', <built-in>)` call, a `useAppDefault('<tag>')`
+ *     whose tag is not this component's (or missing / present without any
+ *     tagged prop), a resolver call for an untagged prop, or a leftover direct
+ *     read — `props.<name>` in the script, or a shorthand `:<kebab>` /
+ *     `="<name>"` binding in the template — that bypasses the resolved value
+ *     (a shorthand `:size` would hand `undefined` to c-input, whose own
+ *     default then silently wins)
  *
  * Warnings (best-effort surface):
  *   - `@cssprop` naming a custom property never referenced in the SFC source
@@ -157,6 +169,8 @@ export const lintComponent = (component, knownTags = new Set()) => {
     }
   }
 
+  lintDefaultable(component, errors);
+
   for (const child of subcomponents ?? []) {
     if (child === tagName) {
       errors.push(`@subcomponents lists the component itself ("${child}")`);
@@ -188,4 +202,149 @@ export const lintComponent = (component, knownTags = new Set()) => {
   }
 
   return { errors, warnings };
+};
+
+const hyphenate = (key) =>
+  key.replace(/([a-z0-9])([A-Z])/g, '$1-$2').toLowerCase();
+
+/** The shape of a `@defaultable` literal, for the type-agreement check. */
+const literalShape = (text) => {
+  if (text === 'true' || text === 'false') return 'boolean';
+
+  if (/^-?\d/.test(text)) return 'number';
+
+  if (/^['"`]/.test(text)) return 'string';
+
+  if (text.startsWith('{')) return 'object';
+
+  return 'unknown';
+};
+
+/** Whether a prop type text accepts a literal of the given shape. */
+const typeAccepts = (type, shape) => {
+  const text = type.replace(/\s+/g, '');
+
+  if (shape === 'boolean') return text === 'boolean';
+
+  if (shape === 'number') return text === 'number';
+
+  if (shape === 'string') return text === 'string' || /['"`]/.test(text);
+
+  if (shape === 'object') {
+    return !['boolean', 'number', 'string'].includes(text) && !/['"`]/.test(text);
+  }
+
+  return false;
+};
+
+const normalizeLiteral = (text) => text.trim().replace(/"/g, "'");
+
+/**
+ * App-wide defaults contract: a `@defaultable <built-in>` prop must be
+ * resolved through `useAppDefault` / `appDefault` (src/shared/appDefaults.ts)
+ * and nowhere else. See the header for the individual rules.
+ */
+const lintDefaultable = (component, errors) => {
+  const scriptSource = component.script ?? '';
+
+  const templateSource = component.templateSource ?? '';
+
+  const defaultable = component.props.filter((p) => p.defaultable);
+
+  const useTags = [
+    ...scriptSource.matchAll(/useAppDefault\(\s*'([^']+)'/g),
+  ].map((m) => m[1]);
+
+  // `appDefault('<name>', <built-in>)` — the literal may itself hold quotes
+  // or an identifier (`DEFAULT_TEXTS`), never a nested call.
+  const resolved = new Map(
+    [
+      ...scriptSource.matchAll(
+        /(?<![\w.])appDefault\(\s*'([^']+)'\s*,\s*([^()]+?)\s*\)/g,
+      ),
+    ].map((m) => [m[1], m[2]]),
+  );
+
+  if (defaultable.length && !useTags.length) {
+    errors.push(
+      `has @defaultable props but never calls useAppDefault('${component.tagName}', props)`,
+    );
+  }
+
+  if (!defaultable.length && useTags.length) {
+    errors.push('calls useAppDefault but has no @defaultable prop');
+  }
+
+  for (const tag of useTags) {
+    if (tag !== component.tagName) {
+      errors.push(
+        `useAppDefault('${tag}') names another component — expected '${component.tagName}'`,
+      );
+    }
+  }
+
+  for (const name of resolved.keys()) {
+    if (!defaultable.some((p) => p.name === name)) {
+      errors.push(
+        `appDefault('${name}') resolves a prop that is not tagged @defaultable`,
+      );
+    }
+  }
+
+  for (const prop of defaultable) {
+    if (prop.defaultable === true) {
+      errors.push(
+        `prop "${prop.name}" is tagged @defaultable without its built-in default literal (e.g. \`@defaultable false\`)`,
+      );
+      continue;
+    }
+
+    const literal = normalizeLiteral(prop.defaultable);
+
+    const shape = literalShape(literal);
+
+    const type = prop.typeResolved ?? prop.typeExpanded ?? prop.type;
+
+    if (!typeAccepts(type, shape)) {
+      errors.push(
+        `prop "${prop.name}" @defaultable literal ${literal} does not fit its type ${type}`,
+      );
+    }
+
+    if (prop.withDefault !== 'undefined') {
+      errors.push(
+        `prop "${prop.name}" is @defaultable but its withDefaults value is ${prop.withDefault ?? 'missing'} — must be \`undefined\``,
+      );
+    }
+
+    const call = resolved.get(prop.name);
+
+    if (call === undefined) {
+      errors.push(
+        `prop "${prop.name}" is @defaultable but the script never calls appDefault('${prop.name}', ${literal})`,
+      );
+    } else if (shape !== 'object' && normalizeLiteral(call) !== literal) {
+      errors.push(
+        `prop "${prop.name}" appDefault built-in ${normalizeLiteral(call)} differs from its @defaultable literal ${literal}`,
+      );
+    }
+
+    if (new RegExp(`\\bprops\\.${prop.name}\\b`).test(scriptSource)) {
+      errors.push(
+        `prop "${prop.name}" is @defaultable but the script reads props.${prop.name} directly — use the appDefault() computed`,
+      );
+    }
+
+    const kebab = hyphenate(prop.name);
+
+    const shorthand = new RegExp(`:${kebab}(?=[\\s/>])`);
+
+    const bound = new RegExp(`="(?:!|props\\.)?${prop.name}"`);
+
+    if (shorthand.test(templateSource) || bound.test(templateSource)) {
+      errors.push(
+        `prop "${prop.name}" is @defaultable but the template binds it directly — bind the appDefault() computed instead`,
+      );
+    }
+  }
 };

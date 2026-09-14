@@ -423,7 +423,11 @@ export interface CDataTableProps {
   stickyFooter?: boolean;
   /** Keep the header row visible while the table scrolls vertically. */
   stickyHeader?: boolean;
-  /** UI text overrides (i18n), merged over the English defaults. */
+  /**
+   * UI text overrides (i18n), merged over the English defaults.
+   *
+   * @defaultable {}
+   */
   texts?: CDataTableTexts;
 }
 
@@ -515,6 +519,7 @@ import {
 
 import type { CPaginationOptions } from '../c-pagination/CPagination.vue';
 
+import { useAppDefault } from '../../shared/appDefaults';
 import { coerceBoolean } from '../../shared/coerceBoolean';
 import { useHasSlot } from '../../shared/useHasSlot';
 import { useHostEmit } from '../../shared/useHostEmit';
@@ -543,7 +548,7 @@ const props = withDefaults(defineProps<CDataTableProps>(), {
   sort: undefined,
   stickyFooter: false,
   stickyHeader: false,
-  texts: () => ({}),
+  texts: undefined,
 });
 
 /**
@@ -618,7 +623,11 @@ const DEFAULT_TEXTS: Required<CDataTableTexts> = {
   selectRow: 'Select row',
 };
 
-const t = computed(() => ({ ...DEFAULT_TEXTS, ...props.texts }));
+// `texts` resolves own value → app default → built-in, key by key (see
+// src/shared/appDefaults.ts).
+const appDefault = useAppDefault('c-data-table', props);
+
+const t = appDefault('texts', DEFAULT_TEXTS);
 
 const externalOn = computed(() => coerceBoolean(props.external));
 

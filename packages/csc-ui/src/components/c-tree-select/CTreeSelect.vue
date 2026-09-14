@@ -15,10 +15,10 @@
       :hint
       :input-id
       :label
-      :label-on-top
+      :label-on-top="labelOnTopResolved"
       :required
-      :shadow
-      :size
+      :shadow="shadowResolved"
+      :size="sizeResolved"
       :valid
       @click="onFieldClick"
     >
@@ -106,7 +106,23 @@
     popover="manual"
     @toggle="onToggle"
   >
-    <div ref="cardRef" :class="ui.card()" part="card">
+    <div
+      ref="cardRef"
+      :aria-label="layout === 'fullscreen' ? label || undefined : undefined"
+      :aria-modal="layout === 'fullscreen' ? 'true' : undefined"
+      :class="ui.card()"
+      :role="layout === 'fullscreen' ? 'dialog' : undefined"
+      part="card"
+    >
+      <!-- Fullscreen panel (CONTEXT.md, ADR-0050): the heading row — label
+           and close button — is the phone user's exit besides picking. -->
+      <panel-heading-row
+        v-if="layout === 'fullscreen'"
+        :close-label="t.closePanel"
+        :heading="label"
+        @close="closePanel(true)"
+      />
+
       <div
         :id="`${id}-status`"
         :class="ui.visuallyHidden()"
@@ -385,6 +401,8 @@ export interface CTreeSelectProps {
   filter?: CTreeSelectFilter;
   /**
    * Hide the hint and error messages
+   *
+   * @defaultable false
    */
   hideDetails?: boolean;
   /**
@@ -406,6 +424,8 @@ export interface CTreeSelectProps {
   items?: CTreeSelectItem[];
   /**
    * Items per page before the list scrolls
+   *
+   * @defaultable 6
    */
   itemsPerPage?: number;
   /**
@@ -416,6 +436,8 @@ export interface CTreeSelectProps {
   label?: string;
   /**
    * Label on top of the field
+   *
+   * @defaultable false
    */
   labelOnTop?: boolean;
   /**
@@ -447,15 +469,21 @@ export interface CTreeSelectProps {
   returnObject?: boolean;
   /**
    * Shadow variant
+   *
+   * @defaultable false
    */
   shadow?: boolean;
   /**
    * Field height: the 44px default or the 36px `small` box
+   *
+   * @defaultable 'default'
    */
   size?: CFieldSize;
   /**
    * UI text overrides (i18n), merged over the English defaults. Objects have
    * no attribute form — bind as a DOM property (`:texts.prop` in Vue)
+   *
+   * @defaultable {}
    */
   texts?: CTreeSelectTexts;
   /**
@@ -506,6 +534,8 @@ export interface CTreeSelectTexts {
   choose?: (levelLabel: string) => string;
   /** Accessible label of the clear button. */
   clearSelection?: string;
+  /** Accessible label of the close button in the fullscreen panel (narrow viewports). */
+  closePanel?: string;
   /** Accessible label of the search input inside the panel. */
   filterOptions?: string;
   /**
@@ -552,6 +582,9 @@ export type CTreeSelectValue = CTreeSelectSelection | null | number | string;
 /**
  * @csspart panel - The top-layer popover container anchored below the field
  * @csspart card - The elevated surface inside the panel holding the search row, the breadcrumb, the header and the list
+ * @csspart heading-row - The top row of the fullscreen panel (narrow viewports): the field label as heading and the close button
+ * @csspart heading - The field label naming the fullscreen panel
+ * @csspart close - The close button of the fullscreen panel
  * @csspart search - The search-input row at the top of the panel
  * @csspart breadcrumb - The breadcrumb navigation naming the browsed level's path
  * @csspart crumb - One crumb in the breadcrumb: the root crumb, an ancestor, or the collapsed "…" crumb
@@ -575,12 +608,15 @@ import {
 import { tv } from 'tailwind-variants';
 import { computed, ref, useHost, useId, useTemplateRef, watch } from 'vue';
 
+import { useAppDefault } from '../../shared/appDefaults';
 import { coerceBoolean } from '../../shared/coerceBoolean';
 import { emitModelChange } from '../../shared/emitModelValue';
+import PanelHeadingRow from '../../shared/PanelHeadingRow.vue';
 import { applyPeekCap } from '../../shared/peekCap';
 import { type MatchSegment, splitMatches } from '../../shared/splitMatches';
 import { useAnchoredPanel } from '../../shared/useAnchoredPanel';
 import { useHostEmit } from '../../shared/useHostEmit';
+import { useNarrowViewport } from '../../shared/useNarrowViewport';
 import { useStatusAnnouncer } from '../../shared/useStatusAnnouncer';
 
 /** Events dispatched by `<c-tree-select>`. */
@@ -618,6 +654,7 @@ const treeSelect = tv({
   defaultVariants: {
     chevronActive: false,
     disabled: false,
+    fullscreen: false,
     selectBranch: false,
   },
   slots: {
@@ -672,6 +709,15 @@ const treeSelect = tv({
         item: 'cursor-default pointer-events-none bg-on-surface/5 [filter:grayscale(1)_opacity(0.75)] data-[active]:bg-on-surface/5 data-[active]:text-inherit data-[active]:ring-0',
       },
     },
+    // The fullscreen panel (CONTEXT.md, ADR-0050): the card fills the
+    // viewport-sized panel edge to edge and the list takes what the rows
+    // above leave, scrolling inside it.
+    fullscreen: {
+      true: {
+        card: 'h-full max-h-none rounded-none shadow-none',
+        list: 'flex-1 min-h-0',
+      },
+    },
     // The pinned select-branch row (ADR-0047): the select-all row's recipe
     // (ADR-0046) — sticks to the list's top edge on an opaque fill with a
     // hairline below; the list drops its top inset while the row is shown
@@ -698,21 +744,21 @@ const props = withDefaults(defineProps<CTreeSelectProps>(), {
   disabled: false,
   errorMessage: '',
   filter: undefined,
-  hideDetails: false,
+  hideDetails: undefined,
   hint: '',
   hostId: '',
   items: () => [],
-  itemsPerPage: 6,
+  itemsPerPage: undefined,
   label: '',
-  labelOnTop: false,
+  labelOnTop: undefined,
   levelLabels: undefined,
   name: '',
   placeholder: '',
   required: false,
   returnObject: false,
-  shadow: false,
-  size: 'default',
-  texts: () => ({}),
+  shadow: undefined,
+  size: undefined,
+  texts: undefined,
   valid: true,
   value: null,
 });
@@ -721,12 +767,17 @@ const host = useHost();
 
 const emit = useHostEmit<CTreeSelectEvents>();
 
+// Defaultable props resolve host attribute → own value → app default →
+// built-in (see src/shared/appDefaults.ts).
+const appDefault = useAppDefault('c-tree-select', props);
+
 const DEFAULT_TEXTS: Required<CTreeSelectTexts> = {
   breadcrumb: 'Breadcrumb',
   browse: 'Browse instead',
   children: (count) => `${count} options`,
   choose: (levelLabel) => `Choose ${levelLabel}`,
   clearSelection: 'Clear selection',
+  closePanel: 'Close',
   filterOptions: 'Filter options',
   final: 'Final level',
   level: (n) => `Level ${n}`,
@@ -739,7 +790,7 @@ const DEFAULT_TEXTS: Required<CTreeSelectTexts> = {
   toggleOptions: 'Toggle options',
 };
 
-const t = computed(() => ({ ...DEFAULT_TEXTS, ...props.texts }));
+const t = appDefault('texts', DEFAULT_TEXTS);
 
 const anchorRef = useTemplateRef<HTMLElement>('anchorRef');
 
@@ -801,15 +852,18 @@ const inputId = computed(
     )}`,
 );
 
-// `hide-details` is forwarded to the inner `c-input` through a `data-*`
-// channel (resolved from the stable host attribute), mirroring c-select: a
-// direct `:hide-details` binding collides with c-input's declared prop and
-// Vue mangles it on the field's frequent re-renders.
-const hideDetailsResolved = computed(() =>
-  host?.hasAttribute('hide-details')
-    ? coerceBoolean(host.getAttribute('hide-details'))
-    : coerceBoolean(props.hideDetails),
-);
+// `hide-details` reaches the inner `c-input` through the `data-hide-details`
+// channel — see src/shared/appDefaults.ts for the two defineCustomElement
+// quirks behind that and behind the attribute-first resolution.
+const hideDetailsResolved = appDefault('hideDetails', false);
+
+const itemsPerPageResolved = appDefault('itemsPerPage', 6);
+
+const labelOnTopResolved = appDefault('labelOnTop', false);
+
+const shadowResolved = appDefault('shadow', false);
+
+const sizeResolved = appDefault('size', 'default');
 
 // Same defineCustomElement Boolean-attribute quirk as `hide-details`: resolve
 // `allow-branch` from the stable host attribute first.
@@ -819,7 +873,12 @@ const allowBranchOn = computed(() =>
     : coerceBoolean(props.allowBranch),
 );
 
-const ui = computed(() => treeSelect({ chevronActive: isOpen.value }));
+const ui = computed(() =>
+  treeSelect({
+    chevronActive: isOpen.value,
+    fullscreen: layout.value === 'fullscreen',
+  }),
+);
 
 // ---- tree index ---------------------------------------------------------
 
@@ -1202,6 +1261,14 @@ const applyListCap = () => {
 
   if (!list || !card) return;
 
+  // A fullscreen panel's list is bounded by the viewport, not a ceiling —
+  // no peek cap; drop one a previous anchored open left (ADR-0050).
+  if (layout.value === 'fullscreen') {
+    list.style.maxHeight = '';
+
+    return;
+  }
+
   const cardMax = parseFloat(getComputedStyle(card).maxHeight);
 
   const above =
@@ -1209,7 +1276,7 @@ const applyListCap = () => {
 
   applyPeekCap(list, {
     ceiling: Number.isFinite(cardMax) ? cardMax - above : Infinity,
-    itemsPerPage: props.itemsPerPage,
+    itemsPerPage: itemsPerPageResolved.value,
     rows: Array.from(
       list.querySelectorAll<HTMLElement>(
         'li[role="option"]:not([data-select-branch])',
@@ -1361,6 +1428,10 @@ const onReset = (event?: Event) => {
 
 // ---- open / close -------------------------------------------------------
 
+// The shared narrow-viewport predicate: below it the panel opens as a
+// fullscreen panel (CONTEXT.md "Fullscreen panel", ADR-0050).
+const narrow = useNarrowViewport();
+
 // The anchored-panel lifecycle (anchor + popover + light dismiss + focus
 // return) is the shared composable; the hooks run synchronously inside the
 // native `toggle` handler, so `change:query` still fires within that event.
@@ -1368,6 +1439,7 @@ const {
   anchorStyle,
   close: closePanel,
   isOpen,
+  layout,
   onToggle,
   open: openPanel,
   panelStyle,
@@ -1375,6 +1447,7 @@ const {
   anchor: anchorRef,
   disabled: () => props.disabled,
   field: cInputRef,
+  fullscreen: narrow,
   host,
   onClosed: () => {
     activeIndex.value = -1;
@@ -1576,7 +1649,7 @@ const onSearchKeyDown = (event: KeyboardEvent) => {
 // element and would measure the outgoing rows.
 let capFrame = 0;
 
-watch([rows, () => props.itemsPerPage], () => {
+watch([rows, itemsPerPageResolved], () => {
   if (!isOpen.value) return;
 
   cancelAnimationFrame(capFrame);

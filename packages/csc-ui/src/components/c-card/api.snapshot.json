@@ -1,0 +1,30 @@
+{
+  "attributes": {
+    "fullscreen": "boolean = false"
+  },
+  "cssProperties": [],
+  "defaultable": [],
+  "events": {},
+  "methods": {
+    "enterFullscreen": "()",
+    "exitFullscreen": "()"
+  },
+  "parts": [
+    "fullscreen-toggle",
+    "root"
+  ],
+  "propertyOnly": [],
+  "props": {
+    "fullscreen": "boolean = false"
+  },
+  "slots": [
+    "default"
+  ],
+  "states": [],
+  "subcomponents": [
+    "c-card-actions",
+    "c-card-content",
+    "c-card-title"
+  ],
+  "tag": "c-card"
+}

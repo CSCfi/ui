@@ -1,0 +1,31 @@
+{
+  "attributes": {
+    "disabled": "boolean = false",
+    "value": "string = ''"
+  },
+  "cssProperties": [],
+  "defaultable": [],
+  "events": {
+    "change": "CustomEvent<string>"
+  },
+  "methods": {},
+  "parts": [
+    "content",
+    "indicator",
+    "root"
+  ],
+  "propertyOnly": [],
+  "props": {
+    "disabled": "boolean = false",
+    "value": "string = ''"
+  },
+  "slots": [
+    "default"
+  ],
+  "states": [
+    "checked",
+    "disabled"
+  ],
+  "subcomponents": [],
+  "tag": "c-radio"
+}

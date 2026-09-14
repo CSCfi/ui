@@ -26,7 +26,7 @@ toggles it off (value `null`) unless `mandatory` is set.
 
 With `multiple` the value is an array of the active buttons' values in DOM
 order. Arrays have no attribute form — bind `value` as a DOM property
-(`:value.prop` in Vue; the React wrapper and property assignment do this
+(`:value="…"` in Vue; the React wrapper and property assignment do this
 naturally).
 
 In both modes every active button paints its own fill. The sliding

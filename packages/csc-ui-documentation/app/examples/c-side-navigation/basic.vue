@@ -6,7 +6,7 @@
       <c-side-navigation-title>My project</c-side-navigation-title>
 
       <c-side-navigation-item
-        :active.prop="current === 'dashboard'"
+        :active="current === 'dashboard'"
         @item-change="current = 'dashboard'"
       >
         <c-icon :path="mdiViewDashboardOutline" />
@@ -18,7 +18,7 @@
         Projects
 
         <c-sub-navigation-item
-          :active.prop="current === 'active'"
+          :active="current === 'active'"
           @click="current = 'active'"
           @keyup.enter="current = 'active'"
         >
@@ -26,7 +26,7 @@
         </c-sub-navigation-item>
 
         <c-sub-navigation-item
-          :active.prop="current === 'archived'"
+          :active="current === 'archived'"
           @click="current = 'archived'"
           @keyup.enter="current = 'archived'"
         >

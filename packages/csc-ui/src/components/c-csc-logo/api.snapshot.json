@@ -1,0 +1,20 @@
+{
+  "attributes": {
+    "width": "number = 60"
+  },
+  "cssProperties": [],
+  "defaultable": [],
+  "events": {},
+  "methods": {},
+  "parts": [
+    "root"
+  ],
+  "propertyOnly": [],
+  "props": {
+    "width": "number = 60"
+  },
+  "slots": [],
+  "states": [],
+  "subcomponents": [],
+  "tag": "c-csc-logo"
+}

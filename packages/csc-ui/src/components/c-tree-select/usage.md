@@ -7,7 +7,7 @@ an entry with a non-empty `children` array is a branch and any other entry is
 a leaf. Values must be unique across the whole tree. An optional `code` — a
 classification number, say — is shown before the name in a muted column and
 is matched by the search. Arrays have no attribute form, so bind `items` as a
-DOM property (`:items.prop` in Vue; the React wrapper and property assignment
+DOM property (`:items="…"` in Vue; the React wrapper and property assignment
 do this naturally):
 
 ```ts
@@ -100,13 +100,17 @@ prop still wins over `texts.searchPlaceholder` when both are set:
 
 ```vue
 <c-tree-select
-  :texts.prop="{
+  :texts="{
     root: 'Kaikki',
     choose: (level) => `Valitse ${level}`,
     children: (count) => `${count} alakohtaa`,
   }"
 />
 ```
+
+To translate every tree select at once, set `texts` app-wide with
+`applyDefaults({ 'c-tree-select': { texts } })` (Customization → App-wide
+prop defaults); a per-instance `texts` still wins key by key.
 
 ## Scrolling
 
@@ -120,6 +124,25 @@ back:
 ```css
 c-tree-select::part(list) {
   scrollbar-width: auto;
+}
+```
+
+## Narrow viewports
+
+On a viewport narrower than 760px the panel opens as a **fullscreen panel**
+instead of anchoring under the field: a heading row with the field's `label` and a
+close button, the search input beneath it, then the items filling the rest of
+the screen. The rows above the items stay in view while the on-screen
+keyboard is open; the close button and Escape both return focus to the field;
+the page behind the panel is inert until it closes, and the list has no
+half-row cut — the screen edge is the cue. The threshold is the viewport's
+width, never the field's, so a narrow field on a desktop keeps its anchored
+panel. The close button's label is the `closePanel` text, and the row's
+parts are `heading-row`, `heading` and `close`:
+
+```css
+c-tree-select::part(heading-row) {
+  border-bottom-color: var(--c-primary);
 }
 ```
 

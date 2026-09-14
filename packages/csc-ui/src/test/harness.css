@@ -1,0 +1,7 @@
+/* A theme-aware, stable frame for behaviour specs and visual baselines. */
+body {
+  margin: 0;
+  padding: 16px;
+  background: var(--c-surface);
+  color: var(--c-on-surface);
+}

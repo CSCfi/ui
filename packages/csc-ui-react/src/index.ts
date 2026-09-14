@@ -19,6 +19,13 @@ export {
 export type { Family, ThemeSeeds } from "@cscfi/csc-ui";
 
 export {
+  DEFAULTABLE_PROPS,
+  applyDefaults,
+  resetDefaults,
+} from "@cscfi/csc-ui";
+export type { AppDefaults, DefaultableTag } from "@cscfi/csc-ui";
+
+export {
   chartAnatomy,
   chartAnatomyHex,
   chartSlots,

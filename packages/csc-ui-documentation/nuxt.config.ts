@@ -1,6 +1,7 @@
 import tailwindcss from '@tailwindcss/vite';
 import { readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
+import { ignoreExampleDocsBlocks } from './scripts/ignore-example-docs-blocks.mjs';
 
 // The site is a pure consumer of the csc-ui build output: the Custom
 // Elements Manifest (dist/custom-elements.json) for the API reference and
@@ -58,19 +59,6 @@ const stubExampleDemosInSsr: import('vite').Plugin = {
     if (options?.ssr && /\/examples\/[^?]+\.vue$/.test(source)) {
       return '\0csc-example-demo-stub';
     }
-
-    return null;
-  },
-};
-
-// Canon examples may carry a `<docs>` custom block (`surface: canvas`, read
-// by useExamples.ts from the `?raw` source). @vitejs/plugin-vue emits an
-// import for every custom block and expects a module with a default export;
-// without a handler the build fails, so resolve the block to a no-op.
-const ignoreExampleDocsBlocks: import('vite').Plugin = {
-  name: 'csc-docs:ignore-example-docs-blocks',
-  transform(_code, id) {
-    if (/\?vue&type=docs/.test(id)) return 'export default () => {}';
 
     return null;
   },

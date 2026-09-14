@@ -82,6 +82,16 @@
                 <code v-if="prop.default">{{ prop.default }}</code>
 
                 <span v-else class="text-on-surface-faint">—</span>
+
+                <!-- A defaultable prop also takes an app-wide default via
+                     applyDefaults(); the footnote under the table explains. -->
+                <span
+                  v-if="prop.defaultable"
+                  :class="BADGE"
+                  title="Accepts an app-wide default via applyDefaults()"
+                >
+                  app default
+                </span>
               </td>
 
               <td :class="TD" class="whitespace-pre-line">
@@ -91,6 +101,21 @@
           </tbody>
         </table>
       </div>
+
+      <p
+        v-if="hasDefaultable"
+        class="mt-2 text-[0.8125rem] text-on-surface-muted"
+      >
+        <span :class="BADGE" class="ml-0">app default</span>
+        marks a prop you can set for every instance at once with
+        <nuxt-link
+          class="font-semibold underline"
+          to="/customization#app-defaults"
+        >
+          <code>applyDefaults()</code>
+        </nuxt-link>
+        — an explicit attribute or property on an instance still wins.
+      </p>
     </template>
 
     <template v-if="view.events.length">
@@ -333,6 +358,8 @@
 </template>
 
 <script setup lang="ts">
+import { computed } from 'vue';
+
 import type { ComponentView } from '~/composables/useManifest';
 
 // Shared table-cell and section-heading utilities (Tailwind scans these
@@ -345,6 +372,10 @@ const TD = 'border-b border-border px-3 py-2 text-left align-top';
 const H4 =
   'mb-2 mt-6 scroll-mt-20 text-xs font-bold uppercase tracking-[0.04em] text-on-surface-faint text-primary';
 
+/** The "app default" marker on defaultable props (see the footnote). */
+const BADGE =
+  'ml-[0.5em] whitespace-nowrap rounded-full bg-primary-subtle px-[0.6em] py-[0.1em] align-middle text-[0.7em] font-semibold text-on-primary-subtle';
+
 const props = defineProps<{
   /** Names of every type rendered on this page — mentions of these in prop
    *  type text become same-page anchor links. */
@@ -353,6 +384,10 @@ const props = defineProps<{
   typesHtml?: Record<string, string>;
   view: ComponentView;
 }>();
+
+const hasDefaultable = computed(() =>
+  props.view.props.some((prop) => prop.defaultable),
+);
 
 /** Split a type's text into plain and linkable segments, so
  *  `CSelectItem[]` renders as a `CSelectItem` link followed by `[]`. */

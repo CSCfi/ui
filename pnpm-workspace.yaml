@@ -1,6 +1,15 @@
 packages:
   - 'packages/*'
 
+# One version of the test toolchain for every package (`"vitest": "catalog:"`).
+# `playwright` is pinned exactly: .devcontainer/Dockerfile bakes the Chromium of
+# this version into /ms-playwright, and packages/csc-ui/src/test/toolchain.node.spec.ts
+# fails when the two drift — bump both together and rebuild the container.
+catalog:
+  vitest: 5.0.0
+  '@vitest/browser-playwright': 5.0.0
+  playwright: 1.60.0
+
 allowBuilds:
   '@parcel/watcher': true
   esbuild: true
@@ -8,9 +17,11 @@ allowBuilds:
   vue-demi: true
   nx: false
   puppeteer: true
+  # Never let the install hook download a browser: the devcontainer bakes it,
+  # CI runs `playwright install --with-deps chromium` explicitly.
+  playwright: false
 
 blockExoticSubdeps: true
-ignoreDepScripts: true
 minimumReleaseAge: 4320
 trustPolicy: no-downgrade
 trustPolicyExclude:

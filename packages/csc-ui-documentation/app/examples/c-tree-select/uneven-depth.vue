@@ -2,7 +2,7 @@
   <div>
     <c-tree-select
       v-model="field"
-      :items.prop="items"
+      :items="items"
       hint="Some units have sub-units, some do not"
       label="Unit"
       clearable

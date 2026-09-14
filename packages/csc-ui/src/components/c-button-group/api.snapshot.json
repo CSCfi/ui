@@ -1,0 +1,40 @@
+{
+  "attributes": {
+    "disabled": "boolean = false",
+    "label": "string = ''",
+    "mandatory": "boolean = false",
+    "multiple": "boolean = false",
+    "required": "boolean = false",
+    "size": "'default' | 'small' = 'default'"
+  },
+  "cssProperties": [],
+  "defaultable": [],
+  "events": {
+    "change": "CustomEvent<CButtonGroupValue>",
+    "input": "CustomEvent<void>",
+    "update:value": "CustomEvent<CButtonGroupValue>"
+  },
+  "methods": {},
+  "parts": [
+    "label",
+    "root"
+  ],
+  "propertyOnly": [
+    "value"
+  ],
+  "props": {
+    "disabled": "boolean = false",
+    "label": "string = ''",
+    "mandatory": "boolean = false",
+    "multiple": "boolean = false",
+    "required": "boolean = false",
+    "size": "'default' | 'small' = 'default'",
+    "value": "CButtonGroupValue = null"
+  },
+  "slots": [
+    "default"
+  ],
+  "states": [],
+  "subcomponents": [],
+  "tag": "c-button-group"
+}

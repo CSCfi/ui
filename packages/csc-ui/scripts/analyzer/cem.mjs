@@ -7,6 +7,9 @@
  *   - declaration-level: `csc.usage` (dist-relative path of the usage doc),
  *                        `csc.subcomponents` (composed children folded into
  *                        this parent's docs page)
+ *   - member-level:      `csc.typeAlias` / `csc.freeform` (see typeCsc) and
+ *                        `csc.defaultable` (the prop accepts an app-wide
+ *                        default via `applyDefaults()`)
  *   - manifest-level:    `csc.types` (shared public types from src/types.ts,
  *                        which CEM has no first-class kind for)
  */
@@ -25,12 +28,14 @@ const isAttributeCompatible = (type) => !/=>|\{|\[\]|Record<|Array</.test(type);
 /**
  * The manifest's standard `type.text` carries the expanded literal union so
  * third-party IDE-data generators can derive value completions; the alias
- * name and the `@freeform` marker ride in the `csc` vendor extension.
+ * name, the `@freeform` marker and the `@defaultable` flag ride in the `csc`
+ * vendor extension.
  */
 const typeCsc = (prop) => {
   const csc = {
     ...(prop.typeAlias ? { typeAlias: prop.typeAlias } : {}),
     ...(prop.freeform ? { freeform: prop.freeform } : {}),
+    ...(prop.defaultable ? { defaultable: true } : {}),
   };
 
   return Object.keys(csc).length ? { csc } : {};

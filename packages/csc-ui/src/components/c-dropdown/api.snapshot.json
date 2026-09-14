@@ -1,0 +1,66 @@
+{
+  "attributes": {
+    "close-label": "string = 'Close'",
+    "dropdown-item-type": "'item' | 'option' = 'item'",
+    "host-id": "string = ''",
+    "index": "null | number = null",
+    "items": "ArrayLike<DropdownItem> = () => []",
+    "items-per-page": "number = 0",
+    "label": "string = ''",
+    "multiple": "boolean = false",
+    "parent": "HTMLElement | null = null",
+    "select-all-row": "CDropdownSelectAllRow | null = null",
+    "type": "'autocomplete' | 'select' = 'select'"
+  },
+  "cssProperties": [],
+  "defaultable": [],
+  "events": {
+    "dropdownStateChange": "CustomEvent<boolean>",
+    "selectall": "CustomEvent<void>",
+    "selectOption": "CustomEvent<{ name: string; value: number | string }>"
+  },
+  "methods": {
+    "close": "()",
+    "focusItem": "(index: number)",
+    "open": "()",
+    "selectItem": "(index: number)",
+    "setStatusText": "(text: string)",
+    "updateList": "(reset = false)"
+  },
+  "parts": [
+    "close",
+    "heading",
+    "heading-row",
+    "indicator",
+    "item",
+    "list",
+    "mark",
+    "menu",
+    "select-all"
+  ],
+  "propertyOnly": [
+    "selected"
+  ],
+  "props": {
+    "closeLabel": "string = 'Close'",
+    "dropdownItemType": "'item' | 'option' = 'item'",
+    "hostId": "string = ''",
+    "index": "null | number = null",
+    "items": "ArrayLike<DropdownItem> = () => []",
+    "itemsPerPage": "number = 0",
+    "label": "string = ''",
+    "multiple": "boolean = false",
+    "parent": "HTMLElement | null = null",
+    "selectAllRow": "CDropdownSelectAllRow | null = null",
+    "selected": "(number | string)[] = () => []",
+    "type": "'autocomplete' | 'select' = 'select'"
+  },
+  "slots": [
+    "default",
+    "input-bottom",
+    "input-top"
+  ],
+  "states": [],
+  "subcomponents": [],
+  "tag": "c-dropdown"
+}

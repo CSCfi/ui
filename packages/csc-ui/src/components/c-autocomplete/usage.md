@@ -89,7 +89,7 @@ Set `multiple` to let the user pick several options. The value is then an
 array of the picked options' values in the order they were picked (an array
 of `{ name, value }` items with `return-object`), and `[]` when nothing is
 picked. Arrays have no attribute form — bind `value` as a DOM property
-(`v-model` or `:value.prop` in Vue; the React wrapper and property
+(`v-model` or `:value="…"` in Vue; the React wrapper and property
 assignment do this naturally). Picking an option toggles it and keeps the
 panel open; the search input keeps its query after a pick, so several
 matches can be picked in a row. `clearable` clears the whole selection.
@@ -133,13 +133,17 @@ as a DOM property; the `placeholder` prop still wins over
 
 ```vue
 <c-autocomplete
-  :texts.prop="{
+  :texts="{
     noResults: 'Ei osumia',
     remove: (label) => `Poista ${label}`,
   }"
   multiple
 />
 ```
+
+To translate every autocomplete at once, set `texts` app-wide with
+`applyDefaults({ 'c-autocomplete': { texts } })` (Customization → App-wide
+prop defaults); a per-instance `texts` still wins key by key.
 
 ## Scrolling
 
@@ -153,5 +157,24 @@ back:
 ```css
 c-autocomplete::part(list) {
   scrollbar-width: auto;
+}
+```
+
+## Narrow viewports
+
+On a viewport narrower than 760px the panel opens as a **fullscreen panel**
+instead of anchoring under the field: a heading row with the field's `label` and a
+close button, the search input beneath it, then the options filling the rest of
+the screen. The rows above the options stay in view while the on-screen
+keyboard is open; the close button and Escape both return focus to the field;
+the page behind the panel is inert until it closes, and the list has no
+half-row cut — the screen edge is the cue. The threshold is the viewport's
+width, never the field's, so a narrow field on a desktop keeps its anchored
+panel. The close button's label is the `closePanel` text, and the row's
+parts are `heading-row`, `heading` and `close`:
+
+```css
+c-autocomplete::part(heading-row) {
+  border-bottom-color: var(--c-primary);
 }
 ```

@@ -1,0 +1,52 @@
+{
+  "attributes": {
+    "aria-label-internal": "string = ''",
+    "disable-tooltip": "boolean = false",
+    "disabled": "boolean = false",
+    "host-id": "string = ''",
+    "host-name": "string = ''",
+    "label": "string = ''",
+    "labels": "boolean = false",
+    "max": "number | string = '100'",
+    "min": "number | string = '0'",
+    "segments": "number | string = '10'",
+    "step": "number | string = '1'",
+    "ticks": "boolean = false",
+    "unit": "string = '%'",
+    "value": "number | string = '50'"
+  },
+  "cssProperties": [],
+  "defaultable": [],
+  "events": {
+    "changeValue": "CustomEvent<number | string>",
+    "input": "CustomEvent<void>",
+    "update:value": "CustomEvent<number | string>"
+  },
+  "methods": {},
+  "parts": [
+    "label",
+    "root",
+    "ticks"
+  ],
+  "propertyOnly": [],
+  "props": {
+    "ariaLabelInternal": "string = ''",
+    "disabled": "boolean = false",
+    "disableTooltip": "boolean = false",
+    "hostId": "string = ''",
+    "hostName": "string = ''",
+    "label": "string = ''",
+    "labels": "boolean = false",
+    "max": "number | string = '100'",
+    "min": "number | string = '0'",
+    "segments": "number | string = '10'",
+    "step": "number | string = '1'",
+    "ticks": "boolean = false",
+    "unit": "string = '%'",
+    "value": "number | string = '50'"
+  },
+  "slots": [],
+  "states": [],
+  "subcomponents": [],
+  "tag": "c-slider"
+}

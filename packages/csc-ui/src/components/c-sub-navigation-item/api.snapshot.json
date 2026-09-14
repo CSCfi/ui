@@ -1,0 +1,31 @@
+{
+  "attributes": {
+    "active": "boolean = false",
+    "focusable": "boolean = false",
+    "href": "string = ''",
+    "loading": "boolean = false",
+    "target": "string = ''"
+  },
+  "cssProperties": [],
+  "defaultable": [],
+  "events": {},
+  "methods": {},
+  "parts": [
+    "content",
+    "root"
+  ],
+  "propertyOnly": [],
+  "props": {
+    "active": "boolean = false",
+    "focusable": "boolean = false",
+    "href": "string = ''",
+    "loading": "boolean = false",
+    "target": "string = ''"
+  },
+  "slots": [
+    "default"
+  ],
+  "states": [],
+  "subcomponents": [],
+  "tag": "c-sub-navigation-item"
+}

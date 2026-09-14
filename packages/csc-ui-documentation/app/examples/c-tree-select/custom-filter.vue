@@ -2,9 +2,9 @@
   <div>
     <c-tree-select
       v-model="field"
-      :items.prop="items"
+      :items="items"
       :filter="filter"
-      :level-labels.prop="levelLabels"
+      :level-labels="levelLabels"
       hint="Matches an item's own code prefix or name"
       label="Field of science"
       placeholder="Type a code prefix or a name"

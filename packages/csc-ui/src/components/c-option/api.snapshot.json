@@ -1,0 +1,26 @@
+{
+  "attributes": {
+    "disabled": "boolean = false",
+    "name": "string",
+    "selected": "boolean = false",
+    "value": "number | string"
+  },
+  "cssProperties": [],
+  "defaultable": [],
+  "events": {},
+  "methods": {},
+  "parts": [],
+  "propertyOnly": [],
+  "props": {
+    "disabled": "boolean = false",
+    "name": "string",
+    "selected": "boolean = false",
+    "value": "number | string"
+  },
+  "slots": [
+    "default"
+  ],
+  "states": [],
+  "subcomponents": [],
+  "tag": "c-option"
+}

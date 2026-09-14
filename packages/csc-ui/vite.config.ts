@@ -1,10 +1,9 @@
-import tailwindcss from '@tailwindcss/vite';
-import vue from '@vitejs/plugin-vue';
 import { spawn } from 'node:child_process';
 import { resolve } from 'node:path';
 import { defineConfig } from 'vite';
 
 import { copyStyles } from './scripts/copy-styles.js';
+import { sfcPlugins } from './vite.plugins';
 
 // `vite build` empties `dist` on every (re)build, including each incremental
 // watch rebuild. The style-dictionary output lives in `src/styles` and must be
@@ -69,22 +68,8 @@ export default defineConfig({
     'process.env.NODE_ENV': JSON.stringify('production'),
   },
   plugins: [
-    vue({
-      // Treat every .vue file in this package as a custom element so its
-      // <style> blocks are compiled into a `styles` array attached to the
-      // component (and inlined into the shadow root by `defineCustomElement`).
-      // A bare `customElement: true` did not produce that array under Vite
-      // lib mode in our setup — the file-pattern form does.
-      customElement: /\.vue$/,
-      template: {
-        compilerOptions: {
-          // Mark `c-*` tags as custom elements so Vue doesn't try to resolve
-          // them as Vue components inside SFC templates.
-          isCustomElement: (tag) => tag.startsWith('c-'),
-        },
-      },
-    }),
-    tailwindcss(),
+    // SFC + Tailwind pipeline shared with the Vitest browser project.
+    ...sfcPlugins(),
     copyStylesPlugin(),
     docsManifestPlugin(),
   ],

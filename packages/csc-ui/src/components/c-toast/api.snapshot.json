@@ -1,0 +1,32 @@
+{
+  "attributes": {
+    "message": "CToastMessage | null = null"
+  },
+  "cssProperties": [],
+  "defaultable": [],
+  "events": {
+    "close": "CustomEvent<CToastMessage | null>"
+  },
+  "methods": {
+    "closeToast": "()"
+  },
+  "parts": [
+    "badge",
+    "content",
+    "custom",
+    "dismiss",
+    "item",
+    "progress",
+    "root"
+  ],
+  "propertyOnly": [],
+  "props": {
+    "message": "CToastMessage | null = null"
+  },
+  "slots": [
+    "default"
+  ],
+  "states": [],
+  "subcomponents": [],
+  "tag": "c-toast"
+}

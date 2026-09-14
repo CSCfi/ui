@@ -24,20 +24,39 @@ A **pnpm workspaces monorepo** (ADR-0001, no Lerna):
 # From the root
 pnpm build          # build all packages (topological)
 pnpm dev            # watch csc-ui + docs dev server (http://localhost:3500)
+pnpm test           # every Vitest project (Chromium + node); `pnpm build` first for the dist/example smokes
+pnpm test:update    # rewrite visual baselines (run in the devcontainer, review the PNG diffs)
 pnpm ui <script>    # run a script in packages/csc-ui
 
 # In packages/csc-ui
 pnpm build          # tokens -> chart data -> tag map -> vite build -> types -> strict manifest
 pnpm docs:manifest  # regenerate custom-elements.json
+pnpm lint           # tokens (strict) + a11y + ramp + chart guards
 pnpm lint:tokens    # forbid direct palette-step utilities in SFCs
 pnpm lint:a11y      # host attribute fallthrough check
 pnpm lint:chart     # chart-data.ts matches the semantic maps (ADR-0040)
+pnpm test           # browser + node projects; test:browser / test:node / test:watch
+pnpm test:update    # rewrite the visual baselines of the browser project
 
 # In packages/csc-ui-react
 pnpm build          # regenerate wrappers from the manifest, then tsc
+
+# In packages/csc-ui-documentation
+pnpm test           # example smoke: mounts every canon against the built csc-ui
 ```
 
 The React package build requires a built `packages/csc-ui` (it reads the manifest from it).
+
+## Testing (ADR-0049)
+
+Tests run against the **registered custom elements in headless Chromium** (Vitest 5 browser mode on Playwright); no jsdom/happy-dom for components. Follow the glossary's **Verification** terms.
+
+- **Behaviour specs** are colocated: `src/components/<c-tag>/C<Name>.spec.ts`. Node-only specs use `*.node.spec.ts`. The shared harness is `packages/csc-ui/src/test/harness.ts` (`mount`, `settle`, `recordEvents`, `matchScreenshotInBothModes`); specs import SFC source, so no build is needed except for the dist smoke and the docs example smoke.
+- **Every `Fix(` PR adds a behaviour spec that fails before the fix.** Every new component ships a colocated spec and a visual baseline per theme mode (`pnpm ui test:update`, commit the PNGs). Conformance suites enrol new tags automatically — fix the component, never opt out.
+- A test fails on any `console.error` or `[Vue warn]`; consume an expected one with `consoleSpy.expect(/…/)`.
+- The browser setup keeps `Date.now()` monotonic (`src/test/monotonicClock.ts`): Vue drops a native event stamped at or before its listener's attach time, and the devcontainer's wall clock steps backwards every few seconds. A click that "does nothing" right after a mount is that, not a component bug.
+- Visual baselines are authored in the devcontainer and compared in CI within a small tolerance. Fonts are pinned to Liberation through `src/test/fonts.conf`; never raise the tolerance to make a token change pass. Comparison runs on Linux only: on a macOS checkout the visual step is skipped (behaviour assertions still run) and `test:update` writes nothing.
+- `playwright` is pinned in `pnpm-workspace.yaml`'s catalog to the Chromium baked into the devcontainer; bump both together.
 
 ## Releases (ADR-0028)
 

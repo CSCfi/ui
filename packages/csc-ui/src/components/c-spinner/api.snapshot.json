@@ -1,0 +1,24 @@
+{
+  "attributes": {
+    "color": "string = 'var(--c-primary)'",
+    "size": "number = 24",
+    "width": "number = 2"
+  },
+  "cssProperties": [],
+  "defaultable": [],
+  "events": {},
+  "methods": {},
+  "parts": [
+    "root"
+  ],
+  "propertyOnly": [],
+  "props": {
+    "color": "string = 'var(--c-primary)'",
+    "size": "number = 24",
+    "width": "number = 2"
+  },
+  "slots": [],
+  "states": [],
+  "subcomponents": [],
+  "tag": "c-spinner"
+}

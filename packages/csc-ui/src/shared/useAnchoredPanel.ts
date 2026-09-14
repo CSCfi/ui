@@ -1,9 +1,10 @@
 /**
  * Anchored field panel (CONTEXT.md "Autocomplete", "Tree select", "Top
- * layer"; ADR-0008, ADR-0009, ADR-0047): the lifecycle shared by the
- * value-selection fields that keep a readonly value field in place and open a
- * native popover panel anchored under it — `c-autocomplete` and
- * `c-tree-select`.
+ * layer", "Fullscreen panel"; ADR-0008, ADR-0009, ADR-0047, ADR-0050): the
+ * lifecycle shared by the value-selection fields that keep a readonly value
+ * field in place and open a native popover panel — `c-autocomplete` and
+ * `c-tree-select`. One panel, two layouts: **anchored** under the field, or
+ * — on a **narrow viewport** — a **fullscreen panel** covering the viewport.
  *
  * What it owns:
  *  - the anchor. CSS anchor names are tree-scoped, so the consumer wraps its
@@ -16,20 +17,30 @@
  *    `hide-details` is set). The panel must sit flush under the field
  *    itself, so the `[part='message']` height is measured on open and pulled
  *    back with a negative block-start margin;
+ *  - the fullscreen layout: chosen at `open()` from the `fullscreen`
+ *    predicate and kept for the whole open (crossing the threshold while open
+ *    closes the panel). The panel drops anchor positioning and follows the
+ *    *visual* viewport — `visualViewport` resize / scroll while open — so the
+ *    heading row and search input stay above the on-screen keyboard;
+ *    `100dvh` where the API is missing. The page behind it is locked
+ *    (`pageLock.ts`: inert except toasts, no document scroll);
  *  - open / close through `showPopover()` / `hidePopover()` on a
  *    `popover="manual"` panel, with the native `toggle` event as the single
  *    source of truth for `isOpen` (browser-initiated closes included);
- *  - light dismiss: a capture-phase document `pointerdown` listener that
- *    closes unless the composed path includes the host;
+ *  - light dismiss (CONTEXT.md "Light dismiss", ADR-0050): a press and its
+ *    release both outside the host close the panel; a press alone — the
+ *    start of every touch scroll — never does (`lightDismiss.ts`);
  *  - focus return to the value field on `close(true)`;
- *  - the OddBird anchor polyfill kick-off on open (Firefox).
+ *  - the OddBird anchor polyfill kick-off on an anchored open (Firefox).
  *
  * What stays in the consumer: the `@position-try --c-field-panel-above` /
  * `--c-field-panel-above-left` flip rules and `position-try-fallbacks` —
  * per-shadow-root escape-hatch CSS (ADR-0007; each element type has its own
- * adopted sheet, so the block is copy-identical in every consumer) — and the
- * open sequence (peek cap, focus, highlight seed, announcement), run from
- * `onOpened` synchronously inside the `toggle` handler.
+ * adopted sheet, so the block is copy-identical in every consumer) — the
+ * fullscreen `tv` variant (card fills the panel, list takes the rest, the
+ * heading row) and the open sequence (peek cap, focus, highlight seed,
+ * announcement), run from `onOpened` synchronously inside the `toggle`
+ * handler.
  */
 
 import {
@@ -40,9 +51,18 @@ import {
   type Ref,
   ref,
   toValue,
+  watch,
 } from 'vue';
 
 import { ensureAnchorPositioning } from './anchorPolyfill';
+import { attachLightDismiss, type Detach } from './lightDismiss';
+import { lockPage, unlockPage } from './pageLock';
+import {
+  fullscreenBoxStyle,
+  type StopTracking,
+  trackVisualViewport,
+  type ViewportBox,
+} from './visualViewport';
 
 /**
  * The `anchor-name` every anchored field panel uses. Anchor names are
@@ -57,13 +77,18 @@ export interface AnchoredPanel {
   close(returnFocus?: boolean): void;
   /** Open state — written only by the native `toggle` event (single source of truth, browser-initiated closes included). */
   isOpen: Readonly<Ref<boolean>>;
+  /** The layout of the current open, fixed at `open()` for its whole duration; `'anchored'` — the resting shape, no heading row — while closed. */
+  layout: ComputedRef<PanelLayout>;
   /** Bind as the panel's `@toggle` handler. */
   onToggle(event: Event): void;
-  /** Measure the anchor width and the field's message height, then `showPopover()`. */
+  /** Choose the layout, measure (anchored: the anchor width and the field's message height), then `showPopover()`. */
   open(): void;
-  /** Inline style for the panel: `position-anchor`, `position-area: bottom span-right`, `inset: auto`, the pinned width and the message pull-back. */
+  /** Inline style for the panel: anchored — `position-anchor`, `position-area: bottom span-right`, `inset: auto`, the pinned width and the message pull-back; fullscreen — the visual viewport's box. */
   panelStyle: ComputedRef<string>;
 }
+
+/** The two layouts one field panel takes (CONTEXT.md "Fullscreen panel"). */
+export type PanelLayout = 'anchored' | 'fullscreen';
 
 export interface UseAnchoredPanelOptions {
   /** Shadow-DOM wrapper around the value field; carries `anchor-name`, and its rect pins the panel width. */
@@ -72,11 +97,13 @@ export interface UseAnchoredPanelOptions {
   disabled?: () => boolean;
   /** The inner `c-input` host: its `[part='message']` height is pulled back so the panel sits flush under the field box. */
   field: Readonly<Ref<HTMLElement | null>>;
-  /** The custom element host: light dismiss keeps pointerdowns whose composed path includes it; its shadow root is what the anchor polyfill runs against. */
+  /** Open as a fullscreen panel while true — the shared narrow-viewport predicate (`useNarrowViewport`). Absent: always anchored. */
+  fullscreen?: Readonly<Ref<boolean>>;
+  /** The custom element host: light dismiss keeps gestures whose composed path includes it; its shadow root is what the anchor polyfill runs against; it is what the page lock keeps interactive. */
   host: HTMLElement | null;
   /** Runs inside the native `toggle` handler once closed, before focus returns. */
   onClosed?: () => void;
-  /** Runs inside the native `toggle` handler once open, after the polyfill kick-off and the dismiss listener — the consumer's open sequence goes here. */
+  /** Runs inside the native `toggle` handler once open, after the polyfill kick-off / page lock and the dismiss listener — the consumer's open sequence goes here. */
   onOpened?: () => void;
   /** The `popover="manual"` panel element. */
   panel: Readonly<Ref<HTMLElement | null>>;
@@ -95,7 +122,43 @@ export const useAnchoredPanel = (
 
   let pendingReturnFocus = false;
 
+  /** The layout chosen at `open()`; `null` while closed. */
+  const openLayout = ref<null | PanelLayout>(null);
+
+  const wouldBeFullscreen = (): boolean => options.fullscreen?.value === true;
+
+  // Resting shape while closed: the consumers key the heading row, the
+  // dialog role and the fullscreen `tv` variant off this, none of which may
+  // linger on a hidden panel.
+  const layout = computed<PanelLayout>(() => openLayout.value ?? 'anchored');
+
+  // ---- visual viewport (fullscreen layout) --------------------------------
+
+  /** The visual viewport's box while a fullscreen panel is open; `null` without the API (then `100dvh`). */
+  const viewportBox = ref<null | ViewportBox>(null);
+
+  let stopViewport: null | StopTracking = null;
+
+  const trackViewport = (): void => {
+    stopViewport?.();
+    stopViewport = trackVisualViewport((box) => {
+      viewportBox.value = box;
+    });
+  };
+
+  const untrackViewport = (): void => {
+    stopViewport?.();
+    stopViewport = null;
+    viewportBox.value = null;
+  };
+
+  // ---- style ----------------------------------------------------------------
+
   const panelStyle = computed(() => {
+    if (layout.value === 'fullscreen') {
+      return `position:fixed;margin:0;${fullscreenBoxStyle(viewportBox.value)}`;
+    }
+
     const w = panelWidth.value ? `width:${panelWidth.value}px;` : '';
 
     const m = messageOffset.value
@@ -105,23 +168,36 @@ export const useAnchoredPanel = (
     return `position-anchor:${FIELD_PANEL_ANCHOR};position-area:bottom span-right;inset:auto;${w}${m}`;
   });
 
+  // ---- open / close -----------------------------------------------------------
+
   const open = (): void => {
     const p = options.panel.value;
 
     if (options.disabled?.() || !p || p.matches(':popover-open')) return;
 
-    // Pin the panel width to the field before showing so it lines up.
-    panelWidth.value = options.anchor.value?.getBoundingClientRect().width ?? 0;
+    if (typeof p.showPopover !== 'function') return;
 
-    // Anchor to the bottom of the FIELD, not the c-input's message area.
-    const message =
-      options.field.value?.shadowRoot?.querySelector<HTMLElement>(
-        "[part='message']",
-      );
+    const fullscreen = wouldBeFullscreen();
 
-    messageOffset.value = message?.getBoundingClientRect().height ?? 0;
+    openLayout.value = fullscreen ? 'fullscreen' : 'anchored';
 
-    if (typeof p.showPopover === 'function') p.showPopover();
+    if (fullscreen) {
+      trackViewport();
+    } else {
+      // Pin the panel width to the field before showing so it lines up.
+      panelWidth.value =
+        options.anchor.value?.getBoundingClientRect().width ?? 0;
+
+      // Anchor to the bottom of the FIELD, not the c-input's message area.
+      const message =
+        options.field.value?.shadowRoot?.querySelector<HTMLElement>(
+          "[part='message']",
+        );
+
+      messageOffset.value = message?.getBoundingClientRect().height ?? 0;
+    }
+
+    p.showPopover();
   };
 
   const close = (returnFocus = false): void => {
@@ -138,11 +214,31 @@ export const useAnchoredPanel = (
     }
   };
 
-  const onDocPointerDown = (event: Event): void => {
-    if (!isOpen.value || !options.host) return;
+  // ---- light dismiss ------------------------------------------------------------
 
-    if (!event.composedPath().includes(options.host)) close(false);
+  let detachDismiss: Detach | null = null;
+
+  const attachDismiss = (): void => {
+    detachDismiss?.();
+
+    const { host } = options;
+
+    if (!host) return;
+
+    detachDismiss = attachLightDismiss({
+      isInside: (path) => path.includes(host),
+      onDismiss: () => {
+        if (isOpen.value) close(false);
+      },
+    });
   };
+
+  const detachDismissListeners = (): void => {
+    detachDismiss?.();
+    detachDismiss = null;
+  };
+
+  // ---- toggle -----------------------------------------------------------------------
 
   const onToggle = (event: Event): void => {
     const nowOpen = (event as ToggleEvent).newState === 'open';
@@ -150,11 +246,25 @@ export const useAnchoredPanel = (
     isOpen.value = nowOpen;
 
     if (nowOpen) {
-      void ensureAnchorPositioning(options.host?.shadowRoot);
-      document.addEventListener('pointerdown', onDocPointerDown, true);
+      // A `manual` popover only opens through `open()`, which set the layout;
+      // fall back to the live predicate for any other route.
+      openLayout.value ??= wouldBeFullscreen() ? 'fullscreen' : 'anchored';
+
+      if (openLayout.value === 'fullscreen') {
+        if (options.host) lockPage(options.host);
+      } else {
+        void ensureAnchorPositioning(options.host?.shadowRoot);
+      }
+
+      attachDismiss();
       options.onOpened?.();
     } else {
-      document.removeEventListener('pointerdown', onDocPointerDown, true);
+      detachDismissListeners();
+
+      if (options.host) unlockPage(options.host);
+
+      untrackViewport();
+      openLayout.value = null;
       options.onClosed?.();
 
       if (pendingReturnFocus) toValue(options.returnFocusTo)?.focus();
@@ -163,8 +273,25 @@ export const useAnchoredPanel = (
     }
   };
 
+  // Crossing the threshold while open: the layouts are not interchangeable
+  // mid-open (anchor vs viewport box, page lock), so the panel closes.
+  if (options.fullscreen) {
+    watch(options.fullscreen, (fullscreen) => {
+      if (
+        isOpen.value &&
+        openLayout.value !== null &&
+        (openLayout.value === 'fullscreen') !== fullscreen
+      ) {
+        close(false);
+      }
+    });
+  }
+
   onBeforeUnmount(() => {
-    document.removeEventListener('pointerdown', onDocPointerDown, true);
+    detachDismissListeners();
+    untrackViewport();
+
+    if (options.host) unlockPage(options.host);
 
     // Ensure the popover is torn down if the consumer unmounts while open.
     const p = options.panel.value;
@@ -176,6 +303,7 @@ export const useAnchoredPanel = (
     anchorStyle: `anchor-name:${FIELD_PANEL_ANCHOR}`,
     close,
     isOpen,
+    layout,
     onToggle,
     open,
     panelStyle,

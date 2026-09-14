@@ -4,12 +4,12 @@
          state changes; sorting and paging here go through a simulated server
          request. `item-count` tells the pager the true total. -->
     <c-data-table
-      :columns.prop="columns"
-      :data.prop="page"
+      :columns="columns"
+      :data="page"
       :item-count="TOTAL"
       :loading="loading"
       :page="query.page"
-      :sort.prop="query.sort"
+      :sort="query.sort"
       external
       page-size="5"
       @change:page="onPage"

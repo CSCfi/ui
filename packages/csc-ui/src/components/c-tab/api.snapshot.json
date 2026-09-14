@@ -1,0 +1,35 @@
+{
+  "attributes": {
+    "active": "boolean = false",
+    "disabled": "boolean = false",
+    "host-id": "string = ''",
+    "position": "number",
+    "setsize": "number",
+    "value": "number | string"
+  },
+  "cssProperties": [],
+  "defaultable": [],
+  "events": {
+    "tabChange": "CustomEvent<{ element: HTMLElement | null; value: number | string | undefined; }>",
+    "tabFocus": "CustomEvent<number | string | undefined>"
+  },
+  "methods": {},
+  "parts": [
+    "root"
+  ],
+  "propertyOnly": [],
+  "props": {
+    "active": "boolean = false",
+    "disabled": "boolean = false",
+    "hostId": "string = ''",
+    "position": "number",
+    "setsize": "number",
+    "value": "number | string"
+  },
+  "slots": [
+    "default"
+  ],
+  "states": [],
+  "subcomponents": [],
+  "tag": "c-tab"
+}

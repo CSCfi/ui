@@ -1,0 +1,29 @@
+{
+  "attributes": {
+    "disabled": "boolean = false",
+    "size": "'default' | 'small' = 'default'",
+    "value": "number | string = 0"
+  },
+  "cssProperties": [],
+  "defaultable": [],
+  "events": {
+    "tabChange": "CustomEvent<{ element: HTMLElement | null; value: number | string; }>"
+  },
+  "methods": {},
+  "parts": [
+    "indicator",
+    "root"
+  ],
+  "propertyOnly": [],
+  "props": {
+    "disabled": "boolean = false",
+    "size": "'default' | 'small' = 'default'",
+    "value": "number | string = 0"
+  },
+  "slots": [
+    "default"
+  ],
+  "states": [],
+  "subcomponents": [],
+  "tag": "c-tab-buttons"
+}

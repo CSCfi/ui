@@ -1,0 +1,25 @@
+{
+  "attributes": {
+    "value": "number | string = 1"
+  },
+  "cssProperties": [],
+  "defaultable": [],
+  "events": {},
+  "methods": {},
+  "parts": [
+    "label",
+    "root"
+  ],
+  "propertyOnly": [],
+  "props": {
+    "value": "number | string = 1"
+  },
+  "slots": [
+    "default"
+  ],
+  "states": [],
+  "subcomponents": [
+    "c-step"
+  ],
+  "tag": "c-steps"
+}

@@ -5,7 +5,7 @@
          first). The pinned column never hides. Without `autohide` the table
          would scroll horizontally instead. -->
     <div class="resizable">
-      <c-data-table :columns.prop="columns" :data.prop="data" autohide />
+      <c-data-table :columns="columns" :data="data" autohide />
     </div>
   </div>
 </template>

@@ -1,0 +1,36 @@
+{
+  "attributes": {
+    "delay": "number | string = 400",
+    "distance": "number | string = 4",
+    "open": "boolean = false",
+    "position": "'bottom-end' | 'bottom-start' | 'bottom' | 'left-end' | 'left-start' | 'left' | 'right-end' | 'right-start' | 'right' | 'top-end' | 'top-start' | 'top' = 'top'",
+    "text": "string = ''",
+    "trigger": "HTMLElement | string"
+  },
+  "cssProperties": [],
+  "defaultable": [],
+  "events": {
+    "change:open": "CustomEvent<boolean>"
+  },
+  "methods": {},
+  "parts": [
+    "panel",
+    "trigger"
+  ],
+  "propertyOnly": [],
+  "props": {
+    "delay": "number | string = 400",
+    "distance": "number | string = 4",
+    "open": "boolean = false",
+    "position": "'bottom-end' | 'bottom-start' | 'bottom' | 'left-end' | 'left-start' | 'left' | 'right-end' | 'right-start' | 'right' | 'top-end' | 'top-start' | 'top' = 'top'",
+    "text": "string = ''",
+    "trigger": "HTMLElement | string"
+  },
+  "slots": [
+    "content",
+    "trigger"
+  ],
+  "states": [],
+  "subcomponents": [],
+  "tag": "c-tooltip"
+}

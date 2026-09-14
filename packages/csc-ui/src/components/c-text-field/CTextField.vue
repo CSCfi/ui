@@ -9,10 +9,10 @@
     :input-id
     :is-textarea="rows > 1"
     :label
-    :label-on-top
+    :label-on-top="labelOnTopResolved"
     :required
-    :shadow
-    :size
+    :shadow="shadowResolved"
+    :size="sizeResolved"
     :valid
   >
     <!-- Pre slot: forwarded from the consumer's `pre` slot. We only
@@ -167,6 +167,7 @@ export interface CTextFieldProps {
    * Hide the hint and error messages
    *
    * @seeded from csc-ui — verify
+   * @defaultable false
    */
   hideDetails?: boolean;
   /**
@@ -194,6 +195,7 @@ export interface CTextFieldProps {
    * Label on top of the input
    *
    * @seeded from csc-ui — verify
+   * @defaultable false
    */
   labelOnTop?: boolean;
   /**
@@ -244,9 +246,14 @@ export interface CTextFieldProps {
    * Shadow variant of the input
    *
    * @seeded from csc-ui — verify
+   * @defaultable false
    */
   shadow?: boolean;
-  /** Field height: the 44px default or the 36px `small` box (single-line fields) */
+  /**
+   * Field height: the 44px default or the 36px `small` box (single-line fields)
+   *
+   * @defaultable 'default'
+   */
   size?: CFieldSize;
   /**
    * Step size on a numeric input
@@ -318,7 +325,7 @@ import {
 
 import type { CFieldSize } from '../../types';
 
-import { coerceBoolean } from '../../shared/coerceBoolean';
+import { useAppDefault } from '../../shared/appDefaults';
 import { emitModelValue } from '../../shared/emitModelValue';
 import { useHostEmit } from '../../shared/useHostEmit';
 
@@ -392,11 +399,11 @@ const props = withDefaults(defineProps<CTextFieldProps>(), {
   automaticCapitalize: undefined,
   disabled: false,
   errorMessage: '',
-  hideDetails: false,
+  hideDetails: undefined,
   hint: '',
   hostId: '',
   label: '',
-  labelOnTop: false,
+  labelOnTop: undefined,
   max: null,
   min: null,
   name: '',
@@ -404,8 +411,8 @@ const props = withDefaults(defineProps<CTextFieldProps>(), {
   readonly: false,
   required: false,
   rows: 1,
-  shadow: false,
-  size: 'default',
+  shadow: undefined,
+  size: undefined,
   step: null,
   trimWhitespace: false,
   type: 'text',
@@ -419,16 +426,18 @@ const host = useHost();
 
 const emit = useHostEmit<CTextFieldEvents>();
 
-// Forward `hide-details` to `c-input` through a `data-*` channel (resolved from
-// the stable host attribute), not a direct `:hide-details` binding: that key
-// collides with c-input's declared `hideDetails` prop and Vue mangles/removes
-// it on re-render (the field re-renders on every keystroke). See the matching
-// note in CSelect.vue and the resolver in CInput.vue.
-const hideDetailsResolved = computed(() =>
-  host?.hasAttribute('hide-details')
-    ? coerceBoolean(host.getAttribute('hide-details'))
-    : coerceBoolean(props.hideDetails),
-);
+// Defaultable props resolve host attribute → own value → app default →
+// built-in (see src/shared/appDefaults.ts, which also explains why
+// `hide-details` reaches c-input through the `data-hide-details` channel).
+const appDefault = useAppDefault('c-text-field', props);
+
+const hideDetailsResolved = appDefault('hideDetails', false);
+
+const labelOnTopResolved = appDefault('labelOnTop', false);
+
+const shadowResolved = appDefault('shadow', false);
+
+const sizeResolved = appDefault('size', 'default');
 
 const inputRef = useTemplateRef<HTMLInputElement | HTMLTextAreaElement>(
   'inputRef',
@@ -502,7 +511,7 @@ onBeforeUnmount(() => {
 const effectivePlaceholder = computed(() => {
   if (!props.placeholder) return undefined;
 
-  if (props.labelOnTop) return props.placeholder;
+  if (labelOnTopResolved.value) return props.placeholder;
 
   if (props.label && !isFocused.value && !hasValue.value) return undefined;
 

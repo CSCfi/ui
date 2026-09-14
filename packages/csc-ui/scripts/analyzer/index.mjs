@@ -203,6 +203,7 @@ const analyzeComponent = (tagName) => {
     subcomponents,
     tagName,
     template,
+    templateSource: descriptor.template?.content ?? '',
     usagePath: hasUsage ? `docs/${tagName}/usage.md` : null,
     usageSource: hasUsage ? usageSource : null,
   };

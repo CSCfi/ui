@@ -1,0 +1,83 @@
+{
+  "attributes": {
+    "autohide": "boolean = false",
+    "external": "boolean = false",
+    "filter": "string = ''",
+    "item-count": "number",
+    "loading": "boolean = false",
+    "page": "number",
+    "page-size": "number",
+    "selection": "'multiple' | 'single'",
+    "single-expansion": "boolean = false",
+    "sort": "CDataTableSort | null",
+    "sticky-footer": "boolean = false",
+    "sticky-header": "boolean = false"
+  },
+  "cssProperties": [],
+  "defaultable": [
+    "texts"
+  ],
+  "events": {
+    "change:expanded": "CustomEvent<string[]>",
+    "change:page": "CustomEvent<number>",
+    "change:page-size": "CustomEvent<number>",
+    "change:selected": "CustomEvent<{ ids: string[]; rows: CDataTableRow[] }>",
+    "change:sort": "CustomEvent<CDataTableSort | null>"
+  },
+  "methods": {},
+  "parts": [
+    "banner",
+    "body",
+    "caption",
+    "cell",
+    "empty",
+    "expansion-row",
+    "footer",
+    "header",
+    "header-cell",
+    "pagination",
+    "root",
+    "row",
+    "table",
+    "viewport"
+  ],
+  "propertyOnly": [
+    "columns",
+    "data",
+    "expanded",
+    "expandedContent",
+    "getRowId",
+    "pageSizes",
+    "selected",
+    "texts"
+  ],
+  "props": {
+    "autohide": "boolean = false",
+    "columns": "CDataTableColumn[] = () => []",
+    "data": "CDataTableRow[] = () => []",
+    "expanded": "string[]",
+    "expandedContent": "( context: CDataTableExpandedContext, ) => CDataTableCellContent",
+    "external": "boolean = false",
+    "filter": "string = ''",
+    "getRowId": "(row: CDataTableRow) => string",
+    "itemCount": "number",
+    "loading": "boolean = false",
+    "page": "number",
+    "pageSize": "number",
+    "pageSizes": "number[] = () => [5, 25, 50, 100]",
+    "selected": "string[]",
+    "selection": "'multiple' | 'single'",
+    "singleExpansion": "boolean = false",
+    "sort": "CDataTableSort | null",
+    "stickyFooter": "boolean = false",
+    "stickyHeader": "boolean = false",
+    "texts": "CDataTableTexts = {}"
+  },
+  "slots": [
+    "caption",
+    "empty"
+  ],
+  "states": [],
+  "subcomponents": [],
+  "tag": "c-data-table"
+}

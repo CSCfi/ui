@@ -1,0 +1,23 @@
+{
+  "attributes": {},
+  "cssProperties": [],
+  "defaultable": [],
+  "events": {},
+  "methods": {},
+  "parts": [
+    "actions",
+    "header",
+    "heading",
+    "root",
+    "underline"
+  ],
+  "propertyOnly": [],
+  "props": {},
+  "slots": [
+    "actions",
+    "default"
+  ],
+  "states": [],
+  "subcomponents": [],
+  "tag": "c-card-title"
+}

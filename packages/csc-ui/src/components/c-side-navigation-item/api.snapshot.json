@@ -1,0 +1,35 @@
+{
+  "attributes": {
+    "active": "boolean = false",
+    "focusable": "boolean = true",
+    "href": "string = ''",
+    "loading": "boolean = false",
+    "target": "string = ''"
+  },
+  "cssProperties": [],
+  "defaultable": [],
+  "events": {
+    "itemChange": "CustomEvent<Event>"
+  },
+  "methods": {},
+  "parts": [
+    "header",
+    "root",
+    "sub-nav"
+  ],
+  "propertyOnly": [],
+  "props": {
+    "active": "boolean = false",
+    "focusable": "boolean = true",
+    "href": "string = ''",
+    "loading": "boolean = false",
+    "target": "string = ''"
+  },
+  "slots": [
+    "default",
+    "sub-item"
+  ],
+  "states": [],
+  "subcomponents": [],
+  "tag": "c-side-navigation-item"
+}

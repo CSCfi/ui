@@ -1,0 +1,41 @@
+{
+  "attributes": {
+    "active": "boolean",
+    "active-icon": "string = ''",
+    "danger": "boolean = false",
+    "disabled": "boolean = false",
+    "icon": "string = ''",
+    "value": "string"
+  },
+  "cssProperties": [],
+  "defaultable": [],
+  "events": {},
+  "methods": {
+    "closeSubmenu": "()",
+    "openSubmenu": "()"
+  },
+  "parts": [
+    "check",
+    "content",
+    "icon",
+    "root",
+    "submenu",
+    "submenu-panel"
+  ],
+  "propertyOnly": [],
+  "props": {
+    "active": "boolean",
+    "activeIcon": "string = ''",
+    "danger": "boolean = false",
+    "disabled": "boolean = false",
+    "icon": "string = ''",
+    "value": "string"
+  },
+  "slots": [
+    "default",
+    "submenu"
+  ],
+  "states": [],
+  "subcomponents": [],
+  "tag": "c-menu-item"
+}

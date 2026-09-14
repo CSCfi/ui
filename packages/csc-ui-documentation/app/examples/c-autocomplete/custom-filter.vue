@@ -5,7 +5,7 @@
     <c-autocomplete
       v-model="country"
       :filter="filter"
-      :items.prop="items"
+      :items="items"
       clearable
       hint="Matches anywhere in the label"
       label="Country"

@@ -5,6 +5,10 @@ setopt SHARE_HISTORY
 setopt HIST_IGNORE_DUPS
 setopt HIST_IGNORE_SPACE
 
+# A SIGKILLed headless Chromium (Vitest browser mode, CDP drivers) otherwise
+# dumps a core file into the working directory.
+ulimit -c 0
+
 autoload -Uz compinit
 compinit
 

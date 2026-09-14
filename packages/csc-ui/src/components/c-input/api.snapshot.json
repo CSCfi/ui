@@ -1,0 +1,54 @@
+{
+  "attributes": {
+    "active": "boolean = false",
+    "disabled": "boolean = false",
+    "error-message": "string = ''",
+    "filled": "boolean = false",
+    "hide-details": "boolean = false",
+    "hint": "string = ''",
+    "input-id": "string = ''",
+    "is-textarea": "boolean = false",
+    "label": "string = ''",
+    "label-on-top": "boolean = false",
+    "required": "boolean = false",
+    "shadow": "boolean = false",
+    "size": "'default' | 'small' = 'default'",
+    "valid": "boolean = true"
+  },
+  "cssProperties": [],
+  "defaultable": [],
+  "events": {},
+  "methods": {},
+  "parts": [
+    "label",
+    "message",
+    "post",
+    "pre",
+    "root"
+  ],
+  "propertyOnly": [],
+  "props": {
+    "active": "boolean = false",
+    "disabled": "boolean = false",
+    "errorMessage": "string = ''",
+    "filled": "boolean = false",
+    "hideDetails": "boolean = false",
+    "hint": "string = ''",
+    "inputId": "string = ''",
+    "isTextarea": "boolean = false",
+    "label": "string = ''",
+    "labelOnTop": "boolean = false",
+    "required": "boolean = false",
+    "shadow": "boolean = false",
+    "size": "'default' | 'small' = 'default'",
+    "valid": "boolean = true"
+  },
+  "slots": [
+    "default",
+    "post",
+    "pre"
+  ],
+  "states": [],
+  "subcomponents": [],
+  "tag": "c-input"
+}

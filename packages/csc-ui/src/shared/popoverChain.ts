@@ -11,12 +11,15 @@
  *   inside a popover listens on its own host (bubble), i.e. *after* this
  *   capture listener — that Escape closes both, exactly as it did when each
  *   popover owned its own capture listener.
- * - **Pointerdown** closes every popover that does not *logically* contain
- *   the event: from the innermost down, everything above the deepest member
- *   whose own inside (host subtree, panel, designated trigger) contains the
- *   composed path is closed. Containment is logical, not DOM ancestry — a
- *   popover whose host lives elsewhere still shields its ancestors, because
- *   ancestry is recorded in the chain itself, not re-derived from the DOM.
+ * - **Light dismiss** (CONTEXT.md, ADR-0050) closes every popover that does
+ *   not *logically* contain the pointer gesture. A press and its release are
+ *   paired (`lightDismiss.ts` — a press alone, the start of every touch
+ *   scroll, closes nothing); from the innermost down, everything above the
+ *   deepest member whose own inside (host subtree, panel, designated
+ *   trigger) contains either composed path is closed. Containment is
+ *   logical, not DOM ancestry — a popover whose host lives elsewhere still
+ *   shields its ancestors, because ancestry is recorded in the chain itself,
+ *   not re-derived from the DOM.
  * - **Opening** a popover whose trigger sits inside an open member joins the
  *   chain below it; one whose trigger is elsewhere replaces the chain.
  *   Siblings therefore never coexist.
@@ -28,6 +31,8 @@
  * independent popovers cannot see each other's claim, so one press closed
  * them all. Coordination needs a single owner, mirroring `modalStack.ts`.
  */
+
+import { attachPointerPair, type Detach } from './lightDismiss';
 
 export interface PopoverChainEntry {
   /** Close this popover with no focus return (light dismiss / chain cleanup). */
@@ -80,19 +85,18 @@ const closeAbove = (index: number): void => {
   for (let i = orphans.length - 1; i >= 0; i--) orphans[i].close();
 };
 
-const onDocPointerDown = (event: Event): void => {
-  const path = event.composedPath();
-
-  let keep = -1;
-
+/** Index of the innermost member whose inside contains `path`, else -1. */
+const deepestContaining = (path: EventTarget[]): number => {
   for (let i = chain.length - 1; i >= 0; i--) {
-    if (chain[i].containsPath(path)) {
-      keep = i;
-      break;
-    }
+    if (chain[i].containsPath(path)) return i;
   }
 
-  closeAbove(keep);
+  return -1;
+};
+
+/** A member survives when either the press or the release landed inside it. */
+const onPointerPair = (down: EventTarget[], up: EventTarget[]): void => {
+  closeAbove(Math.max(deepestContaining(down), deepestContaining(up)));
 };
 
 const onDocKeydown = (event: KeyboardEvent): void => {
@@ -106,16 +110,15 @@ const onDocKeydown = (event: KeyboardEvent): void => {
   innermost.onEscape();
 };
 
-let listenersAttached = false;
+let detachPointerPair: Detach | null = null;
 
 const applyListeners = (): void => {
-  if (chain.length > 0 && !listenersAttached) {
-    listenersAttached = true;
-    document.addEventListener('pointerdown', onDocPointerDown, true);
+  if (chain.length > 0 && !detachPointerPair) {
+    detachPointerPair = attachPointerPair(onPointerPair);
     document.addEventListener('keydown', onDocKeydown, true);
-  } else if (chain.length === 0 && listenersAttached) {
-    listenersAttached = false;
-    document.removeEventListener('pointerdown', onDocPointerDown, true);
+  } else if (chain.length === 0 && detachPointerPair) {
+    detachPointerPair();
+    detachPointerPair = null;
     document.removeEventListener('keydown', onDocKeydown, true);
   }
 };

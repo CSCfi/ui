@@ -4,6 +4,8 @@ status: accepted
 
 # `c-menu` positions with the Popover API + CSS anchor positioning, with an OddBird polyfill for Firefox
 
+> Amended by ADR-0050: light dismiss now pairs the press with its release (a `pointerdown` alone, the start of a touch scroll, closes nothing); the capture-phase `pointerdown` listener described below became the shared `lightDismiss.ts` helper.
+
 The `csc-ui-next` menu family (`c-menu`, `c-menu-item`) renders its dropdown and
 submenu panels as native **Popover API** elements (`popover` attribute, top layer)
 and places them with **CSS anchor positioning** (`anchor-name` / `position-anchor` /

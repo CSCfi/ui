@@ -1,0 +1,37 @@
+{
+  "attributes": {
+    "background-position": "string = 'bottom right'",
+    "mobile-breakpoint": "number = 600",
+    "overlay": "boolean = false",
+    "overlay-blend-mode": "'color-burn' | 'color-dodge' | 'color' | 'darken' | 'difference' | 'exclusion' | 'hard-light' | 'hue' | 'lighten' | 'luminosity' | 'multiply' | 'normal' | 'overlay' | 'saturation' | 'screen' | 'soft-light' = 'multiply'",
+    "src": "string = ''"
+  },
+  "cssProperties": [],
+  "defaultable": [],
+  "events": {},
+  "methods": {},
+  "parts": [
+    "card",
+    "content",
+    "image",
+    "root"
+  ],
+  "propertyOnly": [],
+  "props": {
+    "backgroundPosition": "string = 'bottom right'",
+    "mobileBreakpoint": "number = 600",
+    "overlay": "boolean = false",
+    "overlayBlendMode": "'color-burn' | 'color-dodge' | 'color' | 'darken' | 'difference' | 'exclusion' | 'hard-light' | 'hue' | 'lighten' | 'luminosity' | 'multiply' | 'normal' | 'overlay' | 'saturation' | 'screen' | 'soft-light' = 'multiply'",
+    "src": "string = ''"
+  },
+  "slots": [
+    "default"
+  ],
+  "states": [],
+  "subcomponents": [
+    "c-login-card-actions",
+    "c-login-card-content",
+    "c-login-card-title"
+  ],
+  "tag": "c-login-card"
+}

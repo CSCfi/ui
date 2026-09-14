@@ -13,12 +13,15 @@
  *   below the toast band,
  * - **backdrop visibility**: exactly one backdrop — the active modal's — is
  *   visible at a time,
- * - **inertness**: everything outside the active modal is `inert`, except
- *   `c-toasts` (toasts stay interactive above any modal),
- * - **scroll lock** on the document while the stack is non-empty,
+ * - **inertness** and **scroll lock**, delegated to the shared page lock
+ *   (`pageLock.ts`, ADR-0050): everything outside the active modal is
+ *   `inert` except `c-toasts`, and the document stops scrolling while the
+ *   stack is non-empty,
  * - **Escape routing** to the active modal only, and
  * - **focus restore** to the element focused when each modal opened.
  */
+
+import { lockPage, unlockPage } from './pageLock';
 
 /**
  * Stacking bands (see CONTEXT.md "Stacking band"). Library-owned paint-order
@@ -29,9 +32,6 @@
 export const MODAL_BAND_BASE = 1000;
 
 export const TOAST_BAND = 2000;
-
-/** Tag exempted from inerting — toasts stay interactive above modals. */
-const EXEMPT_TAG = 'c-toasts';
 
 export interface ModalStackEntry {
   /** The `<c-modal>` host element (its slotted content is light DOM). */
@@ -58,13 +58,6 @@ interface StackRecord {
 
 const stack: StackRecord[] = [];
 
-/** Elements THIS controller set `inert` on (consumer-set inert is never touched). */
-const inerted = new Set<HTMLElement>();
-
-let scrollLocked = false;
-
-let previousOverflow = '';
-
 /** The focused element, pierced through open shadow roots. */
 export const deepActiveElement = (): HTMLElement | null => {
   let el: Element | null = document.activeElement;
@@ -72,105 +65,6 @@ export const deepActiveElement = (): HTMLElement | null => {
   while (el?.shadowRoot?.activeElement) el = el.shadowRoot.activeElement;
 
   return el instanceof HTMLElement ? el : null;
-};
-
-/** Non-rendered elements there is no point inerting. */
-const SKIP_TAGS = new Set(['LINK', 'META', 'SCRIPT', 'STYLE', 'TEMPLATE']);
-
-/**
- * Collect `el` (or, when it contains an exempt toaster, its non-exempt
- * descendants) into the inert target set. Descending instead of inerting the
- * whole subtree is what keeps a nested `c-toasts` interactive — an inert
- * ancestor would take the toaster down with it regardless of its own state.
- */
-const collectInertTargets = (el: Element, targets: Set<HTMLElement>): void => {
-  if (SKIP_TAGS.has(el.tagName)) return;
-
-  if (el.localName === EXEMPT_TAG) return;
-
-  if (!(el instanceof HTMLElement)) return;
-
-  if (el.querySelector(EXEMPT_TAG)) {
-    for (const child of Array.from(el.children)) {
-      collectInertTargets(child, targets);
-    }
-
-    return;
-  }
-
-  targets.add(el);
-};
-
-/** Step to the parent, jumping out of a shadow root to its host if needed. */
-const parentOf = (el: Element): Element | null => {
-  if (el.parentElement) return el.parentElement;
-
-  const root = el.getRootNode();
-
-  return root instanceof ShadowRoot ? root.host : null;
-};
-
-/**
- * The classic ancestor-chain modality walk: from the active modal's host up
- * to `document.body`, everything that is a sibling of the chain gets inert —
- * page content and lower modals alike — leaving only the active modal (and
- * exempt toasters) interactive.
- */
-const computeInertTargets = (activeHost: HTMLElement): Set<HTMLElement> => {
-  const targets = new Set<HTMLElement>();
-
-  let node: Element = activeHost;
-
-  while (node && node !== document.body) {
-    const parent = parentOf(node);
-
-    if (!parent) break;
-
-    for (const sibling of Array.from(parent.children)) {
-      if (sibling !== node) collectInertTargets(sibling, targets);
-    }
-
-    node = parent;
-  }
-
-  return targets;
-};
-
-const applyInert = (): void => {
-  const active = stack[stack.length - 1];
-
-  const next = active
-    ? computeInertTargets(active.entry.host)
-    : new Set<HTMLElement>();
-
-  for (const el of inerted) {
-    if (!next.has(el)) {
-      el.inert = false;
-      inerted.delete(el);
-    }
-  }
-
-  for (const el of next) {
-    // An element that is already inert was set by the consumer (or an outer
-    // mechanism); leave it untracked so we never un-inert what isn't ours.
-    if (!inerted.has(el) && !el.inert) {
-      el.inert = true;
-      inerted.add(el);
-    }
-  }
-};
-
-const applyScrollLock = (): void => {
-  const root = document.documentElement;
-
-  if (stack.length > 0 && !scrollLocked) {
-    scrollLocked = true;
-    previousOverflow = root.style.overflow;
-    root.style.overflow = 'hidden';
-  } else if (stack.length === 0 && scrollLocked) {
-    scrollLocked = false;
-    root.style.overflow = previousOverflow;
-  }
 };
 
 /**
@@ -228,8 +122,7 @@ export const openModal = (entry: ModalStackEntry): void => {
   // Animate the backdrop fade-in only when this is the first modal; a modal
   // opening over another swaps backdrop ownership instantly.
   applyLayers(stack.length === 1);
-  applyInert();
-  applyScrollLock();
+  lockPage(entry.host);
   applyKeydownListener();
 };
 
@@ -245,6 +138,7 @@ export const closeModal = (entry: ModalStackEntry): void => {
   if (index === -1) return;
 
   const [record] = stack.splice(index, 1);
+
   const wasActive = index === stack.length;
 
   // Fade the closing modal's backdrop out only when it was the last one; a
@@ -252,8 +146,7 @@ export const closeModal = (entry: ModalStackEntry): void => {
   entry.setBackdropVisible(false, stack.length === 0);
 
   applyLayers(false);
-  applyInert();
-  applyScrollLock();
+  unlockPage(entry.host);
   applyKeydownListener();
 
   // Restore focus only when the closed modal was the active one and focus

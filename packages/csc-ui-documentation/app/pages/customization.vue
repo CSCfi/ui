@@ -6,7 +6,8 @@
       <p class="my-[1em] max-w-[45rem] text-[1.0625rem] text-on-surface-muted">
         Everything about making the design system yours: re-branding with theme
         seeds, dark mode, the semantic tokens, restyling components through
-        their parts, and using the tokens in your own Tailwind build.
+        their parts, setting app-wide prop defaults, and using the tokens in
+        your own Tailwind build.
       </p>
 
       <flavor-switcher class="md:hidden" />
@@ -55,6 +56,10 @@
            hand-written tables and a live playground). -->
         <client-only v-if="section.id === 'brand-theming'">
           <theme-playground />
+        </client-only>
+
+        <client-only v-if="section.id === 'app-defaults'">
+          <app-defaults-playground />
         </client-only>
 
         <template v-if="section.id === 'tokens'">

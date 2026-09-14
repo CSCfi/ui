@@ -1,0 +1,20 @@
+{
+  "attributes": {},
+  "cssProperties": [],
+  "defaultable": [],
+  "events": {},
+  "methods": {},
+  "parts": [
+    "divider-root",
+    "label",
+    "root"
+  ],
+  "propertyOnly": [],
+  "props": {},
+  "slots": [
+    "default"
+  ],
+  "states": [],
+  "subcomponents": [],
+  "tag": "c-side-navigation-title"
+}

@@ -1,0 +1,48 @@
+{
+  "attributes": {
+    "element-id": "string = ''",
+    "error-message": "string = ''",
+    "has-autofocus": "boolean = false",
+    "hide-details": "boolean = false",
+    "hint": "string = ''",
+    "label": "string = ''",
+    "length": "number = 6",
+    "required": "boolean = false",
+    "valid": "boolean = true",
+    "value": "string = ''"
+  },
+  "cssProperties": [],
+  "defaultable": [],
+  "events": {
+    "changeValue": "CustomEvent<null | string>",
+    "completion": "CustomEvent<null | string>",
+    "input": "CustomEvent<void>",
+    "update:value": "CustomEvent<string>"
+  },
+  "methods": {},
+  "parts": [
+    "digits",
+    "input",
+    "label",
+    "root"
+  ],
+  "propertyOnly": [],
+  "props": {
+    "elementId": "string = ''",
+    "errorMessage": "string = ''",
+    "hasAutofocus": "boolean = false",
+    "hideDetails": "boolean = false",
+    "hint": "string = ''",
+    "label": "string = ''",
+    "length": "number = 6",
+    "required": "boolean = false",
+    "valid": "boolean = true",
+    "value": "string = ''"
+  },
+  "slots": [
+    "default"
+  ],
+  "states": [],
+  "subcomponents": [],
+  "tag": "c-otp-input"
+}

@@ -1,0 +1,36 @@
+{
+  "attributes": {
+    "active": "boolean = false",
+    "disabled": "boolean = false",
+    "disabled-by-parent": "boolean = false",
+    "hoverable": "boolean = false",
+    "href": "string = ''",
+    "ripple": "boolean = false",
+    "target": "string = '_blank'"
+  },
+  "cssProperties": [],
+  "defaultable": [],
+  "events": {},
+  "methods": {},
+  "parts": [
+    "root"
+  ],
+  "propertyOnly": [],
+  "props": {
+    "active": "boolean = false",
+    "disabled": "boolean = false",
+    "disabledByParent": "boolean = false",
+    "hoverable": "boolean = false",
+    "href": "string = ''",
+    "ripple": "boolean = false",
+    "target": "string = '_blank'"
+  },
+  "slots": [
+    "default",
+    "post",
+    "pre"
+  ],
+  "states": [],
+  "subcomponents": [],
+  "tag": "c-list-item"
+}

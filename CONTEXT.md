@@ -117,6 +117,10 @@ _Avoid_: Hint, title (the native attribute), popup
 The click-opened, **non-modal** interactive surface component anchored to its **trigger** — light-dismissed, never trapping focus (ADR-0033); blocking flows go to `c-modal`, plain hints to `c-tooltip`. Distinct from the lowercase *native popover*, which is the browser mechanism: any element put in the **top layer** via the Popover API (menu panels, autocomplete panels, and tooltips are all native popovers; only `c-popover` is the Popover *component*).
 _Avoid_: Flyout, popup, overlay (as a name for this component)
 
+**Light dismiss**:
+Closing a transient surface — a **transient list panel**, `c-popover`, a **fullscreen panel** never — because the user pressed *and released* the pointer outside it, mirroring the native Popover API's rule. A press alone is not a dismissal: a scroll or drag that starts outside the surface leaves it open. Escape is a separate close path, not light dismiss. Modals have their own **dismissable** contract (backdrop click and Escape together) and are not light-dismissed.
+_Avoid_: Click-outside / outside click (the trigger is the press-release pair, and it works for touch), auto-close, blur-close
+
 **Popover chain**:
 The ordered set of currently open `c-popover`s, each logically nested in the one before it — a popover joins the chain when its **trigger** sits inside an open popover's panel, and replaces the chain otherwise, so siblings never coexist. Escape peels the innermost popover, one per press; light dismiss closes every popover that does not logically contain the pointer event; closing a popover closes its descendants. Containment is logical (the trigger relationship), not DOM ancestry — a popover whose host lives elsewhere still chains under the popover holding its trigger. Distinct from the **modal stack**: chain members below the innermost stay interactive, nothing goes inert.
 _Avoid_: Popover stack (reserve _stack_ for the modal stack's inert-lower-layers contract), nested popups
@@ -125,9 +129,22 @@ _Avoid_: Popover stack (reserve _stack_ for the modal stack's inert-lower-layers
 The browser-managed paint layer above every author stacking context — nothing an author z-indexes can paint above it, and while a *modal dialog* occupies it the rest of the document is inert. In this library only **transient** surfaces live there, as native popovers: the menu family, the autocomplete and tree-select panels, `c-tooltip`, and `c-popover` (ADR-0008). Modals deliberately do **not** (ADR-0014) — a top-layer modal would paint over and inert the toasts.
 _Avoid_: Overlay (an overlay is any floating surface; the top layer is a specific browser mechanism), portal
 
+**Transient list panel**:
+The floating list surface a component reveals on demand and closes on dismissal — a `c-menu` or **submenu** panel, `c-dropdown`'s listbox behind `c-select`, `c-autocomplete`'s options list, `c-tree-select`'s level and results lists. It lives in the **top layer**, hides its scrollbar and shows a **peek** (ADR-0043). Persistent scroll containers (data table, side navigation, page, card) are not transient list panels; `c-popover`'s panel is transient but carries no list.
+_Avoid_: Dropdown (the component), menu (the component), popup, overlay, flyout
+
 **Peek**:
 The half-visible last row of an overflowing **transient list panel** — a `c-menu` or **submenu** panel, `c-dropdown`'s listbox behind `c-select`, `c-autocomplete`'s options list, or `c-tree-select`'s level and results lists. Those panels hide their scrollbar, so the peek is the sole cue that more rows follow: an overflowing panel always ends at a row's midpoint (the `itemsPerPage`-th row where that prop caps the list, otherwise the last row under the panel's ceiling), never on a row boundary. Persistent scroll containers (data table, side navigation, page, card) keep native scrollbars and have no peek; `c-popover` has no scroll container at all.
 _Avoid_: Scroll hint, teaser, fade / scroll shadow (a peek is never a gradient), affordance
+
+**Fullscreen panel**:
+The viewport-filling layout a value-selection field's **transient list panel** — `c-dropdown`'s listbox behind `c-select`, `c-autocomplete`'s panel, `c-tree-select`'s panel — adopts on a **narrow viewport**: instead of anchoring under the **value field**, the panel covers the whole viewport, opening with a **heading row** — the field's label as the panel's **heading** plus a close control — above the **search input** (where the component has one) and the list. The anchored layout and the fullscreen panel are one panel in two layouts, never two components; menus, tooltips and `c-popover` have no fullscreen panel.
+While it is open the page behind it is inert and scroll-locked (toasts excepted), yet it is not a `c-modal`: it joins no **modal stack** and paints no backdrop. Its list is bounded by the viewport, not a ceiling, so it has no **peek** — the screen edge is the cue that more rows follow.
+_Avoid_: Mobile mode / mobile menu, sheet (a partial-height bottom surface), modal / dialog (see above), takeover
+
+**Narrow viewport**:
+The state of the *window* being narrower than the library's single shared threshold — the one condition under which a value-selection field opens a **fullscreen panel**. Measured on the viewport, never on a component's own box: the container-measured `mobile` / `mobileBreakpoint` switches of `c-table`, `c-steps`, `c-login-card` and `c-side-navigation` are compact *component* layouts, a different concept, and keep their grandfathered names.
+_Avoid_: Mobile (names the device, not the state; grandfathered only as those prop names), phone, small screen, breakpoint (the threshold is one value, not a scale of them)
 
 **Stacking band**:
 A library-owned paint-order range that overlay surfaces are assigned to: page content sits below the **modal stack**'s band, toasts sit in a band above it, and the **top layer** sits above everything. Bands are internal — consumers do not interleave with them. Distinct from the **surface ladder**, which is the *colour* elevation model: a modal paints `surface-overlay` regardless of which band it occupies.
@@ -246,6 +263,20 @@ _Avoid_: Base colour, brand colour (ambiguous — a "brand colour" could mean an
 **Tailwind theme export**:
 The consumer-facing `@theme` mapping the library publishes (`@cscfi/csc-ui/css/tailwind-theme.css`) so a consumer's own Tailwind build gains utilities for the **semantic tokens**. Semantic roles **only**, by design — **palette tokens** are excluded because a palette-step utility cannot be mode-aware (ADR-0018). It is a mapping, not a stylesheet: it must be paired with the token definitions (`tokens.css`) to resolve.
 _Avoid_: Tailwind preset/config (Tailwind-v3 vocabulary), theme file (ambiguous with **theme mode** and `applyTheme`)
+
+### App defaults
+
+**App default**:
+A prop value a consumer sets once for every instance of a tag through `applyDefaults({ 'c-text-field': { labelOnTop: true } })` — `labelOnTop` on every text field, one `texts` translation per list field. Live: mounted elements re-render when it changes. It sits between the instance and the **built-in default**: an explicit attribute or property on an element always wins over it. Cleared with `resetDefaults` or by setting the key to `undefined`. See ADR-0048.
+_Avoid_: Global prop / global default (nothing is global — it is per tag and per-instance overridable), preset, config/configuration (collides with Nuxt/Vite config), theme (colour only)
+
+**Built-in default**:
+The value a **defaultable prop** falls back to when neither an explicit instance value nor an **app default** exists — the library's own choice (`labelOnTop` `false`, `size` `'default'`, `itemsPerPage` `6`). It lives in the prop's `@defaultable <built-in>` tag (the documented default in the props table) and in the component's `appDefault('<name>', <built-in>)` call — never in `withDefaults`, which is `undefined` for these props so that "unset" stays observable.
+_Avoid_: Factory default, fallback (too generic), hard-coded default, `withDefaults` value (for a defaultable prop that value is `undefined`)
+
+**Defaultable prop**:
+A preference prop on the allow-list that accepts an **app default**: it carries the `@defaultable` tag in its SFC, appears in the generated `AppDefaults` type and `DEFAULTABLE_PROPS` list, and is badged "app default" in the props table. Preferences qualify (`labelOnTop`, `hideDetails`, `shadow`, `size`, `itemsPerPage`, `texts`); per-instance data (`value`, `label`, `items`) does not. Every defaultable prop resolves through `useAppDefault`: host attribute → own property → app default → built-in.
+_Avoid_: Configurable prop, overridable prop (every prop is overridable per instance), global prop
 
 ### Data visualization
 
@@ -391,6 +422,28 @@ _Avoid_: Framework (TypeScript is not one), consumer (that is the person/app usi
 A checked-in per-**flavor** sibling of a canon example — `<name>.<flavor>.<ext>` beside `<name>.vue`. The Vue SFC stays the canon (ADR-0012): it alone renders as the live demo; variants differ in the source shown, not behavior. Generated from the canon and kept complete by the docs' example-parity check. A canon missing a variant falls back to showing the Vue tab. A variant is usually one file; the TypeScript flavor's is a markup part plus an optional script part shown as stacked panes (ADR-0024).
 _Avoid_: Override (the variant adds a tab; it replaces nothing), translation, port
 
+### Verification
+
+**Behaviour spec**:
+A browser test colocated with one component (`C<Name>.spec.ts` beside the SFC) asserting that component's interaction contract — keyboard, focus, value events, ARIA, upgrade timing — against the registered custom element, never a mounted SFC (ADR-0049).
+_Avoid_: unit test, e2e test, component test (ambiguous between the two)
+
+**Conformance suite**:
+A parametrised browser test that runs the shared contract of one component *kind* over every tag of that kind, enrolling tags automatically from generated data rather than a hand-kept list. Kinds: all components, **value controls**, anchored overlay components.
+_Avoid_: contract test, shared spec, generic test
+
+**Value control**:
+A component that holds a persistent `value` and reports changes through the value events (`update:value` with its `changeValue`/`change` siblings and a bubbling `input`) — the population a plain Vue `v-model` binds to. Emission happens only on user interaction, never when `value` is set programmatically. Includes the **value-selection** fields, the selection controls, `c-text-field`, `c-slider`, `c-tabs`, `c-button-group`, `c-accordion`, `c-modal`, `c-pagination`, `c-otp-input`.
+_Avoid_: value component, form control (a `c-button` is a control but holds no value), input
+
+**Example smoke**:
+The browser run that mounts every canon example from the docs site once and asserts a clean upgrade — no console error or warning, every `c-*` descendant defined. It asserts nothing about behaviour; the canons are fixtures, not specs.
+_Avoid_: docs test, example test, smoke test (unqualified)
+
+**API snapshot**:
+The committed, condensed rendering of the **manifest** (per tag: props, events, methods, slots, parts, states) that a node spec diffs the freshly generated manifest against, so an unintended public-API change fails a test instead of silently changing `custom-elements.json`. The strict analyzer checks the manifest is *consistent*; the API snapshot checks it is *unchanged*.
+_Avoid_: golden file, manifest snapshot, API baseline
+
 ### Flagged ambiguities
 
 - **"Vue version"** is ambiguous: it can mean (a) the retired `@cscfi/csc-ui-vue` directive package, (b) the fact that 4.x components are implemented in Vue, or (c) the Vue.js framework version. Prefer **"`v-control` directive"** for (a), plain **"component"** for (b) — since 4.x there is no other kind — and **"Vue 3"/"Vue 2"** explicitly for (c).
@@ -398,6 +451,7 @@ _Avoid_: Override (the variant adds a tab; it replaces nothing), translation, po
 - **"Tag"** is overloaded: (a) a component's *tag name* (`<c-button>` — the canonical identifier, see **Component**), (b) the **Tag** component `c-tag`, including the tags a **multiple** field renders for its selections (the `tag` part), (c) a docblock tag (`@csspart`). Say **"tag name"** for (a), plain **"tag"** only for (b) — the `max-tags` prop counts these — and **"docblock tag"** for (c).
 - **"Themeable"** (docs copy: "themable") means *re-seedable* — one of the eight **families** a consumer may re-brand (ADR-0011). Restyling one component's colours from consumer CSS is **"recolour via `::part()`"**, never "theming".
 - **"Path"** is overloaded: (a) an SVG path datum (`c-icon`'s `path` prop), (b) a tree-select item's ancestor chain (see **Path**), (c) a URL or file path. Say **"icon path"** for (a), plain **"path"** only in the tree-select sense, and **"URL"** / **"file path"** for (c).
+- **"Default"** is overloaded: (a) a **built-in default** (the library's value for an unset prop), (b) an **app default** (a consumer's per-tag value via `applyDefaults`), (c) the `'default'` member of a size union (`size="default"`), (d) a tailwind-variants `defaultVariants` entry. Say **"built-in default"** and **"app default"** for (a) and (b), **"the `default` size"** for (c), and **"variant default"** for (d).
 
 ## Example dialogue
 

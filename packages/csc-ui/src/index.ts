@@ -208,6 +208,18 @@ export { applyTheme, resetTheme, themeToCss } from './theme/applyTheme';
 
 export type { Family, ThemeSeeds } from './theme/applyTheme';
 
+// App-wide prop defaults (ADR-0048): set a defaultable prop (`@defaultable`
+// in the manifest) for every instance of a tag — `labelOnTop` on every text
+// field, one `texts` translation per list field. Live: mounted elements
+// re-render; an explicit per-instance attribute or property always wins.
+export {
+  applyDefaults,
+  DEFAULTABLE_PROPS,
+  resetDefaults,
+} from './shared/appDefaults';
+
+export type { AppDefaults, DefaultableTag } from './shared/appDefaults';
+
 // Chart tokens as importable data (ADR-0040): the frozen series slots and
 // anatomy roles per theme mode, in `oklch()` with a `#rrggbb` twin for chart
 // libraries that do their own colour maths in sRGB. `themeMode()` resolves

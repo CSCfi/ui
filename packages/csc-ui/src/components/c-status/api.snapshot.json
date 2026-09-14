@@ -1,0 +1,22 @@
+{
+  "attributes": {
+    "type": "'error' | 'info' | 'success' | 'warning'"
+  },
+  "cssProperties": [],
+  "defaultable": [],
+  "events": {},
+  "methods": {},
+  "parts": [
+    "root"
+  ],
+  "propertyOnly": [],
+  "props": {
+    "type": "'error' | 'info' | 'success' | 'warning'"
+  },
+  "slots": [
+    "default"
+  ],
+  "states": [],
+  "subcomponents": [],
+  "tag": "c-status"
+}

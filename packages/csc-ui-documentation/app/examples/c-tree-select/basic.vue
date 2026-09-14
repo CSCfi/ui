@@ -2,8 +2,8 @@
   <div>
     <c-tree-select
       v-model="field"
-      :items.prop="items"
-      :level-labels.prop="levelLabels"
+      :items="items"
+      :level-labels="levelLabels"
       hint="Browse the levels or type to search"
       label="Field of science"
       placeholder="Search by name or code"
