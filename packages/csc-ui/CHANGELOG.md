@@ -1,5 +1,46 @@
 # @cscfi/csc-ui
 
+## 4.0.0-alpha.15
+
+### Minor Changes
+
+- [#275](https://github.com/CSCfi/ui/pull/275) [`5855ff9`](https://github.com/CSCfi/ui/commit/5855ff924450fadbb3267d17b61a2ffeeaae60a5) Thanks [@razorfever](https://github.com/razorfever)! - Add app-wide prop defaults (ADR-0048): `applyDefaults()` sets a preference
+  prop once for every instance of a tag, and `resetDefaults()` clears it.
+
+  - `applyDefaults({ 'c-text-field': { labelOnTop: true } })` makes every text
+    field label on top; `applyDefaults({ 'c-select': { texts } })` translates
+    every select in one call. Later calls merge with earlier ones, a key set to
+    `undefined` clears it, and mounted elements follow live — a locale switch is
+    one call.
+  - Only defaultable props take part, badged "app default" in each component's
+    Properties table and typed as `AppDefaults`: `labelOnTop`, `hideDetails`,
+    `shadow` and `size` on c-text-field, c-select, c-autocomplete and
+    c-tree-select; `itemsPerPage` on the three list fields; `texts` on those
+    three and c-data-table. An unknown tag or prop throws.
+  - An explicit attribute or property on an instance always wins over the app
+    default; `texts` merges key by key over the built-in strings. Both functions
+    are re-exported from `@cscfi/csc-ui-react`.
+
+  Two visible changes for these props: when unset, the element property now
+  reads `undefined` instead of the built-in (`el.labelOnTop`, `el.size`,
+  `el.itemsPerPage`), and the host no longer carries the reflected default
+  attributes `size="default"` / `items-per-page="6"`.
+
+- [#275](https://github.com/CSCfi/ui/pull/275) [`fd4bf56`](https://github.com/CSCfi/ui/commit/fd4bf56ba38095517dc0c9f95fe0bea263d29e5d) Thanks [@razorfever](https://github.com/razorfever)! - Value-selection fields open a fullscreen panel on narrow viewports. Below
+  760px, `c-autocomplete` and `c-tree-select` no longer anchor their panel under
+  the field: it covers the viewport with a heading row (the field's label and a
+  close button), the search input pinned beneath it and the options filling the
+  rest, following the on-screen keyboard so the search stays visible. The page
+  behind the panel is inert until it closes. `c-select`'s existing phone layout
+  now covers the whole viewport (no gaps below the small viewport or at the
+  corners), follows the keyboard the same way and gains the same heading row.
+  The close button's label is the new `closePanel` text; the row exposes the
+  `heading-row`, `heading` and `close` parts.
+
+  Transient panels (`c-menu`, `c-popover`, `c-autocomplete`, `c-tree-select`) no
+  longer close when a scroll or drag gesture starts outside them: light dismiss
+  now needs the press and its release both outside, as for a native popover.
+
 ## 4.0.0-alpha.14
 
 ### Minor Changes
