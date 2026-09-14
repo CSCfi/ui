@@ -265,3 +265,11 @@ All six steps landed on `development` as six commits (each with an empty changes
 `pnpm test` at the root: 17 files, 704 passed, 2 expected fails (pinned deviations), ~80 s sequential in the devcontainer.
 
 Open follow-ups (not in scope here): fix the pinned deviations (each fix removes a list entry / flips an `it.fails`); guard tests of the lint scripts; React wrapper smoke; `runAnalyzer` extraction so the API snapshot needs no CLI spawn; csc-ui ESLint debt before ESLint can join CI; per-arch baselines only if the first CI run shows drift past the 1% tolerance.
+
+## Stabilisation (2026-09-14)
+
+`pnpm test` in `packages/csc-ui` failed intermittently (~3% of file runs) in `CTreeSelect.spec.ts`: a Playwright click on the chevron or the clear button did nothing — no error, focus left on the clicked button, panel closed. Document-level capture and bubble `click` listeners showed the event dispatched to the right target and bubbling unimpeded to the document while none of Vue's listeners on the path ran. Cause: **the devcontainer's wall clock steps backwards by ~135 ms every few seconds** (arm64 VM; measured in Node and in Chromium), and Vue stamps native events with `Date.now()` and drops them in every listener attached at or after the stamp (`createInvoker`, the vuejs/vue#6566 guard). Specs mount and click within ~50 ms, so a step between the two lost the click.
+
+- `src/test/monotonicClock.ts` wraps `Date.now` in `setup.browser.ts`: never decreasing, one millisecond past the last reading over a step, then following real time. `monotonicClock.node.spec.ts` pins the arithmetic; `monotonicClock.spec.ts` reproduces the drop with a stepping fake clock (`inner: 1, outer: 0`) and shows the shim closing it. If the hazard case ever passes, Vue changed the stamp and the shim can go.
+- c-tree-select fixture: the block host collapsed to 46 px in the inline-block stage (field centre on the chevron, panel and `search` baseline pinned to 46 px); it now mounts with `style="width: 320px"` and `open()` asserts the panel opened. Baselines regenerated.
+- `pnpm type-check` had been broken since step 6: `vue-tsc --build` pins `rootDir` to the package, so importing the root `vitest.browser.shared.ts` needs `rootDir: "../.."`; the unhandled-error filter now accepts Vitest's `TestError` shape.

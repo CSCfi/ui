@@ -7,6 +7,12 @@ import './harness.css';
 import { resetDefaults } from '../shared/appDefaults';
 import { resetTheme } from '../theme/applyTheme';
 import { consoleSpy, parkPointer, setThemeMode } from './harness';
+import { monotonicClock } from './monotonicClock';
+
+// The devcontainer's wall clock steps backwards every few seconds and Vue
+// drops any native event stamped before its listener was attached — a click
+// right after a mount would silently do nothing. See monotonicClock.ts.
+Date.now = monotonicClock(Date.now.bind(Date));
 
 // Registration is deliberately NOT done here: `mount()` registers on demand.
 // The dist smoke needs a registry the source build has not touched, and a spec

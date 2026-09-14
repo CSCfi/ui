@@ -54,6 +54,7 @@ Tests run against the **registered custom elements in headless Chromium** (Vites
 - **Behaviour specs** are colocated: `src/components/<c-tag>/C<Name>.spec.ts`. Node-only specs use `*.node.spec.ts`. The shared harness is `packages/csc-ui/src/test/harness.ts` (`mount`, `settle`, `recordEvents`, `matchScreenshotInBothModes`); specs import SFC source, so no build is needed except for the dist smoke and the docs example smoke.
 - **Every `Fix(` PR adds a behaviour spec that fails before the fix.** Every new component ships a colocated spec and a visual baseline per theme mode (`pnpm ui test:update`, commit the PNGs). Conformance suites enrol new tags automatically — fix the component, never opt out.
 - A test fails on any `console.error` or `[Vue warn]`; consume an expected one with `consoleSpy.expect(/…/)`.
+- The browser setup keeps `Date.now()` monotonic (`src/test/monotonicClock.ts`): Vue drops a native event stamped at or before its listener's attach time, and the devcontainer's wall clock steps backwards every few seconds. A click that "does nothing" right after a mount is that, not a component bug.
 - Visual baselines are authored in the devcontainer and compared in CI within a small tolerance. Fonts are pinned to Liberation through `src/test/fonts.conf`; never raise the tolerance to make a token change pass.
 - `playwright` is pinned in `pnpm-workspace.yaml`'s catalog to the Chromium baked into the devcontainer; bump both together.
 

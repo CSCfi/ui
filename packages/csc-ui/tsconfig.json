@@ -12,7 +12,10 @@
     "allowSyntheticDefaultImports": true,
     "types": ["vite/client", "@vitest/browser-playwright"],
     "outDir": "dist",
-    "noEmit": true
+    "noEmit": true,
+    // `vue-tsc --build` pins rootDir to this directory, but the Vitest configs
+    // import the browser block shared with the docs package from the repo root.
+    "rootDir": "../.."
   },
   "include": [
     "src/**/*.ts",

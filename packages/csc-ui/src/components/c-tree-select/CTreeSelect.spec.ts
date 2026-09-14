@@ -61,11 +61,15 @@ const TREE = [
 
 const LEVELS = ['Primary field', 'Secondary field', 'Tertiary field'];
 
+// A realistic field width: in the inline-block stage the block host would
+// otherwise collapse to 46 px, putting the field's centre on the chevron and
+// pinning the panel to that width.
 const mountTree = (
   props: Record<string, unknown> = {},
   items: unknown[] = TREE,
 ) =>
   mount<TreeHost>('c-tree-select', {
+    attrs: { style: 'width: 320px' },
     props: { items, label: 'Field of science', levelLabels: LEVELS, ...props },
   });
 
@@ -92,6 +96,8 @@ const isOpen = (m: Mounted): boolean =>
 const open = async (m: Mounted): Promise<void> => {
   await userEvent.click(m.shadow('c-input'));
   await settle();
+
+  expect(isOpen(m), 'the panel did not open on the field click').toBe(true);
 };
 
 const clickRow = async (m: Mounted, index: number): Promise<void> => {

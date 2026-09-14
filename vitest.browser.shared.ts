@@ -24,8 +24,9 @@ export const FONTS_CONF = path.join(
 export const RESIZE_OBSERVER_NOTICE =
   /ResizeObserver loop completed with undelivered notifications/;
 
-export const ignoreBenignBrowserNotices = (error: Error): boolean =>
-  !RESIZE_OBSERVER_NOTICE.test(error.message);
+export const ignoreBenignBrowserNotices = (error: {
+  message: string;
+}): boolean => !RESIZE_OBSERVER_NOTICE.test(error.message);
 
 /**
  * The browser block every Vitest browser project in the monorepo shares:
