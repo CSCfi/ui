@@ -662,18 +662,20 @@ export interface CDropdownElementEventMap {
    */
   dropdownStateChange: CustomEvent<boolean>;
   /**
-   * Fired when the user selects an option row, carrying the option's name
-   * and value for the parent (c-select) to commit.
-   */
-  selectOption: CustomEvent<{ name: string; value: number | string }>;
-  /**
    * Fired when the select-all row is activated; the parent (c-select) toggles
    * every listed enabled option.
    */
   selectall: CustomEvent<void>;
+  /**
+   * Fired when the user selects an option row, carrying the option's name
+   * and value for the parent (c-select) to commit.
+   */
+  selectOption: CustomEvent<{ name: string; value: number | string }>;
 }
 
-export interface CDropdownElement extends Omit<HTMLElement, 'dropdownItemType' | 'hostId' | 'index' | 'items' | 'itemsPerPage' | 'multiple' | 'parent' | 'selectAllRow' | 'selected' | 'type'> {
+export interface CDropdownElement extends Omit<HTMLElement, 'closeLabel' | 'dropdownItemType' | 'hostId' | 'index' | 'items' | 'itemsPerPage' | 'label' | 'multiple' | 'parent' | 'selectAllRow' | 'selected' | 'type'> {
+  /** Accessible label of the fullscreen panel's close button (narrow viewports) */
+  closeLabel?: string;
   /** Whether items are <c-option> elements or plain objects */
   dropdownItemType?: 'item' | 'option';
   /** Id used to build option/announce element ids */
@@ -684,6 +686,8 @@ export interface CDropdownElement extends Omit<HTMLElement, 'dropdownItemType' |
   items?: ArrayLike<DropdownItem>;
   /** Items per page before adding scroll */
   itemsPerPage?: number;
+  /** The parent field's label, shown as the fullscreen panel's heading (narrow viewports) */
+  label?: string;
   /**
    * Multi-select mode: rows toggle instead of committing, each carries a
    * decorative checkbox indicator, and the listbox is `aria-multiselectable`

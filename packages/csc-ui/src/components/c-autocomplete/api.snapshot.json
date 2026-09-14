@@ -43,6 +43,9 @@
   },
   "parts": [
     "card",
+    "close",
+    "heading",
+    "heading-row",
     "indicator",
     "info",
     "item",

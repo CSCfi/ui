@@ -40,6 +40,9 @@
     "reset": "()"
   },
   "parts": [
+    "close",
+    "heading",
+    "heading-row",
     "indicator",
     "item",
     "list",

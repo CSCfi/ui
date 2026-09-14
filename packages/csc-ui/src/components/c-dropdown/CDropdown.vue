@@ -11,12 +11,21 @@
 
   <dialog
     ref="dialogRef"
-    :class="[ui.dialog(), isMobile ? 'mobile' : '']"
+    :class="[ui.dialog(), fullscreenOpen ? 'fullscreen' : '']"
     part="menu"
     tabindex="-1"
     @cancel="close"
   >
-    <div @click.stop>
+    <div :class="ui.inner()" @click.stop>
+      <!-- Fullscreen panel (CONTEXT.md, ADR-0050): the heading row — the
+           field's label and a close button — above the moved field. -->
+      <panel-heading-row
+        v-if="fullscreenOpen"
+        :close-label
+        :heading="label"
+        @close="onHeadingClose"
+      />
+
       <div
         :id="'announce-' + hostId"
         :class="ui.visuallyHidden()"
@@ -35,7 +44,7 @@
         ref="listRef"
         :aria-expanded="isOpen"
         :aria-multiselectable="multiple ? 'true' : undefined"
-        :class="[ui.list(), isOpen ? 'active' : '', isMobile ? 'mobile' : '']"
+        :class="[ui.list(), isOpen ? 'active' : '']"
         part="list"
         role="listbox"
         tabindex="-1"
@@ -50,10 +59,10 @@
           :aria-selected="selectAllRow.state === 'all'"
           :class="dropdown({ selectAll: true }).item()"
           :data-name="selectAllRow.label"
-          data-select-all
           part="select-all"
           role="option"
           tabindex="-1"
+          data-select-all
           @click="onSelectAll"
         >
           <selection-indicator
@@ -160,6 +169,9 @@
  * @slot default - The anchor c-input of the parent select / autocomplete, rendered inline while the menu is closed
  *
  * @csspart menu - The positioned dialog surface holding the field and the list
+ * @csspart heading-row - The top row of the fullscreen panel (narrow viewports): the field label as heading and the close button
+ * @csspart heading - The field label naming the fullscreen panel
+ * @csspart close - The close button of the fullscreen panel
  * @csspart list - The scrolling listbox
  * @csspart item - One option row
  * @csspart select-all - The pinned select-all row at the top of the list in `multiple` mode; carries the same indicator / mark parts as an option row
@@ -182,10 +194,17 @@ import {
 
 import { coerceBoolean } from '../../shared/coerceBoolean';
 import { optionLabel } from '../../shared/optionLabel';
+import PanelHeadingRow from '../../shared/PanelHeadingRow.vue';
 import { applyPeekCap } from '../../shared/peekCap';
 import { SELECT_ALL_INDEX } from '../../shared/selectAll';
 import SelectionIndicator from '../../shared/SelectionIndicator.vue';
 import { useHostEmit } from '../../shared/useHostEmit';
+import { useNarrowViewport } from '../../shared/useNarrowViewport';
+import {
+  applyFullscreenBox,
+  type StopTracking,
+  trackVisualViewport,
+} from '../../shared/visualViewport';
 
 /** Events dispatched by `<c-dropdown>`. */
 interface CDropdownEvents {
@@ -195,15 +214,15 @@ interface CDropdownEvents {
    */
   dropdownStateChange: boolean;
   /**
-   * Fired when the user selects an option row, carrying the option's name
-   * and value for the parent (c-select) to commit.
-   */
-  selectOption: { name: string; value: number | string };
-  /**
    * Fired when the select-all row is activated; the parent (c-select) toggles
    * every listed enabled option.
    */
   selectall: void;
+  /**
+   * Fired when the user selects an option row, carrying the option's name
+   * and value for the parent (c-select) to commit.
+   */
+  selectOption: { name: string; value: number | string };
 }
 
 /**
@@ -218,12 +237,12 @@ interface CDropdownEvents {
  * What can't be a utility stays in the escape-hatch <style> below:
  * the host box (`:host{display:block;position:relative}`), the imperative
  * state-class hooks the JS toggles (`ul.active` visibility + fade-in keyframe,
- * `.mobile` full-screen layout, `.input-bottom-wrapper.active` padding),
+ * the fullscreen panel's `.input-top-wrapper` padding, `.input-bottom-wrapper.active` padding),
  * the `li span / li c-option-value` ellipsis rules (those nodes are injected
  * via `v-html`, so Vue can't put a class on them), and the keyframe.
  */
 const dropdown = tv({
-  defaultVariants: { disabled: false, selectAll: false },
+  defaultVariants: { disabled: false, fullscreen: false, selectAll: false },
   slots: {
     // The single-mode selected-row check: trails the label (`ml-auto`) and
     // takes the row's colour (`fill-current`), so a disabled row greys it too.
@@ -232,9 +251,11 @@ const dropdown = tv({
     // top/left/width/maxHeight the JS writes inline drive placement.
     dialog:
       'rounded border-0 bg-transparent m-0 mt-[-4px] p-0 pt-1 overflow-visible fixed',
+    // The wrapper inside the dialog; a flex column in the fullscreen layout.
+    inner: '',
     item: 'flex items-center flex-nowrap gap-3 cursor-pointer text-sm min-h-[42px] outline-none px-[10px] py-2 pointer-events-auto whitespace-nowrap w-full rounded select-none hover:bg-primary-subtle hover:text-primary hover:ring-1 hover:ring-inset hover:ring-primary focus:bg-primary-subtle focus:text-primary focus:ring-1 focus:ring-inset focus:ring-primary aria-selected:bg-primary-subtle aria-selected:text-primary aria-selected:rounded-none hover:aria-selected:rounded focus:aria-selected:rounded',
-    // Static list look; visibility + fade-in (`.active`) and the mobile
-    // full-screen layout stay in the escape-hatch <style>.
+    // Static list look; visibility + fade-in (`.active`) stay in the
+    // escape-hatch <style>.
     list: 'list-none m-0 p-0 outline-none pointer-events-auto w-full h-max overflow-y-auto scrollbar-hidden rounded bg-surface-overlay text-on-surface shadow-[2px_4px_10px_#00000029] overscroll-none',
     visuallyHidden:
       'absolute w-px h-px p-0 overflow-hidden border-0 [clip:rect(1px,1px,1px,1px)]',
@@ -249,6 +270,18 @@ const dropdown = tv({
         item: 'cursor-default pointer-events-none bg-on-surface/5 [filter:grayscale(1)_opacity(0.75)] aria-selected:bg-on-surface/5 aria-selected:text-inherit aria-selected:ring-0 aria-selected:rounded',
       },
     },
+    // The fullscreen panel (CONTEXT.md, ADR-0050): the dialog is the
+    // viewport's box — no radius, top inset or UA max size, an opaque
+    // surface — and the inner column hands the list what the heading row
+    // and the moved field leave.
+    fullscreen: {
+      true: {
+        dialog:
+          'rounded-none mt-0 pt-0 max-w-none max-h-none bg-surface-overlay',
+        inner: 'flex flex-col h-full min-h-0',
+        list: 'flex-1 min-h-0 h-auto rounded-none shadow-none',
+      },
+    },
     // The pinned select-all row (ADR-0046): sticks to the list's top edge on
     // an opaque fill with a hairline below. `z-10` is load-bearing — the
     // positioned row indicators that scroll beneath it come later in tree
@@ -261,7 +294,7 @@ const dropdown = tv({
   },
 });
 
-const ui = computed(() => dropdown());
+const ui = computed(() => dropdown({ fullscreen: fullscreenOpen.value }));
 
 // Three root nodes (slot, dummy, dialog) means Vue can't auto-inherit
 // fallthrough attrs — opt out so an extraneous attribute on the c-dropdown
@@ -282,6 +315,12 @@ type CDropdownItemType = 'item' | 'option';
 type CDropdownParentType = 'autocomplete' | 'select';
 
 interface CDropdownProps {
+  /**
+   * Accessible label of the fullscreen panel's close button (narrow viewports)
+   *
+   * @freeform
+   */
+  closeLabel?: string;
   /** Whether items are <c-option> elements or plain objects */
   dropdownItemType?: CDropdownItemType;
   /**
@@ -296,6 +335,12 @@ interface CDropdownProps {
   items?: ArrayLike<DropdownItem>;
   /** Items per page before adding scroll */
   itemsPerPage?: number;
+  /**
+   * The parent field's label, shown as the fullscreen panel's heading (narrow viewports)
+   *
+   * @freeform
+   */
+  label?: string;
   /**
    * Multi-select mode: rows toggle instead of committing, each carries a
    * decorative checkbox indicator, and the listbox is `aria-multiselectable`
@@ -318,14 +363,6 @@ interface CDropdownProps {
   type?: CDropdownParentType;
 }
 
-type DropdownItem = {
-  disabled?: boolean | string;
-  name: string;
-  outerHTML?: string;
-  selected?: boolean;
-  value: number | string;
-};
-
 /**
  * The select-all row as the parent computes it (ADR-0046): the label, the
  * indicator's tri-state and the counts the live region speaks.
@@ -337,12 +374,22 @@ interface CDropdownSelectAllRow {
   total: number;
 }
 
+type DropdownItem = {
+  disabled?: boolean | string;
+  name: string;
+  outerHTML?: string;
+  selected?: boolean;
+  value: number | string;
+};
+
 const props = withDefaults(defineProps<CDropdownProps>(), {
+  closeLabel: 'Close',
   dropdownItemType: 'item',
   hostId: '',
   index: null,
   items: () => [],
   itemsPerPage: 0,
+  label: '',
   multiple: false,
   parent: null,
   selectAllRow: null,
@@ -392,7 +439,15 @@ const isOpen = ref(false);
 
 const statusText = ref('');
 
-const isMobile = ref(false);
+// The shared narrow-viewport predicate (CONTEXT.md "Narrow viewport",
+// ADR-0050) decides the layout at open; `fullscreenOpen` is that choice for
+// the current open — the heading row, the `fullscreen` classes and the list
+// cap key off it.
+const narrow = useNarrowViewport();
+
+const fullscreenOpen = ref(false);
+
+let stopViewport: null | StopTracking = null;
 
 const openedOnTop = ref(false);
 
@@ -427,12 +482,6 @@ const itemsArray = computed<DropdownItem[]>(() => {
 
   return it ? (Array.from(it) as DropdownItem[]) : [];
 });
-
-const setIsMobile = () => {
-  isMobile.value = window.matchMedia(
-    'only screen and (max-width: 760px)',
-  ).matches;
-};
 
 // ---- events -------------------------------------------------------------
 
@@ -553,11 +602,28 @@ const positionMenu = () => {
 
   const { innerHeight, innerWidth } = window;
 
-  dialog.style.width = 'auto';
-  // Drop a previous open's viewport-fit cap before measuring afresh.
+  const fullscreen = narrow.value;
+
+  fullscreenOpen.value = fullscreen;
+
+  // Drop a previous open's placement and viewport-fit cap before measuring
+  // afresh.
   dialog.style.maxHeight = '';
+  dialog.style.height = '';
+  dialog.style.inset = '';
+  dialog.style.width = 'auto';
   dialogCeiling = Infinity;
   dialog.style.opacity = '0';
+
+  if (fullscreen) {
+    // The fullscreen panel is the visual viewport's box, followed while open
+    // so the heading row and the field stay above the on-screen keyboard.
+    stopViewport?.();
+    stopViewport = trackVisualViewport((box) => {
+      if (dialogRef.value) applyFullscreenBox(dialogRef.value, box);
+    });
+  }
+
   dialog.showModal();
 
   requestAnimationFrame(() => {
@@ -573,7 +639,7 @@ const positionMenu = () => {
     inputSize.height = size.height;
     inputSize.width = size.width;
 
-    if (!isMobile.value) {
+    if (!fullscreen) {
       dialog.style.width = `${width}px`;
       dialog.style.top = `${size.top}px`;
       dialog.style.bottom = 'auto';
@@ -711,6 +777,11 @@ const close = () => {
   dialog.close();
   dialogCeiling = Infinity;
   isOpen.value = false;
+  stopViewport?.();
+  stopViewport = null;
+  fullscreenOpen.value = false;
+  dialog.style.height = '';
+  dialog.style.inset = '';
 
   if (inputElement) {
     // Vue's defineCustomElement compiles `<slot name="default" />` to an
@@ -731,6 +802,17 @@ const close = () => {
     window.removeEventListener('click', outsideClickFn);
     dialog.removeEventListener('click', outsideClickFn);
   }
+};
+
+// The fullscreen panel's close button: close, then put focus back on the
+// parent's field once the moved input is home again.
+const onHeadingClose = () => {
+  close();
+  requestAnimationFrame(() => {
+    (props.parent as HTMLElement | null)?.shadowRoot
+      ?.querySelector('input')
+      ?.focus();
+  });
 };
 
 const setStatusText = (text: string) => {
@@ -813,8 +895,8 @@ watch(isOpen, (value) => {
 // The list hides its scrollbar, so when it overflows it must end on a
 // half-visible row — the peek: `itemsPerPage` full rows first, and never past
 // what the dialog's viewport-fit cap leaves it. Measured from the real rows,
-// so taller <c-option> content sizes correctly. The mobile sheet fills the
-// screen and takes no cap.
+// so taller <c-option> content sizes correctly. A fullscreen panel's list is
+// bounded by the viewport, not a ceiling, and takes no cap (ADR-0050).
 const applyListCap = () => {
   const list = listRef.value;
 
@@ -822,7 +904,7 @@ const applyListCap = () => {
 
   if (!list || !dialog) return;
 
-  if (isMobile.value) {
+  if (fullscreenOpen.value) {
     list.style.maxHeight = '';
 
     return;
@@ -847,7 +929,7 @@ const applyListCap = () => {
 // (a `flush: 'post'` watcher can still run ahead of the patch).
 let capFrame = 0;
 
-watch([itemsArray, isMobile, () => !!props.selectAllRow], () => {
+watch([itemsArray, narrow, () => !!props.selectAllRow], () => {
   if (!isOpen.value) return;
 
   cancelAnimationFrame(capFrame);
@@ -859,14 +941,12 @@ watch([itemsArray, isMobile, () => !!props.selectAllRow], () => {
 
 onMounted(() => {
   if (!host) return;
-  setIsMobile();
   inputElement = host.querySelector('c-input') as typeof inputElement;
 
   resizeObserver = new ResizeObserver((entries) => {
     if (!dialogRef.value?.open) return;
     requestAnimationFrame(() => {
       if (!Array.isArray(entries) || !entries.length || isOpening) return;
-      setIsMobile();
       close();
     });
   });
@@ -877,6 +957,8 @@ onMounted(() => {
 
 onBeforeUnmount(() => {
   resizeObserver?.disconnect();
+  stopViewport?.();
+  stopViewport = null;
 
   if (debounce !== null) clearTimeout(debounce);
 
@@ -900,10 +982,10 @@ onBeforeUnmount(() => {
       target the host.
     - `li c-option-value` ellipsis — those nodes come from `v-html`
       (option outerHTML), unreachable by a class; `li span` shares the rule.
-    - Imperative state-class hooks the JS/positioning toggles: `dialog.mobile`
-      full-screen layout, `ul.active` visibility + the `fade-in` reveal, the
-      mobile list sizing, and the `.input-*-wrapper` paddings — these are
-      contextual selectors and an animation that utilities don't cover.
+    - Imperative state-class hooks the JS/positioning toggles: `ul.active`
+      visibility + the `fade-in` reveal and the `.input-*-wrapper` paddings
+      (the fullscreen one keyed on `dialog.fullscreen`) — contextual
+      selectors and an animation that utilities don't cover.
     - `dialog::backdrop` (a native pseudo-element) and the `.dummy` placeholder
       (`display:none`; its size is set inline by the positioning code).
 -->
@@ -917,16 +999,7 @@ dialog::backdrop {
   opacity: 0;
 }
 
-dialog[open].mobile {
-  background-color: var(--c-surface-overlay);
-  width: 100vw;
-  max-width: 100vw;
-  height: 100vh;
-  max-height: 100svh;
-  inset: 0;
-}
-
-dialog[open].mobile .input-top-wrapper {
+dialog[open].fullscreen .input-top-wrapper {
   padding: 8px;
 }
 
@@ -946,13 +1019,6 @@ ul {
 ul.active {
   visibility: visible;
   animation: 0.2s 1 fade-in cubic-bezier(0.25, 0.8, 0.5, 1);
-}
-
-ul.active.mobile {
-  width: 100vw;
-  max-width: 100vw;
-  height: 100vh;
-  max-height: calc(100svh - 60px);
 }
 
 /* The row's label wrapper (`v-html`-injected option markup, or the plain

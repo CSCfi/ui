@@ -4,6 +4,8 @@ status: accepted
 
 # Designated triggers on the overlay family, and the popover chain for nested `c-popover`s
 
+> Amended by ADR-0050: the chain's light dismiss pairs the press with its release; a member survives when either landed inside it.
+
 Two related extensions to the anchored overlay components. First, a **trigger**
 no longer has to be slotted: every overlay component with a `trigger` slot
 (`c-popover`, `c-menu`, `c-tooltip`) also accepts a `trigger` prop — a document

@@ -117,6 +117,10 @@ _Avoid_: Hint, title (the native attribute), popup
 The click-opened, **non-modal** interactive surface component anchored to its **trigger** — light-dismissed, never trapping focus (ADR-0033); blocking flows go to `c-modal`, plain hints to `c-tooltip`. Distinct from the lowercase *native popover*, which is the browser mechanism: any element put in the **top layer** via the Popover API (menu panels, autocomplete panels, and tooltips are all native popovers; only `c-popover` is the Popover *component*).
 _Avoid_: Flyout, popup, overlay (as a name for this component)
 
+**Light dismiss**:
+Closing a transient surface — a **transient list panel**, `c-popover`, a **fullscreen panel** never — because the user pressed *and released* the pointer outside it, mirroring the native Popover API's rule. A press alone is not a dismissal: a scroll or drag that starts outside the surface leaves it open. Escape is a separate close path, not light dismiss. Modals have their own **dismissable** contract (backdrop click and Escape together) and are not light-dismissed.
+_Avoid_: Click-outside / outside click (the trigger is the press-release pair, and it works for touch), auto-close, blur-close
+
 **Popover chain**:
 The ordered set of currently open `c-popover`s, each logically nested in the one before it — a popover joins the chain when its **trigger** sits inside an open popover's panel, and replaces the chain otherwise, so siblings never coexist. Escape peels the innermost popover, one per press; light dismiss closes every popover that does not logically contain the pointer event; closing a popover closes its descendants. Containment is logical (the trigger relationship), not DOM ancestry — a popover whose host lives elsewhere still chains under the popover holding its trigger. Distinct from the **modal stack**: chain members below the innermost stay interactive, nothing goes inert.
 _Avoid_: Popover stack (reserve _stack_ for the modal stack's inert-lower-layers contract), nested popups
@@ -125,9 +129,22 @@ _Avoid_: Popover stack (reserve _stack_ for the modal stack's inert-lower-layers
 The browser-managed paint layer above every author stacking context — nothing an author z-indexes can paint above it, and while a *modal dialog* occupies it the rest of the document is inert. In this library only **transient** surfaces live there, as native popovers: the menu family, the autocomplete and tree-select panels, `c-tooltip`, and `c-popover` (ADR-0008). Modals deliberately do **not** (ADR-0014) — a top-layer modal would paint over and inert the toasts.
 _Avoid_: Overlay (an overlay is any floating surface; the top layer is a specific browser mechanism), portal
 
+**Transient list panel**:
+The floating list surface a component reveals on demand and closes on dismissal — a `c-menu` or **submenu** panel, `c-dropdown`'s listbox behind `c-select`, `c-autocomplete`'s options list, `c-tree-select`'s level and results lists. It lives in the **top layer**, hides its scrollbar and shows a **peek** (ADR-0043). Persistent scroll containers (data table, side navigation, page, card) are not transient list panels; `c-popover`'s panel is transient but carries no list.
+_Avoid_: Dropdown (the component), menu (the component), popup, overlay, flyout
+
 **Peek**:
 The half-visible last row of an overflowing **transient list panel** — a `c-menu` or **submenu** panel, `c-dropdown`'s listbox behind `c-select`, `c-autocomplete`'s options list, or `c-tree-select`'s level and results lists. Those panels hide their scrollbar, so the peek is the sole cue that more rows follow: an overflowing panel always ends at a row's midpoint (the `itemsPerPage`-th row where that prop caps the list, otherwise the last row under the panel's ceiling), never on a row boundary. Persistent scroll containers (data table, side navigation, page, card) keep native scrollbars and have no peek; `c-popover` has no scroll container at all.
 _Avoid_: Scroll hint, teaser, fade / scroll shadow (a peek is never a gradient), affordance
+
+**Fullscreen panel**:
+The viewport-filling layout a value-selection field's **transient list panel** — `c-dropdown`'s listbox behind `c-select`, `c-autocomplete`'s panel, `c-tree-select`'s panel — adopts on a **narrow viewport**: instead of anchoring under the **value field**, the panel covers the whole viewport, opening with a **heading row** — the field's label as the panel's **heading** plus a close control — above the **search input** (where the component has one) and the list. The anchored layout and the fullscreen panel are one panel in two layouts, never two components; menus, tooltips and `c-popover` have no fullscreen panel.
+While it is open the page behind it is inert and scroll-locked (toasts excepted), yet it is not a `c-modal`: it joins no **modal stack** and paints no backdrop. Its list is bounded by the viewport, not a ceiling, so it has no **peek** — the screen edge is the cue that more rows follow.
+_Avoid_: Mobile mode / mobile menu, sheet (a partial-height bottom surface), modal / dialog (see above), takeover
+
+**Narrow viewport**:
+The state of the *window* being narrower than the library's single shared threshold — the one condition under which a value-selection field opens a **fullscreen panel**. Measured on the viewport, never on a component's own box: the container-measured `mobile` / `mobileBreakpoint` switches of `c-table`, `c-steps`, `c-login-card` and `c-side-navigation` are compact *component* layouts, a different concept, and keep their grandfathered names.
+_Avoid_: Mobile (names the device, not the state; grandfathered only as those prop names), phone, small screen, breakpoint (the threshold is one value, not a scale of them)
 
 **Stacking band**:
 A library-owned paint-order range that overlay surfaces are assigned to: page content sits below the **modal stack**'s band, toasts sit in a band above it, and the **top layer** sits above everything. Bands are internal — consumers do not interleave with them. Distinct from the **surface ladder**, which is the *colour* elevation model: a modal paints `surface-overlay` regardless of which band it occupies.

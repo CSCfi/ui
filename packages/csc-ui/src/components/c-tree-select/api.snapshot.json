@@ -38,9 +38,12 @@
   "parts": [
     "breadcrumb",
     "card",
+    "close",
     "code",
     "crumb",
     "header",
+    "heading",
+    "heading-row",
     "info",
     "item",
     "list",

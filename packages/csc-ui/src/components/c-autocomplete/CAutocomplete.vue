@@ -138,7 +138,23 @@
     popover="manual"
     @toggle="onToggle"
   >
-    <div ref="cardRef" :class="ui.card()" part="card">
+    <div
+      ref="cardRef"
+      :aria-label="layout === 'fullscreen' ? label || undefined : undefined"
+      :aria-modal="layout === 'fullscreen' ? 'true' : undefined"
+      :class="ui.card()"
+      :role="layout === 'fullscreen' ? 'dialog' : undefined"
+      part="card"
+    >
+      <!-- Fullscreen panel (CONTEXT.md, ADR-0050): the heading row — label
+           and close button — is the phone user's exit besides picking. -->
+      <panel-heading-row
+        v-if="layout === 'fullscreen'"
+        :close-label="t.closePanel"
+        :heading="label"
+        @close="closePanel(true)"
+      />
+
       <div
         :id="`${id}-status`"
         :class="ui.visuallyHidden()"
@@ -192,10 +208,10 @@
           :aria-selected="selectAllRowState === 'all'"
           :class="autocomplete({ selectAll: true }).item()"
           :data-active="isSelectAllActive || undefined"
-          data-select-all
           part="select-all"
           role="option"
           tabindex="-1"
+          data-select-all
           @click="onSelectAll"
           @mousedown.prevent
           @pointermove="activeIndex = SELECT_ALL_ROW"
@@ -457,6 +473,8 @@ export interface CAutocompleteProps {
 export interface CAutocompleteTexts {
   /** Accessible label of the clear button. */
   clearSelection?: string;
+  /** Accessible label of the close button in the fullscreen panel (narrow viewports). */
+  closePanel?: string;
   /** Accessible label of the search input inside the panel. */
   filterOptions?: string;
   /** Text of the loading row shown while `loading` with nothing to list. */
@@ -509,6 +527,9 @@ export type CAutocompleteValue =
  *
  * @csspart panel - The top-layer popover container anchored below the field
  * @csspart card - The elevated surface inside the panel holding the search row and the list
+ * @csspart heading-row - The top row of the fullscreen panel (narrow viewports): the field label as heading and the close button
+ * @csspart heading - The field label naming the fullscreen panel
+ * @csspart close - The close button of the fullscreen panel
  * @csspart search - The search-input row at the top of the panel
  * @csspart list - The scrollable options listbox
  * @csspart item - One option row in the list
@@ -546,12 +567,14 @@ import { useAppDefault } from '../../shared/appDefaults';
 import { coerceBoolean } from '../../shared/coerceBoolean';
 import { emitModelValue } from '../../shared/emitModelValue';
 import { optionLabel, optionValueElement } from '../../shared/optionLabel';
+import PanelHeadingRow from '../../shared/PanelHeadingRow.vue';
 import { applyPeekCap } from '../../shared/peekCap';
 import { selectAllState, toggleAllValues } from '../../shared/selectAll';
 import SelectionIndicator from '../../shared/SelectionIndicator.vue';
 import { type MatchSegment, splitMatches } from '../../shared/splitMatches';
 import { useAnchoredPanel } from '../../shared/useAnchoredPanel';
 import { useHostEmit } from '../../shared/useHostEmit';
+import { useNarrowViewport } from '../../shared/useNarrowViewport';
 import { useStatusAnnouncer } from '../../shared/useStatusAnnouncer';
 
 /** Events dispatched by `<c-autocomplete>`. */
@@ -612,6 +635,7 @@ const autocomplete = tv({
   defaultVariants: {
     chevronActive: false,
     disabled: false,
+    fullscreen: false,
     inputHidden: false,
     selectAll: false,
   },
@@ -653,6 +677,23 @@ const autocomplete = tv({
         item: 'cursor-default pointer-events-none bg-on-surface/5 [filter:grayscale(1)_opacity(0.75)] data-[active]:bg-on-surface/5 data-[active]:text-inherit data-[active]:ring-0',
       },
     },
+    // The fullscreen panel (CONTEXT.md, ADR-0050): the card fills the
+    // viewport-sized panel edge to edge and the list takes what the rows
+    // above leave, scrolling inside it.
+    fullscreen: {
+      true: {
+        card: 'h-full max-h-none rounded-none shadow-none',
+        list: 'flex-1 min-h-0',
+      },
+    },
+    // While tags render, the readonly combobox is visually hidden (clip) but
+    // stays focusable and keeps its value for assistive technology.
+    inputHidden: {
+      true: {
+        input:
+          'absolute w-px h-px p-0 m-0 overflow-hidden whitespace-nowrap border-0 [clip:rect(0_0_0_0)]',
+      },
+    },
     // The pinned select-all row (ADR-0046): sticks to the list's top edge on
     // an opaque fill with a hairline below. The list drops its top inset while
     // the row is shown (Chromium sticks inside a scroll container's padding,
@@ -664,14 +705,6 @@ const autocomplete = tv({
       true: {
         item: 'sticky top-0 z-10 -mx-1 mb-1 w-auto px-[14px] rounded-none bg-surface-overlay border-b border-solid border-divider',
         list: 'pt-0',
-      },
-    },
-    // While tags render, the readonly combobox is visually hidden (clip) but
-    // stays focusable and keeps its value for assistive technology.
-    inputHidden: {
-      true: {
-        input:
-          'absolute w-px h-px p-0 m-0 overflow-hidden whitespace-nowrap border-0 [clip:rect(0_0_0_0)]',
       },
     },
   },
@@ -726,6 +759,7 @@ const appDefault = useAppDefault('c-autocomplete', props);
 
 const DEFAULT_TEXTS: Required<CAutocompleteTexts> = {
   clearSelection: 'Clear selection',
+  closePanel: 'Close',
   filterOptions: 'Filter options',
   loading: 'Loading',
   more: (count) => `+${count} more`,
@@ -826,6 +860,7 @@ const multipleOn = computed(() =>
 const ui = computed(() =>
   autocomplete({
     chevronActive: isOpen.value,
+    fullscreen: layout.value === 'fullscreen',
     inputHidden: tagsShown.value,
     selectAll: selectAllShown.value,
   }),
@@ -843,6 +878,14 @@ const applyListCap = () => {
   const card = cardRef.value;
 
   if (!list || !card) return;
+
+  // A fullscreen panel's list is bounded by the viewport, not a ceiling —
+  // no peek cap; drop one a previous anchored open left (ADR-0050).
+  if (layout.value === 'fullscreen') {
+    list.style.maxHeight = '';
+
+    return;
+  }
 
   const cardMax = parseFloat(getComputedStyle(card).maxHeight);
 
@@ -1273,6 +1316,10 @@ defineExpose({ reset });
 
 // ---- open / close -------------------------------------------------------
 
+// The shared narrow-viewport predicate: below it the panel opens as a
+// fullscreen panel (CONTEXT.md "Fullscreen panel", ADR-0050).
+const narrow = useNarrowViewport();
+
 // The anchored-panel lifecycle (anchor + popover + light dismiss + focus
 // return) is the shared composable; the hooks run synchronously inside the
 // native `toggle` handler, so `change:query` still fires within that event.
@@ -1280,6 +1327,7 @@ const {
   anchorStyle,
   close: closePanel,
   isOpen,
+  layout,
   onToggle,
   open: openPanel,
   panelStyle,
@@ -1287,6 +1335,7 @@ const {
   anchor: anchorRef,
   disabled: () => props.disabled,
   field: cInputRef,
+  fullscreen: narrow,
   host,
   onClosed: () => {
     activeIndex.value = -1;

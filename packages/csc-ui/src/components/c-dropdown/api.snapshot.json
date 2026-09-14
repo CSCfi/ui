@@ -1,10 +1,12 @@
 {
   "attributes": {
+    "close-label": "string = 'Close'",
     "dropdown-item-type": "'item' | 'option' = 'item'",
     "host-id": "string = ''",
     "index": "null | number = null",
     "items": "ArrayLike<DropdownItem> = () => []",
     "items-per-page": "number = 0",
+    "label": "string = ''",
     "multiple": "boolean = false",
     "parent": "HTMLElement | null = null",
     "select-all-row": "CDropdownSelectAllRow | null = null",
@@ -26,6 +28,9 @@
     "updateList": "(reset = false)"
   },
   "parts": [
+    "close",
+    "heading",
+    "heading-row",
     "indicator",
     "item",
     "list",
@@ -37,11 +42,13 @@
     "selected"
   ],
   "props": {
+    "closeLabel": "string = 'Close'",
     "dropdownItemType": "'item' | 'option' = 'item'",
     "hostId": "string = ''",
     "index": "null | number = null",
     "items": "ArrayLike<DropdownItem> = () => []",
     "itemsPerPage": "number = 0",
+    "label": "string = ''",
     "multiple": "boolean = false",
     "parent": "HTMLElement | null = null",
     "selectAllRow": "CDropdownSelectAllRow | null = null",

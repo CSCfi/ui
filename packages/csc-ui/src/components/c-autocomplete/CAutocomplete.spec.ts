@@ -5,8 +5,8 @@
  * after a query rebuilt the rows.
  */
 import { mdiCheck, mdiClose } from '@mdi/js';
-import { describe, expect, it } from 'vitest';
-import { userEvent } from 'vitest/browser';
+import { afterEach, describe, expect, it } from 'vitest';
+import { page, userEvent } from 'vitest/browser';
 
 import type { Mounted } from '../../test/harness';
 
@@ -19,6 +19,7 @@ import {
   mount,
   recordEvents,
   settle,
+  settled,
   wrap,
 } from '../../test/harness';
 
@@ -304,5 +305,138 @@ describe('peek', () => {
 
     expect(rows(m)).toHaveLength(1);
     expect(ul.style.maxHeight).toBe('');
+  });
+});
+
+// CONTEXT.md "Fullscreen panel", "Narrow viewport"; ADR-0050. The browser
+// project's viewport is the desktop one (vitest.browser.shared.ts); every
+// case here resizes it and restores it, the page being shared across specs.
+describe('fullscreen panel', () => {
+  const DESKTOP = { height: 800, width: 1280 };
+
+  const PHONE = { height: 740, width: 360 };
+
+  afterEach(async () => {
+    await page.viewport(DESKTOP.width, DESKTOP.height);
+  });
+
+  const outsideButton = (): HTMLButtonElement => {
+    const button = document.createElement('button');
+
+    button.textContent = 'page';
+    document.body.append(button);
+
+    return button;
+  };
+
+  const openField = async (m: Mounted): Promise<void> => {
+    await userEvent.click(m.shadow('c-input'));
+    // Past the panel's 120ms fade-in before measuring boxes.
+    await settled();
+  };
+
+  it('covers the viewport with a heading row and a dialog role, locking the page behind it', async () => {
+    await page.viewport(PHONE.width, PHONE.height);
+
+    const sibling = outsideButton();
+
+    const m = await mountAuto();
+
+    await openField(m);
+
+    const panel = m.part('panel');
+
+    expect(panel.matches(':popover-open')).toBe(true);
+
+    const rect = panel.getBoundingClientRect();
+
+    expect(rect.left).toBe(0);
+    expect(rect.top).toBe(0);
+    expect(rect.width).toBe(document.documentElement.clientWidth);
+    expect(rect.height).toBe(window.innerHeight);
+
+    const card = m.part('card');
+
+    expect(card.getAttribute('role')).toBe('dialog');
+    expect(card.getAttribute('aria-modal')).toBe('true');
+    expect(card.getAttribute('aria-label')).toBe('Language');
+    expect(m.part('heading').textContent?.trim()).toBe('Language');
+    expect(m.part('close').getAttribute('aria-label')).toBe('Close');
+
+    expect(sibling.inert, 'the page behind the panel').toBe(true);
+    expect(m.host.inert).toBe(false);
+    expect(document.documentElement.style.overflow).toBe('hidden');
+
+    expect(deepActiveElement()).toBe(m.shadow('[part~="search"] input'));
+  });
+
+  it('the close button closes, releases the page and returns focus to the field', async () => {
+    await page.viewport(PHONE.width, PHONE.height);
+
+    const sibling = outsideButton();
+
+    const m = await mountAuto();
+
+    await openField(m);
+    await userEvent.click(m.part('close'));
+    await settle();
+
+    expect(m.part('panel').matches(':popover-open')).toBe(false);
+    expect(sibling.inert).toBe(false);
+    expect(document.documentElement.style.overflow).toBe('');
+    expect(deepActiveElement()).toBe(m.shadow('input[role="combobox"]'));
+    expect(m.shadowAll('[part~="heading-row"]')).toHaveLength(0);
+  });
+
+  it('the list takes the remaining height with no peek cap', async () => {
+    await page.viewport(PHONE.width, PHONE.height);
+
+    const m = await mountAuto({ itemsPerPage: 1 });
+
+    await openField(m);
+
+    const list = m.part('list');
+
+    expect(list.style.maxHeight).toBe('');
+
+    const card = m.part('card').getBoundingClientRect();
+
+    expect(Math.round(list.getBoundingClientRect().bottom)).toBe(
+      Math.round(card.bottom),
+    );
+  });
+
+  it('crossing the threshold while open closes the panel; at desktop width it anchors again', async () => {
+    await page.viewport(PHONE.width, PHONE.height);
+
+    const m = await mountAuto();
+
+    await openField(m);
+    await page.viewport(DESKTOP.width, DESKTOP.height);
+
+    await expect
+      .poll(() => m.part('panel').matches(':popover-open'))
+      .toBe(false);
+
+    await openField(m);
+
+    const panel = m.part('panel');
+
+    expect(panel.matches(':popover-open')).toBe(true);
+    expect(m.shadowAll('[part~="heading-row"]')).toHaveLength(0);
+    expect(m.part('card').hasAttribute('role')).toBe(false);
+    expect(panel.getBoundingClientRect().width).toBeLessThan(
+      window.innerWidth / 2,
+    );
+    expect(document.documentElement.style.overflow).toBe('');
+  });
+
+  it('visual: fullscreen panel', async () => {
+    await page.viewport(PHONE.width, PHONE.height);
+
+    const m = await mountAuto();
+
+    await openField(m);
+    await matchScreenshotInBothModes(m.part('panel'), 'fullscreen');
   });
 });

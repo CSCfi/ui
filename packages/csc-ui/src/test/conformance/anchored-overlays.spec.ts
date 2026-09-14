@@ -78,7 +78,7 @@ describe.each(Object.keys(OVERLAY_RECIPES))('%s', (tag) => {
   });
 
   it.runIf(recipe.lightDismiss)(
-    'closes on an outside pointerdown',
+    'light-dismisses on an outside press and release',
     async () => {
       const m = await setup();
 
@@ -92,6 +92,48 @@ describe.each(Object.keys(OVERLAY_RECIPES))('%s', (tag) => {
       await settle();
 
       expect(recipe.panel(m).matches(':popover-open')).toBe(false);
+    },
+  );
+
+  // CONTEXT.md "Light dismiss", ADR-0050: a touch scroll is a press that ends
+  // in `pointercancel`; it must leave the panel open, as it does for a native
+  // `popover="auto"`.
+  it.runIf(recipe.lightDismiss)(
+    'survives a scroll gesture that starts outside',
+    async () => {
+      const m = await setup();
+
+      const outside = document.createElement('div');
+
+      outside.style.cssText = 'height:200px';
+      document.body.append(outside);
+
+      await recipe.open(m);
+
+      const gesture = (type: string): void => {
+        outside.dispatchEvent(
+          new PointerEvent(type, {
+            bubbles: true,
+            composed: true,
+            isPrimary: true,
+            pointerId: 1,
+            pointerType: 'touch',
+          }),
+        );
+      };
+
+      gesture('pointerdown');
+      await settle();
+
+      expect(
+        recipe.panel(m).matches(':popover-open'),
+        'closed on the press alone',
+      ).toBe(true);
+
+      gesture('pointercancel');
+      await settle();
+
+      expect(recipe.panel(m).matches(':popover-open')).toBe(true);
     },
   );
 

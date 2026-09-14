@@ -4,8 +4,8 @@
  * highlight seeding on every open path) and 8ef62d16 (the peek cap measured
  * the outgoing rows).
  */
-import { describe, expect, it } from 'vitest';
-import { userEvent } from 'vitest/browser';
+import { afterEach, describe, expect, it } from 'vitest';
+import { page, userEvent } from 'vitest/browser';
 
 import type { Mounted } from '../../test/harness';
 
@@ -17,6 +17,7 @@ import {
   mount,
   recordEvents,
   settle,
+  settled,
 } from '../../test/harness';
 
 type SelectHost = { reset(): void; value: unknown } & HTMLElement;
@@ -331,5 +332,106 @@ describe('peek', () => {
 
     expect(after).toBeGreaterThan(before);
     expect(after).toBe(peekCap(ul, { itemsPerPage: 3, rows: rows(m) }));
+  });
+});
+
+// CONTEXT.md "Fullscreen panel", "Narrow viewport"; ADR-0050. The browser
+// project's viewport is the desktop one (vitest.browser.shared.ts); every
+// case here resizes it and restores it, the page being shared across specs.
+describe('fullscreen panel', () => {
+  const DESKTOP = { height: 800, width: 1280 };
+
+  const PHONE = { height: 740, width: 360 };
+
+  afterEach(async () => {
+    await page.viewport(DESKTOP.width, DESKTOP.height);
+  });
+
+  const dialog = (m: Mounted): HTMLDialogElement =>
+    dropdownRoot(m).querySelector('dialog')!;
+
+  const dropdownPart = (m: Mounted, name: string): HTMLElement | null =>
+    dropdownRoot(m).querySelector(`[part~="${name}"]`);
+
+  const openFullscreen = async (m: Mounted): Promise<void> => {
+    await openByClick(m);
+    // Past the list's fade-in before measuring boxes.
+    await settled();
+  };
+
+  it('the dialog covers the whole viewport, with a heading row above the moved field', async () => {
+    await page.viewport(PHONE.width, PHONE.height);
+
+    const m = await mountSelect();
+
+    await openFullscreen(m);
+
+    expect(isOpen(m)).toBe(true);
+
+    const rect = dialog(m).getBoundingClientRect();
+
+    expect(rect.left).toBe(0);
+    expect(rect.top).toBe(0);
+    expect(rect.width).toBe(document.documentElement.clientWidth);
+    expect(rect.height).toBe(window.innerHeight);
+
+    expect(dropdownPart(m, 'heading')?.textContent?.trim()).toBe('Country');
+    expect(dropdownPart(m, 'close')?.getAttribute('aria-label')).toBe('Close');
+
+    // Heading row, then the field moved into the dialog, then the list.
+    const headingRow = dropdownPart(m, 'heading-row')!;
+
+    const field = m.shadow('c-input').getBoundingClientRect();
+
+    expect(headingRow.getBoundingClientRect().bottom).toBeLessThanOrEqual(
+      field.top,
+    );
+    expect(field.bottom).toBeLessThanOrEqual(
+      list(m).getBoundingClientRect().top,
+    );
+    expect(list(m).style.maxHeight, 'no peek cap in the fullscreen panel').toBe(
+      '',
+    );
+  });
+
+  it('the close button closes and returns focus to the field; a pick still commits', async () => {
+    await page.viewport(PHONE.width, PHONE.height);
+
+    const m = await mountSelect();
+
+    await openFullscreen(m);
+    await userEvent.click(dropdownPart(m, 'close')!);
+    await settle();
+
+    expect(isOpen(m)).toBe(false);
+    expect(dropdownPart(m, 'heading-row')).toBeNull();
+    expect(deepActiveElement()).toBe(combobox(m));
+
+    await openFullscreen(m);
+    await userEvent.click(rows(m)[1]);
+    await settle();
+
+    expect(m.host.value).toBe('se');
+    expect(isOpen(m)).toBe(false);
+  });
+
+  it('at desktop width the list anchors under the field again', async () => {
+    const m = await mountSelect();
+
+    await openFullscreen(m);
+
+    expect(dropdownPart(m, 'heading-row')).toBeNull();
+    expect(dialog(m).getBoundingClientRect().width).toBeLessThan(
+      window.innerWidth / 2,
+    );
+  });
+
+  it('visual: fullscreen panel', async () => {
+    await page.viewport(PHONE.width, PHONE.height);
+
+    const m = await mountSelect();
+
+    await openFullscreen(m);
+    await matchScreenshotInBothModes(dialog(m), 'fullscreen');
   });
 });

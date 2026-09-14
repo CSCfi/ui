@@ -4,8 +4,8 @@
  * ADR-0047). The committed form of the 127-check smoke run that verified the
  * component on 2026-09-11.
  */
-import { describe, expect, it } from 'vitest';
-import { userEvent } from 'vitest/browser';
+import { afterEach, describe, expect, it } from 'vitest';
+import { page, userEvent } from 'vitest/browser';
 
 import type { Mounted } from '../../test/harness';
 
@@ -15,6 +15,7 @@ import {
   mount,
   recordEvents,
   settle,
+  settled,
 } from '../../test/harness';
 
 type TreeHost = { value: unknown } & HTMLElement;
@@ -410,5 +411,107 @@ describe('uneven trees', () => {
     await clickRow(m, 0);
 
     expect(header(m)).toBe('Choose Secondary field Final level');
+  });
+});
+
+// CONTEXT.md "Fullscreen panel", "Narrow viewport"; ADR-0050. The browser
+// project's viewport is the desktop one (vitest.browser.shared.ts); every
+// case here resizes it and restores it, the page being shared across specs.
+describe('fullscreen panel', () => {
+  const DESKTOP = { height: 800, width: 1280 };
+
+  const PHONE = { height: 740, width: 360 };
+
+  afterEach(async () => {
+    await page.viewport(DESKTOP.width, DESKTOP.height);
+  });
+
+  const openFullscreen = async (m: Mounted): Promise<void> => {
+    await open(m);
+    // Past the panel's 120ms fade-in before measuring boxes.
+    await settled();
+  };
+
+  it('covers the viewport with a heading row above the search, breadcrumb and header; the page behind is inert', async () => {
+    await page.viewport(PHONE.width, PHONE.height);
+
+    const sibling = document.createElement('button');
+
+    document.body.append(sibling);
+
+    const m = await mountTree();
+
+    await openFullscreen(m);
+
+    const rect = m.part('panel').getBoundingClientRect();
+
+    expect(rect.left).toBe(0);
+    expect(rect.top).toBe(0);
+    expect(rect.width).toBe(document.documentElement.clientWidth);
+    expect(rect.height).toBe(window.innerHeight);
+
+    const card = m.part('card');
+
+    expect(card.getAttribute('role')).toBe('dialog');
+    expect(card.getAttribute('aria-modal')).toBe('true');
+    expect(m.part('heading').textContent?.trim()).toBe('Field of science');
+
+    // Heading row first, then the anchored layout's rows in their order.
+    const order = Array.from(card.children)
+      .map((c) => c.getAttribute('part'))
+      .filter((p) => p && p !== 'card');
+
+    expect(order.slice(0, 1)).toEqual(['heading-row']);
+    expect(order).toContain('search');
+    expect(order.indexOf('search')).toBeLessThan(order.indexOf('breadcrumb'));
+    expect(order.indexOf('breadcrumb')).toBeLessThan(order.indexOf('header'));
+    expect(order.indexOf('header')).toBeLessThan(order.indexOf('list'));
+
+    expect(sibling.inert).toBe(true);
+    expect(m.host.inert).toBe(false);
+    expect(deepActiveElement()).toBe(search(m));
+    expect(header(m)).toBe('Choose Primary field Step 1 of 3');
+  });
+
+  it('browsing into a level keeps the fullscreen layout; the close button returns focus to the field', async () => {
+    await page.viewport(PHONE.width, PHONE.height);
+
+    const m = await mountTree();
+
+    await openFullscreen(m);
+    await clickRow(m, 0);
+
+    expect(isOpen(m)).toBe(true);
+    expect(header(m)).toBe('Choose Secondary field Step 2 of 3');
+    expect(m.part('panel').getBoundingClientRect().height).toBe(
+      window.innerHeight,
+    );
+
+    await userEvent.click(m.part('close'));
+    await settle();
+
+    expect(isOpen(m)).toBe(false);
+    expect(deepActiveElement()).toBe(combobox(m));
+    expect(document.documentElement.style.overflow).toBe('');
+    expect(m.host.value).toBeNull();
+  });
+
+  it('the list has no peek cap in the fullscreen layout', async () => {
+    await page.viewport(PHONE.width, PHONE.height);
+
+    const m = await mountTree({ itemsPerPage: 1 });
+
+    await openFullscreen(m);
+
+    expect(m.part('list').style.maxHeight).toBe('');
+  });
+
+  it('visual: fullscreen panel', async () => {
+    await page.viewport(PHONE.width, PHONE.height);
+
+    const m = await mountTree();
+
+    await openFullscreen(m);
+    await matchScreenshotInBothModes(m.part('panel'), 'fullscreen');
   });
 });

@@ -2,16 +2,18 @@
   <c-dropdown
     :id="`${id}-dropdown`"
     ref="dropdownRef"
+    :close-label="t.closePanel"
     :dropdown-item-type="optionElementsExist ? 'option' : 'item'"
     :host-id="`${id}-dropdown`"
     :index="currentIndex"
     :items="dropdownItems"
     :items-per-page="itemsPerPageResolved"
+    :label
     :multiple="multipleOn"
     :parent="host"
-    :select-all-row="selectAllRow"
+    :select-all-row
     :selected="dropdownSelected"
-    exportparts="menu, list, item, select-all, indicator, mark"
+    exportparts="menu, list, item, select-all, indicator, mark, heading-row, heading, close"
     type="select"
   >
     <c-input
@@ -275,6 +277,8 @@ export interface CSelectProps {
 export interface CSelectTexts {
   /** Accessible label of the clear button. */
   clearSelection?: string;
+  /** Accessible label of the close button in the fullscreen panel (narrow viewports). */
+  closePanel?: string;
   /**
    * Text of the overflow tag when `max-tags` folds the selection; receives the
    * number of hidden tags.
@@ -322,6 +326,9 @@ export type CSelectValue =
  * @subcomponents c-option, c-option-value
  *
  * @csspart menu - The dropdown surface (the positioned dialog) holding the field and the list
+ * @csspart heading-row - The top row of the fullscreen panel (narrow viewports): the field label as heading and the close button
+ * @csspart heading - The field label naming the fullscreen panel
+ * @csspart close - The close button of the fullscreen panel
  * @csspart list - The scrolling listbox of options
  * @csspart item - One option row in the list. Any `part` attribute set on content inside a slotted `<c-option>` is exported too, so `c-select::part(<name>)` reaches the consumer's own option markup
  * @csspart select-all - The pinned select-all row at the top of the list (`multiple` mode with `select-all`); carries the same indicator / mark parts as an option row
@@ -487,6 +494,7 @@ const appDefault = useAppDefault('c-select', props);
 
 const DEFAULT_TEXTS: Required<CSelectTexts> = {
   clearSelection: 'Clear selection',
+  closePanel: 'Close',
   more: (count) => `+${count} more`,
   remove: (label) => `Remove ${label}`,
   selectAll: () => 'Select all',

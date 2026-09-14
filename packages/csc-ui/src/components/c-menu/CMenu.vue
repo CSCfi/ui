@@ -76,6 +76,7 @@ import type { CPlacement } from '../../types';
 
 import { ensureAnchorPositioning } from '../../shared/anchorPolyfill';
 import { coerceBoolean } from '../../shared/coerceBoolean';
+import { attachLightDismiss, type Detach } from '../../shared/lightDismiss';
 import { applyPeekCap } from '../../shared/peekCap';
 import { placementAxis, POSITION_AREA } from '../../shared/positionArea';
 import { useDesignatedTrigger } from '../../shared/useDesignatedTrigger';
@@ -793,25 +794,32 @@ const onPointerOver = (event: PointerEvent) => {
 };
 
 // ---- light-dismiss -------------------------------------------------------
+// CONTEXT.md "Light dismiss", ADR-0050: a press and its release both outside
+// close the menu; a press alone (the start of every touch scroll) never does.
 
-const onDocPointerDown = (event: Event) => {
-  if (!isOpen.value || !host) return;
+let detachDismiss: Detach | null = null;
 
-  // Everything interactive lives inside the host's flattened subtree — plus
-  // the designated trigger, which lives elsewhere in the document.
-  const path = event.composedPath();
-
+// Everything interactive lives inside the host's flattened subtree — plus
+// the designated trigger, which lives elsewhere in the document.
+const isInsideMenu = (path: EventTarget[]): boolean => {
   const dt = designated.element.value;
 
-  if (!path.includes(host) && !(dt && path.includes(dt))) closeMenu(false);
+  return (!!host && path.includes(host)) || (!!dt && path.includes(dt));
 };
 
 const addDismissListeners = () => {
-  document.addEventListener('pointerdown', onDocPointerDown, true);
+  detachDismiss?.();
+  detachDismiss = attachLightDismiss({
+    isInside: isInsideMenu,
+    onDismiss: () => {
+      if (isOpen.value) closeMenu(false);
+    },
+  });
 };
 
 const removeDismissListeners = () => {
-  document.removeEventListener('pointerdown', onDocPointerDown, true);
+  detachDismiss?.();
+  detachDismiss = null;
 };
 
 // ---- lifecycle -----------------------------------------------------------

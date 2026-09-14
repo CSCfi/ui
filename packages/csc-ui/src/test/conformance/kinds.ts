@@ -314,7 +314,7 @@ export interface OverlayRecipe {
   afterEscape?(m: Mounted): void;
   /** The element (light or shadow) that owns focus once the panel closes; `null` when focus must not move. */
   focusHome(m: Mounted): Element | null;
-  /** Whether an outside pointerdown closes the panel. */
+  /** Whether an outside press-and-release closes the panel (CONTEXT.md "Light dismiss"). */
   lightDismiss: boolean;
   mount: MountOptions;
   /** The tag to mount when the overlay only exists inside a parent (c-menu-item inside c-menu). */

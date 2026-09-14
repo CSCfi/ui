@@ -4,6 +4,8 @@ status: accepted
 
 # Transient list panels hide the scrollbar; the peek is the overflow cue
 
+> Amended by ADR-0050: a value-selection field's **fullscreen panel** (narrow viewports) has no peek — its list is bounded by the viewport edge, not a ceiling.
+
 The transient list panels — `c-menu` and submenu panels, `c-dropdown`'s
 listbox behind `c-select`, and `c-autocomplete`'s options list — hide their
 native scrollbar. In its place an overflowing panel always ends at a row's
