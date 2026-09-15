@@ -1,5 +1,187 @@
 # @cscfi/csc-ui-react
 
+## 4.0.0-alpha.16
+
+### Patch Changes
+
+- [#277](https://github.com/CSCfi/ui/pull/277) [`0777e00`](https://github.com/CSCfi/ui/commit/0777e0015d746e8e7f66ca2e59d7405ecfede840) Thanks [@razorfever](https://github.com/razorfever)! - Fix the fullscreen panel of `c-autocomplete`, `c-tree-select` and `c-select`
+  uncovering the page while the on-screen keyboard is open: the panel keeps
+  covering the whole screen, and only its content — the heading row, the search
+  input and the options — shrinks to the space the keyboard leaves.
+- Updated dependencies [[`0777e00`](https://github.com/CSCfi/ui/commit/0777e0015d746e8e7f66ca2e59d7405ecfede840)]:
+  - @cscfi/csc-ui@4.0.0-alpha.16
+
+## 4.0.0-alpha.15
+
+### Minor Changes
+
+- [#275](https://github.com/CSCfi/ui/pull/275) [`5855ff9`](https://github.com/CSCfi/ui/commit/5855ff924450fadbb3267d17b61a2ffeeaae60a5) Thanks [@razorfever](https://github.com/razorfever)! - Add app-wide prop defaults (ADR-0048): `applyDefaults()` sets a preference
+  prop once for every instance of a tag, and `resetDefaults()` clears it.
+
+  - `applyDefaults({ 'c-text-field': { labelOnTop: true } })` makes every text
+    field label on top; `applyDefaults({ 'c-select': { texts } })` translates
+    every select in one call. Later calls merge with earlier ones, a key set to
+    `undefined` clears it, and mounted elements follow live — a locale switch is
+    one call.
+  - Only defaultable props take part, badged "app default" in each component's
+    Properties table and typed as `AppDefaults`: `labelOnTop`, `hideDetails`,
+    `shadow` and `size` on c-text-field, c-select, c-autocomplete and
+    c-tree-select; `itemsPerPage` on the three list fields; `texts` on those
+    three and c-data-table. An unknown tag or prop throws.
+  - An explicit attribute or property on an instance always wins over the app
+    default; `texts` merges key by key over the built-in strings. Both functions
+    are re-exported from `@cscfi/csc-ui-react`.
+
+  Two visible changes for these props: when unset, the element property now
+  reads `undefined` instead of the built-in (`el.labelOnTop`, `el.size`,
+  `el.itemsPerPage`), and the host no longer carries the reflected default
+  attributes `size="default"` / `items-per-page="6"`.
+
+- [#275](https://github.com/CSCfi/ui/pull/275) [`fd4bf56`](https://github.com/CSCfi/ui/commit/fd4bf56ba38095517dc0c9f95fe0bea263d29e5d) Thanks [@razorfever](https://github.com/razorfever)! - Value-selection fields open a fullscreen panel on narrow viewports. Below
+  760px, `c-autocomplete` and `c-tree-select` no longer anchor their panel under
+  the field: it covers the viewport with a heading row (the field's label and a
+  close button), the search input pinned beneath it and the options filling the
+  rest, following the on-screen keyboard so the search stays visible. The page
+  behind the panel is inert until it closes. `c-select`'s existing phone layout
+  now covers the whole viewport (no gaps below the small viewport or at the
+  corners), follows the keyboard the same way and gains the same heading row.
+  The close button's label is the new `closePanel` text; the row exposes the
+  `heading-row`, `heading` and `close` parts.
+
+  Transient panels (`c-menu`, `c-popover`, `c-autocomplete`, `c-tree-select`) no
+  longer close when a scroll or drag gesture starts outside them: light dismiss
+  now needs the press and its release both outside, as for a native popover.
+
+### Patch Changes
+
+- Updated dependencies [[`5855ff9`](https://github.com/CSCfi/ui/commit/5855ff924450fadbb3267d17b61a2ffeeaae60a5), [`fd4bf56`](https://github.com/CSCfi/ui/commit/fd4bf56ba38095517dc0c9f95fe0bea263d29e5d)]:
+  - @cscfi/csc-ui@4.0.0-alpha.15
+
+## 4.0.0-alpha.14
+
+### Minor Changes
+
+- [#273](https://github.com/CSCfi/ui/pull/273) [`c3725b5`](https://github.com/CSCfi/ui/commit/c3725b501ae2ddc3e18ee876e1e7f8226592ad4d) Thanks [@razorfever](https://github.com/razorfever)! - Add `c-tree-select`, a single-value field for picking one item from nested
+  data of arbitrary depth (ADR-0047) — a stepped listbox in c-autocomplete's
+  field-plus-panel arrangement.
+
+  - The panel browses one level at a time: picking a branch lists its children,
+    a breadcrumb climbs back, and the header names the level (`level-labels`)
+    with a step counter while the depth is uniform.
+  - Typing into the in-panel search input lists matches from the whole tree
+    with their path; the query matches names and codes of an item and of its
+    ancestors, a `filter` predicate replaces the default, and matches are
+    marked (`::part(match)`).
+  - `items` (a DOM property) is the tree: `{ value, name, code?, disabled?,
+children? }`. The closed field shows the committed item's path above its
+    code and name; `return-object` emits `{ value, name, code, path }`.
+  - `allow-branch` lets a branch be committed through a pinned select-branch
+    row at the top of its level list.
+  - Value events follow the 4.x convention: `change` (with the value),
+    `update:value` and a native `input` — no `changeValue`. `change:query`
+    reports the query.
+  - Parts: `panel`, `card`, `search`, `breadcrumb`, `crumb`, `header`, `list`,
+    `item`, `select-branch`, `code`, `path`, `match`, `info`. Texts are
+    overridable through `texts`; keyboard: arrows, Enter, ArrowRight /
+    ArrowLeft / Backspace to move between levels, Escape.
+
+  Also in this change: the anchored-panel lifecycle and the live status region
+  c-autocomplete used inline are now shared internals it and c-tree-select
+  build on, and a click on a disabled option row in c-autocomplete no longer
+  moves keyboard focus out of the search input.
+
+### Patch Changes
+
+- [#273](https://github.com/CSCfi/ui/pull/273) [`d54ae8a`](https://github.com/CSCfi/ui/commit/d54ae8a9c05d7a4a0a9cd4a763dadad57d204653) Thanks [@razorfever](https://github.com/razorfever)! - Fix(c-select): the picked option's row ends in a check mark, as in
+  c-autocomplete — for slotted options and `items` alike. The mark follows the
+  value, not the keyboard highlight.
+
+  Fix(c-select): a value set from code (an initial `v-model`, say) now marks its
+  option like a click does, and opening the list with the mouse highlights the
+  picked option, so the arrow keys continue from it instead of the first row.
+
+- Updated dependencies [[`d54ae8a`](https://github.com/CSCfi/ui/commit/d54ae8a9c05d7a4a0a9cd4a763dadad57d204653), [`c3725b5`](https://github.com/CSCfi/ui/commit/c3725b501ae2ddc3e18ee876e1e7f8226592ad4d)]:
+  - @cscfi/csc-ui@4.0.0-alpha.14
+
+## 4.0.0-alpha.13
+
+### Minor Changes
+
+- [#271](https://github.com/CSCfi/ui/pull/271) [`5f0a398`](https://github.com/CSCfi/ui/commit/5f0a398aef3bf49ee211e1ad255a49562b8ba908) Thanks [@razorfever](https://github.com/razorfever)! - c-select and c-autocomplete gain a `select-all` attribute for `multiple` mode
+  (ADR-0046): a row pinned at the top of the list that selects every listed
+  enabled option — in c-autocomplete, the current matches — and unselects them
+  again when they are all selected, with a checkbox indicator that reads none,
+  some or all. Its label is `texts.selectAll`, a function receiving the number
+  of listed options (default "Select all"), and the row is stylable through
+  the new `select-all` part.
+
+  In a `multiple` c-select, Space now only toggles the focused row (and opens
+  the closed list, like Enter); it no longer also feeds the type-ahead, which
+  silently dropped the tracked highlight after every Space toggle.
+
+### Patch Changes
+
+- [#271](https://github.com/CSCfi/ui/pull/271) [`2d3d34b`](https://github.com/CSCfi/ui/commit/2d3d34b3b062eddffab19869e19430698eeff91e) Thanks [@razorfever](https://github.com/razorfever)! - Fix(c-autocomplete): a component nested in a slotted option — a `c-icon` with
+  a bound `path`, for instance — renders in the panel as soon as it opens, not
+  only after a query is typed. Changing an option's `disabled`, `value` or the
+  attributes of its content after mount now updates its row as well.
+- Updated dependencies [[`2d3d34b`](https://github.com/CSCfi/ui/commit/2d3d34b3b062eddffab19869e19430698eeff91e), [`5f0a398`](https://github.com/CSCfi/ui/commit/5f0a398aef3bf49ee211e1ad255a49562b8ba908)]:
+  - @cscfi/csc-ui@4.0.0-alpha.13
+
+## 4.0.0-alpha.12
+
+### Minor Changes
+
+- [#269](https://github.com/CSCfi/ui/pull/269) [`4c2f2b1`](https://github.com/CSCfi/ui/commit/4c2f2b12542d5643b8ea7e76c26d8396f8523d0c) Thanks [@razorfever](https://github.com/razorfever)! - c-option-value is the option's label region again (ADR-0045). In c-select and
+  c-autocomplete a slotted option's label — the closed field's text, its tag in
+  `multiple` mode, what the autocomplete filter matches — is its `name`, else
+  the text of its `c-option-value`, else the option's whole text, so an option
+  can carry a description or an icon beside its label. c-autocomplete marks the
+  runs of each label that equal the typed query with `<mark>` again, inside the
+  `c-option-value` of a slotted option or in an `items` entry's label; an option
+  without the wrapper renders exactly as authored. The marks are the new `match`
+  part (`c-autocomplete::part(match)`), and the query is matched literally, so
+  `c++` or `(` no longer throw as they did in 3.x.
+
+- [#269](https://github.com/CSCfi/ui/pull/269) [`d81a761`](https://github.com/CSCfi/ui/commit/d81a761ee30b60037f4d45827f3702dc74f8be11) Thanks [@razorfever](https://github.com/razorfever)! - c-select and c-autocomplete gain a `multiple` mode (ADR-0044). With the
+  `multiple` attribute set, `value` holds an array of the picked values (or
+  items with `return-object`), in the order they were picked, and the value
+  events carry that array — `v-model` keeps working. Every option row shows a
+  checkbox indicator and toggles without closing the list; the selections
+  render as removable tags inside the field, and Backspace in the closed field
+  removes the last one. `max-tags` folds the row: `N` shows the first N tags
+  and one "+X more" tag, `0` shows only "X selected". A new `texts` prop
+  localises those strings and the field's control labels (clear, toggle,
+  search, loading, no results) that were hardcoded before.
+  `c-select::part(indicator)` / `::part(mark)` recolour the row checkboxes the
+  same way they do on c-checkbox; the new `tags`, `tag` and `tag-root` parts
+  reach the tag row, and c-autocomplete's option rows gain the `item` part.
+
+  c-tag gains a `close-label` prop naming its close button for assistive
+  technology.
+
+  BREAKING: because `value` can now be an array, the manifest no longer lists a
+  `value` attribute on c-select and c-autocomplete — bind it as a property
+  (`v-model`, `:value.prop`, `element.value = …`); the single-value contract
+  is otherwise unchanged. c-autocomplete's `no-results-text` prop is removed:
+  set `texts.noResults` instead. A `closeable` c-tag's host is no longer a
+  `role="button"` tab stop — its close button is the interactive control — so
+  listen for `close` rather than key events on a closeable tag.
+
+### Patch Changes
+
+- [#269](https://github.com/CSCfi/ui/pull/269) [`8ef62d1`](https://github.com/CSCfi/ui/commit/8ef62d16494ad5fe0b0ac2651a5f8bb83b6dfcb9) Thanks [@razorfever](https://github.com/razorfever)! - `c-menu`, its submenus and `c-select` now hide the list scrollbar, as
+  `c-autocomplete` already did (ADR-0043). In its place an overflowing panel
+  always ends on a half-visible row — the peek — so it is clear that more items
+  follow. `items-per-page` keeps meaning that many full rows before the peek, and
+  menus cap at the viewport. The cap is now measured from the real rows, so
+  taller `c-option` rows and menus mixing items with labels and dividers cut
+  correctly. Restore the scrollbar with `scrollbar-width: auto` on
+  `c-select::part(list)`, `c-autocomplete::part(list)`, `c-menu::part(list)` or
+  `c-menu-item::part(submenu)`.
+- Updated dependencies [[`4c2f2b1`](https://github.com/CSCfi/ui/commit/4c2f2b12542d5643b8ea7e76c26d8396f8523d0c), [`d81a761`](https://github.com/CSCfi/ui/commit/d81a761ee30b60037f4d45827f3702dc74f8be11), [`8ef62d1`](https://github.com/CSCfi/ui/commit/8ef62d16494ad5fe0b0ac2651a5f8bb83b6dfcb9)]:
+  - @cscfi/csc-ui@4.0.0-alpha.12
+
 ## 4.0.0-alpha.11
 
 ### Patch Changes
