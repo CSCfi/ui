@@ -16,7 +16,7 @@
     tabindex="-1"
     @cancel="close"
   >
-    <div :class="ui.inner()" @click.stop>
+    <div ref="innerRef" :class="ui.inner()" @click.stop>
       <!-- Fullscreen panel (CONTEXT.md, ADR-0050): the heading row — the
            field's label and a close button — above the moved field. -->
       <panel-heading-row
@@ -201,7 +201,9 @@ import SelectionIndicator from '../../shared/SelectionIndicator.vue';
 import { useHostEmit } from '../../shared/useHostEmit';
 import { useNarrowViewport } from '../../shared/useNarrowViewport';
 import {
-  applyFullscreenBox,
+  applyContentBox,
+  applyFullscreenSurface,
+  clearContentBox,
   type StopTracking,
   trackVisualViewport,
 } from '../../shared/visualViewport';
@@ -270,15 +272,16 @@ const dropdown = tv({
         item: 'cursor-default pointer-events-none bg-on-surface/5 [filter:grayscale(1)_opacity(0.75)] aria-selected:bg-on-surface/5 aria-selected:text-inherit aria-selected:ring-0 aria-selected:rounded',
       },
     },
-    // The fullscreen panel (CONTEXT.md, ADR-0050): the dialog is the
-    // viewport's box — no radius, top inset or UA max size, an opaque
-    // surface — and the inner column hands the list what the heading row
-    // and the moved field leave.
+    // The fullscreen panel (CONTEXT.md, ADR-0050): the dialog is the surface
+    // — the layout viewport's box, no radius, top inset or UA max size, an
+    // opaque fill — and the inner column, placed on the visual viewport's box
+    // (`applyContentBox`), hands the list what the heading row and the moved
+    // field leave.
     fullscreen: {
       true: {
         dialog:
           'rounded-none mt-0 pt-0 max-w-none max-h-none bg-surface-overlay',
-        inner: 'flex flex-col h-full min-h-0',
+        inner: 'flex flex-col min-h-0',
         list: 'flex-1 min-h-0 h-auto rounded-none shadow-none',
       },
     },
@@ -411,6 +414,8 @@ const isSelectedValue = (value: number | string) =>
 const dialogRef = useTemplateRef<HTMLDialogElement>('dialogRef');
 
 const dummyRef = useTemplateRef<HTMLDivElement>('dummyRef');
+
+const innerRef = useTemplateRef<HTMLDivElement>('innerRef');
 
 const listRef = useTemplateRef<HTMLUListElement>('listRef');
 
@@ -616,11 +621,15 @@ const positionMenu = () => {
   dialog.style.opacity = '0';
 
   if (fullscreen) {
-    // The fullscreen panel is the visual viewport's box, followed while open
-    // so the heading row and the field stay above the on-screen keyboard.
+    // The dialog is the surface — the layout viewport's box, which the
+    // on-screen keyboard overlays but never shrinks — and the inner column
+    // follows the visual viewport while open, so the heading row and the
+    // moved field stay above the keyboard on a surface that still covers
+    // everything visible.
+    applyFullscreenSurface(dialog);
     stopViewport?.();
     stopViewport = trackVisualViewport((box) => {
-      if (dialogRef.value) applyFullscreenBox(dialogRef.value, box);
+      if (innerRef.value) applyContentBox(innerRef.value, box);
     });
   }
 
@@ -782,6 +791,8 @@ const close = () => {
   fullscreenOpen.value = false;
   dialog.style.height = '';
   dialog.style.inset = '';
+
+  if (innerRef.value) clearContentBox(innerRef.value);
 
   if (inputElement) {
     // Vue's defineCustomElement compiles `<slot name="default" />` to an

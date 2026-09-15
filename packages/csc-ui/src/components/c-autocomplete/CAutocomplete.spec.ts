@@ -11,6 +11,7 @@ import { page, userEvent } from 'vitest/browser';
 import type { Mounted } from '../../test/harness';
 
 import { peekCap } from '../../shared/peekCap';
+import { fakeVisualViewport } from '../../test/fakeVisualViewport';
 import {
   consoleSpy,
   deepActiveElement,
@@ -429,6 +430,70 @@ describe('fullscreen panel', () => {
       window.innerWidth / 2,
     );
     expect(document.documentElement.style.overflow).toBe('');
+  });
+
+  // The on-screen keyboard: headless Chromium has none, so the visual
+  // viewport's box is faked — an Android-like shrink, then an iOS-like pan.
+  // The surface must stay over the whole layout viewport either way; only
+  // the card follows the visible box, so the search input ends above
+  // the keyboard.
+  it('keeps the surface over the whole viewport while the keyboard shrinks the visual viewport; the card follows the visible box', async () => {
+    await page.viewport(PHONE.width, PHONE.height);
+
+    const m = await mountAuto();
+
+    await openField(m);
+
+    const viewport = {
+      height: window.innerHeight,
+      width: document.documentElement.clientWidth,
+    };
+
+    const expectSurfaceCovers = (): void => {
+      const rect = m.part('panel').getBoundingClientRect();
+
+      expect([rect.left, rect.top, rect.width, rect.height]).toEqual([
+        0,
+        0,
+        viewport.width,
+        viewport.height,
+      ]);
+      expect(getComputedStyle(m.part('panel')).backgroundColor).not.toBe(
+        'rgba(0, 0, 0, 0)',
+      );
+    };
+
+    for (const box of [
+      { height: 400, offsetTop: 0 },
+      { height: 400, offsetTop: 340 },
+    ]) {
+      const restore = fakeVisualViewport(box);
+
+      try {
+        await settle();
+        expectSurfaceCovers();
+
+        const content = m.part('card').getBoundingClientRect();
+
+        expect([
+          content.left,
+          content.top,
+          content.width,
+          content.height,
+        ]).toEqual([0, box.offsetTop, viewport.width, box.height]);
+
+        const inside = search(m).getBoundingClientRect();
+
+        expect(inside.top).toBeGreaterThanOrEqual(content.top);
+        expect(inside.bottom).toBeLessThanOrEqual(content.bottom);
+      } finally {
+        restore();
+      }
+    }
+
+    await settle();
+    expectSurfaceCovers();
+    expect(m.part('card').getBoundingClientRect().height).toBe(viewport.height);
   });
 
   it('visual: fullscreen panel', async () => {

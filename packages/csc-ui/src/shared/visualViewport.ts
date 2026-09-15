@@ -1,10 +1,14 @@
 /**
  * Visual viewport tracking for the **fullscreen panel** (CONTEXT.md,
- * ADR-0050). A `position: fixed` top-layer surface sized with `100dvh` does
- * not shrink when the on-screen keyboard opens on iOS — only the
- * `visualViewport` API reports the visible box there. Both fullscreen
- * implementations (the anchored-panel composable and `c-dropdown`'s dialog)
- * follow it through this one helper while they are open.
+ * ADR-0050). Two layers. The *surface* — the panel element itself,
+ * `position: fixed; inset: 0` — spans the layout viewport, which the
+ * on-screen keyboard overlays but never shrinks, so it covers everything
+ * visible whatever the keyboard does. The *content box* inside it (heading
+ * row, search input, list) follows `visualViewport` — the only API that sees
+ * the iOS keyboard — so it ends above the keyboard. A late or wrong box then
+ * shows more surface, never the page. Both fullscreen implementations (the
+ * anchored-panel composable and `c-dropdown`'s dialog) go through this one
+ * helper while they are open.
  */
 
 /** Stop following the visual viewport. Idempotent. */
@@ -18,7 +22,7 @@ export interface ViewportBox {
   width: number;
 }
 
-/** The current visual viewport box; `null` where the API is missing (then size with `100dvh`). */
+/** The current visual viewport box; `null` where the API is missing (then the content box fills the surface). */
 export const readVisualViewport = (): null | ViewportBox => {
   const vv = typeof window === 'undefined' ? null : window.visualViewport;
 
@@ -59,21 +63,41 @@ export const trackVisualViewport = (
 };
 
 /**
- * Inline declarations that make a `position: fixed` surface the visual
- * viewport's box — or, with no box, the layout viewport (`100dvh`). Both
- * override the UA popover / dialog defaults (`inset: 0`, fit-content sizing,
- * auto margins).
+ * Inline declarations that make a top-layer element the surface: the layout
+ * viewport's box. Overrides the UA popover / dialog defaults (`inset: 0` is
+ * theirs too, but with fit-content sizing and auto margins).
  */
-export const fullscreenBoxStyle = (box: null | ViewportBox): string =>
-  box
-    ? `inset:auto;top:${box.top}px;left:${box.left}px;width:${box.width}px;height:${box.height}px;`
-    : 'inset:0;width:auto;height:100dvh;';
+export const FULLSCREEN_SURFACE_STYLE =
+  'position:fixed;inset:0;margin:0;width:auto;height:auto;';
 
-/** The same box written straight onto an element's inline style (for a surface whose placement is imperative, like `c-dropdown`'s dialog). */
-export const applyFullscreenBox = (
+/**
+ * Inline declarations placing the content box inside the surface on the
+ * visual viewport's box; with no box (no API) it fills the surface.
+ */
+export const contentBoxStyle = (box: null | ViewportBox): string =>
+  box
+    ? `position:absolute;inset:auto;top:${box.top}px;left:${box.left}px;width:${box.width}px;height:${box.height}px;`
+    : 'position:absolute;inset:0;';
+
+/**
+ * `FULLSCREEN_SURFACE_STYLE` written straight onto an element's inline style,
+ * for a surface whose placement is imperative (`c-dropdown`'s dialog). Margins
+ * are left to its classes.
+ */
+export const applyFullscreenSurface = (el: HTMLElement): void => {
+  el.style.position = 'fixed';
+  el.style.inset = '0';
+  el.style.width = 'auto';
+  el.style.height = 'auto';
+};
+
+/** `contentBoxStyle(box)` written straight onto an element's inline style. */
+export const applyContentBox = (
   el: HTMLElement,
   box: null | ViewportBox,
 ): void => {
+  el.style.position = 'absolute';
+
   if (box) {
     el.style.inset = 'auto';
     el.style.top = `${box.top}px`;
@@ -82,7 +106,21 @@ export const applyFullscreenBox = (
     el.style.height = `${box.height}px`;
   } else {
     el.style.inset = '0';
-    el.style.width = 'auto';
-    el.style.height = '100dvh';
+    el.style.width = '';
+    el.style.height = '';
+  }
+};
+
+/** Remove exactly what `applyContentBox` set. */
+export const clearContentBox = (el: HTMLElement): void => {
+  for (const property of [
+    'position',
+    'inset',
+    'top',
+    'left',
+    'width',
+    'height',
+  ]) {
+    el.style.removeProperty(property);
   }
 };

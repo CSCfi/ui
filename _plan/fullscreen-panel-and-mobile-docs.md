@@ -202,6 +202,21 @@ Part B (docs) implemented, unpushed:
 Manual phone check (A9: keyboard behaviour on iOS Safari / Android Chrome)
 still to do — not automatable in headless Chromium.
 
+### Follow-up (2026-09-15) — the keyboard uncovered the page
+
+Reported from a phone: with the keyboard up, the `c-tree-select` /
+`c-autocomplete` panel no longer covered the screen (fine again once the
+search field blurred). Cause: the panel *itself* was the visual viewport's
+box, so the whole surface shrank with the keyboard and any gap between what
+`visualViewport` reports and what is visible showed the page. Fix: two
+layers — the panel (`c-dropdown`: the dialog) is the surface,
+`position: fixed; inset: 0` over the layout viewport; only the card
+(`c-dropdown`: the inner column) follows the visual viewport
+(`visualViewport.ts`: `FULLSCREEN_SURFACE_STYLE` / `contentBoxStyle`,
+`useAnchoredPanel.cardStyle`). ADR-0050 decision 4 refined in place. Specs
+fake the API's getters (`src/test/fakeVisualViewport.ts`) — one case per
+component, red before the fix. The manual phone check is still open.
+
 ## Order of work
 
 1. A1 + A2 + A3 (shared primitives, each with its spec) — independent.
