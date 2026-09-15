@@ -274,3 +274,39 @@ Open follow-ups (not in scope here): fix the pinned deviations (each fix removes
 - c-tree-select fixture: the block host collapsed to 46 px in the inline-block stage (field centre on the chevron, panel and `search` baseline pinned to 46 px); it now mounts with `style="width: 320px"` and `open()` asserts the panel opened. Baselines regenerated.
 - `pnpm type-check` had been broken since step 6: `vue-tsc --build` pins `rootDir` to the package, so importing the root `vitest.browser.shared.ts` needs `rootDir: "../.."`; the unhandled-error filter now accepts Vitest's `TestError` shape.
 - Running the suite on the macOS host failed six visual comparisons only (fontconfig has no effect there: narrower text, 2–4% glyph diffs); every behaviour spec passed. `matchScreenshotInBothModes` and the example smoke now compare only when `server.platform === 'linux'` (devcontainer + CI) and print one notice per file elsewhere, so `test:update` cannot author a baseline from a Mac (ADR-0049 consequence added).
+
+## First CI run (2026-09-15): the font pin had never loaded
+
+The first CI run of the visual comparison failed 9 shots: three anchored
+panels came out 7 px wider (`<input>` default width follows the font's
+average character width) and six text-heavy shots differed by 2–4%. Cause:
+`src/test/fonts.conf` contained `--with-deps` inside its XML comment — a
+double hyphen is illegal there — so fontconfig rejected the whole file
+("line 6: not well-formed") and Chromium fell back to the system config
+without a word. Under that config two stacks resolve differently: the
+`--c-font-family` token (`'museo-sans', sans-serif`) reached Liberation Sans
+here anyway (the Latin chain of `60-latin.conf` ends in Arial, metric-aliased
+to Liberation), while Tailwind's preflight stack (`ui-sans-serif, system-ui,
+sans-serif`), which option rows, tags and tabs inherit inside their shadow
+roots, resolved to WenQuanYi Zen Hei — `system-ui` is not language-aware. On
+ubuntu-latest both went to DejaVu Sans. Hence mixed-font baselines, CI
+failing only text-heavy shots, and the 7 px wider panels (the `<input>`
+default width follows the font's average character width). The step-12
+verification (`fc-match sans-serif` → Liberation) had evidently been read
+with stderr hidden. Probed by measuring text widths in Chromium under both
+configs: broken → preflight 203 px (= WenQuanYi), sans-serif 212 px
+(= Liberation); fixed → everything 212 px.
+
+- Comment fixed (no CLI flag spelled with `--` in it); `fc-match` now gives
+  Liberation Sans / Mono for every aliased family.
+- All 22 csc-ui and 28 docs baselines re-authored under the effective pin
+  and reviewed. `test:update` rewrites only the references that fail the
+  comparison (a first pass rewrote 13; the other 37 WenQuanYi baselines
+  passed within the 1% budget), so the PNGs were deleted first and written
+  fresh in both packages.
+- Empty changeset `fontconfig-pin-loads`.
+- Residual risk: the devcontainer (Debian 12) ships fonts-liberation
+  1:1.07.4, ubuntu-latest 2.1.5 — same Arial metrics, different outlines. If
+  the next CI run still drifts past 1%, align the versions (install
+  `fonts-liberation2` in `.devcontainer/Dockerfile` and reject the 1.07 files
+  in `fonts.conf`, or bundle one TTF set) rather than raising the tolerance.
