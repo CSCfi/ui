@@ -22,6 +22,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     unzip \
     toilet \
     figlet \
+    libatomic1 \
     && rm -rf /var/lib/apt/lists/*
 
 ARG USERNAME=claudeuser

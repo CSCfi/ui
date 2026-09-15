@@ -305,8 +305,30 @@ configs: broken → preflight 203 px (= WenQuanYi), sans-serif 212 px
   passed within the 1% budget), so the PNGs were deleted first and written
   fresh in both packages.
 - Empty changeset `fontconfig-pin-loads`.
-- Residual risk: the devcontainer (Debian 12) ships fonts-liberation
-  1:1.07.4, ubuntu-latest 2.1.5 — same Arial metrics, different outlines. If
-  the next CI run still drifts past 1%, align the versions (install
-  `fonts-liberation2` in `.devcontainer/Dockerfile` and reject the 1.07 files
-  in `fonts.conf`, or bundle one TTF set) rather than raising the tolerance.
+- Residual risk at the time: the devcontainer (Debian 12) ships
+  fonts-liberation 1:1.07.4, ubuntu-latest 2.1.5. It materialised at once
+  (next section).
+
+## Second CI run (2026-09-15): Liberation version drift
+
+With the pin loading, the run on `642d7fcd` still failed five csc-ui shots:
+the three anchored panels again 253 px wide against 246 px references, and
+two tree-select shots at 2%. The docs shots and c-menu passed, so both
+machines rendered Liberation Sans — but not the same one. Liberation 2.1.5
+(Arimo-derived) carries a different OS/2 average character width than
+1.07.4, and that value sizes a default `<input>`, hence the 7 px; its
+outlines differ enough for the row-heavy shots.
+
+Decision (Oskari, options with trade-offs): **bundle Liberation 2.1.5 in the
+repo** rather than fetch it at test time or align the devcontainer image.
+`src/test/fonts/` holds Sans Regular/Bold/Italic/BoldItalic and Mono Regular
+plus the OFL `LICENSE` (about 2 MB; provenance and sha256 in `fonts.conf`);
+`fonts.conf` adds the directory (`<dir prefix="relative">`) and rejects every
+system Liberation path, so the bundled files win on any distro.
+`fonts.node.spec.ts` asks fontconfig that the config parses and that the
+aliased families resolve to the bundled files — it would have caught both
+the malformed comment and a system copy winning. All 50 baselines
+re-authored again. If a shot still drifts past 1% after this, the remaining
+variables are FreeType (2.12 vs 2.13) and arm64 vs x64 anti-aliasing: the
+shared config anticipates per-arch baselines (`-${process.arch}` in
+`resolveScreenshotPath`); the tolerance stays.
