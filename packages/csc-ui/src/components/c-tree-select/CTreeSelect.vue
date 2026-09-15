@@ -112,6 +112,7 @@
       :aria-modal="layout === 'fullscreen' ? 'true' : undefined"
       :class="ui.card()"
       :role="layout === 'fullscreen' ? 'dialog' : undefined"
+      :style="cardStyle"
       part="card"
     >
       <!-- Fullscreen panel (CONTEXT.md, ADR-0050): the heading row — label
@@ -709,13 +710,16 @@ const treeSelect = tv({
         item: 'cursor-default pointer-events-none bg-on-surface/5 [filter:grayscale(1)_opacity(0.75)] data-[active]:bg-on-surface/5 data-[active]:text-inherit data-[active]:ring-0',
       },
     },
-    // The fullscreen panel (CONTEXT.md, ADR-0050): the card fills the
-    // viewport-sized panel edge to edge and the list takes what the rows
-    // above leave, scrolling inside it.
+    // The fullscreen panel (CONTEXT.md, ADR-0050): the panel is the surface —
+    // it paints the overlay colour over the whole layout viewport — and the
+    // card, placed inside it on the visual viewport's box (`cardStyle`), sheds
+    // its anchored chrome; the list takes what the rows above leave,
+    // scrolling inside it.
     fullscreen: {
       true: {
-        card: 'h-full max-h-none rounded-none shadow-none',
+        card: 'max-h-none rounded-none shadow-none',
         list: 'flex-1 min-h-0',
+        panel: 'bg-surface-overlay overflow-hidden',
       },
     },
     // The pinned select-branch row (ADR-0047): the select-all row's recipe
@@ -1437,6 +1441,7 @@ const narrow = useNarrowViewport();
 // native `toggle` handler, so `change:query` still fires within that event.
 const {
   anchorStyle,
+  cardStyle,
   close: closePanel,
   isOpen,
   layout,

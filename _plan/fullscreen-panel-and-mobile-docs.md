@@ -202,6 +202,34 @@ Part B (docs) implemented, unpushed:
 Manual phone check (A9: keyboard behaviour on iOS Safari / Android Chrome)
 still to do — not automatable in headless Chromium.
 
+### Follow-up (2026-09-15) — the keyboard uncovered the page
+
+Reported from a phone: with the keyboard up, the `c-tree-select` /
+`c-autocomplete` panel no longer covered the screen (fine again once the
+search field blurred). Cause: the panel *itself* was the visual viewport's
+box, so the whole surface shrank with the keyboard and any gap between what
+`visualViewport` reports and what is visible showed the page. Fix: two
+layers — the panel (`c-dropdown`: the dialog) is the surface,
+`position: fixed; inset: 0` over the layout viewport; only the card
+(`c-dropdown`: the inner column) follows the visual viewport
+(`visualViewport.ts`: `FULLSCREEN_SURFACE_STYLE` / `contentBoxStyle`,
+`useAnchoredPanel.cardStyle`). ADR-0050 decision 4 refined in place. Specs
+fake the API's getters (`src/test/fakeVisualViewport.ts`) — one case per
+component, red before the fix. The manual phone check is still open.
+
+### Follow-up (2026-09-15) — the smoke's first CI run
+
+The viewport smoke never ran in CI until the visual suite went green; its
+first run failed one route: `/components/c-checkbox` at 362 px, widened by
+the inline code `c-checkbox:state(checked)::part(indicator)` in the usage
+prose. Two causes. The smoke launched Chromium without the harness font pin,
+so the runner rendered DejaVu (wider) while the devcontainer did not — it
+now passes `FONTCONFIG_FILE` = the bundled Liberation 2.1.5 pin (override by
+setting the variable, e.g. to probe a wider stack; a DejaVu stack reproduced
+the failure here). And inline `code` in the docs could not wrap: it now has
+`overflow-wrap: anywhere` (`pre` keeps its own scroll), so a long token
+breaks instead of widening the page under any font.
+
 ## Order of work
 
 1. A1 + A2 + A3 (shared primitives, each with its spec) — independent.

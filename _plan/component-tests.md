@@ -274,3 +274,61 @@ Open follow-ups (not in scope here): fix the pinned deviations (each fix removes
 - c-tree-select fixture: the block host collapsed to 46 px in the inline-block stage (field centre on the chevron, panel and `search` baseline pinned to 46 px); it now mounts with `style="width: 320px"` and `open()` asserts the panel opened. Baselines regenerated.
 - `pnpm type-check` had been broken since step 6: `vue-tsc --build` pins `rootDir` to the package, so importing the root `vitest.browser.shared.ts` needs `rootDir: "../.."`; the unhandled-error filter now accepts Vitest's `TestError` shape.
 - Running the suite on the macOS host failed six visual comparisons only (fontconfig has no effect there: narrower text, 2–4% glyph diffs); every behaviour spec passed. `matchScreenshotInBothModes` and the example smoke now compare only when `server.platform === 'linux'` (devcontainer + CI) and print one notice per file elsewhere, so `test:update` cannot author a baseline from a Mac (ADR-0049 consequence added).
+
+## First CI run (2026-09-15): the font pin had never loaded
+
+The first CI run of the visual comparison failed 9 shots: three anchored
+panels came out 7 px wider (`<input>` default width follows the font's
+average character width) and six text-heavy shots differed by 2–4%. Cause:
+`src/test/fonts.conf` contained `--with-deps` inside its XML comment — a
+double hyphen is illegal there — so fontconfig rejected the whole file
+("line 6: not well-formed") and Chromium fell back to the system config
+without a word. Under that config two stacks resolve differently: the
+`--c-font-family` token (`'museo-sans', sans-serif`) reached Liberation Sans
+here anyway (the Latin chain of `60-latin.conf` ends in Arial, metric-aliased
+to Liberation), while Tailwind's preflight stack (`ui-sans-serif, system-ui,
+sans-serif`), which option rows, tags and tabs inherit inside their shadow
+roots, resolved to WenQuanYi Zen Hei — `system-ui` is not language-aware. On
+ubuntu-latest both went to DejaVu Sans. Hence mixed-font baselines, CI
+failing only text-heavy shots, and the 7 px wider panels (the `<input>`
+default width follows the font's average character width). The step-12
+verification (`fc-match sans-serif` → Liberation) had evidently been read
+with stderr hidden. Probed by measuring text widths in Chromium under both
+configs: broken → preflight 203 px (= WenQuanYi), sans-serif 212 px
+(= Liberation); fixed → everything 212 px.
+
+- Comment fixed (no CLI flag spelled with `--` in it); `fc-match` now gives
+  Liberation Sans / Mono for every aliased family.
+- All 22 csc-ui and 28 docs baselines re-authored under the effective pin
+  and reviewed. `test:update` rewrites only the references that fail the
+  comparison (a first pass rewrote 13; the other 37 WenQuanYi baselines
+  passed within the 1% budget), so the PNGs were deleted first and written
+  fresh in both packages.
+- Empty changeset `fontconfig-pin-loads`.
+- Residual risk at the time: the devcontainer (Debian 12) ships
+  fonts-liberation 1:1.07.4, ubuntu-latest 2.1.5. It materialised at once
+  (next section).
+
+## Second CI run (2026-09-15): Liberation version drift
+
+With the pin loading, the run on `642d7fcd` still failed five csc-ui shots:
+the three anchored panels again 253 px wide against 246 px references, and
+two tree-select shots at 2%. The docs shots and c-menu passed, so both
+machines rendered Liberation Sans — but not the same one. Liberation 2.1.5
+(Arimo-derived) carries a different OS/2 average character width than
+1.07.4, and that value sizes a default `<input>`, hence the 7 px; its
+outlines differ enough for the row-heavy shots.
+
+Decision (Oskari, options with trade-offs): **bundle Liberation 2.1.5 in the
+repo** rather than fetch it at test time or align the devcontainer image.
+`src/test/fonts/` holds Sans Regular/Bold/Italic/BoldItalic and Mono Regular
+plus the OFL `LICENSE` (about 2 MB; provenance and sha256 in `fonts.conf`);
+`fonts.conf` adds the directory (`<dir prefix="relative">`) and rejects every
+system Liberation path, so the bundled files win on any distro.
+`fonts.node.spec.ts` asks fontconfig that the config parses and that the
+aliased families resolve to the bundled files — it would have caught both
+the malformed comment and a system copy winning. All 50 baselines
+re-authored again. If a shot still drifts past 1% after this, the remaining
+variables are FreeType (2.12 vs 2.13) and arm64 vs x64 anti-aliasing: the
+shared config anticipates per-arch baselines (`-${process.arch}` in
+`resolveScreenshotPath`); the tolerance stays.

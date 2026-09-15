@@ -6,10 +6,12 @@ import type { BrowserConfigOptions } from "vitest/node";
 const root = fileURLToPath(new URL(".", import.meta.url));
 
 /**
- * Deterministic glyphs for visual baselines: `sans-serif` resolves to WenQuanYi
- * Zen Hei in the devcontainer and to DejaVu Sans on ubuntu-latest. The
- * fontconfig aliases every generic family to Liberation, which
- * `playwright install --with-deps` puts on both machines (ADR-0049).
+ * Deterministic glyphs for visual baselines: the fontconfig selects the
+ * Liberation 2.1.5 files bundled in `packages/csc-ui/src/test/fonts` ahead of
+ * any system font and aliases every generic family onto them. Without it
+ * `sans-serif` is WenQuanYi Zen Hei in the devcontainer and DejaVu Sans on
+ * ubuntu-latest, and the distros' own Liberation copies differ in version
+ * (1.07.4 vs 2.1.5) (ADR-0049).
  */
 export const FONTS_CONF = path.join(
   root,

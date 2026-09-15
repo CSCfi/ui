@@ -10,6 +10,7 @@ import { page, userEvent } from 'vitest/browser';
 import type { Mounted } from '../../test/harness';
 
 import { peekCap } from '../../shared/peekCap';
+import { fakeVisualViewport } from '../../test/fakeVisualViewport';
 import {
   deepActiveElement,
   defineAll,
@@ -424,6 +425,76 @@ describe('fullscreen panel', () => {
     expect(dialog(m).getBoundingClientRect().width).toBeLessThan(
       window.innerWidth / 2,
     );
+  });
+
+  // The on-screen keyboard: headless Chromium has none, so the visual
+  // viewport's box is faked — an Android-like shrink, then an iOS-like pan.
+  // The dialog must stay over the whole layout viewport either way; only
+  // the inner column follows the visible box, so the moved field ends above
+  // the keyboard.
+  it('keeps the dialog over the whole viewport while the keyboard shrinks the visual viewport; the inner column follows the visible box', async () => {
+    await page.viewport(PHONE.width, PHONE.height);
+
+    const m = await mountSelect();
+
+    await openFullscreen(m);
+
+    const viewport = {
+      height: window.innerHeight,
+      width: document.documentElement.clientWidth,
+    };
+
+    const expectSurfaceCovers = (): void => {
+      const rect = dialog(m).getBoundingClientRect();
+
+      expect([rect.left, rect.top, rect.width, rect.height]).toEqual([
+        0,
+        0,
+        viewport.width,
+        viewport.height,
+      ]);
+      expect(getComputedStyle(dialog(m)).backgroundColor).not.toBe(
+        'rgba(0, 0, 0, 0)',
+      );
+    };
+
+    for (const box of [
+      { height: 400, offsetTop: 0 },
+      { height: 400, offsetTop: 340 },
+    ]) {
+      const restore = fakeVisualViewport(box);
+
+      try {
+        await settle();
+        expectSurfaceCovers();
+
+        const content = dialog(m)
+          .querySelector<HTMLElement>(':scope > div')!
+          .getBoundingClientRect();
+
+        expect([
+          content.left,
+          content.top,
+          content.width,
+          content.height,
+        ]).toEqual([0, box.offsetTop, viewport.width, box.height]);
+
+        const inside = m.shadow('c-input').getBoundingClientRect();
+
+        expect(inside.top).toBeGreaterThanOrEqual(content.top);
+        expect(inside.bottom).toBeLessThanOrEqual(content.bottom);
+      } finally {
+        restore();
+      }
+    }
+
+    await settle();
+    expectSurfaceCovers();
+    expect(
+      dialog(m)
+        .querySelector<HTMLElement>(':scope > div')!
+        .getBoundingClientRect().height,
+    ).toBe(viewport.height);
   });
 
   it('visual: fullscreen panel', async () => {

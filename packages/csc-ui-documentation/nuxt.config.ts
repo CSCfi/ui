@@ -117,7 +117,7 @@ export default defineNuxtConfig({
   ssr: true,
   vite: {
     optimizeDeps: {
-      include: ['@mdi/js'],
+      include: ['@mdi/js', 'markdown-it', 'shiki'],
     },
     plugins: [stubExampleDemosInSsr, ignoreExampleDocsBlocks, tailwindcss()],
     resolve: {

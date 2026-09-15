@@ -56,11 +56,19 @@ consumer flag on `c-side-navigation`.
    sizing and heading row. Rejected: porting `c-dropdown` onto the composable
    first (a rewrite of a 980-line component with its moved-field model, for a
    mobile fix) and per-component copies.
-4. **Keyboard — follow `visualViewport`, fall back to `100dvh`.** While a
-   fullscreen panel is open it pins its height and offset to
-   `visualViewport`; `100dvh` is the initial and no-API value. CSS alone
-   cannot see the iOS keyboard, and a library cannot set the consumer page's
-   `interactive-widget` viewport meta.
+4. **Keyboard — the surface spans the layout viewport; the content follows
+   `visualViewport`.** The panel element is `position: fixed; inset: 0` — the
+   layout viewport, which the on-screen keyboard overlays but never shrinks —
+   and paints the surface; the content box inside it (heading row, search
+   input, list) is pinned to `visualViewport`'s box while open, so it ends
+   above the keyboard. Coverage therefore depends on nothing the API reports,
+   or when: a late or wrong box shows more surface, never the page. Without
+   the API the content fills the surface. CSS alone cannot see the iOS
+   keyboard, and a library cannot set the consumer page's
+   `interactive-widget` viewport meta. _Refined 2026-09-15_: the first shape
+   made the panel itself the visual viewport's box (`100dvh` without the
+   API); on a phone the page showed beside the shrunken panel while the
+   keyboard was up.
 5. **Modality — inert and scroll-locked through the modal stack's routines,
    without joining the stack.** The inert and scroll-lock code `modalStack.ts`
    owns is extracted and shared; the fullscreen panel inerts everything
@@ -90,8 +98,9 @@ consumer flag on `c-side-navigation`.
   visual baselines per theme mode; the anchored-overlays conformance suite
   gains a scroll-gesture case (press outside + `pointercancel` keeps the
   surface open; press + release outside closes it). The keyboard itself cannot
-  be driven in headless Chromium — a manual phone check is part of the
-  definition of done.
+  be driven in headless Chromium — specs fake the visual viewport's box (the
+  API's own getters) to prove the surface stays put while the content
+  shrinks; a manual phone check is still part of the definition of done.
 - Two mechanisms remain (`<dialog>` in `c-dropdown`, popover in the
   composable). The seam is the shared predicate, sizing and heading row; a
   later port of `c-dropdown` onto `useAnchoredPanel` collapses it.

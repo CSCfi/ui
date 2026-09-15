@@ -271,7 +271,8 @@ export const consoleSpy = (() => {
 
 /**
  * Visual baselines are authored in the devcontainer and compared in CI — both
- * Linux, where `fonts.conf` pins every generic family to Liberation. No other
+ * Linux, where `fonts.conf` pins every generic family to the bundled
+ * Liberation 2.1.5 files (`src/test/fonts`). No other
  * host renders the same glyphs (macOS ignores fontconfig), so elsewhere the
  * comparison is skipped and only the behaviour assertions around it run.
  * `test:update` therefore never writes a baseline from a non-Linux checkout.

@@ -6,6 +6,7 @@
  *
  * Usage (after `pnpm generate`):
  *   node scripts/viewport-smoke.mjs [--width 360] [--height 740] [--only <route>]
+ * Renders with the harness font pin (see FONTS_CONF below).
  *
  * Serves `.output/public` on a local port, opens each `index.html` route in
  * the pinned Playwright Chromium at the phone viewport, waits for the custom
@@ -29,6 +30,17 @@ import { chromium } from 'playwright';
 const here = fileURLToPath(new URL('.', import.meta.url));
 
 const PUBLIC = resolve(here, '../.output/public');
+
+/**
+ * The same font pin the visual baselines use (ADR-0049): the bundled
+ * Liberation 2.1.5, so a route fits or overflows identically in the
+ * devcontainer and in CI — without it the runner renders DejaVu Sans, which is
+ * wider, and a route that fits here can spill there. Set FONTCONFIG_FILE to
+ * probe another stack on purpose.
+ */
+const FONTS_CONF =
+  process.env.FONTCONFIG_FILE ??
+  resolve(here, '../../csc-ui/src/test/fonts.conf');
 
 const args = process.argv.slice(2);
 
@@ -118,6 +130,7 @@ await new Promise((done) => server.listen(0, '127.0.0.1', done));
 const origin = `http://127.0.0.1:${server.address().port}`;
 
 const browser = await chromium.launch({
+  env: { ...process.env, FONTCONFIG_FILE: FONTS_CONF },
   executablePath: process.env.PLAYWRIGHT_CHROMIUM_PATH || undefined,
 });
 

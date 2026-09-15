@@ -19,11 +19,13 @@
  *    back with a negative block-start margin;
  *  - the fullscreen layout: chosen at `open()` from the `fullscreen`
  *    predicate and kept for the whole open (crossing the threshold while open
- *    closes the panel). The panel drops anchor positioning and follows the
- *    *visual* viewport — `visualViewport` resize / scroll while open — so the
- *    heading row and search input stay above the on-screen keyboard;
- *    `100dvh` where the API is missing. The page behind it is locked
- *    (`pageLock.ts`: inert except toasts, no document scroll);
+ *    closes the panel). The panel drops anchor positioning and becomes the
+ *    surface — `position: fixed; inset: 0`, the layout viewport, which the
+ *    on-screen keyboard overlays but never shrinks — while the card inside it
+ *    follows the *visual* viewport (`visualViewport` resize / scroll while
+ *    open; `cardStyle`), so the heading row and search input stay above the
+ *    keyboard and the page never shows beside them. The page behind it is
+ *    locked (`pageLock.ts`: inert except toasts, no document scroll);
  *  - open / close through `showPopover()` / `hidePopover()` on a
  *    `popover="manual"` panel, with the native `toggle` event as the single
  *    source of truth for `isOpen` (browser-initiated closes included);
@@ -37,10 +39,10 @@
  * `--c-field-panel-above-left` flip rules and `position-try-fallbacks` —
  * per-shadow-root escape-hatch CSS (ADR-0007; each element type has its own
  * adopted sheet, so the block is copy-identical in every consumer) — the
- * fullscreen `tv` variant (card fills the panel, list takes the rest, the
- * heading row) and the open sequence (peek cap, focus, highlight seed,
- * announcement), run from `onOpened` synchronously inside the `toggle`
- * handler.
+ * fullscreen `tv` variant (the panel paints the surface, the card sheds its
+ * anchored chrome, the list takes the rest, the heading row) and the open
+ * sequence (peek cap, focus, highlight seed, announcement), run from
+ * `onOpened` synchronously inside the `toggle` handler.
  */
 
 import {
@@ -58,7 +60,8 @@ import { ensureAnchorPositioning } from './anchorPolyfill';
 import { attachLightDismiss, type Detach } from './lightDismiss';
 import { lockPage, unlockPage } from './pageLock';
 import {
-  fullscreenBoxStyle,
+  contentBoxStyle,
+  FULLSCREEN_SURFACE_STYLE,
   type StopTracking,
   trackVisualViewport,
   type ViewportBox,
@@ -73,6 +76,8 @@ export const FIELD_PANEL_ANCHOR = '--c-field-panel-anchor';
 export interface AnchoredPanel {
   /** Inline style for the anchor wrapper: `anchor-name: --c-field-panel-anchor`. */
   anchorStyle: string;
+  /** Inline style for the card inside the panel: empty while anchored; fullscreen — the visual viewport's box inside the surface (the whole surface with no API). */
+  cardStyle: ComputedRef<string>;
   /** Hide the panel; `returnFocus` moves focus to `returnFocusTo` once the `toggle` event confirms the close. */
   close(returnFocus?: boolean): void;
   /** Open state — written only by the native `toggle` event (single source of truth, browser-initiated closes included). */
@@ -83,7 +88,7 @@ export interface AnchoredPanel {
   onToggle(event: Event): void;
   /** Choose the layout, measure (anchored: the anchor width and the field's message height), then `showPopover()`. */
   open(): void;
-  /** Inline style for the panel: anchored — `position-anchor`, `position-area: bottom span-right`, `inset: auto`, the pinned width and the message pull-back; fullscreen — the visual viewport's box. */
+  /** Inline style for the panel: anchored — `position-anchor`, `position-area: bottom span-right`, `inset: auto`, the pinned width and the message pull-back; fullscreen — the surface, the layout viewport's box. */
   panelStyle: ComputedRef<string>;
 }
 
@@ -134,7 +139,7 @@ export const useAnchoredPanel = (
 
   // ---- visual viewport (fullscreen layout) --------------------------------
 
-  /** The visual viewport's box while a fullscreen panel is open; `null` without the API (then `100dvh`). */
+  /** The visual viewport's box while a fullscreen panel is open; `null` without the API (then the card fills the surface). */
   const viewportBox = ref<null | ViewportBox>(null);
 
   let stopViewport: null | StopTracking = null;
@@ -155,9 +160,7 @@ export const useAnchoredPanel = (
   // ---- style ----------------------------------------------------------------
 
   const panelStyle = computed(() => {
-    if (layout.value === 'fullscreen') {
-      return `position:fixed;margin:0;${fullscreenBoxStyle(viewportBox.value)}`;
-    }
+    if (layout.value === 'fullscreen') return FULLSCREEN_SURFACE_STYLE;
 
     const w = panelWidth.value ? `width:${panelWidth.value}px;` : '';
 
@@ -167,6 +170,10 @@ export const useAnchoredPanel = (
 
     return `position-anchor:${FIELD_PANEL_ANCHOR};position-area:bottom span-right;inset:auto;${w}${m}`;
   });
+
+  const cardStyle = computed(() =>
+    layout.value === 'fullscreen' ? contentBoxStyle(viewportBox.value) : '',
+  );
 
   // ---- open / close -----------------------------------------------------------
 
@@ -301,6 +308,7 @@ export const useAnchoredPanel = (
 
   return {
     anchorStyle: `anchor-name:${FIELD_PANEL_ANCHOR}`,
+    cardStyle,
     close,
     isOpen,
     layout,
