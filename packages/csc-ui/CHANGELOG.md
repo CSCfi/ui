@@ -1,5 +1,14 @@
 # @cscfi/csc-ui
 
+## 4.0.0-alpha.16
+
+### Patch Changes
+
+- [#277](https://github.com/CSCfi/ui/pull/277) [`0777e00`](https://github.com/CSCfi/ui/commit/0777e0015d746e8e7f66ca2e59d7405ecfede840) Thanks [@razorfever](https://github.com/razorfever)! - Fix the fullscreen panel of `c-autocomplete`, `c-tree-select` and `c-select`
+  uncovering the page while the on-screen keyboard is open: the panel keeps
+  covering the whole screen, and only its content — the heading row, the search
+  input and the options — shrinks to the space the keyboard leaves.
+
 ## 4.0.0-alpha.15
 
 ### Minor Changes
