@@ -47,6 +47,9 @@
   /* Inline code everywhere (templates and rendered markdown alike). Code
    * blocks opt back out where needed (utilities or the .shiki rules). */
   code {
+    /* A long unbreakable token (`c-checkbox:state(checked)::part(indicator)`)
+       must wrap rather than widen a 360px page; `pre` keeps its own scroll. */
+    overflow-wrap: anywhere;
     font-size: 0.875em;
     background: var(--c-surface-muted);
     border-radius: 4px;
