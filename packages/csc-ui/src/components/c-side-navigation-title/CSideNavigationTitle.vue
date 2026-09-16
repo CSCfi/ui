@@ -34,6 +34,10 @@ import { computed } from 'vue';
  * The host stays `display:contents` (global) and the visual box lives on the
  * inner `root` element. The 1px underline uses an arbitrary box-shadow because
  * there is no single-side ring/border utility that matches the original.
+ *
+ * The top margin separates a section from the items above it; the first title
+ * in a navigation has nothing above it but the nav padding, so the escape-hatch
+ * rule below drops the margin when the host is its parent's first child.
  */
 const sideNavigationTitle = tv({
   slots: {
@@ -45,3 +49,14 @@ const sideNavigationTitle = tv({
 
 const ui = computed(() => sideNavigationTitle());
 </script>
+
+<!--
+  Escape-hatch CSS (ADR-0007): a positional host selector, which no utility can
+  express. The first section title sits directly under the nav padding, so its
+  section-separating top margin is dropped.
+-->
+<style>
+:host(:first-child) [part='root'] {
+  margin-top: 0;
+}
+</style>
