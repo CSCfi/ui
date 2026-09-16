@@ -543,6 +543,9 @@ describe('fullscreen panel', () => {
     await settle();
     await userEvent.click(rows(m)[1]);
     await settle();
+    // The close this case is about is deferred a frame past the reflow: give
+    // it the chance to land before reading the panel.
+    await settle();
 
     expect(
       document.body.getBoundingClientRect().height,
@@ -573,6 +576,7 @@ describe('fullscreen panel', () => {
       await settle();
       dialog(m).dispatchEvent(new MouseEvent('click', { bubbles: true }));
       await settle();
+      await settle();
 
       expect(isOpen(m)).toBe(true);
     } finally {
@@ -593,9 +597,8 @@ describe('fullscreen panel', () => {
     expect(isOpen(m)).toBe(true);
 
     await page.viewport(DESKTOP.width, DESKTOP.height);
-    await settle();
 
-    expect(isOpen(m)).toBe(false);
+    await expect.poll(() => isOpen(m)).toBe(false);
   });
 
   // The anchored layout keeps its Stencil-era close-on-reflow: it is placed at
@@ -611,12 +614,9 @@ describe('fullscreen panel', () => {
     expect(isOpen(m)).toBe(true);
 
     growPage();
-    // The observer defers its close by a frame; settle() alone can land on
-    // the frame before it.
-    await settle();
-    await settle();
 
-    expect(isOpen(m)).toBe(false);
+    // The observer defers its close by a frame.
+    await expect.poll(() => isOpen(m)).toBe(false);
   });
 
   it('visual: fullscreen panel', async () => {
