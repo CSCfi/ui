@@ -9,7 +9,7 @@
          `c-side-navigation-title::part(divider-root)`; `::part` doesn't pierce
          nested shadow roots, and the bare `root` name is already taken by this
          component's own root part. -->
-    <c-divider exportparts="root:divider-root" />
+    <c-divider :class="ui.divider()" exportparts="root:divider-root" />
   </div>
 </template>
 
@@ -32,8 +32,13 @@ import { computed } from 'vue';
  * customization is via `::part(root)`.
  *
  * The host stays `display:contents` (global) and the visual box lives on the
- * inner `root` element. The 1px underline uses an arbitrary box-shadow because
- * there is no single-side ring/border utility that matches the original.
+ * inner `root` element. The underline is a `c-divider`, but the `divider`
+ * token is a translucent *black* ink in light mode (ADR-0036), audited for the
+ * surface ladder — invisible on the nav surface, which is brand-dark in both
+ * modes. The `divider` slot therefore scopes `--c-divider` to a translucent
+ * `on-nav` ink for that one element: the same principle (a translucent ink of
+ * the surface's foreground) applied to the nav chrome. 40% reads clearly on
+ * the nav without becoming the solid rule the Stencil-era title drew.
  *
  * The top margin separates a section from the items above it; the first title
  * in a navigation has nothing above it but the nav padding, so the escape-hatch
@@ -41,6 +46,7 @@ import { computed } from 'vue';
  */
 const sideNavigationTitle = tv({
   slots: {
+    divider: '[--c-divider:color-mix(in_srgb,var(--c-on-nav)_40%,transparent)]',
     label:
       'flex items-center gap-2 px-2 text-on-nav uppercase text-xs tracking-widest',
     root: 'grid gap-2 mt-6 mb-2',
