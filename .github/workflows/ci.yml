@@ -85,10 +85,16 @@ jobs:
           pnpm --filter @cscfi/csc-ui-documentation run generate
           pnpm --filter @cscfi/csc-ui-documentation run test:viewport
 
+      # `pnpm test` runs vitest from the repo root, so attachments land in
+      # `<root>/.vitest`; the per-package path only catches a run started
+      # inside a package. Both are listed — a failing visual case uploaded
+      # nothing until 2026-09-16.
       - name: Upload screenshot diffs
         if: failure()
         uses: actions/upload-artifact@v4
         with:
           name: vitest-attachments
-          path: packages/**/.vitest/attachments/**
+          path: |
+            .vitest/attachments/**
+            packages/**/.vitest/attachments/**
           if-no-files-found: ignore
