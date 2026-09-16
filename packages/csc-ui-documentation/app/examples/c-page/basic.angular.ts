@@ -15,7 +15,7 @@ import { Component, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
   `,
   styles: [
     `
-      /* Demo-only sizing: c-page normally fills the viewport below the toolbar. */
+      /* Demo-only sizing: c-page normally fills the dashboard's page area and the document scrolls. */
       .demo-page {
         height: 240px;
       }

@@ -505,3 +505,28 @@ describe('fullscreen panel', () => {
     await matchScreenshotInBothModes(m.part('panel'), 'fullscreen');
   });
 });
+
+// The trailing controls (clear button, chevron) sit in c-input's `post` slot
+// on a real box: on the `display: contents` host they used to be on, the
+// chevron's turn never rendered.
+describe('closed field controls', () => {
+  it('turns the chevron while the panel is open', async () => {
+    const m = await mountAuto();
+
+    const chevron = m.shadow('[slot="post"] > span');
+
+    const closed = getComputedStyle(chevron).rotate;
+
+    await open(m);
+    await settled();
+
+    expect(getComputedStyle(chevron).rotate).not.toBe(closed);
+  });
+
+  it('visual: closed field with a selection', async () => {
+    const m = await mountAuto({ clearable: true, value: 'ts' });
+
+    await settled();
+    await matchScreenshotInBothModes(m.stage, 'field-selected');
+  });
+});

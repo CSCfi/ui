@@ -910,7 +910,7 @@ export interface CLoginCardContentElement extends HTMLElement {
 export interface CLoginCardTitleElement extends HTMLElement {
 }
 
-/** Wrapper component for the whole page */
+/** The page shell of an application: it paints the page canvas and lays out the toolbar, the side navigation and the page in the dashboard layout. It is at least a viewport tall and grows with its content, so the document — not a component — is what scrolls. */
 export interface CMainElement extends Omit<HTMLElement, 'disableLayout'> {
   /** Disable the default dashboard layout */
   disableLayout?: boolean;
@@ -2190,7 +2190,13 @@ export interface CToastsElement extends Omit<HTMLElement, 'absolute' | 'horizont
   removeToast(id: string): void;
 }
 
-export interface CToolbarElement extends HTMLElement {
+/** The app-wide bar at the top of the dashboard layout: the logo, the service name and global actions such as the user menu or log out. It is pinned to the top of the viewport by default and stays there while the page scrolls; `static` keeps it in the page flow so it scrolls away with the content. */
+export interface CToolbarElement extends Omit<HTMLElement, 'static'> {
+  /**
+   * Keep the toolbar in the page flow so it scrolls away with the content
+   * instead of staying pinned to the top of its scroll container
+   */
+  static?: boolean;
 }
 
 /** Events dispatched by `<c-tooltip>`. */

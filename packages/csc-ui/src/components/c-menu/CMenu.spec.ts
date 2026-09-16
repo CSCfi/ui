@@ -99,3 +99,55 @@ describe('peek', () => {
     expect(parseFloat(list.style.maxHeight)).toBeLessThanOrEqual(320);
   });
 });
+
+// A submenu on touch (iOS Safari): one tap fires `pointerover` and then, once
+// WebKit's click delay has passed, `click`. Hover-open on that `pointerover`
+// opened the submenu, and the tap's own click then toggled it straight back
+// shut — the submenu flashed and vanished.
+describe('c-menu submenu on touch', () => {
+  const SUBMENU =
+    '<c-menu-item value="p">Parent<c-menu-item slot="submenu" value="s">Sub</c-menu-item></c-menu-item>';
+
+  it('a tap opens the submenu: touch never hover-opens, so the click toggles it open', async () => {
+    const m = await mountMenu(SUBMENU);
+
+    await open(m);
+
+    const parent = m.host.querySelector('c-menu-item')!;
+
+    const panel = parent.shadowRoot!.querySelector('[part~="submenu-panel"]')!;
+
+    parent.dispatchEvent(
+      new PointerEvent('pointerover', {
+        bubbles: true,
+        composed: true,
+        pointerType: 'touch',
+      }),
+    );
+    // Past the hover-open delay (120ms), where the tap's click lands.
+    await settle(250);
+
+    expect(panel.matches(':popover-open'), 'no hover-open on touch').toBe(
+      false,
+    );
+
+    parent.click();
+    await settle();
+
+    expect(panel.matches(':popover-open')).toBe(true);
+  });
+
+  it('the submenu panel can flip to the other side when the right has no room', async () => {
+    const m = await mountMenu(SUBMENU);
+
+    await open(m);
+
+    const panel = m.host
+      .querySelector('c-menu-item')!
+      .shadowRoot!.querySelector('[part~="submenu-panel"]')!;
+
+    expect(
+      getComputedStyle(panel).getPropertyValue('position-try-fallbacks'),
+    ).toContain('flip-inline');
+  });
+});

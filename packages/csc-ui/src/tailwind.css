@@ -166,6 +166,19 @@
 }
 
 /*
+ * Layout value. The toolbar height was a 60px literal in c-toolbar, c-page and
+ * c-side-navigation; `--spacing-toolbar` gives c-toolbar `h-toolbar` and lets
+ * c-main's escape-hatch CSS offset the pinned side navigation (ADR-0051).
+ * `static` keeps the variable in the sheet even when no utility references it
+ * (c-main reads it through `var()`). Theme values are emitted under
+ * `:root, :host`, so they resolve on every component host and inherit into
+ * slotted light-DOM children.
+ */
+@theme static {
+  --spacing-toolbar: 60px;
+}
+
+/*
  * No consumer override safelist. Customization is via `::part()`
  * from the consumer's own stylesheet, so the inlined sheet only needs the
  * utilities the library's own components actually use — those are auto-detected

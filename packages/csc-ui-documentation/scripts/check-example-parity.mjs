@@ -42,10 +42,10 @@ const VARIANTS = new Map([
 const OPTIONAL_EXTS = new Map([['typescript', new Set(['ts'])]]);
 
 /**
- * Internal-only elements (keep in sync with useManifest.ts): no docs page,
- * no React wrapper export — their example dirs need no variants.
+ * Internal-only elements (keep in sync with useManifest.ts): no docs page —
+ * their example dirs, if any, need no variants.
  */
-const INTERNAL_ONLY = new Set(['c-dropdown']);
+const INTERNAL_ONLY = new Set(['c-dropdown', 'c-input']);
 
 /** Vue APIs that Nuxt would auto-import; canon examples must import them. */
 const VUE_APIS = new Set([

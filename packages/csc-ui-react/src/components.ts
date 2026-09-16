@@ -373,7 +373,7 @@ export const CLoginCardTitle = createComponent({
   tagName: 'c-login-card-title',
 });
 
-/** Wrapper component for the whole page */
+/** The page shell of an application: it paints the page canvas and lays out the toolbar, the side navigation and the page in the dashboard layout. It is at least a viewport tall and grows with its content, so the document — not a component — is what scrolls. */
 export const CMain = createComponent({
   displayName: 'CMain',
   elementClass: elementClass<CMainElement>('c-main'),
@@ -744,6 +744,7 @@ export const CToasts = createComponent({
   tagName: 'c-toasts',
 });
 
+/** The app-wide bar at the top of the dashboard layout: the logo, the service name and global actions such as the user menu or log out. It is pinned to the top of the viewport by default and stays there while the page scrolls; `static` keeps it in the page flow so it scrolls away with the content. */
 export const CToolbar = createComponent({
   displayName: 'CToolbar',
   elementClass: elementClass<CToolbarElement>('c-toolbar'),

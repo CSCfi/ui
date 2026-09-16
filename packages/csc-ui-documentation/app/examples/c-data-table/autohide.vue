@@ -49,7 +49,9 @@ const data = [
 <style scoped>
 .resizable {
   max-width: 100%;
-  min-width: 320px;
+  /* Never wider than the example frame: at phone width the frame is narrower
+     than 320px. */
+  min-width: min(320px, 100%);
   overflow: auto;
   resize: horizontal;
   width: 560px;

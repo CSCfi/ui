@@ -55,6 +55,13 @@ The track keeps an opaque fill under its labels and a hairline frame that
 reads on any surface, so the group can sit on a card, a muted panel, or
 directly on the page canvas with no extra styling.
 
+The buttons are equal columns as wide as the longest label. Given room, the
+group is one row — its natural width in a flex row, the full width of a
+block container. Narrower than one row of its buttons, the group wraps them
+onto further rows inside the same frame rather than letting them overflow.
+Keep the labels short (see above): a group that wraps on a phone is fine, a
+group that wraps on a laptop wants `c-select`.
+
 ## Accessibility
 
 Setting `label` names the group for assistive technology (`role="group"` +

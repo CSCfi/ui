@@ -468,6 +468,32 @@ const columns: CDataTableColumn<User>[] = [
 <c-text-field label="Email" error-message="Email is required"></c-text-field>`,
       },
       {
+        filename: 'c-toolbar / c-page — the document scrolls',
+        lang: 'html',
+        code: `<!-- Before: c-toolbar was position: fixed and class="relative" put it in
+     flow; c-page was the scroll container, sized to the viewport minus the
+     60px toolbar. -->
+<c-main>
+  <c-toolbar class="relative">…</c-toolbar>
+  <c-page>…</c-page>
+</c-main>
+
+<!-- After: the document scrolls (ADR-0051). The toolbar is pinned with CSS
+     sticky; the static prop (static in React) keeps it in flow instead.
+     c-page has no height and does not scroll — drop c-page { height }
+     overrides and scroll listeners on it; scroll-indicator tracks the
+     document; smooth scrolling is html { scroll-behavior: smooth }.
+     Inside c-main the desktop side navigation is pinned automatically
+     (autoheight stays for standalone use), and a new banner slot sits
+     above the toolbar. -->
+<c-main>
+  <c-alert slot="banner" type="info">Maintenance on Saturday.</c-alert>
+  <c-toolbar static>…</c-toolbar>
+  <c-side-navigation>…</c-side-navigation>
+  <c-page>…</c-page>
+</c-main>`,
+      },
+      {
         filename: 'Other components',
         lang: 'md',
         code: `- c-autocomplete: no longer built on c-dropdown; it renders its own popover

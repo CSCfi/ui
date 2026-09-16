@@ -776,6 +776,12 @@ const onKeydown = (event: KeyboardEvent) => {
 const onPointerOver = (event: PointerEvent) => {
   if (!isOpen.value) return;
 
+  // A touch never hovers: on iOS one tap fires `pointerover` and then, after
+  // the hover-open delay has passed, `click` — which would toggle the
+  // submenu it had just opened straight back shut. Touch opens a submenu by
+  // tapping its item (the click toggle); only mouse and pen hover-open.
+  if (event.pointerType === 'touch') return;
+
   const item = itemFromPath(event.composedPath());
 
   if (!item || isItemDisabled(item)) return;

@@ -107,6 +107,32 @@ _Avoid_: Stepper mode, navigate, filter mode (the query narrows nothing in brows
 The pinned first row of a **level list** inside a **branch**, present only under `allow-branch`, that commits the branch itself ("Select Natural sciences"). Like the **select-all row** it carries no value of its own and is not an item; it is the only way to commit a branch while browsing.
 _Avoid_: Select affordance, "select this level" button, row action
 
+### Layout
+
+**Dashboard layout** (`c-main`):
+The default arrangement `c-main` gives its slotted layout components: the **toolbar** spanning the top, the **side navigation** down the left, the **page** filling the rest. The document is the scroll container; the toolbar and the desktop side navigation are **pinned** by default, and the layout grows with the page's content (ADR-0051). `disable-layout` opts out and leaves `c-main` a plain column.
+_Avoid_: App shell, frame, chrome, grid (the mechanism, not the concept)
+
+**Toolbar** (`c-toolbar`):
+The app-wide bar at the top of the **dashboard layout** holding the logo, service name and global actions. **Pinned** by default; **static** puts it in flow so it leaves with the page.
+_Avoid_: App bar, header, navbar, fixed toolbar (it is no longer CSS-fixed)
+
+**Banner** (dashboard layout):
+A full-width message strip the consumer slots above the **toolbar** (`slot="banner"`): a service notice, an environment warning. It scrolls away with the page and the toolbar pins in its place. The same sense as `c-data-table`'s select-all banner: a strip carrying a message and, at most, an action. Not a landmark.
+_Avoid_: the ARIA `banner` landmark (that is the site header region, i.e. the toolbar), header, notification (transient; that is a toast), alert (the component that may fill the slot)
+
+**Page** (`c-page`):
+The routed-content region of the **dashboard layout**, with an optional footer slot at its bottom edge. It grows with its content and never scrolls on its own; the document does.
+_Avoid_: Content area, view, scroll container (the Stencil-era and early-4.0 behaviour)
+
+**Pinned**:
+Stuck to an edge of the scroll viewport while the surrounding content scrolls: the **toolbar** and the desktop **side navigation** in the dashboard layout, a **pinned column**, the **select-all row**. The concept; CSS `position: sticky` is one way to implement it.
+_Avoid_: Sticky (the mechanism; as a term reserved for data-table header/footer rows), fixed (a different mechanism the toolbar no longer uses), frozen
+
+**Static** (toolbar):
+The **toolbar**'s opt-in in-flow state (`static`): the bar is ordinary content at the top of the page and leaves the viewport as the page scrolls. The opposite of **pinned**. Named for the behaviour, not the CSS keyword (the bar is positioned `relative` to keep its stacking).
+_Avoid_: Relative (the retired 3.x host-class switch), in-flow, unpinned, hidden (nothing hides it)
+
 ### Overlays
 
 **Tooltip** (`c-tooltip`):
@@ -244,6 +270,10 @@ _Avoid_: Border (the opaque role), outline (the CSS property / focus concept), d
 The top rung of the **surface ladder** (`surface-inverted`): a background that takes the *opposite* mode's ground — near-black in light mode, near-white in dark mode — so a maximum-emphasis transient layer stands apart from every other surface instead of blending one shade above it. Content on it uses the matching inverted roles (`on-surface-inverted`, the `*-inverted` status roles), which likewise borrow the opposite mode's look. Mode-**aware** (it flips with the mode) — not to be confused with the mode-**invariant** `inverse-*` family, which keeps one fixed look on a fixed brand/dark backdrop regardless of mode.
 _Avoid_: Inverse surface (collides with the invariant `inverse-*` family), dark surface (only true in light mode), contrast surface
 
+**Wash** (nav chrome):
+A translucent tint of a surface's own foreground ink — `on-nav` on `nav-surface`, `on-nav-active` on `nav-active` — used for the side navigation's hover, active, indicator and focus states, so every state stays legible in both **theme modes** without a per-mode value (ADR-0052). Page roles (the **surface ladder**, the primary tint pair) are never painted inside the nav.
+_Avoid_: Overlay (a floating surface), tint (reserve for the `*-subtle` roles), highlight
+
 **`on-` token** (foreground role):
 A semantic token naming the **content colour that sits on** a given surface or fill — `on-surface` (text/icons on `surface`), `on-primary` (label on a `primary` fill), etc. Its light/dark values flip to preserve contrast (e.g. `on-primary` is white on the light-mode `primary` fill but dark on the lighter dark-mode `primary` fill). The reason a single mode-independent text colour is insufficient and the semantic layer is required.
 _Avoid_: Foreground, contrast colour, text token (use `on-<role>`)
@@ -307,11 +337,11 @@ A **label** naming a *set* of controls operated as one field — `c-radio-group`
 _Avoid_: Legend (the native `<fieldset>` mechanism this library does not use), group title
 
 **Button group** (`c-button-group`):
-A standalone **labelable value control**: a segmented row of plain `c-button` children where activation carries the value — exclusive by default, cumulative in **multiple** mode. The form-facing component; it knows nothing about tabs. The group drives each child's **active** state; every active child paints its own active look — the **sliding indicator** never appears here (ADR-0025).
+A standalone **labelable value control**: a segmented set of plain `c-button` children — one row that wraps onto further rows when the track is narrower than its buttons — where activation carries the value — exclusive by default, cumulative in **multiple** mode. The form-facing component; it knows nothing about tabs. The group drives each child's **active** state; every active child paints its own active look — the **sliding indicator** never appears here (ADR-0025).
 _Avoid_: Tab buttons (that is the `c-tabs` adapter, not a value control), toggle group (foreign vocabulary for this same component), segmented control as the component's *name* (fine as a description of its shape — the usage doc's "a button group is a segmented control" — never as a synonym in API names or headings), toolbar (a button group holds a value; a toolbar merely groups actions)
 
 **Tab buttons** (`c-tab-buttons`):
-The tab-strip adapter — a **composed child** of `c-tabs` that presents the tab list as a button group with the **sliding indicator**. Carries no form semantics (no label, no required, no **mandatory**) and cannot deselect: a tab strip inherently has an active tab. Standalone value-picking under this tag is Stencil-era usage; since 4.x that job belongs to **button group**.
+The tab-strip adapter — a **composed child** of `c-tabs` that presents the tab list as a button group with the **sliding indicator**. Always a single row: an overflowing strip scrolls sideways behind the same edge arrows and drag as `c-tabs`, never wraps (the indicator's geometry assumes one row). Carries no form semantics (no label, no required, no **mandatory**) and cannot deselect: a tab strip inherently has an active tab. Standalone value-picking under this tag is Stencil-era usage; since 4.x that job belongs to **button group**.
 _Avoid_: using it standalone as a value picker (that is `c-button-group`)
 
 **Sliding indicator** (`c-tab-buttons`):
@@ -452,6 +482,7 @@ _Avoid_: golden file, manifest snapshot, API baseline
 - **"Themeable"** (docs copy: "themable") means *re-seedable* — one of the eight **families** a consumer may re-brand (ADR-0011). Restyling one component's colours from consumer CSS is **"recolour via `::part()`"**, never "theming".
 - **"Path"** is overloaded: (a) an SVG path datum (`c-icon`'s `path` prop), (b) a tree-select item's ancestor chain (see **Path**), (c) a URL or file path. Say **"icon path"** for (a), plain **"path"** only in the tree-select sense, and **"URL"** / **"file path"** for (c).
 - **"Default"** is overloaded: (a) a **built-in default** (the library's value for an unset prop), (b) an **app default** (a consumer's per-tag value via `applyDefaults`), (c) the `'default'` member of a size union (`size="default"`), (d) a tailwind-variants `defaultVariants` entry. Say **"built-in default"** and **"app default"** for (a) and (b), **"the `default` size"** for (c), and **"variant default"** for (d).
+- **"Sticky"** is overloaded: (a) the data-table `sticky-header` / `sticky-footer` rows, (b) the CSS mechanism behind **pinned** elements (the toolbar, the side navigation). Say **"pinned"** for the concept and keep "sticky" for the data-table rows and for literal CSS.
 
 ## Example dialogue
 

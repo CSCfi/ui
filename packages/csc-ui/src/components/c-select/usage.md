@@ -111,9 +111,9 @@ c-select::part(list) {
 
 On a viewport narrower than 760px the panel opens as a **fullscreen panel**
 instead of dropping under the field: a heading row with the field's `label` and
-a close button, the field itself beneath it, then the options filling the rest
-of the screen. The panel keeps covering the screen and the rows above the
-options stay in view while the on-screen keyboard is open; the close button and
+a close button, then the options filling the rest of the screen — the field
+itself stays where it is in the page. The panel keeps covering the screen and
+the heading row stays in view while the on-screen keyboard is open; the close button and
 Escape both return focus to the field; the page behind the panel is inert until
 it closes, and the list has no half-row cut — the screen edge is the cue. The
 threshold is the viewport's width, never the field's, so a narrow field on a

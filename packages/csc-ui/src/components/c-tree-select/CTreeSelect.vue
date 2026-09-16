@@ -65,11 +65,15 @@
             </span>
           </template>
         </div>
+      </div>
 
+      <!-- Trailing controls in c-input's `post` slot, on a real box: the
+           c-icon-button host is `display: contents`, so the edge pull and
+           the chevron's rotation only take effect on a wrapper span. -->
+      <span slot="post" :class="ui.post()">
         <c-icon-button
           v-if="hasSelection && clearable"
           :aria-label="t.clearSelection"
-          :class="ui.iconButton()"
           :disabled
           size="x-small"
           text
@@ -79,19 +83,19 @@
           <c-icon :path="mdiClose" :size="20" />
         </c-icon-button>
 
-        <c-icon-button
-          v-else
-          :aria-label="t.toggleOptions"
-          :class="ui.chevron()"
-          :disabled
-          size="x-small"
-          text
-          @click="onChevronClick"
-          @keydown="onButtonKeyDown('chevron', $event)"
-        >
-          <c-icon :path="mdiChevronDown" :size="24" />
-        </c-icon-button>
-      </div>
+        <span v-else :class="ui.chevron()">
+          <c-icon-button
+            :aria-label="t.toggleOptions"
+            :disabled
+            size="x-small"
+            text
+            @click="onChevronClick"
+            @keydown="onButtonKeyDown('chevron', $event)"
+          >
+            <c-icon :path="mdiChevronDown" :size="24" />
+          </c-icon-button>
+        </span>
+      </span>
     </c-input>
   </span>
 
@@ -664,21 +668,28 @@ const treeSelect = tv({
     card: 'flex flex-col min-w-[180px] max-h-[80vh] overflow-hidden rounded-csc-md bg-surface-overlay shadow-[2px_4px_10px_#00000029]',
     check: 'w-4 h-4 shrink-0 fill-current ml-auto text-primary',
     chevron:
-      'aspect-square -mr-1.5 rotate-0 transition-transform duration-300 ease-in-out',
-    code: 'shrink-0 tabular-nums text-on-surface-muted',
-    content: 'relative flex items-center w-full min-w-0 cursor-pointer',
+      'inline-flex rotate-0 transition-transform duration-300 ease-in-out',
+    // The code may shrink and ellipsise like the label: a long code used to
+    // paint straight out of the field.
+    code: 'min-w-0 truncate tabular-nums text-on-surface-muted',
+    content:
+      'relative flex items-center w-full min-w-0 overflow-hidden cursor-pointer',
     crumb:
       'shrink-0 max-w-40 truncate rounded border-0 bg-transparent px-1 py-0.5 text-sm text-link cursor-pointer hover:underline [font-family:var(--c-font-family)] disabled:text-on-surface disabled:font-medium disabled:cursor-default disabled:no-underline',
     crumbSep: 'shrink-0 text-on-surface-muted',
     fieldMain:
-      'flex items-center gap-2 min-w-0 text-base leading-5 text-on-surface',
+      'flex items-center gap-2 min-w-0 overflow-hidden text-base leading-5 text-on-surface',
     fieldPath: 'text-xs leading-4 text-on-surface-muted truncate',
-    fieldText: 'flex flex-col min-w-0 flex-1 py-1',
+    // Two lines (16px path + 20px main) need 10px above so the lifted
+    // floating label — it hangs ~9px into the field from the top border —
+    // clears the path line, and 6px below: a 52px field, taller than the
+    // 44px single-line fields by design (ADR-0047: a two-line value grows
+    // the box).
+    fieldText: 'flex flex-col min-w-0 flex-1 overflow-hidden pt-2.5 pb-1.5',
     header:
       'flex items-center justify-between gap-2 min-h-8 px-3 pt-2 text-sm text-on-surface-muted',
     headerAction:
       'shrink-0 border-0 bg-transparent p-0 text-sm text-link cursor-pointer hover:underline [font-family:var(--c-font-family)]',
-    iconButton: 'aspect-square -mr-1.5',
     info: 'flex items-center flex-nowrap gap-2 text-sm min-h-[42px] px-[10px] w-full cursor-default whitespace-nowrap text-on-surface-muted',
     infoIcon: 'w-[18px] h-[18px] shrink-0 fill-current text-warning',
     // The readonly combobox is visually hidden (clip) but stays focusable and
@@ -694,6 +705,9 @@ const treeSelect = tv({
     panel:
       'fixed m-0 p-0 border-0 bg-transparent overflow-visible [inset:auto]',
     path: 'text-xs leading-4 text-on-surface-muted truncate',
+    // The trailing controls' box: pulled 6px into the field's padding so
+    // the 28px button reads flush with the value's right edge.
+    post: 'inline-flex items-center -mr-1.5',
     rowChevron: 'w-4 h-4 shrink-0 fill-current text-on-surface-muted',
     search:
       'flex items-center gap-2 min-h-11 px-3 border-b border-solid border-divider',

@@ -107,12 +107,22 @@
           </div>
         </div>
 
+        <!-- Consumer's <c-option> elements: data source only, hidden via the
+             `.c-input__content slot { display: none }` escape-hatch rule. The
+             dropdown renders clones; we read the originals through
+             host.querySelectorAll. -->
+        <slot />
+      </div>
+
+      <!-- Trailing controls in c-input's `post` slot, on a real box: the
+           c-icon-button host is `display: contents`, so the edge pull and
+           the chevron's rotation only take effect on a wrapper span. -->
+      <span slot="post" :class="ui.post()">
         <c-spinner v-if="loading" :size="20" color="var(--c-primary)" />
 
         <c-icon-button
           v-else-if="hasSelection && clearable"
           :aria-label="t.clearSelection"
-          :class="ui.iconButton()"
           :disabled
           size="x-small"
           text
@@ -122,27 +132,20 @@
           <c-icon :path="mdiClose" :size="20" />
         </c-icon-button>
 
-        <c-icon-button
-          v-else
-          :aria-label="t.toggleOptions"
-          :class="ui.chevron()"
-          :disabled
-          size="x-small"
-          text
-          @click="toggleDropdown"
-          @keydown="onButtonKeyDown('chevron', $event)"
-        >
-          <c-icon :path="mdiChevronDown" :size="24" />
-        </c-icon-button>
+        <span v-else :class="ui.chevron()">
+          <c-icon-button
+            :aria-label="t.toggleOptions"
+            :disabled
+            size="x-small"
+            text
+            @click="toggleDropdown"
+            @keydown="onButtonKeyDown('chevron', $event)"
+          >
+            <c-icon :path="mdiChevronDown" :size="24" />
+          </c-icon-button>
+        </span>
 
-        <!-- Consumer's <c-option> elements: data source only, hidden via the
-             `.c-input__content slot { display: none }` escape-hatch rule. The
-             dropdown renders clones; we read the originals through
-             host.querySelectorAll. -->
-        <slot />
-      </div>
-
-      <span v-if="hasConsumerPost" slot="post" style="display: contents">
+        <!-- The consumer's own `post` content follows the controls. -->
         <slot name="post" />
       </span>
     </c-input>
@@ -409,13 +412,14 @@ const select = tv({
   defaultVariants: { chevronActive: false, inputHidden: false },
   slots: {
     chevron:
-      'aspect-square -mr-1.5 rotate-0 transition-transform duration-300 ease-in-out',
+      'inline-flex rotate-0 transition-transform duration-300 ease-in-out',
     content: 'flex items-center w-full',
-    // The clear button / spinner wrappers share the icon-button box metrics.
-    iconButton: 'aspect-square -mr-1.5',
     input:
       'max-h-8 py-2 bg-transparent border-0 text-on-surface flex-[1_1_auto] [font-family:var(--c-font-family)] text-base leading-5 max-w-full min-w-0 w-full cursor-pointer outline-none focus:outline-none active:outline-none placeholder:text-on-surface-muted placeholder:opacity-100',
     inputWrap: 'relative w-full min-w-0 flex justify-items-stretch',
+    // The trailing controls' box: pulled 6px into the field's padding so
+    // the 28px button reads flush with the value's right edge.
+    post: 'inline-flex items-center -mr-1.5',
     selection: 'hidden pointer-events-none',
     // A long option label ellipsises inside its tag instead of blowing out
     // the row.
@@ -615,8 +619,6 @@ const optionElements = ref<HTMLElement[]>([]);
 const optionElementsExist = ref(false);
 
 const hasConsumerPre = ref(false);
-
-const hasConsumerPost = ref(false);
 
 let searchString = '';
 
@@ -1356,7 +1358,6 @@ const refreshOptions = () => {
   }
 
   hasConsumerPre.value = !!host.querySelector(':scope > [slot="pre"]');
-  hasConsumerPost.value = !!host.querySelector(':scope > [slot="post"]');
 
   type OptionEl = {
     selected?: boolean | string;

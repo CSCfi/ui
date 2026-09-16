@@ -98,11 +98,19 @@ const sideNavigationItem = tv({
     // Parent (expandable) + active gets extra bottom padding (original
     // `:host(.c-side-navigation-item--parent.active) > div`).
     { active: true, class: { root: 'pb-1' }, expandable: true },
-    // Sub-item hover is primary-subtle-hover (overrides the top-level
-    // nav-surface-hover from `active:false`); merged after the variants so it wins.
+    // Sub-item states are washes of the ground's own ink (ADR-0052): the
+    // sub-items sit inside the active parent's `nav-active` pill, so hover
+    // and active are translucent `on-nav-active` over it — not page roles.
+    // Merged after the variants so they win over the top-level
+    // `nav-surface-hover` / `nav-active` + ring.
     {
       active: false,
-      class: { root: 'hover:bg-primary-subtle-hover' },
+      class: { root: 'hover:bg-on-nav-active/10' },
+      subItem: true,
+    },
+    {
+      active: true,
+      class: { root: 'bg-on-nav-active/18 ring-0' },
       subItem: true,
     },
   ],
@@ -141,11 +149,10 @@ const sideNavigationItem = tv({
       true: { header: 'grid-cols-[auto_1fr]' },
     },
     subItem: {
-      // Sub-item palette: a surface-raised box with primary text (declared after
-      // `active` so it also overrides the active bg for an active sub-item,
-      // matching the original sub-item-active-bg = the raised surface).
+      // Sub-item palette: transparent on the parent's `nav-active` pill, in
+      // that pill's ink; its hover/active washes are the compounds above.
       true: {
-        root: 'rounded-csc-md m-0 mx-2 mb-1 bg-surface-raised text-primary',
+        root: 'rounded-csc-md m-0 mx-2 mb-1 text-on-nav-active',
       },
     },
   },
@@ -350,7 +357,9 @@ onMounted(() => {
    outset ring would be clipped by the `overflow:hidden` on a nested sub-item's
    parent row. */
 [part='root']:has(:focus-visible) {
-  outline: 2px var(--c-on-nav) solid;
+  /* The row's own ink: `on-nav` at the top level, `on-nav-active` for a
+     sub-item inside the active parent's pill (ADR-0052). */
+  outline: 2px solid currentColor;
   outline-offset: -2px;
 }
 

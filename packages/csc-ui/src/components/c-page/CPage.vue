@@ -18,19 +18,13 @@
  * @slot default - Default slot
  * @slot footer - Footer slot
  *
- * @csspart scroll-indicator - The fixed progress bar at the top of the viewport tracking scroll position
+ * @csspart scroll-indicator - The fixed progress bar at the top of the viewport tracking how far the document is scrolled
  * @csspart container - The max-width content wrapper around the default slot
  *
  * @seeded from csc-ui — verify
  */
 import { tv } from 'tailwind-variants';
-import {
-  computed,
-  onBeforeUnmount,
-  onMounted,
-  useHost,
-  useTemplateRef,
-} from 'vue';
+import { computed, onBeforeUnmount, onMounted, useTemplateRef } from 'vue';
 
 // Multi-root template (fragment) — keep consumer fallthrough attrs
 // (class/style) on the host element instead of tripping the "renders
@@ -40,8 +34,13 @@ defineOptions({ inheritAttrs: false });
 /**
  * Styling lives in this `tailwind-variants` config: the inner
  * `scrollIndicator` and `container` regions are tv slots/parts. The host
- * itself must be the scrollable CSS grid (its slotted children are direct grid
- * items), so the host layout stays in the escape-hatch `<style>` below.
+ * itself must be the CSS grid (its slotted children are direct grid items), so
+ * the host layout stays in the escape-hatch `<style>` below.
+ *
+ * The page is a plain region of the dashboard layout: it grows with its
+ * content and never scrolls on its own — the document does (ADR-0051). Inside
+ * c-main it is stretched to fill the page row, so the footer slot sits at the
+ * bottom of a short page.
  *
  * The per-component `--c-page-*` override vars are dropped: the
  * container authors `max-w-[1280px]` directly and the responsive padding uses
@@ -71,46 +70,47 @@ const props = withDefaults(defineProps<CPageProps>(), {
 
 const ui = computed(() => page());
 
-const host = useHost();
-
 const scrollRef = useTemplateRef<HTMLElement>('scrollRef');
 
-// Replicates Stencil's onscroll handler: paints a 4px progress bar at
-// the top of the viewport whose width tracks how far down the page is
-// scrolled. The host element is the scrollable container itself
-// (overflow-y: auto in :host).
+// Paints a 4px progress bar at the top of the viewport whose width tracks how
+// far the document is scrolled. The document is the scroll container (the host
+// does not scroll), so the listener sits on the window.
 const onScroll = () => {
-  if (!props.scrollIndicator || !host || !scrollRef.value) return;
+  if (!props.scrollIndicator || !scrollRef.value) return;
 
-  const scrolled =
-    (host.scrollTop / (host.scrollHeight - host.clientHeight)) * 100;
+  const scroller = document.scrollingElement;
+
+  if (!scroller) return;
+
+  const range = scroller.scrollHeight - scroller.clientHeight;
+
+  const scrolled = range > 0 ? (scroller.scrollTop / range) * 100 : 0;
+
   scrollRef.value.style.width = `${scrolled}%`;
 };
 
 onMounted(() => {
-  host?.addEventListener('scroll', onScroll);
+  window.addEventListener('scroll', onScroll, { passive: true });
 });
 onBeforeUnmount(() => {
-  host?.removeEventListener('scroll', onScroll);
+  window.removeEventListener('scroll', onScroll);
 });
 </script>
 
 <!--
   Escape-hatch CSS: this component has no inner `root` element — the
   slotted children are the host's direct grid items, so the host itself MUST be
-  the scrollable CSS grid container. Utilities cannot target a shadow host, so
-  the host layout lives here. This `:host` deliberately overrides the global
-  `:host{display:contents}` (the per-type sheet wins).
+  the CSS grid container. Utilities cannot target a shadow host, so the host
+  layout lives here. This `:host` deliberately overrides the global
+  `:host{display:contents}` (the per-type sheet wins). No height and no
+  overflow: the page grows with its content and the document scrolls.
 -->
 <style>
 :host {
   display: grid;
-  height: calc(100lvh - 60px);
   grid-template-rows: 1fr auto;
   grid-template-columns: 1fr;
   width: 100%;
-  overflow-y: auto;
-  scroll-behavior: smooth;
   position: relative;
   place-items: start start;
 }

@@ -12,7 +12,9 @@
   "methods": {},
   "parts": [
     "indicator",
-    "root"
+    "root",
+    "scroll-back",
+    "scroll-forward"
   ],
   "propertyOnly": [],
   "props": {

@@ -77,9 +77,11 @@ export interface Cem {
 
 const manifest = rawManifest as unknown as Cem;
 
-// Elements the consumer never authors (instantiated internally by a parent).
-// They get no nav entry and no page.
-const INTERNAL_ONLY = new Set(['c-dropdown']);
+// Elements the consumer never authors (instantiated internally by a parent):
+// c-dropdown is c-select's listbox, c-input the field shell the form fields
+// compose. They get no nav entry and no page. (Keep in sync with
+// scripts/check-example-parity.mjs.)
+const INTERNAL_ONLY = new Set(['c-dropdown', 'c-input']);
 
 const components = manifest.modules
   .flatMap((module) => module.declarations)

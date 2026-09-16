@@ -15,7 +15,7 @@
 <script setup lang="ts">
 /**
  * @slot default - Card title text
- * @slot actions - Action controls shown to the right of the title
+ * @slot actions - Action controls shown to the right of the title, or under it when the two do not fit side by side
  *
  * @csspart root - The outer header element carrying the title typography and padding
  * @csspart header - The wrapper around the heading and its underline
@@ -42,14 +42,19 @@ import { useHasSlot } from '../../shared/useHasSlot';
  * indirection is dropped. `padding-inline` keys off `--_c-card-padding-inline`
  * (the shared spacing contract the parent c-card sets, inheriting across the
  * shadow boundary) with a 28px fallback. The `actions` variant turns the header
- * row into a side-by-side flex layout when the `actions` slot has content.
+ * row into a side-by-side flex layout when the `actions` slot has content:
+ * `justify-between` on the row puts the actions at the right edge beside the
+ * title and, once the row is too narrow for both, on their own line under it
+ * starting at the left edge — a single item on a line justifies to the start.
+ * The actions box itself grows nothing and justifies nothing, so it never
+ * drags its controls back to the right when wrapped.
  */
 const cardTitle = tv({
   defaultVariants: {
     actions: false,
   },
   slots: {
-    actions: 'flex flex-wrap-reverse items-center justify-end gap-2 flex-1',
+    actions: 'flex flex-wrap items-center gap-2',
     header: '',
     heading: 'm-0',
     root: 'block px-[var(--_c-card-padding-inline,28px)] uppercase text-balance font-bold text-[13.5px] tracking-[1.2px] text-on-surface [font-family:var(--c-font-family)]',
@@ -58,7 +63,7 @@ const cardTitle = tv({
   variants: {
     actions: {
       true: {
-        root: 'flex flex-wrap items-start flex-[0_0_auto] gap-2',
+        root: 'flex flex-wrap items-start justify-between flex-[0_0_auto] gap-2',
       },
     },
   },

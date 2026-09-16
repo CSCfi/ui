@@ -580,3 +580,75 @@ describe('fullscreen panel', () => {
     await matchScreenshotInBothModes(m.part('panel'), 'fullscreen');
   });
 });
+
+// The closed field with a selection. The two-line value block used to have no
+// clip and a code that could not shrink, so a long code painted out through
+// the fieldset and across the clear button; the clear button and chevron sat
+// on a `display: contents` host, so their edge pull and the chevron's turn
+// never rendered.
+describe('closed field with a selection', () => {
+  const LONG = [
+    {
+      children: [
+        {
+          code: '31415926535897932384626',
+          name: 'Interdisciplinary computational neuroscience and cognition',
+          value: 'long',
+        },
+      ],
+      ...leaf('3', 'Very long things'),
+    },
+  ];
+
+  const slotBox = (m: Mounted): DOMRect =>
+    m.deep('c-input', '.c-input__slot').getBoundingClientRect();
+
+  const postButton = (m: Mounted): HTMLElement =>
+    m
+      .shadow('[slot="post"] c-icon-button')
+      .shadowRoot!.querySelector('button')!;
+
+  it('keeps a long code and label inside the field, the clear button at its trailing edge', async () => {
+    const m = await mountTree({ clearable: true, value: 'long' }, LONG);
+
+    await settled();
+
+    const slot = slotBox(m);
+
+    const clear = postButton(m).getBoundingClientRect();
+
+    expect(clear.right).toBeLessThanOrEqual(slot.right);
+    expect(clear.left).toBeGreaterThan(slot.left);
+    expect(clear.top).toBeGreaterThanOrEqual(slot.top);
+    expect(clear.bottom).toBeLessThanOrEqual(slot.bottom);
+
+    const code = m.part('code').getBoundingClientRect();
+
+    expect(
+      code.right,
+      'the code stops before the clear button',
+    ).toBeLessThanOrEqual(clear.left);
+    expect(code.bottom).toBeLessThanOrEqual(slot.bottom);
+    expect(code.top).toBeGreaterThanOrEqual(slot.top);
+  });
+
+  it('turns the chevron while the panel is open', async () => {
+    const m = await mountTree();
+
+    const chevron = m.shadow('[slot="post"] > span');
+
+    const closed = getComputedStyle(chevron).rotate;
+
+    await userEvent.click(postButton(m));
+    await settled();
+
+    expect(getComputedStyle(chevron).rotate).not.toBe(closed);
+  });
+
+  it('visual: closed field with a selection', async () => {
+    const m = await mountTree({ clearable: true, value: 'long' }, LONG);
+
+    await settled();
+    await matchScreenshotInBothModes(m.stage, 'field-selected');
+  });
+});

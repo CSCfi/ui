@@ -29,7 +29,8 @@ const listItemTitle = tv({
     root: 'block font-medium text-on-surface',
   },
   variants: {
-    active: { true: { root: 'text-primary' } },
+    // Paired with the active row's `primary-subtle` tint (see c-list-item).
+    active: { true: { root: 'text-on-primary-subtle' } },
   },
 });
 

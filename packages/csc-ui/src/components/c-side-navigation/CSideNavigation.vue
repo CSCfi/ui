@@ -117,7 +117,7 @@ const sideNavigation = tv({
       true: {
         content:
           'h-screen max-w-80 overflow-y-scroll fixed right-0 top-0 z-[999] transition-transform duration-200 ease-standard translate-x-0',
-        wrapper: 'min-h-[calc(100%-60px)]',
+        wrapper: 'min-h-[calc(100%-var(--spacing-toolbar))]',
       },
     },
   },
@@ -297,10 +297,17 @@ onBeforeUnmount(() => {
   Authored against global design tokens only.
 -->
 <style>
+/* A pinned drawer that scrolls on its own. `overscroll-behavior: contain`
+   keeps a wheel or swipe that reaches its end from chaining to the document
+   — Chromium latches the rest of the gesture to whichever scroller took it,
+   so without it the drawer became unscrollable until the gesture ended.
+   `dvh`, not `vh`: on a phone the drawer must fit the visible viewport
+   while the browser chrome is expanded. */
 :host(.autoheight) {
-  height: calc(100vh - 60px);
+  height: calc(100dvh - var(--spacing-toolbar));
   overflow-y: auto;
   overflow-x: hidden;
+  overscroll-behavior: contain;
 }
 
 :host([data-desktop]) {

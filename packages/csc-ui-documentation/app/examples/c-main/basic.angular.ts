@@ -13,26 +13,53 @@ import {
   encapsulation: ViewEncapsulation.None,
   template: `
     <c-main class="demo-shell">
-      <c-toolbar class="relative">
+      <c-alert slot="banner" type="info">
+        Scheduled maintenance on Saturday 06:00–08:00 EEST.
+      </c-alert>
+
+      <c-toolbar>
         <c-csc-logo></c-csc-logo>
         <span>My Service</span>
       </c-toolbar>
 
+      <c-side-navigation>
+        <c-side-navigation-title>My project</c-side-navigation-title>
+        <c-side-navigation-item active>Dashboard</c-side-navigation-item>
+        <c-side-navigation-item>Members</c-side-navigation-item>
+        <c-side-navigation-item>Billing</c-side-navigation-item>
+      </c-side-navigation>
+
       <c-page>
         <h2>Dashboard</h2>
-        <p>Page content goes here.</p>
+        <p>
+          The banner leaves first. Then the toolbar pins to the top edge and the
+          side navigation pins beneath it, while the page keeps scrolling
+          underneath.
+        </p>
+        <p>
+          In an application the shell fills the whole viewport and the document
+          itself scrolls; here the shell is boxed to 320px so the behaviour is
+          visible.
+        </p>
+        <p>
+          Long menus get their own scrollbar inside the pinned side navigation,
+          and the footer slot of the page stays at the bottom of a short page.
+        </p>
+        <p>
+          Nothing here is demo-specific apart from the shell height: the layout
+          components are slotted as direct children and c-main places them.
+        </p>
+        <p>Scroll back up to bring the banner back.</p>
       </c-page>
     </c-main>
   `,
   styles: [
     `
-      /* Demo-only sizing: c-main normally fills the whole viewport. */
+      /* Demo-only sizing: c-main normally fills the whole viewport and the document scrolls. */
       .demo-shell::part(root) {
         height: 320px;
-      }
-
-      .demo-shell c-page {
-        height: auto;
+        min-height: 0;
+        overflow-y: auto;
       }
     `,
   ],

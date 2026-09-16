@@ -74,7 +74,10 @@ const listItem = tv({
     slotWrap: 'contents',
   },
   variants: {
-    active: { true: { root: 'text-primary' } },
+    // The active row is the `primary-subtle` tint (host rule below) with its
+    // paired ink, `on-primary-subtle` (ADR-0010) — `primary` on the tint
+    // fell short of AA in dark mode.
+    active: { true: { root: 'text-on-primary-subtle' } },
   },
 });
 
@@ -262,12 +265,22 @@ slot:not([name]) {
   outline-offset: 2px;
 }
 
+/* Hover: the tint's hover step, with the full `on-surface` ink — the resting
+   muted ink fails AA on it in both modes. */
 :host(.c-list-item--hoverable:hover) {
   background-color: var(--c-primary-subtle-hover);
 }
 
+:host(.c-list-item--hoverable:hover) [part='root'] {
+  color: var(--c-on-surface);
+}
+
+/* Active: the tint plus the same 1px inset `primary` ring every other row
+   component (menu, dropdown, tree select) paints, so the selection has a
+   non-text cue too. */
 :host(.c-list-item--active) {
   background-color: var(--c-primary-subtle);
+  box-shadow: inset 0 0 0 1px var(--c-primary);
 }
 
 :host(.c-list-item--ripple) {

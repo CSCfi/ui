@@ -1,5 +1,7 @@
 {
-  "attributes": {},
+  "attributes": {
+    "static": "boolean = false"
+  },
   "cssProperties": [],
   "defaultable": [],
   "events": {},
@@ -8,7 +10,9 @@
     "root"
   ],
   "propertyOnly": [],
-  "props": {},
+  "props": {
+    "static": "boolean = false"
+  },
   "slots": [
     "default"
   ],

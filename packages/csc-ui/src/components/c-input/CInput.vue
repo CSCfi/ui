@@ -182,7 +182,11 @@ const input = tv({
   },
   slots: {
     control: 'flex flex-col gap-2 relative min-w-0 w-full',
-    field: 'c-input__field flex flex-auto items-center gap-2 relative',
+    // `min-w-0`: the row never grows past the slot. Its `auto` minimum was
+    // the min-content of the slotted value — a nowrap two-line value block
+    // (c-tree-select) widened the row past the field and pushed the `post`
+    // controls out of it.
+    field: 'c-input__field flex flex-auto items-center gap-2 relative min-w-0',
     fieldset:
       'c-input__fieldset absolute inset-0 m-0 py-0 pr-0 pl-2 rounded-csc-md border border-solid border-border-strong bg-transparent pointer-events-none [border-collapse:collapse] [transition:border-color_0.15s_cubic-bezier(0.25,0.8,0.25,1)]',
     // The resting transform (translateX preslot shift + the Noto-metric

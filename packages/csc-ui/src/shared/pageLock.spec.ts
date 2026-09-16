@@ -157,4 +157,44 @@ describe('lockPage', () => {
 
     document.documentElement.style.overflow = '';
   });
+
+  // iOS Safari pans an `overflow: hidden` document under a touch, so the
+  // lock takes the body out of the scroll flow — without the page visibly
+  // moving, and putting the offset back on release.
+  it('takes a scrolled body out of flow at its scroll offset and restores the offset on release', async () => {
+    const f = build();
+
+    const tall = document.createElement('div');
+    tall.style.height = '400vh';
+    document.body.append(tall);
+
+    try {
+      window.scrollTo({ behavior: 'instant', top: 300 });
+      await new Promise((r) => requestAnimationFrame(r));
+      expect(window.scrollY).toBe(300);
+
+      const anchor = tall.getBoundingClientRect().top;
+
+      lock(f.host);
+
+      const { body } = document;
+
+      expect(body.style.position).toBe('fixed');
+      expect(body.style.top).toBe('-300px');
+      expect(body.style.width).toBe('100%');
+      expect(tall.getBoundingClientRect().top, 'nothing visibly moves').toBe(
+        anchor,
+      );
+
+      unlockPage(f.host);
+
+      expect(body.style.position).toBe('');
+      expect(body.style.top).toBe('');
+      expect(body.style.width).toBe('');
+      expect(window.scrollY).toBe(300);
+    } finally {
+      tall.remove();
+      window.scrollTo({ behavior: 'instant', top: 0 });
+    }
+  });
 });

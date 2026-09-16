@@ -428,8 +428,12 @@ const button = tv({
     loader: 'absolute inset-0 grid place-content-center pointer-events-none',
     ripple:
       'absolute rounded-full bg-current pointer-events-none transition-[transform,opacity] duration-[600ms] ease-out',
+    // The clip follows the root's corners: `border-radius` inherits, but
+    // `corner-shape` (the squircle of `rounded-csc-md`) does not, so it is
+    // inherited explicitly — a round clip inside a squircle let the ripple
+    // bleed past the painted corner.
     ripples:
-      'absolute inset-0 overflow-hidden pointer-events-none rounded-[inherit]',
+      'absolute inset-0 overflow-hidden pointer-events-none rounded-[inherit] [corner-shape:inherit]',
     // `root` is the public part; the host itself is `display:contents`.
     // Set only `font-family` (via the `--c-font-family` token, consistent with
     // every other component) — native buttons don't inherit it. Font *size* is

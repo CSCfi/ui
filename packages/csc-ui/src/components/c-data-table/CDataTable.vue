@@ -9,7 +9,7 @@
     </div>
 
     <div ref="viewportRef" :class="ui.viewport()" part="viewport">
-      <table class="c-data-table" part="table">
+      <table ref="tableRef" class="c-data-table" part="table">
         <!-- v-show, not v-if: the slot element must stay in the DOM for its
              slotchange tracking to work, and an empty caption would otherwise
              reserve its padding. -->
@@ -1101,6 +1101,8 @@ const viewportRef = useTemplateRef<HTMLElement>('viewportRef');
 
 const headerRowRef = useTemplateRef<HTMLTableRowElement>('headerRowRef');
 
+const tableRef = useTemplateRef<HTMLTableElement>('tableRef');
+
 const viewportWidth = ref(0);
 
 /**
@@ -1122,15 +1124,36 @@ const colWidth = (key: string) =>
 const measureColumns = () => {
   const cells = headerRowRef.value?.cells;
 
-  if (!cells) return;
+  const table = tableRef.value;
 
-  for (const cell of Array.from(cells)) {
+  if (!cells || !table) return;
+
+  const unmeasured = Array.from(cells).filter((cell) => {
     const key = cell.getAttribute('data-col');
 
-    if (key && !measuredWidths.has(key)) {
-      measuredWidths.set(key, cell.getBoundingClientRect().width);
-    }
+    return key && !measuredWidths.has(key);
+  });
+
+  if (!unmeasured.length) return;
+
+  // Measure at the columns' natural widths. The table is `width: 100%`, so
+  // in a box narrower than its content the cells are already squeezed when
+  // first seen; recording those widths made the total equal the box and
+  // autohide never saw the overflow — the viewport scrolled instead. Laying
+  // the table out at `max-content` for this one read gives each column the
+  // width its content wants, and the width is put back before paint.
+  const previous = table.style.width;
+
+  table.style.width = 'max-content';
+
+  for (const cell of unmeasured) {
+    measuredWidths.set(
+      cell.getAttribute('data-col')!,
+      cell.getBoundingClientRect().width,
+    );
   }
+
+  table.style.width = previous;
 };
 
 /** Sticky offsets per column key, applied as inline styles on th/td. */
