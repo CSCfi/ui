@@ -16,6 +16,16 @@
     <div ref="rootRef" :class="ui.root()" part="root">
       <slot />
     </div>
+
+    <!-- Width probe: a zero-height flex row whose one item is as wide as
+         the one-row layout of the track (every column at the longest label).
+         It gives the wrapper that max-content width — so in a shrink-to-fit
+         context (a flex row, an inline-block) the group keeps its natural
+         one-row width — while contributing nothing to its min-content width
+         (`min-w-0`), so a squeezed group can still wrap. -->
+    <div aria-hidden="true" class="flex h-0 min-w-0 overflow-hidden">
+      <div ref="probeRef" class="min-w-0" />
+    </div>
   </div>
 </template>
 
@@ -81,6 +91,7 @@ export type CButtonGroupValue = (number | string)[] | null | number | string;
 import { tv } from 'tailwind-variants';
 import {
   computed,
+  onBeforeUnmount,
   onMounted,
   ref,
   useHost,
@@ -157,17 +168,24 @@ const buttonGroup = tv({
     disabled: false,
   },
   slots: {
-    label: 'text-left',
-    // A real GRID with equal `auto-cols-fr` columns — not flex: each slotted
-    // c-button host is `display:contents`, so the native button it wraps is
-    // promoted into this grid and sized by the *track*. In a shrink-to-fit
-    // context (e.g. a flex row) fr tracks all size to the longest label;
-    // flex + w-full instead squeezed every button to an equal share smaller
-    // than that, and the nowrap content overflowed the fill's right edge —
-    // visibly unbalanced horizontal padding on active buttons.
-    root: 'grid grid-flow-col auto-cols-fr rounded-csc-lg border border-solid border-divider bg-clip-padding bg-surface-sunken',
-    // Stacks the group label above the segmented-control frame.
-    wrapper: 'flex flex-col gap-1',
+    // The 4px between label and track sits on the label, not as a wrapper
+    // gap: the width probe below the track must add no height.
+    label: 'text-left mb-1',
+    // A real GRID of equal columns — not flex: each slotted c-button host is
+    // `display:contents`, so the native button it wraps is promoted into
+    // this grid and sized by the *track*. The columns are `auto-fit` at the
+    // longest label's width (`--_c-button-group-col`, measured in
+    // `measureColumns`): as many equal columns as fit the track, the buttons
+    // flowing onto further rows when the track is narrower than one row of
+    // them (CONTEXT.md "Button group"). Flex + w-full instead squeezed every
+    // button to an equal share smaller than the longest label, and a
+    // single-row grid let the buttons overlap once they no longer fit.
+    root: 'grid w-full [grid-template-columns:repeat(auto-fit,minmax(var(--_c-button-group-col,5.5rem),1fr))] rounded-csc-lg border border-solid border-divider bg-clip-padding bg-surface-sunken',
+    // Stacks the group label above the segmented-control frame. `min-w-0`
+    // so a flex row can squeeze the group below one row of buttons — the
+    // probe below the track holds it open to that width only where there
+    // is room.
+    wrapper: 'flex flex-col min-w-0',
   },
   variants: {
     disabled: {
@@ -207,6 +225,8 @@ const ui = computed(() =>
 );
 
 const rootRef = useTemplateRef<HTMLElement>('rootRef');
+
+const probeRef = useTemplateRef<HTMLElement>('probeRef');
 
 // The native slot outlet inside `root` (attributes on Vue's `<slot>` element
 // are slot props, so the element itself is looked up from the DOM instead).
@@ -269,6 +289,80 @@ const selectedValues = (value: CButtonGroupValue): (number | string)[] => {
 const isSelected = (value: CButtonGroupValue, btn: CButtonEl): boolean =>
   selectedValues(value).some((v) => valuesEqual(v, valueOf(btn)));
 
+/* --- column geometry --- */
+
+// Measure the longest button and publish the column width the auto-fit grid
+// wraps at, plus the one-row width the probe holds the wrapper open to. The
+// track is laid out for one frame as a single row of max-content columns —
+// the only layout that reports each label's natural width — and put back
+// before paint. Rounded up to whole pixels, and the one-row width computed
+// from that rounded column rather than measured, so a wrapper exactly as
+// wide as one row still fits every column.
+const measureColumns = () => {
+  const track = rootRef.value;
+
+  const probe = probeRef.value;
+
+  const btns = buttons();
+
+  if (!track || !probe || !btns.length) return;
+
+  const previous = {
+    autoColumns: track.style.gridAutoColumns,
+    autoFlow: track.style.gridAutoFlow,
+    templateColumns: track.style.gridTemplateColumns,
+    width: track.style.width,
+  };
+
+  track.style.gridTemplateColumns = 'none';
+  track.style.gridAutoFlow = 'column';
+  track.style.gridAutoColumns = 'max-content';
+  track.style.width = 'max-content';
+
+  const longest = Math.ceil(
+    Math.max(
+      0,
+      ...btns.map(
+        (b) => nativeControlOf(b)?.getBoundingClientRect().width ?? 0,
+      ),
+    ),
+  );
+
+  const style = getComputedStyle(track);
+
+  const chrome =
+    parseFloat(style.paddingLeft) +
+    parseFloat(style.paddingRight) +
+    parseFloat(style.borderLeftWidth) +
+    parseFloat(style.borderRightWidth);
+
+  const gap = parseFloat(style.columnGap) || 0;
+
+  track.style.gridTemplateColumns = previous.templateColumns;
+  track.style.gridAutoFlow = previous.autoFlow;
+  track.style.gridAutoColumns = previous.autoColumns;
+  track.style.width = previous.width;
+
+  if (!longest) return;
+
+  track.style.setProperty('--_c-button-group-col', `${longest}px`);
+  probe.style.width = `${btns.length * longest + (btns.length - 1) * gap + chrome}px`;
+};
+
+// Label text can change without any prop or slot changing (a `{{ }}` binding
+// inside a button); re-measure a frame later.
+let contentObserver: MutationObserver | null = null;
+
+let measureFrame = 0;
+
+const scheduleMeasure = () => {
+  cancelAnimationFrame(measureFrame);
+  measureFrame = requestAnimationFrame(() => {
+    measureFrame = 0;
+    measureColumns();
+  });
+};
+
 /* --- child driving --- */
 
 // Roving tabindex (single-select): only the active button — or the first
@@ -327,6 +421,7 @@ const setupButtons = () => {
   });
 
   applyActive(internalValue.value);
+  measureColumns();
 };
 
 /* --- selection --- */
@@ -464,8 +559,24 @@ onMounted(() => {
   // Late-appearing buttons (v-if'd/async children) re-run the driving pass.
   slotEl()?.addEventListener('slotchange', () => setupButtons());
 
+  contentObserver = new MutationObserver(scheduleMeasure);
+  contentObserver.observe(host, {
+    characterData: true,
+    childList: true,
+    subtree: true,
+  });
+
+  // Web fonts landing after first paint change every label's width.
+  void document.fonts?.ready.then(scheduleMeasure);
+
   // Drive the initial selection. Double rAF so the slotted buttons' shadow
   // roots exist before we reach into them for the roving tabindex.
   requestAnimationFrame(() => requestAnimationFrame(() => setupButtons()));
+});
+
+onBeforeUnmount(() => {
+  contentObserver?.disconnect();
+  contentObserver = null;
+  cancelAnimationFrame(measureFrame);
 });
 </script>
