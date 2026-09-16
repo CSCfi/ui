@@ -297,10 +297,17 @@ onBeforeUnmount(() => {
   Authored against global design tokens only.
 -->
 <style>
+/* A pinned drawer that scrolls on its own. `overscroll-behavior: contain`
+   keeps a wheel or swipe that reaches its end from chaining to the document
+   — Chromium latches the rest of the gesture to whichever scroller took it,
+   so without it the drawer became unscrollable until the gesture ended.
+   `dvh`, not `vh`: on a phone the drawer must fit the visible viewport
+   while the browser chrome is expanded. */
 :host(.autoheight) {
-  height: calc(100vh - var(--spacing-toolbar));
+  height: calc(100dvh - var(--spacing-toolbar));
   overflow-y: auto;
   overflow-x: hidden;
+  overscroll-behavior: contain;
 }
 
 :host([data-desktop]) {

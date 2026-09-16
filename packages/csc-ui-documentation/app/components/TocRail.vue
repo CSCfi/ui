@@ -2,7 +2,7 @@
   <aside
     ref="railRef"
     aria-label="On this page"
-    class="sticky top-24 max-h-[calc(100vh-7rem)] w-56 shrink-0 overflow-y-auto text-[0.8125rem] max-lg:hidden"
+    class="sticky top-24 max-h-[calc(100dvh-7rem)] w-56 shrink-0 overflow-y-auto overscroll-contain text-[0.8125rem] max-lg:hidden"
   >
     <p
       class="mb-2 text-[0.6875rem] font-bold uppercase tracking-wider text-primary"

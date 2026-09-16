@@ -187,7 +187,12 @@ main ::slotted(c-side-navigation[data-desktop]) {
   position: sticky;
   top: var(--_nav-offset);
   align-self: start;
-  max-height: calc(100vh - var(--_nav-offset));
+  /* `dvh`: the drawer fits the visible viewport while a phone's browser
+     chrome is expanded. `contain`: a wheel or swipe that reaches the
+     drawer's end must not chain to the document — Chromium latches the rest
+     of the gesture to the scroller that took it, leaving the drawer stuck. */
+  max-height: calc(100dvh - var(--_nav-offset));
   overflow-y: auto;
+  overscroll-behavior: contain;
 }
 </style>

@@ -88,6 +88,8 @@ describe('c-main', () => {
     expect(style.top).toBe('60px');
     expect(style.alignSelf).toBe('start');
     expect(style.overflowY).toBe('auto');
+    // A wheel that reaches the drawer's end must not chain to the document.
+    expect(style.overscrollBehaviorY).toBe('contain');
     expect(style.maxHeight).toBe(`${window.innerHeight - 60}px`);
 
     await scrollTo(500);
