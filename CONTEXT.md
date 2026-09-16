@@ -271,7 +271,7 @@ The top rung of the **surface ladder** (`surface-inverted`): a background that t
 _Avoid_: Inverse surface (collides with the invariant `inverse-*` family), dark surface (only true in light mode), contrast surface
 
 **Wash** (nav chrome):
-A translucent tint of a surface's own foreground ink — `on-nav` on `nav-surface`, `on-nav-active` on `nav-active` — used for the side navigation's hover, active, indicator and focus states, so every state stays legible in both **theme modes** without a per-mode value (ADR-0052). Page roles (the **surface ladder**, the primary tint pair) are never painted inside the nav.
+A translucent tint of a surface's own foreground ink — `on-nav` on `nav-surface`, `on-nav-active` on `nav-active` — used for the side navigation's hover, indicator and focus states, so they stay legible in both **theme modes** without a per-mode value (ADR-0052). The active sub-item's fill is the one nav state with a per-mode value (the `nav-sub-active` role: a white pill in light, a wash in dark). Page roles (the **surface ladder**, the primary tint pair) are never painted inside the nav.
 _Avoid_: Overlay (a floating surface), tint (reserve for the `*-subtle` roles), highlight
 
 **`on-` token** (foreground role):

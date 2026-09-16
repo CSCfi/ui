@@ -1,9 +1,11 @@
 /**
  * Behaviour spec for the side navigation's sub-items (CONTEXT.md "Wash",
- * ADR-0052). Inside the active parent's `nav-active` pill, hover and active
- * are translucent washes of that pill's own ink, `on-nav-active` — never
- * page roles: the `surface-raised` slab the active sub-item used to paint
- * is the page colour in dark mode, a hole punched into the drawer.
+ * ADR-0052). Inside the active parent's `nav-active` pill the states are the
+ * nav family's own: hover a translucent wash of the pill's ink,
+ * `on-nav-active`; active the `nav-sub-active` fill (white in light mode, a
+ * wash in dark) — never page roles: the `surface-raised` slab the active
+ * sub-item used to paint is the page colour in dark mode, a hole punched
+ * into the drawer.
  */
 import { describe, expect, it } from 'vitest';
 
@@ -27,11 +29,11 @@ const NAV = `
   <c-side-navigation-item>Service description</c-side-navigation-item>
 `;
 
-/** `color-mix(in oklab, <token> <pct>%, transparent)` as the browser serialises it. */
-const wash = (token: string, pct: number): string => {
+/** A token's background colour as the browser serialises it. */
+const tokenBackground = (token: string): string => {
   const probe = document.createElement('div');
 
-  probe.style.backgroundColor = `color-mix(in oklab, var(${token}) ${pct}%, transparent)`;
+  probe.style.backgroundColor = `var(${token})`;
   document.body.append(probe);
 
   const value = getComputedStyle(probe).backgroundColor;
@@ -70,7 +72,7 @@ const subItems = (m: Mounted): HTMLElement[] =>
 
 describe('c-sub-navigation-item', () => {
   for (const mode of ['light', 'dark'] as const) {
-    it(`paints the active sub-item as a wash of on-nav-active, in that ink (${mode})`, async () => {
+    it(`paints the active sub-item in nav-sub-active with the on-nav-active ink (${mode})`, async () => {
       setThemeMode(mode);
 
       const m = await mountNav();
@@ -79,7 +81,9 @@ describe('c-sub-navigation-item', () => {
 
       const activeStyle = getComputedStyle(active);
 
-      expect(activeStyle.backgroundColor).toBe(wash('--c-on-nav-active', 18));
+      expect(activeStyle.backgroundColor).toBe(
+        tokenBackground('--c-nav-sub-active'),
+      );
       expect(activeStyle.color).toBe(tokenColor('--c-on-nav-active'));
       expect(getComputedStyle(active, '::before').backgroundColor).toBe(
         tokenColor('--c-on-nav-active'),

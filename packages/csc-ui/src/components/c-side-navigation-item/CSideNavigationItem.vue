@@ -98,9 +98,10 @@ const sideNavigationItem = tv({
     // Parent (expandable) + active gets extra bottom padding (original
     // `:host(.c-side-navigation-item--parent.active) > div`).
     { active: true, class: { root: 'pb-1' }, expandable: true },
-    // Sub-item states are washes of the ground's own ink (ADR-0052): the
-    // sub-items sit inside the active parent's `nav-active` pill, so hover
-    // and active are translucent `on-nav-active` over it — not page roles.
+    // Sub-item states are the nav family's own (ADR-0052): the sub-items sit
+    // inside the active parent's `nav-active` pill, so hover is a translucent
+    // `on-nav-active` wash over it and active the `nav-sub-active` fill (an
+    // opaque white pill in light mode, a wash in dark) — never page roles.
     // Merged after the variants so they win over the top-level
     // `nav-surface-hover` / `nav-active` + ring.
     {
@@ -110,7 +111,7 @@ const sideNavigationItem = tv({
     },
     {
       active: true,
-      class: { root: 'bg-on-nav-active/18 ring-0' },
+      class: { root: 'bg-nav-sub-active ring-0' },
       subItem: true,
     },
   ],
