@@ -50,15 +50,6 @@ const subNavigationItem = tv({
       active: true,
       class: { item: 'before:[transform:translateZ(0)_translateX(0)]' },
     },
-    // 3rd-level active background is primary-subtle-hover (not the raised
-    // surface) so it reads as a distinct level against the surface-raised
-    // sub-item parent. Declared after the `active` variant's `bg-surface-raised`
-    // so tailwind-merge lets it win.
-    {
-      active: true,
-      class: { item: 'bg-primary-subtle-hover' },
-      subLevel: true,
-    },
   ],
   defaultVariants: {
     active: false,
@@ -67,15 +58,15 @@ const subNavigationItem = tv({
   slots: {
     content:
       'flex items-center overflow-hidden whitespace-nowrap text-ellipsis',
-    // `hover:bg-*` lives in `active: { false }`, not here: the original cascade
-    // lets the active background (the raised surface) win over hover, but a base
-    // `hover:bg-*` and the active variant's `bg-surface-raised` don't conflict
-    // under tailwind-merge, so both would apply and hover would wrongly override
-    // the active bg. `hover:text-primary` stays unguarded (the original recolours
-    // the text on hover regardless of active state). Resting text is
-    // `on-primary-subtle` — the foreground for the active parent's primary-subtle
-    // region these items sit in.
-    item: 'flex items-center cursor-pointer font-normal leading-[46px] rounded-csc-md mx-2 px-0 pl-[34px] relative overflow-hidden select-none outline-none transition-colors duration-200 ease-in bg-transparent text-on-primary-subtle hover:text-primary before:content-[""] before:absolute before:top-0 before:left-0 before:h-full before:w-2 before:bg-primary before:[transform:translateZ(0)_translateX(-8px)] before:transition-transform before:duration-200 before:ease-in-out',
+    // `hover:bg-*` lives in `active: { false }`, not here: the active wash
+    // must win over hover, and a base `hover:bg-*` and the active variant's
+    // `bg-*` don't conflict under tailwind-merge, so both would apply. The
+    // row sits inside the active parent's `nav-active` pill, so its ink and
+    // every state are that pill's ink, `on-nav-active` — the text, the
+    // leading indicator bar, and the hover/active washes below (ADR-0052);
+    // page roles (`surface-raised`, the primary tint) read as a hole punched
+    // into the drawer in dark mode.
+    item: 'flex items-center cursor-pointer font-normal leading-[46px] rounded-csc-md mx-2 px-0 pl-[34px] relative overflow-hidden select-none outline-none transition-colors duration-200 ease-in bg-transparent text-on-nav-active before:content-[""] before:absolute before:top-0 before:left-0 before:h-full before:w-2 before:bg-on-nav-active before:[transform:translateZ(0)_translateX(-8px)] before:transition-transform before:duration-200 before:ease-in-out',
     root: 'py-0.5',
     slot: 'overflow-hidden whitespace-nowrap text-ellipsis',
     srOnly:
@@ -84,19 +75,16 @@ const subNavigationItem = tv({
   variants: {
     active: {
       // Only a non-active item reacts to hover (active bg must win).
-      false: { item: 'hover:bg-primary-subtle-hover' },
+      false: { item: 'hover:bg-on-nav-active/10' },
       true: {
-        item: 'bg-surface-raised',
+        item: 'bg-on-nav-active/18',
         // reveal the leading indicator bar
       },
     },
-    // The sub-level palette (a 3rd-level item nested inside another
-    // sub-navigation-item) differs from the 2nd-level base in ONE place: it
-    // remaps its *active* background to `primary-subtle-hover` (vs the base's
-    // `surface-raised`). Non-active bg stays transparent and hover stays
-    // `primary-subtle-hover`, so the active-state override below is the whole
-    // story. Without it an active 3rd-level item renders as the raised surface —
-    // indistinguishable from its surface-raised parent box.
+    // A 3rd-level item (nested inside an active sub-item) paints the same
+    // washes: they are translucent, so its active wash composites over the
+    // parent's and reads as a distinct level by itself. The variant is kept
+    // as the hook for anything that has to differ later.
     subLevel: { true: { item: '' } },
   },
 });
@@ -219,7 +207,9 @@ slot {
    draws the ring inside the box so it isn't clipped by the parent row's
    `overflow:hidden`. */
 [part='root']:focus-visible {
-  outline: 2px var(--c-primary) solid;
+  /* The row's own ink (ADR-0052): `primary` fell to 2.3:1 on the dark
+     pill. */
+  outline: 2px solid currentColor;
   outline-offset: -2px;
 }
 
