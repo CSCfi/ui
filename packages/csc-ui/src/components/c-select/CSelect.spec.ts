@@ -507,6 +507,118 @@ describe('fullscreen panel', () => {
     ).toBe(viewport.height);
   });
 
+  // A page taller than the viewport, as a phone page that scrolls is. The
+  // Vitest harness page pins `body` to `min-height: 100vh`, so on a short page
+  // the field's growth is absorbed and `document.body` never resizes at all.
+  const growPage = (): void => {
+    const filler = document.createElement('div');
+
+    filler.style.cssText = 'height:200vh';
+    document.body.append(filler);
+  };
+
+  // The reported bug: on a phone the field STAYS in the page (ADR-0050,
+  // amended), so in `multiple` mode the pick that wraps its tag row grows the
+  // field — and with it `document.body`. c-dropdown's body ResizeObserver used
+  // to read that reflow as "the page moved under the anchored menu" and close,
+  // which is why the panel shut on a seemingly random pick.
+  it('stays open in multiple mode when a pick wraps the field tag row', async () => {
+    await page.viewport(PHONE.width, PHONE.height);
+
+    const m = await mountSelect({ multiple: true });
+
+    growPage();
+
+    // Narrow enough that the second tag cannot share the first one's line.
+    m.host.style.width = '150px';
+
+    await openFullscreen(m);
+    // Past c-dropdown's 500ms opening grace period, which otherwise swallows
+    // the very reflow this case is about.
+    await settle(550);
+
+    const before = document.body.getBoundingClientRect().height;
+
+    await userEvent.click(rows(m)[0]);
+    await settle();
+    await userEvent.click(rows(m)[1]);
+    await settle();
+
+    expect(
+      document.body.getBoundingClientRect().height,
+      'precondition: the tag row wrapped, growing the field and the page',
+    ).toBeGreaterThan(before);
+
+    expect(isOpen(m), 'the panel closed on the field reflow').toBe(true);
+    expect(m.host.value).toEqual(['fi', 'se']);
+    expect(m.shadowAll('c-tag[part~="tag"]')).toHaveLength(2);
+  });
+
+  // CONTEXT.md "Light dismiss": a fullscreen panel is never light-dismissed.
+  // The surface shows beside the content column only while the visual
+  // viewport lags the layout one (the browser chrome or the on-screen
+  // keyboard animating). A tap there lands on the dialog itself — which is
+  // exactly what the menu's surface listener sees — and must not close it.
+  it('ignores a tap on the panel surface beside the content column', async () => {
+    await page.viewport(PHONE.width, PHONE.height);
+
+    const m = await mountSelect();
+
+    await openFullscreen(m);
+    await settle(550);
+
+    const restore = fakeVisualViewport({ height: 300, offsetTop: 0 });
+
+    try {
+      await settle();
+      dialog(m).dispatchEvent(new MouseEvent('click', { bubbles: true }));
+      await settle();
+
+      expect(isOpen(m)).toBe(true);
+    } finally {
+      restore();
+    }
+  });
+
+  // The layouts are not interchangeable mid-open (ADR-0050): the body observer
+  // used to deliver this, so the fullscreen branch now watches the threshold.
+  it('closes when the viewport widens past the narrow threshold', async () => {
+    await page.viewport(PHONE.width, PHONE.height);
+
+    const m = await mountSelect();
+
+    await openFullscreen(m);
+    await settle(550);
+
+    expect(isOpen(m)).toBe(true);
+
+    await page.viewport(DESKTOP.width, DESKTOP.height);
+    await settle();
+
+    expect(isOpen(m)).toBe(false);
+  });
+
+  // The anchored layout keeps its Stencil-era close-on-reflow: it is placed at
+  // coordinates measured on open, so a page that grows under it would leave
+  // the menu floating away from the field.
+  it('still closes the anchored list when the page reflows under it', async () => {
+    const m = await mountSelect();
+
+    await openByClick(m);
+    await settled();
+    await settle(550);
+
+    expect(isOpen(m)).toBe(true);
+
+    growPage();
+    // The observer defers its close by a frame; settle() alone can land on
+    // the frame before it.
+    await settle();
+    await settle();
+
+    expect(isOpen(m)).toBe(false);
+  });
+
   it('visual: fullscreen panel', async () => {
     await page.viewport(PHONE.width, PHONE.height);
 
