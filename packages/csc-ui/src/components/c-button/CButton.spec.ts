@@ -27,3 +27,24 @@ describe('c-button', () => {
     await matchScreenshotInBothModes(stage, 'default');
   });
 });
+
+describe('c-button ripple', () => {
+  it('clips the ripple to the same corner shape and radius as the root', async () => {
+    const { part } = await mount('c-button', { html: 'Save' });
+
+    await settled();
+
+    const root = getComputedStyle(part('root'));
+
+    // The ripple clip is the root's last child.
+    const ripples = getComputedStyle(part('root').lastElementChild!);
+
+    expect(ripples.borderRadius).toBe(root.borderRadius);
+    // `corner-shape` (the squircle of `rounded-csc-md`) does not inherit
+    // like the radius does; the clip must restate it or a round clip sits
+    // inside a squircle corner.
+    expect(ripples.getPropertyValue('corner-shape')).toBe(
+      root.getPropertyValue('corner-shape'),
+    );
+  });
+});
