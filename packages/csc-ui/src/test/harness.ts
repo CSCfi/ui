@@ -62,7 +62,11 @@ export interface MountOptions {
   stage?: boolean;
 }
 
-/** Theme mode lives on the document root (`tokens.css` keys on `:root[data-theme]`). */
+/**
+ * Pin the theme mode for the whole page. `tokens.css` keys its mode blocks on a
+ * bare `[data-theme]`, so any element opens a **mode scope** (ADR-0053) — set
+ * the attribute on a wrapper instead to scope one to part of a spec.
+ */
 export function setThemeMode(mode: ThemeMode): void {
   document.documentElement.setAttribute('data-theme', mode);
 }

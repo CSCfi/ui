@@ -64,7 +64,8 @@ export function render() {
  * The chart tokens (ADR-0030) as importable data (ADR-0040): the twelve
  * series slots and the chart anatomy roles per theme mode. Values are the
  * frozen, validated set — they never follow a consumer's \`--c-chart-*\`
- * overrides. Pair with \`themeMode()\` to pick the mode on screen.
+ * overrides. Pair with \`themeMode(el)\` to pick the mode in effect where the
+ * chart sits, or \`observeThemeMode()\` to follow it.
  */
 
 import type { ThemeMode } from './themeMode';

@@ -30,6 +30,7 @@ export {
   chartAnatomyHex,
   chartSlots,
   chartSlotsHex,
+  observeThemeMode,
   themeMode,
 } from "@cscfi/csc-ui";
 export type { ChartAnatomy, ChartSlots, ThemeMode } from "@cscfi/csc-ui";

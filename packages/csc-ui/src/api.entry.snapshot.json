@@ -12,6 +12,7 @@
     "defineCustomElements",
     "h",
     "migratedTags",
+    "observeThemeMode",
     "resetDefaults",
     "resetTheme",
     "tailwindVariantTags",
