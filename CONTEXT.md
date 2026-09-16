@@ -270,6 +270,10 @@ _Avoid_: Border (the opaque role), outline (the CSS property / focus concept), d
 The top rung of the **surface ladder** (`surface-inverted`): a background that takes the *opposite* mode's ground — near-black in light mode, near-white in dark mode — so a maximum-emphasis transient layer stands apart from every other surface instead of blending one shade above it. Content on it uses the matching inverted roles (`on-surface-inverted`, the `*-inverted` status roles), which likewise borrow the opposite mode's look. Mode-**aware** (it flips with the mode) — not to be confused with the mode-**invariant** `inverse-*` family, which keeps one fixed look on a fixed brand/dark backdrop regardless of mode.
 _Avoid_: Inverse surface (collides with the invariant `inverse-*` family), dark surface (only true in light mode), contrast surface
 
+**Wash** (nav chrome):
+A translucent tint of a surface's own foreground ink — `on-nav` on `nav-surface`, `on-nav-active` on `nav-active` — used for the side navigation's hover, active, indicator and focus states, so every state stays legible in both **theme modes** without a per-mode value (ADR-0052). Page roles (the **surface ladder**, the primary tint pair) are never painted inside the nav.
+_Avoid_: Overlay (a floating surface), tint (reserve for the `*-subtle` roles), highlight
+
 **`on-` token** (foreground role):
 A semantic token naming the **content colour that sits on** a given surface or fill — `on-surface` (text/icons on `surface`), `on-primary` (label on a `primary` fill), etc. Its light/dark values flip to preserve contrast (e.g. `on-primary` is white on the light-mode `primary` fill but dark on the lighter dark-mode `primary` fill). The reason a single mode-independent text colour is insufficient and the semantic layer is required.
 _Avoid_: Foreground, contrast colour, text token (use `on-<role>`)
@@ -333,11 +337,11 @@ A **label** naming a *set* of controls operated as one field — `c-radio-group`
 _Avoid_: Legend (the native `<fieldset>` mechanism this library does not use), group title
 
 **Button group** (`c-button-group`):
-A standalone **labelable value control**: a segmented row of plain `c-button` children where activation carries the value — exclusive by default, cumulative in **multiple** mode. The form-facing component; it knows nothing about tabs. The group drives each child's **active** state; every active child paints its own active look — the **sliding indicator** never appears here (ADR-0025).
+A standalone **labelable value control**: a segmented set of plain `c-button` children — one row that wraps onto further rows when the track is narrower than its buttons — where activation carries the value — exclusive by default, cumulative in **multiple** mode. The form-facing component; it knows nothing about tabs. The group drives each child's **active** state; every active child paints its own active look — the **sliding indicator** never appears here (ADR-0025).
 _Avoid_: Tab buttons (that is the `c-tabs` adapter, not a value control), toggle group (foreign vocabulary for this same component), segmented control as the component's *name* (fine as a description of its shape — the usage doc's "a button group is a segmented control" — never as a synonym in API names or headings), toolbar (a button group holds a value; a toolbar merely groups actions)
 
 **Tab buttons** (`c-tab-buttons`):
-The tab-strip adapter — a **composed child** of `c-tabs` that presents the tab list as a button group with the **sliding indicator**. Carries no form semantics (no label, no required, no **mandatory**) and cannot deselect: a tab strip inherently has an active tab. Standalone value-picking under this tag is Stencil-era usage; since 4.x that job belongs to **button group**.
+The tab-strip adapter — a **composed child** of `c-tabs` that presents the tab list as a button group with the **sliding indicator**. Always a single row: an overflowing strip scrolls sideways behind the same edge arrows and drag as `c-tabs`, never wraps (the indicator's geometry assumes one row). Carries no form semantics (no label, no required, no **mandatory**) and cannot deselect: a tab strip inherently has an active tab. Standalone value-picking under this tag is Stencil-era usage; since 4.x that job belongs to **button group**.
 _Avoid_: using it standalone as a value picker (that is `c-button-group`)
 
 **Sliding indicator** (`c-tab-buttons`):
