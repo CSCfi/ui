@@ -19,7 +19,7 @@ import type { CDataTableColumn } from '@cscfi/csc-ui';
     `
       .resizable {
         max-width: 100%;
-        min-width: 320px;
+        min-width: min(320px, 100%);
         overflow: auto;
         resize: horizontal;
         width: 560px;
