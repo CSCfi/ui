@@ -1,21 +1,60 @@
 <template>
-  <div ref="trackRef" :class="ui.track()" part="root">
-    <div
-      ref="indicatorRef"
-      :class="ui.indicator()"
-      aria-hidden="true"
-      part="indicator"
-    />
-
-    <c-button-group
-      :disabled
-      :size
-      :value.prop
-      mandatory
-      @change="onGroupChange"
+  <div :class="ui.wrapper()">
+    <!-- Edge arrows (CONTEXT.md "Tab buttons"): shown only while the strip
+         overflows, for pointer users without a horizontal wheel — keyboard
+         users rove with the arrow keys and the focused tab scrolls itself
+         into view. -->
+    <c-icon-button
+      v-if="strip.overflowing.value"
+      :aria-label="t.scrollBack"
+      :disabled="!strip.canBack.value || isDisabled"
+      part="scroll-back"
+      size="x-small"
+      ghost
+      @click="strip.back()"
     >
-      <slot />
-    </c-button-group>
+      <c-icon :path="mdiChevronLeft" />
+    </c-icon-button>
+
+    <div ref="trackRef" :class="ui.track()" part="root">
+      <div
+        ref="scrollerRef"
+        :class="ui.scroller()"
+        @pointerdown="strip.onPointerDown"
+        @wheel="strip.onWheel"
+      >
+        <div ref="contentRef" :class="ui.content()">
+          <div
+            ref="indicatorRef"
+            :class="ui.indicator()"
+            aria-hidden="true"
+            part="indicator"
+          />
+
+          <c-button-group
+            :disabled
+            :size
+            :value.prop
+            mandatory
+            @change="onGroupChange"
+          >
+            <slot />
+          </c-button-group>
+        </div>
+      </div>
+    </div>
+
+    <c-icon-button
+      v-if="strip.overflowing.value"
+      :aria-label="t.scrollForward"
+      :disabled="!strip.canForward.value || isDisabled"
+      part="scroll-forward"
+      size="x-small"
+      ghost
+      @click="strip.forward()"
+    >
+      <c-icon :path="mdiChevronRight" />
+    </c-icon-button>
   </div>
 </template>
 
@@ -50,7 +89,10 @@ export type CTabButtonsSize = 'default' | 'small';
  * @slot default - Default slot for the c-button elements
  * @csspart root - The segmented-control box framing the buttons
  * @csspart indicator - The sliding fill highlighting the active tab
+ * @csspart scroll-back - The edge arrow that scrolls an overflowing strip back
+ * @csspart scroll-forward - The edge arrow that scrolls an overflowing strip forward
  */
+import { mdiChevronLeft, mdiChevronRight } from '@mdi/js';
 import { tv } from 'tailwind-variants';
 import {
   computed,
@@ -62,6 +104,7 @@ import {
 
 import { coerceBoolean } from '../../shared/coerceBoolean';
 import { useHostEmit } from '../../shared/useHostEmit';
+import { useScrollStrip } from '../../shared/useScrollStrip';
 
 /** Events dispatched by `<c-tab-buttons>`. */
 interface CTabButtonsEvents {
@@ -94,13 +137,18 @@ defineOptions({ inheritAttrs: false });
  *   `root` box is made transparent and its frame neutralised through the
  *   `::part(root)` rule in the `<style>` block below (an outer-tree part rule
  *   beats the group's shadow styles for normal declarations).
- * - The pill is a `-z-10` child of the `isolate` track, so it paints above
- *   the track background but below the (transparent) buttons — a sibling
- *   could never interleave into the group's own stacking context, which is
- *   why the track ownership moves up here.
+ * - The pill is a `-z-10` child of the `isolate` content box, so it paints
+ *   above the track background but below the (transparent) buttons — a
+ *   sibling could never interleave into the group's own stacking context,
+ *   which is why the track ownership moves up here.
  * - Each slotted button's active fill is retargeted to transparent through
  *   the inherited `--_c-button-active-*` vars, keeping only the text flip;
  *   the pill is the single active fill.
+ * - The strip never wraps (the pill's geometry assumes one row): inside the
+ *   track a native horizontal scroller with a hidden scrollbar holds the
+ *   group, laid out as a single row of equal columns through the
+ *   `::part(root)` rule below, and `useScrollStrip` adds the edge arrows,
+ *   mouse drag, wheel translation and the reveal of the active tab.
  */
 // Hoisted so the runtime guard below can test membership; the `satisfies`
 // keeps the map complete against the public union.
@@ -122,18 +170,32 @@ const tabButtons = tv({
     disabled: false,
   },
   slots: {
+    // The scrolled content: as wide as the one-row group (`w-max`), never
+    // narrower than the scroller (`min-w-full`) so the columns share a wide
+    // track. `relative isolate` so the `-z-10` pill is contained in this
+    // box's stacking context and paints above the track background but
+    // below the (transparent) buttons inside the wrapped group; the pill
+    // scrolls with the buttons because it lives here, not on the track.
+    content: 'relative isolate w-max min-w-full',
     // The single sliding active fill. JS sets width + translateX to the
     // active button's measured box. Radius matches c-button's
     // `rounded-csc-md`.
     indicator:
       'pointer-events-none absolute left-0 -z-10 w-0 origin-left rounded-csc-md bg-primary opacity-0 transition-[transform,width,opacity] duration-300 ease-out',
-    // `relative isolate` so the `-z-10` pill is contained in this box's
-    // stacking context and paints above this track background but below the
-    // (transparent) buttons inside the wrapped group. The border is the
-    // load-bearing hairline, clipped out of the fill so it composites over
-    // the parent surface and reads on every rung (ADR-0042).
+    // The native horizontal scroller (CONTEXT.md "Tab buttons"): scrollbar
+    // hidden, the edge arrows and the peeking buttons are the cue. Rounded
+    // like the frame so the clip follows its corners.
+    scroller:
+      'overflow-x-auto overflow-y-hidden scrollbar-hidden overscroll-x-contain rounded-[inherit] cursor-default',
+    // The frame. The border is the load-bearing hairline, clipped out of the
+    // fill so it composites over the parent surface and reads on every rung
+    // (ADR-0042). `min-w-0` lets a flex parent squeeze it below the one-row
+    // width — that is when the strip scrolls.
     track:
-      'relative isolate rounded-csc-lg border border-solid border-divider bg-clip-padding bg-surface-sunken',
+      'rounded-csc-lg border border-solid border-divider bg-clip-padding bg-surface-sunken min-w-0 flex-1',
+    // Arrows and frame in one row; as wide as the frame wants, at most the
+    // container.
+    wrapper: 'flex items-center gap-1 max-w-full',
   },
   variants: {
     disabled: {
@@ -156,18 +218,34 @@ const host = useHost();
 
 const emit = useHostEmit<CTabButtonsEvents>();
 
+const isDisabled = computed(() => coerceBoolean(props.disabled));
+
 // Attributes can deliver any string at runtime; unknown values fall back to
 // the default size.
 const ui = computed(() =>
   tabButtons({
-    disabled: coerceBoolean(props.disabled),
+    disabled: isDisabled.value,
     size: props.size in sizeVariants ? props.size : 'default',
   }),
 );
 
+// Labels of the edge arrows. Not consumer-facing text in the tab-strip sense
+// (the arrows are out of the tab order); kept in one place for the day they
+// become props.
+const t = {
+  scrollBack: 'Scroll tabs back',
+  scrollForward: 'Scroll tabs forward',
+};
+
 const trackRef = useTemplateRef<HTMLElement>('trackRef');
 
+const scrollerRef = useTemplateRef<HTMLElement>('scrollerRef');
+
+const contentRef = useTemplateRef<HTMLElement>('contentRef');
+
 const indicatorRef = useTemplateRef<HTMLElement>('indicatorRef');
+
+const strip = useScrollStrip(scrollerRef);
 
 type CTabButtonEl = {
   disabled?: boolean;
@@ -197,11 +275,11 @@ const nativeControlOf = (btn: CTabButtonEl): HTMLElement | null =>
 // (initial mount, resize) snaps without a transition so the pill doesn't fly
 // in from the left.
 const moveIndicator = (animate = true) => {
-  const track = trackRef.value;
+  const content = contentRef.value;
 
   const ind = indicatorRef.value;
 
-  if (!track || !ind) return;
+  if (!content || !ind) return;
 
   const active = buttons().find((b) => b.hasAttribute('active'));
 
@@ -217,7 +295,9 @@ const moveIndicator = (animate = true) => {
 
   if (!box || box.width === 0) return;
 
-  const trackBox = track.getBoundingClientRect();
+  // The pill is placed from the scrolled content box (no border of its
+  // own), so it follows the buttons through the scroller.
+  const contentBox = content.getBoundingClientRect();
 
   // A hidden pill (no prior selection) must snap to its first position, not
   // animate from left-0/width-0.
@@ -227,9 +307,7 @@ const moveIndicator = (animate = true) => {
 
   if (snap) ind.style.transition = 'none';
   ind.style.width = `${box.width}px`;
-  // Absolute children are placed from the track's padding box, while
-  // `trackBox` is its border box — subtract the 1px hairline.
-  ind.style.transform = `translateX(${box.left - trackBox.left - track.clientLeft}px)`;
+  ind.style.transform = `translateX(${box.left - contentBox.left}px)`;
   ind.style.opacity = '1';
 
   if (snap) {
@@ -260,7 +338,7 @@ const observeButtons = () => {
   if (resizeObserver) {
     resizeObserver.disconnect();
 
-    if (trackRef.value) resizeObserver.observe(trackRef.value);
+    if (contentRef.value) resizeObserver.observe(contentRef.value);
   }
 
   activeObserver?.disconnect();
@@ -313,9 +391,20 @@ const onGroupChange = (e: Event) => {
   );
 };
 
+// The active tab is brought into view — scrolling the strip, never the page
+// — whenever c-tabs (or a click on a half-visible tab) changes it.
+const revealActive = () => {
+  const active = buttons().find((b) => b.hasAttribute('active'));
+
+  if (active) strip.reveal(nativeControlOf(active));
+};
+
 onMounted(() => {
   resizeObserver = new ResizeObserver(() => moveIndicator(false));
-  activeObserver = new MutationObserver(() => moveIndicator(true));
+  activeObserver = new MutationObserver(() => {
+    moveIndicator(true);
+    revealActive();
+  });
 
   // Late-appearing buttons (v-if'd/async children) re-run the driving pass.
   slotEl()?.addEventListener('slotchange', () => {
@@ -330,6 +419,8 @@ onMounted(() => {
     requestAnimationFrame(() => {
       setupButtons();
       moveIndicator(false);
+      strip.update();
+      revealActive();
     }),
   );
 });
@@ -348,13 +439,22 @@ onBeforeUnmount(() => {
    outer-tree ::part rule wins over the group's shadow styles for normal
    declarations, in every state (the group's disabled variant repaints its
    background too, so `background` — not `background-color` shorthand
-   mismatches — is overridden here). The group keeps its 1px border (made
-   transparent) and 3px padding; the -1px margin pulls its border box over
-   this track's own border, so the buttons land exactly where a standalone
-   group puts them and the pill offsets in `sizeVariants` stay true. */
+   mismatches — is overridden here). The group loses its 1px border and
+   keeps its 3px padding inside this track's own 1px border, so the buttons
+   land exactly where a standalone group puts them and the pill offsets in
+   `sizeVariants` stay true.
+
+   A tab strip never wraps (the pill assumes one row): the group's auto-fit
+   columns become one row of equal columns as wide as the longest label
+   (`width: max-content`), filling the scroller when it is wider
+   (`min-width: 100%`) and scrolling inside it when it is narrower. */
 c-button-group::part(root) {
   background: transparent;
-  border-color: transparent;
-  margin: -1px;
+  border-width: 0;
+  grid-template-columns: none;
+  grid-auto-flow: column;
+  grid-auto-columns: minmax(0, 1fr);
+  width: max-content;
+  min-width: 100%;
 }
 </style>
