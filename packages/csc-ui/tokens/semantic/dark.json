@@ -85,6 +85,7 @@
   "on-nav": "primary-100",
   "nav-active": "primary-500",
   "on-nav-active": "white",
+  "nav-sub-active": "color-mix(in srgb, var(--c-white) 18%, transparent)",
 
   "_comment-chart": "Chart tokens (ADR-0030, amended 2026-09-03): frozen viz-owned literals, re-validated against the dark chart surface (slate-800) — dark values are selected, not flipped. Same hue per slot as light mode (series identity is mode-stable); every slot sits at OKLCH L 0.58–0.67 and clears 3:1 on slate-800, so no slot needs a relief channel any more (the previous set had four sub-3:1 relief slots). All-pairs safe prefix stays slots 1–3.",
   "chart-1": "#1094f1ff",
