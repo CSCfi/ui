@@ -1,5 +1,130 @@
 # @cscfi/csc-ui
 
+## 4.0.0-alpha.17
+
+### Minor Changes
+
+- [#279](https://github.com/CSCfi/ui/pull/279) [`7f03095`](https://github.com/CSCfi/ui/commit/7f03095f9cf034736c4845cb3f9d6ff56e6f945f) Thanks [@villeerikssoncsc](https://github.com/villeerikssoncsc)! - Dashboard layout scrolls the document (ADR-0051):
+
+  - `c-toolbar` is pinned with CSS sticky instead of `position: fixed`, drops its
+    spacer, and gains a `static` prop that keeps it in the page flow so it scrolls
+    away with the content. The `class="relative"` host-class switch is removed;
+    use `static`.
+  - `c-main` grows with its content instead of clamping to the viewport, and pins
+    the desktop `c-side-navigation` beneath the toolbar (or to the top edge when
+    the toolbar is static) with an inner scrollbar. No consumer markup needed.
+  - New `banner` slot on `c-main`: a full-width strip above the toolbar that
+    scrolls away with the page; the toolbar pins to the top edge once it is gone.
+  - `c-page` is no longer a scroll container: no fixed height, no own scrolling.
+    `scroll-indicator` tracks the document. Code that read or set c-page's scroll
+    offset must target the window; smooth scrolling is the document's
+    (`html { scroll-behavior: smooth }`).
+  - The toolbar height is the shared `--spacing-toolbar` theme value (60px)
+    instead of a literal.
+
+### Patch Changes
+
+- [#279](https://github.com/CSCfi/ui/pull/279) [`77ad07a`](https://github.com/CSCfi/ui/commit/77ad07a0b3c79ba054ca685d7f48660947a36c17) Thanks [@villeerikssoncsc](https://github.com/villeerikssoncsc)! - `c-button-group` wraps its buttons onto further rows when the track is
+  narrower than one row of them. The track was a single-row grid whose cells
+  could shrink below the buttons, so on a narrow viewport the buttons painted
+  over each other. The columns stay equal and as wide as the longest label; the
+  group keeps its natural one-row width where there is room.
+
+- [#279](https://github.com/CSCfi/ui/pull/279) [`f5d59f9`](https://github.com/CSCfi/ui/commit/f5d59f9003d318b8e1a768bcf607ca953870dfdd) Thanks [@villeerikssoncsc](https://github.com/villeerikssoncsc)! - `c-button`'s ripple is clipped to the same corner shape as the button. The
+  clip inherited the radius but not the squircle corner shape, so on browsers
+  with `corner-shape` the ripple bled past the painted corners.
+
+- [#279](https://github.com/CSCfi/ui/pull/279) [`07a7e42`](https://github.com/CSCfi/ui/commit/07a7e42b020f0ac4981bf6dc9effa4d08d2c40eb) Thanks [@villeerikssoncsc](https://github.com/villeerikssoncsc)! - `c-card-title`'s `actions` slot drops onto its own row under the title,
+  starting at the left edge, when the two do not fit side by side; it stayed
+  right-aligned (and stacked its own rows in reverse) after wrapping.
+  `c-card-actions` wraps a footer row longer than the card instead of
+  overflowing it.
+
+- [#279](https://github.com/CSCfi/ui/pull/279) [`c05c7ee`](https://github.com/CSCfi/ui/commit/c05c7eede9808db1a85d20ed377fd7ea9fe76f9a) Thanks [@villeerikssoncsc](https://github.com/villeerikssoncsc)! - `c-data-table` with `autohide` measures its columns at their natural widths.
+  It measured them from the already-squeezed `width: 100%` layout, so in a box
+  narrower than the content the total always equalled the box, nothing was
+  hidden, and the table scrolled sideways instead of moving columns into the
+  expansion row.
+
+- [#279](https://github.com/CSCfi/ui/pull/279) [`c35aedc`](https://github.com/CSCfi/ui/commit/c35aedc379d4ec5f20dec85ce076b238bad38a54) Thanks [@villeerikssoncsc](https://github.com/villeerikssoncsc)! - `c-tree-select` keeps a long selection inside its field: the two-line value
+  block is clipped and a long code ellipsises like the label instead of painting
+  out through the field and across the clear button. In `c-select`,
+  `c-autocomplete` and `c-tree-select` the clear button and chevron now render in
+  the field's `post` slot on a real box, so they sit flush at the trailing edge
+  and the chevron turns while the list is open (their classes sat on a
+  `display: contents` host and never applied).
+
+- [#279](https://github.com/CSCfi/ui/pull/279) [`76a8b91`](https://github.com/CSCfi/ui/commit/76a8b91789023877b99569aa1f9b8b1a78c5ed5b) Thanks [@villeerikssoncsc](https://github.com/villeerikssoncsc)! - `c-link` hovers with the `link-subtle` tint. It painted the `link-hover` role,
+  which is the hover _ink_ — in dark mode a lighter step than the link text, so
+  hovered links were unreadable (1.6:1).
+
+- [#279](https://github.com/CSCfi/ui/pull/279) [`96f844b`](https://github.com/CSCfi/ui/commit/96f844b854c1ada8b8b6ac089e741c88fffd99f1) Thanks [@villeerikssoncsc](https://github.com/villeerikssoncsc)! - `c-list-item`'s active row uses the `on-primary-subtle` ink paired with its
+  `primary-subtle` tint and adds the 1px inset `primary` ring the other row
+  components paint; the hover step carries the `on-surface` ink. `primary` on
+  the tint fell short of AA in dark mode and the muted ink on the hover step in
+  both modes. `c-select`'s selected option row takes the same paired ink.
+
+- [#279](https://github.com/CSCfi/ui/pull/279) [`b06e623`](https://github.com/CSCfi/ui/commit/b06e62321d33ba86b127aed2740ab57917a240d3) Thanks [@villeerikssoncsc](https://github.com/villeerikssoncsc)! - `c-menu` submenus open on tap in Safari and iOS. A touch fires `pointerover`
+  before its `click`; the hover-open that `pointerover` started had the submenu
+  open by the time the click arrived, and the click toggled it straight back
+  shut, so the submenu flashed and vanished. Touch no longer hover-opens — a
+  tap on the item toggles its submenu — and the submenu panel now flips to the
+  other side or below when there is no room to the right.
+
+- [#279](https://github.com/CSCfi/ui/pull/279) [`826a24c`](https://github.com/CSCfi/ui/commit/826a24c6903f365dd7d4f6c0332e69436c99c466) Thanks [@villeerikssoncsc](https://github.com/villeerikssoncsc)! - Fix the page scroll lock on iOS: the shared lock behind `c-modal` and the
+  fullscreen panels of `c-autocomplete`, `c-tree-select` and `c-select` only set
+  `overflow: hidden` on the document, which iOS Safari ignores for touch panning,
+  so swiping through the options scrolled the page underneath. The lock now also
+  takes the body out of the scroll flow at its current offset and restores that
+  offset on release, so nothing visibly moves. `c-select`'s listbox drops its
+  private body-overflow lock and holds the shared one.
+
+- [#279](https://github.com/CSCfi/ui/pull/279) [`3b4303a`](https://github.com/CSCfi/ui/commit/3b4303ab381b5603b97b3cfca4ee5796ca69d55c) Thanks [@villeerikssoncsc](https://github.com/villeerikssoncsc)! - `c-pagination` keeps the range text ("1 - 10 of 100 items") at the right edge
+  beside the items-per-page control while both fit and puts it flush under the
+  control on its own row when the viewport is too narrow. A fixed right-aligned
+  box used to leave it indented at a width-dependent offset, and wrapped rows
+  had no gap between them.
+
+- [#279](https://github.com/CSCfi/ui/pull/279) [`826a24c`](https://github.com/CSCfi/ui/commit/826a24c6903f365dd7d4f6c0332e69436c99c466) Thanks [@villeerikssoncsc](https://github.com/villeerikssoncsc)! - `c-select` on a narrow viewport no longer moves its field into the fullscreen
+  panel: the panel is the heading row (the field's label and a close button) and
+  the options, the same shape as `c-tree-select`. The moved field repeated the
+  label and spent a row of a phone screen on a readonly control, and focusing it
+  during the open was one of the things that scrolled the page behind the panel.
+  Focus now lands on the list inside the panel (the highlighted row when there is
+  a selection).
+
+- [#279](https://github.com/CSCfi/ui/pull/279) [`31f8ed9`](https://github.com/CSCfi/ui/commit/31f8ed99e776b2120867fc3c2e6381ffd6896be7) Thanks [@villeerikssoncsc](https://github.com/villeerikssoncsc)! - A pinned `c-side-navigation` that scrolls on its own (the `autoheight` state
+  and the desktop drawer inside `c-main`) contains its overscroll: a wheel or
+  swipe that reached the drawer's end chained to the document, and the browser
+  then kept scrolling the page for the rest of the gesture while the drawer
+  could not be scrolled back. The drawer is also sized to the visible viewport
+  (`dvh`) so it fits while a phone's browser chrome is expanded.
+
+- [#279](https://github.com/CSCfi/ui/pull/279) [`515bd82`](https://github.com/CSCfi/ui/commit/515bd82ed73a83af662d0d506edf3b76382761bb) Thanks [@villeerikssoncsc](https://github.com/villeerikssoncsc)! - Side navigation sub-items paint their hover, active, indicator bar and focus
+  ring as translucent washes of the `on-nav-active` ink of the pill they sit in
+  (ADR-0052). They still carried page roles — `surface-raised`, the primary
+  tint — which in dark mode made the selected sub-item a grey slab at 2:1 inside
+  the teal drawer and its hover states near-invisible.
+
+- [#279](https://github.com/CSCfi/ui/pull/279) [`cef330a`](https://github.com/CSCfi/ui/commit/cef330a9ae15884bbbd6050d88a025ec47dc7811) Thanks [@villeerikssoncsc](https://github.com/villeerikssoncsc)! - `c-side-navigation-title` drops its top margin when it is the first child of
+  `c-side-navigation`, so the first section title sits directly under the nav
+  padding instead of adding a section gap above it.
+
+- [#279](https://github.com/CSCfi/ui/pull/279) [`7d0675b`](https://github.com/CSCfi/ui/commit/7d0675b3b3e1f1844ae125f0bc09263fa6c5d6f4) Thanks [@villeerikssoncsc](https://github.com/villeerikssoncsc)! - `c-side-navigation-title`'s underline is visible again in light mode: it paints
+  a translucent `on-nav` ink instead of the page's `divider` ink, which is a
+  translucent black that vanished on the dark nav surface.
+
+- [#279](https://github.com/CSCfi/ui/pull/279) [`c6105de`](https://github.com/CSCfi/ui/commit/c6105de2ffe67819faf771e24a08122b8ec2e4aa) Thanks [@villeerikssoncsc](https://github.com/villeerikssoncsc)! - `c-slider`'s value bubble appears the moment the thumb is pressed or the
+  input focused, on touch as well as with a mouse; the 300ms transition now
+  only plays when it hides.
+
+- [#279](https://github.com/CSCfi/ui/pull/279) [`33191df`](https://github.com/CSCfi/ui/commit/33191dff05deba9f330bda36f701dfe563e01c51) Thanks [@villeerikssoncsc](https://github.com/villeerikssoncsc)! - `c-tab-buttons` scrolls sideways when the strip is wider than its box instead
+  of letting the buttons overlap: a single row inside a native scroller with a
+  hidden scrollbar, edge arrows (new `scroll-back` / `scroll-forward` parts)
+  while it overflows, mouse drag and wheel scrolling, and the active tab is
+  scrolled into view when `c-tabs` changes it. The sliding indicator follows the
+  buttons through the scroller.
+
 ## 4.0.0-alpha.16
 
 ### Patch Changes
