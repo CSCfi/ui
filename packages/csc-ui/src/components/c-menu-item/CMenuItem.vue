@@ -122,14 +122,14 @@ const item = tv({
     // the accent check in the design, and the danger variant re-tones it below.
     check: 'shrink-0 text-primary',
     chevron: 'shrink-0 size-4.5 -mr-1 fill-current',
-    // Leading icon from the `icon` prop; follows the row colour (hover,
-    // keyboard highlight, danger, disabled) via currentColor.
-    icon: 'shrink-0 text-current',
     // `flex-1` so the content box fills the row width — this lets consumers
     // right-align trailing content placed in the default slot (e.g. an icon or
     // shortcut hint) with `ml-auto` / `justify-between`, instead of it sticking
     // to the label.
     content: 'flex flex-1 items-center gap-2 min-w-0',
+    // Leading icon from the `icon` prop; follows the row colour (hover,
+    // keyboard highlight, danger, disabled) via currentColor.
+    icon: 'shrink-0 text-current',
     root: 'flex items-center justify-between gap-3 min-h-10 px-3 rounded-csc-sm text-sm cursor-pointer select-none outline-none whitespace-nowrap text-on-surface hover:bg-primary-subtle hover:text-primary hover:ring-1 hover:ring-primary',
     submenu:
       'list-none m-0 p-1 min-w-45 w-max max-h-[80vh] overflow-y-auto scrollbar-hidden rounded-csc-sm bg-surface-overlay shadow-[2px_4px_10px_#00000029] outline-none',
@@ -393,6 +393,16 @@ onBeforeUnmount(() => {
 <style>
 :host {
   display: block;
+}
+
+/* The submenu is pinned to the right of its row (`submenuStyle`); on a
+   narrow viewport there is no room there, so it falls back to the left,
+   then above/below — the same escape hatch as the menu panel's own. */
+[part='submenu-panel'] {
+  position-try-fallbacks:
+    flip-inline,
+    flip-block,
+    flip-inline flip-block;
 }
 
 :host(:focus) {
