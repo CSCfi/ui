@@ -219,20 +219,27 @@ const pagination = tv({
     size: 'default',
   },
   slots: {
+    // Items-per-page and the range: side by side with the range at the right
+    // edge while both fit, else the range on its own row — where
+    // `justify-between` puts a lone item at the start, flush under the
+    // items-per-page control.
     details:
-      'flex flex-auto flex-wrap items-center justify-between text-[var(--c-text-system)]',
+      'flex flex-auto flex-wrap items-center justify-between gap-x-6 gap-y-1 text-[var(--c-text-system)]',
     itemsPerPage:
       'flex items-center gap-1 text-sm text-right whitespace-nowrap text-[var(--c-text-system)]',
     itemsPerPageValue: '',
     // 'cursor-pointer border-0 bg-transparent p-0 text-sm text-primary underline decoration-dotted underline-offset-4 [font-family:inherit]',
     pages: 'flex items-center justify-center list-none m-0 p-0 gap-1',
-    rangeText: 'text-sm text-right whitespace-nowrap',
-    root: 'flex flex-wrap items-center justify-center w-full gap-x-6 gap-y-0',
+    // No minimum width or right-aligned text on the range: a fixed box with
+    // text pushed right indented the range when it wrapped to its own row.
+    rangeText: 'text-sm whitespace-nowrap',
+    root: 'flex flex-wrap items-center justify-center w-full gap-x-6 gap-y-1',
   },
   variants: {
-    // `range` is applied per-call on the rangeText span (original `.range`).
+    // `range` is applied per-call on the rangeText span (original `.range`);
+    // it no longer reserves a minimum width.
     range: {
-      true: { rangeText: 'min-w-[132px]' },
+      true: { rangeText: '' },
     },
     simple: {
       true: { pages: 'flex-1 justify-end' },
