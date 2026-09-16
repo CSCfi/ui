@@ -27,6 +27,7 @@ import {
         <c-side-navigation-item active>Dashboard</c-side-navigation-item>
         <c-side-navigation-item>Members</c-side-navigation-item>
         <c-side-navigation-item>Billing</c-side-navigation-item>
+        <c-button slot="bottom" inverted>Sign out</c-button>
       </c-side-navigation>
 
       <c-page>
@@ -60,6 +61,7 @@ import {
         height: 320px;
         min-height: 0;
         overflow-y: auto;
+        --c-main-viewport-height: 320px;
       }
     `,
   ],

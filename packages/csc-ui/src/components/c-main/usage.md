@@ -2,7 +2,7 @@ The page shell of an application: it paints the page canvas and lays out the too
 
 ## Dashboard layout
 
-Slot the layout components as direct children and `c-main` places them: `c-toolbar` spans the top, `c-side-navigation` takes the left column and `c-page` fills the rest. The toolbar pins itself to the top of the viewport; `c-main` pins the desktop side navigation beneath it, gives a long menu its own scrollbar, and moves its pin to the top edge when the toolbar is `static`. The mobile drawer is not touched.
+Slot the layout components as direct children and `c-main` places them: `c-toolbar` spans the top, `c-side-navigation` takes the left column and `c-page` fills the rest. The toolbar pins itself to the top of the viewport; `c-main` pins the desktop side navigation beneath it and moves its pin to the top edge when the toolbar is `static`. The drawer is sized to the pinned height: a short menu fills the column, a long one scrolls inside the drawer, and the side navigation's bottom slot stays at the bottom edge of the viewport — also while a banner or a static toolbar is still above the drawer. The 3.x `autoheight` host class is ignored here, and the mobile drawer is not touched.
 
 ## Banner
 
@@ -18,4 +18,4 @@ The document scrolls, so browser scroll restoration, anchors, find-in-page and m
 
 ## Customization
 
-Structural styling via `::part(root)`. To show the layout inside a bounded box — a demo, a preview — give the part a height together with `min-height: 0` and `overflow-y: auto`; the toolbar and side navigation then pin inside that box.
+Structural styling via `::part(root)`. To show the layout inside a bounded box — a demo, a preview — give the part a height together with `min-height: 0` and `overflow-y: auto`, and set `--c-main-viewport-height` to the same height so the pinned side navigation is sized to the box instead of the viewport; the toolbar and side navigation then pin inside that box.

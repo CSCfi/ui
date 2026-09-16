@@ -9,6 +9,9 @@ Accepted
 Amends ADR-0014: the page lock's document scroll lock now stops the dashboard
 layout's real scroller.
 
+Amended 2026-09-16: the pinned side navigation has an explicit height and a
+bounded shell declares its viewport height (see Amendment below).
+
 ## Context
 
 In 3.x and the early 4.0 alphas `c-main` clamped itself to the viewport
@@ -72,3 +75,32 @@ The **document is the only scroll container of the dashboard layout**.
   no longer `c-page`'s.
 - A future auto-hide toolbar (slide away on scroll down, return on scroll up)
   can be a second boolean on `c-toolbar` and does not reopen this decision.
+
+## Amendment (2026-09-16): the drawer's height and bounded shells
+
+The first cut clamped the pinned side navigation with `max-height` and made its
+host the scroller. Two reports followed: a short menu collapsed to its content,
+so the drawer's **bottom slot** sat under the last item instead of at the bottom
+edge, and a drawer still carrying the 3.x `autoheight` class was one toolbar
+height short under a `static` toolbar. Under a banner or a static toolbar the
+slot was also below the fold at load: a sticky box has a fixed height and cannot
+shrink while the rows above it are still on screen.
+
+Decided:
+
+- `c-main` sizes the desktop drawer to exactly the pinned height
+  (`viewport − offset`), overriding `autoheight` (outer tree context wins over
+  `:host`), and leaves the host `overflow: visible`.
+- `c-side-navigation`'s item list is the drawer's only scroll container; the
+  bottom slot's region sits outside the `menubar` nav and is `sticky bottom: 0`,
+  so it reaches the viewport's bottom edge before the drawer has pinned. The
+  accepted residual is that a long menu's last rows sit behind the slot while
+  the banner and toolbar rows are still on screen; a scroll-measured drawer
+  height in `c-main` would have been exact but was rejected to keep the
+  layout free of measurement.
+- The viewport height comes from a public custom property,
+  `--c-main-viewport-height` (default `100dvh`). No CSS unit knows an ancestor
+  scrollport's height (`cqh` falls back to `svh`, which re-creates the "too
+  high" symptom on tablets with collapsing browser chrome), so a bounded shell
+  — the docs' 320px demo box — declares it. This is a layout parameter, not a
+  restyling surface; ADR-0006's `::part()` rule stands.

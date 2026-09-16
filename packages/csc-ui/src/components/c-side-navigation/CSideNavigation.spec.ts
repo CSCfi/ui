@@ -1,9 +1,12 @@
 /**
- * Behaviour spec for c-side-navigation's pinned, self-scrolling drawer (the
- * `autoheight` host state the docs shell uses). A drawer taller than the
- * viewport scrolls on its own and contains its overscroll: a wheel that
- * reached its end used to chain to the document, and Chromium then latched
- * the rest of the gesture there, leaving the drawer stuck.
+ * Behaviour spec for c-side-navigation's drawer (CONTEXT.md "Side
+ * navigation", "Drawer", "Bottom slot"). The item list is the drawer's scroll
+ * container and contains its overscroll — a wheel that reached its end used
+ * to chain to the document, and Chromium then latched the rest of the gesture
+ * there, leaving the drawer stuck — while the bottom slot stays at the
+ * drawer's bottom edge. Covers the standalone `autoheight` host state (the
+ * docs shell) and the mobile drawer; the pinning inside c-main is c-main's
+ * spec.
  */
 import { describe, expect, it } from 'vitest';
 
@@ -14,22 +17,60 @@ const ITEMS = Array.from(
   (_, i) => `<c-side-navigation-item>Item ${i}</c-side-navigation-item>`,
 ).join('');
 
-describe('c-side-navigation (autoheight)', () => {
-  it('fits the visible viewport under the toolbar, scrolls on its own and contains its overscroll', async () => {
+/** A plain button: slotted csc-ui hosts are boxless, this one has a rect to measure. */
+const BOTTOM =
+  '<button slot="bottom" style="display: block; height: 40px">Sign out</button>';
+
+/** The drawer's inset (`p-6` on the nav, `pb-6` on the bottom region). */
+const DRAWER_INSET = 24;
+
+describe('c-side-navigation', () => {
+  it('autoheight: fits the visible viewport under the toolbar; the item list scrolls and contains its overscroll', async () => {
     const m = await mount('c-side-navigation', {
       attrs: { class: 'autoheight' },
-      html: ITEMS,
+      html: ITEMS + BOTTOM,
     });
 
     await settle();
 
-    const style = getComputedStyle(m.host);
-
-    expect(style.overflowY).toBe('auto');
-    expect(style.overscrollBehaviorY).toBe('contain');
     expect(m.host.getBoundingClientRect().height).toBe(window.innerHeight - 60);
-    expect(m.host.scrollHeight, 'the fixture overflows').toBeGreaterThan(
-      m.host.clientHeight,
+
+    const list = m.part('nav');
+
+    expect(list.scrollHeight, 'the fixture overflows').toBeGreaterThan(
+      list.clientHeight,
+    );
+    expect(getComputedStyle(list).overscrollBehaviorY).toBe('contain');
+    // The host itself never overflows: the list shrinks and scrolls instead.
+    expect(m.host.scrollHeight).toBe(m.host.clientHeight);
+
+    const button = m.host.querySelector('[slot="bottom"]') as HTMLElement;
+
+    expect(button.getBoundingClientRect().bottom).toBeCloseTo(
+      m.host.getBoundingClientRect().bottom - DRAWER_INSET,
+      0,
+    );
+  });
+
+  it('mobile: the item list scrolls and the bottom slot sits at the panel’s bottom edge', async () => {
+    const m = await mount('c-side-navigation', {
+      attrs: { 'menu-visible': true, mobile: true },
+      html: ITEMS + BOTTOM,
+    });
+
+    await settle();
+
+    const list = m.part('nav');
+
+    expect(list.scrollHeight, 'the fixture overflows').toBeGreaterThan(
+      list.clientHeight,
+    );
+
+    const button = m.host.querySelector('[slot="bottom"]') as HTMLElement;
+
+    expect(button.getBoundingClientRect().bottom).toBeCloseTo(
+      window.innerHeight - DRAWER_INSET,
+      0,
     );
   });
 });

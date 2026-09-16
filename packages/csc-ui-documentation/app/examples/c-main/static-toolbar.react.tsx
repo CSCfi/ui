@@ -15,6 +15,7 @@ const styles = `
   height: 320px;
   min-height: 0;
   overflow-y: auto;
+  --c-main-viewport-height: 320px;
 }
 `;
 

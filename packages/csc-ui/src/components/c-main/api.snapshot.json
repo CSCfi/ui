@@ -2,7 +2,9 @@
   "attributes": {
     "disable-layout": "boolean = false"
   },
-  "cssProperties": [],
+  "cssProperties": [
+    "--c-main-viewport-height"
+  ],
   "defaultable": [],
   "events": {},
   "methods": {},
