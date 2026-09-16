@@ -1,5 +1,32 @@
 # @cscfi/csc-ui-react
 
+## 4.0.0-alpha.18
+
+### Patch Changes
+
+- [#281](https://github.com/CSCfi/ui/pull/281) [`a47238e`](https://github.com/CSCfi/ui/commit/a47238e55175b25c64c9533259b42df2ae6ad334) Thanks [@razorfever](https://github.com/razorfever)! - Keep `c-select`'s fullscreen panel open on a narrow viewport. In `multiple`
+  mode the panel closed on the pick that made the field's row of tags wrap: the
+  field stays in the page on a narrow viewport, so growing it reflowed the page,
+  and the menu still treated any page reflow as a reason to close. Anything else
+  that grew the page behind the open panel closed it the same way. The reflow
+  close now applies only to the anchored menu, which is placed against the page;
+  the fullscreen panel closes on the viewport crossing the narrow threshold, as
+  before. A tap on the panel surface beside its content — visible only while the
+  browser chrome or the on-screen keyboard is animating — no longer closes it.
+
+- [#281](https://github.com/CSCfi/ui/pull/281) [`4009914`](https://github.com/CSCfi/ui/commit/4009914070c0e087ceec69783af2f68b43988c47) Thanks [@razorfever](https://github.com/razorfever)! - `c-side-navigation`'s bottom slot stays at the drawer's bottom edge. Inside
+  `c-main` the desktop drawer fills its pinned height, so a short menu no longer
+  leaves the slot under the last item and the 3.x `autoheight` class is ignored
+  there (it left the drawer one toolbar height short under a `static` toolbar).
+  Under a banner or a static toolbar the slot reaches the viewport's bottom edge
+  before the drawer has pinned. A long menu scrolls on its own above the slot,
+  which stays visible, on desktop and in the mobile drawer alike; the slot's
+  content is no longer inside the `menubar` nav. A bounded `c-main` shell with
+  its own scrollbar declares its height with the new `--c-main-viewport-height`
+  custom property.
+- Updated dependencies [[`a47238e`](https://github.com/CSCfi/ui/commit/a47238e55175b25c64c9533259b42df2ae6ad334), [`4009914`](https://github.com/CSCfi/ui/commit/4009914070c0e087ceec69783af2f68b43988c47)]:
+  - @cscfi/csc-ui@4.0.0-alpha.18
+
 ## 4.0.0-alpha.17
 
 ### Minor Changes
