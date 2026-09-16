@@ -25,7 +25,21 @@ const inerted = new Set<HTMLElement>();
 
 let scrollLocked = false;
 
-let previousOverflow = '';
+/**
+ * The inline styles the scroll lock overwrites, so release puts back exactly
+ * what the consumer had set (usually nothing).
+ */
+interface LockedStyles {
+  bodyLeft: string;
+  bodyPosition: string;
+  bodyRight: string;
+  bodyTop: string;
+  bodyWidth: string;
+  rootOverflow: string;
+  scrollY: number;
+}
+
+let saved: LockedStyles | null = null;
 
 /**
  * Collect `el` (or, when it contains an exempt toaster, its non-exempt
@@ -108,16 +122,55 @@ const applyInert = (): void => {
   }
 };
 
+/**
+ * Stop the document scrolling under the active holder. `overflow: hidden` on
+ * the root element is enough for a wheel or a scrollbar, but iOS Safari keeps
+ * panning an `overflow: hidden` document under a touch, so the body is also
+ * taken out of the scroll flow: `position: fixed`, shifted up by the scroll
+ * offset the page had, so nothing visibly moves. Release restores the inline
+ * styles and puts the offset back.
+ */
 const applyScrollLock = (): void => {
   const root = document.documentElement;
 
+  const { body } = document;
+
   if (holders.length > 0 && !scrollLocked) {
     scrollLocked = true;
-    previousOverflow = root.style.overflow;
+    saved = {
+      bodyLeft: body.style.left,
+      bodyPosition: body.style.position,
+      bodyRight: body.style.right,
+      bodyTop: body.style.top,
+      bodyWidth: body.style.width,
+      rootOverflow: root.style.overflow,
+      scrollY: window.scrollY,
+    };
     root.style.overflow = 'hidden';
+    body.style.position = 'fixed';
+    body.style.top = `${-saved.scrollY}px`;
+    body.style.left = '0';
+    body.style.right = '0';
+    body.style.width = '100%';
   } else if (holders.length === 0 && scrollLocked) {
     scrollLocked = false;
-    root.style.overflow = previousOverflow;
+
+    if (!saved) return;
+
+    root.style.overflow = saved.rootOverflow;
+    body.style.position = saved.bodyPosition;
+    body.style.top = saved.bodyTop;
+    body.style.left = saved.bodyLeft;
+    body.style.right = saved.bodyRight;
+    body.style.width = saved.bodyWidth;
+    // `instant`: a consumer's `scroll-behavior: smooth` must not animate the
+    // page back to where it already was.
+    window.scrollTo({
+      behavior: 'instant',
+      left: window.scrollX,
+      top: saved.scrollY,
+    });
+    saved = null;
   }
 };
 

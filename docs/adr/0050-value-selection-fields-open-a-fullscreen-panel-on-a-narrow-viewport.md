@@ -36,8 +36,12 @@ consumer flag on `c-side-navigation`.
 1. **Shape — a fullscreen panel** (CONTEXT.md). On a **narrow viewport** the
    transient list panel of a value-selection field fills the viewport: a
    **heading row** (the field's label as the panel heading, a close icon
-   button), the **search input** where the component has one (the moved field
-   for `c-select`), then the list. Rejected: a bottom sheet (the keyboard
+   button), the **search input** where the component has one, then the list.
+   _Amended 2026-09-16_: the first shape moved `c-select`'s whole value field
+   into the panel under the heading row; on a phone that repeated the label
+   and spent a row on a readonly field that does nothing there. The field now
+   stays in the page for every value-selection component, and `c-select`'s
+   panel is the heading row and the list — the same shape as `c-tree-select`. Rejected: a bottom sheet (the keyboard
    covers or displaces it, the page stays live behind it) and an anchored,
    keyboard-aware panel (it still competes with the keyboard for the lower
    half of the screen and leaves `c-select` on a different model).
@@ -101,6 +105,8 @@ consumer flag on `c-side-navigation`.
   be driven in headless Chromium — specs fake the visual viewport's box (the
   API's own getters) to prove the surface stays put while the content
   shrinks; a manual phone check is still part of the definition of done.
+- `c-dropdown` no longer moves the field on a narrow viewport; its fullscreen
+  baselines and the ordering assertions in `CSelect.spec.ts` change with it.
 - Two mechanisms remain (`<dialog>` in `c-dropdown`, popover in the
   composable). The seam is the shared predicate, sizing and heading row; a
   later port of `c-dropdown` onto `useAnchoredPanel` collapses it.

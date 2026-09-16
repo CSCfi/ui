@@ -18,7 +18,8 @@
   >
     <div ref="innerRef" :class="ui.inner()" @click.stop>
       <!-- Fullscreen panel (CONTEXT.md, ADR-0050): the heading row — the
-           field's label and a close button — above the moved field. -->
+           field's label and a close button — above the list. The field
+           stays in the page in this layout. -->
       <panel-heading-row
         v-if="fullscreenOpen"
         :close-label
@@ -194,6 +195,7 @@ import {
 
 import { coerceBoolean } from '../../shared/coerceBoolean';
 import { optionLabel } from '../../shared/optionLabel';
+import { lockPage, unlockPage } from '../../shared/pageLock';
 import PanelHeadingRow from '../../shared/PanelHeadingRow.vue';
 import { applyPeekCap } from '../../shared/peekCap';
 import { SELECT_ALL_INDEX } from '../../shared/selectAll';
@@ -239,7 +241,7 @@ interface CDropdownEvents {
  * What can't be a utility stays in the escape-hatch <style> below:
  * the host box (`:host{display:block;position:relative}`), the imperative
  * state-class hooks the JS toggles (`ul.active` visibility + fade-in keyframe,
- * the fullscreen panel's `.input-top-wrapper` padding, `.input-bottom-wrapper.active` padding),
+ * the `.input-bottom-wrapper.active` padding),
  * the `li span / li c-option-value` ellipsis rules (those nodes are injected
  * via `v-html`, so Vue can't put a class on them), and the keyframe.
  */
@@ -255,7 +257,7 @@ const dropdown = tv({
       'rounded border-0 bg-transparent m-0 mt-[-4px] p-0 pt-1 overflow-visible fixed',
     // The wrapper inside the dialog; a flex column in the fullscreen layout.
     inner: '',
-    item: 'flex items-center flex-nowrap gap-3 cursor-pointer text-sm min-h-[42px] outline-none px-[10px] py-2 pointer-events-auto whitespace-nowrap w-full rounded select-none hover:bg-primary-subtle hover:text-primary hover:ring-1 hover:ring-inset hover:ring-primary focus:bg-primary-subtle focus:text-primary focus:ring-1 focus:ring-inset focus:ring-primary aria-selected:bg-primary-subtle aria-selected:text-primary aria-selected:rounded-none hover:aria-selected:rounded focus:aria-selected:rounded',
+    item: 'flex items-center flex-nowrap gap-3 cursor-pointer text-sm min-h-[42px] outline-none px-[10px] py-2 pointer-events-auto whitespace-nowrap w-full rounded select-none hover:bg-primary-subtle hover:text-primary hover:ring-1 hover:ring-inset hover:ring-primary focus:bg-primary-subtle focus:text-primary focus:ring-1 focus:ring-inset focus:ring-primary aria-selected:bg-primary-subtle aria-selected:text-on-primary-subtle aria-selected:rounded-none hover:aria-selected:rounded focus:aria-selected:rounded',
     // Static list look; visibility + fade-in (`.active`) stay in the
     // escape-hatch <style>.
     list: 'list-none m-0 p-0 outline-none pointer-events-auto w-full h-max overflow-y-auto scrollbar-hidden rounded bg-surface-overlay text-on-surface shadow-[2px_4px_10px_#00000029] overscroll-none',
@@ -275,8 +277,7 @@ const dropdown = tv({
     // The fullscreen panel (CONTEXT.md, ADR-0050): the dialog is the surface
     // — the layout viewport's box, no radius, top inset or UA max size, an
     // opaque fill — and the inner column, placed on the visual viewport's box
-    // (`applyContentBox`), hands the list what the heading row and the moved
-    // field leave.
+    // (`applyContentBox`), hands the list what the heading row leaves.
     fullscreen: {
       true: {
         dialog:
@@ -472,8 +473,6 @@ let debounce: null | number = null;
 
 let isOpening = false;
 
-let originalOverflowValue = '';
-
 // The dialog's viewport-fit `max-height` while one applies (positionMenu),
 // else Infinity — the list's peek cap has to stay under it.
 let dialogCeiling = Infinity;
@@ -526,21 +525,7 @@ const onSelectAll = () => {
   updateStatusText();
 };
 
-// ---- scroll lock + positioning ------------------------------------------
-
-const disableScroll = () => {
-  document.body.style.overflow = 'hidden';
-};
-
-const enableScroll = () => {
-  if (originalOverflowValue && originalOverflowValue !== 'visible') {
-    document.body.style.overflow = originalOverflowValue;
-
-    return;
-  }
-
-  document.body.style.removeProperty('overflow');
-};
+// ---- positioning --------------------------------------------------------
 
 // The parent select forwards `hide-details` to its c-input through the
 // `data-hide-details` attribute, which c-input resolves AHEAD of its
@@ -624,13 +609,18 @@ const positionMenu = () => {
     // The dialog is the surface — the layout viewport's box, which the
     // on-screen keyboard overlays but never shrinks — and the inner column
     // follows the visual viewport while open, so the heading row and the
-    // moved field stay above the keyboard on a surface that still covers
-    // everything visible.
+    // list stay above the keyboard on a surface that still covers everything
+    // visible.
     applyFullscreenSurface(dialog);
     stopViewport?.();
     stopViewport = trackVisualViewport((box) => {
       if (innerRef.value) applyContentBox(innerRef.value, box);
     });
+    // `showModal()` inerts the page — the field included — so focus has to
+    // land inside the dialog. The dialog's focusing steps take the autofocus
+    // delegate: the list, not the heading row's close button; the index
+    // watcher then moves it onto the highlighted row.
+    listRef.value?.setAttribute('autofocus', '');
   }
 
   dialog.showModal();
@@ -640,6 +630,15 @@ const positionMenu = () => {
     // measured at its capped height.
     applyListCap();
 
+    if (fullscreen) {
+      // The field stays in the page (ADR-0050, amended): the panel is the
+      // heading row and the list — nothing to place, move or hold a place
+      // for, and the page is inert, so focus is already inside the dialog.
+      dialog.style.opacity = '1';
+
+      return;
+    }
+
     let inputSlot = 'input-top';
 
     const { top: parentTop, width } = getParentSlotRect();
@@ -648,33 +647,31 @@ const positionMenu = () => {
     inputSize.height = size.height;
     inputSize.width = size.width;
 
-    if (!fullscreen) {
-      dialog.style.width = `${width}px`;
-      dialog.style.top = `${size.top}px`;
-      dialog.style.bottom = 'auto';
-      dialog.style.left = `${size.left}px`;
+    dialog.style.width = `${width}px`;
+    dialog.style.top = `${size.top}px`;
+    dialog.style.bottom = 'auto';
+    dialog.style.left = `${size.left}px`;
 
-      const { bottom, height, right } = dialog.getBoundingClientRect();
+    const { bottom, height, right } = dialog.getBoundingClientRect();
 
-      const isInView = { x: right < innerWidth, y: bottom < innerHeight };
+    const isInView = { x: right < innerWidth, y: bottom < innerHeight };
 
-      const fitsOnTop = parentTop - height > 0;
+    const fitsOnTop = parentTop - height > 0;
 
-      if (!fitsOnTop && !isInView.y) {
-        dialog.style.maxHeight = `${parentTop}px`;
-        dialogCeiling = parentTop;
-      }
+    if (!fitsOnTop && !isInView.y) {
+      dialog.style.maxHeight = `${parentTop}px`;
+      dialogCeiling = parentTop;
+    }
 
-      if (!isInView.y || openedOnTop.value) {
-        openedOnTop.value = true;
+    if (!isInView.y || openedOnTop.value) {
+      openedOnTop.value = true;
 
-        setInputHideDetails(true);
-        inputSlot = 'input-bottom';
-        dialog.style.top = 'auto';
-        // Anchor the dialog's bottom edge to the field's bottom edge (the
-        // field is 44px by default, 36px for `size="small"`).
-        dialog.style.bottom = `${innerHeight - size.top - getParentSlotRect().height}px`;
-      }
+      setInputHideDetails(true);
+      inputSlot = 'input-bottom';
+      dialog.style.top = 'auto';
+      // Anchor the dialog's bottom edge to the field's bottom edge (the
+      // field is 44px by default, 36px for `size="small"`).
+      dialog.style.bottom = `${innerHeight - size.top - getParentSlotRect().height}px`;
     }
 
     if (dummyRef.value) {
@@ -794,6 +791,8 @@ const close = () => {
 
   if (innerRef.value) clearContentBox(innerRef.value);
 
+  listRef.value?.removeAttribute('autofocus');
+
   if (inputElement) {
     // Vue's defineCustomElement compiles `<slot name="default" />` to an
     // unnamed native <slot>, so we revert to that by clearing the attribute
@@ -816,7 +815,7 @@ const close = () => {
 };
 
 // The fullscreen panel's close button: close, then put focus back on the
-// parent's field once the moved input is home again.
+// parent's field once the page is interactive again.
 const onHeadingClose = () => {
   close();
   requestAnimationFrame(() => {
@@ -887,15 +886,17 @@ watch(
   },
 );
 
+// The page lock (ADR-0014, ADR-0050): the shared, iOS-proof document scroll
+// lock every modal surface in the library holds — `showModal()` already
+// inerts the page, so only its scroll lock matters here. Keyed on the host,
+// so a select opened inside a modal releases back to the modal's hold.
 watch(isOpen, (value) => {
-  originalOverflowValue =
-    originalOverflowValue || window.getComputedStyle(document.body).overflow;
-
   if (value) {
     handleOpen();
-    disableScroll();
-  } else {
-    enableScroll();
+
+    if (host) lockPage(host);
+  } else if (host) {
+    unlockPage(host);
   }
 
   emit('dropdownStateChange', value, bubbling);
@@ -978,7 +979,7 @@ onBeforeUnmount(() => {
     dialogRef.value?.removeEventListener('click', outsideClickFn);
   }
 
-  enableScroll();
+  if (host) unlockPage(host);
 });
 </script>
 
@@ -994,9 +995,9 @@ onBeforeUnmount(() => {
     - `li c-option-value` ellipsis — those nodes come from `v-html`
       (option outerHTML), unreachable by a class; `li span` shares the rule.
     - Imperative state-class hooks the JS/positioning toggles: `ul.active`
-      visibility + the `fade-in` reveal and the `.input-*-wrapper` paddings
-      (the fullscreen one keyed on `dialog.fullscreen`) — contextual
-      selectors and an animation that utilities don't cover.
+      visibility + the `fade-in` reveal and the `.input-bottom-wrapper`
+      padding — contextual selectors and an animation that utilities don't
+      cover.
     - `dialog::backdrop` (a native pseudo-element) and the `.dummy` placeholder
       (`display:none`; its size is set inline by the positioning code).
 -->
@@ -1008,10 +1009,6 @@ onBeforeUnmount(() => {
 
 dialog::backdrop {
   opacity: 0;
-}
-
-dialog[open].fullscreen .input-top-wrapper {
-  padding: 8px;
 }
 
 dialog .input-bottom-wrapper.active {
