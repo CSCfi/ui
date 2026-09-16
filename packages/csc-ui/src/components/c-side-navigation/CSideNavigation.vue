@@ -117,7 +117,7 @@ const sideNavigation = tv({
       true: {
         content:
           'h-screen max-w-80 overflow-y-scroll fixed right-0 top-0 z-[999] transition-transform duration-200 ease-standard translate-x-0',
-        wrapper: 'min-h-[calc(100%-60px)]',
+        wrapper: 'min-h-[calc(100%-var(--spacing-toolbar))]',
       },
     },
   },
@@ -298,7 +298,7 @@ onBeforeUnmount(() => {
 -->
 <style>
 :host(.autoheight) {
-  height: calc(100vh - 60px);
+  height: calc(100vh - var(--spacing-toolbar));
   overflow-y: auto;
   overflow-x: hidden;
 }

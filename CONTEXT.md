@@ -107,6 +107,32 @@ _Avoid_: Stepper mode, navigate, filter mode (the query narrows nothing in brows
 The pinned first row of a **level list** inside a **branch**, present only under `allow-branch`, that commits the branch itself ("Select Natural sciences"). Like the **select-all row** it carries no value of its own and is not an item; it is the only way to commit a branch while browsing.
 _Avoid_: Select affordance, "select this level" button, row action
 
+### Layout
+
+**Dashboard layout** (`c-main`):
+The default arrangement `c-main` gives its slotted layout components: the **toolbar** spanning the top, the **side navigation** down the left, the **page** filling the rest. The document is the scroll container; the toolbar and the desktop side navigation are **pinned** by default, and the layout grows with the page's content (ADR-0051). `disable-layout` opts out and leaves `c-main` a plain column.
+_Avoid_: App shell, frame, chrome, grid (the mechanism, not the concept)
+
+**Toolbar** (`c-toolbar`):
+The app-wide bar at the top of the **dashboard layout** holding the logo, service name and global actions. **Pinned** by default; **static** puts it in flow so it leaves with the page.
+_Avoid_: App bar, header, navbar, fixed toolbar (it is no longer CSS-fixed)
+
+**Banner** (dashboard layout):
+A full-width message strip the consumer slots above the **toolbar** (`slot="banner"`): a service notice, an environment warning. It scrolls away with the page and the toolbar pins in its place. The same sense as `c-data-table`'s select-all banner: a strip carrying a message and, at most, an action. Not a landmark.
+_Avoid_: the ARIA `banner` landmark (that is the site header region, i.e. the toolbar), header, notification (transient; that is a toast), alert (the component that may fill the slot)
+
+**Page** (`c-page`):
+The routed-content region of the **dashboard layout**, with an optional footer slot at its bottom edge. It grows with its content and never scrolls on its own; the document does.
+_Avoid_: Content area, view, scroll container (the Stencil-era and early-4.0 behaviour)
+
+**Pinned**:
+Stuck to an edge of the scroll viewport while the surrounding content scrolls: the **toolbar** and the desktop **side navigation** in the dashboard layout, a **pinned column**, the **select-all row**. The concept; CSS `position: sticky` is one way to implement it.
+_Avoid_: Sticky (the mechanism; as a term reserved for data-table header/footer rows), fixed (a different mechanism the toolbar no longer uses), frozen
+
+**Static** (toolbar):
+The **toolbar**'s opt-in in-flow state (`static`): the bar is ordinary content at the top of the page and leaves the viewport as the page scrolls. The opposite of **pinned**. Named for the behaviour, not the CSS keyword (the bar is positioned `relative` to keep its stacking).
+_Avoid_: Relative (the retired 3.x host-class switch), in-flow, unpinned, hidden (nothing hides it)
+
 ### Overlays
 
 **Tooltip** (`c-tooltip`):
@@ -452,6 +478,7 @@ _Avoid_: golden file, manifest snapshot, API baseline
 - **"Themeable"** (docs copy: "themable") means *re-seedable* — one of the eight **families** a consumer may re-brand (ADR-0011). Restyling one component's colours from consumer CSS is **"recolour via `::part()`"**, never "theming".
 - **"Path"** is overloaded: (a) an SVG path datum (`c-icon`'s `path` prop), (b) a tree-select item's ancestor chain (see **Path**), (c) a URL or file path. Say **"icon path"** for (a), plain **"path"** only in the tree-select sense, and **"URL"** / **"file path"** for (c).
 - **"Default"** is overloaded: (a) a **built-in default** (the library's value for an unset prop), (b) an **app default** (a consumer's per-tag value via `applyDefaults`), (c) the `'default'` member of a size union (`size="default"`), (d) a tailwind-variants `defaultVariants` entry. Say **"built-in default"** and **"app default"** for (a) and (b), **"the `default` size"** for (c), and **"variant default"** for (d).
+- **"Sticky"** is overloaded: (a) the data-table `sticky-header` / `sticky-footer` rows, (b) the CSS mechanism behind **pinned** elements (the toolbar, the side navigation). Say **"pinned"** for the concept and keep "sticky" for the data-table rows and for literal CSS.
 
 ## Example dialogue
 

@@ -13,11 +13,7 @@ import {
   encapsulation: ViewEncapsulation.None,
   template: `
     <c-main class="demo-shell">
-      <c-alert slot="banner" type="info">
-        Scheduled maintenance on Saturday 06:00–08:00 EEST.
-      </c-alert>
-
-      <c-toolbar>
+      <c-toolbar static>
         <c-csc-logo></c-csc-logo>
         <span>My Service</span>
       </c-toolbar>
@@ -26,30 +22,24 @@ import {
         <c-side-navigation-title>My project</c-side-navigation-title>
         <c-side-navigation-item active>Dashboard</c-side-navigation-item>
         <c-side-navigation-item>Members</c-side-navigation-item>
-        <c-side-navigation-item>Billing</c-side-navigation-item>
       </c-side-navigation>
 
       <c-page>
         <h2>Dashboard</h2>
         <p>
-          The banner leaves first. Then the toolbar pins to the top edge and the
-          side navigation pins beneath it, while the page keeps scrolling
-          underneath.
+          With static the toolbar is ordinary content: it scrolls away with the
+          page instead of pinning to the top edge.
+        </p>
+        <p>
+          c-main follows the toolbar. Once the bar has left, the side navigation
+          pins to the top edge instead of one toolbar height down.
         </p>
         <p>
           In an application the shell fills the whole viewport and the document
           itself scrolls; here the shell is boxed to 320px so the behaviour is
           visible.
         </p>
-        <p>
-          Long menus get their own scrollbar inside the pinned side navigation,
-          and the footer slot of the page stays at the bottom of a short page.
-        </p>
-        <p>
-          Nothing here is demo-specific apart from the shell height: the layout
-          components are slotted as direct children and c-main places them.
-        </p>
-        <p>Scroll back up to bring the banner back.</p>
+        <p>Scroll back up to bring the toolbar back.</p>
       </c-page>
     </c-main>
   `,
@@ -64,4 +54,4 @@ import {
     `,
   ],
 })
-export class BasicExampleComponent {}
+export class StaticToolbarExampleComponent {}
