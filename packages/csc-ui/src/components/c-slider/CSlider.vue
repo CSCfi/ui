@@ -129,14 +129,16 @@ const slider = tv({
     ticks:
       'c-slider__ticks flex items-center justify-between h-2 rounded-[100vw] -mt-2 mx-auto pointer-events-none relative -z-10 w-[calc(100%-16px)]',
     // The bubble: a circle that follows the thumb. It reveals on root
-    // hover/focus-within via the `group` anchor on `root` (group-hover /
-    // group-focus-within). Its horizontal `left` follows the thumb via the
+    // hover, press (`group-active`: the pointer is on the thumb — the only
+    // trigger a touch has) and focus-within via the `group` anchor on
+    // `root`, instantly (`duration-0` in every revealed state; the 300ms
+    // transition only plays on hide). Its horizontal `left` follows the thumb via the
     // runtime var --_c-slider-position; that lives in the escape-hatch <style>
     // (not a Tailwind arbitrary value), because a CSS-var underscore can't
     // survive the JS-string→class round-trip a `[...]` utility needs. The
     // ::before/::after callout also lives in the escape-hatch.
     tooltip:
-      'c-slider__tooltip absolute inline-flex items-center justify-center size-6 rounded-full box-border pointer-events-none opacity-0 -translate-x-1/2 -translate-y-1 transition-[opacity,transform] duration-300 ease-[cubic-bezier(0.075,0.82,0.165,1)] group-hover:opacity-100 group-hover:-translate-y-2 group-focus-within:opacity-100 group-focus-within:-translate-y-2',
+      'c-slider__tooltip absolute inline-flex items-center justify-center size-6 rounded-full box-border pointer-events-none opacity-0 -translate-x-1/2 -translate-y-1 transition-[opacity,transform] duration-300 ease-[cubic-bezier(0.075,0.82,0.165,1)] group-hover:opacity-100 group-hover:-translate-y-2 group-hover:duration-0 group-active:opacity-100 group-active:-translate-y-2 group-active:duration-0 group-focus-within:opacity-100 group-focus-within:-translate-y-2 group-focus-within:duration-0',
     tooltipWrapper: 'relative h-0 mx-0.5',
     wrapper: 'relative px-2.5',
   },
