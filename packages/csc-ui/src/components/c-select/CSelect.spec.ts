@@ -360,7 +360,7 @@ describe('fullscreen panel', () => {
     await settled();
   };
 
-  it('the dialog covers the whole viewport, with a heading row above the moved field', async () => {
+  it('the dialog covers the whole viewport: a heading row above the list, the field left in the page', async () => {
     await page.viewport(PHONE.width, PHONE.height);
 
     const m = await mountSelect();
@@ -379,20 +379,30 @@ describe('fullscreen panel', () => {
     expect(dropdownPart(m, 'heading')?.textContent?.trim()).toBe('Country');
     expect(dropdownPart(m, 'close')?.getAttribute('aria-label')).toBe('Close');
 
-    // Heading row, then the field moved into the dialog, then the list.
+    // Heading row, then the list; the field is not moved into the dialog
+    // (ADR-0050, amended): it keeps its place in the page, under the inert
+    // surface, and the panel repeats nothing of it.
     const headingRow = dropdownPart(m, 'heading-row')!;
 
-    const field = m.shadow('c-input').getBoundingClientRect();
+    const field = m.shadow('c-input');
 
+    expect(field.slot, 'the field is not moved').toBe('');
+    expect(dialog(m).contains(field)).toBe(false);
+    expect(
+      dropdownRoot(m)
+        .querySelector<HTMLSlotElement>('slot[name="input-top"]')
+        ?.assignedElements(),
+    ).toHaveLength(0);
     expect(headingRow.getBoundingClientRect().bottom).toBeLessThanOrEqual(
-      field.top,
-    );
-    expect(field.bottom).toBeLessThanOrEqual(
       list(m).getBoundingClientRect().top,
     );
     expect(list(m).style.maxHeight, 'no peek cap in the fullscreen panel').toBe(
       '',
     );
+    expect(
+      dialog(m).contains(deepActiveElement()),
+      'focus lands inside the dialog, never on the inert field',
+    ).toBe(true);
   });
 
   it('the close button closes and returns focus to the field; a pick still commits', async () => {
@@ -430,8 +440,8 @@ describe('fullscreen panel', () => {
   // The on-screen keyboard: headless Chromium has none, so the visual
   // viewport's box is faked — an Android-like shrink, then an iOS-like pan.
   // The dialog must stay over the whole layout viewport either way; only
-  // the inner column follows the visible box, so the moved field ends above
-  // the keyboard.
+  // the inner column follows the visible box, so the list ends above the
+  // keyboard.
   it('keeps the dialog over the whole viewport while the keyboard shrinks the visual viewport; the inner column follows the visible box', async () => {
     await page.viewport(PHONE.width, PHONE.height);
 
@@ -479,7 +489,7 @@ describe('fullscreen panel', () => {
           content.height,
         ]).toEqual([0, box.offsetTop, viewport.width, box.height]);
 
-        const inside = m.shadow('c-input').getBoundingClientRect();
+        const inside = list(m).getBoundingClientRect();
 
         expect(inside.top).toBeGreaterThanOrEqual(content.top);
         expect(inside.bottom).toBeLessThanOrEqual(content.bottom);
@@ -503,6 +513,34 @@ describe('fullscreen panel', () => {
     const m = await mountSelect();
 
     await openFullscreen(m);
+    // The opening click left the pointer where the field was, which is now
+    // the first row: rest it on the heading text (no hover look) instead.
+    await userEvent.hover(dropdownPart(m, 'heading')!);
     await matchScreenshotInBothModes(dialog(m), 'fullscreen');
+  });
+});
+
+// The trailing controls (clear button, chevron) sit in c-input's `post` slot
+// on a real box: on the `display: contents` host they used to be on, the
+// chevron's turn never rendered.
+describe('closed field controls', () => {
+  it('turns the chevron while the list is open', async () => {
+    const m = await mountSelect();
+
+    const chevron = m.shadow('[slot="post"] > span');
+
+    const closed = getComputedStyle(chevron).rotate;
+
+    await openByClick(m);
+    await settled();
+
+    expect(getComputedStyle(chevron).rotate).not.toBe(closed);
+  });
+
+  it('visual: closed field with a selection', async () => {
+    const m = await mountSelect({ clearable: true, value: 'se' });
+
+    await settled();
+    await matchScreenshotInBothModes(m.stage, 'field-selected');
   });
 });

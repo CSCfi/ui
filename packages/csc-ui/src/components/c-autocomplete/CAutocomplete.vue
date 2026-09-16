@@ -86,12 +86,22 @@
           </c-tag>
         </div>
 
+        <!-- Consumer's <c-option> elements: data source only, hidden via the
+             `.c-input__content slot { display: none }` escape-hatch rule. The
+             panel renders the filtered set; we read the originals through
+             host.querySelectorAll. -->
+        <slot />
+      </div>
+
+      <!-- Trailing controls in c-input's `post` slot, on a real box: the
+           c-icon-button host is `display: contents`, so the edge pull and
+           the chevron's rotation only take effect on a wrapper span. -->
+      <span slot="post" :class="ui.post()">
         <c-spinner v-if="loading" :size="20" color="var(--c-primary)" />
 
         <c-icon-button
           v-else-if="hasSelection && clearable"
           :aria-label="t.clearSelection"
-          :class="ui.iconButton()"
           :disabled
           size="x-small"
           text
@@ -101,27 +111,20 @@
           <c-icon :path="mdiClose" :size="20" />
         </c-icon-button>
 
-        <c-icon-button
-          v-else
-          :aria-label="t.toggleOptions"
-          :class="ui.chevron()"
-          :disabled
-          size="x-small"
-          text
-          @click="onChevronClick"
-          @keydown="onButtonKeyDown('chevron', $event)"
-        >
-          <c-icon :path="mdiChevronDown" :size="24" />
-        </c-icon-button>
+        <span v-else :class="ui.chevron()">
+          <c-icon-button
+            :aria-label="t.toggleOptions"
+            :disabled
+            size="x-small"
+            text
+            @click="onChevronClick"
+            @keydown="onButtonKeyDown('chevron', $event)"
+          >
+            <c-icon :path="mdiChevronDown" :size="24" />
+          </c-icon-button>
+        </span>
 
-        <!-- Consumer's <c-option> elements: data source only, hidden via the
-             `.c-input__content slot { display: none }` escape-hatch rule. The
-             panel renders the filtered set; we read the originals through
-             host.querySelectorAll. -->
-        <slot />
-      </div>
-
-      <span v-if="hasConsumerPost" slot="post" style="display: contents">
+        <!-- The consumer's own `post` content follows the controls. -->
         <slot name="post" />
       </span>
     </c-input>
@@ -644,9 +647,8 @@ const autocomplete = tv({
     card: 'flex flex-col min-w-[180px] max-h-[80vh] overflow-hidden rounded-csc-md bg-surface-overlay shadow-[2px_4px_10px_#00000029]',
     check: 'w-4 h-4 shrink-0 fill-current ml-auto text-primary',
     chevron:
-      'aspect-square -mr-1.5 rotate-0 transition-transform duration-300 ease-in-out',
+      'inline-flex rotate-0 transition-transform duration-300 ease-in-out',
     content: 'relative flex items-center w-full min-w-0',
-    iconButton: 'aspect-square -mr-1.5',
     info: 'flex items-center flex-nowrap gap-2 text-sm min-h-[42px] px-[10px] w-full cursor-default whitespace-nowrap text-on-surface-muted',
     infoIcon: 'w-[18px] h-[18px] shrink-0 fill-current text-warning',
     input:
@@ -656,6 +658,9 @@ const autocomplete = tv({
     list: 'list-none m-0 mt-1 p-1 outline-none overflow-y-auto scrollbar-hidden w-full overscroll-none',
     panel:
       'fixed m-0 p-0 border-0 bg-transparent overflow-visible [inset:auto]',
+    // The trailing controls' box: pulled 6px into the field's padding so
+    // the 28px button reads flush with the value's right edge.
+    post: 'inline-flex items-center -mr-1.5',
     search:
       'flex items-center gap-2 min-h-11 px-3 border-b border-solid border-divider',
     searchIcon: 'w-[18px] h-[18px] shrink-0 fill-current text-on-surface-muted',
@@ -825,8 +830,6 @@ const optionElements = ref<HTMLElement[]>([]);
 const optionElementsExist = ref(false);
 
 const hasConsumerPre = ref(false);
-
-const hasConsumerPost = ref(false);
 
 const autoId = useId();
 
@@ -1657,7 +1660,6 @@ const refreshOptions = () => {
   optionsVersion.value++;
 
   hasConsumerPre.value = !!host.querySelector(':scope > [slot="pre"]');
-  hasConsumerPost.value = !!host.querySelector(':scope > [slot="post"]');
 
   type OptionEl = {
     selected?: boolean | string;
