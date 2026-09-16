@@ -483,9 +483,10 @@ const columns: CDataTableColumn<User>[] = [
      c-page has no height and does not scroll — drop c-page { height }
      overrides and scroll listeners on it; scroll-indicator tracks the
      document; smooth scrolling is html { scroll-behavior: smooth }.
-     Inside c-main the desktop side navigation is pinned automatically
-     (autoheight stays for standalone use), and a new banner slot sits
-     above the toolbar. -->
+     Inside c-main the desktop side navigation is pinned automatically and
+     sized to the pinned height, with its bottom slot at the bottom edge
+     (drop the autoheight class there; it stays for standalone use), and a
+     new banner slot sits above the toolbar. -->
 <c-main>
   <c-alert slot="banner" type="info">Maintenance on Saturday.</c-alert>
   <c-toolbar static>…</c-toolbar>

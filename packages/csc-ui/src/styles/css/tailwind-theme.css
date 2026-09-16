@@ -113,6 +113,7 @@
   --color-on-nav: var(--c-on-nav);
   --color-nav-active: var(--c-nav-active);
   --color-on-nav-active: var(--c-on-nav-active);
+  --color-nav-sub-active: var(--c-nav-sub-active);
 
   --color-logo-wordmark: var(--c-logo-wordmark);
   --color-logo-teal: var(--c-logo-teal);

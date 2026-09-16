@@ -62,10 +62,12 @@ const subNavigationItem = tv({
     // must win over hover, and a base `hover:bg-*` and the active variant's
     // `bg-*` don't conflict under tailwind-merge, so both would apply. The
     // row sits inside the active parent's `nav-active` pill, so its ink and
-    // every state are that pill's ink, `on-nav-active` — the text, the
-    // leading indicator bar, and the hover/active washes below (ADR-0052);
-    // page roles (`surface-raised`, the primary tint) read as a hole punched
-    // into the drawer in dark mode.
+    // its states are that pill's — the text and the leading indicator bar in
+    // `on-nav-active`, hover a wash of it, and the active fill the nav
+    // family's own `nav-sub-active` role: an opaque white pill in light mode,
+    // a translucent `on-nav-active` wash in dark (ADR-0052). Page roles
+    // (`surface-raised`, the primary tint) read as a hole punched into the
+    // drawer in dark mode.
     item: 'flex items-center cursor-pointer font-normal leading-[46px] rounded-csc-md mx-2 px-0 pl-[34px] relative overflow-hidden select-none outline-none transition-colors duration-200 ease-in bg-transparent text-on-nav-active before:content-[""] before:absolute before:top-0 before:left-0 before:h-full before:w-2 before:bg-on-nav-active before:[transform:translateZ(0)_translateX(-8px)] before:transition-transform before:duration-200 before:ease-in-out',
     root: 'py-0.5',
     slot: 'overflow-hidden whitespace-nowrap text-ellipsis',
@@ -77,14 +79,14 @@ const subNavigationItem = tv({
       // Only a non-active item reacts to hover (active bg must win).
       false: { item: 'hover:bg-on-nav-active/10' },
       true: {
-        item: 'bg-on-nav-active/18',
+        item: 'bg-nav-sub-active',
         // reveal the leading indicator bar
       },
     },
     // A 3rd-level item (nested inside an active sub-item) paints the same
-    // washes: they are translucent, so its active wash composites over the
-    // parent's and reads as a distinct level by itself. The variant is kept
-    // as the hook for anything that has to differ later.
+    // fill; in dark mode the translucent wash composites over the parent's
+    // and reads as a distinct level by itself. The variant is kept as the
+    // hook for anything that has to differ later.
     subLevel: { true: { item: '' } },
   },
 });

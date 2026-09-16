@@ -125,6 +125,18 @@ _Avoid_: the ARIA `banner` landmark (that is the site header region, i.e. the to
 The routed-content region of the **dashboard layout**, with an optional footer slot at its bottom edge. It grows with its content and never scrolls on its own; the document does.
 _Avoid_: Content area, view, scroll container (the Stencil-era and early-4.0 behaviour)
 
+**Side navigation** (`c-side-navigation`):
+The **dashboard layout**'s left-hand menu — section titles, items and their sub-items. Its box is the **drawer**; below the items sits the **bottom slot**. On desktop `c-main` pins it beneath the **toolbar**; on mobile it is a slide-in panel over the page.
+_Avoid_: Sidebar, side menu, nav bar, menu (the command-menu component)
+
+**Drawer** (side navigation):
+The side navigation's box: on desktop a **pinned** column whose item list scrolls on its own, on mobile the slide-in panel. `autoheight` is its standalone viewport-high state, inert inside `c-main`.
+_Avoid_: Panel (transient surfaces), sidebar
+
+**Bottom slot** (side navigation):
+The region below the items (`slot="bottom"`) for a trailing action such as sign-out. It stays at the drawer's bottom edge — the viewport's on desktop, the panel's on mobile — while the items scroll above it; it is not a menu item and never needs the menu scrolled to be reached.
+_Avoid_: Footer (that is `c-page`'s slot), drawer footer, sticky button
+
 **Pinned**:
 Stuck to an edge of the scroll viewport while the surrounding content scrolls: the **toolbar** and the desktop **side navigation** in the dashboard layout, a **pinned column**, the **select-all row**. The concept; CSS `position: sticky` is one way to implement it.
 _Avoid_: Sticky (the mechanism; as a term reserved for data-table header/footer rows), fixed (a different mechanism the toolbar no longer uses), frozen
@@ -271,7 +283,7 @@ The top rung of the **surface ladder** (`surface-inverted`): a background that t
 _Avoid_: Inverse surface (collides with the invariant `inverse-*` family), dark surface (only true in light mode), contrast surface
 
 **Wash** (nav chrome):
-A translucent tint of a surface's own foreground ink — `on-nav` on `nav-surface`, `on-nav-active` on `nav-active` — used for the side navigation's hover, active, indicator and focus states, so every state stays legible in both **theme modes** without a per-mode value (ADR-0052). Page roles (the **surface ladder**, the primary tint pair) are never painted inside the nav.
+A translucent tint of a surface's own foreground ink — `on-nav` on `nav-surface`, `on-nav-active` on `nav-active` — used for the side navigation's hover, indicator and focus states, so they stay legible in both **theme modes** without a per-mode value (ADR-0052). The active sub-item's fill is the one nav state with a per-mode value (the `nav-sub-active` role: a white pill in light, a wash in dark). Page roles (the **surface ladder**, the primary tint pair) are never painted inside the nav.
 _Avoid_: Overlay (a floating surface), tint (reserve for the `*-subtle` roles), highlight
 
 **`on-` token** (foreground role):

@@ -1530,6 +1530,7 @@ export interface CSideNavigationElementEventMap {
   'change:menu-visible': CustomEvent<boolean>;
 }
 
+/** The dashboard layout's left-hand menu: section titles, navigation items and their sub-items in a drawer that is pinned beside the page on desktop and slides in over it on mobile. */
 export interface CSideNavigationElement extends Omit<HTMLElement, 'menuVisible' | 'mobile' | 'styles'> {
   /** Mobile version menu visibility */
   menuVisible?: boolean;

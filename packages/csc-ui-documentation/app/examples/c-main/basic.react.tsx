@@ -1,6 +1,7 @@
 // @ts-nocheck — documentation code sample; shown as text, never compiled here
 import {
   CAlert,
+  CButton,
   CCscLogo,
   CMain,
   CPage,
@@ -16,6 +17,7 @@ const styles = `
   height: 320px;
   min-height: 0;
   overflow-y: auto;
+  --c-main-viewport-height: 320px;
 }
 `;
 
@@ -38,6 +40,10 @@ export const Basic = () => (
         <CSideNavigationItem active>Dashboard</CSideNavigationItem>
         <CSideNavigationItem>Members</CSideNavigationItem>
         <CSideNavigationItem>Billing</CSideNavigationItem>
+
+        <CButton slot="bottom" inverted>
+          Sign out
+        </CButton>
       </CSideNavigation>
 
       <CPage>

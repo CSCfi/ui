@@ -146,6 +146,10 @@ for (const r of ROLES) {
 add('on-nav', 'nav-surface', TEXT, 'on-nav / nav-surface');
 add('on-nav', 'nav-surface-hover', TEXT, 'on-nav / nav-surface-hover');
 add('on-nav-active', 'nav-active', TEXT, 'on-nav-active / nav-active');
+// The active sub-item fill is opaque only in light mode; in dark it is a
+// translucent wash of on-nav-active over nav-active, which the audit reports
+// as missing rather than grading (a wash cannot be a pair's ground).
+add('on-nav-active', 'nav-sub-active', TEXT, 'on-nav-active / nav-sub-active');
 // inverse family (mode-invariant; values identical both modes)
 add('inverse-on', 'inverse-primary', TEXT, 'inverse-on / inverse-primary');
 add(

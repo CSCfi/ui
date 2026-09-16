@@ -547,6 +547,7 @@ export const CSelect = createComponent({
   tagName: 'c-select',
 });
 
+/** The dashboard layout's left-hand menu: section titles, navigation items and their sub-items in a drawer that is pinned beside the page on desktop and slides in over it on mobile. */
 export const CSideNavigation = createComponent({
   displayName: 'CSideNavigation',
   elementClass: elementClass<CSideNavigationElement>('c-side-navigation'),

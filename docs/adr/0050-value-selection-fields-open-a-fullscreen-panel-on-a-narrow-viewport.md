@@ -119,3 +119,13 @@ consumer flag on `c-side-navigation`.
 - The layouts are not interchangeable mid-open: crossing the threshold while
   a panel is open closes it (the anchored one re-anchors, the fullscreen one
   releases the page lock). `c-dropdown` already closed on any body resize.
+  _Amended 2026-09-16_: that body-resize close now applies to the anchored
+  layout only, and `c-dropdown` watches the threshold itself for the
+  fullscreen one. The field stays in the page (decision 1, amended), so in
+  `multiple` mode it grows whenever its tag row wraps — a reflow the panel's
+  own selection causes, which closed the panel on a seemingly random pick.
+  Nothing about the fullscreen panel is placed against the page, so no reflow
+  concerns it. For the same reason a tap on the panel surface beside the
+  content column no longer closes it either: a fullscreen panel is never
+  light-dismissed (CONTEXT.md), and that surface is only exposed while the
+  visual viewport lags the layout one.

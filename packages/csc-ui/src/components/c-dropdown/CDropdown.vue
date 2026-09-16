@@ -706,6 +706,14 @@ const handleOpen = () => {
 
 const handleOutsideClick = () => {
   if (!isOpen.value) return;
+
+  // CONTEXT.md "Light dismiss": a fullscreen panel is never light-dismissed.
+  // Its surface shows beside the content column only while the visual
+  // viewport lags the layout one (the browser chrome or the on-screen
+  // keyboard animating), so a tap landing there is a mis-tap, not a
+  // dismissal — the heading row's close button is the way out.
+  if (fullscreenOpen.value) return;
+
   close();
 };
 
@@ -902,6 +910,15 @@ watch(isOpen, (value) => {
   emit('dropdownStateChange', value, bubbling);
 });
 
+// The layouts are not interchangeable mid-open (ADR-0050): the anchored menu
+// is placed at coordinates measured on open, the fullscreen panel owns the
+// page — so crossing the threshold closes the menu. The body observer in
+// onMounted used to deliver this for both layouts; the fullscreen branch no
+// longer goes through it. Mirrors useAnchoredPanel's own threshold watch.
+watch(narrow, (isNarrow) => {
+  if (isOpen.value && fullscreenOpen.value !== isNarrow) close();
+});
+
 // ---- peek cap (ADR-0043) -------------------------------------------------
 
 // The list hides its scrollbar, so when it overflows it must end on a
@@ -959,6 +976,16 @@ onMounted(() => {
     if (!dialogRef.value?.open) return;
     requestAnimationFrame(() => {
       if (!Array.isArray(entries) || !entries.length || isOpening) return;
+
+      // The anchored menu is placed against the page, so a reflow under it
+      // leaves it floating away from the field — hence this close. The
+      // fullscreen panel is placed against the viewport instead, and the
+      // field stays in the page (ADR-0050, amended), growing with its tag
+      // row on every `multiple` pick: a body reflow says nothing about it,
+      // and closing on one shut the panel on a seemingly random pick. Only
+      // the threshold (watched above) changes that panel's fate.
+      if (fullscreenOpen.value) return;
+
       close();
     });
   });

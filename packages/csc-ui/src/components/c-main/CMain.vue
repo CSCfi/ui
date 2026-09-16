@@ -13,6 +13,8 @@
  *
  * @csspart root - The main element carrying the page canvas and the dashboard grid layout
  *
+ * @cssprop --c-main-viewport-height - Height of the scroll viewport the layout pins against (default `100dvh`); a bounded shell with its own scrollbar sets it to its box height
+ *
  * @seeded from csc-ui — verify
  */
 import { tv } from 'tailwind-variants';
@@ -33,9 +35,10 @@ import { coerceBoolean } from '../../shared/coerceBoolean';
  * The banner `<slot>` is styled as a block so it is the grid item (slotted
  * hosts have no box); the toolbar's root claims its own area (see c-toolbar).
  * The grid's `::before` is a pseudo grid item behind the side navigation: the
- * pinned drawer is at most a viewport tall, so this paints the drawer surface
- * for the full column height. It has no intrinsic width, so without a desktop
- * drawer the `auto` column stays empty and nothing shows.
+ * pinned drawer is one pinned height tall and moves with the scroll, so this
+ * paints the drawer surface for the full column height. It has no intrinsic
+ * width, so without a desktop drawer the `auto` column stays empty and nothing
+ * shows.
  *
  * `staticToolbar` mirrors the slotted toolbar's mode (see the observer below)
  * into the private `--_nav-offset` custom property: the side navigation sticks
@@ -180,19 +183,26 @@ main ::slotted(c-side-navigation) {
  * beneath the toolbar, or at the viewport top when the toolbar is static
  * (`--_nav-offset`, set by the `staticToolbar` variant). `align-self: start`
  * stops the sticky box from stretching to the whole page row — a stretched
- * sticky item has nowhere to move — and the height clamp gives a long menu its
- * own scrollbar. The mobile drawer carries no `data-desktop` and is untouched.
+ * sticky item has nowhere to move. The height is exactly the pinned height, so
+ * a short menu fills the column and the drawer's bottom slot sits at the
+ * bottom edge; a long menu scrolls inside c-side-navigation's item list. This
+ * overrides the 3.x `autoheight` host class (outer tree context wins over
+ * `:host`), which is therefore inert inside the dashboard layout. The mobile
+ * drawer carries no `data-desktop` and is untouched.
  */
 main ::slotted(c-side-navigation[data-desktop]) {
   position: sticky;
   top: var(--_nav-offset);
   align-self: start;
-  /* `dvh`: the drawer fits the visible viewport while a phone's browser
-     chrome is expanded. `contain`: a wheel or swipe that reaches the
-     drawer's end must not chain to the document — Chromium latches the rest
-     of the gesture to the scroller that took it, leaving the drawer stuck. */
-  max-height: calc(100dvh - var(--_nav-offset));
-  overflow-y: auto;
-  overscroll-behavior: contain;
+  /* `--c-main-viewport-height`: the scrollport the layout pins against — the
+     document by default (`dvh`, so the drawer fits the visible viewport while
+     a phone's browser chrome is expanded); a bounded shell sets its own box
+     height. */
+  height: calc(var(--c-main-viewport-height, 100dvh) - var(--_nav-offset));
+  /* Not a scroll container: the item list scrolls inside c-side-navigation,
+     and the bottom slot's own sticky needs the document (or the bounded
+     shell) as its nearest scrollport to reach the viewport's bottom edge
+     while the banner and toolbar rows are still above the drawer. */
+  overflow: visible;
 }
 </style>

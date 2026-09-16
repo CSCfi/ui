@@ -1,22 +1,22 @@
 <template>
   <div :class="ui.content()" part="root">
+    <div v-if="mobile" :class="ui.burger()">
+      <c-icon-button inverted text @click="closeMenu">
+        <span :class="ui.srOnly()">Close sidemenu</span>
+
+        <c-icon :path="arrowRight" />
+      </c-icon-button>
+    </div>
+
     <nav ref="containerRef" :class="ui.nav()" part="nav" role="menubar">
-      <div v-if="mobile" :class="ui.burger()">
-        <c-icon-button inverted text @click="closeMenu">
-          <span :class="ui.srOnly()">Close sidemenu</span>
-
-          <c-icon :path="arrowRight" />
-        </c-icon-button>
-      </div>
-
       <div :class="ui.wrapper()">
         <slot />
-
-        <div :class="ui.spacer()" />
-
-        <slot name="bottom" />
       </div>
     </nav>
+
+    <div v-show="hasBottom" ref="bottomRef" :class="ui.bottom()">
+      <slot name="bottom" />
+    </div>
   </div>
 
   <div
@@ -28,10 +28,10 @@
 
 <script setup lang="ts">
 /**
- * @slot default - Default slot
- * @slot bottom - Place items at the bottom
+ * @slot default - The navigation items: titles, items and their sub-items
+ * @slot bottom - Trailing content below the items, such as a sign-out button; it stays at the drawer's bottom edge while the items scroll
  *
- * @csspart root - The outer drawer container
+ * @csspart root - The outer drawer container: the item list above the bottom slot's region
  * @csspart nav - The scrollable `<nav>` element holding the navigation items
  *
  * @seeded from csc-ui — verify
@@ -51,6 +51,7 @@ import {
   watchEffect,
 } from 'vue';
 
+import { useHasSlot } from '../../shared/useHasSlot';
 import { useHostEmit } from '../../shared/useHostEmit';
 
 /** Events dispatched by `<c-side-navigation>`. */
@@ -72,18 +73,30 @@ interface CSideNavigationEvents {
 defineOptions({ inheritAttrs: false });
 
 /**
- * Styling lives in this `tailwind-variants` config: each visual
- * region is a slot and the `mobile` variant replaces the
- * `.c-side-navigation__content--mobile/--desktop` and `--mobile` wrapper
- * cascades. The per-component `--c-*` indirection vars are dropped in favour of
- * the semantic design tokens: the drawer is the themed `nav-surface`
- * role (brand primary in light, a dark neutral panel in dark, so it adapts to
- * the theme). Consumer customization is via `::part()`.
+ * Styling lives in this `tailwind-variants` config: each visual region is a
+ * slot and the `mobile` variant swaps the desktop column for the fixed
+ * slide-in panel. The drawer is the themed `nav-surface` role (brand primary
+ * in light, a dark neutral panel in dark). Consumer customization is via
+ * `::part()`.
+ *
+ * The drawer (`content`, `part="root"`) is a column: the mobile close row,
+ * the item list and the bottom slot's region. The **item list** (`nav`,
+ * `part="nav"`) is the drawer's only scroll container — it shrinks to the
+ * space left (`flex-1 min-h-0`) and scrolls a long menu on its own, containing
+ * its overscroll so a wheel that reaches its end does not chain to the
+ * document (Chromium latches the rest of the gesture to whichever scroller
+ * took it). The **bottom slot's region** sits outside the `menubar` nav, so a
+ * sign-out button is not a menu item, and is `sticky bottom-0`: inside c-main
+ * the drawer is sized to its pinned height but sits below the banner and
+ * toolbar rows until the page has scrolled past them, and the sticky region
+ * rides up to the viewport's bottom edge in the meantime (CONTEXT.md "Bottom
+ * slot"). It is opaque so it covers the tail of a long list while shifted.
+ * The region renders only while the slot is populated, so drawers without a
+ * bottom slot keep their box.
  *
  * The host box itself (the `[data-desktop]` / `.autoheight` host states, which
  * carry background/flex/min-width and can't be expressed as utilities on the
- * host),
- * the `.c-overlay` backdrop + its fade-in `@keyframes`, and the
+ * host), the `.c-overlay` backdrop + its fade-in `@keyframes`, and the
  * `::slotted(...)` `display:contents` rule remain in the escape-hatch <style>
  * below.
  */
@@ -91,23 +104,24 @@ const sideNavigation = tv({
   compoundVariants: [
     // Mobile drawer slides off-screen when hidden.
     { class: { content: 'translate-x-full' }, hidden: true, mobile: true },
-    // Mobile nav drops the top padding / min-height (original
-    // `.c-side-navigation__content--mobile > nav`).
-    { class: { nav: 'min-h-[auto] pt-0' }, mobile: true },
+    // Mobile: the close row sits above the list, so the list drops its top padding.
+    { class: { nav: 'pt-0' }, mobile: true },
   ],
   defaultVariants: {
     hidden: false,
     mobile: false,
   },
   slots: {
+    // The bottom slot's region; `px-6 pb-6` matches the list's `p-6` inset.
+    bottom: 'shrink-0 sticky bottom-0 z-[8] bg-nav-surface px-6 pb-6 pt-2',
     burger: 'flex justify-end px-4 py-2',
     // The outer drawer container.
-    content: 'flex flex-col flex-[1_2_260px] w-80',
-    nav: 'relative flex flex-col flex-nowrap flex-1 gap-1 min-h-fit max-h-full w-full overflow-y-auto p-6 z-[8] bg-nav-surface transition-transform duration-300 ease-[ease]',
-    spacer: 'flex-1 mb-2',
+    content: 'flex flex-col min-h-0 flex-[1_2_260px] w-80 bg-nav-surface',
+    // The item list: the drawer's scroll container.
+    nav: 'relative flex flex-col flex-1 min-h-0 w-full overflow-y-auto overscroll-contain p-6 z-[8] bg-nav-surface transition-transform duration-300 ease-[ease]',
     srOnly:
       'absolute w-px h-px p-0 -m-px overflow-hidden whitespace-nowrap border-0 [clip:rect(0_0_0_0)]',
-    wrapper: 'flex flex-col shrink-0 min-h-full gap-px',
+    wrapper: 'flex flex-col gap-px',
   },
   variants: {
     hidden: {
@@ -115,9 +129,9 @@ const sideNavigation = tv({
     },
     mobile: {
       true: {
+        // The panel is viewport-high and clips; the list inside it scrolls.
         content:
-          'h-screen max-w-80 overflow-y-scroll fixed right-0 top-0 z-[999] transition-transform duration-200 ease-standard translate-x-0',
-        wrapper: 'min-h-[calc(100%-var(--spacing-toolbar))]',
+          'h-screen max-w-80 overflow-hidden fixed right-0 top-0 z-[999] transition-transform duration-200 ease-standard translate-x-0',
       },
     },
   },
@@ -157,6 +171,12 @@ const host = useHost();
 const emit = useHostEmit<CSideNavigationEvents>();
 
 const containerRef = useTemplateRef<HTMLElement>('containerRef');
+
+const bottomRef = useTemplateRef<HTMLElement>('bottomRef');
+
+// The bottom slot's region renders only while something is slotted, so a
+// drawer without a bottom slot keeps its box (no empty padded strip).
+const hasBottom = useHasSlot(bottomRef, 'bottom');
 
 const menuVisibleInternal = ref(props.menuVisible);
 
@@ -283,11 +303,11 @@ onBeforeUnmount(() => {
 
 <!--
   Escape-hatch CSS: only constructs Tailwind utilities cannot
-  express. The drawer layout (content/nav/wrapper/burger) lives in the `tv`
-  config above. What remains here:
+  express. The drawer layout (content/nav/wrapper/bottom/burger) lives in the
+  `tv` config above. What remains here:
     - The host box and its `[data-desktop]` / `.autoheight` host states —
       utilities can't target `:host`, and these carry the desktop
-      background/flex/min-width and the autoheight scroll container. Desktop
+      background/flex/min-width and the standalone viewport-high state. Desktop
       mode is a data attribute (not a class) so a consumer's `class` patch
       can't wipe it — see the watchEffect above. The global
       `:host{display:contents}` is overridden per state (the per-type sheet is
@@ -297,12 +317,12 @@ onBeforeUnmount(() => {
   Authored against global design tokens only.
 -->
 <style>
-/* A pinned drawer that scrolls on its own. `overscroll-behavior: contain`
-   keeps a wheel or swipe that reaches its end from chaining to the document
-   — Chromium latches the rest of the gesture to whichever scroller took it,
-   so without it the drawer became unscrollable until the gesture ended.
-   `dvh`, not `vh`: on a phone the drawer must fit the visible viewport
-   while the browser chrome is expanded. */
+/* The standalone viewport-high drawer (the docs shell pins it under its own
+   toolbar). The item list inside scrolls, so the host itself never overflows;
+   the overflow declarations stay as a guard for content that escapes the list.
+   `dvh`, not `vh`: on a phone the drawer must fit the visible viewport while
+   the browser chrome is expanded. Inside c-main this height is overridden by
+   the layout's own pinned height (outer tree context wins over `:host`). */
 :host(.autoheight) {
   height: calc(100dvh - var(--spacing-toolbar));
   overflow-y: auto;
