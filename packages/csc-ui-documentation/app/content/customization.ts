@@ -202,7 +202,11 @@ The same attribute works on any element, not just <html>. An element carrying da
 
 The switching happens in the semantic-token layer: every role token (surface, on-surface, border, …) resolves to a different palette step per mode, so components and any UI you build on the tokens flip together. Seeds and modes compose — a re-branded ramp feeds both modes, so applyTheme needs no dark-mode variant, and a seeded ramp feeds every scope.
 
-A mode scope re-points colours; it paints nothing. Give a container bg-surface and text-on-surface (or the var(--c-…) equivalents) to make it draw the mode it pins — otherwise a colour inherited from outside the scope keeps the outer mode's ink.`,
+A scope can also be relative. An element carrying data-theme-invert resolves every role in the opposite mode to the one it sits in — dark inside a light page, light inside a dark one — so a region that must always stand apart from its surroundings needs no per-page variant. Inverting scopes nest like pinned ones, so inverting twice is back in the surrounding mode, and a data-theme on the same element wins over the inversion. On <html> it means the opposite of the OS preference. The attribute is presence-only, like hidden: data-theme-invert="false" still inverts, so remove it to stop.
+
+A mode scope re-points colours; it paints nothing. Give a container bg-surface and text-on-surface (or the var(--c-…) equivalents) to make it draw the mode it pins — otherwise a colour inherited from outside the scope keeps the outer mode's ink.
+
+Every scope publishes the mode it resolved as --c-mode (light or dark). Read it from JS, or style-query it from your own CSS with @container style(--c-mode: dark) { … }, instead of duplicating the data-theme selectors.`,
     },
     blocks: forAll([
       {
@@ -226,6 +230,23 @@ A mode scope re-points colours; it paints nothing. Give a container bg-surface a
 
 <!-- A single component works too — the host is a scope like any element. -->
 <c-button data-theme="dark">Dark button</c-button>`,
+      },
+      {
+        filename: 'Invert the surrounding mode',
+        lang: 'html',
+        code: `<!-- Opposite of whatever the page is: dark when the page is light, light
+     when it is dark. Paint opt-in is the same as for a pinned scope. -->
+<section data-theme-invert class="bg-surface text-on-surface">
+  <c-card>
+    <c-card-content>Always the opposite of the page.</c-card-content>
+  </c-card>
+
+  <!-- Inverting twice is back in the page's mode. -->
+  <aside data-theme-invert class="bg-surface text-on-surface">Back to the page's mode.</aside>
+</section>
+
+<!-- At the root it means the opposite of the OS preference. -->
+<html data-theme-invert>`,
       },
       {
         filename: 'Runtime toggle with a stored choice',
@@ -256,7 +277,8 @@ A mode scope re-points colours; it paints nothing. Give a container bg-surface a
         lang: 'ts',
         code: `import { chartSlotsHex, observeThemeMode } from '@cscfi/csc-ui';
 
-// Resolves the nearest mode scope, then follows it — a data-theme flip on any
+// Resolves the mode in effect where the element sits — a pinned or inverting
+// scope, else the OS preference — then follows it: a data-theme flip on any
 // ancestor, or the OS preference changing while no scope pins a mode. Fires
 // once immediately, so this is the whole wiring.
 const stop = observeThemeMode(chartEl, (mode) => {
@@ -266,11 +288,12 @@ const stop = observeThemeMode(chartEl, (mode) => {
       {
         filename: 'Overriding a role token? Scope it too',
         lang: 'css',
-        code: `/* A mode scope re-declares every role on itself, and an element's own
-   declaration beats an inherited one — so a :root-only override stops
-   applying inside a scope. Cover both. */
+        code: `/* A mode scope — pinned or inverting — re-declares every role on
+   itself, and an element's own declaration beats an inherited one, so a
+   :root-only override stops applying inside a scope. Cover all three. */
 :root,
-[data-theme] {
+[data-theme],
+[data-theme-invert] {
   --c-surface: #101418;
 }
 
