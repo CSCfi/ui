@@ -582,16 +582,17 @@ describe('fullscreen panel', () => {
 });
 
 // The closed field with a selection. The two-line value block used to have no
-// clip and a code that could not shrink, so a long code painted out through
-// the fieldset and across the clear button; the clear button and chevron sat
-// on a `display: contents` host, so their edge pull and the chevron's turn
-// never rendered.
+// clip, so a long label painted out through the fieldset and across the clear
+// button; the clear button and chevron sat on a `display: contents` host, so
+// their edge pull and the chevron's turn never rendered. Later the code
+// ellipsised along with the label, and the block sat low in the field —
+// 10px above, 6px below — so the value read as bottom-heavy.
 describe('closed field with a selection', () => {
   const LONG = [
     {
       children: [
         {
-          code: '31415926535897932384626',
+          code: '3141.5926',
           name: 'Interdisciplinary computational neuroscience and cognition',
           value: 'long',
         },
@@ -599,6 +600,17 @@ describe('closed field with a selection', () => {
       ...leaf('3', 'Very long things'),
     },
   ];
+
+  /** The painted width of an element's own text, ellipsis or not. */
+  const textWidth = (el: Element): number => {
+    const range = document.createRange();
+
+    range.selectNodeContents(el);
+
+    return range.getBoundingClientRect().width;
+  };
+
+  const centre = (r: DOMRect): number => (r.top + r.bottom) / 2;
 
   const slotBox = (m: Mounted): DOMRect =>
     m.deep('c-input', '.c-input__slot').getBoundingClientRect();
@@ -622,7 +634,9 @@ describe('closed field with a selection', () => {
     expect(clear.top).toBeGreaterThanOrEqual(slot.top);
     expect(clear.bottom).toBeLessThanOrEqual(slot.bottom);
 
-    const code = m.part('code').getBoundingClientRect();
+    const codeEl = m.part('code');
+
+    const code = codeEl.getBoundingClientRect();
 
     expect(
       code.right,
@@ -630,6 +644,50 @@ describe('closed field with a selection', () => {
     ).toBeLessThanOrEqual(clear.left);
     expect(code.bottom).toBeLessThanOrEqual(slot.bottom);
     expect(code.top).toBeGreaterThanOrEqual(slot.top);
+
+    // The code never truncates: it is the item's identity. The label beside
+    // it is what ellipsises.
+    expect(code.width, 'the code shows whole').toBeGreaterThanOrEqual(
+      textWidth(codeEl) - 0.5,
+    );
+
+    const label = codeEl.nextElementSibling!;
+
+    expect(label.scrollWidth, 'the label ellipsises').toBeGreaterThan(
+      label.clientWidth,
+    );
+  });
+
+  it('centres the value in the field: the two-line block and a single-line root value alike', async () => {
+    const two = await mountTree({ value: '1112' });
+
+    await settled();
+
+    const block = two.shadow('.c-input__content [aria-hidden]');
+
+    const [path, main] = Array.from(block.children).map((el) =>
+      el.getBoundingClientRect(),
+    );
+
+    const slot = slotBox(two);
+
+    expect(
+      Math.abs((path.top + main.bottom) / 2 - centre(slot)),
+      'two lines sit centred',
+    ).toBeLessThanOrEqual(1);
+
+    const one = await mountTree({ value: '1' });
+
+    await settled();
+
+    const value = one
+      .shadow('.c-input__content [aria-hidden]')
+      .lastElementChild!.getBoundingClientRect();
+
+    expect(
+      Math.abs(centre(value) - centre(slotBox(one))),
+      'one line sits centred',
+    ).toBeLessThanOrEqual(1);
   });
 
   it('turns the chevron while the panel is open', async () => {
@@ -650,5 +708,33 @@ describe('closed field with a selection', () => {
 
     await settled();
     await matchScreenshotInBothModes(m.stage, 'field-selected');
+  });
+});
+
+// The gap between the field and its panel is the same for every dropdown:
+// none — the panel's edge meets the field box, as `c-select`'s listbox and a
+// `c-menu` with the default `distance` do. The anchor spans the whole
+// `c-input`, and only the message area's height was pulled back, so the 8px
+// gap above it stayed between the field and the panel.
+describe('field to panel gap', () => {
+  const fieldBox = (m: Mounted): DOMRect =>
+    m.deep('c-input', '.c-input__slot').getBoundingClientRect();
+
+  it('the panel meets the field box, with a floating label and with the label on top', async () => {
+    for (const props of [{}, { labelOnTop: true }]) {
+      const m = await mountTree(props);
+
+      await open(m);
+      await settled();
+
+      const panel = m.part('panel').getBoundingClientRect();
+
+      expect(
+        Math.abs(panel.top - fieldBox(m).bottom),
+        `panel flush under the field (${JSON.stringify(props)})`,
+      ).toBeLessThanOrEqual(0.5);
+
+      m.unmount();
+    }
   });
 });

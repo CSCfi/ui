@@ -997,6 +997,7 @@ export interface CMenuItemElement extends Omit<HTMLElement, 'active' | 'activeIc
   /** Value reported in the menu's `select` event when this item is chosen. */
   value?: string;
   closeSubmenu(): void;
+  isSubmenuOpen(): boolean;
   openSubmenu(): void;
 }
 

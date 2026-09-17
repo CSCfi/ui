@@ -121,7 +121,7 @@ const sideNavigation = tv({
     nav: 'relative flex flex-col flex-1 min-h-0 w-full overflow-y-auto overscroll-contain p-6 z-[8] bg-nav-surface transition-transform duration-300 ease-[ease]',
     srOnly:
       'absolute w-px h-px p-0 -m-px overflow-hidden whitespace-nowrap border-0 [clip:rect(0_0_0_0)]',
-    wrapper: 'flex flex-col gap-px',
+    wrapper: 'flex flex-col gap-1',
   },
   variants: {
     hidden: {
@@ -130,8 +130,12 @@ const sideNavigation = tv({
     mobile: {
       true: {
         // The panel is viewport-high and clips; the list inside it scrolls.
+        // `h-dvh`, not `h-screen` (`100vh`): on a phone `vh` is the viewport
+        // with the browser chrome collapsed, so while the address bar is
+        // shown the drawer's tail — the last items, the bottom slot — sat
+        // behind it. The dynamic unit follows the visible viewport.
         content:
-          'h-screen max-w-80 overflow-hidden fixed right-0 top-0 z-[999] transition-transform duration-200 ease-standard translate-x-0',
+          'h-dvh max-w-80 overflow-hidden fixed right-0 top-0 z-[999] transition-transform duration-200 ease-standard translate-x-0',
       },
     },
   },

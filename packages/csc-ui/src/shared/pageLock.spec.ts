@@ -198,3 +198,79 @@ describe('lockPage', () => {
     }
   });
 });
+
+// The iOS visual-viewport pan: while the lock is held, a single-finger drag
+// that no scroll container in its path can consume is cancelled, so the
+// browser cannot pan the visual viewport under a fullscreen panel; a drag in
+// an overflowing list, and every drag once the lock is released, go through.
+describe('touch-pan guard', () => {
+  const touchMove = (target: Element, fingers = 1): TouchEvent => {
+    const touches = Array.from(
+      { length: fingers },
+      (_, i) =>
+        new Touch({ clientX: 10 + i * 40, clientY: 10, identifier: i, target }),
+    );
+
+    const event = new TouchEvent('touchmove', {
+      bubbles: true,
+      cancelable: true,
+      composed: true,
+      touches,
+    });
+
+    target.dispatchEvent(event);
+
+    return event;
+  };
+
+  const scroller = (overflowing: boolean): HTMLDivElement => {
+    const list = document.createElement('div');
+
+    list.style.cssText = 'height:40px;overflow-y:auto';
+    list.innerHTML = overflowing
+      ? '<div style="height:400px"></div>'
+      : '<div style="height:10px"></div>';
+
+    return list;
+  };
+
+  it('cancels a single-touch drag with nothing to scroll in its path, not one inside an overflowing list, and nothing once released', () => {
+    const host = document.createElement('div');
+
+    const still = document.createElement('p');
+
+    still.textContent = 'surface';
+
+    const shortList = scroller(false);
+
+    const longList = scroller(true);
+
+    host.append(still, shortList, longList);
+    document.body.append(host);
+
+    expect(touchMove(still).defaultPrevented, 'unlocked: untouched').toBe(
+      false,
+    );
+
+    lock(host);
+
+    expect(touchMove(still).defaultPrevented, 'no scroller in path').toBe(true);
+    expect(
+      touchMove(shortList.firstElementChild!).defaultPrevented,
+      'a list with nothing to scroll',
+    ).toBe(true);
+    expect(
+      touchMove(longList.firstElementChild!).defaultPrevented,
+      'an overflowing list scrolls',
+    ).toBe(false);
+    expect(touchMove(still, 2).defaultPrevented, "pinch is the browser's").toBe(
+      false,
+    );
+
+    unlockPage(host);
+
+    expect(touchMove(still).defaultPrevented, 'released').toBe(false);
+
+    host.remove();
+  });
+});

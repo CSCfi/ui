@@ -12,11 +12,16 @@
  *    supplies that declaration and `panelStyle` the matching
  *    `position-anchor` / `position-area` plus the panel width pinned to the
  *    anchor's rect on open;
- *  - the message pull-back. The anchor wrapper spans the whole inner
+ *  - the field-box pull-back. The anchor wrapper spans the whole inner
  *    `c-input`, INCLUDING its hint / error message area (reserved unless
- *    `hide-details` is set). The panel must sit flush under the field
- *    itself, so the `[part='message']` height is measured on open and pulled
- *    back with a negative block-start margin;
+ *    `hide-details` is set), the gap above it and an on-top label. The
+ *    panel must sit flush against the field box itself — the same 0px every
+ *    dropdown keeps (`c-select`'s listbox, `c-menu`'s default `distance`) —
+ *    so on open the distance from the anchor's bottom edge to the field
+ *    box's bottom edge is measured and pulled back with a negative
+ *    block-start margin, and the distance from the anchor's top edge to the
+ *    field box's top edge is published as `--_c-field-panel-top-offset` for
+ *    the consumer's flipped-above `@position-try` rules;
  *  - the fullscreen layout: chosen at `open()` from the `fullscreen`
  *    predicate and kept for the whole open (crossing the threshold while open
  *    closes the panel). The panel drops anchor positioning and becomes the
@@ -86,9 +91,9 @@ export interface AnchoredPanel {
   layout: ComputedRef<PanelLayout>;
   /** Bind as the panel's `@toggle` handler. */
   onToggle(event: Event): void;
-  /** Choose the layout, measure (anchored: the anchor width and the field's message height), then `showPopover()`. */
+  /** Choose the layout, measure (anchored: the anchor width and the field box's offsets from the anchor's edges), then `showPopover()`. */
   open(): void;
-  /** Inline style for the panel: anchored — `position-anchor`, `position-area: bottom span-right`, `inset: auto`, the pinned width and the message pull-back; fullscreen — the surface, the layout viewport's box. */
+  /** Inline style for the panel: anchored — `position-anchor`, `position-area: bottom span-right`, `inset: auto`, the pinned width, the field-box pull-back and `--_c-field-panel-top-offset`; fullscreen — the surface, the layout viewport's box. */
   panelStyle: ComputedRef<string>;
 }
 
@@ -100,7 +105,7 @@ export interface UseAnchoredPanelOptions {
   anchor: Readonly<Ref<HTMLElement | null>>;
   /** `open()` is a no-op while this returns true (the field's `disabled`). */
   disabled?: () => boolean;
-  /** The inner `c-input` host: its `[part='message']` height is pulled back so the panel sits flush under the field box. */
+  /** The inner `c-input` host: the offsets between its field box (`.c-input__slot`) and the anchor's edges are pulled back so the panel sits flush against the field box. */
   field: Readonly<Ref<HTMLElement | null>>;
   /** Open as a fullscreen panel while true — the shared narrow-viewport predicate (`useNarrowViewport`). Absent: always anchored. */
   fullscreen?: Readonly<Ref<boolean>>;
@@ -123,7 +128,11 @@ export const useAnchoredPanel = (
 
   const panelWidth = ref(0);
 
-  const messageOffset = ref(0);
+  /** Anchor bottom edge → field box bottom edge (the message area and the gap above it). */
+  const bottomOffset = ref(0);
+
+  /** Anchor top edge → field box top edge (an on-top label and the gap under it). */
+  const topOffset = ref(0);
 
   let pendingReturnFocus = false;
 
@@ -164,11 +173,14 @@ export const useAnchoredPanel = (
 
     const w = panelWidth.value ? `width:${panelWidth.value}px;` : '';
 
-    const m = messageOffset.value
-      ? `margin-top:-${messageOffset.value}px;`
-      : '';
+    const m = bottomOffset.value ? `margin-top:-${bottomOffset.value}px;` : '';
 
-    return `position-anchor:${FIELD_PANEL_ANCHOR};position-area:bottom span-right;inset:auto;${w}${m}`;
+    // Read by the consumer's flipped-above `@position-try` rules as a
+    // negative `margin-bottom`, so the panel meets the field box's top edge
+    // too (and not an on-top label's).
+    const t = `--_c-field-panel-top-offset:${topOffset.value}px;`;
+
+    return `position-anchor:${FIELD_PANEL_ANCHOR};position-area:bottom span-right;inset:auto;${w}${m}${t}`;
   });
 
   const cardStyle = computed(() =>
@@ -192,16 +204,20 @@ export const useAnchoredPanel = (
       trackViewport();
     } else {
       // Pin the panel width to the field before showing so it lines up.
-      panelWidth.value =
-        options.anchor.value?.getBoundingClientRect().width ?? 0;
+      const anchorRect = options.anchor.value?.getBoundingClientRect();
 
-      // Anchor to the bottom of the FIELD, not the c-input's message area.
-      const message =
-        options.field.value?.shadowRoot?.querySelector<HTMLElement>(
-          "[part='message']",
-        );
+      panelWidth.value = anchorRect?.width ?? 0;
 
-      messageOffset.value = message?.getBoundingClientRect().height ?? 0;
+      // Anchor to the FIELD BOX's edges, not the c-input's: below it lie the
+      // gap and the message area, above it an on-top label.
+      const box = options.field.value?.shadowRoot
+        ?.querySelector('.c-input__slot')
+        ?.getBoundingClientRect();
+
+      bottomOffset.value =
+        anchorRect && box ? Math.max(0, anchorRect.bottom - box.bottom) : 0;
+      topOffset.value =
+        anchorRect && box ? Math.max(0, box.top - anchorRect.top) : 0;
     }
 
     p.showPopover();

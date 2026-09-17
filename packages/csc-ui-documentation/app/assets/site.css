@@ -75,7 +75,16 @@
 
 /* ── Shiki: dual-theme output. Default = light values (inline); swap to the
       dark CSS vars when the dark theme is active (explicit toggle or OS
-      default). Generated span trees — utilities cannot reach them. ── */
+      default). Generated span trees — utilities cannot reach them.
+
+      The predicates mirror tokens.css (ADR-0053): unanchored from `:root`, so a
+      dark mode scope anywhere on the page darkens the code blocks inside it,
+      and the OS branch names both pinned values, so `data-theme="auto"` follows
+      the OS here exactly as the tokens do. Not covered: a `light` scope nested
+      inside a dark root. Shiki's light values are inline styles that the dark
+      rule overrides with `!important`, and descendant selectors resolve by
+      source order rather than inheritance proximity, so a selector alone cannot
+      undo it. The docs site only pins at the root. ── */
 
 .shiki {
   margin: 0;
@@ -92,15 +101,15 @@
   font-size: inherit;
 }
 
-:root[data-theme='dark'] .shiki,
-:root[data-theme='dark'] .shiki span {
+[data-theme='dark'] .shiki,
+[data-theme='dark'] .shiki span {
   color: var(--shiki-dark) !important;
   background-color: var(--shiki-dark-bg) !important;
 }
 
 @media (prefers-color-scheme: dark) {
-  :root:not([data-theme]) .shiki,
-  :root:not([data-theme]) .shiki span {
+  :root:not([data-theme='light']):not([data-theme='dark']) .shiki,
+  :root:not([data-theme='light']):not([data-theme='dark']) .shiki span {
     color: var(--shiki-dark) !important;
     background-color: var(--shiki-dark-bg) !important;
   }

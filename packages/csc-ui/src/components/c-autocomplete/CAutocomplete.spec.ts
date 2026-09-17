@@ -530,3 +530,51 @@ describe('closed field controls', () => {
     await matchScreenshotInBothModes(m.stage, 'field-selected');
   });
 });
+
+// The gap between the field and its panel is the same for every dropdown:
+// none — the panel's edge meets the field box, as `c-select`'s listbox and a
+// `c-menu` with the default `distance` do. The anchor spans the whole
+// `c-input`, and only the message area's height was pulled back, so the 8px
+// gap above it stayed between the field and the panel.
+describe('field to panel gap', () => {
+  const fieldBox = (m: Mounted): DOMRect =>
+    m.deep('c-input', '.c-input__slot').getBoundingClientRect();
+
+  it('the panel meets the field box, with a floating label and with the label on top', async () => {
+    for (const props of [{}, { labelOnTop: true }]) {
+      const m = await mountAuto(props);
+
+      await open(m);
+      await settled();
+
+      const panel = m.part('panel').getBoundingClientRect();
+
+      expect(
+        Math.abs(panel.top - fieldBox(m).bottom),
+        `panel flush under the field (${JSON.stringify(props)})`,
+      ).toBeLessThanOrEqual(0.5);
+
+      m.unmount();
+    }
+  });
+
+  it('flipped above a field near the bottom of the viewport with its label on top, the panel meets the top edge of the field box', async () => {
+    const m = await mountAuto({ labelOnTop: true });
+
+    m.stage.style.marginTop = `${window.innerHeight - 120}px`;
+    await settle();
+    await open(m);
+    await settled();
+
+    const panel = m.part('panel').getBoundingClientRect();
+
+    const box = fieldBox(m);
+
+    expect(panel.bottom, 'opened upward').toBeLessThanOrEqual(box.top + 0.5);
+    expect(Math.abs(panel.bottom - box.top), 'flush above').toBeLessThanOrEqual(
+      0.5,
+    );
+
+    m.unmount();
+  });
+});

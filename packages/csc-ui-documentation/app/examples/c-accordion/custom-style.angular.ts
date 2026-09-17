@@ -33,13 +33,15 @@ import {
   `,
   styles: [
     `
+      /* A role override must be unanchored from :root to reach inside a mode
+         scope, and the OS branch must name both pinned values (ADR-0053). */
       :root,
-      :root[data-theme='light'] {
+      [data-theme='light'] {
         --accordion-content-background: var(--c-surface);
       }
 
       @media (prefers-color-scheme: dark) {
-        :root:not([data-theme]) {
+        :root:not([data-theme='light']):not([data-theme='dark']) {
           --accordion-content-background: color-mix(
             in srgb,
             var(--c-primary) 20%,
@@ -48,7 +50,7 @@ import {
         }
       }
 
-      :root[data-theme='dark'] {
+      [data-theme='dark'] {
         --accordion-content-background: color-mix(
           in srgb,
           var(--c-primary) 20%,

@@ -71,6 +71,26 @@ export function setThemeMode(mode: ThemeMode): void {
   document.documentElement.setAttribute('data-theme', mode);
 }
 
+/**
+ * A semantic role's value as a mode resolves it, read the way a page reads it:
+ * a probe that opens a **mode scope** and paints in it. Specs assert against
+ * this rather than a literal `oklch()` string, which would re-assert the token
+ * pipeline instead of the component's behaviour.
+ */
+export function roleInMode(mode: ThemeMode, role = '--c-on-surface'): string {
+  const probe = document.createElement('div');
+
+  probe.setAttribute('data-theme', mode);
+  probe.style.color = `var(${role})`;
+  document.body.append(probe);
+
+  const value = getComputedStyle(probe).color;
+
+  probe.remove();
+
+  return value;
+}
+
 const missing = (what: string, where: string): Error =>
   new Error(`harness: no element matches "${what}" inside ${where}`);
 

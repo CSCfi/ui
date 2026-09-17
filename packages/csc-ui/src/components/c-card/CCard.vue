@@ -24,7 +24,7 @@
 /**
  * @slot default - Card components
  *
- * @csspart root - The card's visible surface, carries the background, border, radius, shadow and section spacing
+ * @csspart root - The card's visible surface, carries the background and its ink, border, radius, shadow and section spacing
  * @csspart fullscreen-toggle - The circular fullscreen toggle button shown when the fullscreen prop is set
  *
  * @seeded from csc-ui — verify
@@ -39,9 +39,15 @@ import { computed, onBeforeUnmount, onMounted, ref, useHost } from 'vue';
  * Styling lives in this `tailwind-variants` config. The inner
  * `<article>` (`root` part) is the card's visible box: it stacks the card
  * sections vertically with gap + block padding AND carries the card's visual
- * surface — background, hairline border and border-radius here (no overflow
- * clipping: popovers, tooltips and focus rings may extend past the box), plus the drop shadow as plain CSS in the escape-hatch <style>
- * (arbitrary `shadow-[...]` values don't emit reliably in this setup). All of it
+ * surface — background, its `on-surface` ink, hairline border and
+ * border-radius here (no overflow clipping: popovers, tooltips and focus rings
+ * may extend past the box), plus the drop shadow as plain CSS in the
+ * escape-hatch <style> (arbitrary `shadow-[...]` values don't emit reliably in
+ * this setup). The ink is paired with the background, not decoration: a mode
+ * scope re-points the semantic tokens and paints nothing (ADR-0053), so a
+ * surface declaring no `color` lets the ink resolved OUTSIDE the scope inherit
+ * in as a literal — `<c-card data-theme="light">` on a dark page would flip its
+ * background and keep the page's dark ink. All of it
  * lives on the part (not `:host`) so consumers can restyle the whole box through
  * `c-card::part(root) { … }`; the host is no longer the styled
  * surface. The `fullscreen-toggle` is the 40px circular button, anchored to
@@ -66,7 +72,7 @@ const card = tv({
   slots: {
     fullscreenToggle:
       'absolute top-[calc(var(--_c-card-gap)-8px)] right-[calc(var(--_c-card-padding-inline)-8px)] z-[1] flex items-center justify-center size-10 p-0 border-0 rounded-full bg-transparent text-primary cursor-pointer transition-colors duration-300 ease-standard hover:bg-primary-subtle-hover focus:outline-none focus-visible:outline-2 focus-visible:outline-solid focus-visible:outline-primary focus-visible:outline-offset-2',
-    root: 'relative flex flex-col flex-1 max-w-full gap-[var(--_c-card-gap)] py-[var(--_c-card-gap)] bg-surface-raised border border-solid border-border rounded-csc-xl',
+    root: 'relative flex flex-col flex-1 max-w-full gap-[var(--_c-card-gap)] py-[var(--_c-card-gap)] bg-surface-raised text-on-surface border border-solid border-border rounded-csc-xl',
   },
 });
 

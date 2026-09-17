@@ -1038,10 +1038,6 @@ dialog::backdrop {
   opacity: 0;
 }
 
-dialog .input-bottom-wrapper.active {
-  padding-top: 8px;
-}
-
 .dummy {
   display: none;
 }

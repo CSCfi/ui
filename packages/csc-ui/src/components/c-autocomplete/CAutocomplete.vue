@@ -1757,17 +1757,20 @@ onBeforeUnmount(() => {
   display: none;
 }
 
-/* When flipped above the field the message-area offset (a negative
- * margin-top set inline) must not apply: the panel's bottom edge then meets
- * the anchor's top edge, which IS the field's top. */
+/* When flipped above the field the field-box pull-back (a negative
+ * margin-top set inline) must not apply; instead the panel's bottom edge is
+ * pulled down past an on-top label to the field box's top edge, by the
+ * offset `useAnchoredPanel` measured into `--_c-field-panel-top-offset`. */
 @position-try --c-field-panel-above {
   position-area: top span-right;
   margin-top: 0;
+  margin-bottom: calc(-1 * var(--_c-field-panel-top-offset, 0px));
 }
 
 @position-try --c-field-panel-above-left {
   position-area: top span-left;
   margin-top: 0;
+  margin-bottom: calc(-1 * var(--_c-field-panel-top-offset, 0px));
 }
 
 [part='panel'] {

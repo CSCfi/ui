@@ -656,3 +656,48 @@ describe('closed field controls', () => {
     await matchScreenshotInBothModes(m.stage, 'field-selected');
   });
 });
+
+// Opened upward (no room below) the list met the field with an 8px gap while
+// opened downward it is flush; every dropdown keeps the same gap — none.
+describe('field to list gap', () => {
+  it('the list meets the field box below, and above when it opens upward', async () => {
+    const below = await mountSelect();
+
+    await openByClick(below);
+    await settled();
+
+    const belowField = below
+      .deep('c-input', '.c-input__slot')
+      .getBoundingClientRect();
+
+    expect(
+      Math.abs(list(below).getBoundingClientRect().top - belowField.bottom),
+    ).toBeLessThanOrEqual(0.5);
+
+    below.unmount();
+
+    // Push the field to the bottom of the viewport so the menu opens above.
+    const above = await mountSelect();
+
+    above.stage.style.marginTop = `${window.innerHeight - 100}px`;
+    await settle();
+    await openByClick(above);
+    await settled();
+
+    const aboveField = above
+      .deep('c-input', '.c-input__slot')
+      .getBoundingClientRect();
+
+    const aboveList = list(above).getBoundingClientRect();
+
+    expect(aboveList.bottom, 'opened upward').toBeLessThanOrEqual(
+      aboveField.top + 0.5,
+    );
+    expect(
+      Math.abs(aboveList.bottom - aboveField.top),
+      'flush above',
+    ).toBeLessThanOrEqual(0.5);
+
+    above.unmount();
+  });
+});
