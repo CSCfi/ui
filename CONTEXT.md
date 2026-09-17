@@ -274,6 +274,10 @@ _Avoid_: Role token, alias token, palette token (a semantic token points *at* a 
 The mode-aware neutral background roles ordered by elevation: `surface` (page background), `surface-raised` (cards/panels), `surface-overlay` (floating layers — popovers, menus, modals), and the **inverted surface** (`surface-inverted`, maximum-emphasis transient layers — toasts, tooltips). In light mode the first three are all near-white and depth reads from shadow; in dark mode each step is progressively lighter so elevation reads **without** relying on shadows. The inverted tier flips instead of climbing — see **Inverted surface**. Below `surface` sit two recessed rungs — `surface-muted` (subdued in-component fills: disabled controls, progress tracks) and, lowest, `surface-sunken` (the page canvas `c-main` paints, and the **track** fill). Each rung pairs with an **`on-` token** for its foreground.
 _Avoid_: Layer, z-level, elevation token (the ladder *is* the elevation model; don't introduce a parallel term)
 
+**Paired ink**:
+The `on-` role a component declares on the element that paints an opaque **surface ladder** rung, so content projected into it — slotted light DOM included — takes that surface's foreground instead of a `color` resolved outside the component. A **mode scope** re-points tokens and paints nothing (ADR-0053), so an unpaired surface carries whatever ink the page had: `<c-card data-theme="light">` on a dark page flipped its background and kept the page's dark text. Inheritance reaches slotted content through the `<slot>`, its flat-tree parent, so the ink belongs on the painting box — not on the transparent sections inside it, which would cost consumers the single `::part()` lever. Guarded by the *projected ink* **conformance suite**.
+_Avoid_: Ink anchor (*anchor* is reserved for **trigger** positioning), text colour pairing, on-token (the token; this is the act of declaring it)
+
 **Load-bearing hairline**:
 A 1px edge that is the *only* cue separating a component from what it sits on — no shadow, no fill that already reads. It paints the translucent `divider` ink over the parent surface, the one ink audited to read on every **surface ladder** rung (ADR-0036, ADR-0042); an edge with another cue (a card's shadow) stays on the opaque `border` role. The **track**'s frame is one; a card's border is not.
 _Avoid_: Border (the opaque role), outline (the CSS property / focus concept), divider (the token, not this use of it)
@@ -475,7 +479,7 @@ A browser test colocated with one component (`C<Name>.spec.ts` beside the SFC) a
 _Avoid_: unit test, e2e test, component test (ambiguous between the two)
 
 **Conformance suite**:
-A parametrised browser test that runs the shared contract of one component *kind* over every tag of that kind, enrolling tags automatically from generated data rather than a hand-kept list. Kinds: all components, **value controls**, anchored overlay components.
+A parametrised browser test that runs the shared contract of one component *kind* over every tag of that kind, enrolling tags automatically from generated data rather than a hand-kept list. Kinds: all components, **value controls**, anchored overlay components, **mode scope**, **paired ink**.
 _Avoid_: contract test, shared spec, generic test
 
 **Value control**:

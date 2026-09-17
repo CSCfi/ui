@@ -8,7 +8,14 @@ import { page, userEvent } from 'vitest/browser';
 
 import type { Mounted } from '../../test/harness';
 
-import { matchScreenshotInBothModes, mount, settle } from '../../test/harness';
+import {
+  matchScreenshotInBothModes,
+  mount,
+  roleInMode,
+  setThemeMode,
+  settle,
+  settled,
+} from '../../test/harness';
 
 const TRIGGER = '<c-button slot="trigger">Open</c-button>';
 
@@ -149,5 +156,29 @@ describe('c-menu submenu on touch', () => {
     expect(
       getComputedStyle(panel).getPropertyValue('position-try-fallbacks'),
     ).toContain('flip-inline');
+  });
+});
+
+describe('ink', () => {
+  // The `list` part paints `bg-surface-overlay` and projects into it. A
+  // c-menu-item declares its own ink, so only content slotted BESIDE the items
+  // was exposed to the ink resolved outside the scope (ADR-0053).
+  it('re-inks content slotted beside its items when the menu pins its own mode', async () => {
+    setThemeMode('dark');
+
+    const m = await mount('c-menu', {
+      attrs: { 'data-theme': 'light' },
+      html: `${TRIGGER}<span>Recent projects</span>${items(2)}`,
+    });
+
+    await open(m);
+    await settled();
+
+    const note = m.host.querySelector('span')!;
+
+    expect(getComputedStyle(note).color, 'slotted note').toBe(
+      roleInMode('light'),
+    );
+    expect(getComputedStyle(note).color).not.toBe(roleInMode('dark'));
   });
 });

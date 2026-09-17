@@ -12,6 +12,7 @@ import { afterAll, describe, expect, it } from 'vitest';
 import { migratedTags } from '../../index';
 import { mount, settled } from '../harness';
 import { FIXTURES } from './kinds';
+import { normalise } from './paint';
 
 /** Colour properties whose computed value must not depend on where the mode was pinned. */
 const PAINTED = [
@@ -24,27 +25,6 @@ const PAINTED = [
 ] as const;
 
 type Reading = Record<string, string>;
-
-const probe = document
-  .createElement('canvas')
-  .getContext('2d', { willReadFrequently: true })!;
-
-/**
- * The same colour has more than one computed spelling — Chromium serialises a
- * `color-mix()` or an interpolated value as `oklab()` where the token itself
- * reads `oklch()` (c-checkbox's focus ring is one), and `getComputedStyle`
- * never collapses the two. Reading `fillStyle` back does not either: canvas
- * preserves the colour space. Rasterising does, and the sRGB bytes are the
- * colour the user actually sees. Two modes' tokens are never 8-bit-adjacent,
- * so the quantisation cannot hide a real difference.
- */
-const normalise = (value: string): string => {
-  probe.clearRect(0, 0, 1, 1);
-  probe.fillStyle = value;
-  probe.fillRect(0, 0, 1, 1);
-
-  return [...probe.getImageData(0, 0, 1, 1).data].join(',');
-};
 
 const readParts = (host: Element): Reading[] =>
   [...host.shadowRoot!.querySelectorAll('[part]')].map((el) => {
