@@ -427,9 +427,13 @@
             strings) or their
             <code>…Hex</code>
             twins for ECharts and Chart.js, and picks the mode with
-            <code>themeMode()</code>
-            — see the snippet above. The export is the frozen, validated set: if
-            you override
+            <code>themeMode(el)</code>
+            — which resolves the nearest
+            <code>data-theme</code>
+            scope, so a chart inside a pinned panel gets that panel's mode.
+            <code>observeThemeMode(el, cb)</code>
+            keeps it current. See the snippet above. The export is the frozen,
+            validated set: if you override
             <code>--c-chart-*</code>
             yourself, read your values back with
             <code>getComputedStyle</code>
@@ -638,12 +642,13 @@ const CODE_BLOCKS = [
   chartAnatomyHex,
   chartSlots,
   chartSlotsHex,
+  observeThemeMode,
   themeMode,
 } from '@cscfi/csc-ui';
 
-// themeMode() resolves the mode on screen the way tokens.css does:
-// an explicit data-theme wins, otherwise the OS preference.
-const mode = themeMode(); // 'light' | 'dark'
+// themeMode(el) resolves the mode in effect for an element the way tokens.css
+// does: the nearest data-theme scope wins, otherwise the OS preference.
+const mode = themeMode(chartEl); // 'light' | 'dark'
 
 // CSS, SVG and raw canvas take the oklch() strings directly.
 const [first] = chartSlots[mode]; // 'oklch(0.6534 0.1710 247.9336)'
@@ -655,12 +660,10 @@ const option = {
   xAxis: { axisLine: { lineStyle: { color: chartAnatomyHex[mode].grid } } },
 };
 
-// Re-resolve when the mode changes — the toggle or the OS preference:
-const rebuild = () => draw(chartSlotsHex[themeMode()]);
-new MutationObserver(rebuild).observe(document.documentElement, {
-  attributeFilter: ['data-theme'],
-});
-matchMedia('(prefers-color-scheme: dark)').addEventListener('change', rebuild);`,
+// Follow the mode in effect WHERE THE CHART SITS — the nearest data-theme
+// scope, not just the document root — and keep following it. Fires once
+// immediately, so there is no separate initial draw; call stop() to detach.
+const stop = observeThemeMode(chartEl, (mode) => draw(chartSlotsHex[mode]));`,
   },
 ];
 

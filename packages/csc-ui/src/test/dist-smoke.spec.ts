@@ -20,6 +20,7 @@ const PUBLIC_EXPORTS = [
   'applyTheme',
   'defineCustomElements',
   'migratedTags',
+  'observeThemeMode',
   'resetDefaults',
   'resetTheme',
   'themeMode',

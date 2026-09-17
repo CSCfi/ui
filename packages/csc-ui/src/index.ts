@@ -223,7 +223,8 @@ export type { AppDefaults, DefaultableTag } from './shared/appDefaults';
 // Chart tokens as importable data (ADR-0040): the frozen series slots and
 // anatomy roles per theme mode, in `oklch()` with a `#rrggbb` twin for chart
 // libraries that do their own colour maths in sRGB. `themeMode()` resolves
-// the mode on screen by the same cascade tokens.css uses.
+// the mode in effect for an element by the same cascade tokens.css uses, and
+// `observeThemeMode()` keeps that answer current as mode scopes change.
 export {
   chartAnatomy,
   chartAnatomyHex,
@@ -238,7 +239,7 @@ export type { ChartAnatomy, ChartSlots } from './theme/chart-data';
 // (token values are oklch() strings, ADR-0041 — not what a colour input takes).
 export { DEFAULT_SEEDS, FAMILIES } from './theme/ramp.js';
 
-export { themeMode } from './theme/themeMode';
+export { observeThemeMode, themeMode } from './theme/themeMode';
 
 export type { ThemeMode } from './theme/themeMode';
 

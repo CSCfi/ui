@@ -198,13 +198,34 @@ defineCustomElements();`,
     intro: {
       all: `Components follow the OS light/dark preference by default. To pin a mode explicitly, set data-theme="light" or "dark" on <html> — the explicit attribute always wins over the OS preference; removing it goes back to following the OS.
 
-The switching happens in the semantic-token layer: every role token (surface, on-surface, border, …) resolves to a different palette step per mode, so components and any UI you build on the tokens flip together. Seeds and modes compose — a re-branded ramp feeds both modes, so applyTheme needs no dark-mode variant.`,
+The same attribute works on any element, not just <html>. An element carrying data-theme opens a mode scope: it and everything inside it resolve in that mode, whatever the rest of the page is doing. Scopes nest, and the nearest one wins. Only light and dark pin a mode — any other value is ignored, so a data-theme your own theming system already sets will not pull components out of the surrounding mode.
+
+The switching happens in the semantic-token layer: every role token (surface, on-surface, border, …) resolves to a different palette step per mode, so components and any UI you build on the tokens flip together. Seeds and modes compose — a re-branded ramp feeds both modes, so applyTheme needs no dark-mode variant, and a seeded ramp feeds every scope.
+
+A mode scope re-points colours; it paints nothing. Give a container bg-surface and text-on-surface (or the var(--c-…) equivalents) to make it draw the mode it pins — otherwise a colour inherited from outside the scope keeps the outer mode's ink.`,
     },
     blocks: forAll([
       {
         lang: 'html',
         code: `<!-- Pin a mode for the whole app; unset = follow the OS preference. -->
 <html data-theme="dark">`,
+      },
+      {
+        filename: 'Pin a mode for part of the page',
+        lang: 'html',
+        code: `<!-- A permanently dark panel on a light page. The scope re-points the
+     tokens; bg-surface/text-on-surface make the panel paint them. -->
+<section data-theme="dark" class="bg-surface text-on-surface">
+  <c-card>
+    <c-card-content>Always dark, whatever the user picked.</c-card-content>
+  </c-card>
+
+  <!-- Scopes nest: the nearest one wins. -->
+  <aside data-theme="light" class="bg-surface text-on-surface">Always light.</aside>
+</section>
+
+<!-- A single component works too — the host is a scope like any element. -->
+<c-button data-theme="dark">Dark button</c-button>`,
       },
       {
         filename: 'Runtime toggle with a stored choice',
@@ -229,6 +250,32 @@ The switching happens in the semantic-token layer: every role token (surface, on
     document.documentElement.dataset.theme = theme;
   }
 </script>`,
+      },
+      {
+        filename: 'Follow the mode in effect for an element',
+        lang: 'ts',
+        code: `import { chartSlotsHex, observeThemeMode } from '@cscfi/csc-ui';
+
+// Resolves the nearest mode scope, then follows it — a data-theme flip on any
+// ancestor, or the OS preference changing while no scope pins a mode. Fires
+// once immediately, so this is the whole wiring.
+const stop = observeThemeMode(chartEl, (mode) => {
+  chart.setOption({ color: chartSlotsHex[mode] });
+});`,
+      },
+      {
+        filename: 'Overriding a role token? Scope it too',
+        lang: 'css',
+        code: `/* A mode scope re-declares every role on itself, and an element's own
+   declaration beats an inherited one — so a :root-only override stops
+   applying inside a scope. Cover both. */
+:root,
+[data-theme] {
+  --c-surface: #101418;
+}
+
+/* Seed overrides (applyTheme) need no such care: they set palette tokens
+   that the roles still point at, so they reach every scope. */`,
       },
     ]),
   },
