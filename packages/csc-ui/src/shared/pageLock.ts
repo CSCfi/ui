@@ -128,7 +128,8 @@ const applyInert = (): void => {
  * panning an `overflow: hidden` document under a touch, so the body is also
  * taken out of the scroll flow: `position: fixed`, shifted up by the scroll
  * offset the page had, so nothing visibly moves. Release restores the inline
- * styles and puts the offset back.
+ * styles and puts the offset back. The touch-pan guard (`onTouchMove`) is
+ * held for the same span.
  */
 const applyScrollLock = (): void => {
   const root = document.documentElement;
@@ -152,8 +153,10 @@ const applyScrollLock = (): void => {
     body.style.left = '0';
     body.style.right = '0';
     body.style.width = '100%';
+    document.addEventListener('touchmove', onTouchMove, { passive: false });
   } else if (holders.length === 0 && scrollLocked) {
     scrollLocked = false;
+    document.removeEventListener('touchmove', onTouchMove);
 
     if (!saved) return;
 
@@ -172,6 +175,51 @@ const applyScrollLock = (): void => {
     });
     saved = null;
   }
+};
+
+/**
+ * True when `el` is a scroll container with something to scroll — a touch
+ * drag on it is the list scrolling, which the lock must leave alone.
+ */
+const canScroll = (el: HTMLElement): boolean => {
+  const y = el.scrollHeight > el.clientHeight;
+
+  const x = el.scrollWidth > el.clientWidth;
+
+  if (!y && !x) return false;
+
+  const { overflowX, overflowY } = getComputedStyle(el);
+
+  const scrolls = (overflow: string): boolean =>
+    overflow === 'auto' || overflow === 'scroll';
+
+  return (y && scrolls(overflowY)) || (x && scrolls(overflowX));
+};
+
+/**
+ * Taking the body out of flow stops the *document* panning under a touch,
+ * but not the *visual viewport*: while the on-screen keyboard is up (a
+ * fullscreen panel's focused search input), iOS Safari pans the visual
+ * viewport within the layout viewport on any single-finger drag the page did
+ * not consume — and a surface that follows `visualViewport` to stay above the
+ * keyboard then jumps after every pan, so dragging a list too short to scroll
+ * made the panel's content flicker between two positions. A single-touch
+ * `touchmove` whose composed path holds no scroll container that can
+ * actually scroll is cancelled while the lock is held; a drag inside an
+ * overflowing list keeps scrolling that list (its `overscroll-behavior:
+ * none` stops the chaining at its ends). Two-finger gestures (pinch zoom)
+ * are left to the browser.
+ */
+const onTouchMove = (event: TouchEvent): void => {
+  if (!event.cancelable || event.touches.length !== 1) return;
+
+  for (const node of event.composedPath()) {
+    if (node === document.body) break;
+
+    if (node instanceof HTMLElement && canScroll(node)) return;
+  }
+
+  event.preventDefault();
 };
 
 const apply = (): void => {

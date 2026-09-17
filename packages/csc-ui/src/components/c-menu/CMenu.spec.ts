@@ -103,10 +103,109 @@ describe('peek', () => {
 // A submenu on touch (iOS Safari): one tap fires `pointerover` and then, once
 // WebKit's click delay has passed, `click`. Hover-open on that `pointerover`
 // opened the submenu, and the tap's own click then toggled it straight back
-// shut — the submenu flashed and vanished.
+// shut — the submenu flashed and vanished. With the hover-open guarded, the
+// toggle still read a tap as "close" whenever the submenu was open or
+// recorded as open by the time the click arrived, and the submenu never
+// showed at all; a click on a parent item now only ever opens.
 describe('c-menu submenu on touch', () => {
   const SUBMENU =
     '<c-menu-item value="p">Parent<c-menu-item slot="submenu" value="s">Sub</c-menu-item></c-menu-item>';
+
+  const submenuPanel = (parent: Element): HTMLElement =>
+    parent.shadowRoot!.querySelector<HTMLElement>('[part~="submenu-panel"]')!;
+
+  /**
+   * The events a tap dispatches, on the row inside the item's shadow root
+   * where a finger lands: `pointerover` and the press pair with
+   * `pointerType: 'touch'`, then the compat `click`.
+   */
+  const tap = async (parent: Element): Promise<void> => {
+    const row =
+      parent.shadowRoot!.querySelector<HTMLElement>('[part~="root"]')!;
+
+    const pointer = (type: string) =>
+      row.dispatchEvent(
+        new PointerEvent(type, {
+          bubbles: true,
+          composed: true,
+          isPrimary: true,
+          pointerType: 'touch',
+        }),
+      );
+
+    pointer('pointerover');
+    pointer('pointerdown');
+    pointer('pointerup');
+    // WebKit's click follows the release after its tap delay — past the
+    // 120ms hover-open delay.
+    await settle(250);
+    row.dispatchEvent(
+      new MouseEvent('click', { bubbles: true, composed: true }),
+    );
+    await settle();
+  };
+
+  it('a tap on the row opens the submenu, and a second tap keeps it open', async () => {
+    const m = await mountMenu(SUBMENU);
+
+    await open(m);
+
+    const parent = m.host.querySelector('c-menu-item')!;
+
+    const panel = submenuPanel(parent);
+
+    await tap(parent);
+
+    expect(panel.matches(':popover-open'), 'first tap opens').toBe(true);
+
+    await tap(parent);
+
+    expect(panel.matches(':popover-open'), 'second tap keeps it open').toBe(
+      true,
+    );
+    expect(m.host.querySelector('c-menu-item')!.closest('c-menu')).toBe(m.host);
+  });
+
+  it('a tap opens the submenu even after a hover-open and after a stale open record', async () => {
+    const m = await mountMenu(SUBMENU);
+
+    await open(m);
+
+    const parent = m.host.querySelector('c-menu-item')!;
+
+    const panel = submenuPanel(parent);
+
+    // A mouse hovers the row: the submenu hover-opens.
+    parent.dispatchEvent(
+      new PointerEvent('pointerover', {
+        bubbles: true,
+        composed: true,
+        pointerType: 'mouse',
+      }),
+    );
+    await settle(250);
+
+    expect(panel.matches(':popover-open'), 'mouse hover-opens').toBe(true);
+
+    await tap(parent);
+
+    expect(panel.matches(':popover-open'), 'the tap does not close it').toBe(
+      true,
+    );
+
+    // The panel goes away behind the controller's back (a consumer's
+    // hidePopover, a browser-initiated close): the record must not turn the
+    // next tap into a close.
+    panel.hidePopover();
+    await settle();
+
+    await tap(parent);
+
+    expect(
+      panel.matches(':popover-open'),
+      'a tap after an untracked close opens',
+    ).toBe(true);
+  });
 
   it('a tap opens the submenu: touch never hover-opens, so the click toggles it open', async () => {
     const m = await mountMenu(SUBMENU);
@@ -142,12 +241,44 @@ describe('c-menu submenu on touch', () => {
 
     await open(m);
 
-    const panel = m.host
-      .querySelector('c-menu-item')!
-      .shadowRoot!.querySelector('[part~="submenu-panel"]')!;
+    const panel = submenuPanel(m.host.querySelector('c-menu-item')!);
 
     expect(
       getComputedStyle(panel).getPropertyValue('position-try-fallbacks'),
     ).toContain('flip-inline');
+  });
+
+  // A phone: the menu spans most of the viewport, so neither side of the
+  // row has room for the submenu. Pinned to the right it rendered entirely
+  // off screen — "the submenu does not open".
+  it('on a narrow viewport the submenu drops below its row and stays on screen', async () => {
+    await page.viewport(360, 640);
+
+    try {
+      const m = await mountMenu(
+        '<c-menu-item value="p">Export the current report as a document<c-menu-item slot="submenu" value="s">Portable document (PDF)</c-menu-item><c-menu-item slot="submenu" value="t">Word document (DOCX)</c-menu-item></c-menu-item>',
+      );
+
+      await open(m);
+
+      const parent = m.host.querySelector('c-menu-item')!;
+
+      await tap(parent);
+
+      const panel = submenuPanel(parent);
+
+      expect(panel.matches(':popover-open')).toBe(true);
+
+      const sub = rect(panel.querySelector('[part~="submenu"]')!);
+
+      const row = rect(parent);
+
+      expect(sub.left, 'inside the viewport').toBeGreaterThanOrEqual(0);
+      expect(sub.right, 'inside the viewport').toBeLessThanOrEqual(360);
+      expect(sub.width).toBeGreaterThan(0);
+      expect(sub.top, 'below its row').toBeGreaterThanOrEqual(row.bottom - 1);
+    } finally {
+      await page.viewport(1280, 800);
+    }
   });
 });

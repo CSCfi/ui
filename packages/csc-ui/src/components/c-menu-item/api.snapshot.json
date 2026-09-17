@@ -12,6 +12,7 @@
   "events": {},
   "methods": {
     "closeSubmenu": "()",
+    "isSubmenuOpen": "(): boolean",
     "openSubmenu": "()"
   },
   "parts": [

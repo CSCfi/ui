@@ -72,5 +72,29 @@ describe('c-side-navigation', () => {
       window.innerHeight - DRAWER_INSET,
       0,
     );
+
+    // The drawer is sized in `dvh`, the visible viewport — not `vh`, which on
+    // a phone is the viewport with the browser chrome collapsed and left the
+    // drawer's tail behind the address bar. Headless Chromium has no dynamic
+    // chrome, so the unit is read from the declaration that sizes the root.
+    const root = m.part('root');
+
+    // Tailwind nests its utilities in `@layer` blocks: walk grouped rules.
+    const flatten = (rules: CSSRuleList): CSSRule[] =>
+      Array.from(rules).flatMap((rule) =>
+        rule instanceof CSSGroupingRule ? flatten(rule.cssRules) : [rule],
+      );
+
+    const heights = Array.from(m.host.shadowRoot!.adoptedStyleSheets)
+      .flatMap((sheet) => flatten(sheet.cssRules))
+      .filter(
+        (rule): rule is CSSStyleRule =>
+          rule instanceof CSSStyleRule && root.matches(rule.selectorText),
+      )
+      .map((rule) => rule.style.height)
+      .filter(Boolean);
+
+    expect(heights, 'the drawer height declaration').toContain('100dvh');
+    expect(heights).not.toContain('100vh');
   });
 });

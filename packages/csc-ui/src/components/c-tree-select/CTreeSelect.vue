@@ -669,9 +669,10 @@ const treeSelect = tv({
     check: 'w-4 h-4 shrink-0 fill-current ml-auto text-primary',
     chevron:
       'inline-flex rotate-0 transition-transform duration-300 ease-in-out',
-    // The code may shrink and ellipsise like the label: a long code used to
-    // paint straight out of the field.
-    code: 'min-w-0 truncate tabular-nums text-on-surface-muted',
+    // The code is the item's identity and never truncates: it keeps its
+    // width and the label beside it is what ellipsises. The row's
+    // `overflow-hidden` still clips a code wider than the whole field.
+    code: 'shrink-0 whitespace-nowrap tabular-nums text-on-surface-muted',
     content:
       'relative flex items-center w-full min-w-0 overflow-hidden cursor-pointer',
     crumb:
@@ -680,12 +681,15 @@ const treeSelect = tv({
     fieldMain:
       'flex items-center gap-2 min-w-0 overflow-hidden text-base leading-5 text-on-surface',
     fieldPath: 'text-xs leading-4 text-on-surface-muted truncate',
-    // Two lines (16px path + 20px main) need 10px above so the lifted
-    // floating label — it hangs ~9px into the field from the top border —
-    // clears the path line, and 6px below: a 52px field, taller than the
-    // 44px single-line fields by design (ADR-0047: a two-line value grows
-    // the box).
-    fieldText: 'flex flex-col min-w-0 flex-1 overflow-hidden pt-2.5 pb-1.5',
+    // The value block is centred in the field: `justify-center` for a
+    // single-line value (no path) inside the 44px row, and symmetric 8px
+    // padding around the two lines (16px path + 20px main) — a 52px field,
+    // taller than the 44px single-line fields by design (ADR-0047: a
+    // two-line value grows the box). The lifted floating label hangs ~9px
+    // into the field from the top border and still clears the path line's
+    // 12px glyphs, which start 2px into their 16px line box.
+    fieldText:
+      'flex flex-col justify-center min-w-0 flex-1 overflow-hidden py-2',
     header:
       'flex items-center justify-between gap-2 min-h-8 px-3 pt-2 text-sm text-on-surface-muted',
     headerAction:
@@ -1729,17 +1733,20 @@ watch(activeIndex, (now, before) => {
   display: block;
 }
 
-/* When flipped above the field the message-area offset (a negative
- * margin-top set inline) must not apply: the panel's bottom edge then meets
- * the anchor's top edge, which IS the field's top. */
+/* When flipped above the field the field-box pull-back (a negative
+ * margin-top set inline) must not apply; instead the panel's bottom edge is
+ * pulled down past an on-top label to the field box's top edge, by the
+ * offset `useAnchoredPanel` measured into `--_c-field-panel-top-offset`. */
 @position-try --c-field-panel-above {
   position-area: top span-right;
   margin-top: 0;
+  margin-bottom: calc(-1 * var(--_c-field-panel-top-offset, 0px));
 }
 
 @position-try --c-field-panel-above-left {
   position-area: top span-left;
   margin-top: 0;
+  margin-bottom: calc(-1 * var(--_c-field-panel-top-offset, 0px));
 }
 
 [part='panel'] {

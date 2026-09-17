@@ -197,8 +197,13 @@ watch(distancePx, (px) => {
 
 // Tracks open submenu items (across nested levels) so we can coordinate
 // dismissal — the browser does not auto-chain manual popovers across the
-// separate shadow roots each c-menu-item owns.
+// separate shadow roots each c-menu-item owns. The record follows the item's
+// own `isSubmenuOpen()` (the panel's `:popover-open`), never the other way
+// round: an open that silently did not happen must not be remembered as one.
 const openSubmenus = new Set<HTMLElement>();
+
+const isSubmenuOpen = (item: HTMLElement): boolean =>
+  (item as { isSubmenuOpen?: () => boolean }).isSubmenuOpen?.() ?? false;
 
 const submenuTimers = new Map<HTMLElement, { close?: number; open?: number }>();
 
@@ -496,7 +501,9 @@ const doOpenSubmenu = (item: HTMLElement, focusFirst: boolean) => {
   }
 
   (item as { openSubmenu?: () => void }).openSubmenu?.();
-  openSubmenus.add(item);
+
+  if (isSubmenuOpen(item)) openSubmenus.add(item);
+  else openSubmenus.delete(item);
 
   if (focusFirst) {
     requestAnimationFrame(() => {
@@ -514,7 +521,7 @@ const doCloseSubmenu = (item: HTMLElement) => {
 };
 
 const scheduleOpenSubmenu = (item: HTMLElement) => {
-  if (openSubmenus.has(item)) return;
+  if (isSubmenuOpen(item)) return;
 
   const t = timersFor(item);
 
@@ -652,8 +659,12 @@ const onClick = (event: MouseEvent) => {
   setActive(item);
 
   if (hasSubmenu(item)) {
-    if (openSubmenus.has(item)) doCloseSubmenu(item);
-    else doOpenSubmenu(item, true);
+    // A click on a parent item opens its submenu and moves into it — it
+    // never closes one. A toggle read every tap on iOS as "close" whenever
+    // anything had the submenu open (or recorded as open) by the time the
+    // tap's delayed `click` arrived; a submenu closes from Escape / arrow
+    // left, from hovering or tapping another item, or with the menu.
+    doOpenSubmenu(item, true);
 
     return;
   }
@@ -776,11 +787,10 @@ const onKeydown = (event: KeyboardEvent) => {
 const onPointerOver = (event: PointerEvent) => {
   if (!isOpen.value) return;
 
-  // A touch never hovers: on iOS one tap fires `pointerover` and then, after
-  // the hover-open delay has passed, `click` — which would toggle the
-  // submenu it had just opened straight back shut. Touch opens a submenu by
-  // tapping its item (the click toggle); only mouse and pen hover-open.
-  if (event.pointerType === 'touch') return;
+  // Only a pointer that can hover hover-opens: mouse and pen. A touch never
+  // hovers — on iOS one tap fires `pointerover` and then, after the click
+  // delay, `click`; the tap opens a submenu through that click.
+  if (event.pointerType !== 'mouse' && event.pointerType !== 'pen') return;
 
   const item = itemFromPath(event.composedPath());
 

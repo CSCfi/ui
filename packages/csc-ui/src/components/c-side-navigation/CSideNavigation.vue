@@ -130,8 +130,12 @@ const sideNavigation = tv({
     mobile: {
       true: {
         // The panel is viewport-high and clips; the list inside it scrolls.
+        // `h-dvh`, not `h-screen` (`100vh`): on a phone `vh` is the viewport
+        // with the browser chrome collapsed, so while the address bar is
+        // shown the drawer's tail — the last items, the bottom slot — sat
+        // behind it. The dynamic unit follows the visible viewport.
         content:
-          'h-screen max-w-80 overflow-hidden fixed right-0 top-0 z-[999] transition-transform duration-200 ease-standard translate-x-0',
+          'h-dvh max-w-80 overflow-hidden fixed right-0 top-0 z-[999] transition-transform duration-200 ease-standard translate-x-0',
       },
     },
   },

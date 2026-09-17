@@ -94,7 +94,8 @@ import { applyPeekCap } from '../../shared/peekCap';
  * The owning `c-menu` is the sole keyboard/focus controller (see CMenu.vue):
  * `provide/inject` does not cross `defineCustomElement` boundaries, so the
  * menu drives this item through the DOM (delegated events, roving `tabindex`)
- * and through the `openSubmenu`/`closeSubmenu` methods exposed below.
+ * and through the `openSubmenu`/`closeSubmenu`/`isSubmenuOpen` methods
+ * exposed below.
  *
  * Styling is in this `tailwind-variants` config; `::part()` is the
  * customization surface. The `<style>` block is the
@@ -131,8 +132,10 @@ const item = tv({
     // keyboard highlight, danger, disabled) via currentColor.
     icon: 'shrink-0 text-current',
     root: 'flex items-center justify-between gap-3 min-h-10 px-3 rounded-csc-sm text-sm cursor-pointer select-none outline-none whitespace-nowrap text-on-surface hover:bg-primary-subtle hover:text-primary hover:ring-1 hover:ring-primary',
+    // `max-w-[calc(100vw-8px)]`: on a phone the panel may end up spanning
+    // the viewport (the below/above fallbacks); it never grows past it.
     submenu:
-      'list-none m-0 p-1 min-w-45 w-max max-h-[80vh] overflow-y-auto scrollbar-hidden rounded-csc-sm bg-surface-overlay shadow-[2px_4px_10px_#00000029] outline-none',
+      'list-none m-0 p-1 min-w-45 w-max max-w-[calc(100vw-8px)] max-h-[80vh] overflow-y-auto scrollbar-hidden rounded-csc-sm bg-surface-overlay shadow-[2px_4px_10px_#00000029] outline-none',
     // The panel anchors to the item ROW, which sits inside the parent
     // surface's 4px padding — the constant 4px only reaches the parent
     // panel's edge (surfaces touch). The visible gap on top of that is the
@@ -279,12 +282,23 @@ const applySubmenuCap = () => {
 
 // ---- exposed imperative API (called by the controlling c-menu) ----------
 
+const isSubmenuOpen = (): boolean =>
+  submenuRef.value?.matches(':popover-open') ?? false;
+
 const openSubmenu = () => {
   const panel = submenuRef.value;
 
   if (!panel) return;
 
-  if (!panel.matches(':popover-open')) panel.showPopover();
+  if (!panel.matches(':popover-open')) {
+    try {
+      panel.showPopover();
+    } catch {
+      // `InvalidStateError` while the panel is still leaving the top layer:
+      // the controller reads `isSubmenuOpen()` and does not record an open.
+      return;
+    }
+  }
 
   requestAnimationFrame(applySubmenuCap);
 
@@ -302,7 +316,7 @@ const closeSubmenu = () => {
   }
 };
 
-defineExpose({ closeSubmenu, openSubmenu });
+defineExpose({ closeSubmenu, isSubmenuOpen, openSubmenu });
 
 // ---- host ARIA / role wiring --------------------------------------------
 
@@ -395,14 +409,46 @@ onBeforeUnmount(() => {
   display: block;
 }
 
-/* The submenu is pinned to the right of its row (`submenuStyle`); on a
-   narrow viewport there is no room there, so it falls back to the left,
-   then above/below — the same escape hatch as the menu panel's own. */
+/* The submenu is pinned to the right of its row (`submenuStyle`); when
+   there is no room there it flips to the left, then the other way on the
+   block axis — and on a phone, where a menu spans most of the viewport and
+   neither side has room, it drops below (or above) its row instead, from
+   the row's own edge, so it is always on screen. The sideways margin is the
+   surfaces-touch constant, meaningless below the row, so it is swapped for
+   the block axis there. */
+@position-try --c-submenu-below {
+  position-area: bottom span-right;
+  margin-inline: 0;
+  margin-block: var(--_c-menu-distance, 0px);
+}
+
+@position-try --c-submenu-below-left {
+  position-area: bottom span-left;
+  margin-inline: 0;
+  margin-block: var(--_c-menu-distance, 0px);
+}
+
+@position-try --c-submenu-above {
+  position-area: top span-right;
+  margin-inline: 0;
+  margin-block: var(--_c-menu-distance, 0px);
+}
+
+@position-try --c-submenu-above-left {
+  position-area: top span-left;
+  margin-inline: 0;
+  margin-block: var(--_c-menu-distance, 0px);
+}
+
 [part='submenu-panel'] {
   position-try-fallbacks:
     flip-inline,
     flip-block,
-    flip-inline flip-block;
+    flip-inline flip-block,
+    --c-submenu-below,
+    --c-submenu-below-left,
+    --c-submenu-above,
+    --c-submenu-above-left;
 }
 
 :host(:focus) {
