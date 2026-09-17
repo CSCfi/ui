@@ -121,7 +121,7 @@ const sideNavigation = tv({
     nav: 'relative flex flex-col flex-1 min-h-0 w-full overflow-y-auto overscroll-contain p-6 z-[8] bg-nav-surface transition-transform duration-300 ease-[ease]',
     srOnly:
       'absolute w-px h-px p-0 -m-px overflow-hidden whitespace-nowrap border-0 [clip:rect(0_0_0_0)]',
-    wrapper: 'flex flex-col gap-px',
+    wrapper: 'flex flex-col gap-1',
   },
   variants: {
     hidden: {
