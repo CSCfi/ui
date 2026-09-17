@@ -126,7 +126,7 @@ const loginCard = tv({
     content: 'flex w-full max-w-[85%] flex-col gap-6 p-[72px] mb-8',
     image:
       "absolute top-0 left-0 h-full w-full overflow-hidden rounded-csc-lg bg-cover [clip-path:url('#cLoginClipPath')]",
-    root: 'flex w-full rounded-csc-lg bg-surface',
+    root: 'flex w-full rounded-csc-lg bg-surface text-on-surface',
   },
   variants: {
     hasImage: {

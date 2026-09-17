@@ -428,9 +428,8 @@
             <code>…Hex</code>
             twins for ECharts and Chart.js, and picks the mode with
             <code>themeMode(el)</code>
-            — which resolves the nearest
-            <code>data-theme</code>
-            scope, so a chart inside a pinned panel gets that panel's mode.
+            — which resolves the mode scope in effect, so a chart inside a
+            pinned or inverting panel gets that panel's mode.
             <code>observeThemeMode(el, cb)</code>
             keeps it current. See the snippet above. The export is the frozen,
             validated set: if you override
@@ -647,7 +646,8 @@ const CODE_BLOCKS = [
 } from '@cscfi/csc-ui';
 
 // themeMode(el) resolves the mode in effect for an element the way tokens.css
-// does: the nearest data-theme scope wins, otherwise the OS preference.
+// does: the nearest mode scope wins — pinned with data-theme or relative with
+// data-theme-invert — otherwise the OS preference.
 const mode = themeMode(chartEl); // 'light' | 'dark'
 
 // CSS, SVG and raw canvas take the oklch() strings directly.

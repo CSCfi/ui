@@ -1,8 +1,10 @@
 /**
  * Mode scope (CONTEXT.md "Mode scope", ADR-0053): `data-theme` on any element
- * pins a theme mode for that element and everything inside it. The cascade is
- * four selectors in `tokens.css`; these assert the behaviour they produce, and
- * that `themeMode()` stays a faithful mirror of it.
+ * pins a theme mode for that element and everything inside it, and
+ * `data-theme-invert` opens an **inverting scope** that resolves the opposite of
+ * whatever it sits in (ADR-0054). The cascade is eight selectors in
+ * `tokens.css`; these assert the behaviour they produce, and that `themeMode()`
+ * stays a faithful mirror of it.
  */
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { page } from 'vitest/browser';
@@ -32,6 +34,20 @@ const box = (theme?: string): HTMLDivElement => {
   return el;
 };
 
+/** An inverting scope: the opposite of whatever mode it lands in. */
+const inverting = (parent: Element = document.body): HTMLDivElement => {
+  const el = document.createElement('div');
+
+  el.setAttribute('data-theme-invert', '');
+  parent.append(el);
+
+  return el;
+};
+
+/** Whether the OS asks for dark — the ambient an inverting root flips. */
+const osPrefersDark = (): boolean =>
+  matchMedia('(prefers-color-scheme: dark)').matches;
+
 /** The two ground truths, read off `<html>` with each mode pinned there. */
 const rootIn = (mode: 'dark' | 'light'): string => {
   const previous = document.documentElement.getAttribute('data-theme');
@@ -48,6 +64,7 @@ const rootIn = (mode: 'dark' | 'light'): string => {
 
 afterEach(() => {
   document.documentElement.setAttribute('data-theme', 'light');
+  document.documentElement.removeAttribute('data-theme-invert');
   document.body.replaceChildren();
 });
 
@@ -156,6 +173,125 @@ describe('the cascade', () => {
   });
 });
 
+describe('an inverting scope', () => {
+  it('resolves dark inside a light document', () => {
+    document.documentElement.setAttribute('data-theme', 'light');
+
+    expect(read(inverting())).toBe(rootIn('dark'));
+    expect(read(document.body)).toBe(rootIn('light'));
+  });
+
+  it('resolves light inside a dark document', () => {
+    document.documentElement.setAttribute('data-theme', 'dark');
+
+    expect(read(inverting())).toBe(rootIn('light'));
+  });
+
+  it('returns to the surrounding mode when inverting scopes nest', () => {
+    // The scope declares --c-mode on ITSELF, so the next one down reads the
+    // flipped value and flips back. Nesting is self-cancelling, not sticky.
+    document.documentElement.setAttribute('data-theme', 'light');
+
+    const first = inverting();
+    const second = inverting(first);
+    const third = inverting(second);
+
+    expect(read(first)).toBe(rootIn('dark'));
+    expect(read(second)).toBe(rootIn('light'));
+    expect(read(third)).toBe(rootIn('dark'));
+  });
+
+  it('inverts the nearest pin, not the document', () => {
+    document.documentElement.setAttribute('data-theme', 'light');
+
+    // A dark island on a light page: inverting inside it must read light,
+    // which is the opposite of the ISLAND, not the opposite of the page.
+    expect(read(inverting(box('dark')))).toBe(rootIn('light'));
+  });
+
+  it('leaves a pin inside it absolute', () => {
+    document.documentElement.setAttribute('data-theme', 'light');
+
+    const scope = inverting();
+    const pinned = document.createElement('div');
+
+    pinned.setAttribute('data-theme', 'dark');
+    scope.append(pinned);
+
+    expect(read(pinned)).toBe(rootIn('dark'));
+  });
+
+  it('lets a pin on the same element win', () => {
+    // The invert selectors repeat the two :not()s for exactly this: an element
+    // that says what mode it is does not also get told the opposite.
+    document.documentElement.setAttribute('data-theme', 'light');
+
+    const both = box('dark');
+
+    both.setAttribute('data-theme-invert', '');
+
+    expect(read(both)).toBe(rootIn('dark'));
+  });
+
+  it('carries the inverted mode to plain descendants', () => {
+    document.documentElement.setAttribute('data-theme', 'light');
+
+    const child = document.createElement('div');
+
+    inverting().append(child);
+
+    expect(read(child)).toBe(rootIn('dark'));
+  });
+
+  it('inverts the OS preference at the root, where no container can be queried', () => {
+    // :root has no ancestor element, so the style query can never match it —
+    // the two prefers-color-scheme blocks are what make this work.
+    document.documentElement.removeAttribute('data-theme');
+    document.documentElement.setAttribute('data-theme-invert', '');
+
+    expect(read(document.documentElement)).toBe(
+      rootIn(osPrefersDark() ? 'light' : 'dark'),
+    );
+  });
+
+  it('is presence-only, like hidden', () => {
+    // An attribute-presence selector: the value is never read, so "false"
+    // inverts too. Remove the attribute to stop inverting.
+    document.documentElement.setAttribute('data-theme', 'light');
+
+    const scope = box();
+
+    scope.setAttribute('data-theme-invert', 'false');
+
+    expect(read(scope)).toBe(rootIn('dark'));
+  });
+
+  it('sets color-scheme so UA chrome follows the inverted mode', () => {
+    document.documentElement.setAttribute('data-theme', 'light');
+
+    expect(getComputedStyle(inverting()).colorScheme).toBe('dark');
+    expect(getComputedStyle(document.body).colorScheme).toBe('light');
+  });
+
+  it('re-points tokens without painting, exactly as a pinned scope does', () => {
+    document.documentElement.setAttribute('data-theme', 'light');
+
+    const outside = box();
+
+    outside.style.color = 'var(--c-on-surface)';
+
+    const scope = inverting(outside);
+
+    const lightInk = getComputedStyle(outside).color;
+
+    expect(getComputedStyle(scope).color).toBe(lightInk);
+
+    scope.style.color = 'var(--c-on-surface)';
+
+    expect(getComputedStyle(scope).color).not.toBe(lightInk);
+  });
+});
+
 describe('themeMode()', () => {
   it('agrees with the computed token at every depth', () => {
     document.documentElement.setAttribute('data-theme', 'light');
@@ -177,6 +313,44 @@ describe('themeMode()', () => {
     document.documentElement.setAttribute('data-theme', 'dark');
 
     expect(themeMode()).toBe('dark');
+  });
+
+  it('agrees with the computed token inside an inverting scope', () => {
+    document.documentElement.setAttribute('data-theme', 'light');
+
+    const scope = inverting();
+    const plain = document.createElement('div');
+
+    scope.append(plain);
+
+    for (const el of [scope, plain]) {
+      expect(themeMode(el), el.outerHTML).toBe('dark');
+      expect(read(el)).toBe(rootIn('dark'));
+    }
+  });
+
+  it('resolves through a shadow boundary', async () => {
+    // Reading --c-mode off the cascade rather than walking up for an attribute
+    // is what makes this work: closest() stops at the shadow root, which is a
+    // DocumentFragment, and used to fall through to the OS preference.
+    document.documentElement.setAttribute('data-theme', 'dark');
+
+    const m = await mount('c-button');
+
+    expect(themeMode(m.part('root'))).toBe('dark');
+  });
+
+  it('falls back to the nearest pin when there is no computed style', () => {
+    // A detached node has no computed --c-mode; the legacy walk still answers
+    // for a pinned scope. It cannot resolve an inverting one — an inverting
+    // scope is relative to a mode a detached subtree does not have.
+    const detached = document.createElement('div');
+    const child = document.createElement('div');
+
+    detached.setAttribute('data-theme', 'dark');
+    detached.append(child);
+
+    expect(themeMode(child)).toBe('dark');
   });
 });
 
@@ -207,6 +381,45 @@ describe('observeThemeMode()', () => {
     onChange.mockClear();
 
     scope.setAttribute('data-theme', 'light');
+    await settle();
+
+    expect(onChange).toHaveBeenCalledExactlyOnceWith('light');
+    stop();
+  });
+
+  it('reports a data-theme-invert toggle on an ancestor', async () => {
+    // The attributeFilter has to name the new attribute; without it an
+    // inverting scope appearing above the target is silent.
+    document.documentElement.setAttribute('data-theme', 'light');
+
+    const scope = box();
+    const target = document.createElement('div');
+
+    scope.append(target);
+
+    const onChange = vi.fn();
+    const stop = observeThemeMode(target, onChange);
+
+    onChange.mockClear();
+
+    scope.setAttribute('data-theme-invert', '');
+    await settle();
+
+    expect(onChange).toHaveBeenCalledExactlyOnceWith('dark');
+    stop();
+  });
+
+  it('reports the enclosing pin flipping under a static inverting scope', async () => {
+    document.documentElement.setAttribute('data-theme', 'light');
+
+    const target = inverting();
+    const onChange = vi.fn();
+    const stop = observeThemeMode(target, onChange);
+
+    expect(onChange).toHaveBeenCalledExactlyOnceWith('dark');
+    onChange.mockClear();
+
+    document.documentElement.setAttribute('data-theme', 'dark');
     await settle();
 
     expect(onChange).toHaveBeenCalledExactlyOnceWith('light');
@@ -274,6 +487,43 @@ describe('components', () => {
       const m = await mount(recipe.mountTag ?? tag, recipe.mount);
 
       m.stage.setAttribute('data-theme', 'dark');
+      await recipe.open(m);
+
+      const panel = recipe.panel(m);
+
+      expect(panel.matches(':popover-open'), `${tag} panel opened`).toBe(true);
+      expect(read(panel)).toBe(rootIn('dark'));
+    },
+  );
+
+  it('paints a host inside an inverting scope like one under a dark root', async () => {
+    document.documentElement.setAttribute('data-theme', 'light');
+
+    const inverted = await mount('c-button');
+
+    inverted.stage.setAttribute('data-theme-invert', '');
+
+    const pinned = await mount('c-button', { attrs: { 'data-theme': 'dark' } });
+
+    await settled();
+
+    expect(getComputedStyle(inverted.part('root')).backgroundColor).toBe(
+      getComputedStyle(pinned.part('root')).backgroundColor,
+    );
+  });
+
+  // The realistic consumer shape: an inverting section containing an overlay
+  // trigger. The panel is in the top layer but still in the DOM tree, so the
+  // style query resolves its container the same way.
+  it.each(Object.keys(OVERLAY_RECIPES))(
+    'carries an inverting scope into %s’s top-layer panel',
+    async (tag) => {
+      document.documentElement.setAttribute('data-theme', 'light');
+
+      const recipe = OVERLAY_RECIPES[tag];
+      const m = await mount(recipe.mountTag ?? tag, recipe.mount);
+
+      m.stage.setAttribute('data-theme-invert', '');
       await recipe.open(m);
 
       const panel = recipe.panel(m);

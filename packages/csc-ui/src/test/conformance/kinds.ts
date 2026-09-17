@@ -81,6 +81,25 @@ export const KNOWN_EMPTY_VALUE_CHECKED: readonly string[] = [
   'c-switch',
 ];
 
+/**
+ * Components whose `<slot>` sits on an opaque surface that declares no ink, so
+ * projected content inherits whatever `color` the page resolved outside them
+ * (CONTEXT.md "Paired ink", ADR-0053). The suite asserts the inverse so fixing
+ * one forces the list to shrink.
+ */
+export const KNOWN_INK_LEAKS: readonly string[] = [
+  // CButtonGroup.vue:183: the `root` track paints `surface-sunken` around the
+  // slot. Slotted c-buttons anchor their own ink, so nothing reads wrong today
+  // — the track wants the rung's `on-surface-sunken`.
+  'c-button-group',
+  // CSideNavigation.vue:116-121: `nav`, `content` and `bottom` paint
+  // `nav-surface`, whose paired ink is `on-nav` (not `on-surface`). A real
+  // colour change, so it moves a visual baseline — fix it on its own.
+  'c-side-navigation',
+  // CTabButtons.vue:195: same track as c-button-group.
+  'c-tab-buttons',
+];
+
 const OPTIONS = [
   '<c-option name="Finland" value="fi">Finland</c-option>',
   '<c-option name="Sweden" value="se">Sweden</c-option>',

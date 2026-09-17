@@ -121,7 +121,7 @@ interface CMenuEvents {
  */
 const menu = tv({
   slots: {
-    list: 'list-none m-0 p-1 min-w-[180px] w-max max-h-[80vh] overflow-y-auto scrollbar-hidden rounded-csc-md bg-surface-overlay shadow-[2px_4px_10px_#00000029] outline-none',
+    list: 'list-none m-0 p-1 min-w-[180px] w-max max-h-[80vh] overflow-y-auto scrollbar-hidden rounded-csc-md bg-surface-overlay text-on-surface shadow-[2px_4px_10px_#00000029] outline-none',
     panel:
       'fixed m-0 p-0 border-0 bg-transparent overflow-visible [inset:auto]',
     proxy: 'pointer-events-none fixed',
