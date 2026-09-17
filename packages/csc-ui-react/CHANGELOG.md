@@ -1,5 +1,114 @@
 # @cscfi/csc-ui-react
 
+## 4.0.0-alpha.20
+
+### Minor Changes
+
+- [#285](https://github.com/CSCfi/ui/pull/285) [`cac5376`](https://github.com/CSCfi/ui/commit/cac5376a2939b187511fa598530365a72cfc71e4) Thanks [@villeerikssoncsc](https://github.com/villeerikssoncsc)! - Invert the theme mode for part of a page. An element carrying
+  `data-theme-invert` resolves the semantic tokens in the opposite mode to the one
+  it sits in — dark inside a light page, light inside a dark one — so a region
+  that must always stand apart from its surroundings needs no per-page variant.
+  Inverting scopes nest like pinned ones, so inverting twice is back in the
+  surrounding mode, and a `data-theme` on the same element wins over the
+  inversion. On `<html>` it means the opposite of the OS preference. The attribute
+  is presence-only, like `hidden`: `data-theme-invert="false"` still inverts, so
+  remove it to stop.
+
+  `data-theme` is unchanged and still takes only `light` and `dark`, so a
+  `data-theme` your own theming system already sets still cannot pull components
+  out of the surrounding mode.
+
+  Every mode block now publishes the mode it resolved as `--c-mode` (`light` or
+  `dark`). It is public: read it in JS, or style-query it from your own CSS with
+  `@container style(--c-mode: dark) { … }` instead of duplicating the `data-theme`
+  selectors.
+
+  `themeMode(element)` now reads that property instead of walking up for a
+  `data-theme` attribute, so it always gives the same answer as the CSS — and it
+  now works for an element **inside a shadow root**, where the old ancestor walk
+  stopped at the boundary and fell back to the OS preference.
+  `observeThemeMode()` follows `data-theme-invert` too.
+
+  A hand-written role override needs the new scope as well:
+  `:root, [data-theme], [data-theme-invert] { --c-surface: … }`. Seed overrides
+  via `applyTheme` are unaffected.
+
+### Patch Changes
+
+- [#285](https://github.com/CSCfi/ui/pull/285) [`e073115`](https://github.com/CSCfi/ui/commit/e0731154c81ad8e418c64211517a597ace3faa43) Thanks [@villeerikssoncsc](https://github.com/villeerikssoncsc)! - Every dropdown meets its field with the same gap: none. `c-select`'s listbox
+  sat flush under the field and `c-menu` opens at its `distance` (0 by default),
+  but `c-autocomplete` and `c-tree-select` left 8px — the anchored panel pulled
+  back only the field's message area, not the gap above it — and opened upward
+  `c-select` left 8px while the anchored panels left none. The anchored panel
+  now measures the field box itself, below and above (so an on-top label no
+  longer pushes a flipped panel up), and the upward listbox drops its padding.
+
+- [#285](https://github.com/CSCfi/ui/pull/285) [`e073115`](https://github.com/CSCfi/ui/commit/e0731154c81ad8e418c64211517a597ace3faa43) Thanks [@villeerikssoncsc](https://github.com/villeerikssoncsc)! - `c-menu` submenus open on tap on iOS. A click on a parent item toggled its
+  submenu, so whenever the submenu was open — or merely recorded as open — by
+  the time the tap's delayed `click` arrived, the tap closed it and nothing ever
+  showed. A click on a parent item now only ever opens its submenu and moves
+  into it; the record of open submenus follows the panel's real popover state,
+  hover-open is reserved for mouse and pen pointers, and on a narrow viewport,
+  where neither side of the row has room, the submenu drops below (or above)
+  its row instead of rendering off screen.
+
+- [#285](https://github.com/CSCfi/ui/pull/285) [`5059f47`](https://github.com/CSCfi/ui/commit/5059f47a7396e1d6ba7875efae14f876bf6d2a13) Thanks [@villeerikssoncsc](https://github.com/villeerikssoncsc)! - An option's label resolution honours an explicit empty `name`: a `<c-option>`
+  authored with `name=""` now has an empty label, and the field falls back to
+  its own last resort (the raw value), instead of the empty string being
+  treated as absent and the option's text content taking over. Only a `name`
+  that was never set (the property and attribute both missing) falls through to
+  `c-option-value` or the option's text, as before.
+
+- [#285](https://github.com/CSCfi/ui/pull/285) [`e073115`](https://github.com/CSCfi/ui/commit/e0731154c81ad8e418c64211517a597ace3faa43) Thanks [@villeerikssoncsc](https://github.com/villeerikssoncsc)! - Stop the fullscreen panels of `c-autocomplete`, `c-tree-select` and `c-select`
+  flickering on iOS when a short list is dragged. With the on-screen keyboard
+  up, iOS Safari pans the visual viewport on any single-finger drag the page
+  did not consume, and the panel content that follows the visual viewport to
+  stay above the keyboard jumped after every pan. While the shared page lock is
+  held, a single-touch drag with no scrollable list in its path is cancelled; a
+  drag inside an overflowing list still scrolls it.
+
+- [#285](https://github.com/CSCfi/ui/pull/285) [`5059f47`](https://github.com/CSCfi/ui/commit/5059f47a7396e1d6ba7875efae14f876bf6d2a13) Thanks [@villeerikssoncsc](https://github.com/villeerikssoncsc)! - Side navigation items sit 4px apart instead of 1px, so adjacent pills — and
+  the hover and active washes they paint — no longer read as one continuous
+  strip.
+
+- [#285](https://github.com/CSCfi/ui/pull/285) [`e073115`](https://github.com/CSCfi/ui/commit/e0731154c81ad8e418c64211517a597ace3faa43) Thanks [@villeerikssoncsc](https://github.com/villeerikssoncsc)! - `c-side-navigation`'s mobile drawer fits the visible viewport. It was sized
+  in `vh`, which on a phone is the viewport with the browser chrome collapsed,
+  so while the address bar was shown the drawer's tail — the last items and the
+  bottom slot — sat behind it. The drawer is now sized in `dvh` and follows the
+  browser chrome as it shows and hides.
+
+- [#285](https://github.com/CSCfi/ui/pull/285) [`5b384d6`](https://github.com/CSCfi/ui/commit/5b384d6e8aa7aeae261f75e40bb14f439b17cbae) Thanks [@villeerikssoncsc](https://github.com/villeerikssoncsc)! - Fix the ink of content projected onto a surface that pins its own theme mode
+  (ADR-0053). A mode scope re-points the semantic tokens but paints nothing, so a
+  `color` resolved outside it inherits in as a literal: `<c-card
+data-theme="light">` on a dark page flipped its background but left its slotted
+  body copy in dark-mode ink, near-invisible on the light surface.
+
+  Containers that paint a surface ladder rung and project consumer content now
+  declare the matching `on-` ink on that same box, so everything they project
+  re-resolves with the surface:
+
+  - `c-card` — `on-surface` on the `root` part (the `surface-raised` box). The
+    card sections and their slotted content inherit it, and
+    `c-card::part(root) { color }` stays the single lever for recolouring the
+    whole card.
+  - `c-login-card` — `on-surface` on the `root` part (the `surface` box).
+  - `c-menu` — `on-surface` on the `list` part (the `surface-overlay` panel), for
+    content slotted into a menu beside its `c-menu-item`s.
+
+  Under a pinned document mode nothing moves: the ink these boxes inherited was
+  already `on-surface`. The one intentional change is a `c-card` inside a
+  `c-modal`, whose body copy now renders the card's own `on-surface` instead of
+  the modal's `on-surface-muted` — matching a standalone card and the card title.
+
+- [#285](https://github.com/CSCfi/ui/pull/285) [`e073115`](https://github.com/CSCfi/ui/commit/e0731154c81ad8e418c64211517a597ace3faa43) Thanks [@villeerikssoncsc](https://github.com/villeerikssoncsc)! - `c-tree-select` centres the committed value in its field and never truncates
+  its code. The two-line value block sat 10px from the top and 6px from the
+  bottom, so both a path-and-label value and a single-line root value read as
+  bottom-heavy; the block is now centred with even padding. The code kept
+  ellipsising along with the label; it is the item's identity, so it now keeps
+  its full width and only the label beside it truncates.
+- Updated dependencies [[`e073115`](https://github.com/CSCfi/ui/commit/e0731154c81ad8e418c64211517a597ace3faa43), [`cac5376`](https://github.com/CSCfi/ui/commit/cac5376a2939b187511fa598530365a72cfc71e4), [`e073115`](https://github.com/CSCfi/ui/commit/e0731154c81ad8e418c64211517a597ace3faa43), [`5059f47`](https://github.com/CSCfi/ui/commit/5059f47a7396e1d6ba7875efae14f876bf6d2a13), [`e073115`](https://github.com/CSCfi/ui/commit/e0731154c81ad8e418c64211517a597ace3faa43), [`5059f47`](https://github.com/CSCfi/ui/commit/5059f47a7396e1d6ba7875efae14f876bf6d2a13), [`e073115`](https://github.com/CSCfi/ui/commit/e0731154c81ad8e418c64211517a597ace3faa43), [`5b384d6`](https://github.com/CSCfi/ui/commit/5b384d6e8aa7aeae261f75e40bb14f439b17cbae), [`e073115`](https://github.com/CSCfi/ui/commit/e0731154c81ad8e418c64211517a597ace3faa43)]:
+  - @cscfi/csc-ui@4.0.0-alpha.20
+
 ## 4.0.0-alpha.19
 
 ### Minor Changes
