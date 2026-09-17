@@ -22,7 +22,7 @@ export const optionLabel = (option: HTMLElement): string => {
     (option as { name?: string } & HTMLElement).name ??
     option.getAttribute('name');
 
-  if (name) return name.trim();
+  if (typeof name === 'string') return name.trim();
 
   const wrapper = optionValueElement(option)?.textContent?.trim();
 
