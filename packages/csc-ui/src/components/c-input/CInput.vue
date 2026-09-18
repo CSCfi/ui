@@ -146,12 +146,19 @@ import { useHasSlot } from '../../shared/useHasSlot';
 // shared control height (`min-h-control`, 52px; ADR-0055); `small` shrinks it
 // to 36px and rests the floating label accordingly (its lifted transform is
 // keyed off `data-size` in the escape-hatch <style>).
+//
+// Every size owns its own `min-h`, and the base `slot` carries none — the same
+// shape c-button uses. A base height would survive here: tailwind-merge does
+// not recognise `min-h-control` as a `min-h` utility (it is generated from the
+// `--spacing-control` theme value, not a built-in scale step), so it would not
+// be dropped in favour of the variant's `min-h-9` and the taller of the two
+// would silently win.
 const sizeVariants = {
-  default: {},
+  default: { slot: 'min-h-control' },
   small: {
     // Same 16px label as the default box (the lifted 0.75 scale gives the
     // same 12px legend text); only its resting offset changes so the 24px
-    // line box centres in the 36px field (8px above it, as 14px does in the
+    // line box centres in the 36px field (8px above it, as 16px does in the
     // 52px box).
     labelFloating: 'top-2',
     slot: 'min-h-9',
@@ -204,8 +211,15 @@ const input = tv({
     // `overflow-hidden`) keeps the ellipsis, which only needs inline-axis
     // clipping, while leaving the y axis visible so tall-metric fonts (Noto
     // Sans' content area is ~1.36em) can never lose descender ink.
+    //
+    // The resting `top` centres that 24px line box in the field by hand — it
+    // is absolutely positioned, so nothing re-centres it when the box height
+    // changes. Keep `top = (box - 24) / 2 + 2`, the +2 cancelling the
+    // `translateY(-2px)` nudge in the escape-hatch rule below: 36px -> top-2,
+    // 44px -> top-3, the 52px control height -> top-4. `controlHeight.spec.ts`
+    // holds this at both sizes.
     labelFloating:
-      'c-input__label--floating absolute top-3.5 left-0 right-auto text-base max-w-[90%] overflow-x-clip text-ellipsis whitespace-nowrap pointer-events-none origin-top-left [transition:0.3s_var(--ease-standard)_0.08s]',
+      'c-input__label--floating absolute top-4 left-0 right-auto text-base max-w-[90%] overflow-x-clip text-ellipsis whitespace-nowrap pointer-events-none origin-top-left [transition:0.3s_var(--ease-standard)_0.08s]',
     labelTop:
       'c-input__label--top text-sm font-medium overflow-hidden text-ellipsis whitespace-nowrap max-w-full',
     legend:
@@ -229,7 +243,7 @@ const input = tv({
     // active/error variants below override it, with tailwind-merge picking the
     // winner so no `!important` is needed.
     root: 'c-input flex flex-col items-stretch rounded text-base max-w-full text-left text-on-surface-muted',
-    slot: 'c-input__slot relative flex items-stretch min-h-control px-3 rounded-csc-md bg-transparent cursor-text transition-all duration-300 ease-standard',
+    slot: 'c-input__slot relative flex items-stretch px-3 rounded-csc-md bg-transparent cursor-text transition-all duration-300 ease-standard',
     visuallyHidden:
       'absolute w-px h-px m-[-1px] p-0 overflow-hidden whitespace-nowrap border-0 [clip:rect(0_0_0_0)]',
   },
@@ -645,13 +659,14 @@ watch(
     scale(1);
 }
 
-/* The lifted label straddles the top border. The label rests 14px into the
+/* The lifted label straddles the top border. The label rests 16px into the
  * 52px box (its 24px line box centred); translateY lifts its glyphs onto the
- * border line — -22px, not the geometric -20px, compensates for the default
+ * border line — -24px, not the geometric -22px, compensates for the default
  * Noto Sans metrics, whose glyphs sit low in the line-box and would otherwise
- * leave the text hanging below the border. */
+ * leave the text hanging below the border. Resting top minus this must stay
+ * -8px, the same painted top the 36px box reaches with 8px and -16px. */
 .c-input__label--floating[data-lifted] {
-  transform: translateX(0) translateY(-22px) scale(0.75);
+  transform: translateX(0) translateY(-24px) scale(0.75);
 }
 
 /* Small (36px) field: the label rests at top 8px (line-box centre at 20px),

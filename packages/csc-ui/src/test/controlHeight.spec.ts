@@ -7,7 +7,7 @@
  */
 import { describe, expect, it } from 'vitest';
 
-import { mount, settle } from './harness';
+import { mount, settle, settled } from './harness';
 
 const px = (value: string): number => Number.parseFloat(value);
 
@@ -89,5 +89,49 @@ describe('control height', () => {
 
     small.unmount();
     large.unmount();
+  });
+
+  // The resting label is absolutely positioned from a literal `top`, so it does
+  // not follow the box the way the button's flex-centred glyph does. Centring
+  // holds only while `top = (box - 24) / 2 + 2` — the 24px is text-base's own
+  // line box, the +2 cancels the `translateY(-2px)` optical nudge in the
+  // escape-hatch rule. Retuning `--spacing-control` without retuning `top`
+  // de-centres the label, which is how it drifted 2px high at 52px.
+  it('rests the floating label centred in the field box, at both sizes', async () => {
+    for (const [size, height] of [
+      ['default', 52],
+      ['small', 36],
+    ] as const) {
+      // `size` goes on the host attribute, not the property: a defaultable
+      // prop resolves attribute-first (ADR-0048, src/shared/appDefaults.ts)
+      // and a property write only reflects to the attribute on connect.
+      const m = await mount('c-text-field', {
+        attrs: { size, style: 'width: 240px' },
+        props: { label: 'Name' },
+      });
+
+      await settled();
+
+      const label = m.deep('c-input', '.c-input__label--floating');
+
+      const labelBox = label.getBoundingClientRect();
+
+      const slot = m
+        .deep('c-input', '.c-input__slot')
+        .getBoundingClientRect();
+
+      expect(slot.height, `${size} box`).toBe(height);
+      // Empty and unfocused: the label rests inside the box, not lifted onto
+      // the border, so this measures the resting geometry.
+      expect(label.hasAttribute('data-lifted'), `${size} resting`).toBe(false);
+      expect(
+        Math.abs(
+          (labelBox.top + labelBox.bottom) / 2 - (slot.top + slot.bottom) / 2,
+        ),
+        `${size} label centred in the box`,
+      ).toBeLessThanOrEqual(1);
+
+      m.unmount();
+    }
   });
 });
