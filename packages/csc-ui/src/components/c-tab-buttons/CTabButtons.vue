@@ -183,16 +183,21 @@ const tabButtons = tv({
     indicator:
       'pointer-events-none absolute left-0 -z-10 w-0 origin-left rounded-csc-md bg-primary opacity-0 transition-[transform,width,opacity] duration-300 ease-out',
     // The native horizontal scroller (CONTEXT.md "Tab buttons"): scrollbar
-    // hidden, the edge arrows and the peeking buttons are the cue. Rounded
-    // like the frame so the clip follows its corners.
+    // hidden, the edge arrows and the peeking buttons are the cue. Not
+    // rounded itself: the track clips it (see `track`).
     scroller:
-      'overflow-x-auto overflow-y-hidden scrollbar-hidden overscroll-x-contain rounded-[inherit] cursor-default',
+      'overflow-x-auto overflow-y-hidden scrollbar-hidden overscroll-x-contain cursor-default',
     // The frame. The border is the load-bearing hairline, clipped out of the
     // fill so it composites over the parent surface and reads on every rung
     // (ADR-0042). `min-w-0` lets a flex parent squeeze it below the one-row
-    // width — that is when the strip scrolls.
+    // width — that is when the strip scrolls. `overflow-clip` makes the
+    // track the corner clip of the scrolled buttons and pill: an element's
+    // overflow clip follows its own `border-radius` AND `corner-shape` at
+    // the padding edge, i.e. the inner curve of the hairline. Rounding the
+    // scroller instead gave a round 16px clip 1px inside a 15px squircle —
+    // `rounded-[inherit]` inherits the radius, not the corner shape.
     track:
-      'rounded-csc-lg border border-solid border-divider bg-clip-padding bg-surface-sunken min-w-0 flex-1',
+      'rounded-csc-lg border border-solid border-divider bg-clip-padding bg-surface-sunken overflow-clip min-w-0 flex-1',
     // Arrows and frame in one row; as wide as the frame wants, at most the
     // container.
     wrapper: 'flex items-center gap-1 max-w-full',

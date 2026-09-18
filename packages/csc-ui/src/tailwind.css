@@ -166,16 +166,21 @@
 }
 
 /*
- * Layout value. The toolbar height was a 60px literal in c-toolbar, c-page and
+ * Layout values. The toolbar height was a 60px literal in c-toolbar, c-page and
  * c-side-navigation; `--spacing-toolbar` gives c-toolbar `h-toolbar` and lets
  * c-main's escape-hatch CSS offset the pinned side navigation (ADR-0051).
- * `static` keeps the variable in the sheet even when no utility references it
- * (c-main reads it through `var()`). Theme values are emitted under
- * `:root, :host`, so they resolve on every component host and inherit into
- * slotted light-DOM children.
+ * `--spacing-control` is the **control height** (CONTEXT.md, ADR-0055): the
+ * one resting height the `default` field box of c-input, the `default`
+ * c-button, the c-button-group frame and a c-tab share so they line up in a
+ * row — `min-h-control` / `h-control`, never a per-component literal.
+ * `static` keeps the variables in the sheet even when no utility references
+ * them (c-main and c-tab read them through `var()`). Theme values are emitted
+ * under `:root, :host`, so they resolve on every component host and inherit
+ * into slotted light-DOM children.
  */
 @theme static {
   --spacing-toolbar: 60px;
+  --spacing-control: 52px;
 }
 
 /*

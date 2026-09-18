@@ -658,6 +658,25 @@ describe('closed field with a selection', () => {
     );
   });
 
+  it('the field keeps the control height whether empty or holding a two-line value', async () => {
+    const empty = await mountTree();
+
+    const two = await mountTree({ value: '1112' });
+
+    await settled();
+
+    const emptyBox = slotBox(empty);
+
+    const twoBox = slotBox(two);
+
+    expect(emptyBox.height, 'empty field').toBe(52);
+    expect(twoBox.height, 'two-line value').toBe(emptyBox.height);
+    expect(
+      two.deep('c-input', '.c-input__slot').scrollHeight,
+      'the value block fits the box',
+    ).toBeLessThanOrEqual(twoBox.height);
+  });
+
   it('centres the value in the field: the two-line block and a single-line root value alike', async () => {
     const two = await mountTree({ value: '1112' });
 

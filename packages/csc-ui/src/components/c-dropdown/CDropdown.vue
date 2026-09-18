@@ -670,7 +670,7 @@ const positionMenu = () => {
       inputSlot = 'input-bottom';
       dialog.style.top = 'auto';
       // Anchor the dialog's bottom edge to the field's bottom edge (the
-      // field is 44px by default, 36px for `size="small"`).
+      // field is 52px by default, 36px for `size="small"`).
       dialog.style.bottom = `${innerHeight - size.top - getParentSlotRect().height}px`;
     }
 

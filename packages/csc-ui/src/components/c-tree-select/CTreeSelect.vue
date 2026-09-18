@@ -479,7 +479,7 @@ export interface CTreeSelectProps {
    */
   shadow?: boolean;
   /**
-   * Field height: the 44px default or the 36px `small` box
+   * Field height: the 52px default (the shared control height) or the 36px `small` box
    *
    * @defaultable 'default'
    */
@@ -681,13 +681,13 @@ const treeSelect = tv({
     fieldMain:
       'flex items-center gap-2 min-w-0 overflow-hidden text-base leading-5 text-on-surface',
     fieldPath: 'text-xs leading-4 text-on-surface-muted truncate',
-    // The value block is centred in the field: `justify-center` for a
-    // single-line value (no path) inside the 44px row, and symmetric 8px
-    // padding around the two lines (16px path + 20px main) — a 52px field,
-    // taller than the 44px single-line fields by design (ADR-0047: a
-    // two-line value grows the box). The lifted floating label hangs ~9px
-    // into the field from the top border and still clears the path line's
-    // 12px glyphs, which start 2px into their 16px line box.
+    // The value block is centred in the 52px field (the shared control
+    // height, ADR-0055): `justify-center` for a single-line value (no path),
+    // and symmetric 8px padding around the two lines (16px path + 20px
+    // main), which fill the box exactly, so the field never grows on
+    // selection. The lifted floating label hangs ~9px into the field from
+    // the top border and still clears the path line's 12px glyphs, which
+    // start 2px into their 16px line box.
     fieldText:
       'flex flex-col justify-center min-w-0 flex-1 overflow-hidden py-2',
     header:

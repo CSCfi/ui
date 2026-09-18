@@ -15,6 +15,7 @@ import {
   mount,
   settle,
   settled,
+  wrap,
 } from '../../test/harness';
 
 const LABELS = [
@@ -133,6 +134,50 @@ describe('c-tab-buttons', () => {
     expect(new Set(rects.map((r) => Math.round(r.width))).size).toBe(1);
     expect(scroller(m).scrollWidth).toBe(scroller(m).clientWidth);
     expect(m.shadowAll('[part~="scroll-forward"]')).toHaveLength(0);
+    expectIndicatorUnderActive(m);
+  });
+
+  it('scrolls inside c-tabs too: the strip is squeezed to the tab row, not clipped by it', async () => {
+    // The consumer's authoring: c-tabs slots the strip into its own tab row.
+    // That row is allowed to outgrow its clipping viewport (the underlined
+    // c-tab row scrolls by transform), so without a buttons-mode rule the
+    // one-row strip pushed the row wide, the frame was clipped at the
+    // viewport edge and the inner scroller never saw an overflow — the
+    // Android report: no arrows, no touch panning, the last tab cut off.
+    const tabs = await mount('c-tabs', {
+      html: `<c-tab-buttons>${BUTTONS}</c-tab-buttons><c-tab-items slot="items">${LABELS.map(
+        (l) =>
+          `<c-tab-item value="${l.toLowerCase().replace(' ', '-')}"><p>${l}</p></c-tab-item>`,
+      ).join('')}</c-tab-items>`,
+      props: { value: 'overview' },
+    });
+
+    tabs.stage.style.cssText = 'display:block;padding:8px;width:320px';
+    await settled();
+
+    const strip = tabs.host.querySelector<HTMLElement>('c-tab-buttons')!;
+
+    const m = wrap(strip, tabs.stage);
+
+    const box = scroller(m);
+
+    const frame = m.part('root').getBoundingClientRect();
+
+    const row = tabs.host.getBoundingClientRect();
+
+    expect(frame.right, 'frame clipped by the tab row').toBeLessThanOrEqual(
+      row.right + 0.5,
+    );
+    expect(box.scrollWidth).toBeGreaterThan(box.clientWidth);
+    expect(m.part('scroll-forward').hasAttribute('disabled')).toBe(false);
+
+    // Touch panning is the browser's own: a scrolled strip must move the
+    // buttons with it, not the page.
+    box.scrollLeft = 80;
+    await settled();
+
+    expect(box.scrollLeft).toBeGreaterThan(0);
+    expect(m.part('scroll-back').hasAttribute('disabled')).toBe(false);
     expectIndicatorUnderActive(m);
   });
 

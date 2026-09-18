@@ -250,7 +250,7 @@ export interface CTextFieldProps {
    */
   shadow?: boolean;
   /**
-   * Field height: the 44px default or the 36px `small` box (single-line fields)
+   * Field height: the 52px default (the shared control height) or the 36px `small` box (single-line fields)
    *
    * @defaultable 'default'
    */

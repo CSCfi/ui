@@ -142,15 +142,17 @@ import { useHasSlot } from '../../shared/useHasSlot';
  * slotted `<input>`/`<textarea>` (which we don't own) via `::slotted(...)`.
  */
 // Hoisted so the runtime guard below can test membership; the `satisfies`
-// keeps the map complete against the public union. `small` shrinks the field
-// box to 36px and rests the floating label accordingly (its lifted transform
-// is keyed off `data-size` in the escape-hatch <style>).
+// keeps the map complete against the public union. The default box is the
+// shared control height (`min-h-control`, 52px; ADR-0055); `small` shrinks it
+// to 36px and rests the floating label accordingly (its lifted transform is
+// keyed off `data-size` in the escape-hatch <style>).
 const sizeVariants = {
   default: {},
   small: {
     // Same 16px label as the default box (the lifted 0.75 scale gives the
     // same 12px legend text); only its resting offset changes so the 24px
-    // line box centres in the 36px field.
+    // line box centres in the 36px field (8px above it, as 14px does in the
+    // 52px box).
     labelFloating: 'top-2',
     slot: 'min-h-9',
   },
@@ -203,7 +205,7 @@ const input = tv({
     // clipping, while leaving the y axis visible so tall-metric fonts (Noto
     // Sans' content area is ~1.36em) can never lose descender ink.
     labelFloating:
-      'c-input__label--floating absolute top-3 left-0 right-auto text-base max-w-[90%] overflow-x-clip text-ellipsis whitespace-nowrap pointer-events-none origin-top-left [transition:0.3s_var(--ease-standard)_0.08s]',
+      'c-input__label--floating absolute top-3.5 left-0 right-auto text-base max-w-[90%] overflow-x-clip text-ellipsis whitespace-nowrap pointer-events-none origin-top-left [transition:0.3s_var(--ease-standard)_0.08s]',
     labelTop:
       'c-input__label--top text-sm font-medium overflow-hidden text-ellipsis whitespace-nowrap max-w-full',
     legend:
@@ -227,7 +229,7 @@ const input = tv({
     // active/error variants below override it, with tailwind-merge picking the
     // winner so no `!important` is needed.
     root: 'c-input flex flex-col items-stretch rounded text-base max-w-full text-left text-on-surface-muted',
-    slot: 'c-input__slot relative flex items-stretch min-h-11 px-3 rounded-csc-md bg-transparent cursor-text transition-all duration-300 ease-standard',
+    slot: 'c-input__slot relative flex items-stretch min-h-control px-3 rounded-csc-md bg-transparent cursor-text transition-all duration-300 ease-standard',
     visuallyHidden:
       'absolute w-px h-px m-[-1px] p-0 overflow-hidden whitespace-nowrap border-0 [clip:rect(0_0_0_0)]',
   },
@@ -344,7 +346,7 @@ interface CInputProps {
    * @seeded from csc-ui — verify
    */
   shadow?: boolean;
-  /** Field height: the 44px default or the 36px `small` box */
+  /** Field height: the 52px default (the shared control height) or the 36px `small` box */
   size?: CFieldSize;
   /**
    * Set the validíty of the input
@@ -643,12 +645,13 @@ watch(
     scale(1);
 }
 
-/* The lifted label straddles the top border. translateY centres the label's
- * glyphs on the border line; -20px (not the geometric -18px) compensates for
- * the default Noto Sans metrics, whose glyphs sit low in the line-box and would
- * otherwise leave the text hanging below the border. */
+/* The lifted label straddles the top border. The label rests 14px into the
+ * 52px box (its 24px line box centred); translateY lifts its glyphs onto the
+ * border line — -22px, not the geometric -20px, compensates for the default
+ * Noto Sans metrics, whose glyphs sit low in the line-box and would otherwise
+ * leave the text hanging below the border. */
 .c-input__label--floating[data-lifted] {
-  transform: translateX(0) translateY(-20px) scale(0.75);
+  transform: translateX(0) translateY(-22px) scale(0.75);
 }
 
 /* Small (36px) field: the label rests at top 8px (line-box centre at 20px),
