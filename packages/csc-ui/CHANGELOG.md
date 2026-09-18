@@ -1,5 +1,47 @@
 # @cscfi/csc-ui
 
+## 4.0.0-alpha.21
+
+### Minor Changes
+
+- [#287](https://github.com/CSCfi/ui/pull/287) [`0116d82`](https://github.com/CSCfi/ui/commit/0116d82b1559d6625d25a043902f0b084ee6f6ba) Thanks [@villeerikssoncsc](https://github.com/villeerikssoncsc)! - One shared control height of 52px (ADR-0055). The `default` field box of
+  `c-input` — behind `c-text-field`, `c-select`, `c-autocomplete` and
+  `c-tree-select` — grows from 44px to 52px, held in the new `--spacing-control`
+  theme value together with the `default` `c-button` (52px, from 44px), the
+  `c-button-group` frame (52px, its buttons 44px inside) and `c-tab` (52px, as
+  before). `c-tree-select` no longer grows on selection: its two-line path and
+  label value fits the box. The button scale becomes 28 / 52 / 60: `large` rises
+  to the toolbar height so it stays a step above `default`; `small` buttons and
+  `small` fields are unchanged. Layouts aligned to the old 44px need to follow.
+
+### Patch Changes
+
+- [#287](https://github.com/CSCfi/ui/pull/287) [`7628ea6`](https://github.com/CSCfi/ui/commit/7628ea6da5e07543fdda4a271cb741b1949c2678) Thanks [@villeerikssoncsc](https://github.com/villeerikssoncsc)! - Fix two field regressions from the 52px control height (ADR-0055). The resting
+  floating label — the one sitting inside an empty, unfocused field — now centres
+  in the box again instead of hanging 2px high, across `c-text-field`, `c-select`,
+  `c-autocomplete` and `c-tree-select`. The `small` field box is 36px again: it
+  had been rendering at the 52px default height, which also left its label far off
+  centre. The lifted label and the value text are unchanged.
+
+- [#287](https://github.com/CSCfi/ui/pull/287) [`0116d82`](https://github.com/CSCfi/ui/commit/0116d82b1559d6625d25a043902f0b084ee6f6ba) Thanks [@villeerikssoncsc](https://github.com/villeerikssoncsc)! - `c-tab-buttons` scrolls sideways inside `c-tabs` again. The tab row that
+  `c-tabs` slots the strip into may outgrow its viewport (that is how the
+  underlined tab row scrolls), so an overflowing strip pushed the row wide
+  instead of scrolling: the frame was clipped at the edge, the last tab was cut
+  off, and neither the edge arrows nor touch panning appeared — as seen on a
+  phone with three tabs. In buttons mode the row now squeezes the strip to its
+  own width, so the strip scrolls by touch, drag, wheel and the edge arrows as
+  documented.
+
+  The strip's corners clip correctly too: the scrolled buttons and the sliding
+  indicator are now cut by the track's own frame, following its squircle at the
+  inner edge of the hairline, instead of a round radius that ran 1px past it.
+
+- [#287](https://github.com/CSCfi/ui/pull/287) [`0116d82`](https://github.com/CSCfi/ui/commit/0116d82b1559d6625d25a043902f0b084ee6f6ba) Thanks [@villeerikssoncsc](https://github.com/villeerikssoncsc)! - The dark-mode hover tint is subtle again. `primary-subtle-hover` mapped to
+  primary-600 in dark mode — brighter than the primary-700 fill of the selected
+  state — so a hovered tab, list row or table row outshone the selected one. It
+  now maps to primary-800, a step fainter than the fill, as in light mode where
+  primary-50 sits under the primary-100 fill.
+
 ## 4.0.0-alpha.20
 
 ### Minor Changes
