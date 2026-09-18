@@ -913,6 +913,18 @@ onBeforeUnmount(() => {
   display: none;
 }
 
+/* Buttons mode: the strip scrolls inside its own viewport, so the tab row
+   must squeeze it instead of growing with it. As a flex item the row's
+   automatic minimum is its content's min-content width — the one-row strip
+   in full (the strip's inner `min-w-0` does not shrink what flows up) — so
+   the row outgrew the clipping `.c-tabs__tabs`, the frame was cut off at
+   the edge and the inner scroller never overflowed: no arrows, no touch
+   panning. The underlined c-tab row keeps its auto minimum: it scrolls by
+   translating this very row past the viewport. */
+:host(.c-tabs--buttons) .c-tabs__scroll {
+  min-width: 0;
+}
+
 :host(.c-tabs--borderless) {
   --_c-tabs-border-color: transparent;
 }

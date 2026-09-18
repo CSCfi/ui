@@ -282,7 +282,7 @@ export interface CAutocompleteElement extends Omit<HTMLElement, 'clearable' | 'd
   selectAll?: boolean;
   /** Shadow variant */
   shadow?: boolean;
-  /** Field height: the 44px default or the 36px `small` box */
+  /** Field height: the 52px default (the shared control height) or the 36px `small` box */
   size?: 'default' | 'small';
   /**
    * UI text overrides (i18n), merged over the English defaults. Objects have
@@ -797,7 +797,7 @@ export interface CInputElement extends Omit<HTMLElement, 'active' | 'disabled' |
   required?: boolean;
   /** Shadow variant of the input */
   shadow?: boolean;
-  /** Field height: the 44px default or the 36px `small` box */
+  /** Field height: the 52px default (the shared control height) or the 36px `small` box */
   size?: 'default' | 'small';
   /** Set the validíty of the input */
   valid?: boolean;
@@ -1480,7 +1480,7 @@ export interface CSelectElement extends Omit<HTMLElement, 'clearable' | 'disable
   selectAll?: boolean;
   /** Shadow variant */
   shadow?: boolean;
-  /** Field height: the 44px default or the 36px `small` box */
+  /** Field height: the 52px default (the shared control height) or the 36px `small` box */
   size?: 'default' | 'small';
   /**
    * UI text overrides (i18n), merged over the English defaults. Objects have
@@ -2107,7 +2107,7 @@ export interface CTextFieldElement extends Omit<HTMLElement, 'autocomplete' | 'a
   rows?: number;
   /** Shadow variant of the input */
   shadow?: boolean;
-  /** Field height: the 44px default or the 36px `small` box (single-line fields) */
+  /** Field height: the 52px default (the shared control height) or the 36px `small` box (single-line fields) */
   size?: 'default' | 'small';
   /** Step size on a numeric input */
   step?: null | number;
@@ -2340,7 +2340,7 @@ export interface CTreeSelectElement extends Omit<HTMLElement, 'allowBranch' | 'c
   returnObject?: boolean;
   /** Shadow variant */
   shadow?: boolean;
-  /** Field height: the 44px default or the 36px `small` box */
+  /** Field height: the 52px default (the shared control height) or the 36px `small` box */
   size?: 'default' | 'small';
   /**
    * UI text overrides (i18n), merged over the English defaults. Objects have

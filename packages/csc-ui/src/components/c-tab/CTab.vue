@@ -222,7 +222,7 @@ slot {
   cursor: pointer;
   display: inline-flex;
   font-weight: 600;
-  height: 52px;
+  height: var(--spacing-control);
   justify-content: center;
   overflow: hidden;
   position: relative;

@@ -180,6 +180,10 @@ The viewport-filling layout a value-selection field's **transient list panel** �
 While it is open the page behind it is inert and scroll-locked (toasts excepted), yet it is not a `c-modal`: it joins no **modal stack** and paints no backdrop. Its list is bounded by the viewport, not a ceiling, so it has no **peek** — the screen edge is the cue that more rows follow.
 _Avoid_: Mobile mode / mobile menu, sheet (a partial-height bottom surface), modal / dialog (see above), takeover
 
+**Control height**:
+The one resting height every operable row-level control shares so they line up in a form row and a toolbar: the `default` **field box** of `c-input` (behind `c-text-field`, `c-select`, `c-autocomplete`, `c-tree-select`), the `default` `c-button`, the `c-button-group` frame and a `c-tab` — 52px, tall enough for `c-tree-select`'s two-line **path** + label value without the field growing on selection. It is a single shared spacing value, never a per-component literal; `small` (36px field, 28px button) and `large` (60px button, the **toolbar** height) are the steps around it.
+_Avoid_: Field height (only one of the four users), input height, row height (a table's)
+
 **Narrow viewport**:
 The state of the *window* being narrower than the library's single shared threshold — the one condition under which a value-selection field opens a **fullscreen panel**. Measured on the viewport, never on a component's own box: the container-measured `mobile` / `mobileBreakpoint` switches of `c-table`, `c-steps`, `c-login-card` and `c-side-navigation` are compact *component* layouts, a different concept, and keep their grandfathered names.
 _Avoid_: Mobile (names the device, not the state; grandfathered only as those prop names), phone, small screen, breakpoint (the threshold is one value, not a scale of them)
@@ -285,6 +289,10 @@ _Avoid_: Border (the opaque role), outline (the CSS property / focus concept), d
 **Inverted surface**:
 The top rung of the **surface ladder** (`surface-inverted`): a background that takes the *opposite* mode's ground — near-black in light mode, near-white in dark mode — so a maximum-emphasis transient layer stands apart from every other surface instead of blending one shade above it. Content on it uses the matching inverted roles (`on-surface-inverted`, the `*-inverted` status roles), which likewise borrow the opposite mode's look. Mode-**aware** (it flips with the mode) — not to be confused with the mode-**invariant** `inverse-*` family, which keeps one fixed look on a fixed brand/dark backdrop regardless of mode.
 _Avoid_: Inverse surface (collides with the invariant `inverse-*` family), dark surface (only true in light mode), contrast surface
+
+**Tint**:
+A page role's translucent-looking *fill* pair on the **surface ladder** — `primary-subtle` with its hover step `primary-subtle-hover`, and the status `*-subtle` roles — used for a selected or active row, tab or option and the hover that leads to it. In both **theme modes** the hover step is *fainter* than the fill, so a hovered row never outshines the selected one (light: primary-50 under primary-100; dark: a step below the primary-700 fill). Painted only on page surfaces; the nav paints **washes**.
+_Avoid_: Highlight, wash (the nav's translucent ink), subtle (the token suffix, not a concept)
 
 **Wash** (nav chrome):
 A translucent tint of a surface's own foreground ink — `on-nav` on `nav-surface`, `on-nav-active` on `nav-active` — used for the side navigation's hover, indicator and focus states, so they stay legible in both **theme modes** without a per-mode value (ADR-0052). The active sub-item's fill is the one nav state with a per-mode value (the `nav-sub-active` role: a white pill in light, a wash in dark). Page roles (the **surface ladder**, the primary tint pair) are never painted inside the nav.

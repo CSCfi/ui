@@ -213,15 +213,17 @@ const sizeVariants = {
   default: {
     contentInner: 'h-full px-4',
     iconWrap: 'text-2xl',
-    // `--_c-button-min-height` is an INTERNAL hook (not consumer API): a
-    // wrapping c-button-group sets it on its frame so the buttons plus the
-    // 4px frame padding total the 44px field height of c-text-field.
-    root: 'min-h-[var(--_c-button-min-height,2.75rem)] text-base',
+    // The shared control height (`--spacing-control`, 52px; ADR-0055), so a
+    // button sits level beside a field. `--_c-button-min-height` is an
+    // INTERNAL hook (not consumer API): a wrapping c-button-group sets it on
+    // its frame so the buttons plus the frame total the control height.
+    root: 'min-h-[var(--_c-button-min-height,var(--spacing-control))] text-base',
   },
   large: {
     contentInner: 'h-full px-6',
     iconWrap: 'text-2xl',
-    root: 'min-h-13 text-lg',
+    // The toolbar height, one step above the control height.
+    root: 'min-h-toolbar text-lg',
   },
   small: {
     contentInner: 'h-full px-3',

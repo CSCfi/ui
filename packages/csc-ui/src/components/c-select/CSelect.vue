@@ -252,7 +252,7 @@ export interface CSelectProps {
    */
   shadow?: boolean;
   /**
-   * Field height: the 44px default or the 36px `small` box
+   * Field height: the 52px default (the shared control height) or the 36px `small` box
    *
    * @defaultable 'default'
    */
@@ -424,9 +424,10 @@ const select = tv({
     // A long option label ellipsises inside its tag instead of blowing out
     // the row.
     tagLabel: 'truncate min-w-0',
-    // The tag row wraps; `py-2` keeps a one-row field at the 44px / 36px
-    // rhythm (default tag 28px + 16px, small tag 20px + 16px). Wrapping lives
-    // here, not on the content row, so the clear/chevron stay centred.
+    // The tag row wraps; `py-2` gives a one-row tag field its own rhythm
+    // (default tag 28px + 16px, small tag 20px + 16px — the small box exactly,
+    // centred in the 52px default box). Wrapping lives here, not on the
+    // content row, so the clear/chevron stay centred.
     tags: 'flex flex-wrap items-center gap-1 py-2 flex-1 min-w-0',
   },
   variants: {

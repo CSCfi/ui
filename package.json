@@ -24,6 +24,6 @@
     "changeset": "changeset",
     "test": "pnpm --filter @cscfi/csc-ui run style-dictionary:build && vitest run",
     "test:watch": "vitest",
-    "test:update": "pnpm --filter @cscfi/csc-ui run style-dictionary:build && vitest run --project browser --update"
+    "test:update": "pnpm --filter @cscfi/csc-ui run style-dictionary:build && vitest run --project browser --project examples --update"
   }
 }
