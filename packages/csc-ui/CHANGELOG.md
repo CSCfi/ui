@@ -1,5 +1,17 @@
 # @cscfi/csc-ui
 
+## 4.0.0-alpha.22
+
+### Patch Changes
+
+- [#289](https://github.com/CSCfi/ui/pull/289) [`7587a76`](https://github.com/CSCfi/ui/commit/7587a760f8453c0d57a1994812a2f07d3c5c2141) Thanks [@razorfever](https://github.com/razorfever)! - Fix a `c-badge` slotted into a `c-tab` being cut off. The badge is a corner
+  overlay that paints 8px outside its parent, and the tab clipped it three times
+  over — on the tab's inner content box, on the tab element itself, and again on
+  the tab strip's viewport. The tab now clips with a margin wide enough for the
+  badge, the redundant second clip on the tab element is gone, and the strip's
+  viewport allows the same overhang while still hiding the tabs that scroll past
+  it. Badges in tabs now behave like badges in `c-button` and `c-icon-button`.
+
 ## 4.0.0-alpha.21
 
 ### Minor Changes
