@@ -3,7 +3,10 @@
     <c-tabs v-model="tab">
       <c-tab value="summary">Summary</c-tab>
 
-      <c-tab value="members">Members</c-tab>
+      <c-tab value="members">
+        Members
+        <c-badge>2</c-badge>
+      </c-tab>
 
       <c-tab value="settings">Settings</c-tab>
 

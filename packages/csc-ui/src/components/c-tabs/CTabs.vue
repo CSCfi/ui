@@ -91,7 +91,7 @@ export interface CTabsProps {
  * @slot default - Default slot
  * @slot items - The c-tab-items container holding the tab content panels
  * @csspart container - The header row wrapping the tab list and the overflow scroll buttons
- * @csspart tabs - The clipping viewport the tab list scrolls inside
+ * @csspart tabs - The clipping viewport the tab list scrolls inside, with a margin so a tab's focus ring and a slotted corner badge still paint
  * @csspart content - Wrapper around the slotted tab content panels
  *
  * @seeded from csc-ui — verify
@@ -155,7 +155,23 @@ const tabs = tv({
     container: 'grid items-center gap-1',
     content: 'flex',
     scroll: 'flex m-0 p-0 relative grow',
-    tabs: 'flex overflow-hidden p-1 relative -m-1',
+    // `tabs` is the viewport the translated `scroll` track hides behind, so it
+    // must keep clipping. `p-1 -m-1` insets the clip 4px at no layout cost —
+    // room for a tab's 2px focus outline at its 2px offset — and the 6px
+    // `overflow-clip-margin` adds the rest of the 8px a `c-badge` slotted into
+    // a tab overhangs by (`-right-1.5 -top-1.5` plus its 2px ring), with 2px of
+    // slack for antialiasing. `clip` rather than `hidden` because nothing here
+    // scrolls natively — the track is a transform on `scroll` — and only `clip`
+    // honours a clip margin.
+    //
+    // `min-w-0` is what `hidden` used to give for free: an `overflow: hidden`
+    // box is a scroll container, so its `min-width: auto` as a grid item
+    // resolved to 0. `clip` is not a scroll container, so without this the
+    // automatic minimum becomes the min-content width of the whole tab row —
+    // this box then outgrows its grid cell instead of clipping, and in buttons
+    // mode the strip's frame is no longer squeezed to the row (CTabButtons
+    // spec: "the strip is squeezed to the tab row, not clipped by it").
+    tabs: 'flex overflow-clip [overflow-clip-margin:6px] min-w-0 p-1 relative -m-1',
   },
 });
 

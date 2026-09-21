@@ -9,7 +9,10 @@ import { Component, CUSTOM_ELEMENTS_SCHEMA, signal } from '@angular/core';
     <div>
       <c-tabs [value]="tab()" (changeValue)="tab.set($any($event).detail)">
         <c-tab value="summary">Summary</c-tab>
-        <c-tab value="members">Members</c-tab>
+        <c-tab value="members">
+          Members
+          <c-badge>2</c-badge>
+        </c-tab>
         <c-tab value="settings">Settings</c-tab>
 
         <c-tab-items slot="items">
