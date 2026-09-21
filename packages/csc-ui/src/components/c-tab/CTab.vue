@@ -48,11 +48,17 @@ interface CTabEvents {
 /**
  * Styling lives in this `tailwind-variants` config; customization
  * is via `::part()`. The inner `root` content box, the ripple
- * container and the ripple dots are utilities here. The host itself MUST be the
- * styled/positioned tab box (it is the real `role="tab"` element c-tabs queries
- * and measures, with imperatively-toggled `c-tab--active`/`c-tab--disabled`
- * state and `:hover`/`:focus-visible` pseudo states), so its styling stays in
- * the escape-hatch <style> below. The ripple itself is the shared transition
+ * container and the ripple dots are utilities here. `root` clips with an 8px
+ * `overflow-clip-margin` rather than at its own edge: a `c-badge` slotted into
+ * the tab is a corner overlay (`absolute -right-1.5 -top-1.5` plus a 2px ring,
+ * so 8px of ink outside the tab box), and a hard clip swallowed it. The margin
+ * lets that badge through while a too-long `whitespace-nowrap` label — vertical
+ * tabs pin every tab to `min/max-width: 100%` — is still cut off.
+ *
+ * The host itself MUST be the styled/positioned tab box (it is the real
+ * `role="tab"` element c-tabs queries and measures, with imperatively-toggled
+ * `c-tab--active`/`c-tab--disabled` state and `:hover`/`:focus-visible` pseudo
+ * states), so its styling stays in the escape-hatch <style> below. The ripple itself is the shared transition
  * primitive (useRipple + transition utilities).
  */
 const tab = tv({
@@ -60,7 +66,7 @@ const tab = tv({
     ripple:
       'absolute rounded-full bg-current pointer-events-none transition-[transform,opacity] duration-[600ms] ease-out',
     ripples: 'absolute inset-0 overflow-hidden pointer-events-none',
-    root: 'flex items-center justify-center h-full w-full max-w-full overflow-hidden px-3 relative text-ellipsis whitespace-nowrap',
+    root: 'flex items-center justify-center h-full w-full max-w-full overflow-clip [overflow-clip-margin:8px] px-3 relative text-ellipsis whitespace-nowrap',
   },
 });
 
@@ -189,6 +195,13 @@ const onClick = (event: MouseEvent, center = false) => {
   pseudo states are positional :host selectors utilities can't express, so they
   stay here (this :host overrides the global `:host{display:contents}`; the
   per-type sheet is adopted after the shared sheet, so it wins).
+
+  The host deliberately does NOT clip. Its old `overflow: hidden` was a second
+  copy of the `[part=root]` clip that bought nothing — `root` is `h-full w-full`
+  so nothing reaches past the host through it, and the ripple is clipped by its
+  own `.ripples` container — while it re-cut the slotted `c-badge` that root's
+  `overflow-clip-margin` had just let through. Same split as c-button, whose
+  root is unclipped and whose ripple container does the clipping.
 -->
 <style>
 :host {
@@ -224,7 +237,6 @@ slot {
   font-weight: 600;
   height: var(--spacing-control);
   justify-content: center;
-  overflow: hidden;
   position: relative;
 }
 

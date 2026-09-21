@@ -1,6 +1,6 @@
 // @ts-nocheck — documentation code sample; shown as text, never compiled here
 import { useState } from 'react';
-import { CTab, CTabItem, CTabItems, CTabs } from '@cscfi/csc-ui-react';
+import { CBadge, CTab, CTabItem, CTabItems, CTabs } from '@cscfi/csc-ui-react';
 
 export const Basic = () => {
   const [tab, setTab] = useState<'summary' | 'members' | 'settings'>('summary');
@@ -14,7 +14,10 @@ export const Basic = () => {
         }
       >
         <CTab value="summary">Summary</CTab>
-        <CTab value="members">Members</CTab>
+        <CTab value="members">
+          Members
+          <CBadge>2</CBadge>
+        </CTab>
         <CTab value="settings">Settings</CTab>
 
         <CTabItems slot="items">
