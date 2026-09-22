@@ -12,6 +12,10 @@ layout's real scroller.
 Amended 2026-09-16: the pinned side navigation has an explicit height and a
 bounded shell declares its viewport height (see Amendment below).
 
+Amended 2026-09-22: the drawer adds nothing to the layout's height and the
+dashboard grid clips its overhang, so a page that fits the viewport never
+scrolls (see the second Amendment).
+
 ## Context
 
 In 3.x and the early 4.0 alphas `c-main` clamped itself to the viewport
@@ -24,7 +28,7 @@ shape:
   could move it. The `class="relative"` switch was inert inside `c-main`.
 - The 60px bar height was hardcoded in four library places (`c-toolbar`,
   `c-page`, `c-side-navigation` twice) and in consumers (`sticky top-15`).
-- The page lock (ADR-0014) locks *document* scroll, so a modal opened inside
+- The page lock (ADR-0014) locks _document_ scroll, so a modal opened inside
   `c-main` never stopped `c-page` scrolling behind it.
 - Mobile browser chrome collapse, router scroll restoration, find-in-page and
   anchor navigation all address the document scroller and missed an inner one.
@@ -104,3 +108,54 @@ Decided:
   high" symptom on tablets with collapsing browser chrome), so a bounded shell
   — the docs' 320px demo box — declares it. This is a layout parameter, not a
   restyling surface; ADR-0006's `::part()` rule stands.
+
+## Amendment (2026-09-22): the page alone sizes the layout
+
+Report: under a `static` toolbar the dashboard layout scrolled although the
+page fit the screen, and that scroll hid the toolbar. Measured at a 720px
+viewport with a 100px page: a static toolbar made the document 60px too tall,
+a 40px banner 40px, both together 100px, and a bounded 320px shell scrolled
+60px past its footer. The 2026-09-16 amendment sized the drawer to its pinned
+height (viewport − offset) and noted that at rest its bottom sits below the
+fold while the banner and toolbar rows are still on screen. That overhang is
+an in-flow grid item's height: it sized the `sidenav`/`page` row and with it
+the document. A fixed-height sticky box cannot both start below the toolbar at
+rest and fill the viewport once pinned, so either the row it sizes or the
+overhang it paints had to give.
+
+Decided:
+
+- The drawer's **margin box is zero-height**: its `margin-bottom` is the
+  negated pinned height, set by the grid only. It adds nothing to its row, so
+  the banner, the toolbar and the page alone size the layout, and a page that
+  fits the viewport is exactly a viewport tall and never scrolls. The sticky
+  position box is the margin box (css-position-3), so the drawer still pins
+  until its row leaves the viewport and still fills the viewport once pinned.
+- The **dashboard grid is the default `<slot>`'s own box**, a growing item of
+  the shell's flex column below the banner, and it **clips vertically**
+  (`overflow-y: clip`; `overflow-x` stays visible so a wide page still scrolls
+  the document). The clip cuts the drawer's overhang below the shell, so it
+  extends neither the document nor a bounded shell's scroller — a clip on the
+  `root` part would have fixed the document but not the shell, whose `root` is
+  the scroller. The grid box is not a part (ADR-0006): `::part(root)` keeps
+  the canvas, the minimum height and the bounded-shell recipe, but no longer
+  carries the grid tracks.
+- Column mode (`disable-layout`) is unchanged: the slot is boxless there and
+  the pull is undefined, since a zero-height drawer in a column would sit on
+  top of the page.
+
+Considered and rejected: sizing the drawer to the viewport minus the toolbar
+in both modes (one line, but the drawer stops a toolbar height short once a
+static toolbar has gone, and the banner still adds its height); measuring the
+rows above with a ResizeObserver (a scroll-measured height would still be
+needed to fill when pinned, and it reopens the measurement-free stance);
+letting `c-side-navigation` pin its own inner box inside a clipping host (the
+same zero-margin device plus a two-component custom-property contract and a
+`contain: size` width regression); a scroll-driven animation of the height
+(the banner height is unknown, modern engines only); a negative top margin
+(the first items would sit behind the toolbar).
+
+Consequence: whatever paints below `c-main`'s bottom edge is clipped instead
+of extending the document. In-flow content is unaffected — the layout grows
+with the page — and so are native popovers, fixed panels and the mobile
+drawer; only overflow escaping the shell's bottom edge is cut.

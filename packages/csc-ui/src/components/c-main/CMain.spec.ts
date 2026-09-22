@@ -348,6 +348,85 @@ describe('c-main', () => {
     });
   });
 
+  describe('a page that fits the viewport', () => {
+    /** A short page with a bottom-slot button: the drawer is the only box with a viewport-derived height. */
+    const SHORT = nav(ITEMS + BOTTOM) + page('100px');
+
+    /**
+     * The shell is exactly a viewport tall and nothing paints below it: the
+     * document ends at the shell's bottom edge (plus the harness frame's body
+     * padding), the footer ends with the shell and the bottom slot at the
+     * viewport's bottom edge.
+     */
+    const expectNoScroll = (m: Mounted) => {
+      const root = m.part('root').getBoundingClientRect();
+
+      const frame = parseFloat(getComputedStyle(document.body).paddingBottom);
+
+      expect(root.height).toBe(window.innerHeight);
+      expect(document.scrollingElement!.scrollHeight).toBe(root.bottom + frame);
+      expect(slotted(m, 'footer').getBoundingClientRect().bottom).toBeCloseTo(
+        root.bottom,
+        0,
+      );
+      expect(slotted(m, 'bottom').getBoundingClientRect().bottom).toBeCloseTo(
+        window.innerHeight - DRAWER_INSET,
+        0,
+      );
+    };
+
+    it('does not scroll under a static toolbar', async () => {
+      const m = await mountMain(STATIC_TOOLBAR + SHORT);
+
+      expectNoScroll(m);
+
+      // At rest the drawer still starts below the bar and is one pinned
+      // height tall; only its overhang is out of the layout.
+      expect(navOf(m).getBoundingClientRect().top).toBe(
+        barOf(m).getBoundingClientRect().bottom,
+      );
+      expect(navOf(m).getBoundingClientRect().height).toBe(window.innerHeight);
+    });
+
+    it('does not scroll under a banner', async () => {
+      const m = await mountMain(BANNER + TOOLBAR + SHORT);
+
+      expectNoScroll(m);
+      expect(navOf(m).getBoundingClientRect().top).toBe(
+        barOf(m).getBoundingClientRect().bottom,
+      );
+    });
+
+    it('does not scroll under a banner and a static toolbar', async () => {
+      const m = await mountMain(BANNER + STATIC_TOOLBAR + SHORT);
+
+      expectNoScroll(m);
+    });
+
+    it('does not scroll a bounded shell', async () => {
+      const m = await mountMain(STATIC_TOOLBAR + SHORT);
+
+      const root = m.part('root');
+
+      root.style.cssText =
+        'height: 320px; min-height: 0; overflow-y: auto; --c-main-viewport-height: 320px';
+      await settle();
+
+      expect(root.scrollHeight).toBe(320);
+      expect(navOf(m).getBoundingClientRect().height).toBe(320);
+    });
+
+    it('still lets a wide page scroll the document horizontally', async () => {
+      await mountMain(
+        `${TOOLBAR}${NAV}<c-page><div style="width: 3000px; height: 100px">Wide</div></c-page>`,
+      );
+
+      expect(document.scrollingElement!.scrollWidth).toBeGreaterThan(
+        window.innerWidth,
+      );
+    });
+  });
+
   it('visual: the dashboard', async () => {
     const m = await mountMain(BANNER + TOOLBAR + NAV + page('100px'));
 
