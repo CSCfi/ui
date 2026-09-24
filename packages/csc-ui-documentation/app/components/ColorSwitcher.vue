@@ -1,5 +1,5 @@
 <template>
-  <c-menu position="bottom-end" @select="onSelect">
+  <c-menu position="bottom-end" distance="8" @select="onSelect">
     <c-button
       slot="trigger"
       :aria-label="`Primary colour: ${currentColor.label}`"
@@ -79,9 +79,5 @@ const onSelect = (event: CustomEvent<{ value: Swatch }>) =>
 <style scoped>
 c-button::part(root) {
   color: var(--c-on-surface);
-}
-
-c-menu::part(panel) {
-  inset: 8px 0;
 }
 </style>

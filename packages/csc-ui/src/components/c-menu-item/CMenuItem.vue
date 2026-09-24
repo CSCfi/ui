@@ -80,9 +80,11 @@ import {
   watch,
 } from 'vue';
 
-import { ensureAnchorPositioning } from '../../shared/anchorPolyfill';
+import type { CPlacement } from '../../types';
+
 import { coerceBoolean } from '../../shared/coerceBoolean';
 import { applyPeekCap } from '../../shared/peekCap';
+import { useFallbackPosition } from '../../shared/useFallbackPosition';
 
 /**
  * A single command in a `c-menu`. Mostly presentational: it renders its row
@@ -239,10 +241,45 @@ const ui = computed(() =>
   item({ danger: isDanger.value, disabled: isDisabled.value }),
 );
 
+// Without native anchor positioning (Firefox 140 ESR) Floating UI places the
+// submenu (ADR-0056): the chain mirrors the `position-try-fallbacks` rule
+// below — flip-inline, flip-block, both, then below/above the row — and the
+// gap is the rule's margins: the surfaces-touch constant plus the menu
+// distance beside the row, the menu distance alone below or above it.
+const SUBMENU_FALLBACKS: CPlacement[] = [
+  'left-start',
+  'right-end',
+  'left-end',
+  'bottom-start',
+  'bottom-end',
+  'top-start',
+  'top-end',
+];
+
+const menuDistance = (): number =>
+  submenuRef.value
+    ? parseFloat(
+        getComputedStyle(submenuRef.value).getPropertyValue(
+          '--_c-menu-distance',
+        ),
+      ) || 0
+    : 0;
+
+const fallback = useFallbackPosition({
+  fallbacks: () => SUBMENU_FALLBACKS,
+  floating: submenuRef,
+  gap: (side) =>
+    side === 'left' || side === 'right' ? 4 + menuDistance() : menuDistance(),
+  placement: () => 'right-start',
+  reference: () => rootRef.value,
+});
+
 // Anchor the submenu to this item's row. The name is tree-scoped to this
 // component's shadow root, so a constant is collision-free across instances.
-const submenuStyle =
-  'position-anchor:--c-menu-item-anchor;position-area:right span-bottom;inset:auto;';
+const submenuStyle = computed(
+  () =>
+    `position-anchor:--c-menu-item-anchor;position-area:right span-bottom;inset:auto;${fallback.style.value}`,
+);
 
 // Whether a populated `submenu` slot exists. Detected by querying this host's
 // own light-DOM children for `slot="submenu"` (not via the shadow `<slot>`),
@@ -303,13 +340,15 @@ const openSubmenu = () => {
   requestAnimationFrame(applySubmenuCap);
 
   host?.setAttribute('aria-expanded', 'true');
-  void ensureAnchorPositioning(host?.shadowRoot);
+  fallback.start();
 };
 
 const closeSubmenu = () => {
   const panel = submenuRef.value;
 
   if (panel?.matches(':popover-open')) panel.hidePopover();
+
+  fallback.stop();
 
   if (host?.hasAttribute('aria-haspopup')) {
     host.setAttribute('aria-expanded', 'false');

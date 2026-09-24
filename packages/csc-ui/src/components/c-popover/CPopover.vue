@@ -93,7 +93,6 @@ import {
   watch,
 } from 'vue';
 
-import { ensureAnchorPositioning } from '../../shared/anchorPolyfill';
 import { coerceBoolean } from '../../shared/coerceBoolean';
 import { deepActiveElement } from '../../shared/modalStack';
 import {
@@ -104,6 +103,10 @@ import {
 } from '../../shared/popoverChain';
 import { placementAxis, POSITION_AREA } from '../../shared/positionArea';
 import { useDesignatedTrigger } from '../../shared/useDesignatedTrigger';
+import {
+  flipChain,
+  useFallbackPosition,
+} from '../../shared/useFallbackPosition';
 import { useHostEmit } from '../../shared/useHostEmit';
 
 /** Events dispatched by `<c-popover>`. */
@@ -239,9 +242,19 @@ const panelStyle = computed(
       designated.element.value ? '--c-popover-designated' : '--c-popover-anchor'
     };position-area:${
       POSITION_AREA[props.position] ?? POSITION_AREA.bottom
-    };inset:auto;margin-${placementAxis(props.position)}:${Number(props.distance) || 0}px;`,
+    };inset:auto;margin-${placementAxis(props.position)}:${Number(props.distance) || 0}px;${fallback.style.value}`,
 );
 
+// Without native anchor positioning (Firefox 140 ESR) Floating UI places the
+// panel; the chain mirrors the `position-try-fallbacks` rule below (ADR-0056).
+const fallback = useFallbackPosition({
+  fallbacks: flipChain,
+  floating: panelRef,
+  gap: () => Number(props.distance) || 0,
+  placement: () =>
+    props.position in POSITION_AREA ? props.position : 'bottom',
+  reference: () => designated.element.value ?? anchorRef.value,
+});
 // ---- open / close ----------------------------------------------------------
 
 const emit = useHostEmit<CPopoverEvents>();
@@ -320,7 +333,7 @@ const onToggle = (event: Event) => {
       );
     }
 
-    void ensureAnchorPositioning(host?.shadowRoot);
+    fallback.start();
 
     // Dismissal (light dismiss, Escape peeling, descendant closing) is owned
     // by the shared popover chain while any popover is open (ADR-0038).
@@ -328,6 +341,7 @@ const onToggle = (event: Event) => {
   } else {
     leaveChain(chainEntry);
     designated.stopTracking();
+    fallback.stop();
 
     if (pendingReturnFocus) getTriggerEl()?.focus?.();
 

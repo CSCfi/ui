@@ -10,10 +10,11 @@
  * cannot reference an `anchor-name` on an outer-tree element. Instead the
  * component keeps a *proxy anchor* — an inert, fixed-position box in its own
  * shadow root carrying the anchor name — and this composable pins it over
- * the designated trigger's rect while the panel is open (a rAF loop, the
- * same tracking strategy the OddBird polyfill uses). `position-area`
- * placement and the `position-try-fallbacks` flip/shift keep working
- * unchanged; only the measurement is JS.
+ * the designated trigger's rect while the panel is open (a rAF loop).
+ * `position-area` placement and the `position-try-fallbacks` flip/shift keep
+ * working unchanged; only the measurement is JS. Without native anchor
+ * positioning the proxy is unused: Floating UI places the panel against the
+ * designated element directly (`useFallbackPosition`, ADR-0056).
  */
 
 import { onBeforeUnmount, ref, type Ref, watch } from 'vue';

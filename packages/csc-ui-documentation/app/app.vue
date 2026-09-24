@@ -95,9 +95,11 @@
 </template>
 
 <script setup lang="ts">
+// A stable gutter keeps the page from reflowing when the library's page lock
+// (an open c-select list, a c-modal) hides the document scrollbar (ADR-0014).
 useHead({
   htmlAttrs: {
-    class: 'scroll-smooth',
+    class: 'scroll-smooth [scrollbar-gutter:stable]',
   },
 });
 const { navComponents } = useManifest();

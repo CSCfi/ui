@@ -898,13 +898,22 @@ watch(
 // lock every modal surface in the library holds — `showModal()` already
 // inerts the page, so only its scroll lock matters here. Keyed on the host,
 // so a select opened inside a modal releases back to the modal's hold.
+//
+// The locked body is fixed over the viewport, so a reflow of the page under an
+// open menu no longer resizes it: while the menu is open, the body's children
+// and their list are observed too, and a change of the body's content height
+// (its `scrollHeight` as the locked scroller) counts as the reflow.
 watch(isOpen, (value) => {
   if (value) {
     handleOpen();
 
     if (host) lockPage(host);
-  } else if (host) {
-    unlockPage(host);
+
+    observePage();
+  } else {
+    unobservePage();
+
+    if (host) unlockPage(host);
   }
 
   emit('dropdownStateChange', value, bubbling);
@@ -968,12 +977,49 @@ watch([itemsArray, narrow, () => !!props.selectAllRow], () => {
   });
 });
 
+// The body's content height at open, and the observers that report a reflow
+// of the page under the locked body (see the page lock watch above).
+let pageHeight = 0;
+
+let pageObserver: MutationObserver | null = null;
+
+let observedChildren: Element[] = [];
+
+const pageReflowed = () => document.body.scrollHeight !== pageHeight;
+
+const observePage = () => {
+  pageHeight = document.body.scrollHeight;
+  observedChildren = Array.from(document.body.children);
+
+  for (const child of observedChildren) resizeObserver?.observe(child);
+
+  pageObserver ??= new MutationObserver(() => {
+    requestAnimationFrame(() => {
+      if (!dialogRef.value?.open || isOpening || fullscreenOpen.value) return;
+
+      if (pageReflowed()) close();
+    });
+  });
+  pageObserver.observe(document.body, { childList: true });
+};
+
+const unobservePage = () => {
+  pageObserver?.disconnect();
+
+  for (const child of observedChildren) resizeObserver?.unobserve(child);
+
+  observedChildren = [];
+};
+
 onMounted(() => {
   if (!host) return;
   inputElement = host.querySelector('c-input') as typeof inputElement;
 
   resizeObserver = new ResizeObserver((entries) => {
     if (!dialogRef.value?.open) return;
+
+    const bodyResized = entries.some((entry) => entry.target === document.body);
+
     requestAnimationFrame(() => {
       if (!Array.isArray(entries) || !entries.length || isOpening) return;
 
@@ -986,7 +1032,7 @@ onMounted(() => {
       // the threshold (watched above) changes that panel's fate.
       if (fullscreenOpen.value) return;
 
-      close();
+      if (bodyResized || pageReflowed()) close();
     });
   });
   resizeObserver.observe(document.body);
@@ -996,6 +1042,7 @@ onMounted(() => {
 
 onBeforeUnmount(() => {
   resizeObserver?.disconnect();
+  pageObserver?.disconnect();
   stopViewport?.();
   stopViewport = null;
 

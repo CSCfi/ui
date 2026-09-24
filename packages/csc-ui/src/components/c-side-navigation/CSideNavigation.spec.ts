@@ -97,4 +97,43 @@ describe('c-side-navigation', () => {
     expect(heights, 'the drawer height declaration').toContain('100dvh');
     expect(heights).not.toContain('100vh');
   });
+
+  // A stable scrollbar gutter on the page (the ADR-0014 advice) leaves a
+  // drawer that is only slid off-screen showing in the gutter — a 15px strip
+  // at the right edge of a phone. The closed drawer is invisible instead.
+  it('mobile: the closed drawer shows nothing, even beside a stable scrollbar gutter', async () => {
+    const root = document.documentElement;
+
+    const gutter = root.style.scrollbarGutter;
+
+    root.style.scrollbarGutter = 'stable';
+
+    try {
+      const m = await mount('c-side-navigation', {
+        attrs: { mobile: true },
+        html: ITEMS,
+      });
+
+      await settle(300);
+
+      const drawer = m.part('root');
+
+      expect(getComputedStyle(drawer).visibility).toBe('hidden');
+      // The slide is Tailwind's `translate` property, not `transform`: it has
+      // to stay in the transition list, or the drawer jumps instead.
+      expect(getComputedStyle(drawer).transitionProperty).toContain(
+        'translate',
+      );
+
+      (m.host as { menuVisible?: boolean } & HTMLElement).menuVisible = true;
+      await settle(300);
+
+      expect(getComputedStyle(drawer).visibility).toBe('visible');
+      expect(drawer.getBoundingClientRect().right).toBeLessThanOrEqual(
+        window.innerWidth,
+      );
+    } finally {
+      root.style.scrollbarGutter = gutter;
+    }
+  });
 });
