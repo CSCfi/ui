@@ -8,7 +8,7 @@
       />
     </template>
 
-    <c-menu position="bottom-end" @select="onSelect">
+    <c-menu position="bottom-end" distance="8" @select="onSelect">
       <c-button
         slot="trigger"
         :aria-label="`Color theme: ${preference}`"
