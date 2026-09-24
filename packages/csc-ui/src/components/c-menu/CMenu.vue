@@ -74,12 +74,15 @@ import {
 
 import type { CPlacement } from '../../types';
 
-import { ensureAnchorPositioning } from '../../shared/anchorPolyfill';
 import { coerceBoolean } from '../../shared/coerceBoolean';
 import { attachLightDismiss, type Detach } from '../../shared/lightDismiss';
 import { applyPeekCap } from '../../shared/peekCap';
 import { placementAxis, POSITION_AREA } from '../../shared/positionArea';
 import { useDesignatedTrigger } from '../../shared/useDesignatedTrigger';
+import {
+  flipChain,
+  useFallbackPosition,
+} from '../../shared/useFallbackPosition';
 import { useHostEmit } from '../../shared/useHostEmit';
 
 /** Events dispatched by `<c-menu>`. */
@@ -188,9 +191,19 @@ const panelStyle = computed(
       designated.element.value ? '--c-menu-designated' : '--c-menu-anchor'
     };position-area:${
       POSITION_AREA[props.position] ?? POSITION_AREA['bottom-start']
-    };inset:auto;margin-${placementAxis(props.position)}:var(--_c-menu-distance,0px);`,
+    };inset:auto;margin-${placementAxis(props.position)}:var(--_c-menu-distance,0px);${fallback.style.value}`,
 );
 
+// Without native anchor positioning (Firefox 140 ESR) Floating UI places the
+// panel; the chain mirrors the `position-try-fallbacks` rule below (ADR-0056).
+const fallback = useFallbackPosition({
+  fallbacks: flipChain,
+  floating: panelRef,
+  gap: () => Number(props.distance) || 0,
+  placement: () =>
+    props.position in POSITION_AREA ? props.position : 'bottom-start',
+  reference: () => designated.element.value ?? anchorRef.value,
+});
 watch(distancePx, (px) => {
   host?.style.setProperty('--_c-menu-distance', px);
 });
@@ -607,7 +620,7 @@ const onToggle = (event: Event) => {
   emit('change:open', nowOpen);
 
   if (nowOpen) {
-    void ensureAnchorPositioning(host?.shadowRoot);
+    fallback.start();
     addDismissListeners();
 
     requestAnimationFrame(() => {
@@ -627,6 +640,7 @@ const onToggle = (event: Event) => {
   } else {
     removeDismissListeners();
     designated.stopTracking();
+    fallback.stop();
     closeAllSubmenus();
     clearActive();
 

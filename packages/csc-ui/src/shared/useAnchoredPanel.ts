@@ -38,7 +38,8 @@
  *    release both outside the host close the panel; a press alone — the
  *    start of every touch scroll — never does (`lightDismiss.ts`);
  *  - focus return to the value field on `close(true)`;
- *  - the OddBird anchor polyfill kick-off on an anchored open (Firefox).
+ *  - the Floating UI placement on an anchored open without native anchor
+ *    positioning (Firefox 140 ESR; ADR-0056).
  *
  * What stays in the consumer: the `@position-try --c-field-panel-above` /
  * `--c-field-panel-above-left` flip rules and `position-try-fallbacks` —
@@ -61,9 +62,9 @@ import {
   watch,
 } from 'vue';
 
-import { ensureAnchorPositioning } from './anchorPolyfill';
 import { attachLightDismiss, type Detach } from './lightDismiss';
 import { lockPage, unlockPage } from './pageLock';
+import { useFallbackPosition } from './useFallbackPosition';
 import {
   contentBoxStyle,
   FULLSCREEN_SURFACE_STYLE,
@@ -109,11 +110,11 @@ export interface UseAnchoredPanelOptions {
   field: Readonly<Ref<HTMLElement | null>>;
   /** Open as a fullscreen panel while true — the shared narrow-viewport predicate (`useNarrowViewport`). Absent: always anchored. */
   fullscreen?: Readonly<Ref<boolean>>;
-  /** The custom element host: light dismiss keeps gestures whose composed path includes it; its shadow root is what the anchor polyfill runs against; it is what the page lock keeps interactive. */
+  /** The custom element host: light dismiss keeps gestures whose composed path includes it; it is what the page lock keeps interactive. */
   host: HTMLElement | null;
   /** Runs inside the native `toggle` handler once closed, before focus returns. */
   onClosed?: () => void;
-  /** Runs inside the native `toggle` handler once open, after the polyfill kick-off / page lock and the dismiss listener — the consumer's open sequence goes here. */
+  /** Runs inside the native `toggle` handler once open, after the fallback positioning / page lock and the dismiss listener — the consumer's open sequence goes here. */
   onOpened?: () => void;
   /** The `popover="manual"` panel element. */
   panel: Readonly<Ref<HTMLElement | null>>;
@@ -168,6 +169,19 @@ export const useAnchoredPanel = (
 
   // ---- style ----------------------------------------------------------------
 
+  // Without native anchor positioning (Firefox 140 ESR) Floating UI places the
+  // anchored panel (ADR-0056). The chain mirrors the consumers'
+  // `position-try-fallbacks: --c-field-panel-above, flip-inline,
+  // --c-field-panel-above-left`, and the gap is the same field-box pull-back:
+  // the bottom offset below the field, the top offset above it.
+  const fallback = useFallbackPosition({
+    fallbacks: () => ['top-start', 'bottom-end', 'top-end'],
+    floating: options.panel,
+    gap: (side) => -(side === 'top' ? topOffset.value : bottomOffset.value),
+    placement: () => 'bottom-start',
+    reference: () => options.anchor.value,
+  });
+
   const panelStyle = computed(() => {
     if (layout.value === 'fullscreen') return FULLSCREEN_SURFACE_STYLE;
 
@@ -180,7 +194,7 @@ export const useAnchoredPanel = (
     // too (and not an on-top label's).
     const t = `--_c-field-panel-top-offset:${topOffset.value}px;`;
 
-    return `position-anchor:${FIELD_PANEL_ANCHOR};position-area:bottom span-right;inset:auto;${w}${m}${t}`;
+    return `position-anchor:${FIELD_PANEL_ANCHOR};position-area:bottom span-right;inset:auto;${w}${m}${t}${fallback.style.value}`;
   });
 
   const cardStyle = computed(() =>
@@ -276,13 +290,14 @@ export const useAnchoredPanel = (
       if (openLayout.value === 'fullscreen') {
         if (options.host) lockPage(options.host);
       } else {
-        void ensureAnchorPositioning(options.host?.shadowRoot);
+        fallback.start();
       }
 
       attachDismiss();
       options.onOpened?.();
     } else {
       detachDismissListeners();
+      fallback.stop();
 
       if (options.host) unlockPage(options.host);
 

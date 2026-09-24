@@ -98,15 +98,17 @@ import {
   onBeforeUnmount,
   onMounted,
   ref,
-  useHost,
   useTemplateRef,
   watch,
 } from 'vue';
 
-import { ensureAnchorPositioning } from '../../shared/anchorPolyfill';
 import { coerceBoolean } from '../../shared/coerceBoolean';
 import { placementAxis, POSITION_AREA } from '../../shared/positionArea';
 import { useDesignatedTrigger } from '../../shared/useDesignatedTrigger';
+import {
+  flipChain,
+  useFallbackPosition,
+} from '../../shared/useFallbackPosition';
 import { useHostEmit } from '../../shared/useHostEmit';
 
 /** Events dispatched by `<c-tooltip>`. */
@@ -159,8 +161,6 @@ const props = withDefaults(defineProps<CTooltipProps>(), {
 // Anchor wrapper + panel are two root nodes; opt out of attr fallthrough.
 defineOptions({ inheritAttrs: false });
 
-const host = useHost();
-
 const anchorRef = useTemplateRef<HTMLElement>('anchorRef');
 
 const panelRef = useTemplateRef<HTMLElement>('panelRef');
@@ -197,9 +197,18 @@ const panelStyle = computed(
       designated.element.value ? '--c-tooltip-designated' : '--c-tooltip-anchor'
     };position-area:${
       POSITION_AREA[props.position] ?? POSITION_AREA.top
-    };inset:auto;margin-${placementAxis(props.position)}:${Number(props.distance) || 0}px;`,
+    };inset:auto;margin-${placementAxis(props.position)}:${Number(props.distance) || 0}px;${fallback.style.value}`,
 );
 
+// Without native anchor positioning (Firefox 140 ESR) Floating UI places the
+// panel; the chain mirrors the `position-try-fallbacks` rule below (ADR-0056).
+const fallback = useFallbackPosition({
+  fallbacks: flipChain,
+  floating: panelRef,
+  gap: () => Number(props.distance) || 0,
+  placement: () => (props.position in POSITION_AREA ? props.position : 'top'),
+  reference: () => designated.element.value ?? anchorRef.value,
+});
 // ---- show / hide -----------------------------------------------------------
 
 const emit = useHostEmit<CTooltipEvents>();
@@ -300,11 +309,12 @@ const onToggle = (event: Event) => {
   emit('change:open', nowOpen);
 
   if (nowOpen) {
-    void ensureAnchorPositioning(host?.shadowRoot);
+    fallback.start();
     document.addEventListener('keydown', onDocKeydown, true);
   } else {
     document.removeEventListener('keydown', onDocKeydown, true);
     designated.stopTracking();
+    fallback.stop();
   }
 };
 
