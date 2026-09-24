@@ -126,10 +126,15 @@ const updateActive = () => {
   }
 
   // Pin the last item once the page is scrolled to the bottom (short tail
-  // sections could otherwise never reach the toolbar line).
+  // sections could otherwise never reach the toolbar line). Read from the
+  // content's visible bottom edge, not window.scrollY: while the library's
+  // page lock holds (an open c-select list, a c-modal) the body is fixed and
+  // scrolls itself, so the window reads as unscrolled and the root as one
+  // viewport tall — which pinned the last item.
+  const content = document.getElementById('__nuxt') ?? document.documentElement;
+
   const scrolledToBottom =
-    window.innerHeight + window.scrollY >=
-    document.documentElement.scrollHeight - 2;
+    content.getBoundingClientRect().bottom <= window.innerHeight + 2;
 
   if (scrolledToBottom) current = items.at(-1)?.id ?? current;
 
