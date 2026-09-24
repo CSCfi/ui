@@ -102,8 +102,15 @@ defineOptions({ inheritAttrs: false });
  */
 const sideNavigation = tv({
   compoundVariants: [
-    // Mobile drawer slides off-screen when hidden.
-    { class: { content: 'translate-x-full' }, hidden: true, mobile: true },
+    // Mobile drawer slides off-screen when hidden, and is invisible once
+    // off-screen: a stable scrollbar gutter on the page (ADR-0014) leaves a
+    // slid-out drawer showing in the gutter. Invisible also takes its links
+    // out of the tab order and the accessibility tree while it is closed.
+    {
+      class: { content: 'translate-x-full invisible' },
+      hidden: true,
+      mobile: true,
+    },
     // Mobile: the close row sits above the list, so the list drops its top padding.
     { class: { nav: 'pt-0' }, mobile: true },
   ],
@@ -135,7 +142,7 @@ const sideNavigation = tv({
         // shown the drawer's tail — the last items, the bottom slot — sat
         // behind it. The dynamic unit follows the visible viewport.
         content:
-          'h-dvh max-w-80 overflow-hidden fixed right-0 top-0 z-[999] transition-transform duration-200 ease-standard translate-x-0',
+          'h-dvh max-w-80 overflow-hidden fixed right-0 top-0 z-[999] transition-[transform,translate,visibility] duration-200 ease-standard translate-x-0',
       },
     },
   },
