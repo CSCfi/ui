@@ -86,6 +86,11 @@ standalone (no `c-main`) usage.
 - **Scroll lock** = `overflow: hidden` on `document.documentElement` while the
   stack is non-empty (prior inline value restored). Layout-shift mitigation is
   documentation (`scrollbar-gutter: stable`), not injected padding.
+  _Amended 2026-09-24_: iOS Safari pans an `overflow: hidden` document under a
+  touch, so the lock also fixes the body over the viewport as its own clipped
+  scroller, scrolled to the page's offset (restored on release). Shifting the
+  fixed body up by the offset instead left sticky toolbars and side
+  navigation at their in-page position in Firefox 140, above the viewport.
 
 ## Considered alternatives
 

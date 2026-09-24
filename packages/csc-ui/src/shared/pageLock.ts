@@ -30,12 +30,11 @@ let scrollLocked = false;
  * what the consumer had set (usually nothing).
  */
 interface LockedStyles {
-  bodyLeft: string;
+  bodyInset: string;
+  bodyOverflow: string;
   bodyPosition: string;
-  bodyRight: string;
-  bodyTop: string;
-  bodyWidth: string;
   rootOverflow: string;
+  scrollX: number;
   scrollY: number;
 }
 
@@ -126,10 +125,17 @@ const applyInert = (): void => {
  * Stop the document scrolling under the active holder. `overflow: hidden` on
  * the root element is enough for a wheel or a scrollbar, but iOS Safari keeps
  * panning an `overflow: hidden` document under a touch, so the body is also
- * taken out of the scroll flow: `position: fixed`, shifted up by the scroll
- * offset the page had, so nothing visibly moves. Release restores the inline
- * styles and puts the offset back. The touch-pan guard (`onTouchMove`) is
- * held for the same span.
+ * taken out of the scroll flow: `position: fixed` over the viewport. The body
+ * is then its own clipped scroller (the root's `overflow: hidden` stops the
+ * body's overflow propagating to the viewport), scrolled to the offset the
+ * page had, so nothing visibly moves. Scrolling the body rather than shifting
+ * it up by the offset keeps sticky descendants pinned: Firefox 140 leaves a
+ * sticky toolbar or side navigation at its in-page position inside a shifted
+ * fixed body, far above the viewport. A sticky box pins inside its
+ * scroller's padding box, so on a body with padding or margin it sits that
+ * far below the viewport edge while the lock holds. Release restores the inline styles and
+ * puts the offset back. The touch-pan guard (`onTouchMove`) is held for the
+ * same span.
  */
 const applyScrollLock = (): void => {
   const root = document.documentElement;
@@ -139,20 +145,24 @@ const applyScrollLock = (): void => {
   if (holders.length > 0 && !scrollLocked) {
     scrollLocked = true;
     saved = {
-      bodyLeft: body.style.left,
+      bodyInset: body.style.inset,
+      bodyOverflow: body.style.overflow,
       bodyPosition: body.style.position,
-      bodyRight: body.style.right,
-      bodyTop: body.style.top,
-      bodyWidth: body.style.width,
       rootOverflow: root.style.overflow,
+      scrollX: window.scrollX,
       scrollY: window.scrollY,
     };
     root.style.overflow = 'hidden';
     body.style.position = 'fixed';
-    body.style.top = `${-saved.scrollY}px`;
-    body.style.left = '0';
-    body.style.right = '0';
-    body.style.width = '100%';
+    body.style.inset = '0';
+    body.style.overflow = 'hidden';
+    // `instant`: a consumer's `scroll-behavior: smooth` must not animate the
+    // page to where it already was.
+    body.scrollTo({
+      behavior: 'instant',
+      left: saved.scrollX,
+      top: saved.scrollY,
+    });
     document.addEventListener('touchmove', onTouchMove, { passive: false });
   } else if (holders.length === 0 && scrollLocked) {
     scrollLocked = false;
@@ -162,15 +172,11 @@ const applyScrollLock = (): void => {
 
     root.style.overflow = saved.rootOverflow;
     body.style.position = saved.bodyPosition;
-    body.style.top = saved.bodyTop;
-    body.style.left = saved.bodyLeft;
-    body.style.right = saved.bodyRight;
-    body.style.width = saved.bodyWidth;
-    // `instant`: a consumer's `scroll-behavior: smooth` must not animate the
-    // page back to where it already was.
+    body.style.inset = saved.bodyInset;
+    body.style.overflow = saved.bodyOverflow;
     window.scrollTo({
       behavior: 'instant',
-      left: window.scrollX,
+      left: saved.scrollX,
       top: saved.scrollY,
     });
     saved = null;

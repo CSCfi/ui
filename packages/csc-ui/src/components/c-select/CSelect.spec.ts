@@ -519,9 +519,10 @@ describe('fullscreen panel', () => {
 
   // The reported bug: on a phone the field STAYS in the page (ADR-0050,
   // amended), so in `multiple` mode the pick that wraps its tag row grows the
-  // field — and with it `document.body`. c-dropdown's body ResizeObserver used
-  // to read that reflow as "the page moved under the anchored menu" and close,
-  // which is why the panel shut on a seemingly random pick.
+  // field — and with it the page. c-dropdown's page-reflow observers used to
+  // read that reflow as "the page moved under the anchored menu" and close,
+  // which is why the panel shut on a seemingly random pick. The locked body
+  // is fixed over the viewport, so the field's own height shows the reflow.
   it('stays open in multiple mode when a pick wraps the field tag row', async () => {
     await page.viewport(PHONE.width, PHONE.height);
 
@@ -537,7 +538,9 @@ describe('fullscreen panel', () => {
     // the very reflow this case is about.
     await settle(550);
 
-    const before = document.body.getBoundingClientRect().height;
+    const field = () => m.shadow('c-input').getBoundingClientRect().height;
+
+    const before = field();
 
     await userEvent.click(rows(m)[0]);
     await settle();
@@ -548,7 +551,7 @@ describe('fullscreen panel', () => {
     await settle();
 
     expect(
-      document.body.getBoundingClientRect().height,
+      field(),
       'precondition: the tag row wrapped, growing the field and the page',
     ).toBeGreaterThan(before);
 

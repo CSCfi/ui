@@ -124,6 +124,10 @@ consumer flag on `c-side-navigation`.
   fullscreen one. The field stays in the page (decision 1, amended), so in
   `multiple` mode it grows whenever its tag row wraps — a reflow the panel's
   own selection causes, which closed the panel on a seemingly random pick.
+  _Amended 2026-09-24_: the locked body is fixed over the viewport (ADR-0014,
+  amended), so its box no longer grows with the page; the anchored close
+  reads a reflow as a change of the body's content height, observed on the
+  body's children and their list while the menu is open.
   Nothing about the fullscreen panel is placed against the page, so no reflow
   concerns it. For the same reason a tap on the panel surface beside the
   content column no longer closes it either: a fullscreen panel is never

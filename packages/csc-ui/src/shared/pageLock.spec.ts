@@ -160,13 +160,26 @@ describe('lockPage', () => {
 
   // iOS Safari pans an `overflow: hidden` document under a touch, so the
   // lock takes the body out of the scroll flow — without the page visibly
-  // moving, and putting the offset back on release.
-  it('takes a scrolled body out of flow at its scroll offset and restores the offset on release', async () => {
+  // moving, and putting the offset back on release. The fixed body scrolls
+  // itself to the offset rather than being shifted up by it: Firefox 140
+  // leaves sticky descendants of a shifted fixed body at their in-page
+  // position (a docs toolbar vanished thousands of pixels above the
+  // viewport), while Chromium pins them either way.
+  it('takes a scrolled body out of flow as its own scroller at the scroll offset, keeps sticky content pinned, and restores the offset on release', async () => {
     const f = build();
+
+    const bar = document.createElement('div');
+    bar.style.cssText = 'position: sticky; top: 0; height: 40px';
 
     const tall = document.createElement('div');
     tall.style.height = '400vh';
+    document.body.prepend(bar);
     document.body.append(tall);
+
+    // A sticky box pins inside its scroller's padding, and the harness body
+    // is padded; a page body without padding or margin pins at the viewport.
+    const padding = document.body.style.padding;
+    document.body.style.padding = '0';
 
     try {
       window.scrollTo({ behavior: 'instant', top: 300 });
@@ -175,24 +188,33 @@ describe('lockPage', () => {
 
       const anchor = tall.getBoundingClientRect().top;
 
+      const pinned = bar.getBoundingClientRect().top;
+
       lock(f.host);
 
       const { body } = document;
 
       expect(body.style.position).toBe('fixed');
-      expect(body.style.top).toBe('-300px');
-      expect(body.style.width).toBe('100%');
+      expect(body.style.inset).toBe('0px');
+      expect(body.style.top, 'not shifted up by the offset').toBe('0px');
+      expect(getComputedStyle(body).overflowY).toBe('hidden');
+      expect(body.scrollTop, 'the body scrolls itself to the offset').toBe(300);
       expect(tall.getBoundingClientRect().top, 'nothing visibly moves').toBe(
         anchor,
+      );
+      expect(bar.getBoundingClientRect().top, 'sticky stays pinned').toBe(
+        pinned,
       );
 
       unlockPage(f.host);
 
       expect(body.style.position).toBe('');
-      expect(body.style.top).toBe('');
-      expect(body.style.width).toBe('');
+      expect(body.style.inset).toBe('');
+      expect(body.style.overflow).toBe('');
       expect(window.scrollY).toBe(300);
     } finally {
+      document.body.style.padding = padding;
+      bar.remove();
       tall.remove();
       window.scrollTo({ behavior: 'instant', top: 0 });
     }
