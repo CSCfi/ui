@@ -1,5 +1,37 @@
 # @cscfi/csc-ui-react
 
+## 4.0.0-alpha.24
+
+### Patch Changes
+
+- [#293](https://github.com/CSCfi/ui/pull/293) [`561a03c`](https://github.com/CSCfi/ui/commit/561a03c44acbe4b1b90ed20ff84affb15414206e) Thanks [@razorfever](https://github.com/razorfever)! - Fix the floating label disappearing in Firefox 140 ESR once a field is focused
+  or filled. The label lifted onto the field border in `c-text-field`,
+  `c-select`, `c-autocomplete` and `c-tree-select` (and any bare `c-input`)
+  painted nothing there; it now shows in every browser, with the same look and
+  the same ellipsis for a long label.
+
+- [#293](https://github.com/CSCfi/ui/pull/293) [`e3e2502`](https://github.com/CSCfi/ui/commit/e3e2502e8051aa789dc945e1b49113aa3bd5dcf0) Thanks [@razorfever](https://github.com/razorfever)! - Fix overlays opening in the wrong place in browsers without CSS anchor
+  positioning, such as Firefox 140 ESR. Menus and submenus, tooltips, popovers
+  and the `c-select`, `c-autocomplete` and `c-tree-select` panels now open against
+  their trigger there too, flip like they do elsewhere when there is no room, and
+  follow the trigger on scroll. `@oddbird/css-anchor-positioning` is no longer a
+  dependency; `@floating-ui/dom` takes its place and loads only in those browsers.
+
+- [#293](https://github.com/CSCfi/ui/pull/293) [`d3b0186`](https://github.com/CSCfi/ui/commit/d3b018615e1e02a7e4210862a860a244b54fba02) Thanks [@razorfever](https://github.com/razorfever)! - Fix sticky toolbars and side navigation vanishing in Firefox 140 ESR while a
+  `c-select` list, a `c-modal` or a fullscreen field panel is open on a scrolled
+  page. The shared page scroll lock shifted the body up by the scroll offset,
+  and Firefox left sticky content at its in-page position, far above the
+  viewport. The locked body now scrolls itself to the offset instead, so sticky
+  content stays pinned in every browser and nothing visibly moves.
+
+- [#293](https://github.com/CSCfi/ui/pull/293) [`d66a85b`](https://github.com/CSCfi/ui/commit/d66a85bf1e07def34496d9667a93a6d0b3a644a8) Thanks [@razorfever](https://github.com/razorfever)! - Fix the closed mobile `c-side-navigation` drawer showing as a strip at the
+  right edge of the screen on a page with `scrollbar-gutter: stable`. The drawer
+  was only slid off-screen, which left it in the reserved gutter; it is now also
+  hidden once closed, which takes its links out of the tab order too. The
+  slide-in and slide-out animations are unchanged.
+- Updated dependencies [[`561a03c`](https://github.com/CSCfi/ui/commit/561a03c44acbe4b1b90ed20ff84affb15414206e), [`e3e2502`](https://github.com/CSCfi/ui/commit/e3e2502e8051aa789dc945e1b49113aa3bd5dcf0), [`d3b0186`](https://github.com/CSCfi/ui/commit/d3b018615e1e02a7e4210862a860a244b54fba02), [`d66a85b`](https://github.com/CSCfi/ui/commit/d66a85bf1e07def34496d9667a93a6d0b3a644a8)]:
+  - @cscfi/csc-ui@4.0.0-alpha.24
+
 ## 4.0.0-alpha.23
 
 ### Patch Changes
