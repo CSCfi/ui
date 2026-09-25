@@ -1,5 +1,14 @@
 # @cscfi/csc-ui
 
+## 4.0.0-alpha.25
+
+### Patch Changes
+
+- [#295](https://github.com/CSCfi/ui/pull/295) [`7feb3ac`](https://github.com/CSCfi/ui/commit/7feb3ac6aca3db7b55450233ab660434fe350ce9) Thanks [@razorfever](https://github.com/razorfever)! - Fix popovers, menus, tooltips and field lists running off the edge of the
+  screen in browsers without CSS anchor positioning (Firefox 140 ESR) when they
+  don't fit beside their trigger, for example a wide popover on a phone. They now
+  stay inside the viewport and pick the same placement as in other browsers.
+
 ## 4.0.0-alpha.24
 
 ### Patch Changes

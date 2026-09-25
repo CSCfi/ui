@@ -43,6 +43,7 @@
     "dropdown-hide-details-restore",
     "example-smoke",
     "export-default-seeds",
+    "fallback-position-shift",
     "field-label-and-small-box",
     "field-trailing-controls-post-slot",
     "fix-autocomplete-textfield-states",
