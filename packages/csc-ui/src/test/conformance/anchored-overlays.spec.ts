@@ -174,17 +174,53 @@ describe.each(Object.keys(OVERLAY_RECIPES))(
   (tag) => {
     const recipe = OVERLAY_RECIPES[tag];
 
-    const SCENARIOS: Record<string, (m: Mounted) => Promise<void> | void> = {
-      'after the page scrolls': () => {
-        const tall = document.createElement('div');
+    // Sizes the open panel from a sheet adopted into its own shadow root,
+    // where no Vue `:style` patch can wipe it.
+    const sizePanel = (m: Mounted, css: string) => {
+      const root = recipe.panel(m).getRootNode() as ShadowRoot;
 
-        tall.style.height = '200vh';
-        document.body.append(tall);
+      const sheet = new CSSStyleSheet();
+
+      sheet.replaceSync(`[popover] { ${css} }`);
+      root.adoptedStyleSheets = [...root.adoptedStyleSheets, sheet];
+    };
+
+    // `before` runs after the mount, `after` once the panel is open.
+    const SCENARIOS: Record<
+      string,
+      {
+        after?: (m: Mounted) => void;
+        before?: (m: Mounted) => Promise<void> | void;
+      }
+    > = {
+      'after the page scrolls': {
+        before: () => {
+          const tall = document.createElement('div');
+
+          tall.style.height = '200vh';
+          document.body.append(tall);
+        },
       },
-      'crowded into the bottom-right corner': (m) => {
-        m.stage.style.cssText += ';position:fixed;right:0;bottom:0';
+      'crowded into the bottom-right corner': {
+        before: (m) => {
+          m.stage.style.cssText += ';position:fixed;right:0;bottom:0';
+        },
       },
-      'in the page flow': () => {},
+      'in the page flow': {},
+      // No placement fits: natively the panel is shifted back inside the
+      // viewport rather than left running off its edge.
+      'taller than the viewport': {
+        after: (m) => sizePanel(m, 'min-height: 120vh; max-height: none'),
+      },
+      'wider than the viewport': {
+        after: (m) => sizePanel(m, 'min-width: 120vw; max-width: none'),
+      },
+      'with no room on either side': {
+        after: (m) => sizePanel(m, 'min-width: 80vw; max-width: none'),
+        before: (m) => {
+          m.stage.style.cssText += ';position:fixed;left:50%;top:40%';
+        },
+      },
     };
 
     const panelRect = async (scenario: string): Promise<string> => {
@@ -193,8 +229,9 @@ describe.each(Object.keys(OVERLAY_RECIPES))(
 
       const m = await mount(recipe.mountTag ?? tag, recipe.mount);
 
-      await SCENARIOS[scenario](m);
+      await SCENARIOS[scenario].before?.(m);
       await recipe.open(m);
+      SCENARIOS[scenario].after?.(m);
 
       if (scenario === 'after the page scrolls') {
         window.scrollTo(0, 40);
