@@ -6,36 +6,38 @@
  */
 import { describe, expect, it } from 'vitest';
 
-import { mount, settle, settled } from '../../test/harness';
+import { mount, settle, settled, withMotion } from '../../test/harness';
 
 describe('c-slider value bubble', () => {
-  it('reveals instantly on focus and fades only on hide', async () => {
-    const m = await mount('c-slider', {
-      props: { label: 'Volume', max: 100, min: 0, value: 40 },
-    });
+  it('reveals instantly on focus and fades only on hide', () =>
+    withMotion(async () => {
+      const m = await mount('c-slider', {
+        props: { label: 'Volume', max: 100, min: 0, value: 40 },
+      });
 
-    await settled();
+      await settled();
 
-    const bubble = m.shadow('.c-slider__tooltip');
+      const bubble = m.shadow('.c-slider__tooltip');
 
-    const input = m.shadow<HTMLInputElement>('input');
+      const input = m.shadow<HTMLInputElement>('input');
 
-    expect(getComputedStyle(bubble).opacity).toBe('0');
-    expect(getComputedStyle(bubble).transitionDuration).toBe('0.3s');
+      expect(getComputedStyle(bubble).opacity).toBe('0');
+      expect(getComputedStyle(bubble).transitionDuration).toBe('0.3s');
 
-    input.focus();
-    await settle();
+      input.focus();
+      await settle();
 
-    expect(getComputedStyle(bubble).transitionDuration, 'instant reveal').toBe(
-      '0s',
-    );
-    expect(getComputedStyle(bubble).opacity).toBe('1');
+      expect(
+        getComputedStyle(bubble).transitionDuration,
+        'instant reveal',
+      ).toBe('0s');
+      expect(getComputedStyle(bubble).opacity).toBe('1');
 
-    input.blur();
-    await settle();
+      input.blur();
+      await settle();
 
-    expect(getComputedStyle(bubble).transitionDuration, 'fades on hide').toBe(
-      '0.3s',
-    );
-  });
+      expect(getComputedStyle(bubble).transitionDuration, 'fades on hide').toBe(
+        '0.3s',
+      );
+    }));
 });

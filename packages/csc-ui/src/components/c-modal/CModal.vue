@@ -47,6 +47,7 @@ import {
   type ModalStackEntry,
   openModal,
 } from '../../shared/modalStack';
+import { prefersReducedMotion } from '../../shared/reducedMotion';
 
 /** Events dispatched by `<c-modal>`. */
 interface CModalEvents {
@@ -360,8 +361,7 @@ watch(
 );
 
 onMounted(() => {
-  const query = window.matchMedia('(prefers-reduced-motion: reduce)');
-  animationsDisabled = query.matches;
+  animationsDisabled = prefersReducedMotion();
 
   // Stencil set this on componentWillLoad; we set it once on mount.
   // Numeric width → "Npx", string width → as-is.
@@ -380,6 +380,7 @@ onBeforeUnmount(() => {
   closeModal(entry);
 
   cancelInitialFocus();
+
   if (nudgeTimer !== null) clearTimeout(nudgeTimer);
 });
 </script>

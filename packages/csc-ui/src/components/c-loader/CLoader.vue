@@ -209,4 +209,21 @@ const ui = computed(() => loader());
     transform: translateY(0);
   }
 }
+
+/* Reduced motion (ADR-0057): the message keeps its `contentdelay` and fade,
+   but no longer rises into place. */
+@media (prefers-reduced-motion: reduce) {
+  .c-loader-fadein {
+    animation-name: c-loader-fadein-still;
+  }
+}
+
+@keyframes c-loader-fadein-still {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
 </style>

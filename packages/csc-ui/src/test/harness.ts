@@ -7,7 +7,7 @@ import type { Locator, ScreenshotMatcherOptions } from 'vitest/browser';
  * attributes, light-DOM children, host events — never to Vue internals.
  */
 import { expect } from 'vitest';
-import { page, server, userEvent } from 'vitest/browser';
+import { commands, page, server, userEvent } from 'vitest/browser';
 
 import type { ThemeMode } from '../theme/themeMode';
 
@@ -63,15 +63,6 @@ export interface MountOptions {
 }
 
 /**
- * Pin the theme mode for the whole page. `tokens.css` keys its mode blocks on a
- * bare `[data-theme]`, so any element opens a **mode scope** (ADR-0053) — set
- * the attribute on a wrapper instead to scope one to part of a spec.
- */
-export function setThemeMode(mode: ThemeMode): void {
-  document.documentElement.setAttribute('data-theme', mode);
-}
-
-/**
  * A semantic role's value as a mode resolves it, read the way a page reads it:
  * a probe that opens a **mode scope** and paints in it. Specs assert against
  * this rather than a literal `oklch()` string, which would re-assert the token
@@ -89,6 +80,15 @@ export function roleInMode(mode: ThemeMode, role = '--c-on-surface'): string {
   probe.remove();
 
   return value;
+}
+
+/**
+ * Pin the theme mode for the whole page. `tokens.css` keys its mode blocks on a
+ * bare `[data-theme]`, so any element opens a **mode scope** (ADR-0053) — set
+ * the attribute on a wrapper instead to scope one to part of a spec.
+ */
+export function setThemeMode(mode: ThemeMode): void {
+  document.documentElement.setAttribute('data-theme', mode);
 }
 
 const missing = (what: string, where: string): Error =>
@@ -352,4 +352,20 @@ export async function parkPointer(): Promise<void> {
   document.body.append(park);
   await userEvent.hover(park);
   park.remove();
+}
+
+/**
+ * Run `body` with the OS reduced-motion preference off. Every spec runs under
+ * `reduce` (vitest.browser.shared.ts), where components drop their motion
+ * (ADR-0057); a spec that asserts a transition or animation itself opts back
+ * in here. The preference is restored even when `body` throws.
+ */
+export async function withMotion(body: () => Promise<void>): Promise<void> {
+  await commands.emulateReducedMotion('no-preference');
+
+  try {
+    await body();
+  } finally {
+    await commands.emulateReducedMotion('reduce');
+  }
 }
