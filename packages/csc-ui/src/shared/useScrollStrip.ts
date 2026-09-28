@@ -12,6 +12,8 @@ import type { Ref } from 'vue';
 
 import { onBeforeUnmount, onMounted, ref } from 'vue';
 
+import { prefersReducedMotion } from './reducedMotion';
+
 export interface ScrollStrip {
   /** Scroll back by half the visible width. */
   back(): void;
@@ -68,7 +70,10 @@ export const useScrollStrip = (
   };
 
   const scrollBy = (left: number): void => {
-    scroller.value?.scrollBy({ behavior: 'smooth', left });
+    scroller.value?.scrollBy({
+      behavior: prefersReducedMotion() ? 'auto' : 'smooth',
+      left,
+    });
   };
 
   const back = (): void => scrollBy(-(scroller.value?.clientWidth ?? 0) / 2);

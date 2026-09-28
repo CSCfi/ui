@@ -114,6 +114,7 @@ import {
 
 import { coerceBoolean } from '../../shared/coerceBoolean';
 import { emitModelValue } from '../../shared/emitModelValue';
+import { prefersReducedMotion } from '../../shared/reducedMotion';
 
 /** Events dispatched by `<c-tabs>`. */
 interface CTabsEvents {
@@ -292,9 +293,7 @@ const vertical = computed(
   () => coerceBoolean(props.vertical) || boolFromHost('vertical'),
 );
 
-const prefersReducedMotion = () =>
-  window.matchMedia('(prefers-reduced-motion: reduce)').matches ||
-  disableAnimation.value;
+const motionDisabled = () => prefersReducedMotion() || disableAnimation.value;
 
 const tabItemsEl = () =>
   host?.querySelector('c-tab-items') as CTabItemsEl | null;
@@ -371,7 +370,7 @@ const moveIndicator = (oldTab: HTMLElement, newTab: HTMLElement) => {
 
       if (!content || !container) return;
 
-      if (initialized && !prefersReducedMotion()) {
+      if (initialized && !motionDisabled()) {
         container.style.setProperty('--_c-tabs-transition-speed', '200ms');
       }
 
@@ -676,7 +675,7 @@ onMounted(() => {
   requestAnimationFrame(() => {
     const items = tabItemsEl();
 
-    if (items) items.disableAnimation = prefersReducedMotion();
+    if (items) items.disableAnimation = motionDisabled();
 
     const tb = tabButtonsEl();
 
@@ -952,5 +951,17 @@ onBeforeUnmount(() => {
 
 :host(.c-tabs--overflow) .c-tabs__container {
   grid-template-columns: auto 1fr auto;
+}
+
+/* Reduced motion (ADR-0057): the shared sheet zeroes every transition, but the
+   indicator and scroll moves are awaited through `transitionend`, which a
+   zero-duration transition never fires. Keep them on the near-instant speed
+   the script already uses when motion is off. */
+@media (prefers-reduced-motion: reduce) {
+  .c-tabs__scroll,
+  .c-tabs__scroll::after,
+  .c-tabs__scroll::before {
+    transition-duration: 0.001ms !important;
+  }
 }
 </style>
