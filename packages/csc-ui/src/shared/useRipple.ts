@@ -1,5 +1,7 @@
 import { ref, type Ref } from 'vue';
 
+import { prefersReducedMotion } from './reducedMotion';
+
 export interface RippleInstance {
   /** Optional tag so one composable instance can drive many surfaces (e.g. the
    *  radio group's v-for items): filter `ripples` by `group` when rendering. */
@@ -69,6 +71,10 @@ export function useRipple(options: UseRippleOptions): {
     event?: MouseEvent | null,
     spawnOptions: SpawnRippleOptions = {},
   ) => {
+    // Purely decorative: under reduced motion the shared sheet would end the
+    // transition on the first frame anyway, so spawn nothing.
+    if (prefersReducedMotion()) return;
+
     const container = (spawnOptions.container ?? options.container)?.();
 
     if (!container) return;

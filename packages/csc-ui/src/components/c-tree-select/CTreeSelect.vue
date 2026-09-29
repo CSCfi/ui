@@ -1781,4 +1781,11 @@ watch(activeIndex, (now, before) => {
     transform: translateY(0);
   }
 }
+
+/* Reduced motion (ADR-0057): the panel opens in place instead of dropping in. */
+@media (prefers-reduced-motion: reduce) {
+  [part='panel']:popover-open {
+    animation: none;
+  }
+}
 </style>

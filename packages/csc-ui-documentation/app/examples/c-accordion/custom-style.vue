@@ -21,51 +21,33 @@ const expanded = ref<'billing' | 'members' | 'storage'>('billing');
 </script>
 
 <style>
-/* A role override must be unanchored from :root to reach inside a mode
-   scope, and the OS branch must name both pinned values (ADR-0053). */
-:root,
-[data-theme='light'] {
-  --accordion-content-background: var(--c-surface);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root:not([data-theme='light']):not([data-theme='dark']) {
-    --accordion-content-background: color-mix(
-      in srgb,
-      var(--c-primary) 20%,
-      transparent
-    );
-  }
-}
-
-[data-theme='dark'] {
-  --accordion-content-background: color-mix(
-    in srgb,
-    var(--c-primary) 20%,
-    transparent
-  );
-}
-
+/* The default look is the accordion frame; this recolours the expanded
+   item from primary to secondary through its parts. */
 c-accordion.custom-style {
-  c-accordion-item {
+  c-accordion-item[expanded] {
     &::part(root) {
-      border: 1px solid var(--c-border);
+      border-color: var(--c-secondary);
+      background-color: color-mix(in srgb, var(--c-secondary) 5%, transparent);
+      box-shadow: inset 2px 0 0 0 var(--c-secondary);
     }
 
-    &::part(header) {
-      background-color: transparent;
+    &::part(header),
+    &::part(indicator) {
+      color: var(--c-secondary);
+    }
+
+    /* The header's hover and pressed washes follow the recolour too. */
+    &::part(header):hover {
+      background-color: color-mix(in srgb, var(--c-secondary) 8%, transparent);
+    }
+
+    &::part(header):active {
+      background-color: color-mix(in srgb, var(--c-secondary) 15%, transparent);
     }
 
     &::part(content) {
-      margin: 8px;
-      padding: 8px;
-      border-radius: 4px;
-      background-color: var(--accordion-content-background);
-    }
-
-    &[expanded]::part(root) {
-      border-color: var(--c-primary);
-      background-color: color-mix(in srgb, var(--c-primary) 10%, transparent);
+      box-shadow: inset 0 0 0 1px
+        color-mix(in srgb, var(--c-secondary) 25%, transparent);
     }
   }
 }

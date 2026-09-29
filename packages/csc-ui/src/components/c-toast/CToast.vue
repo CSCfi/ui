@@ -33,6 +33,7 @@
         <svg class="size-4 fill-current" viewBox="0 0 24 24">
           <path :d="icons.close" />
         </svg>
+
         <span v-if="message?.closeText">{{ message.closeText }}</span>
       </button>
     </div>
@@ -365,11 +366,13 @@ onBeforeUnmount(() => {
 
 /* Reduced motion: a plain, quicker cross-fade — no slide. The close flow
  * waits for `transitionend` on the host, so an opacity transition must
- * remain (only the transform goes). */
+ * remain (only the transform goes); `!important` restores it over the shared
+ * sheet's zero duration (ADR-0057). A fade is not movement. */
 @media (prefers-reduced-motion: reduce) {
   :host {
     transform: none;
     transition: opacity 0.2s ease;
+    transition-duration: 0.2s !important;
     will-change: opacity;
   }
 }

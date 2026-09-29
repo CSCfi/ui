@@ -206,6 +206,31 @@
   display: contents;
 }
 
+/*
+ * Reduced motion (CONTEXT.md "Reduced motion", ADR-0057). This sheet reaches
+ * every shadow root, so one rule honours the OS preference for every CSS
+ * transition the library authors — utilities and escape-hatch CSS alike, on
+ * the host too. The duration is zero, not merely short: `transition-property`
+ * defaults to `all`, so a near-zero duration on every element would start a
+ * transition on every property write — including the positioning code's
+ * `top`/`bottom`, which then measures the pre-write box. The two components
+ * whose script waits for `transitionend` (c-tabs, c-toast) restore a
+ * duration of their own for just those elements. Keyframe animations are
+ * decided per component: decorative ones are switched off in their own
+ * `@media` block, activity indicators (spinner, indeterminate progress, the
+ * toast timer) keep running because they carry meaning. Scripted motion reads
+ * `prefersReducedMotion()`.
+ */
+@media (prefers-reduced-motion: reduce) {
+  :host,
+  *,
+  ::before,
+  ::after {
+    transition-delay: 0s !important;
+    transition-duration: 0s !important;
+  }
+}
+
 @utility rounded-csc-sm {
   @apply supports-corner-shape:[corner-shape:squircle] supports-corner-shape:rounded-md not-supports-corner-shape:rounded-sm;
 }
@@ -220,6 +245,14 @@
 
 @utility rounded-csc-lg {
   @apply supports-corner-shape:[corner-shape:squircle] supports-corner-shape:rounded-2xl not-supports-corner-shape:rounded-lg;
+}
+
+@utility rounded-csc-t-lg {
+  @apply supports-corner-shape:[corner-shape:squircle] supports-corner-shape:rounded-t-2xl not-supports-corner-shape:rounded-t-lg;
+}
+
+@utility rounded-csc-b-lg {
+  @apply supports-corner-shape:[corner-shape:squircle] supports-corner-shape:rounded-b-2xl not-supports-corner-shape:rounded-b-lg;
 }
 
 @utility rounded-csc-xl {

@@ -51,11 +51,13 @@ interface CAccordionEvents {
 
 // Styling lives in `tailwind-variants`: no `<style>` block, no
 // `--c-*` override vars. The accordion is layout-only — the visual styling
-// lives on c-accordion-item. Consumer customization is via `::part(root)`;
-// there is no `override` prop.
+// lives on c-accordion-item, whose collapsed items stack flush into one
+// **accordion frame** (CONTEXT.md), so the column has no gap: an expanded
+// item clears its neighbours with its own margin. Consumer customization is
+// via `::part(root)`; there is no `override` prop.
 const accordion = tv({
   slots: {
-    root: 'flex flex-col gap-2 max-w-full',
+    root: 'flex flex-col max-w-full',
   },
 });
 
@@ -132,7 +134,15 @@ const applyExpansionToItems = () => {
   for (const item of items) {
     if (item.tagName?.toLowerCase() !== 'c-accordion-item') continue;
 
-    const itemValue = (item as unknown as { value: AccordionPrimitive }).value;
+    // HTML-authored items upgrade after this host, so at mount their `value`
+    // property is still undefined (an SSR page, `innerHTML`, a static
+    // document); the attribute carries the same value.
+    const itemValue =
+      (item as unknown as { value?: AccordionPrimitive }).value ??
+      (item.getAttribute('value') as AccordionPrimitive | null) ??
+      undefined;
+
+    if (itemValue === undefined) continue;
     (item as unknown as { collapsable: boolean }).collapsable =
       !props.mandatory || !isLastExpanded(itemValue);
     (item as unknown as { outlined: boolean }).outlined = props.outlined;

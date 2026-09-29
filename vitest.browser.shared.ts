@@ -1,7 +1,7 @@
 import { playwright } from "@vitest/browser-playwright";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
-import type { BrowserConfigOptions } from "vitest/node";
+import type { BrowserCommandContext, BrowserConfigOptions } from "vitest/node";
 
 const root = fileURLToPath(new URL(".", import.meta.url));
 
@@ -37,6 +37,18 @@ export const ignoreBenignBrowserNotices = (error: {
  * comparator. `name` is the project's instance name.
  */
 export const browserProject = (name: string): BrowserConfigOptions => ({
+  commands: {
+    /**
+     * Switch the page's `prefers-reduced-motion` for a spec that asserts the
+     * motion itself. The context default below is `reduce`; restore it after.
+     */
+    emulateReducedMotion: async (
+      ctx: BrowserCommandContext,
+      value: "no-preference" | "reduce",
+    ) => {
+      await ctx.page.emulateMedia({ reducedMotion: value });
+    },
+  },
   enabled: true,
   expect: {
     toMatchScreenshot: {

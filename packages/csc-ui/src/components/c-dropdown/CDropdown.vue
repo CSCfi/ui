@@ -1122,4 +1122,11 @@ li c-option-value {
     transform: translateY(0);
   }
 }
+
+/* Reduced motion (ADR-0057): the panel opens in place instead of dropping in. */
+@media (prefers-reduced-motion: reduce) {
+  ul.active {
+    animation: none;
+  }
+}
 </style>
