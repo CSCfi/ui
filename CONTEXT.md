@@ -259,7 +259,7 @@ A named, publicly overridable region of a migrated component's shadow DOM (e.g. 
 _Avoid_: Slot (a slot is a content-projection hole, a part is a stylable element), element, node, section
 
 **Custom state**:
-A host-exposed `ElementInternals` state (`checked`, `indeterminate`, `disabled`, the date picker's `bad-input`) a consumer selects with `:state(...)` to write per-state `::part()` rules (ADR-0035). The selector-side counterpart of **parts**: parts name *where* a rule applies, custom states name *when*. Curated public API like the part set, documented per component with `@cssstate` and listed in the **manifest**. Only otherwise-invisible internal state is exposed — consumer-set props (`valid`, a standalone `disabled`… ) are not mirrored.
+A host-exposed `ElementInternals` state (`checked`, `indeterminate`, `disabled`, the date picker's `bad-input`, a masked text field's `incomplete`) a consumer selects with `:state(...)` to write per-state `::part()` rules (ADR-0035). The selector-side counterpart of **parts**: parts name *where* a rule applies, custom states name *when*. Curated public API like the part set, documented per component with `@cssstate` and listed in the **manifest**. Only otherwise-invisible internal state is exposed — consumer-set props (`valid`, a standalone `disabled`… ) are not mirrored.
 _Avoid_: Attribute (nothing is stamped on the host), state class (no class exists), reflected prop
 
 **Indicator** (selection controls):
@@ -449,6 +449,34 @@ _Avoid_: Helper text, description
 **Error message**:
 Consumer-supplied text explaining why a control is invalid, shown in place of the **hint** while the control is invalid. The component only *displays* it — validation itself (deciding validity, choosing the wording) is the consumer's job, which is why the prop is named for the message, not the process. Has no default: an invalid control without one shows error styling on the field but keeps its hint.
 _Avoid_: Validation (the Stencil-era prop name; validation is the consumer's activity, not this text), validation message
+
+**Input mask**:
+A pattern the typed text of a `c-text-field` (its `mask`) or a **date picker** (its `format`) follows as it is typed: characters no **mask token** takes are dropped, and **literals** are filled in by the field itself. The value is the text as shown, literals included; the characters filling the tokens alone are the **unmasked value** (ADR-0059). Shapes typing only — it never judges what was typed (see **Complete**).
+_Avoid_: Format (the date picker's display-and-parse pattern, which its mask is derived from), template, input pattern (the native `pattern` attribute validates, it does not shape)
+
+**Mask guide**:
+The faint remainder of an **input mask** drawn behind a masked `c-text-field`'s typed text — the required remainder: unfilled required **mask tokens** as `_`, **literals** as themselves (`+358 __ ___ ____`), nothing of an **optional section** — wherever a placeholder would show. Never part of the value, never announced; a consumer placeholder replaces it.
+_Avoid_: Placeholder (the consumer's native text, which replaces the guide), mask preview, ghost text (fine informally)
+
+**Mask token**:
+A placeholder in an **input mask** for a character the user types: `#` a digit, `A` a letter, `*` either; in a date picker, a day, month or year part.
+_Avoid_: Slot (a content-projection hole), placeholder (the native attribute), wildcard
+
+**Literal** (mask):
+A fixed character of an **input mask** — a separator, a prefix like `+358 ` — that the field inserts itself, only once the next **mask token** character arrives, so an empty field stays empty. Typing it is accepted as the literal.
+_Avoid_: Separator (one kind of literal), mask character, delimiter
+
+**Unmasked value**:
+The characters of a masked field's text that fill its **mask tokens** — `401234567` for `+358 40 123 4567`. A read-only view (`unmaskedValue`), never the value itself.
+_Avoid_: Raw value, clean value
+
+**Optional section**:
+A bracketed trailing part of an **input mask** (`#####[-####]`, `+358 #####[#######]`) whose **mask tokens** may each be left unfilled — a started section needn't be finished — and whose **literals** appear only when a character after them is typed. Only further sections may follow one; they do not nest.
+_Avoid_: Optional token (each token of a section is optional, but the section is the concept), optional group, repeat
+
+**Complete** (mask):
+A masked field's text fills every *required* **mask token** — those outside **optional sections**. Text short of that stays as typed and is **incomplete** — `maskComplete` false and the `incomplete` **custom state** (an empty field is neither incomplete nor complete). A fact the component reports, like **bad input**; whether an incomplete value is an error is the consumer's validation.
+_Avoid_: Valid (validity is the consumer's judgement), filled (a field holding any text)
 
 ### Data table
 

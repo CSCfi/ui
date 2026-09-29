@@ -2199,7 +2199,8 @@ export interface CTextFieldElementEventMap {
   'update:value': CustomEvent<string>;
 }
 
-export interface CTextFieldElement extends Omit<HTMLElement, 'autocomplete' | 'autocorrect' | 'automaticCapitalize' | 'disabled' | 'errorMessage' | 'hideDetails' | 'hint' | 'hostId' | 'label' | 'labelOnTop' | 'max' | 'min' | 'name' | 'placeholder' | 'readonly' | 'required' | 'rows' | 'shadow' | 'size' | 'step' | 'trimWhitespace' | 'type' | 'valid' | 'value'> {
+/** A text field for a single line of text, or several lines under `rows`, with a label, a hint and an error message. */
+export interface CTextFieldElement extends Omit<HTMLElement, 'autocomplete' | 'autocorrect' | 'automaticCapitalize' | 'disabled' | 'errorMessage' | 'hideDetails' | 'hint' | 'hostId' | 'label' | 'labelOnTop' | 'mask' | 'max' | 'min' | 'name' | 'placeholder' | 'readonly' | 'required' | 'rows' | 'shadow' | 'size' | 'step' | 'trimWhitespace' | 'type' | 'valid' | 'value'> {
   /** HTML input autocomplete */
   autocomplete?: string;
   /**
@@ -2310,6 +2311,8 @@ export interface CToastElement extends Omit<HTMLElement, 'message'> {
     listener: EventListenerOrEventListenerObject,
     options?: boolean | EventListenerOptions,
   ): void;
+  /** Input mask the typed text follows: `#` a digit, `A` a letter, `*` a letter or a digit, `\` escapes the next character, `[…]` wraps a trailing optional section, anything else is a literal. Applies to a single-line `text`, `tel` or `search` field */
+  mask?: string;
 }
 
 /** Toasts are passive, transient notifications — operation results, background progress — stacked and managed by a single `c-toasts` container via its `addToast` / `removeToast` methods. */
@@ -2338,6 +2341,10 @@ export interface CToolbarElement extends Omit<HTMLElement, 'static'> {
 /** Events dispatched by `<c-tooltip>`. */
 export interface CTooltipElementEventMap {
   /**
+  /** Whether a masked field has every mask token filled (always `true` without a mask) */
+  readonly maskComplete: boolean;
+  /** The text without the mask's literals: only the characters filling its tokens (the text as is without a mask) */
+  readonly unmaskedValue: string;
    * Fired whenever the tooltip shows or hides, carrying the new open state.
    * Named `change:open`, not `update:open`: Vue's runtime silently drops
    * `onUpdate:*` listeners on custom elements (`isModelListener`), so a

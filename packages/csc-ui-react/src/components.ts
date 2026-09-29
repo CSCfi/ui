@@ -745,6 +745,7 @@ export const CTextField = createComponent({
 
 /** A single toast notification, rendered and managed by c-toasts */
 export const CToast = createComponent({
+/** A text field for a single line of text, or several lines under `rows`, with a label, a hint and an error message. */
   displayName: 'CToast',
   elementClass: elementClass<CToastElement>('c-toast'),
   events: {
