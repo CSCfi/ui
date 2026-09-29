@@ -110,7 +110,7 @@ _Avoid_: Select affordance, "select this level" button, row action
 ### Date picker
 
 **Date picker** (`c-date-picker`):
-A **value control** for a calendar date — or, under `range`, a start and an end — whose **value field** is typeable: the calendar panel is an aid, opened by its calendar button or Alt+↓ and never by typing (ADR-0058). The value is an ISO `YYYY-MM-DD` string, whatever the displayed `format` (ADR-0057). Emits the 4.x value events (`change`, `update:value`, `input`). Distinct from `c-text-field type="date"`, the native browser input.
+A **value control** for a calendar date — or, under `range`, a start and an end — whose **value field** is typeable — typing follows an **input mask** derived from its `format` — while the calendar panel is an aid, opened by its calendar button or Alt+↓ and never by typing (ADR-0058, ADR-0059). The value is an ISO `YYYY-MM-DD` string, whatever the displayed `format` (ADR-0057). Emits the 4.x value events (`change`, `update:value`, `input`). Distinct from `c-text-field type="date"`, the native browser input.
 _Avoid_: Datepicker, calendar (the grid inside it), date field, date input (the native one)
 
 **Day grid**:

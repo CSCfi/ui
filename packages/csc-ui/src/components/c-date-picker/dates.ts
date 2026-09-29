@@ -4,6 +4,7 @@
  * timezone can shift a day. Arithmetic goes through `Date.UTC`.
  */
 
+import type { MaskSlot } from '../../shared/inputMask';
 import type { CDatePickerDisabledDate } from './CDatePicker.vue';
 
 /** A calendar date split into its parts; `m` is 1–12. */
@@ -286,6 +287,43 @@ export const parseDate = (text: string, pattern: string): null | string => {
 
   return isIso(iso) ? iso : null;
 };
+
+const SEPARATORS = './- ';
+
+const isDigit = (ch: string) => ch >= '0' && ch <= '9';
+
+/**
+ * The input mask typing follows under a pattern (ADR-0059): a day or month
+ * takes one or two digits whatever its token, closing early on a typed
+ * separator or on a first digit no two-digit value starts with (a day 4–9,
+ * a month 2–9); the year takes four. A separator of the pattern also accepts
+ * any of `. / - space` typed in its place and shows as the pattern's own.
+ */
+export const compileDateMask = (pattern: string): MaskSlot[] =>
+  tokenize(pattern).flatMap((p): MaskSlot[] => {
+    if ('literal' in p) {
+      return Array.from(p.literal, (text) => ({
+        aliases: SEPARATORS.includes(text) ? SEPARATORS : undefined,
+        kind: 'literal',
+        text,
+      }));
+    }
+
+    if (p.token === 'yyyy')
+      return [{ accepts: isDigit, kind: 'token', max: 4, min: 4 }];
+
+    const highest = p.token.startsWith('d') ? '3' : '1';
+
+    return [
+      {
+        accepts: isDigit,
+        closesAfter: (value) => value.length === 1 && value > highest,
+        kind: 'token',
+        max: 2,
+        min: 1,
+      },
+    ];
+  });
 
 // ---- disabling -----------------------------------------------------------
 

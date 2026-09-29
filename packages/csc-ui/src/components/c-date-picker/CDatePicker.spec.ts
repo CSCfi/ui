@@ -99,6 +99,49 @@ describe('typing', () => {
     expect(events.of('change')).toHaveLength(1);
   });
 
+  it('inserts the format separators while typing (ADR-0059)', async () => {
+    const m = await mountPicker({ format: 'd.M.yyyy' });
+
+    const events = recordEvents(m.host, EVENTS);
+
+    const [input] = inputs(m);
+
+    await type(input, '4x92031');
+
+    expect(input.value).toBe('4.9.2031');
+
+    await type(input, '12/3/2031');
+
+    expect(input.value).toBe('12.3.2031');
+    expect(events.of('change')).toHaveLength(0);
+
+    await userEvent.keyboard('{Enter}');
+    await settle();
+
+    expect(m.host.value).toBe('2031-03-12');
+  });
+
+  it('keeps pasted text for the lenient commit', async () => {
+    const m = await mountPicker();
+
+    const [input] = inputs(m);
+
+    input.focus();
+    input.value = '2031-09-01';
+    input.dispatchEvent(
+      new InputEvent('input', { bubbles: true, inputType: 'insertFromPaste' }),
+    );
+    await settle();
+
+    expect(input.value).toBe('2031-09-01');
+
+    await userEvent.keyboard('{Enter}');
+    await settle();
+
+    expect(m.host.value).toBeNull();
+    expect(m.host.badInput).toBe(true);
+  });
+
   it('commits on blur', async () => {
     const m = await mountPicker();
 

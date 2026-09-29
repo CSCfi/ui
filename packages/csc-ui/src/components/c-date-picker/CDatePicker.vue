@@ -646,6 +646,7 @@ import {
 import { useAppDefault } from '../../shared/appDefaults';
 import { coerceBoolean } from '../../shared/coerceBoolean';
 import { emitModelChange } from '../../shared/emitModelValue';
+import { applyMask } from '../../shared/inputMask';
 import PanelHeadingRow from '../../shared/PanelHeadingRow.vue';
 import { applyPeekCap } from '../../shared/peekCap';
 import { useAnchoredPanel } from '../../shared/useAnchoredPanel';
@@ -657,6 +658,7 @@ import {
   addDays,
   addMonths,
   type CDatePickerDisabling,
+  compileDateMask,
   dayOfWeek,
   daysInMonth,
   firstOfMonth,
@@ -998,6 +1000,9 @@ const pattern = computed(() =>
   isValidPattern(formatResolved.value) ? formatResolved.value : 'dd.MM.yyyy',
 );
 
+// Typing follows the pattern (ADR-0059); commit still parses leniently.
+const dateMask = computed(() => compileDateMask(pattern.value));
+
 const effectivePlaceholder = computed(() => {
   if (!labelOnTopResolved.value && props.label && !focused.value)
     return undefined;
@@ -1180,7 +1185,20 @@ const onFocusOut = (event: FocusEvent) => {
 };
 
 const onTextInput = (end: CDatePickerEnd, event: Event) => {
-  const text = (event.target as HTMLInputElement).value;
+  const input = event.target as HTMLInputElement;
+
+  // A paste or drop keeps its text for the lenient commit: masking text in
+  // another field order would scramble it, possibly into a real but wrong
+  // date ("2031-09-01" → "20.3.1090"), where kept it commits as bad input.
+  applyMask(
+    input,
+    event,
+    dateMask.value,
+    end === 'end' ? endText.value : startText.value,
+    { skipPaste: true },
+  );
+
+  const text = input.value;
 
   if (end === 'end') endText.value = text;
   else startText.value = text;

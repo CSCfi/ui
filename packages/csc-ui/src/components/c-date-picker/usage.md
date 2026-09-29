@@ -29,6 +29,13 @@ so `1.9.2026` and `1/9/2026` both commit as `01.09.2026` under the default. The
 year needs all four digits. The format is an app default, so an app can set it
 once with `applyDefaults({ 'c-date-picker': { format: 'yyyy-MM-dd' } })`.
 
+Typing follows the format as it goes: the separators appear on their own
+(`01012031` shows `01.01.2031`), a day or month closes early when a separator
+is typed or when its first digit can start no two-digit value (`4` for a day,
+`2` for a month), any of `.`, `/`, `-` or a space typed in place of a
+separator shows as the format's own, and other characters are dropped. Pasted
+text is kept as it is and read when committed.
+
 Text that names no date that can be picked — `31.02.2026`, a disabled date, a
 date outside `min` and `max` — is **bad input**: the text stays as the user
 typed it, the value becomes `null`, and the host exposes the `bad-input` custom

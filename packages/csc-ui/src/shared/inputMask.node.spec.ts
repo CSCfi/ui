@@ -1,14 +1,18 @@
 /**
  * The input-mask engine (CONTEXT.md "Input mask"; ADR-0059): tokens,
- * lazy literals, caret mapping, completeness, the guide and optional
- * sections.
+ * lazy literals, caret mapping, completeness, and the date-part rules
+ * `c-date-picker` compiles from its format.
  */
 import { describe, expect, it } from 'vitest';
 
+import { compileDateMask } from '../components/c-date-picker/dates';
 import { compileMask, conformMask, isNumericMask } from './inputMask';
 
 const conform = (mask: string, text: string, caret?: number, del = false) =>
   conformMask(compileMask(mask)!, text, caret, del);
+
+const date = (pattern: string, text: string) =>
+  conformMask(compileDateMask(pattern), text).text;
 
 describe('tokens', () => {
   it('drops characters a token does not take', () => {
@@ -180,5 +184,38 @@ describe('optional sections', () => {
       expect(compileMask(bad), bad).toBeNull();
 
     expect(compileMask('## ###[ ####][###]')).not.toBeNull();
+  });
+});
+
+describe('date masks', () => {
+  it('inserts the separators while digits are typed', () => {
+    expect(date('dd.MM.yyyy', '01012026')).toBe('01.01.2026');
+    expect(date('yyyy-MM-dd', '20260928')).toBe('2026-09-28');
+  });
+
+  it('closes a part on a first digit no two-digit value starts with', () => {
+    expect(date('d.M.yyyy', '4')).toBe('4');
+    expect(date('d.M.yyyy', '42')).toBe('4.2');
+    expect(date('d.M.yyyy', '4220')).toBe('4.2.20');
+    expect(date('dd.MM.yyyy', '12')).toBe('12');
+    expect(date('dd.MM.yyyy', '123')).toBe('12.3');
+  });
+
+  it('closes a part early on a typed separator, normalised to the format', () => {
+    expect(date('d.M.yyyy', '1.')).toBe('1.');
+    expect(date('d.M.yyyy', '1/9/2026')).toBe('1.9.2026');
+    expect(date('d.M.yyyy', '1 ')).toBe('1.');
+  });
+
+  it('drops letters and separators with nothing to close', () => {
+    expect(date('dd.MM.yyyy', 'a.1b')).toBe('1');
+  });
+
+  it('garbles text in another field order, so a paste is read leniently instead', () => {
+    expect(date('dd.MM.yyyy', '2026-09-28')).toBe('20.2.6092');
+  });
+
+  it('caps the year at four digits', () => {
+    expect(date('dd.MM.yyyy', '1.1.202612')).toBe('1.1.2026');
   });
 });
