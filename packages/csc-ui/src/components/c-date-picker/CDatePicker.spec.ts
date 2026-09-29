@@ -61,6 +61,11 @@ const finishAnimations = async (m: Mounted): Promise<void> => {
   await settle();
 };
 
+/** An animation's keyframes: `getKeyframes` is on `KeyframeEffect`, not the base `AnimationEffect`. */
+const keyframes = (animation: Animation | undefined): ComputedKeyframe[] =>
+  (animation?.effect as KeyframeEffect | null | undefined)?.getKeyframes() ??
+  [];
+
 const type = async (input: HTMLInputElement, text: string) => {
   await userEvent.clear(input);
   await userEvent.type(input, text);
@@ -759,10 +764,7 @@ describe('motion', () => {
 
   // The horizontal keyframe offsets of an element's running animation.
   const slide = (el: HTMLElement) =>
-    el
-      .getAnimations()[0]
-      ?.effect?.getKeyframes()
-      .map((k) => k.transform);
+    keyframes(el.getAnimations()[0]).map((k) => k.transform);
 
   it('› slides the old month out left and the new one in from the right; ‹ mirrors it', async () => {
     allowMotion();
@@ -822,7 +824,7 @@ describe('motion', () => {
       'translateY(-10px) scaleY(0.95)',
       'none',
     ]);
-    expect(listIn.effect?.getKeyframes().map((k) => k.clipPath)).toEqual([
+    expect(keyframes(listIn).map((k) => k.clipPath)).toEqual([
       'inset(0px 0px 100%)',
       'inset(0px)',
     ]);
@@ -980,7 +982,7 @@ describe('motion', () => {
     const grow = body.getAnimations()[0];
 
     expect(
-      grow.effect?.getKeyframes().map((k) => parseFloat(String(k.height))),
+      keyframes(grow).map((k) => parseFloat(String(k.height))),
     ).toEqual([236, 276]);
 
     await finishAnimations(m);
@@ -1003,7 +1005,7 @@ describe('motion', () => {
     await settle();
 
     const frames = grids(m).map((g) =>
-      g.getAnimations()[0]?.effect?.getKeyframes(),
+      keyframes(g.getAnimations()[0]),
     );
 
     expect(frames.map((f) => f?.map((k) => Number(k.opacity)))).toEqual([

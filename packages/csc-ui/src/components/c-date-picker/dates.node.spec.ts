@@ -127,9 +127,10 @@ describe('rowWeek', () => {
 
         const next = `2026-${String(m + 1).padStart(2, '0')}`;
 
-        const last = monthMatrix(month, firstDayOfWeek).findLast((r) =>
-          r.some(Boolean),
-        )!;
+        // The last row holding a day of the month (no `findLast`: the lib is ES2022).
+        const last = [...monthMatrix(month, firstDayOfWeek)]
+          .reverse()
+          .find((r) => r.some(Boolean))!;
 
         const first = monthMatrix(next, firstDayOfWeek)[0];
 
