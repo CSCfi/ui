@@ -321,6 +321,16 @@ export const VALUE_RECIPES: Record<string, ValueRecipe> = {
     },
     programmatic: 'one',
   },
+  'c-number-field': {
+    emptyAware: true,
+    expected: 5,
+    family: 'change',
+    interact: async (m) => {
+      await userEvent.type(m.shadow('input'), '5');
+    },
+    mount: { props: { label: 'Amount' } },
+    programmatic: 7,
+  },
   'c-text-field': {
     emptyAware: true,
     expected: 'a',

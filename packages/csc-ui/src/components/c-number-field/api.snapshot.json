@@ -1,0 +1,81 @@
+{
+  "attributes": {
+    "decimal-separator": "string = ''",
+    "decimals": "number = 0",
+    "disabled": "boolean = false",
+    "error-message": "string = ''",
+    "fixed-decimals": "boolean = false",
+    "group-separator": "string = ''",
+    "hide-details": "boolean = false",
+    "hint": "string = ''",
+    "host-id": "string = ''",
+    "label": "string = ''",
+    "label-on-top": "boolean = false",
+    "max": "null | number = null",
+    "min": "null | number = null",
+    "name": "string = ''",
+    "placeholder": "string = ''",
+    "readonly": "boolean = false",
+    "required": "boolean = false",
+    "shadow": "boolean = false",
+    "size": "'default' | 'small' = 'default'",
+    "valid": "boolean = true",
+    "value": "null | number | string = null"
+  },
+  "cssProperties": [],
+  "defaultable": [
+    "decimalSeparator",
+    "decimals",
+    "fixedDecimals",
+    "groupSeparator",
+    "hideDetails",
+    "labelOnTop",
+    "shadow",
+    "size"
+  ],
+  "events": {
+    "change": "CustomEvent<null | number>",
+    "input": "CustomEvent<void>",
+    "update:value": "CustomEvent<null | number>"
+  },
+  "methods": {},
+  "parts": [
+    "input"
+  ],
+  "propertyOnly": [],
+  "props": {
+    "decimals": "number = 0",
+    "decimalSeparator": "string = ''",
+    "disabled": "boolean = false",
+    "errorMessage": "string = ''",
+    "fixedDecimals": "boolean = false",
+    "groupSeparator": "string = ''",
+    "hideDetails": "boolean = false",
+    "hint": "string = ''",
+    "hostId": "string = ''",
+    "label": "string = ''",
+    "labelOnTop": "boolean = false",
+    "max": "null | number = null",
+    "min": "null | number = null",
+    "name": "string = ''",
+    "placeholder": "string = ''",
+    "readonly": "boolean = false",
+    "required": "boolean = false",
+    "shadow": "boolean = false",
+    "size": "'default' | 'small' = 'default'",
+    "valid": "boolean = true",
+    "value": "null | number | string = null"
+  },
+  "readonly": {
+    "outOfRange": "boolean"
+  },
+  "slots": [
+    "post",
+    "pre"
+  ],
+  "states": [
+    "out-of-range"
+  ],
+  "subcomponents": [],
+  "tag": "c-number-field"
+}

@@ -36,6 +36,7 @@ import CMenu from './components/c-menu/CMenu.vue';
 import CMessage from './components/c-message/CMessage.vue';
 import CModal from './components/c-modal/CModal.vue';
 import CNavigationButton from './components/c-navigation-button/CNavigationButton.vue';
+import CNumberField from './components/c-number-field/CNumberField.vue';
 import COptionValue from './components/c-option-value/COptionValue.vue';
 import COption from './components/c-option/COption.vue';
 import COtpInput from './components/c-otp-input/COtpInput.vue';
@@ -148,6 +149,8 @@ export type {
   CLoginCardBlendMode,
   CLoginCardProps,
 } from './components/c-login-card/CLoginCard.vue';
+
+export type { CNumberFieldProps } from './components/c-number-field/CNumberField.vue';
 
 export type {
   CPaginationOptions,
@@ -292,6 +295,8 @@ const components: Array<[string, unknown]> = [
   ['c-accordion-item', CAccordionItem],
   ['c-input', CInput],
   ['c-text-field', CTextField],
+  // c-number-field renders c-input (registered above) inside its shadow root.
+  ['c-number-field', CNumberField],
   ['c-spinner', CSpinner],
   ['c-loader', CLoader],
   ['c-icon-button', CIconButton],
@@ -468,4 +473,5 @@ export const tailwindVariantTags: ReadonlyArray<string> = [
   'c-progress-circle',
   'c-tree-select',
   'c-date-picker',
+  'c-number-field',
 ];

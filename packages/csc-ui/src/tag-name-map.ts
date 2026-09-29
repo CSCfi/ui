@@ -1210,6 +1210,91 @@ export interface CModalElement extends Omit<HTMLElement, 'disableBackdropBlur' |
 export interface CNavigationButtonElement extends HTMLElement {
 }
 
+/** Events dispatched by `<c-number-field>`. */
+export interface CNumberFieldElementEventMap {
+  /**
+   * Fired whenever typing changes the number, carrying it — `null` once the
+   * field holds no digit. Not fired when only the text changes (a group
+   * separator, a trailing decimal separator) or when `value` is set.
+   */
+  change: CustomEvent<null | number>;
+  /**
+   * Native bubbling input event fired alongside every value change so a
+   * plain Vue `v-model` works. No detail.
+   */
+  input: CustomEvent<void>;
+  /** v-model contract event, fired with `change`. */
+  'update:value': CustomEvent<null | number>;
+}
+
+/** A field for a number — an integer, or one with decimals — shown with thousands separators as it is typed. */
+export interface CNumberFieldElement extends Omit<HTMLElement, 'decimals' | 'decimalSeparator' | 'disabled' | 'errorMessage' | 'fixedDecimals' | 'groupSeparator' | 'hideDetails' | 'hint' | 'hostId' | 'label' | 'labelOnTop' | 'max' | 'min' | 'name' | 'placeholder' | 'readonly' | 'required' | 'shadow' | 'size' | 'valid' | 'value'> {
+  /** The most fraction digits the field takes; `0` makes it an integer field */
+  decimals?: number;
+  /** The decimal separator. Empty follows the page's `lang` (`,` for `fi`, `.` for `en`) */
+  decimalSeparator?: string;
+  /** Disable the field */
+  disabled?: boolean;
+  /** Error message shown in place of the hint while the field is invalid */
+  errorMessage?: string;
+  /** Pad the fraction to exactly `decimals` digits when the field is left (`12,5` → `12,50`) */
+  fixedDecimals?: boolean;
+  /** The thousands separator. Empty follows the page's `lang` (a space for `fi`, `,` for `en`) */
+  groupSeparator?: string;
+  /** Hide the hint and error messages */
+  hideDetails?: boolean;
+  /** Hint text for the field */
+  hint?: string;
+  /** Id of the input */
+  hostId?: string;
+  /** Label of the field */
+  label?: string;
+  /** Label on top of the field */
+  labelOnTop?: boolean;
+  /** The largest number in range; a larger one is kept and reported as out of range */
+  max?: null | number;
+  /** The smallest number in range; a smaller one is kept and reported as out of range. At `0` or above, the minus key is ignored */
+  min?: null | number;
+  /** Name of the input */
+  name?: string;
+  /** Placeholder of the input */
+  placeholder?: string;
+  /** Mark as readonly */
+  readonly?: boolean;
+  /** Set the field as required */
+  required?: boolean;
+  /** Shadow variant of the field */
+  shadow?: boolean;
+  /** Field height: the 52px default (the shared control height) or the 36px `small` box */
+  size?: 'default' | 'small';
+  /** Set the validity of the field */
+  valid?: boolean;
+  /** The number, or `null` when the field is empty. A string is read as the number it spells, and `''` as empty — what an attribute, or a plain `v-model` holding `null`, writes; the field always emits a number or `null` */
+  value?: null | number | string;
+  /** Whether the number is below `min` or above `max` (CONTEXT.md "Out of range") */
+  readonly outOfRange: boolean;
+  addEventListener<K extends keyof CNumberFieldElementEventMap>(
+    type: K,
+    listener: (this: CNumberFieldElement, ev: CNumberFieldElementEventMap[K]) => void,
+    options?: boolean | AddEventListenerOptions,
+  ): void;
+  addEventListener(
+    type: string,
+    listener: EventListenerOrEventListenerObject,
+    options?: boolean | AddEventListenerOptions,
+  ): void;
+  removeEventListener<K extends keyof CNumberFieldElementEventMap>(
+    type: K,
+    listener: (this: CNumberFieldElement, ev: CNumberFieldElementEventMap[K]) => void,
+    options?: boolean | EventListenerOptions,
+  ): void;
+  removeEventListener(
+    type: string,
+    listener: EventListenerOrEventListenerObject,
+    options?: boolean | EventListenerOptions,
+  ): void;
+}
+
 export interface COptionElement extends Omit<HTMLElement, 'disabled' | 'name' | 'selected' | 'value'> {
   /** Set option as disabled */
   disabled?: boolean;
@@ -2226,6 +2311,8 @@ export interface CTextFieldElement extends Omit<HTMLElement, 'autocomplete' | 'a
   label?: string;
   /** Label on top of the input */
   labelOnTop?: boolean;
+  /** Input mask the typed text follows: `#` a digit, `A` a letter, `*` a letter or a digit, `\` escapes the next character, `[…]` wraps a trailing optional section, anything else is a literal. Applies to a single-line `text`, `tel` or `search` field */
+  mask?: string;
   /** Maximum value on a numeric input */
   max?: null | number;
   /** Minimum value on a numeric input */
@@ -2254,6 +2341,10 @@ export interface CTextFieldElement extends Omit<HTMLElement, 'autocomplete' | 'a
   valid?: boolean;
   /** Value of the input */
   value?: string;
+  /** Whether a masked field has every mask token filled (always `true` without a mask) */
+  readonly maskComplete: boolean;
+  /** The text without the mask's literals: only the characters filling its tokens (the text as is without a mask) */
+  readonly unmaskedValue: string;
   addEventListener<K extends keyof CTextFieldElementEventMap>(
     type: K,
     listener: (this: CTextFieldElement, ev: CTextFieldElementEventMap[K]) => void,
@@ -2311,8 +2402,6 @@ export interface CToastElement extends Omit<HTMLElement, 'message'> {
     listener: EventListenerOrEventListenerObject,
     options?: boolean | EventListenerOptions,
   ): void;
-  /** Input mask the typed text follows: `#` a digit, `A` a letter, `*` a letter or a digit, `\` escapes the next character, `[…]` wraps a trailing optional section, anything else is a literal. Applies to a single-line `text`, `tel` or `search` field */
-  mask?: string;
 }
 
 /** Toasts are passive, transient notifications — operation results, background progress — stacked and managed by a single `c-toasts` container via its `addToast` / `removeToast` methods. */
@@ -2341,10 +2430,6 @@ export interface CToolbarElement extends Omit<HTMLElement, 'static'> {
 /** Events dispatched by `<c-tooltip>`. */
 export interface CTooltipElementEventMap {
   /**
-  /** Whether a masked field has every mask token filled (always `true` without a mask) */
-  readonly maskComplete: boolean;
-  /** The text without the mask's literals: only the characters filling its tokens (the text as is without a mask) */
-  readonly unmaskedValue: string;
    * Fired whenever the tooltip shows or hides, carrying the new open state.
    * Named `change:open`, not `update:open`: Vue's runtime silently drops
    * `onUpdate:*` listeners on custom elements (`isModelListener`), so a
@@ -2527,6 +2612,7 @@ export interface AppDefaults {
   'c-autocomplete'?: Partial<Pick<CAutocompleteElement, 'hideDetails' | 'itemsPerPage' | 'labelOnTop' | 'shadow' | 'size' | 'texts'>>;
   'c-data-table'?: Partial<Pick<CDataTableElement, 'texts'>>;
   'c-date-picker'?: Partial<Pick<CDatePickerElement, 'firstDayOfWeek' | 'format' | 'hideDetails' | 'labelOnTop' | 'shadow' | 'showWeekNumbers' | 'size' | 'texts'>>;
+  'c-number-field'?: Partial<Pick<CNumberFieldElement, 'decimalSeparator' | 'decimals' | 'fixedDecimals' | 'groupSeparator' | 'hideDetails' | 'labelOnTop' | 'shadow' | 'size'>>;
   'c-select'?: Partial<Pick<CSelectElement, 'hideDetails' | 'itemsPerPage' | 'labelOnTop' | 'shadow' | 'size' | 'texts'>>;
   'c-text-field'?: Partial<Pick<CTextFieldElement, 'hideDetails' | 'labelOnTop' | 'shadow' | 'size'>>;
   'c-tree-select'?: Partial<Pick<CTreeSelectElement, 'hideDetails' | 'itemsPerPage' | 'labelOnTop' | 'shadow' | 'size' | 'texts'>>;
@@ -2537,13 +2623,14 @@ export const DEFAULTABLE_PROPS = {
   'c-autocomplete': ['hideDetails', 'itemsPerPage', 'labelOnTop', 'shadow', 'size', 'texts'],
   'c-data-table': ['texts'],
   'c-date-picker': ['firstDayOfWeek', 'format', 'hideDetails', 'labelOnTop', 'shadow', 'showWeekNumbers', 'size', 'texts'],
+  'c-number-field': ['decimalSeparator', 'decimals', 'fixedDecimals', 'groupSeparator', 'hideDetails', 'labelOnTop', 'shadow', 'size'],
   'c-select': ['hideDetails', 'itemsPerPage', 'labelOnTop', 'shadow', 'size', 'texts'],
   'c-text-field': ['hideDetails', 'labelOnTop', 'shadow', 'size'],
   'c-tree-select': ['hideDetails', 'itemsPerPage', 'labelOnTop', 'shadow', 'size', 'texts'],
 } as const satisfies Record<keyof AppDefaults, readonly string[]>;
 
 /** Tags dispatching the v-model contract event `update:value` — the value controls (CONTEXT.md). */
-export const VALUE_TAGS = ['c-accordion', 'c-autocomplete', 'c-button-group', 'c-checkbox', 'c-date-picker', 'c-modal', 'c-otp-input', 'c-pagination', 'c-radio-group', 'c-select', 'c-slider', 'c-switch', 'c-tabs', 'c-text-field', 'c-tree-select'] as const;
+export const VALUE_TAGS = ['c-accordion', 'c-autocomplete', 'c-button-group', 'c-checkbox', 'c-date-picker', 'c-modal', 'c-number-field', 'c-otp-input', 'c-pagination', 'c-radio-group', 'c-select', 'c-slider', 'c-switch', 'c-tabs', 'c-text-field', 'c-tree-select'] as const;
 
 declare global {
   interface HTMLElementTagNameMap {
@@ -2585,6 +2672,7 @@ declare global {
     'c-message': CMessageElement;
     'c-modal': CModalElement;
     'c-navigation-button': CNavigationButtonElement;
+    'c-number-field': CNumberFieldElement;
     'c-option': COptionElement;
     'c-option-value': COptionValueElement;
     'c-otp-input': COtpInputElement;

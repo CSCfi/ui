@@ -54,6 +54,8 @@ import {
   type CModalElement,
   type CModalElementEventMap,
   type CNavigationButtonElement,
+  type CNumberFieldElement,
+  type CNumberFieldElementEventMap,
   type COptionElement,
   type COptionValueElement,
   type COtpInputElement,
@@ -453,6 +455,19 @@ export const CNavigationButton = createComponent({
   tagName: 'c-navigation-button',
 });
 
+/** A field for a number — an integer, or one with decimals — shown with thousands separators as it is typed. */
+export const CNumberField = createComponent({
+  displayName: 'CNumberField',
+  elementClass: elementClass<CNumberFieldElement>('c-number-field'),
+  events: {
+    onChange: 'change' as EventName<CNumberFieldElementEventMap['change']>,
+    onInput: 'input' as EventName<CNumberFieldElementEventMap['input']>,
+    onUpdateValue: 'update:value' as EventName<CNumberFieldElementEventMap['update:value']>,
+  },
+  react: React,
+  tagName: 'c-number-field',
+});
+
 export const COption = createComponent({
   displayName: 'COption',
   elementClass: elementClass<COptionElement>('c-option'),
@@ -730,6 +745,7 @@ export const CTags = createComponent({
   tagName: 'c-tags',
 });
 
+/** A text field for a single line of text, or several lines under `rows`, with a label, a hint and an error message. */
 export const CTextField = createComponent({
   displayName: 'CTextField',
   elementClass: elementClass<Omit<CTextFieldElement, 'autocorrect'> & HTMLElement>('c-text-field'),
@@ -745,7 +761,6 @@ export const CTextField = createComponent({
 
 /** A single toast notification, rendered and managed by c-toasts */
 export const CToast = createComponent({
-/** A text field for a single line of text, or several lines under `rows`, with a label, a hint and an error message. */
   displayName: 'CToast',
   elementClass: elementClass<CToastElement>('c-toast'),
   events: {

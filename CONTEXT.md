@@ -259,7 +259,7 @@ A named, publicly overridable region of a migrated component's shadow DOM (e.g. 
 _Avoid_: Slot (a slot is a content-projection hole, a part is a stylable element), element, node, section
 
 **Custom state**:
-A host-exposed `ElementInternals` state (`checked`, `indeterminate`, `disabled`, the date picker's `bad-input`, a masked text field's `incomplete`) a consumer selects with `:state(...)` to write per-state `::part()` rules (ADR-0035). The selector-side counterpart of **parts**: parts name *where* a rule applies, custom states name *when*. Curated public API like the part set, documented per component with `@cssstate` and listed in the **manifest**. Only otherwise-invisible internal state is exposed — consumer-set props (`valid`, a standalone `disabled`… ) are not mirrored.
+A host-exposed `ElementInternals` state (`checked`, `indeterminate`, `disabled`, the date picker's `bad-input`, a masked text field's `incomplete`, a number field's `out-of-range`) a consumer selects with `:state(...)` to write per-state `::part()` rules (ADR-0035). The selector-side counterpart of **parts**: parts name *where* a rule applies, custom states name *when*. Curated public API like the part set, documented per component with `@cssstate` and listed in the **manifest**. Only otherwise-invisible internal state is exposed — consumer-set props (`valid`, a standalone `disabled`… ) are not mirrored.
 _Avoid_: Attribute (nothing is stamped on the host), state class (no class exists), reflected prop
 
 **Indicator** (selection controls):
@@ -449,6 +449,18 @@ _Avoid_: Helper text, description
 **Error message**:
 Consumer-supplied text explaining why a control is invalid, shown in place of the **hint** while the control is invalid. The component only *displays* it — validation itself (deciding validity, choosing the wording) is the consumer's job, which is why the prop is named for the message, not the process. Has no default: an invalid control without one shows error styling on the field but keeps its hint.
 _Avoid_: Validation (the Stencil-era prop name; validation is the consumer's activity, not this text), validation message
+
+**Number field** (`c-number-field`):
+A **value control** for a number — an integer, or one with up to `decimals` fraction digits — whose value is a JS `number` (`null` when it holds no digit) while it shows grouped text (`1 234 567,89`), regrouped on every keystroke (ADR-0060). Emits the 4.x value events on every keystroke that changes the number. Distinct from `c-text-field type="number"`, the native number input, and from an **input mask**, which shapes text into fixed slots.
+_Avoid_: Numeric input, number input (the native one), amount field
+
+**Group separator**:
+The thousands separator a **number field** inserts between groups of three integer digits — a space under `lang="fi"`, `,` under `lang="en"` — beside its decimal separator. Both follow the page's `lang` unless set. Never typed: typed or pasted ones are ignored and re-inserted.
+_Avoid_: Thousands separator (fine in prose), delimiter, grouping character
+
+**Out of range**:
+A **number field**'s state while its number is below `min` or above `max`: the number is kept and emitted, and the host exposes `:state(out-of-range)` and `outOfRange`. A fact the component reports, like **bad input** — never clamped; the consumer writes the **error message**.
+_Avoid_: Invalid (validity is the consumer's judgement), overflow, clamped
 
 **Input mask**:
 A pattern the typed text of a `c-text-field` (its `mask`) or a **date picker** (its `format`) follows as it is typed: characters no **mask token** takes are dropped, and **literals** are filled in by the field itself. The value is the text as shown, literals included; the characters filling the tokens alone are the **unmasked value** (ADR-0059). Shapes typing only — it never judges what was typed (see **Complete**).
