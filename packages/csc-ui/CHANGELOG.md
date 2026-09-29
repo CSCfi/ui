@@ -1,5 +1,37 @@
 # @cscfi/csc-ui
 
+## 4.0.0-alpha.27
+
+### Minor Changes
+
+- [#299](https://github.com/CSCfi/ui/pull/299) [`de58feb`](https://github.com/CSCfi/ui/commit/de58feb102f4688eef2a1d4a4c7af7dc3737afc8) Thanks [@razorfever](https://github.com/razorfever)! - Add `c-date-picker`: a typeable date field with a calendar panel. It takes a
+  single date or, with `range`, a start and an end, and its value is an ISO
+  `YYYY-MM-DD` string. The display `format`, the first day of the week, week
+  numbers and the texts are configurable, and dates can be disabled with `min` /
+  `max`, a `disabled-dates` list or an `is-date-disabled` predicate. On a narrow
+  viewport the calendar opens as a fullscreen panel.
+
+- [#299](https://github.com/CSCfi/ui/pull/299) [`e07c07a`](https://github.com/CSCfi/ui/commit/e07c07a4c94aa538239a30a79c2f8ac5f5f8f3fe) Thanks [@razorfever](https://github.com/razorfever)! - Add `c-number-field`: a number input that shows thousands separators as the
+  user types (`1 234 567,89`) while its value stays a plain number. The
+  separators follow the page language unless set, `decimals` allows fraction
+  digits (with optional padding), and `min` / `max` report an out-of-range
+  number through the `out-of-range` custom state instead of changing it.
+
+- [#299](https://github.com/CSCfi/ui/pull/299) [`05366e1`](https://github.com/CSCfi/ui/commit/05366e1fac0c59bd78fde46e7e893ac40d66d7fe) Thanks [@razorfever](https://github.com/razorfever)! - Add input masks to `c-text-field`. A `mask` such as `+358 ## ### ####` makes
+  the typed text follow a pattern (`#` a digit, `A` a letter, `*` either), with
+  the separators filled in automatically, and a faint guide in the field shows
+  what is still to be typed (`+358 __ ___ ____`). A mask can end in optional
+  parts for formats of varying length, like `+358 #####[#######]` for 5–12
+  digits. The value is the text as shown; the read-only `unmaskedValue` holds
+  only the typed characters, and `maskComplete` and the `incomplete` custom
+  state tell whether the required part is filled.
+
+### Patch Changes
+
+- [#299](https://github.com/CSCfi/ui/pull/299) [`91a7cbe`](https://github.com/CSCfi/ui/commit/91a7cbe89eb322cb8c9131a9ef9c3749baf1334f) Thanks [@razorfever](https://github.com/razorfever)! - `c-date-picker` now shapes typed dates to its `format` as they are typed: the
+  separators appear on their own, and letters and other stray characters are
+  ignored.
+
 ## 4.0.0-alpha.26
 
 ### Minor Changes
