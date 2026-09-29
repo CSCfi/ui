@@ -28,6 +28,8 @@ import {
   type CCscLogoElement,
   type CDataTableElement,
   type CDataTableElementEventMap,
+  type CDatePickerElement,
+  type CDatePickerElementEventMap,
   type CDividerElement,
   type CIconElement,
   type CIconButtonElement,
@@ -264,6 +266,21 @@ export const CDataTable = createComponent({
   },
   react: React,
   tagName: 'c-data-table',
+});
+
+/** A date field that takes a typed date, or opens a calendar panel for picking one, or a start and end date under `range`. */
+export const CDatePicker = createComponent({
+  displayName: 'CDatePicker',
+  elementClass: elementClass<CDatePickerElement>('c-date-picker'),
+  events: {
+    onChange: 'change' as EventName<CDatePickerElementEventMap['change']>,
+    onChangeMonth: 'change:month' as EventName<CDatePickerElementEventMap['change:month']>,
+    onChangeText: 'change:text' as EventName<CDatePickerElementEventMap['change:text']>,
+    onInput: 'input' as EventName<CDatePickerElementEventMap['input']>,
+    onUpdateValue: 'update:value' as EventName<CDatePickerElementEventMap['update:value']>,
+  },
+  react: React,
+  tagName: 'c-date-picker',
 });
 
 export const CDivider = createComponent({

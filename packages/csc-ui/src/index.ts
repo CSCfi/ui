@@ -12,6 +12,7 @@ import CCard from './components/c-card/CCard.vue';
 import CCheckbox from './components/c-checkbox/CCheckbox.vue';
 import CCscLogo from './components/c-csc-logo/CCscLogo.vue';
 import CDataTable from './components/c-data-table/CDataTable.vue';
+import CDatePicker from './components/c-date-picker/CDatePicker.vue';
 import CDivider from './components/c-divider/CDivider.vue';
 import CDropdown from './components/c-dropdown/CDropdown.vue';
 import CIconButton from './components/c-icon-button/CIconButton.vue';
@@ -121,6 +122,16 @@ export type {
   CDataTableSortDirection,
   CDataTableTexts,
 } from './components/c-data-table/CDataTable.vue';
+
+export type {
+  CDatePickerDisabledDate,
+  CDatePickerProps,
+  CDatePickerRange,
+  CDatePickerText,
+  CDatePickerTexts,
+  CDatePickerValue,
+  CDatePickerWeekday,
+} from './components/c-date-picker/CDatePicker.vue';
 
 export type {
   CIconButtonProps,
@@ -340,6 +351,9 @@ const components: Array<[string, unknown]> = [
   // c-tree-select renders c-input, c-icon-button and c-icon (all registered
   // above) inside its shadow root and takes its tree from `items` only.
   ['c-tree-select', CTreeSelect],
+  // c-date-picker renders c-input, c-icon-button and c-icon (all registered
+  // above) inside its shadow root.
+  ['c-date-picker', CDatePicker],
   // Menu stack: leaf elements register before c-menu so item/label/divider
   // tags are defined when c-menu's slotted content upgrades.
   ['c-divider', CDivider],
@@ -453,4 +467,5 @@ export const tailwindVariantTags: ReadonlyArray<string> = [
   'c-popover',
   'c-progress-circle',
   'c-tree-select',
+  'c-date-picker',
 ];

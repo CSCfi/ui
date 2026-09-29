@@ -9,7 +9,8 @@
  *     defaults), with per-member JSDoc descriptions and the `@freeform` /
  *     `@defaultable <built-in>` member tags
  *   - methods: `defineExpose({ … })` entries, resolved to their top-level
- *     declarations for JSDoc and signature text
+ *     declarations for JSDoc and signature text; an exposed `computed<T>(…)`
+ *     is a read-only property instead (`readonlyProperties`)
  *   - events: the JSDoc-annotated event-map interface (`<Component>Events`,
  *     the typed emit-helper convention). Components not yet migrated to
  *     the helper simply have no event map — the manifest section stays empty
@@ -283,7 +284,9 @@ export const analyzeScript = (content, fileName, className, options = {}) => {
   // `_`-prefixed exposed names are internal cross-component contracts (e.g.
   // c-radio's group sync hook) — present on the element, absent from the
   // public manifest surface.
-  const methods = exposedNames
+  // An exposed `computed<T>(…)` is a read-only property, not a method: the
+  // custom element unwraps it on access (`el.badInput`).
+  const exposed = exposedNames
     .filter((name) => !name.startsWith('_'))
     .map((name) => {
       const found = topLevelDecls.get(name);
@@ -291,6 +294,8 @@ export const analyzeScript = (content, fileName, className, options = {}) => {
       let description = '';
 
       let signature = '';
+
+      let readonlyType = null;
 
       if (found) {
         description = jsDocDescription(found.statement);
@@ -307,11 +312,35 @@ export const analyzeScript = (content, fileName, className, options = {}) => {
           const ret = init.type ? `: ${typeText(init.type, sf)}` : '';
 
           signature = `(${params})${ret}`;
+        } else if (
+          init &&
+          ts.isCallExpression(init) &&
+          init.expression.getText(sf) === 'computed'
+        ) {
+          readonlyType = init.typeArguments?.[0]
+            ? typeText(init.typeArguments[0], sf)
+            : 'unknown';
         }
       }
 
-      return { description, name, signature };
+      return { description, name, readonlyType, signature };
     });
+
+  const methods = exposed
+    .filter((m) => m.readonlyType === null)
+    .map(({ description, name, signature }) => ({
+      description,
+      name,
+      signature,
+    }));
+
+  const readonlyProperties = exposed
+    .filter((m) => m.readonlyType !== null)
+    .map(({ description, name, readonlyType }) => ({
+      description,
+      name,
+      type: readonlyType,
+    }));
 
   // ---- events (event map, when present) --------------------------------------
   const eventMapName = `${className}Events`;
@@ -336,5 +365,6 @@ export const analyzeScript = (content, fileName, className, options = {}) => {
     hasEventMap: Boolean(eventMap),
     methods,
     props,
+    readonlyProperties,
   };
 };

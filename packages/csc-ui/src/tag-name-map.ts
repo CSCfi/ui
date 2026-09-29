@@ -14,6 +14,7 @@
 import type { CAutocompleteFilter, CAutocompleteItem, CAutocompleteTexts, CAutocompleteValue } from './components/c-autocomplete/CAutocomplete.vue';
 import type { CButtonGroupValue } from './components/c-button-group/CButtonGroup.vue';
 import type { CDataTableCellContent, CDataTableColumn, CDataTableExpandedContext, CDataTableRow, CDataTableSort, CDataTableTexts } from './components/c-data-table/CDataTable.vue';
+import type { CDatePickerDisabledDate, CDatePickerText, CDatePickerTexts, CDatePickerValue } from './components/c-date-picker/CDatePicker.vue';
 import type { CPaginationOptions } from './components/c-pagination/CPagination.vue';
 import type { CSelectTexts, CSelectValue } from './components/c-select/CSelect.vue';
 import type { CTreeSelectFilter, CTreeSelectItem, CTreeSelectTexts, CTreeSelectValue } from './components/c-tree-select/CTreeSelect.vue';
@@ -640,6 +641,139 @@ export interface CDataTableElement extends Omit<HTMLElement, 'autohide' | 'colum
   removeEventListener<K extends keyof CDataTableElementEventMap>(
     type: K,
     listener: (this: CDataTableElement, ev: CDataTableElementEventMap[K]) => void,
+    options?: boolean | EventListenerOptions,
+  ): void;
+  removeEventListener(
+    type: string,
+    listener: EventListenerOrEventListenerObject,
+    options?: boolean | EventListenerOptions,
+  ): void;
+}
+
+/** Events dispatched by `<c-date-picker>`. */
+export interface CDatePickerElementEventMap {
+  /**
+   * Fired when the value changes — a day or range is picked, typed text is
+   * committed, or the field is cleared — carrying the new value: an ISO
+   * date, `{ start, end }` under `range`, or `null`.
+   */
+  change: CustomEvent<CDatePickerValue>;
+  /**
+   * Fired with the displayed month as `YYYY-MM` whenever it changes, and
+   * when the panel opens — the signal to load that month's `disabled-dates`.
+   */
+  'change:month': CustomEvent<string>;
+  /**
+   * Fired on every commit of typed text (Enter or leaving the input) with the
+   * text as typed — `{ start, end }` under `range`. Read `badInput` to tell
+   * whether it named a date that can be picked.
+   */
+  'change:text': CustomEvent<CDatePickerText>;
+  /**
+   * Native bubbling input event dispatched alongside every value change so a
+   * plain `v-model` stays in sync. Carries no detail.
+   */
+  input: CustomEvent<void>;
+  /** Fired alongside `change` with the same detail — the `v-model` contract. */
+  'update:value': CustomEvent<CDatePickerValue>;
+}
+
+/** A date field that takes a typed date, or opens a calendar panel for picking one, or a start and end date under `range`. */
+export interface CDatePickerElement extends Omit<HTMLElement, 'clearable' | 'disabled' | 'disabledDates' | 'errorMessage' | 'firstDayOfWeek' | 'format' | 'hideDetails' | 'hint' | 'hostId' | 'isDateDisabled' | 'label' | 'labelOnTop' | 'max' | 'min' | 'name' | 'placeholder' | 'range' | 'required' | 'shadow' | 'showWeekNumbers' | 'size' | 'texts' | 'valid' | 'value'> {
+  /** Make the value clearable */
+  clearable?: boolean;
+  /** Disable the field */
+  disabled?: boolean;
+  /**
+   * Dates that cannot be picked: ISO dates and inclusive `{ start, end }`
+   * spans. Arrays have no attribute form — bind as a DOM property
+   */
+  disabledDates?: CDatePickerDisabledDate[];
+  /** Error message shown in place of the hint while the field is invalid */
+  errorMessage?: string;
+  /**
+   * First day of the week in the calendar, numbered like `Date.getDay()`:
+   * 0 = Sunday, 1 = Monday … 6 = Saturday
+   */
+  firstDayOfWeek?: 0 | 1 | 2 | 3 | 4 | 5 | 6;
+  /**
+   * How dates are shown and read from typing: a pattern of the tokens `d`,
+   * `dd`, `M`, `MM` and `yyyy` with any separators, e.g. `yyyy-MM-dd`
+   */
+  format?: string;
+  /** Hide the hint and error messages */
+  hideDetails?: boolean;
+  /** Hint text for the field */
+  hint?: string;
+  /** Id of the element */
+  hostId?: string;
+  /**
+   * Predicate for dates that cannot be picked (weekends, say); receives an
+   * ISO date. Functions have no attribute form — bind as a DOM property
+   */
+  isDateDisabled?: (iso: string) => boolean;
+  /** Element label */
+  label?: string;
+  /** Label on top of the field */
+  labelOnTop?: boolean;
+  /**
+   * The latest date that can be picked or typed, as an ISO date; also bounds
+   * the calendar's navigation
+   */
+  max?: string;
+  /**
+   * The earliest date that can be picked or typed, as an ISO date; also
+   * bounds the calendar's navigation
+   */
+  min?: string;
+  /** Input field name */
+  name?: string;
+  /** Placeholder of the input; the `format` pattern when empty */
+  placeholder?: string;
+  /**
+   * Pick a range: the value becomes `{ start, end }` and the field holds two
+   * inputs
+   */
+  range?: boolean;
+  /** Set the field as required */
+  required?: boolean;
+  /** Shadow variant */
+  shadow?: boolean;
+  /**
+   * Show ISO 8601 week numbers beside the calendar rows (meaningful with a
+   * Monday week start)
+   */
+  showWeekNumbers?: boolean;
+  /** Field height: the 52px default (the shared control height) or the 36px `small` box */
+  size?: 'default' | 'small';
+  /**
+   * UI text overrides (i18n), merged over the names `Intl` gives for the
+   * page's `lang` and the English defaults. Objects have no attribute form —
+   * bind as a DOM property
+   */
+  texts?: CDatePickerTexts;
+  /** Set the validity of the field */
+  valid?: boolean;
+  /**
+   * The date as an ISO `YYYY-MM-DD` string, or `{ start, end }` under
+   * `range`; `null` when empty
+   */
+  value?: CDatePickerValue;
+  /** Whether the committed text names no date that can be picked — the value is then `null` (CONTEXT.md "Bad input"). */
+  readonly badInput: boolean;
+  addEventListener<K extends keyof CDatePickerElementEventMap>(
+    type: K,
+    listener: (this: CDatePickerElement, ev: CDatePickerElementEventMap[K]) => void,
+    options?: boolean | AddEventListenerOptions,
+  ): void;
+  addEventListener(
+    type: string,
+    listener: EventListenerOrEventListenerObject,
+    options?: boolean | AddEventListenerOptions,
+  ): void;
+  removeEventListener<K extends keyof CDatePickerElementEventMap>(
+    type: K,
+    listener: (this: CDatePickerElement, ev: CDatePickerElementEventMap[K]) => void,
     options?: boolean | EventListenerOptions,
   ): void;
   removeEventListener(
@@ -2385,6 +2519,7 @@ export interface CTreeSelectElement extends Omit<HTMLElement, 'allowBranch' | 'c
 export interface AppDefaults {
   'c-autocomplete'?: Partial<Pick<CAutocompleteElement, 'hideDetails' | 'itemsPerPage' | 'labelOnTop' | 'shadow' | 'size' | 'texts'>>;
   'c-data-table'?: Partial<Pick<CDataTableElement, 'texts'>>;
+  'c-date-picker'?: Partial<Pick<CDatePickerElement, 'firstDayOfWeek' | 'format' | 'hideDetails' | 'labelOnTop' | 'shadow' | 'showWeekNumbers' | 'size' | 'texts'>>;
   'c-select'?: Partial<Pick<CSelectElement, 'hideDetails' | 'itemsPerPage' | 'labelOnTop' | 'shadow' | 'size' | 'texts'>>;
   'c-text-field'?: Partial<Pick<CTextFieldElement, 'hideDetails' | 'labelOnTop' | 'shadow' | 'size'>>;
   'c-tree-select'?: Partial<Pick<CTreeSelectElement, 'hideDetails' | 'itemsPerPage' | 'labelOnTop' | 'shadow' | 'size' | 'texts'>>;
@@ -2394,13 +2529,14 @@ export interface AppDefaults {
 export const DEFAULTABLE_PROPS = {
   'c-autocomplete': ['hideDetails', 'itemsPerPage', 'labelOnTop', 'shadow', 'size', 'texts'],
   'c-data-table': ['texts'],
+  'c-date-picker': ['firstDayOfWeek', 'format', 'hideDetails', 'labelOnTop', 'shadow', 'showWeekNumbers', 'size', 'texts'],
   'c-select': ['hideDetails', 'itemsPerPage', 'labelOnTop', 'shadow', 'size', 'texts'],
   'c-text-field': ['hideDetails', 'labelOnTop', 'shadow', 'size'],
   'c-tree-select': ['hideDetails', 'itemsPerPage', 'labelOnTop', 'shadow', 'size', 'texts'],
 } as const satisfies Record<keyof AppDefaults, readonly string[]>;
 
 /** Tags dispatching the v-model contract event `update:value` — the value controls (CONTEXT.md). */
-export const VALUE_TAGS = ['c-accordion', 'c-autocomplete', 'c-button-group', 'c-checkbox', 'c-modal', 'c-otp-input', 'c-pagination', 'c-radio-group', 'c-select', 'c-slider', 'c-switch', 'c-tabs', 'c-text-field', 'c-tree-select'] as const;
+export const VALUE_TAGS = ['c-accordion', 'c-autocomplete', 'c-button-group', 'c-checkbox', 'c-date-picker', 'c-modal', 'c-otp-input', 'c-pagination', 'c-radio-group', 'c-select', 'c-slider', 'c-switch', 'c-tabs', 'c-text-field', 'c-tree-select'] as const;
 
 declare global {
   interface HTMLElementTagNameMap {
@@ -2418,6 +2554,7 @@ declare global {
     'c-checkbox': CCheckboxElement;
     'c-csc-logo': CCscLogoElement;
     'c-data-table': CDataTableElement;
+    'c-date-picker': CDatePickerElement;
     'c-divider': CDividerElement;
     'c-dropdown': CDropdownElement;
     'c-icon': CIconElement;

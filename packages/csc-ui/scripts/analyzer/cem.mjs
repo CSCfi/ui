@@ -127,6 +127,14 @@ export const buildManifest = (components, sharedTypes) => ({
         }),
         members: [
           ...c.props.map(field),
+          ...c.readonlyProperties.map((r) => ({
+            kind: 'field',
+            name: r.name,
+            privacy: 'public',
+            readonly: true,
+            type: { text: r.type },
+            ...(r.description ? { description: r.description } : {}),
+          })),
           ...c.methods.map((m) => ({
             kind: 'method',
             name: m.name,

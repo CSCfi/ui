@@ -226,12 +226,17 @@ const typeAccepts = (type, shape) => {
 
   if (shape === 'boolean') return text === 'boolean';
 
-  if (shape === 'number') return text === 'number';
+  // A number fits `number` or a union of numeric literals (`0 | 1 | … | 6`).
+  if (shape === 'number') {
+    return text === 'number' || /^-?\d+(\|-?\d+)*$/.test(text);
+  }
 
   if (shape === 'string') return text === 'string' || /['"`]/.test(text);
 
   if (shape === 'object') {
-    return !['boolean', 'number', 'string'].includes(text) && !/['"`]/.test(text);
+    return (
+      !['boolean', 'number', 'string'].includes(text) && !/['"`]/.test(text)
+    );
   }
 
   return false;

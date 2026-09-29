@@ -36,6 +36,8 @@ export interface CemMember {
   kind: 'field' | 'method';
   name: string;
   privacy?: string;
+  /** An exposed read-only property (`el.badInput`), not a prop. */
+  readonly?: boolean;
   type?: CemTypeRef;
 }
 
@@ -246,7 +248,7 @@ export const toComponentView = (
   );
 
   const props: PropView[] = (c.members ?? [])
-    .filter((m) => m.kind === 'field')
+    .filter((m) => m.kind === 'field' && !m.readonly)
     .map((m) => ({
       attribute: attributeByField.get(m.name) ?? null,
       default: m.default,
@@ -263,12 +265,17 @@ export const toComponentView = (
     name: e.name,
   }));
 
+  // Exposed read-only properties (`el.badInput`) list beside the methods:
+  // like them they are script API, never set as a prop.
   const methods: MethodView[] = (c.members ?? [])
-    .filter((m) => m.kind === 'method')
+    .filter((m) => m.kind === 'method' || (m.kind === 'field' && m.readonly))
     .map((m) => ({
       description: m.description,
       name: m.name,
-      signature: m.csc?.signature ?? '()',
+      signature:
+        m.kind === 'field'
+          ? `: ${m.type?.text ?? 'unknown'} (read-only)`
+          : (m.csc?.signature ?? '()'),
     }));
 
   const cssParts = c.cssParts ?? [];

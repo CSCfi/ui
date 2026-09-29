@@ -145,6 +145,19 @@ const inner = (el: Element | null, selector: string): HTMLElement => {
   return found;
 };
 
+// c-date-picker's calendar opens from its calendar button, never from the
+// text (ADR-0058); min/max pin the displayed month away from today.
+const DATE_PICKER_MOUNT: MountOptions = {
+  props: { label: 'Date', max: '2031-09-30', min: '2031-09-01' },
+};
+
+const openCalendar = async (m: Mounted): Promise<void> => {
+  await userEvent.click(
+    m.deep('c-icon-button[aria-label="Open calendar"]', 'button'),
+  );
+  await settle();
+};
+
 export const VALUE_RECIPES: Record<string, ValueRecipe> = {
   'c-accordion': {
     expected: 'a',
@@ -198,6 +211,17 @@ export const VALUE_RECIPES: Record<string, ValueRecipe> = {
     model: false,
     mount: { props: { label: 'Accept' } },
     programmatic: true,
+  },
+  'c-date-picker': {
+    emptyAware: true,
+    expected: '2031-09-15',
+    family: 'change',
+    interact: async (m) => {
+      await openCalendar(m);
+      await userEvent.click(m.shadow('td[data-date="2031-09-15"]'));
+    },
+    mount: DATE_PICKER_MOUNT,
+    programmatic: '2031-09-20',
   },
   'c-modal': {
     expected: false,
@@ -355,6 +379,13 @@ export const OVERLAY_RECIPES: Record<string, OverlayRecipe> = {
     lightDismiss: true,
     mount: { html: OPTIONS, props: { label: 'Country' } },
     open: openField,
+    panel: (m) => m.part('panel'),
+  },
+  'c-date-picker': {
+    focusHome: (m) => m.shadow('input[part~="input"]'),
+    lightDismiss: true,
+    mount: DATE_PICKER_MOUNT,
+    open: openCalendar,
     panel: (m) => m.part('panel'),
   },
   'c-menu': {
