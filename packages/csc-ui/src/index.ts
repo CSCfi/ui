@@ -12,6 +12,7 @@ import CCard from './components/c-card/CCard.vue';
 import CCheckbox from './components/c-checkbox/CCheckbox.vue';
 import CCscLogo from './components/c-csc-logo/CCscLogo.vue';
 import CDataTable from './components/c-data-table/CDataTable.vue';
+import CDatePicker from './components/c-date-picker/CDatePicker.vue';
 import CDivider from './components/c-divider/CDivider.vue';
 import CDropdown from './components/c-dropdown/CDropdown.vue';
 import CIconButton from './components/c-icon-button/CIconButton.vue';
@@ -35,6 +36,7 @@ import CMenu from './components/c-menu/CMenu.vue';
 import CMessage from './components/c-message/CMessage.vue';
 import CModal from './components/c-modal/CModal.vue';
 import CNavigationButton from './components/c-navigation-button/CNavigationButton.vue';
+import CNumberField from './components/c-number-field/CNumberField.vue';
 import COptionValue from './components/c-option-value/COptionValue.vue';
 import COption from './components/c-option/COption.vue';
 import COtpInput from './components/c-otp-input/COtpInput.vue';
@@ -123,6 +125,16 @@ export type {
 } from './components/c-data-table/CDataTable.vue';
 
 export type {
+  CDatePickerDisabledDate,
+  CDatePickerProps,
+  CDatePickerRange,
+  CDatePickerText,
+  CDatePickerTexts,
+  CDatePickerValue,
+  CDatePickerWeekday,
+} from './components/c-date-picker/CDatePicker.vue';
+
+export type {
   CIconButtonProps,
   CIconButtonSize,
 } from './components/c-icon-button/CIconButton.vue';
@@ -137,6 +149,8 @@ export type {
   CLoginCardBlendMode,
   CLoginCardProps,
 } from './components/c-login-card/CLoginCard.vue';
+
+export type { CNumberFieldProps } from './components/c-number-field/CNumberField.vue';
 
 export type {
   CPaginationOptions,
@@ -281,6 +295,8 @@ const components: Array<[string, unknown]> = [
   ['c-accordion-item', CAccordionItem],
   ['c-input', CInput],
   ['c-text-field', CTextField],
+  // c-number-field renders c-input (registered above) inside its shadow root.
+  ['c-number-field', CNumberField],
   ['c-spinner', CSpinner],
   ['c-loader', CLoader],
   ['c-icon-button', CIconButton],
@@ -340,6 +356,9 @@ const components: Array<[string, unknown]> = [
   // c-tree-select renders c-input, c-icon-button and c-icon (all registered
   // above) inside its shadow root and takes its tree from `items` only.
   ['c-tree-select', CTreeSelect],
+  // c-date-picker renders c-input, c-icon-button and c-icon (all registered
+  // above) inside its shadow root.
+  ['c-date-picker', CDatePicker],
   // Menu stack: leaf elements register before c-menu so item/label/divider
   // tags are defined when c-menu's slotted content upgrades.
   ['c-divider', CDivider],
@@ -453,4 +472,6 @@ export const tailwindVariantTags: ReadonlyArray<string> = [
   'c-popover',
   'c-progress-circle',
   'c-tree-select',
+  'c-date-picker',
+  'c-number-field',
 ];

@@ -14,6 +14,7 @@
 import type { CAutocompleteFilter, CAutocompleteItem, CAutocompleteTexts, CAutocompleteValue } from './components/c-autocomplete/CAutocomplete.vue';
 import type { CButtonGroupValue } from './components/c-button-group/CButtonGroup.vue';
 import type { CDataTableCellContent, CDataTableColumn, CDataTableExpandedContext, CDataTableRow, CDataTableSort, CDataTableTexts } from './components/c-data-table/CDataTable.vue';
+import type { CDatePickerDisabledDate, CDatePickerText, CDatePickerTexts, CDatePickerValue } from './components/c-date-picker/CDatePicker.vue';
 import type { CPaginationOptions } from './components/c-pagination/CPagination.vue';
 import type { CSelectTexts, CSelectValue } from './components/c-select/CSelect.vue';
 import type { CTreeSelectFilter, CTreeSelectItem, CTreeSelectTexts, CTreeSelectValue } from './components/c-tree-select/CTreeSelect.vue';
@@ -649,6 +650,139 @@ export interface CDataTableElement extends Omit<HTMLElement, 'autohide' | 'colum
   ): void;
 }
 
+/** Events dispatched by `<c-date-picker>`. */
+export interface CDatePickerElementEventMap {
+  /**
+   * Fired when the value changes — a day or range is picked, typed text is
+   * committed, or the field is cleared — carrying the new value: an ISO
+   * date, `{ start, end }` under `range`, or `null`.
+   */
+  change: CustomEvent<CDatePickerValue>;
+  /**
+   * Fired with the displayed month as `YYYY-MM` whenever it changes, and
+   * when the panel opens — the signal to load that month's `disabled-dates`.
+   */
+  'change:month': CustomEvent<string>;
+  /**
+   * Fired on every commit of typed text (Enter or leaving the input) with the
+   * text as typed — `{ start, end }` under `range`. Read `badInput` to tell
+   * whether it named a date that can be picked.
+   */
+  'change:text': CustomEvent<CDatePickerText>;
+  /**
+   * Native bubbling input event dispatched alongside every value change so a
+   * plain `v-model` stays in sync. Carries no detail.
+   */
+  input: CustomEvent<void>;
+  /** Fired alongside `change` with the same detail — the `v-model` contract. */
+  'update:value': CustomEvent<CDatePickerValue>;
+}
+
+/** A date field that takes a typed date, or opens a calendar panel for picking one, or a start and end date under `range`. */
+export interface CDatePickerElement extends Omit<HTMLElement, 'clearable' | 'disabled' | 'disabledDates' | 'errorMessage' | 'firstDayOfWeek' | 'format' | 'hideDetails' | 'hint' | 'hostId' | 'isDateDisabled' | 'label' | 'labelOnTop' | 'max' | 'min' | 'name' | 'placeholder' | 'range' | 'required' | 'shadow' | 'showWeekNumbers' | 'size' | 'texts' | 'valid' | 'value'> {
+  /** Make the value clearable */
+  clearable?: boolean;
+  /** Disable the field */
+  disabled?: boolean;
+  /**
+   * Dates that cannot be picked: ISO dates and inclusive `{ start, end }`
+   * spans. Arrays have no attribute form — bind as a DOM property
+   */
+  disabledDates?: CDatePickerDisabledDate[];
+  /** Error message shown in place of the hint while the field is invalid */
+  errorMessage?: string;
+  /**
+   * First day of the week in the calendar, numbered like `Date.getDay()`:
+   * 0 = Sunday, 1 = Monday … 6 = Saturday
+   */
+  firstDayOfWeek?: 0 | 1 | 2 | 3 | 4 | 5 | 6;
+  /**
+   * How dates are shown and read from typing: a pattern of the tokens `d`,
+   * `dd`, `M`, `MM` and `yyyy` with any separators, e.g. `yyyy-MM-dd`
+   */
+  format?: string;
+  /** Hide the hint and error messages */
+  hideDetails?: boolean;
+  /** Hint text for the field */
+  hint?: string;
+  /** Id of the element */
+  hostId?: string;
+  /**
+   * Predicate for dates that cannot be picked (weekends, say); receives an
+   * ISO date. Functions have no attribute form — bind as a DOM property
+   */
+  isDateDisabled?: (iso: string) => boolean;
+  /** Element label */
+  label?: string;
+  /** Label on top of the field */
+  labelOnTop?: boolean;
+  /**
+   * The latest date that can be picked or typed, as an ISO date; also bounds
+   * the calendar's navigation
+   */
+  max?: string;
+  /**
+   * The earliest date that can be picked or typed, as an ISO date; also
+   * bounds the calendar's navigation
+   */
+  min?: string;
+  /** Input field name */
+  name?: string;
+  /** Placeholder of the input; the `format` pattern when empty */
+  placeholder?: string;
+  /**
+   * Pick a range: the value becomes `{ start, end }` and the field holds two
+   * inputs
+   */
+  range?: boolean;
+  /** Set the field as required */
+  required?: boolean;
+  /** Shadow variant */
+  shadow?: boolean;
+  /**
+   * Show ISO 8601 week numbers beside the calendar rows (meaningful with a
+   * Monday week start)
+   */
+  showWeekNumbers?: boolean;
+  /** Field height: the 52px default (the shared control height) or the 36px `small` box */
+  size?: 'default' | 'small';
+  /**
+   * UI text overrides (i18n), merged over the names `Intl` gives for the
+   * page's `lang` and the English defaults. Objects have no attribute form —
+   * bind as a DOM property
+   */
+  texts?: CDatePickerTexts;
+  /** Set the validity of the field */
+  valid?: boolean;
+  /**
+   * The date as an ISO `YYYY-MM-DD` string, or `{ start, end }` under
+   * `range`; `null` when empty
+   */
+  value?: CDatePickerValue;
+  /** Whether the committed text names no date that can be picked — the value is then `null` (CONTEXT.md "Bad input"). */
+  readonly badInput: boolean;
+  addEventListener<K extends keyof CDatePickerElementEventMap>(
+    type: K,
+    listener: (this: CDatePickerElement, ev: CDatePickerElementEventMap[K]) => void,
+    options?: boolean | AddEventListenerOptions,
+  ): void;
+  addEventListener(
+    type: string,
+    listener: EventListenerOrEventListenerObject,
+    options?: boolean | AddEventListenerOptions,
+  ): void;
+  removeEventListener<K extends keyof CDatePickerElementEventMap>(
+    type: K,
+    listener: (this: CDatePickerElement, ev: CDatePickerElementEventMap[K]) => void,
+    options?: boolean | EventListenerOptions,
+  ): void;
+  removeEventListener(
+    type: string,
+    listener: EventListenerOrEventListenerObject,
+    options?: boolean | EventListenerOptions,
+  ): void;
+}
+
 export interface CDividerElement extends Omit<HTMLElement, 'vertical'> {
   /** Render a vertical separator instead of the default horizontal one. */
   vertical?: boolean;
@@ -1074,6 +1208,91 @@ export interface CModalElement extends Omit<HTMLElement, 'disableBackdropBlur' |
 }
 
 export interface CNavigationButtonElement extends HTMLElement {
+}
+
+/** Events dispatched by `<c-number-field>`. */
+export interface CNumberFieldElementEventMap {
+  /**
+   * Fired whenever typing changes the number, carrying it — `null` once the
+   * field holds no digit. Not fired when only the text changes (a group
+   * separator, a trailing decimal separator) or when `value` is set.
+   */
+  change: CustomEvent<null | number>;
+  /**
+   * Native bubbling input event fired alongside every value change so a
+   * plain Vue `v-model` works. No detail.
+   */
+  input: CustomEvent<void>;
+  /** v-model contract event, fired with `change`. */
+  'update:value': CustomEvent<null | number>;
+}
+
+/** A field for a number — an integer, or one with decimals — shown with thousands separators as it is typed. */
+export interface CNumberFieldElement extends Omit<HTMLElement, 'decimals' | 'decimalSeparator' | 'disabled' | 'errorMessage' | 'fixedDecimals' | 'groupSeparator' | 'hideDetails' | 'hint' | 'hostId' | 'label' | 'labelOnTop' | 'max' | 'min' | 'name' | 'placeholder' | 'readonly' | 'required' | 'shadow' | 'size' | 'valid' | 'value'> {
+  /** The most fraction digits the field takes; `0` makes it an integer field */
+  decimals?: number;
+  /** The decimal separator. Empty follows the page's `lang` (`,` for `fi`, `.` for `en`) */
+  decimalSeparator?: string;
+  /** Disable the field */
+  disabled?: boolean;
+  /** Error message shown in place of the hint while the field is invalid */
+  errorMessage?: string;
+  /** Pad the fraction to exactly `decimals` digits when the field is left (`12,5` → `12,50`) */
+  fixedDecimals?: boolean;
+  /** The thousands separator. Empty follows the page's `lang` (a space for `fi`, `,` for `en`) */
+  groupSeparator?: string;
+  /** Hide the hint and error messages */
+  hideDetails?: boolean;
+  /** Hint text for the field */
+  hint?: string;
+  /** Id of the input */
+  hostId?: string;
+  /** Label of the field */
+  label?: string;
+  /** Label on top of the field */
+  labelOnTop?: boolean;
+  /** The largest number in range; a larger one is kept and reported as out of range */
+  max?: null | number;
+  /** The smallest number in range; a smaller one is kept and reported as out of range. At `0` or above, the minus key is ignored */
+  min?: null | number;
+  /** Name of the input */
+  name?: string;
+  /** Placeholder of the input */
+  placeholder?: string;
+  /** Mark as readonly */
+  readonly?: boolean;
+  /** Set the field as required */
+  required?: boolean;
+  /** Shadow variant of the field */
+  shadow?: boolean;
+  /** Field height: the 52px default (the shared control height) or the 36px `small` box */
+  size?: 'default' | 'small';
+  /** Set the validity of the field */
+  valid?: boolean;
+  /** The number, or `null` when the field is empty. A string is read as the number it spells, and `''` as empty — what an attribute, or a plain `v-model` holding `null`, writes; the field always emits a number or `null` */
+  value?: null | number | string;
+  /** Whether the number is below `min` or above `max` (CONTEXT.md "Out of range") */
+  readonly outOfRange: boolean;
+  addEventListener<K extends keyof CNumberFieldElementEventMap>(
+    type: K,
+    listener: (this: CNumberFieldElement, ev: CNumberFieldElementEventMap[K]) => void,
+    options?: boolean | AddEventListenerOptions,
+  ): void;
+  addEventListener(
+    type: string,
+    listener: EventListenerOrEventListenerObject,
+    options?: boolean | AddEventListenerOptions,
+  ): void;
+  removeEventListener<K extends keyof CNumberFieldElementEventMap>(
+    type: K,
+    listener: (this: CNumberFieldElement, ev: CNumberFieldElementEventMap[K]) => void,
+    options?: boolean | EventListenerOptions,
+  ): void;
+  removeEventListener(
+    type: string,
+    listener: EventListenerOrEventListenerObject,
+    options?: boolean | EventListenerOptions,
+  ): void;
 }
 
 export interface COptionElement extends Omit<HTMLElement, 'disabled' | 'name' | 'selected' | 'value'> {
@@ -2065,7 +2284,8 @@ export interface CTextFieldElementEventMap {
   'update:value': CustomEvent<string>;
 }
 
-export interface CTextFieldElement extends Omit<HTMLElement, 'autocomplete' | 'autocorrect' | 'automaticCapitalize' | 'disabled' | 'errorMessage' | 'hideDetails' | 'hint' | 'hostId' | 'label' | 'labelOnTop' | 'max' | 'min' | 'name' | 'placeholder' | 'readonly' | 'required' | 'rows' | 'shadow' | 'size' | 'step' | 'trimWhitespace' | 'type' | 'valid' | 'value'> {
+/** A text field for a single line of text, or several lines under `rows`, with a label, a hint and an error message. */
+export interface CTextFieldElement extends Omit<HTMLElement, 'autocomplete' | 'autocorrect' | 'automaticCapitalize' | 'disabled' | 'errorMessage' | 'hideDetails' | 'hint' | 'hostId' | 'label' | 'labelOnTop' | 'mask' | 'max' | 'min' | 'name' | 'placeholder' | 'readonly' | 'required' | 'rows' | 'shadow' | 'size' | 'step' | 'trimWhitespace' | 'type' | 'valid' | 'value'> {
   /** HTML input autocomplete */
   autocomplete?: string;
   /**
@@ -2091,6 +2311,8 @@ export interface CTextFieldElement extends Omit<HTMLElement, 'autocomplete' | 'a
   label?: string;
   /** Label on top of the input */
   labelOnTop?: boolean;
+  /** Input mask the typed text follows: `#` a digit, `A` a letter, `*` a letter or a digit, `\` escapes the next character, `[…]` wraps a trailing optional section, anything else is a literal. Applies to a single-line `text`, `tel` or `search` field */
+  mask?: string;
   /** Maximum value on a numeric input */
   max?: null | number;
   /** Minimum value on a numeric input */
@@ -2119,6 +2341,10 @@ export interface CTextFieldElement extends Omit<HTMLElement, 'autocomplete' | 'a
   valid?: boolean;
   /** Value of the input */
   value?: string;
+  /** Whether a masked field has every mask token filled (always `true` without a mask) */
+  readonly maskComplete: boolean;
+  /** The text without the mask's literals: only the characters filling its tokens (the text as is without a mask) */
+  readonly unmaskedValue: string;
   addEventListener<K extends keyof CTextFieldElementEventMap>(
     type: K,
     listener: (this: CTextFieldElement, ev: CTextFieldElementEventMap[K]) => void,
@@ -2385,6 +2611,8 @@ export interface CTreeSelectElement extends Omit<HTMLElement, 'allowBranch' | 'c
 export interface AppDefaults {
   'c-autocomplete'?: Partial<Pick<CAutocompleteElement, 'hideDetails' | 'itemsPerPage' | 'labelOnTop' | 'shadow' | 'size' | 'texts'>>;
   'c-data-table'?: Partial<Pick<CDataTableElement, 'texts'>>;
+  'c-date-picker'?: Partial<Pick<CDatePickerElement, 'firstDayOfWeek' | 'format' | 'hideDetails' | 'labelOnTop' | 'shadow' | 'showWeekNumbers' | 'size' | 'texts'>>;
+  'c-number-field'?: Partial<Pick<CNumberFieldElement, 'decimalSeparator' | 'decimals' | 'fixedDecimals' | 'groupSeparator' | 'hideDetails' | 'labelOnTop' | 'shadow' | 'size'>>;
   'c-select'?: Partial<Pick<CSelectElement, 'hideDetails' | 'itemsPerPage' | 'labelOnTop' | 'shadow' | 'size' | 'texts'>>;
   'c-text-field'?: Partial<Pick<CTextFieldElement, 'hideDetails' | 'labelOnTop' | 'shadow' | 'size'>>;
   'c-tree-select'?: Partial<Pick<CTreeSelectElement, 'hideDetails' | 'itemsPerPage' | 'labelOnTop' | 'shadow' | 'size' | 'texts'>>;
@@ -2394,13 +2622,15 @@ export interface AppDefaults {
 export const DEFAULTABLE_PROPS = {
   'c-autocomplete': ['hideDetails', 'itemsPerPage', 'labelOnTop', 'shadow', 'size', 'texts'],
   'c-data-table': ['texts'],
+  'c-date-picker': ['firstDayOfWeek', 'format', 'hideDetails', 'labelOnTop', 'shadow', 'showWeekNumbers', 'size', 'texts'],
+  'c-number-field': ['decimalSeparator', 'decimals', 'fixedDecimals', 'groupSeparator', 'hideDetails', 'labelOnTop', 'shadow', 'size'],
   'c-select': ['hideDetails', 'itemsPerPage', 'labelOnTop', 'shadow', 'size', 'texts'],
   'c-text-field': ['hideDetails', 'labelOnTop', 'shadow', 'size'],
   'c-tree-select': ['hideDetails', 'itemsPerPage', 'labelOnTop', 'shadow', 'size', 'texts'],
 } as const satisfies Record<keyof AppDefaults, readonly string[]>;
 
 /** Tags dispatching the v-model contract event `update:value` — the value controls (CONTEXT.md). */
-export const VALUE_TAGS = ['c-accordion', 'c-autocomplete', 'c-button-group', 'c-checkbox', 'c-modal', 'c-otp-input', 'c-pagination', 'c-radio-group', 'c-select', 'c-slider', 'c-switch', 'c-tabs', 'c-text-field', 'c-tree-select'] as const;
+export const VALUE_TAGS = ['c-accordion', 'c-autocomplete', 'c-button-group', 'c-checkbox', 'c-date-picker', 'c-modal', 'c-number-field', 'c-otp-input', 'c-pagination', 'c-radio-group', 'c-select', 'c-slider', 'c-switch', 'c-tabs', 'c-text-field', 'c-tree-select'] as const;
 
 declare global {
   interface HTMLElementTagNameMap {
@@ -2418,6 +2648,7 @@ declare global {
     'c-checkbox': CCheckboxElement;
     'c-csc-logo': CCscLogoElement;
     'c-data-table': CDataTableElement;
+    'c-date-picker': CDatePickerElement;
     'c-divider': CDividerElement;
     'c-dropdown': CDropdownElement;
     'c-icon': CIconElement;
@@ -2441,6 +2672,7 @@ declare global {
     'c-message': CMessageElement;
     'c-modal': CModalElement;
     'c-navigation-button': CNavigationButtonElement;
+    'c-number-field': CNumberFieldElement;
     'c-option': COptionElement;
     'c-option-value': COptionValueElement;
     'c-otp-input': COtpInputElement;

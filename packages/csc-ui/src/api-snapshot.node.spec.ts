@@ -36,6 +36,7 @@ interface Manifest {
 
 interface Member extends Typed {
   kind: 'field' | 'method';
+  readonly?: boolean;
 }
 
 interface Named {
@@ -82,7 +83,10 @@ const names = (list: Named[]): string[] => list.map((n) => n.name).sort();
 
 /** The reviewable shape of one tag's public API. Descriptions are prose, not API — excluded. */
 const condense = (d: { tagName: string } & Declaration) => {
-  const fields = d.members.filter((m) => m.kind === 'field');
+  const fields = d.members.filter((m) => m.kind === 'field' && !m.readonly);
+
+  // Exposed read-only properties (`el.badInput`); listed only where present.
+  const readonly = d.members.filter((m) => m.kind === 'field' && m.readonly);
 
   const attributeFields = new Set(d.attributes.map((a) => a.fieldName));
 
@@ -105,6 +109,13 @@ const condense = (d: { tagName: string } & Declaration) => {
       .map((f) => f.name)
       .sort(),
     props: sortedObject(fields.map((f) => [f.name, withDefault(f)])),
+    ...(readonly.length
+      ? {
+          readonly: sortedObject(
+            readonly.map((f) => [f.name, f.type?.text ?? 'unknown']),
+          ),
+        }
+      : {}),
     slots: names(d.slots),
     states: names(d.cssStates),
     subcomponents: [...(d.csc?.subcomponents ?? [])].sort(),

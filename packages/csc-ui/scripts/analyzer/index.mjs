@@ -124,7 +124,14 @@ const analyzeComponent = (tagName) => {
         aliasTable,
         plainContent: plainScript?.content ?? '',
       })
-    : { docblock: '', events: [], hasEventMap: false, methods: [], props: [] };
+    : {
+        docblock: '',
+        events: [],
+        hasEventMap: false,
+        methods: [],
+        props: [],
+        readonlyProperties: [],
+      };
 
   // Exported component-owned types, tagged with their owner for
   // the manifest's `csc.types` and the docs Types page.
@@ -198,6 +205,7 @@ const analyzeComponent = (tagName) => {
     modulePath: path.relative(packageRoot, sfcPath),
     ownedTypes,
     props: scriptApi.props,
+    readonlyProperties: scriptApi.readonlyProperties,
     script: [plainScript?.content, script?.content].filter(Boolean).join('\n'),
     source,
     subcomponents,

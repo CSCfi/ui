@@ -107,6 +107,36 @@ _Avoid_: Stepper mode, navigate, filter mode (the query narrows nothing in brows
 The pinned first row of a **level list** inside a **branch**, present only under `allow-branch`, that commits the branch itself ("Select Natural sciences"). Like the **select-all row** it carries no value of its own and is not an item; it is the only way to commit a branch while browsing.
 _Avoid_: Select affordance, "select this level" button, row action
 
+### Date picker
+
+**Date picker** (`c-date-picker`):
+A **value control** for a calendar date — or, under `range`, a start and an end — whose **value field** is typeable — typing follows an **input mask** derived from its `format` — while the calendar panel is an aid, opened by its calendar button or Alt+↓ and never by typing (ADR-0058, ADR-0059). The value is an ISO `YYYY-MM-DD` string, whatever the displayed `format` (ADR-0057). Emits the 4.x value events (`change`, `update:value`, `input`). Distinct from `c-text-field type="date"`, the native browser input.
+_Avoid_: Datepicker, calendar (the grid inside it), date field, date input (the native one)
+
+**Day grid**:
+The date picker's `role="grid"` of one **displayed month**'s days, a week per row starting on `first-day-of-week`. Real DOM focus lives on one day at a time; arrows move by day and week.
+_Avoid_: Calendar (the whole panel), month view, cells
+
+**Displayed month**:
+The month the **day grid** currently shows — not the selected date; paging changes it and picks do not. Announced to consumers as `change:month` (`'YYYY-MM'`), including when the panel opens.
+_Avoid_: Current month (that is today's), view month, page
+
+**Month list** / **Year list**:
+The in-panel listboxes the date picker swaps in for the **day grid** when its month or year control is pressed; picking returns to the grid. They replace the panel body — no nested popover opens.
+_Avoid_: Month/year dropdown, picker, menu
+
+**Pending start**:
+In `range` mode, the first day picked in the panel before the second completes the range: shown and announced, never emitted, discarded if the panel is dismissed.
+_Avoid_: Half range (that is a committed `{ start, end: null }`, which only typing produces), anchor date, first click
+
+**Range band**:
+The `primary-subtle` strip joining the start and end days in the **day grid** — the committed range, or the preview from a **pending start** to the hovered or focused day. Disabled days inside it keep their disabled look.
+_Avoid_: Highlight (the virtual active row elsewhere), selection, span
+
+**Bad input**:
+The date picker's state after committing text that names no enabled date — unparseable, disabled or out of range: the text stays as typed, the value is `null`, and the host exposes `:state(bad-input)` and `badInput`. A fact the component reports, not a verdict — the consumer decides whether it is an error and writes the **error message**.
+_Avoid_: Invalid date (validity is the consumer's judgement), parse error
+
 ### Layout
 
 **Dashboard layout** (`c-main`):
@@ -164,24 +194,24 @@ The ordered set of currently open `c-popover`s, each logically nested in the one
 _Avoid_: Popover stack (reserve _stack_ for the modal stack's inert-lower-layers contract), nested popups
 
 **Top layer**:
-The browser-managed paint layer above every author stacking context — nothing an author z-indexes can paint above it, and while a *modal dialog* occupies it the rest of the document is inert. In this library only **transient** surfaces live there, as native popovers: the menu family, the autocomplete and tree-select panels, `c-tooltip`, and `c-popover` (ADR-0008). Modals deliberately do **not** (ADR-0014) — a top-layer modal would paint over and inert the toasts.
+The browser-managed paint layer above every author stacking context — nothing an author z-indexes can paint above it, and while a *modal dialog* occupies it the rest of the document is inert. In this library only **transient** surfaces live there, as native popovers: the menu family, the autocomplete, tree-select and date-picker panels, `c-tooltip`, and `c-popover` (ADR-0008). Modals deliberately do **not** (ADR-0014) — a top-layer modal would paint over and inert the toasts.
 _Avoid_: Overlay (an overlay is any floating surface; the top layer is a specific browser mechanism), portal
 
 **Transient list panel**:
-The floating list surface a component reveals on demand and closes on dismissal — a `c-menu` or **submenu** panel, `c-dropdown`'s listbox behind `c-select`, `c-autocomplete`'s options list, `c-tree-select`'s level and results lists. It lives in the **top layer**, hides its scrollbar and shows a **peek** (ADR-0043). Persistent scroll containers (data table, side navigation, page, card) are not transient list panels; `c-popover`'s panel is transient but carries no list.
+The floating list surface a component reveals on demand and closes on dismissal — a `c-menu` or **submenu** panel, `c-dropdown`'s listbox behind `c-select`, `c-autocomplete`'s options list, `c-tree-select`'s level and results lists, `c-date-picker`'s **month list** and **year list**. It lives in the **top layer**, hides its scrollbar and shows a **peek** (ADR-0043). Persistent scroll containers (data table, side navigation, page, card) are not transient list panels; `c-popover`'s panel is transient but carries no list.
 _Avoid_: Dropdown (the component), menu (the component), popup, overlay, flyout
 
 **Peek**:
-The half-visible last row of an overflowing **transient list panel** — a `c-menu` or **submenu** panel, `c-dropdown`'s listbox behind `c-select`, `c-autocomplete`'s options list, or `c-tree-select`'s level and results lists. Those panels hide their scrollbar, so the peek is the sole cue that more rows follow: an overflowing panel always ends at a row's midpoint (the `itemsPerPage`-th row where that prop caps the list, otherwise the last row under the panel's ceiling), never on a row boundary. Persistent scroll containers (data table, side navigation, page, card) keep native scrollbars and have no peek; `c-popover` has no scroll container at all.
+The half-visible last row of an overflowing **transient list panel** — a `c-menu` or **submenu** panel, `c-dropdown`'s listbox behind `c-select`, `c-autocomplete`'s options list, `c-tree-select`'s level and results lists, or `c-date-picker`'s **month list** and **year list**. Those panels hide their scrollbar, so the peek is the sole cue that more rows follow: an overflowing panel always ends at a row's midpoint (the `itemsPerPage`-th row where that prop caps the list, otherwise the last row under the panel's ceiling), never on a row boundary. Persistent scroll containers (data table, side navigation, page, card) keep native scrollbars and have no peek; `c-popover` has no scroll container at all.
 _Avoid_: Scroll hint, teaser, fade / scroll shadow (a peek is never a gradient), affordance
 
 **Fullscreen panel**:
-The viewport-filling layout a value-selection field's **transient list panel** — `c-dropdown`'s listbox behind `c-select`, `c-autocomplete`'s panel, `c-tree-select`'s panel — adopts on a **narrow viewport**: instead of anchoring under the **value field**, the panel covers the whole viewport — and keeps covering it while the on-screen keyboard is up, only its content shrinking to the part of the screen the keyboard leaves — opening with a **heading row** — the field's label as the panel's **heading** plus a close control — above the **search input** (where the component has one) and the list. The anchored layout and the fullscreen panel are one panel in two layouts, never two components; menus, tooltips and `c-popover` have no fullscreen panel.
+The viewport-filling layout a value-selection field's **transient list panel** — `c-dropdown`'s listbox behind `c-select`, `c-autocomplete`'s panel, `c-tree-select`'s panel, `c-date-picker`'s calendar panel — adopts on a **narrow viewport**: instead of anchoring under the **value field**, the panel covers the whole viewport — and keeps covering it while the on-screen keyboard is up, only its content shrinking to the part of the screen the keyboard leaves — opening with a **heading row** — the field's label as the panel's **heading** plus a close control — above the **search input** (where the component has one) and the list — or, in `c-date-picker`, the **day grid**. The anchored layout and the fullscreen panel are one panel in two layouts, never two components; menus, tooltips and `c-popover` have no fullscreen panel.
 While it is open the page behind it is inert and scroll-locked (toasts excepted), yet it is not a `c-modal`: it joins no **modal stack** and paints no backdrop. Its list is bounded by the viewport, not a ceiling, so it has no **peek** — the screen edge is the cue that more rows follow.
 _Avoid_: Mobile mode / mobile menu, sheet (a partial-height bottom surface), modal / dialog (see above), takeover
 
 **Control height**:
-The one resting height every operable row-level control shares so they line up in a form row and a toolbar: the `default` **field box** of `c-input` (behind `c-text-field`, `c-select`, `c-autocomplete`, `c-tree-select`), the `default` `c-button`, the `c-button-group` frame and a `c-tab` — 52px, tall enough for `c-tree-select`'s two-line **path** + label value without the field growing on selection. It is a single shared spacing value, never a per-component literal; `small` (36px field, 28px button) and `large` (60px button, the **toolbar** height) are the steps around it.
+The one resting height every operable row-level control shares so they line up in a form row and a toolbar: the `default` **field box** of `c-input` (behind `c-text-field`, `c-select`, `c-autocomplete`, `c-tree-select`, `c-date-picker`), the `default` `c-button`, the `c-button-group` frame and a `c-tab` — 52px, tall enough for `c-tree-select`'s two-line **path** + label value without the field growing on selection. It is a single shared spacing value, never a per-component literal; `small` (36px field, 28px button) and `large` (60px button, the **toolbar** height) are the steps around it.
 _Avoid_: Field height (only one of the four users), input height, row height (a table's)
 
 **Narrow viewport**:
@@ -229,7 +259,7 @@ A named, publicly overridable region of a migrated component's shadow DOM (e.g. 
 _Avoid_: Slot (a slot is a content-projection hole, a part is a stylable element), element, node, section
 
 **Custom state**:
-A host-exposed `ElementInternals` state (`checked`, `indeterminate`, `disabled`) a consumer selects with `:state(...)` to write per-state `::part()` rules (ADR-0035). The selector-side counterpart of **parts**: parts name *where* a rule applies, custom states name *when*. Curated public API like the part set, documented per component with `@cssstate` and listed in the **manifest**. Only otherwise-invisible internal state is exposed — consumer-set props (`valid`, a standalone `disabled`… ) are not mirrored.
+A host-exposed `ElementInternals` state (`checked`, `indeterminate`, `disabled`, the date picker's `bad-input`, a masked text field's `incomplete`, a number field's `out-of-range`) a consumer selects with `:state(...)` to write per-state `::part()` rules (ADR-0035). The selector-side counterpart of **parts**: parts name *where* a rule applies, custom states name *when*. Curated public API like the part set, documented per component with `@cssstate` and listed in the **manifest**. Only otherwise-invisible internal state is exposed — consumer-set props (`valid`, a standalone `disabled`… ) are not mirrored.
 _Avoid_: Attribute (nothing is stamped on the host), state class (no class exists), reflected prop
 
 **Indicator** (selection controls):
@@ -428,6 +458,46 @@ _Avoid_: Helper text, description
 Consumer-supplied text explaining why a control is invalid, shown in place of the **hint** while the control is invalid. The component only *displays* it — validation itself (deciding validity, choosing the wording) is the consumer's job, which is why the prop is named for the message, not the process. Has no default: an invalid control without one shows error styling on the field but keeps its hint.
 _Avoid_: Validation (the Stencil-era prop name; validation is the consumer's activity, not this text), validation message
 
+**Number field** (`c-number-field`):
+A **value control** for a number — an integer, or one with up to `decimals` fraction digits — whose value is a JS `number` (`null` when it holds no digit) while it shows grouped text (`1 234 567,89`), regrouped on every keystroke (ADR-0060). Emits the 4.x value events on every keystroke that changes the number. Distinct from `c-text-field type="number"`, the native number input, and from an **input mask**, which shapes text into fixed slots.
+_Avoid_: Numeric input, number input (the native one), amount field
+
+**Group separator**:
+The thousands separator a **number field** inserts between groups of three integer digits — a space under `lang="fi"`, `,` under `lang="en"` — beside its decimal separator. Both follow the page's `lang` unless set. Never typed: typed or pasted ones are ignored and re-inserted.
+_Avoid_: Thousands separator (fine in prose), delimiter, grouping character
+
+**Out of range**:
+A **number field**'s state while its number is below `min` or above `max`: the number is kept and emitted, and the host exposes `:state(out-of-range)` and `outOfRange`. A fact the component reports, like **bad input** — never clamped; the consumer writes the **error message**.
+_Avoid_: Invalid (validity is the consumer's judgement), overflow, clamped
+
+**Input mask**:
+A pattern the typed text of a `c-text-field` (its `mask`) or a **date picker** (its `format`) follows as it is typed: characters no **mask token** takes are dropped, and **literals** are filled in by the field itself. The value is the text as shown, literals included; the characters filling the tokens alone are the **unmasked value** (ADR-0059). Shapes typing only — it never judges what was typed (see **Complete**).
+_Avoid_: Format (the date picker's display-and-parse pattern, which its mask is derived from), template, input pattern (the native `pattern` attribute validates, it does not shape)
+
+**Mask guide**:
+The faint remainder of an **input mask** drawn behind a masked `c-text-field`'s typed text — the required remainder: unfilled required **mask tokens** as `_`, **literals** as themselves (`+358 __ ___ ____`), nothing of an **optional section** — wherever a placeholder would show. Never part of the value, never announced; a consumer placeholder replaces it.
+_Avoid_: Placeholder (the consumer's native text, which replaces the guide), mask preview, ghost text (fine informally)
+
+**Mask token**:
+A placeholder in an **input mask** for a character the user types: `#` a digit, `A` a letter, `*` either; in a date picker, a day, month or year part.
+_Avoid_: Slot (a content-projection hole), placeholder (the native attribute), wildcard
+
+**Literal** (mask):
+A fixed character of an **input mask** — a separator, a prefix like `+358 ` — that the field inserts itself, only once the next **mask token** character arrives, so an empty field stays empty. Typing it is accepted as the literal.
+_Avoid_: Separator (one kind of literal), mask character, delimiter
+
+**Unmasked value**:
+The characters of a masked field's text that fill its **mask tokens** — `401234567` for `+358 40 123 4567`. A read-only view (`unmaskedValue`), never the value itself.
+_Avoid_: Raw value, clean value
+
+**Optional section**:
+A bracketed trailing part of an **input mask** (`#####[-####]`, `+358 #####[#######]`) whose **mask tokens** may each be left unfilled — a started section needn't be finished — and whose **literals** appear only when a character after them is typed. Only further sections may follow one; they do not nest.
+_Avoid_: Optional token (each token of a section is optional, but the section is the concept), optional group, repeat
+
+**Complete** (mask):
+A masked field's text fills every *required* **mask token** — those outside **optional sections**. Text short of that stays as typed and is **incomplete** — `maskComplete` false and the `incomplete` **custom state** (an empty field is neither incomplete nor complete). A fact the component reports, like **bad input**; whether an incomplete value is an error is the consumer's validation.
+_Avoid_: Valid (validity is the consumer's judgement), filled (a field holding any text)
+
 ### Data table
 
 **Column**:
@@ -503,7 +573,7 @@ A parametrised browser test that runs the shared contract of one component *kind
 _Avoid_: contract test, shared spec, generic test
 
 **Value control**:
-A component that holds a persistent `value` and reports changes through the value events (`update:value` with its `changeValue`/`change` siblings and a bubbling `input`) — the population a plain Vue `v-model` binds to. Emission happens only on user interaction, never when `value` is set programmatically. Includes the **value-selection** fields, the selection controls, `c-text-field`, `c-slider`, `c-tabs`, `c-button-group`, `c-accordion`, `c-modal`, `c-pagination`, `c-otp-input`.
+A component that holds a persistent `value` and reports changes through the value events (`update:value` with its `changeValue`/`change` siblings and a bubbling `input`) — the population a plain Vue `v-model` binds to. Emission happens only on user interaction, never when `value` is set programmatically. Includes the **value-selection** fields, the **date picker**, the selection controls, `c-text-field`, `c-slider`, `c-tabs`, `c-button-group`, `c-accordion`, `c-modal`, `c-pagination`, `c-otp-input`.
 _Avoid_: value component, form control (a `c-button` is a control but holds no value), input
 
 **Example smoke**:

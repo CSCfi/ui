@@ -10,6 +10,7 @@
     "host-id": "string = ''",
     "label": "string = ''",
     "label-on-top": "boolean = false",
+    "mask": "string = ''",
     "max": "null | number = null",
     "min": "null | number = null",
     "name": "string = ''",
@@ -39,7 +40,9 @@
     "update:value": "CustomEvent<string>"
   },
   "methods": {},
-  "parts": [],
+  "parts": [
+    "mask-guide"
+  ],
   "propertyOnly": [],
   "props": {
     "autocomplete": "string = ''",
@@ -52,6 +55,7 @@
     "hostId": "string = ''",
     "label": "string = ''",
     "labelOnTop": "boolean = false",
+    "mask": "string = ''",
     "max": "null | number = null",
     "min": "null | number = null",
     "name": "string = ''",
@@ -67,11 +71,17 @@
     "valid": "boolean = true",
     "value": "string = ''"
   },
+  "readonly": {
+    "maskComplete": "boolean",
+    "unmaskedValue": "string"
+  },
   "slots": [
     "post",
     "pre"
   ],
-  "states": [],
+  "states": [
+    "incomplete"
+  ],
   "subcomponents": [],
   "tag": "c-text-field"
 }

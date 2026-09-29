@@ -2,8 +2,9 @@
  * Anchored field panel (CONTEXT.md "Autocomplete", "Tree select", "Top
  * layer", "Fullscreen panel"; ADR-0008, ADR-0009, ADR-0047, ADR-0050): the
  * lifecycle shared by the value-selection fields that keep a readonly value
- * field in place and open a native popover panel — `c-autocomplete` and
- * `c-tree-select`. One panel, two layouts: **anchored** under the field, or
+ * field in place and open a native popover panel — `c-autocomplete`,
+ * `c-tree-select` and `c-date-picker` (whose field is editable and whose
+ * calendar keeps its own width: `matchWidth: false`, ADR-0058). One panel, two layouts: **anchored** under the field, or
  * — on a **narrow viewport** — a **fullscreen panel** covering the viewport.
  *
  * What it owns:
@@ -112,6 +113,8 @@ export interface UseAnchoredPanelOptions {
   fullscreen?: Readonly<Ref<boolean>>;
   /** The custom element host: light dismiss keeps gestures whose composed path includes it; it is what the page lock keeps interactive. */
   host: HTMLElement | null;
+  /** Pin the anchored panel's width to the anchor's (default `true`). `false` lets the card size the panel — a calendar keeps its own width whatever the field's. */
+  matchWidth?: boolean;
   /** Runs inside the native `toggle` handler once closed, before focus returns. */
   onClosed?: () => void;
   /** Runs inside the native `toggle` handler once open, after the fallback positioning / page lock and the dismiss listener — the consumer's open sequence goes here. */
@@ -220,7 +223,8 @@ export const useAnchoredPanel = (
       // Pin the panel width to the field before showing so it lines up.
       const anchorRect = options.anchor.value?.getBoundingClientRect();
 
-      panelWidth.value = anchorRect?.width ?? 0;
+      panelWidth.value =
+        options.matchWidth === false ? 0 : (anchorRect?.width ?? 0);
 
       // Anchor to the FIELD BOX's edges, not the c-input's: below it lie the
       // gap and the message area, above it an on-top label.

@@ -302,6 +302,12 @@ export const renderTagNameMap = (components, publicTypes) => {
       block += `  ${memberKey(prop.name)}${prop.optional ? '?' : ''}: ${fieldType(prop)};\n`;
     }
 
+    for (const property of component.readonlyProperties) {
+      typeTexts.push(property.type);
+      block += jsdoc(property.description, '  ');
+      block += `  readonly ${memberKey(property.name)}: ${property.type};\n`;
+    }
+
     for (const method of component.methods) {
       typeTexts.push(method.signature ?? '');
       block += jsdoc(method.description, '  ');
@@ -327,12 +333,12 @@ export const renderTagNameMap = (components, publicTypes) => {
   // types the element exposes. The runtime twin is the same data as a value.
   const defaultable = sorted
     .map((c) => ({
+      element: `${c.className}Element`,
       keys: c.props
         .filter((p) => p.defaultable)
         .map((p) => p.name)
         .sort(),
       tag: c.tagName,
-      element: `${c.className}Element`,
     }))
     .filter(({ keys }) => keys.length);
 

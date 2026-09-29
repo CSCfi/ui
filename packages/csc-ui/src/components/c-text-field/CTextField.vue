@@ -51,32 +51,51 @@
       @input="onInput"
     />
 
-    <input
-      v-else
-      :id="inputId"
-      ref="inputRef"
-      :aria-invalid="!valid"
-      :autocapitalize="automaticCapitalize || undefined"
-      :autocomplete="autocomplete || undefined"
-      :autocorrect="
-        autocorrect === undefined ? undefined : autocorrect ? 'on' : 'off'
-      "
-      :class="ui.input()"
-      :disabled
-      :max="max ?? undefined"
-      :min="min ?? undefined"
-      :name="name || undefined"
-      :placeholder="effectivePlaceholder"
-      :readonly
-      :required
-      :step="step ?? undefined"
-      :type="currentType"
-      :value="value ?? ''"
-      @blur="onBlur"
-      @change="onChange"
-      @focus="onFocus"
-      @input="onInput"
-    />
+    <!-- A masked input shares one grid cell with its mask guide: the faint
+         rest of the mask, drawn behind the typed text (ADR-0059). Unmasked,
+         the wrapper is `display: contents` and the input stays the flex
+         item it always was. -->
+    <span v-else :class="ui.field({ masked: !!maskSlots })">
+      <span
+        v-if="guideVisible"
+        ref="guideRef"
+        :class="ui.guide()"
+        aria-hidden="true"
+        part="mask-guide"
+      >
+        <span class="invisible">{{ displayValue }}</span>
+
+        <span>{{ maskResult?.rest }}</span>
+      </span>
+
+      <input
+        :id="inputId"
+        ref="inputRef"
+        :aria-invalid="!valid"
+        :autocapitalize="automaticCapitalize || undefined"
+        :autocomplete="autocomplete || undefined"
+        :autocorrect="
+          autocorrect === undefined ? undefined : autocorrect ? 'on' : 'off'
+        "
+        :class="ui.input()"
+        :disabled
+        :inputmode="maskInputMode"
+        :max="max ?? undefined"
+        :min="min ?? undefined"
+        :name="name || undefined"
+        :placeholder="effectivePlaceholder"
+        :readonly
+        :required
+        :step="step ?? undefined"
+        :type="currentType"
+        :value="displayValue"
+        @blur="onBlur"
+        @change="onChange"
+        @focus="onFocus"
+        @input="onInput"
+        @scroll="syncGuideScroll"
+      />
+    </span>
 
     <!-- Post slot: type-specific toggles (password / date) plus the
          consumer's `post` slot, all projected into c-input's `post`.
@@ -199,6 +218,12 @@ export interface CTextFieldProps {
    */
   labelOnTop?: boolean;
   /**
+   * Input mask the typed text follows: `#` a digit, `A` a letter, `*` a letter or a digit, `\` escapes the next character, `[…]` wraps a trailing optional section, anything else is a literal. Applies to a single-line `text`, `tel` or `search` field
+   *
+   * @freeform a mask pattern, e.g. `+358 ## ### ####`
+   */
+  mask?: string;
+  /**
    * Maximum value on a numeric input
    *
    * @seeded from csc-ui — verify
@@ -308,6 +333,8 @@ export type CTextFieldType =
 /**
  * @slot pre - Content added before the input
  * @slot post - Content added after the input
+ * @csspart mask-guide - The faint rest of the input mask, shown behind the typed text
+ * @cssstate incomplete - Present while a masked field holds text that leaves a mask token unfilled
  *
  * @seeded from csc-ui — verify
  */
@@ -321,13 +348,22 @@ import {
   useHost,
   useId,
   useTemplateRef,
+  watch,
 } from 'vue';
 
 import type { CFieldSize } from '../../types';
 
 import { useAppDefault } from '../../shared/appDefaults';
 import { emitModelValue } from '../../shared/emitModelValue';
+import {
+  applyMask,
+  compileMask,
+  conformMask,
+  isNumericMask,
+  warnInvalidMask,
+} from '../../shared/inputMask';
 import { useHostEmit } from '../../shared/useHostEmit';
+import { useHostStates } from '../../shared/useHostStates';
 
 /** Events dispatched by `<c-text-field>`. */
 interface CTextFieldEvents {
@@ -370,6 +406,15 @@ interface CTextFieldEvents {
  */
 const textField = tv({
   slots: {
+    // The masked input's wrapper: a one-cell grid stacking the guide under
+    // the input; `contents` when unmasked.
+    field: '',
+    // Same typography as the input, so the guide lines up with the typed
+    // text character for character. Not the same box: the input clamps its
+    // padded 36px line box to `max-h-8` and centres its text in what is
+    // left, so the guide is one unpadded line centred in the shared cell.
+    guide:
+      'c-text-field__guide [grid-area:1/1] self-center m-0 [font:inherit] text-base leading-5 min-w-0 overflow-hidden whitespace-pre pointer-events-none select-none text-on-surface-faint',
     // Shared input/textarea reset + typography. `font: inherit` then an
     // explicit 16px/20px to match the original; caret colour is the active
     // token. Tailwind's preflight zeroes input padding, so padding is set
@@ -383,13 +428,19 @@ const textField = tv({
     // their own `color: var(--_c-input-text-color)` for exactly this reason.
     // `disabled:` matches the original's tertiary disabled value colour.
     input:
-      'c-text-field__input bg-transparent border-0 outline-none m-0 [font:inherit] text-base leading-5 text-on-surface disabled:text-on-surface-muted [caret-color:var(--c-primary)] flex-auto min-w-0 w-full max-w-full py-2 max-h-8',
+      'c-text-field__input [grid-area:1/1] bg-transparent border-0 outline-none m-0 [font:inherit] text-base leading-5 text-on-surface disabled:text-on-surface-muted [caret-color:var(--c-primary)] flex-auto min-w-0 w-full max-w-full py-2 max-h-8',
     post: 'inline-flex items-center gap-1',
     textarea:
       'c-text-field__textarea bg-transparent border-0 outline-none [font:inherit] text-base leading-5 text-on-surface disabled:text-on-surface-muted [caret-color:var(--c-primary)] flex-auto min-w-0 w-full max-w-full m-0 pt-3 pr-3 pb-2 pl-0 min-h-11 resize-y whitespace-pre-wrap',
     toggle:
       'inline-flex items-center justify-center size-7 p-0 border-none bg-transparent text-[inherit] cursor-pointer rounded-full transition-colors duration-200 ease-in-out hover:not-disabled:bg-primary-subtle-hover focus:outline-none focus-visible:outline-2 focus-visible:outline-solid focus-visible:outline-primary focus-visible:outline-offset-2 disabled:cursor-not-allowed disabled:opacity-50',
     toggleIcon: 'size-5',
+  },
+  variants: {
+    masked: {
+      false: { field: 'contents' },
+      true: { field: 'grid flex-auto min-w-0 w-full' },
+    },
   },
 });
 
@@ -404,6 +455,7 @@ const props = withDefaults(defineProps<CTextFieldProps>(), {
   hostId: '',
   label: '',
   labelOnTop: undefined,
+  mask: '',
   max: null,
   min: null,
   name: '',
@@ -539,8 +591,93 @@ const openPicker = () => {
   if (el && typeof el.showPicker === 'function') el.showPicker();
 };
 
+// ---- input mask (ADR-0059) ---------------------------------------------------
+
+// Types whose input exposes a caret (`setSelectionRange` throws on the rest).
+const MASKABLE_TYPES = new Set<CTextFieldType>(['search', 'tel', 'text']);
+
+const maskSlots = computed(() =>
+  props.mask && props.rows <= 1 && MASKABLE_TYPES.has(originalType)
+    ? compileMask(props.mask)
+    : null,
+);
+
+// An invalid mask leaves the field unmasked — and says so.
+watch(
+  () => props.mask,
+  (mask) => {
+    if (mask && !compileMask(mask)) warnInvalidMask('c-text-field', mask);
+  },
+  { immediate: true },
+);
+
+const rawValue = computed(() =>
+  props.value === null || props.value === undefined ? '' : String(props.value),
+);
+
+// What the input shows: a programmatic value is conformed through the mask
+// but never emitted — the model keeps what the consumer set until an edit.
+const maskResult = computed(() =>
+  maskSlots.value ? conformMask(maskSlots.value, rawValue.value) : null,
+);
+
+const displayValue = computed(() => maskResult.value?.text ?? rawValue.value);
+
+/** Whether a masked field has every mask token filled (always `true` without a mask) */
+const maskComplete = computed<boolean>(() =>
+  maskResult.value ? maskResult.value.complete : true,
+);
+
+/** The text without the mask's literals: only the characters filling its tokens (the text as is without a mask) */
+const unmaskedValue = computed<string>(
+  () => maskResult.value?.unmasked ?? rawValue.value,
+);
+
+const maskInputMode = computed(() =>
+  maskSlots.value && originalType === 'text' && isNumericMask(props.mask)
+    ? 'numeric'
+    : undefined,
+);
+
+const setState = useHostStates();
+
+watch(
+  () => displayValue.value !== '' && !maskComplete.value,
+  (on) => setState('incomplete', on),
+  { immediate: true },
+);
+
+// The mask guide shows where a placeholder would — once the floating label
+// is out of the way — and a consumer placeholder replaces it.
+const guideVisible = computed(
+  () =>
+    !!maskSlots.value &&
+    !props.placeholder &&
+    (labelOnTopResolved.value ||
+      !props.label ||
+      isFocused.value ||
+      hasValue.value),
+);
+
+const guideRef = useTemplateRef<HTMLElement>('guideRef');
+
+// An overflowing input scrolls its text; the guide follows it.
+const syncGuideScroll = () => {
+  if (guideRef.value && inputRef.value)
+    guideRef.value.scrollLeft = inputRef.value.scrollLeft;
+};
+
+const conformInput = (event: Event) => {
+  if (!maskSlots.value || !(event.target instanceof HTMLInputElement)) return;
+
+  applyMask(event.target, event, maskSlots.value, displayValue.value);
+  requestAnimationFrame(syncGuideScroll);
+};
+
 const onInput = (event: Event) => {
   const target = event.target as HTMLInputElement | HTMLTextAreaElement;
+
+  conformInput(event);
 
   const next = props.trimWhitespace ? target.value.trim() : target.value;
   // changeValue/update:value + native `input` (so a plain `v-model` works
@@ -571,6 +708,8 @@ const onBlur = (event: Event) => {
     target.value = target.value.trim();
   }
 };
+
+defineExpose({ maskComplete, unmaskedValue });
 </script>
 
 <!--

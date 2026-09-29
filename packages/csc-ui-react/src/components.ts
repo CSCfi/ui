@@ -28,6 +28,8 @@ import {
   type CCscLogoElement,
   type CDataTableElement,
   type CDataTableElementEventMap,
+  type CDatePickerElement,
+  type CDatePickerElementEventMap,
   type CDividerElement,
   type CIconElement,
   type CIconButtonElement,
@@ -52,6 +54,8 @@ import {
   type CModalElement,
   type CModalElementEventMap,
   type CNavigationButtonElement,
+  type CNumberFieldElement,
+  type CNumberFieldElementEventMap,
   type COptionElement,
   type COptionValueElement,
   type COtpInputElement,
@@ -266,6 +270,21 @@ export const CDataTable = createComponent({
   tagName: 'c-data-table',
 });
 
+/** A date field that takes a typed date, or opens a calendar panel for picking one, or a start and end date under `range`. */
+export const CDatePicker = createComponent({
+  displayName: 'CDatePicker',
+  elementClass: elementClass<CDatePickerElement>('c-date-picker'),
+  events: {
+    onChange: 'change' as EventName<CDatePickerElementEventMap['change']>,
+    onChangeMonth: 'change:month' as EventName<CDatePickerElementEventMap['change:month']>,
+    onChangeText: 'change:text' as EventName<CDatePickerElementEventMap['change:text']>,
+    onInput: 'input' as EventName<CDatePickerElementEventMap['input']>,
+    onUpdateValue: 'update:value' as EventName<CDatePickerElementEventMap['update:value']>,
+  },
+  react: React,
+  tagName: 'c-date-picker',
+});
+
 export const CDivider = createComponent({
   displayName: 'CDivider',
   elementClass: elementClass<CDividerElement>('c-divider'),
@@ -434,6 +453,19 @@ export const CNavigationButton = createComponent({
   elementClass: elementClass<CNavigationButtonElement>('c-navigation-button'),
   react: React,
   tagName: 'c-navigation-button',
+});
+
+/** A field for a number — an integer, or one with decimals — shown with thousands separators as it is typed. */
+export const CNumberField = createComponent({
+  displayName: 'CNumberField',
+  elementClass: elementClass<CNumberFieldElement>('c-number-field'),
+  events: {
+    onChange: 'change' as EventName<CNumberFieldElementEventMap['change']>,
+    onInput: 'input' as EventName<CNumberFieldElementEventMap['input']>,
+    onUpdateValue: 'update:value' as EventName<CNumberFieldElementEventMap['update:value']>,
+  },
+  react: React,
+  tagName: 'c-number-field',
 });
 
 export const COption = createComponent({
@@ -713,6 +745,7 @@ export const CTags = createComponent({
   tagName: 'c-tags',
 });
 
+/** A text field for a single line of text, or several lines under `rows`, with a label, a hint and an error message. */
 export const CTextField = createComponent({
   displayName: 'CTextField',
   elementClass: elementClass<Omit<CTextFieldElement, 'autocorrect'> & HTMLElement>('c-text-field'),

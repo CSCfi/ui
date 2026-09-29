@@ -48,6 +48,11 @@ it('registers shadow-rendered children before the parents that render them', () 
 
   dropdownStack.slice(1).forEach((tag, i) => before(dropdownStack[i], tag));
 
+  for (const child of ['c-input', 'c-icon-button', 'c-icon'])
+    before(child, 'c-date-picker');
+
+  before('c-input', 'c-number-field');
+
   for (const leaf of ['c-divider', 'c-menu-label', 'c-menu-item'])
     before(leaf, 'c-menu');
 
