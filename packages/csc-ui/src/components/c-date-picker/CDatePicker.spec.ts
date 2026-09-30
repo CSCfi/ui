@@ -644,6 +644,16 @@ describe('range', () => {
     expect([start.value, end.value]).toEqual(['01.09.2031', '20.09.2031']);
   });
 
+  it('a click in the end input keeps focus there', async () => {
+    const m = await mountRange();
+
+    const [, end] = inputs(m);
+
+    await userEvent.click(end);
+
+    expect(deepActiveElement()).toBe(end);
+  });
+
   it('paints the band between the committed ends, across disabled days', async () => {
     const m = await mountRange({
       disabledDates: ['2031-09-12'],
