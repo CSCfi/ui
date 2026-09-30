@@ -71,7 +71,9 @@ the value's hour, or the current hour when the field is empty — and Tab
 cycles through the columns until the panel closes.
 
 Every pick commits at once and the panel stays open, so the hour can be fixed
-after the minutes are picked. Picking into an empty field fills in the rest:
+after the minutes are picked. The selected row rests at the top of its column:
+it opens there and returns there after each pick, and so does a minute a pick
+fills in. Scrolling a column only looks; it never picks. Picking into an empty field fills in the rest:
 minute `00`, and the hour the hour column rests on. Moving in a column is
 picking — each arrow key press commits, so a `change` handler doing network
 work should debounce.
@@ -131,6 +133,7 @@ them app-wide with `applyDefaults({ 'c-time-picker': { texts } })`.
 
 On a viewport narrower than 760px the columns open as a **fullscreen panel**:
 a heading row with the field's `label` and a close button above the columns.
+There the selected row rests in the middle of its column instead of the top.
 The field stays typeable at every width.
 
 ## Related

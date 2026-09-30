@@ -5,7 +5,7 @@
  * Fixtures carry a value, so the columns never rest on the wall clock —
  * except the one empty-open case, which reads the clock itself.
  */
-import { afterEach, describe, expect, it } from 'vitest';
+import { afterEach, describe, expect, it, vi } from 'vitest';
 import { page, userEvent } from 'vitest/browser';
 
 import type { Mounted } from '../../test/harness';
@@ -60,6 +60,11 @@ const keysOf = (m: Mounted, kind: string, which = 'li') =>
   Array.from(column(m, kind).querySelectorAll<HTMLElement>(which)).map(
     (li) => li.dataset.key,
   );
+
+// How far a row's top sits below its column's top edge.
+const restOffset = (m: Mounted, kind: string, key: string): number =>
+  row(m, key).getBoundingClientRect().top -
+  column(m, kind).getBoundingClientRect().top;
 
 const focusedKey = (): null | string =>
   deepActiveElement()?.getAttribute('data-key') ?? null;
@@ -225,7 +230,7 @@ describe('opening', () => {
     expect(events.of('change')).toHaveLength(0);
   });
 
-  it('opens each column with its selected row at the top, ending on a peek', async () => {
+  it('opens each column with its selected row at its resting place, ending on a peek', async () => {
     const m = await mountPicker({ value: '14:30' });
 
     await open(m);
@@ -252,6 +257,47 @@ describe('opening', () => {
           return box.top < bottom && box.bottom > bottom;
         }),
       ).toBe(true);
+    }
+  });
+  it('rests a late row at the top: the room is padding, not rows', async () => {
+    const m = await mountPicker({ minuteStep: 5, value: '23:55' });
+
+    await open(m);
+
+    for (const [kind, key] of [
+      ['hour', 'h23'],
+      ['minute', 'm55'],
+    ]) {
+      const list = column(m, kind);
+
+      const top = row(m, key).getBoundingClientRect().top;
+
+      expect(top - list.getBoundingClientRect().top).toBeCloseTo(4, 0);
+    }
+
+    expect(column(m, 'hour').querySelectorAll('li')).toHaveLength(24);
+    expect(column(m, 'minute').querySelectorAll('li')).toHaveLength(12);
+    expect(
+      Array.from(m.shadowAll('ul[data-column] > *')).every(
+        (li) => li.getAttribute('role') === 'option',
+      ),
+    ).toBe(true);
+  });
+
+  it('a column that fits gets no room and never scrolls', async () => {
+    const m = await mountPicker({
+      format: 'h:mm a',
+      minuteStep: 15,
+      value: '21:45',
+    });
+
+    await open(m);
+
+    for (const kind of ['minute', 'period']) {
+      const list = column(m, kind);
+
+      expect(list.style.paddingBlock, kind).toBe('');
+      expect(list.scrollTop, kind).toBe(0);
     }
   });
 });
@@ -406,6 +452,121 @@ describe('time columns', () => {
 
     expect(m.shadowAll('li[aria-disabled="true"]')).toHaveLength(0);
   });
+  describe('resting after a pick', () => {
+    it('a click rests the picked row at the top', async () => {
+      const m = await mountPicker({ value: '14:30' });
+
+      await open(m);
+      await userEvent.click(row(m, 'm33'));
+      await settle();
+
+      expect(m.host.value).toBe('14:33');
+      expect(restOffset(m, 'minute', 'm33')).toBeCloseTo(4, 0);
+    });
+
+    it('the arrow keys keep the selected row at the top', async () => {
+      const m = await mountPicker({ value: '09:00' });
+
+      await open(m);
+      await userEvent.keyboard('{ArrowDown}{ArrowDown}{ArrowDown}');
+      await settle();
+
+      expect(m.host.value).toBe('12:00');
+      expect(focusedKey()).toBe('h12');
+      expect(restOffset(m, 'hour', 'h12')).toBeCloseTo(4, 0);
+
+      await userEvent.keyboard('{End}');
+      await settle();
+
+      expect(restOffset(m, 'hour', 'h23')).toBeCloseTo(4, 0);
+    });
+
+    it('a minute filled in or clamped rests too', async () => {
+      const empty = await mountPicker();
+
+      await open(empty);
+      column(empty, 'minute').scrollTop = 400;
+      await userEvent.click(row(empty, 'h9'));
+      await settle();
+
+      expect(empty.host.value).toBe('09:00');
+      expect(restOffset(empty, 'minute', 'm0')).toBeCloseTo(4, 0);
+      empty.unmount();
+
+      const bounded = await mountPicker({
+        max: '17:00',
+        min: '09:30',
+        value: '10:15',
+      });
+
+      await open(bounded);
+      await userEvent.click(row(bounded, 'h9'));
+      await settle();
+
+      expect(bounded.host.value).toBe('09:30');
+      expect(restOffset(bounded, 'minute', 'm30')).toBeCloseTo(4, 0);
+    });
+
+    it('a column whose selection did not change keeps its scroll', async () => {
+      const m = await mountPicker({ value: '14:30' });
+
+      await open(m);
+
+      const minutes = column(m, 'minute');
+
+      minutes.scrollTop = 120;
+      await settle();
+      await userEvent.click(row(m, 'h16'));
+      await settle();
+
+      expect(m.host.value).toBe('16:30');
+      expect(minutes.scrollTop).toBe(120);
+    });
+
+    it('a column that fits stays still on a pick', async () => {
+      const m = await mountPicker({
+        format: 'h:mm a',
+        minuteStep: 15,
+        value: '09:00',
+      });
+
+      await open(m);
+      await userEvent.click(row(m, 'pm'));
+      await userEvent.click(row(m, 'm45'));
+      await settle();
+
+      expect(m.host.value).toBe('21:45');
+      expect(column(m, 'period').scrollTop).toBe(0);
+      expect(column(m, 'minute').scrollTop).toBe(0);
+    });
+
+    it('scrolls smoothly unless motion is reduced', async () => {
+      const real = window.matchMedia.bind(window);
+
+      vi.spyOn(window, 'matchMedia').mockImplementation((query) =>
+        query.includes('prefers-reduced-motion')
+          ? ({ ...real(query), matches: false } as MediaQueryList)
+          : real(query),
+      );
+
+      try {
+        const m = await mountPicker({ value: '14:30' });
+
+        await open(m);
+
+        const scrollTo = vi.spyOn(column(m, 'minute'), 'scrollTo');
+
+        await userEvent.click(row(m, 'm33'));
+        await settle();
+
+        expect(scrollTo).toHaveBeenCalledWith(
+          expect.objectContaining({ behavior: 'smooth' }),
+        );
+      } finally {
+        vi.restoreAllMocks();
+      }
+    });
+  });
 });
 
 describe('range', () => {
@@ -515,6 +676,75 @@ describe('fullscreen panel', () => {
     await settle();
 
     expect(isOpen(m)).toBe(false);
+  });
+
+  it('a pick rests the new row in the middle', async () => {
+    await page.viewport(360, 740);
+
+    const m = await mountPicker({ value: '14:30' });
+
+    await open(m);
+    await userEvent.keyboard('{ArrowDown}');
+    await settle();
+
+    const list = column(m, 'hour').getBoundingClientRect();
+
+    const box = row(m, 'h15').getBoundingClientRect();
+
+    expect(
+      Math.abs(box.top + box.height / 2 - (list.top + list.height / 2)),
+    ).toBeLessThanOrEqual(1);
+  });
+
+  it('rests again when the viewport resizes the panel', async () => {
+    await page.viewport(360, 740);
+
+    const m = await mountPicker({ value: '14:30' });
+
+    await open(m);
+    await page.viewport(360, 560);
+    await settle();
+    await new Promise((resolve) =>
+      requestAnimationFrame(() => requestAnimationFrame(resolve)),
+    );
+
+    const list = column(m, 'hour').getBoundingClientRect();
+
+    const box = row(m, 'h14').getBoundingClientRect();
+
+    expect(list.height).toBeLessThan(500);
+    expect(
+      Math.abs(box.top + box.height / 2 - (list.top + list.height / 2)),
+    ).toBeLessThanOrEqual(1);
+  });
+
+  it('rests the selected rows in the middle, the first and last rows too', async () => {
+    await page.viewport(360, 740);
+
+    for (const [value, keys] of [
+      ['14:30', ['h14', 'm30']],
+      ['00:00', ['h0', 'm0']],
+      ['23:59', ['h23', 'm59']],
+    ] as const) {
+      const m = await mountPicker({ value });
+
+      await open(m);
+
+      keys.forEach((key, i) => {
+        const list = column(m, i ? 'minute' : 'hour').getBoundingClientRect();
+
+        const box = row(m, key).getBoundingClientRect();
+
+        expect(
+          Math.abs(box.top + box.height / 2 - (list.top + list.height / 2)),
+          key,
+        ).toBeLessThanOrEqual(1);
+      });
+
+      await userEvent.keyboard('{Escape}');
+      await settle();
+      m.unmount();
+    }
   });
 });
 

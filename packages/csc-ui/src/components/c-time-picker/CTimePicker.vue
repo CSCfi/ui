@@ -328,6 +328,7 @@ import { tv } from 'tailwind-variants';
 import {
   computed,
   nextTick,
+  onBeforeUnmount,
   ref,
   useHost,
   useId,
@@ -339,6 +340,7 @@ import { useAppDefault } from '../../shared/appDefaults';
 import { coerceBoolean } from '../../shared/coerceBoolean';
 import PanelHeadingRow from '../../shared/PanelHeadingRow.vue';
 import { applyPeekCap } from '../../shared/peekCap';
+import { prefersReducedMotion } from '../../shared/reducedMotion';
 import TypedField from '../../shared/TypedField.vue';
 import { useAnchoredPanel } from '../../shared/useAnchoredPanel';
 import { useHostEmit } from '../../shared/useHostEmit';
@@ -722,15 +724,57 @@ const columnEl = (kind: CTimePickerColumnKind) =>
 const rowEl = (kind: CTimePickerColumnKind) =>
   columnEl(kind)?.querySelector<HTMLElement>('li[tabindex="0"]') ?? null;
 
-// After a commit re-renders the rows, move focus onto the column's new tab stop.
-const focusRow = (kind: CTimePickerColumnKind) =>
-  nextTick(() => rowEl(kind)?.focus());
+// Each column's tab stop and row count, before a pick changes them.
+const snapshotColumns = () =>
+  new Map(
+    columns.value.map((c) => [
+      c.kind,
+      { count: c.rows.length, key: c.rows.find((r) => r.focus)?.key },
+    ]),
+  );
+
+// After a commit re-renders the rows: focus the picked column's new tab stop
+// without the browser's own scroll, and rest every column whose selection the
+// pick changed, including a minute filled in or clamped (ADR-0062). A column
+// that gained or lost a row (an off-step bound) is measured again first.
+const afterPick = (
+  kind: CTimePickerColumnKind,
+  before: ReturnType<typeof snapshotColumns>,
+) =>
+  nextTick(() =>
+    requestAnimationFrame(() => {
+      rowEl(kind)?.focus({ preventScroll: true });
+
+      const behavior = prefersReducedMotion() ? 'instant' : 'smooth';
+
+      for (const column of columns.value) {
+        const was = before.get(column.kind);
+
+        const key = column.rows.find((r) => r.focus)?.key;
+
+        if (was && was.key === key && was.count === column.rows.length)
+          continue;
+
+        const list = columnEl(column.kind);
+
+        if (list && was?.count !== column.rows.length) fitColumn(list);
+
+        restColumn(column.kind, behavior);
+      }
+    }),
+  );
+
+const pick = (kind: CTimePickerColumnKind, value: number) => {
+  const before = snapshotColumns();
+
+  pickPart(kind, value);
+  afterPick(kind, before);
+};
 
 const onRowClick = (kind: CTimePickerColumnKind, row: CTimePickerRow) => {
   if (row.disabled) return;
 
-  pickPart(kind, row.value);
-  focusRow(kind);
+  pick(kind, row.value);
 };
 
 const PAGE = 5;
@@ -796,8 +840,7 @@ const onColumnKeyDown = (kind: CTimePickerColumnKind, event: KeyboardEvent) => {
 
   if (target === null || !rows[target] || rows[target].disabled) return;
 
-  pickPart(kind, rows[target].value);
-  focusRow(kind);
+  pick(kind, rows[target].value);
 };
 
 // ---- the end switch -----------------------------------------------------------
@@ -872,29 +915,96 @@ const onPanelKeyDown = (event: KeyboardEvent) => {
   stops[nextIndex].focus();
 };
 
-// Each column opens with its shown row at the top, capped on a peek row
-// (ADR-0043; the fullscreen layout has no peek).
+// A column that overflows rests its selected row at the top (anchored) or the
+// middle (fullscreen), ADR-0062. The room that lets the first and last rows
+// get there is list padding measured from the column, never blank rows, so
+// the listbox holds only its options. A column that fits never scrolls.
+const fitColumn = (list: HTMLElement) => {
+  // Measure without our own room: a padded scrollHeight would make a
+  // fitting column overflow.
+  list.style.paddingBlock = '';
+
+  if (layout.value === 'fullscreen') list.style.maxHeight = '';
+  else
+    applyPeekCap(list, {
+      rows: Array.from(list.querySelectorAll<HTMLElement>('li[role="option"]')),
+    });
+
+  if (list.scrollHeight <= list.clientHeight) return;
+
+  const row = list.querySelector<HTMLElement>('li[role="option"]');
+
+  if (!row) return;
+
+  const cs = getComputedStyle(list);
+
+  const height = list.clientHeight;
+
+  if (layout.value === 'fullscreen') {
+    const room = Math.max(0, (height - row.offsetHeight) / 2);
+
+    list.style.paddingBlock = `${room}px`;
+  } else {
+    const room = height - row.offsetHeight - parseFloat(cs.paddingTop);
+
+    list.style.paddingBlockEnd = `${Math.max(0, room)}px`;
+  }
+};
+
+const restColumn = (kind: CTimePickerColumnKind, behavior: ScrollBehavior) => {
+  const list = columnEl(kind);
+
+  const row = rowEl(kind);
+
+  if (!list || !row || list.scrollHeight <= list.clientHeight) return;
+
+  const top =
+    layout.value === 'fullscreen'
+      ? row.offsetTop + row.offsetHeight / 2 - list.clientHeight / 2
+      : row.offsetTop - parseFloat(getComputedStyle(list).paddingTop);
+
+  list.scrollTo({ behavior, top });
+};
+
+// Each column opens with its selected row at its resting place, capped on a
+// peek row (ADR-0043; the fullscreen layout has no peek).
 const scrollColumns = () => {
   for (const column of columns.value) {
     const list = columnEl(column.kind);
 
-    if (!list) continue;
-
-    if (layout.value === 'fullscreen') list.style.maxHeight = '';
-    else
-      applyPeekCap(list, {
-        rows: Array.from(
-          list.querySelectorAll<HTMLElement>('li[role="option"]'),
-        ),
-      });
-
-    const row = rowEl(column.kind);
-
-    if (row)
-      list.scrollTop =
-        row.offsetTop - parseFloat(getComputedStyle(list).paddingTop);
+    if (list) fitColumn(list);
   }
+
+  for (const column of columns.value) restColumn(column.kind, 'instant');
 };
+
+// A layout switch, a rotation or the visual viewport resizing the fullscreen
+// panel changes a column's height: measure and rest again.
+let resizeObserver: null | ResizeObserver = null;
+
+const observeCard = (on: boolean) => {
+  resizeObserver?.disconnect();
+  resizeObserver = null;
+
+  if (!on || !cardRef.value) return;
+
+  let first = true;
+
+  // A rAF keeps the re-fit out of the observer callback (the
+  // "ResizeObserver loop" error); the first report is the open itself.
+  resizeObserver = new ResizeObserver(() => {
+    if (first) {
+      first = false;
+
+      return;
+    }
+
+    requestAnimationFrame(() => scrollColumns());
+  });
+  resizeObserver.observe(cardRef.value);
+};
+
+onBeforeUnmount(() => observeCard(false));
 
 const narrow = useNarrowViewport();
 
@@ -922,11 +1032,16 @@ const {
       requestAnimationFrame(() => {
         scrollColumns();
         rowEl('hour')?.focus({ preventScroll: true });
+        observeCard(true);
       }),
     );
   },
   panel: panelRef,
   returnFocusTo: () => inputOf(lastInput.value),
+});
+
+watch(isOpen, (open) => {
+  if (!open) observeCard(false);
 });
 
 const ui = computed(() =>

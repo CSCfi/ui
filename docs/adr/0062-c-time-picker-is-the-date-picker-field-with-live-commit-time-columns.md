@@ -39,9 +39,19 @@ typing, clear) is what a time picker needs as well.
 - A pick never produces an out-of-range time: picking an hour that would
   fall outside `min`/`max` with the current minute clamps the minute to the
   bound. Rows outside the bounds are disabled.
-- The columns are finite (no looping). On open the selected row scrolls to
-  the top, and the column ends on a **peek** row with its scrollbar hidden
-  (ADR-0043, via the shared peek helper). The fullscreen layout has no peek.
+- The columns are finite (no looping). The column ends on a **peek** row with
+  its scrollbar hidden (ADR-0043, via the shared peek helper). The
+  fullscreen layout has no peek.
+- A column that overflows keeps its selected row at one resting place: the
+  top in the anchored panel, the middle in the fullscreen panel. It lands
+  there on open (instantly) and after every pick, click or key (smoothly,
+  instantly under reduced motion). Any column whose selection a pick changed
+  moves, including a minute filled in or clamped. Room after the last row,
+  and before the first in the fullscreen panel, is list padding measured
+  from the column's height, never blank rows, so the listbox holds only its
+  options. A column that fits (the period, a coarse minute step) does not
+  scroll. Resting in the middle only positions: scrolling alone never
+  commits.
 - Under `range`, an **end switch** above the one column set picks the end
   being edited. It opens on the end whose input was focused last, and each
   end commits live, so there is no pending state.
@@ -60,7 +70,12 @@ typing, clear) is what a time picker needs as well.
 - **Left/Right between columns as one widget**: not the listbox pattern, so
   screen readers announce it poorly.
 - **A centred or looping wheel**: scrolling alone would commit, and a
-  looping list never ends for a screen reader.
+  looping list never ends for a screen reader. The fullscreen panel centres
+  the selected row, but as a resting place only.
+- **Blank rows as end room**: hidden children inside a listbox are read
+  inconsistently, and every row query would have to skip them.
+- **The browser's minimal scroll-into-view on a pick**: the selected row
+  lands in a different place depending on how it was reached.
 - **Two column groups side by side for a range**: six columns in 12-hour
   mode, cramped in the fullscreen panel.
 - **One clock button per range end**: two trailing buttons in one field box.
