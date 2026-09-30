@@ -1,107 +1,39 @@
 <template>
-  <!-- Anchor wrapper: a shadow-DOM box around the value field. CSS anchor
-       names are tree-scoped, so the anchor must live in the same shadow root
-       as the panel (`useAnchoredPanel`). -->
-  <span ref="anchorRef" :style="anchorStyle" class="block w-full">
-    <c-input
-      ref="cInputRef"
-      :active="focused || isOpen"
-      :data-hide-details="String(hideDetailsResolved)"
-      :disabled
-      :error-message
-      :filled="hasText"
-      :hint
-      :input-id
-      :label
-      :label-on-top="labelOnTopResolved"
-      :required
-      :shadow="shadowResolved"
-      :size="sizeResolved"
-      :valid
-    >
-      <!-- The editable field (ADR-0058): typing never opens the panel. Under
-           `range` a second input holds the end, both in one field box. -->
-      <div
-        :class="ui.content()"
-        class="c-input__content"
-        @focusin="focused = true"
-        @focusout="onFocusOut"
+  <!-- The editable value field (ADR-0058): `src/shared/TypedField.vue`. -->
+  <TypedField
+    :anchor-style
+    :clear-label="t.clearSelection"
+    :clearable
+    :disabled
+    :error-message
+    :field="typed"
+    :hide-details="hideDetailsResolved"
+    :hint
+    :input-id
+    :label
+    :label-on-top="labelOnTopResolved"
+    :name
+    :open="isOpen"
+    :required
+    :shadow="shadowResolved"
+    :size="sizeResolved"
+    :valid
+    inputmode="numeric"
+  >
+    <template #trigger>
+      <c-icon-button
+        ref="calendarButtonRef"
+        :aria-label="t.openCalendar"
+        :disabled
+        aria-haspopup="dialog"
+        size="x-small"
+        text
+        @click="onCalendarClick"
       >
-        <input
-          :id="inputId"
-          ref="startRef"
-          :aria-invalid="!valid || badStart || undefined"
-          :aria-label="inputLabel('start')"
-          :class="ui.input({ start: rangeOn })"
-          :disabled
-          :name="name || undefined"
-          :placeholder="effectivePlaceholder"
-          :required
-          :style="startWidth"
-          :value="startText"
-          autocomplete="off"
-          inputmode="numeric"
-          part="input"
-          type="text"
-          @blur="commitText('start')"
-          @input="onTextInput('start', $event)"
-          @keydown="onInputKeyDown('start', $event)"
-        />
-
-        <template v-if="rangeOn">
-          <span
-            :class="ui.separator({ hidden: !showSeparator })"
-            aria-hidden="true"
-            part="separator"
-          >
-            –
-          </span>
-
-          <input
-            ref="endRef"
-            :aria-invalid="!valid || badEnd || undefined"
-            :aria-label="inputLabel('end')"
-            :class="ui.input()"
-            :disabled
-            :placeholder="effectivePlaceholder"
-            :value="endText"
-            autocomplete="off"
-            inputmode="numeric"
-            part="input"
-            type="text"
-            @blur="commitText('end')"
-            @input="onTextInput('end', $event)"
-            @keydown="onInputKeyDown('end', $event)"
-          />
-        </template>
-      </div>
-
-      <span slot="post" :class="ui.post()">
-        <c-icon-button
-          v-if="clearable && hasContent"
-          :aria-label="t.clearSelection"
-          :disabled
-          size="x-small"
-          text
-          @click="onClear"
-        >
-          <c-icon :path="mdiClose" :size="20" />
-        </c-icon-button>
-
-        <c-icon-button
-          ref="calendarButtonRef"
-          :aria-label="t.openCalendar"
-          :disabled
-          aria-haspopup="dialog"
-          size="x-small"
-          text
-          @click="onCalendarClick"
-        >
-          <c-icon :path="mdiCalendar" :size="20" />
-        </c-icon-button>
-      </span>
-    </c-input>
-  </span>
+        <c-icon :path="mdiCalendar" :size="20" />
+      </c-icon-button>
+    </template>
+  </TypedField>
 
   <!-- Manual popover in the top layer; light dismiss, positioning and the
        fullscreen layout come from `useAnchoredPanel`. -->
@@ -629,7 +561,6 @@ import {
   mdiCheck,
   mdiChevronLeft,
   mdiChevronRight,
-  mdiClose,
   mdiMenuDown,
 } from '@mdi/js';
 import { tv } from 'tailwind-variants';
@@ -645,15 +576,15 @@ import {
 
 import { useAppDefault } from '../../shared/appDefaults';
 import { coerceBoolean } from '../../shared/coerceBoolean';
-import { emitModelChange } from '../../shared/emitModelValue';
-import { applyMask } from '../../shared/inputMask';
 import PanelHeadingRow from '../../shared/PanelHeadingRow.vue';
+import TypedField from '../../shared/TypedField.vue';
 import { applyPeekCap } from '../../shared/peekCap';
 import { useAnchoredPanel } from '../../shared/useAnchoredPanel';
 import { useHostEmit } from '../../shared/useHostEmit';
 import { useHostStates } from '../../shared/useHostStates';
 import { useNarrowViewport } from '../../shared/useNarrowViewport';
 import { useStatusAnnouncer } from '../../shared/useStatusAnnouncer';
+import { useTypedField } from '../../shared/useTypedField';
 import {
   addDays,
   addMonths,
@@ -676,8 +607,6 @@ import {
   todayIso,
   toIso,
 } from './dates';
-
-type CDatePickerEnd = 'end' | 'start';
 
 /** Events dispatched by `<c-date-picker>`. */
 interface CDatePickerEvents {
@@ -731,15 +660,10 @@ const datePicker = tv({
     card: 'flex flex-col w-[328px] overflow-hidden rounded-csc-md bg-surface-overlay text-on-surface shadow-[2px_4px_10px_#00000029]',
     caret: 'size-5 shrink-0 fill-current transition-transform duration-200',
     check: 'size-4 shrink-0 fill-current text-primary',
-    content: 'flex items-center w-full min-w-0 gap-1',
     control: 'flex items-center transition-[opacity,visibility] duration-150',
     grid: 'w-full table-fixed border-collapse',
     header: 'flex items-center justify-between gap-2 min-h-14 px-1',
     icon: 'size-6 fill-current',
-    // The value text colour is set explicitly, as in c-text-field: c-input
-    // drives an inheritable `color` for its state cascade.
-    input:
-      'c-date-picker__input bg-transparent border-0 outline-none m-0 [font:inherit] text-base leading-5 text-on-surface disabled:text-on-surface-muted [caret-color:var(--c-primary)] flex-auto min-w-0 w-full py-2 max-h-8 tabular-nums',
     list: 'list-none m-0 p-1 h-full overflow-y-auto scrollbar-hidden overscroll-none outline-none',
     monthName: '[grid-area:1/1]',
     monthNames: 'grid justify-items-center',
@@ -747,8 +671,6 @@ const datePicker = tv({
       'flex items-center gap-3 min-h-10 px-3 rounded text-sm text-on-surface cursor-pointer select-none outline-none hover:bg-primary-subtle-hover focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-primary aria-selected:bg-primary-subtle aria-selected:text-primary aria-selected:font-medium',
     panel:
       'fixed m-0 p-0 border-0 bg-transparent overflow-visible [inset:auto]',
-    post: 'inline-flex items-center gap-0.5 -mr-1.5',
-    separator: 'shrink-0 mx-1 text-on-surface-muted',
     viewButton:
       'flex items-center gap-0.5 h-9 cursor-pointer rounded-full border-0 bg-transparent pl-3 pr-1.5 text-sm font-medium text-on-surface [font-family:var(--c-font-family)] outline-none hover:bg-primary-subtle-hover focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-primary tabular-nums',
     visuallyHidden:
@@ -780,13 +702,9 @@ const datePicker = tv({
         check: 'invisible',
         control: 'invisible opacity-0',
         monthName: 'invisible',
-        separator: 'invisible',
       },
     },
     open: { true: { caret: 'rotate-180' } },
-    // The range start is as wide as its text, so the separator follows it
-    // with even space both sides; the end input fills the rest.
-    start: { true: { input: 'flex-none w-auto [field-sizing:content]' } },
   },
 });
 
@@ -966,23 +884,15 @@ const names = computed(() => ({
 
 // ---- refs -----------------------------------------------------------------
 
-const anchorRef = useTemplateRef<HTMLElement>('anchorRef');
-
 const bodyRef = useTemplateRef<HTMLElement>('bodyRef');
 
 const cardRef = useTemplateRef<HTMLElement>('cardRef');
-
-const cInputRef = useTemplateRef<HTMLElement>('cInputRef');
-
-const endRef = useTemplateRef<HTMLInputElement>('endRef');
 
 const gridRef = useTemplateRef<HTMLTableElement>('gridRef');
 
 const listRef = useTemplateRef<HTMLUListElement>('listRef');
 
 const panelRef = useTemplateRef<HTMLElement>('panelRef');
-
-const startRef = useTemplateRef<HTMLInputElement>('startRef');
 
 const autoId = useId();
 
@@ -1002,13 +912,6 @@ const pattern = computed(() =>
 
 // Typing follows the pattern (ADR-0059); commit still parses leniently.
 const dateMask = computed(() => compileDateMask(pattern.value));
-
-const effectivePlaceholder = computed(() => {
-  if (!labelOnTopResolved.value && props.label && !focused.value)
-    return undefined;
-
-  return props.placeholder || pattern.value;
-});
 
 // ---- disabling --------------------------------------------------------------
 
@@ -1035,244 +938,35 @@ const clamp = (iso: string): string => {
   return iso;
 };
 
-// ---- value ------------------------------------------------------------------
+// ---- the typed field -------------------------------------------------------
 
-type Ends = { end: null | string; start: null | string };
-
-// Vue's `v-model` on a custom element writes `el.value = ''` for a `null`
-// model (vModelText): the empty string, like any non-date, is "no date".
-const normalize = (v: unknown): Ends => {
-  if (v && typeof v === 'object') {
-    const r = v as Partial<CDatePickerRange>;
-
-    return {
-      end: isIso(r.end) ? r.end : null,
-      start: isIso(r.start) ? r.start : null,
-    };
-  }
-
-  return { end: null, start: isIso(v) ? v : null };
-};
-
-const ends = ref<Ends>(normalize(props.value));
-
-const sameEnds = (a: Ends, b: Ends) => a.start === b.start && a.end === b.end;
-
-const toValue = (e: Ends): CDatePickerValue => {
-  if (!rangeOn.value) return e.start;
-
-  return e.start === null && e.end === null
-    ? null
-    : { end: e.end, start: e.start };
-};
-
-const startText = ref('');
-
-// The separator shows only beside something: text or the placeholders. An
-// empty field under its floating label shows neither.
-const showSeparator = computed(
-  () => !!(startText.value || endText.value || effectivePlaceholder.value),
-);
-
-const fieldSizing =
-  typeof CSS !== 'undefined' && CSS.supports('field-sizing', 'content');
-
-// A width for the range start where `field-sizing` cannot give one: while it
-// shows no text at all (the floating label hides the placeholder), and in a
-// browser without `field-sizing` (Firefox 140 ESR).
-const startWidth = computed(() => {
-  if (!rangeOn.value) return undefined;
-
-  const text = startText.value || effectivePlaceholder.value;
-
-  if (text && fieldSizing) return undefined;
-
-  return { width: `${(text || pattern.value).length}ch` };
+const typed = useTypedField({
+  codec: {
+    format: formatDate,
+    isValue: isIso,
+    isUsable: (iso) => !isDisabled(iso),
+    parse: parseDate,
+  },
+  host,
+  label: () => props.label,
+  labelOnTop: labelOnTopResolved,
+  mask: dateMask,
+  names: () => ({ end: t.value.end, start: t.value.start }),
+  onOpenRequest: () => openPanel(),
+  onTextCommit: (text) => emit('change:text', text),
+  pattern,
+  placeholder: () => props.placeholder,
+  range: rangeOn,
+  reversed: 'swap',
+  value: () => props.value,
 });
 
-const endText = ref('');
-
-// The text last committed per end; a blur without an edit commits nothing.
-const committedText = { end: '', start: '' };
-
-const badStart = ref(false);
-
-const badEnd = ref(false);
+const { commitValue, ends, inputOf, lastInput } = typed;
 
 /** Whether the committed text names no date that can be picked — the value is then `null` (CONTEXT.md "Bad input"). */
-const badInput = computed<boolean>(() => badStart.value || badEnd.value);
+const badInput = computed<boolean>(() => typed.badInput.value);
 
 watch(badInput, (on) => setState('bad-input', on), { immediate: true });
-
-const syncTexts = () => {
-  startText.value = ends.value.start
-    ? formatDate(ends.value.start, pattern.value)
-    : '';
-  endText.value = ends.value.end
-    ? formatDate(ends.value.end, pattern.value)
-    : '';
-  committedText.start = startText.value;
-  committedText.end = endText.value;
-  badStart.value = false;
-  badEnd.value = false;
-};
-
-syncTexts();
-
-// External value updates re-sync the field. The mirror `emitModelChange`
-// writes onto `host.value` re-enters here with what we already hold — a
-// no-op, so bad-input text typed by the user survives its own commit. Never
-// emits.
-watch(
-  () => props.value,
-  (v) => {
-    const next = normalize(v);
-
-    if (sameEnds(next, ends.value)) return;
-
-    ends.value = next;
-    syncTexts();
-  },
-);
-
-watch(pattern, () => {
-  if (!badStart.value && ends.value.start)
-    startText.value = formatDate(ends.value.start, pattern.value);
-
-  if (!badEnd.value && ends.value.end)
-    endText.value = formatDate(ends.value.end, pattern.value);
-
-  committedText.start = startText.value;
-  committedText.end = endText.value;
-});
-
-const hasText = computed(() => !!(startText.value || endText.value));
-
-const hasContent = computed(
-  () => hasText.value || ends.value.start !== null || ends.value.end !== null,
-);
-
-const setEnds = (next: Ends) => {
-  if (sameEnds(next, ends.value)) return;
-
-  ends.value = next;
-  emitModelChange(host, toValue(next));
-};
-
-// ---- the field --------------------------------------------------------------
-
-const focused = ref(false);
-
-// The input focus returns to when the panel closes.
-const lastInput = ref<CDatePickerEnd>('start');
-
-const inputOf = (end: CDatePickerEnd) =>
-  end === 'end' ? endRef.value : startRef.value;
-
-const inputLabel = (end: CDatePickerEnd) => {
-  if (!rangeOn.value) return props.label || undefined;
-
-  const which = end === 'end' ? t.value.end : t.value.start;
-
-  return props.label ? `${props.label}, ${which}` : which;
-};
-
-const onFocusOut = (event: FocusEvent) => {
-  const next = event.relatedTarget as Node | null;
-
-  if (!next || !(event.currentTarget as HTMLElement).contains(next))
-    focused.value = false;
-};
-
-const onTextInput = (end: CDatePickerEnd, event: Event) => {
-  const input = event.target as HTMLInputElement;
-
-  // A paste or drop keeps its text for the lenient commit: masking text in
-  // another field order would scramble it, possibly into a real but wrong
-  // date ("2031-09-01" → "20.3.1090"), where kept it commits as bad input.
-  applyMask(
-    input,
-    event,
-    dateMask.value,
-    end === 'end' ? endText.value : startText.value,
-    { skipPaste: true },
-  );
-
-  const text = input.value;
-
-  if (end === 'end') endText.value = text;
-  else startText.value = text;
-};
-
-// Commit typed text (ADR-0057): on Enter or blur, never per keystroke.
-const commitText = (end: CDatePickerEnd) => {
-  const text = end === 'end' ? endText.value : startText.value;
-
-  if (text === committedText[end]) return;
-
-  committedText[end] = text;
-
-  const parsed = parseDate(text, pattern.value);
-
-  const usable = parsed !== null && !isDisabled(parsed) ? parsed : null;
-
-  const bad = text.trim() !== '' && usable === null;
-
-  if (end === 'end') badEnd.value = bad;
-  else badStart.value = bad;
-
-  const next: Ends = { ...ends.value, [end]: usable };
-
-  // A reversed range swaps its ends, texts and all.
-  if (rangeOn.value && next.start && next.end && next.start > next.end) {
-    [next.start, next.end] = [next.end, next.start];
-  }
-
-  // Reformat what was read ("1.9.2026" → "01.09.2026").
-  if (next.start && !badStart.value)
-    startText.value = formatDate(next.start, pattern.value);
-
-  if (next.end && !badEnd.value)
-    endText.value = formatDate(next.end, pattern.value);
-
-  committedText.start = startText.value;
-  committedText.end = endText.value;
-
-  emit(
-    'change:text',
-    rangeOn.value ? { end: endText.value, start: startText.value } : text,
-  );
-  setEnds(next);
-};
-
-const onInputKeyDown = (end: CDatePickerEnd, event: KeyboardEvent) => {
-  lastInput.value = end;
-
-  if (event.key === 'Enter') {
-    commitText(end);
-
-    return;
-  }
-
-  if (event.key === 'ArrowDown' && event.altKey) {
-    event.preventDefault();
-    commitText(end);
-    openPanel();
-  }
-};
-
-const onClear = (event?: Event) => {
-  event?.stopPropagation();
-
-  startText.value = '';
-  endText.value = '';
-  committedText.start = '';
-  committedText.end = '';
-  badStart.value = false;
-  badEnd.value = false;
-  setEnds({ end: null, start: null });
-  startRef.value?.focus();
-};
 
 // ---- calendar state ---------------------------------------------------------
 
@@ -1667,10 +1361,7 @@ const pick = (iso: string) => {
   if (isDisabled(iso)) return;
 
   if (!rangeOn.value) {
-    startText.value = formatDate(iso, pattern.value);
-    committedText.start = startText.value;
-    badStart.value = false;
-    setEnds({ end: null, start: iso });
+    commitValue({ end: null, start: iso });
     closePanel(true);
 
     return;
@@ -1689,13 +1380,7 @@ const pick = (iso: string) => {
       : [pendingStart.value, iso];
 
   pendingStart.value = null;
-  startText.value = formatDate(start, pattern.value);
-  endText.value = formatDate(end, pattern.value);
-  committedText.start = startText.value;
-  committedText.end = endText.value;
-  badStart.value = false;
-  badEnd.value = false;
-  setEnds({ end, start });
+  commitValue({ end, start });
   closePanel(true);
 };
 
@@ -1933,9 +1618,9 @@ const {
   open: openPanel,
   panelStyle,
 } = useAnchoredPanel({
-  anchor: anchorRef,
+  anchor: typed.anchor,
   disabled: () => props.disabled,
-  field: cInputRef,
+  field: typed.field,
   fullscreen: narrow,
   host,
   matchWidth: false,
@@ -1973,10 +1658,7 @@ const onCalendarClick = (event: Event) => {
     return;
   }
 
-  commitText('start');
-
-  if (rangeOn.value) commitText('end');
-
+  typed.commitAll();
   openPanel();
 };
 
@@ -2018,7 +1700,7 @@ defineExpose({ badInput });
   animation: c-date-picker-fade-in 0.12s ease-out;
 }
 
-.c-date-picker__input::placeholder {
+.c-typed-field__input::placeholder {
   color: var(--c-on-surface-faint);
   opacity: 1;
 }
