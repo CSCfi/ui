@@ -371,6 +371,22 @@ describe('day grid', () => {
     expect(focusedIso()).toBe('2031-09-20');
   });
 
+  it('a disabled day is inked dimmer than hint text', async () => {
+    const m = await mountPicker({ min: '2031-09-10', value: '2031-09-17' });
+
+    await open(m);
+
+    const ink = (iso: string) =>
+      getComputedStyle(cell(m, iso).querySelector('[part~="day"]')!).color;
+    const probe = document.createElement('span');
+
+    probe.style.color = 'var(--c-on-surface-muted)';
+    m.stage.append(probe);
+
+    expect(ink('2031-09-09')).not.toBe(ink('2031-09-16'));
+    expect(ink('2031-09-09')).not.toBe(getComputedStyle(probe).color);
+  });
+
   it('picks with Enter, closes and returns focus to the input', async () => {
     const m = await mountPicker({ value: '2031-09-17' });
 

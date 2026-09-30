@@ -683,7 +683,7 @@ const datePicker = tv({
   variants: {
     disabled: {
       true: {
-        option: 'cursor-default text-on-surface-faint hover:bg-transparent',
+        option: 'cursor-default text-on-surface-disabled hover:bg-transparent',
       },
     },
     fullscreen: {
@@ -734,7 +734,7 @@ const dayCell = tv({
     disabled: {
       true: {
         cell: 'cursor-default',
-        day: 'text-on-surface-faint group-hover:bg-transparent',
+        day: 'text-on-surface-disabled group-hover:bg-transparent',
       },
     },
     selected: {

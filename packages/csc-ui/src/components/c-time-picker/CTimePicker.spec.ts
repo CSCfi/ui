@@ -364,6 +364,21 @@ describe('time columns', () => {
     expect(focusedKey()).toBe('h9');
   });
 
+  it('a disabled row is inked dimmer than hint text', async () => {
+    const m = await mountPicker({ max: '17:00', min: '09:30', value: '10:15' });
+
+    await open(m);
+
+    const ink = (el: HTMLElement) => getComputedStyle(el).color;
+    const probe = document.createElement('span');
+
+    probe.style.color = 'var(--c-on-surface-muted)';
+    m.stage.append(probe);
+
+    expect(ink(row(m, 'h8'))).not.toBe(ink(row(m, 'h10')));
+    expect(ink(row(m, 'h8'))).not.toBe(ink(probe));
+  });
+
   it('a 12-hour clock lists 12, 1…11 and a period column that flips the hour', async () => {
     const m = await mountPicker({ format: 'h:mm a', value: '09:15' });
 

@@ -435,7 +435,7 @@ const timePicker = tv({
   variants: {
     disabled: {
       true: {
-        option: 'cursor-default text-on-surface-faint hover:bg-transparent',
+        option: 'cursor-default text-on-surface-disabled hover:bg-transparent',
       },
     },
     fullscreen: {
