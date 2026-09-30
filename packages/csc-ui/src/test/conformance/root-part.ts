@@ -19,6 +19,7 @@ export const NO_ROOT_PART: readonly string[] = [
   'c-table',
   'c-tabs',
   'c-text-field',
+  'c-time-picker',
   'c-tooltip',
   'c-tree-select',
 ];

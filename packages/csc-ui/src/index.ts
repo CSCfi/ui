@@ -67,6 +67,7 @@ import CTabs from './components/c-tabs/CTabs.vue';
 import CTag from './components/c-tag/CTag.vue';
 import CTags from './components/c-tags/CTags.vue';
 import CTextField from './components/c-text-field/CTextField.vue';
+import CTimePicker from './components/c-time-picker/CTimePicker.vue';
 import CToast from './components/c-toast/CToast.vue';
 import CToasts from './components/c-toasts/CToasts.vue';
 import CToolbar from './components/c-toolbar/CToolbar.vue';
@@ -189,6 +190,14 @@ export type {
   CTextFieldProps,
   CTextFieldType,
 } from './components/c-text-field/CTextField.vue';
+
+export type {
+  CTimePickerProps,
+  CTimePickerRange,
+  CTimePickerText,
+  CTimePickerTexts,
+  CTimePickerValue,
+} from './components/c-time-picker/CTimePicker.vue';
 
 export type { CToastProps } from './components/c-toast/CToast.vue';
 
@@ -359,6 +368,9 @@ const components: Array<[string, unknown]> = [
   // c-date-picker renders c-input, c-icon-button and c-icon (all registered
   // above) inside its shadow root.
   ['c-date-picker', CDatePicker],
+  // c-time-picker renders c-input, c-icon-button and c-icon (all registered
+  // above) inside its shadow root.
+  ['c-time-picker', CTimePicker],
   // Menu stack: leaf elements register before c-menu so item/label/divider
   // tags are defined when c-menu's slotted content upgrades.
   ['c-divider', CDivider],
@@ -474,4 +486,5 @@ export const tailwindVariantTags: ReadonlyArray<string> = [
   'c-tree-select',
   'c-date-picker',
   'c-number-field',
+  'c-time-picker',
 ];

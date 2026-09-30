@@ -151,6 +151,17 @@ const DATE_PICKER_MOUNT: MountOptions = {
   props: { label: 'Date', max: '2031-09-30', min: '2031-09-01' },
 };
 
+// c-time-picker's columns open from its clock button, never from the text
+// (ADR-0062).
+const TIME_PICKER_MOUNT: MountOptions = { props: { label: 'Time' } };
+
+const openClock = async (m: Mounted): Promise<void> => {
+  await userEvent.click(
+    m.deep('c-icon-button[aria-label="Open time picker"]', 'button'),
+  );
+  await settle();
+};
+
 const openCalendar = async (m: Mounted): Promise<void> => {
   await userEvent.click(
     m.deep('c-icon-button[aria-label="Open calendar"]', 'button'),
@@ -222,6 +233,18 @@ export const VALUE_RECIPES: Record<string, ValueRecipe> = {
     },
     mount: DATE_PICKER_MOUNT,
     programmatic: '2031-09-20',
+  },
+  'c-time-picker': {
+    emptyAware: true,
+    // An empty value: the hour pick fills in minute 00 (ADR-0062).
+    expected: '09:00',
+    family: 'change',
+    interact: async (m) => {
+      await openClock(m);
+      await userEvent.click(m.shadow('li[data-key="h9"]'));
+    },
+    mount: TIME_PICKER_MOUNT,
+    programmatic: '14:30',
   },
   'c-modal': {
     expected: false,
@@ -396,6 +419,13 @@ export const OVERLAY_RECIPES: Record<string, OverlayRecipe> = {
     lightDismiss: true,
     mount: DATE_PICKER_MOUNT,
     open: openCalendar,
+    panel: (m) => m.part('panel'),
+  },
+  'c-time-picker': {
+    focusHome: (m) => m.shadow('input[part~="input"]'),
+    lightDismiss: true,
+    mount: TIME_PICKER_MOUNT,
+    open: openClock,
     panel: (m) => m.part('panel'),
   },
   'c-menu': {

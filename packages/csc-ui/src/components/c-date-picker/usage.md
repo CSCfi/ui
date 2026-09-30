@@ -139,3 +139,5 @@ calendar. The field stays typeable at every width.
 `c-text-field type="date"` remains the browser's own date input — no custom
 calendar, the browser's format, and no ranges or disabled dates. Reach for
 `c-date-picker` when the format, the calendar's look or those features matter.
+
+`c-time-picker` is the same typeable field for times of day.

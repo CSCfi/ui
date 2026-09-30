@@ -134,8 +134,34 @@ The `primary-subtle` strip joining the start and end days in the **day grid** �
 _Avoid_: Highlight (the virtual active row elsewhere), selection, span
 
 **Bad input**:
-The date picker's state after committing text that names no enabled date — unparseable, disabled or out of range: the text stays as typed, the value is `null`, and the host exposes `:state(bad-input)` and `badInput`. A fact the component reports, not a verdict — the consumer decides whether it is an error and writes the **error message**.
-_Avoid_: Invalid date (validity is the consumer's judgement), parse error
+The state of a **date picker** or **time picker** after committing text that names no enabled value — unparseable, disabled or out of range: the text stays as typed, the value is `null`, and the host exposes `:state(bad-input)` and `badInput`. A fact the component reports, not a verdict — the consumer decides whether it is an error and writes the **error message**. Only typing produces it; a pick in a panel never does.
+_Avoid_: Invalid date / invalid time (validity is the consumer's judgement), parse error
+
+### Time picker
+
+**Time picker** (`c-time-picker`):
+A **value control** for a time of day — or, under `range`, a start and an end — built like the **date picker**: a typeable **value field** masked from its `format`, and a clock panel opened by its clock button or Alt+↓, never by typing. The value is an ISO `HH:mm` string on a 24-hour clock whatever the displayed `format` (`HH.mm`, `h:mm a`); no seconds, no date, no timezone.
+_Avoid_: Timepicker, clock (the panel), time field, time input (the native `<input type="time">`)
+
+**Time column**:
+One of the time picker panel's side-by-side `role="listbox"` columns — hour, minute, and the AM/PM **period** in a 12-hour `format`. Each is one tab stop; selection follows focus, so moving in a column commits.
+_Avoid_: Wheel, spinner, drum, list
+
+**Period** (time picker):
+AM or PM in a 12-hour `format` — the `a` token and the third **time column**.
+_Avoid_: Meridiem, day period (that is `Intl`'s name), suffix
+
+**Minute step**:
+The spacing of the minute **time column**'s rows (`minute-step`). It shapes the column only: a typed minute off the step commits as typed and shows as an extra row — never **bad input**.
+_Avoid_: Interval, increment, granularity
+
+**End switch** (time picker):
+In `range` mode, the Start | End toggle above the **time columns** choosing which end the columns edit. Each end commits on its own — the time picker has no **pending start**.
+_Avoid_: Tabs, range toggle
+
+**Overnight range**:
+A time-picker range whose end is earlier than its start (`22:00`–`06:00`): a valid value spanning midnight, not **bad input** and never reordered. Distinct from `min` > `max`, which is an invalid constraint, not a wrap.
+_Avoid_: Reversed range, negative range, wrap-around
 
 ### Layout
 

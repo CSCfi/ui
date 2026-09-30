@@ -1,12 +1,20 @@
 /**
  * The input-mask engine (CONTEXT.md "Input mask"; ADR-0059): tokens,
- * lazy literals, caret mapping, completeness, and the date-part rules
- * `c-date-picker` compiles from its format.
+ * lazy literals, caret mapping, completeness, the date-part rules
+ * `c-date-picker` compiles from its format, and the word slot of
+ * `c-time-picker`'s period.
  */
 import { describe, expect, it } from 'vitest';
 
 import { compileDateMask } from '../components/c-date-picker/dates';
-import { compileMask, conformMask, isNumericMask } from './inputMask';
+import { compileTimeMask } from '../components/c-time-picker/times';
+import {
+  applyMask,
+  compileMask,
+  conformMask,
+  isNumericMask,
+  type MaskSlot,
+} from './inputMask';
 
 const conform = (mask: string, text: string, caret?: number, del = false) =>
   conformMask(compileMask(mask)!, text, caret, del);
@@ -217,5 +225,70 @@ describe('date masks', () => {
 
   it('caps the year at four digits', () => {
     expect(date('dd.MM.yyyy', '1.1.202612')).toBe('1.1.2026');
+  });
+});
+
+describe('word slots', () => {
+  const EN = { am: 'AM', pm: 'PM' };
+
+  const slots = compileTimeMask('h:mm a', EN);
+
+  const time = (text: string, caret?: number, del = false) =>
+    conformMask(slots, text, caret, del);
+
+  it('shows the whole word once its first letters name it', () => {
+    expect(time('9:30 p').text).toBe('9:30 PM');
+    expect(time('930a').text).toBe('9:30 AM');
+    expect(time('9:30 pm').text).toBe('9:30 PM');
+  });
+
+  it('drops letters that start no word', () => {
+    expect(time('9:30x').text).toBe('9:30');
+  });
+
+  it('counts the word as typed and completes the mask', () => {
+    const result = time('9:30 p');
+
+    expect(result.tokenAt.slice(-2)).toEqual([true, true]);
+    expect(result.complete).toBe(true);
+    expect(time('9:30').complete).toBe(false);
+  });
+
+  it('waits for a distinct letter between words sharing a start', () => {
+    const shared: MaskSlot[] = [{ kind: 'word', words: ['a.m.', 'ante'] }];
+
+    expect(conformMask(shared, 'a').text).toBe('a');
+    expect(conformMask(shared, 'an').text).toBe('ante');
+  });
+
+  it('clears a word a deleting edit left partial', () => {
+    expect(time('9:30 P', 6, true).text).toBe('9:30');
+    // An intact word survives a deletion elsewhere.
+    expect(time('9:3 PM', 3, true).text).toBe('9:3 PM');
+  });
+
+  it('removes the whole word on one Backspace', () => {
+    const input = {
+      selectionStart: 6,
+      setSelectionRange(start: number) {
+        this.selectionStart = start;
+      },
+      value: '9:30 P',
+    };
+
+    applyMask(
+      input as unknown as HTMLInputElement,
+      { inputType: 'deleteContentBackward', isComposing: false } as never,
+      slots,
+      '9:30 PM',
+    );
+
+    expect(input.value).toBe('9:30');
+  });
+
+  it('matches localised periods case-insensitively', () => {
+    const fi = compileTimeMask('h.mm a', { am: 'ap.', pm: 'ip.' });
+
+    expect(conformMask(fi, '930I').text).toBe('9.30 ip.');
   });
 });
