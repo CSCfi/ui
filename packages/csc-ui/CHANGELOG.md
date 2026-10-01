@@ -1,5 +1,29 @@
 # @cscfi/csc-ui
 
+## 4.0.0-alpha.28
+
+### Minor Changes
+
+- [#301](https://github.com/CSCfi/ui/pull/301) [`fcbc33f`](https://github.com/CSCfi/ui/commit/fcbc33f42f1deec17b69b65811898663075df5d9) Thanks [@razorfever](https://github.com/razorfever)! - Add `type="month"` to c-date-picker for picking a year and a month
+  (`'YYYY-MM'`), with ranges, `min`/`max` and a format derived from `format`.
+
+- [#301](https://github.com/CSCfi/ui/pull/301) [`cfb76c1`](https://github.com/CSCfi/ui/commit/cfb76c1a56c5c39f7c7cb70c0ce4934b3e4705ec) Thanks [@razorfever](https://github.com/razorfever)! - Add c-time-picker: a typeable time field with hour and minute columns, 12- and
+  24-hour formats, a minute step, min and max, and time ranges that may span
+  midnight. The value is an ISO `HH:mm` string whatever the displayed format.
+
+### Patch Changes
+
+- [#301](https://github.com/CSCfi/ui/pull/301) [`8424a7d`](https://github.com/CSCfi/ui/commit/8424a7d30a4f375818dc253386215a70aa95fcc8) Thanks [@razorfever](https://github.com/razorfever)! - Fix a click in c-date-picker's range end input moving the caret to the start
+  input.
+
+- [#301](https://github.com/CSCfi/ui/pull/301) [`9e5b02d`](https://github.com/CSCfi/ui/commit/9e5b02dfc54171b0f42c78cc128c08b695d0c02b) Thanks [@razorfever](https://github.com/razorfever)! - Fix disabled rows in c-time-picker and disabled days in c-date-picker looking
+  almost like enabled ones in light mode. They now use a new
+  `on-surface-disabled` token.
+
+- [#301](https://github.com/CSCfi/ui/pull/301) [`a9d54fb`](https://github.com/CSCfi/ui/commit/a9d54fb473ce2098305eed17f58b5953e87759e1) Thanks [@razorfever](https://github.com/razorfever)! - c-time-picker keeps the selected row at the top of its column (the middle on
+  narrow viewports) on open and after every pick, including the last rows of a
+  column.
+
 ## 4.0.0-alpha.27
 
 ### Minor Changes
