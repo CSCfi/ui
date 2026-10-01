@@ -57,6 +57,7 @@
     "CDatePickerRange",
     "CDatePickerText",
     "CDatePickerTexts",
+    "CDatePickerType",
     "CDatePickerValue",
     "CDatePickerWeekday",
     "CFieldSize",

@@ -680,7 +680,7 @@ export interface CDatePickerElementEventMap {
 }
 
 /** A date field that takes a typed date, or opens a calendar panel for picking one, or a start and end date under `range`. */
-export interface CDatePickerElement extends Omit<HTMLElement, 'clearable' | 'disabled' | 'disabledDates' | 'errorMessage' | 'firstDayOfWeek' | 'format' | 'hideDetails' | 'hint' | 'hostId' | 'isDateDisabled' | 'label' | 'labelOnTop' | 'max' | 'min' | 'name' | 'placeholder' | 'range' | 'required' | 'shadow' | 'showWeekNumbers' | 'size' | 'texts' | 'valid' | 'value'> {
+export interface CDatePickerElement extends Omit<HTMLElement, 'clearable' | 'disabled' | 'disabledDates' | 'errorMessage' | 'firstDayOfWeek' | 'format' | 'hideDetails' | 'hint' | 'hostId' | 'isDateDisabled' | 'label' | 'labelOnTop' | 'max' | 'min' | 'name' | 'placeholder' | 'range' | 'required' | 'shadow' | 'showWeekNumbers' | 'size' | 'texts' | 'type' | 'valid' | 'value'> {
   /** Make the value clearable */
   clearable?: boolean;
   /** Disable the field */
@@ -753,11 +753,16 @@ export interface CDatePickerElement extends Omit<HTMLElement, 'clearable' | 'dis
    * bind as a DOM property
    */
   texts?: CDatePickerTexts;
+  /**
+   * What the field picks: a calendar date, or a year and a month
+   * (`'YYYY-MM'`)
+   */
+  type?: 'date' | 'month';
   /** Set the validity of the field */
   valid?: boolean;
   /**
-   * The date as an ISO `YYYY-MM-DD` string, or `{ start, end }` under
-   * `range`; `null` when empty
+   * The date as an ISO `YYYY-MM-DD` string (an ISO `YYYY-MM` month under
+   * `type="month"`), or `{ start, end }` under `range`; `null` when empty
    */
   value?: CDatePickerValue;
   /** Whether the committed text names no date that can be picked — the value is then `null` (CONTEXT.md "Bad input"). */

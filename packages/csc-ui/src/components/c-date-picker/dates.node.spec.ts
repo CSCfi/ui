@@ -1,22 +1,33 @@
 /**
  * The calendar-date helpers behind c-date-picker (ADR-0057): ISO parts,
  * arithmetic, the month grid, ISO weeks, the numeric format pattern and its
- * lenient parser, and the disabling rules.
+ * lenient parser, and the disabling rules — and their month counterparts
+ * for `type="month"` (ADR-0063).
  */
 import { describe, expect, it } from 'vitest';
 
+import { conformMask } from '../../shared/inputMask';
 import {
   addDays,
   addMonths,
+  compileDateMask,
   dayOfWeek,
   formatDate,
+  formatMonth,
   fromIso,
   isDisabledDate,
+  isDisabledMonth,
+  isIsoMonth,
+  isMonthDisabledEverywhere,
   isoWeek,
+  isValidMonthPattern,
   isValidPattern,
   monthMatrix,
+  monthPattern,
   parseDate,
+  parseMonth,
   rowWeek,
+  toMonth,
 } from './dates';
 
 describe('ISO parts', () => {
@@ -215,5 +226,137 @@ describe('isDisabledDate', () => {
     ['2026-08-03', false],
   ])('%s → %s', (iso, disabled) => {
     expect(isDisabledDate(iso, rules)).toBe(disabled);
+  });
+});
+
+describe('months', () => {
+  it.each([
+    ['2026-03', true],
+    ['2026-12', true],
+    ['2026-13', false],
+    ['2026-00', false],
+    ['2026-3', false],
+    ['2026-03-01', false],
+    [null, false],
+  ])('%s is an ISO month: %s', (month, ok) => {
+    expect(isIsoMonth(month)).toBe(ok);
+  });
+
+  it('reads a month or a date by its month', () => {
+    expect(toMonth('2026-03')).toBe('2026-03');
+    expect(toMonth('2026-03-15')).toBe('2026-03');
+    expect(toMonth('2026-02-30')).toBeNull();
+    expect(toMonth('')).toBeNull();
+  });
+
+  it.each([
+    ['dd.MM.yyyy', 'MM.yyyy'],
+    ['yyyy-MM-dd', 'yyyy-MM'],
+    ['MM/dd/yyyy', 'MM/yyyy'],
+    ['d. M. yyyy', 'M. yyyy'],
+    ['MM.yyyy', 'MM.yyyy'],
+    ['yyyy/M', 'yyyy/M'],
+    ['nonsense', 'MM.yyyy'],
+    ['dd.yyyy', 'MM.yyyy'],
+  ])('the month pattern of %s is %s', (pattern, month) => {
+    expect(monthPattern(pattern)).toBe(month);
+    expect(isValidMonthPattern(monthPattern(pattern))).toBe(true);
+  });
+
+  it('formats a month by the pattern', () => {
+    expect(formatMonth('2026-03', 'MM.yyyy')).toBe('03.2026');
+    expect(formatMonth('2026-03', 'yyyy-M')).toBe('2026-3');
+    expect(formatMonth('2026-13', 'MM.yyyy')).toBe('');
+  });
+
+  it.each([
+    ['03.2026', '2026-03'],
+    ['3.2026', '2026-03'],
+    ['3/2026', '2026-03'],
+    ['3 2026', '2026-03'],
+    ['032026', '2026-03'],
+    ['13.2026', null],
+    ['0.2026', null],
+    ['3.26', null],
+    ['1.3.2026', null],
+    ['', null],
+  ])('%s under MM.yyyy → %s', (text, month) => {
+    expect(parseMonth(text, 'MM.yyyy')).toBe(month);
+  });
+
+  it('reads by the pattern order', () => {
+    expect(parseMonth('2026-3', 'yyyy-MM')).toBe('2026-03');
+    expect(parseMonth('3.2026', 'yyyy-MM')).toBeNull();
+  });
+
+  it('typing follows a month pattern', () => {
+    const typed = (pattern: string, text: string) =>
+      conformMask(compileDateMask(pattern), text).text;
+
+    expect(typed('MM.yyyy', '032026')).toBe('03.2026');
+    expect(typed('MM.yyyy', '32026')).toBe('3.2026');
+    expect(typed('yyyy-MM', '20263')).toBe('2026-3');
+  });
+
+  it('keeps parsing dates as before', () => {
+    expect(parseDate('01012031', 'ddMMyyyy')).toBe('2031-01-01');
+    expect(parseDate('1.9.2026', 'dd.MM.yyyy')).toBe('2026-09-01');
+    expect(parseDate('09.2026', 'dd.MM.yyyy')).toBeNull();
+  });
+});
+
+describe('isDisabledMonth', () => {
+  it('bounds count by their months', () => {
+    const rules = { max: '2026-10-05', min: '2026-03-15' };
+
+    expect(isDisabledMonth('2026-02', rules)).toBe(true);
+    expect(isDisabledMonth('2026-03', rules)).toBe(false);
+    expect(isDisabledMonth('2026-10', rules)).toBe(false);
+    expect(isDisabledMonth('2026-11', rules)).toBe(true);
+    expect(isDisabledMonth('2026-03', { min: '2026-03' })).toBe(false);
+  });
+
+  it('is out only when every day is', () => {
+    const rules = {
+      isDateDisabled: (iso: string) => [0, 6].includes(dayOfWeek(iso)),
+      list: [{ end: '2026-07-31', start: '2026-07-01' }, '2026-08-03'],
+    };
+
+    expect(isDisabledMonth('2026-07', rules)).toBe(true);
+    expect(isDisabledMonth('2026-08', rules)).toBe(false);
+    expect(isDisabledMonth('2026-09', rules)).toBe(false);
+  });
+
+  it('stops at the first enabled day', () => {
+    let calls = 0;
+
+    isDisabledMonth('2026-09', {
+      isDateDisabled: () => {
+        calls++;
+
+        return false;
+      },
+    });
+
+    expect(calls).toBe(1);
+  });
+});
+
+describe('isMonthDisabledEverywhere', () => {
+  it('bounds inside one year rule out the months outside them', () => {
+    const rules = { max: '2031-10', min: '2031-03' };
+
+    const out = Array.from({ length: 12 }, (_, i) => i + 1).filter((m) =>
+      isMonthDisabledEverywhere(m, [2031, 2031], rules),
+    );
+
+    expect(out).toEqual([1, 2, 11, 12]);
+  });
+
+  it('a month disabled in one year is still open when another takes it', () => {
+    const rules = { list: [{ end: '2031-07-31', start: '2031-07-01' }] };
+
+    expect(isMonthDisabledEverywhere(7, [2031, 2032], rules)).toBe(false);
+    expect(isMonthDisabledEverywhere(7, [2031, 2031], rules)).toBe(true);
   });
 });

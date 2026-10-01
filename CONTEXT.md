@@ -110,7 +110,7 @@ _Avoid_: Select affordance, "select this level" button, row action
 ### Date picker
 
 **Date picker** (`c-date-picker`):
-A **value control** for a calendar date — or, under `range`, a start and an end — whose **value field** is typeable — typing follows an **input mask** derived from its `format` — while the calendar panel is an aid, opened by its calendar button or Alt+↓ and never by typing (ADR-0058, ADR-0059). The value is an ISO `YYYY-MM-DD` string, whatever the displayed `format` (ADR-0057). Emits the 4.x value events (`change`, `update:value`, `input`). Distinct from `c-text-field type="date"`, the native browser input.
+A **value control** for a calendar date — or, under `range`, a start and an end — whose **value field** is typeable — typing follows an **input mask** derived from its `format` — while the calendar panel is an aid, opened by its calendar button or Alt+↓ and never by typing (ADR-0058, ADR-0059). The value is an ISO `YYYY-MM-DD` string, whatever the displayed `format` (ADR-0057); under `type="month"` it is an ISO `YYYY-MM` month and the panel holds no **day grid** (ADR-0063). Emits the 4.x value events (`change`, `update:value`, `input`). Distinct from `c-text-field type="date"`, the native browser input.
 _Avoid_: Datepicker, calendar (the grid inside it), date field, date input (the native one)
 
 **Day grid**:
@@ -122,11 +122,15 @@ The month the **day grid** currently shows — not the selected date; paging cha
 _Avoid_: Current month (that is today's), view month, page
 
 **Month list** / **Year list**:
-The in-panel listboxes the date picker swaps in for the **day grid** when its month or year control is pressed; picking returns to the grid. They replace the panel body — no nested popover opens.
+The in-panel listboxes the date picker swaps in for the **day grid** when its month or year control is pressed; picking returns to the grid. They replace the panel body — no nested popover opens. Under `type="month"` the panel holds neither: it runs the **month step** and **year step** instead.
 _Avoid_: Month/year dropdown, picker, menu
 
+**Month step** / **Year step**:
+The two labelled lists of the date picker under `type="month"`: the month first, then the year — twice under `range`, as the start's and then the end's. A finished step collapses to a summary row that returns to it.
+_Avoid_: Wizard, stage, page
+
 **Pending start**:
-In `range` mode, the first day picked in the panel before the second completes the range: shown and announced, never emitted, discarded if the panel is dismissed.
+In `range` mode, the first day (or, under `type="month"`, the start's month and year) picked in the panel before the second completes the range: shown and announced, never emitted, discarded if the panel is dismissed.
 _Avoid_: Half range (that is a committed `{ start, end: null }`, which only typing produces), anchor date, first click
 
 **Range band**:

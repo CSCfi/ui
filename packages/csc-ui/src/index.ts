@@ -131,6 +131,7 @@ export type {
   CDatePickerRange,
   CDatePickerText,
   CDatePickerTexts,
+  CDatePickerType,
   CDatePickerValue,
   CDatePickerWeekday,
 } from './components/c-date-picker/CDatePicker.vue';

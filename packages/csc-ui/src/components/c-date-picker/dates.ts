@@ -232,13 +232,15 @@ export const formatDate = (iso: string, pattern: string): string => {
 };
 
 /**
- * Read typed text against a pattern (ADR-0057). Lenient: a day or month
- * takes one or two digits whatever its token, and any run of `.`, `/`, `-`
- * or spaces separates the fields; the year must have four digits. Returns
- * the ISO date, or `null` when the text names no real date. Text with no
- * separators at all is read by the pattern's digit widths (`ddMMyyyy`).
+ * Split typed text into the pattern's fields (ADR-0057). Lenient: any run of
+ * `.`, `/`, `-` or spaces separates the fields. Text with no separators at
+ * all is read by the pattern's digit widths (`ddMMyyyy`), so only when every
+ * field has a fixed width. `null` when the text has the wrong field count.
  */
-export const parseDate = (text: string, pattern: string): null | string => {
+const readFields = (
+  text: string,
+  pattern: string,
+): null | Partial<Record<'d' | 'm' | 'y', string>> => {
   const trimmed = text.trim();
 
   if (!trimmed || !/^[\d./\-\s]+$/.test(trimmed)) return null;
@@ -249,8 +251,7 @@ export const parseDate = (text: string, pattern: string): null | string => {
 
   let parts = trimmed.split(/[./\-\s]+/).filter(Boolean);
 
-  if (parts.length === 1) {
-    // Separator-free text: only readable when every field has a fixed width.
+  if (parts.length === 1 && order.length > 1) {
     const widths = pieces.flatMap((p) =>
       'token' in p ? [p.token.length === 1 ? 0 : p.token.length] : [],
     );
@@ -270,13 +271,27 @@ export const parseDate = (text: string, pattern: string): null | string => {
     });
   }
 
-  if (parts.length !== 3) return null;
+  if (parts.length !== order.length) return null;
 
   const fields: Partial<Record<'d' | 'm' | 'y', string>> = {};
 
   order.forEach((field, i) => {
     fields[field] = parts[i];
   });
+
+  return fields;
+};
+
+/**
+ * Read typed text against a pattern (ADR-0057). Lenient: a day or month
+ * takes one or two digits whatever its token, and any run of `.`, `/`, `-`
+ * or spaces separates the fields; the year must have four digits. Returns
+ * the ISO date, or `null` when the text names no real date.
+ */
+export const parseDate = (text: string, pattern: string): null | string => {
+  const fields = readFields(text, pattern);
+
+  if (!fields) return null;
 
   const { d = '', m = '', y = '' } = fields;
 
@@ -325,6 +340,78 @@ export const compileDateMask = (pattern: string): MaskSlot[] =>
     ];
   });
 
+// ---- months (type="month", ADR-0063) ---------------------------------------
+
+/** A well-formed ISO `YYYY-MM` month. */
+export const isIsoMonth = (month: unknown): month is string =>
+  typeof month === 'string' && /^\d{4}-(0[1-9]|1[0-2])$/.test(month);
+
+/** The month an ISO month or ISO date names; `null` for anything else. */
+export const toMonth = (value: unknown): null | string => {
+  if (isIsoMonth(value)) return value;
+
+  return isIso(value) ? monthOf(value) : null;
+};
+
+/** Whether `pattern` is a usable month pattern: one month and one year token, no day. */
+export const isValidMonthPattern = (pattern: string): boolean => {
+  const order = fieldOrder(tokenize(pattern));
+
+  return order.length === 2 && order.includes('m') && order.includes('y');
+};
+
+/**
+ * The month pattern of a date pattern: the day token goes, with the
+ * separator after it — or before it when the day comes last (`dd.MM.yyyy` →
+ * `MM.yyyy`, `yyyy-MM-dd` → `yyyy-MM`). A pattern that is already a month
+ * pattern is kept; anything else falls back to `MM.yyyy`.
+ */
+export const monthPattern = (pattern: string): string => {
+  if (isValidMonthPattern(pattern)) return pattern;
+
+  if (!isValidPattern(pattern)) return 'MM.yyyy';
+
+  const pieces = tokenize(pattern);
+
+  const at = pieces.findIndex((p) => 'token' in p && p.token.startsWith('d'));
+
+  const after = pieces[at + 1];
+
+  const before = pieces[at - 1];
+
+  const drop =
+    after && 'literal' in after
+      ? [at, at + 1]
+      : before && 'literal' in before
+        ? [at - 1, at]
+        : [at];
+
+  const kept = pieces
+    .filter((_, i) => !drop.includes(i))
+    .map((p) => ('literal' in p ? p.literal : p.token))
+    .join('');
+
+  return isValidMonthPattern(kept) ? kept.trim() : 'MM.yyyy';
+};
+
+export const formatMonth = (month: string, pattern: string): string =>
+  isIsoMonth(month) ? formatDate(firstOfMonth(month), pattern) : '';
+
+/** Read typed text against a month pattern, as leniently as `parseDate`. */
+export const parseMonth = (text: string, pattern: string): null | string => {
+  const fields = readFields(text, pattern);
+
+  if (!fields) return null;
+
+  const { m = '', y = '' } = fields;
+
+  if (!/^\d{1,2}$/.test(m) || !/^\d{4}$/.test(y)) return null;
+
+  const month = `${y}-${pad(Number(m), 2)}`;
+
+  return isIsoMonth(month) ? month : null;
+};
+
 // ---- disabling -----------------------------------------------------------
 
 export interface CDatePickerDisabling {
@@ -356,6 +443,59 @@ export const isDisabledDate = (
   }
 
   return rules.isDateDisabled?.(iso) === true;
+};
+
+/** Outside `min` / `max` read by their months (ADR-0063). */
+export const isMonthOutOfRange = (
+  month: string,
+  { max, min }: CDatePickerDisabling,
+): boolean => {
+  const from = toMonth(min);
+
+  const to = toMonth(max);
+
+  return (!!from && month < from) || (!!to && month > to);
+};
+
+/**
+ * A month is disabled when it is out of range, or when the list and the
+ * predicate rule out every one of its days (ADR-0063). Stops at the first
+ * enabled day, so a sparse predicate costs one call a month.
+ */
+export const isDisabledMonth = (
+  month: string,
+  rules: CDatePickerDisabling,
+): boolean => {
+  if (isMonthOutOfRange(month, rules)) return true;
+
+  const { m, y } = fromIso(firstOfMonth(month))!;
+
+  const days = { ...rules, max: null, min: null };
+
+  for (let d = 1; d <= daysInMonth(y, m); d++) {
+    if (!isDisabledDate(toIso({ d, m, y }), days)) return false;
+  }
+
+  return true;
+};
+
+/**
+ * Month mode's month step (ADR-0063): month `m` (1–12) is out when it is
+ * disabled in every year of `[from, to]`, so no pick leads to an empty year
+ * step. Stops at the first year that takes it.
+ */
+export const isMonthDisabledEverywhere = (
+  m: number,
+  [from, to]: readonly number[],
+  rules: CDatePickerDisabling,
+): boolean => {
+  for (let y = from; y <= to; y++) {
+    const month = `${pad(y, 4)}-${pad(m, 2)}`;
+
+    if (!isDisabledMonth(month, rules)) return false;
+  }
+
+  return true;
 };
 
 // ---- names (Intl fallback) -------------------------------------------------

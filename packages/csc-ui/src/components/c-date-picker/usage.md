@@ -118,6 +118,51 @@ Availability that comes from a server can follow the calendar: load the
 disabled dates of the month `change:month` names and assign `disabled-dates`
 again.
 
+## Months
+
+With `type="month"` the field picks a year and a month instead of a day. The
+value is an ISO `YYYY-MM` string — `'2026-03'` — or `{ start, end }` of them
+under `range`, like the native `<input type="month">`:
+
+```vue
+<c-date-picker v-model="billing" label="Billing month" type="month" />
+```
+
+The format is the `format` with its day left out, so one app default serves
+both kinds of field: `dd.MM.yyyy` shows months as `MM.yyyy`, `yyyy-MM-dd` as
+`yyyy-MM`. A `format` with no day, such as `MM/yyyy`, is used as given.
+Typing is as lenient as for dates: `3.2026` and `032026` both commit as
+`03.2026`. A full date bound as the value is shown as its month and emits
+nothing; the next pick or commit emits the month.
+
+The panel asks for the month first, then the year. It opens on the twelve
+months under a "Month" label, with the selected month marked and focused.
+Picking one collapses it to a summary row and the years unroll beneath it,
+focused on the selected year — else this year, else the nearest year that can
+be picked. Picking a year commits the month and closes the panel; pressing the
+summary row goes back to the months. Both lists take the arrows, Home and End,
+and Enter or Space to pick.
+
+Under `range` the steps run twice, labelled "Start month", "Start year", "End
+month" and "End year". The finished start shows as a summary row and is only
+pending, as in the day grid: nothing is emitted until the end's year completes
+the range, a range picked backwards is swapped, and dismissing the panel
+discards the start.
+
+`min` and `max` may be months or full dates; a full date counts by its month,
+so `min="2026-03-15"` still allows March. A month is disabled only when every
+one of its days is — by `min` and `max`, `disabled-dates` or
+`is-date-disabled` — so a "no weekends" predicate disables no month, and a
+span covering all of July disables July. In the month list a month is disabled
+when no allowed year takes it; in the year list a year is disabled when the
+picked month is disabled in it, so no pick leads to an empty list. The
+predicate is asked about each day until one is enabled, so in most months it
+runs once; one that disables nearly every day is asked many times when the
+months open.
+
+`change:month` names the displayed month of the day grid, so it is never
+fired in month mode.
+
 ## Texts
 
 Month and weekday names and each day's accessible name come from `texts` when
@@ -139,5 +184,7 @@ calendar. The field stays typeable at every width.
 `c-text-field type="date"` remains the browser's own date input — no custom
 calendar, the browser's format, and no ranges or disabled dates. Reach for
 `c-date-picker` when the format, the calendar's look or those features matter.
+`c-text-field` has no month type: for a year and a month, use
+`type="month"` here.
 
 `c-time-picker` is the same typeable field for times of day.
