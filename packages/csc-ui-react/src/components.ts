@@ -102,6 +102,8 @@ import {
   type CTagsElement,
   type CTextFieldElement,
   type CTextFieldElementEventMap,
+  type CTimePickerElement,
+  type CTimePickerElementEventMap,
   type CToastElement,
   type CToastElementEventMap,
   type CToastsElement,
@@ -757,6 +759,20 @@ export const CTextField = createComponent({
   },
   react: React,
   tagName: 'c-text-field',
+});
+
+/** A time field that takes a typed time, or opens hour and minute columns for picking one, or a start and end time under `range`. */
+export const CTimePicker = createComponent({
+  displayName: 'CTimePicker',
+  elementClass: elementClass<CTimePickerElement>('c-time-picker'),
+  events: {
+    onChange: 'change' as EventName<CTimePickerElementEventMap['change']>,
+    onChangeText: 'change:text' as EventName<CTimePickerElementEventMap['change:text']>,
+    onInput: 'input' as EventName<CTimePickerElementEventMap['input']>,
+    onUpdateValue: 'update:value' as EventName<CTimePickerElementEventMap['update:value']>,
+  },
+  react: React,
+  tagName: 'c-time-picker',
 });
 
 /** A single toast notification, rendered and managed by c-toasts */

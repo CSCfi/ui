@@ -514,7 +514,20 @@ let labelObserver: null | ResizeObserver = null;
 
 let preSlotObserver: null | ResizeObserver = null;
 
-const focusInput = () => {
+const focusInput = (event: MouseEvent) => {
+  // A click on an input already focused it: a field box holding two inputs
+  // (a range picker's start and end) must keep the one clicked.
+  if (
+    event
+      .composedPath()
+      .some(
+        (node) =>
+          node instanceof HTMLInputElement ||
+          node instanceof HTMLTextAreaElement,
+      )
+  )
+    return;
+
   // Click on the slot area (not directly on the input) should still focus
   // the projected input. The default slot lives in our shadow root, so we
   // walk its assignedElements and focus the first focusable native input.

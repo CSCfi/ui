@@ -9,6 +9,8 @@
   "on-surface": "primary-900",
   "on-surface-muted": "tertiary-500",
   "on-surface-faint": "tertiary-500",
+  "_comment-disabled": "on-surface-disabled inks disabled options and days a clear step below on-surface-faint (placeholders, hints), which equals on-surface-muted in light mode. Disabled text is exempt from WCAG AA contrast, so the audit does not check it.",
+  "on-surface-disabled": "tertiary-300",
   "on-surface-sunken": "primary-700",
   "border": "tertiary-200",
   "border-strong": "tertiary-600",

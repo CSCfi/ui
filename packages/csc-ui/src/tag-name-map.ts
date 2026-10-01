@@ -17,6 +17,7 @@ import type { CDataTableCellContent, CDataTableColumn, CDataTableExpandedContext
 import type { CDatePickerDisabledDate, CDatePickerText, CDatePickerTexts, CDatePickerValue } from './components/c-date-picker/CDatePicker.vue';
 import type { CPaginationOptions } from './components/c-pagination/CPagination.vue';
 import type { CSelectTexts, CSelectValue } from './components/c-select/CSelect.vue';
+import type { CTimePickerText, CTimePickerTexts, CTimePickerValue } from './components/c-time-picker/CTimePicker.vue';
 import type { CTreeSelectFilter, CTreeSelectItem, CTreeSelectTexts, CTreeSelectValue } from './components/c-tree-select/CTreeSelect.vue';
 import type { CSelectItem, CToastMessage } from './types';
 
@@ -679,7 +680,7 @@ export interface CDatePickerElementEventMap {
 }
 
 /** A date field that takes a typed date, or opens a calendar panel for picking one, or a start and end date under `range`. */
-export interface CDatePickerElement extends Omit<HTMLElement, 'clearable' | 'disabled' | 'disabledDates' | 'errorMessage' | 'firstDayOfWeek' | 'format' | 'hideDetails' | 'hint' | 'hostId' | 'isDateDisabled' | 'label' | 'labelOnTop' | 'max' | 'min' | 'name' | 'placeholder' | 'range' | 'required' | 'shadow' | 'showWeekNumbers' | 'size' | 'texts' | 'valid' | 'value'> {
+export interface CDatePickerElement extends Omit<HTMLElement, 'clearable' | 'disabled' | 'disabledDates' | 'errorMessage' | 'firstDayOfWeek' | 'format' | 'hideDetails' | 'hint' | 'hostId' | 'isDateDisabled' | 'label' | 'labelOnTop' | 'max' | 'min' | 'name' | 'placeholder' | 'range' | 'required' | 'shadow' | 'showWeekNumbers' | 'size' | 'texts' | 'type' | 'valid' | 'value'> {
   /** Make the value clearable */
   clearable?: boolean;
   /** Disable the field */
@@ -752,11 +753,16 @@ export interface CDatePickerElement extends Omit<HTMLElement, 'clearable' | 'dis
    * bind as a DOM property
    */
   texts?: CDatePickerTexts;
+  /**
+   * What the field picks: a calendar date, or a year and a month
+   * (`'YYYY-MM'`)
+   */
+  type?: 'date' | 'month';
   /** Set the validity of the field */
   valid?: boolean;
   /**
-   * The date as an ISO `YYYY-MM-DD` string, or `{ start, end }` under
-   * `range`; `null` when empty
+   * The date as an ISO `YYYY-MM-DD` string (an ISO `YYYY-MM` month under
+   * `type="month"`), or `{ start, end }` under `range`; `null` when empty
    */
   value?: CDatePickerValue;
   /** Whether the committed text names no date that can be picked — the value is then `null` (CONTEXT.md "Bad input"). */
@@ -2367,6 +2373,117 @@ export interface CTextFieldElement extends Omit<HTMLElement, 'autocomplete' | 'a
   ): void;
 }
 
+/** Events dispatched by `<c-time-picker>`. */
+export interface CTimePickerElementEventMap {
+  /**
+   * Fired when the value changes — a row is picked or moved to in a column,
+   * typed text is committed, or the field is cleared — carrying the new
+   * value: an ISO `HH:mm` time, `{ start, end }` under `range`, or `null`.
+   */
+  change: CustomEvent<CTimePickerValue>;
+  /**
+   * Fired on every commit of typed text (Enter or leaving the input) with the
+   * text as typed — `{ start, end }` under `range`. Read `badInput` to tell
+   * whether it named a time that can be picked.
+   */
+  'change:text': CustomEvent<CTimePickerText>;
+  /**
+   * Native bubbling input event dispatched alongside every value change so a
+   * plain `v-model` stays in sync. Carries no detail.
+   */
+  input: CustomEvent<void>;
+  /** Fired alongside `change` with the same detail — the `v-model` contract. */
+  'update:value': CustomEvent<CTimePickerValue>;
+}
+
+/** A time field that takes a typed time, or opens hour and minute columns for picking one, or a start and end time under `range`. */
+export interface CTimePickerElement extends Omit<HTMLElement, 'clearable' | 'disabled' | 'errorMessage' | 'format' | 'hideDetails' | 'hint' | 'hostId' | 'label' | 'labelOnTop' | 'max' | 'min' | 'minuteStep' | 'name' | 'placeholder' | 'range' | 'required' | 'shadow' | 'size' | 'texts' | 'valid' | 'value'> {
+  /** Make the value clearable */
+  clearable?: boolean;
+  /** Disable the field */
+  disabled?: boolean;
+  /** Error message shown in place of the hint while the field is invalid */
+  errorMessage?: string;
+  /**
+   * How times are shown and read from typing: a pattern of the tokens `H`,
+   * `HH` (24-hour), `h`, `hh` (12-hour, with the period `a`) and `mm` with
+   * any separators, e.g. `HH:mm` or `h:mm a`
+   */
+  format?: string;
+  /** Hide the hint and error messages */
+  hideDetails?: boolean;
+  /** Hint text for the field */
+  hint?: string;
+  /** Id of the element */
+  hostId?: string;
+  /** Element label */
+  label?: string;
+  /** Label on top of the field */
+  labelOnTop?: boolean;
+  /** The latest time that can be picked or typed, as an ISO `HH:mm` time */
+  max?: string;
+  /**
+   * The earliest time that can be picked or typed, as an ISO `HH:mm` time;
+   * a `min` after `max` is invalid and both are ignored
+   */
+  min?: string;
+  /**
+   * Minutes between the minute column's rows; typed times need not fall on
+   * the step
+   */
+  minuteStep?: number;
+  /** Input field name */
+  name?: string;
+  /** Placeholder of the input; the `format` pattern when empty */
+  placeholder?: string;
+  /**
+   * Pick a range: the value becomes `{ start, end }` and the field holds two
+   * inputs
+   */
+  range?: boolean;
+  /** Set the field as required */
+  required?: boolean;
+  /** Shadow variant */
+  shadow?: boolean;
+  /** Field height: the 52px default (the shared control height) or the 36px `small` box */
+  size?: 'default' | 'small';
+  /**
+   * UI text overrides (i18n), merged over the AM/PM texts `Intl` gives for
+   * the page's `lang` and the English defaults. Objects have no attribute
+   * form — bind as a DOM property
+   */
+  texts?: CTimePickerTexts;
+  /** Set the validity of the field */
+  valid?: boolean;
+  /**
+   * The time as an ISO `HH:mm` string on a 24-hour clock, or `{ start, end }`
+   * under `range`; `null` when empty
+   */
+  value?: CTimePickerValue;
+  /** Whether the committed text names no time that can be picked — the value is then `null` (CONTEXT.md "Bad input"). */
+  readonly badInput: boolean;
+  addEventListener<K extends keyof CTimePickerElementEventMap>(
+    type: K,
+    listener: (this: CTimePickerElement, ev: CTimePickerElementEventMap[K]) => void,
+    options?: boolean | AddEventListenerOptions,
+  ): void;
+  addEventListener(
+    type: string,
+    listener: EventListenerOrEventListenerObject,
+    options?: boolean | AddEventListenerOptions,
+  ): void;
+  removeEventListener<K extends keyof CTimePickerElementEventMap>(
+    type: K,
+    listener: (this: CTimePickerElement, ev: CTimePickerElementEventMap[K]) => void,
+    options?: boolean | EventListenerOptions,
+  ): void;
+  removeEventListener(
+    type: string,
+    listener: EventListenerOrEventListenerObject,
+    options?: boolean | EventListenerOptions,
+  ): void;
+}
+
 /** Events dispatched by `<c-toast>`. */
 export interface CToastElementEventMap {
   /**
@@ -2615,6 +2732,7 @@ export interface AppDefaults {
   'c-number-field'?: Partial<Pick<CNumberFieldElement, 'decimalSeparator' | 'decimals' | 'fixedDecimals' | 'groupSeparator' | 'hideDetails' | 'labelOnTop' | 'shadow' | 'size'>>;
   'c-select'?: Partial<Pick<CSelectElement, 'hideDetails' | 'itemsPerPage' | 'labelOnTop' | 'shadow' | 'size' | 'texts'>>;
   'c-text-field'?: Partial<Pick<CTextFieldElement, 'hideDetails' | 'labelOnTop' | 'shadow' | 'size'>>;
+  'c-time-picker'?: Partial<Pick<CTimePickerElement, 'format' | 'hideDetails' | 'labelOnTop' | 'shadow' | 'size' | 'texts'>>;
   'c-tree-select'?: Partial<Pick<CTreeSelectElement, 'hideDetails' | 'itemsPerPage' | 'labelOnTop' | 'shadow' | 'size' | 'texts'>>;
 }
 
@@ -2626,11 +2744,12 @@ export const DEFAULTABLE_PROPS = {
   'c-number-field': ['decimalSeparator', 'decimals', 'fixedDecimals', 'groupSeparator', 'hideDetails', 'labelOnTop', 'shadow', 'size'],
   'c-select': ['hideDetails', 'itemsPerPage', 'labelOnTop', 'shadow', 'size', 'texts'],
   'c-text-field': ['hideDetails', 'labelOnTop', 'shadow', 'size'],
+  'c-time-picker': ['format', 'hideDetails', 'labelOnTop', 'shadow', 'size', 'texts'],
   'c-tree-select': ['hideDetails', 'itemsPerPage', 'labelOnTop', 'shadow', 'size', 'texts'],
 } as const satisfies Record<keyof AppDefaults, readonly string[]>;
 
 /** Tags dispatching the v-model contract event `update:value` — the value controls (CONTEXT.md). */
-export const VALUE_TAGS = ['c-accordion', 'c-autocomplete', 'c-button-group', 'c-checkbox', 'c-date-picker', 'c-modal', 'c-number-field', 'c-otp-input', 'c-pagination', 'c-radio-group', 'c-select', 'c-slider', 'c-switch', 'c-tabs', 'c-text-field', 'c-tree-select'] as const;
+export const VALUE_TAGS = ['c-accordion', 'c-autocomplete', 'c-button-group', 'c-checkbox', 'c-date-picker', 'c-modal', 'c-number-field', 'c-otp-input', 'c-pagination', 'c-radio-group', 'c-select', 'c-slider', 'c-switch', 'c-tabs', 'c-text-field', 'c-time-picker', 'c-tree-select'] as const;
 
 declare global {
   interface HTMLElementTagNameMap {
@@ -2703,6 +2822,7 @@ declare global {
     'c-tag': CTagElement;
     'c-tags': CTagsElement;
     'c-text-field': CTextFieldElement;
+    'c-time-picker': CTimePickerElement;
     'c-toast': CToastElement;
     'c-toasts': CToastsElement;
     'c-toolbar': CToolbarElement;

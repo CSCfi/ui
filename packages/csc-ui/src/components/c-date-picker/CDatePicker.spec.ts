@@ -1,6 +1,7 @@
 /**
  * Behaviour spec for c-date-picker (CONTEXT.md "Date picker", "Day grid",
- * "Pending start", "Bad input"; ADR-0057, ADR-0058).
+ * "Pending start", "Bad input", "Month step"; ADR-0057, ADR-0058,
+ * ADR-0063).
  *
  * Every fixture pins its month with `value` or `min`/`max` far from today,
  * so no assertion or baseline depends on the wall clock.
@@ -371,6 +372,22 @@ describe('day grid', () => {
     expect(focusedIso()).toBe('2031-09-20');
   });
 
+  it('a disabled day is inked dimmer than hint text', async () => {
+    const m = await mountPicker({ min: '2031-09-10', value: '2031-09-17' });
+
+    await open(m);
+
+    const ink = (iso: string) =>
+      getComputedStyle(cell(m, iso).querySelector('[part~="day"]')!).color;
+    const probe = document.createElement('span');
+
+    probe.style.color = 'var(--c-on-surface-muted)';
+    m.stage.append(probe);
+
+    expect(ink('2031-09-09')).not.toBe(ink('2031-09-16'));
+    expect(ink('2031-09-09')).not.toBe(getComputedStyle(probe).color);
+  });
+
   it('picks with Enter, closes and returns focus to the input', async () => {
     const m = await mountPicker({ value: '2031-09-17' });
 
@@ -642,6 +659,16 @@ describe('range', () => {
     expect(events.last()?.type).toBe('update:value');
     expect(m.host.value).toEqual({ end: '2031-09-20', start: '2031-09-01' });
     expect([start.value, end.value]).toEqual(['01.09.2031', '20.09.2031']);
+  });
+
+  it('a click in the end input keeps focus there', async () => {
+    const m = await mountRange();
+
+    const [, end] = inputs(m);
+
+    await userEvent.click(end);
+
+    expect(deepActiveElement()).toBe(end);
   });
 
   it('paints the band between the committed ends, across disabled days', async () => {
@@ -1016,6 +1043,296 @@ describe('motion', () => {
   });
 });
 
+describe('type="month"', () => {
+  const mountMonth = (
+    props: Record<string, unknown> = {},
+    attrs: Record<string, boolean | string> = {},
+  ) => mountPicker({ label: 'Period', type: 'month', ...props }, attrs);
+
+  /** A row of the current step's list: `m3` (March) or `y2031`. */
+  const option = (m: Mounted, key: string): HTMLElement =>
+    m.shadow(`ul[part~="list"] li[data-key="${key}"]`);
+
+  const focusedKey = (): null | string =>
+    deepActiveElement()?.getAttribute('data-key') ?? null;
+
+  const stepLabel = (m: Mounted) => m.part('step-label').textContent?.trim();
+
+  const summaries = (m: Mounted) =>
+    m
+      .shadowAll<HTMLElement>('[part~="step-summary"]')
+      .map((b) => b.textContent?.replace(/\s+/g, ' ').trim());
+
+  const pickRow = async (m: Mounted, key: string) => {
+    await userEvent.click(option(m, key));
+    await finishAnimations(m);
+  };
+
+  it('opens on the month step: no header, a Month label, the value’s month focused', async () => {
+    const m = await mountMonth({ value: '2031-09' });
+
+    const events = recordEvents(m.host, EVENTS);
+
+    await open(m);
+
+    expect(m.shadowAll('[part~="header"]')).toHaveLength(0);
+    expect(m.shadowAll('table[part~="grid"]')).toHaveLength(0);
+    expect(stepLabel(m)).toBe('Month');
+    expect(m.shadow('ul[part~="list"]').getAttribute('aria-labelledby')).toBe(
+      m.part('step-label').id,
+    );
+    expect(m.shadowAll('ul[part~="list"] li')).toHaveLength(12);
+    expect(focusedKey()).toBe('m9');
+    expect(option(m, 'm9').getAttribute('aria-selected')).toBe('true');
+    expect(summaries(m)).toEqual([]);
+    expect(events.of('change:month')).toHaveLength(0);
+  });
+
+  it('a month pick shows its summary and the year step; a year pick commits and closes', async () => {
+    const m = await mountMonth({ value: '2031-09' });
+
+    const events = recordEvents(m.host, EVENTS);
+
+    await open(m);
+    await pickRow(m, 'm3');
+
+    expect(isOpen(m)).toBe(true);
+    expect(summaries(m)).toEqual(['Month March']);
+    expect(stepLabel(m)).toBe('Year');
+    expect(focusedKey()).toBe('y2031');
+    expect(events.of('change')).toHaveLength(0);
+
+    await pickRow(m, 'y2033');
+
+    expect(isOpen(m)).toBe(false);
+    expect(m.host.value).toBe('2033-03');
+    expect(inputs(m)[0].value).toBe('03.2033');
+    expect(events.of('change').map((e) => e.detail)).toEqual(['2033-03']);
+  });
+
+  it('reopens on the month step after a pick', async () => {
+    const m = await mountMonth({ value: '2031-09' });
+
+    await open(m);
+
+    const height = m.part('panel').getBoundingClientRect().height;
+
+    await pickRow(m, 'm3');
+    await pickRow(m, 'y2033');
+
+    expect(isOpen(m)).toBe(false);
+
+    await open(m);
+
+    expect(stepLabel(m)).toBe('Month');
+    expect(summaries(m)).toEqual([]);
+    expect(focusedKey()).toBe('m3');
+    // The step reset ran while the panel was hidden; it must not size the body.
+    expect(m.part('panel').getBoundingClientRect().height).toBe(height);
+
+    await pickRow(m, 'm5');
+
+    expect(stepLabel(m)).toBe('Year');
+  });
+
+  it('the keyboard runs the whole flow', async () => {
+    const m = await mountMonth({ value: '2031-09' });
+
+    await open(m);
+    await userEvent.keyboard('{ArrowDown}{Enter}');
+    await finishAnimations(m);
+
+    expect(stepLabel(m)).toBe('Year');
+    expect(focusedKey()).toBe('y2031');
+
+    await userEvent.keyboard('{ArrowUp}{Enter}');
+    await settle();
+
+    expect(m.host.value).toBe('2030-10');
+  });
+
+  it('a summary row returns to its step', async () => {
+    const m = await mountMonth({ value: '2031-09' });
+
+    await open(m);
+    await pickRow(m, 'm3');
+    await userEvent.click(m.part('step-summary'));
+    await finishAnimations(m);
+
+    expect(stepLabel(m)).toBe('Month');
+    expect(summaries(m)).toEqual([]);
+    expect(focusedKey()).toBe('m9');
+  });
+
+  it('types a month in the derived format; a full date value reads by its month', async () => {
+    const m = await mountMonth({ value: '2031-09-15' });
+
+    const events = recordEvents(m.host, EVENTS);
+
+    expect(inputs(m)[0].value).toBe('09.2031');
+    expect(events.of('change')).toHaveLength(0);
+
+    await type(inputs(m)[0], '3.2032');
+    await userEvent.keyboard('{Enter}');
+    await settle();
+
+    expect(m.host.value).toBe('2032-03');
+    expect(inputs(m)[0].value).toBe('03.2032');
+
+    await type(inputs(m)[0], '13.2032');
+    await userEvent.keyboard('{Enter}');
+    await settle();
+
+    expect(m.host.value).toBeNull();
+    expect(m.host.badInput).toBe(true);
+  });
+
+  it('derives yyyy-MM from a yyyy-MM-dd format', async () => {
+    const m = await mountMonth({ format: 'yyyy-MM-dd', value: '2031-09' });
+
+    expect(inputs(m)[0].value).toBe('2031-09');
+  });
+
+  it('a month is out when no allowed year takes it; a year when the picked month is out there', async () => {
+    const m = await mountMonth({
+      max: '2032-10-05',
+      min: '2031-03-15',
+      value: '2031-06',
+    });
+
+    Object.assign(m.host, {
+      disabledDates: [{ end: '2031-07-31', start: '2031-07-01' }],
+    });
+    await settle();
+    await open(m);
+
+    const disabled = (key: string) =>
+      option(m, key).getAttribute('aria-disabled') === 'true';
+
+    // 2031-03 … 2032-10: every month has some allowed year.
+    expect(disabled('m1')).toBe(false);
+    expect(disabled('m11')).toBe(false);
+
+    await pickRow(m, 'm7');
+
+    expect(m.shadowAll('ul[part~="list"] li')).toHaveLength(2);
+    expect(disabled('y2031')).toBe(true);
+    expect(disabled('y2032')).toBe(false);
+    expect(focusedKey()).toBe('y2032');
+
+    await userEvent.click(m.part('step-summary'));
+    await finishAnimations(m);
+    await pickRow(m, 'm11');
+
+    expect(disabled('y2031')).toBe(false);
+    expect(disabled('y2032')).toBe(true);
+  });
+
+  it('bounds inside one year disable the months outside them', async () => {
+    const m = await mountMonth({ max: '2031-10', min: '2031-03' });
+
+    await open(m);
+
+    const out = m
+      .shadowAll<HTMLElement>('ul[part~="list"] li[aria-disabled="true"]')
+      .map((li) => li.dataset.key);
+
+    expect(out).toEqual(['m1', 'm2', 'm11', 'm12']);
+  });
+
+  it('a range runs four labelled steps; the start is pending until the end year', async () => {
+    const m = await mountMonth({ value: null }, { range: true });
+
+    const events = recordEvents(m.host, EVENTS);
+
+    m.host.value = { end: '2032-02', start: '2031-11' };
+    await settle();
+    await open(m);
+
+    expect(stepLabel(m)).toBe('Start month');
+
+    await pickRow(m, 'm11');
+
+    expect(stepLabel(m)).toBe('Start year');
+    expect(summaries(m)).toEqual(['Start month November']);
+
+    await pickRow(m, 'y2031');
+
+    expect(stepLabel(m)).toBe('End month');
+    expect(summaries(m)).toEqual(['Start month November 2031']);
+    expect(m.shadow('[aria-live="polite"]').textContent).toContain(
+      'November 2031',
+    );
+    expect(focusedKey()).toBe('m2');
+
+    await pickRow(m, 'm2');
+
+    expect(stepLabel(m)).toBe('End year');
+    expect(summaries(m)).toEqual([
+      'Start month November 2031',
+      'End month February',
+    ]);
+    expect(events.of('change')).toHaveLength(0);
+
+    // Reversed: the end year lands before the start, so the ends swap.
+    await pickRow(m, 'y2030');
+
+    expect(isOpen(m)).toBe(false);
+    expect(m.host.value).toEqual({ end: '2031-11', start: '2030-02' });
+    expect(events.of('change')).toHaveLength(1);
+  });
+
+  it('dismissing a range discards the pending start', async () => {
+    const m = await mountMonth({ value: null }, { range: true });
+
+    const events = recordEvents(m.host, EVENTS);
+
+    await open(m);
+    await pickRow(m, 'm3');
+    await pickRow(m, `y${new Date().getFullYear()}`);
+    await userEvent.keyboard('{Escape}');
+    await settle();
+    await open(m);
+
+    expect(stepLabel(m)).toBe('Start month');
+    expect(summaries(m)).toEqual([]);
+    expect(events.of('change')).toHaveLength(0);
+  });
+
+  it('names the range inputs by month', async () => {
+    const m = await mountMonth({ value: null }, { range: true });
+
+    expect(inputs(m).map((i) => i.getAttribute('aria-label'))).toEqual([
+      'Period, Start month',
+      'Period, End month',
+    ]);
+  });
+
+  describe('fullscreen panel', () => {
+    afterEach(async () => {
+      await page.viewport(1280, 800);
+    });
+
+    it('stacks the steps and the list fills the height', async () => {
+      await page.viewport(360, 740);
+
+      const m = await mountMonth({ value: '2031-09' });
+
+      await open(m);
+      await pickRow(m, 'm3');
+
+      const list = m.shadow('ul[part~="list"]').getBoundingClientRect();
+
+      expect(
+        m.part('step-summary').getBoundingClientRect().bottom,
+      ).toBeLessThanOrEqual(
+        m.part('step-label').getBoundingClientRect().top + 1,
+      );
+      expect(list.bottom).toBeGreaterThan(600);
+    });
+  });
+});
+
 describe('visual', () => {
   it('closed field', async () => {
     const m = await mountPicker({ value: '2001-02-14' });
@@ -1054,5 +1371,56 @@ describe('visual', () => {
     await settle();
 
     await matchScreenshotInBothModes(m.part('panel'), 'year-list');
+  });
+
+  it('month step', async () => {
+    const m = await mountPicker({
+      label: 'Billing month',
+      max: '2001-11',
+      min: '2001-03',
+      type: 'month',
+      value: '2001-06',
+    });
+
+    await open(m);
+
+    await matchScreenshotInBothModes(m.part('panel'), 'month-step');
+  });
+
+  it('year step', async () => {
+    const m = await mountPicker({
+      label: 'Billing month',
+      max: '2004-12',
+      min: '1998-01',
+      type: 'month',
+      value: '2001-06',
+    });
+
+    // The keyboard, so no pointer hover lands in the image.
+    await open(m);
+    await userEvent.keyboard('{ArrowUp}{ArrowUp}{ArrowUp}{Enter}');
+    await finishAnimations(m);
+
+    await matchScreenshotInBothModes(m.part('panel'), 'year-step');
+  });
+
+  it('month range: the end month step', async () => {
+    const m = await mountPicker(
+      {
+        label: 'Reporting period',
+        type: 'month',
+        value: { end: '2001-07', start: '2001-03' },
+      },
+      { range: true },
+    );
+
+    // The keyboard, so no pointer hover lands in the image: March, then 2001.
+    await open(m);
+    await userEvent.keyboard('{Enter}');
+    await finishAnimations(m);
+    await userEvent.keyboard('{Enter}');
+    await finishAnimations(m);
+
+    await matchScreenshotInBothModes(m.part('panel'), 'range-end-month');
   });
 });

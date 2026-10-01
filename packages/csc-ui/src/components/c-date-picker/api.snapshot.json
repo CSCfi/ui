@@ -19,6 +19,7 @@
     "shadow": "boolean = false",
     "show-week-numbers": "boolean = false",
     "size": "'default' | 'small' = 'default'",
+    "type": "'date' | 'month' = 'date'",
     "valid": "boolean = true",
     "value": "CDatePickerValue = null"
   },
@@ -61,6 +62,8 @@
     "previous-year",
     "range-band",
     "separator",
+    "step-label",
+    "step-summary",
     "week-number",
     "weekday",
     "year-button"
@@ -93,6 +96,7 @@
     "showWeekNumbers": "boolean = false",
     "size": "'default' | 'small' = 'default'",
     "texts": "CDatePickerTexts = {}",
+    "type": "'date' | 'month' = 'date'",
     "valid": "boolean = true",
     "value": "CDatePickerValue = null"
   },

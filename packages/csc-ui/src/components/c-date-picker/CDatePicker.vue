@@ -1,107 +1,39 @@
 <template>
-  <!-- Anchor wrapper: a shadow-DOM box around the value field. CSS anchor
-       names are tree-scoped, so the anchor must live in the same shadow root
-       as the panel (`useAnchoredPanel`). -->
-  <span ref="anchorRef" :style="anchorStyle" class="block w-full">
-    <c-input
-      ref="cInputRef"
-      :active="focused || isOpen"
-      :data-hide-details="String(hideDetailsResolved)"
-      :disabled
-      :error-message
-      :filled="hasText"
-      :hint
-      :input-id
-      :label
-      :label-on-top="labelOnTopResolved"
-      :required
-      :shadow="shadowResolved"
-      :size="sizeResolved"
-      :valid
-    >
-      <!-- The editable field (ADR-0058): typing never opens the panel. Under
-           `range` a second input holds the end, both in one field box. -->
-      <div
-        :class="ui.content()"
-        class="c-input__content"
-        @focusin="focused = true"
-        @focusout="onFocusOut"
+  <!-- The editable value field (ADR-0058): `src/shared/TypedField.vue`. -->
+  <TypedField
+    :anchor-style
+    :clear-label="t.clearSelection"
+    :clearable
+    :disabled
+    :error-message
+    :field="typed"
+    :hide-details="hideDetailsResolved"
+    :hint
+    :input-id
+    :label
+    :label-on-top="labelOnTopResolved"
+    :name
+    :open="isOpen"
+    :required
+    :shadow="shadowResolved"
+    :size="sizeResolved"
+    :valid
+    inputmode="numeric"
+  >
+    <template #trigger>
+      <c-icon-button
+        ref="calendarButtonRef"
+        :aria-label="t.openCalendar"
+        :disabled
+        aria-haspopup="dialog"
+        size="x-small"
+        text
+        @click="onCalendarClick"
       >
-        <input
-          :id="inputId"
-          ref="startRef"
-          :aria-invalid="!valid || badStart || undefined"
-          :aria-label="inputLabel('start')"
-          :class="ui.input({ start: rangeOn })"
-          :disabled
-          :name="name || undefined"
-          :placeholder="effectivePlaceholder"
-          :required
-          :style="startWidth"
-          :value="startText"
-          autocomplete="off"
-          inputmode="numeric"
-          part="input"
-          type="text"
-          @blur="commitText('start')"
-          @input="onTextInput('start', $event)"
-          @keydown="onInputKeyDown('start', $event)"
-        />
-
-        <template v-if="rangeOn">
-          <span
-            :class="ui.separator({ hidden: !showSeparator })"
-            aria-hidden="true"
-            part="separator"
-          >
-            –
-          </span>
-
-          <input
-            ref="endRef"
-            :aria-invalid="!valid || badEnd || undefined"
-            :aria-label="inputLabel('end')"
-            :class="ui.input()"
-            :disabled
-            :placeholder="effectivePlaceholder"
-            :value="endText"
-            autocomplete="off"
-            inputmode="numeric"
-            part="input"
-            type="text"
-            @blur="commitText('end')"
-            @input="onTextInput('end', $event)"
-            @keydown="onInputKeyDown('end', $event)"
-          />
-        </template>
-      </div>
-
-      <span slot="post" :class="ui.post()">
-        <c-icon-button
-          v-if="clearable && hasContent"
-          :aria-label="t.clearSelection"
-          :disabled
-          size="x-small"
-          text
-          @click="onClear"
-        >
-          <c-icon :path="mdiClose" :size="20" />
-        </c-icon-button>
-
-        <c-icon-button
-          ref="calendarButtonRef"
-          :aria-label="t.openCalendar"
-          :disabled
-          aria-haspopup="dialog"
-          size="x-small"
-          text
-          @click="onCalendarClick"
-        >
-          <c-icon :path="mdiCalendar" :size="20" />
-        </c-icon-button>
-      </span>
-    </c-input>
-  </span>
+        <c-icon :path="mdiCalendar" :size="20" />
+      </c-icon-button>
+    </template>
+  </TypedField>
 
   <!-- Manual popover in the top layer; light dismiss, positioning and the
        fullscreen layout come from `useAnchoredPanel`. -->
@@ -141,7 +73,9 @@
              with its own arrows; the ▾ buttons swap in the month or year
              list. While a list is open the other control and the arrows fade
              out but keep their space, so the open ▾ button stays put. -->
-        <div :class="ui.header()" part="header">
+        <!-- Month mode (ADR-0063) has no header: its steps carry their own
+             labels. -->
+        <div v-if="!monthMode" :class="ui.header()" part="header">
           <div :class="ui.control({ hidden: view === 'years' })">
             <button
               :aria-label="t.previousMonth"
@@ -251,10 +185,77 @@
         </div>
 
         <div ref="bodyRef" :class="ui.body()">
+          <!-- Month mode (ADR-0063): a month step, then a year step — twice
+               under range — each list labelled; a finished step collapses
+               to a summary row that returns to it. -->
+          <template v-if="monthMode">
+            <button
+              v-for="summary in stepSummaries"
+              :key="summary.step"
+              :class="ui.stepSummary()"
+              part="step-summary"
+              type="button"
+              @click="goToStep(summary.step)"
+            >
+              <span :class="ui.stepSummaryLabel()">{{ summary.label }}</span>
+              {{ summary.value }}
+            </button>
+
+            <div :id="stepLabelId" :class="ui.stepLabel()" part="step-label">
+              {{ stepLabel }}
+            </div>
+
+            <div :class="ui.stepList()">
+              <transition
+                :css="false"
+                @enter="onBodyEnter"
+                @leave="onBodyLeave"
+              >
+                <ul
+                  :key="monthStep"
+                  ref="listRef"
+                  :aria-labelledby="stepLabelId"
+                  :class="ui.list()"
+                  part="list"
+                  role="listbox"
+                >
+                  <li
+                    v-for="(option, i) in listOptions"
+                    :key="option.key"
+                    :aria-disabled="option.disabled || undefined"
+                    :aria-selected="option.selected"
+                    :class="ui.option({ disabled: option.disabled })"
+                    :data-index="i"
+                    :data-key="option.key"
+                    :tabindex="i === listIndex ? 0 : -1"
+                    part="option"
+                    role="option"
+                    @click="pickOption(i)"
+                    @keydown="onListKeyDown"
+                  >
+                    <svg
+                      :class="ui.check({ hidden: !option.selected })"
+                      aria-hidden="true"
+                      viewBox="0 0 24 24"
+                    >
+                      <path :d="mdiCheck" />
+                    </svg>
+                    {{ option.name }}
+                  </li>
+                </ul>
+              </transition>
+            </div>
+          </template>
+
           <!-- One transition for every body swap: the day grid slides to a
                neighbouring month, and the month / year list drops in over
                it. The outgoing element is inert while it animates out. -->
-          <transition :css="false" @enter="onBodyEnter" @leave="onBodyLeave">
+          <transition
+            v-else
+            :css="false"
+            @enter="onBodyEnter"
+            @leave="onBodyLeave"
+          >
             <!-- The day grid: one roving tab stop, real DOM focus. -->
             <table
               v-if="view === 'days'"
@@ -515,17 +516,22 @@ export interface CDatePickerProps {
    */
   texts?: CDatePickerTexts;
   /**
+   * What the field picks: a calendar date, or a year and a month
+   * (`'YYYY-MM'`)
+   */
+  type?: CDatePickerType;
+  /**
    * Set the validity of the field
    */
   valid?: boolean;
   /**
-   * The date as an ISO `YYYY-MM-DD` string, or `{ start, end }` under
-   * `range`; `null` when empty
+   * The date as an ISO `YYYY-MM-DD` string (an ISO `YYYY-MM` month under
+   * `type="month"`), or `{ start, end }` under `range`; `null` when empty
    */
   value?: CDatePickerValue;
 }
 
-/** A date range: ISO `YYYY-MM-DD` ends, either of which may be `null` while only one is typed. */
+/** A date range: ISO `YYYY-MM-DD` ends (`YYYY-MM` under `type="month"`), either of which may be `null` while only one is typed. */
 export interface CDatePickerRange {
   /** The last day of the range, inclusive. */
   end: null | string;
@@ -555,6 +561,12 @@ export interface CDatePickerTexts {
   date?: (iso: string) => string;
   /** Accessible name of the end input under `range`. */
   end?: string;
+  /** Label of the end's month step under `type="month"` and `range`; also the end input's name there. */
+  endMonth?: string;
+  /** Label of the end's year step under `type="month"` and `range`. */
+  endYear?: string;
+  /** Label of the month step under `type="month"`. */
+  month?: string;
   /** Twelve month names, January first. */
   months?: string[];
   /** Twelve short month names, January first — shown on the month button. */
@@ -577,6 +589,10 @@ export interface CDatePickerTexts {
   selectYear?: string;
   /** Accessible name of the start input under `range`. */
   start?: string;
+  /** Label of the start's month step under `type="month"` and `range`; also the start input's name there. */
+  startMonth?: string;
+  /** Label of the start's year step under `type="month"` and `range`. */
+  startYear?: string;
   /** Appended to the accessible name of a day that cannot be picked. */
   unavailable?: string;
   /** Seven weekday names, Sunday first. */
@@ -585,11 +601,17 @@ export interface CDatePickerTexts {
   weekdaysShort?: string[];
   /** Accessible name of the week-number column. */
   weekNumber?: string;
+  /** Label of the year step under `type="month"`. */
+  year?: string;
 }
 
+/** What `c-date-picker` picks: a calendar date, or a year and a month (ADR-0063). */
+export type CDatePickerType = 'date' | 'month';
+
 /**
- * Value of `c-date-picker`: an ISO `YYYY-MM-DD` string, a
- * {@link CDatePickerRange} under `range`, or `null` when empty.
+ * Value of `c-date-picker`: an ISO `YYYY-MM-DD` string (`YYYY-MM` under
+ * `type="month"`), a {@link CDatePickerRange} under `range`, or `null` when
+ * empty.
  */
 export type CDatePickerValue = CDatePickerRange | null | string;
 
@@ -621,6 +643,8 @@ export type CDatePickerWeekday = 0 | 1 | 2 | 3 | 4 | 5 | 6;
  * @csspart range-band - The strip joining a range's days behind their circles
  * @csspart list - The month or year list swapped in for the grid
  * @csspart option - One month or year in the list
+ * @csspart step-label - The label above the current list under `type="month"`: month or year, and under `range` start or end
+ * @csspart step-summary - A finished step under `type="month"`, its label and pick; pressing it returns to that step
  *
  * @cssstate bad-input - Present while committed text names no date that can be picked
  */
@@ -629,7 +653,6 @@ import {
   mdiCheck,
   mdiChevronLeft,
   mdiChevronRight,
-  mdiClose,
   mdiMenuDown,
 } from '@mdi/js';
 import { tv } from 'tailwind-variants';
@@ -645,15 +668,15 @@ import {
 
 import { useAppDefault } from '../../shared/appDefaults';
 import { coerceBoolean } from '../../shared/coerceBoolean';
-import { emitModelChange } from '../../shared/emitModelValue';
-import { applyMask } from '../../shared/inputMask';
 import PanelHeadingRow from '../../shared/PanelHeadingRow.vue';
+import TypedField from '../../shared/TypedField.vue';
 import { applyPeekCap } from '../../shared/peekCap';
 import { useAnchoredPanel } from '../../shared/useAnchoredPanel';
 import { useHostEmit } from '../../shared/useHostEmit';
 import { useHostStates } from '../../shared/useHostStates';
 import { useNarrowViewport } from '../../shared/useNarrowViewport';
 import { useStatusAnnouncer } from '../../shared/useStatusAnnouncer';
+import { useTypedField } from '../../shared/useTypedField';
 import {
   addDays,
   addMonths,
@@ -663,21 +686,26 @@ import {
   daysInMonth,
   firstOfMonth,
   formatDate,
+  formatMonth,
   fromIso,
   intlNames,
   isDisabledDate,
+  isDisabledMonth,
   isIso,
+  isIsoMonth,
+  isMonthDisabledEverywhere,
   isOutOfRange,
   isValidPattern,
   monthMatrix,
   monthOf,
+  monthPattern,
   parseDate,
+  parseMonth,
   rowWeek,
   todayIso,
   toIso,
+  toMonth,
 } from './dates';
-
-type CDatePickerEnd = 'end' | 'start';
 
 /** Events dispatched by `<c-date-picker>`. */
 interface CDatePickerEvents {
@@ -720,6 +748,10 @@ type CDatePickerView = 'days' | 'months' | 'years';
  * `::part()` and `:state(bad-input)`.
  */
 const datePicker = tv({
+  compoundVariants: [
+    // The fullscreen body is sized by the viewport in month mode too.
+    { class: { body: 'h-auto' }, fullscreen: true, month: true },
+  ],
   slots: {
     arrow:
       'flex size-9 transition-[opacity,visibility] duration-150 shrink-0 cursor-pointer items-center justify-center rounded-full border-0 bg-transparent p-0 text-on-surface-muted outline-none hover:not-disabled:bg-primary-subtle-hover hover:not-disabled:text-primary focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-primary disabled:cursor-default disabled:opacity-40',
@@ -731,15 +763,10 @@ const datePicker = tv({
     card: 'flex flex-col w-[328px] overflow-hidden rounded-csc-md bg-surface-overlay text-on-surface shadow-[2px_4px_10px_#00000029]',
     caret: 'size-5 shrink-0 fill-current transition-transform duration-200',
     check: 'size-4 shrink-0 fill-current text-primary',
-    content: 'flex items-center w-full min-w-0 gap-1',
     control: 'flex items-center transition-[opacity,visibility] duration-150',
     grid: 'w-full table-fixed border-collapse',
     header: 'flex items-center justify-between gap-2 min-h-14 px-1',
     icon: 'size-6 fill-current',
-    // The value text colour is set explicitly, as in c-text-field: c-input
-    // drives an inheritable `color` for its state cascade.
-    input:
-      'c-date-picker__input bg-transparent border-0 outline-none m-0 [font:inherit] text-base leading-5 text-on-surface disabled:text-on-surface-muted [caret-color:var(--c-primary)] flex-auto min-w-0 w-full py-2 max-h-8 tabular-nums',
     list: 'list-none m-0 p-1 h-full overflow-y-auto scrollbar-hidden overscroll-none outline-none',
     monthName: '[grid-area:1/1]',
     monthNames: 'grid justify-items-center',
@@ -747,8 +774,11 @@ const datePicker = tv({
       'flex items-center gap-3 min-h-10 px-3 rounded text-sm text-on-surface cursor-pointer select-none outline-none hover:bg-primary-subtle-hover focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-primary aria-selected:bg-primary-subtle aria-selected:text-primary aria-selected:font-medium',
     panel:
       'fixed m-0 p-0 border-0 bg-transparent overflow-visible [inset:auto]',
-    post: 'inline-flex items-center gap-0.5 -mr-1.5',
-    separator: 'shrink-0 mx-1 text-on-surface-muted',
+    stepLabel: 'px-3 pt-3 pb-1 text-xs font-medium text-on-surface-muted',
+    stepList: 'relative flex-1 min-h-0',
+    stepSummary:
+      'flex shrink-0 items-center gap-2 w-full min-h-10 px-3 rounded border-0 bg-transparent text-left text-sm text-on-surface [font-family:var(--c-font-family)] cursor-pointer outline-none hover:bg-primary-subtle-hover focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-primary',
+    stepSummaryLabel: 'text-on-surface-muted',
     viewButton:
       'flex items-center gap-0.5 h-9 cursor-pointer rounded-full border-0 bg-transparent pl-3 pr-1.5 text-sm font-medium text-on-surface [font-family:var(--c-font-family)] outline-none hover:bg-primary-subtle-hover focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-primary tabular-nums',
     visuallyHidden:
@@ -761,7 +791,7 @@ const datePicker = tv({
   variants: {
     disabled: {
       true: {
-        option: 'cursor-default text-on-surface-faint hover:bg-transparent',
+        option: 'cursor-default text-on-surface-disabled hover:bg-transparent',
       },
     },
     fullscreen: {
@@ -780,13 +810,13 @@ const datePicker = tv({
         check: 'invisible',
         control: 'invisible opacity-0',
         monthName: 'invisible',
-        separator: 'invisible',
       },
     },
+    // Month mode has no day grid: the body keeps a six-week grid's height.
+    // Month mode has no day grid: the body keeps a six-week grid's height,
+    // and its step list takes what the label and summaries leave.
+    month: { true: { body: 'flex flex-col h-[276px]' } },
     open: { true: { caret: 'rotate-180' } },
-    // The range start is as wide as its text, so the separator follows it
-    // with even space both sides; the end input fills the rest.
-    start: { true: { input: 'flex-none w-auto [field-sizing:content]' } },
   },
 });
 
@@ -816,7 +846,7 @@ const dayCell = tv({
     disabled: {
       true: {
         cell: 'cursor-default',
-        day: 'text-on-surface-faint group-hover:bg-transparent',
+        day: 'text-on-surface-disabled group-hover:bg-transparent',
       },
     },
     selected: {
@@ -854,6 +884,7 @@ const props = withDefaults(defineProps<CDatePickerProps>(), {
   showWeekNumbers: undefined,
   size: undefined,
   texts: undefined,
+  type: 'date',
   valid: true,
   value: null,
 });
@@ -917,6 +948,9 @@ const DEFAULT_TEXTS: Required<CDatePickerTexts> = {
     return `${ENGLISH_WEEKDAYS[dayOfWeek(iso)]} ${d} ${ENGLISH_MONTHS[m - 1]} ${y}`;
   },
   end: 'End date',
+  endMonth: 'End month',
+  endYear: 'End year',
+  month: 'Month',
   months: ENGLISH_MONTHS,
   monthsShort: ENGLISH_MONTHS.map((name) => name.slice(0, 3)),
   nextMonth: 'Next month',
@@ -928,10 +962,13 @@ const DEFAULT_TEXTS: Required<CDatePickerTexts> = {
   selectMonth: 'Choose month',
   selectYear: 'Choose year',
   start: 'Start date',
+  startMonth: 'Start month',
+  startYear: 'Start year',
   unavailable: 'unavailable',
   weekdays: ENGLISH_WEEKDAYS,
   weekdaysShort: ENGLISH_WEEKDAYS.map((name) => name.slice(0, 2)),
   weekNumber: 'Week',
+  year: 'Year',
 };
 
 // Own texts merged over the app default (the resolver's per-key merge).
@@ -966,23 +1003,15 @@ const names = computed(() => ({
 
 // ---- refs -----------------------------------------------------------------
 
-const anchorRef = useTemplateRef<HTMLElement>('anchorRef');
-
 const bodyRef = useTemplateRef<HTMLElement>('bodyRef');
 
 const cardRef = useTemplateRef<HTMLElement>('cardRef');
-
-const cInputRef = useTemplateRef<HTMLElement>('cInputRef');
-
-const endRef = useTemplateRef<HTMLInputElement>('endRef');
 
 const gridRef = useTemplateRef<HTMLTableElement>('gridRef');
 
 const listRef = useTemplateRef<HTMLUListElement>('listRef');
 
 const panelRef = useTemplateRef<HTMLElement>('panelRef');
-
-const startRef = useTemplateRef<HTMLInputElement>('startRef');
 
 const autoId = useId();
 
@@ -996,26 +1025,36 @@ const rangeOn = computed(() =>
     : coerceBoolean(props.range),
 );
 
-const pattern = computed(() =>
-  isValidPattern(formatResolved.value) ? formatResolved.value : 'dd.MM.yyyy',
+// `type="month"` picks a year and a month (ADR-0063).
+const monthMode = computed(() => props.type === 'month');
+
+// Month mode's first view is the month list; there is no day grid.
+const homeView = computed<CDatePickerView>(() =>
+  monthMode.value ? 'months' : 'days',
 );
+
+const pattern = computed(() => {
+  if (monthMode.value) return monthPattern(formatResolved.value);
+
+  return isValidPattern(formatResolved.value)
+    ? formatResolved.value
+    : 'dd.MM.yyyy';
+});
 
 // Typing follows the pattern (ADR-0059); commit still parses leniently.
 const dateMask = computed(() => compileDateMask(pattern.value));
 
-const effectivePlaceholder = computed(() => {
-  if (!labelOnTopResolved.value && props.label && !focused.value)
-    return undefined;
-
-  return props.placeholder || pattern.value;
-});
-
 // ---- disabling --------------------------------------------------------------
 
-const bounds = computed(() => ({
-  max: isIso(props.max) ? props.max : null,
-  min: isIso(props.min) ? props.min : null,
-}));
+// Month mode reads a bound by its month: `'YYYY-MM'` or a full date.
+const bounds = computed(() =>
+  monthMode.value
+    ? { max: toMonth(props.max), min: toMonth(props.min) }
+    : {
+        max: isIso(props.max) ? props.max : null,
+        min: isIso(props.min) ? props.min : null,
+      },
+);
 
 const rules = computed<CDatePickerDisabling>(() => ({
   ...bounds.value,
@@ -1024,6 +1063,17 @@ const rules = computed<CDatePickerDisabling>(() => ({
 }));
 
 const isDisabled = (iso: string) => isDisabledDate(iso, rules.value);
+
+// A month is out only when every one of its days is (ADR-0063).
+const isMonthDisabled = (month: string) => isDisabledMonth(month, rules.value);
+
+// Month mode reads a full date by its month; it emits nothing until a pick.
+const toMonthValue = (value: CDatePickerValue): CDatePickerValue => {
+  if (value && typeof value === 'object')
+    return { end: toMonth(value.end), start: toMonth(value.start) };
+
+  return toMonth(value);
+};
 
 const clamp = (iso: string): string => {
   const { max, min } = bounds.value;
@@ -1035,248 +1085,54 @@ const clamp = (iso: string): string => {
   return iso;
 };
 
-// ---- value ------------------------------------------------------------------
+// ---- the typed field -------------------------------------------------------
 
-type Ends = { end: null | string; start: null | string };
-
-// Vue's `v-model` on a custom element writes `el.value = ''` for a `null`
-// model (vModelText): the empty string, like any non-date, is "no date".
-const normalize = (v: unknown): Ends => {
-  if (v && typeof v === 'object') {
-    const r = v as Partial<CDatePickerRange>;
-
-    return {
-      end: isIso(r.end) ? r.end : null,
-      start: isIso(r.start) ? r.start : null,
-    };
-  }
-
-  return { end: null, start: isIso(v) ? v : null };
-};
-
-const ends = ref<Ends>(normalize(props.value));
-
-const sameEnds = (a: Ends, b: Ends) => a.start === b.start && a.end === b.end;
-
-const toValue = (e: Ends): CDatePickerValue => {
-  if (!rangeOn.value) return e.start;
-
-  return e.start === null && e.end === null
-    ? null
-    : { end: e.end, start: e.start };
-};
-
-const startText = ref('');
-
-// The separator shows only beside something: text or the placeholders. An
-// empty field under its floating label shows neither.
-const showSeparator = computed(
-  () => !!(startText.value || endText.value || effectivePlaceholder.value),
-);
-
-const fieldSizing =
-  typeof CSS !== 'undefined' && CSS.supports('field-sizing', 'content');
-
-// A width for the range start where `field-sizing` cannot give one: while it
-// shows no text at all (the floating label hides the placeholder), and in a
-// browser without `field-sizing` (Firefox 140 ESR).
-const startWidth = computed(() => {
-  if (!rangeOn.value) return undefined;
-
-  const text = startText.value || effectivePlaceholder.value;
-
-  if (text && fieldSizing) return undefined;
-
-  return { width: `${(text || pattern.value).length}ch` };
+const typed = useTypedField({
+  codec: {
+    format: (value, pattern) =>
+      monthMode.value
+        ? formatMonth(value, pattern)
+        : formatDate(value, pattern),
+    isValue: (value): value is string =>
+      monthMode.value ? isIsoMonth(value) : isIso(value),
+    isUsable: (value) =>
+      monthMode.value ? !isMonthDisabled(value) : !isDisabled(value),
+    parse: (text, pattern) =>
+      monthMode.value ? parseMonth(text, pattern) : parseDate(text, pattern),
+  },
+  host,
+  label: () => props.label,
+  labelOnTop: labelOnTopResolved,
+  mask: dateMask,
+  names: () =>
+    monthMode.value
+      ? { end: t.value.endMonth, start: t.value.startMonth }
+      : { end: t.value.end, start: t.value.start },
+  onOpenRequest: () => openPanel(),
+  onTextCommit: (text) => emit('change:text', text),
+  pattern,
+  placeholder: () => props.placeholder,
+  range: rangeOn,
+  reversed: 'swap',
+  value: () => (monthMode.value ? toMonthValue(props.value) : props.value),
 });
 
-const endText = ref('');
-
-// The text last committed per end; a blur without an edit commits nothing.
-const committedText = { end: '', start: '' };
-
-const badStart = ref(false);
-
-const badEnd = ref(false);
+const { commitValue, ends, inputOf, lastInput } = typed;
 
 /** Whether the committed text names no date that can be picked — the value is then `null` (CONTEXT.md "Bad input"). */
-const badInput = computed<boolean>(() => badStart.value || badEnd.value);
+const badInput = computed<boolean>(() => typed.badInput.value);
 
 watch(badInput, (on) => setState('bad-input', on), { immediate: true });
 
-const syncTexts = () => {
-  startText.value = ends.value.start
-    ? formatDate(ends.value.start, pattern.value)
-    : '';
-  endText.value = ends.value.end
-    ? formatDate(ends.value.end, pattern.value)
-    : '';
-  committedText.start = startText.value;
-  committedText.end = endText.value;
-  badStart.value = false;
-  badEnd.value = false;
-};
-
-syncTexts();
-
-// External value updates re-sync the field. The mirror `emitModelChange`
-// writes onto `host.value` re-enters here with what we already hold — a
-// no-op, so bad-input text typed by the user survives its own commit. Never
-// emits.
-watch(
-  () => props.value,
-  (v) => {
-    const next = normalize(v);
-
-    if (sameEnds(next, ends.value)) return;
-
-    ends.value = next;
-    syncTexts();
-  },
-);
-
-watch(pattern, () => {
-  if (!badStart.value && ends.value.start)
-    startText.value = formatDate(ends.value.start, pattern.value);
-
-  if (!badEnd.value && ends.value.end)
-    endText.value = formatDate(ends.value.end, pattern.value);
-
-  committedText.start = startText.value;
-  committedText.end = endText.value;
-});
-
-const hasText = computed(() => !!(startText.value || endText.value));
-
-const hasContent = computed(
-  () => hasText.value || ends.value.start !== null || ends.value.end !== null,
-);
-
-const setEnds = (next: Ends) => {
-  if (sameEnds(next, ends.value)) return;
-
-  ends.value = next;
-  emitModelChange(host, toValue(next));
-};
-
-// ---- the field --------------------------------------------------------------
-
-const focused = ref(false);
-
-// The input focus returns to when the panel closes.
-const lastInput = ref<CDatePickerEnd>('start');
-
-const inputOf = (end: CDatePickerEnd) =>
-  end === 'end' ? endRef.value : startRef.value;
-
-const inputLabel = (end: CDatePickerEnd) => {
-  if (!rangeOn.value) return props.label || undefined;
-
-  const which = end === 'end' ? t.value.end : t.value.start;
-
-  return props.label ? `${props.label}, ${which}` : which;
-};
-
-const onFocusOut = (event: FocusEvent) => {
-  const next = event.relatedTarget as Node | null;
-
-  if (!next || !(event.currentTarget as HTMLElement).contains(next))
-    focused.value = false;
-};
-
-const onTextInput = (end: CDatePickerEnd, event: Event) => {
-  const input = event.target as HTMLInputElement;
-
-  // A paste or drop keeps its text for the lenient commit: masking text in
-  // another field order would scramble it, possibly into a real but wrong
-  // date ("2031-09-01" → "20.3.1090"), where kept it commits as bad input.
-  applyMask(
-    input,
-    event,
-    dateMask.value,
-    end === 'end' ? endText.value : startText.value,
-    { skipPaste: true },
-  );
-
-  const text = input.value;
-
-  if (end === 'end') endText.value = text;
-  else startText.value = text;
-};
-
-// Commit typed text (ADR-0057): on Enter or blur, never per keystroke.
-const commitText = (end: CDatePickerEnd) => {
-  const text = end === 'end' ? endText.value : startText.value;
-
-  if (text === committedText[end]) return;
-
-  committedText[end] = text;
-
-  const parsed = parseDate(text, pattern.value);
-
-  const usable = parsed !== null && !isDisabled(parsed) ? parsed : null;
-
-  const bad = text.trim() !== '' && usable === null;
-
-  if (end === 'end') badEnd.value = bad;
-  else badStart.value = bad;
-
-  const next: Ends = { ...ends.value, [end]: usable };
-
-  // A reversed range swaps its ends, texts and all.
-  if (rangeOn.value && next.start && next.end && next.start > next.end) {
-    [next.start, next.end] = [next.end, next.start];
-  }
-
-  // Reformat what was read ("1.9.2026" → "01.09.2026").
-  if (next.start && !badStart.value)
-    startText.value = formatDate(next.start, pattern.value);
-
-  if (next.end && !badEnd.value)
-    endText.value = formatDate(next.end, pattern.value);
-
-  committedText.start = startText.value;
-  committedText.end = endText.value;
-
-  emit(
-    'change:text',
-    rangeOn.value ? { end: endText.value, start: startText.value } : text,
-  );
-  setEnds(next);
-};
-
-const onInputKeyDown = (end: CDatePickerEnd, event: KeyboardEvent) => {
-  lastInput.value = end;
-
-  if (event.key === 'Enter') {
-    commitText(end);
-
-    return;
-  }
-
-  if (event.key === 'ArrowDown' && event.altKey) {
-    event.preventDefault();
-    commitText(end);
-    openPanel();
-  }
-};
-
-const onClear = (event?: Event) => {
-  event?.stopPropagation();
-
-  startText.value = '';
-  endText.value = '';
-  committedText.start = '';
-  committedText.end = '';
-  badStart.value = false;
-  badEnd.value = false;
-  setEnds({ end: null, start: null });
-  startRef.value?.focus();
-};
-
 // ---- calendar state ---------------------------------------------------------
 
-const view = ref<CDatePickerView>('days');
+const view = ref<CDatePickerView>(homeView.value);
+
+// A `type` change while closed swaps the first view; an open panel keeps its
+// view until it closes.
+watch(homeView, (home) => {
+  if (!isOpen.value) view.value = home;
+});
 
 const today = ref(todayIso());
 
@@ -1452,8 +1308,10 @@ const onBodyEnter = (el: Element, done: () => void) => {
   if (el.localName === 'ul') {
     // The body holds the height the grid had while the list is open, so
     // opening it never resizes the card (the list's peek cap may end it
-    // short). The fullscreen body is sized by the viewport instead.
-    if (layout.value !== 'fullscreen' && bodyRef.value)
+    // short). The fullscreen body is sized by the viewport instead, and
+    // month mode's by its own height: its steps swap lists with no grid,
+    // even while the panel is hidden, where the body measures 0.
+    if (layout.value !== 'fullscreen' && !monthMode.value && bodyRef.value)
       bodyRef.value.style.height = `${bodyFrom}px`;
 
     // Measure the list's rows before its entrance transforms them.
@@ -1504,7 +1362,9 @@ const setMonth = (month: string, force = false, animate = false) => {
       : null;
 
   displayedMonth.value = month;
-  emit('change:month', month);
+
+  // The displayed month belongs to the day grid; month mode has none.
+  if (!monthMode.value) emit('change:month', month);
 };
 
 const weeks = computed(() =>
@@ -1594,6 +1454,10 @@ const moveTo = (iso: string) => {
   focusCell();
 };
 
+// The year a bound falls in, from an ISO date or month.
+const boundYear = (bound: null | string) =>
+  bound ? Number(bound.slice(0, 4)) : null;
+
 const canStep = (months: number) => {
   const target = monthOf(addMonths(firstOfMonth(displayedMonth.value), months));
 
@@ -1667,10 +1531,7 @@ const pick = (iso: string) => {
   if (isDisabled(iso)) return;
 
   if (!rangeOn.value) {
-    startText.value = formatDate(iso, pattern.value);
-    committedText.start = startText.value;
-    badStart.value = false;
-    setEnds({ end: null, start: iso });
+    commitValue({ end: null, start: iso });
     closePanel(true);
 
     return;
@@ -1689,13 +1550,7 @@ const pick = (iso: string) => {
       : [pendingStart.value, iso];
 
   pendingStart.value = null;
-  startText.value = formatDate(start, pattern.value);
-  endText.value = formatDate(end, pattern.value);
-  committedText.start = startText.value;
-  committedText.end = endText.value;
-  badStart.value = false;
-  badEnd.value = false;
-  setEnds({ end, start });
+  commitValue({ end, start });
   closePanel(true);
 };
 
@@ -1714,14 +1569,21 @@ type ListOption = {
   value: number;
 };
 
+const isoMonth = (y: number, m: number) =>
+  `${String(y).padStart(4, '0')}-${String(m).padStart(2, '0')}`;
+
 const yearSpan = computed(() => {
   const thisYear = fromIso(today.value)!.y;
 
   const { max, min } = bounds.value;
 
-  const from = min ? fromIso(min)!.y : thisYear - 100;
+  const from = boundYear(min) ?? thisYear - 100;
 
-  const to = max ? fromIso(max)!.y : thisYear + 100;
+  const to = boundYear(max) ?? thisYear + 100;
+
+  // Month mode's year step lists the bounds only; the grid's year list also
+  // reaches the displayed year.
+  if (monthMode.value) return [from, to];
 
   const shown = displayed.value.y;
 
@@ -1736,8 +1598,196 @@ const monthInBounds = (y: number, m: number) => {
   return !((min && month < monthOf(min)) || (max && month > monthOf(max)));
 };
 
+// ---- month mode: the month step, then the year step (ADR-0063) -------------
+
+type CDatePickerMonthStep =
+  | 'end-month'
+  | 'end-year'
+  | 'start-month'
+  | 'start-year';
+
+const monthStep = ref<CDatePickerMonthStep>('start-month');
+
+// The month (1–12) picked for the end being built, before its year.
+const draftMonth = ref<null | number>(null);
+
+const stepLabelId = `${autoId}-step`;
+
+const onYearStep = computed(() => monthStep.value.endsWith('-year'));
+
+const onEndSteps = computed(() => monthStep.value.startsWith('end-'));
+
+const stepLabel = computed(() => {
+  const labels: Record<CDatePickerMonthStep, string> = rangeOn.value
+    ? {
+        'end-month': t.value.endMonth,
+        'end-year': t.value.endYear,
+        'start-month': t.value.startMonth,
+        'start-year': t.value.startYear,
+      }
+    : {
+        'end-month': t.value.month,
+        'end-year': t.value.year,
+        'start-month': t.value.month,
+        'start-year': t.value.year,
+      };
+
+  return labels[monthStep.value];
+});
+
+const monthName = (m: number) => names.value.months[m - 1];
+
+const monthText = (month: string) =>
+  `${monthName(Number(month.slice(5)))} ${month.slice(0, 4)}`;
+
+// The finished steps above the current one, each a way back to it.
+const stepSummaries = computed(() => {
+  const rows: { label: string; step: CDatePickerMonthStep; value: string }[] =
+    [];
+
+  if (pendingStart.value)
+    rows.push({
+      label: t.value.startMonth,
+      step: 'start-month',
+      value: monthText(pendingStart.value),
+    });
+
+  if (onYearStep.value && draftMonth.value !== null)
+    rows.push({
+      label: rangeOn.value
+        ? onEndSteps.value
+          ? t.value.endMonth
+          : t.value.startMonth
+        : t.value.month,
+      step: onEndSteps.value ? 'end-month' : 'start-month',
+      value: monthName(draftMonth.value),
+    });
+
+  return rows;
+});
+
+// The committed month the current end's steps mark.
+const stepTarget = computed(() =>
+  onEndSteps.value ? ends.value.end : ends.value.start,
+);
+
+// A month row is out when no allowed year can take it.
+const monthOutEverywhere = (m: number) =>
+  isMonthDisabledEverywhere(m, yearSpan.value, rules.value);
+
+const stepOptions = computed<ListOption[]>(() => {
+  const target = stepTarget.value;
+
+  if (!onYearStep.value)
+    return names.value.months.map((name, i) => ({
+      disabled: monthOutEverywhere(i + 1),
+      key: `m${i + 1}`,
+      name,
+      selected: !!target && Number(target.slice(5)) === i + 1,
+      value: i + 1,
+    }));
+
+  const [from, to] = yearSpan.value;
+
+  return Array.from({ length: to - from + 1 }, (_, i) => ({
+    disabled: isMonthDisabled(isoMonth(from + i, draftMonth.value ?? 1)),
+    key: `y${from + i}`,
+    name: String(from + i),
+    selected: !!target && Number(target.slice(0, 4)) === from + i,
+    value: from + i,
+  }));
+});
+
+// Where a step's focus lands: its target, else today's month or year, else
+// the nearest enabled row.
+const landingIndex = () => {
+  const options = stepOptions.value;
+
+  const now = fromIso(today.value)!;
+
+  const preferred = stepTarget.value
+    ? Number(
+        onYearStep.value
+          ? stepTarget.value.slice(0, 4)
+          : stepTarget.value.slice(5),
+      )
+    : onYearStep.value
+      ? now.y
+      : now.m;
+
+  let at = options.findIndex((o) => o.value === preferred);
+
+  if (at < 0)
+    at =
+      onYearStep.value && preferred > options.at(-1)!.value
+        ? options.length - 1
+        : 0;
+
+  for (let i = 0; i < options.length; i++) {
+    for (const candidate of [at + i, at - i]) {
+      if (options[candidate] && !options[candidate].disabled) return candidate;
+    }
+  }
+
+  return at;
+};
+
+const enterStep = (step: CDatePickerMonthStep, animate = true) => {
+  motion.value = animate ? 'list-in' : null;
+  monthStep.value = step;
+  listIndex.value = landingIndex();
+  focusOption(true);
+};
+
+// A summary row returns to its step; the steps after it start over.
+const goToStep = (step: CDatePickerMonthStep) => {
+  if (step === 'start-month') pendingStart.value = null;
+
+  draftMonth.value = null;
+  enterStep(step);
+};
+
+const pickStep = (option: ListOption) => {
+  if (!onYearStep.value) {
+    draftMonth.value = option.value;
+    enterStep(onEndSteps.value ? 'end-year' : 'start-year');
+
+    return;
+  }
+
+  const month = isoMonth(option.value, draftMonth.value ?? 1);
+
+  draftMonth.value = null;
+
+  if (!rangeOn.value) {
+    commitValue({ end: null, start: month });
+    closePanel(true);
+
+    return;
+  }
+
+  if (!pendingStart.value) {
+    pendingStart.value = month;
+    setStatus(t.value.pendingStart(monthText(month)));
+    enterStep('end-month');
+
+    return;
+  }
+
+  const [start, end] =
+    month < pendingStart.value
+      ? [month, pendingStart.value]
+      : [pendingStart.value, month];
+
+  pendingStart.value = null;
+  commitValue({ end, start });
+  closePanel(true);
+};
+
 const listOptions = computed<ListOption[]>(() => {
   const { m, y } = displayed.value;
+
+  if (monthMode.value) return stepOptions.value;
 
   if (view.value === 'months') {
     return names.value.months.map((name, i) => ({
@@ -1802,7 +1852,10 @@ const applyListCap = (list = listRef.value) => {
   }
 
   applyPeekCap(list, {
-    ceiling: body.clientHeight,
+    // Month mode's list shares the body with its label and summaries.
+    ceiling: monthMode.value
+      ? (list.parentElement?.clientHeight ?? body.clientHeight)
+      : body.clientHeight,
     rows: Array.from(list.querySelectorAll<HTMLElement>('li[role="option"]')),
   });
 };
@@ -1831,6 +1884,12 @@ const pickOption = (i: number) => {
   const option = listOptions.value[i];
 
   if (!option || option.disabled) return;
+
+  if (monthMode.value) {
+    listIndex.value = i;
+
+    return pickStep(option);
+  }
 
   const { d } = fromIso(focusedDate.value)!;
 
@@ -1933,9 +1992,9 @@ const {
   open: openPanel,
   panelStyle,
 } = useAnchoredPanel({
-  anchor: anchorRef,
+  anchor: typed.anchor,
   disabled: () => props.disabled,
-  field: cInputRef,
+  field: typed.field,
   fullscreen: narrow,
   host,
   matchWidth: false,
@@ -1944,14 +2003,27 @@ const {
     pendingStart.value = null;
     hoverDate.value = null;
     motion.value = null;
-    view.value = 'days';
+    view.value = homeView.value;
+    monthStep.value = 'start-month';
+    draftMonth.value = null;
   },
   onOpened: () => {
     pageLang.value = document.documentElement.lang;
     today.value = todayIso();
     motion.value = null;
-    view.value = 'days';
     pendingStart.value = null;
+
+    if (monthMode.value) {
+      view.value = 'months';
+      draftMonth.value = null;
+      enterStep('start-month', false);
+      // No body swap ran: cap the list the panel opened with.
+      nextTick(() => requestAnimationFrame(() => applyListCap()));
+
+      return;
+    }
+
+    view.value = 'days';
     focusedDate.value = initialDate();
     setMonth(monthOf(focusedDate.value), true);
     focusCell();
@@ -1961,7 +2033,10 @@ const {
 });
 
 const ui = computed(() =>
-  datePicker({ fullscreen: layout.value === 'fullscreen' }),
+  datePicker({
+    fullscreen: layout.value === 'fullscreen',
+    month: monthMode.value,
+  }),
 );
 
 const onCalendarClick = (event: Event) => {
@@ -1973,10 +2048,7 @@ const onCalendarClick = (event: Event) => {
     return;
   }
 
-  commitText('start');
-
-  if (rangeOn.value) commitText('end');
-
+  typed.commitAll();
   openPanel();
 };
 
@@ -2018,7 +2090,7 @@ defineExpose({ badInput });
   animation: c-date-picker-fade-in 0.12s ease-out;
 }
 
-.c-date-picker__input::placeholder {
+.c-typed-field__input::placeholder {
   color: var(--c-on-surface-faint);
   opacity: 1;
 }

@@ -1,0 +1,89 @@
+{
+  "attributes": {
+    "clearable": "boolean = false",
+    "disabled": "boolean = false",
+    "error-message": "string = ''",
+    "format": "string = 'HH.mm'",
+    "hide-details": "boolean = false",
+    "hint": "string = ''",
+    "host-id": "string = ''",
+    "label": "string = ''",
+    "label-on-top": "boolean = false",
+    "max": "string = ''",
+    "min": "string = ''",
+    "minute-step": "number = 1",
+    "name": "string = ''",
+    "placeholder": "string = ''",
+    "range": "boolean = false",
+    "required": "boolean = false",
+    "shadow": "boolean = false",
+    "size": "'default' | 'small' = 'default'",
+    "valid": "boolean = true",
+    "value": "CTimePickerValue = null"
+  },
+  "cssProperties": [],
+  "defaultable": [
+    "format",
+    "hideDetails",
+    "labelOnTop",
+    "shadow",
+    "size",
+    "texts"
+  ],
+  "events": {
+    "change": "CustomEvent<CTimePickerValue>",
+    "change:text": "CustomEvent<CTimePickerText>",
+    "input": "CustomEvent<void>",
+    "update:value": "CustomEvent<CTimePickerValue>"
+  },
+  "methods": {},
+  "parts": [
+    "card",
+    "close",
+    "column",
+    "columns",
+    "end-switch",
+    "end-tab",
+    "heading",
+    "heading-row",
+    "input",
+    "option",
+    "panel",
+    "separator"
+  ],
+  "propertyOnly": [
+    "texts"
+  ],
+  "props": {
+    "clearable": "boolean = false",
+    "disabled": "boolean = false",
+    "errorMessage": "string = ''",
+    "format": "string = 'HH.mm'",
+    "hideDetails": "boolean = false",
+    "hint": "string = ''",
+    "hostId": "string = ''",
+    "label": "string = ''",
+    "labelOnTop": "boolean = false",
+    "max": "string = ''",
+    "min": "string = ''",
+    "minuteStep": "number = 1",
+    "name": "string = ''",
+    "placeholder": "string = ''",
+    "range": "boolean = false",
+    "required": "boolean = false",
+    "shadow": "boolean = false",
+    "size": "'default' | 'small' = 'default'",
+    "texts": "CTimePickerTexts = {}",
+    "valid": "boolean = true",
+    "value": "CTimePickerValue = null"
+  },
+  "readonly": {
+    "badInput": "boolean"
+  },
+  "slots": [],
+  "states": [
+    "bad-input"
+  ],
+  "subcomponents": [],
+  "tag": "c-time-picker"
+}

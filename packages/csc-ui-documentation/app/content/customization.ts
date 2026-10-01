@@ -533,6 +533,12 @@ export const TOKEN_GROUPS: TokenGroup[] = [
         purpose: 'Hints, captions, and de-emphasized labels.',
       },
       {
+        token: 'on-surface-disabled',
+        light: 'tertiary-300',
+        dark: 'slate-500',
+        purpose: 'Text of disabled options and days.',
+      },
+      {
         token: 'on-surface-sunken',
         light: 'primary-700',
         dark: 'slate-100',

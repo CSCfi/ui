@@ -12,6 +12,11 @@
  * plain text. A typed character that is the next literal (or one of its
  * `aliases`) is consumed as that literal.
  *
+ * A **word** slot takes one of a few words — a time's AM/PM period — typed
+ * by its first letters: once they name one word, the slot shows the whole
+ * word and closes. Its characters all count as typed, and a deleting edit
+ * that leaves a word partial clears it, so one Backspace removes it.
+ *
  * An **optional section** (`[…]`, trailing only) holds optional slots: its
  * tokens take zero or one character (`min: 0`) and its literals are marked
  * `optional`. Completeness and the mask guide count required slots only.
@@ -53,6 +58,11 @@ export type MaskSlot =
       max: number;
       /** `0` for an optional token. */
       min: number;
+    }
+  | {
+      kind: 'word';
+      /** The words the slot takes, matched case-insensitively and shown as written here. */
+      words: string[];
     };
 
 const DIGIT = /^\d$/;
@@ -67,8 +77,11 @@ const TOKENS: Partial<Record<string, (ch: string) => boolean>> = {
   A: (ch) => LETTER.test(ch),
 };
 
-const isOptional = (slot: MaskSlot): boolean =>
-  slot.kind === 'literal' ? !!slot.optional : slot.min === 0;
+const isOptional = (slot: MaskSlot): boolean => {
+  if (slot.kind === 'literal') return !!slot.optional;
+
+  return slot.kind === 'token' && slot.min === 0;
+};
 
 /**
  * Compile a `c-text-field` mask: `#` a digit, `A` a letter, `*` a letter or
@@ -207,6 +220,43 @@ export const conformMask = (
         continue;
       }
 
+      if (slot.kind === 'word') {
+        const typed = (fill + ch).toLocaleLowerCase();
+
+        const matches = slot.words.filter((w) =>
+          w.toLocaleLowerCase().startsWith(typed),
+        );
+
+        if (!matches.length) break;
+
+        const whole =
+          matches.find((w) => w.toLocaleLowerCase() === typed) ??
+          // A deleting edit never completes a word it did not already hold.
+          (matches.length === 1 && !deleting ? matches[0] : undefined);
+
+        flush();
+
+        if (markCaret) outCaret = out.length;
+
+        const add = whole
+          ? whole.slice(fill.length)
+          : matches[0].charAt(fill.length);
+
+        out += add;
+        tokenAt.push(...Array.from(add, () => true));
+        unmasked += add;
+
+        if (whole) {
+          at++;
+          fill = '';
+        } else {
+          fill += add;
+        }
+
+        placed = true;
+        break;
+      }
+
       if (fill.length < slot.max && slot.accepts(ch)) {
         flush();
 
@@ -247,6 +297,14 @@ export const conformMask = (
     }
   }
 
+  // A deleting edit that broke a word clears what is left of it.
+  if (deleting && fill !== '' && slots[at]?.kind === 'word') {
+    out = out.slice(0, -fill.length);
+    tokenAt = tokenAt.slice(0, -fill.length);
+    unmasked = unmasked.slice(0, -fill.length);
+    fill = '';
+  }
+
   const rest = slots.slice(at);
 
   const complete =
@@ -254,8 +312,8 @@ export const conformMask = (
     rest.every(
       (s, i) =>
         s.kind === 'literal' ||
-        s.min === 0 ||
-        (i === 0 && fill.length >= s.min && fill !== ''),
+        (s.kind === 'token' &&
+          (s.min === 0 || (i === 0 && fill.length >= s.min && fill !== ''))),
     );
 
   // A partly filled slot of variable width is drawn by what fills it; the

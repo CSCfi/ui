@@ -110,7 +110,7 @@ _Avoid_: Select affordance, "select this level" button, row action
 ### Date picker
 
 **Date picker** (`c-date-picker`):
-A **value control** for a calendar date — or, under `range`, a start and an end — whose **value field** is typeable — typing follows an **input mask** derived from its `format` — while the calendar panel is an aid, opened by its calendar button or Alt+↓ and never by typing (ADR-0058, ADR-0059). The value is an ISO `YYYY-MM-DD` string, whatever the displayed `format` (ADR-0057). Emits the 4.x value events (`change`, `update:value`, `input`). Distinct from `c-text-field type="date"`, the native browser input.
+A **value control** for a calendar date — or, under `range`, a start and an end — whose **value field** is typeable — typing follows an **input mask** derived from its `format` — while the calendar panel is an aid, opened by its calendar button or Alt+↓ and never by typing (ADR-0058, ADR-0059). The value is an ISO `YYYY-MM-DD` string, whatever the displayed `format` (ADR-0057); under `type="month"` it is an ISO `YYYY-MM` month and the panel holds no **day grid** (ADR-0063). Emits the 4.x value events (`change`, `update:value`, `input`). Distinct from `c-text-field type="date"`, the native browser input.
 _Avoid_: Datepicker, calendar (the grid inside it), date field, date input (the native one)
 
 **Day grid**:
@@ -122,11 +122,15 @@ The month the **day grid** currently shows — not the selected date; paging cha
 _Avoid_: Current month (that is today's), view month, page
 
 **Month list** / **Year list**:
-The in-panel listboxes the date picker swaps in for the **day grid** when its month or year control is pressed; picking returns to the grid. They replace the panel body — no nested popover opens.
+The in-panel listboxes the date picker swaps in for the **day grid** when its month or year control is pressed; picking returns to the grid. They replace the panel body — no nested popover opens. Under `type="month"` the panel holds neither: it runs the **month step** and **year step** instead.
 _Avoid_: Month/year dropdown, picker, menu
 
+**Month step** / **Year step**:
+The two labelled lists of the date picker under `type="month"`: the month first, then the year — twice under `range`, as the start's and then the end's. A finished step collapses to a summary row that returns to it.
+_Avoid_: Wizard, stage, page
+
 **Pending start**:
-In `range` mode, the first day picked in the panel before the second completes the range: shown and announced, never emitted, discarded if the panel is dismissed.
+In `range` mode, the first day (or, under `type="month"`, the start's month and year) picked in the panel before the second completes the range: shown and announced, never emitted, discarded if the panel is dismissed.
 _Avoid_: Half range (that is a committed `{ start, end: null }`, which only typing produces), anchor date, first click
 
 **Range band**:
@@ -134,8 +138,34 @@ The `primary-subtle` strip joining the start and end days in the **day grid** �
 _Avoid_: Highlight (the virtual active row elsewhere), selection, span
 
 **Bad input**:
-The date picker's state after committing text that names no enabled date — unparseable, disabled or out of range: the text stays as typed, the value is `null`, and the host exposes `:state(bad-input)` and `badInput`. A fact the component reports, not a verdict — the consumer decides whether it is an error and writes the **error message**.
-_Avoid_: Invalid date (validity is the consumer's judgement), parse error
+The state of a **date picker** or **time picker** after committing text that names no enabled value — unparseable, disabled or out of range: the text stays as typed, the value is `null`, and the host exposes `:state(bad-input)` and `badInput`. A fact the component reports, not a verdict — the consumer decides whether it is an error and writes the **error message**. Only typing produces it; a pick in a panel never does.
+_Avoid_: Invalid date / invalid time (validity is the consumer's judgement), parse error
+
+### Time picker
+
+**Time picker** (`c-time-picker`):
+A **value control** for a time of day — or, under `range`, a start and an end — built like the **date picker**: a typeable **value field** masked from its `format`, and a clock panel opened by its clock button or Alt+↓, never by typing. The value is an ISO `HH:mm` string on a 24-hour clock whatever the displayed `format` (`HH.mm`, `h:mm a`); no seconds, no date, no timezone.
+_Avoid_: Timepicker, clock (the panel), time field, time input (the native `<input type="time">`)
+
+**Time column**:
+One of the time picker panel's side-by-side `role="listbox"` columns — hour, minute, and the AM/PM **period** in a 12-hour `format`. Each is one tab stop; selection follows focus, so moving in a column commits.
+_Avoid_: Wheel, spinner, drum, list
+
+**Period** (time picker):
+AM or PM in a 12-hour `format` — the `a` token and the third **time column**.
+_Avoid_: Meridiem, day period (that is `Intl`'s name), suffix
+
+**Minute step**:
+The spacing of the minute **time column**'s rows (`minute-step`). It shapes the column only: a typed minute off the step commits as typed and shows as an extra row — never **bad input**.
+_Avoid_: Interval, increment, granularity
+
+**End switch** (time picker):
+In `range` mode, the Start | End toggle above the **time columns** choosing which end the columns edit. Each end commits on its own — the time picker has no **pending start**.
+_Avoid_: Tabs, range toggle
+
+**Overnight range**:
+A time-picker range whose end is earlier than its start (`22:00`–`06:00`): a valid value spanning midnight, not **bad input** and never reordered. Distinct from `min` > `max`, which is an invalid constraint, not a wrap.
+_Avoid_: Reversed range, negative range, wrap-around
 
 ### Layout
 

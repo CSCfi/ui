@@ -32,6 +32,7 @@
   --color-on-surface: var(--c-on-surface);
   --color-on-surface-muted: var(--c-on-surface-muted);
   --color-on-surface-faint: var(--c-on-surface-faint);
+  --color-on-surface-disabled: var(--c-on-surface-disabled);
   --color-on-surface-sunken: var(--c-on-surface-sunken);
   --color-border: var(--c-border);
   --color-border-strong: var(--c-border-strong);
