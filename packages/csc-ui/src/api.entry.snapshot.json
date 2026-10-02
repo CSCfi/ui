@@ -69,6 +69,7 @@
     "CLoginCardBlendMode",
     "CLoginCardProps",
     "CNumberFieldProps",
+    "CNumberFieldTexts",
     "CPaginationOptions",
     "CPaginationProps",
     "CPaginationSize",

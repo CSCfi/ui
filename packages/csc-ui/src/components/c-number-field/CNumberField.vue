@@ -20,10 +20,16 @@
       <slot name="pre" />
     </span>
 
+    <!-- An editable spinbutton (ADR-0064): the arrow and page keys step, the
+         step buttons stay out of the tab order. -->
     <input
       :id="inputId"
       ref="inputRef"
       :aria-invalid="!valid || outOfRange || undefined"
+      :aria-valuemax="maxNumber ?? undefined"
+      :aria-valuemin="minNumber ?? undefined"
+      :aria-valuenow="current ?? undefined"
+      :aria-valuetext="text || undefined"
       :class="ui.input()"
       :disabled
       :inputmode
@@ -34,14 +40,59 @@
       :value="text"
       autocomplete="off"
       part="input"
+      role="spinbutton"
       type="text"
       @blur="onBlur"
       @focus="onFocus"
       @input="onInput"
+      @keydown="onKeydown"
     />
 
-    <span v-if="hasConsumerPost" slot="post" class="contents">
+    <!-- The consumer's post content (a unit), then the step buttons. A press
+         never moves focus, so a tap on a phone opens no keyboard; `.stop`
+         keeps c-input's click-to-focus off them. -->
+    <span slot="post" :class="ui.post()">
       <slot name="post" />
+
+      <span :class="ui.steps()" @mousedown.prevent>
+        <button
+          :aria-label="t.increase"
+          :class="ui.stepButton()"
+          :disabled="!canUp"
+          part="step-up"
+          tabindex="-1"
+          type="button"
+          @click.stop="onStepClick(1)"
+          @contextmenu.prevent
+          @pointercancel="releaseStep"
+          @pointerdown="onStepPress($event, 1)"
+          @pointerleave="releaseStep"
+          @pointerup="releaseStep"
+        >
+          <svg :class="ui.stepIcon()" aria-hidden="true" viewBox="0 0 24 24">
+            <path :d="mdiChevronUp" />
+          </svg>
+        </button>
+
+        <button
+          :aria-label="t.decrease"
+          :class="ui.stepButton()"
+          :disabled="!canDown"
+          part="step-down"
+          tabindex="-1"
+          type="button"
+          @click.stop="onStepClick(-1)"
+          @contextmenu.prevent
+          @pointercancel="releaseStep"
+          @pointerdown="onStepPress($event, -1)"
+          @pointerleave="releaseStep"
+          @pointerup="releaseStep"
+        >
+          <svg :class="ui.stepIcon()" aria-hidden="true" viewBox="0 0 24 24">
+            <path :d="mdiChevronDown" />
+          </svg>
+        </button>
+      </span>
     </span>
   </c-input>
 </template>
@@ -155,6 +206,18 @@ export interface CNumberFieldProps {
    */
   size?: CFieldSize;
   /**
+   * The spacing of the grid the step buttons and arrow keys move along, counted from `min` (or `0`)
+   *
+   * @defaultable 1
+   */
+  step?: number;
+  /**
+   * UI text overrides (i18n), merged over the English defaults. Objects have no attribute form — bind as a DOM property
+   *
+   * @defaultable {}
+   */
+  texts?: CNumberFieldTexts;
+  /**
    * Set the validity of the field
    */
   valid?: boolean;
@@ -163,15 +226,26 @@ export interface CNumberFieldProps {
    */
   value?: null | number | string;
 }
+
+/** UI texts of `c-number-field`, merged key by key over the English defaults. */
+export interface CNumberFieldTexts {
+  /** Accessible label of the step-down button. */
+  decrease?: string;
+  /** Accessible label of the step-up button. */
+  increase?: string;
+}
 </script>
 
 <script setup lang="ts">
 /**
  * @slot pre - Content before the number, such as a currency sign
- * @slot post - Content after the number, such as a unit
+ * @slot post - Content after the number, such as a unit; the step buttons follow it
  * @csspart input - The text input
+ * @csspart step-up - The button that steps the number up
+ * @csspart step-down - The button that steps the number down
  * @cssstate out-of-range - Present while the number is below `min` or above `max`
  */
+import { mdiChevronDown, mdiChevronUp } from '@mdi/js';
 import { tv } from 'tailwind-variants';
 import {
   computed,
@@ -196,6 +270,7 @@ import {
   formatNumber,
   numberSeparators,
   readNumber,
+  stepNumber,
 } from './numbers';
 
 /**
@@ -204,8 +279,8 @@ import {
  */
 interface CNumberFieldEvents {
   /**
-   * Fired whenever typing changes the number, carrying it — `null` once the
-   * field holds no digit. Not fired when only the text changes (a group
+   * Fired whenever typing or a step changes the number, carrying it — `null`
+   * once the field holds no digit. Not fired when only the text changes (a group
    * separator, a trailing decimal separator) or when `value` is set.
    */
   change: null | number;
@@ -226,6 +301,21 @@ const numberField = tv({
     // a form.
     input:
       'c-number-field__input bg-transparent border-0 outline-none m-0 [font:inherit] text-base leading-5 text-on-surface disabled:text-on-surface-muted [caret-color:var(--c-primary)] flex-auto min-w-0 w-full max-w-full py-2 max-h-8 [font-variant-numeric:tabular-nums]',
+    post: 'inline-flex items-center gap-1',
+    stepButton:
+      'inline-flex items-center justify-center w-8 h-6 p-0 border-none bg-transparent text-[inherit] cursor-pointer rounded-csc-sm select-none [touch-action:manipulation] [-webkit-tap-highlight-color:transparent] transition-colors duration-200 ease-in-out hover:not-disabled:bg-primary-subtle-hover disabled:cursor-not-allowed disabled:opacity-50',
+    stepIcon: 'size-5 fill-current',
+    // Stacked halves of a 48px column at the default size (24px targets,
+    // WCAG 2.5.8); side by side at `small`, where halves of 36px would fall
+    // under it — down first, as on a number line. Pulled into the slot's
+    // right padding so the column sits near the edge, as a spinner does.
+    steps: '-mr-2 inline-flex flex-col',
+  },
+  variants: {
+    size: {
+      default: {},
+      small: { stepButton: 'h-8 w-7', steps: '-mr-1.5 flex-row-reverse' },
+    },
   },
 });
 
@@ -249,11 +339,13 @@ const props = withDefaults(defineProps<CNumberFieldProps>(), {
   required: false,
   shadow: undefined,
   size: undefined,
+  step: undefined,
+  texts: undefined,
   valid: true,
   value: null,
 });
 
-const ui = computed(() => numberField());
+const ui = computed(() => numberField({ size: sizeResolved.value }));
 
 const host = useHost();
 
@@ -274,6 +366,22 @@ const labelOnTopResolved = appDefault('labelOnTop', false);
 const shadowResolved = appDefault('shadow', false);
 
 const sizeResolved = appDefault('size', 'default');
+
+const stepResolved = appDefault('step', 1);
+
+const ownTexts = appDefault('texts', {} as Required<CNumberFieldTexts>);
+
+const DEFAULT_TEXTS: Required<CNumberFieldTexts> = {
+  decrease: 'Decrease',
+  increase: 'Increase',
+};
+
+const t = computed<Required<CNumberFieldTexts>>(() => ({
+  ...DEFAULT_TEXTS,
+  ...Object.fromEntries(
+    Object.entries(ownTexts.value).filter(([, v]) => v !== undefined),
+  ),
+}));
 
 const setState = useHostStates();
 
@@ -298,10 +406,14 @@ const toNumber = (v: unknown): null | number => {
   return Number.isFinite(n) ? n : null;
 };
 
+const minNumber = computed(() => toNumber(props.min));
+
+const maxNumber = computed(() => toNumber(props.max));
+
 const format = computed<CNumberFieldFormat>(() => {
   const intl = numberSeparators(pageLang.value);
 
-  const min = toNumber(props.min);
+  const min = minNumber.value;
 
   return {
     allowNegative: min === null || min < 0,
@@ -311,13 +423,11 @@ const format = computed<CNumberFieldFormat>(() => {
   };
 });
 
-// Numeric keyboards on iOS have no minus key, so only a field that cannot
-// hold a negative number asks for one.
-const inputmode = computed(() => {
-  if (format.value.allowNegative) return undefined;
-
-  return format.value.decimals > 0 ? 'decimal' : 'numeric';
-});
+// Always a numeric keyboard (ADR-0064). The iOS ones have no minus key: a
+// negative is reached there by stepping below zero.
+const inputmode = computed(() =>
+  format.value.decimals > 0 ? 'decimal' : 'numeric',
+);
 
 /** The number the field holds, as last typed or set. */
 const current = ref<null | number>(toNumber(props.value));
@@ -333,9 +443,9 @@ const outOfRange = computed<boolean>(() => {
 
   if (n === null) return false;
 
-  const min = toNumber(props.min);
+  const min = minNumber.value;
 
-  const max = toNumber(props.max);
+  const max = maxNumber.value;
 
   return (min !== null && n < min) || (max !== null && n > max);
 });
@@ -421,16 +531,133 @@ const onBlur = () => {
   );
 };
 
-// Pre/post slot detection, as in c-text-field: c-input would otherwise see
-// our wrapper spans as always assigned and draw an empty gap.
-const hasConsumerPre = ref(false);
+// ---- stepping (CONTEXT.md "Step"; ADR-0064) ----------------------------
 
-const hasConsumerPost = ref(false);
+const stepOptions = computed(() => ({
+  decimals: format.value.decimals,
+  max: maxNumber.value,
+  min: minNumber.value,
+  step: Number(stepResolved.value),
+}));
+
+/** The number `count` steps away, or `null` when a step would not change it. */
+const stepped = (direction: -1 | 1, count = 1): null | number => {
+  if (props.disabled || props.readonly) return null;
+
+  const next = stepNumber(current.value, direction, stepOptions.value, count);
+
+  return next === null || same(next, current.value) ? null : next;
+};
+
+/** Take a step; `false` when there is none to take (at a bound). */
+const stepBy = (direction: -1 | 1, count = 1): boolean => {
+  const next = stepped(direction, count);
+
+  if (next === null) return false;
+
+  current.value = next;
+  text.value = formatNumber(
+    next,
+    format.value,
+    fixedDecimalsResolved.value && !isFocused.value,
+  );
+  emitModelChange(host, next satisfies CNumberFieldEvents['change']);
+
+  return true;
+};
+
+const canUp = computed(() => stepped(1) !== null);
+
+const canDown = computed(() => stepped(-1) !== null);
+
+const STEP_KEYS: Record<string, [-1 | 1, number]> = {
+  ArrowDown: [-1, 1],
+  ArrowUp: [1, 1],
+  PageDown: [-1, 10],
+  PageUp: [1, 10],
+};
+
+const onKeydown = (event: KeyboardEvent) => {
+  const key = STEP_KEYS[event.key];
+
+  if (
+    !key ||
+    event.isComposing ||
+    event.altKey ||
+    event.ctrlKey ||
+    event.metaKey ||
+    event.shiftKey ||
+    props.disabled ||
+    props.readonly
+  )
+    return;
+
+  event.preventDefault();
+  stepBy(...key);
+};
+
+// Holding a step button repeats: one step on the press, then after a pause
+// a step per tick until the release or a bound.
+const REPEAT_DELAY = 400;
+
+const REPEAT_INTERVAL = 75;
+
+let repeatTimer: ReturnType<typeof setTimeout> | undefined;
+
+// A press already stepped: the click that follows it must not step again.
+// A click with no press before it (a screen reader's activation) steps.
+let pressed = false;
+
+const stopRepeat = () => {
+  clearTimeout(repeatTimer);
+  repeatTimer = undefined;
+};
+
+// The click, if any, follows the release in the same task.
+const releaseStep = () => {
+  stopRepeat();
+
+  if (pressed) setTimeout(() => (pressed = false));
+};
+
+const onStepPress = (event: PointerEvent, direction: -1 | 1) => {
+  if (event.button !== 0) return;
+
+  // No focus move: a tap must not open the phone keyboard, and a focused
+  // input keeps its focus and caret.
+  event.preventDefault();
+  stopRepeat();
+  pressed = true;
+
+  if (!stepBy(direction)) return;
+
+  // At a bound the button turns disabled and may see no release.
+  const repeat = () => {
+    if (stepBy(direction)) repeatTimer = setTimeout(repeat, REPEAT_INTERVAL);
+    else releaseStep();
+  };
+
+  repeatTimer = setTimeout(repeat, REPEAT_DELAY);
+};
+
+const onStepClick = (direction: -1 | 1) => {
+  if (pressed) {
+    pressed = false;
+
+    return;
+  }
+
+  stepBy(direction);
+};
+
+// Pre slot detection, as in c-text-field: c-input would otherwise see our
+// wrapper span as always assigned and draw an empty gap. The post wrapper
+// always holds the step buttons.
+const hasConsumerPre = ref(false);
 
 const refreshConsumerSlots = () => {
   if (!host) return;
   hasConsumerPre.value = !!host.querySelector(':scope > [slot="pre"]');
-  hasConsumerPost.value = !!host.querySelector(':scope > [slot="post"]');
 };
 
 let childObserver: MutationObserver | null = null;
@@ -449,6 +676,7 @@ onMounted(() => {
 
 onBeforeUnmount(() => {
   childObserver?.disconnect();
+  clearTimeout(repeatTimer);
 });
 
 defineExpose({ outOfRange });

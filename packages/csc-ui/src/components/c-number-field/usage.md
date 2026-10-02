@@ -12,12 +12,11 @@ or listen for `change`:
 ```
 
 The value follows the text on every keystroke: typing `1234,` gives `1234`,
-a lone `-` gives `null`. Only typing emits; setting `value` shows the number
-without emitting it.
+a lone `-` gives `null`. Only typing and stepping emit; setting `value` shows
+the number without emitting it.
 
 Unlike `c-text-field type="number"`, the native number input, the field shows
-separators, never shows spin buttons, and does not change the number on a
-scroll or an arrow key.
+separators and never changes the number on a scroll.
 
 ## Separators
 
@@ -74,9 +73,40 @@ read-only `outOfRange` property. The field shows no error of its own:
 />
 ```
 
-With `min` at `0` or above, the minus key is ignored. Such a field also asks
-for the numeric keyboard on a phone (a decimal one when `decimals` is set);
-a field that takes negative numbers keeps the regular keyboard, because
-numeric keyboards on iOS have no minus key.
+With `min` at `0` or above, the minus key is ignored.
 
-Use the `pre` and `post` slots for a currency sign or a unit.
+## Step
+
+The buttons at the end of the field move the number one `step` up or down
+(`1` by default); holding one repeats. The arrow keys do the same, and Page Up
+and Page Down move ten steps:
+
+```vue
+<c-number-field v-model="volume" label="Volume" max="100" min="0" step="5" />
+```
+
+A step lands on the grid of `step` counted from `min` (or `0`): from a typed
+`12`, a step of `5` goes up to `15` or down to `10`. A typed number off the
+grid stays as typed.
+
+Stepping never leaves `min` and `max`: it stops on the bound, and the button
+for that direction is disabled there. From an out-of-range number, a step
+goes back to the nearest bound. An empty field counts from `0`.
+
+A stepped number is rounded to `decimals`, so a `step` finer than `decimals`
+allows (`0.5` on an integer field) does not step as written; keep the two
+in line.
+
+The buttons stay out of the tab order and never take focus, so tapping one
+on a phone does not open the keyboard. To translate their accessible labels,
+set `texts`: `{ increase: 'Lisää', decrease: 'Vähennä' }`, or app-wide with
+`applyDefaults`.
+
+## Keyboard
+
+On a phone the field asks for the numeric keyboard, or a decimal one when
+`decimals` is set. Numeric keyboards on iOS have no minus key: there, a
+negative number is reached by stepping below zero.
+
+Use the `pre` and `post` slots for a currency sign or a unit; the step
+buttons follow the `post` content.

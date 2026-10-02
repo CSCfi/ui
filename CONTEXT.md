@@ -489,8 +489,16 @@ Consumer-supplied text explaining why a control is invalid, shown in place of th
 _Avoid_: Validation (the Stencil-era prop name; validation is the consumer's activity, not this text), validation message
 
 **Number field** (`c-number-field`):
-A **value control** for a number — an integer, or one with up to `decimals` fraction digits — whose value is a JS `number` (`null` when it holds no digit) while it shows grouped text (`1 234 567,89`), regrouped on every keystroke (ADR-0060). Emits the 4.x value events on every keystroke that changes the number. Distinct from `c-text-field type="number"`, the native number input, and from an **input mask**, which shapes text into fixed slots.
+A **value control** for a number — an integer, or one with up to `decimals` fraction digits — whose value is a JS `number` (`null` when it holds no digit) while it shows grouped text (`1 234 567,89`), regrouped on every keystroke (ADR-0060). Emits the 4.x value events on every keystroke and every **step** that changes the number. Distinct from `c-text-field type="number"`, the native number input, and from an **input mask**, which shapes text into fixed slots.
 _Avoid_: Numeric input, number input (the native one), amount field
+
+**Step** (number field):
+The spacing of the grid a **number field**'s **step buttons** and arrow keys move along (`step`, `1` by default), counted from `min` or `0`. Stepping lands on the next point of the grid and never leaves `min`–`max`; a typed number off the grid or out of range is kept as typed (ADR-0064). The same sense as the **minute step**.
+_Avoid_: Increment, interval, granularity
+
+**Step buttons**:
+The up and down pair at the end of every **number field** that moves its number one **step**; holding one repeats. They never take focus.
+_Avoid_: Spinner (the loading indicator), stepper (a form-wizard pattern), spin buttons, increment buttons
 
 **Group separator**:
 The thousands separator a **number field** inserts between groups of three integer digits — a space under `lang="fi"`, `,` under `lang="en"` — beside its decimal separator. Both follow the page's `lang` unless set. Never typed: typed or pasted ones are ignored and re-inserted.

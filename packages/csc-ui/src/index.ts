@@ -152,7 +152,10 @@ export type {
   CLoginCardProps,
 } from './components/c-login-card/CLoginCard.vue';
 
-export type { CNumberFieldProps } from './components/c-number-field/CNumberField.vue';
+export type {
+  CNumberFieldProps,
+  CNumberFieldTexts,
+} from './components/c-number-field/CNumberField.vue';
 
 export type {
   CPaginationOptions,

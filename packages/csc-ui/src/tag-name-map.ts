@@ -15,6 +15,7 @@ import type { CAutocompleteFilter, CAutocompleteItem, CAutocompleteTexts, CAutoc
 import type { CButtonGroupValue } from './components/c-button-group/CButtonGroup.vue';
 import type { CDataTableCellContent, CDataTableColumn, CDataTableExpandedContext, CDataTableRow, CDataTableSort, CDataTableTexts } from './components/c-data-table/CDataTable.vue';
 import type { CDatePickerDisabledDate, CDatePickerText, CDatePickerTexts, CDatePickerValue } from './components/c-date-picker/CDatePicker.vue';
+import type { CNumberFieldTexts } from './components/c-number-field/CNumberField.vue';
 import type { CPaginationOptions } from './components/c-pagination/CPagination.vue';
 import type { CSelectTexts, CSelectValue } from './components/c-select/CSelect.vue';
 import type { CTimePickerText, CTimePickerTexts, CTimePickerValue } from './components/c-time-picker/CTimePicker.vue';
@@ -1219,8 +1220,8 @@ export interface CNavigationButtonElement extends HTMLElement {
 /** Events dispatched by `<c-number-field>`. */
 export interface CNumberFieldElementEventMap {
   /**
-   * Fired whenever typing changes the number, carrying it — `null` once the
-   * field holds no digit. Not fired when only the text changes (a group
+   * Fired whenever typing or a step changes the number, carrying it — `null`
+   * once the field holds no digit. Not fired when only the text changes (a group
    * separator, a trailing decimal separator) or when `value` is set.
    */
   change: CustomEvent<null | number>;
@@ -1234,7 +1235,7 @@ export interface CNumberFieldElementEventMap {
 }
 
 /** A field for a number — an integer, or one with decimals — shown with thousands separators as it is typed. */
-export interface CNumberFieldElement extends Omit<HTMLElement, 'decimals' | 'decimalSeparator' | 'disabled' | 'errorMessage' | 'fixedDecimals' | 'groupSeparator' | 'hideDetails' | 'hint' | 'hostId' | 'label' | 'labelOnTop' | 'max' | 'min' | 'name' | 'placeholder' | 'readonly' | 'required' | 'shadow' | 'size' | 'valid' | 'value'> {
+export interface CNumberFieldElement extends Omit<HTMLElement, 'decimals' | 'decimalSeparator' | 'disabled' | 'errorMessage' | 'fixedDecimals' | 'groupSeparator' | 'hideDetails' | 'hint' | 'hostId' | 'label' | 'labelOnTop' | 'max' | 'min' | 'name' | 'placeholder' | 'readonly' | 'required' | 'shadow' | 'size' | 'step' | 'texts' | 'valid' | 'value'> {
   /** The most fraction digits the field takes; `0` makes it an integer field */
   decimals?: number;
   /** The decimal separator. Empty follows the page's `lang` (`,` for `fi`, `.` for `en`) */
@@ -1273,6 +1274,10 @@ export interface CNumberFieldElement extends Omit<HTMLElement, 'decimals' | 'dec
   shadow?: boolean;
   /** Field height: the 52px default (the shared control height) or the 36px `small` box */
   size?: 'default' | 'small';
+  /** The spacing of the grid the step buttons and arrow keys move along, counted from `min` (or `0`) */
+  step?: number;
+  /** UI text overrides (i18n), merged over the English defaults. Objects have no attribute form — bind as a DOM property */
+  texts?: CNumberFieldTexts;
   /** Set the validity of the field */
   valid?: boolean;
   /** The number, or `null` when the field is empty. A string is read as the number it spells, and `''` as empty — what an attribute, or a plain `v-model` holding `null`, writes; the field always emits a number or `null` */
@@ -2729,7 +2734,7 @@ export interface AppDefaults {
   'c-autocomplete'?: Partial<Pick<CAutocompleteElement, 'hideDetails' | 'itemsPerPage' | 'labelOnTop' | 'shadow' | 'size' | 'texts'>>;
   'c-data-table'?: Partial<Pick<CDataTableElement, 'texts'>>;
   'c-date-picker'?: Partial<Pick<CDatePickerElement, 'firstDayOfWeek' | 'format' | 'hideDetails' | 'labelOnTop' | 'shadow' | 'showWeekNumbers' | 'size' | 'texts'>>;
-  'c-number-field'?: Partial<Pick<CNumberFieldElement, 'decimalSeparator' | 'decimals' | 'fixedDecimals' | 'groupSeparator' | 'hideDetails' | 'labelOnTop' | 'shadow' | 'size'>>;
+  'c-number-field'?: Partial<Pick<CNumberFieldElement, 'decimalSeparator' | 'decimals' | 'fixedDecimals' | 'groupSeparator' | 'hideDetails' | 'labelOnTop' | 'shadow' | 'size' | 'step' | 'texts'>>;
   'c-select'?: Partial<Pick<CSelectElement, 'hideDetails' | 'itemsPerPage' | 'labelOnTop' | 'shadow' | 'size' | 'texts'>>;
   'c-text-field'?: Partial<Pick<CTextFieldElement, 'hideDetails' | 'labelOnTop' | 'shadow' | 'size'>>;
   'c-time-picker'?: Partial<Pick<CTimePickerElement, 'format' | 'hideDetails' | 'labelOnTop' | 'shadow' | 'size' | 'texts'>>;
@@ -2741,7 +2746,7 @@ export const DEFAULTABLE_PROPS = {
   'c-autocomplete': ['hideDetails', 'itemsPerPage', 'labelOnTop', 'shadow', 'size', 'texts'],
   'c-data-table': ['texts'],
   'c-date-picker': ['firstDayOfWeek', 'format', 'hideDetails', 'labelOnTop', 'shadow', 'showWeekNumbers', 'size', 'texts'],
-  'c-number-field': ['decimalSeparator', 'decimals', 'fixedDecimals', 'groupSeparator', 'hideDetails', 'labelOnTop', 'shadow', 'size'],
+  'c-number-field': ['decimalSeparator', 'decimals', 'fixedDecimals', 'groupSeparator', 'hideDetails', 'labelOnTop', 'shadow', 'size', 'step', 'texts'],
   'c-select': ['hideDetails', 'itemsPerPage', 'labelOnTop', 'shadow', 'size', 'texts'],
   'c-text-field': ['hideDetails', 'labelOnTop', 'shadow', 'size'],
   'c-time-picker': ['format', 'hideDetails', 'labelOnTop', 'shadow', 'size', 'texts'],
