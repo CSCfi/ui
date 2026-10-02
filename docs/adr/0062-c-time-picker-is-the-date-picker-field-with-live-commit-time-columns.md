@@ -49,9 +49,12 @@ typing, clear) is what a time picker needs as well.
   moves, including a minute filled in or clamped. Room after the last row,
   and before the first in the fullscreen panel, is list padding measured
   from the column's height, never blank rows, so the listbox holds only its
-  options. A column that fits (the period, a coarse minute step) does not
-  scroll. Resting in the middle only positions: scrolling alone never
-  commits.
+  options. In the anchored panel a column that fits (the period, a coarse
+  minute step) does not scroll. In the fullscreen panel every column gets
+  the room, fitting or not, so the selected rows line up in the middle
+  however tall the panel is: a tall desktop window fits all 24 hours, and
+  without the room the hour column stayed still while the minutes centred.
+  Resting in the middle only positions: scrolling alone never commits.
 - Under `range`, an **end switch** above the one column set picks the end
   being edited. It opens on the end whose input was focused last, and each
   end commits live, so there is no pending state.

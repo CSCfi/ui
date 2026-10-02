@@ -970,10 +970,12 @@ const onPanelKeyDown = (event: KeyboardEvent) => {
   stops[nextIndex].focus();
 };
 
-// A column that overflows rests its selected row at the top (anchored) or the
-// middle (fullscreen), ADR-0062. The room that lets the first and last rows
-// get there is list padding measured from the column, never blank rows, so
-// the listbox holds only its options. A column that fits never scrolls.
+// The selected row rests at the top of an overflowing column (anchored) or
+// in the middle of every column (fullscreen), ADR-0062. The room that lets
+// the first and last rows get there is list padding measured from the
+// column, never blank rows, so the listbox holds only its options. In the
+// anchored panel a column that fits never scrolls; in the fullscreen panel
+// it gets the room too, so the selections line up however tall the panel is.
 const fitColumn = (list: HTMLElement) => {
   // Measure without our own room: a padded scrollHeight would make a
   // fitting column overflow.
@@ -985,13 +987,9 @@ const fitColumn = (list: HTMLElement) => {
       rows: Array.from(list.querySelectorAll<HTMLElement>('li[role="option"]')),
     });
 
-  if (list.scrollHeight <= list.clientHeight) return;
-
   const row = list.querySelector<HTMLElement>('li[role="option"]');
 
   if (!row) return;
-
-  const cs = getComputedStyle(list);
 
   const height = list.clientHeight;
 
@@ -999,11 +997,16 @@ const fitColumn = (list: HTMLElement) => {
     const room = Math.max(0, (height - row.offsetHeight) / 2);
 
     list.style.paddingBlock = `${room}px`;
-  } else {
-    const room = height - row.offsetHeight - parseFloat(cs.paddingTop);
 
-    list.style.paddingBlockEnd = `${Math.max(0, room)}px`;
+    return;
   }
+
+  if (list.scrollHeight <= height) return;
+
+  const room =
+    height - row.offsetHeight - parseFloat(getComputedStyle(list).paddingTop);
+
+  list.style.paddingBlockEnd = `${Math.max(0, room)}px`;
 };
 
 const restColumn = (kind: CTimePickerColumnKind, behavior: ScrollBehavior) => {

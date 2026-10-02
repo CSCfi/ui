@@ -287,7 +287,7 @@ describe('opening', () => {
     ).toBe(true);
   });
 
-  it('a column that fits gets no room and never scrolls', async () => {
+  it('a column that fits the anchored panel gets no room and never scrolls', async () => {
     const m = await mountPicker({
       format: 'h:mm a',
       minuteStep: 15,
@@ -748,6 +748,38 @@ describe('fullscreen panel', () => {
       await settle();
       m.unmount();
     }
+  });
+
+  it('a column that fits a tall panel rests in the middle too, so the selections line up', async () => {
+    // Tall enough that the hours and AM/PM fit; the minutes overflow.
+    await page.viewport(500, 1200);
+
+    const m = await mountPicker({ format: 'h:mm a', value: '14:30' });
+
+    await open(m);
+
+    const offCentre = (kind: string, key: string) => {
+      const list = column(m, kind).getBoundingClientRect();
+
+      const box = row(m, key).getBoundingClientRect();
+
+      return Math.abs(box.top + box.height / 2 - (list.top + list.height / 2));
+    };
+
+    expect(column(m, 'hour').clientHeight).toBeGreaterThan(12 * 40);
+
+    for (const [kind, key] of [
+      ['hour', 'h14'],
+      ['minute', 'm30'],
+      ['period', 'pm'],
+    ])
+      expect(offCentre(kind, key), key).toBeLessThanOrEqual(1);
+
+    await userEvent.click(row(m, 'h16'));
+    await settle();
+
+    expect(m.host.value).toBe('16:30');
+    expect(offCentre('hour', 'h16')).toBeLessThanOrEqual(1);
   });
 });
 

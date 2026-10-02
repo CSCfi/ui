@@ -150,7 +150,8 @@ them app-wide with `applyDefaults({ 'c-time-picker': { texts } })`.
 
 On a viewport narrower than 760px the columns open as a **fullscreen panel**:
 a heading row with the field's `label` and a close button above the columns.
-There the selected row rests in the middle of its column instead of the top.
+There the selected row rests in the middle of its column instead of the top,
+in every column, so the selections line up even when a column fits.
 The field stays typeable at every width.
 
 ## Related
