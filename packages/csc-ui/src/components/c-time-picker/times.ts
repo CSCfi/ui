@@ -359,10 +359,10 @@ export const periodDisabled = (
 
 // ---- column rows -----------------------------------------------------------
 
-/** The hour column's hours (0–23) in row order: `0…23`, or `12, 1…11` of one half day. */
+/** The hour column's hours (0–23) in row order: `0…23`, or `1…11, 12` of one half day. */
 export const hourRows = (twelve: boolean, pm = false): number[] =>
   twelve
-    ? Array.from({ length: 12 }, (_, i) => i + (pm ? 12 : 0))
+    ? Array.from({ length: 12 }, (_, i) => ((i + 1) % 12) + (pm ? 12 : 0))
     : Array.from({ length: 24 }, (_, i) => i);
 
 /**

@@ -428,7 +428,7 @@ describe('time columns', () => {
     expect(ink(row(m, 'h8'))).not.toBe(ink(probe));
   });
 
-  it('a 12-hour clock lists 12, 1…11 and a period column that flips the hour', async () => {
+  it('a 12-hour clock lists 1…11, 12 and a period column that flips the hour', async () => {
     const m = await mountPicker({ format: 'h:mm a', value: '09:15' });
 
     await open(m);
@@ -437,13 +437,30 @@ describe('time columns', () => {
       Array.from(column(m, 'hour').querySelectorAll('li')).map((li) =>
         li.textContent?.trim(),
       ),
-    ).toEqual(['12', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11']);
+    ).toEqual(['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12']);
 
     await userEvent.click(row(m, 'pm'));
     await settle();
 
     expect(m.host.value).toBe('21:15');
     expect(inputs(m)[0].value).toBe('9:15 PM');
+  });
+
+  it('the 12-hour keys follow the list, so 12 comes after 11', async () => {
+    const m = await mountPicker({ format: 'h:mm a', value: '11:15' });
+
+    await open(m);
+    await userEvent.keyboard('{ArrowDown}');
+    await settle();
+
+    expect(focusedKey()).toBe('h0');
+    expect(m.host.value).toBe('00:15');
+
+    await userEvent.keyboard('{Home}');
+    await settle();
+
+    expect(focusedKey()).toBe('h1');
+    expect(m.host.value).toBe('01:15');
   });
 
   it('warns about a min after max and ignores both', async () => {

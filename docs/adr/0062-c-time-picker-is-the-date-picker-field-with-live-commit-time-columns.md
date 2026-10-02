@@ -28,7 +28,9 @@ typing, clear) is what a time picker needs as well.
 - The panel holds **time columns**, each a `role="listbox"` and one tab
   stop, named by `aria-label` with no visible heading. Real focus is on the
   option. Up/Down, Home/End and PageUp/Down move and commit (selection
-  follows focus), Enter closes.
+  follows focus), Enter closes. A 12-hour hour column lists `1…11, 12` of
+  the half day, the order people count, though 12 AM is the day's first
+  hour; the keys follow the list, so ArrowDown from 11 AM picks 12 AM.
 - **Live commit**: every pick commits at once and the panel stays open. A
   missing part fills in (minute `00`, the current period). The panel closes
   on Escape, Enter, light dismiss or its close button. There is no OK/Cancel
@@ -69,6 +71,9 @@ typing, clear) is what a time picker needs as well.
   and the order of the 12-hour period is ambiguous.
 - **An OK/Cancel footer**: an extra step and row, and it contradicts
   ADR-0058.
+- **A 12-hour hour column in time order (`12, 1…11`)**: the half day's
+  hours in sequence, but the list starts at 12 and does not read the way
+  hours are counted.
 - **Space/Enter to select**: more keystrokes, and Enter could no longer
   close.
 - **Left/Right between columns as one widget**: not the listbox pattern, so
