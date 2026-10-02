@@ -64,7 +64,8 @@ moment to read `badInput`, as above.
 The calendar button at the field's trailing edge, or Alt+ArrowDown in the
 input, opens the calendar panel. It is a dialog: focus moves onto the selected
 day, else today, else the nearest day that can be picked, and Tab cycles
-through the month and year controls and the grid until the panel closes.
+through the month and year controls, the grid and the Today button
+(`show-today`) until the panel closes.
 Picking a day commits it and closes the panel; Escape closes it without a
 change. Focus returns to the input either way.
 
@@ -162,6 +163,27 @@ months open.
 
 `change:month` names the displayed month of the day grid, so it is never
 fired in month mode.
+
+## Today
+
+`show-today` adds a Today button under the calendar. Pressing it does what
+pressing today in the grid would: it commits today and closes the panel.
+Under `range` the first press makes today the pending start and moves focus
+onto it in the grid; a press while a start is pending completes the range.
+Under `type="month"` the button reads "This month" and picks the current
+month, its month and year at once.
+
+```vue
+<c-date-picker v-model="due" label="Due date" show-today />
+```
+
+The button is disabled, never hidden, while today cannot be picked: outside
+`min` and `max`, in `disabled-dates`, or ruled out by `is-date-disabled`. It
+goes by the rules assigned at that moment, as typed text does, so when
+`disabled-dates` is loaded per displayed month, keep today's dates in the
+list or express the rule as `is-date-disabled`. Leave the button off where
+today is never the answer, such as a birthdate, or turn it on app-wide with
+`applyDefaults({ 'c-date-picker': { showToday: true } })`.
 
 ## Texts
 

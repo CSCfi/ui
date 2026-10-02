@@ -68,7 +68,8 @@ The clock button at the field's trailing edge, or Alt+ArrowDown in the input,
 opens the columns: hours and minutes side by side, and an AM/PM column in a
 12-hour format. The panel is a dialog: focus moves onto the hour column —
 the value's hour, or the current hour when the field is empty — and Tab
-cycles through the columns until the panel closes.
+cycles through the columns and the Now button (`show-now`) until the panel
+closes.
 
 Every pick commits at once and the panel stays open, so the hour can be fixed
 after the minutes are picked. The selected row rests at the top of its column:
@@ -120,6 +121,22 @@ correctly as strings:
 const sameDay =
   !value || !value.start || !value.end || value.start <= value.end;
 ```
+
+## Now
+
+`show-now` adds a Now button under the columns. Pressing it commits the
+current time and closes the panel, unlike a pick in the columns, which leaves
+it open. The time is the exact minute whatever `minute-step`: at 14:07 with a
+step of 15 it commits `14:07`. Under `range` it sets the end the Start | End
+switch shows.
+
+```vue
+<c-time-picker v-model="arrival" label="Arrival" show-now />
+```
+
+The button is disabled, never hidden, while the current time is outside
+`min` and `max`. Turn it on app-wide with
+`applyDefaults({ 'c-time-picker': { showNow: true } })`.
 
 ## Texts
 

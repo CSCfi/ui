@@ -1,16 +1,18 @@
 /**
  * Behaviour spec for c-time-picker (CONTEXT.md "Time picker", "Time column",
- * "End switch", "Overnight range", "Bad input"; ADR-0061, ADR-0062).
+ * "End switch", "Overnight range", "Bad input", "Now button"; ADR-0061,
+ * ADR-0062, ADR-0065).
  *
  * Fixtures carry a value, so the columns never rest on the wall clock —
- * except the one empty-open case, which reads the clock itself.
+ * except the one empty-open case and the Now button's cases, which read the
+ * clock themselves.
  */
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { page, userEvent } from 'vitest/browser';
 
 import type { Mounted } from '../../test/harness';
 
-import { resetDefaults } from '../../shared/appDefaults';
+import { applyDefaults, resetDefaults } from '../../shared/appDefaults';
 import {
   consoleSpy,
   deepActiveElement,
@@ -20,6 +22,7 @@ import {
   settle,
   settled,
 } from '../../test/harness';
+import { nowTime, toMinutes } from './times';
 
 type PickerHost = { badInput: boolean; value: unknown } & HTMLElement;
 
@@ -765,6 +768,130 @@ describe('field', () => {
   });
 });
 
+describe('Now button (ADR-0065)', () => {
+  // Each case accepts now read before or after the press, so a minute that
+  // turns mid-test cannot flake it.
+  const nowButton = (m: Mounted) => m.part('now') as HTMLButtonElement;
+
+  it('is opt-in, and an app default turns it on', async () => {
+    const off = await mountPicker({ value: '14:30' });
+
+    expect(off.shadowAll('[part~="actions"]')).toHaveLength(0);
+
+    applyDefaults({ 'c-time-picker': { showNow: true } });
+
+    const on = await mountPicker({ value: '14:30' });
+
+    expect(nowButton(on).textContent?.trim()).toBe('Now');
+  });
+
+  it('commits the exact minute whatever the step, closes and returns focus to the input', async () => {
+    const m = await mountPicker({ minuteStep: 15, showNow: true });
+
+    const events = recordEvents(m.host, EVENTS);
+
+    await open(m);
+
+    const before = nowTime();
+
+    await userEvent.click(nowButton(m));
+    await settle();
+
+    expect([before, nowTime()]).toContain(m.host.value);
+    expect(events.of('change').map((r) => r.detail)).toEqual([m.host.value]);
+    expect(events.of('change:text')).toHaveLength(0);
+    expect(isOpen(m)).toBe(false);
+    expect(deepActiveElement()).toBe(inputs(m)[0]);
+  });
+
+  it('under range sets the end being edited', async () => {
+    const m = await mountPicker(
+      {
+        label: 'Shift',
+        showNow: true,
+        value: { end: '06:00', start: '22:00' },
+      },
+      { range: true },
+    );
+
+    await open(m);
+    await userEvent.click(m.shadowAll('[part~="end-tab"]')[1]);
+    await settle();
+
+    const before = nowTime();
+
+    await userEvent.click(nowButton(m));
+    await settle();
+
+    const { end, start } = m.host.value as { end: string; start: string };
+
+    expect(start).toBe('22:00');
+    expect([before, nowTime()]).toContain(end);
+    expect(isOpen(m)).toBe(false);
+  });
+
+  it('is the last Tab stop', async () => {
+    const m = await mountPicker({ showNow: true, value: '14:30' });
+
+    await open(m);
+
+    const seen: (null | string)[] = [];
+
+    for (let i = 0; i < 3; i++) {
+      await userEvent.keyboard('{Tab}');
+      seen.push(
+        focusedKey() ?? deepActiveElement()?.getAttribute('part') ?? null,
+      );
+    }
+
+    expect(seen).toEqual(['m30', 'now', 'h14']);
+  });
+
+  it('is disabled while now is outside min and max, and a press emits nothing', async () => {
+    // A half-hour window that holds neither now nor the next minute.
+    const window =
+      toMinutes(nowTime()) < 60
+        ? { max: '23:30', min: '23:00', value: '23:15' }
+        : { max: '00:30', min: '00:00', value: '00:15' };
+
+    const m = await mountPicker({ showNow: true, ...window });
+
+    const events = recordEvents(m.host, EVENTS);
+
+    await open(m);
+
+    expect(nowButton(m).disabled).toBe(true);
+
+    nowButton(m).click();
+    await settle();
+
+    expect(events.of('change')).toHaveLength(0);
+    expect(isOpen(m)).toBe(true);
+  });
+
+  it('takes its label from texts', async () => {
+    const m = await mountPicker({ showNow: true, texts: { now: 'Nyt' } });
+
+    expect(nowButton(m).textContent?.trim()).toBe('Nyt');
+  });
+
+  it('sits at the bottom edge of the fullscreen panel', async () => {
+    await page.viewport(360, 740);
+
+    try {
+      const m = await mountPicker({ showNow: true, value: '14:30' });
+
+      await open(m);
+
+      expect(m.part('actions').getBoundingClientRect().bottom).toBe(
+        m.part('panel').getBoundingClientRect().bottom,
+      );
+    } finally {
+      await page.viewport(1280, 800);
+    }
+  });
+});
+
 describe('visual', () => {
   it('closed field', async () => {
     const m = await mountPicker({ value: '14:30' });
@@ -778,6 +905,15 @@ describe('visual', () => {
     await open(m);
 
     await matchScreenshotInBothModes(m.part('panel'), 'open-panel');
+  });
+
+  it('Now button', async () => {
+    // No bounds, so the button is enabled whatever the time.
+    const m = await mountPicker({ showNow: true, value: '14:30' });
+
+    await open(m);
+
+    await matchScreenshotInBothModes(m.part('panel'), 'now-button');
   });
 
   it('12-hour panel with bounds', async () => {

@@ -373,6 +373,20 @@
           </transition>
         </div>
       </div>
+
+      <!-- The Today button (ADR-0065): picks today as its cell would. Outside
+           the body, so it stays through every swap; the last Tab stop. -->
+      <div v-if="showTodayResolved" :class="ui.actions()" part="actions">
+        <button
+          :class="ui.today()"
+          :disabled="todayDisabled"
+          part="today"
+          type="button"
+          @click="pickToday"
+        >
+          {{ monthMode ? t.thisMonth : t.today }}
+        </button>
+      </div>
     </div>
   </div>
 </template>
@@ -495,6 +509,13 @@ export interface CDatePickerProps {
    */
   shadow?: boolean;
   /**
+   * Show a Today button under the calendar that picks today ("This month"
+   * under `type="month"`)
+   *
+   * @defaultable false
+   */
+  showToday?: boolean;
+  /**
    * Show ISO 8601 week numbers beside the calendar rows (meaningful with a
    * Monday week start)
    *
@@ -593,6 +614,10 @@ export interface CDatePickerTexts {
   startMonth?: string;
   /** Label of the start's year step under `type="month"` and `range`. */
   startYear?: string;
+  /** Label of the Today button under `type="month"`. */
+  thisMonth?: string;
+  /** Label of the Today button (`show-today`). */
+  today?: string;
   /** Appended to the accessible name of a day that cannot be picked. */
   unavailable?: string;
   /** Seven weekday names, Sunday first. */
@@ -645,6 +670,8 @@ export type CDatePickerWeekday = 0 | 1 | 2 | 3 | 4 | 5 | 6;
  * @csspart option - One month or year in the list
  * @csspart step-label - The label above the current list under `type="month"`: month or year, and under `range` start or end
  * @csspart step-summary - A finished step under `type="month"`, its label and pick; pressing it returns to that step
+ * @csspart actions - The row under the calendar body holding the Today button (`show-today`)
+ * @csspart today - The Today button: picks today, or the current month under `type="month"`
  *
  * @cssstate bad-input - Present while committed text names no date that can be picked
  */
@@ -753,6 +780,7 @@ const datePicker = tv({
     { class: { body: 'h-auto' }, fullscreen: true, month: true },
   ],
   slots: {
+    actions: 'flex shrink-0 justify-end px-3 pb-3',
     arrow:
       'flex size-9 transition-[opacity,visibility] duration-150 shrink-0 cursor-pointer items-center justify-center rounded-full border-0 bg-transparent p-0 text-on-surface-muted outline-none hover:not-disabled:bg-primary-subtle-hover hover:not-disabled:text-primary focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-primary disabled:cursor-default disabled:opacity-40',
     blank: 'p-0',
@@ -779,6 +807,10 @@ const datePicker = tv({
     stepSummary:
       'flex shrink-0 items-center gap-2 w-full min-h-10 px-3 rounded border-0 bg-transparent text-left text-sm text-on-surface [font-family:var(--c-font-family)] cursor-pointer outline-none hover:bg-primary-subtle-hover focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-primary',
     stepSummaryLabel: 'text-on-surface-muted',
+    // A text button's look on a native button: the focus trap only sees
+    // native buttons in the card.
+    today:
+      'h-9 px-3 cursor-pointer rounded-csc-md border-0 bg-transparent text-sm font-bold text-primary [font-family:var(--c-font-family)] outline-none hover:not-disabled:bg-primary-subtle-hover focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-primary disabled:cursor-default disabled:text-on-surface-disabled',
     viewButton:
       'flex items-center gap-0.5 h-9 cursor-pointer rounded-full border-0 bg-transparent pl-3 pr-1.5 text-sm font-medium text-on-surface [font-family:var(--c-font-family)] outline-none hover:bg-primary-subtle-hover focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-primary tabular-nums',
     visuallyHidden:
@@ -796,6 +828,7 @@ const datePicker = tv({
     },
     fullscreen: {
       true: {
+        actions: 'w-full max-w-[400px] mx-auto',
         body: 'flex-1 h-auto min-h-[280px]',
         calendar: 'flex-1 min-h-0 w-full max-w-[400px] mx-auto',
         card: 'w-auto max-h-none rounded-none shadow-none',
@@ -881,6 +914,7 @@ const props = withDefaults(defineProps<CDatePickerProps>(), {
   range: false,
   required: false,
   shadow: undefined,
+  showToday: undefined,
   showWeekNumbers: undefined,
   size: undefined,
   texts: undefined,
@@ -906,6 +940,8 @@ const hideDetailsResolved = appDefault('hideDetails', false);
 const labelOnTopResolved = appDefault('labelOnTop', false);
 
 const shadowResolved = appDefault('shadow', false);
+
+const showTodayResolved = appDefault('showToday', false);
 
 const showWeekNumbersResolved = appDefault('showWeekNumbers', false);
 
@@ -964,6 +1000,8 @@ const DEFAULT_TEXTS: Required<CDatePickerTexts> = {
   start: 'Start date',
   startMonth: 'Start month',
   startYear: 'Start year',
+  thisMonth: 'This month',
+  today: 'Today',
   unavailable: 'unavailable',
   weekdays: ENGLISH_WEEKDAYS,
   weekdaysShort: ENGLISH_WEEKDAYS.map((name) => name.slice(0, 2)),
@@ -1747,18 +1785,9 @@ const goToStep = (step: CDatePickerMonthStep) => {
   enterStep(step);
 };
 
-const pickStep = (option: ListOption) => {
-  if (!onYearStep.value) {
-    draftMonth.value = option.value;
-    enterStep(onEndSteps.value ? 'end-year' : 'start-year');
-
-    return;
-  }
-
-  const month = isoMonth(option.value, draftMonth.value ?? 1);
-
-  draftMonth.value = null;
-
+// A finished year step: commit the month, or under range make it the
+// pending start or complete the range.
+const commitMonth = (month: string) => {
   if (!rangeOn.value) {
     commitValue({ end: null, start: month });
     closePanel(true);
@@ -1782,6 +1811,20 @@ const pickStep = (option: ListOption) => {
   pendingStart.value = null;
   commitValue({ end, start });
   closePanel(true);
+};
+
+const pickStep = (option: ListOption) => {
+  if (!onYearStep.value) {
+    draftMonth.value = option.value;
+    enterStep(onEndSteps.value ? 'end-year' : 'start-year');
+
+    return;
+  }
+
+  const month = isoMonth(option.value, draftMonth.value ?? 1);
+
+  draftMonth.value = null;
+  commitMonth(month);
 };
 
 const listOptions = computed<ListOption[]>(() => {
@@ -1931,6 +1974,48 @@ const onListKeyDown = (event: KeyboardEvent) => {
     event.preventDefault();
     pickOption(listIndex.value);
   }
+};
+
+// ---- the Today button (ADR-0065) ----------------------------------------------
+
+const thisMonth = computed(() => monthOf(today.value));
+
+// Disabled, never hidden, when today (or this month) cannot be picked.
+const todayDisabled = computed(() =>
+  monthMode.value ? isMonthDisabled(thisMonth.value) : isDisabled(today.value),
+);
+
+// Today is pressing today's cell; in month mode, both steps on this month.
+const pickToday = () => {
+  // A panel left open across midnight: the press reads the clock again.
+  today.value = todayIso();
+
+  if (todayDisabled.value) return;
+
+  if (monthMode.value) {
+    draftMonth.value = null;
+    commitMonth(thisMonth.value);
+
+    return;
+  }
+
+  // A range's first pick keeps the panel open: show today's month and put
+  // focus on the pending start, as a press on its cell would.
+  if (rangeOn.value && !pendingStart.value) {
+    const fromList = view.value !== 'days';
+
+    focusedDate.value = today.value;
+    setMonth(monthOf(today.value), false, !fromList);
+
+    if (fromList) {
+      motion.value = 'list-out';
+      view.value = 'days';
+    }
+
+    focusCell();
+  }
+
+  pick(today.value);
 };
 
 // ---- panel ------------------------------------------------------------------

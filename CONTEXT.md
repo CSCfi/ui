@@ -137,6 +137,10 @@ _Avoid_: Half range (that is a committed `{ start, end: null }`, which only typi
 The `primary-subtle` strip joining the start and end days in the **day grid** — the committed range, or the preview from a **pending start** to the hovered or focused day. Disabled days inside it keep their disabled look.
 _Avoid_: Highlight (the virtual active row elsewhere), selection, span
 
+**Today button** (date picker):
+The opt-in (`show-today`) button in a row under the date picker's calendar body that picks today, exactly as pressing today's cell would — committing and closing, or under `range` becoming the **pending start** or completing the range. Under `type="month"` it reads "This month" and picks the current month. Shown disabled when today cannot be picked.
+_Avoid_: Reset (that is a form reset to the default value), go-to-today (it commits, not navigates), shortcut
+
 **Bad input**:
 The state of a **date picker** or **time picker** after committing text that names no enabled value — unparseable, disabled or out of range: the text stays as typed, the value is `null`, and the host exposes `:state(bad-input)` and `badInput`. A fact the component reports, not a verdict — the consumer decides whether it is an error and writes the **error message**. Only typing produces it; a pick in a panel never does.
 _Avoid_: Invalid date / invalid time (validity is the consumer's judgement), parse error
@@ -162,6 +166,10 @@ _Avoid_: Interval, increment, granularity
 **End switch** (time picker):
 In `range` mode, the Start | End toggle above the **time columns** choosing which end the columns edit. Each end commits on its own — the time picker has no **pending start**.
 _Avoid_: Tabs, range toggle
+
+**Now button** (time picker):
+The opt-in (`show-now`) button in a row under the **time columns** that commits the current time, to the exact minute whatever the **minute step**, and closes the panel — the time panel's one commit that closes. Under `range` it sets the end the **end switch** selects. Shown disabled when now is outside `min`/`max`.
+_Avoid_: Reset, current time button, shortcut
 
 **Overnight range**:
 A time-picker range whose end is earlier than its start (`22:00`–`06:00`): a valid value spanning midnight, not **bad input** and never reordered. Distinct from `min` > `max`, which is an invalid constraint, not a wrap.

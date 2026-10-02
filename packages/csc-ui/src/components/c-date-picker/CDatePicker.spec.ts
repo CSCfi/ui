@@ -1,17 +1,18 @@
 /**
  * Behaviour spec for c-date-picker (CONTEXT.md "Date picker", "Day grid",
- * "Pending start", "Bad input", "Month step"; ADR-0057, ADR-0058,
- * ADR-0063).
+ * "Pending start", "Bad input", "Month step", "Today button"; ADR-0057,
+ * ADR-0058, ADR-0063, ADR-0065).
  *
  * Every fixture pins its month with `value` or `min`/`max` far from today,
- * so no assertion or baseline depends on the wall clock.
+ * so no assertion or baseline depends on the wall clock — except the Today
+ * button's cases, which read the clock around each press.
  */
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { page, userEvent } from 'vitest/browser';
 
 import type { Mounted } from '../../test/harness';
 
-import { resetDefaults } from '../../shared/appDefaults';
+import { applyDefaults, resetDefaults } from '../../shared/appDefaults';
 import {
   deepActiveElement,
   matchScreenshotInBothModes,
@@ -20,6 +21,7 @@ import {
   settle,
   settled,
 } from '../../test/harness';
+import { addDays, todayIso } from './dates';
 
 type PickerHost = { badInput: boolean; value: unknown } & HTMLElement;
 
@@ -1333,6 +1335,278 @@ describe('type="month"', () => {
   });
 });
 
+describe('Today button (ADR-0065)', () => {
+  // Each case accepts today read before or after the press, so a midnight
+  // mid-test cannot flake it.
+  const todayButton = (m: Mounted) => m.part('today') as HTMLButtonElement;
+
+  const press = async (m: Mounted) => {
+    await userEvent.click(todayButton(m));
+    await finishAnimations(m);
+  };
+
+  const mountRange = (props: Record<string, unknown> = {}) =>
+    mountPicker(
+      {
+        label: 'Leave',
+        showToday: true,
+        value: { end: '2031-09-12', start: '2031-09-10' },
+        ...props,
+      },
+      { range: true },
+    );
+
+  it('is opt-in, and an app default turns it on', async () => {
+    const off = await mountPicker({ value: '2031-09-17' });
+
+    expect(off.shadowAll('[part~="actions"]')).toHaveLength(0);
+
+    applyDefaults({ 'c-date-picker': { showToday: true } });
+
+    const on = await mountPicker({ value: '2031-09-17' });
+
+    expect(todayButton(on).textContent?.trim()).toBe('Today');
+  });
+
+  it('picks today, clears bad input, closes and returns focus to the input', async () => {
+    const m = await mountPicker({ showToday: true });
+
+    const [input] = inputs(m);
+
+    await type(input, '31.02.2031');
+    await userEvent.keyboard('{Enter}');
+    await settle();
+
+    expect(m.host.badInput).toBe(true);
+
+    const events = recordEvents(m.host, EVENTS);
+
+    await open(m);
+
+    const before = todayIso();
+
+    await press(m);
+
+    const value = m.host.value as string;
+
+    expect([before, todayIso()]).toContain(value);
+    expect(events.of('change').map((r) => r.detail)).toEqual([value]);
+    expect(events.of('change:text')).toHaveLength(0);
+    expect(m.host.badInput).toBe(false);
+    expect(isOpen(m)).toBe(false);
+    expect(input.value).toBe(value.split('-').reverse().join('.'));
+    expect(deepActiveElement()).toBe(input);
+  });
+
+  it('is the last Tab stop', async () => {
+    const m = await mountPicker({ showToday: true, value: '2031-09-17' });
+
+    await open(m);
+
+    const seen: (null | string)[] = [];
+
+    for (let i = 0; i < 2; i++) {
+      await userEvent.keyboard('{Tab}');
+      seen.push(deepActiveElement()?.getAttribute('part') ?? null);
+    }
+
+    expect(seen).toEqual(['today', 'previous-month']);
+  });
+
+  it('under range, the first press is the pending start on today’s cell', async () => {
+    const m = await mountRange();
+
+    const events = recordEvents(m.host, EVENTS);
+
+    await open(m);
+
+    const before = todayIso();
+
+    await press(m);
+
+    const today = focusedIso()!;
+
+    expect([before, todayIso()]).toContain(today);
+    expect(isOpen(m)).toBe(true);
+    expect(events.of('change')).toHaveLength(0);
+    expect(events.of('change:month').at(-1)?.detail).toBe(today.slice(0, 7));
+    expect(cell(m, today).getAttribute('aria-current')).toBe('date');
+    expect(cell(m, today).getAttribute('aria-selected')).toBe('true');
+    expect(m.shadow('[aria-live="polite"]').textContent).toContain(
+      'selected as the start',
+    );
+
+    // The grid takes it from there: the next day completes the range.
+    await userEvent.keyboard('{ArrowRight}');
+    await finishAnimations(m);
+    await userEvent.keyboard('{Enter}');
+    await settle();
+
+    expect(events.of('change').map((r) => r.detail)).toEqual([
+      { end: addDays(today, 1), start: today },
+    ]);
+    expect(isOpen(m)).toBe(false);
+  });
+
+  it('with a pending start, a press completes the range in order and closes', async () => {
+    const m = await mountRange();
+
+    const events = recordEvents(m.host, EVENTS);
+
+    await open(m);
+    await userEvent.click(cell(m, '2031-09-20'));
+    await settle();
+
+    const before = todayIso();
+
+    await press(m);
+
+    const { end, start } = m.host.value as { end: string; start: string };
+
+    expect([before, todayIso()]).toContain(start);
+    expect(end).toBe('2031-09-20');
+    expect(events.of('change')).toHaveLength(1);
+    expect(isOpen(m)).toBe(false);
+  });
+
+  it('from the year list, the first range press returns to the day grid', async () => {
+    const m = await mountRange();
+
+    await open(m);
+    await userEvent.click(m.part('year-button'));
+    await finishAnimations(m);
+    await press(m);
+
+    expect(m.shadowAll('table[part~="grid"]')).toHaveLength(1);
+    expect(m.shadowAll('ul[part~="list"]')).toHaveLength(0);
+    expect(focusedIso()).toBe(
+      m.shadow('td[aria-current="date"]').getAttribute('data-date'),
+    );
+  });
+
+  it('is disabled when today cannot be picked, and a press emits nothing', async () => {
+    // Today and tomorrow, in case midnight falls mid-test.
+    const today = todayIso();
+
+    const tomorrow = addDays(today, 1);
+
+    const fixtures: Record<string, unknown>[] = [
+      { max: '2001-12-31', value: '2001-02-14' },
+      { disabledDates: [{ end: tomorrow, start: today }], value: '2031-09-17' },
+      {
+        isDateDisabled: (iso: string) => iso === today || iso === tomorrow,
+        value: '2031-09-17',
+      },
+      { max: '2001-12', type: 'month', value: '2001-06' },
+    ];
+
+    for (const props of fixtures) {
+      const m = await mountPicker({ showToday: true, ...props });
+
+      const events = recordEvents(m.host, EVENTS);
+
+      await open(m);
+
+      expect(todayButton(m).disabled, Object.keys(props).join()).toBe(true);
+
+      todayButton(m).click();
+      await settle();
+
+      expect(events.of('change')).toHaveLength(0);
+      expect(isOpen(m)).toBe(true);
+
+      await userEvent.keyboard('{Escape}');
+      await settle();
+      m.unmount();
+    }
+  });
+
+  it('type="month": This month commits the current month and closes', async () => {
+    const m = await mountPicker({
+      label: 'Period',
+      showToday: true,
+      type: 'month',
+      value: '2031-09',
+    });
+
+    const events = recordEvents(m.host, EVENTS);
+
+    await open(m);
+
+    expect(todayButton(m).textContent?.trim()).toBe('This month');
+
+    const before = todayIso().slice(0, 7);
+
+    await press(m);
+
+    expect([before, todayIso().slice(0, 7)]).toContain(m.host.value);
+    expect(events.of('change')).toHaveLength(1);
+    expect(isOpen(m)).toBe(false);
+  });
+
+  it('type="month" under range: the first press is the pending start, the second completes the range', async () => {
+    const m = await mountPicker(
+      { label: 'Period', showToday: true, type: 'month', value: null },
+      { range: true },
+    );
+
+    const events = recordEvents(m.host, EVENTS);
+
+    await open(m);
+    await press(m);
+
+    expect(m.part('step-label').textContent?.trim()).toBe('End month');
+    expect(
+      m
+        .shadowAll('[part~="step-summary"]')
+        .map((b) => b.textContent?.trim().startsWith('Start month')),
+    ).toEqual([true]);
+    expect(events.of('change')).toHaveLength(0);
+
+    const before = todayIso().slice(0, 7);
+
+    await press(m);
+
+    const { end, start } = m.host.value as { end: string; start: string };
+
+    expect([before, todayIso().slice(0, 7)]).toContain(start);
+    expect(end).toBe(start);
+    expect(events.of('change')).toHaveLength(1);
+    expect(isOpen(m)).toBe(false);
+  });
+
+  it('takes its labels from texts', async () => {
+    const m = await mountPicker({
+      showToday: true,
+      texts: { thisMonth: 'Tämä kuu', today: 'Tänään' },
+    });
+
+    expect(todayButton(m).textContent?.trim()).toBe('Tänään');
+
+    (m.host as unknown as { type: string }).type = 'month';
+    await settle();
+
+    expect(todayButton(m).textContent?.trim()).toBe('Tämä kuu');
+  });
+
+  it('sits at the bottom edge of the fullscreen panel', async () => {
+    await page.viewport(360, 740);
+
+    try {
+      const m = await mountPicker({ showToday: true, value: '2031-09-17' });
+
+      await open(m);
+      await settled();
+
+      expect(m.part('actions').getBoundingClientRect().bottom).toBe(
+        m.part('panel').getBoundingClientRect().bottom,
+      );
+    } finally {
+      await page.viewport(1280, 800);
+    }
+  });
+});
+
 describe('visual', () => {
   it('closed field', async () => {
     const m = await mountPicker({ value: '2001-02-14' });
@@ -1346,6 +1620,15 @@ describe('visual', () => {
     await open(m);
 
     await matchScreenshotInBothModes(m.part('panel'), 'open-panel');
+  });
+
+  it('Today button', async () => {
+    // No bounds, so the button is enabled whatever the date.
+    const m = await mountPicker({ showToday: true, value: '2001-02-14' });
+
+    await open(m);
+
+    await matchScreenshotInBothModes(m.part('panel'), 'today-button');
   });
 
   it('range band', async () => {

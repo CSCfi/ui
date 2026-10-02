@@ -17,6 +17,7 @@
     "range": "boolean = false",
     "required": "boolean = false",
     "shadow": "boolean = false",
+    "show-now": "boolean = false",
     "size": "'default' | 'small' = 'default'",
     "valid": "boolean = true",
     "value": "CTimePickerValue = null"
@@ -27,6 +28,7 @@
     "hideDetails",
     "labelOnTop",
     "shadow",
+    "showNow",
     "size",
     "texts"
   ],
@@ -38,6 +40,7 @@
   },
   "methods": {},
   "parts": [
+    "actions",
     "card",
     "close",
     "column",
@@ -47,6 +50,7 @@
     "heading",
     "heading-row",
     "input",
+    "now",
     "option",
     "panel",
     "separator"
@@ -72,6 +76,7 @@
     "range": "boolean = false",
     "required": "boolean = false",
     "shadow": "boolean = false",
+    "showNow": "boolean = false",
     "size": "'default' | 'small' = 'default'",
     "texts": "CTimePickerTexts = {}",
     "valid": "boolean = true",

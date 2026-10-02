@@ -681,7 +681,7 @@ export interface CDatePickerElementEventMap {
 }
 
 /** A date field that takes a typed date, or opens a calendar panel for picking one, or a start and end date under `range`. */
-export interface CDatePickerElement extends Omit<HTMLElement, 'clearable' | 'disabled' | 'disabledDates' | 'errorMessage' | 'firstDayOfWeek' | 'format' | 'hideDetails' | 'hint' | 'hostId' | 'isDateDisabled' | 'label' | 'labelOnTop' | 'max' | 'min' | 'name' | 'placeholder' | 'range' | 'required' | 'shadow' | 'showWeekNumbers' | 'size' | 'texts' | 'type' | 'valid' | 'value'> {
+export interface CDatePickerElement extends Omit<HTMLElement, 'clearable' | 'disabled' | 'disabledDates' | 'errorMessage' | 'firstDayOfWeek' | 'format' | 'hideDetails' | 'hint' | 'hostId' | 'isDateDisabled' | 'label' | 'labelOnTop' | 'max' | 'min' | 'name' | 'placeholder' | 'range' | 'required' | 'shadow' | 'showToday' | 'showWeekNumbers' | 'size' | 'texts' | 'type' | 'valid' | 'value'> {
   /** Make the value clearable */
   clearable?: boolean;
   /** Disable the field */
@@ -741,6 +741,11 @@ export interface CDatePickerElement extends Omit<HTMLElement, 'clearable' | 'dis
   required?: boolean;
   /** Shadow variant */
   shadow?: boolean;
+  /**
+   * Show a Today button under the calendar that picks today ("This month"
+   * under `type="month"`)
+   */
+  showToday?: boolean;
   /**
    * Show ISO 8601 week numbers beside the calendar rows (meaningful with a
    * Monday week start)
@@ -2402,7 +2407,7 @@ export interface CTimePickerElementEventMap {
 }
 
 /** A time field that takes a typed time, or opens hour and minute columns for picking one, or a start and end time under `range`. */
-export interface CTimePickerElement extends Omit<HTMLElement, 'clearable' | 'disabled' | 'errorMessage' | 'format' | 'hideDetails' | 'hint' | 'hostId' | 'label' | 'labelOnTop' | 'max' | 'min' | 'minuteStep' | 'name' | 'placeholder' | 'range' | 'required' | 'shadow' | 'size' | 'texts' | 'valid' | 'value'> {
+export interface CTimePickerElement extends Omit<HTMLElement, 'clearable' | 'disabled' | 'errorMessage' | 'format' | 'hideDetails' | 'hint' | 'hostId' | 'label' | 'labelOnTop' | 'max' | 'min' | 'minuteStep' | 'name' | 'placeholder' | 'range' | 'required' | 'shadow' | 'showNow' | 'size' | 'texts' | 'valid' | 'value'> {
   /** Make the value clearable */
   clearable?: boolean;
   /** Disable the field */
@@ -2450,6 +2455,8 @@ export interface CTimePickerElement extends Omit<HTMLElement, 'clearable' | 'dis
   required?: boolean;
   /** Shadow variant */
   shadow?: boolean;
+  /** Show a Now button under the columns that commits the current time */
+  showNow?: boolean;
   /** Field height: the 52px default (the shared control height) or the 36px `small` box */
   size?: 'default' | 'small';
   /**
@@ -2733,11 +2740,11 @@ export interface CTreeSelectElement extends Omit<HTMLElement, 'allowBranch' | 'c
 export interface AppDefaults {
   'c-autocomplete'?: Partial<Pick<CAutocompleteElement, 'hideDetails' | 'itemsPerPage' | 'labelOnTop' | 'shadow' | 'size' | 'texts'>>;
   'c-data-table'?: Partial<Pick<CDataTableElement, 'texts'>>;
-  'c-date-picker'?: Partial<Pick<CDatePickerElement, 'firstDayOfWeek' | 'format' | 'hideDetails' | 'labelOnTop' | 'shadow' | 'showWeekNumbers' | 'size' | 'texts'>>;
+  'c-date-picker'?: Partial<Pick<CDatePickerElement, 'firstDayOfWeek' | 'format' | 'hideDetails' | 'labelOnTop' | 'shadow' | 'showToday' | 'showWeekNumbers' | 'size' | 'texts'>>;
   'c-number-field'?: Partial<Pick<CNumberFieldElement, 'decimalSeparator' | 'decimals' | 'fixedDecimals' | 'groupSeparator' | 'hideDetails' | 'labelOnTop' | 'shadow' | 'size' | 'step' | 'texts'>>;
   'c-select'?: Partial<Pick<CSelectElement, 'hideDetails' | 'itemsPerPage' | 'labelOnTop' | 'shadow' | 'size' | 'texts'>>;
   'c-text-field'?: Partial<Pick<CTextFieldElement, 'hideDetails' | 'labelOnTop' | 'shadow' | 'size'>>;
-  'c-time-picker'?: Partial<Pick<CTimePickerElement, 'format' | 'hideDetails' | 'labelOnTop' | 'shadow' | 'size' | 'texts'>>;
+  'c-time-picker'?: Partial<Pick<CTimePickerElement, 'format' | 'hideDetails' | 'labelOnTop' | 'shadow' | 'showNow' | 'size' | 'texts'>>;
   'c-tree-select'?: Partial<Pick<CTreeSelectElement, 'hideDetails' | 'itemsPerPage' | 'labelOnTop' | 'shadow' | 'size' | 'texts'>>;
 }
 
@@ -2745,11 +2752,11 @@ export interface AppDefaults {
 export const DEFAULTABLE_PROPS = {
   'c-autocomplete': ['hideDetails', 'itemsPerPage', 'labelOnTop', 'shadow', 'size', 'texts'],
   'c-data-table': ['texts'],
-  'c-date-picker': ['firstDayOfWeek', 'format', 'hideDetails', 'labelOnTop', 'shadow', 'showWeekNumbers', 'size', 'texts'],
+  'c-date-picker': ['firstDayOfWeek', 'format', 'hideDetails', 'labelOnTop', 'shadow', 'showToday', 'showWeekNumbers', 'size', 'texts'],
   'c-number-field': ['decimalSeparator', 'decimals', 'fixedDecimals', 'groupSeparator', 'hideDetails', 'labelOnTop', 'shadow', 'size', 'step', 'texts'],
   'c-select': ['hideDetails', 'itemsPerPage', 'labelOnTop', 'shadow', 'size', 'texts'],
   'c-text-field': ['hideDetails', 'labelOnTop', 'shadow', 'size'],
-  'c-time-picker': ['format', 'hideDetails', 'labelOnTop', 'shadow', 'size', 'texts'],
+  'c-time-picker': ['format', 'hideDetails', 'labelOnTop', 'shadow', 'showNow', 'size', 'texts'],
   'c-tree-select': ['hideDetails', 'itemsPerPage', 'labelOnTop', 'shadow', 'size', 'texts'],
 } as const satisfies Record<keyof AppDefaults, readonly string[]>;
 

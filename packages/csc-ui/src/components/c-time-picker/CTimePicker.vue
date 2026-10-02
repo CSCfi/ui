@@ -125,6 +125,20 @@
           </li>
         </ul>
       </div>
+
+      <!-- The Now button (ADR-0065): commits the current time and closes.
+           Outside the tabpanel: it sets whichever end is being edited. -->
+      <div v-if="showNowResolved" :class="ui.actions()" part="actions">
+        <button
+          :class="ui.now()"
+          :disabled="nowDisabled"
+          part="now"
+          type="button"
+          @click="pickNow"
+        >
+          {{ t.now }}
+        </button>
+      </div>
     </div>
   </div>
 </template>
@@ -232,6 +246,12 @@ export interface CTimePickerProps {
    */
   shadow?: boolean;
   /**
+   * Show a Now button under the columns that commits the current time
+   *
+   * @defaultable false
+   */
+  showNow?: boolean;
+  /**
    * Field height: the 52px default (the shared control height) or the 36px `small` box
    *
    * @defaultable 'default'
@@ -289,6 +309,8 @@ export interface CTimePickerTexts {
   hours?: string;
   /** Accessible name of the minute column. */
   minutes?: string;
+  /** Label of the Now button (`show-now`). */
+  now?: string;
   /** Accessible label of the clock button. */
   openClock?: string;
   /** Accessible name of the AM/PM column. */
@@ -320,6 +342,8 @@ export type CTimePickerValue = CTimePickerRange | null | string;
  * @csspart columns - The row of time columns
  * @csspart column - One time column: hours, minutes or AM/PM
  * @csspart option - One row of a time column
+ * @csspart actions - The row under the columns holding the Now button (`show-now`)
+ * @csspart now - The Now button: commits the current time
  *
  * @cssstate bad-input - Present while committed text names no time that can be picked
  */
@@ -420,6 +444,7 @@ type CTimePickerRow = {
  */
 const timePicker = tv({
   slots: {
+    actions: 'flex shrink-0 justify-end px-2 pb-2',
     card: 'flex flex-col w-max overflow-hidden rounded-csc-md bg-surface-overlay text-on-surface shadow-[2px_4px_10px_#00000029]',
     // Ceiling 7.2 rows; the peek cap ends each column on a half row.
     column:
@@ -429,6 +454,9 @@ const timePicker = tv({
       'flex gap-0.5 mx-3 mt-3 p-0.5 rounded-csc-lg border border-solid border-divider bg-clip-padding bg-surface-sunken',
     endTab:
       'flex-1 h-8 px-3 whitespace-nowrap cursor-pointer rounded-csc-md border-0 bg-transparent text-sm font-medium text-on-surface-muted [font-family:var(--c-font-family)] outline-none hover:bg-primary-subtle-hover focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-primary aria-selected:bg-primary aria-selected:text-on-primary aria-selected:hover:bg-primary-hover',
+    // A text button's look on a native button: the focus trap only sees
+    // native buttons in the card.
+    now: 'h-9 px-3 whitespace-nowrap cursor-pointer rounded-csc-md border-0 bg-transparent text-sm font-bold text-primary [font-family:var(--c-font-family)] outline-none hover:not-disabled:bg-primary-subtle-hover focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-primary disabled:cursor-default disabled:text-on-surface-disabled',
     option:
       'flex items-center justify-center h-10 rounded-csc-lg text-sm tabular-nums text-on-surface cursor-pointer select-none outline-none hover:bg-primary-subtle-hover focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-primary aria-selected:bg-primary-subtle aria-selected:text-primary aria-selected:font-medium',
     panel:
@@ -474,6 +502,7 @@ const props = withDefaults(defineProps<CTimePickerProps>(), {
   range: false,
   required: false,
   shadow: undefined,
+  showNow: undefined,
   size: undefined,
   texts: undefined,
   valid: true,
@@ -496,6 +525,8 @@ const labelOnTopResolved = appDefault('labelOnTop', false);
 
 const shadowResolved = appDefault('shadow', false);
 
+const showNowResolved = appDefault('showNow', false);
+
 const sizeResolved = appDefault('size', 'default');
 
 // ---- texts: own → app default → Intl for the page's lang → English -------
@@ -508,6 +539,7 @@ const DEFAULT_TEXTS: Required<CTimePickerTexts> = {
   end: 'End time',
   hours: 'Hours',
   minutes: 'Minutes',
+  now: 'Now',
   openClock: 'Open time picker',
   period: 'AM/PM',
   pm: 'PM',
@@ -874,6 +906,29 @@ const onEndKeyDown = (event: KeyboardEvent) => {
   );
 };
 
+// ---- the Now button (ADR-0065) ------------------------------------------------
+
+// The current time, read on open and again on the press.
+const now = ref(nowTime());
+
+// Disabled, never hidden, while now is outside `min` / `max`.
+const nowDisabled = computed(
+  () => !inBounds(toMinutes(now.value), bounds.value),
+);
+
+// The exact minute, whatever the minute step; the one commit that closes.
+const pickNow = () => {
+  now.value = nowTime();
+
+  if (nowDisabled.value) return;
+
+  commitValue({
+    ...ends.value,
+    [rangeOn.value ? editing.value : 'start']: now.value,
+  });
+  closePanel(true);
+};
+
 // ---- the panel ---------------------------------------------------------------
 
 const onPanelKeyDown = (event: KeyboardEvent) => {
@@ -1027,6 +1082,7 @@ const {
   onOpened: () => {
     pageLang.value = document.documentElement.lang;
     editing.value = rangeOn.value ? lastInput.value : 'start';
+    now.value = nowTime();
     resetLanding();
     nextTick(() =>
       requestAnimationFrame(() => {
