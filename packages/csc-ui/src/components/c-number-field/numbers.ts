@@ -239,3 +239,59 @@ export const formatNumber = (
     (frac === undefined ? '' : format.decimal + frac)
   );
 };
+
+export interface CNumberFieldStepOptions {
+  /** The most fraction digits; a stepped number is rounded to them. */
+  decimals: number;
+  max: null | number;
+  min: null | number;
+  /** The spacing of the grid, counted from `min` (or `0`); not a positive number reads as `1`. */
+  step: number;
+}
+
+/** The largest integer part the field holds: `MAX_INTEGER_DIGITS` nines. */
+const LIMIT = 10 ** MAX_INTEGER_DIGITS - 1;
+
+/** Whether `x` is within float noise of a whole number. */
+const nearInteger = (x: number) => Math.abs(x - Math.round(x)) < 1e-9;
+
+/**
+ * Move a number `count` points along its step grid (ADR-0064): to the next
+ * point of `base + k·step` above it (`direction` 1) or below it (-1), where
+ * `base` is `min`, or `0`. The result is rounded to `decimals` and held in
+ * `min`–`max`: a move that would pass a bound lands on it, and a number at or
+ * beyond the bound in `direction` stays put. An empty field counts from `0`.
+ */
+export const stepNumber = (
+  current: null | number,
+  direction: -1 | 1,
+  options: CNumberFieldStepOptions,
+  count = 1,
+): null | number => {
+  const step =
+    Number.isFinite(options.step) && options.step > 0 ? options.step : 1;
+
+  const min = Math.max(options.min ?? -LIMIT, -LIMIT);
+
+  const max = Math.min(options.max ?? LIMIT, LIMIT);
+
+  if (current !== null) {
+    if (direction > 0 && current >= max) return current;
+
+    if (direction < 0 && current <= min) return current;
+  }
+
+  const base = options.min ?? 0;
+
+  const index = ((current ?? 0) - base) / step;
+
+  const from = nearInteger(index) ? Math.round(index) : index;
+
+  const k = direction > 0 ? Math.floor(from) + count : Math.ceil(from) - count;
+
+  const rounded = Number(
+    (base + k * step).toFixed(Math.max(0, Math.min(options.decimals, 100))),
+  );
+
+  return Math.min(max, Math.max(min, rounded)) + 0;
+};

@@ -28,11 +28,14 @@ typing, clear) is what a time picker needs as well.
 - The panel holds **time columns**, each a `role="listbox"` and one tab
   stop, named by `aria-label` with no visible heading. Real focus is on the
   option. Up/Down, Home/End and PageUp/Down move and commit (selection
-  follows focus), Enter closes.
+  follows focus), Enter closes. A 12-hour hour column lists `1…11, 12` of
+  the half day, the order people count, though 12 AM is the day's first
+  hour; the keys follow the list, so ArrowDown from 11 AM picks 12 AM.
 - **Live commit**: every pick commits at once and the panel stays open. A
   missing part fills in (minute `00`, the current period). The panel closes
   on Escape, Enter, light dismiss or its close button. There is no OK/Cancel
-  row.
+  row. _Amended 2026-10-02 by ADR-0066_: in the fullscreen panel picks wait
+  for a Done button, and the close button and Escape discard them.
 - Opening with an empty value focuses the hour column at the current hour,
   with the minute column scrolled to the current minute (rounded to the
   step). Landing commits nothing.
@@ -49,9 +52,12 @@ typing, clear) is what a time picker needs as well.
   moves, including a minute filled in or clamped. Room after the last row,
   and before the first in the fullscreen panel, is list padding measured
   from the column's height, never blank rows, so the listbox holds only its
-  options. A column that fits (the period, a coarse minute step) does not
-  scroll. Resting in the middle only positions: scrolling alone never
-  commits.
+  options. In the anchored panel a column that fits (the period, a coarse
+  minute step) does not scroll. In the fullscreen panel every column gets
+  the room, fitting or not, so the selected rows line up in the middle
+  however tall the panel is: a tall desktop window fits all 24 hours, and
+  without the room the hour column stayed still while the minutes centred.
+  Resting in the middle only positions: scrolling alone never commits.
 - Under `range`, an **end switch** above the one column set picks the end
   being edited. It opens on the end whose input was focused last, and each
   end commits live, so there is no pending state.
@@ -65,6 +71,9 @@ typing, clear) is what a time picker needs as well.
   and the order of the 12-hour period is ambiguous.
 - **An OK/Cancel footer**: an extra step and row, and it contradicts
   ADR-0058.
+- **A 12-hour hour column in time order (`12, 1…11`)**: the half day's
+  hours in sequence, but the list starts at 12 and does not read the way
+  hours are counted.
 - **Space/Enter to select**: more keystrokes, and Enter could no longer
   close.
 - **Left/Right between columns as one widget**: not the listbox pattern, so

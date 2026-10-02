@@ -20,17 +20,17 @@
     :valid
     inputmode="numeric"
   >
-    <template #trigger>
+    <template #trigger="{ buttonSize, iconSize }">
       <c-icon-button
         ref="calendarButtonRef"
         :aria-label="t.openCalendar"
         :disabled
+        :size="buttonSize"
         aria-haspopup="dialog"
-        size="x-small"
         text
         @click="onCalendarClick"
       >
-        <c-icon :path="mdiCalendar" :size="20" />
+        <c-icon :path="mdiCalendar" :size="iconSize" />
       </c-icon-button>
     </template>
   </TypedField>
@@ -373,6 +373,38 @@
           </transition>
         </div>
       </div>
+
+      <!-- The Today button (ADR-0065) picks today as its cell would; the
+           fullscreen panel's Done button (ADR-0066) commits the pending value.
+           Outside the body, so they stay through every swap; the last Tab
+           stops. -->
+      <div
+        v-if="showTodayResolved || confirming"
+        :class="ui.actions()"
+        part="actions"
+      >
+        <button
+          v-if="showTodayResolved"
+          :class="ui.today()"
+          :disabled="todayDisabled"
+          part="today"
+          type="button"
+          @click="pickToday"
+        >
+          {{ monthMode ? t.thisMonth : t.today }}
+        </button>
+
+        <button
+          v-if="confirming"
+          :class="ui.done()"
+          :disabled="doneDisabled"
+          part="done"
+          type="button"
+          @click="pickDone"
+        >
+          {{ t.done }}
+        </button>
+      </div>
     </div>
   </div>
 </template>
@@ -495,6 +527,13 @@ export interface CDatePickerProps {
    */
   shadow?: boolean;
   /**
+   * Show a Today button under the calendar that picks today ("This month"
+   * under `type="month"`)
+   *
+   * @defaultable false
+   */
+  showToday?: boolean;
+  /**
    * Show ISO 8601 week numbers beside the calendar rows (meaningful with a
    * Monday week start)
    *
@@ -559,6 +598,8 @@ export interface CDatePickerTexts {
   closePanel?: string;
   /** A day's accessible name in the grid; receives the ISO date. */
   date?: (iso: string) => string;
+  /** Label of the Done button in the fullscreen panel (narrow viewports). */
+  done?: string;
   /** Accessible name of the end input under `range`. */
   end?: string;
   /** Label of the end's month step under `type="month"` and `range`; also the end input's name there. */
@@ -593,6 +634,10 @@ export interface CDatePickerTexts {
   startMonth?: string;
   /** Label of the start's year step under `type="month"` and `range`. */
   startYear?: string;
+  /** Label of the Today button under `type="month"`. */
+  thisMonth?: string;
+  /** Label of the Today button (`show-today`). */
+  today?: string;
   /** Appended to the accessible name of a day that cannot be picked. */
   unavailable?: string;
   /** Seven weekday names, Sunday first. */
@@ -645,6 +690,9 @@ export type CDatePickerWeekday = 0 | 1 | 2 | 3 | 4 | 5 | 6;
  * @csspart option - One month or year in the list
  * @csspart step-label - The label above the current list under `type="month"`: month or year, and under `range` start or end
  * @csspart step-summary - A finished step under `type="month"`, its label and pick; pressing it returns to that step
+ * @csspart actions - The row under the calendar body holding the Today button (`show-today`) and, in the fullscreen panel, the Done button
+ * @csspart today - The Today button: picks today, or the current month under `type="month"`
+ * @csspart done - The Done button of the fullscreen panel (narrow viewports): commits what the panel holds and closes
  *
  * @cssstate bad-input - Present while committed text names no date that can be picked
  */
@@ -676,7 +724,7 @@ import { useHostEmit } from '../../shared/useHostEmit';
 import { useHostStates } from '../../shared/useHostStates';
 import { useNarrowViewport } from '../../shared/useNarrowViewport';
 import { useStatusAnnouncer } from '../../shared/useStatusAnnouncer';
-import { useTypedField } from '../../shared/useTypedField';
+import { type TypedFieldEnds, useTypedField } from '../../shared/useTypedField';
 import {
   addDays,
   addMonths,
@@ -753,6 +801,7 @@ const datePicker = tv({
     { class: { body: 'h-auto' }, fullscreen: true, month: true },
   ],
   slots: {
+    actions: 'flex shrink-0 justify-end px-3 pb-3',
     arrow:
       'flex size-9 transition-[opacity,visibility] duration-150 shrink-0 cursor-pointer items-center justify-center rounded-full border-0 bg-transparent p-0 text-on-surface-muted outline-none hover:not-disabled:bg-primary-subtle-hover hover:not-disabled:text-primary focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-primary disabled:cursor-default disabled:opacity-40',
     blank: 'p-0',
@@ -764,6 +813,9 @@ const datePicker = tv({
     caret: 'size-5 shrink-0 fill-current transition-transform duration-200',
     check: 'size-4 shrink-0 fill-current text-primary',
     control: 'flex items-center transition-[opacity,visibility] duration-150',
+    // c-button's filled look on a native button, at the heading row's 44px
+    // touch target.
+    done: 'ml-auto h-11 min-w-22 px-5 cursor-pointer rounded-csc-md border-0 bg-primary text-sm font-bold text-on-primary [font-family:var(--c-font-family)] outline-none hover:not-disabled:bg-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary disabled:cursor-default disabled:bg-surface-muted disabled:text-on-surface-faint',
     grid: 'w-full table-fixed border-collapse',
     header: 'flex items-center justify-between gap-2 min-h-14 px-1',
     icon: 'size-6 fill-current',
@@ -779,6 +831,10 @@ const datePicker = tv({
     stepSummary:
       'flex shrink-0 items-center gap-2 w-full min-h-10 px-3 rounded border-0 bg-transparent text-left text-sm text-on-surface [font-family:var(--c-font-family)] cursor-pointer outline-none hover:bg-primary-subtle-hover focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-primary',
     stepSummaryLabel: 'text-on-surface-muted',
+    // A text button's look on a native button: the focus trap only sees
+    // native buttons in the card.
+    today:
+      'h-9 px-3 cursor-pointer rounded-csc-md border-0 bg-transparent text-sm font-bold text-primary [font-family:var(--c-font-family)] outline-none hover:not-disabled:bg-primary-subtle-hover focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-primary disabled:cursor-default disabled:text-on-surface-disabled',
     viewButton:
       'flex items-center gap-0.5 h-9 cursor-pointer rounded-full border-0 bg-transparent pl-3 pr-1.5 text-sm font-medium text-on-surface [font-family:var(--c-font-family)] outline-none hover:bg-primary-subtle-hover focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-primary tabular-nums',
     visuallyHidden:
@@ -796,11 +852,13 @@ const datePicker = tv({
     },
     fullscreen: {
       true: {
+        actions: 'w-full max-w-[400px] mx-auto justify-between items-center',
         body: 'flex-1 h-auto min-h-[280px]',
         calendar: 'flex-1 min-h-0 w-full max-w-[400px] mx-auto',
         card: 'w-auto max-h-none rounded-none shadow-none',
         list: 'absolute inset-0 h-auto',
         panel: 'bg-surface-overlay overflow-hidden',
+        today: 'h-11',
       },
     },
     // A header item faded out while a list is open: it keeps its space.
@@ -881,6 +939,7 @@ const props = withDefaults(defineProps<CDatePickerProps>(), {
   range: false,
   required: false,
   shadow: undefined,
+  showToday: undefined,
   showWeekNumbers: undefined,
   size: undefined,
   texts: undefined,
@@ -906,6 +965,8 @@ const hideDetailsResolved = appDefault('hideDetails', false);
 const labelOnTopResolved = appDefault('labelOnTop', false);
 
 const shadowResolved = appDefault('shadow', false);
+
+const showTodayResolved = appDefault('showToday', false);
 
 const showWeekNumbersResolved = appDefault('showWeekNumbers', false);
 
@@ -947,6 +1008,7 @@ const DEFAULT_TEXTS: Required<CDatePickerTexts> = {
 
     return `${ENGLISH_WEEKDAYS[dayOfWeek(iso)]} ${d} ${ENGLISH_MONTHS[m - 1]} ${y}`;
   },
+  done: 'Done',
   end: 'End date',
   endMonth: 'End month',
   endYear: 'End year',
@@ -964,6 +1026,8 @@ const DEFAULT_TEXTS: Required<CDatePickerTexts> = {
   start: 'Start date',
   startMonth: 'Start month',
   startYear: 'Start year',
+  thisMonth: 'This month',
+  today: 'Today',
   unavailable: 'unavailable',
   weekdays: ENGLISH_WEEKDAYS,
   weekdaysShort: ENGLISH_WEEKDAYS.map((name) => name.slice(0, 2)),
@@ -1382,6 +1446,12 @@ const weekdayOrder = computed(() =>
 // Range picking: the first pick is pending — shown, announced, not emitted.
 const pendingStart = ref<null | string>(null);
 
+// The fullscreen panel's picks wait here for Done; every other way out
+// discards them (ADR-0066). The panel shows them over the committed value.
+const pendingValue = ref<null | TypedFieldEnds>(null);
+
+const panelEnds = computed(() => pendingValue.value ?? ends.value);
+
 const hoverDate = ref<null | string>(null);
 
 const { announce, set: setStatus, text: statusText } = useStatusAnnouncer();
@@ -1403,7 +1473,7 @@ const bandSpan = computed<[string, string] | null>(() => {
       : [pendingStart.value, other];
   }
 
-  const { end, start } = ends.value;
+  const { end, start } = panelEnds.value;
 
   return start && end ? [start, end] : null;
 });
@@ -1424,7 +1494,7 @@ const band = (iso: string): 'end' | 'middle' | 'start' | null => {
 const isSelected = (iso: string) => {
   if (rangeOn.value && pendingStart.value) return iso === pendingStart.value;
 
-  return iso === ends.value.start || iso === ends.value.end;
+  return iso === panelEnds.value.start || iso === panelEnds.value.end;
 };
 
 const cellUi = (iso: string) =>
@@ -1522,17 +1592,33 @@ const onGridKeyDown = (event: KeyboardEvent) => {
   if (event.key === 'Enter' || event.key === ' ') {
     event.preventDefault();
     pick(day);
+
+    // Enter is a pick and Done in one, unless the pick is half done.
+    if (event.key === 'Enter' && confirming.value && !isDisabled(day))
+      pickDone();
   }
 };
 
 // ---- picking ------------------------------------------------------------------
 
+// A finished pick commits and closes; in the fullscreen panel it becomes the
+// pending value instead, and the panel stays open for Done (ADR-0066).
+const finishPick = (next: TypedFieldEnds) => {
+  if (confirming.value) {
+    pendingValue.value = next;
+
+    return;
+  }
+
+  commitValue(next);
+  closePanel(true);
+};
+
 const pick = (iso: string) => {
   if (isDisabled(iso)) return;
 
   if (!rangeOn.value) {
-    commitValue({ end: null, start: iso });
-    closePanel(true);
+    finishPick({ end: null, start: iso });
 
     return;
   }
@@ -1550,8 +1636,7 @@ const pick = (iso: string) => {
       : [pendingStart.value, iso];
 
   pendingStart.value = null;
-  commitValue({ end, start });
-  closePanel(true);
+  finishPick({ end, start });
 };
 
 const onCellClick = (iso: string) => {
@@ -1645,14 +1730,22 @@ const stepSummaries = computed(() => {
   const rows: { label: string; step: CDatePickerMonthStep; value: string }[] =
     [];
 
-  if (pendingStart.value)
+  // A finished range waits on the end's year step: its start still shows.
+  const start =
+    pendingStart.value ??
+    (onEndSteps.value ? (pendingValue.value?.start ?? null) : null);
+
+  if (start)
     rows.push({
       label: t.value.startMonth,
       step: 'start-month',
-      value: monthText(pendingStart.value),
+      value: monthText(start),
     });
 
-  if (onYearStep.value && draftMonth.value !== null)
+  // A finished pick waits on its year step: its month still shows.
+  const month = draftMonth.value ?? targetMonth.value;
+
+  if (onYearStep.value && month !== null)
     rows.push({
       label: rangeOn.value
         ? onEndSteps.value
@@ -1660,16 +1753,28 @@ const stepSummaries = computed(() => {
           : t.value.startMonth
         : t.value.month,
       step: onEndSteps.value ? 'end-month' : 'start-month',
-      value: monthName(draftMonth.value),
+      value: monthName(month),
     });
 
   return rows;
 });
 
-// The committed month the current end's steps mark.
+// The month the current end's steps mark: the pending one in the fullscreen
+// panel, else the committed one.
 const stepTarget = computed(() =>
-  onEndSteps.value ? ends.value.end : ends.value.start,
+  onEndSteps.value ? panelEnds.value.end : panelEnds.value.start,
 );
+
+// The month (1–12) of the pending value on its year step, which a new year
+// pick keeps.
+const targetMonth = computed(() =>
+  pendingValue.value && stepTarget.value
+    ? Number(stepTarget.value.slice(5))
+    : null,
+);
+
+// The month a year step pairs with: the one just picked, else the pending one.
+const yearStepMonth = computed(() => draftMonth.value ?? targetMonth.value);
 
 // A month row is out when no allowed year can take it.
 const monthOutEverywhere = (m: number) =>
@@ -1690,7 +1795,7 @@ const stepOptions = computed<ListOption[]>(() => {
   const [from, to] = yearSpan.value;
 
   return Array.from({ length: to - from + 1 }, (_, i) => ({
-    disabled: isMonthDisabled(isoMonth(from + i, draftMonth.value ?? 1)),
+    disabled: isMonthDisabled(isoMonth(from + i, yearStepMonth.value ?? 1)),
     key: `y${from + i}`,
     name: String(from + i),
     selected: !!target && Number(target.slice(0, 4)) === from + i,
@@ -1747,6 +1852,48 @@ const goToStep = (step: CDatePickerMonthStep) => {
   enterStep(step);
 };
 
+// A finished year step: commit the month, or under range make it the
+// pending start or complete the range.
+const commitMonth = (month: string) => {
+  if (!rangeOn.value) {
+    finishPick({ end: null, start: month });
+    stayOnYearStep();
+
+    return;
+  }
+
+  // On the end's year step a finished pending range keeps its start, so a
+  // new year changes the end.
+  const first =
+    pendingStart.value ??
+    (onEndSteps.value ? (pendingValue.value?.start ?? null) : null);
+
+  if (!first) {
+    pendingStart.value = month;
+    setStatus(t.value.pendingStart(monthText(month)));
+    enterStep('end-month');
+
+    return;
+  }
+
+  const [start, end] = month < first ? [month, first] : [first, month];
+
+  pendingStart.value = null;
+  finishPick({ end, start });
+  stayOnYearStep();
+};
+
+// In the fullscreen panel a finished pick waits for Done on its year step,
+// with the year checked under the month's summary (Today lands there too).
+const stayOnYearStep = () => {
+  if (!confirming.value) return;
+
+  const step = rangeOn.value ? 'end-year' : 'start-year';
+
+  if (monthStep.value === step) listIndex.value = landingIndex();
+  else enterStep(step);
+};
+
 const pickStep = (option: ListOption) => {
   if (!onYearStep.value) {
     draftMonth.value = option.value;
@@ -1755,33 +1902,10 @@ const pickStep = (option: ListOption) => {
     return;
   }
 
-  const month = isoMonth(option.value, draftMonth.value ?? 1);
+  const month = isoMonth(option.value, yearStepMonth.value ?? 1);
 
   draftMonth.value = null;
-
-  if (!rangeOn.value) {
-    commitValue({ end: null, start: month });
-    closePanel(true);
-
-    return;
-  }
-
-  if (!pendingStart.value) {
-    pendingStart.value = month;
-    setStatus(t.value.pendingStart(monthText(month)));
-    enterStep('end-month');
-
-    return;
-  }
-
-  const [start, end] =
-    month < pendingStart.value
-      ? [month, pendingStart.value]
-      : [pendingStart.value, month];
-
-  pendingStart.value = null;
-  commitValue({ end, start });
-  closePanel(true);
+  commitMonth(month);
 };
 
 const listOptions = computed<ListOption[]>(() => {
@@ -1929,8 +2053,79 @@ const onListKeyDown = (event: KeyboardEvent) => {
 
   if (event.key === 'Enter' || event.key === ' ') {
     event.preventDefault();
+
+    // On a year step Enter is a pick and Done in one, as in the grid.
+    const finishing =
+      event.key === 'Enter' &&
+      confirming.value &&
+      monthMode.value &&
+      onYearStep.value &&
+      !listOptions.value[listIndex.value]?.disabled;
+
     pickOption(listIndex.value);
+
+    if (finishing) pickDone();
   }
+};
+
+// ---- the Today button (ADR-0065) ----------------------------------------------
+
+const thisMonth = computed(() => monthOf(today.value));
+
+// Disabled, never hidden, when today (or this month) cannot be picked.
+const todayDisabled = computed(() =>
+  monthMode.value ? isMonthDisabled(thisMonth.value) : isDisabled(today.value),
+);
+
+// Today is pressing today's cell; in month mode, both steps on this month.
+const pickToday = () => {
+  // A panel left open across midnight: the press reads the clock again.
+  today.value = todayIso();
+
+  if (todayDisabled.value) return;
+
+  if (monthMode.value) {
+    draftMonth.value = null;
+    commitMonth(thisMonth.value);
+
+    return;
+  }
+
+  // A pick that keeps the panel open — a range's first, or any in the
+  // fullscreen panel — shows today's month and puts focus on today's cell,
+  // as a press on it would.
+  if (confirming.value || (rangeOn.value && !pendingStart.value)) {
+    const fromList = view.value !== 'days';
+
+    focusedDate.value = today.value;
+    setMonth(monthOf(today.value), false, !fromList);
+
+    if (fromList) {
+      motion.value = 'list-out';
+      view.value = 'days';
+    }
+
+    focusCell();
+  }
+
+  pick(today.value);
+};
+
+// ---- the Done button (ADR-0066) -----------------------------------------------
+
+// Disabled while a pick is half done, so a pick never makes a half range.
+const doneDisabled = computed(
+  () => pendingStart.value !== null || draftMonth.value !== null,
+);
+
+// Commits the pending value — nothing when there was no pick — and closes.
+// It commits before closing: the panel's layout resets as it closes.
+const pickDone = () => {
+  if (doneDisabled.value) return;
+
+  if (pendingValue.value) commitValue(pendingValue.value);
+
+  closePanel(true);
 };
 
 // ---- panel ------------------------------------------------------------------
@@ -1999,8 +2194,9 @@ const {
   host,
   matchWidth: false,
   onClosed: () => {
-    // A dismissed range gesture leaves nothing behind.
+    // A dismissed range gesture or pending value leaves nothing behind.
     pendingStart.value = null;
+    pendingValue.value = null;
     hoverDate.value = null;
     motion.value = null;
     view.value = homeView.value;
@@ -2012,6 +2208,7 @@ const {
     today.value = todayIso();
     motion.value = null;
     pendingStart.value = null;
+    pendingValue.value = null;
 
     if (monthMode.value) {
       view.value = 'months';
@@ -2031,6 +2228,9 @@ const {
   panel: panelRef,
   returnFocusTo: () => inputOf(lastInput.value),
 });
+
+// The fullscreen panel collects picks for its Done button (ADR-0066).
+const confirming = computed(() => layout.value === 'fullscreen');
 
 const ui = computed(() =>
   datePicker({

@@ -20,16 +20,16 @@
     :size="sizeResolved"
     :valid
   >
-    <template #trigger>
+    <template #trigger="{ buttonSize, iconSize }">
       <c-icon-button
         :aria-label="t.openClock"
         :disabled
+        :size="buttonSize"
         aria-haspopup="dialog"
-        size="x-small"
         text
         @click="onClockClick"
       >
-        <c-icon :path="mdiClockOutline" :size="20" />
+        <c-icon :path="mdiClockOutline" :size="iconSize" />
       </c-icon-button>
     </template>
   </typed-field>
@@ -124,6 +124,36 @@
             {{ row.label }}
           </li>
         </ul>
+      </div>
+
+      <!-- The Now button (ADR-0065) commits the current time and closes; the
+           fullscreen panel's Done button (ADR-0066) commits the pending value.
+           Outside the tabpanel: they act on whichever end is being edited. -->
+      <div
+        v-if="showNowResolved || confirming"
+        :class="ui.actions()"
+        part="actions"
+      >
+        <button
+          v-if="showNowResolved"
+          :class="ui.now()"
+          :disabled="nowDisabled"
+          part="now"
+          type="button"
+          @click="pickNow"
+        >
+          {{ t.now }}
+        </button>
+
+        <button
+          v-if="confirming"
+          :class="ui.done()"
+          part="done"
+          type="button"
+          @click="pickDone"
+        >
+          {{ t.done }}
+        </button>
       </div>
     </div>
   </div>
@@ -232,6 +262,12 @@ export interface CTimePickerProps {
    */
   shadow?: boolean;
   /**
+   * Show a Now button under the columns that commits the current time
+   *
+   * @defaultable false
+   */
+  showNow?: boolean;
+  /**
    * Field height: the 52px default (the shared control height) or the 36px `small` box
    *
    * @defaultable 'default'
@@ -283,12 +319,16 @@ export interface CTimePickerTexts {
   clearSelection?: string;
   /** Accessible label of the close button in the fullscreen panel (narrow viewports). */
   closePanel?: string;
+  /** Label of the Done button in the fullscreen panel (narrow viewports). */
+  done?: string;
   /** Name of the end input and the end tab under `range`. */
   end?: string;
   /** Accessible name of the hour column. */
   hours?: string;
   /** Accessible name of the minute column. */
   minutes?: string;
+  /** Label of the Now button (`show-now`). */
+  now?: string;
   /** Accessible label of the clock button. */
   openClock?: string;
   /** Accessible name of the AM/PM column. */
@@ -320,6 +360,9 @@ export type CTimePickerValue = CTimePickerRange | null | string;
  * @csspart columns - The row of time columns
  * @csspart column - One time column: hours, minutes or AM/PM
  * @csspart option - One row of a time column
+ * @csspart actions - The row under the columns holding the Now button (`show-now`) and, in the fullscreen panel, the Done button
+ * @csspart now - The Now button: commits the current time
+ * @csspart done - The Done button of the fullscreen panel (narrow viewports): commits what the panel holds and closes
  *
  * @cssstate bad-input - Present while committed text names no time that can be picked
  */
@@ -346,7 +389,11 @@ import { useAnchoredPanel } from '../../shared/useAnchoredPanel';
 import { useHostEmit } from '../../shared/useHostEmit';
 import { useHostStates } from '../../shared/useHostStates';
 import { useNarrowViewport } from '../../shared/useNarrowViewport';
-import { type TypedFieldEnd, useTypedField } from '../../shared/useTypedField';
+import {
+  type TypedFieldEnd,
+  type TypedFieldEnds,
+  useTypedField,
+} from '../../shared/useTypedField';
 import {
   clampToBounds,
   compileTimeMask,
@@ -420,15 +467,22 @@ type CTimePickerRow = {
  */
 const timePicker = tv({
   slots: {
+    actions: 'flex shrink-0 justify-end px-2 pb-2',
     card: 'flex flex-col w-max overflow-hidden rounded-csc-md bg-surface-overlay text-on-surface shadow-[2px_4px_10px_#00000029]',
     // Ceiling 7.2 rows; the peek cap ends each column on a half row.
     column:
       'relative list-none m-0 p-1 w-16 max-h-[296px] overflow-y-auto scrollbar-hidden overscroll-contain outline-none',
     columns: 'flex justify-center gap-1 p-2',
+    // c-button's filled look on a native button, at the heading row's 44px
+    // touch target.
+    done: 'ml-auto h-11 min-w-22 px-5 cursor-pointer rounded-csc-md border-0 bg-primary text-sm font-bold text-on-primary [font-family:var(--c-font-family)] outline-none hover:bg-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary',
     endSwitch:
       'flex gap-0.5 mx-3 mt-3 p-0.5 rounded-csc-lg border border-solid border-divider bg-clip-padding bg-surface-sunken',
     endTab:
       'flex-1 h-8 px-3 whitespace-nowrap cursor-pointer rounded-csc-md border-0 bg-transparent text-sm font-medium text-on-surface-muted [font-family:var(--c-font-family)] outline-none hover:bg-primary-subtle-hover focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-primary aria-selected:bg-primary aria-selected:text-on-primary aria-selected:hover:bg-primary-hover',
+    // A text button's look on a native button: the focus trap only sees
+    // native buttons in the card.
+    now: 'h-9 px-3 whitespace-nowrap cursor-pointer rounded-csc-md border-0 bg-transparent text-sm font-bold text-primary [font-family:var(--c-font-family)] outline-none hover:not-disabled:bg-primary-subtle-hover focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-primary disabled:cursor-default disabled:text-on-surface-disabled',
     option:
       'flex items-center justify-center h-10 rounded-csc-lg text-sm tabular-nums text-on-surface cursor-pointer select-none outline-none hover:bg-primary-subtle-hover focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-primary aria-selected:bg-primary-subtle aria-selected:text-primary aria-selected:font-medium',
     panel:
@@ -442,9 +496,12 @@ const timePicker = tv({
     },
     fullscreen: {
       true: {
+        actions:
+          'w-full max-w-[400px] mx-auto justify-between items-center px-3 pb-3',
         card: 'w-auto max-h-none rounded-none shadow-none',
         column: 'max-h-none h-full',
         columns: 'flex-1 min-h-0',
+        now: 'h-11',
         panel: 'bg-surface-overlay overflow-hidden',
       },
     },
@@ -474,6 +531,7 @@ const props = withDefaults(defineProps<CTimePickerProps>(), {
   range: false,
   required: false,
   shadow: undefined,
+  showNow: undefined,
   size: undefined,
   texts: undefined,
   valid: true,
@@ -496,6 +554,8 @@ const labelOnTopResolved = appDefault('labelOnTop', false);
 
 const shadowResolved = appDefault('shadow', false);
 
+const showNowResolved = appDefault('showNow', false);
+
 const sizeResolved = appDefault('size', 'default');
 
 // ---- texts: own → app default → Intl for the page's lang → English -------
@@ -505,9 +565,11 @@ const DEFAULT_TEXTS: Required<CTimePickerTexts> = {
   chooseTime: 'Choose time',
   clearSelection: 'Clear selection',
   closePanel: 'Close',
+  done: 'Done',
   end: 'End time',
   hours: 'Hours',
   minutes: 'Minutes',
+  now: 'Now',
   openClock: 'Open time picker',
   period: 'AM/PM',
   pm: 'PM',
@@ -602,6 +664,12 @@ const typed = useTypedField({
 
 const { commitValue, ends, inputOf, lastInput } = typed;
 
+// The fullscreen panel's picks wait here for Done; every other way out
+// discards them (ADR-0066). The columns show them over the committed value.
+const pendingValue = ref<null | TypedFieldEnds>(null);
+
+const panelEnds = computed(() => pendingValue.value ?? ends.value);
+
 /** Whether the committed text names no time that can be picked — the value is then `null` (CONTEXT.md "Bad input"). */
 const badInput = computed<boolean>(() => typed.badInput.value);
 
@@ -627,7 +695,7 @@ const resetLanding = () => {
 };
 
 const committed = computed<null | number>(() => {
-  const time = ends.value[rangeOn.value ? editing.value : 'start'];
+  const time = panelEnds.value[rangeOn.value ? editing.value : 'start'];
 
   return time ? toMinutes(time) : null;
 });
@@ -694,8 +762,9 @@ const columns = computed<CTimePickerColumn[]>(() => {
 
 // ---- committing -------------------------------------------------------------
 
-// Every pick commits (ADR-0062). An empty end fills in its other parts: the
-// hour column's resting hour, minute 00, that hour's period.
+// Every pick commits (ADR-0062), or in the fullscreen panel becomes the
+// pending value (ADR-0066). An empty end fills in its other parts: the hour
+// column's resting hour, minute 00, that hour's period.
 const pickPart = (kind: CTimePickerColumnKind, value: number) => {
   const base = committed.value;
 
@@ -712,9 +781,13 @@ const pickPart = (kind: CTimePickerColumnKind, value: number) => {
   // A pick never leaves the bounds: the minute clamps to the bound.
   const time = fromMinutes(clampToBounds(next, bounds.value));
 
-  const end = rangeOn.value ? editing.value : 'start';
+  setEnd(rangeOn.value ? editing.value : 'start', time);
+};
 
-  commitValue({ ...ends.value, [end]: time });
+const setEnd = (end: TypedFieldEnd, time: string) => {
+  if (confirming.value)
+    pendingValue.value = { ...panelEnds.value, [end]: time };
+  else commitValue({ ...ends.value, [end]: time });
 };
 
 const columnEl = (kind: CTimePickerColumnKind) =>
@@ -744,25 +817,31 @@ const afterPick = (
   nextTick(() =>
     requestAnimationFrame(() => {
       rowEl(kind)?.focus({ preventScroll: true });
-
-      const behavior = prefersReducedMotion() ? 'instant' : 'smooth';
-
-      for (const column of columns.value) {
-        const was = before.get(column.kind);
-
-        const key = column.rows.find((r) => r.focus)?.key;
-
-        if (was && was.key === key && was.count === column.rows.length)
-          continue;
-
-        const list = columnEl(column.kind);
-
-        if (list && was?.count !== column.rows.length) fitColumn(list);
-
-        restColumn(column.kind, behavior);
-      }
+      restColumnsMoved(before);
     }),
   );
+
+// Rest every column the change moved, once the rows re-render.
+const restMoved = (before: ReturnType<typeof snapshotColumns>) =>
+  nextTick(() => requestAnimationFrame(() => restColumnsMoved(before)));
+
+const restColumnsMoved = (before: ReturnType<typeof snapshotColumns>) => {
+  const behavior = prefersReducedMotion() ? 'instant' : 'smooth';
+
+  for (const column of columns.value) {
+    const was = before.get(column.kind);
+
+    const key = column.rows.find((r) => r.focus)?.key;
+
+    if (was && was.key === key && was.count === column.rows.length) continue;
+
+    const list = columnEl(column.kind);
+
+    if (list && was?.count !== column.rows.length) fitColumn(list);
+
+    restColumn(column.kind, behavior);
+  }
+};
 
 const pick = (kind: CTimePickerColumnKind, value: number) => {
   const before = snapshotColumns();
@@ -820,7 +899,7 @@ const onColumnKeyDown = (kind: CTimePickerColumnKind, event: KeyboardEvent) => {
 
       if (rows[at] && !rows[at].disabled) pickPart(kind, rows[at].value);
 
-      closePanel(true);
+      pickDone();
 
       return;
     case 'Home':
@@ -874,6 +953,46 @@ const onEndKeyDown = (event: KeyboardEvent) => {
   );
 };
 
+// ---- the Now button (ADR-0065) ------------------------------------------------
+
+// The current time, read on open and again on the press.
+const now = ref(nowTime());
+
+// Disabled, never hidden, while now is outside `min` / `max`.
+const nowDisabled = computed(
+  () => !inBounds(toMinutes(now.value), bounds.value),
+);
+
+// The exact minute, whatever the minute step; the one commit that closes. In
+// the fullscreen panel it only moves the columns there, for Done.
+const pickNow = () => {
+  now.value = nowTime();
+
+  if (nowDisabled.value) return;
+
+  if (!confirming.value) {
+    setEnd(rangeOn.value ? editing.value : 'start', now.value);
+    closePanel(true);
+
+    return;
+  }
+
+  const before = snapshotColumns();
+
+  setEnd(rangeOn.value ? editing.value : 'start', now.value);
+  restMoved(before);
+};
+
+// ---- the Done button (ADR-0066) -----------------------------------------------
+
+// Commits the pending value — nothing when there was no pick — and closes.
+// It commits before closing: the panel's layout resets as it closes.
+const pickDone = () => {
+  if (pendingValue.value) commitValue(pendingValue.value);
+
+  closePanel(true);
+};
+
 // ---- the panel ---------------------------------------------------------------
 
 const onPanelKeyDown = (event: KeyboardEvent) => {
@@ -915,10 +1034,12 @@ const onPanelKeyDown = (event: KeyboardEvent) => {
   stops[nextIndex].focus();
 };
 
-// A column that overflows rests its selected row at the top (anchored) or the
-// middle (fullscreen), ADR-0062. The room that lets the first and last rows
-// get there is list padding measured from the column, never blank rows, so
-// the listbox holds only its options. A column that fits never scrolls.
+// The selected row rests at the top of an overflowing column (anchored) or
+// in the middle of every column (fullscreen), ADR-0062. The room that lets
+// the first and last rows get there is list padding measured from the
+// column, never blank rows, so the listbox holds only its options. In the
+// anchored panel a column that fits never scrolls; in the fullscreen panel
+// it gets the room too, so the selections line up however tall the panel is.
 const fitColumn = (list: HTMLElement) => {
   // Measure without our own room: a padded scrollHeight would make a
   // fitting column overflow.
@@ -930,13 +1051,9 @@ const fitColumn = (list: HTMLElement) => {
       rows: Array.from(list.querySelectorAll<HTMLElement>('li[role="option"]')),
     });
 
-  if (list.scrollHeight <= list.clientHeight) return;
-
   const row = list.querySelector<HTMLElement>('li[role="option"]');
 
   if (!row) return;
-
-  const cs = getComputedStyle(list);
 
   const height = list.clientHeight;
 
@@ -944,11 +1061,16 @@ const fitColumn = (list: HTMLElement) => {
     const room = Math.max(0, (height - row.offsetHeight) / 2);
 
     list.style.paddingBlock = `${room}px`;
-  } else {
-    const room = height - row.offsetHeight - parseFloat(cs.paddingTop);
 
-    list.style.paddingBlockEnd = `${Math.max(0, room)}px`;
+    return;
   }
+
+  if (list.scrollHeight <= height) return;
+
+  const room =
+    height - row.offsetHeight - parseFloat(getComputedStyle(list).paddingTop);
+
+  list.style.paddingBlockEnd = `${Math.max(0, room)}px`;
 };
 
 const restColumn = (kind: CTimePickerColumnKind, behavior: ScrollBehavior) => {
@@ -1024,9 +1146,15 @@ const {
   fullscreen: narrow,
   host,
   matchWidth: false,
+  // A pending value leaves nothing behind on any exit but Done.
+  onClosed: () => {
+    pendingValue.value = null;
+  },
   onOpened: () => {
     pageLang.value = document.documentElement.lang;
     editing.value = rangeOn.value ? lastInput.value : 'start';
+    pendingValue.value = null;
+    now.value = nowTime();
     resetLanding();
     nextTick(() =>
       requestAnimationFrame(() => {
@@ -1043,6 +1171,9 @@ const {
 watch(isOpen, (open) => {
   if (!open) observeCard(false);
 });
+
+// The fullscreen panel collects picks for its Done button (ADR-0066).
+const confirming = computed(() => layout.value === 'fullscreen');
 
 const ui = computed(() =>
   timePicker({ fullscreen: layout.value === 'fullscreen' }),

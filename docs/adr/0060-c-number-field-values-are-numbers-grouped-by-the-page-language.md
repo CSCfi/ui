@@ -4,7 +4,8 @@ Date: 2026-09-29
 
 ## Status
 
-Accepted
+Accepted. Amended by ADR-0064 (always a numeric keyboard; step buttons
+and arrow-key stepping).
 
 ## Context
 

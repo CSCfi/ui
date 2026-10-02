@@ -64,9 +64,11 @@ moment to read `badInput`, as above.
 The calendar button at the field's trailing edge, or Alt+ArrowDown in the
 input, opens the calendar panel. It is a dialog: focus moves onto the selected
 day, else today, else the nearest day that can be picked, and Tab cycles
-through the month and year controls and the grid until the panel closes.
+through the month and year controls, the grid and the Today button
+(`show-today`) until the panel closes.
 Picking a day commits it and closes the panel; Escape closes it without a
-change. Focus returns to the input either way.
+change. Focus returns to the input either way. On a narrow viewport a pick
+waits for a Done button instead (see [Narrow viewports](#narrow-viewports)).
 
 | Key                     | In the day grid                       |
 | ----------------------- | ------------------------------------- |
@@ -163,6 +165,27 @@ months open.
 `change:month` names the displayed month of the day grid, so it is never
 fired in month mode.
 
+## Today
+
+`show-today` adds a Today button under the calendar. Pressing it does what
+pressing today in the grid would: it commits today and closes the panel.
+Under `range` the first press makes today the pending start and moves focus
+onto it in the grid; a press while a start is pending completes the range.
+Under `type="month"` the button reads "This month" and picks the current
+month, its month and year at once.
+
+```vue
+<c-date-picker v-model="due" label="Due date" show-today />
+```
+
+The button is disabled, never hidden, while today cannot be picked: outside
+`min` and `max`, in `disabled-dates`, or ruled out by `is-date-disabled`. It
+goes by the rules assigned at that moment, as typed text does, so when
+`disabled-dates` is loaded per displayed month, keep today's dates in the
+list or express the rule as `is-date-disabled`. Leave the button off where
+today is never the answer, such as a birthdate, or turn it on app-wide with
+`applyDefaults({ 'c-date-picker': { showToday: true } })`.
+
 ## Texts
 
 Month and weekday names and each day's accessible name come from `texts` when
@@ -177,7 +200,18 @@ English unless `texts` replaces them. Weekday arrays are indexed like
 
 On a viewport narrower than 760px the calendar opens as a **fullscreen
 panel**: a heading row with the field's `label` and a close button above the
-calendar. The field stays typeable at every width.
+calendar, and a Done button below it. There a pick only selects: the day, the
+range or the month waits in the panel, and nothing is emitted until Done
+commits it and closes the panel. The close button and Escape close the panel
+without a change, discarding what was picked, and so does the window growing
+past 760px while it is open.
+
+The Today button selects today the same way. Enter on a day picks it and
+presses Done at once. Under `range` Done stays disabled until the second pick
+completes the range, and under `type="month"` the panel stays on the year
+step, the year checked, until Done. Pressing Done before picking anything
+closes the panel and changes nothing. The field stays typeable at every
+width.
 
 ## Native date input
 

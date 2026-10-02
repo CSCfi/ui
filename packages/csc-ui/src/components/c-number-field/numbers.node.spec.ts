@@ -1,7 +1,8 @@
 /**
  * The number core behind c-number-field (CONTEXT.md "Number field", "Group
  * separator"; ADR-0060): separators from Intl, grouping as digits are typed,
- * the caret, decimals, the sign, reading and formatting.
+ * the caret, decimals, the sign, reading and formatting, and stepping
+ * (CONTEXT.md "Step"; ADR-0064).
  */
 import { describe, expect, it } from 'vitest';
 
@@ -12,6 +13,7 @@ import {
   formatNumber,
   numberSeparators,
   readNumber,
+  stepNumber,
 } from './numbers';
 
 const NBSP = ' ';
@@ -175,5 +177,85 @@ describe('formatting', () => {
     expect(format(Number.NaN)).toBe('');
     expect(format(Number.POSITIVE_INFINITY)).toBe('');
     expect(format(-0.001)).toBe('0');
+  });
+});
+
+describe('stepping', () => {
+  const opts = (o: Partial<Parameters<typeof stepNumber>[2]> = {}) => ({
+    decimals: 0,
+    max: null,
+    min: null,
+    step: 1,
+    ...o,
+  });
+
+  it('moves one step, by 1 without a step', () => {
+    expect(stepNumber(12, 1, opts())).toBe(13);
+    expect(stepNumber(12, -1, opts())).toBe(11);
+    expect(stepNumber(0, -1, opts())).toBe(-1);
+    expect(stepNumber(5, 1, opts({ step: 0 }))).toBe(6);
+    expect(stepNumber(5, 1, opts({ step: -3 }))).toBe(6);
+  });
+
+  it('snaps an off-grid number to the next point of the grid', () => {
+    expect(stepNumber(12, 1, opts({ step: 5 }))).toBe(15);
+    expect(stepNumber(12, -1, opts({ step: 5 }))).toBe(10);
+    expect(stepNumber(15, 1, opts({ step: 5 }))).toBe(20);
+    expect(stepNumber(-12, 1, opts({ step: 5 }))).toBe(-10);
+  });
+
+  it('counts the grid from min', () => {
+    expect(stepNumber(3, 1, opts({ min: 3, step: 5 }))).toBe(8);
+    expect(stepNumber(10, 1, opts({ min: 3, step: 5 }))).toBe(13);
+    expect(stepNumber(10, -1, opts({ min: 3, step: 5 }))).toBe(8);
+  });
+
+  it('moves count steps along the grid', () => {
+    expect(stepNumber(12, 1, opts({ step: 5 }), 10)).toBe(60);
+    expect(stepNumber(12, -1, opts({ step: 5 }), 10)).toBe(-35);
+  });
+
+  it('lands on a bound and stays at it', () => {
+    const range = opts({ max: 50, min: 1, step: 5 });
+
+    expect(stepNumber(49, 1, range)).toBe(50);
+    expect(stepNumber(50, 1, range)).toBe(50);
+    expect(stepNumber(2, -1, range)).toBe(1);
+    expect(stepNumber(1, -1, range)).toBe(1);
+  });
+
+  it('goes from an out-of-range number to the nearest bound', () => {
+    const range = opts({ max: 50, min: 1 });
+
+    expect(stepNumber(70, -1, range)).toBe(50);
+    expect(stepNumber(70, 1, range)).toBe(70);
+    expect(stepNumber(-5, 1, range)).toBe(1);
+    expect(stepNumber(-5, -1, range)).toBe(-5);
+  });
+
+  it('counts an empty field from 0, then clamps', () => {
+    expect(stepNumber(null, 1, opts({ step: 5 }))).toBe(5);
+    expect(stepNumber(null, -1, opts({ step: 5 }))).toBe(-5);
+    expect(stepNumber(null, 1, opts({ min: 10 }))).toBe(10);
+    expect(stepNumber(null, -1, opts({ min: 10 }))).toBe(10);
+    expect(stepNumber(null, 1, opts({ max: -3 }))).toBe(-3);
+  });
+
+  it('rounds to decimals, leaving no float noise', () => {
+    const tenths = opts({ decimals: 1, step: 0.1 });
+
+    expect(stepNumber(0.2, 1, tenths)).toBe(0.3);
+    expect(stepNumber(0.3, -1, tenths)).toBe(0.2);
+    expect(stepNumber(0.7, 1, tenths)).toBe(0.8);
+    expect(stepNumber(1.25, 1, opts({ decimals: 2, step: 0.25 }))).toBe(1.5);
+    expect(stepNumber(1, -1, opts({ step: 1 }))).toBe(0);
+    expect(Object.is(stepNumber(1, -1, opts()), 0)).toBe(true);
+  });
+
+  it('never steps past 15 integer digits', () => {
+    const top = 999_999_999_999_999;
+
+    expect(stepNumber(top, 1, opts())).toBe(top);
+    expect(stepNumber(-top, -1, opts())).toBe(-top);
   });
 });

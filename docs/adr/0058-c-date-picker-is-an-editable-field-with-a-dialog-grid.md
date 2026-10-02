@@ -24,7 +24,12 @@ the panel ever getting in the way, and its calendar is two-dimensional:
   and end, in one field box under `range`). Clicking or focusing the text
   never opens the panel; a trailing calendar button and Alt+ArrowDown do.
   The same model holds on every viewport; a narrow viewport opens the
-  fullscreen panel (ADR-0050), which holds no text input.
+  fullscreen panel (ADR-0050), which holds no text input. On a touch screen
+  the calendar button is the panel's only opener, so in a default field it
+  is a 40px button with a 24px icon, bigger than `c-select`'s 28px chevron,
+  whose whole field opens the panel; a small field's 36px box keeps 28px with
+  a 20px icon, and the clear button stays 28px beside it. The time picker's
+  clock button follows (ADR-0062).
 - The panel is a `role="dialog"` named by the field label, following the
   WAI-ARIA date-picker-dialog pattern: real DOM focus moves onto the day grid
   (one roving tab stop — the selected day, else today, else the nearest
@@ -34,7 +39,8 @@ the panel ever getting in the way, and its calendar is two-dimensional:
   rather than opening nested popovers, so no popover chain forms.
 - A pick commits and closes; there is no Cancel/OK row. In range mode the
   first pick is a pending start, emitted only when the second pick completes
-  the range.
+  the range. _Amended 2026-10-02 by ADR-0066_: in the fullscreen panel a pick
+  only selects, and a Done button commits.
 
 ## Alternatives considered
 

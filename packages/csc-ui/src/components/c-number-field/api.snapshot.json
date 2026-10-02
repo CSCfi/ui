@@ -19,6 +19,7 @@
     "required": "boolean = false",
     "shadow": "boolean = false",
     "size": "'default' | 'small' = 'default'",
+    "step": "number = 1",
     "valid": "boolean = true",
     "value": "null | number | string = null"
   },
@@ -31,7 +32,9 @@
     "hideDetails",
     "labelOnTop",
     "shadow",
-    "size"
+    "size",
+    "step",
+    "texts"
   ],
   "events": {
     "change": "CustomEvent<null | number>",
@@ -40,9 +43,13 @@
   },
   "methods": {},
   "parts": [
-    "input"
+    "input",
+    "step-down",
+    "step-up"
   ],
-  "propertyOnly": [],
+  "propertyOnly": [
+    "texts"
+  ],
   "props": {
     "decimals": "number = 0",
     "decimalSeparator": "string = ''",
@@ -63,6 +70,8 @@
     "required": "boolean = false",
     "shadow": "boolean = false",
     "size": "'default' | 'small' = 'default'",
+    "step": "number = 1",
+    "texts": "CNumberFieldTexts = {}",
     "valid": "boolean = true",
     "value": "null | number | string = null"
   },

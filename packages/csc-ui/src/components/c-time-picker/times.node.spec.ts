@@ -203,10 +203,12 @@ describe('bounds', () => {
 });
 
 describe('column rows', () => {
-  it('orders a 12-hour column 12, 1…11 of its half day', () => {
+  it('orders a 12-hour column 1…11, 12 of its half day', () => {
     expect(hourRows(false)).toHaveLength(24);
-    expect(hourRows(true)).toEqual([0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]);
-    expect(hourRows(true, true)[0]).toBe(12);
+    expect(hourRows(true)).toEqual([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 0]);
+    expect(hourRows(true, true)).toEqual([
+      13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 12,
+    ]);
   });
 
   it('thins minutes by the step and sorts an off-step minute in', () => {
