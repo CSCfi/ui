@@ -72,7 +72,8 @@ cycles through the columns and the Now button (`show-now`) until the panel
 closes.
 
 Every pick commits at once and the panel stays open, so the hour can be fixed
-after the minutes are picked. The selected row rests at the top of its column:
+after the minutes are picked (on a narrow viewport picks wait for a Done
+button instead; see [Narrow viewports](#narrow-viewports)). The selected row rests at the top of its column:
 it opens there and returns there after each pick, and so does a minute a pick
 fills in. Scrolling a column only looks; it never picks. Picking into an empty field fills in the rest:
 minute `00`, and the hour the hour column rests on. Moving in a column is
@@ -152,7 +153,15 @@ On a viewport narrower than 760px the columns open as a **fullscreen panel**:
 a heading row with the field's `label` and a close button above the columns.
 There the selected row rests in the middle of its column instead of the top,
 in every column, so the selections line up even when a column fits.
-The field stays typeable at every width.
+
+The fullscreen panel ends in a Done button, and there picks wait in the
+panel instead of committing: nothing is emitted until Done commits the time
+— under `range` both ends at once — and closes the panel. The close button
+and Escape close the panel without a change, discarding what was picked, and
+so does the window growing past 760px while it is open. The Now button moves
+the columns to the current time the same way, and Enter picks the focused
+row and presses Done at once. Pressing Done before picking anything closes
+the panel and changes nothing. The field stays typeable at every width.
 
 ## Related
 

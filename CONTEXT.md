@@ -130,16 +130,24 @@ The two labelled lists of the date picker under `type="month"`: the month first,
 _Avoid_: Wizard, stage, page
 
 **Pending start**:
-In `range` mode, the first day (or, under `type="month"`, the start's month and year) picked in the panel before the second completes the range: shown and announced, never emitted, discarded if the panel is dismissed.
+In `range` mode, the first day (or, under `type="month"`, the start's month and year) picked in the panel before the second completes the range: shown and announced, never emitted, discarded if the panel is dismissed. In the **fullscreen panel** it is the first half of a **pending value**.
 _Avoid_: Half range (that is a committed `{ start, end: null }`, which only typing produces), anchor date, first click
+
+**Pending value**:
+What a date or time picker's **fullscreen panel** holds between its picks and the **Done button** — a date, a range, a month or a time: shown selected in the panel, never emitted, and discarded by every other way out (the close control, Escape, crossing the **narrow viewport** threshold). A range's **pending start** is its first half. The anchored panel has none: there a pick commits.
+_Avoid_: Draft (nothing is kept for later), selection, staged value
 
 **Range band**:
 The `primary-subtle` strip joining the start and end days in the **day grid** — the committed range, or the preview from a **pending start** to the hovered or focused day. Disabled days inside it keep their disabled look.
 _Avoid_: Highlight (the virtual active row elsewhere), selection, span
 
 **Today button** (date picker):
-The opt-in (`show-today`) button in a row under the date picker's calendar body that picks today, exactly as pressing today's cell would — committing and closing, or under `range` becoming the **pending start** or completing the range. Under `type="month"` it reads "This month" and picks the current month. Shown disabled when today cannot be picked.
+The opt-in (`show-today`) button in a row under the date picker's calendar body that picks today, exactly as pressing today's cell would — committing and closing, or under `range` becoming the **pending start** or completing the range. Under `type="month"` it reads "This month" and picks the current month. Shown disabled when today cannot be picked. In the **fullscreen panel**, where a press on a cell only selects, it makes today the **pending value**.
 _Avoid_: Reset (that is a form reset to the default value), go-to-today (it commits, not navigates), shortcut
+
+**Done button** (date and time picker):
+The filled button ending the row under the body of a date or time picker's **fullscreen panel**: it commits the **pending value** and closes — the panel's only commit. Disabled while a pick is half done (a **pending start**, a month without its year); with no pick it changes nothing.
+_Avoid_: OK, Save, Apply, confirm button, submit
 
 **Bad input**:
 The state of a **date picker** or **time picker** after committing text that names no enabled value — unparseable, disabled or out of range: the text stays as typed, the value is `null`, and the host exposes `:state(bad-input)` and `badInput`. A fact the component reports, not a verdict — the consumer decides whether it is an error and writes the **error message**. Only typing produces it; a pick in a panel never does.
@@ -152,7 +160,7 @@ A **value control** for a time of day — or, under `range`, a start and an end 
 _Avoid_: Timepicker, clock (the panel), time field, time input (the native `<input type="time">`)
 
 **Time column**:
-One of the time picker panel's side-by-side `role="listbox"` columns — hour, minute, and the AM/PM **period** in a 12-hour `format`. Each is one tab stop; selection follows focus, so moving in a column commits.
+One of the time picker panel's side-by-side `role="listbox"` columns — hour, minute, and the AM/PM **period** in a 12-hour `format`. Each is one tab stop; selection follows focus, so moving in a column picks — a commit in the anchored panel, a change to the **pending value** in the **fullscreen panel**.
 _Avoid_: Wheel, spinner, drum, list
 
 **Period** (time picker):
@@ -164,11 +172,11 @@ The spacing of the minute **time column**'s rows (`minute-step`). It shapes the 
 _Avoid_: Interval, increment, granularity
 
 **End switch** (time picker):
-In `range` mode, the Start | End toggle above the **time columns** choosing which end the columns edit. Each end commits on its own — the time picker has no **pending start**.
+In `range` mode, the Start | End toggle above the **time columns** choosing which end the columns edit. Each end commits on its own — the time picker has no **pending start** — except in the **fullscreen panel**, where both ends wait in the **pending value** for the **Done button**.
 _Avoid_: Tabs, range toggle
 
 **Now button** (time picker):
-The opt-in (`show-now`) button in a row under the **time columns** that commits the current time, to the exact minute whatever the **minute step**, and closes the panel — the time panel's one commit that closes. Under `range` it sets the end the **end switch** selects. Shown disabled when now is outside `min`/`max`.
+The opt-in (`show-now`) button in a row under the **time columns** that commits the current time, to the exact minute whatever the **minute step**, and closes the panel — the anchored time panel's one commit that closes. In the **fullscreen panel** it sets the **pending value** instead. Under `range` it sets the end the **end switch** selects. Shown disabled when now is outside `min`/`max`.
 _Avoid_: Reset, current time button, shortcut
 
 **Overnight range**:
@@ -245,6 +253,7 @@ _Avoid_: Scroll hint, teaser, fade / scroll shadow (a peek is never a gradient),
 
 **Fullscreen panel**:
 The viewport-filling layout a value-selection field's **transient list panel** — `c-dropdown`'s listbox behind `c-select`, `c-autocomplete`'s panel, `c-tree-select`'s panel, `c-date-picker`'s calendar panel — adopts on a **narrow viewport**: instead of anchoring under the **value field**, the panel covers the whole viewport — and keeps covering it while the on-screen keyboard is up, only its content shrinking to the part of the screen the keyboard leaves — opening with a **heading row** — the field's label as the panel's **heading** plus a close control — above the **search input** (where the component has one) and the list — or, in `c-date-picker`, the **day grid**. The anchored layout and the fullscreen panel are one panel in two layouts, never two components; menus, tooltips and `c-popover` have no fullscreen panel.
+In the date and time pickers the panel ends in a row holding the **Done button**, and the close control discards the **pending value**; elsewhere the close control only closes.
 While it is open the page behind it is inert and scroll-locked (toasts excepted), yet it is not a `c-modal`: it joins no **modal stack** and paints no backdrop. Its list is bounded by the viewport, not a ceiling, so it has no **peek** — the screen edge is the cue that more rows follow.
 _Avoid_: Mobile mode / mobile menu, sheet (a partial-height bottom surface), modal / dialog (see above), takeover
 

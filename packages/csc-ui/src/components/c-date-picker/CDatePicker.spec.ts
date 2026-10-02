@@ -1,7 +1,7 @@
 /**
  * Behaviour spec for c-date-picker (CONTEXT.md "Date picker", "Day grid",
- * "Pending start", "Bad input", "Month step", "Today button"; ADR-0057,
- * ADR-0058, ADR-0063, ADR-0065).
+ * "Pending start", "Pending value", "Bad input", "Month step", "Today button",
+ * "Done button"; ADR-0057, ADR-0058, ADR-0063, ADR-0065, ADR-0066).
  *
  * Every fixture pins its month with `value` or `min`/`max` far from today,
  * so no assertion or baseline depends on the wall clock — except the Today
@@ -1607,6 +1607,300 @@ describe('Today button (ADR-0065)', () => {
   });
 });
 
+describe('Done button (ADR-0066)', () => {
+  // The fullscreen panel collects picks in a pending value; Done commits it
+  // and every other way out discards it.
+  afterEach(async () => {
+    await page.viewport(1280, 800);
+  });
+
+  const done = (m: Mounted) => m.part('done') as HTMLButtonElement;
+
+  const mountNarrow = async (
+    props: Record<string, unknown> = {},
+    attrs: Record<string, boolean | string> = {},
+  ) => {
+    await page.viewport(360, 740);
+
+    return mountPicker(props, attrs);
+  };
+
+  const mountNarrowRange = (props: Record<string, unknown> = {}) =>
+    mountNarrow(
+      {
+        label: 'Leave',
+        value: { end: '2031-09-12', start: '2031-09-10' },
+        ...props,
+      },
+      { range: true },
+    );
+
+  const selected = (m: Mounted, iso: string) =>
+    cell(m, iso).getAttribute('aria-selected');
+
+  const tap = async (m: Mounted, el: HTMLElement) => {
+    await userEvent.click(el);
+    await finishAnimations(m);
+  };
+
+  it('is in the fullscreen panel only, at the end of the row under the calendar', async () => {
+    const wide = await mountPicker({ value: '2031-09-17' });
+
+    await open(wide);
+
+    expect(wide.shadowAll('[part~="done"]')).toHaveLength(0);
+
+    await userEvent.keyboard('{Escape}');
+    await settle();
+    wide.unmount();
+
+    const m = await mountNarrow({ showToday: true, value: '2031-09-17' });
+
+    await open(m);
+    await settled();
+
+    const row = m.part('actions').getBoundingClientRect();
+
+    expect(done(m).textContent?.trim()).toBe('Done');
+    expect(row.bottom).toBe(m.part('panel').getBoundingClientRect().bottom);
+    expect(done(m).getBoundingClientRect().left).toBeGreaterThan(
+      m.part('today').getBoundingClientRect().right,
+    );
+    expect(done(m).getBoundingClientRect().height).toBe(44);
+  });
+
+  it('a pick only selects; Done commits once, closes and returns focus', async () => {
+    const m = await mountNarrow({ value: '2031-09-17' });
+
+    const events = recordEvents(m.host, EVENTS);
+
+    await open(m);
+    await tap(m, cell(m, '2031-09-20'));
+
+    expect(selected(m, '2031-09-20')).toBe('true');
+    expect(selected(m, '2031-09-17')).toBe('false');
+    expect(events.of('change')).toHaveLength(0);
+    expect(isOpen(m)).toBe(true);
+    expect(m.host.value).toBe('2031-09-17');
+
+    await tap(m, done(m));
+
+    expect(events.of('change').map((r) => r.detail)).toEqual(['2031-09-20']);
+    expect(isOpen(m)).toBe(false);
+    expect(deepActiveElement()).toBe(inputs(m)[0]);
+  });
+
+  it('the close button, Escape and leaving the narrow viewport discard the pick', async () => {
+    const m = await mountNarrow({ value: '2031-09-17' });
+
+    const events = recordEvents(m.host, EVENTS);
+
+    const exits: [string, () => Promise<unknown>][] = [
+      ['close', () => userEvent.click(m.part('close'))],
+      ['Escape', () => userEvent.keyboard('{Escape}')],
+      ['threshold', () => page.viewport(1280, 800)],
+    ];
+
+    for (const [name, exit] of exits) {
+      await open(m);
+      await tap(m, cell(m, '2031-09-20'));
+      await exit();
+      await settle();
+
+      expect(isOpen(m), name).toBe(false);
+      expect(m.host.value, name).toBe('2031-09-17');
+
+      await open(m);
+
+      expect(selected(m, '2031-09-17'), name).toBe('true');
+      expect(selected(m, '2031-09-20'), name).toBe('false');
+
+      await userEvent.keyboard('{Escape}');
+      await settle();
+    }
+
+    expect(events.of('change')).toHaveLength(0);
+  });
+
+  it('Done with no pick changes nothing, and bad input stays', async () => {
+    const m = await mountNarrow();
+
+    const [input] = inputs(m);
+
+    await type(input, '31.02.2031');
+    await userEvent.keyboard('{Enter}');
+    await settle();
+
+    const events = recordEvents(m.host, EVENTS);
+
+    await open(m);
+    await tap(m, done(m));
+
+    expect(isOpen(m)).toBe(false);
+    expect(events.of('change')).toHaveLength(0);
+    expect(m.host.badInput).toBe(true);
+    expect(input.value).toBe('31.02.2031');
+  });
+
+  it('under range, Done waits for the end and Tab skips it until then', async () => {
+    const m = await mountNarrowRange();
+
+    const events = recordEvents(m.host, EVENTS);
+
+    await open(m);
+    await tap(m, cell(m, '2031-09-20'));
+
+    expect(done(m).disabled).toBe(true);
+
+    for (let i = 0; i < 9; i++) {
+      await userEvent.keyboard('{Tab}');
+
+      expect(deepActiveElement()?.getAttribute('part')).not.toBe('done');
+    }
+
+    await tap(m, cell(m, '2031-09-15'));
+
+    expect(done(m).disabled).toBe(false);
+    expect(events.of('change')).toHaveLength(0);
+
+    await tap(m, done(m));
+
+    expect(events.of('change').map((r) => r.detail)).toEqual([
+      { end: '2031-09-20', start: '2031-09-15' },
+    ]);
+  });
+
+  it('Enter on a day selects and commits; on a range’s first day it only selects', async () => {
+    const single = await mountNarrow({ value: '2031-09-17' });
+
+    await open(single);
+    await userEvent.keyboard('{ArrowRight}{Enter}');
+    await settle();
+
+    expect(single.host.value).toBe('2031-09-18');
+    expect(isOpen(single)).toBe(false);
+
+    single.unmount();
+
+    const m = await mountNarrowRange();
+
+    const events = recordEvents(m.host, EVENTS);
+
+    await open(m);
+    await userEvent.keyboard('{Enter}');
+    await settle();
+
+    expect(isOpen(m)).toBe(true);
+    expect(events.of('change')).toHaveLength(0);
+
+    await userEvent.keyboard('{ArrowDown}');
+    await finishAnimations(m);
+    await userEvent.keyboard('{Enter}');
+    await settle();
+
+    expect(isOpen(m)).toBe(false);
+    expect(events.of('change').map((r) => r.detail)).toEqual([
+      { end: '2031-09-17', start: '2031-09-10' },
+    ]);
+  });
+
+  it('Today selects today on its month and waits for Done', async () => {
+    const m = await mountNarrow({ showToday: true, value: '2031-09-17' });
+
+    const events = recordEvents(m.host, EVENTS);
+
+    await open(m);
+
+    const before = todayIso();
+
+    await tap(m, m.part('today'));
+
+    const today = [before, todayIso()].find(
+      (iso) => m.shadowAll(`td[data-date="${iso}"]`).length,
+    )!;
+
+    expect(isOpen(m)).toBe(true);
+    expect(events.of('change')).toHaveLength(0);
+    expect(selected(m, today)).toBe('true');
+
+    await tap(m, done(m));
+
+    expect(events.of('change').map((r) => r.detail)).toEqual([today]);
+  });
+
+  describe('type="month"', () => {
+    const option = (m: Mounted, key: string): HTMLElement =>
+      m.shadow(`ul[part~="list"] li[data-key="${key}"]`);
+
+    const summaries = (m: Mounted) =>
+      m
+        .shadowAll<HTMLElement>('[part~="step-summary"]')
+        .map((b) => b.textContent?.replace(/\s+/g, ' ').trim());
+
+    it('the year pick stays on the year step; Done commits the month', async () => {
+      const m = await mountNarrow({
+        label: 'Period',
+        type: 'month',
+        value: '2031-09',
+      });
+
+      const events = recordEvents(m.host, EVENTS);
+
+      await open(m);
+      await tap(m, option(m, 'm3'));
+
+      expect(done(m).disabled).toBe(true);
+
+      await tap(m, option(m, 'y2032'));
+
+      expect(isOpen(m)).toBe(true);
+      expect(m.part('step-label').textContent?.trim()).toBe('Year');
+      expect(summaries(m)).toEqual(['Month March']);
+      expect(option(m, 'y2032').getAttribute('aria-selected')).toBe('true');
+      expect(done(m).disabled).toBe(false);
+      expect(events.of('change')).toHaveLength(0);
+
+      await tap(m, done(m));
+
+      expect(events.of('change').map((r) => r.detail)).toEqual(['2032-03']);
+    });
+
+    it('a month range stays on the end’s year step until Done', async () => {
+      const m = await mountNarrow(
+        {
+          label: 'Period',
+          type: 'month',
+          value: { end: '2031-02', start: '2031-01' },
+        },
+        { range: true },
+      );
+
+      const events = recordEvents(m.host, EVENTS);
+
+      await open(m);
+      await tap(m, option(m, 'm3'));
+      await tap(m, option(m, 'y2031'));
+
+      expect(done(m).disabled).toBe(true);
+
+      await tap(m, option(m, 'm5'));
+      await tap(m, option(m, 'y2031'));
+
+      expect(isOpen(m)).toBe(true);
+      expect(m.part('step-label').textContent?.trim()).toBe('End year');
+      expect(summaries(m)).toEqual(['Start month March 2031', 'End month May']);
+      expect(done(m).disabled).toBe(false);
+      expect(events.of('change')).toHaveLength(0);
+
+      await tap(m, done(m));
+
+      expect(events.of('change').map((r) => r.detail)).toEqual([
+        { end: '2031-05', start: '2031-03' },
+      ]);
+    });
+  });
+});
+
 describe('visual', () => {
   it('closed field', async () => {
     const m = await mountPicker({ value: '2001-02-14' });
@@ -1629,6 +1923,21 @@ describe('visual', () => {
     await open(m);
 
     await matchScreenshotInBothModes(m.part('panel'), 'today-button');
+  });
+
+  it('fullscreen panel', async () => {
+    await page.viewport(360, 740);
+
+    try {
+      const m = await mountPicker({ showToday: true, value: '2001-02-14' });
+
+      await open(m);
+      await settled();
+
+      await matchScreenshotInBothModes(m.part('panel'), 'fullscreen-panel');
+    } finally {
+      await page.viewport(1280, 800);
+    }
   });
 
   it('range band', async () => {

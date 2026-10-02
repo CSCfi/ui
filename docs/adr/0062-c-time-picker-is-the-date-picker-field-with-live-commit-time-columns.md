@@ -32,7 +32,8 @@ typing, clear) is what a time picker needs as well.
 - **Live commit**: every pick commits at once and the panel stays open. A
   missing part fills in (minute `00`, the current period). The panel closes
   on Escape, Enter, light dismiss or its close button. There is no OK/Cancel
-  row.
+  row. _Amended 2026-10-02 by ADR-0066_: in the fullscreen panel picks wait
+  for a Done button, and the close button and Escape discard them.
 - Opening with an empty value focuses the hour column at the current hour,
   with the minute column scrolled to the current minute (rounded to the
   step). Landing commits nothing.

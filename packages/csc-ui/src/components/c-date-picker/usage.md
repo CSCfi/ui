@@ -67,7 +67,8 @@ day, else today, else the nearest day that can be picked, and Tab cycles
 through the month and year controls, the grid and the Today button
 (`show-today`) until the panel closes.
 Picking a day commits it and closes the panel; Escape closes it without a
-change. Focus returns to the input either way.
+change. Focus returns to the input either way. On a narrow viewport a pick
+waits for a Done button instead (see [Narrow viewports](#narrow-viewports)).
 
 | Key                     | In the day grid                       |
 | ----------------------- | ------------------------------------- |
@@ -199,7 +200,18 @@ English unless `texts` replaces them. Weekday arrays are indexed like
 
 On a viewport narrower than 760px the calendar opens as a **fullscreen
 panel**: a heading row with the field's `label` and a close button above the
-calendar. The field stays typeable at every width.
+calendar, and a Done button below it. There a pick only selects: the day, the
+range or the month waits in the panel, and nothing is emitted until Done
+commits it and closes the panel. The close button and Escape close the panel
+without a change, discarding what was picked, and so does the window growing
+past 760px while it is open.
+
+The Today button selects today the same way. Enter on a day picks it and
+presses Done at once. Under `range` Done stays disabled until the second pick
+completes the range, and under `type="month"` the panel stays on the year
+step, the year checked, until Done. Pressing Done before picking anything
+closes the panel and changes nothing. The field stays typeable at every
+width.
 
 ## Native date input
 

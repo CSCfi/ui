@@ -37,14 +37,16 @@ rejected an OK/Cancel row, so neither panel has a row below its body.
   `range` it follows the **pending start** rule: the first press makes today
   the pending start, returns the body to the day grid on today's month and
   focuses today's cell; with a pending start it completes the range, in
-  order, and closes.
+  order, and closes. _Amended 2026-10-02 by ADR-0066_: in the fullscreen
+  panel a cell press only selects, so Today does too, and Done commits.
 - **Month mode:** the button reads "This month" and picks the current month
   as both steps at once: it commits `'YYYY-MM'` and closes, or under `range`
   becomes the pending start and opens the end's month step.
 - **Now commits the current time and closes.** It is the time panel's one
   commit that closes; every other pick stays live (ADR-0062). Under `range`
   it sets the end the **end switch** selects, and focus returns to the input
-  used last, as on Escape.
+  used last, as on Escape. _Amended 2026-10-02 by ADR-0066_: in the
+  fullscreen panel Now only moves the columns, and Done commits.
 - **Now is the exact minute**, whatever `minute-step`; seconds are dropped.
   The step stays presentational (ADR-0061), as for a typed off-step minute.
 - **Disabled, never hidden:** the button is disabled when today (or this

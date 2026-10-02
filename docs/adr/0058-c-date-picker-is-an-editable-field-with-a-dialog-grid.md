@@ -34,7 +34,8 @@ the panel ever getting in the way, and its calendar is two-dimensional:
   rather than opening nested popovers, so no popover chain forms.
 - A pick commits and closes; there is no Cancel/OK row. In range mode the
   first pick is a pending start, emitted only when the second pick completes
-  the range.
+  the range. _Amended 2026-10-02 by ADR-0066_: in the fullscreen panel a pick
+  only selects, and a Done button commits.
 
 ## Alternatives considered
 

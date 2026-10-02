@@ -1,7 +1,7 @@
 /**
  * Behaviour spec for c-time-picker (CONTEXT.md "Time picker", "Time column",
- * "End switch", "Overnight range", "Bad input", "Now button"; ADR-0061,
- * ADR-0062, ADR-0065).
+ * "End switch", "Overnight range", "Bad input", "Now button", "Pending value",
+ * "Done button"; ADR-0061, ADR-0062, ADR-0065, ADR-0066).
  *
  * Fixtures carry a value, so the columns never rest on the wall clock —
  * except the one empty-open case and the Now button's cases, which read the
@@ -778,8 +778,13 @@ describe('fullscreen panel', () => {
     await userEvent.click(row(m, 'h16'));
     await settle();
 
-    expect(m.host.value).toBe('16:30');
+    expect(row(m, 'h16').getAttribute('aria-selected')).toBe('true');
     expect(offCentre('hour', 'h16')).toBeLessThanOrEqual(1);
+
+    await userEvent.click(m.part('done'));
+    await settle();
+
+    expect(m.host.value).toBe('16:30');
   });
 });
 
@@ -924,6 +929,194 @@ describe('Now button (ADR-0065)', () => {
   });
 });
 
+describe('Done button (ADR-0066)', () => {
+  // The fullscreen panel collects picks in a pending value; Done commits it
+  // and every other way out discards it.
+  afterEach(async () => {
+    await page.viewport(1280, 800);
+  });
+
+  const done = (m: Mounted) => m.part('done') as HTMLButtonElement;
+
+  const mountNarrow = async (
+    props: Record<string, unknown> = {},
+    attrs: Record<string, boolean | string> = {},
+  ) => {
+    await page.viewport(360, 740);
+
+    return mountPicker(props, attrs);
+  };
+
+  const selected = (m: Mounted, key: string) =>
+    row(m, key).getAttribute('aria-selected');
+
+  const tap = async (el: HTMLElement) => {
+    await userEvent.click(el);
+    await settle();
+  };
+
+  it('is in the fullscreen panel only, at the end of the row under the columns', async () => {
+    const wide = await mountPicker({ value: '14:30' });
+
+    await open(wide);
+
+    expect(wide.shadowAll('[part~="done"]')).toHaveLength(0);
+
+    await userEvent.keyboard('{Escape}');
+    await settle();
+    wide.unmount();
+
+    const m = await mountNarrow({ showNow: true, value: '14:30' });
+
+    await open(m);
+
+    expect(done(m).textContent?.trim()).toBe('Done');
+    expect(m.part('actions').getBoundingClientRect().bottom).toBe(
+      m.part('panel').getBoundingClientRect().bottom,
+    );
+    expect(done(m).getBoundingClientRect().left).toBeGreaterThan(
+      m.part('now').getBoundingClientRect().right,
+    );
+  });
+
+  it('picks and arrow keys only select; Done commits once, closes and returns focus', async () => {
+    const m = await mountNarrow({ value: '14:30' });
+
+    const events = recordEvents(m.host, EVENTS);
+
+    await open(m);
+    await tap(row(m, 'h16'));
+    await userEvent.keyboard('{ArrowDown}');
+    await settle();
+    await tap(row(m, 'm45'));
+
+    expect(selected(m, 'h17')).toBe('true');
+    expect(selected(m, 'm45')).toBe('true');
+    expect(events.of('change')).toHaveLength(0);
+    expect(m.host.value).toBe('14:30');
+    expect(inputs(m)[0].value).toBe('14.30');
+    expect(isOpen(m)).toBe(true);
+
+    await tap(done(m));
+
+    expect(events.of('change').map((r) => r.detail)).toEqual(['17:45']);
+    expect(isOpen(m)).toBe(false);
+    expect(deepActiveElement()).toBe(inputs(m)[0]);
+  });
+
+  it('the close button, Escape and leaving the narrow viewport discard the picks', async () => {
+    const m = await mountNarrow({ value: '14:30' });
+
+    const events = recordEvents(m.host, EVENTS);
+
+    const exits: [string, () => Promise<unknown>][] = [
+      ['close', () => userEvent.click(m.part('close'))],
+      ['Escape', () => userEvent.keyboard('{Escape}')],
+      ['threshold', () => page.viewport(1280, 800)],
+    ];
+
+    for (const [name, exit] of exits) {
+      await open(m);
+      await tap(row(m, 'h16'));
+      await exit();
+      await settle();
+
+      expect(isOpen(m), name).toBe(false);
+      expect(m.host.value, name).toBe('14:30');
+
+      await open(m);
+
+      expect(selected(m, 'h14'), name).toBe('true');
+      expect(selected(m, 'h16'), name).toBe('false');
+
+      await userEvent.keyboard('{Escape}');
+      await settle();
+    }
+
+    expect(events.of('change')).toHaveLength(0);
+  });
+
+  it('Done with no pick leaves an empty field empty', async () => {
+    const m = await mountNarrow();
+
+    const events = recordEvents(m.host, EVENTS);
+
+    await open(m);
+    await tap(done(m));
+
+    expect(isOpen(m)).toBe(false);
+    expect(m.host.value).toBe(null);
+    expect(events.of('change')).toHaveLength(0);
+  });
+
+  it('under range, both ends wait across the end switch and Done commits them together', async () => {
+    const m = await mountNarrow({ label: 'Shift' }, { range: true });
+
+    const events = recordEvents(m.host, EVENTS);
+
+    await open(m);
+    await tap(row(m, 'h22'));
+    await tap(m.shadowAll<HTMLElement>('[part~="end-tab"]')[1]);
+    await tap(row(m, 'h6'));
+
+    expect(events.of('change')).toHaveLength(0);
+
+    await tap(done(m));
+
+    expect(events.of('change').map((r) => r.detail)).toEqual([
+      { end: '06:00', start: '22:00' },
+    ]);
+  });
+
+  it('Enter selects the focused row and commits', async () => {
+    const m = await mountNarrow({ value: '14:30' });
+
+    const events = recordEvents(m.host, EVENTS);
+
+    await open(m);
+    await userEvent.keyboard('{ArrowDown}{Enter}');
+    await settle();
+
+    expect(isOpen(m)).toBe(false);
+    expect(events.of('change').map((r) => r.detail)).toEqual(['15:30']);
+  });
+
+  it('Now moves the columns to the current minute and waits for Done', async () => {
+    const m = await mountNarrow({ showNow: true, value: '00:00' });
+
+    const events = recordEvents(m.host, EVENTS);
+
+    await open(m);
+
+    const before = nowTime();
+
+    await tap(m.part('now'));
+    await new Promise((resolve) => requestAnimationFrame(resolve));
+
+    const now = [before, nowTime()].find(
+      (time) =>
+        selected(m, `m${Number(time.slice(3))}`) === 'true' &&
+        selected(m, `h${Number(time.slice(0, 2))}`) === 'true',
+    );
+
+    expect(now, 'the columns do not show now').toBeDefined();
+    expect(isOpen(m)).toBe(true);
+    expect(events.of('change')).toHaveLength(0);
+
+    const list = column(m, 'hour').getBoundingClientRect();
+
+    const box = row(m, `h${Number(now!.slice(0, 2))}`).getBoundingClientRect();
+
+    expect(
+      Math.abs(box.top + box.height / 2 - (list.top + list.height / 2)),
+    ).toBeLessThanOrEqual(1);
+
+    await tap(done(m));
+
+    expect(events.of('change').map((r) => r.detail)).toEqual([now]);
+  });
+});
+
 describe('visual', () => {
   it('closed field', async () => {
     const m = await mountPicker({ value: '14:30' });
@@ -937,6 +1130,20 @@ describe('visual', () => {
     await open(m);
 
     await matchScreenshotInBothModes(m.part('panel'), 'open-panel');
+  });
+
+  it('fullscreen panel', async () => {
+    await page.viewport(360, 740);
+
+    try {
+      const m = await mountPicker({ showNow: true, value: '14:30' });
+
+      await open(m);
+
+      await matchScreenshotInBothModes(m.part('panel'), 'fullscreen-panel');
+    } finally {
+      await page.viewport(1280, 800);
+    }
   });
 
   it('Now button', async () => {
