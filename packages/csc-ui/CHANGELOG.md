@@ -1,5 +1,39 @@
 # @cscfi/csc-ui
 
+## 4.0.0-alpha.29
+
+### Minor Changes
+
+- [#303](https://github.com/CSCfi/ui/pull/303) [`72aca2d`](https://github.com/CSCfi/ui/commit/72aca2d450a9ce6b93c6a1b6f4267ab49a48d2f2) Thanks [@razorfever](https://github.com/razorfever)! - c-date-picker, c-time-picker: on a narrow viewport the fullscreen panel now
+  ends in a Done button. Picks only select there, and nothing is emitted until
+  Done commits them and closes the panel; the close button and Escape discard
+  them. The Today and Now buttons select the same way. The anchored panel is
+  unchanged.
+
+- [#303](https://github.com/CSCfi/ui/pull/303) [`f5b416f`](https://github.com/CSCfi/ui/commit/f5b416f3ee40392d22d7d41bc4efa78c72c4b62a) Thanks [@razorfever](https://github.com/razorfever)! - c-number-field opens the numeric keyboard on phones, also in fields that take
+  negative numbers, and gains step buttons: up and down chevrons that move the
+  number by the new `step` prop (`1` by default) and repeat while held. The
+  arrow keys step too, and Page Up / Page Down move ten steps. Stepping snaps to
+  the step grid and stays within `min` and `max`. The buttons' accessible labels
+  can be translated with the new `texts` prop.
+
+- [#303](https://github.com/CSCfi/ui/pull/303) [`219a91e`](https://github.com/CSCfi/ui/commit/219a91e79d155b8f8b476720ee92ed6b8cd88517) Thanks [@razorfever](https://github.com/razorfever)! - Add `show-today` to c-date-picker and `show-now` to c-time-picker: an opt-in
+  button under the panel that picks today (the current month under
+  `type="month"`) or commits the current time.
+
+### Patch Changes
+
+- [#303](https://github.com/CSCfi/ui/pull/303) [`8561284`](https://github.com/CSCfi/ui/commit/856128481a567503104da5f137fe31310fe54c8c) Thanks [@razorfever](https://github.com/razorfever)! - c-date-picker, c-time-picker: the calendar and clock buttons are bigger in a
+  default-size field, a 24px icon on a 40px button, so they are easier to tap.
+  A small field keeps the 28px button.
+
+- [#303](https://github.com/CSCfi/ui/pull/303) [`79f8220`](https://github.com/CSCfi/ui/commit/79f82207e410b01c42b3c838d13e77ca24297297) Thanks [@razorfever](https://github.com/razorfever)! - c-time-picker: in the fullscreen panel, a column that fits (the hours in a
+  tall window, AM/PM, a coarse minute step) now rests its selected row in the
+  middle too, so the selections line up.
+
+- [#303](https://github.com/CSCfi/ui/pull/303) [`3a47459`](https://github.com/CSCfi/ui/commit/3a47459890edb2eec678b06207064477c1bd259f) Thanks [@razorfever](https://github.com/razorfever)! - c-time-picker: a 12-hour hour column now lists 1 to 11 and then 12, instead
+  of starting with 12.
+
 ## 4.0.0-alpha.28
 
 ### Minor Changes
