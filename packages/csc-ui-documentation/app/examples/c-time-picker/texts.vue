@@ -18,15 +18,21 @@ import { ref } from 'vue';
 
 import type { CTimePickerRange, CTimePickerTexts } from '@cscfi/csc-ui';
 
-// The AM/PM texts the list leaves out come from Intl for the page's lang.
+// Every text, so none falls back to Intl for the page's lang or to English;
+// AM/PM shows in a 12-hour format, Now under show-now.
 const texts: CTimePickerTexts = {
+  am: 'ap.',
   chooseTime: 'Valitse aika',
   clearSelection: 'Tyhjennä',
   closePanel: 'Sulje',
+  done: 'Valmis',
   end: 'Loppuaika',
   hours: 'Tunnit',
   minutes: 'Minuutit',
+  now: 'Nyt',
   openClock: 'Avaa kellonajan valinta',
+  period: 'ap./ip.',
+  pm: 'ip.',
   start: 'Alkuaika',
 };
 
