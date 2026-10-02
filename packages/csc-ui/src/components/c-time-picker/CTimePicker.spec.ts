@@ -820,6 +820,38 @@ describe('field', () => {
       ).toBe(52);
     }
   });
+
+  it('sizes the clock button by the field, its icon on the same edge', async () => {
+    const regular = await mountPicker({ clearable: true, value: '14:30' });
+
+    const small = await mountPicker({
+      clearable: true,
+      size: 'small',
+      value: '14:30',
+    });
+
+    for (const [m, button, icon] of [
+      [regular, 40, 24],
+      [small, 28, 20],
+    ] as const) {
+      const border = m
+        .deep('c-input', '.c-input__fieldset')
+        .getBoundingClientRect();
+
+      const glyph = m
+        .deep('c-icon-button[aria-label="Open time picker"] > c-icon', 'svg')
+        .getBoundingClientRect();
+
+      expect(clockButton(m).getBoundingClientRect().width).toBe(button);
+      expect(glyph.width).toBe(icon);
+      expect(border.right - glyph.right).toBe(10);
+      expect(
+        m
+          .deep('c-icon-button[aria-label="Clear selection"]', 'button')
+          .getBoundingClientRect().width,
+      ).toBe(28);
+    }
+  });
 });
 
 describe('Now button (ADR-0065)', () => {

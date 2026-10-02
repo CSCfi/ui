@@ -20,16 +20,16 @@
     :size="sizeResolved"
     :valid
   >
-    <template #trigger>
+    <template #trigger="{ buttonSize, iconSize }">
       <c-icon-button
         :aria-label="t.openClock"
         :disabled
+        :size="buttonSize"
         aria-haspopup="dialog"
-        size="x-small"
         text
         @click="onClockClick"
       >
-        <c-icon :path="mdiClockOutline" :size="20" />
+        <c-icon :path="mdiClockOutline" :size="iconSize" />
       </c-icon-button>
     </template>
   </typed-field>

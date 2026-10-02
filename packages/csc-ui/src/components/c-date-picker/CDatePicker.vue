@@ -20,17 +20,17 @@
     :valid
     inputmode="numeric"
   >
-    <template #trigger>
+    <template #trigger="{ buttonSize, iconSize }">
       <c-icon-button
         ref="calendarButtonRef"
         :aria-label="t.openCalendar"
         :disabled
+        :size="buttonSize"
         aria-haspopup="dialog"
-        size="x-small"
         text
         @click="onCalendarClick"
       >
-        <c-icon :path="mdiCalendar" :size="20" />
+        <c-icon :path="mdiCalendar" :size="iconSize" />
       </c-icon-button>
     </template>
   </TypedField>

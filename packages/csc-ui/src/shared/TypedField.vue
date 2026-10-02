@@ -76,7 +76,7 @@
         </template>
       </div>
 
-      <span slot="post" :class="ui.post()">
+      <span slot="post" :class="ui.post({ small: size === 'small' })">
         <c-icon-button
           v-if="clearable && hasContent"
           :aria-label="clearLabel"
@@ -88,7 +88,7 @@
           <c-icon :path="mdiClose" :size="20" />
         </c-icon-button>
 
-        <slot name="trigger" />
+        <slot name="trigger" v-bind="panelButton" />
       </span>
     </c-input>
   </span>
@@ -102,7 +102,8 @@
  * host's `useTypedField` state. NOT a registered custom element — rendered
  * inside the host's shadow root, so its stamped parts (`input`, `separator`)
  * join each host's `::part()` contract (the analyzer merges them). The host
- * puts its panel button in the `trigger` slot.
+ * puts its panel button in the `trigger` slot, sized by the slot's
+ * `buttonSize` and `iconSize`.
  *
  * No `<style>` block on purpose: a non-element SFC has no shadow root of its
  * own to adopt a per-type sheet into. The `::placeholder` rule for the
@@ -110,7 +111,7 @@
  */
 import { mdiClose } from '@mdi/js';
 import { tv } from 'tailwind-variants';
-import { type ComponentPublicInstance } from 'vue';
+import { type ComponentPublicInstance, computed } from 'vue';
 
 import type { CFieldSize } from '../types';
 
@@ -123,11 +124,15 @@ const typedField = tv({
     // drives an inheritable `color` for its state cascade.
     input:
       'c-typed-field__input bg-transparent border-0 outline-none m-0 [font:inherit] text-base leading-5 text-on-surface disabled:text-on-surface-muted [caret-color:var(--c-primary)] flex-auto min-w-0 w-full py-2 max-h-8 tabular-nums',
-    post: 'inline-flex items-center gap-0.5 -mr-1.5',
+    // The trailing controls' box, pulled into the field's padding so the
+    // panel button's icon ends 10px inside the border: the 40px button's
+    // 24px icon pulled 10px, a small field's 28px button's 20px icon 6px.
+    post: 'inline-flex items-center gap-0.5 -mr-2.5',
     separator: 'shrink-0 mx-1 text-on-surface-muted',
   },
   variants: {
     hidden: { true: { separator: 'invisible' } },
+    small: { true: { post: '-mr-1.5' } },
     // The range start is as wide as its text, so the separator follows it
     // with even space both sides; the end input fills the rest.
     start: { true: { input: 'flex-none w-auto [field-sizing:content]' } },
@@ -182,6 +187,15 @@ const {
   startText,
   startWidth,
 } = props.field;
+
+// The panel button is the panel's only opener on a touch screen, so a
+// default field gives it a 40px target and a 24px icon, bigger than
+// c-select's chevron (ADR-0058); a small field's 36px box keeps 28px.
+const panelButton = computed(() =>
+  props.size === 'small'
+    ? { buttonSize: 'x-small' as const, iconSize: 20 }
+    : { buttonSize: 'default' as const, iconSize: 24 },
+);
 
 const onFocusIn = () => {
   props.field.focused.value = true;

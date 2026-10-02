@@ -773,6 +773,38 @@ describe('field', () => {
       ).toBe(52);
     }
   });
+
+  it('sizes the calendar button by the field, its icon on the same edge', async () => {
+    const regular = await mountPicker({ clearable: true, value: '2031-09-17' });
+
+    const small = await mountPicker({
+      clearable: true,
+      size: 'small',
+      value: '2031-09-17',
+    });
+
+    for (const [m, button, icon] of [
+      [regular, 40, 24],
+      [small, 28, 20],
+    ] as const) {
+      const border = m
+        .deep('c-input', '.c-input__fieldset')
+        .getBoundingClientRect();
+
+      const glyph = m
+        .deep('c-icon-button[aria-label="Open calendar"] > c-icon', 'svg')
+        .getBoundingClientRect();
+
+      expect(calendarButton(m).getBoundingClientRect().width).toBe(button);
+      expect(glyph.width).toBe(icon);
+      expect(border.right - glyph.right).toBe(10);
+      expect(
+        m
+          .deep('c-icon-button[aria-label="Clear selection"]', 'button')
+          .getBoundingClientRect().width,
+      ).toBe(28);
+    }
+  });
 });
 
 describe('motion', () => {
