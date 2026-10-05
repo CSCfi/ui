@@ -343,6 +343,10 @@ _Avoid_: Check(mark) only (it also renders the indeterminate bar), icon (not slo
 The 2px keyboard-focus halo around a selection control's **indicator**, drawn by the indicator's own `::before` with `currentColor`, so it always matches the indicator's colour — including a consumer's `::part(indicator) { color }` (ADR-0039). Circular and 42px-scale like the ripple surface it visually encloses, but it belongs to the indicator, not the surface; hover tint and ripple stay on the internal colour. Not a **part**.
 _Avoid_: Outline (the CSS property, not the concept), ring (the semantic token role / the radio indicator's shape), focus outline
 
+**Keyboard modality**:
+Whether the latest press a component saw was a key — any key, Alt, Ctrl and Meta chords included — rather than a pointer press. A panel that moves focus by script (the **day grid**, a **time column**) rings the new focus under keyboard modality and otherwise leaves the browser's own `:focus-visible` heuristic to decide.
+_Avoid_: Focus-visible (the CSS pseudo-class, whose browser heuristics ignore chords and carry a mouse focus through script focus), keyboard mode
+
 **Reduced motion**:
 The OS-level `prefers-reduced-motion: reduce` preference, which every component honours without an opt-in (ADR-0057). CSS transitions go instant through one rule in the shared utility sheet; decorative keyframes (panel drop-ins, the loader message's rise, the modal's open and close) stop; scripted motion (the ripple, smooth strip scrolling, the tabs indicator) reads `prefersReducedMotion()` at the moment it runs. Activity indicators — the spinner, indeterminate progress, the toast timer — keep moving because the motion is the information. A fade is not movement, so the toast's short cross-fade stays.
 _Avoid_: Animations off, disable-animation (that is c-tabs' own prop, one input to the same decision), motion-safe

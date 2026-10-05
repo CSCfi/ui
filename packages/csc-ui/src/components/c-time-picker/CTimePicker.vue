@@ -388,6 +388,7 @@ import TypedField from '../../shared/TypedField.vue';
 import { useAnchoredPanel } from '../../shared/useAnchoredPanel';
 import { useHostEmit } from '../../shared/useHostEmit';
 import { useHostStates } from '../../shared/useHostStates';
+import { useKeyboardModality } from '../../shared/useKeyboardModality';
 import { useNarrowViewport } from '../../shared/useNarrowViewport';
 import {
   type TypedFieldEnd,
@@ -541,6 +542,9 @@ const props = withDefaults(defineProps<CTimePickerProps>(), {
 });
 
 const host = useHost();
+
+// Script focus rings after a keyboard path, an Alt+↓ open included.
+const focusOptions = useKeyboardModality(host);
 
 const emit = useHostEmit<CTimePickerEvents>();
 
@@ -818,7 +822,7 @@ const afterPick = (
 ) =>
   nextTick(() =>
     requestAnimationFrame(() => {
-      rowEl(kind)?.focus({ preventScroll: true });
+      rowEl(kind)?.focus(focusOptions({ preventScroll: true }));
       restColumnsMoved(before);
     }),
   );
@@ -951,7 +955,7 @@ const onEndKeyDown = (event: KeyboardEvent) => {
   nextTick(() =>
     cardRef.value
       ?.querySelector<HTMLElement>(`button[data-end="${end}"]`)
-      ?.focus(),
+      ?.focus(focusOptions()),
   );
 };
 
@@ -1033,7 +1037,7 @@ const onPanelKeyDown = (event: KeyboardEvent) => {
       : index + 1;
 
   event.preventDefault();
-  stops[nextIndex].focus();
+  stops[nextIndex].focus(focusOptions());
 };
 
 // The selected row rests at the top of an overflowing column (anchored) or
@@ -1161,7 +1165,7 @@ const {
     nextTick(() =>
       requestAnimationFrame(() => {
         scrollColumns();
-        rowEl('hour')?.focus({ preventScroll: true });
+        rowEl('hour')?.focus(focusOptions({ preventScroll: true }));
         observeCard(true);
       }),
     );

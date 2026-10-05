@@ -897,12 +897,26 @@ describe('focus ring', () => {
     return stops;
   };
 
-  // Chrome ignores an Alt chord for the keyboard modality, so a plain key
-  // first: after a mouse-driven spec the panel's focus would show no ring.
+  // A mouse-focused field, then the Alt chord alone: the browsers' own
+  // heuristics see no keyboard there (Chrome ignores the chord, Firefox keeps
+  // the mouse), so the panel rings only under keyboard modality.
   const openFromKeyboard = async (m: Mounted) => {
-    inputs(m)[0].focus();
-    await userEvent.keyboard('{ArrowLeft}{Alt>}{ArrowDown}{/Alt}');
+    await userEvent.click(inputs(m)[0]);
+    await userEvent.keyboard('{Alt>}{ArrowDown}{/Alt}');
   };
+
+  it('rings the hour column after a mouse-focused field and Alt+ArrowDown', async () => {
+    const m = await mountPicker({ value: '14:30' });
+
+    await openFromKeyboard(m);
+    await settled();
+
+    const row = deepActiveElement()!;
+
+    expect(row.getAttribute('part')).toBe('option');
+    expect(row.matches(':focus-visible')).toBe(true);
+    expect(ringOf(row).ring).toBe('solid 2px');
+  });
 
   it('paints a 2px ring on every stop reached from the keyboard', async () => {
     const m = await mountPicker(
