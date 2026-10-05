@@ -527,6 +527,32 @@ describe('time columns', () => {
       expect(restOffset(bounded, 'minute', 'm30')).toBeCloseTo(4, 0);
     });
 
+    // On the hour the empty minute column already rests its tab stop on
+    // 00, the minute the pick fills in: only the selection changes.
+    it('a minute filled in on the hour rests too', async () => {
+      const m = await mountPicker();
+
+      const hours = vi.spyOn(Date.prototype, 'getHours').mockReturnValue(14);
+
+      const minutes = vi.spyOn(Date.prototype, 'getMinutes').mockReturnValue(0);
+
+      try {
+        await open(m);
+      } finally {
+        hours.mockRestore();
+        minutes.mockRestore();
+      }
+
+      expect(focusedKey()).toBe('h14');
+
+      column(m, 'minute').scrollTop = 400;
+      await userEvent.click(row(m, 'h9'));
+      await settle();
+
+      expect(m.host.value).toBe('09:00');
+      expect(restOffset(m, 'minute', 'm0')).toBeCloseTo(4, 0);
+    });
+
     it('a column whose selection did not change keeps its scroll', async () => {
       const m = await mountPicker({ value: '14:30' });
 
@@ -897,12 +923,26 @@ describe('focus ring', () => {
     return stops;
   };
 
-  // Chrome ignores an Alt chord for the keyboard modality, so a plain key
-  // first: after a mouse-driven spec the panel's focus would show no ring.
+  // A mouse-focused field, then the Alt chord alone: the browsers' own
+  // heuristics see no keyboard there (Chrome ignores the chord, Firefox keeps
+  // the mouse), so the panel rings only under keyboard modality.
   const openFromKeyboard = async (m: Mounted) => {
-    inputs(m)[0].focus();
-    await userEvent.keyboard('{ArrowLeft}{Alt>}{ArrowDown}{/Alt}');
+    await userEvent.click(inputs(m)[0]);
+    await userEvent.keyboard('{Alt>}{ArrowDown}{/Alt}');
   };
+
+  it('rings the hour column after a mouse-focused field and Alt+ArrowDown', async () => {
+    const m = await mountPicker({ value: '14:30' });
+
+    await openFromKeyboard(m);
+    await settled();
+
+    const row = deepActiveElement()!;
+
+    expect(row.getAttribute('part')).toBe('option');
+    expect(row.matches(':focus-visible')).toBe(true);
+    expect(ringOf(row).ring).toBe('solid 2px');
+  });
 
   it('paints a 2px ring on every stop reached from the keyboard', async () => {
     const m = await mountPicker(

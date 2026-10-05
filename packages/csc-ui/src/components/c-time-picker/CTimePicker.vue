@@ -388,6 +388,7 @@ import TypedField from '../../shared/TypedField.vue';
 import { useAnchoredPanel } from '../../shared/useAnchoredPanel';
 import { useHostEmit } from '../../shared/useHostEmit';
 import { useHostStates } from '../../shared/useHostStates';
+import { useKeyboardModality } from '../../shared/useKeyboardModality';
 import { useNarrowViewport } from '../../shared/useNarrowViewport';
 import {
   type TypedFieldEnd,
@@ -541,6 +542,9 @@ const props = withDefaults(defineProps<CTimePickerProps>(), {
 });
 
 const host = useHost();
+
+// Script focus rings after a keyboard path, an Alt+↓ open included.
+const focusOptions = useKeyboardModality(host);
 
 const emit = useHostEmit<CTimePickerEvents>();
 
@@ -799,12 +803,18 @@ const columnEl = (kind: CTimePickerColumnKind) =>
 const rowEl = (kind: CTimePickerColumnKind) =>
   columnEl(kind)?.querySelector<HTMLElement>('li[tabindex="0"]') ?? null;
 
-// Each column's tab stop and row count, before a pick changes them.
+// Each column's tab stop, selected row and row count, before a pick changes
+// them. A filled-in minute can keep its tab stop: on the hour, the empty
+// column already rests on 00.
 const snapshotColumns = () =>
   new Map(
     columns.value.map((c) => [
       c.kind,
-      { count: c.rows.length, key: c.rows.find((r) => r.focus)?.key },
+      {
+        count: c.rows.length,
+        key: c.rows.find((r) => r.focus)?.key,
+        selected: c.rows.find((r) => r.selected)?.key,
+      },
     ]),
   );
 
@@ -818,7 +828,7 @@ const afterPick = (
 ) =>
   nextTick(() =>
     requestAnimationFrame(() => {
-      rowEl(kind)?.focus({ preventScroll: true });
+      rowEl(kind)?.focus(focusOptions({ preventScroll: true }));
       restColumnsMoved(before);
     }),
   );
@@ -835,7 +845,15 @@ const restColumnsMoved = (before: ReturnType<typeof snapshotColumns>) => {
 
     const key = column.rows.find((r) => r.focus)?.key;
 
-    if (was && was.key === key && was.count === column.rows.length) continue;
+    const selected = column.rows.find((r) => r.selected)?.key;
+
+    if (
+      was &&
+      was.key === key &&
+      was.selected === selected &&
+      was.count === column.rows.length
+    )
+      continue;
 
     const list = columnEl(column.kind);
 
@@ -951,7 +969,7 @@ const onEndKeyDown = (event: KeyboardEvent) => {
   nextTick(() =>
     cardRef.value
       ?.querySelector<HTMLElement>(`button[data-end="${end}"]`)
-      ?.focus(),
+      ?.focus(focusOptions()),
   );
 };
 
@@ -1033,7 +1051,7 @@ const onPanelKeyDown = (event: KeyboardEvent) => {
       : index + 1;
 
   event.preventDefault();
-  stops[nextIndex].focus();
+  stops[nextIndex].focus(focusOptions());
 };
 
 // The selected row rests at the top of an overflowing column (anchored) or
@@ -1161,7 +1179,7 @@ const {
     nextTick(() =>
       requestAnimationFrame(() => {
         scrollColumns();
-        rowEl('hour')?.focus({ preventScroll: true });
+        rowEl('hour')?.focus(focusOptions({ preventScroll: true }));
         observeCard(true);
       }),
     );

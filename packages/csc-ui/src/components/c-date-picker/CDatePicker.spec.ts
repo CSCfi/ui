@@ -850,16 +850,77 @@ describe('focus ring', () => {
     return stops;
   };
 
-  // Chrome ignores an Alt chord for the keyboard modality, so a plain key
-  // first: after a mouse-driven spec the panel's focus would show no ring.
+  // A mouse-focused field, then the Alt chord alone: the browsers' own
+  // heuristics see no keyboard there (Chrome ignores the chord, Firefox keeps
+  // the mouse), so the panel rings only under keyboard modality.
   const openFromKeyboard = async (m: Mounted) => {
-    inputs(m)[0].focus();
-    await userEvent.keyboard('{ArrowLeft}{Alt>}{ArrowDown}{/Alt}');
+    await userEvent.click(inputs(m)[0]);
+    await userEvent.keyboard('{Alt>}{ArrowDown}{/Alt}');
   };
 
   // A day cell paints its ring on the day inside it.
   const dayRing = (el: Element) =>
     el.localName === 'td' ? el.querySelector('span')! : el;
+
+  it('rings the opening day after a mouse-focused field and Alt+ArrowDown', async () => {
+    const m = await mountPicker({ value: '2031-09-15' });
+
+    await openFromKeyboard(m);
+    await settled();
+
+    const day = deepActiveElement()!;
+
+    expect(day.getAttribute('data-date')).toBe('2031-09-15');
+    expect(day.matches(':focus-visible')).toBe(true);
+    expect(ringOf(dayRing(day)).ring).toBe('solid 2px');
+  });
+
+  it('rings a selected day in its own ink, inside the fill', async () => {
+    const m = await mountPicker({ value: '2031-09-15' });
+
+    await openFromKeyboard(m);
+    await settled();
+
+    const selected = dayRing(cell(m, '2031-09-15'));
+
+    expect(ringOf(selected).ring).toBe('solid 2px');
+    expect(ringOf(selected).color).toBe(ringOf(selected).ink);
+    expect(getComputedStyle(selected).outlineOffset).toBe('-4px');
+
+    await userEvent.keyboard('{ArrowRight}');
+    await settled();
+
+    const plain = dayRing(cell(m, '2031-09-16'));
+
+    expect(ringOf(plain).color).not.toBe(ringOf(selected).color);
+    expect(getComputedStyle(plain).outlineOffset).toBe('0px');
+  });
+
+  // Chrome rings a script focus after any plain key, Firefox and Safari only
+  // when asked: the keyboard moves ask, a pointer open leaves it to the
+  // browser.
+  it('asks for the ring on keyboard moves only', async () => {
+    const m = await mountPicker({ value: '2031-09-15' });
+
+    const focus = vi.spyOn(HTMLElement.prototype, 'focus');
+
+    try {
+      await open(m);
+      await settled();
+
+      expect(focusedIso()).toBe('2031-09-15');
+      expect(cell(m, '2031-09-15').matches(':focus-visible')).toBe(false);
+      expect(focus.mock.lastCall?.[0]?.focusVisible).toBeUndefined();
+
+      await userEvent.keyboard('{ArrowRight}');
+      await settle();
+
+      expect(focusedIso()).toBe('2031-09-16');
+      expect(focus.mock.lastCall?.[0]?.focusVisible).toBe(true);
+    } finally {
+      focus.mockRestore();
+    }
+  });
 
   it('paints a 2px ring on every stop reached from the keyboard', async () => {
     const m = await mountPicker({ showToday: true, value: '2031-09-15' });

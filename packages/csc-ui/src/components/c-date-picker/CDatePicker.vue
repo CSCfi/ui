@@ -722,6 +722,7 @@ import { applyPeekCap } from '../../shared/peekCap';
 import { useAnchoredPanel } from '../../shared/useAnchoredPanel';
 import { useHostEmit } from '../../shared/useHostEmit';
 import { useHostStates } from '../../shared/useHostStates';
+import { useKeyboardModality } from '../../shared/useKeyboardModality';
 import { useNarrowViewport } from '../../shared/useNarrowViewport';
 import { useStatusAnnouncer } from '../../shared/useStatusAnnouncer';
 import { type TypedFieldEnds, useTypedField } from '../../shared/useTypedField';
@@ -909,7 +910,8 @@ const dayCell = tv({
     },
     selected: {
       true: {
-        day: 'bg-primary text-on-primary font-medium group-hover:bg-primary-hover',
+        // A primary ring would vanish into the fill: the day's own ink, inside.
+        day: 'bg-primary text-on-primary font-medium group-hover:bg-primary-hover group-focus-visible:-outline-offset-4 group-focus-visible:outline-on-primary',
       },
     },
     today: { true: { day: 'border border-solid border-primary' } },
@@ -949,6 +951,9 @@ const props = withDefaults(defineProps<CDatePickerProps>(), {
 });
 
 const host = useHost();
+
+// Script focus rings after a keyboard path, an Alt+↓ open included.
+const focusOptions = useKeyboardModality(host);
 
 const emit = useHostEmit<CDatePickerEvents>();
 
@@ -1513,7 +1518,7 @@ const focusCell = () =>
       // The live grid only: an outgoing one may hold the same date.
       gridRef.value
         ?.querySelector<HTMLElement>(`td[data-date="${focusedDate.value}"]`)
-        ?.focus();
+        ?.focus(focusOptions());
     }),
   );
 
@@ -1957,7 +1962,7 @@ const focusOption = (center = false) =>
         list.scrollTop = top * option.offsetHeight;
       }
 
-      option.focus({ preventScroll: center });
+      option.focus(focusOptions({ preventScroll: center }));
     }),
   );
 
@@ -2172,7 +2177,7 @@ const onPanelKeyDown = (event: KeyboardEvent) => {
       : index + 1;
 
   event.preventDefault();
-  stops[nextIndex].focus();
+  stops[nextIndex].focus(focusOptions());
 };
 
 const narrow = useNarrowViewport();
