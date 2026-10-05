@@ -1,5 +1,34 @@
 # @cscfi/csc-ui
 
+## 4.0.0-alpha.30
+
+### Minor Changes
+
+- [#305](https://github.com/CSCfi/ui/pull/305) [`45179c7`](https://github.com/CSCfi/ui/commit/45179c754956d0ba15e592ea05c57cad38f9048f) Thanks [@razorfever](https://github.com/razorfever)! - Add `c-breadcrumb` and its crumbs, `c-breadcrumb-item`: a navigation aid naming
+  where the current page sits in a site's hierarchy (ADR-0067).
+
+  - A crumb with an `href` is a link (an optional `target` sets where it opens);
+    the last crumb is always the current page, plain text announced as the
+    current page. An icon goes in a crumb's `icon` slot; an icon-only crumb is
+    named by its `aria-label`.
+  - The breadcrumb is one line. When it runs out of room, the middle crumbs fold
+    behind a "…" button whose panel lists them as links (Tab or the arrow keys
+    move through them), and past that the current and first crumbs' labels
+    shorten with an ellipsis. A single-page app routes by intercepting a crumb's
+    click, folded crumbs included.
+  - Parts: `root`, `list`, `separator`, `fold-button`, `panel`, `panel-list` on
+    the breadcrumb; `root`, `separator`, `content`, `label` on a crumb, with the
+    `current` and `folded` custom states. Texts are overridable through `texts`.
+
+### Patch Changes
+
+- [#305](https://github.com/CSCfi/ui/pull/305) [`5672043`](https://github.com/CSCfi/ui/commit/567204394ddd1a20617c6abe2412431608a0c6c2) Thanks [@razorfever](https://github.com/razorfever)! - Keyboard focus now shows a ring where it never painted: c-time-picker's
+  columns, end switch and Now and Done buttons; c-date-picker's arrows, month
+  and year buttons and lists and Today and Done buttons; the close button of a
+  fullscreen panel (also in c-select, c-autocomplete and c-tree-select); and
+  c-link. The time picker's selected end tab rings in its own ink, inside the
+  fill.
+
 ## 4.0.0-alpha.29
 
 ### Minor Changes
