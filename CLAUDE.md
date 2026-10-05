@@ -31,10 +31,11 @@ pnpm ui <script>    # run a script in packages/csc-ui
 # In packages/csc-ui
 pnpm build          # tokens -> chart data -> tag map -> vite build -> types -> strict manifest
 pnpm docs:manifest  # regenerate custom-elements.json
-pnpm lint           # tokens (strict) + a11y + ramp + chart guards
+pnpm lint           # tokens (strict) + a11y + ramp + chart + focus-ring guards
 pnpm lint:tokens    # forbid direct palette-step utilities in SFCs
 pnpm lint:a11y      # host attribute fallthrough check
 pnpm lint:chart     # chart-data.ts matches the semantic maps (ADR-0040)
+pnpm lint:focus     # a focus ring under outline-none restates outline-solid (Tailwind v4)
 pnpm test           # browser + node projects; test:browser / test:node / test:watch
 pnpm test:update    # rewrite the visual baselines of the browser project
 

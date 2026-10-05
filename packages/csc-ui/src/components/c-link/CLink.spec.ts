@@ -43,4 +43,23 @@ describe('c-link', () => {
       setThemeMode('light');
     });
   }
+
+  it('paints a 2px ring in the link ink when reached from the keyboard', async () => {
+    const { part } = await mount('c-link', {
+      attrs: { href: '#' },
+      html: 'Read the guide',
+    });
+
+    await userEvent.keyboard('{Tab}');
+    await settled();
+
+    const root = part('root');
+
+    expect(root.matches(':focus-visible')).toBe(true);
+
+    const style = getComputedStyle(root);
+
+    expect(`${style.outlineStyle} ${style.outlineWidth}`).toBe('solid 2px');
+    expect(style.outlineColor).toBe(tokenColor('--c-link'));
+  });
 });

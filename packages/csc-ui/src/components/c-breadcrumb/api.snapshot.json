@@ -1,0 +1,33 @@
+{
+  "attributes": {},
+  "cssProperties": [],
+  "defaultable": [
+    "texts"
+  ],
+  "events": {},
+  "methods": {},
+  "parts": [
+    "fold-button",
+    "list",
+    "panel",
+    "panel-list",
+    "root",
+    "separator"
+  ],
+  "propertyOnly": [
+    "texts"
+  ],
+  "props": {
+    "texts": "CBreadcrumbTexts = {}"
+  },
+  "slots": [
+    "default",
+    "first",
+    "folded"
+  ],
+  "states": [],
+  "subcomponents": [
+    "c-breadcrumb-item"
+  ],
+  "tag": "c-breadcrumb"
+}

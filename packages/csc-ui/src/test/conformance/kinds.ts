@@ -414,6 +414,36 @@ export const OVERLAY_RECIPES: Record<string, OverlayRecipe> = {
     open: openField,
     panel: (m) => m.part('panel'),
   },
+  // The fold panel exists only while crumbs are folded: narrow the stage
+  // until they fold, then open it from the fold button.
+  'c-breadcrumb': {
+    focusHome: (m) => m.part('fold-button'),
+    lightDismiss: true,
+    mount: {
+      html: [
+        'Home',
+        'Research infrastructures',
+        'Computing services',
+        'Supercomputers',
+        'Project #1',
+      ]
+        .map((label, i, all) =>
+          i === all.length - 1
+            ? `<c-breadcrumb-item>${label}</c-breadcrumb-item>`
+            : `<c-breadcrumb-item href="#crumb-${i}">${label}</c-breadcrumb-item>`,
+        )
+        .join(''),
+    },
+    open: async (m) => {
+      m.stage.style.display = 'block';
+      m.stage.style.width = '320px';
+      await settle();
+      await settle();
+      await userEvent.click(m.part('fold-button'));
+      await settle();
+    },
+    panel: (m) => m.part('panel'),
+  },
   'c-date-picker': {
     focusHome: (m) => m.shadow('input[part~="input"]'),
     lightDismiss: true,

@@ -3,13 +3,18 @@ import { Component, CUSTOM_ELEMENTS_SCHEMA, signal } from '@angular/core';
 import type { CTimePickerRange, CTimePickerTexts } from '@cscfi/csc-ui';
 
 const texts: CTimePickerTexts = {
+  am: 'ap.',
   chooseTime: 'Valitse aika',
   clearSelection: 'Tyhjennä',
   closePanel: 'Sulje',
+  done: 'Valmis',
   end: 'Loppuaika',
   hours: 'Tunnit',
   minutes: 'Minuutit',
+  now: 'Nyt',
   openClock: 'Avaa kellonajan valinta',
+  period: 'ap./ip.',
+  pm: 'ip.',
   start: 'Alkuaika',
 };
 

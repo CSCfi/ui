@@ -12,6 +12,7 @@
  */
 
 import type { CAutocompleteFilter, CAutocompleteItem, CAutocompleteTexts, CAutocompleteValue } from './components/c-autocomplete/CAutocomplete.vue';
+import type { CBreadcrumbTexts } from './components/c-breadcrumb/CBreadcrumb.vue';
 import type { CButtonGroupValue } from './components/c-button-group/CButtonGroup.vue';
 import type { CDataTableCellContent, CDataTableColumn, CDataTableExpandedContext, CDataTableRow, CDataTableSort, CDataTableTexts } from './components/c-data-table/CDataTable.vue';
 import type { CDatePickerDisabledDate, CDatePickerText, CDatePickerTexts, CDatePickerValue } from './components/c-date-picker/CDatePicker.vue';
@@ -324,6 +325,27 @@ export interface CAutocompleteElement extends Omit<HTMLElement, 'clearable' | 'd
 }
 
 export interface CBadgeElement extends HTMLElement {
+}
+
+/** A navigation aid naming where the current page sits in a site's hierarchy: one line of crumbs from the top of the hierarchy down to the current page, the middle ones folding behind a "…" button when the line runs out of room. */
+export interface CBreadcrumbElement extends Omit<HTMLElement, 'texts'> {
+  /**
+   * UI text overrides (i18n), merged over the English defaults. Objects have
+   * no attribute form — set it as a property
+   */
+  texts?: CBreadcrumbTexts;
+}
+
+/** One crumb in a `c-breadcrumb`: a link to a level of the hierarchy, or, as the last crumb, the current page. */
+export interface CBreadcrumbItemElement extends Omit<HTMLElement, 'href' | 'target'> {
+  /**
+   * URL of the page the crumb leads to. Ignored on the current crumb (the
+   * last one); a crumb without it names a level that has no page and renders
+   * as plain text
+   */
+  href?: string;
+  /** Browsing context the link opens in; the same tab when unset */
+  target?: string;
 }
 
 /** Buttons trigger actions — submitting a form, opening a modal, confirming a choice. Use one primary (default appearance) button per view; secondary actions use the `outlined`, `ghost` or `text` appearances. */
@@ -2739,6 +2761,7 @@ export interface CTreeSelectElement extends Omit<HTMLElement, 'allowBranch' | 'c
  */
 export interface AppDefaults {
   'c-autocomplete'?: Partial<Pick<CAutocompleteElement, 'hideDetails' | 'itemsPerPage' | 'labelOnTop' | 'shadow' | 'size' | 'texts'>>;
+  'c-breadcrumb'?: Partial<Pick<CBreadcrumbElement, 'texts'>>;
   'c-data-table'?: Partial<Pick<CDataTableElement, 'texts'>>;
   'c-date-picker'?: Partial<Pick<CDatePickerElement, 'firstDayOfWeek' | 'format' | 'hideDetails' | 'labelOnTop' | 'shadow' | 'showToday' | 'showWeekNumbers' | 'size' | 'texts'>>;
   'c-number-field'?: Partial<Pick<CNumberFieldElement, 'decimalSeparator' | 'decimals' | 'fixedDecimals' | 'groupSeparator' | 'hideDetails' | 'labelOnTop' | 'shadow' | 'size' | 'step' | 'texts'>>;
@@ -2751,6 +2774,7 @@ export interface AppDefaults {
 /** Runtime allow-list behind `applyDefaults()` validation — the same data as `AppDefaults`. */
 export const DEFAULTABLE_PROPS = {
   'c-autocomplete': ['hideDetails', 'itemsPerPage', 'labelOnTop', 'shadow', 'size', 'texts'],
+  'c-breadcrumb': ['texts'],
   'c-data-table': ['texts'],
   'c-date-picker': ['firstDayOfWeek', 'format', 'hideDetails', 'labelOnTop', 'shadow', 'showToday', 'showWeekNumbers', 'size', 'texts'],
   'c-number-field': ['decimalSeparator', 'decimals', 'fixedDecimals', 'groupSeparator', 'hideDetails', 'labelOnTop', 'shadow', 'size', 'step', 'texts'],
@@ -2770,6 +2794,8 @@ declare global {
     'c-alert': CAlertElement;
     'c-autocomplete': CAutocompleteElement;
     'c-badge': CBadgeElement;
+    'c-breadcrumb': CBreadcrumbElement;
+    'c-breadcrumb-item': CBreadcrumbItemElement;
     'c-button': CButtonElement;
     'c-button-group': CButtonGroupElement;
     'c-card': CCardElement;

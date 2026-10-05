@@ -38,7 +38,7 @@ const headingRow = tv({
     // A 44px touch target on a 56px row; the focus ring is the primary
     // outline every button in the library draws.
     close:
-      'flex size-11 shrink-0 cursor-pointer items-center justify-center rounded-full border-0 bg-transparent p-0 text-on-surface-muted outline-none hover:bg-primary-subtle hover:text-primary focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-primary',
+      'flex size-11 shrink-0 cursor-pointer items-center justify-center rounded-full border-0 bg-transparent p-0 text-on-surface-muted outline-none hover:bg-primary-subtle hover:text-primary focus-visible:outline-2 focus-visible:outline-solid focus-visible:-outline-offset-2 focus-visible:outline-primary',
     heading:
       'min-w-0 flex-1 truncate text-base font-semibold leading-6 text-on-surface',
     root: 'flex min-h-14 items-center gap-2 border-b border-solid border-divider pl-4 pr-1.5',

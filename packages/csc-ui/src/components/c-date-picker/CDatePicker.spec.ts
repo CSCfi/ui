@@ -807,6 +807,125 @@ describe('field', () => {
   });
 });
 
+describe('focus ring', () => {
+  afterEach(async () => {
+    await page.viewport(1280, 800);
+  });
+
+  /** The outline a control paints, and the ink it sits beside. */
+  const ringOf = (el: Element) => {
+    const style = getComputedStyle(el);
+
+    return {
+      color: style.outlineColor,
+      ink: style.color,
+      ring: `${style.outlineStyle} ${style.outlineWidth}`,
+    };
+  };
+
+  /** One Tab round of the panel's focus trap: each stop's name and ring. */
+  const tabRound = async (ringed: (el: Element) => Element = (el) => el) => {
+    const first = deepActiveElement()!;
+
+    const stops: ({ name: string; selected: boolean } & ReturnType<
+      typeof ringOf
+    >)[] = [];
+
+    let el: Element = first;
+
+    do {
+      expect(el.matches(':focus-visible'), el.outerHTML.slice(0, 80)).toBe(
+        true,
+      );
+      stops.push({
+        name: el.getAttribute('part') ?? el.localName,
+        selected: el.getAttribute('aria-selected') === 'true',
+        ...ringOf(ringed(el)),
+      });
+      await userEvent.keyboard('{Tab}');
+      await settle();
+      el = deepActiveElement()!;
+    } while (el !== first && stops.length < 16);
+
+    return stops;
+  };
+
+  // Chrome ignores an Alt chord for the keyboard modality, so a plain key
+  // first: after a mouse-driven spec the panel's focus would show no ring.
+  const openFromKeyboard = async (m: Mounted) => {
+    inputs(m)[0].focus();
+    await userEvent.keyboard('{ArrowLeft}{Alt>}{ArrowDown}{/Alt}');
+  };
+
+  // A day cell paints its ring on the day inside it.
+  const dayRing = (el: Element) =>
+    el.localName === 'td' ? el.querySelector('span')! : el;
+
+  it('paints a 2px ring on every stop reached from the keyboard', async () => {
+    const m = await mountPicker({ showToday: true, value: '2031-09-15' });
+
+    await openFromKeyboard(m);
+    await settle();
+
+    const stops = await tabRound(dayRing);
+
+    expect(new Set(stops.map((s) => s.name))).toEqual(
+      new Set([
+        'cell',
+        'month-button',
+        'next-month',
+        'next-year',
+        'previous-month',
+        'previous-year',
+        'today',
+        'year-button',
+      ]),
+    );
+
+    for (const stop of stops) expect(stop.ring, stop.name).toBe('solid 2px');
+  });
+
+  it('rings a month list row', async () => {
+    const m = await mountPicker({ value: '2031-09-15' });
+
+    await openFromKeyboard(m);
+    await settle();
+
+    while (deepActiveElement()?.getAttribute('part') !== 'month-button') {
+      await userEvent.keyboard('{Tab}');
+      await settle();
+    }
+
+    await userEvent.keyboard('{Enter}');
+    await settled();
+    await userEvent.keyboard('{ArrowDown}');
+    await settle();
+
+    const row = deepActiveElement()!;
+
+    expect(row.getAttribute('part')).toBe('option');
+    expect(row.matches(':focus-visible')).toBe(true);
+    expect(ringOf(row).ring).toBe('solid 2px');
+  });
+
+  it('rings the close button and Done in the fullscreen panel', async () => {
+    await page.viewport(360, 740);
+
+    const m = await mountPicker({ value: '2031-09-15' });
+
+    await openFromKeyboard(m);
+    await settled();
+
+    const stops = await tabRound(dayRing);
+
+    expect(stops.map((s) => s.name)).toEqual(
+      expect.arrayContaining(['close', 'done']),
+    );
+
+    for (const stop of stops) expect(stop.ring, stop.name).toBe('solid 2px');
+  });
+});
+
 describe('motion', () => {
   // The browser context emulates reduced motion; these specs opt back in.
   const allowMotion = () => {

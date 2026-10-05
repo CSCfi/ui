@@ -475,16 +475,18 @@ const timePicker = tv({
     columns: 'flex justify-center gap-1 p-2',
     // c-button's filled look on a native button, at the heading row's 44px
     // touch target.
-    done: 'ml-auto h-11 min-w-22 px-5 cursor-pointer rounded-csc-md border-0 bg-primary text-sm font-bold text-on-primary [font-family:var(--c-font-family)] outline-none hover:bg-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary',
+    done: 'ml-auto h-11 min-w-22 px-5 cursor-pointer rounded-csc-md border-0 bg-primary text-sm font-bold text-on-primary [font-family:var(--c-font-family)] outline-none hover:bg-primary-hover focus-visible:outline-2 focus-visible:outline-solid focus-visible:outline-offset-2 focus-visible:outline-primary',
     endSwitch:
       'flex gap-0.5 mx-3 mt-3 p-0.5 rounded-csc-lg border border-solid border-divider bg-clip-padding bg-surface-sunken',
+    // Tab lands on the selected tab, so its ring is on-primary inside the
+    // fill: a primary ring would vanish into it.
     endTab:
-      'flex-1 h-8 px-3 whitespace-nowrap cursor-pointer rounded-csc-md border-0 bg-transparent text-sm font-medium text-on-surface-muted [font-family:var(--c-font-family)] outline-none hover:bg-primary-subtle-hover focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-primary aria-selected:bg-primary aria-selected:text-on-primary aria-selected:hover:bg-primary-hover',
+      'flex-1 h-8 px-3 whitespace-nowrap cursor-pointer rounded-csc-md border-0 bg-transparent text-sm font-medium text-on-surface-muted [font-family:var(--c-font-family)] outline-none hover:bg-primary-subtle-hover focus-visible:outline-2 focus-visible:outline-solid focus-visible:-outline-offset-2 focus-visible:outline-primary aria-selected:bg-primary aria-selected:text-on-primary aria-selected:hover:bg-primary-hover aria-selected:focus-visible:-outline-offset-4 aria-selected:focus-visible:outline-on-primary',
     // A text button's look on a native button: the focus trap only sees
     // native buttons in the card.
-    now: 'h-9 px-3 whitespace-nowrap cursor-pointer rounded-csc-md border-0 bg-transparent text-sm font-bold text-primary [font-family:var(--c-font-family)] outline-none hover:not-disabled:bg-primary-subtle-hover focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-primary disabled:cursor-default disabled:text-on-surface-disabled',
+    now: 'h-9 px-3 whitespace-nowrap cursor-pointer rounded-csc-md border-0 bg-transparent text-sm font-bold text-primary [font-family:var(--c-font-family)] outline-none hover:not-disabled:bg-primary-subtle-hover focus-visible:outline-2 focus-visible:outline-solid focus-visible:-outline-offset-2 focus-visible:outline-primary disabled:cursor-default disabled:text-on-surface-disabled',
     option:
-      'flex items-center justify-center h-10 rounded-csc-lg text-sm tabular-nums text-on-surface cursor-pointer select-none outline-none hover:bg-primary-subtle-hover focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-primary aria-selected:bg-primary-subtle aria-selected:text-primary aria-selected:font-medium',
+      'flex items-center justify-center h-10 rounded-csc-lg text-sm tabular-nums text-on-surface cursor-pointer select-none outline-none hover:bg-primary-subtle-hover focus-visible:outline-2 focus-visible:outline-solid focus-visible:-outline-offset-2 focus-visible:outline-primary aria-selected:bg-primary-subtle aria-selected:text-primary aria-selected:font-medium',
     panel:
       'fixed m-0 p-0 border-0 bg-transparent overflow-visible [inset:auto]',
   },
