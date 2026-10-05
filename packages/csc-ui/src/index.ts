@@ -3,6 +3,8 @@ import CAccordion from './components/c-accordion/CAccordion.vue';
 import CAlert from './components/c-alert/CAlert.vue';
 import CAutocomplete from './components/c-autocomplete/CAutocomplete.vue';
 import CBadge from './components/c-badge/CBadge.vue';
+import CBreadcrumbItem from './components/c-breadcrumb-item/CBreadcrumbItem.vue';
+import CBreadcrumb from './components/c-breadcrumb/CBreadcrumb.vue';
 import CButtonGroup from './components/c-button-group/CButtonGroup.vue';
 import CButton from './components/c-button/CButton.vue';
 import CCardActions from './components/c-card-actions/CCardActions.vue';
@@ -89,6 +91,13 @@ export type {
   CAutocompleteTexts,
   CAutocompleteValue,
 } from './components/c-autocomplete/CAutocomplete.vue';
+
+export type { CBreadcrumbItemProps } from './components/c-breadcrumb-item/CBreadcrumbItem.vue';
+
+export type {
+  CBreadcrumbProps,
+  CBreadcrumbTexts,
+} from './components/c-breadcrumb/CBreadcrumb.vue';
 
 export type {
   CButtonGroupProps,
@@ -381,6 +390,10 @@ const components: Array<[string, unknown]> = [
   ['c-menu-label', CMenuLabel],
   ['c-menu-item', CMenuItem],
   ['c-menu', CMenu],
+  // Breadcrumb: crumbs register before c-breadcrumb, which measures them to
+  // fold the overflow into its own popover panel (ADR-0067).
+  ['c-breadcrumb-item', CBreadcrumbItem],
+  ['c-breadcrumb', CBreadcrumb],
   // Anchor-positioned overlays on the same popover pattern as the menu
   // family (ADR-0008); no shadow-rendered children, so order is free.
   ['c-tooltip', CTooltip],
@@ -491,4 +504,6 @@ export const tailwindVariantTags: ReadonlyArray<string> = [
   'c-date-picker',
   'c-number-field',
   'c-time-picker',
+  'c-breadcrumb',
+  'c-breadcrumb-item',
 ];

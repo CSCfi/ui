@@ -73,14 +73,36 @@ _Avoid_: Nested dropdown, flyout, child menu
 A general-purpose `role="separator"` line dividing groups of content. Used to partition menu sections but not menu-specific. A **menu label** (`c-menu-label`) is the complementary heading for a group of items; a separator is the line between groups. Paints the `divider` semantic token — a translucent ink that reads on every **surface ladder** rung (ADR-0036); the token role deliberately takes the tag's name, not this concept's, and since ADR-0042 it also paints every **load-bearing hairline**.
 _Avoid_: Spacer (the Stencil-era `c-spacer` flex-grow filler, removed in 4.x — not a visible rule), rule, hr
 
+### Breadcrumb
+
+**Breadcrumb** (`c-breadcrumb`):
+The page-level navigation aid naming where the current page sits in a site's hierarchy: a row of **crumbs** from the top of the hierarchy down to the current page. Distinct from the tree select's **panel breadcrumb**, which climbs **levels** inside a panel.
+_Avoid_: Breadcrumbs (the plural, as the component's name), trail, path bar, navigation path
+
+**Crumb** (`c-breadcrumb-item`):
+One entry of a **breadcrumb** or a **panel breadcrumb**, naming one step of the hierarchy. The tag name says *item*; the concept is a crumb.
+_Avoid_: Breadcrumb item (the tag name, not the term), step, link, node
+
+**Current crumb**:
+The last **crumb** of a **breadcrumb**, naming the page the user is on. Always the last one, never a link, and marked as the current page for assistive technology; the consumer sets nothing to make it so.
+_Avoid_: Active crumb, selected crumb, disabled crumb (a crumb has no disabled state)
+
+**Crumb separator**:
+The fixed decorative chevron (the Material Design `chevron-right` icon) between two crumbs. Not configurable and never announced; not a `c-divider`.
+_Avoid_: Separator unqualified (that is `c-divider`), divider, delimiter
+
+**Folded crumbs** / **Fold button** / **Fold panel**:
+When a **breadcrumb**'s single row is too narrow, its middle crumbs fold away, the one nearest the first crumb first — the **current crumb** and the first crumb never fold. The **fold button** ("…") stands in their place, and the **fold panel** it opens lists them as links, a **transient list panel** (ADR-0067). Once nothing more can fold, the current crumb's label truncates, then the first crumb's.
+_Avoid_: Trigger (that is the consumer-supplied element opening an overlay), overflow menu (it is not a menu), ellipsis, collapsed crumbs, hidden crumbs
+
 ### Tree select
 
 **Tree select** (`c-tree-select`):
-A single-value **value-selection** field for nested **items** of arbitrary depth, presented as a **stepped listbox**: its panel shows one **level** at a time with a **breadcrumb** for climbing back, and a whole-tree **search** while a **query** is typed (ADR-0047). Shares the **autocomplete**'s arrangement (readonly **value field**, in-panel **search input**) and emits the 4.x value events (`change` carrying the value, `update:value`, `input` — no grandfathered `changeValue`). Takes its data from the `items` property only.
+A single-value **value-selection** field for nested **items** of arbitrary depth, presented as a **stepped listbox**: its panel shows one **level** at a time with a **panel breadcrumb** for climbing back, and a whole-tree **search** while a **query** is typed (ADR-0047). Shares the **autocomplete**'s arrangement (readonly **value field**, in-panel **search input**) and emits the 4.x value events (`change` carrying the value, `update:value`, `input` — no grandfathered `changeValue`). Takes its data from the `items` property only.
 _Avoid_: Tree view (a different pattern — expand/collapse in place, `role="tree"`), tree picker, cascader, nested select, hierarchical dropdown
 
 **Stepped listbox**:
-The arrangement in which a hierarchy is browsed one flat `role="listbox"` **level** at a time — activating a **branch** replaces the list with its children, the **breadcrumb** climbs back — rather than expanding items in place. `c-tree-select`'s panel arrangement (ADR-0047).
+The arrangement in which a hierarchy is browsed one flat `role="listbox"` **level** at a time — activating a **branch** replaces the list with its children, the **panel breadcrumb** climbs back — rather than expanding items in place. `c-tree-select`'s panel arrangement (ADR-0047).
 _Avoid_: Stepper (a form-wizard pattern), drill-down, miller / cascading columns (several levels visible at once)
 
 **Branch** / **Leaf** (tree select):
@@ -95,12 +117,12 @@ _Avoid_: Depth (zero-based implementation word), tier, step, layer
 An **item**'s chain of ancestors, root-first. Shown under each search result and above the label in the closed **value field**; carried on the emitted selection under `return-object`. Distinct from the **query**.
 _Avoid_: Ancestry, trail, hierarchy, parents
 
-**Breadcrumb** / **Crumb** (tree select):
-The row of **crumbs** at the top of the panel naming the current **path** — a **root crumb** ("All") followed by one crumb per ancestor — each of which climbs back to that **level**. A navigation aid inside the panel; there is no page-level breadcrumb component.
-_Avoid_: Back button (there is none), path bar, trail
+**Panel breadcrumb** (tree select):
+The row of **crumbs** at the top of the tree select's panel naming the current **path** — a **root crumb** ("All") followed by one crumb per ancestor — each of which climbs back to that **level**. A navigation aid inside the panel, separate from the page-level **breadcrumb** component; its parts keep the names `breadcrumb` and `crumb`.
+_Avoid_: Breadcrumb unqualified (that is `c-breadcrumb`), back button (there is none), path bar, trail
 
 **Browse** / **Search** (modes, tree select):
-The two panel modes: **browse** while the **query** is empty (the **level list** under the **breadcrumb**), **search** while a query is typed (a flat list of matches from the whole tree, each with its **path**). Clearing the query returns to the remembered level.
+The two panel modes: **browse** while the **query** is empty (the **level list** under the **panel breadcrumb**), **search** while a query is typed (a flat list of matches from the whole tree, each with its **path**). Clearing the query returns to the remembered level.
 _Avoid_: Stepper mode, navigate, filter mode (the query narrows nothing in browse mode)
 
 **Select-branch row** (tree select):
@@ -244,11 +266,11 @@ The browser-managed paint layer above every author stacking context — nothing 
 _Avoid_: Overlay (an overlay is any floating surface; the top layer is a specific browser mechanism), portal
 
 **Transient list panel**:
-The floating list surface a component reveals on demand and closes on dismissal — a `c-menu` or **submenu** panel, `c-dropdown`'s listbox behind `c-select`, `c-autocomplete`'s options list, `c-tree-select`'s level and results lists, `c-date-picker`'s **month list** and **year list**. It lives in the **top layer**, hides its scrollbar and shows a **peek** (ADR-0043). Persistent scroll containers (data table, side navigation, page, card) are not transient list panels; `c-popover`'s panel is transient but carries no list.
+The floating list surface a component reveals on demand and closes on dismissal — a `c-menu` or **submenu** panel, `c-dropdown`'s listbox behind `c-select`, `c-autocomplete`'s options list, `c-tree-select`'s level and results lists, `c-date-picker`'s **month list** and **year list**, `c-breadcrumb`'s **fold panel**. It lives in the **top layer**, hides its scrollbar and shows a **peek** (ADR-0043). Persistent scroll containers (data table, side navigation, page, card) are not transient list panels; `c-popover`'s panel is transient but carries no list.
 _Avoid_: Dropdown (the component), menu (the component), popup, overlay, flyout
 
 **Peek**:
-The half-visible last row of an overflowing **transient list panel** — a `c-menu` or **submenu** panel, `c-dropdown`'s listbox behind `c-select`, `c-autocomplete`'s options list, `c-tree-select`'s level and results lists, or `c-date-picker`'s **month list** and **year list**. Those panels hide their scrollbar, so the peek is the sole cue that more rows follow: an overflowing panel always ends at a row's midpoint (the `itemsPerPage`-th row where that prop caps the list, otherwise the last row under the panel's ceiling), never on a row boundary. Persistent scroll containers (data table, side navigation, page, card) keep native scrollbars and have no peek; `c-popover` has no scroll container at all.
+The half-visible last row of an overflowing **transient list panel** — a `c-menu` or **submenu** panel, `c-dropdown`'s listbox behind `c-select`, `c-autocomplete`'s options list, `c-tree-select`'s level and results lists, `c-date-picker`'s **month list** and **year list**, or `c-breadcrumb`'s **fold panel**. Those panels hide their scrollbar, so the peek is the sole cue that more rows follow: an overflowing panel always ends at a row's midpoint (the `itemsPerPage`-th row where that prop caps the list, otherwise the last row under the panel's ceiling), never on a row boundary. Persistent scroll containers (data table, side navigation, page, card) keep native scrollbars and have no peek; `c-popover` has no scroll container at all.
 _Avoid_: Scroll hint, teaser, fade / scroll shadow (a peek is never a gradient), affordance
 
 **Fullscreen panel**:

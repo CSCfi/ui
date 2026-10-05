@@ -1,0 +1,31 @@
+{
+  "attributes": {
+    "href": "string = ''",
+    "target": "string = ''"
+  },
+  "cssProperties": [],
+  "defaultable": [],
+  "events": {},
+  "methods": {},
+  "parts": [
+    "content",
+    "label",
+    "root",
+    "separator"
+  ],
+  "propertyOnly": [],
+  "props": {
+    "href": "string = ''",
+    "target": "string = ''"
+  },
+  "slots": [
+    "default",
+    "icon"
+  ],
+  "states": [
+    "current",
+    "folded"
+  ],
+  "subcomponents": [],
+  "tag": "c-breadcrumb-item"
+}

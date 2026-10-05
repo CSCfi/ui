@@ -16,6 +16,8 @@ import {
   type CAutocompleteElement,
   type CAutocompleteElementEventMap,
   type CBadgeElement,
+  type CBreadcrumbElement,
+  type CBreadcrumbItemElement,
   type CButtonElement,
   type CButtonGroupElement,
   type CButtonGroupElementEventMap,
@@ -186,6 +188,22 @@ export const CBadge = createComponent({
   elementClass: elementClass<CBadgeElement>('c-badge'),
   react: React,
   tagName: 'c-badge',
+});
+
+/** A navigation aid naming where the current page sits in a site's hierarchy: one line of crumbs from the top of the hierarchy down to the current page, the middle ones folding behind a "…" button when the line runs out of room. */
+export const CBreadcrumb = createComponent({
+  displayName: 'CBreadcrumb',
+  elementClass: elementClass<CBreadcrumbElement>('c-breadcrumb'),
+  react: React,
+  tagName: 'c-breadcrumb',
+});
+
+/** One crumb in a `c-breadcrumb`: a link to a level of the hierarchy, or, as the last crumb, the current page. */
+export const CBreadcrumbItem = createComponent({
+  displayName: 'CBreadcrumbItem',
+  elementClass: elementClass<CBreadcrumbItemElement>('c-breadcrumb-item'),
+  react: React,
+  tagName: 'c-breadcrumb-item',
 });
 
 /** Buttons trigger actions — submitting a form, opening a modal, confirming a choice. Use one primary (default appearance) button per view; secondary actions use the `outlined`, `ghost` or `text` appearances. */

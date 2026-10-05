@@ -7,10 +7,10 @@
  * - **Escape** peels the innermost popover only, one per press. The listener
  *   is capture-phase and calls `preventDefault()`, so an enclosing
  *   `c-modal`'s bubble-phase controller sees the claimed key and does not
- *   close itself (ADR-0014). Known pre-existing limitation: a `c-menu` open
- *   inside a popover listens on its own host (bubble), i.e. *after* this
- *   capture listener — that Escape closes both, exactly as it did when each
- *   popover owned its own capture listener.
+ *   close itself (ADR-0014). Known pre-existing limitation: a `c-menu`, or a
+ *   `c-breadcrumb`'s fold panel, open inside a popover listens on its own
+ *   host (bubble), i.e. *after* this capture listener — that Escape closes
+ *   both, exactly as it did when each popover owned its own capture listener.
  * - **Light dismiss** (CONTEXT.md, ADR-0050) closes every popover that does
  *   not *logically* contain the pointer gesture. A press and its release are
  *   paired (`lightDismiss.ts` — a press alone, the start of every touch
