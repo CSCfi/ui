@@ -527,6 +527,32 @@ describe('time columns', () => {
       expect(restOffset(bounded, 'minute', 'm30')).toBeCloseTo(4, 0);
     });
 
+    // On the hour the empty minute column already rests its tab stop on
+    // 00, the minute the pick fills in: only the selection changes.
+    it('a minute filled in on the hour rests too', async () => {
+      const m = await mountPicker();
+
+      const hours = vi.spyOn(Date.prototype, 'getHours').mockReturnValue(14);
+
+      const minutes = vi.spyOn(Date.prototype, 'getMinutes').mockReturnValue(0);
+
+      try {
+        await open(m);
+      } finally {
+        hours.mockRestore();
+        minutes.mockRestore();
+      }
+
+      expect(focusedKey()).toBe('h14');
+
+      column(m, 'minute').scrollTop = 400;
+      await userEvent.click(row(m, 'h9'));
+      await settle();
+
+      expect(m.host.value).toBe('09:00');
+      expect(restOffset(m, 'minute', 'm0')).toBeCloseTo(4, 0);
+    });
+
     it('a column whose selection did not change keeps its scroll', async () => {
       const m = await mountPicker({ value: '14:30' });
 

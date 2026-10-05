@@ -803,12 +803,18 @@ const columnEl = (kind: CTimePickerColumnKind) =>
 const rowEl = (kind: CTimePickerColumnKind) =>
   columnEl(kind)?.querySelector<HTMLElement>('li[tabindex="0"]') ?? null;
 
-// Each column's tab stop and row count, before a pick changes them.
+// Each column's tab stop, selected row and row count, before a pick changes
+// them. A filled-in minute can keep its tab stop: on the hour, the empty
+// column already rests on 00.
 const snapshotColumns = () =>
   new Map(
     columns.value.map((c) => [
       c.kind,
-      { count: c.rows.length, key: c.rows.find((r) => r.focus)?.key },
+      {
+        count: c.rows.length,
+        key: c.rows.find((r) => r.focus)?.key,
+        selected: c.rows.find((r) => r.selected)?.key,
+      },
     ]),
   );
 
@@ -839,7 +845,15 @@ const restColumnsMoved = (before: ReturnType<typeof snapshotColumns>) => {
 
     const key = column.rows.find((r) => r.focus)?.key;
 
-    if (was && was.key === key && was.count === column.rows.length) continue;
+    const selected = column.rows.find((r) => r.selected)?.key;
+
+    if (
+      was &&
+      was.key === key &&
+      was.selected === selected &&
+      was.count === column.rows.length
+    )
+      continue;
 
     const list = columnEl(column.kind);
 
