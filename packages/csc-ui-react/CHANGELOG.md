@@ -1,5 +1,20 @@
 # @cscfi/csc-ui-react
 
+## 4.0.0-alpha.31
+
+### Patch Changes
+
+- [#307](https://github.com/CSCfi/ui/pull/307) [`2852e02`](https://github.com/CSCfi/ui/commit/2852e02a72cdd135333f1d57d6c2146d7726d191) Thanks [@razorfever](https://github.com/razorfever)! - c-date-picker and c-time-picker now ring the panel's focused day or row after
+  Alt+↓ and the arrow keys, also when the field was clicked first and in Firefox,
+  where no ring showed. A selected day rings in its own ink, inside the fill,
+  instead of a primary ring lost against it.
+
+- [#307](https://github.com/CSCfi/ui/pull/307) [`ea71a5e`](https://github.com/CSCfi/ui/commit/ea71a5e83bcee05c91433bf497e76ad9701ee48c) Thanks [@razorfever](https://github.com/razorfever)! - c-time-picker: a pick in an empty field on the hour now rests the filled-in
+  minute (00) at the top of its column, as it does at any other minute; the
+  column used to keep wherever it had been scrolled.
+- Updated dependencies [[`2852e02`](https://github.com/CSCfi/ui/commit/2852e02a72cdd135333f1d57d6c2146d7726d191), [`ea71a5e`](https://github.com/CSCfi/ui/commit/ea71a5e83bcee05c91433bf497e76ad9701ee48c)]:
+  - @cscfi/csc-ui@4.0.0-alpha.31
+
 ## 4.0.0-alpha.30
 
 ### Minor Changes
