@@ -32,6 +32,7 @@ it('validates before touching state, so a bad call leaves earlier defaults alone
 it('the wave-1 allow-list is exactly the documented tags', () => {
   expect(Object.keys(DEFAULTABLE_PROPS).sort()).toEqual([
     'c-autocomplete',
+    'c-breadcrumb',
     'c-data-table',
     'c-date-picker',
     'c-number-field',
