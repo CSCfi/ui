@@ -1,20 +1,12 @@
-// @ts-nocheck — documentation code sample; shown as text, never compiled here
-import { Component, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import type { CDataTableColumn } from '@cscfi/csc-ui';
 
+// @ts-nocheck — documentation code sample; shown as text, never compiled here
+import { Component, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
+
 @Component({
+  schemas: [CUSTOM_ELEMENTS_SCHEMA],
   selector: 'app-example',
   standalone: true,
-  schemas: [CUSTOM_ELEMENTS_SCHEMA],
-  template: `
-    <!-- Drag the handle in the wrapper's bottom-right corner: with autohide,
-         columns that stop fitting move into the expansion row (rightmost
-         first). The pinned column never hides. Without autohide the table
-         would scroll horizontally instead. -->
-    <div class="resizable">
-      <c-data-table [columns]="columns" [data]="data" autohide></c-data-table>
-    </div>
-  `,
   styles: [
     `
       .resizable {
@@ -26,6 +18,15 @@ import type { CDataTableColumn } from '@cscfi/csc-ui';
       }
     `,
   ],
+  template: `
+    <!-- Drag the handle in the wrapper's bottom-right corner: with autohide,
+         columns that stop fitting move into the expansion row (rightmost
+         first). The pinned column never hides. Without autohide the table
+         would scroll horizontally instead. -->
+    <div class="resizable">
+      <c-data-table [columns]="columns" [data]="data" autohide></c-data-table>
+    </div>
+  `,
 })
 export class AutohideExampleComponent {
   columns: CDataTableColumn[] = [

@@ -1,7 +1,8 @@
+import type { CDatePickerRange, CDatePickerTexts } from '@cscfi/csc-ui';
+
+import { CDatePicker } from '@cscfi/csc-ui-react';
 // @ts-nocheck — documentation code sample; shown as text, never compiled here
 import { useState } from 'react';
-import { CDatePicker } from '@cscfi/csc-ui-react';
-import type { CDatePickerRange, CDatePickerTexts } from '@cscfi/csc-ui';
 
 const months = [
   'tammikuu',
@@ -86,13 +87,13 @@ export const Texts = () => {
   return (
     <div>
       <CDatePicker
-        value={period}
-        texts={texts}
         hint="Kirjoita päivämäärät tai valitse kalenterista"
         label="Lomajakso"
+        onChange={(event) => setPeriod(event.detail as CDatePickerRange | null)}
         range
         showWeekNumbers
-        onChange={(event) => setPeriod(event.detail as CDatePickerRange | null)}
+        texts={texts}
+        value={period}
       />
 
       <p>Value: {period ? `${period.start} – ${period.end}` : 'null'}</p>

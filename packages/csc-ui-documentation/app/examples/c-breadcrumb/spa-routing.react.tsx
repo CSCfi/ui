@@ -1,7 +1,8 @@
+import type { MouseEvent } from 'react';
+
+import { CBreadcrumb, CBreadcrumbItem } from '@cscfi/csc-ui-react';
 // @ts-nocheck — documentation code sample; shown as text, never compiled here
 import { useState } from 'react';
-import type { MouseEvent } from 'react';
-import { CBreadcrumb, CBreadcrumbItem } from '@cscfi/csc-ui-react';
 
 const PAGES = [
   { name: 'Home', path: '/' },
@@ -35,8 +36,8 @@ export const SpaRouting = () => {
       <CBreadcrumb>
         {crumbs.map((page) => (
           <CBreadcrumbItem
-            key={page.path}
             href={page.path}
+            key={page.path}
             onClick={(event) => navigate(event, page.path)}
           >
             {page.name}

@@ -2,6 +2,7 @@
 // residual stylesheet the example SFCs reference, and the registered elements
 // from the built package (app/plugins/csc-ui.client.ts).
 import '@cscfi/csc-ui/css/tokens.css';
+
 import '../app/assets/site.css';
 
 import { defineCustomElements } from '@cscfi/csc-ui';

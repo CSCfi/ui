@@ -1,6 +1,6 @@
+import { COption, CSelect } from '@cscfi/csc-ui-react';
 // @ts-nocheck — documentation code sample; shown as text, never compiled here
 import { useState } from 'react';
-import { COption, CSelect } from '@cscfi/csc-ui-react';
 
 export const SelectAll = () => {
   const [countries, setCountries] = useState<string[]>(['fi']);
@@ -8,14 +8,14 @@ export const SelectAll = () => {
   return (
     <div>
       <CSelect
-        value={countries}
         clearable
         hint="Pick some, or all at once"
         label="Countries"
         maxTags={3}
         multiple
-        selectAll
         onChangeValue={(event) => setCountries(event.detail as string[])}
+        selectAll
+        value={countries}
       >
         <COption name="Finland" value="fi">
           Finland
@@ -32,7 +32,7 @@ export const SelectAll = () => {
         <COption name="Iceland" value="is">
           Iceland
         </COption>
-        <COption name="Faroe Islands" value="fo" disabled>
+        <COption disabled name="Faroe Islands" value="fo">
           Faroe Islands
         </COption>
       </CSelect>

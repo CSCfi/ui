@@ -1,11 +1,12 @@
-// @ts-nocheck — documentation code sample; shown as text, never compiled here
-import { Component, CUSTOM_ELEMENTS_SCHEMA, signal } from '@angular/core';
 import type { CDatePickerRange } from '@cscfi/csc-ui';
 
+// @ts-nocheck — documentation code sample; shown as text, never compiled here
+import { Component, CUSTOM_ELEMENTS_SCHEMA, signal } from '@angular/core';
+
 @Component({
+  schemas: [CUSTOM_ELEMENTS_SCHEMA],
   selector: 'app-example',
   standalone: true,
-  schemas: [CUSTOM_ELEMENTS_SCHEMA],
   template: `
     <div>
       <c-date-picker
@@ -35,6 +36,6 @@ import type { CDatePickerRange } from '@cscfi/csc-ui';
   `,
 })
 export class MonthExampleComponent {
-  billing = signal<string | null>(null);
+  billing = signal<null | string>(null);
   period = signal<CDatePickerRange | null>(null);
 }

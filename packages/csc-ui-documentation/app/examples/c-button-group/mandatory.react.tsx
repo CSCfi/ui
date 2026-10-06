@@ -1,6 +1,6 @@
+import { CButton, CButtonGroup } from '@cscfi/csc-ui-react';
 // @ts-nocheck — documentation code sample; shown as text, never compiled here
 import { useState } from 'react';
-import { CButton, CButtonGroup } from '@cscfi/csc-ui-react';
 
 export const Mandatory = () => {
   const [align, setAlign] = useState('left');
@@ -10,8 +10,8 @@ export const Mandatory = () => {
       <CButtonGroup
         label="Alignment"
         mandatory
-        value={align}
         onChange={(event) => setAlign(event.detail as string)}
+        value={align}
       >
         <CButton value="left">Left</CButton>
         <CButton value="center">Center</CButton>

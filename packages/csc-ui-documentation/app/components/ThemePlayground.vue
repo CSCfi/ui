@@ -13,9 +13,9 @@
         class="flex cursor-pointer items-center gap-2 text-sm text-on-surface"
       >
         <input
-          type="color"
           :value="seeds[family]"
           class="size-8 cursor-pointer rounded border border-border bg-surface"
+          type="color"
           @input="onInput(family, $event)"
         />
 

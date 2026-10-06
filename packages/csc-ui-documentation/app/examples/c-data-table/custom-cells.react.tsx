@@ -1,7 +1,7 @@
+import { type CDataTableColumn, h } from '@cscfi/csc-ui';
+import { CDataTable } from '@cscfi/csc-ui-react';
 // @ts-nocheck — documentation code sample; shown as text, never compiled here
 import { useState } from 'react';
-import { CDataTable } from '@cscfi/csc-ui-react';
-import { type CDataTableColumn, h } from '@cscfi/csc-ui';
 
 const data = [
   { name: 'Aurora', status: 'active', usage: 0.72 },

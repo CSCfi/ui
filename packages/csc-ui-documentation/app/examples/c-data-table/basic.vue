@@ -1,21 +1,15 @@
 <template>
   <div>
-    <c-data-table
-      :columns="columns"
-      :data="data"
-      :sort="sort"
-      page-size="5"
-      @change:sort="onSort"
-    />
+    <c-data-table :columns :data :sort page-size="5" @change:sort="onSort" />
 
     <p>Sorted by: {{ sort.column }} ({{ sort.direction }})</p>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
-
 import type { CDataTableColumn, CDataTableSort } from '@cscfi/csc-ui';
+
+import { ref } from 'vue';
 
 const columns: CDataTableColumn[] = [
   { header: 'Project', key: 'name', sortable: true },

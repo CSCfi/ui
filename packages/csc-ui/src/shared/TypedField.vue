@@ -144,9 +144,9 @@ const ui = typedField();
 const props = defineProps<{
   /** The `anchor-name` style from `useAnchoredPanel`. */
   anchorStyle: string;
+  clearable: boolean;
   /** Accessible label of the clear button. */
   clearLabel: string;
-  clearable: boolean;
   disabled: boolean;
   errorMessage: string;
   /** The `useTypedField` state this field renders. */

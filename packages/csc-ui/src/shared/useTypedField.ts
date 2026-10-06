@@ -15,6 +15,17 @@ import { computed, type Ref, ref, shallowRef, watch } from 'vue';
 import { emitModelChange } from './emitModelValue';
 import { applyMask, type MaskSlot } from './inputMask';
 
+export interface TypedFieldCodec {
+  /** The committed value shown as text under `pattern`. */
+  format(value: string, pattern: string): string;
+  /** A parsed value that can still not be committed (disabled, out of range) — bad input. */
+  isUsable(value: string): boolean;
+  /** Whether a value set from outside is one this field holds (anything else is "no value"). */
+  isValue(value: unknown): value is string;
+  /** Typed text read under `pattern`; `null` when it names no value. */
+  parse(text: string, pattern: string): null | string;
+}
+
 export type TypedFieldEnd = 'end' | 'start';
 
 export interface TypedFieldEnds {
@@ -24,17 +35,6 @@ export interface TypedFieldEnds {
 
 /** The text committed from the field, as typed: both ends' texts under `range`. */
 export type TypedFieldText = { end: string; start: string } | string;
-
-export interface TypedFieldCodec {
-  /** The committed value shown as text under `pattern`. */
-  format(value: string, pattern: string): string;
-  /** Whether a value set from outside is one this field holds (anything else is "no value"). */
-  isValue(value: unknown): value is string;
-  /** A parsed value that can still not be committed (disabled, out of range) — bad input. */
-  isUsable(value: string): boolean;
-  /** Typed text read under `pattern`; `null` when it names no value. */
-  parse(text: string, pattern: string): null | string;
-}
 
 export interface UseTypedFieldOptions {
   codec: TypedFieldCodec;
@@ -48,10 +48,10 @@ export interface UseTypedFieldOptions {
   mask: Readonly<Ref<MaskSlot[]>>;
   /** The end inputs' accessible names under `range`. */
   names: () => { end: string; start: string };
-  /** Fired on every commit of typed text, as typed — the host's `change:text`. */
-  onTextCommit: (text: TypedFieldText) => void;
   /** Alt+↓ in an input, after committing its text: open the panel. */
   onOpenRequest: () => void;
+  /** Fired on every commit of typed text, as typed — the host's `change:text`. */
+  onTextCommit: (text: TypedFieldText) => void;
   /** The display and parse pattern. */
   pattern: Readonly<Ref<string>>;
   /** The consumer's placeholder (props.placeholder). */
@@ -359,8 +359,8 @@ export const useTypedField = (options: UseTypedFieldOptions) => {
     commitText,
     commitValue,
     endInput,
-    endText,
     ends,
+    endText,
     field,
     focused,
     hasContent,

@@ -15,9 +15,9 @@
            the section currently under the sticky toolbar. -->
       <span
         v-show="marker.visible"
+        :style="{ top: `${marker.top}px`, height: `${marker.height}px` }"
         aria-hidden="true"
         class="absolute -left-px w-0.5 bg-primary transition-[top,height] duration-200"
-        :style="{ top: `${marker.top}px`, height: `${marker.height}px` }"
       />
 
       <a
@@ -86,6 +86,7 @@ const scrollRailToLink = (link: HTMLElement) => {
 
   // The rail (sticky → positioned) is the nav's offsetParent.
   const top = navRef.value.offsetTop + link.offsetTop;
+
   const bottom = top + link.offsetHeight;
 
   if (top < rail.scrollTop + margin) {

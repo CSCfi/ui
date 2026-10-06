@@ -1,6 +1,7 @@
+import type { CTimePickerRange, CTimePickerTexts } from '@cscfi/csc-ui';
+
 // @ts-nocheck — documentation code sample; shown as text, never compiled here
 import { Component, CUSTOM_ELEMENTS_SCHEMA, signal } from '@angular/core';
-import type { CTimePickerRange, CTimePickerTexts } from '@cscfi/csc-ui';
 
 const texts: CTimePickerTexts = {
   am: 'ap.',
@@ -19,9 +20,9 @@ const texts: CTimePickerTexts = {
 };
 
 @Component({
+  schemas: [CUSTOM_ELEMENTS_SCHEMA],
   selector: 'app-example',
   standalone: true,
-  schemas: [CUSTOM_ELEMENTS_SCHEMA],
   template: `
     <div>
       <c-time-picker
@@ -41,6 +42,6 @@ const texts: CTimePickerTexts = {
   `,
 })
 export class TextsExampleComponent {
-  texts = texts;
   shift = signal<CTimePickerRange | null>(null);
+  texts = texts;
 }

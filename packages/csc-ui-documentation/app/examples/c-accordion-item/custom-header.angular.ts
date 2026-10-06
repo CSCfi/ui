@@ -2,25 +2,9 @@
 import { Component, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 
 @Component({
+  schemas: [CUSTOM_ELEMENTS_SCHEMA],
   selector: 'app-example',
   standalone: true,
-  schemas: [CUSTOM_ELEMENTS_SCHEMA],
-  template: `
-    <div>
-      <c-accordion>
-        <c-accordion-item value="members">
-          <div slot="header" class="member-header">
-            <span>Members and roles</span>
-            <span class="member-header-meta">3 pending invites</span>
-          </div>
-          <p>Invite members by email and assign them a role in the project.</p>
-        </c-accordion-item>
-        <c-accordion-item heading="Data storage" value="storage">
-          <p>Allas object storage is available to every project by default.</p>
-        </c-accordion-item>
-      </c-accordion>
-    </div>
-  `,
   styles: [
     `
       /* Slotted header content is light DOM: style it with your own CSS. It
@@ -39,5 +23,21 @@ import { Component, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
       }
     `,
   ],
+  template: `
+    <div>
+      <c-accordion>
+        <c-accordion-item value="members">
+          <div slot="header" class="member-header">
+            <span>Members and roles</span>
+            <span class="member-header-meta">3 pending invites</span>
+          </div>
+          <p>Invite members by email and assign them a role in the project.</p>
+        </c-accordion-item>
+        <c-accordion-item heading="Data storage" value="storage">
+          <p>Allas object storage is available to every project by default.</p>
+        </c-accordion-item>
+      </c-accordion>
+    </div>
+  `,
 })
 export class CustomHeaderExampleComponent {}

@@ -20,7 +20,7 @@ export interface MigrationBlock {
 export interface MigrationSection {
   blocks: Record<Flavor, MigrationBlock[]>;
   id: string;
-  intro: Partial<Record<Flavor | 'all', string>>;
+  intro: Partial<Record<'all' | Flavor, string>>;
   /** Optional trailing cross-page link (intros are plain text). */
   link?: { label: string; to: string };
   title: string;
@@ -37,8 +37,8 @@ const forAll = (
 
 export const MIGRATION_SECTIONS: MigrationSection[] = [
   {
+    blocks: forAll([]),
     id: 'before-you-start',
-    title: 'Before you start',
     intro: {
       all: `Version 4 is a complete rewrite of the library under the same package name: the tag names are stable — every <c-*> element keeps its name, so your existing markup mostly stays put. What changes is everything around the tags — how you register the library, how two-way binding and events work, how you customize and theme components.
 
@@ -46,65 +46,128 @@ This is an all-at-once upgrade. You cannot run 3.x and 4.x side by side: both re
 
 @cscfi/csc-ui 4.x is ESM-only, so a bundler (Vite, webpack, etc.) is assumed.`,
     },
-    blocks: forAll([]),
+    title: 'Before you start',
   },
   {
-    id: 'packages',
-    title: 'Update the packages',
-    intro: {
-      vue: 'Bump the core package to 4.x and remove the v-control directive package (@cscfi/csc-ui-vue, or @cscfi/csc-ui-vue2 on Vue 2) — the 4.x elements support plain v-model natively, so the directive is gone.',
-      react:
-        'Bump both packages to 4.x. The names are unchanged, but @cscfi/csc-ui-react is reimplemented (typed React components generated from the custom-elements manifest) and is now always released with the exact same version number as the core.',
-      angular:
-        'Bump the core package to 4.x. Angular consumes the custom elements natively — no wrapper package.',
-      typescript:
-        'Bump the core package to 4.x. TypeScript consumes the custom elements natively — no wrapper package.',
-    },
     blocks: {
-      vue: [
+      angular: [
         {
+          code: `pnpm add @cscfi/csc-ui@^4`,
           lang: 'bash',
-          code: `pnpm remove @cscfi/csc-ui-vue
-pnpm add @cscfi/csc-ui@^4`,
         },
       ],
       react: [
         {
-          lang: 'bash',
           code: `pnpm add @cscfi/csc-ui@^4 @cscfi/csc-ui-react@^4`,
-        },
-      ],
-      angular: [
-        {
           lang: 'bash',
-          code: `pnpm add @cscfi/csc-ui@^4`,
         },
       ],
       typescript: [
         {
-          lang: 'bash',
           code: `pnpm add @cscfi/csc-ui@^4`,
+          lang: 'bash',
+        },
+      ],
+      vue: [
+        {
+          code: `pnpm remove @cscfi/csc-ui-vue
+pnpm add @cscfi/csc-ui@^4`,
+          lang: 'bash',
         },
       ],
     },
+    id: 'packages',
+    intro: {
+      angular:
+        'Bump the core package to 4.x. Angular consumes the custom elements natively — no wrapper package.',
+      react:
+        'Bump both packages to 4.x. The names are unchanged, but @cscfi/csc-ui-react is reimplemented (typed React components generated from the custom-elements manifest) and is now always released with the exact same version number as the core.',
+      typescript:
+        'Bump the core package to 4.x. TypeScript consumes the custom elements natively — no wrapper package.',
+      vue: 'Bump the core package to 4.x and remove the v-control directive package (@cscfi/csc-ui-vue, or @cscfi/csc-ui-vue2 on Vue 2) — the 4.x elements support plain v-model natively, so the directive is gone.',
+    },
+    title: 'Update the packages',
   },
   {
-    id: 'registration',
-    title: 'Update registration & imports',
-    intro: {
-      vue: 'Drop applyPolyfills and the /loader subpath — 4.x exports defineCustomElements() directly and registers every element eagerly. Remove the v-control directive registration. Switch the CSS import to css/tokens.css.',
-      react:
-        'Drop applyPolyfills and the /loader subpath. With the React wrapper you no longer call defineCustomElements() yourself — importing anything from @cscfi/csc-ui-react registers the elements as a side effect. Switch the CSS import to css/tokens.css.',
-      angular:
-        'Drop applyPolyfills and the /loader subpath — 4.x exports defineCustomElements() directly. Switch the CSS import to css/tokens.css.',
-      typescript:
-        'Drop applyPolyfills and the /loader subpath — 4.x exports defineCustomElements() directly. Switch the CSS import to css/tokens.css.',
-    },
     blocks: {
-      vue: [
+      angular: [
         {
+          code: `import '@cscfi/csc-ui/css/theme.css';
+
+import { bootstrapApplication } from '@angular/platform-browser';
+import { applyPolyfills, defineCustomElements } from '@cscfi/csc-ui/loader';
+
+import { AppComponent } from './app/app.component';
+
+applyPolyfills().then(() => defineCustomElements());
+
+bootstrapApplication(AppComponent);`,
           filename: 'Before — 3.x',
           lang: 'ts',
+        },
+        {
+          code: `import '@cscfi/csc-ui/css/tokens.css';
+
+import { bootstrapApplication } from '@angular/platform-browser';
+import { defineCustomElements } from '@cscfi/csc-ui';
+
+import { AppComponent } from './app/app.component';
+
+defineCustomElements();
+
+bootstrapApplication(AppComponent);`,
+          filename: 'After — 4.x',
+          lang: 'ts',
+        },
+      ],
+      react: [
+        {
+          code: `import '@cscfi/csc-ui-react/css/theme.css';
+
+import { createRoot } from 'react-dom/client';
+import { applyPolyfills, defineCustomElements } from '@cscfi/csc-ui/loader';
+
+import { App } from './App';
+
+applyPolyfills().then(() => defineCustomElements());
+
+createRoot(document.getElementById('root')!).render(<App />);`,
+          filename: 'Before — 3.x',
+          lang: 'tsx',
+        },
+        {
+          code: `import '@cscfi/csc-ui/css/tokens.css';
+
+import { createRoot } from 'react-dom/client';
+
+// Importing the wrapper registers the elements as a side effect.
+import { App } from './App';
+
+createRoot(document.getElementById('root')!).render(<App />);`,
+          filename: 'After — 4.x',
+          lang: 'tsx',
+        },
+      ],
+      typescript: [
+        {
+          code: `import '@cscfi/csc-ui/css/theme.css';
+import { applyPolyfills, defineCustomElements } from '@cscfi/csc-ui/loader';
+
+applyPolyfills().then(() => defineCustomElements());`,
+          filename: 'Before — 3.x',
+          lang: 'ts',
+        },
+        {
+          code: `import '@cscfi/csc-ui/css/tokens.css';
+import { defineCustomElements } from '@cscfi/csc-ui';
+
+defineCustomElements();`,
+          filename: 'After — 4.x',
+          lang: 'ts',
+        },
+      ],
+      vue: [
+        {
           code: `import '@cscfi/csc-ui/css/theme.css';
 
 import { createApp } from 'vue';
@@ -119,10 +182,10 @@ app.directive('control', vControl);
 applyPolyfills().then(() => defineCustomElements());
 
 app.mount('#app');`,
+          filename: 'Before — 3.x',
+          lang: 'ts',
         },
         {
-          filename: 'After — 4.x',
-          lang: 'ts',
           code: `import '@cscfi/csc-ui/css/tokens.css';
 
 import { createApp } from 'vue';
@@ -133,153 +196,45 @@ import App from './App.vue';
 defineCustomElements();
 
 createApp(App).mount('#app');`,
-        },
-      ],
-      react: [
-        {
-          filename: 'Before — 3.x',
-          lang: 'tsx',
-          code: `import '@cscfi/csc-ui-react/css/theme.css';
-
-import { createRoot } from 'react-dom/client';
-import { applyPolyfills, defineCustomElements } from '@cscfi/csc-ui/loader';
-
-import { App } from './App';
-
-applyPolyfills().then(() => defineCustomElements());
-
-createRoot(document.getElementById('root')!).render(<App />);`,
-        },
-        {
-          filename: 'After — 4.x',
-          lang: 'tsx',
-          code: `import '@cscfi/csc-ui/css/tokens.css';
-
-import { createRoot } from 'react-dom/client';
-
-// Importing the wrapper registers the elements as a side effect.
-import { App } from './App';
-
-createRoot(document.getElementById('root')!).render(<App />);`,
-        },
-      ],
-      angular: [
-        {
-          filename: 'Before — 3.x',
-          lang: 'ts',
-          code: `import '@cscfi/csc-ui/css/theme.css';
-
-import { bootstrapApplication } from '@angular/platform-browser';
-import { applyPolyfills, defineCustomElements } from '@cscfi/csc-ui/loader';
-
-import { AppComponent } from './app/app.component';
-
-applyPolyfills().then(() => defineCustomElements());
-
-bootstrapApplication(AppComponent);`,
-        },
-        {
           filename: 'After — 4.x',
           lang: 'ts',
-          code: `import '@cscfi/csc-ui/css/tokens.css';
-
-import { bootstrapApplication } from '@angular/platform-browser';
-import { defineCustomElements } from '@cscfi/csc-ui';
-
-import { AppComponent } from './app/app.component';
-
-defineCustomElements();
-
-bootstrapApplication(AppComponent);`,
-        },
-      ],
-      typescript: [
-        {
-          filename: 'Before — 3.x',
-          lang: 'ts',
-          code: `import '@cscfi/csc-ui/css/theme.css';
-import { applyPolyfills, defineCustomElements } from '@cscfi/csc-ui/loader';
-
-applyPolyfills().then(() => defineCustomElements());`,
-        },
-        {
-          filename: 'After — 4.x',
-          lang: 'ts',
-          code: `import '@cscfi/csc-ui/css/tokens.css';
-import { defineCustomElements } from '@cscfi/csc-ui';
-
-defineCustomElements();`,
         },
       ],
     },
+    id: 'registration',
+    intro: {
+      angular:
+        'Drop applyPolyfills and the /loader subpath — 4.x exports defineCustomElements() directly. Switch the CSS import to css/tokens.css.',
+      react:
+        'Drop applyPolyfills and the /loader subpath. With the React wrapper you no longer call defineCustomElements() yourself — importing anything from @cscfi/csc-ui-react registers the elements as a side effect. Switch the CSS import to css/tokens.css.',
+      typescript:
+        'Drop applyPolyfills and the /loader subpath — 4.x exports defineCustomElements() directly. Switch the CSS import to css/tokens.css.',
+      vue: 'Drop applyPolyfills and the /loader subpath — 4.x exports defineCustomElements() directly and registers every element eagerly. Remove the v-control directive registration. Switch the CSS import to css/tokens.css.',
+    },
+    title: 'Update registration & imports',
   },
   {
-    id: 'binding-events',
-    title: 'Two-way binding & events',
-    intro: {
-      vue: `The headline change for Vue. The v-control directive is gone — value components support plain v-model directly.
-
-Use plain v-model (no argument): the elements ride the native input event, so v-model:value does not compile on a custom element and must not be used. For other two-way state, bind :prop and listen to the lowercase kebab-case @change:<prop> event (e.g. @change:open, @change:sort) — the old update:<prop> events were renamed because Vue silently drops update:*-prefixed listeners on custom elements.`,
-      react: `The legacy changeValue event still fires, so existing onChangeValue handlers keep working. Prefer the typed on* props from @cscfi/csc-ui-react going forward. State-change events were renamed from update:<prop> to change:<prop>.`,
-      angular: `The legacy changeValue event still fires, so existing (changeValue) handlers keep working. State-change events were renamed from update:<prop> to change:<prop> (e.g. (change:sort)).`,
-      typescript: `The legacy changeValue event still fires, so existing addEventListener('changeValue', …) handlers keep working; the elements also dispatch a native input event. State-change events were renamed from update:<prop> to change:<prop>.`,
-    },
     blocks: {
-      vue: [
+      angular: [
         {
-          filename: 'Before — 3.x',
-          lang: 'vue',
-          code: `<template>
-  <!-- v-control bridged Stencil's changeValue to v-model -->
-  <c-text-field v-model="name" v-control label="Name" />
-  <c-switch v-model="enabled" v-control>Notifications</c-switch>
-</template>
+          code: `<c-text-field
+  label="Name"
+  [value]="name()"
+  (changeValue)="name.set($any($event).detail)"
+></c-text-field>
 
-<script setup lang="ts">
-import { ref } from 'vue';
-
-const name = ref('');
-const enabled = ref(false);
-</script>`,
-        },
-        {
+<c-switch
+  [value]="enabled()"
+  (changeValue)="enabled.set($any($event).detail)"
+>
+  Notifications
+</c-switch>`,
           filename: 'After — 4.x',
-          lang: 'vue',
-          code: `<template>
-  <!-- plain v-model, no directive -->
-  <c-text-field v-model="name" label="Name" />
-  <c-switch v-model="enabled">Notifications</c-switch>
-</template>
-
-<script setup lang="ts">
-import { ref } from 'vue';
-
-const name = ref('');
-const enabled = ref(false);
-</script>`,
-        },
-        {
-          filename: 'Other two-way state — :prop + @change:prop',
-          lang: 'vue',
-          code: `<template>
-  <!-- NOT v-model:open — bind the prop and listen to change:open -->
-  <c-menu :open.prop="open" @change:open="open = $event.detail">
-    <c-button slot="trigger">Menu</c-button>
-    <c-menu-item>Profile</c-menu-item>
-  </c-menu>
-</template>
-
-<script setup lang="ts">
-import { ref } from 'vue';
-
-const open = ref(false);
-</script>`,
+          lang: 'html',
         },
       ],
       react: [
         {
-          filename: 'After — 4.x',
-          lang: 'tsx',
           code: `import { useState } from 'react';
 import { CTextField, CSwitch } from '@cscfi/csc-ui-react';
 
@@ -303,43 +258,105 @@ export const Form = () => {
     </>
   );
 };`,
-        },
-      ],
-      angular: [
-        {
           filename: 'After — 4.x',
-          lang: 'html',
-          code: `<c-text-field
-  label="Name"
-  [value]="name()"
-  (changeValue)="name.set($any($event).detail)"
-></c-text-field>
-
-<c-switch
-  [value]="enabled()"
-  (changeValue)="enabled.set($any($event).detail)"
->
-  Notifications
-</c-switch>`,
+          lang: 'tsx',
         },
       ],
       typescript: [
         {
-          filename: 'After — 4.x',
-          lang: 'ts',
           code: `const field = document.querySelector('c-text-field')!;
 
 // changeValue still fires; a native input event fires too.
 field.addEventListener('changeValue', (event) => {
   console.log('value:', event.detail);
 });`,
+          filename: 'After — 4.x',
+          lang: 'ts',
+        },
+      ],
+      vue: [
+        {
+          code: `<template>
+  <!-- v-control bridged Stencil's changeValue to v-model -->
+  <c-text-field v-model="name" v-control label="Name" />
+  <c-switch v-model="enabled" v-control>Notifications</c-switch>
+</template>
+
+<script setup lang="ts">
+import { ref } from 'vue';
+
+const name = ref('');
+const enabled = ref(false);
+</script>`,
+          filename: 'Before — 3.x',
+          lang: 'vue',
+        },
+        {
+          code: `<template>
+  <!-- plain v-model, no directive -->
+  <c-text-field v-model="name" label="Name" />
+  <c-switch v-model="enabled">Notifications</c-switch>
+</template>
+
+<script setup lang="ts">
+import { ref } from 'vue';
+
+const name = ref('');
+const enabled = ref(false);
+</script>`,
+          filename: 'After — 4.x',
+          lang: 'vue',
+        },
+        {
+          code: `<template>
+  <!-- NOT v-model:open — bind the prop and listen to change:open -->
+  <c-menu :open.prop="open" @change:open="open = $event.detail">
+    <c-button slot="trigger">Menu</c-button>
+    <c-menu-item>Profile</c-menu-item>
+  </c-menu>
+</template>
+
+<script setup lang="ts">
+import { ref } from 'vue';
+
+const open = ref(false);
+</script>`,
+          filename: 'Other two-way state — :prop + @change:prop',
+          lang: 'vue',
         },
       ],
     },
+    id: 'binding-events',
+    intro: {
+      angular: `The legacy changeValue event still fires, so existing (changeValue) handlers keep working. State-change events were renamed from update:<prop> to change:<prop> (e.g. (change:sort)).`,
+      react: `The legacy changeValue event still fires, so existing onChangeValue handlers keep working. Prefer the typed on* props from @cscfi/csc-ui-react going forward. State-change events were renamed from update:<prop> to change:<prop>.`,
+      typescript: `The legacy changeValue event still fires, so existing addEventListener('changeValue', …) handlers keep working; the elements also dispatch a native input event. State-change events were renamed from update:<prop> to change:<prop>.`,
+      vue: `The headline change for Vue. The v-control directive is gone — value components support plain v-model directly.
+
+Use plain v-model (no argument): the elements ride the native input event, so v-model:value does not compile on a custom element and must not be used. For other two-way state, bind :prop and listen to the lowercase kebab-case @change:<prop> event (e.g. @change:open, @change:sort) — the old update:<prop> events were renamed because Vue silently drops update:*-prefixed listeners on custom elements.`,
+    },
+    title: 'Two-way binding & events',
   },
   {
+    blocks: forAll([
+      {
+        code: `c-button {
+  --c-button-background-color: #006efd;
+  --c-button-border-radius: 4px;
+}`,
+        filename: 'Before — 3.x',
+        lang: 'css',
+      },
+      {
+        code: `c-button::part(root) {
+  background: var(--c-primary);
+  border-radius: 4px;
+}`,
+        filename: 'After — 4.x',
+        lang: 'css',
+      },
+    ]),
     id: 'styling',
-    title: 'Styling & customization',
     intro: {
       all: `Per-component CSS custom properties are gone. Variables like --c-button-background-color or --c-button-border-radius no longer exist; ::part() is now the sole customization API, and a component's curated part set is its customization contract.`,
     },
@@ -347,28 +364,29 @@ field.addEventListener('changeValue', (event) => {
       label: 'How ::part() restyling works',
       to: '/customization#parts',
     },
-    blocks: forAll([
-      {
-        filename: 'Before — 3.x',
-        lang: 'css',
-        code: `c-button {
-  --c-button-background-color: #006efd;
-  --c-button-border-radius: 4px;
-}`,
-      },
-      {
-        filename: 'After — 4.x',
-        lang: 'css',
-        code: `c-button::part(root) {
-  background: var(--c-primary);
-  border-radius: 4px;
-}`,
-      },
-    ]),
+    title: 'Styling & customization',
   },
   {
+    blocks: forAll([
+      {
+        code: `:root {
+  /* Override individual ramp steps; light mode only. */
+  --c-primary-500: #006efd;
+  --c-primary-600: #005fd6;
+}`,
+        filename: 'Before — 3.x',
+        lang: 'css',
+      },
+      {
+        code: `import { applyTheme } from '@cscfi/csc-ui';
+
+// One step-500 seed per family; ramps and dark mode derive from it.
+applyTheme({ primary: '#006efd' });`,
+        filename: 'After — 4.x',
+        lang: 'ts',
+      },
+    ]),
     id: 'theming',
-    title: 'Theming & dark mode',
     intro: {
       all: `The flat, light-only ramp is replaced by a semantic-token layer with real dark-mode support. Components now follow the OS light/dark preference by default; set data-theme="light" or "dark" on <html> to pin a mode.
 
@@ -378,36 +396,11 @@ To re-brand, stop overriding individual --c-* ramp variables. Instead hand apply
       label: 'Full theming & dark-mode guide',
       to: '/customization',
     },
-    blocks: forAll([
-      {
-        filename: 'Before — 3.x',
-        lang: 'css',
-        code: `:root {
-  /* Override individual ramp steps; light mode only. */
-  --c-primary-500: #006efd;
-  --c-primary-600: #005fd6;
-}`,
-      },
-      {
-        filename: 'After — 4.x',
-        lang: 'ts',
-        code: `import { applyTheme } from '@cscfi/csc-ui';
-
-// One step-500 seed per family; ramps and dark mode derive from it.
-applyTheme({ primary: '#006efd' });`,
-      },
-    ]),
+    title: 'Theming & dark mode',
   },
   {
-    id: 'components',
-    title: 'Component-specific changes',
-    intro: {
-      all: `Most components keep their old props and events. The ones below changed enough to need attention when you upgrade.`,
-    },
     blocks: forAll([
       {
-        filename: 'c-data-table — headers → columns',
-        lang: 'ts',
         code: `// Before: headers[] describe columns; data cells are wrapped objects.
 // After:  columns[] describe columns; data is plain domain objects and
 //         custom cells are render functions (h is re-exported by the package).
@@ -422,19 +415,19 @@ const columns: CDataTableColumn<User>[] = [
 
 // The columns prop holds functions — bind it as a DOM property (:columns.prop
 // in Vue, [columns] in Angular), never as an attribute.`,
+        filename: 'c-data-table — headers → columns',
+        lang: 'ts',
       },
       {
-        filename: 'c-data-table — pinned / hidden → expansion policy',
-        lang: 'ts',
         code: `// Old two-boolean shape collapses into one tri-state axis:
 //   pinned: true  (exempt from autohide)  -> policy: 'never'
 //   hidden: true                          -> policy: 'always'
 //   (default)                             -> policy: 'auto'
 // "pinned" now means TanStack-style edge-sticky during horizontal scroll.`,
+        filename: 'c-data-table — pinned / hidden → expansion policy',
+        lang: 'ts',
       },
       {
-        filename: 'c-tab-buttons — standalone use moves to c-button-group',
-        lang: 'html',
         code: `<!-- Before: c-tab-buttons doubled as a standalone segmented value picker. -->
 <c-tab-buttons value="week" mandatory>
   <c-button value="day">Day</c-button>
@@ -451,10 +444,10 @@ const columns: CDataTableColumn<User>[] = [
   <c-button value="day">Day</c-button>
   <c-button value="week">Week</c-button>
 </c-button-group>`,
+        filename: 'c-tab-buttons — standalone use moves to c-button-group',
+        lang: 'html',
       },
       {
-        filename: 'Form controls — validation → error-message',
-        lang: 'html',
         code: `<!-- Before: every form control had validation (default 'Required field')
      shown while valid was false, plus inert validate / validate-on-blur. -->
 <c-text-field label="Email" validation="Email is required"></c-text-field>
@@ -466,10 +459,10 @@ const columns: CDataTableColumn<User>[] = [
      styled as a hint. validate and validate-on-blur are removed — they
      were never wired to anything; validation logic stays in your app. -->
 <c-text-field label="Email" error-message="Email is required"></c-text-field>`,
+        filename: 'Form controls — validation → error-message',
+        lang: 'html',
       },
       {
-        filename: 'c-toolbar / c-page — the document scrolls',
-        lang: 'html',
         code: `<!-- Before: c-toolbar was position: fixed and class="relative" put it in
      flow; c-page was the scroll container, sized to the viewport minus the
      60px toolbar. -->
@@ -493,10 +486,10 @@ const columns: CDataTableColumn<User>[] = [
   <c-side-navigation>…</c-side-navigation>
   <c-page>…</c-page>
 </c-main>`,
+        filename: 'c-toolbar / c-page — the document scrolls',
+        lang: 'html',
       },
       {
-        filename: 'Other components',
-        lang: 'md',
         code: `- c-autocomplete: no longer built on c-dropdown; it renders its own popover
   panel with an internal search input. Option/value events are unchanged, but
   the 3.x query API is not: the query prop, the changeQuery event and the
@@ -518,22 +511,29 @@ const columns: CDataTableColumn<User>[] = [
 - c-spacer: removed — use margin-inline-start: auto on the element you want
   pushed to the far edge, or your own flex-grow filler.
   c-backdrop / c-ripple were internal-only and are not part of the public API.`,
+        filename: 'Other components',
+        lang: 'md',
       },
     ]),
+    id: 'components',
+    intro: {
+      all: `Most components keep their old props and events. The ones below changed enough to need attention when you upgrade.`,
+    },
+    title: 'Component-specific changes',
   },
   {
+    blocks: forAll([
+      {
+        code: `import type { CButtonSize, CSelectItem } from '@cscfi/csc-ui';`,
+        lang: 'ts',
+      },
+    ]),
     id: 'tooling',
-    title: 'Types & IDE tooling',
     intro: {
       all: `Public TypeScript types are now exported from the package root using the C<Component><Concept> convention — e.g. CButtonSize, CAlertType, CSelectItem. Import them from @cscfi/csc-ui instead of deep paths.
 
 IDE integration data changed too: the library now ships a Custom Elements Manifest (custom-elements.json) plus web-types.json and VS Code custom-data files, replacing the old docs.json / vscode-data.json.`,
     },
-    blocks: forAll([
-      {
-        lang: 'ts',
-        code: `import type { CButtonSize, CSelectItem } from '@cscfi/csc-ui';`,
-      },
-    ]),
+    title: 'Types & IDE tooling',
   },
 ];

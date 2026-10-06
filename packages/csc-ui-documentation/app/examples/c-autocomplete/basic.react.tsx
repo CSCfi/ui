@@ -1,19 +1,19 @@
+import { CAutocomplete, COption, COptionValue } from '@cscfi/csc-ui-react';
 // @ts-nocheck — documentation code sample; shown as text, never compiled here
 import { useState } from 'react';
-import { CAutocomplete, COption, COptionValue } from '@cscfi/csc-ui-react';
 
 export const Basic = () => {
-  const [language, setLanguage] = useState<string | null>(null);
+  const [language, setLanguage] = useState<null | string>(null);
 
   return (
     <div>
       <CAutocomplete
-        value={language}
         clearable
         hint="Type to filter the options"
         label="Programming language"
+        onChangeValue={(event) => setLanguage(event.detail as null | string)}
         placeholder="Start typing to search"
-        onChangeValue={(event) => setLanguage(event.detail as string | null)}
+        value={language}
       >
         <COption value="js">
           <COptionValue>JavaScript</COptionValue>

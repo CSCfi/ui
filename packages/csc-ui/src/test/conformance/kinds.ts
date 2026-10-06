@@ -234,18 +234,6 @@ export const VALUE_RECIPES: Record<string, ValueRecipe> = {
     mount: DATE_PICKER_MOUNT,
     programmatic: '2031-09-20',
   },
-  'c-time-picker': {
-    emptyAware: true,
-    // An empty value: the hour pick fills in minute 00 (ADR-0062).
-    expected: '09:00',
-    family: 'change',
-    interact: async (m) => {
-      await openClock(m);
-      await userEvent.click(m.shadow('li[data-key="h9"]'));
-    },
-    mount: TIME_PICKER_MOUNT,
-    programmatic: '14:30',
-  },
   'c-modal': {
     expected: false,
     family: 'changeValue',
@@ -259,6 +247,16 @@ export const VALUE_RECIPES: Record<string, ValueRecipe> = {
       props: { dismissable: true, value: true },
     },
     programmatic: false,
+  },
+  'c-number-field': {
+    emptyAware: true,
+    expected: 5,
+    family: 'change',
+    interact: async (m) => {
+      await userEvent.type(m.shadow('input'), '5');
+    },
+    mount: { props: { label: 'Amount' } },
+    programmatic: 7,
   },
   'c-otp-input': {
     expected: '1',
@@ -344,16 +342,6 @@ export const VALUE_RECIPES: Record<string, ValueRecipe> = {
     },
     programmatic: 'one',
   },
-  'c-number-field': {
-    emptyAware: true,
-    expected: 5,
-    family: 'change',
-    interact: async (m) => {
-      await userEvent.type(m.shadow('input'), '5');
-    },
-    mount: { props: { label: 'Amount' } },
-    programmatic: 7,
-  },
   'c-text-field': {
     emptyAware: true,
     expected: 'a',
@@ -363,6 +351,18 @@ export const VALUE_RECIPES: Record<string, ValueRecipe> = {
     },
     mount: { props: { label: 'Name' } },
     programmatic: 'x',
+  },
+  'c-time-picker': {
+    emptyAware: true,
+    // An empty value: the hour pick fills in minute 00 (ADR-0062).
+    expected: '09:00',
+    family: 'change',
+    interact: async (m) => {
+      await openClock(m);
+      await userEvent.click(m.shadow('li[data-key="h9"]'));
+    },
+    mount: TIME_PICKER_MOUNT,
+    programmatic: '14:30',
   },
   'c-tree-select': {
     emptyAware: true,
@@ -451,13 +451,6 @@ export const OVERLAY_RECIPES: Record<string, OverlayRecipe> = {
     open: openCalendar,
     panel: (m) => m.part('panel'),
   },
-  'c-time-picker': {
-    focusHome: (m) => m.shadow('input[part~="input"]'),
-    lightDismiss: true,
-    mount: TIME_PICKER_MOUNT,
-    open: openClock,
-    panel: (m) => m.part('panel'),
-  },
   'c-menu': {
     focusHome: (m) => m.host.querySelector('c-button'),
     lightDismiss: true,
@@ -499,6 +492,13 @@ export const OVERLAY_RECIPES: Record<string, OverlayRecipe> = {
       await userEvent.click(triggerButton(m));
       await settle();
     },
+    panel: (m) => m.part('panel'),
+  },
+  'c-time-picker': {
+    focusHome: (m) => m.shadow('input[part~="input"]'),
+    lightDismiss: true,
+    mount: TIME_PICKER_MOUNT,
+    open: openClock,
     panel: (m) => m.part('panel'),
   },
   'c-tooltip': {

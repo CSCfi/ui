@@ -15,5 +15,5 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 
-const date = ref<string | null>('2026-09-28');
+const date = ref<null | string>('2026-09-28');
 </script>

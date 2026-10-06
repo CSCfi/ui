@@ -381,6 +381,7 @@ describe('day grid', () => {
 
     const ink = (iso: string) =>
       getComputedStyle(cell(m, iso).querySelector('[part~="day"]')!).color;
+
     const probe = document.createElement('span');
 
     probe.style.color = 'var(--c-on-surface-muted)';

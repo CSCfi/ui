@@ -19,7 +19,7 @@
  * useXxx() composable they call has to be explicitly imported.
  */
 
-import { readFileSync, readdirSync } from 'node:fs';
+import { readdirSync, readFileSync } from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
@@ -30,8 +30,8 @@ const examplesDir = path.resolve(
 
 /** flavor id → required extension. Keep in sync with FLAVORS in useFlavor.ts. */
 const VARIANTS = new Map([
-  ['react', 'tsx'],
   ['angular', 'ts'],
+  ['react', 'tsx'],
   ['typescript', 'html'],
 ]);
 
@@ -104,6 +104,7 @@ for (const dir of readdirSync(examplesDir, { withFileTypes: true })) {
   if (!dir.isDirectory()) continue;
 
   const files = readdirSync(path.join(examplesDir, dir.name));
+
   const requireVariants = !INTERNAL_ONLY.has(dir.name);
 
   const canons = files
@@ -150,6 +151,7 @@ for (const dir of readdirSync(examplesDir, { withFileTypes: true })) {
     if (parts.length < 3) continue;
 
     const [name, flavor] = parts;
+
     const ext = parts.at(-1);
 
     if (!VARIANTS.has(flavor)) {

@@ -1,6 +1,6 @@
 <template>
   <div v-if="!coerceBoolean(hideDetails)" :class="ui.root()" :part>
-    <Transition
+    <transition
       enter-active-class="transition-[opacity,translate] duration-200 ease-standard"
       enter-from-class="opacity-0 -translate-y-1"
       leave-active-class="transition-[opacity,translate] duration-200 ease-standard"
@@ -23,7 +23,7 @@
 
         <span>{{ showError ? errorMessage : hint }}</span>
       </span>
-    </Transition>
+    </transition>
   </div>
 </template>
 

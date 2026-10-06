@@ -592,7 +592,7 @@ const pageLang = ref(
 
 const t = computed<Required<CTimePickerTexts>>(() => ({
   ...DEFAULT_TEXTS,
-  ...(intlPeriods(pageLang.value) ?? {}),
+  ...intlPeriods(pageLang.value),
   ...Object.fromEntries(
     Object.entries(ownTexts.value).filter(([, v]) => v !== undefined),
   ),

@@ -1,11 +1,12 @@
-// @ts-nocheck — documentation code sample; shown as text, never compiled here
-import { Component, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import type { CBreadcrumbTexts } from '@cscfi/csc-ui';
 
+// @ts-nocheck — documentation code sample; shown as text, never compiled here
+import { Component, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
+
 @Component({
+  schemas: [CUSTOM_ELEMENTS_SCHEMA],
   selector: 'app-example',
   standalone: true,
-  schemas: [CUSTOM_ELEMENTS_SCHEMA],
   template: `
     <div style="width: 320px; max-width: 100%">
       <c-breadcrumb [texts]="texts">

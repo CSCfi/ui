@@ -77,7 +77,9 @@ describe('c-tab badge overhang', () => {
     await settled();
 
     const badge = host.querySelector('c-badge')!;
+
     const badgeRoot = badge.shadowRoot!.querySelector('[part~="root"]')!;
+
     const rect = badgeRoot.getBoundingClientRect();
 
     expect(rect.width).toBeGreaterThan(0);
@@ -128,6 +130,7 @@ describe('c-tab label', () => {
     await settled();
 
     const tab = host.querySelectorAll('c-tab')[1]!;
+
     const root = tab.shadowRoot!.querySelector('[part~="root"]')!;
 
     expect(root.getBoundingClientRect().width).toBeLessThanOrEqual(

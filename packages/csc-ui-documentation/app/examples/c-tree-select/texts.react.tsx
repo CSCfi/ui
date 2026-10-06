@@ -1,62 +1,63 @@
+import type { CTreeSelectItem, CTreeSelectTexts } from '@cscfi/csc-ui';
+
+import { CTreeSelect } from '@cscfi/csc-ui-react';
 // @ts-nocheck — documentation code sample; shown as text, never compiled here
 import { useState } from 'react';
-import { CTreeSelect } from '@cscfi/csc-ui-react';
-import type { CTreeSelectItem, CTreeSelectTexts } from '@cscfi/csc-ui';
 
 const items: CTreeSelectItem[] = [
   {
-    value: '1',
-    code: '1',
-    name: 'Luonnontieteet',
     children: [
       {
-        value: '111',
+        children: [
+          { code: '1111', name: 'Puhdas matematiikka', value: '1111' },
+          { code: '1112', name: 'Sovellettu matematiikka', value: '1112' },
+        ],
         code: '111',
         name: 'Matematiikka',
-        children: [
-          { value: '1111', code: '1111', name: 'Puhdas matematiikka' },
-          { value: '1112', code: '1112', name: 'Sovellettu matematiikka' },
-        ],
+        value: '111',
       },
       {
-        value: '113',
+        children: [
+          { code: '1131', name: 'Tietojenkäsittelytiede', value: '1131' },
+          { code: '1132', name: 'Tietojärjestelmätiede', value: '1132' },
+        ],
         code: '113',
         name: 'Tietojenkäsittely ja informaatiotieteet',
-        children: [
-          { value: '1131', code: '1131', name: 'Tietojenkäsittelytiede' },
-          { value: '1132', code: '1132', name: 'Tietojärjestelmätiede' },
-        ],
+        value: '113',
       },
     ],
+    code: '1',
+    name: 'Luonnontieteet',
+    value: '1',
   },
   {
-    value: '2',
-    code: '2',
-    name: 'Tekniikka',
     children: [
       {
-        value: '213',
+        children: [
+          { code: '2131', name: 'Elektroniikka', value: '2131' },
+          { code: '2133', name: 'Tietoliikennetekniikka', value: '2133' },
+        ],
         code: '213',
         name: 'Sähkö-, automaatio- ja tietoliikennetekniikka',
-        children: [
-          { value: '2131', code: '2131', name: 'Elektroniikka' },
-          { value: '2133', code: '2133', name: 'Tietoliikennetekniikka' },
-        ],
+        value: '213',
       },
       {
-        value: '217',
-        code: '217',
-        name: 'Lääketieteen tekniikka',
         children: [
-          { value: '2171', code: '2171', name: 'Biolääketieteen tekniikka' },
+          { code: '2171', name: 'Biolääketieteen tekniikka', value: '2171' },
           {
-            value: '2172',
             code: '2172',
             name: 'Lääketieteellinen kuvantaminen',
+            value: '2172',
           },
         ],
+        code: '217',
+        name: 'Lääketieteen tekniikka',
+        value: '217',
       },
     ],
+    code: '2',
+    name: 'Tekniikka',
+    value: '2',
   },
 ];
 
@@ -81,19 +82,19 @@ const texts: CTreeSelectTexts = {
 };
 
 export const Texts = () => {
-  const [field, setField] = useState<string | null>(null);
+  const [field, setField] = useState<null | string>(null);
 
   return (
     <div>
       <CTreeSelect
-        value={field}
-        items={items}
-        levelLabels={levelLabels}
-        texts={texts}
-        hint="Selaa tasoja tai hae"
-        label="Tieteenala"
         clearable
-        onChange={(event) => setField(event.detail as string | null)}
+        hint="Selaa tasoja tai hae"
+        items={items}
+        label="Tieteenala"
+        levelLabels={levelLabels}
+        onChange={(event) => setField(event.detail as null | string)}
+        texts={texts}
+        value={field}
       />
 
       <p>Value: {field ?? 'null'}</p>

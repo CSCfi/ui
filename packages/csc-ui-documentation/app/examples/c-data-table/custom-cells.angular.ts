@@ -3,9 +3,9 @@ import { Component, CUSTOM_ELEMENTS_SCHEMA, signal } from '@angular/core';
 import { type CDataTableColumn, h } from '@cscfi/csc-ui';
 
 @Component({
+  schemas: [CUSTOM_ELEMENTS_SCHEMA],
   selector: 'app-example',
   standalone: true,
-  schemas: [CUSTOM_ELEMENTS_SCHEMA],
   template: `
     <div>
       <c-data-table [columns]="columns" [data]="data"></c-data-table>
@@ -16,12 +16,6 @@ import { type CDataTableColumn, h } from '@cscfi/csc-ui';
 })
 export class CustomCellsExampleComponent {
   message = signal('Open a project with the button in the last column');
-
-  data = [
-    { name: 'Aurora', status: 'active', usage: 0.72 },
-    { name: 'Borealis', status: 'closed', usage: 0.13 },
-    { name: 'Cirrus', status: 'pending', usage: 0.44 },
-  ];
 
   // Cell renderers are plain functions returning VNodes built with the `h`
   // re-exported from @cscfi/csc-ui — no direct vue dependency needed.
@@ -59,5 +53,11 @@ export class CustomCellsExampleComponent {
       header: '',
       key: 'actions',
     },
+  ];
+
+  data = [
+    { name: 'Aurora', status: 'active', usage: 0.72 },
+    { name: 'Borealis', status: 'closed', usage: 0.13 },
+    { name: 'Cirrus', status: 'pending', usage: 0.44 },
   ];
 }

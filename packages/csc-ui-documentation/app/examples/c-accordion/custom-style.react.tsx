@@ -1,6 +1,6 @@
+import { CAccordion, CAccordionItem } from '@cscfi/csc-ui-react';
 // @ts-nocheck — documentation code sample; shown as text, never compiled here
 import { useState } from 'react';
-import { CAccordion, CAccordionItem } from '@cscfi/csc-ui-react';
 
 const styles = `
 /* The default look is the accordion frame; this recolours the expanded
@@ -46,10 +46,10 @@ export const CustomStyle = () => {
 
       <CAccordion
         className="custom-style"
-        value={expanded}
         onChangeValue={(event) =>
           setExpanded(event.detail as 'billing' | 'members' | 'storage')
         }
+        value={expanded}
       >
         <CAccordionItem heading="Project billing" value="billing">
           <p>

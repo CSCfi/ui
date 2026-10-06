@@ -17,7 +17,7 @@ const artwork = `data:image/svg+xml;utf8,${encodeURIComponent(
 export const Basic = () => {
   return (
     <div>
-      <CLoginCard src={artwork} backgroundPosition="50% 0%">
+      <CLoginCard backgroundPosition="50% 0%" src={artwork}>
         <CLoginCardTitle>Sign in to My CSC</CLoginCardTitle>
 
         <CLoginCardContent>

@@ -5,10 +5,10 @@
          "+N more" tag. Backspace in the closed field removes the last tag. -->
     <c-select
       v-model="countries"
-      clearable
       hint="Pick as many as you like"
       label="Countries"
       max-tags="3"
+      clearable
       multiple
     >
       <c-option name="Finland" value="fi">Finland</c-option>

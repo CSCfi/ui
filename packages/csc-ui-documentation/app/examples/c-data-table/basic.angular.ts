@@ -1,22 +1,22 @@
 // @ts-nocheck — documentation code sample; shown as text, never compiled here
-import {
-  AfterViewInit,
-  Component,
-  CUSTOM_ELEMENTS_SCHEMA,
-  ElementRef,
-  signal,
-  viewChild,
-} from '@angular/core';
+import type { AfterViewInit, ElementRef } from '@angular/core';
 import type {
   CDataTableColumn,
   CDataTableElement,
   CDataTableSort,
 } from '@cscfi/csc-ui';
 
+import {
+  Component,
+  CUSTOM_ELEMENTS_SCHEMA,
+  signal,
+  viewChild,
+} from '@angular/core';
+
 @Component({
+  schemas: [CUSTOM_ELEMENTS_SCHEMA],
   selector: 'app-example',
   standalone: true,
-  schemas: [CUSTOM_ELEMENTS_SCHEMA],
   template: `
     <div>
       <c-data-table
@@ -32,8 +32,6 @@ import type {
   `,
 })
 export class BasicExampleComponent implements AfterViewInit {
-  table = viewChild.required<ElementRef<CDataTableElement>>('table');
-
   columns: CDataTableColumn[] = [
     { header: 'Project', key: 'name', sortable: true },
     { align: 'end', header: 'Members', key: 'members', sortable: true },
@@ -53,6 +51,8 @@ export class BasicExampleComponent implements AfterViewInit {
   ];
 
   sort = signal<CDataTableSort>({ column: 'name', direction: 'asc' });
+
+  table = viewChild.required<ElementRef<CDataTableElement>>('table');
 
   // Colon-named events ("change:sort") cannot be bound in an Angular
   // template, so listen on the element directly.

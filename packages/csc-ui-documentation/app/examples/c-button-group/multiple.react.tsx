@@ -1,6 +1,6 @@
+import { CButton, CButtonGroup } from '@cscfi/csc-ui-react';
 // @ts-nocheck — documentation code sample; shown as text, never compiled here
 import { useState } from 'react';
-import { CButton, CButtonGroup } from '@cscfi/csc-ui-react';
 
 export const Multiple = () => {
   const [toppings, setToppings] = useState<string[]>(['cheese']);
@@ -10,8 +10,8 @@ export const Multiple = () => {
       <CButtonGroup
         label="Toppings"
         multiple
-        value={toppings}
         onChange={(event) => setToppings(event.detail as string[])}
+        value={toppings}
       >
         <CButton value="cheese">Cheese</CButton>
         <CButton value="pepperoni">Pepperoni</CButton>

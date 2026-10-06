@@ -1,6 +1,6 @@
 <template>
   <div>
-    <c-tabs vertical value="profile">
+    <c-tabs value="profile" vertical>
       <c-tab value="profile">Profile</c-tab>
 
       <c-tab value="security">Security</c-tab>

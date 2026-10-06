@@ -1,4 +1,5 @@
 const checkbox = document.querySelector('c-checkbox')!;
+
 const status = document.querySelector('p')!;
 
 checkbox.addEventListener('changeValue', (event) => {

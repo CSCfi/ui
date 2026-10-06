@@ -9,5 +9,5 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 
-const time = ref<string | null>('14:30');
+const time = ref<null | string>('14:30');
 </script>

@@ -1,7 +1,8 @@
+import type { CToastsElement } from '@cscfi/csc-ui';
+
+import { CButton, COption, CSelect, CToasts } from '@cscfi/csc-ui-react';
 // @ts-nocheck — documentation code sample; shown as text, never compiled here
 import { useRef, useState } from 'react';
-import { CButton, COption, CSelect, CToasts } from '@cscfi/csc-ui-react';
-import type { CToastsElement } from '@cscfi/csc-ui';
 
 export const Placement = () => {
   const toasts = useRef<CToastsElement>(null);
@@ -12,19 +13,19 @@ export const Placement = () => {
 
   const notify = () => {
     toasts.current?.addToast({
-      type: 'info',
-      title: 'Notification',
       message: `Placed at ${vertical} ${horizontal}.`,
       progress: true,
+      title: 'Notification',
+      type: 'info',
     });
   };
 
   return (
     <div className="example-row">
       <CSelect
-        value={vertical}
         label="Vertical"
         onChangeValue={(event) => setVertical(event.detail as string)}
+        value={vertical}
       >
         <COption name="Bottom" value="bottom">
           Bottom
@@ -35,9 +36,9 @@ export const Placement = () => {
       </CSelect>
 
       <CSelect
-        value={horizontal}
         label="Horizontal"
         onChangeValue={(event) => setHorizontal(event.detail as string)}
+        value={horizontal}
       >
         <COption name="Left" value="left">
           Left
@@ -52,7 +53,7 @@ export const Placement = () => {
 
       <CButton onClick={notify}>Show toast</CButton>
 
-      <CToasts ref={toasts} horizontal={horizontal} vertical={vertical} />
+      <CToasts horizontal={horizontal} ref={toasts} vertical={vertical} />
     </div>
   );
 };

@@ -10,9 +10,9 @@ import {
 } from '@mdi/js';
 
 @Component({
+  schemas: [CUSTOM_ELEMENTS_SCHEMA],
   selector: 'app-example',
   standalone: true,
-  schemas: [CUSTOM_ELEMENTS_SCHEMA],
   template: `
     <div class="example-row">
       <c-menu (select)="onTheme($event)">
@@ -73,15 +73,15 @@ export class ActiveItemsExampleComponent {
   mdiWeatherNight = mdiWeatherNight;
   mdiWeatherSunny = mdiWeatherSunny;
 
-  theme = 'dark';
-  sortKeys = ['name', 'size', 'date'];
   sortBy = 'name';
-
-  onTheme(event: Event) {
-    this.theme = (event as CustomEvent<{ value: string }>).detail.value;
-  }
+  sortKeys = ['name', 'size', 'date'];
+  theme = 'dark';
 
   onSort(event: Event) {
     this.sortBy = (event as CustomEvent<{ value: string }>).detail.value;
+  }
+
+  onTheme(event: Event) {
+    this.theme = (event as CustomEvent<{ value: string }>).detail.value;
   }
 }

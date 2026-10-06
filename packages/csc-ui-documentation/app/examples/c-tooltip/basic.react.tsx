@@ -1,17 +1,17 @@
+import { CIcon, CIconButton, CTooltip } from '@cscfi/csc-ui-react';
 // @ts-nocheck — documentation code sample; shown as text, never compiled here
 import { mdiDownload, mdiTrashCanOutline } from '@mdi/js';
-import { CIcon, CIconButton, CTooltip } from '@cscfi/csc-ui-react';
 
 export const Basic = () => (
   <div className="example-row">
     <CTooltip text="Download the report as PDF">
-      <CIconButton slot="trigger" aria-label="Download" ghost>
+      <CIconButton aria-label="Download" ghost slot="trigger">
         <CIcon path={mdiDownload} />
       </CIconButton>
     </CTooltip>
 
-    <CTooltip text="Remove the report permanently" position="bottom">
-      <CIconButton slot="trigger" aria-label="Remove" ghost>
+    <CTooltip position="bottom" text="Remove the report permanently">
+      <CIconButton aria-label="Remove" ghost slot="trigger">
         <CIcon path={mdiTrashCanOutline} />
       </CIconButton>
     </CTooltip>

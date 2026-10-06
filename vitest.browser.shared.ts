@@ -1,7 +1,8 @@
+import type { BrowserCommandContext, BrowserConfigOptions } from 'vitest/node';
+
 import { playwright } from '@vitest/browser-playwright';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import type { BrowserCommandContext, BrowserConfigOptions } from 'vitest/node';
 
 const root = fileURLToPath(new URL('.', import.meta.url));
 

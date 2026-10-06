@@ -191,15 +191,16 @@
 </template>
 
 <script setup lang="ts">
+import type { TocItem } from '~/utils/toc';
+
 import {
   CUSTOMIZATION_SECTIONS,
+  type CustomizationSection,
   ROLE_FAMILIES,
   ROLE_SEXTET,
-  TOKEN_GROUPS,
   roleTokens,
-  type CustomizationSection,
+  TOKEN_GROUPS,
 } from '~/content/customization';
-import type { TocItem } from '~/utils/toc';
 
 const sections: CustomizationSection[] = CUSTOMIZATION_SECTIONS;
 

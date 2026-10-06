@@ -1,6 +1,7 @@
 import tailwindcss from '@tailwindcss/vite';
 import { readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
+
 import { ignoreExampleDocsBlocks } from './scripts/ignore-example-docs-blocks.mjs';
 
 // The site is a pure consumer of the csc-ui build output: the Custom
@@ -79,10 +80,6 @@ for (const module of manifest.modules ?? []) {
 }
 
 export default defineNuxtConfig({
-  devServer: {
-    port: 3500,
-  },
-
   app: {
     head: {
       script: [
@@ -100,12 +97,16 @@ export default defineNuxtConfig({
       title: 'CSC Design System',
     },
   },
+
   compatibilityDate: '2026-07-01',
   css: [
     '@cscfi/csc-ui/css/tokens.css',
     '~/assets/tailwind.css',
     '~/assets/site.css',
   ],
+  devServer: {
+    port: 3500,
+  },
   nitro: {
     prerender: {
       crawlLinks: true,

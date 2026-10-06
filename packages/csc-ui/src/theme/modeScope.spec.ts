@@ -90,6 +90,7 @@ describe('the cascade', () => {
     document.documentElement.setAttribute('data-theme', 'light');
 
     const outer = box('dark');
+
     const inner = document.createElement('div');
 
     inner.setAttribute('data-theme', 'light');
@@ -109,6 +110,7 @@ describe('the cascade', () => {
     document.documentElement.setAttribute('data-theme', 'light');
 
     const scope = box('dark');
+
     const plain = document.createElement('div');
 
     scope.append(plain);
@@ -193,7 +195,9 @@ describe('an inverting scope', () => {
     document.documentElement.setAttribute('data-theme', 'light');
 
     const first = inverting();
+
     const second = inverting(first);
+
     const third = inverting(second);
 
     expect(read(first)).toBe(rootIn('dark'));
@@ -213,6 +217,7 @@ describe('an inverting scope', () => {
     document.documentElement.setAttribute('data-theme', 'light');
 
     const scope = inverting();
+
     const pinned = document.createElement('div');
 
     pinned.setAttribute('data-theme', 'dark');
@@ -297,6 +302,7 @@ describe('themeMode()', () => {
     document.documentElement.setAttribute('data-theme', 'light');
 
     const scope = box('dark');
+
     const plain = document.createElement('div');
 
     scope.append(plain);
@@ -319,6 +325,7 @@ describe('themeMode()', () => {
     document.documentElement.setAttribute('data-theme', 'light');
 
     const scope = inverting();
+
     const plain = document.createElement('div');
 
     scope.append(plain);
@@ -345,6 +352,7 @@ describe('themeMode()', () => {
     // for a pinned scope. It cannot resolve an inverting one — an inverting
     // scope is relative to a mode a detached subtree does not have.
     const detached = document.createElement('div');
+
     const child = document.createElement('div');
 
     detached.setAttribute('data-theme', 'dark');
@@ -359,6 +367,7 @@ describe('observeThemeMode()', () => {
     document.documentElement.setAttribute('data-theme', 'light');
 
     const scope = box('dark');
+
     const onChange = vi.fn();
 
     const stop = observeThemeMode(scope, onChange);
@@ -371,11 +380,13 @@ describe('observeThemeMode()', () => {
     document.documentElement.setAttribute('data-theme', 'light');
 
     const scope = box('dark');
+
     const target = document.createElement('div');
 
     scope.append(target);
 
     const onChange = vi.fn();
+
     const stop = observeThemeMode(target, onChange);
 
     onChange.mockClear();
@@ -393,11 +404,13 @@ describe('observeThemeMode()', () => {
     document.documentElement.setAttribute('data-theme', 'light');
 
     const scope = box();
+
     const target = document.createElement('div');
 
     scope.append(target);
 
     const onChange = vi.fn();
+
     const stop = observeThemeMode(target, onChange);
 
     onChange.mockClear();
@@ -413,7 +426,9 @@ describe('observeThemeMode()', () => {
     document.documentElement.setAttribute('data-theme', 'light');
 
     const target = inverting();
+
     const onChange = vi.fn();
+
     const stop = observeThemeMode(target, onChange);
 
     expect(onChange).toHaveBeenCalledExactlyOnceWith('dark');
@@ -430,7 +445,9 @@ describe('observeThemeMode()', () => {
     document.documentElement.setAttribute('data-theme', 'light');
 
     const scope = box('dark');
+
     const onChange = vi.fn();
+
     const stop = observeThemeMode(scope, onChange);
 
     onChange.mockClear();
@@ -448,7 +465,9 @@ describe('observeThemeMode()', () => {
     document.documentElement.setAttribute('data-theme', 'light');
 
     const scope = box('dark');
+
     const onChange = vi.fn();
+
     const stop = observeThemeMode(scope, onChange);
 
     stop();
@@ -466,6 +485,7 @@ describe('components', () => {
     document.documentElement.setAttribute('data-theme', 'light');
 
     const dark = await mount('c-button', { attrs: { 'data-theme': 'dark' } });
+
     const light = await mount('c-button');
 
     await settle();
@@ -484,6 +504,7 @@ describe('components', () => {
       document.documentElement.setAttribute('data-theme', 'light');
 
       const recipe = OVERLAY_RECIPES[tag];
+
       const m = await mount(recipe.mountTag ?? tag, recipe.mount);
 
       m.stage.setAttribute('data-theme', 'dark');
@@ -521,6 +542,7 @@ describe('components', () => {
       document.documentElement.setAttribute('data-theme', 'light');
 
       const recipe = OVERLAY_RECIPES[tag];
+
       const m = await mount(recipe.mountTag ?? tag, recipe.mount);
 
       m.stage.setAttribute('data-theme-invert', '');
@@ -540,6 +562,7 @@ describe('components', () => {
     document.documentElement.setAttribute('data-theme', 'light');
 
     const scope = box('dark');
+
     const host = document.createElement('c-table');
 
     host.innerHTML = '<table><tbody><tr><td>cell</td></tr></tbody></table>';

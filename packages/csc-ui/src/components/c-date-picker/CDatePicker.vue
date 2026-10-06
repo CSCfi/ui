@@ -1,6 +1,6 @@
 <template>
   <!-- The editable value field (ADR-0058): `src/shared/TypedField.vue`. -->
-  <TypedField
+  <typed-field
     :anchor-style
     :clear-label="t.clearSelection"
     :clearable
@@ -33,7 +33,7 @@
         <c-icon :path="mdiCalendar" :size="iconSize" />
       </c-icon-button>
     </template>
-  </TypedField>
+  </typed-field>
 
   <!-- Manual popover in the top layer; light dismiss, positioning and the
        fullscreen layout come from `useAnchoredPanel`. -->
@@ -717,8 +717,8 @@ import {
 import { useAppDefault } from '../../shared/appDefaults';
 import { coerceBoolean } from '../../shared/coerceBoolean';
 import PanelHeadingRow from '../../shared/PanelHeadingRow.vue';
-import TypedField from '../../shared/TypedField.vue';
 import { applyPeekCap } from '../../shared/peekCap';
+import TypedField from '../../shared/TypedField.vue';
 import { useAnchoredPanel } from '../../shared/useAnchoredPanel';
 import { useHostEmit } from '../../shared/useHostEmit';
 import { useHostStates } from '../../shared/useHostStates';
@@ -1050,7 +1050,7 @@ const pageLang = ref(
 
 const t = computed<Required<CDatePickerTexts>>(() => ({
   ...DEFAULT_TEXTS,
-  ...(intlNames(pageLang.value) ?? {}),
+  ...intlNames(pageLang.value),
   ...Object.fromEntries(
     Object.entries(ownTexts.value).filter(([, v]) => v !== undefined),
   ),
@@ -1162,10 +1162,10 @@ const typed = useTypedField({
       monthMode.value
         ? formatMonth(value, pattern)
         : formatDate(value, pattern),
-    isValue: (value): value is string =>
-      monthMode.value ? isIsoMonth(value) : isIso(value),
     isUsable: (value) =>
       monthMode.value ? !isMonthDisabled(value) : !isDisabled(value),
+    isValue: (value): value is string =>
+      monthMode.value ? isIsoMonth(value) : isIso(value),
     parse: (text, pattern) =>
       monthMode.value ? parseMonth(text, pattern) : parseDate(text, pattern),
   },

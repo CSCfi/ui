@@ -4,7 +4,7 @@
 
     <c-icon :path="mdiBellOutline" size="36" />
 
-    <c-icon :path="mdiCheckCircle" size="36" color="var(--c-success)" />
+    <c-icon :path="mdiCheckCircle" color="var(--c-success)" size="36" />
   </div>
 </template>
 

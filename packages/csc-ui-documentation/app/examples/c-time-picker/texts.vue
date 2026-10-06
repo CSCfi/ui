@@ -2,7 +2,7 @@
   <div>
     <c-time-picker
       v-model="shift"
-      :texts="texts"
+      :texts
       format="H.mm"
       hint="Kirjoita ajat tai valitse listoista"
       label="Työvuoro"
@@ -14,9 +14,9 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
-
 import type { CTimePickerRange, CTimePickerTexts } from '@cscfi/csc-ui';
+
+import { ref } from 'vue';
 
 // Every text, so none falls back to Intl for the page's lang or to English;
 // AM/PM shows in a 12-hour format, Now under show-now.

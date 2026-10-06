@@ -1,5 +1,9 @@
-// @ts-nocheck — documentation code sample; shown as text, never compiled here
-import { useState } from 'react';
+import {
+  CAutocomplete,
+  CIcon,
+  COption,
+  COptionValue,
+} from '@cscfi/csc-ui-react';
 import {
   mdiLanguageGo,
   mdiLanguageJavascript,
@@ -8,49 +12,45 @@ import {
   mdiLanguageRust,
   mdiLanguageTypescript,
 } from '@mdi/js';
-import {
-  CAutocomplete,
-  CIcon,
-  COption,
-  COptionValue,
-} from '@cscfi/csc-ui-react';
+// @ts-nocheck — documentation code sample; shown as text, never compiled here
+import { useState } from 'react';
 
 const options = [
   {
-    value: 'js',
-    label: 'JavaScript',
-    icon: mdiLanguageJavascript,
     color: '#F7DF1E',
+    icon: mdiLanguageJavascript,
+    label: 'JavaScript',
+    value: 'js',
   },
   {
-    value: 'ts',
-    label: 'TypeScript',
-    icon: mdiLanguageTypescript,
     color: '#3178C6',
+    icon: mdiLanguageTypescript,
+    label: 'TypeScript',
+    value: 'ts',
   },
   {
-    value: 'py',
-    label: 'Python',
-    icon: mdiLanguagePython,
     color: '#3776AB',
+    icon: mdiLanguagePython,
+    label: 'Python',
+    value: 'py',
   },
   {
-    value: 'rs',
-    label: 'Rust',
-    icon: mdiLanguageRust,
     color: '#CE422B',
+    icon: mdiLanguageRust,
+    label: 'Rust',
+    value: 'rs',
   },
   {
-    value: 'go',
-    label: 'Go',
-    icon: mdiLanguageGo,
     color: '#00ADD8',
+    icon: mdiLanguageGo,
+    label: 'Go',
+    value: 'go',
   },
   {
-    value: 'rb',
-    label: 'Ruby',
-    icon: mdiLanguageRuby,
     color: '#CC342D',
+    icon: mdiLanguageRuby,
+    label: 'Ruby',
+    value: 'rb',
   },
 ];
 
@@ -73,14 +73,14 @@ export const Multiple = () => {
       <style>{styles}</style>
 
       <CAutocomplete
-        value={languages}
         clearable
         hint="Type to filter, pick several"
         label="Programming languages"
         maxTags={3}
         multiple
-        placeholder="Start typing to search"
         onChangeValue={(event) => setLanguages(event.detail as string[])}
+        placeholder="Start typing to search"
+        value={languages}
       >
         {options.map((option) => (
           <COption key={option.value} value={option.value}>

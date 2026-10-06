@@ -1,22 +1,22 @@
 // @ts-nocheck — documentation code sample; shown as text, never compiled here
-import {
-  AfterViewInit,
-  Component,
-  CUSTOM_ELEMENTS_SCHEMA,
-  ElementRef,
-  signal,
-  viewChild,
-} from '@angular/core';
+import type { AfterViewInit, ElementRef } from '@angular/core';
 import type {
   CAutocompleteElement,
   CAutocompleteFilter,
   CAutocompleteItem,
 } from '@cscfi/csc-ui';
 
+import {
+  Component,
+  CUSTOM_ELEMENTS_SCHEMA,
+  signal,
+  viewChild,
+} from '@angular/core';
+
 @Component({
+  schemas: [CUSTOM_ELEMENTS_SCHEMA],
   selector: 'app-example',
   standalone: true,
-  schemas: [CUSTOM_ELEMENTS_SCHEMA],
   template: `
     <div>
       <!-- The default filter matches the start of the label; this one matches
@@ -40,6 +40,8 @@ export class CustomFilterExampleComponent implements AfterViewInit {
   autocomplete =
     viewChild.required<ElementRef<CAutocompleteElement>>('autocomplete');
 
+  country = signal<null | string>(null);
+
   items: CAutocompleteItem[] = [
     { name: 'Austria', value: 'at' },
     { name: 'Denmark', value: 'dk' },
@@ -55,8 +57,6 @@ export class CustomFilterExampleComponent implements AfterViewInit {
 
   filter: CAutocompleteFilter = (option, query) =>
     option.label.toLowerCase().includes(query.toLowerCase());
-
-  country = signal<string | null>(null);
 
   // `filter` is a function, so it must be set as a DOM property.
   ngAfterViewInit() {

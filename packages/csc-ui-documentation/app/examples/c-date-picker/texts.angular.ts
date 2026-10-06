@@ -1,6 +1,7 @@
+import type { CDatePickerRange, CDatePickerTexts } from '@cscfi/csc-ui';
+
 // @ts-nocheck — documentation code sample; shown as text, never compiled here
 import { Component, CUSTOM_ELEMENTS_SCHEMA, signal } from '@angular/core';
-import type { CDatePickerRange, CDatePickerTexts } from '@cscfi/csc-ui';
 
 const months = [
   'tammikuu',
@@ -80,9 +81,9 @@ const texts: CDatePickerTexts = {
 };
 
 @Component({
+  schemas: [CUSTOM_ELEMENTS_SCHEMA],
   selector: 'app-example',
   standalone: true,
-  schemas: [CUSTOM_ELEMENTS_SCHEMA],
   template: `
     <div>
       <c-date-picker
@@ -102,6 +103,6 @@ const texts: CDatePickerTexts = {
   `,
 })
 export class TextsExampleComponent {
-  texts = texts;
   period = signal<CDatePickerRange | null>(null);
+  texts = texts;
 }

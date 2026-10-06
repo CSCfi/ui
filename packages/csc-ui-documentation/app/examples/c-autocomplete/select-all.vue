@@ -6,13 +6,13 @@
          as a property because it holds a function. -->
     <c-autocomplete
       v-model="languages"
-      :texts="texts"
-      clearable
+      :texts
       hint="Type to narrow the list, then select all matches"
       label="Programming languages"
       max-tags="3"
-      multiple
       placeholder="Start typing to search"
+      clearable
+      multiple
       select-all
     >
       <c-option value="js">

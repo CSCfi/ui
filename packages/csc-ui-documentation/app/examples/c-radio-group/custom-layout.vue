@@ -23,7 +23,7 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 
-const plan = ref<'free' | 'pro' | 'enterprise'>('free');
+const plan = ref<'enterprise' | 'free' | 'pro'>('free');
 </script>
 
 <style>

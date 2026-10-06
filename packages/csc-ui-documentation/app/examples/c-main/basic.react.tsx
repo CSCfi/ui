@@ -41,7 +41,7 @@ export const Basic = () => (
         <CSideNavigationItem>Members</CSideNavigationItem>
         <CSideNavigationItem>Billing</CSideNavigationItem>
 
-        <CButton slot="bottom" inverted>
+        <CButton inverted slot="bottom">
           Sign out
         </CButton>
       </CSideNavigation>

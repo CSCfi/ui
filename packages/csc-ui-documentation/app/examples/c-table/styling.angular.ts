@@ -6,11 +6,27 @@ import {
 } from '@angular/core';
 
 @Component({
-  selector: 'app-example',
-  standalone: true,
-  schemas: [CUSTOM_ELEMENTS_SCHEMA],
   // The styles target ::part(), so they must apply globally.
   encapsulation: ViewEncapsulation.None,
+  schemas: [CUSTOM_ELEMENTS_SCHEMA],
+  selector: 'app-example',
+  standalone: true,
+  styles: [
+    `
+      /* The table stays in your DOM, so page CSS reaches components inside cells. */
+      c-tag.tag-success::part(root) {
+        background-color: var(--c-success-subtle);
+        color: var(--c-on-success-subtle);
+        box-shadow: inset 0 0 0 1px var(--c-success);
+      }
+
+      c-tag.tag-warning::part(root) {
+        background-color: var(--c-warning-subtle);
+        color: var(--c-on-warning-subtle);
+        box-shadow: inset 0 0 0 1px var(--c-warning);
+      }
+    `,
+  ],
   template: `
     <div>
       <c-table>
@@ -43,21 +59,5 @@ import {
       </c-table>
     </div>
   `,
-  styles: [
-    `
-      /* The table stays in your DOM, so page CSS reaches components inside cells. */
-      c-tag.tag-success::part(root) {
-        background-color: var(--c-success-subtle);
-        color: var(--c-on-success-subtle);
-        box-shadow: inset 0 0 0 1px var(--c-success);
-      }
-
-      c-tag.tag-warning::part(root) {
-        background-color: var(--c-warning-subtle);
-        color: var(--c-on-warning-subtle);
-        box-shadow: inset 0 0 0 1px var(--c-warning);
-      }
-    `,
-  ],
 })
 export class StylingExampleComponent {}

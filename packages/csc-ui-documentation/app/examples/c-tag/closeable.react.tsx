@@ -1,6 +1,6 @@
+import { CButton, CTag, CTags } from '@cscfi/csc-ui-react';
 // @ts-nocheck — documentation code sample; shown as text, never compiled here
 import { useState } from 'react';
-import { CButton, CTag, CTags } from '@cscfi/csc-ui-react';
 
 const createTopics = () => [
   { id: 'biosciences', label: 'Biosciences' },
@@ -20,7 +20,7 @@ export const Closeable = () => {
     <div className="example-grid">
       <CTags>
         {topics.map((topic) => (
-          <CTag key={topic.id} closeable onClose={() => remove(topic.id)}>
+          <CTag closeable key={topic.id} onClose={() => remove(topic.id)}>
             {topic.label}
           </CTag>
         ))}

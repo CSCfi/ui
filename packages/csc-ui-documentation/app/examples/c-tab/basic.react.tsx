@@ -7,7 +7,7 @@ export const Basic = () => {
       <CTabs value="summary">
         <CTab value="summary">Summary</CTab>
         <CTab value="members">Members</CTab>
-        <CTab value="settings" disabled>
+        <CTab disabled value="settings">
           Settings
         </CTab>
 

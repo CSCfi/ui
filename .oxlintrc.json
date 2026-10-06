@@ -40,6 +40,11 @@
         "blankLine": "always",
         "next": "return",
         "prev": "*"
+      },
+      {
+        "blankLine": "any",
+        "next": "cjs-import",
+        "prev": "cjs-import"
       }
     ],
     "constructor-super": "off",

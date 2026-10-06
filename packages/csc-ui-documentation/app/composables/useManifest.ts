@@ -1,8 +1,9 @@
 import rawManifest from '@cscfi/csc-ui/custom-elements.json';
 
-/** The subset of the Custom Elements Manifest schema the analyzer emits. */
-export interface CemTypeRef {
-  text: string;
+export interface Cem {
+  csc?: { types?: CemSharedType[] };
+  modules: CemModule[];
+  schemaVersion: string;
 }
 
 export interface CemAttribute {
@@ -10,34 +11,6 @@ export interface CemAttribute {
   description?: string;
   fieldName?: string;
   name: string;
-  type?: CemTypeRef;
-}
-
-export interface CemEvent {
-  description?: string;
-  name: string;
-  type?: CemTypeRef;
-}
-
-export interface CemNamed {
-  description?: string;
-  name: string;
-}
-
-export interface CemMember {
-  csc?: {
-    defaultable?: boolean;
-    freeform?: boolean | string;
-    signature?: string;
-    typeAlias?: string;
-  };
-  default?: string;
-  description?: string;
-  kind: 'field' | 'method';
-  name: string;
-  privacy?: string;
-  /** An exposed read-only property (`el.badInput`), not a prop. */
-  readonly?: boolean;
   type?: CemTypeRef;
 }
 
@@ -57,6 +30,39 @@ export interface CemDeclaration {
   tagName?: string;
 }
 
+export interface CemEvent {
+  description?: string;
+  name: string;
+  type?: CemTypeRef;
+}
+
+export interface CemMember {
+  csc?: {
+    defaultable?: boolean;
+    freeform?: boolean | string;
+    signature?: string;
+    typeAlias?: string;
+  };
+  default?: string;
+  description?: string;
+  kind: 'field' | 'method';
+  name: string;
+  privacy?: string;
+  /** An exposed read-only property (`el.badInput`), not a prop. */
+  readonly?: boolean;
+  type?: CemTypeRef;
+}
+
+export interface CemModule {
+  declarations: CemDeclaration[];
+  path: string;
+}
+
+export interface CemNamed {
+  description?: string;
+  name: string;
+}
+
 export interface CemSharedType {
   declaration: string;
   description?: string;
@@ -66,15 +72,9 @@ export interface CemSharedType {
   owner?: string;
 }
 
-export interface CemModule {
-  declarations: CemDeclaration[];
-  path: string;
-}
-
-export interface Cem {
-  csc?: { types?: CemSharedType[] };
-  modules: CemModule[];
-  schemaVersion: string;
+/** The subset of the Custom Elements Manifest schema the analyzer emits. */
+export interface CemTypeRef {
+  text: string;
 }
 
 const manifest = rawManifest as unknown as Cem;
@@ -87,7 +87,7 @@ const INTERNAL_ONLY = new Set(['c-dropdown', 'c-input']);
 
 const components = manifest.modules
   .flatMap((module) => module.declarations)
-  .filter((declaration): declaration is CemDeclaration & { tagName: string } =>
+  .filter((declaration): declaration is { tagName: string } & CemDeclaration =>
     Boolean(declaration.customElement && declaration.tagName),
   )
   .sort((a, b) => a.tagName.localeCompare(b.tagName));
@@ -119,7 +119,7 @@ const navComponents = components.filter(
  * first, then its composed children in declared order (internal-only or
  * unknown tags skipped). A standalone leaf resolves to just itself.
  */
-type ResolvedComponent = CemDeclaration & { tagName: string };
+type ResolvedComponent = { tagName: string } & CemDeclaration;
 
 const resolveGroup = (tag: string): ResolvedComponent[] => {
   const parent = byTag.get(tag);
@@ -133,31 +133,6 @@ const resolveGroup = (tag: string): ResolvedComponent[] => {
 
   return [parent, ...children];
 };
-
-export interface PropView {
-  attribute: null | string;
-  default?: string;
-  /** Accepts an app-wide default via `applyDefaults()` (`@defaultable`). */
-  defaultable?: boolean;
-  description?: string;
-  name: string;
-  type: string;
-  /** Alias name behind the expanded `type` text — links to the type's
-   *  declaration in the Types section on the same page. */
-  typeAlias?: string;
-}
-
-export interface EventView {
-  description?: string;
-  detail: string;
-  name: string;
-}
-
-export interface MethodView {
-  description?: string;
-  name: string;
-  signature: string;
-}
 
 export interface ComponentView {
   cssParts: CemNamed[];
@@ -174,6 +149,31 @@ export interface ComponentView {
    *  shared type its API references (rendered on every referencing page —
    *  the pages' self-containment rule applied to types). */
   types: CemSharedType[];
+}
+
+export interface EventView {
+  description?: string;
+  detail: string;
+  name: string;
+}
+
+export interface MethodView {
+  description?: string;
+  name: string;
+  signature: string;
+}
+
+export interface PropView {
+  attribute: null | string;
+  default?: string;
+  /** Accepts an app-wide default via `applyDefaults()` (`@defaultable`). */
+  defaultable?: boolean;
+  description?: string;
+  name: string;
+  type: string;
+  /** Alias name behind the expanded `type` text — links to the type's
+   *  declaration in the Types section on the same page. */
+  typeAlias?: string;
 }
 
 const publicTypes: CemSharedType[] = manifest.csc?.types ?? [];

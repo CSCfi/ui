@@ -13,9 +13,9 @@ const createTopics = (): Topic[] => [
 ];
 
 @Component({
+  schemas: [CUSTOM_ELEMENTS_SCHEMA],
   selector: 'app-example',
   standalone: true,
-  schemas: [CUSTOM_ELEMENTS_SCHEMA],
   template: `
     <div class="example-grid">
       <c-tags>

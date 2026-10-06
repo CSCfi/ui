@@ -15,5 +15,5 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 
-const view = ref<string | null>('week');
+const view = ref<null | string>('week');
 </script>

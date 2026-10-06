@@ -2,8 +2,8 @@
 // each message. A persistent message can be shown standalone.
 document.querySelector('c-toast')!.message = {
   id: 'example',
-  title: 'Saved',
   message: 'Your changes have been saved.',
-  type: 'success',
   persistent: true,
+  title: 'Saved',
+  type: 'success',
 };

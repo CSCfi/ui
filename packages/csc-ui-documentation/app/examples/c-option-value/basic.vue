@@ -6,10 +6,10 @@
          runs of the label equal to it are marked (`::part(match)`). -->
     <c-autocomplete
       v-model="language"
-      clearable
       hint="Only the c-option-value text is filtered, marked and used as the label"
       label="Programming language"
       placeholder="Start typing to search"
+      clearable
     >
       <c-option value="js">
         <c-option-value>JavaScript</c-option-value>
@@ -43,5 +43,5 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 
-const language = ref<string | null>(null);
+const language = ref<null | string>(null);
 </script>

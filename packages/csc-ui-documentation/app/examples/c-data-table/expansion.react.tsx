@@ -1,12 +1,12 @@
-// @ts-nocheck — documentation code sample; shown as text, never compiled here
-import { useState } from 'react';
-import { CDataTable } from '@cscfi/csc-ui-react';
 import {
   type CDataTableColumn,
   type CDataTableExpandedContext,
   type CDataTableRow,
   h,
 } from '@cscfi/csc-ui';
+import { CDataTable } from '@cscfi/csc-ui-react';
+// @ts-nocheck — documentation code sample; shown as text, never compiled here
+import { useState } from 'react';
 
 const columns: CDataTableColumn[] = [
   { header: 'Service', key: 'name' },
@@ -43,8 +43,8 @@ const expandedContent = ({ row }: CDataTableExpandedContext) =>
     'c-link',
     {
       href: `https://docs.csc.fi/computing/systems-${row.id}/`,
-      underline: true,
       style: 'padding-inline: 6px',
+      underline: true,
     },
     `Read more about ${row.name}`,
   );
@@ -62,8 +62,8 @@ export const Expansion = () => {
         data={data}
         expandedContent={expandedContent}
         getRowId={getRowId}
-        singleExpansion
         onChangeExpanded={(event) => setExpanded(event.detail as string[])}
+        singleExpansion
       />
 
       <p>Expanded: {expanded.length ? expanded.join(', ') : '—'}</p>

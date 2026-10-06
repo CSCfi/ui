@@ -3,7 +3,7 @@ import { CTab, CTabItem, CTabItems, CTabs } from '@cscfi/csc-ui-react';
 
 export const Vertical = () => (
   <div>
-    <CTabs vertical value="profile">
+    <CTabs value="profile" vertical>
       <CTab value="profile">Profile</CTab>
       <CTab value="security">Security</CTab>
       <CTab value="tokens">API tokens</CTab>

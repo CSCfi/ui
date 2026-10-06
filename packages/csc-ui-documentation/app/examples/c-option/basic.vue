@@ -2,10 +2,10 @@
   <div>
     <c-select
       v-model="country"
-      clearable
       hint="Each c-option provides a name and a value"
       label="Country"
       placeholder="Choose a country"
+      clearable
     >
       <c-option name="Finland" value="fi">Finland</c-option>
 
@@ -23,5 +23,5 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 
-const country = ref<string | null>(null);
+const country = ref<null | string>(null);
 </script>

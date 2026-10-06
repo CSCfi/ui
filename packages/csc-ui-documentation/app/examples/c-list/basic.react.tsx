@@ -1,7 +1,7 @@
-// @ts-nocheck — documentation code sample; shown as text, never compiled here
-import { useState } from 'react';
 import { CIcon, CList, CListItem, CListItemTitle } from '@cscfi/csc-ui-react';
 import { mdiAccount, mdiBell, mdiCog } from '@mdi/js';
+// @ts-nocheck — documentation code sample; shown as text, never compiled here
+import { useState } from 'react';
 
 const items = [
   { icon: mdiAccount, label: 'Profile' },
@@ -17,12 +17,12 @@ export const Basic = () => {
       <CList bordered>
         {items.map((item) => (
           <CListItem
-            key={item.label}
-            ripple
             active={selected === item.label}
+            key={item.label}
             onClick={() => setSelected(item.label)}
+            ripple
           >
-            <CIcon slot="pre" path={item.icon} />
+            <CIcon path={item.icon} slot="pre" />
             <CListItemTitle>{item.label}</CListItemTitle>
           </CListItem>
         ))}

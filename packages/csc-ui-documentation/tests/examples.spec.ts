@@ -1,3 +1,5 @@
+import type { Component } from 'vue';
+
 /**
  * Example smoke (CONTEXT.md, ADR-0049): every canon mounts once against the
  * built package and upgrades cleanly. The canons are fixtures, not specs —
@@ -6,7 +8,6 @@
  */
 import { describe, expect, it } from 'vitest';
 import { page, server } from 'vitest/browser';
-import type { Component } from 'vue';
 import { createApp } from 'vue';
 
 const canons = import.meta.glob<{ default: Component }>(
@@ -50,7 +51,9 @@ describe('canon', () => {
 
     it(name, async () => {
       const { default: canon } = await load();
+
       const problems: string[] = [];
+
       const originals = { error: console.error, warn: console.warn };
 
       console.error = (...args: unknown[]) =>

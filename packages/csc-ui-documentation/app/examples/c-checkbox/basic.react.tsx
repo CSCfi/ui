@@ -1,6 +1,6 @@
+import { CCheckbox } from '@cscfi/csc-ui-react';
 // @ts-nocheck — documentation code sample; shown as text, never compiled here
 import { useState } from 'react';
-import { CCheckbox } from '@cscfi/csc-ui-react';
 
 export const Basic = () => {
   const [subscribed, setSubscribed] = useState(false);

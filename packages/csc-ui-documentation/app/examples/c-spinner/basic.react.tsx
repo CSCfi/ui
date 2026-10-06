@@ -6,7 +6,7 @@ export const Basic = () => {
     <div className="example-row">
       <CSpinner />
       <CSpinner size={48} width={4} />
-      <CSpinner size={48} width={4} color="var(--c-success)" />
+      <CSpinner color="var(--c-success)" size={48} width={4} />
     </div>
   );
 };

@@ -1,8 +1,8 @@
 import {
+  applyTheme,
   DEFAULT_SEEDS,
   FAMILIES,
   type Family,
-  applyTheme,
   resetTheme,
 } from '@cscfi/csc-ui';
 

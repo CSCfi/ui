@@ -34,7 +34,7 @@
         <example-block
           v-for="example in examples"
           :key="example.name"
-          :example="example"
+          :example
           :html="examplesHtml[example.name]"
         />
       </section>
@@ -51,8 +51,8 @@
           v-for="view in views"
           :key="view.tagName"
           :linkable-types="pageTypeNames"
-          :types-html="typesHtml"
-          :view="view"
+          :types-html
+          :view
         />
       </section>
     </article>
@@ -62,8 +62,9 @@
 </template>
 
 <script setup lang="ts">
-import { toComponentView, useManifest } from '~/composables/useManifest';
 import type { TocItem } from '~/utils/toc';
+
+import { toComponentView, useManifest } from '~/composables/useManifest';
 
 const route = useRoute();
 

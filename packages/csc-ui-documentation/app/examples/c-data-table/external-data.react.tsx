@@ -1,11 +1,12 @@
-// @ts-nocheck — documentation code sample; shown as text, never compiled here
-import { useEffect, useState } from 'react';
-import { CDataTable } from '@cscfi/csc-ui-react';
 import type {
   CDataTableColumn,
   CDataTableRow,
   CDataTableSort,
 } from '@cscfi/csc-ui';
+
+import { CDataTable } from '@cscfi/csc-ui-react';
+// @ts-nocheck — documentation code sample; shown as text, never compiled here
+import { useEffect, useState } from 'react';
 
 const columns: CDataTableColumn[] = [
   { header: 'Job', key: 'name', sortable: true },
@@ -82,12 +83,9 @@ export const ExternalData = () => {
       <CDataTable
         columns={columns}
         data={page}
+        external
         itemCount={TOTAL}
         loading={loading}
-        page={query.page}
-        sort={query.sort}
-        external
-        pageSize={5}
         onChangePage={(event) =>
           load({ ...query, page: event.detail as number })
         }
@@ -101,6 +99,9 @@ export const ExternalData = () => {
             sort: event.detail as CDataTableSort | null,
           })
         }
+        page={query.page}
+        pageSize={5}
+        sort={query.sort}
       />
     </div>
   );

@@ -4,12 +4,12 @@
          anywhere in it. -->
     <c-autocomplete
       v-model="country"
-      :filter="filter"
-      :items="items"
-      clearable
+      :filter
+      :items
       hint="Matches anywhere in the label"
       label="Country"
       placeholder="Type to filter"
+      clearable
     />
 
     <p>Value: {{ country ?? 'null' }}</p>
@@ -17,9 +17,9 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
-
 import type { CAutocompleteFilter, CAutocompleteItem } from '@cscfi/csc-ui';
+
+import { ref } from 'vue';
 
 const items: CAutocompleteItem[] = [
   { name: 'Austria', value: 'at' },
@@ -40,5 +40,5 @@ const items: CAutocompleteItem[] = [
 const filter: CAutocompleteFilter = (option, query) =>
   option.label.toLowerCase().includes(query.toLowerCase());
 
-const country = ref<string | null>(null);
+const country = ref<null | string>(null);
 </script>

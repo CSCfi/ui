@@ -41,11 +41,11 @@
 import { computed, type ComputedRef, reactive, useHost } from 'vue';
 
 import { type AppDefaults, DEFAULTABLE_PROPS } from '../tag-name-map';
-
 import { coerceBoolean } from './coerceBoolean';
 import { hyphenate } from './defineElement';
 
 export type { AppDefaults } from '../tag-name-map';
+
 export { DEFAULTABLE_PROPS } from '../tag-name-map';
 
 /** A tag with at least one defaultable prop. */

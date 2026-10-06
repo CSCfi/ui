@@ -1,15 +1,15 @@
-// @ts-nocheck — documentation code sample; shown as text, never compiled here
-import {
-  mdiDatabaseOutline,
-  mdiHelpCircleOutline,
-  mdiServerNetwork,
-} from '@mdi/js';
 import {
   CIcon,
   CSideNavigation,
   CSideNavigationItem,
   CSideNavigationTitle,
 } from '@cscfi/csc-ui-react';
+// @ts-nocheck — documentation code sample; shown as text, never compiled here
+import {
+  mdiDatabaseOutline,
+  mdiHelpCircleOutline,
+  mdiServerNetwork,
+} from '@mdi/js';
 
 export const Basic = () => {
   return (

@@ -1,6 +1,6 @@
+import { CAutocomplete, COption, COptionValue } from '@cscfi/csc-ui-react';
 // @ts-nocheck — documentation code sample; shown as text, never compiled here
 import { useState } from 'react';
-import { CAutocomplete, COption, COptionValue } from '@cscfi/csc-ui-react';
 
 const texts = {
   selectAll: (count: number) => `Select all ${count} matches`,
@@ -12,16 +12,16 @@ export const SelectAll = () => {
   return (
     <div>
       <CAutocomplete
-        value={languages}
-        texts={texts}
         clearable
         hint="Type to narrow the list, then select all matches"
         label="Programming languages"
         maxTags={3}
         multiple
+        onChangeValue={(event) => setLanguages(event.detail as string[])}
         placeholder="Start typing to search"
         selectAll
-        onChangeValue={(event) => setLanguages(event.detail as string[])}
+        texts={texts}
+        value={languages}
       >
         <COption value="js">
           <COptionValue>JavaScript</COptionValue>
@@ -41,7 +41,7 @@ export const SelectAll = () => {
         <COption value="rb">
           <COptionValue>Ruby</COptionValue>
         </COption>
-        <COption value="cobol" disabled>
+        <COption disabled value="cobol">
           <COptionValue>COBOL</COptionValue>
         </COption>
       </CAutocomplete>

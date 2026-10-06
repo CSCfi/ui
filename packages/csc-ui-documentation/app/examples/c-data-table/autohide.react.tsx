@@ -1,6 +1,7 @@
+import type { CDataTableColumn } from '@cscfi/csc-ui';
+
 // @ts-nocheck — documentation code sample; shown as text, never compiled here
 import { CDataTable } from '@cscfi/csc-ui-react';
-import type { CDataTableColumn } from '@cscfi/csc-ui';
 
 const styles = `
 .resizable {
@@ -54,7 +55,7 @@ export const Autohide = () => {
           first). The pinned column never hides. Without `autohide` the table
           would scroll horizontally instead. */}
       <div className="resizable">
-        <CDataTable columns={columns} data={data} autohide />
+        <CDataTable autohide columns={columns} data={data} />
       </div>
     </>
   );

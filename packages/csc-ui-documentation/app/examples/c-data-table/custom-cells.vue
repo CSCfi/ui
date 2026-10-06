@@ -1,15 +1,14 @@
 <template>
   <div>
-    <c-data-table :columns="columns" :data="data" />
+    <c-data-table :columns :data />
 
     <p>{{ message }}</p>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
-
 import { type CDataTableColumn, h } from '@cscfi/csc-ui';
+import { ref } from 'vue';
 
 const message = ref('Open a project with the button in the last column');
 

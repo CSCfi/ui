@@ -11,29 +11,29 @@ export type Flavor = 'angular' | 'react' | 'typescript' | 'vue';
 export const FLAVOR_STORAGE_KEY = 'csc-docs-flavor';
 
 export const ICONS: Record<Flavor, string> = {
-  vue: mdiVuejs,
-  react: mdiReact,
   angular: mdiAngular,
+  react: mdiReact,
   typescript: mdiLanguageTypescript,
+  vue: mdiVuejs,
 };
 
 export const ICON_COLORS: Record<Flavor, string> = {
-  vue: 'text-[#42b883]',
-  react: 'text-[#61dafb]',
   angular: 'text-[#dd0031]',
+  react: 'text-[#61dafb]',
   typescript: 'text-[#3178c6]',
+  vue: 'text-[#42b883]',
 };
 
 /** Canonical display order: the Vue canon first, then overrides. */
 export const FLAVORS: ReadonlyArray<{
+  icon: string;
   id: Flavor;
   label: string;
-  icon: string;
 }> = [
-  { id: 'vue', label: 'Vue', icon: ICONS.vue },
-  { id: 'react', label: 'React', icon: ICONS.react },
-  { id: 'angular', label: 'Angular', icon: ICONS.angular },
-  { id: 'typescript', label: 'TypeScript', icon: ICONS.typescript },
+  { icon: ICONS.vue, id: 'vue', label: 'Vue' },
+  { icon: ICONS.react, id: 'react', label: 'React' },
+  { icon: ICONS.angular, id: 'angular', label: 'Angular' },
+  { icon: ICONS.typescript, id: 'typescript', label: 'TypeScript' },
 ];
 
 export const isFlavor = (value: unknown): value is Flavor =>

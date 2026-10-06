@@ -1,9 +1,10 @@
+import { CSwitch } from '@cscfi/csc-ui-react';
 // @ts-nocheck — documentation code sample; shown as text, never compiled here
 import { useState } from 'react';
-import { CSwitch } from '@cscfi/csc-ui-react';
 
 export const Loading = () => {
   const [enabled, setEnabled] = useState(false);
+
   const [pending, setPending] = useState(false);
 
   // Simulated round trip: `loading` shows the spinner in place of the handle
@@ -23,8 +24,8 @@ export const Loading = () => {
       <CSwitch
         disabled={pending}
         loading={pending}
-        value={enabled}
         onChangeValue={onToggle}
+        value={enabled}
       >
         Sync to cloud
       </CSwitch>

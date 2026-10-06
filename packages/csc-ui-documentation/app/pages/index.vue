@@ -13,8 +13,8 @@
     >
       <li v-for="component in navComponents" :key="component.tagName">
         <nuxt-link
-          class="block h-full rounded-lg border border-border px-4 py-[0.875rem] text-inherit no-underline hover:border-primary"
           :to="`/components/${component.tagName}`"
+          class="block h-full rounded-lg border border-border px-4 py-[0.875rem] text-inherit no-underline hover:border-primary"
         >
           <code>&lt;{{ component.tagName }}&gt;</code>
 

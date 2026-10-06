@@ -1,3 +1,4 @@
+import { mdiChevronRight, mdiHome } from '@mdi/js';
 /**
  * Behaviour spec for c-breadcrumb and c-breadcrumb-item (CONTEXT.md
  * "Breadcrumb", "Crumb", "Current crumb", "Folded crumbs"; ADR-0067): one line
@@ -5,7 +6,6 @@
  * then whose current and first crumbs truncate.
  */
 import { afterAll, afterEach, beforeAll, describe, expect, it } from 'vitest';
-import { mdiChevronRight, mdiHome } from '@mdi/js';
 import { page, userEvent } from 'vitest/browser';
 
 import type { Mounted } from '../../test/harness';

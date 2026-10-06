@@ -1,6 +1,3 @@
-// @ts-nocheck — documentation code sample; shown as text, never compiled here
-import { useState } from 'react';
-import { mdiAccount, mdiChevronDown } from '@mdi/js';
 import {
   CButton,
   CDivider,
@@ -8,6 +5,9 @@ import {
   CMenu,
   CMenuItem,
 } from '@cscfi/csc-ui-react';
+import { mdiAccount, mdiChevronDown } from '@mdi/js';
+// @ts-nocheck — documentation code sample; shown as text, never compiled here
+import { useState } from 'react';
 
 export const Basic = () => {
   const [selected, setSelected] = useState<null | string>(null);
@@ -23,7 +23,7 @@ export const Basic = () => {
 
         <CMenuItem value="profile">View profile</CMenuItem>
 
-        <CMenuItem value="billing" disabled>
+        <CMenuItem disabled value="billing">
           Billing (unavailable)
         </CMenuItem>
 
@@ -31,7 +31,7 @@ export const Basic = () => {
 
         <CDivider />
 
-        <CMenuItem value="delete" danger>
+        <CMenuItem danger value="delete">
           Delete account
         </CMenuItem>
       </CMenu>

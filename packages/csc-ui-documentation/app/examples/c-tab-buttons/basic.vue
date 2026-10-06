@@ -27,5 +27,5 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 
-const tab = ref<'overview' | 'members' | 'settings'>('overview');
+const tab = ref<'members' | 'overview' | 'settings'>('overview');
 </script>

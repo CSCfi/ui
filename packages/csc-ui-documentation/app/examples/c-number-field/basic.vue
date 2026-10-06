@@ -9,5 +9,5 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 
-const count = ref<number | null>(null);
+const count = ref<null | number>(null);
 </script>

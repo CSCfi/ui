@@ -3,9 +3,9 @@ import { Component, CUSTOM_ELEMENTS_SCHEMA, signal } from '@angular/core';
 import { mdiTuneVariant } from '@mdi/js';
 
 @Component({
+  schemas: [CUSTOM_ELEMENTS_SCHEMA],
   selector: 'app-example',
   standalone: true,
-  schemas: [CUSTOM_ELEMENTS_SCHEMA],
   template: `
     <div class="example-row">
       <c-popover heading="Display settings">
@@ -36,9 +36,9 @@ import { mdiTuneVariant } from '@mdi/js';
   `,
 })
 export class BasicExampleComponent {
-  mdiTuneVariant = mdiTuneVariant;
-
   compact = signal(false);
+
+  mdiTuneVariant = mdiTuneVariant;
 
   showIds = signal(true);
 }

@@ -3,13 +3,13 @@
     <c-slider
       v-model="cores"
       label="CPU cores"
-      labels
       max="8"
       min="0"
       segments="8"
       step="1"
-      ticks
       unit=""
+      labels
+      ticks
     />
   </div>
 </template>

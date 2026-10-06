@@ -3,12 +3,12 @@ import { CButton, CButtonGroup } from '@cscfi/csc-ui-react';
 
 export const Sizes = () => (
   <div className="example-row">
-    <CButtonGroup value="list" mandatory>
+    <CButtonGroup mandatory value="list">
       <CButton value="list">List</CButton>
       <CButton value="grid">Grid</CButton>
     </CButtonGroup>
 
-    <CButtonGroup size="small" value="list" mandatory>
+    <CButtonGroup mandatory size="small" value="list">
       <CButton value="list">List</CButton>
       <CButton value="grid">Grid</CButton>
     </CButtonGroup>

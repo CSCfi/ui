@@ -6,16 +6,16 @@
 
 import type { MaskSlot } from '../../shared/inputMask';
 
-/** The two period texts of a 12-hour format, as shown. */
-export interface CTimePickerPeriods {
-  am: string;
-  pm: string;
-}
-
 /** `min` / `max` in minutes since midnight; `null` where unbounded. */
 export interface CTimePickerBounds {
   max: null | number;
   min: null | number;
+}
+
+/** The two period texts of a 12-hour format, as shown. */
+export interface CTimePickerPeriods {
+  am: string;
+  pm: string;
 }
 
 const pad = (n: number): string => String(n).padStart(2, '0');
@@ -43,9 +43,9 @@ export const nowTime = (): string => {
 
 // ---- the format pattern ---------------------------------------------------
 
-type Token = 'a' | 'h' | 'H' | 'hh' | 'HH' | 'mm';
-
 type Piece = { literal: string } | { token: Token };
+
+type Token = 'a' | 'h' | 'H' | 'hh' | 'HH' | 'mm';
 
 const TOKEN = /HH|H|hh|h|mm|a/g;
 

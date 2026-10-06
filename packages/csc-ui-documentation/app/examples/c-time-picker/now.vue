@@ -2,9 +2,9 @@
   <div>
     <c-time-picker
       v-model="time"
+      :minute-step="15"
       hint="Now under the columns commits the current minute"
       label="Arrival"
-      :minute-step="15"
       show-now
     />
 
@@ -15,5 +15,5 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 
-const time = ref<string | null>('08:00');
+const time = ref<null | string>('08:00');
 </script>

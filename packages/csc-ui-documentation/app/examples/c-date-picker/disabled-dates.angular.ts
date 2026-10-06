@@ -1,6 +1,7 @@
+import type { CDatePickerDisabledDate } from '@cscfi/csc-ui';
+
 // @ts-nocheck — documentation code sample; shown as text, never compiled here
 import { Component, CUSTOM_ELEMENTS_SCHEMA, signal } from '@angular/core';
-import type { CDatePickerDisabledDate } from '@cscfi/csc-ui';
 
 // No weekends, no Christmas week, nothing before today.
 const isWeekend = (iso: string) => [0, 6].includes(new Date(iso).getUTCDay());
@@ -10,13 +11,13 @@ const today = new Date().toISOString().slice(0, 10);
 const year = today.slice(0, 4);
 
 const disabledDates: CDatePickerDisabledDate[] = [
-  { start: `${year}-12-24`, end: `${year}-12-31` },
+  { end: `${year}-12-31`, start: `${year}-12-24` },
 ];
 
 @Component({
+  schemas: [CUSTOM_ELEMENTS_SCHEMA],
   selector: 'app-example',
   standalone: true,
-  schemas: [CUSTOM_ELEMENTS_SCHEMA],
   template: `
     <div>
       <c-date-picker
@@ -34,8 +35,8 @@ const disabledDates: CDatePickerDisabledDate[] = [
   `,
 })
 export class DisabledDatesExampleComponent {
+  date = signal<null | string>(null);
   disabledDates = disabledDates;
   isWeekend = isWeekend;
   today = today;
-  date = signal<string | null>(null);
 }

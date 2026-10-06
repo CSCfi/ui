@@ -4,8 +4,8 @@
       v-model="maintenance"
       hint="An end before the start spans midnight"
       label="Maintenance maintenance"
-      range
       clearable
+      range
     />
 
     <p>
@@ -16,9 +16,9 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
-
 import type { CTimePickerRange } from '@cscfi/csc-ui';
+
+import { ref } from 'vue';
 
 const maintenance = ref<CTimePickerRange | null>(null);
 </script>

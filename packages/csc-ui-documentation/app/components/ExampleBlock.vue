@@ -43,21 +43,21 @@
              made elsewhere (e.g. the header FlavorSwitcher) updates this
              block's active tab too. -->
         <c-button-group
+          :value="activeTab.flavor"
           data-flavor-tabs
           mandatory
-          :value="activeTab.flavor"
           @input="onFlavorChange"
         >
           <c-button
             v-for="tab in example.tabs"
             :key="tab.flavor"
-            :value="tab.flavor"
             :aria-selected="tab.flavor === activeTab.flavor"
+            :value="tab.flavor"
           >
             <c-icon
+              :class="ICON_COLORS[tab.flavor]"
               :path="tab.icon"
               :size="16"
-              :class="ICON_COLORS[tab.flavor]"
             />
 
             {{ tab.label }}

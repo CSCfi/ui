@@ -5,10 +5,10 @@
          checkbox reads none, some or all; the disabled option is left alone. -->
     <c-select
       v-model="countries"
-      clearable
       hint="Pick some, or all at once"
       label="Countries"
       max-tags="3"
+      clearable
       multiple
       select-all
     >

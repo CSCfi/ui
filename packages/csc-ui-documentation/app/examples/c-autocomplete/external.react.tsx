@@ -1,7 +1,8 @@
+import type { CAutocompleteItem } from '@cscfi/csc-ui';
+
+import { CAutocomplete } from '@cscfi/csc-ui-react';
 // @ts-nocheck — documentation code sample; shown as text, never compiled here
 import { useEffect, useRef, useState } from 'react';
-import { CAutocomplete } from '@cscfi/csc-ui-react';
-import type { CAutocompleteItem } from '@cscfi/csc-ui';
 
 // ---- a pretend server ------------------------------------------------
 const ALL: CAutocompleteItem[] = [
@@ -32,7 +33,7 @@ const search = (query: string): Promise<CAutocompleteItem[]> =>
 // -----------------------------------------------------------------------
 
 export const External = () => {
-  const [country, setCountry] = useState<string | null>(null);
+  const [country, setCountry] = useState<null | string>(null);
 
   const [items, setItems] = useState<CAutocompleteItem[]>([]);
 
@@ -69,16 +70,16 @@ export const External = () => {
           opens, which is what loads the initial unfiltered list. The
           component ships no debounce — do it in the handler, as here. */}
       <CAutocomplete
-        value={country}
-        items={items}
-        loading={loading}
-        external
         clearable
+        external
         hint="Options are fetched as you type"
+        items={items}
         label="Country"
-        placeholder="Type to search"
-        onChangeValue={(event) => setCountry(event.detail as string | null)}
+        loading={loading}
         onChangeQuery={onQuery}
+        onChangeValue={(event) => setCountry(event.detail as null | string)}
+        placeholder="Type to search"
+        value={country}
       />
 
       <p>Value: {country ?? 'null'}</p>

@@ -1,9 +1,9 @@
 // @ts-nocheck — documentation code sample; shown as text, never compiled here
+import type { AfterViewInit, ElementRef } from '@angular/core';
+
 import {
-  AfterViewInit,
   Component,
   CUSTOM_ELEMENTS_SCHEMA,
-  ElementRef,
   signal,
   viewChild,
 } from '@angular/core';
@@ -16,9 +16,9 @@ import {
 } from '@cscfi/csc-ui';
 
 @Component({
+  schemas: [CUSTOM_ELEMENTS_SCHEMA],
   selector: 'app-example',
   standalone: true,
-  schemas: [CUSTOM_ELEMENTS_SCHEMA],
   template: `
     <div>
       <!-- The description column has expansion: 'always' — it never renders as
@@ -38,8 +38,6 @@ import {
   `,
 })
 export class ExpansionExampleComponent implements AfterViewInit {
-  table = viewChild.required<ElementRef<CDataTableElement>>('table');
-
   columns: CDataTableColumn[] = [
     { header: 'Service', key: 'name' },
     { header: 'Category', key: 'category' },
@@ -68,20 +66,22 @@ export class ExpansionExampleComponent implements AfterViewInit {
     },
   ];
 
-  getRowId = (row: CDataTableRow) => row.id as string;
+  expanded = signal<string[]>([]);
+
+  table = viewChild.required<ElementRef<CDataTableElement>>('table');
 
   expandedContent = ({ row }: CDataTableExpandedContext) =>
     h(
       'c-link',
       {
         href: `https://docs.csc.fi/computing/systems-${row.id}/`,
-        underline: true,
         style: 'padding-inline: 6px',
+        underline: true,
       },
       `Read more about ${row.name}`,
     );
 
-  expanded = signal<string[]>([]);
+  getRowId = (row: CDataTableRow) => row.id as string;
 
   // Colon-named events ("change:expanded") cannot be bound in an Angular
   // template, so listen on the element directly.

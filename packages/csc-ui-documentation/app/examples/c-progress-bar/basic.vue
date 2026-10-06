@@ -1,5 +1,5 @@
 <template>
   <div>
-    <c-progress-bar value="72" label="Uploading files" />
+    <c-progress-bar label="Uploading files" value="72" />
   </div>
 </template>

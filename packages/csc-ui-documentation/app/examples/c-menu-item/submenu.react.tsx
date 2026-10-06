@@ -1,7 +1,7 @@
+import { CButton, CIcon, CMenu, CMenuItem } from '@cscfi/csc-ui-react';
+import { mdiChevronDown, mdiFileDocument, mdiFilePdfBox } from '@mdi/js';
 // @ts-nocheck — documentation code sample; shown as text, never compiled here
 import { useState } from 'react';
-import { mdiChevronDown, mdiFileDocument, mdiFilePdfBox } from '@mdi/js';
-import { CButton, CIcon, CMenu, CMenuItem } from '@cscfi/csc-ui-react';
 
 export const Submenu = () => {
   const [selected, setSelected] = useState<null | string>(null);
@@ -9,7 +9,7 @@ export const Submenu = () => {
   return (
     <div className="example-row">
       <CMenu onSelect={(event) => setSelected(event.detail.value as string)}>
-        <CButton slot="trigger" ghost>
+        <CButton ghost slot="trigger">
           Export
           <CIcon path={mdiChevronDown} />
         </CButton>

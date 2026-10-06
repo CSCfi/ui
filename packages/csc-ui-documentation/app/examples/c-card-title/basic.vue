@@ -5,7 +5,7 @@
     <c-card>
       <c-card-title>
         Notifications
-        <c-button slot="actions" ghost size="small">Mark all read</c-button>
+        <c-button slot="actions" size="small" ghost>Mark all read</c-button>
       </c-card-title>
 
       <c-card-content>

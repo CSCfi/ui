@@ -1,6 +1,6 @@
+import { CSlider } from '@cscfi/csc-ui-react';
 // @ts-nocheck — documentation code sample; shown as text, never compiled here
 import { useState } from 'react';
-import { CSlider } from '@cscfi/csc-ui-react';
 
 export const Basic = () => {
   const [volume, setVolume] = useState(40);
@@ -8,9 +8,9 @@ export const Basic = () => {
   return (
     <div>
       <CSlider
-        value={volume}
         label="Volume"
         onChangeValue={(event) => setVolume(event.detail as number)}
+        value={volume}
       />
 
       <p>Value: {volume} %</p>

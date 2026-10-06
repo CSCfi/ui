@@ -55,7 +55,7 @@
         </figure>
 
         <p v-if="section.link" class="my-[1em]">
-          <nuxt-link class="font-semibold underline" :to="section.link.to">
+          <nuxt-link :to="section.link.to" class="font-semibold underline">
             {{ section.link.label }} →
           </nuxt-link>
         </p>
@@ -67,8 +67,9 @@
 </template>
 
 <script setup lang="ts">
-import { MIGRATION_SECTIONS, type MigrationSection } from '~/content/migration';
 import type { TocItem } from '~/utils/toc';
+
+import { MIGRATION_SECTIONS, type MigrationSection } from '~/content/migration';
 
 const sections: MigrationSection[] = MIGRATION_SECTIONS;
 

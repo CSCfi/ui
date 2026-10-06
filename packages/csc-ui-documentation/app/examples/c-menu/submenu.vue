@@ -44,8 +44,6 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
-
 import {
   mdiChevronDown,
   mdiFileDocument,
@@ -53,6 +51,7 @@ import {
   mdiFilePdfBox,
   mdiFilePngBox,
 } from '@mdi/js';
+import { ref } from 'vue';
 
 const selected = ref<null | string>(null);
 

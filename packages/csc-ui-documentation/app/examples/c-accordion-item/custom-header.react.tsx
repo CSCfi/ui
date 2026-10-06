@@ -25,7 +25,7 @@ export const CustomHeader = () => {
 
       <CAccordion>
         <CAccordionItem value="members">
-          <div slot="header" className="member-header">
+          <div className="member-header" slot="header">
             <span>Members and roles</span>
             <span className="member-header-meta">3 pending invites</span>
           </div>

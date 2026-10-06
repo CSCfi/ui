@@ -3,10 +3,10 @@
     <!-- With client-side data and pagination, selecting a full page offers a
          two-step "select all N rows" banner. -->
     <c-data-table
-      :columns="columns"
-      :data="data"
-      :get-row-id="getRowId"
-      :selected="selected"
+      :columns
+      :data
+      :get-row-id
+      :selected
       page-size="4"
       selection="multiple"
       @change:selected="onSelection"
@@ -17,9 +17,9 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
-
 import type { CDataTableColumn, CDataTableRow } from '@cscfi/csc-ui';
+
+import { ref } from 'vue';
 
 const columns: CDataTableColumn[] = [
   { header: 'Dataset', key: 'name' },

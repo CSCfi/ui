@@ -8,7 +8,7 @@ const today = new Date().toISOString().slice(0, 10);
 const year = today.slice(0, 4);
 
 const disabledDates: CDatePickerDisabledDate[] = [
-  { start: `${year}-12-24`, end: `${year}-12-31` },
+  { end: `${year}-12-31`, start: `${year}-12-24` },
 ];
 
 // Arrays and functions have no attribute form: set them as DOM properties.

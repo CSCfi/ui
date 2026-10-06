@@ -4,9 +4,9 @@
       v-model="price"
       :decimals="2"
       :min="0"
-      fixed-decimals
       hint="Up to two decimals"
       label="Price"
+      fixed-decimals
     >
       <span slot="post">€</span>
     </c-number-field>
@@ -18,5 +18,5 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 
-const price = ref<number | null>(1234.5);
+const price = ref<null | number>(1234.5);
 </script>

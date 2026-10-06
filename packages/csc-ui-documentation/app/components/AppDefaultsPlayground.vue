@@ -81,9 +81,9 @@
 
 <script setup lang="ts">
 import {
+  applyDefaults,
   type CFieldSize,
   type CSelectTexts,
-  applyDefaults,
   resetDefaults,
 } from '@cscfi/csc-ui';
 import { onBeforeUnmount, ref, watch } from 'vue';
@@ -96,7 +96,7 @@ const size = ref<CFieldSize>('default');
 
 const language = ref<'en' | 'fi'>('en');
 
-const country = ref<string | null>('fi');
+const country = ref<null | string>('fi');
 
 const FINNISH: CSelectTexts = {
   clearSelection: 'Tyhjennä valinta',

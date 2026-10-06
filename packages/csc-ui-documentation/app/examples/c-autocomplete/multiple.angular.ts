@@ -10,9 +10,9 @@ import {
 } from '@mdi/js';
 
 @Component({
+  schemas: [CUSTOM_ELEMENTS_SCHEMA],
   selector: 'app-example',
   standalone: true,
-  schemas: [CUSTOM_ELEMENTS_SCHEMA],
   // Option content is copied into the panel: page classes do not reach it,
   // the `part` does.
   styles: `
@@ -54,40 +54,40 @@ export class MultipleExampleComponent {
 
   options = [
     {
-      value: 'js',
-      label: 'JavaScript',
-      icon: mdiLanguageJavascript,
       color: '#F7DF1E',
+      icon: mdiLanguageJavascript,
+      label: 'JavaScript',
+      value: 'js',
     },
     {
-      value: 'ts',
-      label: 'TypeScript',
-      icon: mdiLanguageTypescript,
       color: '#3178C6',
+      icon: mdiLanguageTypescript,
+      label: 'TypeScript',
+      value: 'ts',
     },
     {
-      value: 'py',
-      label: 'Python',
-      icon: mdiLanguagePython,
       color: '#3776AB',
+      icon: mdiLanguagePython,
+      label: 'Python',
+      value: 'py',
     },
     {
-      value: 'rs',
-      label: 'Rust',
-      icon: mdiLanguageRust,
       color: '#CE422B',
+      icon: mdiLanguageRust,
+      label: 'Rust',
+      value: 'rs',
     },
     {
-      value: 'go',
-      label: 'Go',
-      icon: mdiLanguageGo,
       color: '#00ADD8',
+      icon: mdiLanguageGo,
+      label: 'Go',
+      value: 'go',
     },
     {
-      value: 'rb',
-      label: 'Ruby',
-      icon: mdiLanguageRuby,
       color: '#CC342D',
+      icon: mdiLanguageRuby,
+      label: 'Ruby',
+      value: 'rb',
     },
   ];
 }

@@ -13,5 +13,5 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 
-const period = ref<string | null>('monthly');
+const period = ref<null | string>('monthly');
 </script>

@@ -99,6 +99,7 @@ describe('tokens.css mode cascade', () => {
     // Every `data-theme-invert` occurrence in a selector carries the guard.
     for (const line of css.split('\n')) {
       if (!line.includes('[data-theme-invert]')) continue;
+
       if (!line.trimStart().startsWith('[') && !line.includes(':root'))
         continue;
 

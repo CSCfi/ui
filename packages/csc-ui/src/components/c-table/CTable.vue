@@ -84,11 +84,13 @@ const createMobileLabels = () => {
 
       const span = document.createElement('span');
       span.classList.add('c-table__mobile-label');
+
       // Clone the header's nodes instead of serializing through innerHTML —
       // nested elements (icons, c-tags) survive as live, styleable clones.
       for (const node of heading.childNodes) {
         span.appendChild(node.cloneNode(true));
       }
+
       cell.prepend(span);
     });
   });
@@ -124,6 +126,7 @@ const adoptTable = () => {
   if (next === tableEl) {
     // Same table — its rows may still have changed.
     if (props.responsive) createMobileLabels();
+
     return;
   }
 

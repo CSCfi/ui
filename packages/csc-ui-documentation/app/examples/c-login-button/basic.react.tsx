@@ -11,11 +11,11 @@ const logo = (path: string) =>
 export const Basic = () => (
   <div>
     <CLoginButtons>
-      <CLoginButton src={logo(mdiSchool)} alt="Haka logo">
+      <CLoginButton alt="Haka logo" src={logo(mdiSchool)}>
         Haka login
       </CLoginButton>
 
-      <CLoginButton src={logo(mdiAccountCircle)} alt="CSC logo">
+      <CLoginButton alt="CSC logo" src={logo(mdiAccountCircle)}>
         CSC login
       </CLoginButton>
     </CLoginButtons>

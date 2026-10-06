@@ -9,9 +9,9 @@ const logo = (path: string) =>
   )}`;
 
 @Component({
+  schemas: [CUSTOM_ELEMENTS_SCHEMA],
   selector: 'app-example',
   standalone: true,
-  schemas: [CUSTOM_ELEMENTS_SCHEMA],
   template: `
     <div>
       <c-login-buttons>
@@ -31,7 +31,7 @@ const logo = (path: string) =>
   `,
 })
 export class BasicExampleComponent {
+  cscLogo = logo(mdiAccountCircle);
   hakaLogo = logo(mdiSchool);
   virtuLogo = logo(mdiDomain);
-  cscLogo = logo(mdiAccountCircle);
 }

@@ -40,8 +40,8 @@
            host is display:contents and the drawer inside is fixed. Items use
            `.prop`/@itemChange (not href) so navigation stays client-side. -->
       <c-side-navigation
-        class="autoheight sticky top-15"
         :mobile.prop="isMobile"
+        class="autoheight sticky top-15"
       >
         <c-side-navigation-title>Guides</c-side-navigation-title>
 
@@ -102,6 +102,7 @@ useHead({
     class: 'scroll-smooth [scrollbar-gutter:stable]',
   },
 });
+
 const { navComponents } = useManifest();
 
 const route = useRoute();

@@ -11,6 +11,10 @@
 <script setup lang="ts">
 import { useTemplateRef } from 'vue';
 
+type CToastsElement = {
+  addToast: (message: ToastMessage) => void;
+} & HTMLElement;
+
 interface ToastMessage {
   duration?: number;
   message: string;
@@ -20,21 +24,17 @@ interface ToastMessage {
   type?: 'error' | 'info' | 'success' | 'warning';
 }
 
-type CToastsElement = HTMLElement & {
-  addToast: (message: ToastMessage) => void;
-};
-
 const toasts = useTemplateRef<CToastsElement>('toasts');
 
 const notify = (type: 'error' | 'success') => {
   toasts.value?.addToast({
-    type,
-    title: type === 'success' ? 'Saved' : 'Upload failed',
     message:
       type === 'success'
         ? 'Your changes have been saved.'
         : 'The file could not be uploaded.',
     progress: true,
+    title: type === 'success' ? 'Saved' : 'Upload failed',
+    type,
   });
 };
 </script>

@@ -158,8 +158,8 @@
                 class="inline-flex items-center gap-1.5"
               >
                 <span
-                  class="inline-block size-2.5 rounded-sm"
                   :style="{ background: `var(--c-chart-${i + 1})` }"
+                  class="inline-block size-2.5 rounded-sm"
                 />
                 {{ name }}
               </span>
@@ -167,9 +167,9 @@
 
             <svg
               :viewBox="`0 0 ${W} ${H}`"
+              aria-label="Grouped bar chart: monthly CPU core hours for three services"
               class="w-full"
               role="img"
-              aria-label="Grouped bar chart: monthly CPU core hours for three services"
             >
               <!-- gridlines + y tick labels -->
               <g v-for="tick in yTicks" :key="tick.value">
@@ -185,9 +185,9 @@
                 <text
                   :x="PAD.l - 6"
                   :y="tick.y + 3"
-                  text-anchor="end"
                   class="text-[9px]"
                   fill="var(--c-chart-axis)"
+                  text-anchor="end"
                 >
                   {{ tick.label }}
                 </text>
@@ -196,10 +196,10 @@
               <!-- bars: thin marks, rounded data ends, 2px surface gaps -->
               <clipPath id="bar-plot">
                 <rect
+                  :height="baseY"
+                  :width="W - PAD.l - PAD.r"
                   :x="PAD.l"
                   y="0"
-                  :width="W - PAD.l - PAD.r"
-                  :height="baseY"
                 />
               </clipPath>
 
@@ -207,12 +207,12 @@
                 <rect
                   v-for="bar in bars"
                   :key="`${bar.month}-${bar.series}`"
+                  :fill="`var(--c-chart-${bar.seriesIndex + 1})`"
+                  :height="baseY - bar.y + 4"
+                  :width="BAR_W"
                   :x="bar.x"
                   :y="bar.y"
-                  :width="BAR_W"
-                  :height="baseY - bar.y + 4"
                   rx="3"
-                  :fill="`var(--c-chart-${bar.seriesIndex + 1})`"
                 >
                   <title>
                     {{ bar.series }} — {{ bar.month }}: {{ bar.value }}M core
@@ -236,9 +236,9 @@
                 :key="group.month"
                 :x="group.cx"
                 :y="baseY + 14"
-                text-anchor="middle"
                 class="text-[9px]"
                 fill="var(--c-chart-axis)"
+                text-anchor="middle"
               >
                 {{ group.month }}
               </text>
@@ -252,9 +252,9 @@
           <c-card-content>
             <svg
               :viewBox="`0 0 ${W} ${H}`"
+              aria-label="Line chart: weekly active projects for three services"
               class="w-full"
               role="img"
-              aria-label="Line chart: weekly active projects for three services"
             >
               <g v-for="tick in lineTicks" :key="tick.value">
                 <line
@@ -269,9 +269,9 @@
                 <text
                   :x="PAD.l - 6"
                   :y="tick.y + 3"
-                  text-anchor="end"
                   class="text-[9px]"
                   fill="var(--c-chart-axis)"
+                  text-anchor="end"
                 >
                   {{ tick.value }}
                 </text>
@@ -280,18 +280,18 @@
               <g v-for="line in lines" :key="line.name">
                 <polyline
                   :points="line.points"
-                  fill="none"
                   :stroke="`var(--c-chart-${line.seriesIndex + 1})`"
-                  stroke-width="2"
-                  stroke-linejoin="round"
+                  fill="none"
                   stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
                 />
                 <!-- end marker + direct label; label text wears a text token -->
                 <circle
                   :cx="line.endX"
                   :cy="line.endY"
-                  r="4"
                   :fill="`var(--c-chart-${line.seriesIndex + 1})`"
+                  r="4"
                   stroke="var(--c-chart-surface)"
                   stroke-width="2"
                 >
@@ -322,9 +322,9 @@
                 :key="week"
                 :x="lineX(i)"
                 :y="baseY + 14"
-                text-anchor="middle"
                 class="text-[9px]"
                 fill="var(--c-chart-axis)"
+                text-anchor="middle"
               >
                 {{ week }}
               </text>
@@ -461,116 +461,126 @@ import type { TocItem } from '~/utils/toc';
  */
 
 const SLOTS = [
-  { n: 1, hue: 'blue', light: '#1295f2', dark: '#1094f1', origin: 'info hue' },
+  { dark: '#1094f1', hue: 'blue', light: '#1295f2', n: 1, origin: 'info hue' },
   {
-    n: 2,
+    dark: '#b75693',
     hue: 'magenta',
     light: '#b75593',
-    dark: '#b75693',
+    n: 2,
     origin: 'secondary hue',
   },
-  { n: 3, hue: 'gold', light: '#b5901d', dark: '#b5901a', origin: 'viz-only' },
+  { dark: '#b5901a', hue: 'gold', light: '#b5901d', n: 3, origin: 'viz-only' },
   {
-    n: 4,
+    dark: '#9160c6',
     hue: 'purple',
     light: '#905fc5',
-    dark: '#9160c6',
+    n: 4,
     origin: 'viz-only',
   },
   {
-    n: 5,
+    dark: '#17ad92',
     hue: 'teal',
     light: '#05a88c',
-    dark: '#17ad92',
+    n: 5,
     origin: 'accent hue',
   },
-  { n: 6, hue: 'rose', light: '#b64655', dark: '#c3525f', origin: 'viz-only' },
-  { n: 7, hue: 'cyan', light: '#26a2bc', dark: '#1da6c1', origin: 'viz-only' },
+  { dark: '#c3525f', hue: 'rose', light: '#b64655', n: 6, origin: 'viz-only' },
+  { dark: '#1da6c1', hue: 'cyan', light: '#26a2bc', n: 7, origin: 'viz-only' },
   {
-    n: 8,
+    dark: '#586edd',
     hue: 'indigo',
     light: '#5165d4',
-    dark: '#586edd',
+    n: 8,
     origin: 'viz-only',
   },
   {
-    n: 9,
+    dark: '#ce6cb9',
     hue: 'orchid',
     light: '#ce6cb9',
-    dark: '#ce6cb9',
+    n: 9,
     origin: 'viz-only',
   },
   {
-    n: 10,
+    dark: '#848c00',
     hue: 'olive',
     light: '#858d00',
-    dark: '#848c00',
+    n: 10,
     origin: 'viz-only',
   },
   {
-    n: 11,
+    dark: '#8382ed',
     hue: 'violet',
     light: '#8483ee',
-    dark: '#8382ed',
+    n: 11,
     origin: 'viz-only',
   },
-  { n: 12, hue: 'aqua', light: '#008f90', dark: '#009293', origin: 'viz-only' },
+  { dark: '#009293', hue: 'aqua', light: '#008f90', n: 12, origin: 'viz-only' },
 ];
 
 const ANATOMY = [
   {
-    token: 'chart-surface',
-    light: 'white',
     dark: 'slate-800',
+    light: 'white',
     purpose:
       'Plot background. Equals the raised card surface, so a chart on a card is flush with it — the series slots are validated against this color.',
+    token: 'chart-surface',
   },
   {
-    token: 'chart-grid',
-    light: 'tertiary-200',
     dark: 'slate-700',
+    light: 'tertiary-200',
     purpose: 'Gridlines, baselines, and axis lines. Recessive by design.',
+    token: 'chart-grid',
   },
   {
-    token: 'chart-axis',
-    light: 'tertiary-500',
     dark: 'slate-300',
+    light: 'tertiary-500',
     purpose: 'Axis tick labels and small chart captions.',
+    token: 'chart-axis',
   },
 ];
 
 // ── example chart data & geometry ──────────────────────────────────────────
 
 const W = 560;
+
 const H = 220;
-const PAD = { l: 36, r: 8, t: 10, b: 22 };
+
+const PAD = { b: 22, l: 36, r: 8, t: 10 };
+
 const baseY = H - PAD.b;
 
 const BAR_SERIES = ['Pouta', 'Mahti', 'LUMI'];
+
 const BAR_MONTHS = ['May', 'June', 'July', 'August'];
+
 // millions of CPU core hours
 const BAR_DATA = [
   [3.1, 3.4, 2.9, 3.8],
   [5.2, 4.8, 5.6, 6.1],
   [4.0, 4.4, 4.9, 4.6],
 ];
+
 const BAR_MAX = 8;
+
 const BAR_W = 26;
+
 const BAR_GAP = 2; // the 2px surface gap between adjacent bars
 
 const yTicks = [0, 2, 4, 6, 8].map((value) => ({
-  value,
   label: `${value}M`,
+  value,
   y: baseY - (value / BAR_MAX) * (baseY - PAD.t),
 }));
 
 const barGroups = BAR_MONTHS.map((month, m) => {
   const groupWidth =
     BAR_SERIES.length * BAR_W + (BAR_SERIES.length - 1) * BAR_GAP;
+
   const slot = (W - PAD.l - PAD.r) / BAR_MONTHS.length;
+
   const x0 = PAD.l + slot * m + (slot - groupWidth) / 2;
 
-  return { month, x0, cx: x0 + groupWidth / 2 };
+  return { cx: x0 + groupWidth / 2, month, x0 };
 });
 
 const bars = barGroups.flatMap((group, m) =>
@@ -585,11 +595,13 @@ const bars = barGroups.flatMap((group, m) =>
 );
 
 const WEEKS = ['W1', 'W2', 'W3', 'W4', 'W5', 'W6', 'W7', 'W8'];
+
 const LINE_DATA: { name: string; values: number[] }[] = [
   { name: 'Pouta', values: [112, 118, 121, 117, 126, 131, 128, 136] },
   { name: 'Mahti', values: [64, 61, 70, 74, 72, 79, 84, 82] },
   { name: 'LUMI', values: [35, 42, 40, 48, 53, 51, 58, 63] },
 ];
+
 const LINE_MAX = 150;
 
 const lineTicks = [0, 50, 100, 150].map((value) => ({
@@ -604,15 +616,16 @@ const lineY = (value: number) => baseY - (value / LINE_MAX) * (baseY - PAD.t);
 
 const lines = LINE_DATA.map((series, s) => {
   const coords = series.values.map((v, i) => [lineX(i), lineY(v)] as const);
+
   const end = coords[coords.length - 1]!;
 
   return {
-    name: series.name,
-    seriesIndex: s,
-    points: coords.map(([x, y]) => `${x},${y}`).join(' '),
+    endValue: series.values[series.values.length - 1]!,
     endX: end[0],
     endY: end[1],
-    endValue: series.values[series.values.length - 1]!,
+    name: series.name,
+    points: coords.map(([x, y]) => `${x},${y}`).join(' '),
+    seriesIndex: s,
   };
 });
 
@@ -620,8 +633,6 @@ const lines = LINE_DATA.map((series, s) => {
 
 const CODE_BLOCKS = [
   {
-    filename: 'chart.svg (excerpt) — SVG reads the tokens directly',
-    lang: 'html',
     code: `<c-card>
   <c-card-title>Compute usage by service</c-card-title>
   <c-card-content>
@@ -633,10 +644,10 @@ const CODE_BLOCKS = [
     </svg>
   </c-card-content>
 </c-card>`,
+    filename: 'chart.svg (excerpt) — SVG reads the tokens directly',
+    lang: 'html',
   },
   {
-    filename: 'chart-colors.ts — import the slots as data',
-    lang: 'ts',
     code: `import {
   chartAnatomyHex,
   chartSlots,
@@ -664,6 +675,8 @@ const option = {
 // scope, not just the document root — and keep following it. Fires once
 // immediately, so there is no separate initial draw; call stop() to detach.
 const stop = observeThemeMode(chartEl, (mode) => draw(chartSlotsHex[mode]));`,
+    filename: 'chart-colors.ts — import the slots as data',
+    lang: 'ts',
   },
 ];
 

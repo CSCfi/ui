@@ -6,7 +6,7 @@
       </c-icon-button>
     </c-tooltip>
 
-    <c-tooltip text="Remove the report permanently" position="bottom">
+    <c-tooltip position="bottom" text="Remove the report permanently">
       <c-icon-button slot="trigger" aria-label="Remove" ghost>
         <c-icon :path="mdiTrashCanOutline" />
       </c-icon-button>

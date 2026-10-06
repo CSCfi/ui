@@ -24,7 +24,6 @@ import {
 import { createServer } from 'node:http';
 import { extname, join, relative, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
-
 import { chromium } from 'playwright';
 
 const here = fileURLToPath(new URL('.', import.meta.url));
