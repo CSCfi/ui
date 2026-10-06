@@ -28,9 +28,6 @@ trustPolicyExclude:
   - ua-parser-js
 
 overrides:
-  eslint-plugin-prettier: ^5.0.0
-  eslint-config-prettier: ^10.0.0
-  eslint-import-resolver-typescript: ^4.0.0
   vite: ^7.0.0
   semver: ^7.0.0
   chokidar: ^5.0.0

@@ -31,7 +31,7 @@
     "vscode": {
       "extensions": [
         "anthropic.claude-code",
-        "esbenp.prettier-vscode@11.0.3",
+        "oxc.oxc-vscode",
         "dbaeumer.vscode-eslint",
         "Vue.volar",
         "mrmlnc.vscode-duplicate",

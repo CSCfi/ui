@@ -1,80 +1,50 @@
-import eslint from '@eslint/js';
-import stylistic from '@stylistic/eslint-plugin';
-import perfectionist from 'eslint-plugin-perfectionist';
-import eslintPluginPrettierRecommended from 'eslint-plugin-prettier/recommended';
+import eslintConfigPrettier from 'eslint-config-prettier';
+import oxlint from 'eslint-plugin-oxlint';
 import eslintPluginVue from 'eslint-plugin-vue';
-import globals from 'globals';
+import { defineConfig } from 'eslint/config';
 import typescriptEslint from 'typescript-eslint';
 
-export default typescriptEslint.config(
+// ESLint only runs the eslint-plugin-vue rules oxlint cannot: oxlint lints
+// every script, `.vue` script blocks included, but not templates (ADR-0068).
+export default defineConfig(
   {
-    ignores: ['**/build/', '**/dist/', '**/node_modules/', '**/public/'],
+    ignores: [
+      '**/dist/',
+      '**/dist-types/',
+      '**/.nuxt/',
+      '**/.output/',
+      'temp/',
+      // Scripts are oxlint's.
+      '**/*.{js,mjs,cjs,jsx,ts,mts,cts,tsx}',
+    ],
     name: 'app/ignored',
   },
 
   {
     extends: [
-      eslint.configs.recommended,
-      ...typescriptEslint.configs.recommended,
       ...eslintPluginVue.configs['flat/strongly-recommended'],
-      eslintPluginPrettierRecommended,
-      perfectionist.configs['recommended-alphabetical'],
+      // Switches off the template formatting rules oxfmt owns. It must come
+      // before the rules below, or it would switch off vue/html-self-closing.
+      eslintConfigPrettier,
     ],
 
-    files: ['**/*.{cjs,mjs,js,ts,vue}'],
+    files: ['**/*.vue'],
 
     languageOptions: {
-      ecmaVersion: 'latest',
-      globals: globals.browser,
       parserOptions: {
         parser: typescriptEslint.parser,
-        tsconfigRootDir: '/',
       },
-
-      sourceType: 'module',
     },
 
-    name: 'app/base',
-
-    plugins: {
-      '@stylistic': stylistic,
+    // oxlint honours `eslint-disable` comments for the rules it now owns, so
+    // ESLint must not report (or `--fix` away) the ones it no longer runs.
+    linterOptions: {
+      reportUnusedDisableDirectives: 'off',
     },
+
+    name: 'app/vue',
 
     rules: {
-      '@stylistic/padding-line-between-statements': [
-        'warn',
-        {
-          blankLine: 'always',
-          next: ['interface', 'type', 'if', 'for', 'const', 'let', 'export'],
-          prev: '*',
-        },
-        {
-          blankLine: 'always',
-          next: '*',
-          prev: ['block-like', 'block'],
-        },
-      ],
-      '@typescript-eslint/consistent-type-imports': 'error',
-      '@typescript-eslint/no-empty-object-type': 'off',
-      '@typescript-eslint/no-redeclare': 'error',
-      '@typescript-eslint/no-unused-vars': [
-        'error',
-        {
-          args: 'all',
-          argsIgnorePattern: '^_',
-          ignoreRestSiblings: true,
-        },
-      ],
-      '@typescript-eslint/no-use-before-define': 'off',
-      'eol-last': 'error',
-      'newline-before-return': 'error',
-      'no-console': 'off',
-      'no-param-reassign': 'off',
-      'no-redeclare': 'off',
-      'no-restricted-syntax': 'off',
-      'no-useless-constructor': 'off',
-      'prefer-template': 'error',
-      'prettier/prettier': 'error',
       'vue/attributes-order': [
         'error',
         {
@@ -107,7 +77,6 @@ export default typescriptEslint.config(
         'kebab-case',
         { registeredComponentsOnly: false },
       ],
-      'vue/define-emits-declaration': ['error', 'type-literal'],
       'vue/html-self-closing': [
         'error',
         {
@@ -132,6 +101,7 @@ export default typescriptEslint.config(
       ],
       'vue/prefer-true-attribute-shorthand': ['error', 'always'],
       'vue/prefer-use-template-ref': 'error',
+      'vue/require-default-prop': 'error',
       'vue/v-bind-style': [
         'error',
         'shorthand',
@@ -150,10 +120,7 @@ export default typescriptEslint.config(
     },
   },
 
-  {
-    extends: [typescriptEslint.configs.disableTypeChecked],
-    files: ['**/*.js'],
-    // disable type-aware linting on JS files
-    name: 'app/disabled',
-  },
+  // Last: switches off every rule `.oxlintrc.json` enables, so a `vue/*` rule
+  // both tools implement reports once, from oxlint.
+  ...oxlint.buildFromOxlintConfigFile('./.oxlintrc.json'),
 );

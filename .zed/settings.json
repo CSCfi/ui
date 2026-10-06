@@ -1,0 +1,69 @@
+// oxfmt formats, oxlint lints every script, ESLint only Vue templates
+// (ADR-0068). Needs the Oxc extension (`zed: extensions`, search "Oxc"). Save
+// runs the lint fixes first, then the formatter.
+{
+  "languages": {
+    "JavaScript": {
+      "language_servers": ["oxlint", "oxfmt", "!eslint", "..."],
+      "format_on_save": "on",
+      "prettier": { "allowed": false },
+      "formatter": [
+        { "code_action": "source.fixAll.oxc" },
+        { "language_server": { "name": "oxfmt" } }
+      ]
+    },
+    "TypeScript": {
+      "language_servers": ["oxlint", "oxfmt", "!eslint", "..."],
+      "format_on_save": "on",
+      "prettier": { "allowed": false },
+      "formatter": [
+        { "code_action": "source.fixAll.oxc" },
+        { "language_server": { "name": "oxfmt" } }
+      ]
+    },
+    "TSX": {
+      "language_servers": ["oxlint", "oxfmt", "!eslint", "..."],
+      "format_on_save": "on",
+      "prettier": { "allowed": false },
+      "formatter": [
+        { "code_action": "source.fixAll.oxc" },
+        { "language_server": { "name": "oxfmt" } }
+      ]
+    },
+    "Vue.js": {
+      "language_servers": ["vue-language-server", "oxlint", "oxfmt", "eslint", "..."],
+      "format_on_save": "on",
+      "prettier": { "allowed": false },
+      "formatter": [
+        { "code_action": "source.fixAll.oxc" },
+        { "code_action": "source.fixAll.eslint" },
+        { "language_server": { "name": "oxfmt" } }
+      ]
+    },
+    "CSS": {
+      "format_on_save": "on",
+      "prettier": { "allowed": false },
+      "formatter": [{ "language_server": { "name": "oxfmt" } }]
+    },
+    "JSON": {
+      "format_on_save": "on",
+      "prettier": { "allowed": false },
+      "formatter": [{ "language_server": { "name": "oxfmt" } }]
+    },
+    "JSONC": {
+      "format_on_save": "on",
+      "prettier": { "allowed": false },
+      "formatter": [{ "language_server": { "name": "oxfmt" } }]
+    },
+    "Markdown": {
+      "format_on_save": "on",
+      "prettier": { "allowed": false },
+      "formatter": [{ "language_server": { "name": "oxfmt" } }]
+    },
+    "YAML": {
+      "format_on_save": "on",
+      "prettier": { "allowed": false },
+      "formatter": [{ "language_server": { "name": "oxfmt" } }]
+    }
+  }
+}

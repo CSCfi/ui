@@ -106,7 +106,6 @@ export default defineNuxtConfig({
     '~/assets/tailwind.css',
     '~/assets/site.css',
   ],
-  modules: ['@nuxt/eslint'],
   nitro: {
     prerender: {
       crawlLinks: true,

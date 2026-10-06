@@ -5,13 +5,23 @@
   "devDependencies": {
     "@changesets/changelog-github": "^0.7.0",
     "@changesets/cli": "^2.31.1",
+    "@stylistic/eslint-plugin": "5.10.0",
     "@types/node": "^24.0.0",
     "@vitest/browser-playwright": "catalog:",
     "concurrently": "^10.0.3",
     "consola": "^3.4.2",
+    "eslint": "9.39.4",
+    "eslint-config-prettier": "10.1.8",
+    "eslint-plugin-oxlint": "1.86.0",
+    "eslint-plugin-perfectionist": "5.9.1",
+    "eslint-plugin-vue": "10.9.2",
     "husky": "^8.0.3",
+    "jiti": "2.7.0",
+    "oxfmt": "0.71.0",
+    "oxlint": "1.86.0",
     "playwright": "catalog:",
     "typescript": "^6.0.3",
+    "typescript-eslint": "8.62.0",
     "vitest": "catalog:"
   },
   "scripts": {
@@ -24,6 +34,13 @@
     "changeset": "changeset",
     "test": "pnpm --filter @cscfi/csc-ui run style-dictionary:build && vitest run",
     "test:watch": "vitest",
-    "test:update": "pnpm --filter @cscfi/csc-ui run style-dictionary:build && vitest run --project browser --project examples --update"
+    "test:update": "pnpm --filter @cscfi/csc-ui run style-dictionary:build && vitest run --project browser --project examples --update",
+    "format": "oxfmt",
+    "format:check": "oxfmt --check",
+    "lint": "pnpm run lint:oxlint && pnpm run lint:eslint && pnpm run lint:guards",
+    "lint:oxlint": "oxlint --deny-warnings",
+    "lint:eslint": "eslint --max-warnings 0 .",
+    "lint:guards": "pnpm --filter @cscfi/csc-ui run lint:guards && pnpm --filter @cscfi/csc-ui-documentation run lint:examples",
+    "fix": "oxlint --fix; eslint --fix .; oxfmt"
   }
 }

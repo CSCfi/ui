@@ -59,5 +59,16 @@
   ],
   "css.customData": [
     "./node_modules/@cscfi/csc-ui-next/vscode.css-custom-data.json"
-  ]
+  ],
+  // oxfmt formats, oxlint lints every script, ESLint only Vue templates
+  // (ADR-0068). Save runs the lint fixes first, then the formatter.
+  "editor.defaultFormatter": "oxc.oxc-vscode",
+  "editor.formatOnSave": true,
+  "editor.formatOnSaveMode": "file",
+  "editor.codeActionsOnSave": {
+    "source.fixAll.oxc": "explicit",
+    "source.fixAll.eslint": "explicit"
+  },
+  "eslint.validate": ["vue"],
+  "prettier.enable": false
 }

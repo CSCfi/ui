@@ -1,0 +1,73 @@
+{
+  "$schema": "./node_modules/oxfmt/configuration_schema.json",
+  "arrowParens": "always",
+  "bracketSameLine": false,
+  "bracketSpacing": true,
+  "endOfLine": "lf",
+  "htmlWhitespaceSensitivity": "ignore",
+  "printWidth": 80,
+  "quoteProps": "as-needed",
+  "semi": true,
+  "singleQuote": true,
+  "sortPackageJson": false,
+  "tabWidth": 2,
+  "trailingComma": "all",
+  "useTabs": false,
+  "vueIndentScriptAndStyle": false,
+  "ignorePatterns": [
+    "**/CHANGELOG.md",
+    "**/dist/**",
+    "**/dist-types/**",
+    "**/.nuxt/**",
+    "**/.output/**",
+    "**/.data/**",
+    "**/.nitro/**",
+    "**/.cache/**",
+    "pnpm-lock.yaml",
+    "skills-lock.json",
+    ".devcontainer/devcontainer-lock.json",
+    ".agents/**",
+    ".changeset/**",
+    ".claude/**",
+    "_plan/**",
+    "_todo/**",
+    "docs/**",
+    "temp/**",
+    "CLAUDE.md",
+    "CONTEXT.md",
+    "packages/csc-ui/src/styles/css/theme.css",
+    "packages/csc-ui/src/styles/css/tokens.css",
+    "packages/csc-ui/src/styles/scss/**",
+    "packages/csc-ui/src/styles/tailwind/**",
+    "packages/csc-ui/src/tag-name-map.ts",
+    "packages/csc-ui/src/theme/chart-data.ts",
+    "packages/csc-ui/src/components/*/api*.snapshot.json",
+    "packages/csc-ui/src/api*.snapshot.json",
+    "packages/csc-ui-react/src/components.ts"
+  ],
+  "overrides": [
+    {
+      "files": [
+        "packages/csc-ui/**"
+      ],
+      "options": {
+        "sortTailwindcss": {
+          "functions": [
+            "tv"
+          ],
+          "stylesheet": "./packages/csc-ui/src/tailwind.css"
+        }
+      }
+    },
+    {
+      "files": [
+        "packages/csc-ui-documentation/**"
+      ],
+      "options": {
+        "sortTailwindcss": {
+          "stylesheet": "./packages/csc-ui-documentation/app/assets/tailwind-sort.css"
+        }
+      }
+    }
+  ]
+}

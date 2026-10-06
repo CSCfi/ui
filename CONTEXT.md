@@ -665,6 +665,10 @@ _Avoid_: docs test, example test, smoke test (unqualified)
 The committed, condensed rendering of the **manifest** (per tag: props, events, methods, slots, parts, states) that a node spec diffs the freshly generated manifest against, so an unintended public-API change fails a test instead of silently changing `custom-elements.json`. The strict analyzer checks the manifest is *consistent*; the API snapshot checks it is *unchanged*.
 _Avoid_: golden file, manifest snapshot, API baseline
 
+**Guard**:
+A repo-owned static check of one project convention that no lint rule can express — no palette-step utilities, host attribute fallthrough, ramp and chart parity, focus rings, the docs' example parity. Guards are part of lint: a guard failure fails the gate exactly like a lint error.
+_Avoid_: custom lint rule (a guard is not an oxlint or ESLint rule), check (unqualified), validator
+
 ### Flagged ambiguities
 
 - **"Vue version"** is ambiguous: it can mean (a) the retired `@cscfi/csc-ui-vue` directive package, (b) the fact that 4.x components are implemented in Vue, or (c) the Vue.js framework version. Prefer **"`v-control` directive"** for (a), plain **"component"** for (b) — since 4.x there is no other kind — and **"Vue 3"/"Vue 2"** explicitly for (c).
@@ -674,6 +678,7 @@ _Avoid_: golden file, manifest snapshot, API baseline
 - **"Path"** is overloaded: (a) an SVG path datum (`c-icon`'s `path` prop), (b) a tree-select item's ancestor chain (see **Path**), (c) a URL or file path. Say **"icon path"** for (a), plain **"path"** only in the tree-select sense, and **"URL"** / **"file path"** for (c).
 - **"Default"** is overloaded: (a) a **built-in default** (the library's value for an unset prop), (b) an **app default** (a consumer's per-tag value via `applyDefaults`), (c) the `'default'` member of a size union (`size="default"`), (d) a tailwind-variants `defaultVariants` entry. Say **"built-in default"** and **"app default"** for (a) and (b), **"the `default` size"** for (c), and **"variant default"** for (d).
 - **"Invert"** is overloaded: (a) an **inverting scope** (`data-theme-invert` — a region resolving the opposite **theme mode**), (b) the **inverted surface** (`surface-inverted`, one mode-aware rung of the **surface ladder**), (c) the mode-**invariant** `inverse-*` family (one fixed look regardless of mode). Say **"inverting scope"**, **"inverted surface"**, and **"the `inverse-*` family"**.
+- **"Lint"** is overloaded: (a) the whole static gate — formatting aside, every oxlint and ESLint rule plus every **guard**, (b) one tool's run ("oxlint", "ESLint"). Say **"lint"** for (a) and name the tool for (b); formatting is **"format"**, never lint.
 - **"Sticky"** is overloaded: (a) the data-table `sticky-header` / `sticky-footer` rows, (b) the CSS mechanism behind **pinned** elements (the toolbar, the side navigation). Say **"pinned"** for the concept and keep "sticky" for the data-table rows and for literal CSS.
 
 ## Example dialogue
