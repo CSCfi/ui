@@ -33,12 +33,14 @@
 export interface CButtonGroupProps {
   /** Disable the whole group — every slotted c-button is disabled and the selection can no longer be changed. */
   disabled?: boolean;
+
   /**
    * Label of the button group, shown above the buttons
    *
    * @freeform
    */
   label?: string;
+
   /**
    * The selection can never become empty: the active button (or, with
    * `multiple`, the last active button) cannot be toggled off. Distinct from
@@ -46,20 +48,24 @@ export interface CButtonGroupProps {
    * form-level demand for an answer.
    */
   mandatory?: boolean;
+
   /**
    * Allow several buttons to be active at once. The value becomes an array
    * of the active buttons' values (in DOM order). Arrays have no attribute
    * form — bind `value` as a DOM property (`:value.prop` in Vue).
    */
   multiple?: boolean;
+
   /**
    * Set as required — shows the required marker on the label
    */
   required?: boolean;
+
   /**
    * Size of the buttons
    */
   size?: CButtonGroupSize;
+
   /**
    * Value of the group: the active button's `value` (or its index when no
    * button declares one). `null` when nothing is selected. With `multiple`,
@@ -112,8 +118,10 @@ interface CButtonGroupEvents {
    * is toggled off, or the array of active values in `multiple` mode.
    */
   change: CButtonGroupValue;
+
   /** Native bubbling input event dispatched for plain `v-model` support; carries no detail. */
   input: void;
+
   /**
    * Fired alongside `change` with the new selection; fulfills the `v-model`
    * contract.

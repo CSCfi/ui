@@ -73,6 +73,7 @@ export interface CBreadcrumbProps {
 export interface CBreadcrumbTexts {
   /** Accessible name of the breadcrumb navigation. */
   breadcrumb?: string;
+
   /** Accessible name of the fold button; receives the number of folded crumbs. */
   fold?: (count: number) => string;
 }

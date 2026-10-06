@@ -38,6 +38,7 @@ interface CTabEvents {
     element: HTMLElement | null;
     value: number | string | undefined;
   };
+
   /**
    * Fired when the tab receives focus, so the parent `<c-tabs>` can drive
    * arrow-key navigation.
@@ -88,12 +89,14 @@ interface CTabProps {
    * @seeded from csc-ui — verify
    */
   active?: boolean;
+
   /**
    * Mark tab as disabled
    *
    * @seeded from csc-ui — verify
    */
   disabled?: boolean;
+
   /**
    * Id of the tab
    *
@@ -101,18 +104,21 @@ interface CTabProps {
    * @freeform
    */
   hostId?: string;
+
   /**
    * Position in the set
    *
    * @seeded from csc-ui — verify
    */
   position?: number;
+
   /**
    * Size of the set
    *
    * @seeded from csc-ui — verify
    */
   setsize?: number;
+
   /**
    * Value for the tab
    * - for use in c-tabs

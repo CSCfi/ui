@@ -42,6 +42,7 @@ export interface CAlertProps {
    * the page stays the consumer's job.
    */
   dismissible?: boolean;
+
   /**
    * Heading rendered above the message. The `heading` slot overrides it for
    * rich content.
@@ -49,6 +50,7 @@ export interface CAlertProps {
    * @freeform
    */
   heading?: string;
+
   /**
    * Type of the alert
    *

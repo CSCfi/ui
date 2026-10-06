@@ -98,12 +98,14 @@ interface CSubNavigationItemProps {
    * @seeded from csc-ui — verify
    */
   active?: boolean;
+
   /**
    * Element is visible and focusable
    *
    * @seeded from csc-ui — verify
    */
   focusable?: boolean;
+
   /**
    * Link url
    *
@@ -111,12 +113,14 @@ interface CSubNavigationItemProps {
    * @freeform any URL
    */
   href?: string;
+
   /**
    * Loading state
    *
    * @seeded from csc-ui — verify
    */
   loading?: boolean;
+
   /**
    * Link target
    *

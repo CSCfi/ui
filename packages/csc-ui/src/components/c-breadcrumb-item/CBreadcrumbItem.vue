@@ -52,6 +52,7 @@ export interface CBreadcrumbItemProps {
    * @freeform any URL
    */
   href?: string;
+
   /**
    * Browsing context the link opens in; the same tab when unset
    *

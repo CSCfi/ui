@@ -30,6 +30,7 @@ interface CTableProps {
    * @seeded from csc-ui — verify
    */
   mobileBreakpoint?: number;
+
   /**
    * Should the table be responsive
    *

@@ -96,13 +96,16 @@ interface COtpInputEvents {
    * event).
    */
   changeValue: null | string;
+
   /** Fired when the last digit is filled, carrying the complete code. */
   completion: null | string;
+
   /**
    * Native bubbling input event for plain `v-model`; carries no detail — the
    * model value is mirrored onto the host's `value` property.
    */
   input: void;
+
   /**
    * Fired on every digit change with the currently entered digits (v-model
    * contract).
@@ -164,24 +167,28 @@ interface COtpInputProps {
    * @freeform
    */
   elementId?: string;
+
   /**
    * Error message shown in place of the hint while the input is invalid
    *
    * @freeform
    */
   errorMessage?: string;
+
   /**
    * Auto focus
    *
    * @seeded from csc-ui — verify
    */
   hasAutofocus?: boolean;
+
   /**
    * Hide the hint and error messages
    *
    * @seeded from csc-ui — verify
    */
   hideDetails?: boolean;
+
   /**
    * Hint text for the input
    *
@@ -189,28 +196,33 @@ interface COtpInputProps {
    * @freeform
    */
   hint?: string;
+
   /**
    * Label of the input group, shown above the digit inputs
    *
    * @freeform
    */
   label?: string;
+
   /**
    * Length of the OTP code
    *
    * @seeded from csc-ui — verify
    */
   length?: number;
+
   /**
    * Set as required — shows the required marker on the label
    */
   required?: boolean;
+
   /**
    * Set the validíty of the input
    *
    * @seeded from csc-ui — verify
    */
   valid?: boolean;
+
   /**
    * Value of the input
    *

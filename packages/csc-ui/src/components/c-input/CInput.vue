@@ -302,26 +302,31 @@ const input = tv({
 interface CInputProps {
   /** Set by the wrapping form component when its input has focus or holds a value. */
   active?: boolean;
+
   /**
    * Disable the input
    *
    * @seeded from csc-ui — verify
    */
   disabled?: boolean;
+
   /**
    * Error message shown in place of the hint while the input is invalid
    *
    * @freeform
    */
   errorMessage?: string;
+
   /** Set by the wrapping form component when its input holds a value. */
   filled?: boolean;
+
   /**
    * Hide the hint and error messages
    *
    * @seeded from csc-ui — verify
    */
   hideDetails?: boolean;
+
   /**
    * Hint text for the input
    *
@@ -329,14 +334,17 @@ interface CInputProps {
    * @freeform
    */
   hint?: string;
+
   /**
    * id of the inner input element (for the label's htmlFor).
    *
    * @freeform
    */
   inputId?: string;
+
   /** Renders textarea-specific spacing tweaks. */
   isTextarea?: boolean;
+
   /**
    * Label of the input
    *
@@ -344,26 +352,31 @@ interface CInputProps {
    * @freeform
    */
   label?: string;
+
   /**
    * Label on top of the input
    *
    * @seeded from csc-ui — verify
    */
   labelOnTop?: boolean;
+
   /**
    * Set the input as required
    *
    * @seeded from csc-ui — verify
    */
   required?: boolean;
+
   /**
    * Shadow variant of the input
    *
    * @seeded from csc-ui — verify
    */
   shadow?: boolean;
+
   /** Field height: the 52px default (the shared control height) or the 36px `small` box */
   size?: CFieldSize;
+
   /**
    * Set the validíty of the input
    *

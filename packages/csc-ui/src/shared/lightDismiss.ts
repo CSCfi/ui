@@ -66,6 +66,7 @@ export const attachPointerPair = (
 export interface LightDismissOptions {
   /** True when a composed event path passes through the surface's own inside (host subtree, panel, designated trigger). */
   isInside(path: EventTarget[]): boolean;
+
   /** The press and its release both landed outside: close the surface. */
   onDismiss(): void;
 }

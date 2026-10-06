@@ -92,12 +92,14 @@ interface CProgressBarProps {
    * @seeded from csc-ui — verify
    */
   hideDetails?: boolean;
+
   /**
    * Indeterminate state of the progress bar
    *
    * @seeded from csc-ui — verify
    */
   indeterminate?: boolean;
+
   /**
    * Optional details message next to percentage display
    *
@@ -105,12 +107,14 @@ interface CProgressBarProps {
    * @freeform
    */
   label?: string;
+
   /**
    * Place details next to progress bar
    *
    * @seeded from csc-ui — verify
    */
   singleLine?: boolean;
+
   /**
    * Progress bar value in percentage (0 to 100)
    *

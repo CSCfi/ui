@@ -109,21 +109,27 @@ const OPTIONS = [
 export interface ValueRecipe {
   /** The value control is built on c-input and must treat '' / null as empty. */
   emptyAware?: boolean;
+
   /** The `update:value` detail that interaction yields (a predicate for object values). */
   expected: ((detail: unknown) => boolean) | unknown;
+
   /**
    * `changeValue`: the grandfathered set (changeValue + change-value twin);
    * `change`: the all-lowercase set (`emitModelChange`);
    * `otp`: c-otp-input's hand-rolled bridge (changeValue is null until complete).
    */
   family: 'change' | 'changeValue' | 'otp';
+
   /** The one user interaction that changes the value. */
   interact(m: Mounted): Promise<void>;
+
   /** Initial v-model value for the round-trip test (default `null`). */
   model?: unknown;
   mount: MountOptions;
+
   /** A value to assign programmatically in the no-emission test. */
   programmatic: unknown;
+
   /** The event at which `host.value` is guaranteed updated (c-otp-input writes it after `update:value`). */
   valueSettledAt?: 'input' | 'update:value';
 }
@@ -388,15 +394,20 @@ export const VALUE_RECIPES: Record<string, ValueRecipe> = {
 export interface OverlayRecipe {
   /** Extra expectations once Escape has closed the panel. */
   afterEscape?(m: Mounted): void;
+
   /** The element (light or shadow) that owns focus once the panel closes; `null` when focus must not move. */
   focusHome(m: Mounted): Element | null;
+
   /** Whether an outside press-and-release closes the panel (CONTEXT.md "Light dismiss"). */
   lightDismiss: boolean;
   mount: MountOptions;
+
   /** The tag to mount when the overlay only exists inside a parent (c-menu-item inside c-menu). */
   mountTag?: string;
+
   /** Open the panel through its trigger. */
   open(m: Mounted): Promise<void>;
+
   /** The `[popover]` panel element. */
   panel(m: Mounted): HTMLElement;
 }

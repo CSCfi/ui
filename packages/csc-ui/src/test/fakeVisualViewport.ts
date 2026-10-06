@@ -11,9 +11,11 @@
 /** The box the faked visual viewport reports, in CSS px relative to the layout viewport. */
 export interface FakeViewportBox {
   height: number;
+
   /** Default 0. */
   offsetLeft?: number;
   offsetTop: number;
+
   /** Default: the layout viewport's width (a keyboard never narrows it). */
   width?: number;
 }

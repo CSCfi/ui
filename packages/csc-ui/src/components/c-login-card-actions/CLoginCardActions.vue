@@ -31,6 +31,7 @@ export interface CLoginCardActionsProps {
    * @seeded from csc-ui — verify
    */
   align?: CLoginCardActionsAlign;
+
   /**
    * Justify the actions
    *

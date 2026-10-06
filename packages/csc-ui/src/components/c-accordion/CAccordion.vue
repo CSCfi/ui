@@ -32,16 +32,19 @@ interface CAccordionEvents {
    * mode, or `null` when everything is collapsed.
    */
   change: AccordionValue;
+
   /**
    * Legacy value-change event carrying the new expansion value (kept for
    * existing `@changeValue` listeners and the `v-control` directive).
    */
   changeValue: AccordionValue;
+
   /**
    * Native bubbling input event dispatched alongside `changeValue` so a plain
    * `v-model` works without `v-control`; carries no detail.
    */
   input: void;
+
   /**
    * Fired with the new expansion value whenever an item is toggled — the
    * `v-model` contract.
@@ -68,18 +71,21 @@ interface CAccordionProps {
    * @seeded from csc-ui — verify
    */
   mandatory?: boolean;
+
   /**
    * Allow expanding multiple items
    *
    * @seeded from csc-ui — verify
    */
   multiple?: boolean;
+
   /**
    * Show an outline around expanded items
    *
    * @seeded from csc-ui — verify
    */
   outlined?: boolean;
+
   /**
    * Value of the accordion
    *

@@ -13,10 +13,12 @@ export interface RippleInstance {
 export interface SpawnRippleOptions {
   /** Force-centre the ripple in the container (default false). */
   center?: boolean;
+
   /** Per-spawn container override — for consumers with many surfaces (radio
    *  group) that resolve the target only at activation time. Falls back to the
    *  composable's `container` option. */
   container?: () => HTMLElement | null | undefined;
+
   /** Tag stamped onto the spawned ripple (see `RippleInstance.group`). */
   group?: number | string;
 }
@@ -25,10 +27,13 @@ export interface UseRippleOptions {
   /** Resolve the surface ripples are measured/positioned against. Optional when
    *  the container is supplied per-spawn instead (multi-surface consumers). */
   container?: () => HTMLElement | null | undefined;
+
   /** Transition + cleanup duration in ms (default 600). */
   duration?: number;
+
   /** Peak opacity at spawn (default 0.4 — the standardized value). */
   opacity?: number;
+
   /** Multiplier on max(w,h) for the ripple diameter (default 2; checkbox uses 1). */
   sizeFactor?: number;
 }

@@ -335,11 +335,13 @@ export type CAutocompleteItem = CSelectItem;
 export interface CAutocompleteOption {
   /** Whether the option is disabled. */
   disabled: boolean;
+
   /**
    * The option's label: its `name`, else the text of its `c-option-value`,
    * else its whole text content (for an `items` entry, its `name`).
    */
   label: string;
+
   /** The option's value. */
   value: number | string;
 }
@@ -347,68 +349,82 @@ export interface CAutocompleteOption {
 export interface CAutocompleteProps {
   /** Make the selected value clearable */
   clearable?: boolean;
+
   /** Disable the input */
   disabled?: boolean;
+
   /**
    * Error message shown in place of the hint while the autocomplete is invalid
    *
    * @freeform
    */
   errorMessage?: string;
+
   /**
    * The consumer owns filtering: the component renders its options verbatim
    * and only emits `change:query` as the user types. Pair with `loading` and
    * an async data source feeding `items`
    */
   external?: boolean;
+
   /** Custom filter predicate; receives a normalized option + the query. Ignored when `external` is set */
   filter?: CAutocompleteFilter;
+
   /**
    * Hide the hint and error messages
    *
    * @defaultable false
    */
   hideDetails?: boolean;
+
   /**
    * Hint text for the input
    *
    * @freeform
    */
   hint?: string;
+
   /**
    * Id of the element
    *
    * @freeform
    */
   hostId?: string;
+
   /** Dropdown items (when not using <c-option> elements) */
   items?: CAutocompleteItem[];
+
   /**
    * Items per page before the list scrolls
    *
    * @defaultable 6
    */
   itemsPerPage?: number;
+
   /**
    * Element label
    *
    * @freeform
    */
   label?: string;
+
   /**
    * Label on top of the input
    *
    * @defaultable false
    */
   labelOnTop?: boolean;
+
   /** Show loading state */
   loading?: boolean;
+
   /**
    * In `multiple` mode, show at most this many selected-value tags and fold
    * the rest into one "+N more" tag; `0` shows no tags and reads "N selected"
    * instead; unset shows every tag
    */
   maxTags?: number;
+
   /**
    * Allow selecting several options: rows toggle, the panel stays open and
    * keeps its query, `value` becomes an array of the selected values (items
@@ -417,22 +433,27 @@ export interface CAutocompleteProps {
    * a DOM property
    */
   multiple?: boolean;
+
   /**
    * Input field name
    *
    * @freeform
    */
   name?: string;
+
   /**
    * Placeholder for the in-panel search input
    *
    * @freeform
    */
   placeholder?: string;
+
   /** Set the autocomplete as required */
   required?: boolean;
+
   /** Return object instead of value */
   returnObject?: boolean;
+
   /**
    * In `multiple` mode, pin a select-all row at the top of the list. Its
    * checkbox shows whether none, some or all enabled options currently listed
@@ -441,18 +462,21 @@ export interface CAutocompleteProps {
    * unselects them. Ignored in single mode
    */
   selectAll?: boolean;
+
   /**
    * Shadow variant
    *
    * @defaultable false
    */
   shadow?: boolean;
+
   /**
    * Field height: the 52px default (the shared control height) or the 36px `small` box
    *
    * @defaultable 'default'
    */
   size?: CFieldSize;
+
   /**
    * UI text overrides (i18n), merged over the English defaults. Objects have
    * no attribute form — bind as a DOM property (`:texts.prop` in Vue)
@@ -460,8 +484,10 @@ export interface CAutocompleteProps {
    * @defaultable {}
    */
   texts?: CAutocompleteTexts;
+
   /** Set the validity of the input */
   valid?: boolean;
+
   /**
    * Selected value: the option's value, or the whole item with
    * `return-object`; an array of them in `multiple` mode
@@ -477,33 +503,43 @@ export interface CAutocompleteProps {
 export interface CAutocompleteTexts {
   /** Accessible label of the clear button. */
   clearSelection?: string;
+
   /** Accessible label of the close button in the fullscreen panel (narrow viewports). */
   closePanel?: string;
+
   /** Accessible label of the search input inside the panel. */
   filterOptions?: string;
+
   /** Text of the loading row shown while `loading` with nothing to list. */
   loading?: string;
+
   /**
    * Text of the overflow tag when `max-tags` folds the selection; receives the
    * number of hidden tags.
    */
   more?: (count: number) => string;
+
   /** Text of the row shown when the query matches no options. */
   noResults?: string;
+
   /** Accessible label of a tag's remove button; receives the option label. */
   remove?: (label: string) => string;
+
   /** Placeholder of the search input when the `placeholder` prop is empty. */
   searchPlaceholder?: string;
+
   /**
    * Label of the select-all row; receives the number of enabled options
    * listed.
    */
   selectAll?: (count: number) => string;
+
   /**
    * Field text when `max-tags="0"` shows no tags; receives the selection
    * count.
    */
   selected?: (count: number) => string;
+
   /** Accessible label of the chevron button that opens and closes the panel. */
   toggleOptions?: string;
 }
@@ -589,6 +625,7 @@ interface CAutocompleteEvents {
    * form-style listeners.
    */
   change: void;
+
   /**
    * Fired whenever the query changes — on every keystroke in the search
    * input, and with an empty string when the panel opens. Carries the query
@@ -596,6 +633,7 @@ interface CAutocompleteEvents {
    * your side) and feed the results back via `items`.
    */
   'change:query': string;
+
   /**
    * Fired when the selected value changes (an option is committed or the
    * selection is cleared), carrying the new value — the option's value, or
@@ -604,11 +642,13 @@ interface CAutocompleteEvents {
    * pick order (`[]` when cleared).
    */
   changeValue: CAutocompleteValue;
+
   /**
    * Native bubbling input event dispatched alongside every value change so a
    * plain `v-model` stays in sync. Carries no detail.
    */
   input: void;
+
   /**
    * Fired alongside `changeValue` with the same detail — the `v-model`
    * contract.

@@ -58,11 +58,13 @@ interface CModalEvents {
    * always `false`.
    */
   changeValue: boolean;
+
   /**
    * Native bubbling input event dispatched alongside every value change so a
    * plain `v-model` stays in sync. Carries no detail.
    */
   input: void;
+
   /**
    * Fired alongside `changeValue` with the same detail — the `v-model`
    * contract.
@@ -130,16 +132,19 @@ interface CModalProps {
    * Disable backdrop blur effect
    */
   disableBackdropBlur?: boolean;
+
   /**
    * Dismissed when touching/clicking outside the content or pressing Escape.
    * A non-dismissable modal responds to either gesture with a nudge animation
    * instead of closing.
    */
   dismissable?: boolean;
+
   /**
    * Is the modal visible
    */
   value?: boolean;
+
   /**
    * Width of the dialog. Numeric value is considered as pixel value (400 -> 400px)
    */

@@ -42,8 +42,10 @@ export type CPlacement =
 export interface CSelectItem {
   /** Disable the item so it cannot be selected. */
   disabled?: boolean;
+
   /** The item's display label. */
   name: string;
+
   /** The value emitted via v-model when the item is selected. */
   value: number | string;
 }
@@ -55,22 +57,31 @@ export interface CSelectItem {
 export interface CToastMessage {
   /** Label of the toast's close button. */
   closeText?: string;
+
   /** Render the slotted custom content instead of `message`. */
   custom?: boolean;
+
   /** How long the toast stays visible, in milliseconds. Defaults to 6000. */
   duration?: number;
+
   /** Identifier used to remove the toast via `removeToast`. */
   id?: string;
+
   /** Show an indeterminate progress bar instead of the countdown. */
   indeterminate?: boolean;
+
   /** The message text. */
   message: string;
+
   /** Keep the toast visible until it is explicitly closed. */
   persistent?: boolean;
+
   /** Show a progress bar counting down the toast's remaining duration. */
   progress?: boolean;
+
   /** Optional title rendered above the message. */
   title?: string;
+
   /** Status type of the toast. Defaults to `info`. */
   type?: CToastType;
 }

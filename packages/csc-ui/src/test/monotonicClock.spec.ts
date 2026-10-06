@@ -1,5 +1,3 @@
-import { afterEach, describe, expect, it } from 'vitest';
-import { userEvent } from 'vitest/browser';
 /**
  * Reproduces the hazard `monotonicClock.ts` closes: a wall clock that steps
  * backwards between a mount and a click makes Vue drop the click for every
@@ -8,6 +6,8 @@ import { userEvent } from 'vitest/browser';
  * If the first one ever starts passing, Vue stopped using `Date.now()` for the
  * event stamp and the shim in `setup.browser.ts` can go.
  */
+import { afterEach, describe, expect, it } from 'vitest';
+import { userEvent } from 'vitest/browser';
 import { createApp, h } from 'vue';
 
 import { settle } from './harness';

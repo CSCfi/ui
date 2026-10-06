@@ -50,6 +50,7 @@ const ui = headingRow();
 defineProps<{
   /** Accessible label of the close button. */
   closeLabel: string;
+
   /** The field's label, shown as the panel heading. */
   heading: string;
 }>();

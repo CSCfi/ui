@@ -471,6 +471,7 @@ export interface TokenRow {
   dark: string;
   light: string;
   purpose: string;
+
   /** Token name without the --c- prefix (the template prepends it). */
   token: string;
 }

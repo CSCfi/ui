@@ -77,11 +77,13 @@ interface CSliderEvents {
    * when the current `value` prop is a number, otherwise a string.
    */
   changeValue: number | string;
+
   /**
    * Native bubbling input event fired on every thumb movement so a plain Vue
    * `v-model` works without the `v-control` directive. No detail.
    */
   input: void;
+
   /**
    * v-model contract event fired on every thumb movement, carrying the new
    * slider value — a number when the current `value` prop is a number,
@@ -166,18 +168,21 @@ interface CSliderProps {
    * @freeform
    */
   ariaLabelInternal?: string;
+
   /**
    * Disable the slider
    *
    * @seeded from csc-ui — verify
    */
   disabled?: boolean;
+
   /**
    * Disable tooltip
    *
    * @seeded from csc-ui — verify
    */
   disableTooltip?: boolean;
+
   /**
    * Id of the element
    *
@@ -185,6 +190,7 @@ interface CSliderProps {
    * @freeform
    */
   hostId?: string;
+
   /**
    * Id of the element
    *
@@ -192,6 +198,7 @@ interface CSliderProps {
    * @freeform
    */
   hostName?: string;
+
   /**
    * Label of the slider
    *
@@ -199,42 +206,49 @@ interface CSliderProps {
    * @freeform
    */
   label?: string;
+
   /**
    * Show tick labels
    *
    * @seeded from csc-ui — verify
    */
   labels?: boolean;
+
   /**
    * Max value
    *
    * @seeded from csc-ui — verify
    */
   max?: number | string;
+
   /**
    * Min value
    *
    * @seeded from csc-ui — verify
    */
   min?: number | string;
+
   /**
    * Segment count
    *
    * @seeded from csc-ui — verify
    */
   segments?: number | string;
+
   /**
    * Step
    *
    * @seeded from csc-ui — verify
    */
   step?: number | string;
+
   /**
    * Thow ticks
    *
    * @seeded from csc-ui — verify
    */
   ticks?: boolean;
+
   /**
    * Unit
    *
@@ -242,6 +256,7 @@ interface CSliderProps {
    * @freeform
    */
   unit?: string;
+
   /**
    * Value
    *

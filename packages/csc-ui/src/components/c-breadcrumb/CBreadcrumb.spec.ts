@@ -1,10 +1,10 @@
-import { mdiChevronRight, mdiHome } from '@mdi/js';
 /**
  * Behaviour spec for c-breadcrumb and c-breadcrumb-item (CONTEXT.md
  * "Breadcrumb", "Crumb", "Current crumb", "Folded crumbs"; ADR-0067): one line
  * of crumbs whose middle ones fold into a disclosure panel by moving there,
  * then whose current and first crumbs truncate.
  */
+import { mdiChevronRight, mdiHome } from '@mdi/js';
 import { afterAll, afterEach, beforeAll, describe, expect, it } from 'vitest';
 import { page, userEvent } from 'vitest/browser';
 

@@ -129,16 +129,19 @@ interface CCheckboxEvents {
    * boundary). No detail; read the new value from the host's `value` property.
    */
   change: void;
+
   /**
    * Fired when the checkbox is toggled, carrying the new value —
    * `trueValue` when checked, `falseValue` when unchecked.
    */
   changeValue: boolean | number | string;
+
   /**
    * Native bubbling input event fired on toggle so a plain Vue `v-model`
    * works without the `v-control` directive. No detail.
    */
   input: void;
+
   /**
    * v-model contract event fired on toggle, carrying the new value —
    * `trueValue` when checked, `falseValue` when unchecked.
@@ -251,30 +254,35 @@ interface CCheckboxProps {
    * @seeded from csc-ui — verify
    */
   checked?: boolean;
+
   /**
    * Disable the checkbox
    *
    * @seeded from csc-ui — verify
    */
   disabled?: boolean;
+
   /**
    * Error message shown in place of the hint while the checkbox is invalid
    *
    * @freeform
    */
   errorMessage?: string;
+
   /**
    * The value when the checkbox is unchecked
    *
    * @seeded from csc-ui — verify
    */
   falseValue?: boolean | number | string;
+
   /**
    * Hide the hint and error messages
    *
    * @seeded from csc-ui — verify
    */
   hideDetails?: boolean;
+
   /**
    * Hint text for the input
    *
@@ -282,6 +290,7 @@ interface CCheckboxProps {
    * @freeform
    */
   hint?: string;
+
   /**
    * Id of the element
    *
@@ -289,6 +298,7 @@ interface CCheckboxProps {
    * @freeform
    */
   hostId?: string;
+
   /**
    * Name of the input
    * - Only used when the checkbox participates in a native `<form>`
@@ -297,12 +307,14 @@ interface CCheckboxProps {
    * @freeform
    */
   hostName?: string;
+
   /**
    * Indeterminate state
    *
    * @seeded from csc-ui — verify
    */
   indeterminate?: boolean;
+
   /**
    * Element label
    *
@@ -310,24 +322,28 @@ interface CCheckboxProps {
    * @freeform
    */
   label?: string;
+
   /**
    * Set as required
    *
    * @seeded from csc-ui — verify
    */
   required?: boolean;
+
   /**
    * The value when the checkbox is checked
    *
    * @seeded from csc-ui — verify
    */
   trueValue?: boolean | number | string;
+
   /**
    * Set the validity of the input
    *
    * @seeded from csc-ui — verify
    */
   valid?: boolean;
+
   /**
    * The input value
    * - Only used when the checkbox participates in a native `<form>`

@@ -77,6 +77,7 @@ export interface DocExample {
 
 export interface ExamplePane {
   code: string;
+
   /** Chip label above the pane; only multi-pane flavors set it. */
   label?: string;
   lang: string;

@@ -31,6 +31,7 @@ export interface CCardActionsProps {
    * @seeded from csc-ui — verify
    */
   align?: CCardActionsAlign;
+
   /**
    * Justify the actions
    *

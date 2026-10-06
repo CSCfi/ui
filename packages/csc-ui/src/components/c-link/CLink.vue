@@ -56,6 +56,7 @@ interface CLinkProps {
    * @freeform any URL
    */
   href?: string;
+
   /**
    * regular target attribute of a hyperlink
    *
@@ -63,12 +64,14 @@ interface CLinkProps {
    * @freeform any browsing-context name (e.g. _blank, _self)
    */
   target?: string;
+
   /**
    * Display line under the link
    *
    * @seeded from csc-ui — verify
    */
   underline?: boolean;
+
   /**
    * Customisable font weight
    *

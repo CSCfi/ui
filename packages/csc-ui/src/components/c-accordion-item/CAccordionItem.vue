@@ -205,12 +205,14 @@ interface CAccordionItemProps {
    * @seeded from csc-ui — verify
    */
   collapsable?: boolean;
+
   /**
    * Expansion status of the item
    *
    * @seeded from csc-ui — verify
    */
   expanded?: boolean;
+
   /**
    * Heading of the accordion item
    *
@@ -218,12 +220,14 @@ interface CAccordionItemProps {
    * @freeform
    */
   heading?: string;
+
   /**
    * Show an outline around the expanded item
    *
    * @seeded from csc-ui — verify
    */
   outlined?: boolean;
+
   /**
    * Value of the accordion item
    *

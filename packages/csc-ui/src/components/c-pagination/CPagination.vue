@@ -113,24 +113,28 @@ export interface CPaginationProps {
    * @seeded from csc-ui — verify
    */
   hideDetails?: boolean;
+
   /**
    * Hide range indicator
    *
    * @seeded from csc-ui — verify
    */
   hideRange?: boolean;
+
   /**
    * Hide page number buttons
    *
    * @seeded from csc-ui — verify
    */
   simple?: boolean;
+
   /**
    * Hide details (per page dropdown and the 'x - y of n pages' text)
    *
    * @seeded from csc-ui — verify
    */
   size?: CPaginationSize;
+
   /**
    * Object containing values that are needed for pagination.
    *
@@ -173,11 +177,13 @@ interface CPaginationEvents {
    * `itemsPerPage`, `startFrom` and `endTo` fields.
    */
   changeValue: CPaginationOptions;
+
   /**
    * Native bubbling input event dispatched alongside every value change so a
    * plain `v-model` stays in sync. Carries no detail.
    */
   input: void;
+
   /**
    * Fired alongside `changeValue` with the same detail — the `v-model`
    * contract.

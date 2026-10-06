@@ -158,60 +158,72 @@ import type { CFieldSize, CSelectItem } from '../../types';
 export interface CSelectProps {
   /** Make the selected value clearable */
   clearable?: boolean;
+
   /** Disable the input */
   disabled?: boolean;
+
   /**
    * Error message shown in place of the hint while the select is invalid
    *
    * @freeform
    */
   errorMessage?: string;
+
   /**
    * Hide the hint and error messages
    *
    * @defaultable false
    */
   hideDetails?: boolean;
+
   /**
    * Hint text for the input
    *
    * @freeform
    */
   hint?: string;
+
   /**
    * Id of the element
    *
    * @freeform
    */
   hostId?: string;
+
   /** Dropdown items (when not using <c-option> elements) */
   items?: CSelectItem[];
+
   /**
    * Items per page before adding scroll
    *
    * @defaultable 6
    */
   itemsPerPage?: number;
+
   /**
    * Element label
    *
    * @freeform
    */
   label?: string;
+
   /**
    * Label on top of the input
    *
    * @defaultable false
    */
   labelOnTop?: boolean;
+
   /** Show loading state */
   loading?: boolean;
+
   /**
    * In `multiple` mode, show at most this many selected-value tags and fold
    * the rest into one "+N more" tag; `0` shows no tags and reads "N selected"
    * instead; unset shows every tag
    */
   maxTags?: number;
+
   /**
    * Allow selecting several options: rows toggle and the list stays open,
    * `value` becomes an array of the selected values (items with
@@ -220,24 +232,30 @@ export interface CSelectProps {
    * Arrays have no attribute form — bind `value` as a DOM property
    */
   multiple?: boolean;
+
   /**
    * Input field name
    *
    * @freeform
    */
   name?: string;
+
   /** Display the option as selection (only with <c-option> elements) */
   optionAsSelection?: boolean;
+
   /**
    * Placeholder text
    *
    * @freeform
    */
   placeholder?: string;
+
   /** Set the select as required */
   required?: boolean;
+
   /** Return object instead of value */
   returnObject?: boolean;
+
   /**
    * In `multiple` mode, pin a select-all row at the top of the list. Its
    * checkbox shows whether none, some or all enabled options are selected;
@@ -245,18 +263,21 @@ export interface CSelectProps {
    * unselects them. Ignored in single mode
    */
   selectAll?: boolean;
+
   /**
    * Shadow variant
    *
    * @defaultable false
    */
   shadow?: boolean;
+
   /**
    * Field height: the 52px default (the shared control height) or the 36px `small` box
    *
    * @defaultable 'default'
    */
   size?: CFieldSize;
+
   /**
    * UI text overrides (i18n), merged over the English defaults. Objects have
    * no attribute form — bind as a DOM property (`:texts.prop` in Vue)
@@ -264,8 +285,10 @@ export interface CSelectProps {
    * @defaultable {}
    */
   texts?: CSelectTexts;
+
   /** Set the validity of the input */
   valid?: boolean;
+
   /**
    * Selected value: the option's value, or the whole item with
    * `return-object`; an array of them in `multiple` mode
@@ -280,25 +303,31 @@ export interface CSelectProps {
 export interface CSelectTexts {
   /** Accessible label of the clear button. */
   clearSelection?: string;
+
   /** Accessible label of the close button in the fullscreen panel (narrow viewports). */
   closePanel?: string;
+
   /**
    * Text of the overflow tag when `max-tags` folds the selection; receives the
    * number of hidden tags.
    */
   more?: (count: number) => string;
+
   /** Accessible label of a tag's remove button; receives the option label. */
   remove?: (label: string) => string;
+
   /**
    * Label of the select-all row; receives the number of enabled options
    * listed.
    */
   selectAll?: (count: number) => string;
+
   /**
    * Field text when `max-tags="0"` shows no tags; receives the selection
    * count.
    */
   selected?: (count: number) => string;
+
   /** Accessible label of the chevron button that opens and closes the list. */
   toggleOptions?: string;
 }
@@ -374,11 +403,13 @@ interface CSelectEvents {
    * (`[]` when cleared).
    */
   changeValue: CSelectValue;
+
   /**
    * Native bubbling input event dispatched alongside every value change so a
    * plain `v-model` stays in sync. Carries no detail.
    */
   input: void;
+
   /**
    * Fired alongside `changeValue` with the same detail — the `v-model`
    * contract.

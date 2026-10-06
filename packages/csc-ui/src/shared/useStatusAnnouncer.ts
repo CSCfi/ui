@@ -21,10 +21,13 @@ import { onBeforeUnmount, type Ref, ref } from 'vue';
 export interface StatusAnnouncer {
   /** Schedule an announcement. `compose` runs when the debounce fires, so it reads the state current *then*; every call restarts the timer. */
   announce(compose: () => string): void;
+
   /** Drop a pending announcement (also runs on unmount). */
   cancel(): void;
+
   /** Write immediately, dropping any pending announcement. */
   set(text: string): void;
+
   /** The live text; bind as the content of the `aria-live="polite" aria-atomic="true"` region. */
   text: Readonly<Ref<string>>;
 }

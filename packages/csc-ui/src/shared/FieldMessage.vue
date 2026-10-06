@@ -79,12 +79,16 @@ const errorIconPath = mdiCloseCircle;
 interface FieldMessageProps {
   /** Consumer-supplied text shown in place of the hint while invalid. */
   errorMessage?: string;
+
   /** Suppress the whole message area (no reserved height either). */
   hideDetails?: boolean;
+
   /** Neutral helper text shown while valid (or when no error message is supplied). */
   hint?: string;
+
   /** Part name stamped on the message area (`message` unless the host reserves it). */
   part?: string;
+
   /** Host control's validity; `false` switches to the error message when one is supplied. */
   valid?: boolean;
 }

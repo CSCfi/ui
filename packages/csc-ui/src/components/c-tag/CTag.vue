@@ -22,30 +22,35 @@ export interface CTagProps {
    * @seeded from csc-ui — verify
    */
   active?: boolean;
+
   /**
    * Display an optional badge at the start of the tag
    *
    * @seeded from csc-ui — verify
    */
   badge?: null | number | string;
+
   /**
    * Mark tag as closeable
    *
    * @seeded from csc-ui — verify
    */
   closeable?: boolean;
+
   /**
    * Accessible name of the close button rendered when `closeable`
    *
    * @freeform
    */
   closeLabel?: string;
+
   /**
    * Remove the hover effect
    *
    * @seeded from csc-ui — verify
    */
   flat?: boolean;
+
   /**
    * Size of the tag
    *

@@ -94,6 +94,7 @@ interface CMenuEvents {
    * template `@update:open` would never be attached.
    */
   'change:open': boolean;
+
   /**
    * Fired when a leaf menu item is selected, carrying the item's `value`;
    * bubbles out of the menu so a single listener can handle the whole tree.
@@ -137,10 +138,13 @@ const ui = menu();
 interface CMenuProps {
   /** Distance from the trigger to the panel, in pixels. Defaults to `0`. */
   distance?: number | string;
+
   /** Whether the menu is open. Two-way: emits `change:open`. */
   open?: boolean;
+
   /** Preferred placement of the panel relative to the trigger. */
   position?: CPlacement;
+
   /**
    * Designated trigger: an element elsewhere in the document that opens the
    * menu — its document ID, or the element itself. The same trigger concept

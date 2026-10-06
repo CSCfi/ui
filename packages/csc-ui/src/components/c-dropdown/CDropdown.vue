@@ -217,11 +217,13 @@ interface CDropdownEvents {
    * state.
    */
   dropdownStateChange: boolean;
+
   /**
    * Fired when the select-all row is activated; the parent (c-select) toggles
    * every listed enabled option.
    */
   selectall: void;
+
   /**
    * Fired when the user selects an option row, carrying the option's name
    * and value for the parent (c-select) to commit.
@@ -325,44 +327,55 @@ interface CDropdownProps {
    * @freeform
    */
   closeLabel?: string;
+
   /** Whether items are <c-option> elements or plain objects */
   dropdownItemType?: CDropdownItemType;
+
   /**
    * Id used to build option/announce element ids
    *
    * @freeform
    */
   hostId?: string;
+
   /** Current highlighted index; `-1` (`SELECT_ALL_INDEX`) is the select-all row */
   index?: null | number;
+
   /** Dropdown options: a NodeList of <c-option> or an array of items */
   items?: ArrayLike<DropdownItem>;
+
   /** Items per page before adding scroll */
   itemsPerPage?: number;
+
   /**
    * The parent field's label, shown as the fullscreen panel's heading (narrow viewports)
    *
    * @freeform
    */
   label?: string;
+
   /**
    * Multi-select mode: rows toggle instead of committing, each carries a
    * decorative checkbox indicator, and the listbox is `aria-multiselectable`
    */
   multiple?: boolean;
+
   /** Dropdown parent (the c-select / c-autocomplete host element) */
   parent?: HTMLElement | null;
+
   /**
    * The select-all row in `multiple` mode, as the parent computes it (label,
    * tri-state, counts for the live region); `null` renders no row
    */
   selectAllRow?: CDropdownSelectAllRow | null;
+
   /**
    * Values of the currently selected items — the picked values in `multiple`
    * mode, the single value otherwise; drives each row's `aria-selected`, its
    * indicator and the single-mode selected-row check
    */
   selected?: (number | string)[];
+
   /** Parent type — drives autocomplete-only behaviour (highlight, messages) */
   type?: CDropdownParentType;
 }

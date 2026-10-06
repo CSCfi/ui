@@ -176,6 +176,7 @@ interface CMenuItemProps {
    * moves between rows).
    */
   active?: boolean;
+
   /**
    * SVG path for the trailing indicator shown while `active`; defaults to a
    * check mark.
@@ -183,16 +184,20 @@ interface CMenuItemProps {
    * @freeform SVG path data
    */
   activeIcon?: string;
+
   /** Marks the action as destructive (renders in the error colour). */
   danger?: boolean;
+
   /** Disables the item — it is skipped by keyboard nav and emits no select. */
   disabled?: boolean;
+
   /**
    * SVG path for a leading icon rendered before the item's content.
    *
    * @freeform SVG path data
    */
   icon?: string;
+
   /**
    * Value reported in the menu's `select` event when this item is chosen.
    *

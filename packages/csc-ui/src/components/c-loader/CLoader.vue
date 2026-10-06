@@ -106,12 +106,14 @@ interface CLoaderProps {
    * @seeded from csc-ui — verify
    */
   contentdelay?: number;
+
   /**
    * Size of the loader
    *
    * @seeded from csc-ui — verify
    */
   size?: number;
+
   /**
    * Whether the loader is shown. Toggling this drives the fade-in / smooth
    * fade-out — keep the element mounted and bind `visible` rather than using
@@ -126,6 +128,7 @@ interface CLoaderProps {
    * the default (`true` = shown) preserves the original default behaviour.
    */
   visible?: boolean;
+
   /**
    * Width of the loader
    *

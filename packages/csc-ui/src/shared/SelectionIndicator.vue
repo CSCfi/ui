@@ -86,12 +86,16 @@ const indicator = tv({
 interface SelectionIndicatorProps {
   /** Fill the box and show the check glyph. */
   checked?: boolean;
+
   /** Paint the disabled colour channel. */
   disabled?: boolean;
+
   /** Paint the error colour channel (box unless disabled; mark always). */
   error?: boolean;
+
   /** Render the keyboard focus halo pseudo-element for the host to reveal. */
   focusHalo?: boolean;
+
   /** Fill the box and show the indeterminate bar (wins over `checked`). */
   indeterminate?: boolean;
 }

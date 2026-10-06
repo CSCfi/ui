@@ -18,10 +18,13 @@ import { applyMask, type MaskSlot } from './inputMask';
 export interface TypedFieldCodec {
   /** The committed value shown as text under `pattern`. */
   format(value: string, pattern: string): string;
+
   /** A parsed value that can still not be committed (disabled, out of range) — bad input. */
   isUsable(value: string): boolean;
+
   /** Whether a value set from outside is one this field holds (anything else is "no value"). */
   isValue(value: unknown): value is string;
+
   /** Typed text read under `pattern`; `null` when it names no value. */
   parse(text: string, pattern: string): null | string;
 }
@@ -38,28 +41,40 @@ export type TypedFieldText = { end: string; start: string } | string;
 
 export interface UseTypedFieldOptions {
   codec: TypedFieldCodec;
+
   /** The custom element host: the model events dispatch from it. */
   host: HTMLElement | null;
+
   /** The field label (props.label). */
   label: () => string;
+
   /** Whether the label rests on top of the field (the resolved app default). */
   labelOnTop: Readonly<Ref<boolean>>;
+
   /** The typing mask derived from `pattern`. */
   mask: Readonly<Ref<MaskSlot[]>>;
+
   /** The end inputs' accessible names under `range`. */
   names: () => { end: string; start: string };
+
   /** Alt+↓ in an input, after committing its text: open the panel. */
   onOpenRequest: () => void;
+
   /** Fired on every commit of typed text, as typed — the host's `change:text`. */
   onTextCommit: (text: TypedFieldText) => void;
+
   /** The display and parse pattern. */
   pattern: Readonly<Ref<string>>;
+
   /** The consumer's placeholder (props.placeholder). */
   placeholder: () => string;
+
   /** Whether the field holds a start and an end. */
   range: Readonly<Ref<boolean>>;
+
   /** What a committed range with its start after its end becomes: swapped, or kept as typed. */
   reversed: 'keep' | 'swap';
+
   /** The host's `value` prop. */
   value: () => unknown;
 }

@@ -362,18 +362,22 @@ export type CTreeSelectFilter = (
 export interface CTreeSelectItem {
   /** Child items; present and non-empty for a branch. */
   children?: CTreeSelectItem[];
+
   /**
    * Short code shown before the name and matched by the search (a
    * classification number, say).
    */
   code?: string;
+
   /**
    * Disable the item: a disabled branch cannot be entered, a disabled leaf
    * cannot be committed.
    */
   disabled?: boolean;
+
   /** The item's label. */
   name: string;
+
   /** The item's value, unique across the tree. */
   value: number | string;
 }
@@ -385,105 +389,124 @@ export interface CTreeSelectProps {
    * results
    */
   allowBranch?: boolean;
+
   /**
    * Make the selected value clearable
    */
   clearable?: boolean;
+
   /**
    * Disable the field
    */
   disabled?: boolean;
+
   /**
    * Error message shown in place of the hint while the field is invalid
    *
    * @freeform
    */
   errorMessage?: string;
+
   /**
    * Custom search predicate; receives the item, the query and the item's
    * ancestors. Functions have no attribute form — bind as a DOM property
    */
   filter?: CTreeSelectFilter;
+
   /**
    * Hide the hint and error messages
    *
    * @defaultable false
    */
   hideDetails?: boolean;
+
   /**
    * Hint text for the field
    *
    * @freeform
    */
   hint?: string;
+
   /**
    * Id of the element
    *
    * @freeform
    */
   hostId?: string;
+
   /**
    * The tree to pick from. Arrays have no attribute form — bind as a DOM
    * property (`:items.prop` in Vue)
    */
   items?: CTreeSelectItem[];
+
   /**
    * Items per page before the list scrolls
    *
    * @defaultable 6
    */
   itemsPerPage?: number;
+
   /**
    * Element label
    *
    * @freeform
    */
   label?: string;
+
   /**
    * Label on top of the field
    *
    * @defaultable false
    */
   labelOnTop?: boolean;
+
   /**
    * Names of the levels, top level first, shown in the panel header; a
    * missing entry falls back to `texts.level(n)`. Arrays have no attribute
    * form — bind as a DOM property
    */
   levelLabels?: string[];
+
   /**
    * Input field name
    *
    * @freeform
    */
   name?: string;
+
   /**
    * Placeholder for the search input inside the panel
    *
    * @freeform
    */
   placeholder?: string;
+
   /**
    * Set the field as required
    */
   required?: boolean;
+
   /**
    * Emit the committed item with its path as a `CTreeSelectSelection` instead
    * of its value
    */
   returnObject?: boolean;
+
   /**
    * Shadow variant
    *
    * @defaultable false
    */
   shadow?: boolean;
+
   /**
    * Field height: the 52px default (the shared control height) or the 36px `small` box
    *
    * @defaultable 'default'
    */
   size?: CFieldSize;
+
   /**
    * UI text overrides (i18n), merged over the English defaults. Objects have
    * no attribute form — bind as a DOM property (`:texts.prop` in Vue)
@@ -491,10 +514,12 @@ export interface CTreeSelectProps {
    * @defaultable {}
    */
   texts?: CTreeSelectTexts;
+
   /**
    * Set the validity of the field
    */
   valid?: boolean;
+
   /**
    * Selected value: the committed item's value, or the `CTreeSelectSelection`
    * with `return-object`; `null` when nothing is selected
@@ -510,10 +535,13 @@ export interface CTreeSelectProps {
 export interface CTreeSelectSelection {
   /** The committed item's code, when it has one. */
   code?: string;
+
   /** The committed item's label. */
   name: string;
+
   /** The committed item's ancestors, root-first. */
   path: Array<{ code?: string; name: string; value: number | string }>;
+
   /** The committed item's value. */
   value: number | string;
 }
@@ -525,52 +553,67 @@ export interface CTreeSelectSelection {
 export interface CTreeSelectTexts {
   /** Accessible label of the breadcrumb navigation in the panel. */
   breadcrumb?: string;
+
   /**
    * Label of the "Browse instead" control shown in the header while a query
    * is typed.
    */
   browse?: string;
+
   /** Meta text on a branch row; receives its number of children. */
   children?: (count: number) => string;
+
   /**
    * Header text in browse mode; receives the label of the level being
    * listed.
    */
   choose?: (levelLabel: string) => string;
+
   /** Accessible label of the clear button. */
   clearSelection?: string;
+
   /** Accessible label of the close button in the fullscreen panel (narrow viewports). */
   closePanel?: string;
+
   /** Accessible label of the search input inside the panel. */
   filterOptions?: string;
+
   /**
    * Header text of a level whose rows are all leaves in an unevenly deep
    * tree (an evenly deep tree shows the step counter instead).
    */
   final?: string;
+
   /**
    * Default label of level `n` (1 = the top level) when `level-labels` gives
    * none.
    */
   level?: (n: number) => string;
+
   /** Header text in search mode; receives the number of matches. */
   matches?: (count: number) => string;
+
   /** Text of the row shown when nothing is listed. */
   noResults?: string;
+
   /** Label of the root crumb. */
   root?: string;
+
   /** Placeholder of the search input when the `placeholder` prop is empty. */
   searchPlaceholder?: string;
+
   /**
    * Label of the pinned select-branch row; receives the current branch's
    * name.
    */
   select?: (name: string) => string;
+
   /**
    * Header step counter shown while the tree is evenly deep (every leaf at
    * one level); receives the step and the total number of levels.
    */
   step?: (n: number, total: number) => string;
+
   /** Accessible label of the chevron button that opens and closes the panel. */
   toggleOptions?: string;
 }
@@ -632,17 +675,20 @@ interface CTreeSelectEvents {
    * `CTreeSelectSelection` with `return-object`, or `null` when cleared.
    */
   change: CTreeSelectValue;
+
   /**
    * Fired whenever the query changes — on every keystroke in the search
    * input, and with an empty string when the panel opens. Carries the query
    * string.
    */
   'change:query': string;
+
   /**
    * Native bubbling input event dispatched alongside every value change so a
    * plain `v-model` stays in sync. Carries no detail.
    */
   input: void;
+
   /**
    * Fired alongside `change` with the same detail — the `v-model` contract.
    */

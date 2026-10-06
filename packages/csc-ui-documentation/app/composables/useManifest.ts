@@ -48,6 +48,7 @@ export interface CemMember {
   kind: 'field' | 'method';
   name: string;
   privacy?: string;
+
   /** An exposed read-only property (`el.badInput`), not a prop. */
   readonly?: boolean;
   type?: CemTypeRef;
@@ -68,6 +69,7 @@ export interface CemSharedType {
   description?: string;
   kind: string;
   name: string;
+
   /** Owning component tag for component-owned types; absent for shared types. */
   owner?: string;
 }
@@ -145,6 +147,7 @@ export interface ComponentView {
   sections: { id: string; label: string }[];
   slots: CemNamed[];
   tagName: string;
+
   /** Public types documented under this component: its owned types plus any
    *  shared type its API references (rendered on every referencing page —
    *  the pages' self-containment rule applied to types). */
@@ -166,11 +169,13 @@ export interface MethodView {
 export interface PropView {
   attribute: null | string;
   default?: string;
+
   /** Accepts an app-wide default via `applyDefaults()` (`@defaultable`). */
   defaultable?: boolean;
   description?: string;
   name: string;
   type: string;
+
   /** Alias name behind the expanded `type` text — links to the type's
    *  declaration in the Types section on the same page. */
   typeAlias?: string;

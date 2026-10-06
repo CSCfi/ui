@@ -155,12 +155,14 @@ interface CSideNavigationProps {
    * @seeded from csc-ui — verify
    */
   menuVisible?: boolean;
+
   /**
    * Mobile version
    *
    * @seeded from csc-ui — verify
    */
   mobile?: boolean;
+
   /**
    * Background styles
    *

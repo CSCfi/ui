@@ -57,6 +57,7 @@ interface CLoginButtonProps {
    * @freeform any image alt text
    */
   alt?: string;
+
   /**
    * Login provider link. Do not set if using a javascript click handler
    *
@@ -64,6 +65,7 @@ interface CLoginButtonProps {
    * @freeform any URL
    */
   href?: string;
+
   /**
    * Login provider logo url
    *

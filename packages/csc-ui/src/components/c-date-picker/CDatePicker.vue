@@ -420,21 +420,25 @@ export interface CDatePickerProps {
    * Make the value clearable
    */
   clearable?: boolean;
+
   /**
    * Disable the field
    */
   disabled?: boolean;
+
   /**
    * Dates that cannot be picked: ISO dates and inclusive `{ start, end }`
    * spans. Arrays have no attribute form — bind as a DOM property
    */
   disabledDates?: CDatePickerDisabledDate[];
+
   /**
    * Error message shown in place of the hint while the field is invalid
    *
    * @freeform
    */
   errorMessage?: string;
+
   /**
    * First day of the week in the calendar, numbered like `Date.getDay()`:
    * 0 = Sunday, 1 = Monday … 6 = Saturday
@@ -442,6 +446,7 @@ export interface CDatePickerProps {
    * @defaultable 1
    */
   firstDayOfWeek?: CDatePickerWeekday;
+
   /**
    * How dates are shown and read from typing: a pattern of the tokens `d`,
    * `dd`, `M`, `MM` and `yyyy` with any separators, e.g. `yyyy-MM-dd`
@@ -450,41 +455,48 @@ export interface CDatePickerProps {
    * @freeform
    */
   format?: string;
+
   /**
    * Hide the hint and error messages
    *
    * @defaultable false
    */
   hideDetails?: boolean;
+
   /**
    * Hint text for the field
    *
    * @freeform
    */
   hint?: string;
+
   /**
    * Id of the element
    *
    * @freeform
    */
   hostId?: string;
+
   /**
    * Predicate for dates that cannot be picked (weekends, say); receives an
    * ISO date. Functions have no attribute form — bind as a DOM property
    */
   isDateDisabled?: (iso: string) => boolean;
+
   /**
    * Element label
    *
    * @freeform
    */
   label?: string;
+
   /**
    * Label on top of the field
    *
    * @defaultable false
    */
   labelOnTop?: boolean;
+
   /**
    * The latest date that can be picked or typed, as an ISO date; also bounds
    * the calendar's navigation
@@ -492,6 +504,7 @@ export interface CDatePickerProps {
    * @freeform
    */
   max?: string;
+
   /**
    * The earliest date that can be picked or typed, as an ISO date; also
    * bounds the calendar's navigation
@@ -499,33 +512,39 @@ export interface CDatePickerProps {
    * @freeform
    */
   min?: string;
+
   /**
    * Input field name
    *
    * @freeform
    */
   name?: string;
+
   /**
    * Placeholder of the input; the `format` pattern when empty
    *
    * @freeform
    */
   placeholder?: string;
+
   /**
    * Pick a range: the value becomes `{ start, end }` and the field holds two
    * inputs
    */
   range?: boolean;
+
   /**
    * Set the field as required
    */
   required?: boolean;
+
   /**
    * Shadow variant
    *
    * @defaultable false
    */
   shadow?: boolean;
+
   /**
    * Show a Today button under the calendar that picks today ("This month"
    * under `type="month"`)
@@ -533,6 +552,7 @@ export interface CDatePickerProps {
    * @defaultable false
    */
   showToday?: boolean;
+
   /**
    * Show ISO 8601 week numbers beside the calendar rows (meaningful with a
    * Monday week start)
@@ -540,12 +560,14 @@ export interface CDatePickerProps {
    * @defaultable false
    */
   showWeekNumbers?: boolean;
+
   /**
    * Field height: the 52px default (the shared control height) or the 36px `small` box
    *
    * @defaultable 'default'
    */
   size?: CFieldSize;
+
   /**
    * UI text overrides (i18n), merged over the names `Intl` gives for the
    * page's `lang` and the English defaults. Objects have no attribute form —
@@ -554,15 +576,18 @@ export interface CDatePickerProps {
    * @defaultable {}
    */
   texts?: CDatePickerTexts;
+
   /**
    * What the field picks: a calendar date, or a year and a month
    * (`'YYYY-MM'`)
    */
   type?: CDatePickerType;
+
   /**
    * Set the validity of the field
    */
   valid?: boolean;
+
   /**
    * The date as an ISO `YYYY-MM-DD` string (an ISO `YYYY-MM` month under
    * `type="month"`), or `{ start, end }` under `range`; `null` when empty
@@ -574,6 +599,7 @@ export interface CDatePickerProps {
 export interface CDatePickerRange {
   /** The last day of the range, inclusive. */
   end: null | string;
+
   /** The first day of the range. */
   start: null | string;
 }
@@ -592,60 +618,88 @@ export type CDatePickerText = { end: string; start: string } | string;
 export interface CDatePickerTexts {
   /** Accessible name of the dialog when the field has no label. */
   chooseDate?: string;
+
   /** Accessible label of the clear button. */
   clearSelection?: string;
+
   /** Accessible label of the close button in the fullscreen panel (narrow viewports). */
   closePanel?: string;
+
   /** A day's accessible name in the grid; receives the ISO date. */
   date?: (iso: string) => string;
+
   /** Label of the Done button in the fullscreen panel (narrow viewports). */
   done?: string;
+
   /** Accessible name of the end input under `range`. */
   end?: string;
+
   /** Label of the end's month step under `type="month"` and `range`; also the end input's name there. */
   endMonth?: string;
+
   /** Label of the end's year step under `type="month"` and `range`. */
   endYear?: string;
+
   /** Label of the month step under `type="month"`. */
   month?: string;
+
   /** Twelve month names, January first. */
   months?: string[];
+
   /** Twelve short month names, January first — shown on the month button. */
   monthsShort?: string[];
+
   /** Accessible label of the next-month arrow. */
   nextMonth?: string;
+
   /** Accessible label of the next-year arrow. */
   nextYear?: string;
+
   /** Accessible label of the calendar button. */
   openCalendar?: string;
+
   /** Announcement once a range's first day is picked; receives that day's name. */
   pendingStart?: (date: string) => string;
+
   /** Accessible label of the previous-month arrow. */
   previousMonth?: string;
+
   /** Accessible label of the previous-year arrow. */
   previousYear?: string;
+
   /** Accessible label of the month button and the month list. */
   selectMonth?: string;
+
   /** Accessible label of the year button and the year list. */
   selectYear?: string;
+
   /** Accessible name of the start input under `range`. */
   start?: string;
+
   /** Label of the start's month step under `type="month"` and `range`; also the start input's name there. */
   startMonth?: string;
+
   /** Label of the start's year step under `type="month"` and `range`. */
   startYear?: string;
+
   /** Label of the Today button under `type="month"`. */
   thisMonth?: string;
+
   /** Label of the Today button (`show-today`). */
   today?: string;
+
   /** Appended to the accessible name of a day that cannot be picked. */
   unavailable?: string;
+
   /** Seven weekday names, Sunday first. */
   weekdays?: string[];
+
   /** Seven short weekday names, Sunday first — the grid's column heads. */
   weekdaysShort?: string[];
+
   /** Accessible name of the week-number column. */
   weekNumber?: string;
+
   /** Label of the year step under `type="month"`. */
   year?: string;
 }
@@ -764,22 +818,26 @@ interface CDatePickerEvents {
    * date, `{ start, end }` under `range`, or `null`.
    */
   change: CDatePickerValue;
+
   /**
    * Fired with the displayed month as `YYYY-MM` whenever it changes, and
    * when the panel opens — the signal to load that month's `disabled-dates`.
    */
   'change:month': string;
+
   /**
    * Fired on every commit of typed text (Enter or leaving the input) with the
    * text as typed — `{ start, end }` under `range`. Read `badInput` to tell
    * whether it named a date that can be picked.
    */
   'change:text': CDatePickerText;
+
   /**
    * Native bubbling input event dispatched alongside every value change so a
    * plain `v-model` stays in sync. Carries no detail.
    */
   input: void;
+
   /**
    * Fired alongside `change` with the same detail — the `v-model` contract.
    */

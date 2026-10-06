@@ -145,20 +145,24 @@ const props = defineProps<{
   /** The `anchor-name` style from `useAnchoredPanel`. */
   anchorStyle: string;
   clearable: boolean;
+
   /** Accessible label of the clear button. */
   clearLabel: string;
   disabled: boolean;
   errorMessage: string;
+
   /** The `useTypedField` state this field renders. */
   field: TypedField;
   hideDetails: boolean;
   hint: string;
   inputId: string;
+
   /** The virtual keyboard the inputs ask for. */
   inputmode: 'numeric' | 'text';
   label: string;
   labelOnTop: boolean;
   name: string;
+
   /** Whether the host's panel is open — the field stays active. */
   open: boolean;
   required: boolean;

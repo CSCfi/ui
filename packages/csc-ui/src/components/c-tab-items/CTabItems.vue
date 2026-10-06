@@ -42,6 +42,7 @@ interface CTabItemsProps {
    * @seeded from csc-ui — verify
    */
   disableAnimation?: boolean;
+
   /**
    * Currently active tab
    *

@@ -14,6 +14,7 @@ export interface CNumberFieldConform extends ConformResult {
 export interface CNumberFieldFormat extends CNumberFieldSeparators {
   /** Whether a leading minus is kept (`false` when `min` ≥ 0). */
   allowNegative: boolean;
+
   /** The most fraction digits; `0` for an integer field. */
   decimals: number;
 }
@@ -245,6 +246,7 @@ export interface CNumberFieldStepOptions {
   decimals: number;
   max: null | number;
   min: null | number;
+
   /** The spacing of the grid, counted from `min` (or `0`); not a positive number reads as `1`. */
   step: number;
 }

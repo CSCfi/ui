@@ -87,6 +87,7 @@ interface CStepProps {
    * @seeded from csc-ui — verify
    */
   complete?: boolean;
+
   /**
    * Mark step as current
    *

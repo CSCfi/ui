@@ -279,12 +279,16 @@ export type CDataTableCellContent = VNodeChild;
 export interface CDataTableCellContext {
   /** The column being rendered. */
   column: CDataTableColumn;
+
   /** The row object this cell belongs to. */
   row: CDataTableRow;
+
   /** Stable row id (from `getRowId`, or the row index). */
   rowId: string;
+
   /** Index of the row within the full data set. */
   rowIndex: number;
+
   /** The raw cell value (`row[column.key]`). */
   value: unknown;
 }
@@ -296,33 +300,41 @@ export interface CDataTableCellContext {
 export interface CDataTableColumn {
   /** Horizontal alignment of the header and cell content. */
   align?: CDataTableAlign;
+
   /**
    * Custom cell renderer. Return a VNode built with the package-exported `h`,
    * or a string/number rendered as text. Omit to render the raw value.
    */
   cell?: (context: CDataTableCellContext) => CDataTableCellContent;
+
   /**
    * When this column's cells move to the expansion row: `auto` (default,
    * moved only when autohide overflows), `never`, or `always`.
    */
   expansion?: CDataTableColumnExpansion;
+
   /**
    * Footer cell renderer. The footer row renders only when at least one
    * column defines one.
    */
   footer?: (context: CDataTableFooterContext) => CDataTableCellContent;
+
   /** Header content — a string, or a render function for rich headers. Defaults to `key`. */
   header?: (() => CDataTableCellContent) | string;
+
   /** Key of the row property this column reads (also the column's id). */
   key: string;
+
   /**
    * Pin the column to an edge so it stays visible during horizontal scroll.
    * A pinned column is never autohidden. Cannot combine with
    * `expansion: 'always'`.
    */
   pinned?: CDataTableColumnPin;
+
   /** Allow sorting by this column. */
   sortable?: boolean;
+
   /** Fixed column width (any CSS width value). */
   width?: string;
 }
@@ -345,10 +357,13 @@ export type CDataTableColumnPin = 'left' | 'right';
 export interface CDataTableExpandedContext {
   /** Columns currently rendered inside the expansion row (policy `always` + autohidden). */
   expansionColumns: CDataTableColumn[];
+
   /** The expanded row object. */
   row: CDataTableRow;
+
   /** Stable row id (from `getRowId`, or the row index). */
   rowId: string;
+
   /** Index of the row within the full data set. */
   rowIndex: number;
 }
@@ -357,6 +372,7 @@ export interface CDataTableExpandedContext {
 export interface CDataTableFooterContext {
   /** The column whose footer is being rendered. */
   column: CDataTableColumn;
+
   /** The rows currently rendered (the visible page). */
   rows: CDataTableRow[];
 }
@@ -367,12 +383,16 @@ export interface CDataTableProps {
    * (rightmost first) instead of scrolling horizontally.
    */
   autohide?: boolean;
+
   /** Column definitions. Pass as a DOM property (contains functions). */
   columns?: CDataTableColumn[];
+
   /** Rows — plain domain objects. Pass as a DOM property. */
   data?: CDataTableRow[];
+
   /** Ids of the expanded rows (optionally controlled). */
   expanded?: string[];
+
   /**
    * Custom expansion-row content, appended after the auto-rendered cells of
    * columns currently in the expansion row.
@@ -380,12 +400,14 @@ export interface CDataTableProps {
   expandedContent?: (
     context: CDataTableExpandedContext,
   ) => CDataTableCellContent;
+
   /**
    * The server owns sorting, pagination and filtering: the table renders
    * `data` verbatim and only emits the state-change events. Requires
    * `itemCount` for the pager; disables the select-all banner and `filter`.
    */
   external?: boolean;
+
   /**
    * Filter rows client-side against this string (all columns). Ignored when
    * `external` is set.
@@ -393,36 +415,49 @@ export interface CDataTableProps {
    * @freeform
    */
   filter?: string;
+
   /**
    * Return a stable id for a row. Falls back to the row's index — supply
    * this whenever selection/expansion is used with `external` data.
    */
   getRowId?: (row: CDataTableRow) => string;
+
   /** Total number of rows in the dataset. Only used (and needed) with `external`. */
   itemCount?: number;
+
   /** Show the loading indicator. */
   loading?: boolean;
+
   /** Current page, 1-based (optionally controlled). */
   page?: number;
+
   /**
    * Rows per page. Pagination is active only when set — without it every row
    * renders and no pager is shown.
    */
   pageSize?: number;
+
   /** Options for the pager's page-size menu. */
   pageSizes?: number[];
+
   /** Ids of the selected rows (optionally controlled). */
   selected?: string[];
+
   /** Row selection mode. Unset means rows are not selectable. */
   selection?: CDataTableSelectionMode;
+
   /** Allow only one row to be expanded at a time. */
   singleExpansion?: boolean;
+
   /** The sorting state (optionally controlled). `null` renders unsorted. */
   sort?: CDataTableSort | null;
+
   /** Keep the footer row visible while the table scrolls vertically. */
   stickyFooter?: boolean;
+
   /** Keep the header row visible while the table scrolls vertically. */
   stickyHeader?: boolean;
+
   /**
    * UI text overrides (i18n), merged over the English defaults.
    *
@@ -441,6 +476,7 @@ export type CDataTableSelectionMode = 'multiple' | 'single';
 export interface CDataTableSort {
   /** `key` of the sorted column. */
   column: string;
+
   /** Direction the column is sorted in. */
   direction: CDataTableSortDirection;
 }
@@ -455,20 +491,28 @@ export type CDataTableSortDirection = 'asc' | 'desc';
 export interface CDataTableTexts {
   /** Banner text when every (filtered) row is selected. */
   allSelected?: (count: number) => string;
+
   /** Label of the banner action clearing the whole selection. */
   clearSelection?: string;
+
   /** Accessible label of a row's expansion toggle. */
   expandRow?: string;
+
   /** Text shown when the table is empty while `loading`. */
   loading?: string;
+
   /** Text shown when there are no rows (unless the `empty` slot is used). */
   noData?: string;
+
   /** Banner text when the visible page is fully selected. */
   pageSelected?: (count: number) => string;
+
   /** Label of the banner action selecting all (filtered) rows. */
   selectAllItems?: (count: number) => string;
+
   /** Accessible label of the header select-all checkbox. */
   selectPage?: string;
+
   /** Accessible label of a row's selection checkbox. */
   selectRow?: string;
 }
@@ -564,18 +608,22 @@ const props = withDefaults(defineProps<CDataTableProps>(), {
 interface CDataTableEvents {
   /** Fired when the expanded rows change, carrying the expanded row ids. */
   'change:expanded': string[];
+
   /** Fired when the user changes the page, carrying the new 1-based page. */
   'change:page': number;
+
   /**
    * Fired when the user picks a new page size. Also resets the page to 1
    * (a separate `change:page` event fires alongside).
    */
   'change:page-size': number;
+
   /**
    * Fired when the selection changes, carrying the selected row ids and the
    * row objects resolvable from the current `data`.
    */
   'change:selected': { ids: string[]; rows: CDataTableRow[] };
+
   /** Fired when the user sorts a column, carrying the new sorting state. */
   'change:sort': CDataTableSort | null;
 }

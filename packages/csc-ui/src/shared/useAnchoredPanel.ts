@@ -83,18 +83,25 @@ export const FIELD_PANEL_ANCHOR = '--c-field-panel-anchor';
 export interface AnchoredPanel {
   /** Inline style for the anchor wrapper: `anchor-name: --c-field-panel-anchor`. */
   anchorStyle: string;
+
   /** Inline style for the card inside the panel: empty while anchored; fullscreen — the visual viewport's box inside the surface (the whole surface with no API). */
   cardStyle: ComputedRef<string>;
+
   /** Hide the panel; `returnFocus` moves focus to `returnFocusTo` once the `toggle` event confirms the close. */
   close(returnFocus?: boolean): void;
+
   /** Open state — written only by the native `toggle` event (single source of truth, browser-initiated closes included). */
   isOpen: Readonly<Ref<boolean>>;
+
   /** The layout of the current open, fixed at `open()` for its whole duration; `'anchored'` — the resting shape, no heading row — while closed. */
   layout: ComputedRef<PanelLayout>;
+
   /** Bind as the panel's `@toggle` handler. */
   onToggle(event: Event): void;
+
   /** Choose the layout, measure (anchored: the anchor width and the field box's offsets from the anchor's edges), then `showPopover()`. */
   open(): void;
+
   /** Inline style for the panel: anchored — `position-anchor`, `position-area: bottom span-right`, `inset: auto`, the pinned width, the field-box pull-back and `--_c-field-panel-top-offset`; fullscreen — the surface, the layout viewport's box. */
   panelStyle: ComputedRef<string>;
 }
@@ -105,22 +112,31 @@ export type PanelLayout = 'anchored' | 'fullscreen';
 export interface UseAnchoredPanelOptions {
   /** Shadow-DOM wrapper around the value field; carries `anchor-name`, and its rect pins the panel width. */
   anchor: Readonly<Ref<HTMLElement | null>>;
+
   /** `open()` is a no-op while this returns true (the field's `disabled`). */
   disabled?: () => boolean;
+
   /** The inner `c-input` host: the offsets between its field box (`.c-input__slot`) and the anchor's edges are pulled back so the panel sits flush against the field box. */
   field: Readonly<Ref<HTMLElement | null>>;
+
   /** Open as a fullscreen panel while true — the shared narrow-viewport predicate (`useNarrowViewport`). Absent: always anchored. */
   fullscreen?: Readonly<Ref<boolean>>;
+
   /** The custom element host: light dismiss keeps gestures whose composed path includes it; it is what the page lock keeps interactive. */
   host: HTMLElement | null;
+
   /** Pin the anchored panel's width to the anchor's (default `true`). `false` lets the card size the panel — a calendar keeps its own width whatever the field's. */
   matchWidth?: boolean;
+
   /** Runs inside the native `toggle` handler once closed, before focus returns. */
   onClosed?: () => void;
+
   /** Runs inside the native `toggle` handler once open, after the fallback positioning / page lock and the dismiss listener — the consumer's open sequence goes here. */
   onOpened?: () => void;
+
   /** The `popover="manual"` panel element. */
   panel: Readonly<Ref<HTMLElement | null>>;
+
   /** Receives focus when the panel closes via `close(true)`. */
   returnFocusTo: MaybeRefOrGetter<HTMLElement | null | undefined>;
 }

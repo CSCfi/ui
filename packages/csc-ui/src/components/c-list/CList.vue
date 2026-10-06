@@ -51,6 +51,7 @@ interface CListProps {
    * @seeded from csc-ui — verify
    */
   bordered?: boolean;
+
   /**
    * Disable the list
    *

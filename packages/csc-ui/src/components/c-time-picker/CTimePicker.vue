@@ -167,16 +167,19 @@ export interface CTimePickerProps {
    * Make the value clearable
    */
   clearable?: boolean;
+
   /**
    * Disable the field
    */
   disabled?: boolean;
+
   /**
    * Error message shown in place of the hint while the field is invalid
    *
    * @freeform
    */
   errorMessage?: string;
+
   /**
    * How times are shown and read from typing: a pattern of the tokens `H`,
    * `HH` (24-hour), `h`, `hh` (12-hour, with the period `a`) and `mm` with
@@ -186,42 +189,49 @@ export interface CTimePickerProps {
    * @freeform
    */
   format?: string;
+
   /**
    * Hide the hint and error messages
    *
    * @defaultable false
    */
   hideDetails?: boolean;
+
   /**
    * Hint text for the field
    *
    * @freeform
    */
   hint?: string;
+
   /**
    * Id of the element
    *
    * @freeform
    */
   hostId?: string;
+
   /**
    * Element label
    *
    * @freeform
    */
   label?: string;
+
   /**
    * Label on top of the field
    *
    * @defaultable false
    */
   labelOnTop?: boolean;
+
   /**
    * The latest time that can be picked or typed, as an ISO `HH:mm` time
    *
    * @freeform
    */
   max?: string;
+
   /**
    * The earliest time that can be picked or typed, as an ISO `HH:mm` time;
    * a `min` after `max` is invalid and both are ignored
@@ -229,50 +239,59 @@ export interface CTimePickerProps {
    * @freeform
    */
   min?: string;
+
   /**
    * Minutes between the minute column's rows; typed times need not fall on
    * the step
    */
   minuteStep?: number;
+
   /**
    * Input field name
    *
    * @freeform
    */
   name?: string;
+
   /**
    * Placeholder of the input; the `format` pattern when empty
    *
    * @freeform
    */
   placeholder?: string;
+
   /**
    * Pick a range: the value becomes `{ start, end }` and the field holds two
    * inputs
    */
   range?: boolean;
+
   /**
    * Set the field as required
    */
   required?: boolean;
+
   /**
    * Shadow variant
    *
    * @defaultable false
    */
   shadow?: boolean;
+
   /**
    * Show a Now button under the columns that commits the current time
    *
    * @defaultable false
    */
   showNow?: boolean;
+
   /**
    * Field height: the 52px default (the shared control height) or the 36px `small` box
    *
    * @defaultable 'default'
    */
   size?: CFieldSize;
+
   /**
    * UI text overrides (i18n), merged over the AM/PM texts `Intl` gives for
    * the page's `lang` and the English defaults. Objects have no attribute
@@ -281,10 +300,12 @@ export interface CTimePickerProps {
    * @defaultable {}
    */
   texts?: CTimePickerTexts;
+
   /**
    * Set the validity of the field
    */
   valid?: boolean;
+
   /**
    * The time as an ISO `HH:mm` string on a 24-hour clock, or `{ start, end }`
    * under `range`; `null` when empty
@@ -296,6 +317,7 @@ export interface CTimePickerProps {
 export interface CTimePickerRange {
   /** The end of the range; earlier than the start for an overnight range. */
   end: null | string;
+
   /** The start of the range. */
   start: null | string;
 }
@@ -313,28 +335,40 @@ export type CTimePickerText = { end: string; start: string } | string;
 export interface CTimePickerTexts {
   /** The period before noon in a 12-hour `format`. */
   am?: string;
+
   /** Accessible name of the dialog when the field has no label. */
   chooseTime?: string;
+
   /** Accessible label of the clear button. */
   clearSelection?: string;
+
   /** Accessible label of the close button in the fullscreen panel (narrow viewports). */
   closePanel?: string;
+
   /** Label of the Done button in the fullscreen panel (narrow viewports). */
   done?: string;
+
   /** Name of the end input and the end tab under `range`. */
   end?: string;
+
   /** Accessible name of the hour column. */
   hours?: string;
+
   /** Accessible name of the minute column. */
   minutes?: string;
+
   /** Label of the Now button (`show-now`). */
   now?: string;
+
   /** Accessible label of the clock button. */
   openClock?: string;
+
   /** Accessible name of the AM/PM column. */
   period?: string;
+
   /** The period from noon in a 12-hour `format`. */
   pm?: string;
+
   /** Name of the start input and the start tab under `range`. */
   start?: string;
 }
@@ -434,17 +468,20 @@ interface CTimePickerEvents {
    * value: an ISO `HH:mm` time, `{ start, end }` under `range`, or `null`.
    */
   change: CTimePickerValue;
+
   /**
    * Fired on every commit of typed text (Enter or leaving the input) with the
    * text as typed — `{ start, end }` under `range`. Read `badInput` to tell
    * whether it named a time that can be picked.
    */
   'change:text': CTimePickerText;
+
   /**
    * Native bubbling input event dispatched alongside every value change so a
    * plain `v-model` stays in sync. Carries no detail.
    */
   input: void;
+
   /**
    * Fired alongside `change` with the same detail — the `v-model` contract.
    */
@@ -457,6 +494,7 @@ type CTimePickerRow = {
   key: string;
   label: string;
   selected: boolean;
+
   /** Hour 0–23, minute 0–59, or 0 (AM) / 12 (PM). */
   value: number;
 };

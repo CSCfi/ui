@@ -52,18 +52,21 @@ export interface CTabsProps {
    * @seeded from csc-ui — verify
    */
   borderless?: boolean;
+
   /**
    * Disable animation
    *
    * @seeded from csc-ui — verify
    */
   disableAnimation?: boolean;
+
   /**
    * Justification of the children
    *
    * @seeded from csc-ui — verify
    */
   justify?: CTabsJustify;
+
   /**
    * Mobile breakpoint in pixels
    * - affects the content stacking with the vertical tabs
@@ -71,12 +74,14 @@ export interface CTabsProps {
    * @seeded from csc-ui — verify
    */
   mobileBreakpoint?: number;
+
   /**
    * Currently active tab
    *
    * @seeded from csc-ui — verify
    */
   value?: number | string;
+
   /**
    * Vertical tabs
    *
@@ -123,8 +128,10 @@ interface CTabsEvents {
    * tab), carrying the newly selected tab value. Legacy value-change event.
    */
   changeValue: number | string;
+
   /** Native bubbling input event dispatched for plain `v-model` support; carries no detail. */
   input: void;
+
   /**
    * Fired alongside `changeValue` with the newly selected tab value; fulfills
    * the `v-model`/`v-control` contract.

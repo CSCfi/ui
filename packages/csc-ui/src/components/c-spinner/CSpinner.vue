@@ -67,12 +67,14 @@ interface CSpinnerProps {
    * @freeform any CSS color value
    */
   color?: string;
+
   /**
    * Size of the spinner
    *
    * @seeded from csc-ui — verify
    */
   size?: number;
+
   /**
    * Width of the spinner
    *

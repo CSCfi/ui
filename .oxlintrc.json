@@ -24,6 +24,21 @@
     "temp/**"
   ],
   "rules": {
+    "@stylistic/lines-around-comment": [
+      "error",
+      {
+        "allowArrayStart": true,
+        "allowBlockStart": true,
+        "allowClassStart": true,
+        "allowEnumStart": true,
+        "allowInterfaceStart": true,
+        "allowModuleStart": true,
+        "allowObjectStart": true,
+        "allowTypeStart": true,
+        "beforeBlockComment": true,
+        "beforeLineComment": false
+      }
+    ],
     "@stylistic/padding-line-between-statements": [
       "error",
       {

@@ -43,42 +43,49 @@ export interface CIconButtonProps {
    * @seeded from csc-ui — verify
    */
   badge?: null | number | string;
+
   /**
    * Danger variant of the button
    *
    * @seeded from csc-ui — verify
    */
   danger?: boolean;
+
   /**
    * Disable the button
    *
    * @seeded from csc-ui — verify
    */
   disabled?: boolean;
+
   /**
    * Ghost variant of the button
    *
    * @seeded from csc-ui — verify
    */
   ghost?: boolean;
+
   /**
    * Inverted color for dark backgrounds
    *
    * @seeded from csc-ui — verify
    */
   inverted?: boolean;
+
   /**
    * Loading variant of the button
    *
    * @seeded from csc-ui — verify
    */
   loading?: boolean;
+
   /**
    * Outlined variant of the button
    *
    * @seeded from csc-ui — verify
    */
   outlined?: boolean;
+
   /**
    * Path for the svg icon
    *
@@ -86,12 +93,14 @@ export interface CIconButtonProps {
    * @freeform SVG path data
    */
   path?: string;
+
   /**
    * Size of the button
    *
    * @seeded from csc-ui — verify
    */
   size?: CIconButtonSize;
+
   /**
    * Text variant of the button
    *

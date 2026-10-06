@@ -45,14 +45,19 @@ const formLabel = tv({
 interface FormLabelProps {
   /** `for` attribute for field-label mode (associates a single control). */
   htmlFor?: string;
+
   /** Visible label text; when empty the default slot renders instead. */
   label?: string;
+
   /** Id stamped on the element for the host's `aria-labelledby` (group-label mode). */
   labelId?: string;
+
   /** Part name stamped on the element (`label` unless the host reserves it). */
   part?: string;
+
   /** Render the required asterisk. */
   required?: boolean;
+
   /** Element to render; `label` for real labels, `span`/`div` inside an outer `<label>`. */
   tag?: 'div' | 'label' | 'span';
 }

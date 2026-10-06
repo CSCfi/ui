@@ -166,8 +166,10 @@ interface CSideNavigationItemProps {
    * @seeded from csc-ui — verify
    */
   active?: boolean;
+
   /** Whether the item is in the keyboard tab order — a parent item sets this to false on its collapsed sub-items so hidden items aren't Tab-reachable */
   focusable?: boolean;
+
   /**
    * Hyperlink url
    *
@@ -175,12 +177,14 @@ interface CSideNavigationItemProps {
    * @freeform any URL
    */
   href?: string;
+
   /**
    * Loading state
    *
    * @seeded from csc-ui — verify
    */
   loading?: boolean;
+
   /**
    * Hyperlink target
    *

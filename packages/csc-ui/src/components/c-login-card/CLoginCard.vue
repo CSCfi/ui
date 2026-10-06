@@ -49,24 +49,28 @@ export interface CLoginCardProps {
    * @freeform any CSS background-position value
    */
   backgroundPosition?: string;
+
   /**
    * Mobile breakpoint in pixels
    *
    * @seeded from csc-ui — verify
    */
   mobileBreakpoint?: number;
+
   /**
    * Add colored overlay to the background image
    *
    * @seeded from csc-ui — verify
    */
   overlay?: boolean;
+
   /**
    * Add colored overlay to the background image
    *
    * @seeded from csc-ui — verify
    */
   overlayBlendMode?: CLoginCardBlendMode;
+
   /**
    * Background image
    *

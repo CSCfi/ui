@@ -157,6 +157,7 @@ export interface CTextFieldProps {
    * @freeform any HTML autocomplete token list
    */
   autocomplete?: string;
+
   /**
    * Enable native input autocorrection (Safari). Maps to the input's
    * `autocorrect="on"`/`"off"` attribute; left unset (browser default per
@@ -164,24 +165,28 @@ export interface CTextFieldProps {
    * `HTMLElement.autocorrect` boolean.
    */
   autocorrect?: boolean;
+
   /**
    * HTML input autocapitalize
    *
    * @seeded from csc-ui — verify
    */
   automaticCapitalize?: CTextFieldAutocapitalize;
+
   /**
    * Disable the input
    *
    * @seeded from csc-ui — verify
    */
   disabled?: boolean;
+
   /**
    * Error message shown in place of the hint while the input is invalid
    *
    * @freeform
    */
   errorMessage?: string;
+
   /**
    * Hide the hint and error messages
    *
@@ -189,6 +194,7 @@ export interface CTextFieldProps {
    * @defaultable false
    */
   hideDetails?: boolean;
+
   /**
    * Hint text for the input
    *
@@ -196,6 +202,7 @@ export interface CTextFieldProps {
    * @freeform
    */
   hint?: string;
+
   /**
    * Id of the input
    *
@@ -203,6 +210,7 @@ export interface CTextFieldProps {
    * @freeform
    */
   hostId?: string;
+
   /**
    * Label of the input
    *
@@ -210,6 +218,7 @@ export interface CTextFieldProps {
    * @freeform
    */
   label?: string;
+
   /**
    * Label on top of the input
    *
@@ -217,24 +226,28 @@ export interface CTextFieldProps {
    * @defaultable false
    */
   labelOnTop?: boolean;
+
   /**
    * Input mask the typed text follows: `#` a digit, `A` a letter, `*` a letter or a digit, `\` escapes the next character, `[…]` wraps a trailing optional section, anything else is a literal. Applies to a single-line `text`, `tel` or `search` field
    *
    * @freeform a mask pattern, e.g. `+358 ## ### ####`
    */
   mask?: string;
+
   /**
    * Maximum value on a numeric input
    *
    * @seeded from csc-ui — verify
    */
   max?: null | number;
+
   /**
    * Minimum value on a numeric input
    *
    * @seeded from csc-ui — verify
    */
   min?: null | number;
+
   /**
    * Name of the input
    *
@@ -242,6 +255,7 @@ export interface CTextFieldProps {
    * @freeform
    */
   name?: string;
+
   /**
    * Placeholder of the input
    *
@@ -249,24 +263,28 @@ export interface CTextFieldProps {
    * @freeform
    */
   placeholder?: string;
+
   /**
    * Mark as readonly
    *
    * @seeded from csc-ui — verify
    */
   readonly?: boolean;
+
   /**
    * Set the input as required
    *
    * @seeded from csc-ui — verify
    */
   required?: boolean;
+
   /**
    * Rows on the input
    *
    * @seeded from csc-ui — verify
    */
   rows?: number;
+
   /**
    * Shadow variant of the input
    *
@@ -274,36 +292,42 @@ export interface CTextFieldProps {
    * @defaultable false
    */
   shadow?: boolean;
+
   /**
    * Field height: the 52px default (the shared control height) or the 36px `small` box (single-line fields)
    *
    * @defaultable 'default'
    */
   size?: CFieldSize;
+
   /**
    * Step size on a numeric input
    *
    * @seeded from csc-ui — verify
    */
   step?: null | number;
+
   /**
    * Trim whitespace from the return value
    *
    * @seeded from csc-ui — verify
    */
   trimWhitespace?: boolean;
+
   /**
    * Type of the input
    *
    * @seeded from csc-ui — verify
    */
   type?: CTextFieldType;
+
   /**
    * Set the validity of the input
    *
    * @seeded from csc-ui — verify
    */
   valid?: boolean;
+
   /**
    * Value of the input
    *
@@ -374,16 +398,19 @@ interface CTextFieldEvents {
    * `value` property.
    */
   change: void;
+
   /**
    * Fired on every keystroke (and on native change), carrying the current
    * text — trimmed when `trim-whitespace` is set.
    */
   changeValue: string;
+
   /**
    * Native bubbling input event fired alongside every value change so a
    * plain Vue `v-model` works without the `v-control` directive. No detail.
    */
   input: void;
+
   /**
    * v-model contract event fired on every keystroke (and on native change),
    * carrying the current text — trimmed when `trim-whitespace` is set.

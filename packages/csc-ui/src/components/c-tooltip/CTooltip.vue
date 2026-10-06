@@ -60,18 +60,23 @@ export interface CTooltipProps {
    * `400`.
    */
   delay?: number | string;
+
   /** Distance from the trigger to the tooltip, in pixels. Defaults to `4`. */
   distance?: number | string;
+
   /** Whether the tooltip is open. Two-way: emits `change:open`. */
   open?: boolean;
+
   /** Preferred placement of the tooltip relative to the trigger. */
   position?: CPlacement;
+
   /**
    * The tooltip text. Overridden by the `content` slot when that is
    * populated.
    * @freeform
    */
   text?: string;
+
   /**
    * Designated trigger: an element elsewhere in the document that the
    * tooltip describes — its document ID, or the element itself. The same

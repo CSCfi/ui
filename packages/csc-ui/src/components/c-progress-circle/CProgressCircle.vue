@@ -110,10 +110,12 @@ export interface CProgressCircleProps {
    * Diameter of the circle in pixels
    */
   size?: number;
+
   /**
    * Progress value in percentage (0 to 100)
    */
   value?: number;
+
   /**
    * Stroke width of the track in pixels; the value arc draws at half this
    * width, inset within the track

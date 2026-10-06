@@ -58,30 +58,35 @@ export interface CButtonProps {
    * `c-button-group` on its slotted buttons.
    */
   active?: boolean;
+
   /**
    * Danger variant style
    *
    * @seeded from csc-ui — verify
    */
   danger?: boolean;
+
   /**
    * Disable the button
    *
    * @seeded from csc-ui — verify
    */
   disabled?: boolean;
+
   /**
    * Fit width to containing element
    *
    * @seeded from csc-ui — verify
    */
   fit?: boolean;
+
   /**
    * Light button background
    *
    * @seeded from csc-ui — verify
    */
   ghost?: boolean;
+
   /**
    * Id of the button
    *
@@ -89,6 +94,7 @@ export interface CButtonProps {
    * @freeform
    */
   hostId?: string;
+
   /**
    * Hyperlink url
    *
@@ -96,38 +102,45 @@ export interface CButtonProps {
    * @freeform any URL
    */
   href?: string;
+
   /**
    * Inverted button style for dark backgrounds
    *
    * @seeded from csc-ui — verify
    */
   inverted?: boolean;
+
   /**
    * Display loader on the button
    *
    * @seeded from csc-ui — verify
    */
   loading?: boolean;
+
   /**
    * Remove the default border radius
    *
    * @seeded from csc-ui — verify
    */
   noRadius?: boolean;
+
   /** Suppress the click ripple (e.g. when a wrapper owns the press feedback). */
   noRipple?: boolean;
+
   /**
    * Outlined button style
    *
    * @seeded from csc-ui — verify
    */
   outlined?: boolean;
+
   /**
    * Size of the button
    *
    * @seeded from csc-ui — verify
    */
   size?: CButtonSize;
+
   /**
    * Hyperlink target
    *
@@ -135,18 +148,21 @@ export interface CButtonProps {
    * @freeform any browsing-context name (e.g. _blank, _self)
    */
   target?: string;
+
   /**
    * Transparent button background
    *
    * @seeded from csc-ui — verify
    */
   text?: boolean;
+
   /**
    * Button type
    *
    * @seeded from csc-ui — verify
    */
   type?: CButtonType;
+
   /**
    * Value for the button
    * - for use in the c-button-group

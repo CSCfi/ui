@@ -84,16 +84,19 @@ interface CSwitchEvents {
    * boundary). No detail; read the new value from the host's `value` property.
    */
   change: void;
+
   /**
    * Fired when the switch is toggled, carrying the new value —
    * `trueValue` when on, `falseValue` when off.
    */
   changeValue: boolean | number | string;
+
   /**
    * Native bubbling input event fired on toggle so a plain Vue `v-model`
    * works without the `v-control` directive. No detail.
    */
   input: void;
+
   /**
    * v-model contract event fired on toggle, carrying the new value —
    * `trueValue` when on, `falseValue` when off.
@@ -170,16 +173,19 @@ interface CSwitchProps {
    * @seeded from csc-ui — verify
    */
   checked?: boolean;
+
   /**
    * If `true`, the switch is disabled and cannot be toggled
    */
   disabled?: boolean;
+
   /**
    * The value when the checkbox is unchecked
    *
    * @seeded from csc-ui — verify
    */
   falseValue?: boolean | number | string;
+
   /**
    * Id for the element
    *
@@ -187,6 +193,7 @@ interface CSwitchProps {
    * @freeform
    */
   hostId?: string;
+
   /**
    * Label of the switch, shown beside the toggle. Falls back to the default
    * slot content when not set.
@@ -194,24 +201,28 @@ interface CSwitchProps {
    * @freeform
    */
   label?: string;
+
   /**
    * Loading state
    *
    * @seeded from csc-ui — verify
    */
   loading?: boolean;
+
   /**
    * Set as required
    *
    * @seeded from csc-ui — verify
    */
   required?: boolean;
+
   /**
    * The value when the checkbox is checked
    *
    * @seeded from csc-ui — verify
    */
   trueValue?: boolean | number | string;
+
   /**
    * The input value
    * - Only used when the checkbox participates in a native `<form>`

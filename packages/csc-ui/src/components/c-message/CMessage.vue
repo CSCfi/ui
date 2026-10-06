@@ -63,6 +63,7 @@ interface CMessageProps {
    * @freeform
    */
   errorMessage?: string;
+
   /**
    * Hint text for the input
    *
@@ -70,6 +71,7 @@ interface CMessageProps {
    * @freeform
    */
   hint?: string;
+
   /**
    * Id of the related input element
    *
@@ -77,6 +79,7 @@ interface CMessageProps {
    * @freeform
    */
   inputId?: string;
+
   /**
    * Parent validíty
    *

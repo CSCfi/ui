@@ -62,12 +62,14 @@
 export interface CTabButtonsProps {
   /** Disable the whole tab strip — every slotted c-button is disabled and the selection can no longer be changed. */
   disabled?: boolean;
+
   /**
    * Size of the buttons
    *
    * @seeded from csc-ui — verify
    */
   size?: CTabButtonsSize;
+
   /**
    * Value of the active tab — pushed down by the parent c-tabs.
    *

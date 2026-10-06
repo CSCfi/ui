@@ -95,24 +95,28 @@ interface CListItemProps {
    * @seeded from csc-ui — verify
    */
   active?: boolean;
+
   /**
    * Disable the item
    *
    * @seeded from csc-ui — verify
    */
   disabled?: boolean;
+
   /**
    * Disabled by the parent list
    *
    * @seeded from csc-ui — verify
    */
   disabledByParent?: boolean;
+
   /**
    * Display background color on hover
    *
    * @seeded from csc-ui — verify
    */
   hoverable?: boolean;
+
   /**
    * Hyperlink url
    *
@@ -120,12 +124,14 @@ interface CListItemProps {
    * @freeform any URL
    */
   href?: string;
+
   /**
    * Add ripple effect to the item
    *
    * @seeded from csc-ui — verify
    */
   ripple?: boolean;
+
   /**
    * Hyperlink target
    *

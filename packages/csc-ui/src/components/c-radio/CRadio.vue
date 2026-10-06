@@ -129,6 +129,7 @@ interface CRadioProps {
    * Disable the radio button
    */
   disabled?: boolean;
+
   /**
    * Radio button value
    *

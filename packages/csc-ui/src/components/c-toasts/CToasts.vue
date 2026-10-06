@@ -25,12 +25,14 @@ export interface CToastsProps {
    * @seeded from csc-ui — verify
    */
   absolute?: boolean;
+
   /**
    * Horizontal position
    *
    * @seeded from csc-ui — verify
    */
   horizontal?: CToastsHorizontal;
+
   /**
    * Vertical position
    *

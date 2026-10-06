@@ -105,6 +105,7 @@ export interface CNumberFieldProps {
    * @defaultable 0
    */
   decimals?: number;
+
   /**
    * The decimal separator. Empty follows the page's `lang` (`,` for `fi`, `.` for `en`)
    *
@@ -112,22 +113,26 @@ export interface CNumberFieldProps {
    * @freeform one character
    */
   decimalSeparator?: string;
+
   /**
    * Disable the field
    */
   disabled?: boolean;
+
   /**
    * Error message shown in place of the hint while the field is invalid
    *
    * @freeform
    */
   errorMessage?: string;
+
   /**
    * Pad the fraction to exactly `decimals` digits when the field is left (`12,5` → `12,50`)
    *
    * @defaultable false
    */
   fixedDecimals?: boolean;
+
   /**
    * The thousands separator. Empty follows the page's `lang` (a space for `fi`, `,` for `en`)
    *
@@ -135,92 +140,109 @@ export interface CNumberFieldProps {
    * @freeform one character
    */
   groupSeparator?: string;
+
   /**
    * Hide the hint and error messages
    *
    * @defaultable false
    */
   hideDetails?: boolean;
+
   /**
    * Hint text for the field
    *
    * @freeform
    */
   hint?: string;
+
   /**
    * Id of the input
    *
    * @freeform
    */
   hostId?: string;
+
   /**
    * Label of the field
    *
    * @freeform
    */
   label?: string;
+
   /**
    * Label on top of the field
    *
    * @defaultable false
    */
   labelOnTop?: boolean;
+
   /**
    * The largest number in range; a larger one is kept and reported as out of range
    */
   max?: null | number;
+
   /**
    * The smallest number in range; a smaller one is kept and reported as out of range. At `0` or above, the minus key is ignored
    */
   min?: null | number;
+
   /**
    * Name of the input
    *
    * @freeform
    */
   name?: string;
+
   /**
    * Placeholder of the input
    *
    * @freeform
    */
   placeholder?: string;
+
   /**
    * Mark as readonly
    */
   readonly?: boolean;
+
   /**
    * Set the field as required
    */
   required?: boolean;
+
   /**
    * Shadow variant of the field
    *
    * @defaultable false
    */
   shadow?: boolean;
+
   /**
    * Field height: the 52px default (the shared control height) or the 36px `small` box
    *
    * @defaultable 'default'
    */
   size?: CFieldSize;
+
   /**
    * The spacing of the grid the step buttons and arrow keys move along, counted from `min` (or `0`)
    *
    * @defaultable 1
    */
   step?: number;
+
   /**
    * UI text overrides (i18n), merged over the English defaults. Objects have no attribute form — bind as a DOM property
    *
    * @defaultable {}
    */
   texts?: CNumberFieldTexts;
+
   /**
    * Set the validity of the field
    */
   valid?: boolean;
+
   /**
    * The number, or `null` when the field is empty. A string is read as the number it spells, and `''` as empty — what an attribute, or a plain `v-model` holding `null`, writes; the field always emits a number or `null`
    */
@@ -231,6 +253,7 @@ export interface CNumberFieldProps {
 export interface CNumberFieldTexts {
   /** Accessible label of the step-down button. */
   decrease?: string;
+
   /** Accessible label of the step-up button. */
   increase?: string;
 }
@@ -284,11 +307,13 @@ interface CNumberFieldEvents {
    * separator, a trailing decimal separator) or when `value` is set.
    */
   change: null | number;
+
   /**
    * Native bubbling input event fired alongside every value change so a
    * plain Vue `v-model` works. No detail.
    */
   input: void;
+
   /**
    * v-model contract event, fired with `change`.
    */

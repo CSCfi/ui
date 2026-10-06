@@ -50,6 +50,7 @@ import type { CPlacement } from '../../types';
 export interface CPopoverProps {
   /** Distance from the trigger to the panel, in pixels. Defaults to `0`. */
   distance?: number | string;
+
   /**
    * Heading rendered at the top of the panel, doubling as its accessible
    * name. Without it, set `aria-label` on the host. Named `heading`, not
@@ -58,10 +59,13 @@ export interface CPopoverProps {
    * @freeform
    */
   heading?: string;
+
   /** Whether the popover is open. Two-way: emits `change:open`. */
   open?: boolean;
+
   /** Preferred placement of the panel relative to the trigger. */
   position?: CPlacement;
+
   /**
    * Designated trigger: an element elsewhere in the document that opens the
    * popover — its document ID, or the element itself. The same trigger

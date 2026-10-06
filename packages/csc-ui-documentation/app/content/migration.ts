@@ -21,6 +21,7 @@ export interface MigrationSection {
   blocks: Record<Flavor, MigrationBlock[]>;
   id: string;
   intro: Partial<Record<'all' | Flavor, string>>;
+
   /** Optional trailing cross-page link (intros are plain text). */
   link?: { label: string; to: string };
   title: string;

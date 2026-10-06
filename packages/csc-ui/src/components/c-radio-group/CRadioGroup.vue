@@ -62,11 +62,13 @@ interface CRadioGroupEvents {
    * Fired when a radio is selected, carrying the selected radio's value.
    */
   changeValue: string;
+
   /**
    * Native bubbling input event fired on selection so a plain Vue `v-model`
    * works without the `v-control` directive. No detail.
    */
   input: void;
+
   /**
    * v-model contract event fired on selection, carrying the selected radio's
    * value.
@@ -134,40 +136,48 @@ interface CRadioGroupProps {
    * Disable the radio group
    */
   disabled?: boolean;
+
   /**
    * Error message shown in place of the hint while the group is invalid
    *
    * @freeform
    */
   errorMessage?: string;
+
   /**
    * Hide the hint and error messages
    */
   hideDetails?: boolean;
+
   /**
    * Hint text for the input
    *
    * @freeform
    */
   hint?: string;
+
   /**
    * Display radio buttons inline
    */
   inline?: boolean;
+
   /**
    * Label of the radio group
    *
    * @freeform
    */
   label?: string;
+
   /**
    * Set as required
    */
   required?: boolean;
+
   /**
    * Set the validity of the input
    */
   valid?: boolean;
+
   /**
    * Value of the radio group; matched against each radio's `value` by strict
    * string equality
