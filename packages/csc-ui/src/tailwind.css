@@ -232,31 +232,31 @@
 }
 
 @utility rounded-csc-sm {
-  @apply supports-corner-shape:[corner-shape:squircle] supports-corner-shape:rounded-md not-supports-corner-shape:rounded-sm;
+  @apply not-supports-corner-shape:rounded-sm supports-corner-shape:rounded-md supports-corner-shape:[corner-shape:squircle];
 }
 
 @utility rounded-csc-md {
-  @apply supports-corner-shape:[corner-shape:squircle] supports-corner-shape:rounded-xl not-supports-corner-shape:rounded-md;
+  @apply not-supports-corner-shape:rounded-md supports-corner-shape:rounded-xl supports-corner-shape:[corner-shape:squircle];
 }
 
 @utility rounded-csc-l-md {
-  @apply supports-corner-shape:[corner-shape:squircle] supports-corner-shape:rounded-l-xl not-supports-corner-shape:rounded-l-md;
+  @apply not-supports-corner-shape:rounded-l-md supports-corner-shape:rounded-l-xl supports-corner-shape:[corner-shape:squircle];
 }
 
 @utility rounded-csc-lg {
-  @apply supports-corner-shape:[corner-shape:squircle] supports-corner-shape:rounded-2xl not-supports-corner-shape:rounded-lg;
+  @apply not-supports-corner-shape:rounded-lg supports-corner-shape:rounded-2xl supports-corner-shape:[corner-shape:squircle];
 }
 
 @utility rounded-csc-t-lg {
-  @apply supports-corner-shape:[corner-shape:squircle] supports-corner-shape:rounded-t-2xl not-supports-corner-shape:rounded-t-lg;
+  @apply not-supports-corner-shape:rounded-t-lg supports-corner-shape:rounded-t-2xl supports-corner-shape:[corner-shape:squircle];
 }
 
 @utility rounded-csc-b-lg {
-  @apply supports-corner-shape:[corner-shape:squircle] supports-corner-shape:rounded-b-2xl not-supports-corner-shape:rounded-b-lg;
+  @apply not-supports-corner-shape:rounded-b-lg supports-corner-shape:rounded-b-2xl supports-corner-shape:[corner-shape:squircle];
 }
 
 @utility rounded-csc-xl {
-  @apply supports-corner-shape:[corner-shape:squircle] supports-corner-shape:rounded-3xl not-supports-corner-shape:rounded-xl;
+  @apply not-supports-corner-shape:rounded-xl supports-corner-shape:rounded-3xl supports-corner-shape:[corner-shape:squircle];
 }
 
 /*

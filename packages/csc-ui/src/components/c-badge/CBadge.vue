@@ -25,7 +25,7 @@ import { tv } from 'tailwind-variants';
  * white).
  */
 const badge = tv({
-  base: 'absolute -right-1.5 -top-1.5 z-[2] flex items-center justify-center min-w-4 h-4 px-1 rounded-2xl text-xs leading-none pointer-events-none bg-warning text-on-warning ring-2 ring-surface',
+  base: 'pointer-events-none absolute -top-1.5 -right-1.5 z-[2] flex h-4 min-w-4 items-center justify-center rounded-2xl bg-warning px-1 text-xs leading-none text-on-warning ring-2 ring-surface',
 });
 
 // `<slot />`-only authoring previously kept fallthrough attrs on the host; we

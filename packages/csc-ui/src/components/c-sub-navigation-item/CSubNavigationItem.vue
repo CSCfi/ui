@@ -57,7 +57,7 @@ const subNavigationItem = tv({
   },
   slots: {
     content:
-      'flex items-center overflow-hidden whitespace-nowrap text-ellipsis',
+      'flex items-center overflow-hidden text-ellipsis whitespace-nowrap',
     // `hover:bg-*` lives in `active: { false }`, not here: the active wash
     // must win over hover, and a base `hover:bg-*` and the active variant's
     // `bg-*` don't conflict under tailwind-merge, so both would apply. The
@@ -68,11 +68,11 @@ const subNavigationItem = tv({
     // a translucent `on-nav-active` wash in dark (ADR-0052). Page roles
     // (`surface-raised`, the primary tint) read as a hole punched into the
     // drawer in dark mode.
-    item: 'flex items-center cursor-pointer font-normal leading-[46px] rounded-csc-md mx-2 px-0 pl-[34px] relative overflow-hidden select-none outline-none transition-colors duration-200 ease-in bg-transparent text-on-nav-active before:content-[""] before:absolute before:top-0 before:left-0 before:h-full before:w-2 before:bg-on-nav-active before:[transform:translateZ(0)_translateX(-8px)] before:transition-transform before:duration-200 before:ease-in-out',
+    item: 'relative mx-2 flex cursor-pointer items-center overflow-hidden rounded-csc-md bg-transparent px-0 pl-[34px] leading-[46px] font-normal text-on-nav-active transition-colors duration-200 ease-in outline-none select-none before:absolute before:top-0 before:left-0 before:h-full before:w-2 before:[transform:translateZ(0)_translateX(-8px)] before:bg-on-nav-active before:transition-transform before:duration-200 before:ease-in-out before:content-[""]',
     root: 'py-0.5',
-    slot: 'overflow-hidden whitespace-nowrap text-ellipsis',
+    slot: 'overflow-hidden text-ellipsis whitespace-nowrap',
     srOnly:
-      'absolute w-px h-px p-0 -m-px overflow-hidden whitespace-nowrap border-0 [clip:rect(0_0_0_0)]',
+      'absolute -m-px h-px w-px overflow-hidden border-0 p-0 whitespace-nowrap [clip:rect(0_0_0_0)]',
   },
   variants: {
     active: {

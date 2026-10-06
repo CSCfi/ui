@@ -198,26 +198,23 @@ describe('single mode', () => {
     expect(events.of('update:value').map((r) => r.detail)).toEqual([null]);
   });
 
-  it.fails(
-    'does not emit when a slotted <c-option selected> seeds the value at mount (pinned deviation)',
-    async () => {
-      defineAll();
+  it.fails('does not emit when a slotted <c-option selected> seeds the value at mount (pinned deviation)', async () => {
+    defineAll();
 
-      const host = document.createElement('c-select');
+    const host = document.createElement('c-select');
 
-      host.innerHTML = [
-        option('fi', 'Finland'),
-        option('se', 'Sweden', ' selected'),
-      ].join('');
+    host.innerHTML = [
+      option('fi', 'Finland'),
+      option('se', 'Sweden', ' selected'),
+    ].join('');
 
-      const events = recordEvents(host, VALUE_EVENTS);
+    const events = recordEvents(host, VALUE_EVENTS);
 
-      document.body.append(host);
-      await settle(60);
+    document.body.append(host);
+    await settle(60);
 
-      expect(events.records).toEqual([]);
-    },
-  );
+    expect(events.records).toEqual([]);
+  });
 });
 
 describe('multiple mode', () => {

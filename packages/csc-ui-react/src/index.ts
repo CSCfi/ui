@@ -7,7 +7,7 @@
  * need (e.g. `CSelectItem`) from there.
  */
 
-export * from "./components.js";
+export * from './components.js';
 
 export {
   DEFAULT_SEEDS,
@@ -15,15 +15,11 @@ export {
   applyTheme,
   resetTheme,
   themeToCss,
-} from "@cscfi/csc-ui";
-export type { Family, ThemeSeeds } from "@cscfi/csc-ui";
+} from '@cscfi/csc-ui';
+export type { Family, ThemeSeeds } from '@cscfi/csc-ui';
 
-export {
-  DEFAULTABLE_PROPS,
-  applyDefaults,
-  resetDefaults,
-} from "@cscfi/csc-ui";
-export type { AppDefaults, DefaultableTag } from "@cscfi/csc-ui";
+export { DEFAULTABLE_PROPS, applyDefaults, resetDefaults } from '@cscfi/csc-ui';
+export type { AppDefaults, DefaultableTag } from '@cscfi/csc-ui';
 
 export {
   chartAnatomy,
@@ -32,5 +28,5 @@ export {
   chartSlotsHex,
   observeThemeMode,
   themeMode,
-} from "@cscfi/csc-ui";
-export type { ChartAnatomy, ChartSlots, ThemeMode } from "@cscfi/csc-ui";
+} from '@cscfi/csc-ui';
+export type { ChartAnatomy, ChartSlots, ThemeMode } from '@cscfi/csc-ui';

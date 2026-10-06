@@ -47,22 +47,16 @@
   ],
   "overrides": [
     {
-      "files": [
-        "packages/csc-ui/**"
-      ],
+      "files": ["packages/csc-ui/**"],
       "options": {
         "sortTailwindcss": {
-          "functions": [
-            "tv"
-          ],
+          "functions": ["tv"],
           "stylesheet": "./packages/csc-ui/src/tailwind.css"
         }
       }
     },
     {
-      "files": [
-        "packages/csc-ui-documentation/**"
-      ],
+      "files": ["packages/csc-ui-documentation/**"],
       "options": {
         "sortTailwindcss": {
           "stylesheet": "./packages/csc-ui-documentation/app/assets/tailwind-sort.css"

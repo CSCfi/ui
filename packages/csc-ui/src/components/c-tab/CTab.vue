@@ -64,9 +64,9 @@ interface CTabEvents {
 const tab = tv({
   slots: {
     ripple:
-      'absolute rounded-full bg-current pointer-events-none transition-[transform,opacity] duration-[600ms] ease-out',
-    ripples: 'absolute inset-0 overflow-hidden pointer-events-none',
-    root: 'flex items-center justify-center h-full w-full max-w-full overflow-clip [overflow-clip-margin:8px] px-3 relative text-ellipsis whitespace-nowrap',
+      'pointer-events-none absolute rounded-full bg-current transition-[transform,opacity] duration-[600ms] ease-out',
+    ripples: 'pointer-events-none absolute inset-0 overflow-hidden',
+    root: 'relative flex h-full w-full max-w-full items-center justify-center overflow-clip px-3 text-ellipsis whitespace-nowrap [overflow-clip-margin:8px]',
   },
 });
 

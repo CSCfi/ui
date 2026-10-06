@@ -120,14 +120,14 @@ const slider = tv({
   slots: {
     // The native range input; thumb/track styled via pseudo-elements (escape-hatch).
     input:
-      'c-slider__input flex items-center appearance-none bg-transparent h-2 m-0 relative w-full',
-    label: 'block mb-4 -mt-2',
+      'c-slider__input relative m-0 flex h-2 w-full appearance-none items-center bg-transparent',
+    label: '-mt-2 mb-4 block',
     // `group` is the hover/focus-within anchor for the tooltip reveal below.
-    root: 'c-slider__root group block isolate py-2',
+    root: 'c-slider__root group isolate block py-2',
     tick: 'c-slider__tick relative size-1 rounded-full text-xs',
     // The visual track: a gradient fill driven by --_c-slider-position.
     ticks:
-      'c-slider__ticks flex items-center justify-between h-2 rounded-[100vw] -mt-2 mx-auto pointer-events-none relative -z-10 w-[calc(100%-16px)]',
+      'c-slider__ticks pointer-events-none relative -z-10 mx-auto -mt-2 flex h-2 w-[calc(100%-16px)] items-center justify-between rounded-[100vw]',
     // The bubble: a circle that follows the thumb. It reveals on root
     // hover, press (`group-active`: the pointer is on the thumb — the only
     // trigger a touch has) and focus-within via the `group` anchor on
@@ -138,8 +138,8 @@ const slider = tv({
     // survive the JS-string→class round-trip a `[...]` utility needs. The
     // ::before/::after callout also lives in the escape-hatch.
     tooltip:
-      'c-slider__tooltip absolute inline-flex items-center justify-center size-6 rounded-full box-border pointer-events-none opacity-0 -translate-x-1/2 -translate-y-1 transition-[opacity,transform] duration-300 ease-[cubic-bezier(0.075,0.82,0.165,1)] group-hover:opacity-100 group-hover:-translate-y-2 group-hover:duration-0 group-active:opacity-100 group-active:-translate-y-2 group-active:duration-0 group-focus-within:opacity-100 group-focus-within:-translate-y-2 group-focus-within:duration-0',
-    tooltipWrapper: 'relative h-0 mx-0.5',
+      'c-slider__tooltip pointer-events-none absolute box-border inline-flex size-6 -translate-x-1/2 -translate-y-1 items-center justify-center rounded-full opacity-0 transition-[opacity,transform] duration-300 ease-[cubic-bezier(0.075,0.82,0.165,1)] group-focus-within:-translate-y-2 group-focus-within:opacity-100 group-focus-within:duration-0 group-hover:-translate-y-2 group-hover:opacity-100 group-hover:duration-0 group-active:-translate-y-2 group-active:opacity-100 group-active:duration-0',
+    tooltipWrapper: 'relative mx-0.5 h-0',
     wrapper: 'relative px-2.5',
   },
   variants: {

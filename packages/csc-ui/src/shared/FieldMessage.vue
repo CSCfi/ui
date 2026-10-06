@@ -59,9 +59,9 @@ import { coerceBoolean } from './coerceBoolean';
 
 const fieldMessage = tv({
   slots: {
-    icon: 'fill-current h-4 w-4 relative -top-0.5 shrink-0',
+    icon: 'relative -top-0.5 h-4 w-4 shrink-0 fill-current',
     line: 'flex items-start gap-1',
-    root: 'px-3 text-xs leading-none min-h-4 text-on-surface-muted',
+    root: 'min-h-4 px-3 text-xs leading-none text-on-surface-muted',
     visuallyHidden:
       'absolute h-px w-px overflow-hidden border-0 p-0 [clip:rect(1px,1px,1px,1px)]',
   },

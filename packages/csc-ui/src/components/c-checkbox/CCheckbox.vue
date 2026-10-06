@@ -197,18 +197,18 @@ const checkbox = tv({
     // for hiding the underlying native checkbox.
     input:
       'absolute h-px w-px overflow-hidden border-0 p-0 [clip:rect(1px,1px,1px,1px)]',
-    label: 'flex gap-1 relative cursor-pointer select-none',
+    label: 'relative flex cursor-pointer gap-1 select-none',
     labelContent: 'pt-[10px] text-left select-none',
     // Outer message AREA (reserved, see the template) + the inner hint/error
     // line that fades in/out inside it.
-    message: 'px-3 text-xs leading-none min-h-4 text-on-surface-muted',
-    messageIcon: 'fill-current h-4 w-4 relative -top-0.5 shrink-0',
+    message: 'min-h-4 px-3 text-xs leading-none text-on-surface-muted',
+    messageIcon: 'relative -top-0.5 h-4 w-4 shrink-0 fill-current',
     messageLine: 'flex items-start gap-1',
     // 42px circular ripple surface holding the box, the check and the click
     // ripple. Purely internal (no part). Does NOT clip: the indicator's focus
     // halo overhangs it by 2px; clipping is the `rippleLayer`'s job.
     ripple:
-      'grid place-content-center relative h-[42px] w-[42px] min-w-[42px] rounded-full transform-gpu transition-colors duration-200 ease-in-out',
+      'relative grid h-[42px] w-[42px] min-w-[42px] transform-gpu place-content-center rounded-full transition-colors duration-200 ease-in-out',
     // Material click ripple: an absolutely-positioned circle, centred in the
     // 42px ripple surface (clipped by the `rippleLayer`). Like c-button, it
     // tweens scale/opacity via the `transition` util rather than a bespoke
@@ -218,7 +218,7 @@ const checkbox = tv({
     // Clips the ripple to the circle so the indicator's focus halo (which
     // overhangs the surface by 2px) is not clipped with it.
     rippleLayer:
-      'pointer-events-none absolute inset-0 rounded-full overflow-hidden',
+      'pointer-events-none absolute inset-0 overflow-hidden rounded-full',
     root: 'relative w-fit',
     visuallyHidden:
       'absolute h-px w-px overflow-hidden border-0 p-0 [clip:rect(1px,1px,1px,1px)]',

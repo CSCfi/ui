@@ -90,7 +90,7 @@ const progressCircle = tv({
     empty: false,
   },
   slots: {
-    bar: '-rotate-90 fill-transparent stroke-primary [stroke-linecap:round] transition-[stroke-dashoffset,opacity] duration-300 ease-in-out',
+    bar: '-rotate-90 fill-transparent stroke-primary transition-[stroke-dashoffset,opacity] duration-300 ease-in-out [stroke-linecap:round]',
     content: 'absolute inset-0 flex items-center justify-center',
     root: 'relative inline-flex items-center justify-center align-middle',
     svg: 'block overflow-visible',

@@ -41,8 +41,8 @@ import { computed } from 'vue';
 const loginButton = tv({
   slots: {
     image: 'max-h-30 max-w-50 px-6 py-2',
-    imageWrap: 'flex items-center justify-center min-h-0',
-    root: 'grid grid-rows-[1fr_auto] grid-cols-1 h-full min-h-42 rounded-csc-md border border-solid overflow-hidden border-border bg-surface text-on-surface-muted text-center no-underline cursor-pointer outline outline-1 outline-transparent hover:border-primary hover:outline-primary focus-visible:outline-2 focus-visible:outline-primary focus-visible:outline-offset-2',
+    imageWrap: 'flex min-h-0 items-center justify-center',
+    root: 'grid h-full min-h-42 cursor-pointer grid-cols-1 grid-rows-[1fr_auto] overflow-hidden rounded-csc-md border border-solid border-border bg-surface text-center text-on-surface-muted no-underline outline outline-1 outline-transparent hover:border-primary hover:outline-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary',
     title: 'bg-surface-muted p-1 text-sm shadow-[0_-1px_0_0_var(--c-border)]',
   },
 });

@@ -18,7 +18,9 @@ if (staged.length === 0) {
   process.exit(0);
 }
 
-const scripts = staged.filter((file) => /\.(?:[cm]?[jt]s|[jt]sx|vue)$/.test(file));
+const scripts = staged.filter((file) =>
+  /\.(?:[cm]?[jt]s|[jt]sx|vue)$/.test(file),
+);
 const templates = staged.filter((file) => file.endsWith('.vue'));
 
 const steps = [

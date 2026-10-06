@@ -664,23 +664,23 @@ const treeSelect = tv({
   },
   slots: {
     breadcrumb:
-      'flex items-center gap-1 min-h-9 px-3 text-sm overflow-hidden whitespace-nowrap border-b border-solid border-divider',
-    card: 'flex flex-col min-w-[180px] max-h-[80vh] overflow-hidden rounded-csc-md bg-surface-overlay shadow-[2px_4px_10px_#00000029]',
-    check: 'w-4 h-4 shrink-0 fill-current ml-auto text-primary',
+      'flex min-h-9 items-center gap-1 overflow-hidden border-b border-solid border-divider px-3 text-sm whitespace-nowrap',
+    card: 'flex max-h-[80vh] min-w-[180px] flex-col overflow-hidden rounded-csc-md bg-surface-overlay shadow-[2px_4px_10px_#00000029]',
+    check: 'ml-auto h-4 w-4 shrink-0 fill-current text-primary',
     chevron:
       'inline-flex rotate-0 transition-transform duration-300 ease-in-out',
     // The code is the item's identity and never truncates: it keeps its
     // width and the label beside it is what ellipsises. The row's
     // `overflow-hidden` still clips a code wider than the whole field.
-    code: 'shrink-0 whitespace-nowrap tabular-nums text-on-surface-muted',
+    code: 'shrink-0 whitespace-nowrap text-on-surface-muted tabular-nums',
     content:
-      'relative flex items-center w-full min-w-0 overflow-hidden cursor-pointer',
+      'relative flex w-full min-w-0 cursor-pointer items-center overflow-hidden',
     crumb:
-      'shrink-0 max-w-40 truncate rounded border-0 bg-transparent px-1 py-0.5 text-sm text-link cursor-pointer hover:underline [font-family:var(--c-font-family)] disabled:text-on-surface disabled:font-medium disabled:cursor-default disabled:no-underline',
+      'max-w-40 shrink-0 cursor-pointer truncate rounded border-0 bg-transparent px-1 py-0.5 [font-family:var(--c-font-family)] text-sm text-link hover:underline disabled:cursor-default disabled:font-medium disabled:text-on-surface disabled:no-underline',
     crumbSep: 'shrink-0 text-on-surface-muted',
     fieldMain:
-      'flex items-center gap-2 min-w-0 overflow-hidden text-base leading-5 text-on-surface',
-    fieldPath: 'text-xs leading-4 text-on-surface-muted truncate',
+      'flex min-w-0 items-center gap-2 overflow-hidden text-base leading-5 text-on-surface',
+    fieldPath: 'truncate text-xs leading-4 text-on-surface-muted',
     // The value block is centred in the 52px field (the shared control
     // height, ADR-0055): `justify-center` for a single-line value (no path),
     // and symmetric 8px padding around the two lines (16px path + 20px
@@ -689,43 +689,43 @@ const treeSelect = tv({
     // the top border and still clears the path line's 12px glyphs, which
     // start 2px into their 16px line box.
     fieldText:
-      'flex flex-col justify-center min-w-0 flex-1 overflow-hidden py-2',
+      'flex min-w-0 flex-1 flex-col justify-center overflow-hidden py-2',
     header:
-      'flex items-center justify-between gap-2 min-h-8 px-3 pt-2 text-sm text-on-surface-muted',
+      'flex min-h-8 items-center justify-between gap-2 px-3 pt-2 text-sm text-on-surface-muted',
     headerAction:
-      'shrink-0 border-0 bg-transparent p-0 text-sm text-link cursor-pointer hover:underline [font-family:var(--c-font-family)]',
-    info: 'flex items-center flex-nowrap gap-2 text-sm min-h-[42px] px-[10px] w-full cursor-default whitespace-nowrap text-on-surface-muted',
-    infoIcon: 'w-[18px] h-[18px] shrink-0 fill-current text-warning',
+      'shrink-0 cursor-pointer border-0 bg-transparent p-0 [font-family:var(--c-font-family)] text-sm text-link hover:underline',
+    info: 'flex min-h-[42px] w-full cursor-default flex-nowrap items-center gap-2 px-[10px] text-sm whitespace-nowrap text-on-surface-muted',
+    infoIcon: 'h-[18px] w-[18px] shrink-0 fill-current text-warning',
     // The readonly combobox is visually hidden (clip) but stays focusable and
     // keeps the flattened value for assistive technology.
     input:
-      'absolute w-px h-px p-0 m-0 overflow-hidden whitespace-nowrap border-0 [clip:rect(0_0_0_0)] outline-none',
-    item: 'flex items-center flex-nowrap gap-3 cursor-pointer text-sm min-h-[42px] outline-none px-[10px] py-2 whitespace-nowrap w-full rounded select-none data-[active]:bg-primary-subtle data-[active]:text-primary data-[active]:ring-1 data-[active]:ring-inset data-[active]:ring-primary text-on-surface',
+      'absolute m-0 h-px w-px overflow-hidden border-0 p-0 whitespace-nowrap outline-none [clip:rect(0_0_0_0)]',
+    item: 'flex min-h-[42px] w-full cursor-pointer flex-nowrap items-center gap-3 rounded px-[10px] py-2 text-sm whitespace-nowrap text-on-surface outline-none select-none data-[active]:bg-primary-subtle data-[active]:text-primary data-[active]:ring-1 data-[active]:ring-primary data-[active]:ring-inset',
     itemLabel: 'min-w-0 truncate',
-    itemMain: 'flex flex-col min-w-0 flex-auto',
-    itemTitle: 'flex items-center gap-2 min-w-0',
-    list: 'list-none m-0 mt-1 p-1 outline-none overflow-y-auto scrollbar-hidden w-full overscroll-none',
+    itemMain: 'flex min-w-0 flex-auto flex-col',
+    itemTitle: 'flex min-w-0 items-center gap-2',
+    list: 'm-0 mt-1 w-full scrollbar-hidden list-none overflow-y-auto overscroll-none p-1 outline-none',
     meta: 'shrink-0 text-xs text-on-surface-muted',
     panel:
-      'fixed m-0 p-0 border-0 bg-transparent overflow-visible [inset:auto]',
-    path: 'text-xs leading-4 text-on-surface-muted truncate',
+      'fixed [inset:auto] m-0 overflow-visible border-0 bg-transparent p-0',
+    path: 'truncate text-xs leading-4 text-on-surface-muted',
     // The trailing controls' box: pulled 6px into the field's padding so
     // the 28px button reads flush with the value's right edge.
-    post: 'inline-flex items-center -mr-1.5',
-    rowChevron: 'w-4 h-4 shrink-0 fill-current text-on-surface-muted',
+    post: '-mr-1.5 inline-flex items-center',
+    rowChevron: 'h-4 w-4 shrink-0 fill-current text-on-surface-muted',
     search:
-      'flex items-center gap-2 min-h-11 px-3 border-b border-solid border-divider',
-    searchIcon: 'w-[18px] h-[18px] shrink-0 fill-current text-on-surface-muted',
+      'flex min-h-11 items-center gap-2 border-b border-solid border-divider px-3',
+    searchIcon: 'h-[18px] w-[18px] shrink-0 fill-current text-on-surface-muted',
     searchInput:
-      'bg-transparent border-0 outline-none w-full py-2 text-base leading-5 text-on-surface [font-family:var(--c-font-family)] [caret-color:var(--c-primary)] placeholder:text-on-surface-muted placeholder:opacity-100',
+      'w-full border-0 bg-transparent py-2 [font-family:var(--c-font-family)] text-base leading-5 text-on-surface [caret-color:var(--c-primary)] outline-none placeholder:text-on-surface-muted placeholder:opacity-100',
     visuallyHidden:
-      'absolute w-px h-px p-0 overflow-hidden border-0 [clip:rect(1px,1px,1px,1px)]',
+      'absolute h-px w-px overflow-hidden border-0 p-0 [clip:rect(1px,1px,1px,1px)]',
   },
   variants: {
     chevronActive: { true: { chevron: 'rotate-180' } },
     disabled: {
       true: {
-        item: 'cursor-default pointer-events-none bg-on-surface/5 [filter:grayscale(1)_opacity(0.75)] data-[active]:bg-on-surface/5 data-[active]:text-inherit data-[active]:ring-0',
+        item: 'pointer-events-none cursor-default bg-on-surface/5 [filter:grayscale(1)_opacity(0.75)] data-[active]:bg-on-surface/5 data-[active]:text-inherit data-[active]:ring-0',
       },
     },
     // The fullscreen panel (CONTEXT.md, ADR-0050): the panel is the surface —
@@ -736,8 +736,8 @@ const treeSelect = tv({
     fullscreen: {
       true: {
         card: 'max-h-none rounded-none shadow-none',
-        list: 'flex-1 min-h-0',
-        panel: 'bg-surface-overlay overflow-hidden',
+        list: 'min-h-0 flex-1',
+        panel: 'overflow-hidden bg-surface-overlay',
       },
     },
     // The pinned select-branch row (ADR-0047): the select-all row's recipe
@@ -747,7 +747,7 @@ const treeSelect = tv({
     // to the full list width and restores the inset below itself.
     selectBranch: {
       true: {
-        item: 'sticky top-0 z-10 -mx-1 mb-1 w-auto px-[14px] rounded-none bg-surface-overlay border-b border-solid border-divider',
+        item: 'sticky top-0 z-10 -mx-1 mb-1 w-auto rounded-none border-b border-solid border-divider bg-surface-overlay px-[14px]',
         list: 'pt-0',
       },
     },

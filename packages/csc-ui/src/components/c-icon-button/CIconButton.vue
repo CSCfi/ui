@@ -186,7 +186,7 @@ const iconButton = tv({
     // ---- ghost -----------------------------------------------------------
     {
       class: {
-        root: 'bg-primary/8 text-primary hover:bg-primary/15 active:bg-primary/22 focus-visible:outline-primary',
+        root: 'bg-primary/8 text-primary hover:bg-primary/15 focus-visible:outline-primary active:bg-primary/22',
       },
       ghost: true,
       inverted: false,
@@ -216,14 +216,14 @@ const iconButton = tv({
     // ---- outlined --------------------------------------------------------
     {
       class: {
-        root: 'bg-transparent text-primary ring-2 ring-inset ring-primary hover:bg-primary/15 focus-visible:outline-primary',
+        root: 'bg-transparent text-primary ring-2 ring-primary ring-inset hover:bg-primary/15 focus-visible:outline-primary',
       },
       inverted: false,
       outlined: true,
     },
     {
       class: {
-        root: 'bg-transparent text-inverse-on ring-2 ring-inset ring-inverse-on hover:bg-inverse-on/30 focus-visible:outline-inverse-on',
+        root: 'bg-transparent text-inverse-on ring-2 ring-inverse-on ring-inset hover:bg-inverse-on/30 focus-visible:outline-inverse-on',
       },
       inverted: true,
       outlined: true,
@@ -274,7 +274,7 @@ const iconButton = tv({
     },
     {
       class: {
-        root: 'bg-transparent text-on-surface-muted ring-2 ring-inset ring-border',
+        root: 'bg-transparent text-on-surface-muted ring-2 ring-border ring-inset',
       },
       disabled: true,
       inverted: false,
@@ -282,7 +282,7 @@ const iconButton = tv({
     },
     {
       class: {
-        root: 'bg-transparent text-inverse-on/40 ring-2 ring-inset ring-inverse-on/40',
+        root: 'bg-transparent text-inverse-on/40 ring-2 ring-inverse-on/40 ring-inset',
       },
       disabled: true,
       inverted: true,
@@ -300,18 +300,18 @@ const iconButton = tv({
   },
   slots: {
     badge:
-      'absolute -top-1 -right-1 z-[2] min-w-[18px] h-[18px] px-1 inline-flex items-center justify-center rounded-full border-2 border-surface bg-warning text-on-warning text-[11px] leading-[14px] font-semibold pointer-events-none',
+      'pointer-events-none absolute -top-1 -right-1 z-[2] inline-flex h-[18px] min-w-[18px] items-center justify-center rounded-full border-2 border-surface bg-warning px-1 text-[11px] leading-[14px] font-semibold text-on-warning',
     inner:
-      'relative flex items-center justify-center size-full inset-0 transform-gpu',
+      'relative inset-0 flex size-full transform-gpu items-center justify-center',
     ripple:
-      'absolute rounded-full bg-current pointer-events-none transition-[transform,opacity] duration-[600ms] ease-out',
+      'pointer-events-none absolute rounded-full bg-current transition-[transform,opacity] duration-[600ms] ease-out',
     ripples:
-      'absolute inset-0 overflow-hidden pointer-events-none rounded-[inherit]',
+      'pointer-events-none absolute inset-0 overflow-hidden rounded-[inherit]',
     // Box + default appearance live here; appearance flags refine in
     // compoundVariants so the inverted/disabled intersections override cleanly.
-    root: 'relative inline-grid place-items-center size-10 p-0 m-0 border-0 appearance-none cursor-pointer rounded-full overflow-visible [font-family:var(--c-font-family)] leading-normal transition-colors duration-300 ease-[cubic-bezier(0.25,0.8,0.5,1)] outline-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-solid',
+    root: 'relative m-0 inline-grid size-10 cursor-pointer appearance-none place-items-center overflow-visible rounded-full border-0 p-0 [font-family:var(--c-font-family)] leading-normal transition-colors duration-300 ease-[cubic-bezier(0.25,0.8,0.5,1)] outline-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-solid',
     spinner:
-      'inline-block border-2 border-solid border-current border-r-transparent rounded-full animate-spin',
+      'inline-block animate-spin rounded-full border-2 border-solid border-current border-r-transparent',
   },
   variants: {
     danger: { true: '' },

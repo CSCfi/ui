@@ -124,20 +124,20 @@ const item = tv({
     // Trailing indicator for the active (selected) item; `text-primary` matches
     // the accent check in the design, and the danger variant re-tones it below.
     check: 'shrink-0 text-primary',
-    chevron: 'shrink-0 size-4.5 -mr-1 fill-current',
+    chevron: '-mr-1 size-4.5 shrink-0 fill-current',
     // `flex-1` so the content box fills the row width — this lets consumers
     // right-align trailing content placed in the default slot (e.g. an icon or
     // shortcut hint) with `ml-auto` / `justify-between`, instead of it sticking
     // to the label.
-    content: 'flex flex-1 items-center gap-2 min-w-0',
+    content: 'flex min-w-0 flex-1 items-center gap-2',
     // Leading icon from the `icon` prop; follows the row colour (hover,
     // keyboard highlight, danger, disabled) via currentColor.
     icon: 'shrink-0 text-current',
-    root: 'flex items-center justify-between gap-3 min-h-10 px-3 rounded-csc-sm text-sm cursor-pointer select-none outline-none whitespace-nowrap text-on-surface hover:bg-primary-subtle hover:text-primary hover:ring-1 hover:ring-primary',
+    root: 'flex min-h-10 cursor-pointer items-center justify-between gap-3 rounded-csc-sm px-3 text-sm whitespace-nowrap text-on-surface outline-none select-none hover:bg-primary-subtle hover:text-primary hover:ring-1 hover:ring-primary',
     // `max-w-[calc(100vw-8px)]`: on a phone the panel may end up spanning
     // the viewport (the below/above fallbacks); it never grows past it.
     submenu:
-      'list-none m-0 p-1 min-w-45 w-max max-w-[calc(100vw-8px)] max-h-[80vh] overflow-y-auto scrollbar-hidden rounded-csc-sm bg-surface-overlay shadow-[2px_4px_10px_#00000029] outline-none',
+      'm-0 max-h-[80vh] w-max max-w-[calc(100vw-8px)] min-w-45 scrollbar-hidden list-none overflow-y-auto rounded-csc-sm bg-surface-overlay p-1 shadow-[2px_4px_10px_#00000029] outline-none',
     // The panel anchors to the item ROW, which sits inside the parent
     // surface's 4px padding — the constant 4px only reaches the parent
     // panel's edge (surfaces touch). The visible gap on top of that is the
@@ -145,7 +145,7 @@ const item = tv({
     // trigger→panel and panel→submenu gaps stay identical; the menu's
     // scheduled close delay makes it safe to cross with the pointer.
     submenuPanel:
-      'fixed my-0 [margin-inline:calc(4px_+_var(--_c-menu-distance,0px))] p-0 border-0 bg-transparent overflow-visible [inset:auto]',
+      'fixed [inset:auto] [margin-inline:calc(4px_+_var(--_c-menu-distance,0px))] my-0 overflow-visible border-0 bg-transparent p-0',
   },
   variants: {
     // Destructive action — matches c-button's danger token (error-600). The
@@ -159,7 +159,7 @@ const item = tv({
     },
     disabled: {
       true: {
-        root: 'cursor-default pointer-events-none opacity-60 text-on-surface-muted hover:bg-transparent hover:text-on-surface-muted',
+        root: 'pointer-events-none cursor-default text-on-surface-muted opacity-60 hover:bg-transparent hover:text-on-surface-muted',
       },
     },
   },

@@ -119,9 +119,9 @@ const alert = tv({
   slots: {
     content: 'flex min-w-0 flex-1 flex-col gap-0.5 pt-px text-on-surface',
     dismiss:
-      'grid size-7 shrink-0 -my-0.5 -mr-1 cursor-pointer place-items-center rounded-csc-sm border-0 bg-transparent p-0 text-on-surface-muted transition-colors duration-150 focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-primary',
+      '-my-0.5 -mr-1 grid size-7 shrink-0 cursor-pointer place-items-center rounded-csc-sm border-0 bg-transparent p-0 text-on-surface-muted transition-colors duration-150 focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-primary',
     heading:
-      'm-0 text-[length:inherit] font-semibold leading-[1.4] text-(--_c-alert-ink)',
+      'm-0 text-[length:inherit] leading-[1.4] font-semibold text-(--_c-alert-ink)',
     icon: 'mt-px size-5 shrink-0 fill-current',
     root: 'flex items-start gap-3 rounded-csc-md border border-l-4 p-3.5 text-sm leading-normal',
   },
@@ -130,27 +130,27 @@ const alert = tv({
       default: {
         dismiss: 'hover:bg-primary/10 hover:text-on-primary-subtle',
         icon: 'text-on-primary-subtle',
-        root: 'bg-primary/10 border-primary/40 border-l-primary [--_c-alert-ink:var(--c-on-primary-subtle)]',
+        root: 'border-primary/40 border-l-primary bg-primary/10 [--_c-alert-ink:var(--c-on-primary-subtle)]',
       },
       error: {
         dismiss: 'hover:bg-error/10 hover:text-on-error-subtle',
         icon: 'text-on-error-subtle',
-        root: 'bg-error/10 border-error/40 border-l-error [--_c-alert-ink:var(--c-on-error-subtle)]',
+        root: 'border-error/40 border-l-error bg-error/10 [--_c-alert-ink:var(--c-on-error-subtle)]',
       },
       info: {
         dismiss: 'hover:bg-info/10 hover:text-on-info-subtle',
         icon: 'text-on-info-subtle',
-        root: 'bg-info/10 border-info/40 border-l-info [--_c-alert-ink:var(--c-on-info-subtle)]',
+        root: 'border-info/40 border-l-info bg-info/10 [--_c-alert-ink:var(--c-on-info-subtle)]',
       },
       success: {
         dismiss: 'hover:bg-success/10 hover:text-on-success-subtle',
         icon: 'text-on-success-subtle',
-        root: 'bg-success/10 border-success/40 border-l-success [--_c-alert-ink:var(--c-on-success-subtle)]',
+        root: 'border-success/40 border-l-success bg-success/10 [--_c-alert-ink:var(--c-on-success-subtle)]',
       },
       warning: {
         dismiss: 'hover:bg-warning/10 hover:text-on-warning-subtle',
         icon: 'text-on-warning-subtle',
-        root: 'bg-warning/10 border-warning/40 border-l-warning [--_c-alert-ink:var(--c-on-warning-subtle)]',
+        root: 'border-warning/40 border-l-warning bg-warning/10 [--_c-alert-ink:var(--c-on-warning-subtle)]',
       },
     } satisfies Record<CAlertType, object>,
   },
@@ -176,8 +176,8 @@ const icons: Record<CAlertType, string> = {
 
 // Attributes can deliver any string at runtime (including the legacy `''`),
 // so unknown values fall back to the default look.
-const normalizedType = computed(
-  (): CAlertType => (props.type in icons ? props.type : 'default'),
+const normalizedType = computed((): CAlertType =>
+  props.type in icons ? props.type : 'default',
 );
 
 const isDismissible = computed(() => coerceBoolean(props.dismissible));

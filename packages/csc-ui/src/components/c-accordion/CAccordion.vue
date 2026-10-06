@@ -57,7 +57,7 @@ interface CAccordionEvents {
 // via `::part(root)`; there is no `override` prop.
 const accordion = tv({
   slots: {
-    root: 'flex flex-col max-w-full',
+    root: 'flex max-w-full flex-col',
   },
 });
 

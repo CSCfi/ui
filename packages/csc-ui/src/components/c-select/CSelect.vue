@@ -413,22 +413,22 @@ const select = tv({
   slots: {
     chevron:
       'inline-flex rotate-0 transition-transform duration-300 ease-in-out',
-    content: 'flex items-center w-full',
+    content: 'flex w-full items-center',
     input:
-      'max-h-8 py-2 bg-transparent border-0 text-on-surface flex-[1_1_auto] [font-family:var(--c-font-family)] text-base leading-5 max-w-full min-w-0 w-full cursor-pointer outline-none focus:outline-none active:outline-none placeholder:text-on-surface-muted placeholder:opacity-100',
-    inputWrap: 'relative w-full min-w-0 flex justify-items-stretch',
+      'max-h-8 w-full max-w-full min-w-0 flex-[1_1_auto] cursor-pointer border-0 bg-transparent py-2 [font-family:var(--c-font-family)] text-base leading-5 text-on-surface outline-none placeholder:text-on-surface-muted placeholder:opacity-100 focus:outline-none active:outline-none',
+    inputWrap: 'relative flex w-full min-w-0 justify-items-stretch',
     // The trailing controls' box: pulled 6px into the field's padding so
     // the 28px button reads flush with the value's right edge.
-    post: 'inline-flex items-center -mr-1.5',
-    selection: 'hidden pointer-events-none',
+    post: '-mr-1.5 inline-flex items-center',
+    selection: 'pointer-events-none hidden',
     // A long option label ellipsises inside its tag instead of blowing out
     // the row.
-    tagLabel: 'truncate min-w-0',
+    tagLabel: 'min-w-0 truncate',
     // The tag row wraps; `py-2` gives a one-row tag field its own rhythm
     // (default tag 28px + 16px, small tag 20px + 16px — the small box exactly,
     // centred in the 52px default box). Wrapping lives here, not on the
     // content row, so the clear/chevron stay centred.
-    tags: 'flex flex-wrap items-center gap-1 py-2 flex-1 min-w-0',
+    tags: 'flex min-w-0 flex-1 flex-wrap items-center gap-1 py-2',
   },
   variants: {
     chevronActive: { true: { chevron: 'rotate-180' } },
@@ -437,7 +437,7 @@ const select = tv({
     inputHidden: {
       true: {
         input:
-          'absolute w-px h-px p-0 m-0 overflow-hidden whitespace-nowrap border-0 [clip:rect(0_0_0_0)]',
+          'absolute m-0 h-px w-px overflow-hidden border-0 p-0 whitespace-nowrap [clip:rect(0_0_0_0)]',
       },
     },
   },

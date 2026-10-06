@@ -22,4 +22,4 @@ Slotted center content is presentational to assistive technology (the value is a
 
 ## Customization
 
-Restyle via the parts: `::part(track)` and `::part(bar)` accept any stroke colour (the defaults are the muted surface track and the primary arc), and `::part(content)` styles the centered slot wrapper. Keep stroke *width* on the `width` prop — the radius math depends on it.
+Restyle via the parts: `::part(track)` and `::part(bar)` accept any stroke colour (the defaults are the muted surface track and the primary arc), and `::part(content)` styles the centered slot wrapper. Keep stroke _width_ on the `width` prop — the radius math depends on it.

@@ -116,9 +116,7 @@ describe('control height', () => {
 
       const labelBox = label.getBoundingClientRect();
 
-      const slot = m
-        .deep('c-input', '.c-input__slot')
-        .getBoundingClientRect();
+      const slot = m.deep('c-input', '.c-input__slot').getBoundingClientRect();
 
       expect(slot.height, `${size} box`).toBe(height);
       // Empty and unfocused: the label rests inside the box, not lifted onto

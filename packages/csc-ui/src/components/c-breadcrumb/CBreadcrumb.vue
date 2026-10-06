@@ -127,22 +127,22 @@ const breadcrumb = tv({
   slots: {
     // Shown only while a crumb is folded — `data-folding` is set with the
     // fold itself, so the button is focusable the moment it is needed.
-    fold: 'absolute invisible flex items-center shrink-0 data-folding:static data-folding:visible',
+    fold: 'invisible absolute flex shrink-0 items-center data-folding:visible data-folding:static',
     foldButton:
-      'inline-flex items-center justify-center min-h-7 px-3 m-0 border-0 rounded-csc-md bg-transparent text-sm font-bold text-primary [font-family:var(--c-font-family)] cursor-pointer transition-colors duration-300 ease-in-out hover:bg-primary/15 aria-expanded:bg-primary/15 outline-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-solid focus-visible:outline-primary',
+      'm-0 inline-flex min-h-7 cursor-pointer items-center justify-center rounded-csc-md border-0 bg-transparent px-3 [font-family:var(--c-font-family)] text-sm font-bold text-primary transition-colors duration-300 ease-in-out outline-none hover:bg-primary/15 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary focus-visible:outline-solid aria-expanded:bg-primary/15',
     // Icons, not the `…` glyph: a glyph sits on the font's baseline, an SVG
     // centres with the crumbs' icons and chevrons whatever the font.
-    foldIcon: 'shrink-0 size-5 fill-current',
+    foldIcon: 'size-5 shrink-0 fill-current',
     // One line that never wraps: what does not fit folds or truncates. The
     // clip keeps a row of floors from scrolling the page; its margin keeps
     // the crumbs' focus rings.
-    list: 'relative flex items-center flex-nowrap min-w-0 m-0 p-0 list-none overflow-clip [overflow-clip-margin:4px]',
+    list: 'relative m-0 flex min-w-0 list-none flex-nowrap items-center overflow-clip p-0 [overflow-clip-margin:4px]',
     panel:
-      'fixed m-0 p-0 border-0 bg-transparent overflow-visible [inset:auto]',
+      'fixed [inset:auto] m-0 overflow-visible border-0 bg-transparent p-0',
     panelList:
-      'list-none m-0 p-1 min-w-[180px] w-max max-w-[calc(100vw-8px)] max-h-[80vh] overflow-y-auto scrollbar-hidden rounded-csc-md bg-surface-overlay text-on-surface shadow-[2px_4px_10px_#00000029] outline-none',
+      'm-0 max-h-[80vh] w-max max-w-[calc(100vw-8px)] min-w-[180px] scrollbar-hidden list-none overflow-y-auto rounded-csc-md bg-surface-overlay p-1 text-on-surface shadow-[2px_4px_10px_#00000029] outline-none',
     root: 'block w-full min-w-0',
-    separator: 'shrink-0 size-4 fill-current text-on-surface-muted',
+    separator: 'size-4 shrink-0 fill-current text-on-surface-muted',
   },
 });
 

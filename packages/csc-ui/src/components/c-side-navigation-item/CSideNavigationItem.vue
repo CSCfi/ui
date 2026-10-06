@@ -127,14 +127,14 @@ const sideNavigationItem = tv({
     // skipped by sequential focus, so focus must live on a rendered box. Its own
     // native outline is suppressed; the visible ring is drawn on `root`.
     header:
-      'grid items-center min-h-[46px] gap-2 px-3 py-2 no-underline text-current outline-none',
+      'grid min-h-[46px] items-center gap-2 px-3 py-2 text-current no-underline outline-none',
     // The outer box (the original `:host(.c-side-navigation-item) > div`) that
     // wraps the header + sub-nav and carries the bg/color/state. Its `color`
     // cascades into the rendered chevron c-icon (currentColor contract).
-    root: 'grid items-center relative overflow-hidden rounded-csc-md cursor-pointer font-normal select-none [backface-visibility:hidden] [transform:translate3d(0,0,0)] bg-transparent text-on-nav',
-    slot: 'flex items-center gap-2 max-w-full leading-normal',
+    root: 'relative grid [transform:translate3d(0,0,0)] cursor-pointer items-center overflow-hidden rounded-csc-md bg-transparent font-normal text-on-nav select-none [backface-visibility:hidden]',
+    slot: 'flex max-w-full items-center gap-2 leading-normal',
     subNav:
-      'w-full overflow-y-hidden h-0 transition-all duration-500 ease-[ease]',
+      'h-0 w-full overflow-y-hidden transition-all duration-500 ease-[ease]',
   },
   variants: {
     active: {
@@ -153,7 +153,7 @@ const sideNavigationItem = tv({
       // Sub-item palette: transparent on the parent's `nav-active` pill, in
       // that pill's ink; its hover/active washes are the compounds above.
       true: {
-        root: 'rounded-csc-md m-0 mx-2 mb-1 text-on-nav-active',
+        root: 'm-0 mx-2 mb-1 rounded-csc-md text-on-nav-active',
       },
     },
   },

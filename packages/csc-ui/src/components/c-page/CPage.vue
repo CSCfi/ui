@@ -49,9 +49,9 @@ defineOptions({ inheritAttrs: false });
  */
 const page = tv({
   slots: {
-    container: 'relative w-full h-full max-w-[1280px] p-3 sm:p-4 md:p-6',
+    container: 'relative h-full w-full max-w-[1280px] p-3 sm:p-4 md:p-6',
     // Fixed 4px progress bar pinned to the top of the viewport.
-    scrollIndicator: 'z-[9] fixed top-0 left-0 h-1 w-0 bg-primary',
+    scrollIndicator: 'fixed top-0 left-0 z-[9] h-1 w-0 bg-primary',
   },
 });
 

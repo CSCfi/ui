@@ -57,13 +57,13 @@ const cardTitle = tv({
     actions: 'flex flex-wrap items-center gap-2',
     header: '',
     heading: 'm-0',
-    root: 'block px-[var(--_c-card-padding-inline,28px)] uppercase text-balance font-bold text-[13.5px] tracking-[1.2px] text-on-surface [font-family:var(--c-font-family)]',
+    root: 'block px-[var(--_c-card-padding-inline,28px)] [font-family:var(--c-font-family)] text-[13.5px] font-bold tracking-[1.2px] text-balance text-on-surface uppercase',
     underline: 'mt-2 h-[3px] w-[42px] rounded-[2px] bg-primary',
   },
   variants: {
     actions: {
       true: {
-        root: 'flex flex-wrap items-start justify-between flex-[0_0_auto] gap-2',
+        root: 'flex flex-[0_0_auto] flex-wrap items-start justify-between gap-2',
       },
     },
   },

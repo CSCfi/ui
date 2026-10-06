@@ -186,7 +186,7 @@ const tabButtons = tv({
     // hidden, the edge arrows and the peeking buttons are the cue. Not
     // rounded itself: the track clips it (see `track`).
     scroller:
-      'overflow-x-auto overflow-y-hidden scrollbar-hidden overscroll-x-contain cursor-default',
+      'cursor-default scrollbar-hidden overflow-x-auto overflow-y-hidden overscroll-x-contain',
     // The frame. The border is the load-bearing hairline, clipped out of the
     // fill so it composites over the parent surface and reads on every rung
     // (ADR-0042). `min-w-0` lets a flex parent squeeze it below the one-row
@@ -197,16 +197,16 @@ const tabButtons = tv({
     // scroller instead gave a round 16px clip 1px inside a 15px squircle —
     // `rounded-[inherit]` inherits the radius, not the corner shape.
     track:
-      'rounded-csc-lg border border-solid border-divider bg-clip-padding bg-surface-sunken overflow-clip min-w-0 flex-1',
+      'min-w-0 flex-1 overflow-clip rounded-csc-lg border border-solid border-divider bg-surface-sunken bg-clip-padding',
     // Arrows and frame in one row; as wide as the frame wants, at most the
     // container.
-    wrapper: 'flex items-center gap-1 max-w-full',
+    wrapper: 'flex max-w-full items-center gap-1',
   },
   variants: {
     disabled: {
       true: {
         indicator: 'bg-border-strong',
-        track: 'bg-surface-muted pointer-events-none',
+        track: 'pointer-events-none bg-surface-muted',
       },
     },
     size: sizeVariants,

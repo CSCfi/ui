@@ -39,7 +39,7 @@ const toolbar = tv({
     static: false,
   },
   slots: {
-    root: 'z-10 flex h-toolbar w-full items-center gap-x-3 px-4 bg-surface-raised text-on-surface-muted shadow-[2px_4px_10px_#00000029] border-b border-border [grid-area:toolbar]',
+    root: 'z-10 flex h-toolbar w-full items-center gap-x-3 border-b border-border bg-surface-raised px-4 text-on-surface-muted shadow-[2px_4px_10px_#00000029] [grid-area:toolbar]',
   },
   variants: {
     static: {

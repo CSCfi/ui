@@ -41,12 +41,12 @@ const message = tv({
     error: false,
   },
   slots: {
-    icon: 'fill-current size-4 relative -top-0.5 shrink-0',
-    line: 'flex items-start gap-1 min-h-4 text-current',
-    root: 'text-xs min-h-4 px-3 leading-none',
+    icon: 'relative -top-0.5 size-4 shrink-0 fill-current',
+    line: 'flex min-h-4 items-start gap-1 text-current',
+    root: 'min-h-4 px-3 text-xs leading-none',
     // Visually-hidden but screen-reader accessible.
     visuallyHidden:
-      'absolute w-px h-px m-[-1px] p-0 overflow-hidden whitespace-nowrap border-0 [clip:rect(0_0_0_0)]',
+      'absolute m-[-1px] h-px w-px overflow-hidden border-0 p-0 whitespace-nowrap [clip:rect(0_0_0_0)]',
   },
   variants: {
     error: {

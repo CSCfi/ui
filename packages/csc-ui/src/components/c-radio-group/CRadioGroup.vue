@@ -106,7 +106,7 @@ const radioGroup = tv({
   slots: {
     items: 'flex flex-wrap',
     label: 'text-left',
-    root: 'flex flex-col gap-1 w-fit',
+    root: 'flex w-fit flex-col gap-1',
   },
   variants: {
     disabled: {
@@ -114,7 +114,7 @@ const radioGroup = tv({
       true: {
         items:
           'text-on-surface-muted [--_c-radio-color:var(--c-on-surface-muted)]',
-        root: 'text-on-surface-muted cursor-default',
+        root: 'cursor-default text-on-surface-muted',
       },
     },
     error: {

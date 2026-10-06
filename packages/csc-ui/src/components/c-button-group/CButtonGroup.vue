@@ -170,7 +170,7 @@ const buttonGroup = tv({
   slots: {
     // The 4px between label and track sits on the label, not as a wrapper
     // gap: the width probe below the track must add no height.
-    label: 'text-left mb-1',
+    label: 'mb-1 text-left',
     // A real GRID of equal columns — not flex: each slotted c-button host is
     // `display:contents`, so the native button it wraps is promoted into
     // this grid and sized by the *track*. The columns are `auto-fit` at the
@@ -180,17 +180,17 @@ const buttonGroup = tv({
     // them (CONTEXT.md "Button group"). Flex + w-full instead squeezed every
     // button to an equal share smaller than the longest label, and a
     // single-row grid let the buttons overlap once they no longer fit.
-    root: 'grid w-full [grid-template-columns:repeat(auto-fit,minmax(var(--_c-button-group-col,5.5rem),1fr))] rounded-csc-lg border border-solid border-divider bg-clip-padding bg-surface-sunken',
+    root: 'grid w-full [grid-template-columns:repeat(auto-fit,minmax(var(--_c-button-group-col,5.5rem),1fr))] rounded-csc-lg border border-solid border-divider bg-surface-sunken bg-clip-padding',
     // Stacks the group label above the segmented-control frame. `min-w-0`
     // so a flex row can squeeze the group below one row of buttons — the
     // probe below the track holds it open to that width only where there
     // is room.
-    wrapper: 'flex flex-col min-w-0',
+    wrapper: 'flex min-w-0 flex-col',
   },
   variants: {
     disabled: {
       true: {
-        root: 'bg-surface-muted pointer-events-none',
+        root: 'pointer-events-none bg-surface-muted',
       },
     },
     size: sizeVariants,

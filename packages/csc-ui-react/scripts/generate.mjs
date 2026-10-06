@@ -162,9 +162,7 @@ const previous = existsSync(target) ? readFileSync(target, 'utf8') : '';
 
 if (previous !== output) {
   writeFileSync(target, output);
-  console.log(
-    `components.ts: generated ${components.length} React components`,
-  );
+  console.log(`components.ts: generated ${components.length} React components`);
 } else {
   console.log(`components.ts: up to date (${components.length} components)`);
 }

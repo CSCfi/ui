@@ -55,7 +55,7 @@ const spinner = tv({
   slots: {
     circle:
       'c-spinner-circle fill-transparent stroke-current [stroke-linecap:round]',
-    root: 'block fill-current overflow-visible',
+    root: 'block overflow-visible fill-current',
   },
 });
 

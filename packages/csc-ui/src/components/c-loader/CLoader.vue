@@ -76,10 +76,10 @@ const loader = tv({
     // `c-loader-fadein` animation (gated on `active`) fades it in. Text colour
     // is the muted on-surface role.
     content:
-      'block absolute inset-x-0 opacity-0 text-center text-sm leading-6 font-medium text-on-surface-muted',
+      'absolute inset-x-0 block text-center text-sm leading-6 font-medium text-on-surface-muted opacity-0',
     // `relative` so the absolutely-positioned content anchors to it.
     inner:
-      'relative flex flex-col items-center justify-center h-full w-full scale-50 transition-transform duration-300 ease-in-out py-4',
+      'relative flex h-full w-full scale-50 flex-col items-center justify-center py-4 transition-transform duration-300 ease-in-out',
     // Background is the surface role at 80% (a theme-aware scrim over the
     // overlaid container; was an opaque-ish white veil).
     // `visibility` is in the transition list (alongside opacity/transform) so
@@ -87,7 +87,7 @@ const loader = tv({
     // when either endpoint is `visible` it stays visible for the whole duration
     // and only flips to `hidden` at the end. Without it, `invisible` applied
     // instantly on leave and cut off the opacity/scale fade-out.
-    root: 'absolute inset-0 z-[6] w-full bg-surface/80 rounded-[inherit] invisible opacity-0 transition-[opacity,transform,visibility] duration-300 ease-in-out text-primary',
+    root: 'invisible absolute inset-0 z-[6] w-full rounded-[inherit] bg-surface/80 text-primary opacity-0 transition-[opacity,transform,visibility] duration-300 ease-in-out',
   },
   variants: {
     active: {

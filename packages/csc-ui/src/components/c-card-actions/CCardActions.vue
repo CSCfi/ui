@@ -89,7 +89,7 @@ const cardActions = tv({
   slots: {
     // Wraps: a footer row longer than the card flows onto further rows
     // instead of overflowing it.
-    actions: 'm-0 p-0 flex flex-wrap gap-2',
+    actions: 'm-0 flex flex-wrap gap-2 p-0',
     root: 'px-[var(--_c-card-padding-inline,28px)]',
   },
   variants: {

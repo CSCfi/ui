@@ -250,19 +250,19 @@ const dropdown = tv({
   slots: {
     // The single-mode selected-row check: trails the label (`ml-auto`) and
     // takes the row's colour (`fill-current`), so a disabled row greys it too.
-    check: 'w-4 h-4 shrink-0 fill-current ml-auto',
+    check: 'ml-auto h-4 w-4 shrink-0 fill-current',
     // The positioned menu surface. `position:fixed` + the imperative
     // top/left/width/maxHeight the JS writes inline drive placement.
     dialog:
-      'rounded border-0 bg-transparent m-0 mt-[-4px] p-0 pt-1 overflow-visible fixed',
+      'fixed m-0 mt-[-4px] overflow-visible rounded border-0 bg-transparent p-0 pt-1',
     // The wrapper inside the dialog; a flex column in the fullscreen layout.
     inner: '',
-    item: 'flex items-center flex-nowrap gap-3 cursor-pointer text-sm min-h-[42px] outline-none px-[10px] py-2 pointer-events-auto whitespace-nowrap w-full rounded select-none hover:bg-primary-subtle hover:text-primary hover:ring-1 hover:ring-inset hover:ring-primary focus:bg-primary-subtle focus:text-primary focus:ring-1 focus:ring-inset focus:ring-primary aria-selected:bg-primary-subtle aria-selected:text-on-primary-subtle aria-selected:rounded-none hover:aria-selected:rounded focus:aria-selected:rounded',
+    item: 'pointer-events-auto flex min-h-[42px] w-full cursor-pointer flex-nowrap items-center gap-3 rounded px-[10px] py-2 text-sm whitespace-nowrap outline-none select-none hover:bg-primary-subtle hover:text-primary hover:ring-1 hover:ring-primary hover:ring-inset focus:bg-primary-subtle focus:text-primary focus:ring-1 focus:ring-primary focus:ring-inset aria-selected:rounded-none aria-selected:bg-primary-subtle aria-selected:text-on-primary-subtle hover:aria-selected:rounded focus:aria-selected:rounded',
     // Static list look; visibility + fade-in (`.active`) stay in the
     // escape-hatch <style>.
-    list: 'list-none m-0 p-0 outline-none pointer-events-auto w-full h-max overflow-y-auto scrollbar-hidden rounded bg-surface-overlay text-on-surface shadow-[2px_4px_10px_#00000029] overscroll-none',
+    list: 'pointer-events-auto m-0 h-max w-full scrollbar-hidden list-none overflow-y-auto overscroll-none rounded bg-surface-overlay p-0 text-on-surface shadow-[2px_4px_10px_#00000029] outline-none',
     visuallyHidden:
-      'absolute w-px h-px p-0 overflow-hidden border-0 [clip:rect(1px,1px,1px,1px)]',
+      'absolute h-px w-px overflow-hidden border-0 p-0 [clip:rect(1px,1px,1px,1px)]',
   },
   variants: {
     // Mirrors `li.disabled` — applied per-row (overrides the hover/selected
@@ -271,7 +271,7 @@ const dropdown = tv({
       true: {
         // pointer-events-none means :hover/:focus never fire on a disabled
         // row, so only the aria-selected branch needs neutralising here.
-        item: 'cursor-default pointer-events-none bg-on-surface/5 [filter:grayscale(1)_opacity(0.75)] aria-selected:bg-on-surface/5 aria-selected:text-inherit aria-selected:ring-0 aria-selected:rounded',
+        item: 'pointer-events-none cursor-default bg-on-surface/5 [filter:grayscale(1)_opacity(0.75)] aria-selected:rounded aria-selected:bg-on-surface/5 aria-selected:text-inherit aria-selected:ring-0',
       },
     },
     // The fullscreen panel (CONTEXT.md, ADR-0050): the dialog is the surface
@@ -281,9 +281,9 @@ const dropdown = tv({
     fullscreen: {
       true: {
         dialog:
-          'rounded-none mt-0 pt-0 max-w-none max-h-none bg-surface-overlay',
-        inner: 'flex flex-col min-h-0',
-        list: 'flex-1 min-h-0 h-auto rounded-none shadow-none',
+          'mt-0 max-h-none max-w-none rounded-none bg-surface-overlay pt-0',
+        inner: 'flex min-h-0 flex-col',
+        list: 'h-auto min-h-0 flex-1 rounded-none shadow-none',
       },
     },
     // The pinned select-all row (ADR-0046): sticks to the list's top edge on
@@ -292,7 +292,7 @@ const dropdown = tv({
     // order and would paint over it otherwise.
     selectAll: {
       true: {
-        item: 'sticky top-0 z-10 rounded-none bg-surface-overlay border-b border-solid border-divider hover:aria-selected:rounded-none focus:aria-selected:rounded-none',
+        item: 'sticky top-0 z-10 rounded-none border-b border-solid border-divider bg-surface-overlay hover:aria-selected:rounded-none focus:aria-selected:rounded-none',
       },
     },
   },

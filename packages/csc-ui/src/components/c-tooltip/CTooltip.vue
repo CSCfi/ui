@@ -141,7 +141,7 @@ interface CTooltipEvents {
 const tooltip = tv({
   slots: {
     panel:
-      'fixed m-0 [inset:auto] box-border w-max max-w-xs overflow-visible rounded-csc-sm border-0 bg-surface-inverted px-2 py-1 text-sm text-on-surface-inverted shadow-[2px_4px_10px_#00000029]',
+      'fixed [inset:auto] m-0 box-border w-max max-w-xs overflow-visible rounded-csc-sm border-0 bg-surface-inverted px-2 py-1 text-sm text-on-surface-inverted shadow-[2px_4px_10px_#00000029]',
     proxy: 'pointer-events-none fixed',
     trigger: 'inline-flex w-max max-w-full',
   },

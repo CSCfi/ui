@@ -107,7 +107,7 @@ const sideNavigation = tv({
     // slid-out drawer showing in the gutter. Invisible also takes its links
     // out of the tab order and the accessibility tree while it is closed.
     {
-      class: { content: 'translate-x-full invisible' },
+      class: { content: 'invisible translate-x-full' },
       hidden: true,
       mobile: true,
     },
@@ -120,14 +120,14 @@ const sideNavigation = tv({
   },
   slots: {
     // The bottom slot's region; `px-6 pb-6` matches the list's `p-6` inset.
-    bottom: 'shrink-0 sticky bottom-0 z-[8] bg-nav-surface px-6 pb-6 pt-2',
+    bottom: 'sticky bottom-0 z-[8] shrink-0 bg-nav-surface px-6 pt-2 pb-6',
     burger: 'flex justify-end px-4 py-2',
     // The outer drawer container.
-    content: 'flex flex-col min-h-0 flex-[1_2_260px] w-80 bg-nav-surface',
+    content: 'flex min-h-0 w-80 flex-[1_2_260px] flex-col bg-nav-surface',
     // The item list: the drawer's scroll container.
-    nav: 'relative flex flex-col flex-1 min-h-0 w-full overflow-y-auto overscroll-contain p-6 z-[8] bg-nav-surface transition-transform duration-300 ease-[ease]',
+    nav: 'relative z-[8] flex min-h-0 w-full flex-1 flex-col overflow-y-auto overscroll-contain bg-nav-surface p-6 transition-transform duration-300 ease-[ease]',
     srOnly:
-      'absolute w-px h-px p-0 -m-px overflow-hidden whitespace-nowrap border-0 [clip:rect(0_0_0_0)]',
+      'absolute -m-px h-px w-px overflow-hidden border-0 p-0 whitespace-nowrap [clip:rect(0_0_0_0)]',
     wrapper: 'flex flex-col gap-1',
   },
   variants: {
@@ -142,7 +142,7 @@ const sideNavigation = tv({
         // shown the drawer's tail — the last items, the bottom slot — sat
         // behind it. The dynamic unit follows the visible viewport.
         content:
-          'h-dvh max-w-80 overflow-hidden fixed right-0 top-0 z-[999] transition-[transform,translate,visibility] duration-200 ease-standard translate-x-0',
+          'fixed top-0 right-0 z-[999] h-dvh max-w-80 translate-x-0 overflow-hidden transition-[transform,translate,visibility] duration-200 ease-standard',
       },
     },
   },

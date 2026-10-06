@@ -1,9 +1,9 @@
-import { playwright } from "@vitest/browser-playwright";
-import path from "node:path";
-import { fileURLToPath } from "node:url";
-import type { BrowserCommandContext, BrowserConfigOptions } from "vitest/node";
+import { playwright } from '@vitest/browser-playwright';
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
+import type { BrowserCommandContext, BrowserConfigOptions } from 'vitest/node';
 
-const root = fileURLToPath(new URL(".", import.meta.url));
+const root = fileURLToPath(new URL('.', import.meta.url));
 
 /**
  * Deterministic glyphs for visual baselines: the fontconfig selects the
@@ -15,7 +15,7 @@ const root = fileURLToPath(new URL(".", import.meta.url));
  */
 export const FONTS_CONF = path.join(
   root,
-  "packages/csc-ui/src/test/fonts.conf",
+  'packages/csc-ui/src/test/fonts.conf',
 );
 
 /**
@@ -44,7 +44,7 @@ export const browserProject = (name: string): BrowserConfigOptions => ({
      */
     emulateReducedMotion: async (
       ctx: BrowserCommandContext,
-      value: "no-preference" | "reduce",
+      value: 'no-preference' | 'reduce',
     ) => {
       await ctx.page.emulateMedia({ reducedMotion: value });
     },
@@ -52,7 +52,7 @@ export const browserProject = (name: string): BrowserConfigOptions => ({
   enabled: true,
   expect: {
     toMatchScreenshot: {
-      comparatorName: "pixelmatch",
+      comparatorName: 'pixelmatch',
       // A 1% budget of differing pixels plus a per-pixel YIQ tolerance for
       // arm64 vs x64 anti-aliasing. Tune after the first CI run; never raise
       // past the point where a token flip would pass.
@@ -82,17 +82,17 @@ export const browserProject = (name: string): BrowserConfigOptions => ({
     },
   },
   headless: true,
-  instances: [{ browser: "chromium", name }],
+  instances: [{ browser: 'chromium', name }],
   provider: playwright({
     contextOptions: {
-      colorScheme: "light",
+      colorScheme: 'light',
       deviceScaleFactor: 1,
       // Components honour prefers-reduced-motion (c-modal, c-tabs): no
       // open/close keyframes to wait for.
-      reducedMotion: "reduce",
+      reducedMotion: 'reduce',
     },
     launchOptions: {
-      args: ["--font-render-hinting=none", "--force-device-scale-factor=1"],
+      args: ['--font-render-hinting=none', '--force-device-scale-factor=1'],
       env: { ...process.env, FONTCONFIG_FILE: FONTS_CONF },
       // Unset → Playwright resolves PLAYWRIGHT_BROWSERS_PATH (/ms-playwright
       // in the devcontainer, ~/.cache/ms-playwright in CI).

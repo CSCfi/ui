@@ -190,14 +190,14 @@ const input = tv({
     textarea: false,
   },
   slots: {
-    control: 'flex flex-col gap-2 relative min-w-0 w-full',
+    control: 'relative flex w-full min-w-0 flex-col gap-2',
     // `min-w-0`: the row never grows past the slot. Its `auto` minimum was
     // the min-content of the slotted value — a nowrap two-line value block
     // (c-tree-select) widened the row past the field and pushed the `post`
     // controls out of it.
-    field: 'c-input__field flex flex-auto items-center gap-2 relative min-w-0',
+    field: 'c-input__field relative flex min-w-0 flex-auto items-center gap-2',
     fieldset:
-      'c-input__fieldset absolute inset-0 m-0 py-0 pr-0 pl-2 rounded-csc-md border border-solid border-border-strong bg-transparent pointer-events-none [border-collapse:collapse] [transition:border-color_0.15s_cubic-bezier(0.25,0.8,0.25,1)]',
+      'c-input__fieldset pointer-events-none absolute inset-0 m-0 [border-collapse:collapse] rounded-csc-md border border-solid border-border-strong bg-transparent py-0 pr-0 pl-2 [transition:border-color_0.15s_cubic-bezier(0.25,0.8,0.25,1)]',
     // The resting transform (translateX preslot shift + the Noto-metric
     // vertical nudge) lives in the escape-hatch <style>: it reads the
     // underscored runtime var `--_c-input-label-position`, which a Tailwind
@@ -221,19 +221,19 @@ const input = tv({
     // 44px -> top-3, the 52px control height -> top-4. `controlHeight.spec.ts`
     // holds this at both sizes.
     labelFloating:
-      'c-input__label--floating absolute top-4 left-0 right-auto text-base max-w-[90%] overflow-clip [overflow-clip-margin:4px] text-ellipsis whitespace-nowrap pointer-events-none origin-top-left [transition:0.3s_var(--ease-standard)_0.08s]',
+      'c-input__label--floating pointer-events-none absolute top-4 right-auto left-0 max-w-[90%] origin-top-left overflow-clip text-base text-ellipsis whitespace-nowrap [overflow-clip-margin:4px] [transition:0.3s_var(--ease-standard)_0.08s]',
     labelTop:
-      'c-input__label--top text-sm font-medium overflow-hidden text-ellipsis whitespace-nowrap max-w-full',
+      'c-input__label--top max-w-full overflow-hidden text-sm font-medium text-ellipsis whitespace-nowrap',
     legend:
-      'c-input__legend float-none leading-[11px] -ml-px p-0 text-left w-0 [transition:width_0.3s_var(--ease-standard)]',
+      'c-input__legend float-none -ml-px w-0 p-0 text-left leading-[11px] [transition:width_0.3s_var(--ease-standard)]',
     // Outer message AREA: reserved whenever details aren't hidden (the `min-h-4`
     // holds 16px even with no hint/error) so a hint-less field keeps the same
     // height as one with a message and the layout doesn't shift when a message
     // appears — matching the original c-message, which always reserved its
     // min-height. The actual hint/error line (`messageLine`) fades in/out inside.
     message:
-      'c-input__message px-3 text-xs leading-none min-h-4 text-on-surface-muted',
-    messageIcon: 'fill-current size-4 shrink-0 relative -top-0.5',
+      'c-input__message min-h-4 px-3 text-xs leading-none text-on-surface-muted',
+    messageIcon: 'relative -top-0.5 size-4 shrink-0 fill-current',
     // Inner hint/error line: lays out the (optional) error icon + text.
     messageLine: 'flex items-start gap-1',
     post: 'c-input__post inline-flex items-center empty:hidden',
@@ -244,10 +244,10 @@ const input = tv({
     // colour lives here too (the slotted input + labels inherit it); the
     // active/error variants below override it, with tailwind-merge picking the
     // winner so no `!important` is needed.
-    root: 'c-input flex flex-col items-stretch rounded text-base max-w-full text-left text-on-surface-muted',
-    slot: 'c-input__slot relative flex items-stretch px-3 rounded-csc-md bg-transparent cursor-text transition-all duration-300 ease-standard',
+    root: 'c-input flex max-w-full flex-col items-stretch rounded text-left text-base text-on-surface-muted',
+    slot: 'c-input__slot relative flex cursor-text items-stretch rounded-csc-md bg-transparent px-3 transition-all duration-300 ease-standard',
     visuallyHidden:
-      'absolute w-px h-px m-[-1px] p-0 overflow-hidden whitespace-nowrap border-0 [clip:rect(0_0_0_0)]',
+      'absolute m-[-1px] h-px w-px overflow-hidden border-0 p-0 whitespace-nowrap [clip:rect(0_0_0_0)]',
   },
   variants: {
     // Active state (driven by the `active` prop OR native focus, both folded
@@ -289,7 +289,7 @@ const input = tv({
     // isn't rendered in shadow mode — see the template `v-if="!shadow"`).
     shadow: {
       true: {
-        slot: 'bg-surface-overlay [box-shadow:rgba(0,0,0,0.15)_0_5px_15px_0] focus-within:outline-2 focus-within:outline-solid focus-within:outline-primary',
+        slot: 'bg-surface-overlay [box-shadow:rgba(0,0,0,0.15)_0_5px_15px_0] focus-within:outline-2 focus-within:outline-primary focus-within:outline-solid',
       },
     },
     size: sizeVariants,

@@ -1,16 +1,7 @@
 {
   "$schema": "./node_modules/oxlint/configuration_schema.json",
-  "plugins": [
-    "eslint",
-    "typescript",
-    "unicorn",
-    "oxc",
-    "vue"
-  ],
-  "jsPlugins": [
-    "eslint-plugin-perfectionist",
-    "@stylistic/eslint-plugin"
-  ],
+  "plugins": ["eslint", "typescript", "unicorn", "oxc", "vue"],
+  "jsPlugins": ["eslint-plugin-perfectionist", "@stylistic/eslint-plugin"],
   "categories": {
     "correctness": "error"
   },
@@ -37,24 +28,13 @@
       "error",
       {
         "blankLine": "always",
-        "next": [
-          "interface",
-          "type",
-          "if",
-          "for",
-          "const",
-          "let",
-          "export"
-        ],
+        "next": ["interface", "type", "if", "for", "const", "let", "export"],
         "prev": "*"
       },
       {
         "blankLine": "always",
         "next": "*",
-        "prev": [
-          "block-like",
-          "block"
-        ]
+        "prev": ["block-like", "block"]
       },
       {
         "blankLine": "always",
@@ -311,10 +291,7 @@
     "use-isnan": "error",
     "valid-typeof": "error",
     "vue/component-definition-name-casing": "error",
-    "vue/define-emits-declaration": [
-      "error",
-      "type-literal"
-    ],
+    "vue/define-emits-declaration": ["error", "type-literal"],
     "vue/no-arrow-functions-in-watch": "error",
     "vue/no-async-in-computed-properties": "error",
     "vue/no-computed-properties-in-data": "error",
@@ -351,9 +328,7 @@
   },
   "overrides": [
     {
-      "files": [
-        "**/*.cjs"
-      ],
+      "files": ["**/*.cjs"],
       "rules": {
         "typescript/no-require-imports": "off"
       }

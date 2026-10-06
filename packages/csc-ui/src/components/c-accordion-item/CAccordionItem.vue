@@ -137,7 +137,7 @@ const accordionItem = tv({
     // `outlined` outlines expanded items only: a collapsed item is part of
     // the frame, and a ring inside its hairline read as a double border.
     {
-      class: { root: 'ring-1 ring-inset ring-primary' },
+      class: { root: 'ring-1 ring-primary ring-inset' },
       expanded: true,
       outlined: true,
     },
@@ -154,16 +154,16 @@ const accordionItem = tv({
   },
   slots: {
     content:
-      'min-h-0 overflow-hidden mx-2 mb-2 p-3 rounded-sm bg-surface-raised inset-ring inset-ring-primary/25 text-on-surface-muted',
+      'mx-2 mb-2 min-h-0 overflow-hidden rounded-sm bg-surface-raised p-3 text-on-surface-muted inset-ring inset-ring-primary/25',
     contentWrapper:
       'grid grid-rows-[minmax(0,0fr)] overflow-hidden transition-[grid-template-rows] duration-300 ease-standard',
     header:
-      'bg-transparent hover:bg-primary/8 active:bg-primary/15 transition-colors duration-200 ease-standard min-h-[46px] text-primary select-none grid grid-cols-[1fr_auto] gap-x-2 items-center px-3 rounded-[inherit] supports-corner-shape:[corner-shape:squircle] cursor-pointer text-left m-0 [font:inherit] border-0 w-full relative focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary',
-    icon: 'h-6 text-2xl text-primary flex items-center *:h-6 *:flex *:items-center',
+      'relative m-0 grid min-h-[46px] w-full cursor-pointer grid-cols-[1fr_auto] items-center gap-x-2 rounded-[inherit] border-0 bg-transparent px-3 text-left text-primary transition-colors duration-200 ease-standard select-none [font:inherit] hover:bg-primary/8 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary active:bg-primary/15 supports-corner-shape:[corner-shape:squircle]',
+    icon: 'flex h-6 items-center text-2xl text-primary *:flex *:h-6 *:items-center',
     indicator:
-      'flex items-center text-primary -rotate-90 transition-transform duration-300 ease-standard',
-    root: 'block max-w-full border border-border border-t-0 supports-corner-shape:[corner-shape:squircle] transition-[margin] duration-300 ease-in-out',
-    title: 'm-0 font-medium text-base leading-none',
+      'flex -rotate-90 items-center text-primary transition-transform duration-300 ease-standard',
+    root: 'block max-w-full border border-t-0 border-border transition-[margin] duration-300 ease-in-out supports-corner-shape:[corner-shape:squircle]',
+    title: 'm-0 text-base leading-none font-medium',
   },
   variants: {
     afterExpanded: {
@@ -180,7 +180,7 @@ const accordionItem = tv({
         contentWrapper: 'grid-rows-[minmax(0,1fr)]',
         header: 'rounded-b-none',
         indicator: 'rotate-90',
-        root: 'my-2 border-t border-primary bg-primary/5 rounded-csc-lg inset-shadow-[2px_0_0_0] inset-shadow-primary',
+        root: 'my-2 rounded-csc-lg border-t border-primary bg-primary/5 inset-shadow-[2px_0_0_0] inset-shadow-primary',
       },
     },
     first: {

@@ -127,18 +127,18 @@ const cSwitch = tv({
     hasLabel: false,
   },
   slots: {
-    input: 'h-0 opacity-0 w-0 absolute',
-    inputWrap: 'h-5.5 relative w-11 self-start',
+    input: 'absolute h-0 w-0 opacity-0',
+    inputWrap: 'relative h-5.5 w-11 self-start',
     label: 'self-center',
     // Track geometry: 22x44, pill radius, gap to label. The on/off colours and
     // handle position are sibling-driven in the escape-hatch below.
-    root: 'inline-grid h-5.5 relative items-center gap-3 transform-gpu [backface-visibility:hidden]',
+    root: 'relative inline-grid h-5.5 transform-gpu items-center gap-3 [backface-visibility:hidden]',
     // The track. Border drawn as an inset ring; colours flipped on state in
     // escape-hatch. Handle is the `::before` (also escape-hatch, sibling-driven
     // for its translate). The slider's `color` (set in escape-hatch) is what
     // the nested c-spinner inherits via `currentColor`.
     slider:
-      'absolute inset-0 rounded-full cursor-pointer origin-center transition-[box-shadow,background-color] duration-300 ease-[cubic-bezier(0.25,0.8,0.5,1)]',
+      'absolute inset-0 origin-center cursor-pointer rounded-full transition-[box-shadow,background-color] duration-300 ease-[cubic-bezier(0.25,0.8,0.5,1)]',
     // Spinner wrapper: hidden by default, revealed by the --loading state class.
     // These utilities sit on a wrapper <span> (not the <c-spinner> element)
     // because the nested <c-spinner> host is `display:contents` (global host
@@ -146,7 +146,7 @@ const cSwitch = tv({
     // The span owns the box; the c-spinner inside renders its svg and inherits
     // `color` (currentColor) from the slider (see header).
     spinner:
-      'block pointer-events-none z-2 absolute left-1 top-1 opacity-0 transition-all duration-300 ease-[cubic-bezier(0.25,0.8,0.5,1)]',
+      'pointer-events-none absolute top-1 left-1 z-2 block opacity-0 transition-all duration-300 ease-[cubic-bezier(0.25,0.8,0.5,1)]',
   },
   variants: {
     disabled: {

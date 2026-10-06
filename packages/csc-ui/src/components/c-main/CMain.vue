@@ -74,14 +74,14 @@ const main = tv({
     // hosts are `display:contents`, so a grid area on them would be ignored.
     banner: 'block',
     layout: '',
-    root: 'flex flex-col min-h-screen bg-surface-sunken text-on-surface [--_drawer-height:calc(var(--c-main-viewport-height,100dvh)_-_var(--_nav-offset))]',
+    root: 'flex min-h-screen flex-col bg-surface-sunken text-on-surface [--_drawer-height:calc(var(--c-main-viewport-height,100dvh)_-_var(--_nav-offset))]',
   },
   variants: {
     disableLayout: {
       // Dashboard grid: the toolbar spans the top row, sidenav + page below.
       false: {
         layout:
-          "grid grow gap-0 overflow-y-clip [grid-template:'toolbar_toolbar'_auto_'sidenav_page'_1fr_/_auto_1fr] before:content-[''] before:[grid-area:sidenav] before:bg-nav-surface [--_drawer-pull:calc(-1_*_var(--_drawer-height))]",
+          "grid grow gap-0 overflow-y-clip [--_drawer-pull:calc(-1_*_var(--_drawer-height))] [grid-template:'toolbar_toolbar'_auto_'sidenav_page'_1fr_/_auto_1fr] before:bg-nav-surface before:content-[''] before:[grid-area:sidenav]",
       },
       // Plain column: the slot is boxless and the shell's column flows through.
       true: { layout: 'contents' },

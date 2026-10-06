@@ -23,7 +23,7 @@ import { computed } from 'vue';
  */
 const navigationButton = tv({
   slots: {
-    root: 'block mr-0 cursor-pointer select-none rounded-full text-[var(--c-text-system)]',
+    root: 'mr-0 block cursor-pointer rounded-full text-[var(--c-text-system)] select-none',
   },
 });
 

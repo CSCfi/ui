@@ -16,7 +16,7 @@
       <span class="min-w-0 truncate max-sm:hidden">CSC Design System</span>
 
       <span
-        class="ml-[0.35rem] shrink-0 rounded-full bg-accent px-2 py-[0.1rem] align-middle text-xs font-semibold uppercase tracking-wider text-on-accent max-sm:hidden"
+        class="ml-[0.35rem] shrink-0 rounded-full bg-accent px-2 py-[0.1rem] align-middle text-xs font-semibold tracking-wider text-on-accent uppercase max-sm:hidden"
       >
         next
       </span>
@@ -86,7 +86,7 @@
       </c-side-navigation>
 
       <main
-        class="min-w-0 max-w-280 flex-1 px-5 pb-12 pt-6 md:px-12 md:pb-16 md:pt-8"
+        class="max-w-280 min-w-0 flex-1 px-5 pt-6 pb-12 md:px-12 md:pt-8 md:pb-16"
       >
         <nuxt-page />
       </main>

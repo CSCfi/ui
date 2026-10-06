@@ -65,8 +65,8 @@ const progress = tv({
     singleLine: false,
   },
   slots: {
-    bar: 'relative basis-full h-2 w-[calc(100%-8px)] m-1 overflow-hidden rounded-2xl opacity-75 transform-gpu bg-surface-muted shadow-[0_0_0_4px_var(--c-surface-muted)] focus-within:outline-2 focus-within:outline-solid focus-within:outline-primary focus-within:outline-offset-6',
-    details: 'basis-full mt-0.5 pl-4 text-sm text-end whitespace-nowrap',
+    bar: 'relative m-1 h-2 w-[calc(100%-8px)] basis-full transform-gpu overflow-hidden rounded-2xl bg-surface-muted opacity-75 shadow-[0_0_0_4px_var(--c-surface-muted)] focus-within:outline-2 focus-within:outline-offset-6 focus-within:outline-primary focus-within:outline-solid',
+    details: 'mt-0.5 basis-full pl-4 text-end text-sm whitespace-nowrap',
     // 16px design height minus 2×4px border = 8px (h-2); 100% minus 2×4px (w-...).
     root: 'flex flex-wrap items-center',
   },

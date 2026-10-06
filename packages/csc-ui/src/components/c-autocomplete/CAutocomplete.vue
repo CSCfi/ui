@@ -644,44 +644,44 @@ const autocomplete = tv({
     selectAll: false,
   },
   slots: {
-    card: 'flex flex-col min-w-[180px] max-h-[80vh] overflow-hidden rounded-csc-md bg-surface-overlay shadow-[2px_4px_10px_#00000029]',
-    check: 'w-4 h-4 shrink-0 fill-current ml-auto text-primary',
+    card: 'flex max-h-[80vh] min-w-[180px] flex-col overflow-hidden rounded-csc-md bg-surface-overlay shadow-[2px_4px_10px_#00000029]',
+    check: 'ml-auto h-4 w-4 shrink-0 fill-current text-primary',
     chevron:
       'inline-flex rotate-0 transition-transform duration-300 ease-in-out',
-    content: 'relative flex items-center w-full min-w-0',
-    info: 'flex items-center flex-nowrap gap-2 text-sm min-h-[42px] px-[10px] w-full cursor-default whitespace-nowrap text-on-surface-muted',
-    infoIcon: 'w-[18px] h-[18px] shrink-0 fill-current text-warning',
+    content: 'relative flex w-full min-w-0 items-center',
+    info: 'flex min-h-[42px] w-full cursor-default flex-nowrap items-center gap-2 px-[10px] text-sm whitespace-nowrap text-on-surface-muted',
+    infoIcon: 'h-[18px] w-[18px] shrink-0 fill-current text-warning',
     input:
-      'max-h-8 py-2 bg-transparent border-0 text-on-surface flex-[1_1_auto] [font-family:var(--c-font-family)] text-base leading-5 max-w-full min-w-0 w-full cursor-pointer outline-none focus:outline-none active:outline-none placeholder:text-on-surface-muted placeholder:opacity-100',
-    item: 'flex items-center flex-nowrap gap-3 cursor-pointer text-sm min-h-[42px] outline-none px-[10px] py-2 whitespace-nowrap w-full rounded select-none data-[active]:bg-primary-subtle data-[active]:text-primary data-[active]:ring-1 data-[active]:ring-inset data-[active]:ring-primary text-on-surface',
+      'max-h-8 w-full max-w-full min-w-0 flex-[1_1_auto] cursor-pointer border-0 bg-transparent py-2 [font-family:var(--c-font-family)] text-base leading-5 text-on-surface outline-none placeholder:text-on-surface-muted placeholder:opacity-100 focus:outline-none active:outline-none',
+    item: 'flex min-h-[42px] w-full cursor-pointer flex-nowrap items-center gap-3 rounded px-[10px] py-2 text-sm whitespace-nowrap text-on-surface outline-none select-none data-[active]:bg-primary-subtle data-[active]:text-primary data-[active]:ring-1 data-[active]:ring-primary data-[active]:ring-inset',
     itemLabel: 'flex-auto overflow-hidden text-ellipsis whitespace-nowrap',
-    list: 'list-none m-0 mt-1 p-1 outline-none overflow-y-auto scrollbar-hidden w-full overscroll-none',
+    list: 'm-0 mt-1 w-full scrollbar-hidden list-none overflow-y-auto overscroll-none p-1 outline-none',
     panel:
-      'fixed m-0 p-0 border-0 bg-transparent overflow-visible [inset:auto]',
+      'fixed [inset:auto] m-0 overflow-visible border-0 bg-transparent p-0',
     // The trailing controls' box: pulled 6px into the field's padding so
     // the 28px button reads flush with the value's right edge.
-    post: 'inline-flex items-center -mr-1.5',
+    post: '-mr-1.5 inline-flex items-center',
     search:
-      'flex items-center gap-2 min-h-11 px-3 border-b border-solid border-divider',
-    searchIcon: 'w-[18px] h-[18px] shrink-0 fill-current text-on-surface-muted',
+      'flex min-h-11 items-center gap-2 border-b border-solid border-divider px-3',
+    searchIcon: 'h-[18px] w-[18px] shrink-0 fill-current text-on-surface-muted',
     searchInput:
-      'bg-transparent border-0 outline-none w-full py-2 text-base leading-5 text-on-surface [font-family:var(--c-font-family)] [caret-color:var(--c-primary)] placeholder:text-on-surface-muted placeholder:opacity-100',
+      'w-full border-0 bg-transparent py-2 [font-family:var(--c-font-family)] text-base leading-5 text-on-surface [caret-color:var(--c-primary)] outline-none placeholder:text-on-surface-muted placeholder:opacity-100',
     // A long option label ellipsises inside its tag instead of blowing out
     // the row.
-    tagLabel: 'truncate min-w-0',
+    tagLabel: 'min-w-0 truncate',
     // The tag row wraps; `py-2` gives a one-row tag field its own rhythm
     // (default tag 28px + 16px, small tag 20px + 16px — the small box exactly,
     // centred in the 52px default box). Wrapping lives here, not on the
     // content row, so the clear/chevron stay centred.
-    tags: 'flex flex-wrap items-center gap-1 py-2 flex-1 min-w-0',
+    tags: 'flex min-w-0 flex-1 flex-wrap items-center gap-1 py-2',
     visuallyHidden:
-      'absolute w-px h-px p-0 overflow-hidden border-0 [clip:rect(1px,1px,1px,1px)]',
+      'absolute h-px w-px overflow-hidden border-0 p-0 [clip:rect(1px,1px,1px,1px)]',
   },
   variants: {
     chevronActive: { true: { chevron: 'rotate-180' } },
     disabled: {
       true: {
-        item: 'cursor-default pointer-events-none bg-on-surface/5 [filter:grayscale(1)_opacity(0.75)] data-[active]:bg-on-surface/5 data-[active]:text-inherit data-[active]:ring-0',
+        item: 'pointer-events-none cursor-default bg-on-surface/5 [filter:grayscale(1)_opacity(0.75)] data-[active]:bg-on-surface/5 data-[active]:text-inherit data-[active]:ring-0',
       },
     },
     // The fullscreen panel (CONTEXT.md, ADR-0050): the panel is the surface —
@@ -692,8 +692,8 @@ const autocomplete = tv({
     fullscreen: {
       true: {
         card: 'max-h-none rounded-none shadow-none',
-        list: 'flex-1 min-h-0',
-        panel: 'bg-surface-overlay overflow-hidden',
+        list: 'min-h-0 flex-1',
+        panel: 'overflow-hidden bg-surface-overlay',
       },
     },
     // While tags render, the readonly combobox is visually hidden (clip) but
@@ -701,7 +701,7 @@ const autocomplete = tv({
     inputHidden: {
       true: {
         input:
-          'absolute w-px h-px p-0 m-0 overflow-hidden whitespace-nowrap border-0 [clip:rect(0_0_0_0)]',
+          'absolute m-0 h-px w-px overflow-hidden border-0 p-0 whitespace-nowrap [clip:rect(0_0_0_0)]',
       },
     },
     // The pinned select-all row (ADR-0046): sticks to the list's top edge on
@@ -713,7 +713,7 @@ const autocomplete = tv({
     // row indicators that scroll beneath it from painting over it.
     selectAll: {
       true: {
-        item: 'sticky top-0 z-10 -mx-1 mb-1 w-auto px-[14px] rounded-none bg-surface-overlay border-b border-solid border-divider',
+        item: 'sticky top-0 z-10 -mx-1 mb-1 w-auto rounded-none border-b border-solid border-divider bg-surface-overlay px-[14px]',
         list: 'pt-0',
       },
     },

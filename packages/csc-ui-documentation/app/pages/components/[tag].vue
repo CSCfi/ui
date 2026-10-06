@@ -7,7 +7,7 @@
 
       <p
         v-if="parentView.description"
-        class="my-[1em] max-w-[45rem] whitespace-pre-line text-[1.0625rem] text-on-surface-muted"
+        class="my-[1em] max-w-[45rem] text-[1.0625rem] whitespace-pre-line text-on-surface-muted"
       >
         {{ parentView.description }}
       </p>

@@ -51,7 +51,7 @@ const logo = tv({
   slots: {
     clipRect: 'fill-none',
     magentaMark: 'fill-logo-magenta',
-    root: 'block mt-1',
+    root: 'mt-1 block',
     tealMark: 'fill-logo-teal',
     wordmark: 'fill-logo-wordmark',
   },

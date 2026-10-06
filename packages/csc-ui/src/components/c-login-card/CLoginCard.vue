@@ -123,7 +123,7 @@ const loginCard = tv({
   },
   slots: {
     card: 'relative flex w-full rounded-csc-lg [box-shadow:rgba(0,0,0,0.15)_0_10px_20px,rgba(0,0,0,0.2)_0_5px_5px]',
-    content: 'flex w-full max-w-[85%] flex-col gap-6 p-[72px] mb-8',
+    content: 'mb-8 flex w-full max-w-[85%] flex-col gap-6 p-[72px]',
     image:
       "absolute top-0 left-0 h-full w-full overflow-hidden rounded-csc-lg bg-cover [clip-path:url('#cLoginClipPath')]",
     root: 'flex w-full rounded-csc-lg bg-surface text-on-surface',
@@ -131,13 +131,13 @@ const loginCard = tv({
   variants: {
     hasImage: {
       false: {
-        content: 'max-w-full mb-0',
+        content: 'mb-0 max-w-full',
       },
     },
     mobile: {
       true: {
         content: 'max-w-full p-10',
-        image: 'top-auto bottom-0 w-full rounded-b-md rounded-t-none',
+        image: 'top-auto bottom-0 w-full rounded-t-none rounded-b-md',
         // `c-login-card--mobile` is the marker the ::slotted escape-hatch rule
         // keys off (it must sit on an ancestor of the slot in this shadow root).
         root: 'c-login-card--mobile',

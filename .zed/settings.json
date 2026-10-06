@@ -31,7 +31,13 @@
       ]
     },
     "Vue.js": {
-      "language_servers": ["vue-language-server", "oxlint", "oxfmt", "eslint", "..."],
+      "language_servers": [
+        "vue-language-server",
+        "oxlint",
+        "oxfmt",
+        "eslint",
+        "..."
+      ],
       "format_on_save": "on",
       "prettier": { "allowed": false },
       "formatter": [

@@ -273,7 +273,7 @@ const button = tv({
     // ---- ghost -----------------------------------------------------------
     {
       class: {
-        root: 'bg-primary/8 text-primary hover:bg-primary/15 active:bg-primary/22 focus-visible:outline-primary',
+        root: 'bg-primary/8 text-primary hover:bg-primary/15 focus-visible:outline-primary active:bg-primary/22',
       },
       ghost: true,
       inverted: false,
@@ -303,14 +303,14 @@ const button = tv({
     // ---- outlined --------------------------------------------------------
     {
       class: {
-        root: 'bg-transparent text-primary ring-2 ring-inset ring-primary hover:bg-primary/15 focus-visible:outline-primary',
+        root: 'bg-transparent text-primary ring-2 ring-primary ring-inset hover:bg-primary/15 focus-visible:outline-primary',
       },
       inverted: false,
       outlined: true,
     },
     {
       class: {
-        root: 'bg-transparent text-inverse-on ring-2 ring-inset ring-inverse-on hover:bg-inverse-on/30 focus-visible:outline-inverse-on',
+        root: 'bg-transparent text-inverse-on ring-2 ring-inverse-on ring-inset hover:bg-inverse-on/30 focus-visible:outline-inverse-on',
       },
       inverted: true,
       outlined: true,
@@ -393,7 +393,7 @@ const button = tv({
     },
     {
       class: {
-        root: 'bg-transparent text-on-surface-faint ring-2 ring-inset ring-border hover:bg-transparent',
+        root: 'bg-transparent text-on-surface-faint ring-2 ring-border ring-inset hover:bg-transparent',
       },
       disabled: true,
       inverted: false,
@@ -401,7 +401,7 @@ const button = tv({
     },
     {
       class: {
-        root: 'bg-transparent text-inverse-on/40 ring-2 ring-inset ring-inverse-on/40 hover:bg-transparent',
+        root: 'bg-transparent text-inverse-on/40 ring-2 ring-inverse-on/40 ring-inset hover:bg-transparent',
       },
       disabled: true,
       inverted: true,
@@ -422,28 +422,28 @@ const button = tv({
     text: false,
   },
   slots: {
-    content: 'grid items-stretch w-full font-bold select-none',
+    content: 'grid w-full items-stretch font-bold select-none',
     contentInner:
       'flex items-center justify-center gap-2 whitespace-nowrap transition-opacity duration-200',
-    description: 'font-normal text-xs px-3 pb-3 text-left',
+    description: 'px-3 pb-3 text-left text-xs font-normal',
     iconWrap: 'inline-flex items-center fill-current',
-    loader: 'absolute inset-0 grid place-content-center pointer-events-none',
+    loader: 'pointer-events-none absolute inset-0 grid place-content-center',
     ripple:
-      'absolute rounded-full bg-current pointer-events-none transition-[transform,opacity] duration-[600ms] ease-out',
+      'pointer-events-none absolute rounded-full bg-current transition-[transform,opacity] duration-[600ms] ease-out',
     // The clip follows the root's corners: `border-radius` inherits, but
     // `corner-shape` (the squircle of `rounded-csc-md`) does not, so it is
     // inherited explicitly — a round clip inside a squircle let the ripple
     // bleed past the painted corner.
     ripples:
-      'absolute inset-0 overflow-hidden pointer-events-none rounded-[inherit] [corner-shape:inherit]',
+      'pointer-events-none absolute inset-0 overflow-hidden rounded-[inherit] [corner-shape:inherit]',
     // `root` is the public part; the host itself is `display:contents`.
     // Set only `font-family` (via the `--c-font-family` token, consistent with
     // every other component) — native buttons don't inherit it. Font *size* is
     // owned by the `size` variant's `text-*` (and consumer overrides);
     // inheriting the whole `font` shorthand would reset it.
-    root: 'inline-grid place-items-center relative min-w-22 rounded-csc-md border-0 m-0 p-0 [font-family:var(--c-font-family)] no-underline cursor-pointer transform-gpu transition-colors duration-300 ease-in-out outline-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-solid',
+    root: 'relative m-0 inline-grid min-w-22 transform-gpu cursor-pointer place-items-center rounded-csc-md border-0 p-0 [font-family:var(--c-font-family)] no-underline transition-colors duration-300 ease-in-out outline-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-solid',
     spinner:
-      'inline-block border-2 border-solid border-current border-r-transparent rounded-full animate-spin',
+      'inline-block animate-spin rounded-full border-2 border-solid border-current border-r-transparent',
   },
   variants: {
     active: { true: '' },

@@ -64,10 +64,10 @@ const listItem = tv({
   },
   slots: {
     ripple:
-      'absolute rounded-full bg-current pointer-events-none transition-[transform,opacity] duration-[600ms] ease-out',
+      'pointer-events-none absolute rounded-full bg-current transition-[transform,opacity] duration-[600ms] ease-out',
     ripples:
-      'absolute inset-0 overflow-hidden pointer-events-none rounded-[inherit]',
-    root: 'flex items-center gap-4 min-h-[42px] p-3 w-full relative overflow-hidden rounded text-on-surface-muted no-underline',
+      'pointer-events-none absolute inset-0 overflow-hidden rounded-[inherit]',
+    root: 'relative flex min-h-[42px] w-full items-center gap-4 overflow-hidden rounded p-3 text-on-surface-muted no-underline',
     // Layout-neutral wrapper: display:contents so the wrapped <slot> is itself
     // the flex item of `root`. Only exists so v-show can collapse an empty
     // named slot (Vue forbids v-show on a <slot> outlet directly).

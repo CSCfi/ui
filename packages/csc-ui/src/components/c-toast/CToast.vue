@@ -124,22 +124,22 @@ const toast = tv({
   },
   slots: {
     badge: 'grid size-8 shrink-0 place-items-center rounded-full',
-    box: 'grid items-center min-h-[52px] w-full box-border p-2 pl-3 rounded-csc-lg bg-surface-inverted text-on-surface-inverted',
+    box: 'box-border grid min-h-[52px] w-full items-center rounded-csc-lg bg-surface-inverted p-2 pl-3 text-on-surface-inverted',
     content: 'text-on-surface-inverted-muted',
     custom: '',
     dismiss:
       'grid size-8 shrink-0 cursor-pointer place-items-center rounded-full border-0 bg-transparent p-0 text-on-surface-inverted-muted transition-colors duration-150 hover:bg-on-surface-inverted/10 hover:text-on-surface-inverted focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-on-surface-inverted',
     icon: 'size-5 shrink-0',
-    item: 'grid items-center gap-3 grid-cols-[32px_1fr] auto-cols-auto grid-flow-col',
+    item: 'grid auto-cols-auto grid-flow-col grid-cols-[32px_1fr] items-center gap-3',
     progress:
-      'bg-on-surface-inverted/15 rounded-lg h-1.5 mt-2 overflow-hidden [transform:translateZ(0)]',
+      'mt-2 h-1.5 [transform:translateZ(0)] overflow-hidden rounded-lg bg-on-surface-inverted/15',
     // The animation (keyframes + host-hover-driven play-state) lives in the
     // escape-hatch sheet keyed off the static `.c-toast__progress__bar` class.
     // Neutral on purpose: the badge carries the status colour.
     progressBar: 'h-1.5 w-full rounded-lg bg-on-surface-inverted',
     title: 'm-0 font-semibold text-on-surface-inverted',
     visuallyHidden:
-      'absolute w-px h-px overflow-hidden p-0 border-0 [clip:rect(1px,1px,1px,1px)]',
+      'absolute h-px w-px overflow-hidden border-0 p-0 [clip:rect(1px,1px,1px,1px)]',
   },
   variants: {
     // The dismiss button grows from an icon circle into a labelled pill when

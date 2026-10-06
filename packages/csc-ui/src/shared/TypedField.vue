@@ -119,23 +119,23 @@ import { type TypedField } from './useTypedField';
 
 const typedField = tv({
   slots: {
-    content: 'flex items-center w-full min-w-0 gap-1',
+    content: 'flex w-full min-w-0 items-center gap-1',
     // The value text colour is set explicitly, as in c-text-field: c-input
     // drives an inheritable `color` for its state cascade.
     input:
-      'c-typed-field__input bg-transparent border-0 outline-none m-0 [font:inherit] text-base leading-5 text-on-surface disabled:text-on-surface-muted [caret-color:var(--c-primary)] flex-auto min-w-0 w-full py-2 max-h-8 tabular-nums',
+      'c-typed-field__input m-0 max-h-8 w-full min-w-0 flex-auto border-0 bg-transparent py-2 text-base leading-5 text-on-surface tabular-nums [caret-color:var(--c-primary)] outline-none [font:inherit] disabled:text-on-surface-muted',
     // The trailing controls' box, pulled into the field's padding so the
     // panel button's icon ends 10px inside the border: the 40px button's
     // 24px icon pulled 10px, a small field's 28px button's 20px icon 6px.
-    post: 'inline-flex items-center gap-0.5 -mr-2.5',
-    separator: 'shrink-0 mx-1 text-on-surface-muted',
+    post: '-mr-2.5 inline-flex items-center gap-0.5',
+    separator: 'mx-1 shrink-0 text-on-surface-muted',
   },
   variants: {
     hidden: { true: { separator: 'invisible' } },
     small: { true: { post: '-mr-1.5' } },
     // The range start is as wide as its text, so the separator follows it
     // with even space both sides; the end input fills the rest.
-    start: { true: { input: 'flex-none w-auto [field-sizing:content]' } },
+    start: { true: { input: '[field-sizing:content] w-auto flex-none' } },
   },
 });
 

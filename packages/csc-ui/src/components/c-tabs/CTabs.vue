@@ -155,7 +155,7 @@ const tabs = tv({
     // selectors in the escape-hatch <style>.
     container: 'grid items-center gap-1',
     content: 'flex',
-    scroll: 'flex m-0 p-0 relative grow',
+    scroll: 'relative m-0 flex grow p-0',
     // `tabs` is the viewport the translated `scroll` track hides behind, so it
     // must keep clipping. `p-1 -m-1` insets the clip 4px at no layout cost —
     // room for a tab's 2px focus outline at its 2px offset — and the 6px
@@ -172,7 +172,7 @@ const tabs = tv({
     // this box then outgrows its grid cell instead of clipping, and in buttons
     // mode the strip's frame is no longer squeezed to the row (CTabButtons
     // spec: "the strip is squeezed to the tab row, not clipped by it").
-    tabs: 'flex overflow-clip [overflow-clip-margin:6px] min-w-0 p-1 relative -m-1',
+    tabs: 'relative -m-1 flex min-w-0 overflow-clip p-1 [overflow-clip-margin:6px]',
   },
 });
 

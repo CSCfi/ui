@@ -41,7 +41,7 @@ const link = tv({
     underline: false,
   },
   slots: {
-    root: 'inline-flex items-center justify-start gap-2 bg-transparent text-link text-[length:inherit] no-underline cursor-pointer transition-colors duration-300 ease-in-out hover:bg-link-subtle outline-none focus-visible:outline-2 focus-visible:outline-solid focus-visible:outline-link focus-visible:outline-offset-4 focus-visible:rounded-[2px]',
+    root: 'inline-flex cursor-pointer items-center justify-start gap-2 bg-transparent text-[length:inherit] text-link no-underline transition-colors duration-300 ease-in-out outline-none hover:bg-link-subtle focus-visible:rounded-[2px] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-link focus-visible:outline-solid',
   },
   variants: {
     underline: { true: { root: 'underline' } },

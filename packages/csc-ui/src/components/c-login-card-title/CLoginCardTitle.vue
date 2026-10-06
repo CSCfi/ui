@@ -29,7 +29,7 @@ import { computed } from 'vue';
  */
 const cardTitle = tv({
   slots: {
-    root: 'block m-0 text-[length:var(--_c-login-card-title-font-size,40px)]/[1.375] font-bold text-balance text-primary [font-family:var(--c-font-family)]',
+    root: 'm-0 block [font-family:var(--c-font-family)] text-[length:var(--_c-login-card-title-font-size,40px)]/[1.375] font-bold text-balance text-primary',
   },
 });
 

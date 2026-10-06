@@ -104,13 +104,13 @@ const modal = tv({
     // transition for the first-in / last-out modal; switches within a stack
     // are instant (see `instant` variant) so the dim level stays flat.
     backdrop:
-      'fixed inset-0 bg-scrim/50 opacity-0 pointer-events-none transition-opacity duration-300 motion-reduce:transition-none',
+      'pointer-events-none fixed inset-0 bg-scrim/50 opacity-0 transition-opacity duration-300 motion-reduce:transition-none',
     // The native <dialog> is the positioned overlay box. It must not be
     // `display:contents`, so the box lives on this element (not the host).
     // `outline-none`: the dialog is a focus start point (tabindex="-1"
     // fallback), not an interactive control — without it the UA paints a
     // :focus-visible ring around the whole modal box.
-    root: 'block fixed inset-0 m-auto p-0 border-0 outline-none bg-transparent overflow-visible rounded-csc-xl max-w-[calc(100%-32px)] w-[var(--_c-modal-width,600px)] text-on-surface-muted',
+    root: 'fixed inset-0 m-auto block w-[var(--_c-modal-width,600px)] max-w-[calc(100%-32px)] overflow-visible rounded-csc-xl border-0 bg-transparent p-0 text-on-surface-muted outline-none',
   },
   variants: {
     blur: {
@@ -120,7 +120,7 @@ const modal = tv({
       true: { backdrop: 'transition-none' },
     },
     visible: {
-      true: { backdrop: 'opacity-100 pointer-events-auto' },
+      true: { backdrop: 'pointer-events-auto opacity-100' },
     },
   },
 });

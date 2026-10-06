@@ -88,7 +88,7 @@ const loginCardActions = tv({
     justify: 'start',
   },
   slots: {
-    actions: 'm-0 p-0 flex gap-2 items-center',
+    actions: 'm-0 flex items-center gap-2 p-0',
     root: 'block p-0',
   },
   variants: {

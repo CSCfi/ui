@@ -99,7 +99,7 @@ const radio = tv({
     // separate CSS `scale` property and would survive the escape-hatch
     // `transform: scale(1)`, pinning the dot permanently invisible).
     indicator:
-      "absolute top-[11px] left-[11px] h-5 w-5 bg-transparent rounded-full shadow-[inset_0_0_0_2px_currentColor] transition-shadow duration-150 ease-in-out before:content-[''] before:pointer-events-none before:absolute before:-inset-[13px] before:rounded-full before:border-2 before:border-current before:opacity-0 after:content-[''] after:absolute after:top-[5px] after:left-[5px] after:h-2.5 after:w-2.5 after:rounded-full after:bg-current after:[transform:scale(0)] after:transition-transform after:duration-150 after:ease-in-out",
+      "absolute top-[11px] left-[11px] h-5 w-5 rounded-full bg-transparent shadow-[inset_0_0_0_2px_currentColor] transition-shadow duration-150 ease-in-out before:pointer-events-none before:absolute before:-inset-[13px] before:rounded-full before:border-2 before:border-current before:opacity-0 before:content-[''] after:absolute after:top-[5px] after:left-[5px] after:h-2.5 after:w-2.5 after:[transform:scale(0)] after:rounded-full after:bg-current after:transition-transform after:duration-150 after:ease-in-out after:content-['']",
     // Visually hidden but keyboard/screen-reader accessible — standard pattern
     // for hiding the underlying native radio.
     input:
@@ -113,14 +113,14 @@ const radio = tv({
     // Clips the ripple to the circle so the indicator's focus halo (which
     // overhangs the surface by 2px) is not clipped with it.
     rippleLayer:
-      'pointer-events-none absolute inset-0 rounded-full overflow-hidden',
-    root: 'flex items-start relative cursor-pointer text-base select-none gap-1 leading-[1.2]',
+      'pointer-events-none absolute inset-0 overflow-hidden rounded-full',
+    root: 'relative flex cursor-pointer items-start gap-1 text-base leading-[1.2] select-none',
     // 42px circular ripple surface around the radio ring. Purely internal (no
     // part). Colour comes from the escape-hatch `--_c-radio-color` rule (a
     // var() fallback chain is not a utility). Does NOT clip: the indicator's
     // focus halo overhangs it by 2px; clipping is the `rippleLayer`'s job.
     surface:
-      'inline-block relative h-[42px] w-[42px] min-w-[42px] rounded-full transition-colors duration-200 ease-in-out',
+      'relative inline-block h-[42px] w-[42px] min-w-[42px] rounded-full transition-colors duration-200 ease-in-out',
   },
 });
 

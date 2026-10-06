@@ -86,7 +86,7 @@ defineOptions({ inheritAttrs: false });
  */
 const toasts = tv({
   slots: {
-    root: 'grid gap-3 grid-cols-[1fr] p-3',
+    root: 'grid grid-cols-[1fr] gap-3 p-3',
   },
 });
 

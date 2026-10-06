@@ -58,7 +58,7 @@ const status = tv({
     type: '',
   },
   slots: {
-    root: 'inline-flex items-center justify-center overflow-hidden relative min-h-6 min-w-[88px] px-4 py-1 rounded-csc-md text-sm leading-none ring-1 ring-inset ring-current bg-surface-muted text-on-surface-muted',
+    root: 'relative inline-flex min-h-6 min-w-[88px] items-center justify-center overflow-hidden rounded-csc-md bg-surface-muted px-4 py-1 text-sm leading-none text-on-surface-muted ring-1 ring-current ring-inset',
   },
   variants: {
     type: {

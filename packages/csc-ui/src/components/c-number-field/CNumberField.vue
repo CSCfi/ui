@@ -300,10 +300,10 @@ const numberField = tv({
     // The input typography of c-text-field's input, so the two line up in
     // a form.
     input:
-      'c-number-field__input bg-transparent border-0 outline-none m-0 [font:inherit] text-base leading-5 text-on-surface disabled:text-on-surface-muted [caret-color:var(--c-primary)] flex-auto min-w-0 w-full max-w-full py-2 max-h-8 [font-variant-numeric:tabular-nums]',
+      'c-number-field__input m-0 max-h-8 w-full max-w-full min-w-0 flex-auto border-0 bg-transparent py-2 text-base leading-5 text-on-surface [font-variant-numeric:tabular-nums] [caret-color:var(--c-primary)] outline-none [font:inherit] disabled:text-on-surface-muted',
     post: 'inline-flex items-center gap-1',
     stepButton:
-      'inline-flex items-center justify-center w-8 h-6 p-0 border-none bg-transparent text-[inherit] cursor-pointer rounded-csc-sm select-none [touch-action:manipulation] [-webkit-tap-highlight-color:transparent] transition-colors duration-200 ease-in-out hover:not-disabled:bg-primary-subtle-hover disabled:cursor-not-allowed disabled:opacity-50',
+      'inline-flex h-6 w-8 cursor-pointer [touch-action:manipulation] items-center justify-center rounded-csc-sm border-none bg-transparent p-0 text-[inherit] transition-colors duration-200 ease-in-out select-none [-webkit-tap-highlight-color:transparent] hover:not-disabled:bg-primary-subtle-hover disabled:cursor-not-allowed disabled:opacity-50',
     stepIcon: 'size-5 fill-current',
     // Stacked halves of a 48px column at the default size (24px targets,
     // WCAG 2.5.8); side by side at `small`, where halves of 36px would fall

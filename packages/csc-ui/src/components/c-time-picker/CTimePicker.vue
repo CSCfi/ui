@@ -469,27 +469,27 @@ type CTimePickerRow = {
 const timePicker = tv({
   slots: {
     actions: 'flex shrink-0 justify-end px-2 pb-2',
-    card: 'flex flex-col w-max overflow-hidden rounded-csc-md bg-surface-overlay text-on-surface shadow-[2px_4px_10px_#00000029]',
+    card: 'flex w-max flex-col overflow-hidden rounded-csc-md bg-surface-overlay text-on-surface shadow-[2px_4px_10px_#00000029]',
     // Ceiling 7.2 rows; the peek cap ends each column on a half row.
     column:
-      'relative list-none m-0 p-1 w-16 max-h-[296px] overflow-y-auto scrollbar-hidden overscroll-contain outline-none',
+      'relative m-0 max-h-[296px] w-16 scrollbar-hidden list-none overflow-y-auto overscroll-contain p-1 outline-none',
     columns: 'flex justify-center gap-1 p-2',
     // c-button's filled look on a native button, at the heading row's 44px
     // touch target.
-    done: 'ml-auto h-11 min-w-22 px-5 cursor-pointer rounded-csc-md border-0 bg-primary text-sm font-bold text-on-primary [font-family:var(--c-font-family)] outline-none hover:bg-primary-hover focus-visible:outline-2 focus-visible:outline-solid focus-visible:outline-offset-2 focus-visible:outline-primary',
+    done: 'ml-auto h-11 min-w-22 cursor-pointer rounded-csc-md border-0 bg-primary px-5 [font-family:var(--c-font-family)] text-sm font-bold text-on-primary outline-none hover:bg-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary focus-visible:outline-solid',
     endSwitch:
-      'flex gap-0.5 mx-3 mt-3 p-0.5 rounded-csc-lg border border-solid border-divider bg-clip-padding bg-surface-sunken',
+      'mx-3 mt-3 flex gap-0.5 rounded-csc-lg border border-solid border-divider bg-surface-sunken bg-clip-padding p-0.5',
     // Tab lands on the selected tab, so its ring is on-primary inside the
     // fill: a primary ring would vanish into it.
     endTab:
-      'flex-1 h-8 px-3 whitespace-nowrap cursor-pointer rounded-csc-md border-0 bg-transparent text-sm font-medium text-on-surface-muted [font-family:var(--c-font-family)] outline-none hover:bg-primary-subtle-hover focus-visible:outline-2 focus-visible:outline-solid focus-visible:-outline-offset-2 focus-visible:outline-primary aria-selected:bg-primary aria-selected:text-on-primary aria-selected:hover:bg-primary-hover aria-selected:focus-visible:-outline-offset-4 aria-selected:focus-visible:outline-on-primary',
+      'h-8 flex-1 cursor-pointer rounded-csc-md border-0 bg-transparent px-3 [font-family:var(--c-font-family)] text-sm font-medium whitespace-nowrap text-on-surface-muted outline-none hover:bg-primary-subtle-hover focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-primary focus-visible:outline-solid aria-selected:bg-primary aria-selected:text-on-primary aria-selected:hover:bg-primary-hover aria-selected:focus-visible:-outline-offset-4 aria-selected:focus-visible:outline-on-primary',
     // A text button's look on a native button: the focus trap only sees
     // native buttons in the card.
-    now: 'h-9 px-3 whitespace-nowrap cursor-pointer rounded-csc-md border-0 bg-transparent text-sm font-bold text-primary [font-family:var(--c-font-family)] outline-none hover:not-disabled:bg-primary-subtle-hover focus-visible:outline-2 focus-visible:outline-solid focus-visible:-outline-offset-2 focus-visible:outline-primary disabled:cursor-default disabled:text-on-surface-disabled',
+    now: 'h-9 cursor-pointer rounded-csc-md border-0 bg-transparent px-3 [font-family:var(--c-font-family)] text-sm font-bold whitespace-nowrap text-primary outline-none hover:not-disabled:bg-primary-subtle-hover focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-primary focus-visible:outline-solid disabled:cursor-default disabled:text-on-surface-disabled',
     option:
-      'flex items-center justify-center h-10 rounded-csc-lg text-sm tabular-nums text-on-surface cursor-pointer select-none outline-none hover:bg-primary-subtle-hover focus-visible:outline-2 focus-visible:outline-solid focus-visible:-outline-offset-2 focus-visible:outline-primary aria-selected:bg-primary-subtle aria-selected:text-primary aria-selected:font-medium',
+      'flex h-10 cursor-pointer items-center justify-center rounded-csc-lg text-sm text-on-surface tabular-nums outline-none select-none hover:bg-primary-subtle-hover focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-primary focus-visible:outline-solid aria-selected:bg-primary-subtle aria-selected:font-medium aria-selected:text-primary',
     panel:
-      'fixed m-0 p-0 border-0 bg-transparent overflow-visible [inset:auto]',
+      'fixed [inset:auto] m-0 overflow-visible border-0 bg-transparent p-0',
   },
   variants: {
     disabled: {
@@ -500,12 +500,12 @@ const timePicker = tv({
     fullscreen: {
       true: {
         actions:
-          'w-full max-w-[400px] mx-auto justify-between items-center px-3 pb-3',
-        card: 'w-auto max-h-none rounded-none shadow-none',
-        column: 'max-h-none h-full',
-        columns: 'flex-1 min-h-0',
+          'mx-auto w-full max-w-[400px] items-center justify-between px-3 pb-3',
+        card: 'max-h-none w-auto rounded-none shadow-none',
+        column: 'h-full max-h-none',
+        columns: 'min-h-0 flex-1',
         now: 'h-11',
-        panel: 'bg-surface-overlay overflow-hidden',
+        panel: 'overflow-hidden bg-surface-overlay',
       },
     },
   },

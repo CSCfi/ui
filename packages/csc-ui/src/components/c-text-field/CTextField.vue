@@ -414,7 +414,7 @@ const textField = tv({
     // padded 36px line box to `max-h-8` and centres its text in what is
     // left, so the guide is one unpadded line centred in the shared cell.
     guide:
-      'c-text-field__guide [grid-area:1/1] self-center m-0 [font:inherit] text-base leading-5 min-w-0 overflow-hidden whitespace-pre pointer-events-none select-none text-on-surface-faint',
+      'c-text-field__guide pointer-events-none m-0 min-w-0 self-center overflow-hidden text-base leading-5 whitespace-pre text-on-surface-faint select-none [font:inherit] [grid-area:1/1]',
     // Shared input/textarea reset + typography. `font: inherit` then an
     // explicit 16px/20px to match the original; caret colour is the active
     // token. Tailwind's preflight zeroes input padding, so padding is set
@@ -428,18 +428,18 @@ const textField = tv({
     // their own `color: var(--_c-input-text-color)` for exactly this reason.
     // `disabled:` matches the original's tertiary disabled value colour.
     input:
-      'c-text-field__input [grid-area:1/1] bg-transparent border-0 outline-none m-0 [font:inherit] text-base leading-5 text-on-surface disabled:text-on-surface-muted [caret-color:var(--c-primary)] flex-auto min-w-0 w-full max-w-full py-2 max-h-8',
+      'c-text-field__input m-0 max-h-8 w-full max-w-full min-w-0 flex-auto border-0 bg-transparent py-2 text-base leading-5 text-on-surface [caret-color:var(--c-primary)] outline-none [font:inherit] [grid-area:1/1] disabled:text-on-surface-muted',
     post: 'inline-flex items-center gap-1',
     textarea:
-      'c-text-field__textarea bg-transparent border-0 outline-none [font:inherit] text-base leading-5 text-on-surface disabled:text-on-surface-muted [caret-color:var(--c-primary)] flex-auto min-w-0 w-full max-w-full m-0 pt-3 pr-3 pb-2 pl-0 min-h-11 resize-y whitespace-pre-wrap',
+      'c-text-field__textarea m-0 min-h-11 w-full max-w-full min-w-0 flex-auto resize-y border-0 bg-transparent pt-3 pr-3 pb-2 pl-0 text-base leading-5 whitespace-pre-wrap text-on-surface [caret-color:var(--c-primary)] outline-none [font:inherit] disabled:text-on-surface-muted',
     toggle:
-      'inline-flex items-center justify-center size-7 p-0 border-none bg-transparent text-[inherit] cursor-pointer rounded-full transition-colors duration-200 ease-in-out hover:not-disabled:bg-primary-subtle-hover focus:outline-none focus-visible:outline-2 focus-visible:outline-solid focus-visible:outline-primary focus-visible:outline-offset-2 disabled:cursor-not-allowed disabled:opacity-50',
+      'inline-flex size-7 cursor-pointer items-center justify-center rounded-full border-none bg-transparent p-0 text-[inherit] transition-colors duration-200 ease-in-out hover:not-disabled:bg-primary-subtle-hover focus:outline-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary focus-visible:outline-solid disabled:cursor-not-allowed disabled:opacity-50',
     toggleIcon: 'size-5',
   },
   variants: {
     masked: {
       false: { field: 'contents' },
-      true: { field: 'grid flex-auto min-w-0 w-full' },
+      true: { field: 'grid w-full min-w-0 flex-auto' },
     },
   },
 });
