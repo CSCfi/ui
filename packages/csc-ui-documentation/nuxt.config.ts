@@ -1,3 +1,5 @@
+import type { Plugin } from 'vite';
+
 import tailwindcss from '@tailwindcss/vite';
 import { readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
@@ -48,7 +50,7 @@ try {
 // server never renders them, `isCustomElement` stays intact for the real c-*
 // usage on pages, and the `?raw` source imports (code tabs, which DO render
 // server-side) are left untouched because they carry a query string.
-const stubExampleDemosInSsr: import('vite').Plugin = {
+const stubExampleDemosInSsr: Plugin = {
   enforce: 'pre',
   load(id) {
     if (id === '\0csc-example-demo-stub') return 'export default {}';

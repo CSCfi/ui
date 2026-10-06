@@ -95,6 +95,7 @@ export function resetTheme(families?: Family[]): void {
 
   const prefixes = families?.map((family) => `--c-${family}-`);
 
+  // oxlint-disable-next-line unicorn/no-useless-spread -- iterate a copy: the loop deletes from `applied`
   for (const name of [...applied]) {
     if (prefixes && !prefixes.some((prefix) => name.startsWith(prefix))) {
       continue;

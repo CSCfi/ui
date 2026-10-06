@@ -197,6 +197,7 @@ const panelButton = computed(() =>
     : { buttonSize: 'default' as const, iconSize: 24 },
 );
 
+/* eslint-disable vue/no-mutating-props -- `field` is the useTypedField handle: its refs are the shell's shared state, written here by design */
 const onFocusIn = () => {
   props.field.focused.value = true;
 };
@@ -218,4 +219,5 @@ const bindStart = (el: TemplateRefValue) => {
 const bindEnd = (el: TemplateRefValue) => {
   props.field.endInput.value = el as HTMLInputElement | null;
 };
+/* eslint-enable vue/no-mutating-props */
 </script>

@@ -347,6 +347,14 @@
       "rules": {
         "typescript/ban-ts-comment": "off"
       }
+    },
+    {
+      "files": [
+        "packages/csc-ui-documentation/app/examples/**/*.typescript.ts"
+      ],
+      "rules": {
+        "no-unused-vars": "off"
+      }
     }
   ]
 }

@@ -509,6 +509,7 @@ const doOpenSubmenu = (item: HTMLElement, focusFirst: boolean) => {
   cancelTimers(item);
 
   // Close any open submenu that is not on this item's ancestor path.
+  // oxlint-disable-next-line unicorn/no-useless-spread -- iterate a copy: closing a submenu deletes it from the set
   for (const open of [...openSubmenus]) {
     if (!activePath(item).includes(open)) scheduleCloseSubmenu(open);
   }
@@ -563,6 +564,7 @@ const scheduleCloseSubmenu = (item: HTMLElement) => {
 };
 
 const closeAllSubmenus = () => {
+  // oxlint-disable-next-line unicorn/no-useless-spread -- iterate a copy: closing a submenu deletes it from the set
   for (const open of [...openSubmenus]) doCloseSubmenu(open);
 
   openSubmenus.clear();
@@ -814,6 +816,7 @@ const onPointerOver = (event: PointerEvent) => {
 
   const path = activePath(item);
 
+  // oxlint-disable-next-line unicorn/no-useless-spread -- iterate a copy: closing a submenu deletes it from the set
   for (const open of [...openSubmenus]) {
     if (!path.includes(open)) scheduleCloseSubmenu(open);
   }

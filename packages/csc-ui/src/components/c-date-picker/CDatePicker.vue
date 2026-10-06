@@ -1370,6 +1370,7 @@ const animateBodyHeight = (timing: KeyframeAnimationOptions) => {
 // removes its outgoing element and settles the incoming one in place. Every
 // swap is a leave then an enter, so the leave hook does this.
 const settleBody = () => {
+  // oxlint-disable-next-line unicorn/no-useless-spread -- iterate a copy: a finished animation deletes itself from the set
   for (const animation of [...running]) animation.finish();
 };
 
