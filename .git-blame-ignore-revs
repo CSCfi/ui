@@ -1,0 +1,8 @@
+# Mechanical commits `git blame` skips (ADR-0068). GitHub reads this file;
+# locally: git config blame.ignoreRevsFile .git-blame-ignore-revs
+# Rebasing these commits changes their hashes: update the lines below.
+
+# Style: Format with oxfmt and sort Tailwind classes
+a8393491f9eae7407fd3c6556da612358e99d621
+# Style: Apply lint autofixes
+7526707a7cf414ac16e08397566221b84ac71271
