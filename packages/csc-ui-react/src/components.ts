@@ -35,6 +35,8 @@ import {
   type CDatePickerElement,
   type CDatePickerElementEventMap,
   type CDividerElement,
+  type CFileUploadElement,
+  type CFileUploadElementEventMap,
   type CIconElement,
   type CIconButtonElement,
   type CInputElement,
@@ -326,6 +328,20 @@ export const CDivider = createComponent({
   elementClass: elementClass<CDividerElement>('c-divider'),
   react: React,
   tagName: 'c-divider',
+});
+
+/** A field the user adds files to by dropping them on it or choosing them from a file dialog — and, given an upload function, the place each file's upload shows its progress. */
+export const CFileUpload = createComponent({
+  displayName: 'CFileUpload',
+  elementClass: elementClass<CFileUploadElement>('c-file-upload'),
+  events: {
+    onChange: 'change' as EventName<CFileUploadElementEventMap['change']>,
+    onInput: 'input' as EventName<CFileUploadElementEventMap['input']>,
+    onReject: 'reject' as EventName<CFileUploadElementEventMap['reject']>,
+    onUpdateValue: 'update:value' as EventName<CFileUploadElementEventMap['update:value']>,
+  },
+  react: React,
+  tagName: 'c-file-upload',
 });
 
 export const CIcon = createComponent({

@@ -264,6 +264,21 @@ export const VALUE_RECIPES: Record<string, ValueRecipe> = {
     mount: DATE_PICKER_MOUNT,
     programmatic: '2031-09-20',
   },
+  'c-file-upload': {
+    expected: (detail: unknown) =>
+      Array.isArray(detail) &&
+      detail.length === 1 &&
+      (detail[0] as { name?: string; status?: string }).name === 'a.txt',
+    family: 'change',
+    interact: async (m) => {
+      await userEvent.upload(
+        m.shadow('input[type="file"]'),
+        new File(['a'], 'a.txt', { type: 'text/plain' }),
+      );
+    },
+    mount: { props: { label: 'Attachments' } },
+    programmatic: [{ id: 'f_1', name: 'b.txt', size: 1, status: 'done' }],
+  },
   'c-modal': {
     expected: false,
     family: 'changeValue',

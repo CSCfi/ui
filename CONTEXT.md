@@ -243,6 +243,32 @@ _Avoid_: Preset, palette (the design system's whole ramp set), sample, chip
 The colour picker under `swatches-only`: the field is readonly and opens the panel like `c-select`'s, the panel holds only the swatch grid, and a pick commits and closes in every layout — no **Done button**.
 _Avoid_: Restricted mode, preset mode, palette mode
 
+### File upload
+
+**File upload** (`c-file-upload`):
+A **value control** holding a list of **file entries** — files the user adds by dropping them on it or choosing them through its **drop zone**, and server files the consumer supplies. It never sends a byte itself: with an **upload function** it uploads each added file through it and shows the progress; without one it only holds the files (ADR-0071).
+_Avoid_: Uploader, file input (the native `<input type="file">`), dropzone
+
+**File entry**:
+One file a **file upload** holds — picked by the user, or a server file the consumer supplies — with its name, size, **upload status** and, once uploaded, the upload function's result. Identified by its `id`, which the component generates for a picked file and the consumer supplies for a server file.
+_Avoid_: Item (an `items` entry), attachment, upload, file (the browser's `File`, which an entry may carry)
+
+**Upload status**:
+Where a **file entry** stands: `local` (held, not sent: no **upload function**, or a `manual` field not yet started), `queued` (waiting for one of three upload slots), `uploading`, `done` (sent, or a server file) or `error` (the upload function rejected).
+_Avoid_: State (custom states are host-level), pending (that is the **pending value**)
+
+**Upload function**:
+The consumer's `upload` property, which a **file upload** calls once per file with a progress callback and an abort signal. It owns the transport; the file upload owns the queue, cancel and retry. Assigning one queues every `local` entry — unless the field is `manual`, which holds added files until the consumer starts them, and holds the files added after that start again.
+_Avoid_: Handler, custom request, action (a URL prop this library deliberately lacks)
+
+**Drop zone**:
+The **file upload**'s dashed target, which is also the button that opens the file dialog — a large zone, or a **control height** row under `compact`. The whole component accepts a drop; the zone shows it.
+_Avoid_: Dropzone, drop area, drag area
+
+**Rejected file**:
+A file a **file upload** refuses — it breaks `accept`, `max-size` or `max-files`, is a folder, or is a file the upload already holds. Shown as a dismissible row with its reason until the list next changes, announced, and reported by the `reject` event; never a **file entry**.
+_Avoid_: Invalid file (validity is the consumer's judgement), error entry (an entry whose upload failed)
+
 ### Layout
 
 **Dashboard layout** (`c-main`):
@@ -318,7 +344,7 @@ While it is open the page behind it is inert and scroll-locked (toasts excepted)
 _Avoid_: Mobile mode / mobile menu, sheet (a partial-height bottom surface), modal / dialog (see above), takeover
 
 **Control height**:
-The one resting height every operable row-level control shares so they line up in a form row and a toolbar: the `default` **field box** of `c-input` (behind `c-text-field`, `c-select`, `c-autocomplete`, `c-tree-select`, `c-date-picker`, `c-time-picker`, `c-color-picker`), the `default` `c-button`, the `c-button-group` frame and a `c-tab` — 52px, tall enough for `c-tree-select`'s two-line **path** + label value without the field growing on selection. It is a single shared spacing value, never a per-component literal; `small` (36px field, 28px button) and `large` (60px button, the **toolbar** height) are the steps around it.
+The one resting height every operable row-level control shares so they line up in a form row and a toolbar: the `default` **field box** of `c-input` (behind `c-text-field`, `c-select`, `c-autocomplete`, `c-tree-select`, `c-date-picker`, `c-time-picker`, `c-color-picker`), the `default` `c-button`, the `c-button-group` frame, a `c-tab` and the `compact` **drop zone** — 52px, tall enough for `c-tree-select`'s two-line **path** + label value without the field growing on selection. It is a single shared spacing value, never a per-component literal; `small` (36px field, 28px button) and `large` (60px button, the **toolbar** height) are the steps around it.
 _Avoid_: Field height (only one of the four users), input height, row height (a table's)
 
 **Narrow viewport**:
@@ -366,7 +392,7 @@ A named, publicly overridable region of a migrated component's shadow DOM (e.g. 
 _Avoid_: Slot (a slot is a content-projection hole, a part is a stylable element), element, node, section
 
 **Custom state**:
-A host-exposed `ElementInternals` state (`checked`, `indeterminate`, `disabled`, the date picker's `bad-input`, a masked text field's `incomplete`, a number field's `out-of-range`) a consumer selects with `:state(...)` to write per-state `::part()` rules (ADR-0035). The selector-side counterpart of **parts**: parts name *where* a rule applies, custom states name *when*. Curated public API like the part set, documented per component with `@cssstate` and listed in the **manifest**. Only otherwise-invisible internal state is exposed — consumer-set props (`valid`, a standalone `disabled`… ) are not mirrored.
+A host-exposed `ElementInternals` state (`checked`, `indeterminate`, `disabled`, the date picker's `bad-input`, a masked text field's `incomplete`, a number field's `out-of-range`, a file upload's `drag-over`) a consumer selects with `:state(...)` to write per-state `::part()` rules (ADR-0035). The selector-side counterpart of **parts**: parts name *where* a rule applies, custom states name *when*. Curated public API like the part set, documented per component with `@cssstate` and listed in the **manifest**. Only otherwise-invisible internal state is exposed — consumer-set props (`valid`, a standalone `disabled`… ) are not mirrored.
 _Avoid_: Attribute (nothing is stamped on the host), state class (no class exists), reflected prop
 
 **Indicator** (selection controls):
@@ -546,7 +572,7 @@ A selection-behavior rule on the *control*: the selection can never become empty
 _Avoid_: Required (the form-demand concept), forced
 
 **Multiple** (mode):
-The selection mode in which a value control holds *several* values at once — `c-button-group`, `c-select` and `c-autocomplete` with the `multiple` prop set. The `value` becomes an array (`[]` when empty), bound as a DOM property since arrays have no attribute form, and the same value events carry the whole array. The two fields keep it in selection order and show each pick as a **tag**; `c-button-group` keeps DOM order (ADR-0044). Picking a selected option unselects it and the panel stays open; an opt-in **select-all row** toggles every listed option at once. Says nothing about how many are demanded (**required**) or whether it may empty out (**mandatory**).
+The selection mode in which a value control holds *several* values at once — `c-button-group`, `c-select` and `c-autocomplete` with the `multiple` prop set. The `value` becomes an array (`[]` when empty), bound as a DOM property since arrays have no attribute form, and the same value events carry the whole array. The two fields keep it in selection order and show each pick as a **tag**; `c-button-group` keeps DOM order (ADR-0044). Picking a selected option unselects it and the panel stays open; an opt-in **select-all row** toggles every listed option at once. On a **file upload** the value is a list either way; `multiple` lets a pick add files, where without it a pick replaces the one **file entry**. Says nothing about how many are demanded (**required**) or whether it may empty out (**mandatory**).
 _Avoid_: multi, multiselect / multi-select (as a prop or mode name — fine as an adjective in prose), checkbox mode (the row indicator is decorative, never a `c-checkbox`), selection mode (that is `c-data-table`'s separate `selection` prop, which keeps its value in `selected`)
 
 **Tag** (`c-tag`):
@@ -692,7 +718,7 @@ A parametrised browser test that runs the shared contract of one component *kind
 _Avoid_: contract test, shared spec, generic test
 
 **Value control**:
-A component that holds a persistent `value` and reports changes through the value events (`update:value` with its `changeValue`/`change` siblings and a bubbling `input`) — the population a plain Vue `v-model` binds to. Emission happens only on user interaction, never when `value` is set programmatically. The **colour picker** reports a pointer drag on its **colour area** or sliders through `update:value` and `input` on each move and fires `change` once, on release; `c-slider` still fires all of them on each move. Includes the **value-selection** fields, the **date picker**, the **time picker**, the **colour picker**, the selection controls, `c-text-field`, `c-slider`, `c-tabs`, `c-button-group`, `c-accordion`, `c-modal`, `c-pagination`, `c-otp-input`.
+A component that holds a persistent `value` and reports changes through the value events (`update:value` with its `changeValue`/`change` siblings and a bubbling `input`) — the population a plain Vue `v-model` binds to. Emission happens only on user interaction, never when `value` is set programmatically. The **colour picker** reports a pointer drag on its **colour area** or sliders through `update:value` and `input` on each move and fires `change` once, on release; `c-slider` still fires all of them on each move. The **file upload** also emits once when an upload settles, done or failed, and when `startUploads()` starts files (ADR-0071). Includes the **value-selection** fields, the **date picker**, the **time picker**, the **colour picker**, the **file upload**, the selection controls, `c-text-field`, `c-slider`, `c-tabs`, `c-button-group`, `c-accordion`, `c-modal`, `c-pagination`, `c-otp-input`.
 _Avoid_: value component, form control (a `c-button` is a control but holds no value), input
 
 **Example smoke**:
@@ -719,6 +745,7 @@ _Avoid_: custom lint rule (a guard is not an oxlint or ESLint rule), check (unqu
 - **"Lint"** is overloaded: (a) the whole static gate — formatting aside, every oxlint and ESLint rule plus every **guard**, (b) one tool's run ("oxlint", "ESLint"). Say **"lint"** for (a) and name the tool for (b); formatting is **"format"**, never lint.
 - **"Format"** is overloaded: (a) the date and time pickers' display-and-parse pattern (`DD.MM.YYYY`, `HH.mm`), which leaves the ISO value alone, (b) the colour picker's `format` prop, which sets its **notation** and so the value itself. Say **"display pattern"** for (a) and **"notation"** for (b).
 - **"Swatch"** is overloaded: (a) the colour picker's predefined colour (see **Swatch**), (b) the docs site's decorative samples of design tokens. Say plain **"swatch"** only for (a) and **"token sample"** for (b).
+- **"Upload"** is overloaded: (a) the act of sending a file, (b) the **upload function** (`upload`), (c) the **file upload** component. Say "uploading" for (a) and name (b) and (c) in full; one element of a file upload's value is a **file entry**, never "an upload".
 - **"Sticky"** is overloaded: (a) the data-table `sticky-header` / `sticky-footer` rows, (b) the CSS mechanism behind **pinned** elements (the toolbar, the side navigation). Say **"pinned"** for the concept and keep "sticky" for the data-table rows and for literal CSS.
 
 ## Example dialogue

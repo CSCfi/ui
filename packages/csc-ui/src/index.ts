@@ -18,6 +18,7 @@ import CDataTable from './components/c-data-table/CDataTable.vue';
 import CDatePicker from './components/c-date-picker/CDatePicker.vue';
 import CDivider from './components/c-divider/CDivider.vue';
 import CDropdown from './components/c-dropdown/CDropdown.vue';
+import CFileUpload from './components/c-file-upload/CFileUpload.vue';
 import CIconButton from './components/c-icon-button/CIconButton.vue';
 import CIcon from './components/c-icon/CIcon.vue';
 import CInput from './components/c-input/CInput.vue';
@@ -153,6 +154,17 @@ export type {
   CDatePickerValue,
   CDatePickerWeekday,
 } from './components/c-date-picker/CDatePicker.vue';
+
+export type {
+  CFileUploadContext,
+  CFileUploadEntry,
+  CFileUploadFunction,
+  CFileUploadProps,
+  CFileUploadRejection,
+  CFileUploadRejectReason,
+  CFileUploadStatus,
+  CFileUploadTexts,
+} from './components/c-file-upload/CFileUpload.vue';
 
 export type {
   CIconButtonProps,
@@ -396,6 +408,8 @@ const components: Array<[string, unknown]> = [
   // c-color-picker renders c-input, c-icon-button and c-icon (all registered
   // above) inside its shadow root.
   ['c-color-picker', CColorPicker],
+  // c-file-upload renders no c-* children; its rows use native buttons.
+  ['c-file-upload', CFileUpload],
   // Menu stack: leaf elements register before c-menu so item/label/divider
   // tags are defined when c-menu's slotted content upgrades.
   ['c-divider', CDivider],
@@ -519,4 +533,5 @@ export const tailwindVariantTags: ReadonlyArray<string> = [
   'c-color-picker',
   'c-breadcrumb',
   'c-breadcrumb-item',
+  'c-file-upload',
 ];

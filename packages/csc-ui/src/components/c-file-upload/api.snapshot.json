@@ -1,0 +1,74 @@
+{
+  "attributes": {
+    "accept": "string = ''",
+    "compact": "boolean = false",
+    "disabled": "boolean = false",
+    "error-message": "string = ''",
+    "hide-details": "boolean = false",
+    "hint": "string = ''",
+    "label": "string = ''",
+    "manual": "boolean = false",
+    "max-files": "null | number = null",
+    "max-size": "null | number = null",
+    "multiple": "boolean = false",
+    "required": "boolean = false",
+    "size": "'default' | 'small' = 'default'",
+    "valid": "boolean = true"
+  },
+  "cssProperties": [],
+  "defaultable": [
+    "compact",
+    "hideDetails",
+    "size",
+    "texts"
+  ],
+  "events": {
+    "change": "CustomEvent<CFileUploadEntry[]>",
+    "input": "CustomEvent<void>",
+    "reject": "CustomEvent<CFileUploadRejection[]>",
+    "update:value": "CustomEvent<CFileUploadEntry[]>"
+  },
+  "methods": {
+    "startUploads": "(): void"
+  },
+  "parts": [
+    "drop-zone",
+    "entry",
+    "label",
+    "list",
+    "message",
+    "progress",
+    "rejected",
+    "root"
+  ],
+  "propertyOnly": [
+    "texts",
+    "upload",
+    "value"
+  ],
+  "props": {
+    "accept": "string = ''",
+    "compact": "boolean = false",
+    "disabled": "boolean = false",
+    "errorMessage": "string = ''",
+    "hideDetails": "boolean = false",
+    "hint": "string = ''",
+    "label": "string = ''",
+    "manual": "boolean = false",
+    "maxFiles": "null | number = null",
+    "maxSize": "null | number = null",
+    "multiple": "boolean = false",
+    "required": "boolean = false",
+    "size": "'default' | 'small' = 'default'",
+    "texts": "CFileUploadTexts = {}",
+    "upload": "CFileUploadFunction",
+    "valid": "boolean = true",
+    "value": "CFileUploadEntry[] | null | string = null"
+  },
+  "slots": [],
+  "states": [
+    "drag-over"
+  ],
+  "subcomponents": [],
+  "tag": "c-file-upload"
+}
