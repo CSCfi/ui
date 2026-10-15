@@ -6,6 +6,7 @@
  */
 export const NO_ROOT_PART: readonly string[] = [
   'c-autocomplete',
+  'c-color-picker',
   'c-date-picker',
   'c-dropdown',
   'c-login-buttons',

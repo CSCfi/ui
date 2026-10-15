@@ -1,0 +1,99 @@
+{
+  "attributes": {
+    "alpha": "boolean = false",
+    "clearable": "boolean = false",
+    "disabled": "boolean = false",
+    "error-message": "string = ''",
+    "format": "'hex' | 'oklch' | 'rgb' = 'hex'",
+    "hide-details": "boolean = false",
+    "hint": "string = ''",
+    "host-id": "string = ''",
+    "label": "string = ''",
+    "label-on-top": "boolean = false",
+    "name": "string = ''",
+    "placeholder": "string = ''",
+    "required": "boolean = false",
+    "shadow": "boolean = false",
+    "size": "'default' | 'small' = 'default'",
+    "swatches-only": "boolean = false",
+    "valid": "boolean = true",
+    "value": "CColorPickerValue = null"
+  },
+  "cssProperties": [],
+  "defaultable": [
+    "alpha",
+    "format",
+    "hideDetails",
+    "labelOnTop",
+    "shadow",
+    "size",
+    "texts"
+  ],
+  "events": {
+    "change": "CustomEvent<CColorPickerValue>",
+    "change:text": "CustomEvent<string>",
+    "input": "CustomEvent<void>",
+    "update:value": "CustomEvent<CColorPickerValue>"
+  },
+  "methods": {},
+  "parts": [
+    "actions",
+    "alpha-slider",
+    "area",
+    "area-thumb",
+    "card",
+    "channel",
+    "channels",
+    "close",
+    "color-chip",
+    "comparison",
+    "done",
+    "heading",
+    "heading-row",
+    "hue-slider",
+    "input",
+    "new-color",
+    "notation",
+    "notation-switch",
+    "original-color",
+    "panel",
+    "separator",
+    "swatch",
+    "swatches"
+  ],
+  "propertyOnly": [
+    "swatches",
+    "texts"
+  ],
+  "props": {
+    "alpha": "boolean = false",
+    "clearable": "boolean = false",
+    "disabled": "boolean = false",
+    "errorMessage": "string = ''",
+    "format": "'hex' | 'oklch' | 'rgb' = 'hex'",
+    "hideDetails": "boolean = false",
+    "hint": "string = ''",
+    "hostId": "string = ''",
+    "label": "string = ''",
+    "labelOnTop": "boolean = false",
+    "name": "string = ''",
+    "placeholder": "string = ''",
+    "required": "boolean = false",
+    "shadow": "boolean = false",
+    "size": "'default' | 'small' = 'default'",
+    "swatches": "CColorPickerSwatch[] = () => []",
+    "swatchesOnly": "boolean = false",
+    "texts": "CColorPickerTexts = {}",
+    "valid": "boolean = true",
+    "value": "CColorPickerValue = null"
+  },
+  "readonly": {
+    "badInput": "boolean"
+  },
+  "slots": [],
+  "states": [
+    "bad-input"
+  ],
+  "subcomponents": [],
+  "tag": "c-color-picker"
+}

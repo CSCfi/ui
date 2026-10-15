@@ -4,15 +4,20 @@
  * one field box under `range`. Text is masked while typed and read by the
  * codec only on Enter or blur; text that names no usable value is kept as
  * typed and flags **bad input** (CONTEXT.md). Programmatic values re-sync the
- * text and never emit; commits emit through `emitModelChange`.
+ * text and never emit; commits emit through `emitModelChange`, and a panel
+ * drag reports its moves through `moveValue` and one `settleValue` (ADR-0070).
  *
- * Generic over the value's codec, so `c-date-picker` and `c-time-picker`
- * share one commit model. The anatomy lives in `TypedField.vue`, which binds
+ * Generic over the value's codec, so `c-date-picker`, `c-time-picker` and
+ * `c-color-picker` share one commit model. The anatomy lives in `TypedField.vue`, which binds
  * the element refs returned here.
  */
 import { computed, type Ref, ref, shallowRef, watch } from 'vue';
 
-import { emitModelChange } from './emitModelValue';
+import {
+  emitModelChange,
+  emitModelInput,
+  emitModelSettled,
+} from './emitModelValue';
 import { applyMask, type MaskSlot } from './inputMask';
 
 export interface TypedFieldCodec {
@@ -51,8 +56,8 @@ export interface UseTypedFieldOptions {
   /** Whether the label rests on top of the field (the resolved app default). */
   labelOnTop: Readonly<Ref<boolean>>;
 
-  /** The typing mask derived from `pattern`. */
-  mask: Readonly<Ref<MaskSlot[]>>;
+  /** The typing mask derived from `pattern`; without one, typing is free. */
+  mask?: Readonly<Ref<MaskSlot[]>>;
 
   /** The end inputs' accessible names under `range`. */
   names: () => { end: string; start: string };
@@ -188,8 +193,8 @@ export const useTypedField = (options: UseTypedFieldOptions) => {
     emitModelChange(options.host, toValue(next));
   };
 
-  /** Commit a value picked in the panel: its ends' texts reformat and lose bad input. */
-  const commitValue = (next: TypedFieldEnds) => {
+  // Show a picked value: its ends' texts reformat and lose bad input.
+  const showValue = (next: TypedFieldEnds) => {
     if (next.start !== null) {
       startText.value = codec.format(next.start, pattern.value);
       committedText.start = startText.value;
@@ -201,8 +206,40 @@ export const useTypedField = (options: UseTypedFieldOptions) => {
       committedText.end = endText.value;
       badEnd.value = false;
     }
+  };
 
+  // The value a drag started from, while one is under way.
+  let gestureFrom: null | TypedFieldEnds = null;
+
+  /** Commit a value picked in the panel: its ends' texts reformat and lose bad input. */
+  const commitValue = (next: TypedFieldEnds) => {
+    gestureFrom = null;
+    showValue(next);
     setEnds(next);
+  };
+
+  /**
+   * One move of a panel drag: shown and reported through `update:value` and
+   * `input`, never `change` — `settleValue` sends that once, on release.
+   */
+  const moveValue = (next: TypedFieldEnds) => {
+    gestureFrom ??= ends.value;
+    showValue(next);
+
+    if (sameEnds(next, ends.value)) return;
+
+    ends.value = next;
+    emitModelInput(options.host, toValue(next));
+  };
+
+  /** The end of a panel drag: one `change`, when the drag moved the value. */
+  const settleValue = () => {
+    const from = gestureFrom;
+
+    gestureFrom = null;
+
+    if (from && !sameEnds(from, ends.value))
+      emitModelSettled(options.host, toValue(ends.value));
   };
 
   // ---- the field --------------------------------------------------------------
@@ -269,13 +306,14 @@ export const useTypedField = (options: UseTypedFieldOptions) => {
     // A paste or drop keeps its text for the lenient commit: masking text in
     // another field order would scramble it, possibly into a real but wrong
     // value ("2031-09-01" → "20.3.1090"), where kept it commits as bad input.
-    applyMask(
-      input,
-      event,
-      options.mask.value,
-      end === 'end' ? endText.value : startText.value,
-      { skipPaste: true },
-    );
+    if (options.mask)
+      applyMask(
+        input,
+        event,
+        options.mask.value,
+        end === 'end' ? endText.value : startText.value,
+        { skipPaste: true },
+      );
 
     const text = input.value;
 
@@ -383,12 +421,14 @@ export const useTypedField = (options: UseTypedFieldOptions) => {
     inputLabel,
     inputOf,
     lastInput,
+    moveValue,
     onClear,
     onFocusOut,
     onKeyDown,
     onTextInput,
     placeholder,
     range,
+    settleValue,
     showSeparator,
     startInput,
     startText,

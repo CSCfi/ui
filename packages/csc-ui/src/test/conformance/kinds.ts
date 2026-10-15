@@ -157,6 +157,19 @@ const DATE_PICKER_MOUNT: MountOptions = {
   props: { label: 'Date', max: '2031-09-30', min: '2031-09-01' },
 };
 
+// c-color-picker's panel opens from its colour button, never from the text
+// (ADR-0070); the swatches make a pick independent of where the panel lands.
+const COLOR_PICKER_MOUNT: MountOptions = {
+  props: { label: 'Colour', swatches: ['#1f6feb', '#e5534b'] },
+};
+
+const openColorPanel = async (m: Mounted): Promise<void> => {
+  await userEvent.click(
+    m.deep('c-icon-button[aria-label="Open colour picker"]', 'button'),
+  );
+  await settle();
+};
+
 // c-time-picker's columns open from its clock button, never from the text
 // (ADR-0062).
 const TIME_PICKER_MOUNT: MountOptions = { props: { label: 'Time' } };
@@ -228,6 +241,17 @@ export const VALUE_RECIPES: Record<string, ValueRecipe> = {
     model: false,
     mount: { props: { label: 'Accept' } },
     programmatic: true,
+  },
+  'c-color-picker': {
+    emptyAware: true,
+    expected: '#e5534b',
+    family: 'change',
+    interact: async (m) => {
+      await openColorPanel(m);
+      await userEvent.click(m.shadowAll('[part~="swatch"]')[1]);
+    },
+    mount: COLOR_PICKER_MOUNT,
+    programmatic: '#00ff00',
   },
   'c-date-picker': {
     emptyAware: true,
@@ -453,6 +477,13 @@ export const OVERLAY_RECIPES: Record<string, OverlayRecipe> = {
       await userEvent.click(m.part('fold-button'));
       await settle();
     },
+    panel: (m) => m.part('panel'),
+  },
+  'c-color-picker': {
+    focusHome: (m) => m.shadow('input[part~="input"]'),
+    lightDismiss: true,
+    mount: COLOR_PICKER_MOUNT,
+    open: openColorPanel,
     panel: (m) => m.part('panel'),
   },
   'c-date-picker': {

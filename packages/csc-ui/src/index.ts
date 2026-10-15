@@ -12,6 +12,7 @@ import CCardContent from './components/c-card-content/CCardContent.vue';
 import CCardTitle from './components/c-card-title/CCardTitle.vue';
 import CCard from './components/c-card/CCard.vue';
 import CCheckbox from './components/c-checkbox/CCheckbox.vue';
+import CColorPicker from './components/c-color-picker/CColorPicker.vue';
 import CCscLogo from './components/c-csc-logo/CCscLogo.vue';
 import CDataTable from './components/c-data-table/CDataTable.vue';
 import CDatePicker from './components/c-date-picker/CDatePicker.vue';
@@ -116,6 +117,14 @@ export type {
   CCardActionsJustify,
   CCardActionsProps,
 } from './components/c-card-actions/CCardActions.vue';
+
+export type {
+  CColorPickerFormat,
+  CColorPickerProps,
+  CColorPickerSwatch,
+  CColorPickerTexts,
+  CColorPickerValue,
+} from './components/c-color-picker/CColorPicker.vue';
 
 export type {
   CDataTableAlign,
@@ -384,6 +393,9 @@ const components: Array<[string, unknown]> = [
   // c-time-picker renders c-input, c-icon-button and c-icon (all registered
   // above) inside its shadow root.
   ['c-time-picker', CTimePicker],
+  // c-color-picker renders c-input, c-icon-button and c-icon (all registered
+  // above) inside its shadow root.
+  ['c-color-picker', CColorPicker],
   // Menu stack: leaf elements register before c-menu so item/label/divider
   // tags are defined when c-menu's slotted content upgrades.
   ['c-divider', CDivider],
@@ -504,6 +516,7 @@ export const tailwindVariantTags: ReadonlyArray<string> = [
   'c-date-picker',
   'c-number-field',
   'c-time-picker',
+  'c-color-picker',
   'c-breadcrumb',
   'c-breadcrumb-item',
 ];

@@ -27,6 +27,8 @@ import {
   type CCardTitleElement,
   type CCheckboxElement,
   type CCheckboxElementEventMap,
+  type CColorPickerElement,
+  type CColorPickerElementEventMap,
   type CCscLogoElement,
   type CDataTableElement,
   type CDataTableElementEventMap,
@@ -267,6 +269,20 @@ export const CCheckbox = createComponent({
   },
   react: React,
   tagName: 'c-checkbox',
+});
+
+/** A colour field that takes any typed CSS colour, or opens a panel for picking one: a colour area, hue and alpha sliders, per-channel inputs and swatches — or swatches alone under `swatches-only`. */
+export const CColorPicker = createComponent({
+  displayName: 'CColorPicker',
+  elementClass: elementClass<CColorPickerElement>('c-color-picker'),
+  events: {
+    onChange: 'change' as EventName<CColorPickerElementEventMap['change']>,
+    onChangeText: 'change:text' as EventName<CColorPickerElementEventMap['change:text']>,
+    onInput: 'input' as EventName<CColorPickerElementEventMap['input']>,
+    onUpdateValue: 'update:value' as EventName<CColorPickerElementEventMap['update:value']>,
+  },
+  react: React,
+  tagName: 'c-color-picker',
 });
 
 export const CCscLogo = createComponent({

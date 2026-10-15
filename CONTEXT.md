@@ -156,7 +156,7 @@ In `range` mode, the first day (or, under `type="month"`, the start's month and 
 _Avoid_: Half range (that is a committed `{ start, end: null }`, which only typing produces), anchor date, first click
 
 **Pending value**:
-What a date or time picker's **fullscreen panel** holds between its picks and the **Done button** — a date, a range, a month or a time: shown selected in the panel, never emitted, and discarded by every other way out (the close control, Escape, crossing the **narrow viewport** threshold). A range's **pending start** is its first half. The anchored panel has none: there a pick commits.
+What a date, time or colour picker's **fullscreen panel** holds between its picks and the **Done button** — a date, a range, a month, a time or a colour: shown selected in the panel, never emitted, and discarded by every other way out (the close control, Escape, crossing the **narrow viewport** threshold). A range's **pending start** is its first half. The anchored panel has none: there a pick commits.
 _Avoid_: Draft (nothing is kept for later), selection, staged value
 
 **Range band**:
@@ -167,12 +167,12 @@ _Avoid_: Highlight (the virtual active row elsewhere), selection, span
 The opt-in (`show-today`) button in a row under the date picker's calendar body that picks today, exactly as pressing today's cell would — committing and closing, or under `range` becoming the **pending start** or completing the range. Under `type="month"` it reads "This month" and picks the current month. Shown disabled when today cannot be picked. In the **fullscreen panel**, where a press on a cell only selects, it makes today the **pending value**.
 _Avoid_: Reset (that is a form reset to the default value), go-to-today (it commits, not navigates), shortcut
 
-**Done button** (date and time picker):
-The filled button ending the row under the body of a date or time picker's **fullscreen panel**: it commits the **pending value** and closes — the panel's only commit. Disabled while a pick is half done (a **pending start**, a month without its year); with no pick it changes nothing.
+**Done button** (date, time and colour picker):
+The filled button ending the row under the body of a date, time or colour picker's **fullscreen panel**: it commits the **pending value** and closes — the panel's only commit. A **swatch-only** colour picker has none. Disabled while a pick is half done (a **pending start**, a month without its year); with no pick it changes nothing.
 _Avoid_: OK, Save, Apply, confirm button, submit
 
 **Bad input**:
-The state of a **date picker** or **time picker** after committing text that names no enabled value — unparseable, disabled or out of range: the text stays as typed, the value is `null`, and the host exposes `:state(bad-input)` and `badInput`. A fact the component reports, not a verdict — the consumer decides whether it is an error and writes the **error message**. Only typing produces it; a pick in a panel never does.
+The state of a **date picker**, **time picker** or **colour picker** after committing text that names no enabled value — unparseable, disabled or out of range: the text stays as typed, the value is `null`, and the host exposes `:state(bad-input)` and `badInput`. A colour picker reaches it only through unparseable text: a colour outside sRGB is mapped into it, not rejected. A fact the component reports, not a verdict — the consumer decides whether it is an error and writes the **error message**. Only typing produces it; a pick in a panel never does.
 _Avoid_: Invalid date / invalid time (validity is the consumer's judgement), parse error
 
 ### Time picker
@@ -204,6 +204,44 @@ _Avoid_: Reset, current time button, shortcut
 **Overnight range**:
 A time-picker range whose end is earlier than its start (`22:00`–`06:00`): a valid value spanning midnight, not **bad input** and never reordered. Distinct from `min` > `max`, which is an invalid constraint, not a wrap.
 _Avoid_: Reversed range, negative range, wrap-around
+
+### Colour picker
+
+**Colour picker** (`c-color-picker`):
+A **value control** for one colour, built like the **date picker**: a typeable **value field** that takes any CSS colour and commits it in the picker's **notation**, and a panel opened by its **colour button** or Alt+↓, never by typing (ADR-0070). The value is a string in that notation, `null` when empty; every colour it holds is 8-bit sRGB, with alpha only under `alpha` (ADR-0069). Distinct from the native `<input type="color">`.
+_Avoid_: Colorpicker, colour input / colour field (the native one), colour well
+
+**Notation**:
+The CSS syntax a **colour picker**'s value and field text are written in — `hex`, `rgb` or `oklch`, set by its `format`. Each notation spells the same 8-bit colour at the fewest decimals that round-trip, so changing notation never moves the colour.
+_Avoid_: Format (the prop's name, and the date and time pickers' display pattern), colour space (every colour here is sRGB; oklch is a spelling), rgba (the legacy alias of `rgb`)
+
+**Notation switch**:
+The HEX | RGB | OKLCH toggle row in the colour picker's panel choosing which **channel editor** shows. A view only — it never changes the value or its notation.
+_Avoid_: Format toggle, mode switch, tabs
+
+**Channel editor**:
+The panel's labelled inputs for one **notation** — a single hex box, R G B, or L C H — plus A under `alpha`. The **fullscreen panel**'s only text entry.
+_Avoid_: Inputs (unqualified), sliders
+
+**Colour area**:
+The panel's saturation × brightness square at the current hue — one Tab stop whose arrow keys move both axes.
+_Avoid_: Canvas, palette, gradient, 2D slider, colour field
+
+**Colour comparison**:
+The strip in the colour picker's panel showing its **original colour** — the value it held when the panel opened — beside the colour the panel holds now: the value, or the fullscreen panel's **pending value**. A click on the original restores it. Absent when the panel opened empty, and under **swatch-only**.
+_Avoid_: Preview, before/after, old/new swatch (a **swatch** is a predefined colour)
+
+**Colour button**:
+The trailing button of the colour picker's field, painted with the current colour, that opens the panel.
+_Avoid_: Swatch (a swatch is a predefined colour), chip, preview, trigger (the consumer-supplied element)
+
+**Swatch**:
+One predefined colour a consumer offers through `swatches`, named by its `name` — else its spelled value — for assistive technology and in a **swatch-only** field. Suggestions beside the free picker by default.
+_Avoid_: Preset, palette (the design system's whole ramp set), sample, chip
+
+**Swatch-only** (mode):
+The colour picker under `swatches-only`: the field is readonly and opens the panel like `c-select`'s, the panel holds only the swatch grid, and a pick commits and closes in every layout — no **Done button**.
+_Avoid_: Restricted mode, preset mode, palette mode
 
 ### Layout
 
@@ -262,25 +300,25 @@ The ordered set of currently open `c-popover`s, each logically nested in the one
 _Avoid_: Popover stack (reserve _stack_ for the modal stack's inert-lower-layers contract), nested popups
 
 **Top layer**:
-The browser-managed paint layer above every author stacking context — nothing an author z-indexes can paint above it, and while a *modal dialog* occupies it the rest of the document is inert. In this library only **transient** surfaces live there, as native popovers: the menu family, the autocomplete, tree-select and date-picker panels, `c-tooltip`, and `c-popover` (ADR-0008). Modals deliberately do **not** (ADR-0014) — a top-layer modal would paint over and inert the toasts.
+The browser-managed paint layer above every author stacking context — nothing an author z-indexes can paint above it, and while a *modal dialog* occupies it the rest of the document is inert. In this library only **transient** surfaces live there, as native popovers: the menu family, the autocomplete, tree-select, date-picker, time-picker and colour-picker panels, `c-tooltip`, and `c-popover` (ADR-0008). Modals deliberately do **not** (ADR-0014) — a top-layer modal would paint over and inert the toasts.
 _Avoid_: Overlay (an overlay is any floating surface; the top layer is a specific browser mechanism), portal
 
 **Transient list panel**:
-The floating list surface a component reveals on demand and closes on dismissal — a `c-menu` or **submenu** panel, `c-dropdown`'s listbox behind `c-select`, `c-autocomplete`'s options list, `c-tree-select`'s level and results lists, `c-date-picker`'s **month list** and **year list**, `c-breadcrumb`'s **fold panel**. It lives in the **top layer**, hides its scrollbar and shows a **peek** (ADR-0043). Persistent scroll containers (data table, side navigation, page, card) are not transient list panels; `c-popover`'s panel is transient but carries no list.
+The floating list surface a component reveals on demand and closes on dismissal — a `c-menu` or **submenu** panel, `c-dropdown`'s listbox behind `c-select`, `c-autocomplete`'s options list, `c-tree-select`'s level and results lists, `c-date-picker`'s **month list** and **year list**, `c-breadcrumb`'s **fold panel**, `c-color-picker`'s swatch grid. It lives in the **top layer**, hides its scrollbar and shows a **peek** (ADR-0043). Persistent scroll containers (data table, side navigation, page, card) are not transient list panels; `c-popover`'s panel is transient but carries no list.
 _Avoid_: Dropdown (the component), menu (the component), popup, overlay, flyout
 
 **Peek**:
-The half-visible last row of an overflowing **transient list panel** — a `c-menu` or **submenu** panel, `c-dropdown`'s listbox behind `c-select`, `c-autocomplete`'s options list, `c-tree-select`'s level and results lists, `c-date-picker`'s **month list** and **year list**, or `c-breadcrumb`'s **fold panel**. Those panels hide their scrollbar, so the peek is the sole cue that more rows follow: an overflowing panel always ends at a row's midpoint (the `itemsPerPage`-th row where that prop caps the list, otherwise the last row under the panel's ceiling), never on a row boundary. Persistent scroll containers (data table, side navigation, page, card) keep native scrollbars and have no peek; `c-popover` has no scroll container at all.
+The half-visible last row of an overflowing **transient list panel** — a `c-menu` or **submenu** panel, `c-dropdown`'s listbox behind `c-select`, `c-autocomplete`'s options list, `c-tree-select`'s level and results lists, `c-date-picker`'s **month list** and **year list**, `c-breadcrumb`'s **fold panel**, or `c-color-picker`'s swatch grid. Those panels hide their scrollbar, so the peek is the sole cue that more rows follow: an overflowing panel always ends at a row's midpoint (the `itemsPerPage`-th row where that prop caps the list, otherwise the last row under the panel's ceiling), never on a row boundary. Persistent scroll containers (data table, side navigation, page, card) keep native scrollbars and have no peek; `c-popover` has no scroll container at all.
 _Avoid_: Scroll hint, teaser, fade / scroll shadow (a peek is never a gradient), affordance
 
 **Fullscreen panel**:
-The viewport-filling layout a value-selection field's **transient list panel** — `c-dropdown`'s listbox behind `c-select`, `c-autocomplete`'s panel, `c-tree-select`'s panel, `c-date-picker`'s calendar panel — adopts on a **narrow viewport**: instead of anchoring under the **value field**, the panel covers the whole viewport — and keeps covering it while the on-screen keyboard is up, only its content shrinking to the part of the screen the keyboard leaves — opening with a **heading row** — the field's label as the panel's **heading** plus a close control — above the **search input** (where the component has one) and the list — or, in `c-date-picker`, the **day grid**. The anchored layout and the fullscreen panel are one panel in two layouts, never two components; menus, tooltips and `c-popover` have no fullscreen panel.
-In the date and time pickers the panel ends in a row holding the **Done button**, and the close control discards the **pending value**; elsewhere the close control only closes.
+The viewport-filling layout a value-selection field's **transient list panel** — `c-dropdown`'s listbox behind `c-select`, `c-autocomplete`'s panel, `c-tree-select`'s panel, `c-date-picker`'s calendar panel, `c-time-picker`'s and `c-color-picker`'s panels — adopts on a **narrow viewport**: instead of anchoring under the **value field**, the panel covers the whole viewport — and keeps covering it while the on-screen keyboard is up, only its content shrinking to the part of the screen the keyboard leaves — opening with a **heading row** — the field's label as the panel's **heading** plus a close control — above the **search input** (where the component has one) and the list — or, in `c-date-picker`, the **day grid**. The anchored layout and the fullscreen panel are one panel in two layouts, never two components; menus, tooltips and `c-popover` have no fullscreen panel.
+In the date, time and colour pickers the panel ends in a row holding the **Done button**, and the close control discards the **pending value**; elsewhere — a **swatch-only** colour picker included — the close control only closes.
 While it is open the page behind it is inert and scroll-locked (toasts excepted), yet it is not a `c-modal`: it joins no **modal stack** and paints no backdrop. Its list is bounded by the viewport, not a ceiling, so it has no **peek** — the screen edge is the cue that more rows follow.
 _Avoid_: Mobile mode / mobile menu, sheet (a partial-height bottom surface), modal / dialog (see above), takeover
 
 **Control height**:
-The one resting height every operable row-level control shares so they line up in a form row and a toolbar: the `default` **field box** of `c-input` (behind `c-text-field`, `c-select`, `c-autocomplete`, `c-tree-select`, `c-date-picker`), the `default` `c-button`, the `c-button-group` frame and a `c-tab` — 52px, tall enough for `c-tree-select`'s two-line **path** + label value without the field growing on selection. It is a single shared spacing value, never a per-component literal; `small` (36px field, 28px button) and `large` (60px button, the **toolbar** height) are the steps around it.
+The one resting height every operable row-level control shares so they line up in a form row and a toolbar: the `default` **field box** of `c-input` (behind `c-text-field`, `c-select`, `c-autocomplete`, `c-tree-select`, `c-date-picker`, `c-time-picker`, `c-color-picker`), the `default` `c-button`, the `c-button-group` frame and a `c-tab` — 52px, tall enough for `c-tree-select`'s two-line **path** + label value without the field growing on selection. It is a single shared spacing value, never a per-component literal; `small` (36px field, 28px button) and `large` (60px button, the **toolbar** height) are the steps around it.
 _Avoid_: Field height (only one of the four users), input height, row height (a table's)
 
 **Narrow viewport**:
@@ -344,7 +382,7 @@ The 2px keyboard-focus halo around a selection control's **indicator**, drawn by
 _Avoid_: Outline (the CSS property, not the concept), ring (the semantic token role / the radio indicator's shape), focus outline
 
 **Keyboard modality**:
-Whether the latest press a component saw was a key — any key, Alt, Ctrl and Meta chords included — rather than a pointer press. A panel that moves focus by script (the **day grid**, a **time column**) rings the new focus under keyboard modality and otherwise leaves the browser's own `:focus-visible` heuristic to decide.
+Whether the latest press a component saw was a key — any key, Alt, Ctrl and Meta chords included — rather than a pointer press. A panel that moves focus by script (the **day grid**, a **time column**, the colour picker's swatch grid) rings the new focus under keyboard modality and otherwise leaves the browser's own `:focus-visible` heuristic to decide.
 _Avoid_: Focus-visible (the CSS pseudo-class, whose browser heuristics ignore chords and carry a mouse focus through script focus), keyboard mode
 
 **Reduced motion**:
@@ -654,7 +692,7 @@ A parametrised browser test that runs the shared contract of one component *kind
 _Avoid_: contract test, shared spec, generic test
 
 **Value control**:
-A component that holds a persistent `value` and reports changes through the value events (`update:value` with its `changeValue`/`change` siblings and a bubbling `input`) — the population a plain Vue `v-model` binds to. Emission happens only on user interaction, never when `value` is set programmatically. Includes the **value-selection** fields, the **date picker**, the selection controls, `c-text-field`, `c-slider`, `c-tabs`, `c-button-group`, `c-accordion`, `c-modal`, `c-pagination`, `c-otp-input`.
+A component that holds a persistent `value` and reports changes through the value events (`update:value` with its `changeValue`/`change` siblings and a bubbling `input`) — the population a plain Vue `v-model` binds to. Emission happens only on user interaction, never when `value` is set programmatically. The **colour picker** reports a pointer drag on its **colour area** or sliders through `update:value` and `input` on each move and fires `change` once, on release; `c-slider` still fires all of them on each move. Includes the **value-selection** fields, the **date picker**, the **time picker**, the **colour picker**, the selection controls, `c-text-field`, `c-slider`, `c-tabs`, `c-button-group`, `c-accordion`, `c-modal`, `c-pagination`, `c-otp-input`.
 _Avoid_: value component, form control (a `c-button` is a control but holds no value), input
 
 **Example smoke**:
@@ -679,6 +717,8 @@ _Avoid_: custom lint rule (a guard is not an oxlint or ESLint rule), check (unqu
 - **"Default"** is overloaded: (a) a **built-in default** (the library's value for an unset prop), (b) an **app default** (a consumer's per-tag value via `applyDefaults`), (c) the `'default'` member of a size union (`size="default"`), (d) a tailwind-variants `defaultVariants` entry. Say **"built-in default"** and **"app default"** for (a) and (b), **"the `default` size"** for (c), and **"variant default"** for (d).
 - **"Invert"** is overloaded: (a) an **inverting scope** (`data-theme-invert` — a region resolving the opposite **theme mode**), (b) the **inverted surface** (`surface-inverted`, one mode-aware rung of the **surface ladder**), (c) the mode-**invariant** `inverse-*` family (one fixed look regardless of mode). Say **"inverting scope"**, **"inverted surface"**, and **"the `inverse-*` family"**.
 - **"Lint"** is overloaded: (a) the whole static gate — formatting aside, every oxlint and ESLint rule plus every **guard**, (b) one tool's run ("oxlint", "ESLint"). Say **"lint"** for (a) and name the tool for (b); formatting is **"format"**, never lint.
+- **"Format"** is overloaded: (a) the date and time pickers' display-and-parse pattern (`DD.MM.YYYY`, `HH.mm`), which leaves the ISO value alone, (b) the colour picker's `format` prop, which sets its **notation** and so the value itself. Say **"display pattern"** for (a) and **"notation"** for (b).
+- **"Swatch"** is overloaded: (a) the colour picker's predefined colour (see **Swatch**), (b) the docs site's decorative samples of design tokens. Say plain **"swatch"** only for (a) and **"token sample"** for (b).
 - **"Sticky"** is overloaded: (a) the data-table `sticky-header` / `sticky-footer` rows, (b) the CSS mechanism behind **pinned** elements (the toolbar, the side navigation). Say **"pinned"** for the concept and keep "sticky" for the data-table rows and for literal CSS.
 
 ## Example dialogue

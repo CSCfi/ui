@@ -33,6 +33,7 @@ it('the wave-1 allow-list is exactly the documented tags', () => {
   expect(Object.keys(DEFAULTABLE_PROPS).sort()).toEqual([
     'c-autocomplete',
     'c-breadcrumb',
+    'c-color-picker',
     'c-data-table',
     'c-date-picker',
     'c-number-field',

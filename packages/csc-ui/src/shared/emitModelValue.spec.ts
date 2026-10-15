@@ -1,7 +1,12 @@
 import { expect, it } from 'vitest';
 
 import { recordEvents } from '../test/harness';
-import { emitModelChange, emitModelValue } from './emitModelValue';
+import {
+  emitModelChange,
+  emitModelInput,
+  emitModelSettled,
+  emitModelValue,
+} from './emitModelValue';
 
 type ValueHost = { value?: unknown } & HTMLElement;
 
@@ -64,7 +69,35 @@ it('emitModelChange dispatches change, update:value and a bubbling input', () =>
   expect(events.of('change')[0].detail).toBe(7);
 });
 
-it('both no-op on a null host', () => {
+it('emitModelInput writes the host value, then dispatches update:value and a bubbling input without change', () => {
+  const el = host();
+
+  const events = recordEvents(el, ['change', 'update:value', 'input']);
+
+  emitModelInput(el, '#ff0000');
+
+  expect(events.names()).toEqual(['update:value', 'input']);
+  expect(events.records.map((r) => r.targetValue)).toEqual([
+    '#ff0000',
+    '#ff0000',
+  ]);
+  expect(events.of('input')[0].bubbles).toBe(true);
+});
+
+it('emitModelSettled dispatches change alone', () => {
+  const el = host();
+
+  const events = recordEvents(el, ['change', 'update:value', 'input']);
+
+  emitModelSettled(el, '#ff0000');
+
+  expect(events.names()).toEqual(['change']);
+  expect(events.of('change')[0].detail).toBe('#ff0000');
+});
+
+it('every helper no-ops on a null host', () => {
   expect(() => emitModelValue(null, 1)).not.toThrow();
   expect(() => emitModelChange(null, 1)).not.toThrow();
+  expect(() => emitModelInput(null, 1)).not.toThrow();
+  expect(() => emitModelSettled(null, 1)).not.toThrow();
 });

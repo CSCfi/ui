@@ -243,6 +243,10 @@
   @apply not-supports-corner-shape:rounded-l-md supports-corner-shape:rounded-l-xl supports-corner-shape:[corner-shape:squircle];
 }
 
+@utility rounded-csc-r-md {
+  @apply not-supports-corner-shape:rounded-r-md supports-corner-shape:rounded-r-xl supports-corner-shape:[corner-shape:squircle];
+}
+
 @utility rounded-csc-lg {
   @apply not-supports-corner-shape:rounded-lg supports-corner-shape:rounded-2xl supports-corner-shape:[corner-shape:squircle];
 }

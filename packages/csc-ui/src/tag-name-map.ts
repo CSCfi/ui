@@ -14,6 +14,7 @@
 import type { CAutocompleteFilter, CAutocompleteItem, CAutocompleteTexts, CAutocompleteValue } from './components/c-autocomplete/CAutocomplete.vue';
 import type { CBreadcrumbTexts } from './components/c-breadcrumb/CBreadcrumb.vue';
 import type { CButtonGroupValue } from './components/c-button-group/CButtonGroup.vue';
+import type { CColorPickerSwatch, CColorPickerTexts, CColorPickerValue } from './components/c-color-picker/CColorPicker.vue';
 import type { CDataTableCellContent, CDataTableColumn, CDataTableExpandedContext, CDataTableRow, CDataTableSort, CDataTableTexts } from './components/c-data-table/CDataTable.vue';
 import type { CDatePickerDisabledDate, CDatePickerText, CDatePickerTexts, CDatePickerValue } from './components/c-date-picker/CDatePicker.vue';
 import type { CNumberFieldTexts } from './components/c-number-field/CNumberField.vue';
@@ -558,6 +559,118 @@ export interface CCheckboxElement extends Omit<HTMLElement, 'checked' | 'disable
   removeEventListener<K extends keyof CCheckboxElementEventMap>(
     type: K,
     listener: (this: CCheckboxElement, ev: CCheckboxElementEventMap[K]) => void,
+    options?: boolean | EventListenerOptions,
+  ): void;
+  removeEventListener(
+    type: string,
+    listener: EventListenerOrEventListenerObject,
+    options?: boolean | EventListenerOptions,
+  ): void;
+}
+
+/** Events dispatched by `<c-color-picker>`. */
+export interface CColorPickerElementEventMap {
+  /**
+   * Fired when the value changes — a pick in the panel, typed text
+   * committed, the field cleared — carrying the colour in the `format`
+   * notation, or `null`. A drag on the area or a slider fires it once, on
+   * release.
+   */
+  change: CustomEvent<CColorPickerValue>;
+  /**
+   * Fired on every commit of typed text (Enter or leaving the input) with the
+   * text as typed. Read `badInput` to tell whether it named a colour.
+   */
+  'change:text': CustomEvent<string>;
+  /**
+   * Native bubbling input event dispatched alongside every value change —
+   * each move of a drag included — so a plain `v-model` stays in sync.
+   * Carries no detail.
+   */
+  input: CustomEvent<void>;
+  /**
+   * Fired with every value change, each move of a drag included — the
+   * `v-model` contract.
+   */
+  'update:value': CustomEvent<CColorPickerValue>;
+}
+
+/** A colour field that takes any typed CSS colour, or opens a panel for picking one: a colour area, hue and alpha sliders, per-channel inputs and swatches — or swatches alone under `swatches-only`. */
+export interface CColorPickerElement extends Omit<HTMLElement, 'alpha' | 'clearable' | 'disabled' | 'errorMessage' | 'format' | 'hideDetails' | 'hint' | 'hostId' | 'label' | 'labelOnTop' | 'name' | 'placeholder' | 'required' | 'shadow' | 'size' | 'swatches' | 'swatchesOnly' | 'texts' | 'valid' | 'value'> {
+  /**
+   * Let the colour carry transparency: an alpha slider and an A channel join
+   * the panel. Without it typed alpha is dropped
+   */
+  alpha?: boolean;
+  /** Make the value clearable */
+  clearable?: boolean;
+  /** Disable the field */
+  disabled?: boolean;
+  /** Error message shown in place of the hint while the field is invalid */
+  errorMessage?: string;
+  /**
+   * The notation the value is written in — and every emission with it:
+   * `#rrggbb`, `rgb(r g b)` or `oklch(l c h)`
+   */
+  format?: 'hex' | 'oklch' | 'rgb';
+  /** Hide the hint and error messages */
+  hideDetails?: boolean;
+  /** Hint text for the field */
+  hint?: string;
+  /** Id of the element */
+  hostId?: string;
+  /** Element label */
+  label?: string;
+  /** Label on top of the field */
+  labelOnTop?: boolean;
+  /** Input field name */
+  name?: string;
+  /** Placeholder of the input; an example of the notation when empty */
+  placeholder?: string;
+  /** Set the field as required */
+  required?: boolean;
+  /** Shadow variant */
+  shadow?: boolean;
+  /** Field height: the 52px default (the shared control height) or the 36px `small` box */
+  size?: 'default' | 'small';
+  /**
+   * Predefined colours offered under the picker — CSS colours, or
+   * `{ value, name }` objects whose name is read out and shown. Arrays have
+   * no attribute form — bind as a DOM property
+   */
+  swatches?: CColorPickerSwatch[];
+  /**
+   * Limit the choice to the swatches: the field becomes readonly and opens
+   * a panel of the swatches alone
+   */
+  swatchesOnly?: boolean;
+  /**
+   * UI text overrides (i18n), merged over the English defaults. Objects have
+   * no attribute form — bind as a DOM property
+   */
+  texts?: CColorPickerTexts;
+  /** Set the validity of the field */
+  valid?: boolean;
+  /**
+   * The colour in the `format` notation, or `null` when empty. Any CSS
+   * colour is accepted and shown in the notation
+   */
+  value?: CColorPickerValue;
+  /** Whether the committed text names no colour — the value is then `null` (CONTEXT.md "Bad input"). */
+  readonly badInput: boolean;
+  addEventListener<K extends keyof CColorPickerElementEventMap>(
+    type: K,
+    listener: (this: CColorPickerElement, ev: CColorPickerElementEventMap[K]) => void,
+    options?: boolean | AddEventListenerOptions,
+  ): void;
+  addEventListener(
+    type: string,
+    listener: EventListenerOrEventListenerObject,
+    options?: boolean | AddEventListenerOptions,
+  ): void;
+  removeEventListener<K extends keyof CColorPickerElementEventMap>(
+    type: K,
+    listener: (this: CColorPickerElement, ev: CColorPickerElementEventMap[K]) => void,
     options?: boolean | EventListenerOptions,
   ): void;
   removeEventListener(
@@ -2762,6 +2875,7 @@ export interface CTreeSelectElement extends Omit<HTMLElement, 'allowBranch' | 'c
 export interface AppDefaults {
   'c-autocomplete'?: Partial<Pick<CAutocompleteElement, 'hideDetails' | 'itemsPerPage' | 'labelOnTop' | 'shadow' | 'size' | 'texts'>>;
   'c-breadcrumb'?: Partial<Pick<CBreadcrumbElement, 'texts'>>;
+  'c-color-picker'?: Partial<Pick<CColorPickerElement, 'alpha' | 'format' | 'hideDetails' | 'labelOnTop' | 'shadow' | 'size' | 'texts'>>;
   'c-data-table'?: Partial<Pick<CDataTableElement, 'texts'>>;
   'c-date-picker'?: Partial<Pick<CDatePickerElement, 'firstDayOfWeek' | 'format' | 'hideDetails' | 'labelOnTop' | 'shadow' | 'showToday' | 'showWeekNumbers' | 'size' | 'texts'>>;
   'c-number-field'?: Partial<Pick<CNumberFieldElement, 'decimalSeparator' | 'decimals' | 'fixedDecimals' | 'groupSeparator' | 'hideDetails' | 'labelOnTop' | 'shadow' | 'size' | 'step' | 'texts'>>;
@@ -2775,6 +2889,7 @@ export interface AppDefaults {
 export const DEFAULTABLE_PROPS = {
   'c-autocomplete': ['hideDetails', 'itemsPerPage', 'labelOnTop', 'shadow', 'size', 'texts'],
   'c-breadcrumb': ['texts'],
+  'c-color-picker': ['alpha', 'format', 'hideDetails', 'labelOnTop', 'shadow', 'size', 'texts'],
   'c-data-table': ['texts'],
   'c-date-picker': ['firstDayOfWeek', 'format', 'hideDetails', 'labelOnTop', 'shadow', 'showToday', 'showWeekNumbers', 'size', 'texts'],
   'c-number-field': ['decimalSeparator', 'decimals', 'fixedDecimals', 'groupSeparator', 'hideDetails', 'labelOnTop', 'shadow', 'size', 'step', 'texts'],
@@ -2785,7 +2900,7 @@ export const DEFAULTABLE_PROPS = {
 } as const satisfies Record<keyof AppDefaults, readonly string[]>;
 
 /** Tags dispatching the v-model contract event `update:value` — the value controls (CONTEXT.md). */
-export const VALUE_TAGS = ['c-accordion', 'c-autocomplete', 'c-button-group', 'c-checkbox', 'c-date-picker', 'c-modal', 'c-number-field', 'c-otp-input', 'c-pagination', 'c-radio-group', 'c-select', 'c-slider', 'c-switch', 'c-tabs', 'c-text-field', 'c-time-picker', 'c-tree-select'] as const;
+export const VALUE_TAGS = ['c-accordion', 'c-autocomplete', 'c-button-group', 'c-checkbox', 'c-color-picker', 'c-date-picker', 'c-modal', 'c-number-field', 'c-otp-input', 'c-pagination', 'c-radio-group', 'c-select', 'c-slider', 'c-switch', 'c-tabs', 'c-text-field', 'c-time-picker', 'c-tree-select'] as const;
 
 declare global {
   interface HTMLElementTagNameMap {
@@ -2803,6 +2918,7 @@ declare global {
     'c-card-content': CCardContentElement;
     'c-card-title': CCardTitleElement;
     'c-checkbox': CCheckboxElement;
+    'c-color-picker': CColorPickerElement;
     'c-csc-logo': CCscLogoElement;
     'c-data-table': CDataTableElement;
     'c-date-picker': CDatePickerElement;
