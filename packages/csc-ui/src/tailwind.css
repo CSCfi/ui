@@ -1,4 +1,4 @@
-@import 'tailwindcss' source(none);
+@import 'tailwindcss' source(none) theme(inline);
 
 /*
  * Components live inside shadow roots and SFCs are the only place utilities are
@@ -7,6 +7,12 @@
  * inlined sheet to the utilities components actually use and stops
  * class-like tokens in comments of sibling .ts/.cjs/.css files (and in the
  * previous build's bundle) from emitting stray, unused rules.
+ *
+ * `theme(inline)` substitutes Tailwind's default theme into the utilities
+ * (`p-4` is `calc(0.25rem * 4)`), so no `--font-sans`, `--spacing`, … is
+ * declared on a host. Declared there, they would inherit into slotted content
+ * and shadow a consumer's own Tailwind theme: their `font-sans` inside c-main
+ * would read ours (ADR-0072).
  */
 @source './components/**/*.vue';
 @source './shared/**/*.vue';
@@ -154,33 +160,21 @@
 @import './styles/css/tailwind-theme.css';
 
 /*
- * Shared motion tokens. The CSC standard easing (Material "standard" curve) is
- * repeated across ~15 components; exposing it as `--ease-standard` lets every
- * `tailwind-variants` config author `ease-standard` instead of inlining the
- * arbitrary cubic-bezier. The value is a literal (not a `var(--c-*)`), so it
- * substitutes directly into the `ease-standard` utility and resolves inside
- * shadow roots without an `@source inline` safelist entry.
+ * Library values. `ease-standard` is the CSC standard easing (Material
+ * "standard" curve) ~15 components share. `h-toolbar` is the toolbar height
+ * c-toolbar, c-page and c-side-navigation share; c-main offsets the pinned
+ * side navigation by it (ADR-0051). `h-control` / `min-h-control` is the
+ * **control height** (CONTEXT.md, ADR-0055): the one resting height the
+ * `default` field box of c-input, the `default` c-button, the c-button-group
+ * frame and a c-tab share so they line up in a row, never a per-component
+ * literal. Escape-hatch CSS and arbitrary values read these through `var()`,
+ * so each value lives once, as a private `--_c-` property on the shared
+ * `:host` rule below, and the utilities map onto it.
  */
-@theme {
-  --ease-standard: cubic-bezier(0.25, 0.8, 0.5, 1);
-}
-
-/*
- * Layout values. The toolbar height was a 60px literal in c-toolbar, c-page and
- * c-side-navigation; `--spacing-toolbar` gives c-toolbar `h-toolbar` and lets
- * c-main's escape-hatch CSS offset the pinned side navigation (ADR-0051).
- * `--spacing-control` is the **control height** (CONTEXT.md, ADR-0055): the
- * one resting height the `default` field box of c-input, the `default`
- * c-button, the c-button-group frame and a c-tab share so they line up in a
- * row — `min-h-control` / `h-control`, never a per-component literal.
- * `static` keeps the variables in the sheet even when no utility references
- * them (c-main and c-tab read them through `var()`). Theme values are emitted
- * under `:root, :host`, so they resolve on every component host and inherit
- * into slotted light-DOM children.
- */
-@theme static {
-  --spacing-toolbar: 60px;
-  --spacing-control: 52px;
+@theme inline {
+  --ease-standard: var(--_c-ease-standard);
+  --spacing-toolbar: var(--_c-toolbar-height);
+  --spacing-control: var(--_c-control-height);
 }
 
 /*
@@ -201,9 +195,48 @@
  * component's `root` element (the first child inside the shadow root) carries
  * all visual styling and sizing. This is the only `:host`/style rule that
  * lives outside a `tailwind-variants` config.
+ *
+ * The host passes the **page typography** through (CONTEXT.md, ADR-0072).
+ * Preflight's `html, :host` rule gives every host Tailwind's system font, a
+ * 1.5 line height and reset font features, and slotted content inherits them
+ * through the flat tree, so text slotted into c-main lost the page's typeface.
+ * This rule is unlayered and beats preflight's `@layer base`. The
+ * all-components conformance suite fails when a Tailwind upgrade adds a
+ * property there. Tap highlight stays off on the shadow's own interactive
+ * elements (below), never on an ancestor of a content slot.
  */
 :host {
   display: contents;
+  font: inherit;
+  font-feature-settings: inherit;
+  font-variation-settings: inherit;
+  tab-size: inherit;
+  -webkit-text-size-adjust: inherit;
+  -webkit-tap-highlight-color: inherit;
+  --_c-ease-standard: cubic-bezier(0.25, 0.8, 0.5, 1);
+  --_c-toolbar-height: 60px;
+  --_c-control-height: 52px;
+}
+
+:where(
+  a,
+  button,
+  input,
+  select,
+  textarea,
+  summary,
+  label,
+  [role='button'],
+  [role='checkbox'],
+  [role='menuitem'],
+  [role='option'],
+  [role='radio'],
+  [role='slider'],
+  [role='switch'],
+  [role='tab'],
+  [role='treeitem']
+) {
+  -webkit-tap-highlight-color: transparent;
 }
 
 /*

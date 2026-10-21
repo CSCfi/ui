@@ -589,7 +589,7 @@ const fileUpload = tv({
     actions: 'flex shrink-0 items-center',
     bar: 'block h-full bg-primary transition-[width] duration-200 ease-linear',
     choose:
-      'm-0 inline-flex h-9 shrink-0 cursor-pointer items-center gap-2 rounded-csc-md border border-solid border-primary bg-transparent px-3 [font-family:var(--c-font-family)] text-sm font-bold text-primary transition-colors duration-200 ease-in-out outline-none hover:not-disabled:bg-primary/15 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary focus-visible:outline-solid disabled:pointer-events-none disabled:border-on-surface-disabled disabled:text-on-surface-disabled',
+      'm-0 inline-flex h-9 shrink-0 cursor-pointer items-center gap-2 rounded-csc-md border border-solid border-primary bg-transparent px-3 text-sm font-bold text-primary transition-colors duration-200 ease-in-out outline-none hover:not-disabled:bg-primary/15 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary focus-visible:outline-solid disabled:pointer-events-none disabled:border-on-surface-disabled disabled:text-on-surface-disabled',
     chooseIcon: 'size-5 shrink-0 fill-current',
     compactPrompt: 'min-w-0 truncate',
     done: 'size-5 shrink-0 fill-current text-success',
@@ -603,7 +603,7 @@ const fileUpload = tv({
       'absolute inset-x-0 bottom-0 h-0.5 overflow-hidden bg-primary-subtle',
     promptCoarse: 'hidden pointer-coarse:inline',
     promptFine: 'pointer-coarse:hidden',
-    root: 'flex w-full max-w-full min-w-0 flex-col gap-1 text-left [font-family:var(--c-font-family)] text-base text-on-surface',
+    root: 'flex w-full max-w-full min-w-0 flex-col gap-1 text-left text-base text-on-surface',
     row: 'relative flex min-w-0 items-center gap-3 overflow-clip rounded-csc-md border border-solid border-divider bg-transparent py-2 pr-1 pl-3',
     status:
       'truncate text-xs text-on-surface-muted [font-variant-numeric:tabular-nums]',
@@ -611,7 +611,7 @@ const fileUpload = tv({
     text: 'flex min-w-0 flex-auto flex-col gap-0.5',
     visuallyHidden:
       'absolute m-[-1px] h-px w-px overflow-hidden border-0 p-0 whitespace-nowrap [clip:rect(0_0_0_0)]',
-    zone: 'relative m-0 flex w-full min-w-0 cursor-pointer rounded-csc-md border border-dashed border-border-strong bg-transparent [font-family:var(--c-font-family)] text-sm text-on-surface-muted transition-colors duration-200 ease-in-out outline-none hover:bg-primary-subtle-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary focus-visible:outline-solid',
+    zone: 'relative m-0 flex w-full min-w-0 cursor-pointer rounded-csc-md border border-dashed border-border-strong bg-transparent text-sm text-on-surface-muted transition-colors duration-200 ease-in-out outline-none hover:bg-primary-subtle-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary focus-visible:outline-solid',
     zoneIcon: 'size-8 shrink-0 fill-current text-primary',
   },
   variants: {

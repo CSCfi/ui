@@ -57,7 +57,7 @@ const cardTitle = tv({
     actions: 'flex flex-wrap items-center gap-2',
     header: '',
     heading: 'm-0',
-    root: 'block px-[var(--_c-card-padding-inline,28px)] [font-family:var(--c-font-family)] text-[13.5px] font-bold tracking-[1.2px] text-balance text-on-surface uppercase',
+    root: 'block px-[var(--_c-card-padding-inline,28px)] text-[13.5px] font-bold tracking-[1.2px] text-balance text-on-surface uppercase',
     underline: 'mt-2 h-[3px] w-[42px] rounded-[2px] bg-primary',
   },
   variants: {

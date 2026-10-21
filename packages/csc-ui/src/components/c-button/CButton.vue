@@ -193,8 +193,6 @@ export type CButtonType = 'button' | 'reset' | 'submit';
  * @csspart root - The native `<button>` / `<a>` element carrying the visual styling.
  * @csspart content - Layout wrapper for the label, icon and description.
  * @csspart description - Wrapper of the `description` slot.
- *
- * @cssprop --c-font-family - Font stack applied to the label (native buttons do not inherit it).
  */
 import { tv } from 'tailwind-variants';
 import { computed, useTemplateRef } from 'vue';
@@ -229,11 +227,11 @@ const sizeVariants = {
   default: {
     contentInner: 'h-full px-4',
     iconWrap: 'text-2xl',
-    // The shared control height (`--spacing-control`, 52px; ADR-0055), so a
+    // The shared control height (`--_c-control-height`, 52px; ADR-0055), so a
     // button sits level beside a field. `--_c-button-min-height` is an
     // INTERNAL hook (not consumer API): a wrapping c-button-group sets it on
     // its frame so the buttons plus the frame total the control height.
-    root: 'min-h-[var(--_c-button-min-height,var(--spacing-control))] text-base',
+    root: 'min-h-[var(--_c-button-min-height,var(--_c-control-height))] text-base',
   },
   large: {
     contentInner: 'h-full px-6',
@@ -453,11 +451,10 @@ const button = tv({
     ripples:
       'pointer-events-none absolute inset-0 overflow-hidden rounded-[inherit] [corner-shape:inherit]',
     // `root` is the public part; the host itself is `display:contents`.
-    // Set only `font-family` (via the `--c-font-family` token, consistent with
-    // every other component) — native buttons don't inherit it. Font *size* is
-    // owned by the `size` variant's `text-*` (and consumer overrides);
-    // inheriting the whole `font` shorthand would reset it.
-    root: 'relative m-0 inline-grid min-w-22 transform-gpu cursor-pointer place-items-center rounded-csc-md border-0 p-0 [font-family:var(--c-font-family)] no-underline transition-colors duration-300 ease-in-out outline-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-solid',
+    // The typeface comes from the page through preflight's `font: inherit` on
+    // native buttons (ADR-0072). Font *size* is owned by the `size` variant's
+    // `text-*` (and consumer overrides), which outranks preflight's layer.
+    root: 'relative m-0 inline-grid min-w-22 transform-gpu cursor-pointer place-items-center rounded-csc-md border-0 p-0 no-underline transition-colors duration-300 ease-in-out outline-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-solid',
     spinner:
       'inline-block animate-spin rounded-full border-2 border-solid border-current border-r-transparent',
   },

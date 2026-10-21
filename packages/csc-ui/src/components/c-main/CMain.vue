@@ -87,7 +87,7 @@ const main = tv({
       true: { layout: 'contents' },
     },
     staticToolbar: {
-      false: { root: '[--_nav-offset:var(--spacing-toolbar)]' },
+      false: { root: '[--_nav-offset:var(--_c-toolbar-height)]' },
       true: { root: '[--_nav-offset:0px]' },
     },
   },

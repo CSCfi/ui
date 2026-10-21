@@ -701,3 +701,18 @@ describe('field to list gap', () => {
     above.unmount();
   });
 });
+
+describe('page typography (CONTEXT.md, ADR-0072)', () => {
+  // The list lives in a c-dropdown inside c-select's shadow root, out of
+  // reach of any page rule: only inheritance can carry the page font there.
+  it('draws the option rows of its nested list in the page font', async () => {
+    const m = await mountSelect();
+
+    m.stage.style.fontFamily = '"Page Probe", monospace';
+    await openByClick(m);
+
+    expect(getComputedStyle(rows(m)[0]!).fontFamily).toBe(
+      '"Page Probe", monospace',
+    );
+  });
+});

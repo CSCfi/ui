@@ -4,9 +4,9 @@ import type { Flavor } from '~/composables/useFlavor';
  * Customization page content, one block set per flavor. Kept as
  * data so the page can prerender-highlight every flavor and swap client-side.
  *
- * This page is the single source of truth for the five consumer customization
+ * This page is the single source of truth for the six consumer customization
  * surfaces: seed theming, dark mode / semantic tokens, ::part() restyling,
- * app-wide prop defaults, and the Tailwind theme export.
+ * typography, app-wide prop defaults, and the Tailwind theme export.
  * The getting-started and migration guides keep only teasers that link here.
  */
 export interface CustomizationBlock {
@@ -334,6 +334,30 @@ c-button::part(root):hover {
 Parts reach through the shadow boundary, so ordinary stylesheet rules work; there is nothing to configure. Keep colours inside part rules on the design tokens so your overrides still follow theme mode and brand seeds. Parts nested in inner components are forwarded on demand under a <child>-<part> naming convention — if a region you need is missing, request a part rather than working around the shadow root.`,
     },
     title: 'Restyle with ::part()',
+  },
+  {
+    blocks: forAll([
+      {
+        code: `/* Every component, and what you slot into it, inherits this. */
+body {
+  font-family: 'Noto Sans', sans-serif;
+  line-height: 1.5;
+}
+
+/* One component in another typeface, nested components included. */
+c-select {
+  font-family: 'museo-sans', sans-serif;
+}`,
+        lang: 'css',
+      },
+    ]),
+    id: 'typography',
+    intro: {
+      all: `Components draw in your page's typography. The typeface, line height and font features you set on body reach every component and the content you slot into it, as they reach native elements: c-main's page, a card's body and a select's option list alike. The library ships no font and no font token, so load your typeface and set it on body. On a page that sets no font, components fall back to the browser default, like any other element.
+
+Components pin type only where their design calls for it, such as a button label's size or an alert's text. To give one component another typeface, set font-family on its c-* element. Your rule outranks the component's own and reaches the components nested inside it.`,
+    },
+    title: 'Typography',
   },
   {
     blocks: {

@@ -692,7 +692,7 @@ const autocomplete = tv({
     info: 'flex min-h-[42px] w-full cursor-default flex-nowrap items-center gap-2 px-[10px] text-sm whitespace-nowrap text-on-surface-muted',
     infoIcon: 'h-[18px] w-[18px] shrink-0 fill-current text-warning',
     input:
-      'max-h-8 w-full max-w-full min-w-0 flex-[1_1_auto] cursor-pointer border-0 bg-transparent py-2 [font-family:var(--c-font-family)] text-base leading-5 text-on-surface outline-none placeholder:text-on-surface-muted placeholder:opacity-100 focus:outline-none active:outline-none',
+      'max-h-8 w-full max-w-full min-w-0 flex-[1_1_auto] cursor-pointer border-0 bg-transparent py-2 text-base leading-5 text-on-surface outline-none placeholder:text-on-surface-muted placeholder:opacity-100 focus:outline-none active:outline-none',
     item: 'flex min-h-[42px] w-full cursor-pointer flex-nowrap items-center gap-3 rounded px-[10px] py-2 text-sm whitespace-nowrap text-on-surface outline-none select-none data-[active]:bg-primary-subtle data-[active]:text-primary data-[active]:ring-1 data-[active]:ring-primary data-[active]:ring-inset',
     itemLabel: 'flex-auto overflow-hidden text-ellipsis whitespace-nowrap',
     list: 'm-0 mt-1 w-full scrollbar-hidden list-none overflow-y-auto overscroll-none p-1 outline-none',
@@ -705,7 +705,7 @@ const autocomplete = tv({
       'flex min-h-11 items-center gap-2 border-b border-solid border-divider px-3',
     searchIcon: 'h-[18px] w-[18px] shrink-0 fill-current text-on-surface-muted',
     searchInput:
-      'w-full border-0 bg-transparent py-2 [font-family:var(--c-font-family)] text-base leading-5 text-on-surface [caret-color:var(--c-primary)] outline-none placeholder:text-on-surface-muted placeholder:opacity-100',
+      'w-full border-0 bg-transparent py-2 text-base leading-5 text-on-surface [caret-color:var(--c-primary)] outline-none placeholder:text-on-surface-muted placeholder:opacity-100',
     // A long option label ellipsises inside its tag instead of blowing out
     // the row.
     tagLabel: 'min-w-0 truncate',

@@ -1356,7 +1356,6 @@ table.c-data-table {
   background-color: var(--c-surface);
   border-collapse: separate;
   border-spacing: 0;
-  font-family: var(--c-font-family);
   width: 100%;
 }
 

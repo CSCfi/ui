@@ -337,7 +337,7 @@ onBeforeUnmount(() => {
    the browser chrome is expanded. Inside c-main this height is overridden by
    the layout's own pinned height (outer tree context wins over `:host`). */
 :host(.autoheight) {
-  height: calc(100dvh - var(--spacing-toolbar));
+  height: calc(100dvh - var(--_c-toolbar-height));
   overflow-y: auto;
   overflow-x: hidden;
   overscroll-behavior: contain;

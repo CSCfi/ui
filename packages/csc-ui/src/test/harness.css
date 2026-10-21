@@ -4,4 +4,10 @@ body {
   padding: 16px;
   background: var(--c-surface);
   color: var(--c-on-surface);
+  /* Components inherit the page typography (ADR-0072). This is the page of a
+   * typical app with Tailwind preflight: its system stack and line height. */
+  font-family:
+    ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
+    'Segoe UI Symbol', 'Noto Color Emoji';
+  line-height: 1.5;
 }

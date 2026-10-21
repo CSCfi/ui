@@ -257,10 +257,13 @@ applyTheme({ primary: '#006efd' });`,
     ]),
     id: 'theming',
     intro: {
-      all: `Components follow the OS light/dark preference by default; set data-theme="light" or "dark" on <html> to pin a mode explicitly. To re-brand, hand applyTheme one seed colour per family you want to override — the full ramp and both modes regenerate from it.`,
+      all: `Components follow the OS light/dark preference by default; set data-theme="light" or "dark" on <html> to pin a mode explicitly. To re-brand, hand applyTheme one seed colour per family you want to override — the full ramp and both modes regenerate from it.
+
+Components draw in your page's font and line height, so set them on body.`,
     },
     link: {
-      label: 'Customization guide — theming, dark mode, parts, Tailwind',
+      label:
+        'Customization guide — theming, dark mode, parts, typography, Tailwind',
       to: '/customization',
     },
     title: 'Theming & dark mode',

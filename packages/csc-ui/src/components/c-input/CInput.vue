@@ -150,7 +150,7 @@ import { useHasSlot } from '../../shared/useHasSlot';
 // Every size owns its own `min-h`, and the base `slot` carries none — the same
 // shape c-button uses. A base height would survive here: tailwind-merge does
 // not recognise `min-h-control` as a `min-h` utility (it is generated from the
-// `--spacing-control` theme value, not a built-in scale step), so it would not
+// control-height theme value, not a built-in scale step), so it would not
 // be dropped in favour of the variant's `min-h-9` and the taller of the two
 // would silently win.
 const sizeVariants = {
@@ -221,11 +221,11 @@ const input = tv({
     // 44px -> top-3, the 52px control height -> top-4. `controlHeight.spec.ts`
     // holds this at both sizes.
     labelFloating:
-      'c-input__label--floating pointer-events-none absolute top-4 right-auto left-0 max-w-[90%] origin-top-left overflow-clip text-base text-ellipsis whitespace-nowrap [overflow-clip-margin:4px] [transition:0.3s_var(--ease-standard)_0.08s]',
+      'c-input__label--floating pointer-events-none absolute top-4 right-auto left-0 max-w-[90%] origin-top-left overflow-clip text-base text-ellipsis whitespace-nowrap [overflow-clip-margin:4px] [transition:0.3s_var(--_c-ease-standard)_0.08s]',
     labelTop:
       'c-input__label--top max-w-full overflow-hidden text-sm font-medium text-ellipsis whitespace-nowrap',
     legend:
-      'c-input__legend float-none -ml-px w-0 p-0 text-left leading-[11px] [transition:width_0.3s_var(--ease-standard)]',
+      'c-input__legend float-none -ml-px w-0 p-0 text-left leading-[11px] [transition:width_0.3s_var(--_c-ease-standard)]',
     // Outer message AREA: reserved whenever details aren't hidden (the `min-h-4`
     // holds 16px even with no hint/error) so a hint-less field keeps the same
     // height as one with a message and the layout doesn't shift when a message
@@ -636,7 +636,6 @@ watch(
 <style>
 :host {
   display: block;
-  font-family: var(--c-font-family);
   color: var(--c-on-surface);
 }
 
@@ -709,8 +708,8 @@ watch(
 .c-input-message-enter-active,
 .c-input-message-leave-active {
   transition:
-    opacity 0.2s var(--ease-standard),
-    transform 0.2s var(--ease-standard);
+    opacity 0.2s var(--_c-ease-standard),
+    transform 0.2s var(--_c-ease-standard);
 }
 
 .c-input-message-enter-from,

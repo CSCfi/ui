@@ -687,7 +687,7 @@ const colorPicker = tv({
     channel:
       'flex min-w-0 flex-1 flex-col items-center gap-1 text-xs text-on-surface-muted',
     channelInput:
-      'h-8 w-full min-w-0 rounded-csc-md border border-solid border-divider bg-surface bg-clip-padding px-1 text-center [font-family:var(--c-font-family)] text-sm text-on-surface tabular-nums outline-none focus-visible:outline-2 focus-visible:-outline-offset-1 focus-visible:outline-primary focus-visible:outline-solid',
+      'h-8 w-full min-w-0 rounded-csc-md border border-solid border-divider bg-surface bg-clip-padding px-1 text-center text-sm text-on-surface tabular-nums outline-none focus-visible:outline-2 focus-visible:-outline-offset-1 focus-visible:outline-primary focus-visible:outline-solid',
     channelLabel: 'leading-4 font-medium',
     channels: 'flex gap-2',
     // A chip on the colour's own ground over the checkerboard, framed by a
@@ -699,13 +699,13 @@ const colorPicker = tv({
     content: 'flex w-full min-w-0 items-center',
     // c-button's filled look on a native button, at the heading row's 44px
     // touch target.
-    done: 'ml-auto h-11 min-w-22 cursor-pointer rounded-csc-md border-0 bg-primary px-5 [font-family:var(--c-font-family)] text-sm font-bold text-on-primary outline-none hover:bg-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary focus-visible:outline-solid',
+    done: 'ml-auto h-11 min-w-22 cursor-pointer rounded-csc-md border-0 bg-primary px-5 text-sm font-bold text-on-primary outline-none hover:bg-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary focus-visible:outline-solid',
     // The two halves touch with no seam, so a small shift shows; the frame
     // is the chip's hairline (ADR-0042).
     newColor:
       'c-color-picker__chip flex-1 rounded-csc-r-md border border-l-0 border-solid border-divider bg-clip-padding',
     notation:
-      'h-7 flex-1 cursor-pointer rounded-csc-md border-0 bg-transparent px-2 [font-family:var(--c-font-family)] text-xs font-semibold text-on-surface-muted outline-none hover:bg-primary-subtle-hover focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-primary focus-visible:outline-solid aria-pressed:bg-primary aria-pressed:text-on-primary aria-pressed:hover:bg-primary-hover aria-pressed:focus-visible:-outline-offset-4 aria-pressed:focus-visible:outline-on-primary',
+      'h-7 flex-1 cursor-pointer rounded-csc-md border-0 bg-transparent px-2 text-xs font-semibold text-on-surface-muted outline-none hover:bg-primary-subtle-hover focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-primary focus-visible:outline-solid aria-pressed:bg-primary aria-pressed:text-on-primary aria-pressed:hover:bg-primary-hover aria-pressed:focus-visible:-outline-offset-4 aria-pressed:focus-visible:outline-on-primary',
     notationSwitch:
       'flex gap-0.5 rounded-csc-lg border border-solid border-divider bg-surface-sunken bg-clip-padding p-0.5',
     original:

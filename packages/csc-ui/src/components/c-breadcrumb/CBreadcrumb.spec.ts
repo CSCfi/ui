@@ -218,7 +218,7 @@ describe('semantics', () => {
         `<c-breadcrumb-item aria-label="Home" href="#home"><svg slot="icon" viewBox="0 0 24 24" width="20" height="20"><path d="${mdiHome}" /></svg></c-breadcrumb-item><c-breadcrumb-item>Projects<span class="baseline" style="display:inline-block;width:0;height:0"></span></c-breadcrumb-item>`,
       );
 
-      m.stage.style.setProperty('--c-font-family', 'Skewed');
+      m.stage.style.fontFamily = 'Skewed';
       await relaid();
 
       const [home, projects] = crumbs(m);

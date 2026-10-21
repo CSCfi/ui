@@ -318,7 +318,7 @@ const iconButton = tv({
       'pointer-events-none absolute inset-0 overflow-hidden rounded-[inherit]',
     // Box + default appearance live here; appearance flags refine in
     // compoundVariants so the inverted/disabled intersections override cleanly.
-    root: 'relative m-0 inline-grid size-10 cursor-pointer appearance-none place-items-center overflow-visible rounded-full border-0 p-0 [font-family:var(--c-font-family)] leading-normal transition-colors duration-300 ease-[cubic-bezier(0.25,0.8,0.5,1)] outline-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-solid',
+    root: 'relative m-0 inline-grid size-10 cursor-pointer appearance-none place-items-center overflow-visible rounded-full border-0 p-0 leading-normal transition-colors duration-300 ease-[cubic-bezier(0.25,0.8,0.5,1)] outline-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-solid',
     spinner:
       'inline-block animate-spin rounded-full border-2 border-solid border-current border-r-transparent',
   },

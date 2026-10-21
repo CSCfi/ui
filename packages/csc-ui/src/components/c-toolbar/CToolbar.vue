@@ -31,8 +31,8 @@ import { coerceBoolean } from '../../shared/coerceBoolean';
  * scrolls away before the bar pins. `static` leaves the bar in flow so it
  * scrolls away with the page; it is positioned `relative` (not `static`) so
  * `z-10` keeps its shadow above positioned page content. The height is the
- * shared `--spacing-toolbar` theme value (`h-toolbar`), which c-main also
- * reads to offset the pinned side navigation.
+ * shared toolbar height (`h-toolbar`, `--_c-toolbar-height`), which c-main
+ * also reads to offset the pinned side navigation.
  */
 const toolbar = tv({
   defaultVariants: {

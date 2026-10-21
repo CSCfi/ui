@@ -359,7 +359,9 @@ Use plain v-model (no argument): the elements ride the native input event, so v-
     ]),
     id: 'styling',
     intro: {
-      all: `Per-component CSS custom properties are gone. Variables like --c-button-background-color or --c-button-border-radius no longer exist; ::part() is now the sole customization API, and a component's curated part set is its customization contract.`,
+      all: `Per-component CSS custom properties are gone. Variables like --c-button-background-color or --c-button-border-radius no longer exist; ::part() is now the sole customization API, and a component's curated part set is its customization contract.
+
+The --c-font-family token is gone too. Components, and the content you slot into them, inherit your page's typeface, line height and font features, as native elements do. Set your font on body; to give one component another typeface, set font-family on its c-* element.`,
     },
     link: {
       label: 'How ::part() restyling works',

@@ -130,7 +130,7 @@ const breadcrumb = tv({
     // fold itself, so the button is focusable the moment it is needed.
     fold: 'invisible absolute flex shrink-0 items-center data-folding:visible data-folding:static',
     foldButton:
-      'm-0 inline-flex min-h-7 cursor-pointer items-center justify-center rounded-csc-md border-0 bg-transparent px-3 [font-family:var(--c-font-family)] text-sm font-bold text-primary transition-colors duration-300 ease-in-out outline-none hover:bg-primary/15 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary focus-visible:outline-solid aria-expanded:bg-primary/15',
+      'm-0 inline-flex min-h-7 cursor-pointer items-center justify-center rounded-csc-md border-0 bg-transparent px-3 text-sm font-bold text-primary transition-colors duration-300 ease-in-out outline-none hover:bg-primary/15 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary focus-visible:outline-solid aria-expanded:bg-primary/15',
     // Icons, not the `…` glyph: a glyph sits on the font's baseline, an SVG
     // centres with the crumbs' icons and chevrons whatever the font.
     foldIcon: 'size-5 shrink-0 fill-current',

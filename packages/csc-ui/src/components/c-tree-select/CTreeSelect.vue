@@ -722,7 +722,7 @@ const treeSelect = tv({
     content:
       'relative flex w-full min-w-0 cursor-pointer items-center overflow-hidden',
     crumb:
-      'max-w-40 shrink-0 cursor-pointer truncate rounded border-0 bg-transparent px-1 py-0.5 [font-family:var(--c-font-family)] text-sm text-link hover:underline disabled:cursor-default disabled:font-medium disabled:text-on-surface disabled:no-underline',
+      'max-w-40 shrink-0 cursor-pointer truncate rounded border-0 bg-transparent px-1 py-0.5 text-sm text-link hover:underline disabled:cursor-default disabled:font-medium disabled:text-on-surface disabled:no-underline',
     crumbSep: 'shrink-0 text-on-surface-muted',
     fieldMain:
       'flex min-w-0 items-center gap-2 overflow-hidden text-base leading-5 text-on-surface',
@@ -739,7 +739,7 @@ const treeSelect = tv({
     header:
       'flex min-h-8 items-center justify-between gap-2 px-3 pt-2 text-sm text-on-surface-muted',
     headerAction:
-      'shrink-0 cursor-pointer border-0 bg-transparent p-0 [font-family:var(--c-font-family)] text-sm text-link hover:underline',
+      'shrink-0 cursor-pointer border-0 bg-transparent p-0 text-sm text-link hover:underline',
     info: 'flex min-h-[42px] w-full cursor-default flex-nowrap items-center gap-2 px-[10px] text-sm whitespace-nowrap text-on-surface-muted',
     infoIcon: 'h-[18px] w-[18px] shrink-0 fill-current text-warning',
     // The readonly combobox is visually hidden (clip) but stays focusable and
@@ -763,7 +763,7 @@ const treeSelect = tv({
       'flex min-h-11 items-center gap-2 border-b border-solid border-divider px-3',
     searchIcon: 'h-[18px] w-[18px] shrink-0 fill-current text-on-surface-muted',
     searchInput:
-      'w-full border-0 bg-transparent py-2 [font-family:var(--c-font-family)] text-base leading-5 text-on-surface [caret-color:var(--c-primary)] outline-none placeholder:text-on-surface-muted placeholder:opacity-100',
+      'w-full border-0 bg-transparent py-2 text-base leading-5 text-on-surface [caret-color:var(--c-primary)] outline-none placeholder:text-on-surface-muted placeholder:opacity-100',
     visuallyHidden:
       'absolute h-px w-px overflow-hidden border-0 p-0 [clip:rect(1px,1px,1px,1px)]',
   },

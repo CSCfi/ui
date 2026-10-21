@@ -137,7 +137,7 @@ const breadcrumbItem = tv({
   slots: {
     baseline: 'inline-block h-0 w-0',
     content:
-      'm-0 flex min-w-0 items-center gap-2 [font-family:var(--c-font-family)] whitespace-nowrap text-on-surface no-underline transition-colors duration-300 ease-in-out outline-none focus-visible:outline-2 focus-visible:outline-solid',
+      'm-0 flex min-w-0 items-center gap-2 whitespace-nowrap text-on-surface no-underline transition-colors duration-300 ease-in-out outline-none focus-visible:outline-2 focus-visible:outline-solid',
     icon: 'inline-flex shrink-0 items-center fill-current',
     label: 'relative block min-w-0 truncate',
     root: 'flex min-w-0 items-center',

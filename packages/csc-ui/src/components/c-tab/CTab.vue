@@ -241,7 +241,7 @@ slot {
   cursor: pointer;
   display: inline-flex;
   font-weight: 600;
-  height: var(--spacing-control);
+  height: var(--_c-control-height);
   justify-content: center;
   position: relative;
 }

@@ -874,7 +874,7 @@ const datePicker = tv({
     control: 'flex items-center transition-[opacity,visibility] duration-150',
     // c-button's filled look on a native button, at the heading row's 44px
     // touch target.
-    done: 'ml-auto h-11 min-w-22 cursor-pointer rounded-csc-md border-0 bg-primary px-5 [font-family:var(--c-font-family)] text-sm font-bold text-on-primary outline-none hover:not-disabled:bg-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary focus-visible:outline-solid disabled:cursor-default disabled:bg-surface-muted disabled:text-on-surface-faint',
+    done: 'ml-auto h-11 min-w-22 cursor-pointer rounded-csc-md border-0 bg-primary px-5 text-sm font-bold text-on-primary outline-none hover:not-disabled:bg-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary focus-visible:outline-solid disabled:cursor-default disabled:bg-surface-muted disabled:text-on-surface-faint',
     grid: 'w-full table-fixed border-collapse',
     header: 'flex min-h-14 items-center justify-between gap-2 px-1',
     icon: 'size-6 fill-current',
@@ -888,14 +888,14 @@ const datePicker = tv({
     stepLabel: 'px-3 pt-3 pb-1 text-xs font-medium text-on-surface-muted',
     stepList: 'relative min-h-0 flex-1',
     stepSummary:
-      'flex min-h-10 w-full shrink-0 cursor-pointer items-center gap-2 rounded border-0 bg-transparent px-3 text-left [font-family:var(--c-font-family)] text-sm text-on-surface outline-none hover:bg-primary-subtle-hover focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-primary focus-visible:outline-solid',
+      'flex min-h-10 w-full shrink-0 cursor-pointer items-center gap-2 rounded border-0 bg-transparent px-3 text-left text-sm text-on-surface outline-none hover:bg-primary-subtle-hover focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-primary focus-visible:outline-solid',
     stepSummaryLabel: 'text-on-surface-muted',
     // A text button's look on a native button: the focus trap only sees
     // native buttons in the card.
     today:
-      'h-9 cursor-pointer rounded-csc-md border-0 bg-transparent px-3 [font-family:var(--c-font-family)] text-sm font-bold text-primary outline-none hover:not-disabled:bg-primary-subtle-hover focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-primary focus-visible:outline-solid disabled:cursor-default disabled:text-on-surface-disabled',
+      'h-9 cursor-pointer rounded-csc-md border-0 bg-transparent px-3 text-sm font-bold text-primary outline-none hover:not-disabled:bg-primary-subtle-hover focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-primary focus-visible:outline-solid disabled:cursor-default disabled:text-on-surface-disabled',
     viewButton:
-      'flex h-9 cursor-pointer items-center gap-0.5 rounded-full border-0 bg-transparent pr-1.5 pl-3 [font-family:var(--c-font-family)] text-sm font-medium text-on-surface tabular-nums outline-none hover:bg-primary-subtle-hover focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-primary focus-visible:outline-solid',
+      'flex h-9 cursor-pointer items-center gap-0.5 rounded-full border-0 bg-transparent pr-1.5 pl-3 text-sm font-medium text-on-surface tabular-nums outline-none hover:bg-primary-subtle-hover focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-primary focus-visible:outline-solid',
     visuallyHidden:
       'absolute h-px w-px overflow-hidden border-0 p-0 whitespace-nowrap [clip:rect(0_0_0_0)]',
     weekday: 'h-9 p-0 text-center text-xs font-medium text-on-surface-muted',

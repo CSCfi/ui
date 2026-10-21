@@ -446,7 +446,7 @@ const select = tv({
       'inline-flex rotate-0 transition-transform duration-300 ease-in-out',
     content: 'flex w-full items-center',
     input:
-      'max-h-8 w-full max-w-full min-w-0 flex-[1_1_auto] cursor-pointer border-0 bg-transparent py-2 [font-family:var(--c-font-family)] text-base leading-5 text-on-surface outline-none placeholder:text-on-surface-muted placeholder:opacity-100 focus:outline-none active:outline-none',
+      'max-h-8 w-full max-w-full min-w-0 flex-[1_1_auto] cursor-pointer border-0 bg-transparent py-2 text-base leading-5 text-on-surface outline-none placeholder:text-on-surface-muted placeholder:opacity-100 focus:outline-none active:outline-none',
     inputWrap: 'relative flex w-full min-w-0 justify-items-stretch',
     // The trailing controls' box: pulled 6px into the field's padding so
     // the 28px button reads flush with the value's right edge.
