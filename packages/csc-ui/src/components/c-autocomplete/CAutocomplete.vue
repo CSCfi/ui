@@ -1369,8 +1369,9 @@ defineExpose({ reset });
 const narrow = useNarrowViewport();
 
 // The anchored-panel lifecycle (anchor + popover + light dismiss + focus
-// return) is the shared composable; the hooks run synchronously inside the
-// native `toggle` handler, so `change:query` still fires within that event.
+// return) is the shared composable. The query resets in `onOpening`, before
+// `showPopover()`: a key typed on the closed field reaches the search input
+// before the queued `toggle` event runs `onOpened`.
 const {
   anchorStyle,
   cardStyle,
@@ -1390,11 +1391,6 @@ const {
     activeIndex.value = -1;
   },
   onOpened: () => {
-    // Reset the query and tell the consumer — always, even when it was
-    // already empty: with `external` this is what loads the default list.
-    query.value = '';
-    emit('change:query', '');
-
     // Seed the active option from the current selection, else the first
     // enabled option.
     requestAnimationFrame(() => {
@@ -1404,12 +1400,22 @@ const {
       updateStatusText();
     });
   },
+  onOpening: () => {
+    // Reset the query and tell the consumer — always, even when it was
+    // already empty: with `external` this is what loads the default list.
+    query.value = '';
+    emit('change:query', '');
+  },
   panel: panelRef,
   returnFocusTo: fieldRef,
 });
 
+// The selection is preferred only while the query is empty: after a typed
+// open the first match leads, as on every keystroke (`onSearchInput`).
 const seedActiveIndex = () => {
-  const selIdx = filteredOptions.value.findIndex((o) => isSelected(o));
+  const selIdx = query.value
+    ? -1
+    : filteredOptions.value.findIndex((o) => isSelected(o));
 
   if (selIdx >= 0 && !filteredOptions.value[selIdx].disabled) {
     activeIndex.value = selIdx;
@@ -1480,7 +1486,11 @@ const onFieldKeyDown = (event: KeyboardEvent) => {
     return;
   }
 
-  // A printable character opens the panel and seeds the search input.
+  // A printable character opens the panel and moves focus to the search
+  // input while its keydown is still dispatching: the browser then types the
+  // key — and every key after it — into the search input itself.
+  // `preventScroll`: without native anchor positioning the panel is placed
+  // only once `toggle` fires.
   if (
     !isOpen.value &&
     event.key.length === 1 &&
@@ -1489,12 +1499,7 @@ const onFieldKeyDown = (event: KeyboardEvent) => {
     !event.altKey
   ) {
     openPanel();
-    requestAnimationFrame(() => {
-      setQuery(event.key);
-
-      if (searchRef.value) searchRef.value.value = event.key;
-      activeIndex.value = firstEnabledIndex();
-    });
+    searchRef.value?.focus({ preventScroll: true });
   }
 };
 

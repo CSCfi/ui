@@ -1501,8 +1501,9 @@ const onReset = (event?: Event) => {
 const narrow = useNarrowViewport();
 
 // The anchored-panel lifecycle (anchor + popover + light dismiss + focus
-// return) is the shared composable; the hooks run synchronously inside the
-// native `toggle` handler, so `change:query` still fires within that event.
+// return) is the shared composable. The query resets in `onOpening`, before
+// `showPopover()`: a key typed on the closed field reaches the search input
+// before the queued `toggle` event runs `onOpened`.
 const {
   anchorStyle,
   cardStyle,
@@ -1522,20 +1523,23 @@ const {
     activeIndex.value = -1;
   },
   onOpened: () => {
+    // The committed row leads while browsing; after a typed open the first
+    // match does, as on every keystroke (`onSearchInput`).
+    requestAnimationFrame(() => {
+      applyListCap();
+      searchRef.value?.focus();
+      settleHighlight(searchMode.value ? null : committedValue.value);
+    });
+  },
+  onOpening: () => {
     // Reset the query and tell the consumer — always, even when it was
     // already empty (the shared search-input contract, ADR-0029).
     query.value = '';
     emit('change:query', '');
 
     // Reopen at the committed item's parent level (the root when nothing is
-    // committed), with the committed row highlighted.
+    // committed).
     pathValues.value = committedEntry.value?.path.map((p) => p.value) ?? [];
-
-    requestAnimationFrame(() => {
-      applyListCap();
-      searchRef.value?.focus();
-      settleHighlight(committedValue.value);
-    });
   },
   panel: panelRef,
   returnFocusTo: fieldRef,
@@ -1584,7 +1588,11 @@ const onFieldKeyDown = (event: KeyboardEvent) => {
     return;
   }
 
-  // A printable character opens the panel and seeds the search input.
+  // A printable character opens the panel and moves focus to the search
+  // input while its keydown is still dispatching: the browser then types the
+  // key — and every key after it — into the search input itself.
+  // `preventScroll`: without native anchor positioning the panel is placed
+  // only once `toggle` fires.
   if (
     event.key.length === 1 &&
     !event.ctrlKey &&
@@ -1592,13 +1600,7 @@ const onFieldKeyDown = (event: KeyboardEvent) => {
     !event.altKey
   ) {
     openPanel();
-    requestAnimationFrame(() => {
-      setQuery(event.key);
-
-      if (searchRef.value) searchRef.value.value = event.key;
-
-      settleHighlight();
-    });
+    searchRef.value?.focus({ preventScroll: true });
   }
 };
 

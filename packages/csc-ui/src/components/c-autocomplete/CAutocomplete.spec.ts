@@ -212,6 +212,69 @@ describe('query', () => {
 
     expect(events.details()).toEqual(['', 'j', 'ja', '']);
   });
+
+  // The open-reset used to run in the `toggle` task and the typed key was
+  // seeded a frame later: whichever ran last won, so `finland` could search
+  // `inland`, and keys typed before the search input took focus were lost.
+  it.each([
+    ['in one burst', ['python']],
+    ['with a frame after the first key', ['p', 'ython']],
+  ])(
+    'keeps every character typed on the closed field, %s',
+    async (_, bursts) => {
+      const m = await mountAuto();
+
+      const events = recordEvents(m.host, ['change:query']);
+
+      combobox(m).focus();
+      await settle();
+
+      for (const keys of bursts) {
+        await userEvent.keyboard(keys);
+        await settle();
+      }
+
+      expect(isOpen(m)).toBe(true);
+      expect(deepActiveElement()).toBe(search(m));
+      expect(search(m).value).toBe('python');
+      expect(rows(m)).toHaveLength(1);
+      expect(rows(m)[0].textContent).toContain('Python');
+      expect(rows(m)[0].hasAttribute('data-active')).toBe(true);
+      expect(events.details()).toEqual([
+        '',
+        'p',
+        'py',
+        'pyt',
+        'pyth',
+        'pytho',
+        'python',
+      ]);
+    },
+  );
+
+  it('highlights the first match, not the selection, after a typed open', async () => {
+    const m = await mountAuto(
+      {
+        items: [
+          { name: 'Faroe Islands', value: 'fo' },
+          { name: 'Fiji', value: 'fj' },
+          { name: 'Finland', value: 'fi' },
+          { name: 'France', value: 'fr' },
+        ],
+        value: 'fi',
+      },
+      '',
+    );
+
+    combobox(m).focus();
+    await settle();
+    await userEvent.keyboard('f');
+    await settle();
+
+    expect(search(m).value).toBe('f');
+    expect(rows(m)).toHaveLength(4);
+    expect(rows(m)[0].hasAttribute('data-active')).toBe(true);
+  });
 });
 
 describe('multiple', () => {

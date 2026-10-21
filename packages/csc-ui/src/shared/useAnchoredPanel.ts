@@ -49,7 +49,10 @@
  * fullscreen `tv` variant (the panel paints the surface, the card sheds its
  * anchored chrome, the list takes the rest, the heading row) and the open
  * sequence (peek cap, focus, highlight seed, announcement), run from
- * `onOpened` synchronously inside the `toggle` handler.
+ * `onOpened` synchronously inside the `toggle` handler. State that must be in
+ * place before the first keystroke reaches the panel — a search input's
+ * query reset — goes in `onOpening` instead: `toggle` is a queued task, so a
+ * key typed into a panel focused on open can land before it.
  */
 
 import {
@@ -133,6 +136,9 @@ export interface UseAnchoredPanelOptions {
 
   /** Runs inside the native `toggle` handler once open, after the fallback positioning / page lock and the dismiss listener — the consumer's open sequence goes here. */
   onOpened?: () => void;
+
+  /** Runs inside `open()` right before `showPopover()`, only when the panel really opens — the reset of state a keystroke may already change before `toggle` fires (a search input's query). */
+  onOpening?: () => void;
 
   /** The `popover="manual"` panel element. */
   panel: Readonly<Ref<HTMLElement | null>>;
@@ -254,6 +260,7 @@ export const useAnchoredPanel = (
         anchorRect && box ? Math.max(0, box.top - anchorRect.top) : 0;
     }
 
+    options.onOpening?.();
     p.showPopover();
   };
 
