@@ -86,7 +86,7 @@
       </c-side-navigation>
 
       <main
-        class="max-w-280 min-w-0 flex-1 px-5 pt-6 pb-12 md:px-12 md:pt-8 md:pb-16"
+        class="max-w-420 min-w-0 flex-1 px-5 pt-6 pb-12 md:px-12 md:pt-8 md:pb-16"
       >
         <nuxt-page />
       </main>

@@ -3,7 +3,7 @@
     "activityBar.activeBackground": "#c935b5",
     "activityBar.activeBorder": "#f9e64f",
     "activityBar.activeForeground": "#fff",
-    "activityBar.background": "#d968c9",
+    "activityBar.background": "#0f1115",
     "activityBar.foreground": "#fff",
     "activityBar.inactiveForeground": "#ffffff99",
 
@@ -20,7 +20,7 @@
 
     "editorGroup.border": "#d968c9",
 
-    "modernActivityBar.border": "#d968c9",
+    "modernActivityBar.border": "#d968c900",
     "modernActivityBarItem.hoverBackground": "#f9e64f",
     "modernActivityBarItem.hoverForeground": "#000",
 
@@ -39,8 +39,18 @@
     "statusBarItem.remoteBackground": "#f9e64f",
     "statusBarItem.remoteForeground": "#000000",
 
-    "tab.activeBackground": "#50017b",
-    "tab.activeBorder": "#d968c9",
+    "editor.border": "#d968c9",
+
+    "tab.divider": "#00000000",
+
+    "tab.activeBackground": "#171A1F",
+    "tab.hoverBackground": "#000000",
+    "modernEditorTab.activeHoverBackground": "#171A1F",
+
+    "editorGroupHeader.tabsBackground": "#0f1115",
+    "editorGroupHeader.tabsBorder": "#262b35",
+
+    "bar": "#0048ff",
 
     "titleBar.activeBackground": "#d968c9",
     "titleBar.activeForeground": "#fff",
