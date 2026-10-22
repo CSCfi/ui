@@ -84,12 +84,22 @@ import {
   computed,
   onBeforeUnmount,
   onMounted,
+  ref,
   useHost,
   watch,
   watchEffect,
 } from 'vue';
 
+import { prefersReducedMotion } from '../../shared/reducedMotion';
 import { useHostEmit } from '../../shared/useHostEmit';
+import {
+  type CToastSwipeSample,
+  SWIPE_VELOCITY_WINDOW_MS,
+  swipeIntent,
+  swipeOpacity,
+  swipeOutcome,
+  swipeVelocity,
+} from './swipe';
 
 /** Events dispatched by `<c-toast>`. */
 interface CToastEvents {
@@ -133,7 +143,7 @@ const toast = tv({
     item: 'grid auto-cols-auto grid-flow-col grid-cols-[32px_1fr] items-center gap-3',
     progress:
       'mt-2 h-1.5 [transform:translateZ(0)] overflow-hidden rounded-lg bg-on-surface-inverted/15',
-    // The animation (keyframes + host-hover-driven play-state) lives in the
+    // The animation (keyframes + hold-driven play-state) lives in the
     // escape-hatch sheet keyed off the static `.c-toast__progress__bar` class.
     // Neutral on purpose: the badge carries the status colour.
     progressBar: 'h-1.5 w-full rounded-lg bg-on-surface-inverted',
@@ -220,7 +230,54 @@ const showProgress = computed(
   () => !props.message?.persistent && props.message?.progress,
 );
 
-let closed = false;
+/** A press on a swipeable toast, from `pointerdown` until it ends. */
+interface CToastDrag {
+  /** The offset the toast already had when pressed (caught springing back). */
+  base: number;
+
+  claimed: boolean;
+
+  /** The offset last painted. */
+  dx: number;
+  id: number;
+  samples: CToastSwipeSample[];
+  startX: number;
+  startY: number;
+  width: number;
+}
+
+/**
+ * The c-toasts stack a toast renders in, reached through the shadow root it
+ * sits in. `_toastLeaving` pins the leaving toast and glides the rest.
+ */
+type CToastStackHost = {
+  _toastLeaving?: (toast: HTMLElement) => void;
+} & Element;
+
+const SWIPE_MOTION_MS = 250;
+
+// Longer than the slowest exit (the 0.5s slide), for an exit that never
+// transitions: a hidden ancestor, a cancelled transition.
+const EXIT_FALLBACK_MS = 700;
+
+// The exit has begun, whichever path started it.
+const leaving = ref(false);
+
+// CONTEXT.md "Swipe dismiss": only a toast with a dismiss button takes it.
+const swipeable = computed(
+  () =>
+    !leaving.value &&
+    Boolean(props.message) &&
+    !props.message?.custom &&
+    !props.message?.indeterminate,
+);
+
+const timed = () =>
+  Boolean(props.message) &&
+  !props.message?.persistent &&
+  !props.message?.indeterminate;
+
+let started = false;
 
 let startTime = 0;
 
@@ -228,36 +285,337 @@ let remainingTime = 0;
 
 let timeoutId: null | ReturnType<typeof setTimeout> = null;
 
-const close = () => {
-  if (closed) return;
-  closed = true;
+let exitFallback: null | ReturnType<typeof setTimeout> = null;
 
-  if (!host) return;
+let closeEmitted = false;
+
+// Hover and press each hold the timer (ADR-0073): it waits while either lasts
+// and resumes with the time it had left once both have ended.
+const holds = new Set<'hover' | 'press'>();
+
+let pressId: null | number = null;
+
+let drag: CToastDrag | null = null;
+
+let springBack: Animation | null = null;
+
+const stopTimer = () => {
+  if (timeoutId !== null) clearTimeout(timeoutId);
+  timeoutId = null;
+};
+
+const stackHost = (): CToastStackHost | null => {
+  const root = host?.getRootNode();
+
+  return root instanceof ShadowRoot ? (root.host as CToastStackHost) : null;
+};
+
+const clearDragStyles = () => {
+  host?.style.removeProperty('transform');
+  host?.style.removeProperty('opacity');
+  host?.style.removeProperty('transition');
+};
+
+const finish = () => {
+  if (closeEmitted) return;
+  closeEmitted = true;
+
+  if (exitFallback !== null) clearTimeout(exitFallback);
+  host?.removeEventListener('transitionend', onExitEnd);
+  emit('close', props.message);
+};
+
+// Every exit fades the host out; a slotted child's own transitions bubble
+// through the host too, so only the host's opacity counts.
+const onExitEnd = (event: TransitionEvent) => {
+  if (event.target === host && event.propertyName === 'opacity') finish();
+};
+
+// The one exit behind the dismiss button, the timer, `closeToast` and a
+// swipe dismiss. A swipe carries on from where the toast was let go.
+const leave = (swipe?: { dx: number; width: number }) => {
+  if (!host || leaving.value) return;
+  leaving.value = true;
+  stopTimer();
+
+  if (drag?.claimed && host.hasPointerCapture(drag.id)) {
+    host.releasePointerCapture(drag.id);
+  }
+
+  drag = null;
+  host.classList.remove('swiping');
+  springBack?.cancel();
+  springBack = null;
+
+  if (!swipe) clearDragStyles();
+
+  const shown = host.classList.contains('show');
+
+  // Before any style changes: the stack measures the toast where it rests.
+  stackHost()?._toastLeaving?.(host);
+  host.classList.add('leaving');
+
+  // Closed before its entrance: there is nothing to fade.
+  if (!shown) {
+    finish();
+
+    return;
+  }
+
+  host.addEventListener('transitionend', onExitEnd);
+  exitFallback = setTimeout(finish, EXIT_FALLBACK_MS);
   host.classList.remove('show');
 
-  const onEnd = () => {
-    host.removeEventListener('transitionend', onEnd);
-    emit('close', props.message);
+  if (!swipe) return;
+
+  if (prefersReducedMotion()) {
+    // The sheet's cross-fade, where the toast was let go.
+    host.style.removeProperty('transition');
+    host.style.removeProperty('opacity');
+
+    return;
+  }
+
+  host.style.transition = `opacity ${SWIPE_MOTION_MS}ms ease-out, transform ${SWIPE_MOTION_MS}ms ease-out`;
+  host.style.transform = `translateX(${swipe.dx + Math.sign(swipe.dx) * swipe.width}px)`;
+  host.style.opacity = '0';
+};
+
+// Zero-argument: the dismiss button's click handler passes its event.
+const close = () => leave();
+
+const runTimer = () => {
+  if (!started || leaving.value || !timed() || holds.size > 0) return;
+
+  if (timeoutId !== null) return;
+  startTime = performance.now();
+  timeoutId = setTimeout(close, Math.max(0, remainingTime));
+};
+
+const hold = (kind: 'hover' | 'press') => {
+  if (holds.has(kind)) return;
+  holds.add(kind);
+  host?.classList.add('held');
+
+  if (timeoutId === null) return;
+  stopTimer();
+  remainingTime -= performance.now() - startTime;
+};
+
+const unhold = (kind: 'hover' | 'press') => {
+  if (!holds.delete(kind) || holds.size > 0) return;
+  host?.classList.remove('held');
+  runTimer();
+};
+
+const onMouseEnter = () => hold('hover');
+
+const onMouseLeave = () => unhold('hover');
+
+const place = (dx: number, width: number) => {
+  if (!host || !drag) return;
+  drag.dx = dx;
+  host.style.transform = `translateX(${dx}px)`;
+  host.style.opacity = String(swipeOpacity(dx, width));
+};
+
+const claim = (d: CToastDrag) => {
+  if (!host) return;
+  d.claimed = true;
+
+  try {
+    host.setPointerCapture(d.id);
+  } catch {
+    // A pointer the browser no longer tracks: the document listeners still
+    // follow it.
+  }
+
+  host.classList.add('swiping');
+  host.style.transition = 'none';
+};
+
+// Snap without the sheet's transitions: commit the rest pose with transitions
+// off, then hand them back.
+const snapToRest = () => {
+  if (!host) return;
+  host.style.transition = 'none';
+  host.style.removeProperty('transform');
+  host.style.removeProperty('opacity');
+  void getComputedStyle(host).opacity;
+  host.style.removeProperty('transition');
+};
+
+const returnToRest = (from: number) => {
+  if (!host) return;
+  host.classList.remove('swiping');
+
+  const opacity = Number(host.style.opacity || 1);
+
+  if (from === 0 || prefersReducedMotion()) {
+    snapToRest();
+
+    return;
+  }
+
+  // The rest pose goes in underneath with transitions still off, so the only
+  // motion is the animation from the release point.
+  host.style.removeProperty('transform');
+  host.style.removeProperty('opacity');
+
+  const animation = host.animate(
+    [
+      { opacity, transform: `translateX(${from}px)` },
+      { opacity: 1, transform: 'translateX(0)' },
+    ],
+    { duration: SWIPE_MOTION_MS, easing: 'ease-out' },
+  );
+
+  springBack = animation;
+  animation.finished.then(
+    () => {
+      if (springBack !== animation) return;
+      springBack = null;
+      host.style.removeProperty('transition');
+    },
+    // Cancelled by a new press or the exit, which take over the styles.
+    () => {},
+  );
+};
+
+const swallowClick = (click: Event) => {
+  click.stopPropagation();
+  click.preventDefault();
+};
+
+const endPress = () => {
+  pressId = null;
+  drag = null;
+  document.removeEventListener('pointermove', onPressMove, true);
+  document.removeEventListener('pointerup', onPressEnd, true);
+  document.removeEventListener('pointercancel', onPressEnd, true);
+  unhold('press');
+};
+
+// A press holds the timer however it ends, so its release is followed on the
+// document: the pointer may come up anywhere.
+const onPointerDown = (event: PointerEvent) => {
+  if (!host || !event.isPrimary || event.button !== 0) return;
+
+  if (leaving.value || pressId !== null) return;
+  pressId = event.pointerId;
+  document.addEventListener('pointermove', onPressMove, true);
+  document.addEventListener('pointerup', onPressEnd, true);
+  document.addEventListener('pointercancel', onPressEnd, true);
+  hold('press');
+
+  if (!swipeable.value) return;
+
+  // Caught springing back: the drag carries on from where the toast is.
+  let base = 0;
+
+  if (springBack) {
+    springBack.commitStyles();
+    springBack.cancel();
+    springBack = null;
+    base = new DOMMatrixReadOnly(getComputedStyle(host).transform).m41;
+  }
+
+  drag = {
+    base,
+    claimed: false,
+    dx: base,
+    id: event.pointerId,
+    samples: [{ t: event.timeStamp, x: event.clientX }],
+    startX: event.clientX,
+    startY: event.clientY,
+    width: host.getBoundingClientRect().width,
   };
 
-  host.addEventListener('transitionend', onEnd);
+  if (base !== 0) claim(drag);
 };
 
-// Pause / resume on hover. Persistent and indeterminate toasts never
-// auto-close so they ignore mouse events.
-const onMouseEnter = () => {
-  if (!props.message || props.message.persistent || props.message.indeterminate)
-    return;
-  remainingTime -= Date.now() - startTime;
+const onPressMove = (event: PointerEvent) => {
+  if (!drag || event.pointerId !== drag.id) return;
 
-  if (timeoutId !== null) clearTimeout(timeoutId);
+  const tx = event.clientX - drag.startX;
+
+  drag.samples = drag.samples.filter(
+    (s) => event.timeStamp - s.t <= SWIPE_VELOCITY_WINDOW_MS,
+  );
+  drag.samples.push({ t: event.timeStamp, x: event.clientX });
+
+  if (!drag.claimed) {
+    const intent = swipeIntent(tx, event.clientY - drag.startY);
+
+    if (intent === 'pending') return;
+
+    if (intent === 'release') {
+      drag = null;
+
+      return;
+    }
+
+    claim(drag);
+  }
+
+  // A mouse press on the message text began a selection before the claim.
+  document.getSelection()?.removeAllRanges();
+  place(drag.base + tx, drag.width);
 };
 
-const onMouseLeave = () => {
-  if (!props.message || props.message.persistent || props.message.indeterminate)
+const onPressEnd = (event: PointerEvent) => {
+  if (event.pointerId !== pressId) return;
+
+  const d = drag;
+
+  endPress();
+
+  if (!d?.claimed) return;
+
+  if (event.type === 'pointercancel') {
+    returnToRest(d.dx);
+
     return;
-  startTime = Date.now();
-  timeoutId = setTimeout(close, remainingTime);
+  }
+
+  // The release may land on the dismiss button: its click ends a drag, it
+  // does not activate the button.
+  host?.addEventListener('click', swallowClick, { capture: true, once: true });
+  requestAnimationFrame(() =>
+    host?.removeEventListener('click', swallowClick, { capture: true }),
+  );
+
+  d.samples.push({ t: event.timeStamp, x: event.clientX });
+
+  const dx = d.base + event.clientX - d.startX;
+
+  const outcome = swipeOutcome({
+    dx,
+    velocity: swipeVelocity(d.samples, event.timeStamp),
+    width: d.width,
+  });
+
+  if (outcome === 'dismiss') {
+    host?.classList.remove('swiping');
+    leave({ dx, width: d.width });
+  } else {
+    returnToRest(d.dx);
+  }
+};
+
+// Capture is lost after every release too; only a live drag springs back.
+// A touch press starts captured by the element under the finger, and the
+// claim moving capture to the host fires that element's loss, which bubbles
+// here: only the host's own loss counts.
+const onLostCapture = (event: PointerEvent) => {
+  if (event.composedPath()[0] !== host) return;
+
+  if (!drag?.claimed || event.pointerId !== drag.id) return;
+
+  const from = drag.dx;
+
+  drag = null;
+  returnToRest(from);
 };
 
 // Expose `closeToast` so the parent c-toasts container can dismiss a
@@ -267,17 +625,16 @@ defineExpose({ closeToast: close });
 
 // Show animation + auto-close timer. Runs exactly once, the first time
 // `message` is available.
-let started = false;
-
 const start = () => {
   if (started || !host || !props.message) return;
   started = true;
-  requestAnimationFrame(() => host.classList.add('show'));
+  requestAnimationFrame(() => {
+    if (!leaving.value) host.classList.add('show');
+  });
 
-  if (props.message.persistent || props.message.indeterminate) return;
-  startTime = Date.now();
+  if (!timed()) return;
   remainingTime = Number(props.message.duration || 0);
-  timeoutId = setTimeout(close, remainingTime);
+  runTimer();
 };
 
 onMounted(() => {
@@ -287,13 +644,17 @@ onMounted(() => {
   host.setAttribute('aria-live', 'assertive');
   host.addEventListener('mouseenter', onMouseEnter);
   host.addEventListener('mouseleave', onMouseLeave);
+  host.addEventListener('pointerdown', onPointerDown);
+  host.addEventListener('lostpointercapture', onLostCapture);
 
   // The `message` object prop is set across the custom-element boundary and
-  // can arrive after mount, so reflect the id + the hover-pause type classes
-  // reactively. (The visible accent now comes from the `type` tv variant; the
-  // host classes only drive the `:host(.show)`/`:host(:hover)` state in the
-  // escape-hatch sheet and the id used by the parent container.)
+  // can arrive after mount, so reflect the id, the swipeable state and the
+  // type classes reactively. (The visible accent comes from the `type` tv
+  // variant; the host classes drive the escape-hatch sheet's host states and
+  // the id used by the parent container.)
   watchEffect(() => {
+    host.classList.toggle('swipeable', swipeable.value);
+
     if (!props.message) return;
     host.id = `c-toast--${props.message.id || ''}`;
     TYPES.forEach((t) => host.classList.toggle(t, toastType.value === t));
@@ -315,9 +676,18 @@ onMounted(() => {
 });
 
 onBeforeUnmount(() => {
-  if (timeoutId !== null) clearTimeout(timeoutId);
+  stopTimer();
+
+  if (exitFallback !== null) clearTimeout(exitFallback);
+  springBack?.cancel();
+  document.removeEventListener('pointermove', onPressMove, true);
+  document.removeEventListener('pointerup', onPressEnd, true);
+  document.removeEventListener('pointercancel', onPressEnd, true);
   host?.removeEventListener('mouseenter', onMouseEnter);
   host?.removeEventListener('mouseleave', onMouseLeave);
+  host?.removeEventListener('pointerdown', onPointerDown);
+  host?.removeEventListener('lostpointercapture', onLostCapture);
+  host?.removeEventListener('transitionend', onExitEnd);
 });
 </script>
 
@@ -330,9 +700,15 @@ onBeforeUnmount(() => {
     transition must live on the host. `display:block` is required here because
     the global `:host{display:contents}` can't carry opacity/transform; the
     per-type sheet is adopted after the shared sheet, so it wins.
-  - `:host(:hover)` pausing the progress animation via the
-    `--_c-toast-animation-state` custom property (a contextual host state that
-    must reach a descendant's animation — not expressible as a utility).
+  - the swipe dismiss host states (ADR-0073), toggled by JS: `.swipeable`
+    leaves vertical pans and pinch-zoom to the page, `.swiping` stops text
+    selection while a drag holds the press, and `.leaving` lets the pointer
+    through to the toasts gliding in under a fading one. The drag itself
+    writes inline `transform`/`opacity` on the host.
+  - `:host(.held)` pausing the progress animation via the
+    `--_c-toast-animation-state` custom property while a hover or a press
+    holds the timer (a host state that must reach a descendant's animation —
+    not expressible as a utility).
   - the `@keyframes` for the timer + indeterminate progress bar.
   - the box's multi-layer drop shadow: authored as plain CSS rather than a
     `shadow-[...]` utility because Tailwind wraps multi-layer arbitrary shadow
@@ -377,6 +753,21 @@ onBeforeUnmount(() => {
   }
 }
 
+/* Horizontal travel is the swipe's; a vertical pan or a pinch that starts on
+ * the toast stays the page's. */
+:host(.swipeable) {
+  touch-action: pan-y pinch-zoom;
+}
+
+:host(.swiping) {
+  cursor: grabbing;
+  user-select: none;
+}
+
+:host(.leaving) {
+  pointer-events: none;
+}
+
 [part='root'] {
   box-shadow:
     rgba(0, 0, 0, 0.07) 0 1px 1px,
@@ -386,13 +777,13 @@ onBeforeUnmount(() => {
     rgba(0, 0, 0, 0.07) 0 16px 16px;
 }
 
-:host(:hover) {
+:host(.held) {
   --_c-toast-animation-state: paused;
 }
 
 /* Progress bar animation. Static size/colour live in the `tv` `progressBar`
  * slot; the animation references the `@keyframes` below and reads its
- * play-state from the host-hover-driven `--_c-toast-animation-state` custom
+ * play-state from the hold-driven `--_c-toast-animation-state` custom
  * property, neither of which a utility can express. `--_c-toast-duration` is
  * set inline from the message `duration`. */
 .c-toast__progress__bar {

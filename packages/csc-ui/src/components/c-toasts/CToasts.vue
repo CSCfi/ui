@@ -57,6 +57,7 @@ export type CToastsVertical = 'bottom' | 'top';
 import { tv } from 'tailwind-variants';
 import {
   computed,
+  nextTick,
   onMounted,
   ref,
   useHost,
@@ -67,6 +68,7 @@ import {
 import type { CToastMessage } from '../../types';
 
 import { TOAST_BAND } from '../../shared/modalStack';
+import { prefersReducedMotion } from '../../shared/reducedMotion';
 
 // Placement state (`absolute`/`top`/`bottom`/`left`/`right`/`center`) is toggled
 // imperatively as classes on the HOST so the `:host(.absolute)` etc. rules below
@@ -88,7 +90,7 @@ defineOptions({ inheritAttrs: false });
  */
 const toasts = tv({
   slots: {
-    root: 'grid grid-cols-[1fr] gap-3 p-3',
+    root: 'relative grid grid-cols-[1fr] gap-3 p-3',
   },
 });
 
@@ -107,6 +109,85 @@ const messages = ref<CToastMessage[]>([]);
 const ui = computed(() => toasts());
 
 let nextId = 0;
+
+// The stack glide (ADR-0073): when a toast arrives or leaves, the toasts that
+// change place move there from where they were.
+const GLIDE_ID = 'c-toasts-glide';
+
+const GLIDE_MS = 250;
+
+// The toasts still in the stack's flow, in order; a leaving one is pinned out
+// of it.
+const toastsInFlow = (): HTMLElement[] =>
+  Array.from(
+    containerRef.value?.querySelectorAll<HTMLElement>('c-toast') ?? [],
+  ).filter((el) => !el.classList.contains('leaving'));
+
+const snapshot = (except?: HTMLElement): Map<HTMLElement, number> =>
+  new Map(
+    toastsInFlow()
+      .filter((el) => el !== except)
+      .map((el) => [el, el.getBoundingClientRect().top]),
+  );
+
+// Call after the layout change. A glide still running is cancelled before the
+// new places are measured, so a toast caught mid-glide carries on from where
+// it is instead of jumping by the old offset.
+const glide = (before: Map<HTMLElement, number>) => {
+  for (const el of before.keys()) {
+    for (const animation of el.getAnimations()) {
+      if (animation.id === GLIDE_ID) animation.cancel();
+    }
+  }
+
+  if (prefersReducedMotion()) return;
+
+  for (const [el, top] of before) {
+    if (!el.isConnected) continue;
+
+    const dy = top - el.getBoundingClientRect().top;
+
+    if (Math.abs(dy) < 0.5) continue;
+
+    // The independent `translate` property, so the glide never fights a
+    // toast's own enter, exit or swipe `transform`.
+    el.animate([{ translate: `0 ${dy}px` }, { translate: '0 0' }], {
+      duration: GLIDE_MS,
+      easing: 'ease-out',
+      id: GLIDE_ID,
+    });
+  }
+};
+
+// A toast starting its exit: pin it where it is, above its neighbours, while
+// they glide into its place. The pin holds the edge the stack is anchored to:
+// a bottom stack shrinks from the top, which would carry a top-pinned toast
+// down with it.
+const _toastLeaving = (toast: HTMLElement) => {
+  const root = containerRef.value;
+
+  if (!root || toast.parentElement !== root) return;
+
+  const before = snapshot(toast);
+
+  const width = getComputedStyle(toast).width;
+
+  const left = toast.offsetLeft;
+
+  const top = toast.offsetTop;
+
+  const bottom = root.clientHeight - toast.offsetTop - toast.offsetHeight;
+
+  toast.style.position = 'absolute';
+  toast.style.left = `${left}px`;
+  toast.style.width = width;
+  toast.style.zIndex = '1';
+
+  if (vertical.value === 'top') toast.style.top = `${top}px`;
+  else toast.style.bottom = `${bottom}px`;
+
+  glide(before);
+};
 
 const defaultOptions = () => ({
   duration: 6000,
@@ -135,8 +216,11 @@ const addToast = (message: CToastMessage) => {
     return;
   }
 
-  requestAnimationFrame(() => {
+  requestAnimationFrame(async () => {
     const defaults = defaultOptions();
+
+    const before = snapshot();
+
     messages.value = [
       ...messages.value,
       {
@@ -148,6 +232,10 @@ const addToast = (message: CToastMessage) => {
             : defaults.duration,
       },
     ];
+
+    // After the whole flush, still before this frame paints.
+    await nextTick();
+    glide(before);
   });
 };
 
@@ -181,7 +269,7 @@ const onChildClose = (event: CustomEvent<CToastMessage>) => {
   }
 };
 
-defineExpose({ addToast, removeToast });
+defineExpose({ _toastLeaving, addToast, removeToast });
 
 // Attributes can deliver any string at runtime; unknown placements fall back
 // to the default center/bottom — otherwise an invalid `vertical`

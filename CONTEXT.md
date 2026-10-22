@@ -317,9 +317,17 @@ _Avoid_: Hint, title (the native attribute), popup
 The click-opened, **non-modal** interactive surface component anchored to its **trigger** — light-dismissed, never trapping focus (ADR-0033); blocking flows go to `c-modal`, plain hints to `c-tooltip`. Distinct from the lowercase *native popover*, which is the browser mechanism: any element put in the **top layer** via the Popover API (menu panels, autocomplete panels, and tooltips are all native popovers; only `c-popover` is the Popover *component*).
 _Avoid_: Flyout, popup, overlay (as a name for this component)
 
+**Toast** (`c-toast`):
+A passive, transient notification — an operation result, background progress — that the `c-toasts` container shows against one edge of the viewport, painting the **inverted surface** (ADR-0032). It closes itself when its timer runs out unless it is *persistent*, and the timer waits while a pointer hovers or presses it. The user closes it with its dismiss button or a **swipe dismiss**; a *custom* toast (slotted content) and an *indeterminate* one (ongoing work) have no dismiss button. When a toast arrives or leaves, the toasts around it glide into their new places (ADR-0073).
+_Avoid_: Notification (the general idea), snackbar (Material's name), alert (that is `c-alert`, the in-page message)
+
 **Light dismiss**:
 Closing a transient surface — a **transient list panel**, `c-popover`, a **fullscreen panel** never — because the user pressed *and released* the pointer outside it, mirroring the native Popover API's rule. A press alone is not a dismissal: a scroll or drag that starts outside the surface leaves it open. Escape is a separate close path, not light dismiss. Modals have their own **dismissable** contract (backdrop click and Escape together) and are not light-dismissed.
 _Avoid_: Click-outside / outside click (the trigger is the press-release pair, and it works for touch), auto-close, blur-close
+
+**Swipe dismiss**:
+Closing a **toast** by dragging it sideways, with any pointer, and letting go past a third of its width or with a quick flick; anything less springs it back (ADR-0073). It is a second path to the dismiss button, never the only one, so only a toast with a dismiss button takes it. A vertical drag stays with the page.
+_Avoid_: Dismissable (the modal property), drag to dismiss, flick, light dismiss (a press and release outside a surface)
 
 **Popover chain**:
 The ordered set of currently open `c-popover`s, each logically nested in the one before it — a popover joins the chain when its **trigger** sits inside an open popover's panel, and replaces the chain otherwise, so siblings never coexist. Escape peels the innermost popover, one per press; light dismiss closes every popover that does not logically contain the pointer event; closing a popover closes its descendants. Containment is logical (the trigger relationship), not DOM ancestry — a popover whose host lives elsewhere still chains under the popover holding its trigger. Distinct from the **modal stack**: chain members below the innermost stay interactive, nothing goes inert.
@@ -368,7 +376,7 @@ The single dimming overlay rendered directly beneath the **active modal**, paint
 _Avoid_: Scrim (that is the colour token), dimmer, overlay, `::backdrop` (the retired native pseudo-element)
 
 **Dismissable**:
-A modal property governing *both* light-dismiss gestures — backdrop click **and** Escape. A non-dismissable modal responds to either with a nudge animation instead of closing; it can only be closed by an explicit action inside it.
+A modal property governing *both* light-dismiss gestures — backdrop click **and** Escape. A non-dismissable modal responds to either with a nudge animation instead of closing; it can only be closed by an explicit action inside it. A **toast** is not dismissable in this sense: it closes by its button or a **swipe dismiss**.
 _Avoid_: persistent (the inverse framing; canonical axis is _dismissable_), closable
 
 ### Progress & loading
