@@ -1,5 +1,63 @@
 # @cscfi/csc-ui-react
 
+## 4.0.0-alpha.32
+
+### Minor Changes
+
+- [#309](https://github.com/CSCfi/ui/pull/309) [`fceba25`](https://github.com/CSCfi/ui/commit/fceba2537cc62554ab2333951a41ac6057ef0a8e) Thanks [@razorfever](https://github.com/razorfever)! - Add c-color-picker: a typeable colour field that reads any CSS colour, with a
+  keyboard-operable panel of a colour area, hue and alpha sliders, per-channel
+  inputs and swatches (ADR-0069, ADR-0070).
+
+  - `format` sets the notation the value is written in — `hex` (default), `rgb`
+    or `oklch` — whatever notation a colour is typed or picked in; the panel's
+    HEX | RGB | OKLCH switch only changes the channel inputs. `alpha` opts into
+    transparency.
+  - `swatches` offers predefined colours, named for assistive technology;
+    `swatches-only` limits the choice to them in a readonly, select-like field.
+  - A drag on the area or a slider updates `v-model` as it moves and fires
+    `change` once, on release.
+  - When the panel opens on a colour, it shows that original colour beside the
+    new one; a click on the original restores it.
+
+- [#309](https://github.com/CSCfi/ui/pull/309) [`bd3c227`](https://github.com/CSCfi/ui/commit/bd3c227546fc74e4fd6a7fe169fb9bc7c4c81bbe) Thanks [@razorfever](https://github.com/razorfever)! - Add c-file-upload: a field the user adds files to by dropping them on it or
+  choosing them from the file dialog, with each file's size and upload progress
+  in a list under the drop zone (ADR-0071).
+
+  - The value is a list of file entries — name, size, type, the browser `File`
+    and a status — bound with `v-model`. Files already on the server can be
+    listed as entries without a `File`.
+  - Set `upload` to a function that sends one file; the field calls it for each
+    added file, three at a time, shows its progress, and offers cancel and retry.
+    Without one, the field only holds the files. A `manual` field holds them
+    until `startUploads()` is called, for a form that uploads on its own button.
+  - `accept`, `max-size` and `max-files` limit what the field takes, and a file
+    already in the list is never added twice; a refused file is listed with its
+    reason until the list next changes, and reported by the `reject` event.
+  - `compact` shows the drop zone as a row at the shared control height, to line
+    up with the fields beside it.
+
+- [#309](https://github.com/CSCfi/ui/pull/309) [`2d7d2ef`](https://github.com/CSCfi/ui/commit/2d7d2ef410bcea0d4fda15c17bbfca449dd4045b) Thanks [@razorfever](https://github.com/razorfever)! - Components inherit the page's typography (ADR-0072). Every component used to
+  reset its font to the operating system's and its line height to 1.5, so text
+  slotted into `c-main`, cards and other components ignored the app's font, and
+  nested parts such as `c-select`'s option list could not be reached from the
+  page at all. Components now take the page's font family, line height and font
+  features, as native elements do, and no longer declare Tailwind theme
+  variables (`--font-sans`, `--spacing`, …) that made an app's own Tailwind
+  utilities read csc-ui's values inside components. The `--c-font-family` token
+  is removed: set your font on `body`, or `font-family` on a `c-*` element to
+  give one component another typeface. A page that sets no font now shows
+  components in the browser default.
+
+### Patch Changes
+
+- [#309](https://github.com/CSCfi/ui/pull/309) [`758789e`](https://github.com/CSCfi/ui/commit/758789e0e462f52c5b0d72664569574ee9e3335b) Thanks [@razorfever](https://github.com/razorfever)! - Typing into a closed `c-autocomplete` or `c-tree-select` field now opens the
+  panel with every typed character in its search input. Before, the first
+  character could be lost (typing `finland` searched for `inland`), and fast
+  typing could drop more. After such an open the highlight lands on the first
+  match, as it does when typing into the open panel.
+- Updated dependencies [[`fceba25`](https://github.com/CSCfi/ui/commit/fceba2537cc62554ab2333951a41ac6057ef0a8e), [`bd3c227`](https://github.com/CSCfi/ui/commit/bd3c227546fc74e4fd6a7fe169fb9bc7c4c81bbe), [`2d7d2ef`](https://github.com/CSCfi/ui/commit/2d7d2ef410bcea0d4fda15c17bbfca449dd4045b), [`758789e`](https://github.com/CSCfi/ui/commit/758789e0e462f52c5b0d72664569574ee9e3335b)]:
+  - @cscfi/csc-ui@4.0.0-alpha.32
+
 ## 4.0.0-alpha.31
 
 ### Patch Changes
