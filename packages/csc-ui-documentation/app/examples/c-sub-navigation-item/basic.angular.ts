@@ -3,9 +3,9 @@ import { Component, CUSTOM_ELEMENTS_SCHEMA, signal } from '@angular/core';
 import { mdiFolderOutline } from '@mdi/js';
 
 @Component({
+  schemas: [CUSTOM_ELEMENTS_SCHEMA],
   selector: 'app-example',
   standalone: true,
-  schemas: [CUSTOM_ELEMENTS_SCHEMA],
   template: `
     <div>
       <c-side-navigation>
@@ -38,7 +38,7 @@ import { mdiFolderOutline } from '@mdi/js';
   `,
 })
 export class BasicExampleComponent {
-  mdiFolderOutline = mdiFolderOutline;
-
   current = signal('active');
+
+  mdiFolderOutline = mdiFolderOutline;
 }

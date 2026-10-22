@@ -2,9 +2,9 @@
 import { Component, CUSTOM_ELEMENTS_SCHEMA, signal } from '@angular/core';
 
 @Component({
+  schemas: [CUSTOM_ELEMENTS_SCHEMA],
   selector: 'app-example',
   standalone: true,
-  schemas: [CUSTOM_ELEMENTS_SCHEMA],
   template: `
     <div>
       <c-select
@@ -21,5 +21,5 @@ import { Component, CUSTOM_ELEMENTS_SCHEMA, signal } from '@angular/core';
   `,
 })
 export class SmallExampleComponent {
-  country = signal<string | null>('fi');
+  country = signal<null | string>('fi');
 }

@@ -3,7 +3,6 @@
 // byte-identical (checked by scripts/check-ramp-parity.mjs).
 const { cssColor } = require('../src/theme/ramp.js');
 const getRgbValue = require('./getRgbValue.cjs');
-const setValue = require('./setValue.cjs');
 
 const formats = {
   css: {

@@ -6,6 +6,9 @@ status: >
   Amended by ADR-0007 — the "no per-component CSS" / "re-architect un-Tailwind-able
   CSS away" decisions are relaxed to allow a narrow escape-hatch `<style>` block
   (::slotted, positional :host, @keyframes, native pseudo-elements)
+  Amended by ADR-0072 — the shared `:host` rule also passes the page typography
+  through (preflight's typography and Tailwind's theme variables no longer
+  reach hosts)
 ---
 
 # Tailwind-variants styling, dropped `--c-*` override vars, and the `override` prop

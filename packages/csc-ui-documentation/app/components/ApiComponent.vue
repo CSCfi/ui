@@ -380,6 +380,7 @@ const props = defineProps<{
   /** Names of every type rendered on this page — mentions of these in prop
    *  type text become same-page anchor links. */
   linkableTypes?: string[];
+
   /** Shiki-highlighted declarations keyed by type name, built at prerender. */
   typesHtml?: Record<string, string>;
   view: ComponentView;

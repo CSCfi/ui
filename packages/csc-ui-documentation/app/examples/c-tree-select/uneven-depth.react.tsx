@@ -1,54 +1,55 @@
+import type { CTreeSelectItem } from '@cscfi/csc-ui';
+
+import { CTreeSelect } from '@cscfi/csc-ui-react';
 // @ts-nocheck — documentation code sample; shown as text, never compiled here
 import { useState } from 'react';
-import { CTreeSelect } from '@cscfi/csc-ui-react';
-import type { CTreeSelectItem } from '@cscfi/csc-ui';
 
 const items: CTreeSelectItem[] = [
   {
-    value: 'research',
-    name: 'Research services',
     children: [
       {
-        value: 'computing',
-        name: 'Computing',
         children: [
-          { value: 'hpc', name: 'High-performance computing' },
-          { value: 'cloud', name: 'Cloud services' },
-          { value: 'quantum', name: 'Quantum computing', disabled: true },
+          { name: 'High-performance computing', value: 'hpc' },
+          { name: 'Cloud services', value: 'cloud' },
+          { disabled: true, name: 'Quantum computing', value: 'quantum' },
         ],
+        name: 'Computing',
+        value: 'computing',
       },
-      { value: 'data', name: 'Data management' },
+      { name: 'Data management', value: 'data' },
     ],
+    name: 'Research services',
+    value: 'research',
   },
   {
-    value: 'education',
-    name: 'Education',
     children: [
-      { value: 'training', name: 'Training' },
-      { value: 'materials', name: 'Learning materials' },
+      { name: 'Training', value: 'training' },
+      { name: 'Learning materials', value: 'materials' },
     ],
+    name: 'Education',
+    value: 'education',
   },
   {
-    value: 'administration',
-    name: 'Administration',
+    children: [{ name: 'Human resources', value: 'hr' }],
     disabled: true,
-    children: [{ value: 'hr', name: 'Human resources' }],
+    name: 'Administration',
+    value: 'administration',
   },
-  { value: 'communications', name: 'Communications' },
+  { name: 'Communications', value: 'communications' },
 ];
 
 export const UnevenDepth = () => {
-  const [field, setField] = useState<string | null>(null);
+  const [field, setField] = useState<null | string>(null);
 
   return (
     <div>
       <CTreeSelect
-        value={field}
-        items={items}
-        hint="Some units have sub-units, some do not"
-        label="Unit"
         clearable
-        onChange={(event) => setField(event.detail as string | null)}
+        hint="Some units have sub-units, some do not"
+        items={items}
+        label="Unit"
+        onChange={(event) => setField(event.detail as null | string)}
+        value={field}
       />
 
       <p>Value: {field ?? 'null'}</p>

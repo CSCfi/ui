@@ -109,21 +109,27 @@ const OPTIONS = [
 export interface ValueRecipe {
   /** The value control is built on c-input and must treat '' / null as empty. */
   emptyAware?: boolean;
+
   /** The `update:value` detail that interaction yields (a predicate for object values). */
   expected: ((detail: unknown) => boolean) | unknown;
+
   /**
    * `changeValue`: the grandfathered set (changeValue + change-value twin);
    * `change`: the all-lowercase set (`emitModelChange`);
    * `otp`: c-otp-input's hand-rolled bridge (changeValue is null until complete).
    */
   family: 'change' | 'changeValue' | 'otp';
+
   /** The one user interaction that changes the value. */
   interact(m: Mounted): Promise<void>;
+
   /** Initial v-model value for the round-trip test (default `null`). */
   model?: unknown;
   mount: MountOptions;
+
   /** A value to assign programmatically in the no-emission test. */
   programmatic: unknown;
+
   /** The event at which `host.value` is guaranteed updated (c-otp-input writes it after `update:value`). */
   valueSettledAt?: 'input' | 'update:value';
 }
@@ -149,6 +155,19 @@ const inner = (el: Element | null, selector: string): HTMLElement => {
 // text (ADR-0058); min/max pin the displayed month away from today.
 const DATE_PICKER_MOUNT: MountOptions = {
   props: { label: 'Date', max: '2031-09-30', min: '2031-09-01' },
+};
+
+// c-color-picker's panel opens from its colour button, never from the text
+// (ADR-0070); the swatches make a pick independent of where the panel lands.
+const COLOR_PICKER_MOUNT: MountOptions = {
+  props: { label: 'Colour', swatches: ['#1f6feb', '#e5534b'] },
+};
+
+const openColorPanel = async (m: Mounted): Promise<void> => {
+  await userEvent.click(
+    m.deep('c-icon-button[aria-label="Open colour picker"]', 'button'),
+  );
+  await settle();
 };
 
 // c-time-picker's columns open from its clock button, never from the text
@@ -223,6 +242,17 @@ export const VALUE_RECIPES: Record<string, ValueRecipe> = {
     mount: { props: { label: 'Accept' } },
     programmatic: true,
   },
+  'c-color-picker': {
+    emptyAware: true,
+    expected: '#e5534b',
+    family: 'change',
+    interact: async (m) => {
+      await openColorPanel(m);
+      await userEvent.click(m.shadowAll('[part~="swatch"]')[1]);
+    },
+    mount: COLOR_PICKER_MOUNT,
+    programmatic: '#00ff00',
+  },
   'c-date-picker': {
     emptyAware: true,
     expected: '2031-09-15',
@@ -234,17 +264,20 @@ export const VALUE_RECIPES: Record<string, ValueRecipe> = {
     mount: DATE_PICKER_MOUNT,
     programmatic: '2031-09-20',
   },
-  'c-time-picker': {
-    emptyAware: true,
-    // An empty value: the hour pick fills in minute 00 (ADR-0062).
-    expected: '09:00',
+  'c-file-upload': {
+    expected: (detail: unknown) =>
+      Array.isArray(detail) &&
+      detail.length === 1 &&
+      (detail[0] as { name?: string; status?: string }).name === 'a.txt',
     family: 'change',
     interact: async (m) => {
-      await openClock(m);
-      await userEvent.click(m.shadow('li[data-key="h9"]'));
+      await userEvent.upload(
+        m.shadow('input[type="file"]'),
+        new File(['a'], 'a.txt', { type: 'text/plain' }),
+      );
     },
-    mount: TIME_PICKER_MOUNT,
-    programmatic: '14:30',
+    mount: { props: { label: 'Attachments' } },
+    programmatic: [{ id: 'f_1', name: 'b.txt', size: 1, status: 'done' }],
   },
   'c-modal': {
     expected: false,
@@ -259,6 +292,16 @@ export const VALUE_RECIPES: Record<string, ValueRecipe> = {
       props: { dismissable: true, value: true },
     },
     programmatic: false,
+  },
+  'c-number-field': {
+    emptyAware: true,
+    expected: 5,
+    family: 'change',
+    interact: async (m) => {
+      await userEvent.type(m.shadow('input'), '5');
+    },
+    mount: { props: { label: 'Amount' } },
+    programmatic: 7,
   },
   'c-otp-input': {
     expected: '1',
@@ -344,16 +387,6 @@ export const VALUE_RECIPES: Record<string, ValueRecipe> = {
     },
     programmatic: 'one',
   },
-  'c-number-field': {
-    emptyAware: true,
-    expected: 5,
-    family: 'change',
-    interact: async (m) => {
-      await userEvent.type(m.shadow('input'), '5');
-    },
-    mount: { props: { label: 'Amount' } },
-    programmatic: 7,
-  },
   'c-text-field': {
     emptyAware: true,
     expected: 'a',
@@ -363,6 +396,18 @@ export const VALUE_RECIPES: Record<string, ValueRecipe> = {
     },
     mount: { props: { label: 'Name' } },
     programmatic: 'x',
+  },
+  'c-time-picker': {
+    emptyAware: true,
+    // An empty value: the hour pick fills in minute 00 (ADR-0062).
+    expected: '09:00',
+    family: 'change',
+    interact: async (m) => {
+      await openClock(m);
+      await userEvent.click(m.shadow('li[data-key="h9"]'));
+    },
+    mount: TIME_PICKER_MOUNT,
+    programmatic: '14:30',
   },
   'c-tree-select': {
     emptyAware: true,
@@ -388,15 +433,20 @@ export const VALUE_RECIPES: Record<string, ValueRecipe> = {
 export interface OverlayRecipe {
   /** Extra expectations once Escape has closed the panel. */
   afterEscape?(m: Mounted): void;
+
   /** The element (light or shadow) that owns focus once the panel closes; `null` when focus must not move. */
   focusHome(m: Mounted): Element | null;
+
   /** Whether an outside press-and-release closes the panel (CONTEXT.md "Light dismiss"). */
   lightDismiss: boolean;
   mount: MountOptions;
+
   /** The tag to mount when the overlay only exists inside a parent (c-menu-item inside c-menu). */
   mountTag?: string;
+
   /** Open the panel through its trigger. */
   open(m: Mounted): Promise<void>;
+
   /** The `[popover]` panel element. */
   panel(m: Mounted): HTMLElement;
 }
@@ -444,18 +494,18 @@ export const OVERLAY_RECIPES: Record<string, OverlayRecipe> = {
     },
     panel: (m) => m.part('panel'),
   },
+  'c-color-picker': {
+    focusHome: (m) => m.shadow('input[part~="input"]'),
+    lightDismiss: true,
+    mount: COLOR_PICKER_MOUNT,
+    open: openColorPanel,
+    panel: (m) => m.part('panel'),
+  },
   'c-date-picker': {
     focusHome: (m) => m.shadow('input[part~="input"]'),
     lightDismiss: true,
     mount: DATE_PICKER_MOUNT,
     open: openCalendar,
-    panel: (m) => m.part('panel'),
-  },
-  'c-time-picker': {
-    focusHome: (m) => m.shadow('input[part~="input"]'),
-    lightDismiss: true,
-    mount: TIME_PICKER_MOUNT,
-    open: openClock,
     panel: (m) => m.part('panel'),
   },
   'c-menu': {
@@ -499,6 +549,13 @@ export const OVERLAY_RECIPES: Record<string, OverlayRecipe> = {
       await userEvent.click(triggerButton(m));
       await settle();
     },
+    panel: (m) => m.part('panel'),
+  },
+  'c-time-picker': {
+    focusHome: (m) => m.shadow('input[part~="input"]'),
+    lightDismiss: true,
+    mount: TIME_PICKER_MOUNT,
+    open: openClock,
     panel: (m) => m.part('panel'),
   },
   'c-tooltip': {

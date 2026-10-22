@@ -2,35 +2,16 @@
 import {
   Component,
   CUSTOM_ELEMENTS_SCHEMA,
-  ViewEncapsulation,
   signal,
+  ViewEncapsulation,
 } from '@angular/core';
 
 @Component({
-  selector: 'app-example',
-  standalone: true,
-  schemas: [CUSTOM_ELEMENTS_SCHEMA],
   // The styles target ::part(), so they must apply globally.
   encapsulation: ViewEncapsulation.None,
-  template: `
-    <c-accordion
-      class="custom-style"
-      [value]="expanded()"
-      (changeValue)="expanded.set($any($event).detail)"
-    >
-      <c-accordion-item heading="Project billing" value="billing">
-        <p>Billing units are deducted monthly based on the resources in use.</p>
-      </c-accordion-item>
-
-      <c-accordion-item heading="Members and roles" value="members">
-        <p>Invite members by email and assign them a role in the project.</p>
-      </c-accordion-item>
-
-      <c-accordion-item heading="Data storage" value="storage">
-        <p>Allas object storage is available to every project by default.</p>
-      </c-accordion-item>
-    </c-accordion>
-  `,
+  schemas: [CUSTOM_ELEMENTS_SCHEMA],
+  selector: 'app-example',
+  standalone: true,
   styles: [
     `
       /* The default look is the accordion frame; this recolours the expanded
@@ -77,6 +58,25 @@ import {
       }
     `,
   ],
+  template: `
+    <c-accordion
+      class="custom-style"
+      [value]="expanded()"
+      (changeValue)="expanded.set($any($event).detail)"
+    >
+      <c-accordion-item heading="Project billing" value="billing">
+        <p>Billing units are deducted monthly based on the resources in use.</p>
+      </c-accordion-item>
+
+      <c-accordion-item heading="Members and roles" value="members">
+        <p>Invite members by email and assign them a role in the project.</p>
+      </c-accordion-item>
+
+      <c-accordion-item heading="Data storage" value="storage">
+        <p>Allas object storage is available to every project by default.</p>
+      </c-accordion-item>
+    </c-accordion>
+  `,
 })
 export class CustomStyleExampleComponent {
   expanded = signal<'billing' | 'members' | 'storage'>('billing');

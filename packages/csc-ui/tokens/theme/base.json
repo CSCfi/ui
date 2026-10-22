@@ -364,9 +364,6 @@
     "white": {
       "value": "#ffffffff"
     },
-    "font-family": {
-      "value": "'museo-sans', sans-serif"
-    },
     "text-body": {
       "value": "var(--c-primary-900)"
     },

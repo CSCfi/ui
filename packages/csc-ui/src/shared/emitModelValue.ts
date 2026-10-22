@@ -65,3 +65,33 @@ export const emitModelChange = (
   host.dispatchEvent(new CustomEvent('update:value', { detail: value }));
   host.dispatchEvent(new Event('input', { bubbles: true }));
 };
+
+/**
+ * The live half of a drag (ADR-0070): mirror the host `value`, then
+ * `update:value` + a native bubbling `input` — what `v-model` previews from —
+ * with no `change`. A drag ends with one `emitModelSettled`, as a native range
+ * input fires `input` per move and `change` on release.
+ *
+ * The same re-entrancy rule applies: call ONLY from user-interaction
+ * handlers, never from a `props.value` watcher.
+ */
+export const emitModelInput = (
+  host: HTMLElement | null,
+  value: unknown,
+): void => {
+  if (!host) return;
+
+  const el = host as { value?: unknown } & HTMLElement;
+
+  if (el.value !== value) el.value = value;
+  host.dispatchEvent(new CustomEvent('update:value', { detail: value }));
+  host.dispatchEvent(new Event('input', { bubbles: true }));
+};
+
+/** The `change` that ends a drag the `emitModelInput` moves reported (ADR-0070). */
+export const emitModelSettled = (
+  host: HTMLElement | null,
+  value: unknown,
+): void => {
+  host?.dispatchEvent(new CustomEvent('change', { detail: value }));
+};

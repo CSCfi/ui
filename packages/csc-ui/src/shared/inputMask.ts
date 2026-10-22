@@ -25,18 +25,23 @@
 export interface MaskResult {
   /** The caret position in `text`. */
   caret: number;
+
   /** Whether every required token slot is filled. */
   complete: boolean;
+
   /**
    * What the mask still asks for after `text` — the **mask guide**: each
    * unfilled required token drawn as `_`, literals as themselves; optional
    * slots are never drawn. `''` once complete.
    */
   rest: string;
+
   /** The conformed text. */
   text: string;
+
   /** Per character of `text`: whether it fills a token slot (not a literal). */
   tokenAt: boolean[];
+
   /** Only the characters filling token slots. */
   unmasked: string;
 }
@@ -46,21 +51,25 @@ export type MaskSlot =
       /** Other typed characters that stand for this literal. */
       aliases?: string;
       kind: 'literal';
+
       /** Part of an optional section: never drawn in the guide, never appended. */
       optional?: boolean;
       text: string;
     }
   | {
       accepts: (ch: string) => boolean;
+
       /** Closes the slot early once its characters so far are `value`. */
       closesAfter?: (value: string) => boolean;
       kind: 'token';
       max: number;
+
       /** `0` for an optional token. */
       min: number;
     }
   | {
       kind: 'word';
+
       /** The words the slot takes, matched case-insensitively and shown as written here. */
       words: string[];
     };
@@ -370,6 +379,7 @@ export type Conformer<R extends ConformResult = ConformResult> = (
 export interface ConformResult {
   caret: number;
   text: string;
+
   /** Per character of `text`: whether it is typed content (not an inserted literal or separator). */
   tokenAt: boolean[];
 }

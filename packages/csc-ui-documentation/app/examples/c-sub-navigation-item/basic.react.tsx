@@ -1,5 +1,3 @@
-// @ts-nocheck — documentation code sample; shown as text, never compiled here
-import { useState } from 'react';
 import {
   CIcon,
   CSideNavigation,
@@ -7,6 +5,8 @@ import {
   CSubNavigationItem,
 } from '@cscfi/csc-ui-react';
 import { mdiFolderOutline } from '@mdi/js';
+// @ts-nocheck — documentation code sample; shown as text, never compiled here
+import { useState } from 'react';
 
 export const Basic = () => {
   const [current, setCurrent] = useState('active');

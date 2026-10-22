@@ -1,5 +1,10 @@
-// @ts-nocheck — documentation code sample; shown as text, never compiled here
-import { useState } from 'react';
+import {
+  CButton,
+  CIcon,
+  CMenu,
+  CMenuItem,
+  CMenuLabel,
+} from '@cscfi/csc-ui-react';
 import {
   mdiChevronDown,
   mdiMonitor,
@@ -8,16 +13,12 @@ import {
   mdiWeatherNight,
   mdiWeatherSunny,
 } from '@mdi/js';
-import {
-  CButton,
-  CIcon,
-  CMenu,
-  CMenuItem,
-  CMenuLabel,
-} from '@cscfi/csc-ui-react';
+// @ts-nocheck — documentation code sample; shown as text, never compiled here
+import { useState } from 'react';
 
 export const ActiveItems = () => {
   const [theme, setTheme] = useState('dark');
+
   const [sortBy, setSortBy] = useState('name');
 
   return (
@@ -58,9 +59,9 @@ export const ActiveItems = () => {
 
         {['name', 'size', 'date'].map((key) => (
           <CMenuItem
-            key={key}
             active={sortBy === key}
             activeIcon={mdiRadioboxMarked}
+            key={key}
             value={key}
           >
             {key}

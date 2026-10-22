@@ -97,8 +97,10 @@ export const flipChain = (placement: CPlacement): CPlacement[] => [
 export interface FallbackPosition {
   /** Start positioning — call once the panel is open. */
   start(): void;
+
   /** Stop tracking — call when the panel closes. */
   stop(): void;
+
   /** Declarations to append to the panel's inline style; empty with native support. */
   style: Readonly<Ref<string>>;
 }
@@ -106,12 +108,16 @@ export interface FallbackPosition {
 export interface UseFallbackPositionOptions {
   /** Ordered fallback placements, mirroring the panel's `position-try-fallbacks`. */
   fallbacks: (placement: CPlacement) => CPlacement[];
+
   /** The `popover` panel. */
   floating: Readonly<Ref<HTMLElement | null>>;
+
   /** The trigger→panel gap in px on the resolved placement's side (negative pulls the panel in). */
   gap: (side: Side) => number;
+
   /** The preferred placement (the inline `position-area`). */
   placement: () => CPlacement;
+
   /** The element the panel sits against. */
   reference: () => Element | null | undefined;
 }

@@ -1,5 +1,5 @@
 <template>
   <div>
-    <c-progress-bar indeterminate label="Processing data" />
+    <c-progress-bar label="Processing data" indeterminate />
   </div>
 </template>

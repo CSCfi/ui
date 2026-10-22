@@ -1,6 +1,7 @@
+import type { CBreadcrumbTexts } from '@cscfi/csc-ui';
+
 // @ts-nocheck — documentation code sample; shown as text, never compiled here
 import { CBreadcrumb, CBreadcrumbItem } from '@cscfi/csc-ui-react';
-import type { CBreadcrumbTexts } from '@cscfi/csc-ui';
 
 const texts: CBreadcrumbTexts = {
   breadcrumb: 'Murupolku',
@@ -9,7 +10,7 @@ const texts: CBreadcrumbTexts = {
 
 export const Texts = () => {
   return (
-    <div style={{ width: 320, maxWidth: '100%' }}>
+    <div style={{ maxWidth: '100%', width: 320 }}>
       <CBreadcrumb texts={texts}>
         <CBreadcrumbItem href="https://csc.fi">Etusivu</CBreadcrumbItem>
         <CBreadcrumbItem href="https://csc.fi/palvelut">

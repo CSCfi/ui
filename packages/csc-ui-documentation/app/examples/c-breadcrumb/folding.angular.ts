@@ -5,9 +5,9 @@ import { mdiHome } from '@mdi/js';
 // Drag the corner to narrow the box: the middle crumbs fold behind "…",
 // then the current crumb's label shortens.
 @Component({
+  schemas: [CUSTOM_ELEMENTS_SCHEMA],
   selector: 'app-example',
   standalone: true,
-  schemas: [CUSTOM_ELEMENTS_SCHEMA],
   styles: `
     .box {
       resize: horizontal;

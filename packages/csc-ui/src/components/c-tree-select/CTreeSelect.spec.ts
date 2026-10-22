@@ -126,6 +126,38 @@ describe('opening', () => {
 
     expect(isOpen(m)).toBe(true);
   });
+
+  // The open-reset used to run in the `toggle` task and the typed key was
+  // seeded a frame later: whichever ran last won, and keys typed before the
+  // search input took focus were lost.
+  it.each([
+    ['in one burst', ['math']],
+    ['with a frame after the first key', ['m', 'ath']],
+  ])(
+    'keeps every character typed on the closed field, %s',
+    async (_, bursts) => {
+      const m = await mountTree({ value: '1112' });
+
+      const events = recordEvents(m.host, ['change:query']);
+
+      combobox(m).focus();
+      await settle();
+
+      for (const keys of bursts) {
+        await userEvent.keyboard(keys);
+        await settle();
+      }
+
+      expect(isOpen(m)).toBe(true);
+      expect(deepActiveElement()).toBe(search(m));
+      expect(search(m).value).toBe('math');
+      expect(header(m)).toMatch(/^2 matches/);
+      // The first match, as when typing into the open panel — not the
+      // committed Applied mathematics.
+      expect(rows(m)[0].hasAttribute('data-active')).toBe(true);
+      expect(events.details()).toEqual(['', 'm', 'ma', 'mat', 'math']);
+    },
+  );
 });
 
 describe('browse', () => {

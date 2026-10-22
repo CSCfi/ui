@@ -22,7 +22,6 @@ c-table > table.c-table {
   border-spacing: 0;
   border: 0;
   font-size: 100%;
-  font-family: var(--c-font-family);
   margin: 0;
   padding: 0;
   width: 100%;
@@ -37,7 +36,6 @@ c-table > table.c-table th,
 c-table > table.c-table td {
   border: 0;
   font-size: 100%;
-  font-family: var(--c-font-family);
   margin: 0;
   padding: 0;
 }

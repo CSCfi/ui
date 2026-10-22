@@ -1,17 +1,17 @@
+import { CButton, CTextField } from '@cscfi/csc-ui-react';
 // @ts-nocheck — documentation code sample; shown as text, never compiled here
 import { useState } from 'react';
-import { CButton, CTextField } from '@cscfi/csc-ui-react';
 
 export const Small = () => {
   const [query, setQuery] = useState('');
 
   return (
-    <div style={{ display: 'flex', alignItems: 'flex-start', gap: 16 }}>
+    <div style={{ alignItems: 'flex-start', display: 'flex', gap: 16 }}>
       <CTextField
-        value={query}
         label="Search"
-        size="small"
         onChangeValue={(event) => setQuery(event.detail as string)}
+        size="small"
+        value={query}
       />
 
       <CButton size="small">Search</CButton>

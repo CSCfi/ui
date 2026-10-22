@@ -1,6 +1,6 @@
+import { CRadio, CRadioGroup } from '@cscfi/csc-ui-react';
 // @ts-nocheck — documentation code sample; shown as text, never compiled here
 import { useState } from 'react';
-import { CRadio, CRadioGroup } from '@cscfi/csc-ui-react';
 
 const styles = `
 /* The radios are ordinary light DOM: wrap them in your own layout markup and
@@ -21,10 +21,10 @@ export const CustomLayout = () => {
       <style>{styles}</style>
 
       <CRadioGroup
-        value={plan}
         hint="You can change the plan later"
         label="Subscription plan"
         onChangeValue={(event) => setPlan(event.detail as string)}
+        value={plan}
       >
         <div className="plan-option">
           <CRadio value="free">Free</CRadio>

@@ -1,7 +1,7 @@
 <template>
   <div>
     <!-- Below the breakpoint each row becomes a card with header labels -->
-    <c-table responsive mobile-breakpoint="800">
+    <c-table mobile-breakpoint="800" responsive>
       <table>
         <thead>
           <tr>

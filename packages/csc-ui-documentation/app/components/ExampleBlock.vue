@@ -15,9 +15,12 @@
          `<docs>surface: canvas</docs>` (see .example-demo in assets/site.css). -->
     <!-- `overflow-x-auto`: a demo wider than a phone (a table, a data table)
          scrolls sideways inside the pane instead of being cut by the figure. -->
+    <!-- `leading-normal`: components inherit the page typography (ADR-0072).
+         The site body's 1.6 suits its prose; the pane resets to the 1.5 of a
+         typical app (Tailwind preflight) that the visual baselines use too. -->
     <div
       :data-surface="example.surface"
-      class="example-demo overflow-x-auto px-4 py-6"
+      class="example-demo overflow-x-auto px-4 py-6 leading-normal"
     >
       <!-- The live demo is always the Vue canon (compiled SFC), whatever the
            selected flavor — the variants differ in source, not behavior.
@@ -43,21 +46,21 @@
              made elsewhere (e.g. the header FlavorSwitcher) updates this
              block's active tab too. -->
         <c-button-group
+          :value="activeTab.flavor"
           data-flavor-tabs
           mandatory
-          :value="activeTab.flavor"
           @input="onFlavorChange"
         >
           <c-button
             v-for="tab in example.tabs"
             :key="tab.flavor"
-            :value="tab.flavor"
             :aria-selected="tab.flavor === activeTab.flavor"
+            :value="tab.flavor"
           >
             <c-icon
+              :class="ICON_COLORS[tab.flavor]"
               :path="tab.icon"
               :size="16"
-              :class="ICON_COLORS[tab.flavor]"
             />
 
             {{ tab.label }}

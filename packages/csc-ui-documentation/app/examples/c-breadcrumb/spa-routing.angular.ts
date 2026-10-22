@@ -14,9 +14,9 @@ const PAGES = [
 ];
 
 @Component({
+  schemas: [CUSTOM_ELEMENTS_SCHEMA],
   selector: 'app-example',
   standalone: true,
-  schemas: [CUSTOM_ELEMENTS_SCHEMA],
   template: `
     <div>
       <c-breadcrumb>

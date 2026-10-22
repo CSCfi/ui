@@ -37,11 +37,14 @@ export interface Mounted<T extends HTMLElement = HTMLElement> {
   /** Walk nested shadow roots: `deep('c-input', 'input')` finds the inner field. */
   deep<E extends Element = HTMLElement>(...selectors: string[]): E;
   host: T;
+
   /** `shadow('[part~="<name>"]')`. */
   part(name: string): HTMLElement;
+
   /** First match inside the host's shadow root; throws when absent. */
   shadow<E extends Element = HTMLElement>(selector: string): E;
   shadowAll<E extends Element = HTMLElement>(selector: string): E[];
+
   /** The wrapper element (the host itself when `stage: false`). */
   stage: HTMLElement;
   unmount(): void;
@@ -50,10 +53,13 @@ export interface Mounted<T extends HTMLElement = HTMLElement> {
 export interface MountOptions {
   /** Host attributes. `true` sets the bare attribute, `false` omits it. */
   attrs?: Record<string, boolean | number | string>;
+
   /** Light-DOM children, i.e. slotted content. */
   html?: string;
+
   /** Host properties, assigned before the element connects (arrays, objects, numbers). */
   props?: Record<string, unknown>;
+
   /**
    * Wrap the host in an inline-block stage. Hosts are `display: contents`
    * (zero rect), so the stage is the screenshot target. Default `true`;
@@ -112,6 +118,7 @@ export interface EventRecord {
   bubbles: boolean;
   composed: boolean;
   detail: unknown;
+
   /** `event.target.value` at dispatch time — proves the host was updated before it emitted. */
   targetValue: unknown;
   type: string;
@@ -267,6 +274,7 @@ export const consoleSpy = (() => {
 
       return records.splice(index, 1)[0];
     },
+
     /** Every record so far (not consumed). */
     records: (): ConsoleRecord[] => [...records],
     start(): void {
@@ -279,6 +287,7 @@ export const consoleSpy = (() => {
         };
       }
     },
+
     /** Restore the console and return what would fail the test. */
     stop(): ConsoleRecord[] {
       console.error = originals.error;

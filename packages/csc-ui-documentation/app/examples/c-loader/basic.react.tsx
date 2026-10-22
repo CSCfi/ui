@@ -1,6 +1,6 @@
+import { CButton, CLoader } from '@cscfi/csc-ui-react';
 // @ts-nocheck — documentation code sample; shown as text, never compiled here
 import { useState } from 'react';
-import { CButton, CLoader } from '@cscfi/csc-ui-react';
 
 export const Basic = () => {
   const [loading, setLoading] = useState(true);
@@ -10,8 +10,8 @@ export const Basic = () => {
       <CButton onClick={() => setLoading(!loading)}>Toggle loader</CButton>
 
       {/* The loader fills the nearest position: relative ancestor */}
-      <div style={{ position: 'relative', height: '160px', width: '100%' }}>
-        <CLoader visible={loading} contentdelay={1}>
+      <div style={{ height: '160px', position: 'relative', width: '100%' }}>
+        <CLoader contentdelay={1} visible={loading}>
           Loading resources
         </CLoader>
       </div>

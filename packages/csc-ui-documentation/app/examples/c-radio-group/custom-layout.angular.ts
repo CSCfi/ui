@@ -2,9 +2,21 @@
 import { Component, CUSTOM_ELEMENTS_SCHEMA, signal } from '@angular/core';
 
 @Component({
+  schemas: [CUSTOM_ELEMENTS_SCHEMA],
   selector: 'app-example',
   standalone: true,
-  schemas: [CUSTOM_ELEMENTS_SCHEMA],
+  styles: [
+    `
+      /* The radios are ordinary light DOM: wrap them in your own layout markup
+         and style it with your own CSS. Keep the label text inside the
+         <c-radio> so the whole row stays click-associated. */
+      .plan-option {
+        border: 1px solid var(--c-border);
+        border-radius: 0.5rem;
+        padding: 0 0.75rem;
+      }
+    `,
+  ],
   template: `
     <div>
       <c-radio-group
@@ -25,18 +37,6 @@ import { Component, CUSTOM_ELEMENTS_SCHEMA, signal } from '@angular/core';
       </c-radio-group>
     </div>
   `,
-  styles: [
-    `
-      /* The radios are ordinary light DOM: wrap them in your own layout markup
-         and style it with your own CSS. Keep the label text inside the
-         <c-radio> so the whole row stays click-associated. */
-      .plan-option {
-        border: 1px solid var(--c-border);
-        border-radius: 0.5rem;
-        padding: 0 0.75rem;
-      }
-    `,
-  ],
 })
 export class CustomLayoutExampleComponent {
   plan = signal('free');

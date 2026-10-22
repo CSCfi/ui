@@ -7,9 +7,9 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
-
 import type { CPaginationOptions } from '@cscfi/csc-ui';
+
+import { ref } from 'vue';
 
 const options = ref<CPaginationOptions>({
   itemCount: 96,

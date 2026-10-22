@@ -7,9 +7,9 @@ import {
 } from '@mdi/js';
 
 @Component({
+  schemas: [CUSTOM_ELEMENTS_SCHEMA],
   selector: 'app-example',
   standalone: true,
-  schemas: [CUSTOM_ELEMENTS_SCHEMA],
   template: `
     <div>
       <c-side-navigation>
@@ -55,7 +55,7 @@ import {
 export class BasicExampleComponent {
   current = signal('active');
 
-  mdiViewDashboardOutline = mdiViewDashboardOutline;
   mdiFolderOutline = mdiFolderOutline;
   mdiOpenInNew = mdiOpenInNew;
+  mdiViewDashboardOutline = mdiViewDashboardOutline;
 }

@@ -443,3 +443,19 @@ describe('c-main', () => {
     await matchScreenshotInBothModes(m.part('root'), 'bottom-slot');
   });
 });
+
+describe('page typography (CONTEXT.md, ADR-0072)', () => {
+  it('renders slotted page content in the page font and line height', async () => {
+    const m = await mount('c-main', {
+      html: `${TOOLBAR}<c-page><p>Content</p></c-page>`,
+    });
+
+    m.stage.style.fontFamily = '"Page Probe", monospace';
+    m.stage.style.lineHeight = '1.7';
+
+    const text = getComputedStyle(m.host.querySelector('p')!);
+
+    expect(text.fontFamily).toBe('"Page Probe", monospace');
+    expect(text.lineHeight).toBe(getComputedStyle(m.stage).lineHeight);
+  });
+});

@@ -2,10 +2,10 @@
   <div>
     <c-autocomplete
       v-model="language"
-      clearable
       hint="Type to filter the options"
       label="Programming language"
       placeholder="Start typing to search"
+      clearable
     >
       <c-option value="js">
         <c-option-value>JavaScript</c-option-value>
@@ -31,5 +31,5 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 
-const language = ref<string | null>(null);
+const language = ref<null | string>(null);
 </script>

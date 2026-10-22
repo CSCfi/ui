@@ -1,17 +1,17 @@
+import { COption, CSelect } from '@cscfi/csc-ui-react';
 // @ts-nocheck — documentation code sample; shown as text, never compiled here
 import { useState } from 'react';
-import { COption, CSelect } from '@cscfi/csc-ui-react';
 
 export const Small = () => {
-  const [country, setCountry] = useState<string | null>('fi');
+  const [country, setCountry] = useState<null | string>('fi');
 
   return (
     <div>
       <CSelect
-        value={country}
         label="Country"
+        onChangeValue={(event) => setCountry(event.detail as null | string)}
         size="small"
-        onChangeValue={(event) => setCountry(event.detail as string | null)}
+        value={country}
       >
         <COption name="Finland" value="fi">
           Finland

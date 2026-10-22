@@ -14,8 +14,10 @@
 import type { CAutocompleteFilter, CAutocompleteItem, CAutocompleteTexts, CAutocompleteValue } from './components/c-autocomplete/CAutocomplete.vue';
 import type { CBreadcrumbTexts } from './components/c-breadcrumb/CBreadcrumb.vue';
 import type { CButtonGroupValue } from './components/c-button-group/CButtonGroup.vue';
+import type { CColorPickerSwatch, CColorPickerTexts, CColorPickerValue } from './components/c-color-picker/CColorPicker.vue';
 import type { CDataTableCellContent, CDataTableColumn, CDataTableExpandedContext, CDataTableRow, CDataTableSort, CDataTableTexts } from './components/c-data-table/CDataTable.vue';
 import type { CDatePickerDisabledDate, CDatePickerText, CDatePickerTexts, CDatePickerValue } from './components/c-date-picker/CDatePicker.vue';
+import type { CFileUploadEntry, CFileUploadFunction, CFileUploadRejection, CFileUploadTexts } from './components/c-file-upload/CFileUpload.vue';
 import type { CNumberFieldTexts } from './components/c-number-field/CNumberField.vue';
 import type { CPaginationOptions } from './components/c-pagination/CPagination.vue';
 import type { CSelectTexts, CSelectValue } from './components/c-select/CSelect.vue';
@@ -567,6 +569,118 @@ export interface CCheckboxElement extends Omit<HTMLElement, 'checked' | 'disable
   ): void;
 }
 
+/** Events dispatched by `<c-color-picker>`. */
+export interface CColorPickerElementEventMap {
+  /**
+   * Fired when the value changes — a pick in the panel, typed text
+   * committed, the field cleared — carrying the colour in the `format`
+   * notation, or `null`. A drag on the area or a slider fires it once, on
+   * release.
+   */
+  change: CustomEvent<CColorPickerValue>;
+  /**
+   * Fired on every commit of typed text (Enter or leaving the input) with the
+   * text as typed. Read `badInput` to tell whether it named a colour.
+   */
+  'change:text': CustomEvent<string>;
+  /**
+   * Native bubbling input event dispatched alongside every value change —
+   * each move of a drag included — so a plain `v-model` stays in sync.
+   * Carries no detail.
+   */
+  input: CustomEvent<void>;
+  /**
+   * Fired with every value change, each move of a drag included — the
+   * `v-model` contract.
+   */
+  'update:value': CustomEvent<CColorPickerValue>;
+}
+
+/** A colour field that takes any typed CSS colour, or opens a panel for picking one: a colour area, hue and alpha sliders, per-channel inputs and swatches — or swatches alone under `swatches-only`. */
+export interface CColorPickerElement extends Omit<HTMLElement, 'alpha' | 'clearable' | 'disabled' | 'errorMessage' | 'format' | 'hideDetails' | 'hint' | 'hostId' | 'label' | 'labelOnTop' | 'name' | 'placeholder' | 'required' | 'shadow' | 'size' | 'swatches' | 'swatchesOnly' | 'texts' | 'valid' | 'value'> {
+  /**
+   * Let the colour carry transparency: an alpha slider and an A channel join
+   * the panel. Without it typed alpha is dropped
+   */
+  alpha?: boolean;
+  /** Make the value clearable */
+  clearable?: boolean;
+  /** Disable the field */
+  disabled?: boolean;
+  /** Error message shown in place of the hint while the field is invalid */
+  errorMessage?: string;
+  /**
+   * The notation the value is written in — and every emission with it:
+   * `#rrggbb`, `rgb(r g b)` or `oklch(l c h)`
+   */
+  format?: 'hex' | 'oklch' | 'rgb';
+  /** Hide the hint and error messages */
+  hideDetails?: boolean;
+  /** Hint text for the field */
+  hint?: string;
+  /** Id of the element */
+  hostId?: string;
+  /** Element label */
+  label?: string;
+  /** Label on top of the field */
+  labelOnTop?: boolean;
+  /** Input field name */
+  name?: string;
+  /** Placeholder of the input; an example of the notation when empty */
+  placeholder?: string;
+  /** Set the field as required */
+  required?: boolean;
+  /** Shadow variant */
+  shadow?: boolean;
+  /** Field height: the 52px default (the shared control height) or the 36px `small` box */
+  size?: 'default' | 'small';
+  /**
+   * Predefined colours offered under the picker — CSS colours, or
+   * `{ value, name }` objects whose name is read out and shown. Arrays have
+   * no attribute form — bind as a DOM property
+   */
+  swatches?: CColorPickerSwatch[];
+  /**
+   * Limit the choice to the swatches: the field becomes readonly and opens
+   * a panel of the swatches alone
+   */
+  swatchesOnly?: boolean;
+  /**
+   * UI text overrides (i18n), merged over the English defaults. Objects have
+   * no attribute form — bind as a DOM property
+   */
+  texts?: CColorPickerTexts;
+  /** Set the validity of the field */
+  valid?: boolean;
+  /**
+   * The colour in the `format` notation, or `null` when empty. Any CSS
+   * colour is accepted and shown in the notation
+   */
+  value?: CColorPickerValue;
+  /** Whether the committed text names no colour — the value is then `null` (CONTEXT.md "Bad input"). */
+  readonly badInput: boolean;
+  addEventListener<K extends keyof CColorPickerElementEventMap>(
+    type: K,
+    listener: (this: CColorPickerElement, ev: CColorPickerElementEventMap[K]) => void,
+    options?: boolean | AddEventListenerOptions,
+  ): void;
+  addEventListener(
+    type: string,
+    listener: EventListenerOrEventListenerObject,
+    options?: boolean | AddEventListenerOptions,
+  ): void;
+  removeEventListener<K extends keyof CColorPickerElementEventMap>(
+    type: K,
+    listener: (this: CColorPickerElement, ev: CColorPickerElementEventMap[K]) => void,
+    options?: boolean | EventListenerOptions,
+  ): void;
+  removeEventListener(
+    type: string,
+    listener: EventListenerOrEventListenerObject,
+    options?: boolean | EventListenerOptions,
+  ): void;
+}
+
 export interface CCscLogoElement extends Omit<HTMLElement, 'width'> {
   /** Logo width in pixels */
   width?: number;
@@ -899,6 +1013,90 @@ export interface CDropdownElement extends Omit<HTMLElement, 'closeLabel' | 'drop
   removeEventListener<K extends keyof CDropdownElementEventMap>(
     type: K,
     listener: (this: CDropdownElement, ev: CDropdownElementEventMap[K]) => void,
+    options?: boolean | EventListenerOptions,
+  ): void;
+  removeEventListener(
+    type: string,
+    listener: EventListenerOrEventListenerObject,
+    options?: boolean | EventListenerOptions,
+  ): void;
+}
+
+/** Events dispatched by `<c-file-upload>`. */
+export interface CFileUploadElementEventMap {
+  /** Fired with the new list of file entries. */
+  change: CustomEvent<CFileUploadEntry[]>;
+  /**
+   * Native bubbling input event fired with every value change so a plain Vue
+   * `v-model` works. No detail.
+   */
+  input: CustomEvent<void>;
+  /**
+   * Fired after an add that refused files, listing each with its reason —
+   * a type outside `accept`, a file over `max-size`, a file already held,
+   * one beyond `max-files`, or a folder. The refused files never join the
+   * value.
+   */
+  reject: CustomEvent<CFileUploadRejection[]>;
+  /** v-model contract event, fired with `change`. */
+  'update:value': CustomEvent<CFileUploadEntry[]>;
+}
+
+/** A field the user adds files to by dropping them on it or choosing them from a file dialog — and, given an upload function, the place each file's upload shows its progress. */
+export interface CFileUploadElement extends Omit<HTMLElement, 'accept' | 'compact' | 'disabled' | 'errorMessage' | 'hideDetails' | 'hint' | 'label' | 'manual' | 'maxFiles' | 'maxSize' | 'multiple' | 'required' | 'size' | 'texts' | 'upload' | 'valid' | 'value'> {
+  /** The file types the field takes, in the native `accept` syntax: extensions (`.pdf`) and media types (`image/*`, `application/json`), comma separated. It filters the file dialog and is checked again on a drop */
+  accept?: string;
+  /** Show the drop zone as a control-height row — a "Choose files" button and a drop prompt — that lines up with the fields beside it */
+  compact?: boolean;
+  /** Disable the field. Uploads already running continue */
+  disabled?: boolean;
+  /** Error message shown in place of the hint while the field is invalid */
+  errorMessage?: string;
+  /** Hide the hint and error messages */
+  hideDetails?: boolean;
+  /** Hint text under the drop zone — the place to name the accepted types and limits */
+  hint?: string;
+  /** Label of the field */
+  label?: string;
+  /** Hold added files as `local` even with an upload function, until `startUploads()` queues them — for a form that uploads on its own button. Files added after the call wait for the next one */
+  manual?: boolean;
+  /** The most file entries a `multiple` field holds; files beyond it are rejected */
+  maxFiles?: null | number;
+  /** The largest file in bytes; a larger one is rejected. Sizes are shown in decimal units, so write the limit in decimal bytes (`10000000` reads "10 MB") */
+  maxSize?: null | number;
+  /** Let a pick or a drop add several files. Without it the field holds one file and a new pick replaces it; the value is a list either way */
+  multiple?: boolean;
+  /** Set the field as required */
+  required?: boolean;
+  /** Height of the `compact` row: the 52px default (the shared control height) or the 36px `small` row. The large drop zone has one size */
+  size?: 'default' | 'small';
+  /** UI text overrides (i18n), merged over the English defaults. Objects have no attribute form — bind as a DOM property */
+  texts?: CFileUploadTexts;
+  /** The upload function: called once per added file with an abort signal and a progress callback taking a fraction from 0 to 1; what it resolves to becomes the entry's `result`, an `Error` it rejects with becomes the entry's `error` text. Without one the field only holds the files. A function — bind as a DOM property */
+  upload?: CFileUploadFunction;
+  /** Set the validity of the field */
+  valid?: boolean;
+  /** The file entries — always a list. A picked file's entry carries the browser `File`; a server file's entry is `{ id, name, size, status: 'done' }`. `''` reads as empty — what a plain `v-model` holding `null` writes. An array — bind as a DOM property */
+  value?: CFileUploadEntry[] | null | string;
+  /**
+   * Queue every `local` file entry for the upload function — how a `manual`
+   * field starts; files added after the call wait for the next one. Fires the
+   * value events once when it starts any. Does nothing without an upload function
+   */
+  startUploads(): void;
+  addEventListener<K extends keyof CFileUploadElementEventMap>(
+    type: K,
+    listener: (this: CFileUploadElement, ev: CFileUploadElementEventMap[K]) => void,
+    options?: boolean | AddEventListenerOptions,
+  ): void;
+  addEventListener(
+    type: string,
+    listener: EventListenerOrEventListenerObject,
+    options?: boolean | AddEventListenerOptions,
+  ): void;
+  removeEventListener<K extends keyof CFileUploadElementEventMap>(
+    type: K,
+    listener: (this: CFileUploadElement, ev: CFileUploadElementEventMap[K]) => void,
     options?: boolean | EventListenerOptions,
   ): void;
   removeEventListener(
@@ -2762,8 +2960,10 @@ export interface CTreeSelectElement extends Omit<HTMLElement, 'allowBranch' | 'c
 export interface AppDefaults {
   'c-autocomplete'?: Partial<Pick<CAutocompleteElement, 'hideDetails' | 'itemsPerPage' | 'labelOnTop' | 'shadow' | 'size' | 'texts'>>;
   'c-breadcrumb'?: Partial<Pick<CBreadcrumbElement, 'texts'>>;
+  'c-color-picker'?: Partial<Pick<CColorPickerElement, 'alpha' | 'format' | 'hideDetails' | 'labelOnTop' | 'shadow' | 'size' | 'texts'>>;
   'c-data-table'?: Partial<Pick<CDataTableElement, 'texts'>>;
   'c-date-picker'?: Partial<Pick<CDatePickerElement, 'firstDayOfWeek' | 'format' | 'hideDetails' | 'labelOnTop' | 'shadow' | 'showToday' | 'showWeekNumbers' | 'size' | 'texts'>>;
+  'c-file-upload'?: Partial<Pick<CFileUploadElement, 'compact' | 'hideDetails' | 'size' | 'texts'>>;
   'c-number-field'?: Partial<Pick<CNumberFieldElement, 'decimalSeparator' | 'decimals' | 'fixedDecimals' | 'groupSeparator' | 'hideDetails' | 'labelOnTop' | 'shadow' | 'size' | 'step' | 'texts'>>;
   'c-select'?: Partial<Pick<CSelectElement, 'hideDetails' | 'itemsPerPage' | 'labelOnTop' | 'shadow' | 'size' | 'texts'>>;
   'c-text-field'?: Partial<Pick<CTextFieldElement, 'hideDetails' | 'labelOnTop' | 'shadow' | 'size'>>;
@@ -2775,8 +2975,10 @@ export interface AppDefaults {
 export const DEFAULTABLE_PROPS = {
   'c-autocomplete': ['hideDetails', 'itemsPerPage', 'labelOnTop', 'shadow', 'size', 'texts'],
   'c-breadcrumb': ['texts'],
+  'c-color-picker': ['alpha', 'format', 'hideDetails', 'labelOnTop', 'shadow', 'size', 'texts'],
   'c-data-table': ['texts'],
   'c-date-picker': ['firstDayOfWeek', 'format', 'hideDetails', 'labelOnTop', 'shadow', 'showToday', 'showWeekNumbers', 'size', 'texts'],
+  'c-file-upload': ['compact', 'hideDetails', 'size', 'texts'],
   'c-number-field': ['decimalSeparator', 'decimals', 'fixedDecimals', 'groupSeparator', 'hideDetails', 'labelOnTop', 'shadow', 'size', 'step', 'texts'],
   'c-select': ['hideDetails', 'itemsPerPage', 'labelOnTop', 'shadow', 'size', 'texts'],
   'c-text-field': ['hideDetails', 'labelOnTop', 'shadow', 'size'],
@@ -2785,7 +2987,7 @@ export const DEFAULTABLE_PROPS = {
 } as const satisfies Record<keyof AppDefaults, readonly string[]>;
 
 /** Tags dispatching the v-model contract event `update:value` — the value controls (CONTEXT.md). */
-export const VALUE_TAGS = ['c-accordion', 'c-autocomplete', 'c-button-group', 'c-checkbox', 'c-date-picker', 'c-modal', 'c-number-field', 'c-otp-input', 'c-pagination', 'c-radio-group', 'c-select', 'c-slider', 'c-switch', 'c-tabs', 'c-text-field', 'c-time-picker', 'c-tree-select'] as const;
+export const VALUE_TAGS = ['c-accordion', 'c-autocomplete', 'c-button-group', 'c-checkbox', 'c-color-picker', 'c-date-picker', 'c-file-upload', 'c-modal', 'c-number-field', 'c-otp-input', 'c-pagination', 'c-radio-group', 'c-select', 'c-slider', 'c-switch', 'c-tabs', 'c-text-field', 'c-time-picker', 'c-tree-select'] as const;
 
 declare global {
   interface HTMLElementTagNameMap {
@@ -2803,11 +3005,13 @@ declare global {
     'c-card-content': CCardContentElement;
     'c-card-title': CCardTitleElement;
     'c-checkbox': CCheckboxElement;
+    'c-color-picker': CColorPickerElement;
     'c-csc-logo': CCscLogoElement;
     'c-data-table': CDataTableElement;
     'c-date-picker': CDatePickerElement;
     'c-divider': CDividerElement;
     'c-dropdown': CDropdownElement;
+    'c-file-upload': CFileUploadElement;
     'c-icon': CIconElement;
     'c-icon-button': CIconButtonElement;
     'c-input': CInputElement;

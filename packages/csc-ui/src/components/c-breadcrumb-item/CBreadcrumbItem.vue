@@ -35,6 +35,7 @@
       >
         <!-- Zero-size probe resting on the label's baseline. -->
         <span ref="baselineRef" :class="ui.baseline()" aria-hidden="true" />
+
         <slot />
       </span>
     </a>
@@ -51,6 +52,7 @@ export interface CBreadcrumbItemProps {
    * @freeform any URL
    */
   href?: string;
+
   /**
    * Browsing context the link opens in; the same tab when unset
    *
@@ -106,7 +108,7 @@ const breadcrumbItem = tv({
     {
       class: {
         content:
-          'text-primary cursor-pointer hover:bg-primary/15 focus-visible:outline-primary',
+          'cursor-pointer text-primary hover:bg-primary/15 focus-visible:outline-primary',
       },
       folded: false,
       interactive: true,
@@ -133,13 +135,13 @@ const breadcrumbItem = tv({
     interactive: false,
   },
   slots: {
+    baseline: 'inline-block h-0 w-0',
     content:
-      'flex items-center gap-2 min-w-0 m-0 whitespace-nowrap no-underline text-on-surface [font-family:var(--c-font-family)] transition-colors duration-300 ease-in-out outline-none focus-visible:outline-2 focus-visible:outline-solid',
-    icon: 'inline-flex items-center shrink-0 fill-current',
-    baseline: 'inline-block w-0 h-0',
+      'm-0 flex min-w-0 items-center gap-2 whitespace-nowrap text-on-surface no-underline transition-colors duration-300 ease-in-out outline-none focus-visible:outline-2 focus-visible:outline-solid',
+    icon: 'inline-flex shrink-0 items-center fill-current',
     label: 'relative block min-w-0 truncate',
-    root: 'flex items-center min-w-0',
-    separator: 'shrink-0 size-4 fill-current text-on-surface-muted',
+    root: 'flex min-w-0 items-center',
+    separator: 'size-4 shrink-0 fill-current text-on-surface-muted',
   },
   variants: {
     current: { true: '' },
@@ -149,12 +151,12 @@ const breadcrumbItem = tv({
     folded: {
       false: {
         content:
-          'min-h-7 px-3 rounded-csc-md text-sm font-bold focus-visible:outline-offset-2',
+          'min-h-7 rounded-csc-md px-3 text-sm font-bold focus-visible:outline-offset-2',
         root: 'shrink-0',
       },
       true: {
         content:
-          'w-full min-h-10 px-3 rounded-csc-sm text-sm focus-visible:-outline-offset-2',
+          'min-h-10 w-full rounded-csc-sm px-3 text-sm focus-visible:-outline-offset-2',
         root: 'w-full',
       },
     },

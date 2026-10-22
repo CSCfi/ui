@@ -4,8 +4,8 @@
       <c-list-item
         v-for="item in items"
         :key="item.label"
-        ripple
         :active="selected === item.label"
+        ripple
         @click="selected = item.label"
       >
         <c-icon slot="pre" :path="item.icon" />
@@ -17,9 +17,8 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
-
 import { mdiAccount, mdiBell, mdiCog } from '@mdi/js';
+import { ref } from 'vue';
 
 const items = [
   { icon: mdiAccount, label: 'Profile' },

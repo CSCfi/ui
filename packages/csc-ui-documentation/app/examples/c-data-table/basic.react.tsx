@@ -1,7 +1,8 @@
+import type { CDataTableColumn, CDataTableSort } from '@cscfi/csc-ui';
+
+import { CDataTable } from '@cscfi/csc-ui-react';
 // @ts-nocheck — documentation code sample; shown as text, never compiled here
 import { useState } from 'react';
-import { CDataTable } from '@cscfi/csc-ui-react';
-import type { CDataTableColumn, CDataTableSort } from '@cscfi/csc-ui';
 
 const columns: CDataTableColumn[] = [
   { header: 'Project', key: 'name', sortable: true },
@@ -32,9 +33,9 @@ export const Basic = () => {
       <CDataTable
         columns={columns}
         data={data}
-        sort={sort}
-        pageSize={5}
         onChangeSort={(event) => setSort(event.detail as CDataTableSort)}
+        pageSize={5}
+        sort={sort}
       />
 
       <p>

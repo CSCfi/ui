@@ -41,13 +41,12 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
-
 import {
   mdiFolderOutline,
   mdiOpenInNew,
   mdiViewDashboardOutline,
 } from '@mdi/js';
+import { ref } from 'vue';
 
 const current = ref('dashboard');
 </script>

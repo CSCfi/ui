@@ -1,6 +1,6 @@
 <template>
   <div v-if="!coerceBoolean(hideDetails)" :class="ui.root()" :part>
-    <Transition
+    <transition
       enter-active-class="transition-[opacity,translate] duration-200 ease-standard"
       enter-from-class="opacity-0 -translate-y-1"
       leave-active-class="transition-[opacity,translate] duration-200 ease-standard"
@@ -23,7 +23,7 @@
 
         <span>{{ showError ? errorMessage : hint }}</span>
       </span>
-    </Transition>
+    </transition>
   </div>
 </template>
 
@@ -59,9 +59,9 @@ import { coerceBoolean } from './coerceBoolean';
 
 const fieldMessage = tv({
   slots: {
-    icon: 'fill-current h-4 w-4 relative -top-0.5 shrink-0',
+    icon: 'relative -top-0.5 h-4 w-4 shrink-0 fill-current',
     line: 'flex items-start gap-1',
-    root: 'px-3 text-xs leading-none min-h-4 text-on-surface-muted',
+    root: 'min-h-4 px-3 text-xs leading-none text-on-surface-muted',
     visuallyHidden:
       'absolute h-px w-px overflow-hidden border-0 p-0 [clip:rect(1px,1px,1px,1px)]',
   },
@@ -79,12 +79,16 @@ const errorIconPath = mdiCloseCircle;
 interface FieldMessageProps {
   /** Consumer-supplied text shown in place of the hint while invalid. */
   errorMessage?: string;
+
   /** Suppress the whole message area (no reserved height either). */
   hideDetails?: boolean;
+
   /** Neutral helper text shown while valid (or when no error message is supplied). */
   hint?: string;
+
   /** Part name stamped on the message area (`message` unless the host reserves it). */
   part?: string;
+
   /** Host control's validity; `false` switches to the error message when one is supplied. */
   valid?: boolean;
 }

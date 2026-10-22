@@ -1,11 +1,12 @@
-// @ts-nocheck — documentation code sample; shown as text, never compiled here
-import { Component, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import type { CToastMessage } from '@cscfi/csc-ui';
 
+// @ts-nocheck — documentation code sample; shown as text, never compiled here
+import { Component, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
+
 @Component({
+  schemas: [CUSTOM_ELEMENTS_SCHEMA],
   selector: 'app-example',
   standalone: true,
-  schemas: [CUSTOM_ELEMENTS_SCHEMA],
   template: `
     <div>
       <!-- Toasts are normally created by c-toasts, which renders a c-toast for
@@ -17,9 +18,9 @@ import type { CToastMessage } from '@cscfi/csc-ui';
 export class BasicExampleComponent {
   message: CToastMessage = {
     id: 'example',
-    title: 'Saved',
     message: 'Your changes have been saved.',
-    type: 'success',
     persistent: true,
+    title: 'Saved',
+    type: 'success',
   };
 }

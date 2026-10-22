@@ -2,8 +2,8 @@
   <div>
     <c-otp-input
       v-model="code"
-      label="OTP"
       hint="Enter the 6-digit code we sent you"
+      label="OTP"
     />
 
     <p>Code: {{ code ?? 'incomplete' }}</p>

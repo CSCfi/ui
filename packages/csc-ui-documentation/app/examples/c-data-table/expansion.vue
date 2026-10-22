@@ -4,10 +4,10 @@
          a table column, its cells live in the expansion row. The custom
          expandedContent renders after them. -->
     <c-data-table
-      :columns="columns"
-      :data="data"
-      :expanded-content="expandedContent"
-      :get-row-id="getRowId"
+      :columns
+      :data
+      :expanded-content
+      :get-row-id
       single-expansion
       @change:expanded="onExpanded"
     />
@@ -17,14 +17,13 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
-
 import {
   type CDataTableColumn,
   type CDataTableExpandedContext,
   type CDataTableRow,
   h,
 } from '@cscfi/csc-ui';
+import { ref } from 'vue';
 
 const columns: CDataTableColumn[] = [
   { header: 'Service', key: 'name' },
@@ -61,8 +60,8 @@ const expandedContent = ({ row }: CDataTableExpandedContext) =>
     'c-link',
     {
       href: `https://docs.csc.fi/computing/systems-${row.id}/`,
-      underline: true,
       style: 'padding-inline: 6px',
+      underline: true,
     },
     `Read more about ${row.name}`,
   );

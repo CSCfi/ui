@@ -2,17 +2,9 @@
 import { Component, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 
 @Component({
+  schemas: [CUSTOM_ELEMENTS_SCHEMA],
   selector: 'app-example',
   standalone: true,
-  schemas: [CUSTOM_ELEMENTS_SCHEMA],
-  template: `
-    <c-page class="demo-page">
-      <h2>Reports</h2>
-      <p>The default slot is wrapped in a centered max-width container.</p>
-
-      <div slot="footer">Footer content</div>
-    </c-page>
-  `,
   styles: [
     `
       /* Demo-only sizing: c-page normally fills the dashboard's page area and the document scrolls. */
@@ -21,5 +13,13 @@ import { Component, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
       }
     `,
   ],
+  template: `
+    <c-page class="demo-page">
+      <h2>Reports</h2>
+      <p>The default slot is wrapped in a centered max-width container.</p>
+
+      <div slot="footer">Footer content</div>
+    </c-page>
+  `,
 })
 export class BasicExampleComponent {}

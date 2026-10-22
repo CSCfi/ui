@@ -1,19 +1,18 @@
 // @ts-nocheck — documentation code sample; shown as text, never compiled here
+import type { AfterViewInit, ElementRef, OnDestroy } from '@angular/core';
+import type { CAutocompleteElement, CAutocompleteItem } from '@cscfi/csc-ui';
+
 import {
-  AfterViewInit,
   Component,
   CUSTOM_ELEMENTS_SCHEMA,
-  ElementRef,
-  OnDestroy,
   signal,
   viewChild,
 } from '@angular/core';
-import type { CAutocompleteElement, CAutocompleteItem } from '@cscfi/csc-ui';
 
 @Component({
+  schemas: [CUSTOM_ELEMENTS_SCHEMA],
   selector: 'app-example',
   standalone: true,
-  schemas: [CUSTOM_ELEMENTS_SCHEMA],
   template: `
     <div>
       <!-- With "external", the autocomplete renders "items" verbatim and only
@@ -38,9 +37,6 @@ import type { CAutocompleteElement, CAutocompleteItem } from '@cscfi/csc-ui';
   `,
 })
 export class ExternalExampleComponent implements AfterViewInit, OnDestroy {
-  autocomplete =
-    viewChild.required<ElementRef<CAutocompleteElement>>('autocomplete');
-
   // ---- a pretend server ------------------------------------------------
   ALL: CAutocompleteItem[] = [
     { name: 'Austria', value: 'at' },
@@ -55,27 +51,17 @@ export class ExternalExampleComponent implements AfterViewInit, OnDestroy {
     { name: 'Sweden', value: 'se' },
   ];
 
-  search = (query: string): Promise<CAutocompleteItem[]> =>
-    new Promise((resolve) =>
-      setTimeout(
-        () =>
-          resolve(
-            this.ALL.filter((item) =>
-              item.name.toLowerCase().includes(query.toLowerCase()),
-            ),
-          ),
-        600,
-      ),
-    );
+  autocomplete =
+    viewChild.required<ElementRef<CAutocompleteElement>>('autocomplete');
+
+  country = signal<null | string>(null);
   // -----------------------------------------------------------------------
 
-  country = signal<string | null>(null);
+  debounce?: ReturnType<typeof setTimeout>;
 
   items = signal<CAutocompleteItem[]>([]);
 
   loading = signal(false);
-
-  debounce?: ReturnType<typeof setTimeout>;
 
   // Drop responses a newer query has superseded.
   requestId = 0;
@@ -109,4 +95,17 @@ export class ExternalExampleComponent implements AfterViewInit, OnDestroy {
   ngOnDestroy() {
     clearTimeout(this.debounce);
   }
+
+  search = (query: string): Promise<CAutocompleteItem[]> =>
+    new Promise((resolve) =>
+      setTimeout(
+        () =>
+          resolve(
+            this.ALL.filter((item) =>
+              item.name.toLowerCase().includes(query.toLowerCase()),
+            ),
+          ),
+        600,
+      ),
+    );
 }

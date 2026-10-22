@@ -3,9 +3,9 @@ import { Component, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { mdiAccountCircle, mdiSchool } from '@mdi/js';
 
 @Component({
+  schemas: [CUSTOM_ELEMENTS_SCHEMA],
   selector: 'app-example',
   standalone: true,
-  schemas: [CUSTOM_ELEMENTS_SCHEMA],
   template: `
     <div>
       <c-login-buttons>
@@ -21,9 +21,9 @@ import { mdiAccountCircle, mdiSchool } from '@mdi/js';
   `,
 })
 export class BasicExampleComponent {
-  mdiSchool = mdiSchool;
-
   mdiAccountCircle = mdiAccountCircle;
+
+  mdiSchool = mdiSchool;
 
   // Stand-in provider logos; use your identity provider's logo url instead.
   logo(path: string) {

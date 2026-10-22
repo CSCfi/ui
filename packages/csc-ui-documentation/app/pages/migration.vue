@@ -1,6 +1,6 @@
 <template>
   <div class="flex items-start gap-10">
-    <article class="min-w-0 max-w-[52rem] flex-1">
+    <article class="max-w-[52rem] min-w-0 flex-1">
       <h1 class="mb-[0.67em] text-[2rem] font-bold">Migration guide</h1>
 
       <p class="my-[1em] max-w-[45rem] text-[1.0625rem] text-on-surface-muted">
@@ -55,7 +55,7 @@
         </figure>
 
         <p v-if="section.link" class="my-[1em]">
-          <nuxt-link class="font-semibold underline" :to="section.link.to">
+          <nuxt-link :to="section.link.to" class="font-semibold underline">
             {{ section.link.label }} →
           </nuxt-link>
         </p>
@@ -67,8 +67,9 @@
 </template>
 
 <script setup lang="ts">
-import { MIGRATION_SECTIONS, type MigrationSection } from '~/content/migration';
 import type { TocItem } from '~/utils/toc';
+
+import { MIGRATION_SECTIONS, type MigrationSection } from '~/content/migration';
 
 const sections: MigrationSection[] = MIGRATION_SECTIONS;
 

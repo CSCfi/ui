@@ -4,7 +4,7 @@ import { CTable } from '@cscfi/csc-ui-react';
 export const Responsive = () => (
   <div>
     {/* Below the breakpoint each row becomes a card with header labels */}
-    <CTable responsive mobileBreakpoint={800}>
+    <CTable mobileBreakpoint={800} responsive>
       <table>
         <thead>
           <tr>

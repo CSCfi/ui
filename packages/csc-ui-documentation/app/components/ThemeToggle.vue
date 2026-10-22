@@ -8,14 +8,14 @@
       />
     </template>
 
-    <c-menu position="bottom-end" distance="8" @select="onSelect">
+    <c-menu distance="8" position="bottom-end" @select="onSelect">
       <c-button
         slot="trigger"
         :aria-label="`Color theme: ${preference}`"
         size="small"
         text
       >
-        <c-icon aria-hidden="true" :path="icon" :size="20" />
+        <c-icon :path="icon" :size="20" aria-hidden="true" />
 
         <!-- Icon-only below `md`: the toolbar has to fit a phone. -->
         <span class="capitalize max-md:hidden">{{ preference }}</span>
@@ -26,8 +26,8 @@
       <c-menu-item
         v-for="option in THEME_OPTIONS"
         :key="option.id"
-        :value="option.id"
         :active="option.id === preference"
+        :value="option.id"
       >
         <c-icon :path="option.icon" :size="16" />
         {{ option.label }}
@@ -51,12 +51,12 @@ const ICONS = {
   system: mdiThemeLightDark,
 } as const;
 
-type ThemeOption = { id: ThemePreference; label: string; icon: string };
+type ThemeOption = { icon: string; id: ThemePreference; label: string };
 
 const THEME_OPTIONS: ThemeOption[] = [
-  { id: 'dark', label: 'Dark', icon: mdiWeatherNight },
-  { id: 'light', label: 'Light', icon: mdiWhiteBalanceSunny },
-  { id: 'system', label: 'System', icon: mdiThemeLightDark },
+  { icon: mdiWeatherNight, id: 'dark', label: 'Dark' },
+  { icon: mdiWhiteBalanceSunny, id: 'light', label: 'Light' },
+  { icon: mdiThemeLightDark, id: 'system', label: 'System' },
 ];
 
 const icon = computed(() => ICONS[preference.value] ?? mdiThemeLightDark);

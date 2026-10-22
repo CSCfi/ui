@@ -1,19 +1,19 @@
+import { CTimePicker } from '@cscfi/csc-ui-react';
 // @ts-nocheck — documentation code sample; shown as text, never compiled here
 import { useState } from 'react';
-import { CTimePicker } from '@cscfi/csc-ui-react';
 
 export const Now = () => {
-  const [time, setTime] = useState<string | null>('08:00');
+  const [time, setTime] = useState<null | string>('08:00');
 
   return (
     <div>
       <CTimePicker
-        value={time}
         hint="Now under the columns commits the current minute"
         label="Arrival"
         minuteStep={15}
+        onChange={(event) => setTime(event.detail as null | string)}
         showNow
-        onChange={(event) => setTime(event.detail as string | null)}
+        value={time}
       />
 
       <p>Value: {time ?? 'null'}</p>

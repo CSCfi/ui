@@ -4,7 +4,7 @@ import { CProgressBar } from '@cscfi/csc-ui-react';
 export const Basic = () => {
   return (
     <div>
-      <CProgressBar value={72} label="Uploading files" />
+      <CProgressBar label="Uploading files" value={72} />
     </div>
   );
 };

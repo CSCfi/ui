@@ -1,8 +1,9 @@
 // @ts-nocheck — documentation code sample; shown as text, never compiled here
+import type { ElementRef } from '@angular/core';
+
 import {
   Component,
   CUSTOM_ELEMENTS_SCHEMA,
-  ElementRef,
   signal,
   viewChild,
 } from '@angular/core';
@@ -20,9 +21,9 @@ const fetchBooked = (month: string): Promise<string[]> =>
   );
 
 @Component({
+  schemas: [CUSTOM_ELEMENTS_SCHEMA],
   selector: 'app-example',
   standalone: true,
-  schemas: [CUSTOM_ELEMENTS_SCHEMA],
   template: `
     <div>
       <c-date-picker
@@ -39,9 +40,9 @@ const fetchBooked = (month: string): Promise<string[]> =>
   `,
 })
 export class LazyMonthExampleComponent {
-  picker = viewChild.required<ElementRef<HTMLElement>>('picker');
-  date = signal<string | null>(null);
   booked = signal<string[]>([]);
+  date = signal<null | string>(null);
+  picker = viewChild.required<ElementRef<HTMLElement>>('picker');
 
   // Colon-named events ("change:month") cannot be bound in an Angular
   // template, so listen on the element directly.

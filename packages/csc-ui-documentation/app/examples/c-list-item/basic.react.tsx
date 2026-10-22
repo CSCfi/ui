@@ -1,24 +1,24 @@
+import { CIcon, CList, CListItem, CListItemTitle } from '@cscfi/csc-ui-react';
 // @ts-nocheck — documentation code sample; shown as text, never compiled here
 import { mdiAccount, mdiBell, mdiChevronRight, mdiCog } from '@mdi/js';
-import { CIcon, CList, CListItem, CListItemTitle } from '@cscfi/csc-ui-react';
 
 export const Basic = () => {
   return (
     <div>
       <CList>
         <CListItem hoverable>
-          <CIcon slot="pre" path={mdiAccount} />
+          <CIcon path={mdiAccount} slot="pre" />
           <CListItemTitle>Profile</CListItemTitle>
         </CListItem>
 
         <CListItem active>
-          <CIcon slot="pre" path={mdiBell} />
+          <CIcon path={mdiBell} slot="pre" />
           <CListItemTitle>Notifications</CListItemTitle>
-          <CIcon slot="post" path={mdiChevronRight} />
+          <CIcon path={mdiChevronRight} slot="post" />
         </CListItem>
 
         <CListItem disabled>
-          <CIcon slot="pre" path={mdiCog} />
+          <CIcon path={mdiCog} slot="pre" />
           <CListItemTitle>Settings</CListItemTitle>
         </CListItem>
       </CList>

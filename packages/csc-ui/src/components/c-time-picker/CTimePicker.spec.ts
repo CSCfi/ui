@@ -419,6 +419,7 @@ describe('time columns', () => {
     await open(m);
 
     const ink = (el: HTMLElement) => getComputedStyle(el).color;
+
     const probe = document.createElement('span');
 
     probe.style.color = 'var(--c-on-surface-muted)';

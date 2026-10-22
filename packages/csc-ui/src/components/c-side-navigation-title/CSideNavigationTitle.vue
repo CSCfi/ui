@@ -48,8 +48,8 @@ const sideNavigationTitle = tv({
   slots: {
     divider: '[--c-divider:color-mix(in_srgb,var(--c-on-nav)_40%,transparent)]',
     label:
-      'flex items-center gap-2 px-2 text-on-nav uppercase text-xs tracking-widest',
-    root: 'grid gap-2 mt-6 mb-2',
+      'flex items-center gap-2 px-2 text-xs tracking-widest text-on-nav uppercase',
+    root: 'mt-6 mb-2 grid gap-2',
   },
 });
 

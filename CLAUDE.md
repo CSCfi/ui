@@ -27,11 +27,14 @@ pnpm dev            # watch csc-ui + docs dev server (http://localhost:3500)
 pnpm test           # every Vitest project (Chromium + node); `pnpm build` first for the dist/example smokes
 pnpm test:update    # rewrite visual baselines (run in the devcontainer, review the PNG diffs)
 pnpm ui <script>    # run a script in packages/csc-ui
+pnpm lint           # oxlint + ESLint (Vue templates) + every guard + docs example parity
+pnpm format         # oxfmt (format:check to verify)
+pnpm fix            # oxlint --fix, eslint --fix, then oxfmt
 
 # In packages/csc-ui
 pnpm build          # tokens -> chart data -> tag map -> vite build -> types -> strict manifest
 pnpm docs:manifest  # regenerate custom-elements.json
-pnpm lint           # tokens (strict) + a11y + ramp + chart + focus-ring guards
+pnpm lint:guards    # tokens (strict) + a11y + ramp + chart + focus-ring guards
 pnpm lint:tokens    # forbid direct palette-step utilities in SFCs
 pnpm lint:a11y      # host attribute fallthrough check
 pnpm lint:chart     # chart-data.ts matches the semantic maps (ADR-0040)
@@ -73,5 +76,6 @@ Releases are driven by **changesets**, not commit messages:
 - **Styling**: Tailwind v4 + `tailwind-variants` inside SFCs. Consumer customization is exclusively CSS `::part()` (ADR-0006); every colour goes through semantic tokens (`bg-surface`, `text-on-primary`) — direct palette-step utilities (`bg-primary-600`) fail CI (ADR-0010). Token values are emitted as `oklch()` from validated hex via one `cssColor()` in the ramp core (ADR-0041); never write a colour value by hand in generated CSS.
 - **Events**: each component declares a JSDoc-annotated event-map interface — the single source of truth for emissions, typings, and the manifest. New event names are all-lowercase (ADR-0017); grandfathered camelCase events auto-dispatch a kebab-case twin (ADR-0021).
 - **Types**: component-owned types live in the component and are exported from the entry; only types whose values cross component boundaries live in `src/types.ts` (ADR-0015).
+- **Lint and format** (ADR-0068): oxfmt formats everything under `packages/` (Tailwind classes sorted, `tv()` strings too); oxlint lints every script, running perfectionist and `@stylistic` as `jsPlugins` (alpha: oxlint and oxfmt are pinned exactly, bump them together); ESLint runs only the `vue/*` template rules oxlint lacks. No warn tier. The pre-commit hook only checks the staged paths; fix with `pnpm fix`.
 - **Docs**: a component's description is the first paragraph of its `usage.md`; SFC docblocks carry tags only, no prose (ADR-0026).
 - Commit style: `Feat(scope): ...` / `Fix(scope): ...` — capitalized types, no release semantics (versioning is changesets' job).

@@ -3,9 +3,9 @@ import { Component, CUSTOM_ELEMENTS_SCHEMA, signal } from '@angular/core';
 import { mdiAccount, mdiBell, mdiCog } from '@mdi/js';
 
 @Component({
+  schemas: [CUSTOM_ELEMENTS_SCHEMA],
   selector: 'app-example',
   standalone: true,
-  schemas: [CUSTOM_ELEMENTS_SCHEMA],
   template: `
     <div>
       <c-list bordered>

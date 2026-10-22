@@ -19,7 +19,7 @@ const artwork = `data:image/svg+xml;utf8,${encodeURIComponent(
 export const Colored = () => {
   return (
     <div>
-      <CLoginCard src={artwork} overlay overlayBlendMode="multiply">
+      <CLoginCard overlay overlayBlendMode="multiply" src={artwork}>
         <CLoginCardTitle>Sign in to My CSC</CLoginCardTitle>
 
         <CLoginCardContent>

@@ -2,9 +2,9 @@
 import { Component, CUSTOM_ELEMENTS_SCHEMA, signal } from '@angular/core';
 
 @Component({
+  schemas: [CUSTOM_ELEMENTS_SCHEMA],
   selector: 'app-example',
   standalone: true,
-  schemas: [CUSTOM_ELEMENTS_SCHEMA],
   template: `
     <div>
       <c-date-picker
@@ -21,5 +21,5 @@ import { Component, CUSTOM_ELEMENTS_SCHEMA, signal } from '@angular/core';
   `,
 })
 export class FormatAndWeekStartExampleComponent {
-  date = signal<string | null>('2026-09-28');
+  date = signal<null | string>('2026-09-28');
 }

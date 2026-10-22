@@ -27,12 +27,16 @@ import {
   type CCardTitleElement,
   type CCheckboxElement,
   type CCheckboxElementEventMap,
+  type CColorPickerElement,
+  type CColorPickerElementEventMap,
   type CCscLogoElement,
   type CDataTableElement,
   type CDataTableElementEventMap,
   type CDatePickerElement,
   type CDatePickerElementEventMap,
   type CDividerElement,
+  type CFileUploadElement,
+  type CFileUploadElementEventMap,
   type CIconElement,
   type CIconButtonElement,
   type CInputElement,
@@ -269,6 +273,20 @@ export const CCheckbox = createComponent({
   tagName: 'c-checkbox',
 });
 
+/** A colour field that takes any typed CSS colour, or opens a panel for picking one: a colour area, hue and alpha sliders, per-channel inputs and swatches — or swatches alone under `swatches-only`. */
+export const CColorPicker = createComponent({
+  displayName: 'CColorPicker',
+  elementClass: elementClass<CColorPickerElement>('c-color-picker'),
+  events: {
+    onChange: 'change' as EventName<CColorPickerElementEventMap['change']>,
+    onChangeText: 'change:text' as EventName<CColorPickerElementEventMap['change:text']>,
+    onInput: 'input' as EventName<CColorPickerElementEventMap['input']>,
+    onUpdateValue: 'update:value' as EventName<CColorPickerElementEventMap['update:value']>,
+  },
+  react: React,
+  tagName: 'c-color-picker',
+});
+
 export const CCscLogo = createComponent({
   displayName: 'CCscLogo',
   elementClass: elementClass<CCscLogoElement>('c-csc-logo'),
@@ -310,6 +328,20 @@ export const CDivider = createComponent({
   elementClass: elementClass<CDividerElement>('c-divider'),
   react: React,
   tagName: 'c-divider',
+});
+
+/** A field the user adds files to by dropping them on it or choosing them from a file dialog — and, given an upload function, the place each file's upload shows its progress. */
+export const CFileUpload = createComponent({
+  displayName: 'CFileUpload',
+  elementClass: elementClass<CFileUploadElement>('c-file-upload'),
+  events: {
+    onChange: 'change' as EventName<CFileUploadElementEventMap['change']>,
+    onInput: 'input' as EventName<CFileUploadElementEventMap['input']>,
+    onReject: 'reject' as EventName<CFileUploadElementEventMap['reject']>,
+    onUpdateValue: 'update:value' as EventName<CFileUploadElementEventMap['update:value']>,
+  },
+  react: React,
+  tagName: 'c-file-upload',
 });
 
 export const CIcon = createComponent({

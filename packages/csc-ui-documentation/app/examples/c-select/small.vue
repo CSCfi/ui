@@ -13,5 +13,5 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 
-const country = ref<string | null>('fi');
+const country = ref<null | string>('fi');
 </script>

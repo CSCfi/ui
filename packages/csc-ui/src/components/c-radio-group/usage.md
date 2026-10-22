@@ -27,7 +27,7 @@ needs:
 </c-radio-group>
 ```
 
-Text placed *next to* a radio instead of inside it renders, but is not
+Text placed _next to_ a radio instead of inside it renders, but is not
 click-associated or announced — put the label content in the radio's slot.
 
 ## Value

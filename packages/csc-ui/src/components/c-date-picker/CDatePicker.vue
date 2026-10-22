@@ -1,6 +1,6 @@
 <template>
   <!-- The editable value field (ADR-0058): `src/shared/TypedField.vue`. -->
-  <TypedField
+  <typed-field
     :anchor-style
     :clear-label="t.clearSelection"
     :clearable
@@ -33,7 +33,7 @@
         <c-icon :path="mdiCalendar" :size="iconSize" />
       </c-icon-button>
     </template>
-  </TypedField>
+  </typed-field>
 
   <!-- Manual popover in the top layer; light dismiss, positioning and the
        fullscreen layout come from `useAnchoredPanel`. -->
@@ -420,21 +420,25 @@ export interface CDatePickerProps {
    * Make the value clearable
    */
   clearable?: boolean;
+
   /**
    * Disable the field
    */
   disabled?: boolean;
+
   /**
    * Dates that cannot be picked: ISO dates and inclusive `{ start, end }`
    * spans. Arrays have no attribute form — bind as a DOM property
    */
   disabledDates?: CDatePickerDisabledDate[];
+
   /**
    * Error message shown in place of the hint while the field is invalid
    *
    * @freeform
    */
   errorMessage?: string;
+
   /**
    * First day of the week in the calendar, numbered like `Date.getDay()`:
    * 0 = Sunday, 1 = Monday … 6 = Saturday
@@ -442,6 +446,7 @@ export interface CDatePickerProps {
    * @defaultable 1
    */
   firstDayOfWeek?: CDatePickerWeekday;
+
   /**
    * How dates are shown and read from typing: a pattern of the tokens `d`,
    * `dd`, `M`, `MM` and `yyyy` with any separators, e.g. `yyyy-MM-dd`
@@ -450,41 +455,48 @@ export interface CDatePickerProps {
    * @freeform
    */
   format?: string;
+
   /**
    * Hide the hint and error messages
    *
    * @defaultable false
    */
   hideDetails?: boolean;
+
   /**
    * Hint text for the field
    *
    * @freeform
    */
   hint?: string;
+
   /**
    * Id of the element
    *
    * @freeform
    */
   hostId?: string;
+
   /**
    * Predicate for dates that cannot be picked (weekends, say); receives an
    * ISO date. Functions have no attribute form — bind as a DOM property
    */
   isDateDisabled?: (iso: string) => boolean;
+
   /**
    * Element label
    *
    * @freeform
    */
   label?: string;
+
   /**
    * Label on top of the field
    *
    * @defaultable false
    */
   labelOnTop?: boolean;
+
   /**
    * The latest date that can be picked or typed, as an ISO date; also bounds
    * the calendar's navigation
@@ -492,6 +504,7 @@ export interface CDatePickerProps {
    * @freeform
    */
   max?: string;
+
   /**
    * The earliest date that can be picked or typed, as an ISO date; also
    * bounds the calendar's navigation
@@ -499,33 +512,39 @@ export interface CDatePickerProps {
    * @freeform
    */
   min?: string;
+
   /**
    * Input field name
    *
    * @freeform
    */
   name?: string;
+
   /**
    * Placeholder of the input; the `format` pattern when empty
    *
    * @freeform
    */
   placeholder?: string;
+
   /**
    * Pick a range: the value becomes `{ start, end }` and the field holds two
    * inputs
    */
   range?: boolean;
+
   /**
    * Set the field as required
    */
   required?: boolean;
+
   /**
    * Shadow variant
    *
    * @defaultable false
    */
   shadow?: boolean;
+
   /**
    * Show a Today button under the calendar that picks today ("This month"
    * under `type="month"`)
@@ -533,6 +552,7 @@ export interface CDatePickerProps {
    * @defaultable false
    */
   showToday?: boolean;
+
   /**
    * Show ISO 8601 week numbers beside the calendar rows (meaningful with a
    * Monday week start)
@@ -540,12 +560,14 @@ export interface CDatePickerProps {
    * @defaultable false
    */
   showWeekNumbers?: boolean;
+
   /**
    * Field height: the 52px default (the shared control height) or the 36px `small` box
    *
    * @defaultable 'default'
    */
   size?: CFieldSize;
+
   /**
    * UI text overrides (i18n), merged over the names `Intl` gives for the
    * page's `lang` and the English defaults. Objects have no attribute form —
@@ -554,15 +576,18 @@ export interface CDatePickerProps {
    * @defaultable {}
    */
   texts?: CDatePickerTexts;
+
   /**
    * What the field picks: a calendar date, or a year and a month
    * (`'YYYY-MM'`)
    */
   type?: CDatePickerType;
+
   /**
    * Set the validity of the field
    */
   valid?: boolean;
+
   /**
    * The date as an ISO `YYYY-MM-DD` string (an ISO `YYYY-MM` month under
    * `type="month"`), or `{ start, end }` under `range`; `null` when empty
@@ -574,6 +599,7 @@ export interface CDatePickerProps {
 export interface CDatePickerRange {
   /** The last day of the range, inclusive. */
   end: null | string;
+
   /** The first day of the range. */
   start: null | string;
 }
@@ -592,60 +618,88 @@ export type CDatePickerText = { end: string; start: string } | string;
 export interface CDatePickerTexts {
   /** Accessible name of the dialog when the field has no label. */
   chooseDate?: string;
+
   /** Accessible label of the clear button. */
   clearSelection?: string;
+
   /** Accessible label of the close button in the fullscreen panel (narrow viewports). */
   closePanel?: string;
+
   /** A day's accessible name in the grid; receives the ISO date. */
   date?: (iso: string) => string;
+
   /** Label of the Done button in the fullscreen panel (narrow viewports). */
   done?: string;
+
   /** Accessible name of the end input under `range`. */
   end?: string;
+
   /** Label of the end's month step under `type="month"` and `range`; also the end input's name there. */
   endMonth?: string;
+
   /** Label of the end's year step under `type="month"` and `range`. */
   endYear?: string;
+
   /** Label of the month step under `type="month"`. */
   month?: string;
+
   /** Twelve month names, January first. */
   months?: string[];
+
   /** Twelve short month names, January first — shown on the month button. */
   monthsShort?: string[];
+
   /** Accessible label of the next-month arrow. */
   nextMonth?: string;
+
   /** Accessible label of the next-year arrow. */
   nextYear?: string;
+
   /** Accessible label of the calendar button. */
   openCalendar?: string;
+
   /** Announcement once a range's first day is picked; receives that day's name. */
   pendingStart?: (date: string) => string;
+
   /** Accessible label of the previous-month arrow. */
   previousMonth?: string;
+
   /** Accessible label of the previous-year arrow. */
   previousYear?: string;
+
   /** Accessible label of the month button and the month list. */
   selectMonth?: string;
+
   /** Accessible label of the year button and the year list. */
   selectYear?: string;
+
   /** Accessible name of the start input under `range`. */
   start?: string;
+
   /** Label of the start's month step under `type="month"` and `range`; also the start input's name there. */
   startMonth?: string;
+
   /** Label of the start's year step under `type="month"` and `range`. */
   startYear?: string;
+
   /** Label of the Today button under `type="month"`. */
   thisMonth?: string;
+
   /** Label of the Today button (`show-today`). */
   today?: string;
+
   /** Appended to the accessible name of a day that cannot be picked. */
   unavailable?: string;
+
   /** Seven weekday names, Sunday first. */
   weekdays?: string[];
+
   /** Seven short weekday names, Sunday first — the grid's column heads. */
   weekdaysShort?: string[];
+
   /** Accessible name of the week-number column. */
   weekNumber?: string;
+
   /** Label of the year step under `type="month"`. */
   year?: string;
 }
@@ -717,8 +771,8 @@ import {
 import { useAppDefault } from '../../shared/appDefaults';
 import { coerceBoolean } from '../../shared/coerceBoolean';
 import PanelHeadingRow from '../../shared/PanelHeadingRow.vue';
-import TypedField from '../../shared/TypedField.vue';
 import { applyPeekCap } from '../../shared/peekCap';
+import TypedField from '../../shared/TypedField.vue';
 import { useAnchoredPanel } from '../../shared/useAnchoredPanel';
 import { useHostEmit } from '../../shared/useHostEmit';
 import { useHostStates } from '../../shared/useHostStates';
@@ -764,22 +818,26 @@ interface CDatePickerEvents {
    * date, `{ start, end }` under `range`, or `null`.
    */
   change: CDatePickerValue;
+
   /**
    * Fired with the displayed month as `YYYY-MM` whenever it changes, and
    * when the panel opens — the signal to load that month's `disabled-dates`.
    */
   'change:month': string;
+
   /**
    * Fired on every commit of typed text (Enter or leaving the input) with the
    * text as typed — `{ start, end }` under `range`. Read `badInput` to tell
    * whether it named a date that can be picked.
    */
   'change:text': CDatePickerText;
+
   /**
    * Native bubbling input event dispatched alongside every value change so a
    * plain `v-model` stays in sync. Carries no detail.
    */
   input: void;
+
   /**
    * Fired alongside `change` with the same detail — the `v-model` contract.
    */
@@ -804,46 +862,46 @@ const datePicker = tv({
   slots: {
     actions: 'flex shrink-0 justify-end px-3 pb-3',
     arrow:
-      'flex size-9 transition-[opacity,visibility] duration-150 shrink-0 cursor-pointer items-center justify-center rounded-full border-0 bg-transparent p-0 text-on-surface-muted outline-none hover:not-disabled:bg-primary-subtle-hover hover:not-disabled:text-primary focus-visible:outline-2 focus-visible:outline-solid focus-visible:-outline-offset-2 focus-visible:outline-primary disabled:cursor-default disabled:opacity-40',
+      'flex size-9 shrink-0 cursor-pointer items-center justify-center rounded-full border-0 bg-transparent p-0 text-on-surface-muted transition-[opacity,visibility] duration-150 outline-none hover:not-disabled:bg-primary-subtle-hover hover:not-disabled:text-primary focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-primary focus-visible:outline-solid disabled:cursor-default disabled:opacity-40',
     blank: 'p-0',
     // As tall as its content: the day grid's weeks (four to six). An open
     // list holds the height the grid had (`onBodyEnter`).
     body: 'relative overflow-hidden',
     calendar: 'flex flex-col px-3 pb-3',
-    card: 'flex flex-col w-[328px] overflow-hidden rounded-csc-md bg-surface-overlay text-on-surface shadow-[2px_4px_10px_#00000029]',
+    card: 'flex w-[328px] flex-col overflow-hidden rounded-csc-md bg-surface-overlay text-on-surface shadow-[2px_4px_10px_#00000029]',
     caret: 'size-5 shrink-0 fill-current transition-transform duration-200',
     check: 'size-4 shrink-0 fill-current text-primary',
     control: 'flex items-center transition-[opacity,visibility] duration-150',
     // c-button's filled look on a native button, at the heading row's 44px
     // touch target.
-    done: 'ml-auto h-11 min-w-22 px-5 cursor-pointer rounded-csc-md border-0 bg-primary text-sm font-bold text-on-primary [font-family:var(--c-font-family)] outline-none hover:not-disabled:bg-primary-hover focus-visible:outline-2 focus-visible:outline-solid focus-visible:outline-offset-2 focus-visible:outline-primary disabled:cursor-default disabled:bg-surface-muted disabled:text-on-surface-faint',
+    done: 'ml-auto h-11 min-w-22 cursor-pointer rounded-csc-md border-0 bg-primary px-5 text-sm font-bold text-on-primary outline-none hover:not-disabled:bg-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary focus-visible:outline-solid disabled:cursor-default disabled:bg-surface-muted disabled:text-on-surface-faint',
     grid: 'w-full table-fixed border-collapse',
-    header: 'flex items-center justify-between gap-2 min-h-14 px-1',
+    header: 'flex min-h-14 items-center justify-between gap-2 px-1',
     icon: 'size-6 fill-current',
-    list: 'list-none m-0 p-1 h-full overflow-y-auto scrollbar-hidden overscroll-none outline-none',
+    list: 'm-0 h-full scrollbar-hidden list-none overflow-y-auto overscroll-none p-1 outline-none',
     monthName: '[grid-area:1/1]',
     monthNames: 'grid justify-items-center',
     option:
-      'flex items-center gap-3 min-h-10 px-3 rounded text-sm text-on-surface cursor-pointer select-none outline-none hover:bg-primary-subtle-hover focus-visible:outline-2 focus-visible:outline-solid focus-visible:-outline-offset-2 focus-visible:outline-primary aria-selected:bg-primary-subtle aria-selected:text-primary aria-selected:font-medium',
+      'flex min-h-10 cursor-pointer items-center gap-3 rounded px-3 text-sm text-on-surface outline-none select-none hover:bg-primary-subtle-hover focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-primary focus-visible:outline-solid aria-selected:bg-primary-subtle aria-selected:font-medium aria-selected:text-primary',
     panel:
-      'fixed m-0 p-0 border-0 bg-transparent overflow-visible [inset:auto]',
+      'fixed [inset:auto] m-0 overflow-visible border-0 bg-transparent p-0',
     stepLabel: 'px-3 pt-3 pb-1 text-xs font-medium text-on-surface-muted',
-    stepList: 'relative flex-1 min-h-0',
+    stepList: 'relative min-h-0 flex-1',
     stepSummary:
-      'flex shrink-0 items-center gap-2 w-full min-h-10 px-3 rounded border-0 bg-transparent text-left text-sm text-on-surface [font-family:var(--c-font-family)] cursor-pointer outline-none hover:bg-primary-subtle-hover focus-visible:outline-2 focus-visible:outline-solid focus-visible:-outline-offset-2 focus-visible:outline-primary',
+      'flex min-h-10 w-full shrink-0 cursor-pointer items-center gap-2 rounded border-0 bg-transparent px-3 text-left text-sm text-on-surface outline-none hover:bg-primary-subtle-hover focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-primary focus-visible:outline-solid',
     stepSummaryLabel: 'text-on-surface-muted',
     // A text button's look on a native button: the focus trap only sees
     // native buttons in the card.
     today:
-      'h-9 px-3 cursor-pointer rounded-csc-md border-0 bg-transparent text-sm font-bold text-primary [font-family:var(--c-font-family)] outline-none hover:not-disabled:bg-primary-subtle-hover focus-visible:outline-2 focus-visible:outline-solid focus-visible:-outline-offset-2 focus-visible:outline-primary disabled:cursor-default disabled:text-on-surface-disabled',
+      'h-9 cursor-pointer rounded-csc-md border-0 bg-transparent px-3 text-sm font-bold text-primary outline-none hover:not-disabled:bg-primary-subtle-hover focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-primary focus-visible:outline-solid disabled:cursor-default disabled:text-on-surface-disabled',
     viewButton:
-      'flex items-center gap-0.5 h-9 cursor-pointer rounded-full border-0 bg-transparent pl-3 pr-1.5 text-sm font-medium text-on-surface [font-family:var(--c-font-family)] outline-none hover:bg-primary-subtle-hover focus-visible:outline-2 focus-visible:outline-solid focus-visible:-outline-offset-2 focus-visible:outline-primary tabular-nums',
+      'flex h-9 cursor-pointer items-center gap-0.5 rounded-full border-0 bg-transparent pr-1.5 pl-3 text-sm font-medium text-on-surface tabular-nums outline-none hover:bg-primary-subtle-hover focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-primary focus-visible:outline-solid',
     visuallyHidden:
-      'absolute w-px h-px p-0 overflow-hidden border-0 whitespace-nowrap [clip:rect(0_0_0_0)]',
+      'absolute h-px w-px overflow-hidden border-0 p-0 whitespace-nowrap [clip:rect(0_0_0_0)]',
     weekday: 'h-9 p-0 text-center text-xs font-medium text-on-surface-muted',
     weekHead: 'h-9 w-8',
     weekNumber:
-      'h-10 w-8 p-0 text-center text-xs font-normal tabular-nums text-on-surface-faint',
+      'h-10 w-8 p-0 text-center text-xs font-normal text-on-surface-faint tabular-nums',
   },
   variants: {
     disabled: {
@@ -853,12 +911,12 @@ const datePicker = tv({
     },
     fullscreen: {
       true: {
-        actions: 'w-full max-w-[400px] mx-auto justify-between items-center',
-        body: 'flex-1 h-auto min-h-[280px]',
-        calendar: 'flex-1 min-h-0 w-full max-w-[400px] mx-auto',
-        card: 'w-auto max-h-none rounded-none shadow-none',
+        actions: 'mx-auto w-full max-w-[400px] items-center justify-between',
+        body: 'h-auto min-h-[280px] flex-1',
+        calendar: 'mx-auto min-h-0 w-full max-w-[400px] flex-1',
+        card: 'max-h-none w-auto rounded-none shadow-none',
         list: 'absolute inset-0 h-auto',
-        panel: 'bg-surface-overlay overflow-hidden',
+        panel: 'overflow-hidden bg-surface-overlay',
         today: 'h-11',
       },
     },
@@ -874,7 +932,7 @@ const datePicker = tv({
     // Month mode has no day grid: the body keeps a six-week grid's height.
     // Month mode has no day grid: the body keeps a six-week grid's height,
     // and its step list takes what the label and summaries leave.
-    month: { true: { body: 'flex flex-col h-[276px]' } },
+    month: { true: { body: 'flex h-[276px] flex-col' } },
     open: { true: { caret: 'rotate-180' } },
   },
 });
@@ -892,15 +950,15 @@ const dayCell = tv({
   },
   slots: {
     band: 'absolute inset-y-0 bg-primary-subtle',
-    cell: 'group relative h-10 p-0 text-center cursor-pointer outline-none',
-    day: 'relative inline-flex size-10 items-center justify-center rounded-full text-sm tabular-nums text-on-surface transition-colors duration-150 group-hover:bg-primary-subtle-hover group-focus-visible:outline-2 group-focus-visible:outline-offset-0 group-focus-visible:outline-primary',
+    cell: 'group relative h-10 cursor-pointer p-0 text-center outline-none',
+    day: 'relative inline-flex size-10 items-center justify-center rounded-full text-sm text-on-surface tabular-nums transition-colors duration-150 group-hover:bg-primary-subtle-hover group-focus-visible:outline-2 group-focus-visible:outline-offset-0 group-focus-visible:outline-primary',
   },
   variants: {
     band: {
-      end: { band: 'left-0 right-1/2' },
+      end: { band: 'right-1/2 left-0' },
       middle: { band: 'inset-x-0' },
       none: {},
-      start: { band: 'left-1/2 right-0' },
+      start: { band: 'right-0 left-1/2' },
     },
     disabled: {
       true: {
@@ -911,7 +969,7 @@ const dayCell = tv({
     selected: {
       true: {
         // A primary ring would vanish into the fill: the day's own ink, inside.
-        day: 'bg-primary text-on-primary font-medium group-hover:bg-primary-hover group-focus-visible:-outline-offset-4 group-focus-visible:outline-on-primary',
+        day: 'bg-primary font-medium text-on-primary group-hover:bg-primary-hover group-focus-visible:-outline-offset-4 group-focus-visible:outline-on-primary',
       },
     },
     today: { true: { day: 'border border-solid border-primary' } },
@@ -1050,7 +1108,7 @@ const pageLang = ref(
 
 const t = computed<Required<CDatePickerTexts>>(() => ({
   ...DEFAULT_TEXTS,
-  ...(intlNames(pageLang.value) ?? {}),
+  ...intlNames(pageLang.value),
   ...Object.fromEntries(
     Object.entries(ownTexts.value).filter(([, v]) => v !== undefined),
   ),
@@ -1162,10 +1220,10 @@ const typed = useTypedField({
       monthMode.value
         ? formatMonth(value, pattern)
         : formatDate(value, pattern),
-    isValue: (value): value is string =>
-      monthMode.value ? isIsoMonth(value) : isIso(value),
     isUsable: (value) =>
       monthMode.value ? !isMonthDisabled(value) : !isDisabled(value),
+    isValue: (value): value is string =>
+      monthMode.value ? isIsoMonth(value) : isIso(value),
     parse: (text, pattern) =>
       monthMode.value ? parseMonth(text, pattern) : parseDate(text, pattern),
   },
@@ -1370,6 +1428,7 @@ const animateBodyHeight = (timing: KeyframeAnimationOptions) => {
 // removes its outgoing element and settles the incoming one in place. Every
 // swap is a leave then an enter, so the leave hook does this.
 const settleBody = () => {
+  // oxlint-disable-next-line unicorn/no-useless-spread -- iterate a copy: a finished animation deletes itself from the set
   for (const animation of [...running]) animation.finish();
 };
 

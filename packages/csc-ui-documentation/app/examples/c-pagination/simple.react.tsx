@@ -1,7 +1,8 @@
+import type { CPaginationOptions } from '@cscfi/csc-ui';
+
+import { CPagination } from '@cscfi/csc-ui-react';
 // @ts-nocheck — documentation code sample; shown as text, never compiled here
 import { useState } from 'react';
-import { CPagination } from '@cscfi/csc-ui-react';
-import type { CPaginationOptions } from '@cscfi/csc-ui';
 
 export const Simple = () => {
   const [options] = useState<CPaginationOptions>({
@@ -14,12 +15,12 @@ export const Simple = () => {
   return (
     <div>
       <CPagination
-        value={options}
         hideDetails
-        simple
         onChangeValue={(event) =>
           setPage((event.detail as CPaginationOptions).currentPage ?? 1)
         }
+        simple
+        value={options}
       />
 
       <p>Current page: {page}</p>

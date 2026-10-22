@@ -1,12 +1,5 @@
 // @ts-nocheck — documentation code sample; shown as text, never compiled here
-import {
-  AfterViewInit,
-  Component,
-  CUSTOM_ELEMENTS_SCHEMA,
-  ElementRef,
-  signal,
-  viewChild,
-} from '@angular/core';
+import type { AfterViewInit, ElementRef } from '@angular/core';
 import type {
   CDataTableColumn,
   CDataTableElement,
@@ -14,10 +7,17 @@ import type {
   CDataTableSort,
 } from '@cscfi/csc-ui';
 
+import {
+  Component,
+  CUSTOM_ELEMENTS_SCHEMA,
+  signal,
+  viewChild,
+} from '@angular/core';
+
 @Component({
+  schemas: [CUSTOM_ELEMENTS_SCHEMA],
   selector: 'app-example',
   standalone: true,
-  schemas: [CUSTOM_ELEMENTS_SCHEMA],
   template: `
     <div>
       <!-- With "external", the table renders "data" verbatim and only emits
@@ -38,14 +38,6 @@ import type {
   `,
 })
 export class ExternalDataExampleComponent implements AfterViewInit {
-  table = viewChild.required<ElementRef<CDataTableElement>>('table');
-
-  columns: CDataTableColumn[] = [
-    { header: 'Job', key: 'name', sortable: true },
-    { align: 'end', header: 'Runtime (h)', key: 'runtime', sortable: true },
-    { header: 'State', key: 'state' },
-  ];
-
   // ---- a pretend server ------------------------------------------------
   TOTAL = 57;
 
@@ -54,6 +46,29 @@ export class ExternalDataExampleComponent implements AfterViewInit {
     runtime: ((i * 13) % 96) + 1,
     state: i % 4 ? 'completed' : 'running',
   }));
+
+  columns: CDataTableColumn[] = [
+    { header: 'Job', key: 'name', sortable: true },
+    { align: 'end', header: 'Runtime (h)', key: 'runtime', sortable: true },
+    { header: 'State', key: 'state' },
+  ];
+
+  loading = signal(false);
+
+  page = signal<CDataTableRow[]>([]);
+  // -----------------------------------------------------------------------
+
+  query = signal<{
+    page: number;
+    pageSize: number;
+    sort: CDataTableSort | null;
+  }>({
+    page: 1,
+    pageSize: 5,
+    sort: { column: 'name', direction: 'asc' },
+  });
+
+  table = viewChild.required<ElementRef<CDataTableElement>>('table');
 
   fetchPage = (q: {
     page: number;
@@ -79,21 +94,6 @@ export class ExternalDataExampleComponent implements AfterViewInit {
 
       setTimeout(() => resolve(sorted.slice(start, start + q.pageSize)), 600);
     });
-  // -----------------------------------------------------------------------
-
-  query = signal<{
-    page: number;
-    pageSize: number;
-    sort: CDataTableSort | null;
-  }>({
-    page: 1,
-    pageSize: 5,
-    sort: { column: 'name', direction: 'asc' },
-  });
-
-  page = signal<CDataTableRow[]>([]);
-
-  loading = signal(false);
 
   async load() {
     this.loading.set(true);

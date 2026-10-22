@@ -1,7 +1,8 @@
+import type { CAutocompleteFilter, CAutocompleteItem } from '@cscfi/csc-ui';
+
+import { CAutocomplete } from '@cscfi/csc-ui-react';
 // @ts-nocheck — documentation code sample; shown as text, never compiled here
 import { useState } from 'react';
-import { CAutocomplete } from '@cscfi/csc-ui-react';
-import type { CAutocompleteFilter, CAutocompleteItem } from '@cscfi/csc-ui';
 
 const items: CAutocompleteItem[] = [
   { name: 'Austria', value: 'at' },
@@ -22,19 +23,19 @@ const filter: CAutocompleteFilter = (option, query) =>
   option.label.toLowerCase().includes(query.toLowerCase());
 
 export const CustomFilter = () => {
-  const [country, setCountry] = useState<string | null>(null);
+  const [country, setCountry] = useState<null | string>(null);
 
   return (
     <div>
       <CAutocomplete
-        value={country}
-        filter={filter}
-        items={items}
         clearable
+        filter={filter}
         hint="Matches anywhere in the label"
+        items={items}
         label="Country"
+        onChangeValue={(event) => setCountry(event.detail as null | string)}
         placeholder="Type to filter"
-        onChangeValue={(event) => setCountry(event.detail as string | null)}
+        value={country}
       />
 
       <p>Value: {country ?? 'null'}</p>

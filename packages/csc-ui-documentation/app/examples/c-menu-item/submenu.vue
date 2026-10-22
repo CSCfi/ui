@@ -28,9 +28,8 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
-
 import { mdiChevronDown, mdiFileDocument, mdiFilePdfBox } from '@mdi/js';
+import { ref } from 'vue';
 
 const selected = ref<null | string>(null);
 

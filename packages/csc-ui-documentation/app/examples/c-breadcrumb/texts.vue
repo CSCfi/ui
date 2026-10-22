@@ -1,6 +1,6 @@
 <template>
   <div style="width: 320px; max-width: 100%">
-    <c-breadcrumb :texts="texts">
+    <c-breadcrumb :texts>
       <c-breadcrumb-item href="https://csc.fi">Etusivu</c-breadcrumb-item>
 
       <c-breadcrumb-item href="https://csc.fi/palvelut">

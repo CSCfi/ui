@@ -11,12 +11,12 @@
 /** `c-select` ↔ `c-dropdown` `index` contract: the select-all row is highlighted. */
 export const SELECT_ALL_INDEX = -1;
 
-export type SelectAllState = 'all' | 'none' | 'some';
-
 export interface SelectAllListedOption {
   label: string;
   value: number | string;
 }
+
+export type SelectAllState = 'all' | 'none' | 'some';
 
 /** What the row's indicator shows: none, some (indeterminate) or all listed selected. */
 export const selectAllState = (

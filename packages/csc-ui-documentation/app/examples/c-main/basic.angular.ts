@@ -6,11 +6,22 @@ import {
 } from '@angular/core';
 
 @Component({
-  selector: 'app-example',
-  standalone: true,
-  schemas: [CUSTOM_ELEMENTS_SCHEMA],
   // The styles target ::part(), so they must apply globally.
   encapsulation: ViewEncapsulation.None,
+  schemas: [CUSTOM_ELEMENTS_SCHEMA],
+  selector: 'app-example',
+  standalone: true,
+  styles: [
+    `
+      /* Demo-only sizing: c-main normally fills the whole viewport and the document scrolls. */
+      .demo-shell::part(root) {
+        height: 320px;
+        min-height: 0;
+        overflow-y: auto;
+        --c-main-viewport-height: 320px;
+      }
+    `,
+  ],
   template: `
     <c-main class="demo-shell">
       <c-alert slot="banner" type="info">
@@ -54,16 +65,5 @@ import {
       </c-page>
     </c-main>
   `,
-  styles: [
-    `
-      /* Demo-only sizing: c-main normally fills the whole viewport and the document scrolls. */
-      .demo-shell::part(root) {
-        height: 320px;
-        min-height: 0;
-        overflow-y: auto;
-        --c-main-viewport-height: 320px;
-      }
-    `,
-  ],
 })
 export class BasicExampleComponent {}

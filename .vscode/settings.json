@@ -3,29 +3,29 @@
     "activityBar.activeBackground": "#c935b5",
     "activityBar.activeBorder": "#f9e64f",
     "activityBar.activeForeground": "#fff",
-    "activityBar.background": "#d968c9",
+    "activityBar.background": "#0f1115",
     "activityBar.foreground": "#fff",
     "activityBar.inactiveForeground": "#ffffff99",
-  
+
     "activityBarBadge.background": "#f9e64f",
     "activityBarBadge.foreground": "#000000",
-  
+
     "activityBarTop.activeBackground": "#d968c9",
     "activityBarTop.background": "#d968c9",
     "activityBarTop.foreground": "#fff",
     "activityBarTop.inactiveForeground": "#15202b99",
-  
+
     "commandCenter.border": "#15202b99",
     "commandCenter.foreground": "#15202b",
-  
+
     "editorGroup.border": "#d968c9",
-  
-    "modernActivityBar.border": "#d968c9",
+
+    "modernActivityBar.border": "#d968c900",
     "modernActivityBarItem.hoverBackground": "#f9e64f",
     "modernActivityBarItem.hoverForeground": "#000",
-  
+
     "panel.border": "#d968c9",
-  
+
     "panelTitle.activeBorder": "#f9e64f",
 
     "sash.hoverBorder": "#d968c9",
@@ -39,17 +39,27 @@
     "statusBarItem.remoteBackground": "#f9e64f",
     "statusBarItem.remoteForeground": "#000000",
 
-    "tab.activeBackground": "#50017b",
-    "tab.activeBorder": "#d968c9",
+    "editor.border": "#d968c9",
+
+    "tab.divider": "#00000000",
+
+    "tab.activeBackground": "#171A1F",
+    "tab.hoverBackground": "#000000",
+    "modernEditorTab.activeHoverBackground": "#171A1F",
+
+    "editorGroupHeader.tabsBackground": "#0f1115",
+    "editorGroupHeader.tabsBorder": "#262b35",
+
+    "bar": "#0048ff",
 
     "titleBar.activeBackground": "#d968c9",
     "titleBar.activeForeground": "#fff",
     "titleBar.border": "#978a88",
     "titleBar.inactiveBackground": "#d968c9",
     "titleBar.inactiveForeground": "#343434",
-    
+
     "window.activeBorder": "#d968c9",
-    "window.inactiveBorder": "#978a88",
+    "window.inactiveBorder": "#978a88"
   },
   "peacock.color": "#d968c9",
   "js/ts.tsdk.path": "node_modules/typescript/lib",
@@ -59,5 +69,29 @@
   ],
   "css.customData": [
     "./node_modules/@cscfi/csc-ui-next/vscode.css-custom-data.json"
-  ]
+  ],
+  // oxfmt formats, oxlint lints every script, ESLint only Vue templates
+  // (ADR-0068). Save runs the lint fixes first, then the formatter.
+  "editor.defaultFormatter": "oxc.oxc-vscode",
+  "editor.formatOnSave": true,
+  "editor.formatOnSaveMode": "file",
+  "editor.codeActionsOnSave": {
+    "source.fixAll.oxc": "explicit",
+    "source.fixAll.eslint": "explicit"
+  },
+  // One block per language: a user-level "[vue]" formatter (Vue.volar) beats
+  // a generic or multi-language ("[css][vue]") workspace setting, but not a
+  // workspace "[vue]".
+  "[css]": { "editor.defaultFormatter": "oxc.oxc-vscode" },
+  "[html]": { "editor.defaultFormatter": "oxc.oxc-vscode" },
+  "[javascript]": { "editor.defaultFormatter": "oxc.oxc-vscode" },
+  "[json]": { "editor.defaultFormatter": "oxc.oxc-vscode" },
+  "[jsonc]": { "editor.defaultFormatter": "oxc.oxc-vscode" },
+  "[markdown]": { "editor.defaultFormatter": "oxc.oxc-vscode" },
+  "[typescript]": { "editor.defaultFormatter": "oxc.oxc-vscode" },
+  "[typescriptreact]": { "editor.defaultFormatter": "oxc.oxc-vscode" },
+  "[vue]": { "editor.defaultFormatter": "oxc.oxc-vscode" },
+  "[yaml]": { "editor.defaultFormatter": "oxc.oxc-vscode" },
+  "eslint.validate": ["vue"],
+  "prettier.enable": false
 }

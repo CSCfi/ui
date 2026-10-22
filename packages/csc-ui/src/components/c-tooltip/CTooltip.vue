@@ -60,18 +60,23 @@ export interface CTooltipProps {
    * `400`.
    */
   delay?: number | string;
+
   /** Distance from the trigger to the tooltip, in pixels. Defaults to `4`. */
   distance?: number | string;
+
   /** Whether the tooltip is open. Two-way: emits `change:open`. */
   open?: boolean;
+
   /** Preferred placement of the tooltip relative to the trigger. */
   position?: CPlacement;
+
   /**
    * The tooltip text. Overridden by the `content` slot when that is
    * populated.
    * @freeform
    */
   text?: string;
+
   /**
    * Designated trigger: an element elsewhere in the document that the
    * tooltip describes — its document ID, or the element itself. The same
@@ -141,7 +146,7 @@ interface CTooltipEvents {
 const tooltip = tv({
   slots: {
     panel:
-      'fixed m-0 [inset:auto] box-border w-max max-w-xs overflow-visible rounded-csc-sm border-0 bg-surface-inverted px-2 py-1 text-sm text-on-surface-inverted shadow-[2px_4px_10px_#00000029]',
+      'fixed [inset:auto] m-0 box-border w-max max-w-xs overflow-visible rounded-csc-sm border-0 bg-surface-inverted px-2 py-1 text-sm text-on-surface-inverted shadow-[2px_4px_10px_#00000029]',
     proxy: 'pointer-events-none fixed',
     trigger: 'inline-flex w-max max-w-full',
   },

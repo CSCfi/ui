@@ -38,6 +38,7 @@ interface CTabEvents {
     element: HTMLElement | null;
     value: number | string | undefined;
   };
+
   /**
    * Fired when the tab receives focus, so the parent `<c-tabs>` can drive
    * arrow-key navigation.
@@ -64,9 +65,9 @@ interface CTabEvents {
 const tab = tv({
   slots: {
     ripple:
-      'absolute rounded-full bg-current pointer-events-none transition-[transform,opacity] duration-[600ms] ease-out',
-    ripples: 'absolute inset-0 overflow-hidden pointer-events-none',
-    root: 'flex items-center justify-center h-full w-full max-w-full overflow-clip [overflow-clip-margin:8px] px-3 relative text-ellipsis whitespace-nowrap',
+      'pointer-events-none absolute rounded-full bg-current transition-[transform,opacity] duration-[600ms] ease-out',
+    ripples: 'pointer-events-none absolute inset-0 overflow-hidden',
+    root: 'relative flex h-full w-full max-w-full items-center justify-center overflow-clip px-3 text-ellipsis whitespace-nowrap [overflow-clip-margin:8px]',
   },
 });
 
@@ -88,12 +89,14 @@ interface CTabProps {
    * @seeded from csc-ui — verify
    */
   active?: boolean;
+
   /**
    * Mark tab as disabled
    *
    * @seeded from csc-ui — verify
    */
   disabled?: boolean;
+
   /**
    * Id of the tab
    *
@@ -101,18 +104,21 @@ interface CTabProps {
    * @freeform
    */
   hostId?: string;
+
   /**
    * Position in the set
    *
    * @seeded from csc-ui — verify
    */
   position?: number;
+
   /**
    * Size of the set
    *
    * @seeded from csc-ui — verify
    */
   setsize?: number;
+
   /**
    * Value for the tab
    * - for use in c-tabs
@@ -235,7 +241,7 @@ slot {
   cursor: pointer;
   display: inline-flex;
   font-weight: 600;
-  height: var(--spacing-control);
+  height: var(--_c-control-height);
   justify-content: center;
   position: relative;
 }

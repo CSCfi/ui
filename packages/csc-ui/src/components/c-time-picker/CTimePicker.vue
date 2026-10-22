@@ -167,16 +167,19 @@ export interface CTimePickerProps {
    * Make the value clearable
    */
   clearable?: boolean;
+
   /**
    * Disable the field
    */
   disabled?: boolean;
+
   /**
    * Error message shown in place of the hint while the field is invalid
    *
    * @freeform
    */
   errorMessage?: string;
+
   /**
    * How times are shown and read from typing: a pattern of the tokens `H`,
    * `HH` (24-hour), `h`, `hh` (12-hour, with the period `a`) and `mm` with
@@ -186,42 +189,49 @@ export interface CTimePickerProps {
    * @freeform
    */
   format?: string;
+
   /**
    * Hide the hint and error messages
    *
    * @defaultable false
    */
   hideDetails?: boolean;
+
   /**
    * Hint text for the field
    *
    * @freeform
    */
   hint?: string;
+
   /**
    * Id of the element
    *
    * @freeform
    */
   hostId?: string;
+
   /**
    * Element label
    *
    * @freeform
    */
   label?: string;
+
   /**
    * Label on top of the field
    *
    * @defaultable false
    */
   labelOnTop?: boolean;
+
   /**
    * The latest time that can be picked or typed, as an ISO `HH:mm` time
    *
    * @freeform
    */
   max?: string;
+
   /**
    * The earliest time that can be picked or typed, as an ISO `HH:mm` time;
    * a `min` after `max` is invalid and both are ignored
@@ -229,50 +239,59 @@ export interface CTimePickerProps {
    * @freeform
    */
   min?: string;
+
   /**
    * Minutes between the minute column's rows; typed times need not fall on
    * the step
    */
   minuteStep?: number;
+
   /**
    * Input field name
    *
    * @freeform
    */
   name?: string;
+
   /**
    * Placeholder of the input; the `format` pattern when empty
    *
    * @freeform
    */
   placeholder?: string;
+
   /**
    * Pick a range: the value becomes `{ start, end }` and the field holds two
    * inputs
    */
   range?: boolean;
+
   /**
    * Set the field as required
    */
   required?: boolean;
+
   /**
    * Shadow variant
    *
    * @defaultable false
    */
   shadow?: boolean;
+
   /**
    * Show a Now button under the columns that commits the current time
    *
    * @defaultable false
    */
   showNow?: boolean;
+
   /**
    * Field height: the 52px default (the shared control height) or the 36px `small` box
    *
    * @defaultable 'default'
    */
   size?: CFieldSize;
+
   /**
    * UI text overrides (i18n), merged over the AM/PM texts `Intl` gives for
    * the page's `lang` and the English defaults. Objects have no attribute
@@ -281,10 +300,12 @@ export interface CTimePickerProps {
    * @defaultable {}
    */
   texts?: CTimePickerTexts;
+
   /**
    * Set the validity of the field
    */
   valid?: boolean;
+
   /**
    * The time as an ISO `HH:mm` string on a 24-hour clock, or `{ start, end }`
    * under `range`; `null` when empty
@@ -296,6 +317,7 @@ export interface CTimePickerProps {
 export interface CTimePickerRange {
   /** The end of the range; earlier than the start for an overnight range. */
   end: null | string;
+
   /** The start of the range. */
   start: null | string;
 }
@@ -313,28 +335,40 @@ export type CTimePickerText = { end: string; start: string } | string;
 export interface CTimePickerTexts {
   /** The period before noon in a 12-hour `format`. */
   am?: string;
+
   /** Accessible name of the dialog when the field has no label. */
   chooseTime?: string;
+
   /** Accessible label of the clear button. */
   clearSelection?: string;
+
   /** Accessible label of the close button in the fullscreen panel (narrow viewports). */
   closePanel?: string;
+
   /** Label of the Done button in the fullscreen panel (narrow viewports). */
   done?: string;
+
   /** Name of the end input and the end tab under `range`. */
   end?: string;
+
   /** Accessible name of the hour column. */
   hours?: string;
+
   /** Accessible name of the minute column. */
   minutes?: string;
+
   /** Label of the Now button (`show-now`). */
   now?: string;
+
   /** Accessible label of the clock button. */
   openClock?: string;
+
   /** Accessible name of the AM/PM column. */
   period?: string;
+
   /** The period from noon in a 12-hour `format`. */
   pm?: string;
+
   /** Name of the start input and the start tab under `range`. */
   start?: string;
 }
@@ -434,17 +468,20 @@ interface CTimePickerEvents {
    * value: an ISO `HH:mm` time, `{ start, end }` under `range`, or `null`.
    */
   change: CTimePickerValue;
+
   /**
    * Fired on every commit of typed text (Enter or leaving the input) with the
    * text as typed — `{ start, end }` under `range`. Read `badInput` to tell
    * whether it named a time that can be picked.
    */
   'change:text': CTimePickerText;
+
   /**
    * Native bubbling input event dispatched alongside every value change so a
    * plain `v-model` stays in sync. Carries no detail.
    */
   input: void;
+
   /**
    * Fired alongside `change` with the same detail — the `v-model` contract.
    */
@@ -457,6 +494,7 @@ type CTimePickerRow = {
   key: string;
   label: string;
   selected: boolean;
+
   /** Hour 0–23, minute 0–59, or 0 (AM) / 12 (PM). */
   value: number;
 };
@@ -469,27 +507,27 @@ type CTimePickerRow = {
 const timePicker = tv({
   slots: {
     actions: 'flex shrink-0 justify-end px-2 pb-2',
-    card: 'flex flex-col w-max overflow-hidden rounded-csc-md bg-surface-overlay text-on-surface shadow-[2px_4px_10px_#00000029]',
+    card: 'flex w-max flex-col overflow-hidden rounded-csc-md bg-surface-overlay text-on-surface shadow-[2px_4px_10px_#00000029]',
     // Ceiling 7.2 rows; the peek cap ends each column on a half row.
     column:
-      'relative list-none m-0 p-1 w-16 max-h-[296px] overflow-y-auto scrollbar-hidden overscroll-contain outline-none',
+      'relative m-0 max-h-[296px] w-16 scrollbar-hidden list-none overflow-y-auto overscroll-contain p-1 outline-none',
     columns: 'flex justify-center gap-1 p-2',
     // c-button's filled look on a native button, at the heading row's 44px
     // touch target.
-    done: 'ml-auto h-11 min-w-22 px-5 cursor-pointer rounded-csc-md border-0 bg-primary text-sm font-bold text-on-primary [font-family:var(--c-font-family)] outline-none hover:bg-primary-hover focus-visible:outline-2 focus-visible:outline-solid focus-visible:outline-offset-2 focus-visible:outline-primary',
+    done: 'ml-auto h-11 min-w-22 cursor-pointer rounded-csc-md border-0 bg-primary px-5 text-sm font-bold text-on-primary outline-none hover:bg-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary focus-visible:outline-solid',
     endSwitch:
-      'flex gap-0.5 mx-3 mt-3 p-0.5 rounded-csc-lg border border-solid border-divider bg-clip-padding bg-surface-sunken',
+      'mx-3 mt-3 flex gap-0.5 rounded-csc-lg border border-solid border-divider bg-surface-sunken bg-clip-padding p-0.5',
     // Tab lands on the selected tab, so its ring is on-primary inside the
     // fill: a primary ring would vanish into it.
     endTab:
-      'flex-1 h-8 px-3 whitespace-nowrap cursor-pointer rounded-csc-md border-0 bg-transparent text-sm font-medium text-on-surface-muted [font-family:var(--c-font-family)] outline-none hover:bg-primary-subtle-hover focus-visible:outline-2 focus-visible:outline-solid focus-visible:-outline-offset-2 focus-visible:outline-primary aria-selected:bg-primary aria-selected:text-on-primary aria-selected:hover:bg-primary-hover aria-selected:focus-visible:-outline-offset-4 aria-selected:focus-visible:outline-on-primary',
+      'h-8 flex-1 cursor-pointer rounded-csc-md border-0 bg-transparent px-3 text-sm font-medium whitespace-nowrap text-on-surface-muted outline-none hover:bg-primary-subtle-hover focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-primary focus-visible:outline-solid aria-selected:bg-primary aria-selected:text-on-primary aria-selected:hover:bg-primary-hover aria-selected:focus-visible:-outline-offset-4 aria-selected:focus-visible:outline-on-primary',
     // A text button's look on a native button: the focus trap only sees
     // native buttons in the card.
-    now: 'h-9 px-3 whitespace-nowrap cursor-pointer rounded-csc-md border-0 bg-transparent text-sm font-bold text-primary [font-family:var(--c-font-family)] outline-none hover:not-disabled:bg-primary-subtle-hover focus-visible:outline-2 focus-visible:outline-solid focus-visible:-outline-offset-2 focus-visible:outline-primary disabled:cursor-default disabled:text-on-surface-disabled',
+    now: 'h-9 cursor-pointer rounded-csc-md border-0 bg-transparent px-3 text-sm font-bold whitespace-nowrap text-primary outline-none hover:not-disabled:bg-primary-subtle-hover focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-primary focus-visible:outline-solid disabled:cursor-default disabled:text-on-surface-disabled',
     option:
-      'flex items-center justify-center h-10 rounded-csc-lg text-sm tabular-nums text-on-surface cursor-pointer select-none outline-none hover:bg-primary-subtle-hover focus-visible:outline-2 focus-visible:outline-solid focus-visible:-outline-offset-2 focus-visible:outline-primary aria-selected:bg-primary-subtle aria-selected:text-primary aria-selected:font-medium',
+      'flex h-10 cursor-pointer items-center justify-center rounded-csc-lg text-sm text-on-surface tabular-nums outline-none select-none hover:bg-primary-subtle-hover focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-primary focus-visible:outline-solid aria-selected:bg-primary-subtle aria-selected:font-medium aria-selected:text-primary',
     panel:
-      'fixed m-0 p-0 border-0 bg-transparent overflow-visible [inset:auto]',
+      'fixed [inset:auto] m-0 overflow-visible border-0 bg-transparent p-0',
   },
   variants: {
     disabled: {
@@ -500,12 +538,12 @@ const timePicker = tv({
     fullscreen: {
       true: {
         actions:
-          'w-full max-w-[400px] mx-auto justify-between items-center px-3 pb-3',
-        card: 'w-auto max-h-none rounded-none shadow-none',
-        column: 'max-h-none h-full',
-        columns: 'flex-1 min-h-0',
+          'mx-auto w-full max-w-[400px] items-center justify-between px-3 pb-3',
+        card: 'max-h-none w-auto rounded-none shadow-none',
+        column: 'h-full max-h-none',
+        columns: 'min-h-0 flex-1',
         now: 'h-11',
-        panel: 'bg-surface-overlay overflow-hidden',
+        panel: 'overflow-hidden bg-surface-overlay',
       },
     },
   },
@@ -592,7 +630,7 @@ const pageLang = ref(
 
 const t = computed<Required<CTimePickerTexts>>(() => ({
   ...DEFAULT_TEXTS,
-  ...(intlPeriods(pageLang.value) ?? {}),
+  ...intlPeriods(pageLang.value),
   ...Object.fromEntries(
     Object.entries(ownTexts.value).filter(([, v]) => v !== undefined),
   ),

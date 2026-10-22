@@ -1,5 +1,5 @@
 <template>
-  <c-menu position="bottom-end" distance="8" @select="onSelect">
+  <c-menu distance="8" position="bottom-end" @select="onSelect">
     <c-button
       slot="trigger"
       :aria-label="`Primary colour: ${currentColor.label}`"
@@ -7,8 +7,8 @@
       text
     >
       <span
-        class="size-3 rounded-full"
         :style="{ 'background-color': currentColor.value }"
+        class="size-3 rounded-full"
       />
 
       <!-- Swatch-only below `md`: the toolbar has to fit a phone. -->
@@ -22,8 +22,8 @@
           :value="color"
         >
           <span
-            class="size-4 rounded-full"
             :style="{ 'background-color': color.value }"
+            class="size-4 rounded-full"
           />
 
           <span class="text-accent">{{ color.label }}</span>
@@ -42,23 +42,23 @@
 </template>
 
 <script setup lang="ts">
-type Swatch = { type: 'color'; value: string; label: string };
+type Entry = { label: string; type: 'title' } | { type: 'divider' } | Swatch;
 
-type Entry = Swatch | { type: 'title'; label: string } | { type: 'divider' };
+type Swatch = { label: string; type: 'color'; value: string };
 
 const colors = ref<Entry[]>([
-  { type: 'title', label: 'CSC UI Colors' },
-  { type: 'color', value: '#006778', label: 'Primary' },
-  { type: 'color', value: '#830051', label: 'Secondary' },
-  { type: 'color', value: '#00c7b2', label: 'Accent' },
+  { label: 'CSC UI Colors', type: 'title' },
+  { label: 'Primary', type: 'color', value: '#006778' },
+  { label: 'Secondary', type: 'color', value: '#830051' },
+  { label: 'Accent', type: 'color', value: '#00c7b2' },
   { type: 'divider' },
-  { type: 'title', label: 'Custom Colors' },
-  { type: 'color', value: '#ff595e', label: 'Red' },
-  { type: 'color', value: '#ffca3a', label: 'Orange' },
-  { type: 'color', value: '#8ac926', label: 'Green' },
-  { type: 'color', value: '#1982c4', label: 'Blue' },
-  { type: 'color', value: '#6a4c93', label: 'Purple' },
-  { type: 'color', value: '#e500a4', label: 'Pink' },
+  { label: 'Custom Colors', type: 'title' },
+  { label: 'Red', type: 'color', value: '#ff595e' },
+  { label: 'Orange', type: 'color', value: '#ffca3a' },
+  { label: 'Green', type: 'color', value: '#8ac926' },
+  { label: 'Blue', type: 'color', value: '#1982c4' },
+  { label: 'Purple', type: 'color', value: '#6a4c93' },
+  { label: 'Pink', type: 'color', value: '#e500a4' },
 ]);
 
 // The primary seed is shared with the customization page's playground, so a
@@ -69,7 +69,7 @@ const currentColor = computed<Swatch>(
   () =>
     colors.value.find(
       (c): c is Swatch => c.type === 'color' && c.value === seeds.primary,
-    ) ?? { type: 'color', value: seeds.primary, label: 'Custom' },
+    ) ?? { label: 'Custom', type: 'color', value: seeds.primary },
 );
 
 const onSelect = (event: CustomEvent<{ value: Swatch }>) =>

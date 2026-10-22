@@ -1,11 +1,11 @@
 <template>
   <!-- Documentation-wide flavor selection. -->
-  <c-menu position="bottom-end" distance="8" @select="onSelect">
+  <c-menu distance="8" position="bottom-end" @select="onSelect">
     <c-button slot="trigger" size="small" text>
       <c-icon
+        :class="ICON_COLORS[currentFlavor!.id]"
         :path="currentFlavor?.icon"
         :size="16"
-        :class="ICON_COLORS[currentFlavor!.id]"
       />
 
       {{ currentFlavor?.label }}
@@ -16,10 +16,10 @@
     <c-menu-item
       v-for="option in FLAVORS"
       :key="option.id"
-      :value="option.id"
       :active="option.id === currentFlavor?.id"
+      :value="option.id"
     >
-      <c-icon :path="option.icon" :size="16" :class="ICON_COLORS[option.id]" />
+      <c-icon :class="ICON_COLORS[option.id]" :path="option.icon" :size="16" />
       {{ option.label }}
     </c-menu-item>
   </c-menu>

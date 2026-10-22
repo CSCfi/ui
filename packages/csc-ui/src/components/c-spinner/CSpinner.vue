@@ -55,7 +55,7 @@ const spinner = tv({
   slots: {
     circle:
       'c-spinner-circle fill-transparent stroke-current [stroke-linecap:round]',
-    root: 'block fill-current overflow-visible',
+    root: 'block overflow-visible fill-current',
   },
 });
 
@@ -67,12 +67,14 @@ interface CSpinnerProps {
    * @freeform any CSS color value
    */
   color?: string;
+
   /**
    * Size of the spinner
    *
    * @seeded from csc-ui — verify
    */
   size?: number;
+
   /**
    * Width of the spinner
    *

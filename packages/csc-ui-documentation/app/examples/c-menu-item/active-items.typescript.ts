@@ -1,3 +1,5 @@
+import type { CMenuItem } from '@cscfi/csc-ui';
+
 import {
   mdiChevronDown,
   mdiMonitor,
@@ -6,7 +8,6 @@ import {
   mdiWeatherNight,
   mdiWeatherSunny,
 } from '@mdi/js';
-import type { CMenuItem } from '@cscfi/csc-ui';
 
 document.querySelector('#theme-trigger-icon')!.path = mdiThemeLightDark;
 

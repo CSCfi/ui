@@ -18,17 +18,14 @@
       </c-breadcrumb-item>
 
       <c-breadcrumb-item href="https://csc.fi/en/services">
-        <c-icon slot="icon" :path="mdiHome" :size="20" />
         Services
       </c-breadcrumb-item>
 
       <c-breadcrumb-item href="https://csc.fi/en/services/computing">
-        <c-icon slot="icon" :path="mdiHome" :size="20" />
         Computing
       </c-breadcrumb-item>
 
       <c-breadcrumb-item href="https://csc.fi/en/services/computing/lumi">
-        <c-icon slot="icon" :path="mdiHome" :size="20" />
         LUMI supercomputer
       </c-breadcrumb-item>
 

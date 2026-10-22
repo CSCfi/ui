@@ -1,11 +1,12 @@
 const { readdirSync } = require('node:fs');
 const path = require('node:path');
 const StyleDictionaryPackage = require('style-dictionary');
-const createTheme = require('./utils/createTheme.cjs');
-const createSemanticTheme = require('./utils/createSemanticTheme.cjs');
-const semanticLight = require('./tokens/semantic/light.json');
+
 const semanticDark = require('./tokens/semantic/dark.json');
 const semanticInvariant = require('./tokens/semantic/invariant.json');
+const semanticLight = require('./tokens/semantic/light.json');
+const createSemanticTheme = require('./utils/createSemanticTheme.cjs');
+const createTheme = require('./utils/createTheme.cjs');
 
 /**
  * Token pipeline for `@cscfi/csc-ui`.
@@ -118,9 +119,9 @@ c-radio:not(:defined) {
 
 // Emit the palette `--c-*` properties followed by the semantic-token layer.
 StyleDictionaryPackage.registerFormat({
-  name: 'css/tokens',
   formatter({ dictionary }) {
     const palette = createTheme(dictionary, 'css');
+
     const semantic = createSemanticTheme(
       semanticLight,
       semanticDark,
@@ -129,28 +130,29 @@ StyleDictionaryPackage.registerFormat({
 
     return `${palette}\n${semantic}\n${preUpgradePlaceholders}`;
   },
+  name: 'css/tokens',
 });
 
 module.exports = {
-  source: ['tokens/theme/**/*.json'],
-
   platforms: {
     // Palette + semantic tokens → src/styles/css/tokens.css
     // (copied into dist/styles/css by `scripts/copy-styles.js` post-build).
     'css/tokens': {
-      transformGroup: 'css',
       buildPath: 'src/styles/css/',
       files: [
         {
           destination: 'tokens.css',
-          format: 'css/tokens',
           filter: {
             attributes: {
               category: 'theme',
             },
           },
+          format: 'css/tokens',
         },
       ],
+      transformGroup: 'css',
     },
   },
+
+  source: ['tokens/theme/**/*.json'],
 };

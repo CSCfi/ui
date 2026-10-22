@@ -158,60 +158,72 @@ import type { CFieldSize, CSelectItem } from '../../types';
 export interface CSelectProps {
   /** Make the selected value clearable */
   clearable?: boolean;
+
   /** Disable the input */
   disabled?: boolean;
+
   /**
    * Error message shown in place of the hint while the select is invalid
    *
    * @freeform
    */
   errorMessage?: string;
+
   /**
    * Hide the hint and error messages
    *
    * @defaultable false
    */
   hideDetails?: boolean;
+
   /**
    * Hint text for the input
    *
    * @freeform
    */
   hint?: string;
+
   /**
    * Id of the element
    *
    * @freeform
    */
   hostId?: string;
+
   /** Dropdown items (when not using <c-option> elements) */
   items?: CSelectItem[];
+
   /**
    * Items per page before adding scroll
    *
    * @defaultable 6
    */
   itemsPerPage?: number;
+
   /**
    * Element label
    *
    * @freeform
    */
   label?: string;
+
   /**
    * Label on top of the input
    *
    * @defaultable false
    */
   labelOnTop?: boolean;
+
   /** Show loading state */
   loading?: boolean;
+
   /**
    * In `multiple` mode, show at most this many selected-value tags and fold
    * the rest into one "+N more" tag; `0` shows no tags and reads "N selected"
    * instead; unset shows every tag
    */
   maxTags?: number;
+
   /**
    * Allow selecting several options: rows toggle and the list stays open,
    * `value` becomes an array of the selected values (items with
@@ -220,24 +232,30 @@ export interface CSelectProps {
    * Arrays have no attribute form — bind `value` as a DOM property
    */
   multiple?: boolean;
+
   /**
    * Input field name
    *
    * @freeform
    */
   name?: string;
+
   /** Display the option as selection (only with <c-option> elements) */
   optionAsSelection?: boolean;
+
   /**
    * Placeholder text
    *
    * @freeform
    */
   placeholder?: string;
+
   /** Set the select as required */
   required?: boolean;
+
   /** Return object instead of value */
   returnObject?: boolean;
+
   /**
    * In `multiple` mode, pin a select-all row at the top of the list. Its
    * checkbox shows whether none, some or all enabled options are selected;
@@ -245,18 +263,21 @@ export interface CSelectProps {
    * unselects them. Ignored in single mode
    */
   selectAll?: boolean;
+
   /**
    * Shadow variant
    *
    * @defaultable false
    */
   shadow?: boolean;
+
   /**
    * Field height: the 52px default (the shared control height) or the 36px `small` box
    *
    * @defaultable 'default'
    */
   size?: CFieldSize;
+
   /**
    * UI text overrides (i18n), merged over the English defaults. Objects have
    * no attribute form — bind as a DOM property (`:texts.prop` in Vue)
@@ -264,8 +285,10 @@ export interface CSelectProps {
    * @defaultable {}
    */
   texts?: CSelectTexts;
+
   /** Set the validity of the input */
   valid?: boolean;
+
   /**
    * Selected value: the option's value, or the whole item with
    * `return-object`; an array of them in `multiple` mode
@@ -280,25 +303,31 @@ export interface CSelectProps {
 export interface CSelectTexts {
   /** Accessible label of the clear button. */
   clearSelection?: string;
+
   /** Accessible label of the close button in the fullscreen panel (narrow viewports). */
   closePanel?: string;
+
   /**
    * Text of the overflow tag when `max-tags` folds the selection; receives the
    * number of hidden tags.
    */
   more?: (count: number) => string;
+
   /** Accessible label of a tag's remove button; receives the option label. */
   remove?: (label: string) => string;
+
   /**
    * Label of the select-all row; receives the number of enabled options
    * listed.
    */
   selectAll?: (count: number) => string;
+
   /**
    * Field text when `max-tags="0"` shows no tags; receives the selection
    * count.
    */
   selected?: (count: number) => string;
+
   /** Accessible label of the chevron button that opens and closes the list. */
   toggleOptions?: string;
 }
@@ -374,11 +403,13 @@ interface CSelectEvents {
    * (`[]` when cleared).
    */
   changeValue: CSelectValue;
+
   /**
    * Native bubbling input event dispatched alongside every value change so a
    * plain `v-model` stays in sync. Carries no detail.
    */
   input: void;
+
   /**
    * Fired alongside `changeValue` with the same detail — the `v-model`
    * contract.
@@ -413,22 +444,22 @@ const select = tv({
   slots: {
     chevron:
       'inline-flex rotate-0 transition-transform duration-300 ease-in-out',
-    content: 'flex items-center w-full',
+    content: 'flex w-full items-center',
     input:
-      'max-h-8 py-2 bg-transparent border-0 text-on-surface flex-[1_1_auto] [font-family:var(--c-font-family)] text-base leading-5 max-w-full min-w-0 w-full cursor-pointer outline-none focus:outline-none active:outline-none placeholder:text-on-surface-muted placeholder:opacity-100',
-    inputWrap: 'relative w-full min-w-0 flex justify-items-stretch',
+      'max-h-8 w-full max-w-full min-w-0 flex-[1_1_auto] cursor-pointer border-0 bg-transparent py-2 text-base leading-5 text-on-surface outline-none placeholder:text-on-surface-muted placeholder:opacity-100 focus:outline-none active:outline-none',
+    inputWrap: 'relative flex w-full min-w-0 justify-items-stretch',
     // The trailing controls' box: pulled 6px into the field's padding so
     // the 28px button reads flush with the value's right edge.
-    post: 'inline-flex items-center -mr-1.5',
-    selection: 'hidden pointer-events-none',
+    post: '-mr-1.5 inline-flex items-center',
+    selection: 'pointer-events-none hidden',
     // A long option label ellipsises inside its tag instead of blowing out
     // the row.
-    tagLabel: 'truncate min-w-0',
+    tagLabel: 'min-w-0 truncate',
     // The tag row wraps; `py-2` gives a one-row tag field its own rhythm
     // (default tag 28px + 16px, small tag 20px + 16px — the small box exactly,
     // centred in the 52px default box). Wrapping lives here, not on the
     // content row, so the clear/chevron stay centred.
-    tags: 'flex flex-wrap items-center gap-1 py-2 flex-1 min-w-0',
+    tags: 'flex min-w-0 flex-1 flex-wrap items-center gap-1 py-2',
   },
   variants: {
     chevronActive: { true: { chevron: 'rotate-180' } },
@@ -437,7 +468,7 @@ const select = tv({
     inputHidden: {
       true: {
         input:
-          'absolute w-px h-px p-0 m-0 overflow-hidden whitespace-nowrap border-0 [clip:rect(0_0_0_0)]',
+          'absolute m-0 h-px w-px overflow-hidden border-0 p-0 whitespace-nowrap [clip:rect(0_0_0_0)]',
       },
     },
   },

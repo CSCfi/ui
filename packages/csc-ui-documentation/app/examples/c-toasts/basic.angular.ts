@@ -1,16 +1,13 @@
 // @ts-nocheck — documentation code sample; shown as text, never compiled here
-import {
-  Component,
-  CUSTOM_ELEMENTS_SCHEMA,
-  ElementRef,
-  viewChild,
-} from '@angular/core';
+import type { ElementRef } from '@angular/core';
 import type { CToastsElement } from '@cscfi/csc-ui';
 
+import { Component, CUSTOM_ELEMENTS_SCHEMA, viewChild } from '@angular/core';
+
 @Component({
+  schemas: [CUSTOM_ELEMENTS_SCHEMA],
   selector: 'app-example',
   standalone: true,
-  schemas: [CUSTOM_ELEMENTS_SCHEMA],
   template: `
     <div class="example-row">
       <c-button (click)="notify('success')">Show success toast</c-button>
@@ -26,13 +23,13 @@ export class BasicExampleComponent {
 
   notify(type: 'error' | 'success') {
     this.toasts()?.nativeElement.addToast({
-      type,
-      title: type === 'success' ? 'Saved' : 'Upload failed',
       message:
         type === 'success'
           ? 'Your changes have been saved.'
           : 'The file could not be uploaded.',
       progress: true,
+      title: type === 'success' ? 'Saved' : 'Upload failed',
+      type,
     });
   }
 }

@@ -56,6 +56,7 @@ interface CTabItemProps {
    * @seeded from csc-ui — verify
    */
   active?: boolean;
+
   /**
    * Tab value
    *

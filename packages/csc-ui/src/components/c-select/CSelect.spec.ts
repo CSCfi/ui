@@ -198,26 +198,23 @@ describe('single mode', () => {
     expect(events.of('update:value').map((r) => r.detail)).toEqual([null]);
   });
 
-  it.fails(
-    'does not emit when a slotted <c-option selected> seeds the value at mount (pinned deviation)',
-    async () => {
-      defineAll();
+  it.fails('does not emit when a slotted <c-option selected> seeds the value at mount (pinned deviation)', async () => {
+    defineAll();
 
-      const host = document.createElement('c-select');
+    const host = document.createElement('c-select');
 
-      host.innerHTML = [
-        option('fi', 'Finland'),
-        option('se', 'Sweden', ' selected'),
-      ].join('');
+    host.innerHTML = [
+      option('fi', 'Finland'),
+      option('se', 'Sweden', ' selected'),
+    ].join('');
 
-      const events = recordEvents(host, VALUE_EVENTS);
+    const events = recordEvents(host, VALUE_EVENTS);
 
-      document.body.append(host);
-      await settle(60);
+    document.body.append(host);
+    await settle(60);
 
-      expect(events.records).toEqual([]);
-    },
-  );
+    expect(events.records).toEqual([]);
+  });
 });
 
 describe('multiple mode', () => {
@@ -702,5 +699,20 @@ describe('field to list gap', () => {
     ).toBeLessThanOrEqual(0.5);
 
     above.unmount();
+  });
+});
+
+describe('page typography (CONTEXT.md, ADR-0072)', () => {
+  // The list lives in a c-dropdown inside c-select's shadow root, out of
+  // reach of any page rule: only inheritance can carry the page font there.
+  it('draws the option rows of its nested list in the page font', async () => {
+    const m = await mountSelect();
+
+    m.stage.style.fontFamily = '"Page Probe", monospace';
+    await openByClick(m);
+
+    expect(getComputedStyle(rows(m)[0]!).fontFamily).toBe(
+      '"Page Probe", monospace',
+    );
   });
 });

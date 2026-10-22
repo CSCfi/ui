@@ -1,6 +1,9 @@
+import type { Plugin } from 'vite';
+
 import tailwindcss from '@tailwindcss/vite';
 import { readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
+
 import { ignoreExampleDocsBlocks } from './scripts/ignore-example-docs-blocks.mjs';
 
 // The site is a pure consumer of the csc-ui build output: the Custom
@@ -47,7 +50,7 @@ try {
 // server never renders them, `isCustomElement` stays intact for the real c-*
 // usage on pages, and the `?raw` source imports (code tabs, which DO render
 // server-side) are left untouched because they carry a query string.
-const stubExampleDemosInSsr: import('vite').Plugin = {
+const stubExampleDemosInSsr: Plugin = {
   enforce: 'pre',
   load(id) {
     if (id === '\0csc-example-demo-stub') return 'export default {}';
@@ -79,10 +82,6 @@ for (const module of manifest.modules ?? []) {
 }
 
 export default defineNuxtConfig({
-  devServer: {
-    port: 3500,
-  },
-
   app: {
     head: {
       script: [
@@ -100,13 +99,16 @@ export default defineNuxtConfig({
       title: 'CSC Design System',
     },
   },
+
   compatibilityDate: '2026-07-01',
   css: [
     '@cscfi/csc-ui/css/tokens.css',
     '~/assets/tailwind.css',
     '~/assets/site.css',
   ],
-  modules: ['@nuxt/eslint'],
+  devServer: {
+    port: 3500,
+  },
   nitro: {
     prerender: {
       crawlLinks: true,

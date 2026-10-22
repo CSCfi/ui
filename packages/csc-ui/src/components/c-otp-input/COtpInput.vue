@@ -96,13 +96,16 @@ interface COtpInputEvents {
    * event).
    */
   changeValue: null | string;
+
   /** Fired when the last digit is filled, carrying the complete code. */
   completion: null | string;
+
   /**
    * Native bubbling input event for plain `v-model`; carries no detail — the
    * model value is mirrored onto the host's `value` property.
    */
   input: void;
+
   /**
    * Fired on every digit change with the currently entered digits (v-model
    * contract).
@@ -134,15 +137,15 @@ const otp = tv({
     // `display: inline-grid` with a column-per-digit auto track (the
     // `grid-auto-columns: minmax(auto, 42px)` original).
     digits:
-      'inline-grid gap-2 grid-flow-col grid-cols-[repeat(var(--_c-otp-input-count),minmax(auto,42px))] [backface-visibility:hidden] [transform:translate3d(0,0,0)]',
+      'inline-grid [transform:translate3d(0,0,0)] grid-flow-col grid-cols-[repeat(var(--_c-otp-input-count),minmax(auto,42px))] gap-2 [backface-visibility:hidden]',
     input:
-      'rounded-csc-md border-0 text-center w-full min-w-6 max-w-[42px] h-14 text-2xl text-on-surface ring-1 ring-inset ring-border-strong outline-none focus:ring-2 focus:ring-inset focus:ring-primary',
+      'h-14 w-full max-w-[42px] min-w-6 rounded-csc-md border-0 text-center text-2xl text-on-surface ring-1 ring-border-strong outline-none ring-inset focus:ring-2 focus:ring-primary focus:ring-inset',
     label: 'text-left',
     message: '',
     // Column layout stacking the group label, the digit grid and the message.
-    root: 'inline-flex flex-col gap-1 mb-2',
+    root: 'mb-2 inline-flex flex-col gap-1',
     visuallyHidden:
-      'absolute w-px h-px m-[-1px] p-0 overflow-hidden whitespace-nowrap border-0 [clip:rect(0_0_0_0)]',
+      'absolute m-[-1px] h-px w-px overflow-hidden border-0 p-0 whitespace-nowrap [clip:rect(0_0_0_0)]',
   },
   variants: {
     hideDetails: {
@@ -164,24 +167,28 @@ interface COtpInputProps {
    * @freeform
    */
   elementId?: string;
+
   /**
    * Error message shown in place of the hint while the input is invalid
    *
    * @freeform
    */
   errorMessage?: string;
+
   /**
    * Auto focus
    *
    * @seeded from csc-ui — verify
    */
   hasAutofocus?: boolean;
+
   /**
    * Hide the hint and error messages
    *
    * @seeded from csc-ui — verify
    */
   hideDetails?: boolean;
+
   /**
    * Hint text for the input
    *
@@ -189,28 +196,33 @@ interface COtpInputProps {
    * @freeform
    */
   hint?: string;
+
   /**
    * Label of the input group, shown above the digit inputs
    *
    * @freeform
    */
   label?: string;
+
   /**
    * Length of the OTP code
    *
    * @seeded from csc-ui — verify
    */
   length?: number;
+
   /**
    * Set as required — shows the required marker on the label
    */
   required?: boolean;
+
   /**
    * Set the validíty of the input
    *
    * @seeded from csc-ui — verify
    */
   valid?: boolean;
+
   /**
    * Value of the input
    *

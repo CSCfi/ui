@@ -63,7 +63,7 @@ const indicator = tv({
     // The glyph: fills the box's 14px padding box (18px minus the 2px border).
     mark: 'absolute inset-0 h-[14px] w-[14px] text-on-primary',
     path: 'fill-current stroke-current [stroke-width:13] [stroke-linecap:round] [stroke-linejoin:round] [stroke-miterlimit:10]',
-    root: 'block shrink-0 h-[18px] w-[18px] rounded-csc-sm border-2 border-current bg-transparent text-primary transition-[color,background-color,border-color] duration-200 ease-out',
+    root: 'block h-[18px] w-[18px] shrink-0 rounded-csc-sm border-2 border-current bg-transparent text-primary transition-[color,background-color,border-color] duration-200 ease-out',
   },
   variants: {
     checked: { true: { root: 'bg-current' } },
@@ -76,7 +76,7 @@ const indicator = tv({
     // pseudo would add scrollable overflow.
     focusHalo: {
       true: {
-        root: "before:content-[''] before:pointer-events-none before:absolute before:-inset-[15px] before:rounded-full before:border-2 before:border-current before:opacity-0",
+        root: "before:pointer-events-none before:absolute before:-inset-[15px] before:rounded-full before:border-2 before:border-current before:opacity-0 before:content-['']",
       },
     },
     indeterminate: { true: { path: 'stroke-transparent', root: 'bg-current' } },
@@ -86,12 +86,16 @@ const indicator = tv({
 interface SelectionIndicatorProps {
   /** Fill the box and show the check glyph. */
   checked?: boolean;
+
   /** Paint the disabled colour channel. */
   disabled?: boolean;
+
   /** Paint the error colour channel (box unless disabled; mark always). */
   error?: boolean;
+
   /** Render the keyboard focus halo pseudo-element for the host to reveal. */
   focusHalo?: boolean;
+
   /** Fill the box and show the indeterminate bar (wins over `checked`). */
   indeterminate?: boolean;
 }

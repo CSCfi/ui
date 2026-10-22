@@ -38,14 +38,24 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
+      # Formatting and lint need no build, so they fail fast (ADR-0068).
+      - name: Format check (oxfmt)
+        run: pnpm format:check
+
+      - name: Lint scripts (oxlint)
+        run: pnpm lint:oxlint
+
+      - name: Lint Vue templates (ESLint)
+        run: pnpm lint:eslint
+
       - name: Build csc-ui (tokens → bundle → types → strict manifest)
         run: pnpm --filter @cscfi/csc-ui run build
 
       - name: Build csc-ui-react
         run: pnpm --filter @cscfi/csc-ui-react run build
 
-      - name: Lint csc-ui (tokens --strict, a11y, ramp, chart)
-        run: pnpm --filter @cscfi/csc-ui run lint
+      - name: Guards csc-ui (tokens --strict, a11y, ramp, chart, focus)
+        run: pnpm --filter @cscfi/csc-ui run lint:guards
 
       - name: Type-check csc-ui (components, harness, specs)
         run: pnpm --filter @cscfi/csc-ui run type-check
@@ -54,9 +64,6 @@ jobs:
       - name: Contrast audit (report only)
         run: pnpm --filter @cscfi/csc-ui run lint:contrast
         continue-on-error: true
-
-      - name: Lint docs
-        run: pnpm --filter @cscfi/csc-ui-documentation run lint
 
       - name: Docs example parity
         run: pnpm --filter @cscfi/csc-ui-documentation run lint:examples

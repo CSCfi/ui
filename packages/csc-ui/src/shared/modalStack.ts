@@ -36,17 +36,20 @@ export const TOAST_BAND = 2000;
 export interface ModalStackEntry {
   /** The `<c-modal>` host element (its slotted content is light DOM). */
   host: HTMLElement;
+
   /**
    * Escape was routed to this modal (it is the active one and no inner
    * overlay consumed the press). The modal decides: close or nudge.
    */
   onEscape: () => void;
+
   /**
    * Backdrop visibility changed. `animate` is true only for the fade of the
    * first modal in / last modal out; switches *within* a stack are instant so
    * the dim level never dips or doubles.
    */
   setBackdropVisible: (visible: boolean, animate: boolean) => void;
+
   /** Paint order changed: the dialog's z-index (backdrop sits at `z - 1`). */
   setLayer: (zIndex: number) => void;
 }

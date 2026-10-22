@@ -2,9 +2,9 @@
 import { Component, CUSTOM_ELEMENTS_SCHEMA, signal } from '@angular/core';
 
 @Component({
+  schemas: [CUSTOM_ELEMENTS_SCHEMA],
   selector: 'app-example',
   standalone: true,
-  schemas: [CUSTOM_ELEMENTS_SCHEMA],
   template: `
     <div class="example-row">
       <c-button-group [value]="view()" (change)="view.set($any($event).detail)">
@@ -18,5 +18,5 @@ import { Component, CUSTOM_ELEMENTS_SCHEMA, signal } from '@angular/core';
   `,
 })
 export class BasicExampleComponent {
-  view = signal<string | null>('week');
+  view = signal<null | string>('week');
 }

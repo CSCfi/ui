@@ -7,13 +7,13 @@
          debounce — do it in the handler, as here. -->
     <c-autocomplete
       v-model="country"
-      :items="items"
-      :loading="loading"
-      external
+      :items
+      :loading
       hint="Options are fetched as you type"
       label="Country"
       placeholder="Type to search"
       clearable
+      external
       @change:query="onQuery"
     />
 
@@ -22,9 +22,9 @@
 </template>
 
 <script setup lang="ts">
-import { onBeforeUnmount, ref } from 'vue';
-
 import type { CAutocompleteItem } from '@cscfi/csc-ui';
+
+import { onBeforeUnmount, ref } from 'vue';
 
 // ---- a pretend server ------------------------------------------------
 const ALL: CAutocompleteItem[] = [
@@ -54,7 +54,7 @@ const search = (query: string): Promise<CAutocompleteItem[]> =>
   );
 // -----------------------------------------------------------------------
 
-const country = ref<string | null>(null);
+const country = ref<null | string>(null);
 
 const items = ref<CAutocompleteItem[]>([]);
 

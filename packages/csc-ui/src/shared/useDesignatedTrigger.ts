@@ -22,8 +22,10 @@ import { onBeforeUnmount, ref, type Ref, watch } from 'vue';
 export interface DesignatedTriggerHandle {
   /** The resolved designated trigger; null when the prop is unset/unresolved. */
   element: Readonly<Ref<HTMLElement | null>>;
+
   /** Re-resolve the prop (an ID may match only after later DOM insertion). */
   resolve(): HTMLElement | null;
+
   /** Pin the proxy over the trigger every frame until `stopTracking`. */
   startTracking(): void;
   stopTracking(): void;
@@ -32,12 +34,16 @@ export interface DesignatedTriggerHandle {
 export interface UseDesignatedTriggerOptions {
   /** Tag name for console warnings (e.g. `c-popover`). */
   componentName: string;
+
   /** Interaction listeners kept installed on the designated element. */
   listeners: Record<string, EventListener>;
+
   /** Resolved element changed — mirror/clean ARIA here. */
   onElementChange?: (el: HTMLElement | null, prev: HTMLElement | null) => void;
+
   /** The in-shadow proxy anchor to pin over the designated trigger. */
   proxy: Ref<HTMLElement | null>;
+
   /** The raw `trigger` prop: a document ID or an element reference. */
   source: () => HTMLElement | string | undefined;
 }

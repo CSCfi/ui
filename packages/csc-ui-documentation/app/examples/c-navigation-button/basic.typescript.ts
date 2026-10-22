@@ -1,4 +1,5 @@
 const button = document.querySelector('c-navigation-button')!;
+
 const status = document.querySelector('p')!;
 
 let menuVisible = false;

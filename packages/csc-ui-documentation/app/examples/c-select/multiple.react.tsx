@@ -1,6 +1,6 @@
+import { COption, CSelect } from '@cscfi/csc-ui-react';
 // @ts-nocheck — documentation code sample; shown as text, never compiled here
 import { useState } from 'react';
-import { COption, CSelect } from '@cscfi/csc-ui-react';
 
 export const Multiple = () => {
   const [countries, setCountries] = useState<string[]>(['fi', 'se']);
@@ -8,13 +8,13 @@ export const Multiple = () => {
   return (
     <div>
       <CSelect
-        value={countries}
         clearable
         hint="Pick as many as you like"
         label="Countries"
         maxTags={3}
         multiple
         onChangeValue={(event) => setCountries(event.detail as string[])}
+        value={countries}
       >
         <COption name="Finland" value="fi">
           Finland

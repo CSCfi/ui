@@ -50,6 +50,7 @@ import type { CPlacement } from '../../types';
 export interface CPopoverProps {
   /** Distance from the trigger to the panel, in pixels. Defaults to `0`. */
   distance?: number | string;
+
   /**
    * Heading rendered at the top of the panel, doubling as its accessible
    * name. Without it, set `aria-label` on the host. Named `heading`, not
@@ -58,10 +59,13 @@ export interface CPopoverProps {
    * @freeform
    */
   heading?: string;
+
   /** Whether the popover is open. Two-way: emits `change:open`. */
   open?: boolean;
+
   /** Preferred placement of the panel relative to the trigger. */
   position?: CPlacement;
+
   /**
    * Designated trigger: an element elsewhere in the document that opens the
    * popover — its document ID, or the element itself. The same trigger
@@ -137,7 +141,7 @@ const popover = tv({
   slots: {
     heading: 'm-0 mb-2 font-semibold text-on-surface',
     panel:
-      'fixed m-0 [inset:auto] box-border w-max max-w-sm overflow-visible rounded-csc-md border-0 bg-surface-overlay p-4 text-on-surface shadow-[2px_4px_10px_#00000029]',
+      'fixed [inset:auto] m-0 box-border w-max max-w-sm overflow-visible rounded-csc-md border-0 bg-surface-overlay p-4 text-on-surface shadow-[2px_4px_10px_#00000029]',
     proxy: 'pointer-events-none fixed',
     trigger: 'inline-flex w-max max-w-full',
   },

@@ -1,3 +1,4 @@
+import { CIcon, CIconButton } from '@cscfi/csc-ui-react';
 // @ts-nocheck — documentation code sample; shown as text, never compiled here
 import {
   mdiBellOutline,
@@ -7,7 +8,6 @@ import {
   mdiPencil,
   mdiPlus,
 } from '@mdi/js';
-import { CIcon, CIconButton } from '@cscfi/csc-ui-react';
 
 export const Basic = () => (
   <div className="example-row">

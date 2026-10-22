@@ -1,6 +1,6 @@
 <template>
   <div class="flex items-start gap-10">
-    <article class="min-w-0 max-w-[52rem] flex-1">
+    <article class="max-w-[52rem] min-w-0 flex-1">
       <h1 class="mb-[0.67em] text-[2rem] font-bold">Customization</h1>
 
       <p class="my-[1em] max-w-[45rem] text-[1.0625rem] text-on-surface-muted">
@@ -191,15 +191,16 @@
 </template>
 
 <script setup lang="ts">
+import type { TocItem } from '~/utils/toc';
+
 import {
   CUSTOMIZATION_SECTIONS,
+  type CustomizationSection,
   ROLE_FAMILIES,
   ROLE_SEXTET,
-  TOKEN_GROUPS,
   roleTokens,
-  type CustomizationSection,
+  TOKEN_GROUPS,
 } from '~/content/customization';
-import type { TocItem } from '~/utils/toc';
 
 const sections: CustomizationSection[] = CUSTOMIZATION_SECTIONS;
 

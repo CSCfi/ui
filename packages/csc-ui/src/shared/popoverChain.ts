@@ -37,15 +37,19 @@ import { attachPointerPair, type Detach } from './lightDismiss';
 export interface PopoverChainEntry {
   /** Close this popover with no focus return (light dismiss / chain cleanup). */
   close(): void;
+
   /** True when `node` is inside this popover's own logical inside. */
   containsNode(node: Node): boolean;
+
   /** True when a composed event path passes through this popover's own inside. */
   containsPath(path: EventTarget[]): boolean;
+
   /**
    * The node that chains this popover under an open ancestor: its designated
    * trigger, else its slotted trigger, else its host.
    */
   getAnchorNode(): Node | null;
+
   /** Escape routed here — this popover is the innermost. Decides focus return. */
   onEscape(): void;
 }

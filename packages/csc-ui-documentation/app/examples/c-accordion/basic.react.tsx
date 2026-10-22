@@ -1,6 +1,6 @@
+import { CAccordion, CAccordionItem } from '@cscfi/csc-ui-react';
 // @ts-nocheck — documentation code sample; shown as text, never compiled here
 import { useState } from 'react';
-import { CAccordion, CAccordionItem } from '@cscfi/csc-ui-react';
 
 export const Basic = () => {
   const [expanded, setExpanded] = useState<'billing' | 'members' | 'storage'>(
@@ -9,10 +9,10 @@ export const Basic = () => {
 
   return (
     <CAccordion
-      value={expanded}
       onChangeValue={(event) =>
         setExpanded(event.detail as 'billing' | 'members' | 'storage')
       }
+      value={expanded}
     >
       <CAccordionItem heading="Project billing" value="billing">
         <p>Billing units are deducted monthly based on the resources in use.</p>

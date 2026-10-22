@@ -1,17 +1,18 @@
 // @ts-nocheck — documentation code sample; shown as text, never compiled here
+import type { ElementRef } from '@angular/core';
+import type { CToastsElement } from '@cscfi/csc-ui';
+
 import {
   Component,
   CUSTOM_ELEMENTS_SCHEMA,
-  ElementRef,
   signal,
   viewChild,
 } from '@angular/core';
-import type { CToastsElement } from '@cscfi/csc-ui';
 
 @Component({
+  schemas: [CUSTOM_ELEMENTS_SCHEMA],
   selector: 'app-example',
   standalone: true,
-  schemas: [CUSTOM_ELEMENTS_SCHEMA],
   template: `
     <div class="example-row">
       <c-select
@@ -44,18 +45,18 @@ import type { CToastsElement } from '@cscfi/csc-ui';
   `,
 })
 export class PlacementExampleComponent {
+  horizontal = signal('center');
+
   toasts = viewChild<ElementRef<CToastsElement>>('toasts');
 
   vertical = signal('bottom');
 
-  horizontal = signal('center');
-
   notify() {
     this.toasts()?.nativeElement.addToast({
-      type: 'info',
-      title: 'Notification',
       message: `Placed at ${this.vertical()} ${this.horizontal()}.`,
       progress: true,
+      title: 'Notification',
+      type: 'info',
     });
   }
 }

@@ -32,9 +32,8 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
-
 import { mdiFolderOutline } from '@mdi/js';
+import { ref } from 'vue';
 
 const current = ref('active');
 </script>

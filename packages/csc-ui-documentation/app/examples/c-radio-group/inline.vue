@@ -2,9 +2,9 @@
   <div>
     <c-radio-group
       v-model="frequency"
+      label="Email frequency"
       hide-details
       inline
-      label="Email frequency"
     >
       <c-radio value="daily">Daily</c-radio>
 

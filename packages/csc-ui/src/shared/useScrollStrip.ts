@@ -17,27 +17,35 @@ import { prefersReducedMotion } from './reducedMotion';
 export interface ScrollStrip {
   /** Scroll back by half the visible width. */
   back(): void;
+
   /** True while the strip can scroll back (its start is out of view). */
   canBack: Ref<boolean>;
+
   /** True while the strip can scroll forward (its end is out of view). */
   canForward: Ref<boolean>;
+
   /** Scroll forward by half the visible width. */
   forward(): void;
+
   /**
    * Mouse drag scrolling: bind to the scroller's `pointerdown`. Touch and
    * pen pan natively and are ignored here. A drag that moved swallows the
    * `click` it would otherwise end in.
    */
   onPointerDown(event: PointerEvent): void;
+
   /**
    * Translate a vertical wheel into horizontal scrolling while the strip
    * overflows: bind to the scroller's `wheel`.
    */
   onWheel(event: WheelEvent): void;
+
   /** True while the content is wider than the scroller. */
   overflowing: Ref<boolean>;
+
   /** Scroll the strip just enough to bring `el` fully into view. */
   reveal(el: Element | null | undefined): void;
+
   /** Re-read the overflow state (after content changed size). */
   update(): void;
 }

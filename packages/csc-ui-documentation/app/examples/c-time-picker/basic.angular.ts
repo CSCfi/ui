@@ -2,9 +2,9 @@
 import { Component, CUSTOM_ELEMENTS_SCHEMA, signal } from '@angular/core';
 
 @Component({
+  schemas: [CUSTOM_ELEMENTS_SCHEMA],
   selector: 'app-example',
   standalone: true,
-  schemas: [CUSTOM_ELEMENTS_SCHEMA],
   template: `
     <div>
       <c-time-picker
@@ -20,5 +20,5 @@ import { Component, CUSTOM_ELEMENTS_SCHEMA, signal } from '@angular/core';
   `,
 })
 export class BasicExampleComponent {
-  time = signal<string | null>(null);
+  time = signal<null | string>(null);
 }

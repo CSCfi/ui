@@ -1,7 +1,8 @@
+import type { CDataTableColumn, CDataTableRow } from '@cscfi/csc-ui';
+
+import { CDataTable } from '@cscfi/csc-ui-react';
 // @ts-nocheck — documentation code sample; shown as text, never compiled here
 import { useState } from 'react';
-import { CDataTable } from '@cscfi/csc-ui-react';
-import type { CDataTableColumn, CDataTableRow } from '@cscfi/csc-ui';
 
 const columns: CDataTableColumn[] = [
   { header: 'Dataset', key: 'name' },
@@ -28,14 +29,14 @@ export const Selection = () => {
         columns={columns}
         data={data}
         getRowId={getRowId}
-        selected={selected}
-        pageSize={4}
-        selection="multiple"
         onChangeSelected={(event) =>
           setSelected(
             (event.detail as { ids: string[]; rows: CDataTableRow[] }).ids,
           )
         }
+        pageSize={4}
+        selected={selected}
+        selection="multiple"
       />
 
       <p>Selected ids: {selected.length ? selected.join(', ') : '—'}</p>

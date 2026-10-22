@@ -7,11 +7,18 @@ import {
 import { mdiBellOutline, mdiEmailOutline } from '@mdi/js';
 
 @Component({
-  selector: 'app-example',
-  standalone: true,
-  schemas: [CUSTOM_ELEMENTS_SCHEMA],
   // The styles target ::part(), so they must apply globally.
   encapsulation: ViewEncapsulation.None,
+  schemas: [CUSTOM_ELEMENTS_SCHEMA],
+  selector: 'app-example',
+  standalone: true,
+  styles: [
+    `
+      c-badge.success-badge::part(root) {
+        background-color: var(--c-success-500);
+      }
+    `,
+  ],
   template: `
     <div class="example-row">
       <span style="position: relative">
@@ -30,13 +37,6 @@ import { mdiBellOutline, mdiEmailOutline } from '@mdi/js';
       </c-button>
     </div>
   `,
-  styles: [
-    `
-      c-badge.success-badge::part(root) {
-        background-color: var(--c-success-500);
-      }
-    `,
-  ],
 })
 export class BasicExampleComponent {
   mdiBellOutline = mdiBellOutline;

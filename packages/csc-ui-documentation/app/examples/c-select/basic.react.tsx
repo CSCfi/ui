@@ -1,19 +1,19 @@
+import { COption, CSelect } from '@cscfi/csc-ui-react';
 // @ts-nocheck — documentation code sample; shown as text, never compiled here
 import { useState } from 'react';
-import { COption, CSelect } from '@cscfi/csc-ui-react';
 
 export const Basic = () => {
-  const [country, setCountry] = useState<string | null>(null);
+  const [country, setCountry] = useState<null | string>(null);
 
   return (
     <div>
       <CSelect
-        value={country}
         clearable
         hint="The list opens on click or with the arrow keys"
         label="Country"
+        onChangeValue={(event) => setCountry(event.detail as null | string)}
         placeholder="Choose a country"
-        onChangeValue={(event) => setCountry(event.detail as string | null)}
+        value={country}
       >
         <COption name="Finland" value="fi">
           Finland

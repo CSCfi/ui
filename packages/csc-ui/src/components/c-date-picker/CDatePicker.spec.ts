@@ -381,6 +381,7 @@ describe('day grid', () => {
 
     const ink = (iso: string) =>
       getComputedStyle(cell(m, iso).querySelector('[part~="day"]')!).color;
+
     const probe = document.createElement('span');
 
     probe.style.color = 'var(--c-on-surface-muted)';
@@ -1222,9 +1223,9 @@ describe('motion', () => {
 
     const grow = body.getAnimations()[0];
 
-    expect(
-      keyframes(grow).map((k) => parseFloat(String(k.height))),
-    ).toEqual([236, 276]);
+    expect(keyframes(grow).map((k) => parseFloat(String(k.height)))).toEqual([
+      236, 276,
+    ]);
 
     await finishAnimations(m);
 
@@ -1245,9 +1246,7 @@ describe('motion', () => {
     m.part('next-month').click();
     await settle();
 
-    const frames = grids(m).map((g) =>
-      keyframes(g.getAnimations()[0]),
-    );
+    const frames = grids(m).map((g) => keyframes(g.getAnimations()[0]));
 
     expect(frames.map((f) => f?.map((k) => Number(k.opacity)))).toEqual([
       [1, 0],

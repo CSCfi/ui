@@ -18,5 +18,5 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 
-const volume = ref<number | null>(50);
+const volume = ref<null | number>(50);
 </script>

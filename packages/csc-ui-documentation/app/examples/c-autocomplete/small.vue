@@ -23,5 +23,5 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 
-const language = ref<string | null>(null);
+const language = ref<null | string>(null);
 </script>

@@ -25,12 +25,14 @@ export interface CToastsProps {
    * @seeded from csc-ui — verify
    */
   absolute?: boolean;
+
   /**
    * Horizontal position
    *
    * @seeded from csc-ui — verify
    */
   horizontal?: CToastsHorizontal;
+
   /**
    * Vertical position
    *
@@ -86,7 +88,7 @@ defineOptions({ inheritAttrs: false });
  */
 const toasts = tv({
   slots: {
-    root: 'grid gap-3 grid-cols-[1fr] p-3',
+    root: 'grid grid-cols-[1fr] gap-3 p-3',
   },
 });
 

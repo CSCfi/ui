@@ -43,8 +43,8 @@ const expandedContent = ({ row }: CDataTableExpandedContext) =>
     'c-link',
     {
       href: `https://docs.csc.fi/computing/systems-${row.id}/`,
-      underline: true,
       style: 'padding-inline: 6px',
+      underline: true,
     },
     `Read more about ${row.name}`,
   );

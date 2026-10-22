@@ -9,6 +9,7 @@
 export interface CBreadcrumbCrumbWidth {
   /** The narrowest the crumb may get when its label truncates. */
   floor: number;
+
   /** The untruncated width. */
   natural: number;
 }
@@ -16,8 +17,10 @@ export interface CBreadcrumbCrumbWidth {
 export interface CBreadcrumbFit {
   /** Width cap for the current (last) crumb, or `null` when it keeps its natural width. */
   currentMax: null | number;
+
   /** Width cap for the first crumb, or `null` when it keeps its natural width. */
   firstMax: null | number;
+
   /** How many crumbs fold, counted from the second one. */
   folded: number;
 }

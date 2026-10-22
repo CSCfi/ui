@@ -1,4 +1,4 @@
-import { defineConfig } from "vitest/config";
+import { defineConfig } from 'vitest/config';
 
 // Every Vitest project in the monorepo. A listed package config may itself be
 // a container declaring several projects (packages/csc-ui: browser + node);
@@ -6,8 +6,8 @@ import { defineConfig } from "vitest/config";
 export default defineConfig({
   test: {
     projects: [
-      "packages/csc-ui/vitest.config.ts",
-      "packages/csc-ui-documentation/vitest.config.ts",
+      'packages/csc-ui/vitest.config.ts',
+      'packages/csc-ui-documentation/vitest.config.ts',
     ],
   },
 });

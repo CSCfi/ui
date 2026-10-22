@@ -129,16 +129,19 @@ interface CCheckboxEvents {
    * boundary). No detail; read the new value from the host's `value` property.
    */
   change: void;
+
   /**
    * Fired when the checkbox is toggled, carrying the new value —
    * `trueValue` when checked, `falseValue` when unchecked.
    */
   changeValue: boolean | number | string;
+
   /**
    * Native bubbling input event fired on toggle so a plain Vue `v-model`
    * works without the `v-control` directive. No detail.
    */
   input: void;
+
   /**
    * v-model contract event fired on toggle, carrying the new value —
    * `trueValue` when checked, `falseValue` when unchecked.
@@ -197,18 +200,18 @@ const checkbox = tv({
     // for hiding the underlying native checkbox.
     input:
       'absolute h-px w-px overflow-hidden border-0 p-0 [clip:rect(1px,1px,1px,1px)]',
-    label: 'flex gap-1 relative cursor-pointer select-none',
+    label: 'relative flex cursor-pointer gap-1 select-none',
     labelContent: 'pt-[10px] text-left select-none',
     // Outer message AREA (reserved, see the template) + the inner hint/error
     // line that fades in/out inside it.
-    message: 'px-3 text-xs leading-none min-h-4 text-on-surface-muted',
-    messageIcon: 'fill-current h-4 w-4 relative -top-0.5 shrink-0',
+    message: 'min-h-4 px-3 text-xs leading-none text-on-surface-muted',
+    messageIcon: 'relative -top-0.5 h-4 w-4 shrink-0 fill-current',
     messageLine: 'flex items-start gap-1',
     // 42px circular ripple surface holding the box, the check and the click
     // ripple. Purely internal (no part). Does NOT clip: the indicator's focus
     // halo overhangs it by 2px; clipping is the `rippleLayer`'s job.
     ripple:
-      'grid place-content-center relative h-[42px] w-[42px] min-w-[42px] rounded-full transform-gpu transition-colors duration-200 ease-in-out',
+      'relative grid h-[42px] w-[42px] min-w-[42px] transform-gpu place-content-center rounded-full transition-colors duration-200 ease-in-out',
     // Material click ripple: an absolutely-positioned circle, centred in the
     // 42px ripple surface (clipped by the `rippleLayer`). Like c-button, it
     // tweens scale/opacity via the `transition` util rather than a bespoke
@@ -218,7 +221,7 @@ const checkbox = tv({
     // Clips the ripple to the circle so the indicator's focus halo (which
     // overhangs the surface by 2px) is not clipped with it.
     rippleLayer:
-      'pointer-events-none absolute inset-0 rounded-full overflow-hidden',
+      'pointer-events-none absolute inset-0 overflow-hidden rounded-full',
     root: 'relative w-fit',
     visuallyHidden:
       'absolute h-px w-px overflow-hidden border-0 p-0 [clip:rect(1px,1px,1px,1px)]',
@@ -251,30 +254,35 @@ interface CCheckboxProps {
    * @seeded from csc-ui — verify
    */
   checked?: boolean;
+
   /**
    * Disable the checkbox
    *
    * @seeded from csc-ui — verify
    */
   disabled?: boolean;
+
   /**
    * Error message shown in place of the hint while the checkbox is invalid
    *
    * @freeform
    */
   errorMessage?: string;
+
   /**
    * The value when the checkbox is unchecked
    *
    * @seeded from csc-ui — verify
    */
   falseValue?: boolean | number | string;
+
   /**
    * Hide the hint and error messages
    *
    * @seeded from csc-ui — verify
    */
   hideDetails?: boolean;
+
   /**
    * Hint text for the input
    *
@@ -282,6 +290,7 @@ interface CCheckboxProps {
    * @freeform
    */
   hint?: string;
+
   /**
    * Id of the element
    *
@@ -289,6 +298,7 @@ interface CCheckboxProps {
    * @freeform
    */
   hostId?: string;
+
   /**
    * Name of the input
    * - Only used when the checkbox participates in a native `<form>`
@@ -297,12 +307,14 @@ interface CCheckboxProps {
    * @freeform
    */
   hostName?: string;
+
   /**
    * Indeterminate state
    *
    * @seeded from csc-ui — verify
    */
   indeterminate?: boolean;
+
   /**
    * Element label
    *
@@ -310,24 +322,28 @@ interface CCheckboxProps {
    * @freeform
    */
   label?: string;
+
   /**
    * Set as required
    *
    * @seeded from csc-ui — verify
    */
   required?: boolean;
+
   /**
    * The value when the checkbox is checked
    *
    * @seeded from csc-ui — verify
    */
   trueValue?: boolean | number | string;
+
   /**
    * Set the validity of the input
    *
    * @seeded from csc-ui — verify
    */
   valid?: boolean;
+
   /**
    * The input value
    * - Only used when the checkbox participates in a native `<form>`

@@ -16,12 +16,16 @@
 
     <c-button @click="notify()">Show toast</c-button>
 
-    <c-toasts ref="toasts" :horizontal="horizontal" :vertical="vertical" />
+    <c-toasts ref="toasts" :horizontal :vertical />
   </div>
 </template>
 
 <script setup lang="ts">
 import { ref, useTemplateRef } from 'vue';
+
+type CToastsElement = {
+  addToast: (message: ToastMessage) => void;
+} & HTMLElement;
 
 interface ToastMessage {
   duration?: number;
@@ -32,10 +36,6 @@ interface ToastMessage {
   type?: 'error' | 'info' | 'success' | 'warning';
 }
 
-type CToastsElement = HTMLElement & {
-  addToast: (message: ToastMessage) => void;
-};
-
 const toasts = useTemplateRef<CToastsElement>('toasts');
 
 const vertical = ref('bottom');
@@ -44,10 +44,10 @@ const horizontal = ref('center');
 
 const notify = () => {
   toasts.value?.addToast({
-    type: 'info',
-    title: 'Notification',
     message: `Placed at ${vertical.value} ${horizontal.value}.`,
     progress: true,
+    title: 'Notification',
+    type: 'info',
   });
 };
 </script>

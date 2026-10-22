@@ -1,6 +1,6 @@
+import { CButton, CStep, CSteps } from '@cscfi/csc-ui-react';
 // @ts-nocheck — documentation code sample; shown as text, never compiled here
 import { useState } from 'react';
-import { CButton, CStep, CSteps } from '@cscfi/csc-ui-react';
 
 export const Basic = () => {
   const [step, setStep] = useState(1);
@@ -16,9 +16,9 @@ export const Basic = () => {
 
       <div className="example-row">
         <CButton
-          outlined
           disabled={step === 1}
           onClick={() => setStep(step - 1)}
+          outlined
         >
           Previous
         </CButton>

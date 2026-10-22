@@ -26,10 +26,14 @@ const copyStylesPlugin = () => ({
 const docsManifestPlugin = () => ({
   name: 'csc-docs-manifest',
   writeBundle() {
-    spawn(process.execPath, [resolve(__dirname, 'scripts/analyzer/index.mjs')], {
-      cwd: __dirname,
-      stdio: 'ignore',
-    });
+    spawn(
+      process.execPath,
+      [resolve(__dirname, 'scripts/analyzer/index.mjs')],
+      {
+        cwd: __dirname,
+        stdio: 'ignore',
+      },
+    );
   },
 });
 

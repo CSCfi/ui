@@ -11,7 +11,7 @@
     </c-steps>
 
     <div class="example-row">
-      <c-button outlined :disabled="step === 1" @click="step--">
+      <c-button :disabled="step === 1" outlined @click="step--">
         Previous
       </c-button>
 

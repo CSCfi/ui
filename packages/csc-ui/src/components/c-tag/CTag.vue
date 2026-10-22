@@ -22,30 +22,35 @@ export interface CTagProps {
    * @seeded from csc-ui — verify
    */
   active?: boolean;
+
   /**
    * Display an optional badge at the start of the tag
    *
    * @seeded from csc-ui — verify
    */
   badge?: null | number | string;
+
   /**
    * Mark tag as closeable
    *
    * @seeded from csc-ui — verify
    */
   closeable?: boolean;
+
   /**
    * Accessible name of the close button rendered when `closeable`
    *
    * @freeform
    */
   closeLabel?: string;
+
   /**
    * Remove the hover effect
    *
    * @seeded from csc-ui — verify
    */
   flat?: boolean;
+
   /**
    * Size of the tag
    *
@@ -131,12 +136,12 @@ const tag = tv({
     // The tag's visible box. The host stays a real box (see <style>) so that
     // :host(:hover) can recolour this inner element via descendant selectors.
     root:
-      'inline-flex items-center justify-center select-none cursor-pointer rounded-full min-w-12 gap-2 text-sm font-normal leading-none [transform:translate3d(0,0,0)] transition-colors duration-200 ease-in-out bg-transparent text-primary ring-1 ring-inset ring-primary ' +
+      'inline-flex min-w-12 [transform:translate3d(0,0,0)] cursor-pointer items-center justify-center gap-2 rounded-full bg-transparent text-sm leading-none font-normal text-primary ring-1 ring-primary transition-colors duration-200 ease-in-out select-none ring-inset ' +
       // badge ::before defaults — hidden until the `badged` variant reveals it
       // with `before:grid`. (Keep only ONE display utility per state: a base
       // `before:grid` here would let tailwind-merge drop `before:hidden`, so the
       // pill would always show.)
-      'before:content-[attr(data-badge)] before:hidden before:place-content-center before:rounded-full before:px-1 before:text-xs before:leading-none before:bg-primary before:text-on-primary',
+      'before:hidden before:place-content-center before:rounded-full before:bg-primary before:px-1 before:text-xs before:leading-none before:text-on-primary before:content-[attr(data-badge)]',
   },
   variants: {
     active: {
@@ -146,7 +151,7 @@ const tag = tv({
     },
     // data-badge present: reveal the ::before pill (grid centres the value) and
     // add left padding.
-    badged: { true: { root: 'before:grid pl-1' } },
+    badged: { true: { root: 'pl-1 before:grid' } },
     closeable: { true: {} },
     flat: { true: { root: 'pointer-events-none' } },
     size: sizeVariants,

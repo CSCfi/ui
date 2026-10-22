@@ -14,7 +14,7 @@ one beneath is dimmed and inert until it becomes topmost again.
 ## When not to use
 
 - Passive notifications — use `c-toasts`, which stays visible and clickable
-  *above* any open modal.
+  _above_ any open modal.
 - Large multi-step flows — prefer a dedicated page.
 
 ## Dismissal

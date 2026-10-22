@@ -6,12 +6,12 @@
          "+N more" tag. -->
     <c-autocomplete
       v-model="languages"
-      clearable
       hint="Type to filter, pick several"
       label="Programming languages"
       max-tags="3"
-      multiple
       placeholder="Start typing to search"
+      clearable
+      multiple
     >
       <!-- An option can carry more than its label: wrap the label in
            c-option-value and lay the rest out through a `part` — the row
@@ -49,40 +49,40 @@ const languages = ref<string[]>(['ts']);
 
 const options = [
   {
-    value: 'js',
-    label: 'JavaScript',
-    icon: mdiLanguageJavascript,
     color: '#F7DF1E',
+    icon: mdiLanguageJavascript,
+    label: 'JavaScript',
+    value: 'js',
   },
   {
-    value: 'ts',
-    label: 'TypeScript',
-    icon: mdiLanguageTypescript,
     color: '#3178C6',
+    icon: mdiLanguageTypescript,
+    label: 'TypeScript',
+    value: 'ts',
   },
   {
-    value: 'py',
-    label: 'Python',
-    icon: mdiLanguagePython,
     color: '#3776AB',
+    icon: mdiLanguagePython,
+    label: 'Python',
+    value: 'py',
   },
   {
-    value: 'rs',
-    label: 'Rust',
-    icon: mdiLanguageRust,
     color: '#CE422B',
+    icon: mdiLanguageRust,
+    label: 'Rust',
+    value: 'rs',
   },
   {
-    value: 'go',
-    label: 'Go',
-    icon: mdiLanguageGo,
     color: '#00ADD8',
+    icon: mdiLanguageGo,
+    label: 'Go',
+    value: 'go',
   },
   {
-    value: 'rb',
-    label: 'Ruby',
-    icon: mdiLanguageRuby,
     color: '#CC342D',
+    icon: mdiLanguageRuby,
+    label: 'Ruby',
+    value: 'rb',
   },
 ];
 </script>

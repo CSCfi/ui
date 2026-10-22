@@ -1,0 +1,10 @@
+/*
+ * The stylesheet oxfmt sorts the site's Tailwind classes against (ADR-0068),
+ * never loaded by the site. It is tailwind.css minus what sorting cannot
+ * use: the library theme comes from csc-ui's source rather than its build,
+ * so formatting works before `pnpm build`. The site's own @theme adds no
+ * utility names, so the order matches tailwind.css.
+ */
+@import 'tailwindcss';
+@import './palette-reset.css';
+@import '../../../csc-ui/src/styles/css/tailwind-theme.css';

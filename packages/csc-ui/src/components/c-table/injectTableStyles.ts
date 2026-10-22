@@ -16,6 +16,7 @@ export const ensureTableStyles = (): void => {
   injected = true;
 
   if (typeof document === 'undefined' || !document.head) return;
+
   if (document.querySelector('style[data-csc-ui-c-table]')) return;
 
   const style = document.createElement('style');

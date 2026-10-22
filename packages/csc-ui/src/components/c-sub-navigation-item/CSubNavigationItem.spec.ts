@@ -66,8 +66,8 @@ const mountNav = async (): Promise<Mounted> => {
 };
 
 const subItems = (m: Mounted): HTMLElement[] =>
-  Array.from(m.host.querySelectorAll('c-sub-navigation-item')).map(
-    (el) => el.shadowRoot!.querySelector('[part~="root"]')!,
+  Array.from(m.host.querySelectorAll('c-sub-navigation-item')).map((el) =>
+    el.shadowRoot!.querySelector('[part~="root"]')!,
   );
 
 describe('c-sub-navigation-item', () => {

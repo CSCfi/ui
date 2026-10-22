@@ -2,7 +2,7 @@
   <div>
     <c-date-picker
       v-model="period"
-      :texts="texts"
+      :texts
       hint="Kirjoita päivämäärät tai valitse kalenterista"
       label="Lomajakso"
       range
@@ -14,9 +14,9 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
-
 import type { CDatePickerRange, CDatePickerTexts } from '@cscfi/csc-ui';
+
+import { ref } from 'vue';
 
 const months = [
   'tammikuu',

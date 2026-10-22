@@ -46,12 +46,14 @@ interface CIconProps {
    * @freeform any CSS color value
    */
   color?: string;
+
   /**
    * Svg `path` `d` attribute value.
    *
    * @freeform SVG path data
    */
   path: string;
+
   /** Icon size in pixels. */
   size?: number;
 }

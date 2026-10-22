@@ -4,14 +4,14 @@
          state changes; sorting and paging here go through a simulated server
          request. `item-count` tells the pager the true total. -->
     <c-data-table
-      :columns="columns"
+      :columns
       :data="page"
       :item-count="TOTAL"
-      :loading="loading"
+      :loading
       :page="query.page"
       :sort="query.sort"
-      external
       page-size="5"
+      external
       @change:page="onPage"
       @change:page-size="onPageSize"
       @change:sort="onSort"
@@ -20,13 +20,13 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, ref } from 'vue';
-
 import type {
   CDataTableColumn,
   CDataTableRow,
   CDataTableSort,
 } from '@cscfi/csc-ui';
+
+import { onMounted, ref } from 'vue';
 
 const columns: CDataTableColumn[] = [
   { header: 'Job', key: 'name', sortable: true },

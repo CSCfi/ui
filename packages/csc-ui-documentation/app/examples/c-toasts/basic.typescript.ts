@@ -4,18 +4,18 @@ const [successButton, errorButton] = document.querySelectorAll('c-button');
 
 successButton!.addEventListener('click', () => {
   toasts.addToast({
-    type: 'success',
-    title: 'Saved',
     message: 'Your changes have been saved.',
     progress: true,
+    title: 'Saved',
+    type: 'success',
   });
 });
 
 errorButton!.addEventListener('click', () => {
   toasts.addToast({
-    type: 'error',
-    title: 'Upload failed',
     message: 'The file could not be uploaded.',
     progress: true,
+    title: 'Upload failed',
+    type: 'error',
   });
 });

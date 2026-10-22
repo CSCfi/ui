@@ -4,6 +4,6 @@
 
     <c-spinner size="48" width="4" />
 
-    <c-spinner size="48" width="4" color="var(--c-success)" />
+    <c-spinner color="var(--c-success)" size="48" width="4" />
   </div>
 </template>

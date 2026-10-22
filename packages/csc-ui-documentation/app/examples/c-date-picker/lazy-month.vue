@@ -31,7 +31,7 @@ const fetchBooked = (month: string): Promise<string[]> =>
 
 const booked = ref<string[]>([]);
 
-const date = ref<string | null>(null);
+const date = ref<null | string>(null);
 
 const onMonth = async (event: CustomEvent<string>) => {
   booked.value = await fetchBooked(event.detail);

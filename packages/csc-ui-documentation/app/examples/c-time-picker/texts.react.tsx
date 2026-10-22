@@ -1,7 +1,8 @@
+import type { CTimePickerRange, CTimePickerTexts } from '@cscfi/csc-ui';
+
+import { CTimePicker } from '@cscfi/csc-ui-react';
 // @ts-nocheck — documentation code sample; shown as text, never compiled here
 import { useState } from 'react';
-import { CTimePicker } from '@cscfi/csc-ui-react';
-import type { CTimePickerRange, CTimePickerTexts } from '@cscfi/csc-ui';
 
 const texts: CTimePickerTexts = {
   am: 'ap.',
@@ -25,13 +26,13 @@ export const Texts = () => {
   return (
     <div>
       <CTimePicker
-        value={shift}
-        texts={texts}
         format="H.mm"
         hint="Kirjoita ajat tai valitse listoista"
         label="Työvuoro"
-        range
         onChange={(event) => setShift(event.detail as CTimePickerRange | null)}
+        range
+        texts={texts}
+        value={shift}
       />
 
       <p>Value: {shift ? `${shift.start} – ${shift.end}` : 'null'}</p>

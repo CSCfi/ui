@@ -90,7 +90,7 @@ const progressCircle = tv({
     empty: false,
   },
   slots: {
-    bar: '-rotate-90 fill-transparent stroke-primary [stroke-linecap:round] transition-[stroke-dashoffset,opacity] duration-300 ease-in-out',
+    bar: '-rotate-90 fill-transparent stroke-primary transition-[stroke-dashoffset,opacity] duration-300 ease-in-out [stroke-linecap:round]',
     content: 'absolute inset-0 flex items-center justify-center',
     root: 'relative inline-flex items-center justify-center align-middle',
     svg: 'block overflow-visible',
@@ -110,10 +110,12 @@ export interface CProgressCircleProps {
    * Diameter of the circle in pixels
    */
   size?: number;
+
   /**
    * Progress value in percentage (0 to 100)
    */
   value?: number;
+
   /**
    * Stroke width of the track in pixels; the value arc draws at half this
    * width, inset within the track

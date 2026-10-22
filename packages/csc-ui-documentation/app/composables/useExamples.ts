@@ -1,6 +1,6 @@
 import type { Component } from 'vue';
 
-import { FLAVORS, isFlavor, type Flavor } from './useFlavor';
+import { type Flavor, FLAVORS, isFlavor } from './useFlavor';
 
 /**
  * Examples live in app/examples/<tag>/<name>.vue — plain Vue SFCs that are
@@ -67,29 +67,30 @@ const FLAVOR_LABEL = new Map(
   FLAVORS.map((flavor) => [flavor.id, flavor.label]),
 );
 
-export interface ExamplePane {
-  code: string;
-  /** Chip label above the pane; only multi-pane flavors set it. */
-  label?: string;
-  lang: string;
-}
-
-export interface ExampleTab {
-  flavor: Flavor;
-  icon: string;
-  label: string;
-  panes: ExamplePane[];
-}
-
-/** The background a demo renders on — see the `<docs>` block note above. */
-export type ExampleSurface = 'canvas' | 'card';
-
 export interface DocExample {
   demo: Component;
   name: string;
   surface: ExampleSurface;
   tabs: ExampleTab[];
   title: string;
+}
+
+export interface ExamplePane {
+  code: string;
+
+  /** Chip label above the pane; only multi-pane flavors set it. */
+  label?: string;
+  lang: string;
+}
+
+/** The background a demo renders on — see the `<docs>` block note above. */
+export type ExampleSurface = 'canvas' | 'card';
+
+export interface ExampleTab {
+  flavor: Flavor;
+  icon: string;
+  label: string;
+  panes: ExamplePane[];
 }
 
 /**
@@ -187,6 +188,7 @@ export const useExamples = (tags: string[]): DocExample[] => {
 
         if (flavor === 'typescript') {
           const markup = files.find((f) => f.ext === 'html');
+
           const script = files.find((f) => f.ext === 'ts');
 
           // The markup fragment is the variant's anchor; a lone script file

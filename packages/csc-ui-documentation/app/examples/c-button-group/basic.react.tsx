@@ -1,15 +1,15 @@
+import { CButton, CButtonGroup } from '@cscfi/csc-ui-react';
 // @ts-nocheck — documentation code sample; shown as text, never compiled here
 import { useState } from 'react';
-import { CButton, CButtonGroup } from '@cscfi/csc-ui-react';
 
 export const Basic = () => {
-  const [view, setView] = useState<string | null>('week');
+  const [view, setView] = useState<null | string>('week');
 
   return (
     <div className="example-row">
       <CButtonGroup
+        onChange={(event) => setView(event.detail as null | string)}
         value={view}
-        onChange={(event) => setView(event.detail as string | null)}
       >
         <CButton value="day">Day</CButton>
         <CButton value="week">Week</CButton>

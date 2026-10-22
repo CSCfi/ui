@@ -15,8 +15,10 @@ export interface PeekCapOptions {
    * `applyPeekCap` defaults it to the list's stylesheet `max-height`.
    */
   ceiling?: number;
+
   /** Full rows shown before the peek. `0` (or less): no row cap. */
   itemsPerPage?: number;
+
   /** Item rows in visual order — only these can be the peek row. */
   rows: readonly HTMLElement[];
 }

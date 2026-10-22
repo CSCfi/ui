@@ -1,17 +1,17 @@
+import { CTimePicker } from '@cscfi/csc-ui-react';
 // @ts-nocheck — documentation code sample; shown as text, never compiled here
 import { useState } from 'react';
-import { CTimePicker } from '@cscfi/csc-ui-react';
 
 export const TwelveHour = () => {
-  const [time, setTime] = useState<string | null>('14:30');
+  const [time, setTime] = useState<null | string>('14:30');
 
   return (
     <div>
       <CTimePicker
-        value={time}
         format="h:mm a"
         label="Meeting time"
-        onChange={(event) => setTime(event.detail as string | null)}
+        onChange={(event) => setTime(event.detail as null | string)}
+        value={time}
       />
 
       <p>Value: {time ?? 'null'}</p>

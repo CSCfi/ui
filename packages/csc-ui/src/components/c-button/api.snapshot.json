@@ -18,9 +18,7 @@
     "type": "'button' | 'reset' | 'submit' = 'button'",
     "value": "number | string"
   },
-  "cssProperties": [
-    "--c-font-family"
-  ],
+  "cssProperties": [],
   "defaultable": [],
   "events": {},
   "methods": {},

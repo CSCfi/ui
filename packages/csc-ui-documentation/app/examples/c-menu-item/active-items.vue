@@ -42,7 +42,7 @@
 
       <c-menu-item
         v-for="key in sortKeys"
-        :key="key"
+        :key
         :active="sortBy === key"
         :active-icon="mdiRadioboxMarked"
         :value="key"
@@ -54,8 +54,6 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
-
 import {
   mdiChevronDown,
   mdiMonitor,
@@ -64,6 +62,7 @@ import {
   mdiWeatherNight,
   mdiWeatherSunny,
 } from '@mdi/js';
+import { ref } from 'vue';
 
 const theme = ref('dark');
 

@@ -28,10 +28,12 @@ export interface CTagsProps {
    * @freeform
    */
   label?: string;
+
   /**
    * Set as required — shows the required marker on the label
    */
   required?: boolean;
+
   /**
    * Size of the tags
    *

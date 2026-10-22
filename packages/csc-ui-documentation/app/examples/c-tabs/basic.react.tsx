@@ -1,17 +1,17 @@
+import { CBadge, CTab, CTabItem, CTabItems, CTabs } from '@cscfi/csc-ui-react';
 // @ts-nocheck — documentation code sample; shown as text, never compiled here
 import { useState } from 'react';
-import { CBadge, CTab, CTabItem, CTabItems, CTabs } from '@cscfi/csc-ui-react';
 
 export const Basic = () => {
-  const [tab, setTab] = useState<'summary' | 'members' | 'settings'>('summary');
+  const [tab, setTab] = useState<'members' | 'settings' | 'summary'>('summary');
 
   return (
     <div>
       <CTabs
-        value={tab}
         onChangeValue={(event) =>
-          setTab(event.detail as 'summary' | 'members' | 'settings')
+          setTab(event.detail as 'members' | 'settings' | 'summary')
         }
+        value={tab}
       >
         <CTab value="summary">Summary</CTab>
         <CTab value="members">

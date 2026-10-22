@@ -2,7 +2,7 @@
 
 <template>
   <div>
-    <c-login-card :src="artwork" overlay overlay-blend-mode="multiply">
+    <c-login-card :src="artwork" overlay-blend-mode="multiply" overlay>
       <c-login-card-title>Sign in to My CSC</c-login-card-title>
 
       <c-login-card-content>

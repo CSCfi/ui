@@ -14,8 +14,8 @@
       v-model="period"
       label="Reporting period"
       type="month"
-      range
       clearable
+      range
     />
 
     <p>Value: {{ period ? `${period.start} – ${period.end}` : 'null' }}</p>
@@ -23,11 +23,11 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
-
 import type { CDatePickerRange } from '@cscfi/csc-ui';
 
-const billing = ref<string | null>(null);
+import { ref } from 'vue';
+
+const billing = ref<null | string>(null);
 
 const period = ref<CDatePickerRange | null>(null);
 </script>

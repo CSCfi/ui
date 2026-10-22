@@ -29,7 +29,7 @@ const tabItems = tv({
   slots: {
     // `position: relative` is load-bearing: it makes this div the offsetParent
     // of the slotted c-tab-item children (see the script's slide math).
-    root: 'flex items-start relative h-full',
+    root: 'relative flex h-full items-start',
   },
 });
 
@@ -42,6 +42,7 @@ interface CTabItemsProps {
    * @seeded from csc-ui — verify
    */
   disableAnimation?: boolean;
+
   /**
    * Currently active tab
    *

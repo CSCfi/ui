@@ -1,9 +1,9 @@
 /**
  * The control height (CONTEXT.md, ADR-0055): the `default` field box, the
  * `default` c-button, the c-button-group frame and a c-tab share one resting
- * height — the `--spacing-control` theme value — so they line up in a form
- * row and a toolbar. The button scale sits around it: `small` below,
- * `large` at the toolbar height above.
+ * height — the `--_c-control-height` value behind `h-control` — so they
+ * line up in a form row and a toolbar. The button scale sits around it:
+ * `small` below, `large` at the toolbar height above.
  */
 import { describe, expect, it } from 'vitest';
 
@@ -11,8 +11,8 @@ import { mount, settle, settled } from './harness';
 
 const px = (value: string): number => Number.parseFloat(value);
 
-// Theme values are emitted under `:root, :host` in each component's adopted
-// sheet, so they resolve on a component host — not on the document.
+// The shared `:host` rule declares the library values, so they resolve on a
+// component host — not on the document.
 const themeValue = (host: Element, name: string): number =>
   px(getComputedStyle(host).getPropertyValue(name));
 
@@ -20,7 +20,7 @@ describe('control height', () => {
   it('is one shared 52px value', async () => {
     const m = await mount('c-button', { html: 'Save' });
 
-    expect(themeValue(m.host, '--spacing-control')).toBe(52);
+    expect(themeValue(m.host, '--_c-control-height')).toBe(52);
     m.unmount();
   });
 
@@ -43,7 +43,7 @@ describe('control height', () => {
 
     await settle();
 
-    const expected = themeValue(button.host, '--spacing-control');
+    const expected = themeValue(button.host, '--_c-control-height');
 
     expect(
       field.deep('c-input', '.c-input__slot').getBoundingClientRect().height,
@@ -77,9 +77,9 @@ describe('control height', () => {
 
     await settle();
 
-    const control = themeValue(large.host, '--spacing-control');
+    const control = themeValue(large.host, '--_c-control-height');
 
-    const toolbar = themeValue(large.host, '--spacing-toolbar');
+    const toolbar = themeValue(large.host, '--_c-toolbar-height');
 
     expect(small.part('root').getBoundingClientRect().height).toBeLessThan(
       control,
@@ -95,7 +95,7 @@ describe('control height', () => {
   // not follow the box the way the button's flex-centred glyph does. Centring
   // holds only while `top = (box - 24) / 2 + 2` — the 24px is text-base's own
   // line box, the +2 cancels the `translateY(-2px)` optical nudge in the
-  // escape-hatch rule. Retuning `--spacing-control` without retuning `top`
+  // escape-hatch rule. Retuning `--_c-control-height` without retuning `top`
   // de-centres the label, which is how it drifted 2px high at 52px.
   it('rests the floating label centred in the field box, at both sizes', async () => {
     for (const [size, height] of [
@@ -116,9 +116,7 @@ describe('control height', () => {
 
       const labelBox = label.getBoundingClientRect();
 
-      const slot = m
-        .deep('c-input', '.c-input__slot')
-        .getBoundingClientRect();
+      const slot = m.deep('c-input', '.c-input__slot').getBoundingClientRect();
 
       expect(slot.height, `${size} box`).toBe(height);
       // Empty and unfocused: the label rests inside the box, not lifted onto

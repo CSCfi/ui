@@ -7,7 +7,7 @@ export const States = () => (
     <CCheckbox checked hideDetails>
       Checked
     </CCheckbox>
-    <CCheckbox indeterminate hideDetails>
+    <CCheckbox hideDetails indeterminate>
       Indeterminate
     </CCheckbox>
     <CCheckbox disabled hideDetails>

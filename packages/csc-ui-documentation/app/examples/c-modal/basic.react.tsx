@@ -1,5 +1,3 @@
-// @ts-nocheck — documentation code sample; shown as text, never compiled here
-import { useState } from 'react';
 import {
   CButton,
   CCard,
@@ -8,6 +6,8 @@ import {
   CCardTitle,
   CModal,
 } from '@cscfi/csc-ui-react';
+// @ts-nocheck — documentation code sample; shown as text, never compiled here
+import { useState } from 'react';
 
 export const Basic = () => {
   const [open, setOpen] = useState(false);
@@ -16,7 +16,7 @@ export const Basic = () => {
     <div className="example-row">
       <CButton onClick={() => setOpen(true)}>Open modal</CButton>
 
-      <CModal value={open} dismissable onChangeValue={() => setOpen(false)}>
+      <CModal dismissable onChangeValue={() => setOpen(false)} value={open}>
         <CCard>
           <CCardTitle>Delete project</CCardTitle>
 
@@ -25,7 +25,7 @@ export const Basic = () => {
           </CCardContent>
 
           <CCardActions justify="end">
-            <CButton text onClick={() => setOpen(false)}>
+            <CButton onClick={() => setOpen(false)} text>
               Cancel
             </CButton>
             <CButton danger onClick={() => setOpen(false)}>

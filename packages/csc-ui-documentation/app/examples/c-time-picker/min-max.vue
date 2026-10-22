@@ -15,5 +15,5 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 
-const time = ref<string | null>(null);
+const time = ref<null | string>(null);
 </script>

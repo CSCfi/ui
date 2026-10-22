@@ -7,7 +7,7 @@ const usageFiles = import.meta.glob('#library-docs/*/usage.md', {
   query: '?raw',
 }) as Record<string, string>;
 
-export const useUsageDoc = (tag: string): string | null => {
+export const useUsageDoc = (tag: string): null | string => {
   const entry = Object.entries(usageFiles).find(([path]) =>
     path.endsWith(`/${tag}/usage.md`),
   );
@@ -22,7 +22,7 @@ export const useUsageDoc = (tag: string): string | null => {
  * repeat it. Returns null when nothing but that paragraph exists (a freshly
  * seeded usage doc), so the Usage section can be omitted entirely.
  */
-export const usageWithoutIntro = (markdown: string | null): string | null => {
+export const usageWithoutIntro = (markdown: null | string): null | string => {
   if (!markdown) return null;
 
   const lines = markdown.split('\n');

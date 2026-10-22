@@ -1,6 +1,6 @@
+import { CDatePicker } from '@cscfi/csc-ui-react';
 // @ts-nocheck — documentation code sample; shown as text, never compiled here
 import { useState } from 'react';
-import { CDatePicker } from '@cscfi/csc-ui-react';
 
 // A simulated booking API: the fully booked days of one month.
 const fetchBooked = (month: string): Promise<string[]> =>
@@ -15,7 +15,8 @@ const fetchBooked = (month: string): Promise<string[]> =>
   );
 
 export const LazyMonth = () => {
-  const [date, setDate] = useState<string | null>(null);
+  const [date, setDate] = useState<null | string>(null);
+
   const [booked, setBooked] = useState<string[]>([]);
 
   return (
@@ -23,14 +24,14 @@ export const LazyMonth = () => {
       {/* `change:month` names the displayed month — on open too — so the
           booked days load one month at a time. */}
       <CDatePicker
-        value={date}
         disabledDates={booked}
         hint="Booked days load as you browse"
         label="Booking"
-        onChange={(event) => setDate(event.detail as string | null)}
+        onChange={(event) => setDate(event.detail as null | string)}
         onChangeMonth={async (event) =>
           setBooked(await fetchBooked(event.detail as string))
         }
+        value={date}
       />
 
       <p>Value: {date ?? 'null'}</p>

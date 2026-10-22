@@ -5,7 +5,7 @@
     class="sticky top-24 max-h-[calc(100dvh-7rem)] w-56 shrink-0 overflow-y-auto overscroll-contain text-[0.8125rem] max-lg:hidden"
   >
     <p
-      class="mb-2 text-[0.6875rem] font-bold uppercase tracking-wider text-primary"
+      class="mb-2 text-[0.6875rem] font-bold tracking-wider text-primary uppercase"
     >
       On this page
     </p>
@@ -15,9 +15,9 @@
            the section currently under the sticky toolbar. -->
       <span
         v-show="marker.visible"
+        :style="{ top: `${marker.top}px`, height: `${marker.height}px` }"
         aria-hidden="true"
         class="absolute -left-px w-0.5 bg-primary transition-[top,height] duration-200"
-        :style="{ top: `${marker.top}px`, height: `${marker.height}px` }"
       />
 
       <a
@@ -86,6 +86,7 @@ const scrollRailToLink = (link: HTMLElement) => {
 
   // The rail (sticky → positioned) is the nav's offsetParent.
   const top = navRef.value.offsetTop + link.offsetTop;
+
   const bottom = top + link.offsetHeight;
 
   if (top < rail.scrollTop + margin) {
