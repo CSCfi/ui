@@ -46,7 +46,8 @@ Migration advice is per flavor, because Vue templates can never hear `update:val
   snippets); the migration guide offers MyCSC the same rule as a snippet. No new event is added.
 
 ### D4 — Non-value events
-- c-side-navigation-item `itemChange` → `select` (detail = originating event), like c-menu.
+- c-side-navigation-item `itemChange` → `select` with detail `{ value }` and a new `value` prop, like c-menu
+  (D17 #8); c-sub-navigation-item gains the same `select` here (D17 #27).
 - Child→parent wiring (`tabChange`, `tabFocus`, `contentChange`, `selectOption`, `dropdownStateChange`) →
   lowercase **internal events**: an `@internal` event-map tag the analyzer honours, so they leave the manifest,
   the React wrapper and the contract.
@@ -87,11 +88,13 @@ pre mode (rc) any breaking diff fails. Hooks into `changeset-check.yml`.
 `valid` (default true, read as `!props.valid` at `c-input/CInput.vue:444`, so the attribute `valid="false"` is a
 truthy string and shows no error) → `invalid` (default false) on all 14 tags (c-autocomplete, c-checkbox,
 c-color-picker, c-date-picker, c-file-upload, c-input, c-message, c-number-field, c-otp-input, c-radio-group,
-c-select, c-text-field, c-time-picker, c-tree-select). c-loader `visible` → `hidden` (drop `show()`/`hide()`).
-c-side-navigation-item `focusable` → internal wiring. `docs:manifest:strict` fails any boolean with a `true`
+c-select, c-text-field, c-time-picker, c-tree-select). c-loader `visible` → `hide` (its 3.x name; drop `show()`/
+`hide()`). `focusable` → internal wiring on both side-navigation items. `docs:manifest:strict` fails any boolean with a `true`
 built-in default. Migration-guide entry: `:valid="x"` → `:invalid="!x"`.
 
 ### D12 — All break-now audit findings land before rc.1
+> Amended by **D17**: where `_plan/csc-ui-4-api-audit/decisions.md` disagrees with this section, it wins.
+
 Accepted in full (details + file:line in the three agent reports):
 - **Internal surface:** a tag-level `@internal` (c-dropdown, c-input → also drops `CInput` from the React package;
   replaces the three hand-kept internal-tag lists — docs, example-parity script, React generator — with one
@@ -115,46 +118,48 @@ Accepted in full (details + file:line in the three agent reports):
   `content-delay` in ms.
 - **ADR-0006:** remove c-side-navigation `styles` and c-link `weight`.
 
-### D13 — Consider tier: the additive-path rule
-**Before rc.1** (removals of unused/undeclared things, renames of alpha-era names, part / texts-key / type renames,
-type narrowing, built-in default changes, behaviour bugs, and the low-use 3.x names named in the rule):
-- Tokens: remove `--c-ring`/`ring` (unused), Stencil-era `--c-text-*` / `--c-transparent` (grep MyCSC first).
-  c-icon: drop the undeclared `--c-icon-color` hook (ADR-0006; recolour via `::part`).
-- c-modal keeps `dismissable` — the glossary's **Dismissable** (light-dismiss gestures) is a different concept from
-  a close button (`closeable`, D12's c-alert rename); only the stray "dismissible" in the file-upload entry changes.
-- `mobile` / `mobile-breakpoint` on c-side-navigation / c-tabs renamed to state names; correct the glossary's
-  grandfathered list (c-steps has none; side-nav `mobile` is consumer-set, not container-measured).
-- c-accordion-item `collapsable`/`outlined`/`expanded` and c-list-item-title `active` → internal wiring.
-- c-data-table (alpha-era): `change:selected` detail = the `selected` value with a named type; `filter` (string)
-  renamed so it no longer clashes with the predicate `filter` of c-autocomplete/c-tree-select.
-- c-tooltip `content` slot → default slot (like c-popover). c-menu-item `icon` path prop → `icon` slot; `active`
-  becomes two-state + an explicit checkable/type switch.
-- Part renames: c-login-button `title`, c-menu-item `submenu`, c-side-navigation-title `label` (holds a heading),
-  c-time-picker `end-tab`, list-row `item` vs `option` unified across select/autocomplete/tree-select/pickers.
-- Texts keys: c-tree-select `select` → `selectBranch`, `step`; c-number-field `increase`/`decrease` vs parts;
-  c-file-upload `waiting` → `queued` and `dismiss` → `close` (**Closeable**).
-- Types: `CPlacement` renamed per the shared-type rule; package-level `Family`/`ThemeMode`/`AppDefaults`… get the
-  `C` prefix and the entry snapshot starts guarding exported type names; export the accordion value type.
-- Narrowing / defaults: `number | string` → `number` on c-menu/c-popover/c-tooltip/c-steps numeric props; c-menu
-  `select` detail typed; c-slider `unit` built-in default `'%'` → `''`.
-- Bugs: c-option `selected` seeding (c-select emits value events on seed — must not); c-pagination leaks its inner
-  menu's `select`; c-progress-bar `label` becomes the accessible name.
+### D13 — Consider tier: the additive-path rule (verified, see D17)
+Rule: fix before rc.1 whatever has no clean additive path or was named only in the alphas; defer to 4.x (add the
+new name, deprecate the old, remove in 5.0) the 3.x names in wide use. Numbers refer to `decisions.md`.
 
-**4.x: add + deprecate, remove in 5.0** (3.x-era names in wide use): c-button/c-icon-button `outlined`/`ghost`/
-`text` → `variant`; c-checkbox/c-switch `checked` → `value`; `hide-details` → `hide-message` (+ c-pagination
-`hide-range`/`simple`); `host-id`/`element-id`/`input-id` unified; c-pagination `currentPage`/`itemsPerPage` →
-`page`/`pageSize`; `width` → stroke naming on spinner/loader/progress-circle; `ripple`/`no-ripple` polarity;
-c-card `fullscreen`; c-status vs c-alert neutral look; c-toasts `vertical`/`horizontal`/`absolute` → placement;
-`automatic-capitalize` → `autocapitalize`; c-otp-input `has-autofocus`/`element-id`; c-slider `labels`;
-c-side-navigation-item `active` (current vs expanded).
-Needs a deprecation mechanism before the first 4.x deprecation: `@deprecated` → manifest `deprecated` → IDE data +
-React JSDoc (+ a dev-mode warning that specs consume via `consoleSpy.expect`).
+**Before rc.1:**
+- Tokens: remove `--c-ring`/`ring` (unused; also CONTEXT.md, ADR-0010, `customization.ts`, `audit-contrast.mjs`)
+  and the Stencil-era `--c-text-*` / `--c-transparent` (move CPagination / CNavigationButton to `on-surface-muted`,
+  delete `src/tailwind.css:144`, guide line). `--c-icon-color` → private `--_c-icon-color` (#16).
+- Internal wiring: c-accordion-item `collapsable`/`outlined`, c-list-item-title `active`, c-button `no-ripple`;
+  c-accordion-item `expanded` only after a `:state(expanded)` replaces it in the custom-style canon (#18).
+- c-data-table: `change:selected` detail `string[]` + read-only `selectedRows` (#19); `filter` → `query` (#20).
+- c-menu-item: `icon` slot (drop `active-icon`); `type: 'command' | 'radio'` + `checked` replace `active` (#22).
+- Parts: c-login-button `title`, c-menu-item `submenu`, c-side-navigation-title `label` (holds a heading),
+  c-time-picker `end-tab`, list rows → `option` everywhere (#23), color-picker `color-chip` → `value-color` (#11).
+- Texts keys: c-tree-select `select` → `selectBranch`, `step` → `levelCounter` (#24); c-number-field
+  `increase`/`decrease` to match its parts; c-file-upload `waiting` → `queued`, `dismiss` → `close`.
+- Types: `CPlacement` → `CMenuPosition` / `CPopoverPosition` / `CTooltipPosition` (#25); package-level
+  `Family`/`ThemeMode`/`AppDefaults`… get the `C` prefix and the entry snapshot guards exported type names; export
+  the accordion value type; stop exporting the 30 `C*Props` types (#27).
+- Narrowing / defaults: `number | string` → `number` on c-menu/c-popover/c-tooltip/c-steps (keep the runtime
+  `Number()` coercion); c-menu `select` detail typed; c-slider `unit` default `'%'` → `''` (guide: add `unit="%"`);
+  c-progress-circle `width` → `thickness`; c-alert's neutral member spelled like c-status's.
+- Behaviour: c-option `selected` seeds silently, once, while the value is empty (#26); c-pagination stops leaking
+  its inner menu's `select`; c-progress-bar `label` becomes the accessible name; c-checkbox/c-switch `checked` is
+  the boolean view of `value` (#34); c-navigation-button gets an accessible name via `texts.label`; c-tabs
+  overflow arrows get names; `addToast` returns its id synchronously; c-sub-navigation-item drops ", Current page".
+- Kept (items dropped after verification): c-modal `dismissable` (glossary **Dismissable**); `mobile` /
+  `mobile-breakpoint` / `updateMobileLabels()` (grandfathered; glossary list corrected); c-tooltip `content` slot
+  (ADR-0033); c-pagination / c-progress-bar `hide-details` / `hide-range` / `simple` ("`hide-<part>`" rule).
 
-**4.x additive only:** `texts` for the fixed English strings (side-nav, sub-nav, toast, tabs, tab-buttons, steps,
-nav button, alert, card); c-sub-navigation-item `select` (cheap to do with D4); text-family `label`/`message`/
-`root`/`input` parts; c-text-field `min`/`max` accepting date strings; c-otp-input `disabled` + `texts`;
-side-nav `autoheight` class → prop; `C*Props` exports; `addToast` returns the id; c-tabs arrow parts; c-popover
-`heading` slot.
+**4.x: add + deprecate, remove in 5.0:** c-button/c-icon-button `outlined`/`ghost`/`text` → `appearance` (#29);
+field `hide-details` → `hide-message` (#30); c-spinner/c-loader `width` → `thickness` (#31); c-toasts
+`vertical`/`horizontal`/`absolute` → `position` (#32); c-side-navigation-item `active` → `current` + `expanded`
+(#33); c-card `fullscreen` → `show-fullscreen`; c-slider `labels` → `tick-labels`. Each new prop has no built-in
+default and wins over the old one when set.
+Deprecation mechanism (#36): `@deprecated` → manifest `deprecated` → IDE data + React JSDoc. No runtime warning:
+there is no dev build, and the example smoke fails on any `console.warn`.
+
+**4.x additive only:** `texts` for the fixed English strings (side-nav, toast, tabs, tab-buttons, steps, alert,
+card); text-family `label`/`message`/`root`/`input` parts; c-text-field `min`/`max` accepting date strings;
+c-otp-input `disabled` + `texts`; side-nav `autoheight` class → a prop (#35); c-tabs arrow parts; c-popover
+`heading` slot. Deferred design: c-list-item `ripple` (it also controls focusability).
 
 ### D14 — Accessibility gate: axe in the example smoke
 `packages/csc-ui-documentation/tests/examples.spec.ts` runs axe-core (WCAG 2.1 AA) on every canon in light and
@@ -175,15 +180,29 @@ c-pagination, c-steps, c-navigation-button, …). Supported-browsers statement o
 3.x docs: build once from `legacy-main`, host as a static snapshot (e.g. `design-system.csc.fi/v3/`) with an
 "unsupported — see the migration guide" banner; linked from the migration guide and footer.
 
+### D17 — Verification corrections (2026-10-23)
+A read-only check of all 124 D11–D13 items against source, glossary, ADRs, usage.md, the migration guide and Stencil
+3.x flagged 55 (`_plan/csc-ui-4-api-audit/verify-*.md`). Decisions, with every resolution, are in
+`_plan/csc-ui-4-api-audit/decisions.md`; the cross-cutting ones:
+- **R1** — restore the 3.x / native attribute names the alphas replaced: `autofocus`, `autocapitalize`,
+  `aria-label` (forwarded; drop `aria-label-internal`), c-loader `hide`. Delete `host-id` / `element-id`; `id` stays
+  on the host. Fix c-otp-input overwriting the host `id`; give c-otp-input its first spec.
+- **R2** — clean break, no aliases, and a migration-guide completeness guard over committed 3.x API data (a diff
+  found 22 removed attributes and 2 removed tags the guide never mentions). ADR-0027 amendment.
+- **R3** — c-pagination's value becomes `{ page, pageSize, … }` before rc.1, emitted as a new object.
+
 ## Work, in order
 
 Every PR to `main` carries its own changeset (major for breaking items while in pre mode → next alpha); MyCSC can
 start migrating on the first alpha that carries D2–D4.
 
 0. **Infrastructure first** (so later work is checked as it lands)
-   - Analyzer: `@internal` for tags, props, events, slots, methods (`packages/csc-ui/scripts/analyzer/`; reuse the
+   - **Done (67a3e096)** — Analyzer: `@internal` for tags, props, events, slots, methods (`packages/csc-ui/scripts/analyzer/`; reuse the
      `_`-prefix handling at `script-api.mjs:284`); one generated internal-tag list consumed by docs, the example-parity
-     script and `packages/csc-ui-react/scripts/generate.mjs`. Strict rule: no boolean with a `true` built-in default.
+     script and `packages/csc-ui-react/scripts/generate.mjs`. The strict no-default-`true`-boolean rule lands
+     with D11 in phase 2 (it would fail the build until `valid`/`visible`/`focusable` change).
+   - Docs guard (R2): commit the 3.x API data; fail when a 3.x tag/attribute missing from the 4.x manifest has no
+     migration-guide entry.
    - Lint: `@update:*` on a `c-*` element in a Vue template is an error (D3) — an ESLint `vue/*` rule (ADR-0068 keeps
      template rules in ESLint) plus the example-parity script for usage.md snippets.
    - API-snapshot breaking-change guard (D10), armed by pre tag: `alpha` → needs a major changeset, `rc` → fail.
@@ -193,7 +212,7 @@ start migrating on the first alpha that carries D2–D4.
 1. **Events** — D2–D4: delete twin dispatch (shared emit helpers / `useHostEmit`), add/align `change`, internal
    wiring events, side-nav `select`; regenerate the React wrapper; update docs canons (all four flavors) and the
    docs site's own `@item-change` bindings (`app/app.vue`).
-2. **API fixes** — D11, D12, D13 "before rc.1", in themed PRs (internal surface → bugs → renames → tokens/types).
+2. **API fixes** — D11, D12, D13 "before rc.1", D17, in themed PRs (internal surface → bugs → renames → tokens/types).
    Each rename also updates canons in all four flavors, usage.md and the migration guide.
 3. **Docs** — D16 (migration guide can grow with each PR in 1–2; the rest here).
 4. **RC** — switch pre tag `alpha` → `rc` (verify the changesets CLI sequence: `pre exit` + `pre enter rc` before a
@@ -211,7 +230,8 @@ start migrating on the first alpha that carries D2–D4.
   (add + deprecate in a minor, remove in a major).
 - **ADR-0075** Events are all-lowercase; value events follow native timing — D2–D4; supersedes ADR-0021, amends
   ADR-0017 (grandfather clause gone), introduces internal events.
-- **ADR-0076** No boolean prop defaults to true — D11 (`invalid`, `hidden`).
+- **ADR-0076** No boolean prop defaults to true — D11 (`invalid`, `hide`).
+- **ADR-0027 amendment** What an upgrade can rely on — D17 R1/R2 (written 2026-10-23).
 - **ADR-0077** Supported browsers; behaviour specs on three engines, visuals on Chromium — D6; amends ADR-0049
   (also records D14 axe and D15 flavor smokes as part of the verification layer).
 - Amend ADR-0027/0028: RC phase, 3.x frozen with a `v3` dist-tag, curated 4.0.0 changelog (D7–D9).
@@ -229,6 +249,8 @@ start migrating on the first alpha that carries D2–D4.
 
 - CI green on Chromium, Firefox and WebKit; the `chromiumOnly` guard lists every skip with its reason.
 - API-snapshot guard: a fixture PR that removes a prop fails without a major changeset (alpha) and always fails (rc).
+- The migration-guide guard fails when a 3.x attribute missing from the 4.x manifest has no entry (delete one
+  entry to see it fail), and passes on the finished guide.
 - The `@update:*` lint fails a fixture `<c-text-field @update:value="…">` in a Vue template; a Vue canon using
   `@input="fn($event.target.value)"` receives every keystroke's value in the example smoke.
 - `docs:manifest:strict` fails a fixture prop `boolean = true`; manifest + React wrapper contain no camelCase event,

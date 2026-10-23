@@ -50,7 +50,7 @@ The composed child a consumer wraps around the label text inside a `c-option`, s
 _Avoid_: Option value (it is the label, not the `value`; the tag name is historical), wrapper, title
 
 **Query**:
-The transient text currently typed into the **search input** — the narrowing criterion, distinct from the committed selected value. It resets to empty whenever the panel opens, and every change (the open-reset included) is announced via the `change:query` event; in **external** mode that event is the consumer's signal to refresh the options.
+The text narrowing a list — typed into the **search input** of `c-autocomplete` or `c-tree-select`, or set as `c-data-table`'s `query` — the narrowing criterion, distinct from the committed selected value. In the fields it resets to empty whenever the panel opens, and every change (the open-reset included) is announced via the `change:query` event; in **external** mode that event is the consumer's signal to refresh the options.
 _Avoid_: Search term, filter string (one word for this concept — _query_), value (the query is never the selected value)
 
 **Match marking**:
@@ -318,7 +318,7 @@ The click-opened, **non-modal** interactive surface component anchored to its **
 _Avoid_: Flyout, popup, overlay (as a name for this component)
 
 **Toast** (`c-toast`):
-A passive, transient notification — an operation result, background progress — that the `c-toasts` container shows against one edge of the viewport, painting the **inverted surface** (ADR-0032). It closes itself when its timer runs out unless it is *persistent*, and the timer waits while a pointer hovers or presses it. The user closes it with its dismiss button or a **swipe dismiss**; a *custom* toast (slotted content) and an *indeterminate* one (ongoing work) have no dismiss button. When a toast arrives or leaves, the toasts around it glide into their new places (ADR-0073).
+A passive, transient notification — an operation result, background progress — that the `c-toasts` container shows against one edge of the viewport, painting the **inverted surface** (ADR-0032). It closes itself when its timer runs out unless it is *persistent*, and the timer waits while a pointer hovers or presses it. The user closes it with its close button or a **swipe dismiss**; a *custom* toast (slotted content) and an *indeterminate* one (ongoing work) have no close button. When a toast arrives or leaves, the toasts around it glide into their new places (ADR-0073).
 _Avoid_: Notification (the general idea), snackbar (Material's name), alert (that is `c-alert`, the in-page message)
 
 **Light dismiss**:
@@ -326,7 +326,7 @@ Closing a transient surface — a **transient list panel**, `c-popover`, a **ful
 _Avoid_: Click-outside / outside click (the trigger is the press-release pair, and it works for touch), auto-close, blur-close
 
 **Swipe dismiss**:
-Closing a **toast** by dragging it sideways, with any pointer, and letting go past a third of its width or with a quick flick; anything less springs it back (ADR-0073). It is a second path to the dismiss button, never the only one, so only a toast with a dismiss button takes it. A vertical drag stays with the page.
+Closing a **toast** by dragging it sideways, with any pointer, and letting go past a third of its width or with a quick flick; anything less springs it back (ADR-0073). It is a second path to the close button, never the only one, so only a toast with a close button takes it. A vertical drag stays with the page.
 _Avoid_: Dismissable (the modal property), drag to dismiss, flick, light dismiss (a press and release outside a surface)
 
 **Popover chain**:
@@ -356,8 +356,8 @@ The one resting height every operable row-level control shares so they line up i
 _Avoid_: Field height (only one of the four users), input height, row height (a table's)
 
 **Narrow viewport**:
-The state of the *window* being narrower than the library's single shared threshold — the one condition under which a value-selection field opens a **fullscreen panel**. Measured on the viewport, never on a component's own box: the container-measured `mobile` / `mobileBreakpoint` switches of `c-table`, `c-steps`, `c-login-card` and `c-side-navigation` are compact *component* layouts, a different concept, and keep their grandfathered names.
-_Avoid_: Mobile (names the device, not the state; grandfathered only as those prop names), phone, small screen, breakpoint (the threshold is one value, not a scale of them)
+The state of the *window* being narrower than the library's single shared threshold — the one condition under which a value-selection field opens a **fullscreen panel**. Measured on the viewport, never on a component's own box: the `mobile-breakpoint` widths of `c-table`, `c-tabs` and `c-login-card`, `c-side-navigation`'s consumer-set `mobile` switch and `c-table`'s `updateMobileLabels()` concern compact *component* layouts, a different concept, and keep their grandfathered names.
+_Avoid_: Mobile (names the device, not the state; grandfathered only as those prop and method names), phone, small screen, breakpoint (the threshold is one value, not a scale of them)
 
 **Stacking band**:
 A library-owned paint-order range that overlay surfaces are assigned to: page content sits below the **modal stack**'s band, toasts sit in a band above it, and the **top layer** sits above everything. Bands are internal — consumers do not interleave with them. Distinct from the **surface ladder**, which is the *colour* elevation model: a modal paints `surface-overlay` regardless of which band it occupies.
@@ -380,7 +380,7 @@ A modal property governing *both* light-dismiss gestures — backdrop click **an
 _Avoid_: persistent (the inverse framing; canonical axis is _dismissable_), closable
 
 **Closeable**:
-Showing a close button of its own that removes or hides the surface and fires `close`: a `c-tag`, a `c-alert`, a `c-toast`, a **rejected file** row. A different concept from **dismissable** — a modal's light-dismiss gestures — so a non-dismissable modal can still hold a close button.
+Showing a close button of its own that removes or hides the surface: a `c-tag`, a `c-alert` and a `c-toast` fire `close` when it is pressed; a **rejected file** row just leaves the list. A different concept from **dismissable** — a modal's light-dismiss gestures — so a non-dismissable modal can still hold a close button.
 _Avoid_: Dismissible (the alert's former prop), removable, closable (one spelling: _closeable_)
 
 ### Progress & loading

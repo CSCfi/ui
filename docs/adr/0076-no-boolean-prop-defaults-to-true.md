@@ -21,12 +21,16 @@ upgraded templates broke silently. `c-loader`'s `visible` and
 
 - Every boolean prop defaults to `false` and is named for the non-default
   state: `valid` becomes `invalid` (matching `aria-invalid`), `c-loader`'s
-  `visible` becomes `hidden` (its `show()`/`hide()` methods go), and `focusable`
-  becomes internal wiring.
+  `visible` becomes `hide` (its 3.x name; its `show()`/`hide()` methods go), and
+  `focusable` becomes internal wiring on both side-navigation items.
 - The strict analyzer fails any boolean prop whose built-in default is `true`.
 
 ## Considered options
 
+- **`hidden` for c-loader.** Rejected: it is the HTML global attribute
+  (`boolean | "until-found"` on `HTMLElement`), so the prop would shadow it and
+  the React wrapper would need a type-collision entry; 3.x already called it
+  `hide`.
 - **Keep `valid` and coerce `"false"`** through `coerceBoolean`, as Stencil
   did. No migration, but removing the attribute still could not turn validity
   off, and the pattern would stay in the frozen API.
