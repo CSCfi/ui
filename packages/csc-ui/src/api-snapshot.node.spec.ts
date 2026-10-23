@@ -30,7 +30,7 @@ interface Declaration {
 }
 
 interface Manifest {
-  csc: { types: Named[] };
+  csc: { internalTags?: string[]; types: Named[] };
   modules: Array<{ declarations?: Declaration[] }>;
 }
 
@@ -64,6 +64,10 @@ execFileSync(process.execPath, ['scripts/analyzer/index.mjs'], {
 const manifest = JSON.parse(
   readFileSync(join(packageRoot, 'dist/custom-elements.json'), 'utf8'),
 ) as Manifest;
+
+// Internal tags are named, never described (ADR-0075): no snapshot, since
+// their API may change in any release.
+const internalTags = manifest.csc.internalTags ?? [];
 
 const declarations = manifest.modules
   .flatMap((m) => m.declarations ?? [])
@@ -141,7 +145,7 @@ it('describes every component directory and leaves no orphan snapshot', () => {
 
   const tags = new Set(declarations.map((d) => d.tagName));
 
-  expect([...tags].sort()).toEqual(directories.sort());
+  expect([...tags, ...internalTags].sort()).toEqual(directories.sort());
 
   // A snapshot whose tag no longer exists would silently outlive its component.
   const orphans = directories.filter(
@@ -188,7 +192,9 @@ it('agrees with the generated allow-lists and the conformance exceptions', () =>
       ]),
     ),
   );
-  expect(noRoot).toEqual([...NO_ROOT_PART].sort());
+  expect(noRoot).toEqual(
+    NO_ROOT_PART.filter((tag) => !internalTags.includes(tag)).sort(),
+  );
 });
 
 it('matches the entry snapshot of runtime exports and public types', async () => {
@@ -208,7 +214,10 @@ it('matches the entry snapshot of runtime exports and public types', async () =>
     }
   }
 
+  // The internal-tag list is not public API, but a tag moving in or out of it
+  // changes what is — so the move shows up in this reviewed snapshot.
   const entry = {
+    internalTags: [...internalTags].sort(),
     runtimeExports: [...runtimeExports].sort(),
     types: names(manifest.csc.types),
   };

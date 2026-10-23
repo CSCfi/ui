@@ -96,6 +96,8 @@
 
 <script setup lang="ts">
 /**
+ * @internal the field shell the form fields compose in their shadow roots; consumers never author it
+ *
  * @slot pre - Leading content (e.g. an icon) inside the field, before the input
  * @slot default - The native `<input>` / `<textarea>` element the field wraps
  * @slot post - Trailing content (e.g. an icon or button) inside the field, after the input

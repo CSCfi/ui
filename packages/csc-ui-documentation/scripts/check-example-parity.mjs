@@ -19,7 +19,7 @@
  * useXxx() composable they call has to be explicitly imported.
  */
 
-import { readdirSync, readFileSync } from 'node:fs';
+import { existsSync, readdirSync, readFileSync } from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
@@ -27,6 +27,18 @@ const examplesDir = path.resolve(
   fileURLToPath(import.meta.url),
   '../../app/examples',
 );
+
+const manifestPath = path.resolve(
+  fileURLToPath(import.meta.url),
+  '../../../csc-ui/dist/custom-elements.json',
+);
+
+if (!existsSync(manifestPath)) {
+  console.error(
+    `custom-elements.json not found at ${manifestPath} — build @cscfi/csc-ui first`,
+  );
+  process.exit(1);
+}
 
 /** flavor id → required extension. Keep in sync with FLAVORS in useFlavor.ts. */
 const VARIANTS = new Map([
@@ -42,10 +54,12 @@ const VARIANTS = new Map([
 const OPTIONAL_EXTS = new Map([['typescript', new Set(['ts'])]]);
 
 /**
- * Internal-only elements (keep in sync with useManifest.ts): no docs page —
+ * Internal tags (ADR-0075), as the manifest names them: no docs page, so
  * their example dirs, if any, need no variants.
  */
-const INTERNAL_ONLY = new Set(['c-dropdown', 'c-input']);
+const INTERNAL_TAGS = new Set(
+  JSON.parse(readFileSync(manifestPath, 'utf8')).csc?.internalTags ?? [],
+);
 
 /** Vue APIs that Nuxt would auto-import; canon examples must import them. */
 const VUE_APIS = new Set([
@@ -105,7 +119,7 @@ for (const dir of readdirSync(examplesDir, { withFileTypes: true })) {
 
   const files = readdirSync(path.join(examplesDir, dir.name));
 
-  const requireVariants = !INTERNAL_ONLY.has(dir.name);
+  const requireVariants = !INTERNAL_TAGS.has(dir.name);
 
   const canons = files
     .filter((f) => f.endsWith('.vue') && f.split('.').length === 2)

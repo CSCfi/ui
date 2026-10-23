@@ -167,6 +167,8 @@
 
 <script setup lang="ts">
 /**
+ * @internal c-select instantiates it in its shadow root; consumers never author it
+ *
  * @slot default - The anchor c-input of the parent select / autocomplete, rendered inline while the menu is closed
  *
  * @csspart menu - The positioned dialog surface holding the field and the list

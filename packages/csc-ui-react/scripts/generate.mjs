@@ -34,12 +34,6 @@ if (!existsSync(manifestPath)) {
 }
 
 /**
- * Elements the consumer never authors (instantiated internally by a parent).
- * Keep in sync with INTERNAL_ONLY in the docs' useManifest.ts.
- */
-const INTERNAL_ONLY = new Set(['c-dropdown']);
-
-/**
  * Props that shadow an HTMLElement member `@lit/react` cannot reconcile, per
  * tag. `HTMLElement.autocorrect` is a NON-optional `boolean`; c-text-field's
  * `autocorrect` is an optional `boolean` (unset = browser per-input-type
@@ -53,9 +47,11 @@ const DOM_LIB_COLLISIONS = new Map([['c-text-field', ['autocorrect']]]);
 
 const manifest = JSON.parse(readFileSync(manifestPath, 'utf8'));
 
+// Internal tags (ADR-0075) are only named in `csc.internalTags`, never
+// declared, so they get no wrapper.
 const components = manifest.modules
   .flatMap((mod) => mod.declarations ?? [])
-  .filter((decl) => decl.customElement && !INTERNAL_ONLY.has(decl.tagName))
+  .filter((decl) => decl.customElement)
   .sort((a, b) => a.tagName.localeCompare(b.tagName));
 
 /** `update:value` → `onUpdateValue`, `changeValue` → `onChangeValue`. */

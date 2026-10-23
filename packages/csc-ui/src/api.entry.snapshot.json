@@ -1,4 +1,8 @@
 {
+  "internalTags": [
+    "c-dropdown",
+    "c-input"
+  ],
   "runtimeExports": [
     "DEFAULTABLE_PROPS",
     "DEFAULT_SEEDS",

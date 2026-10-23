@@ -11,7 +11,13 @@
  *                        `csc.defaultable` (the prop accepts an app-wide
  *                        default via `applyDefaults()`)
  *   - manifest-level:    `csc.types` (shared public types from src/types.ts,
- *                        which CEM has no first-class kind for)
+ *                        which CEM has no first-class kind for),
+ *                        `csc.internalTags` (registered tags only another
+ *                        component instantiates — named, never described)
+ *
+ * Anything marked internal (ADR-0075) is left out: an `@internal` component
+ * gets no declaration, an `@internal` prop or event no entry, and an
+ * `@internalslot` no slot. The manifest is the public API (ADR-0074).
  */
 
 const kebab = (name) =>
@@ -83,10 +89,25 @@ const declarationCsc = (c) => {
   return Object.keys(csc).length ? { csc } : {};
 };
 
+const manifestCsc = (components, sharedTypes) => {
+  const internalTags = components
+    .filter((c) => c.internal)
+    .map((c) => c.tagName);
+
+  const csc = {
+    ...(sharedTypes.length ? { types: sharedTypes } : {}),
+    ...(internalTags.length ? { internalTags } : {}),
+  };
+
+  return Object.keys(csc).length ? { csc } : {};
+};
+
+const isPublic = (entry) => !entry.internal;
+
 export const buildManifest = (components, sharedTypes) => ({
   schemaVersion: '1.0.0',
-  ...(sharedTypes.length ? { csc: { types: sharedTypes } } : {}),
-  modules: components.map((c) => ({
+  ...manifestCsc(components, sharedTypes),
+  modules: components.filter(isPublic).map((c) => ({
     declarations: [
       {
         customElement: true,
@@ -96,6 +117,7 @@ export const buildManifest = (components, sharedTypes) => ({
         ...(c.description ? { description: c.description } : {}),
         ...declarationCsc(c),
         attributes: c.props
+          .filter(isPublic)
           .filter((p) => isAttributeCompatible(p.typeResolved ?? p.type))
           .map(attribute),
         cssParts: docTagEntries(c.docTags, 'csspart'),
@@ -106,7 +128,7 @@ export const buildManifest = (components, sharedTypes) => ({
         // Host custom states (`:state()` selectors, ADR-0035). `cssStates` is
         // the CEM 2.x field name; harmless extra data under schema 1.0.0.
         cssStates: docTagEntries(c.docTags, 'cssstate'),
-        events: c.events.map((e) => {
+        events: c.events.filter(isPublic).map((e) => {
           // camelCase events dispatch a kebab-case twin at runtime
           // (useHostEmit) so Vue templates can bind them;
           // surface the twin in the docs.
@@ -126,7 +148,7 @@ export const buildManifest = (components, sharedTypes) => ({
           };
         }),
         members: [
-          ...c.props.map(field),
+          ...c.props.filter(isPublic).map(field),
           ...c.readonlyProperties.map((r) => ({
             kind: 'field',
             name: r.name,

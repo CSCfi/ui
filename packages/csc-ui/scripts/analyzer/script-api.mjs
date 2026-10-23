@@ -7,12 +7,13 @@
  *     `@slot` / `@csspart` / `@cssprop` tags
  *   - props: the type argument of `defineProps<T>()` (+ `withDefaults`
  *     defaults), with per-member JSDoc descriptions and the `@freeform` /
- *     `@defaultable <built-in>` member tags
+ *     `@defaultable <built-in>` / `@internal` member tags
  *   - methods: `defineExpose({ … })` entries, resolved to their top-level
  *     declarations for JSDoc and signature text; an exposed `computed<T>(…)`
  *     is a read-only property instead (`readonlyProperties`)
  *   - events: the JSDoc-annotated event-map interface (`<Component>Events`,
- *     the typed emit-helper convention). Components not yet migrated to
+ *     the typed emit-helper convention), each member possibly `@internal`.
+ *     Components not yet migrated to
  *     the helper simply have no event map — the manifest section stays empty
  *     until they are.
  */
@@ -51,6 +52,14 @@ const freeformTag = (member) => memberTag(member, 'freeform');
  * literal text (or `true` when missing, which lint rejects).
  */
 const defaultableTag = (member) => memberTag(member, 'defaultable');
+
+/**
+ * The `@internal` member tag: the prop or event exists only to wire this
+ * component to another (ADR-0075) — dispatched or accepted at runtime, but
+ * left out of the manifest, the tag map and the React wrapper, so it is not
+ * public API (ADR-0074).
+ */
+const internalTag = (member) => Boolean(memberTag(member, 'internal'));
 
 const jsDocDescription = (node) => {
   const docs = ts.getJSDocCommentsAndTags(node).filter(ts.isJSDoc);
@@ -121,6 +130,7 @@ const interfaceMembers = (
       defaultable,
       description: jsDocDescription(member),
       freeform: freeformTag(member),
+      internal: internalTag(member),
       name,
       optional: Boolean(member.questionToken),
       type: typeText(member.type, sf),
@@ -351,9 +361,10 @@ export const analyzeScript = (content, fileName, className, options = {}) => {
 
   const events = eventMap
     ? interfaceMembers(eventMap.decl, eventMap.sf).map(
-        ({ description, name, type }) => ({
+        ({ description, internal, name, type }) => ({
           description,
           detailType: type,
+          internal,
           name,
         }),
       )

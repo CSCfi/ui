@@ -38,7 +38,11 @@ dialect, and 4.0.0 would have frozen all of it.
   parent (`c-tab` → `c-tabs`, `c-dropdown` → `c-select`, `c-tab-item` →
   `c-tab-items`) is marked `@internal` in the event map. The analyzer leaves it
   out of the manifest and the React wrapper, so it sits outside the public API
-  (ADR-0074). The same marker hides internal tags, props, slots and methods.
+  (ADR-0074). The same idea covers every kind of member: `@internal` in a
+  component's docblock (the tag is only named, in the manifest's
+  `csc.internalTags`), `@internal` on a prop, `@internalslot` for a slot the
+  component assigns its own children to, and a `_` prefix on an exposed
+  method.
 
 ## Considered options
 

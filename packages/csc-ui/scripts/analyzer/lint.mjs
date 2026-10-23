@@ -4,7 +4,8 @@
  * Hard errors (the template and the docblock must agree 1:1 — parts are the
  * customization API, so an undocumented or phantom name is an API
  * defect):
- *   - template slot without an `@slot` tag / `@slot` naming no template slot
+ *   - template slot without an `@slot` (or `@internalslot`) tag / either tag
+ *     naming no template slot, or one slot carrying both
  *   - part (own, stamped by an imported `src/shared/*.vue` SFC, or
  *     exportparts-exposed) without an `@csspart` tag / `@csspart` naming no
  *     part
@@ -15,8 +16,11 @@
  *     single source of truth
  *   - an `emitModelValue` caller whose event map is missing the
  *     `changeValue` / `update:value` / `input` triple that helper dispatches
- *   - an `@subcomponents` tag naming an unknown tag, or the component itself
- *     (the composed-children list must resolve to real components)
+ *   - an `@subcomponents` tag naming an unknown tag, an internal tag, or the
+ *     component itself (the composed-children list must resolve to real,
+ *     documented components)
+ *   - a prop tagged both `@internal` and `@defaultable` (an app default is set
+ *     by consumers, so the prop is public by definition)
  *   - a prop typed bare `string` without an `@freeform` tag
  *     (set-of-accepted-values props must be named exported unions; genuinely
  *     open-ended props declare it explicitly), or an `@freeform` tag on a
@@ -40,23 +44,44 @@
  *     tag→usage direction is checked; the global `--c-*` theme tokens are NOT
  *     per-component API and are never required to be tagged)
  *   - dynamic slot-name / part bindings the analyzer cannot verify
- *   - missing `usage.md`
+ *   - missing `usage.md` (internal tags have no docs page and need none)
  *   - free text in the component docblock (the component description lives
  *     in usage.md's first paragraph; the docblock carries tags only)
  */
 
-export const lintComponent = (component, knownTags = new Set()) => {
+export const lintComponent = (
+  component,
+  knownTags = new Set(),
+  internalTags = new Set(),
+) => {
   const errors = [];
 
   const warnings = [];
 
-  const { docTags, source, subcomponents, tagName, template, usagePath } =
-    component;
+  const {
+    docTags,
+    internal,
+    source,
+    subcomponents,
+    tagName,
+    template,
+    usagePath,
+  } = component;
 
   const tagged = (tag) =>
     docTags.filter((t) => t.tag === tag).map((t) => t.name);
 
-  const taggedSlots = tagged('slot');
+  // `@internalslot` documents a slot the component assigns its own children
+  // to (c-breadcrumb's folded crumbs): checked like `@slot`, never published.
+  const internalSlots = tagged('internalslot');
+
+  const taggedSlots = [...tagged('slot'), ...internalSlots];
+
+  for (const slot of internalSlots) {
+    if (tagged('slot').includes(slot)) {
+      errors.push(`slot "${slot}" is tagged both @slot and @internalslot`);
+    }
+  }
 
   const taggedParts = tagged('csspart');
 
@@ -167,6 +192,12 @@ export const lintComponent = (component, knownTags = new Set()) => {
         `prop "${prop.name}" is tagged @freeform but is not a bare string`,
       );
     }
+
+    if (prop.internal && prop.defaultable) {
+      errors.push(
+        `prop "${prop.name}" is tagged both @internal and @defaultable — an app default makes it public`,
+      );
+    }
   }
 
   lintDefaultable(component, errors);
@@ -176,6 +207,8 @@ export const lintComponent = (component, knownTags = new Set()) => {
       errors.push(`@subcomponents lists the component itself ("${child}")`);
     } else if (!knownTags.has(child)) {
       errors.push(`@subcomponents "${child}" is not a known component`);
+    } else if (internalTags.has(child)) {
+      errors.push(`@subcomponents "${child}" is an internal tag`);
     }
   }
 
@@ -189,7 +222,7 @@ export const lintComponent = (component, knownTags = new Set()) => {
     warnings.push(`unverifiable ${dynamic}`);
   }
 
-  if (!usagePath) {
+  if (!usagePath && !internal) {
     warnings.push('no usage.md');
   }
 

@@ -39,7 +39,6 @@ import {
   type CFileUploadElementEventMap,
   type CIconElement,
   type CIconButtonElement,
-  type CInputElement,
   type CLinkElement,
   type CListElement,
   type CListItemElement,
@@ -356,13 +355,6 @@ export const CIconButton = createComponent({
   elementClass: elementClass<CIconButtonElement>('c-icon-button'),
   react: React,
   tagName: 'c-icon-button',
-});
-
-export const CInput = createComponent({
-  displayName: 'CInput',
-  elementClass: elementClass<CInputElement>('c-input'),
-  react: React,
-  tagName: 'c-input',
 });
 
 /** Basic hyperlink component */
