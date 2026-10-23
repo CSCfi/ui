@@ -255,8 +255,11 @@ start migrating on the first alpha that carries D2–D4.
        (Bug 1924792) nor keeps the last placement that fit — decided: where its native panel runs off the viewport,
        the fallback is held to the shift itself. A too-tall c-popover still runs off-screen on current Firefox.
      Open: WebKit has never run (its system libraries are missing in the arm64 devcontainer); the first CI run
-     shows what it surfaces, fonts included. Add `Behaviour specs (firefox)` and `Behaviour specs (webkit)` to the
-     branch protection's required checks. iOS Safari stays untested: CI's WebKit is WebKitGTK, without iOS touch
+     shows what it surfaces, fonts included. `main` is protected but requires no status check at all (GitHub API,
+     2026-10-23: enforcement off, no contexts, no rulesets), so today no failing job blocks a merge, not even
+     `build-lint-test` or `require-changeset`. Make all four required once the engine jobs have reported once:
+     `build-lint-test`, `Behaviour specs (firefox)`, `Behaviour specs (webkit)`, `require-changeset`.
+     iOS Safari stays untested: CI's WebKit is WebKitGTK, without iOS touch
      scrolling, keyboard or visual viewport — a known gap, no device check (decided 2026-10-23).
    - **Done (2026-10-23)** — Example smoke: axe (D14), React + TypeScript flavors (D15). The docs smoke now runs
      the 160 Vue canons with axe (WCAG 2.1 AA, light and dark), the 159 `.react.tsx` canons on React 19 through the
