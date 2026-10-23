@@ -55,11 +55,16 @@ deprecated on npm with pointers to 4.x.
 - **No aliases for 3.x names.** A 3.x tag, attribute, slot, event or method
   that 4.0.0 removes or renames simply stops working; the upgrade is
   all-at-once anyway (ADR-0075 rewrites every event handler).
-- **Every such name has a migration-guide entry, enforced.** The 3.x API data
-  (`vscode-data.json`, and the 3.x `docs.json` where available) is committed,
-  and a docs guard fails when a 3.x tag or attribute missing from the 4.x
-  manifest has no entry. A diff found 22 removed attributes and 2 removed tags
-  the guide never mentioned.
+- **Every such name has a migration-guide entry, enforced.** The 3.x API,
+  generated from the Stencil readmes (attribute, type and default of every
+  prop, plus events, methods, slots, parts and CSS custom properties), is
+  committed, and a docs guard fails when a 3.x name that is gone, or whose
+  default or type changed, has no entry. A first diff found 22 removed
+  attributes and 2 removed tags the guide never mentioned.
+- **A changed meaning under an unchanged name is listed by hand.** No data can
+  show that c-otp-input's value now holds the digits typed so far, so such
+  changes are kept in a ledger and each one gets its entry in the PR that
+  makes it.
 - **Where the alphas renamed a 3.x attribute, the 3.x name comes back.** Stencil
   exposed several props under native attribute names (`autofocus`,
   `autocapitalize`, `aria-label`) or other names (`hide`); 4.0.0 uses those

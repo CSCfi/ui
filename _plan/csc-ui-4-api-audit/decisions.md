@@ -18,9 +18,12 @@ never mentioned in the migration guide.
   c-loader `hide` (default false — not `hidden`, which is the HTML global; amend ADR-0076). Delete `host-id` /
   `element-id` (shadow-internal ids are unreachable from page `for`/`aria-*`, ADR-0033); the guide says 3.x `id`
   now stays on the host. Fix COtpInput.vue:432 overwriting the host `id`; c-otp-input gets its first spec.
-- **R2 — Clean break + migration-guide completeness guard.** No aliases. Commit the 3.x API data
-  (`vscode-data.json`; events/slots/methods from 3.x `docs.json` if the 3.0.19 tarball has it); a docs guard fails
-  when a 3.x tag/attribute missing from the 4.x manifest has no guide entry. Write the missing entries: the 22
+- **R2 — Clean break + migration-guide completeness guard.** No aliases. Commit 3.x API data generated from the
+  73 Stencil readmes on `legacy-main` (props with attribute / type / default, events, methods, slots, parts, CSS
+  custom properties — the 3.0.19 tarball has no `docs.json`, and `vscode-data.json` records no defaults). A docs
+  guard fails when a 3.x name that is gone, or whose default or type changed, has no guide entry. Changes of
+  *meaning* under an unchanged name, type and default are invisible to it: they go in the plan's ledger, and each
+  one's PR adds its entry (amended 2026-10-23 after a review note). Write the missing entries: the 22
   attributes, `c-menu-items`, `c-text-field-open`, c-otp-input `reset()`, `id`, `textOverrides`, `valid`,
   `slot="header"`, toast `title`, `target`, `--c-icon-color`, slider `unit="%"`.
 - **R3 — c-pagination value `{ currentPage, itemsPerPage }` → `{ page, pageSize }`** before rc.1, matching

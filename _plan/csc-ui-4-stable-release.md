@@ -187,8 +187,26 @@ A read-only check of all 124 D11–D13 items against source, glossary, ADRs, usa
 - **R1** — restore the 3.x / native attribute names the alphas replaced: `autofocus`, `autocapitalize`,
   `aria-label` (forwarded; drop `aria-label-internal`), c-loader `hide`. Delete `host-id` / `element-id`; `id` stays
   on the host. Fix c-otp-input overwriting the host `id`; give c-otp-input its first spec.
-- **R2** — clean break, no aliases, and a migration-guide completeness guard over committed 3.x API data (a diff
-  found 22 removed attributes and 2 removed tags the guide never mentions). ADR-0027 amendment.
+- **R2** — clean break, no aliases, and a migration-guide completeness guard over 3.x API data generated from the
+  Stencil readmes (attribute / type / default per prop, events, methods, slots, parts, CSS props): every 3.x name
+  that is gone or whose default or type changed needs a guide entry. A first diff found 22 removed attributes and
+  2 removed tags the guide never mentions. ADR-0027 amendment.
+- **Ledger — same-name behaviour changes** (invisible to the guard: name, type and default unchanged). Each PR that
+  makes one adds its guide entry; tick it here. Entries marked *(check)* need the 3.x behaviour confirmed first.
+  - [ ] c-otp-input `value`: the digits typed so far, `''` when empty (3.x: `null` until complete).
+  - [ ] `id` on the 11 tags that forwarded it: stays on the host (3.x: set on the inner control).
+  - [ ] c-option `selected`: seeds silently, once, while the value is empty (3.x c-select emitted `changeValue`).
+  - [ ] Value events fire only on user interaction, never on a programmatic `value` (*check* each 3.x tag).
+  - [ ] c-slider: `change` fires once on release (3.x `changeValue` fired on every move).
+  - [ ] c-pagination `value`: `{ page, pageSize, … }` and a new object per change (3.x: `CPaginationOptions`
+        mutated in place) — same prop name and type name, so the guard cannot see it.
+  - [ ] c-checkbox / c-switch `checked`: the boolean view of `value` (*check* 3.x precedence).
+  - [ ] c-radio `change` no longer escapes c-radio-group (*check* whether 3.x c-radio's event bubbled).
+  - [ ] `change` on c-text-field / c-checkbox / c-switch / c-autocomplete carries the value (*check* what 3.x
+        consumers could hear as `change`).
+  - [ ] `hidden` on a `c-*` host hides it (*check* 3.x).
+  - [ ] c-data-table `change:selected` detail is `string[]` (if 3.x had the event under another name, the guard
+        covers the name; the detail change goes here).
 - **R3** — c-pagination's value becomes `{ page, pageSize, … }` before rc.1, emitted as a new object.
 
 ## Work, in order
@@ -201,8 +219,8 @@ start migrating on the first alpha that carries D2–D4.
      `_`-prefix handling at `script-api.mjs:284`); one generated internal-tag list consumed by docs, the example-parity
      script and `packages/csc-ui-react/scripts/generate.mjs`. The strict no-default-`true`-boolean rule lands
      with D11 in phase 2 (it would fail the build until `valid`/`visible`/`focusable` change).
-   - Docs guard (R2): commit the 3.x API data; fail when a 3.x tag/attribute missing from the 4.x manifest has no
-     migration-guide entry.
+   - Docs guard (R2): generate and commit the 3.x API data from the `legacy-main` Stencil readmes; fail when a 3.x
+     name that is gone, or whose default or type changed, has no migration-guide entry.
    - Lint: `@update:*` on a `c-*` element in a Vue template is an error (D3) — an ESLint `vue/*` rule (ADR-0068 keeps
      template rules in ESLint) plus the example-parity script for usage.md snippets.
    - API-snapshot breaking-change guard (D10), armed by pre tag: `alpha` → needs a major changeset, `rc` → fail.
@@ -249,8 +267,8 @@ start migrating on the first alpha that carries D2–D4.
 
 - CI green on Chromium, Firefox and WebKit; the `chromiumOnly` guard lists every skip with its reason.
 - API-snapshot guard: a fixture PR that removes a prop fails without a major changeset (alpha) and always fails (rc).
-- The migration-guide guard fails when a 3.x attribute missing from the 4.x manifest has no entry (delete one
-  entry to see it fail), and passes on the finished guide.
+- The migration-guide guard fails when a gone 3.x name or a changed 3.x default has no entry (delete the `target`
+  entry to see it fail), and passes on the finished guide; every ledger line is ticked before rc.1.
 - The `@update:*` lint fails a fixture `<c-text-field @update:value="…">` in a Vue template; a Vue canon using
   `@input="fn($event.target.value)"` receives every keystroke's value in the example smoke.
 - `docs:manifest:strict` fails a fixture prop `boolean = true`; manifest + React wrapper contain no camelCase event,
