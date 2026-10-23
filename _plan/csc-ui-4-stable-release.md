@@ -224,7 +224,8 @@ start migrating on the first alpha that carries D2–D4.
      (`pnpm lint:migration`, in `lint:guards` and CI) fails when a 3.x name that is gone, or whose default or type
      changed, has no entry in `app/content/migration-api.ts`, which the migration page renders as "3.x API, name
      by name". It also fails stale entries. 75 names wait in `scripts/migration-guide-baseline.json`, which may
-     only shrink and must be empty once the pre tag leaves `alpha` (phase 3, or the PR that settles each name).
+     only shrink and must be empty once the pre tag leaves `alpha`. Who writes them (decided 2026-10-23, hybrid):
+     the ~30 names phases 1–2 still change go with their PRs, the ~45 already-final ones in one phase-3 batch.
    - **Done (2026-10-23)** — Lint: `@update:*` on a `c-*` element in a Vue template is an error (D3): a
      `vue/no-restricted-syntax` selector in `eslint.config.ts` (`.vue` files: SFCs, canons, the docs app) plus the
      example-parity script for the ```vue snippets in usage.md (which also gained the canons' `.prop` check). The
@@ -241,8 +242,20 @@ start migrating on the first alpha that carries D2–D4.
    wiring events, side-nav `select`; regenerate the React wrapper; update docs canons (all four flavors) and the
    docs site's own `@item-change` bindings (`app/app.vue`).
 2. **API fixes** — D11, D12, D13 "before rc.1", D17, in themed PRs (internal surface → bugs → renames → tokens/types).
-   Each rename also updates canons in all four flavors, usage.md and the migration guide.
-3. **Docs** — D16 (migration guide can grow with each PR in 1–2; the rest here).
+   Each rename also updates canons in all four flavors, usage.md and the migration guide. A PR that changes a name in
+   `scripts/migration-guide-baseline.json` writes its `migration-api.ts` entry and drops it from the baseline (the
+   guard forces the drop only when the name stops being flagged, e.g. a restored `autofocus`; a name that stays
+   flagged, like the forwarded `id`, is on the PR author — and on the ledger when its meaning changes). Phase-1
+   events (`itemChange`, `tabChange`, `tabFocus`, c-steps `changeValue`) likewise. Open question the guard surfaced:
+   the manifest lists no `value` attribute on c-select, c-autocomplete and c-accordion (object-capable types),
+   though Vue still observes it — either the analyzer lists it (3.x had it) or the guide says to set the property.
+3. **Docs** — D16 (migration guide can grow with each PR in 1–2; the rest here). One batch writes the baseline's
+   already-final names (~45): the 18 c-data-table 3.x props, events and methods mapped onto `selection` / `sort` /
+   `page` / `texts`; c-menu `content-class`/`custom`/`flat`/`items-per-page`/`small` and `c-menu-items`; c-modal
+   `z-index`; c-tag `block`/`fit`; c-radio-group `color`/`items`/`return-object` and its narrowed `value` type; c-radio `checked`; c-button
+   `grouped`/`tabs`; c-tab-buttons `tabs`; `hostDisabled` (c-switch, c-tab-buttons); c-switch `label` slot; c-page
+   `default` slot; `c-text-field-open`; c-otp-input `reset()`; c-text-field `type`/`autocorrect`; c-spinner `color`.
+   The baseline is empty before phase 4.
 4. **RC** — switch pre tag `alpha` → `rc` (verify the changesets CLI sequence: `pre exit` + `pre enter rc` before a
    version run), publish `4.0.0-rc.1`. From here: fixes only, API guard fails any breaking diff.
    Gate (D8): MyCSC fully migrated on the latest RC, e2e green, no open csc-ui blocker.
