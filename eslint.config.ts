@@ -93,6 +93,18 @@ export default defineConfig(
         },
       ],
       'vue/no-deprecated-slot-attribute': 'off',
+      // Vue's runtime never attaches an `onUpdate:*` listener to an element
+      // (`isModelListener`), so `@update:value` on a csc-ui element is dead
+      // code (ADR-0075).
+      'vue/no-restricted-syntax': [
+        'error',
+        {
+          message:
+            'Vue never attaches an @update:* listener to a custom element, so this never fires. Use v-model, @input with the element’s value, or @change (ADR-0075).',
+          selector:
+            "VElement[rawName=/^c-/] > VStartTag > VAttribute[directive=true][key.name.name='on'][key.argument.name=/^update:/]",
+        },
+      ],
       'vue/no-v-html': 'off',
       'vue/padding-line-between-blocks': 'error',
       'vue/padding-line-between-tags': [

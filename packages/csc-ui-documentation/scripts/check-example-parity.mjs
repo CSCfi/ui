@@ -17,6 +17,11 @@
  * Canon examples are also copy-paste targets for non-Nuxt apps, so their
  * script blocks must not lean on Nuxt auto-imports: every Vue API and
  * useXxx() composable they call has to be explicitly imported.
+ *
+ * The ```vue snippets in each component's usage.md are copy-paste targets
+ * too, and ESLint never sees them: they get the canons' `.prop` check, and
+ * an `@update:*` listener on a `c-*` element fails, as ESLint fails it in
+ * `.vue` files (Vue never attaches one to an element, ADR-0075).
  */
 
 import { existsSync, readdirSync, readFileSync } from 'node:fs';
@@ -26,6 +31,11 @@ import { fileURLToPath } from 'node:url';
 const examplesDir = path.resolve(
   fileURLToPath(import.meta.url),
   '../../app/examples',
+);
+
+const componentsDir = path.resolve(
+  fileURLToPath(import.meta.url),
+  '../../../csc-ui/src/components',
 );
 
 const manifestPath = path.resolve(
@@ -112,6 +122,33 @@ const findAutoImportReliance = (source) => {
   return [...new Set(called)].filter((name) => !imported.has(name));
 };
 
+/**
+ * Vue sets every declared prop of a csc-ui element as a property on its own
+ * (camelizing hyphenated names); `.prop` forces the literal key, so
+ * `:level-labels.prop` writes a dead `el['level-labels']`.
+ */
+const findPropModifiers = (source) =>
+  [...source.matchAll(/:[a-zA-Z-]+\.prop\b/g)].map(
+    (match) =>
+      `"${match[0]}" — ".prop" is unnecessary on csc-ui elements and silently breaks hyphenated names; bind plainly (:items="…")`,
+  );
+
+/**
+ * Vue's runtime skips every `onUpdate:*` listener on an element, so
+ * `@update:value` on a `c-*` element never fires (ADR-0075).
+ */
+const findUpdateListeners = (source) =>
+  [...source.matchAll(/(?:@|v-on:)update:[\w-]+/g)]
+    .filter((match) =>
+      [...source.slice(0, match.index).matchAll(/<([a-zA-Z][\w-]*)/g)]
+        .at(-1)?.[1]
+        .startsWith('c-'),
+    )
+    .map(
+      (match) =>
+        `"${match[0]}" — Vue never attaches an @update:* listener to a custom element; use v-model, @input with the element's value, or @change`,
+    );
+
 const problems = [];
 
 for (const dir of readdirSync(examplesDir, { withFileTypes: true })) {
@@ -147,13 +184,8 @@ for (const dir of readdirSync(examplesDir, { withFileTypes: true })) {
       );
     }
 
-    // Vue sets every declared prop of a csc-ui element as a property on its
-    // own (camelizing hyphenated names); `.prop` forces the literal key, so
-    // `:level-labels.prop` writes a dead `el['level-labels']`.
-    for (const match of source.matchAll(/:[a-zA-Z-]+\.prop\b/g)) {
-      problems.push(
-        `${dir.name}/${canon}.vue: "${match[0]}" — ".prop" is unnecessary on csc-ui elements and silently breaks hyphenated names; bind plainly (:items="…")`,
-      );
+    for (const problem of findPropModifiers(source)) {
+      problems.push(`${dir.name}/${canon}.vue: ${problem}`);
     }
   }
 
@@ -179,6 +211,23 @@ for (const dir of readdirSync(examplesDir, { withFileTypes: true })) {
       problems.push(
         `${dir.name}/${file}: extension ".${ext}" is not valid for the "${flavor}" flavor`,
       );
+    }
+  }
+}
+
+for (const dir of readdirSync(componentsDir, { withFileTypes: true })) {
+  const usagePath = path.join(componentsDir, dir.name, 'usage.md');
+
+  if (!dir.isDirectory() || !existsSync(usagePath)) continue;
+
+  const usage = readFileSync(usagePath, 'utf8');
+
+  for (const [, snippet] of usage.matchAll(/```vue\n([\s\S]*?)```/g)) {
+    for (const problem of [
+      ...findPropModifiers(snippet),
+      ...findUpdateListeners(snippet),
+    ]) {
+      problems.push(`${dir.name}/usage.md: ${problem}`);
     }
   }
 }

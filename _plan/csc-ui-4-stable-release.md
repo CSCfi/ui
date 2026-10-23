@@ -225,8 +225,10 @@ start migrating on the first alpha that carries D2–D4.
      changed, has no entry in `app/content/migration-api.ts`, which the migration page renders as "3.x API, name
      by name". It also fails stale entries. 75 names wait in `scripts/migration-guide-baseline.json`, which may
      only shrink and must be empty once the pre tag leaves `alpha` (phase 3, or the PR that settles each name).
-   - Lint: `@update:*` on a `c-*` element in a Vue template is an error (D3) — an ESLint `vue/*` rule (ADR-0068 keeps
-     template rules in ESLint) plus the example-parity script for usage.md snippets.
+   - **Done (2026-10-23)** — Lint: `@update:*` on a `c-*` element in a Vue template is an error (D3): a
+     `vue/no-restricted-syntax` selector in `eslint.config.ts` (`.vue` files: SFCs, canons, the docs app) plus the
+     example-parity script for the ```vue snippets in usage.md (which also gained the canons' `.prop` check). The
+     migration guide's copy of the rule for MyCSC lands with phase 1's event rewrite.
    - API-snapshot breaking-change guard (D10), armed by pre tag: `alpha` → needs a major changeset, `rc` → fail.
    - CI: Firefox + WebKit instances in the browser project (`packages/csc-ui/vitest.browser.config.ts`,
      `.github/workflows/ci.yml` installs them), `chromiumOnly(reason)` helper + guard; fix what they surface.
