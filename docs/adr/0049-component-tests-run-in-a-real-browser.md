@@ -1,5 +1,6 @@
 ---
 status: accepted
+amended-by: ADR-0077 (Firefox and WebKit behaviour runs, axe and React/TypeScript flavors in the example smoke)
 ---
 
 # Component tests run in a real browser through Vitest browser mode
