@@ -1,24 +1,40 @@
 import type { Component } from 'vue';
 
 /**
- * Example smoke (CONTEXT.md, ADR-0049): every canon mounts once against the
- * built package and upgrades cleanly. The canons are fixtures, not specs —
- * nothing here asserts behaviour. The 2026-09-11 `.prop` regression (52 dead
- * bindings across 26 canons) is the class of fault this catches.
+ * Example smoke (CONTEXT.md, ADR-0049): every Vue canon mounts once against
+ * the built package and upgrades cleanly, and axe finds no WCAG 2.1 AA
+ * violation in either theme mode (D14, ADR-0077). The canons are fixtures,
+ * not specs — nothing here asserts behaviour. The 2026-09-11 `.prop`
+ * regression (52 dead bindings across 26 canons) is the class of fault this
+ * catches.
+ *
+ * `axe-baseline.json` lists, per canon, the axe rules that still fail. It
+ * may only shrink (a listed rule that passes fails the canon until it is
+ * removed), and it must be empty once the changesets pre tag leaves `alpha`.
+ * A rule wrong for a shadow-DOM pattern is disabled for every canon in
+ * `smoke.ts`, with its reason — never per canon.
  */
-import { describe, expect, it } from 'vitest';
+import { describe, expect, inject, it } from 'vitest';
 import { page, server } from 'vitest/browser';
 import { createApp } from 'vue';
+
+import AXE_BASELINE from './axe-baseline.json';
+import {
+  axeViolations,
+  captureConsole,
+  expectUpgraded,
+  settle,
+  settleTime,
+} from './smoke';
 
 const canons = import.meta.glob<{ default: Component }>(
   '../app/examples/*/*.vue',
 );
 
-/** Canons whose data arrives on a timer (debounced external filter, simulated fetch). */
-const TIMER_DRIVEN = new Set([
-  'c-autocomplete/external',
-  'c-data-table/external-data',
-]);
+const nameOf = (file: string): string =>
+  file.replace('../app/examples/', '').replace(/\.vue$/, '');
+
+const baseline: Record<string, string[]> = AXE_BASELINE;
 
 /** One representative canon per component family, captured in both theme modes. */
 const SCREENSHOT = new Set([
@@ -38,28 +54,16 @@ const SCREENSHOT = new Set([
   'c-tree-select/basic',
 ]);
 
-const settle = async (ms = 0): Promise<void> => {
-  await new Promise((resolve) => requestAnimationFrame(resolve));
-  await new Promise((resolve) => requestAnimationFrame(resolve));
-
-  if (ms > 0) await new Promise((resolve) => setTimeout(resolve, ms));
-};
-
 describe('canon', () => {
   for (const [file, load] of Object.entries(canons)) {
-    const name = file.replace('../app/examples/', '').replace(/\.vue$/, '');
+    const name = nameOf(file);
 
     it(name, async () => {
       const { default: canon } = await load();
 
-      const problems: string[] = [];
+      const capture = captureConsole();
 
-      const originals = { error: console.error, warn: console.warn };
-
-      console.error = (...args: unknown[]) =>
-        problems.push(`console.error: ${args.join(' ')}`);
-      console.warn = (...args: unknown[]) =>
-        problems.push(`console.warn: ${args.join(' ')}`);
+      const { problems } = capture;
 
       const app = createApp(canon);
 
@@ -75,30 +79,25 @@ describe('canon', () => {
 
       try {
         app.mount(root);
-        await settle(TIMER_DRIVEN.has(name) ? 700 : 100);
+        await settle(settleTime(name));
 
-        const elements = Array.from(root.querySelectorAll('*')).filter((el) =>
-          el.localName.startsWith('c-'),
-        );
+        expectUpgraded(root);
+        expect(problems).toEqual([]);
+
+        const violations = await axeViolations(root);
+
+        const allowed = new Set(baseline[name] ?? []);
 
         expect(
-          elements.length,
-          'the canon renders at least one c-* element',
-        ).toBeGreaterThan(0);
-
-        for (const el of elements) {
-          expect(customElements.get(el.localName), el.localName).toBeDefined();
-          expect(el.matches(':defined'), `${el.localName} upgraded`).toBe(true);
-          expect(el.shadowRoot, `${el.localName} shadow root`).not.toBeNull();
-          // A `:some-prop.prop` binding writes a dead own property instead of
-          // the camelCase property the element declares.
-          expect(
-            Object.getOwnPropertyNames(el).filter((key) => key.includes('-')),
-            `${el.localName} hyphenated own properties`,
-          ).toEqual([]);
-        }
-
-        expect(problems).toEqual([]);
+          [...violations]
+            .filter(([rule]) => !allowed.has(rule))
+            .flatMap(([rule, lines]) => lines.map((line) => `${rule} ${line}`)),
+          'axe violations (WCAG 2.1 AA)',
+        ).toEqual([]);
+        expect(
+          [...allowed].filter((rule) => !violations.has(rule)),
+          'axe rules that pass now: remove them from tests/axe-baseline.json',
+        ).toEqual([]);
 
         // Baselines are compared on Linux only (devcontainer + CI, where the
         // fonts are pinned); elsewhere the mount assertions above still run.
@@ -112,8 +111,7 @@ describe('canon', () => {
           }
         }
       } finally {
-        console.error = originals.error;
-        console.warn = originals.warn;
+        capture.restore();
         app.unmount();
         root.remove();
       }
@@ -124,4 +122,20 @@ describe('canon', () => {
       ).toBe('');
     });
   }
+});
+
+describe('axe baseline', () => {
+  it('names only canons that exist', () => {
+    const names = new Set(Object.keys(canons).map(nameOf));
+
+    expect(Object.keys(baseline).filter((name) => !names.has(name))).toEqual(
+      [],
+    );
+  });
+
+  it('is empty once the changesets pre tag leaves alpha', () => {
+    if (inject('preTag') === 'alpha') return;
+
+    expect(Object.keys(baseline)).toEqual([]);
+  });
 });

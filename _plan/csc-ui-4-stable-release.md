@@ -237,7 +237,33 @@ start migrating on the first alpha that carries D2–D4.
      alias unions are guarded. Its first run caught 67a3e096: `internal-tags.md` became a major changeset.
    - CI: Firefox + WebKit instances in the browser project (`packages/csc-ui/vitest.browser.config.ts`,
      `.github/workflows/ci.yml` installs them), `chromiumOnly(reason)` helper + guard; fix what they surface.
-   - Example smoke: axe (D14), React + TypeScript flavors (D15).
+   - **Done (2026-10-23)** — Example smoke: axe (D14), React + TypeScript flavors (D15). The docs smoke now runs
+     the 160 Vue canons with axe (WCAG 2.1 AA, light and dark), the 159 `.react.tsx` canons on React 19 through the
+     built wrapper, the 159 `.typescript.html` fragments with their wiring, and a manifest-generated spec that every
+     event's `on<Event>` prop receives the detail. `tests/axe-baseline.json` lists the rules still failing per canon
+     (101 canons, 123 canon-rule pairs); it may only shrink and must be empty once the pre tag leaves `alpha`.
+     The React flavor surfaced a wrapper bug, fixed on the way: `@lit/react` sets a prop as a property only when
+     the element class's prototype names it, Vue defines props on the instance, so arrays, objects and functions
+     reached the element as `[object Object]` attributes (the generator now lists each tag's properties).
+     What the axe baseline holds, for phase 2:
+     - **Contrast (80 canons, open design question):** light `on-surface-muted` / `on-surface-faint` are both
+       `tertiary-500` (`#7e888d`, 3.62:1 on white) — hints, secondary text. D14 wants zero violations; the
+       contrast audit calls ten brand pairs design-owned. Decide: retune the token(s) or accept with a recorded
+       exception (which D14 does not allow). Also dark `#5e6a71` on `#2b2f33` (data table / pagination meta),
+       white on `#c4dee4` (side-nav title / item), a field label on primary, c-message error red in dark.
+     - **Component faults:** c-slider `aria-label-internal` (R1); c-progress-bar has no accessible name (D13);
+       c-pagination page-size button's visible text not in its name; c-pagination's separator role without
+       `aria-valuenow`; data-table selection checkboxes (`aria-label` on a role-less div, no label on the
+       input); c-tabs puts tabpanels inside its `tablist`; c-side-navigation's `menubar` children and
+       `aria-hidden` sub-items; c-breadcrumb's `ol` holds `c-breadcrumb-item` hosts (list / listitem — fix the
+       structure or disable the two rules for every canon with the shadow-DOM reason, never per canon).
+     - **Fields lose their label (high):** c-text-field / c-number-field (and the other fields on c-input) render
+       the `<input id>` in their own shadow root and slot it into c-input, whose `<label for>` sits in c-input's
+       shadow root — `for` never leaves its tree, so the visible label does not name the input (axe `label` on
+       12 canons, including those that set `label`). Name the input from the label across the boundary
+       (`aria-label` from the prop, or move the label next to the input), then check every c-input field.
+     - **Canon faults:** c-icon-button and c-navigation-button canons give no accessible name (`button-name`;
+       c-navigation-button's `texts.label` is D17 #27).
 1. **Events** — D2–D4: delete twin dispatch (shared emit helpers / `useHostEmit`), add/align `change`, internal
    wiring events, side-nav `select`; regenerate the React wrapper; update docs canons (all four flavors) and the
    docs site's own `@item-change` bindings (`app/app.vue`).
