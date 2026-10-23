@@ -246,17 +246,16 @@ start migrating on the first alpha that carries D2–D4.
      the element class's prototype names it, Vue defines props on the instance, so arrays, objects and functions
      reached the element as `[object Object]` attributes (the generator now lists each tag's properties).
      What the axe baseline holds, for phase 2:
-     - **Contrast (80 canons, open design question):** light `on-surface-muted` / `on-surface-faint` are both
-       `tertiary-500` (`#7e888d`, 3.62:1 on white) — hints, secondary text. D14 wants zero violations; the
-       contrast audit calls ten brand pairs design-owned. Decide: retune the token(s) or accept with a recorded
-       exception (which D14 does not allow). Also dark `#5e6a71` on `#2b2f33` (data table / pagination meta),
-       white on `#c4dee4` (side-nav title / item), a field label on primary, c-message error red in dark.
-     - **Component faults:** c-slider `aria-label-internal` (R1); c-progress-bar has no accessible name (D13);
-       c-pagination page-size button's visible text not in its name; c-pagination's separator role without
-       `aria-valuenow`; data-table selection checkboxes (`aria-label` on a role-less div, no label on the
-       input); c-tabs puts tabpanels inside its `tablist`; c-side-navigation's `menubar` children and
-       `aria-hidden` sub-items; c-breadcrumb's `ol` holds `c-breadcrumb-item` hosts (list / listitem — fix the
-       structure or disable the two rules for every canon with the shadow-DOM reason, never per canon).
+     - **Contrast (80 canons) — decided 2026-10-23: propose `tertiary-600` to design.** Light `on-surface-muted` /
+       `on-surface-faint` are both `tertiary-500` (`#7e888d`: 3.62:1 on white, 3.18:1 on `surface-muted`). The
+       proposal: both → `tertiary-600` (`#5e6a71`: 5.56:1 / 4.87:1; `border-strong` already uses it). It lands in
+       phase 2 once design approves; D14 stays exception-free. These are the only 2 of the contrast audit's ten
+       below-AA pairs that axe flags today; the other 8 (white on `accent` / `success` / `info` / `warning`,
+       `on-accent-subtle`, nav hover) appear in no canon state axe sees (hover never), so they go to design as
+       context but do not block rc.1 unless a canon starts showing one. Axe's other failing pairs are not in the
+       audit (it checks light-mode token pairs only) and are ours to fix: dark `#5e6a71` on `#2b2f33` (data
+       table / pagination meta), white on `#c4dee4` (side-nav title / item), the colored login card's field
+       label, accordion custom colours in dark, c-message error red in dark.
      - **Fields lose their label (high):** c-text-field / c-number-field (and the other fields on c-input) render
        the `<input id>` in their own shadow root and slot it into c-input, whose `<label for>` sits in c-input's
        shadow root — `for` never leaves its tree, so the visible label does not name the input (axe `label` on
