@@ -107,10 +107,16 @@ for (const component of components) {
     ? `\n  events: {\n${eventEntries}\n  },`
     : '';
 
+  // The public, settable properties: what a React prop must be set as.
+  const properties = (component.members ?? [])
+    .filter((member) => member.kind === 'field' && !member.readonly)
+    .map((member) => `'${member.name}'`)
+    .sort();
+
   blocks.push(
     `${jsdoc(component.description)}export const ${component.name} = createComponent({
   displayName: '${component.name}',
-  elementClass: elementClass<${elementType}>('${component.tagName}'),${eventsBlock}
+  elementClass: elementClass<${elementType}>([${properties.join(', ')}]),${eventsBlock}
   react: React,
   tagName: '${component.tagName}',
 });`,
@@ -137,15 +143,27 @@ if (typeof customElements !== 'undefined') {
 }
 
 /**
- * The upgraded element class, typed as its generated element interface.
- * \`createComponent\` probes \`elementClass.prototype\` to route React props to
- * DOM properties; on the server (no custom element registry) an empty class
- * makes every prop render as an attribute, which hydration then corrects.
+ * A stand-in element class, typed as the generated element interface.
+ * \`createComponent\` sets a React prop as a DOM property only when the
+ * class's prototype names it; anything else goes to React, which writes an
+ * attribute while the element is still unconnected. Vue defines a custom
+ * element's props on the instance when it connects, so the registered class's
+ * prototype names none of them, and objects, arrays and functions arrived as
+ * \`[object Object]\` attributes. The prototype lists the tag's properties
+ * instead. On the server (no custom element registry) it lists none, so every
+ * prop renders as an attribute, which hydration then corrects.
  */
-const elementClass = <T extends HTMLElement>(tag: string) =>
-  (typeof customElements !== 'undefined'
-    ? customElements.get(tag)
-    : class {}) as unknown as { new (): T };
+const elementClass = <T extends HTMLElement>(properties: readonly string[]) => {
+  const stand = class {};
+
+  if (typeof customElements !== 'undefined') {
+    for (const name of properties) {
+      Object.defineProperty(stand.prototype, name, { value: undefined });
+    }
+  }
+
+  return stand as unknown as { new (): T };
+};
 
 ${blocks.join('\n\n')}
 `;
