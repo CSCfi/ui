@@ -30,7 +30,7 @@ interface Declaration {
 }
 
 interface Manifest {
-  csc: { internalTags?: string[]; types: Named[] };
+  csc: { internalTags?: string[]; types: TypeDeclaration[] };
   modules: Array<{ declarations?: Declaration[] }>;
 }
 
@@ -48,6 +48,11 @@ interface Typed {
   default?: string;
   name: string;
   type?: { text: string };
+}
+
+interface TypeDeclaration extends Named {
+  declaration: string;
+  kind: 'interface' | 'type-alias';
 }
 
 const srcDir = fileURLToPath(new URL('.', import.meta.url));
@@ -84,6 +89,58 @@ const withDefault = (t: Typed): string =>
   t.default === undefined ? typeText(t) : `${typeText(t)} = ${t.default}`;
 
 const names = (list: Named[]): string[] => list.map((n) => n.name).sort();
+
+/** Split at `separator` outside brackets (the `>` of `=>` closes nothing). */
+const splitTopLevel = (text: string, separator: string): string[] => {
+  const parts = [''];
+
+  let depth = 0;
+
+  for (const [index, char] of [...text].entries()) {
+    if ('{([<'.includes(char)) depth++;
+
+    if ('})]'.includes(char) || (char === '>' && text[index - 1] !== '=')) {
+      depth--;
+    }
+
+    if (char === separator && depth === 0) parts.push('');
+    else parts[parts.length - 1] += char;
+  }
+
+  return parts.map((part) => part.replaceAll(/\s+/g, ' ').trim());
+};
+
+/**
+ * An exported type's shape without its prose (ADR-0074): an interface as
+ * `{ field: type }` (`?` marks an optional field), an alias as its text. The
+ * API guard diffs these, so a narrowed alias or a renamed `texts` key shows.
+ */
+const typeShape = ({
+  declaration,
+  kind,
+}: TypeDeclaration): Record<string, string> | string => {
+  const code = declaration
+    .replaceAll(/\/\*[\s\S]*?\*\//g, '')
+    .replaceAll(/^\s*\/\/.*$/gm, '');
+
+  if (kind === 'type-alias') {
+    return splitTopLevel(code.replace(/^export type \w+\s*=/, ''), ';')[0]
+      .replace(/^\| /, '')
+      .trim();
+  }
+
+  const body = code.slice(code.indexOf('{') + 1, code.lastIndexOf('}'));
+
+  return sortedObject(
+    splitTopLevel(body, ';')
+      .filter(Boolean)
+      .map((field): [string, string] => {
+        const [name, ...type] = splitTopLevel(field, ':');
+
+        return [name, type.join(':')];
+      }),
+  );
+};
 
 /** The reviewable shape of one tag's public API. Descriptions are prose, not API — excluded. */
 const condense = (d: { tagName: string } & Declaration) => {
@@ -219,7 +276,11 @@ it('matches the entry snapshot of runtime exports and public types', async () =>
   const entry = {
     internalTags: [...internalTags].sort(),
     runtimeExports: [...runtimeExports].sort(),
-    types: names(manifest.csc.types),
+    types: Object.fromEntries(
+      [...manifest.csc.types]
+        .sort((a, b) => a.name.localeCompare(b.name))
+        .map((type) => [type.name, typeShape(type)]),
+    ),
   };
 
   await expect(`${JSON.stringify(entry, null, 2)}\n`).toMatchFileSnapshot(

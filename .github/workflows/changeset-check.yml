@@ -42,3 +42,9 @@ jobs:
           fi
           echo "New changeset(s):"
           echo "$added"
+
+      # Classify the public-API diff against the base branch: a breaking change
+      # needs a major changeset, and none is allowed while the release
+      # candidates are out (ADR-0074).
+      - name: Check API changes against the changeset
+        run: node packages/csc-ui/scripts/check-api-breaks.mjs --base "origin/${{ github.base_ref }}"

@@ -1,6 +1,6 @@
 ---
-"@cscfi/csc-ui": minor
-"@cscfi/csc-ui-react": minor
+"@cscfi/csc-ui": major
+"@cscfi/csc-ui-react": major
 ---
 
 `c-input` and `c-dropdown` are no longer public API (ADR-0075). They are the

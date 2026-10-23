@@ -765,7 +765,7 @@ What a release's version number makes promises about: everything the **manifest*
 _Avoid_: Contract (unqualified), surface, interface
 
 **API snapshot**:
-The committed, condensed rendering of the **manifest** (per tag: props, events, methods, slots, parts, states) that a node spec diffs the freshly generated manifest against, so an unintended public-API change fails a test instead of silently changing `custom-elements.json`. The strict analyzer checks the manifest is *consistent*; the API snapshot checks it is *unchanged*.
+The committed, condensed rendering of the **manifest** (per tag: props, events, methods, slots, parts, states; for the package: runtime exports and the shape of every exported type) that a node spec diffs the freshly generated manifest against, so an unintended public-API change fails a test instead of silently changing `custom-elements.json`. The strict analyzer checks the manifest is *consistent*; the API snapshot checks it is *unchanged*.
 _Avoid_: golden file, manifest snapshot, API baseline
 
 **Guard**:

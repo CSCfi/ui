@@ -44,7 +44,8 @@ change to it, but a reviewer still decides by eye whether a diff is breaking.
 
 - Every part name, `texts` key and token name is frozen until 5.0. Renaming a
   part means exposing both names for a major's lifetime.
-- Package-level exported types are guarded too, so the entry snapshot starts
-  recording type names.
+- Package-level exported types are guarded too, so the entry snapshot
+  records each type's shape (an interface's fields, an alias's text): a
+  renamed `texts` key or a narrowed alias is a breaking diff.
 - Maintainer tooling (`migratedTags`, `tailwindVariantTags`) leaves the
   package entry: anything exported is public by this rule.

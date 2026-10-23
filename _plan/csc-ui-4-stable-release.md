@@ -229,7 +229,11 @@ start migrating on the first alpha that carries D2–D4.
      `vue/no-restricted-syntax` selector in `eslint.config.ts` (`.vue` files: SFCs, canons, the docs app) plus the
      example-parity script for the ```vue snippets in usage.md (which also gained the canons' `.prop` check). The
      migration guide's copy of the rule for MyCSC lands with phase 1's event rewrite.
-   - API-snapshot breaking-change guard (D10), armed by pre tag: `alpha` → needs a major changeset, `rc` → fail.
+   - **Done (2026-10-23)** — API-snapshot breaking-change guard (D10), armed by pre tag: `alpha` → needs a major
+     changeset, `rc` → fail; outside pre mode an addition needs at least a minor one.
+     `packages/csc-ui/scripts/check-api-breaks.mjs` (`pnpm ui lint:api`, a step in `changeset-check.yml`) diffs the
+     snapshots from the merge base; the entry snapshot now records each exported type's shape, so `texts` keys and
+     alias unions are guarded. Its first run caught 67a3e096: `internal-tags.md` became a major changeset.
    - CI: Firefox + WebKit instances in the browser project (`packages/csc-ui/vitest.browser.config.ts`,
      `.github/workflows/ci.yml` installs them), `chromiumOnly(reason)` helper + guard; fix what they surface.
    - Example smoke: axe (D14), React + TypeScript flavors (D15).

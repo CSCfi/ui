@@ -30,6 +30,7 @@
     "build:watch": "pnpm run style-dictionary:build && pnpm run chart:generate && pnpm run build:types && vite build --watch",
     "dev": "pnpm run style-dictionary:build && pnpm run chart:generate && pnpm run build:types && vite build --watch",
     "lint:a11y": "node scripts/check-host-attr-fallthrough.mjs",
+    "lint:api": "node scripts/check-api-breaks.mjs",
     "lint:contrast": "node scripts/audit-contrast.mjs",
     "lint:ramp": "node scripts/check-ramp-parity.mjs",
     "lint:tokens": "node scripts/check-palette-utilities.mjs --strict",
