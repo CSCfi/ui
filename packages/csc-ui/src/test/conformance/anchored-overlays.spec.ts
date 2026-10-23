@@ -169,6 +169,67 @@ describe.each(Object.keys(OVERLAY_RECIPES))('%s', (tag) => {
 // land where the native engine puts it — flips and scroll-tracking included —
 // through the non-native path, measured against a native run of the same
 // scenario in the same page.
+//
+// Where no placement fits, CSS Anchor Positioning shifts the panel back inside
+// the viewport, margin box first, starting at the start edge when larger.
+// Firefox's native layout does not shift yet (Bug 1924792), nor keep the last
+// placement that fit, so where its panel runs off the viewport the fallback is
+// held to the shift itself rather than to that placement.
+const NO_PLACEMENT_FITS = new Set([
+  'taller than the viewport',
+  'wider than the viewport',
+  'with no room on either side',
+]);
+
+interface PanelPlacement {
+  /** The panel's margins: top, right, bottom, left. */
+  margins: number[];
+
+  /** The panel's border box: left, top, width, height. */
+  rect: number[];
+}
+
+const rounded = (values: number[]): string =>
+  values.map((v) => Math.round(v)).join(',');
+
+/** One axis of the shift: the box's new start. */
+const shiftAxis = (
+  start: number,
+  size: number,
+  marginStart: number,
+  marginEnd: number,
+  viewport: number,
+): number => {
+  const outer = size + marginStart + marginEnd;
+
+  const outerStart =
+    outer >= viewport
+      ? 0
+      : Math.min(Math.max(start - marginStart, 0), viewport - outer);
+
+  return outerStart + marginStart;
+};
+
+/**
+ * `rect` shifted into the viewport with the component's own `margins` (the
+ * fallback folds the gap into its offset and zeroes the margin, so pass the
+ * native run's).
+ */
+const shiftedIntoViewport = (rect: number[], margins: number[]): string => {
+  const [left, top, width, height] = rect;
+
+  const [marginTop, marginRight, marginBottom, marginLeft] = margins;
+
+  const { clientHeight, clientWidth } = document.documentElement;
+
+  return rounded([
+    shiftAxis(left, width, marginLeft, marginRight, clientWidth),
+    shiftAxis(top, height, marginTop, marginBottom, clientHeight),
+    width,
+    height,
+  ]);
+};
+
 describe.each(Object.keys(OVERLAY_RECIPES))(
   '%s without native anchor positioning',
   (tag) => {
@@ -223,7 +284,7 @@ describe.each(Object.keys(OVERLAY_RECIPES))(
       },
     };
 
-    const panelRect = async (scenario: string): Promise<string> => {
+    const panelRect = async (scenario: string): Promise<PanelPlacement> => {
       document.body.replaceChildren();
       window.scrollTo(0, 0);
 
@@ -248,14 +309,19 @@ describe.each(Object.keys(OVERLAY_RECIPES))(
 
       const r = panel.getBoundingClientRect();
 
-      const out = [r.left, r.top, r.width, r.height]
-        .map((v) => Math.round(v))
-        .join(',');
+      const style = getComputedStyle(panel);
+
+      const margins = [
+        style.marginTop,
+        style.marginRight,
+        style.marginBottom,
+        style.marginLeft,
+      ].map((value) => parseFloat(value));
 
       m.unmount();
       window.scrollTo(0, 0);
 
-      return out;
+      return { margins, rect: [r.left, r.top, r.width, r.height] };
     };
 
     // ADR-0038: a designated trigger elsewhere in the document; natively the
@@ -320,7 +386,20 @@ describe.each(Object.keys(OVERLAY_RECIPES))(
 
         try {
           expect(supportsAnchorPositioning()).toBe(false);
-          expect(await panelRect(scenario)).toBe(native);
+
+          const fallback = await panelRect(scenario);
+
+          const nativeShifted = shiftedIntoViewport(
+            native.rect,
+            native.margins,
+          );
+
+          expect(rounded(fallback.rect)).toBe(
+            NO_PLACEMENT_FITS.has(scenario) &&
+              nativeShifted !== rounded(native.rect)
+              ? shiftedIntoViewport(fallback.rect, native.margins)
+              : rounded(native.rect),
+          );
         } finally {
           restore();
         }

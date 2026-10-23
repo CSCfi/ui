@@ -1,3 +1,4 @@
+import type { TestContext } from 'vitest';
 import type { Locator, ScreenshotMatcherOptions } from 'vitest/browser';
 
 /**
@@ -6,7 +7,7 @@ import type { Locator, ScreenshotMatcherOptions } from 'vitest/browser';
  * talks to the element the way a consumer's page does — properties,
  * attributes, light-DOM children, host events — never to Vue internals.
  */
-import { expect } from 'vitest';
+import { expect, it } from 'vitest';
 import { commands, page, server, userEvent } from 'vitest/browser';
 
 import type { ThemeMode } from '../theme/themeMode';
@@ -309,8 +310,35 @@ export const consoleSpy = (() => {
  * host renders the same glyphs (macOS ignores fontconfig), so elsewhere the
  * comparison is skipped and only the behaviour assertions around it run.
  * `test:update` therefore never writes a baseline from a non-Linux checkout.
+ * Firefox and WebKit run the behaviour assertions only (ADR-0077).
  */
-export const VISUAL_BASELINES = server.platform === 'linux';
+export const VISUAL_BASELINES =
+  server.platform === 'linux' && server.browser === 'chromium';
+
+/**
+ * A **Chromium-only spec** (ADR-0077): `chromiumOnly(reason)(name, fn)` is
+ * `it(name, fn)`, skipped on Firefox and WebKit with `reason` as the skip
+ * note. The reason is test tooling only Chromium has (CDP-driven input); a
+ * component fault on another engine is a bug to fix, never a reason. Never
+ * used in a conformance suite; `lint:engines` lists every use.
+ */
+export const chromiumOnly =
+  (reason: string) =>
+  (
+    name: string,
+    fn: (context: TestContext) => Promise<void> | void,
+    timeout?: number,
+  ): void => {
+    it(
+      name,
+      (context) => {
+        context.skip(server.browser !== 'chromium', `Chromium only: ${reason}`);
+
+        return fn(context);
+      },
+      timeout,
+    );
+  };
 
 let skipNoticed = false;
 
@@ -323,7 +351,7 @@ export async function matchScreenshotInBothModes(
     if (!skipNoticed) {
       skipNoticed = true;
       console.log(
-        `[csc-ui] visual baselines compare on linux only — skipped on ${server.platform}`,
+        `[csc-ui] visual baselines compare on linux Chromium only — skipped on ${server.platform} ${server.browser}`,
       );
     }
 

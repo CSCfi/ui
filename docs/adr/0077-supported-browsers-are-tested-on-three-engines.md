@@ -38,5 +38,35 @@ test run behind it.
 ## Consequences
 
 - CI time grows by two browser runs of the behaviour specs.
+- `TEST_BROWSERS` (comma-separated, Chromium alone when unset) picks the
+  engines of the csc-ui browser project; CI lists all three. Firefox and
+  WebKit are the instances `browser (firefox)` and `browser (webkit)`. The
+  docs example smoke stays on Chromium: it checks the canons and axe, not
+  engine behaviour.
+- `lint:engines` lists every `chromiumOnly` use with its reason, and fails on
+  one in a conformance suite, on a missing reason, and on any other engine
+  switch (`server.browser`, `navigator.userAgent`) in a spec.
+- A spec may branch on a **capability**, probed at runtime, when a supported
+  browser lacks it and an ADR documents what happens then: it asserts that
+  documented behaviour instead, so nothing goes untested. The first Firefox
+  run (Playwright's Firefox 150) needed two:
+  - style container queries, which arrived in Firefox 151 and are missing in
+    ESR 140: an element-level inverting scope is inert there (ADR-0054), and
+    `modeScope.spec.ts` asserts exactly that;
+  - Firefox's native anchor positioning neither shifts a panel no placement
+    fits back into the viewport (Bug 1924792) nor keeps the last placement
+    that fit. Where its native panel runs off the viewport, the
+    anchored-overlay suite holds the fallback (ADR-0056) to the shift itself
+    instead of to that placement.
+- **iOS Safari is promised but not tested.** Playwright's WebKit is the Linux
+  WebKitGTK build: Safari's engine without iOS's touch scrolling, on-screen
+  keyboard or visual viewport, where the worst alpha bugs lived (the page
+  lock). A green WebKit run says nothing about iPhones and iPads. Recorded as
+  a known gap (decided 2026-10-23): no device check gates a release, and iOS
+  faults arrive as user reports.
+- Firefox's content sandbox cannot read the bundled test fonts until their
+  directory is allowed (`security.sandbox.content.read_path_whitelist`);
+  without it every family fell back to DejaVu, about 15% wider, and specs
+  that measure text failed.
 - `@cscfi/csc-ui-react` gets its first runtime check: event-mapping specs per
   event kind on top of the React smoke.

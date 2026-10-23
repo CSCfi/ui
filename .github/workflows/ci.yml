@@ -54,7 +54,7 @@ jobs:
       - name: Build csc-ui-react
         run: pnpm --filter @cscfi/csc-ui-react run build
 
-      - name: Guards csc-ui (tokens --strict, a11y, ramp, chart, focus)
+      - name: Guards csc-ui (tokens --strict, a11y, ramp, chart, focus, engines)
         run: pnpm --filter @cscfi/csc-ui run lint:guards
 
       - name: Type-check csc-ui (components, harness, specs)
@@ -109,3 +109,51 @@ jobs:
             .vitest/attachments/**
             packages/**/.vitest/attachments/**
           if-no-files-found: ignore
+
+  # The behaviour specs on Firefox and WebKit (ADR-0077), beside the Chromium
+  # run above: one runner per engine, so a slow engine never holds up the
+  # other or crowds the Chromium visual baselines. Builds first because the
+  # dist smoke runs here too.
+  engines:
+    name: Behaviour specs (${{ matrix.engine }})
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    strategy:
+      fail-fast: false
+      matrix:
+        engine: [firefox, webkit]
+    env:
+      TEST_BROWSERS: ${{ matrix.engine }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Enable corepack (pnpm)
+        run: corepack enable
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Build csc-ui
+        run: pnpm --filter @cscfi/csc-ui run build
+
+      - name: Read the pinned playwright version
+        id: pw
+        run: echo "version=$(node -p "require('playwright/package.json').version")" >> "$GITHUB_OUTPUT"
+
+      - name: Cache Playwright browsers
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/ms-playwright
+          key: playwright-${{ runner.os }}-${{ matrix.engine }}-${{ steps.pw.outputs.version }}
+
+      - name: Install ${{ matrix.engine }} (+ OS deps)
+        run: pnpm exec playwright install --with-deps ${{ matrix.engine }}
+
+      - name: Test (csc-ui browser project on ${{ matrix.engine }})
+        run: pnpm --filter @cscfi/csc-ui exec vitest run --project "browser (${{ matrix.engine }})"

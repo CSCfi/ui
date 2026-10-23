@@ -34,11 +34,12 @@ pnpm fix            # oxlint --fix, eslint --fix, then oxfmt
 # In packages/csc-ui
 pnpm build          # tokens -> chart data -> tag map -> vite build -> types -> strict manifest
 pnpm docs:manifest  # regenerate custom-elements.json
-pnpm lint:guards    # tokens (strict) + a11y + ramp + chart + focus-ring guards
+pnpm lint:guards    # tokens (strict) + a11y + ramp + chart + focus-ring + engine-skip guards
 pnpm lint:tokens    # forbid direct palette-step utilities in SFCs
 pnpm lint:a11y      # host attribute fallthrough check
 pnpm lint:chart     # chart-data.ts matches the semantic maps (ADR-0040)
 pnpm lint:focus     # a focus ring under outline-none restates outline-solid (Tailwind v4)
+pnpm lint:engines   # lists every chromiumOnly() spec; no other engine switch (ADR-0077)
 pnpm test           # browser + node projects; test:browser / test:node / test:watch
 pnpm test:update    # rewrite the visual baselines of the browser project
 
@@ -55,6 +56,7 @@ The React package build requires a built `packages/csc-ui` (it reads the manifes
 
 Tests run against the **registered custom elements in headless Chromium** (Vitest 5 browser mode on Playwright); no jsdom/happy-dom for components. Follow the glossary's **Verification** terms.
 
+- **Three engines in CI (ADR-0077).** `TEST_BROWSERS=chromium,firefox,webkit` adds the `browser (firefox)` and `browser (webkit)` instances; unset, it is Chromium alone (the devcontainer has no Firefox or WebKit). Visual baselines compare on Chromium only. A spec skips the other engines only through the harness's `chromiumOnly(reason)`, for test tooling only Chromium has; a component fault on Firefox or WebKit is a bug to fix.
 - **Behaviour specs** are colocated: `src/components/<c-tag>/C<Name>.spec.ts`. Node-only specs use `*.node.spec.ts`. The shared harness is `packages/csc-ui/src/test/harness.ts` (`mount`, `settle`, `recordEvents`, `matchScreenshotInBothModes`); specs import SFC source, so no build is needed except for the dist smoke and the docs example smoke.
 - **Every `Fix(` PR adds a behaviour spec that fails before the fix.** Every new component ships a colocated spec and a visual baseline per theme mode (`pnpm ui test:update`, commit the PNGs). Conformance suites enrol new tags automatically — fix the component, never opt out.
 - A test fails on any `console.error` or `[Vue warn]`; consume an expected one with `consoleSpy.expect(/…/)`.

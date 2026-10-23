@@ -79,11 +79,14 @@ describe('c-side-navigation', () => {
     // chrome, so the unit is read from the declaration that sizes the root.
     const root = m.part('root');
 
-    // Tailwind nests its utilities in `@layer` blocks: walk grouped rules.
+    // Tailwind nests its utilities in `@layer` blocks: walk grouped rules. A
+    // style rule is itself a grouping rule in Firefox (it may hold nested
+    // rules), so keep it as well as walking into it.
     const flatten = (rules: CSSRuleList): CSSRule[] =>
-      Array.from(rules).flatMap((rule) =>
-        rule instanceof CSSGroupingRule ? flatten(rule.cssRules) : [rule],
-      );
+      Array.from(rules).flatMap((rule) => [
+        ...(rule instanceof CSSStyleRule ? [rule] : []),
+        ...(rule instanceof CSSGroupingRule ? flatten(rule.cssRules) : []),
+      ]);
 
     const heights = Array.from(m.host.shadowRoot!.adoptedStyleSheets)
       .flatMap((sheet) => flatten(sheet.cssRules))

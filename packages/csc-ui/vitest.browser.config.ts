@@ -4,6 +4,7 @@ import { defineConfig } from 'vitest/config';
 import {
   browserProject,
   ignoreBenignBrowserNotices,
+  testEngines,
 } from '../../vitest.browser.shared';
 import { sfcPlugins } from './vite.plugins';
 
@@ -18,7 +19,7 @@ export default defineConfig({
   },
   plugins: sfcPlugins(),
   test: {
-    browser: browserProject('browser'),
+    browser: browserProject('browser', testEngines()),
     exclude: ['src/**/*.node.spec.ts', '**/node_modules/**', '**/dist/**'],
     // Test files share one browser page (focus, pointer, keyboard). Run them
     // one at a time so real input events cannot cross between files.

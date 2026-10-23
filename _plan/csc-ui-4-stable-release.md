@@ -235,8 +235,29 @@ start migrating on the first alpha that carries D2–D4.
      `packages/csc-ui/scripts/check-api-breaks.mjs` (`pnpm ui lint:api`, a step in `changeset-check.yml`) diffs the
      snapshots from the merge base; the entry snapshot now records each exported type's shape, so `texts` keys and
      alias unions are guarded. Its first run caught 67a3e096: `internal-tags.md` became a major changeset.
-   - CI: Firefox + WebKit instances in the browser project (`packages/csc-ui/vitest.browser.config.ts`,
-     `.github/workflows/ci.yml` installs them), `chromiumOnly(reason)` helper + guard; fix what they surface.
+   - **Done locally (2026-10-23); WebKit waits for the first pushed CI run** — CI: Firefox + WebKit.
+     `TEST_BROWSERS` (comma-separated, Chromium alone when unset) adds the `browser (firefox)` and
+     `browser (webkit)` instances to the csc-ui browser project (`vitest.browser.shared.ts`); CI runs them in a
+     separate `engines` matrix job, one runner per engine, which builds first for the dist smoke. Visual baselines
+     compare on Chromium only. `chromiumOnly(reason)` in the harness plus `lint:engines` (in `lint:guards`); one use
+     so far, the page-lock touch-pan test (desktop Firefox has no `Touch` constructor). The docs example smoke stays
+     on Chromium. The first Firefox run (Playwright's Firefox 150, from a scratch install in the devcontainer)
+     failed 50 of 1467 tests; now 51/51 files pass:
+     - Fonts: Firefox's content sandbox could not read the bundled Liberation files, so everything fell back to
+       DejaVu, about 15% wider (c-card-title, c-breadcrumb and an overlay case failed). Fixed with the sandbox
+       read-path pref.
+     - Bug, fixed: a `range` date/time picker's dash sat off centre where `field-sizing` is missing (ESR too);
+       the start is now measured in its own font.
+     - Test bug: a `CSSStyleRule` is a `CSSGroupingRule` in Firefox (the side-nav `dvh` check skipped it).
+     - Style queries (Firefox 151+, missing in ESR 140 and in Playwright's 150) — decided: the spec probes the
+       capability and asserts ADR-0054's inert inverting scope where it is missing.
+     - Firefox's native anchor positioning neither shifts a panel no placement fits back into the viewport
+       (Bug 1924792) nor keeps the last placement that fit — decided: where its native panel runs off the viewport,
+       the fallback is held to the shift itself. A too-tall c-popover still runs off-screen on current Firefox.
+     Open: WebKit has never run (its system libraries are missing in the arm64 devcontainer); the first CI run
+     shows what it surfaces, fonts included. Add `Behaviour specs (firefox)` and `Behaviour specs (webkit)` to the
+     branch protection's required checks. iOS Safari stays untested: CI's WebKit is WebKitGTK, without iOS touch
+     scrolling, keyboard or visual viewport — a known gap, no device check (decided 2026-10-23).
    - **Done (2026-10-23)** — Example smoke: axe (D14), React + TypeScript flavors (D15). The docs smoke now runs
      the 160 Vue canons with axe (WCAG 2.1 AA, light and dark), the 159 `.react.tsx` canons on React 19 through the
      built wrapper, the 159 `.typescript.html` fragments with their wiring, and a manifest-generated spec that every
