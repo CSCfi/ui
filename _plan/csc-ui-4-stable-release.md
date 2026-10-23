@@ -192,7 +192,7 @@ A read-only check of all 124 D11–D13 items against source, glossary, ADRs, usa
   that is gone or whose default or type changed needs a guide entry. A first diff found 22 removed attributes and
   2 removed tags the guide never mentions. ADR-0027 amendment.
 - **Ledger — same-name behaviour changes** (invisible to the guard: name, type and default unchanged). Each PR that
-  makes one adds its guide entry; tick it here. Entries marked *(check)* need the 3.x behaviour confirmed first.
+  makes one adds its guide entry (a `meaningChanged` entry in `migration-api.ts`); tick it here. Entries marked *(check)* need the 3.x behaviour confirmed first.
   - [ ] c-otp-input `value`: the digits typed so far, `''` when empty (3.x: `null` until complete).
   - [ ] `id` on the 11 tags that forwarded it: stays on the host (3.x: set on the inner control).
   - [ ] c-option `selected`: seeds silently, once, while the value is empty (3.x c-select emitted `changeValue`).
@@ -219,8 +219,12 @@ start migrating on the first alpha that carries D2–D4.
      `_`-prefix handling at `script-api.mjs:284`); one generated internal-tag list consumed by docs, the example-parity
      script and `packages/csc-ui-react/scripts/generate.mjs`. The strict no-default-`true`-boolean rule lands
      with D11 in phase 2 (it would fail the build until `valid`/`visible`/`focusable` change).
-   - Docs guard (R2): generate and commit the 3.x API data from the `legacy-main` Stencil readmes; fail when a 3.x
-     name that is gone, or whose default or type changed, has no migration-guide entry.
+   - **Done (2026-10-23)** — Docs guard (R2): `scripts/extract-v3-api.mjs` wrote `scripts/v3-api.json` from the
+     72 tags' readmes at `v3.0.19` (identical to `legacy-main`'s); `scripts/check-migration-guide.mjs`
+     (`pnpm lint:migration`, in `lint:guards` and CI) fails when a 3.x name that is gone, or whose default or type
+     changed, has no entry in `app/content/migration-api.ts`, which the migration page renders as "3.x API, name
+     by name". It also fails stale entries. 75 names wait in `scripts/migration-guide-baseline.json`, which may
+     only shrink and must be empty once the pre tag leaves `alpha` (phase 3, or the PR that settles each name).
    - Lint: `@update:*` on a `c-*` element in a Vue template is an error (D3) — an ESLint `vue/*` rule (ADR-0068 keeps
      template rules in ESLint) plus the example-parity script for usage.md snippets.
    - API-snapshot breaking-change guard (D10), armed by pre tag: `alpha` → needs a major changeset, `rc` → fail.

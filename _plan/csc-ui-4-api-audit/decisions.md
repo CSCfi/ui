@@ -19,7 +19,7 @@ never mentioned in the migration guide.
   `element-id` (shadow-internal ids are unreachable from page `for`/`aria-*`, ADR-0033); the guide says 3.x `id`
   now stays on the host. Fix COtpInput.vue:432 overwriting the host `id`; c-otp-input gets its first spec.
 - **R2 — Clean break + migration-guide completeness guard.** No aliases. Commit 3.x API data generated from the
-  73 Stencil readmes on `legacy-main` (props with attribute / type / default, events, methods, slots, parts, CSS
+  Stencil readmes (72 tags at `v3.0.19`, identical to `legacy-main`) (props with attribute / type / default, events, methods, slots, parts, CSS
   custom properties — the 3.0.19 tarball has no `docs.json`, and `vscode-data.json` records no defaults). A docs
   guard fails when a 3.x name that is gone, or whose default or type changed, has no guide entry. Changes of
   *meaning* under an unchanged name, type and default are invisible to it: they go in the plan's ledger, and each

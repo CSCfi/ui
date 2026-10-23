@@ -68,6 +68,10 @@ jobs:
       - name: Docs example parity
         run: pnpm --filter @cscfi/csc-ui-documentation run lint:examples
 
+      # Every changed 3.x name has a migration-guide entry (ADR-0027).
+      - name: Docs migration-guide coverage
+        run: pnpm --filter @cscfi/csc-ui-documentation run lint:migration
+
       - name: Read the pinned playwright version
         id: pw
         run: echo "version=$(node -p "require('playwright/package.json').version")" >> "$GITHUB_OUTPUT"

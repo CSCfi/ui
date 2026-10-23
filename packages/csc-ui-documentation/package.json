@@ -9,6 +9,7 @@
     "dev": "nuxt dev",
     "generate": "pnpm run lint:examples && nuxt generate",
     "lint:examples": "node scripts/check-example-parity.mjs",
+    "lint:migration": "node scripts/check-migration-guide.mjs",
     "postinstall": "nuxt prepare",
     "preview": "nuxt preview",
     "typecheck": "nuxt typecheck",

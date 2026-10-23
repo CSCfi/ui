@@ -60,6 +60,72 @@
           </nuxt-link>
         </p>
       </section>
+
+      <section class="mt-10">
+        <h2
+          id="v3-api"
+          class="my-[0.83em] scroll-mt-20 border-b border-border pb-1.5 text-2xl font-bold"
+        >
+          3.x API, name by name
+        </h2>
+
+        <p class="my-[1em] max-w-180 text-on-surface-muted">
+          Every 3.x tag, attribute, event, method, slot and CSS custom property
+          that 4.x removed, renamed or changed the default or type of, and the
+          ones whose behaviour changed under the same name. Attributes are
+          listed by their 3.x attribute name.
+        </p>
+
+        <div v-for="group in apiGroups" :key="group.tag">
+          <h3
+            :id="`v3-api-${group.tag === '*' ? 'all' : group.tag}`"
+            :class="{ 'font-mono': group.tag !== '*' }"
+            class="mt-8 mb-2 scroll-mt-20 text-lg font-bold"
+          >
+            {{ group.tag === '*' ? 'Every component' : group.tag }}
+          </h3>
+
+          <div class="overflow-x-auto">
+            <table class="w-full text-sm">
+              <thead>
+                <tr>
+                  <th :class="TH">3.x</th>
+
+                  <th :class="TH">Kind</th>
+
+                  <th :class="TH">In 4.x</th>
+                </tr>
+              </thead>
+
+              <tbody>
+                <tr
+                  v-for="entry in group.entries"
+                  :key="`${entry.kind} ${entry.name}`"
+                >
+                  <td :class="TD">
+                    <code class="whitespace-nowrap">{{ nameOf(entry) }}</code>
+                  </td>
+
+                  <td :class="TD" class="whitespace-nowrap">
+                    {{ KIND_LABELS[entry.kind] }}
+                  </td>
+
+                  <td :class="TD">
+                    <template
+                      v-for="(part, index) in entry.change.split('`')"
+                      :key="index"
+                    >
+                      <code v-if="index % 2">{{ part }}</code>
+
+                      <template v-else>{{ part }}</template>
+                    </template>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
     </article>
 
     <toc-rail :items="tocItems" />
@@ -70,14 +136,69 @@
 import type { TocItem } from '~/utils/toc';
 
 import { MIGRATION_SECTIONS, type MigrationSection } from '~/content/migration';
+import {
+  V3_API_CHANGES,
+  type V3ApiChange,
+  type V3ApiKind,
+} from '~/content/migration-api';
 
 const sections: MigrationSection[] = MIGRATION_SECTIONS;
 
-// "On this page" rail links — one per section.
-const tocItems: TocItem[] = sections.map((section) => ({
-  id: section.id,
-  label: section.title,
-}));
+// "On this page" rail links — one per section, then the name-by-name lookup.
+const tocItems: TocItem[] = [
+  ...sections.map((section) => ({ id: section.id, label: section.title })),
+  { id: 'v3-api', label: '3.x API, name by name' },
+];
+
+const KIND_LABELS: Record<V3ApiKind, string> = {
+  cssProperty: 'CSS custom property',
+  event: 'Event',
+  method: 'Method',
+  prop: 'Attribute',
+  slot: 'Slot',
+  tag: 'Tag',
+};
+
+const KIND_ORDER: V3ApiKind[] = [
+  'tag',
+  'prop',
+  'event',
+  'method',
+  'slot',
+  'cssProperty',
+];
+
+const nameOf = (entry: V3ApiChange): string => {
+  if (entry.kind === 'tag') return `<${entry.tag}>`;
+
+  if (entry.name === '*') return 'all';
+
+  if (entry.kind === 'slot' && entry.name === '') return 'default';
+
+  return entry.name ?? '';
+};
+
+// One table per 3.x tag, the every-component entries first; in a table the
+// tag itself, then kinds and names in order.
+const apiGroups = Object.entries(
+  Object.groupBy(V3_API_CHANGES, (entry) => entry.tag),
+)
+  .map(([tag, entries = []]) => ({
+    entries: entries.toSorted(
+      (a, b) =>
+        KIND_ORDER.indexOf(a.kind) - KIND_ORDER.indexOf(b.kind) ||
+        (a.name ?? '').localeCompare(b.name ?? ''),
+    ),
+    tag,
+  }))
+  .toSorted((a, b) =>
+    a.tag === '*' ? -1 : b.tag === '*' ? 1 : a.tag.localeCompare(b.tag),
+  );
+
+const TH =
+  'border-b border-border px-3 py-2 text-left align-top font-semibold whitespace-nowrap text-on-surface-faint';
+
+const TD = 'border-b border-border px-3 py-2 text-left align-top';
 
 const { flavor } = useFlavor();
 

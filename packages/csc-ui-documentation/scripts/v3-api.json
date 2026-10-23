@@ -1,0 +1,3345 @@
+{
+  "source": "v3.0.19 (1535c556646e64c25a953564120d3e708e1fc68f)",
+  "tags": {
+    "c-accordion": {
+      "props": [
+        {
+          "attribute": "mandatory",
+          "default": "false",
+          "property": "mandatory",
+          "type": "boolean"
+        },
+        {
+          "attribute": "multiple",
+          "default": "false",
+          "property": "multiple",
+          "type": "boolean"
+        },
+        {
+          "attribute": "outlined",
+          "default": "false",
+          "property": "outlined",
+          "type": "boolean"
+        },
+        {
+          "attribute": "value",
+          "default": "undefined",
+          "property": "value",
+          "required": true,
+          "type": "(string | number)[] | number | string"
+        }
+      ],
+      "events": [
+        {
+          "name": "changeValue",
+          "type": "CustomEvent<number | string>"
+        }
+      ],
+      "slots": [""]
+    },
+    "c-accordion-item": {
+      "props": [
+        {
+          "attribute": "collapsable",
+          "default": "false",
+          "property": "collapsable",
+          "type": "boolean"
+        },
+        {
+          "attribute": "expanded",
+          "default": "false",
+          "property": "expanded",
+          "type": "boolean"
+        },
+        {
+          "attribute": "heading",
+          "default": "undefined",
+          "property": "heading",
+          "type": "string"
+        },
+        {
+          "attribute": "outlined",
+          "default": "false",
+          "property": "outlined",
+          "type": "boolean"
+        },
+        {
+          "attribute": "value",
+          "default": "undefined",
+          "property": "value",
+          "type": "number | string"
+        }
+      ],
+      "events": [
+        {
+          "name": "itemChange",
+          "type": "CustomEvent<any>"
+        }
+      ],
+      "slots": ["", "header"],
+      "cssProperties": [
+        "--c-accordion-item-header-background-color",
+        "--c-accordion-item-outline-color",
+        "--c-accordion-item-text-color"
+      ]
+    },
+    "c-alert": {
+      "props": [
+        {
+          "attribute": "type",
+          "default": "undefined",
+          "property": "type",
+          "type": "'error' | 'info' | 'success' | 'warning'"
+        }
+      ],
+      "slots": ["", "title"]
+    },
+    "c-autocomplete": {
+      "props": [
+        {
+          "attribute": "disabled",
+          "default": "false",
+          "property": "disabled",
+          "type": "boolean"
+        },
+        {
+          "attribute": "hide-details",
+          "default": "false",
+          "property": "hideDetails",
+          "type": "boolean"
+        },
+        {
+          "attribute": "hint",
+          "default": "''",
+          "property": "hint",
+          "type": "string"
+        },
+        {
+          "attribute": "id",
+          "default": "undefined",
+          "property": "hostId",
+          "type": "string"
+        },
+        {
+          "attribute": null,
+          "default": "[]",
+          "property": "items",
+          "type": "CAutocompleteItem[]"
+        },
+        {
+          "attribute": "items-per-page",
+          "default": "6",
+          "property": "itemsPerPage",
+          "type": "number"
+        },
+        {
+          "attribute": "label",
+          "default": "undefined",
+          "property": "label",
+          "type": "string"
+        },
+        {
+          "attribute": "loading",
+          "default": "false",
+          "property": "loading",
+          "type": "boolean"
+        },
+        {
+          "attribute": "minimum-query-length",
+          "default": "0",
+          "property": "minimumQueryLength",
+          "type": "number"
+        },
+        {
+          "attribute": "minimum-query-length-message",
+          "default": "'Type at least {n} characters'",
+          "property": "minimumQueryLengthMessage",
+          "type": "string"
+        },
+        {
+          "attribute": "name",
+          "default": "undefined",
+          "property": "name",
+          "type": "string"
+        },
+        {
+          "attribute": "no-matching-items-message",
+          "default": "'No suggestions found'",
+          "property": "noMatchingItemsMessage",
+          "type": "string"
+        },
+        {
+          "attribute": "placeholder",
+          "default": "''",
+          "property": "placeholder",
+          "type": "string"
+        },
+        {
+          "attribute": "query",
+          "default": "null",
+          "property": "query",
+          "type": "string"
+        },
+        {
+          "attribute": "required",
+          "default": "false",
+          "property": "required",
+          "type": "boolean"
+        },
+        {
+          "attribute": "return-object",
+          "default": "false",
+          "property": "returnObject",
+          "type": "boolean"
+        },
+        {
+          "attribute": "shadow",
+          "default": "false",
+          "property": "shadow",
+          "type": "boolean"
+        },
+        {
+          "attribute": "valid",
+          "default": "true",
+          "property": "valid",
+          "type": "boolean"
+        },
+        {
+          "attribute": "validate",
+          "default": "false",
+          "property": "validate",
+          "type": "boolean"
+        },
+        {
+          "attribute": "validate-on-blur",
+          "default": "false",
+          "property": "validateOnBlur",
+          "type": "boolean"
+        },
+        {
+          "attribute": "validation",
+          "default": "'Required field'",
+          "property": "validation",
+          "type": "string"
+        },
+        {
+          "attribute": "value",
+          "default": "null",
+          "property": "value",
+          "type": "CSelectItem & { ref?: HTMLElement; } | number | string"
+        }
+      ],
+      "events": [
+        {
+          "name": "changeQuery",
+          "type": "CustomEvent<any>"
+        },
+        {
+          "name": "changeValue",
+          "type": "CustomEvent<any>"
+        }
+      ],
+      "methods": ["reset"],
+      "cssProperties": [
+        "--c-autocomplete-active-color",
+        "--c-autocomplete-background-color",
+        "--c-autocomplete-inactive-color",
+        "--c-autocomplete-option-background-color",
+        "--c-autocomplete-option-background-hover-color",
+        "--c-autocomplete-option-text-color",
+        "--c-autocomplete-placeholder-color",
+        "--c-autocomplete-text-color"
+      ]
+    },
+    "c-backdrop": {
+      "props": [
+        {
+          "attribute": "disable-backdrop-blur",
+          "default": "false",
+          "property": "disableBackdropBlur",
+          "type": "boolean"
+        }
+      ]
+    },
+    "c-badge": {
+      "cssProperties": [
+        "--c-badge-background-color",
+        "--c-badge-border-color",
+        "--c-badge-text-color"
+      ]
+    },
+    "c-button": {
+      "props": [
+        {
+          "attribute": "danger",
+          "default": "false",
+          "property": "danger",
+          "type": "boolean"
+        },
+        {
+          "attribute": "disabled",
+          "default": "false",
+          "property": "disabled",
+          "type": "boolean"
+        },
+        {
+          "attribute": "fit",
+          "default": "false",
+          "property": "fit",
+          "type": "boolean"
+        },
+        {
+          "attribute": "ghost",
+          "default": "false",
+          "property": "ghost",
+          "type": "boolean"
+        },
+        {
+          "attribute": "grouped",
+          "default": "false",
+          "property": "grouped",
+          "type": "boolean"
+        },
+        {
+          "attribute": "id",
+          "default": "undefined",
+          "property": "hostId",
+          "type": "string"
+        },
+        {
+          "attribute": "href",
+          "default": "undefined",
+          "property": "href",
+          "type": "string"
+        },
+        {
+          "attribute": "inverted",
+          "default": "false",
+          "property": "inverted",
+          "type": "boolean"
+        },
+        {
+          "attribute": "loading",
+          "default": "false",
+          "property": "loading",
+          "type": "boolean"
+        },
+        {
+          "attribute": "no-radius",
+          "default": "false",
+          "property": "noRadius",
+          "type": "boolean"
+        },
+        {
+          "attribute": "outlined",
+          "default": "false",
+          "property": "outlined",
+          "type": "boolean"
+        },
+        {
+          "attribute": "size",
+          "default": "'default'",
+          "property": "size",
+          "type": "\"default\" | \"large\" | \"small\""
+        },
+        {
+          "attribute": "tabs",
+          "default": "false",
+          "property": "tabs",
+          "type": "boolean"
+        },
+        {
+          "attribute": "target",
+          "default": "'_blank'",
+          "property": "target",
+          "type": "string"
+        },
+        {
+          "attribute": "text",
+          "default": "false",
+          "property": "text",
+          "type": "boolean"
+        },
+        {
+          "attribute": "type",
+          "default": "'button'",
+          "property": "type",
+          "type": "\"button\" | \"submit\""
+        },
+        {
+          "attribute": "value",
+          "default": "undefined",
+          "property": "value",
+          "type": "number | string"
+        }
+      ],
+      "events": [
+        {
+          "name": "tabChange",
+          "type": "CustomEvent<{ value: string | number; element: HTMLCButtonElement; }>"
+        },
+        {
+          "name": "tabFocus",
+          "type": "CustomEvent<number | string>"
+        }
+      ],
+      "slots": ["", "description", "icon"],
+      "cssProperties": [
+        "--c-button-background-color",
+        "--c-button-background-color-hover",
+        "--c-button-border-radius",
+        "--c-button-danger-background-color",
+        "--c-button-danger-background-color-hover",
+        "--c-button-danger-disabled-background-color",
+        "--c-button-danger-disabled-text-color",
+        "--c-button-danger-inverted-background-color",
+        "--c-button-danger-inverted-background-color-hover",
+        "--c-button-danger-inverted-disabled-background-color",
+        "--c-button-danger-inverted-disabled-text-color",
+        "--c-button-danger-inverted-text-color",
+        "--c-button-danger-loader-color",
+        "--c-button-danger-text-color",
+        "--c-button-disabled-background-color",
+        "--c-button-disabled-text-color",
+        "--c-button-ghost-background-color",
+        "--c-button-ghost-background-color-hover",
+        "--c-button-ghost-disabled-background-color",
+        "--c-button-ghost-disabled-text-color",
+        "--c-button-ghost-inverted-background-color",
+        "--c-button-ghost-inverted-background-color-hover",
+        "--c-button-ghost-inverted-disabled-background-color",
+        "--c-button-ghost-inverted-disabled-text-color",
+        "--c-button-ghost-inverted-text-color",
+        "--c-button-ghost-loader-color",
+        "--c-button-ghost-text-color",
+        "--c-button-inverted-background-color",
+        "--c-button-inverted-background-color-hover",
+        "--c-button-inverted-disabled-background-color",
+        "--c-button-inverted-disabled-text-color",
+        "--c-button-inverted-text-color",
+        "--c-button-loader-color",
+        "--c-button-outline-color",
+        "--c-button-outlined-background-color",
+        "--c-button-outlined-background-color-hover",
+        "--c-button-outlined-border-color",
+        "--c-button-outlined-disabled-background-color",
+        "--c-button-outlined-disabled-border-color",
+        "--c-button-outlined-disabled-text-color",
+        "--c-button-outlined-inverted-background-color",
+        "--c-button-outlined-inverted-border-color",
+        "--c-button-outlined-inverted-disabled-background-color",
+        "--c-button-outlined-inverted-disabled-border-color",
+        "--c-button-outlined-inverted-disabled-text-color",
+        "--c-button-outlined-inverted-text-color",
+        "--c-button-outlined-loader-color",
+        "--c-button-outlined-text-color",
+        "--c-button-text-background-color",
+        "--c-button-text-background-color-hover",
+        "--c-button-text-color",
+        "--c-button-text-disabled-background-color",
+        "--c-button-text-disabled-text-color",
+        "--c-button-text-inverted-background-color",
+        "--c-button-text-inverted-background-color-hover",
+        "--c-button-text-inverted-disabled-background-color",
+        "--c-button-text-inverted-disabled-text-color",
+        "--c-button-text-inverted-text-color",
+        "--c-button-text-loader-color",
+        "--c-button-text-text-color"
+      ]
+    },
+    "c-card": {
+      "props": [
+        {
+          "attribute": "fullscreen",
+          "default": "false",
+          "property": "fullscreen",
+          "type": "boolean"
+        }
+      ],
+      "methods": ["enterFullscreen", "exitFullscreen"],
+      "slots": [""],
+      "cssProperties": ["--c-card-background-color", "--c-card-gap"]
+    },
+    "c-card-actions": {
+      "props": [
+        {
+          "attribute": "align",
+          "default": "'center'",
+          "property": "align",
+          "type": "\"center\" | \"end\" | \"start\""
+        },
+        {
+          "attribute": "justify",
+          "default": "'start'",
+          "property": "justify",
+          "type": "\"center\" | \"end\" | \"space-around\" | \"space-between\" | \"start\" | \"stretch\""
+        }
+      ],
+      "slots": [""]
+    },
+    "c-card-content": {
+      "slots": [""]
+    },
+    "c-card-title": {
+      "slots": [""],
+      "cssProperties": [
+        "--c-card-title-color",
+        "--c-card-title-underline-color"
+      ]
+    },
+    "c-checkbox": {
+      "props": [
+        {
+          "attribute": "checked",
+          "default": "false",
+          "property": "checked",
+          "type": "boolean"
+        },
+        {
+          "attribute": "disabled",
+          "default": "false",
+          "property": "disabled",
+          "type": "boolean"
+        },
+        {
+          "attribute": "false-value",
+          "default": "false",
+          "property": "falseValue",
+          "type": "boolean | string"
+        },
+        {
+          "attribute": "hide-details",
+          "default": "false",
+          "property": "hideDetails",
+          "type": "boolean"
+        },
+        {
+          "attribute": "hint",
+          "default": "''",
+          "property": "hint",
+          "type": "string"
+        },
+        {
+          "attribute": "id",
+          "default": "undefined",
+          "property": "hostId",
+          "type": "string"
+        },
+        {
+          "attribute": "name",
+          "default": "undefined",
+          "property": "hostName",
+          "type": "string"
+        },
+        {
+          "attribute": "indeterminate",
+          "default": "false",
+          "property": "indeterminate",
+          "type": "boolean"
+        },
+        {
+          "attribute": "label",
+          "default": "''",
+          "property": "label",
+          "type": "string"
+        },
+        {
+          "attribute": "required",
+          "default": "false",
+          "property": "required",
+          "type": "boolean"
+        },
+        {
+          "attribute": "true-value",
+          "default": "true",
+          "property": "trueValue",
+          "type": "boolean | string"
+        },
+        {
+          "attribute": "valid",
+          "default": "true",
+          "property": "valid",
+          "type": "boolean"
+        },
+        {
+          "attribute": "validation",
+          "default": "'Required field'",
+          "property": "validation",
+          "type": "string"
+        },
+        {
+          "attribute": "value",
+          "default": "false",
+          "property": "value",
+          "type": "boolean | string"
+        }
+      ],
+      "events": [
+        {
+          "name": "changeValue",
+          "type": "CustomEvent<any>"
+        }
+      ],
+      "slots": [""],
+      "cssProperties": [
+        "--c-checkbox-background-color-hover",
+        "--c-checkbox-color",
+        "--c-checkbox-color-active",
+        "--c-checkbox-color-disabled"
+      ]
+    },
+    "c-csc-logo": {
+      "props": [
+        {
+          "attribute": "width",
+          "default": "60",
+          "property": "width",
+          "type": "number"
+        }
+      ]
+    },
+    "c-data-table": {
+      "props": [
+        {
+          "attribute": null,
+          "default": "[]",
+          "property": "data",
+          "type": "CDataTableData[]"
+        },
+        {
+          "attribute": "external-data",
+          "default": "false",
+          "property": "externalData",
+          "type": "boolean"
+        },
+        {
+          "attribute": null,
+          "default": "{     hideDetails: false,     simple: false,     hideRange: false,     size: 'default',   }",
+          "property": "footerOptions",
+          "type": "{ hideDetails?: boolean; simple?: boolean; hideRange?: boolean; size?: \"small\" | \"default\"; }"
+        },
+        {
+          "attribute": null,
+          "default": "[]",
+          "property": "headers",
+          "type": "CDataTableHeader[]"
+        },
+        {
+          "attribute": "hide-footer",
+          "default": "false",
+          "property": "hideFooter",
+          "type": "boolean"
+        },
+        {
+          "attribute": "horizontal-scrolling",
+          "default": "false",
+          "property": "horizontalScrolling",
+          "type": "boolean"
+        },
+        {
+          "attribute": "loading",
+          "default": "false",
+          "property": "loading",
+          "type": "boolean"
+        },
+        {
+          "attribute": "loading-text",
+          "default": "'Loading data'",
+          "property": "loadingText",
+          "type": "string"
+        },
+        {
+          "attribute": "no-data-text",
+          "default": "'No data'",
+          "property": "noDataText",
+          "type": "string"
+        },
+        {
+          "attribute": null,
+          "default": "undefined",
+          "property": "pagination",
+          "type": "{ itemCount: number; currentPage?: number; totalVisible?: number; itemsPerPage?: number; startFrom?: number; endTo?: number; locale?: string; textOverrides?: CPaginationTextOverrides; pageSizes?: number[]; }"
+        },
+        {
+          "attribute": "selectable",
+          "default": "false",
+          "property": "selectable",
+          "type": "boolean"
+        },
+        {
+          "attribute": "selection-property",
+          "default": "null",
+          "property": "selectionProperty",
+          "type": "string"
+        },
+        {
+          "attribute": "single-expansion",
+          "default": "false",
+          "property": "singleExpansion",
+          "type": "boolean"
+        },
+        {
+          "attribute": "single-selection",
+          "default": "false",
+          "property": "singleSelection",
+          "type": "boolean"
+        },
+        {
+          "attribute": "sort-by",
+          "default": "null",
+          "property": "sortBy",
+          "type": "any"
+        },
+        {
+          "attribute": "sort-direction",
+          "default": "null",
+          "property": "sortDirection",
+          "type": "\"asc\" | \"desc\""
+        },
+        {
+          "attribute": "sticky-header",
+          "default": "false",
+          "property": "stickyHeader",
+          "type": "boolean"
+        }
+      ],
+      "events": [
+        {
+          "name": "expand",
+          "type": "CustomEvent<any>"
+        },
+        {
+          "name": "paginate",
+          "type": "CustomEvent<{ itemCount: number; currentPage?: number; totalVisible?: number; itemsPerPage?: number; startFrom?: number; endTo?: number; locale?: string; textOverrides?: CPaginationTextOverrides; pageSizes?: number[]; }>"
+        },
+        {
+          "name": "selection",
+          "type": "CustomEvent<any>"
+        },
+        {
+          "name": "sort",
+          "type": "CustomEvent<any>"
+        }
+      ],
+      "methods": ["clearSelections", "getData"],
+      "cssProperties": [
+        "--c-data-table-active",
+        "--c-data-table-background-color",
+        "--c-data-table-background-color-hover",
+        "--c-data-table-border-color",
+        "--c-data-table-checkbox-background-color-hover",
+        "--c-data-table-checkbox-color",
+        "--c-data-table-checkbox-color-active",
+        "--c-data-table-highlighted-column-background-color",
+        "--c-data-table-menu-background-color-hover",
+        "--c-data-table-menu-outline-color",
+        "--c-data-table-menu-text-color",
+        "--c-data-table-menu-text-color-active",
+        "--c-data-table-pagination-button-active-background-color",
+        "--c-data-table-pagination-button-active-background-color-hover",
+        "--c-data-table-pagination-button-active-text-color",
+        "--c-data-table-pagination-button-background-color",
+        "--c-data-table-pagination-button-background-color-hover",
+        "--c-data-table-pagination-button-text-color",
+        "--c-data-table-selected-row-background-color"
+      ]
+    },
+    "c-dropdown": {
+      "props": [
+        {
+          "attribute": "dropdown-item-type",
+          "default": "undefined",
+          "property": "dropdownItemType",
+          "type": "\"item\" | \"option\""
+        },
+        {
+          "attribute": "id",
+          "default": "undefined",
+          "property": "hostId",
+          "type": "string"
+        },
+        {
+          "attribute": "index",
+          "default": "undefined",
+          "property": "index",
+          "type": "number"
+        },
+        {
+          "attribute": null,
+          "default": "undefined",
+          "property": "items",
+          "type": "CAutocompleteItem[] | CSelectItem[] | NodeListOf<HTMLCOptionElement>"
+        },
+        {
+          "attribute": "items-per-page",
+          "default": "undefined",
+          "property": "itemsPerPage",
+          "type": "number"
+        },
+        {
+          "attribute": null,
+          "default": "undefined",
+          "property": "parent",
+          "type": "HTMLCAutocompleteElement | HTMLCSelectElement"
+        },
+        {
+          "attribute": "type",
+          "default": "undefined",
+          "property": "type",
+          "type": "\"autocomplete\" | \"select\""
+        }
+      ],
+      "events": [
+        {
+          "name": "dropdownStateChange",
+          "type": "CustomEvent<boolean>"
+        },
+        {
+          "name": "selectOption",
+          "type": "CustomEvent<any>"
+        }
+      ],
+      "methods": [
+        "close",
+        "focusItem",
+        "open",
+        "selectItem",
+        "setStatusText",
+        "updateList"
+      ],
+      "cssProperties": [
+        "--c-dropdown-background-color",
+        "--c-dropdown-background-color-hover",
+        "--c-dropdown-text-color",
+        "--c-dropdown-text-color-active"
+      ]
+    },
+    "c-icon": {
+      "props": [
+        {
+          "attribute": "color",
+          "default": "'currentColor'",
+          "property": "color",
+          "type": "string"
+        },
+        {
+          "attribute": "path",
+          "default": "undefined",
+          "property": "path",
+          "type": "string"
+        },
+        {
+          "attribute": "size",
+          "default": "24",
+          "property": "size",
+          "type": "number"
+        }
+      ],
+      "cssProperties": ["--c-icon-color"]
+    },
+    "c-icon-button": {
+      "props": [
+        {
+          "attribute": "badge",
+          "default": "undefined",
+          "property": "badge",
+          "type": "string"
+        },
+        {
+          "attribute": "danger",
+          "default": "false",
+          "property": "danger",
+          "type": "boolean"
+        },
+        {
+          "attribute": "disabled",
+          "default": "false",
+          "property": "disabled",
+          "type": "boolean"
+        },
+        {
+          "attribute": "ghost",
+          "default": "false",
+          "property": "ghost",
+          "type": "boolean"
+        },
+        {
+          "attribute": "inverted",
+          "default": "false",
+          "property": "inverted",
+          "type": "boolean"
+        },
+        {
+          "attribute": "loading",
+          "default": "false",
+          "property": "loading",
+          "type": "boolean"
+        },
+        {
+          "attribute": "outlined",
+          "default": "false",
+          "property": "outlined",
+          "type": "boolean"
+        },
+        {
+          "attribute": "path",
+          "default": "null",
+          "property": "path",
+          "type": "string"
+        },
+        {
+          "attribute": "size",
+          "default": "'default'",
+          "property": "size",
+          "type": "\"default\" | \"small\" | \"x-small\""
+        },
+        {
+          "attribute": "text",
+          "default": "false",
+          "property": "text",
+          "type": "boolean"
+        }
+      ],
+      "slots": [""],
+      "cssProperties": [
+        "--c-icon-button-background-color",
+        "--c-icon-button-background-color-disabled",
+        "--c-icon-button-background-color-disabled-hover",
+        "--c-icon-button-background-color-hover",
+        "--c-icon-button-badge-background-color",
+        "--c-icon-button-badge-background-color-disabled",
+        "--c-icon-button-badge-border-color",
+        "--c-icon-button-badge-border-color-disabled",
+        "--c-icon-button-badge-text-color",
+        "--c-icon-button-badge-text-color-disabled",
+        "--c-icon-button-border-radius",
+        "--c-icon-button-danger-background-color",
+        "--c-icon-button-danger-background-color-disabled",
+        "--c-icon-button-danger-background-color-hover",
+        "--c-icon-button-danger-badge-background-color",
+        "--c-icon-button-danger-badge-background-color-disabled",
+        "--c-icon-button-danger-badge-border-color",
+        "--c-icon-button-danger-badge-border-color-disabled",
+        "--c-icon-button-danger-badge-text-color",
+        "--c-icon-button-danger-badge-text-color-disabled",
+        "--c-icon-button-danger-inverted-background-color",
+        "--c-icon-button-danger-inverted-background-color-hover",
+        "--c-icon-button-danger-inverted-badge-background-color",
+        "--c-icon-button-danger-inverted-badge-border-color",
+        "--c-icon-button-danger-inverted-badge-text-color",
+        "--c-icon-button-danger-inverted-text-color",
+        "--c-icon-button-danger-text-color",
+        "--c-icon-button-danger-text-color-disabled",
+        "--c-icon-button-ghost-background-color",
+        "--c-icon-button-ghost-background-color-hover",
+        "--c-icon-button-ghost-badge-background-color",
+        "--c-icon-button-ghost-badge-border-color",
+        "--c-icon-button-ghost-badge-text-color",
+        "--c-icon-button-ghost-disabled-background-color",
+        "--c-icon-button-ghost-disabled-background-color-hover",
+        "--c-icon-button-ghost-disabled-badge-background-color",
+        "--c-icon-button-ghost-disabled-badge-border-color",
+        "--c-icon-button-ghost-disabled-badge-text-color",
+        "--c-icon-button-ghost-disabled-text-color",
+        "--c-icon-button-ghost-inverted-background-color",
+        "--c-icon-button-ghost-inverted-background-color-hover",
+        "--c-icon-button-ghost-inverted-badge-background-color",
+        "--c-icon-button-ghost-inverted-badge-border-color",
+        "--c-icon-button-ghost-inverted-badge-text-color",
+        "--c-icon-button-ghost-inverted-disabled-background-color",
+        "--c-icon-button-ghost-inverted-disabled-badge-background-color",
+        "--c-icon-button-ghost-inverted-disabled-badge-border-color",
+        "--c-icon-button-ghost-inverted-disabled-badge-text-color",
+        "--c-icon-button-ghost-inverted-disabled-text-color",
+        "--c-icon-button-ghost-inverted-text-color",
+        "--c-icon-button-ghost-text-color",
+        "--c-icon-button-inverted-background-color",
+        "--c-icon-button-inverted-background-color-disabled",
+        "--c-icon-button-inverted-background-color-hover",
+        "--c-icon-button-inverted-badge-background-color",
+        "--c-icon-button-inverted-badge-background-color-disabled",
+        "--c-icon-button-inverted-badge-border-color",
+        "--c-icon-button-inverted-badge-border-color-disabled",
+        "--c-icon-button-inverted-badge-text-color",
+        "--c-icon-button-inverted-badge-text-color-disabled",
+        "--c-icon-button-inverted-outline-color-disabled",
+        "--c-icon-button-inverted-text-color",
+        "--c-icon-button-inverted-text-color-disabled",
+        "--c-icon-button-outline-color",
+        "--c-icon-button-outline-color-disabled",
+        "--c-icon-button-outlined-background-color",
+        "--c-icon-button-outlined-background-color-hover",
+        "--c-icon-button-outlined-badge-background-color",
+        "--c-icon-button-outlined-badge-border-color",
+        "--c-icon-button-outlined-badge-text-color",
+        "--c-icon-button-outlined-border-color",
+        "--c-icon-button-outlined-disabled-background-color",
+        "--c-icon-button-outlined-disabled-badge-background-color",
+        "--c-icon-button-outlined-disabled-badge-border-color",
+        "--c-icon-button-outlined-disabled-badge-text-color",
+        "--c-icon-button-outlined-disabled-border-color",
+        "--c-icon-button-outlined-disabled-text-color",
+        "--c-icon-button-outlined-inverted-background-color",
+        "--c-icon-button-outlined-inverted-background-color-hover",
+        "--c-icon-button-outlined-inverted-badge-background-color",
+        "--c-icon-button-outlined-inverted-badge-border-color",
+        "--c-icon-button-outlined-inverted-badge-text-color",
+        "--c-icon-button-outlined-inverted-border-color",
+        "--c-icon-button-outlined-inverted-disabled-background-color",
+        "--c-icon-button-outlined-inverted-disabled-badge-background-color",
+        "--c-icon-button-outlined-inverted-disabled-badge-border-color",
+        "--c-icon-button-outlined-inverted-disabled-badge-text-color",
+        "--c-icon-button-outlined-inverted-disabled-border-color",
+        "--c-icon-button-outlined-inverted-disabled-text-color",
+        "--c-icon-button-outlined-inverted-text-color",
+        "--c-icon-button-outlined-text-color",
+        "--c-icon-button-text-background-color",
+        "--c-icon-button-text-background-color-hover",
+        "--c-icon-button-text-badge-background-color",
+        "--c-icon-button-text-badge-border-color",
+        "--c-icon-button-text-badge-text-color",
+        "--c-icon-button-text-color",
+        "--c-icon-button-text-color-disabled",
+        "--c-icon-button-text-disabled-background-color",
+        "--c-icon-button-text-disabled-badge-background-color",
+        "--c-icon-button-text-disabled-badge-border-color",
+        "--c-icon-button-text-disabled-badge-text-color",
+        "--c-icon-button-text-disabled-text-color",
+        "--c-icon-button-text-inverted-disabled-background-color",
+        "--c-icon-button-text-inverted-disabled-badge-background-color",
+        "--c-icon-button-text-inverted-disabled-badge-border-color",
+        "--c-icon-button-text-inverted-disabled-badge-text-color",
+        "--c-icon-button-text-inverted-disabled-text-color",
+        "--c-icon-button-text-text-color"
+      ]
+    },
+    "c-input": {
+      "props": [
+        {
+          "attribute": "active",
+          "default": "false",
+          "property": "active",
+          "type": "boolean"
+        },
+        {
+          "attribute": "autofocus",
+          "default": "false",
+          "property": "automaticFocus",
+          "type": "boolean"
+        },
+        {
+          "attribute": "disabled",
+          "default": "false",
+          "property": "disabled",
+          "type": "boolean"
+        },
+        {
+          "attribute": "hide-details",
+          "default": "false",
+          "property": "hideDetails",
+          "type": "boolean"
+        },
+        {
+          "attribute": "hint",
+          "default": "''",
+          "property": "hint",
+          "type": "string"
+        },
+        {
+          "attribute": "id",
+          "default": "undefined",
+          "property": "hostId",
+          "type": "string"
+        },
+        {
+          "attribute": "input-id",
+          "default": "undefined",
+          "property": "inputId",
+          "type": "string"
+        },
+        {
+          "attribute": null,
+          "default": "undefined",
+          "property": "items",
+          "type": "CSelectItem[]"
+        },
+        {
+          "attribute": "items-per-page",
+          "default": "6",
+          "property": "itemsPerPage",
+          "type": "number"
+        },
+        {
+          "attribute": "label",
+          "default": "undefined",
+          "property": "label",
+          "type": "string"
+        },
+        {
+          "attribute": "label-on-top",
+          "default": "false",
+          "property": "labelOnTop",
+          "type": "boolean"
+        },
+        {
+          "attribute": "max",
+          "default": "null",
+          "property": "max",
+          "type": "number"
+        },
+        {
+          "attribute": "min",
+          "default": "null",
+          "property": "min",
+          "type": "number"
+        },
+        {
+          "attribute": "name",
+          "default": "undefined",
+          "property": "name",
+          "type": "string"
+        },
+        {
+          "attribute": "placeholder",
+          "default": "undefined",
+          "property": "placeholder",
+          "type": "string"
+        },
+        {
+          "attribute": "readonly",
+          "default": "false",
+          "property": "readonly",
+          "type": "boolean"
+        },
+        {
+          "attribute": "required",
+          "default": "false",
+          "property": "required",
+          "type": "boolean"
+        },
+        {
+          "attribute": "rows",
+          "default": "1",
+          "property": "rows",
+          "type": "number"
+        },
+        {
+          "attribute": "shadow",
+          "default": "false",
+          "property": "shadow",
+          "type": "boolean"
+        },
+        {
+          "attribute": "step",
+          "default": "null",
+          "property": "step",
+          "type": "number"
+        },
+        {
+          "attribute": "type",
+          "default": "undefined",
+          "property": "type",
+          "type": "string"
+        },
+        {
+          "attribute": "valid",
+          "default": "true",
+          "property": "valid",
+          "type": "boolean"
+        },
+        {
+          "attribute": "validate",
+          "default": "false",
+          "property": "validate",
+          "type": "boolean"
+        },
+        {
+          "attribute": "validate-on-blur",
+          "default": "false",
+          "property": "validateOnBlur",
+          "type": "boolean"
+        },
+        {
+          "attribute": "validation",
+          "default": "'Required field'",
+          "property": "validation",
+          "type": "string"
+        },
+        {
+          "attribute": "value",
+          "default": "undefined",
+          "property": "value",
+          "type": "CSelectItem & { ref?: HTMLElement; } | boolean | number | string | { name: string; value: string | number; disabled?: boolean; }"
+        },
+        {
+          "attribute": "variant",
+          "default": "'text'",
+          "property": "variant",
+          "type": "\"select\" | \"text\""
+        }
+      ],
+      "events": [
+        {
+          "name": "changeValue",
+          "type": "CustomEvent<any>"
+        },
+        {
+          "name": "dropdownClose",
+          "type": "CustomEvent<any>"
+        },
+        {
+          "name": "itemClick",
+          "type": "CustomEvent<any>"
+        }
+      ],
+      "methods": ["reset"]
+    },
+    "c-link": {
+      "props": [
+        {
+          "attribute": "href",
+          "default": "null",
+          "property": "href",
+          "type": "string"
+        },
+        {
+          "attribute": "target",
+          "default": "null",
+          "property": "target",
+          "type": "string"
+        },
+        {
+          "attribute": "underline",
+          "default": "false",
+          "property": "underline",
+          "type": "boolean"
+        },
+        {
+          "attribute": "weight",
+          "default": "'600'",
+          "property": "weight",
+          "type": "string"
+        }
+      ],
+      "cssProperties": ["--_c-link-color", "--_c-link-hover"]
+    },
+    "c-list": {
+      "props": [
+        {
+          "attribute": "bordered",
+          "default": "false",
+          "property": "bordered",
+          "type": "boolean"
+        },
+        {
+          "attribute": "disabled",
+          "default": "false",
+          "property": "disabled",
+          "type": "boolean"
+        }
+      ],
+      "cssProperties": [
+        "--c-list-border-color",
+        "--c-list-border-color-active",
+        "--c-list-gap"
+      ]
+    },
+    "c-list-item": {
+      "props": [
+        {
+          "attribute": "active",
+          "default": "false",
+          "property": "active",
+          "type": "boolean"
+        },
+        {
+          "attribute": "disabled",
+          "default": "false",
+          "property": "disabled",
+          "type": "boolean"
+        },
+        {
+          "attribute": "disabled-by-parent",
+          "default": "false",
+          "property": "disabledByParent",
+          "type": "boolean"
+        },
+        {
+          "attribute": "hoverable",
+          "default": "false",
+          "property": "hoverable",
+          "type": "boolean"
+        },
+        {
+          "attribute": "href",
+          "default": "undefined",
+          "property": "href",
+          "type": "string"
+        },
+        {
+          "attribute": "ripple",
+          "default": "false",
+          "property": "ripple",
+          "type": "boolean"
+        },
+        {
+          "attribute": "target",
+          "default": "'_blank'",
+          "property": "target",
+          "type": "string"
+        }
+      ],
+      "cssProperties": [
+        "--c-list-item-background-color",
+        "--c-list-item-background-color-active",
+        "--c-list-item-background-color-hover",
+        "--c-list-item-outline-color",
+        "--c-list-item-text-color",
+        "--c-list-item-text-color-active"
+      ]
+    },
+    "c-list-item-title": {
+      "props": [
+        {
+          "attribute": "active",
+          "default": "false",
+          "property": "active",
+          "type": "boolean"
+        }
+      ],
+      "cssProperties": [
+        "--c-list-item-title-color",
+        "--c-list-item-title-color-active"
+      ]
+    },
+    "c-loader": {
+      "props": [
+        {
+          "attribute": "contentdelay",
+          "default": "0",
+          "property": "contentdelay",
+          "type": "number"
+        },
+        {
+          "attribute": "hide",
+          "default": "false",
+          "property": "hide",
+          "type": "boolean"
+        },
+        {
+          "attribute": "size",
+          "default": "48",
+          "property": "size",
+          "type": "number"
+        },
+        {
+          "attribute": "width",
+          "default": "4",
+          "property": "width",
+          "type": "number"
+        }
+      ],
+      "cssProperties": [
+        "--c-loader-background-color",
+        "--c-loader-color",
+        "--c-loader-text-color"
+      ]
+    },
+    "c-login-button": {
+      "props": [
+        {
+          "attribute": "alt",
+          "default": "''",
+          "property": "alt",
+          "type": "string"
+        },
+        {
+          "attribute": "href",
+          "default": "''",
+          "property": "href",
+          "type": "string"
+        },
+        {
+          "attribute": "src",
+          "default": "undefined",
+          "property": "src",
+          "required": true,
+          "type": "string"
+        }
+      ],
+      "slots": [""],
+      "cssProperties": [
+        "--c-login-button-background-color",
+        "--c-login-button-border-color",
+        "--c-login-button-outline-color",
+        "--c-login-button-text-color",
+        "--c-login-button-title-background-color"
+      ]
+    },
+    "c-login-buttons": {
+      "slots": [""]
+    },
+    "c-login-card": {
+      "props": [
+        {
+          "attribute": "background-position",
+          "default": "'bottom right'",
+          "property": "backgroundPosition",
+          "type": "string"
+        },
+        {
+          "attribute": "mobile-breakpoint",
+          "default": "600",
+          "property": "mobileBreakpoint",
+          "type": "number"
+        },
+        {
+          "attribute": "overlay",
+          "default": "false",
+          "property": "overlay",
+          "type": "boolean"
+        },
+        {
+          "attribute": "overlay-blend-mode",
+          "default": "'multiply'",
+          "property": "overlayBlendMode",
+          "type": "\"color\" | \"color-burn\" | \"color-dodge\" | \"darken\" | \"difference\" | \"exclusion\" | \"hard-light\" | \"hue\" | \"lighten\" | \"luminosity\" | \"multiply\" | \"normal\" | \"overlay\" | \"saturation\" | \"screen\" | \"soft-light\""
+        },
+        {
+          "attribute": "src",
+          "default": "''",
+          "property": "src",
+          "type": "string"
+        }
+      ],
+      "slots": [""],
+      "cssProperties": [
+        "--c-login-card-background-color",
+        "--c-login-card-overlay-color"
+      ]
+    },
+    "c-login-card-actions": {
+      "props": [
+        {
+          "attribute": "align",
+          "default": "'center'",
+          "property": "align",
+          "type": "\"center\" | \"end\" | \"start\""
+        },
+        {
+          "attribute": "justify",
+          "default": "'start'",
+          "property": "justify",
+          "type": "\"center\" | \"end\" | \"space-around\" | \"space-between\" | \"start\" | \"stretch\""
+        }
+      ],
+      "slots": [""]
+    },
+    "c-login-card-content": {
+      "slots": [""]
+    },
+    "c-login-card-title": {
+      "slots": [""],
+      "cssProperties": ["--c-login-card-title-color"]
+    },
+    "c-main": {
+      "props": [
+        {
+          "attribute": "disable-layout",
+          "default": "false",
+          "property": "disableLayout",
+          "type": "boolean"
+        }
+      ],
+      "slots": [""],
+      "cssProperties": ["--c-main-background-color", "--c-main-text-color"]
+    },
+    "c-menu": {
+      "props": [
+        {
+          "attribute": "content-class",
+          "default": "''",
+          "property": "contentClass",
+          "type": "string"
+        },
+        {
+          "attribute": "custom",
+          "default": "false",
+          "property": "custom",
+          "type": "boolean"
+        },
+        {
+          "attribute": "flat",
+          "default": "false",
+          "property": "flat",
+          "type": "boolean"
+        },
+        {
+          "attribute": null,
+          "default": "[]",
+          "property": "items",
+          "type": "CMenuOption[]"
+        },
+        {
+          "attribute": "items-per-page",
+          "default": "6",
+          "property": "itemsPerPage",
+          "type": "number"
+        },
+        {
+          "attribute": "small",
+          "default": "false",
+          "property": "small",
+          "type": "boolean"
+        }
+      ],
+      "slots": [""],
+      "cssProperties": [
+        "--c-menu-background-color-hover",
+        "--c-menu-outline-color",
+        "--c-menu-text-color",
+        "--c-menu-text-color-active"
+      ]
+    },
+    "c-menu-items": {
+      "props": [
+        {
+          "attribute": "active",
+          "default": "false",
+          "property": "active",
+          "type": "boolean"
+        },
+        {
+          "attribute": "index",
+          "default": "null",
+          "property": "index",
+          "type": "number"
+        },
+        {
+          "attribute": null,
+          "default": "[]",
+          "property": "items",
+          "type": "CMenuOption[]"
+        },
+        {
+          "attribute": "items-per-page",
+          "default": "6",
+          "property": "itemsPerPage",
+          "type": "number"
+        },
+        {
+          "attribute": null,
+          "default": "undefined",
+          "property": "parent",
+          "type": "HTMLCMenuElement"
+        },
+        {
+          "attribute": "parent-type",
+          "default": "'menu'",
+          "property": "parentType",
+          "type": "string"
+        },
+        {
+          "attribute": "small",
+          "default": "false",
+          "property": "small",
+          "type": "boolean"
+        },
+        {
+          "attribute": "top",
+          "default": "0",
+          "property": "top",
+          "type": "number"
+        }
+      ],
+      "events": [
+        {
+          "name": "close",
+          "type": "CustomEvent<any>"
+        },
+        {
+          "name": "open",
+          "type": "CustomEvent<{ height: number; width: number; isInView: { x: boolean; y: boolean; }; }>"
+        }
+      ],
+      "cssProperties": [
+        "--c-menu-items-background-color-hover",
+        "--c-menu-items-text-color",
+        "--c-menu-items-text-color-active"
+      ]
+    },
+    "c-message": {
+      "props": [
+        {
+          "attribute": "hint",
+          "default": "''",
+          "property": "hint",
+          "type": "string"
+        },
+        {
+          "attribute": "input-id",
+          "default": "undefined",
+          "property": "inputId",
+          "type": "string"
+        },
+        {
+          "attribute": "valid",
+          "default": "true",
+          "property": "valid",
+          "type": "boolean"
+        },
+        {
+          "attribute": "validation",
+          "default": "'Required field'",
+          "property": "validation",
+          "type": "string"
+        }
+      ]
+    },
+    "c-modal": {
+      "props": [
+        {
+          "attribute": "disable-backdrop-blur",
+          "default": "false",
+          "property": "disableBackdropBlur",
+          "type": "boolean"
+        },
+        {
+          "attribute": "dismissable",
+          "default": "false",
+          "property": "dismissable",
+          "type": "boolean"
+        },
+        {
+          "attribute": "value",
+          "default": "false",
+          "property": "value",
+          "type": "boolean"
+        },
+        {
+          "attribute": "width",
+          "default": "600",
+          "property": "width",
+          "type": "number | string"
+        },
+        {
+          "attribute": "z-index",
+          "default": "10",
+          "property": "zIndex",
+          "type": "number"
+        }
+      ],
+      "events": [
+        {
+          "name": "changeValue",
+          "type": "CustomEvent<boolean>"
+        }
+      ]
+    },
+    "c-navigation-button": {
+      "cssProperties": ["--c-navigation-button-color"]
+    },
+    "c-option": {
+      "props": [
+        {
+          "attribute": "disabled",
+          "default": "false",
+          "property": "disabled",
+          "type": "boolean"
+        },
+        {
+          "attribute": "name",
+          "default": "undefined",
+          "property": "name",
+          "type": "string"
+        },
+        {
+          "attribute": "selected",
+          "default": "false",
+          "property": "selected",
+          "type": "boolean"
+        },
+        {
+          "attribute": "value",
+          "default": "undefined",
+          "property": "value",
+          "type": "number | string"
+        }
+      ]
+    },
+    "c-option-value": {},
+    "c-otp-input": {
+      "props": [
+        {
+          "attribute": "id",
+          "default": "undefined",
+          "property": "elementId",
+          "required": true,
+          "type": "string"
+        },
+        {
+          "attribute": "autofocus",
+          "default": "false",
+          "property": "hasAutofocus",
+          "type": "boolean"
+        },
+        {
+          "attribute": "hide-details",
+          "default": "false",
+          "property": "hideDetails",
+          "type": "boolean"
+        },
+        {
+          "attribute": "hint",
+          "default": "''",
+          "property": "hint",
+          "type": "string"
+        },
+        {
+          "attribute": "length",
+          "default": "6",
+          "property": "length",
+          "type": "number"
+        },
+        {
+          "attribute": "valid",
+          "default": "true",
+          "property": "valid",
+          "type": "boolean"
+        },
+        {
+          "attribute": "validation",
+          "default": "'Required field'",
+          "property": "validation",
+          "type": "string"
+        },
+        {
+          "attribute": "value",
+          "default": "undefined",
+          "property": "value",
+          "type": "string"
+        }
+      ],
+      "events": [
+        {
+          "name": "changeValue",
+          "type": "CustomEvent<string>"
+        },
+        {
+          "name": "completion",
+          "type": "CustomEvent<string>"
+        }
+      ],
+      "methods": ["reset"],
+      "cssProperties": [
+        "--c-otp-input-border-color",
+        "--c-otp-input-border-color-active",
+        "--c-otp-input-font-size",
+        "--c-otp-input-height",
+        "--c-otp-input-text-color",
+        "--c-otp-input-width"
+      ]
+    },
+    "c-page": {
+      "props": [
+        {
+          "attribute": "scroll-indicator",
+          "default": "false",
+          "property": "scrollIndicator",
+          "type": "boolean"
+        }
+      ],
+      "slots": ["default", "footer"],
+      "cssProperties": ["--c-page-justify-content", "--c-page-max-width"]
+    },
+    "c-pagination": {
+      "props": [
+        {
+          "attribute": "hide-details",
+          "default": "false",
+          "property": "hideDetails",
+          "type": "boolean"
+        },
+        {
+          "attribute": "hide-range",
+          "default": "false",
+          "property": "hideRange",
+          "type": "boolean"
+        },
+        {
+          "attribute": "simple",
+          "default": "false",
+          "property": "simple",
+          "type": "boolean"
+        },
+        {
+          "attribute": "size",
+          "default": "'default'",
+          "property": "size",
+          "type": "\"default\" | \"small\""
+        },
+        {
+          "attribute": null,
+          "default": "{     itemCount: 0,   }",
+          "property": "value",
+          "type": "{ itemCount: number; currentPage?: number; totalVisible?: number; itemsPerPage?: number; startFrom?: number; endTo?: number; locale?: string; textOverrides?: CPaginationTextOverrides; pageSizes?: number[]; }"
+        }
+      ],
+      "events": [
+        {
+          "name": "changeValue",
+          "type": "CustomEvent<{ itemCount: number; currentPage?: number; totalVisible?: number; itemsPerPage?: number; startFrom?: number; endTo?: number; locale?: string; textOverrides?: CPaginationTextOverrides; pageSizes?: number[]; }>"
+        }
+      ],
+      "cssProperties": [
+        "--c-pagination-button-active-background-color",
+        "--c-pagination-button-active-background-color-hover",
+        "--c-pagination-button-active-text-color",
+        "--c-pagination-button-background-color",
+        "--c-pagination-button-background-color-hover",
+        "--c-pagination-button-text-color",
+        "--c-pagination-menu-background-color-hover",
+        "--c-pagination-menu-outline-color",
+        "--c-pagination-menu-text-color",
+        "--c-pagination-menu-text-color-active",
+        "--c-pagination-text-color"
+      ]
+    },
+    "c-progress-bar": {
+      "props": [
+        {
+          "attribute": "hide-details",
+          "default": "false",
+          "property": "hideDetails",
+          "type": "boolean"
+        },
+        {
+          "attribute": "indeterminate",
+          "default": "false",
+          "property": "indeterminate",
+          "type": "boolean"
+        },
+        {
+          "attribute": "label",
+          "default": "''",
+          "property": "label",
+          "type": "string"
+        },
+        {
+          "attribute": "single-line",
+          "default": "false",
+          "property": "singleLine",
+          "type": "boolean"
+        },
+        {
+          "attribute": "value",
+          "default": "0",
+          "property": "value",
+          "type": "number"
+        }
+      ],
+      "cssProperties": [
+        "--c-progress-bar-background-color",
+        "--c-progress-bar-border-width",
+        "--c-progress-bar-color",
+        "--c-progress-bar-height",
+        "--c-progress-bar-value"
+      ]
+    },
+    "c-radio": {
+      "props": [
+        {
+          "attribute": "checked",
+          "default": "false",
+          "property": "checked",
+          "type": "boolean"
+        },
+        {
+          "attribute": "disabled",
+          "default": "false",
+          "property": "disabled",
+          "type": "boolean"
+        },
+        {
+          "attribute": "value",
+          "default": "undefined",
+          "property": "value",
+          "type": "string"
+        }
+      ]
+    },
+    "c-radio-group": {
+      "props": [
+        {
+          "attribute": "color",
+          "default": "''",
+          "property": "color",
+          "type": "string"
+        },
+        {
+          "attribute": "disabled",
+          "default": "false",
+          "property": "disabled",
+          "type": "boolean"
+        },
+        {
+          "attribute": "hide-details",
+          "default": "false",
+          "property": "hideDetails",
+          "type": "boolean"
+        },
+        {
+          "attribute": "hint",
+          "default": "''",
+          "property": "hint",
+          "type": "string"
+        },
+        {
+          "attribute": "id",
+          "default": "undefined",
+          "property": "hostId",
+          "type": "string"
+        },
+        {
+          "attribute": "inline",
+          "default": "false",
+          "property": "inline",
+          "type": "boolean"
+        },
+        {
+          "attribute": null,
+          "default": "[]",
+          "property": "items",
+          "type": "CRadioGroupItem[]"
+        },
+        {
+          "attribute": "label",
+          "default": "undefined",
+          "property": "label",
+          "type": "string"
+        },
+        {
+          "attribute": "required",
+          "default": "false",
+          "property": "required",
+          "type": "boolean"
+        },
+        {
+          "attribute": "return-object",
+          "default": "false",
+          "property": "returnObject",
+          "type": "boolean"
+        },
+        {
+          "attribute": "valid",
+          "default": "true",
+          "property": "valid",
+          "type": "boolean"
+        },
+        {
+          "attribute": "validation",
+          "default": "'Required field'",
+          "property": "validation",
+          "type": "string"
+        },
+        {
+          "attribute": "value",
+          "default": "undefined",
+          "property": "value",
+          "type": "number | string | { name: string; value: string | number; disabled?: boolean; }"
+        }
+      ],
+      "events": [
+        {
+          "name": "changeValue",
+          "type": "CustomEvent<any>"
+        }
+      ],
+      "slots": [""],
+      "cssProperties": [
+        "--c-radio-group-background-color-hover",
+        "--c-radio-group-color",
+        "--c-radio-group-color-active",
+        "--c-radio-group-color-disabled"
+      ]
+    },
+    "c-ripple": {
+      "methods": ["createRipple"]
+    },
+    "c-row": {
+      "props": [
+        {
+          "attribute": "align",
+          "default": "undefined",
+          "property": "align",
+          "type": "\"center\" | \"end\" | \"start\""
+        },
+        {
+          "attribute": "gap",
+          "default": "0",
+          "property": "gap",
+          "type": "number"
+        },
+        {
+          "attribute": "justify",
+          "default": "undefined",
+          "property": "justify",
+          "type": "\"center\" | \"end\" | \"space-around\" | \"space-between\" | \"start\""
+        },
+        {
+          "attribute": "nowrap",
+          "default": "false",
+          "property": "nowrap",
+          "type": "boolean"
+        }
+      ],
+      "slots": [""]
+    },
+    "c-select": {
+      "props": [
+        {
+          "attribute": "clearable",
+          "default": "false",
+          "property": "clearable",
+          "type": "boolean"
+        },
+        {
+          "attribute": "disabled",
+          "default": "false",
+          "property": "disabled",
+          "type": "boolean"
+        },
+        {
+          "attribute": "hide-details",
+          "default": "false",
+          "property": "hideDetails",
+          "type": "boolean"
+        },
+        {
+          "attribute": "hint",
+          "default": "''",
+          "property": "hint",
+          "type": "string"
+        },
+        {
+          "attribute": "id",
+          "default": "undefined",
+          "property": "hostId",
+          "type": "string"
+        },
+        {
+          "attribute": null,
+          "default": "[]",
+          "property": "items",
+          "type": "CSelectItem[]"
+        },
+        {
+          "attribute": "items-per-page",
+          "default": "6",
+          "property": "itemsPerPage",
+          "type": "number"
+        },
+        {
+          "attribute": "label",
+          "default": "undefined",
+          "property": "label",
+          "type": "string"
+        },
+        {
+          "attribute": "label-on-top",
+          "default": "false",
+          "property": "labelOnTop",
+          "type": "boolean"
+        },
+        {
+          "attribute": "loading",
+          "default": "false",
+          "property": "loading",
+          "type": "boolean"
+        },
+        {
+          "attribute": "name",
+          "default": "undefined",
+          "property": "name",
+          "type": "string"
+        },
+        {
+          "attribute": "option-as-selection",
+          "default": "undefined",
+          "property": "optionAsSelection",
+          "type": "boolean"
+        },
+        {
+          "attribute": "placeholder",
+          "default": "''",
+          "property": "placeholder",
+          "type": "string"
+        },
+        {
+          "attribute": "required",
+          "default": "false",
+          "property": "required",
+          "type": "boolean"
+        },
+        {
+          "attribute": "return-object",
+          "default": "false",
+          "property": "returnObject",
+          "type": "boolean"
+        },
+        {
+          "attribute": "shadow",
+          "default": "false",
+          "property": "shadow",
+          "type": "boolean"
+        },
+        {
+          "attribute": "valid",
+          "default": "true",
+          "property": "valid",
+          "type": "boolean"
+        },
+        {
+          "attribute": "validate",
+          "default": "false",
+          "property": "validate",
+          "type": "boolean"
+        },
+        {
+          "attribute": "validate-on-blur",
+          "default": "false",
+          "property": "validateOnBlur",
+          "type": "boolean"
+        },
+        {
+          "attribute": "validation",
+          "default": "'Required field'",
+          "property": "validation",
+          "type": "string"
+        },
+        {
+          "attribute": "value",
+          "default": "null",
+          "property": "value",
+          "type": "number | string | { name: string; value: string | number; disabled?: boolean; }"
+        }
+      ],
+      "events": [
+        {
+          "name": "changeValue",
+          "type": "CustomEvent<any>"
+        }
+      ],
+      "methods": ["reset"],
+      "slots": [""],
+      "cssProperties": [
+        "--c-select-active-color",
+        "--c-select-background-color",
+        "--c-select-inactive-color",
+        "--c-select-option-background-color",
+        "--c-select-option-background-color-hover",
+        "--c-select-option-text-color",
+        "--c-select-placeholder-color",
+        "--c-select-text-color"
+      ]
+    },
+    "c-side-navigation": {
+      "props": [
+        {
+          "attribute": "menu-visible",
+          "default": "false",
+          "property": "menuVisible",
+          "type": "boolean"
+        },
+        {
+          "attribute": "mobile",
+          "default": "undefined",
+          "property": "mobile",
+          "type": "boolean"
+        },
+        {
+          "attribute": null,
+          "default": "undefined",
+          "property": "styles",
+          "type": "{ [key: string]: string; }"
+        }
+      ],
+      "slots": ["", "bottom"],
+      "cssProperties": [
+        "--c-side-navigation-background-color",
+        "--c-side-navigation-overlay-color"
+      ]
+    },
+    "c-side-navigation-item": {
+      "props": [
+        {
+          "attribute": "active",
+          "default": "undefined",
+          "property": "active",
+          "type": "boolean"
+        },
+        {
+          "attribute": "href",
+          "default": "undefined",
+          "property": "href",
+          "type": "string"
+        },
+        {
+          "attribute": "loading",
+          "default": "false",
+          "property": "loading",
+          "type": "boolean"
+        },
+        {
+          "attribute": "target",
+          "default": "null",
+          "property": "target",
+          "type": "string"
+        }
+      ],
+      "events": [
+        {
+          "name": "itemChange",
+          "type": "CustomEvent<any>"
+        }
+      ],
+      "cssProperties": [
+        "--c-side-navigation-item-background-color",
+        "--c-side-navigation-item-background-color-active",
+        "--c-side-navigation-item-background-color-hover",
+        "--c-side-navigation-item-outline-color",
+        "--c-side-navigation-item-sub-item-background-color",
+        "--c-side-navigation-item-sub-item-background-color-active",
+        "--c-side-navigation-item-sub-item-background-color-hover",
+        "--c-side-navigation-item-sub-item-text-color",
+        "--c-side-navigation-item-sub-item-text-color-active",
+        "--c-side-navigation-item-text-color",
+        "--c-side-navigation-item-text-color-active"
+      ]
+    },
+    "c-side-navigation-title": {
+      "cssProperties": [
+        "--c-side-navigation-title-border-color",
+        "--c-side-navigation-title-color"
+      ]
+    },
+    "c-slider": {
+      "props": [
+        {
+          "attribute": "aria-label",
+          "default": "undefined",
+          "property": "ariaLabelInternal",
+          "type": "string"
+        },
+        {
+          "attribute": "disable-tooltip",
+          "default": "false",
+          "property": "disableTooltip",
+          "type": "boolean"
+        },
+        {
+          "attribute": "disabled",
+          "default": "false",
+          "property": "disabled",
+          "type": "boolean"
+        },
+        {
+          "attribute": "id",
+          "default": "undefined",
+          "property": "hostId",
+          "type": "string"
+        },
+        {
+          "attribute": "name",
+          "default": "undefined",
+          "property": "hostName",
+          "type": "string"
+        },
+        {
+          "attribute": "label",
+          "default": "undefined",
+          "property": "label",
+          "type": "string"
+        },
+        {
+          "attribute": "labels",
+          "default": "false",
+          "property": "labels",
+          "type": "boolean"
+        },
+        {
+          "attribute": "max",
+          "default": "'100'",
+          "property": "max",
+          "type": "string"
+        },
+        {
+          "attribute": "min",
+          "default": "'0'",
+          "property": "min",
+          "type": "string"
+        },
+        {
+          "attribute": "segments",
+          "default": "'10'",
+          "property": "segments",
+          "type": "string"
+        },
+        {
+          "attribute": "step",
+          "default": "'1'",
+          "property": "step",
+          "type": "string"
+        },
+        {
+          "attribute": "ticks",
+          "default": "false",
+          "property": "ticks",
+          "type": "boolean"
+        },
+        {
+          "attribute": "unit",
+          "default": "'%'",
+          "property": "unit",
+          "type": "string"
+        },
+        {
+          "attribute": "value",
+          "default": "'50'",
+          "property": "value",
+          "type": "number | string"
+        }
+      ],
+      "events": [
+        {
+          "name": "changeValue",
+          "type": "CustomEvent<any>"
+        }
+      ],
+      "cssProperties": [
+        "--c-slider-background-color",
+        "--c-slider-background-color-active",
+        "--c-slider-background-color-active-disabled",
+        "--c-slider-background-color-disabled",
+        "--c-slider-thumb-background-color",
+        "--c-slider-thumb-background-color-disabled",
+        "--c-slider-thumb-background-color-hover",
+        "--c-slider-tick-color",
+        "--c-slider-tick-color-active",
+        "--c-slider-tooltip-background-color",
+        "--c-slider-tooltip-text-color"
+      ]
+    },
+    "c-spacer": {},
+    "c-spinner": {
+      "props": [
+        {
+          "attribute": "color",
+          "default": "'var(--c-primary-600)'",
+          "property": "color",
+          "type": "string"
+        },
+        {
+          "attribute": "size",
+          "default": "24",
+          "property": "size",
+          "type": "number"
+        },
+        {
+          "attribute": "width",
+          "default": "2",
+          "property": "width",
+          "type": "number"
+        }
+      ],
+      "cssProperties": ["--c-spinner-color"]
+    },
+    "c-status": {
+      "props": [
+        {
+          "attribute": "type",
+          "default": "undefined",
+          "property": "type",
+          "type": "\"error\" | \"info\" | \"success\" | \"warning\""
+        }
+      ],
+      "slots": [""],
+      "cssProperties": [
+        "--c-status-background-color",
+        "--c-status-error-background-color",
+        "--c-status-error-text-color",
+        "--c-status-info-background-color",
+        "--c-status-info-text-color",
+        "--c-status-success-background-color",
+        "--c-status-success-text-color",
+        "--c-status-warning-background-color",
+        "--c-status-warning-text-color"
+      ]
+    },
+    "c-step": {
+      "props": [
+        {
+          "attribute": "complete",
+          "default": "false",
+          "property": "complete",
+          "type": "boolean"
+        },
+        {
+          "attribute": "current",
+          "default": "false",
+          "property": "current",
+          "type": "boolean"
+        }
+      ],
+      "slots": [""],
+      "cssProperties": [
+        "--c-step-color",
+        "--c-step-color-complete",
+        "--c-step-text-color-complete"
+      ]
+    },
+    "c-steps": {
+      "props": [
+        {
+          "attribute": "value",
+          "default": "undefined",
+          "property": "value",
+          "required": true,
+          "type": "number | string"
+        }
+      ],
+      "events": [
+        {
+          "name": "changeValue",
+          "type": "CustomEvent<number | string>"
+        }
+      ],
+      "slots": [""],
+      "cssProperties": ["--c-steps-outline-color"]
+    },
+    "c-sub-navigation-item": {
+      "props": [
+        {
+          "attribute": "active",
+          "default": "undefined",
+          "property": "active",
+          "type": "boolean"
+        },
+        {
+          "attribute": "focusable",
+          "default": "false",
+          "property": "focusable",
+          "type": "boolean"
+        },
+        {
+          "attribute": "href",
+          "default": "undefined",
+          "property": "href",
+          "type": "string"
+        },
+        {
+          "attribute": "loading",
+          "default": "false",
+          "property": "loading",
+          "type": "boolean"
+        },
+        {
+          "attribute": "target",
+          "default": "null",
+          "property": "target",
+          "type": "string"
+        }
+      ],
+      "cssProperties": [
+        "--c-sub-navigation-item-background-color-active",
+        "--c-sub-navigation-item-background-color-hover",
+        "--c-sub-navigation-item-sub-item-background-color",
+        "--c-sub-navigation-item-sub-item-background-color-active",
+        "--c-sub-navigation-item-sub-item-background-color-hover",
+        "--c-sub-navigation-item-sub-item-text-color",
+        "--c-sub-navigation-item-sub-item-text-color-active",
+        "--c-sub-navigation-item-text-color",
+        "--c-sub-navigation-item-text-color-active"
+      ]
+    },
+    "c-swiper": {
+      "props": [
+        {
+          "attribute": "id",
+          "default": "undefined",
+          "property": "elementId",
+          "required": true,
+          "type": "string"
+        },
+        {
+          "attribute": "value",
+          "default": "undefined",
+          "property": "value",
+          "type": "number | string"
+        }
+      ],
+      "events": [
+        {
+          "name": "changeValue",
+          "type": "CustomEvent<number | string>"
+        }
+      ],
+      "slots": [""],
+      "cssProperties": [
+        "--c-swiper-active-background-color",
+        "--c-swiper-active-text-color",
+        "--c-swiper-background-color",
+        "--c-swiper-disabled-background-color",
+        "--c-swiper-disabled-text-color",
+        "--c-swiper-hover-color",
+        "--c-swiper-text-color"
+      ]
+    },
+    "c-swiper-tab": {
+      "props": [
+        {
+          "attribute": "active",
+          "default": "false",
+          "property": "active",
+          "type": "boolean"
+        },
+        {
+          "attribute": "disabled",
+          "default": "false",
+          "property": "disabled",
+          "type": "boolean"
+        },
+        {
+          "attribute": "id",
+          "default": "undefined",
+          "property": "hostId",
+          "type": "string"
+        },
+        {
+          "attribute": "label",
+          "default": "undefined",
+          "property": "label",
+          "type": "string"
+        },
+        {
+          "attribute": "position",
+          "default": "undefined",
+          "property": "position",
+          "type": "number"
+        },
+        {
+          "attribute": "setsize",
+          "default": "undefined",
+          "property": "setsize",
+          "type": "number"
+        },
+        {
+          "attribute": "value",
+          "default": "undefined",
+          "property": "value",
+          "type": "number | string"
+        }
+      ],
+      "events": [
+        {
+          "name": "changeValue",
+          "type": "CustomEvent<number | string>"
+        }
+      ],
+      "cssProperties": [
+        "--c-swiper-tab-background-color",
+        "--c-swiper-tab-background-color-active",
+        "--c-swiper-tab-background-color-disabled",
+        "--c-swiper-tab-hover-color",
+        "--c-swiper-tab-text-color",
+        "--c-swiper-tab-text-color-active",
+        "--c-swiper-tab-text-color-disabled"
+      ]
+    },
+    "c-switch": {
+      "props": [
+        {
+          "attribute": "checked",
+          "default": "false",
+          "property": "checked",
+          "type": "boolean"
+        },
+        {
+          "attribute": "false-value",
+          "default": "false",
+          "property": "falseValue",
+          "type": "boolean | string"
+        },
+        {
+          "attribute": "disabled",
+          "default": "false",
+          "property": "hostDisabled",
+          "type": "boolean"
+        },
+        {
+          "attribute": "id",
+          "default": "undefined",
+          "property": "hostId",
+          "type": "string"
+        },
+        {
+          "attribute": "loading",
+          "default": "false",
+          "property": "loading",
+          "type": "boolean"
+        },
+        {
+          "attribute": "required",
+          "default": "false",
+          "property": "required",
+          "type": "boolean"
+        },
+        {
+          "attribute": "true-value",
+          "default": "true",
+          "property": "trueValue",
+          "type": "boolean | string"
+        },
+        {
+          "attribute": "value",
+          "default": "false",
+          "property": "value",
+          "type": "boolean | string"
+        }
+      ],
+      "events": [
+        {
+          "name": "changeValue",
+          "type": "CustomEvent<any>"
+        }
+      ],
+      "slots": ["label"],
+      "cssProperties": [
+        "--c-switch-border-color",
+        "--c-switch-border-color-active",
+        "--c-switch-border-color-active-disabled",
+        "--c-switch-border-color-disabled",
+        "--c-switch-handle-color",
+        "--c-switch-handle-color-active",
+        "--c-switch-handle-color-active-disabled",
+        "--c-switch-handle-color-disabled",
+        "--c-switch-slider-color",
+        "--c-switch-slider-color-active",
+        "--c-switch-slider-color-active-disabled",
+        "--c-switch-slider-color-disabled"
+      ]
+    },
+    "c-tab": {
+      "props": [
+        {
+          "attribute": "active",
+          "default": "false",
+          "property": "active",
+          "type": "boolean"
+        },
+        {
+          "attribute": "disabled",
+          "default": "false",
+          "property": "disabled",
+          "type": "boolean"
+        },
+        {
+          "attribute": "id",
+          "default": "undefined",
+          "property": "hostId",
+          "type": "string"
+        },
+        {
+          "attribute": "position",
+          "default": "undefined",
+          "property": "position",
+          "type": "number"
+        },
+        {
+          "attribute": "setsize",
+          "default": "undefined",
+          "property": "setsize",
+          "type": "number"
+        },
+        {
+          "attribute": "value",
+          "default": "undefined",
+          "property": "value",
+          "type": "number | string"
+        }
+      ],
+      "events": [
+        {
+          "name": "tabChange",
+          "type": "CustomEvent<{ value: string | number; element: HTMLCTabElement; }>"
+        },
+        {
+          "name": "tabFocus",
+          "type": "CustomEvent<number | string>"
+        }
+      ],
+      "slots": [""],
+      "cssProperties": [
+        "--c-tab-background-color-hover",
+        "--c-tab-border-color-active",
+        "--c-tab-outline-color",
+        "--c-tab-text-color"
+      ]
+    },
+    "c-tab-buttons": {
+      "props": [
+        {
+          "attribute": "disabled",
+          "default": "false",
+          "property": "hostDisabled",
+          "type": "boolean"
+        },
+        {
+          "attribute": "mandatory",
+          "default": "false",
+          "property": "mandatory",
+          "type": "boolean"
+        },
+        {
+          "attribute": "size",
+          "default": "'default'",
+          "property": "size",
+          "type": "\"default\" | \"small\""
+        },
+        {
+          "attribute": "tabs",
+          "default": "false",
+          "property": "tabs",
+          "type": "boolean"
+        },
+        {
+          "attribute": "value",
+          "default": "0",
+          "property": "value",
+          "type": "number | string"
+        }
+      ],
+      "events": [
+        {
+          "name": "changeValue",
+          "type": "CustomEvent<number | string>"
+        }
+      ],
+      "slots": [""],
+      "cssProperties": [
+        "--c-tab-buttons-background-color",
+        "--c-tab-buttons-background-color-active",
+        "--c-tab-buttons-background-color-active-hover",
+        "--c-tab-buttons-background-color-hover",
+        "--c-tab-buttons-border-color",
+        "--c-tab-buttons-border-radius",
+        "--c-tab-buttons-text-color",
+        "--c-tab-buttons-text-color-active"
+      ]
+    },
+    "c-tab-item": {
+      "props": [
+        {
+          "attribute": "active",
+          "default": "false",
+          "property": "active",
+          "type": "boolean"
+        },
+        {
+          "attribute": "value",
+          "default": "undefined",
+          "property": "value",
+          "required": true,
+          "type": "number | string"
+        }
+      ],
+      "events": [
+        {
+          "name": "contentChange",
+          "type": "CustomEvent<any>"
+        }
+      ],
+      "slots": [""],
+      "cssProperties": ["--c-tab-item-padding"]
+    },
+    "c-tab-items": {
+      "props": [
+        {
+          "attribute": "disable-animation",
+          "default": "false",
+          "property": "disableAnimation",
+          "type": "boolean"
+        },
+        {
+          "attribute": "value",
+          "default": "undefined",
+          "property": "value",
+          "required": true,
+          "type": "number | string"
+        }
+      ],
+      "slots": [""]
+    },
+    "c-table": {
+      "props": [
+        {
+          "attribute": "mobile-breakpoint",
+          "default": "600",
+          "property": "mobileBreakpoint",
+          "type": "number"
+        },
+        {
+          "attribute": "responsive",
+          "default": "false",
+          "property": "responsive",
+          "type": "boolean"
+        }
+      ],
+      "methods": ["updateMobileLabels"],
+      "cssProperties": [
+        "--c-table-border-color",
+        "--c-table-header-text-color",
+        "--c-table-row-background-color-mobile"
+      ]
+    },
+    "c-tabs": {
+      "props": [
+        {
+          "attribute": "borderless",
+          "default": "false",
+          "property": "borderless",
+          "type": "boolean"
+        },
+        {
+          "attribute": "disable-animation",
+          "default": "false",
+          "property": "disableAnimation",
+          "type": "boolean"
+        },
+        {
+          "attribute": "justify",
+          "default": "'stretch'",
+          "property": "justify",
+          "type": "\"center\" | \"end\" | \"start\" | \"stretch\""
+        },
+        {
+          "attribute": "mobile-breakpoint",
+          "default": "640",
+          "property": "mobileBreakpoint",
+          "type": "number"
+        },
+        {
+          "attribute": "value",
+          "default": "undefined",
+          "property": "value",
+          "required": true,
+          "type": "number | string"
+        },
+        {
+          "attribute": "vertical",
+          "default": "false",
+          "property": "vertical",
+          "type": "boolean"
+        }
+      ],
+      "events": [
+        {
+          "name": "changeValue",
+          "type": "CustomEvent<any>"
+        }
+      ],
+      "slots": [""],
+      "cssProperties": ["--c-tabs-border-color", "--c-tabs-indicator-color"]
+    },
+    "c-tag": {
+      "props": [
+        {
+          "attribute": "active",
+          "default": "false",
+          "property": "active",
+          "type": "boolean"
+        },
+        {
+          "attribute": "badge",
+          "default": "null",
+          "property": "badge",
+          "type": "number | string"
+        },
+        {
+          "attribute": "block",
+          "default": "false",
+          "property": "block",
+          "type": "boolean"
+        },
+        {
+          "attribute": "closeable",
+          "default": "false",
+          "property": "closeable",
+          "type": "boolean"
+        },
+        {
+          "attribute": "fit",
+          "default": "false",
+          "property": "fit",
+          "type": "boolean"
+        },
+        {
+          "attribute": "flat",
+          "default": "false",
+          "property": "flat",
+          "type": "boolean"
+        },
+        {
+          "attribute": "size",
+          "default": "'default'",
+          "property": "size",
+          "type": "\"default\" | \"small\""
+        }
+      ],
+      "events": [
+        {
+          "name": "close",
+          "type": "CustomEvent<any>"
+        }
+      ],
+      "slots": [""],
+      "cssProperties": [
+        "--c-tag-background-color",
+        "--c-tag-background-color-active",
+        "--c-tag-background-color-active-hover",
+        "--c-tag-background-color-hover",
+        "--c-tag-badge-background-color",
+        "--c-tag-badge-background-color-active",
+        "--c-tag-badge-text-color",
+        "--c-tag-badge-text-color-active",
+        "--c-tag-border-color",
+        "--c-tag-border-radius",
+        "--c-tag-text-color",
+        "--c-tag-text-color-active"
+      ]
+    },
+    "c-tags": {
+      "props": [
+        {
+          "attribute": "size",
+          "default": "'default'",
+          "property": "size",
+          "type": "\"default\" | \"small\""
+        }
+      ],
+      "slots": [""]
+    },
+    "c-text-field": {
+      "props": [
+        {
+          "attribute": "autocomplete",
+          "default": "''",
+          "property": "autocomplete",
+          "type": "string"
+        },
+        {
+          "attribute": "autocorrect",
+          "default": "''",
+          "property": "autocorrect",
+          "type": "string"
+        },
+        {
+          "attribute": "autocapitalize",
+          "default": "''",
+          "property": "automaticCapitalize",
+          "type": "string"
+        },
+        {
+          "attribute": "autofocus",
+          "default": "false",
+          "property": "automaticFocus",
+          "type": "boolean"
+        },
+        {
+          "attribute": "disabled",
+          "default": "false",
+          "property": "disabled",
+          "type": "boolean"
+        },
+        {
+          "attribute": "hide-details",
+          "default": "false",
+          "property": "hideDetails",
+          "type": "boolean"
+        },
+        {
+          "attribute": "hint",
+          "default": "''",
+          "property": "hint",
+          "type": "string"
+        },
+        {
+          "attribute": "id",
+          "default": "undefined",
+          "property": "hostId",
+          "type": "string"
+        },
+        {
+          "attribute": "label",
+          "default": "undefined",
+          "property": "label",
+          "type": "string"
+        },
+        {
+          "attribute": "label-on-top",
+          "default": "false",
+          "property": "labelOnTop",
+          "type": "boolean"
+        },
+        {
+          "attribute": "max",
+          "default": "null",
+          "property": "max",
+          "type": "number"
+        },
+        {
+          "attribute": "min",
+          "default": "null",
+          "property": "min",
+          "type": "number"
+        },
+        {
+          "attribute": "name",
+          "default": "undefined",
+          "property": "name",
+          "type": "string"
+        },
+        {
+          "attribute": "placeholder",
+          "default": "undefined",
+          "property": "placeholder",
+          "type": "string"
+        },
+        {
+          "attribute": "readonly",
+          "default": "false",
+          "property": "readonly",
+          "type": "boolean"
+        },
+        {
+          "attribute": "required",
+          "default": "false",
+          "property": "required",
+          "type": "boolean"
+        },
+        {
+          "attribute": "rows",
+          "default": "1",
+          "property": "rows",
+          "type": "number"
+        },
+        {
+          "attribute": "shadow",
+          "default": "false",
+          "property": "shadow",
+          "type": "boolean"
+        },
+        {
+          "attribute": "step",
+          "default": "null",
+          "property": "step",
+          "type": "number"
+        },
+        {
+          "attribute": "trim-whitespace",
+          "default": "false",
+          "property": "trimWhitespace",
+          "type": "boolean"
+        },
+        {
+          "attribute": "type",
+          "default": "'text'",
+          "property": "type",
+          "type": "string"
+        },
+        {
+          "attribute": "valid",
+          "default": "true",
+          "property": "valid",
+          "type": "boolean"
+        },
+        {
+          "attribute": "validate",
+          "default": "false",
+          "property": "validate",
+          "type": "boolean"
+        },
+        {
+          "attribute": "validate-on-blur",
+          "default": "false",
+          "property": "validateOnBlur",
+          "type": "boolean"
+        },
+        {
+          "attribute": "validation",
+          "default": "'Required field'",
+          "property": "validation",
+          "type": "string"
+        },
+        {
+          "attribute": "value",
+          "default": "undefined",
+          "property": "value",
+          "type": "string"
+        }
+      ],
+      "events": [
+        {
+          "name": "changeValue",
+          "type": "CustomEvent<any>"
+        }
+      ],
+      "slots": ["post", "pre"],
+      "cssProperties": [
+        "--c-text-field-active-color",
+        "--c-text-field-background-color",
+        "--c-text-field-inactive-color",
+        "--c-text-field-label-color",
+        "--c-text-field-placeholder-color",
+        "--c-text-field-shadow-active-color",
+        "--c-text-field-shadow-background-color",
+        "--c-text-field-shadow-placeholder-color",
+        "--c-text-field-shadow-text-color",
+        "--c-text-field-text-color"
+      ]
+    },
+    "c-text-field-open": {
+      "props": [
+        {
+          "attribute": "autocomplete",
+          "default": "''",
+          "property": "autocomplete",
+          "type": "string"
+        },
+        {
+          "attribute": "autocorrect",
+          "default": "''",
+          "property": "autocorrect",
+          "type": "string"
+        },
+        {
+          "attribute": "autocapitalize",
+          "default": "''",
+          "property": "automaticCapitalize",
+          "type": "string"
+        },
+        {
+          "attribute": "autofocus",
+          "default": "false",
+          "property": "automaticFocus",
+          "type": "boolean"
+        },
+        {
+          "attribute": "disabled",
+          "default": "false",
+          "property": "disabled",
+          "type": "boolean"
+        },
+        {
+          "attribute": "hide-details",
+          "default": "false",
+          "property": "hideDetails",
+          "type": "boolean"
+        },
+        {
+          "attribute": "hint",
+          "default": "''",
+          "property": "hint",
+          "type": "string"
+        },
+        {
+          "attribute": "id",
+          "default": "undefined",
+          "property": "hostId",
+          "type": "string"
+        },
+        {
+          "attribute": "label",
+          "default": "undefined",
+          "property": "label",
+          "type": "string"
+        },
+        {
+          "attribute": "label-on-top",
+          "default": "false",
+          "property": "labelOnTop",
+          "type": "boolean"
+        },
+        {
+          "attribute": "max",
+          "default": "null",
+          "property": "max",
+          "type": "number"
+        },
+        {
+          "attribute": "min",
+          "default": "null",
+          "property": "min",
+          "type": "number"
+        },
+        {
+          "attribute": "name",
+          "default": "undefined",
+          "property": "name",
+          "type": "string"
+        },
+        {
+          "attribute": "placeholder",
+          "default": "undefined",
+          "property": "placeholder",
+          "type": "string"
+        },
+        {
+          "attribute": "readonly",
+          "default": "false",
+          "property": "readonly",
+          "type": "boolean"
+        },
+        {
+          "attribute": "render-outside-shadow",
+          "default": "false",
+          "property": "renderOutsideShadow",
+          "type": "boolean"
+        },
+        {
+          "attribute": "required",
+          "default": "false",
+          "property": "required",
+          "type": "boolean"
+        },
+        {
+          "attribute": "rows",
+          "default": "1",
+          "property": "rows",
+          "type": "number"
+        },
+        {
+          "attribute": "shadow",
+          "default": "false",
+          "property": "shadow",
+          "type": "boolean"
+        },
+        {
+          "attribute": "step",
+          "default": "null",
+          "property": "step",
+          "type": "number"
+        },
+        {
+          "attribute": "trim-whitespace",
+          "default": "false",
+          "property": "trimWhitespace",
+          "type": "boolean"
+        },
+        {
+          "attribute": "type",
+          "default": "'text'",
+          "property": "type",
+          "type": "string"
+        },
+        {
+          "attribute": "valid",
+          "default": "true",
+          "property": "valid",
+          "type": "boolean"
+        },
+        {
+          "attribute": "validate",
+          "default": "false",
+          "property": "validate",
+          "type": "boolean"
+        },
+        {
+          "attribute": "validate-on-blur",
+          "default": "false",
+          "property": "validateOnBlur",
+          "type": "boolean"
+        },
+        {
+          "attribute": "validation",
+          "default": "'Required field'",
+          "property": "validation",
+          "type": "string"
+        },
+        {
+          "attribute": "value",
+          "default": "undefined",
+          "property": "value",
+          "type": "string"
+        }
+      ],
+      "events": [
+        {
+          "name": "changeValue",
+          "type": "CustomEvent<any>"
+        }
+      ],
+      "slots": ["post", "pre"],
+      "cssProperties": [
+        "--c-text-field-active-color",
+        "--c-text-field-background-color",
+        "--c-text-field-inactive-color",
+        "--c-text-field-label-color",
+        "--c-text-field-placeholder-color",
+        "--c-text-field-shadow-active-color",
+        "--c-text-field-shadow-background-color",
+        "--c-text-field-shadow-placeholder-color",
+        "--c-text-field-shadow-text-color",
+        "--c-text-field-text-color"
+      ]
+    },
+    "c-toast": {
+      "props": [
+        {
+          "attribute": null,
+          "default": "undefined",
+          "property": "message",
+          "type": "{ message: string; title?: string; type?: CToastType; duration?: number; persistent?: boolean; position?: CToastPosition; id?: string; closeText?: string; indeterminate?: boolean; progress?: boolean; custom?: boolean; }"
+        }
+      ],
+      "events": [
+        {
+          "name": "close",
+          "type": "CustomEvent<{ message: string; title?: string; type?: CToastType; duration?: number; persistent?: boolean; position?: CToastPosition; id?: string; closeText?: string; indeterminate?: boolean; progress?: boolean; custom?: boolean; }>"
+        }
+      ],
+      "methods": ["closeToast"],
+      "cssProperties": ["--c-toast-background-color", "--c-toast-text-color"]
+    },
+    "c-toasts": {
+      "props": [
+        {
+          "attribute": "absolute",
+          "default": "false",
+          "property": "absolute",
+          "type": "boolean"
+        },
+        {
+          "attribute": "horizontal",
+          "default": "'center'",
+          "property": "horizontal",
+          "type": "\"center\" | \"left\" | \"right\""
+        },
+        {
+          "attribute": "vertical",
+          "default": "'bottom'",
+          "property": "vertical",
+          "type": "\"bottom\" | \"top\""
+        }
+      ],
+      "methods": ["addToast", "removeToast"]
+    },
+    "c-toolbar": {
+      "slots": [""],
+      "cssProperties": [
+        "--c-toolbar-background-color",
+        "--c-toolbar-text-color"
+      ]
+    }
+  }
+}

@@ -56,11 +56,13 @@ deprecated on npm with pointers to 4.x.
   that 4.0.0 removes or renames simply stops working; the upgrade is
   all-at-once anyway (ADR-0075 rewrites every event handler).
 - **Every such name has a migration-guide entry, enforced.** The 3.x API,
-  generated from the Stencil readmes (attribute, type and default of every
-  prop, plus events, methods, slots, parts and CSS custom properties), is
+  generated from the 3.0.19 Stencil readmes (attribute, type and default of
+  every prop, plus events, methods, slots and CSS custom properties), is
   committed, and a docs guard fails when a 3.x name that is gone, or whose
   default or type changed, has no entry. A first diff found 22 removed
-  attributes and 2 removed tags the guide never mentioned.
+  attributes and 2 removed tags the guide never mentioned. The entries form
+  the migration page's name-by-name lookup; names still waiting for one sit
+  in a baseline that may only shrink, and must be empty before rc.1.
 - **A changed meaning under an unchanged name is listed by hand.** No data can
   show that c-otp-input's value now holds the digits typed so far, so such
   changes are kept in a ledger and each one gets its entry in the PR that
