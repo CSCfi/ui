@@ -460,7 +460,7 @@ export const CMenu = createComponent({
 /** A single command in a `c-menu`. */
 export const CMenuItem = createComponent({
   displayName: 'CMenuItem',
-  elementClass: elementClass<CMenuItemElement>(['active', 'activeIcon', 'danger', 'disabled', 'icon', 'value']),
+  elementClass: elementClass<CMenuItemElement>(['checked', 'danger', 'disabled', 'type', 'value']),
   react: React,
   tagName: 'c-menu-item',
 });

@@ -80,6 +80,8 @@ export type {
 
 export type { CLoginCardBlendMode } from './components/c-login-card/CLoginCard.vue';
 
+export type { CMenuItemType } from './components/c-menu-item/CMenuItem.vue';
+
 export type { CNavigationButtonTexts } from './components/c-navigation-button/CNavigationButton.vue';
 
 export type { CNumberFieldTexts } from './components/c-number-field/CNumberField.vue';

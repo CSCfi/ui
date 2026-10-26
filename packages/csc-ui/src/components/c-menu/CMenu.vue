@@ -99,7 +99,7 @@ interface CMenuEvents {
    * Fired when a leaf menu item is selected, carrying the item's `value`;
    * bubbles out of the menu so a single listener can handle the whole tree.
    */
-  select: { value: unknown };
+  select: { value: string | undefined };
 }
 
 /**
@@ -610,7 +610,7 @@ const toggle = () => (isOpen.value ? closeMenu(false) : openMenu('first'));
 
 const activateLeaf = (item: HTMLElement) => {
   const value =
-    (item as { value?: unknown }).value ??
+    (item as { value?: string }).value ??
     item.getAttribute('value') ??
     undefined;
 

@@ -1,22 +1,17 @@
 <template>
   <div ref="rootRef" :class="ui.root()" part="root">
-    <c-icon
-      v-if="icon"
-      :class="ui.icon()"
-      :path="icon"
-      :size="18"
-      aria-hidden="true"
-      part="icon"
-    />
+    <span v-show="hasIcon" :class="ui.icon()" aria-hidden="true">
+      <slot name="icon" />
+    </span>
 
     <span :class="ui.content()" part="content">
       <slot />
     </span>
 
     <c-icon
-      v-if="isActive"
+      v-if="isChecked"
       :class="ui.check()"
-      :path="activeIcon || mdiCheck"
+      :path="mdiCheck"
       :size="18"
       aria-hidden="true"
       part="check"
@@ -56,15 +51,51 @@
   </div>
 </template>
 
+<script lang="ts">
+/**
+ * What a menu item is: a plain `command`, or one `radio` choice of several
+ * (`role="menuitemradio"`, checked with `checked`).
+ */
+export type CMenuItemType = 'command' | 'radio';
+
+interface CMenuItemProps {
+  /**
+   * Whether a `radio` item is the checked choice: it shows a check mark and
+   * `aria-checked`. The state is yours: the menu fires `select` as usual and
+   * never checks an item itself.
+   */
+  checked?: boolean;
+
+  /** Marks the action as destructive (renders in the error colour). */
+  danger?: boolean;
+
+  /** Disables the item — it is skipped by keyboard nav and emits no select. */
+  disabled?: boolean;
+
+  /**
+   * What the item is: a `command` (a plain menu item) or one `radio` choice
+   * of several, checked with `checked`.
+   */
+  type?: CMenuItemType;
+
+  /**
+   * Value reported in the menu's `select` event when this item is chosen.
+   *
+   * @freeform
+   */
+  value?: string;
+}
+</script>
+
 <script setup lang="ts">
 /**
  * @slot default - The item's content: label text plus optional icons or shortcut hint
+ * @slot icon - A leading icon, such as a `c-icon`, before the content
  * @slot submenu - c-menu-item components for the nested submenu
  *
  * @csspart root - The item row containing the content and the submenu chevron
  * @csspart content - The flex wrapper around the default-slot content
- * @csspart icon - The leading icon rendered from the `icon` prop
- * @csspart check - The trailing indicator icon shown while the item is active
+ * @csspart check - The check mark shown while a `radio` item is checked
  * @csspart submenu-panel - The floating popover holding the submenu
  * @csspart submenu-list - The submenu list surface inside the popover
  */
@@ -85,6 +116,7 @@ import type { CPlacement } from '../../types';
 import { coerceBoolean } from '../../shared/coerceBoolean';
 import { applyPeekCap } from '../../shared/peekCap';
 import { useFallbackPosition } from '../../shared/useFallbackPosition';
+import { useHasSlot } from '../../shared/useHasSlot';
 
 /**
  * A single command in a `c-menu`. Mostly presentational: it renders its row
@@ -165,57 +197,11 @@ const item = tv({
   },
 });
 
-interface CMenuItemProps {
-  /**
-   * Marks the item as the currently selected choice: renders the trailing
-   * indicator icon and stamps `role="menuitemradio"` + `aria-checked`. Leave
-   * unset for regular command items — only a true/false value marks the item
-   * as a selectable choice. The state is consumer-owned: the menu emits
-   * `select` as usual and never toggles this itself. Distinct from the
-   * keyboard highlight (the `data-active` attribute the controlling menu
-   * moves between rows).
-   */
-  active?: boolean;
-
-  /**
-   * SVG path for the trailing indicator shown while `active`; defaults to a
-   * check mark.
-   *
-   * @freeform SVG path data
-   */
-  activeIcon?: string;
-
-  /** Marks the action as destructive (renders in the error colour). */
-  danger?: boolean;
-
-  /** Disables the item — it is skipped by keyboard nav and emits no select. */
-  disabled?: boolean;
-
-  /**
-   * SVG path for a leading icon rendered before the item's content.
-   *
-   * @freeform SVG path data
-   */
-  icon?: string;
-
-  /**
-   * Value reported in the menu's `select` event when this item is chosen.
-   *
-   * @freeform
-   */
-  value?: string;
-}
-
 const props = withDefaults(defineProps<CMenuItemProps>(), {
-  // `active` deliberately defaults to undefined — "not a selectable choice"
-  // (plain menuitem, no aria-checked), which a false default could not
-  // express (Vue's Boolean casting would turn an absent prop into `false`
-  // and stamp aria-checked="false" on every command item).
-  active: undefined,
-  activeIcon: '',
+  checked: false,
   danger: false,
   disabled: false,
-  icon: '',
+  type: 'command',
   value: undefined,
 });
 
@@ -234,13 +220,14 @@ const isDisabled = computed(() => coerceBoolean(props.disabled));
 
 const isDanger = computed(() => coerceBoolean(props.danger));
 
-// Selectable-choice state (see the `active` prop docblock): only a present
-// true/false value makes the item checkable; undefined stays a plain command.
-const isCheckable = computed(() => props.active !== undefined);
+// A `radio` item is a choice with a checked state; a command has none.
+const isCheckable = computed(() => props.type === 'radio');
 
-const isActive = computed(
-  () => isCheckable.value && coerceBoolean(props.active),
+const isChecked = computed(
+  () => isCheckable.value && coerceBoolean(props.checked),
 );
+
+const hasIcon = useHasSlot(rootRef, 'icon');
 
 const ui = computed(() =>
   item({ danger: isDanger.value, disabled: isDisabled.value }),
@@ -383,13 +370,13 @@ const applyCheckableState = () => {
   host?.setAttribute('role', isCheckable.value ? 'menuitemradio' : 'menuitem');
 
   if (isCheckable.value) {
-    host?.setAttribute('aria-checked', String(isActive.value));
+    host?.setAttribute('aria-checked', String(isChecked.value));
   } else {
     host?.removeAttribute('aria-checked');
   }
 };
 
-watch([isCheckable, isActive], applyCheckableState);
+watch([isCheckable, isChecked], applyCheckableState);
 
 watch(hasSubmenu, (has) => {
   if (has) {

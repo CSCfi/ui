@@ -9,7 +9,7 @@
   "defaultable": [],
   "events": {
     "change:open": "CustomEvent<boolean>",
-    "select": "CustomEvent<{ value: unknown }>"
+    "select": "CustomEvent<{ value: string | undefined }>"
   },
   "methods": {},
   "parts": [

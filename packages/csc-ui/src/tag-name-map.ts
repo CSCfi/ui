@@ -1103,7 +1103,7 @@ export interface CMenuElementEventMap {
    * Fired when a leaf menu item is selected, carrying the item's `value`;
    * bubbles out of the menu so a single listener can handle the whole tree.
    */
-  select: CustomEvent<{ value: unknown }>;
+  select: CustomEvent<{ value: string | undefined }>;
 }
 
 /** A command menu: a transient panel of actions or navigation choices opened from a trigger (the WAI-ARIA menu-button pattern), authored declaratively with slotted `c-menu-item`, `c-menu-label` and `c-divider` elements. Activating an item fires a one-off `select` event and closes the menu; the menu holds no selected value — that is `c-select`'s job. */
@@ -1146,28 +1146,22 @@ export interface CMenuElement extends Omit<HTMLElement, 'distance' | 'open' | 'p
 }
 
 /** A single command in a `c-menu`. */
-export interface CMenuItemElement extends Omit<HTMLElement, 'active' | 'activeIcon' | 'danger' | 'disabled' | 'icon' | 'value'> {
+export interface CMenuItemElement extends Omit<HTMLElement, 'checked' | 'danger' | 'disabled' | 'type' | 'value'> {
   /**
-   * Marks the item as the currently selected choice: renders the trailing
-   * indicator icon and stamps `role="menuitemradio"` + `aria-checked`. Leave
-   * unset for regular command items — only a true/false value marks the item
-   * as a selectable choice. The state is consumer-owned: the menu emits
-   * `select` as usual and never toggles this itself. Distinct from the
-   * keyboard highlight (the `data-active` attribute the controlling menu
-   * moves between rows).
+   * Whether a `radio` item is the checked choice: it shows a check mark and
+   * `aria-checked`. The state is yours: the menu fires `select` as usual and
+   * never checks an item itself.
    */
-  active?: boolean;
-  /**
-   * SVG path for the trailing indicator shown while `active`; defaults to a
-   * check mark.
-   */
-  activeIcon?: string;
+  checked?: boolean;
   /** Marks the action as destructive (renders in the error colour). */
   danger?: boolean;
   /** Disables the item — it is skipped by keyboard nav and emits no select. */
   disabled?: boolean;
-  /** SVG path for a leading icon rendered before the item's content. */
-  icon?: string;
+  /**
+   * What the item is: a `command` (a plain menu item) or one `radio` choice
+   * of several, checked with `checked`.
+   */
+  type?: 'command' | 'radio';
   /** Value reported in the menu's `select` event when this item is chosen. */
   value?: string;
 }
