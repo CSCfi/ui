@@ -6,7 +6,9 @@
     "size": "'default' | 'small' = 'default'"
   },
   "cssProperties": [],
-  "defaultable": [],
+  "defaultable": [
+    "texts"
+  ],
   "events": {
     "change": "CustomEvent<CPaginationOptions>",
     "input": "CustomEvent<void>",
@@ -20,6 +22,7 @@
     "root"
   ],
   "propertyOnly": [
+    "texts",
     "value"
   ],
   "props": {
@@ -27,6 +30,7 @@
     "hideRange": "boolean = false",
     "simple": "boolean = false",
     "size": "'default' | 'small' = 'default'",
+    "texts": "CPaginationTexts = {}",
     "value": "CPaginationOptions = () => ({ itemCount: 0 })"
   },
   "slots": [],

@@ -11,7 +11,7 @@ import { Component, CUSTOM_ELEMENTS_SCHEMA, signal } from '@angular/core';
     <div>
       <c-pagination
         [value]="options"
-        (change)="page.set($any($event).detail.currentPage ?? 1)"
+        (change)="page.set($any($event).detail.page ?? 1)"
       ></c-pagination>
 
       <p>Current page: {{ page() }}</p>
@@ -21,7 +21,7 @@ import { Component, CUSTOM_ELEMENTS_SCHEMA, signal } from '@angular/core';
 export class BasicExampleComponent {
   options: CPaginationOptions = {
     itemCount: 96,
-    itemsPerPage: 10,
+    pageSize: 10,
     pageSizes: [10, 25, 50],
   };
 

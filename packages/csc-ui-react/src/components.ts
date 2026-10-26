@@ -550,7 +550,7 @@ export const CPage = createComponent({
 
 export const CPagination = createComponent({
   displayName: 'CPagination',
-  elementClass: elementClass<CPaginationElement>(['hideDetails', 'hideRange', 'simple', 'size', 'value']),
+  elementClass: elementClass<CPaginationElement>(['hideDetails', 'hideRange', 'simple', 'size', 'texts', 'value']),
   events: {
     onChange: 'change' as EventName<CPaginationElementEventMap['change']>,
     onInput: 'input' as EventName<CPaginationElementEventMap['input']>,

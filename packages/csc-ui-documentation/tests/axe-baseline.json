@@ -21,7 +21,6 @@
   "c-data-table/basic": ["color-contrast", "label-content-name-mismatch"],
   "c-data-table/custom-cells": ["aria-progressbar-name"],
   "c-data-table/external-data": [
-    "aria-required-attr",
     "color-contrast",
     "label-content-name-mismatch"
   ],

@@ -2,7 +2,7 @@
   <div>
     <c-pagination v-model="options" hide-details simple />
 
-    <p>Current page: {{ options.currentPage ?? 1 }}</p>
+    <p>Current page: {{ options.page ?? 1 }}</p>
   </div>
 </template>
 
@@ -13,6 +13,6 @@ import { ref } from 'vue';
 
 const options = ref<CPaginationOptions>({
   itemCount: 40,
-  itemsPerPage: 10,
+  pageSize: 10,
 });
 </script>

@@ -88,6 +88,7 @@ export type { CNumberFieldTexts } from './components/c-number-field/CNumberField
 export type {
   CPaginationOptions,
   CPaginationSize,
+  CPaginationTexts,
 } from './components/c-pagination/CPagination.vue';
 
 export type {

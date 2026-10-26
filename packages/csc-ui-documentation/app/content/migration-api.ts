@@ -350,4 +350,11 @@ export const V3_API_CHANGES: V3ApiChange[] = [
     name: 'selected',
     tag: 'c-option',
   },
+  {
+    change:
+      'Its fields `currentPage` and `itemsPerPage` are `page` and `pageSize`, and `textOverrides` is the `texts` prop: `itemsPerPageText` → `pageSize`, `prevPage` → `previousPage`, `nextPage`, `pageText({ start, end, count })` → `range(start, end, count)`, `pageOfText({ pageNumber, count })` → `page(page, pageCount)`. The pagination never writes into your object: each pick emits a new one, with `startFrom` and `endTo`, and nothing is emitted at mount or when you set it.',
+    kind: 'prop',
+    name: 'value',
+    tag: 'c-pagination',
+  },
 ];

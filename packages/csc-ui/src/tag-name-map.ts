@@ -19,7 +19,7 @@ import type { CDataTableCellContent, CDataTableColumn, CDataTableExpandedContext
 import type { CDatePickerDisabledDate, CDatePickerText, CDatePickerTexts, CDatePickerValue } from './components/c-date-picker/CDatePicker.vue';
 import type { CFileUploadEntry, CFileUploadFunction, CFileUploadRejection, CFileUploadTexts } from './components/c-file-upload/CFileUpload.vue';
 import type { CNumberFieldTexts } from './components/c-number-field/CNumberField.vue';
-import type { CPaginationOptions } from './components/c-pagination/CPagination.vue';
+import type { CPaginationOptions, CPaginationTexts } from './components/c-pagination/CPagination.vue';
 import type { CSelectTexts, CSelectValue } from './components/c-select/CSelect.vue';
 import type { CTimePickerText, CTimePickerTexts, CTimePickerValue } from './components/c-time-picker/CTimePicker.vue';
 import type { CTreeSelectFilter, CTreeSelectItem, CTreeSelectTexts, CTreeSelectValue } from './components/c-tree-select/CTreeSelect.vue';
@@ -1424,9 +1424,9 @@ export interface CPageElement extends Omit<HTMLElement, 'scrollIndicator'> {
 /** Events dispatched by `<c-pagination>`. */
 export interface CPaginationElementEventMap {
   /**
-   * Fired when the user changes the page or the page size, carrying the
-   * pagination options object with the recomputed `currentPage`,
-   * `itemsPerPage`, `startFrom` and `endTo` fields.
+   * Fired when the user picks a page or a page size, carrying a new value
+   * with the picked `page` and `pageSize` and the page's `startFrom` and
+   * `endTo`.
    */
   change: CustomEvent<CPaginationOptions>;
   /**
@@ -1438,19 +1438,24 @@ export interface CPaginationElementEventMap {
   'update:value': CustomEvent<CPaginationOptions>;
 }
 
-export interface CPaginationElement extends Omit<HTMLElement, 'hideDetails' | 'hideRange' | 'simple' | 'size' | 'value'> {
+export interface CPaginationElement extends Omit<HTMLElement, 'hideDetails' | 'hideRange' | 'simple' | 'size' | 'texts' | 'value'> {
   /** Hide details (per page dropdown and the 'x - y of n pages' text) */
   hideDetails?: boolean;
   /** Hide range indicator */
   hideRange?: boolean;
   /** Hide page number buttons */
   simple?: boolean;
-  /** Hide details (per page dropdown and the 'x - y of n pages' text) */
+  /** Size of the controls: `small` renders the compact page buttons. */
   size?: 'default' | 'small';
   /**
-   * Object containing values that are needed for pagination.
-   *
-   * Note! startFrom and endTo are assigned automatically to the object based on other values
+   * UI text overrides (i18n), merged over the English defaults. Objects have
+   * no attribute form — bind as a DOM property
+   */
+  texts?: CPaginationTexts;
+  /**
+   * The item count and the current page and page size; see
+   * `CPaginationOptions`. Bind it with `v-model`, or set it and listen to
+   * `change`.
    */
   value?: CPaginationOptions;
   addEventListener<K extends keyof CPaginationElementEventMap>(
@@ -2628,6 +2633,7 @@ export interface AppDefaults {
   'c-date-picker'?: Partial<Pick<CDatePickerElement, 'firstDayOfWeek' | 'format' | 'hideDetails' | 'labelOnTop' | 'shadow' | 'showToday' | 'showWeekNumbers' | 'size' | 'texts'>>;
   'c-file-upload'?: Partial<Pick<CFileUploadElement, 'compact' | 'hideDetails' | 'size' | 'texts'>>;
   'c-number-field'?: Partial<Pick<CNumberFieldElement, 'decimalSeparator' | 'decimals' | 'fixedDecimals' | 'groupSeparator' | 'hideDetails' | 'labelOnTop' | 'shadow' | 'size' | 'step' | 'texts'>>;
+  'c-pagination'?: Partial<Pick<CPaginationElement, 'texts'>>;
   'c-select'?: Partial<Pick<CSelectElement, 'hideDetails' | 'itemsPerPage' | 'labelOnTop' | 'shadow' | 'size' | 'texts'>>;
   'c-text-field'?: Partial<Pick<CTextFieldElement, 'hideDetails' | 'labelOnTop' | 'shadow' | 'size'>>;
   'c-time-picker'?: Partial<Pick<CTimePickerElement, 'format' | 'hideDetails' | 'labelOnTop' | 'shadow' | 'showNow' | 'size' | 'texts'>>;
@@ -2643,6 +2649,7 @@ export const DEFAULTABLE_PROPS = {
   'c-date-picker': ['firstDayOfWeek', 'format', 'hideDetails', 'labelOnTop', 'shadow', 'showToday', 'showWeekNumbers', 'size', 'texts'],
   'c-file-upload': ['compact', 'hideDetails', 'size', 'texts'],
   'c-number-field': ['decimalSeparator', 'decimals', 'fixedDecimals', 'groupSeparator', 'hideDetails', 'labelOnTop', 'shadow', 'size', 'step', 'texts'],
+  'c-pagination': ['texts'],
   'c-select': ['hideDetails', 'itemsPerPage', 'labelOnTop', 'shadow', 'size', 'texts'],
   'c-text-field': ['hideDetails', 'labelOnTop', 'shadow', 'size'],
   'c-time-picker': ['format', 'hideDetails', 'labelOnTop', 'shadow', 'showNow', 'size', 'texts'],

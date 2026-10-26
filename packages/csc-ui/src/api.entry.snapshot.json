@@ -124,8 +124,14 @@
       "clearSelection?": "string",
       "expandRow?": "string",
       "loading?": "string",
+      "nextPage?": "string",
       "noData?": "string",
+      "page?": "(page: number, pageCount: number) => string",
       "pageSelected?": "(count: number) => string",
+      "pageSize?": "string",
+      "pagination?": "string",
+      "previousPage?": "string",
+      "range?": "(start: number, end: number, count: number) => string",
       "selectAllItems?": "(count: number) => string",
       "selectPage?": "string",
       "selectRow?": "string"
@@ -227,16 +233,23 @@
       "increase?": "string"
     },
     "CPaginationOptions": {
-      "currentPage?": "number",
       "endTo?": "number",
       "itemCount": "number",
-      "itemsPerPage?": "number",
+      "page?": "number",
+      "pageSize?": "number",
       "pageSizes?": "number[]",
       "startFrom?": "number",
-      "textOverrides?": "Record<string, unknown>",
       "totalVisible?": "number"
     },
     "CPaginationSize": "'default' | 'small'",
+    "CPaginationTexts": {
+      "nextPage?": "string",
+      "page?": "(page: number, pageCount: number) => string",
+      "pageSize?": "string",
+      "pagination?": "string",
+      "previousPage?": "string",
+      "range?": "(start: number, end: number, count: number) => string"
+    },
     "CPlacement": "'bottom-end' | 'bottom-start' | 'bottom' | 'left-end' | 'left-start' | 'left' | 'right-end' | 'right-start' | 'right' | 'top-end' | 'top-start' | 'top'",
     "CSelectItem": {
       "disabled?": "boolean",

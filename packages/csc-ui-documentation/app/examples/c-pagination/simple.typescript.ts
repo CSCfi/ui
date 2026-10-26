@@ -4,9 +4,9 @@ const status = document.querySelector('p')!;
 
 pagination.value = {
   itemCount: 40,
-  itemsPerPage: 10,
+  pageSize: 10,
 };
 
 pagination.addEventListener('change', (event) => {
-  status.textContent = `Current page: ${event.detail.currentPage ?? 1}`;
+  status.textContent = `Current page: ${event.detail.page ?? 1}`;
 });

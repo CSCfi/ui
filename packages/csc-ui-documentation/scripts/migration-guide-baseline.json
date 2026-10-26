@@ -40,7 +40,6 @@
   "c-otp-input prop autofocus",
   "c-otp-input prop id",
   "c-page slot default",
-  "c-pagination prop value",
   "c-radio prop checked",
   "c-radio-group prop color",
   "c-radio-group prop id",

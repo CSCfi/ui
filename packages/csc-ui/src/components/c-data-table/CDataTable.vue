@@ -254,7 +254,11 @@
     </div>
 
     <div v-if="paginationOn" :class="ui.pagination()" part="pagination">
-      <c-pagination :value="paginationValue" @change="onPaginationChange" />
+      <c-pagination
+        :texts="paginationTexts"
+        :value="paginationValue"
+        @change="onPaginationChange"
+      />
     </div>
   </div>
 </template>
@@ -409,11 +413,29 @@ export interface CDataTableTexts {
   /** Text shown when the table is empty while `loading`. */
   loading?: string;
 
+  /** The pagination's next-page button; see `CPaginationTexts`. */
+  nextPage?: string;
+
   /** Text shown when there are no rows (unless the `empty` slot is used). */
   noData?: string;
 
+  /** The pagination's page buttons; see `CPaginationTexts`. */
+  page?: (page: number, pageCount: number) => string;
+
   /** Banner text when the visible page is fully selected. */
   pageSelected?: (count: number) => string;
+
+  /** The pagination's page-size menu label; see `CPaginationTexts`. */
+  pageSize?: string;
+
+  /** The pagination's landmark name; see `CPaginationTexts`. */
+  pagination?: string;
+
+  /** The pagination's previous-page button; see `CPaginationTexts`. */
+  previousPage?: string;
+
+  /** The pagination's range of items shown; see `CPaginationTexts`. */
+  range?: (start: number, end: number, count: number) => string;
 
   /** Label of the banner action selecting all (filtered) rows. */
   selectAllItems?: (count: number) => string;
@@ -558,7 +580,10 @@ import {
   watch,
 } from 'vue';
 
-import type { CPaginationOptions } from '../c-pagination/CPagination.vue';
+import type {
+  CPaginationOptions,
+  CPaginationTexts,
+} from '../c-pagination/CPagination.vue';
 
 import { useAppDefault } from '../../shared/appDefaults';
 import { coerceBoolean } from '../../shared/coerceBoolean';
@@ -656,7 +681,23 @@ const ui = tv({
   },
 })();
 
-const DEFAULT_TEXTS: Required<CDataTableTexts> = {
+// The pagination's keys default in c-pagination itself (and its own app
+// default): the table only forwards what is set.
+const PAGINATION_TEXT_KEYS = [
+  'nextPage',
+  'page',
+  'pageSize',
+  'pagination',
+  'previousPage',
+  'range',
+] as const satisfies readonly (keyof CPaginationTexts)[];
+
+type CDataTableOwnTexts = Omit<
+  CDataTableTexts,
+  (typeof PAGINATION_TEXT_KEYS)[number]
+>;
+
+const DEFAULT_TEXTS: Required<CDataTableOwnTexts> = {
   allSelected: (count) => `All ${count} rows are selected`,
   clearSelection: 'Clear selection',
   expandRow: 'Toggle row expansion',
@@ -672,7 +713,9 @@ const DEFAULT_TEXTS: Required<CDataTableTexts> = {
 // src/shared/appDefaults.ts).
 const appDefault = useAppDefault('c-data-table', props);
 
-const t = appDefault('texts', DEFAULT_TEXTS);
+// The pagination's keys have no built-in here (see PAGINATION_TEXT_KEYS), so
+// they resolve to `undefined` unless set; `paginationTexts` drops those.
+const t = appDefault('texts', DEFAULT_TEXTS as Required<CDataTableTexts>);
 
 const externalOn = computed(() => coerceBoolean(props.external));
 
@@ -1081,17 +1124,22 @@ const onRowClick = (row: Row<CDataTableRow>, event: MouseEvent) => {
 
 /* ------------------------------------------------------------- pagination */
 
-// startFrom/endTo are pre-filled: c-pagination normally writes them into the
-// value object in place, but that mutation isn't observable on a per-change
-// computed object, so its range text would read stale/absent values.
 const paginationValue = computed<CPaginationOptions>(() => ({
-  currentPage: page.value,
-  endTo: page.value * (pageSize.value ?? 0) - 1,
   itemCount: totalCount.value,
-  itemsPerPage: pageSize.value,
+  page: page.value,
+  pageSize: pageSize.value,
   pageSizes: props.pageSizes,
-  startFrom: (page.value - 1) * (pageSize.value ?? 0),
 }));
+
+const paginationTexts = computed<CPaginationTexts>(() =>
+  Object.fromEntries(
+    PAGINATION_TEXT_KEYS.flatMap((key) => {
+      const text = t.value[key] as CPaginationTexts[typeof key];
+
+      return text === undefined ? [] : [[key, text]];
+    }),
+  ),
+);
 
 const setPage = (next: number) => {
   if (next === page.value) return;
@@ -1104,7 +1152,7 @@ const onPaginationChange = (event: Event) => {
 
   if (!detail) return;
 
-  const nextSize = detail.itemsPerPage ?? pageSize.value;
+  const nextSize = detail.pageSize ?? pageSize.value;
 
   if (nextSize != null && nextSize !== pageSize.value) {
     pageSize.value = nextSize;
@@ -1116,7 +1164,7 @@ const onPaginationChange = (event: Event) => {
     return;
   }
 
-  setPage(detail.currentPage ?? 1);
+  setPage(detail.page ?? 1);
 };
 
 // Filtering changes the page count under the pager; restart from page 1.

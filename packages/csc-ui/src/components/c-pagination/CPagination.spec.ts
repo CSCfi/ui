@@ -6,14 +6,22 @@
  * so it landed indented at a width-dependent offset.
  */
 import { describe, expect, it } from 'vitest';
+import { userEvent } from 'vitest/browser';
 
 import type { Mounted } from '../../test/harness';
+import type { CPaginationOptions } from './CPagination.vue';
 
-import { matchScreenshotInBothModes, mount, settled } from '../../test/harness';
+import {
+  matchScreenshotInBothModes,
+  mount,
+  recordEvents,
+  settle,
+  settled,
+} from '../../test/harness';
 
 const mountPagination = async (width: number): Promise<Mounted> => {
   const m = await mount('c-pagination', {
-    props: { value: { currentPage: 1, itemCount: 100, itemsPerPage: 10 } },
+    props: { value: { itemCount: 100, page: 1, pageSize: 10 } },
   });
 
   m.stage.style.cssText = `display:block;padding:8px;width:${width}px`;
@@ -61,5 +69,90 @@ describe('c-pagination details', () => {
     const m = await mountPagination(300);
 
     await matchScreenshotInBothModes(m.stage, 'narrow');
+  });
+});
+
+describe('c-pagination value (R3)', () => {
+  type PaginationHost = { value: CPaginationOptions } & HTMLElement;
+
+  const next = (m: Mounted) =>
+    m.deep('c-icon-button[aria-label="Next page"]', 'button');
+
+  it('emits nothing on mount or when the value is set, and never writes into it', async () => {
+    const value: CPaginationOptions = { itemCount: 100, page: 2, pageSize: 10 };
+
+    const m = await mount<PaginationHost>('c-pagination', { props: { value } });
+
+    const events = recordEvents(m.host, ['change', 'input', 'update:value']);
+
+    m.host.value = { itemCount: 100, page: 3, pageSize: 10 };
+    await settle();
+
+    expect(events.records).toEqual([]);
+    expect(value).toEqual({ itemCount: 100, page: 2, pageSize: 10 });
+    expect(m.shadow('[aria-current="page"]').textContent?.trim()).toBe('3');
+  });
+
+  it('emits a new value with the page, the page size and the item range', async () => {
+    const value: CPaginationOptions = { itemCount: 100, page: 1, pageSize: 10 };
+
+    const m = await mount<PaginationHost>('c-pagination', { props: { value } });
+
+    const events = recordEvents(m.host, ['change']);
+
+    await userEvent.click(next(m));
+    await settle();
+
+    const [detail] = events.records.map((r) => r.detail as CPaginationOptions);
+
+    expect(detail).toEqual({
+      endTo: 19,
+      itemCount: 100,
+      page: 2,
+      pageSize: 10,
+      startFrom: 10,
+    });
+    expect(detail).not.toBe(value);
+    expect(value.page).toBe(1);
+  });
+
+  it('keeps its page-size menu’s select inside', async () => {
+    const m = await mount<PaginationHost>('c-pagination', {
+      props: { value: { itemCount: 100, pageSize: 25 } },
+    });
+
+    const page = recordEvents(document, ['select']);
+
+    const changes = recordEvents(m.host, ['change']);
+
+    await userEvent.click(m.deep('c-menu c-button', 'button'));
+    await settle();
+    await userEvent.click(m.shadow('c-menu-item[value="50"]') as HTMLElement);
+    await settle();
+
+    expect(
+      changes.records.map((r) => (r.detail as CPaginationOptions).pageSize),
+    ).toEqual([50]);
+    expect(page.records).toEqual([]);
+  });
+
+  it('reads its texts from the texts prop', async () => {
+    const m = await mount<PaginationHost>('c-pagination', {
+      props: {
+        texts: {
+          nextPage: 'Seuraava sivu',
+          range: (start: number, end: number, count: number) =>
+            `${start}–${end} / ${count}`,
+        },
+        value: { itemCount: 100, page: 2, pageSize: 10 },
+      },
+    });
+
+    expect(m.part('details').querySelector('span')!.textContent).toBe(
+      '11–20 / 100',
+    );
+    expect(
+      m.shadow('c-icon-button[aria-label="Seuraava sivu"]'),
+    ).not.toBeNull();
   });
 });

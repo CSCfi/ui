@@ -7,7 +7,7 @@ import { useState } from 'react';
 export const Simple = () => {
   const [options] = useState<CPaginationOptions>({
     itemCount: 40,
-    itemsPerPage: 10,
+    pageSize: 10,
   });
 
   const [page, setPage] = useState(1);
@@ -17,7 +17,7 @@ export const Simple = () => {
       <CPagination
         hideDetails
         onChange={(event) =>
-          setPage((event.detail as CPaginationOptions).currentPage ?? 1)
+          setPage((event.detail as CPaginationOptions).page ?? 1)
         }
         simple
         value={options}

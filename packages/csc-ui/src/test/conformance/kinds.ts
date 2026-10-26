@@ -38,10 +38,7 @@ export const FIXTURES: Record<string, MountOptions> = {
  * `value` change, breaking the "emit only on interaction" contract. The suite
  * asserts the inverse for these so fixing one forces the list to shrink.
  */
-export const KNOWN_PROGRAMMATIC_EMITTERS: readonly string[] = [
-  // CPagination.vue: `onMounted → setRange()` and a `value` watch both emit.
-  'c-pagination',
-];
+export const KNOWN_PROGRAMMATIC_EMITTERS: readonly string[] = [];
 
 /**
  * Value controls that dispatch the value events TWICE for one interaction.
@@ -287,18 +284,17 @@ export const VALUE_RECIPES: Record<string, ValueRecipe> = {
     programmatic: '2',
   },
   'c-pagination': {
-    expected: (detail: unknown) =>
-      (detail as { currentPage?: number }).currentPage === 2,
+    expected: (detail: unknown) => (detail as { page?: number }).page === 2,
     interact: async (m) => {
       await userEvent.click(
         m.deep('c-icon-button[aria-label="Next page"]', 'button'),
       );
     },
-    model: { currentPage: 1, itemCount: 100, itemsPerPage: 25 },
+    model: { itemCount: 100, page: 1, pageSize: 25 },
     mount: {
-      props: { value: { currentPage: 1, itemCount: 100, itemsPerPage: 25 } },
+      props: { value: { itemCount: 100, page: 1, pageSize: 25 } },
     },
-    programmatic: { currentPage: 3, itemCount: 100, itemsPerPage: 25 },
+    programmatic: { itemCount: 100, page: 3, pageSize: 25 },
   },
   'c-radio-group': {
     expected: 'b',
