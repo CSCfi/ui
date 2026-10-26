@@ -2213,10 +2213,11 @@ export interface CTextFieldElement extends Omit<HTMLElement, 'autocapitalize' | 
   /**
    * Enable native input autocorrection (Safari). Maps to the input's
    * `autocorrect="on"`/`"off"` attribute; left unset (browser default per
-   * input type) when not specified. Mirrors the platform
+   * input type) when not specified. The attribute takes the native values
+   * (`autocorrect="off"`), the property also the platform's
    * `HTMLElement.autocorrect` boolean.
    */
-  autocorrect?: boolean;
+  autocorrect?: 'off' | 'on' | boolean;
   /**
    * Focus the input when the field mounts, as the native `autofocus` does —
    * which is not honoured inside a shadow root.

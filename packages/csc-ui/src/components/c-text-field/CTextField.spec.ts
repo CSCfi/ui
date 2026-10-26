@@ -131,6 +131,31 @@ describe('3.x attribute names (R1)', () => {
     expect(input(m).getAttribute('autocapitalize')).toBe('words');
   });
 
+  it('autocorrect takes the native attribute values', async () => {
+    const cases: {
+      attrs?: Record<string, string>;
+      expected: null | string;
+      props?: Record<string, boolean>;
+    }[] = [
+      { attrs: { autocorrect: 'off' }, expected: 'off' },
+      { attrs: { autocorrect: 'on' }, expected: 'on' },
+      { attrs: { autocorrect: '' }, expected: 'on' },
+      { expected: 'off', props: { autocorrect: false } },
+      { expected: 'on', props: { autocorrect: true } },
+      { expected: null },
+    ];
+
+    for (const { attrs, expected, props } of cases) {
+      const m = await mount<FieldHost>('c-text-field', {
+        attrs: { label: 'Name', ...attrs },
+        props,
+      });
+
+      expect(input(m).getAttribute('autocorrect')).toBe(expected);
+      m.unmount();
+    }
+  });
+
   it('keeps the id on the host, not on the input', async () => {
     const m = await mount<FieldHost>('c-text-field', {
       attrs: { id: 'phone', label: 'Phone' },

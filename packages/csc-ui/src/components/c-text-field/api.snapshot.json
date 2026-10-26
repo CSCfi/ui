@@ -2,7 +2,7 @@
   "attributes": {
     "autocapitalize": "'characters' | 'none' | 'off' | 'on' | 'sentences' | 'words'",
     "autocomplete": "string = ''",
-    "autocorrect": "boolean",
+    "autocorrect": "'off' | 'on' | boolean",
     "autofocus": "boolean = false",
     "disabled": "boolean = false",
     "error-message": "string = ''",
@@ -46,7 +46,7 @@
   "props": {
     "autocapitalize": "'characters' | 'none' | 'off' | 'on' | 'sentences' | 'words'",
     "autocomplete": "string = ''",
-    "autocorrect": "boolean",
+    "autocorrect": "'off' | 'on' | boolean",
     "autofocus": "boolean = false",
     "disabled": "boolean = false",
     "errorMessage": "string = ''",

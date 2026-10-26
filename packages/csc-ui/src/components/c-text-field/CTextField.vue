@@ -35,9 +35,7 @@
       :aria-label="label || undefined"
       :autocapitalize="autocapitalize || undefined"
       :autocomplete="autocomplete || undefined"
-      :autocorrect="
-        autocorrect === undefined ? undefined : autocorrect ? 'on' : 'off'
-      "
+      :autocorrect="autocorrectAttr"
       :class="ui.textarea()"
       :disabled
       :name="name || undefined"
@@ -76,9 +74,7 @@
         :aria-label="label || undefined"
         :autocapitalize="autocapitalize || undefined"
         :autocomplete="autocomplete || undefined"
-        :autocorrect="
-          autocorrect === undefined ? undefined : autocorrect ? 'on' : 'off'
-        "
+        :autocorrect="autocorrectAttr"
         :class="ui.input()"
         :disabled
         :inputmode="maskInputMode"
@@ -185,10 +181,11 @@ interface CTextFieldProps {
   /**
    * Enable native input autocorrection (Safari). Maps to the input's
    * `autocorrect="on"`/`"off"` attribute; left unset (browser default per
-   * input type) when not specified. Mirrors the platform
+   * input type) when not specified. The attribute takes the native values
+   * (`autocorrect="off"`), the property also the platform's
    * `HTMLElement.autocorrect` boolean.
    */
-  autocorrect?: boolean;
+  autocorrect?: 'off' | 'on' | boolean;
 
   /**
    * Focus the input when the field mounts, as the native `autofocus` does —
@@ -513,6 +510,16 @@ const inputRef = useTemplateRef<HTMLInputElement | HTMLTextAreaElement>(
 const autoId = useId();
 
 const inputId = computed(() => autoId);
+
+// The native attribute's values: `off` (or `false`) turns it off, `on` or a
+// bare attribute (`''`) turns it on; unset leaves the browser's default.
+const autocorrectAttr = computed(() => {
+  const { autocorrect } = props;
+
+  if (autocorrect === undefined) return undefined;
+
+  return autocorrect === false || autocorrect === 'off' ? 'off' : 'on';
+});
 
 const isFocused = ref(false);
 
