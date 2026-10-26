@@ -91,3 +91,22 @@ describe('value events', () => {
     expect(events.records).toEqual([]);
   });
 });
+
+describe('3.x attribute names (R1)', () => {
+  it('keeps the id set on the host', async () => {
+    const m = await mount<OtpHost>('c-otp-input', {
+      attrs: { id: 'code', length: 4 },
+    });
+
+    expect(m.host.id).toBe('code');
+  });
+
+  it('autofocus focuses the first digit', async () => {
+    const m = await mount<OtpHost>('c-otp-input', {
+      attrs: { autofocus: true, length: 4 },
+    });
+    await settle();
+
+    expect(m.host.shadowRoot!.activeElement).toBe(digits(m)[0]);
+  });
+});

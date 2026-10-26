@@ -165,13 +165,6 @@ interface CNumberFieldProps {
   hint?: string;
 
   /**
-   * Id of the input
-   *
-   * @freeform
-   */
-  hostId?: string;
-
-  /**
    * Show the control as invalid: its `error-message`, when set, replaces the
    * hint, and the control is marked `aria-invalid`.
    */
@@ -354,7 +347,6 @@ const props = withDefaults(defineProps<CNumberFieldProps>(), {
   groupSeparator: undefined,
   hideDetails: undefined,
   hint: '',
-  hostId: '',
   invalid: false,
   label: '',
   labelOnTop: undefined,
@@ -415,7 +407,7 @@ const inputRef = useTemplateRef<HTMLInputElement>('inputRef');
 
 const autoId = useId();
 
-const inputId = computed(() => props.hostId || autoId);
+const inputId = computed(() => autoId);
 
 const isFocused = ref(false);
 

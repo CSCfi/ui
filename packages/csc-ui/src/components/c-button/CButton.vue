@@ -1,7 +1,6 @@
 <template>
   <component
     :is="href ? 'a' : 'button'"
-    :id="hostId || undefined"
     ref="rootRef"
     :aria-pressed
     :class="ui.root()"
@@ -97,14 +96,6 @@ interface CButtonProps {
    * @seeded from csc-ui — verify
    */
   ghost?: boolean;
-
-  /**
-   * Id of the button
-   *
-   * @seeded from csc-ui — verify
-   * @freeform
-   */
-  hostId?: string;
 
   /**
    * Hyperlink url
@@ -493,7 +484,6 @@ const props = withDefaults(defineProps<CButtonProps>(), {
   disabled: false,
   fit: false,
   ghost: false,
-  hostId: '',
   href: '',
   inverted: false,
   loading: false,

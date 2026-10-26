@@ -73,14 +73,6 @@ interface CMessageProps {
   hint?: string;
 
   /**
-   * Id of the related input element
-   *
-   * @seeded from csc-ui — verify
-   * @freeform
-   */
-  inputId?: string;
-
-  /**
    * Show the control as invalid: its `error-message`, when set, replaces the
    * hint, and the control is marked `aria-invalid`.
    */
@@ -90,7 +82,6 @@ interface CMessageProps {
 const props = withDefaults(defineProps<CMessageProps>(), {
   errorMessage: '',
   hint: '',
-  inputId: '',
   invalid: false,
 });
 

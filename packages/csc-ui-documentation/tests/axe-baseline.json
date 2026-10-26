@@ -75,8 +75,6 @@
   "c-select/small": ["color-contrast"],
   "c-side-navigation-item/basic": ["aria-required-children"],
   "c-side-navigation/basic": ["aria-required-children"],
-  "c-slider/basic": ["aria-valid-attr"],
-  "c-slider/ticks": ["aria-valid-attr"],
   "c-status/basic": ["color-contrast"],
   "c-sub-navigation-item/basic": ["aria-required-children"],
   "c-tab-buttons/basic": ["aria-required-children"],

@@ -1,8 +1,7 @@
 {
   "attributes": {
-    "element-id": "string = ''",
+    "autofocus": "boolean = false",
     "error-message": "string = ''",
-    "has-autofocus": "boolean = false",
     "hide-details": "boolean = false",
     "hint": "string = ''",
     "invalid": "boolean = false",
@@ -28,9 +27,8 @@
   ],
   "propertyOnly": [],
   "props": {
-    "elementId": "string = ''",
+    "autofocus": "boolean = false",
     "errorMessage": "string = ''",
-    "hasAutofocus": "boolean = false",
     "hideDetails": "boolean = false",
     "hint": "string = ''",
     "invalid": "boolean = false",

@@ -33,7 +33,6 @@
         :key="i"
         ref="inputsRef"
         :aria-label="`Enter code - digit number - ${i} of ${length}`"
-        :autofocus="hasAutofocus && i === 1 ? true : undefined"
         :class="ui.input()"
         :name="`${resolvedId}--digit-${i}`"
         autocapitalize="off"
@@ -55,13 +54,7 @@
       />
     </div>
 
-    <c-message
-      :class="ui.message()"
-      :error-message
-      :hint
-      :input-id="elementId"
-      :invalid
-    />
+    <c-message :class="ui.message()" :error-message :hint :invalid />
   </div>
 </template>
 
@@ -162,12 +155,9 @@ const otp = tv({
 
 interface COtpInputProps {
   /**
-   * Id of the element
-   *
-   * @seeded from csc-ui — verify
-   * @freeform
+   * Focus the first digit when the field mounts.
    */
-  elementId?: string;
+  autofocus?: boolean;
 
   /**
    * Error message shown in place of the hint while the input is invalid
@@ -175,13 +165,6 @@ interface COtpInputProps {
    * @freeform
    */
   errorMessage?: string;
-
-  /**
-   * Auto focus
-   *
-   * @seeded from csc-ui — verify
-   */
-  hasAutofocus?: boolean;
 
   /**
    * Hide the hint and error messages
@@ -233,9 +216,8 @@ interface COtpInputProps {
 }
 
 const props = withDefaults(defineProps<COtpInputProps>(), {
-  elementId: '',
+  autofocus: false,
   errorMessage: '',
-  hasAutofocus: false,
   hideDetails: false,
   hint: '',
   invalid: false,
@@ -251,7 +233,7 @@ const emit = useHostEmit<COtpInputEvents>();
 
 const autoId = useId();
 
-const resolvedId = computed(() => props.elementId || autoId);
+const resolvedId = computed(() => autoId);
 
 const rootRef = useTemplateRef<HTMLElement>('rootRef');
 
@@ -435,13 +417,6 @@ const onPaste = (event: ClipboardEvent) => {
 };
 
 // Expose a public reset() like Stencil's @Method().
-const reset = () => {
-  inputs().forEach((i) => {
-    if (i) i.value = '';
-  });
-  emitValue();
-};
-
 watch(() => props.errorMessage, updateStatusText);
 // A value set from outside fills the digits and is the baseline for the next
 // commit; the host `value` mirror's own write is `held` already. Never emits.
@@ -461,11 +436,12 @@ watch(
 
 onMounted(() => {
   if (!host) return;
-  host.id = resolvedId.value;
   host.classList.toggle('error', props.invalid);
   host.style.setProperty('--_c-otp-input-count', String(props.length));
-  (host as unknown as { reset: () => void }).reset = reset;
   handleValueChange(props.value);
+
+  // A native `autofocus` inside a shadow root is not honoured.
+  if (props.autofocus) requestAnimationFrame(() => inputs()[0]?.focus());
 });
 
 watch(

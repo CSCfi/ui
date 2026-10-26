@@ -526,13 +526,6 @@ interface CTreeSelectProps {
   hint?: string;
 
   /**
-   * Id of the element
-   *
-   * @freeform
-   */
-  hostId?: string;
-
-  /**
    * Show the control as invalid: its `error-message`, when set, replaces the
    * hint, and the control is marked `aria-invalid`.
    */
@@ -815,7 +808,6 @@ const props = withDefaults(defineProps<CTreeSelectProps>(), {
   filter: undefined,
   hideDetails: undefined,
   hint: '',
-  hostId: '',
   invalid: false,
   items: () => [],
   itemsPerPage: undefined,
@@ -911,11 +903,11 @@ const SELECT_BRANCH_ROW = -2;
 
 const autoId = useId();
 
-const id = computed(() => props.hostId || autoId);
+const id = computed(() => autoId);
 
 const inputId = computed(
   () =>
-    `input_${(props.hostId || props.label || props.placeholder).replace(
+    `input_${(props.label || props.placeholder).replace(
       /[^a-zA-Z0-9-_]/g,
       '',
     )}`,

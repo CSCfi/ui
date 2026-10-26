@@ -372,4 +372,58 @@ export const V3_API_CHANGES: V3ApiChange[] = [
     name: 'valid',
     tag,
   })),
+  ...[
+    'c-autocomplete',
+    'c-button',
+    'c-checkbox',
+    'c-otp-input',
+    'c-radio-group',
+    'c-select',
+    'c-slider',
+    'c-switch',
+    'c-text-field',
+  ].map((tag) => ({
+    change:
+      'A plain `id` on the element itself, as on any element: it no longer reaches the inner control, whose own id lives in the component’s shadow root, out of reach of your page’s `for` and `aria-*` anyway. Name the control with its `label`.',
+    kind: 'prop' as const,
+    name: 'id',
+    tag,
+  })),
+  {
+    change: "Removed: it announced a value set from code. Set `value` to `''`.",
+    kind: 'method',
+    name: 'reset',
+    tag: 'c-otp-input',
+  },
+  {
+    change: 'Removed: it was never read.',
+    kind: 'prop',
+    name: 'input-id',
+    tag: 'c-message',
+  },
+  ...(
+    [
+      ['c-checkbox', 'name', '`name` (was `hostName`)'],
+      ['c-otp-input', 'autofocus', '`autofocus` (was `hasAutofocus`)'],
+      ['c-slider', 'name', '`name` (was `hostName`)'],
+      ['c-text-field', 'autofocus', '`autofocus` (was `automaticFocus`)'],
+      [
+        'c-text-field',
+        'autocapitalize',
+        '`autocapitalize` (was `automaticCapitalize`), typed as the values the browser knows',
+      ],
+    ] as const
+  ).map(([tag, name, property]) => ({
+    change: `The attribute works as in 3.x; the property is ${property}.`,
+    kind: 'prop' as const,
+    name,
+    tag,
+  })),
+  {
+    change:
+      'The attribute works as in 3.x and names the range input; there is no property for it any more (it was `ariaLabelInternal`), so set the attribute.',
+    kind: 'prop',
+    name: 'aria-label',
+    tag: 'c-slider',
+  },
 ];

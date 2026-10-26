@@ -470,13 +470,6 @@ interface CColorPickerProps {
   hint?: string;
 
   /**
-   * Id of the element
-   *
-   * @freeform
-   */
-  hostId?: string;
-
-  /**
    * Show the control as invalid: its `error-message`, when set, replaces the
    * hint, and the control is marked `aria-invalid`.
    */
@@ -767,7 +760,6 @@ const props = withDefaults(defineProps<CColorPickerProps>(), {
   format: undefined,
   hideDetails: undefined,
   hint: '',
-  hostId: '',
   invalid: false,
   label: '',
   labelOnTop: undefined,
@@ -850,7 +842,7 @@ const swatchesRef = useTemplateRef<HTMLElement>('swatchesRef');
 
 const autoId = useId();
 
-const inputId = computed(() => props.hostId || autoId);
+const inputId = computed(() => autoId);
 
 // Same defineCustomElement Boolean-attribute quirk as `range` in
 // c-date-picker: resolve it from the stable host attribute first.

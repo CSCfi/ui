@@ -177,7 +177,7 @@ export const CAlert = createComponent({
 /** A filterable value-selection component: a readonly value field that opens a popover panel with a search input above the matching options. */
 export const CAutocomplete = createComponent({
   displayName: 'CAutocomplete',
-  elementClass: elementClass<CAutocompleteElement>(['clearable', 'disabled', 'errorMessage', 'external', 'filter', 'hideDetails', 'hint', 'hostId', 'invalid', 'items', 'itemsPerPage', 'label', 'labelOnTop', 'loading', 'maxTags', 'multiple', 'name', 'placeholder', 'required', 'returnObject', 'selectAll', 'shadow', 'size', 'texts', 'value']),
+  elementClass: elementClass<CAutocompleteElement>(['clearable', 'disabled', 'errorMessage', 'external', 'filter', 'hideDetails', 'hint', 'invalid', 'items', 'itemsPerPage', 'label', 'labelOnTop', 'loading', 'maxTags', 'multiple', 'name', 'placeholder', 'required', 'returnObject', 'selectAll', 'shadow', 'size', 'texts', 'value']),
   events: {
     onChange: 'change' as EventName<CAutocompleteElementEventMap['change']>,
     onChangeQuery: 'change:query' as EventName<CAutocompleteElementEventMap['change:query']>,
@@ -214,7 +214,7 @@ export const CBreadcrumbItem = createComponent({
 /** Buttons trigger actions — submitting a form, opening a modal, confirming a choice. Use one primary (default appearance) button per view; secondary actions use the `outlined`, `ghost` or `text` appearances. */
 export const CButton = createComponent({
   displayName: 'CButton',
-  elementClass: elementClass<CButtonElement>(['active', 'danger', 'disabled', 'fit', 'ghost', 'hostId', 'href', 'inverted', 'loading', 'noRadius', 'outlined', 'size', 'target', 'text', 'type', 'value']),
+  elementClass: elementClass<CButtonElement>(['active', 'danger', 'disabled', 'fit', 'ghost', 'href', 'inverted', 'loading', 'noRadius', 'outlined', 'size', 'target', 'text', 'type', 'value']),
   react: React,
   tagName: 'c-button',
 });
@@ -263,7 +263,7 @@ export const CCardTitle = createComponent({
 /** A form control for a single on/off choice: a native checkbox with a label, an optional hint, and validation messaging. */
 export const CCheckbox = createComponent({
   displayName: 'CCheckbox',
-  elementClass: elementClass<CCheckboxElement>(['checked', 'disabled', 'errorMessage', 'falseValue', 'hideDetails', 'hint', 'hostId', 'hostName', 'indeterminate', 'invalid', 'label', 'required', 'trueValue', 'value']),
+  elementClass: elementClass<CCheckboxElement>(['checked', 'disabled', 'errorMessage', 'falseValue', 'hideDetails', 'hint', 'indeterminate', 'invalid', 'label', 'name', 'required', 'trueValue', 'value']),
   events: {
     onChange: 'change' as EventName<CCheckboxElementEventMap['change']>,
     onInput: 'input' as EventName<CCheckboxElementEventMap['input']>,
@@ -276,7 +276,7 @@ export const CCheckbox = createComponent({
 /** A colour field that takes any typed CSS colour, or opens a panel for picking one: a colour area, hue and alpha sliders, per-channel inputs and swatches — or swatches alone under `swatches-only`. */
 export const CColorPicker = createComponent({
   displayName: 'CColorPicker',
-  elementClass: elementClass<CColorPickerElement>(['alpha', 'clearable', 'disabled', 'errorMessage', 'format', 'hideDetails', 'hint', 'hostId', 'invalid', 'label', 'labelOnTop', 'name', 'placeholder', 'required', 'shadow', 'size', 'swatches', 'swatchesOnly', 'texts', 'value']),
+  elementClass: elementClass<CColorPickerElement>(['alpha', 'clearable', 'disabled', 'errorMessage', 'format', 'hideDetails', 'hint', 'invalid', 'label', 'labelOnTop', 'name', 'placeholder', 'required', 'shadow', 'size', 'swatches', 'swatchesOnly', 'texts', 'value']),
   events: {
     onChange: 'change' as EventName<CColorPickerElementEventMap['change']>,
     onChangeText: 'change:text' as EventName<CColorPickerElementEventMap['change:text']>,
@@ -311,7 +311,7 @@ export const CDataTable = createComponent({
 /** A date field that takes a typed date, or opens a calendar panel for picking one, or a start and end date under `range`. */
 export const CDatePicker = createComponent({
   displayName: 'CDatePicker',
-  elementClass: elementClass<CDatePickerElement>(['clearable', 'disabled', 'disabledDates', 'errorMessage', 'firstDayOfWeek', 'format', 'hideDetails', 'hint', 'hostId', 'invalid', 'isDateDisabled', 'label', 'labelOnTop', 'max', 'min', 'name', 'placeholder', 'range', 'required', 'shadow', 'showToday', 'showWeekNumbers', 'size', 'texts', 'type', 'value']),
+  elementClass: elementClass<CDatePickerElement>(['clearable', 'disabled', 'disabledDates', 'errorMessage', 'firstDayOfWeek', 'format', 'hideDetails', 'hint', 'invalid', 'isDateDisabled', 'label', 'labelOnTop', 'max', 'min', 'name', 'placeholder', 'range', 'required', 'shadow', 'showToday', 'showWeekNumbers', 'size', 'texts', 'type', 'value']),
   events: {
     onChange: 'change' as EventName<CDatePickerElementEventMap['change']>,
     onChangeMonth: 'change:month' as EventName<CDatePickerElementEventMap['change:month']>,
@@ -475,7 +475,7 @@ export const CMenuLabel = createComponent({
 
 export const CMessage = createComponent({
   displayName: 'CMessage',
-  elementClass: elementClass<CMessageElement>(['errorMessage', 'hint', 'inputId', 'invalid']),
+  elementClass: elementClass<CMessageElement>(['errorMessage', 'hint', 'invalid']),
   react: React,
   tagName: 'c-message',
 });
@@ -503,7 +503,7 @@ export const CNavigationButton = createComponent({
 /** A field for a number — an integer, or one with decimals — shown with thousands separators as it is typed. */
 export const CNumberField = createComponent({
   displayName: 'CNumberField',
-  elementClass: elementClass<CNumberFieldElement>(['decimalSeparator', 'decimals', 'disabled', 'errorMessage', 'fixedDecimals', 'groupSeparator', 'hideDetails', 'hint', 'hostId', 'invalid', 'label', 'labelOnTop', 'max', 'min', 'name', 'placeholder', 'readonly', 'required', 'shadow', 'size', 'step', 'texts', 'value']),
+  elementClass: elementClass<CNumberFieldElement>(['decimalSeparator', 'decimals', 'disabled', 'errorMessage', 'fixedDecimals', 'groupSeparator', 'hideDetails', 'hint', 'invalid', 'label', 'labelOnTop', 'max', 'min', 'name', 'placeholder', 'readonly', 'required', 'shadow', 'size', 'step', 'texts', 'value']),
   events: {
     onChange: 'change' as EventName<CNumberFieldElementEventMap['change']>,
     onInput: 'input' as EventName<CNumberFieldElementEventMap['input']>,
@@ -530,7 +530,7 @@ export const COptionValue = createComponent({
 
 export const COtpInput = createComponent({
   displayName: 'COtpInput',
-  elementClass: elementClass<COtpInputElement>(['elementId', 'errorMessage', 'hasAutofocus', 'hideDetails', 'hint', 'invalid', 'label', 'length', 'required', 'value']),
+  elementClass: elementClass<Omit<COtpInputElement, 'autofocus'> & HTMLElement>(['autofocus', 'errorMessage', 'hideDetails', 'hint', 'invalid', 'label', 'length', 'required', 'value']),
   events: {
     onChange: 'change' as EventName<COtpInputElementEventMap['change']>,
     onCompletion: 'completion' as EventName<COtpInputElementEventMap['completion']>,
@@ -611,7 +611,7 @@ export const CRadioGroup = createComponent({
 /** A value-selection field: a readonly field that opens a listbox of options — slotted `c-option` elements or an `items` array — and holds the picked value, emitting the value events that back `v-model`. */
 export const CSelect = createComponent({
   displayName: 'CSelect',
-  elementClass: elementClass<CSelectElement>(['clearable', 'disabled', 'errorMessage', 'hideDetails', 'hint', 'hostId', 'invalid', 'items', 'itemsPerPage', 'label', 'labelOnTop', 'loading', 'maxTags', 'multiple', 'name', 'optionAsSelection', 'placeholder', 'required', 'returnObject', 'selectAll', 'shadow', 'size', 'texts', 'value']),
+  elementClass: elementClass<CSelectElement>(['clearable', 'disabled', 'errorMessage', 'hideDetails', 'hint', 'invalid', 'items', 'itemsPerPage', 'label', 'labelOnTop', 'loading', 'maxTags', 'multiple', 'name', 'optionAsSelection', 'placeholder', 'required', 'returnObject', 'selectAll', 'shadow', 'size', 'texts', 'value']),
   events: {
     onChange: 'change' as EventName<CSelectElementEventMap['change']>,
     onInput: 'input' as EventName<CSelectElementEventMap['input']>,
@@ -651,7 +651,7 @@ export const CSideNavigationTitle = createComponent({
 
 export const CSlider = createComponent({
   displayName: 'CSlider',
-  elementClass: elementClass<CSliderElement>(['ariaLabelInternal', 'disableTooltip', 'disabled', 'hostId', 'hostName', 'label', 'labels', 'max', 'min', 'segments', 'step', 'ticks', 'unit', 'value']),
+  elementClass: elementClass<CSliderElement>(['disableTooltip', 'disabled', 'label', 'labels', 'max', 'min', 'name', 'segments', 'step', 'ticks', 'unit', 'value']),
   events: {
     onChange: 'change' as EventName<CSliderElementEventMap['change']>,
     onInput: 'input' as EventName<CSliderElementEventMap['input']>,
@@ -703,7 +703,7 @@ export const CSubNavigationItem = createComponent({
 /** A toggle for a binary setting that takes effect immediately: a native switch control with a label, an optional hint, and validation messaging. */
 export const CSwitch = createComponent({
   displayName: 'CSwitch',
-  elementClass: elementClass<CSwitchElement>(['checked', 'disabled', 'falseValue', 'hostId', 'label', 'loading', 'required', 'trueValue', 'value']),
+  elementClass: elementClass<CSwitchElement>(['checked', 'disabled', 'falseValue', 'label', 'loading', 'required', 'trueValue', 'value']),
   events: {
     onChange: 'change' as EventName<CSwitchElementEventMap['change']>,
     onInput: 'input' as EventName<CSwitchElementEventMap['input']>,
@@ -782,7 +782,7 @@ export const CTags = createComponent({
 /** A text field for a single line of text, or several lines under `rows`, with a label, a hint and an error message. */
 export const CTextField = createComponent({
   displayName: 'CTextField',
-  elementClass: elementClass<Omit<CTextFieldElement, 'autocorrect'> & HTMLElement>(['autocomplete', 'autocorrect', 'automaticCapitalize', 'disabled', 'errorMessage', 'hideDetails', 'hint', 'hostId', 'invalid', 'label', 'labelOnTop', 'mask', 'max', 'min', 'name', 'placeholder', 'readonly', 'required', 'rows', 'shadow', 'size', 'step', 'trimWhitespace', 'type', 'value']),
+  elementClass: elementClass<Omit<CTextFieldElement, 'autocorrect'> & HTMLElement>(['autocapitalize', 'autocomplete', 'autocorrect', 'autofocus', 'disabled', 'errorMessage', 'hideDetails', 'hint', 'invalid', 'label', 'labelOnTop', 'mask', 'max', 'min', 'name', 'placeholder', 'readonly', 'required', 'rows', 'shadow', 'size', 'step', 'trimWhitespace', 'type', 'value']),
   events: {
     onChange: 'change' as EventName<CTextFieldElementEventMap['change']>,
     onInput: 'input' as EventName<CTextFieldElementEventMap['input']>,
@@ -795,7 +795,7 @@ export const CTextField = createComponent({
 /** A time field that takes a typed time, or opens hour and minute columns for picking one, or a start and end time under `range`. */
 export const CTimePicker = createComponent({
   displayName: 'CTimePicker',
-  elementClass: elementClass<CTimePickerElement>(['clearable', 'disabled', 'errorMessage', 'format', 'hideDetails', 'hint', 'hostId', 'invalid', 'label', 'labelOnTop', 'max', 'min', 'minuteStep', 'name', 'placeholder', 'range', 'required', 'shadow', 'showNow', 'size', 'texts', 'value']),
+  elementClass: elementClass<CTimePickerElement>(['clearable', 'disabled', 'errorMessage', 'format', 'hideDetails', 'hint', 'invalid', 'label', 'labelOnTop', 'max', 'min', 'minuteStep', 'name', 'placeholder', 'range', 'required', 'shadow', 'showNow', 'size', 'texts', 'value']),
   events: {
     onChange: 'change' as EventName<CTimePickerElementEventMap['change']>,
     onChangeText: 'change:text' as EventName<CTimePickerElementEventMap['change:text']>,
@@ -839,7 +839,7 @@ export const CTooltip = createComponent({
 /** A hierarchical value-selection component: a readonly value field that opens a panel for browsing a tree one level at a time, or searching it as a whole, to commit one item. */
 export const CTreeSelect = createComponent({
   displayName: 'CTreeSelect',
-  elementClass: elementClass<CTreeSelectElement>(['allowBranch', 'clearable', 'disabled', 'errorMessage', 'filter', 'hideDetails', 'hint', 'hostId', 'invalid', 'items', 'itemsPerPage', 'label', 'labelOnTop', 'levelLabels', 'name', 'placeholder', 'required', 'returnObject', 'shadow', 'size', 'texts', 'value']),
+  elementClass: elementClass<CTreeSelectElement>(['allowBranch', 'clearable', 'disabled', 'errorMessage', 'filter', 'hideDetails', 'hint', 'invalid', 'items', 'itemsPerPage', 'label', 'labelOnTop', 'levelLabels', 'name', 'placeholder', 'required', 'returnObject', 'shadow', 'size', 'texts', 'value']),
   events: {
     onChange: 'change' as EventName<CTreeSelectElementEventMap['change']>,
     onChangeQuery: 'change:query' as EventName<CTreeSelectElementEventMap['change:query']>,

@@ -188,14 +188,6 @@ interface CSwitchProps {
   falseValue?: boolean | number | string;
 
   /**
-   * Id for the element
-   *
-   * @seeded from csc-ui — verify
-   * @freeform
-   */
-  hostId?: string;
-
-  /**
    * Label of the switch, shown beside the toggle. Falls back to the default
    * slot content when not set.
    *
@@ -240,7 +232,6 @@ const props = withDefaults(defineProps<CSwitchProps>(), {
   checked: false,
   disabled: false,
   falseValue: false,
-  hostId: '',
   label: '',
   loading: false,
   required: false,
@@ -263,7 +254,7 @@ const ui = computed(() =>
 
 const autoId = useId();
 
-const inputId = computed(() => props.hostId || `c-switch-${autoId}`);
+const inputId = computed(() => `c-switch-${autoId}`);
 
 // One state, two views (decisions #34): `value` is the state, `checked` its
 // boolean view. A bound `value` wins; without one, `checked` seeds. Setting

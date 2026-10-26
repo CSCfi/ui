@@ -32,7 +32,7 @@
       :id="inputId"
       ref="inputRef"
       :aria-invalid="invalid"
-      :autocapitalize="automaticCapitalize || undefined"
+      :autocapitalize="autocapitalize || undefined"
       :autocomplete="autocomplete || undefined"
       :autocorrect="
         autocorrect === undefined ? undefined : autocorrect ? 'on' : 'off'
@@ -72,7 +72,7 @@
         :id="inputId"
         ref="inputRef"
         :aria-invalid="invalid"
-        :autocapitalize="automaticCapitalize || undefined"
+        :autocapitalize="autocapitalize || undefined"
         :autocomplete="autocomplete || undefined"
         :autocorrect="
           autocorrect === undefined ? undefined : autocorrect ? 'on' : 'off'
@@ -166,6 +166,13 @@ export type CTextFieldType =
 
 interface CTextFieldProps {
   /**
+   * HTML input autocapitalize
+   *
+   * @seeded from csc-ui — verify
+   */
+  autocapitalize?: CTextFieldAutocapitalize;
+
+  /**
    * HTML input autocomplete
    *
    * @seeded from csc-ui — verify
@@ -182,11 +189,10 @@ interface CTextFieldProps {
   autocorrect?: boolean;
 
   /**
-   * HTML input autocapitalize
-   *
-   * @seeded from csc-ui — verify
+   * Focus the input when the field mounts, as the native `autofocus` does —
+   * which is not honoured inside a shadow root.
    */
-  automaticCapitalize?: CTextFieldAutocapitalize;
+  autofocus?: boolean;
 
   /**
    * Disable the input
@@ -217,14 +223,6 @@ interface CTextFieldProps {
    * @freeform
    */
   hint?: string;
-
-  /**
-   * Id of the input
-   *
-   * @seeded from csc-ui — verify
-   * @freeform
-   */
-  hostId?: string;
 
   /**
    * Show the control as invalid: its `error-message`, when set, replaces the
@@ -462,14 +460,14 @@ const textField = tv({
 });
 
 const props = withDefaults(defineProps<CTextFieldProps>(), {
+  autocapitalize: undefined,
   autocomplete: '',
   autocorrect: undefined,
-  automaticCapitalize: undefined,
+  autofocus: false,
   disabled: false,
   errorMessage: '',
   hideDetails: undefined,
   hint: '',
-  hostId: '',
   invalid: false,
   label: '',
   labelOnTop: undefined,
@@ -512,7 +510,7 @@ const inputRef = useTemplateRef<HTMLInputElement | HTMLTextAreaElement>(
 
 const autoId = useId();
 
-const inputId = computed(() => props.hostId || autoId);
+const inputId = computed(() => autoId);
 
 const isFocused = ref(false);
 
@@ -561,6 +559,8 @@ const refreshConsumerSlots = () => {
 let childObserver: MutationObserver | null = null;
 onMounted(() => {
   refreshConsumerSlots();
+
+  if (props.autofocus) requestAnimationFrame(() => inputRef.value?.focus());
 
   if (host && typeof MutationObserver !== 'undefined') {
     childObserver = new MutationObserver(refreshConsumerSlots);

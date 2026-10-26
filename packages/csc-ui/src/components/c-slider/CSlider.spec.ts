@@ -41,3 +41,26 @@ describe('c-slider value bubble', () => {
       );
     }));
 });
+
+describe('3.x attribute names (R1)', () => {
+  it('a host aria-label names the range input, and name reaches it', async () => {
+    const m = await mount('c-slider', {
+      attrs: { 'aria-label': 'Volume', name: 'volume' },
+    });
+
+    const range = m.shadow<HTMLInputElement>('input[type="range"]');
+
+    expect(range.getAttribute('aria-label')).toBe('Volume');
+    expect(range.name).toBe('volume');
+    expect(m.part('root').hasAttribute('aria-label')).toBe(false);
+  });
+
+  it('a visible label names it instead, and is not doubled', async () => {
+    const m = await mount('c-slider', { attrs: { label: 'Volume' } });
+
+    const range = m.shadow<HTMLInputElement>('input[type="range"]');
+
+    expect(range.hasAttribute('aria-label')).toBe(false);
+    expect(range.labels?.[0]?.textContent?.trim()).toBe('Volume');
+  });
+});

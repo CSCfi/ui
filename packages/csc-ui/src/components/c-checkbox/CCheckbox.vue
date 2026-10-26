@@ -15,7 +15,7 @@
       :class="ui.input()"
       :disabled
       :indeterminate.prop
-      :name="hostName || undefined"
+      :name="name || undefined"
       :required
       type="checkbox"
       @change="onChange"
@@ -293,23 +293,6 @@ interface CCheckboxProps {
   hint?: string;
 
   /**
-   * Id of the element
-   *
-   * @seeded from csc-ui — verify
-   * @freeform
-   */
-  hostId?: string;
-
-  /**
-   * Name of the input
-   * - Only used when the checkbox participates in a native `<form>`
-   *
-   * @seeded from csc-ui — verify
-   * @freeform
-   */
-  hostName?: string;
-
-  /**
    * Indeterminate state
    *
    * @seeded from csc-ui — verify
@@ -329,6 +312,14 @@ interface CCheckboxProps {
    * @freeform
    */
   label?: string;
+
+  /**
+   * `name` of the inner checkbox input. The component is not
+   * form-associated, so it does not submit with a `<form>`.
+   *
+   * @freeform
+   */
+  name?: string;
 
   /**
    * Set as required
@@ -363,11 +354,10 @@ const props = withDefaults(defineProps<CCheckboxProps>(), {
   falseValue: false,
   hideDetails: false,
   hint: '',
-  hostId: '',
-  hostName: '',
   indeterminate: false,
   invalid: false,
   label: '',
+  name: '',
   required: false,
   trueValue: true,
   value: undefined,
@@ -403,7 +393,7 @@ const { ripples, spawn: spawnRipple } = useRipple({
 
 const autoId = useId();
 
-const inputId = computed(() => props.hostId || autoId);
+const inputId = computed(() => autoId);
 
 // The Transition's `:key` swaps the element when message identity
 // changes (hint↔error or text changes), triggering the slide animation.

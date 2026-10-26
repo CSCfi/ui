@@ -3,8 +3,8 @@
     <form-label
       v-if="label"
       :class="ui.label()"
-      :html-for="hostId || generatedId"
-      :label="labelText"
+      :html-for="generatedId"
+      :label
       part="label"
     />
 
@@ -21,9 +21,9 @@
       </div>
 
       <input
-        :id="hostId || generatedId"
+        :id="generatedId"
         ref="inputRef"
-        :aria-label="ariaLabelInternal || label"
+        :aria-label="hostAriaLabel"
         :aria-valuemax="max"
         :aria-valuemin="min"
         :aria-valuenow="value"
@@ -32,7 +32,7 @@
         :disabled="disabled || undefined"
         :max
         :min
-        :name="hostName || undefined"
+        :name="name || undefined"
         :step
         type="range"
         @change="onChange"
@@ -62,6 +62,7 @@ import {
   computed,
   onMounted,
   ref,
+  useAttrs,
   useHost,
   useId,
   useTemplateRef,
@@ -70,6 +71,10 @@ import {
 
 import FormLabel from '../../shared/FormLabel.vue';
 import { emitModelInput, emitModelSettled } from '../../shared/valueEvents';
+
+// The host's `aria-label` names the range input (below); without this it
+// would also fall through onto the shadow `[part=root]` box.
+defineOptions({ inheritAttrs: false });
 
 /** Events dispatched by `<c-slider>`. */
 interface CSliderEvents {
@@ -164,14 +169,6 @@ const slider = tv({
 
 interface CSliderProps {
   /**
-   * Aria label
-   *
-   * @seeded from csc-ui — verify
-   * @freeform
-   */
-  ariaLabelInternal?: string;
-
-  /**
    * Disable the slider
    *
    * @seeded from csc-ui — verify
@@ -184,22 +181,6 @@ interface CSliderProps {
    * @seeded from csc-ui — verify
    */
   disableTooltip?: boolean;
-
-  /**
-   * Id of the element
-   *
-   * @seeded from csc-ui — verify
-   * @freeform
-   */
-  hostId?: string;
-
-  /**
-   * Id of the element
-   *
-   * @seeded from csc-ui — verify
-   * @freeform
-   */
-  hostName?: string;
 
   /**
    * Label of the slider
@@ -229,6 +210,14 @@ interface CSliderProps {
    * @seeded from csc-ui — verify
    */
   min?: number | string;
+
+  /**
+   * `name` of the inner range input. The component is not
+   * form-associated, so it does not submit with a `<form>`.
+   *
+   * @freeform
+   */
+  name?: string;
 
   /**
    * Segment count
@@ -268,15 +257,13 @@ interface CSliderProps {
 }
 
 const props = withDefaults(defineProps<CSliderProps>(), {
-  ariaLabelInternal: '',
   disabled: false,
   disableTooltip: false,
-  hostId: '',
-  hostName: '',
   label: '',
   labels: false,
   max: '100',
   min: '0',
+  name: '',
   segments: '10',
   step: '1',
   ticks: false,
@@ -300,9 +287,12 @@ const autoId = useId();
 
 const generatedId = computed(() => `c-slider__${autoId}`);
 
-// Preserves the seeded template's rendering of both texts in the visible label.
-const labelText = computed(() =>
-  `${props.label} ${props.ariaLabelInternal}`.trim(),
+// A host `aria-label` (the 3.x attribute) names the range input; a visible
+// `label` names it through `<label for>` instead.
+const attrs = useAttrs();
+
+const hostAriaLabel = computed(
+  () => (attrs.ariaLabel ?? attrs['aria-label']) as string | undefined,
 );
 
 const trackPosition = ref(0);

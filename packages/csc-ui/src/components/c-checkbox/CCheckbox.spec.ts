@@ -97,3 +97,11 @@ describe('value and checked', () => {
     expect(m.host.checked).toBe(false);
   });
 });
+
+describe('3.x attribute names (R1)', () => {
+  it('name reaches the inner input', async () => {
+    const m = await mount<Host>('c-checkbox', { attrs: { name: 'terms' } });
+
+    expect(m.shadow<HTMLInputElement>('input').name).toBe('terms');
+  });
+});

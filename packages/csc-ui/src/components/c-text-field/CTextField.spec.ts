@@ -120,6 +120,27 @@ describe('invalid (ADR-0076)', () => {
   });
 });
 
+describe('3.x attribute names (R1)', () => {
+  it('autofocus focuses the input, and autocapitalize reaches it', async () => {
+    const m = await mount<FieldHost>('c-text-field', {
+      attrs: { autocapitalize: 'words', autofocus: true, label: 'Name' },
+    });
+    await settle();
+
+    expect(m.host.shadowRoot!.activeElement).toBe(input(m));
+    expect(input(m).getAttribute('autocapitalize')).toBe('words');
+  });
+
+  it('keeps the id on the host, not on the input', async () => {
+    const m = await mount<FieldHost>('c-text-field', {
+      attrs: { id: 'phone', label: 'Phone' },
+    });
+
+    expect(m.host.id).toBe('phone');
+    expect(input(m).id).not.toBe('phone');
+  });
+});
+
 describe('input mask', () => {
   it('conforms typing and emits the masked text', async () => {
     const m = await mountField({ mask: '+358 ## ### ####' });

@@ -37,13 +37,16 @@ if (!existsSync(manifestPath)) {
  * Props that shadow an HTMLElement member `@lit/react` cannot reconcile, per
  * tag. `HTMLElement.autocorrect` is a NON-optional `boolean`; c-text-field's
  * `autocorrect` is an optional `boolean` (unset = browser per-input-type
- * default), and `boolean | undefined` is not assignable to `boolean`, so the
+ * default) — and so is c-otp-input's `autofocus`, and `boolean | undefined` is not assignable to `boolean`, so the
  * element interface fails `@lit/react`'s `I extends HTMLElement` constraint.
  * The wrapper re-adds the lib member for these names so the constraint holds;
  * the React prop stays optional regardless. A new collision fails the tsc
  * step loudly — add the prop here when that happens.
  */
-const DOM_LIB_COLLISIONS = new Map([['c-text-field', ['autocorrect']]]);
+const DOM_LIB_COLLISIONS = new Map([
+  ['c-otp-input', ['autofocus']],
+  ['c-text-field', ['autocorrect']],
+]);
 
 const manifest = JSON.parse(readFileSync(manifestPath, 'utf8'));
 

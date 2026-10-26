@@ -2,7 +2,6 @@
   "attributes": {
     "error-message": "string = ''",
     "hint": "string = ''",
-    "input-id": "string = ''",
     "invalid": "boolean = false"
   },
   "cssProperties": [],
@@ -16,7 +15,6 @@
   "props": {
     "errorMessage": "string = ''",
     "hint": "string = ''",
-    "inputId": "string = ''",
     "invalid": "boolean = false"
   },
   "slots": [],

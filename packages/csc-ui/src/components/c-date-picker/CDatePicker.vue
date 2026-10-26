@@ -593,13 +593,6 @@ interface CDatePickerProps {
   hint?: string;
 
   /**
-   * Id of the element
-   *
-   * @freeform
-   */
-  hostId?: string;
-
-  /**
    * Show the control as invalid: its `error-message`, when set, replaces the
    * hint, and the control is marked `aria-invalid`.
    */
@@ -989,7 +982,6 @@ const props = withDefaults(defineProps<CDatePickerProps>(), {
   format: undefined,
   hideDetails: undefined,
   hint: '',
-  hostId: '',
   invalid: false,
   isDateDisabled: undefined,
   label: '',
@@ -1143,7 +1135,7 @@ const panelRef = useTemplateRef<HTMLElement>('panelRef');
 
 const autoId = useId();
 
-const inputId = computed(() => props.hostId || autoId);
+const inputId = computed(() => autoId);
 
 // Same defineCustomElement Boolean-attribute quirk as `allow-branch` in
 // c-tree-select: resolve `range` from the stable host attribute first.
