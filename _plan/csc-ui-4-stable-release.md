@@ -217,6 +217,9 @@ A read-only check of all 124 D11–D13 items against source, glossary, ADRs, usa
         hide a Stencil host with its own `:host` display; it now works where it never did.
   - [x] c-data-table `change:selected` detail is `string[]`. No entry here: 3.x had `selection` (a baseline name
         the phase-3 batch maps onto `selected` / `change:selected`), so the guide's entry covers the detail too.
+  - [x] c-menu default slot: the items, where 3.x's default slot was the trigger (now `slot="trigger"`). Entry
+        (phase 3).
+  - [x] c-modal `dismissable` also governs Escape: 3.x closed every modal on Escape. Entry (phase 3).
 - **R3** — c-pagination's value becomes `{ page, pageSize, … }` before rc.1, emitted as a new object.
 
 ## Work, in order
@@ -375,6 +378,14 @@ start migrating on the first alpha that carries D2–D4.
    `grouped`/`tabs`; c-tab-buttons `tabs`; `hostDisabled` (c-switch, c-tab-buttons); c-switch `label` slot; c-page
    `default` slot; `c-text-field-open`; c-otp-input `reset()`; c-text-field `type`/`autocorrect`; c-spinner `color`.
    The baseline is empty before phase 4.
+   - **Migration guide — done locally (2026-10-26).** The batch wrote the remaining 44 entries and emptied the
+     baseline (534 of 534 changed 3.x names covered). Three of the 47 were guard artifacts, fixed in the guard: it
+     compared a prop's 3.x type with the attribute's string form instead of the property (c-select /
+     c-autocomplete `value` still take the item object), it did not equate an inline 3.x object type with the
+     interface it is, and the extractor kept c-page's slot literally named `default`. Found on the way:
+     `autocorrect="off"` turned autocorrection on (a9745b7c fixes it), the data-table column example used
+     `value` / `policy` for `header` / `expansion` and a non-generic `CDataTableColumn<User>`, and 3.x sorted
+     every column unless told otherwise, where 4.x needs `sortable: true`.
 4. **RC** — switch pre tag `alpha` → `rc` (verify the changesets CLI sequence: `pre exit` + `pre enter rc` before a
    version run), publish `4.0.0-rc.1`. From here: fixes only, API guard fails any breaking diff.
    Gate (D8): MyCSC fully migrated on the latest RC, e2e green, no open csc-ui blocker.

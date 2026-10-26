@@ -135,7 +135,7 @@ for (const tag of tags) {
     entry.slots = tableRows(sections.Slots).map(([name]) => {
       const slot = name.replace(/^"(.*)"$/, '$1');
 
-      return /^default slot$/i.test(slot) ? '' : slot;
+      return /^default( slot)?$/i.test(slot) ? '' : slot;
     });
   }
 

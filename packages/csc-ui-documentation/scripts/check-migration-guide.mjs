@@ -65,9 +65,9 @@ const aliases = new Map(
     ]),
 );
 
-/** Split a type at its top-level `|`s. */
-const unionMembers = (type) => {
-  const members = [];
+/** Split a type at its top-level `separator`s (`|`, `&`, `;`). */
+const splitTopLevel = (type, separator) => {
+  const parts = [];
 
   let depth = 0;
 
@@ -76,19 +76,59 @@ const unionMembers = (type) => {
   for (const char of type) {
     if ('{([<'.includes(char)) depth++;
 
-    if ('})]>'.includes(char)) depth--;
+    // The `>` of an arrow (`=>`) closes nothing.
+    if ('})]>'.includes(char) && !current.endsWith('=')) depth--;
 
-    if (char === '|' && depth === 0) {
-      members.push(current);
+    if (char === separator && depth === 0) {
+      parts.push(current);
       current = '';
     } else {
       current += char;
     }
   }
 
-  return [...members, current]
-    .map((member) => member.replaceAll(/\s+/g, ' ').replaceAll('"', "'").trim())
+  return [...parts, current]
+    .map((part) => part.replaceAll(/\s+/g, ' ').replaceAll('"', "'").trim())
     .filter(Boolean);
+};
+
+const unionMembers = (type) => splitTopLevel(type, '|');
+
+/**
+ * An object type's members, sorted, with their types normalized: the 3.x
+ * readmes inline some named types (`{ name: string; value: string | number;
+ * disabled?: boolean; }` is `CSelectItem`).
+ */
+const objectShape = (body) =>
+  `{ ${splitTopLevel(
+    body.replaceAll(/\/\*[\s\S]*?\*\//g, '').replaceAll(/\n/g, ';'),
+    ';',
+  )
+    .map((member) => {
+      const [, name, type] = /^([\w$]+\??)\s*:\s*(.*)$/s.exec(member) ?? [];
+
+      return name ? `${name}: ${normalizeType(type)}` : member;
+    })
+    .sort()
+    .join('; ')} }`;
+
+/** Interfaces, so an inline 3.x object type compares as the interface it is. */
+const interfaces = new Map(
+  (manifest.csc?.types ?? [])
+    .filter((type) => type.kind === 'interface')
+    .map((type) => [type.name, /\{([\s\S]*)\}/.exec(type.declaration)[1]]),
+);
+
+const normalizeType = (type) => {
+  const members = unionMembers(type);
+
+  if (members.length > 1) return members.map(normalizeType).sort().join(' | ');
+
+  const [member = ''] = members;
+
+  if (interfaces.has(member)) return objectShape(interfaces.get(member));
+
+  return /^\{(.*)\}$/s.test(member) ? objectShape(member.slice(1, -1)) : member;
 };
 
 const expand = (type) =>
@@ -96,11 +136,19 @@ const expand = (type) =>
     aliases.has(member) ? expand(aliases.get(member)) : [member],
   );
 
-/** The 4.x type accepts every 3.x member: unchanged or widened. */
+/**
+ * The 4.x type accepts every 3.x member: unchanged or widened. A 3.x
+ * intersection (`CSelectItem & { ref?: HTMLElement; }`) is accepted where
+ * one of its parts is, since it is a subtype of each.
+ */
 const accepts = (type4, type3) => {
-  const members = new Set(expand(type4));
+  const members = new Set(expand(type4).map(normalizeType));
 
-  return unionMembers(type3).every((member) => members.has(member));
+  const accepted = (member) => members.has(normalizeType(member));
+
+  return unionMembers(type3).every(
+    (member) => accepted(member) || splitTopLevel(member, '&').some(accepted),
+  );
 };
 
 /** `undefined`, `null`, `''`, `false` and no default all mean "unset". */
@@ -187,8 +235,12 @@ for (const [tag, api] of Object.entries(v3)) {
       reasons.push(`default ${prop.default} → ${now.default ?? '(none)'}`);
     }
 
-    if (now && !accepts(now.type?.text ?? '', prop.type)) {
-      reasons.push(`type ${prop.type} → ${now.type?.text}`);
+    // The readme's type is the property's; an attribute lists only the
+    // string and number members of a type that also takes objects.
+    const typed = field ?? attribute;
+
+    if (typed && !accepts(typed.type?.text ?? '', prop.type)) {
+      reasons.push(`type ${prop.type} → ${typed.type?.text}`);
     }
 
     if (reasons.length > 0) {

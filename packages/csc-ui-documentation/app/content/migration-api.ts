@@ -406,6 +406,8 @@ export const V3_API_CHANGES: V3ApiChange[] = [
       ['c-checkbox', 'name', '`name` (was `hostName`)'],
       ['c-otp-input', 'autofocus', '`autofocus` (was `hasAutofocus`)'],
       ['c-slider', 'name', '`name` (was `hostName`)'],
+      ['c-switch', 'disabled', '`disabled` (was `hostDisabled`)'],
+      ['c-tab-buttons', 'disabled', '`disabled` (was `hostDisabled`)'],
       ['c-text-field', 'autofocus', '`autofocus` (was `automaticFocus`)'],
       [
         'c-text-field',
@@ -503,5 +505,256 @@ export const V3_API_CHANGES: V3ApiChange[] = [
     meaningChanged: true,
     name: 'value',
     tag: 'c-tabs',
+  },
+  {
+    change:
+      'Renamed to `heading`, like the `heading` prop that sets plain text. A leftover `slot="title"` matches no slot, so its content disappears.',
+    kind: 'slot',
+    name: 'title',
+    tag: 'c-alert',
+  },
+  ...['grouped', 'tabs'].map((name) => ({
+    change:
+      'Removed: `c-tab-buttons` set it on its buttons (it was private in 3.x). Group buttons in `c-button-group`, and tabs in `c-tabs`.',
+    kind: 'prop' as const,
+    name,
+    tag: 'c-button',
+  })),
+  {
+    change:
+      'Removed: `c-tabs` set it (it was private in 3.x). Inside `c-tabs` nothing changes; standalone use moves to `c-button-group`.',
+    kind: 'prop',
+    name: 'tabs',
+    tag: 'c-tab-buttons',
+  },
+  {
+    change:
+      'There never was a `label` slot: 3.x’s docs gave the default slot that name. The label text goes inside the element, as before, or in the new `label` prop.',
+    kind: 'slot',
+    name: 'label',
+    tag: 'c-switch',
+  },
+  ...(
+    [
+      [
+        'prop',
+        'data',
+        "Rows are plain objects: `{ name: 'Ada' }`, where 3.x wrapped each cell as `{ name: { value: 'Ada' } }`. A cell’s `formattedValue`, `component` and `children` become the column’s `cell` render function, and `align` / `justify` the column’s `align`. See Component-specific changes.",
+      ],
+      [
+        'prop',
+        'external-data',
+        'Renamed to `external`. Set `item-count` (`itemCount`) to the total number of rows, so the pager knows how many pages there are.',
+      ],
+      [
+        'prop',
+        'footerOptions',
+        'Removed: the table’s pager has one look. Translate its texts through `texts`.',
+      ],
+      [
+        'prop',
+        'hide-footer',
+        'Removed: the table paginates only while `page-size` (`pageSize`) is set. Leave it unset to show every row with no pager.',
+      ],
+      [
+        'prop',
+        'horizontal-scrolling',
+        'Removed: a table wider than its container now scrolls sideways by default. Set `autohide` for what 3.x did without this prop: move the columns that do not fit into an expandable row.',
+      ],
+      [
+        'prop',
+        'loading-text',
+        'Moved to `texts.loading` (the `texts` object, set as a property).',
+      ],
+      [
+        'prop',
+        'no-data-text',
+        'Moved to `texts.noData` (the `texts` object, set as a property). For richer content, use the `empty` slot.',
+      ],
+      [
+        'prop',
+        'pagination',
+        'Split into props: `page` (was `currentPage`), `page-size` (`pageSize`, was `itemsPerPage`; the table paginates only while it is set), `page-sizes` (`pageSizes`) and, with `external`, `item-count` (`itemCount`). `textOverrides` moves to `texts`. The table computes `startFrom` and `endTo` itself, and has no `totalVisible` or `locale`.',
+      ],
+      ['prop', 'selectable', 'Replaced by `selection="multiple"`.'],
+      ['prop', 'single-selection', 'Replaced by `selection="single"`.'],
+      [
+        'prop',
+        'selection-property',
+        'Replaced by `getRowId`, a function returning a row’s id, set as a property: `(row) => String(row.id)`. Without it, a row’s id is its index in `data`, as without `selection-property`.',
+      ],
+      [
+        'prop',
+        'sort-by',
+        'Merged with `sort-direction` into `sort`, one object set as a property: `sort-by="name" sort-direction="desc"` becomes `{ column: \'name\', direction: \'desc\' }`. Unset, the rows keep their order, where 3.x sorted by the first column.',
+      ],
+      [
+        'prop',
+        'sort-direction',
+        "Merged with `sort-by` into `sort`, one object set as a property: `{ column: 'name', direction: 'desc' }`. Unset, the rows keep their order, where 3.x sorted ascending.",
+      ],
+      [
+        'event',
+        'expand',
+        'Replaced by `change:expanded`: its detail is the ids of every expanded row, where 3.x sent `{ active, row }` for the row that toggled. Look the rows up in your `data`.',
+      ],
+      [
+        'event',
+        'paginate',
+        'Replaced by `change:page` (the page, counting from 1) and `change:page-size` (the page size). A new page size also fires `change:page` with 1.',
+      ],
+      [
+        'event',
+        'selection',
+        'Replaced by `change:selected`: its detail is the selected rows’ ids, strings from `getRowId`. The rows themselves are the `selectedRows` property.',
+      ],
+      [
+        'event',
+        'sort',
+        'Replaced by `change:sort`: its detail is `{ column, direction }`, where 3.x sent `{ sortBy, direction }`.',
+      ],
+      ['method', 'clearSelections', 'Removed: set `selected` to `[]`.'],
+      [
+        'method',
+        'getData',
+        'Removed: the table no longer hands back its sorted rows. Sort your own `data` from `change:sort` where you need that order; `selectedRows` holds the selected rows.',
+      ],
+    ] as const
+  ).map(([kind, name, change]) => ({
+    change,
+    kind,
+    name,
+    tag: 'c-data-table',
+  })),
+  {
+    change:
+      'Removed (ADR-0006): style the panel through `c-menu::part(panel)` and its list through `c-menu::part(list)`.',
+    kind: 'prop',
+    name: 'content-class',
+    tag: 'c-menu',
+  },
+  ...['custom', 'flat'].map((name) => ({
+    change:
+      'Removed: the menu draws nothing around its trigger. The element you slot as `slot="trigger"` shows as it is, with no chevron or hover background.',
+    kind: 'prop' as const,
+    name,
+    tag: 'c-menu',
+  })),
+  {
+    change:
+      'Removed: the list grows to 80% of the viewport height, then scrolls. Cap it lower with `c-menu::part(list) { max-height: 20rem; }`.',
+    kind: 'prop',
+    name: 'items-per-page',
+    tag: 'c-menu',
+  },
+  {
+    change: 'Removed: the menu has one size.',
+    kind: 'prop',
+    name: 'small',
+    tag: 'c-menu',
+  },
+  {
+    change:
+      'The default slot holds the menu’s items (`c-menu-item`, `c-menu-label`, `c-divider`). The trigger, 3.x’s default slot content, moves to `slot="trigger"`: slot your own button there.',
+    kind: 'slot',
+    meaningChanged: true,
+    name: '',
+    tag: 'c-menu',
+  },
+  {
+    change:
+      'Removed: it was the list `c-menu` rendered for its `items`. Style the list through `c-menu::part(list)`.',
+    kind: 'tag',
+    tag: 'c-menu-items',
+  },
+  {
+    change:
+      'Removed: open modals stack themselves, above the page and below toasts, and a modal opened from another stacks over it. Keep your page’s own `z-index` values below 1000 so a modal covers them.',
+    kind: 'prop',
+    name: 'z-index',
+    tag: 'c-modal',
+  },
+  {
+    change:
+      'Escape closes a modal only when it is `dismissable`, as a backdrop click does; 3.x closed every modal on Escape. A modal that is not dismissable nudges instead, so give it a close button.',
+    kind: 'prop',
+    meaningChanged: true,
+    name: 'dismissable',
+    tag: 'c-modal',
+  },
+  {
+    change: 'Removed: set the group’s `value` to the radio’s `value`.',
+    kind: 'prop',
+    name: 'checked',
+    tag: 'c-radio',
+  },
+  {
+    change:
+      'Removed: it was never read. Recolour a radio through `c-radio::part(indicator)`; its `color` tints the ring, the dot and the focus ring.',
+    kind: 'prop',
+    name: 'color',
+    tag: 'c-radio-group',
+  },
+  {
+    change:
+      'Removed: author the options as slotted `<c-radio value="…">Label</c-radio>` elements, with `disabled` on a radio that cannot be picked.',
+    kind: 'prop',
+    name: 'items',
+    tag: 'c-radio-group',
+  },
+  {
+    change:
+      'Removed with `items`: the value is the picked radio’s `value`. Look your object up from it.',
+    kind: 'prop',
+    name: 'return-object',
+    tag: 'c-radio-group',
+  },
+  {
+    change:
+      "A string, the picked radio’s `value`, or `null` with none picked. A number still picks the radio whose `value` matches it, but the events carry the string (`'1'`, not `1`).",
+    kind: 'prop',
+    name: 'value',
+    tag: 'c-radio-group',
+  },
+  {
+    change:
+      'Defaults to `var(--c-primary)`, the theme’s primary colour, which follows dark mode. It was the palette step `var(--c-primary-600)`.',
+    kind: 'prop',
+    name: 'color',
+    tag: 'c-spinner',
+  },
+  {
+    change:
+      'Removed. To make a tag fill its row, size its part: `c-tag::part(root) { width: 100%; }`.',
+    kind: 'prop',
+    name: 'block',
+    tag: 'c-tag',
+  },
+  {
+    change:
+      'Removed. To stretch a tag over the free space of its row, size its part: `c-tag::part(root) { flex-grow: 1; }`.',
+    kind: 'prop',
+    name: 'fit',
+    tag: 'c-tag',
+  },
+  {
+    change:
+      'Typed as the native values, `on` and `off`, so `autocorrect="off"` works as in 3.x. The property also takes `true` and `false`, like the platform’s `autocorrect`.',
+    kind: 'prop',
+    name: 'autocorrect',
+    tag: 'c-text-field',
+  },
+  {
+    change:
+      'Typed as the types the field is built for: `text`, `email`, `password`, `search`, `tel`, `url`, `number` and `date`. The others have their own components: `c-time-picker`, `c-color-picker`, `c-slider`, `c-file-upload`, and `c-date-picker` for a month.',
+    kind: 'prop',
+    name: 'type',
+    tag: 'c-text-field',
+  },
+  {
+    change:
+      'Removed: use `c-text-field`. Its input lives in its shadow root, so a native `<form>` does not submit it: send the field’s `value` from your code.',
+    kind: 'tag',
+    tag: 'c-text-field-open',
   },
 ];

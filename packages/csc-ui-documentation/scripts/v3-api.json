@@ -1749,7 +1749,7 @@
           "type": "boolean"
         }
       ],
-      "slots": ["default", "footer"],
+      "slots": ["", "footer"],
       "cssProperties": ["--c-page-justify-content", "--c-page-max-width"]
     },
     "c-pagination": {

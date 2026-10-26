@@ -346,7 +346,7 @@ const enabled = ref(false);
         {
           code: `<template>
   <!-- NOT v-model:open — bind the prop and listen to change:open -->
-  <c-menu :open.prop="open" @change:open="open = $event.detail">
+  <c-menu :open="open" @change:open="open = $event.detail">
     <c-button slot="trigger">Menu</c-button>
     <c-menu-item>Profile</c-menu-item>
   </c-menu>
@@ -477,29 +477,38 @@ To re-brand, stop overriding individual --c-* ramp variables. Instead hand apply
   {
     blocks: forAll([
       {
-        code: `// Before: headers[] describe columns; data cells are wrapped objects.
-// After:  columns[] describe columns; data is plain domain objects and
-//         custom cells are render functions (h is re-exported by the package).
+        code: `// Before: headers[] describe the columns, and every data cell is wrapped.
+const headers = [
+  { key: 'name', value: 'Name' },
+  { key: 'id', value: 'ID', sortable: false },
+];
+const data = [{ id: { formattedValue: '#1', value: 1 }, name: { value: 'Ada' } }];
+
+// After: columns[] describe the columns, rows are plain objects, and a custom
+// cell is a render function (h is re-exported by the package).
 import { h, type CDataTableColumn } from '@cscfi/csc-ui';
 
-interface User { id: number; name: string; }
-
-const columns: CDataTableColumn<User>[] = [
-  { key: 'name', value: 'Name' },
-  { key: 'id', value: 'ID', cell: (ctx) => h('code', String(ctx.value)) },
+const columns: CDataTableColumn[] = [
+  { header: 'Name', key: 'name', sortable: true },
+  { cell: ({ value }) => h('code', \`#\${value}\`), header: 'ID', key: 'id' },
 ];
+const data = [{ id: 1, name: 'Ada' }];
 
-// The columns prop holds functions — bind it as a DOM property (:columns.prop
-// in Vue, [columns] in Angular), never as an attribute.`,
+// A column sorts only with sortable: true, where 3.x sorted every column
+// that did not say sortable: false. columns holds functions, so set it as a
+// property (:columns in Vue, [columns] in Angular), never as an attribute.`,
         filename: 'c-data-table — headers → columns',
         lang: 'ts',
       },
       {
-        code: `// Old two-boolean shape collapses into one tri-state axis:
-//   pinned: true  (exempt from autohide)  -> policy: 'never'
-//   hidden: true                          -> policy: 'always'
-//   (default)                             -> policy: 'auto'
-// "pinned" now means TanStack-style edge-sticky during horizontal scroll.`,
+        code: `// 3.x hid the columns that did not fit unless horizontal-scrolling was
+// set. 4.x scrolls sideways unless autohide is set, and each column's
+// expansion says where its cells go:
+//   pinned: true  (never hidden)         -> expansion: 'never'
+//   hidden: true  (always hidden)        -> expansion: 'always'
+//   (default)                            -> expansion: 'auto'
+// pinned now pins a column to an edge while the table scrolls sideways:
+// pinned: 'left' or 'right'.`,
         filename: 'c-data-table — pinned / hidden → expansion policy',
         lang: 'ts',
       },
@@ -588,10 +597,13 @@ const columns: CDataTableColumn<User>[] = [
   the c-option-value text, else the option's whole text, and the runs of a
   label equal to the query are marked as the match part
   (c-autocomplete::part(match)); the 3.x mark element had no part.
-- c-modal: no native top layer / ::backdrop. New vocabulary — the scrim token
-  and a dismissable prop (governs both backdrop-click and Escape).
+- c-modal: not in the browser's top layer and no ::backdrop; its backdrop is
+  its own element, coloured by the scrim token. dismissable now governs Escape
+  as well as a backdrop click (3.x closed every modal on Escape), and z-index
+  is gone: open modals stack themselves, below toasts.
 - c-menu: authored declaratively with slotted c-menu-item / c-menu-label
-  instead of a programmatic items array; leaf activation fires a select event.
+  instead of a programmatic items array, and the trigger moves from the
+  default slot to slot="trigger"; leaf activation fires a select event.
 - c-toasts: a message's title is now heading (an untyped { title } loses its
   heading silently). c-toast is internal: c-toasts renders one per addToast()
   message, so style a toast through c-toasts::part(toast-root) and its other
