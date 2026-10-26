@@ -296,7 +296,7 @@ export const CCscLogo = createComponent({
 
 export const CDataTable = createComponent({
   displayName: 'CDataTable',
-  elementClass: elementClass<CDataTableElement>(['autohide', 'columns', 'data', 'expanded', 'expandedContent', 'external', 'filter', 'getRowId', 'itemCount', 'loading', 'page', 'pageSize', 'pageSizes', 'selected', 'selection', 'singleExpansion', 'sort', 'stickyFooter', 'stickyHeader', 'texts']),
+  elementClass: elementClass<CDataTableElement>(['autohide', 'columns', 'data', 'expanded', 'expandedContent', 'external', 'getRowId', 'itemCount', 'loading', 'page', 'pageSize', 'pageSizes', 'query', 'selected', 'selection', 'singleExpansion', 'sort', 'stickyFooter', 'stickyHeader', 'texts']),
   events: {
     onChangeExpanded: 'change:expanded' as EventName<CDataTableElementEventMap['change:expanded']>,
     onChangePage: 'change:page' as EventName<CDataTableElementEventMap['change:page']>,

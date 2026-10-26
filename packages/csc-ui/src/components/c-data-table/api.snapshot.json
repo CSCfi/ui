@@ -2,11 +2,11 @@
   "attributes": {
     "autohide": "boolean = false",
     "external": "boolean = false",
-    "filter": "string = ''",
     "item-count": "number",
     "loading": "boolean = false",
     "page": "number",
     "page-size": "number",
+    "query": "string = ''",
     "selection": "'multiple' | 'single'",
     "single-expansion": "boolean = false",
     "sort": "CDataTableSort | null",
@@ -21,7 +21,7 @@
     "change:expanded": "CustomEvent<string[]>",
     "change:page": "CustomEvent<number>",
     "change:page-size": "CustomEvent<number>",
-    "change:selected": "CustomEvent<{ ids: string[]; rows: CDataTableRow[] }>",
+    "change:selected": "CustomEvent<string[]>",
     "change:sort": "CustomEvent<CDataTableSort | null>"
   },
   "methods": {},
@@ -58,13 +58,13 @@
     "expanded": "string[]",
     "expandedContent": "( context: CDataTableExpandedContext, ) => CDataTableCellContent",
     "external": "boolean = false",
-    "filter": "string = ''",
     "getRowId": "(row: CDataTableRow) => string",
     "itemCount": "number",
     "loading": "boolean = false",
     "page": "number",
     "pageSize": "number",
     "pageSizes": "number[] = () => [5, 25, 50, 100]",
+    "query": "string = ''",
     "selected": "string[]",
     "selection": "'multiple' | 'single'",
     "singleExpansion": "boolean = false",
@@ -72,6 +72,9 @@
     "stickyFooter": "boolean = false",
     "stickyHeader": "boolean = false",
     "texts": "CDataTableTexts = {}"
+  },
+  "readonly": {
+    "selectedRows": "CDataTableRow[]"
   },
   "slots": [
     "caption",

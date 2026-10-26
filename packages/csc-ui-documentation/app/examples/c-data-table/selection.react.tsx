@@ -29,11 +29,7 @@ export const Selection = () => {
         columns={columns}
         data={data}
         getRowId={getRowId}
-        onChangeSelected={(event) =>
-          setSelected(
-            (event.detail as { ids: string[]; rows: CDataTableRow[] }).ids,
-          )
-        }
+        onChangeSelected={(event) => setSelected(event.detail as string[])}
         pageSize={4}
         selected={selected}
         selection="multiple"

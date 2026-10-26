@@ -631,15 +631,15 @@ export interface CDataTableElementEventMap {
    */
   'change:page-size': CustomEvent<number>;
   /**
-   * Fired when the selection changes, carrying the selected row ids and the
-   * row objects resolvable from the current `data`.
+   * Fired when the user changes the selection, carrying the selected row ids
+   * — the new `selected`. The rows themselves are `selectedRows`.
    */
-  'change:selected': CustomEvent<{ ids: string[]; rows: CDataTableRow[] }>;
+  'change:selected': CustomEvent<string[]>;
   /** Fired when the user sorts a column, carrying the new sorting state. */
   'change:sort': CustomEvent<CDataTableSort | null>;
 }
 
-export interface CDataTableElement extends Omit<HTMLElement, 'autohide' | 'columns' | 'data' | 'expanded' | 'expandedContent' | 'external' | 'filter' | 'getRowId' | 'itemCount' | 'loading' | 'page' | 'pageSize' | 'pageSizes' | 'selected' | 'selection' | 'singleExpansion' | 'sort' | 'stickyFooter' | 'stickyHeader' | 'texts'> {
+export interface CDataTableElement extends Omit<HTMLElement, 'autohide' | 'columns' | 'data' | 'expanded' | 'expandedContent' | 'external' | 'getRowId' | 'itemCount' | 'loading' | 'page' | 'pageSize' | 'pageSizes' | 'query' | 'selected' | 'selection' | 'singleExpansion' | 'sort' | 'stickyFooter' | 'stickyHeader' | 'texts'> {
   /**
    * Move overflowing `expansion: 'auto'` columns into the expansion row
    * (rightmost first) instead of scrolling horizontally.
@@ -663,11 +663,6 @@ export interface CDataTableElement extends Omit<HTMLElement, 'autohide' | 'colum
    */
   external?: boolean;
   /**
-   * Filter rows client-side against this string (all columns). Ignored when
-   * `external` is set.
-   */
-  filter?: string;
-  /**
    * Return a stable id for a row. Falls back to the row's index — supply
    * this whenever selection/expansion is used with `external` data.
    */
@@ -685,6 +680,11 @@ export interface CDataTableElement extends Omit<HTMLElement, 'autohide' | 'colum
   pageSize?: number;
   /** Options for the pager's page-size menu. */
   pageSizes?: number[];
+  /**
+   * The query rows are filtered by client-side, matched against every column.
+   * Ignored when `external` is set.
+   */
+  query?: string;
   /** Ids of the selected rows (optionally controlled). */
   selected?: string[];
   /** Row selection mode. Unset means rows are not selectable. */
@@ -699,6 +699,11 @@ export interface CDataTableElement extends Omit<HTMLElement, 'autohide' | 'colum
   stickyHeader?: boolean;
   /** UI text overrides (i18n), merged over the English defaults. */
   texts?: CDataTableTexts;
+  /**
+   * The selected rows that the current `data` holds, in selection order:
+   * the row objects behind `selected`.
+   */
+  readonly selectedRows: CDataTableRow[];
   addEventListener<K extends keyof CDataTableElementEventMap>(
     type: K,
     listener: (this: CDataTableElement, ev: CDataTableElementEventMap[K]) => void,

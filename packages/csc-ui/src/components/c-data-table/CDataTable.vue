@@ -479,14 +479,6 @@ interface CDataTableProps {
   external?: boolean;
 
   /**
-   * Filter rows client-side against this string (all columns). Ignored when
-   * `external` is set.
-   *
-   * @freeform
-   */
-  filter?: string;
-
-  /**
    * Return a stable id for a row. Falls back to the row's index — supply
    * this whenever selection/expansion is used with `external` data.
    */
@@ -509,6 +501,14 @@ interface CDataTableProps {
 
   /** Options for the pager's page-size menu. */
   pageSizes?: number[];
+
+  /**
+   * The query rows are filtered by client-side, matched against every column.
+   * Ignored when `external` is set.
+   *
+   * @freeform
+   */
+  query?: string;
 
   /** Ids of the selected rows (optionally controlled). */
   selected?: string[];
@@ -601,13 +601,13 @@ const props = withDefaults(defineProps<CDataTableProps>(), {
   expanded: undefined,
   expandedContent: undefined,
   external: false,
-  filter: '',
   getRowId: undefined,
   itemCount: undefined,
   loading: false,
   page: undefined,
   pageSize: undefined,
   pageSizes: () => [5, 25, 50, 100],
+  query: '',
   selected: undefined,
   selection: undefined,
   singleExpansion: false,
@@ -641,10 +641,10 @@ interface CDataTableEvents {
   'change:page-size': number;
 
   /**
-   * Fired when the selection changes, carrying the selected row ids and the
-   * row objects resolvable from the current `data`.
+   * Fired when the user changes the selection, carrying the selected row ids
+   * — the new `selected`. The rows themselves are `selectedRows`.
    */
-  'change:selected': { ids: string[]; rows: CDataTableRow[] };
+  'change:selected': string[];
 
   /** Fired when the user sorts a column, carrying the new sorting state. */
   'change:sort': CDataTableSort | null;
@@ -900,7 +900,7 @@ const table = useVueTable<CDataTableRow>({
   },
   state: {
     get globalFilter() {
-      return externalOn.value ? '' : props.filter;
+      return externalOn.value ? '' : props.query;
     },
     get pagination() {
       return paginationState.value;
@@ -985,18 +985,24 @@ const isSelected = (id: string) => selectedSet.value.has(id);
 
 const commitSelection = (ids: string[]) => {
   selectedIds.value = ids;
+  emit('change:selected', [...ids]);
+};
 
+/**
+ * The selected rows that the current `data` holds, in selection order:
+ * the row objects behind `selected`.
+ */
+const selectedRows = computed<CDataTableRow[]>(() => {
   const byId = table.getCoreRowModel().rowsById;
 
-  emit('change:selected', {
-    ids: [...ids],
-    rows: ids.flatMap((id) => {
-      const row = byId[id];
+  return selectedIds.value.flatMap((id) => {
+    const row = byId[id];
 
-      return row ? [row.original] : [];
-    }),
+    return row ? [row.original] : [];
   });
-};
+});
+
+defineExpose({ selectedRows });
 
 const onRowCheck = (row: Row<CDataTableRow>, event: Event) => {
   const checked = coerceBoolean((event as CustomEvent).detail);
@@ -1169,7 +1175,7 @@ const onPaginationChange = (event: Event) => {
 
 // Filtering changes the page count under the pager; restart from page 1.
 watch(
-  () => props.filter,
+  () => props.query,
   () => {
     if (!externalOn.value) setPage(1);
   },

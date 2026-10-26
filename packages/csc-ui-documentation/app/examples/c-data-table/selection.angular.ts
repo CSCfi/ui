@@ -58,10 +58,7 @@ export class SelectionExampleComponent implements AfterViewInit {
   // template, so listen on the element directly.
   ngAfterViewInit() {
     this.table().nativeElement.addEventListener('change:selected', (event) => {
-      this.selected.set(
-        (event as CustomEvent<{ ids: string[]; rows: CDataTableRow[] }>).detail
-          .ids,
-      );
+      this.selected.set((event as CustomEvent<string[]>).detail);
     });
   }
 }

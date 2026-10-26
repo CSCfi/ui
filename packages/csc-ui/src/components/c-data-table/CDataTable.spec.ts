@@ -78,3 +78,45 @@ describe('c-data-table autohide', () => {
     for (const col of COLUMNS) expect(keys).toContain(col.key);
   });
 });
+
+describe('c-data-table selection and query (decisions #19, #20)', () => {
+  type TableHost = {
+    query?: string;
+    selectedRows: Record<string, unknown>[];
+  } & HTMLElement;
+
+  const mountTable = (props: Record<string, unknown> = {}) =>
+    mount<TableHost>('c-data-table', {
+      props: {
+        columns: COLUMNS,
+        data: DATA,
+        getRowId: (row: { name: string }) => row.name,
+        ...props,
+      },
+    });
+
+  it('change:selected carries the selected ids; selectedRows the rows', async () => {
+    const m = await mountTable({ selection: 'multiple' });
+    await settled();
+
+    const ids: unknown[] = [];
+    m.host.addEventListener('change:selected', (e) =>
+      ids.push((e as CustomEvent).detail),
+    );
+
+    const checkbox = m.shadowAll('tr[part~="row"] c-checkbox')[1];
+
+    checkbox.shadowRoot!.querySelector('input')!.click();
+    await settled();
+
+    expect(ids).toEqual([['Borealis']]);
+    expect(m.host.selectedRows.map((row) => row.name)).toEqual(['Borealis']);
+  });
+
+  it('query filters the rows across every column', async () => {
+    const m = await mountTable({ query: 'mahti' });
+    await settled();
+
+    expect(m.shadowAll('tr[part~="row"]')).toHaveLength(1);
+  });
+});
