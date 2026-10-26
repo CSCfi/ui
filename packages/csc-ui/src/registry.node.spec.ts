@@ -1,6 +1,6 @@
 /**
- * The registration table in `src/index.ts` is the single source of truth for
- * what the package registers. Read as source text (the node project has no
+ * The registration table in `src/registry.ts` is the single source of truth
+ * for what the package registers. Read as source text (the node project has no
  * SFC pipeline) so the table, the component directories and the documented
  * registration order cannot drift apart.
  */
@@ -10,7 +10,7 @@ import { expect, it } from 'vitest';
 
 const srcDir = fileURLToPath(new URL('.', import.meta.url));
 
-const source = readFileSync(`${srcDir}index.ts`, 'utf8');
+const source = readFileSync(`${srcDir}registry.ts`, 'utf8');
 
 const registered = [
   ...source.matchAll(/^\s*\['(c-[a-z-]+)',\s*C\w+\],?\s*$/gm),
