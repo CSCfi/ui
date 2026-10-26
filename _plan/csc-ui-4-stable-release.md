@@ -193,17 +193,19 @@ A read-only check of all 124 D11–D13 items against source, glossary, ADRs, usa
   2 removed tags the guide never mentions. ADR-0027 amendment.
 - **Ledger — same-name behaviour changes** (invisible to the guard: name, type and default unchanged). Each PR that
   makes one adds its guide entry (a `meaningChanged` entry in `migration-api.ts`); tick it here. Entries marked *(check)* need the 3.x behaviour confirmed first.
-  - [ ] c-otp-input `value`: the digits typed so far, `''` when empty (3.x: `null` until complete).
+  - [x] c-otp-input `value`: the digits typed so far, `''` when empty. No entry: 3.x's `value` already held them;
+        only `changeValue` was `null` until complete, and its entry says so (phase 1).
   - [ ] `id` on the 11 tags that forwarded it: stays on the host (3.x: set on the inner control).
   - [ ] c-option `selected`: seeds silently, once, while the value is empty (3.x c-select emitted `changeValue`).
   - [ ] Value events fire only on user interaction, never on a programmatic `value` (*check* each 3.x tag).
-  - [ ] c-slider: `change` fires once on release (3.x `changeValue` fired on every move).
+  - [x] c-slider: `change` fires once on release (3.x `changeValue` fired on every move) — in the c-slider
+        `changeValue` entry (phase 1).
   - [ ] c-pagination `value`: `{ page, pageSize, … }` and a new object per change (3.x: `CPaginationOptions`
         mutated in place) — same prop name and type name, so the guard cannot see it.
   - [ ] c-checkbox / c-switch `checked`: the boolean view of `value` (*check* 3.x precedence).
   - [ ] c-radio `change` no longer escapes c-radio-group (*check* whether 3.x c-radio's event bubbled).
-  - [ ] `change` on c-text-field / c-checkbox / c-switch / c-autocomplete carries the value (*check* what 3.x
-        consumers could hear as `change`).
+  - [x] `change` on c-text-field / c-checkbox / c-switch / c-autocomplete carries the value. No entry: 3.x
+        rendered them in shadow roots, so the inner input's `change` never reached a 3.x consumer (phase 1).
   - [ ] `hidden` on a `c-*` host hides it (*check* 3.x).
   - [ ] c-data-table `change:selected` detail is `string[]` (if 3.x had the event under another name, the guard
         covers the name; the detail change goes here).
@@ -290,6 +292,37 @@ start migrating on the first alpha that carries D2–D4.
 1. **Events** — D2–D4: delete twin dispatch (shared emit helpers / `useHostEmit`), add/align `change`, internal
    wiring events, side-nav `select`; regenerate the React wrapper; update docs canons (all four flavors) and the
    docs site's own `@item-change` bindings (`app/app.vue`).
+   **Done locally (2026-10-26): ba39ece8, 8bab4d4d, ab622392, 735fe84d, acb5fd3e.**
+   - **Internal wiring events (ba39ece8).** c-tab `tabchange`/`tabfocus`, c-tab-buttons `tabchange`, c-tab-item
+     `contentchange`, c-accordion-item `itemchange` (it was public `item-change`, the same kind of event), c-radio
+     `radioselect`: lowercase, `@internal`, stopped at the parent. c-dropdown's events no longer leave c-select's
+     shadow root. The tag map's generated `INTERNAL_EVENTS` backs a conformance check that none reaches the page.
+     Fixed on the way: a nested accordion's item toggled the outer accordion too.
+   - **Value events (8bab4d4d).** `emitModelValue` is gone; `valueEvents.ts` has `emitModelChange` (a pick: `update:value`,
+     `input`, then `change`, in native order), `emitModelInput` (a keystroke or drag move) and `emitModelSettled`
+     (the commit). **`change` never bubbles** (decided 2026-10-26: a field inside an accordion, modal or tab panel
+     would reach the container's `change` with a foreign detail); `input` bubbles. Typed text commits on Enter or
+     leaving the field, and only when it changed since the last commit (c-text-field through the inner input's
+     native `change`; c-number-field and c-otp-input track their own commit, since the number field's conform
+     rewrites the text). c-number-field: key steps and click steps commit at once, a held step button on release.
+     c-otp-input: one value shape, the digits so far (D17 #4); `completion` typed `string`. The conformance recipe
+     gained a `commit` step for typed text. Fixed on the way: c-modal's double emission (both KNOWN lists lose it)
+     and c-tabs' double emission on Enter.
+   - Angular templates cannot bind colon-named events, so the Angular canons follow typed text with `(input)`
+     reading `$event.target.value` and picks with `(change)`; the migration guide's binding section now says so
+     (it used to suggest `(change:sort)`) and offers MyCSC the ESLint rule for `@update:*` and the retired names.
+   - **Side navigation `select` (ab622392).** c-side-navigation-item `itemChange` → `select` with `{ value }` and a
+     new `value` prop (D17 #8); c-sub-navigation-item gains both (#27), so its canons drop click + keyup pairs.
+     Both bubble; c-side-navigation ignores sub-items' events, and a nested item no longer swallows its own. The
+     docs site's navigation listens once on c-side-navigation.
+   - **Twins gone (735fe84d).** `useHostEmit` dispatches one event; the strict analyzer fails any event name that
+     is not all-lowercase. Manifest and React wrapper hold no camelCase event (verified).
+   - **One `input` per value change (acb5fd3e)** (decided 2026-10-26). A native `input` is `composed`: text and number fields
+     sent two per keystroke, the pickers one per keystroke of uncommitted text. `defineElement` now stops a native
+     `input` that started in a component's own shadow tree at its shadow root; a page's input slotted into a
+     component still reaches the page. The value-control conformance suite counts every `input` reaching the page.
+   - Left for phase 2: c-pagination still emits on mount and on a set `value` (KNOWN_PROGRAMMATIC_EMITTERS; R3
+     rewrites its value), c-option `selected` seeding (#26), c-checkbox/c-switch reading `''` as checked.
 2. **API fixes** — D11, D12, D13 "before rc.1", D17, in themed PRs (internal surface → bugs → renames → tokens/types).
    Each rename also updates canons in all four flavors, usage.md and the migration guide. A PR that changes a name in
    `scripts/migration-guide-baseline.json` writes its `migration-api.ts` entry and drops it from the baseline (the
