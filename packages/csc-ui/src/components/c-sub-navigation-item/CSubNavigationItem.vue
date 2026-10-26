@@ -167,15 +167,8 @@ const emit = useHostEmit<CSubNavigationItemEvents>();
 const redirect = (event: Event) => {
   if (event instanceof KeyboardEvent && event.key !== 'Enter') return;
   event.stopPropagation();
+  // c-side-navigation hears it and closes its drawer.
   emit('select', { value: props.value }, { bubbles: true, composed: true });
-
-  // Closing the side menu is a side-effect of any sub-item navigation —
-  // matches the Stencil behaviour of dismissing the drawer on click.
-  const sidenav = document.querySelector('c-side-navigation') as
-    | ({ menuVisible: boolean } & HTMLElement)
-    | null;
-
-  if (sidenav) sidenav.menuVisible = false;
 
   if (props.href) {
     if (props.target) window.open(props.href, props.target);

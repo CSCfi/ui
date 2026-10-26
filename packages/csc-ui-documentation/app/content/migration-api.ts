@@ -461,4 +461,25 @@ export const V3_API_CHANGES: V3ApiChange[] = [
     name: 'contentdelay',
     tag: 'c-loader',
   },
+  {
+    change:
+      'Removed (ADR-0006): its inline style beat your stylesheet. Set the weight through the link’s part: `c-link::part(root) { font-weight: 400; }`.',
+    kind: 'prop',
+    name: 'weight',
+    tag: 'c-link',
+  },
+  {
+    change:
+      'Renamed to `open`. The drawer fires `change:open` with the new state whenever the user opens or closes it — the navigation button, the close button, the backdrop or an item.',
+    kind: 'prop',
+    name: 'menu-visible',
+    tag: 'c-side-navigation',
+  },
+  {
+    change:
+      'Removed (ADR-0006): it wrote inline styles. Restyle the drawer through its parts, e.g. `c-side-navigation::part(nav)`.',
+    kind: 'prop',
+    name: 'styles',
+    tag: 'c-side-navigation',
+  },
 ];

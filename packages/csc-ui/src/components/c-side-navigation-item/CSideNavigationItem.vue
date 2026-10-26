@@ -279,15 +279,8 @@ const redirect = (event: Event | KeyboardEvent) => {
     event.preventDefault();
   }
 
+  // c-side-navigation hears it, and closes its drawer for a leaf item.
   emit('select', { value: props.value }, { bubbles: true, composed: true });
-
-  if (!slotHasContent.value) {
-    const sidenav = document.querySelector('c-side-navigation') as
-      | ({ menuVisible: boolean } & HTMLElement)
-      | null;
-
-    if (sidenav) sidenav.menuVisible = false;
-  }
 };
 
 onMounted(() => {

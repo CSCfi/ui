@@ -8,7 +8,7 @@
       </c-icon-button>
     </div>
 
-    <nav ref="containerRef" :class="ui.nav()" part="nav" role="menubar">
+    <nav :class="ui.nav()" part="nav" role="menubar">
       <div :class="ui.wrapper()">
         <slot />
       </div>
@@ -20,7 +20,7 @@
   </div>
 
   <div
-    v-if="menuVisibleInternal && mobile"
+    v-if="openInternal && mobile"
     class="c-overlay c-fade-in"
     @click="closeMenu"
   />
@@ -57,14 +57,12 @@ import { useHostEmit } from '../../shared/useHostEmit';
 /** Events dispatched by `<c-side-navigation>`. */
 interface CSideNavigationEvents {
   /**
-   * Fired when the drawer is closed from within (the mobile close button or
-   * the backdrop overlay), carrying the new visibility (`false`).
-   * Named `change:menu-visible`, not `update:menuVisible`: Vue's runtime
-   * silently drops `onUpdate:*` listeners on custom elements
-   * (`isModelListener`), so a template `@update:menu-visible` would never be
-   * attached.
+   * Fired when the user opens or closes the drawer — a `c-navigation-button`,
+   * the close button, the backdrop, or activating an item — carrying the new
+   * `open`. Named `change:open`, not `update:open`: Vue's runtime silently
+   * drops `onUpdate:*` listeners on custom elements (`isModelListener`).
    */
-  'change:menu-visible': boolean;
+  'change:open': boolean;
 }
 
 // Multi-root template (fragment) + we write to the host below — keep
@@ -150,13 +148,6 @@ const sideNavigation = tv({
 
 interface CSideNavigationProps {
   /**
-   * Mobile version menu visibility
-   *
-   * @seeded from csc-ui — verify
-   */
-  menuVisible?: boolean;
-
-  /**
    * Mobile version
    *
    * @seeded from csc-ui — verify
@@ -164,17 +155,15 @@ interface CSideNavigationProps {
   mobile?: boolean;
 
   /**
-   * Background styles
-   *
-   * @seeded from csc-ui — verify
+   * Whether the `mobile` drawer is open. A `c-navigation-button` anywhere on
+   * the page toggles it.
    */
-  styles?: null | Record<string, string>;
+  open?: boolean;
 }
 
 const props = withDefaults(defineProps<CSideNavigationProps>(), {
-  menuVisible: false,
   mobile: false,
-  styles: null,
+  open: false,
 });
 
 const arrowRight = mdiArrowRight;
@@ -183,59 +172,44 @@ const host = useHost();
 
 const emit = useHostEmit<CSideNavigationEvents>();
 
-const containerRef = useTemplateRef<HTMLElement>('containerRef');
-
 const bottomRef = useTemplateRef<HTMLElement>('bottomRef');
 
 // The bottom slot's region renders only while something is slotted, so a
 // drawer without a bottom slot keeps its box (no empty padded strip).
 const hasBottom = useHasSlot(bottomRef, 'bottom');
 
-const menuVisibleInternal = ref(props.menuVisible);
+const openInternal = ref(props.open);
 
 const ui = computed(() =>
   sideNavigation({
-    hidden: !menuVisibleInternal.value,
+    hidden: !openInternal.value,
     mobile: !!props.mobile,
   }),
 );
 
-// Keep the internal render state and the reflected custom-element `menuVisible`
-// property in lockstep. The nav button toggles visibility through internal
-// state, but nav items close the drawer by setting the `menuVisible` *property*
-// on the host (`document.querySelector('c-side-navigation').menuVisible = false`).
-// If the property lagged behind internal state, that write could be a no-op
-// (false -> false) and leave the drawer open — so mirror every change back to
-// the host property too. The watcher below then closes the loop without
-// recursing (both assignments are guarded by an equality check).
-const setMenuVisible = (value: boolean) => {
-  if (menuVisibleInternal.value !== value) {
-    menuVisibleInternal.value = value;
-  }
+// Called from user interaction only: the drawer's state, the host's `open`
+// property (so a later write of the same value is not a no-op) and
+// `change:open`. A value set from outside only re-syncs (the watch below).
+const setOpen = (value: boolean) => {
+  if (openInternal.value === value) return;
 
-  const el = host as ({ menuVisible?: boolean } & HTMLElement) | null;
+  openInternal.value = value;
 
-  if (el && el.menuVisible !== value) {
-    el.menuVisible = value;
-  }
+  const el = host as ({ open?: boolean } & HTMLElement) | null;
+
+  if (el && el.open !== value) el.open = value;
+
+  emit('change:open', value);
 };
 
 watch(
-  () => props.menuVisible,
+  () => props.open,
   (v) => {
-    setMenuVisible(v);
+    openInternal.value = v;
   },
 );
 
-// Expose menuVisible setter so sub-navigation-item / side-navigation-item
-// can close the drawer via `document.querySelector('c-side-navigation').menuVisible = false`.
-// Vue's defineCustomElement already creates the property setter for the
-// prop; the watcher above keeps internal state in sync when consumers
-// pass the prop reactively.
-const closeMenu = () => {
-  setMenuVisible(false);
-  emit('change:menu-visible', false);
-};
+const closeMenu = () => setOpen(false);
 
 // Reflect a c-side-navigation-item's `select`: when a top-level item is
 // activated, deactivate any other parent (an "accordion"-style behaviour).
@@ -245,6 +219,10 @@ const handleItemChange = (event: Event) => {
   if (!host) return;
 
   const target = event.target as { active: boolean } & HTMLElement;
+
+  // Activating a leaf — an item without sub-items, or a sub-item — navigates:
+  // the drawer closes.
+  if (!target.querySelector('[slot="sub-item"]')) closeMenu();
 
   if (target.localName !== 'c-side-navigation-item' || target.slot) return;
 
@@ -267,18 +245,13 @@ const handleItemChange = (event: Event) => {
   }
 };
 
-// Global click/keyup listener: c-navigation-button anywhere on the page
-// toggles the side navigation. Matches Stencil's componentDidLoad.
-const onDocEvent = (e: Event) => {
+// A c-navigation-button anywhere on the page toggles the drawer. Click only:
+// Enter and Space on its button fire a click, so a `keyup` listener too
+// toggled twice and left the drawer where it was.
+const onDocClick = (e: Event) => {
   const t = e.target as HTMLElement;
 
-  if (!t?.matches?.('c-navigation-button')) return;
-
-  if (e.type === 'click') {
-    setMenuVisible(!menuVisibleInternal.value);
-  } else if (e instanceof KeyboardEvent && e.key === 'Enter') {
-    setMenuVisible(!menuVisibleInternal.value);
-  }
+  if (t?.matches?.('c-navigation-button')) setOpen(!openInternal.value);
 };
 
 // Move c-sub-navigation-item children into the "sub-item" slot —
@@ -295,12 +268,7 @@ onMounted(() => {
   assignSubItemSlots();
   host.addEventListener('select', handleItemChange);
 
-  if (props.styles && containerRef.value) {
-    Object.assign(containerRef.value.style, props.styles);
-  }
-
-  document.body.addEventListener('click', onDocEvent);
-  document.body.addEventListener('keyup', onDocEvent);
+  document.body.addEventListener('click', onDocClick);
 
   // Desktop mode is reflected as a host ATTRIBUTE (`data-desktop`), not a host
   // class: Vue patches a consumer's `class` binding on the custom element
@@ -313,8 +281,7 @@ onMounted(() => {
 });
 
 onBeforeUnmount(() => {
-  document.body.removeEventListener('click', onDocEvent);
-  document.body.removeEventListener('keyup', onDocEvent);
+  document.body.removeEventListener('click', onDocClick);
 });
 </script>
 

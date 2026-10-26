@@ -990,15 +990,13 @@ export interface CIconButtonElement extends Omit<HTMLElement, 'badge' | 'danger'
 }
 
 /** Basic hyperlink component */
-export interface CLinkElement extends Omit<HTMLElement, 'href' | 'target' | 'underline' | 'weight'> {
+export interface CLinkElement extends Omit<HTMLElement, 'href' | 'target' | 'underline'> {
   /** Url of link */
   href?: string;
   /** regular target attribute of a hyperlink */
   target?: string;
   /** Display line under the link */
   underline?: boolean;
-  /** Customisable font weight */
-  weight?: number | string;
 }
 
 export interface CListElement extends Omit<HTMLElement, 'bordered' | 'disabled'> {
@@ -1762,24 +1760,23 @@ export interface CSelectElement extends Omit<HTMLElement, 'clearable' | 'disable
 /** Events dispatched by `<c-side-navigation>`. */
 export interface CSideNavigationElementEventMap {
   /**
-   * Fired when the drawer is closed from within (the mobile close button or
-   * the backdrop overlay), carrying the new visibility (`false`).
-   * Named `change:menu-visible`, not `update:menuVisible`: Vue's runtime
-   * silently drops `onUpdate:*` listeners on custom elements
-   * (`isModelListener`), so a template `@update:menu-visible` would never be
-   * attached.
+   * Fired when the user opens or closes the drawer — a `c-navigation-button`,
+   * the close button, the backdrop, or activating an item — carrying the new
+   * `open`. Named `change:open`, not `update:open`: Vue's runtime silently
+   * drops `onUpdate:*` listeners on custom elements (`isModelListener`).
    */
-  'change:menu-visible': CustomEvent<boolean>;
+  'change:open': CustomEvent<boolean>;
 }
 
 /** The dashboard layout's left-hand menu: section titles, navigation items and their sub-items in a drawer that is pinned beside the page on desktop and slides in over it on mobile. */
-export interface CSideNavigationElement extends Omit<HTMLElement, 'menuVisible' | 'mobile' | 'styles'> {
-  /** Mobile version menu visibility */
-  menuVisible?: boolean;
+export interface CSideNavigationElement extends Omit<HTMLElement, 'mobile' | 'open'> {
   /** Mobile version */
   mobile?: boolean;
-  /** Background styles */
-  styles?: null | Record<string, string>;
+  /**
+   * Whether the `mobile` drawer is open. A `c-navigation-button` anywhere on
+   * the page toggles it.
+   */
+  open?: boolean;
   addEventListener<K extends keyof CSideNavigationElementEventMap>(
     type: K,
     listener: (this: CSideNavigationElement, ev: CSideNavigationElementEventMap[K]) => void,

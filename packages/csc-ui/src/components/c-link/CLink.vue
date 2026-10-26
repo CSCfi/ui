@@ -6,7 +6,6 @@
         ...(!!href ? { href } : {}),
         ...(!!target ? { target } : {}),
       }"
-      :style="{ fontWeight: String(weight) }"
       part="root"
     >
       <slot />
@@ -41,7 +40,7 @@ const link = tv({
     underline: false,
   },
   slots: {
-    root: 'inline-flex cursor-pointer items-center justify-start gap-2 bg-transparent text-[length:inherit] text-link no-underline transition-colors duration-300 ease-in-out outline-none hover:bg-link-subtle focus-visible:rounded-[2px] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-link focus-visible:outline-solid',
+    root: 'inline-flex cursor-pointer items-center justify-start gap-2 bg-transparent text-[length:inherit] font-semibold text-link no-underline transition-colors duration-300 ease-in-out outline-none hover:bg-link-subtle focus-visible:rounded-[2px] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-link focus-visible:outline-solid',
   },
   variants: {
     underline: { true: { root: 'underline' } },
@@ -71,20 +70,12 @@ interface CLinkProps {
    * @seeded from csc-ui — verify
    */
   underline?: boolean;
-
-  /**
-   * Customisable font weight
-   *
-   * @seeded from csc-ui — verify
-   */
-  weight?: number | string;
 }
 
 const props = withDefaults(defineProps<CLinkProps>(), {
   href: '',
   target: '',
   underline: false,
-  weight: '600',
 });
 
 const ui = computed(() => link({ underline: props.underline }));

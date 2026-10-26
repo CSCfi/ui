@@ -361,7 +361,7 @@ export const CIconButton = createComponent({
 /** Basic hyperlink component */
 export const CLink = createComponent({
   displayName: 'CLink',
-  elementClass: elementClass<CLinkElement>(['href', 'target', 'underline', 'weight']),
+  elementClass: elementClass<CLinkElement>(['href', 'target', 'underline']),
   react: React,
   tagName: 'c-link',
 });
@@ -624,9 +624,9 @@ export const CSelect = createComponent({
 /** The dashboard layout's left-hand menu: section titles, navigation items and their sub-items in a drawer that is pinned beside the page on desktop and slides in over it on mobile. */
 export const CSideNavigation = createComponent({
   displayName: 'CSideNavigation',
-  elementClass: elementClass<CSideNavigationElement>(['menuVisible', 'mobile', 'styles']),
+  elementClass: elementClass<CSideNavigationElement>(['mobile', 'open']),
   events: {
-    onChangeMenuVisible: 'change:menu-visible' as EventName<CSideNavigationElementEventMap['change:menu-visible']>,
+    onChangeOpen: 'change:open' as EventName<CSideNavigationElementEventMap['change:open']>,
   },
   react: React,
   tagName: 'c-side-navigation',

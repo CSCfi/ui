@@ -37,7 +37,6 @@
   "c-radio-group prop return-object",
   "c-radio-group prop value",
   "c-select prop value",
-  "c-side-navigation prop styles",
   "c-spinner prop color",
   "c-switch prop disabled",
   "c-switch slot label",

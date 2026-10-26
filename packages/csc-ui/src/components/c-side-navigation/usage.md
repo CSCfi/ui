@@ -24,7 +24,7 @@ Trailing content — a sign-out button, a help link — goes in the `bottom` slo
 
 ## Mobile
 
-Set `mobile` to render the drawer as a panel that slides in from the right over a backdrop. `menu-visible` opens and closes it, and a `c-navigation-button` anywhere on the page toggles it. Closing from within — the close button or the backdrop — emits `change:menu-visible`.
+Set `mobile` to render the drawer as a panel that slides in from the right over a backdrop. `open` opens and closes it, and a `c-navigation-button` anywhere on the page toggles it. Whenever the user opens or closes it — the navigation button, the close button, the backdrop, or activating an item, which closes it — the drawer fires `change:open` with the new state.
 
 ## Standalone
 

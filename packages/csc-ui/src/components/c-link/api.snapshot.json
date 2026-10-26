@@ -2,8 +2,7 @@
   "attributes": {
     "href": "string = ''",
     "target": "string = ''",
-    "underline": "boolean = false",
-    "weight": "number | string = '600'"
+    "underline": "boolean = false"
   },
   "cssProperties": [],
   "defaultable": [],
@@ -16,8 +15,7 @@
   "props": {
     "href": "string = ''",
     "target": "string = ''",
-    "underline": "boolean = false",
-    "weight": "number | string = '600'"
+    "underline": "boolean = false"
   },
   "slots": [
     "default"

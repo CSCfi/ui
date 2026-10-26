@@ -55,7 +55,7 @@ describe('c-side-navigation', () => {
 
   it('mobile: the item list scrolls and the bottom slot sits at the panel’s bottom edge', async () => {
     const m = await mount('c-side-navigation', {
-      attrs: { 'menu-visible': true, mobile: true },
+      attrs: { mobile: true, open: true },
       html: ITEMS + BOTTOM,
     });
 
@@ -129,7 +129,7 @@ describe('c-side-navigation', () => {
         'translate',
       );
 
-      (m.host as { menuVisible?: boolean } & HTMLElement).menuVisible = true;
+      (m.host as { open?: boolean } & HTMLElement).open = true;
       await settle(300);
 
       expect(getComputedStyle(drawer).visibility).toBe('visible');
@@ -191,5 +191,71 @@ describe('c-side-navigation', () => {
       expect(events.details()).toEqual([{ value: 'active' }]);
       expect(item(m, 'projects').active).toBe(true);
     });
+  });
+});
+
+describe('open (decisions #44)', () => {
+  type NavHost = { open?: boolean } & HTMLElement;
+
+  const ITEMS =
+    '<c-side-navigation-item value="/home">Home</c-side-navigation-item>';
+
+  const navButton = async () => {
+    const b = await mount('c-navigation-button');
+
+    return b.host
+      .shadowRoot!.querySelector('c-icon-button')!
+      .shadowRoot!.querySelector('button')!;
+  };
+
+  it('Enter on a c-navigation-button opens the drawer once, and fires change:open', async () => {
+    const nav = await mount<NavHost>('c-side-navigation', {
+      attrs: { mobile: true },
+      html: ITEMS,
+    });
+
+    const events = recordEvents(nav.host, ['change:open']);
+
+    (await navButton()).focus();
+    await userEvent.keyboard('{Enter}');
+    await settle();
+
+    expect(nav.host.open).toBe(true);
+    expect(events.records.map((r) => r.detail)).toEqual([true]);
+  });
+
+  it('activating a leaf item closes the drawer and fires change:open', async () => {
+    const nav = await mount<NavHost>('c-side-navigation', {
+      attrs: { mobile: true, open: true },
+      html: ITEMS,
+    });
+
+    const events = recordEvents(nav.host, ['change:open']);
+
+    nav.host.querySelector('c-side-navigation-item')!.dispatchEvent(
+      new CustomEvent('select', {
+        bubbles: true,
+        composed: true,
+        detail: { value: '/home' },
+      }),
+    );
+    await settle();
+
+    expect(nav.host.open).toBe(false);
+    expect(events.records.map((r) => r.detail)).toEqual([false]);
+  });
+
+  it('a value set from code fires nothing', async () => {
+    const nav = await mount<NavHost>('c-side-navigation', {
+      attrs: { mobile: true },
+      html: ITEMS,
+    });
+
+    const events = recordEvents(nav.host, ['change:open']);
+
+    nav.host.open = true;
+    await settle();
+
+    expect(events.records).toEqual([]);
   });
 });

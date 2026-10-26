@@ -1,25 +1,22 @@
 {
   "attributes": {
-    "menu-visible": "boolean = false",
-    "mobile": "boolean = false"
+    "mobile": "boolean = false",
+    "open": "boolean = false"
   },
   "cssProperties": [],
   "defaultable": [],
   "events": {
-    "change:menu-visible": "CustomEvent<boolean>"
+    "change:open": "CustomEvent<boolean>"
   },
   "methods": {},
   "parts": [
     "nav",
     "root"
   ],
-  "propertyOnly": [
-    "styles"
-  ],
+  "propertyOnly": [],
   "props": {
-    "menuVisible": "boolean = false",
     "mobile": "boolean = false",
-    "styles": "null | Record<string, string> = null"
+    "open": "boolean = false"
   },
   "slots": [
     "bottom",
