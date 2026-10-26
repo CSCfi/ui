@@ -133,9 +133,9 @@ interface CListItemProps {
   ripple?: boolean;
 
   /**
-   * Hyperlink target
+   * Where the `href` opens, as on a native `<a>`: the same tab unless set —
+   * `_blank` for a new one.
    *
-   * @seeded from csc-ui — verify
    * @freeform any browsing-context name (e.g. _blank, _self)
    */
   target?: string;
@@ -148,7 +148,7 @@ const props = withDefaults(defineProps<CListItemProps>(), {
   hoverable: false,
   href: '',
   ripple: false,
-  target: '_blank',
+  target: '',
 });
 
 const ui = computed(() => listItem({ active: props.active }));

@@ -103,3 +103,17 @@ describe('c-sub-navigation-item', () => {
     await matchScreenshotInBothModes(m.stage, 'sub-items');
   });
 });
+
+describe('current page', () => {
+  it('is announced by aria-current alone, not by added text', async () => {
+    const m = await mount('c-sub-navigation-item', {
+      attrs: { active: true },
+      html: 'Reports',
+    });
+
+    const row = m.part('root');
+
+    expect(row.getAttribute('aria-current')).toBe('page');
+    expect(row.textContent?.replace(/\s+/g, ' ').trim()).toBe('');
+  });
+});

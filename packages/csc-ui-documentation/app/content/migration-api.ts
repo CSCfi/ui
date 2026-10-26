@@ -426,4 +426,25 @@ export const V3_API_CHANGES: V3ApiChange[] = [
     name: 'aria-label',
     tag: 'c-slider',
   },
+  ...['c-button', 'c-list-item'].map((tag) => ({
+    change:
+      'Defaults to `\'\'`, as on a native `<a>`: an `href` opens in the same tab. Add `target="_blank"` where you relied on a new tab.',
+    kind: 'prop' as const,
+    name: 'target',
+    tag,
+  })),
+  ...['max', 'min', 'segments', 'step', 'value'].map((name) => ({
+    change:
+      'A number, and its events carry numbers. Attributes still work: `max="8"` reads as `8`.',
+    kind: 'prop' as const,
+    name,
+    tag: 'c-slider',
+  })),
+  {
+    change:
+      'Defaults to no unit (it was `%`). Add `unit="%"` to show a percentage.',
+    kind: 'prop',
+    name: 'unit',
+    tag: 'c-slider',
+  },
 ];

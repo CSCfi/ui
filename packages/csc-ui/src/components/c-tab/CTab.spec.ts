@@ -169,9 +169,9 @@ describe('c-tab strip', () => {
     ).toBe(true);
 
     expect(
-      m.shadowAll('c-icon-button').length,
-      'back and forward arrows rendered',
-    ).toBe(2);
+      m.shadowAll('c-icon-button').map((b) => b.getAttribute('aria-label')),
+      'back and forward arrows rendered, with names',
+    ).toEqual(['Scroll tabs back', 'Scroll tabs forward']);
   });
 });
 

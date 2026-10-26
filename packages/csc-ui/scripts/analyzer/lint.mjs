@@ -7,8 +7,8 @@
  *   - template slot without an `@slot` (or `@internalslot`) tag / either tag
  *     naming no template slot, or one slot carrying both
  *   - part (own, stamped by an imported `src/shared/*.vue` SFC, or
- *     exportparts-exposed) without an `@csspart` tag / `@csspart` naming no
- *     part
+ *     exportparts-exposed) without an `@csspart` (or `@internalpart`) tag /
+ *     either tag naming no part
  *   - a `setState('<name>')` custom state without a `@cssstate` tag /
  *     `@cssstate` naming a state the script never sets
  *   - a raw `new CustomEvent(` / `new Event(` in the SFC — events must go
@@ -85,7 +85,18 @@ export const lintComponent = (
     }
   }
 
-  const taggedParts = tagged('csspart');
+  // `@internalpart` documents a part a shared template stamps but this
+  // component never renders (c-color-picker has no range, so no range
+  // separator): checked like `@csspart`, never published.
+  const internalParts = tagged('internalpart');
+
+  for (const part of internalParts) {
+    if (tagged('csspart').includes(part)) {
+      errors.push(`part "${part}" is tagged both @csspart and @internalpart`);
+    }
+  }
+
+  const taggedParts = [...tagged('csspart'), ...internalParts];
 
   const taggedCssProps = tagged('cssprop');
 

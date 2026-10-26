@@ -554,7 +554,7 @@ interface CColorPickerProps {
 <script setup lang="ts">
 /**
  * @csspart input - The text input; under `swatches-only` the readonly field
- * @csspart separator - Unused: the shared typed field's range separator
+ * @internalpart separator - The shared typed field's range separator; a colour has no range
  * @csspart color-chip - The colour painted in the colour button, or before the swatch-only field's text
  * @csspart panel - The top-layer popover container anchored below the field
  * @csspart card - The dialog surface inside the panel

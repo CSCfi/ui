@@ -64,3 +64,31 @@ describe('3.x attribute names (R1)', () => {
     expect(range.labels?.[0]?.textContent?.trim()).toBe('Volume');
   });
 });
+
+describe('numbers (decisions D12)', () => {
+  it('reads numeric attributes as numbers and emits a number', async () => {
+    const m = await mount<{ value: unknown } & HTMLElement>('c-slider', {
+      attrs: { label: 'Cores', max: 8, value: 3 },
+    });
+
+    expect(m.host.value).toBe(3);
+
+    const range = m.shadow<HTMLInputElement>('input[type="range"]');
+
+    const details: unknown[] = [];
+    m.host.addEventListener('update:value', (e) =>
+      details.push((e as CustomEvent).detail),
+    );
+    range.value = '5';
+    range.dispatchEvent(new Event('input', { bubbles: true }));
+    await settle();
+
+    expect(details).toEqual([5]);
+  });
+
+  it('shows no unit unless one is set', async () => {
+    const m = await mount('c-slider', { attrs: { label: 'Cores', value: 3 } });
+
+    expect(m.shadow('[data-tooltip]').getAttribute('data-tooltip')).toBe('3');
+  });
+});

@@ -116,7 +116,13 @@ const stopObserving = () => {
   tableEl?.classList.remove('c-table--mobile');
 };
 
+/**
+ * Re-read the header cells into the narrow layout's row labels, after the
+ * table's rows or headers changed from code.
+ */
 const updateMobileLabels = () => createMobileLabels();
+
+defineExpose({ updateMobileLabels });
 
 // Adopt the slotted `<table>`: stamp the styling hook class and (re)wire the
 // responsive machinery. Idempotent — runs on mount and on every slotchange,
@@ -146,9 +152,6 @@ const adoptTable = () => {
 
 onMounted(() => {
   if (!host) return;
-
-  (host as unknown as { updateMobileLabels: () => void }).updateMobileLabels =
-    updateMobileLabels;
 
   adoptTable();
 

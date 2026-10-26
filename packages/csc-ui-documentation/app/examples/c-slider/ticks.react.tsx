@@ -16,7 +16,6 @@ export const Ticks = () => {
         segments="8"
         step="1"
         ticks
-        unit=""
         value={cores}
       />
     </div>

@@ -37,6 +37,7 @@ it('the wave-1 allow-list is exactly the documented tags', () => {
     'c-data-table',
     'c-date-picker',
     'c-file-upload',
+    'c-navigation-button',
     'c-number-field',
     'c-pagination',
     'c-select',

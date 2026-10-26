@@ -218,6 +218,15 @@
   --_c-control-height: 52px;
 }
 
+/*
+ * `hidden` hides a component as it hides any element. The `display` above
+ * (and a component's own `:host` box) is author CSS, which beats the UA's
+ * `[hidden] { display: none }`, so without this `hidden` did nothing.
+ */
+:host([hidden]) {
+  display: none !important;
+}
+
 :where(
   a,
   button,

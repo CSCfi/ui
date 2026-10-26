@@ -495,7 +495,7 @@ export const CModal = createComponent({
 
 export const CNavigationButton = createComponent({
   displayName: 'CNavigationButton',
-  elementClass: elementClass<CNavigationButtonElement>([]),
+  elementClass: elementClass<CNavigationButtonElement>(['texts']),
   react: React,
   tagName: 'c-navigation-button',
 });

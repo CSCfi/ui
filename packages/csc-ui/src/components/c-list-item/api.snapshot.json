@@ -5,7 +5,7 @@
     "hoverable": "boolean = false",
     "href": "string = ''",
     "ripple": "boolean = false",
-    "target": "string = '_blank'"
+    "target": "string = ''"
   },
   "cssProperties": [],
   "defaultable": [],
@@ -21,7 +21,7 @@
     "hoverable": "boolean = false",
     "href": "string = ''",
     "ripple": "boolean = false",
-    "target": "string = '_blank'"
+    "target": "string = ''"
   },
   "slots": [
     "default",

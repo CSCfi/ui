@@ -1,4 +1,5 @@
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
+import { userEvent } from 'vitest/browser';
 
 import { matchScreenshotInBothModes, mount, settled } from '../../test/harness';
 
@@ -46,5 +47,48 @@ describe('c-button ripple', () => {
     expect(ripples.getPropertyValue('corner-shape')).toBe(
       root.getPropertyValue('corner-shape'),
     );
+  });
+});
+
+describe('c-button link (decisions #7)', () => {
+  const mountLink = async (attrs: Record<string, string> = {}) => {
+    const m = await mount('c-button', {
+      attrs: { href: '#somewhere', ...attrs },
+      html: 'Docs',
+    });
+
+    const anchor = m.part('root') as HTMLAnchorElement;
+
+    const clicks: string[] = [];
+
+    // Record the activation, and keep the test page where it is.
+    anchor.addEventListener('click', (event) => {
+      clicks.push(anchor.target);
+      event.preventDefault();
+    });
+
+    return { anchor, clicks };
+  };
+
+  it('opens in the same tab unless target is set, as a native link does', async () => {
+    const { anchor } = await mountLink();
+
+    expect(anchor.hasAttribute('target') ? anchor.target : '').toBe('');
+  });
+
+  it('Space clicks the link; nothing opens a window behind its back', async () => {
+    const open = vi.spyOn(window, 'open').mockReturnValue(null);
+
+    try {
+      const { anchor, clicks } = await mountLink();
+
+      anchor.focus();
+      await userEvent.keyboard(' ');
+
+      expect(clicks).toEqual(['']);
+      expect(open).not.toHaveBeenCalled();
+    } finally {
+      open.mockRestore();
+    }
   });
 });

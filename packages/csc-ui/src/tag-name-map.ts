@@ -18,6 +18,7 @@ import type { CColorPickerSwatch, CColorPickerTexts, CColorPickerValue } from '.
 import type { CDataTableCellContent, CDataTableColumn, CDataTableExpandedContext, CDataTableRow, CDataTableSort, CDataTableTexts } from './components/c-data-table/CDataTable.vue';
 import type { CDatePickerDisabledDate, CDatePickerText, CDatePickerTexts, CDatePickerValue } from './components/c-date-picker/CDatePicker.vue';
 import type { CFileUploadEntry, CFileUploadFunction, CFileUploadRejection, CFileUploadTexts } from './components/c-file-upload/CFileUpload.vue';
+import type { CNavigationButtonTexts } from './components/c-navigation-button/CNavigationButton.vue';
 import type { CNumberFieldTexts } from './components/c-number-field/CNumberField.vue';
 import type { CPaginationOptions, CPaginationTexts } from './components/c-pagination/CPagination.vue';
 import type { CSelectTexts, CSelectValue } from './components/c-select/CSelect.vue';
@@ -313,7 +314,10 @@ export interface CButtonElement extends Omit<HTMLElement, 'active' | 'danger' | 
   outlined?: boolean;
   /** Size of the button */
   size?: 'default' | 'large' | 'small';
-  /** Hyperlink target */
+  /**
+   * Where the `href` opens, as on a native `<a>`: the same tab unless set —
+   * `_blank` for a new one.
+   */
   target?: string;
   /** Transparent button background */
   text?: boolean;
@@ -1015,7 +1019,10 @@ export interface CListItemElement extends Omit<HTMLElement, 'active' | 'disabled
   href?: string;
   /** Add ripple effect to the item */
   ripple?: boolean;
-  /** Hyperlink target */
+  /**
+   * Where the `href` opens, as on a native `<a>`: the same tab unless set —
+   * `_blank` for a new one.
+   */
   target?: string;
 }
 
@@ -1234,7 +1241,12 @@ export interface CModalElement extends Omit<HTMLElement, 'disableBackdropBlur' |
   ): void;
 }
 
-export interface CNavigationButtonElement extends HTMLElement {
+export interface CNavigationButtonElement extends Omit<HTMLElement, 'texts'> {
+  /**
+   * UI text overrides (i18n), merged over the English defaults. Objects have
+   * no attribute form — bind as a DOM property
+   */
+  texts?: CNavigationButtonTexts;
 }
 
 /** Events dispatched by `<c-number-field>`. */
@@ -1538,7 +1550,10 @@ export interface CProgressBarElement extends Omit<HTMLElement, 'hideDetails' | '
   hideDetails?: boolean;
   /** Indeterminate state of the progress bar */
   indeterminate?: boolean;
-  /** Optional details message next to percentage display */
+  /**
+   * What is progressing: shown after the percentage, and the progress bar's
+   * accessible name.
+   */
   label?: string;
   /** Place details next to progress bar */
   singleLine?: boolean;
@@ -1834,10 +1849,9 @@ export interface CSideNavigationTitleElement extends HTMLElement {
 export interface CSliderElementEventMap {
   /**
    * Fired when a move is committed — the release that ends a drag, or each
-   * arrow-key step — carrying the slider value: a number when the current
-   * `value` prop is a number, otherwise a string.
+   * arrow-key step — carrying the value.
    */
-  change: CustomEvent<number | string>;
+  change: CustomEvent<number>;
   /**
    * Native bubbling input event fired on every thumb movement so a plain Vue
    * `v-model` stays in sync. No detail.
@@ -1845,10 +1859,9 @@ export interface CSliderElementEventMap {
   input: CustomEvent<void>;
   /**
    * v-model contract event fired on every thumb movement, carrying the new
-   * slider value — a number when the current `value` prop is a number,
-   * otherwise a string.
+   * value.
    */
-  'update:value': CustomEvent<number | string>;
+  'update:value': CustomEvent<number>;
 }
 
 export interface CSliderElement extends Omit<HTMLElement, 'disabled' | 'disableTooltip' | 'label' | 'labels' | 'max' | 'min' | 'name' | 'segments' | 'step' | 'ticks' | 'unit' | 'value'> {
@@ -1860,25 +1873,25 @@ export interface CSliderElement extends Omit<HTMLElement, 'disabled' | 'disableT
   label?: string;
   /** Show tick labels */
   labels?: boolean;
-  /** Max value */
-  max?: number | string;
-  /** Min value */
-  min?: number | string;
+  /** The largest value. */
+  max?: number;
+  /** The smallest value. */
+  min?: number;
   /**
    * `name` of the inner range input. The component is not
    * form-associated, so it does not submit with a `<form>`.
    */
   name?: string;
-  /** Segment count */
-  segments?: number | string;
-  /** Step */
-  step?: number | string;
+  /** Number of segments the tick marks divide the track into. */
+  segments?: number;
+  /** Step between values. */
+  step?: number;
   /** Thow ticks */
   ticks?: boolean;
-  /** Unit */
+  /** Unit shown after the value in the tooltip and read with it, e.g. `%`. */
   unit?: string;
-  /** Value */
-  value?: number | string;
+  /** The value, a number between `min` and `max`. */
+  value?: number;
   addEventListener<K extends keyof CSliderElementEventMap>(
     type: K,
     listener: (this: CSliderElement, ev: CSliderElementEventMap[K]) => void,
@@ -2066,6 +2079,11 @@ export interface CTableElement extends Omit<HTMLElement, 'mobileBreakpoint' | 'r
   mobileBreakpoint?: number;
   /** Should the table be responsive */
   responsive?: boolean;
+  /**
+   * Re-read the header cells into the narrow layout's row labels, after the
+   * table's rows or headers changed from code.
+   */
+  updateMobileLabels(): void;
 }
 
 /** Events dispatched by `<c-tabs>`. */
@@ -2637,6 +2655,7 @@ export interface AppDefaults {
   'c-data-table'?: Partial<Pick<CDataTableElement, 'texts'>>;
   'c-date-picker'?: Partial<Pick<CDatePickerElement, 'firstDayOfWeek' | 'format' | 'hideDetails' | 'labelOnTop' | 'shadow' | 'showToday' | 'showWeekNumbers' | 'size' | 'texts'>>;
   'c-file-upload'?: Partial<Pick<CFileUploadElement, 'compact' | 'hideDetails' | 'size' | 'texts'>>;
+  'c-navigation-button'?: Partial<Pick<CNavigationButtonElement, 'texts'>>;
   'c-number-field'?: Partial<Pick<CNumberFieldElement, 'decimalSeparator' | 'decimals' | 'fixedDecimals' | 'groupSeparator' | 'hideDetails' | 'labelOnTop' | 'shadow' | 'size' | 'step' | 'texts'>>;
   'c-pagination'?: Partial<Pick<CPaginationElement, 'texts'>>;
   'c-select'?: Partial<Pick<CSelectElement, 'hideDetails' | 'itemsPerPage' | 'labelOnTop' | 'shadow' | 'size' | 'texts'>>;
@@ -2653,6 +2672,7 @@ export const DEFAULTABLE_PROPS = {
   'c-data-table': ['texts'],
   'c-date-picker': ['firstDayOfWeek', 'format', 'hideDetails', 'labelOnTop', 'shadow', 'showToday', 'showWeekNumbers', 'size', 'texts'],
   'c-file-upload': ['compact', 'hideDetails', 'size', 'texts'],
+  'c-navigation-button': ['texts'],
   'c-number-field': ['decimalSeparator', 'decimals', 'fixedDecimals', 'groupSeparator', 'hideDetails', 'labelOnTop', 'shadow', 'size', 'step', 'texts'],
   'c-pagination': ['texts'],
   'c-select': ['hideDetails', 'itemsPerPage', 'labelOnTop', 'shadow', 'size', 'texts'],

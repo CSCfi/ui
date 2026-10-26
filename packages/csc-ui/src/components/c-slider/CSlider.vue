@@ -80,10 +80,9 @@ defineOptions({ inheritAttrs: false });
 interface CSliderEvents {
   /**
    * Fired when a move is committed — the release that ends a drag, or each
-   * arrow-key step — carrying the slider value: a number when the current
-   * `value` prop is a number, otherwise a string.
+   * arrow-key step — carrying the value.
    */
-  change: number | string;
+  change: number;
 
   /**
    * Native bubbling input event fired on every thumb movement so a plain Vue
@@ -93,10 +92,9 @@ interface CSliderEvents {
 
   /**
    * v-model contract event fired on every thumb movement, carrying the new
-   * slider value — a number when the current `value` prop is a number,
-   * otherwise a string.
+   * value.
    */
-  'update:value': number | string;
+  'update:value': number;
 }
 
 /**
@@ -197,19 +195,11 @@ interface CSliderProps {
    */
   labels?: boolean;
 
-  /**
-   * Max value
-   *
-   * @seeded from csc-ui — verify
-   */
-  max?: number | string;
+  /** The largest value. */
+  max?: number;
 
-  /**
-   * Min value
-   *
-   * @seeded from csc-ui — verify
-   */
-  min?: number | string;
+  /** The smallest value. */
+  min?: number;
 
   /**
    * `name` of the inner range input. The component is not
@@ -219,19 +209,11 @@ interface CSliderProps {
    */
   name?: string;
 
-  /**
-   * Segment count
-   *
-   * @seeded from csc-ui — verify
-   */
-  segments?: number | string;
+  /** Number of segments the tick marks divide the track into. */
+  segments?: number;
 
-  /**
-   * Step
-   *
-   * @seeded from csc-ui — verify
-   */
-  step?: number | string;
+  /** Step between values. */
+  step?: number;
 
   /**
    * Thow ticks
@@ -241,19 +223,14 @@ interface CSliderProps {
   ticks?: boolean;
 
   /**
-   * Unit
+   * Unit shown after the value in the tooltip and read with it, e.g. `%`.
    *
-   * @seeded from csc-ui — verify
    * @freeform
    */
   unit?: string;
 
-  /**
-   * Value
-   *
-   * @seeded from csc-ui — verify
-   */
-  value?: number | string;
+  /** The value, a number between `min` and `max`. */
+  value?: number;
 }
 
 const props = withDefaults(defineProps<CSliderProps>(), {
@@ -261,14 +238,14 @@ const props = withDefaults(defineProps<CSliderProps>(), {
   disableTooltip: false,
   label: '',
   labels: false,
-  max: '100',
-  min: '0',
+  max: 100,
+  min: 0,
   name: '',
-  segments: '10',
-  step: '1',
+  segments: 10,
+  step: 1,
   ticks: false,
-  unit: '%',
-  value: '50',
+  unit: '',
+  value: 50,
 });
 
 const ui = computed(() =>
@@ -325,9 +302,7 @@ const cssVars = computed(() => ({
 
 // Typed against the event map so the emitted detail is compile-checked.
 const valueOf = (e: Event): CSliderEvents['change'] => {
-  const v = (e.target as HTMLInputElement).value;
-
-  return typeof props.value === 'number' ? +v : v;
+  return Number((e.target as HTMLInputElement).value);
 };
 
 // The inner range input's own timing: `input` on every move, `change` on the

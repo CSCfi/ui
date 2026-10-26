@@ -10,6 +10,7 @@
       part="bar"
     >
       <progress
+        :aria-label="label || undefined"
         :aria-valuenow="indeterminate ? undefined : String(safeValue)"
         :value="indeterminate ? undefined : safeValue"
         max="100"
@@ -101,9 +102,9 @@ interface CProgressBarProps {
   indeterminate?: boolean;
 
   /**
-   * Optional details message next to percentage display
+   * What is progressing: shown after the percentage, and the progress bar's
+   * accessible name.
    *
-   * @seeded from csc-ui — verify
    * @freeform
    */
   label?: string;

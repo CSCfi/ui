@@ -11,8 +11,6 @@
         <div :class="ui.slot()">
           <slot />
         </div>
-
-        <span v-if="active" :class="ui.srOnly()">, Current page</span>
       </div>
 
       <c-loader :hide="!loading" :size="32" style="pointer-events: none" />
@@ -73,8 +71,6 @@ const subNavigationItem = tv({
     item: 'relative mx-2 flex cursor-pointer items-center overflow-hidden rounded-csc-md bg-transparent px-0 pl-[34px] leading-[46px] font-normal text-on-nav-active transition-colors duration-200 ease-in outline-none select-none before:absolute before:top-0 before:left-0 before:h-full before:w-2 before:[transform:translateZ(0)_translateX(-8px)] before:bg-on-nav-active before:transition-transform before:duration-200 before:ease-in-out before:content-[""]',
     root: 'py-0.5',
     slot: 'overflow-hidden text-ellipsis whitespace-nowrap',
-    srOnly:
-      'absolute -m-px h-px w-px overflow-hidden border-0 p-0 whitespace-nowrap [clip:rect(0_0_0_0)]',
   },
   variants: {
     active: {

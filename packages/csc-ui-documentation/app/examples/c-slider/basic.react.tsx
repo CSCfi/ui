@@ -10,6 +10,7 @@ export const Basic = () => {
       <CSlider
         label="Volume"
         onUpdateValue={(event) => setVolume(event.detail as number)}
+        unit="%"
         value={volume}
       />
 

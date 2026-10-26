@@ -149,9 +149,9 @@ interface CButtonProps {
   size?: CButtonSize;
 
   /**
-   * Hyperlink target
+   * Where the `href` opens, as on a native `<a>`: the same tab unless set —
+   * `_blank` for a new one.
    *
-   * @seeded from csc-ui — verify
    * @freeform any browsing-context name (e.g. _blank, _self)
    */
   target?: string;
@@ -491,7 +491,7 @@ const props = withDefaults(defineProps<CButtonProps>(), {
   noRipple: false,
   outlined: false,
   size: 'default',
-  target: '_blank',
+  target: '',
   text: false,
   type: 'button',
   value: undefined,
@@ -574,11 +574,12 @@ const onKeydown = (event: KeyboardEvent) => {
     return;
   }
 
-  if (event.code === 'Space' || event.code === 'Enter') {
-    if (props.href) {
-      window.open(props.href, props.target);
-      event.preventDefault();
-    }
+  // A link activates natively on Enter, honouring `target`. Space, which a
+  // button answers and a link does not, clicks it the same way —
+  // `window.open(href, '')` would open a new tab for the empty target.
+  if (props.href && event.code === 'Space') {
+    event.preventDefault();
+    rootRef.value?.click();
   }
 };
 </script>

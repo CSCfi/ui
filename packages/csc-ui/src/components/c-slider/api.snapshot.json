@@ -4,21 +4,21 @@
     "disabled": "boolean = false",
     "label": "string = ''",
     "labels": "boolean = false",
-    "max": "number | string = '100'",
-    "min": "number | string = '0'",
+    "max": "number = 100",
+    "min": "number = 0",
     "name": "string = ''",
-    "segments": "number | string = '10'",
-    "step": "number | string = '1'",
+    "segments": "number = 10",
+    "step": "number = 1",
     "ticks": "boolean = false",
-    "unit": "string = '%'",
-    "value": "number | string = '50'"
+    "unit": "string = ''",
+    "value": "number = 50"
   },
   "cssProperties": [],
   "defaultable": [],
   "events": {
-    "change": "CustomEvent<number | string>",
+    "change": "CustomEvent<number>",
     "input": "CustomEvent<void>",
-    "update:value": "CustomEvent<number | string>"
+    "update:value": "CustomEvent<number>"
   },
   "methods": {},
   "parts": [
@@ -32,14 +32,14 @@
     "disableTooltip": "boolean = false",
     "label": "string = ''",
     "labels": "boolean = false",
-    "max": "number | string = '100'",
-    "min": "number | string = '0'",
+    "max": "number = 100",
+    "min": "number = 0",
     "name": "string = ''",
-    "segments": "number | string = '10'",
-    "step": "number | string = '1'",
+    "segments": "number = 10",
+    "step": "number = 1",
     "ticks": "boolean = false",
-    "unit": "string = '%'",
-    "value": "number | string = '50'"
+    "unit": "string = ''",
+    "value": "number = 50"
   },
   "slots": [],
   "states": [],

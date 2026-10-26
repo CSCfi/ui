@@ -1,8 +1,29 @@
 <template>
-  <c-icon-button :class="ui.root()" part="root" text>
+  <c-icon-button :aria-label="t.label" :class="ui.root()" part="root" text>
     <c-icon :path="menuIcon" />
   </c-icon-button>
 </template>
+
+<script lang="ts">
+/**
+ * UI texts of `c-navigation-button`, shallow-merged over the English
+ * defaults.
+ */
+export interface CNavigationButtonTexts {
+  /** Accessible name of the button. */
+  label?: string;
+}
+
+interface CNavigationButtonProps {
+  /**
+   * UI text overrides (i18n), merged over the English defaults. Objects have
+   * no attribute form — bind as a DOM property
+   *
+   * @defaultable {}
+   */
+  texts?: CNavigationButtonTexts;
+}
+</script>
 
 <script setup lang="ts">
 /**
@@ -11,6 +32,8 @@
 import { mdiMenu } from '@mdi/js';
 import { tv } from 'tailwind-variants';
 import { computed } from 'vue';
+
+import { useAppDefault } from '../../shared/appDefaults';
 
 /**
  * Styling lives entirely in this `tailwind-variants` config. The
@@ -34,6 +57,20 @@ const navigationButton = tv({
 // `<c-icon-button>` and turned it into a *second* tab stop (host id leaked the
 // same way). Don't set tabindex here, and suppress the fallthrough entirely.
 defineOptions({ inheritAttrs: false });
+
+const props = withDefaults(defineProps<CNavigationButtonProps>(), {
+  texts: undefined,
+});
+
+// `texts` resolves own value → app default → built-in, key by key (see
+// src/shared/appDefaults.ts).
+const appDefault = useAppDefault('c-navigation-button', props);
+
+const DEFAULT_TEXTS: Required<CNavigationButtonTexts> = {
+  label: 'Menu',
+};
+
+const t = appDefault('texts', DEFAULT_TEXTS);
 
 const ui = computed(() => navigationButton());
 

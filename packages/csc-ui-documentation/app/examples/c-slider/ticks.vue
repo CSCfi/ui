@@ -7,7 +7,6 @@
       min="0"
       segments="8"
       step="1"
-      unit=""
       labels
       ticks
     />

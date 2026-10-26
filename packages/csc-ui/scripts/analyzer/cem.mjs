@@ -17,7 +17,8 @@
  *
  * Anything marked internal (ADR-0075) is left out: an `@internal` component
  * gets no declaration, an `@internal` prop or event no entry, and an
- * `@internalslot` no slot. The manifest is the public API (ADR-0074).
+ * `@internalslot` no slot, an `@internalpart` no part. The manifest is the
+ * public API (ADR-0074).
  */
 
 const kebab = (name) =>

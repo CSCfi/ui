@@ -44,6 +44,19 @@ describe.each(registeredTags)('%s', (tag) => {
     expect(host.shadowRoot).not.toBeNull();
   });
 
+  // `display: contents` (and a component's own `:host` box) is author CSS,
+  // which beats the UA's `[hidden]` rule (decisions #15).
+  it('is hidden by a hidden attribute, as any element is', async () => {
+    const fixture = FIXTURES[tag] ?? {};
+
+    const { host } = await mount(tag, {
+      ...fixture,
+      attrs: { ...fixture.attrs, hidden: true },
+    });
+
+    expect(getComputedStyle(host).display).toBe('none');
+  });
+
   it('mounts and disconnects without console output', async () => {
     const m = await mount(tag, FIXTURES[tag]);
 
