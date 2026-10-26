@@ -594,12 +594,6 @@ export const TOKEN_GROUPS: TokenGroup[] = [
         purpose: 'Emphasized borders, e.g. resting form-field outlines.',
         token: 'border-strong',
       },
-      {
-        dark: 'accent-400',
-        light: 'primary-500',
-        purpose: 'Keyboard focus ring.',
-        token: 'ring',
-      },
     ],
   },
   {

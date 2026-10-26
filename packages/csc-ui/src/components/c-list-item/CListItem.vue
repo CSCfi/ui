@@ -302,9 +302,9 @@ slot:not([name]) {
 
 /* Grey a disabled item's slotted icon. c-icon applies its `color` prop as the
  * path's own inline fill, which inherited `color` cannot override, so use
- * c-icon's `--c-icon-color` override hook (it inherits across the shadow
+ * c-icon's private `--_c-icon-color` override hook (it inherits across the shadow
  * boundary and wins over the prop fallback). */
 :host([disabled]) ::slotted(c-icon) {
-  --c-icon-color: var(--c-on-surface-muted) !important;
+  --_c-icon-color: var(--c-on-surface-muted) !important;
 }
 </style>

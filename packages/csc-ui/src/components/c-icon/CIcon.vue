@@ -24,14 +24,15 @@ import { computed } from 'vue';
  * values, so they're applied directly as inline styles on the SVG / path rather
  * than enumerable `tv` variants. Consumer customization is via `::part()`.
  *
- * COLOUR OVERRIDE HOOK: the path fill is `var(--c-icon-color, <color prop>)`,
- * so the `color` prop is the default but an ANCESTOR can recolour a slotted icon
- * by setting `--c-icon-color` (it inherits across the shadow boundary). This is
+ * COLOUR OVERRIDE HOOK: the path fill is `var(--_c-icon-color, <color prop>)`,
+ * so the `color` prop is the default but an ANCESTOR library component can
+ * recolour a slotted icon by setting the private `--_c-icon-color` (it
+ * inherits across the shadow boundary; not a consumer hook, ADR-0006). This is
  * needed because the `color` prop lands as the path's own inline declaration,
  * which inherited `color`/`currentColor` cannot override — e.g. a disabled
  * c-list-item greying a `<c-icon color="...">`. Default fallback is
  * `currentColor`, so icons without a `color` still follow the inherited colour
- * (no behavioural change when `--c-icon-color` is unset).
+ * (no behavioural change when `--_c-icon-color` is unset).
  */
 const icon = tv({
   slots: {
@@ -67,7 +68,7 @@ const ui = computed(() => icon());
 
 const iconSize = computed(() => `${props.size}px`);
 
-// `color` is the fallback; an ancestor's `--c-icon-color` (inherited across the
+// `color` is the fallback; an ancestor's `--_c-icon-color` (inherited across the
 // shadow boundary) wins — see the COLOUR OVERRIDE HOOK note above.
-const pathFill = computed(() => `var(--c-icon-color, ${props.color})`);
+const pathFill = computed(() => `var(--_c-icon-color, ${props.color})`);
 </script>

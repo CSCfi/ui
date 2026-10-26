@@ -46,7 +46,7 @@ import { useAppDefault } from '../../shared/appDefaults';
  */
 const navigationButton = tv({
   slots: {
-    root: 'mr-0 block cursor-pointer rounded-full text-[var(--c-text-system)] select-none',
+    root: 'mr-0 block cursor-pointer rounded-full text-on-surface-muted select-none',
   },
 });
 

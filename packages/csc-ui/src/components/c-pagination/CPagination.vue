@@ -251,9 +251,8 @@ interface CPaginationEvents {
  * longer themed via the removed `--c-icon-button-*` vars — the active page uses
  * the icon-button DEFAULT appearance (primary-600 bg / white text) and every
  * other control uses its `text` appearance (transparent / primary-600 text).
- * The c-menu vars are likewise gone; the menu styles itself. Body text uses the
- * design token directly (`text-[var(--c-text-system)]` — no `text-system`
- * utility exists in this theme).
+ * The c-menu vars are likewise gone; the menu styles itself. Its text is the
+ * `on-surface-muted` role, which themes in dark mode.
  *
  * The `:host(.c-pagination--simple|--small) ul` positional host rules map
  * directly to the `simple`/`size` props, so they become tv variants on `pages`.
@@ -277,9 +276,9 @@ const pagination = tv({
     // `justify-between` puts a lone item at the start, flush under the
     // items-per-page control.
     details:
-      'flex flex-auto flex-wrap items-center justify-between gap-x-6 gap-y-1 text-[var(--c-text-system)]',
+      'flex flex-auto flex-wrap items-center justify-between gap-x-6 gap-y-1 text-on-surface-muted',
     itemsPerPage:
-      'flex items-center gap-1 text-right text-sm whitespace-nowrap text-[var(--c-text-system)]',
+      'flex items-center gap-1 text-right text-sm whitespace-nowrap text-on-surface-muted',
     itemsPerPageValue: '',
     // 'cursor-pointer border-0 bg-transparent p-0 text-sm text-primary underline decoration-dotted underline-offset-4 [font-family:inherit]',
     pages: 'm-0 flex list-none items-center justify-center gap-1 p-0',

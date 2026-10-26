@@ -315,17 +315,6 @@
         "value": "#1c2022ff"
       }
     },
-    "text": {
-      "dark": {
-        "value": "#2e3438ff"
-      },
-      "light": {
-        "value": "#ffffffff"
-      }
-    },
-    "transparent": {
-      "value": "transparent"
-    },
     "warning": {
       "50": {
         "value": "#fff8f6ff"
@@ -363,12 +352,6 @@
     },
     "white": {
       "value": "#ffffffff"
-    },
-    "text-body": {
-      "value": "var(--c-primary-900)"
-    },
-    "text-system": {
-      "value": "var(--c-tertiary-600)"
     }
   }
 }

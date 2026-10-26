@@ -421,7 +421,7 @@ interface CSelectEvents {
  * `.c-input-menu__chevron--active` / `.c-input-menu__selection--show` classes.
  * The per-component `--c-select-*` override-variable layer is dropped in favour
  * of the global design tokens (`text-primary-600` for the active colour,
- * `text-[var(--c-text-body)]` for text, `text-tertiary-500` for placeholder);
+ * the semantic text roles for text and placeholder);
  * consumer customization is via `::part()`, there is no `override`
  * prop.
  *
