@@ -746,3 +746,16 @@ describe('page typography (CONTEXT.md, ADR-0072)', () => {
     );
   });
 });
+
+describe('value attribute', () => {
+  it('a value attribute in markup selects the option', async () => {
+    const m = await mount<SelectHost>('c-select', {
+      attrs: { label: 'Country', value: 'se' },
+      html: COUNTRIES,
+    });
+    await settle();
+
+    expect(m.host.value).toBe('se');
+    expect(combobox(m).value).toBe('Sweden');
+  });
+});

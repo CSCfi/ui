@@ -32,6 +32,53 @@ const kebab = (name) =>
  */
 const isAttributeCompatible = (type) => !/=>|\{|\[\]|Record<|Array</.test(type);
 
+/** A type's members at its top-level `|`, outside brackets of any kind. */
+const unionMembers = (type) => {
+  const members = [];
+
+  let depth = 0;
+
+  let current = '';
+
+  for (const char of type) {
+    if ('([{<'.includes(char)) depth += 1;
+    else if (')]}>'.includes(char)) depth -= 1;
+
+    if (char === '|' && depth === 0) {
+      members.push(current.trim());
+      current = '';
+    } else {
+      current += char;
+    }
+  }
+
+  return [...members, current.trim()].filter(Boolean);
+};
+
+const ATTRIBUTE_MEMBER =
+  /^(?:string|number|boolean|true|false|-?\d+(?:\.\d+)?|'[^']*'|"[^"]*")$/;
+
+/**
+ * The type an attribute can carry for a prop: the whole type when it
+ * round-trips through an attribute, else its string, number and boolean
+ * members — `c-select`'s `value` takes an option's value as `value="fi"`,
+ * though the property also takes `{ name, value }` items and arrays (3.x
+ * documented the attribute, and Vue applies it). `null` when nothing does.
+ */
+const attributeType = (prop) => {
+  if (prop.propertyOnly) return null;
+
+  const resolved = prop.typeResolved ?? prop.type;
+
+  if (isAttributeCompatible(resolved)) return prop.typeExpanded ?? prop.type;
+
+  const members = unionMembers(resolved).filter((m) =>
+    ATTRIBUTE_MEMBER.test(m),
+  );
+
+  return members.length ? members.join(' | ') : null;
+};
+
 /**
  * The manifest's standard `type.text` carries the expanded literal union so
  * third-party IDE-data generators can derive value completions; the alias
@@ -68,7 +115,7 @@ const attribute = (prop) => ({
   fieldName: prop.name,
   name: kebab(prop.name),
   ...(prop.description ? { description: prop.description } : {}),
-  ...typeEntry(prop),
+  type: { text: attributeType(prop) },
   ...(prop.default !== undefined ? { default: prop.default } : {}),
   ...typeCsc(prop),
 });
@@ -119,7 +166,7 @@ export const buildManifest = (components, sharedTypes) => ({
         ...declarationCsc(c),
         attributes: c.props
           .filter(isPublic)
-          .filter((p) => isAttributeCompatible(p.typeResolved ?? p.type))
+          .filter((p) => attributeType(p) !== null)
           .map(attribute),
         cssParts: docTagEntries(c.docTags, 'csspart'),
         cssProperties: docTagEntries(c.docTags, 'cssprop').map((entry) => ({

@@ -465,6 +465,8 @@ interface CFileUploadProps {
 
   /**
    * The file entries — always a list. A picked file's entry carries the browser `File`; a server file's entry is `{ id, name, size, status: 'done' }`. `''` reads as empty — what a plain `v-model` holding `null` writes. An array — bind as a DOM property
+   *
+   * @propertyonly
    */
   value?: CFileUploadEntry[] | null | string;
 }

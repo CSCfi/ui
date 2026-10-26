@@ -5,7 +5,8 @@
     "mandatory": "boolean = false",
     "multiple": "boolean = false",
     "required": "boolean = false",
-    "size": "'default' | 'small' = 'default'"
+    "size": "'default' | 'small' = 'default'",
+    "value": "number | string = null"
   },
   "cssProperties": [],
   "defaultable": [],
@@ -19,9 +20,7 @@
     "label",
     "root"
   ],
-  "propertyOnly": [
-    "value"
-  ],
+  "propertyOnly": [],
   "props": {
     "disabled": "boolean = false",
     "label": "string = ''",

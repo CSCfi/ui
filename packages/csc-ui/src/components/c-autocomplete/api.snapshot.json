@@ -19,7 +19,8 @@
     "return-object": "boolean = false",
     "select-all": "boolean = false",
     "shadow": "boolean = false",
-    "size": "'default' | 'small' = 'default'"
+    "size": "'default' | 'small' = 'default'",
+    "value": "number | string = null"
   },
   "cssProperties": [],
   "defaultable": [
@@ -58,8 +59,7 @@
   "propertyOnly": [
     "filter",
     "items",
-    "texts",
-    "value"
+    "texts"
   ],
   "props": {
     "clearable": "boolean = false",

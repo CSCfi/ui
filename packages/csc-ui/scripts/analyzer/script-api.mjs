@@ -61,6 +61,13 @@ const defaultableTag = (member) => memberTag(member, 'defaultable');
  */
 const internalTag = (member) => Boolean(memberTag(member, 'internal'));
 
+/**
+ * The `@propertyonly` member tag: a prop whose type has a string member that
+ * is no value an attribute should carry (c-file-upload's `value` accepts the
+ * `''` a plain `v-model` writes), so the manifest lists no attribute for it.
+ */
+const propertyOnlyTag = (member) => Boolean(memberTag(member, 'propertyonly'));
+
 const jsDocDescription = (node) => {
   const docs = ts.getJSDocCommentsAndTags(node).filter(ts.isJSDoc);
 
@@ -133,6 +140,7 @@ const interfaceMembers = (
       internal: internalTag(member),
       name,
       optional: Boolean(member.questionToken),
+      propertyOnly: propertyOnlyTag(member),
       type: typeText(member.type, sf),
       typeAlias: alias ?? undefined,
       typeExpanded: expanded ?? undefined,
