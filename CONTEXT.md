@@ -404,7 +404,7 @@ A named, publicly overridable region of a migrated component's shadow DOM (e.g. 
 _Avoid_: Slot (a slot is a content-projection hole, a part is a stylable element), element, node, section
 
 **Custom state**:
-A host-exposed `ElementInternals` state (`checked`, `indeterminate`, `disabled`, the date picker's `bad-input`, a masked text field's `incomplete`, a number field's `out-of-range`, a file upload's `drag-over`) a consumer selects with `:state(...)` to write per-state `::part()` rules (ADR-0035). The selector-side counterpart of **parts**: parts name *where* a rule applies, custom states name *when*. Curated public API like the part set, documented per component with `@cssstate` and listed in the **manifest**. Only otherwise-invisible internal state is exposed — consumer-set props (`valid`, a standalone `disabled`… ) are not mirrored.
+A host-exposed `ElementInternals` state (`checked`, `indeterminate`, `disabled`, an accordion item's `expanded`, the date picker's `bad-input`, a masked text field's `incomplete`, a number field's `out-of-range`, a file upload's `drag-over`) a consumer selects with `:state(...)` to write per-state `::part()` rules (ADR-0035). The selector-side counterpart of **parts**: parts name *where* a rule applies, custom states name *when*. Curated public API like the part set, documented per component with `@cssstate` and listed in the **manifest**. Only otherwise-invisible internal state is exposed — consumer-set props (`invalid`, a standalone `disabled`… ) are not mirrored.
 _Avoid_: Attribute (nothing is stamped on the host), state class (no class exists), reflected prop
 
 **Indicator** (selection controls):

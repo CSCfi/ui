@@ -7,6 +7,7 @@
     "hide-details": "boolean = false",
     "hint": "string = ''",
     "host-id": "string = ''",
+    "invalid": "boolean = false",
     "items-per-page": "number = 6",
     "label": "string = ''",
     "label-on-top": "boolean = false",
@@ -19,8 +20,7 @@
     "return-object": "boolean = false",
     "select-all": "boolean = false",
     "shadow": "boolean = false",
-    "size": "'default' | 'small' = 'default'",
-    "valid": "boolean = true"
+    "size": "'default' | 'small' = 'default'"
   },
   "cssProperties": [],
   "defaultable": [
@@ -71,6 +71,7 @@
     "hideDetails": "boolean = false",
     "hint": "string = ''",
     "hostId": "string = ''",
+    "invalid": "boolean = false",
     "items": "CAutocompleteItem[] = () => []",
     "itemsPerPage": "number = 6",
     "label": "string = ''",
@@ -86,7 +87,6 @@
     "shadow": "boolean = false",
     "size": "'default' | 'small' = 'default'",
     "texts": "CAutocompleteTexts = {}",
-    "valid": "boolean = true",
     "value": "CAutocompleteValue = null"
   },
   "slots": [

@@ -357,4 +357,19 @@ export const V3_API_CHANGES: V3ApiChange[] = [
     name: 'value',
     tag: 'c-pagination',
   },
+  ...[
+    'c-autocomplete',
+    'c-checkbox',
+    'c-message',
+    'c-otp-input',
+    'c-radio-group',
+    'c-select',
+    'c-text-field',
+  ].map((tag) => ({
+    change:
+      'Renamed to `invalid`, with the opposite meaning (ADR-0076): `:valid="!error"` becomes `:invalid="!!error"`, and markup sets a bare `invalid` attribute. A leftover `valid` is ignored, so the error never shows.',
+    kind: 'prop' as const,
+    name: 'valid',
+    tag,
+  })),
 ];

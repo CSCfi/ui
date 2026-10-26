@@ -94,7 +94,7 @@ consumer's validation:
 <c-text-field
   v-model="phone"
   :error-message="error"
-  :valid="!error"
+  :invalid="!!error"
   label="Phone"
   mask="+358 ## ### ####"
   @change="

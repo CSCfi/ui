@@ -12,12 +12,12 @@
       :filled="hasText"
       :hint
       :input-id
+      :invalid
       :label
       :label-on-top
       :required
       :shadow
       :size
-      :valid
     >
       <!-- The editable field (ADR-0058): typing never opens the panel. Under
            `range` a second input holds the end, both in one field box. -->
@@ -30,7 +30,7 @@
         <input
           :id="inputId"
           :ref="bindStart"
-          :aria-invalid="!valid || badStart || undefined"
+          :aria-invalid="invalid || badStart || undefined"
           :aria-label="inputLabel('start')"
           :class="ui.input({ start: range })"
           :disabled
@@ -59,7 +59,7 @@
 
           <input
             :ref="bindEnd"
-            :aria-invalid="!valid || badEnd || undefined"
+            :aria-invalid="invalid || badEnd || undefined"
             :aria-label="inputLabel('end')"
             :class="ui.input()"
             :disabled
@@ -159,6 +159,7 @@ const props = defineProps<{
 
   /** The virtual keyboard the inputs ask for. */
   inputmode: 'numeric' | 'text';
+  invalid: boolean;
   label: string;
   labelOnTop: boolean;
   name: string;
@@ -168,7 +169,6 @@ const props = defineProps<{
   required: boolean;
   shadow: boolean;
   size: CFieldSize;
-  valid: boolean;
 }>();
 
 // Top-level bindings, so the template unwraps them.

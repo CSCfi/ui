@@ -8,6 +8,7 @@
     "hide-details": "boolean = false",
     "hint": "string = ''",
     "host-id": "string = ''",
+    "invalid": "boolean = false",
     "label": "string = ''",
     "label-on-top": "boolean = false",
     "mask": "string = ''",
@@ -23,7 +24,6 @@
     "step": "null | number = null",
     "trim-whitespace": "boolean = false",
     "type": "'date' | 'email' | 'number' | 'password' | 'search' | 'tel' | 'text' | 'url' = 'text'",
-    "valid": "boolean = true",
     "value": "string = ''"
   },
   "cssProperties": [],
@@ -52,6 +52,7 @@
     "hideDetails": "boolean = false",
     "hint": "string = ''",
     "hostId": "string = ''",
+    "invalid": "boolean = false",
     "label": "string = ''",
     "labelOnTop": "boolean = false",
     "mask": "string = ''",
@@ -67,7 +68,6 @@
     "step": "null | number = null",
     "trimWhitespace": "boolean = false",
     "type": "'date' | 'email' | 'number' | 'password' | 'search' | 'tel' | 'text' | 'url' = 'text'",
-    "valid": "boolean = true",
     "value": "string = ''"
   },
   "readonly": {

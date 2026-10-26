@@ -49,7 +49,7 @@ error, and saying so, is the consumer's validation:
 <c-color-picker
   v-model="color"
   :error-message="error"
-  :valid="!error"
+  :invalid="!!error"
   label="Colour"
   @change:text="error = $event.target.badInput ? 'Enter a colour' : ''"
 />

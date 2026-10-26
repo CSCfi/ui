@@ -9,6 +9,7 @@
     "hide-details": "boolean = false",
     "hint": "string = ''",
     "host-id": "string = ''",
+    "invalid": "boolean = false",
     "label": "string = ''",
     "label-on-top": "boolean = false",
     "max": "null | number = null",
@@ -20,7 +21,6 @@
     "shadow": "boolean = false",
     "size": "'default' | 'small' = 'default'",
     "step": "number = 1",
-    "valid": "boolean = true",
     "value": "null | number | string = null"
   },
   "cssProperties": [],
@@ -60,6 +60,7 @@
     "hideDetails": "boolean = false",
     "hint": "string = ''",
     "hostId": "string = ''",
+    "invalid": "boolean = false",
     "label": "string = ''",
     "labelOnTop": "boolean = false",
     "max": "null | number = null",
@@ -72,7 +73,6 @@
     "size": "'default' | 'small' = 'default'",
     "step": "number = 1",
     "texts": "CNumberFieldTexts = {}",
-    "valid": "boolean = true",
     "value": "null | number | string = null"
   },
   "readonly": {

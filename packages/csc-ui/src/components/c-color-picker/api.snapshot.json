@@ -8,6 +8,7 @@
     "hide-details": "boolean = false",
     "hint": "string = ''",
     "host-id": "string = ''",
+    "invalid": "boolean = false",
     "label": "string = ''",
     "label-on-top": "boolean = false",
     "name": "string = ''",
@@ -16,7 +17,6 @@
     "shadow": "boolean = false",
     "size": "'default' | 'small' = 'default'",
     "swatches-only": "boolean = false",
-    "valid": "boolean = true",
     "value": "CColorPickerValue = null"
   },
   "cssProperties": [],
@@ -74,6 +74,7 @@
     "hideDetails": "boolean = false",
     "hint": "string = ''",
     "hostId": "string = ''",
+    "invalid": "boolean = false",
     "label": "string = ''",
     "labelOnTop": "boolean = false",
     "name": "string = ''",
@@ -84,7 +85,6 @@
     "swatches": "CColorPickerSwatch[] = () => []",
     "swatchesOnly": "boolean = false",
     "texts": "CColorPickerTexts = {}",
-    "valid": "boolean = true",
     "value": "CColorPickerValue = null"
   },
   "readonly": {

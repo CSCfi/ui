@@ -20,6 +20,7 @@
  *   - an `@subcomponents` tag naming an unknown tag, an internal tag, or the
  *     component itself (the composed-children list must resolve to real,
  *     documented components)
+ *   - a boolean prop whose built-in default is `true` (ADR-0076)
  *   - a prop tagged both `@internal` and `@defaultable` (an app default is set
  *     by consumers, so the prop is public by definition)
  *   - a prop typed bare `string` without an `@freeform` tag
@@ -196,6 +197,14 @@ export const lintComponent = (
     if (prop.freeform && prop.type !== 'string') {
       errors.push(
         `prop "${prop.name}" is tagged @freeform but is not a bare string`,
+      );
+    }
+
+    // ADR-0076: an absent HTML boolean attribute means false, so a boolean
+    // that defaults to `true` can never be turned off from markup.
+    if (prop.type === 'boolean' && String(prop.default).trim() === 'true') {
+      errors.push(
+        `prop "${prop.name}" is a boolean that defaults to true — name it for the non-default state (ADR-0076)`,
       );
     }
 

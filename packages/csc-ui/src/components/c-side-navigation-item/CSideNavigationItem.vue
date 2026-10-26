@@ -28,7 +28,7 @@
       <slot name="sub-item" />
     </nav>
 
-    <c-loader :size="32" :visible="loading" style="pointer-events: none" />
+    <c-loader :hide="!loading" :size="32" style="pointer-events: none" />
   </div>
 </template>
 

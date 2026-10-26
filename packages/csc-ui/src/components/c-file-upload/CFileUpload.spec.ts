@@ -893,7 +893,7 @@ describe('visual', () => {
 
     const invalid = await mountField(
       {},
-      { 'error-message': 'Attach your CV', valid: 'false' },
+      { 'error-message': 'Attach your CV', invalid: true },
     );
 
     const disabled = await mountField({ compact: true }, { disabled: true });

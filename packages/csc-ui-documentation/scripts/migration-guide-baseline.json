@@ -28,7 +28,6 @@
   "c-data-table prop single-selection",
   "c-data-table prop sort-by",
   "c-data-table prop sort-direction",
-  "c-loader prop hide",
   "c-menu prop content-class",
   "c-menu prop custom",
   "c-menu prop flat",

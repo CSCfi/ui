@@ -53,7 +53,7 @@ contract changes — made now, at `4.0.0-alpha.5`, while breaking is cheap.
   script↔tag symmetry lint). Exposed: `checked` + `indeterminate`
   (`c-checkbox`), `checked` + `disabled` (`c-radio` — both group-driven and
   otherwise invisible on the host), `checked` (`c-switch`). Consumer-set
-  props (`valid`, a standalone `disabled`) are deliberately NOT mirrored —
+  props (`invalid`, formerly `valid`; a standalone `disabled`) are deliberately NOT mirrored —
   the consumer already owns a selector for what they set themselves.
 - **`indicator` means the visual control.** The checkbox box became a real
   element to carry the part (it was a `::before`); the radio ring span

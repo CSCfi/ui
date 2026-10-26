@@ -12,8 +12,8 @@ for the mixed "some but not all" state of a parent checkbox.
 <c-checkbox v-model="accepted" label="I accept the terms" />
 ```
 
-Set `hint` for a persistent helper line below the control; while `valid` is
-`false`, `error-message` replaces it. `hide-details` removes the message area
+Set `hint` for a persistent helper line below the control; while `invalid` is
+set, `error-message` replaces it. `hide-details` removes the message area
 entirely.
 
 ## When to use

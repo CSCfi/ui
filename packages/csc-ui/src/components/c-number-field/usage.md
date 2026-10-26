@@ -67,7 +67,7 @@ read-only `outOfRange` property. The field shows no error of its own:
 <c-number-field
   v-model="count"
   :error-message="error"
-  :valid="!error"
+  :invalid="!!error"
   label="Participants"
   max="50"
   min="1"

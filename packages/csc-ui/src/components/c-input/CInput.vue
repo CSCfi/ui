@@ -344,6 +344,12 @@ interface CInputProps {
    */
   inputId?: string;
 
+  /**
+   * Show the control as invalid: its `error-message`, when set, replaces the
+   * hint, and the control is marked `aria-invalid`.
+   */
+  invalid?: boolean;
+
   /** Renders textarea-specific spacing tweaks. */
   isTextarea?: boolean;
 
@@ -378,13 +384,6 @@ interface CInputProps {
 
   /** Field height: the 52px default (the shared control height) or the 36px `small` box */
   size?: CFieldSize;
-
-  /**
-   * Set the validíty of the input
-   *
-   * @seeded from csc-ui — verify
-   */
-  valid?: boolean;
 }
 
 const props = withDefaults(defineProps<CInputProps>(), {
@@ -395,13 +394,13 @@ const props = withDefaults(defineProps<CInputProps>(), {
   hideDetails: false,
   hint: '',
   inputId: '',
+  invalid: false,
   isTextarea: false,
   label: '',
   labelOnTop: false,
   required: false,
   shadow: false,
   size: 'default',
-  valid: true,
 });
 
 const errorIconPath = mdiCloseCircle;
@@ -443,7 +442,7 @@ const isFocused = ref(false);
 
 const isActiveResolved = computed(() => props.active || isFocused.value);
 
-const showError = computed(() => !props.valid && Boolean(props.errorMessage));
+const showError = computed(() => props.invalid && Boolean(props.errorMessage));
 
 // Attributes can deliver any string at runtime; unknown values fall back to
 // the default size.
@@ -455,7 +454,7 @@ const ui = computed(() =>
   input({
     active: isActiveResolved.value,
     disabled: props.disabled,
-    error: !props.valid,
+    error: props.invalid,
     labelOnTop: props.labelOnTop,
     messageError: showError.value,
     shadow: props.shadow,

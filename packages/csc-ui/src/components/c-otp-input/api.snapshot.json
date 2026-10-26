@@ -5,10 +5,10 @@
     "has-autofocus": "boolean = false",
     "hide-details": "boolean = false",
     "hint": "string = ''",
+    "invalid": "boolean = false",
     "label": "string = ''",
     "length": "number = 6",
     "required": "boolean = false",
-    "valid": "boolean = true",
     "value": "string = ''"
   },
   "cssProperties": [],
@@ -33,10 +33,10 @@
     "hasAutofocus": "boolean = false",
     "hideDetails": "boolean = false",
     "hint": "string = ''",
+    "invalid": "boolean = false",
     "label": "string = ''",
     "length": "number = 6",
     "required": "boolean = false",
-    "valid": "boolean = true",
     "value": "string = ''"
   },
   "slots": [

@@ -14,12 +14,12 @@
       :filled="hasSelection"
       :hint
       :input-id
+      :invalid
       :label
       :label-on-top="labelOnTopResolved"
       :required
       :shadow="shadowResolved"
       :size="sizeResolved"
-      :valid
       @click="onFieldClick"
     >
       <div :class="ui.content()" class="c-input__content">
@@ -533,6 +533,12 @@ interface CTreeSelectProps {
   hostId?: string;
 
   /**
+   * Show the control as invalid: its `error-message`, when set, replaces the
+   * hint, and the control is marked `aria-invalid`.
+   */
+  invalid?: boolean;
+
+  /**
    * The tree to pick from. Arrays have no attribute form — bind as a DOM
    * property (`:items.prop` in Vue)
    */
@@ -612,11 +618,6 @@ interface CTreeSelectProps {
    * @defaultable {}
    */
   texts?: CTreeSelectTexts;
-
-  /**
-   * Set the validity of the field
-   */
-  valid?: boolean;
 
   /**
    * Selected value: the committed item's value, or the `CTreeSelectSelection`
@@ -815,6 +816,7 @@ const props = withDefaults(defineProps<CTreeSelectProps>(), {
   hideDetails: undefined,
   hint: '',
   hostId: '',
+  invalid: false,
   items: () => [],
   itemsPerPage: undefined,
   label: '',
@@ -827,7 +829,6 @@ const props = withDefaults(defineProps<CTreeSelectProps>(), {
   shadow: undefined,
   size: undefined,
   texts: undefined,
-  valid: true,
   value: null,
 });
 

@@ -14,12 +14,12 @@
       :filled="hasSelection"
       :hint
       :input-id
+      :invalid
       :label
       :label-on-top="labelOnTopResolved"
       :required
       :shadow="shadowResolved"
       :size="sizeResolved"
-      :valid
       @click="onFieldClick"
     >
       <span v-if="hasConsumerPre" slot="pre" style="display: contents">
@@ -454,6 +454,12 @@ interface CAutocompleteProps {
    */
   hostId?: string;
 
+  /**
+   * Show the control as invalid: its `error-message`, when set, replaces the
+   * hint, and the control is marked `aria-invalid`.
+   */
+  invalid?: boolean;
+
   /** Dropdown items (when not using <c-option> elements) */
   items?: CAutocompleteItem[];
 
@@ -547,9 +553,6 @@ interface CAutocompleteProps {
    * @defaultable {}
    */
   texts?: CAutocompleteTexts;
-
-  /** Set the validity of the input */
-  valid?: boolean;
 
   /**
    * Selected value: the option's value, or the whole item with
@@ -772,6 +775,7 @@ const props = withDefaults(defineProps<CAutocompleteProps>(), {
   hideDetails: undefined,
   hint: '',
   hostId: '',
+  invalid: false,
   items: () => [],
   itemsPerPage: undefined,
   label: '',
@@ -787,7 +791,6 @@ const props = withDefaults(defineProps<CAutocompleteProps>(), {
   shadow: undefined,
   size: undefined,
   texts: undefined,
-  valid: true,
   value: null,
 });
 

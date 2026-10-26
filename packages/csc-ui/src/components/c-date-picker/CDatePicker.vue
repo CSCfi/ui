@@ -10,6 +10,7 @@
     :hide-details="hideDetailsResolved"
     :hint
     :input-id
+    :invalid
     :label
     :label-on-top="labelOnTopResolved"
     :name
@@ -17,7 +18,6 @@
     :required
     :shadow="shadowResolved"
     :size="sizeResolved"
-    :valid
     inputmode="numeric"
   >
     <template #trigger="{ buttonSize, iconSize }">
@@ -600,6 +600,12 @@ interface CDatePickerProps {
   hostId?: string;
 
   /**
+   * Show the control as invalid: its `error-message`, when set, replaces the
+   * hint, and the control is marked `aria-invalid`.
+   */
+  invalid?: boolean;
+
+  /**
    * Predicate for dates that cannot be picked (weekends, say); receives an
    * ISO date. Functions have no attribute form — bind as a DOM property
    */
@@ -704,11 +710,6 @@ interface CDatePickerProps {
    * (`'YYYY-MM'`)
    */
   type?: CDatePickerType;
-
-  /**
-   * Set the validity of the field
-   */
-  valid?: boolean;
 
   /**
    * The date as an ISO `YYYY-MM-DD` string (an ISO `YYYY-MM` month under
@@ -989,6 +990,7 @@ const props = withDefaults(defineProps<CDatePickerProps>(), {
   hideDetails: undefined,
   hint: '',
   hostId: '',
+  invalid: false,
   isDateDisabled: undefined,
   label: '',
   labelOnTop: undefined,
@@ -1004,7 +1006,6 @@ const props = withDefaults(defineProps<CDatePickerProps>(), {
   size: undefined,
   texts: undefined,
   type: 'date',
-  valid: true,
   value: null,
 });
 

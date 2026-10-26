@@ -81,21 +81,20 @@ interface CMessageProps {
   inputId?: string;
 
   /**
-   * Parent validíty
-   *
-   * @seeded from csc-ui — verify
+   * Show the control as invalid: its `error-message`, when set, replaces the
+   * hint, and the control is marked `aria-invalid`.
    */
-  valid?: boolean;
+  invalid?: boolean;
 }
 
 const props = withDefaults(defineProps<CMessageProps>(), {
   errorMessage: '',
   hint: '',
   inputId: '',
-  valid: true,
+  invalid: false,
 });
 
-const showError = computed(() => !props.valid && Boolean(props.errorMessage));
+const showError = computed(() => props.invalid && Boolean(props.errorMessage));
 
 const ui = computed(() => message({ error: showError.value }));
 

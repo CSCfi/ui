@@ -7,12 +7,12 @@
     :filled="text !== ''"
     :hint
     :input-id
+    :invalid
     :label
     :label-on-top="labelOnTopResolved"
     :required
     :shadow="shadowResolved"
     :size="sizeResolved"
-    :valid
   >
     <!-- Consumer pre/post content (a currency, a unit), forwarded only when
          present so c-input draws no empty gap — as in c-text-field. -->
@@ -25,7 +25,7 @@
     <input
       :id="inputId"
       ref="inputRef"
-      :aria-invalid="!valid || outOfRange || undefined"
+      :aria-invalid="invalid || outOfRange || undefined"
       :aria-valuemax="maxNumber ?? undefined"
       :aria-valuemin="minNumber ?? undefined"
       :aria-valuenow="current ?? undefined"
@@ -172,6 +172,12 @@ interface CNumberFieldProps {
   hostId?: string;
 
   /**
+   * Show the control as invalid: its `error-message`, when set, replaces the
+   * hint, and the control is marked `aria-invalid`.
+   */
+  invalid?: boolean;
+
+  /**
    * Label of the field
    *
    * @freeform
@@ -246,11 +252,6 @@ interface CNumberFieldProps {
    * @defaultable {}
    */
   texts?: CNumberFieldTexts;
-
-  /**
-   * Set the validity of the field
-   */
-  valid?: boolean;
 
   /**
    * The number, or `null` when the field is empty. A string is read as the number it spells, and `''` as empty — what an attribute, or a plain `v-model` holding `null`, writes; the field always emits a number or `null`
@@ -354,6 +355,7 @@ const props = withDefaults(defineProps<CNumberFieldProps>(), {
   hideDetails: undefined,
   hint: '',
   hostId: '',
+  invalid: false,
   label: '',
   labelOnTop: undefined,
   max: null,
@@ -366,7 +368,6 @@ const props = withDefaults(defineProps<CNumberFieldProps>(), {
   size: undefined,
   step: undefined,
   texts: undefined,
-  valid: true,
   value: null,
 });
 

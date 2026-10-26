@@ -414,8 +414,8 @@ describe('visual', () => {
 
     const over = await mountField({
       errorMessage: 'Enter 1 to 100',
+      invalid: true,
       max: 100,
-      valid: false,
       value: 150,
     });
 

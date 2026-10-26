@@ -16,12 +16,12 @@
       :filled="!!fieldText"
       :hint
       :input-id
+      :invalid
       :label
       :label-on-top="labelOnTopResolved"
       :required
       :shadow="shadowResolved"
       :size="sizeResolved"
-      :valid
       @click="onFieldClick"
     >
       <span v-if="committedColor" slot="pre" :class="ui.pre()">
@@ -38,7 +38,7 @@
           :id="inputId"
           ref="comboRef"
           :aria-expanded="isOpen"
-          :aria-invalid="!valid || undefined"
+          :aria-invalid="invalid || undefined"
           :aria-label="label || undefined"
           :class="ui.combo()"
           :disabled
@@ -93,6 +93,7 @@
     :hide-details="hideDetailsResolved"
     :hint
     :input-id
+    :invalid
     :label
     :label-on-top="labelOnTopResolved"
     :name
@@ -100,7 +101,6 @@
     :required
     :shadow="shadowResolved"
     :size="sizeResolved"
-    :valid
     inputmode="text"
   >
     <!-- The colour button (CONTEXT.md): painted with the current colour. -->
@@ -477,6 +477,12 @@ interface CColorPickerProps {
   hostId?: string;
 
   /**
+   * Show the control as invalid: its `error-message`, when set, replaces the
+   * hint, and the control is marked `aria-invalid`.
+   */
+  invalid?: boolean;
+
+  /**
    * Element label
    *
    * @freeform
@@ -543,11 +549,6 @@ interface CColorPickerProps {
    * @defaultable {}
    */
   texts?: CColorPickerTexts;
-
-  /**
-   * Set the validity of the field
-   */
-  valid?: boolean;
 
   /**
    * The colour in the `format` notation, or `null` when empty. Any CSS
@@ -767,6 +768,7 @@ const props = withDefaults(defineProps<CColorPickerProps>(), {
   hideDetails: undefined,
   hint: '',
   hostId: '',
+  invalid: false,
   label: '',
   labelOnTop: undefined,
   name: '',
@@ -777,7 +779,6 @@ const props = withDefaults(defineProps<CColorPickerProps>(), {
   swatches: () => [],
   swatchesOnly: false,
   texts: undefined,
-  valid: true,
   value: null,
 });
 

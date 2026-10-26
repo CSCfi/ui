@@ -3,7 +3,7 @@
     "error-message": "string = ''",
     "hint": "string = ''",
     "input-id": "string = ''",
-    "valid": "boolean = true"
+    "invalid": "boolean = false"
   },
   "cssProperties": [],
   "defaultable": [],
@@ -17,7 +17,7 @@
     "errorMessage": "string = ''",
     "hint": "string = ''",
     "inputId": "string = ''",
-    "valid": "boolean = true"
+    "invalid": "boolean = false"
   },
   "slots": [],
   "states": [],

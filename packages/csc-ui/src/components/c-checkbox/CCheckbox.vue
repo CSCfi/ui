@@ -43,7 +43,7 @@
         <selection-indicator
           :checked="isChecked"
           :disabled
-          :error="!valid"
+          :error="invalid"
           :indeterminate
           class="c-checkbox__box absolute top-3 left-3"
           focus-halo
@@ -317,6 +317,12 @@ interface CCheckboxProps {
   indeterminate?: boolean;
 
   /**
+   * Show the control as invalid: its `error-message`, when set, replaces the
+   * hint, and the control is marked `aria-invalid`.
+   */
+  invalid?: boolean;
+
+  /**
    * Element label
    *
    * @seeded from csc-ui — verify
@@ -337,13 +343,6 @@ interface CCheckboxProps {
    * @seeded from csc-ui — verify
    */
   trueValue?: boolean | number | string;
-
-  /**
-   * Set the validity of the input
-   *
-   * @seeded from csc-ui — verify
-   */
-  valid?: boolean;
 
   /**
    * The checkbox's state: `trueValue` while it is on, `falseValue` while it is
@@ -367,19 +366,19 @@ const props = withDefaults(defineProps<CCheckboxProps>(), {
   hostId: '',
   hostName: '',
   indeterminate: false,
+  invalid: false,
   label: '',
   required: false,
   trueValue: true,
-  valid: true,
   value: undefined,
 });
 
-const showError = computed(() => !props.valid && Boolean(props.errorMessage));
+const showError = computed(() => props.invalid && Boolean(props.errorMessage));
 
 const ui = computed(() =>
   checkbox({
     disabled: props.disabled,
-    error: !props.valid,
+    error: props.invalid,
     messageError: showError.value,
   }),
 );

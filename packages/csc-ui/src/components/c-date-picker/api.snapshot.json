@@ -8,6 +8,7 @@
     "hide-details": "boolean = false",
     "hint": "string = ''",
     "host-id": "string = ''",
+    "invalid": "boolean = false",
     "label": "string = ''",
     "label-on-top": "boolean = false",
     "max": "string = ''",
@@ -21,7 +22,6 @@
     "show-week-numbers": "boolean = false",
     "size": "'default' | 'small' = 'default'",
     "type": "'date' | 'month' = 'date'",
-    "valid": "boolean = true",
     "value": "CDatePickerValue = null"
   },
   "cssProperties": [],
@@ -88,6 +88,7 @@
     "hideDetails": "boolean = false",
     "hint": "string = ''",
     "hostId": "string = ''",
+    "invalid": "boolean = false",
     "isDateDisabled": "(iso: string) => boolean",
     "label": "string = ''",
     "labelOnTop": "boolean = false",
@@ -103,7 +104,6 @@
     "size": "'default' | 'small' = 'default'",
     "texts": "CDatePickerTexts = {}",
     "type": "'date' | 'month' = 'date'",
-    "valid": "boolean = true",
     "value": "CDatePickerValue = null"
   },
   "readonly": {

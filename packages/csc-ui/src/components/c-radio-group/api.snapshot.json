@@ -5,9 +5,9 @@
     "hide-details": "boolean = false",
     "hint": "string = ''",
     "inline": "boolean = false",
+    "invalid": "boolean = false",
     "label": "string = ''",
     "required": "boolean = false",
-    "valid": "boolean = true",
     "value": "null | string = null"
   },
   "cssProperties": [],
@@ -31,9 +31,9 @@
     "hideDetails": "boolean = false",
     "hint": "string = ''",
     "inline": "boolean = false",
+    "invalid": "boolean = false",
     "label": "string = ''",
     "required": "boolean = false",
-    "valid": "boolean = true",
     "value": "null | string = null"
   },
   "slots": [

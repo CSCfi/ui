@@ -83,29 +83,29 @@ interface FieldMessageProps {
   /** Suppress the whole message area (no reserved height either). */
   hideDetails?: boolean;
 
-  /** Neutral helper text shown while valid (or when no error message is supplied). */
+  /** Neutral helper text, shown unless the control is invalid with an error message. */
   hint?: string;
+
+  /** The host control is invalid: the error message, when set, replaces the hint. */
+  invalid?: boolean;
 
   /** Part name stamped on the message area (`message` unless the host reserves it). */
   part?: string;
-
-  /** Host control's validity; `false` switches to the error message when one is supplied. */
-  valid?: boolean;
 }
 
 const props = withDefaults(defineProps<FieldMessageProps>(), {
   errorMessage: '',
   hideDetails: false,
   hint: '',
+  invalid: false,
   part: 'message',
-  valid: true,
 });
 
 // Hosts pass their custom-element props straight through, where boolean
 // attribute presence can arrive as the raw string "" (falsy) and "false" as
 // a truthy string — coerce before any conditional logic.
 const showError = computed(
-  () => !coerceBoolean(props.valid) && Boolean(props.errorMessage),
+  () => coerceBoolean(props.invalid) && Boolean(props.errorMessage),
 );
 
 const ui = computed(() => fieldMessage({ error: showError.value }));

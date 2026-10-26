@@ -9,7 +9,7 @@
            `contentdelay`) is gated on `active` so it (re)starts each time the
            loader is shown. Without this it would run once when the element
            first renders — which, now the loader stays mounted and is toggled
-           via `visible`, means at page load, leaving `contentdelay` with no
+           via `hide`, means at page load, leaving `contentdelay` with no
            visible effect. -->
       <div
         v-show="hasSlotContent"
@@ -36,14 +36,7 @@
  * @seeded from csc-ui — verify
  */
 import { tv } from 'tailwind-variants';
-import {
-  computed,
-  onMounted,
-  ref,
-  useTemplateRef,
-  watch,
-  watchEffect,
-} from 'vue';
+import { computed, onMounted, ref, useTemplateRef, watchEffect } from 'vue';
 
 import { useHasSlot } from '../../shared/useHasSlot';
 
@@ -108,26 +101,18 @@ interface CLoaderProps {
   contentdelay?: number;
 
   /**
+   * Hide the loader. Toggling it fades the loader in and out, so keep the
+   * element mounted and bind `hide` rather than using `v-if`, which would
+   * unmount it and skip the fade-out.
+   */
+  hide?: boolean;
+
+  /**
    * Size of the loader
    *
    * @seeded from csc-ui — verify
    */
   size?: number;
-
-  /**
-   * Whether the loader is shown. Toggling this drives the fade-in / smooth
-   * fade-out — keep the element mounted and bind `visible` rather than using
-   * `v-if`, which would unmount it and skip the leave transition.
-   *
-   * For imperative control (non-Vue consumers holding an element ref) the
-   * element also exposes `show()` / `hide()` methods. The prop is named
-   * `visible` (not `show`) so it doesn't collide with the `show()` method —
-   * mirroring native `<dialog>` (`open` property + `show()`/`close()` methods).
-   *
-   * NOTE: this replaces the original Stencil `hide` prop with its inverse, so
-   * the default (`true` = shown) preserves the original default behaviour.
-   */
-  visible?: boolean;
 
   /**
    * Width of the loader
@@ -139,8 +124,8 @@ interface CLoaderProps {
 
 const props = withDefaults(defineProps<CLoaderProps>(), {
   contentdelay: 0,
+  hide: false,
   size: 48,
-  visible: true,
   width: 4,
 });
 
@@ -148,42 +133,18 @@ const rootRef = useTemplateRef<HTMLElement>('rootRef');
 
 const hasSlotContent = useHasSlot(rootRef, '');
 
-// Visibility source of truth: initialised from the `visible` prop and kept in
-// sync with it, but also settable imperatively via the exposed show()/hide()
-// methods (for non-Vue consumers holding an element ref). A later prop change
-// wins, as expected for a controlled prop.
-const isVisible = ref(props.visible);
-watch(
-  () => props.visible,
-  (v) => {
-    isVisible.value = v;
-  },
-);
-
 // Match Stencil's deferred activation: start hidden, then flip `active` on the
 // next frame so the opacity/scale/visibility transition plays on appearance and
 // on every toggle instead of the loader snapping in/out.
 const active = ref(false);
 onMounted(() => {
   watchEffect(() => {
-    const wantActive = isVisible.value;
+    const wantActive = !props.hide;
     requestAnimationFrame(() => {
       active.value = wantActive;
     });
   });
 });
-
-/** Imperatively show the loader (plays the fade-in). */
-const show = () => {
-  isVisible.value = true;
-};
-
-/** Imperatively hide the loader (plays the smooth fade-out). */
-const hide = () => {
-  isVisible.value = false;
-};
-
-defineExpose({ hide, show });
 
 const ui = computed(() => loader());
 </script>

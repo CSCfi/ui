@@ -22,7 +22,7 @@
       <slot />
     </div>
 
-    <field-message :error-message :hide-details :hint :valid part="message" />
+    <field-message :error-message :hide-details :hint :invalid part="message" />
   </div>
 </template>
 
@@ -161,6 +161,12 @@ interface CRadioGroupProps {
   inline?: boolean;
 
   /**
+   * Show the control as invalid: its `error-message`, when set, replaces the
+   * hint, and the control is marked `aria-invalid`.
+   */
+  invalid?: boolean;
+
+  /**
    * Label of the radio group
    *
    * @freeform
@@ -171,11 +177,6 @@ interface CRadioGroupProps {
    * Set as required
    */
   required?: boolean;
-
-  /**
-   * Set the validity of the input
-   */
-  valid?: boolean;
 
   /**
    * Value of the radio group; matched against each radio's `value` by strict
@@ -190,9 +191,9 @@ const props = withDefaults(defineProps<CRadioGroupProps>(), {
   hideDetails: false,
   hint: '',
   inline: false,
+  invalid: false,
   label: '',
   required: false,
-  valid: true,
   value: null,
 });
 
@@ -205,7 +206,7 @@ const isRequired = computed(() => coerceBoolean(props.required));
 const ui = computed(() =>
   radioGroup({
     disabled: isGroupDisabled.value,
-    error: !coerceBoolean(props.valid),
+    error: coerceBoolean(props.invalid),
     inline: coerceBoolean(props.inline),
   }),
 );

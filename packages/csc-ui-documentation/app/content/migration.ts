@@ -524,16 +524,26 @@ const columns: CDataTableColumn<User>[] = [
       {
         code: `<!-- Before: every form control had validation (default 'Required field')
      shown while valid was false, plus inert validate / validate-on-blur. -->
-<c-text-field label="Email" validation="Email is required"></c-text-field>
+<c-text-field
+  label="Email"
+  :valid="!error"
+  validation="Email is required"
+></c-text-field>
 
-<!-- After: the prop is error-message (errorMessage in React / as a DOM
-     property) on c-text-field, c-select, c-autocomplete, c-checkbox,
-     c-radio-group, c-otp-input and c-message. There is NO default text:
-     an invalid control without an error-message keeps showing its hint,
-     styled as a hint. validate and validate-on-blur are removed — they
-     were never wired to anything; validation logic stays in your app. -->
-<c-text-field label="Email" error-message="Email is required"></c-text-field>`,
-        filename: 'Form controls — validation → error-message',
+<!-- After: valid is invalid (ADR-0076), so markup can set it: a bare
+     invalid attribute, or a binding such as :invalid="!!error". A leftover :valid is
+     ignored and the error never shows. The message is error-message
+     (errorMessage in React / as a DOM property) on every field, c-checkbox,
+     c-radio-group, c-otp-input and c-message. There is NO default text: an
+     invalid control without an error-message keeps showing its hint, styled
+     as a hint. validate and validate-on-blur are removed — they were never
+     wired to anything; validation logic stays in your app. -->
+<c-text-field
+  label="Email"
+  :invalid="!!error"
+  error-message="Email is required"
+></c-text-field>`,
+        filename: 'Form controls — valid → invalid, validation → error-message',
         lang: 'html',
       },
       {

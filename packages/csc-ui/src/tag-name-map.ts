@@ -160,7 +160,7 @@ export interface CAutocompleteElementEventMap {
 }
 
 /** A filterable value-selection component: a readonly value field that opens a popover panel with a search input above the matching options. */
-export interface CAutocompleteElement extends Omit<HTMLElement, 'clearable' | 'disabled' | 'errorMessage' | 'external' | 'filter' | 'hideDetails' | 'hint' | 'hostId' | 'items' | 'itemsPerPage' | 'label' | 'labelOnTop' | 'loading' | 'maxTags' | 'multiple' | 'name' | 'placeholder' | 'required' | 'returnObject' | 'selectAll' | 'shadow' | 'size' | 'texts' | 'valid' | 'value'> {
+export interface CAutocompleteElement extends Omit<HTMLElement, 'clearable' | 'disabled' | 'errorMessage' | 'external' | 'filter' | 'hideDetails' | 'hint' | 'hostId' | 'invalid' | 'items' | 'itemsPerPage' | 'label' | 'labelOnTop' | 'loading' | 'maxTags' | 'multiple' | 'name' | 'placeholder' | 'required' | 'returnObject' | 'selectAll' | 'shadow' | 'size' | 'texts' | 'value'> {
   /** Make the selected value clearable */
   clearable?: boolean;
   /** Disable the input */
@@ -181,6 +181,11 @@ export interface CAutocompleteElement extends Omit<HTMLElement, 'clearable' | 'd
   hint?: string;
   /** Id of the element */
   hostId?: string;
+  /**
+   * Show the control as invalid: its `error-message`, when set, replaces the
+   * hint, and the control is marked `aria-invalid`.
+   */
+  invalid?: boolean;
   /** Dropdown items (when not using <c-option> elements) */
   items?: CAutocompleteItem[];
   /** Items per page before the list scrolls */
@@ -230,8 +235,6 @@ export interface CAutocompleteElement extends Omit<HTMLElement, 'clearable' | 'd
    * no attribute form — bind as a DOM property (`:texts.prop` in Vue)
    */
   texts?: CAutocompleteTexts;
-  /** Set the validity of the input */
-  valid?: boolean;
   /**
    * Selected value: the option's value, or the whole item with
    * `return-object`; an array of them in `multiple` mode
@@ -434,7 +437,7 @@ export interface CCheckboxElementEventMap {
 }
 
 /** A form control for a single on/off choice: a native checkbox with a label, an optional hint, and validation messaging. */
-export interface CCheckboxElement extends Omit<HTMLElement, 'checked' | 'disabled' | 'errorMessage' | 'falseValue' | 'hideDetails' | 'hint' | 'hostId' | 'hostName' | 'indeterminate' | 'label' | 'required' | 'trueValue' | 'valid' | 'value'> {
+export interface CCheckboxElement extends Omit<HTMLElement, 'checked' | 'disabled' | 'errorMessage' | 'falseValue' | 'hideDetails' | 'hint' | 'hostId' | 'hostName' | 'indeterminate' | 'invalid' | 'label' | 'required' | 'trueValue' | 'value'> {
   /**
    * Whether the checkbox is on: the boolean view of `value`. Setting it sets
    * `value` to `trueValue` or `falseValue`; reading it reports whether
@@ -461,14 +464,17 @@ export interface CCheckboxElement extends Omit<HTMLElement, 'checked' | 'disable
   hostName?: string;
   /** Indeterminate state */
   indeterminate?: boolean;
+  /**
+   * Show the control as invalid: its `error-message`, when set, replaces the
+   * hint, and the control is marked `aria-invalid`.
+   */
+  invalid?: boolean;
   /** Element label */
   label?: string;
   /** Set as required */
   required?: boolean;
   /** The value when the checkbox is checked */
   trueValue?: boolean | number | string;
-  /** Set the validity of the input */
-  valid?: boolean;
   /**
    * The checkbox's state: `trueValue` while it is on, `falseValue` while it is
    * off. A bound value wins over a `checked` attribute; any other value,
@@ -525,7 +531,7 @@ export interface CColorPickerElementEventMap {
 }
 
 /** A colour field that takes any typed CSS colour, or opens a panel for picking one: a colour area, hue and alpha sliders, per-channel inputs and swatches — or swatches alone under `swatches-only`. */
-export interface CColorPickerElement extends Omit<HTMLElement, 'alpha' | 'clearable' | 'disabled' | 'errorMessage' | 'format' | 'hideDetails' | 'hint' | 'hostId' | 'label' | 'labelOnTop' | 'name' | 'placeholder' | 'required' | 'shadow' | 'size' | 'swatches' | 'swatchesOnly' | 'texts' | 'valid' | 'value'> {
+export interface CColorPickerElement extends Omit<HTMLElement, 'alpha' | 'clearable' | 'disabled' | 'errorMessage' | 'format' | 'hideDetails' | 'hint' | 'hostId' | 'invalid' | 'label' | 'labelOnTop' | 'name' | 'placeholder' | 'required' | 'shadow' | 'size' | 'swatches' | 'swatchesOnly' | 'texts' | 'value'> {
   /**
    * Let the colour carry transparency: an alpha slider and an A channel join
    * the panel. Without it typed alpha is dropped
@@ -548,6 +554,11 @@ export interface CColorPickerElement extends Omit<HTMLElement, 'alpha' | 'cleara
   hint?: string;
   /** Id of the element */
   hostId?: string;
+  /**
+   * Show the control as invalid: its `error-message`, when set, replaces the
+   * hint, and the control is marked `aria-invalid`.
+   */
+  invalid?: boolean;
   /** Element label */
   label?: string;
   /** Label on top of the field */
@@ -578,8 +589,6 @@ export interface CColorPickerElement extends Omit<HTMLElement, 'alpha' | 'cleara
    * no attribute form — bind as a DOM property
    */
   texts?: CColorPickerTexts;
-  /** Set the validity of the field */
-  valid?: boolean;
   /**
    * The colour in the `format` notation, or `null` when empty. Any CSS
    * colour is accepted and shown in the notation
@@ -745,7 +754,7 @@ export interface CDatePickerElementEventMap {
 }
 
 /** A date field that takes a typed date, or opens a calendar panel for picking one, or a start and end date under `range`. */
-export interface CDatePickerElement extends Omit<HTMLElement, 'clearable' | 'disabled' | 'disabledDates' | 'errorMessage' | 'firstDayOfWeek' | 'format' | 'hideDetails' | 'hint' | 'hostId' | 'isDateDisabled' | 'label' | 'labelOnTop' | 'max' | 'min' | 'name' | 'placeholder' | 'range' | 'required' | 'shadow' | 'showToday' | 'showWeekNumbers' | 'size' | 'texts' | 'type' | 'valid' | 'value'> {
+export interface CDatePickerElement extends Omit<HTMLElement, 'clearable' | 'disabled' | 'disabledDates' | 'errorMessage' | 'firstDayOfWeek' | 'format' | 'hideDetails' | 'hint' | 'hostId' | 'invalid' | 'isDateDisabled' | 'label' | 'labelOnTop' | 'max' | 'min' | 'name' | 'placeholder' | 'range' | 'required' | 'shadow' | 'showToday' | 'showWeekNumbers' | 'size' | 'texts' | 'type' | 'value'> {
   /** Make the value clearable */
   clearable?: boolean;
   /** Disable the field */
@@ -773,6 +782,11 @@ export interface CDatePickerElement extends Omit<HTMLElement, 'clearable' | 'dis
   hint?: string;
   /** Id of the element */
   hostId?: string;
+  /**
+   * Show the control as invalid: its `error-message`, when set, replaces the
+   * hint, and the control is marked `aria-invalid`.
+   */
+  invalid?: boolean;
   /**
    * Predicate for dates that cannot be picked (weekends, say); receives an
    * ISO date. Functions have no attribute form — bind as a DOM property
@@ -828,8 +842,6 @@ export interface CDatePickerElement extends Omit<HTMLElement, 'clearable' | 'dis
    * (`'YYYY-MM'`)
    */
   type?: 'date' | 'month';
-  /** Set the validity of the field */
-  valid?: boolean;
   /**
    * The date as an ISO `YYYY-MM-DD` string (an ISO `YYYY-MM` month under
    * `type="month"`), or `{ start, end }` under `range`; `null` when empty
@@ -885,7 +897,7 @@ export interface CFileUploadElementEventMap {
 }
 
 /** A field the user adds files to by dropping them on it or choosing them from a file dialog — and, given an upload function, the place each file's upload shows its progress. */
-export interface CFileUploadElement extends Omit<HTMLElement, 'accept' | 'compact' | 'disabled' | 'errorMessage' | 'hideDetails' | 'hint' | 'label' | 'manual' | 'maxFiles' | 'maxSize' | 'multiple' | 'required' | 'size' | 'texts' | 'upload' | 'valid' | 'value'> {
+export interface CFileUploadElement extends Omit<HTMLElement, 'accept' | 'compact' | 'disabled' | 'errorMessage' | 'hideDetails' | 'hint' | 'invalid' | 'label' | 'manual' | 'maxFiles' | 'maxSize' | 'multiple' | 'required' | 'size' | 'texts' | 'upload' | 'value'> {
   /** The file types the field takes, in the native `accept` syntax: extensions (`.pdf`) and media types (`image/*`, `application/json`), comma separated. It filters the file dialog and is checked again on a drop */
   accept?: string;
   /** Show the drop zone as a control-height row — a "Choose files" button and a drop prompt — that lines up with the fields beside it */
@@ -898,6 +910,11 @@ export interface CFileUploadElement extends Omit<HTMLElement, 'accept' | 'compac
   hideDetails?: boolean;
   /** Hint text under the drop zone — the place to name the accepted types and limits */
   hint?: string;
+  /**
+   * Show the control as invalid: its `error-message`, when set, replaces the
+   * hint, and the control is marked `aria-invalid`.
+   */
+  invalid?: boolean;
   /** Label of the field */
   label?: string;
   /** Hold added files as `local` even with an upload function, until `startUploads()` queues them — for a form that uploads on its own button. Files added after the call wait for the next one */
@@ -916,8 +933,6 @@ export interface CFileUploadElement extends Omit<HTMLElement, 'accept' | 'compac
   texts?: CFileUploadTexts;
   /** The upload function: called once per added file with an abort signal and a progress callback taking a fraction from 0 to 1; what it resolves to becomes the entry's `result`, an `Error` it rejects with becomes the entry's `error` text. Without one the field only holds the files. A function — bind as a DOM property */
   upload?: CFileUploadFunction;
-  /** Set the validity of the field */
-  valid?: boolean;
   /** The file entries — always a list. A picked file's entry carries the browser `File`; a server file's entry is `{ id, name, size, status: 'done' }`. `''` reads as empty — what a plain `v-model` holding `null` writes. An array — bind as a DOM property */
   value?: CFileUploadEntry[] | null | string;
   /**
@@ -1018,31 +1033,19 @@ export interface CListItemTitleElement extends Omit<HTMLElement, 'active'> {
 }
 
 /** A loader component that fills the nearest containing element that has css-property position set to 'relative' */
-export interface CLoaderElement extends Omit<HTMLElement, 'contentdelay' | 'size' | 'visible' | 'width'> {
+export interface CLoaderElement extends Omit<HTMLElement, 'contentdelay' | 'hide' | 'size' | 'width'> {
   /** Delay in seconds of showing the contents in the slot of the loader */
   contentdelay?: number;
+  /**
+   * Hide the loader. Toggling it fades the loader in and out, so keep the
+   * element mounted and bind `hide` rather than using `v-if`, which would
+   * unmount it and skip the fade-out.
+   */
+  hide?: boolean;
   /** Size of the loader */
   size?: number;
-  /**
-   * Whether the loader is shown. Toggling this drives the fade-in / smooth
-   * fade-out — keep the element mounted and bind `visible` rather than using
-   * `v-if`, which would unmount it and skip the leave transition.
-   *
-   * For imperative control (non-Vue consumers holding an element ref) the
-   * element also exposes `show()` / `hide()` methods. The prop is named
-   * `visible` (not `show`) so it doesn't collide with the `show()` method —
-   * mirroring native `<dialog>` (`open` property + `show()`/`close()` methods).
-   *
-   * NOTE: this replaces the original Stencil `hide` prop with its inverse, so
-   * the default (`true` = shown) preserves the original default behaviour.
-   */
-  visible?: boolean;
   /** Width of the loader */
   width?: number;
-  /** Imperatively hide the loader (plays the smooth fade-out). */
-  hide(): void;
-  /** Imperatively show the loader (plays the fade-in). */
-  show(): void;
 }
 
 export interface CLoginButtonElement extends Omit<HTMLElement, 'alt' | 'href' | 'src'> {
@@ -1175,15 +1178,18 @@ export interface CMenuItemElement extends Omit<HTMLElement, 'active' | 'activeIc
 export interface CMenuLabelElement extends HTMLElement {
 }
 
-export interface CMessageElement extends Omit<HTMLElement, 'errorMessage' | 'hint' | 'inputId' | 'valid'> {
+export interface CMessageElement extends Omit<HTMLElement, 'errorMessage' | 'hint' | 'inputId' | 'invalid'> {
   /** Error message shown in place of the hint while the parent is invalid */
   errorMessage?: string;
   /** Hint text for the input */
   hint?: string;
   /** Id of the related input element */
   inputId?: string;
-  /** Parent validíty */
-  valid?: boolean;
+  /**
+   * Show the control as invalid: its `error-message`, when set, replaces the
+   * hint, and the control is marked `aria-invalid`.
+   */
+  invalid?: boolean;
 }
 
 /** Events dispatched by `<c-modal>`. */
@@ -1266,7 +1272,7 @@ export interface CNumberFieldElementEventMap {
 }
 
 /** A field for a number — an integer, or one with decimals — shown with thousands separators as it is typed. */
-export interface CNumberFieldElement extends Omit<HTMLElement, 'decimals' | 'decimalSeparator' | 'disabled' | 'errorMessage' | 'fixedDecimals' | 'groupSeparator' | 'hideDetails' | 'hint' | 'hostId' | 'label' | 'labelOnTop' | 'max' | 'min' | 'name' | 'placeholder' | 'readonly' | 'required' | 'shadow' | 'size' | 'step' | 'texts' | 'valid' | 'value'> {
+export interface CNumberFieldElement extends Omit<HTMLElement, 'decimals' | 'decimalSeparator' | 'disabled' | 'errorMessage' | 'fixedDecimals' | 'groupSeparator' | 'hideDetails' | 'hint' | 'hostId' | 'invalid' | 'label' | 'labelOnTop' | 'max' | 'min' | 'name' | 'placeholder' | 'readonly' | 'required' | 'shadow' | 'size' | 'step' | 'texts' | 'value'> {
   /** The most fraction digits the field takes; `0` makes it an integer field */
   decimals?: number;
   /** The decimal separator. Empty follows the page's `lang` (`,` for `fi`, `.` for `en`) */
@@ -1285,6 +1291,11 @@ export interface CNumberFieldElement extends Omit<HTMLElement, 'decimals' | 'dec
   hint?: string;
   /** Id of the input */
   hostId?: string;
+  /**
+   * Show the control as invalid: its `error-message`, when set, replaces the
+   * hint, and the control is marked `aria-invalid`.
+   */
+  invalid?: boolean;
   /** Label of the field */
   label?: string;
   /** Label on top of the field */
@@ -1309,8 +1320,6 @@ export interface CNumberFieldElement extends Omit<HTMLElement, 'decimals' | 'dec
   step?: number;
   /** UI text overrides (i18n), merged over the English defaults. Objects have no attribute form — bind as a DOM property */
   texts?: CNumberFieldTexts;
-  /** Set the validity of the field */
-  valid?: boolean;
   /** The number, or `null` when the field is empty. A string is read as the number it spells, and `''` as empty — what an attribute, or a plain `v-model` holding `null`, writes; the field always emits a number or `null` */
   value?: null | number | string;
   /** Whether the number is below `min` or above `max` (CONTEXT.md "Out of range") */
@@ -1373,7 +1382,7 @@ export interface COtpInputElementEventMap {
   'update:value': CustomEvent<string>;
 }
 
-export interface COtpInputElement extends Omit<HTMLElement, 'elementId' | 'errorMessage' | 'hasAutofocus' | 'hideDetails' | 'hint' | 'label' | 'length' | 'required' | 'valid' | 'value'> {
+export interface COtpInputElement extends Omit<HTMLElement, 'elementId' | 'errorMessage' | 'hasAutofocus' | 'hideDetails' | 'hint' | 'invalid' | 'label' | 'length' | 'required' | 'value'> {
   /** Id of the element */
   elementId?: string;
   /** Error message shown in place of the hint while the input is invalid */
@@ -1384,14 +1393,17 @@ export interface COtpInputElement extends Omit<HTMLElement, 'elementId' | 'error
   hideDetails?: boolean;
   /** Hint text for the input */
   hint?: string;
+  /**
+   * Show the control as invalid: its `error-message`, when set, replaces the
+   * hint, and the control is marked `aria-invalid`.
+   */
+  invalid?: boolean;
   /** Label of the input group, shown above the digit inputs */
   label?: string;
   /** Length of the OTP code */
   length?: number;
   /** Set as required — shows the required marker on the label */
   required?: boolean;
-  /** Set the validíty of the input */
-  valid?: boolean;
   /** Value of the input */
   value?: string;
   addEventListener<K extends keyof COtpInputElementEventMap>(
@@ -1585,7 +1597,7 @@ export interface CRadioGroupElementEventMap {
 }
 
 /** A radio group is a set of mutually exclusive choices where exactly one can be selected, authored as slotted `c-radio` children. Give the group a `label` so the choice it represents is named for every user, and a `hint` describing how to answer. */
-export interface CRadioGroupElement extends Omit<HTMLElement, 'disabled' | 'errorMessage' | 'hideDetails' | 'hint' | 'inline' | 'label' | 'required' | 'valid' | 'value'> {
+export interface CRadioGroupElement extends Omit<HTMLElement, 'disabled' | 'errorMessage' | 'hideDetails' | 'hint' | 'inline' | 'invalid' | 'label' | 'required' | 'value'> {
   /** Disable the radio group */
   disabled?: boolean;
   /** Error message shown in place of the hint while the group is invalid */
@@ -1596,12 +1608,15 @@ export interface CRadioGroupElement extends Omit<HTMLElement, 'disabled' | 'erro
   hint?: string;
   /** Display radio buttons inline */
   inline?: boolean;
+  /**
+   * Show the control as invalid: its `error-message`, when set, replaces the
+   * hint, and the control is marked `aria-invalid`.
+   */
+  invalid?: boolean;
   /** Label of the radio group */
   label?: string;
   /** Set as required */
   required?: boolean;
-  /** Set the validity of the input */
-  valid?: boolean;
   /**
    * Value of the radio group; matched against each radio's `value` by strict
    * string equality
@@ -1649,7 +1664,7 @@ export interface CSelectElementEventMap {
 }
 
 /** A value-selection field: a readonly field that opens a listbox of options — slotted `c-option` elements or an `items` array — and holds the picked value, emitting the value events that back `v-model`. */
-export interface CSelectElement extends Omit<HTMLElement, 'clearable' | 'disabled' | 'errorMessage' | 'hideDetails' | 'hint' | 'hostId' | 'items' | 'itemsPerPage' | 'label' | 'labelOnTop' | 'loading' | 'maxTags' | 'multiple' | 'name' | 'optionAsSelection' | 'placeholder' | 'required' | 'returnObject' | 'selectAll' | 'shadow' | 'size' | 'texts' | 'valid' | 'value'> {
+export interface CSelectElement extends Omit<HTMLElement, 'clearable' | 'disabled' | 'errorMessage' | 'hideDetails' | 'hint' | 'hostId' | 'invalid' | 'items' | 'itemsPerPage' | 'label' | 'labelOnTop' | 'loading' | 'maxTags' | 'multiple' | 'name' | 'optionAsSelection' | 'placeholder' | 'required' | 'returnObject' | 'selectAll' | 'shadow' | 'size' | 'texts' | 'value'> {
   /** Make the selected value clearable */
   clearable?: boolean;
   /** Disable the input */
@@ -1662,6 +1677,11 @@ export interface CSelectElement extends Omit<HTMLElement, 'clearable' | 'disable
   hint?: string;
   /** Id of the element */
   hostId?: string;
+  /**
+   * Show the control as invalid: its `error-message`, when set, replaces the
+   * hint, and the control is marked `aria-invalid`.
+   */
+  invalid?: boolean;
   /** Dropdown items (when not using <c-option> elements) */
   items?: CSelectItem[];
   /** Items per page before adding scroll */
@@ -1712,8 +1732,6 @@ export interface CSelectElement extends Omit<HTMLElement, 'clearable' | 'disable
    * no attribute form — bind as a DOM property (`:texts.prop` in Vue)
    */
   texts?: CSelectTexts;
-  /** Set the validity of the input */
-  valid?: boolean;
   /**
    * Selected value: the option's value, or the whole item with
    * `return-object`; an array of them in `multiple` mode
@@ -2192,7 +2210,7 @@ export interface CTextFieldElementEventMap {
 }
 
 /** A text field for a single line of text, or several lines under `rows`, with a label, a hint and an error message. */
-export interface CTextFieldElement extends Omit<HTMLElement, 'autocomplete' | 'autocorrect' | 'automaticCapitalize' | 'disabled' | 'errorMessage' | 'hideDetails' | 'hint' | 'hostId' | 'label' | 'labelOnTop' | 'mask' | 'max' | 'min' | 'name' | 'placeholder' | 'readonly' | 'required' | 'rows' | 'shadow' | 'size' | 'step' | 'trimWhitespace' | 'type' | 'valid' | 'value'> {
+export interface CTextFieldElement extends Omit<HTMLElement, 'autocomplete' | 'autocorrect' | 'automaticCapitalize' | 'disabled' | 'errorMessage' | 'hideDetails' | 'hint' | 'hostId' | 'invalid' | 'label' | 'labelOnTop' | 'mask' | 'max' | 'min' | 'name' | 'placeholder' | 'readonly' | 'required' | 'rows' | 'shadow' | 'size' | 'step' | 'trimWhitespace' | 'type' | 'value'> {
   /** HTML input autocomplete */
   autocomplete?: string;
   /**
@@ -2214,6 +2232,11 @@ export interface CTextFieldElement extends Omit<HTMLElement, 'autocomplete' | 'a
   hint?: string;
   /** Id of the input */
   hostId?: string;
+  /**
+   * Show the control as invalid: its `error-message`, when set, replaces the
+   * hint, and the control is marked `aria-invalid`.
+   */
+  invalid?: boolean;
   /** Label of the input */
   label?: string;
   /** Label on top of the input */
@@ -2244,8 +2267,6 @@ export interface CTextFieldElement extends Omit<HTMLElement, 'autocomplete' | 'a
   trimWhitespace?: boolean;
   /** Type of the input */
   type?: 'date' | 'email' | 'number' | 'password' | 'search' | 'tel' | 'text' | 'url';
-  /** Set the validity of the input */
-  valid?: boolean;
   /** Value of the input */
   value?: string;
   /** Whether a masked field has every mask token filled (always `true` without a mask) */
@@ -2298,7 +2319,7 @@ export interface CTimePickerElementEventMap {
 }
 
 /** A time field that takes a typed time, or opens hour and minute columns for picking one, or a start and end time under `range`. */
-export interface CTimePickerElement extends Omit<HTMLElement, 'clearable' | 'disabled' | 'errorMessage' | 'format' | 'hideDetails' | 'hint' | 'hostId' | 'label' | 'labelOnTop' | 'max' | 'min' | 'minuteStep' | 'name' | 'placeholder' | 'range' | 'required' | 'shadow' | 'showNow' | 'size' | 'texts' | 'valid' | 'value'> {
+export interface CTimePickerElement extends Omit<HTMLElement, 'clearable' | 'disabled' | 'errorMessage' | 'format' | 'hideDetails' | 'hint' | 'hostId' | 'invalid' | 'label' | 'labelOnTop' | 'max' | 'min' | 'minuteStep' | 'name' | 'placeholder' | 'range' | 'required' | 'shadow' | 'showNow' | 'size' | 'texts' | 'value'> {
   /** Make the value clearable */
   clearable?: boolean;
   /** Disable the field */
@@ -2317,6 +2338,11 @@ export interface CTimePickerElement extends Omit<HTMLElement, 'clearable' | 'dis
   hint?: string;
   /** Id of the element */
   hostId?: string;
+  /**
+   * Show the control as invalid: its `error-message`, when set, replaces the
+   * hint, and the control is marked `aria-invalid`.
+   */
+  invalid?: boolean;
   /** Element label */
   label?: string;
   /** Label on top of the field */
@@ -2356,8 +2382,6 @@ export interface CTimePickerElement extends Omit<HTMLElement, 'clearable' | 'dis
    * form — bind as a DOM property
    */
   texts?: CTimePickerTexts;
-  /** Set the validity of the field */
-  valid?: boolean;
   /**
    * The time as an ISO `HH:mm` string on a 24-hour clock, or `{ start, end }`
    * under `range`; `null` when empty
@@ -2529,7 +2553,7 @@ export interface CTreeSelectElementEventMap {
 }
 
 /** A hierarchical value-selection component: a readonly value field that opens a panel for browsing a tree one level at a time, or searching it as a whole, to commit one item. */
-export interface CTreeSelectElement extends Omit<HTMLElement, 'allowBranch' | 'clearable' | 'disabled' | 'errorMessage' | 'filter' | 'hideDetails' | 'hint' | 'hostId' | 'items' | 'itemsPerPage' | 'label' | 'labelOnTop' | 'levelLabels' | 'name' | 'placeholder' | 'required' | 'returnObject' | 'shadow' | 'size' | 'texts' | 'valid' | 'value'> {
+export interface CTreeSelectElement extends Omit<HTMLElement, 'allowBranch' | 'clearable' | 'disabled' | 'errorMessage' | 'filter' | 'hideDetails' | 'hint' | 'hostId' | 'invalid' | 'items' | 'itemsPerPage' | 'label' | 'labelOnTop' | 'levelLabels' | 'name' | 'placeholder' | 'required' | 'returnObject' | 'shadow' | 'size' | 'texts' | 'value'> {
   /**
    * Let a branch be committed as the value: a pinned select-branch row heads
    * every level below the root, and matching branches are listed as search
@@ -2553,6 +2577,11 @@ export interface CTreeSelectElement extends Omit<HTMLElement, 'allowBranch' | 'c
   hint?: string;
   /** Id of the element */
   hostId?: string;
+  /**
+   * Show the control as invalid: its `error-message`, when set, replaces the
+   * hint, and the control is marked `aria-invalid`.
+   */
+  invalid?: boolean;
   /**
    * The tree to pick from. Arrays have no attribute form — bind as a DOM
    * property (`:items.prop` in Vue)
@@ -2590,8 +2619,6 @@ export interface CTreeSelectElement extends Omit<HTMLElement, 'allowBranch' | 'c
    * no attribute form — bind as a DOM property (`:texts.prop` in Vue)
    */
   texts?: CTreeSelectTexts;
-  /** Set the validity of the field */
-  valid?: boolean;
   /**
    * Selected value: the committed item's value, or the `CTreeSelectSelection`
    * with `return-object`; `null` when nothing is selected

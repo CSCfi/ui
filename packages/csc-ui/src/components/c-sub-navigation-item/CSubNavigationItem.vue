@@ -15,7 +15,7 @@
         <span v-if="active" :class="ui.srOnly()">, Current page</span>
       </div>
 
-      <c-loader :size="32" :visible="loading" style="pointer-events: none" />
+      <c-loader :hide="!loading" :size="32" style="pointer-events: none" />
     </div>
   </div>
 </template>

@@ -1,7 +1,8 @@
 /**
  * Behaviour spec for c-text-field's value events (CONTEXT.md "Value events",
- * "Commit"; ADR-0075) and its input mask (CONTEXT.md "Input mask",
- * "Complete"; ADR-0059).
+ * "Commit"; ADR-0075), its input mask (CONTEXT.md "Input mask", "Complete";
+ * ADR-0059) and `invalid`, which markup can set — `valid`, defaulting to true,
+ * could never be turned off from an attribute (ADR-0076).
  */
 import { describe, expect, it } from 'vitest';
 import { page, userEvent } from 'vitest/browser';
@@ -91,6 +92,31 @@ describe('value events', () => {
     await settle();
 
     expect(events.of('change').map((r) => r.detail)).toEqual(['12 345']);
+  });
+});
+
+describe('invalid (ADR-0076)', () => {
+  it('a bare invalid attribute shows the error message and marks the input', async () => {
+    const m = await mount<FieldHost>('c-text-field', {
+      attrs: {
+        'error-message': 'Enter a phone number',
+        hint: 'With the country code',
+        invalid: true,
+        label: 'Phone',
+      },
+    });
+    await settle(400);
+
+    const message = m.deep('c-input', '[part="message"]');
+
+    expect(message.textContent).toContain('Enter a phone number');
+    expect(input(m).getAttribute('aria-invalid')).toBe('true');
+
+    m.host.removeAttribute('invalid');
+    await settle(400);
+
+    expect(message.textContent).toContain('With the country code');
+    expect(input(m).getAttribute('aria-invalid')).toBe('false');
   });
 });
 

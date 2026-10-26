@@ -60,7 +60,7 @@
       :error-message
       :hint
       :input-id="elementId"
-      :valid
+      :invalid
     />
   </div>
 </template>
@@ -122,17 +122,17 @@ defineOptions({ inheritAttrs: false });
 /**
  * Styling lives in this `tailwind-variants` config: the old
  * `--_c-otp-input-*` indirection vars are dropped in favour of token-mapped
- * utilities, and the `:host(.error)` border colour swap becomes the `valid`
+ * utilities, and the `:host(.error)` border colour swap becomes the `invalid`
  * variant. Consumer customization is via `::part()`.
  *
  * The digit `<input>`s live in *this* shadow root (not slotted), so the
  * box-shadow notch border is authored as an inset `ring`: `ring-1` inactive,
- * `ring-2` on focus. The `valid` variant recolours both states to error red.
+ * `ring-2` on focus. The `invalid` variant recolours both states to error red.
  */
 const otp = tv({
   defaultVariants: {
     hideDetails: false,
-    valid: true,
+    invalid: false,
   },
   slots: {
     // `display: inline-grid` with a column-per-digit auto track (the
@@ -152,8 +152,8 @@ const otp = tv({
     hideDetails: {
       true: { root: 'mb-0' },
     },
-    valid: {
-      false: {
+    invalid: {
+      true: {
         input: 'ring-error focus:ring-error',
       },
     },
@@ -199,6 +199,12 @@ interface COtpInputProps {
   hint?: string;
 
   /**
+   * Show the control as invalid: its `error-message`, when set, replaces the
+   * hint, and the control is marked `aria-invalid`.
+   */
+  invalid?: boolean;
+
+  /**
    * Label of the input group, shown above the digit inputs
    *
    * @freeform
@@ -218,13 +224,6 @@ interface COtpInputProps {
   required?: boolean;
 
   /**
-   * Set the validíty of the input
-   *
-   * @seeded from csc-ui — verify
-   */
-  valid?: boolean;
-
-  /**
    * Value of the input
    *
    * @seeded from csc-ui — verify
@@ -239,10 +238,10 @@ const props = withDefaults(defineProps<COtpInputProps>(), {
   hasAutofocus: false,
   hideDetails: false,
   hint: '',
+  invalid: false,
   label: '',
   length: 6,
   required: false,
-  valid: true,
   value: '',
 });
 
@@ -268,7 +267,7 @@ const labelVisible = computed(
 const labelId = computed(() => `${resolvedId.value}-label`);
 
 const ui = computed(() =>
-  otp({ hideDetails: props.hideDetails, valid: props.valid }),
+  otp({ hideDetails: props.hideDetails, invalid: props.invalid }),
 );
 
 const statusText = ref('');
@@ -297,7 +296,9 @@ const updateStatusText = () => {
       .join('');
 
     let text =
-      !props.valid && props.errorMessage ? `Error: ${props.errorMessage} ` : '';
+      props.invalid && props.errorMessage
+        ? `Error: ${props.errorMessage} `
+        : '';
     text += `Currently entered - ${
       !value.length ? 'nothing' : value.split('').join(' - ')
     }`;
@@ -461,15 +462,15 @@ watch(
 onMounted(() => {
   if (!host) return;
   host.id = resolvedId.value;
-  host.classList.toggle('error', !props.valid);
+  host.classList.toggle('error', props.invalid);
   host.style.setProperty('--_c-otp-input-count', String(props.length));
   (host as unknown as { reset: () => void }).reset = reset;
   handleValueChange(props.value);
 });
 
 watch(
-  () => props.valid,
-  (v) => host?.classList.toggle('error', !v),
+  () => props.invalid,
+  (v) => host?.classList.toggle('error', v),
 );
 </script>
 

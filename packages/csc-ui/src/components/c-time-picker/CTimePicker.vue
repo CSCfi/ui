@@ -11,6 +11,7 @@
     :hint
     :input-id
     :inputmode="twelve ? 'text' : 'numeric'"
+    :invalid
     :label
     :label-on-top="labelOnTopResolved"
     :name
@@ -18,7 +19,6 @@
     :required
     :shadow="shadowResolved"
     :size="sizeResolved"
-    :valid
   >
     <template #trigger="{ buttonSize, iconSize }">
       <c-icon-button
@@ -278,6 +278,12 @@ interface CTimePickerProps {
   hostId?: string;
 
   /**
+   * Show the control as invalid: its `error-message`, when set, replaces the
+   * hint, and the control is marked `aria-invalid`.
+   */
+  invalid?: boolean;
+
+  /**
    * Element label
    *
    * @freeform
@@ -366,11 +372,6 @@ interface CTimePickerProps {
    * @defaultable {}
    */
   texts?: CTimePickerTexts;
-
-  /**
-   * Set the validity of the field
-   */
-  valid?: boolean;
 
   /**
    * The time as an ISO `HH:mm` string on a 24-hour clock, or `{ start, end }`
@@ -562,6 +563,7 @@ const props = withDefaults(defineProps<CTimePickerProps>(), {
   hideDetails: undefined,
   hint: '',
   hostId: '',
+  invalid: false,
   label: '',
   labelOnTop: undefined,
   max: '',
@@ -575,7 +577,6 @@ const props = withDefaults(defineProps<CTimePickerProps>(), {
   showNow: undefined,
   size: undefined,
   texts: undefined,
-  valid: true,
   value: null,
 });
 

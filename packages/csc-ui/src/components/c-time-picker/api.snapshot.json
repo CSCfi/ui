@@ -7,6 +7,7 @@
     "hide-details": "boolean = false",
     "hint": "string = ''",
     "host-id": "string = ''",
+    "invalid": "boolean = false",
     "label": "string = ''",
     "label-on-top": "boolean = false",
     "max": "string = ''",
@@ -19,7 +20,6 @@
     "shadow": "boolean = false",
     "show-now": "boolean = false",
     "size": "'default' | 'small' = 'default'",
-    "valid": "boolean = true",
     "value": "CTimePickerValue = null"
   },
   "cssProperties": [],
@@ -67,6 +67,7 @@
     "hideDetails": "boolean = false",
     "hint": "string = ''",
     "hostId": "string = ''",
+    "invalid": "boolean = false",
     "label": "string = ''",
     "labelOnTop": "boolean = false",
     "max": "string = ''",
@@ -80,7 +81,6 @@
     "showNow": "boolean = false",
     "size": "'default' | 'small' = 'default'",
     "texts": "CTimePickerTexts = {}",
-    "valid": "boolean = true",
     "value": "CTimePickerValue = null"
   },
   "readonly": {

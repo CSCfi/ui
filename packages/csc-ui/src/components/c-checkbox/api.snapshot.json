@@ -9,10 +9,10 @@
     "host-id": "string = ''",
     "host-name": "string = ''",
     "indeterminate": "boolean = false",
+    "invalid": "boolean = false",
     "label": "string = ''",
     "required": "boolean = false",
     "true-value": "boolean | number | string = true",
-    "valid": "boolean = true",
     "value": "string | number | boolean"
   },
   "cssProperties": [],
@@ -42,10 +42,10 @@
     "hostId": "string = ''",
     "hostName": "string = ''",
     "indeterminate": "boolean = false",
+    "invalid": "boolean = false",
     "label": "string = ''",
     "required": "boolean = false",
     "trueValue": "boolean | number | string = true",
-    "valid": "boolean = true",
     "value": "string | number | boolean"
   },
   "slots": [

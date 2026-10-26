@@ -7,13 +7,13 @@
     :filled="isFilledForInput"
     :hint
     :input-id
+    :invalid
     :is-textarea="rows > 1"
     :label
     :label-on-top="labelOnTopResolved"
     :required
     :shadow="shadowResolved"
     :size="sizeResolved"
-    :valid
   >
     <!-- Pre slot: forwarded from the consumer's `pre` slot. We only
          render the wrapper when the consumer has actually provided pre
@@ -31,7 +31,7 @@
       v-if="rows > 1"
       :id="inputId"
       ref="inputRef"
-      :aria-invalid="!valid"
+      :aria-invalid="invalid"
       :autocapitalize="automaticCapitalize || undefined"
       :autocomplete="autocomplete || undefined"
       :autocorrect="
@@ -71,7 +71,7 @@
       <input
         :id="inputId"
         ref="inputRef"
-        :aria-invalid="!valid"
+        :aria-invalid="invalid"
         :autocapitalize="automaticCapitalize || undefined"
         :autocomplete="autocomplete || undefined"
         :autocorrect="
@@ -227,6 +227,12 @@ interface CTextFieldProps {
   hostId?: string;
 
   /**
+   * Show the control as invalid: its `error-message`, when set, replaces the
+   * hint, and the control is marked `aria-invalid`.
+   */
+  invalid?: boolean;
+
+  /**
    * Label of the input
    *
    * @seeded from csc-ui — verify
@@ -335,13 +341,6 @@ interface CTextFieldProps {
    * @seeded from csc-ui — verify
    */
   type?: CTextFieldType;
-
-  /**
-   * Set the validity of the input
-   *
-   * @seeded from csc-ui — verify
-   */
-  valid?: boolean;
 
   /**
    * Value of the input
@@ -471,6 +470,7 @@ const props = withDefaults(defineProps<CTextFieldProps>(), {
   hideDetails: undefined,
   hint: '',
   hostId: '',
+  invalid: false,
   label: '',
   labelOnTop: undefined,
   mask: '',
@@ -486,7 +486,6 @@ const props = withDefaults(defineProps<CTextFieldProps>(), {
   step: null,
   trimWhitespace: false,
   type: 'text',
-  valid: true,
   value: '',
 });
 

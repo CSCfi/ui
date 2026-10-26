@@ -87,7 +87,7 @@
       :error-message
       :hide-details="hideDetailsResolved"
       :hint
-      :valid
+      :invalid
       part="message"
     />
 
@@ -407,6 +407,12 @@ interface CFileUploadProps {
   hint?: string;
 
   /**
+   * Show the control as invalid: its `error-message`, when set, replaces the
+   * hint, and the control is marked `aria-invalid`.
+   */
+  invalid?: boolean;
+
+  /**
    * Label of the field
    *
    * @freeform
@@ -456,11 +462,6 @@ interface CFileUploadProps {
    * The upload function: called once per added file with an abort signal and a progress callback taking a fraction from 0 to 1; what it resolves to becomes the entry's `result`, an `Error` it rejects with becomes the entry's `error` text. Without one the field only holds the files. A function — bind as a DOM property
    */
   upload?: CFileUploadFunction;
-
-  /**
-   * Set the validity of the field
-   */
-  valid?: boolean;
 
   /**
    * The file entries — always a list. A picked file's entry carries the browser `File`; a server file's entry is `{ id, name, size, status: 'done' }`. `''` reads as empty — what a plain `v-model` holding `null` writes. An array — bind as a DOM property
@@ -659,6 +660,7 @@ const props = withDefaults(defineProps<CFileUploadProps>(), {
   errorMessage: '',
   hideDetails: undefined,
   hint: '',
+  invalid: false,
   label: '',
   manual: false,
   maxFiles: null,
@@ -668,7 +670,6 @@ const props = withDefaults(defineProps<CFileUploadProps>(), {
   size: undefined,
   texts: undefined,
   upload: undefined,
-  valid: true,
   value: null,
 });
 
@@ -743,7 +744,7 @@ const ui = computed(() =>
     compact: compactResolved.value,
     disabled: isDisabled.value,
     dragOver: dragOver.value && !isDisabled.value,
-    error: !coerceBoolean(props.valid),
+    error: coerceBoolean(props.invalid),
     size: sizeResolved.value,
   }),
 );
