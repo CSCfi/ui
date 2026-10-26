@@ -66,7 +66,7 @@ const combobox = (m: Mounted): HTMLInputElement =>
 const search = (m: Mounted): HTMLInputElement =>
   m.shadow('[part~="search"] input');
 
-const rows = (m: Mounted): HTMLElement[] => m.shadowAll('li[part~="item"]');
+const rows = (m: Mounted): HTMLElement[] => m.shadowAll('li[part~="option"]');
 
 const list = (m: Mounted): HTMLElement => m.part('list');
 
@@ -124,7 +124,7 @@ describe('option content', () => {
     await settle();
 
     const icons = Array.from(
-      host.shadowRoot!.querySelectorAll('li[part~="item"] c-icon'),
+      host.shadowRoot!.querySelectorAll('li[part~="option"] c-icon'),
     );
 
     expect(icons).toHaveLength(2);

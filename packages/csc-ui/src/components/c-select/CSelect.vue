@@ -13,7 +13,7 @@
     :parent="host"
     :select-all-row
     :selected="dropdownSelected"
-    exportparts="menu, list, item, select-all, indicator, mark, heading-row, heading, close"
+    exportparts="panel, card, list, option, select-all, indicator, mark, heading-row, heading, close"
     type="select"
   >
     <c-input
@@ -353,12 +353,13 @@ interface CSelectProps {
  *
  * @subcomponents c-option, c-option-value
  *
- * @csspart menu - The dropdown surface (the positioned dialog) holding the field and the list
+ * @csspart panel - The positioned dialog holding the field and the list, as on the other value fields
+ * @csspart card - The same dialog as the painted surface: background, radius and shadow, as on the other value fields
  * @csspart heading-row - The top row of the fullscreen panel (narrow viewports): the field label as heading and the close button
  * @csspart heading - The field label naming the fullscreen panel
  * @csspart close - The close button of the fullscreen panel
  * @csspart list - The scrolling listbox of options
- * @csspart item - One option row in the list. Any `part` attribute set on content inside a slotted `<c-option>` is exported too, so `c-select::part(<name>)` reaches the consumer's own option markup
+ * @csspart option - One option row in the list. Any `part` attribute set on content inside a slotted `<c-option>` is exported too, so `c-select::part(<name>)` reaches the consumer's own option markup
  * @csspart select-all - The pinned select-all row at the top of the list (`multiple` mode with `select-all`); carries the same indicator / mark parts as an option row
  * @csspart indicator - The decorative checkbox box on an option row in `multiple` mode; border, fill and glyph draw with `currentColor`, so `color` recolours them together (the c-checkbox recipe)
  * @csspart mark - The check glyph inside a row indicator; draws with `currentColor`
@@ -1327,13 +1328,14 @@ const handleKeyDown = (event: KeyboardEvent) => {
 // the consumer's <c-option> markup inside its own shadow root, so the
 // consumer's page styles can't reach that content; forwarding every `part`
 // name found inside the options lets `c-select::part(<name>)` style it.
-// The static `exportparts="menu, list, item"` in the template is the
+// The static `exportparts="panel, card, list, option, …"` in the template is the
 // verifiable contract; the consumer names are appended imperatively (Vue never
 // re-patches a static attribute, so the extension survives re-renders).
 const STATIC_EXPORTED_PARTS = [
-  'menu',
+  'panel',
+  'card',
   'list',
-  'item',
+  'option',
   'select-all',
   'indicator',
   'mark',

@@ -78,7 +78,7 @@
           :class="ui.endTab()"
           :data-end="end"
           :tabindex="editing === end ? 0 : -1"
-          part="end-tab"
+          part="end"
           role="tab"
           type="button"
           @click="switchEnd(end)"
@@ -384,7 +384,7 @@ interface CTimePickerProps {
  * @csspart heading - The field label naming the fullscreen panel
  * @csspart close - The close button of the fullscreen panel
  * @csspart end-switch - The Start | End switch above the columns under `range`
- * @csspart end-tab - One end's button in the end switch
+ * @csspart end - One end's button in the end switch
  * @csspart columns - The row of time columns
  * @csspart column - One time column: hours, minutes or AM/PM
  * @csspart option - One row of a time column

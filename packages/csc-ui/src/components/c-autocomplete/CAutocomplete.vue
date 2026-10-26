@@ -267,7 +267,7 @@
             i === activeIndex ? 'c-autocomplete__item--active' : '',
           ]"
           :data-active="i === activeIndex || undefined"
-          part="item"
+          part="option"
           role="option"
           tabindex="-1"
           @click="onSelect(opt)"
@@ -568,7 +568,7 @@ interface CAutocompleteProps {
  * @csspart close - The close button of the fullscreen panel
  * @csspart search - The search-input row at the top of the panel
  * @csspart list - The scrollable options listbox
- * @csspart item - One option row in the list
+ * @csspart option - One option row in the list
  * @csspart select-all - The pinned select-all row at the top of the list (`multiple` mode with `select-all`); carries the same indicator / mark parts as an option row
  * @csspart indicator - The decorative checkbox box on an option row in `multiple` mode; border, fill and glyph draw with `currentColor`, so `color` recolours them together (the c-checkbox recipe)
  * @csspart mark - The check glyph inside a row indicator; draws with `currentColor`

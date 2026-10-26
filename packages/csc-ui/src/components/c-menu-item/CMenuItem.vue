@@ -48,7 +48,7 @@
       ref="submenuListRef"
       :class="ui.submenu()"
       aria-orientation="vertical"
-      part="submenu"
+      part="submenu-list"
       role="menu"
     >
       <slot name="submenu" />
@@ -66,7 +66,7 @@
  * @csspart icon - The leading icon rendered from the `icon` prop
  * @csspart check - The trailing indicator icon shown while the item is active
  * @csspart submenu-panel - The floating popover holding the submenu
- * @csspart submenu - The submenu list surface inside the popover
+ * @csspart submenu-list - The submenu list surface inside the popover
  */
 import { mdiCheck, mdiChevronRight } from '@mdi/js';
 import { tv } from 'tailwind-variants';

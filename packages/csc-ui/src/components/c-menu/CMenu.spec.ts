@@ -276,7 +276,7 @@ describe('c-menu submenu on touch', () => {
 
       expect(panel.matches(':popover-open')).toBe(true);
 
-      const sub = rect(panel.querySelector('[part~="submenu"]')!);
+      const sub = rect(panel.querySelector('[part~="submenu-list"]')!);
 
       const row = rect(parent);
 

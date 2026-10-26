@@ -29,7 +29,7 @@
           :class="ui.chip({ small: sizeResolved === 'small' })"
           :style="chipStyle(committedColor)"
           aria-hidden="true"
-          part="color-chip"
+          part="value-color"
         />
       </span>
 
@@ -116,7 +116,7 @@
         <span
           :class="ui.chip({ empty: !committedColor })"
           :style="chipStyle(committedColor)"
-          part="color-chip"
+          part="value-color"
         />
       </c-icon-button>
     </template>
@@ -555,7 +555,7 @@ interface CColorPickerProps {
 /**
  * @csspart input - The text input; under `swatches-only` the readonly field
  * @internalpart separator - The shared typed field's range separator; a colour has no range
- * @csspart color-chip - The colour painted in the colour button, or before the swatch-only field's text
+ * @csspart value-color - The value's colour, painted in the colour button or before the swatch-only field's text; pairs with `original-color` and `new-color`
  * @csspart panel - The top-layer popover container anchored below the field
  * @csspart card - The dialog surface inside the panel
  * @csspart heading-row - The top row of the fullscreen panel (narrow viewports): the field label as heading and the close button

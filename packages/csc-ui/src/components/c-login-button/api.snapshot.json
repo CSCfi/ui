@@ -11,8 +11,8 @@
   "parts": [
     "image",
     "image-wrap",
-    "root",
-    "title"
+    "label",
+    "root"
   ],
   "propertyOnly": [],
   "props": {

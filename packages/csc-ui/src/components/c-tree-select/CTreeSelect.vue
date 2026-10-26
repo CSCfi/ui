@@ -272,7 +272,7 @@
           :class="treeSelect({ disabled: row.disabled }).item()"
           :data-active="i === activeIndex || undefined"
           :title="searchMode ? row.pathText || undefined : undefined"
-          part="item"
+          part="option"
           role="option"
           tabindex="-1"
           @click="activateRow(row)"
@@ -632,7 +632,7 @@ interface CTreeSelectProps {
  * @csspart crumb - One crumb in the breadcrumb: the root crumb, an ancestor, or the collapsed "…" crumb
  * @csspart header - The header line under the breadcrumb: the level to choose and its step counter, or the match count and the "Browse instead" control
  * @csspart list - The scrollable listbox: the level list while browsing, the results while searching
- * @csspart item - One item row in the list
+ * @csspart option - One row in the list
  * @csspart select-branch - The pinned select-branch row at the top of a level list inside a branch (`allow-branch`)
  * @csspart code - An item's code column, in a row and in the closed field
  * @csspart path - The ancestor path line under a search result's label

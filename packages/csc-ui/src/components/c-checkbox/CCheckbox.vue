@@ -21,7 +21,7 @@
       @change="onChange"
     />
 
-    <label :class="ui.label()" :for="inputId" part="label">
+    <label :class="ui.label()" :for="inputId">
       <span
         ref="rippleContainerRef"
         :class="ui.ripple()"
@@ -55,7 +55,7 @@
         :class="ui.labelContent()"
         :label
         :required
-        part="content"
+        part="label"
         tag="span"
       >
         <slot />
@@ -98,10 +98,9 @@
  * @slot default - Default slot for the label
  *
  * @csspart root - The outer wrapper containing the checkbox, label and message
- * @csspart label - The `<label>` element wrapping the indicator and the label content
+ * @csspart label - The label text or slotted label content beside the box, as on c-switch (ADR-0022)
  * @csspart indicator - The checkbox box itself — the bordered square that fills when checked; border, fill and the keyboard focus ring (its `::before`) all draw with `currentColor`, so `color` recolours them together
  * @csspart mark - The SVG check / indeterminate glyph revealed inside the indicator; draws with `currentColor`, so `color` recolours it
- * @csspart content - Wrapper around the label text or slotted label content
  * @csspart message - The hint / error message area below the checkbox (always reserved unless `hide-details`)
  *
  * @cssstate checked - Present while the checkbox is checked

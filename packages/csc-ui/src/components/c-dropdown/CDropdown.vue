@@ -12,7 +12,7 @@
   <dialog
     ref="dialogRef"
     :class="[ui.dialog(), fullscreenOpen ? 'fullscreen' : '']"
-    part="menu"
+    part="panel card"
     tabindex="-1"
     @cancel="close"
   >
@@ -91,7 +91,7 @@
               isDisabled(opt) ? 'disabled' : '',
             ]"
             :data-name="nameOf(opt)"
-            part="item"
+            part="option"
             role="option"
             tabindex="-1"
             @click="onSelect(opt, $event)"
@@ -131,7 +131,7 @@
             ]"
             :data-name="item.name"
             :title="item.name"
-            part="item"
+            part="option"
             role="option"
             tabindex="-1"
             @click="onSelect(item, $event)"
@@ -171,12 +171,13 @@
  *
  * @slot default - The anchor c-input of the parent select / autocomplete, rendered inline while the menu is closed
  *
- * @csspart menu - The positioned dialog surface holding the field and the list
+ * @csspart panel - The positioned dialog holding the field and the list
+ * @csspart card - The same dialog as the painted surface: background, radius and shadow
  * @csspart heading-row - The top row of the fullscreen panel (narrow viewports): the field label as heading and the close button
  * @csspart heading - The field label naming the fullscreen panel
  * @csspart close - The close button of the fullscreen panel
  * @csspart list - The scrolling listbox
- * @csspart item - One option row
+ * @csspart option - One option row
  * @csspart select-all - The pinned select-all row at the top of the list in `multiple` mode; carries the same indicator / mark parts as an option row
  * @csspart indicator - The decorative checkbox box on an option row in `multiple` mode; border, fill and glyph draw with `currentColor`, so `color` recolours them together
  * @csspart mark - The check glyph inside a row indicator; draws with `currentColor`

@@ -1,6 +1,6 @@
 <template>
   <div :class="ui.root()" part="root">
-    <div :class="ui.label()" part="label">
+    <div :class="ui.label()" part="heading">
       <slot />
     </div>
 
@@ -18,7 +18,7 @@
  * @slot default - The title text of the navigation section
  *
  * @csspart root - The outer wrapper around the label and the divider
- * @csspart label - The uppercase section title label
+ * @csspart heading - The uppercase section heading
  * @csspart divider-root - The underline divider's root element, forwarded from the inner c-divider
  */
 import { tv } from 'tailwind-variants';

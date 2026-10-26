@@ -190,7 +190,7 @@ export const VALUE_RECIPES: Record<string, ValueRecipe> = {
     expected: 'fi',
     interact: async (m) => {
       await openField(m);
-      await userEvent.click(m.shadow('li[part~="item"]'));
+      await userEvent.click(m.shadow('li[part~="option"]'));
     },
     mount: { html: OPTIONS, props: { label: 'Country' } },
     programmatic: 'se',
@@ -376,7 +376,7 @@ export const VALUE_RECIPES: Record<string, ValueRecipe> = {
     expected: 'a',
     interact: async (m) => {
       await openField(m);
-      await userEvent.click(m.shadow('li[part~="item"]'));
+      await userEvent.click(m.shadow('li[part~="option"]'));
     },
     mount: {
       props: {

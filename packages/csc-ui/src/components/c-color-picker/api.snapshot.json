@@ -44,7 +44,6 @@
     "channel",
     "channels",
     "close",
-    "color-chip",
     "comparison",
     "done",
     "heading",
@@ -57,7 +56,8 @@
     "original-color",
     "panel",
     "swatch",
-    "swatches"
+    "swatches",
+    "value-color"
   ],
   "propertyOnly": [
     "swatches",

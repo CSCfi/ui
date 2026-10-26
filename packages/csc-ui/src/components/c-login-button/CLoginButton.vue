@@ -6,7 +6,7 @@
       </slot>
     </div>
 
-    <div :class="ui.title()" part="title">
+    <div :class="ui.title()" part="label">
       <slot />
     </div>
   </a>
@@ -20,7 +20,7 @@
  * @csspart root - The anchor element forming the whole clickable card
  * @csspart image-wrap - The area above the title bar that centers the logo (default image or slotted content)
  * @csspart image - The default provider logo `<img>` (absent when the `image` slot is used)
- * @csspart title - The bottom title bar wrapping the slotted label
+ * @csspart label - The bottom bar wrapping the slotted label
  *
  * @seeded from csc-ui — verify
  */

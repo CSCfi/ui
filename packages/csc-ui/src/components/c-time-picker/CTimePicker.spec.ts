@@ -627,7 +627,7 @@ describe('range', () => {
 
     await open(m);
 
-    const tabs = m.shadowAll('[part~="end-tab"]');
+    const tabs = m.shadowAll('[part~="end"]');
 
     expect(tabs.map((t) => t.getAttribute('aria-selected'))).toEqual([
       'true',
@@ -660,9 +660,9 @@ describe('range', () => {
     await userEvent.keyboard('{ArrowLeft}');
     await settle();
 
-    expect(
-      m.shadow('[part~="end-tab"][aria-selected="true"]').dataset.end,
-    ).toBe('start');
+    expect(m.shadow('[part~="end"][aria-selected="true"]').dataset.end).toBe(
+      'start',
+    );
     expect(row(m, 'h9').getAttribute('aria-selected')).toBe('true');
   });
 
@@ -959,7 +959,7 @@ describe('focus ring', () => {
     const stops = await tabRound();
 
     expect(new Set(stops.map((s) => s.name))).toEqual(
-      new Set(['end-tab', 'now', 'option']),
+      new Set(['end', 'now', 'option']),
     );
 
     for (const stop of stops) expect(stop.ring, stop.name).toBe('solid 2px');
@@ -974,7 +974,7 @@ describe('focus ring', () => {
     await openFromKeyboard(m);
     await settle();
 
-    const tabs = (await tabRound()).filter((s) => s.name === 'end-tab');
+    const tabs = (await tabRound()).filter((s) => s.name === 'end');
 
     const selected = tabs.find((s) => s.selected)!;
 
@@ -1051,7 +1051,7 @@ describe('Now button (ADR-0065)', () => {
     );
 
     await open(m);
-    await userEvent.click(m.shadowAll('[part~="end-tab"]')[1]);
+    await userEvent.click(m.shadowAll('[part~="end"]')[1]);
     await settle();
 
     const before = nowTime();
@@ -1255,7 +1255,7 @@ describe('Done button (ADR-0066)', () => {
 
     await open(m);
     await tap(row(m, 'h22'));
-    await tap(m.shadowAll<HTMLElement>('[part~="end-tab"]')[1]);
+    await tap(m.shadowAll<HTMLElement>('[part~="end"]')[1]);
     await tap(row(m, 'h6'));
 
     expect(events.of('change')).toHaveLength(0);
