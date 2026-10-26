@@ -14,7 +14,7 @@
         <slot name="icon" />
       </div>
 
-      <slot name="header">
+      <slot name="heading">
         <div :class="ui.title()">{{ heading }}</div>
       </slot>
 
@@ -42,7 +42,7 @@
 
 <script setup lang="ts">
 /**
- * @slot header - Custom header slot
+ * @slot heading - Rich heading content; overrides the `heading` prop
  * @slot icon - Icon shown in the header before the heading
  * @slot default - Default slot
  *

@@ -7,16 +7,16 @@ import { Component, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
   standalone: true,
   styles: [
     `
-      /* Slotted header content is light DOM: style it with your own CSS. It
-         inherits the header's text color, so it matches a plain 'heading'. */
-      .member-header {
+      /* Slotted heading content is light DOM: style it with your own CSS. It
+         inherits the header row's text color, so it matches a plain 'heading'. */
+      .member-heading {
         display: flex;
         align-items: baseline;
         gap: 0.5rem;
         font-weight: 500;
       }
 
-      .member-header-meta {
+      .member-heading-meta {
         font-size: 0.8125rem;
         font-weight: 400;
         color: var(--c-on-surface-muted);
@@ -27,9 +27,9 @@ import { Component, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
     <div>
       <c-accordion>
         <c-accordion-item value="members">
-          <div slot="header" class="member-header">
+          <div slot="heading" class="member-heading">
             <span>Members and roles</span>
-            <span class="member-header-meta">3 pending invites</span>
+            <span class="member-heading-meta">3 pending invites</span>
           </div>
           <p>Invite members by email and assign them a role in the project.</p>
         </c-accordion-item>
@@ -40,4 +40,4 @@ import { Component, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
     </div>
   `,
 })
-export class CustomHeaderExampleComponent {}
+export class CustomHeadingExampleComponent {}

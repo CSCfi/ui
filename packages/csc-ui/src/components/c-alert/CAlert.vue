@@ -15,12 +15,12 @@
     </div>
 
     <button
-      v-if="isDismissible"
-      :class="ui.dismiss()"
-      aria-label="Dismiss"
-      part="dismiss"
+      v-if="isCloseable"
+      :class="ui.close()"
+      aria-label="Close"
+      part="close"
       type="button"
-      @click="onDismiss"
+      @click="onClose"
     >
       <svg class="size-4 fill-current" viewBox="0 0 24 24">
         <path :d="mdiClose" />
@@ -31,24 +31,18 @@
 
 <script lang="ts">
 /**
- * The alert types that carry a status family's accent colour; `default` uses
- * the brand primary. Every type renders its status icon.
+ * Type of the alert: the four status types carry their status family's
+ * colours and icon. Omitting it renders the neutral, brand-primary look, as
+ * on `c-status`.
  */
-export type CAlertIconType = 'error' | 'info' | 'success' | 'warning';
-
-/**
- * Type of the alert. `default` — equivalently, omitting the attribute —
- * renders the brand-primary look; the four status types carry their status
- * family's colours.
- */
-export type CAlertType = 'default' | CAlertIconType;
+export type CAlertType = 'error' | 'info' | 'success' | 'warning';
 
 interface CAlertProps {
   /**
-   * Show a dismiss button. The alert only emits `dismiss` — removing it from
-   * the page stays the consumer's job.
+   * Show a close button. The alert only fires `close` — removing it from the
+   * page stays the consumer's job.
    */
-  dismissible?: boolean;
+  closeable?: boolean;
 
   /**
    * Heading rendered above the message. The `heading` slot overrides it for
@@ -76,7 +70,7 @@ interface CAlertProps {
  * @csspart icon - The status icon svg
  * @csspart content - The wrapper around the heading and message content
  * @csspart heading - The heading paragraph rendered from the `heading` prop
- * @csspart dismiss - The dismiss button rendered when `dismissible` is set
+ * @csspart close - The close button rendered when `closeable` is set
  *
  * @seeded from csc-ui — verify
  */
@@ -93,15 +87,6 @@ import { computed, onMounted, useHost, watch } from 'vue';
 import { coerceBoolean } from '../../shared/coerceBoolean';
 import { useHostEmit } from '../../shared/useHostEmit';
 
-/** Events dispatched by `<c-alert>`. */
-interface CAlertEvents {
-  /**
-   * Fired when the dismiss button is pressed. The alert does not hide
-   * itself — the consumer owns removal.
-   */
-  dismiss: void;
-}
-
 /**
  * Styling lives entirely in this `tailwind-variants` config, per the MyCSC
  * alert spec: a wash of the type's role colour (10%) as the box tint with a
@@ -114,14 +99,26 @@ interface CAlertEvents {
  * content (a utility cannot reach slotted content).
  * Consumer customization is via `::part()`.
  */
+/** The type's look, `neutral` when no type is set. */
+type AlertLook = 'neutral' | CAlertType;
+
+/** Events dispatched by `<c-alert>`. */
+interface CAlertEvents {
+  /**
+   * Fired when the close button is pressed. The alert does not hide
+   * itself — the consumer owns removal.
+   */
+  close: void;
+}
+
 const alert = tv({
   defaultVariants: {
-    type: 'default',
+    type: 'neutral',
   },
   slots: {
-    content: 'flex min-w-0 flex-1 flex-col gap-0.5 pt-px text-on-surface',
-    dismiss:
+    close:
       '-my-0.5 -mr-1 grid size-7 shrink-0 cursor-pointer place-items-center rounded-csc-sm border-0 bg-transparent p-0 text-on-surface-muted transition-colors duration-150 focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-primary',
+    content: 'flex min-w-0 flex-1 flex-col gap-0.5 pt-px text-on-surface',
     heading:
       'm-0 text-[length:inherit] leading-[1.4] font-semibold text-(--_c-alert-ink)',
     icon: 'mt-px size-5 shrink-0 fill-current',
@@ -129,38 +126,38 @@ const alert = tv({
   },
   variants: {
     type: {
-      default: {
-        dismiss: 'hover:bg-primary/10 hover:text-on-primary-subtle',
-        icon: 'text-on-primary-subtle',
-        root: 'border-primary/40 border-l-primary bg-primary/10 [--_c-alert-ink:var(--c-on-primary-subtle)]',
-      },
       error: {
-        dismiss: 'hover:bg-error/10 hover:text-on-error-subtle',
+        close: 'hover:bg-error/10 hover:text-on-error-subtle',
         icon: 'text-on-error-subtle',
         root: 'border-error/40 border-l-error bg-error/10 [--_c-alert-ink:var(--c-on-error-subtle)]',
       },
       info: {
-        dismiss: 'hover:bg-info/10 hover:text-on-info-subtle',
+        close: 'hover:bg-info/10 hover:text-on-info-subtle',
         icon: 'text-on-info-subtle',
         root: 'border-info/40 border-l-info bg-info/10 [--_c-alert-ink:var(--c-on-info-subtle)]',
       },
+      neutral: {
+        close: 'hover:bg-primary/10 hover:text-on-primary-subtle',
+        icon: 'text-on-primary-subtle',
+        root: 'border-primary/40 border-l-primary bg-primary/10 [--_c-alert-ink:var(--c-on-primary-subtle)]',
+      },
       success: {
-        dismiss: 'hover:bg-success/10 hover:text-on-success-subtle',
+        close: 'hover:bg-success/10 hover:text-on-success-subtle',
         icon: 'text-on-success-subtle',
         root: 'border-success/40 border-l-success bg-success/10 [--_c-alert-ink:var(--c-on-success-subtle)]',
       },
       warning: {
-        dismiss: 'hover:bg-warning/10 hover:text-on-warning-subtle',
+        close: 'hover:bg-warning/10 hover:text-on-warning-subtle',
         icon: 'text-on-warning-subtle',
         root: 'border-warning/40 border-l-warning bg-warning/10 [--_c-alert-ink:var(--c-on-warning-subtle)]',
       },
-    } satisfies Record<CAlertType, object>,
+    } satisfies Record<AlertLook, object>,
   },
 });
 
 const props = withDefaults(defineProps<CAlertProps>(), {
-  dismissible: false,
-  type: 'default',
+  closeable: false,
+  type: undefined,
 });
 
 // The host carries the imperative `role`; without this, Vue mirrors it (and
@@ -168,21 +165,21 @@ const props = withDefaults(defineProps<CAlertProps>(), {
 // live-region role (`pnpm lint:a11y`).
 defineOptions({ inheritAttrs: false });
 
-const icons: Record<CAlertType, string> = {
-  default: mdiInformation,
+const icons: Record<AlertLook, string> = {
   error: mdiCloseCircle,
   info: mdiInformation,
+  neutral: mdiInformation,
   success: mdiCheckCircle,
   warning: mdiAlert,
 };
 
 // Attributes can deliver any string at runtime (including the legacy `''`),
-// so unknown values fall back to the default look.
-const normalizedType = computed((): CAlertType =>
-  props.type in icons ? props.type : 'default',
+// so unknown values fall back to the neutral look.
+const normalizedType = computed((): AlertLook =>
+  props.type && props.type in icons ? props.type : 'neutral',
 );
 
-const isDismissible = computed(() => coerceBoolean(props.dismissible));
+const isCloseable = computed(() => coerceBoolean(props.closeable));
 
 const ui = computed(() => alert({ type: normalizedType.value }));
 
@@ -204,7 +201,7 @@ onMounted(() => host?.setAttribute('role', hostRole.value));
 
 const emit = useHostEmit<CAlertEvents>();
 
-const onDismiss = () => emit('dismiss');
+const onClose = () => emit('close');
 </script>
 
 <!--

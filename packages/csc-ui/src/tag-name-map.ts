@@ -92,26 +92,26 @@ export interface CAccordionItemElement extends Omit<HTMLElement, 'collapsable' |
 /** Events dispatched by `<c-alert>`. */
 export interface CAlertElementEventMap {
   /**
-   * Fired when the dismiss button is pressed. The alert does not hide
+   * Fired when the close button is pressed. The alert does not hide
    * itself — the consumer owns removal.
    */
-  dismiss: CustomEvent<void>;
+  close: CustomEvent<void>;
 }
 
 /** A persistent, in-flow status message: a tinted box whose type carries a status family's colours through the icon, heading and accent edge, while the body copy stays neutral. */
-export interface CAlertElement extends Omit<HTMLElement, 'dismissible' | 'heading' | 'type'> {
+export interface CAlertElement extends Omit<HTMLElement, 'closeable' | 'heading' | 'type'> {
   /**
-   * Show a dismiss button. The alert only emits `dismiss` — removing it from
-   * the page stays the consumer's job.
+   * Show a close button. The alert only fires `close` — removing it from the
+   * page stays the consumer's job.
    */
-  dismissible?: boolean;
+  closeable?: boolean;
   /**
    * Heading rendered above the message. The `heading` slot overrides it for
    * rich content.
    */
   heading?: string;
   /** Type of the alert */
-  type?: 'default' | 'error' | 'info' | 'success' | 'warning';
+  type?: 'error' | 'info' | 'success' | 'warning';
   addEventListener<K extends keyof CAlertElementEventMap>(
     type: K,
     listener: (this: CAlertElement, ev: CAlertElementEventMap[K]) => void,
@@ -1030,9 +1030,12 @@ export interface CListItemTitleElement extends Omit<HTMLElement, 'active'> {
 }
 
 /** A loader component that fills the nearest containing element that has css-property position set to 'relative' */
-export interface CLoaderElement extends Omit<HTMLElement, 'contentdelay' | 'hide' | 'size' | 'width'> {
-  /** Delay in seconds of showing the contents in the slot of the loader */
-  contentdelay?: number;
+export interface CLoaderElement extends Omit<HTMLElement, 'contentDelay' | 'hide' | 'size' | 'width'> {
+  /**
+   * Delay, in milliseconds, before the slotted message fades in once the
+   * loader shows.
+   */
+  contentDelay?: number;
   /**
    * Hide the loader. Toggling it fades the loader in and out, so keep the
    * element mounted and bind `hide` rather than using `v-if`, which would

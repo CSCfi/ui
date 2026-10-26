@@ -211,3 +211,24 @@ describe('c-accordion', () => {
     await matchScreenshotInBothModes(m.stage, 'frame-expanded');
   });
 });
+
+describe('c-accordion-item heading slot', () => {
+  it('slot="heading" replaces the heading text', async () => {
+    const m = await mount('c-accordion', {
+      html:
+        '<c-accordion-item heading="Plain" value="a">' +
+        '<strong slot="heading">Rich heading</strong>Body' +
+        '</c-accordion-item>',
+    });
+
+    const item = m.host.querySelector('c-accordion-item')!;
+
+    const slot = item.shadowRoot!.querySelector<HTMLSlotElement>(
+      'slot[name="heading"]',
+    )!;
+
+    expect(slot.assignedElements().map((el) => el.textContent)).toEqual([
+      'Rich heading',
+    ]);
+  });
+});

@@ -11,7 +11,7 @@ import { Component, CUSTOM_ELEMENTS_SCHEMA, signal } from '@angular/core';
 
       <!-- The loader fills the nearest position: relative ancestor -->
       <div style="position: relative; height: 160px; width: 100%">
-        <c-loader [hide]="!loading()" contentdelay="1">
+        <c-loader [hide]="!loading()" content-delay="1000">
           Loading resources
         </c-loader>
       </div>

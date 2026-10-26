@@ -11,7 +11,7 @@ export const Basic = () => {
 
       {/* The loader fills the nearest position: relative ancestor */}
       <div style={{ height: '160px', position: 'relative', width: '100%' }}>
-        <CLoader contentdelay={1} hide={!loading}>
+        <CLoader contentDelay={1000} hide={!loading}>
           Loading resources
         </CLoader>
       </div>

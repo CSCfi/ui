@@ -166,9 +166,9 @@ export const CAccordionItem = createComponent({
 /** A persistent, in-flow status message: a tinted box whose type carries a status family's colours through the icon, heading and accent edge, while the body copy stays neutral. */
 export const CAlert = createComponent({
   displayName: 'CAlert',
-  elementClass: elementClass<CAlertElement>(['dismissible', 'heading', 'type']),
+  elementClass: elementClass<CAlertElement>(['closeable', 'heading', 'type']),
   events: {
-    onDismiss: 'dismiss' as EventName<CAlertElementEventMap['dismiss']>,
+    onClose: 'close' as EventName<CAlertElementEventMap['close']>,
   },
   react: React,
   tagName: 'c-alert',
@@ -390,7 +390,7 @@ export const CListItemTitle = createComponent({
 /** A loader component that fills the nearest containing element that has css-property position set to 'relative' */
 export const CLoader = createComponent({
   displayName: 'CLoader',
-  elementClass: elementClass<CLoaderElement>(['contentdelay', 'hide', 'size', 'width']),
+  elementClass: elementClass<CLoaderElement>(['contentDelay', 'hide', 'size', 'width']),
   react: React,
   tagName: 'c-loader',
 });

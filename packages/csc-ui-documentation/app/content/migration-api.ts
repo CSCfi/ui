@@ -447,4 +447,18 @@ export const V3_API_CHANGES: V3ApiChange[] = [
     name: 'unit',
     tag: 'c-slider',
   },
+  {
+    change:
+      'Renamed to `heading` (the glossary’s name, as the `heading` prop). A leftover `slot="header"` matches no slot, so its content disappears.',
+    kind: 'slot',
+    name: 'header',
+    tag: 'c-accordion-item',
+  },
+  {
+    change:
+      'Renamed to `content-delay` (`contentDelay`), in milliseconds: `contentdelay="1"` becomes `content-delay="1000"`. A leftover `contentdelay` is ignored, and the message shows without a delay.',
+    kind: 'prop',
+    name: 'contentdelay',
+    tag: 'c-loader',
+  },
 ];

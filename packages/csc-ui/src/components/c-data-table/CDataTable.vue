@@ -438,7 +438,7 @@ export interface CDataTableTexts {
   range?: (start: number, end: number, count: number) => string;
 
   /** Label of the banner action selecting all (filtered) rows. */
-  selectAllItems?: (count: number) => string;
+  selectAllRows?: (count: number) => string;
 
   /** Accessible label of the header select-all checkbox. */
   selectPage?: string;
@@ -704,7 +704,7 @@ const DEFAULT_TEXTS: Required<CDataTableOwnTexts> = {
   loading: 'Loading data',
   noData: 'No data',
   pageSelected: (count) => `All ${count} rows on this page are selected`,
-  selectAllItems: (count) => `Select all ${count} rows`,
+  selectAllRows: (count) => `Select all ${count} rows`,
   selectPage: 'Select all rows on this page',
   selectRow: 'Select row',
 };
@@ -1067,7 +1067,7 @@ const banner = computed(() => {
   return {
     action: () =>
       commitSelection(table.getFilteredRowModel().rows.map((row) => row.id)),
-    actionLabel: t.value.selectAllItems(totalCount.value),
+    actionLabel: t.value.selectAllRows(totalCount.value),
     message: t.value.pageSelected(renderRows.value.length),
   };
 });

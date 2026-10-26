@@ -1,10 +1,7 @@
 import { components } from './registry';
 import { defineElement } from './shared/defineElement';
 
-export type {
-  CAlertIconType,
-  CAlertType,
-} from './components/c-alert/CAlert.vue';
+export type { CAlertType } from './components/c-alert/CAlert.vue';
 
 export type {
   CAutocompleteFilter,

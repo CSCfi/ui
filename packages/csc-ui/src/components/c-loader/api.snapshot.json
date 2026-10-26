@@ -1,6 +1,6 @@
 {
   "attributes": {
-    "contentdelay": "number = 0",
+    "content-delay": "number = 0",
     "hide": "boolean = false",
     "size": "number = 48",
     "width": "number = 4"
@@ -15,7 +15,7 @@
   ],
   "propertyOnly": [],
   "props": {
-    "contentdelay": "number = 0",
+    "contentDelay": "number = 0",
     "hide": "boolean = false",
     "size": "number = 48",
     "width": "number = 4"

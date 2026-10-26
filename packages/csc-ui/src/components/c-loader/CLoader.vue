@@ -6,16 +6,16 @@
            own primary-600 prop default. -->
       <c-spinner :size :width color="currentColor" />
       <!-- The content-reveal animation (max-height grow, delayed by
-           `contentdelay`) is gated on `active` so it (re)starts each time the
+           `content-delay`) is gated on `active` so it (re)starts each time the
            loader is shown. Without this it would run once when the element
            first renders — which, now the loader stays mounted and is toggled
-           via `hide`, means at page load, leaving `contentdelay` with no
+           via `hide`, means at page load, leaving `content-delay` with no
            visible effect. -->
       <div
         v-show="hasSlotContent"
         :class="[ui.content(), { 'c-loader-fadein': active }]"
         :style="{
-          animationDelay: `${contentdelay}s`,
+          animationDelay: `${contentDelay}ms`,
           top: `calc(50% + ${size / 2 + 8}px)`,
         }"
         part="content"
@@ -28,7 +28,7 @@
 
 <script setup lang="ts">
 /**
- * @slot default - Message text revealed below the spinner after `contentdelay`
+ * @slot default - Message text revealed below the spinner after `content-delay`
  *
  * @csspart root - The overlay element covering the containing element (scrim, fade transition)
  * @csspart content - The message wrapper anchored below the spinner
@@ -94,11 +94,10 @@ const loader = tv({
 
 interface CLoaderProps {
   /**
-   * Delay in seconds of showing the contents in the slot of the loader
-   *
-   * @seeded from csc-ui — verify
+   * Delay, in milliseconds, before the slotted message fades in once the
+   * loader shows.
    */
-  contentdelay?: number;
+  contentDelay?: number;
 
   /**
    * Hide the loader. Toggling it fades the loader in and out, so keep the
@@ -123,7 +122,7 @@ interface CLoaderProps {
 }
 
 const props = withDefaults(defineProps<CLoaderProps>(), {
-  contentdelay: 0,
+  contentDelay: 0,
   hide: false,
   size: 48,
   width: 4,
@@ -153,7 +152,7 @@ const ui = computed(() => loader());
   Escape-hatch CSS: the message appear @keyframes + the rule that
   applies it. Keyframes (vs a transition) are used so the reveal is a one-shot
   that restarts each time the `c-loader-fadein` class is (re)added on show, and
-  so it honours the `animation-delay` set inline from `contentdelay`. A gentle
+  so it honours the `animation-delay` set inline from `content-delay`. A gentle
   opacity + rise (ease-out) reads smoother than the old linear max-height clip;
   max-height is no longer needed since the message is positioned out of flow.
   The static slot styling lives in the `tv` config above.
@@ -174,7 +173,7 @@ const ui = computed(() => loader());
   }
 }
 
-/* Reduced motion (ADR-0057): the message keeps its `contentdelay` and fade,
+/* Reduced motion (ADR-0057): the message keeps its `content-delay` and fade,
    but no longer rises into place. */
 @media (prefers-reduced-motion: reduce) {
   .c-loader-fadein {

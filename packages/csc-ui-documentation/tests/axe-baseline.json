@@ -1,5 +1,5 @@
 {
-  "c-accordion-item/custom-header": ["color-contrast"],
+  "c-accordion-item/custom-heading": ["color-contrast"],
   "c-accordion/basic": ["color-contrast"],
   "c-accordion/custom-style": ["color-contrast"],
   "c-autocomplete/basic": ["color-contrast"],

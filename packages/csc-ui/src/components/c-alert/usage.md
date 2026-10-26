@@ -5,15 +5,15 @@ Give the alert a `heading` with the prop for plain text; the `heading` slot over
 ## When to use
 
 - Persistent status that belongs to the page or a section: a maintenance notice, a failed validation summary, a quota warning.
-- Not for transient feedback on an action — use `c-toasts`, which overlays and dismisses itself; the alert stays in the layout until the consumer removes it.
+- Not for transient feedback on an action — use `c-toasts`, which overlays and closes itself; the alert stays in the layout until the consumer removes it.
 
 ## Types
 
-The four status types (`error`, `info`, `success`, `warning`) carry their status family's colours and icon; `default` — equivalently, omitting the attribute — renders the brand-primary look. Severity is signalled by the icon, the heading's ink and the accent edge, never by colouring the body text.
+The four status types (`error`, `info`, `success`, `warning`) carry their status family's colours and icon; omitting `type` renders the neutral, brand-primary look. Severity is signalled by the icon, the heading's ink and the accent edge, never by colouring the body text.
 
-## Dismissal
+## Closing
 
-`dismissible` renders a dismiss button, but pressing it only emits the `dismiss` event — removing the alert from the page stays the consumer's job.
+`closeable` renders a close button, but pressing it only fires the `close` event — removing the alert from the page stays the consumer's job.
 
 ## Accessibility
 
@@ -21,4 +21,4 @@ The alert manages its own live-region role: `warning` and `error` interrupt (`ro
 
 ## Customization
 
-Structural styling via `::part(root)`, `::part(icon)`, `::part(content)`, `::part(heading)` and `::part(dismiss)`. Colours come from the status-family semantic tokens; override the tokens to re-theme.
+Structural styling via `::part(root)`, `::part(icon)`, `::part(content)`, `::part(heading)` and `::part(close)`. Colours come from the status-family semantic tokens; override the tokens to re-theme.

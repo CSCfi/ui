@@ -23,8 +23,7 @@
     "themeToCss"
   ],
   "types": {
-    "CAlertIconType": "'error' | 'info' | 'success' | 'warning'",
-    "CAlertType": "'default' | CAlertIconType",
+    "CAlertType": "'error' | 'info' | 'success' | 'warning'",
     "CAutocompleteFilter": "( option: CAutocompleteOption, query: string, ) => boolean",
     "CAutocompleteItem": "CSelectItem",
     "CAutocompleteOption": {
@@ -132,7 +131,7 @@
       "pagination?": "string",
       "previousPage?": "string",
       "range?": "(start: number, end: number, count: number) => string",
-      "selectAllItems?": "(count: number) => string",
+      "selectAllRows?": "(count: number) => string",
       "selectPage?": "string",
       "selectRow?": "string"
     },
