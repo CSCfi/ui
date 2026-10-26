@@ -8,7 +8,7 @@
     "loading": "boolean = false",
     "required": "boolean = false",
     "true-value": "boolean | number | string = true",
-    "value": "boolean | number | string = false"
+    "value": "string | number | boolean"
   },
   "cssProperties": [],
   "defaultable": [],
@@ -33,7 +33,7 @@
     "loading": "boolean = false",
     "required": "boolean = false",
     "trueValue": "boolean | number | string = true",
-    "value": "boolean | number | string = false"
+    "value": "string | number | boolean"
   },
   "slots": [
     "default"

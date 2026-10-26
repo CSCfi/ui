@@ -641,3 +641,53 @@ describe('field to panel gap', () => {
     m.unmount();
   });
 });
+
+describe('<c-option selected>', () => {
+  const mountWithSelected = async (value?: unknown) => {
+    defineAll();
+
+    const host = document.createElement('c-autocomplete') as AutoHost;
+
+    host.innerHTML = [
+      option('js', 'JavaScript'),
+      '<c-option value="ts" selected>TypeScript</c-option>',
+    ].join('');
+
+    if (value !== undefined) host.value = value;
+
+    const events = recordEvents(host, ['change', 'input', 'update:value']);
+
+    document.body.append(host);
+    await settle(60);
+
+    return { events, host };
+  };
+
+  it('seeds the value silently at mount', async () => {
+    const { events, host } = await mountWithSelected();
+
+    expect(host.value).toBe('ts');
+    expect(events.records).toEqual([]);
+
+    host.remove();
+  });
+
+  it('seeds once: a later change to the options does not re-seed a cleared value', async () => {
+    const { events, host } = await mountWithSelected();
+
+    host.value = null;
+    await settle();
+
+    host.insertAdjacentHTML(
+      'beforeend',
+      '<c-option value="py" selected>Python</c-option>',
+    );
+    await settle(60);
+
+    expect(host.value).toBeNull();
+    expect('reset' in host).toBe(false);
+    expect(events.records).toEqual([]);
+
+    host.remove();
+  });
+});

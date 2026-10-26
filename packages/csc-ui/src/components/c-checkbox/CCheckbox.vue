@@ -111,7 +111,16 @@
  */
 import { mdiCloseCircle } from '@mdi/js';
 import { tv } from 'tailwind-variants';
-import { computed, ref, useHost, useId, useTemplateRef, watch } from 'vue';
+import {
+  computed,
+  nextTick,
+  onMounted,
+  ref,
+  useHost,
+  useId,
+  useTemplateRef,
+  watch,
+} from 'vue';
 
 import FormLabel from '../../shared/FormLabel.vue';
 import SelectionIndicator from '../../shared/SelectionIndicator.vue';
@@ -240,9 +249,10 @@ const errorIconPath = mdiCloseCircle;
 
 interface CCheckboxProps {
   /**
-   * If `true`, the checkbox is selected.
-   *
-   * @seeded from csc-ui — verify
+   * Whether the checkbox is on: the boolean view of `value`. Setting it sets
+   * `value` to `trueValue` or `falseValue`; reading it reports whether
+   * `value` equals `trueValue`. As an attribute it sets the initial state when
+   * no `value` is bound.
    */
   checked?: boolean;
 
@@ -336,12 +346,15 @@ interface CCheckboxProps {
   valid?: boolean;
 
   /**
-   * The input value
-   * - Only used when the checkbox participates in a native `<form>`
-   *
-   * @seeded from csc-ui — verify
+   * The checkbox's state: `trueValue` while it is on, `falseValue` while it is
+   * off. A bound value wins over a `checked` attribute; any other value,
+   * `''` included, reads as off.
    */
-  value?: boolean | number | string;
+  // Not sorted: Vue reads `''` as `true` for a prop whose runtime types list
+  // Boolean before String, and `''` is what a plain Vue `v-model` writes for
+  // an empty model.
+  // oxlint-disable-next-line perfectionist/sort-union-types
+  value?: string | number | boolean;
 }
 
 const props = withDefaults(defineProps<CCheckboxProps>(), {
@@ -358,7 +371,7 @@ const props = withDefaults(defineProps<CCheckboxProps>(), {
   required: false,
   trueValue: true,
   valid: true,
-  value: false,
+  value: undefined,
 });
 
 const showError = computed(() => !props.valid && Boolean(props.errorMessage));
@@ -401,7 +414,20 @@ const messageKey = computed(() =>
 
 const messageVisible = computed(() => Boolean(props.hint || showError.value));
 
-const internalChecked = ref(props.checked || props.value === props.trueValue);
+// One state, two views (decisions #34): `value` is the state, `checked` its
+// boolean view. A bound `value` wins; without one, `checked` seeds. Setting
+// either view updates the other on the host, without a value event — only a
+// toggle emits.
+type CheckboxStateHost = {
+  checked?: boolean;
+  value?: CCheckboxProps['value'];
+} & HTMLElement;
+
+const isOn = (v: unknown) => v === props.trueValue;
+
+const internalChecked = ref(
+  props.value === undefined ? props.checked : isOn(props.value),
+);
 
 const isChecked = computed(() => internalChecked.value);
 
@@ -417,10 +443,40 @@ watch(
   { immediate: true },
 );
 
+// The views are reconciled on the next tick, from the state the latest
+// change left: a host prop set inside a watcher re-renders the element while
+// it is still patching (the next prop write is then dropped), and a callback
+// holding the state from before a later write would undo it — React sets
+// `checked` only after the element has mounted.
+let syncQueued = false;
+
+const syncViews = () => {
+  if (syncQueued) return;
+  syncQueued = true;
+
+  void nextTick(() => {
+    syncQueued = false;
+
+    if (!host) return;
+
+    const state = host as CheckboxStateHost;
+
+    const on = internalChecked.value;
+
+    // The raw property, not the prop: a `checked` attribute reads back `''`.
+    if (state.checked !== on) state.checked = on;
+
+    if (props.value === undefined || isOn(props.value) !== on) {
+      state.value = on ? props.trueValue : props.falseValue;
+    }
+  });
+};
+
 watch(
   () => props.value,
   (v) => {
-    internalChecked.value = v === props.trueValue;
+    internalChecked.value = isOn(v);
+    syncViews();
   },
 );
 
@@ -428,8 +484,13 @@ watch(
   () => props.checked,
   (c) => {
     internalChecked.value = c;
+    syncViews();
   },
 );
+
+// Both views agree from the start: without a bound value the seeded state
+// reads back through `value`, and `checked` reports a bound one.
+onMounted(syncViews);
 
 const onChange = (_event: Event) => {
   if (props.disabled) return;

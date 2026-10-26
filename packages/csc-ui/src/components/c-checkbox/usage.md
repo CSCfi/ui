@@ -1,8 +1,11 @@
 A form control for a single on/off choice: a native checkbox with a label,
 an optional hint, and validation messaging.
 
-Bind the state with a plain `v-model` (or the `checked` prop); `true-value` /
-`false-value` map the checked state onto custom values. Set `indeterminate`
+Bind the state with a plain `v-model`: `value` is `true-value` while the
+checkbox is on and `false-value` while it is off (`true` and `false` unless you
+map them onto custom values). `checked` is the same state as a boolean —
+setting it sets `value`, and a `checked` attribute sets the initial state when
+no `value` is bound. Set `indeterminate`
 for the mixed "some but not all" state of a parent checkbox.
 
 ```html

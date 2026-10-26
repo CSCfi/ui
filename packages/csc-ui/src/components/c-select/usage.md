@@ -10,6 +10,10 @@ Wrap the label in `c-option-value` when an option carries more than its
 label, such as a description; the rest of the option's markup still renders
 in the list row.
 
+`<c-option selected>` sets the initial value of plain HTML: once, only while
+the value is empty, and silently — no value event, so a bound `v-model` does
+not learn it. With a bound value, initialise the model instead.
+
 The row shows a copy of the option's markup, re-created from its HTML inside
 the list. A component nested in an option — a `c-icon`, say — is therefore
 configured through attributes, or props with an attribute form (strings,

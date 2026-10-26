@@ -615,7 +615,7 @@ import { useAnchoredPanel } from '../../shared/useAnchoredPanel';
 import { useHostEmit } from '../../shared/useHostEmit';
 import { useNarrowViewport } from '../../shared/useNarrowViewport';
 import { useStatusAnnouncer } from '../../shared/useStatusAnnouncer';
-import { emitModelChange } from '../../shared/valueEvents';
+import { emitModelChange, seedModelValue } from '../../shared/valueEvents';
 
 /** Events dispatched by `<c-autocomplete>`. */
 interface CAutocompleteEvents {
@@ -1222,12 +1222,24 @@ const syncOptionElements = (selected: Set<number | string>) => {
 
 // ---- value plumbing -----------------------------------------------------
 
+// `<c-option selected>` seeds an empty value once, silently (CONTEXT.md
+// "Value control": value events only on interaction). An interaction, a value
+// set from outside or one seed ends it, so a later change to the options never
+// re-seeds a value the user cleared.
+let seedable = true;
+
+// Every pick, toggle and clear: the value events, and no seed after it.
+const emitPick = (next: CAutocompleteValue) => {
+  seedable = false;
+  emitModelChange(host, next);
+};
+
 // The `multiple`-mode commit shared by a row toggle and the select-all row:
 // one emission of the whole array, panel and query untouched.
 const commitMultiple = (next: AutocompleteRawValue[]) => {
   const committed = next as CAutocompleteValue;
   value.value = committed;
-  emitModelChange(host, committed);
+  emitPick(committed);
   syncOptionElements(new Set(next.map(valueOf)));
 };
 
@@ -1307,7 +1319,7 @@ const commit = (opt: NormalizedOption) => {
 
   value.value = next;
   committedLabel.value = { label: opt.label, value: opt.value };
-  emitModelChange(host, next);
+  emitPick(next);
   syncOptionElements(new Set([opt.value]));
 };
 
@@ -1336,20 +1348,11 @@ const onReset = (event?: Event) => {
   committedLabel.value = null;
   committedLabels.value.clear();
   setQuery('');
-  emitModelChange(host, cleared);
+  emitPick(cleared);
   syncOptionElements(new Set());
 
   fieldRef.value?.focus();
 };
-
-/**
- * Reset autocomplete state
- *
- * @seeded from csc-ui — verify
- */
-const reset = () => onReset();
-
-defineExpose({ reset });
 
 // ---- open / close -------------------------------------------------------
 
@@ -1701,32 +1704,39 @@ const refreshOptions = () => {
     value: number | string;
   } & HTMLElement;
 
-  // `multiple`: every `<c-option selected>` seeds the array (DOM order) —
-  // only while nothing is picked yet, so a later child mutation cannot
-  // re-seed a selection the user has cleared.
-  if (multipleOn.value) {
-    const picked = (options as OptionEl[]).filter((o) =>
-      coerceBoolean(o.selected ?? o.getAttribute('selected')),
-    );
+  if (!seedable) return;
 
-    if (picked.length && !selectedValues.value.length) {
-      value.value = picked.map((o) =>
-        props.returnObject ? { name: optionLabel(o), value: o.value } : o.value,
-      ) as CAutocompleteValue;
-    }
+  // A value set from outside wins, and ends seeding: `''` is what a plain
+  // Vue `v-model` writes for an empty model.
+  if (
+    multipleOn.value
+      ? selectedValues.value.length
+      : value.value != null && value.value !== ''
+  ) {
+    seedable = false;
 
     return;
   }
 
-  const selection = (options as OptionEl[]).find((o) =>
-    coerceBoolean(o.selected ?? o.getAttribute('selected')),
-  );
+  // `selected` may arrive as `""` (Boolean attribute) — coerce, never test
+  // by truthiness. `multiple`: every `<c-option selected>`, in DOM order. At
+  // mount the options have not upgraded yet, so read the attributes too.
+  const picked = (options as OptionEl[])
+    .filter((o) => coerceBoolean(o.selected ?? o.getAttribute('selected')))
+    .map((o) => {
+      const v = o.value ?? (o.getAttribute('value') as string);
 
-  if (selection && value.value == null) {
-    value.value = props.returnObject
-      ? { name: optionLabel(selection), value: selection.value }
-      : selection.value;
-  }
+      return props.returnObject ? { name: optionLabel(o), value: v } : v;
+    });
+
+  if (!picked.length) return;
+
+  seedable = false;
+
+  const seed = (multipleOn.value ? picked : picked[0]) as CAutocompleteValue;
+
+  value.value = seed;
+  seedModelValue(host, seed);
 };
 
 let childObserver: MutationObserver | null = null;

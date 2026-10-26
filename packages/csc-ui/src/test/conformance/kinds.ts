@@ -61,19 +61,6 @@ export const KNOWN_FOCUS_LOSS_ON_CLOSE: readonly string[] = [
 ];
 
 /**
- * Value controls whose `value` prop is typed `boolean | number | string`: Vue
- * casts an empty string to `true` for such a prop, so the `''` a plain Vue
- * `v-model` writes for a `null` model reads as `trueValue` and the control
- * mounts CHECKED. Real consumer-facing deviation (see CONTEXT.md "Value
- * control": '' must read as empty). The suite asserts the inverse so fixing
- * one forces the list to shrink.
- */
-export const KNOWN_EMPTY_VALUE_CHECKED: readonly string[] = [
-  'c-checkbox',
-  'c-switch',
-];
-
-/**
  * Components whose `<slot>` sits on an opaque surface that declares no ink, so
  * projected content inherits whatever `color` the page resolved outside them
  * (CONTEXT.md "Paired ink", ADR-0053). The suite asserts the inverse so fixing

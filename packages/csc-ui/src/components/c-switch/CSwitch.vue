@@ -68,7 +68,16 @@
  * @cssstate checked - Present while the switch is on
  */
 import { tv } from 'tailwind-variants';
-import { computed, ref, useHost, useId, useTemplateRef, watch } from 'vue';
+import {
+  computed,
+  nextTick,
+  onMounted,
+  ref,
+  useHost,
+  useId,
+  useTemplateRef,
+  watch,
+} from 'vue';
 
 import FormLabel from '../../shared/FormLabel.vue';
 import { useHasSlot } from '../../shared/useHasSlot';
@@ -159,9 +168,10 @@ const cSwitch = tv({
 
 interface CSwitchProps {
   /**
-   * If `true`, the checkbox is selected.
-   *
-   * @seeded from csc-ui — verify
+   * Whether the switch is on: the boolean view of `value`. Setting it sets
+   * `value` to `trueValue` or `falseValue`; reading it reports whether
+   * `value` equals `trueValue`. As an attribute it sets the initial state when
+   * no `value` is bound.
    */
   checked?: boolean;
 
@@ -215,12 +225,15 @@ interface CSwitchProps {
   trueValue?: boolean | number | string;
 
   /**
-   * The input value
-   * - Only used when the checkbox participates in a native `<form>`
-   *
-   * @seeded from csc-ui — verify
+   * The switch's state: `trueValue` while it is on, `falseValue` while it is
+   * off. A bound value wins over a `checked` attribute; any other value,
+   * `''` included, reads as off.
    */
-  value?: boolean | number | string;
+  // Not sorted: Vue reads `''` as `true` for a prop whose runtime types list
+  // Boolean before String, and `''` is what a plain Vue `v-model` writes for
+  // an empty model.
+  // oxlint-disable-next-line perfectionist/sort-union-types
+  value?: string | number | boolean;
 }
 
 const props = withDefaults(defineProps<CSwitchProps>(), {
@@ -232,7 +245,7 @@ const props = withDefaults(defineProps<CSwitchProps>(), {
   loading: false,
   required: false,
   trueValue: true,
-  value: false,
+  value: undefined,
 });
 
 const host = useHost();
@@ -252,7 +265,20 @@ const autoId = useId();
 
 const inputId = computed(() => props.hostId || `c-switch-${autoId}`);
 
-const internalChecked = ref(props.checked || props.value === props.trueValue);
+// One state, two views (decisions #34): `value` is the state, `checked` its
+// boolean view. A bound `value` wins; without one, `checked` seeds. Setting
+// either view updates the other on the host, without a value event — only a
+// toggle emits.
+type SwitchStateHost = {
+  checked?: boolean;
+  value?: CSwitchProps['value'];
+} & HTMLElement;
+
+const isOn = (v: unknown) => v === props.trueValue;
+
+const internalChecked = ref(
+  props.value === undefined ? props.checked : isOn(props.value),
+);
 
 // Republish the on/off state as a host custom state so consumers can write
 // per-state ::part() rules: c-switch:state(checked)::part(slider).
@@ -260,18 +286,54 @@ const setState = useHostStates();
 
 watch(internalChecked, (on) => setState('checked', on), { immediate: true });
 
+// The views are reconciled on the next tick, from the state the latest
+// change left: a host prop set inside a watcher re-renders the element while
+// it is still patching (the next prop write is then dropped), and a callback
+// holding the state from before a later write would undo it — React sets
+// `checked` only after the element has mounted.
+let syncQueued = false;
+
+const syncViews = () => {
+  if (syncQueued) return;
+  syncQueued = true;
+
+  void nextTick(() => {
+    syncQueued = false;
+
+    if (!host) return;
+
+    const state = host as SwitchStateHost;
+
+    const on = internalChecked.value;
+
+    // The raw property, not the prop: a `checked` attribute reads back `''`.
+    if (state.checked !== on) state.checked = on;
+
+    if (props.value === undefined || isOn(props.value) !== on) {
+      state.value = on ? props.trueValue : props.falseValue;
+    }
+  });
+};
+
+watch(
+  () => props.value,
+  (v) => {
+    internalChecked.value = isOn(v);
+    syncViews();
+  },
+);
+
 watch(
   () => props.checked,
   (c) => {
     internalChecked.value = c;
+    syncViews();
   },
 );
-watch(
-  () => props.value,
-  (v) => {
-    internalChecked.value = v === props.trueValue;
-  },
-);
+
+// Both views agree from the start: without a bound value the seeded state
+// reads back through `value`, and `checked` reports a bound one.
+onMounted(syncViews);
 
 const toggle = () => {
   if (props.disabled) return;

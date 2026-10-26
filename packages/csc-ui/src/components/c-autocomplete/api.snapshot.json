@@ -37,9 +37,7 @@
     "input": "CustomEvent<void>",
     "update:value": "CustomEvent<CAutocompleteValue>"
   },
-  "methods": {
-    "reset": "()"
-  },
+  "methods": {},
   "parts": [
     "card",
     "close",

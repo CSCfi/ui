@@ -12,7 +12,6 @@ import { INTERNAL_EVENTS, VALUE_TAGS } from '../../tag-name-map';
 import { defineAll, mount, recordEvents, settle, wrap } from '../harness';
 import {
   KNOWN_DOUBLE_EMITTERS,
-  KNOWN_EMPTY_VALUE_CHECKED,
   KNOWN_PROGRAMMATIC_EMITTERS,
   VALUE_RECIPES,
 } from './kinds';
@@ -174,20 +173,25 @@ describe.each(VALUE_TAGS)('%s', (tag) => {
     },
   );
 
-  it.runIf(KNOWN_EMPTY_VALUE_CHECKED.includes(tag))(
-    'an empty-string value mounts the control checked (known deviation)',
-    async () => {
+  // Vue reads `''` as `true` for a prop whose runtime types list Boolean
+  // before String, and `''` is what a plain `v-model` writes for an empty
+  // model (CONTEXT.md "Value control": '' reads as empty).
+  it.runIf(typeof recipe.expected === 'boolean')(
+    'reads an empty-string value as unchecked',
+    async ({ skip }) => {
       const m = await mount<ValueHost>(tag, recipe.mount);
 
-      expect(m.host.matches(':state(checked)')).toBe(false);
+      // Only the controls with a `checked` view (c-modal's value is a boolean
+      // too, but it is open or closed).
+      if (!('checked' in m.host)) skip();
+
+      m.host.value = true;
+      await settle();
+      expect(m.host.matches(':state(checked)')).toBe(true);
 
       m.host.value = '';
       await settle();
-
-      expect(
-        m.host.matches(':state(checked)'),
-        'deviation fixed — remove the tag from KNOWN_EMPTY_VALUE_CHECKED',
-      ).toBe(true);
+      expect(m.host.matches(':state(checked)')).toBe(false);
     },
   );
 

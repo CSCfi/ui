@@ -327,4 +327,27 @@ export const V3_API_CHANGES: V3ApiChange[] = [
     name: 'id',
     tag: 'c-tab',
   },
+  ...['c-autocomplete', 'c-select'].map((tag) => ({
+    change:
+      'Removed: it announced a value set from outside, which no value control does any more. Set `value` to `null` (`[]` with `multiple`).',
+    kind: 'method' as const,
+    name: 'reset',
+    tag,
+  })),
+  ...['c-checkbox', 'c-switch'].map((tag) => ({
+    change:
+      '`checked` is now the boolean view of `value`: setting it sets `value` to `true-value` or `false-value`, and it reads whether `value` equals `true-value`. A bound `value` wins over a `checked` attribute, where 3.x checked the box when either said so.',
+    kind: 'prop' as const,
+    meaningChanged: true as const,
+    name: 'checked',
+    tag,
+  })),
+  {
+    change:
+      '`<c-option selected>` sets the initial value silently: only while the value is empty, once, and with no event, so a bound `v-model` or React state does not learn it (3.x emitted `changeValue`). With a bound value, initialise the model instead.',
+    kind: 'prop',
+    meaningChanged: true,
+    name: 'selected',
+    tag: 'c-option',
+  },
 ];

@@ -391,7 +391,7 @@ import {
   selectAllState,
   toggleAllValues,
 } from '../../shared/selectAll';
-import { emitModelChange } from '../../shared/valueEvents';
+import { emitModelChange, seedModelValue } from '../../shared/valueEvents';
 
 /** Events dispatched by `<c-select>`. */
 interface CSelectEvents {
@@ -800,7 +800,14 @@ const inputValue = computed(() => {
 
 // ---- value plumbing -----------------------------------------------------
 
+// `<c-option selected>` seeds an empty value once, silently (CONTEXT.md
+// "Value control": value events only on interaction). An interaction, a value
+// set from outside or one seed ends it, so a later change to the options never
+// re-seeds a value the user cleared.
+let seedable = true;
+
 const emitValue = (next: CSelectEvents['update:value']) => {
+  seedable = false;
   value.value = next;
   // A pick is its own commit. The value watch runs onValueChanged/selectOption
   // (visuals-only), so the host `value` mirror doesn't loop.
@@ -1319,20 +1326,6 @@ const handleKeyDown = (event: KeyboardEvent) => {
   }
 };
 
-// ---- public method ------------------------------------------------------
-
-/**
- * Reset select state
- *
- * @seeded from csc-ui — verify
- */
-const reset = () => {
-  emitValue(multipleOn.value ? [] : null);
-  dropdownRef.value?.updateList(true);
-};
-
-defineExpose({ reset });
-
 // ---- slotted <c-option> discovery ---------------------------------------
 
 // Parts exported through the inner c-dropdown. The dropdown renders CLONES of
@@ -1393,40 +1386,39 @@ const refreshOptions = () => {
     value: number | string;
   } & HTMLElement;
 
-  // `multiple`: every `<c-option selected>` seeds the array (DOM order) —
-  // only while nothing is picked yet, so a later child mutation cannot
-  // re-seed a selection the user has cleared.
-  if (multipleOn.value) {
-    const picked = (options as OptionEl[]).filter((o) =>
-      coerceBoolean(o.selected ?? o.getAttribute('selected')),
-    );
+  if (!seedable) return;
 
-    if (picked.length && !selectedValues.value.length) {
-      emitValue(
-        picked.map((o) =>
-          props.returnObject
-            ? { name: optionLabel(o), value: o.value }
-            : o.value,
-        ) as CSelectValue,
-      );
-    }
+  // A value set from outside wins, and ends seeding: `''` is what a plain
+  // Vue `v-model` writes for an empty model.
+  if (
+    multipleOn.value
+      ? selectedValues.value.length
+      : value.value != null && value.value !== ''
+  ) {
+    seedable = false;
 
     return;
   }
 
   // `selected` may arrive as `""` (Boolean attribute) — coerce, never test
-  // by truthiness.
-  const selection = (options as OptionEl[]).find((o) =>
-    coerceBoolean(o.selected ?? o.getAttribute('selected')),
-  );
+  // by truthiness. `multiple`: every `<c-option selected>`, in DOM order. At
+  // mount the options have not upgraded yet, so read the attributes too.
+  const picked = (options as OptionEl[])
+    .filter((o) => coerceBoolean(o.selected ?? o.getAttribute('selected')))
+    .map((o) => {
+      const v = o.value ?? (o.getAttribute('value') as string);
 
-  if (selection) {
-    emitValue(
-      props.returnObject
-        ? { name: optionLabel(selection), value: selection.value }
-        : selection.value,
-    );
-  }
+      return props.returnObject ? { name: optionLabel(o), value: v } : v;
+    });
+
+  if (!picked.length) return;
+
+  seedable = false;
+
+  const seed = (multipleOn.value ? picked : picked[0]) as CSelectValue;
+
+  value.value = seed;
+  seedModelValue(host, seed);
 };
 
 let childObserver: MutationObserver | null = null;

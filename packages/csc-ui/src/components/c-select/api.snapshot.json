@@ -36,9 +36,7 @@
     "input": "CustomEvent<void>",
     "update:value": "CustomEvent<CSelectValue>"
   },
-  "methods": {
-    "reset": "()"
-  },
+  "methods": {},
   "parts": [
     "close",
     "heading",

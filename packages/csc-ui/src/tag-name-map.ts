@@ -237,8 +237,6 @@ export interface CAutocompleteElement extends Omit<HTMLElement, 'clearable' | 'd
    * `return-object`; an array of them in `multiple` mode
    */
   value?: CAutocompleteValue;
-  /** Reset autocomplete state */
-  reset(): void;
   addEventListener<K extends keyof CAutocompleteElementEventMap>(
     type: K,
     listener: (this: CAutocompleteElement, ev: CAutocompleteElementEventMap[K]) => void,
@@ -437,7 +435,12 @@ export interface CCheckboxElementEventMap {
 
 /** A form control for a single on/off choice: a native checkbox with a label, an optional hint, and validation messaging. */
 export interface CCheckboxElement extends Omit<HTMLElement, 'checked' | 'disabled' | 'errorMessage' | 'falseValue' | 'hideDetails' | 'hint' | 'hostId' | 'hostName' | 'indeterminate' | 'label' | 'required' | 'trueValue' | 'valid' | 'value'> {
-  /** If `true`, the checkbox is selected. */
+  /**
+   * Whether the checkbox is on: the boolean view of `value`. Setting it sets
+   * `value` to `trueValue` or `falseValue`; reading it reports whether
+   * `value` equals `trueValue`. As an attribute it sets the initial state when
+   * no `value` is bound.
+   */
   checked?: boolean;
   /** Disable the checkbox */
   disabled?: boolean;
@@ -467,10 +470,11 @@ export interface CCheckboxElement extends Omit<HTMLElement, 'checked' | 'disable
   /** Set the validity of the input */
   valid?: boolean;
   /**
-   * The input value
-   * - Only used when the checkbox participates in a native `<form>`
+   * The checkbox's state: `trueValue` while it is on, `falseValue` while it is
+   * off. A bound value wins over a `checked` attribute; any other value,
+   * `''` included, reads as off.
    */
-  value?: boolean | number | string;
+  value?: string | number | boolean;
   addEventListener<K extends keyof CCheckboxElementEventMap>(
     type: K,
     listener: (this: CCheckboxElement, ev: CCheckboxElementEventMap[K]) => void,
@@ -1710,8 +1714,6 @@ export interface CSelectElement extends Omit<HTMLElement, 'clearable' | 'disable
    * `return-object`; an array of them in `multiple` mode
    */
   value?: CSelectValue;
-  /** Reset select state */
-  reset(): void;
   addEventListener<K extends keyof CSelectElementEventMap>(
     type: K,
     listener: (this: CSelectElement, ev: CSelectElementEventMap[K]) => void,
@@ -1978,7 +1980,12 @@ export interface CSwitchElementEventMap {
 
 /** A toggle for a binary setting that takes effect immediately: a native switch control with a label, an optional hint, and validation messaging. */
 export interface CSwitchElement extends Omit<HTMLElement, 'checked' | 'disabled' | 'falseValue' | 'hostId' | 'label' | 'loading' | 'required' | 'trueValue' | 'value'> {
-  /** If `true`, the checkbox is selected. */
+  /**
+   * Whether the switch is on: the boolean view of `value`. Setting it sets
+   * `value` to `trueValue` or `falseValue`; reading it reports whether
+   * `value` equals `trueValue`. As an attribute it sets the initial state when
+   * no `value` is bound.
+   */
   checked?: boolean;
   /** If `true`, the switch is disabled and cannot be toggled */
   disabled?: boolean;
@@ -1998,10 +2005,11 @@ export interface CSwitchElement extends Omit<HTMLElement, 'checked' | 'disabled'
   /** The value when the checkbox is checked */
   trueValue?: boolean | number | string;
   /**
-   * The input value
-   * - Only used when the checkbox participates in a native `<form>`
+   * The switch's state: `trueValue` while it is on, `falseValue` while it is
+   * off. A bound value wins over a `checked` attribute; any other value,
+   * `''` included, reads as off.
    */
-  value?: boolean | number | string;
+  value?: string | number | boolean;
   addEventListener<K extends keyof CSwitchElementEventMap>(
     type: K,
     listener: (this: CSwitchElement, ev: CSwitchElementEventMap[K]) => void,

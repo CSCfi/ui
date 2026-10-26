@@ -13,7 +13,7 @@
     "required": "boolean = false",
     "true-value": "boolean | number | string = true",
     "valid": "boolean = true",
-    "value": "boolean | number | string = false"
+    "value": "string | number | boolean"
   },
   "cssProperties": [],
   "defaultable": [],
@@ -46,7 +46,7 @@
     "required": "boolean = false",
     "trueValue": "boolean | number | string = true",
     "valid": "boolean = true",
-    "value": "boolean | number | string = false"
+    "value": "string | number | boolean"
   },
   "slots": [
     "default"

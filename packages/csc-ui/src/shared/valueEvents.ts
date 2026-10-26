@@ -27,6 +27,19 @@ const mirror = (host: HTMLElement, value: unknown): void => {
 };
 
 /**
+ * A value the control settles on by itself, not by an interaction — a
+ * `<c-option selected>` seeding an empty field: the host's `value` only, and
+ * no event. A bound `v-model` does not learn it, so a bound value is
+ * initialised in the model instead.
+ */
+export const seedModelValue = (
+  host: HTMLElement | null,
+  value: unknown,
+): void => {
+  if (host) mirror(host, value);
+};
+
+/**
  * A change not yet committed (a keystroke, one move of a drag): `update:value`
  * and `input`, no `change`. The commit follows as one `emitModelSettled`, as a
  * native range input fires `input` per move and `change` on release.
