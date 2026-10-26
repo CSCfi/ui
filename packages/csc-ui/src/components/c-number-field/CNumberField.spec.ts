@@ -3,7 +3,7 @@
  * separator", "Out of range", "Step", "Step buttons"; ADR-0060, ADR-0064).
  */
 import { afterEach, describe, expect, it } from 'vitest';
-import { userEvent } from 'vitest/browser';
+import { page, userEvent } from 'vitest/browser';
 
 import type { Mounted } from '../../test/harness';
 
@@ -424,5 +424,15 @@ describe('visual', () => {
     const small = await mountField({ max: 10, size: 'small', value: 10 });
 
     await matchScreenshotInBothModes(small.stage, 'small');
+  });
+});
+
+describe('accessible name', () => {
+  it('the label names the spinbutton', async () => {
+    await mount('c-number-field', { attrs: { label: 'Cores' } });
+
+    await expect
+      .element(page.getByRole('spinbutton', { name: 'Cores' }))
+      .toBeInTheDocument();
   });
 });

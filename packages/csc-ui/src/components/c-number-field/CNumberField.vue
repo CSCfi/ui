@@ -26,6 +26,7 @@
       :id="inputId"
       ref="inputRef"
       :aria-invalid="invalid || outOfRange || undefined"
+      :aria-label="label || undefined"
       :aria-valuemax="maxNumber ?? undefined"
       :aria-valuemin="minNumber ?? undefined"
       :aria-valuenow="current ?? undefined"

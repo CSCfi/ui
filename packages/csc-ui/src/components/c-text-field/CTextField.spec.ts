@@ -141,6 +141,18 @@ describe('3.x attribute names (R1)', () => {
   });
 });
 
+describe('accessible name', () => {
+  it('the label names the input', async () => {
+    await mount<FieldHost>('c-text-field', {
+      attrs: { label: 'Phone number' },
+    });
+
+    await expect
+      .element(page.getByRole('textbox', { name: 'Phone number' }))
+      .toBeInTheDocument();
+  });
+});
+
 describe('input mask', () => {
   it('conforms typing and emits the masked text', async () => {
     const m = await mountField({ mask: '+358 ## ### ####' });
