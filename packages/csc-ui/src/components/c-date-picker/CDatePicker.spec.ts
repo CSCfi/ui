@@ -107,6 +107,26 @@ describe('typing', () => {
     expect(events.of('change')).toHaveLength(1);
   });
 
+  // A native `input` is composed: each keystroke's used to reach the page,
+  // though the value changes only on commit.
+  it('sends one input, on the commit, and none while typing', async () => {
+    const m = await mountPicker();
+
+    const page = recordEvents(document.body, ['input']);
+
+    const [input] = inputs(m);
+
+    await type(input, '1.9.2031');
+
+    expect(page.records).toHaveLength(0);
+
+    await userEvent.keyboard('{Enter}');
+    await settle();
+
+    expect(page.records).toHaveLength(1);
+    expect(page.records[0].composed).toBe(false);
+  });
+
   it('inserts the format separators while typing (ADR-0059)', async () => {
     const m = await mountPicker({ format: 'd.M.yyyy' });
 

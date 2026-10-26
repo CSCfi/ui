@@ -72,3 +72,8 @@ dialect, and 4.0.0 would have frozen all of it.
   listener with a foreign detail. Form-level delegation of `change` is not
   available; listen on each control. A commit dispatches `update:value` and
   `input` before `change`, in a native control's order.
+- A native `input` is `composed`, so one typed into a field in a component's
+  shadow tree stops at its shadow root (decided 2026-10-26): `input` fires
+  once per value change, the component's own, never on a keystroke that only
+  changes the text. A page's own input slotted into a component is not in the
+  shadow tree and reaches the page as before.

@@ -91,9 +91,14 @@ describe.each(VALUE_TAGS)('%s', (tag) => {
       expect(detail).toEqual(recipe.expected);
     }
 
-    const libraryInputs = inputs.of('input', libraryInput);
+    // Only the control's own `input` reaches the page: a native one from its
+    // shadow tree stops at the shadow root.
+    const libraryInputs = inputs.of('input');
 
-    expect(libraryInputs).toHaveLength(expectedCount);
+    expect(libraryInputs, 'input events reaching the page').toHaveLength(
+      expectedCount,
+    );
+    expect(libraryInputs.every(libraryInput)).toBe(true);
     expect(libraryInputs[0].bubbles).toBe(true);
 
     expect(updates[0].targetValue, 'host.value at dispatch').toEqual(detail);
@@ -105,6 +110,10 @@ describe.each(VALUE_TAGS)('%s', (tag) => {
 
       await recipe.commit(m);
       await settle(60);
+
+      expect(inputs.of('input'), 'input after the commit').toHaveLength(
+        expectedCount,
+      );
     }
 
     const changes = host.of('change');

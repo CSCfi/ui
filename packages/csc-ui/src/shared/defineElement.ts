@@ -219,6 +219,27 @@ const normalizeNumberProperties = (
 };
 
 /**
+ * A native `input` is `composed`: typed into a field in a shadow root, it
+ * would reach the page beside the `input` the component sends once its value
+ * has changed (`valueEvents.ts`) — twice per keystroke on a text field, and on
+ * every keystroke of a picker whose value changes only on commit. Each
+ * component reports its own value events (ADR-0075), so a native `input` that
+ * started in its shadow tree stops at its shadow root; listeners inside the
+ * tree still hear it. A page's own input slotted into a component is not in
+ * the shadow tree and goes on to the page.
+ */
+const containedRoots = new WeakSet<ShadowRoot>();
+
+const containNativeInput = (root: null | ShadowRoot): void => {
+  if (!root || containedRoots.has(root)) return;
+
+  containedRoots.add(root);
+  root.addEventListener('input', (event) => {
+    if (root.contains(event.composedPath()[0] as Node)) event.stopPropagation();
+  });
+};
+
+/**
  * Register a Vue SFC as a custom element under `tag`, with the shared Tailwind
  * utility stylesheet applied to its shadow root alongside the SFC's own styles.
  *
@@ -263,6 +284,7 @@ export function defineElement(tag: string, component: Component): void {
         normalizeBooleanAttributes(this, booleanKeys);
         normalizeNumberProperties(this, numberKeys);
         super.connectedCallback?.();
+        containNativeInput(this.shadowRoot);
       }
     }
 
@@ -297,6 +319,7 @@ export function defineElement(tag: string, component: Component): void {
       this.adoptSheets();
       super.connectedCallback?.();
       this.adoptSheets();
+      containNativeInput(this.shadowRoot);
     }
 
     private adoptSheets() {
