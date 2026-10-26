@@ -34,8 +34,7 @@
     "size"
   ],
   "events": {
-    "change": "CustomEvent<void>",
-    "changeValue": "CustomEvent<string>",
+    "change": "CustomEvent<string>",
     "input": "CustomEvent<void>",
     "update:value": "CustomEvent<string>"
   },

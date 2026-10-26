@@ -51,27 +51,26 @@ import {
 } from 'vue';
 
 import { coerceBoolean } from '../../shared/coerceBoolean';
-import { emitModelValue } from '../../shared/emitModelValue';
 import FieldMessage from '../../shared/FieldMessage.vue';
 import FormLabel from '../../shared/FormLabel.vue';
 import { useHasSlot } from '../../shared/useHasSlot';
+import { emitModelChange } from '../../shared/valueEvents';
 
 /** Events dispatched by `<c-radio-group>`. */
 interface CRadioGroupEvents {
   /**
-   * Fired when a radio is selected, carrying the selected radio's value.
+   * Fired when the user selects a radio, carrying the selected radio's value.
    */
-  changeValue: string;
+  change: string;
 
   /**
    * Native bubbling input event fired on selection so a plain Vue `v-model`
-   * works without the `v-control` directive. No detail.
+   * stays in sync. No detail.
    */
   input: void;
 
   /**
-   * v-model contract event fired on selection, carrying the selected radio's
-   * value.
+   * Fired alongside `change` with the same detail — the `v-model` contract.
    */
   'update:value': string;
 }
@@ -291,9 +290,9 @@ const syncRadios = () => {
 };
 
 // Commit a user-driven selection arriving as a slotted radio's composed
-// bubbling `radioselect` (a light-DOM event never enters this shadow root, so the
-// listener sits on the host — c-accordion precedent). Emits the grandfathered
-// changeValue/update:value + native `input` triple and mirrors host `value`.
+// bubbling `radioselect` (a light-DOM event never enters this shadow root, so
+// the listener sits on the host — c-accordion precedent). A pick is its own
+// commit: `change`, `update:value` and `input`.
 const onRadioChange = (event: Event) => {
   const target = event.target as CRadioEl;
 
@@ -304,7 +303,7 @@ const onRadioChange = (event: Event) => {
 
   const next = String((event as CustomEvent<string>).detail ?? '');
   internalValue.value = next;
-  emitModelValue(host, next);
+  emitModelChange(host, next satisfies CRadioGroupEvents['change']);
   syncRadios();
 };
 
@@ -346,7 +345,7 @@ const onKeyDown = (event: KeyboardEvent) => {
   input?.click();
 };
 
-// Visuals-only: re-sync when the parent (or our own emitModelValue host
+// Visuals-only: re-sync when the parent (or our own emitModelChange host
 // `value` mirror) changes the value; never emit here (would loop with
 // v-model).
 watch(

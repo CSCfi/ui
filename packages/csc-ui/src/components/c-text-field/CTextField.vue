@@ -378,7 +378,6 @@ import {
 import type { CFieldSize } from '../../types';
 
 import { useAppDefault } from '../../shared/appDefaults';
-import { emitModelValue } from '../../shared/emitModelValue';
 import {
   applyMask,
   compileMask,
@@ -386,34 +385,26 @@ import {
   isNumericMask,
   warnInvalidMask,
 } from '../../shared/inputMask';
-import { useHostEmit } from '../../shared/useHostEmit';
 import { useHostStates } from '../../shared/useHostStates';
+import { emitModelInput, emitModelSettled } from '../../shared/valueEvents';
 
 /** Events dispatched by `<c-text-field>`. */
 interface CTextFieldEvents {
   /**
-   * Standard bubbling DOM change event, re-dispatched from the host when the
-   * inner input/textarea fires its native change (which does not cross the
-   * shadow boundary). No detail; read the current text from the host's
-   * `value` property.
+   * Fired when typed text is committed — Enter, or leaving the field after
+   * editing it — carrying the text, trimmed when `trim-whitespace` is set.
    */
-  change: void;
-
-  /**
-   * Fired on every keystroke (and on native change), carrying the current
-   * text — trimmed when `trim-whitespace` is set.
-   */
-  changeValue: string;
+  change: string;
 
   /**
    * Native bubbling input event fired alongside every value change so a
-   * plain Vue `v-model` works without the `v-control` directive. No detail.
+   * plain Vue `v-model` stays in sync. No detail.
    */
   input: void;
 
   /**
-   * v-model contract event fired on every keystroke (and on native change),
-   * carrying the current text — trimmed when `trim-whitespace` is set.
+   * v-model contract event fired on every keystroke, carrying the current
+   * text — trimmed when `trim-whitespace` is set.
    */
   'update:value': string;
 }
@@ -502,8 +493,6 @@ const props = withDefaults(defineProps<CTextFieldProps>(), {
 const ui = computed(() => textField());
 
 const host = useHost();
-
-const emit = useHostEmit<CTextFieldEvents>();
 
 // Defaultable props resolve host attribute → own value → app default →
 // built-in (see src/shared/appDefaults.ts, which also explains why
@@ -707,20 +696,19 @@ const onInput = (event: Event) => {
   conformInput(event);
 
   const next = props.trimWhitespace ? target.value.trim() : target.value;
-  // changeValue/update:value + native `input` (so a plain `v-model` works
-  // without `v-control`) + host `value` mirror. The inner input is bound via
-  // template `:value`, so mirroring the just-typed value is idempotent.
-  emitModelValue(host, next);
-  void event;
+  // A keystroke is a value change, not yet a commit. The inner input is bound
+  // via template `:value`, so mirroring the just-typed value is idempotent.
+  emitModelInput(host, next);
 };
 
+// The inner input's native `change` marks the commit (Enter, or leaving the
+// field after an edit); it does not cross the shadow boundary, so the host
+// sends its own.
 const onChange = (event: Event) => {
   const target = event.target as HTMLInputElement | HTMLTextAreaElement;
 
   const next = props.trimWhitespace ? target.value.trim() : target.value;
-  emitModelValue(host, next);
-  emit('change', undefined, { bubbles: true, composed: true });
-  void event;
+  emitModelSettled(host, next satisfies CTextFieldEvents['change']);
 };
 
 const onFocus = () => {

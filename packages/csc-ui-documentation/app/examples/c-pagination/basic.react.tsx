@@ -16,7 +16,7 @@ export const Basic = () => {
   return (
     <div>
       <CPagination
-        onChangeValue={(event) =>
+        onChange={(event) =>
           setPage((event.detail as CPaginationOptions).currentPage ?? 1)
         }
         value={options}

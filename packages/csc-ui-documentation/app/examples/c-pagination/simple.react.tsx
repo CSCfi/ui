@@ -16,7 +16,7 @@ export const Simple = () => {
     <div>
       <CPagination
         hideDetails
-        onChangeValue={(event) =>
+        onChange={(event) =>
           setPage((event.detail as CPaginationOptions).currentPage ?? 1)
         }
         simple

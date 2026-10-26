@@ -658,7 +658,6 @@ import { computed, ref, useHost, useId, useTemplateRef, watch } from 'vue';
 
 import { useAppDefault } from '../../shared/appDefaults';
 import { coerceBoolean } from '../../shared/coerceBoolean';
-import { emitModelChange } from '../../shared/emitModelValue';
 import PanelHeadingRow from '../../shared/PanelHeadingRow.vue';
 import { applyPeekCap } from '../../shared/peekCap';
 import { type MatchSegment, splitMatches } from '../../shared/splitMatches';
@@ -666,6 +665,7 @@ import { useAnchoredPanel } from '../../shared/useAnchoredPanel';
 import { useHostEmit } from '../../shared/useHostEmit';
 import { useNarrowViewport } from '../../shared/useNarrowViewport';
 import { useStatusAnnouncer } from '../../shared/useStatusAnnouncer';
+import { emitModelChange } from '../../shared/valueEvents';
 
 /** Events dispatched by `<c-tree-select>`. */
 interface CTreeSelectEvents {

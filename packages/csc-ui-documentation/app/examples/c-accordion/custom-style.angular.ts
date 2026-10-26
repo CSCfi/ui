@@ -62,7 +62,7 @@ import {
     <c-accordion
       class="custom-style"
       [value]="expanded()"
-      (changeValue)="expanded.set($any($event).detail)"
+      (change)="expanded.set($any($event).detail)"
     >
       <c-accordion-item heading="Project billing" value="billing">
         <p>Billing units are deducted monthly based on the resources in use.</p>

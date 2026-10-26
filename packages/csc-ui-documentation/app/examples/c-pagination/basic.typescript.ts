@@ -8,6 +8,6 @@ pagination.value = {
   pageSizes: [10, 25, 50],
 };
 
-pagination.addEventListener('changeValue', (event) => {
+pagination.addEventListener('change', (event) => {
   current.textContent = `Current page: ${event.detail.currentPage ?? 1}`;
 });

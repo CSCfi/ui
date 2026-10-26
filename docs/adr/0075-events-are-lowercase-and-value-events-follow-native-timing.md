@@ -66,3 +66,9 @@ dialect, and 4.0.0 would have frozen all of it.
   group's own `change` does not fire twice.
 - The React wrapper loses `onChangeValue` and friends; `onChange` carries the
   value everywhere.
+- `change` stays on the host, unlike a native one, and `input` bubbles
+  (decided 2026-10-26): a bubbling `change` from a field inside an accordion
+  item, a modal or a tab panel would reach the container's own `change`
+  listener with a foreign detail. Form-level delegation of `change` is not
+  available; listen on each control. A commit dispatches `update:value` and
+  `input` before `change`, in a native control's order.

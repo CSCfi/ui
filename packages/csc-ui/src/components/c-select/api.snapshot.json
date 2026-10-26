@@ -32,7 +32,7 @@
     "texts"
   ],
   "events": {
-    "changeValue": "CustomEvent<CSelectValue>",
+    "change": "CustomEvent<CSelectValue>",
     "input": "CustomEvent<void>",
     "update:value": "CustomEvent<CSelectValue>"
   },

@@ -12,10 +12,10 @@
  *   - a `setState('<name>')` custom state without a `@cssstate` tag /
  *     `@cssstate` naming a state the script never sets
  *   - a raw `new CustomEvent(` / `new Event(` in the SFC — events must go
- *     through `useHostEmit` (or `emitModelValue`) so the event map stays the
- *     single source of truth
- *   - an `emitModelValue` caller whose event map is missing the
- *     `changeValue` / `update:value` / `input` triple that helper dispatches
+ *     through `useHostEmit` (or a `valueEvents.ts` helper) so the event map
+ *     stays the single source of truth
+ *   - a `valueEvents.ts` helper caller whose event map is missing an event
+ *     that helper dispatches
  *   - an `@subcomponents` tag naming an unknown tag, an internal tag, or the
  *     component itself (the composed-children list must resolve to real,
  *     documented components)
@@ -149,32 +149,27 @@ export const lintComponent = (
 
   if (rawDispatches) {
     errors.push(
-      `${rawDispatches} raw new CustomEvent/Event dispatch(es) — use useHostEmit (event map) or emitModelValue`,
+      `${rawDispatches} raw new CustomEvent/Event dispatch(es) — use useHostEmit (event map) or the valueEvents helpers`,
     );
   }
 
-  if (scriptSource.includes('emitModelValue(')) {
-    const eventNames = component.events.map((e) => e.name);
+  // The value-event helpers (valueEvents.ts, ADR-0075) and the events each
+  // one dispatches.
+  const valueHelpers = {
+    emitModelChange: ['change', 'update:value', 'input'],
+    emitModelInput: ['update:value', 'input'],
+    emitModelSettled: ['change'],
+  };
 
-    for (const name of ['changeValue', 'update:value', 'input']) {
+  const eventNames = component.events.map((e) => e.name);
+
+  for (const [helper, names] of Object.entries(valueHelpers)) {
+    if (!scriptSource.includes(`${helper}(`)) continue;
+
+    for (const name of names) {
       if (!eventNames.includes(name)) {
         errors.push(
-          `emitModelValue is used but "${name}" is missing from the event map`,
-        );
-      }
-    }
-  }
-
-  // New-style components use emitModelChange, which
-  // dispatches the all-lowercase `change` instead of the grandfathered
-  // `changeValue`.
-  if (scriptSource.includes('emitModelChange(')) {
-    const eventNames = component.events.map((e) => e.name);
-
-    for (const name of ['change', 'update:value', 'input']) {
-      if (!eventNames.includes(name)) {
-        errors.push(
-          `emitModelChange is used but "${name}" is missing from the event map`,
+          `${helper} is used but "${name}" is missing from the event map`,
         );
       }
     }

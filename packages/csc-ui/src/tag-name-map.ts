@@ -33,25 +33,17 @@ type AccordionValue = AccordionPrimitive | AccordionPrimitive[] | null;
 /** Events dispatched by `<c-accordion>`. */
 export interface CAccordionElementEventMap {
   /**
-   * Fired when the expansion state changes, carrying the new value as a bare
-   * `detail`: the expanded item's value, an array of values in `multiple`
-   * mode, or `null` when everything is collapsed.
+   * Fired when the user toggles an item, carrying the new value: the expanded
+   * item's value, an array of values in `multiple` mode, or `null` when
+   * everything is collapsed.
    */
   change: CustomEvent<AccordionValue>;
   /**
-   * Legacy value-change event carrying the new expansion value (kept for
-   * existing `@changeValue` listeners and the `v-control` directive).
-   */
-  changeValue: CustomEvent<AccordionValue>;
-  /**
-   * Native bubbling input event dispatched alongside `changeValue` so a plain
-   * `v-model` works without `v-control`; carries no detail.
+   * Native bubbling input event dispatched alongside every value change so a
+   * plain `v-model` stays in sync. Carries no detail.
    */
   input: CustomEvent<void>;
-  /**
-   * Fired with the new expansion value whenever an item is toggled — the
-   * `v-model` contract.
-   */
+  /** Fired alongside `change` with the same detail — the `v-model` contract. */
   'update:value': CustomEvent<AccordionValue>;
 }
 
@@ -147,11 +139,13 @@ export interface CAlertElement extends Omit<HTMLElement, 'dismissible' | 'headin
 /** Events dispatched by `<c-autocomplete>`. */
 export interface CAutocompleteElementEventMap {
   /**
-   * Native change event (no detail) dispatched whenever a selection is
-   * committed or cleared; bubbles through the shadow boundary for
-   * form-style listeners.
+   * Fired when the selected value changes (an option is committed or the
+   * selection is cleared), carrying the new value — the option's value, or
+   * the whole `{ name, value }` item when `return-object` is set; `null`
+   * when cleared. In `multiple` mode the whole array of picked values, in
+   * pick order (`[]` when cleared).
    */
-  change: CustomEvent<void>;
+  change: CustomEvent<CAutocompleteValue>;
   /**
    * Fired whenever the query changes — on every keystroke in the search
    * input, and with an empty string when the panel opens. Carries the query
@@ -160,22 +154,11 @@ export interface CAutocompleteElementEventMap {
    */
   'change:query': CustomEvent<string>;
   /**
-   * Fired when the selected value changes (an option is committed or the
-   * selection is cleared), carrying the new value — the option's value, or
-   * the whole `{ name, value }` item when `return-object` is set; `null`
-   * when cleared. In `multiple` mode the whole array of picked values, in
-   * pick order (`[]` when cleared).
-   */
-  changeValue: CustomEvent<CAutocompleteValue>;
-  /**
    * Native bubbling input event dispatched alongside every value change so a
    * plain `v-model` stays in sync. Carries no detail.
    */
   input: CustomEvent<void>;
-  /**
-   * Fired alongside `changeValue` with the same detail — the `v-model`
-   * contract.
-   */
+  /** Fired alongside `change` with the same detail — the `v-model` contract. */
   'update:value': CustomEvent<CAutocompleteValue>;
 }
 
@@ -444,25 +427,16 @@ export interface CCardTitleElement extends HTMLElement {
 /** Events dispatched by `<c-checkbox>`. */
 export interface CCheckboxElementEventMap {
   /**
-   * Standard bubbling DOM change event, re-dispatched from the host when the
-   * checkbox is toggled (the inner input's change does not cross the shadow
-   * boundary). No detail; read the new value from the host's `value` property.
-   */
-  change: CustomEvent<void>;
-  /**
-   * Fired when the checkbox is toggled, carrying the new value —
+   * Fired when the user toggles the checkbox, carrying the new value —
    * `trueValue` when checked, `falseValue` when unchecked.
    */
-  changeValue: CustomEvent<boolean | number | string>;
+  change: CustomEvent<boolean | number | string>;
   /**
    * Native bubbling input event fired on toggle so a plain Vue `v-model`
-   * works without the `v-control` directive. No detail.
+   * stays in sync. No detail.
    */
   input: CustomEvent<void>;
-  /**
-   * v-model contract event fired on toggle, carrying the new value —
-   * `trueValue` when checked, `falseValue` when unchecked.
-   */
+  /** Fired alongside `change` with the same detail — the `v-model` contract. */
   'update:value': CustomEvent<boolean | number | string>;
 }
 
@@ -1228,16 +1202,13 @@ export interface CModalElementEventMap {
    * slotted `<form method="dialog">`). The detail is the new open state,
    * always `false`.
    */
-  changeValue: CustomEvent<boolean>;
+  change: CustomEvent<boolean>;
   /**
    * Native bubbling input event dispatched alongside every value change so a
    * plain `v-model` stays in sync. Carries no detail.
    */
   input: CustomEvent<void>;
-  /**
-   * Fired alongside `changeValue` with the same detail — the `v-model`
-   * contract.
-   */
+  /** Fired alongside `change` with the same detail — the `v-model` contract. */
   'update:value': CustomEvent<boolean>;
 }
 
@@ -1283,9 +1254,10 @@ export interface CNavigationButtonElement extends HTMLElement {
 /** Events dispatched by `<c-number-field>`. */
 export interface CNumberFieldElementEventMap {
   /**
-   * Fired whenever typing or a step changes the number, carrying it — `null`
-   * once the field holds no digit. Not fired when only the text changes (a group
-   * separator, a trailing decimal separator) or when `value` is set.
+   * Fired when the number is committed, carrying it — `null` once the field
+   * holds no digit: Enter or leaving the field after typing, each arrow-key
+   * or step-button step, and the release that ends a held step button. Not
+   * fired when nothing changed since the last commit.
    */
   change: CustomEvent<null | number>;
   /**
@@ -1293,7 +1265,11 @@ export interface CNumberFieldElementEventMap {
    * plain Vue `v-model` works. No detail.
    */
   input: CustomEvent<void>;
-  /** v-model contract event, fired with `change`. */
+  /**
+   * v-model contract event fired whenever typing or a step changes the
+   * number. Not fired when only the text changes (a group separator, a
+   * trailing decimal separator) or when `value` is set.
+   */
   'update:value': CustomEvent<null | number>;
 }
 
@@ -1387,21 +1363,20 @@ export interface COptionValueElement extends HTMLElement {
 /** Events dispatched by `<c-otp-input>`. */
 export interface COtpInputElementEventMap {
   /**
-   * Fired on every digit change with the complete code once all digits are
-   * filled, or `null` while the code is still incomplete (legacy value-change
-   * event).
+   * Fired when the code is committed — Enter, or focus leaving the digits
+   * after a change — carrying the digits entered so far (`''` when none).
    */
-  changeValue: CustomEvent<null | string>;
+  change: CustomEvent<string>;
   /** Fired when the last digit is filled, carrying the complete code. */
-  completion: CustomEvent<null | string>;
+  completion: CustomEvent<string>;
   /**
-   * Native bubbling input event for plain `v-model`; carries no detail — the
-   * model value is mirrored onto the host's `value` property.
+   * Native bubbling input event fired alongside every value change so a
+   * plain `v-model` stays in sync. No detail.
    */
   input: CustomEvent<void>;
   /**
-   * Fired on every digit change with the currently entered digits (v-model
-   * contract).
+   * v-model contract event fired on every digit change, carrying the digits
+   * entered so far (`''` when none).
    */
   'update:value': CustomEvent<string>;
 }
@@ -1461,16 +1436,13 @@ export interface CPaginationElementEventMap {
    * pagination options object with the recomputed `currentPage`,
    * `itemsPerPage`, `startFrom` and `endTo` fields.
    */
-  changeValue: CustomEvent<CPaginationOptions>;
+  change: CustomEvent<CPaginationOptions>;
   /**
    * Native bubbling input event dispatched alongside every value change so a
    * plain `v-model` stays in sync. Carries no detail.
    */
   input: CustomEvent<void>;
-  /**
-   * Fired alongside `changeValue` with the same detail — the `v-model`
-   * contract.
-   */
+  /** Fired alongside `change` with the same detail — the `v-model` contract. */
   'update:value': CustomEvent<CPaginationOptions>;
 }
 
@@ -1604,17 +1576,14 @@ export interface CRadioElement extends Omit<HTMLElement, 'disabled' | 'value'> {
 
 /** Events dispatched by `<c-radio-group>`. */
 export interface CRadioGroupElementEventMap {
-  /** Fired when a radio is selected, carrying the selected radio's value. */
-  changeValue: CustomEvent<string>;
+  /** Fired when the user selects a radio, carrying the selected radio's value. */
+  change: CustomEvent<string>;
   /**
    * Native bubbling input event fired on selection so a plain Vue `v-model`
-   * works without the `v-control` directive. No detail.
+   * stays in sync. No detail.
    */
   input: CustomEvent<void>;
-  /**
-   * v-model contract event fired on selection, carrying the selected radio's
-   * value.
-   */
+  /** Fired alongside `change` with the same detail — the `v-model` contract. */
   'update:value': CustomEvent<string>;
 }
 
@@ -1672,16 +1641,13 @@ export interface CSelectElementEventMap {
    * In `multiple` mode the whole array of picked values, in pick order
    * (`[]` when cleared).
    */
-  changeValue: CustomEvent<CSelectValue>;
+  change: CustomEvent<CSelectValue>;
   /**
    * Native bubbling input event dispatched alongside every value change so a
    * plain `v-model` stays in sync. Carries no detail.
    */
   input: CustomEvent<void>;
-  /**
-   * Fired alongside `changeValue` with the same detail — the `v-model`
-   * contract.
-   */
+  /** Fired alongside `change` with the same detail — the `v-model` contract. */
   'update:value': CustomEvent<CSelectValue>;
 }
 
@@ -1872,13 +1838,14 @@ export interface CSideNavigationTitleElement extends HTMLElement {
 /** Events dispatched by `<c-slider>`. */
 export interface CSliderElementEventMap {
   /**
-   * Fired on every thumb movement, carrying the new slider value — a number
-   * when the current `value` prop is a number, otherwise a string.
+   * Fired when a move is committed — the release that ends a drag, or each
+   * arrow-key step — carrying the slider value: a number when the current
+   * `value` prop is a number, otherwise a string.
    */
-  changeValue: CustomEvent<number | string>;
+  change: CustomEvent<number | string>;
   /**
    * Native bubbling input event fired on every thumb movement so a plain Vue
-   * `v-model` works without the `v-control` directive. No detail.
+   * `v-model` stays in sync. No detail.
    */
   input: CustomEvent<void>;
   /**
@@ -1983,25 +1950,16 @@ export interface CSubNavigationItemElement extends Omit<HTMLElement, 'active' | 
 /** Events dispatched by `<c-switch>`. */
 export interface CSwitchElementEventMap {
   /**
-   * Standard bubbling DOM change event, re-dispatched from the host when the
-   * switch is toggled (the inner input's change does not cross the shadow
-   * boundary). No detail; read the new value from the host's `value` property.
-   */
-  change: CustomEvent<void>;
-  /**
-   * Fired when the switch is toggled, carrying the new value —
+   * Fired when the user toggles the switch, carrying the new value —
    * `trueValue` when on, `falseValue` when off.
    */
-  changeValue: CustomEvent<boolean | number | string>;
+  change: CustomEvent<boolean | number | string>;
   /**
    * Native bubbling input event fired on toggle so a plain Vue `v-model`
-   * works without the `v-control` directive. No detail.
+   * stays in sync. No detail.
    */
   input: CustomEvent<void>;
-  /**
-   * v-model contract event fired on toggle, carrying the new value —
-   * `trueValue` when on, `falseValue` when off.
-   */
+  /** Fired alongside `change` with the same detail — the `v-model` contract. */
   'update:value': CustomEvent<boolean | number | string>;
 }
 
@@ -2106,16 +2064,13 @@ export interface CTableElement extends Omit<HTMLElement, 'mobileBreakpoint' | 'r
 /** Events dispatched by `<c-tabs>`. */
 export interface CTabsElementEventMap {
   /**
-   * Fired when the user activates a tab (click, or Enter/Space on a focused
-   * tab), carrying the newly selected tab value. Legacy value-change event.
+   * Fired when the user activates another tab (click, or Enter/Space on a
+   * focused tab), carrying the newly selected tab value.
    */
-  changeValue: CustomEvent<number | string>;
+  change: CustomEvent<number | string>;
   /** Native bubbling input event dispatched for plain `v-model` support; carries no detail. */
   input: CustomEvent<void>;
-  /**
-   * Fired alongside `changeValue` with the newly selected tab value; fulfills
-   * the `v-model`/`v-control` contract.
-   */
+  /** Fired alongside `change` with the same detail — the `v-model` contract. */
   'update:value': CustomEvent<number | string>;
 }
 
@@ -2210,25 +2165,18 @@ export interface CTagsElement extends Omit<HTMLElement, 'label' | 'required' | '
 /** Events dispatched by `<c-text-field>`. */
 export interface CTextFieldElementEventMap {
   /**
-   * Standard bubbling DOM change event, re-dispatched from the host when the
-   * inner input/textarea fires its native change (which does not cross the
-   * shadow boundary). No detail; read the current text from the host's
-   * `value` property.
+   * Fired when typed text is committed — Enter, or leaving the field after
+   * editing it — carrying the text, trimmed when `trim-whitespace` is set.
    */
-  change: CustomEvent<void>;
-  /**
-   * Fired on every keystroke (and on native change), carrying the current
-   * text — trimmed when `trim-whitespace` is set.
-   */
-  changeValue: CustomEvent<string>;
+  change: CustomEvent<string>;
   /**
    * Native bubbling input event fired alongside every value change so a
-   * plain Vue `v-model` works without the `v-control` directive. No detail.
+   * plain Vue `v-model` stays in sync. No detail.
    */
   input: CustomEvent<void>;
   /**
-   * v-model contract event fired on every keystroke (and on native change),
-   * carrying the current text — trimmed when `trim-whitespace` is set.
+   * v-model contract event fired on every keystroke, carrying the current
+   * text — trimmed when `trim-whitespace` is set.
    */
   'update:value': CustomEvent<string>;
 }

@@ -17,8 +17,7 @@
 import { tv } from 'tailwind-variants';
 import { onBeforeUnmount, onMounted, ref, useHost, watch } from 'vue';
 
-import { emitModelValue } from '../../shared/emitModelValue';
-import { useHostEmit } from '../../shared/useHostEmit';
+import { emitModelChange } from '../../shared/valueEvents';
 
 type AccordionPrimitive = number | string;
 
@@ -27,27 +26,20 @@ type AccordionValue = AccordionPrimitive | AccordionPrimitive[] | null;
 /** Events dispatched by `<c-accordion>`. */
 interface CAccordionEvents {
   /**
-   * Fired when the expansion state changes, carrying the new value as a bare
-   * `detail`: the expanded item's value, an array of values in `multiple`
-   * mode, or `null` when everything is collapsed.
+   * Fired when the user toggles an item, carrying the new value: the expanded
+   * item's value, an array of values in `multiple` mode, or `null` when
+   * everything is collapsed.
    */
   change: AccordionValue;
 
   /**
-   * Legacy value-change event carrying the new expansion value (kept for
-   * existing `@changeValue` listeners and the `v-control` directive).
-   */
-  changeValue: AccordionValue;
-
-  /**
-   * Native bubbling input event dispatched alongside `changeValue` so a plain
-   * `v-model` works without `v-control`; carries no detail.
+   * Native bubbling input event dispatched alongside every value change so a
+   * plain `v-model` stays in sync. Carries no detail.
    */
   input: void;
 
   /**
-   * Fired with the new expansion value whenever an item is toggled — the
-   * `v-model` contract.
+   * Fired alongside `change` with the same detail — the `v-model` contract.
    */
   'update:value': AccordionValue;
 }
@@ -102,12 +94,6 @@ const props = withDefaults(defineProps<CAccordionProps>(), {
 });
 
 const host = useHost();
-
-// Events go through useHostEmit (not Vue's `emit()`) so `detail` stays the
-// bare value — Vue's defineCustomElement emit wraps args into
-// `detail: [...args]` (always an array), which breaks consumers like the
-// legacy `v-control` directive that do `el.value = event.detail`.
-const emit = useHostEmit<CAccordionEvents>();
 
 // Internal state lets the accordion work without v-model. We mirror the
 // `value` prop in, then mutate this on itemchange events so the UI updates
@@ -191,12 +177,9 @@ const onItemChange = (event: Event) => {
   }
 
   internalValue.value = next;
-  // changeValue/update:value + native `input` (so a plain `v-model` works
-  // without `v-control`) + host `value` mirror. The value watch is
-  // visuals-only, so writing the property doesn't loop.
-  emitModelValue(host, next);
-  // Domain `change` event (bare value) for non-v-model consumers.
-  emit('change', next);
+  // A toggle is its own commit. The value watch is visuals-only, so the host
+  // `value` mirror doesn't loop.
+  emitModelChange(host, next satisfies CAccordionEvents['change']);
 };
 
 // `itemchange` is dispatched on the child c-accordion-item's host element

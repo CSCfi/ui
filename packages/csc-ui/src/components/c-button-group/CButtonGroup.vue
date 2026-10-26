@@ -107,8 +107,8 @@ import {
 } from 'vue';
 
 import { coerceBoolean } from '../../shared/coerceBoolean';
-import { emitModelChange } from '../../shared/emitModelValue';
 import FormLabel from '../../shared/FormLabel.vue';
+import { emitModelChange } from '../../shared/valueEvents';
 
 /** Events dispatched by `<c-button-group>`. */
 interface CButtonGroupEvents {
@@ -436,10 +436,10 @@ const setupButtons = () => {
 
 // Commit a user-driven selection: update the internal mirror and visuals
 // immediately, then hand off to emitModelChange (host `value` mirror +
-// `change`/`update:value`/native `input`, the new-style triple — this
-// component has no grandfathered `changeValue`). Emission lives here — on
-// interaction only — never in the `props.value` watch, so parent/programmatic
-// value changes don't echo back as events (which would loop with v-model).
+// `update:value`/native `input`/`change` — a pick is its own commit).
+// Emission lives here — on interaction only — never in the `props.value`
+// watch, so parent/programmatic value changes don't echo back as events
+// (which would loop with v-model).
 const commitValue = (resolved: CButtonGroupEvents['change']) => {
   internalValue.value = resolved;
   applyActive(resolved);

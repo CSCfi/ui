@@ -605,7 +605,6 @@ import {
 
 import { useAppDefault } from '../../shared/appDefaults';
 import { coerceBoolean } from '../../shared/coerceBoolean';
-import { emitModelValue } from '../../shared/emitModelValue';
 import { optionLabel, optionValueElement } from '../../shared/optionLabel';
 import PanelHeadingRow from '../../shared/PanelHeadingRow.vue';
 import { applyPeekCap } from '../../shared/peekCap';
@@ -616,15 +615,18 @@ import { useAnchoredPanel } from '../../shared/useAnchoredPanel';
 import { useHostEmit } from '../../shared/useHostEmit';
 import { useNarrowViewport } from '../../shared/useNarrowViewport';
 import { useStatusAnnouncer } from '../../shared/useStatusAnnouncer';
+import { emitModelChange } from '../../shared/valueEvents';
 
 /** Events dispatched by `<c-autocomplete>`. */
 interface CAutocompleteEvents {
   /**
-   * Native change event (no detail) dispatched whenever a selection is
-   * committed or cleared; bubbles through the shadow boundary for
-   * form-style listeners.
+   * Fired when the selected value changes (an option is committed or the
+   * selection is cleared), carrying the new value — the option's value, or
+   * the whole `{ name, value }` item when `return-object` is set; `null`
+   * when cleared. In `multiple` mode the whole array of picked values, in
+   * pick order (`[]` when cleared).
    */
-  change: void;
+  change: CAutocompleteValue;
 
   /**
    * Fired whenever the query changes — on every keystroke in the search
@@ -635,23 +637,13 @@ interface CAutocompleteEvents {
   'change:query': string;
 
   /**
-   * Fired when the selected value changes (an option is committed or the
-   * selection is cleared), carrying the new value — the option's value, or
-   * the whole `{ name, value }` item when `return-object` is set; `null`
-   * when cleared. In `multiple` mode the whole array of picked values, in
-   * pick order (`[]` when cleared).
-   */
-  changeValue: CAutocompleteValue;
-
-  /**
    * Native bubbling input event dispatched alongside every value change so a
    * plain `v-model` stays in sync. Carries no detail.
    */
   input: void;
 
   /**
-   * Fired alongside `changeValue` with the same detail — the `v-model`
-   * contract.
+   * Fired alongside `change` with the same detail — the `v-model` contract.
    */
   'update:value': CAutocompleteValue;
 }
@@ -1235,8 +1227,7 @@ const syncOptionElements = (selected: Set<number | string>) => {
 const commitMultiple = (next: AutocompleteRawValue[]) => {
   const committed = next as CAutocompleteValue;
   value.value = committed;
-  emitModelValue(host, committed);
-  emit('change', undefined, { bubbles: true, composed: true });
+  emitModelChange(host, committed);
   syncOptionElements(new Set(next.map(valueOf)));
 };
 
@@ -1316,8 +1307,7 @@ const commit = (opt: NormalizedOption) => {
 
   value.value = next;
   committedLabel.value = { label: opt.label, value: opt.value };
-  emitModelValue(host, next);
-  emit('change', undefined, { bubbles: true, composed: true });
+  emitModelChange(host, next);
   syncOptionElements(new Set([opt.value]));
 };
 
@@ -1346,8 +1336,7 @@ const onReset = (event?: Event) => {
   committedLabel.value = null;
   committedLabels.value.clear();
   setQuery('');
-  emitModelValue(host, cleared);
-  emit('change', undefined, { bubbles: true, composed: true });
+  emitModelChange(host, cleared);
   syncOptionElements(new Set());
 
   fieldRef.value?.focus();

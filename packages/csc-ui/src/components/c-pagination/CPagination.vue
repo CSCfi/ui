@@ -167,7 +167,7 @@ import {
 import { tv } from 'tailwind-variants';
 import { computed, onMounted, ref, useHost, watch, watchEffect } from 'vue';
 
-import { emitModelValue } from '../../shared/emitModelValue';
+import { emitModelChange } from '../../shared/valueEvents';
 
 /** Events dispatched by `<c-pagination>`. */
 interface CPaginationEvents {
@@ -176,7 +176,7 @@ interface CPaginationEvents {
    * pagination options object with the recomputed `currentPage`,
    * `itemsPerPage`, `startFrom` and `endTo` fields.
    */
-  changeValue: CPaginationOptions;
+  change: CPaginationOptions;
 
   /**
    * Native bubbling input event dispatched alongside every value change so a
@@ -185,8 +185,7 @@ interface CPaginationEvents {
   input: void;
 
   /**
-   * Fired alongside `changeValue` with the same detail — the `v-model`
-   * contract.
+   * Fired alongside `change` with the same detail — the `v-model` contract.
    */
   'update:value': CPaginationOptions;
 }
@@ -279,12 +278,12 @@ const dotsIcon = mdiDotsHorizontal;
 
 const host = useHost();
 
-// changeValue/update:value + native `input` (so a plain `v-model` works without
-// `v-control`). The value is the same object reference the consumer holds
-// (mutated in place with the computed range), so the helper's identity guard
-// skips re-writing `host.value` and there is no loop with the value watch.
-const dispatchValue = (value: CPaginationEvents['changeValue']) =>
-  emitModelValue(host, value);
+// Each page or page-size pick is its own commit. The value is the same object
+// reference the consumer holds (mutated in place with the computed range), so
+// the helper's identity guard skips re-writing `host.value` and there is no
+// loop with the value watch.
+const dispatchValue = (value: CPaginationEvents['change']) =>
+  emitModelChange(host, value);
 
 const currentPage = ref(1);
 
@@ -310,7 +309,7 @@ const buttonSize = computed(() =>
 
 /*
   We intentionally mutate `props.value` in place here. The value is the same
-  object reference the consumer holds, and `emitModelValue`'s identity guard
+  object reference the consumer holds, and `emitModelChange`'s identity guard
   depends on that identity to skip re-writing `host.value` (no update loop —
   see the dispatchValue comment above). Cloning would break that contract.
 */

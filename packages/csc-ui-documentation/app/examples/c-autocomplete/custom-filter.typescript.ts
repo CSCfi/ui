@@ -23,6 +23,6 @@ const autocomplete = document.querySelector('c-autocomplete')!;
 autocomplete.items = items;
 autocomplete.filter = filter;
 
-autocomplete.addEventListener('changeValue', (event) => {
+autocomplete.addEventListener('change', (event) => {
   document.querySelector('p')!.textContent = `Value: ${event.detail ?? 'null'}`;
 });

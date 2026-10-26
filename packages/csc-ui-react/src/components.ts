@@ -149,7 +149,6 @@ export const CAccordion = createComponent({
   elementClass: elementClass<CAccordionElement>(['mandatory', 'multiple', 'outlined', 'value']),
   events: {
     onChange: 'change' as EventName<CAccordionElementEventMap['change']>,
-    onChangeValue: 'changeValue' as EventName<CAccordionElementEventMap['changeValue']>,
     onInput: 'input' as EventName<CAccordionElementEventMap['input']>,
     onUpdateValue: 'update:value' as EventName<CAccordionElementEventMap['update:value']>,
   },
@@ -182,7 +181,6 @@ export const CAutocomplete = createComponent({
   events: {
     onChange: 'change' as EventName<CAutocompleteElementEventMap['change']>,
     onChangeQuery: 'change:query' as EventName<CAutocompleteElementEventMap['change:query']>,
-    onChangeValue: 'changeValue' as EventName<CAutocompleteElementEventMap['changeValue']>,
     onInput: 'input' as EventName<CAutocompleteElementEventMap['input']>,
     onUpdateValue: 'update:value' as EventName<CAutocompleteElementEventMap['update:value']>,
   },
@@ -268,7 +266,6 @@ export const CCheckbox = createComponent({
   elementClass: elementClass<CCheckboxElement>(['checked', 'disabled', 'errorMessage', 'falseValue', 'hideDetails', 'hint', 'hostId', 'hostName', 'indeterminate', 'label', 'required', 'trueValue', 'valid', 'value']),
   events: {
     onChange: 'change' as EventName<CCheckboxElementEventMap['change']>,
-    onChangeValue: 'changeValue' as EventName<CCheckboxElementEventMap['changeValue']>,
     onInput: 'input' as EventName<CCheckboxElementEventMap['input']>,
     onUpdateValue: 'update:value' as EventName<CCheckboxElementEventMap['update:value']>,
   },
@@ -488,7 +485,7 @@ export const CModal = createComponent({
   displayName: 'CModal',
   elementClass: elementClass<CModalElement>(['disableBackdropBlur', 'dismissable', 'value', 'width']),
   events: {
-    onChangeValue: 'changeValue' as EventName<CModalElementEventMap['changeValue']>,
+    onChange: 'change' as EventName<CModalElementEventMap['change']>,
     onInput: 'input' as EventName<CModalElementEventMap['input']>,
     onUpdateValue: 'update:value' as EventName<CModalElementEventMap['update:value']>,
   },
@@ -535,7 +532,7 @@ export const COtpInput = createComponent({
   displayName: 'COtpInput',
   elementClass: elementClass<COtpInputElement>(['elementId', 'errorMessage', 'hasAutofocus', 'hideDetails', 'hint', 'label', 'length', 'required', 'valid', 'value']),
   events: {
-    onChangeValue: 'changeValue' as EventName<COtpInputElementEventMap['changeValue']>,
+    onChange: 'change' as EventName<COtpInputElementEventMap['change']>,
     onCompletion: 'completion' as EventName<COtpInputElementEventMap['completion']>,
     onInput: 'input' as EventName<COtpInputElementEventMap['input']>,
     onUpdateValue: 'update:value' as EventName<COtpInputElementEventMap['update:value']>,
@@ -555,7 +552,7 @@ export const CPagination = createComponent({
   displayName: 'CPagination',
   elementClass: elementClass<CPaginationElement>(['hideDetails', 'hideRange', 'simple', 'size', 'value']),
   events: {
-    onChangeValue: 'changeValue' as EventName<CPaginationElementEventMap['changeValue']>,
+    onChange: 'change' as EventName<CPaginationElementEventMap['change']>,
     onInput: 'input' as EventName<CPaginationElementEventMap['input']>,
     onUpdateValue: 'update:value' as EventName<CPaginationElementEventMap['update:value']>,
   },
@@ -603,7 +600,7 @@ export const CRadioGroup = createComponent({
   displayName: 'CRadioGroup',
   elementClass: elementClass<CRadioGroupElement>(['disabled', 'errorMessage', 'hideDetails', 'hint', 'inline', 'label', 'required', 'valid', 'value']),
   events: {
-    onChangeValue: 'changeValue' as EventName<CRadioGroupElementEventMap['changeValue']>,
+    onChange: 'change' as EventName<CRadioGroupElementEventMap['change']>,
     onInput: 'input' as EventName<CRadioGroupElementEventMap['input']>,
     onUpdateValue: 'update:value' as EventName<CRadioGroupElementEventMap['update:value']>,
   },
@@ -616,7 +613,7 @@ export const CSelect = createComponent({
   displayName: 'CSelect',
   elementClass: elementClass<CSelectElement>(['clearable', 'disabled', 'errorMessage', 'hideDetails', 'hint', 'hostId', 'items', 'itemsPerPage', 'label', 'labelOnTop', 'loading', 'maxTags', 'multiple', 'name', 'optionAsSelection', 'placeholder', 'required', 'returnObject', 'selectAll', 'shadow', 'size', 'texts', 'valid', 'value']),
   events: {
-    onChangeValue: 'changeValue' as EventName<CSelectElementEventMap['changeValue']>,
+    onChange: 'change' as EventName<CSelectElementEventMap['change']>,
     onInput: 'input' as EventName<CSelectElementEventMap['input']>,
     onUpdateValue: 'update:value' as EventName<CSelectElementEventMap['update:value']>,
   },
@@ -656,7 +653,7 @@ export const CSlider = createComponent({
   displayName: 'CSlider',
   elementClass: elementClass<CSliderElement>(['ariaLabelInternal', 'disableTooltip', 'disabled', 'hostId', 'hostName', 'label', 'labels', 'max', 'min', 'segments', 'step', 'ticks', 'unit', 'value']),
   events: {
-    onChangeValue: 'changeValue' as EventName<CSliderElementEventMap['changeValue']>,
+    onChange: 'change' as EventName<CSliderElementEventMap['change']>,
     onInput: 'input' as EventName<CSliderElementEventMap['input']>,
     onUpdateValue: 'update:value' as EventName<CSliderElementEventMap['update:value']>,
   },
@@ -706,7 +703,6 @@ export const CSwitch = createComponent({
   elementClass: elementClass<CSwitchElement>(['checked', 'disabled', 'falseValue', 'hostId', 'label', 'loading', 'required', 'trueValue', 'value']),
   events: {
     onChange: 'change' as EventName<CSwitchElementEventMap['change']>,
-    onChangeValue: 'changeValue' as EventName<CSwitchElementEventMap['changeValue']>,
     onInput: 'input' as EventName<CSwitchElementEventMap['input']>,
     onUpdateValue: 'update:value' as EventName<CSwitchElementEventMap['update:value']>,
   },
@@ -755,7 +751,7 @@ export const CTabs = createComponent({
   displayName: 'CTabs',
   elementClass: elementClass<CTabsElement>(['borderless', 'disableAnimation', 'justify', 'mobileBreakpoint', 'value', 'vertical']),
   events: {
-    onChangeValue: 'changeValue' as EventName<CTabsElementEventMap['changeValue']>,
+    onChange: 'change' as EventName<CTabsElementEventMap['change']>,
     onInput: 'input' as EventName<CTabsElementEventMap['input']>,
     onUpdateValue: 'update:value' as EventName<CTabsElementEventMap['update:value']>,
   },
@@ -786,7 +782,6 @@ export const CTextField = createComponent({
   elementClass: elementClass<Omit<CTextFieldElement, 'autocorrect'> & HTMLElement>(['autocomplete', 'autocorrect', 'automaticCapitalize', 'disabled', 'errorMessage', 'hideDetails', 'hint', 'hostId', 'label', 'labelOnTop', 'mask', 'max', 'min', 'name', 'placeholder', 'readonly', 'required', 'rows', 'shadow', 'size', 'step', 'trimWhitespace', 'type', 'valid', 'value']),
   events: {
     onChange: 'change' as EventName<CTextFieldElementEventMap['change']>,
-    onChangeValue: 'changeValue' as EventName<CTextFieldElementEventMap['changeValue']>,
     onInput: 'input' as EventName<CTextFieldElementEventMap['input']>,
     onUpdateValue: 'update:value' as EventName<CTextFieldElementEventMap['update:value']>,
   },

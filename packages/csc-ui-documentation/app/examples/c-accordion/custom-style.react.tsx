@@ -46,7 +46,7 @@ export const CustomStyle = () => {
 
       <CAccordion
         className="custom-style"
-        onChangeValue={(event) =>
+        onChange={(event) =>
           setExpanded(event.detail as 'billing' | 'members' | 'storage')
         }
         value={expanded}

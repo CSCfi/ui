@@ -17,12 +17,7 @@ import {
   VALUE_RECIPES,
 } from './kinds';
 
-const HOST_EVENTS = [
-  'changeValue',
-  'change-value',
-  'change',
-  'update:value',
-] as const;
+const HOST_EVENTS = ['change', 'update:value'] as const;
 
 type ValueHost = { value?: unknown } & HTMLElement;
 
@@ -101,24 +96,46 @@ describe.each(VALUE_TAGS)('%s', (tag) => {
     expect(libraryInputs).toHaveLength(expectedCount);
     expect(libraryInputs[0].bubbles).toBe(true);
 
-    const settledAt =
-      recipe.valueSettledAt === 'input' ? libraryInputs[0] : updates[0];
+    expect(updates[0].targetValue, 'host.value at dispatch').toEqual(detail);
+    expect(libraryInputs[0].targetValue, 'host.value at input').toEqual(detail);
 
-    expect(settledAt.targetValue, 'host.value at dispatch').toEqual(detail);
+    // Typed text commits later: the interaction alone fires no `change`.
+    if (recipe.commit) {
+      expect(host.of('change'), 'change before the commit').toHaveLength(0);
 
-    if (recipe.family === 'change') {
-      const changes = host.of('change');
-
-      expect(changes).toHaveLength(expectedCount);
-      expect(changes[0].detail).toEqual(detail);
-      expect(host.of('changeValue')).toHaveLength(0);
-    } else {
-      expect(host.of('changeValue')).toHaveLength(expectedCount);
-      expect(host.of('change-value')).toHaveLength(expectedCount);
-      expect(host.of('changeValue')[0].detail).toEqual(detail);
-      expect(host.of('change-value')[0].detail).toEqual(detail);
+      await recipe.commit(m);
+      await settle(60);
     }
+
+    const changes = host.of('change');
+
+    expect(changes, 'change dispatches').toHaveLength(expectedCount);
+    expect(changes[0].detail).toEqual(detail);
+    expect(changes[0].bubbles, 'change bubbles').toBe(false);
+    expect(
+      host.of('update:value'),
+      'update:value after the commit',
+    ).toHaveLength(expectedCount);
   });
+
+  it.runIf(recipe.commit)(
+    'a commit with nothing changed since the last one fires no change',
+    async () => {
+      const m = await mount<ValueHost>(tag, recipe.mount);
+
+      await recipe.interact(m);
+      await recipe.commit!(m);
+      await settle(60);
+
+      const host = recordEvents(m.host, HOST_EVENTS);
+
+      m.shadow('input').focus();
+      await recipe.commit!(m);
+      await settle(60);
+
+      expect(host.names()).toEqual([]);
+    },
+  );
 
   it.runIf(recipe.emptyAware)(
     'treats an empty string and null as no value',

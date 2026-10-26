@@ -9,7 +9,7 @@ import { Component, CUSTOM_ELEMENTS_SCHEMA, signal } from '@angular/core';
     <div class="example-row">
       <c-button (click)="open.set(true)">Open modal</c-button>
 
-      <c-modal [value]="open()" dismissable (changeValue)="open.set(false)">
+      <c-modal [value]="open()" dismissable (change)="open.set(false)">
         <c-card>
           <c-card-title>Delete project</c-card-title>
 

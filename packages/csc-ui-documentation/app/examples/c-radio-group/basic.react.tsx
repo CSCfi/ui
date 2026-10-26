@@ -10,7 +10,7 @@ export const Basic = () => {
       <CRadioGroup
         hint="You can change the plan later"
         label="Subscription plan"
-        onChangeValue={(event) => setPlan(event.detail as string)}
+        onChange={(event) => setPlan(event.detail as string)}
         value={plan}
       >
         <CRadio value="free">Free</CRadio>

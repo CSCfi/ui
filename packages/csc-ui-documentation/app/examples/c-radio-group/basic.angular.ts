@@ -11,7 +11,7 @@ import { Component, CUSTOM_ELEMENTS_SCHEMA, signal } from '@angular/core';
         [value]="plan()"
         hint="You can change the plan later"
         label="Subscription plan"
-        (changeValue)="plan.set($any($event).detail)"
+        (change)="plan.set($any($event).detail)"
       >
         <c-radio value="free">Free</c-radio>
         <c-radio value="pro">Pro</c-radio>

@@ -11,7 +11,7 @@ import { Component, CUSTOM_ELEMENTS_SCHEMA, signal } from '@angular/core';
         [value]="query()"
         label="Search"
         size="small"
-        (changeValue)="query.set($any($event).detail)"
+        (input)="query.set($any($event.target).value)"
       ></c-text-field>
 
       <c-button size="small">Search</c-button>

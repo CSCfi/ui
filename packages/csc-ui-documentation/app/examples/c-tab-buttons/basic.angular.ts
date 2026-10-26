@@ -6,7 +6,7 @@ import { Component, CUSTOM_ELEMENTS_SCHEMA, signal } from '@angular/core';
   selector: 'app-example',
   standalone: true,
   template: `
-    <c-tabs [value]="tab()" (changeValue)="tab.set($any($event).detail)">
+    <c-tabs [value]="tab()" (change)="tab.set($any($event).detail)">
       <c-tab-buttons>
         <c-button value="overview">Overview</c-button>
         <c-button value="members">Members</c-button>

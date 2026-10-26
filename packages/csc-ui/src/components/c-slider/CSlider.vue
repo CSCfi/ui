@@ -35,6 +35,7 @@
         :name="hostName || undefined"
         :step
         type="range"
+        @change="onChange"
         @input="onInput"
       />
     </div>
@@ -67,20 +68,21 @@ import {
   watch,
 } from 'vue';
 
-import { emitModelValue } from '../../shared/emitModelValue';
 import FormLabel from '../../shared/FormLabel.vue';
+import { emitModelInput, emitModelSettled } from '../../shared/valueEvents';
 
 /** Events dispatched by `<c-slider>`. */
 interface CSliderEvents {
   /**
-   * Fired on every thumb movement, carrying the new slider value — a number
-   * when the current `value` prop is a number, otherwise a string.
+   * Fired when a move is committed — the release that ends a drag, or each
+   * arrow-key step — carrying the slider value: a number when the current
+   * `value` prop is a number, otherwise a string.
    */
-  changeValue: number | string;
+  change: number | string;
 
   /**
    * Native bubbling input event fired on every thumb movement so a plain Vue
-   * `v-model` works without the `v-control` directive. No detail.
+   * `v-model` stays in sync. No detail.
    */
   input: void;
 
@@ -331,20 +333,28 @@ const cssVars = computed(() => ({
   '--_c-slider-position': `${trackPosition.value}`,
 }));
 
+// Typed against the event map so the emitted detail is compile-checked.
+const valueOf = (e: Event): CSliderEvents['change'] => {
+  const v = (e.target as HTMLInputElement).value;
+
+  return typeof props.value === 'number' ? +v : v;
+};
+
+// The inner range input's own timing: `input` on every move, `change` on the
+// release that ends a drag and on each arrow-key step.
 const onInput = (e: Event) => {
   const v = (e.target as HTMLInputElement).value;
 
-  // Typed against the event map so the emitted detail is compile-checked.
-  const next: CSliderEvents['changeValue'] =
-    typeof props.value === 'number' ? +v : v;
-  // changeValue/update:value + native `input` (plain v-model) + host `value`
-  // mirror. The value watch is visuals-only, so no loop.
-  emitModelValue(host, next);
+  // The value watch is visuals-only, so the host `value` mirror doesn't loop.
+  emitModelInput(host, valueOf(e));
   // Don't wait for the consumer to push value back — update the track
   // fill immediately so the gradient and tooltip stay in sync with the
   // thumb during drag.
   trackPosition.value = ((+v - +props.min) / (+props.max - +props.min)) * 100;
 };
+
+// A native `change` does not cross the shadow boundary; the host sends its own.
+const onChange = (e: Event) => emitModelSettled(host, valueOf(e));
 
 watch(() => props.segments, calculateTickPositions);
 watch(

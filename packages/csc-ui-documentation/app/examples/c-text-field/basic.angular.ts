@@ -11,7 +11,7 @@ import { Component, CUSTOM_ELEMENTS_SCHEMA, signal } from '@angular/core';
         [value]="name()"
         hint="Shown on your public profile"
         label="Display name"
-        (changeValue)="name.set($any($event).detail)"
+        (input)="name.set($any($event.target).value)"
       ></c-text-field>
 
       <p>Value: {{ name() }}</p>

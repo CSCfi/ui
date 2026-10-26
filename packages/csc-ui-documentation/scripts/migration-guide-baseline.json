@@ -54,7 +54,6 @@
   "c-slider prop id",
   "c-slider prop name",
   "c-spinner prop color",
-  "c-steps event changeValue",
   "c-switch prop disabled",
   "c-switch prop id",
   "c-switch slot label",

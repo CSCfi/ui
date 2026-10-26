@@ -29,10 +29,10 @@ import { useHost } from 'vue';
  * Events do not bubble by default; pass `{ bubbles: true, composed: true }`
  * per call where the Stencil-era event bubbled.
  *
- * v-model components: `emitModelValue` remains the dispatch path for the
- * `changeValue` / `update:value` / `input` triple (it also mirrors `host.value`
- * for native v-model). Declare those three events in the component's event map
- * anyway — the docs analyzer enforces this for every `emitModelValue` caller.
+ * Value controls dispatch their value events through `valueEvents.ts`
+ * instead (it also mirrors `host.value` for native v-model). Declare those
+ * events in the component's event map anyway — the docs analyzer enforces
+ * this for every caller.
  *
  * camelCase events also dispatch a kebab-case twin: Vue's runtime
  * hyphenates every v-on listener name before calling addEventListener

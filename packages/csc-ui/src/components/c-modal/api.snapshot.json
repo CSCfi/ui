@@ -8,7 +8,7 @@
   "cssProperties": [],
   "defaultable": [],
   "events": {
-    "changeValue": "CustomEvent<boolean>",
+    "change": "CustomEvent<boolean>",
     "input": "CustomEvent<void>",
     "update:value": "CustomEvent<boolean>"
   },

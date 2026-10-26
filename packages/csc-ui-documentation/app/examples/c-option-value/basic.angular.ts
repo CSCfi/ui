@@ -13,7 +13,7 @@ import { Component, CUSTOM_ELEMENTS_SCHEMA, signal } from '@angular/core';
         hint="Only the c-option-value text is filtered, marked and used as the label"
         label="Programming language"
         placeholder="Start typing to search"
-        (changeValue)="language.set($any($event).detail)"
+        (change)="language.set($any($event).detail)"
       >
         <c-option value="js">
           <c-option-value>JavaScript</c-option-value>

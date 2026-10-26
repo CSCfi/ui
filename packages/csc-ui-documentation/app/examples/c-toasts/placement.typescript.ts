@@ -3,11 +3,11 @@ const toasts = document.querySelector('c-toasts')!;
 const [verticalSelect, horizontalSelect] =
   document.querySelectorAll('c-select');
 
-verticalSelect!.addEventListener('changeValue', (event) => {
+verticalSelect!.addEventListener('change', (event) => {
   toasts.vertical = event.detail as 'bottom' | 'top';
 });
 
-horizontalSelect!.addEventListener('changeValue', (event) => {
+horizontalSelect!.addEventListener('change', (event) => {
   toasts.horizontal = event.detail as 'center' | 'left' | 'right';
 });
 

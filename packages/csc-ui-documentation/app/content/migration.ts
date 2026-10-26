@@ -36,6 +36,9 @@ const forAll = (
   vue: blocks,
 });
 
+/** The value-event change every flavor's binding section opens with. */
+const VALUE_EVENTS = `changeValue and every other camelCase event are gone (ADR-0075). Every value control reports through the same three events, with a native input's timing: input (no detail) and update:value (the value) on every value change, and change (the value) on every commit — Enter or leaving the field for typed text, each pick or toggle, each arrow-key step, the release that ends a drag. Where a changeValue handler ran on every keystroke or slider move, listen for update:value to keep that timing, or for change to act once per commit. The change event stays on the element: it does not bubble, so listen on each control.`;
+
 export const MIGRATION_SECTIONS: MigrationSection[] = [
   {
     blocks: forAll([]),
@@ -222,12 +225,20 @@ createApp(App).mount('#app');`,
   label="Name"
   [value]="name()"
   (changeValue)="name.set($any($event).detail)"
+></c-text-field>`,
+          filename: 'Before — 3.x',
+          lang: 'html',
+        },
+        {
+          code: `<!-- input: every keystroke; read the element's value -->
+<c-text-field
+  label="Name"
+  [value]="name()"
+  (input)="name.set($any($event.target).value)"
 ></c-text-field>
 
-<c-switch
-  [value]="enabled()"
-  (changeValue)="enabled.set($any($event).detail)"
->
+<!-- change: each commit, with the value as $event.detail -->
+<c-switch [value]="enabled()" (change)="enabled.set($any($event).detail)">
   Notifications
 </c-switch>`,
           filename: 'After — 4.x',
@@ -235,6 +246,15 @@ createApp(App).mount('#app');`,
         },
       ],
       react: [
+        {
+          code: `<CTextField
+  label="Name"
+  value={name}
+  onChangeValue={(event) => setName(event.detail as string)}
+/>`,
+          filename: 'Before — 3.x',
+          lang: 'tsx',
+        },
         {
           code: `import { useState } from 'react';
 import { CTextField, CSwitch } from '@cscfi/csc-ui-react';
@@ -245,14 +265,16 @@ export const Form = () => {
 
   return (
     <>
+      {/* onUpdateValue: every keystroke */}
       <CTextField
         label="Name"
         value={name}
-        onChangeValue={(event) => setName(event.detail as string)}
+        onUpdateValue={(event) => setName(event.detail as string)}
       />
+      {/* onChange: each commit */}
       <CSwitch
         value={enabled}
-        onChangeValue={(event) => setEnabled(event.detail as boolean)}
+        onChange={(event) => setEnabled(event.detail as boolean)}
       >
         Notifications
       </CSwitch>
@@ -267,9 +289,23 @@ export const Form = () => {
         {
           code: `const field = document.querySelector('c-text-field')!;
 
-// changeValue still fires; a native input event fires too.
 field.addEventListener('changeValue', (event) => {
   console.log('value:', event.detail);
+});`,
+          filename: 'Before — 3.x',
+          lang: 'ts',
+        },
+        {
+          code: `const field = document.querySelector('c-text-field')!;
+
+// Every keystroke.
+field.addEventListener('update:value', (event) => {
+  console.log('value:', event.detail);
+});
+
+// Each commit: Enter, or leaving the field after an edit.
+field.addEventListener('change', (event) => {
+  console.log('committed:', event.detail);
 });`,
           filename: 'After — 4.x',
           lang: 'ts',
@@ -281,14 +317,7 @@ field.addEventListener('changeValue', (event) => {
   <!-- v-control bridged Stencil's changeValue to v-model -->
   <c-text-field v-model="name" v-control label="Name" />
   <c-switch v-model="enabled" v-control>Notifications</c-switch>
-</template>
-
-<script setup lang="ts">
-import { ref } from 'vue';
-
-const name = ref('');
-const enabled = ref(false);
-</script>`,
+</template>`,
           filename: 'Before — 3.x',
           lang: 'vue',
         },
@@ -297,6 +326,12 @@ const enabled = ref(false);
   <!-- plain v-model, no directive -->
   <c-text-field v-model="name" label="Name" />
   <c-switch v-model="enabled">Notifications</c-switch>
+
+  <!-- change: each commit, with the value as $event.detail -->
+  <c-select :value="country" @change="save($event.detail)" />
+
+  <!-- input: every change; read the element's value -->
+  <c-slider :value="volume" @input="preview($event.target.value)" />
 </template>
 
 <script setup lang="ts">
@@ -325,16 +360,52 @@ const open = ref(false);
           filename: 'Other two-way state — :prop + @change:prop',
           lang: 'vue',
         },
+        {
+          code: `// eslint.config.js (eslint-plugin-vue): a listener that can never fire
+// is an error, so none survives the upgrade unnoticed.
+const on = "VElement[rawName=/^c-/] > VStartTag > VAttribute[directive=true][key.name.name='on']";
+
+export default [
+  {
+    files: ['**/*.vue'],
+    rules: {
+      'vue/no-restricted-syntax': [
+        'error',
+        {
+          message:
+            'Vue never attaches an @update:* listener to a custom element. Use v-model, @input with the element’s value, or @change.',
+          selector: \`\${on}[key.argument.name=/^update:/]\`,
+        },
+        {
+          message:
+            'csc-ui 4 removed this event. Use @change (commits) or @input (every change); a side navigation item fires @select.',
+          selector: \`\${on}[key.argument.name=/^(change-?value|item-?change)$/i]\`,
+        },
+      ],
+    },
+  },
+];`,
+          filename: 'Catch the old listeners — ESLint',
+          lang: 'js',
+        },
       ],
     },
     id: 'binding-events',
     intro: {
-      angular: `The legacy changeValue event still fires, so existing (changeValue) handlers keep working. State-change events were renamed from update:<prop> to change:<prop> (e.g. (change:sort)).`,
-      react: `The legacy changeValue event still fires, so existing onChangeValue handlers keep working. Prefer the typed on* props from @cscfi/csc-ui-react going forward. State-change events were renamed from update:<prop> to change:<prop>.`,
-      typescript: `The legacy changeValue event still fires, so existing addEventListener('changeValue', …) handlers keep working; the elements also dispatch a native input event. State-change events were renamed from update:<prop> to change:<prop>.`,
-      vue: `The headline change for Vue. The v-control directive is gone — value components support plain v-model directly.
+      angular: `${VALUE_EVENTS}
 
-Use plain v-model (no argument): the elements ride the native input event, so v-model:value does not compile on a custom element and must not be used. For other two-way state, bind :prop and listen to the lowercase kebab-case @change:<prop> event (e.g. @change:open, @change:sort) — the old update:<prop> events were renamed because Vue silently drops update:*-prefixed listeners on custom elements.`,
+Follow typed text with (input), reading $any($event.target).value, and commits with (change), reading $any($event).detail. An Angular template cannot bind a colon-named event — (update:value), (change:sort) — so add a listener for those on the element itself, as the data table examples do.`,
+      react: `${VALUE_EVENTS}
+
+onChangeValue is gone: onUpdateValue carries the value on every change, onChange on every commit. State-change events were renamed from update:<prop> to change:<prop>, so onUpdateSort became onChangeSort.`,
+      typescript: `${VALUE_EVENTS}
+
+Listen for update:value to follow every change, or change for commits; both carry the value as detail. State-change events were renamed from update:<prop> to change:<prop>.`,
+      vue: `${VALUE_EVENTS}
+
+The headline change for Vue. The v-control directive is gone — value components support plain v-model directly.
+
+Use plain v-model (no argument): the elements ride the native input event, so v-model:value does not compile on a custom element and must not be used. A Vue template can never hear update:value — Vue skips every @update:* listener on an element — so a former @change-value handler becomes @change (commits, the value in $event.detail) or @input (every change, the value in $event.target.value). For other two-way state, bind :prop and listen to the lowercase @change:<prop> event (e.g. @change:open, @change:sort) — the old update:<prop> events were renamed for the same reason.`,
     },
     title: 'Two-way binding & events',
   },

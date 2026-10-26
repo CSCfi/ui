@@ -17,7 +17,7 @@ import { Component, CUSTOM_ELEMENTS_SCHEMA, signal } from '@angular/core';
         multiple
         placeholder="Start typing to search"
         select-all
-        (changeValue)="languages.set($any($event).detail)"
+        (change)="languages.set($any($event).detail)"
       >
         <c-option value="js">
           <c-option-value>JavaScript</c-option-value>

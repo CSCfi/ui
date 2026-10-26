@@ -118,23 +118,22 @@ import {
 } from 'vue';
 
 import { coerceBoolean } from '../../shared/coerceBoolean';
-import { emitModelValue } from '../../shared/emitModelValue';
 import { prefersReducedMotion } from '../../shared/reducedMotion';
+import { emitModelChange } from '../../shared/valueEvents';
 
 /** Events dispatched by `<c-tabs>`. */
 interface CTabsEvents {
   /**
-   * Fired when the user activates a tab (click, or Enter/Space on a focused
-   * tab), carrying the newly selected tab value. Legacy value-change event.
+   * Fired when the user activates another tab (click, or Enter/Space on a
+   * focused tab), carrying the newly selected tab value.
    */
-  changeValue: number | string;
+  change: number | string;
 
   /** Native bubbling input event dispatched for plain `v-model` support; carries no detail. */
   input: void;
 
   /**
-   * Fired alongside `changeValue` with the newly selected tab value; fulfills
-   * the `v-model`/`v-control` contract.
+   * Fired alongside `change` with the same detail — the `v-model` contract.
    */
   'update:value': number | string;
 }
@@ -223,15 +222,21 @@ const tabsRef = useTemplateRef<HTMLElement>('tabsRef');
 
 const scrollRef = useTemplateRef<HTMLElement>('scrollRef');
 
-// changeValue/update:value + native `input` (so a plain `v-model` works without
-// `v-control`) + host `value` mirror. Called only from interaction handlers;
-// the value/internalValue watches are visuals-only (+ push-down), so no loop.
-const dispatchValue = (value: CTabsEvents['changeValue']) =>
-  emitModelValue(host, value);
-
 const autoId = useId();
 
 const internalValue = ref<number | string>(props.value);
+
+// A user's tab pick, its own commit. Called only from interaction handlers;
+// the value/internalValue watches are visuals-only (+ push-down), so the host
+// `value` mirror doesn't loop. Activating the current tab changes nothing,
+// so it emits nothing — Enter reaches both the keydown handler below and the
+// tab's own.
+const select = (value: CTabsEvents['change']) => {
+  if (value === internalValue.value) return;
+
+  internalValue.value = value;
+  emitModelChange(host, value);
+};
 
 const isOverflowing = ref(false);
 
@@ -698,8 +703,7 @@ onMounted(() => {
   host.addEventListener('tabchange', (e) => {
     const ev = e as CustomEvent<{ value: number | string }>;
     ev.stopPropagation();
-    internalValue.value = ev.detail.value;
-    dispatchValue(internalValue.value);
+    select(ev.detail.value);
   });
   host.addEventListener('tabfocus', (e) => {
     const ev = e as CustomEvent<number | string>;
@@ -710,7 +714,7 @@ onMounted(() => {
   // Keyboard: Enter/Space selects focused tab; arrows move focus. In buttons
   // mode the adapter's wrapped c-button-group owns keyboard interaction
   // (Space/Enter fire the native button click, arrows rove focus), so both
-  // handlers stand down to avoid double-dispatching changeValue.
+  // handlers stand down to avoid double-dispatching `change`.
   host.addEventListener(
     'keydown',
     (e) => {
@@ -722,10 +726,7 @@ onMounted(() => {
 
       if (!tabsList().includes(target) || target.disabled) return;
 
-      if (ev.key === 'Enter' || ev.code === 'Space') {
-        internalValue.value = target.value;
-        dispatchValue(internalValue.value);
-      }
+      if (ev.key === 'Enter' || ev.code === 'Space') select(target.value);
     },
     true,
   );

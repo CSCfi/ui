@@ -3,11 +3,14 @@ A text field for a single line of text, or several lines under `rows`, with a la
 ## Value
 
 The value is the text in the field as a string. Bind it with `v-model`, or
-listen for `update:value`:
+listen for `update:value`, which fires on every keystroke:
 
 ```vue
 <c-text-field v-model="name" label="Name" />
 ```
+
+`change` fires when the text is committed — Enter, or leaving the field after
+an edit — so save or validate there rather than on every keystroke.
 
 `type` maps to the native input type: `password` adds a toggle that reveals
 the text, and `number` honours `min`, `max` and `step`. Setting `rows` above

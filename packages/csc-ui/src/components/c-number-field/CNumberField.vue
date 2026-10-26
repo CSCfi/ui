@@ -285,9 +285,9 @@ import type { CFieldSize } from '../../types';
 import type { CNumberFieldFormat } from './numbers';
 
 import { useAppDefault } from '../../shared/appDefaults';
-import { emitModelChange } from '../../shared/emitModelValue';
 import { applyConform } from '../../shared/inputMask';
 import { useHostStates } from '../../shared/useHostStates';
+import { emitModelInput, emitModelSettled } from '../../shared/valueEvents';
 import {
   conformNumber,
   formatNumber,
@@ -296,15 +296,13 @@ import {
   stepNumber,
 } from './numbers';
 
-/**
- * Events dispatched by `<c-number-field>` — all three at once, through
- * `emitModelChange`.
- */
+/** Events dispatched by `<c-number-field>`. */
 interface CNumberFieldEvents {
   /**
-   * Fired whenever typing or a step changes the number, carrying it — `null`
-   * once the field holds no digit. Not fired when only the text changes (a group
-   * separator, a trailing decimal separator) or when `value` is set.
+   * Fired when the number is committed, carrying it — `null` once the field
+   * holds no digit: Enter or leaving the field after typing, each arrow-key
+   * or step-button step, and the release that ends a held step button. Not
+   * fired when nothing changed since the last commit.
    */
   change: null | number;
 
@@ -315,7 +313,9 @@ interface CNumberFieldEvents {
   input: void;
 
   /**
-   * v-model contract event, fired with `change`.
+   * v-model contract event fired whenever typing or a step changes the
+   * number. Not fired when only the text changes (a group separator, a
+   * trailing decimal separator) or when `value` is set.
    */
   'update:value': null | number;
 }
@@ -462,6 +462,17 @@ const text = ref(formatNumber(current.value, format.value));
 const same = (a: null | number, b: null | number) =>
   a === b || (a !== null && b !== null && Object.is(a + 0, b + 0));
 
+/** The number at the last commit, or as last set: a commit reports a change since then. */
+let committed = current.value;
+
+/** Report the number held as committed, when it changed since the last commit. */
+const commit = () => {
+  if (same(current.value, committed)) return;
+
+  committed = current.value;
+  emitModelSettled(host, current.value satisfies CNumberFieldEvents['change']);
+};
+
 /** Whether the number is below `min` or above `max` (CONTEXT.md "Out of range") */
 const outOfRange = computed<boolean>(() => {
   const n = current.value;
@@ -478,12 +489,15 @@ const outOfRange = computed<boolean>(() => {
 watch(outOfRange, (on) => setState('out-of-range', on), { immediate: true });
 
 // A set `value` re-formats the text — unless the text already reads as that
-// number, which is also what the `emitModelChange` mirror writes back while
-// the user types ("12," stays "12,"). Never emits.
+// number, which is also what the `emitModelInput` mirror writes back while
+// the user types ("12," stays "12,"). Never emits. A number from outside is
+// the new baseline for the next commit; the mirror's own number is not.
 watch(
   () => props.value,
   (v) => {
     const next = toNumber(v);
+
+    if (!same(next, current.value)) committed = next;
 
     if (same(next, readNumber(text.value, format.value))) {
       current.value = next;
@@ -537,7 +551,7 @@ const onInput = (event: Event) => {
   if (same(result.value, current.value)) return;
 
   current.value = result.value;
-  emitModelChange(host, result.value satisfies CNumberFieldEvents['change']);
+  emitModelInput(host, result.value);
 };
 
 const onFocus = () => {
@@ -545,9 +559,10 @@ const onFocus = () => {
   pageLang.value = document.documentElement.lang;
 };
 
-// Leaving the field tidies the text ("12," → "12", padding under
-// `fixed-decimals`); the number does not change, so nothing is emitted.
+// Leaving the field commits what was typed, then tidies the text ("12," →
+// "12", padding under `fixed-decimals`), which leaves the number as it is.
 const onBlur = () => {
+  commit();
   isFocused.value = false;
   text.value = formatNumber(
     current.value,
@@ -574,7 +589,10 @@ const stepped = (direction: -1 | 1, count = 1): null | number => {
   return next === null || same(next, current.value) ? null : next;
 };
 
-/** Take a step; `false` when there is none to take (at a bound). */
+/**
+ * Take a step, reported as a change not yet committed; `false` when there is
+ * none to take (at a bound).
+ */
 const stepBy = (direction: -1 | 1, count = 1): boolean => {
   const next = stepped(direction, count);
 
@@ -586,7 +604,7 @@ const stepBy = (direction: -1 | 1, count = 1): boolean => {
     format.value,
     fixedDecimalsResolved.value && !isFocused.value,
   );
-  emitModelChange(host, next satisfies CNumberFieldEvents['change']);
+  emitModelInput(host, next);
 
   return true;
 };
@@ -603,6 +621,12 @@ const STEP_KEYS: Record<string, [-1 | 1, number]> = {
 };
 
 const onKeydown = (event: KeyboardEvent) => {
+  if (event.key === 'Enter' && !event.isComposing) {
+    commit();
+
+    return;
+  }
+
   const key = STEP_KEYS[event.key];
 
   if (
@@ -618,7 +642,9 @@ const onKeydown = (event: KeyboardEvent) => {
     return;
 
   event.preventDefault();
-  stepBy(...key);
+
+  // A key step commits at once, as a native range input's does.
+  if (stepBy(...key)) commit();
 };
 
 // Holding a step button repeats: one step on the press, then after a pause
@@ -638,11 +664,15 @@ const stopRepeat = () => {
   repeatTimer = undefined;
 };
 
-// The click, if any, follows the release in the same task.
+// The click, if any, follows the release in the same task. The release ends
+// the press, and commits its steps like the end of a drag.
 const releaseStep = () => {
   stopRepeat();
 
-  if (pressed) setTimeout(() => (pressed = false));
+  if (!pressed) return;
+
+  commit();
+  setTimeout(() => (pressed = false));
 };
 
 const onStepPress = (event: PointerEvent, direction: -1 | 1) => {
@@ -672,7 +702,7 @@ const onStepClick = (direction: -1 | 1) => {
     return;
   }
 
-  stepBy(direction);
+  if (stepBy(direction)) commit();
 };
 
 // Pre slot detection, as in c-text-field: c-input would otherwise see our

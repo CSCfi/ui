@@ -33,7 +33,7 @@ import {
         max-tags="3"
         multiple
         placeholder="Start typing to search"
-        (changeValue)="languages.set($any($event).detail)"
+        (change)="languages.set($any($event).detail)"
       >
         @for (option of options; track option.value) {
           <c-option [value]="option.value">

@@ -38,9 +38,8 @@ solely through the group — radios carry no checked state of their own.
 Giving two radios the same `value` is a consumer error: every matching
 radio will show as checked.
 
-In Vue, bind with a plain `v-model`. The group also emits its radios'
-bubbling `change` events onward, with the selected `c-radio` as the
-event target.
+In Vue, bind with a plain `v-model`; elsewhere, listen for `change`, which
+carries the picked value.
 
 ## Label
 

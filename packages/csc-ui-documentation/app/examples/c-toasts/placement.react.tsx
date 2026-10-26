@@ -24,7 +24,7 @@ export const Placement = () => {
     <div className="example-row">
       <CSelect
         label="Vertical"
-        onChangeValue={(event) => setVertical(event.detail as string)}
+        onChange={(event) => setVertical(event.detail as string)}
         value={vertical}
       >
         <COption name="Bottom" value="bottom">
@@ -37,7 +37,7 @@ export const Placement = () => {
 
       <CSelect
         label="Horizontal"
-        onChangeValue={(event) => setHorizontal(event.detail as string)}
+        onChange={(event) => setHorizontal(event.detail as string)}
         value={horizontal}
       >
         <COption name="Left" value="left">

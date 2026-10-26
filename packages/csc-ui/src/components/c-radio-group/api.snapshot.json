@@ -13,7 +13,7 @@
   "cssProperties": [],
   "defaultable": [],
   "events": {
-    "changeValue": "CustomEvent<string>",
+    "change": "CustomEvent<string>",
     "input": "CustomEvent<void>",
     "update:value": "CustomEvent<string>"
   },

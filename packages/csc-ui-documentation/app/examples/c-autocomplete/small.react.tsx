@@ -9,7 +9,7 @@ export const Small = () => {
     <div>
       <CAutocomplete
         label="Programming language"
-        onChangeValue={(event) => setLanguage(event.detail as null | string)}
+        onChange={(event) => setLanguage(event.detail as null | string)}
         size="small"
         value={language}
       >

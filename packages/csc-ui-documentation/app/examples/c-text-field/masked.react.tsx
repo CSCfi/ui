@@ -11,7 +11,7 @@ export const Masked = () => {
         hint="5–12 digits after the country code"
         label="Phone"
         mask="+358 #####[#######]"
-        onChangeValue={(event) => setPhone(event.detail as string)}
+        onUpdateValue={(event) => setPhone(event.detail as string)}
         type="tel"
         value={phone}
       />

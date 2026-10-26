@@ -20,12 +20,12 @@ import {
   watch,
 } from 'vue';
 
+import { applyMask, type MaskSlot } from './inputMask';
 import {
   emitModelChange,
   emitModelInput,
   emitModelSettled,
-} from './emitModelValue';
-import { applyMask, type MaskSlot } from './inputMask';
+} from './valueEvents';
 
 export interface TypedFieldCodec {
   /** The committed value shown as text under `pattern`. */

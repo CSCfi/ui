@@ -12,7 +12,7 @@ export const Ticks = () => {
         labels
         max="8"
         min="0"
-        onChangeValue={(event) => setCores(event.detail as number)}
+        onUpdateValue={(event) => setCores(event.detail as number)}
         segments="8"
         step="1"
         ticks

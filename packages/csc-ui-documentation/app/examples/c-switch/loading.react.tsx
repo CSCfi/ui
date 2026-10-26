@@ -24,7 +24,7 @@ export const Loading = () => {
       <CSwitch
         disabled={pending}
         loading={pending}
-        onChangeValue={onToggle}
+        onChange={onToggle}
         value={enabled}
       >
         Sync to cloud

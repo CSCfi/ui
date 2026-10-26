@@ -11,7 +11,7 @@ import { Component, CUSTOM_ELEMENTS_SCHEMA, signal } from '@angular/core';
     <div>
       <c-pagination
         [value]="options"
-        (changeValue)="page.set($any($event).detail.currentPage ?? 1)"
+        (change)="page.set($any($event).detail.currentPage ?? 1)"
       ></c-pagination>
 
       <p>Current page: {{ page() }}</p>

@@ -11,7 +11,7 @@ export const Basic = () => {
         clearable
         hint="Each c-option provides a name and a value"
         label="Country"
-        onChangeValue={(event) => setCountry(event.detail as null | string)}
+        onChange={(event) => setCountry(event.detail as null | string)}
         placeholder="Choose a country"
         value={country}
       >

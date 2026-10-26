@@ -9,7 +9,7 @@ export const Basic = () => {
 
   return (
     <CAccordion
-      onChangeValue={(event) =>
+      onChange={(event) =>
         setExpanded(event.detail as 'billing' | 'members' | 'storage')
       }
       value={expanded}

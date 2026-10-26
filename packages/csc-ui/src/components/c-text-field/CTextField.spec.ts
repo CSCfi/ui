@@ -1,5 +1,6 @@
 /**
- * Behaviour spec for c-text-field's input mask (CONTEXT.md "Input mask",
+ * Behaviour spec for c-text-field's value events (CONTEXT.md "Value events",
+ * "Commit"; ADR-0075) and its input mask (CONTEXT.md "Input mask",
  * "Complete"; ADR-0059).
  */
 import { describe, expect, it } from 'vitest';
@@ -35,6 +36,63 @@ const guide = (m: Mounted): HTMLElement | null =>
 /** The faint part of the guide: what the mask still asks for. */
 const rest = (m: Mounted): string | undefined =>
   guide(m)?.lastElementChild?.textContent ?? undefined;
+
+describe('value events', () => {
+  const EVENTS = ['change', 'update:value'];
+
+  it('reports every keystroke and commits the text on Enter', async () => {
+    const m = await mountField();
+
+    const events = recordEvents(m.host, EVENTS);
+
+    await userEvent.type(input(m), 'abc');
+    await settle();
+
+    expect(events.of('update:value').map((r) => r.detail)).toEqual([
+      'a',
+      'ab',
+      'abc',
+    ]);
+    expect(events.of('change')).toHaveLength(0);
+
+    await userEvent.keyboard('{Enter}');
+    await settle();
+
+    expect(events.of('change').map((r) => r.detail)).toEqual(['abc']);
+    expect(events.of('change')[0].targetValue).toBe('abc');
+  });
+
+  it('commits on leaving the field, once per edit', async () => {
+    const m = await mountField();
+
+    const events = recordEvents(m.host, EVENTS);
+
+    await userEvent.type(input(m), 'ab');
+    input(m).blur();
+    await settle();
+
+    expect(events.of('change').map((r) => r.detail)).toEqual(['ab']);
+
+    input(m).focus();
+    input(m).blur();
+    await settle();
+
+    expect(events.of('change')).toHaveLength(1);
+  });
+
+  // The mask rewrites the input's text on every keystroke.
+  it('a masked field commits the masked text on leaving it', async () => {
+    const m = await mountField({ mask: '## ###' });
+
+    const events = recordEvents(m.host, EVENTS);
+
+    await userEvent.type(input(m), '12345');
+    input(m).blur();
+    await settle();
+
+    expect(events.of('change').map((r) => r.detail)).toEqual(['12 345']);
+  });
+});
 
 describe('input mask', () => {
   it('conforms typing and emits the masked text', async () => {
@@ -93,7 +151,7 @@ describe('input mask', () => {
   it('conforms a programmatic value without emitting', async () => {
     const m = await mountField({ mask: '## ###', value: '12345' });
 
-    const events = recordEvents(m.host, ['update:value', 'changeValue']);
+    const events = recordEvents(m.host, ['update:value', 'change']);
 
     expect(input(m).value).toBe('12 345');
     expect(m.host.unmaskedValue).toBe('12345');

@@ -7,6 +7,6 @@ pagination.value = {
   itemsPerPage: 10,
 };
 
-pagination.addEventListener('changeValue', (event) => {
+pagination.addEventListener('change', (event) => {
   status.textContent = `Current page: ${event.detail.currentPage ?? 1}`;
 });

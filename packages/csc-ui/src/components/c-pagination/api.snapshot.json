@@ -8,7 +8,7 @@
   "cssProperties": [],
   "defaultable": [],
   "events": {
-    "changeValue": "CustomEvent<CPaginationOptions>",
+    "change": "CustomEvent<CPaginationOptions>",
     "input": "CustomEvent<void>",
     "update:value": "CustomEvent<CPaginationOptions>"
   },

@@ -10,7 +10,7 @@ import { Component, CUSTOM_ELEMENTS_SCHEMA, signal } from '@angular/core';
       <c-checkbox
         [checked]="subscribed()"
         hint="You can unsubscribe at any time"
-        (changeValue)="subscribed.set($any($event).detail)"
+        (change)="subscribed.set($any($event).detail)"
       >
         Subscribe to the newsletter
       </c-checkbox>

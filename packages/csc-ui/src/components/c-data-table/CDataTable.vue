@@ -33,7 +33,7 @@
                   :indeterminate="somePageSelected && !allPageSelected"
                   :value="allPageSelected"
                   hide-details
-                  @changeValue="onSelectPage"
+                  @change="onSelectPage"
                 />
               </div>
             </th>
@@ -127,7 +127,7 @@
                     :aria-label="t.selectRow"
                     :value="isSelected(row.id)"
                     hide-details
-                    @changeValue="onRowCheck(row, $event)"
+                    @change="onRowCheck(row, $event)"
                     @click.stop
                   />
                 </div>
@@ -254,10 +254,7 @@
     </div>
 
     <div v-if="paginationOn" :class="ui.pagination()" part="pagination">
-      <c-pagination
-        :value="paginationValue"
-        @changeValue="onPaginationChange"
-      />
+      <c-pagination :value="paginationValue" @change="onPaginationChange" />
     </div>
   </div>
 </template>

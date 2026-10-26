@@ -14,8 +14,8 @@
   "cssProperties": [],
   "defaultable": [],
   "events": {
-    "changeValue": "CustomEvent<null | string>",
-    "completion": "CustomEvent<null | string>",
+    "change": "CustomEvent<string>",
+    "completion": "CustomEvent<string>",
     "input": "CustomEvent<void>",
     "update:value": "CustomEvent<string>"
   },

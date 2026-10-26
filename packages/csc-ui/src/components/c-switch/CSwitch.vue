@@ -70,36 +70,27 @@
 import { tv } from 'tailwind-variants';
 import { computed, ref, useHost, useId, useTemplateRef, watch } from 'vue';
 
-import { emitModelValue } from '../../shared/emitModelValue';
 import FormLabel from '../../shared/FormLabel.vue';
 import { useHasSlot } from '../../shared/useHasSlot';
-import { useHostEmit } from '../../shared/useHostEmit';
 import { useHostStates } from '../../shared/useHostStates';
+import { emitModelChange } from '../../shared/valueEvents';
 
 /** Events dispatched by `<c-switch>`. */
 interface CSwitchEvents {
   /**
-   * Standard bubbling DOM change event, re-dispatched from the host when the
-   * switch is toggled (the inner input's change does not cross the shadow
-   * boundary). No detail; read the new value from the host's `value` property.
-   */
-  change: void;
-
-  /**
-   * Fired when the switch is toggled, carrying the new value —
+   * Fired when the user toggles the switch, carrying the new value —
    * `trueValue` when on, `falseValue` when off.
    */
-  changeValue: boolean | number | string;
+  change: boolean | number | string;
 
   /**
    * Native bubbling input event fired on toggle so a plain Vue `v-model`
-   * works without the `v-control` directive. No detail.
+   * stays in sync. No detail.
    */
   input: void;
 
   /**
-   * v-model contract event fired on toggle, carrying the new value —
-   * `trueValue` when on, `falseValue` when off.
+   * Fired alongside `change` with the same detail — the `v-model` contract.
    */
   'update:value': boolean | number | string;
 }
@@ -246,8 +237,6 @@ const props = withDefaults(defineProps<CSwitchProps>(), {
 
 const host = useHost();
 
-const emit = useHostEmit<CSwitchEvents>();
-
 const rootRef = useTemplateRef<HTMLElement>('rootRef');
 
 const hasSlotContent = useHasSlot(rootRef, '');
@@ -289,11 +278,9 @@ const toggle = () => {
   internalChecked.value = !internalChecked.value;
 
   const next = internalChecked.value ? props.trueValue : props.falseValue;
-  // Emits changeValue/update:value + native `input` (for plain v-model) and
-  // mirrors `value` onto the host. The value watch above is visuals-only, so no
-  // loop. The native `change` is kept for @change listeners.
-  emitModelValue(host, next);
-  emit('change', undefined, { bubbles: true, composed: true });
+  // A toggle is its own commit. The value watch above is visuals-only, so the
+  // host `value` mirror doesn't loop.
+  emitModelChange(host, next satisfies CSwitchEvents['change']);
 };
 </script>
 

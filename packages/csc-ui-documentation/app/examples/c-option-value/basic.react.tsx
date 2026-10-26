@@ -11,7 +11,7 @@ export const Basic = () => {
         clearable
         hint="Only the c-option-value text is filtered, marked and used as the label"
         label="Programming language"
-        onChangeValue={(event) => setLanguage(event.detail as null | string)}
+        onChange={(event) => setLanguage(event.detail as null | string)}
         placeholder="Start typing to search"
         value={language}
       >

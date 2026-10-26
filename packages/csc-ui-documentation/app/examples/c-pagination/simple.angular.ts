@@ -13,7 +13,7 @@ import { Component, CUSTOM_ELEMENTS_SCHEMA, signal } from '@angular/core';
         [value]="options"
         hide-details
         simple
-        (changeValue)="page.set($any($event).detail.currentPage ?? 1)"
+        (change)="page.set($any($event).detail.currentPage ?? 1)"
       ></c-pagination>
 
       <p>Current page: {{ page() }}</p>

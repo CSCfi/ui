@@ -9,7 +9,7 @@ export const Small = () => {
     <div style={{ alignItems: 'flex-start', display: 'flex', gap: 16 }}>
       <CTextField
         label="Search"
-        onChangeValue={(event) => setQuery(event.detail as string)}
+        onUpdateValue={(event) => setQuery(event.detail as string)}
         size="small"
         value={query}
       />

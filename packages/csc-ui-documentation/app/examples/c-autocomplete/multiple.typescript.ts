@@ -34,7 +34,7 @@ autocomplete.querySelectorAll('c-option').forEach((option) => {
   icon.path = path;
 });
 
-autocomplete.addEventListener('changeValue', (event) => {
+autocomplete.addEventListener('change', (event) => {
   const languages = event.detail as string[];
 
   status.textContent = `Value: ${languages.length ? languages.join(', ') : '[]'}`;

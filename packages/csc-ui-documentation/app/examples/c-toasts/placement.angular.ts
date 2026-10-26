@@ -18,7 +18,7 @@ import {
       <c-select
         [value]="vertical()"
         label="Vertical"
-        (changeValue)="vertical.set($any($event).detail)"
+        (change)="vertical.set($any($event).detail)"
       >
         <c-option name="Bottom" value="bottom">Bottom</c-option>
         <c-option name="Top" value="top">Top</c-option>
@@ -27,7 +27,7 @@ import {
       <c-select
         [value]="horizontal()"
         label="Horizontal"
-        (changeValue)="horizontal.set($any($event).detail)"
+        (change)="horizontal.set($any($event).detail)"
       >
         <c-option name="Left" value="left">Left</c-option>
         <c-option name="Center" value="center">Center</c-option>

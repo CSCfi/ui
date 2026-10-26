@@ -17,7 +17,7 @@ export const SelectAll = () => {
         label="Programming languages"
         maxTags={3}
         multiple
-        onChangeValue={(event) => setLanguages(event.detail as string[])}
+        onChange={(event) => setLanguages(event.detail as string[])}
         placeholder="Start typing to search"
         selectAll
         texts={texts}

@@ -23,7 +23,7 @@ type ModalHost = { value: boolean } & HTMLElement;
 const ACTIONS =
   '<c-card><c-card-actions><c-button>Cancel</c-button><c-button id="delete">Delete</c-button></c-card-actions></c-card>';
 
-const VALUE_EVENTS = ['changeValue', 'change-value', 'update:value'] as const;
+const VALUE_EVENTS = ['change', 'update:value'] as const;
 
 const mountModal = (props: Record<string, unknown> = {}, html = ACTIONS) =>
   mount<ModalHost>('c-modal', {
@@ -95,19 +95,30 @@ describe('dismissal', () => {
     expect(events.of('update:value')[0]?.detail).toBe(false);
   });
 
-  // Pinned deviation: `dialog.close()` fires `close` in a later task, after
-  // `internalClose` was reset, so `onNativeClose` dispatches a second time
-  // (KNOWN_DOUBLE_EMITTERS in the value-control conformance suite). Flip to
-  // `it` when fixed.
-  it.fails('emits false once per dismissal (pinned deviation)', async () => {
+  // `dialog.close()` fires `close` a task later: the native listener used to
+  // take the modal's own close for a platform one and dispatch again.
+  it('emits false once per dismissal', async () => {
     const m = await mountModal();
 
     const events = recordEvents(m.host, VALUE_EVENTS);
 
     await userEvent.keyboard('{Escape}');
-    await settle();
+    await settle(60);
 
     expect(events.of('update:value').map((r) => r.detail)).toEqual([false]);
+    expect(events.of('change').map((r) => r.detail)).toEqual([false]);
+  });
+
+  it('emits nothing when value closes it', async () => {
+    const m = await mountModal();
+
+    const events = recordEvents(m.host, VALUE_EVENTS);
+
+    (m.host as { value?: boolean } & HTMLElement).value = false;
+    await settle(60);
+
+    expect(dialog(m).open).toBe(false);
+    expect(events.records).toEqual([]);
   });
 
   it('non-dismissable: Escape and the backdrop nudge instead of closing', async () => {

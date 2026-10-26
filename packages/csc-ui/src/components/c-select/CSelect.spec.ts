@@ -33,7 +33,7 @@ const COUNTRIES = [
   option('dk', 'Denmark'),
 ].join('');
 
-const VALUE_EVENTS = ['changeValue', 'change-value', 'update:value'] as const;
+const VALUE_EVENTS = ['change', 'update:value'] as const;
 
 const mountSelect = (props: Record<string, unknown> = {}, html = COUNTRIES) =>
   mount<SelectHost>('c-select', {

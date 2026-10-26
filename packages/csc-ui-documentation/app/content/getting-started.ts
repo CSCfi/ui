@@ -153,7 +153,7 @@ export default defineConfig({
       Clicked {{ count() }} times
     </c-button>
 
-    <c-switch [value]="enabled()" (changeValue)="enabled.set($any($event).detail)">
+    <c-switch [value]="enabled()" (change)="enabled.set($any($event).detail)">
       Notifications
     </c-switch>
   \`,
@@ -184,7 +184,7 @@ export const App = () => {
 
       <CSwitch
         value={enabled}
-        onChangeValue={(event) => setEnabled(event.detail as boolean)}
+        onChange={(event) => setEnabled(event.detail as boolean)}
       >
         Notifications
       </CSwitch>
@@ -203,7 +203,7 @@ button.addEventListener('click', () => console.log('clicked'));
 
 const toggle = document.createElement('c-switch');
 toggle.textContent = 'Notifications';
-toggle.addEventListener('changeValue', (event) => {
+toggle.addEventListener('change', (event) => {
   // event.detail is typed from the component's event map
   console.log('switch value:', event.detail);
 });

@@ -33,7 +33,7 @@ export const CustomFilter = () => {
         hint="Matches anywhere in the label"
         items={items}
         label="Country"
-        onChangeValue={(event) => setCountry(event.detail as null | string)}
+        onChange={(event) => setCountry(event.detail as null | string)}
         placeholder="Type to filter"
         value={country}
       />

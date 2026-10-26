@@ -8,7 +8,7 @@ export const Basic = () => {
   return (
     <div>
       <CTabs
-        onChangeValue={(event) =>
+        onChange={(event) =>
           setTab(event.detail as 'members' | 'settings' | 'summary')
         }
         value={tab}

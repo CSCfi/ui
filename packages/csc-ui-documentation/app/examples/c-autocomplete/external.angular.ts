@@ -29,7 +29,7 @@ import {
         hint="Options are fetched as you type"
         label="Country"
         placeholder="Type to search"
-        (changeValue)="country.set($any($event).detail)"
+        (change)="country.set($any($event).detail)"
       ></c-autocomplete>
 
       <p>Value: {{ country() ?? 'null' }}</p>

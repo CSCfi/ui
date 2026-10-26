@@ -15,6 +15,6 @@ deleteButton!.addEventListener('click', () => {
   modal.value = false;
 });
 
-modal.addEventListener('changeValue', () => {
+modal.addEventListener('change', () => {
   modal.value = false;
 });

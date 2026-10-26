@@ -13,7 +13,7 @@ import { Component, CUSTOM_ELEMENTS_SCHEMA, signal } from '@angular/core';
         label="Phone"
         mask="+358 #####[#######]"
         type="tel"
-        (changeValue)="phone.set($any($event).detail)"
+        (input)="phone.set($any($event.target).value)"
       ></c-text-field>
 
       <p>Value: {{ phone() }}</p>

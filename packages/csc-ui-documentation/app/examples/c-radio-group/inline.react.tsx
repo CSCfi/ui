@@ -11,7 +11,7 @@ export const Inline = () => {
         hideDetails
         inline
         label="Email frequency"
-        onChangeValue={(event) => setFrequency(event.detail as string)}
+        onChange={(event) => setFrequency(event.detail as string)}
         value={frequency}
       >
         <CRadio value="daily">Daily</CRadio>

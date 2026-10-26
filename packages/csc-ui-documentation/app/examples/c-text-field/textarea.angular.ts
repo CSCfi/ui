@@ -12,7 +12,7 @@ import { Component, CUSTOM_ELEMENTS_SCHEMA, signal } from '@angular/core';
         hint="A rows value above 1 renders a textarea"
         label="Description"
         [rows]="4"
-        (changeValue)="description.set($any($event).detail)"
+        (input)="description.set($any($event.target).value)"
       ></c-text-field>
     </div>
   `,

@@ -6,12 +6,12 @@
       label="OTP"
     />
 
-    <p>Code: {{ code ?? 'incomplete' }}</p>
+    <p>Code: {{ code }}</p>
   </div>
 </template>
 
 <script setup lang="ts">
 import { ref } from 'vue';
 
-const code = ref<string>();
+const code = ref('');
 </script>

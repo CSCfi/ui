@@ -2,7 +2,8 @@ Modals interrupt the page for a task that must be completed (or explicitly
 cancelled) before continuing — confirmations, short forms, destructive-action
 warnings. The slotted content is typically a `c-card`.
 
-Open state is controlled: bind `value` (v-model) and react to `changeValue`.
+Open state is controlled: bind `value` (v-model), or set it and listen for
+`change`, which carries `false` when the modal dismisses itself.
 Modals may be stacked — opening a second modal makes it the active one; the
 one beneath is dimmed and inert until it becomes topmost again.
 

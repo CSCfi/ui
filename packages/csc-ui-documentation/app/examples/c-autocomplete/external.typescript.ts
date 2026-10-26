@@ -58,6 +58,6 @@ autocomplete.addEventListener('change:query', (event) => {
   debounce = setTimeout(() => load(query), 300);
 });
 
-autocomplete.addEventListener('changeValue', (event) => {
+autocomplete.addEventListener('change', (event) => {
   document.querySelector('p')!.textContent = `Value: ${event.detail ?? 'null'}`;
 });

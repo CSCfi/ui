@@ -5,8 +5,7 @@ import {
   emitModelChange,
   emitModelInput,
   emitModelSettled,
-  emitModelValue,
-} from './emitModelValue';
+} from './valueEvents';
 
 type ValueHost = { value?: unknown } & HTMLElement;
 
@@ -18,55 +17,19 @@ const host = (): ValueHost => {
   return el;
 };
 
-it('emitModelValue writes the host value, then dispatches the grandfathered set and a bubbling input', () => {
+it('emitModelChange dispatches update:value, a bubbling input and a non-bubbling change', () => {
   const el = host();
 
-  const events = recordEvents(el, [
-    'changeValue',
-    'change-value',
-    'update:value',
-    'input',
-  ]);
-
-  emitModelValue(el, 'x');
-
-  expect(events.names()).toEqual([
-    'changeValue',
-    'change-value',
-    'update:value',
-    'input',
-  ]);
-  expect(events.records.map((r) => r.targetValue)).toEqual([
-    'x',
-    'x',
-    'x',
-    'x',
-  ]);
-  expect(events.records.slice(0, 3).map((r) => r.detail)).toEqual([
-    'x',
-    'x',
-    'x',
-  ]);
-  expect(events.of('input')[0].bubbles).toBe(true);
-  expect(events.of('input')[0].composed).toBe(false);
-});
-
-it('emitModelChange dispatches change, update:value and a bubbling input', () => {
-  const el = host();
-
-  const events = recordEvents(el, [
-    'changeValue',
-    'change-value',
-    'change',
-    'update:value',
-    'input',
-  ]);
+  const events = recordEvents(el, ['change', 'update:value', 'input']);
 
   emitModelChange(el, 7);
 
-  expect(events.names()).toEqual(['change', 'update:value', 'input']);
+  expect(events.names()).toEqual(['update:value', 'input', 'change']);
   expect(events.records.map((r) => r.targetValue)).toEqual([7, 7, 7]);
   expect(events.of('change')[0].detail).toBe(7);
+  expect(events.of('change')[0].bubbles).toBe(false);
+  expect(events.of('input')[0].bubbles).toBe(true);
+  expect(events.of('input')[0].composed).toBe(false);
 });
 
 it('emitModelInput writes the host value, then dispatches update:value and a bubbling input without change', () => {
@@ -96,7 +59,6 @@ it('emitModelSettled dispatches change alone', () => {
 });
 
 it('every helper no-ops on a null host', () => {
-  expect(() => emitModelValue(null, 1)).not.toThrow();
   expect(() => emitModelChange(null, 1)).not.toThrow();
   expect(() => emitModelInput(null, 1)).not.toThrow();
   expect(() => emitModelSettled(null, 1)).not.toThrow();

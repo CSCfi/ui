@@ -659,7 +659,12 @@ describe('range', () => {
     await userEvent.keyboard('{Enter}');
     await settle();
 
-    expect(events.last()?.type).toBe('update:value');
+    // A commit ends with its `change`, after `update:value` (native order).
+    expect(events.last()?.type).toBe('change');
+    expect(events.last()?.detail).toEqual({
+      end: '2031-09-20',
+      start: '2031-09-01',
+    });
     expect(m.host.value).toEqual({ end: '2031-09-20', start: '2031-09-01' });
     expect([start.value, end.value]).toEqual(['01.09.2031', '20.09.2031']);
   });

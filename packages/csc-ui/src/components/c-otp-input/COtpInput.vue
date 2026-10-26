@@ -48,6 +48,7 @@
         spellcheck="false"
         type="tel"
         @focus="onFocus(i - 1)"
+        @focusout="onFocusOut($event as FocusEvent)"
         @input="onInput($event as InputEvent)"
         @keydown="onKeyDown($event as KeyboardEvent)"
         @paste="i === 1 && onPaste($event as ClipboardEvent)"
@@ -87,28 +88,28 @@ import {
 import FormLabel from '../../shared/FormLabel.vue';
 import { useHasSlot } from '../../shared/useHasSlot';
 import { useHostEmit } from '../../shared/useHostEmit';
+import { emitModelInput, emitModelSettled } from '../../shared/valueEvents';
 
 /** Events dispatched by `<c-otp-input>`. */
 interface COtpInputEvents {
   /**
-   * Fired on every digit change with the complete code once all digits are
-   * filled, or `null` while the code is still incomplete (legacy value-change
-   * event).
+   * Fired when the code is committed — Enter, or focus leaving the digits
+   * after a change — carrying the digits entered so far (`''` when none).
    */
-  changeValue: null | string;
+  change: string;
 
   /** Fired when the last digit is filled, carrying the complete code. */
-  completion: null | string;
+  completion: string;
 
   /**
-   * Native bubbling input event for plain `v-model`; carries no detail — the
-   * model value is mirrored onto the host's `value` property.
+   * Native bubbling input event fired alongside every value change so a
+   * plain `v-model` stays in sync. No detail.
    */
   input: void;
 
   /**
-   * Fired on every digit change with the currently entered digits (v-model
-   * contract).
+   * v-model contract event fired on every digit change, carrying the digits
+   * entered so far (`''` when none).
    */
   'update:value': string;
 }
@@ -305,31 +306,51 @@ const updateStatusText = () => {
   }, 1400);
 };
 
+/** The digits entered so far, `''` when none: the value everywhere. */
+const digits = (): string =>
+  inputs()
+    .map((i) => i?.value ?? '')
+    .join('');
+
+// The value last reported or set, and the value at the last commit.
+let held = props.value ?? '';
+
+let committed = held;
+
+/** Report the digits as the value when they changed; `completion` once all are in. */
+const report = () => {
+  const value = digits();
+
+  if (value === held) return;
+
+  held = value;
+  // The value watch skips the host `value` mirror (it is `held`), so no loop.
+  emitModelInput(host, value satisfies COtpInputEvents['update:value']);
+
+  if (value.length === props.length) emit('completion', value);
+};
+
+// Digits settle a frame after the keystroke (focus moves, paste fills).
 const emitValue = () => {
   requestAnimationFrame(() => {
-    const value = inputs()
-      .map((i) => i?.value ?? '')
-      .join('');
-
-    const isFull = value.length === props.length;
-
-    const modelValue = isFull ? value : null;
-    emit('changeValue', modelValue);
-    emit('update:value', value);
-
-    if (isFull) emit('completion', value || null);
-
-    // Native v-model bridge (works without `v-control`): mirror the model value
-    // (null until complete, matching `changeValue`) onto the host's `value` and
-    // fire a native `input`. The value watch no-ops on null, so partial typing
-    // is not disturbed.
-    if (host) {
-      (host as { value?: unknown } & HTMLElement).value = modelValue;
-      emit('input', undefined, { bubbles: true });
-    }
-
+    report();
     updateStatusText();
   });
+};
+
+/** Commit the code: report it, then `change` when it changed since the last commit. */
+const commit = () => {
+  report();
+
+  if (held === committed) return;
+
+  committed = held;
+  emitModelSettled(host, held satisfies COtpInputEvents['change']);
+};
+
+// Focus leaving the digits commits, like leaving a text field.
+const onFocusOut = (event: FocusEvent) => {
+  if (!inputs().includes(event.relatedTarget as HTMLInputElement)) commit();
 };
 
 const handleValueChange = (value: null | string, forceEmpty = false) => {
@@ -357,6 +378,8 @@ const onKeyDown = (event: KeyboardEvent) => {
     if (previousElement && !target.value) previousElement.focus();
     emitValue();
   }
+
+  if (event.key === 'Enter') commit();
 };
 
 const onInput = (event: InputEvent) => {
@@ -419,10 +442,18 @@ const reset = () => {
 };
 
 watch(() => props.errorMessage, updateStatusText);
+// A value set from outside fills the digits and is the baseline for the next
+// commit; the host `value` mirror's own write is `held` already. Never emits.
 watch(
   () => props.value,
   (v) => {
-    handleValueChange(v);
+    const next = v ?? '';
+
+    if (next === held) return;
+
+    held = next;
+    committed = next;
+    handleValueChange(next, true);
     updateStatusText();
   },
 );

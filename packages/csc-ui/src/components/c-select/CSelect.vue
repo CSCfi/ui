@@ -385,13 +385,13 @@ import {
 
 import { useAppDefault } from '../../shared/appDefaults';
 import { coerceBoolean } from '../../shared/coerceBoolean';
-import { emitModelValue } from '../../shared/emitModelValue';
 import { optionLabel } from '../../shared/optionLabel';
 import {
   SELECT_ALL_INDEX,
   selectAllState,
   toggleAllValues,
 } from '../../shared/selectAll';
+import { emitModelChange } from '../../shared/valueEvents';
 
 /** Events dispatched by `<c-select>`. */
 interface CSelectEvents {
@@ -402,7 +402,7 @@ interface CSelectEvents {
    * In `multiple` mode the whole array of picked values, in pick order
    * (`[]` when cleared).
    */
-  changeValue: CSelectValue;
+  change: CSelectValue;
 
   /**
    * Native bubbling input event dispatched alongside every value change so a
@@ -411,8 +411,7 @@ interface CSelectEvents {
   input: void;
 
   /**
-   * Fired alongside `changeValue` with the same detail — the `v-model`
-   * contract.
+   * Fired alongside `change` with the same detail — the `v-model` contract.
    */
   'update:value': CSelectValue;
 }
@@ -803,11 +802,9 @@ const inputValue = computed(() => {
 
 const emitValue = (next: CSelectEvents['update:value']) => {
   value.value = next;
-  // changeValue/update:value (non-bubbling) + native `input` (so a plain
-  // `v-model` works without `v-control`) + host `value` mirror. The value watch
-  // runs onValueChanged/selectOption (visuals-only), so writing the property
-  // doesn't loop.
-  emitModelValue(host, next);
+  // A pick is its own commit. The value watch runs onValueChanged/selectOption
+  // (visuals-only), so the host `value` mirror doesn't loop.
+  emitModelChange(host, next);
 };
 
 const getSelectionIndex = (search: string) =>

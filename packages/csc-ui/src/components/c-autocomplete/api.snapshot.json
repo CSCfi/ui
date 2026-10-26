@@ -32,9 +32,8 @@
     "texts"
   ],
   "events": {
-    "change": "CustomEvent<void>",
+    "change": "CustomEvent<CAutocompleteValue>",
     "change:query": "CustomEvent<string>",
-    "changeValue": "CustomEvent<CAutocompleteValue>",
     "input": "CustomEvent<void>",
     "update:value": "CustomEvent<CAutocompleteValue>"
   },

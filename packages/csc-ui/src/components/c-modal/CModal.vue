@@ -39,7 +39,6 @@ import {
   watch,
 } from 'vue';
 
-import { emitModelValue } from '../../shared/emitModelValue';
 import {
   closeModal,
   focusInitialElement,
@@ -48,6 +47,7 @@ import {
   openModal,
 } from '../../shared/modalStack';
 import { prefersReducedMotion } from '../../shared/reducedMotion';
+import { emitModelChange } from '../../shared/valueEvents';
 
 /** Events dispatched by `<c-modal>`. */
 interface CModalEvents {
@@ -57,7 +57,7 @@ interface CModalEvents {
    * slotted `<form method="dialog">`). The detail is the new open state,
    * always `false`.
    */
-  changeValue: boolean;
+  change: boolean;
 
   /**
    * Native bubbling input event dispatched alongside every value change so a
@@ -66,8 +66,7 @@ interface CModalEvents {
   input: void;
 
   /**
-   * Fired alongside `changeValue` with the same detail — the `v-model`
-   * contract.
+   * Fired alongside `change` with the same detail — the `v-model` contract.
    */
   'update:value': boolean;
 }
@@ -160,10 +159,10 @@ const props = withDefaults(defineProps<CModalProps>(), {
 
 const host = useHost();
 
-// changeValue/update:value + native `input` (plain v-model) + host `value`
-// mirror. The value watch is visuals-only (open/close), so no loop.
-const dispatchValue = (value: CModalEvents['changeValue']) =>
-  emitModelValue(host, value);
+// A dismissal is its own commit. The value watch is visuals-only (open/close),
+// so the host `value` mirror doesn't loop.
+const dispatchValue = (value: CModalEvents['change']) =>
+  emitModelChange(host, value);
 
 const dialogRef = useTemplateRef<HTMLDialogElement>('dialogRef');
 
@@ -189,8 +188,9 @@ let animationsDisabled = false;
 
 let nudgeTimer: null | ReturnType<typeof setTimeout> = null;
 
-// True while `finalizeClose` runs `dialog.close()`, so the native `close`
+// Set when `finalizeClose` runs `dialog.close()`, so the native `close`
 // listener can tell our own teardown apart from a platform-initiated close.
+// The platform fires `close` a task later, so the listener clears the flag.
 let internalClose = false;
 
 const nudge = () => {
@@ -322,9 +322,11 @@ const closeDialog = () => {
 const finalizeClose = () => {
   dialogRef.value?.classList.remove('closing');
 
+  // Closing a dialog that is not open fires no `close` to clear the flag.
+  if (!dialogRef.value?.open) return;
+
   internalClose = true;
-  dialogRef.value?.close();
-  internalClose = false;
+  dialogRef.value.close();
 };
 
 /**
@@ -334,7 +336,11 @@ const finalizeClose = () => {
  * inert state and the consumer's `value` never desync.
  */
 const onNativeClose = () => {
-  if (internalClose) return;
+  if (internalClose) {
+    internalClose = false;
+
+    return;
+  }
 
   cancelInitialFocus();
   closeModal(entry);

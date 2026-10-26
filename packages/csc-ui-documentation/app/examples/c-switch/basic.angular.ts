@@ -7,10 +7,7 @@ import { Component, CUSTOM_ELEMENTS_SCHEMA, signal } from '@angular/core';
   standalone: true,
   template: `
     <div class="example-grid">
-      <c-switch
-        [value]="enabled()"
-        (changeValue)="enabled.set($any($event).detail)"
-      >
+      <c-switch [value]="enabled()" (change)="enabled.set($any($event).detail)">
         Notifications
       </c-switch>
 

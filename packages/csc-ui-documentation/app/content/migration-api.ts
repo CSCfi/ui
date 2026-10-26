@@ -192,4 +192,54 @@ export const V3_API_CHANGES: V3ApiChange[] = [
     name: 'itemChange',
     tag: 'c-accordion-item',
   },
+  ...[
+    'c-accordion',
+    'c-autocomplete',
+    'c-checkbox',
+    'c-pagination',
+    'c-radio-group',
+    'c-select',
+    'c-switch',
+    'c-tabs',
+  ].map((tag) => ({
+    change:
+      'Use `change`: it carries the new value as `detail`, as `changeValue` did. In a Vue template bind `v-model` or `@change`; in React, `onChange`.',
+    kind: 'event' as const,
+    name: 'changeValue',
+    tag,
+  })),
+  {
+    change:
+      'Use `change`: it carries `false` when the modal dismisses itself. In a Vue template bind `v-model` or `@change`; in React, `onChange`.',
+    kind: 'event',
+    name: 'changeValue',
+    tag: 'c-modal',
+  },
+  {
+    change:
+      '`update:value` (`onUpdateValue` in React) carries the text on every keystroke, as `changeValue` did; `change` carries it when it is committed (Enter, or leaving the field). In a Vue template bind `v-model`, or `@input` reading the element’s `value`.',
+    kind: 'event',
+    name: 'changeValue',
+    tag: 'c-text-field',
+  },
+  {
+    change:
+      '`update:value` (`onUpdateValue` in React) carries the value on every move, as `changeValue` did; `change` carries it once on release, and on each arrow-key step. In a Vue template bind `v-model`, or `@input` reading the element’s `value`.',
+    kind: 'event',
+    name: 'changeValue',
+    tag: 'c-slider',
+  },
+  {
+    change:
+      '`update:value` (`onUpdateValue` in React) carries the digits entered so far on every change, where `changeValue` carried `null` until the code was complete. `completion` still carries the complete code, and `change` carries the digits on Enter or when focus leaves them.',
+    kind: 'event',
+    name: 'changeValue',
+    tag: 'c-otp-input',
+  },
+  {
+    change: 'Removed: 3.x declared it but never dispatched it.',
+    kind: 'event',
+    name: 'changeValue',
+    tag: 'c-steps',
+  },
 ];

@@ -518,13 +518,13 @@ import type { Candidate, FileCategory } from './files';
 
 import { useAppDefault } from '../../shared/appDefaults';
 import { coerceBoolean } from '../../shared/coerceBoolean';
-import { emitModelChange } from '../../shared/emitModelValue';
 import FieldMessage from '../../shared/FieldMessage.vue';
 import FormLabel from '../../shared/FormLabel.vue';
 import { useHostEmit } from '../../shared/useHostEmit';
 import { useHostStates } from '../../shared/useHostStates';
 import { useKeyboardModality } from '../../shared/useKeyboardModality';
 import { useStatusAnnouncer } from '../../shared/useStatusAnnouncer';
+import { emitModelChange } from '../../shared/valueEvents';
 import {
   createEntryId,
   fileCategory,

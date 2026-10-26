@@ -695,7 +695,7 @@ _Avoid_: emits (Vue `defineEmits` is not used in this library), event list
 The hyphenated duplicate (`item-change`, `change-value`) the alphas dispatched alongside each grandfathered camelCase Stencil-era event (ADR-0021), because Vue can never hear a camelCase `CustomEvent`. Retired in 4.0.0 with the camelCase events themselves: every event name is all-lowercase (ADR-0017), so none needs a twin. Historical only.
 
 **Internal** (API):
-A tag, prop, event, slot or method marked internal in its source because it exists only to wire one component to another: `c-dropdown` and `c-input` behind the fields, a prop only `c-tabs` sets on its tabs, a slot a component assigns its own children to. It stays out of the **manifest**, the **wrapper package** and the **public API**, and may change in any release. An **internal event** is the event case — a **composed child** telling its parent it was activated, an option telling `c-select` it was picked; it is still an ordinary DOM event anyone can hear, only the promise differs. Anything a consumer is meant to use is never internal.
+A tag, prop, event, slot or method marked internal in its source because it exists only to wire one component to another: `c-dropdown` and `c-input` behind the fields, a prop only `c-tabs` sets on its tabs, a slot a component assigns its own children to. It stays out of the **manifest**, the **wrapper package** and the **public API**, and may change in any release. An **internal event** is the event case — a **composed child** telling its parent it was activated, an option telling `c-select` it was picked; it is an ordinary DOM event that stops at the parent, and no release promises anything about it. Anything a consumer is meant to use is never internal.
 _Avoid_: private (it is reachable — only the promise differs), protocol event, hidden
 
 **Component-owned type**:
@@ -753,7 +753,7 @@ The one event vocabulary every **value control** reports through, with native `<
 _Avoid_: changeValue (removed), change event (unqualified, when the native one is meant), model event
 
 **Commit**:
-The moment a **value control**'s change counts as the user's decision and fires `change`: Enter or leaving the field for typed text, each pick in a list or panel, the release that ends a drag. Every commit is also a value change, so `update:value` and `input` fire with it; keystrokes and drag moves are value changes but not commits.
+The moment a **value control**'s change counts as the user's decision and fires `change`: Enter or leaving the field for typed text, each pick in a list or panel, each arrow-key step, the release that ends a drag. A commit with nothing changed since the last one fires nothing. Every commit is also a value change, so `update:value` and `input` fire with it; keystrokes and drag moves are value changes but not commits.
 _Avoid_: Confirm, submit (a form's act), apply
 
 **Example smoke**:

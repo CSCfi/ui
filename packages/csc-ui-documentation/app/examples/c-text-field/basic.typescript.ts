@@ -2,6 +2,6 @@ const field = document.querySelector('c-text-field')!;
 
 const status = document.querySelector('p')!;
 
-field.addEventListener('changeValue', (event) => {
+field.addEventListener('update:value', (event) => {
   status.textContent = `Value: ${event.detail}`;
 });

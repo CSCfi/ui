@@ -9,7 +9,7 @@ export const Small = () => {
     <div>
       <CSelect
         label="Country"
-        onChangeValue={(event) => setCountry(event.detail as null | string)}
+        onChange={(event) => setCountry(event.detail as null | string)}
         size="small"
         value={country}
       >

@@ -113,38 +113,29 @@ import { mdiCloseCircle } from '@mdi/js';
 import { tv } from 'tailwind-variants';
 import { computed, ref, useHost, useId, useTemplateRef, watch } from 'vue';
 
-import { emitModelValue } from '../../shared/emitModelValue';
 import FormLabel from '../../shared/FormLabel.vue';
 import SelectionIndicator from '../../shared/SelectionIndicator.vue';
 import { useHasSlot } from '../../shared/useHasSlot';
-import { useHostEmit } from '../../shared/useHostEmit';
 import { useHostStates } from '../../shared/useHostStates';
 import { useRipple } from '../../shared/useRipple';
+import { emitModelChange } from '../../shared/valueEvents';
 
 /** Events dispatched by `<c-checkbox>`. */
 interface CCheckboxEvents {
   /**
-   * Standard bubbling DOM change event, re-dispatched from the host when the
-   * checkbox is toggled (the inner input's change does not cross the shadow
-   * boundary). No detail; read the new value from the host's `value` property.
-   */
-  change: void;
-
-  /**
-   * Fired when the checkbox is toggled, carrying the new value —
+   * Fired when the user toggles the checkbox, carrying the new value —
    * `trueValue` when checked, `falseValue` when unchecked.
    */
-  changeValue: boolean | number | string;
+  change: boolean | number | string;
 
   /**
    * Native bubbling input event fired on toggle so a plain Vue `v-model`
-   * works without the `v-control` directive. No detail.
+   * stays in sync. No detail.
    */
   input: void;
 
   /**
-   * v-model contract event fired on toggle, carrying the new value —
-   * `trueValue` when checked, `falseValue` when unchecked.
+   * Fired alongside `change` with the same detail — the `v-model` contract.
    */
   'update:value': boolean | number | string;
 }
@@ -380,15 +371,7 @@ const ui = computed(() =>
   }),
 );
 
-// Event emissions are dispatched directly on the host as CustomEvents
-// with `detail` set to the raw value. Vue's own `emit()` for
-// defineCustomElement wraps every emit's args into `detail: [...args]`
-// (always an array), which breaks consumers like the `v-control`
-// directive that do `el.value = event.detail`. Manual dispatch keeps
-// `detail` as the bare value, matching the Stencil component's behaviour.
 const host = useHost();
-
-const emit = useHostEmit<CCheckboxEvents>();
 
 const rootRef = useTemplateRef<HTMLElement>('rootRef');
 
@@ -454,14 +437,9 @@ const onChange = (_event: Event) => {
   internalChecked.value = !internalChecked.value;
 
   const nextValue = internalChecked.value ? props.trueValue : props.falseValue;
-  // Emits changeValue/update:value + native `input` (so a plain `v-model` works
-  // without `v-control`) and mirrors `value` onto the host. The value watch
-  // above is visuals-only, so writing the property doesn't loop.
-  emitModelValue(host, nextValue);
-  // Standard DOM change for non-Vue consumers; re-dispatched from the
-  // host because the inner <input>'s native change event doesn't escape
-  // the shadow root (composed: false by default).
-  emit('change', undefined, { bubbles: true, composed: true });
+  // A toggle is its own commit. The value watch above is visuals-only, so the
+  // host `value` mirror doesn't loop.
+  emitModelChange(host, nextValue satisfies CCheckboxEvents['change']);
 };
 </script>
 

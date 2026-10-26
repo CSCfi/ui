@@ -76,8 +76,8 @@ export const External = () => {
         items={items}
         label="Country"
         loading={loading}
+        onChange={(event) => setCountry(event.detail as null | string)}
         onChangeQuery={onQuery}
-        onChangeValue={(event) => setCountry(event.detail as null | string)}
         placeholder="Type to search"
         value={country}
       />
