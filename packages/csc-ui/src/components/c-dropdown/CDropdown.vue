@@ -218,7 +218,7 @@ interface CDropdownEvents {
    * Fired when the dropdown menu opens or closes; the detail is the new open
    * state.
    */
-  dropdownStateChange: boolean;
+  dropdownstatechange: boolean;
 
   /**
    * Fired when the select-all row is activated; the parent (c-select) toggles
@@ -230,7 +230,7 @@ interface CDropdownEvents {
    * Fired when the user selects an option row, carrying the option's name
    * and value for the parent (c-select) to commit.
    */
-  selectOption: { name: string; value: number | string };
+  selectoption: { name: string; value: number | string };
 }
 
 /**
@@ -504,10 +504,9 @@ const itemsArray = computed<DropdownItem[]>(() => {
 
 // ---- events -------------------------------------------------------------
 
+// The parent select listens on this element in its own shadow root, so the
+// events neither bubble nor leave it (they are internal wiring, ADR-0075).
 const emit = useHostEmit<CDropdownEvents>();
-
-// Both dropdown events cross the shadow boundary to the parent select.
-const bubbling = { bubbles: true, composed: true };
 
 // A <c-option disabled> in option mode delivers its Boolean attribute as `""`
 // (the defineCustomElement quirk coerceBoolean exists for), so never test
@@ -528,7 +527,7 @@ const onSelect = (item: DropdownItem, event: Event) => {
     return;
   }
 
-  emit('selectOption', { name: nameOf(item), value: item.value }, bubbling);
+  emit('selectoption', { name: nameOf(item), value: item.value });
 };
 
 // The select-all row: the parent owns the selection and toggles every listed
@@ -536,7 +535,7 @@ const onSelect = (item: DropdownItem, event: Event) => {
 // watcher does not re-announce — do it here (the debounce lets the parent's
 // new counts land first).
 const onSelectAll = () => {
-  emit('selectall', undefined, bubbling);
+  emit('selectall');
   updateStatusText();
 };
 
@@ -931,7 +930,7 @@ watch(isOpen, (value) => {
     if (host) unlockPage(host);
   }
 
-  emit('dropdownStateChange', value, bubbling);
+  emit('dropdownstatechange', value);
 });
 
 // The layouts are not interchangeable mid-open (ADR-0050): the anchored menu

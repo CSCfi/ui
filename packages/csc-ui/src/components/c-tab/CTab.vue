@@ -33,8 +33,10 @@ interface CTabEvents {
    * Fired when the tab is activated (click, or Space/Enter), carrying the tab
    * element and its value; the parent `<c-tabs>` listens for it to switch the
    * active tab.
+   *
+   * @internal
    */
-  tabChange: {
+  tabchange: {
     element: HTMLElement | null;
     value: number | string | undefined;
   };
@@ -42,8 +44,10 @@ interface CTabEvents {
   /**
    * Fired when the tab receives focus, so the parent `<c-tabs>` can drive
    * arrow-key navigation.
+   *
+   * @internal
    */
-  tabFocus: number | string | undefined;
+  tabfocus: number | string | undefined;
 }
 
 /**
@@ -172,7 +176,7 @@ onMounted(() => {
   });
 
   host.addEventListener('click', (e) => onClick(e as MouseEvent));
-  host.addEventListener('focus', () => emit('tabFocus', props.value, bubbling));
+  host.addEventListener('focus', () => emit('tabfocus', props.value, bubbling));
   host.addEventListener('keydown', (e) => {
     const ke = e as KeyboardEvent;
 
@@ -190,7 +194,7 @@ const { ripples, spawn: spawnRipple } = useRipple({ container: () => host });
 const onClick = (event: MouseEvent, center = false) => {
   if (props.disabled) return;
   spawnRipple(event, { center });
-  emit('tabChange', { element: host, value: props.value }, bubbling);
+  emit('tabchange', { element: host, value: props.value }, bubbling);
 };
 </script>
 

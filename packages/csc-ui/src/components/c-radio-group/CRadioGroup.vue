@@ -291,13 +291,16 @@ const syncRadios = () => {
 };
 
 // Commit a user-driven selection arriving as a slotted radio's composed
-// bubbling `change` (a light-DOM event never enters this shadow root, so the
+// bubbling `radioselect` (a light-DOM event never enters this shadow root, so the
 // listener sits on the host — c-accordion precedent). Emits the grandfathered
 // changeValue/update:value + native `input` triple and mirrors host `value`.
 const onRadioChange = (event: Event) => {
   const target = event.target as CRadioEl;
 
   if (!radios().includes(target)) return;
+
+  // The radio's wiring event ends here; the group's `change` is public.
+  event.stopPropagation();
 
   const next = String((event as CustomEvent<string>).detail ?? '');
   internalValue.value = next;
@@ -362,7 +365,7 @@ watch(
 let observer: MutationObserver | null = null;
 onMounted(() => {
   if (!host) return;
-  host.addEventListener('change', onRadioChange);
+  host.addEventListener('radioselect', onRadioChange);
   host.addEventListener('keydown', onKeyDown);
 
   if (typeof MutationObserver !== 'undefined') {
@@ -390,7 +393,7 @@ onMounted(() => {
 });
 onBeforeUnmount(() => {
   observer?.disconnect();
-  host?.removeEventListener('change', onRadioChange);
+  host?.removeEventListener('radioselect', onRadioChange);
   host?.removeEventListener('keydown', onKeyDown);
 });
 </script>

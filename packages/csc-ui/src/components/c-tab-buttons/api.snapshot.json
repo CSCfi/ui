@@ -6,9 +6,7 @@
   },
   "cssProperties": [],
   "defaultable": [],
-  "events": {
-    "tabChange": "CustomEvent<{ element: HTMLElement | null; value: number | string; }>"
-  },
+  "events": {},
   "methods": {},
   "parts": [
     "indicator",

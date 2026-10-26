@@ -8,7 +8,7 @@ import { createApp, h, ref, vModelText, withDirectives } from 'vue';
 
 import type { Mounted } from '../harness';
 
-import { VALUE_TAGS } from '../../tag-name-map';
+import { INTERNAL_EVENTS, VALUE_TAGS } from '../../tag-name-map';
 import { defineAll, mount, recordEvents, settle, wrap } from '../harness';
 import {
   KNOWN_DOUBLE_EMITTERS,
@@ -70,8 +70,12 @@ describe.each(VALUE_TAGS)('%s', (tag) => {
 
     const inputs = recordEvents(document.body, ['input']);
 
+    const wiring = recordEvents(document, INTERNAL_EVENTS);
+
     await recipe.interact(m);
     await settle(60);
+
+    expect(wiring.names(), 'internal events reaching the page').toEqual([]);
 
     const updates = host.of('update:value');
 

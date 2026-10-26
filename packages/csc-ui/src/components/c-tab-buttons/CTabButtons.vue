@@ -113,9 +113,11 @@ interface CTabButtonsEvents {
   /**
    * Fired when the user activates a tab button, carrying the newly selected
    * value. The parent `<c-tabs>` listens for it and pushes the accepted value
-   * back down; consumers should listen to `c-tabs` instead.
+   * back down; consumers listen to `c-tabs` instead.
+   *
+   * @internal
    */
-  tabChange: {
+  tabchange: {
     element: HTMLElement | null;
     value: number | string;
   };
@@ -381,7 +383,7 @@ const setupButtons = () => {
 };
 
 // Bridge the group's selection to the c-tabs contract: c-tabs listens for
-// `tabChange` bubbling from its light-DOM children and pushes the accepted
+// `tabchange` bubbling from its light-DOM children and pushes the accepted
 // value back via the `value` property, which flows down to the group through
 // the template binding. The group knows nothing about tabs.
 const onGroupChange = (e: Event) => {
@@ -392,7 +394,7 @@ const onGroupChange = (e: Event) => {
   e.stopPropagation();
 
   emit(
-    'tabChange',
+    'tabchange',
     { element: host, value },
     { bubbles: true, composed: true },
   );

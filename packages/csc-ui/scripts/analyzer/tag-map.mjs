@@ -357,6 +357,19 @@ export const renderTagNameMap = (components, publicTypes) => {
     .filter((c) => c.events.some((e) => e.name === 'update:value'))
     .map((c) => `'${c.tagName}'`);
 
+  // Internal events (ADR-0075): an internal tag's events and every
+  // `@internal` event-map member. The conformance suites assert that none
+  // reaches the page.
+  const internalEvents = [
+    ...new Set(
+      components.flatMap((c) =>
+        c.events
+          .filter((e) => c.internal || e.internal)
+          .map((e) => `'${e.name}'`),
+      ),
+    ),
+  ].sort();
+
   const appDefaults = [
     '/**',
     ' * Props a consumer may set for every instance of a tag with',
@@ -381,6 +394,9 @@ export const renderTagNameMap = (components, publicTypes) => {
     '',
     '/** Tags dispatching the v-model contract event `update:value` — the value controls (CONTEXT.md). */',
     `export const VALUE_TAGS = [${valueTags.join(', ')}] as const;`,
+    '',
+    '/** Events dispatched only to wire a parent to its composed children (ADR-0075); never public API. */',
+    `export const INTERNAL_EVENTS = [${internalEvents.join(', ')}] as const;`,
     '',
   ].join('\n');
 

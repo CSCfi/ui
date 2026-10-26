@@ -694,14 +694,14 @@ onMounted(() => {
 
   updateItemsValue();
 
-  // Selection: a c-tab emits tabChange on click.
-  host.addEventListener('tabChange', (e) => {
+  // Selection: a c-tab emits tabchange on click.
+  host.addEventListener('tabchange', (e) => {
     const ev = e as CustomEvent<{ value: number | string }>;
     ev.stopPropagation();
     internalValue.value = ev.detail.value;
     dispatchValue(internalValue.value);
   });
-  host.addEventListener('tabFocus', (e) => {
+  host.addEventListener('tabfocus', (e) => {
     const ev = e as CustomEvent<number | string>;
     ev.stopPropagation();
     focusedTabValue = ev.detail;

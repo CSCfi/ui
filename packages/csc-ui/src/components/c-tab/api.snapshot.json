@@ -9,10 +9,7 @@
   },
   "cssProperties": [],
   "defaultable": [],
-  "events": {
-    "tabChange": "CustomEvent<{ element: HTMLElement | null; value: number | string | undefined; }>",
-    "tabFocus": "CustomEvent<number | string | undefined>"
-  },
+  "events": {},
   "methods": {},
   "parts": [
     "root"

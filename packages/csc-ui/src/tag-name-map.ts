@@ -86,16 +86,6 @@ export interface CAccordionElement extends Omit<HTMLElement, 'mandatory' | 'mult
   ): void;
 }
 
-/** Events dispatched by `<c-accordion-item>`. */
-export interface CAccordionItemElementEventMap {
-  /**
-   * Fired when the header is toggled, carrying the requested expansion state
-   * and the item's `value`; bubbles so the parent `<c-accordion>` can update
-   * its model.
-   */
-  'item-change': CustomEvent<{ expanded: boolean; value: number | string | undefined }>;
-}
-
 export interface CAccordionItemElement extends Omit<HTMLElement, 'collapsable' | 'expanded' | 'heading' | 'outlined' | 'value'> {
   /** Marks the item as collapsable */
   collapsable?: boolean;
@@ -107,26 +97,6 @@ export interface CAccordionItemElement extends Omit<HTMLElement, 'collapsable' |
   outlined?: boolean;
   /** Value of the accordion item */
   value?: number | string;
-  addEventListener<K extends keyof CAccordionItemElementEventMap>(
-    type: K,
-    listener: (this: CAccordionItemElement, ev: CAccordionItemElementEventMap[K]) => void,
-    options?: boolean | AddEventListenerOptions,
-  ): void;
-  addEventListener(
-    type: string,
-    listener: EventListenerOrEventListenerObject,
-    options?: boolean | AddEventListenerOptions,
-  ): void;
-  removeEventListener<K extends keyof CAccordionItemElementEventMap>(
-    type: K,
-    listener: (this: CAccordionItemElement, ev: CAccordionItemElementEventMap[K]) => void,
-    options?: boolean | EventListenerOptions,
-  ): void;
-  removeEventListener(
-    type: string,
-    listener: EventListenerOrEventListenerObject,
-    options?: boolean | EventListenerOptions,
-  ): void;
 }
 
 /** Events dispatched by `<c-alert>`. */
@@ -1624,43 +1594,12 @@ export interface CProgressCircleElement extends Omit<HTMLElement, 'size' | 'valu
   width?: number;
 }
 
-/** Events dispatched by `<c-radio>`. */
-export interface CRadioElementEventMap {
-  /**
-   * Fired when the radio is selected by the user, carrying its `value`.
-   * Bubbles composed so the parent `<c-radio-group>` — whose shadow root a
-   * light-DOM event never enters — catches it on its host; a consumer
-   * listening on the group hears it too, with the radio as `target`.
-   */
-  change: CustomEvent<string>;
-}
-
 /** A single radio option inside a `c-radio-group`: a native radio input whose default slot is its clickable, announced label. */
 export interface CRadioElement extends Omit<HTMLElement, 'disabled' | 'value'> {
   /** Disable the radio button */
   disabled?: boolean;
   /** Radio button value */
   value?: string;
-  addEventListener<K extends keyof CRadioElementEventMap>(
-    type: K,
-    listener: (this: CRadioElement, ev: CRadioElementEventMap[K]) => void,
-    options?: boolean | AddEventListenerOptions,
-  ): void;
-  addEventListener(
-    type: string,
-    listener: EventListenerOrEventListenerObject,
-    options?: boolean | AddEventListenerOptions,
-  ): void;
-  removeEventListener<K extends keyof CRadioElementEventMap>(
-    type: K,
-    listener: (this: CRadioElement, ev: CRadioElementEventMap[K]) => void,
-    options?: boolean | EventListenerOptions,
-  ): void;
-  removeEventListener(
-    type: string,
-    listener: EventListenerOrEventListenerObject,
-    options?: boolean | EventListenerOptions,
-  ): void;
 }
 
 /** Events dispatched by `<c-radio-group>`. */
@@ -2114,21 +2053,6 @@ export interface CSwitchElement extends Omit<HTMLElement, 'checked' | 'disabled'
   ): void;
 }
 
-/** Events dispatched by `<c-tab>`. */
-export interface CTabElementEventMap {
-  /**
-   * Fired when the tab is activated (click, or Space/Enter), carrying the tab
-   * element and its value; the parent `<c-tabs>` listens for it to switch the
-   * active tab.
-   */
-  tabChange: CustomEvent<{ element: HTMLElement | null; value: number | string | undefined; }>;
-  /**
-   * Fired when the tab receives focus, so the parent `<c-tabs>` can drive
-   * arrow-key navigation.
-   */
-  tabFocus: CustomEvent<number | string | undefined>;
-}
-
 export interface CTabElement extends Omit<HTMLElement, 'active' | 'disabled' | 'hostId' | 'position' | 'setsize' | 'value'> {
   /** Mark tab as active */
   active?: boolean;
@@ -2145,36 +2069,6 @@ export interface CTabElement extends Omit<HTMLElement, 'active' | 'disabled' | '
    * - for use in c-tabs
    */
   value?: number | string;
-  addEventListener<K extends keyof CTabElementEventMap>(
-    type: K,
-    listener: (this: CTabElement, ev: CTabElementEventMap[K]) => void,
-    options?: boolean | AddEventListenerOptions,
-  ): void;
-  addEventListener(
-    type: string,
-    listener: EventListenerOrEventListenerObject,
-    options?: boolean | AddEventListenerOptions,
-  ): void;
-  removeEventListener<K extends keyof CTabElementEventMap>(
-    type: K,
-    listener: (this: CTabElement, ev: CTabElementEventMap[K]) => void,
-    options?: boolean | EventListenerOptions,
-  ): void;
-  removeEventListener(
-    type: string,
-    listener: EventListenerOrEventListenerObject,
-    options?: boolean | EventListenerOptions,
-  ): void;
-}
-
-/** Events dispatched by `<c-tab-buttons>`. */
-export interface CTabButtonsElementEventMap {
-  /**
-   * Fired when the user activates a tab button, carrying the newly selected
-   * value. The parent `<c-tabs>` listens for it and pushes the accepted value
-   * back down; consumers should listen to `c-tabs` instead.
-   */
-  tabChange: CustomEvent<{ element: HTMLElement | null; value: number | string; }>;
 }
 
 /** Tab buttons present a `c-tabs` tab list as a segmented control instead of the underlined tab row. Author it only inside `<c-tabs>`, with plain `<c-button>` children whose `value`s match the `c-tab-item` panels; `c-tabs` owns the active value and pushes it down. */
@@ -2185,35 +2079,6 @@ export interface CTabButtonsElement extends Omit<HTMLElement, 'disabled' | 'size
   size?: 'default' | 'small';
   /** Value of the active tab — pushed down by the parent c-tabs. */
   value?: number | string;
-  addEventListener<K extends keyof CTabButtonsElementEventMap>(
-    type: K,
-    listener: (this: CTabButtonsElement, ev: CTabButtonsElementEventMap[K]) => void,
-    options?: boolean | AddEventListenerOptions,
-  ): void;
-  addEventListener(
-    type: string,
-    listener: EventListenerOrEventListenerObject,
-    options?: boolean | AddEventListenerOptions,
-  ): void;
-  removeEventListener<K extends keyof CTabButtonsElementEventMap>(
-    type: K,
-    listener: (this: CTabButtonsElement, ev: CTabButtonsElementEventMap[K]) => void,
-    options?: boolean | EventListenerOptions,
-  ): void;
-  removeEventListener(
-    type: string,
-    listener: EventListenerOrEventListenerObject,
-    options?: boolean | EventListenerOptions,
-  ): void;
-}
-
-/** Events dispatched by `<c-tab-item>`. */
-export interface CTabItemElementEventMap {
-  /**
-   * Fired whenever the panel's content is resized, so the parent
-   * `<c-tab-items>` can re-measure and keep the slide position correct.
-   */
-  contentChange: CustomEvent<void>;
 }
 
 export interface CTabItemElement extends Omit<HTMLElement, 'active' | 'value'> {
@@ -2221,26 +2086,6 @@ export interface CTabItemElement extends Omit<HTMLElement, 'active' | 'value'> {
   active?: boolean;
   /** Tab value */
   value?: number | string;
-  addEventListener<K extends keyof CTabItemElementEventMap>(
-    type: K,
-    listener: (this: CTabItemElement, ev: CTabItemElementEventMap[K]) => void,
-    options?: boolean | AddEventListenerOptions,
-  ): void;
-  addEventListener(
-    type: string,
-    listener: EventListenerOrEventListenerObject,
-    options?: boolean | AddEventListenerOptions,
-  ): void;
-  removeEventListener<K extends keyof CTabItemElementEventMap>(
-    type: K,
-    listener: (this: CTabItemElement, ev: CTabItemElementEventMap[K]) => void,
-    options?: boolean | EventListenerOptions,
-  ): void;
-  removeEventListener(
-    type: string,
-    listener: EventListenerOrEventListenerObject,
-    options?: boolean | EventListenerOptions,
-  ): void;
 }
 
 export interface CTabItemsElement extends Omit<HTMLElement, 'disableAnimation' | 'value'> {
@@ -2856,6 +2701,9 @@ export const DEFAULTABLE_PROPS = {
 
 /** Tags dispatching the v-model contract event `update:value` — the value controls (CONTEXT.md). */
 export const VALUE_TAGS = ['c-accordion', 'c-autocomplete', 'c-button-group', 'c-checkbox', 'c-color-picker', 'c-date-picker', 'c-file-upload', 'c-modal', 'c-number-field', 'c-otp-input', 'c-pagination', 'c-radio-group', 'c-select', 'c-slider', 'c-switch', 'c-tabs', 'c-text-field', 'c-time-picker', 'c-tree-select'] as const;
+
+/** Events dispatched only to wire a parent to its composed children (ADR-0075); never public API. */
+export const INTERNAL_EVENTS = ['contentchange', 'dropdownstatechange', 'itemchange', 'radioselect', 'selectall', 'selectoption', 'tabchange', 'tabfocus'] as const;
 
 declare global {
   interface HTMLElementTagNameMap {

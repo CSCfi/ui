@@ -10,7 +10,6 @@ import {
   type CAccordionElement,
   type CAccordionElementEventMap,
   type CAccordionItemElement,
-  type CAccordionItemElementEventMap,
   type CAlertElement,
   type CAlertElementEventMap,
   type CAutocompleteElement,
@@ -73,7 +72,6 @@ import {
   type CProgressBarElement,
   type CProgressCircleElement,
   type CRadioElement,
-  type CRadioElementEventMap,
   type CRadioGroupElement,
   type CRadioGroupElementEventMap,
   type CSelectElement,
@@ -93,11 +91,8 @@ import {
   type CSwitchElement,
   type CSwitchElementEventMap,
   type CTabElement,
-  type CTabElementEventMap,
   type CTabButtonsElement,
-  type CTabButtonsElementEventMap,
   type CTabItemElement,
-  type CTabItemElementEventMap,
   type CTabItemsElement,
   type CTableElement,
   type CTabsElement,
@@ -165,9 +160,6 @@ export const CAccordion = createComponent({
 export const CAccordionItem = createComponent({
   displayName: 'CAccordionItem',
   elementClass: elementClass<CAccordionItemElement>(['collapsable', 'expanded', 'heading', 'outlined', 'value']),
-  events: {
-    onItemChange: 'item-change' as EventName<CAccordionItemElementEventMap['item-change']>,
-  },
   react: React,
   tagName: 'c-accordion-item',
 });
@@ -602,9 +594,6 @@ export const CProgressCircle = createComponent({
 export const CRadio = createComponent({
   displayName: 'CRadio',
   elementClass: elementClass<CRadioElement>(['disabled', 'value']),
-  events: {
-    onChange: 'change' as EventName<CRadioElementEventMap['change']>,
-  },
   react: React,
   tagName: 'c-radio',
 });
@@ -728,10 +717,6 @@ export const CSwitch = createComponent({
 export const CTab = createComponent({
   displayName: 'CTab',
   elementClass: elementClass<CTabElement>(['active', 'disabled', 'hostId', 'position', 'setsize', 'value']),
-  events: {
-    onTabChange: 'tabChange' as EventName<CTabElementEventMap['tabChange']>,
-    onTabFocus: 'tabFocus' as EventName<CTabElementEventMap['tabFocus']>,
-  },
   react: React,
   tagName: 'c-tab',
 });
@@ -740,9 +725,6 @@ export const CTab = createComponent({
 export const CTabButtons = createComponent({
   displayName: 'CTabButtons',
   elementClass: elementClass<CTabButtonsElement>(['disabled', 'size', 'value']),
-  events: {
-    onTabChange: 'tabChange' as EventName<CTabButtonsElementEventMap['tabChange']>,
-  },
   react: React,
   tagName: 'c-tab-buttons',
 });
@@ -750,9 +732,6 @@ export const CTabButtons = createComponent({
 export const CTabItem = createComponent({
   displayName: 'CTabItem',
   elementClass: elementClass<CTabItemElement>(['active', 'value']),
-  events: {
-    onContentChange: 'contentChange' as EventName<CTabItemElementEventMap['contentChange']>,
-  },
   react: React,
   tagName: 'c-tab-item',
 });

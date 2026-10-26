@@ -58,10 +58,12 @@ interface CRadioEvents {
   /**
    * Fired when the radio is selected by the user, carrying its `value`.
    * Bubbles composed so the parent `<c-radio-group>` — whose shadow root a
-   * light-DOM event never enters — catches it on its host; a consumer
-   * listening on the group hears it too, with the radio as `target`.
+   * light-DOM event never enters — catches it on its host and stops it there;
+   * the group's own `change` is the public event.
+   *
+   * @internal
    */
-  change: string;
+  radioselect: string;
 }
 
 /**
@@ -205,7 +207,7 @@ defineExpose({ _syncGroupState });
 const onChange = () => {
   spawnRipple();
   setState('checked', true);
-  emit('change', props.value, { bubbles: true, composed: true });
+  emit('radioselect', props.value, { bubbles: true, composed: true });
 };
 </script>
 

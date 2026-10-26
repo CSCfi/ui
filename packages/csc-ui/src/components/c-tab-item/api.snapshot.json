@@ -5,9 +5,7 @@
   },
   "cssProperties": [],
   "defaultable": [],
-  "events": {
-    "contentChange": "CustomEvent<void>"
-  },
+  "events": {},
   "methods": {},
   "parts": [
     "root"

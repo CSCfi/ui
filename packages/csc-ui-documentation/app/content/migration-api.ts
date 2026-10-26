@@ -169,4 +169,27 @@ export const V3_API_CHANGES: V3ApiChange[] = [
     name: 'changeValue',
     tag: 'c-tab-buttons',
   },
+  ...(['tabChange', 'tabFocus'] as const).flatMap((name) =>
+    ['c-button', 'c-tab'].map((tag) => ({
+      change:
+        'Internal: it only wires the tab to `c-tabs`, and stops there. Listen to `c-tabs`, whose `change` carries the picked tab’s value.',
+      kind: 'event' as const,
+      name,
+      tag,
+    })),
+  ),
+  {
+    change:
+      'Internal: it only tells `c-tab-items` to re-measure, and stops there. Nothing to listen to.',
+    kind: 'event',
+    name: 'contentChange',
+    tag: 'c-tab-item',
+  },
+  {
+    change:
+      'Internal: it only wires the item to `c-accordion`, and stops there. Listen to `c-accordion`, whose `change` carries the expanded value.',
+    kind: 'event',
+    name: 'itemChange',
+    tag: 'c-accordion-item',
+  },
 ];

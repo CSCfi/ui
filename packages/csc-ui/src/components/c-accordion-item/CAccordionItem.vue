@@ -73,9 +73,11 @@ interface CAccordionItemEvents {
   /**
    * Fired when the header is toggled, carrying the requested expansion state
    * and the item's `value`; bubbles so the parent `<c-accordion>` can update
-   * its model.
+   * its model, and stops there.
+   *
+   * @internal
    */
-  'item-change': { expanded: boolean; value: number | string | undefined };
+  itemchange: { expanded: boolean; value: number | string | undefined };
 }
 
 // Styling lives in `tailwind-variants`: no `<style>` block and the
@@ -344,7 +346,7 @@ const emit = useHostEmit<CAccordionItemEvents>();
 const onToggle = () => {
   if (!props.collapsable && props.expanded) return;
   emit(
-    'item-change',
+    'itemchange',
     { expanded: !props.expanded, value: props.value },
     { bubbles: true, composed: true },
   );

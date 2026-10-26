@@ -219,8 +219,8 @@ onMounted(() => {
     host.style.setProperty('--c-tab-items-animation-duration', '0ms');
   }
 
-  // contentChange bubbles up from child panels when they resize.
-  host?.addEventListener('contentChange', (e) => e.stopPropagation());
+  // contentchange bubbles up from child panels when they resize.
+  host?.addEventListener('contentchange', (e) => e.stopPropagation());
 
   if (host) {
     resizeObserver = new ResizeObserver(handleResize);

@@ -110,7 +110,7 @@ const host = useHost();
 const emit = useHostEmit<CAccordionEvents>();
 
 // Internal state lets the accordion work without v-model. We mirror the
-// `value` prop in, then mutate this on item-change events so the UI updates
+// `value` prop in, then mutate this on itemchange events so the UI updates
 // immediately. `update:value` is emitted so v-model consumers stay in sync.
 const internalValue = ref<AccordionValue>(props.value as AccordionValue);
 
@@ -162,6 +162,10 @@ const onItemChange = (event: Event) => {
     value: AccordionPrimitive;
   }>;
 
+  // The item's wiring event ends here: a nested accordion's items must not
+  // reach an outer one.
+  event.stopPropagation();
+
   const { expanded, value: itemValue } = ce.detail;
 
   let next: AccordionValue;
@@ -195,17 +199,17 @@ const onItemChange = (event: Event) => {
   emit('change', next);
 };
 
-// `item-change` is dispatched on the child c-accordion-item's host element
+// `itemchange` is dispatched on the child c-accordion-item's host element
 // (in the light DOM). It bubbles up to OUR host element, but never enters
-// our shadow root — so listening via `@item-change` in the template would
-// never fire. The listener must be attached to the host directly.
+// our shadow root — so a listener in the template would never fire. The
+// listener must be attached to the host directly.
 onMounted(() => {
-  host?.addEventListener('item-change', onItemChange);
+  host?.addEventListener('itemchange', onItemChange);
   applyExpansionToItems();
 });
 
 onBeforeUnmount(() => {
-  host?.removeEventListener('item-change', onItemChange);
+  host?.removeEventListener('itemchange', onItemChange);
 });
 
 // Mirror controlled updates from props into internal state.

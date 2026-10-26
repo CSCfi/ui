@@ -8,9 +8,7 @@
   },
   "cssProperties": [],
   "defaultable": [],
-  "events": {
-    "item-change": "CustomEvent<{ expanded: boolean; value: number | string | undefined }>"
-  },
+  "events": {},
   "methods": {},
   "parts": [
     "content",

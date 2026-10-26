@@ -22,8 +22,10 @@ interface CTabItemEvents {
   /**
    * Fired whenever the panel's content is resized, so the parent
    * `<c-tab-items>` can re-measure and keep the slide position correct.
+   *
+   * @internal
    */
-  contentChange: void;
+  contentchange: void;
 }
 
 /**
@@ -85,7 +87,7 @@ onMounted(() => {
 
   if (innerRef.value) {
     resizeObserver = new ResizeObserver(() => {
-      emit('contentChange', undefined, { bubbles: true, composed: true });
+      emit('contentchange', undefined, { bubbles: true, composed: true });
     });
     resizeObserver.observe(innerRef.value);
   }

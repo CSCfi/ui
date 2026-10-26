@@ -1439,10 +1439,10 @@ onMounted(() => {
   // property bind didn't land before the child mounted.
   if (dropdownRef.value && host) {
     (dropdownRef.value as { parent?: HTMLElement } & HTMLElement).parent = host;
-    dropdownRef.value.addEventListener('selectOption', onSelectOption);
+    dropdownRef.value.addEventListener('selectoption', onSelectOption);
     dropdownRef.value.addEventListener('selectall', onSelectAll);
     dropdownRef.value.addEventListener(
-      'dropdownStateChange',
+      'dropdownstatechange',
       onDropdownStateChange,
     );
   }
@@ -1487,10 +1487,10 @@ onBeforeUnmount(() => {
   host?.removeEventListener('keydown', handleKeyDown);
 
   if (statusDebounce !== null) clearTimeout(statusDebounce);
-  dropdownRef.value?.removeEventListener('selectOption', onSelectOption);
+  dropdownRef.value?.removeEventListener('selectoption', onSelectOption);
   dropdownRef.value?.removeEventListener('selectall', onSelectAll);
   dropdownRef.value?.removeEventListener(
-    'dropdownStateChange',
+    'dropdownstatechange',
     onDropdownStateChange,
   );
 });

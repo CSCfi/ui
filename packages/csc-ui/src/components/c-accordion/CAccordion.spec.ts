@@ -11,6 +11,7 @@ import type { Mounted } from '../../test/harness';
 import {
   matchScreenshotInBothModes,
   mount,
+  recordEvents,
   roleInMode,
   settle,
   settled,
@@ -151,6 +152,28 @@ describe('c-accordion', () => {
 
     expect(rounded(style(all[3]), 'bottom')).toBe(false);
     expect(rounded(style(extra), 'bottom')).toBe(true);
+  });
+
+  // An item's toggle reaches its accordion through a bubbling wiring event,
+  // which used to bubble on to every accordion around it.
+  it('a nested accordion’s item toggles only the accordion it belongs to', async () => {
+    const m = await mountAccordion({ value: 'billing' });
+
+    const inner = document.createElement('c-accordion');
+
+    inner.innerHTML =
+      '<c-accordion-item heading="Inner" value="inner"><p>Inner content.</p></c-accordion-item>';
+    items(m)[0].querySelector('p')!.after(inner);
+    await settle();
+    await settled();
+
+    const events = recordEvents(m.host, ['update:value']);
+
+    await toggle(inner.querySelector('c-accordion-item')!);
+
+    expect((inner as { value?: unknown } & HTMLElement).value).toBe('inner');
+    expect((m.host as { value?: unknown } & HTMLElement).value).toBe('billing');
+    expect(events.names()).toEqual([]);
   });
 
   it('squares the header wash off at the bottom of an expanded item', async () => {

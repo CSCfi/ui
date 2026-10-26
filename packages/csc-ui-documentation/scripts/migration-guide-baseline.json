@@ -1,12 +1,9 @@
 [
   "c-accordion prop value",
-  "c-accordion-item event itemChange",
   "c-alert prop type",
   "c-alert slot title",
   "c-autocomplete prop id",
   "c-autocomplete prop value",
-  "c-button event tabChange",
-  "c-button event tabFocus",
   "c-button prop grouped",
   "c-button prop id",
   "c-button prop tabs",
