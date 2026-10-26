@@ -9,7 +9,7 @@ import { userEvent } from 'vitest/browser';
 
 import type { Mounted } from '../harness';
 
-import { migratedTags } from '../../index';
+import { registeredTags } from '../../registry';
 import { supportsAnchorPositioning } from '../../shared/useFallbackPosition';
 import { deepActiveElement, mount, settle } from '../harness';
 import { withoutAnchorPositioning } from '../noAnchorPositioning';
@@ -24,7 +24,7 @@ const within = (home: Element, active: Element | null): boolean =>
 it('every anchored overlay component has a recipe', async () => {
   const detected: string[] = [];
 
-  for (const tag of migratedTags) {
+  for (const tag of registeredTags) {
     const m = await mount(tag, FIXTURES[tag]);
 
     if (m.host.shadowRoot!.querySelector('[popover]')) detected.push(tag);

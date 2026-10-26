@@ -12,6 +12,33 @@ const distModules = import.meta.glob<typeof CscUi>('../../dist/csc-ui.js');
 
 const load = Object.values(distModules)[0];
 
+interface Manifest {
+  csc?: { internalTags?: string[] };
+  modules: { declarations?: { tagName?: string }[] }[];
+}
+
+const manifests = import.meta.glob<Manifest>(
+  '../../dist/custom-elements.json',
+  {
+    eager: true,
+    import: 'default',
+  },
+);
+
+/** Every tag the built manifest names: the public ones and the internal ones. */
+const builtTags = (): string[] => {
+  const manifest = Object.values(manifests)[0];
+
+  if (!manifest) return [];
+
+  return [
+    ...manifest.modules.flatMap((m) =>
+      (m.declarations ?? []).flatMap((d) => (d.tagName ? [d.tagName] : [])),
+    ),
+    ...(manifest.csc?.internalTags ?? []),
+  ];
+};
+
 const PUBLIC_EXPORTS = [
   'DEFAULTABLE_PROPS',
   'DEFAULT_SEEDS',
@@ -19,7 +46,6 @@ const PUBLIC_EXPORTS = [
   'applyDefaults',
   'applyTheme',
   'defineCustomElements',
-  'migratedTags',
   'observeThemeMode',
   'resetDefaults',
   'resetTheme',
@@ -40,18 +66,20 @@ describe.skipIf(!load && !__CSC_REQUIRE_DIST__)('dist/csc-ui.js', () => {
     const mod = await load!();
 
     for (const name of PUBLIC_EXPORTS) expect(mod[name], name).toBeDefined();
-    expect(new Set(mod.migratedTags).size).toBe(mod.migratedTags.length);
-    expect(
-      mod.tailwindVariantTags.every((tag) => mod.migratedTags.includes(tag)),
-    ).toBe(true);
   });
 
-  it('upgrades every migrated tag, idempotently', async () => {
+  it('upgrades every tag of the built manifest, idempotently', async () => {
     const mod = await load!();
     mod.defineCustomElements();
     expect(() => mod.defineCustomElements()).not.toThrow();
 
-    for (const tag of mod.migratedTags) {
+    const tags = builtTags();
+    expect(
+      tags.length,
+      'dist/custom-elements.json lists no tag',
+    ).toBeGreaterThan(0);
+
+    for (const tag of tags) {
       expect(customElements.get(tag), tag).toBeDefined();
 
       const el = document.createElement(tag);

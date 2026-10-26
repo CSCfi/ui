@@ -59,7 +59,14 @@
 </template>
 
 <script lang="ts">
-export interface CTabButtonsProps {
+/**
+ * Size of the tab strip. `small` renders a more compact control; the size is
+ * also propagated to every slotted `<c-button>`. Omitting the attribute
+ * renders the default size.
+ */
+export type CTabButtonsSize = 'default' | 'small';
+
+interface CTabButtonsProps {
   /** Disable the whole tab strip — every slotted c-button is disabled and the selection can no longer be changed. */
   disabled?: boolean;
 
@@ -71,19 +78,12 @@ export interface CTabButtonsProps {
   size?: CTabButtonsSize;
 
   /**
-   * Value of the active tab — pushed down by the parent c-tabs.
+   * Value of the active tab; the parent `<c-tabs>` sets it.
    *
-   * @seeded from csc-ui — verify
+   * @internal
    */
   value?: number | string;
 }
-
-/**
- * Size of the tab strip. `small` renders a more compact control; the size is
- * also propagated to every slotted `<c-button>`. Omitting the attribute
- * renders the default size.
- */
-export type CTabButtonsSize = 'default' | 'small';
 </script>
 
 <script setup lang="ts">

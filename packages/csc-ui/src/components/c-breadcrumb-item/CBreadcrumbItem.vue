@@ -43,7 +43,7 @@
 </template>
 
 <script lang="ts">
-export interface CBreadcrumbItemProps {
+interface CBreadcrumbItemProps {
   /**
    * URL of the page the crumb leads to. Ignored on the current crumb (the
    * last one); a crumb without it names a level that has no page and renders

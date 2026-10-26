@@ -415,7 +415,129 @@ import type { CFieldSize } from '../../types';
 /** One entry of `disabled-dates`: an ISO date, or an inclusive `{ start, end }` span of them. */
 export type CDatePickerDisabledDate = { end: string; start: string } | string;
 
-export interface CDatePickerProps {
+/** A date range: ISO `YYYY-MM-DD` ends (`YYYY-MM` under `type="month"`), either of which may be `null` while only one is typed. */
+export interface CDatePickerRange {
+  /** The last day of the range, inclusive. */
+  end: null | string;
+
+  /** The first day of the range. */
+  start: null | string;
+}
+
+/**
+ * The text committed from the field, as typed: a string, or both ends'
+ * texts under `range`.
+ */
+export type CDatePickerText = { end: string; start: string } | string;
+
+/**
+ * UI texts of `c-date-picker`, merged key by key over the names `Intl`
+ * gives for the page's `lang` and the English defaults. Weekday arrays are
+ * indexed like `Date.getDay()`: Sunday first.
+ */
+export interface CDatePickerTexts {
+  /** Accessible name of the dialog when the field has no label. */
+  chooseDate?: string;
+
+  /** Accessible label of the clear button. */
+  clearSelection?: string;
+
+  /** Accessible label of the close button in the fullscreen panel (narrow viewports). */
+  closePanel?: string;
+
+  /** A day's accessible name in the grid; receives the ISO date. */
+  date?: (iso: string) => string;
+
+  /** Label of the Done button in the fullscreen panel (narrow viewports). */
+  done?: string;
+
+  /** Accessible name of the end input under `range`. */
+  end?: string;
+
+  /** Label of the end's month step under `type="month"` and `range`; also the end input's name there. */
+  endMonth?: string;
+
+  /** Label of the end's year step under `type="month"` and `range`. */
+  endYear?: string;
+
+  /** Label of the month step under `type="month"`. */
+  month?: string;
+
+  /** Twelve month names, January first. */
+  months?: string[];
+
+  /** Twelve short month names, January first — shown on the month button. */
+  monthsShort?: string[];
+
+  /** Accessible label of the next-month arrow. */
+  nextMonth?: string;
+
+  /** Accessible label of the next-year arrow. */
+  nextYear?: string;
+
+  /** Accessible label of the calendar button. */
+  openCalendar?: string;
+
+  /** Announcement once a range's first day is picked; receives that day's name. */
+  pendingStart?: (date: string) => string;
+
+  /** Accessible label of the previous-month arrow. */
+  previousMonth?: string;
+
+  /** Accessible label of the previous-year arrow. */
+  previousYear?: string;
+
+  /** Accessible label of the month button and the month list. */
+  selectMonth?: string;
+
+  /** Accessible label of the year button and the year list. */
+  selectYear?: string;
+
+  /** Accessible name of the start input under `range`. */
+  start?: string;
+
+  /** Label of the start's month step under `type="month"` and `range`; also the start input's name there. */
+  startMonth?: string;
+
+  /** Label of the start's year step under `type="month"` and `range`. */
+  startYear?: string;
+
+  /** Label of the Today button under `type="month"`. */
+  thisMonth?: string;
+
+  /** Label of the Today button (`show-today`). */
+  today?: string;
+
+  /** Appended to the accessible name of a day that cannot be picked. */
+  unavailable?: string;
+
+  /** Seven weekday names, Sunday first. */
+  weekdays?: string[];
+
+  /** Seven short weekday names, Sunday first — the grid's column heads. */
+  weekdaysShort?: string[];
+
+  /** Accessible name of the week-number column. */
+  weekNumber?: string;
+
+  /** Label of the year step under `type="month"`. */
+  year?: string;
+}
+
+/** What `c-date-picker` picks: a calendar date, or a year and a month (ADR-0063). */
+export type CDatePickerType = 'date' | 'month';
+
+/**
+ * Value of `c-date-picker`: an ISO `YYYY-MM-DD` string (`YYYY-MM` under
+ * `type="month"`), a {@link CDatePickerRange} under `range`, or `null` when
+ * empty.
+ */
+export type CDatePickerValue = CDatePickerRange | null | string;
+
+/** A day of the week numbered like `Date.getDay()`: 0 = Sunday … 6 = Saturday. */
+export type CDatePickerWeekday = 0 | 1 | 2 | 3 | 4 | 5 | 6;
+
+interface CDatePickerProps {
   /**
    * Make the value clearable
    */
@@ -594,128 +716,6 @@ export interface CDatePickerProps {
    */
   value?: CDatePickerValue;
 }
-
-/** A date range: ISO `YYYY-MM-DD` ends (`YYYY-MM` under `type="month"`), either of which may be `null` while only one is typed. */
-export interface CDatePickerRange {
-  /** The last day of the range, inclusive. */
-  end: null | string;
-
-  /** The first day of the range. */
-  start: null | string;
-}
-
-/**
- * The text committed from the field, as typed: a string, or both ends'
- * texts under `range`.
- */
-export type CDatePickerText = { end: string; start: string } | string;
-
-/**
- * UI texts of `c-date-picker`, merged key by key over the names `Intl`
- * gives for the page's `lang` and the English defaults. Weekday arrays are
- * indexed like `Date.getDay()`: Sunday first.
- */
-export interface CDatePickerTexts {
-  /** Accessible name of the dialog when the field has no label. */
-  chooseDate?: string;
-
-  /** Accessible label of the clear button. */
-  clearSelection?: string;
-
-  /** Accessible label of the close button in the fullscreen panel (narrow viewports). */
-  closePanel?: string;
-
-  /** A day's accessible name in the grid; receives the ISO date. */
-  date?: (iso: string) => string;
-
-  /** Label of the Done button in the fullscreen panel (narrow viewports). */
-  done?: string;
-
-  /** Accessible name of the end input under `range`. */
-  end?: string;
-
-  /** Label of the end's month step under `type="month"` and `range`; also the end input's name there. */
-  endMonth?: string;
-
-  /** Label of the end's year step under `type="month"` and `range`. */
-  endYear?: string;
-
-  /** Label of the month step under `type="month"`. */
-  month?: string;
-
-  /** Twelve month names, January first. */
-  months?: string[];
-
-  /** Twelve short month names, January first — shown on the month button. */
-  monthsShort?: string[];
-
-  /** Accessible label of the next-month arrow. */
-  nextMonth?: string;
-
-  /** Accessible label of the next-year arrow. */
-  nextYear?: string;
-
-  /** Accessible label of the calendar button. */
-  openCalendar?: string;
-
-  /** Announcement once a range's first day is picked; receives that day's name. */
-  pendingStart?: (date: string) => string;
-
-  /** Accessible label of the previous-month arrow. */
-  previousMonth?: string;
-
-  /** Accessible label of the previous-year arrow. */
-  previousYear?: string;
-
-  /** Accessible label of the month button and the month list. */
-  selectMonth?: string;
-
-  /** Accessible label of the year button and the year list. */
-  selectYear?: string;
-
-  /** Accessible name of the start input under `range`. */
-  start?: string;
-
-  /** Label of the start's month step under `type="month"` and `range`; also the start input's name there. */
-  startMonth?: string;
-
-  /** Label of the start's year step under `type="month"` and `range`. */
-  startYear?: string;
-
-  /** Label of the Today button under `type="month"`. */
-  thisMonth?: string;
-
-  /** Label of the Today button (`show-today`). */
-  today?: string;
-
-  /** Appended to the accessible name of a day that cannot be picked. */
-  unavailable?: string;
-
-  /** Seven weekday names, Sunday first. */
-  weekdays?: string[];
-
-  /** Seven short weekday names, Sunday first — the grid's column heads. */
-  weekdaysShort?: string[];
-
-  /** Accessible name of the week-number column. */
-  weekNumber?: string;
-
-  /** Label of the year step under `type="month"`. */
-  year?: string;
-}
-
-/** What `c-date-picker` picks: a calendar date, or a year and a month (ADR-0063). */
-export type CDatePickerType = 'date' | 'month';
-
-/**
- * Value of `c-date-picker`: an ISO `YYYY-MM-DD` string (`YYYY-MM` under
- * `type="month"`), a {@link CDatePickerRange} under `range`, or `null` when
- * empty.
- */
-export type CDatePickerValue = CDatePickerRange | null | string;
-
-/** A day of the week numbered like `Date.getDay()`: 0 = Sunday … 6 = Saturday. */
-export type CDatePickerWeekday = 0 | 1 | 2 | 3 | 4 | 5 | 6;
 </script>
 
 <script setup lang="ts">

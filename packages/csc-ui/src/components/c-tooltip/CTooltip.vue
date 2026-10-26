@@ -53,7 +53,7 @@
 <script lang="ts">
 import type { CPlacement } from '../../types';
 
-export interface CTooltipProps {
+interface CTooltipProps {
   /**
    * Delay before the tooltip shows on hover, in milliseconds. Keyboard focus
    * shows the tooltip immediately, regardless of this value. Defaults to

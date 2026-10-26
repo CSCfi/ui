@@ -51,6 +51,8 @@
  * @csspart indicator - The rotating chevron at the end of the header
  * @csspart content - The padded card around the slotted content inside the collapsing region
  *
+ * @cssstate expanded - Present while the item is expanded
+ *
  * @seeded from csc-ui — verify
  */
 import { mdiChevronRight } from '@mdi/js';
@@ -63,10 +65,12 @@ import {
   useHost,
   useId,
   useTemplateRef,
+  watch,
 } from 'vue';
 
 import { useHasSlot } from '../../shared/useHasSlot';
 import { useHostEmit } from '../../shared/useHostEmit';
+import { useHostStates } from '../../shared/useHostStates';
 
 /** Events dispatched by `<c-accordion-item>`. */
 interface CAccordionItemEvents {
@@ -202,16 +206,18 @@ const accordionItem = tv({
 
 interface CAccordionItemProps {
   /**
-   * Marks the item as collapsable
+   * Whether the expanded item may collapse; the parent `<c-accordion>` sets
+   * it from its `mandatory`.
    *
-   * @seeded from csc-ui — verify
+   * @internal
    */
   collapsable?: boolean;
 
   /**
-   * Expansion status of the item
+   * Whether the item is expanded; the parent `<c-accordion>` sets it from its
+   * `value`. Style an expanded item through `:state(expanded)`.
    *
-   * @seeded from csc-ui — verify
+   * @internal
    */
   expanded?: boolean;
 
@@ -224,16 +230,16 @@ interface CAccordionItemProps {
   heading?: string;
 
   /**
-   * Show an outline around the expanded item
+   * Outline the item while it is expanded; the parent `<c-accordion>` sets
+   * it from its own `outlined`.
    *
-   * @seeded from csc-ui — verify
+   * @internal
    */
   outlined?: boolean;
 
   /**
-   * Value of the accordion item
-   *
-   * @seeded from csc-ui — verify
+   * Identifies the item in the parent `<c-accordion>`'s `value`. Required:
+   * the accordion leaves an item without one collapsed.
    */
   value?: number | string;
 }
@@ -255,6 +261,14 @@ const chevronPath = mdiChevronRight;
 const host = useHost();
 
 const TAG = 'c-accordion-item';
+
+const setState = useHostStates();
+
+watch(
+  () => props.expanded,
+  (on) => setState('expanded', on),
+  { immediate: true },
+);
 
 // Where this item sits in the accordion frame. Read from the light DOM: the
 // run's ends are the first and last item among the parent's children, and an

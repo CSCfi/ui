@@ -1,6 +1,6 @@
 /**
  * Fixtures and recipes for the conformance suites (CONTEXT.md "Conformance
- * suite", ADR-0049). Tags are enrolled from generated data — `migratedTags`,
+ * suite", ADR-0049). Tags are enrolled from generated data — `registeredTags`,
  * `VALUE_TAGS`, a runtime `[popover]` probe — never from these tables; the
  * tables only say how to make a tag interactive, and each suite fails when a
  * tag has no entry.

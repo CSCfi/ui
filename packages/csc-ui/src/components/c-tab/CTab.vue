@@ -88,9 +88,9 @@ defineOptions({ inheritAttrs: false });
 
 interface CTabProps {
   /**
-   * Mark tab as active
+   * Whether this is the selected tab; the parent `<c-tabs>` sets it.
    *
-   * @seeded from csc-ui — verify
+   * @internal
    */
   active?: boolean;
 
@@ -100,28 +100,6 @@ interface CTabProps {
    * @seeded from csc-ui — verify
    */
   disabled?: boolean;
-
-  /**
-   * Id of the tab
-   *
-   * @seeded from csc-ui — verify
-   * @freeform
-   */
-  hostId?: string;
-
-  /**
-   * Position in the set
-   *
-   * @seeded from csc-ui — verify
-   */
-  position?: number;
-
-  /**
-   * Size of the set
-   *
-   * @seeded from csc-ui — verify
-   */
-  setsize?: number;
 
   /**
    * Value for the tab
@@ -135,9 +113,6 @@ interface CTabProps {
 const props = withDefaults(defineProps<CTabProps>(), {
   active: false,
   disabled: false,
-  hostId: '',
-  position: undefined,
-  setsize: undefined,
   value: undefined,
 });
 
@@ -150,7 +125,7 @@ const emit = useHostEmit<CTabEvents>();
 const bubbling = { bubbles: true, composed: true };
 
 // Reflect tab state + a11y onto the host (the real tab element c-tabs
-// queries and wires aria-controls/posinset onto).
+// queries and wires id and aria-controls onto).
 onMounted(() => {
   if (!host) return;
   host.setAttribute('role', 'tab');
@@ -161,14 +136,6 @@ onMounted(() => {
     host.setAttribute('aria-disabled', String(props.disabled));
     host.setAttribute('aria-hidden', String(props.disabled));
     host.setAttribute('aria-selected', String(props.active));
-
-    if (props.setsize != null)
-      host.setAttribute('aria-setsize', String(props.setsize));
-
-    if (props.position != null)
-      host.setAttribute('aria-posinset', String(props.position));
-
-    if (props.hostId) host.setAttribute('id', props.hostId);
 
     if (props.value != null)
       host.setAttribute('data-value', String(props.value));

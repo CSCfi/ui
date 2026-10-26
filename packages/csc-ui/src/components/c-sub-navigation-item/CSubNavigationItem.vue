@@ -3,7 +3,7 @@
     <div
       :aria-current="active ? 'page' : undefined"
       :class="ui.item()"
-      :tabindex="focusable ? 0 : -1"
+      :tabindex="collapsed ? -1 : 0"
       part="root"
       role="menuitem"
     >
@@ -111,11 +111,12 @@ interface CSubNavigationItemProps {
   active?: boolean;
 
   /**
-   * Element is visible and focusable
+   * Whether the item sits under a collapsed `<c-side-navigation-item>`,
+   * which sets it so hidden items are not Tab-reachable.
    *
-   * @seeded from csc-ui — verify
+   * @internal
    */
-  focusable?: boolean;
+  collapsed?: boolean;
 
   /**
    * Link url
@@ -150,7 +151,7 @@ interface CSubNavigationItemProps {
 
 const props = withDefaults(defineProps<CSubNavigationItemProps>(), {
   active: false,
-  focusable: false,
+  collapsed: false,
   href: '',
   loading: false,
   target: '',

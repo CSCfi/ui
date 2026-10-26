@@ -6,7 +6,7 @@ const styles = `
 /* The default look is the accordion frame; this recolours the expanded
    item from primary to secondary through its parts. */
 c-accordion.custom-style {
-  c-accordion-item[expanded] {
+  c-accordion-item:state(expanded) {
     &::part(root) {
       border-color: var(--c-secondary);
       background-color: color-mix(in srgb, var(--c-secondary) 5%, transparent);

@@ -159,7 +159,7 @@ export const CAccordion = createComponent({
 
 export const CAccordionItem = createComponent({
   displayName: 'CAccordionItem',
-  elementClass: elementClass<CAccordionItemElement>(['collapsable', 'expanded', 'heading', 'outlined', 'value']),
+  elementClass: elementClass<CAccordionItemElement>(['heading', 'value']),
   react: React,
   tagName: 'c-accordion-item',
 });
@@ -215,7 +215,7 @@ export const CBreadcrumbItem = createComponent({
 /** Buttons trigger actions — submitting a form, opening a modal, confirming a choice. Use one primary (default appearance) button per view; secondary actions use the `outlined`, `ghost` or `text` appearances. */
 export const CButton = createComponent({
   displayName: 'CButton',
-  elementClass: elementClass<CButtonElement>(['active', 'danger', 'disabled', 'fit', 'ghost', 'hostId', 'href', 'inverted', 'loading', 'noRadius', 'noRipple', 'outlined', 'size', 'target', 'text', 'type', 'value']),
+  elementClass: elementClass<CButtonElement>(['active', 'danger', 'disabled', 'fit', 'ghost', 'hostId', 'href', 'inverted', 'loading', 'noRadius', 'outlined', 'size', 'target', 'text', 'type', 'value']),
   react: React,
   tagName: 'c-button',
 });
@@ -376,14 +376,14 @@ export const CList = createComponent({
 
 export const CListItem = createComponent({
   displayName: 'CListItem',
-  elementClass: elementClass<CListItemElement>(['active', 'disabled', 'disabledByParent', 'hoverable', 'href', 'ripple', 'target']),
+  elementClass: elementClass<CListItemElement>(['active', 'disabled', 'hoverable', 'href', 'ripple', 'target']),
   react: React,
   tagName: 'c-list-item',
 });
 
 export const CListItemTitle = createComponent({
   displayName: 'CListItemTitle',
-  elementClass: elementClass<CListItemTitleElement>(['active']),
+  elementClass: elementClass<CListItemTitleElement>([]),
   react: React,
   tagName: 'c-list-item-title',
 });
@@ -635,7 +635,7 @@ export const CSideNavigation = createComponent({
 
 export const CSideNavigationItem = createComponent({
   displayName: 'CSideNavigationItem',
-  elementClass: elementClass<CSideNavigationItemElement>(['active', 'focusable', 'href', 'loading', 'target', 'value']),
+  elementClass: elementClass<CSideNavigationItemElement>(['active', 'href', 'loading', 'target', 'value']),
   events: {
     onSelect: 'select' as EventName<CSideNavigationItemElementEventMap['select']>,
   },
@@ -679,7 +679,7 @@ export const CStatus = createComponent({
 
 export const CStep = createComponent({
   displayName: 'CStep',
-  elementClass: elementClass<CStepElement>(['complete', 'current']),
+  elementClass: elementClass<CStepElement>([]),
   react: React,
   tagName: 'c-step',
 });
@@ -693,7 +693,7 @@ export const CSteps = createComponent({
 
 export const CSubNavigationItem = createComponent({
   displayName: 'CSubNavigationItem',
-  elementClass: elementClass<CSubNavigationItemElement>(['active', 'focusable', 'href', 'loading', 'target', 'value']),
+  elementClass: elementClass<CSubNavigationItemElement>(['active', 'href', 'loading', 'target', 'value']),
   events: {
     onSelect: 'select' as EventName<CSubNavigationItemElementEventMap['select']>,
   },
@@ -716,7 +716,7 @@ export const CSwitch = createComponent({
 
 export const CTab = createComponent({
   displayName: 'CTab',
-  elementClass: elementClass<CTabElement>(['active', 'disabled', 'hostId', 'position', 'setsize', 'value']),
+  elementClass: elementClass<CTabElement>(['disabled', 'value']),
   react: React,
   tagName: 'c-tab',
 });
@@ -724,21 +724,21 @@ export const CTab = createComponent({
 /** Tab buttons present a `c-tabs` tab list as a segmented control instead of the underlined tab row. Author it only inside `<c-tabs>`, with plain `<c-button>` children whose `value`s match the `c-tab-item` panels; `c-tabs` owns the active value and pushes it down. */
 export const CTabButtons = createComponent({
   displayName: 'CTabButtons',
-  elementClass: elementClass<CTabButtonsElement>(['disabled', 'size', 'value']),
+  elementClass: elementClass<CTabButtonsElement>(['disabled', 'size']),
   react: React,
   tagName: 'c-tab-buttons',
 });
 
 export const CTabItem = createComponent({
   displayName: 'CTabItem',
-  elementClass: elementClass<CTabItemElement>(['active', 'value']),
+  elementClass: elementClass<CTabItemElement>(['value']),
   react: React,
   tagName: 'c-tab-item',
 });
 
 export const CTabItems = createComponent({
   displayName: 'CTabItems',
-  elementClass: elementClass<CTabItemsElement>(['disableAnimation', 'value']),
+  elementClass: elementClass<CTabItemsElement>([]),
   react: React,
   tagName: 'c-tab-items',
 });

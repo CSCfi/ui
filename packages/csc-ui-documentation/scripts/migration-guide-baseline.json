@@ -57,7 +57,6 @@
   "c-switch prop disabled",
   "c-switch prop id",
   "c-switch slot label",
-  "c-tab prop id",
   "c-tab-buttons prop disabled",
   "c-tab-buttons prop tabs",
   "c-table method updateMobileLabels",

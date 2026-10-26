@@ -21,7 +21,13 @@
 </template>
 
 <script lang="ts">
-export interface CTagsProps {
+/**
+ * Size propagated to every slotted `<c-tag>`. `small` renders compact tags;
+ * omitting the attribute leaves the tags at their default size.
+ */
+export type CTagsSize = 'default' | 'small';
+
+interface CTagsProps {
   /**
    * Label of the tag group, shown above the tags
    *
@@ -41,12 +47,6 @@ export interface CTagsProps {
    */
   size?: CTagsSize;
 }
-
-/**
- * Size propagated to every slotted `<c-tag>`. `small` renders compact tags;
- * omitting the attribute leaves the tags at their default size.
- */
-export type CTagsSize = 'default' | 'small';
 </script>
 
 <script setup lang="ts">

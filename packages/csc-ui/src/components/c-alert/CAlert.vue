@@ -36,7 +36,14 @@
  */
 export type CAlertIconType = 'error' | 'info' | 'success' | 'warning';
 
-export interface CAlertProps {
+/**
+ * Type of the alert. `default` — equivalently, omitting the attribute —
+ * renders the brand-primary look; the four status types carry their status
+ * family's colours.
+ */
+export type CAlertType = 'default' | CAlertIconType;
+
+interface CAlertProps {
   /**
    * Show a dismiss button. The alert only emits `dismiss` — removing it from
    * the page stays the consumer's job.
@@ -58,13 +65,6 @@ export interface CAlertProps {
    */
   type?: CAlertType;
 }
-
-/**
- * Type of the alert. `default` — equivalently, omitting the attribute —
- * renders the brand-primary look; the four status types carry their status
- * family's colours.
- */
-export type CAlertType = 'default' | CAlertIconType;
 </script>
 
 <script setup lang="ts">

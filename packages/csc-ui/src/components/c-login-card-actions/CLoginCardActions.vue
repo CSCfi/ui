@@ -24,7 +24,7 @@ export type CLoginCardActionsJustify =
   | 'start'
   | 'stretch';
 
-export interface CLoginCardActionsProps {
+interface CLoginCardActionsProps {
   /**
    * Align the actions
    *

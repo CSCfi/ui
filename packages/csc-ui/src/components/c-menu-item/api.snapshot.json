@@ -10,11 +10,7 @@
   "cssProperties": [],
   "defaultable": [],
   "events": {},
-  "methods": {
-    "closeSubmenu": "()",
-    "isSubmenuOpen": "(): boolean",
-    "openSubmenu": "()"
-  },
+  "methods": {},
   "parts": [
     "check",
     "content",

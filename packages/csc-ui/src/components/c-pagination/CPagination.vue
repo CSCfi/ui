@@ -106,7 +106,12 @@ export interface CPaginationOptions {
   totalVisible?: number;
 }
 
-export interface CPaginationProps {
+/**
+ * Size of the pagination controls. `small` renders the compact page buttons.
+ */
+export type CPaginationSize = 'default' | 'small';
+
+interface CPaginationProps {
   /**
    * Hide details (per page dropdown and the 'x - y of n pages' text)
    *
@@ -144,11 +149,6 @@ export interface CPaginationProps {
    */
   value?: CPaginationOptions;
 }
-
-/**
- * Size of the pagination controls. `small` renders the compact page buttons.
- */
-export type CPaginationSize = 'default' | 'small';
 </script>
 
 <script setup lang="ts">

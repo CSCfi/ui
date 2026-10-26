@@ -24,7 +24,7 @@ export type CCardActionsJustify =
   | 'start'
   | 'stretch';
 
-export interface CCardActionsProps {
+interface CCardActionsProps {
   /**
    * Align the actions
    *

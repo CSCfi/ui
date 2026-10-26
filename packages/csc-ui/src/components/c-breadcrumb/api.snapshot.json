@@ -21,9 +21,7 @@
     "texts": "CBreadcrumbTexts = {}"
   },
   "slots": [
-    "default",
-    "first",
-    "folded"
+    "default"
   ],
   "states": [],
   "subcomponents": [

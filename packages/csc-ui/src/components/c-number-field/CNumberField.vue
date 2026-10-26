@@ -98,7 +98,16 @@
 </template>
 
 <script lang="ts">
-export interface CNumberFieldProps {
+/** UI texts of `c-number-field`, merged key by key over the English defaults. */
+export interface CNumberFieldTexts {
+  /** Accessible label of the step-down button. */
+  decrease?: string;
+
+  /** Accessible label of the step-up button. */
+  increase?: string;
+}
+
+interface CNumberFieldProps {
   /**
    * The most fraction digits the field takes; `0` makes it an integer field
    *
@@ -247,15 +256,6 @@ export interface CNumberFieldProps {
    * The number, or `null` when the field is empty. A string is read as the number it spells, and `''` as empty — what an attribute, or a plain `v-model` holding `null`, writes; the field always emits a number or `null`
    */
   value?: null | number | string;
-}
-
-/** UI texts of `c-number-field`, merged key by key over the English defaults. */
-export interface CNumberFieldTexts {
-  /** Accessible label of the step-down button. */
-  decrease?: string;
-
-  /** Accessible label of the step-up button. */
-  increase?: string;
 }
 </script>
 

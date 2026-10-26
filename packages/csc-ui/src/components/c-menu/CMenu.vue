@@ -115,7 +115,7 @@ interface CMenuEvents {
  * host's flattened subtree, so delegated `click`/`keydown`/`pointerover`
  * listeners on the host see them all, and `composedPath().includes(host)`
  * cleanly separates inside from outside for light-dismiss. Submenus are opened
- * and closed by calling the `openSubmenu`/`closeSubmenu` methods that
+ * and closed by calling the `_openSubmenu`/`_closeSubmenu` methods that
  * `c-menu-item` exposes.
  *
  * Styling is in this `tailwind-variants` config; `::part()` is the
@@ -215,12 +215,12 @@ watch(distancePx, (px) => {
 // Tracks open submenu items (across nested levels) so we can coordinate
 // dismissal — the browser does not auto-chain manual popovers across the
 // separate shadow roots each c-menu-item owns. The record follows the item's
-// own `isSubmenuOpen()` (the panel's `:popover-open`), never the other way
+// own `_isSubmenuOpen()` (the panel's `:popover-open`), never the other way
 // round: an open that silently did not happen must not be remembered as one.
 const openSubmenus = new Set<HTMLElement>();
 
 const isSubmenuOpen = (item: HTMLElement): boolean =>
-  (item as { isSubmenuOpen?: () => boolean }).isSubmenuOpen?.() ?? false;
+  (item as { _isSubmenuOpen?: () => boolean })._isSubmenuOpen?.() ?? false;
 
 const submenuTimers = new Map<HTMLElement, { close?: number; open?: number }>();
 
@@ -518,7 +518,7 @@ const doOpenSubmenu = (item: HTMLElement, focusFirst: boolean) => {
     if (!activePath(item).includes(open)) scheduleCloseSubmenu(open);
   }
 
-  (item as { openSubmenu?: () => void }).openSubmenu?.();
+  (item as { _openSubmenu?: () => void })._openSubmenu?.();
 
   if (isSubmenuOpen(item)) openSubmenus.add(item);
   else openSubmenus.delete(item);
@@ -534,7 +534,7 @@ const doOpenSubmenu = (item: HTMLElement, focusFirst: boolean) => {
 
 const doCloseSubmenu = (item: HTMLElement) => {
   cancelTimers(item);
-  (item as { closeSubmenu?: () => void }).closeSubmenu?.();
+  (item as { _closeSubmenu?: () => void })._closeSubmenu?.();
   openSubmenus.delete(item);
 };
 

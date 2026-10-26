@@ -79,15 +79,12 @@ export interface CAccordionElement extends Omit<HTMLElement, 'mandatory' | 'mult
 }
 
 export interface CAccordionItemElement extends Omit<HTMLElement, 'collapsable' | 'expanded' | 'heading' | 'outlined' | 'value'> {
-  /** Marks the item as collapsable */
-  collapsable?: boolean;
-  /** Expansion status of the item */
-  expanded?: boolean;
   /** Heading of the accordion item */
   heading?: string;
-  /** Show an outline around the expanded item */
-  outlined?: boolean;
-  /** Value of the accordion item */
+  /**
+   * Identifies the item in the parent `<c-accordion>`'s `value`. Required:
+   * the accordion leaves an item without one collapsed.
+   */
   value?: number | string;
 }
 
@@ -315,8 +312,6 @@ export interface CButtonElement extends Omit<HTMLElement, 'active' | 'danger' | 
   loading?: boolean;
   /** Remove the default border radius */
   noRadius?: boolean;
-  /** Suppress the click ripple (e.g. when a wrapper owns the press feedback). */
-  noRipple?: boolean;
   /** Outlined button style */
   outlined?: boolean;
   /** Size of the button */
@@ -1005,8 +1000,6 @@ export interface CListItemElement extends Omit<HTMLElement, 'active' | 'disabled
   active?: boolean;
   /** Disable the item */
   disabled?: boolean;
-  /** Disabled by the parent list */
-  disabledByParent?: boolean;
   /** Display background color on hover */
   hoverable?: boolean;
   /** Hyperlink url */
@@ -1018,8 +1011,6 @@ export interface CListItemElement extends Omit<HTMLElement, 'active' | 'disabled
 }
 
 export interface CListItemTitleElement extends Omit<HTMLElement, 'active'> {
-  /** Set the title active */
-  active?: boolean;
 }
 
 /** A loader component that fills the nearest containing element that has css-property position set to 'relative' */
@@ -1174,9 +1165,6 @@ export interface CMenuItemElement extends Omit<HTMLElement, 'active' | 'activeIc
   icon?: string;
   /** Value reported in the menu's `select` event when this item is chosen. */
   value?: string;
-  closeSubmenu(): void;
-  isSubmenuOpen(): boolean;
-  openSubmenu(): void;
 }
 
 /** Section label for a group of `c-menu-item`s. */
@@ -1799,11 +1787,9 @@ export interface CSideNavigationItemElementEventMap {
   select: CustomEvent<{ value: string | undefined }>;
 }
 
-export interface CSideNavigationItemElement extends Omit<HTMLElement, 'active' | 'focusable' | 'href' | 'loading' | 'target' | 'value'> {
+export interface CSideNavigationItemElement extends Omit<HTMLElement, 'active' | 'collapsed' | 'href' | 'loading' | 'target' | 'value'> {
   /** Indicate active state */
   active?: boolean;
-  /** Whether the item is in the keyboard tab order — a parent item sets this to false on its collapsed sub-items so hidden items aren't Tab-reachable */
-  focusable?: boolean;
   /** Hyperlink url */
   href?: string;
   /** Loading state */
@@ -1925,10 +1911,6 @@ export interface CStatusElement extends Omit<HTMLElement, 'type'> {
 }
 
 export interface CStepElement extends Omit<HTMLElement, 'complete' | 'current'> {
-  /** Mark step as complete */
-  complete?: boolean;
-  /** Mark step as current */
-  current?: boolean;
 }
 
 export interface CStepsElement extends Omit<HTMLElement, 'value'> {
@@ -1945,11 +1927,9 @@ export interface CSubNavigationItemElementEventMap {
   select: CustomEvent<{ value: string | undefined }>;
 }
 
-export interface CSubNavigationItemElement extends Omit<HTMLElement, 'active' | 'focusable' | 'href' | 'loading' | 'target' | 'value'> {
+export interface CSubNavigationItemElement extends Omit<HTMLElement, 'active' | 'collapsed' | 'href' | 'loading' | 'target' | 'value'> {
   /** Active state */
   active?: boolean;
-  /** Element is visible and focusable */
-  focusable?: boolean;
   /** Link url */
   href?: string;
   /** Loading state */
@@ -2044,17 +2024,9 @@ export interface CSwitchElement extends Omit<HTMLElement, 'checked' | 'disabled'
   ): void;
 }
 
-export interface CTabElement extends Omit<HTMLElement, 'active' | 'disabled' | 'hostId' | 'position' | 'setsize' | 'value'> {
-  /** Mark tab as active */
-  active?: boolean;
+export interface CTabElement extends Omit<HTMLElement, 'active' | 'disabled' | 'value'> {
   /** Mark tab as disabled */
   disabled?: boolean;
-  /** Id of the tab */
-  hostId?: string;
-  /** Position in the set */
-  position?: number;
-  /** Size of the set */
-  setsize?: number;
   /**
    * Value for the tab
    * - for use in c-tabs
@@ -2068,22 +2040,14 @@ export interface CTabButtonsElement extends Omit<HTMLElement, 'disabled' | 'size
   disabled?: boolean;
   /** Size of the buttons */
   size?: 'default' | 'small';
-  /** Value of the active tab — pushed down by the parent c-tabs. */
-  value?: number | string;
 }
 
 export interface CTabItemElement extends Omit<HTMLElement, 'active' | 'value'> {
-  /** Active */
-  active?: boolean;
   /** Tab value */
   value?: number | string;
 }
 
 export interface CTabItemsElement extends Omit<HTMLElement, 'disableAnimation' | 'value'> {
-  /** Disable animation */
-  disableAnimation?: boolean;
-  /** Currently active tab */
-  value?: number | string;
 }
 
 /** A styled wrapper for a table you author yourself: slot in a plain `<table>` and c-table gives it the CSC look plus an optional responsive card layout on narrow screens. The table stays in your own DOM — your stylesheets, your framework's rendering, and `::part()` selectors on components nested in cells (a `c-tag` status chip, a `c-pagination` footer) all keep working. */

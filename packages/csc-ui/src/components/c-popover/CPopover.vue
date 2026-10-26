@@ -47,7 +47,7 @@
 <script lang="ts">
 import type { CPlacement } from '../../types';
 
-export interface CPopoverProps {
+interface CPopoverProps {
   /** Distance from the trigger to the panel, in pixels. Defaults to `0`. */
   distance?: number | string;
 

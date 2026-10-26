@@ -9,7 +9,7 @@
  */
 import { afterAll, describe, expect, it } from 'vitest';
 
-import { migratedTags } from '../../index';
+import { registeredTags } from '../../registry';
 import { mount, settled } from '../harness';
 import { FIXTURES } from './kinds';
 import { normalise } from './paint';
@@ -39,7 +39,7 @@ afterAll(() => {
   document.documentElement.setAttribute('data-theme', 'light');
 });
 
-describe.each(migratedTags)('%s', (tag) => {
+describe.each(registeredTags)('%s', (tag) => {
   it('paints the same in a mode scope as under a pinned root', async () => {
     document.documentElement.setAttribute('data-theme', 'light');
 

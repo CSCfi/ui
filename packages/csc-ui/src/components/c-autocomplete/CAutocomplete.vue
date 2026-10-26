@@ -346,7 +346,70 @@ export interface CAutocompleteOption {
   value: number | string;
 }
 
-export interface CAutocompleteProps {
+/**
+ * UI texts of `c-autocomplete`, shallow-merged over the English defaults.
+ * Static labels are strings; count- or label-interpolated ones are
+ * functions.
+ */
+export interface CAutocompleteTexts {
+  /** Accessible label of the clear button. */
+  clearSelection?: string;
+
+  /** Accessible label of the close button in the fullscreen panel (narrow viewports). */
+  closePanel?: string;
+
+  /** Accessible label of the search input inside the panel. */
+  filterOptions?: string;
+
+  /** Text of the loading row shown while `loading` with nothing to list. */
+  loading?: string;
+
+  /**
+   * Text of the overflow tag when `max-tags` folds the selection; receives the
+   * number of hidden tags.
+   */
+  more?: (count: number) => string;
+
+  /** Text of the row shown when the query matches no options. */
+  noResults?: string;
+
+  /** Accessible label of a tag's remove button; receives the option label. */
+  remove?: (label: string) => string;
+
+  /** Placeholder of the search input when the `placeholder` prop is empty. */
+  searchPlaceholder?: string;
+
+  /**
+   * Label of the select-all row; receives the number of enabled options
+   * listed.
+   */
+  selectAll?: (count: number) => string;
+
+  /**
+   * Field text when `max-tags="0"` shows no tags; receives the selection
+   * count.
+   */
+  selected?: (count: number) => string;
+
+  /** Accessible label of the chevron button that opens and closes the panel. */
+  toggleOptions?: string;
+}
+
+/**
+ * Selection value of `c-autocomplete`: the committed option's value — or the
+ * whole `{ name, value }` item with `return-object` — and `null` when
+ * cleared. In `multiple` mode an array of them in the order they were
+ * picked, `[]` when empty.
+ */
+export type CAutocompleteValue =
+  | (number | string)[]
+  | CAutocompleteItem
+  | CAutocompleteItem[]
+  | null
+  | number
+  | string;
+
+interface CAutocompleteProps {
   /** Make the selected value clearable */
   clearable?: boolean;
 
@@ -494,69 +557,6 @@ export interface CAutocompleteProps {
    */
   value?: CAutocompleteValue;
 }
-
-/**
- * UI texts of `c-autocomplete`, shallow-merged over the English defaults.
- * Static labels are strings; count- or label-interpolated ones are
- * functions.
- */
-export interface CAutocompleteTexts {
-  /** Accessible label of the clear button. */
-  clearSelection?: string;
-
-  /** Accessible label of the close button in the fullscreen panel (narrow viewports). */
-  closePanel?: string;
-
-  /** Accessible label of the search input inside the panel. */
-  filterOptions?: string;
-
-  /** Text of the loading row shown while `loading` with nothing to list. */
-  loading?: string;
-
-  /**
-   * Text of the overflow tag when `max-tags` folds the selection; receives the
-   * number of hidden tags.
-   */
-  more?: (count: number) => string;
-
-  /** Text of the row shown when the query matches no options. */
-  noResults?: string;
-
-  /** Accessible label of a tag's remove button; receives the option label. */
-  remove?: (label: string) => string;
-
-  /** Placeholder of the search input when the `placeholder` prop is empty. */
-  searchPlaceholder?: string;
-
-  /**
-   * Label of the select-all row; receives the number of enabled options
-   * listed.
-   */
-  selectAll?: (count: number) => string;
-
-  /**
-   * Field text when `max-tags="0"` shows no tags; receives the selection
-   * count.
-   */
-  selected?: (count: number) => string;
-
-  /** Accessible label of the chevron button that opens and closes the panel. */
-  toggleOptions?: string;
-}
-
-/**
- * Selection value of `c-autocomplete`: the committed option's value — or the
- * whole `{ name, value }` item with `return-object` — and `null` when
- * cleared. In `multiple` mode an array of them in the order they were
- * picked, `[]` when empty.
- */
-export type CAutocompleteValue =
-  | (number | string)[]
-  | CAutocompleteItem
-  | CAutocompleteItem[]
-  | null
-  | number
-  | string;
 </script>
 
 <script setup lang="ts">

@@ -82,16 +82,18 @@ const step = tv({
 
 interface CStepProps {
   /**
-   * Mark step as complete
+   * Whether the step comes before the current one; the parent `<c-steps>`
+   * sets it from its `value`.
    *
-   * @seeded from csc-ui — verify
+   * @internal
    */
   complete?: boolean;
 
   /**
-   * Mark step as current
+   * Whether this is the current step; the parent `<c-steps>` sets it from its
+   * `value`.
    *
-   * @seeded from csc-ui — verify
+   * @internal
    */
   current?: boolean;
 }

@@ -15,7 +15,13 @@
 </template>
 
 <script lang="ts">
-export interface CTagProps {
+/**
+ * Size of the tag. `small` renders a more compact pill; omitting the
+ * attribute renders the default size.
+ */
+export type CTagSize = 'default' | 'small';
+
+interface CTagProps {
   /**
    * Mark tag as active
    *
@@ -58,12 +64,6 @@ export interface CTagProps {
    */
   size?: CTagSize;
 }
-
-/**
- * Size of the tag. `small` renders a more compact pill; omitting the
- * attribute renders the default size.
- */
-export type CTagSize = 'default' | 'small';
 </script>
 
 <script setup lang="ts">

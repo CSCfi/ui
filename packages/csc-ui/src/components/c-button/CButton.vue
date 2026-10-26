@@ -50,7 +50,18 @@
 </template>
 
 <script lang="ts">
-export interface CButtonProps {
+/**
+ * Size of the button.
+ */
+export type CButtonSize = 'default' | 'large' | 'small';
+
+/**
+ * Native `type` of the underlying `<button>` element. Ignored when `href`
+ * turns the component into a link.
+ */
+export type CButtonType = 'button' | 'reset' | 'submit';
+
+interface CButtonProps {
   /**
    * Pressed (toggle) state — renders the selected look and sets
    * `aria-pressed`. Leave unset for regular action buttons: only a
@@ -124,7 +135,12 @@ export interface CButtonProps {
    */
   noRadius?: boolean;
 
-  /** Suppress the click ripple (e.g. when a wrapper owns the press feedback). */
+  /**
+   * Suppress the click ripple; the parent `<c-button-group>` sets it on its
+   * buttons, whose press feedback it owns.
+   *
+   * @internal
+   */
   noRipple?: boolean;
 
   /**
@@ -171,17 +187,6 @@ export interface CButtonProps {
    */
   value?: number | string;
 }
-
-/**
- * Size of the button.
- */
-export type CButtonSize = 'default' | 'large' | 'small';
-
-/**
- * Native `type` of the underlying `<button>` element. Ignored when `href`
- * turns the component into a link.
- */
-export type CButtonType = 'button' | 'reset' | 'submit';
 </script>
 
 <script setup lang="ts">

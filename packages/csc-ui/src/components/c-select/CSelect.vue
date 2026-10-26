@@ -155,7 +155,57 @@
 <script lang="ts">
 import type { CFieldSize, CSelectItem } from '../../types';
 
-export interface CSelectProps {
+/**
+ * UI texts of `c-select`, shallow-merged over the English defaults. Static
+ * labels are strings; count- or label-interpolated ones are functions.
+ */
+export interface CSelectTexts {
+  /** Accessible label of the clear button. */
+  clearSelection?: string;
+
+  /** Accessible label of the close button in the fullscreen panel (narrow viewports). */
+  closePanel?: string;
+
+  /**
+   * Text of the overflow tag when `max-tags` folds the selection; receives the
+   * number of hidden tags.
+   */
+  more?: (count: number) => string;
+
+  /** Accessible label of a tag's remove button; receives the option label. */
+  remove?: (label: string) => string;
+
+  /**
+   * Label of the select-all row; receives the number of enabled options
+   * listed.
+   */
+  selectAll?: (count: number) => string;
+
+  /**
+   * Field text when `max-tags="0"` shows no tags; receives the selection
+   * count.
+   */
+  selected?: (count: number) => string;
+
+  /** Accessible label of the chevron button that opens and closes the list. */
+  toggleOptions?: string;
+}
+
+/**
+ * Selection value of `c-select`: the picked option's value — or the whole
+ * `{ name, value }` item with `return-object` — and `null` when nothing is
+ * selected. In `multiple` mode an array of them in the order they were
+ * picked, `[]` when empty.
+ */
+export type CSelectValue =
+  | (number | string)[]
+  | CSelectItem
+  | CSelectItem[]
+  | null
+  | number
+  | string;
+
+interface CSelectProps {
   /** Make the selected value clearable */
   clearable?: boolean;
 
@@ -295,56 +345,6 @@ export interface CSelectProps {
    */
   value?: CSelectValue;
 }
-
-/**
- * UI texts of `c-select`, shallow-merged over the English defaults. Static
- * labels are strings; count- or label-interpolated ones are functions.
- */
-export interface CSelectTexts {
-  /** Accessible label of the clear button. */
-  clearSelection?: string;
-
-  /** Accessible label of the close button in the fullscreen panel (narrow viewports). */
-  closePanel?: string;
-
-  /**
-   * Text of the overflow tag when `max-tags` folds the selection; receives the
-   * number of hidden tags.
-   */
-  more?: (count: number) => string;
-
-  /** Accessible label of a tag's remove button; receives the option label. */
-  remove?: (label: string) => string;
-
-  /**
-   * Label of the select-all row; receives the number of enabled options
-   * listed.
-   */
-  selectAll?: (count: number) => string;
-
-  /**
-   * Field text when `max-tags="0"` shows no tags; receives the selection
-   * count.
-   */
-  selected?: (count: number) => string;
-
-  /** Accessible label of the chevron button that opens and closes the list. */
-  toggleOptions?: string;
-}
-
-/**
- * Selection value of `c-select`: the picked option's value — or the whole
- * `{ name, value }` item with `return-object` — and `null` when nothing is
- * selected. In `multiple` mode an array of them in the order they were
- * picked, `[]` when empty.
- */
-export type CSelectValue =
-  | (number | string)[]
-  | CSelectItem
-  | CSelectItem[]
-  | null
-  | number
-  | string;
 </script>
 
 <script setup lang="ts">

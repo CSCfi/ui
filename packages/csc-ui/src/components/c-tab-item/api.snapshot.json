@@ -1,6 +1,5 @@
 {
   "attributes": {
-    "active": "boolean = false",
     "value": "number | string = 0"
   },
   "cssProperties": [],
@@ -12,7 +11,6 @@
   ],
   "propertyOnly": [],
   "props": {
-    "active": "boolean = false",
     "value": "number | string = 0"
   },
   "slots": [

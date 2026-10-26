@@ -162,7 +162,73 @@
 <script lang="ts">
 import type { CFieldSize } from '../../types';
 
-export interface CTimePickerProps {
+/** A time range: ISO `HH:mm` ends, either of which may be `null` while only one is typed; an end before the start spans midnight. */
+export interface CTimePickerRange {
+  /** The end of the range; earlier than the start for an overnight range. */
+  end: null | string;
+
+  /** The start of the range. */
+  start: null | string;
+}
+
+/**
+ * The text committed from the field, as typed: a string, or both ends'
+ * texts under `range`.
+ */
+export type CTimePickerText = { end: string; start: string } | string;
+
+/**
+ * UI texts of `c-time-picker`, merged key by key over the AM/PM texts
+ * `Intl` gives for the page's `lang` and the English defaults.
+ */
+export interface CTimePickerTexts {
+  /** The period before noon in a 12-hour `format`. */
+  am?: string;
+
+  /** Accessible name of the dialog when the field has no label. */
+  chooseTime?: string;
+
+  /** Accessible label of the clear button. */
+  clearSelection?: string;
+
+  /** Accessible label of the close button in the fullscreen panel (narrow viewports). */
+  closePanel?: string;
+
+  /** Label of the Done button in the fullscreen panel (narrow viewports). */
+  done?: string;
+
+  /** Name of the end input and the end tab under `range`. */
+  end?: string;
+
+  /** Accessible name of the hour column. */
+  hours?: string;
+
+  /** Accessible name of the minute column. */
+  minutes?: string;
+
+  /** Label of the Now button (`show-now`). */
+  now?: string;
+
+  /** Accessible label of the clock button. */
+  openClock?: string;
+
+  /** Accessible name of the AM/PM column. */
+  period?: string;
+
+  /** The period from noon in a 12-hour `format`. */
+  pm?: string;
+
+  /** Name of the start input and the start tab under `range`. */
+  start?: string;
+}
+
+/**
+ * Value of `c-time-picker`: an ISO `HH:mm` string, a
+ * {@link CTimePickerRange} under `range`, or `null` when empty.
+ */
+export type CTimePickerValue = CTimePickerRange | null | string;
+
+interface CTimePickerProps {
   /**
    * Make the value clearable
    */
@@ -312,72 +378,6 @@ export interface CTimePickerProps {
    */
   value?: CTimePickerValue;
 }
-
-/** A time range: ISO `HH:mm` ends, either of which may be `null` while only one is typed; an end before the start spans midnight. */
-export interface CTimePickerRange {
-  /** The end of the range; earlier than the start for an overnight range. */
-  end: null | string;
-
-  /** The start of the range. */
-  start: null | string;
-}
-
-/**
- * The text committed from the field, as typed: a string, or both ends'
- * texts under `range`.
- */
-export type CTimePickerText = { end: string; start: string } | string;
-
-/**
- * UI texts of `c-time-picker`, merged key by key over the AM/PM texts
- * `Intl` gives for the page's `lang` and the English defaults.
- */
-export interface CTimePickerTexts {
-  /** The period before noon in a 12-hour `format`. */
-  am?: string;
-
-  /** Accessible name of the dialog when the field has no label. */
-  chooseTime?: string;
-
-  /** Accessible label of the clear button. */
-  clearSelection?: string;
-
-  /** Accessible label of the close button in the fullscreen panel (narrow viewports). */
-  closePanel?: string;
-
-  /** Label of the Done button in the fullscreen panel (narrow viewports). */
-  done?: string;
-
-  /** Name of the end input and the end tab under `range`. */
-  end?: string;
-
-  /** Accessible name of the hour column. */
-  hours?: string;
-
-  /** Accessible name of the minute column. */
-  minutes?: string;
-
-  /** Label of the Now button (`show-now`). */
-  now?: string;
-
-  /** Accessible label of the clock button. */
-  openClock?: string;
-
-  /** Accessible name of the AM/PM column. */
-  period?: string;
-
-  /** The period from noon in a 12-hour `format`. */
-  pm?: string;
-
-  /** Name of the start input and the start tab under `range`. */
-  start?: string;
-}
-
-/**
- * Value of `c-time-picker`: an ISO `HH:mm` string, a
- * {@link CTimePickerRange} under `range`, or `null` when empty.
- */
-export type CTimePickerValue = CTimePickerRange | null | string;
 </script>
 
 <script setup lang="ts">

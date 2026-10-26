@@ -51,7 +51,7 @@
 <script lang="ts">
 import type { CToastMessage, CToastType } from '../../types';
 
-export interface CToastProps {
+interface CToastProps {
   /**
    * Messages
    *

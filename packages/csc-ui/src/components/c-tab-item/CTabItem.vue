@@ -53,9 +53,9 @@ defineOptions({ inheritAttrs: false });
 
 interface CTabItemProps {
   /**
-   * Active
+   * Whether this is the shown panel; the parent `<c-tabs>` sets it.
    *
-   * @seeded from csc-ui — verify
+   * @internal
    */
   active?: boolean;
 

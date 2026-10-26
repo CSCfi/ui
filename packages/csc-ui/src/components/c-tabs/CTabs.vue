@@ -45,7 +45,7 @@
  */
 export type CTabsJustify = 'center' | 'end' | 'start' | 'stretch';
 
-export interface CTabsProps {
+interface CTabsProps {
   /**
    * Disable the bottom border
    *
@@ -452,6 +452,20 @@ const moveIndicator = (oldTab: HTMLElement, newTab: HTMLElement) => {
   }, 200);
 };
 
+let generatedIds = 0;
+
+// The id that pairs a tab with its panel (`aria-controls` and
+// `aria-labelledby`). An id the consumer set stays; a generated one is
+// unique per element, so it survives tabs being added or reordered.
+const ensureId = (el: HTMLElement, prefix: string): string => {
+  if (!el.id) {
+    generatedIds += 1;
+    el.id = `${prefix}-${autoId}-${generatedIds}`;
+  }
+
+  return el.id;
+};
+
 const handleActiveTab = () => {
   requestAnimationFrame(() => {
     const items = tabItemsEl();
@@ -468,17 +482,16 @@ const handleActiveTab = () => {
 
     const tb = tabButtonsEl();
 
-    tabItems.forEach((item, index) => {
+    tabItems.forEach((item) => {
       const tab = tabsList().find((t) => t.value === item.value);
 
-      const tabItemId = `c-tab-item-${autoId}-${index + 1}`;
+      const tabItemId = ensureId(item, 'c-tab-item');
 
       const isActive = item.value === internalValue.value;
 
       if (tab) {
-        const tabId = `c-tab-${autoId}-${index + 1}`;
+        const tabId = ensureId(tab, 'c-tab');
         item.setAttribute('aria-labelledby', tabId);
-        tab.setAttribute('id', tabId);
         tab.setAttribute('aria-controls', tabItemId);
 
         if (!tb) {
@@ -506,7 +519,6 @@ const handleActiveTab = () => {
         if (isActive && isDirty) tab.focus();
       }
 
-      item.setAttribute('id', tabItemId);
       item.active = isActive;
     });
   });

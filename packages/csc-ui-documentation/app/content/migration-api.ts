@@ -249,4 +249,76 @@ export const V3_API_CHANGES: V3ApiChange[] = [
     name: 'itemChange',
     tag: 'c-side-navigation-item',
   },
+  ...(
+    [
+      [
+        'c-accordion-item',
+        'collapsable',
+        '`c-accordion` sets it from its `mandatory`.',
+      ],
+      [
+        'c-accordion-item',
+        'expanded',
+        '`c-accordion` sets it from its `value`: expand items through the accordion’s `value` (or `v-model`), and style an expanded item with `c-accordion-item:state(expanded)`.',
+      ],
+      ['c-accordion-item', 'outlined', 'set `outlined` on `c-accordion`.'],
+      [
+        'c-list-item',
+        'disabled-by-parent',
+        '`c-list` sets it from its `disabled`. Disable the list, or the item itself.',
+      ],
+      [
+        'c-list-item-title',
+        'active',
+        'the `c-list-item` holding it sets it from its own `active`.',
+      ],
+      [
+        'c-step',
+        'complete',
+        '`c-steps` sets it from its `value`, the current step’s number.',
+      ],
+      [
+        'c-step',
+        'current',
+        '`c-steps` sets it from its `value`, the current step’s number.',
+      ],
+      [
+        'c-sub-navigation-item',
+        'focusable',
+        'the parent `c-side-navigation-item` takes the sub-items of a collapsed item out of the tab order.',
+      ],
+      ['c-tab', 'active', '`c-tabs` sets it from its `value`.'],
+      [
+        'c-tab-buttons',
+        'value',
+        '`c-tabs` sets it from its own `value`. Standalone use moves to `c-button-group`; see Component-specific changes.',
+      ],
+      ['c-tab-item', 'active', '`c-tabs` sets it from its `value`.'],
+      [
+        'c-tab-items',
+        'disable-animation',
+        '`c-tabs` sets it from its own `disable-animation`.',
+      ],
+      ['c-tab-items', 'value', '`c-tabs` sets it from its own `value`.'],
+    ] as const
+  ).map(([tag, name, how]) => ({
+    change: `Internal: ${how}`,
+    kind: 'prop' as const,
+    name,
+    tag,
+  })),
+  ...(['position', 'setsize'] as const).map((name) => ({
+    change:
+      'Removed: the browser counts the tabs of a `c-tabs` itself, for `aria-posinset` and `aria-setsize`.',
+    kind: 'prop' as const,
+    name,
+    tag: 'c-tab',
+  })),
+  {
+    change:
+      'A plain `id` on the tab, as on any element. `c-tabs` keeps it for `aria-controls` and generates one only for a tab without one.',
+    kind: 'prop',
+    name: 'id',
+    tag: 'c-tab',
+  },
 ];

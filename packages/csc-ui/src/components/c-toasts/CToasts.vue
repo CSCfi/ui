@@ -18,7 +18,12 @@
  */
 export type CToastsHorizontal = 'center' | 'left' | 'right';
 
-export interface CToastsProps {
+/**
+ * Vertical placement of the toast stack.
+ */
+export type CToastsVertical = 'bottom' | 'top';
+
+interface CToastsProps {
   /**
    * Use absolute positioning
    *
@@ -40,11 +45,6 @@ export interface CToastsProps {
    */
   vertical?: CToastsVertical;
 }
-
-/**
- * Vertical placement of the toast stack.
- */
-export type CToastsVertical = 'bottom' | 'top';
 </script>
 
 <script setup lang="ts">

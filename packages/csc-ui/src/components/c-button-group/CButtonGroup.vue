@@ -30,7 +30,20 @@
 </template>
 
 <script lang="ts">
-export interface CButtonGroupProps {
+/**
+ * Size of the button group. `small` renders a more compact control; the size
+ * is also propagated to every slotted `<c-button>`. Omitting the attribute
+ * renders the default size.
+ */
+export type CButtonGroupSize = 'default' | 'small';
+
+/**
+ * Selection value of the group: a single button value (or index) — `null`
+ * when nothing is selected — or, in `multiple` mode, an array of them.
+ */
+export type CButtonGroupValue = (number | string)[] | null | number | string;
+
+interface CButtonGroupProps {
   /** Disable the whole group — every slotted c-button is disabled and the selection can no longer be changed. */
   disabled?: boolean;
 
@@ -73,19 +86,6 @@ export interface CButtonGroupProps {
    */
   value?: CButtonGroupValue;
 }
-
-/**
- * Size of the button group. `small` renders a more compact control; the size
- * is also propagated to every slotted `<c-button>`. Omitting the attribute
- * renders the default size.
- */
-export type CButtonGroupSize = 'default' | 'small';
-
-/**
- * Selection value of the group: a single button value (or index) — `null`
- * when nothing is selected — or, in `multiple` mode, an array of them.
- */
-export type CButtonGroupValue = (number | string)[] | null | number | string;
 </script>
 
 <script setup lang="ts">

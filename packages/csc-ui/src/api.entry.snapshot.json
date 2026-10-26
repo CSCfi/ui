@@ -15,21 +15,14 @@
     "chartSlotsHex",
     "defineCustomElements",
     "h",
-    "migratedTags",
     "observeThemeMode",
     "resetDefaults",
     "resetTheme",
-    "tailwindVariantTags",
     "themeMode",
     "themeToCss"
   ],
   "types": {
     "CAlertIconType": "'error' | 'info' | 'success' | 'warning'",
-    "CAlertProps": {
-      "dismissible?": "boolean",
-      "heading?": "string",
-      "type?": "CAlertType"
-    },
     "CAlertType": "'default' | CAlertIconType",
     "CAutocompleteFilter": "( option: CAutocompleteOption, query: string, ) => boolean",
     "CAutocompleteItem": "CSelectItem",
@@ -37,33 +30,6 @@
       "disabled": "boolean",
       "label": "string",
       "value": "number | string"
-    },
-    "CAutocompleteProps": {
-      "clearable?": "boolean",
-      "disabled?": "boolean",
-      "errorMessage?": "string",
-      "external?": "boolean",
-      "filter?": "CAutocompleteFilter",
-      "hideDetails?": "boolean",
-      "hint?": "string",
-      "hostId?": "string",
-      "items?": "CAutocompleteItem[]",
-      "itemsPerPage?": "number",
-      "label?": "string",
-      "labelOnTop?": "boolean",
-      "loading?": "boolean",
-      "maxTags?": "number",
-      "multiple?": "boolean",
-      "name?": "string",
-      "placeholder?": "string",
-      "required?": "boolean",
-      "returnObject?": "boolean",
-      "selectAll?": "boolean",
-      "shadow?": "boolean",
-      "size?": "CFieldSize",
-      "texts?": "CAutocompleteTexts",
-      "valid?": "boolean",
-      "value?": "CAutocompleteValue"
     },
     "CAutocompleteTexts": {
       "clearSelection?": "string",
@@ -79,78 +45,17 @@
       "toggleOptions?": "string"
     },
     "CAutocompleteValue": "(number | string)[] | CAutocompleteItem | CAutocompleteItem[] | null | number | string",
-    "CBreadcrumbItemProps": {
-      "href?": "string",
-      "target?": "string"
-    },
-    "CBreadcrumbProps": {
-      "texts?": "CBreadcrumbTexts"
-    },
     "CBreadcrumbTexts": {
       "breadcrumb?": "string",
       "fold?": "(count: number) => string"
     },
-    "CButtonGroupProps": {
-      "disabled?": "boolean",
-      "label?": "string",
-      "mandatory?": "boolean",
-      "multiple?": "boolean",
-      "required?": "boolean",
-      "size?": "CButtonGroupSize",
-      "value?": "CButtonGroupValue"
-    },
     "CButtonGroupSize": "'default' | 'small'",
     "CButtonGroupValue": "(number | string)[] | null | number | string",
-    "CButtonProps": {
-      "active?": "boolean",
-      "danger?": "boolean",
-      "disabled?": "boolean",
-      "fit?": "boolean",
-      "ghost?": "boolean",
-      "hostId?": "string",
-      "href?": "string",
-      "inverted?": "boolean",
-      "loading?": "boolean",
-      "noRadius?": "boolean",
-      "noRipple?": "boolean",
-      "outlined?": "boolean",
-      "size?": "CButtonSize",
-      "target?": "string",
-      "text?": "boolean",
-      "type?": "CButtonType",
-      "value?": "number | string"
-    },
     "CButtonSize": "'default' | 'large' | 'small'",
     "CButtonType": "'button' | 'reset' | 'submit'",
     "CCardActionsAlign": "'center' | 'end' | 'start'",
     "CCardActionsJustify": "'center' | 'end' | 'space-around' | 'space-between' | 'start' | 'stretch'",
-    "CCardActionsProps": {
-      "align?": "CCardActionsAlign",
-      "justify?": "CCardActionsJustify"
-    },
     "CColorPickerFormat": "'hex' | 'oklch' | 'rgb'",
-    "CColorPickerProps": {
-      "alpha?": "boolean",
-      "clearable?": "boolean",
-      "disabled?": "boolean",
-      "errorMessage?": "string",
-      "format?": "CColorPickerFormat",
-      "hideDetails?": "boolean",
-      "hint?": "string",
-      "hostId?": "string",
-      "label?": "string",
-      "labelOnTop?": "boolean",
-      "name?": "string",
-      "placeholder?": "string",
-      "required?": "boolean",
-      "shadow?": "boolean",
-      "size?": "CFieldSize",
-      "swatches?": "CColorPickerSwatch[]",
-      "swatchesOnly?": "boolean",
-      "texts?": "CColorPickerTexts",
-      "valid?": "boolean",
-      "value?": "CColorPickerValue"
-    },
     "CColorPickerSwatch": "{ name?: string; value: string } | string",
     "CColorPickerTexts": {
       "alpha?": "string",
@@ -206,28 +111,6 @@
       "column": "CDataTableColumn",
       "rows": "CDataTableRow[]"
     },
-    "CDataTableProps": {
-      "autohide?": "boolean",
-      "columns?": "CDataTableColumn[]",
-      "data?": "CDataTableRow[]",
-      "expanded?": "string[]",
-      "expandedContent?": "( context: CDataTableExpandedContext, ) => CDataTableCellContent",
-      "external?": "boolean",
-      "filter?": "string",
-      "getRowId?": "(row: CDataTableRow) => string",
-      "itemCount?": "number",
-      "loading?": "boolean",
-      "page?": "number",
-      "pageSize?": "number",
-      "pageSizes?": "number[]",
-      "selected?": "string[]",
-      "selection?": "CDataTableSelectionMode",
-      "singleExpansion?": "boolean",
-      "sort?": "CDataTableSort | null",
-      "stickyFooter?": "boolean",
-      "stickyHeader?": "boolean",
-      "texts?": "CDataTableTexts"
-    },
     "CDataTableRow": "Record<string, unknown>",
     "CDataTableSelectionMode": "'multiple' | 'single'",
     "CDataTableSort": {
@@ -247,34 +130,6 @@
       "selectRow?": "string"
     },
     "CDatePickerDisabledDate": "{ end: string; start: string } | string",
-    "CDatePickerProps": {
-      "clearable?": "boolean",
-      "disabled?": "boolean",
-      "disabledDates?": "CDatePickerDisabledDate[]",
-      "errorMessage?": "string",
-      "firstDayOfWeek?": "CDatePickerWeekday",
-      "format?": "string",
-      "hideDetails?": "boolean",
-      "hint?": "string",
-      "hostId?": "string",
-      "isDateDisabled?": "(iso: string) => boolean",
-      "label?": "string",
-      "labelOnTop?": "boolean",
-      "max?": "string",
-      "min?": "string",
-      "name?": "string",
-      "placeholder?": "string",
-      "range?": "boolean",
-      "required?": "boolean",
-      "shadow?": "boolean",
-      "showToday?": "boolean",
-      "showWeekNumbers?": "boolean",
-      "size?": "CFieldSize",
-      "texts?": "CDatePickerTexts",
-      "type?": "CDatePickerType",
-      "valid?": "boolean",
-      "value?": "CDatePickerValue"
-    },
     "CDatePickerRange": {
       "end": "null | string",
       "start": "null | string"
@@ -331,25 +186,6 @@
       "type?": "string"
     },
     "CFileUploadFunction": "( file: File, context: CFileUploadContext, ) => Promise<unknown>",
-    "CFileUploadProps": {
-      "accept?": "string",
-      "compact?": "boolean",
-      "disabled?": "boolean",
-      "errorMessage?": "string",
-      "hideDetails?": "boolean",
-      "hint?": "string",
-      "label?": "string",
-      "manual?": "boolean",
-      "maxFiles?": "null | number",
-      "maxSize?": "null | number",
-      "multiple?": "boolean",
-      "required?": "boolean",
-      "size?": "CFieldSize",
-      "texts?": "CFileUploadTexts",
-      "upload?": "CFileUploadFunction",
-      "valid?": "boolean",
-      "value?": "CFileUploadEntry[] | null | string"
-    },
     "CFileUploadRejection": {
       "file": "File",
       "reason": "CFileUploadRejectReason"
@@ -381,58 +217,10 @@
       "uploading?": "string",
       "waiting?": "string"
     },
-    "CIconButtonProps": {
-      "badge?": "null | number | string",
-      "danger?": "boolean",
-      "disabled?": "boolean",
-      "ghost?": "boolean",
-      "inverted?": "boolean",
-      "loading?": "boolean",
-      "outlined?": "boolean",
-      "path?": "string",
-      "size?": "CIconButtonSize",
-      "text?": "boolean"
-    },
     "CIconButtonSize": "'default' | 'small' | 'x-small'",
     "CLoginCardActionsAlign": "'center' | 'end' | 'start'",
     "CLoginCardActionsJustify": "'center' | 'end' | 'space-around' | 'space-between' | 'start' | 'stretch'",
-    "CLoginCardActionsProps": {
-      "align?": "CLoginCardActionsAlign",
-      "justify?": "CLoginCardActionsJustify"
-    },
     "CLoginCardBlendMode": "'color-burn' | 'color-dodge' | 'color' | 'darken' | 'difference' | 'exclusion' | 'hard-light' | 'hue' | 'lighten' | 'luminosity' | 'multiply' | 'normal' | 'overlay' | 'saturation' | 'screen' | 'soft-light'",
-    "CLoginCardProps": {
-      "backgroundPosition?": "string",
-      "mobileBreakpoint?": "number",
-      "overlay?": "boolean",
-      "overlayBlendMode?": "CLoginCardBlendMode",
-      "src?": "string"
-    },
-    "CNumberFieldProps": {
-      "decimals?": "number",
-      "decimalSeparator?": "string",
-      "disabled?": "boolean",
-      "errorMessage?": "string",
-      "fixedDecimals?": "boolean",
-      "groupSeparator?": "string",
-      "hideDetails?": "boolean",
-      "hint?": "string",
-      "hostId?": "string",
-      "label?": "string",
-      "labelOnTop?": "boolean",
-      "max?": "null | number",
-      "min?": "null | number",
-      "name?": "string",
-      "placeholder?": "string",
-      "readonly?": "boolean",
-      "required?": "boolean",
-      "shadow?": "boolean",
-      "size?": "CFieldSize",
-      "step?": "number",
-      "texts?": "CNumberFieldTexts",
-      "valid?": "boolean",
-      "value?": "null | number | string"
-    },
     "CNumberFieldTexts": {
       "decrease?": "string",
       "increase?": "string"
@@ -447,52 +235,12 @@
       "textOverrides?": "Record<string, unknown>",
       "totalVisible?": "number"
     },
-    "CPaginationProps": {
-      "hideDetails?": "boolean",
-      "hideRange?": "boolean",
-      "simple?": "boolean",
-      "size?": "CPaginationSize",
-      "value?": "CPaginationOptions"
-    },
     "CPaginationSize": "'default' | 'small'",
     "CPlacement": "'bottom-end' | 'bottom-start' | 'bottom' | 'left-end' | 'left-start' | 'left' | 'right-end' | 'right-start' | 'right' | 'top-end' | 'top-start' | 'top'",
-    "CPopoverProps": {
-      "distance?": "number | string",
-      "heading?": "string",
-      "open?": "boolean",
-      "position?": "CPlacement",
-      "trigger?": "HTMLElement | string"
-    },
     "CSelectItem": {
       "disabled?": "boolean",
       "name": "string",
       "value": "number | string"
-    },
-    "CSelectProps": {
-      "clearable?": "boolean",
-      "disabled?": "boolean",
-      "errorMessage?": "string",
-      "hideDetails?": "boolean",
-      "hint?": "string",
-      "hostId?": "string",
-      "items?": "CSelectItem[]",
-      "itemsPerPage?": "number",
-      "label?": "string",
-      "labelOnTop?": "boolean",
-      "loading?": "boolean",
-      "maxTags?": "number",
-      "multiple?": "boolean",
-      "name?": "string",
-      "optionAsSelection?": "boolean",
-      "placeholder?": "string",
-      "required?": "boolean",
-      "returnObject?": "boolean",
-      "selectAll?": "boolean",
-      "shadow?": "boolean",
-      "size?": "CFieldSize",
-      "texts?": "CSelectTexts",
-      "valid?": "boolean",
-      "value?": "CSelectValue"
     },
     "CSelectTexts": {
       "clearSelection?": "string",
@@ -504,93 +252,13 @@
       "toggleOptions?": "string"
     },
     "CSelectValue": "(number | string)[] | CSelectItem | CSelectItem[] | null | number | string",
-    "CStatusProps": {
-      "type?": "CStatusType"
-    },
     "CStatusType": "'error' | 'info' | 'success' | 'warning'",
-    "CTabButtonsProps": {
-      "disabled?": "boolean",
-      "size?": "CTabButtonsSize",
-      "value?": "number | string"
-    },
     "CTabButtonsSize": "'default' | 'small'",
     "CTabsJustify": "'center' | 'end' | 'start' | 'stretch'",
-    "CTabsProps": {
-      "borderless?": "boolean",
-      "disableAnimation?": "boolean",
-      "justify?": "CTabsJustify",
-      "mobileBreakpoint?": "number",
-      "value?": "number | string",
-      "vertical?": "boolean"
-    },
-    "CTagProps": {
-      "active?": "boolean",
-      "badge?": "null | number | string",
-      "closeable?": "boolean",
-      "closeLabel?": "string",
-      "flat?": "boolean",
-      "size?": "CTagSize"
-    },
     "CTagSize": "'default' | 'small'",
-    "CTagsProps": {
-      "label?": "string",
-      "required?": "boolean",
-      "size?": "CTagsSize"
-    },
     "CTagsSize": "'default' | 'small'",
     "CTextFieldAutocapitalize": "'characters' | 'none' | 'off' | 'on' | 'sentences' | 'words'",
-    "CTextFieldProps": {
-      "autocomplete?": "string",
-      "autocorrect?": "boolean",
-      "automaticCapitalize?": "CTextFieldAutocapitalize",
-      "disabled?": "boolean",
-      "errorMessage?": "string",
-      "hideDetails?": "boolean",
-      "hint?": "string",
-      "hostId?": "string",
-      "label?": "string",
-      "labelOnTop?": "boolean",
-      "mask?": "string",
-      "max?": "null | number",
-      "min?": "null | number",
-      "name?": "string",
-      "placeholder?": "string",
-      "readonly?": "boolean",
-      "required?": "boolean",
-      "rows?": "number",
-      "shadow?": "boolean",
-      "size?": "CFieldSize",
-      "step?": "null | number",
-      "trimWhitespace?": "boolean",
-      "type?": "CTextFieldType",
-      "valid?": "boolean",
-      "value?": "string"
-    },
     "CTextFieldType": "'date' | 'email' | 'number' | 'password' | 'search' | 'tel' | 'text' | 'url'",
-    "CTimePickerProps": {
-      "clearable?": "boolean",
-      "disabled?": "boolean",
-      "errorMessage?": "string",
-      "format?": "string",
-      "hideDetails?": "boolean",
-      "hint?": "string",
-      "hostId?": "string",
-      "label?": "string",
-      "labelOnTop?": "boolean",
-      "max?": "string",
-      "min?": "string",
-      "minuteStep?": "number",
-      "name?": "string",
-      "placeholder?": "string",
-      "range?": "boolean",
-      "required?": "boolean",
-      "shadow?": "boolean",
-      "showNow?": "boolean",
-      "size?": "CFieldSize",
-      "texts?": "CTimePickerTexts",
-      "valid?": "boolean",
-      "value?": "CTimePickerValue"
-    },
     "CTimePickerRange": {
       "end": "null | string",
       "start": "null | string"
@@ -624,25 +292,9 @@
       "title?": "string",
       "type?": "CToastType"
     },
-    "CToastProps": {
-      "message?": "CToastMessage | null"
-    },
     "CToastsHorizontal": "'center' | 'left' | 'right'",
-    "CToastsProps": {
-      "absolute?": "boolean",
-      "horizontal?": "CToastsHorizontal",
-      "vertical?": "CToastsVertical"
-    },
     "CToastsVertical": "'bottom' | 'top'",
     "CToastType": "'error' | 'info' | 'success' | 'warning'",
-    "CTooltipProps": {
-      "delay?": "number | string",
-      "distance?": "number | string",
-      "open?": "boolean",
-      "position?": "CPlacement",
-      "text?": "string",
-      "trigger?": "HTMLElement | string"
-    },
     "CTreeSelectFilter": "( item: CTreeSelectItem, query: string, path: CTreeSelectItem[], ) => boolean",
     "CTreeSelectItem": {
       "children?": "CTreeSelectItem[]",
@@ -650,30 +302,6 @@
       "disabled?": "boolean",
       "name": "string",
       "value": "number | string"
-    },
-    "CTreeSelectProps": {
-      "allowBranch?": "boolean",
-      "clearable?": "boolean",
-      "disabled?": "boolean",
-      "errorMessage?": "string",
-      "filter?": "CTreeSelectFilter",
-      "hideDetails?": "boolean",
-      "hint?": "string",
-      "hostId?": "string",
-      "items?": "CTreeSelectItem[]",
-      "itemsPerPage?": "number",
-      "label?": "string",
-      "labelOnTop?": "boolean",
-      "levelLabels?": "string[]",
-      "name?": "string",
-      "placeholder?": "string",
-      "required?": "boolean",
-      "returnObject?": "boolean",
-      "shadow?": "boolean",
-      "size?": "CFieldSize",
-      "texts?": "CTreeSelectTexts",
-      "valid?": "boolean",
-      "value?": "CTreeSelectValue"
     },
     "CTreeSelectSelection": {
       "code?": "string",

@@ -374,7 +374,58 @@ export interface CDataTableFooterContext {
   rows: CDataTableRow[];
 }
 
-export interface CDataTableProps {
+/** A single data row — the consumer's own plain domain object. */
+export type CDataTableRow = Record<string, unknown>;
+
+/** Row selection mode. Unset means rows are not selectable. */
+export type CDataTableSelectionMode = 'multiple' | 'single';
+
+/** The table's atomic sorting state. */
+export interface CDataTableSort {
+  /** `key` of the sorted column. */
+  column: string;
+
+  /** Direction the column is sorted in. */
+  direction: CDataTableSortDirection;
+}
+
+/** Sorting direction of a column. */
+export type CDataTableSortDirection = 'asc' | 'desc';
+
+/**
+ * UI texts, shallow-merged over the English defaults. Static labels are
+ * strings; count-interpolated ones are functions.
+ */
+export interface CDataTableTexts {
+  /** Banner text when every (filtered) row is selected. */
+  allSelected?: (count: number) => string;
+
+  /** Label of the banner action clearing the whole selection. */
+  clearSelection?: string;
+
+  /** Accessible label of a row's expansion toggle. */
+  expandRow?: string;
+
+  /** Text shown when the table is empty while `loading`. */
+  loading?: string;
+
+  /** Text shown when there are no rows (unless the `empty` slot is used). */
+  noData?: string;
+
+  /** Banner text when the visible page is fully selected. */
+  pageSelected?: (count: number) => string;
+
+  /** Label of the banner action selecting all (filtered) rows. */
+  selectAllItems?: (count: number) => string;
+
+  /** Accessible label of the header select-all checkbox. */
+  selectPage?: string;
+
+  /** Accessible label of a row's selection checkbox. */
+  selectRow?: string;
+}
+
+interface CDataTableProps {
   /**
    * Move overflowing `expansion: 'auto'` columns into the expansion row
    * (rightmost first) instead of scrolling horizontally.
@@ -461,57 +512,6 @@ export interface CDataTableProps {
    * @defaultable {}
    */
   texts?: CDataTableTexts;
-}
-
-/** A single data row — the consumer's own plain domain object. */
-export type CDataTableRow = Record<string, unknown>;
-
-/** Row selection mode. Unset means rows are not selectable. */
-export type CDataTableSelectionMode = 'multiple' | 'single';
-
-/** The table's atomic sorting state. */
-export interface CDataTableSort {
-  /** `key` of the sorted column. */
-  column: string;
-
-  /** Direction the column is sorted in. */
-  direction: CDataTableSortDirection;
-}
-
-/** Sorting direction of a column. */
-export type CDataTableSortDirection = 'asc' | 'desc';
-
-/**
- * UI texts, shallow-merged over the English defaults. Static labels are
- * strings; count-interpolated ones are functions.
- */
-export interface CDataTableTexts {
-  /** Banner text when every (filtered) row is selected. */
-  allSelected?: (count: number) => string;
-
-  /** Label of the banner action clearing the whole selection. */
-  clearSelection?: string;
-
-  /** Accessible label of a row's expansion toggle. */
-  expandRow?: string;
-
-  /** Text shown when the table is empty while `loading`. */
-  loading?: string;
-
-  /** Text shown when there are no rows (unless the `empty` slot is used). */
-  noData?: string;
-
-  /** Banner text when the visible page is fully selected. */
-  pageSelected?: (count: number) => string;
-
-  /** Label of the banner action selecting all (filtered) rows. */
-  selectAllItems?: (count: number) => string;
-
-  /** Accessible label of the header select-all checkbox. */
-  selectPage?: string;
-
-  /** Accessible label of a row's selection checkbox. */
-  selectRow?: string;
 }
 </script>
 

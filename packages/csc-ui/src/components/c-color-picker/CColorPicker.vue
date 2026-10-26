@@ -353,7 +353,75 @@ import type { CFieldSize } from '../../types';
 /** The notation a colour picker's value is written in (CONTEXT.md "Notation"). */
 export type CColorPickerFormat = 'hex' | 'oklch' | 'rgb';
 
-export interface CColorPickerProps {
+/** A predefined colour: a CSS colour, or one with a name for assistive technology and the swatch-only field. */
+export type CColorPickerSwatch = { name?: string; value: string } | string;
+
+/**
+ * UI texts of `c-color-picker`, merged key by key over the English defaults.
+ */
+export interface CColorPickerTexts {
+  /** Accessible name of the alpha slider and the A channel. */
+  alpha?: string;
+
+  /** Accessible name of the blue channel. */
+  blue?: string;
+
+  /** Accessible name of the colour area's vertical axis. */
+  brightness?: string;
+
+  /** Accessible name of the dialog when the field has no label. */
+  chooseColor?: string;
+
+  /** Accessible name of the chroma channel. */
+  chroma?: string;
+
+  /** Accessible label of the clear button. */
+  clearSelection?: string;
+
+  /** Accessible label of the close button in the fullscreen panel (narrow viewports). */
+  closePanel?: string;
+
+  /** Label of the Done button in the fullscreen panel (narrow viewports). */
+  done?: string;
+
+  /** Accessible name of the green channel. */
+  green?: string;
+
+  /** Accessible name of the hex channel. */
+  hex?: string;
+
+  /** Accessible name of the hue slider and the OKLCH hue channel. */
+  hue?: string;
+
+  /** Accessible name of the lightness channel. */
+  lightness?: string;
+
+  /** Accessible name of the notation switch. */
+  notation?: string;
+
+  /** Accessible label of the colour button. */
+  openPicker?: string;
+
+  /** Accessible name of the red channel. */
+  red?: string;
+
+  /** Accessible label of the original colour in the colour comparison: a click restores it. */
+  restoreOriginal?: string;
+
+  /** Accessible name of the colour area's horizontal axis. */
+  saturation?: string;
+
+  /** Accessible name of the swatch list. */
+  swatches?: string;
+
+  /** Accessible label of the swatch-only field's chevron button. */
+  toggleSwatches?: string;
+}
+
+/** Value of `c-color-picker`: a colour in its `format` notation, or `null` when empty. */
+export type CColorPickerValue = null | string;
+
+interface CColorPickerProps {
   /**
    * Let the colour carry transparency: an alpha slider and an A channel join
    * the panel. Without it typed alpha is dropped
@@ -487,74 +555,6 @@ export interface CColorPickerProps {
    */
   value?: CColorPickerValue;
 }
-
-/** A predefined colour: a CSS colour, or one with a name for assistive technology and the swatch-only field. */
-export type CColorPickerSwatch = { name?: string; value: string } | string;
-
-/**
- * UI texts of `c-color-picker`, merged key by key over the English defaults.
- */
-export interface CColorPickerTexts {
-  /** Accessible name of the alpha slider and the A channel. */
-  alpha?: string;
-
-  /** Accessible name of the blue channel. */
-  blue?: string;
-
-  /** Accessible name of the colour area's vertical axis. */
-  brightness?: string;
-
-  /** Accessible name of the dialog when the field has no label. */
-  chooseColor?: string;
-
-  /** Accessible name of the chroma channel. */
-  chroma?: string;
-
-  /** Accessible label of the clear button. */
-  clearSelection?: string;
-
-  /** Accessible label of the close button in the fullscreen panel (narrow viewports). */
-  closePanel?: string;
-
-  /** Label of the Done button in the fullscreen panel (narrow viewports). */
-  done?: string;
-
-  /** Accessible name of the green channel. */
-  green?: string;
-
-  /** Accessible name of the hex channel. */
-  hex?: string;
-
-  /** Accessible name of the hue slider and the OKLCH hue channel. */
-  hue?: string;
-
-  /** Accessible name of the lightness channel. */
-  lightness?: string;
-
-  /** Accessible name of the notation switch. */
-  notation?: string;
-
-  /** Accessible label of the colour button. */
-  openPicker?: string;
-
-  /** Accessible name of the red channel. */
-  red?: string;
-
-  /** Accessible label of the original colour in the colour comparison: a click restores it. */
-  restoreOriginal?: string;
-
-  /** Accessible name of the colour area's horizontal axis. */
-  saturation?: string;
-
-  /** Accessible name of the swatch list. */
-  swatches?: string;
-
-  /** Accessible label of the swatch-only field's chevron button. */
-  toggleSwatches?: string;
-}
-
-/** Value of `c-color-picker`: a colour in its `format` notation, or `null` when empty. */
-export type CColorPickerValue = null | string;
 </script>
 
 <script setup lang="ts">

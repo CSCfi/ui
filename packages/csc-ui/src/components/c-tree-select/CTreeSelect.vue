@@ -382,7 +382,105 @@ export interface CTreeSelectItem {
   value: number | string;
 }
 
-export interface CTreeSelectProps {
+/**
+ * The committed item as emitted with `return-object`: a fresh object — never
+ * the `items` entry itself — with its ancestors root-first and without
+ * `children`.
+ */
+export interface CTreeSelectSelection {
+  /** The committed item's code, when it has one. */
+  code?: string;
+
+  /** The committed item's label. */
+  name: string;
+
+  /** The committed item's ancestors, root-first. */
+  path: Array<{ code?: string; name: string; value: number | string }>;
+
+  /** The committed item's value. */
+  value: number | string;
+}
+
+/**
+ * UI texts of `c-tree-select`, shallow-merged over the English defaults.
+ * Static labels are strings; interpolated ones are functions.
+ */
+export interface CTreeSelectTexts {
+  /** Accessible label of the breadcrumb navigation in the panel. */
+  breadcrumb?: string;
+
+  /**
+   * Label of the "Browse instead" control shown in the header while a query
+   * is typed.
+   */
+  browse?: string;
+
+  /** Meta text on a branch row; receives its number of children. */
+  children?: (count: number) => string;
+
+  /**
+   * Header text in browse mode; receives the label of the level being
+   * listed.
+   */
+  choose?: (levelLabel: string) => string;
+
+  /** Accessible label of the clear button. */
+  clearSelection?: string;
+
+  /** Accessible label of the close button in the fullscreen panel (narrow viewports). */
+  closePanel?: string;
+
+  /** Accessible label of the search input inside the panel. */
+  filterOptions?: string;
+
+  /**
+   * Header text of a level whose rows are all leaves in an unevenly deep
+   * tree (an evenly deep tree shows the step counter instead).
+   */
+  final?: string;
+
+  /**
+   * Default label of level `n` (1 = the top level) when `level-labels` gives
+   * none.
+   */
+  level?: (n: number) => string;
+
+  /** Header text in search mode; receives the number of matches. */
+  matches?: (count: number) => string;
+
+  /** Text of the row shown when nothing is listed. */
+  noResults?: string;
+
+  /** Label of the root crumb. */
+  root?: string;
+
+  /** Placeholder of the search input when the `placeholder` prop is empty. */
+  searchPlaceholder?: string;
+
+  /**
+   * Label of the pinned select-branch row; receives the current branch's
+   * name.
+   */
+  select?: (name: string) => string;
+
+  /**
+   * Header step counter shown while the tree is evenly deep (every leaf at
+   * one level); receives the step and the total number of levels.
+   */
+  step?: (n: number, total: number) => string;
+
+  /** Accessible label of the chevron button that opens and closes the panel. */
+  toggleOptions?: string;
+}
+
+/**
+ * Selection value of `c-tree-select`: the committed item's value — or a
+ * {@link CTreeSelectSelection} with `return-object` — and `null` when
+ * cleared.
+ */
+export type CTreeSelectValue = CTreeSelectSelection | null | number | string;
+
+interface CTreeSelectProps {
   /**
    * Let a branch be committed as the value: a pinned select-branch row heads
    * every level below the root, and matching branches are listed as search
@@ -526,104 +624,6 @@ export interface CTreeSelectProps {
    */
   value?: CTreeSelectValue;
 }
-
-/**
- * The committed item as emitted with `return-object`: a fresh object — never
- * the `items` entry itself — with its ancestors root-first and without
- * `children`.
- */
-export interface CTreeSelectSelection {
-  /** The committed item's code, when it has one. */
-  code?: string;
-
-  /** The committed item's label. */
-  name: string;
-
-  /** The committed item's ancestors, root-first. */
-  path: Array<{ code?: string; name: string; value: number | string }>;
-
-  /** The committed item's value. */
-  value: number | string;
-}
-
-/**
- * UI texts of `c-tree-select`, shallow-merged over the English defaults.
- * Static labels are strings; interpolated ones are functions.
- */
-export interface CTreeSelectTexts {
-  /** Accessible label of the breadcrumb navigation in the panel. */
-  breadcrumb?: string;
-
-  /**
-   * Label of the "Browse instead" control shown in the header while a query
-   * is typed.
-   */
-  browse?: string;
-
-  /** Meta text on a branch row; receives its number of children. */
-  children?: (count: number) => string;
-
-  /**
-   * Header text in browse mode; receives the label of the level being
-   * listed.
-   */
-  choose?: (levelLabel: string) => string;
-
-  /** Accessible label of the clear button. */
-  clearSelection?: string;
-
-  /** Accessible label of the close button in the fullscreen panel (narrow viewports). */
-  closePanel?: string;
-
-  /** Accessible label of the search input inside the panel. */
-  filterOptions?: string;
-
-  /**
-   * Header text of a level whose rows are all leaves in an unevenly deep
-   * tree (an evenly deep tree shows the step counter instead).
-   */
-  final?: string;
-
-  /**
-   * Default label of level `n` (1 = the top level) when `level-labels` gives
-   * none.
-   */
-  level?: (n: number) => string;
-
-  /** Header text in search mode; receives the number of matches. */
-  matches?: (count: number) => string;
-
-  /** Text of the row shown when nothing is listed. */
-  noResults?: string;
-
-  /** Label of the root crumb. */
-  root?: string;
-
-  /** Placeholder of the search input when the `placeholder` prop is empty. */
-  searchPlaceholder?: string;
-
-  /**
-   * Label of the pinned select-branch row; receives the current branch's
-   * name.
-   */
-  select?: (name: string) => string;
-
-  /**
-   * Header step counter shown while the tree is evenly deep (every leaf at
-   * one level); receives the step and the total number of levels.
-   */
-  step?: (n: number, total: number) => string;
-
-  /** Accessible label of the chevron button that opens and closes the panel. */
-  toggleOptions?: string;
-}
-
-/**
- * Selection value of `c-tree-select`: the committed item's value — or a
- * {@link CTreeSelectSelection} with `return-object` — and `null` when
- * cleared.
- */
-export type CTreeSelectValue = CTreeSelectSelection | null | number | string;
 </script>
 
 <script setup lang="ts">

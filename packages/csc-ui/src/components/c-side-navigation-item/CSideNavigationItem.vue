@@ -5,7 +5,7 @@
       ref="headerRef"
       :class="ui.header()"
       :href="href || undefined"
-      :tabindex="focusable ? 0 : -1"
+      :tabindex="collapsed ? -1 : 0"
       :target="href ? target : undefined"
       part="header"
       role="menuitem"
@@ -35,7 +35,7 @@
 <script setup lang="ts">
 /**
  * @slot default - The item's label content (text and an optional c-icon)
- * @slot sub-item - Nested c-side-navigation-item components; assigned automatically to nested items
+ * @internalslot sub-item - Assigned by the item to its nested items
  *
  * @csspart root - The outer box wrapping the header and sub-navigation, carrying the background and state styling
  * @csspart header - The clickable header row (an `<a>` when `href` is set) holding the chevron and label
@@ -167,8 +167,13 @@ interface CSideNavigationItemProps {
    */
   active?: boolean;
 
-  /** Whether the item is in the keyboard tab order — a parent item sets this to false on its collapsed sub-items so hidden items aren't Tab-reachable */
-  focusable?: boolean;
+  /**
+   * Whether the item sits under a collapsed parent item, which sets it so
+   * hidden items are not Tab-reachable.
+   *
+   * @internal
+   */
+  collapsed?: boolean;
 
   /**
    * Hyperlink url
@@ -203,7 +208,7 @@ interface CSideNavigationItemProps {
 
 const props = withDefaults(defineProps<CSideNavigationItemProps>(), {
   active: false,
-  focusable: true,
+  collapsed: false,
   href: '',
   loading: false,
   target: '',
@@ -252,15 +257,14 @@ const handleChildClasses = () => {
     .forEach((c) => c.classList.add('c-sub-navigation-item--sub-level'));
 };
 
-// Propagate focusability + aria-hidden to sub-navigation-item children
-// based on this item's expanded state — hidden subitems shouldn't be
-// in the tab order.
-const handleChildFocusableChange = (focusable: boolean) => {
+// Propagate this item's expanded state to its sub-items — hidden sub-items
+// leave the tab order and the accessibility tree.
+const handleChildCollapsedChange = (expanded: boolean) => {
   if (!slotHasContent.value || !host) return;
   host.querySelectorAll('[slot="sub-item"]').forEach((child: Element) => {
-    const c = child as { focusable?: boolean } & HTMLElement;
-    c.setAttribute('aria-hidden', String(!focusable));
-    c.focusable = focusable;
+    const c = child as { collapsed?: boolean } & HTMLElement;
+    c.setAttribute('aria-hidden', String(!expanded));
+    c.collapsed = !expanded;
   });
 };
 
@@ -315,7 +319,7 @@ onMounted(() => {
   });
 
   handleChildClasses();
-  handleChildFocusableChange(props.active);
+  handleChildCollapsedChange(props.active);
 
   watchEffect(() => {
     host.classList.toggle('c-side-navigation-item', true);
@@ -341,7 +345,7 @@ onMounted(() => {
       }
     }
 
-    handleChildFocusableChange(props.active);
+    handleChildCollapsedChange(props.active);
   });
 });
 </script>

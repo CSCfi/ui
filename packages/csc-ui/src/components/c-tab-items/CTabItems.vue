@@ -37,16 +37,17 @@ const ui = tabItems();
 
 interface CTabItemsProps {
   /**
-   * Disable animation
+   * Switch panels without the slide; the parent `<c-tabs>` sets it from its
+   * own `disable-animation`.
    *
-   * @seeded from csc-ui — verify
+   * @internal
    */
   disableAnimation?: boolean;
 
   /**
-   * Currently active tab
+   * Value of the shown panel; the parent `<c-tabs>` sets it.
    *
-   * @seeded from csc-ui — verify
+   * @internal
    */
   value?: number | string;
 }

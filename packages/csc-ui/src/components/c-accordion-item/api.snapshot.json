@@ -1,9 +1,6 @@
 {
   "attributes": {
-    "collapsable": "boolean = false",
-    "expanded": "boolean = false",
     "heading": "string = ''",
-    "outlined": "boolean = false",
     "value": "number | string"
   },
   "cssProperties": [],
@@ -18,10 +15,7 @@
   ],
   "propertyOnly": [],
   "props": {
-    "collapsable": "boolean = false",
-    "expanded": "boolean = false",
     "heading": "string = ''",
-    "outlined": "boolean = false",
     "value": "number | string"
   },
   "slots": [
@@ -29,7 +23,9 @@
     "header",
     "icon"
   ],
-  "states": [],
+  "states": [
+    "expanded"
+  ],
   "subcomponents": [],
   "tag": "c-accordion-item"
 }

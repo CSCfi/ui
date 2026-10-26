@@ -41,7 +41,7 @@ export type CLoginCardBlendMode =
   | 'screen'
   | 'soft-light';
 
-export interface CLoginCardProps {
+interface CLoginCardProps {
   /**
    * Background position (css background-position)
    *

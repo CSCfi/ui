@@ -1,10 +1,10 @@
 /**
  * Conformance suite, kind "all components" (CONTEXT.md, ADR-0049): the
- * contract every registered tag honours, enrolled from `migratedTags`.
+ * contract every registered tag honours, enrolled from `registeredTags`.
  */
 import { describe, expect, it } from 'vitest';
 
-import { migratedTags } from '../../index';
+import { registeredTags } from '../../registry';
 import { BENIGN_BROWSER_NOTICES, consoleSpy, mount, settle } from '../harness';
 import { FIXTURES, NO_ROOT_PART } from './kinds';
 
@@ -35,7 +35,7 @@ const customProperties = (style: CSSStyleDeclaration): Map<string, string> =>
       .map((name) => [name, style.getPropertyValue(name)]),
   );
 
-describe.each(migratedTags)('%s', (tag) => {
+describe.each(registeredTags)('%s', (tag) => {
   it('upgrades into a shadow root', async () => {
     const { host } = await mount(tag, FIXTURES[tag]);
 

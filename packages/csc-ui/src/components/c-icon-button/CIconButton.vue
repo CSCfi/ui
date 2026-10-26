@@ -36,7 +36,13 @@
 </template>
 
 <script lang="ts">
-export interface CIconButtonProps {
+/**
+ * Size of the icon button. `small` and `x-small` render progressively more
+ * compact buttons; omitting the attribute renders the default size.
+ */
+export type CIconButtonSize = 'default' | 'small' | 'x-small';
+
+interface CIconButtonProps {
   /**
    * Show a badge on top of the icon
    *
@@ -108,12 +114,6 @@ export interface CIconButtonProps {
    */
   text?: boolean;
 }
-
-/**
- * Size of the icon button. `small` and `x-small` render progressively more
- * compact buttons; omitting the attribute renders the default size.
- */
-export type CIconButtonSize = 'default' | 'small' | 'x-small';
 </script>
 
 <script setup lang="ts">

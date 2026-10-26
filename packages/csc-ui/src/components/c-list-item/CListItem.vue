@@ -104,9 +104,9 @@ interface CListItemProps {
   disabled?: boolean;
 
   /**
-   * Disabled by the parent list
+   * Disabled by the parent `<c-list>`, which sets it from its own `disabled`.
    *
-   * @seeded from csc-ui — verify
+   * @internal
    */
   disabledByParent?: boolean;
 

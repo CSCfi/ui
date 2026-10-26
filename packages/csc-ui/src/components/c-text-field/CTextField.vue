@@ -149,7 +149,22 @@ export type CTextFieldAutocapitalize =
   | 'sentences'
   | 'words';
 
-export interface CTextFieldProps {
+/**
+ * Type of the input. `password` gets a reveal toggle, `date` a picker button,
+ * `number` honours `min`/`max`/`step`; the rest map straight to the native
+ * input type.
+ */
+export type CTextFieldType =
+  | 'date'
+  | 'email'
+  | 'number'
+  | 'password'
+  | 'search'
+  | 'tel'
+  | 'text'
+  | 'url';
+
+interface CTextFieldProps {
   /**
    * HTML input autocomplete
    *
@@ -336,21 +351,6 @@ export interface CTextFieldProps {
    */
   value?: string;
 }
-
-/**
- * Type of the input. `password` gets a reveal toggle, `date` a picker button,
- * `number` honours `min`/`max`/`step`; the rest map straight to the native
- * input type.
- */
-export type CTextFieldType =
-  | 'date'
-  | 'email'
-  | 'number'
-  | 'password'
-  | 'search'
-  | 'tel'
-  | 'text'
-  | 'url';
 </script>
 
 <script setup lang="ts">

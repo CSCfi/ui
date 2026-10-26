@@ -96,8 +96,8 @@ import { useFallbackPosition } from '../../shared/useFallbackPosition';
  * The owning `c-menu` is the sole keyboard/focus controller (see CMenu.vue):
  * `provide/inject` does not cross `defineCustomElement` boundaries, so the
  * menu drives this item through the DOM (delegated events, roving `tabindex`)
- * and through the `openSubmenu`/`closeSubmenu`/`isSubmenuOpen` methods
- * exposed below.
+ * and through the `_openSubmenu`/`_closeSubmenu`/`_isSubmenuOpen` methods
+ * exposed below (internal: `_`-prefixed, so not in the manifest).
  *
  * Styling is in this `tailwind-variants` config; `::part()` is the
  * customization surface. The `<style>` block is the
@@ -324,10 +324,10 @@ const applySubmenuCap = () => {
 
 // ---- exposed imperative API (called by the controlling c-menu) ----------
 
-const isSubmenuOpen = (): boolean =>
+const _isSubmenuOpen = (): boolean =>
   submenuRef.value?.matches(':popover-open') ?? false;
 
-const openSubmenu = () => {
+const _openSubmenu = () => {
   const panel = submenuRef.value;
 
   if (!panel) return;
@@ -337,7 +337,7 @@ const openSubmenu = () => {
       panel.showPopover();
     } catch {
       // `InvalidStateError` while the panel is still leaving the top layer:
-      // the controller reads `isSubmenuOpen()` and does not record an open.
+      // the controller reads `_isSubmenuOpen()` and does not record an open.
       return;
     }
   }
@@ -348,7 +348,7 @@ const openSubmenu = () => {
   fallback.start();
 };
 
-const closeSubmenu = () => {
+const _closeSubmenu = () => {
   const panel = submenuRef.value;
 
   if (panel?.matches(':popover-open')) panel.hidePopover();
@@ -360,7 +360,7 @@ const closeSubmenu = () => {
   }
 };
 
-defineExpose({ closeSubmenu, isSubmenuOpen, openSubmenu });
+defineExpose({ _closeSubmenu, _isSubmenuOpen, _openSubmenu });
 
 // ---- host ARIA / role wiring --------------------------------------------
 

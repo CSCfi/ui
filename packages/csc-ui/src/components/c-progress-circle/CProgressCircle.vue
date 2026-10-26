@@ -105,7 +105,7 @@ const progressCircle = tv({
 
 const ui = computed(() => progressCircle());
 
-export interface CProgressCircleProps {
+interface CProgressCircleProps {
   /**
    * Diameter of the circle in pixels
    */

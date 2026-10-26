@@ -56,16 +56,6 @@
 </template>
 
 <script lang="ts">
-export interface CBreadcrumbProps {
-  /**
-   * UI text overrides (i18n), merged over the English defaults. Objects have
-   * no attribute form — set it as a property
-   *
-   * @defaultable {}
-   */
-  texts?: CBreadcrumbTexts;
-}
-
 /**
  * UI texts of `c-breadcrumb`, shallow-merged over the English defaults.
  * Static labels are strings; interpolated ones are functions.
@@ -77,13 +67,23 @@ export interface CBreadcrumbTexts {
   /** Accessible name of the fold button; receives the number of folded crumbs. */
   fold?: (count: number) => string;
 }
+
+interface CBreadcrumbProps {
+  /**
+   * UI text overrides (i18n), merged over the English defaults. Objects have
+   * no attribute form — set it as a property
+   *
+   * @defaultable {}
+   */
+  texts?: CBreadcrumbTexts;
+}
 </script>
 
 <script setup lang="ts">
 /**
  * @slot default - The crumbs (`c-breadcrumb-item`), from the top of the hierarchy down to the current page
- * @slot first - Assigned by the breadcrumb to its first crumb; never set `slot` on a crumb
- * @slot folded - Assigned by the breadcrumb to the crumbs it folds into the fold panel; never set `slot` on a crumb
+ * @internalslot first - Assigned by the breadcrumb to its first crumb
+ * @internalslot folded - Assigned by the breadcrumb to the crumbs it folds into the fold panel
  *
  * @csspart root - The `<nav>` landmark; it takes the full width it is given and folds the crumbs to fit it
  * @csspart list - The one-line list of crumbs
