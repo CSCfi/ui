@@ -1,6 +1,8 @@
 Toasts are passive, transient notifications — operation results, background
 progress — stacked and managed by a single `c-toasts` container via its
-`addToast` / `removeToast` methods.
+`addToast` / `removeToast` methods. `addToast` returns the message's `id` (its
+own, or a generated one), which `removeToast` takes; `close` fires on the
+container with the message once a toast has left.
 
 ## When to use
 
@@ -12,12 +14,12 @@ progress — stacked and managed by a single `c-toasts` container via its
 - Anything requiring a decision before continuing — use `c-modal`.
 - Persistent page-level status — use `c-alert` or `c-message`.
 
-## Dismissing
+## Closing
 
-A toast with a dismiss button can also be swiped away: drag it left or right
+A toast with a close button can also be swiped away: drag it left or right
 and let go past a third of its width, or flick it. A shorter drag springs back,
 and a vertical drag scrolls the page as usual. Custom and indeterminate toasts
-have no dismiss button and can't be swiped.
+have no close button and can't be swiped.
 
 A timed toast waits while the pointer hovers over it or presses it, and
 carries on with the time it had left. When a toast arrives or leaves, the
@@ -38,8 +40,15 @@ so it does **not** carry the above-modal guarantee.
 
 Each toast is a `role="alert"` live region announced assertively when it
 appears. Keep messages short; use `persistent` for messages the user must
-dismiss themselves.
+close themselves.
 
 Swiping is a shortcut, never the only way: every swipeable toast has its
-dismiss button. On a touch screen, pressing and holding a toast keeps it up
+close button. On a touch screen, pressing and holding a toast keeps it up
 for as long as the user needs to read it.
+
+## Styling
+
+Each toast's parts are forwarded from the container as `toast-*`:
+`c-toasts::part(toast-root)` is a toast's box, and `toast-item`,
+`toast-badge`, `toast-content`, `toast-close`, `toast-custom` and
+`toast-progress` its pieces.

@@ -13,9 +13,9 @@ horizontalSelect!.addEventListener('change', (event) => {
 
 document.querySelector('c-button')!.addEventListener('click', () => {
   toasts.addToast({
+    heading: 'Notification',
     message: `Placed at ${toasts.vertical} ${toasts.horizontal}.`,
     progress: true,
-    title: 'Notification',
     type: 'info',
   });
 });

@@ -105,9 +105,8 @@ import {
   type CTextFieldElementEventMap,
   type CTimePickerElement,
   type CTimePickerElementEventMap,
-  type CToastElement,
-  type CToastElementEventMap,
   type CToastsElement,
+  type CToastsElementEventMap,
   type CToolbarElement,
   type CTooltipElement,
   type CTooltipElementEventMap,
@@ -807,21 +806,13 @@ export const CTimePicker = createComponent({
   tagName: 'c-time-picker',
 });
 
-/** A single toast notification, rendered and managed by c-toasts */
-export const CToast = createComponent({
-  displayName: 'CToast',
-  elementClass: elementClass<CToastElement>(['message']),
-  events: {
-    onClose: 'close' as EventName<CToastElementEventMap['close']>,
-  },
-  react: React,
-  tagName: 'c-toast',
-});
-
-/** Toasts are passive, transient notifications — operation results, background progress — stacked and managed by a single `c-toasts` container via its `addToast` / `removeToast` methods. */
+/** Toasts are passive, transient notifications — operation results, background progress — stacked and managed by a single `c-toasts` container via its `addToast` / `removeToast` methods. `addToast` returns the message's `id` (its own, or a generated one), which `removeToast` takes; `close` fires on the container with the message once a toast has left. */
 export const CToasts = createComponent({
   displayName: 'CToasts',
   elementClass: elementClass<CToastsElement>(['absolute', 'horizontal', 'vertical']),
+  events: {
+    onClose: 'close' as EventName<CToastsElementEventMap['close']>,
+  },
   react: React,
   tagName: 'c-toasts',
 });

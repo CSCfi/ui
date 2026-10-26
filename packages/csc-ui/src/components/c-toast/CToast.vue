@@ -18,15 +18,17 @@
       </span>
 
       <div :class="ui.content()" part="content">
-        <p v-if="message?.title" :class="ui.title()">{{ message.title }}</p>
+        <p v-if="message?.heading" :class="ui.heading()">
+          {{ message.heading }}
+        </p>
         {{ message?.message }}
       </div>
 
       <button
         v-if="!message?.indeterminate"
         :aria-label="message?.closeText ? undefined : 'close'"
-        :class="ui.dismiss()"
-        part="dismiss"
+        :class="ui.close()"
+        part="close"
         type="button"
         @click="close"
       >
@@ -66,11 +68,13 @@ interface CToastProps {
  * @slot default - Custom toast content, shown when the message is flagged `custom`
  * @csspart root - The toast's outer box: the inverted-surface pill carrying the shadow
  * @csspart custom - Wrapper shown for custom messages in place of the standard item layout
- * @csspart content - The message body holding the title and text, or the slotted custom content
- * @csspart item - Row layout of a standard toast: status badge, message body and dismiss button
+ * @csspart content - The message body holding the heading and text, or the slotted custom content
+ * @csspart item - Row layout of a standard toast: status badge, message body and close button
  * @csspart badge - The circular tinted badge holding the status icon
- * @csspart dismiss - The dismiss button (icon-only, or labelled when the message sets `closeText`)
+ * @csspart close - The close button (icon-only, or labelled when the message sets `closeText`)
  * @csspart progress - The track of the auto-close progress bar
+ *
+ * @internal
  */
 import {
   mdiAlert,
@@ -117,7 +121,7 @@ interface CToastEvents {
  * flip makes the toast stand apart from every other surface in both modes —
  * with the status (`type`) carried solely by the circular tinted badge
  * around the leading icon (the `*-inverted` status roles). Body copy wears
- * the muted inverted ink, the title the full ink; the dismiss button and the
+ * the muted inverted ink, the heading the full ink; the close button and the
  * progress bar are neutral. Consumer customization is via `::part()`.
  *
  * Why the box (padding/bg/shadow) is on the `root` element and NOT the
@@ -135,10 +139,11 @@ const toast = tv({
   slots: {
     badge: 'grid size-8 shrink-0 place-items-center rounded-full',
     box: 'box-border grid min-h-[52px] w-full items-center rounded-csc-lg bg-surface-inverted p-2 pl-3 text-on-surface-inverted',
+    close:
+      'grid size-8 shrink-0 cursor-pointer place-items-center rounded-full border-0 bg-transparent p-0 text-on-surface-inverted-muted transition-colors duration-150 hover:bg-on-surface-inverted/10 hover:text-on-surface-inverted focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-on-surface-inverted',
     content: 'text-on-surface-inverted-muted',
     custom: '',
-    dismiss:
-      'grid size-8 shrink-0 cursor-pointer place-items-center rounded-full border-0 bg-transparent p-0 text-on-surface-inverted-muted transition-colors duration-150 hover:bg-on-surface-inverted/10 hover:text-on-surface-inverted focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-on-surface-inverted',
+    heading: 'm-0 font-semibold text-on-surface-inverted',
     icon: 'size-5 shrink-0',
     item: 'grid auto-cols-auto grid-flow-col grid-cols-[32px_1fr] items-center gap-3',
     progress:
@@ -147,16 +152,15 @@ const toast = tv({
     // escape-hatch sheet keyed off the static `.c-toast__progress__bar` class.
     // Neutral on purpose: the badge carries the status colour.
     progressBar: 'h-1.5 w-full rounded-lg bg-on-surface-inverted',
-    title: 'm-0 font-semibold text-on-surface-inverted',
     visuallyHidden:
       'absolute h-px w-px overflow-hidden border-0 p-0 [clip:rect(1px,1px,1px,1px)]',
   },
   variants: {
-    // The dismiss button grows from an icon circle into a labelled pill when
+    // The close button grows from an icon circle into a labelled pill when
     // the message sets `closeText`.
     labelled: {
       true: {
-        dismiss: 'flex w-auto items-center gap-1.5 px-2.5',
+        close: 'flex w-auto items-center gap-1.5 px-2.5',
       },
     },
     // Status accent — the coloured icon plus a translucent same-colour halo
@@ -263,7 +267,7 @@ const EXIT_FALLBACK_MS = 700;
 // The exit has begun, whichever path started it.
 const leaving = ref(false);
 
-// CONTEXT.md "Swipe dismiss": only a toast with a dismiss button takes it.
+// CONTEXT.md "Swipe dismiss": only a toast with a close button takes it.
 const swipeable = computed(
   () =>
     !leaving.value &&
@@ -331,7 +335,7 @@ const onExitEnd = (event: TransitionEvent) => {
   if (event.target === host && event.propertyName === 'opacity') finish();
 };
 
-// The one exit behind the dismiss button, the timer, `closeToast` and a
+// The one exit behind the close button, the timer, `closeToast` and a
 // swipe dismiss. A swipe carries on from where the toast was let go.
 const leave = (swipe?: { dx: number; width: number }) => {
   if (!host || leaving.value) return;
@@ -381,7 +385,7 @@ const leave = (swipe?: { dx: number; width: number }) => {
   host.style.opacity = '0';
 };
 
-// Zero-argument: the dismiss button's click handler passes its event.
+// Zero-argument: the close button's click handler passes its event.
 const close = () => leave();
 
 const runTimer = () => {
@@ -578,7 +582,7 @@ const onPressEnd = (event: PointerEvent) => {
     return;
   }
 
-  // The release may land on the dismiss button: its click ends a drag, it
+  // The release may land on the close button: its click ends a drag, it
   // does not activate the button.
   host?.addEventListener('click', swallowClick, { capture: true, once: true });
   requestAnimationFrame(() =>

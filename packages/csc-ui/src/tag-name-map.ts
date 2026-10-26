@@ -2374,44 +2374,17 @@ export interface CTimePickerElement extends Omit<HTMLElement, 'clearable' | 'dis
   ): void;
 }
 
-/** Events dispatched by `<c-toast>`. */
-export interface CToastElementEventMap {
+/** Events dispatched by `<c-toasts>`. */
+export interface CToastsElementEventMap {
   /**
-   * Fired once the toast's leave transition has finished (after a manual
-   * dismiss or the auto-close timer), carrying the dismissed toast's message
-   * object.
+   * Fired once a toast has left (closed by its close button, a swipe, the
+   * timer or `removeToast`), carrying its message with the `id` it was
+   * shown under.
    */
-  close: CustomEvent<CToastMessage | null>;
+  close: CustomEvent<CToastMessage>;
 }
 
-/** A single toast notification, rendered and managed by c-toasts */
-export interface CToastElement extends Omit<HTMLElement, 'message'> {
-  /** Messages */
-  message?: CToastMessage | null;
-  closeToast(): void;
-  addEventListener<K extends keyof CToastElementEventMap>(
-    type: K,
-    listener: (this: CToastElement, ev: CToastElementEventMap[K]) => void,
-    options?: boolean | AddEventListenerOptions,
-  ): void;
-  addEventListener(
-    type: string,
-    listener: EventListenerOrEventListenerObject,
-    options?: boolean | AddEventListenerOptions,
-  ): void;
-  removeEventListener<K extends keyof CToastElementEventMap>(
-    type: K,
-    listener: (this: CToastElement, ev: CToastElementEventMap[K]) => void,
-    options?: boolean | EventListenerOptions,
-  ): void;
-  removeEventListener(
-    type: string,
-    listener: EventListenerOrEventListenerObject,
-    options?: boolean | EventListenerOptions,
-  ): void;
-}
-
-/** Toasts are passive, transient notifications — operation results, background progress — stacked and managed by a single `c-toasts` container via its `addToast` / `removeToast` methods. */
+/** Toasts are passive, transient notifications — operation results, background progress — stacked and managed by a single `c-toasts` container via its `addToast` / `removeToast` methods. `addToast` returns the message's `id` (its own, or a generated one), which `removeToast` takes; `close` fires on the container with the message once a toast has left. */
 export interface CToastsElement extends Omit<HTMLElement, 'absolute' | 'horizontal' | 'vertical'> {
   /** Use absolute positioning */
   absolute?: boolean;
@@ -2419,10 +2392,34 @@ export interface CToastsElement extends Omit<HTMLElement, 'absolute' | 'horizont
   horizontal?: 'center' | 'left' | 'right';
   /** Vertical position */
   vertical?: 'bottom' | 'top';
-  /** Add a new message */
-  addToast(message: CToastMessage): void;
-  /** Remove a message by id (id should be specified in the addToast params) */
+  /**
+   * Show a message as a toast and return its `id` — the message's own, or a
+   * generated one — for `removeToast`. A second `custom` message while one is
+   * shown is refused, and returns `undefined`.
+   */
+  addToast(message: CToastMessage): string | undefined;
+  /** Close the toast with this `id`, the one `addToast` returned. */
   removeToast(id: string): void;
+  addEventListener<K extends keyof CToastsElementEventMap>(
+    type: K,
+    listener: (this: CToastsElement, ev: CToastsElementEventMap[K]) => void,
+    options?: boolean | AddEventListenerOptions,
+  ): void;
+  addEventListener(
+    type: string,
+    listener: EventListenerOrEventListenerObject,
+    options?: boolean | AddEventListenerOptions,
+  ): void;
+  removeEventListener<K extends keyof CToastsElementEventMap>(
+    type: K,
+    listener: (this: CToastsElement, ev: CToastsElementEventMap[K]) => void,
+    options?: boolean | EventListenerOptions,
+  ): void;
+  removeEventListener(
+    type: string,
+    listener: EventListenerOrEventListenerObject,
+    options?: boolean | EventListenerOptions,
+  ): void;
 }
 
 /** The app-wide bar at the top of the dashboard layout: the logo, the service name and global actions such as the user menu or log out. It is pinned to the top of the viewport by default and stays there while the page scrolls; `static` keeps it in the page flow so it scrolls away with the content. */
@@ -2724,7 +2721,6 @@ declare global {
     'c-tags': CTagsElement;
     'c-text-field': CTextFieldElement;
     'c-time-picker': CTimePickerElement;
-    'c-toast': CToastElement;
     'c-toasts': CToastsElement;
     'c-toolbar': CToolbarElement;
     'c-tooltip': CTooltipElement;

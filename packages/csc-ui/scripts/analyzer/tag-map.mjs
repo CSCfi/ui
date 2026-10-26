@@ -358,13 +358,22 @@ export const renderTagNameMap = (components, publicTypes) => {
     .map((c) => `'${c.tagName}'`);
 
   // Internal events (ADR-0075): an internal tag's events and every
-  // `@internal` event-map member. The conformance suites assert that none
-  // reaches the page.
+  // `@internal` event-map member, less any name a public tag also publishes
+  // (c-toast's `close` is c-toasts' too). The conformance suites assert that
+  // none reaches the page.
+  const publicEvents = new Set(
+    components.flatMap((c) =>
+      c.internal ? [] : c.events.filter((e) => !e.internal).map((e) => e.name),
+    ),
+  );
+
   const internalEvents = [
     ...new Set(
       components.flatMap((c) =>
         c.events
-          .filter((e) => c.internal || e.internal)
+          .filter(
+            (e) => (c.internal || e.internal) && !publicEvents.has(e.name),
+          )
           .map((e) => `'${e.name}'`),
       ),
     ),

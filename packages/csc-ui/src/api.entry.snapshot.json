@@ -1,7 +1,8 @@
 {
   "internalTags": [
     "c-dropdown",
-    "c-input"
+    "c-input",
+    "c-toast"
   ],
   "runtimeExports": [
     "DEFAULTABLE_PROPS",
@@ -284,12 +285,12 @@
       "closeText?": "string",
       "custom?": "boolean",
       "duration?": "number",
+      "heading?": "string",
       "id?": "string",
       "indeterminate?": "boolean",
       "message": "string",
       "persistent?": "boolean",
       "progress?": "boolean",
-      "title?": "string",
       "type?": "CToastType"
     },
     "CToastsHorizontal": "'center' | 'left' | 'right'",

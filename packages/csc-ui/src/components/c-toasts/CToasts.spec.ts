@@ -3,6 +3,11 @@
  * where it is while its neighbours glide into its place; an arrival glides the
  * toasts it moves. Specs run under reduced motion, where nothing glides, unless
  * a test opts back in with `withMotion()`.
+ *
+ * c-toast is internal (ADR-0075), so c-toasts is the toast's whole surface:
+ * `addToast` returns the id `removeToast` takes, a toast's parts are styleable
+ * as `toast-*`, and `close` reaches the page from c-toasts — c-toast's own
+ * stops in c-toasts' shadow root.
  */
 import { describe, expect, it } from 'vitest';
 
@@ -13,12 +18,13 @@ import {
   mount,
   type Mounted,
   nextFrame,
+  recordEvents,
   settle,
   withMotion,
 } from '../../test/harness';
 
 type CToastsEl = {
-  addToast(message: CToastMessage): void;
+  addToast(message: CToastMessage): string | undefined;
   removeToast(id: string): void;
 } & HTMLElement;
 
@@ -129,15 +135,90 @@ describe('stack glide', () => {
   });
 });
 
+describe('the toast surface', () => {
+  it('returns the id addToast shows the message under, for removeToast', async () => {
+    const stack = await mountStack();
+
+    const given = stack.host.addToast({ id: 'mine', message: 'Saved' });
+
+    const generated = stack.host.addToast({ message: 'Sent' });
+
+    // Synchronously, before the toasts render.
+    expect(given).toBe('mine');
+    expect(generated).toMatch(/\S/);
+    expect(generated).not.toBe(given);
+
+    await settle();
+    expect(toast(stack, generated!)).not.toBeNull();
+  });
+
+  it('fires close with the message once a toast has left', async () => {
+    const stack = await mountStack();
+
+    const events = recordEvents(stack.host, ['close']);
+
+    const id = stack.host.addToast({
+      heading: 'Saved',
+      message: 'Your changes were saved.',
+      persistent: true,
+    });
+    await settle();
+
+    stack.host.removeToast(id!);
+
+    // After the toast's exit fade.
+    await expect.poll(() => events.records.length).toBe(1);
+    expect(events.records[0].detail).toMatchObject({
+      heading: 'Saved',
+      id,
+      message: 'Your changes were saved.',
+    });
+  });
+
+  it('forwards a toast’s parts as toast-*', async () => {
+    const stack = await mountStack();
+
+    stack.host.addToast({ id: 'a', message: 'Saved', persistent: true });
+    await settle();
+
+    expect(
+      toast(stack, 'a').getAttribute('exportparts')?.split(/,\s*/),
+    ).toEqual([
+      'root:toast-root',
+      'custom:toast-custom',
+      'content:toast-content',
+      'item:toast-item',
+      'badge:toast-badge',
+      'close:toast-close',
+      'progress:toast-progress',
+    ]);
+
+    const style = document.createElement('style');
+    style.textContent =
+      'c-toasts::part(toast-close) { outline: 3px solid rgb(255, 0, 0); }';
+    document.head.append(style);
+
+    try {
+      const close = toast(stack, 'a').shadowRoot!.querySelector<HTMLElement>(
+        '[part~="close"]',
+      )!;
+
+      expect(getComputedStyle(close).outlineColor).toBe('rgb(255, 0, 0)');
+    } finally {
+      style.remove();
+    }
+  });
+});
+
 describe('visual', () => {
   it('a resting stack', async () => {
     const stack = await mountStack();
 
     stack.host.addToast({
+      heading: 'Saved',
       id: 'saved',
       message: 'Your changes were saved.',
       persistent: true,
-      title: 'Saved',
       type: 'success',
     });
     stack.host.addToast({

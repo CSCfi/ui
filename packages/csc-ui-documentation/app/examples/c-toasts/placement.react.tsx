@@ -13,9 +13,9 @@ export const Placement = () => {
 
   const notify = () => {
     toasts.current?.addToast({
+      heading: 'Notification',
       message: `Placed at ${vertical} ${horizontal}.`,
       progress: true,
-      title: 'Notification',
       type: 'info',
     });
   };

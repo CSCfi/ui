@@ -317,8 +317,8 @@ _Avoid_: Hint, title (the native attribute), popup
 The click-opened, **non-modal** interactive surface component anchored to its **trigger** — light-dismissed, never trapping focus (ADR-0033); blocking flows go to `c-modal`, plain hints to `c-tooltip`. Distinct from the lowercase *native popover*, which is the browser mechanism: any element put in the **top layer** via the Popover API (menu panels, autocomplete panels, and tooltips are all native popovers; only `c-popover` is the Popover *component*).
 _Avoid_: Flyout, popup, overlay (as a name for this component)
 
-**Toast** (`c-toast`):
-A passive, transient notification — an operation result, background progress — that the `c-toasts` container shows against one edge of the viewport, painting the **inverted surface** (ADR-0032). It closes itself when its timer runs out unless it is *persistent*, and the timer waits while a pointer hovers or presses it. The user closes it with its close button or a **swipe dismiss**; a *custom* toast (slotted content) and an *indeterminate* one (ongoing work) have no close button. When a toast arrives or leaves, the toasts around it glide into their new places (ADR-0073).
+**Toast** (`c-toast`, an **internal** tag):
+A passive, transient notification — an operation result, background progress — that the `c-toasts` container creates from a message and shows against one edge of the viewport, painting the **inverted surface** (ADR-0032). It closes itself when its timer runs out unless it is *persistent*, and the timer waits while a pointer hovers or presses it. The user closes it with its close button or a **swipe dismiss**; a *custom* toast (slotted content) and an *indeterminate* one (ongoing work) have no close button. When a toast arrives or leaves, the toasts around it glide into their new places (ADR-0073).
 _Avoid_: Notification (the general idea), snackbar (Material's name), alert (that is `c-alert`, the in-page message)
 
 **Light dismiss**:
@@ -380,7 +380,7 @@ A modal property governing *both* light-dismiss gestures — backdrop click **an
 _Avoid_: persistent (the inverse framing; canonical axis is _dismissable_), closable
 
 **Closeable**:
-Showing a close button of its own that removes or hides the surface: a `c-tag`, a `c-alert` and a `c-toast` fire `close` when it is pressed; a **rejected file** row just leaves the list. A different concept from **dismissable** — a modal's light-dismiss gestures — so a non-dismissable modal can still hold a close button.
+Showing a close button of its own that removes or hides the surface: a `c-tag` and a `c-alert` fire `close` when it is pressed, and `c-toasts` fires it for a toast; a **rejected file** row just leaves the list. A different concept from **dismissable** — a modal's light-dismiss gestures — so a non-dismissable modal can still hold a close button.
 _Avoid_: Dismissible (the alert's former prop), removable, closable (one spelling: _closeable_)
 
 ### Progress & loading

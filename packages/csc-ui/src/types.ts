@@ -52,7 +52,7 @@ export interface CSelectItem {
 
 /**
  * A toast notification: the argument to `c-toasts`' `addToast` method,
- * rendered by the composed `c-toast` child.
+ * rendered by the internal `c-toast`, and the detail of `c-toasts`' `close` event.
  */
 export interface CToastMessage {
   /** Label of the toast's close button. */
@@ -64,7 +64,13 @@ export interface CToastMessage {
   /** How long the toast stays visible, in milliseconds. Defaults to 6000. */
   duration?: number;
 
-  /** Identifier used to remove the toast via `removeToast`. */
+  /** Optional heading rendered above the message. */
+  heading?: string;
+
+  /**
+   * Identifier for `removeToast`. `addToast` generates one when it is
+   * omitted, and returns it either way.
+   */
   id?: string;
 
   /** Show an indeterminate progress bar instead of the countdown. */
@@ -78,9 +84,6 @@ export interface CToastMessage {
 
   /** Show a progress bar counting down the toast's remaining duration. */
   progress?: boolean;
-
-  /** Optional title rendered above the message. */
-  title?: string;
 
   /** Status type of the toast. Defaults to `info`. */
   type?: CToastType;

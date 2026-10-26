@@ -580,6 +580,11 @@ const columns: CDataTableColumn<User>[] = [
   and a dismissable prop (governs both backdrop-click and Escape).
 - c-menu: authored declaratively with slotted c-menu-item / c-menu-label
   instead of a programmatic items array; leaf activation fires a select event.
+- c-toasts: a message's title is now heading (an untyped { title } loses its
+  heading silently). c-toast is internal: c-toasts renders one per addToast()
+  message, so style a toast through c-toasts::part(toast-root) and its other
+  toast-* parts, and listen to close on c-toasts (detail: the message).
+  addToast() returns the message's id, for removeToast(id).
 - c-swiper / c-swiper-tab: removed, no replacement.
 - c-row: removed — use your own flex container (display: flex plus gap).
 - c-spacer: removed — use margin-inline-start: auto on the element you want

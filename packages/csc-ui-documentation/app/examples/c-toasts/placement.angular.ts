@@ -53,9 +53,9 @@ export class PlacementExampleComponent {
 
   notify() {
     this.toasts()?.nativeElement.addToast({
+      heading: 'Notification',
       message: `Placed at ${this.vertical()} ${this.horizontal()}.`,
       progress: true,
-      title: 'Notification',
       type: 'info',
     });
   }

@@ -118,6 +118,12 @@ export const V3_API_CHANGES: V3ApiChange[] = [
   },
   {
     change:
+      'Internal: `c-toasts` renders one per `addToast()` message. Style a toast through `c-toasts::part(toast-root)` and the other `toast-*` parts, listen to `close` on `c-toasts` (the detail is the message), and close one with `removeToast(id)`, where `closeToast()` was.',
+    kind: 'tag',
+    tag: 'c-toast',
+  },
+  {
+    change:
       'Author the menu with slotted `c-menu-item` and `c-menu-label` elements. Activating a leaf item fires `select`.',
     kind: 'prop',
     name: 'items',

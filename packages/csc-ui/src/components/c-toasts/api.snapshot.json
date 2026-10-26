@@ -6,13 +6,22 @@
   },
   "cssProperties": [],
   "defaultable": [],
-  "events": {},
+  "events": {
+    "close": "CustomEvent<CToastMessage>"
+  },
   "methods": {
-    "addToast": "(message: CToastMessage)",
+    "addToast": "(message: CToastMessage): string | undefined",
     "removeToast": "(id: string)"
   },
   "parts": [
-    "root"
+    "root",
+    "toast-badge",
+    "toast-close",
+    "toast-content",
+    "toast-custom",
+    "toast-item",
+    "toast-progress",
+    "toast-root"
   ],
   "propertyOnly": [],
   "props": {
@@ -24,8 +33,6 @@
     "default"
   ],
   "states": [],
-  "subcomponents": [
-    "c-toast"
-  ],
+  "subcomponents": [],
   "tag": "c-toasts"
 }
