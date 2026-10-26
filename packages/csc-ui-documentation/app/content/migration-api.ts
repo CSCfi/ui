@@ -489,4 +489,19 @@ export const V3_API_CHANGES: V3ApiChange[] = [
     name: 'value',
     tag: 'c-steps',
   },
+  {
+    change:
+      'Also takes `null`: every item collapsed. Setting `value` from code no longer fires an event (3.x fired `changeValue`): the value events report what the user does.',
+    kind: 'prop',
+    name: 'value',
+    tag: 'c-accordion',
+  },
+  {
+    change:
+      'Setting `value` from code no longer fires an event (3.x fired `changeValue`): the value events report what the user does.',
+    kind: 'prop',
+    meaningChanged: true,
+    name: 'value',
+    tag: 'c-tabs',
+  },
 ];

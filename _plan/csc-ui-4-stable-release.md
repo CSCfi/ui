@@ -195,20 +195,28 @@ A read-only check of all 124 D11–D13 items against source, glossary, ADRs, usa
   makes one adds its guide entry (a `meaningChanged` entry in `migration-api.ts`); tick it here. Entries marked *(check)* need the 3.x behaviour confirmed first.
   - [x] c-otp-input `value`: the digits typed so far, `''` when empty. No entry: 3.x's `value` already held them;
         only `changeValue` was `null` until complete, and its entry says so (phase 1).
-  - [ ] `id` on the 11 tags that forwarded it: stays on the host (3.x: set on the inner control).
-  - [ ] c-option `selected`: seeds silently, once, while the value is empty (3.x c-select emitted `changeValue`).
-  - [ ] Value events fire only on user interaction, never on a programmatic `value` (*check* each 3.x tag).
+  - [x] `id` on the 11 tags that forwarded it: stays on the host (3.x: set on the inner control). The guard
+        flags it (property `hostId` gone), so each tag's `id` entry says so (R1 commit).
+  - [x] c-option `selected`: seeds silently, once, while the value is empty (3.x c-select emitted `changeValue`)
+        — `meaningChanged` entry (d9d71773).
+  - [x] Value events fire only on user interaction, never on a programmatic `value`. 3.x emitted on a set
+        `value` in c-accordion, c-tabs and c-pagination (and c-select's seed, c-tab-buttons' standalone use):
+        each one's entry says so (c-accordion folds it into its `value` entry, c-tabs is `meaningChanged`).
   - [x] c-slider: `change` fires once on release (3.x `changeValue` fired on every move) — in the c-slider
         `changeValue` entry (phase 1).
-  - [ ] c-pagination `value`: `{ page, pageSize, … }` and a new object per change (3.x: `CPaginationOptions`
-        mutated in place) — same prop name and type name, so the guard cannot see it.
-  - [ ] c-checkbox / c-switch `checked`: the boolean view of `value` (*check* 3.x precedence).
-  - [ ] c-radio `change` no longer escapes c-radio-group (*check* whether 3.x c-radio's event bubbled).
+  - [x] c-pagination `value`: `{ page, pageSize, … }` and a new object per change (3.x: `CPaginationOptions`
+        mutated in place). The guard did flag it after all (the 3.x type differs); its `value` entry says so
+        (cdcc47fb).
+  - [x] c-checkbox / c-switch `checked`: the boolean view of `value`. 3.x checked the box when `checked` OR
+        `value === trueValue`; now a bound `value` wins — `meaningChanged` entries (d9d71773).
+  - [x] c-radio `change` no longer escapes c-radio-group. No entry: 3.x c-radio declared no event, and its
+        inner input's native `change` stayed in its shadow root (phase 1 made the wiring event internal).
   - [x] `change` on c-text-field / c-checkbox / c-switch / c-autocomplete carries the value. No entry: 3.x
         rendered them in shadow roots, so the inner input's `change` never reached a 3.x consumer (phase 1).
-  - [ ] `hidden` on a `c-*` host hides it (*check* 3.x).
-  - [ ] c-data-table `change:selected` detail is `string[]` (if 3.x had the event under another name, the guard
-        covers the name; the detail change goes here).
+  - [x] `hidden` on a `c-*` host hides it. No entry: 3.x had no `[hidden]` rule either, so `hidden` did not
+        hide a Stencil host with its own `:host` display; it now works where it never did.
+  - [x] c-data-table `change:selected` detail is `string[]`. No entry here: 3.x had `selection` (a baseline name
+        the phase-3 batch maps onto `selected` / `change:selected`), so the guide's entry covers the detail too.
 - **R3** — c-pagination's value becomes `{ page, pageSize, … }` before rc.1, emitted as a new object.
 
 ## Work, in order
@@ -328,9 +336,38 @@ start migrating on the first alpha that carries D2–D4.
    `scripts/migration-guide-baseline.json` writes its `migration-api.ts` entry and drops it from the baseline (the
    guard forces the drop only when the name stops being flagged, e.g. a restored `autofocus`; a name that stays
    flagged, like the forwarded `id`, is on the PR author — and on the ledger when its meaning changes). Phase-1
-   events (`itemChange`, `tabChange`, `tabFocus`, c-steps `changeValue`) likewise. Open question the guard surfaced:
-   the manifest lists no `value` attribute on c-select, c-autocomplete and c-accordion (object-capable types),
-   though Vue still observes it — either the analyzer lists it (3.x had it) or the guide says to set the property.
+   events (`itemChange`, `tabChange`, `tabFocus`, c-steps `changeValue`) likewise. The open question the guard
+   surfaced (no `value` attribute on object-capable types) is decided (2026-10-26): the analyzer lists the
+   string/number form (ee79afbf).
+   **Done locally (2026-10-26)**, 18 commits after 898b1e4c, each with its changeset; the full Chromium + node suite
+   passes (75 files, 2014 tests) and the docs smoke with axe:
+   - Internal surface (980729ec): tab family, c-accordion-item `expanded` (now `:state(expanded)`) /
+     `collapsable` / `outlined`, c-step, list items, c-button `no-ripple`, nav items' `focusable` → one internal
+     `collapsed`; internal slots; `_`-prefixed submenu methods; no `C*Props` / `migratedTags` exports (registry
+     moves to `src/registry.ts`; 1334bb47 points its node spec there). c-tabs keeps a consumer-set `id`.
+   - Toasts (ffe2644d): c-toast internal, `toast-*` parts, `close` on c-toasts, `addToast` returns the id,
+     `title` → `heading`.
+   - Values (d9d71773): `<c-option selected>` seeds silently, once; `reset()` gone; c-checkbox/c-switch one state
+     (views reconciled in one nextTick pass — a per-watcher deferral looped forever under React); `''` unchecked.
+   - R3 (cdcc47fb): c-pagination `{ page, pageSize }`, new object per pick, no programmatic emission, `texts`
+     (also via c-data-table's), menu `select` contained, the ellipsis hidden from AT.
+   - D11 (948d91c7): `valid` → `invalid` (13 tags), c-loader `hide`, the strict no-true-boolean rule.
+   - R1 (4aee2cd7): `autofocus`, `autocapitalize`, `name`, slider `aria-label` restored; `host-id` / `element-id`
+     gone, `id` stays on the host; c-otp-input's hidden `reset()` and c-message `input-id` gone.
+   - Bugs (9e9ffb8a): `target` `''` + keyboard path, `:host([hidden])`, slider numbers / `unit`, c-table
+     `updateMobileLabels()` exposed, progress-bar / nav-button / tab-arrow names, `@internalpart`.
+   - Renames (4fc63895, b20fe9d4, e3b90a99, 1aa4ac94, 7b75a71c, 9994f373): c-alert closeable/close, accordion
+     `heading` slot, loader `content-delay` (ms), `selectAllRows`; parts (`option`, `panel card`, checkbox `label`,
+     `value-color`, …); texts keys; side-nav `open` (+ Enter on the nav button toggled twice — fixed), `styles` /
+     c-link `weight` gone; c-menu-item `type` + `checked` + `icon` slot; data-table `change:selected` ids +
+     `selectedRows`, `filter` → `query`.
+   - Types (4898c0db): `CPlacement` split per overlay, package types `C`-prefixed, exported type names in the entry
+     snapshot, `CAccordionValue`, numbers narrowed, progress-circle `thickness`.
+   - Tokens (ce1432d7): `ring`, Stencil-era `--c-text-*` / `--c-transparent` gone, `--_c-icon-color` private.
+   - A11y (23e6be6d): text/number fields named from `label`, icon-button canons named; the axe baseline lost 19
+     canon-rule pairs in phase 2 (slider `aria-valid-attr`, progress-bar, nav-button, data-table separator too).
+   Left: the contrast token (design decision pending, `tertiary-600` proposed); the remaining axe baseline
+   (contrast, c-tabs `aria-required-children`, data-table selection); the 47 baseline names are phase 3's batch.
 3. **Docs** — D16 (migration guide can grow with each PR in 1–2; the rest here). One batch writes the baseline's
    already-final names (~45): the 18 c-data-table 3.x props, events and methods mapped onto `selection` / `sort` /
    `page` / `texts`; c-menu `content-class`/`custom`/`flat`/`items-per-page`/`small` and `c-menu-items`; c-modal
