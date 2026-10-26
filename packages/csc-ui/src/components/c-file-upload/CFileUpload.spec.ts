@@ -303,7 +303,7 @@ describe('rejected files', () => {
     expect(statusOf(m.part('rejected'))).toBe("Folders aren't supported");
   });
 
-  it('clears rejected rows on the next add and on dismiss', async () => {
+  it('clears rejected rows on the next add and on close', async () => {
     const m = await mountField({ multiple: true }, { accept: '.pdf' });
 
     await pick(m, [fileOf('a.exe'), fileOf('b.exe')]);
@@ -311,7 +311,7 @@ describe('rejected files', () => {
     expect(m.shadowAll('[part="rejected"]')).toHaveLength(2);
 
     await userEvent.click(
-      button(m.shadowAll<HTMLElement>('[part="rejected"]')[0], /Dismiss a.exe/),
+      button(m.shadowAll<HTMLElement>('[part="rejected"]')[0], /Close a.exe/),
     );
     await settle();
 

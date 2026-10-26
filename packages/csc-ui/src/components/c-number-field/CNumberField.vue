@@ -56,7 +56,7 @@
 
       <span :class="ui.steps()" @mousedown.prevent>
         <button
-          :aria-label="t.increase"
+          :aria-label="t.stepUp"
           :class="ui.stepButton()"
           :disabled="!canUp"
           part="step-up"
@@ -75,7 +75,7 @@
         </button>
 
         <button
-          :aria-label="t.decrease"
+          :aria-label="t.stepDown"
           :class="ui.stepButton()"
           :disabled="!canDown"
           part="step-down"
@@ -101,10 +101,10 @@
 /** UI texts of `c-number-field`, merged key by key over the English defaults. */
 export interface CNumberFieldTexts {
   /** Accessible label of the step-down button. */
-  decrease?: string;
+  stepDown?: string;
 
   /** Accessible label of the step-up button. */
-  increase?: string;
+  stepUp?: string;
 }
 
 interface CNumberFieldProps {
@@ -390,8 +390,8 @@ const stepResolved = appDefault('step', 1);
 const ownTexts = appDefault('texts', {} as Required<CNumberFieldTexts>);
 
 const DEFAULT_TEXTS: Required<CNumberFieldTexts> = {
-  decrease: 'Decrease',
-  increase: 'Increase',
+  stepDown: 'Decrease',
+  stepUp: 'Increase',
 };
 
 const t = computed<Required<CNumberFieldTexts>>(() => ({

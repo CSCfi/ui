@@ -199,10 +199,10 @@
 
         <span :class="ui.actions()">
           <button
-            :aria-label="t.dismiss(row.name)"
+            :aria-label="t.close(row.name)"
             :class="ui.action()"
             type="button"
-            @click="dismissRejected(row.key)"
+            @click="closeRejected(row.key)"
           >
             <svg
               :class="ui.actionIcon()"
@@ -316,11 +316,11 @@ export interface CFileUploadTexts {
   /** The compact row's button, and the large drop zone's prompt on a touch screen. */
   chooseButton?: (multiple: boolean) => string;
 
+  /** Accessible label of a rejected row's close button. */
+  close?: (name: string) => string;
+
   /** The compact row's prompt beside its button. */
   compactPrompt?: (multiple: boolean) => string;
-
-  /** Accessible label of a rejected row's dismiss button. */
-  dismiss?: (name: string) => string;
 
   /** The large drop zone's prompt before the choose link. */
   dragPrompt?: (multiple: boolean) => string;
@@ -330,6 +330,9 @@ export interface CFileUploadTexts {
 
   /** An uploading row's status: bytes sent, file size (both formatted) and the whole percentage. */
   progress?: (loaded: string, total: string, percent: number) => string;
+
+  /** A queued row's status. */
+  queued?: string;
 
   /** Rejection reason: a file beyond the count the field holds. */
   rejectedCount?: (max: number) => string;
@@ -360,9 +363,6 @@ export interface CFileUploadTexts {
 
   /** An uploading row's status before the first progress report. */
   uploading?: string;
-
-  /** A queued row's status. */
-  waiting?: string;
 }
 
 interface CFileUploadProps {
@@ -702,14 +702,15 @@ const DEFAULT_TEXTS: Required<CFileUploadTexts> = {
   cancel: (name) => `Cancel upload of ${name}`,
   choose: (multiple) => (multiple ? 'choose files' : 'choose a file'),
   chooseButton: (multiple) => (multiple ? 'Choose files' : 'Choose a file'),
+  close: (name) => `Close ${name}`,
   compactPrompt: (multiple) =>
     multiple ? 'or drop files here' : 'or drop a file here',
-  dismiss: (name) => `Dismiss ${name}`,
   dragPrompt: (multiple) =>
     multiple ? 'Drag files here or' : 'Drag a file here or',
   dropActive: (multiple) =>
     multiple ? 'Drop files to add them' : 'Drop the file to add it',
   progress: (loaded, total, percent) => `${loaded} of ${total} · ${percent}%`,
+  queued: 'Waiting',
   rejectedCount: (max) =>
     max === 1 ? 'Only one file allowed' : `Only ${max} files allowed`,
   rejectedDuplicate: 'Already added',
@@ -721,7 +722,6 @@ const DEFAULT_TEXTS: Required<CFileUploadTexts> = {
   uploaded: 'Uploaded',
   uploadFailed: 'Upload failed',
   uploading: 'Uploading',
-  waiting: 'Waiting',
 };
 
 const t = computed<Required<CFileUploadTexts>>(() => ({
@@ -877,7 +877,7 @@ interface RejectedRow {
 /**
  * The latest add's rejected files. They describe that add only, so the next
  * change to the list — an add, a removal, a value set from outside — clears
- * them, as does their own dismiss.
+ * them, as does their own close button.
  */
 const rejectedRows = shallowRef<RejectedRow[]>([]);
 
@@ -1360,7 +1360,7 @@ const retryEntry = (entry: CFileUploadEntry): void => {
   emitValue();
 };
 
-const dismissRejected = (key: string): void => {
+const closeRejected = (key: string): void => {
   const index =
     base.value.length + rejectedRows.value.findIndex((row) => row.key === key);
 
@@ -1385,7 +1385,7 @@ const entryRows = computed<EntryRow[]>(() => {
 
     let line = size;
 
-    if (status === 'queued') line = `${size} · ${text.waiting}`;
+    if (status === 'queued') line = `${size} · ${text.queued}`;
     else if (status === 'uploading') {
       line =
         progress === null || progress === undefined

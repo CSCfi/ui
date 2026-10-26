@@ -48,7 +48,7 @@ back. The header names the level being chosen: give `level-labels` an array
 of names, top level first ("Main field", "Field", "Subfield"), and it reads
 "Choose Field"; a level without a name reads "Choose Level 2". While the
 tree is evenly deep — every leaf at the same level — the header also counts
-the steps ("Step 2 of 3"); in an unevenly deep tree the counter is left out,
+the levels ("Step 2 of 3"); in an unevenly deep tree the counter is left out,
 and a level made only of leaves says "Final level" instead. Reopening the
 panel returns to the committed item's level with its row selected, so its
 siblings are one click away.

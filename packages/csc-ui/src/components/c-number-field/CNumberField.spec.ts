@@ -391,7 +391,7 @@ describe('stepping', () => {
     expect(up(m).getAttribute('aria-label')).toBe('Increase');
     expect(down(m).getAttribute('aria-label')).toBe('Decrease');
 
-    const own = await mountField({ texts: { increase: 'Lisää' } });
+    const own = await mountField({ texts: { stepUp: 'Lisää' } });
 
     expect(up(own).getAttribute('aria-label')).toBe('Lisää');
     expect(down(own).getAttribute('aria-label')).toBe('Decrease');

@@ -240,7 +240,7 @@
           @pointermove="activeIndex = SELECT_BRANCH_ROW"
         >
           <span :class="ui.itemLabel()">
-            {{ t.select(currentBranch?.name ?? '') }}
+            {{ t.selectBranch(currentBranch?.name ?? '') }}
           </span>
 
           <svg
@@ -445,6 +445,12 @@ export interface CTreeSelectTexts {
    */
   level?: (n: number) => string;
 
+  /**
+   * Header level counter shown while the tree is evenly deep (every leaf at
+   * one level); receives the level and the number of levels.
+   */
+  levelCounter?: (n: number, total: number) => string;
+
   /** Header text in search mode; receives the number of matches. */
   matches?: (count: number) => string;
 
@@ -461,13 +467,7 @@ export interface CTreeSelectTexts {
    * Label of the pinned select-branch row; receives the current branch's
    * name.
    */
-  select?: (name: string) => string;
-
-  /**
-   * Header step counter shown while the tree is evenly deep (every leaf at
-   * one level); receives the step and the total number of levels.
-   */
-  step?: (n: number, total: number) => string;
+  selectBranch?: (name: string) => string;
 
   /** Accessible label of the chevron button that opens and closes the panel. */
   toggleOptions?: string;
@@ -842,12 +842,12 @@ const DEFAULT_TEXTS: Required<CTreeSelectTexts> = {
   filterOptions: 'Filter options',
   final: 'Final level',
   level: (n) => `Level ${n}`,
+  levelCounter: (n, total) => `Step ${n} of ${total}`,
   matches: (count) => `${count} ${count === 1 ? 'match' : 'matches'}`,
   noResults: 'No matching data',
   root: 'All',
   searchPlaceholder: 'Search...',
-  select: (name) => `Select ${name}`,
-  step: (n, total) => `Step ${n} of ${total}`,
+  selectBranch: (name) => `Select ${name}`,
   toggleOptions: 'Toggle options',
 };
 
@@ -1077,7 +1077,7 @@ const levelLabel = (n: number) =>
 const stepText = computed(() => {
   const total = index.value.rootLeafDepth;
 
-  if (total !== null) return t.value.step(level.value + 1, total);
+  if (total !== null) return t.value.levelCounter(level.value + 1, total);
 
   return levelItems.value.length &&
     levelItems.value.every((item) => !isBranchItem(item))

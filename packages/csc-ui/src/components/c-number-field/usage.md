@@ -101,7 +101,7 @@ in line.
 
 The buttons stay out of the tab order and never take focus, so tapping one
 on a phone does not open the keyboard. To translate their accessible labels,
-set `texts`: `{ increase: 'Lisää', decrease: 'Vähennä' }`, or app-wide with
+set `texts`: `{ stepUp: 'Lisää', stepDown: 'Vähennä' }`, or app-wide with
 `applyDefaults`.
 
 ## Keyboard

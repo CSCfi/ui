@@ -206,11 +206,12 @@
       "cancel?": "(name: string) => string",
       "choose?": "(multiple: boolean) => string",
       "chooseButton?": "(multiple: boolean) => string",
+      "close?": "(name: string) => string",
       "compactPrompt?": "(multiple: boolean) => string",
-      "dismiss?": "(name: string) => string",
       "dragPrompt?": "(multiple: boolean) => string",
       "dropActive?": "(multiple: boolean) => string",
       "progress?": "(loaded: string, total: string, percent: number) => string",
+      "queued?": "string",
       "rejectedCount?": "(max: number) => string",
       "rejectedDuplicate?": "string",
       "rejectedFolder?": "string",
@@ -220,8 +221,7 @@
       "retry?": "(name: string) => string",
       "uploaded?": "string",
       "uploadFailed?": "string",
-      "uploading?": "string",
-      "waiting?": "string"
+      "uploading?": "string"
     },
     "CIconButtonSize": "'default' | 'small' | 'x-small'",
     "CLoginCardActionsAlign": "'center' | 'end' | 'start'",
@@ -231,8 +231,8 @@
       "label?": "string"
     },
     "CNumberFieldTexts": {
-      "decrease?": "string",
-      "increase?": "string"
+      "stepDown?": "string",
+      "stepUp?": "string"
     },
     "CPaginationOptions": {
       "endTo?": "number",
@@ -335,12 +335,12 @@
       "filterOptions?": "string",
       "final?": "string",
       "level?": "(n: number) => string",
+      "levelCounter?": "(n: number, total: number) => string",
       "matches?": "(count: number) => string",
       "noResults?": "string",
       "root?": "string",
       "searchPlaceholder?": "string",
-      "select?": "(name: string) => string",
-      "step?": "(n: number, total: number) => string",
+      "selectBranch?": "(name: string) => string",
       "toggleOptions?": "string"
     },
     "CTreeSelectValue": "CTreeSelectSelection | null | number | string"

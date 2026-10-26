@@ -72,12 +72,12 @@ const texts: CTreeSelectTexts = {
   filterOptions: 'Suodata vaihtoehtoja',
   final: 'Viimeinen taso',
   level: (n) => `taso ${n}`,
+  levelCounter: (n, total) => `Taso ${n}/${total}`,
   matches: (count) => `${count} osumaa`,
   noResults: 'Ei osumia',
   root: 'Kaikki',
   searchPlaceholder: 'Hae nimellä tai koodilla',
-  select: (name) => `Valitse ${name}`,
-  step: (n, total) => `Vaihe ${n}/${total}`,
+  selectBranch: (name) => `Valitse ${name}`,
   toggleOptions: 'Näytä vaihtoehdot',
 };
 
