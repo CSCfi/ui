@@ -1792,14 +1792,14 @@ export interface CSideNavigationElement extends Omit<HTMLElement, 'menuVisible' 
 /** Events dispatched by `<c-side-navigation-item>`. */
 export interface CSideNavigationItemElementEventMap {
   /**
-   * Fired when the item is activated (click or Enter), carrying the
-   * originating DOM event; bubbles so the parent `<c-side-navigation>` can
-   * coordinate which item is active.
+   * Fired when the item is activated (click or Enter), carrying its `value`;
+   * bubbles out of the navigation, as `c-menu`'s does, so one listener on
+   * `c-side-navigation` can handle every item.
    */
-  itemChange: CustomEvent<Event>;
+  select: CustomEvent<{ value: string | undefined }>;
 }
 
-export interface CSideNavigationItemElement extends Omit<HTMLElement, 'active' | 'focusable' | 'href' | 'loading' | 'target'> {
+export interface CSideNavigationItemElement extends Omit<HTMLElement, 'active' | 'focusable' | 'href' | 'loading' | 'target' | 'value'> {
   /** Indicate active state */
   active?: boolean;
   /** Whether the item is in the keyboard tab order — a parent item sets this to false on its collapsed sub-items so hidden items aren't Tab-reachable */
@@ -1810,6 +1810,8 @@ export interface CSideNavigationItemElement extends Omit<HTMLElement, 'active' |
   loading?: boolean;
   /** Hyperlink target */
   target?: string;
+  /** Value reported in the `select` event when the item is activated */
+  value?: string;
   addEventListener<K extends keyof CSideNavigationItemElementEventMap>(
     type: K,
     listener: (this: CSideNavigationItemElement, ev: CSideNavigationItemElementEventMap[K]) => void,
@@ -1934,7 +1936,16 @@ export interface CStepsElement extends Omit<HTMLElement, 'value'> {
   value?: number | string;
 }
 
-export interface CSubNavigationItemElement extends Omit<HTMLElement, 'active' | 'focusable' | 'href' | 'loading' | 'target'> {
+/** Events dispatched by `<c-sub-navigation-item>`. */
+export interface CSubNavigationItemElementEventMap {
+  /**
+   * Fired when the item is activated (click or Enter), carrying its `value`;
+   * bubbles out of the navigation, as `c-side-navigation-item`'s does.
+   */
+  select: CustomEvent<{ value: string | undefined }>;
+}
+
+export interface CSubNavigationItemElement extends Omit<HTMLElement, 'active' | 'focusable' | 'href' | 'loading' | 'target' | 'value'> {
   /** Active state */
   active?: boolean;
   /** Element is visible and focusable */
@@ -1945,6 +1956,28 @@ export interface CSubNavigationItemElement extends Omit<HTMLElement, 'active' | 
   loading?: boolean;
   /** Link target */
   target?: string;
+  /** Value reported in the `select` event when the item is activated */
+  value?: string;
+  addEventListener<K extends keyof CSubNavigationItemElementEventMap>(
+    type: K,
+    listener: (this: CSubNavigationItemElement, ev: CSubNavigationItemElementEventMap[K]) => void,
+    options?: boolean | AddEventListenerOptions,
+  ): void;
+  addEventListener(
+    type: string,
+    listener: EventListenerOrEventListenerObject,
+    options?: boolean | AddEventListenerOptions,
+  ): void;
+  removeEventListener<K extends keyof CSubNavigationItemElementEventMap>(
+    type: K,
+    listener: (this: CSubNavigationItemElement, ev: CSubNavigationItemElementEventMap[K]) => void,
+    options?: boolean | EventListenerOptions,
+  ): void;
+  removeEventListener(
+    type: string,
+    listener: EventListenerOrEventListenerObject,
+    options?: boolean | EventListenerOptions,
+  ): void;
 }
 
 /** Events dispatched by `<c-switch>`. */

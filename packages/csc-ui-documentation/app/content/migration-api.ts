@@ -242,4 +242,11 @@ export const V3_API_CHANGES: V3ApiChange[] = [
     name: 'changeValue',
     tag: 'c-steps',
   },
+  {
+    change:
+      'Renamed to `select`, as on `c-menu`: its detail is `{ value }`, the item’s new `value` prop, instead of the originating DOM event. It bubbles, so one listener on `c-side-navigation` can handle every item; `c-sub-navigation-item` fires it too.',
+    kind: 'event',
+    name: 'itemChange',
+    tag: 'c-side-navigation-item',
+  },
 ];

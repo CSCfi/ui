@@ -9,8 +9,9 @@
  * spec.
  */
 import { describe, expect, it } from 'vitest';
+import { userEvent } from 'vitest/browser';
 
-import { mount, settle } from '../../test/harness';
+import { mount, recordEvents, settle } from '../../test/harness';
 
 const ITEMS = Array.from(
   { length: 40 },
@@ -138,5 +139,57 @@ describe('c-side-navigation', () => {
     } finally {
       root.style.scrollbarGutter = gutter;
     }
+  });
+
+  describe('select', () => {
+    const NAV =
+      '<c-side-navigation-item value="dashboard">Dashboard</c-side-navigation-item>' +
+      '<c-side-navigation-item value="projects">Projects' +
+      '<c-sub-navigation-item value="active">Active</c-sub-navigation-item>' +
+      '<c-sub-navigation-item value="archived">Archived</c-sub-navigation-item>' +
+      '</c-side-navigation-item>';
+
+    type ItemHost = { active: boolean } & HTMLElement;
+
+    const item = (m: { host: HTMLElement }, value: string): ItemHost =>
+      m.host.querySelector(`[value="${value}"]`) as ItemHost;
+
+    const box = (el: HTMLElement, part: string): HTMLElement =>
+      el.shadowRoot!.querySelector(`[part~="${part}"]`) as HTMLElement;
+
+    it('an item fires select with its value, heard on the navigation', async () => {
+      const m = await mount('c-side-navigation', { html: NAV });
+
+      await settle();
+
+      const events = recordEvents(m.host, ['select']);
+
+      await userEvent.click(box(item(m, 'dashboard'), 'header'));
+      box(item(m, 'dashboard'), 'header').focus();
+      await userEvent.keyboard('{Enter}');
+
+      expect(events.details()).toEqual([
+        { value: 'dashboard' },
+        { value: 'dashboard' },
+      ]);
+      expect(item(m, 'dashboard').active).toBe(true);
+    });
+
+    it('a sub-item fires select with its value and leaves the parent items alone', async () => {
+      const m = await mount('c-side-navigation', { html: NAV });
+
+      await settle();
+
+      // Open the parent so its sub-items are shown.
+      await userEvent.click(box(item(m, 'projects'), 'header'));
+      await settle();
+
+      const events = recordEvents(m.host, ['select']);
+
+      await userEvent.click(box(item(m, 'active'), 'root'));
+
+      expect(events.details()).toEqual([{ value: 'active' }]);
+      expect(item(m, 'projects').active).toBe(true);
+    });
   });
 });

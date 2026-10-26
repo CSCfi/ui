@@ -88,6 +88,7 @@ import {
   type CStepElement,
   type CStepsElement,
   type CSubNavigationItemElement,
+  type CSubNavigationItemElementEventMap,
   type CSwitchElement,
   type CSwitchElementEventMap,
   type CTabElement,
@@ -634,9 +635,9 @@ export const CSideNavigation = createComponent({
 
 export const CSideNavigationItem = createComponent({
   displayName: 'CSideNavigationItem',
-  elementClass: elementClass<CSideNavigationItemElement>(['active', 'focusable', 'href', 'loading', 'target']),
+  elementClass: elementClass<CSideNavigationItemElement>(['active', 'focusable', 'href', 'loading', 'target', 'value']),
   events: {
-    onItemChange: 'itemChange' as EventName<CSideNavigationItemElementEventMap['itemChange']>,
+    onSelect: 'select' as EventName<CSideNavigationItemElementEventMap['select']>,
   },
   react: React,
   tagName: 'c-side-navigation-item',
@@ -692,7 +693,10 @@ export const CSteps = createComponent({
 
 export const CSubNavigationItem = createComponent({
   displayName: 'CSubNavigationItem',
-  elementClass: elementClass<CSubNavigationItemElement>(['active', 'focusable', 'href', 'loading', 'target']),
+  elementClass: elementClass<CSubNavigationItemElement>(['active', 'focusable', 'href', 'loading', 'target', 'value']),
+  events: {
+    onSelect: 'select' as EventName<CSubNavigationItemElementEventMap['select']>,
+  },
   react: React,
   tagName: 'c-sub-navigation-item',
 });

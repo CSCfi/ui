@@ -4,12 +4,13 @@
     "focusable": "boolean = true",
     "href": "string = ''",
     "loading": "boolean = false",
-    "target": "string = ''"
+    "target": "string = ''",
+    "value": "string"
   },
   "cssProperties": [],
   "defaultable": [],
   "events": {
-    "itemChange": "CustomEvent<Event>"
+    "select": "CustomEvent<{ value: string | undefined }>"
   },
   "methods": {},
   "parts": [
@@ -23,7 +24,8 @@
     "focusable": "boolean = true",
     "href": "string = ''",
     "loading": "boolean = false",
-    "target": "string = ''"
+    "target": "string = ''",
+    "value": "string"
   },
   "slots": [
     "default",

@@ -237,12 +237,16 @@ const closeMenu = () => {
   emit('change:menu-visible', false);
 };
 
-// Reflect c-side-navigation-item's itemChange: when a top-level item is
+// Reflect a c-side-navigation-item's `select`: when a top-level item is
 // activated, deactivate any other parent (an "accordion"-style behaviour).
+// A sub-item's `select` — a c-sub-navigation-item, or an item nested in a
+// parent item's sub-item slot, which toggles itself — bubbles through here too.
 const handleItemChange = (event: Event) => {
   if (!host) return;
 
   const target = event.target as { active: boolean } & HTMLElement;
+
+  if (target.localName !== 'c-side-navigation-item' || target.slot) return;
 
   const wasActive = target.active;
 
@@ -289,7 +293,7 @@ const assignSubItemSlots = () => {
 onMounted(() => {
   if (!host) return;
   assignSubItemSlots();
-  host.addEventListener('itemChange', handleItemChange);
+  host.addEventListener('select', handleItemChange);
 
   if (props.styles && containerRef.value) {
     Object.assign(containerRef.value.style, props.styles);

@@ -57,11 +57,11 @@ import { useHostEmit } from '../../shared/useHostEmit';
 /** Events dispatched by `<c-side-navigation-item>`. */
 interface CSideNavigationItemEvents {
   /**
-   * Fired when the item is activated (click or Enter), carrying the
-   * originating DOM event; bubbles so the parent `<c-side-navigation>` can
-   * coordinate which item is active.
+   * Fired when the item is activated (click or Enter), carrying its `value`;
+   * bubbles out of the navigation, as `c-menu`'s does, so one listener on
+   * `c-side-navigation` can handle every item.
    */
-  itemChange: Event;
+  select: { value: string | undefined };
 }
 
 /**
@@ -192,6 +192,13 @@ interface CSideNavigationItemProps {
    * @freeform any browsing-context name (e.g. _blank, _self)
    */
   target?: string;
+
+  /**
+   * Value reported in the `select` event when the item is activated
+   *
+   * @freeform
+   */
+  value?: string;
 }
 
 const props = withDefaults(defineProps<CSideNavigationItemProps>(), {
@@ -200,6 +207,7 @@ const props = withDefaults(defineProps<CSideNavigationItemProps>(), {
   href: '',
   loading: false,
   target: '',
+  value: undefined,
 });
 
 const chevronIcon = mdiChevronRight;
@@ -267,7 +275,7 @@ const redirect = (event: Event | KeyboardEvent) => {
     event.preventDefault();
   }
 
-  emit('itemChange', event, { bubbles: true, composed: true });
+  emit('select', { value: props.value }, { bubbles: true, composed: true });
 
   if (!slotHasContent.value) {
     const sidenav = document.querySelector('c-side-navigation') as
@@ -297,16 +305,13 @@ onMounted(() => {
   // not the `display:contents` host which is skipped by sequential focus.
   host.addEventListener('click', redirect);
   host.addEventListener('keydown', redirect);
-  // A nested item bubbling its own itemChange shouldn't toggle the
-  // parent — instead toggle this item's active and swallow.
-  host.addEventListener('itemChange', (e) => {
-    if (isSubItem.value) {
-      e.stopPropagation();
-      e.stopImmediatePropagation?.();
-      e.preventDefault();
-      // Re-assign via host so Vue's prop setter runs.
+  // A nested item (in a parent item's sub-item slot) toggles itself on its
+  // own `select`; c-side-navigation leaves slotted items alone, and the event
+  // goes on to the page.
+  host.addEventListener('select', (e) => {
+    // Re-assign via host so Vue's prop setter runs.
+    if (isSubItem.value && e.target === host)
       (host as { active?: boolean }).active = !props.active;
-    }
   });
 
   handleChildClasses();

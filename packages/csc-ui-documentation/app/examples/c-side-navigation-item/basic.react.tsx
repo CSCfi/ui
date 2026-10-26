@@ -20,7 +20,7 @@ export const Basic = () => {
       <CSideNavigation>
         <CSideNavigationItem
           active={current === 'dashboard'}
-          onItemChange={() => setCurrent('dashboard')}
+          onSelect={() => setCurrent('dashboard')}
         >
           <CIcon path={mdiViewDashboardOutline} />
           Dashboard
@@ -31,15 +31,13 @@ export const Basic = () => {
           Projects
           <CSubNavigationItem
             active={current === 'active'}
-            onClick={() => setCurrent('active')}
-            onKeyUp={(event) => event.key === 'Enter' && setCurrent('active')}
+            onSelect={() => setCurrent('active')}
           >
             Active projects
           </CSubNavigationItem>
           <CSubNavigationItem
             active={current === 'archived'}
-            onClick={() => setCurrent('archived')}
-            onKeyUp={(event) => event.key === 'Enter' && setCurrent('archived')}
+            onSelect={() => setCurrent('archived')}
           >
             Archived projects
           </CSubNavigationItem>

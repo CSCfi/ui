@@ -30,6 +30,8 @@
 import { tv } from 'tailwind-variants';
 import { computed, onMounted, ref, useHost, watchEffect } from 'vue';
 
+import { useHostEmit } from '../../shared/useHostEmit';
+
 /**
  * Styling lives in this `tailwind-variants` config: each visual
  * region is a slot, and the `active` / `subLevel` variants replace the
@@ -91,6 +93,15 @@ const subNavigationItem = tv({
   },
 });
 
+/** Events dispatched by `<c-sub-navigation-item>`. */
+interface CSubNavigationItemEvents {
+  /**
+   * Fired when the item is activated (click or Enter), carrying its `value`;
+   * bubbles out of the navigation, as `c-side-navigation-item`'s does.
+   */
+  select: { value: string | undefined };
+}
+
 interface CSubNavigationItemProps {
   /**
    * Active state
@@ -128,6 +139,13 @@ interface CSubNavigationItemProps {
    * @freeform any browsing-context name (e.g. _blank, _self)
    */
   target?: string;
+
+  /**
+   * Value reported in the `select` event when the item is activated
+   *
+   * @freeform
+   */
+  value?: string;
 }
 
 const props = withDefaults(defineProps<CSubNavigationItemProps>(), {
@@ -136,6 +154,7 @@ const props = withDefaults(defineProps<CSubNavigationItemProps>(), {
   href: '',
   loading: false,
   target: '',
+  value: undefined,
 });
 
 const host = useHost();
@@ -146,9 +165,12 @@ const ui = computed(() =>
   subNavigationItem({ active: props.active, subLevel: subLevel.value }),
 );
 
+const emit = useHostEmit<CSubNavigationItemEvents>();
+
 const redirect = (event: Event) => {
   if (event instanceof KeyboardEvent && event.key !== 'Enter') return;
   event.stopPropagation();
+  emit('select', { value: props.value }, { bubbles: true, composed: true });
 
   // Closing the side menu is a side-effect of any sub-item navigation —
   // matches the Stencil behaviour of dismissing the drawer on click.

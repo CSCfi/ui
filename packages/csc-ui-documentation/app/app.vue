@@ -38,37 +38,39 @@
            scroll); `sticky top-15` pins it below the fixed toolbar while
            the page scrolls. Both are inert on mobile, where the un-classed
            host is display:contents and the drawer inside is fixed. Items use
-           `.prop`/@itemChange (not href) so navigation stays client-side. -->
+           `.prop`/@select (not href) so navigation stays client-side: each
+           item's value is its route. -->
       <c-side-navigation
         :mobile.prop="isMobile"
         class="autoheight sticky top-15"
+        @select="navigateTo($event.detail.value)"
       >
         <c-side-navigation-title>Guides</c-side-navigation-title>
 
         <c-side-navigation-item
           :active.prop="route.path === '/getting-started'"
-          @item-change="navigateTo('/getting-started')"
+          value="/getting-started"
         >
           Getting started
         </c-side-navigation-item>
 
         <c-side-navigation-item
           :active.prop="route.path === '/customization'"
-          @item-change="navigateTo('/customization')"
+          value="/customization"
         >
           Customization
         </c-side-navigation-item>
 
         <c-side-navigation-item
           :active.prop="route.path === '/data-visualization'"
-          @item-change="navigateTo('/data-visualization')"
+          value="/data-visualization"
         >
           Data visualization
         </c-side-navigation-item>
 
         <c-side-navigation-item
           :active.prop="route.path === '/migration'"
-          @item-change="navigateTo('/migration')"
+          value="/migration"
         >
           Migration guide
         </c-side-navigation-item>
@@ -79,7 +81,7 @@
           v-for="component in navComponents"
           :key="component.tagName"
           :active.prop="route.path === `/components/${component.tagName}`"
-          @item-change="navigateTo(`/components/${component.tagName}`)"
+          :value="`/components/${component.tagName}`"
         >
           {{ component.tagName }}
         </c-side-navigation-item>

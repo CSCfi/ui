@@ -1,5 +1,19 @@
 The dashboard layout's left-hand menu: section titles, navigation items and their sub-items in a drawer that is pinned beside the page on desktop and slides in over it on mobile.
 
+## Selecting an item
+
+Activating an item — a click, or Enter — fires `select` with `{ value }`, the
+item's `value`. Sub-items fire it too, and it bubbles, so one listener on the
+navigation can route every item:
+
+```vue
+<c-side-navigation @select="navigate($event.detail.value)">
+  <c-side-navigation-item value="/dashboard">Dashboard</c-side-navigation-item>
+</c-side-navigation>
+```
+
+Highlight the current page by setting `active` on its item.
+
 ## Inside c-main
 
 Slot it as a direct child of `c-main` and the dashboard layout places and pins it: the drawer sits beneath the toolbar — or at the top edge once a `static` toolbar has scrolled away — is sized to the pinned height, and scrolls a long menu on its own. No host class is needed; the 3.x `autoheight` class is ignored there.
