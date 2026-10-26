@@ -128,25 +128,11 @@ export const buildManifest = (components, sharedTypes) => ({
         // Host custom states (`:state()` selectors, ADR-0035). `cssStates` is
         // the CEM 2.x field name; harmless extra data under schema 1.0.0.
         cssStates: docTagEntries(c.docTags, 'cssstate'),
-        events: c.events.filter(isPublic).map((e) => {
-          // camelCase events dispatch a kebab-case twin at runtime
-          // (useHostEmit) so Vue templates can bind them;
-          // surface the twin in the docs.
-          const twin = e.name.replace(/\B([A-Z])/g, '-$1').toLowerCase();
-
-          const note =
-            twin === e.name
-              ? ''
-              : `Also dispatched as \`${twin}\` — bind that name in Vue templates.`;
-
-          const description = [e.description, note].filter(Boolean).join(' ');
-
-          return {
-            name: e.name,
-            type: { text: `CustomEvent<${e.detailType || 'unknown'}>` },
-            ...(description ? { description } : {}),
-          };
-        }),
+        events: c.events.filter(isPublic).map((e) => ({
+          name: e.name,
+          type: { text: `CustomEvent<${e.detailType || 'unknown'}>` },
+          ...(e.description ? { description: e.description } : {}),
+        })),
         members: [
           ...c.props.filter(isPublic).map(field),
           ...c.readonlyProperties.map((r) => ({

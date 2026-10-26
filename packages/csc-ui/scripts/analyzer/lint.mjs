@@ -16,6 +16,7 @@
  *     stays the single source of truth
  *   - a `valueEvents.ts` helper caller whose event map is missing an event
  *     that helper dispatches
+ *   - an event name that is not all-lowercase (ADR-0075)
  *   - an `@subcomponents` tag naming an unknown tag, an internal tag, or the
  *     component itself (the composed-children list must resolve to real,
  *     documented components)
@@ -151,6 +152,16 @@ export const lintComponent = (
     errors.push(
       `${rawDispatches} raw new CustomEvent/Event dispatch(es) — use useHostEmit (event map) or the valueEvents helpers`,
     );
+  }
+
+  // Every event name is all-lowercase (ADR-0017, ADR-0075): Vue hyphenates
+  // every v-on listener name, so a camelCase event never reaches a template.
+  for (const event of component.events) {
+    if (event.name !== event.name.toLowerCase()) {
+      errors.push(
+        `event "${event.name}" is not all-lowercase — Vue templates cannot listen for it`,
+      );
+    }
   }
 
   // The value-event helpers (valueEvents.ts, ADR-0075) and the events each

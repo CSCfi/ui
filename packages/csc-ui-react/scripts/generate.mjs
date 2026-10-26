@@ -8,7 +8,7 @@
  *     into its tag-name map (`CSwitchElement` etc.) — `createComponent`
  *     derives the React props from the element type.
  *   - Event typing anchors on the exported `C*ElementEventMap` interfaces
- *     (`EventName<CSwitchElementEventMap['changeValue']>`), so event `detail`
+ *     (`EventName<CSwitchElementEventMap['change']>`), so event `detail`
  *     types stay correct without re-declaring them here.
  *
  * The output is committed for reviewability; `pnpm run build` regenerates it
@@ -54,7 +54,7 @@ const components = manifest.modules
   .filter((decl) => decl.customElement)
   .sort((a, b) => a.tagName.localeCompare(b.tagName));
 
-/** `update:value` → `onUpdateValue`, `changeValue` → `onChangeValue`. */
+/** `update:value` → `onUpdateValue`, `change:query` → `onChangeQuery`. */
 const reactEventName = (name) =>
   `on${name
     .split(/[:-]/)

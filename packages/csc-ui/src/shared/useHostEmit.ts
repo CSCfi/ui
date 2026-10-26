@@ -27,23 +27,17 @@ import { useHost } from 'vue';
  * consumers rely on.
  *
  * Events do not bubble by default; pass `{ bubbles: true, composed: true }`
- * per call where the Stencil-era event bubbled.
+ * per call where an event must leave the component.
  *
  * Value controls dispatch their value events through `valueEvents.ts`
  * instead (it also mirrors `host.value` for native v-model). Declare those
  * events in the component's event map anyway — the docs analyzer enforces
  * this for every caller.
  *
- * camelCase events also dispatch a kebab-case twin: Vue's runtime
- * hyphenates every v-on listener name before calling addEventListener
- * (`@item-change` and `@itemChange` both listen for "item-change"), so a
- * camelCase name is unreachable from Vue templates. The camelCase event stays
- * canonical for Angular/TypeScript/the React wrapper (Stencil-era compat);
- * the twin carries the same `detail` and `EventInit`.
+ * Every event name is all-lowercase (ADR-0017, ADR-0075; the strict
+ * analyzer fails any other): Vue's runtime hyphenates every v-on listener
+ * name, so a camelCase event is unreachable from a Vue template.
  */
-const hyphenate = (name: string): string =>
-  name.replace(/\B([A-Z])/g, '-$1').toLowerCase();
-
 export const useHostEmit = <EventMap extends object>() => {
   const host = useHost();
 
@@ -56,11 +50,5 @@ export const useHostEmit = <EventMap extends object>() => {
     const [detail, options] = rest;
 
     host?.dispatchEvent(new CustomEvent(name, { detail, ...options }));
-
-    const kebab = hyphenate(name);
-
-    if (kebab !== name) {
-      host?.dispatchEvent(new CustomEvent(kebab, { detail, ...options }));
-    }
   };
 };
