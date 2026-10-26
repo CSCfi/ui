@@ -31,7 +31,7 @@ import type { Middleware, Padding, Placement } from '@floating-ui/dom';
 
 import { onBeforeUnmount, readonly, ref, type Ref, watch } from 'vue';
 
-import type { CPlacement } from '../types';
+import type { Placement as PanelPlacement } from './positionArea';
 
 type FloatingUi = typeof FloatingUiModule;
 
@@ -56,30 +56,31 @@ const OPPOSITE: Record<Side, Side> = {
   top: 'bottom',
 };
 
-const sideOf = (placement: CPlacement): Side => placement.split('-')[0] as Side;
+const sideOf = (placement: PanelPlacement): Side =>
+  placement.split('-')[0] as Side;
 
 const isBlockSide = (side: Side): boolean =>
   side === 'top' || side === 'bottom';
 
-const swapAlignment = (placement: CPlacement): CPlacement =>
+const swapAlignment = (placement: PanelPlacement): PanelPlacement =>
   (placement.endsWith('-start')
     ? placement.replace('-start', '-end')
-    : placement.replace('-end', '-start')) as CPlacement;
+    : placement.replace('-end', '-start')) as PanelPlacement;
 
-const swapSide = (placement: CPlacement): CPlacement =>
+const swapSide = (placement: PanelPlacement): PanelPlacement =>
   placement.replace(
     sideOf(placement),
     OPPOSITE[sideOf(placement)],
-  ) as CPlacement;
+  ) as PanelPlacement;
 
 /** The `flip-block` try-tactic: mirror across the block axis. */
-export const flipBlock = (placement: CPlacement): CPlacement =>
+export const flipBlock = (placement: PanelPlacement): PanelPlacement =>
   isBlockSide(sideOf(placement))
     ? swapSide(placement)
     : swapAlignment(placement);
 
 /** The `flip-inline` try-tactic: mirror across the inline axis. */
-export const flipInline = (placement: CPlacement): CPlacement =>
+export const flipInline = (placement: PanelPlacement): PanelPlacement =>
   isBlockSide(sideOf(placement))
     ? swapAlignment(placement)
     : swapSide(placement);
@@ -88,7 +89,7 @@ export const flipInline = (placement: CPlacement): CPlacement =>
  * `position-try-fallbacks: flip-block, flip-inline, flip-block flip-inline`
  * — the chain of `c-menu`, `c-tooltip` and `c-popover` — from `placement`.
  */
-export const flipChain = (placement: CPlacement): CPlacement[] => [
+export const flipChain = (placement: PanelPlacement): PanelPlacement[] => [
   flipBlock(placement),
   flipInline(placement),
   flipInline(flipBlock(placement)),
@@ -107,7 +108,7 @@ export interface FallbackPosition {
 
 export interface UseFallbackPositionOptions {
   /** Ordered fallback placements, mirroring the panel's `position-try-fallbacks`. */
-  fallbacks: (placement: CPlacement) => CPlacement[];
+  fallbacks: (placement: PanelPlacement) => PanelPlacement[];
 
   /** The `popover` panel. */
   floating: Readonly<Ref<HTMLElement | null>>;
@@ -116,7 +117,7 @@ export interface UseFallbackPositionOptions {
   gap: (side: Side) => number;
 
   /** The preferred placement (the inline `position-area`). */
-  placement: () => CPlacement;
+  placement: () => PanelPlacement;
 
   /** The element the panel sits against. */
   reference: () => Element | null | undefined;
@@ -165,7 +166,7 @@ export const useFallbackPosition = (
           // Natively the panel's margin box — the gap on both sides of the
           // placement's axis — is what must fit, and what is kept inside.
           const padding = (placement: Placement): Padding => {
-            const side = sideOf(placement as CPlacement);
+            const side = sideOf(placement as PanelPlacement);
 
             const gap = options.gap(side);
 
@@ -177,13 +178,14 @@ export const useFallbackPosition = (
           // The last placement that fitted while this panel is open — native
           // keeps it when no option fits any more ("last successful position
           // option") — and the preferred placement it was tried from.
-          let lastFit: { from: CPlacement; placement: Placement } | null = null;
+          let lastFit: { from: PanelPlacement; placement: Placement } | null =
+            null;
 
           // The native try chain: the first placement that fits entirely wins;
           // when none does, the last one that fitted, else the preferred one.
           // Not Floating UI's `flip`, which prefers any candidate that fits on
           // the side axis, however far it overflows along the other.
-          const tryChain = (candidates: CPlacement[]): Middleware => ({
+          const tryChain = (candidates: PanelPlacement[]): Middleware => ({
             async fn(state) {
               const tried: number = state.middlewareData.tryChain?.index ?? 0;
 
@@ -215,7 +217,7 @@ export const useFallbackPosition = (
             void computePosition(reference, floating, {
               middleware: [
                 offset(({ placement: resolved }) =>
-                  options.gap(sideOf(resolved as CPlacement)),
+                  options.gap(sideOf(resolved as PanelPlacement)),
                 ),
                 tryChain([placement, ...options.fallbacks(placement)]),
                 shift(({ placement: resolved }) => ({

@@ -14,7 +14,7 @@
         :cx="size / 2"
         :cy="size / 2"
         :r="radius"
-        :style="{ strokeWidth: `${width}px` }"
+        :style="{ strokeWidth: `${thickness}px` }"
         part="track"
       />
 
@@ -68,7 +68,7 @@ import { useHasSlot } from '../../shared/useHasSlot';
  * which is safe because stroke colour — unlike stroke width — does not feed
  * the radius math.
  *
- * SIZE CONTRACT: geometry is driven by the `size` / `width` props (inline
+ * SIZE CONTRACT: geometry is driven by the `size` / `thickness` props (inline
  * styles on the `svg` / `circle`s), because the circle radius and the dash
  * lengths are computed from them.
  *
@@ -112,21 +112,21 @@ interface CProgressCircleProps {
   size?: number;
 
   /**
+   * Thickness of the track in pixels; the value arc draws at half this
+   * thickness, inset within the track
+   */
+  thickness?: number;
+
+  /**
    * Progress value in percentage (0 to 100)
    */
   value?: number;
-
-  /**
-   * Stroke width of the track in pixels; the value arc draws at half this
-   * width, inset within the track
-   */
-  width?: number;
 }
 
 const props = withDefaults(defineProps<CProgressCircleProps>(), {
   size: 32,
+  thickness: 6,
   value: 0,
-  width: 6,
 });
 
 const safeValue = computed(() => {
@@ -138,14 +138,14 @@ const safeValue = computed(() => {
 });
 
 // The radius leaves room for the stroke: the track's outer edge lands exactly
-// on the size×size box (r + width/2 = size/2), so the ring never spills past
+// on the size×size box (r + thickness/2 = size/2), so the ring never spills past
 // the declared size.
-const radius = computed(() => Math.max((props.size - props.width) / 2, 0));
+const radius = computed(() => Math.max((props.size - props.thickness) / 2, 0));
 
 // The value arc is inset within the track, mirroring c-progress-bar's anatomy
 // (an 8px fill inside a 16px track): same centerline radius, half the track's
-// stroke width, leaving a width/4 rim of track visible on either side.
-const barWidth = computed(() => props.width / 2);
+// stroke width, leaving a thickness/4 rim of track visible on either side.
+const barWidth = computed(() => props.thickness / 2);
 
 const circumference = computed(() => 2 * Math.PI * radius.value);
 

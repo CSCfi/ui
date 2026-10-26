@@ -528,7 +528,7 @@ The value a **defaultable prop** falls back to when neither an explicit instance
 _Avoid_: Factory default, fallback (too generic), hard-coded default, `withDefaults` value (for a defaultable prop that value is `undefined`)
 
 **Defaultable prop**:
-A preference prop on the allow-list that accepts an **app default**: it carries the `@defaultable` tag in its SFC, appears in the generated `AppDefaults` type and `DEFAULTABLE_PROPS` list, and is badged "app default" in the props table. Preferences qualify (`labelOnTop`, `hideDetails`, `shadow`, `size`, `itemsPerPage`, `texts`); per-instance data (`value`, `label`, `items`) does not. Every defaultable prop resolves through `useAppDefault`: host attribute → own property → app default → built-in.
+A preference prop on the allow-list that accepts an **app default**: it carries the `@defaultable` tag in its SFC, appears in the generated `CAppDefaults` type and `DEFAULTABLE_PROPS` list, and is badged "app default" in the props table. Preferences qualify (`labelOnTop`, `hideDetails`, `shadow`, `size`, `itemsPerPage`, `texts`); per-instance data (`value`, `label`, `items`) does not. Every defaultable prop resolves through `useAppDefault`: host attribute → own property → app default → built-in.
 _Avoid_: Configurable prop, overridable prop (every prop is overridable per instance), global prop
 
 ### Data visualization

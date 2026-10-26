@@ -1,8 +1,8 @@
 {
   "attributes": {
     "size": "number = 32",
-    "value": "number = 0",
-    "width": "number = 6"
+    "thickness": "number = 6",
+    "value": "number = 0"
   },
   "cssProperties": [],
   "defaultable": [],
@@ -17,8 +17,8 @@
   "propertyOnly": [],
   "props": {
     "size": "number = 32",
-    "value": "number = 0",
-    "width": "number = 6"
+    "thickness": "number = 6",
+    "value": "number = 0"
   },
   "slots": [
     "default"

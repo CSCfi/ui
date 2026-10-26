@@ -17,11 +17,11 @@ export {
   themeToCss,
 } from '@cscfi/csc-ui';
 
-export type { Family, ThemeSeeds } from '@cscfi/csc-ui';
+export type { CFamily, CThemeSeeds } from '@cscfi/csc-ui';
 
 export { applyDefaults, DEFAULTABLE_PROPS, resetDefaults } from '@cscfi/csc-ui';
 
-export type { AppDefaults, DefaultableTag } from '@cscfi/csc-ui';
+export type { CAppDefaults, CDefaultableTag } from '@cscfi/csc-ui';
 
 export {
   chartAnatomy,
@@ -32,4 +32,4 @@ export {
   themeMode,
 } from '@cscfi/csc-ui';
 
-export type { ChartAnatomy, ChartSlots, ThemeMode } from '@cscfi/csc-ui';
+export type { CChartAnatomy, CChartSlots, CThemeMode } from '@cscfi/csc-ui';

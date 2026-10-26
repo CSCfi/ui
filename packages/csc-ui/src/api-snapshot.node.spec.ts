@@ -271,11 +271,28 @@ it('matches the entry snapshot of runtime exports and public types', async () =>
     }
   }
 
+  // Every exported type name (ADR-0074): the manifest describes the
+  // component and shared types below, but not the package-level ones
+  // (`CThemeMode`, `CAppDefaults`, …), and a renamed export breaks an import.
+  const typeExports = new Set<string>();
+
+  for (const m of source.matchAll(/^export type \{([^}]+)\} from/gm)) {
+    for (const entry of m[1].split(',')) {
+      const name = entry.trim();
+
+      if (name) typeExports.add(name.split(/\s+as\s+/).pop()!);
+    }
+  }
+
+  for (const m of source.matchAll(/^export type \* from '([^']+)'/gm))
+    typeExports.add(`* from ${m[1]}`);
+
   // The internal-tag list is not public API, but a tag moving in or out of it
   // changes what is — so the move shows up in this reviewed snapshot.
   const entry = {
     internalTags: [...internalTags].sort(),
     runtimeExports: [...runtimeExports].sort(),
+    typeExports: [...typeExports].sort(),
     types: Object.fromEntries(
       [...manifest.csc.types]
         .sort((a, b) => a.name.localeCompare(b.name))

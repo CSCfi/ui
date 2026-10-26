@@ -1,11 +1,28 @@
-import type { CPlacement } from '../types';
+/**
+ * A panel's placement relative to its anchor: the side, and `-start`/`-end`
+ * to align their edges on the cross axis. Private: c-menu, c-popover and
+ * c-tooltip each own a public alias of it (`CMenuPosition`, …).
+ */
+export type Placement =
+  | 'bottom-end'
+  | 'bottom-start'
+  | 'bottom'
+  | 'left-end'
+  | 'left-start'
+  | 'left'
+  | 'right-end'
+  | 'right-start'
+  | 'right'
+  | 'top-end'
+  | 'top-start'
+  | 'top';
 
 /**
- * `CPlacement` → CSS `position-area`, shared by the anchor-positioned overlay
+ * `Placement` → CSS `position-area`, shared by the anchor-positioned overlay
  * components (`c-menu`, `c-tooltip`, `c-popover`; ADR-0008). Native flip/shift
  * comes from each component's `position-try-fallbacks` escape-hatch rule.
  */
-export const POSITION_AREA: Record<CPlacement, string> = {
+export const POSITION_AREA: Record<Placement, string> = {
   bottom: 'bottom',
   'bottom-end': 'bottom span-left',
   'bottom-start': 'bottom span-right',
@@ -25,7 +42,7 @@ export const POSITION_AREA: Record<CPlacement, string> = {
  * margin is applied on (both sides, so the gap survives the position-try
  * flip fallbacks).
  */
-export const placementAxis = (position: CPlacement): 'block' | 'inline' =>
+export const placementAxis = (position: Placement): 'block' | 'inline' =>
   position.startsWith('left') || position.startsWith('right')
     ? 'inline'
     : 'block';

@@ -9,13 +9,13 @@
 
 import { FAMILIES, familyVars } from './ramp.js';
 
-export type { Family } from './ramp.js';
-import type { Family } from './ramp.js';
+export type { CFamily } from './ramp.js';
+import type { CFamily } from './ramp.js';
 
 /** A partial map of chromatic family → step-500 seed color. */
-export type ThemeSeeds = Partial<Record<Family, string>>;
+export type CThemeSeeds = Partial<Record<CFamily, string>>;
 
-const isFamily = (key: string): key is Family =>
+const isFamily = (key: string): key is CFamily =>
   (FAMILIES as readonly string[]).includes(key);
 
 /**
@@ -24,7 +24,7 @@ const isFamily = (key: string): key is Family =>
  * server and inject into `<head>` for zero-flash theming. Returns `''` for an
  * empty seed set.
  */
-export function themeToCss(seeds: ThemeSeeds): string {
+export function themeToCss(seeds: CThemeSeeds): string {
   const vars = seedVars(seeds);
 
   const names = Object.keys(vars);
@@ -40,7 +40,7 @@ export function themeToCss(seeds: ThemeSeeds): string {
  * Build the `--c-*` custom properties for the given seeds. Throws on an unknown
  * family or an unparseable color — this is a developer-facing API, so fail loud.
  */
-function seedVars(seeds: ThemeSeeds): Record<string, string> {
+function seedVars(seeds: CThemeSeeds): Record<string, string> {
   const vars: Record<string, string> = {};
 
   for (const [family, seed] of Object.entries(seeds)) {
@@ -70,7 +70,7 @@ const applied = new Set<string>();
  * shadow root. Merges with previously applied seeds. No-op outside the browser
  * (validation still runs, so bad input throws in any environment).
  */
-export function applyTheme(seeds: ThemeSeeds): void {
+export function applyTheme(seeds: CThemeSeeds): void {
   const vars = seedVars(seeds); // validate before touching the DOM
 
   if (typeof document === 'undefined') return;
@@ -88,7 +88,7 @@ export function applyTheme(seeds: ThemeSeeds): void {
  * argument, clears every applied property (reverting to the tokens.css
  * defaults); pass families to clear only those.
  */
-export function resetTheme(families?: Family[]): void {
+export function resetTheme(families?: CFamily[]): void {
   if (typeof document === 'undefined') return;
 
   const root = document.documentElement;

@@ -6,11 +6,12 @@
  * Typed element interfaces for every public custom element, plus the
  * global `HTMLElementTagNameMap` augmentation that makes
  * `document.createElement('c-button')` and `querySelector('c-button')`
- * return the typed element. Also the `AppDefaults` map (tag → props a
+ * return the typed element. Also the `CAppDefaults` map (tag → props a
  * consumer may set app-wide with `applyDefaults()`) and its runtime twin
  * `DEFAULTABLE_PROPS`, both derived from the `@defaultable` prop tags.
  */
 
+import type { CAccordionValue } from './components/c-accordion/CAccordion.vue';
 import type { CAutocompleteFilter, CAutocompleteItem, CAutocompleteTexts, CAutocompleteValue } from './components/c-autocomplete/CAutocomplete.vue';
 import type { CBreadcrumbTexts } from './components/c-breadcrumb/CBreadcrumb.vue';
 import type { CButtonGroupValue } from './components/c-button-group/CButtonGroup.vue';
@@ -26,11 +27,6 @@ import type { CTimePickerText, CTimePickerTexts, CTimePickerValue } from './comp
 import type { CTreeSelectFilter, CTreeSelectItem, CTreeSelectTexts, CTreeSelectValue } from './components/c-tree-select/CTreeSelect.vue';
 import type { CSelectItem, CToastMessage } from './types';
 
-// Local (non-exported) types referenced by the interfaces, inlined.
-type AccordionPrimitive = number | string;
-
-type AccordionValue = AccordionPrimitive | AccordionPrimitive[] | null;
-
 /** Events dispatched by `<c-accordion>`. */
 export interface CAccordionElementEventMap {
   /**
@@ -38,14 +34,14 @@ export interface CAccordionElementEventMap {
    * item's value, an array of values in `multiple` mode, or `null` when
    * everything is collapsed.
    */
-  change: CustomEvent<AccordionValue>;
+  change: CustomEvent<CAccordionValue>;
   /**
    * Native bubbling input event dispatched alongside every value change so a
    * plain `v-model` stays in sync. Carries no detail.
    */
   input: CustomEvent<void>;
   /** Fired alongside `change` with the same detail — the `v-model` contract. */
-  'update:value': CustomEvent<AccordionValue>;
+  'update:value': CustomEvent<CAccordionValue>;
 }
 
 export interface CAccordionElement extends Omit<HTMLElement, 'mandatory' | 'multiple' | 'outlined' | 'value'> {
@@ -55,8 +51,11 @@ export interface CAccordionElement extends Omit<HTMLElement, 'mandatory' | 'mult
   multiple?: boolean;
   /** Show an outline around expanded items */
   outlined?: boolean;
-  /** Value of the accordion */
-  value?: AccordionValue;
+  /**
+   * The expanded item's `value`, an array of them with `multiple`, or `null`
+   * when every item is collapsed.
+   */
+  value?: CAccordionValue;
   addEventListener<K extends keyof CAccordionElementEventMap>(
     type: K,
     listener: (this: CAccordionElement, ev: CAccordionElementEventMap[K]) => void,
@@ -1114,7 +1113,7 @@ export interface CMenuElementEventMap {
 /** A command menu: a transient panel of actions or navigation choices opened from a trigger (the WAI-ARIA menu-button pattern), authored declaratively with slotted `c-menu-item`, `c-menu-label` and `c-divider` elements. Activating an item fires a one-off `select` event and closes the menu; the menu holds no selected value — that is `c-select`'s job. */
 export interface CMenuElement extends Omit<HTMLElement, 'distance' | 'open' | 'position' | 'trigger'> {
   /** Distance from the trigger to the panel, in pixels. Defaults to `0`. */
-  distance?: number | string;
+  distance?: number;
   /** Whether the menu is open. Two-way: emits `change:open`. */
   open?: boolean;
   /** Preferred placement of the panel relative to the trigger. */
@@ -1502,7 +1501,7 @@ export interface CPopoverElementEventMap {
 /** A click-opened, non-modal surface anchored to its trigger, floating in the top layer; its content may be interactive. */
 export interface CPopoverElement extends Omit<HTMLElement, 'distance' | 'heading' | 'open' | 'position' | 'trigger'> {
   /** Distance from the trigger to the panel, in pixels. Defaults to `0`. */
-  distance?: number | string;
+  distance?: number;
   /**
    * Heading rendered at the top of the panel, doubling as its accessible
    * name. Without it, set `aria-label` on the host. Named `heading`, not
@@ -1562,16 +1561,16 @@ export interface CProgressBarElement extends Omit<HTMLElement, 'hideDetails' | '
 }
 
 /** A circular progress indicator that draws a known completion percentage as an arc around a track — the circular counterpart of `c-progress-bar`. */
-export interface CProgressCircleElement extends Omit<HTMLElement, 'size' | 'value' | 'width'> {
+export interface CProgressCircleElement extends Omit<HTMLElement, 'size' | 'thickness' | 'value'> {
   /** Diameter of the circle in pixels */
   size?: number;
+  /**
+   * Thickness of the track in pixels; the value arc draws at half this
+   * thickness, inset within the track
+   */
+  thickness?: number;
   /** Progress value in percentage (0 to 100) */
   value?: number;
-  /**
-   * Stroke width of the track in pixels; the value arc draws at half this
-   * width, inset within the track
-   */
-  width?: number;
 }
 
 /** A single radio option inside a `c-radio-group`: a native radio input whose default slot is its clickable, announced label. */
@@ -1932,8 +1931,8 @@ export interface CStepElement extends Omit<HTMLElement, 'complete' | 'current'> 
 }
 
 export interface CStepsElement extends Omit<HTMLElement, 'value'> {
-  /** Value of the accordion (current step number) */
-  value?: number | string;
+  /** Number of the current step, counting from 1. */
+  value?: number;
 }
 
 /** Events dispatched by `<c-sub-navigation-item>`. */
@@ -2483,9 +2482,9 @@ export interface CTooltipElement extends Omit<HTMLElement, 'delay' | 'distance' 
    * shows the tooltip immediately, regardless of this value. Defaults to
    * `400`.
    */
-  delay?: number | string;
+  delay?: number;
   /** Distance from the trigger to the tooltip, in pixels. Defaults to `4`. */
-  distance?: number | string;
+  distance?: number;
   /** Whether the tooltip is open. Two-way: emits `change:open`. */
   open?: boolean;
   /** Preferred placement of the tooltip relative to the trigger. */
@@ -2647,7 +2646,7 @@ export interface CTreeSelectElement extends Omit<HTMLElement, 'allowBranch' | 'c
  * element's own members. An explicit per-instance attribute or property
  * always wins over an app default.
  */
-export interface AppDefaults {
+export interface CAppDefaults {
   'c-autocomplete'?: Partial<Pick<CAutocompleteElement, 'hideDetails' | 'itemsPerPage' | 'labelOnTop' | 'shadow' | 'size' | 'texts'>>;
   'c-breadcrumb'?: Partial<Pick<CBreadcrumbElement, 'texts'>>;
   'c-color-picker'?: Partial<Pick<CColorPickerElement, 'alpha' | 'format' | 'hideDetails' | 'labelOnTop' | 'shadow' | 'size' | 'texts'>>;
@@ -2663,7 +2662,7 @@ export interface AppDefaults {
   'c-tree-select'?: Partial<Pick<CTreeSelectElement, 'hideDetails' | 'itemsPerPage' | 'labelOnTop' | 'shadow' | 'size' | 'texts'>>;
 }
 
-/** Runtime allow-list behind `applyDefaults()` validation — the same data as `AppDefaults`. */
+/** Runtime allow-list behind `applyDefaults()` validation — the same data as `CAppDefaults`. */
 export const DEFAULTABLE_PROPS = {
   'c-autocomplete': ['hideDetails', 'itemsPerPage', 'labelOnTop', 'shadow', 'size', 'texts'],
   'c-breadcrumb': ['texts'],
@@ -2678,7 +2677,7 @@ export const DEFAULTABLE_PROPS = {
   'c-text-field': ['hideDetails', 'labelOnTop', 'shadow', 'size'],
   'c-time-picker': ['format', 'hideDetails', 'labelOnTop', 'shadow', 'showNow', 'size', 'texts'],
   'c-tree-select': ['hideDetails', 'itemsPerPage', 'labelOnTop', 'shadow', 'size', 'texts'],
-} as const satisfies Record<keyof AppDefaults, readonly string[]>;
+} as const satisfies Record<keyof CAppDefaults, readonly string[]>;
 
 /** Tags dispatching the v-model contract event `update:value` — the value controls (CONTEXT.md). */
 export const VALUE_TAGS = ['c-accordion', 'c-autocomplete', 'c-button-group', 'c-checkbox', 'c-color-picker', 'c-date-picker', 'c-file-upload', 'c-modal', 'c-number-field', 'c-otp-input', 'c-pagination', 'c-radio-group', 'c-select', 'c-slider', 'c-switch', 'c-tabs', 'c-text-field', 'c-time-picker', 'c-tree-select'] as const;

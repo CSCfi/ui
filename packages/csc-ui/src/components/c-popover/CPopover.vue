@@ -45,11 +45,27 @@
 </template>
 
 <script lang="ts">
-import type { CPlacement } from '../../types';
+/**
+ * Preferred placement of the panel relative to its trigger: the side, and
+ * `-start`/`-end` to align their edges on the cross axis.
+ */
+export type CPopoverPosition =
+  | 'bottom-end'
+  | 'bottom-start'
+  | 'bottom'
+  | 'left-end'
+  | 'left-start'
+  | 'left'
+  | 'right-end'
+  | 'right-start'
+  | 'right'
+  | 'top-end'
+  | 'top-start'
+  | 'top';
 
 interface CPopoverProps {
   /** Distance from the trigger to the panel, in pixels. Defaults to `0`. */
-  distance?: number | string;
+  distance?: number;
 
   /**
    * Heading rendered at the top of the panel, doubling as its accessible
@@ -64,7 +80,7 @@ interface CPopoverProps {
   open?: boolean;
 
   /** Preferred placement of the panel relative to the trigger. */
-  position?: CPlacement;
+  position?: CPopoverPosition;
 
   /**
    * Designated trigger: an element elsewhere in the document that opens the

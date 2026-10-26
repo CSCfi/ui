@@ -12,10 +12,10 @@
  * chart sits, or `observeThemeMode()` to follow it.
  */
 
-import type { ThemeMode } from './themeMode';
+import type { CThemeMode } from './themeMode';
 
 /** The twelve series slots in slot order (`chart-1` … `chart-12`). */
-export type ChartSlots = readonly [
+export type CChartSlots = readonly [
   string,
   string,
   string,
@@ -31,7 +31,7 @@ export type ChartSlots = readonly [
 ];
 
 /** The chart anatomy roles: plot background, gridlines/axes, tick labels. */
-export interface ChartAnatomy {
+export interface CChartAnatomy {
   readonly surface: string;
   readonly grid: string;
   readonly axis: string;
@@ -43,7 +43,7 @@ export interface ChartAnatomy {
  * string the `--c-chart-*` variable holds (ADR-0041). Each round-trips to
  * the `#rrggbb` in `chartSlotsHex`.
  */
-export const chartSlots: Readonly<Record<ThemeMode, ChartSlots>> = {
+export const chartSlots: Readonly<Record<CThemeMode, CChartSlots>> = {
   light: [
     'oklch(0.6534 0.1710 247.9336)',
     'oklch(0.5906 0.1462 343.7182)',
@@ -79,7 +79,7 @@ export const chartSlots: Readonly<Record<ThemeMode, ChartSlots>> = {
  * their own colour maths in sRGB (ECharts, Chart.js) and cannot parse
  * `oklch()`. Same colours and order as `chartSlots`.
  */
-export const chartSlotsHex: Readonly<Record<ThemeMode, ChartSlots>> = {
+export const chartSlotsHex: Readonly<Record<CThemeMode, CChartSlots>> = {
   light: [
     '#1295f2',
     '#b75593',
@@ -111,7 +111,7 @@ export const chartSlotsHex: Readonly<Record<ThemeMode, ChartSlots>> = {
 };
 
 /** Chart anatomy roles per theme mode as `oklch(L C H)` strings. */
-export const chartAnatomy: Readonly<Record<ThemeMode, ChartAnatomy>> = {
+export const chartAnatomy: Readonly<Record<CThemeMode, CChartAnatomy>> = {
   light: {
     surface: 'oklch(1.0000 0.0000 0.0000)',
     grid: 'oklch(0.9088 0.0035 247.8616)',
@@ -125,7 +125,7 @@ export const chartAnatomy: Readonly<Record<ThemeMode, ChartAnatomy>> = {
 };
 
 /** Chart anatomy roles per theme mode as `#rrggbb`. */
-export const chartAnatomyHex: Readonly<Record<ThemeMode, ChartAnatomy>> = {
+export const chartAnatomyHex: Readonly<Record<CThemeMode, CChartAnatomy>> = {
   light: {
     surface: '#ffffff',
     grid: '#dfe1e3',

@@ -48,6 +48,47 @@ The wrapper carries `anchor-name`; the panel references it. -->
   </div>
 </template>
 
+<script lang="ts">
+/**
+ * Preferred placement of the menu panel relative to its trigger: the side, and
+ * `-start`/`-end` to align their edges on the cross axis.
+ */
+export type CMenuPosition =
+  | 'bottom-end'
+  | 'bottom-start'
+  | 'bottom'
+  | 'left-end'
+  | 'left-start'
+  | 'left'
+  | 'right-end'
+  | 'right-start'
+  | 'right'
+  | 'top-end'
+  | 'top-start'
+  | 'top';
+
+interface CMenuProps {
+  /** Distance from the trigger to the panel, in pixels. Defaults to `0`. */
+  distance?: number;
+
+  /** Whether the menu is open. Two-way: emits `change:open`. */
+  open?: boolean;
+
+  /** Preferred placement of the panel relative to the trigger. */
+  position?: CMenuPosition;
+
+  /**
+   * Designated trigger: an element elsewhere in the document that opens the
+   * menu — its document ID, or the element itself. The same trigger concept
+   * as the `trigger` slot, supplied by reference: the menu wires
+   * click-to-toggle, arrow-key opening, ARIA and focus return onto it and
+   * anchors the panel to it. When both routes are supplied, this prop wins
+   * over the slot.
+   */
+  trigger?: HTMLElement | string;
+}
+</script>
+
 <script setup lang="ts">
 /**
  * @slot default - Menu title / activator element (simple variant)
@@ -71,8 +112,6 @@ import {
   useTemplateRef,
   watch,
 } from 'vue';
-
-import type { CPlacement } from '../../types';
 
 import { coerceBoolean } from '../../shared/coerceBoolean';
 import { attachLightDismiss, type Detach } from '../../shared/lightDismiss';
@@ -134,27 +173,6 @@ const menu = tv({
 });
 
 const ui = menu();
-
-interface CMenuProps {
-  /** Distance from the trigger to the panel, in pixels. Defaults to `0`. */
-  distance?: number | string;
-
-  /** Whether the menu is open. Two-way: emits `change:open`. */
-  open?: boolean;
-
-  /** Preferred placement of the panel relative to the trigger. */
-  position?: CPlacement;
-
-  /**
-   * Designated trigger: an element elsewhere in the document that opens the
-   * menu — its document ID, or the element itself. The same trigger concept
-   * as the `trigger` slot, supplied by reference: the menu wires
-   * click-to-toggle, arrow-key opening, ARIA and focus return onto it and
-   * anchors the panel to it. When both routes are supplied, this prop wins
-   * over the slot.
-   */
-  trigger?: HTMLElement | string;
-}
 
 const props = withDefaults(defineProps<CMenuProps>(), {
   distance: 0,

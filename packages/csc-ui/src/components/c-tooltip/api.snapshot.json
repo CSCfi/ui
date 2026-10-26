@@ -1,7 +1,7 @@
 {
   "attributes": {
-    "delay": "number | string = 400",
-    "distance": "number | string = 4",
+    "delay": "number = 400",
+    "distance": "number = 4",
     "open": "boolean = false",
     "position": "'bottom-end' | 'bottom-start' | 'bottom' | 'left-end' | 'left-start' | 'left' | 'right-end' | 'right-start' | 'right' | 'top-end' | 'top-start' | 'top' = 'top'",
     "text": "string = ''",
@@ -19,8 +19,8 @@
   ],
   "propertyOnly": [],
   "props": {
-    "delay": "number | string = 400",
-    "distance": "number | string = 4",
+    "delay": "number = 400",
+    "distance": "number = 4",
     "open": "boolean = false",
     "position": "'bottom-end' | 'bottom-start' | 'bottom' | 'left-end' | 'left-start' | 'left' | 'right-end' | 'right-start' | 'right' | 'top-end' | 'top-start' | 'top' = 'top'",
     "text": "string = ''",

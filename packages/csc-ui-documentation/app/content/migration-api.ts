@@ -482,4 +482,11 @@ export const V3_API_CHANGES: V3ApiChange[] = [
     name: 'styles',
     tag: 'c-side-navigation',
   },
+  {
+    change:
+      'Typed `number` (the current step, counting from 1). An attribute still works: `value="3"` reads as `3`.',
+    kind: 'prop',
+    name: 'value',
+    tag: 'c-steps',
+  },
 ];

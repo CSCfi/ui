@@ -60,12 +60,8 @@ const steps = tv({
 });
 
 interface CStepsProps {
-  /**
-   * Value of the accordion (current step number)
-   *
-   * @seeded from csc-ui — verify
-   */
-  value?: number | string;
+  /** Number of the current step, counting from 1. */
+  value?: number;
 }
 
 const props = withDefaults(defineProps<CStepsProps>(), {

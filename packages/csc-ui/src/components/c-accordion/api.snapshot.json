@@ -7,9 +7,9 @@
   "cssProperties": [],
   "defaultable": [],
   "events": {
-    "change": "CustomEvent<AccordionValue>",
+    "change": "CustomEvent<CAccordionValue>",
     "input": "CustomEvent<void>",
-    "update:value": "CustomEvent<AccordionValue>"
+    "update:value": "CustomEvent<CAccordionValue>"
   },
   "methods": {},
   "parts": [
@@ -22,7 +22,7 @@
     "mandatory": "boolean = false",
     "multiple": "boolean = false",
     "outlined": "boolean = false",
-    "value": "AccordionValue = null"
+    "value": "CAccordionValue = null"
   },
   "slots": [
     "default"

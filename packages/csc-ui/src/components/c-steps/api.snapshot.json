@@ -1,6 +1,6 @@
 {
   "attributes": {
-    "value": "number | string = 1"
+    "value": "number = 1"
   },
   "cssProperties": [],
   "defaultable": [],
@@ -12,7 +12,7 @@
   ],
   "propertyOnly": [],
   "props": {
-    "value": "number | string = 1"
+    "value": "number = 1"
   },
   "slots": [
     "default"

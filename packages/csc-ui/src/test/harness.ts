@@ -10,7 +10,7 @@ import type { Locator, ScreenshotMatcherOptions } from 'vitest/browser';
 import { expect, it } from 'vitest';
 import { commands, page, server, userEvent } from 'vitest/browser';
 
-import type { ThemeMode } from '../theme/themeMode';
+import type { CThemeMode } from '../theme/themeMode';
 
 import { defineCustomElements } from '../index';
 
@@ -75,7 +75,7 @@ export interface MountOptions {
  * this rather than a literal `oklch()` string, which would re-assert the token
  * pipeline instead of the component's behaviour.
  */
-export function roleInMode(mode: ThemeMode, role = '--c-on-surface'): string {
+export function roleInMode(mode: CThemeMode, role = '--c-on-surface'): string {
   const probe = document.createElement('div');
 
   probe.setAttribute('data-theme', mode);
@@ -94,7 +94,7 @@ export function roleInMode(mode: ThemeMode, role = '--c-on-surface'): string {
  * bare `[data-theme]`, so any element opens a **mode scope** (ADR-0053) — set
  * the attribute on a wrapper instead to scope one to part of a spec.
  */
-export function setThemeMode(mode: ThemeMode): void {
+export function setThemeMode(mode: CThemeMode): void {
   document.documentElement.setAttribute('data-theme', mode);
 }
 

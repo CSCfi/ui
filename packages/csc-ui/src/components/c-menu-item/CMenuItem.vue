@@ -111,7 +111,7 @@ import {
   watch,
 } from 'vue';
 
-import type { CPlacement } from '../../types';
+import type { Placement } from '../../shared/positionArea';
 
 import { coerceBoolean } from '../../shared/coerceBoolean';
 import { applyPeekCap } from '../../shared/peekCap';
@@ -238,7 +238,7 @@ const ui = computed(() =>
 // below — flip-inline, flip-block, both, then below/above the row — and the
 // gap is the rule's margins: the surfaces-touch constant plus the menu
 // distance beside the row, the menu distance alone below or above it.
-const SUBMENU_FALLBACKS: CPlacement[] = [
+const SUBMENU_FALLBACKS: Placement[] = [
   'left-start',
   'right-end',
   'left-end',

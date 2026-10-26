@@ -30,7 +30,7 @@
 </template>
 
 <script setup lang="ts">
-import type { Family } from '@cscfi/csc-ui';
+import type { CFamily } from '@cscfi/csc-ui';
 
 // The seeds come from the library's DEFAULT_SEEDS through the shared
 // composable (also driven by the header colour switcher), not from the live
@@ -38,6 +38,6 @@ import type { Family } from '@cscfi/csc-ui';
 // <input type="color"> cannot take.
 const { families, resetSeeds, seeds, setSeed } = useThemeSeeds();
 
-const onInput = (family: Family, event: Event) =>
+const onInput = (family: CFamily, event: Event) =>
   setSeed(family, (event.target as HTMLInputElement).value);
 </script>

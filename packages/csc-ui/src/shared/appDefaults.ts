@@ -8,7 +8,7 @@
  *   applyDefaults({ 'c-text-field': { labelOnTop: true } });
  *
  * Only props tagged `@defaultable <built-in>` in their SFC take part; the
- * analyzer derives the `AppDefaults` type and the `DEFAULTABLE_PROPS`
+ * analyzer derives the `CAppDefaults` type and the `DEFAULTABLE_PROPS`
  * allow-list from those tags (src/tag-name-map.ts). Each such prop declares
  * `undefined` in `withDefaults` — so "unset" is observable — and resolves
  * through `useAppDefault` below, in this order:
@@ -40,33 +40,33 @@
 
 import { computed, type ComputedRef, reactive, useHost } from 'vue';
 
-import { type AppDefaults, DEFAULTABLE_PROPS } from '../tag-name-map';
+import { type CAppDefaults, DEFAULTABLE_PROPS } from '../tag-name-map';
 import { coerceBoolean } from './coerceBoolean';
 import { hyphenate } from './defineElement';
 
-export type { AppDefaults } from '../tag-name-map';
+export type { CAppDefaults } from '../tag-name-map';
 
 export { DEFAULTABLE_PROPS } from '../tag-name-map';
 
 /** A tag with at least one defaultable prop. */
-export type DefaultableTag = keyof AppDefaults;
+export type CDefaultableTag = keyof CAppDefaults;
 
-type Bucket<T extends DefaultableTag> = NonNullable<AppDefaults[T]>;
+type Bucket<T extends CDefaultableTag> = NonNullable<CAppDefaults[T]>;
 
 /** The value a resolved prop takes: the element member type, made required. */
-type Resolved<T extends DefaultableTag, K extends keyof Bucket<T>> = Required<
+type Resolved<T extends CDefaultableTag, K extends keyof Bucket<T>> = Required<
   NonNullable<Bucket<T>[K]>
 >;
 
 /** tag → { prop → app default }. Reactive: every resolved computed depends on it. */
-const registry = reactive<{ [T in DefaultableTag]?: Bucket<T> }>({});
+const registry = reactive<{ [T in CDefaultableTag]?: Bucket<T> }>({});
 
 // The same proxy, viewed loosely for the merge/delete code below.
 const buckets = registry as Record<string, Record<string, unknown> | undefined>;
 
 const defaultableTags: readonly string[] = Object.keys(DEFAULTABLE_PROPS);
 
-const isDefaultableTag = (tag: string): tag is DefaultableTag =>
+const isDefaultableTag = (tag: string): tag is CDefaultableTag =>
   defaultableTags.includes(tag);
 
 /**
@@ -74,7 +74,7 @@ const isDefaultableTag = (tag: string): tag is DefaultableTag =>
  * prop that is not defaultable — this is a developer-facing API, so fail loud
  * (cf. applyTheme's seedVars).
  */
-const validate = (defaults: AppDefaults): void => {
+const validate = (defaults: CAppDefaults): void => {
   for (const [tag, bucket] of Object.entries(defaults)) {
     if (!isDefaultableTag(tag)) {
       throw new Error(
@@ -104,7 +104,7 @@ const validate = (defaults: AppDefaults): void => {
  * module-level registry must not leak across server requests, and custom
  * elements never render on the server.
  */
-export function applyDefaults(defaults: AppDefaults): void {
+export function applyDefaults(defaults: CAppDefaults): void {
   validate(defaults); // validate before touching state
 
   if (typeof document === 'undefined') return;
@@ -122,7 +122,7 @@ export function applyDefaults(defaults: AppDefaults): void {
 }
 
 /** Clear the app-wide defaults of the given tags, or of every tag when omitted. */
-export function resetDefaults(tags?: DefaultableTag[]): void {
+export function resetDefaults(tags?: CDefaultableTag[]): void {
   for (const tag of tags ?? Object.keys(buckets)) delete buckets[tag];
 }
 
@@ -160,7 +160,7 @@ const fromAttribute = (attr: string, builtIn: unknown): unknown => {
  * A nullish own value counts as "unset" (Vue itself treats `null` as an
  * explicit value; here it falls through to the app default).
  */
-export const useAppDefault = <T extends DefaultableTag>(
+export const useAppDefault = <T extends CDefaultableTag>(
   tag: T,
   props: object,
 ) => {

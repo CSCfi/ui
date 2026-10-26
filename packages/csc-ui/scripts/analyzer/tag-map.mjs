@@ -7,7 +7,7 @@
  * TypeScript consumers get typed `document.createElement('c-button')` /
  * `querySelector('c-button')`, and wrapper codegen has element types to
  * anchor on. The `@defaultable` prop tags additionally yield the
- * `AppDefaults` interface (the typed input of `applyDefaults()`) and the
+ * `CAppDefaults` interface (the typed input of `applyDefaults()`) and the
  * `DEFAULTABLE_PROPS` runtime allow-list behind its validation — the one
  * value export in an otherwise types-only file.
  *
@@ -28,7 +28,7 @@ const HEADER = `/* eslint-disable */
  * Typed element interfaces for every public custom element, plus the
  * global \`HTMLElementTagNameMap\` augmentation that makes
  * \`document.createElement('c-button')\` and \`querySelector('c-button')\`
- * return the typed element. Also the \`AppDefaults\` map (tag → props a
+ * return the typed element. Also the \`CAppDefaults\` map (tag → props a
  * consumer may set app-wide with \`applyDefaults()\`) and its runtime twin
  * \`DEFAULTABLE_PROPS\`, both derived from the \`@defaultable\` prop tags.
  */
@@ -386,20 +386,20 @@ export const renderTagNameMap = (components, publicTypes) => {
     " * element's own members. An explicit per-instance attribute or property",
     ' * always wins over an app default.',
     ' */',
-    'export interface AppDefaults {',
+    'export interface CAppDefaults {',
     ...defaultable.map(
       ({ element, keys, tag }) =>
         `  '${tag}'?: Partial<Pick<${element}, ${keys.map((k) => `'${k}'`).join(' | ')}>>;`,
     ),
     '}',
     '',
-    '/** Runtime allow-list behind `applyDefaults()` validation — the same data as `AppDefaults`. */',
+    '/** Runtime allow-list behind `applyDefaults()` validation — the same data as `CAppDefaults`. */',
     'export const DEFAULTABLE_PROPS = {',
     ...defaultable.map(
       ({ keys, tag }) =>
         `  '${tag}': [${keys.map((k) => `'${k}'`).join(', ')}],`,
     ),
-    '} as const satisfies Record<keyof AppDefaults, readonly string[]>;',
+    '} as const satisfies Record<keyof CAppDefaults, readonly string[]>;',
     '',
     '/** Tags dispatching the v-model contract event `update:value` — the value controls (CONTEXT.md). */',
     `export const VALUE_TAGS = [${valueTags.join(', ')}] as const;`,

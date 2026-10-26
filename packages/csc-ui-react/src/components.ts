@@ -582,7 +582,7 @@ export const CProgressBar = createComponent({
 /** A circular progress indicator that draws a known completion percentage as an arc around a track — the circular counterpart of `c-progress-bar`. */
 export const CProgressCircle = createComponent({
   displayName: 'CProgressCircle',
-  elementClass: elementClass<CProgressCircleElement>(['size', 'value', 'width']),
+  elementClass: elementClass<CProgressCircleElement>(['size', 'thickness', 'value']),
   react: React,
   tagName: 'c-progress-circle',
 });

@@ -4,57 +4,12 @@
   </div>
 </template>
 
-<script setup lang="ts">
+<script lang="ts">
 /**
- * @slot default - Default slot for the c-accordion-item components
- *
- * @csspart root - The outer wrapper stacking the accordion items vertically
- *
- * @seeded from csc-ui — verify
- *
- * @subcomponents c-accordion-item
+ * Value of `c-accordion`: the expanded item's `value`, an array of them in
+ * `multiple` mode, or `null` when every item is collapsed.
  */
-import { tv } from 'tailwind-variants';
-import { onBeforeUnmount, onMounted, ref, useHost, watch } from 'vue';
-
-import { emitModelChange } from '../../shared/valueEvents';
-
-type AccordionPrimitive = number | string;
-
-type AccordionValue = AccordionPrimitive | AccordionPrimitive[] | null;
-
-/** Events dispatched by `<c-accordion>`. */
-interface CAccordionEvents {
-  /**
-   * Fired when the user toggles an item, carrying the new value: the expanded
-   * item's value, an array of values in `multiple` mode, or `null` when
-   * everything is collapsed.
-   */
-  change: AccordionValue;
-
-  /**
-   * Native bubbling input event dispatched alongside every value change so a
-   * plain `v-model` stays in sync. Carries no detail.
-   */
-  input: void;
-
-  /**
-   * Fired alongside `change` with the same detail — the `v-model` contract.
-   */
-  'update:value': AccordionValue;
-}
-
-// Styling lives in `tailwind-variants`: no `<style>` block, no
-// `--c-*` override vars. The accordion is layout-only — the visual styling
-// lives on c-accordion-item, whose collapsed items stack flush into one
-// **accordion frame** (CONTEXT.md), so the column has no gap: an expanded
-// item clears its neighbours with its own margin. Consumer customization is
-// via `::part(root)`; there is no `override` prop.
-const accordion = tv({
-  slots: {
-    root: 'flex max-w-full flex-col',
-  },
-});
+export type CAccordionValue = (number | string)[] | null | number | string;
 
 interface CAccordionProps {
   /**
@@ -79,12 +34,62 @@ interface CAccordionProps {
   outlined?: boolean;
 
   /**
-   * Value of the accordion
-   *
-   * @seeded from csc-ui — verify
+   * The expanded item's `value`, an array of them with `multiple`, or `null`
+   * when every item is collapsed.
    */
-  value?: AccordionValue;
+  value?: CAccordionValue;
 }
+</script>
+
+<script setup lang="ts">
+/**
+ * @slot default - Default slot for the c-accordion-item components
+ *
+ * @csspart root - The outer wrapper stacking the accordion items vertically
+ *
+ * @seeded from csc-ui — verify
+ *
+ * @subcomponents c-accordion-item
+ */
+import { tv } from 'tailwind-variants';
+import { onBeforeUnmount, onMounted, ref, useHost, watch } from 'vue';
+
+import { emitModelChange } from '../../shared/valueEvents';
+
+type AccordionPrimitive = number | string;
+
+/** Events dispatched by `<c-accordion>`. */
+interface CAccordionEvents {
+  /**
+   * Fired when the user toggles an item, carrying the new value: the expanded
+   * item's value, an array of values in `multiple` mode, or `null` when
+   * everything is collapsed.
+   */
+  change: CAccordionValue;
+
+  /**
+   * Native bubbling input event dispatched alongside every value change so a
+   * plain `v-model` stays in sync. Carries no detail.
+   */
+  input: void;
+
+  /**
+   * Fired alongside `change` with the same detail — the `v-model` contract.
+   */
+  'update:value': CAccordionValue;
+}
+
+// Styling lives in `tailwind-variants`: no `<style>` block, no
+// `--c-*` override vars. The accordion is layout-only — the visual styling
+// lives on c-accordion-item, whose collapsed items stack flush into one
+// **accordion frame** (CONTEXT.md), so the column has no gap: an expanded
+// item clears its neighbours with its own margin. Consumer customization is
+// via `::part(root)`; there is no `override` prop.
+const accordion = tv({
+  slots: {
+    root: 'flex max-w-full flex-col',
+  },
+});
 
 const props = withDefaults(defineProps<CAccordionProps>(), {
   mandatory: false,
@@ -98,7 +103,7 @@ const host = useHost();
 // Internal state lets the accordion work without v-model. We mirror the
 // `value` prop in, then mutate this on itemchange events so the UI updates
 // immediately. `update:value` is emitted so v-model consumers stay in sync.
-const internalValue = ref<AccordionValue>(props.value as AccordionValue);
+const internalValue = ref<CAccordionValue>(props.value as CAccordionValue);
 
 const isExpanded = (itemValue: AccordionPrimitive) => {
   const v = internalValue.value;
@@ -154,7 +159,7 @@ const onItemChange = (event: Event) => {
 
   const { expanded, value: itemValue } = ce.detail;
 
-  let next: AccordionValue;
+  let next: CAccordionValue;
 
   if (props.multiple) {
     const current = internalValue.value;
@@ -199,7 +204,7 @@ onBeforeUnmount(() => {
 watch(
   () => props.value,
   (v) => {
-    internalValue.value = v as AccordionValue;
+    internalValue.value = v as CAccordionValue;
   },
 );
 

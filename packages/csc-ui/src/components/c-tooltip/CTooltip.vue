@@ -51,7 +51,23 @@
 </template>
 
 <script lang="ts">
-import type { CPlacement } from '../../types';
+/**
+ * Preferred placement of the tooltip relative to its trigger: the side, and
+ * `-start`/`-end` to align their edges on the cross axis.
+ */
+export type CTooltipPosition =
+  | 'bottom-end'
+  | 'bottom-start'
+  | 'bottom'
+  | 'left-end'
+  | 'left-start'
+  | 'left'
+  | 'right-end'
+  | 'right-start'
+  | 'right'
+  | 'top-end'
+  | 'top-start'
+  | 'top';
 
 interface CTooltipProps {
   /**
@@ -59,16 +75,16 @@ interface CTooltipProps {
    * shows the tooltip immediately, regardless of this value. Defaults to
    * `400`.
    */
-  delay?: number | string;
+  delay?: number;
 
   /** Distance from the trigger to the tooltip, in pixels. Defaults to `4`. */
-  distance?: number | string;
+  distance?: number;
 
   /** Whether the tooltip is open. Two-way: emits `change:open`. */
   open?: boolean;
 
   /** Preferred placement of the tooltip relative to the trigger. */
-  position?: CPlacement;
+  position?: CTooltipPosition;
 
   /**
    * The tooltip text. Overridden by the `content` slot when that is

@@ -1,6 +1,6 @@
 {
   "attributes": {
-    "distance": "number | string = 0",
+    "distance": "number = 0",
     "heading": "string = ''",
     "open": "boolean = false",
     "position": "'bottom-end' | 'bottom-start' | 'bottom' | 'left-end' | 'left-start' | 'left' | 'right-end' | 'right-start' | 'right' | 'top-end' | 'top-start' | 'top' = 'bottom'",
@@ -19,7 +19,7 @@
   ],
   "propertyOnly": [],
   "props": {
-    "distance": "number | string = 0",
+    "distance": "number = 0",
     "heading": "string = ''",
     "open": "boolean = false",
     "position": "'bottom-end' | 'bottom-start' | 'bottom' | 'left-end' | 'left-start' | 'left' | 'right-end' | 'right-start' | 'right' | 'top-end' | 'top-start' | 'top' = 'bottom'",

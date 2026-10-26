@@ -4,7 +4,7 @@
 // `src/theme/ramp.js` is plain ESM (so the Node build scripts can import it
 // without a TS loader, ADR-0011) and is typed by a hand-written `ramp.d.ts`
 // next to it — which vue-tsc neither emits nor copies. Without it the
-// published `Family`, `ThemeSeeds`, `DEFAULT_SEEDS` and `FAMILIES` types
+// published `CFamily`, `CThemeSeeds`, `DEFAULT_SEEDS` and `FAMILIES` types
 // resolve to nothing for consumers. Run after `vue-tsc` in `build:types`.
 import fs from 'node:fs';
 import path from 'node:path';
