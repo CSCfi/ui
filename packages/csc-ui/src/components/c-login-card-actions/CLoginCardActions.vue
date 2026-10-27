@@ -1,8 +1,8 @@
 <template>
   <footer :class="ui.root()" part="root">
-    <menu :class="ui.actions()" part="actions">
+    <div :class="ui.actions()" part="actions">
       <slot />
-    </menu>
+    </div>
   </footer>
 </template>
 
@@ -46,7 +46,7 @@ interface CLoginCardActionsProps {
  * @slot default - Login card actions
  *
  * @csspart root - The outer footer element
- * @csspart actions - The flex menu row laying out the slotted actions
+ * @csspart actions - The flex row laying out the slotted actions
  *
  * @seeded from csc-ui — verify
  */
@@ -55,7 +55,7 @@ import { computed } from 'vue';
 
 /**
  * Styling lives entirely in this `tailwind-variants` config; `root`
- * (the <footer>) and `actions` (the flex <menu> row) are the public parts.
+ * (the <footer>) and `actions` (the flex row) are the public parts.
  * The Stencil version delegated to <c-card-actions> with
  * `--_c-card-gap: 0`; the layout is inlined here so we don't nest a second
  * custom element (and its shadow boundary) just to zero a single var. The host

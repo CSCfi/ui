@@ -113,3 +113,24 @@ describe('c-card fullscreen', () => {
     }
   });
 });
+
+describe('card section semantics', () => {
+  it('nests no article in the card and lists no actions', async () => {
+    for (const [card, content, actions] of [
+      ['c-card', 'c-card-content', 'c-card-actions'],
+      ['c-login-card', 'c-login-card-content', 'c-login-card-actions'],
+    ]) {
+      const { host } = await mount(card!, {
+        html: `<${content}><p>Body</p></${content}><${actions}><c-button>Save</c-button></${actions}>`,
+      });
+
+      const part = (tag: string, name: string): Element =>
+        host
+          .querySelector(tag)!
+          .shadowRoot!.querySelector(`[part~="${name}"]`)!;
+
+      expect(part(content!, 'root').localName, content).toBe('div');
+      expect(part(actions!, 'actions').localName, actions).toBe('div');
+    }
+  });
+});

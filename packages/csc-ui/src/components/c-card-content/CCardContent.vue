@@ -1,7 +1,7 @@
 <template>
-  <article :class="ui.root()" part="root">
+  <div :class="ui.root()" part="root">
     <slot />
-  </article>
+  </div>
 </template>
 
 <script setup lang="ts">

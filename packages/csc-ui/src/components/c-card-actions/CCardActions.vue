@@ -1,8 +1,8 @@
 <template>
   <footer :class="ui.root()" part="root">
-    <menu :class="ui.actions()" part="actions">
+    <div :class="ui.actions()" part="actions">
       <slot />
-    </menu>
+    </div>
   </footer>
 </template>
 
