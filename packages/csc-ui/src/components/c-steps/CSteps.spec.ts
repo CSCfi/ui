@@ -59,3 +59,23 @@ describe('c-steps', () => {
     expect(sequence(host)).toEqual(['c-step', 'line', 'c-step']);
   });
 });
+
+describe('c-steps for assistive technology', () => {
+  it('is no Tab stop, and announces its summary politely as the step changes', async () => {
+    const { host, shadow } = await mount('c-steps', {
+      attrs: { value: 1 },
+      html: `${STEPS}<c-step>Three</c-step>`,
+    });
+
+    expect(host.hasAttribute('tabindex')).toBe(false);
+
+    const status = shadow('[role="status"]');
+
+    expect(status.textContent).toContain('step 1 of 3');
+
+    host.setAttribute('value', '2');
+    await settle();
+
+    expect(status.textContent).toContain('step 2 of 3');
+  });
+});

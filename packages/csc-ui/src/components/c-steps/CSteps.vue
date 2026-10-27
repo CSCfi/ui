@@ -1,5 +1,7 @@
 <template>
-  <span class="sr-only">{{ a11yMessage }}</span>
+  <!-- The summary stands in for the hidden dots; a polite status region, so a
+       step change is announced. -->
+  <span class="sr-only" role="status">{{ a11yMessage }}</span>
 
   <div ref="stepsRef" :class="ui.root()" aria-hidden="true" part="root">
     <slot />
@@ -47,7 +49,7 @@ defineOptions({ inheritAttrs: false });
  * imperatively-inserted `.divider` siblings are styled via `::slotted(.divider)`
  * in the escape-hatch <style> below (they read CSS custom properties scoped to
  * `.c-steps`, including the JS-toggled `.mobile` variant). The host itself
- * stays a real box (focus target + grid) in the escape hatch.
+ * stays a real box (a grid) in the escape hatch.
  */
 const steps = tv({
   slots: {
@@ -170,7 +172,6 @@ let cachedRequiredWidth = 0;
 
 onMounted(() => {
   if (!host) return;
-  host.setAttribute('tabindex', '0');
   handleDividers();
 
   // Attributes on Vue's <slot> element are slot props, so the native outlet
@@ -202,10 +203,10 @@ watch(() => props.value, handleDividers);
 
 <!--
   Escape-hatch CSS: constructs Tailwind utilities cannot express.
-  - :host box + :host(:focus-visible) outline — the host is the focusable
-    element (tabindex=0) and must be a real, sized box. This deliberately
-    overrides the global `:host{display:contents}`; the per-type sheet is
-    adopted after the shared sheet, so it wins.
+  - :host box — the host must be a real, sized box (the resize observer
+    measures it). This deliberately overrides the global
+    `:host{display:contents}`; the per-type sheet is adopted after the shared
+    sheet, so it wins.
   - .c-steps slot — the default `<slot>` element itself must be flex so the
     projected steps + `.divider` siblings lay out in a row.
   - ::slotted(.divider[.complete]) — styling the imperatively-inserted, light-DOM
@@ -219,15 +220,6 @@ watch(() => props.value, handleDividers);
   display: grid;
   gap: 8px;
   border-radius: 6px;
-}
-
-:host(:focus) {
-  outline: none;
-}
-
-:host(:focus-visible) {
-  outline: 2px var(--c-primary) solid;
-  outline-offset: 2px;
 }
 
 .c-steps {

@@ -26,7 +26,7 @@ When the step labels no longer fit side by side within the element's own width, 
 
 ## Accessibility
 
-The row of dots is hidden from assistive technology. In its place `c-steps` carries a one-sentence summary — for example "Steps, step 2 of 4. Billing details. 1 step marked as completed." — and the element is a Tab stop, so a screen-reader user can reach it. The summary is not a live region: a change of `value` is not announced, so when the step changes, move focus to the new step's content, such as its heading.
+The row of dots is hidden from assistive technology. In its place `c-steps` carries a one-sentence summary — for example "Steps, step 2 of 4. Billing details. 1 step marked as completed." — read in its place on the page. It is not a Tab stop, since there is nothing to operate. The summary is a polite status region, so a change of `value` is announced; moving focus to the new step's content, such as its heading, still helps keyboard users.
 
 ## Customization
 
