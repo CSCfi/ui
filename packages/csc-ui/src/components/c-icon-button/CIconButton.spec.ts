@@ -4,7 +4,7 @@
  */
 import { describe, expect, it } from 'vitest';
 
-import { mount, settle } from '../../test/harness';
+import { mount, roleInMode, setThemeMode, settle } from '../../test/harness';
 
 describe('c-icon-button', () => {
   it('forwards host ARIA attributes to the button under their own names', async () => {
@@ -50,5 +50,26 @@ describe('c-icon-button loading', () => {
 
     expect(button.hasAttribute('aria-busy')).toBe(false);
     expect(button.hasAttribute('aria-disabled')).toBe(false);
+  });
+});
+
+describe('c-icon-button disabled', () => {
+  it('dims its icon to the faint ink, as c-button does, in dark mode too', async () => {
+    setThemeMode('dark');
+
+    for (const attrs of [
+      {},
+      { ghost: true },
+      { text: true },
+      { outlined: true },
+    ] as Record<string, boolean>[]) {
+      const { part } = await mount('c-icon-button', {
+        attrs: { ...attrs, disabled: true },
+      });
+
+      expect(getComputedStyle(part('root')).color, JSON.stringify(attrs)).toBe(
+        roleInMode('dark', '--c-on-surface-faint'),
+      );
+    }
   });
 });
