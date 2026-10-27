@@ -40,7 +40,7 @@ Content slotted straight into the card, outside a section, keeps the vertical sp
 
 ## Accessibility
 
-The card is an `<article>`. `c-card-title` sets its text in a paragraph, not a heading element, so card headings do not appear in the page's heading outline. The fullscreen toggle is a native button whose name and tooltip, "Enter fullscreen" or "Exit fullscreen", follow its state; the text is fixed English.
+The card is an `<article>`. `c-card-title` is a heading, level 2 unless its `heading-level` says otherwise, so cards appear in the page's heading outline; set the level that fits where the cards sit. The fullscreen toggle is a native button whose name and tooltip, "Enter fullscreen" or "Exit fullscreen", follow its state; the text is fixed English.
 
 ## Customization
 

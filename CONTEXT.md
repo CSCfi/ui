@@ -109,6 +109,10 @@ _Avoid_: Stepper (a form-wizard pattern), drill-down, miller / cascading columns
 The two kinds of **item** in a tree: a branch has children and descends when activated in **browse** mode; a leaf has none and commits when activated. A branch can be committed only under `allow-branch`, via the **select-branch row**. "Leaf" means no `children` array or an empty one.
 _Avoid_: Node (the DOM sense everywhere else in this codebase), folder, parent/child as kinds (those are relations), category
 
+**Heading level** (card titles):
+The outline level, 1 to 6, at which a card's title is a heading (`heading-level`, 2 by default). The page chooses it, so cards nest in its heading outline.
+_Avoid_: Level alone (the **Level** of a tree select is its depth)
+
 **Level** (tree select):
 The depth of an **item** in the tree, counted from 1 at the top. The **level list** is the panel's list of one level's items in **browse** mode. A consumer may name levels (`level-labels` — "Primary field", "Secondary field"); the names appear in the panel header.
 _Avoid_: Depth (zero-based implementation word), tier, step, layer

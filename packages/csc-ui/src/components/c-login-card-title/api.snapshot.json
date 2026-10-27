@@ -1,5 +1,7 @@
 {
-  "attributes": {},
+  "attributes": {
+    "heading-level": "1 | 2 | 3 | 4 | 5 | 6 = 2"
+  },
   "cssProperties": [],
   "defaultable": [],
   "events": {},
@@ -8,7 +10,9 @@
     "root"
   ],
   "propertyOnly": [],
-  "props": {},
+  "props": {
+    "headingLevel": "1 | 2 | 3 | 4 | 5 | 6 = 2"
+  },
   "slots": [
     "default"
   ],
