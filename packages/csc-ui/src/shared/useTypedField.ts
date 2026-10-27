@@ -52,6 +52,9 @@ export interface TypedFieldEnds {
 export type TypedFieldText = { end: string; start: string } | string;
 
 export interface UseTypedFieldOptions {
+  /** The inputs' accessible name: the host's `aria-label`, else the label. */
+  accessibleName: () => string | undefined;
+
   codec: TypedFieldCodec;
 
   /** The custom element host: the model events dispatch from it. */
@@ -260,7 +263,7 @@ export const useTypedField = (options: UseTypedFieldOptions) => {
     end === 'end' ? endInput.value : startInput.value;
 
   const inputLabel = (end: TypedFieldEnd) => {
-    const label = options.label();
+    const label = options.accessibleName();
 
     if (!range.value) return label || undefined;
 

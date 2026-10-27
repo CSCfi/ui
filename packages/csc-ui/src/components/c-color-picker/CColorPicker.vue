@@ -37,9 +37,10 @@
         <input
           :id="inputId"
           ref="comboRef"
+          v-bind="controlAttrs"
           :aria-expanded="isOpen"
           :aria-invalid="invalid || undefined"
-          :aria-label="label || undefined"
+          :aria-label="accessibleName"
           :class="ui.combo()"
           :disabled
           :name="name || undefined"
@@ -87,6 +88,7 @@
     :anchor-style
     :clear-label="t.clearSelection"
     :clearable
+    :control-attrs
     :disabled
     :error-message
     :field="typed"
@@ -598,6 +600,7 @@ import PanelHeadingRow from '../../shared/PanelHeadingRow.vue';
 import { applyPeekCap } from '../../shared/peekCap';
 import TypedField from '../../shared/TypedField.vue';
 import { useAnchoredPanel } from '../../shared/useAnchoredPanel';
+import { useControlAttrs } from '../../shared/useControlAttrs';
 import { useHostEmit } from '../../shared/useHostEmit';
 import { useHostStates } from '../../shared/useHostStates';
 import { useKeyboardModality } from '../../shared/useKeyboardModality';
@@ -776,6 +779,17 @@ const props = withDefaults(defineProps<CColorPickerProps>(), {
 
 const host = useHost();
 
+const { controlAttrs } = useControlAttrs();
+
+// The host's `aria-label` names the input, beating the visible label as it
+// does on a native control; without one, `label` does.
+const accessibleName = computed(
+  () =>
+    (controlAttrs.value['aria-label'] as string | undefined) ||
+    props.label ||
+    undefined,
+);
+
 // Script focus rings after a keyboard path, an Alt+↓ open included.
 const focusOptions = useKeyboardModality(host);
 
@@ -873,6 +887,7 @@ const readPattern = (text: string, p: string): null | string => {
 // ---- the typed field --------------------------------------------------------
 
 const typed = useTypedField({
+  accessibleName: () => accessibleName.value,
   codec: {
     format: (value, p) => readPattern(value, p) ?? value,
     // Every colour that parses is usable: outside sRGB it is mapped in.

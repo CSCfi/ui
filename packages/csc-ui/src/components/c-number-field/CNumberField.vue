@@ -1,5 +1,6 @@
 <template>
   <c-input
+    v-bind="rootAttrs"
     :active="isFocused"
     :data-hide-details="String(hideDetailsResolved)"
     :disabled
@@ -25,8 +26,9 @@
     <input
       :id="inputId"
       ref="inputRef"
+      v-bind="controlAttrs"
       :aria-invalid="invalid || outOfRange || undefined"
-      :aria-label="label || undefined"
+      :aria-label="accessibleName"
       :aria-valuemax="maxNumber ?? undefined"
       :aria-valuemin="minNumber ?? undefined"
       :aria-valuenow="current ?? undefined"
@@ -281,6 +283,7 @@ import type { CNumberFieldFormat } from './numbers';
 
 import { useAppDefault } from '../../shared/appDefaults';
 import { applyConform } from '../../shared/inputMask';
+import { useControlAttrs } from '../../shared/useControlAttrs';
 import { useHostStates } from '../../shared/useHostStates';
 import { emitModelInput, emitModelSettled } from '../../shared/valueEvents';
 import {
@@ -339,6 +342,10 @@ const numberField = tv({
   },
 });
 
+// ARIA attributes on the element name and describe the native control;
+// every other attribute stays on the root, as Vue's fallthrough put it.
+defineOptions({ inheritAttrs: false });
+
 const props = withDefaults(defineProps<CNumberFieldProps>(), {
   decimals: undefined,
   decimalSeparator: undefined,
@@ -367,6 +374,17 @@ const props = withDefaults(defineProps<CNumberFieldProps>(), {
 const ui = computed(() => numberField({ size: sizeResolved.value }));
 
 const host = useHost();
+
+const { controlAttrs, rootAttrs } = useControlAttrs();
+
+// The host's `aria-label` names the input, beating the visible label as it
+// does on a native control; without one, `label` does.
+const accessibleName = computed(
+  () =>
+    (controlAttrs.value['aria-label'] as string | undefined) ||
+    props.label ||
+    undefined,
+);
 
 const appDefault = useAppDefault('c-number-field', props);
 

@@ -173,6 +173,39 @@ describe.each(VALUE_TAGS)('%s', (tag) => {
     },
   );
 
+  // The field's input is in its shadow root, so the host's `aria-label` is
+  // the only name a field without a visible label can get; it names the
+  // input, even beside a `label`, as `aria-label` beats a native label.
+  it.runIf(recipe.emptyAware)(
+    'a host aria-label names the input, and nothing else',
+    async () => {
+      const { label: _label, ...props } = recipe.mount.props ?? {};
+
+      for (const label of [undefined, 'Visible label']) {
+        const m = await mount(tag, {
+          ...recipe.mount,
+          attrs: { ...recipe.mount.attrs, 'aria-label': 'Probe name' },
+          props: label ? { ...props, label } : props,
+        });
+
+        const named = (root: ShadowRoot): Element[] =>
+          [...root.querySelectorAll('*')].flatMap((el) => [
+            ...(el.getAttribute('aria-label') === 'Probe name' ? [el] : []),
+            ...(el.shadowRoot ? named(el.shadowRoot) : []),
+          ]);
+
+        const control = m.host.shadowRoot!.querySelector(
+          '[role="combobox"], input:not([type="hidden"]), textarea',
+        );
+
+        expect(named(m.host.shadowRoot!), `with label ${label}`).toEqual([
+          control,
+        ]);
+        m.unmount();
+      }
+    },
+  );
+
   // Vue reads `''` as `true` for a prop whose runtime types list Boolean
   // before String, and `''` is what a plain `v-model` writes for an empty
   // model (CONTEXT.md "Value control": '' reads as empty).

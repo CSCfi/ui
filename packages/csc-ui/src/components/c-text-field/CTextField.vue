@@ -1,5 +1,6 @@
 <template>
   <c-input
+    v-bind="rootAttrs"
     :active="isActiveForInput"
     :data-hide-details="String(hideDetailsResolved)"
     :disabled
@@ -31,8 +32,9 @@
       v-if="rows > 1"
       :id="inputId"
       ref="inputRef"
+      v-bind="controlAttrs"
       :aria-invalid="invalid"
-      :aria-label="label || undefined"
+      :aria-label="accessibleName"
       :autocapitalize="autocapitalize || undefined"
       :autocomplete="autocomplete || undefined"
       :autocorrect="autocorrectAttr"
@@ -70,8 +72,9 @@
       <input
         :id="inputId"
         ref="inputRef"
+        v-bind="controlAttrs"
         :aria-invalid="invalid"
-        :aria-label="label || undefined"
+        :aria-label="accessibleName"
         :autocapitalize="autocapitalize || undefined"
         :autocomplete="autocomplete || undefined"
         :autocorrect="autocorrectAttr"
@@ -360,6 +363,7 @@ import {
   isNumericMask,
   warnInvalidMask,
 } from '../../shared/inputMask';
+import { useControlAttrs } from '../../shared/useControlAttrs';
 import { useHostStates } from '../../shared/useHostStates';
 import { emitModelInput, emitModelSettled } from '../../shared/valueEvents';
 
@@ -437,6 +441,10 @@ const textField = tv({
   },
 });
 
+// ARIA attributes on the element name and describe the native control;
+// every other attribute stays on the root, as Vue's fallthrough put it.
+defineOptions({ inheritAttrs: false });
+
 const props = withDefaults(defineProps<CTextFieldProps>(), {
   autocapitalize: undefined,
   autocomplete: '',
@@ -468,6 +476,17 @@ const props = withDefaults(defineProps<CTextFieldProps>(), {
 const ui = computed(() => textField());
 
 const host = useHost();
+
+const { controlAttrs, rootAttrs } = useControlAttrs();
+
+// The host's `aria-label` names the input, beating the visible label as it
+// does on a native control; without one, `label` does.
+const accessibleName = computed(
+  () =>
+    (controlAttrs.value['aria-label'] as string | undefined) ||
+    props.label ||
+    undefined,
+);
 
 // Defaultable props resolve host attribute → own value → app default →
 // built-in (see src/shared/appDefaults.ts, which also explains why

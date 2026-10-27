@@ -29,9 +29,10 @@
              for assistive technology and the form. -->
         <input
           ref="fieldRef"
+          v-bind="controlAttrs"
           :aria-controls="`${id}-listbox`"
           :aria-expanded="isOpen"
-          :aria-label="label || undefined"
+          :aria-label="accessibleName"
           :class="ui.input()"
           :disabled
           :name="name || undefined"
@@ -656,6 +657,7 @@ import PanelHeadingRow from '../../shared/PanelHeadingRow.vue';
 import { applyPeekCap } from '../../shared/peekCap';
 import { type MatchSegment, splitMatches } from '../../shared/splitMatches';
 import { useAnchoredPanel } from '../../shared/useAnchoredPanel';
+import { useControlAttrs } from '../../shared/useControlAttrs';
 import { useHostEmit } from '../../shared/useHostEmit';
 import { useNarrowViewport } from '../../shared/useNarrowViewport';
 import { useStatusAnnouncer } from '../../shared/useStatusAnnouncer';
@@ -825,6 +827,17 @@ const props = withDefaults(defineProps<CTreeSelectProps>(), {
 });
 
 const host = useHost();
+
+const { controlAttrs } = useControlAttrs();
+
+// The host's `aria-label` names the input, beating the visible label as it
+// does on a native control; without one, `label` does.
+const accessibleName = computed(
+  () =>
+    (controlAttrs.value['aria-label'] as string | undefined) ||
+    props.label ||
+    undefined,
+);
 
 const emit = useHostEmit<CTreeSelectEvents>();
 

@@ -30,6 +30,7 @@
         <input
           :id="inputId"
           :ref="bindStart"
+          v-bind="controlAttrs"
           :aria-invalid="invalid || badStart || undefined"
           :aria-label="inputLabel('start')"
           :class="ui.input({ start: range })"
@@ -59,6 +60,7 @@
 
           <input
             :ref="bindEnd"
+            v-bind="controlAttrs"
             :aria-invalid="invalid || badEnd || undefined"
             :aria-label="inputLabel('end')"
             :class="ui.input()"
@@ -148,6 +150,9 @@ const props = defineProps<{
 
   /** Accessible label of the clear button. */
   clearLabel: string;
+
+  /** The host's ARIA attributes, for the inputs (`useControlAttrs`). */
+  controlAttrs: Record<string, unknown>;
   disabled: boolean;
   errorMessage: string;
 

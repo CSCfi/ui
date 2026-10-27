@@ -4,6 +4,7 @@
     :anchor-style
     :clear-label="t.clearSelection"
     :clearable
+    :control-attrs
     :disabled
     :error-message
     :field="typed"
@@ -414,6 +415,7 @@ import { applyPeekCap } from '../../shared/peekCap';
 import { prefersReducedMotion } from '../../shared/reducedMotion';
 import TypedField from '../../shared/TypedField.vue';
 import { useAnchoredPanel } from '../../shared/useAnchoredPanel';
+import { useControlAttrs } from '../../shared/useControlAttrs';
 import { useHostEmit } from '../../shared/useHostEmit';
 import { useHostStates } from '../../shared/useHostStates';
 import { useKeyboardModality } from '../../shared/useKeyboardModality';
@@ -574,6 +576,17 @@ const props = withDefaults(defineProps<CTimePickerProps>(), {
 
 const host = useHost();
 
+const { controlAttrs } = useControlAttrs();
+
+// The host's `aria-label` names the input, beating the visible label as it
+// does on a native control; without one, `label` does.
+const accessibleName = computed(
+  () =>
+    (controlAttrs.value['aria-label'] as string | undefined) ||
+    props.label ||
+    undefined,
+);
+
 // Script focus rings after a keyboard path, an Alt+↓ open included.
 const focusOptions = useKeyboardModality(host);
 
@@ -678,6 +691,7 @@ watch(
 // ---- the typed field -------------------------------------------------------
 
 const typed = useTypedField({
+  accessibleName: () => accessibleName.value,
   codec: {
     format: (time, p) => formatTime(time, p, periods.value),
     isUsable: (time) => inBounds(toMinutes(time), bounds.value),

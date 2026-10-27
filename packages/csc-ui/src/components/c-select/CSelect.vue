@@ -45,8 +45,9 @@
                carries the whole selection for assistive technology. -->
           <input
             ref="inputRef"
+            v-bind="controlAttrs"
             :aria-expanded="dropdownVisible"
-            :aria-label="label || undefined"
+            :aria-label="accessibleName"
             :aria-owns="inputId + '-items'"
             :class="ui.input()"
             :disabled
@@ -386,6 +387,7 @@ import {
   selectAllState,
   toggleAllValues,
 } from '../../shared/selectAll';
+import { useControlAttrs } from '../../shared/useControlAttrs';
 import { emitModelChange, seedModelValue } from '../../shared/valueEvents';
 
 /** Events dispatched by `<c-select>`. */
@@ -516,6 +518,17 @@ const props = withDefaults(defineProps<CSelectProps>(), {
 });
 
 const host = useHost();
+
+const { controlAttrs } = useControlAttrs();
+
+// The host's `aria-label` names the input, beating the visible label as it
+// does on a native control; without one, `label` does.
+const accessibleName = computed(
+  () =>
+    (controlAttrs.value['aria-label'] as string | undefined) ||
+    props.label ||
+    undefined,
+);
 
 // Defaultable props resolve host attribute → own value → app default →
 // built-in (see src/shared/appDefaults.ts).
