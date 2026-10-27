@@ -151,7 +151,7 @@ c-data-table::part(viewport) {
 
 ## Texts
 
-The built-in strings are translated through `texts`, merged key by key over the English defaults: `noData`, `loading`, `selectRow`, `selectPage` and `expandRow`; the banner's `pageSelected`, `allSelected` and `selectAllRows`, functions receiving a row count, and `clearSelection`; and the pager's `pagination`, `pageSize`, `previousPage`, `nextPage`, `page` and `range`, which the table hands to its `c-pagination` (see the `c-pagination` texts). Since some keys are functions, bind the object as a DOM property:
+The built-in strings are translated through `texts`, merged key by key over the English defaults: `noData`, `loading` and `selectPage`; `selectRow` and `expandRow`, functions receiving the row's value in the first visible column (or one string for every row); the banner's `pageSelected`, `allSelected` and `selectAllRows`, functions receiving a row count, and `clearSelection`; and the pager's `pagination`, `pageSize`, `previousPage`, `nextPage`, `page` and `range`, which the table hands to its `c-pagination` (see the `c-pagination` texts). Since some keys are functions, bind the object as a DOM property:
 
 ```vue
 <c-data-table
@@ -170,9 +170,9 @@ To translate every data table at once, set `texts` app-wide with `applyDefaults(
 
 - The table is a native `<table>` with column headers, so screen readers' table navigation works. Name it through the `caption` slot: an `aria-label` on the element does not reach the table. To keep the caption for screen readers only, hide it visually through `::part(caption)`.
 - Sortable headers are buttons in the tab order, operated with Enter or Space; the sorted column's header carries `aria-sort`.
-- The checkboxes and expander buttons are named by `texts.selectRow`, `texts.selectPage` and `texts.expandRow`, and the expander reports its state with `aria-expanded`. Clicking a row to expand it is a pointer shortcut; keyboard users reach the expander button.
-- The select-all banner is a polite live region.
-- The loading bar is decorative and the table exposes no busy state: announce a long load yourself.
+- The checkboxes and expander buttons are named by `texts.selectRow`, `texts.selectPage` and `texts.expandRow`; a row's checkbox and expander carry the row's first-column value ("Select Aurora", "Details of Aurora"), so each is told apart. The expander reports its state with `aria-expanded`. Clicking a row to expand it is a pointer shortcut; keyboard users reach the expander button.
+- The select-all banner's message is announced through a polite status region.
+- While `loading` the table is `aria-busy`; the loading bar itself is decorative.
 - Give every column a header — an empty `header` leaves its cells without one in screen-reader table navigation — and give icon-only controls you render in cells an `aria-label`.
 
 ## Customization

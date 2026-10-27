@@ -151,3 +151,64 @@ describe('c-data-table sorting', () => {
     );
   });
 });
+
+describe('c-data-table for assistive technology', () => {
+  const mountTable = (props: Record<string, unknown> = {}) =>
+    mount('c-data-table', {
+      props: {
+        columns: COLUMNS,
+        data: DATA,
+        expandedContent: () => 'More',
+        getRowId: (row: { name: string }) => row.name,
+        selection: 'multiple',
+        ...props,
+      },
+    });
+
+  it('announces the selection banner from a status region that is always there', async () => {
+    // A full page with more rows beyond it shows the banner.
+    const m = await mountTable({ pageSize: 1 });
+    await settled();
+
+    const status = m.shadow('[role="status"]');
+
+    expect(status.textContent?.trim()).toBe('');
+
+    m.shadowAll('thead c-checkbox')[0]!
+      .shadowRoot!.querySelector('input')!
+      .click();
+    await settled();
+
+    const message = m.part('banner').querySelector('span')!.textContent!.trim();
+
+    expect(m.shadow('[role="status"]')).toBe(status);
+    expect(message).not.toBe('');
+    expect(status.textContent?.trim()).toBe(message);
+  });
+
+  it('is busy while loading', async () => {
+    const m = await mountTable({ loading: true });
+    await settled();
+
+    expect(m.part('table').getAttribute('aria-busy')).toBe('true');
+
+    (m.host as { loading?: boolean } & HTMLElement).loading = false;
+    await settled();
+
+    expect(m.part('table').hasAttribute('aria-busy')).toBe(false);
+  });
+
+  it('names each row’s checkbox and expander after the row', async () => {
+    const m = await mountTable();
+    await settled();
+
+    const [first] = m.shadowAll('tbody tr[part~="row"]');
+
+    expect(first!.querySelector('c-checkbox')!.getAttribute('aria-label')).toBe(
+      'Select Aurora',
+    );
+    expect(
+      first!.querySelector('c-icon-button')!.getAttribute('aria-label'),
+    ).toBe('Details of Aurora');
+  });
+});

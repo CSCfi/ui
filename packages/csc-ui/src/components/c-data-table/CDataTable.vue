@@ -1,6 +1,10 @@
 <template>
   <div ref="rootRef" :class="ui.root()" part="root">
-    <div v-if="banner" :class="ui.banner()" aria-live="polite" part="banner">
+    <!-- The banner's message is announced from a status region that is always
+         in the DOM: one created with its first message is not announced. -->
+    <div class="sr-only" role="status">{{ banner?.message ?? '' }}</div>
+
+    <div v-if="banner" :class="ui.banner()" part="banner">
       <span>{{ banner.message }}</span>
 
       <c-button size="small" text @click="banner.action">
@@ -9,7 +13,12 @@
     </div>
 
     <div ref="viewportRef" :class="ui.viewport()" part="viewport">
-      <table ref="tableRef" class="c-data-table" part="table">
+      <table
+        ref="tableRef"
+        :aria-busy="coerceBoolean(loading) ? 'true' : undefined"
+        class="c-data-table"
+        part="table"
+      >
         <!-- v-show, not v-if: the slot element must stay in the DOM for its
              slotchange tracking to work, and an empty caption would otherwise
              reserve its padding. -->
@@ -124,7 +133,7 @@
               >
                 <div class="cell selection">
                   <c-checkbox
-                    :aria-label="t.selectRow"
+                    :aria-label="rowText(t.selectRow, row)"
                     :value="isSelected(row.id)"
                     hide-details
                     @change="onRowCheck(row, $event)"
@@ -161,7 +170,7 @@
                 <div class="cell">
                   <c-icon-button
                     :aria-expanded="isExpanded(row.id)"
-                    :aria-label="t.expandRow"
+                    :aria-label="rowText(t.expandRow, row)"
                     size="small"
                     text
                     @click.stop="toggleExpanded(row.id)"
@@ -407,8 +416,11 @@ export interface CDataTableTexts {
   /** Label of the banner action clearing the whole selection. */
   clearSelection?: string;
 
-  /** Accessible label of a row's expansion toggle. */
-  expandRow?: string;
+  /**
+   * Accessible label of a row's expansion toggle: a function of the row's
+   * value in the first visible column, or one string for every row.
+   */
+  expandRow?: ((row: string) => string) | string;
 
   /** Text shown when the table is empty while `loading`. */
   loading?: string;
@@ -443,8 +455,11 @@ export interface CDataTableTexts {
   /** Accessible label of the header select-all checkbox. */
   selectPage?: string;
 
-  /** Accessible label of a row's selection checkbox. */
-  selectRow?: string;
+  /**
+   * Accessible label of a row's selection checkbox: a function of the row's
+   * value in the first visible column, or one string for every row.
+   */
+  selectRow?: ((row: string) => string) | string;
 }
 
 interface CDataTableProps {
@@ -705,13 +720,13 @@ type CDataTableOwnTexts = Omit<
 const DEFAULT_TEXTS: Required<CDataTableOwnTexts> = {
   allSelected: (count) => `All ${count} rows are selected`,
   clearSelection: 'Clear selection',
-  expandRow: 'Toggle row expansion',
+  expandRow: (row) => `Details of ${row}`,
   loading: 'Loading data',
   noData: 'No data',
   pageSelected: (count) => `All ${count} rows on this page are selected`,
   selectAllRows: (count) => `Select all ${count} rows`,
   selectPage: 'Select all rows on this page',
-  selectRow: 'Select row',
+  selectRow: (row) => `Select ${row}`,
 };
 
 // `texts` resolves own value → app default → built-in, key by key (see
@@ -930,6 +945,19 @@ const displayValue = (row: Row<CDataTableRow>, col: CDataTableColumn) => {
   const value = row.getValue(col.key);
 
   return value == null ? '' : String(value);
+};
+
+// A row control's name carries the row: its value in the first visible
+// column ("Select Aurora", not one "Select row" per row).
+const rowText = (
+  text: ((row: string) => string) | string,
+  row: Row<CDataTableRow>,
+) => {
+  if (typeof text === 'string') return text;
+
+  const [first] = visibleColumns.value;
+
+  return text(first ? displayValue(row, first) : String(row.index + 1));
 };
 
 const cellContext = (
