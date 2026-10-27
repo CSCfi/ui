@@ -1,6 +1,6 @@
 A grid of sign-in choices, one `c-login-button` per identity provider, each showing the provider's logo above its name.
 
-Use it where a service lets the user pick how to sign in, such as Haka, Virtu or a CSC account. Each `c-login-button` is a link to that provider's sign-in: set its `href`, the logo in `src` and the provider's name in the default slot. The grid has no props or events of its own.
+Use it where a service lets the user pick how to sign in, such as Haka, Virtu or a CSC account. Each `c-login-button` is that provider's sign-in: set its `href` to make it a link (or handle its `click` without one), the logo in `src` and the provider's name in the default slot. The grid has no props or events of its own.
 
 ```html
 <c-login-buttons>
@@ -31,7 +31,7 @@ The grid fits as many columns as its width allows, each at least 12rem wide, and
 
 ## Accessibility
 
-Each button renders an `<a>`. With `href` it is a real link: focus, Enter, middle-click and open-in-new-tab come from the platform. Without `href` it still takes focus, but it is neither a link nor a button and Enter fires no `click`, so give every button an `href`.
+With `href` a button is a real link: focus, Enter, middle-click and open-in-new-tab come from the platform. Without `href` it is a native button that Enter and Space press, firing `click`.
 
 A button's accessible name is the logo's `alt` followed by the name in the default slot. The name already identifies the provider, so leave `alt` empty (the default) unless the logo says something the name does not. Mark an inline `<svg>` in the `image` slot `aria-hidden="true"` for the same reason.
 
@@ -45,4 +45,4 @@ c-login-buttons {
 }
 ```
 
-Each button's parts are `::part(root)` (the link box), `::part(image-wrap)` (the area that centres the logo), `::part(image)` (the default `<img>`) and `::part(label)` (the bar holding the name).
+Each button's parts are `::part(root)` (the link or button box), `::part(image-wrap)` (the area that centres the logo), `::part(image)` (the default `<img>`) and `::part(label)` (the bar holding the name).

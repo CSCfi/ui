@@ -342,7 +342,7 @@ interface CInputProps {
 
   /**
    * Show the control as invalid: its `error-message`, when set, replaces the
-   * hint, and the control is marked `aria-invalid`.
+   * hint. Marking the input `aria-invalid` is the wrapping component's job.
    */
   invalid?: boolean;
 

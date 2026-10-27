@@ -42,7 +42,7 @@
  *
  * @csspart root - The outer box wrapping the header and sub-navigation, carrying the background and state styling
  * @csspart header - The clickable header row (an `<a>` when `href` is set) holding the chevron and label
- * @csspart sub-nav - The collapsible `<nav>` container for the sub-items
+ * @csspart sub-nav - The collapsible group holding the sub-items
  */
 import { mdiChevronRight } from '@mdi/js';
 import { tv } from 'tailwind-variants';

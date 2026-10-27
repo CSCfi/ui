@@ -1,5 +1,5 @@
 A toggle for a binary setting that takes effect immediately: a native
-switch control with a label, an optional hint, and validation messaging.
+switch control with a label.
 
 Bind the state with a plain `v-model`: `value` is `true-value` while the
 switch is on and `false-value` while it is off (`true` and `false` unless you

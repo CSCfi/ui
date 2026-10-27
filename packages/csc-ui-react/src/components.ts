@@ -734,7 +734,7 @@ export const CSubNavigationItem = createComponent({
   tagName: 'c-sub-navigation-item',
 });
 
-/** A toggle for a binary setting that takes effect immediately: a native switch control with a label, an optional hint, and validation messaging. */
+/** A toggle for a binary setting that takes effect immediately: a native switch control with a label. */
 export const CSwitch = createComponent({
   displayName: 'CSwitch',
   elementClass: elementClass<CSwitchElement>(['checked', 'disabled', 'falseValue', 'label', 'loading', 'required', 'trueValue', 'value']),

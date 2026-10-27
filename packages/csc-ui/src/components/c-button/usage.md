@@ -20,7 +20,7 @@ as `form.requestSubmit()` does) and `type="reset"` resets it; the default
 `button` does nothing to the form. A disabled or loading button, or one with
 an `href`, never submits.
 
-```html
+```vue
 <form @submit.prevent="save">
   <c-button type="submit">Save</c-button>
 </form>

@@ -2230,7 +2230,7 @@ export interface CSwitchElementEventMap {
   'update:value': CustomEvent<boolean | number | string>;
 }
 
-/** A toggle for a binary setting that takes effect immediately: a native switch control with a label, an optional hint, and validation messaging. */
+/** A toggle for a binary setting that takes effect immediately: a native switch control with a label. */
 export interface CSwitchElement extends Omit<HTMLElement, 'checked' | 'disabled' | 'falseValue' | 'label' | 'loading' | 'required' | 'trueValue' | 'value'> {
   /**
    * Whether the switch is on: the boolean view of `value`. Setting it sets

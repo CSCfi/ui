@@ -36,7 +36,7 @@ The card measures its own width, not the window's. At `mobile-breakpoint` pixels
 
 ## Accessibility
 
-The image is a CSS background: it is never announced, so it must not carry information the page needs. `c-login-card-title` renders a `<header>`, not a heading element, so the card's heading does not appear in the page's heading outline.
+The image is a CSS background: it is never announced, so it must not carry information the page needs. `c-login-card-title` is a heading, level 2 unless its `heading-level` says otherwise.
 
 ## Customization
 
