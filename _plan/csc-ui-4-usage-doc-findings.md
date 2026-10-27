@@ -89,34 +89,39 @@ reflection (`ariaControlsElements`), a 4.x follow-up.
 ## C. Accessibility
 
 - **c-tag** — a plain tag is a `role="button"` Tab stop with no Enter/Space handling (CTag.vue:213-219; WCAG
-  2.1.1); `active` is not exposed (no `aria-pressed`). c-tags/usage.md states both.
+  2.1.1); `active` is not exposed (no `aria-pressed`). c-tags/usage.md states both. **FIXED** (a toggle button).
 - **c-list-item** — `ripple` makes a Tab stop that Enter/Space do not activate (CListItem.vue:192, 220-224;
   confirmed), and the c-list canons select items by `click` on ripple items, so they are mouse-only; link items
   lose the library focus ring (269; confirmed); `active` is not exposed; `aria-disabled` on `listitem` (175).
+  **FIXED** (Enter/Space click, ring on the link, `aria-current`, no `aria-disabled`; a disabled link drops `href`).
 - **c-login-button** — without `href` it is a focusable `<a>` that Enter does not activate (CLoginButton.vue:2);
-  its prop description invites that use (62).
+  its prop description invites that use (62). **FIXED** (a native button without `href`).
 - **c-tabs** — `role="tablist"` on the host, which also owns the panels and arrow buttons (CTabs.vue:694);
   buttons mode has no `role="tab"`; a disabled tab is `aria-hidden` yet arrow-focusable (CTab.vue:137); arrows act on
   keyup, no Home/End, no Up/Down for `vertical`, no `aria-orientation` (747-786); string values with no `value` set
   leave the row with no Tab stop (default `value` 0).
-- **c-steps** — host `tabindex="0"` with no role (CSteps.vue:169); summary not a live region.
+- **c-steps** — host `tabindex="0"` with no role (CSteps.vue:169); summary not a live region. **FIXED** (no Tab stop;
+  the summary is `role="status"`).
 - **c-navigation-button** — no `aria-expanded` / `aria-controls`, and `inheritAttrs: false` keeps authors from
   adding them.
 - **c-side-navigation** — `<nav role="menubar">` drops the landmark and promises a keyboard model that is not
   there; the mobile drawer has no focus move, Escape or inert page; a c-sub-navigation-item with `href` is a
   `div role=menuitem` navigating by script (no link semantics); titles have no heading/group semantics.
 - **c-otp-input** — `required` without `aria-required`; the `invalid` description promises `aria-invalid`, nothing
-  sets it (also c-message); the message has no part and no `aria-describedby`.
+  sets it (also c-message); the message has no part and no `aria-describedby`. **FIXED** (on every digit; `message`
+  part; c-message's description no longer promises `aria-invalid`).
 - **c-data-table** — the banner's `aria-live` sits on a `v-if` element (first message likely unannounced); no
-  `aria-busy` while loading; row checkbox / expander names carry no row context.
+  `aria-busy` while loading; row checkbox / expander names carry no row context. **FIXED** (a persistent status
+  region; `aria-busy`; `selectRow` / `expandRow` also take a function of the row's first-column value).
 - **c-pagination** — the page-size button's `aria-label` hides the current size from its name (12); page-button
-  names come from `aria-label` on a `<span>` (73).
+  names come from `aria-label` on a `<span>` (73). **FIXED**.
 - **c-icon-button** — `loading` exposes nothing (no `aria-busy` / `aria-disabled`) and removes slotted text
-  (339-343, 394-403).
+  (339-343, 394-403). **FIXED**.
 - **c-csc-logo** — accessible name is the `<title>` "CSC_logo_no_tagline" (CCscLogo.vue:9); the docs app's home
-  link is announced that way (app.vue:9-14).
+  link is announced that way (app.vue:9-14). **FIXED** (an image named "CSC"; the docs home link is named).
 - **Cards** — c-card-title is a `<p>`, c-login-card-title a `<header>` (not headings); c-card-content /
   c-login-card-content nest an `<article>` in the card's; the actions rows are `<menu>` with non-`li` children.
+  **FIXED** (the nested article and the menus are `<div>`s); headings are the structural proposal.
 - **Fixed English** (4.x `texts` list): c-tabs arrows, c-side-navigation close, c-card fullscreen toggle, c-steps
   summary, c-otp-input labels and announcements, c-message prefixes.
 

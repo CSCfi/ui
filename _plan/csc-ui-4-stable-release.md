@@ -432,6 +432,17 @@ start migrating on the first alpha that carries D2–D4.
      dangled. The login-card canons' baselined contrast now reports nothing because axe cannot measure text over
      the image the URL fix restored; the same text stays baselined in c-login-card-content/basic. Next: section C
      (a11y), then the axe baseline.
+   - **Findings triage, section C (a11y) — clear-cut items done locally (2026-10-27).** User chose "clear-cut first,
+     propose the rest". Fixed, each with a failing-first spec (0d93fadd..fcca2f7a): c-tag a toggle button
+     (Enter/Space, `aria-pressed`), c-list-item (Enter/Space on ripple items, link focus ring, `aria-current`, no
+     `aria-disabled` on a listitem), c-login-button a native button without `href`, c-steps no empty Tab stop and
+     a `role="status"` summary, c-otp-input `aria-required` / `aria-invalid` / described digits (+ `message` part),
+     c-data-table row-aware control names (`selectRow` / `expandRow` also take a function), a persistent status
+     region and `aria-busy`, c-pagination button names, c-icon-button busy while loading, c-csc-logo an image
+     named "CSC", card sections without a nested article or `<menu>` rows. The structural three — c-tabs (APG
+     Tabs), c-side-navigation + c-navigation-button (disclosure navigation, modal drawer), card-title headings —
+     are proposed in `_plan/csc-ui-4-a11y-structural-proposal.md`, awaiting the user's pick. Fixed English strings
+     stay on the 4.x `texts` list (D13).
 4. **RC** — switch pre tag `alpha` → `rc` (verify the changesets CLI sequence: `pre exit` + `pre enter rc` before a
    version run), publish `4.0.0-rc.1`. From here: fixes only, API guard fails any breaking diff.
    Gate (D8): MyCSC fully migrated on the latest RC, e2e green, no open csc-ui blocker.
