@@ -441,8 +441,17 @@ start migrating on the first alpha that carries D2–D4.
      region and `aria-busy`, c-pagination button names, c-icon-button busy while loading, c-csc-logo an image
      named "CSC", card sections without a nested article or `<menu>` rows. The structural three — c-tabs (APG
      Tabs), c-side-navigation + c-navigation-button (disclosure navigation, modal drawer), card-title headings —
-     are proposed in `_plan/csc-ui-4-a11y-structural-proposal.md`, awaiting the user's pick. Fixed English strings
-     stay on the 4.x `texts` list (D13).
+     are proposed in `_plan/csc-ui-4-a11y-structural-proposal.md`. Fixed English strings stay on the 4.x `texts`
+     list (D13).
+   - **Structural a11y — done locally (2026-10-27).** User picked all three as recommended: card titles are
+     headings at a new `heading-level` (default 2; named so because the glossary's **Level** is the tree select's
+     depth; 17d17a7b, React 35e64b00); c-tabs follows APG Tabs with manual activation (aca759f9; buttons mode via
+     an internal c-button `asTab`; found on the way: arrow focus waited for a transitionend that never fires
+     without motion, and a re-measure pulled focus back to the active tab); c-side-navigation follows the
+     disclosure navigation pattern with the mobile drawer a modal dialog on the shared modal stack (04cd5740;
+     c-navigation-button reports `aria-expanded`). The axe baseline lost every `aria-required-children` entry
+     (9 canons). Section C is complete; left in the axe baseline: `color-contrast` (the design token decision),
+     data-table selection (`aria-prohibited-attr`, `label`), `list` / `listitem`, `aria-progressbar-name`.
 4. **RC** — switch pre tag `alpha` → `rc` (verify the changesets CLI sequence: `pre exit` + `pre enter rc` before a
    version run), publish `4.0.0-rc.1`. From here: fixes only, API guard fails any breaking diff.
    Gate (D8): MyCSC fully migrated on the latest RC, e2e green, no open csc-ui blocker.

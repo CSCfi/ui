@@ -1,7 +1,8 @@
 # csc-ui 4 — structural accessibility proposal (findings section C)
 
 The clear-cut section C faults are fixed (0d93fadd..fcca2f7a). These three change what assistive technology
-hears, so they wait for a decision. Each follows the WAI-ARIA Authoring Practices (APG) pattern named; none
+hears, so they waited for a decision. **Decided 2026-10-27 (user): all three as recommended** — APG tabs with
+manual activation; disclosure navigation with a modal mobile drawer; a `level` prop (default 2) on both title tags. Each follows the WAI-ARIA Authoring Practices (APG) pattern named; none
 removes or renames a prop, event, slot or part.
 
 ## 1. c-tabs (+ c-tab, c-tab-buttons) — APG "Tabs"

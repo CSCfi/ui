@@ -99,14 +99,19 @@ reflection (`ariaControlsElements`), a 4.x follow-up.
 - **c-tabs** — `role="tablist"` on the host, which also owns the panels and arrow buttons (CTabs.vue:694);
   buttons mode has no `role="tab"`; a disabled tab is `aria-hidden` yet arrow-focusable (CTab.vue:137); arrows act on
   keyup, no Home/End, no Up/Down for `vertical`, no `aria-orientation` (747-786); string values with no `value` set
-  leave the row with no Tab stop (default `value` 0).
+  leave the row with no Tab stop (default `value` 0). **FIXED** (APG Tabs, user's pick: the tablist is the row; buttons
+  mode's buttons are tabs; disabled tabs announced and skipped; keydown arrows, Home/End, Up/Down + orientation;
+  a fallback Tab stop; found on the way: arrow focus waited for a transitionend that never came without motion, and
+  a re-measure pulled focus back to the active tab).
 - **c-steps** — host `tabindex="0"` with no role (CSteps.vue:169); summary not a live region. **FIXED** (no Tab stop;
   the summary is `role="status"`).
 - **c-navigation-button** — no `aria-expanded` / `aria-controls`, and `inheritAttrs: false` keeps authors from
-  adding them.
+  adding them. **FIXED** (`aria-expanded` from the drawer; `aria-controls` cannot cross the shadow boundary).
 - **c-side-navigation** — `<nav role="menubar">` drops the landmark and promises a keyboard model that is not
   there; the mobile drawer has no focus move, Escape or inert page; a c-sub-navigation-item with `href` is a
-  `div role=menuitem` navigating by script (no link semantics); titles have no heading/group semantics.
+  `div role=menuitem` navigating by script (no link semantics); titles have no heading/group semantics. **FIXED**
+  (disclosure navigation, user's pick: links and buttons, parents with `aria-expanded` / `aria-controls`, titles
+  level-2 headings, the mobile drawer a modal dialog on the shared modal stack).
 - **c-otp-input** — `required` without `aria-required`; the `invalid` description promises `aria-invalid`, nothing
   sets it (also c-message); the message has no part and no `aria-describedby`. **FIXED** (on every digit; `message`
   part; c-message's description no longer promises `aria-invalid`).
@@ -121,7 +126,7 @@ reflection (`ariaControlsElements`), a 4.x follow-up.
   link is announced that way (app.vue:9-14). **FIXED** (an image named "CSC"; the docs home link is named).
 - **Cards** — c-card-title is a `<p>`, c-login-card-title a `<header>` (not headings); c-card-content /
   c-login-card-content nest an `<article>` in the card's; the actions rows are `<menu>` with non-`li` children.
-  **FIXED** (the nested article and the menus are `<div>`s); headings are the structural proposal.
+  **FIXED** (the nested article and the menus are `<div>`s); titles are headings at `heading-level` (default 2).
 - **Fixed English** (4.x `texts` list): c-tabs arrows, c-side-navigation close, c-card fullscreen toggle, c-steps
   summary, c-otp-input labels and announcements, c-message prefixes.
 
