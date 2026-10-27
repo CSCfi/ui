@@ -1,12 +1,19 @@
 <template>
-  <svg :class="ui.root()" :width part="root" viewBox="0 0 233.61 149.04">
+  <!-- An image named "CSC"; an aria-label on the element names it instead. -->
+  <svg
+    :class="ui.root()"
+    :width
+    part="root"
+    role="img"
+    viewBox="0 0 233.61 149.04"
+  >
     <defs>
       <clipPath id="c-csc-logo-clip">
         <rect :class="ui.clipRect()" height="156.31" width="233.61" />
       </clipPath>
     </defs>
 
-    <title>CSC_logo_no_tagline</title>
+    <title>CSC</title>
 
     <g clip-path="url(#c-csc-logo-clip)">
       <path

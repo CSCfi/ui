@@ -14,11 +14,10 @@ mode scope with `data-theme="dark"`.
 
 ## Accessibility
 
-Assistive technology names the logo by the SVG's built-in `<title>`,
-"CSC_logo_no_tagline", and no prop changes it. When the logo is the content
-of a link to the home page, give the link its own name, for example
-`aria-label="CSC home"` on the `<a>`, so the title is not read as the link
-text.
+The logo is an image named "CSC"; an `aria-label` on the element names it
+instead. When the logo is the content of a link to the home page, give the
+link its own name, for example `aria-label="CSC home"` on the `<a>`, and hide
+the logo with `aria-hidden="true"`, so the link is not read as just "CSC".
 
 ## Customization
 
