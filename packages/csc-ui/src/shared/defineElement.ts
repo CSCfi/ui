@@ -1,4 +1,11 @@
-import { camelize, type Component, defineCustomElement } from 'vue';
+import {
+  camelize,
+  type Component,
+  defineCustomElement,
+  type SetupContext,
+  unref,
+  useHost,
+} from 'vue';
 
 import tailwindStyles from '../tailwind.css?inline';
 import { ID_REFERENCES } from './useIdReferences';
@@ -293,6 +300,59 @@ const containNativeInput = (root: null | ShadowRoot): void => {
 };
 
 /**
+ * What each element's mounted instance exposes (`defineExpose`), read by the
+ * element's own accessors for those members.
+ */
+const exposedNow = new WeakMap<HTMLElement, Record<string, unknown>>();
+
+type Setup = (props: object, context: SetupContext) => unknown;
+
+/**
+ * The members a component exposes belong on its element. Vue puts them there
+ * once, at the first mount, as fixed getters bound to that instance: when the
+ * element leaves the page and comes back (KeepAlive, a moved list item), Vue
+ * mounts a new instance, warns that each member already exists, and the
+ * element goes on calling into the unmounted one — `focus()` focuses nothing,
+ * `unmaskedValue` is stuck. So `expose` is taken over here: the element gets
+ * one accessor per member, which reads the instance mounted now, and Vue
+ * itself is told nothing is exposed.
+ */
+const withLiveExposed = (component: Component): Component => {
+  const setup = (component as { setup?: Setup }).setup;
+
+  if (!setup) return component;
+
+  return {
+    ...component,
+    setup(props: object, context: SetupContext) {
+      const host = useHost();
+
+      const expose = (exposed?: Record<string, unknown>) => {
+        if (host && exposed) {
+          exposedNow.set(host, exposed);
+
+          for (const key of Object.keys(exposed)) {
+            if (Object.hasOwn(host, key)) continue;
+
+            Object.defineProperty(host, key, {
+              configurable: true,
+              get: () => unref(exposedNow.get(host)?.[key]),
+            });
+          }
+        }
+
+        context.expose();
+      };
+
+      return setup(
+        props,
+        Object.create(context, { expose: { value: expose } }),
+      );
+    },
+  } as Component;
+};
+
+/**
  * Register a Vue SFC as a custom element under `tag`, with the shared Tailwind
  * utility stylesheet applied to its shadow root alongside the SFC's own styles.
  *
@@ -318,7 +378,9 @@ export function defineElement(tag: string, component: Component): void {
   // Vue's `defineCustomElement` overloads don't accept the broad `Component`
   // union directly (it includes constructor forms that fail the options
   // overload); cast to the form it expects. Runtime behaviour is unchanged.
-  const vueComponent = component as Parameters<typeof defineCustomElement>[0];
+  const vueComponent = withLiveExposed(component) as Parameters<
+    typeof defineCustomElement
+  >[0];
 
   const booleanKeys = booleanPropKeys(component);
 
