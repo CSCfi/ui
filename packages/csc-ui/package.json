@@ -20,6 +20,14 @@
     "./css/*": "./dist/styles/css/*",
     "./custom-elements.json": "./dist/custom-elements.json"
   },
+  "browserslist": [
+    "last 2 Chrome versions",
+    "last 2 Edge versions",
+    "last 2 Firefox versions",
+    "Firefox ESR",
+    "last 2 Safari versions",
+    "last 2 iOS versions"
+  ],
   "scripts": {
     "build": "pnpm run style-dictionary:build && pnpm run chart:generate && pnpm run docs:tag-map && vite build && pnpm run build:types && pnpm run docs:manifest:strict",
     "docs:manifest": "node scripts/analyzer/index.mjs",

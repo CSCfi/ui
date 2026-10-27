@@ -1,5 +1,7 @@
 import type { Flavor } from '~/composables/useFlavor';
 
+import corePackage from '../../../csc-ui/package.json';
+
 /**
  * Getting-started page content, one block set per flavor. Kept as
  * data so the page can prerender-highlight every flavor and swap client-side.
@@ -267,5 +269,25 @@ Components draw in your page's font and line height, so set them on body.`,
       to: '/customization',
     },
     title: 'Theming & dark mode',
+  },
+  {
+    blocks: forAll([
+      {
+        code: corePackage.browserslist.join('\n'),
+        filename: 'browserslist',
+        lang: 'text',
+      },
+    ]),
+    id: 'browsers',
+    intro: {
+      all: `The components support the current and previous versions of Chrome, Edge, Firefox and Safari, Safari on iOS included, plus Firefox ESR, the extended-support release that Red Hat Enterprise Linux ships (140 today). Every component's behaviour is tested on Chromium, Firefox and WebKit before a release, and a fault in a supported browser is a bug. Older browsers may work, but nothing is tested or promised for them.
+
+The package declares the same list as its browserslist query:`,
+    },
+    link: {
+      label: 'Report a browser bug',
+      to: 'https://github.com/CSCfi/ui/issues',
+    },
+    title: 'Supported browsers',
   },
 ];

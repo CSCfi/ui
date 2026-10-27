@@ -396,6 +396,11 @@ start migrating on the first alpha that carries D2–D4.
      `_plan/csc-ui-4-usage-doc-findings.md`, with the systemic one first (host `aria-*` attributes reach the
      shadow DOM camelized: `aria-label` on c-icon, `aria-haspopup` on the pickers' icon buttons, `rel` on c-link).
      The migration guide's c-tag `block` / `fit` CSS was wrong (sized only the part) and is corrected.
+     Follow-ups the user chose: the attribute fix (7ef09509) and Escape closing every modal (24fe47a4).
+   - **Supported browsers — done locally (2026-10-27).** Getting started gains the statement (ADR-0077's matrix);
+     both packages carry it as `browserslist` (last 2 Chrome / Edge / Firefox / Safari / iOS + Firefox ESR, which
+     resolves to ESR 140), and the page reads the query from the core package.json. The field changes nothing in
+     the build: dist is byte-identical with it.
 4. **RC** — switch pre tag `alpha` → `rc` (verify the changesets CLI sequence: `pre exit` + `pre enter rc` before a
    version run), publish `4.0.0-rc.1`. From here: fixes only, API guard fails any breaking diff.
    Gate (D8): MyCSC fully migrated on the latest RC, e2e green, no open csc-ui blocker.
