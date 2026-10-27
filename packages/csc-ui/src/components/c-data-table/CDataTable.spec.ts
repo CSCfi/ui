@@ -120,3 +120,34 @@ describe('c-data-table selection and query (decisions #19, #20)', () => {
     expect(m.shadowAll('tr[part~="row"]')).toHaveLength(1);
   });
 });
+
+describe('c-data-table sorting', () => {
+  it('announces a sort only on a column that sorts', async () => {
+    const m = await mount('c-data-table', {
+      props: {
+        columns: [
+          { header: 'Project', key: 'name' },
+          { header: 'Owner', key: 'owner', sortable: true },
+        ],
+        data: DATA,
+        sort: { column: 'name', direction: 'desc' },
+      },
+    });
+    await settled();
+
+    // The rows keep their order: a column that does not sort is never sorted.
+    expect(m.shadow('th[data-col="name"]').hasAttribute('aria-sort')).toBe(
+      false,
+    );
+
+    (m.host as { sort?: unknown } & HTMLElement).sort = {
+      column: 'owner',
+      direction: 'asc',
+    };
+    await settled();
+
+    expect(m.shadow('th[data-col="owner"]').getAttribute('aria-sort')).toBe(
+      'ascending',
+    );
+  });
+});

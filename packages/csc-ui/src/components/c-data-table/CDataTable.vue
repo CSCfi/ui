@@ -138,7 +138,7 @@
                 :key="col.key"
                 :class="{
                   pinned: col.pinned,
-                  sorted: sortState?.column === col.key,
+                  sorted: col.sortable && sortState?.column === col.key,
                 }"
                 :style="pinStyle(col.key)"
                 part="cell"
@@ -474,7 +474,7 @@ interface CDataTableProps {
   /**
    * The server owns sorting, pagination and filtering: the table renders
    * `data` verbatim and only emits the state-change events. Requires
-   * `itemCount` for the pager; disables the select-all banner and `filter`.
+   * `itemCount` for the pager; disables the select-all banner and `query`.
    */
   external?: boolean;
 
@@ -631,7 +631,12 @@ interface CDataTableEvents {
   /** Fired when the expanded rows change, carrying the expanded row ids. */
   'change:expanded': string[];
 
-  /** Fired when the user changes the page, carrying the new 1-based page. */
+  /**
+   * Fired when the page changes, carrying the new 1-based page: the user
+   * picks a page or a page size, or the table moves back to page 1 when
+   * `query` changes, or to the last page when the rows shrink beneath the
+   * current one.
+   */
   'change:page': number;
 
   /**
@@ -647,7 +652,7 @@ interface CDataTableEvents {
   'change:selected': string[];
 
   /** Fired when the user sorts a column, carrying the new sorting state. */
-  'change:sort': CDataTableSort | null;
+  'change:sort': CDataTableSort;
 }
 
 const emit = useHostEmit<CDataTableEvents>();
@@ -971,8 +976,10 @@ const toggleSort = (col: CDataTableColumn) => {
   emit('change:sort', next);
 };
 
+// A column that does not sort is never sorted (TanStack skips a sort on it),
+// whatever `sort` names.
 const ariaSort = (col: CDataTableColumn) => {
-  if (sortState.value?.column !== col.key) return undefined;
+  if (!col.sortable || sortState.value?.column !== col.key) return undefined;
 
   return sortState.value.direction === 'asc' ? 'ascending' : 'descending';
 };

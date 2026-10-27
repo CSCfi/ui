@@ -630,7 +630,12 @@ export interface CCscLogoElement extends Omit<HTMLElement, 'width'> {
 export interface CDataTableElementEventMap {
   /** Fired when the expanded rows change, carrying the expanded row ids. */
   'change:expanded': CustomEvent<string[]>;
-  /** Fired when the user changes the page, carrying the new 1-based page. */
+  /**
+   * Fired when the page changes, carrying the new 1-based page: the user
+   * picks a page or a page size, or the table moves back to page 1 when
+   * `query` changes, or to the last page when the rows shrink beneath the
+   * current one.
+   */
   'change:page': CustomEvent<number>;
   /**
    * Fired when the user picks a new page size. Also resets the page to 1
@@ -643,7 +648,7 @@ export interface CDataTableElementEventMap {
    */
   'change:selected': CustomEvent<string[]>;
   /** Fired when the user sorts a column, carrying the new sorting state. */
-  'change:sort': CustomEvent<CDataTableSort | null>;
+  'change:sort': CustomEvent<CDataTableSort>;
 }
 
 /** A data-driven table that renders the rows of a `data` array through a set of `columns` definitions, with built-in sorting, pagination, row selection and expandable rows. Rows are your own plain objects; each column reads one of their properties and may render its header, cells and footer through render functions. */
@@ -667,7 +672,7 @@ export interface CDataTableElement extends Omit<HTMLElement, 'autohide' | 'colum
   /**
    * The server owns sorting, pagination and filtering: the table renders
    * `data` verbatim and only emits the state-change events. Requires
-   * `itemCount` for the pager; disables the select-all banner and `filter`.
+   * `itemCount` for the pager; disables the select-all banner and `query`.
    */
   external?: boolean;
   /**
@@ -1977,7 +1982,7 @@ export interface CSubNavigationItemElementEventMap {
   select: CustomEvent<{ value: string | undefined }>;
 }
 
-/** A second-level entry of a `c-side-navigation`, written inside the `c-side-navigation-item` it belongs to (no `slot` attribute needed) and shown while that parent is `active`. Activating it fires `select` with its `value` and closes the mobile drawer; to mark the current page, set `active` on the sub-item and on its parent, so the parent is expanded. */
+/** A second-level entry of a `c-side-navigation`, written inside the `c-side-navigation-item` it belongs to (no `slot` attribute needed) and shown while that parent is `active`. Activating it fires `select` with its `value`, makes it the current page (`active`, in place of the item that was) and closes the mobile drawer; to mark the current page from code, set `active` on the sub-item and on its parent, so the parent is expanded. */
 export interface CSubNavigationItemElement extends Omit<HTMLElement, 'active' | 'collapsed' | 'href' | 'loading' | 'target' | 'value'> {
   /** Active state */
   active?: boolean;

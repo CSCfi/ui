@@ -16,7 +16,7 @@
     "return-object": "boolean = false",
     "shadow": "boolean = false",
     "size": "'default' | 'small' = 'default'",
-    "value": "CTreeSelectValue = null"
+    "value": "number | string = null"
   },
   "cssProperties": [],
   "defaultable": [

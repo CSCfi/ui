@@ -21,7 +21,7 @@
     "show-week-numbers": "boolean = false",
     "size": "'default' | 'small' = 'default'",
     "type": "'date' | 'month' = 'date'",
-    "value": "CDatePickerValue = null"
+    "value": "string = null"
   },
   "cssProperties": [],
   "defaultable": [

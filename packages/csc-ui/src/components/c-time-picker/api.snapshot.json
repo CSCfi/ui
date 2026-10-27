@@ -19,7 +19,7 @@
     "shadow": "boolean = false",
     "show-now": "boolean = false",
     "size": "'default' | 'small' = 'default'",
-    "value": "CTimePickerValue = null"
+    "value": "string = null"
   },
   "cssProperties": [],
   "defaultable": [

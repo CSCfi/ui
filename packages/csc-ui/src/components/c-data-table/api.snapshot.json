@@ -9,7 +9,6 @@
     "query": "string = ''",
     "selection": "'multiple' | 'single'",
     "single-expansion": "boolean = false",
-    "sort": "CDataTableSort | null",
     "sticky-footer": "boolean = false",
     "sticky-header": "boolean = false"
   },
@@ -22,7 +21,7 @@
     "change:page": "CustomEvent<number>",
     "change:page-size": "CustomEvent<number>",
     "change:selected": "CustomEvent<string[]>",
-    "change:sort": "CustomEvent<CDataTableSort | null>"
+    "change:sort": "CustomEvent<CDataTableSort>"
   },
   "methods": {},
   "parts": [
@@ -49,6 +48,7 @@
     "getRowId",
     "pageSizes",
     "selected",
+    "sort",
     "texts"
   ],
   "props": {
