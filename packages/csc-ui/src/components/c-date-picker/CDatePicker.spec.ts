@@ -262,6 +262,12 @@ describe('typing', () => {
 });
 
 describe('opening', () => {
+  it('tells assistive technology the calendar button opens a dialog', async () => {
+    const m = await mountPicker({ value: '2031-09-15' });
+
+    expect(calendarButton(m).getAttribute('aria-haspopup')).toBe('dialog');
+  });
+
   it('opens from the calendar button and from Alt+ArrowDown, never from a click in the text', async () => {
     const m = await mountPicker({ value: '2031-09-15' });
 

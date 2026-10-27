@@ -28,9 +28,9 @@ say where it leads ("Read the billing guide", not "click here"). Without
 `href` the `<a>` has no destination: it is neither focusable nor announced
 as a link, so do not use `c-link` for actions.
 
-Only `href` and `target` reach the inner `<a>`. Other link attributes —
-`rel`, `download`, `hreflang`, an `aria-label` — set on the `c-link` element
-do not, so for those use a native `<a>`.
+ARIA attributes (`aria-label`, `aria-current`, …) and the link attributes
+`rel`, `download`, `hreflang`, `ping`, `referrerpolicy` and `type` set on the
+`c-link` element are forwarded to the inner `<a>`.
 
 ## Customization
 

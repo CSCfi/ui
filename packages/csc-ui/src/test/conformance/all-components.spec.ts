@@ -100,6 +100,34 @@ describe.each(registeredTags)('%s', (tag) => {
     }
   });
 
+  // A host attribute that falls through to the shadow DOM keeps its name: a
+  // camelized `ariaHaspopup` lands as a junk `ariahaspopup` attribute, and on
+  // an `<svg>` root as a literal `ariaLabel`.
+  it('forwards no host attribute under a mangled name', async () => {
+    const fixture = FIXTURES[tag] ?? {};
+
+    const { host } = await mount(tag, {
+      ...fixture,
+      attrs: {
+        ...fixture.attrs,
+        'aria-roledescription': 'probe',
+        'data-probe': 'probe',
+      },
+    });
+
+    const mangled = new Set(['ariaroledescription', 'dataprobe']);
+
+    const walk = (root: ShadowRoot): string[] =>
+      [...root.querySelectorAll('*')].flatMap((element) => [
+        ...[...element.attributes]
+          .map((attribute) => attribute.name)
+          .filter((name) => mangled.has(name.toLowerCase())),
+        ...(element.shadowRoot ? walk(element.shadowRoot) : []),
+      ]);
+
+    expect(walk(host.shadowRoot!)).toEqual([]);
+  });
+
   it('passes the page typography through the host', async () => {
     const { host, stage } = await mount(tag, FIXTURES[tag]);
 

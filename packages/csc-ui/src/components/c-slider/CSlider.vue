@@ -268,9 +268,7 @@ const generatedId = computed(() => `c-slider__${autoId}`);
 // `label` names it through `<label for>` instead.
 const attrs = useAttrs();
 
-const hostAriaLabel = computed(
-  () => (attrs.ariaLabel ?? attrs['aria-label']) as string | undefined,
-);
+const hostAriaLabel = computed(() => attrs['aria-label'] as string | undefined);
 
 const trackPosition = ref(0);
 

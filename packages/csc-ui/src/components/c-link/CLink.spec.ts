@@ -44,6 +44,25 @@ describe('c-link', () => {
     });
   }
 
+  it('forwards link and ARIA attributes to the link', async () => {
+    const { part, shadow } = await mount('c-link', {
+      attrs: {
+        'aria-label': 'Billing guide',
+        download: '',
+        href: '/guide.pdf',
+        rel: 'noopener',
+      },
+      html: 'Read the guide',
+    });
+
+    const link = part('root');
+
+    expect(link.getAttribute('aria-label')).toBe('Billing guide');
+    expect(link.getAttribute('rel')).toBe('noopener');
+    expect(link.hasAttribute('download')).toBe(true);
+    expect(shadow('div').hasAttribute('rel')).toBe(false);
+  });
+
   it('paints a 2px ring in the link ink when reached from the keyboard', async () => {
     const { part } = await mount('c-link', {
       attrs: { href: '#' },

@@ -1,4 +1,4 @@
-import { type Component, defineCustomElement } from 'vue';
+import { camelize, type Component, defineCustomElement } from 'vue';
 
 import tailwindStyles from '../tailwind.css?inline';
 
@@ -100,6 +100,13 @@ const getSfcSheet = (
 };
 
 interface ConnectableElement extends HTMLElement {
+  _setAttr(key: string): void;
+  _setProp(
+    key: string,
+    value: unknown,
+    shouldReflect?: boolean,
+    shouldUpdate?: boolean,
+  ): void;
   connectedCallback?(): void;
 }
 
@@ -219,6 +226,30 @@ const normalizeNumberProperties = (
 };
 
 /**
+ * Whether a host attribute reaches the component under its own name.
+ *
+ * Vue's custom element hands EVERY host attribute to the component camelized
+ * (`aria-haspopup` → `ariaHaspopup`). For a declared prop that is the prop's
+ * key; an undeclared attribute falls through to the rendered element under
+ * that key instead, and comes out right only where the key is also a
+ * reflected DOM property (`ariaLabel`). `ariaHaspopup` is not `ariaHasPopup`,
+ * so it lands as a junk `ariahaspopup` attribute, and an `<svg>`, which takes
+ * every key as an attribute, gets a literal `ariaLabel`. An undeclared
+ * hyphenated attribute therefore keeps its name: `$attrs['aria-label']`.
+ */
+const keepsItsName = (declared: Set<string>, key: string): boolean => {
+  const camelKey = camelize(key);
+
+  return (
+    camelKey !== key && !declared.has(camelKey) && !key.startsWith('data-v-')
+  );
+};
+
+/** Vue's `_setAttr` for an attribute that keeps its name; removal leaves `undefined`. */
+const setNamedAttribute = (el: ConnectableElement, key: string): void =>
+  el._setProp(key, el.getAttribute(key) ?? undefined, false, true);
+
+/**
  * A native `input` is `composed`: typed into a field in a shadow root, it
  * would reach the page beside the `input` the component sends once its value
  * has changed (`valueEvents.ts`) — twice per keystroke on a text field, and on
@@ -271,6 +302,10 @@ export function defineElement(tag: string, component: Component): void {
 
   const numberKeys = numberPropKeys(component);
 
+  const declaredKeys = new Set(
+    Object.keys((component as { props?: object }).props ?? {}),
+  );
+
   if (!supportsAdopted) {
     // Fallback: let Vue inject the styles per instance, as before. The merge is
     // deliberate — Vue's `styles` option replaces (not appends to) the SFC's
@@ -280,6 +315,11 @@ export function defineElement(tag: string, component: Component): void {
     });
 
     class Element extends (Base as unknown as { new (): ConnectableElement }) {
+      _setAttr(key: string) {
+        if (keepsItsName(declaredKeys, key)) setNamedAttribute(this, key);
+        else super._setAttr(key);
+      }
+
       connectedCallback() {
         normalizeBooleanAttributes(this, booleanKeys);
         normalizeNumberProperties(this, numberKeys);
@@ -300,6 +340,11 @@ export function defineElement(tag: string, component: Component): void {
   const typeSheet = getSfcSheet(tag, sfcStyles);
 
   class Element extends (Base as unknown as { new (): ConnectableElement }) {
+    _setAttr(key: string) {
+      if (keepsItsName(declaredKeys, key)) setNamedAttribute(this, key);
+      else super._setAttr(key);
+    }
+
     connectedCallback() {
       // Coerce SSR'd "true"/"false" boolean attributes and string values in
       // pre-upgrade Number properties before Vue resolves props (the

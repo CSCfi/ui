@@ -3,6 +3,7 @@
     <a
       :class="ui.root()"
       v-bind="{
+        ...linkAttributes(),
         ...(!!href ? { href } : {}),
         ...(!!target ? { target } : {}),
       }"
@@ -22,7 +23,7 @@
  * @seeded from csc-ui — verify
  */
 import { tv } from 'tailwind-variants';
-import { computed } from 'vue';
+import { computed, useAttrs } from 'vue';
 
 /**
  * Styling lives entirely in this `tailwind-variants` config: the
@@ -79,6 +80,30 @@ const props = withDefaults(defineProps<CLinkProps>(), {
 });
 
 const ui = computed(() => link({ underline: props.underline }));
+
+// The host's ARIA and link attributes name and qualify the link, not the
+// wrapper around it; nothing else falls through.
+defineOptions({ inheritAttrs: false });
+
+const attrs = useAttrs();
+
+const LINK_ATTRIBUTES = new Set([
+  'download',
+  'hreflang',
+  'ping',
+  'referrerpolicy',
+  'rel',
+  'type',
+]);
+
+// Read on every render: `attrs` is not reactive, but a changed host
+// attribute re-renders the element.
+const linkAttributes = () =>
+  Object.fromEntries(
+    Object.entries(attrs).filter(
+      ([name]) => name.startsWith('aria-') || LINK_ATTRIBUTES.has(name),
+    ),
+  );
 </script>
 
 <style>

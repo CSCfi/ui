@@ -171,7 +171,7 @@ const props = withDefaults(defineProps<CBreadcrumbItemProps>(), {
 
 // Vue mirrors EVERY host attribute into `$attrs` — the `slot` the breadcrumb
 // assigns included — so nothing falls through; only `aria-label` (which
-// names an icon-only crumb) is forwarded, to the link. Vue camelizes the key.
+// names an icon-only crumb) is forwarded, to the link.
 defineOptions({ inheritAttrs: false });
 
 const attrs = useAttrs();
@@ -179,7 +179,7 @@ const attrs = useAttrs();
 // Read on every render: `attrs` is not reactive, but a changed host
 // attribute re-renders the element.
 const ariaLabel = (): string | undefined =>
-  (attrs.ariaLabel as string | undefined) || undefined;
+  (attrs['aria-label'] as string | undefined) || undefined;
 
 const host = useHost();
 

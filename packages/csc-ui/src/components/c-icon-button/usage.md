@@ -56,10 +56,11 @@ live-region message.
 
 The `root` part is a native `<button>`, so focus, keyboard activation and the
 button role come from the platform. Its name comes from `aria-label` on the
-`c-icon-button` element, which is forwarded to the inner button. Without one
-the button is named only by the text in its content, which is usually
-nothing or the badge count. Prefer `aria-label` to visually hidden slotted
-text: while `loading`, the spinner replaces the slotted content, text
+`c-icon-button` element, which is forwarded to the inner button, as are the
+other ARIA attributes (`aria-expanded`, `aria-haspopup`, …). Without an
+`aria-label` the button is named only by the text in its content, which is
+usually nothing or the badge count. Prefer `aria-label` to visually hidden
+slotted text: while `loading`, the spinner replaces the slotted content, text
 included.
 
 To show the name to sighted users too, put the button in a `c-tooltip`'s

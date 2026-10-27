@@ -10,7 +10,7 @@ the source; "inferred" marks a finding whose effect was reasoned, not observed.
 Triage per D13: behaviour bugs and a11y faults are "before rc.1" work; fixed-English strings are the 4.x `texts`
 list; doc and example corrections can land any time.
 
-## A. Host attributes reach the shadow DOM mangled (systemic, confirmed)
+## A. Host attributes reach the shadow DOM mangled (systemic, confirmed) — FIXED 2026-10-27
 
 A Vue custom element hands every non-prop host attribute to the component camelized (`aria-label` →
 `ariaLabel`), and `inheritAttrs` passes it to the root element. On an HTML element `ariaLabel` is a reflected
@@ -26,8 +26,10 @@ property, so it works; anything whose reflected property is not the naive cameli
 - `c-link`: the root is a wrapper `<div>`, so `rel`, `download`, `aria-label` land on the div, not the `<a>`
   (the MyCSC sweep's open `rel` item). c-link/usage.md says only `href`/`target` reach the link.
 
-Fix direction: one shared fallthrough helper that re-hyphenates `aria*` keys and targets the real control, plus a
-conformance spec over every tag that forwards attributes.
+Fixed in `shared/defineElement.ts`: an undeclared hyphenated host attribute reaches the component under its own
+name (`$attrs['aria-haspopup']`); declared props still camelize. A labelled c-icon is `role="img"`, and c-link
+forwards ARIA and link attributes to its `<a>`. The all-components conformance suite now fails any tag that
+forwards a mangled name (39 of 79 did); c-icon / c-link / c-icon-button usage.md no longer describe workarounds.
 
 ## B. Behaviour bugs
 

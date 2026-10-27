@@ -1,6 +1,7 @@
 <template>
   <svg
     :class="ui.root()"
+    :role="$attrs['aria-label'] ? 'img' : undefined"
     :style="{ width: iconSize, height: iconSize }"
     part="root"
     viewBox="0 0 24 24"

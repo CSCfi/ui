@@ -26,20 +26,22 @@ the theme mode.
 
 ## Accessibility
 
-The icon is an unlabelled `<svg>`, and `c-icon` has no prop for an accessible
-name.
+The icon is an unnamed `<svg>` unless the element has an `aria-label`.
 
 - A decorative icon, one beside a visible label that says the same thing:
   set `aria-hidden="true"` on the `c-icon` so screen readers skip it.
 - Inside a control named by its `aria-label`, such as a `c-icon-button`, the
   label replaces the icon; nothing more is needed.
 - A meaningful icon with no visible text, such as a status shown only as an
-  icon: wrap it in an element that carries the name.
+  icon: name it with `aria-label` on the `c-icon`, which makes it an image
+  (`role="img"`) with that name.
 
 ```vue
-<span role="img" aria-label="Completed">
-  <c-icon :path="mdiCheckCircle" color="var(--c-success)" />
-</span>
+<c-icon
+  :path="mdiCheckCircle"
+  aria-label="Completed"
+  color="var(--c-success)"
+/>
 ```
 
 ## Customization
