@@ -79,3 +79,25 @@ describe('c-steps for assistive technology', () => {
     expect(status.textContent).toContain('step 2 of 3');
   });
 });
+
+describe('c-steps summary', () => {
+  it('stays in range and reads the label without its whitespace', async () => {
+    const { shadow } = await mount('c-steps', {
+      attrs: { value: 0 },
+      html: '<c-step>\n  One\n</c-step><c-step>Two</c-step>',
+    });
+
+    expect(shadow('[role="status"]').textContent).toBe(
+      'Steps, step 1 of 2. 0 steps marked as completed.',
+    );
+
+    const second = await mount('c-steps', {
+      attrs: { value: 1 },
+      html: '<c-step>\n  One\n</c-step><c-step>Two</c-step>',
+    });
+
+    expect(second.shadow('[role="status"]').textContent).toBe(
+      'Steps, step 1 of 2. One. 0 steps marked as completed.',
+    );
+  });
+});

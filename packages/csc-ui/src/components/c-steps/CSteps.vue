@@ -115,7 +115,7 @@ const handleDividers = () => {
       kept.add(divider);
     }
 
-    if (current) label.value = item.textContent || '';
+    if (current) label.value = item.textContent?.trim() ?? '';
   });
 
   for (const divider of host.querySelectorAll(':scope > .divider')) {
@@ -130,9 +130,15 @@ const a11yMessage = computed(() => {
 
   if (!total) return '';
 
-  const completed = current - 1;
+  // Held within the steps: a value of 0 or past the last step still reads as
+  // a step of the flow, and no step is "-1 completed".
+  const step = Math.min(Math.max(current, 1), total);
 
-  return `Steps, step ${Math.min(current, total)} of ${total}. ${label.value}. ${completed} step${completed !== 1 ? 's' : ''} marked as completed.`;
+  const completed = Math.min(Math.max(current - 1, 0), total);
+
+  const name = label.value ? ` ${label.value}.` : '';
+
+  return `Steps, step ${step} of ${total}.${name} ${completed} step${completed !== 1 ? 's' : ''} marked as completed.`;
 });
 
 let resizeObserver: null | ResizeObserver = null;
