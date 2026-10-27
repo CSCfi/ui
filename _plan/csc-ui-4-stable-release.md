@@ -503,6 +503,11 @@ start migrating on the first alpha that carries D2–D4.
      component's own; 38 tags wired, the rest listed in `aria-object.ts` and asserted by all-components.
      Found on the way and fixed first (10836590): a host `aria-label` never named a field's input.
      MyCSC check: none needed for these attributes; they now work.
+   - **Hints and error messages linked (user decision 2026-10-27, `_plan/field-message-link.md`).** A side agent
+     asked to confirm that fields never link hint / error text to the control: confirmed (only c-otp-input did).
+     The c-input fields now render FieldMessage in their own tree (c-input offers a `message` slot) and point
+     the input's `aria-describedby` at it; c-checkbox, c-radio-group, c-file-upload link theirs. Fields gain a
+     `message` part. Axe never flagged it.
    - **Merge conflict ahead:** the `development` → `main` PR conflicts in `packages/csc-ui/package.json`: phase 3's
      new `description` is the line after `version`, which `main`'s release commits bumped (development still has
      alpha.18). Resolve with `main`'s version and `development`'s description. A wrong pick is cosmetic, not a
