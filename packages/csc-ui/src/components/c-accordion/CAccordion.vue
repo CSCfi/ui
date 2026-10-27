@@ -164,9 +164,13 @@ const onItemChange = (event: Event) => {
   if (props.multiple) {
     const current = internalValue.value;
 
+    // A single value (the `value` attribute carries one) is the first
+    // expanded item, not dropped.
     const arr: AccordionPrimitive[] = Array.isArray(current)
       ? [...current]
-      : [];
+      : current == null
+        ? []
+        : [current];
 
     if (expanded) {
       if (!arr.includes(itemValue)) arr.push(itemValue);
@@ -194,6 +198,13 @@ const onItemChange = (event: Event) => {
 onMounted(() => {
   host?.addEventListener('itemchange', onItemChange);
   applyExpansionToItems();
+
+  // Items added later (a v-for that grows, an async list) are set up too.
+  // Attributes on Vue's <slot> element are slot props, so the native outlet
+  // is wired imperatively (as in CTable).
+  host?.shadowRoot
+    ?.querySelector('slot')
+    ?.addEventListener('slotchange', applyExpansionToItems);
 });
 
 onBeforeUnmount(() => {

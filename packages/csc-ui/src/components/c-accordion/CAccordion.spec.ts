@@ -154,6 +154,35 @@ describe('c-accordion', () => {
     expect(rounded(style(extra), 'bottom')).toBe(true);
   });
 
+  it('expands an item added after mount when the value names it', async () => {
+    const m = await mountAccordion({ outlined: true, value: 'extra' });
+
+    const extra = document.createElement('c-accordion-item');
+
+    extra.setAttribute('heading', 'Extra');
+    extra.setAttribute('value', 'extra');
+    m.host.append(extra);
+    await settle();
+    await settled();
+
+    expect(extra.matches(':state(expanded)')).toBe(true);
+    expect(style(extra).boxShadow).toContain(
+      roleInMode('light', '--c-primary'),
+    );
+  });
+
+  it('keeps a single value as the first item of a multiple accordion', async () => {
+    const m = await mountAccordion({ multiple: true, value: 'billing' });
+
+    await toggle(items(m)[1]);
+
+    expect((m.host as { value?: unknown } & HTMLElement).value).toEqual([
+      'billing',
+      'members',
+    ]);
+    expect(items(m)[0].matches(':state(expanded)')).toBe(true);
+  });
+
   // An item's toggle reaches its accordion through a bubbling wiring event,
   // which used to bubble on to every accordion around it.
   it('a nested accordion’s item toggles only the accordion it belongs to', async () => {

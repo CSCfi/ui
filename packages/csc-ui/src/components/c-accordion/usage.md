@@ -30,7 +30,7 @@ Items must be direct children of the accordion; an item wrapped in another eleme
 
 ## One or several expanded
 
-By default one item is expanded at a time: expanding an item collapses the one that was open. With `multiple`, items open and close independently and `value` is an array of the expanded items' values. Give a `multiple` accordion an array from the start, since a single value is dropped at the first toggle; in plain HTML set it through the `value` property, because the attribute carries a single value.
+By default one item is expanded at a time: expanding an item collapses the one that was open. With `multiple`, items open and close independently and `value` is an array of the expanded items' values. A single value counts as a one-item array, so the `value` attribute can name one item to start open; to open several from plain HTML, set the `value` property to an array.
 
 `mandatory` keeps the last expanded item open: its header stops responding and reports itself disabled until another item is expanded. It never expands an item by itself, so give a `mandatory` accordion an initial `value`.
 
