@@ -30,10 +30,8 @@
 /**
  * @slot default - Message text revealed below the spinner after `content-delay`
  *
- * @csspart root - The overlay element covering the containing element (scrim, fade transition)
+ * @csspart root - The overlay covering the nearest positioned ancestor: the scrim, and the text colour the spinner takes
  * @csspart content - The message wrapper anchored below the spinner
- *
- * @seeded from csc-ui — verify
  */
 import { tv } from 'tailwind-variants';
 import { computed, onMounted, ref, useTemplateRef, watchEffect } from 'vue';
@@ -107,16 +105,12 @@ interface CLoaderProps {
   hide?: boolean;
 
   /**
-   * Size of the loader
-   *
-   * @seeded from csc-ui — verify
+   * The spinner's diameter in pixels.
    */
   size?: number;
 
   /**
-   * Width of the loader
-   *
-   * @seeded from csc-ui — verify
+   * The spinner's stroke width in pixels.
    */
   width?: number;
 }

@@ -26,16 +26,14 @@ export type CLoginCardActionsJustify =
 
 interface CLoginCardActionsProps {
   /**
-   * Align the actions
-   *
-   * @seeded from csc-ui — verify
+   * Aligns the actions across the row: to its top (`start`), centre or
+   * bottom (`end`).
    */
   align?: CLoginCardActionsAlign;
 
   /**
-   * Justify the actions
-   *
-   * @seeded from csc-ui — verify
+   * Distributes the actions along the row; `stretch` grows every action to
+   * share it.
    */
   justify?: CLoginCardActionsJustify;
 }
@@ -43,12 +41,10 @@ interface CLoginCardActionsProps {
 
 <script setup lang="ts">
 /**
- * @slot default - Login card actions
+ * @slot default - The actions: the sign-in button and any link beside it
  *
  * @csspart root - The outer footer element
  * @csspart actions - The flex row laying out the slotted actions
- *
- * @seeded from csc-ui — verify
  */
 import { tv } from 'tailwind-variants';
 import { computed } from 'vue';

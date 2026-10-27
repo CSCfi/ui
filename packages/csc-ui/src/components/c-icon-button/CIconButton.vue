@@ -53,73 +53,60 @@ export type CIconButtonSize = 'default' | 'small' | 'x-small';
 
 interface CIconButtonProps {
   /**
-   * Show a badge on top of the icon
-   *
-   * @seeded from csc-ui — verify
+   * Count shown in a bubble at the button's top-right corner; hidden while
+   * `null` or empty, so `0` still shows.
    */
   badge?: null | number | string;
 
   /**
-   * Danger variant of the button
-   *
-   * @seeded from csc-ui — verify
+   * Danger appearance for a destructive action: the filled button in the error
+   * colour; no effect on `outlined`, `ghost` or `text`.
    */
   danger?: boolean;
 
   /**
-   * Disable the button
-   *
-   * @seeded from csc-ui — verify
+   * Disable the button: it leaves the Tab order and ignores the pointer.
    */
   disabled?: boolean;
 
   /**
-   * Ghost variant of the button
-   *
-   * @seeded from csc-ui — verify
+   * Ghost appearance: a light primary tint, for lower emphasis.
    */
   ghost?: boolean;
 
   /**
-   * Inverted color for dark backgrounds
-   *
-   * @seeded from csc-ui — verify
+   * Inverted colours for a fixed dark or brand-coloured backdrop: the
+   * `inverse-*` family, the same in both theme modes. Combines with the other
+   * appearances.
    */
   inverted?: boolean;
 
   /**
-   * Loading variant of the button
-   *
-   * @seeded from csc-ui — verify
+   * Show a spinner in place of the icon and ignore clicks; the button stays
+   * focusable and is announced as busy and unavailable.
    */
   loading?: boolean;
 
   /**
-   * Outlined variant of the button
-   *
-   * @seeded from csc-ui — verify
+   * Outlined appearance: a primary outline with no fill, for lower emphasis.
    */
   outlined?: boolean;
 
   /**
-   * Path for the svg icon
+   * Icon path of an icon the button draws itself, always 24px; a slotted icon
+   * wins over it.
    *
-   * @seeded from csc-ui — verify
    * @freeform SVG path data
    */
   path?: string;
 
   /**
-   * Size of the button
-   *
-   * @seeded from csc-ui — verify
+   * Size of the button: `default` (40px), `small` (32px) or `x-small` (28px).
    */
   size?: CIconButtonSize;
 
   /**
-   * Text variant of the button
-   *
-   * @seeded from csc-ui — verify
+   * Text appearance: no fill or outline, the lightest look.
    */
   text?: boolean;
 }
@@ -127,13 +114,11 @@ interface CIconButtonProps {
 
 <script setup lang="ts">
 /**
- * @slot default - Default slot for the icon
+ * @slot default - The icon: a `c-icon` or an `<svg>`; it wins over `path`
  *
  * @csspart root - The native `<button>` element carrying the visual styling
  * @csspart content - Inner wrapper around the slotted icon or loading spinner
- * @csspart badge - The badge bubble shown in the button's corner
- *
- * @seeded from csc-ui — verify
+ * @csspart badge - The count bubble at the button's top-right corner, shown by `badge`
  */
 import { tv } from 'tailwind-variants';
 import { computed, useTemplateRef } from 'vue';

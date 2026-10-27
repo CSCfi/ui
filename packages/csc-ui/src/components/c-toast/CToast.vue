@@ -55,9 +55,8 @@ import type { CToastMessage, CToastType } from '../../types';
 
 interface CToastProps {
   /**
-   * Messages
-   *
-   * @seeded from csc-ui — verify
+   * The message the toast shows: its text, heading, type, close button and
+   * timer. The parent `c-toasts` sets it.
    */
   message?: CToastMessage | null;
 }

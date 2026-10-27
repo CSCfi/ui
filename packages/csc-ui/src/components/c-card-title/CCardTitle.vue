@@ -21,7 +21,7 @@
 
 <script setup lang="ts">
 /**
- * @slot default - Card title text
+ * @slot default - The title text
  * @slot actions - Action controls shown to the right of the title, or under it when the two do not fit side by side
  *
  * @csspart root - The outer header element carrying the title typography and padding
@@ -29,8 +29,6 @@
  * @csspart heading - The heading (`role="heading"`, at `heading-level`) holding the slotted title text
  * @csspart underline - The decorative accent bar under the heading
  * @csspart actions - The wrapper around the slotted action controls
- *
- * @seeded from csc-ui — verify
  */
 import { tv } from 'tailwind-variants';
 import { computed, useTemplateRef } from 'vue';

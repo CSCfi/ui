@@ -80,59 +80,50 @@ interface CButtonProps {
   asTab?: boolean;
 
   /**
-   * Danger variant style
-   *
-   * @seeded from csc-ui — verify
+   * Danger appearance for a destructive action: the filled button in the error
+   * colour; no effect on `outlined`, `ghost` or `text`.
    */
   danger?: boolean;
 
   /**
-   * Disable the button
-   *
-   * @seeded from csc-ui — verify
+   * Grey the button out and block clicks and keys, a link button (`href`)
+   * included.
    */
   disabled?: boolean;
 
   /**
-   * Fit width to containing element
-   *
-   * @seeded from csc-ui — verify
+   * Stretch the button to the full width of its container.
    */
   fit?: boolean;
 
   /**
-   * Light button background
-   *
-   * @seeded from csc-ui — verify
+   * Ghost appearance: primary text on a light primary tint, for lower emphasis.
    */
   ghost?: boolean;
 
   /**
-   * Hyperlink url
+   * URL to link to: the button renders as a real link (`<a>`) styled as a
+   * button.
    *
-   * @seeded from csc-ui — verify
    * @freeform any URL
    */
   href?: string;
 
   /**
-   * Inverted button style for dark backgrounds
-   *
-   * @seeded from csc-ui — verify
+   * Inverted colours for a fixed dark or brand-coloured backdrop: the
+   * `inverse-*` family, the same in both theme modes. Combines with the other
+   * appearances.
    */
   inverted?: boolean;
 
   /**
-   * Display loader on the button
-   *
-   * @seeded from csc-ui — verify
+   * Show a spinner in place of the label and ignore clicks and keys, e.g. while
+   * the action runs.
    */
   loading?: boolean;
 
   /**
-   * Remove the default border radius
-   *
-   * @seeded from csc-ui — verify
+   * Square corners instead of the rounded default.
    */
   noRadius?: boolean;
 
@@ -145,16 +136,14 @@ interface CButtonProps {
   noRipple?: boolean;
 
   /**
-   * Outlined button style
-   *
-   * @seeded from csc-ui — verify
+   * Outlined appearance: a primary outline and text with no fill, for lower
+   * emphasis.
    */
   outlined?: boolean;
 
   /**
-   * Size of the button
-   *
-   * @seeded from csc-ui — verify
+   * Size of the button: `small`, `default` (the control height, level with a
+   * form field) or `large` (the toolbar height).
    */
   size?: CButtonSize;
 
@@ -167,24 +156,19 @@ interface CButtonProps {
   target?: string;
 
   /**
-   * Transparent button background
-   *
-   * @seeded from csc-ui — verify
+   * Text appearance: primary text with no fill or outline, the lightest look.
    */
   text?: boolean;
 
   /**
-   * Button type
-   *
-   * @seeded from csc-ui — verify
+   * Native `type` of the button: `button` unless set, `submit` or `reset`.
+   * Ignored when `href` is set.
    */
   type?: CButtonType;
 
   /**
-   * Value for the button
-   * - for use in the c-button-group
-   *
-   * @seeded from csc-ui — verify
+   * The button's value in a `c-button-group`; in `c-tab-buttons`, the `value`
+   * of the `c-tab-item` panel it shows.
    */
   value?: number | string;
 }

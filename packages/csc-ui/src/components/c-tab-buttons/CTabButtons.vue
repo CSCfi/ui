@@ -78,9 +78,7 @@ interface CTabButtonsProps {
   disabled?: boolean;
 
   /**
-   * Size of the buttons
-   *
-   * @seeded from csc-ui — verify
+   * Size of the buttons: `default`, or the more compact `small`.
    */
   size?: CTabButtonsSize;
 

@@ -184,15 +184,12 @@ interface COtpInputProps {
 
   /**
    * Hide the hint and error messages
-   *
-   * @seeded from csc-ui — verify
    */
   hideDetails?: boolean;
 
   /**
    * Hint text for the input
    *
-   * @seeded from csc-ui — verify
    * @freeform
    */
   hint?: string;
@@ -211,9 +208,7 @@ interface COtpInputProps {
   label?: string;
 
   /**
-   * Length of the OTP code
-   *
-   * @seeded from csc-ui — verify
+   * Number of digits in the code, one box each
    */
   length?: number;
 
@@ -223,9 +218,9 @@ interface COtpInputProps {
   required?: boolean;
 
   /**
-   * Value of the input
+   * The digits entered so far, joined into one string (`''` when none).
+   * Setting it fills the boxes from the first one
    *
-   * @seeded from csc-ui — verify
    * @freeform
    */
   value?: string;

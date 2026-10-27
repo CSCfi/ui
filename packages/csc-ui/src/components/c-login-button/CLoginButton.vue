@@ -22,15 +22,13 @@
 
 <script setup lang="ts">
 /**
- * @slot default - The title shown in the bottom bar
+ * @slot default - The provider's name, shown in the bar under the logo
  * @slot image - Custom provider logo markup (an inline `<svg>`, a `<picture>`, …) replacing the default `<img>` rendered from `src`
  *
  * @csspart root - The whole clickable card: a link with `href`, else a button
- * @csspart image-wrap - The area above the title bar that centers the logo (default image or slotted content)
+ * @csspart image-wrap - The area above the name bar that centres the logo (default image or slotted content)
  * @csspart image - The default provider logo `<img>` (absent when the `image` slot is used)
- * @csspart label - The bottom bar wrapping the slotted label
- *
- * @seeded from csc-ui — verify
+ * @csspart label - The bar under the logo holding the provider's name
  */
 import { tv } from 'tailwind-variants';
 import { computed } from 'vue';
@@ -60,9 +58,9 @@ const ui = computed(() => loginButton());
 
 interface CLoginButtonProps {
   /**
-   * Alt description for logo
+   * Alternative text for the `src` logo, read before the provider's name.
+   * Leave it empty when the name already identifies the provider.
    *
-   * @seeded from csc-ui — verify
    * @freeform any image alt text
    */
   alt?: string;
@@ -76,9 +74,9 @@ interface CLoginButtonProps {
   href?: string;
 
   /**
-   * Login provider logo url
+   * URL of the provider's logo, shown above the name. The `image` slot
+   * replaces it.
    *
-   * @seeded from csc-ui — verify
    * @freeform any image URL
    */
   src?: string;

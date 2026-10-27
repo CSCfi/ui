@@ -16,11 +16,9 @@
 
 <script setup lang="ts">
 /**
- * @slot default - The visible content of the link
+ * @slot default - The link text
  *
  * @csspart root - The native `<a>` element carrying the link styling
- *
- * @seeded from csc-ui — verify
  */
 import { tv } from 'tailwind-variants';
 import { computed, useAttrs } from 'vue';
@@ -50,25 +48,24 @@ const link = tv({
 
 interface CLinkProps {
   /**
-   * Url of link
+   * URL the link leads to. Without it the link has no destination: it is
+   * neither focusable nor announced as a link.
    *
-   * @seeded from csc-ui — verify
    * @freeform any URL
    */
   href?: string;
 
   /**
-   * regular target attribute of a hyperlink
+   * Where the `href` opens, as on a native `<a>`: the same tab unless set —
+   * `_blank` for a new one.
    *
-   * @seeded from csc-ui — verify
    * @freeform any browsing-context name (e.g. _blank, _self)
    */
   target?: string;
 
   /**
-   * Display line under the link
-   *
-   * @seeded from csc-ui — verify
+   * Underline the text. Underline links inside running text, so colour is not
+   * the only thing telling them apart.
    */
   underline?: boolean;
 }

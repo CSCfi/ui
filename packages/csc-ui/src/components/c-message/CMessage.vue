@@ -65,9 +65,8 @@ interface CMessageProps {
   errorMessage?: string;
 
   /**
-   * Hint text for the input
+   * Hint text, shown unless the error message replaces it
    *
-   * @seeded from csc-ui — verify
    * @freeform
    */
   hint?: string;

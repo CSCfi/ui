@@ -13,9 +13,8 @@ export type CStatusType = 'error' | 'info' | 'success' | 'warning';
 
 interface CStatusProps {
   /**
-   * Status type
-   *
-   * @seeded from csc-ui — verify
+   * The status family whose tint and ink paint the pill; without it the
+   * pill is neutral grey.
    */
   type?: CStatusType;
 }
@@ -23,11 +22,9 @@ interface CStatusProps {
 
 <script setup lang="ts">
 /**
- * @slot default - Status text
+ * @slot default - The status text, such as Active or Failed
  *
  * @csspart root - The status pill wrapping the slotted text
- *
- * @seeded from csc-ui — verify
  */
 import { tv } from 'tailwind-variants';
 import { computed } from 'vue';

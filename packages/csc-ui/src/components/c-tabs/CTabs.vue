@@ -59,45 +59,38 @@ export type CTabsJustify = 'center' | 'end' | 'start' | 'stretch';
 
 interface CTabsProps {
   /**
-   * Disable the bottom border
-   *
-   * @seeded from csc-ui — verify
+   * Remove the line along the tab row.
    */
   borderless?: boolean;
 
   /**
-   * Disable animation
-   *
-   * @seeded from csc-ui — verify
+   * Switch off the underline's glide and the panels' slide; both also stop
+   * under the reduced-motion preference.
    */
   disableAnimation?: boolean;
 
   /**
-   * Justification of the children
-   *
-   * @seeded from csc-ui — verify
+   * Placement of the tabs along the row: `stretch` grows them to fill it;
+   * `start`, `center` and `end` keep each tab at its own width. No effect on
+   * `vertical` tabs.
    */
   justify?: CTabsJustify;
 
   /**
-   * Mobile breakpoint in pixels
-   * - affects the content stacking with the vertical tabs
-   *
-   * @seeded from csc-ui — verify
+   * Width in pixels of the `c-tabs` element (not the viewport) below which
+   * `vertical` tabs move above the panels. No effect on horizontal tabs.
    */
   mobileBreakpoint?: number;
 
   /**
-   * Currently active tab
-   *
-   * @seeded from csc-ui — verify
+   * Value of the active tab: the `c-tab` and the `c-tab-item` with the same
+   * `value` are shown. With no match, no tab is active and no panel is shown.
    */
   value?: number | string;
 
   /**
-   * Vertical tabs
-   *
-   * @seeded from csc-ui — verify
+   * Stack the tabs in a column beside the panels, which slide vertically; below
+   * `mobile-breakpoint` the column moves above the panels.
    */
   vertical?: boolean;
 }
@@ -105,13 +98,11 @@ interface CTabsProps {
 
 <script setup lang="ts">
 /**
- * @slot default - Default slot
- * @slot items - The c-tab-items container holding the tab content panels
- * @csspart container - The header row wrapping the tab list and the overflow scroll buttons
+ * @slot default - The `c-tab` headers, or one `c-tab-buttons`
+ * @slot items - The `c-tab-items` holding the panels
+ * @csspart container - The tab row: the tabs plus the overflow arrows
  * @csspart tabs - The clipping viewport the tab list scrolls inside, with a margin so a tab's focus ring and a slotted corner badge still paint
- * @csspart content - Wrapper around the slotted tab content panels
- *
- * @seeded from csc-ui — verify
+ * @csspart content - The wrapper around the panels
  *
  * @subcomponents c-tab, c-tab-items, c-tab-item, c-tab-buttons
  */

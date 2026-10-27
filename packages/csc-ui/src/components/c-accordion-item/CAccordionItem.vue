@@ -42,18 +42,16 @@
 
 <script setup lang="ts">
 /**
- * @slot heading - Rich heading content; overrides the `heading` prop
+ * @slot heading - Rich heading content, replacing the `heading` prop; no interactive content
  * @slot icon - Icon shown in the header before the heading
- * @slot default - Default slot
+ * @slot default - The content shown while the item is expanded
  *
- * @csspart root - The outer wrapper of the item: its share of the accordion frame, the lifted outline and wash when expanded, and a 2px outline on expanded items when outlined
+ * @csspart root - The item's box: its share of the accordion frame, the lifted outline and wash while expanded, and the ring the accordion's `outlined` adds
  * @csspart header - The toggle button row containing the icon, heading and indicator
  * @csspart indicator - The rotating chevron at the end of the header
  * @csspart content - The padded card around the slotted content inside the collapsing region
  *
  * @cssstate expanded - Present while the item is expanded
- *
- * @seeded from csc-ui — verify
  */
 import { mdiChevronRight } from '@mdi/js';
 import { tv } from 'tailwind-variants';
@@ -222,9 +220,8 @@ interface CAccordionItemProps {
   expanded?: boolean;
 
   /**
-   * Heading of the accordion item
+   * The header's text. The `heading` slot replaces it for rich content.
    *
-   * @seeded from csc-ui — verify
    * @freeform
    */
   heading?: string;

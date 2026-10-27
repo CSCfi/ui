@@ -43,24 +43,22 @@ export type CLoginCardBlendMode =
 
 interface CLoginCardProps {
   /**
-   * Background position (css background-position)
+   * Which part of the `src` image shows: any CSS `background-position`
+   * value.
    *
-   * @seeded from csc-ui — verify
    * @freeform any CSS background-position value
    */
   backgroundPosition?: string;
 
   /**
-   * Mobile breakpoint in pixels
-   *
-   * @seeded from csc-ui — verify
+   * The card's own width, in pixels, at or below which it switches to its
+   * compact layout.
    */
   mobileBreakpoint?: number;
 
   /**
-   * Add colored overlay to the background image
-   *
-   * @seeded from csc-ui — verify
+   * Tints the background image with the primary colour, blended through
+   * `overlay-blend-mode`.
    */
   overlay?: boolean;
 
@@ -68,9 +66,10 @@ interface CLoginCardProps {
   overlayBlendMode?: CLoginCardBlendMode;
 
   /**
-   * Background image
+   * URL of the background image, shown below a curved edge: in the card's
+   * bottom-right corner, or along its bottom in the compact layout. Without
+   * it the content takes the card's full width.
    *
-   * @seeded from csc-ui — verify
    * @freeform any image URL
    */
   src?: string;
@@ -79,14 +78,12 @@ interface CLoginCardProps {
 
 <script setup lang="ts">
 /**
- * @slot default - Login Card contents
+ * @slot default - The card's sections: `c-login-card-title`, `c-login-card-content` and `c-login-card-actions`, in that order
  *
- * @csspart root - The outer article carrying the card background and radius
- * @csspart card - The shadowed, positioned container inside the root
- * @csspart image - The clipped background-image layer of the card
- * @csspart content - The padded column wrapping the slotted contents
- *
- * @seeded from csc-ui — verify
+ * @csspart root - The card's surface, carrying its background, ink and corner radius
+ * @csspart card - The shadowed box inside the root
+ * @csspart image - The clipped background-image layer
+ * @csspart content - The padded column holding the sections
  *
  * @subcomponents c-login-card-title, c-login-card-content, c-login-card-actions
  */

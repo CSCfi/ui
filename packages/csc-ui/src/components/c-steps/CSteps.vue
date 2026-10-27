@@ -14,12 +14,10 @@
 
 <script setup lang="ts">
 /**
- * @slot default - Default slot
+ * @slot default - The `c-step` elements, one per step of the flow
  *
- * @csspart root - The flex row laying out the projected c-step children and their dividers
- * @csspart label - The current step's label shown below the row in the collapsed (mobile) layout
- *
- * @seeded from csc-ui — verify
+ * @csspart root - The row of steps and the lines joining them
+ * @csspart label - The current step's label, shown below the row in the narrow layout
  *
  * @subcomponents c-step
  */

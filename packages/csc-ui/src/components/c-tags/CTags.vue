@@ -41,9 +41,8 @@ interface CTagsProps {
   required?: boolean;
 
   /**
-   * Size of the tags
-   *
-   * @seeded from csc-ui — verify
+   * Size of every tag in the group: `small` renders them compact. Overrides
+   * each tag's own `size`
    */
   size?: CTagsSize;
 }
@@ -51,13 +50,11 @@ interface CTagsProps {
 
 <script setup lang="ts">
 /**
- * @slot default - Default slot for the c-tag elements
+ * @slot default - The `c-tag` elements of the group
  *
  * @csspart root - The wrapper stacking the group label above the tags
  * @csspart label - The group label rendered above the tags
  * @csspart items - The wrapping row that lays out the slotted tags
- *
- * @seeded from csc-ui — verify
  *
  * @subcomponents c-tag
  */

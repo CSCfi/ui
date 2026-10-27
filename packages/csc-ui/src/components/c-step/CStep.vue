@@ -21,15 +21,13 @@
 
 <script setup lang="ts">
 /**
- * @slot default - Default slot for the label
+ * @slot default - The step's label
  *
- * @csspart root - The step's grid container holding the indicator and the label
+ * @csspart root - The step's box: its indicator over its label
  * @csspart indicator - Wrapper around the state indicator (incomplete dot or completed check)
- * @csspart dot - The circular indicator shown while the step is incomplete
+ * @csspart dot - The circle shown while the step is incomplete, ringed for the current step
  * @csspart complete - The filled circle with the check mark shown when the step is complete
  * @csspart label - Wrapper around the slotted label text
- *
- * @seeded from csc-ui — verify
  */
 import { tv } from 'tailwind-variants';
 import { computed } from 'vue';

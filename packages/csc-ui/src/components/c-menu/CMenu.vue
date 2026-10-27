@@ -91,14 +91,12 @@ interface CMenuProps {
 
 <script setup lang="ts">
 /**
- * @slot default - Menu title / activator element (simple variant)
- * @slot trigger - The element that opens the menu (e.g. a c-button)
+ * @slot default - The menu's content: `c-menu-item`, `c-menu-label` and `c-divider` elements
+ * @slot trigger - The trigger: the element that opens the menu, e.g. a `c-button`
  *
  * @csspart trigger - The inline wrapper around the slotted trigger, serving as the panel's anchor
  * @csspart panel - The floating popover positioned against the trigger
  * @csspart list - The menu list surface inside the panel
- *
- * @seeded from csc-ui — verify
  *
  * @subcomponents c-menu-item, c-menu-label
  */

@@ -22,12 +22,10 @@
 
 <script setup lang="ts">
 /**
- * @slot default - Card components
+ * @slot default - The card's sections: `c-card-title`, `c-card-content` and `c-card-actions`, in that order
  *
  * @csspart root - The card's visible surface, carries the background and its ink, border, radius, shadow and section spacing
- * @csspart fullscreen-toggle - The circular fullscreen toggle button shown when the fullscreen prop is set
- *
- * @seeded from csc-ui — verify
+ * @csspart fullscreen-toggle - The round fullscreen toggle button, shown when `fullscreen` is set
  *
  * @subcomponents c-card-title, c-card-content, c-card-actions
  */
@@ -83,9 +81,8 @@ const card = tv({
 
 interface CCardProps {
   /**
-   * Enable the fullscreen toggle button
-   *
-   * @seeded from csc-ui — verify
+   * Shows a toggle button in the card's top-right corner that puts the card
+   * in the browser's fullscreen mode and back.
    */
   fullscreen?: boolean;
 }
@@ -125,9 +122,9 @@ const onFullscreen = async (event: MouseEvent) => {
 };
 
 /**
- * Enter fullscreen from the outside
- *
- * @seeded from csc-ui — verify
+ * Shows the card in the browser's fullscreen mode; does nothing while any
+ * element is already fullscreen. Browsers grant it only in response to a
+ * user action, so call it from a click handler.
  */
 const enterFullscreen = async () => {
   if (!host || document.fullscreenElement) return;
@@ -139,9 +136,8 @@ const enterFullscreen = async () => {
 };
 
 /**
- * Exit fullscreen from the outside
- *
- * @seeded from csc-ui — verify
+ * Returns the card from fullscreen to the page. Ends only the card's own
+ * fullscreen, never another element's.
  */
 const exitFullscreen = async () => {
   // Only the card's own fullscreen: another element's is not the card's to end.

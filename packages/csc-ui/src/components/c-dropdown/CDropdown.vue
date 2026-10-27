@@ -778,9 +778,8 @@ const updateStatusText = () => {
 // ---- exposed imperative API (called by c-select) ------------------------
 
 /**
- * Open dropdown
- *
- * @seeded from csc-ui — verify
+ * Open the list panel against the field, or fullscreen on a narrow
+ * viewport; does nothing while it is open
  */
 const open = () => {
   const dialog = dialogRef.value;
@@ -795,9 +794,7 @@ const open = () => {
 };
 
 /**
- * Close dropdown
- *
- * @seeded from csc-ui — verify
+ * Close the list panel and put the field back in its place
  */
 const close = () => {
   const dialog = dialogRef.value;
@@ -859,9 +856,8 @@ const focusItem = (index: number) => {
 };
 
 /**
- * Select item
- *
- * @seeded from csc-ui — verify
+ * Pick the option row at `index`, as a click on it would. Returns `true`
+ * when there is no row there or it is disabled, `false` once it is picked
  */
 const selectItem = (index: number) => {
   const item = rowAt(index);
@@ -875,9 +871,8 @@ const selectItem = (index: number) => {
 };
 
 /**
- * Update list items
- *
- * @seeded from csc-ui — verify
+ * Re-read the options' live state and re-render the list on the next frame;
+ * `reset` also re-reads it at once
  */
 const updateList = (reset = false) => {
   if (reset) {

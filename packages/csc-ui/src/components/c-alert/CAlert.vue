@@ -53,9 +53,9 @@ interface CAlertProps {
   heading?: string;
 
   /**
-   * Type of the alert
-   *
-   * @seeded from csc-ui — verify
+   * The status type, setting the colours, the icon and how urgently the
+   * alert is announced (`warning` and `error` interrupt). Without it the
+   * alert has the neutral, brand-primary look.
    */
   type?: CAlertType;
 }
@@ -64,15 +64,13 @@ interface CAlertProps {
 <script setup lang="ts">
 /**
  * @slot heading - Rich heading content; overrides the `heading` prop
- * @slot default - Default slot
+ * @slot default - The message
  *
  * @csspart root - The tinted box carrying the type's wash, hairline border and accent edge
- * @csspart icon - The status icon svg
+ * @csspart icon - The status icon
  * @csspart content - The wrapper around the heading and message content
  * @csspart heading - The heading paragraph rendered from the `heading` prop
  * @csspart close - The close button rendered when `closeable` is set
- *
- * @seeded from csc-ui — verify
  */
 import {
   mdiAlert,

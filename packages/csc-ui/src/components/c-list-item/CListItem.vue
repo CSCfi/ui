@@ -91,16 +91,14 @@ defineOptions({ inheritAttrs: false });
 
 interface CListItemProps {
   /**
-   * Set the item active
-   *
-   * @seeded from csc-ui — verify
+   * Mark the item as the current one: a primary tint and ring, announced as
+   * current (`aria-current`).
    */
   active?: boolean;
 
   /**
-   * Disable the item
-   *
-   * @seeded from csc-ui — verify
+   * Grey the item out, ignore the pointer and take it out of the Tab order; a
+   * link item stops being a link.
    */
   disabled?: boolean;
 
@@ -112,24 +110,21 @@ interface CListItemProps {
   disabledByParent?: boolean;
 
   /**
-   * Display background color on hover
-   *
-   * @seeded from csc-ui — verify
+   * Add the hover tint alone, without a link or a ripple.
    */
   hoverable?: boolean;
 
   /**
-   * Hyperlink url
+   * URL that turns the item's content box into a real link, with a hover tint
+   * on the row.
    *
-   * @seeded from csc-ui — verify
    * @freeform any URL
    */
   href?: string;
 
   /**
-   * Add ripple effect to the item
-   *
-   * @seeded from csc-ui — verify
+   * Add a pointer cursor, the hover tint and a ripple on press; an item without
+   * `href` also becomes a Tab stop that Enter and Space press, firing `click`.
    */
   ripple?: boolean;
 

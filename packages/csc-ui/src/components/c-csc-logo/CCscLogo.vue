@@ -66,9 +66,7 @@ const logo = tv({
 
 interface CCscLogoProps {
   /**
-   * Logo width in pixels
-   *
-   * @seeded from csc-ui — verify
+   * Logo width in pixels; the height follows the logo's proportions.
    */
   width?: number;
 }

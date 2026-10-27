@@ -15,13 +15,11 @@
 
 <script setup lang="ts">
 /**
- * @slot default - Default slot
- * @slot footer - Footer slot
+ * @slot default - The current view's content
+ * @slot footer - Content below the container; inside `c-main` it sits at the bottom edge of a short page
  *
  * @csspart scroll-indicator - The fixed progress bar at the top of the viewport tracking how far the document is scrolled
- * @csspart container - The max-width content wrapper around the default slot
- *
- * @seeded from csc-ui — verify
+ * @csspart container - The content wrapper around the default slot, carrying its 1280px width limit and padding
  */
 import { tv } from 'tailwind-variants';
 import { computed, onBeforeUnmount, onMounted, useTemplateRef } from 'vue';
@@ -59,9 +57,8 @@ const page = tv({
 
 interface CPageProps {
   /**
-   * Display scroll indicator
-   *
-   * @seeded from csc-ui — verify
+   * Shows a 4px primary bar along the top edge of the viewport whose length
+   * tracks how far the document has been scrolled.
    */
   scrollIndicator?: boolean;
 }

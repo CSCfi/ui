@@ -345,11 +345,9 @@ interface CSelectProps {
 
 <script setup lang="ts">
 /**
- * @slot default - Use c-option elements only
- * @slot pre - Leading content forwarded to the inner c-input, rendered before the select's value
- * @slot post - Trailing content forwarded to the inner c-input, rendered after the select's controls
- *
- * @seeded from csc-ui — verify
+ * @slot default - The `c-option` elements the list is built from, as an alternative to `items` (never rendered in place)
+ * @slot pre - Content inside the field, before the value, such as an icon
+ * @slot post - Content inside the field, after its own controls (the chevron, clear button or loading spinner)
  *
  * @subcomponents c-option, c-option-value
  *

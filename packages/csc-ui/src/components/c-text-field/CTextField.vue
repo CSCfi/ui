@@ -164,16 +164,15 @@ export type CTextFieldType =
 
 interface CTextFieldProps {
   /**
-   * HTML input autocapitalize
-   *
-   * @seeded from csc-ui — verify
+   * How on-screen keyboards capitalize typed text, as the native
+   * `autocapitalize` attribute; unset leaves the browser's default
    */
   autocapitalize?: CTextFieldAutocapitalize;
 
   /**
-   * HTML input autocomplete
+   * The browser's autofill hint, as the native `autocomplete` attribute
+   * (`email`, `new-password`, `off`…)
    *
-   * @seeded from csc-ui — verify
    * @freeform any HTML autocomplete token list
    */
   autocomplete?: string;
@@ -195,8 +194,6 @@ interface CTextFieldProps {
 
   /**
    * Disable the input
-   *
-   * @seeded from csc-ui — verify
    */
   disabled?: boolean;
 
@@ -210,7 +207,6 @@ interface CTextFieldProps {
   /**
    * Hide the hint and error messages
    *
-   * @seeded from csc-ui — verify
    * @defaultable false
    */
   hideDetails?: boolean;
@@ -218,7 +214,6 @@ interface CTextFieldProps {
   /**
    * Hint text for the input
    *
-   * @seeded from csc-ui — verify
    * @freeform
    */
   hint?: string;
@@ -232,7 +227,6 @@ interface CTextFieldProps {
   /**
    * Label of the input
    *
-   * @seeded from csc-ui — verify
    * @freeform
    */
   label?: string;
@@ -240,7 +234,6 @@ interface CTextFieldProps {
   /**
    * Label on top of the input
    *
-   * @seeded from csc-ui — verify
    * @defaultable false
    */
   labelOnTop?: boolean;
@@ -253,60 +246,51 @@ interface CTextFieldProps {
   mask?: string;
 
   /**
-   * Maximum value on a numeric input
-   *
-   * @seeded from csc-ui — verify
+   * Largest value of a `type="number"` field, as the native `max` attribute
    */
   max?: null | number;
 
   /**
-   * Minimum value on a numeric input
-   *
-   * @seeded from csc-ui — verify
+   * Smallest value of a `type="number"` field, as the native `min` attribute
    */
   min?: null | number;
 
   /**
-   * Name of the input
+   * `name` of the inner input. The component is not form-associated, so it
+   * does not submit with a `<form>`.
    *
-   * @seeded from csc-ui — verify
    * @freeform
    */
   name?: string;
 
   /**
-   * Placeholder of the input
+   * Placeholder of the input. Beside a floating `label` it shows only while
+   * the field is focused; under a `mask` it replaces the mask guide
    *
-   * @seeded from csc-ui — verify
    * @freeform
    */
   placeholder?: string;
 
   /**
-   * Mark as readonly
-   *
-   * @seeded from csc-ui — verify
+   * Make the input read-only: its text can be selected and copied but not
+   * edited
    */
   readonly?: boolean;
 
   /**
    * Set the input as required
-   *
-   * @seeded from csc-ui — verify
    */
   required?: boolean;
 
   /**
-   * Rows on the input
-   *
-   * @seeded from csc-ui — verify
+   * Number of text lines the field shows; above `1` it becomes a multi-line
+   * textarea
    */
   rows?: number;
 
   /**
-   * Shadow variant of the input
+   * Draw the field as a raised, drop-shadowed box instead of an outlined one
    *
-   * @seeded from csc-ui — verify
    * @defaultable false
    */
   shadow?: boolean;
@@ -319,30 +303,27 @@ interface CTextFieldProps {
   size?: CFieldSize;
 
   /**
-   * Step size on a numeric input
-   *
-   * @seeded from csc-ui — verify
+   * Step of a `type="number"` field, as the native `step` attribute
    */
   step?: null | number;
 
   /**
-   * Trim whitespace from the return value
-   *
-   * @seeded from csc-ui — verify
+   * Trim leading and trailing whitespace from the emitted text, and from the
+   * shown text when the field is left
    */
   trimWhitespace?: boolean;
 
   /**
-   * Type of the input
-   *
-   * @seeded from csc-ui — verify
+   * The native input type: `password` adds a toggle that reveals the text,
+   * `date` a button that opens the browser's date picker, and `number` honours
+   * `min`, `max` and `step`
    */
   type?: CTextFieldType;
 
   /**
-   * Value of the input
+   * The text in the field; under a `mask`, the text as shown, literals
+   * included
    *
-   * @seeded from csc-ui — verify
    * @freeform
    */
   value?: string;
@@ -351,12 +332,10 @@ interface CTextFieldProps {
 
 <script setup lang="ts">
 /**
- * @slot pre - Content added before the input
- * @slot post - Content added after the input
+ * @slot pre - Content inside the field, before the input, such as an icon
+ * @slot post - Content inside the field, after the input and its password or date button
  * @csspart mask-guide - The faint rest of the input mask, shown behind the typed text
- * @cssstate incomplete - Present while a masked field holds text that leaves a mask token unfilled
- *
- * @seeded from csc-ui — verify
+ * @cssstate incomplete - Present while a masked field holds text that leaves a required mask token (one outside an optional section) unfilled
  */
 import { mdiCalendar, mdiEye, mdiEyeOff } from '@mdi/js';
 import { tv } from 'tailwind-variants';

@@ -8,14 +8,12 @@
 
 <script setup lang="ts">
 /**
- * @slot default - Contents of the page: the toolbar, side navigation and page
+ * @slot default - The layout components: `c-toolbar`, `c-side-navigation` and `c-page`
  * @slot banner - A full-width message strip above the toolbar; it scrolls away with the page
  *
  * @csspart root - The shell box: it paints the page canvas and is at least a viewport tall; the dashboard grid is laid out inside it
  *
  * @cssprop --c-main-viewport-height - Height of the scroll viewport the layout pins against (default `100dvh`); a bounded shell with its own scrollbar sets it to its box height
- *
- * @seeded from csc-ui — verify
  */
 import { tv } from 'tailwind-variants';
 import { computed, onBeforeUnmount, onMounted, ref, useTemplateRef } from 'vue';
@@ -95,9 +93,8 @@ const main = tv({
 
 interface CMainProps {
   /**
-   * Disable the default dashboard layout
-   *
-   * @seeded from csc-ui — verify
+   * Turns off the dashboard layout: the slotted components stack in a plain
+   * column, still at least a viewport tall.
    */
   disableLayout?: boolean;
 }

@@ -46,16 +46,14 @@ defineOptions({ inheritAttrs: false });
 
 interface CListProps {
   /**
-   * Show a border around the list items
-   *
-   * @seeded from csc-ui — verify
+   * Draw a 1px border with rounded corners around each item; an `active` item's
+   * border turns primary.
    */
   bordered?: boolean;
 
   /**
-   * Disable the list
-   *
-   * @seeded from csc-ui — verify
+   * Disable every item, items added later included; clearing it re-enables only
+   * the items the list disabled.
    */
   disabled?: boolean;
 }

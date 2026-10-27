@@ -6,11 +6,9 @@
 
 <script setup lang="ts">
 /**
- * @slot default - Login card content
+ * @slot default - The intro text and the sign-in fields
  *
- * @csspart root - The inner wrapper stacking the slotted content vertically
- *
- * @seeded from csc-ui — verify
+ * @csspart root - The column stacking the slotted content with a 24px gap
  */
 import { tv } from 'tailwind-variants';
 import { computed } from 'vue';

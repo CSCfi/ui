@@ -23,23 +23,19 @@ export type CTagSize = 'default' | 'small';
 
 interface CTagProps {
   /**
-   * Mark tag as active
-   *
-   * @seeded from csc-ui — verify
+   * Paint the filled, selected look, announced as the pressed state of a
+   * plain tag. The tag never sets it itself: toggle it on `click`
    */
   active?: boolean;
 
   /**
-   * Display an optional badge at the start of the tag
-   *
-   * @seeded from csc-ui — verify
+   * A number or short text shown in a small pill at the start of the tag
    */
   badge?: null | number | string;
 
   /**
-   * Mark tag as closeable
-   *
-   * @seeded from csc-ui — verify
+   * Add a close button that fires `close`; removing the tag stays your job.
+   * The button, not the tag, is then the Tab stop
    */
   closeable?: boolean;
 
@@ -51,16 +47,14 @@ interface CTagProps {
   closeLabel?: string;
 
   /**
-   * Remove the hover effect
-   *
-   * @seeded from csc-ui — verify
+   * Make the tag a plain label: no hover effect, not a button, and out of
+   * the Tab order
    */
   flat?: boolean;
 
   /**
-   * Size of the tag
-   *
-   * @seeded from csc-ui — verify
+   * Size of the tag: `small` renders a compact pill. Inside `c-tags`, the
+   * group's `size` overrides it
    */
   size?: CTagSize;
 }
@@ -68,10 +62,8 @@ interface CTagProps {
 
 <script setup lang="ts">
 /**
- * @slot default - Default slot
+ * @slot default - The tag's text
  * @csspart root - The tag's visible pill-shaped box
- *
- * @seeded from csc-ui — verify
  */
 import { mdiClose } from '@mdi/js';
 import { tv } from 'tailwind-variants';

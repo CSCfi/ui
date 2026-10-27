@@ -26,16 +26,14 @@ export type CCardActionsJustify =
 
 interface CCardActionsProps {
   /**
-   * Align the actions
-   *
-   * @seeded from csc-ui — verify
+   * Aligns the actions across the row: to its top (`start`), centre or
+   * bottom (`end`).
    */
   align?: CCardActionsAlign;
 
   /**
-   * Justify the actions
-   *
-   * @seeded from csc-ui — verify
+   * Distributes the actions along the row; `stretch` grows every action to
+   * share it.
    */
   justify?: CCardActionsJustify;
 }
@@ -43,12 +41,10 @@ interface CCardActionsProps {
 
 <script setup lang="ts">
 /**
- * @slot default - Card actions
+ * @slot default - The actions, typically `c-button`s
  *
  * @csspart root - The padded footer wrapping the actions row
- * @csspart actions - The flex row laying out the slotted action elements
- *
- * @seeded from csc-ui — verify
+ * @csspart actions - The wrapping flex row laying out the slotted actions
  */
 import { tv } from 'tailwind-variants';
 import { computed } from 'vue';

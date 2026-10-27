@@ -6,11 +6,9 @@
 
 <script setup lang="ts">
 /**
- * @slot default - Default slot
+ * @slot default - The panel's content
  *
- * @csspart root - The panel's padded content wrapper
- *
- * @seeded from csc-ui — verify
+ * @csspart root - The panel's padded content box
  */
 import { tv } from 'tailwind-variants';
 import { onBeforeUnmount, onMounted, useHost, useTemplateRef } from 'vue';
@@ -60,9 +58,8 @@ interface CTabItemProps {
   active?: boolean;
 
   /**
-   * Tab value
-   *
-   * @seeded from csc-ui — verify
+   * Value of the panel, the same as its `c-tab`'s; the panel shows while the
+   * `value` of `c-tabs` equals it.
    */
   value?: number | string;
 }

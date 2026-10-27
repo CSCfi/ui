@@ -15,11 +15,9 @@
 
 <script setup lang="ts">
 /**
- * @slot default - Default slot
+ * @slot default - The tab's label; a `c-badge` here sits on the tab's corner
  *
- * @csspart root - The tab's inner content box centering the slotted label
- *
- * @seeded from csc-ui — verify
+ * @csspart root - The box centring the tab's label
  */
 import { tv } from 'tailwind-variants';
 import { onMounted, useHost, useTemplateRef, watchEffect } from 'vue';
@@ -95,9 +93,8 @@ interface CTabProps {
   active?: boolean;
 
   /**
-   * Mark tab as disabled
-   *
-   * @seeded from csc-ui — verify
+   * Grey the tab out and keep it from being selected by pointer or keyboard;
+   * the arrow keys skip it.
    */
   disabled?: boolean;
 
@@ -110,10 +107,8 @@ interface CTabProps {
   tabStop?: boolean;
 
   /**
-   * Value for the tab
-   * - for use in c-tabs
-   *
-   * @seeded from csc-ui — verify
+   * Value of the tab, matching the `value` of the `c-tab-item` panel it shows;
+   * `c-tabs` holds it as its `value` while this tab is active.
    */
   value?: number | string;
 }

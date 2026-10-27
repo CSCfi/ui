@@ -190,9 +190,7 @@ interface CSwitchProps {
   disabled?: boolean;
 
   /**
-   * The value when the checkbox is unchecked
-   *
-   * @seeded from csc-ui — verify
+   * The value when the switch is off
    */
   falseValue?: boolean | number | string;
 
@@ -205,23 +203,18 @@ interface CSwitchProps {
   label?: string;
 
   /**
-   * Loading state
-   *
-   * @seeded from csc-ui — verify
+   * Show a spinner in place of the handle, such as while the change is
+   * saved. It does not disable the switch
    */
   loading?: boolean;
 
   /**
-   * Set as required
-   *
-   * @seeded from csc-ui — verify
+   * Set as required — shows the required marker on the label
    */
   required?: boolean;
 
   /**
-   * The value when the checkbox is checked
-   *
-   * @seeded from csc-ui — verify
+   * The value when the switch is on
    */
   trueValue?: boolean | number | string;
 

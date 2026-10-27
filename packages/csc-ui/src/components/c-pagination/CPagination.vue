@@ -169,16 +169,13 @@ interface CPaginationProps {
   hideDetails?: boolean;
 
   /**
-   * Hide range indicator
-   *
-   * @seeded from csc-ui — verify
+   * Hide the range text ("11 - 20 of 96 items"), keeping the page-size menu.
    */
   hideRange?: boolean;
 
   /**
-   * Hide page number buttons
-   *
-   * @seeded from csc-ui — verify
+   * Drop the page buttons and move previous and next to the bar's end; the
+   * range text is then the only sign of position.
    */
   simple?: boolean;
 

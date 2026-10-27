@@ -306,9 +306,8 @@ interface CInputProps {
   active?: boolean;
 
   /**
-   * Disable the input
-   *
-   * @seeded from csc-ui — verify
+   * Dim the field and show the not-allowed cursor; the wrapping component
+   * disables its own input
    */
   disabled?: boolean;
 
@@ -324,15 +323,12 @@ interface CInputProps {
 
   /**
    * Hide the hint and error messages
-   *
-   * @seeded from csc-ui — verify
    */
   hideDetails?: boolean;
 
   /**
    * Hint text for the input
    *
-   * @seeded from csc-ui — verify
    * @freeform
    */
   hint?: string;
@@ -356,29 +352,24 @@ interface CInputProps {
   /**
    * Label of the input
    *
-   * @seeded from csc-ui — verify
    * @freeform
    */
   label?: string;
 
   /**
    * Label on top of the input
-   *
-   * @seeded from csc-ui — verify
    */
   labelOnTop?: boolean;
 
   /**
-   * Set the input as required
-   *
-   * @seeded from csc-ui — verify
+   * Show the required asterisk after the label; the wrapping component marks
+   * its own input required
    */
   required?: boolean;
 
   /**
-   * Shadow variant of the input
-   *
-   * @seeded from csc-ui — verify
+   * Draw the field as a raised, drop-shadowed box with a focus outline
+   * instead of the outlined border and its label notch
    */
   shadow?: boolean;
 

@@ -25,16 +25,14 @@ defineOptions({ inheritAttrs: false });
 
 interface CTableProps {
   /**
-   * Mobile breakpoint in pixels
-   *
-   * @seeded from csc-ui — verify
+   * The table's width, in pixels, at or below which a `responsive` table
+   * stacks its rows into cards.
    */
   mobileBreakpoint?: number;
 
   /**
-   * Should the table be responsive
-   *
-   * @seeded from csc-ui — verify
+   * Stacks the rows into cards, each cell labelled with its column header,
+   * while the table is no wider than `mobile-breakpoint`.
    */
   responsive?: boolean;
 }

@@ -95,16 +95,14 @@ const ui = computed(() => progress());
 
 interface CProgressBarProps {
   /**
-   * Hide the percentage display
-   *
-   * @seeded from csc-ui — verify
+   * Hides the details line (the percentage and `label`); `label` still
+   * names the bar.
    */
   hideDetails?: boolean;
 
   /**
-   * Indeterminate state of the progress bar
-   *
-   * @seeded from csc-ui — verify
+   * Replaces the fill with a looping sweep for work of unknown duration,
+   * hiding the details line and exposing no value.
    */
   indeterminate?: boolean;
 
@@ -117,16 +115,14 @@ interface CProgressBarProps {
   label?: string;
 
   /**
-   * Place details next to progress bar
-   *
-   * @seeded from csc-ui — verify
+   * Places the details line beside the bar instead of below it.
    */
   singleLine?: boolean;
 
   /**
-   * Progress bar value in percentage (0 to 100)
-   *
-   * @seeded from csc-ui — verify
+   * Completion percentage, 0 to 100. The fill clamps a value outside that
+   * range; the details line shows it as given, a negative one in the error
+   * colour.
    */
   value?: number;
 }

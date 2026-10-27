@@ -42,8 +42,6 @@
  * @csspart root - The outer drawer container: the item list above the bottom slot's region; the open mobile drawer is a modal `dialog`
  * @csspart nav - The scrollable `<nav>` element holding the navigation items
  *
- * @seeded from csc-ui — verify
- *
  * @subcomponents c-side-navigation-item, c-side-navigation-title, c-sub-navigation-item
  */
 import { mdiArrowRight } from '@mdi/js';
@@ -164,9 +162,9 @@ const sideNavigation = tv({
 
 interface CSideNavigationProps {
   /**
-   * Mobile version
-   *
-   * @seeded from csc-ui — verify
+   * Render the drawer as a panel that slides in from the right over a backdrop,
+   * opened and closed by `open` or a `c-navigation-button`; while open it is a
+   * modal dialog.
    */
   mobile?: boolean;
 

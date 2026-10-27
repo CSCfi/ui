@@ -165,9 +165,8 @@ const sideNavigationItem = tv({
 
 interface CSideNavigationItemProps {
   /**
-   * Indicate active state
-   *
-   * @seeded from csc-ui — verify
+   * On an item without sub-items, mark the current page
+   * (`aria-current="page"`); on a parent, expand its sub-items.
    */
   active?: boolean;
 
@@ -180,24 +179,21 @@ interface CSideNavigationItemProps {
   collapsed?: boolean;
 
   /**
-   * Hyperlink url
+   * URL that makes the item a real link; without it the item is a button.
    *
-   * @seeded from csc-ui — verify
    * @freeform any URL
    */
   href?: string;
 
   /**
-   * Loading state
-   *
-   * @seeded from csc-ui — verify
+   * Cover the item with a loading overlay: a translucent scrim and a spinner.
    */
   loading?: boolean;
 
   /**
-   * Hyperlink target
+   * Where the `href` opens, as on a native `<a>`: the same tab unless set —
+   * `_blank` for a new one.
    *
-   * @seeded from csc-ui — verify
    * @freeform any browsing-context name (e.g. _blank, _self)
    */
   target?: string;

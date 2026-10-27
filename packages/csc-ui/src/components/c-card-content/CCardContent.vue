@@ -6,11 +6,9 @@
 
 <script setup lang="ts">
 /**
- * @slot default - Card contents
+ * @slot default - The card's body content
  *
- * @csspart root - The padded wrapper stacking the slotted content vertically
- *
- * @seeded from csc-ui — verify
+ * @csspart root - The padded column stacking the slotted content with the card's section spacing
  */
 import { tv } from 'tailwind-variants';
 import { computed } from 'vue';

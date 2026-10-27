@@ -46,11 +46,18 @@ export interface CAccordionElementEventMap {
 
 /** A stack of collapsible sections, each a `c-accordion-item` whose header button shows or hides the content beneath it. */
 export interface CAccordionElement extends Omit<HTMLElement, 'mandatory' | 'multiple' | 'outlined' | 'value'> {
-  /** Disallow collapsing all the items */
+  /**
+   * Keeps the last expanded item from collapsing: its header stops
+   * responding until another item expands. It never expands an item
+   * itself, so pair it with an initial `value`.
+   */
   mandatory?: boolean;
-  /** Allow expanding multiple items */
+  /**
+   * Lets items expand and collapse independently; `value` is then an array
+   * of the expanded items' values.
+   */
   multiple?: boolean;
-  /** Show an outline around expanded items */
+  /** Adds a primary ring inside the outline of expanded items. */
   outlined?: boolean;
   /**
    * The expanded item's `value`, an array of them with `multiple`, or `null`
@@ -81,7 +88,7 @@ export interface CAccordionElement extends Omit<HTMLElement, 'mandatory' | 'mult
 
 /** One collapsible section of a `c-accordion`: a header button showing its `heading` (or the `heading` slot) and an optional icon, above the content in the default slot. Place it directly inside the accordion and give it a `value`: the accordion expands items by value and leaves an item without one collapsed. */
 export interface CAccordionItemElement extends Omit<HTMLElement, 'collapsable' | 'expanded' | 'heading' | 'outlined' | 'value'> {
-  /** Heading of the accordion item */
+  /** The header's text. The `heading` slot replaces it for rich content. */
   heading?: string;
   /**
    * Identifies the item in the parent `<c-accordion>`'s `value`. Required:
@@ -111,7 +118,11 @@ export interface CAlertElement extends Omit<HTMLElement, 'closeable' | 'heading'
    * rich content.
    */
   heading?: string;
-  /** Type of the alert */
+  /**
+   * The status type, setting the colours, the icon and how urgently the
+   * alert is announced (`warning` and `error` interrupt). Without it the
+   * alert has the neutral, brand-primary look.
+   */
   type?: 'error' | 'info' | 'success' | 'warning';
   addEventListener<K extends keyof CAlertElementEventMap>(
     type: K,
@@ -296,38 +307,63 @@ export interface CButtonElement extends Omit<HTMLElement, 'active' | 'asTab' | '
    * `c-button-group` on its slotted buttons.
    */
   active?: boolean;
-  /** Danger variant style */
+  /**
+   * Danger appearance for a destructive action: the filled button in the error
+   * colour; no effect on `outlined`, `ghost` or `text`.
+   */
   danger?: boolean;
-  /** Disable the button */
+  /**
+   * Grey the button out and block clicks and keys, a link button (`href`)
+   * included.
+   */
   disabled?: boolean;
-  /** Fit width to containing element */
+  /** Stretch the button to the full width of its container. */
   fit?: boolean;
-  /** Light button background */
+  /** Ghost appearance: primary text on a light primary tint, for lower emphasis. */
   ghost?: boolean;
-  /** Hyperlink url */
+  /**
+   * URL to link to: the button renders as a real link (`<a>`) styled as a
+   * button.
+   */
   href?: string;
-  /** Inverted button style for dark backgrounds */
+  /**
+   * Inverted colours for a fixed dark or brand-coloured backdrop: the
+   * `inverse-*` family, the same in both theme modes. Combines with the other
+   * appearances.
+   */
   inverted?: boolean;
-  /** Display loader on the button */
+  /**
+   * Show a spinner in place of the label and ignore clicks and keys, e.g. while
+   * the action runs.
+   */
   loading?: boolean;
-  /** Remove the default border radius */
+  /** Square corners instead of the rounded default. */
   noRadius?: boolean;
-  /** Outlined button style */
+  /**
+   * Outlined appearance: a primary outline and text with no fill, for lower
+   * emphasis.
+   */
   outlined?: boolean;
-  /** Size of the button */
+  /**
+   * Size of the button: `small`, `default` (the control height, level with a
+   * form field) or `large` (the toolbar height).
+   */
   size?: 'default' | 'large' | 'small';
   /**
    * Where the `href` opens, as on a native `<a>`: the same tab unless set —
    * `_blank` for a new one.
    */
   target?: string;
-  /** Transparent button background */
+  /** Text appearance: primary text with no fill or outline, the lightest look. */
   text?: boolean;
-  /** Button type */
+  /**
+   * Native `type` of the button: `button` unless set, `submit` or `reset`.
+   * Ignored when `href` is set.
+   */
   type?: 'button' | 'reset' | 'submit';
   /**
-   * Value for the button
-   * - for use in the c-button-group
+   * The button's value in a `c-button-group`; in `c-tab-buttons`, the `value`
+   * of the `c-tab-item` panel it shows.
    */
   value?: number | string;
 }
@@ -402,19 +438,35 @@ export interface CButtonGroupElement extends Omit<HTMLElement, 'disabled' | 'lab
 
 /** A raised, bordered surface that groups one piece of content — its heading, body and actions — into a single box on the page. */
 export interface CCardElement extends Omit<HTMLElement, 'fullscreen'> {
-  /** Enable the fullscreen toggle button */
+  /**
+   * Shows a toggle button in the card's top-right corner that puts the card
+   * in the browser's fullscreen mode and back.
+   */
   fullscreen?: boolean;
-  /** Enter fullscreen from the outside */
+  /**
+   * Shows the card in the browser's fullscreen mode; does nothing while any
+   * element is already fullscreen. Browsers grant it only in response to a
+   * user action, so call it from a click handler.
+   */
   enterFullscreen(): void;
-  /** Exit fullscreen from the outside */
+  /**
+   * Returns the card from fullscreen to the page. Ends only the card's own
+   * fullscreen, never another element's.
+   */
   exitFullscreen(): void;
 }
 
 /** The row of actions at the bottom of a `c-card`, typically `c-button`s, which wraps onto further rows instead of overflowing the card. `justify` distributes the actions along the row (`start` by default, `stretch` to grow them all) and `align` places them across it. */
 export interface CCardActionsElement extends Omit<HTMLElement, 'align' | 'justify'> {
-  /** Align the actions */
+  /**
+   * Aligns the actions across the row: to its top (`start`), centre or
+   * bottom (`end`).
+   */
   align?: 'center' | 'end' | 'start';
-  /** Justify the actions */
+  /**
+   * Distributes the actions along the row; `stretch` grows every action to
+   * share it.
+   */
   justify?: 'center' | 'end' | 'space-around' | 'space-between' | 'start' | 'stretch';
 }
 
@@ -465,23 +517,30 @@ export interface CCheckboxElement extends Omit<HTMLElement, 'checked' | 'disable
   falseValue?: boolean | number | string;
   /** Hide the hint and error messages */
   hideDetails?: boolean;
-  /** Hint text for the input */
+  /** Hint text for the checkbox */
   hint?: string;
-  /** Indeterminate state */
+  /**
+   * Show the mixed state, a bar in place of the check, for a parent checkbox
+   * whose options are partly checked. It wins over `checked` and stays until
+   * you clear it
+   */
   indeterminate?: boolean;
   /**
    * Show the control as invalid: its `error-message`, when set, replaces the
    * hint, and the control is marked `aria-invalid`.
    */
   invalid?: boolean;
-  /** Element label */
+  /**
+   * Label of the checkbox, shown beside the box. Falls back to the default
+   * slot content when not set.
+   */
   label?: string;
   /**
    * `name` of the inner checkbox input. The component is not
    * form-associated, so it does not submit with a `<form>`.
    */
   name?: string;
-  /** Set as required */
+  /** Set as required — shows the required marker on the label */
   required?: boolean;
   /** The value when the checkbox is checked */
   trueValue?: boolean | number | string;
@@ -628,7 +687,7 @@ export interface CColorPickerElement extends Omit<HTMLElement, 'alpha' | 'cleara
 
 /** The CSC logo without its tagline, drawn as an inline SVG in the colours of the current theme mode. */
 export interface CCscLogoElement extends Omit<HTMLElement, 'width'> {
-  /** Logo width in pixels */
+  /** Logo width in pixels; the height follows the logo's proportions. */
   width?: number;
 }
 
@@ -994,57 +1053,100 @@ export interface CIconElement extends Omit<HTMLElement, 'color' | 'path' | 'size
 
 /** An icon-only button: a round native button that shows a single icon and takes its accessible name from an `aria-label` on the element. */
 export interface CIconButtonElement extends Omit<HTMLElement, 'badge' | 'danger' | 'disabled' | 'ghost' | 'inverted' | 'loading' | 'outlined' | 'path' | 'size' | 'text'> {
-  /** Show a badge on top of the icon */
+  /**
+   * Count shown in a bubble at the button's top-right corner; hidden while
+   * `null` or empty, so `0` still shows.
+   */
   badge?: null | number | string;
-  /** Danger variant of the button */
+  /**
+   * Danger appearance for a destructive action: the filled button in the error
+   * colour; no effect on `outlined`, `ghost` or `text`.
+   */
   danger?: boolean;
-  /** Disable the button */
+  /** Disable the button: it leaves the Tab order and ignores the pointer. */
   disabled?: boolean;
-  /** Ghost variant of the button */
+  /** Ghost appearance: a light primary tint, for lower emphasis. */
   ghost?: boolean;
-  /** Inverted color for dark backgrounds */
+  /**
+   * Inverted colours for a fixed dark or brand-coloured backdrop: the
+   * `inverse-*` family, the same in both theme modes. Combines with the other
+   * appearances.
+   */
   inverted?: boolean;
-  /** Loading variant of the button */
+  /**
+   * Show a spinner in place of the icon and ignore clicks; the button stays
+   * focusable and is announced as busy and unavailable.
+   */
   loading?: boolean;
-  /** Outlined variant of the button */
+  /** Outlined appearance: a primary outline with no fill, for lower emphasis. */
   outlined?: boolean;
-  /** Path for the svg icon */
+  /**
+   * Icon path of an icon the button draws itself, always 24px; a slotted icon
+   * wins over it.
+   */
   path?: string;
-  /** Size of the button */
+  /** Size of the button: `default` (40px), `small` (32px) or `x-small` (28px). */
   size?: 'default' | 'small' | 'x-small';
-  /** Text variant of the button */
+  /** Text appearance: no fill or outline, the lightest look. */
   text?: boolean;
 }
 
 /** A text link to another page or resource: a native `<a>` in the link colour, with an optional underline. */
 export interface CLinkElement extends Omit<HTMLElement, 'href' | 'target' | 'underline'> {
-  /** Url of link */
+  /**
+   * URL the link leads to. Without it the link has no destination: it is
+   * neither focusable nor announced as a link.
+   */
   href?: string;
-  /** regular target attribute of a hyperlink */
+  /**
+   * Where the `href` opens, as on a native `<a>`: the same tab unless set —
+   * `_blank` for a new one.
+   */
   target?: string;
-  /** Display line under the link */
+  /**
+   * Underline the text. Underline links inside running text, so colour is not
+   * the only thing telling them apart.
+   */
   underline?: boolean;
 }
 
 /** A vertical list of rows, each a `c-list-item` with its main content and optional leading and trailing content, for settings entries, related pages or a short set of records. */
 export interface CListElement extends Omit<HTMLElement, 'bordered' | 'disabled'> {
-  /** Show a border around the list items */
+  /**
+   * Draw a 1px border with rounded corners around each item; an `active` item's
+   * border turns primary.
+   */
   bordered?: boolean;
-  /** Disable the list */
+  /**
+   * Disable every item, items added later included; clearing it re-enables only
+   * the items the list disabled.
+   */
   disabled?: boolean;
 }
 
 /** One row of a `c-list`: its main content goes in the default slot, leading content such as an icon in the `pre` slot and trailing content in the `post` slot. The row is static unless it has an `href`, which makes it a real link; `ripple` adds a press effect and a Tab stop that Enter and Space press, firing `click`; give navigation an `href`. */
 export interface CListItemElement extends Omit<HTMLElement, 'active' | 'disabled' | 'disabledByParent' | 'hoverable' | 'href' | 'ripple' | 'target'> {
-  /** Set the item active */
+  /**
+   * Mark the item as the current one: a primary tint and ring, announced as
+   * current (`aria-current`).
+   */
   active?: boolean;
-  /** Disable the item */
+  /**
+   * Grey the item out, ignore the pointer and take it out of the Tab order; a
+   * link item stops being a link.
+   */
   disabled?: boolean;
-  /** Display background color on hover */
+  /** Add the hover tint alone, without a link or a ripple. */
   hoverable?: boolean;
-  /** Hyperlink url */
+  /**
+   * URL that turns the item's content box into a real link, with a hover tint
+   * on the row.
+   */
   href?: string;
-  /** Add ripple effect to the item */
+  /**
+   * Add a pointer cursor, the hover tint and a ripple on press; an item without
+   * `href` also becomes a Tab stop that Enter and Space press, firing `click`.
+   */
   ripple?: boolean;
   /**
    * Where the `href` opens, as on a native `<a>`: the same tab unless set —
@@ -1070,22 +1172,28 @@ export interface CLoaderElement extends Omit<HTMLElement, 'contentDelay' | 'hide
    * unmount it and skip the fade-out.
    */
   hide?: boolean;
-  /** Size of the loader */
+  /** The spinner's diameter in pixels. */
   size?: number;
-  /** Width of the loader */
+  /** The spinner's stroke width in pixels. */
   width?: number;
 }
 
 /** One identity-provider choice inside `c-login-buttons`: a card with the provider's logo (`src`, or markup in the `image` slot) above the provider's name. With an `href` it is a link to the provider's sign-in; without one it is a button whose `click` you handle. Leave `alt` empty when the name already identifies the provider. */
 export interface CLoginButtonElement extends Omit<HTMLElement, 'alt' | 'href' | 'src'> {
-  /** Alt description for logo */
+  /**
+   * Alternative text for the `src` logo, read before the provider's name.
+   * Leave it empty when the name already identifies the provider.
+   */
   alt?: string;
   /**
    * The provider's sign-in URL, which makes the card a link. Without it the
    * card is a button: handle its `click`.
    */
   href?: string;
-  /** Login provider logo url */
+  /**
+   * URL of the provider's logo, shown above the name. The `image` slot
+   * replaces it.
+   */
   src?: string;
 }
 
@@ -1095,23 +1203,42 @@ export interface CLoginButtonsElement extends HTMLElement {
 
 /** The card of a sign-in page: a large surface holding the service's heading, the sign-in form or choices and their actions, with an optional background image showing below a curved edge. */
 export interface CLoginCardElement extends Omit<HTMLElement, 'backgroundPosition' | 'mobileBreakpoint' | 'overlay' | 'overlayBlendMode' | 'src'> {
-  /** Background position (css background-position) */
+  /**
+   * Which part of the `src` image shows: any CSS `background-position`
+   * value.
+   */
   backgroundPosition?: string;
-  /** Mobile breakpoint in pixels */
+  /**
+   * The card's own width, in pixels, at or below which it switches to its
+   * compact layout.
+   */
   mobileBreakpoint?: number;
-  /** Add colored overlay to the background image */
+  /**
+   * Tints the background image with the primary colour, blended through
+   * `overlay-blend-mode`.
+   */
   overlay?: boolean;
   /** How the `overlay` tint blends with the image: a CSS blend mode. */
   overlayBlendMode?: 'color-burn' | 'color-dodge' | 'color' | 'darken' | 'difference' | 'exclusion' | 'hard-light' | 'hue' | 'lighten' | 'luminosity' | 'multiply' | 'normal' | 'overlay' | 'saturation' | 'screen' | 'soft-light';
-  /** Background image */
+  /**
+   * URL of the background image, shown below a curved edge: in the card's
+   * bottom-right corner, or along its bottom in the compact layout. Without
+   * it the content takes the card's full width.
+   */
   src?: string;
 }
 
 /** The row of actions at the bottom of a `c-login-card`: the sign-in button and any link beside it, such as a forgotten-password link. `justify` distributes them along the row (`start` by default, `space-between` to push the last one to the far end, `stretch` to grow them all) and `align` places them across it. */
 export interface CLoginCardActionsElement extends Omit<HTMLElement, 'align' | 'justify'> {
-  /** Align the actions */
+  /**
+   * Aligns the actions across the row: to its top (`start`), centre or
+   * bottom (`end`).
+   */
   align?: 'center' | 'end' | 'start';
-  /** Justify the actions */
+  /**
+   * Distributes the actions along the row; `stretch` grows every action to
+   * share it.
+   */
   justify?: 'center' | 'end' | 'space-around' | 'space-between' | 'start' | 'stretch';
 }
 
@@ -1131,7 +1258,10 @@ export interface CLoginCardTitleElement extends Omit<HTMLElement, 'headingLevel'
 
 /** The page shell of an application: it paints the page canvas and lays out the toolbar, the side navigation and the page in the dashboard layout. It is at least a viewport tall and grows with its content, so the document — not a component — is what scrolls. */
 export interface CMainElement extends Omit<HTMLElement, 'disableLayout'> {
-  /** Disable the default dashboard layout */
+  /**
+   * Turns off the dashboard layout: the slotted components stack in a plain
+   * column, still at least a viewport tall.
+   */
   disableLayout?: boolean;
 }
 
@@ -1219,7 +1349,7 @@ export interface CMenuLabelElement extends HTMLElement {
 export interface CMessageElement extends Omit<HTMLElement, 'errorMessage' | 'hint' | 'invalid'> {
   /** Error message shown in place of the hint while the parent is invalid */
   errorMessage?: string;
-  /** Hint text for the input */
+  /** Hint text, shown unless the error message replaces it */
   hint?: string;
   /**
    * Show the `error-message`, when set, in place of the hint. Marking the
@@ -1440,11 +1570,14 @@ export interface COtpInputElement extends Omit<HTMLElement, 'autofocus' | 'error
   invalid?: boolean;
   /** Label of the input group, shown above the digit inputs */
   label?: string;
-  /** Length of the OTP code */
+  /** Number of digits in the code, one box each */
   length?: number;
   /** Set as required — shows the required marker on the label */
   required?: boolean;
-  /** Value of the input */
+  /**
+   * The digits entered so far, joined into one string (`''` when none).
+   * Setting it fills the boxes from the first one
+   */
   value?: string;
   addEventListener<K extends keyof COtpInputElementEventMap>(
     type: K,
@@ -1470,7 +1603,10 @@ export interface COtpInputElement extends Omit<HTMLElement, 'autofocus' | 'error
 
 /** The routed-content region of the dashboard layout: inside `c-main` it fills the area beside the side navigation and below the toolbar, pads the current view's content and keeps an optional footer at its bottom edge. */
 export interface CPageElement extends Omit<HTMLElement, 'scrollIndicator'> {
-  /** Display scroll indicator */
+  /**
+   * Shows a 4px primary bar along the top edge of the viewport whose length
+   * tracks how far the document has been scrolled.
+   */
   scrollIndicator?: boolean;
 }
 
@@ -1495,9 +1631,12 @@ export interface CPaginationElementEventMap {
 export interface CPaginationElement extends Omit<HTMLElement, 'hideDetails' | 'hideRange' | 'simple' | 'size' | 'texts' | 'value'> {
   /** Hide the details row: the page-size menu and the "x - y of n items" text */
   hideDetails?: boolean;
-  /** Hide range indicator */
+  /** Hide the range text ("11 - 20 of 96 items"), keeping the page-size menu. */
   hideRange?: boolean;
-  /** Hide page number buttons */
+  /**
+   * Drop the page buttons and move previous and next to the bar's end; the
+   * range text is then the only sign of position.
+   */
   simple?: boolean;
   /** Size of the controls: `small` renders the compact page buttons. */
   size?: 'default' | 'small';
@@ -1592,18 +1731,28 @@ export interface CPopoverElement extends Omit<HTMLElement, 'distance' | 'heading
 
 /** A horizontal progress bar that fills a track to a known completion percentage, with an optional details line showing the value and a label. */
 export interface CProgressBarElement extends Omit<HTMLElement, 'hideDetails' | 'indeterminate' | 'label' | 'singleLine' | 'value'> {
-  /** Hide the percentage display */
+  /**
+   * Hides the details line (the percentage and `label`); `label` still
+   * names the bar.
+   */
   hideDetails?: boolean;
-  /** Indeterminate state of the progress bar */
+  /**
+   * Replaces the fill with a looping sweep for work of unknown duration,
+   * hiding the details line and exposing no value.
+   */
   indeterminate?: boolean;
   /**
    * What is progressing: shown after the percentage, and the progress bar's
    * accessible name.
    */
   label?: string;
-  /** Place details next to progress bar */
+  /** Places the details line beside the bar instead of below it. */
   singleLine?: boolean;
-  /** Progress bar value in percentage (0 to 100) */
+  /**
+   * Completion percentage, 0 to 100. The fill clamps a value outside that
+   * range; the details line shows it as given, a negative one in the error
+   * colour.
+   */
   value?: number;
 }
 
@@ -1815,7 +1964,11 @@ export interface CSideNavigationElementEventMap {
 
 /** The dashboard layout's left-hand menu: section titles, navigation items and their sub-items in a drawer that is pinned beside the page on desktop and slides in over it on mobile. */
 export interface CSideNavigationElement extends Omit<HTMLElement, 'mobile' | 'open'> {
-  /** Mobile version */
+  /**
+   * Render the drawer as a panel that slides in from the right over a backdrop,
+   * opened and closed by `open` or a `c-navigation-button`; while open it is a
+   * modal dialog.
+   */
   mobile?: boolean;
   /**
    * Whether the `mobile` drawer is open. A `c-navigation-button` anywhere on
@@ -1856,13 +2009,19 @@ export interface CSideNavigationItemElementEventMap {
 
 /** One entry of a `c-side-navigation`: its label text, after an optional leading `c-icon`, goes in the default slot, and activating it fires `select` with its `value`; with `href` it is a real link, opened in `target`, and without one a button. Write `c-sub-navigation-item` children inside it to make it an expandable parent, whose `active` then means expanded rather than the current page. */
 export interface CSideNavigationItemElement extends Omit<HTMLElement, 'active' | 'collapsed' | 'href' | 'loading' | 'target' | 'value'> {
-  /** Indicate active state */
+  /**
+   * On an item without sub-items, mark the current page
+   * (`aria-current="page"`); on a parent, expand its sub-items.
+   */
   active?: boolean;
-  /** Hyperlink url */
+  /** URL that makes the item a real link; without it the item is a button. */
   href?: string;
-  /** Loading state */
+  /** Cover the item with a loading overlay: a translucent scrim and a spinner. */
   loading?: boolean;
-  /** Hyperlink target */
+  /**
+   * Where the `href` opens, as on a native `<a>`: the same tab unless set —
+   * `_blank` for a new one.
+   */
   target?: string;
   /** Value reported in the `select` event when the item is activated */
   value?: string;
@@ -1915,11 +2074,17 @@ export interface CSliderElementEventMap {
 export interface CSliderElement extends Omit<HTMLElement, 'disabled' | 'disableTooltip' | 'label' | 'labels' | 'max' | 'min' | 'name' | 'segments' | 'step' | 'ticks' | 'unit' | 'value'> {
   /** Disable the slider */
   disabled?: boolean;
-  /** Disable tooltip */
+  /**
+   * Turn off the value bubble shown above the thumb while the slider is
+   * hovered, pressed or focused
+   */
   disableTooltip?: boolean;
   /** Label of the slider */
   label?: string;
-  /** Show tick labels */
+  /**
+   * Write a number under the track at each tick mark position, `segments`
+   * apart, formatted like the value bubble's; shown with or without `ticks`
+   */
   labels?: boolean;
   /** The largest value. */
   max?: number;
@@ -1964,17 +2129,23 @@ export interface CSliderElement extends Omit<HTMLElement, 'disabled' | 'disableT
 
 /** A circular indeterminate activity indicator — pure motion with no value, for waits of unknown duration. */
 export interface CSpinnerElement extends Omit<HTMLElement, 'color' | 'size' | 'width'> {
-  /** Color of the spinner */
+  /**
+   * Stroke colour, the primary role by default; `currentColor` follows the
+   * surrounding text colour.
+   */
   color?: string;
-  /** Size of the spinner */
+  /** Diameter in pixels. */
   size?: number;
-  /** Width of the spinner */
+  /** Stroke width in pixels. */
   width?: number;
 }
 
 /** A status pill: a short word naming the state of a record, such as Active, Pending or Failed, tinted with the colours of its status type. */
 export interface CStatusElement extends Omit<HTMLElement, 'type'> {
-  /** Status type */
+  /**
+   * The status family whose tint and ink paint the pill; without it the
+   * pill is neutral grey.
+   */
   type?: 'error' | 'info' | 'success' | 'warning';
 }
 
@@ -1999,13 +2170,25 @@ export interface CSubNavigationItemElementEventMap {
 
 /** A second-level entry of a `c-side-navigation`, written inside the `c-side-navigation-item` it belongs to (no `slot` attribute needed) and shown while that parent is `active`. Activating it fires `select` with its `value`, makes it the current page (`active`, in place of the item that was) and closes the mobile drawer; to mark the current page from code, set `active` on the sub-item and on its parent, so the parent is expanded. */
 export interface CSubNavigationItemElement extends Omit<HTMLElement, 'active' | 'collapsed' | 'href' | 'loading' | 'target' | 'value'> {
-  /** Active state */
+  /**
+   * Mark the sub-item as the current page (`aria-current="page"`); set `active`
+   * on its parent item too, so the parent is expanded.
+   */
   active?: boolean;
-  /** Link url */
+  /**
+   * URL that makes the sub-item a real link; without it the sub-item is a
+   * button.
+   */
   href?: string;
-  /** Loading state */
+  /**
+   * Cover the sub-item with a loading overlay: a translucent scrim and a
+   * spinner.
+   */
   loading?: boolean;
-  /** Link target */
+  /**
+   * Where the `href` opens, as on a native `<a>`: the same tab unless set —
+   * `_blank` for a new one.
+   */
   target?: string;
   /** Value reported in the `select` event when the item is activated */
   value?: string;
@@ -2058,18 +2241,21 @@ export interface CSwitchElement extends Omit<HTMLElement, 'checked' | 'disabled'
   checked?: boolean;
   /** If `true`, the switch is disabled and cannot be toggled */
   disabled?: boolean;
-  /** The value when the checkbox is unchecked */
+  /** The value when the switch is off */
   falseValue?: boolean | number | string;
   /**
    * Label of the switch, shown beside the toggle. Falls back to the default
    * slot content when not set.
    */
   label?: string;
-  /** Loading state */
+  /**
+   * Show a spinner in place of the handle, such as while the change is
+   * saved. It does not disable the switch
+   */
   loading?: boolean;
-  /** Set as required */
+  /** Set as required — shows the required marker on the label */
   required?: boolean;
-  /** The value when the checkbox is checked */
+  /** The value when the switch is on */
   trueValue?: boolean | number | string;
   /**
    * The switch's state: `trueValue` while it is on, `falseValue` while it is
@@ -2101,11 +2287,14 @@ export interface CSwitchElement extends Omit<HTMLElement, 'checked' | 'disabled'
 
 /** One tab in the row of a `c-tabs`: its label goes in the default slot (a `c-badge` there sits on the tab's corner), and its `value` names the `c-tab-item` panel it shows. `c-tabs` decides which tab is active; `disabled` keeps a tab from being selected. */
 export interface CTabElement extends Omit<HTMLElement, 'active' | 'disabled' | 'tabStop' | 'value'> {
-  /** Mark tab as disabled */
+  /**
+   * Grey the tab out and keep it from being selected by pointer or keyboard;
+   * the arrow keys skip it.
+   */
   disabled?: boolean;
   /**
-   * Value for the tab
-   * - for use in c-tabs
+   * Value of the tab, matching the `value` of the `c-tab-item` panel it shows;
+   * `c-tabs` holds it as its `value` while this tab is active.
    */
   value?: number | string;
 }
@@ -2114,13 +2303,16 @@ export interface CTabElement extends Omit<HTMLElement, 'active' | 'disabled' | '
 export interface CTabButtonsElement extends Omit<HTMLElement, 'disabled' | 'size' | 'value'> {
   /** Disable the whole tab strip — every slotted c-button is disabled and the selection can no longer be changed. */
   disabled?: boolean;
-  /** Size of the buttons */
+  /** Size of the buttons: `default`, or the more compact `small`. */
   size?: 'default' | 'small';
 }
 
 /** One tab panel inside `c-tab-items`, shown while its `value` equals the `value` of `c-tabs` — give it the same `value` as its `c-tab`. Inactive panels stay in the DOM, hidden, so their content keeps its state across tab switches. */
 export interface CTabItemElement extends Omit<HTMLElement, 'active' | 'value'> {
-  /** Tab value */
+  /**
+   * Value of the panel, the same as its `c-tab`'s; the panel shows while the
+   * `value` of `c-tabs` equals it.
+   */
   value?: number | string;
 }
 
@@ -2130,9 +2322,15 @@ export interface CTabItemsElement extends Omit<HTMLElement, 'disableAnimation' |
 
 /** A styled wrapper for a table you author yourself: slot in a plain `<table>` and c-table gives it the CSC look plus an optional responsive card layout on narrow screens. The table stays in your own DOM — your stylesheets, your framework's rendering, and `::part()` selectors on components nested in cells (a `c-tag` status chip, a `c-pagination` footer) all keep working. */
 export interface CTableElement extends Omit<HTMLElement, 'mobileBreakpoint' | 'responsive'> {
-  /** Mobile breakpoint in pixels */
+  /**
+   * The table's width, in pixels, at or below which a `responsive` table
+   * stacks its rows into cards.
+   */
   mobileBreakpoint?: number;
-  /** Should the table be responsive */
+  /**
+   * Stacks the rows into cards, each cell labelled with its column header,
+   * while the table is no wider than `mobile-breakpoint`.
+   */
   responsive?: boolean;
   /**
    * Re-read the header cells into the narrow layout's row labels, after the
@@ -2156,20 +2354,33 @@ export interface CTabsElementEventMap {
 
 /** A tab set that switches between panels of related content: a row of `c-tab` headers above the `c-tab-item` panels, one panel shown at a time. */
 export interface CTabsElement extends Omit<HTMLElement, 'borderless' | 'disableAnimation' | 'justify' | 'mobileBreakpoint' | 'value' | 'vertical'> {
-  /** Disable the bottom border */
+  /** Remove the line along the tab row. */
   borderless?: boolean;
-  /** Disable animation */
+  /**
+   * Switch off the underline's glide and the panels' slide; both also stop
+   * under the reduced-motion preference.
+   */
   disableAnimation?: boolean;
-  /** Justification of the children */
+  /**
+   * Placement of the tabs along the row: `stretch` grows them to fill it;
+   * `start`, `center` and `end` keep each tab at its own width. No effect on
+   * `vertical` tabs.
+   */
   justify?: 'center' | 'end' | 'start' | 'stretch';
   /**
-   * Mobile breakpoint in pixels
-   * - affects the content stacking with the vertical tabs
+   * Width in pixels of the `c-tabs` element (not the viewport) below which
+   * `vertical` tabs move above the panels. No effect on horizontal tabs.
    */
   mobileBreakpoint?: number;
-  /** Currently active tab */
+  /**
+   * Value of the active tab: the `c-tab` and the `c-tab-item` with the same
+   * `value` are shown. With no match, no tab is active and no panel is shown.
+   */
   value?: number | string;
-  /** Vertical tabs */
+  /**
+   * Stack the tabs in a column beside the panels, which slide vertically; below
+   * `mobile-breakpoint` the column moves above the panels.
+   */
   vertical?: boolean;
   addEventListener<K extends keyof CTabsElementEventMap>(
     type: K,
@@ -2201,17 +2412,29 @@ export interface CTagElementEventMap {
 
 /** A pill-shaped tag naming one item — a keyword, a category, an applied filter — authored inside `c-tags`, or on its own where a single tag is needed, such as a status in a table cell. With `closeable` it shows a close button that fires `close` and leaves removing the tag to you; name that button with `close-label`, for example "Remove Chemistry". */
 export interface CTagElement extends Omit<HTMLElement, 'active' | 'badge' | 'closeable' | 'closeLabel' | 'flat' | 'size'> {
-  /** Mark tag as active */
+  /**
+   * Paint the filled, selected look, announced as the pressed state of a
+   * plain tag. The tag never sets it itself: toggle it on `click`
+   */
   active?: boolean;
-  /** Display an optional badge at the start of the tag */
+  /** A number or short text shown in a small pill at the start of the tag */
   badge?: null | number | string;
-  /** Mark tag as closeable */
+  /**
+   * Add a close button that fires `close`; removing the tag stays your job.
+   * The button, not the tag, is then the Tab stop
+   */
   closeable?: boolean;
   /** Accessible name of the close button rendered when `closeable` */
   closeLabel?: string;
-  /** Remove the hover effect */
+  /**
+   * Make the tag a plain label: no hover effect, not a button, and out of
+   * the Tab order
+   */
   flat?: boolean;
-  /** Size of the tag */
+  /**
+   * Size of the tag: `small` renders a compact pill. Inside `c-tags`, the
+   * group's `size` overrides it
+   */
   size?: 'default' | 'small';
   addEventListener<K extends keyof CTagElementEventMap>(
     type: K,
@@ -2241,7 +2464,10 @@ export interface CTagsElement extends Omit<HTMLElement, 'label' | 'required' | '
   label?: string;
   /** Set as required — shows the required marker on the label */
   required?: boolean;
-  /** Size of the tags */
+  /**
+   * Size of every tag in the group: `small` renders them compact. Overrides
+   * each tag's own `size`
+   */
   size?: 'default' | 'small';
 }
 
@@ -2266,9 +2492,15 @@ export interface CTextFieldElementEventMap {
 
 /** A text field for a single line of text, or several lines under `rows`, with a label, a hint and an error message. */
 export interface CTextFieldElement extends Omit<HTMLElement, 'autocapitalize' | 'autocomplete' | 'autocorrect' | 'autofocus' | 'disabled' | 'errorMessage' | 'hideDetails' | 'hint' | 'invalid' | 'label' | 'labelOnTop' | 'mask' | 'max' | 'min' | 'name' | 'placeholder' | 'readonly' | 'required' | 'rows' | 'shadow' | 'size' | 'step' | 'trimWhitespace' | 'type' | 'value'> {
-  /** HTML input autocapitalize */
+  /**
+   * How on-screen keyboards capitalize typed text, as the native
+   * `autocapitalize` attribute; unset leaves the browser's default
+   */
   autocapitalize?: 'characters' | 'none' | 'off' | 'on' | 'sentences' | 'words';
-  /** HTML input autocomplete */
+  /**
+   * The browser's autofill hint, as the native `autocomplete` attribute
+   * (`email`, `new-password`, `off`…)
+   */
   autocomplete?: string;
   /**
    * Enable native input autocorrection (Safari). Maps to the input's
@@ -2302,31 +2534,53 @@ export interface CTextFieldElement extends Omit<HTMLElement, 'autocapitalize' | 
   labelOnTop?: boolean;
   /** Input mask the typed text follows: `#` a digit, `A` a letter, `*` a letter or a digit, `\` escapes the next character, `[…]` wraps a trailing optional section, anything else is a literal. Applies to a single-line `text`, `tel` or `search` field */
   mask?: string;
-  /** Maximum value on a numeric input */
+  /** Largest value of a `type="number"` field, as the native `max` attribute */
   max?: null | number;
-  /** Minimum value on a numeric input */
+  /** Smallest value of a `type="number"` field, as the native `min` attribute */
   min?: null | number;
-  /** Name of the input */
+  /**
+   * `name` of the inner input. The component is not form-associated, so it
+   * does not submit with a `<form>`.
+   */
   name?: string;
-  /** Placeholder of the input */
+  /**
+   * Placeholder of the input. Beside a floating `label` it shows only while
+   * the field is focused; under a `mask` it replaces the mask guide
+   */
   placeholder?: string;
-  /** Mark as readonly */
+  /**
+   * Make the input read-only: its text can be selected and copied but not
+   * edited
+   */
   readonly?: boolean;
   /** Set the input as required */
   required?: boolean;
-  /** Rows on the input */
+  /**
+   * Number of text lines the field shows; above `1` it becomes a multi-line
+   * textarea
+   */
   rows?: number;
-  /** Shadow variant of the input */
+  /** Draw the field as a raised, drop-shadowed box instead of an outlined one */
   shadow?: boolean;
   /** Field height: the 52px default (the shared control height) or the 36px `small` box (single-line fields) */
   size?: 'default' | 'small';
-  /** Step size on a numeric input */
+  /** Step of a `type="number"` field, as the native `step` attribute */
   step?: null | number;
-  /** Trim whitespace from the return value */
+  /**
+   * Trim leading and trailing whitespace from the emitted text, and from the
+   * shown text when the field is left
+   */
   trimWhitespace?: boolean;
-  /** Type of the input */
+  /**
+   * The native input type: `password` adds a toggle that reveals the text,
+   * `date` a button that opens the browser's date picker, and `number` honours
+   * `min`, `max` and `step`
+   */
   type?: 'date' | 'email' | 'number' | 'password' | 'search' | 'tel' | 'text' | 'url';
-  /** Value of the input */
+  /**
+   * The text in the field; under a `mask`, the text as shown, literals
+   * included
+   */
   value?: string;
   /** Whether a masked field has every mask token filled (always `true` without a mask) */
   readonly maskComplete: boolean;
@@ -2480,11 +2734,18 @@ export interface CToastsElementEventMap {
 
 /** Toasts are passive, transient notifications — operation results, background progress — stacked and managed by a single `c-toasts` container via its `addToast` / `removeToast` methods. `addToast` returns the message's `id` (its own, or a generated one), which `removeToast` takes; `close` fires on the container with the message once a toast has left. */
 export interface CToastsElement extends Omit<HTMLElement, 'absolute' | 'horizontal' | 'vertical'> {
-  /** Use absolute positioning */
+  /**
+   * Places the stack in its nearest positioned ancestor instead of the
+   * viewport, for in-container notifications. Such a stack is not
+   * guaranteed to paint above an open modal.
+   */
   absolute?: boolean;
-  /** Horizontal position */
+  /**
+   * Where the stack sits across the viewport, or across its container
+   * under `absolute`.
+   */
   horizontal?: 'center' | 'left' | 'right';
-  /** Vertical position */
+  /** The edge the stack is anchored to; toasts slide in from it. */
   vertical?: 'bottom' | 'top';
   /**
    * Show a message as a toast and return its `id` — the message's own, or a

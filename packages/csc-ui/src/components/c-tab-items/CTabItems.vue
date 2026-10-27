@@ -6,11 +6,9 @@
 
 <script setup lang="ts">
 /**
- * @slot default - Default slot
+ * @slot default - The `c-tab-item` panels
  *
- * @csspart root - The sliding track that lays out the c-tab-item panels
- *
- * @seeded from csc-ui — verify
+ * @csspart root - The track the panels slide on
  */
 import { tv } from 'tailwind-variants';
 import { nextTick, onBeforeUnmount, onMounted, useHost, watch } from 'vue';

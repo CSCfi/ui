@@ -168,30 +168,25 @@ const slider = tv({
 interface CSliderProps {
   /**
    * Disable the slider
-   *
-   * @seeded from csc-ui — verify
    */
   disabled?: boolean;
 
   /**
-   * Disable tooltip
-   *
-   * @seeded from csc-ui — verify
+   * Turn off the value bubble shown above the thumb while the slider is
+   * hovered, pressed or focused
    */
   disableTooltip?: boolean;
 
   /**
    * Label of the slider
    *
-   * @seeded from csc-ui — verify
    * @freeform
    */
   label?: string;
 
   /**
-   * Show tick labels
-   *
-   * @seeded from csc-ui — verify
+   * Write a number under the track at each tick mark position, `segments`
+   * apart, formatted like the value bubble's; shown with or without `ticks`
    */
   labels?: boolean;
 

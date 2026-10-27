@@ -97,18 +97,16 @@
 
 <script setup lang="ts">
 /**
- * @slot default - Default slot for the label
+ * @slot default - The visible label of the checkbox (fallback when the `label` prop is not set)
  *
  * @csspart root - The outer wrapper containing the checkbox, label and message
- * @csspart label - The label text or slotted label content beside the box, as on c-switch (ADR-0022)
+ * @csspart label - The label text or slotted label content beside the box
  * @csspart indicator - The checkbox box itself — the bordered square that fills when checked; border, fill and the keyboard focus ring (its `::before`) all draw with `currentColor`, so `color` recolours them together
  * @csspart mark - The SVG check / indeterminate glyph revealed inside the indicator; draws with `currentColor`, so `color` recolours it
  * @csspart message - The hint / error message area below the checkbox (always reserved unless `hide-details`)
  *
  * @cssstate checked - Present while the checkbox is checked
  * @cssstate indeterminate - Present while the checkbox is in the indeterminate state
- *
- * @seeded from csc-ui — verify
  */
 import { mdiCloseCircle } from '@mdi/js';
 import { tv } from 'tailwind-variants';
@@ -266,8 +264,6 @@ interface CCheckboxProps {
 
   /**
    * Disable the checkbox
-   *
-   * @seeded from csc-ui — verify
    */
   disabled?: boolean;
 
@@ -280,30 +276,25 @@ interface CCheckboxProps {
 
   /**
    * The value when the checkbox is unchecked
-   *
-   * @seeded from csc-ui — verify
    */
   falseValue?: boolean | number | string;
 
   /**
    * Hide the hint and error messages
-   *
-   * @seeded from csc-ui — verify
    */
   hideDetails?: boolean;
 
   /**
-   * Hint text for the input
+   * Hint text for the checkbox
    *
-   * @seeded from csc-ui — verify
    * @freeform
    */
   hint?: string;
 
   /**
-   * Indeterminate state
-   *
-   * @seeded from csc-ui — verify
+   * Show the mixed state, a bar in place of the check, for a parent checkbox
+   * whose options are partly checked. It wins over `checked` and stays until
+   * you clear it
    */
   indeterminate?: boolean;
 
@@ -314,9 +305,9 @@ interface CCheckboxProps {
   invalid?: boolean;
 
   /**
-   * Element label
+   * Label of the checkbox, shown beside the box. Falls back to the default
+   * slot content when not set.
    *
-   * @seeded from csc-ui — verify
    * @freeform
    */
   label?: string;
@@ -330,16 +321,12 @@ interface CCheckboxProps {
   name?: string;
 
   /**
-   * Set as required
-   *
-   * @seeded from csc-ui — verify
+   * Set as required — shows the required marker on the label
    */
   required?: boolean;
 
   /**
    * The value when the checkbox is checked
-   *
-   * @seeded from csc-ui — verify
    */
   trueValue?: boolean | number | string;
 

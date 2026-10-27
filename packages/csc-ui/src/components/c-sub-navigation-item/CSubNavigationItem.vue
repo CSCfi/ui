@@ -104,9 +104,8 @@ interface CSubNavigationItemEvents {
 
 interface CSubNavigationItemProps {
   /**
-   * Active state
-   *
-   * @seeded from csc-ui — verify
+   * Mark the sub-item as the current page (`aria-current="page"`); set `active`
+   * on its parent item too, so the parent is expanded.
    */
   active?: boolean;
 
@@ -119,24 +118,23 @@ interface CSubNavigationItemProps {
   collapsed?: boolean;
 
   /**
-   * Link url
+   * URL that makes the sub-item a real link; without it the sub-item is a
+   * button.
    *
-   * @seeded from csc-ui — verify
    * @freeform any URL
    */
   href?: string;
 
   /**
-   * Loading state
-   *
-   * @seeded from csc-ui — verify
+   * Cover the sub-item with a loading overlay: a translucent scrim and a
+   * spinner.
    */
   loading?: boolean;
 
   /**
-   * Link target
+   * Where the `href` opens, as on a native `<a>`: the same tab unless set —
+   * `_blank` for a new one.
    *
-   * @seeded from csc-ui — verify
    * @freeform any browsing-context name (e.g. _blank, _self)
    */
   target?: string;

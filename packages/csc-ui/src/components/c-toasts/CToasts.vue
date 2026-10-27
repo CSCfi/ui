@@ -26,23 +26,20 @@ export type CToastsVertical = 'bottom' | 'top';
 
 interface CToastsProps {
   /**
-   * Use absolute positioning
-   *
-   * @seeded from csc-ui — verify
+   * Places the stack in its nearest positioned ancestor instead of the
+   * viewport, for in-container notifications. Such a stack is not
+   * guaranteed to paint above an open modal.
    */
   absolute?: boolean;
 
   /**
-   * Horizontal position
-   *
-   * @seeded from csc-ui — verify
+   * Where the stack sits across the viewport, or across its container
+   * under `absolute`.
    */
   horizontal?: CToastsHorizontal;
 
   /**
-   * Vertical position
-   *
-   * @seeded from csc-ui — verify
+   * The edge the stack is anchored to; toasts slide in from it.
    */
   vertical?: CToastsVertical;
 }

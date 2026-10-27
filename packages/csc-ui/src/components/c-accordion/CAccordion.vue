@@ -13,23 +13,20 @@ export type CAccordionValue = (number | string)[] | null | number | string;
 
 interface CAccordionProps {
   /**
-   * Disallow collapsing all the items
-   *
-   * @seeded from csc-ui — verify
+   * Keeps the last expanded item from collapsing: its header stops
+   * responding until another item expands. It never expands an item
+   * itself, so pair it with an initial `value`.
    */
   mandatory?: boolean;
 
   /**
-   * Allow expanding multiple items
-   *
-   * @seeded from csc-ui — verify
+   * Lets items expand and collapse independently; `value` is then an array
+   * of the expanded items' values.
    */
   multiple?: boolean;
 
   /**
-   * Show an outline around expanded items
-   *
-   * @seeded from csc-ui — verify
+   * Adds a primary ring inside the outline of expanded items.
    */
   outlined?: boolean;
 
@@ -43,11 +40,9 @@ interface CAccordionProps {
 
 <script setup lang="ts">
 /**
- * @slot default - Default slot for the c-accordion-item components
+ * @slot default - The `c-accordion-item` elements, as direct children
  *
- * @csspart root - The outer wrapper stacking the accordion items vertically
- *
- * @seeded from csc-ui — verify
+ * @csspart root - The column holding the items
  *
  * @subcomponents c-accordion-item
  */

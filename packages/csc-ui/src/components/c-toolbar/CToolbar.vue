@@ -6,10 +6,8 @@
 
 <script setup lang="ts">
 /**
- * @slot default - Content of toolbar
+ * @slot default - The bar's content: the logo, the service name and global actions
  * @csspart root - The toolbar bar itself: pinned to the top of its scroll container by default, in flow when `static`
- *
- * @seeded from csc-ui — verify
  */
 import { tv } from 'tailwind-variants';
 import { computed } from 'vue';
