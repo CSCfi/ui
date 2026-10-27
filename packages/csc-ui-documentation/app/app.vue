@@ -18,7 +18,7 @@
       <span
         class="ml-[0.35rem] shrink-0 rounded-full bg-accent px-2 py-[0.1rem] align-middle text-xs font-semibold tracking-wider text-on-accent uppercase max-sm:hidden"
       >
-        next
+        v{{ major }}
       </span>
 
       <div class="ml-auto flex shrink-0 items-center gap-2">
@@ -111,6 +111,8 @@
 </template>
 
 <script setup lang="ts">
+import corePackage from '../../csc-ui/package.json';
+
 // A stable gutter keeps the page from reflowing when the library's page lock
 // (an open c-select list, a c-modal) hides the document scrollbar (ADR-0014).
 useHead({
@@ -120,6 +122,9 @@ useHead({
 });
 
 const { navComponents } = useManifest();
+
+// The badge names the major these docs cover; `/v3/` archives the last one.
+const major = corePackage.version.split('.')[0];
 
 const route = useRoute();
 
