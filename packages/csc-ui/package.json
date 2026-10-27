@@ -1,7 +1,7 @@
 {
   "name": "@cscfi/csc-ui",
   "version": "4.0.0-alpha.18",
-  "description": "Vue 3-based replacement for @cscfi/csc-ui — same custom element tag names, Vue v-model contract.",
+  "description": "The CSC Design System's components as native custom elements: one set of c-* tags for plain HTML, Vue, React and Angular.",
   "type": "module",
   "main": "./dist/csc-ui.js",
   "module": "./dist/csc-ui.js",

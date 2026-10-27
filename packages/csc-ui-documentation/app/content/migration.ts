@@ -46,6 +46,8 @@ export const MIGRATION_SECTIONS: MigrationSection[] = [
     intro: {
       all: `Version 4 is a complete rewrite of the library under the same package name: the tag names are stable — every <c-*> element keeps its name, so your existing markup mostly stays put. What changes is everything around the tags — how you register the library, how two-way binding and events work, how you customize and theme components.
 
+3.x is unsupported since 4.0.0: 3.0.19 is its last release, and it gets no fixes. An app that cannot upgrade yet stays on it by pinning the major version (@cscfi/csc-ui@3, and @cscfi/csc-ui-react@3 for React).
+
 This is an all-at-once upgrade. You cannot run 3.x and 4.x side by side: both register the same custom-element tags, and the second defineCustomElements() call throws a "already defined" error. Bump the whole dependency in one change rather than component by component.
 
 @cscfi/csc-ui 4.x is ESM-only, so a bundler (Vite, webpack, etc.) is assumed.`,

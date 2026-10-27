@@ -401,6 +401,12 @@ start migrating on the first alpha that carries D2–D4.
      both packages carry it as `browserslist` (last 2 Chrome / Edge / Firefox / Safari / iOS + Firefox ESR, which
      resolves to ESR 140), and the page reads the query from the core package.json. The field changes nothing in
      the build: dist is byte-identical with it.
+   - **Package and README — done locally (2026-10-27).** The core description no longer calls the package a
+     "Vue 3-based replacement"; the core README is rewritten (what it is, frameworks, supported browsers, upgrading
+     from 3.x) and `@cscfi/csc-ui-react` gets its first README. Both, and the migration guide's "Before you start",
+     say 3.x is unsupported since 4.0.0 with 3.0.19 its last release. They pin with `@3`, not the planned `@v3`
+     tag: `@3` already resolves to 3.0.19 on npm, while the `v3` dist-tag only exists after phase 5, so rc
+     READMEs would point at a missing tag. Phase 5 still adds the tag.
 4. **RC** — switch pre tag `alpha` → `rc` (verify the changesets CLI sequence: `pre exit` + `pre enter rc` before a
    version run), publish `4.0.0-rc.1`. From here: fixes only, API guard fails any breaking diff.
    Gate (D8): MyCSC fully migrated on the latest RC, e2e green, no open csc-ui blocker.
