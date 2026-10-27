@@ -7,10 +7,11 @@
          line and the control cluster never shrinks off the right edge. -->
     <c-toolbar>
       <nuxt-link
+        aria-label="CSC Design System home"
         class="flex shrink-0 items-center text-lg font-bold no-underline"
         to="/"
       >
-        <c-csc-logo />
+        <c-csc-logo aria-hidden="true" />
       </nuxt-link>
 
       <span class="min-w-0 truncate max-sm:hidden">CSC Design System</span>
