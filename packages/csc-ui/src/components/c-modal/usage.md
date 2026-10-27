@@ -20,12 +20,18 @@ one beneath is dimmed and inert until it becomes topmost again.
 
 ## Dismissal
 
-`dismissable` governs both light-dismiss gestures: clicking the backdrop and
-pressing Escape. A non-dismissable modal (the default) responds to either
-with a nudge animation instead of closing — it can only be closed by an
-explicit action inside it. Escape peels overlays innermost-first: with a
-menu or select open inside the modal, the first press closes that overlay,
-the next one reaches the modal.
+Escape closes every modal, as it closes a native dialog: it is the keyboard
+user's way out. Escape peels overlays innermost-first: with a menu or select
+open inside the modal, the first press closes that overlay, the next one
+reaches the modal.
+
+`dismissable` governs the backdrop: a dismissable modal also closes on a
+click outside its dialog, while a non-dismissable one (the default) responds
+to that click with a nudge animation instead of closing.
+
+Because Escape closes any modal, a page that sets `value` must also hear
+`change` (or bind `v-model`): otherwise its own state still says open, and
+setting it to `true` again does nothing.
 
 ## Accessibility
 

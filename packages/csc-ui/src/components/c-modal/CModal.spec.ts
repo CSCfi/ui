@@ -71,8 +71,8 @@ describe('initial focus', () => {
 });
 
 describe('dismissal', () => {
-  it('dismissable: Escape closes', async () => {
-    const m = await mountModal();
+  it('Escape closes, dismissable or not', async () => {
+    const m = await mountModal({ dismissable: false });
 
     const events = recordEvents(m.host, VALUE_EVENTS);
 
@@ -121,16 +121,11 @@ describe('dismissal', () => {
     expect(events.records).toEqual([]);
   });
 
-  it('non-dismissable: Escape and the backdrop nudge instead of closing', async () => {
+  it('non-dismissable: the backdrop nudges instead of closing', async () => {
     const m = await mountModal({ dismissable: false });
 
     const events = recordEvents(m.host, VALUE_EVENTS);
 
-    await userEvent.keyboard('{Escape}');
-
-    expect(dialog(m).classList.contains('nudging')).toBe(true);
-
-    await settle(200);
     await userEvent.click(m.part('backdrop'), { position: { x: 4, y: 4 } });
 
     expect(dialog(m).classList.contains('nudging')).toBe(true);

@@ -1211,9 +1211,9 @@ export interface CMessageElement extends Omit<HTMLElement, 'errorMessage' | 'hin
 /** Events dispatched by `<c-modal>`. */
 export interface CModalElementEventMap {
   /**
-   * Fired when the modal dismisses itself — a backdrop click or the Escape
-   * key on a `dismissable` modal, or a platform-initiated close (e.g. a
-   * slotted `<form method="dialog">`). The detail is the new open state,
+   * Fired when the modal dismisses itself — the Escape key, a backdrop click
+   * on a `dismissable` modal, or a platform-initiated close (e.g. a slotted
+   * `<form method="dialog">`). The detail is the new open state,
    * always `false`.
    */
   change: CustomEvent<boolean>;
@@ -1231,9 +1231,9 @@ export interface CModalElement extends Omit<HTMLElement, 'disableBackdropBlur' |
   /** Disable backdrop blur effect */
   disableBackdropBlur?: boolean;
   /**
-   * Dismissed when touching/clicking outside the content or pressing Escape.
-   * A non-dismissable modal responds to either gesture with a nudge animation
-   * instead of closing.
+   * Dismissed when touching/clicking outside the content. A non-dismissable
+   * modal responds to that with a nudge animation instead of closing. Escape
+   * closes every modal.
    */
   dismissable?: boolean;
   /** Is the modal visible */

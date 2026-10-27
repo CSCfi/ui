@@ -376,7 +376,7 @@ The single dimming overlay rendered directly beneath the **active modal**, paint
 _Avoid_: Scrim (that is the colour token), dimmer, overlay, `::backdrop` (the retired native pseudo-element)
 
 **Dismissable**:
-A modal property governing *both* light-dismiss gestures — backdrop click **and** Escape. A non-dismissable modal responds to either with a nudge animation instead of closing; it can only be closed by an explicit action inside it. A **toast** is not dismissable in this sense: it closes by its button or a **swipe dismiss**.
+A modal property governing the backdrop click: a dismissable modal closes on a click outside its dialog, a non-dismissable one responds with a nudge animation instead. Escape is not part of it — Escape closes every modal, as it closes a native dialog. A **toast** is not dismissable in this sense: it closes by its button or a **swipe dismiss**.
 _Avoid_: persistent (the inverse framing; canonical axis is _dismissable_), closable
 
 **Closeable**:

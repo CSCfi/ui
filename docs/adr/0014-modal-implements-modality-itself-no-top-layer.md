@@ -120,3 +120,14 @@ standalone (no `c-main`) usage.
 - If the platform ever ships a top-layer exemption / "always-on-top" primitive
   for live regions, revisit — the controller isolates everything that would
   need to change.
+
+## Amendment (2026-10-27): Escape closes every modal
+
+Reverses the "`dismissable` governs both light-dismiss gestures" point above,
+before rc.1 freezes behaviour. Escape closes every modal again, as it did in
+3.x and as Escape closes a native dialog in the WAI-ARIA dialog pattern;
+`dismissable` governs only the backdrop click, where a non-dismissable modal
+still nudges. A modal that Escape could not leave left keyboard users with no
+way out but whatever close action the author remembered to slot. Escape
+routing is unchanged: the controller still sends it to the active modal only,
+after inner overlays have consumed it.

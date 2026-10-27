@@ -675,14 +675,6 @@ export const V3_API_CHANGES: V3ApiChange[] = [
     tag: 'c-modal',
   },
   {
-    change:
-      'Escape closes a modal only when it is `dismissable`, as a backdrop click does; 3.x closed every modal on Escape. A modal that is not dismissable nudges instead, so give it a close button.',
-    kind: 'prop',
-    meaningChanged: true,
-    name: 'dismissable',
-    tag: 'c-modal',
-  },
-  {
     change: 'Removed: set the group’s `value` to the radio’s `value`.',
     kind: 'prop',
     name: 'checked',

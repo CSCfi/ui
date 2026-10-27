@@ -598,8 +598,8 @@ const data = [{ id: 1, name: 'Ada' }];
   label equal to the query are marked as the match part
   (c-autocomplete::part(match)); the 3.x mark element had no part.
 - c-modal: not in the browser's top layer and no ::backdrop; its backdrop is
-  its own element, coloured by the scrim token. dismissable now governs Escape
-  as well as a backdrop click (3.x closed every modal on Escape), and z-index
+  its own element, coloured by the scrim token. Escape still closes every
+  modal and dismissable still governs the backdrop click, as in 3.x; z-index
   is gone: open modals stack themselves, below toasts.
 - c-menu: authored declaratively with slotted c-menu-item / c-menu-label
   instead of a programmatic items array, and the trigger moves from the

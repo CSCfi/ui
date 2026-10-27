@@ -52,9 +52,9 @@ import { emitModelChange } from '../../shared/valueEvents';
 /** Events dispatched by `<c-modal>`. */
 interface CModalEvents {
   /**
-   * Fired when the modal dismisses itself — a backdrop click or the Escape
-   * key on a `dismissable` modal, or a platform-initiated close (e.g. a
-   * slotted `<form method="dialog">`). The detail is the new open state,
+   * Fired when the modal dismisses itself — the Escape key, a backdrop click
+   * on a `dismissable` modal, or a platform-initiated close (e.g. a slotted
+   * `<form method="dialog">`). The detail is the new open state,
    * always `false`.
    */
   change: boolean;
@@ -133,9 +133,9 @@ interface CModalProps {
   disableBackdropBlur?: boolean;
 
   /**
-   * Dismissed when touching/clicking outside the content or pressing Escape.
-   * A non-dismissable modal responds to either gesture with a nudge animation
-   * instead of closing.
+   * Dismissed when touching/clicking outside the content. A non-dismissable
+   * modal responds to that with a nudge animation instead of closing. Escape
+   * closes every modal.
    */
   dismissable?: boolean;
 
@@ -207,13 +207,9 @@ const entry: ModalStackEntry = {
   get host() {
     return host as HTMLElement;
   },
+  // Escape closes every modal, as on a native dialog (WAI-ARIA dialog
+  // pattern); `dismissable` governs only the backdrop click (ADR-0014).
   onEscape: () => {
-    if (!props.dismissable) {
-      nudge();
-
-      return;
-    }
-
     closeDialog();
     dispatchValue(false);
   },

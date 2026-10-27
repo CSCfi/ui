@@ -219,7 +219,8 @@ A read-only check of all 124 D11–D13 items against source, glossary, ADRs, usa
         the phase-3 batch maps onto `selected` / `change:selected`), so the guide's entry covers the detail too.
   - [x] c-menu default slot: the items, where 3.x's default slot was the trigger (now `slot="trigger"`). Entry
         (phase 3).
-  - [x] c-modal `dismissable` also governs Escape: 3.x closed every modal on Escape. Entry (phase 3).
+  - [x] c-modal `dismissable` also governed Escape (3.x closed every modal on Escape). User decided 2026-10-27:
+        Escape closes every modal again, `dismissable` governs the backdrop only (ADR-0014 amendment); no entry.
 - **R3** — c-pagination's value becomes `{ page, pageSize, … }` before rc.1, emitted as a new object.
 
 ## Work, in order
