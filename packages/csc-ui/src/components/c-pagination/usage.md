@@ -21,7 +21,7 @@ Its `value` is one object holding the item count, the current page and the page 
 - `pageSizes` — the sizes the page-size menu offers. Default `[5, 25, 50, 100]`.
 - `totalVisible` — the most page buttons shown at once, ellipses included. Default 7. With more pages than that, the first and last page stay in view and an ellipsis stands for the pages left out.
 
-Each pick — a page button, previous, next, a page size — emits a new object: your fields, the picked `page` and `pageSize`, and `startFrom` and `endTo`, the 0-based indices of the page's first and last item. A new page size returns to page 1. `startFrom` and `endTo` are set only on emitted values, and `endTo` counts a full page, so on a short last page it runs past the last item; `items.slice(startFrom, endTo + 1)` still gives the page's items.
+Each pick — a page button, previous, next, a page size — emits a new object: your fields, the picked `page` and `pageSize`, and `startFrom` and `endTo`, the 0-based indices of the page's first and last item. A new page size returns to page 1. `startFrom` and `endTo` are set only on emitted values; on a short last page `endTo` is the last item, so `items.slice(startFrom, endTo + 1)` gives the page's items.
 
 The pagination never writes into your object, and setting `value` emits nothing: it only moves the controls to the new value. A new object does that even when its fields are unchanged, so write the emitted value back (as `v-model` does) or keep the object stable between renders. An object literal re-created on every React render resets the page each time.
 
