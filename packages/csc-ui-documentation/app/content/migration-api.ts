@@ -725,14 +725,14 @@ export const V3_API_CHANGES: V3ApiChange[] = [
   },
   {
     change:
-      'Removed. To make a tag fill its row, size its part: `c-tag::part(root) { width: 100%; }`.',
+      'Removed. To make a tag fill its row, widen the element and let its box grow: `c-tag { width: 100%; } c-tag::part(root) { flex-grow: 1; }`.',
     kind: 'prop',
     name: 'block',
     tag: 'c-tag',
   },
   {
     change:
-      'Removed. To stretch a tag over the free space of its row, size its part: `c-tag::part(root) { flex-grow: 1; }`.',
+      'Removed. To stretch a tag over the free space of its `c-tags` row, let the element and its box grow: `c-tag, c-tag::part(root) { flex-grow: 1; }`.',
     kind: 'prop',
     name: 'fit',
     tag: 'c-tag',
