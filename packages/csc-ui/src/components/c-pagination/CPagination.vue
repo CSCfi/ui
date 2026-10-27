@@ -1,5 +1,10 @@
 <template>
-  <nav :aria-label="t.pagination" :class="ui.root()" part="root">
+  <nav
+    :aria-label="t.pagination"
+    v-bind="navAttributes"
+    :class="ui.root()"
+    part="root"
+  >
     <div v-if="!hideDetails" :class="ui.details()" part="details">
       <div :class="ui.itemsPerPage()" part="items-per-page">
         {{ t.pageSize }}
@@ -212,7 +217,7 @@ import {
   mdiDotsHorizontal,
 } from '@mdi/js';
 import { tv } from 'tailwind-variants';
-import { computed, onMounted, ref, useHost, watch, watchEffect } from 'vue';
+import { computed, ref, useAttrs, useHost, watch } from 'vue';
 
 import { useAppDefault } from '../../shared/appDefaults';
 import { emitModelChange } from '../../shared/valueEvents';
@@ -326,6 +331,19 @@ const dotsIcon = mdiDotsHorizontal;
 
 const host = useHost();
 
+// The element's own attributes stay on it: its classes would also land on the
+// <nav> (as the 3.x `c-pagination--small` / `--simple` classes once did) and
+// match the nav's own utilities. A host `aria-label` still names the nav.
+defineOptions({ inheritAttrs: false });
+
+const attrs = useAttrs();
+
+const navAttributes = computed(() =>
+  Object.fromEntries(
+    Object.entries(attrs).filter(([name]) => name.startsWith('aria-')),
+  ),
+);
+
 // Defaultable props resolve host attribute → own value → app default →
 // built-in (see src/shared/appDefaults.ts).
 const appDefault = useAppDefault('c-pagination', props);
@@ -375,7 +393,9 @@ const buttonSize = computed(() =>
 const commit = () => {
   const next: CPaginationEvents['change'] = {
     ...props.value,
-    endTo: page.value * pageSize.value - 1,
+    // The last page ends at the last item, not a full page further.
+    endTo:
+      Math.min(page.value * pageSize.value, props.value?.itemCount ?? 0) - 1,
     page: page.value,
     pageSize: pageSize.value,
     startFrom: (page.value - 1) * pageSize.value,
@@ -474,15 +494,6 @@ const pageButtons = computed<Btn[]>(() => {
   if (more) buttons.push({ number: total, type: 'page' });
 
   return buttons;
-});
-
-onMounted(() => {
-  watchEffect(() => {
-    if (!host) return;
-    host.classList.add('c-pagination');
-    host.classList.toggle('c-pagination--small', props.size === 'small');
-    host.classList.toggle('c-pagination--simple', props.simple);
-  });
 });
 </script>
 

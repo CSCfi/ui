@@ -116,6 +116,37 @@ describe('c-pagination value (R3)', () => {
     expect(value.page).toBe(1);
   });
 
+  it('ends the last page’s range at the last item', async () => {
+    const m = await mount<PaginationHost>('c-pagination', {
+      props: { value: { itemCount: 95, page: 9, pageSize: 10 } },
+    });
+
+    const events = recordEvents(m.host, ['change']);
+
+    await userEvent.click(next(m));
+    await settle();
+
+    expect(events.records.map((r) => r.detail)).toEqual([
+      { endTo: 94, itemCount: 95, page: 10, pageSize: 10, startFrom: 90 },
+    ]);
+  });
+
+  it('leaves the element’s classes off its nav, and its aria-label on', async () => {
+    const m = await mount('c-pagination', {
+      attrs: {
+        'aria-label': 'Result pages',
+        class: 'page-pager',
+        simple: true,
+        size: 'small',
+      },
+      props: { value: { itemCount: 100 } },
+    });
+
+    expect(m.part('root').className).not.toMatch(/page-pager|c-pagination/);
+    // A host aria-label still names the navigation.
+    expect(m.part('root').getAttribute('aria-label')).toBe('Result pages');
+  });
+
   it('keeps its page-size menu’s select inside', async () => {
     const m = await mount<PaginationHost>('c-pagination', {
       props: { value: { itemCount: 100, pageSize: 25 } },
