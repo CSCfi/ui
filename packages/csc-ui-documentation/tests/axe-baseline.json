@@ -18,18 +18,10 @@
   "c-color-picker/swatches": ["color-contrast"],
   "c-color-picker/swatches-only": ["color-contrast"],
   "c-color-picker/texts": ["color-contrast"],
-  "c-data-table/basic": ["color-contrast", "label-content-name-mismatch"],
+  "c-data-table/basic": ["color-contrast"],
   "c-data-table/custom-cells": ["aria-progressbar-name"],
-  "c-data-table/external-data": [
-    "color-contrast",
-    "label-content-name-mismatch"
-  ],
-  "c-data-table/selection": [
-    "aria-prohibited-attr",
-    "color-contrast",
-    "label",
-    "label-content-name-mismatch"
-  ],
+  "c-data-table/external-data": ["color-contrast"],
+  "c-data-table/selection": ["aria-prohibited-attr", "color-contrast", "label"],
   "c-date-picker/basic": ["color-contrast"],
   "c-date-picker/disabled-dates": ["color-contrast"],
   "c-date-picker/format-and-week-start": ["color-contrast"],
@@ -58,7 +50,7 @@
   "c-option-value/basic": ["color-contrast"],
   "c-option/basic": ["color-contrast"],
   "c-otp-input/basic": ["color-contrast"],
-  "c-pagination/basic": ["color-contrast", "label-content-name-mismatch"],
+  "c-pagination/basic": ["color-contrast"],
   "c-radio-group/basic": ["color-contrast"],
   "c-radio-group/custom-layout": ["color-contrast"],
   "c-radio/basic": ["color-contrast"],
