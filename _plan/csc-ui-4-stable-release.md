@@ -505,7 +505,11 @@ start migrating on the first alpha that carries D2–D4.
      MyCSC check: none needed for these attributes; they now work.
    - **Merge conflict ahead:** the `development` → `main` PR conflicts in `packages/csc-ui/package.json`: phase 3's
      new `description` is the line after `version`, which `main`'s release commits bumped (development still has
-     alpha.18). Resolve with `main`'s version and `development`'s description. From here: fixes only, API guard fails any breaking diff.
+     alpha.18). Resolve with `main`'s version and `development`'s description. A wrong pick is cosmetic, not a
+     rollback (checked 2026-10-27 by resolving to alpha.18 in a throwaway merge): csc-ui-react merges cleanly at
+     main's alpha.32, and the fixed group takes the highest version and pre number, so `changeset version` still
+     gives alpha.33 to both and rewrites the stale line. (`changeset publish` would skip, not fail on, a version
+     already on npm.) From here: fixes only, API guard fails any breaking diff.
    Gate (D8): MyCSC fully migrated on the latest RC, e2e green, no open csc-ui blocker.
 5. **4.0.0** — D7 curated changeset (delete changesets already released in an alpha, add the hand-written major),
    `changeset pre exit`, merge the version PR → publish via `release.yml`. Then D9: `v3` dist-tag on 3.0.19 (both
