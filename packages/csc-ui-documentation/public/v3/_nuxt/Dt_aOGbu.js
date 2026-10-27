@@ -1,0 +1,1 @@
+var r;(function(n){n.Warning="warning",n.Error="error",n.Success="success",n.Info="info"})(r||(r={}));var s;(function(n){n.Absolute="absolute",n.Fixed="fixed"})(s||(s={}));var o;(function(n){n.Warning="warning",n.Error="error",n.Success="success",n.Info="info"})(o||(o={}));export{s as C,r as a,o as b};
