@@ -16,7 +16,9 @@
       <input
         :id="inputId"
         v-bind="controlAttrs"
+        :aria-busy="loading ? 'true' : undefined"
         :aria-checked="internalChecked"
+        :aria-disabled="loading ? 'true' : undefined"
         :aria-required="required || undefined"
         :checked="internalChecked || undefined"
         :class="ui.input()"
@@ -24,6 +26,7 @@
         role="switch"
         type="checkbox"
         @change="toggle"
+        @click="onClick"
       />
 
       <span
@@ -204,7 +207,7 @@ interface CSwitchProps {
 
   /**
    * Show a spinner in place of the handle, such as while the change is
-   * saved. It does not disable the switch
+   * saved. The switch ignores toggles meanwhile and is announced as busy
    */
   loading?: boolean;
 
@@ -327,6 +330,12 @@ watch(
 // Both views agree from the start: without a bound value the seeded state
 // reads back through `value`, and `checked` reports a bound one.
 onMounted(syncViews);
+
+// While loading the switch stays put, as a loading button swallows clicks:
+// cancelling the click keeps the native checkbox from flipping at all.
+const onClick = (event: MouseEvent) => {
+  if (props.loading) event.preventDefault();
+};
 
 const toggle = () => {
   if (props.disabled) return;

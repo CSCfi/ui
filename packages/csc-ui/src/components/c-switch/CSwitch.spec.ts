@@ -111,3 +111,34 @@ describe('c-switch name', () => {
     ).toEqual(['input=Notifications']);
   });
 });
+
+describe('c-switch loading', () => {
+  it('ignores toggles and is announced as busy while loading', async () => {
+    const { host, part: partOf } = await mount<
+      { loading?: boolean } & HTMLElement
+    >('c-switch', { attrs: { 'aria-label': 'Notifications', loading: true } });
+
+    const input = host.shadowRoot!.querySelector('input')!;
+
+    const events = recordEvents(host, ['change']);
+
+    // `force`: Playwright will not click a control marked aria-disabled, which a
+    // user still can.
+    await userEvent.click(partOf('root'), { force: true });
+    await settle();
+
+    expect(input.checked).toBe(false);
+    expect(events.records).toEqual([]);
+    expect(input.getAttribute('aria-busy')).toBe('true');
+    expect(input.getAttribute('aria-disabled')).toBe('true');
+
+    host.loading = false;
+    await settle();
+    await userEvent.click(partOf('root'));
+    await settle();
+
+    expect(input.checked).toBe(true);
+    expect(events.names()).toEqual(['change']);
+    expect(input.hasAttribute('aria-busy')).toBe(false);
+  });
+});
