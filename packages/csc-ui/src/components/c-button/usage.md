@@ -13,6 +13,19 @@ actions use the `outlined`, `ghost` or `text` appearances.
 - Inline navigation within text — use `c-link`.
 - Toggling a persistent on/off state — use `c-switch`.
 
+## In a form
+
+`type="submit"` submits the `<form>` around the button (validating it first,
+as `form.requestSubmit()` does) and `type="reset"` resets it; the default
+`button` does nothing to the form. A disabled or loading button, or one with
+an `href`, never submits.
+
+```html
+<form @submit.prevent="save">
+  <c-button type="submit">Save</c-button>
+</form>
+```
+
 ## Accessibility
 
 The `root` part is a native `<button>` (or `<a>` when `href` is set), so

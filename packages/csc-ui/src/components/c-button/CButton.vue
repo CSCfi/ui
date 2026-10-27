@@ -185,7 +185,7 @@ interface CButtonProps {
  * @csspart description - Wrapper of the `description` slot.
  */
 import { tv } from 'tailwind-variants';
-import { computed, useTemplateRef } from 'vue';
+import { computed, useHost, useTemplateRef } from 'vue';
 
 import { coerceBoolean } from '../../shared/coerceBoolean';
 import { useHasSlot } from '../../shared/useHasSlot';
@@ -525,6 +525,8 @@ const buttonType = computed(() =>
 
 const rootRef = useTemplateRef<HTMLElement>('rootRef');
 
+const host = useHost();
+
 const hasIcon = useHasSlot(rootRef, 'icon');
 
 const hasDescription = useHasSlot(rootRef, 'description');
@@ -550,6 +552,24 @@ const { ripples, spawn: spawnRipple } = useRipple({
   container: () => rootRef.value,
 });
 
+// The nearest <form> around the element, across shadow roots: the native
+// button sits in this shadow root, where it has no form owner.
+const closestForm = (): HTMLFormElement | null => {
+  let el: Element | null = host;
+
+  while (el) {
+    const form = el.closest('form');
+
+    if (form) return form;
+
+    const root = el.getRootNode();
+
+    el = root instanceof ShadowRoot ? root.host : null;
+  }
+
+  return null;
+};
+
 const onClick = (event: MouseEvent) => {
   if (props.disabled || props.loading) {
     event.preventDefault();
@@ -559,6 +579,14 @@ const onClick = (event: MouseEvent) => {
   }
 
   if (!props.noRipple) spawnRipple(event);
+
+  // `type` acts on the form around the element, as on a native button (3.x
+  // did it through a hidden submit button): submit validates and submits it,
+  // reset resets it.
+  if (props.href) return;
+
+  if (buttonType.value === 'submit') closestForm()?.requestSubmit();
+  else if (buttonType.value === 'reset') closestForm()?.reset();
 };
 
 const onKeydown = (event: KeyboardEvent) => {

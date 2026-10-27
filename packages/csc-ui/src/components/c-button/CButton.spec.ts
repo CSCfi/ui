@@ -92,3 +92,53 @@ describe('c-button link (decisions #7)', () => {
     }
   });
 });
+
+describe('c-button in a form', () => {
+  const inForm = async (attrs: Record<string, boolean | string>) => {
+    const form = document.createElement('form');
+
+    const seen: string[] = [];
+
+    form.addEventListener('submit', (event) => {
+      event.preventDefault();
+      seen.push('submit');
+    });
+    form.addEventListener('reset', () => seen.push('reset'));
+    document.body.append(form);
+
+    const { host } = await mount('c-button', { attrs, html: 'Go' });
+
+    form.append(host.parentElement!);
+
+    return { button: host.shadowRoot!.querySelector('button')!, form, seen };
+  };
+
+  it('type="submit" submits and type="reset" resets the form around it', async () => {
+    const submit = await inForm({ type: 'submit' });
+
+    await userEvent.click(submit.button);
+
+    const reset = await inForm({ type: 'reset' });
+
+    await userEvent.click(reset.button);
+
+    expect([...submit.seen, ...reset.seen]).toEqual(['submit', 'reset']);
+    submit.form.remove();
+    reset.form.remove();
+  });
+
+  it('a plain, disabled or loading button submits nothing', async () => {
+    for (const attrs of [
+      {},
+      { disabled: true, type: 'submit' },
+      { loading: true, type: 'submit' },
+    ] as Record<string, boolean | string>[]) {
+      const { button, form, seen } = await inForm(attrs);
+
+      button.click();
+
+      expect(seen, JSON.stringify(attrs)).toEqual([]);
+      form.remove();
+    }
+  });
+});
