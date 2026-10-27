@@ -502,14 +502,23 @@ const autocorrectAttr = computed(() => {
 
 const isFocused = ref(false);
 
-const originalType = props.type;
+// The type as set; `currentType` is what the input shows, which the password
+// toggle flips. A new `type` resets it.
+const originalType = computed(() => props.type);
 
 const currentType = ref(props.type);
+
+watch(
+  () => props.type,
+  (type) => {
+    currentType.value = type;
+  },
+);
 
 // Date inputs render a permanent "mm/dd/yyyy" format hint inside the
 // field, so the floating label has to stay lifted from the start —
 // otherwise it overlaps the format hint. Treat date as always-filled.
-const isDateType = originalType === 'date';
+const isDateType = computed(() => originalType.value === 'date');
 
 // A field "has a value" when it holds anything but the empty string — `0`
 // (a numeric property binding on a `type="number"` field) counts. A plain
@@ -523,7 +532,7 @@ const hasValue = computed(
 // over an existing value is the separate `filled` flag.
 const isActiveForInput = computed(() => isFocused.value);
 
-const isFilledForInput = computed(() => hasValue.value || isDateType);
+const isFilledForInput = computed(() => hasValue.value || isDateType.value);
 
 // Detect consumer-provided slotted content. We need this at the
 // c-text-field level (rather than c-input via `useHasSlot`) because
@@ -535,7 +544,9 @@ const hasConsumerPre = ref(false);
 const hasConsumerPost = ref(false);
 
 const hasToggle = computed(
-  () => originalType === 'password' || (originalType === 'date' && !isFirefox),
+  () =>
+    originalType.value === 'password' ||
+    (originalType.value === 'date' && !isFirefox),
 );
 
 const refreshConsumerSlots = () => {
@@ -600,7 +611,7 @@ const openPicker = () => {
 const MASKABLE_TYPES = new Set<CTextFieldType>(['search', 'tel', 'text']);
 
 const maskSlots = computed(() =>
-  props.mask && props.rows <= 1 && MASKABLE_TYPES.has(originalType)
+  props.mask && props.rows <= 1 && MASKABLE_TYPES.has(originalType.value)
     ? compileMask(props.mask)
     : null,
 );
@@ -637,7 +648,7 @@ const unmaskedValue = computed<string>(
 );
 
 const maskInputMode = computed(() =>
-  maskSlots.value && originalType === 'text' && isNumericMask(props.mask)
+  maskSlots.value && originalType.value === 'text' && isNumericMask(props.mask)
     ? 'numeric'
     : undefined,
 );

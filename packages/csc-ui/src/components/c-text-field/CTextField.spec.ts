@@ -464,3 +464,17 @@ describe('visual', () => {
     await matchScreenshotInBothModes(typed.stage, 'mask-guide-typed');
   });
 });
+
+describe('type', () => {
+  it('follows a type set after mount, password toggle included', async () => {
+    const m = await mount<{ type?: string } & HTMLElement>('c-text-field', {
+      attrs: { label: 'Secret' },
+    });
+
+    m.host.type = 'password';
+    await settle();
+
+    expect(input(m).type).toBe('password');
+    expect(m.shadow('button[aria-label="Show password"]')).not.toBeNull();
+  });
+});
