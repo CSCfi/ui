@@ -217,6 +217,8 @@ const props = withDefaults(defineProps<CSideNavigationItemProps>(), {
 
 const chevronIcon = mdiChevronRight;
 
+const SUB_ITEMS = new Set(['c-side-navigation-item', 'c-sub-navigation-item']);
+
 const host = useHost();
 
 // The rendered header element carries the tabindex/role/aria (the focusable
@@ -236,16 +238,6 @@ const ui = computed(() =>
     subItem: isSubItem.value,
   }),
 );
-
-// Move nested c-side-navigation-item children into the "sub-item" named
-// slot. Mirrors Stencil's _assignSubItemSlots — consumers write nested
-// items without manually specifying the slot.
-const assignSubItemSlots = () => {
-  if (!host) return;
-  host.querySelectorAll('c-side-navigation-item').forEach((item) => {
-    item.setAttribute('slot', 'sub-item');
-  });
-};
 
 // Sub-items rendered inside another sub-navigation-item get a marker
 // class so the sub-item CSS variant kicks in (Stencil sets this in
@@ -268,16 +260,40 @@ const handleChildCollapsedChange = (expanded: boolean) => {
   });
 };
 
+// Nested items — c-sub-navigation-item and c-side-navigation-item children,
+// which consumers write inline — go in the sub-item slot. Runs on mount and on
+// every slotchange in the shadow root, so sub-items added or removed later
+// find their place; a pass with nothing to move changes no slot.
+const adoptSubItems = () => {
+  if (!host) return;
+
+  for (const child of host.children) {
+    if (SUB_ITEMS.has(child.localName) && child.slot !== 'sub-item') {
+      child.slot = 'sub-item';
+    }
+  }
+
+  slotHasContent.value = !!host.querySelector(':scope > [slot="sub-item"]');
+  handleChildClasses();
+  handleChildCollapsedChange(props.active);
+};
+
 const emit = useHostEmit<CSideNavigationItemEvents>();
 
 const redirect = (event: Event | KeyboardEvent) => {
-  if (event instanceof KeyboardEvent && event.key !== 'Enter') return;
+  const key = event instanceof KeyboardEvent;
 
+  if (key && event.key !== 'Enter') return;
+
+  // A nested item's activation ends here: the parent item around it must not
+  // take it for its own.
   if (isSubItem.value) {
     event.stopPropagation();
     event.stopImmediatePropagation?.();
-    event.preventDefault();
   }
+
+  // Enter on a link activates it, and the click that fires emits.
+  if (key && props.href) return;
 
   // c-side-navigation hears it, and closes its drawer for a leaf item.
   emit('select', { value: props.value }, { bubbles: true, composed: true });
@@ -285,9 +301,9 @@ const redirect = (event: Event | KeyboardEvent) => {
 
 onMounted(() => {
   if (!host) return;
-  assignSubItemSlots();
-  slotHasContent.value = !!host.querySelector('[slot="sub-item"]');
-  isSubItem.value = !!host.getAttribute('slot');
+  isSubItem.value = host.parentElement?.localName === 'c-side-navigation-item';
+  adoptSubItems();
+  host.shadowRoot?.addEventListener('slotchange', adoptSubItems);
 
   // Pull aria-label from the first text node (Stencil mirrors this for
   // the nested <nav>).
@@ -302,17 +318,15 @@ onMounted(() => {
   // not the `display:contents` host which is skipped by sequential focus.
   host.addEventListener('click', redirect);
   host.addEventListener('keydown', redirect);
-  // A nested item (in a parent item's sub-item slot) toggles itself on its
-  // own `select`; c-side-navigation leaves slotted items alone, and the event
-  // goes on to the page.
+  // A nested parent item (in a parent item's sub-item slot) shows and hides
+  // its own sub-items on its `select`; c-side-navigation leaves a slotted
+  // item's expansion alone (it makes a nested leaf the current page), and the
+  // event goes on to the page.
   host.addEventListener('select', (e) => {
     // Re-assign via host so Vue's prop setter runs.
-    if (isSubItem.value && e.target === host)
+    if (isSubItem.value && slotHasContent.value && e.target === host)
       (host as { active?: boolean }).active = !props.active;
   });
-
-  handleChildClasses();
-  handleChildCollapsedChange(props.active);
 
   watchEffect(() => {
     host.classList.toggle('c-side-navigation-item', true);

@@ -190,8 +190,10 @@ const ui = computed(() =>
 // Called from user interaction only: the drawer's state, the host's `open`
 // property (so a later write of the same value is not a no-op) and
 // `change:open`. A value set from outside only re-syncs (the watch below).
+// Only the `mobile` drawer opens and closes: a desktop navigation is always
+// shown, so a c-navigation-button or an activated item leaves it alone.
 const setOpen = (value: boolean) => {
-  if (openInternal.value === value) return;
+  if (!props.mobile || openInternal.value === value) return;
 
   openInternal.value = value;
 
@@ -211,38 +213,47 @@ watch(
 
 const closeMenu = () => setOpen(false);
 
-// Reflect a c-side-navigation-item's `select`: when a top-level item is
-// activated, deactivate any other parent (an "accordion"-style behaviour).
-// A sub-item's `select` — a c-sub-navigation-item, or an item nested in a
-// parent item's sub-item slot, which toggles itself — bubbles through here too.
+type ItemHost = { active: boolean } & HTMLElement;
+
+const ITEMS = 'c-side-navigation-item, c-sub-navigation-item';
+
+/** Whether an item has sub-items: a parent shows and hides them, a leaf navigates. */
+const isParent = (item: Element) =>
+  !!item.querySelector(':scope > [slot="sub-item"]');
+
+// Reflect an item's `select`. A leaf — an item without sub-items, or a
+// sub-item — is the page the user went to: it becomes the one active leaf
+// (`aria-current="page"`), and the drawer closes. A top-level item also
+// collapses every parent (an "accordion"-style behaviour), and a top-level
+// parent toggles its sub-items; a nested parent toggles itself.
 const handleItemChange = (event: Event) => {
   if (!host) return;
 
-  const target = event.target as { active: boolean } & HTMLElement;
+  const target = event.target as ItemHost;
 
-  // Activating a leaf — an item without sub-items, or a sub-item — navigates:
-  // the drawer closes.
-  if (!target.querySelector('[slot="sub-item"]')) closeMenu();
+  const parent = target.matches(ITEMS) && isParent(target);
+
+  if (!parent) closeMenu();
+
+  if (!target.matches(ITEMS)) return;
+
+  if (!parent) {
+    for (const leaf of host.querySelectorAll<ItemHost>(ITEMS)) {
+      if (!isParent(leaf)) leaf.active = leaf === target;
+    }
+  }
 
   if (target.localName !== 'c-side-navigation-item' || target.slot) return;
 
   const wasActive = target.active;
 
-  const items = host.querySelectorAll('c-side-navigation-item');
-
-  items.forEach((item) => {
-    const el = item as { active: boolean } & HTMLElement;
-
-    if (el.querySelector('c-sub-navigation-item[slot="sub-item"]')) {
-      el.active = false;
-    }
-  });
-
-  if (target.querySelector('[slot="sub-item"]')) {
-    target.active = !wasActive;
-  } else {
-    target.active = true;
+  for (const item of host.querySelectorAll<ItemHost>(
+    'c-side-navigation-item',
+  )) {
+    if (isParent(item)) item.active = false;
   }
+
+  if (parent) target.active = !wasActive;
 };
 
 // A c-navigation-button anywhere on the page toggles the drawer. Click only:
@@ -254,18 +265,8 @@ const onDocClick = (e: Event) => {
   if (t?.matches?.('c-navigation-button')) setOpen(!openInternal.value);
 };
 
-// Move c-sub-navigation-item children into the "sub-item" slot —
-// consumers write them inline.
-const assignSubItemSlots = () => {
-  if (!host) return;
-  host.querySelectorAll('c-sub-navigation-item').forEach((item) => {
-    item.setAttribute('slot', 'sub-item');
-  });
-};
-
 onMounted(() => {
   if (!host) return;
-  assignSubItemSlots();
   host.addEventListener('select', handleItemChange);
 
   document.body.addEventListener('click', onDocClick);

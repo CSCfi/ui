@@ -4,7 +4,7 @@ The dashboard layout's left-hand menu: section titles, navigation items and thei
 
 Author the menu as a flat list of `c-side-navigation-title` and `c-side-navigation-item` elements: a title heads the items that follow it, up to the next title.
 
-Write an item's sub-items as `c-sub-navigation-item` children inside it; the navigation slots them itself. An item with sub-items is an expandable parent with a chevron: activating it toggles its `active` state, which shows or hides the sub-items, and activating any top-level item collapses the other parents, so one stays open at a time. A parent only expands and collapses — activating it does not close the mobile drawer. The sub-items of a collapsed parent leave the Tab order.
+Write an item's sub-items as `c-sub-navigation-item` children inside it; the item slots them itself, including sub-items added later. An item with sub-items is an expandable parent with a chevron: activating it toggles its `active` state, which shows or hides the sub-items, and activating any top-level item collapses the other parents, so one stays open at a time. A parent only expands and collapses — activating it does not close the mobile drawer. The sub-items of a collapsed parent leave the Tab order.
 
 On a parent, `active` means expanded; on an item without sub-items and on a sub-item it marks the current page (`aria-current="page"`). To mark a page under a parent, set `active` on both:
 
@@ -36,7 +36,7 @@ navigation can route every item:
 </c-side-navigation>
 ```
 
-Highlight the current page by setting `active` on its item.
+Activating an item without sub-items, or a sub-item, makes it the current page: it becomes `active`, and the item that was current stops being. Set `active` yourself for the page the menu first shows, and whenever the page changes some other way, such as a link elsewhere on the page.
 
 ## Inside c-main
 
@@ -48,7 +48,7 @@ Trailing content — a sign-out button, a help link — goes in the `bottom` slo
 
 ## Mobile
 
-Set `mobile` to render the drawer as a panel that slides in from the right over a backdrop. `open` opens and closes it, and a `c-navigation-button` anywhere on the page toggles it. Whenever the user opens or closes it — the navigation button, the close button, the backdrop, or activating an item, which closes it — the drawer fires `change:open` with the new state.
+Set `mobile` to render the drawer as a panel that slides in from the right over a backdrop. `open` opens and closes it, and a `c-navigation-button` anywhere on the page toggles it. Whenever the user opens or closes it — the navigation button, the close button, the backdrop, or activating an item, which closes it — the drawer fires `change:open` with the new state. Without `mobile` the drawer is always shown: a `c-navigation-button` and activating an item leave it as it is, and fire nothing.
 
 ## Standalone
 

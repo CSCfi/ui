@@ -191,6 +191,106 @@ describe('c-side-navigation', () => {
       expect(events.details()).toEqual([{ value: 'active' }]);
       expect(item(m, 'projects').active).toBe(true);
     });
+
+    it('one leaf at a time is the current page', async () => {
+      const m = await mount('c-side-navigation', {
+        html: `${NAV}<c-side-navigation-item value="settings">Settings</c-side-navigation-item>`,
+      });
+
+      await settle();
+
+      const current = (): string[] =>
+        [...m.host.querySelectorAll<ItemHost>('[value]')]
+          .filter((el) => el.active)
+          .map((el) => el.getAttribute('value')!);
+
+      await userEvent.click(box(item(m, 'dashboard'), 'header'));
+      await userEvent.click(box(item(m, 'settings'), 'header'));
+      await settle();
+
+      expect(current()).toEqual(['settings']);
+      expect(
+        box(item(m, 'dashboard'), 'header').hasAttribute('aria-current'),
+      ).toBe(false);
+
+      await userEvent.click(box(item(m, 'projects'), 'header'));
+      await settle();
+      await userEvent.click(box(item(m, 'archived'), 'root'));
+      await settle();
+
+      expect(current()).toEqual(['projects', 'archived']);
+      expect(
+        box(item(m, 'settings'), 'header').hasAttribute('aria-current'),
+      ).toBe(false);
+    });
+
+    it('an item with an href fires select once on Enter', async () => {
+      const m = await mount('c-side-navigation', {
+        html: '<c-side-navigation-item href="#side-nav-enter" value="docs">Docs</c-side-navigation-item>',
+      });
+
+      await settle();
+
+      const events = recordEvents(m.host, ['select']);
+
+      box(item(m, 'docs'), 'header').focus();
+      await userEvent.keyboard('{Enter}');
+      await settle();
+
+      expect(events.details()).toEqual([{ value: 'docs' }]);
+    });
+
+    it('a nested item follows its href and leaves its parent open', async () => {
+      const m = await mount('c-side-navigation', {
+        html:
+          '<c-side-navigation-item value="guides">Guides' +
+          '<c-side-navigation-item href="#side-nav-nested" value="intro">Intro</c-side-navigation-item>' +
+          '</c-side-navigation-item>',
+      });
+
+      await settle();
+      await userEvent.click(box(item(m, 'guides'), 'header'));
+      await settle();
+
+      const events = recordEvents(m.host, ['select']);
+
+      await userEvent.click(box(item(m, 'intro'), 'header'));
+      await settle();
+
+      expect(location.hash).toBe('#side-nav-nested');
+      expect(events.details()).toEqual([{ value: 'intro' }]);
+      expect(item(m, 'guides').active).toBe(true);
+      expect(item(m, 'intro').active).toBe(true);
+      history.replaceState(null, '', location.pathname + location.search);
+    });
+
+    it('a sub-item added after mount goes under its item', async () => {
+      const m = await mount('c-side-navigation', { html: NAV });
+
+      await settle();
+
+      const added = ['dashboard', 'projects'].map((value) => {
+        const sub = document.createElement('c-sub-navigation-item');
+
+        sub.setAttribute('value', `${value}-new`);
+        sub.textContent = 'New';
+        item(m, value).append(sub);
+
+        return sub;
+      });
+
+      await settle();
+
+      for (const sub of added) {
+        expect(sub.assignedSlot?.name, sub.getAttribute('value')!).toBe(
+          'sub-item',
+        );
+      }
+
+      expect(
+        box(item(m, 'dashboard'), 'header').getAttribute('aria-expanded'),
+      ).toBe('false');
+    });
   });
 });
 
@@ -243,6 +343,18 @@ describe('open (decisions #44)', () => {
 
     expect(nav.host.open).toBe(false);
     expect(events.records.map((r) => r.detail)).toEqual([false]);
+  });
+
+  it('a c-navigation-button leaves a desktop navigation alone', async () => {
+    const nav = await mount<NavHost>('c-side-navigation', { html: ITEMS });
+
+    const events = recordEvents(nav.host, ['change:open']);
+
+    (await navButton()).click();
+    await settle();
+
+    expect(nav.host.open).toBe(false);
+    expect(events.records).toEqual([]);
   });
 
   it('a value set from code fires nothing', async () => {
