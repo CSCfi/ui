@@ -490,6 +490,12 @@ start migrating on the first alpha that carries D2–D4.
    - **User decisions 2026-10-27 on the verification pass's reports:** c-switch `loading` matches the buttons
      (done, 6fd1fbf6); c-checkbox `indeterminate` clears on a user click, natively (**open — not built yet**);
      c-icon-button disabled ink fixed (5eaa4c88).
+   - **Side navigation: the page owns the current page (user decision 2026-10-27, 80f1a92b).** 75ab6d1d made a
+     click mark the leaf `active` and clear the others; with a route binding, a cancelled navigation left the
+     clicked item highlighted, and Vue never rewrote it (binding unchanged), even across later route changes. The
+     navigation now leaves a leaf's `active` alone (`select`, drawer close and parent expansion unchanged), as
+     the docs site and every canon already bind it. MyCSC check: every side-nav item and sub-item binds `active`
+     from the route (3.x highlighted a clicked top-level item by itself).
    - **Merge conflict ahead:** the `development` → `main` PR conflicts in `packages/csc-ui/package.json`: phase 3's
      new `description` is the line after `version`, which `main`'s release commits bumped (development still has
      alpha.18). Resolve with `main`'s version and `development`'s description. From here: fixes only, API guard fails any breaking diff.
