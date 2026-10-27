@@ -1854,7 +1854,7 @@ export interface CSideNavigationItemElementEventMap {
   select: CustomEvent<{ value: string | undefined }>;
 }
 
-/** One entry of a `c-side-navigation`: its label text, after an optional leading `c-icon`, goes in the default slot, and activating it fires `select` with its `value`; with `href` it is also a real link, opened in `target`. Write `c-sub-navigation-item` children inside it to make it an expandable parent, whose `active` then means expanded rather than the current page. */
+/** One entry of a `c-side-navigation`: its label text, after an optional leading `c-icon`, goes in the default slot, and activating it fires `select` with its `value`; with `href` it is a real link, opened in `target`, and without one a button. Write `c-sub-navigation-item` children inside it to make it an expandable parent, whose `active` then means expanded rather than the current page. */
 export interface CSideNavigationItemElement extends Omit<HTMLElement, 'active' | 'collapsed' | 'href' | 'loading' | 'target' | 'value'> {
   /** Indicate active state */
   active?: boolean;
@@ -1888,7 +1888,7 @@ export interface CSideNavigationItemElement extends Omit<HTMLElement, 'active' |
   ): void;
 }
 
-/** A section title in a `c-side-navigation`: uppercase text over a divider line, placed before the items it groups. It is not a menu item and cannot be activated. */
+/** A section title in a `c-side-navigation`: uppercase text over a divider line, placed before the items it groups. It is a heading (level 2), so screen-reader users can jump between sections, and cannot be activated. */
 export interface CSideNavigationTitleElement extends HTMLElement {
 }
 

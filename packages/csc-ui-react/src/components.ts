@@ -262,7 +262,7 @@ export const CCardContent = createComponent({
 /** The heading section of a `c-card`, set in small uppercase type above a primary accent bar; place it first in the card. Controls in its `actions` slot sit at the right of the heading and move onto their own line under it when the two do not fit side by side. */
 export const CCardTitle = createComponent({
   displayName: 'CCardTitle',
-  elementClass: elementClass<CCardTitleElement>([]),
+  elementClass: elementClass<CCardTitleElement>(['headingLevel']),
   react: React,
   tagName: 'c-card-title',
 });
@@ -453,7 +453,7 @@ export const CLoginCardContent = createComponent({
 /** The heading of a `c-login-card`, in large bold type in the primary colour; place it first in the card. The card shrinks it from 40px to 32px in its compact layout. */
 export const CLoginCardTitle = createComponent({
   displayName: 'CLoginCardTitle',
-  elementClass: elementClass<CLoginCardTitleElement>([]),
+  elementClass: elementClass<CLoginCardTitleElement>(['headingLevel']),
   react: React,
   tagName: 'c-login-card-title',
 });
@@ -659,7 +659,7 @@ export const CSideNavigation = createComponent({
   tagName: 'c-side-navigation',
 });
 
-/** One entry of a `c-side-navigation`: its label text, after an optional leading `c-icon`, goes in the default slot, and activating it fires `select` with its `value`; with `href` it is also a real link, opened in `target`. Write `c-sub-navigation-item` children inside it to make it an expandable parent, whose `active` then means expanded rather than the current page. */
+/** One entry of a `c-side-navigation`: its label text, after an optional leading `c-icon`, goes in the default slot, and activating it fires `select` with its `value`; with `href` it is a real link, opened in `target`, and without one a button. Write `c-sub-navigation-item` children inside it to make it an expandable parent, whose `active` then means expanded rather than the current page. */
 export const CSideNavigationItem = createComponent({
   displayName: 'CSideNavigationItem',
   elementClass: elementClass<CSideNavigationItemElement>(['active', 'href', 'loading', 'target', 'value']),
@@ -670,7 +670,7 @@ export const CSideNavigationItem = createComponent({
   tagName: 'c-side-navigation-item',
 });
 
-/** A section title in a `c-side-navigation`: uppercase text over a divider line, placed before the items it groups. It is not a menu item and cannot be activated. */
+/** A section title in a `c-side-navigation`: uppercase text over a divider line, placed before the items it groups. It is a heading (level 2), so screen-reader users can jump between sections, and cannot be activated. */
 export const CSideNavigationTitle = createComponent({
   displayName: 'CSideNavigationTitle',
   elementClass: elementClass<CSideNavigationTitleElement>([]),
