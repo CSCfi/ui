@@ -100,6 +100,7 @@ const getSfcSheet = (
 };
 
 interface ConnectableElement extends HTMLElement {
+  _instance?: { proxy?: { $forceUpdate(): void } | null } | null;
   _setAttr(key: string): void;
   _setProp(
     key: string,
@@ -226,28 +227,41 @@ const normalizeNumberProperties = (
 };
 
 /**
- * Whether a host attribute reaches the component under its own name.
+ * Hand a host attribute to the component the way its kind needs.
  *
  * Vue's custom element hands EVERY host attribute to the component camelized
  * (`aria-haspopup` → `ariaHaspopup`). For a declared prop that is the prop's
- * key; an undeclared attribute falls through to the rendered element under
- * that key instead, and comes out right only where the key is also a
- * reflected DOM property (`ariaLabel`). `ariaHaspopup` is not `ariaHasPopup`,
- * so it lands as a junk `ariahaspopup` attribute, and an `<svg>`, which takes
- * every key as an attribute, gets a literal `ariaLabel`. An undeclared
- * hyphenated attribute therefore keeps its name: `$attrs['aria-label']`.
+ * key, and Vue's own path (`viaVue`) handles it. An undeclared attribute falls
+ * through to the rendered element under that key instead, and came out right
+ * only where the key is also a reflected DOM property (`ariaLabel`):
+ * `ariaHaspopup` is not `ariaHasPopup`, so it landed as a junk `ariahaspopup`
+ * attribute, and an `<svg>`, which takes every key as an attribute, got a
+ * literal `ariaLabel`. So:
+ *
+ * - a `data-*` attribute is the author's data on the element they wrote, and
+ *   is not handed over: a copy in the shadow DOM would make a selector such
+ *   as `[data-test="save"]` match twice (Playwright's CSS engine pierces
+ *   shadow roots). A change still re-renders the component, as Vue's path
+ *   did, for a render that reads one off the host (c-input's
+ *   `data-hide-details`);
+ * - any other undeclared hyphenated attribute keeps its name
+ *   (`$attrs['aria-label']`); removal leaves `undefined`;
+ * - a single-word one (`role`, `rel`, `class`) goes Vue's way.
  */
-const keepsItsName = (declared: Set<string>, key: string): boolean => {
+const routeAttribute = (
+  el: ConnectableElement,
+  declared: Set<string>,
+  key: string,
+  viaVue: () => void,
+): void => {
   const camelKey = camelize(key);
 
-  return (
-    camelKey !== key && !declared.has(camelKey) && !key.startsWith('data-v-')
-  );
+  if (declared.has(camelKey)) viaVue();
+  else if (key.startsWith('data-')) el._instance?.proxy?.$forceUpdate();
+  else if (camelKey !== key) {
+    el._setProp(key, el.getAttribute(key) ?? undefined, false, true);
+  } else viaVue();
 };
-
-/** Vue's `_setAttr` for an attribute that keeps its name; removal leaves `undefined`. */
-const setNamedAttribute = (el: ConnectableElement, key: string): void =>
-  el._setProp(key, el.getAttribute(key) ?? undefined, false, true);
 
 /**
  * A native `input` is `composed`: typed into a field in a shadow root, it
@@ -316,8 +330,7 @@ export function defineElement(tag: string, component: Component): void {
 
     class Element extends (Base as unknown as { new (): ConnectableElement }) {
       _setAttr(key: string) {
-        if (keepsItsName(declaredKeys, key)) setNamedAttribute(this, key);
-        else super._setAttr(key);
+        routeAttribute(this, declaredKeys, key, () => super._setAttr(key));
       }
 
       connectedCallback() {
@@ -341,8 +354,7 @@ export function defineElement(tag: string, component: Component): void {
 
   class Element extends (Base as unknown as { new (): ConnectableElement }) {
     _setAttr(key: string) {
-      if (keepsItsName(declaredKeys, key)) setNamedAttribute(this, key);
-      else super._setAttr(key);
+      routeAttribute(this, declaredKeys, key, () => super._setAttr(key));
     }
 
     connectedCallback() {

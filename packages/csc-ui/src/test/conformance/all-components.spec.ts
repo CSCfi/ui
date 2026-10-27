@@ -102,8 +102,9 @@ describe.each(registeredTags)('%s', (tag) => {
 
   // A host attribute that falls through to the shadow DOM keeps its name: a
   // camelized `ariaHaspopup` lands as a junk `ariahaspopup` attribute, and on
-  // an `<svg>` root as a literal `ariaLabel`.
-  it('forwards no host attribute under a mangled name', async () => {
+  // an `<svg>` root as a literal `ariaLabel`. A data attribute stays on the
+  // host: a copy inside would make `[data-test="…"]` match twice.
+  it('keeps data attributes on the host and forwards no mangled name', async () => {
     const fixture = FIXTURES[tag] ?? {};
 
     const { host } = await mount(tag, {
@@ -115,13 +116,17 @@ describe.each(registeredTags)('%s', (tag) => {
       },
     });
 
-    const mangled = new Set(['ariaroledescription', 'dataprobe']);
+    const unwanted = new Set([
+      'ariaroledescription',
+      'data-probe',
+      'dataprobe',
+    ]);
 
     const walk = (root: ShadowRoot): string[] =>
       [...root.querySelectorAll('*')].flatMap((element) => [
         ...[...element.attributes]
           .map((attribute) => attribute.name)
-          .filter((name) => mangled.has(name.toLowerCase())),
+          .filter((name) => unwanted.has(name.toLowerCase())),
         ...(element.shadowRoot ? walk(element.shadowRoot) : []),
       ]);
 

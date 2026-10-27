@@ -30,6 +30,9 @@ Fixed in `shared/defineElement.ts`: an undeclared hyphenated host attribute reac
 name (`$attrs['aria-haspopup']`); declared props still camelize. A labelled c-icon is `role="img"`, and c-link
 forwards ARIA and link attributes to its `<a>`. The all-components conformance suite now fails any tag that
 forwards a mangled name (39 of 79 did); c-icon / c-link / c-icon-button usage.md no longer describe workarounds.
+`data-*` attributes are not forwarded at all (a follow-up fix): an exact copy inside made Playwright's
+`[data-test="…"]` match twice. A change to one still re-renders the component, since c-input reads its
+`data-hide-details` off the host at render time.
 
 ## B. Behaviour bugs
 
