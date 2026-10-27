@@ -459,8 +459,17 @@ start migrating on the first alpha that carries D2–D4.
    - **Findings section D — done locally (2026-10-27)**: glossary (expander pins right, c-tag standalone, the
      c-tabs row's scroll input), c-status / c-alert neutral-look descriptions, four seeded prop descriptions,
      and the canon faults (sub-item `select`, c-steps `:value`, c-page wording, c-badge name and token, login
-     `alt`, accordion `null`, external-data request race and a stale React closure). Left: 181 `@seeded …
-     verify` prop descriptions.
+     `alt`, accordion `null`, external-data request race and a stale React closure).
+   - **Seeded descriptions — done locally (2026-10-27).** All 181 `@seeded from csc-ui — verify` descriptions
+     verified against source and usage.md (three parallel agents, reviewed: JSDoc-only diff), 172 rewritten;
+     the analyzer's pending count is 0 (3c8f1360). The pass surfaced, and these were fixed with specs:
+     `<c-button type="submit|reset">` did nothing to its form, a 4.x regression from 3.x (195b86ba);
+     c-text-field ignored a `type` set after mount (76413966); c-progress-bar's "0 %" tooltip while
+     indeterminate, c-steps' out-of-range summary, c-page's indicator stale until a scroll (e8671334..626f3f5d);
+     stale usage docs (0694ec4e). Reported, not acted on: c-tabs' scroll-arrow names are fixed English (the 4.x
+     `texts` list); c-icon-button's disabled ink is `on-surface-muted` where c-button moved to
+     `on-surface-faint`; c-checkbox `indeterminate` stays until the consumer clears it (native clears on click);
+     c-switch `loading` neither blocks toggling nor sets `aria-busy`.
 4. **RC** — switch pre tag `alpha` → `rc` (verify the changesets CLI sequence: `pre exit` + `pre enter rc` before a
    version run), publish `4.0.0-rc.1`. From here: fixes only, API guard fails any breaking diff.
    Gate (D8): MyCSC fully migrated on the latest RC, e2e green, no open csc-ui blocker.
