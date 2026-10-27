@@ -32,11 +32,11 @@ Give each `c-tab` a `value` and the panel it shows the same `value`. The panels 
 
 ## Keyboard
 
-Only the active tab is in the Tab order. The Left and Right arrow keys move focus to the previous or next tab, stopping at the first and the last, and scroll a tab that is out of view into the row. Moving focus does not switch panels: Enter or Space activates the focused tab.
+Only the active tab is in the Tab order (the first enabled tab while no tab matches `value`). The Left and Right arrow keys — Up and Down in the `vertical` layout — move focus to the previous or next enabled tab, stopping at the first and the last; Home and End go to the first and the last. A tab out of view scrolls into the row. Moving focus does not switch panels: Enter or Space activates the focused tab.
 
 ## Disabled tabs
 
-Set `disabled` on a `c-tab` to show it greyed out and keep it from being selected by pointer or keyboard. Its panel stays in `c-tab-items` but cannot be reached through the tab.
+Set `disabled` on a `c-tab` to show it greyed out and keep it from being selected by pointer or keyboard; the arrow keys skip it, and it is announced as disabled. Its panel stays in `c-tab-items` but cannot be reached through the tab.
 
 ## Layout
 
@@ -62,7 +62,7 @@ To show the tab list as a segmented control instead of the underlined row, put o
 
 ## Accessibility
 
-`c-tabs` applies the tab pattern's roles: the element is the `tablist`, each `c-tab` a `tab` carrying `aria-selected`, and each `c-tab-item` a `tabpanel`. A tab and its panel point at each other through `aria-controls` and `aria-labelledby`; an `id` you set on a tab or a panel is kept, and the others are generated. When a page holds more than one tab set, give each `c-tabs` an `aria-label` so they can be told apart.
+`c-tabs` applies the tab pattern's roles: the row of tabs is the `tablist` (`aria-orientation="vertical"` in the vertical layout; the scroll arrows and the panels sit outside it), each `c-tab` a `tab` carrying `aria-selected`, and each `c-tab-item` a `tabpanel`; with `c-tab-buttons` its buttons are the tabs. A tab and its panel point at each other through `aria-controls` and `aria-labelledby`; an `id` you set on a tab or a panel is kept, and the others are generated. An `aria-label` on `c-tabs` names the tablist; when a page holds more than one tab set, give each one so they can be told apart.
 
 ## Customization
 

@@ -6,7 +6,13 @@
 import { describe, expect, it } from 'vitest';
 import { userEvent } from 'vitest/browser';
 
-import { chromiumOnly, mount, settled, withMotion } from '../../test/harness';
+import {
+  chromiumOnly,
+  mount,
+  recordEvents,
+  settled,
+  withMotion,
+} from '../../test/harness';
 
 const panel = (value: string, id = '') =>
   `<c-tab-item value="${value}"${id ? ` id="${id}"` : ''}>${value}</c-tab-item>`;
@@ -233,5 +239,121 @@ describe('tab row', () => {
     await new Promise((resolve) => setTimeout(resolve, 400));
 
     expect(document.activeElement).toBe(input);
+  });
+});
+
+describe('APG tabs', () => {
+  const tabs = (m: { host: HTMLElement }): HTMLElement[] => [
+    ...m.host.querySelectorAll<HTMLElement>('c-tab'),
+  ];
+
+  const mountSet = (
+    attrs: Record<string, boolean | string> = {},
+    value = 'one',
+    extra = '',
+  ) =>
+    mount('c-tabs', {
+      attrs,
+      html: `${tab('one') + tab('two')}${extra}${tab('three')}<c-tab-items slot="items">${
+        panel('one') + panel('two') + panel('three')
+      }</c-tab-items>`,
+      props: { value },
+    });
+
+  it('the tab row is the tablist; arrows and panels are outside it', async () => {
+    const m = await mountSet({ 'aria-label': 'Project views' });
+    await settled();
+
+    const tablist = m.shadow('[role="tablist"]');
+
+    expect(m.host.hasAttribute('role')).toBe(false);
+    expect(tablist.getAttribute('aria-label')).toBe('Project views');
+    expect(tablist.querySelector('slot[name="items"]')).toBeNull();
+    expect(tablist.querySelector('c-icon-button')).toBeNull();
+    expect(
+      tabs(m).every((t) => t.assignedSlot?.closest('[role="tablist"]')),
+    ).toBe(true);
+  });
+
+  it('marks a vertical tablist with aria-orientation', async () => {
+    const m = await mountSet({ vertical: true });
+    await settled();
+
+    expect(m.shadow('[role="tablist"]').getAttribute('aria-orientation')).toBe(
+      'vertical',
+    );
+  });
+
+  it('arrows, Home and End move focus over enabled tabs; Enter selects', async () => {
+    const m = await mountSet(
+      {},
+      'one',
+      '<c-tab value="off" disabled>off</c-tab>',
+    );
+    await settled();
+
+    const events = recordEvents(m.host, ['change']);
+
+    const focused = () => document.activeElement?.getAttribute('value');
+
+    tabs(m)[0]!.focus();
+    await userEvent.keyboard('{ArrowRight}');
+    await settled();
+    expect(focused()).toBe('two');
+
+    // The disabled tab is skipped.
+    await userEvent.keyboard('{ArrowRight}');
+    await settled();
+    expect(focused()).toBe('three');
+
+    await userEvent.keyboard('{Home}');
+    await settled();
+    expect(focused()).toBe('one');
+
+    await userEvent.keyboard('{End}');
+    await settled();
+    expect(focused()).toBe('three');
+
+    // Moving focus selects nothing; Enter does.
+    expect(events.records).toEqual([]);
+    await userEvent.keyboard('{Enter}');
+    await settled();
+    expect(events.records.map((r) => r.detail)).toEqual(['three']);
+  });
+
+  it('Up and Down move focus in the vertical layout', async () => {
+    const m = await mountSet({ vertical: true });
+    await settled();
+
+    tabs(m)[0]!.focus();
+    await userEvent.keyboard('{ArrowDown}');
+    await settled();
+
+    expect(document.activeElement?.getAttribute('value')).toBe('two');
+  });
+
+  it('a disabled tab is announced as disabled, not hidden', async () => {
+    const m = await mountSet(
+      {},
+      'one',
+      '<c-tab value="off" disabled>off</c-tab>',
+    );
+    await settled();
+
+    const off = m.host.querySelector('c-tab[value="off"]')!;
+
+    expect(off.getAttribute('aria-disabled')).toBe('true');
+    expect(off.hasAttribute('aria-hidden')).toBe(false);
+  });
+
+  it('with no tab matching the value, the first enabled tab is the Tab stop', async () => {
+    const m = await mountSet({}, 'nothing');
+    await settled();
+
+    expect(tabs(m).map((t) => t.getAttribute('tabindex'))).toEqual([
+      '0',
+      '-1',
+      '-1',
+    ]);
   });
 });

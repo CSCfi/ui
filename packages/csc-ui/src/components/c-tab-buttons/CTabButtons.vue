@@ -23,7 +23,14 @@
         @pointerdown="strip.onPointerDown"
         @wheel="strip.onWheel"
       >
-        <div ref="contentRef" :class="ui.content()">
+        <!-- The tablist (APG Tabs): the buttons inside it are its tabs; the
+             scroll arrows sit outside it. -->
+        <div
+          ref="contentRef"
+          :aria-label="tablistLabel"
+          :class="ui.content()"
+          role="tablist"
+        >
           <div
             ref="indicatorRef"
             :class="ui.indicator()"
@@ -100,6 +107,7 @@ import {
   computed,
   onBeforeUnmount,
   onMounted,
+  useAttrs,
   useHost,
   useTemplateRef,
 } from 'vue';
@@ -257,8 +265,15 @@ const indicatorRef = useTemplateRef<HTMLElement>('indicatorRef');
 const strip = useScrollStrip(scrollerRef);
 
 type CTabButtonEl = {
+  asTab?: boolean;
   disabled?: boolean;
 } & HTMLElement;
+
+// An aria-label on the element (or on the c-tabs around it, which passes its
+// own down) names the tablist.
+const attrs = useAttrs();
+
+const tablistLabel = computed(() => attrs['aria-label'] as string | undefined);
 
 // Our own slot outlet (it lives in this shadow root, slot-forwarding the
 // consumer's buttons into the wrapped group). Its assigned elements are the
@@ -378,6 +393,10 @@ const suppressActiveFill = () => {
 };
 
 const setupButtons = () => {
+  // Each button is a tab of the tablist, not a toggle button.
+  buttons().forEach((button) => {
+    button.asTab = true;
+  });
   suppressActiveFill();
   observeButtons();
 };

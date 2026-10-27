@@ -2,10 +2,12 @@
   <component
     :is="href ? 'a' : 'button'"
     ref="rootRef"
-    :aria-pressed
+    :aria-pressed="asTab ? undefined : ariaPressed"
+    :aria-selected="asTab ? String(coerceBoolean(active)) : undefined"
     :class="ui.root()"
     :disabled="href ? undefined : disabled || undefined"
     :href="href || undefined"
+    :role="asTab ? 'tab' : undefined"
     :target="href ? target : undefined"
     :type="href ? undefined : buttonType"
     part="root"
@@ -68,6 +70,14 @@ interface CButtonProps {
    * `c-button-group` on its slotted buttons.
    */
   active?: boolean;
+
+  /**
+   * Be a tab of a tablist: `role="tab"`, with `active` as `aria-selected`
+   * instead of `aria-pressed`. c-tab-buttons sets it on its buttons.
+   *
+   * @internal
+   */
+  asTab?: boolean;
 
   /**
    * Danger variant style
@@ -480,6 +490,7 @@ const props = withDefaults(defineProps<CButtonProps>(), {
   // absent prop into `false`, which would stamp aria-pressed="false" on
   // every regular action button.
   active: undefined,
+  asTab: false,
   danger: false,
   disabled: false,
   fit: false,

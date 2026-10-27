@@ -102,6 +102,14 @@ interface CTabProps {
   disabled?: boolean;
 
   /**
+   * Whether the tab is the row's Tab stop though not active: no tab matches
+   * the value; the parent `<c-tabs>` sets it.
+   *
+   * @internal
+   */
+  tabStop?: boolean;
+
+  /**
    * Value for the tab
    * - for use in c-tabs
    *
@@ -113,6 +121,7 @@ interface CTabProps {
 const props = withDefaults(defineProps<CTabProps>(), {
   active: false,
   disabled: false,
+  tabStop: false,
   value: undefined,
 });
 
@@ -133,13 +142,16 @@ onMounted(() => {
     host.classList.toggle('c-tab', true);
     host.classList.toggle('c-tab--active', props.active);
     host.classList.toggle('c-tab--disabled', props.disabled);
+    // A disabled tab is announced as one (the arrow keys skip it).
     host.setAttribute('aria-disabled', String(props.disabled));
-    host.setAttribute('aria-hidden', String(props.disabled));
     host.setAttribute('aria-selected', String(props.active));
 
     if (props.value != null)
       host.setAttribute('data-value', String(props.value));
-    host.setAttribute('tabindex', props.active && !props.disabled ? '0' : '-1');
+    host.setAttribute(
+      'tabindex',
+      (props.active || props.tabStop) && !props.disabled ? '0' : '-1',
+    );
   });
 
   host.addEventListener('click', (e) => onClick(e as MouseEvent));

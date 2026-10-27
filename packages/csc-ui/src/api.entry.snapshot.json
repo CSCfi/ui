@@ -216,7 +216,7 @@
     "CDataTableTexts": {
       "allSelected?": "(count: number) => string",
       "clearSelection?": "string",
-      "expandRow?": "string",
+      "expandRow?": "((row: string) => string) | string",
       "loading?": "string",
       "nextPage?": "string",
       "noData?": "string",
@@ -228,7 +228,7 @@
       "range?": "(start: number, end: number, count: number) => string",
       "selectAllRows?": "(count: number) => string",
       "selectPage?": "string",
-      "selectRow?": "string"
+      "selectRow?": "((row: string) => string) | string"
     },
     "CDatePickerDisabledDate": "{ end: string; start: string } | string",
     "CDatePickerRange": {

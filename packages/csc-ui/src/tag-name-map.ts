@@ -288,7 +288,7 @@ export interface CBreadcrumbItemElement extends Omit<HTMLElement, 'href' | 'targ
 }
 
 /** Buttons trigger actions — submitting a form, opening a modal, confirming a choice. Use one primary (default appearance) button per view; secondary actions use the `outlined`, `ghost` or `text` appearances. */
-export interface CButtonElement extends Omit<HTMLElement, 'active' | 'danger' | 'disabled' | 'fit' | 'ghost' | 'href' | 'inverted' | 'loading' | 'noRadius' | 'noRipple' | 'outlined' | 'size' | 'target' | 'text' | 'type' | 'value'> {
+export interface CButtonElement extends Omit<HTMLElement, 'active' | 'asTab' | 'danger' | 'disabled' | 'fit' | 'ghost' | 'href' | 'inverted' | 'loading' | 'noRadius' | 'noRipple' | 'outlined' | 'size' | 'target' | 'text' | 'type' | 'value'> {
   /**
    * Pressed (toggle) state — renders the selected look and sets
    * `aria-pressed`. Leave unset for regular action buttons: only a
@@ -423,7 +423,13 @@ export interface CCardContentElement extends HTMLElement {
 }
 
 /** The heading section of a `c-card`, set in small uppercase type above a primary accent bar; place it first in the card. Controls in its `actions` slot sit at the right of the heading and move onto their own line under it when the two do not fit side by side. */
-export interface CCardTitleElement extends HTMLElement {
+export interface CCardTitleElement extends Omit<HTMLElement, 'headingLevel'> {
+  /**
+   * The title's heading level, 1 to 6: pick the one that fits the card's
+   * place in the page's outline (2 under the page's `h1`, 3 inside a section
+   * with an `h2`).
+   */
+  headingLevel?: 1 | 2 | 3 | 4 | 5 | 6;
 }
 
 /** Events dispatched by `<c-checkbox>`. */
@@ -1114,7 +1120,13 @@ export interface CLoginCardContentElement extends HTMLElement {
 }
 
 /** The heading of a `c-login-card`, in large bold type in the primary colour; place it first in the card. The card shrinks it from 40px to 32px in its compact layout. */
-export interface CLoginCardTitleElement extends HTMLElement {
+export interface CLoginCardTitleElement extends Omit<HTMLElement, 'headingLevel'> {
+  /**
+   * The title's heading level, 1 to 6: pick the one that fits the card's
+   * place in the page's outline (2 under the page's `h1`, 3 inside a section
+   * with an `h2`).
+   */
+  headingLevel?: 1 | 2 | 3 | 4 | 5 | 6;
 }
 
 /** The page shell of an application: it paints the page canvas and lays out the toolbar, the side navigation and the page in the dashboard layout. It is at least a viewport tall and grows with its content, so the document — not a component — is what scrolls. */
@@ -2088,7 +2100,7 @@ export interface CSwitchElement extends Omit<HTMLElement, 'checked' | 'disabled'
 }
 
 /** One tab in the row of a `c-tabs`: its label goes in the default slot (a `c-badge` there sits on the tab's corner), and its `value` names the `c-tab-item` panel it shows. `c-tabs` decides which tab is active; `disabled` keeps a tab from being selected. */
-export interface CTabElement extends Omit<HTMLElement, 'active' | 'disabled' | 'value'> {
+export interface CTabElement extends Omit<HTMLElement, 'active' | 'disabled' | 'tabStop' | 'value'> {
   /** Mark tab as disabled */
   disabled?: boolean;
   /**

@@ -19,7 +19,17 @@
       @touchmove="onTouchMove"
       @touchstart="onTouchStart"
     >
-      <div ref="scrollRef" :class="ui.scroll()" class="c-tabs__scroll">
+      <!-- The tablist is the row of tabs alone (APG Tabs): the scroll arrows
+           and the panels sit outside it. In buttons mode c-tab-buttons is
+           the tablist itself, around its own buttons. -->
+      <div
+        ref="scrollRef"
+        :aria-label="buttonsMode ? undefined : tablistLabel"
+        :aria-orientation="!buttonsMode && vertical ? 'vertical' : undefined"
+        :class="ui.scroll()"
+        :role="buttonsMode ? undefined : 'tablist'"
+        class="c-tabs__scroll"
+      >
         <slot />
       </div>
     </div>
@@ -112,6 +122,7 @@ import {
   onBeforeUnmount,
   onMounted,
   ref,
+  useAttrs,
   useHost,
   useId,
   useTemplateRef,
@@ -248,10 +259,6 @@ const scrollOffset = ref(0);
 
 let initialized = false;
 
-let isDirty = false;
-
-let focusedTabValue: number | string = props.value;
-
 let previousWidth = 0;
 
 let maxScrollOffset = 0;
@@ -277,8 +284,20 @@ type CTabButtonsEl = { value: number | string } & HTMLElement;
 type CTabEl = {
   active?: boolean;
   disabled?: boolean;
+  tabStop?: boolean;
   value: number | string;
 } & HTMLElement;
+
+// An aria-label on the element names the tablist.
+const attrs = useAttrs();
+
+const tablistLabel = computed(() => attrs['aria-label'] as string | undefined);
+
+// A tab's `disabled` reads back as the raw attribute string ('' when set).
+const isDisabled = (tab: CTabEl) => coerceBoolean(tab.disabled);
+
+// Buttons mode: a slotted c-tab-buttons is the tab strip, and the tablist.
+const buttonsMode = ref(false);
 
 type CTabItemsEl = {
   disableAnimation?: boolean;
@@ -477,8 +496,26 @@ const ensureId = (el: HTMLElement, prefix: string): string => {
   return el.id;
 };
 
+// With no tab matching the value, the first enabled tab is the row's Tab
+// stop, so the row stays reachable (c-tab: `tabStop`).
+const updateTabStop = () => {
+  if (tabButtonsEl()) return;
+
+  const list = tabsList();
+
+  const entry = list.some(
+    (t) => t.value === internalValue.value && !isDisabled(t),
+  )
+    ? null
+    : list.find((t) => !isDisabled(t));
+
+  for (const t of list) t.tabStop = t === entry;
+};
+
 const handleActiveTab = () => {
   requestAnimationFrame(() => {
+    updateTabStop();
+
     const items = tabItemsEl();
 
     if (!items) return;
@@ -503,7 +540,11 @@ const handleActiveTab = () => {
       if (tab) {
         const tabId = ensureId(tab, 'c-tab');
         item.setAttribute('aria-labelledby', tabId);
-        tab.setAttribute('aria-controls', tabItemId);
+
+        // A c-tab is the tab itself; in buttons mode the tab is the c-button's
+        // inner button, which an id reference on its host never reaches, and
+        // a host carrying one is a stray child of the tablist.
+        if (!tb) tab.setAttribute('aria-controls', tabItemId);
 
         if (!tb) {
           tab.active = isActive;
@@ -527,15 +568,8 @@ const handleActiveTab = () => {
           });
         }
 
-        // After keyboard use the active tab takes focus, but only from the
-        // row: focus in a panel (typing in a field) stays where it is.
-        if (
-          isActive &&
-          isDirty &&
-          tabsList().some((t) => t.matches(':focus-within'))
-        ) {
-          tab.focus();
-        }
+        // No focus moves here: with manual activation focus stays where the
+        // keys put it (a re-measure used to pull it back to the active tab).
       }
 
       item.active = isActive;
@@ -553,13 +587,11 @@ const getDimensions = (item: HTMLElement) => {
   return { containerWidth, containerX, width, x };
 };
 
+// Scroll the row so `tab` is in view. It moves no focus: a value set from
+// code scrolls the selected tab into view too, and focus waiting for the
+// scroll's transitionend never came without motion.
 const moveToTab = (tab: HTMLElement) => {
   if (!tab) return;
-
-  const onTransitionEnd = () => {
-    tab?.focus();
-    scrollRef.value?.removeEventListener('transitionend', onTransitionEnd);
-  };
 
   requestAnimationFrame(() => {
     const tabIndex = getTabIndex((tab.dataset.value as string) ?? '');
@@ -591,26 +623,25 @@ const moveToTab = (tab: HTMLElement) => {
       scrollOffset.value -= tabEnd - containerEnd + 4;
     }
   });
-  scrollRef.value?.addEventListener('transitionend', onTransitionEnd);
 };
 
+// Focus a tab at once, without the browser scrolling the clipped row; the row
+// then scrolls a tab out of view into it.
 const focusTab = (value: number | string) => {
   if (tabButtonsEl()) return;
-  requestAnimationFrame(() => {
-    const item = tabsList().find((t) => t.value === value) as HTMLElement;
 
-    if (!item) return;
+  const item = tabsList().find((t) => t.value === value) as HTMLElement;
 
-    const { containerWidth, containerX, width, x } = getDimensions(item);
+  if (!item) return;
+  item.focus({ preventScroll: true });
 
-    if (x >= containerX && x + width <= containerX + containerWidth) {
-      item.focus();
+  if (vertical.value) return;
 
-      return;
-    }
+  const { containerWidth, containerX, width, x } = getDimensions(item);
 
+  if (x < containerX || x + width > containerX + containerWidth) {
     moveToTab(item);
-  });
+  }
 };
 
 // A resize while the indicator moves is re-measured too: dropping it left a
@@ -707,6 +738,14 @@ watch(internalValue, () => {
 
 watch(justify, handleActiveTab);
 
+// In buttons mode c-tab-buttons is the tablist; it takes the tab set's name.
+watch([tablistLabel, buttonsMode], () => {
+  const tb = tabButtonsEl();
+
+  if (tb && tablistLabel.value)
+    tb.setAttribute('aria-label', tablistLabel.value);
+});
+
 // Host class list reflects the current variant/state set.
 watchEffect(() => {
   if (!host) return;
@@ -722,7 +761,7 @@ watchEffect(() => {
 
 onMounted(() => {
   if (!host) return;
-  host.setAttribute('role', 'tablist');
+  buttonsMode.value = !!tabButtonsEl();
 
   // Defer reaching into slotted/light-DOM children: c-tabs.onMounted
   // runs in a microtask after its own connectedCallback, which can fire
@@ -739,6 +778,8 @@ onMounted(() => {
     // The adapter needs no mode flag: c-tab-buttons is always the
     // tab-strip controller; only the host class for the indicator-suppressing
     // styles below is ours to set.
+    buttonsMode.value = !!tb;
+
     if (tb) host.classList.add('c-tabs--buttons');
   });
 
@@ -750,16 +791,15 @@ onMounted(() => {
     ev.stopPropagation();
     select(ev.detail.value);
   });
-  host.addEventListener('tabfocus', (e) => {
-    const ev = e as CustomEvent<number | string>;
-    ev.stopPropagation();
-    focusedTabValue = ev.detail;
-  });
+  // A tab's focus wiring event ends here (the keys read the focused tab
+  // off the event target).
+  host.addEventListener('tabfocus', (e) => e.stopPropagation());
 
-  // Keyboard: Enter/Space selects focused tab; arrows move focus. In buttons
-  // mode the adapter's wrapped c-button-group owns keyboard interaction
-  // (Space/Enter fire the native button click, arrows rove focus), so both
-  // handlers stand down to avoid double-dispatching `change`.
+  // APG Tabs with manual activation: Enter and Space select the focused tab;
+  // the arrow keys (Up and Down in the vertical layout) move focus over the
+  // enabled tabs, stopping at the ends, and Home and End go to the first and
+  // the last. On keydown, as native controls act. In buttons mode the
+  // adapter's wrapped c-button-group owns the keys, so this stands down.
   host.addEventListener(
     'keydown',
     (e) => {
@@ -769,50 +809,35 @@ onMounted(() => {
 
       const target = ev.target as CTabEl;
 
-      if (!tabsList().includes(target) || target.disabled) return;
+      if (!tabsList().includes(target)) return;
 
-      if (ev.key === 'Enter' || ev.code === 'Space') select(target.value);
-    },
-    true,
-  );
-  host.addEventListener(
-    'keyup',
-    (e) => {
-      if (tabButtonsEl()) return;
+      if (ev.key === 'Enter' || ev.code === 'Space') {
+        if (!isDisabled(target)) select(target.value);
 
-      const ev = e as KeyboardEvent;
-
-      // Keys on a tab only: typing in a panel is not tab-row keyboard use.
-      if (!tabsList().includes(ev.target as CTabEl)) return;
-      isDirty = true;
-
-      const isLeft = ev.key === 'ArrowLeft';
-
-      const isRight = ev.key === 'ArrowRight';
-
-      if (!isLeft && !isRight) return;
-
-      const values = availableValues();
-
-      const idx = getTabIndex(focusedTabValue);
-
-      const first = values.at(0);
-
-      const last = values.at(-1);
-
-      const isBeginning = focusedTabValue === first;
-
-      const isEnd = focusedTabValue === last;
-
-      if (isLeft) {
-        if (isBeginning) return;
-        focusTab(isBeginning ? last! : values[idx - 1]);
+        return;
       }
 
-      if (isRight) {
-        if (isEnd) return;
-        focusTab(isEnd ? first! : values[idx + 1]);
+      const enabled = tabsList().filter((t) => !isDisabled(t));
+
+      const at = enabled.indexOf(target);
+
+      let next: CTabEl | undefined;
+
+      if (ev.key === (vertical.value ? 'ArrowUp' : 'ArrowLeft')) {
+        next = enabled[at - 1];
+      } else if (ev.key === (vertical.value ? 'ArrowDown' : 'ArrowRight')) {
+        next = enabled[at + 1];
+      } else if (ev.key === 'Home') {
+        next = enabled[0];
+      } else if (ev.key === 'End') {
+        next = enabled.at(-1);
+      } else {
+        return;
       }
+
+      ev.preventDefault();
+
+      if (next && next !== target) focusTab(next.value);
     },
     true,
   );
