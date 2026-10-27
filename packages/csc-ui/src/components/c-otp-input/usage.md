@@ -71,7 +71,9 @@ most flows. `hide-details` hides the hint and the error message.
 - The boxes form a `role="group"` named by the label. Without a `label` or
   slotted label the group has no name, so always give it one.
 - Each box is its own input and Tab stop, labelled with its position ("Enter
-  code - digit number - 2 of 6").
+  code - digit number - 2 of 6") and described by the hint or error message.
+  `required` marks every box `aria-required`, and `invalid` every box
+  `aria-invalid`.
 - About 1.4 seconds after the digits stop changing, a polite live region reads
   what has been entered ("Currently entered - 1 - 2 - 3"), prefixed with the
   error message while one is shown.
@@ -83,7 +85,8 @@ most flows. `hide-details` hides the hint and the error message.
 
 Restyle via CSS parts: `::part(root)` wraps the label, the boxes and the
 message; `::part(label)` is the group label; `::part(digits)` is the row of
-boxes; `::part(input)` is each box.
+boxes; `::part(input)` is each box; `::part(message)` is the hint or error
+message.
 
 ```css
 c-otp-input::part(input) {

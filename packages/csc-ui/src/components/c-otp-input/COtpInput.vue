@@ -36,7 +36,10 @@
         :id="`${resolvedId}--input-${i}`"
         :key="i"
         ref="inputsRef"
+        :aria-describedby="hideDetails ? undefined : messageId"
+        :aria-invalid="invalid ? 'true' : undefined"
         :aria-label="`Enter code - digit number - ${i} of ${length}`"
+        :aria-required="required ? 'true' : undefined"
         :class="ui.input()"
         :name="`${resolvedId}--digit-${i}`"
         autocapitalize="off"
@@ -60,10 +63,12 @@
 
     <c-message
       v-if="!hideDetails"
+      :id="messageId"
       :class="ui.message()"
       :error-message
       :hint
       :invalid
+      part="message"
     />
   </div>
 </template>
@@ -76,6 +81,7 @@
  * @csspart label - The group label rendered above the digit inputs
  * @csspart digits - The inline-grid wrapper around the digit inputs
  * @csspart input - Each single-digit `<input>` box (one per digit)
+ * @csspart message - The hint or error message under the digits, which describes each digit
  */
 import { tv } from 'tailwind-variants';
 import {
@@ -257,6 +263,8 @@ const labelVisible = computed(
 );
 
 const labelId = computed(() => `${resolvedId.value}-label`);
+
+const messageId = computed(() => `${resolvedId.value}-message`);
 
 const ui = computed(() =>
   otp({ hideDetails: props.hideDetails, invalid: props.invalid }),

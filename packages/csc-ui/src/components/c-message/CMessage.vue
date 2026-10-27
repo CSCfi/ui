@@ -73,8 +73,8 @@ interface CMessageProps {
   hint?: string;
 
   /**
-   * Show the control as invalid: its `error-message`, when set, replaces the
-   * hint, and the control is marked `aria-invalid`.
+   * Show the `error-message`, when set, in place of the hint. Marking the
+   * control itself `aria-invalid` is up to the control.
    */
   invalid?: boolean;
 }

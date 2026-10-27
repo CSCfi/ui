@@ -215,3 +215,32 @@ describe('digits', () => {
     expect(m.host.classList.contains('error')).toBe(true);
   });
 });
+
+describe('digits for assistive technology', () => {
+  it('marks every digit required and invalid, described by the message', async () => {
+    const m = await mountOtp({
+      errorMessage: 'The code has expired',
+      invalid: true,
+      required: true,
+    });
+
+    const message = m.part('message');
+
+    expect(message.id).not.toBe('');
+
+    for (const digit of digits(m)) {
+      expect(digit.getAttribute('aria-required')).toBe('true');
+      expect(digit.getAttribute('aria-invalid')).toBe('true');
+      expect(digit.getAttribute('aria-describedby')).toBe(message.id);
+    }
+  });
+
+  it('marks nothing on a valid, optional field', async () => {
+    const m = await mountOtp();
+
+    for (const digit of digits(m)) {
+      expect(digit.hasAttribute('aria-required')).toBe(false);
+      expect(digit.hasAttribute('aria-invalid')).toBe(false);
+    }
+  });
+});
