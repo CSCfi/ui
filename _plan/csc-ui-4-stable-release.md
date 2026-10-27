@@ -496,6 +496,13 @@ start migrating on the first alpha that carries D2–D4.
      navigation now leaves a leaf's `active` alone (`select`, drawer close and parent expansion unchanged), as
      the docs site and every canon already bind it. MyCSC check: every side-nav item and sub-item binds `active`
      from the route (3.x highlighted a clicked top-level item by itself).
+   - **ARIA id references (user decision 2026-10-27: forward them, `_plan/aria-id-references.md`, ADR-0078).**
+     A side agent noted that `aria-labelledby`/`-describedby`/`-controls` on a `c-*` element reached nothing
+     (kept on the host since d6253feb). Fixed with ARIA element reflection: `useIdReferences` resolves the
+     host's ids in the host's tree and hands the elements to the element carrying the role, merged after the
+     component's own; 38 tags wired, the rest listed in `aria-object.ts` and asserted by all-components.
+     Found on the way and fixed first (10836590): a host `aria-label` never named a field's input.
+     MyCSC check: none needed for these attributes; they now work.
    - **Merge conflict ahead:** the `development` → `main` PR conflicts in `packages/csc-ui/package.json`: phase 3's
      new `description` is the line after `version`, which `main`'s release commits bumped (development still has
      alpha.18). Resolve with `main`'s version and `development`'s description. From here: fixes only, API guard fails any breaking diff.
