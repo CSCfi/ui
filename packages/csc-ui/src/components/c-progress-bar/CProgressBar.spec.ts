@@ -26,3 +26,11 @@ it('an aria-label on the element names the progress bar without a label', async 
     host.shadowRoot!.querySelector('progress')!.getAttribute('aria-label'),
   ).toBe('Storage used');
 });
+
+it('shows no percentage tooltip while indeterminate', async () => {
+  const { host } = await mount('c-progress-bar', {
+    attrs: { indeterminate: true, value: 0 },
+  });
+
+  expect(host.hasAttribute('title')).toBe(false);
+});

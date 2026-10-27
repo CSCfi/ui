@@ -150,7 +150,10 @@ onMounted(() => {
     // Busy only while indeterminate: a determinate bar announces its value
     // updates, which aria-busy="true" would tell AT to defer.
     host.setAttribute('aria-busy', props.indeterminate.toString());
-    host.setAttribute('title', `${safeValue.value} %`);
+
+    // The percentage tooltip, but none while there is no value to show.
+    if (props.indeterminate) host.removeAttribute('title');
+    else host.setAttribute('title', `${safeValue.value} %`);
   });
 });
 </script>
