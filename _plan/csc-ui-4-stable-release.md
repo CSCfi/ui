@@ -508,6 +508,9 @@ start migrating on the first alpha that carries D2–D4.
      The c-input fields now render FieldMessage in their own tree (c-input offers a `message` slot) and point
      the input's `aria-describedby` at it; c-checkbox, c-radio-group, c-file-upload link theirs. Fields gain a
      `message` part. Axe never flagged it.
+     Follow-up (user decision): `host.focus()` did nothing on any value control, so an app could not move focus
+     to an invalid field; the 15 form controls now expose `focus()` (minor changeset). MyCSC check: after a
+     failed submit, focus the first invalid field (or an error summary).
    - **Merge conflict ahead:** the `development` → `main` PR conflicts in `packages/csc-ui/package.json`: phase 3's
      new `description` is the line after `version`, which `main`'s release commits bumped (development still has
      alpha.18). Resolve with `main`'s version and `development`'s description. A wrong pick is cosmetic, not a

@@ -27,3 +27,20 @@ or the error (WCAG 1.3.1 / 3.3.1 in practice); axe does not flag it.
 
 Spec: value-controls — every value control with a `hint` describes a role-bearing control with its hint, and
 with its error message while invalid.
+
+## Follow-up: moving focus to a field (user decision 2026-10-27: a `focus()` method)
+
+A side agent noted that a new error is announced to no one, so after a failed submit the app should move focus
+to the first invalid field. Probing showed it could not: `host.focus()` did nothing on all 19 value controls (the
+host renders no box, nothing delegates). Rejected: `delegatesFocus` (it also moves focus on clicks on
+non-focusable parts, including inside the select and picker panels, and misses c-radio-group's slotted radios).
+Built: an exposed `focus(options?)` on the 15 form controls (value controls minus `NOT_FORM_CONTROLS`:
+c-accordion, c-modal, c-pagination, c-tabs), focusing the control or the group's tab stop; value-controls asserts
+it. Getting started shows the focus-the-first-invalid-field pattern.
+
+Found by a side agent while building it: Vue defines exposed members on the element once, at the first mount,
+as non-configurable getters bound to that instance, so after a remount every exposed member (`startUploads()`,
+`unmaskedValue`, `badInput`, c-radio's `_syncGroupState`, the new `focus()`) reached the unmounted instance,
+with a dev warning per member. Fixed centrally in defineElement (`withLiveExposed`: `expose` taken over, one
+configurable accessor per member reading the instance mounted now); the focus conformance test re-adds every
+form control.
