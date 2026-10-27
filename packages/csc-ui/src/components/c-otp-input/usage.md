@@ -31,6 +31,10 @@ property, `update:value` and `change`. Every change fires `update:value` and
 `input`; `change` fires when the code is committed, on Enter or when focus
 leaves the boxes after a change (moving between the boxes does not count).
 
+The digits run from the first box up to the first empty one: clearing a box in
+the middle ends the value there, and the digits after it count again once it
+is filled.
+
 `completion` fires with the whole code whenever a change leaves every box
 filled, so editing a complete code fires it again with the new code.
 
@@ -42,10 +46,12 @@ to `''` to clear them.
 Each box takes one digit and brings up the numeric keyboard on a phone.
 Typing a digit moves focus to the next box, and focusing a box selects its
 digit, so typing replaces it. Backspace in an empty box moves back to the
-previous one. Letters and punctuation are dropped as they are typed.
+previous one. Anything but a digit — a letter, a space, punctuation — is
+dropped as it is typed.
 
 Pasting a code into the first box fills the boxes in order, up to `length`
-digits, and moves focus to the last box filled. A paste that is not a number
+digits, and moves focus to the last box filled. Spaces and line breaks in the
+pasted text are skipped; a paste with any other character that is not a digit
 is ignored. The boxes opt out of browser and password-manager autofill.
 
 ## Label and validation
@@ -58,7 +64,7 @@ Validation is yours too: set `invalid` and an `error-message` explaining why.
 The boxes take the error colour and the message replaces the `hint`. While
 invalid without an `error-message`, the boxes are still coloured but the hint
 keeps rendering as a hint. Checking the code on `completion` or `change` fits
-most flows.
+most flows. `hide-details` hides the hint and the error message.
 
 ## Accessibility
 

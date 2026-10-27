@@ -26,7 +26,11 @@
       <slot />
     </form-label>
 
-    <div :class="ui.digits()" part="digits">
+    <div
+      :class="ui.digits()"
+      :style="{ '--_c-otp-input-count': length }"
+      part="digits"
+    >
       <input
         v-for="i in length"
         :id="`${resolvedId}--input-${i}`"
@@ -54,7 +58,13 @@
       />
     </div>
 
-    <c-message :class="ui.message()" :error-message :hint :invalid />
+    <c-message
+      v-if="!hideDetails"
+      :class="ui.message()"
+      :error-message
+      :hint
+      :invalid
+    />
   </div>
 </template>
 
@@ -289,11 +299,18 @@ const updateStatusText = () => {
   }, 1400);
 };
 
-/** The digits entered so far, `''` when none: the value everywhere. */
-const digits = (): string =>
-  inputs()
-    .map((i) => i?.value ?? '')
-    .join('');
+/**
+ * The digits entered so far, `''` when none: the value everywhere. They run
+ * from the first box up to the first empty one, so a cleared middle box ends
+ * the value there instead of pulling the later digits into its place.
+ */
+const digits = (): string => {
+  const boxes = inputs().map((i) => i?.value ?? '');
+
+  const gap = boxes.indexOf('');
+
+  return (gap < 0 ? boxes : boxes.slice(0, gap)).join('');
+};
 
 // The value last reported or set, and the value at the last commit.
 let held = props.value ?? '';
@@ -372,7 +389,8 @@ const onInput = (event: InputEvent) => {
 
   const prev = target.previousElementSibling as HTMLInputElement | null;
 
-  if (isNaN(+target.value)) {
+  // One digit, or none (a deletion); anything else is dropped.
+  if (!/^\d?$/.test(target.value)) {
     event.preventDefault();
     target.value = '';
 
@@ -395,9 +413,11 @@ const onInput = (event: InputEvent) => {
 const onPaste = (event: ClipboardEvent) => {
   event.preventDefault();
 
-  const paste = event.clipboardData?.getData('text') ?? '';
+  // A code copied with spaces or a line break around it still counts; any
+  // other character makes the paste no code.
+  const paste = (event.clipboardData?.getData('text') ?? '').replace(/\s/g, '');
 
-  if (isNaN(+paste)) return;
+  if (!/^\d+$/.test(paste)) return;
   isPasting = true;
   paste.split('').forEach((char, index) => {
     if (index >= inputs().length) return;
@@ -416,7 +436,6 @@ const onPaste = (event: ClipboardEvent) => {
   });
 };
 
-// Expose a public reset() like Stencil's @Method().
 watch(() => props.errorMessage, updateStatusText);
 // A value set from outside fills the digits and is the baseline for the next
 // commit; the host `value` mirror's own write is `held` already. Never emits.
@@ -436,18 +455,11 @@ watch(
 
 onMounted(() => {
   if (!host) return;
-  host.classList.toggle('error', props.invalid);
-  host.style.setProperty('--_c-otp-input-count', String(props.length));
   handleValueChange(props.value);
 
   // A native `autofocus` inside a shadow root is not honoured.
   if (props.autofocus) requestAnimationFrame(() => inputs()[0]?.focus());
 });
-
-watch(
-  () => props.invalid,
-  (v) => host?.classList.toggle('error', v),
-);
 </script>
 
 <!--

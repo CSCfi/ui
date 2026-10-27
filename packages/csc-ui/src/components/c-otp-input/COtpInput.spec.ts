@@ -110,3 +110,102 @@ describe('3.x attribute names (R1)', () => {
     expect(m.host.shadowRoot!.activeElement).toBe(digits(m)[0]);
   });
 });
+
+describe('digits', () => {
+  const paste = (input: HTMLInputElement, text: string): void => {
+    const data = new DataTransfer();
+
+    data.setData('text', text);
+    input.dispatchEvent(
+      new ClipboardEvent('paste', {
+        bubbles: true,
+        cancelable: true,
+        clipboardData: data,
+      }),
+    );
+  };
+
+  it('a cleared middle digit ends the value there', async () => {
+    const m = await mountOtp({ value: '1234' });
+
+    digits(m)[1]!.focus();
+    await userEvent.keyboard('{Backspace}');
+    await settle();
+
+    expect(digits(m).map((d) => d.value)).toEqual(['1', '', '3', '4']);
+    expect(m.host.value).toBe('1');
+
+    await userEvent.keyboard('2');
+    await settle();
+
+    expect(m.host.value).toBe('1234');
+  });
+
+  it('takes digits only, typed or pasted', async () => {
+    const m = await mountOtp();
+
+    await userEvent.type(digits(m)[0]!, ' ');
+    await settle();
+
+    expect(digits(m)[0]!.value).toBe('');
+
+    for (const text of ['1e34', '0x1F', '-123', '1.52']) {
+      paste(digits(m)[0]!, text);
+      await settle();
+
+      expect(
+        digits(m)
+          .map((d) => d.value)
+          .join(''),
+        text,
+      ).toBe('');
+    }
+
+    // A code copied with spaces or a line break around it still fills.
+    paste(digits(m)[0]!, ' 12 34\n');
+    await settle();
+
+    expect(m.host.value).toBe('1234');
+  });
+
+  it('lays out a box per digit when length changes', async () => {
+    const m = await mountOtp({ length: 6 });
+
+    (m.host as { length?: number } & HTMLElement).length = 4;
+    await settle();
+
+    const boxes = digits(m).map((d) => d.getBoundingClientRect());
+
+    const row = m.part('digits').getBoundingClientRect();
+
+    expect(boxes).toHaveLength(4);
+    // No empty columns left over from the six digits.
+    expect(row.right).toBeCloseTo(boxes.at(-1)!.right, 0);
+  });
+
+  it('hide-details hides the hint', async () => {
+    const m = await mountOtp({ hideDetails: true, hint: 'Check your SMS' });
+
+    /** Text in a shadow tree and the shadow trees inside it. */
+    const deepText = (root: ShadowRoot): string =>
+      [...root.querySelectorAll('*')].reduce(
+        (text, el) => text + (el.shadowRoot ? deepText(el.shadowRoot) : ''),
+        root.textContent ?? '',
+      );
+
+    expect(deepText(m.host.shadowRoot!)).not.toContain('Check your SMS');
+  });
+
+  it('leaves a class of your own on the element', async () => {
+    const m = await mount<OtpHost>('c-otp-input', {
+      attrs: { class: 'error', length: 4 },
+    });
+
+    (m.host as { invalid?: boolean } & HTMLElement).invalid = true;
+    await settle();
+    (m.host as { invalid?: boolean } & HTMLElement).invalid = false;
+    await settle();
+
+    expect(m.host.classList.contains('error')).toBe(true);
+  });
+});
