@@ -4,7 +4,7 @@ import { mdiBellOutline, mdiEmailOutline } from '@mdi/js';
 
 const styles = `
 c-badge.success-badge::part(root) {
-  background-color: var(--c-success-500);
+  background-color: var(--c-success);
 }
 `;
 
@@ -18,7 +18,7 @@ export const Basic = () => (
         <CBadge>3</CBadge>
       </span>
 
-      <CIconButton outlined>
+      <CIconButton aria-label="Messages, 1 unread" outlined>
         <CIcon path={mdiEmailOutline} />
         <CBadge className="success-badge">1</CBadge>
       </CIconButton>

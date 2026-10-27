@@ -36,9 +36,9 @@ c-accordion.custom-style {
 `;
 
 export const CustomStyle = () => {
-  const [expanded, setExpanded] = useState<'billing' | 'members' | 'storage'>(
-    'billing',
-  );
+  const [expanded, setExpanded] = useState<
+    'billing' | 'members' | 'storage' | null
+  >('billing');
 
   return (
     <>
@@ -47,7 +47,7 @@ export const CustomStyle = () => {
       <CAccordion
         className="custom-style"
         onChange={(event) =>
-          setExpanded(event.detail as 'billing' | 'members' | 'storage')
+          setExpanded(event.detail as 'billing' | 'members' | 'storage' | null)
         }
         value={expanded}
       >

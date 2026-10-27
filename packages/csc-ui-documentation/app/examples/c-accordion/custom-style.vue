@@ -17,7 +17,7 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 
-const expanded = ref<'billing' | 'members' | 'storage'>('billing');
+const expanded = ref<'billing' | 'members' | 'storage' | null>('billing');
 </script>
 
 <style>

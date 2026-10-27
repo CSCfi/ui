@@ -9,16 +9,14 @@
 
         <c-sub-navigation-item
           :active="current === 'active'"
-          @click="current = 'active'"
-          @keyup.enter="current = 'active'"
+          @select="current = 'active'"
         >
           Active projects
         </c-sub-navigation-item>
 
         <c-sub-navigation-item
           :active="current === 'archived'"
-          @click="current = 'archived'"
-          @keyup.enter="current = 'archived'"
+          @select="current = 'archived'"
         >
           Archived projects
         </c-sub-navigation-item>

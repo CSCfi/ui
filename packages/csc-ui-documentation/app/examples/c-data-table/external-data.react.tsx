@@ -6,7 +6,7 @@ import type {
 
 import { CDataTable } from '@cscfi/csc-ui-react';
 // @ts-nocheck — documentation code sample; shown as text, never compiled here
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 const columns: CDataTableColumn[] = [
   { header: 'Job', key: 'name', sortable: true },
@@ -64,15 +64,29 @@ export const ExternalData = () => {
 
   const [loading, setLoading] = useState(false);
 
-  const load = async (q: Query) => {
+  // The table's events can follow each other in one go (a page-size change
+  // also moves to page 1), so each builds on the latest query, not on the
+  // render's, and only the latest request's rows are shown.
+  const latest = useRef({ query, request: 0 });
+
+  const load = async (change: Partial<Query>) => {
+    const q = { ...latest.current.query, ...change };
+
+    const request = ++latest.current.request;
+
+    latest.current.query = q;
     setQuery(q);
     setLoading(true);
-    setPage(await fetchPage(q));
+
+    const rows = await fetchPage(q);
+
+    if (request !== latest.current.request) return;
+    setPage(rows);
     setLoading(false);
   };
 
   useEffect(() => {
-    load(query);
+    load({});
   }, []);
 
   return (
@@ -86,18 +100,10 @@ export const ExternalData = () => {
         external
         itemCount={TOTAL}
         loading={loading}
-        onChangePage={(event) =>
-          load({ ...query, page: event.detail as number })
-        }
-        onChangePageSize={(event) =>
-          load({ ...query, pageSize: event.detail as number })
-        }
+        onChangePage={(event) => load({ page: event.detail as number })}
+        onChangePageSize={(event) => load({ pageSize: event.detail as number })}
         onChangeSort={(event) =>
-          load({
-            ...query,
-            page: 1,
-            sort: event.detail as CDataTableSort | null,
-          })
+          load({ page: 1, sort: event.detail as CDataTableSort | null })
         }
         page={query.page}
         pageSize={5}

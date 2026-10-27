@@ -53,11 +53,21 @@ const table = document.querySelector('c-data-table')!;
 table.columns = columns;
 table.itemCount = TOTAL;
 
+// A page-size change also moves to page 1, so two requests can overlap: only
+// the latest one's rows are shown.
+let latest = 0;
+
 const load = async () => {
+  const request = ++latest;
+
   table.loading = true;
   table.page = query.page;
   table.sort = query.sort;
-  table.data = await fetchPage(query);
+
+  const rows = await fetchPage({ ...query });
+
+  if (request !== latest) return;
+  table.data = rows;
   table.loading = false;
 };
 

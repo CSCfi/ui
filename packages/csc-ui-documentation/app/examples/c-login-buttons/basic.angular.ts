@@ -15,17 +15,11 @@ const logo = (path: string) =>
   template: `
     <div>
       <c-login-buttons>
-        <c-login-button [src]="hakaLogo" alt="Haka logo">
-          Haka login
-        </c-login-button>
+        <c-login-button [src]="hakaLogo">Haka login</c-login-button>
 
-        <c-login-button [src]="virtuLogo" alt="Virtu logo">
-          Virtu login
-        </c-login-button>
+        <c-login-button [src]="virtuLogo">Virtu login</c-login-button>
 
-        <c-login-button [src]="cscLogo" alt="CSC logo">
-          CSC login
-        </c-login-button>
+        <c-login-button [src]="cscLogo">CSC login</c-login-button>
       </c-login-buttons>
     </div>
   `,

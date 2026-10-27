@@ -5,7 +5,10 @@ export const Basic = () => (
   // Demo-only sizing: c-page normally fills the dashboard's page area and the document scrolls.
   <CPage style={{ height: '240px' }}>
     <h2>Reports</h2>
-    <p>The default slot is wrapped in a centered max-width container.</p>
+    <p>
+      The default slot is wrapped in a max-width container at the start of the
+      page.
+    </p>
 
     <div slot="footer">Footer content</div>
   </CPage>

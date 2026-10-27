@@ -79,5 +79,5 @@ import {
   `,
 })
 export class CustomStyleExampleComponent {
-  expanded = signal<'billing' | 'members' | 'storage'>('billing');
+  expanded = signal<'billing' | 'members' | 'storage' | null>('billing');
 }

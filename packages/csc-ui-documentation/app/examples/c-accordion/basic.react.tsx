@@ -3,14 +3,14 @@ import { CAccordion, CAccordionItem } from '@cscfi/csc-ui-react';
 import { useState } from 'react';
 
 export const Basic = () => {
-  const [expanded, setExpanded] = useState<'billing' | 'members' | 'storage'>(
-    'billing',
-  );
+  const [expanded, setExpanded] = useState<
+    'billing' | 'members' | 'storage' | null
+  >('billing');
 
   return (
     <CAccordion
       onChange={(event) =>
-        setExpanded(event.detail as 'billing' | 'members' | 'storage')
+        setExpanded(event.detail as 'billing' | 'members' | 'storage' | null)
       }
       value={expanded}
     >

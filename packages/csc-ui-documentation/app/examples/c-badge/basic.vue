@@ -6,7 +6,7 @@
       <c-badge>3</c-badge>
     </span>
 
-    <c-icon-button outlined>
+    <c-icon-button aria-label="Messages, 1 unread" outlined>
       <c-icon :path="mdiEmailOutline" />
 
       <c-badge class="success-badge">1</c-badge>
@@ -25,6 +25,6 @@ import { mdiBellOutline, mdiEmailOutline } from '@mdi/js';
 
 <style>
 c-badge.success-badge::part(root) {
-  background-color: var(--c-success-500);
+  background-color: var(--c-success);
 }
 </style>

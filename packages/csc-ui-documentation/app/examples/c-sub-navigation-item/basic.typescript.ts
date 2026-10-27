@@ -13,9 +13,5 @@ selectable.forEach((item) => {
     selectable.forEach((other) => (other.active = other === item));
   };
 
-  item.addEventListener('click', select);
-
-  item.addEventListener('keyup', (event) => {
-    if (event.key === 'Enter') select();
-  });
+  item.addEventListener('select', select);
 });
