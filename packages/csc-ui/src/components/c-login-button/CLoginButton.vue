@@ -1,15 +1,23 @@
 <template>
-  <a :class="ui.root()" :href="href || undefined" part="root" tabindex="0">
-    <div :class="ui.imageWrap()" part="image-wrap">
+  <!-- A link with an `href`, else a native button the keyboard presses. -->
+  <component
+    :is="href ? 'a' : 'button'"
+    :class="ui.root()"
+    :href="href || undefined"
+    :type="href ? undefined : 'button'"
+    part="root"
+  >
+    <!-- Spans: a button takes phrasing content only. -->
+    <span :class="ui.imageWrap()" part="image-wrap">
       <slot name="image">
         <img :alt :class="ui.image()" :src="src || ''" part="image" />
       </slot>
-    </div>
+    </span>
 
-    <div :class="ui.title()" part="label">
+    <span :class="ui.title()" part="label">
       <slot />
-    </div>
-  </a>
+    </span>
+  </component>
 </template>
 
 <script setup lang="ts">
@@ -17,7 +25,7 @@
  * @slot default - The title shown in the bottom bar
  * @slot image - Custom provider logo markup (an inline `<svg>`, a `<picture>`, …) replacing the default `<img>` rendered from `src`
  *
- * @csspart root - The anchor element forming the whole clickable card
+ * @csspart root - The whole clickable card: a link with `href`, else a button
  * @csspart image-wrap - The area above the title bar that centers the logo (default image or slotted content)
  * @csspart image - The default provider logo `<img>` (absent when the `image` slot is used)
  * @csspart label - The bottom bar wrapping the slotted label
@@ -42,8 +50,9 @@ const loginButton = tv({
   slots: {
     image: 'max-h-30 max-w-50 px-6 py-2',
     imageWrap: 'flex min-h-0 items-center justify-center',
-    root: 'grid h-full min-h-42 cursor-pointer grid-cols-1 grid-rows-[1fr_auto] overflow-hidden rounded-csc-md border border-solid border-border bg-surface text-center text-on-surface-muted no-underline outline outline-1 outline-transparent hover:border-primary hover:outline-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary',
-    title: 'bg-surface-muted p-1 text-sm shadow-[0_-1px_0_0_var(--c-border)]',
+    root: 'grid h-full min-h-42 w-full cursor-pointer grid-cols-1 grid-rows-[1fr_auto] overflow-hidden rounded-csc-md border border-solid border-border bg-surface text-center text-on-surface-muted no-underline outline outline-1 outline-transparent hover:border-primary hover:outline-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary',
+    title:
+      'block bg-surface-muted p-1 text-sm shadow-[0_-1px_0_0_var(--c-border)]',
   },
 });
 
@@ -59,9 +68,9 @@ interface CLoginButtonProps {
   alt?: string;
 
   /**
-   * Login provider link. Do not set if using a javascript click handler
+   * The provider's sign-in URL, which makes the card a link. Without it the
+   * card is a button: handle its `click`.
    *
-   * @seeded from csc-ui — verify
    * @freeform any URL
    */
   href?: string;
