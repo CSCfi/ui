@@ -89,7 +89,10 @@ const routes = (dir = PUBLIC, found = []) => {
     const path = join(dir, entry);
 
     if (statSync(path).isDirectory()) {
-      if (entry !== '_nuxt') routes(path, found);
+      // The /v3/ archive is the 3.x site, built once (build-v3-archive.mjs).
+      if (entry !== '_nuxt' && path !== join(PUBLIC, 'v3')) {
+        routes(path, found);
+      }
     } else if (entry === 'index.html') {
       const route = `/${relative(PUBLIC, dir).split('\\').join('/')}`.replace(
         /\/$/,

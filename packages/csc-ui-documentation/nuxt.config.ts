@@ -112,6 +112,8 @@ export default defineNuxtConfig({
   nitro: {
     prerender: {
       crawlLinks: true,
+      // The 3.x archive is static files in public/v3/, not app routes.
+      ignore: ['/v3'],
       routes: ['/'],
     },
   },

@@ -407,6 +407,14 @@ start migrating on the first alpha that carries D2–D4.
      say 3.x is unsupported since 4.0.0 with 3.0.19 its last release. They pin with `@3`, not the planned `@v3`
      tag: `@3` already resolves to 3.0.19 on npm, while the `v3` dist-tag only exists after phase 5, so rc
      READMEs would point at a missing tag. Phase 5 still adds the tag.
+   - **3.x docs archive — done locally (2026-10-27).** User chose to commit it: `public/v3/` holds the 3.0.19 docs
+     (387 files, 4.7 MB, `linguist-generated`), served at `/v3/` by every docs deploy, so phase 5 has nothing left
+     to publish for it. `scripts/build-v3-archive.mjs` rebuilds it from the `v3.0.19` tag in a temporary worktree
+     (npm `--ignore-scripts`, so the old `husky install` never touches this repo's git config), injects the
+     "unsupported" banner and `noindex`, and gives each of the 72 component routes an entry HTML so direct links
+     load on any static host. Linked from the migration guide's "Before you start" and a new site footer; the
+     prerender crawler, oxfmt and the viewport smoke skip it. The archive loads Highlight.js from a CDN, as the
+     3.x site did. Noticed: the 4.x docs toolbar still shows a "next" badge.
 4. **RC** — switch pre tag `alpha` → `rc` (verify the changesets CLI sequence: `pre exit` + `pre enter rc` before a
    version run), publish `4.0.0-rc.1`. From here: fixes only, API guard fails any breaking diff.
    Gate (D8): MyCSC fully migrated on the latest RC, e2e green, no open csc-ui blocker.

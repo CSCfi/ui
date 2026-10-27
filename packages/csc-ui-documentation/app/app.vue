@@ -91,6 +91,20 @@
         class="max-w-420 min-w-0 flex-1 px-5 pt-6 pb-12 md:px-12 md:pt-8 md:pb-16"
       >
         <nuxt-page />
+
+        <!-- Plain links: /v3/ is a static archive the client router does not
+             know, so it must load as a page of its own. -->
+        <footer
+          class="mt-16 flex flex-wrap gap-x-6 gap-y-2 border-t border-border pt-6 text-sm text-on-surface-muted"
+        >
+          <a class="underline" href="/v3/">
+            3.x documentation (archived, unsupported)
+          </a>
+
+          <a class="underline" href="https://github.com/CSCfi/ui">
+            Source on GitHub
+          </a>
+        </footer>
       </main>
     </div>
   </div>

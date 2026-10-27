@@ -55,7 +55,11 @@
         </figure>
 
         <p v-if="section.link" class="my-[1em]">
-          <nuxt-link :to="section.link.to" class="font-semibold underline">
+          <nuxt-link
+            :external="section.link.external"
+            :to="section.link.to"
+            class="font-semibold underline"
+          >
             {{ section.link.label }} →
           </nuxt-link>
         </p>
