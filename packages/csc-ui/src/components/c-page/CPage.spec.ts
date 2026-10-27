@@ -49,6 +49,21 @@ describe('c-page', () => {
     expect(m.part('scroll-indicator').style.width).toBe('100%');
   });
 
+  it('scroll-indicator paints above a pinned toolbar inside c-main', async () => {
+    await mount('c-main', {
+      html: `<c-toolbar>Toolbar</c-toolbar><c-page scroll-indicator>${TALL}</c-page>`,
+      stage: false,
+    });
+
+    const scroller = document.scrollingElement!;
+
+    window.scrollTo(0, (scroller.scrollHeight - scroller.clientHeight) / 2);
+    await settle();
+
+    // A point on both the toolbar and the indicator's bar.
+    expect(document.elementFromPoint(100, 1)?.localName).toBe('c-page');
+  });
+
   it('puts the footer at the bottom of a sized host', async () => {
     const m = await mount('c-page', {
       attrs: { style: 'height: 240px' },

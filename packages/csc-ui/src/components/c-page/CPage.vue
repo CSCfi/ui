@@ -50,8 +50,10 @@ defineOptions({ inheritAttrs: false });
 const page = tv({
   slots: {
     container: 'relative h-full w-full max-w-[1280px] p-3 sm:p-4 md:p-6',
-    // Fixed 4px progress bar pinned to the top of the viewport.
-    scrollIndicator: 'fixed top-0 left-0 z-[9] h-1 w-0 bg-primary',
+    // Fixed 4px progress bar pinned to the top of the viewport, above
+    // c-toolbar's `z-10`: inside c-main the pinned toolbar shares the viewport's
+    // top edge with the bar, and hid it.
+    scrollIndicator: 'fixed top-0 left-0 z-[11] h-1 w-0 bg-primary',
   },
 });
 
