@@ -1076,7 +1076,17 @@ const startUploads = (): void => {
   emitValue();
 };
 
-defineExpose({ startUploads });
+/**
+ * Focus its drop zone's button, as `focus()` does on a native control: the element renders
+ * no box of its own to take it.
+ *
+ * @param options - Passed on to that element's `focus()`
+ */
+const focus = (options?: FocusOptions): void => {
+  zoneRef.value?.focus(options);
+};
+
+defineExpose({ focus, startUploads });
 
 // A value set from outside: tracked ids it leaves out are aborted silently;
 // for the rest the component's own state wins, so a stale snapshot never

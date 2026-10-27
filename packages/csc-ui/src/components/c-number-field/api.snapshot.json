@@ -40,7 +40,9 @@
     "input": "CustomEvent<void>",
     "update:value": "CustomEvent<null | number>"
   },
-  "methods": {},
+  "methods": {
+    "focus": "(options?: FocusOptions): void"
+  },
   "parts": [
     "input",
     "message",

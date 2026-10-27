@@ -251,6 +251,11 @@ export interface CAutocompleteElement extends Omit<HTMLElement, 'clearable' | 'd
    * `return-object`; an array of them in `multiple` mode
    */
   value?: CAutocompleteValue;
+  /**
+   * Focus its combobox, as `focus()` does on a native control: the element renders
+   * no box of its own to take it.
+   */
+  focus(options?: FocusOptions): void;
   addEventListener<K extends keyof CAutocompleteElementEventMap>(
     type: K,
     listener: (this: CAutocompleteElement, ev: CAutocompleteElementEventMap[K]) => void,
@@ -414,6 +419,11 @@ export interface CButtonGroupElement extends Omit<HTMLElement, 'disabled' | 'lab
    * an array of the active buttons' values.
    */
   value?: CButtonGroupValue;
+  /**
+   * Focus its tab stop: the selected button, else the first enabled one, as `focus()` does on a native control: the element renders
+   * no box of its own to take it.
+   */
+  focus(options?: FocusOptions): void;
   addEventListener<K extends keyof CButtonGroupElementEventMap>(
     type: K,
     listener: (this: CButtonGroupElement, ev: CButtonGroupElementEventMap[K]) => void,
@@ -550,6 +560,11 @@ export interface CCheckboxElement extends Omit<HTMLElement, 'checked' | 'disable
    * `''` included, reads as off.
    */
   value?: string | number | boolean;
+  /**
+   * Focus its checkbox, as `focus()` does on a native control: the element renders
+   * no box of its own to take it.
+   */
+  focus(options?: FocusOptions): void;
   addEventListener<K extends keyof CCheckboxElementEventMap>(
     type: K,
     listener: (this: CCheckboxElement, ev: CCheckboxElementEventMap[K]) => void,
@@ -663,6 +678,11 @@ export interface CColorPickerElement extends Omit<HTMLElement, 'alpha' | 'cleara
   value?: CColorPickerValue;
   /** Whether the committed text names no colour — the value is then `null` (CONTEXT.md "Bad input"). */
   readonly badInput: boolean;
+  /**
+   * Focus its input (the readonly combobox under `swatches-only`), as `focus()` does on a native control: the element renders
+   * no box of its own to take it.
+   */
+  focus(options?: FocusOptions): void;
   addEventListener<K extends keyof CColorPickerElementEventMap>(
     type: K,
     listener: (this: CColorPickerElement, ev: CColorPickerElementEventMap[K]) => void,
@@ -926,6 +946,11 @@ export interface CDatePickerElement extends Omit<HTMLElement, 'clearable' | 'dis
   value?: CDatePickerValue;
   /** Whether the committed text names no date that can be picked — the value is then `null` (CONTEXT.md "Bad input"). */
   readonly badInput: boolean;
+  /**
+   * Focus its input (the start input under `range`), as `focus()` does on a native control: the element renders
+   * no box of its own to take it.
+   */
+  focus(options?: FocusOptions): void;
   addEventListener<K extends keyof CDatePickerElementEventMap>(
     type: K,
     listener: (this: CDatePickerElement, ev: CDatePickerElementEventMap[K]) => void,
@@ -1013,6 +1038,11 @@ export interface CFileUploadElement extends Omit<HTMLElement, 'accept' | 'compac
   upload?: CFileUploadFunction;
   /** The file entries — always a list. A picked file's entry carries the browser `File`; a server file's entry is `{ id, name, size, status: 'done' }`. `''` reads as empty — what a plain `v-model` holding `null` writes. An array — bind as a DOM property */
   value?: CFileUploadEntry[] | null | string;
+  /**
+   * Focus its drop zone's button, as `focus()` does on a native control: the element renders
+   * no box of its own to take it.
+   */
+  focus(options?: FocusOptions): void;
   /**
    * Queue every `local` file entry for the upload function — how a `manual`
    * field starts; files added after the call wait for the next one. Fires the
@@ -1494,6 +1524,11 @@ export interface CNumberFieldElement extends Omit<HTMLElement, 'decimals' | 'dec
   value?: null | number | string;
   /** Whether the number is below `min` or above `max` (CONTEXT.md "Out of range") */
   readonly outOfRange: boolean;
+  /**
+   * Focus its input, as `focus()` does on a native control: the element renders
+   * no box of its own to take it.
+   */
+  focus(options?: FocusOptions): void;
   addEventListener<K extends keyof CNumberFieldElementEventMap>(
     type: K,
     listener: (this: CNumberFieldElement, ev: CNumberFieldElementEventMap[K]) => void,
@@ -1579,6 +1614,11 @@ export interface COtpInputElement extends Omit<HTMLElement, 'autofocus' | 'error
    * Setting it fills the boxes from the first one
    */
   value?: string;
+  /**
+   * Focus its first digit box, as `focus()` does on a native control: the element renders
+   * no box of its own to take it.
+   */
+  focus(options?: FocusOptions): void;
   addEventListener<K extends keyof COtpInputElementEventMap>(
     type: K,
     listener: (this: COtpInputElement, ev: COtpInputElementEventMap[K]) => void,
@@ -1816,6 +1856,11 @@ export interface CRadioGroupElement extends Omit<HTMLElement, 'disabled' | 'erro
    * string equality
    */
   value?: null | string;
+  /**
+   * Focus its tab stop: the checked radio, else the first enabled one, as `focus()` does on a native control: the element renders
+   * no box of its own to take it.
+   */
+  focus(options?: FocusOptions): void;
   addEventListener<K extends keyof CRadioGroupElementEventMap>(
     type: K,
     listener: (this: CRadioGroupElement, ev: CRadioGroupElementEventMap[K]) => void,
@@ -1929,6 +1974,11 @@ export interface CSelectElement extends Omit<HTMLElement, 'clearable' | 'disable
    * `return-object`; an array of them in `multiple` mode
    */
   value?: CSelectValue;
+  /**
+   * Focus its combobox, as `focus()` does on a native control: the element renders
+   * no box of its own to take it.
+   */
+  focus(options?: FocusOptions): void;
   addEventListener<K extends keyof CSelectElementEventMap>(
     type: K,
     listener: (this: CSelectElement, ev: CSelectElementEventMap[K]) => void,
@@ -2105,6 +2155,11 @@ export interface CSliderElement extends Omit<HTMLElement, 'disabled' | 'disableT
   unit?: string;
   /** The value, a number between `min` and `max`. */
   value?: number;
+  /**
+   * Focus its slider, as `focus()` does on a native control: the element renders
+   * no box of its own to take it.
+   */
+  focus(options?: FocusOptions): void;
   addEventListener<K extends keyof CSliderElementEventMap>(
     type: K,
     listener: (this: CSliderElement, ev: CSliderElementEventMap[K]) => void,
@@ -2263,6 +2318,11 @@ export interface CSwitchElement extends Omit<HTMLElement, 'checked' | 'disabled'
    * `''` included, reads as off.
    */
   value?: string | number | boolean;
+  /**
+   * Focus its switch, as `focus()` does on a native control: the element renders
+   * no box of its own to take it.
+   */
+  focus(options?: FocusOptions): void;
   addEventListener<K extends keyof CSwitchElementEventMap>(
     type: K,
     listener: (this: CSwitchElement, ev: CSwitchElementEventMap[K]) => void,
@@ -2586,6 +2646,11 @@ export interface CTextFieldElement extends Omit<HTMLElement, 'autocapitalize' | 
   readonly maskComplete: boolean;
   /** The text without the mask's literals: only the characters filling its tokens (the text as is without a mask) */
   readonly unmaskedValue: string;
+  /**
+   * Focus its input, as `focus()` does on a native control: the element renders
+   * no box of its own to take it.
+   */
+  focus(options?: FocusOptions): void;
   addEventListener<K extends keyof CTextFieldElementEventMap>(
     type: K,
     listener: (this: CTextFieldElement, ev: CTextFieldElementEventMap[K]) => void,
@@ -2700,6 +2765,11 @@ export interface CTimePickerElement extends Omit<HTMLElement, 'clearable' | 'dis
   value?: CTimePickerValue;
   /** Whether the committed text names no time that can be picked — the value is then `null` (CONTEXT.md "Bad input"). */
   readonly badInput: boolean;
+  /**
+   * Focus its input (the start input under `range`), as `focus()` does on a native control: the element renders
+   * no box of its own to take it.
+   */
+  focus(options?: FocusOptions): void;
   addEventListener<K extends keyof CTimePickerElementEventMap>(
     type: K,
     listener: (this: CTimePickerElement, ev: CTimePickerElementEventMap[K]) => void,
@@ -2940,6 +3010,11 @@ export interface CTreeSelectElement extends Omit<HTMLElement, 'allowBranch' | 'c
    * with `return-object`; `null` when nothing is selected
    */
   value?: CTreeSelectValue;
+  /**
+   * Focus its combobox, as `focus()` does on a native control: the element renders
+   * no box of its own to take it.
+   */
+  focus(options?: FocusOptions): void;
   addEventListener<K extends keyof CTreeSelectElementEventMap>(
     type: K,
     listener: (this: CTreeSelectElement, ev: CTreeSelectElementEventMap[K]) => void,

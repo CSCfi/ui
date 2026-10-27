@@ -42,7 +42,9 @@
     "input": "CustomEvent<void>",
     "update:value": "CustomEvent<CDatePickerValue>"
   },
-  "methods": {},
+  "methods": {
+    "focus": "(options?: FocusOptions): void"
+  },
   "parts": [
     "actions",
     "card",

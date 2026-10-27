@@ -9,10 +9,18 @@ import { createApp, h, ref, vModelText, withDirectives } from 'vue';
 import type { Mounted } from '../harness';
 
 import { INTERNAL_EVENTS, VALUE_TAGS } from '../../tag-name-map';
-import { defineAll, mount, recordEvents, settle, wrap } from '../harness';
+import {
+  deepActiveElement,
+  defineAll,
+  mount,
+  recordEvents,
+  settle,
+  wrap,
+} from '../harness';
 import {
   KNOWN_DOUBLE_EMITTERS,
   KNOWN_PROGRAMMATIC_EMITTERS,
+  NOT_FORM_CONTROLS,
   VALUE_RECIPES,
 } from './kinds';
 
@@ -38,6 +46,20 @@ const deepElements = (root: ShadowRoot): Element[] =>
     el,
     ...(el.shadowRoot ? deepElements(el.shadowRoot) : []),
   ]);
+
+/** Whether `el` is in `host`'s light or shadow tree, at any depth. */
+const inside = (host: Element, el: Element): boolean => {
+  for (let node: Node | null = el; node;) {
+    if (node === host) return true;
+
+    node =
+      node.parentNode instanceof ShadowRoot
+        ? node.parentNode.host
+        : node.parentNode;
+  }
+
+  return false;
+};
 
 /** An element's text, its shadow tree's included (c-message draws its own). */
 const textOf = (el: Element): string =>
@@ -232,6 +254,40 @@ describe.each(VALUE_TAGS)('%s', (tag) => {
         }
 
         m.unmount();
+      }
+    },
+  );
+
+  // An app moves focus to a form control (the first invalid one after a
+  // failed submit) with the element's focus(). The host renders no box of
+  // its own, so the control inside must take it.
+  it.skipIf(NOT_FORM_CONTROLS.includes(tag))(
+    'focus() focuses its control, also once the element is re-added',
+    async () => {
+      const m = await mount(tag, recipe.mount);
+
+      const parent = m.host.parentNode!;
+
+      // Once mounted, and again after the element leaves the page and comes
+      // back with a new component instance (KeepAlive, a moved list item).
+      for (const pass of ['mounted', 're-added']) {
+        await settle();
+        (deepActiveElement() as HTMLElement | null)?.blur();
+
+        m.host.focus();
+        await settle();
+
+        const active = deepActiveElement();
+
+        expect(
+          active?.matches(ROLE_BEARING),
+          `${pass}: ${active?.localName}`,
+        ).toBe(true);
+        expect(inside(m.host, active!), pass).toBe(true);
+
+        m.host.remove();
+        await settle(100);
+        parent.append(m.host);
       }
     },
   );

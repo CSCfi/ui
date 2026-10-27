@@ -21,7 +21,9 @@
     "input": "CustomEvent<void>",
     "update:value": "CustomEvent<boolean | number | string>"
   },
-  "methods": {},
+  "methods": {
+    "focus": "(options?: FocusOptions): void"
+  },
   "parts": [
     "indicator",
     "label",

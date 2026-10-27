@@ -1259,7 +1259,19 @@ const onClockClick = (event: Event) => {
   openPanel();
 };
 
-defineExpose({ badInput });
+/**
+ * Focus its input (the start input under `range`), as `focus()` does on a native control: the element renders
+ * no box of its own to take it.
+ *
+ * @param options - Passed on to that element's `focus()`
+ */
+const focus = (options?: FocusOptions): void => {
+  host?.shadowRoot
+    ?.querySelector<HTMLElement>('input[part~="input"]')
+    ?.focus(options);
+};
+
+defineExpose({ badInput, focus });
 
 // The page's id references on the element reach the element carrying its role.
 useIdReferences('input[part~="input"]');

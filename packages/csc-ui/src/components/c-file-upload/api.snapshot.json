@@ -29,6 +29,7 @@
     "update:value": "CustomEvent<CFileUploadEntry[]>"
   },
   "methods": {
+    "focus": "(options?: FocusOptions): void",
     "startUploads": "(): void"
   },
   "parts": [

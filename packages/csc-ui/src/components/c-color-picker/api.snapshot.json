@@ -34,7 +34,9 @@
     "input": "CustomEvent<void>",
     "update:value": "CustomEvent<CColorPickerValue>"
   },
-  "methods": {},
+  "methods": {
+    "focus": "(options?: FocusOptions): void"
+  },
   "parts": [
     "actions",
     "alpha-slider",

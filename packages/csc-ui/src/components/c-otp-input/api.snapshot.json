@@ -18,7 +18,9 @@
     "input": "CustomEvent<void>",
     "update:value": "CustomEvent<string>"
   },
-  "methods": {},
+  "methods": {
+    "focus": "(options?: FocusOptions): void"
+  },
   "parts": [
     "digits",
     "input",

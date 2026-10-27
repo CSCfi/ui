@@ -606,4 +606,19 @@ onBeforeUnmount(() => {
 
 // The page's id references on the element reach the element carrying its role.
 useIdReferences(() => groupRef.value);
+
+/**
+ * Focus its tab stop: the selected button, else the first enabled one, as `focus()` does on a native control: the element renders
+ * no box of its own to take it.
+ *
+ * @param options - Passed on to that element's `focus()`
+ */
+const focus = (options?: FocusOptions): void => {
+  buttons()
+    .map(nativeControlOf)
+    .find((control) => control?.tabIndex === 0)
+    ?.focus(options);
+};
+
+defineExpose({ focus });
 </script>

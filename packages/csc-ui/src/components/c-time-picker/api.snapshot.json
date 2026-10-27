@@ -37,7 +37,9 @@
     "input": "CustomEvent<void>",
     "update:value": "CustomEvent<CTimePickerValue>"
   },
-  "methods": {},
+  "methods": {
+    "focus": "(options?: FocusOptions): void"
+  },
   "parts": [
     "actions",
     "card",

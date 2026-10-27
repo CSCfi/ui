@@ -37,7 +37,9 @@
     "input": "CustomEvent<void>",
     "update:value": "CustomEvent<CAutocompleteValue>"
   },
-  "methods": {},
+  "methods": {
+    "focus": "(options?: FocusOptions): void"
+  },
   "parts": [
     "card",
     "close",

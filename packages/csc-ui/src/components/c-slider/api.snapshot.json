@@ -20,7 +20,9 @@
     "input": "CustomEvent<void>",
     "update:value": "CustomEvent<number>"
   },
-  "methods": {},
+  "methods": {
+    "focus": "(options?: FocusOptions): void"
+  },
   "parts": [
     "label",
     "root",

@@ -256,10 +256,18 @@ const enabled = ref(false);
 <c-text-field aria-label="Search projects"></c-text-field>`,
         lang: 'html',
       },
+      {
+        code: `// After a failed submit, take the user to the first invalid field: its
+// hint and error message are read out as it takes focus.
+form.querySelector<HTMLElement>('[invalid]')?.focus();`,
+        lang: 'ts',
+      },
     ]),
     id: 'accessibility',
     intro: {
-      all: `ARIA attributes on a component reach the control inside it: aria-label names a button, a dialog, or a field without a visible label (beside a label, the label names the field, so its name matches what is on screen). The attributes that point at elements by id work too (aria-labelledby, aria-describedby, aria-controls and the rest): the component looks the ids up where the element is written, your page or the shadow root around it, and hands those elements to its control. It looks them up when it renders, when the attribute changes and when the control takes focus, so an element your page renders later is found by then.`,
+      all: `ARIA attributes on a component reach the control inside it: aria-label names a button, a dialog, or a field without a visible label (beside a label, the label names the field, so its name matches what is on screen). The attributes that point at elements by id work too (aria-labelledby, aria-describedby, aria-controls and the rest): the component looks the ids up where the element is written, your page or the shadow root around it, and hands those elements to its control. It looks them up when it renders, when the attribute changes and when the control takes focus, so an element your page renders later is found by then.
+
+A field's hint and error message are read out with it when it takes focus, but an error that appears is not announced: after a failed submit, move focus to the first invalid field with its focus() method (each form control focuses its input, its checked radio or its first box), or to an error summary at the top of the form.`,
     },
     title: 'Accessibility',
   },

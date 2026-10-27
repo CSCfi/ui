@@ -15,7 +15,9 @@
     "input": "CustomEvent<void>",
     "update:value": "CustomEvent<CButtonGroupValue>"
   },
-  "methods": {},
+  "methods": {
+    "focus": "(options?: FocusOptions): void"
+  },
   "parts": [
     "label",
     "root"

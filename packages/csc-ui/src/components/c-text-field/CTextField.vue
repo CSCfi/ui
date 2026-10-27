@@ -759,7 +759,17 @@ const onBlur = (event: Event) => {
   }
 };
 
-defineExpose({ maskComplete, unmaskedValue });
+/**
+ * Focus its input, as `focus()` does on a native control: the element renders
+ * no box of its own to take it.
+ *
+ * @param options - Passed on to that element's `focus()`
+ */
+const focus = (options?: FocusOptions): void => {
+  inputRef.value?.focus(options);
+};
+
+defineExpose({ focus, maskComplete, unmaskedValue });
 
 // The page's id references on the element reach the element carrying its role.
 useIdReferences(() => inputRef.value);

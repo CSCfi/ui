@@ -36,7 +36,9 @@
     "input": "CustomEvent<void>",
     "update:value": "CustomEvent<CSelectValue>"
   },
-  "methods": {},
+  "methods": {
+    "focus": "(options?: FocusOptions): void"
+  },
   "parts": [
     "card",
     "close",

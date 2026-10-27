@@ -410,6 +410,21 @@ onBeforeUnmount(() => {
 
 // The page's id references on the element reach the element carrying its role.
 useIdReferences(() => rootRef.value);
+
+/**
+ * Focus its tab stop: the checked radio, else the first enabled one, as `focus()` does on a native control: the element renders
+ * no box of its own to take it.
+ *
+ * @param options - Passed on to that element's `focus()`
+ */
+const focus = (options?: FocusOptions): void => {
+  radios()
+    .map(inputOf)
+    .find((input) => input?.tabIndex === 0)
+    ?.focus(options);
+};
+
+defineExpose({ focus });
 </script>
 
 <!--
