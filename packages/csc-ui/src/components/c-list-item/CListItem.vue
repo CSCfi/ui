@@ -2,8 +2,9 @@
   <component
     :is="href ? 'a' : 'div'"
     ref="contentRef"
+    :aria-current="href && active ? 'page' : undefined"
     :class="ui.root()"
-    :href="href || undefined"
+    :href="(!disabled && href) || undefined"
     :target="href ? target : undefined"
     part="root"
   >
@@ -172,7 +173,12 @@ onMounted(() => {
   if (!host) return;
   host.setAttribute('role', 'listitem');
   watchEffect(() => {
-    host.setAttribute('aria-disabled', String(!!props.disabled));
+    // `active` is the current item: a link's is `aria-current="page"` (on
+    // the link, above), any other item's `"true"` here. A list item takes no
+    // `aria-disabled`; a disabled item leaves the Tab order instead (a
+    // disabled link item loses its `href`, above).
+    if (props.active && !props.href) host.setAttribute('aria-current', 'true');
+    else host.removeAttribute('aria-current');
     host.classList.toggle('c-list-item--hoverable', isHoverable.value);
     host.classList.toggle('c-list-item--ripple', props.ripple);
     host.classList.toggle('c-list-item--active', props.active);
@@ -206,7 +212,10 @@ const { ripples, spawn: spawnRipple } = useRipple({
   container: () => contentRef.value,
 });
 
-const onClick = (event: MouseEvent, center = false) => {
+// Set while Enter or Space presses the item, so its ripple starts centred.
+let keyPress = false;
+
+const onClick = (event: MouseEvent) => {
   if (props.disabled) {
     event.preventDefault();
 
@@ -214,13 +223,34 @@ const onClick = (event: MouseEvent, center = false) => {
   }
 
   if (!props.ripple) return;
-  spawnRipple(event, { center });
+  spawnRipple(event, { center: keyPress });
+};
+
+// A ripple item (no link) is a Tab stop: Enter and Space press it with a
+// click, as on a native button (Enter on keydown, Space on keyup).
+const pressable = (event: KeyboardEvent) =>
+  event.target === host && props.ripple && !props.href && !props.disabled;
+
+const press = () => {
+  keyPress = true;
+  host?.click();
+  keyPress = false;
+};
+
+const onKeydown = (event: KeyboardEvent) => {
+  if (!pressable(event)) return;
+
+  if (event.key === 'Enter') {
+    event.preventDefault();
+    press();
+  } else if (event.key === ' ') {
+    // No page scroll; the press lands on keyup.
+    event.preventDefault();
+  }
 };
 
 const onKeyup = (event: KeyboardEvent) => {
-  if (event.key === ' ' || event.key === 'Enter') {
-    onClick(event as unknown as MouseEvent, true);
-  }
+  if (pressable(event) && event.key === ' ') press();
 };
 
 // Listen on the host so clicks anywhere on the item trigger the ripple,
@@ -228,6 +258,7 @@ const onKeyup = (event: KeyboardEvent) => {
 onMounted(() => {
   if (!host) return;
   host.addEventListener('click', onClick as EventListener);
+  host.addEventListener('keydown', onKeydown as EventListener);
   host.addEventListener('keyup', onKeyup as EventListener);
 });
 </script>
@@ -266,7 +297,8 @@ slot:not([name]) {
   flex: 1;
 }
 
-:host(:focus-visible) {
+:host(:focus-visible),
+[part='root']:focus-visible {
   outline: 2px var(--c-primary) solid;
   outline-offset: 2px;
 }

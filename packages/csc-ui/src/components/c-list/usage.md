@@ -26,14 +26,14 @@ Put the row's main content, usually a `c-list-item-title`, in the item's default
 An item is static by default: a row of content with no hover state and no place in the Tab order.
 
 - `href` turns the item's content box into a real link, with focus, Enter, middle-click and open-in-new-tab from the platform, and a hover tint on the row. `target` says where the link opens, as on a native `<a>`: the same tab unless set, `_blank` for a new one.
-- `ripple` adds a pointer cursor, the hover tint and a ripple on press, and puts an item without `href` in the Tab order. It does not make the item a button: Enter and Space play the ripple but fire no `click`, so an action that lives only in a `click` listener cannot be reached from the keyboard. Give navigation an `href`, and put an action of its own in a `c-button` in the `post` slot.
+- `ripple` adds a pointer cursor, the hover tint and a ripple on press, and puts an item without `href` in the Tab order, where Enter and Space press it: each fires `click`, as a mouse click does. Give navigation an `href`; an action of the item's own can also go in a `c-button` in the `post` slot.
 - `hoverable` adds the hover tint alone.
 
 ## Active and disabled items
 
-`active` marks the current item with a primary tint and an inset primary ring; in a `bordered` list its border turns primary too. The active state is painted only: assistive technology is not told which item is active.
+`active` marks the current item with a primary tint and an inset primary ring; in a `bordered` list its border turns primary too. Assistive technology hears it as the current item: `aria-current="page"` on a link item, `aria-current="true"` on any other.
 
-`disabled` greys an item out, a slotted `c-icon` included, ignores the pointer, takes the item out of the Tab order and sets `aria-disabled`. `disabled` on the list disables every item, also items added later. Clearing it re-enables only the items the list disabled, so an item you disabled yourself stays disabled.
+`disabled` greys an item out, a slotted `c-icon` included, ignores the pointer, and takes the item out of the Tab order (a disabled link item stops being a link). `disabled` on the list disables every item, also items added later. Clearing it re-enables only the items the list disabled, so an item you disabled yourself stays disabled.
 
 ## Accessibility
 
