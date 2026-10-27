@@ -478,11 +478,18 @@ start migrating on the first alpha that carries D2–D4.
      prerelease number from the current version's (`alpha.32` → 33) whatever the tag
      (`assemble-release-plan` `getPreVersion`). Getting rc.1 needs a one-time hand edit of both package versions to
      `4.0.0-rc.0` in the PR that enters rc, which CLAUDE.md forbids, so it's the user's call. The plain alpha
-     path gives `4.0.0-alpha.33`.
+     path gives `4.0.0-alpha.33`. **Decided 2026-10-27 (user): reset once to rc.1.** Runbook, on a branch from
+     `main` after `development` is merged: `pnpm changeset pre exit`, `pnpm changeset pre enter rc`, set both
+     `packages/csc-ui` and `packages/csc-ui-react` `version` to `4.0.0-rc.0` by hand (never published; the one
+     documented exception to "never bump by hand"), merge; the release workflow's version run then gives
+     `4.0.0-rc.1`. Still to verify by dry run before doing it.
    - **Contrast brief for design (2026-10-27):** `_plan/csc-ui-4-contrast-brief.md`, the last rc.1 gate in the axe
      baseline (78 examples), measured by pair: light hint ink `tertiary-500` → `tertiary-600` (76 examples; then
      disabled buttons move to `on-surface-disabled`), dark `error` → `error-300`, expanded accordion headings →
      `on-primary-subtle`; the c-main reports are axe misreading the pinned layout.
+   - **User decisions 2026-10-27 on the verification pass's reports:** c-switch `loading` matches the buttons
+     (done, 6fd1fbf6); c-checkbox `indeterminate` clears on a user click, natively (**open — not built yet**);
+     c-icon-button disabled ink fixed (5eaa4c88).
    - **Merge conflict ahead:** the `development` → `main` PR conflicts in `packages/csc-ui/package.json`: phase 3's
      new `description` is the line after `version`, which `main`'s release commits bumped (development still has
      alpha.18). Resolve with `main`'s version and `development`'s description. From here: fixes only, API guard fails any breaking diff.
