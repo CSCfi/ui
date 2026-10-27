@@ -103,8 +103,8 @@ const labelId = `${autoId}-label`;
 // The original Stencil c-tags reaches into its slotted children on mount
 // and propagates `size="small"` onto each <c-tag>. Mirror that here so a
 // consumer can just write `<c-tags size="small">` without setting size on
-// each tag. Re-run whenever `size` changes — covers cases where the prop
-// is set dynamically after mount.
+// each tag. Re-run whenever `size` changes and on every slotchange, so tags
+// added later (a v-for that grows) get the group's size too.
 const propagate = () => {
   if (!host) return;
 
@@ -118,7 +118,14 @@ const propagate = () => {
   });
 };
 
-onMounted(propagate);
+onMounted(() => {
+  propagate();
+  // Attributes on Vue's <slot> element are slot props, so the native outlet
+  // is wired imperatively (as in CTable).
+  host?.shadowRoot
+    ?.querySelector('slot')
+    ?.addEventListener('slotchange', propagate);
+});
 watch(size, propagate);
 </script>
 

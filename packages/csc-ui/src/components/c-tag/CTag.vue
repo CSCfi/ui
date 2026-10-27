@@ -273,6 +273,13 @@ const onClose = () => {
   outline: none;
 }
 
+/* A flat tag's root ignores the pointer (`pointer-events-none`), and its
+ * close button would inherit that: give it back, so a flat closeable tag can
+ * still be removed with the mouse. */
+c-icon-button {
+  pointer-events: auto;
+}
+
 /* The close button was a fixed 20px (16px on small tags) via the old
  * c-icon-button size vars, which are removed. The smallest size
  * variant is x-small (28px), so re-pin the box through ::part() — the
