@@ -21,9 +21,7 @@
       :active="dropdownVisible"
       :data-hide-details="String(hideDetailsResolved)"
       :disabled
-      :error-message
       :filled="hasSelection"
-      :hint
       :input-id
       :invalid
       :label
@@ -33,6 +31,19 @@
       :size="sizeResolved"
       @click="onInputClick"
     >
+      <!-- The hint / error message, here in the field's own tree so the
+           input's aria-describedby can name it. -->
+      <field-message
+        :id="`${inputId}-message`"
+        slot="message"
+        :error-message
+        :hide-details="hideDetailsResolved"
+        :hint
+        :invalid
+        :label-on-top="labelOnTopResolved"
+        part="message"
+      />
+
       <span v-if="hasConsumerPre" slot="pre" style="display: contents">
         <slot name="pre" />
       </span>
@@ -46,6 +57,9 @@
           <input
             ref="inputRef"
             v-bind="controlAttrs"
+            :aria-describedby="
+              hideDetailsResolved ? undefined : `${inputId}-message`
+            "
             :aria-expanded="dropdownVisible"
             :aria-label="accessibleName"
             :aria-owns="inputId + '-items'"
@@ -365,6 +379,7 @@ interface CSelectProps {
  * @csspart tags - The row of selected-value tags inside the field (`multiple` mode)
  * @csspart tag - One selected-value tag: the `c-tag` host, including the overflow tag
  * @csspart tag-root - The pill box inside each tag (the `c-tag` `root` part), for colours and borders
+ * @csspart message - The hint / error message area below the field (always reserved unless `hide-details`)
  */
 import { mdiChevronDown, mdiClose } from '@mdi/js';
 import { tv } from 'tailwind-variants';
@@ -381,6 +396,7 @@ import {
 
 import { useAppDefault } from '../../shared/appDefaults';
 import { coerceBoolean } from '../../shared/coerceBoolean';
+import FieldMessage from '../../shared/FieldMessage.vue';
 import { optionLabel } from '../../shared/optionLabel';
 import {
   SELECT_ALL_INDEX,

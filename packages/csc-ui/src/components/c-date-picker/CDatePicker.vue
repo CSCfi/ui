@@ -742,6 +742,7 @@ interface CDatePickerProps {
  * @csspart actions - The row under the calendar body holding the Today button (`show-today`) and, in the fullscreen panel, the Done button
  * @csspart today - The Today button: picks today, or the current month under `type="month"`
  * @csspart done - The Done button of the fullscreen panel (narrow viewports): commits what the panel holds and closes
+ * @csspart message - The hint / error message area below the field (always reserved unless `hide-details`)
  *
  * @cssstate bad-input - Present while committed text names no date that can be picked
  */

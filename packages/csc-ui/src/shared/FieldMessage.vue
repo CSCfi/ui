@@ -47,9 +47,12 @@
  * shadow root of its own to adopt a per-type sheet into, so no `<style>` block
  * (FormLabel precedent). Semantic-token utilities only.
  *
- * Currently used by `c-radio-group`; `c-input`, `c-checkbox`, and `c-message`
- * carry older hand-rolled copies of this anatomy and are follow-up refit
- * candidates (ADR-0031).
+ * Used by the c-input fields (slotted into c-input's `message` slot, so the
+ * field's input and its message share a tree and the input's
+ * `aria-describedby` can name it), `c-radio-group` and `c-file-upload`;
+ * `c-checkbox` and `c-message` carry older hand-rolled copies of this anatomy
+ * (ADR-0031). A host that renders it gives it an `id` and points its control's
+ * `aria-describedby` at it: unlinked, a screen reader never reads it.
  */
 import { mdiCloseCircle } from '@mdi/js';
 import { tv } from 'tailwind-variants';
@@ -71,6 +74,11 @@ const fieldMessage = tv({
     error: {
       true: { root: 'text-error' },
     },
+    // Under an on-top label the message lines up with the label, not the
+    // field's inner padding.
+    labelOnTop: {
+      true: { root: 'px-0' },
+    },
   },
 });
 
@@ -89,6 +97,9 @@ interface FieldMessageProps {
   /** The host control is invalid: the error message, when set, replaces the hint. */
   invalid?: boolean;
 
+  /** The field's label sits on top of it (c-input's `label-on-top`). */
+  labelOnTop?: boolean;
+
   /** Part name stamped on the message area (`message` unless the host reserves it). */
   part?: string;
 }
@@ -98,6 +109,7 @@ const props = withDefaults(defineProps<FieldMessageProps>(), {
   hideDetails: false,
   hint: '',
   invalid: false,
+  labelOnTop: false,
   part: 'message',
 });
 
@@ -108,7 +120,12 @@ const showError = computed(
   () => coerceBoolean(props.invalid) && Boolean(props.errorMessage),
 );
 
-const ui = computed(() => fieldMessage({ error: showError.value }));
+const ui = computed(() =>
+  fieldMessage({
+    error: showError.value,
+    labelOnTop: coerceBoolean(props.labelOnTop),
+  }),
+);
 
 const messageVisible = computed(() => Boolean(props.hint || showError.value));
 

@@ -13,6 +13,7 @@
       :id="inputId"
       v-bind="controlAttrs"
       :aria-checked="indeterminate ? 'mixed' : isChecked"
+      :aria-describedby="hideDetails ? undefined : `${inputId}-message`"
       :checked="isChecked"
       :class="ui.input()"
       :disabled
@@ -72,7 +73,12 @@
          200ms later the new message slides down + fades in. `:key` forces a
          re-mount whenever the message identity (hint vs error, or text
          content) changes. -->
-    <div v-if="!hideDetails" :class="ui.message()" part="message">
+    <div
+      v-if="!hideDetails"
+      :id="`${inputId}-message`"
+      :class="ui.message()"
+      part="message"
+    >
       <transition mode="out-in" name="c-checkbox-message">
         <span v-if="messageVisible" :key="messageKey" :class="ui.messageLine()">
           <svg

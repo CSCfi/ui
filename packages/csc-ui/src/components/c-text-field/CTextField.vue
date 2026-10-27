@@ -4,9 +4,7 @@
     :active="isActiveForInput"
     :data-hide-details="String(hideDetailsResolved)"
     :disabled
-    :error-message
     :filled="isFilledForInput"
-    :hint
     :input-id
     :invalid
     :is-textarea="rows > 1"
@@ -16,6 +14,19 @@
     :shadow="shadowResolved"
     :size="sizeResolved"
   >
+    <!-- The hint / error message, here in the field's own tree so the
+         input's aria-describedby can name it. -->
+    <field-message
+      :id="`${inputId}-message`"
+      slot="message"
+      :error-message
+      :hide-details="hideDetailsResolved"
+      :hint
+      :invalid
+      :label-on-top="labelOnTopResolved"
+      part="message"
+    />
+
     <!-- Pre slot: forwarded from the consumer's `pre` slot. We only
          render the wrapper when the consumer has actually provided pre
          content — otherwise c-input would see an always-assigned slot
@@ -33,6 +44,7 @@
       :id="inputId"
       ref="inputRef"
       v-bind="controlAttrs"
+      :aria-describedby="hideDetailsResolved ? undefined : `${inputId}-message`"
       :aria-invalid="invalid"
       :aria-label="accessibleName"
       :autocapitalize="autocapitalize || undefined"
@@ -73,6 +85,9 @@
         :id="inputId"
         ref="inputRef"
         v-bind="controlAttrs"
+        :aria-describedby="
+          hideDetailsResolved ? undefined : `${inputId}-message`
+        "
         :aria-invalid="invalid"
         :aria-label="accessibleName"
         :autocapitalize="autocapitalize || undefined"
@@ -338,6 +353,7 @@ interface CTextFieldProps {
  * @slot pre - Content inside the field, before the input, such as an icon
  * @slot post - Content inside the field, after the input and its password or date button
  * @csspart mask-guide - The faint rest of the input mask, shown behind the typed text
+ * @csspart message - The hint / error message area below the field (always reserved unless `hide-details`)
  * @cssstate incomplete - Present while a masked field holds text that leaves a required mask token (one outside an optional section) unfilled
  */
 import { mdiCalendar, mdiEye, mdiEyeOff } from '@mdi/js';
@@ -356,6 +372,7 @@ import {
 import type { CFieldSize } from '../../types';
 
 import { useAppDefault } from '../../shared/appDefaults';
+import FieldMessage from '../../shared/FieldMessage.vue';
 import {
   applyMask,
   compileMask,

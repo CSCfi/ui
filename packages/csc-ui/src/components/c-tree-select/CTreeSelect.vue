@@ -10,9 +10,7 @@
       :active="isOpen"
       :data-hide-details="String(hideDetailsResolved)"
       :disabled
-      :error-message
       :filled="hasSelection"
-      :hint
       :input-id
       :invalid
       :label
@@ -22,6 +20,19 @@
       :size="sizeResolved"
       @click="onFieldClick"
     >
+      <!-- The hint / error message, here in the field's own tree so the
+           input's aria-describedby can name it. -->
+      <field-message
+        :id="`${inputId}-message`"
+        slot="message"
+        :error-message
+        :hide-details="hideDetailsResolved"
+        :hint
+        :invalid
+        :label-on-top="labelOnTopResolved"
+        part="message"
+      />
+
       <div :class="ui.content()" class="c-input__content">
         <!-- The readonly combobox is visually hidden (clip, never
              display:none — it must keep taking focus) behind the two-line
@@ -31,6 +42,9 @@
           ref="fieldRef"
           v-bind="controlAttrs"
           :aria-controls="`${id}-listbox`"
+          :aria-describedby="
+            hideDetailsResolved ? undefined : `${inputId}-message`
+          "
           :aria-expanded="isOpen"
           :aria-label="accessibleName"
           :class="ui.input()"
@@ -639,6 +653,7 @@ interface CTreeSelectProps {
  * @csspart path - The ancestor path line under a search result's label
  * @csspart match - A run of an item's code, label or path equal to the query, in a row; underlined in the primary colour, text inherits the row
  * @csspart info - The no-results row shown when nothing is listed
+ * @csspart message - The hint / error message area below the field (always reserved unless `hide-details`)
  */
 import {
   mdiAlert,
@@ -653,6 +668,7 @@ import { computed, ref, useHost, useId, useTemplateRef, watch } from 'vue';
 
 import { useAppDefault } from '../../shared/appDefaults';
 import { coerceBoolean } from '../../shared/coerceBoolean';
+import FieldMessage from '../../shared/FieldMessage.vue';
 import PanelHeadingRow from '../../shared/PanelHeadingRow.vue';
 import { applyPeekCap } from '../../shared/peekCap';
 import { type MatchSegment, splitMatches } from '../../shared/splitMatches';

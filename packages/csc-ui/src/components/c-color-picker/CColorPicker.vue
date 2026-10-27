@@ -12,9 +12,7 @@
       :active="isOpen"
       :data-hide-details="String(hideDetailsResolved)"
       :disabled
-      :error-message
       :filled="!!fieldText"
-      :hint
       :input-id
       :invalid
       :label
@@ -24,6 +22,19 @@
       :size="sizeResolved"
       @click="onFieldClick"
     >
+      <!-- The hint / error message, here in the field's own tree so the
+           input's aria-describedby can name it. -->
+      <field-message
+        :id="`${inputId}-message`"
+        slot="message"
+        :error-message
+        :hide-details="hideDetailsResolved"
+        :hint
+        :invalid
+        :label-on-top="labelOnTopResolved"
+        part="message"
+      />
+
       <span v-if="committedColor" slot="pre" :class="ui.pre()">
         <span
           :class="ui.chip({ small: sizeResolved === 'small' })"
@@ -38,6 +49,9 @@
           :id="inputId"
           ref="comboRef"
           v-bind="controlAttrs"
+          :aria-describedby="
+            hideDetailsResolved ? undefined : `${inputId}-message`
+          "
           :aria-expanded="isOpen"
           :aria-invalid="invalid || undefined"
           :aria-label="accessibleName"
@@ -578,6 +592,7 @@ interface CColorPickerProps {
  * @csspart swatch - One swatch
  * @csspart actions - The row under the panel body in the fullscreen panel (narrow viewports)
  * @csspart done - The Done button of the fullscreen panel (narrow viewports): commits what the panel holds and closes
+ * @csspart message - The hint / error message area below the field (always reserved unless `hide-details`)
  *
  * @cssstate bad-input - Present while committed text names no colour
  */
@@ -596,6 +611,7 @@ import {
 
 import { useAppDefault } from '../../shared/appDefaults';
 import { coerceBoolean } from '../../shared/coerceBoolean';
+import FieldMessage from '../../shared/FieldMessage.vue';
 import PanelHeadingRow from '../../shared/PanelHeadingRow.vue';
 import { applyPeekCap } from '../../shared/peekCap';
 import TypedField from '../../shared/TypedField.vue';

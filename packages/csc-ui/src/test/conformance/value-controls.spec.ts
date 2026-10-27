@@ -18,7 +18,31 @@ import {
 
 const HOST_EVENTS = ['change', 'update:value'] as const;
 
+type Described = {
+  ariaDescribedByElements?: null | readonly Element[];
+} & Element;
+
+type DescribedHost = {
+  errorMessage?: string;
+  hint?: string;
+  invalid?: boolean;
+} & HTMLElement;
+
 type ValueHost = { value?: unknown } & HTMLElement;
+
+/** What can carry an accessible object: a native control, or a role. */
+const ROLE_BEARING = 'button, input, textarea, [role]';
+
+const deepElements = (root: ShadowRoot): Element[] =>
+  [...root.querySelectorAll('*')].flatMap((el) => [
+    el,
+    ...(el.shadowRoot ? deepElements(el.shadowRoot) : []),
+  ]);
+
+/** An element's text, its shadow tree's included (c-message draws its own). */
+const textOf = (el: Element): string =>
+  (el.textContent ?? '') +
+  (el.shadowRoot ? deepElements(el.shadowRoot).map(textOf).join('') : '');
 
 /** A value control's own `input` (the native inner input's twin is `composed`). */
 const libraryInput = (r: { composed: boolean }): boolean => !r.composed;
@@ -211,6 +235,39 @@ describe.each(VALUE_TAGS)('%s', (tag) => {
       }
     },
   );
+
+  // A screen reader reads a hint or an error message with the control only
+  // when the control is described by it (aria-describedby): text beside the
+  // control, unlinked, is never announced on focus.
+  it('describes its control with the hint, and with the error message while invalid', async ({
+    skip,
+  }) => {
+    const m = await mount<DescribedHost>(tag, recipe.mount);
+
+    // Value controls without hint text (c-switch, c-slider, …) have nothing
+    // to link.
+    if (!Object.getOwnPropertyDescriptor(m.host, 'hint')?.get) skip();
+
+    const described = (text: string): Element[] =>
+      deepElements(m.host.shadowRoot!).filter(
+        (el) =>
+          el.matches(ROLE_BEARING) &&
+          [...((el as Described).ariaDescribedByElements ?? [])].some((d) =>
+            textOf(d).includes(text),
+          ),
+      );
+
+    m.host.hint = 'Probe hint';
+    await settle(300);
+
+    expect(described('Probe hint')).not.toEqual([]);
+
+    m.host.errorMessage = 'Probe error';
+    m.host.invalid = true;
+    await settle(300);
+
+    expect(described('Probe error')).not.toEqual([]);
+  });
 
   // Vue reads `''` as `true` for a prop whose runtime types list Boolean
   // before String, and `''` is what a plain `v-model` writes for an empty

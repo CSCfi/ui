@@ -1,6 +1,7 @@
 <template>
   <div
     ref="rootRef"
+    :aria-describedby="coerceBoolean(hideDetails) ? undefined : messageId"
     :aria-labelledby="labelVisible ? labelId : undefined"
     :aria-required="isRequired || undefined"
     :class="ui.root()"
@@ -22,7 +23,14 @@
       <slot />
     </div>
 
-    <field-message :error-message :hide-details :hint :invalid part="message" />
+    <field-message
+      :id="messageId"
+      :error-message
+      :hide-details
+      :hint
+      :invalid
+      part="message"
+    />
   </div>
 </template>
 
@@ -226,6 +234,8 @@ const labelVisible = computed(() => Boolean(props.label) || hasLabelSlot.value);
 const autoId = useId();
 
 const labelId = `${autoId}-label`;
+
+const messageId = `${autoId}-message`;
 
 // Internal value mirror: `props.value` is only updated by the parent
 // asynchronously (after the native `input` round trip), so the sync pass

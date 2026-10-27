@@ -40,7 +40,8 @@
   },
   "methods": {},
   "parts": [
-    "mask-guide"
+    "mask-guide",
+    "message"
   ],
   "propertyOnly": [],
   "props": {

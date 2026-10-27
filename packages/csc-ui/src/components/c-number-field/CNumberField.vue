@@ -4,9 +4,7 @@
     :active="isFocused"
     :data-hide-details="String(hideDetailsResolved)"
     :disabled
-    :error-message
     :filled="text !== ''"
-    :hint
     :input-id
     :invalid
     :label
@@ -15,6 +13,19 @@
     :shadow="shadowResolved"
     :size="sizeResolved"
   >
+    <!-- The hint / error message, here in the field's own tree so the
+         input's aria-describedby can name it. -->
+    <field-message
+      :id="`${inputId}-message`"
+      slot="message"
+      :error-message
+      :hide-details="hideDetailsResolved"
+      :hint
+      :invalid
+      :label-on-top="labelOnTopResolved"
+      part="message"
+    />
+
     <!-- Consumer pre/post content (a currency, a unit), forwarded only when
          present so c-input draws no empty gap — as in c-text-field. -->
     <span v-if="hasConsumerPre" slot="pre" class="contents">
@@ -27,6 +38,7 @@
       :id="inputId"
       ref="inputRef"
       v-bind="controlAttrs"
+      :aria-describedby="hideDetailsResolved ? undefined : `${inputId}-message`"
       :aria-invalid="invalid || outOfRange || undefined"
       :aria-label="accessibleName"
       :aria-valuemax="maxNumber ?? undefined"
@@ -263,6 +275,7 @@ interface CNumberFieldProps {
  * @csspart input - The text input
  * @csspart step-up - The button that steps the number up
  * @csspart step-down - The button that steps the number down
+ * @csspart message - The hint / error message area below the field (always reserved unless `hide-details`)
  * @cssstate out-of-range - Present while the number is below `min` or above `max`
  */
 import { mdiChevronDown, mdiChevronUp } from '@mdi/js';
@@ -282,6 +295,7 @@ import type { CFieldSize } from '../../types';
 import type { CNumberFieldFormat } from './numbers';
 
 import { useAppDefault } from '../../shared/appDefaults';
+import FieldMessage from '../../shared/FieldMessage.vue';
 import { applyConform } from '../../shared/inputMask';
 import { useControlAttrs } from '../../shared/useControlAttrs';
 import { useHostStates } from '../../shared/useHostStates';

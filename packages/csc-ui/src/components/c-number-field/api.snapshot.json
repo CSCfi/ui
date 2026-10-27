@@ -43,6 +43,7 @@
   "methods": {},
   "parts": [
     "input",
+    "message",
     "step-down",
     "step-up"
   ],

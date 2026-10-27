@@ -107,7 +107,7 @@ describe('invalid (ADR-0076)', () => {
     });
     await settle(400);
 
-    const message = m.deep('c-input', '[part="message"]');
+    const message = m.shadow('[part="message"]');
 
     expect(message.textContent).toContain('Enter a phone number');
     expect(input(m).getAttribute('aria-invalid')).toBe('true');

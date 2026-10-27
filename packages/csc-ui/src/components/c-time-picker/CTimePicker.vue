@@ -392,6 +392,7 @@ interface CTimePickerProps {
  * @csspart actions - The row under the columns holding the Now button (`show-now`) and, in the fullscreen panel, the Done button
  * @csspart now - The Now button: commits the current time
  * @csspart done - The Done button of the fullscreen panel (narrow viewports): commits what the panel holds and closes
+ * @csspart message - The hint / error message area below the field (always reserved unless `hide-details`)
  *
  * @cssstate bad-input - Present while committed text names no time that can be picked
  */

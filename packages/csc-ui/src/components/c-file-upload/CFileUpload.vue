@@ -40,6 +40,7 @@
     <button
       v-if="!compactResolved"
       ref="zoneRef"
+      :aria-describedby="hideDetailsResolved ? undefined : messageId"
       :class="ui.zone()"
       :disabled="isDisabled"
       part="drop-zone"
@@ -67,6 +68,7 @@
     <div v-else :class="ui.zone()" part="drop-zone" @click="openDialog">
       <button
         ref="zoneRef"
+        :aria-describedby="hideDetailsResolved ? undefined : messageId"
         :class="ui.choose()"
         :disabled="isDisabled"
         type="button"
@@ -84,6 +86,7 @@
     </div>
 
     <field-message
+      :id="messageId"
       :error-message
       :hide-details="hideDetailsResolved"
       :hint
@@ -755,6 +758,8 @@ const ui = computed(() =>
 const autoId = useId();
 
 const labelId = `${autoId}-label`;
+
+const messageId = `${autoId}-message`;
 
 const inputRef = useTemplateRef<HTMLInputElement>('inputRef');
 

@@ -8,9 +8,7 @@
       :active="focused || open"
       :data-hide-details="String(hideDetails)"
       :disabled
-      :error-message
       :filled="hasText"
-      :hint
       :input-id
       :invalid
       :label
@@ -19,6 +17,19 @@
       :shadow
       :size
     >
+      <!-- The hint / error message, here in the field's own tree so the
+           input's aria-describedby can name it. -->
+      <field-message
+        :id="`${inputId}-message`"
+        slot="message"
+        :error-message
+        :hide-details
+        :hint
+        :invalid
+        :label-on-top
+        part="message"
+      />
+
       <!-- The editable field (ADR-0058): typing never opens the panel. Under
            `range` a second input holds the end, both in one field box. -->
       <div
@@ -31,6 +42,7 @@
           :id="inputId"
           :ref="bindStart"
           v-bind="controlAttrs"
+          :aria-describedby="hideDetails ? undefined : `${inputId}-message`"
           :aria-invalid="invalid || badStart || undefined"
           :aria-label="inputLabel('start')"
           :class="ui.input({ start: range })"
@@ -61,6 +73,7 @@
           <input
             :ref="bindEnd"
             v-bind="controlAttrs"
+            :aria-describedby="hideDetails ? undefined : `${inputId}-message`"
             :aria-invalid="invalid || badEnd || undefined"
             :aria-label="inputLabel('end')"
             :class="ui.input()"
@@ -117,6 +130,7 @@ import { type ComponentPublicInstance, computed } from 'vue';
 
 import type { CFieldSize } from '../types';
 
+import FieldMessage from './FieldMessage.vue';
 import { type TypedField } from './useTypedField';
 
 const typedField = tv({
