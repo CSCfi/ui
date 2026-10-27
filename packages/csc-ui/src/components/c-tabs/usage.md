@@ -46,7 +46,7 @@ Set `disabled` on a `c-tab` to show it greyed out and keep it from being selecte
 
 ## Overflowing tab row
 
-The horizontal tab row is one line and never wraps. When the tabs are wider than the row, arrow buttons appear at both ends; each press scrolls by half the row's width, and on a touch screen the row also pans with a drag. A tab that becomes active, or that the arrow keys move to, is scrolled into view. There is no scrollbar. Vertical tabs do not scroll this way.
+The horizontal tab row is one line and never wraps. When the tabs are wider than the row, arrow buttons appear at both ends; each press scrolls by half the row's width, and on a touch screen the row also pans with a sideways drag (a vertical swipe that starts on the row scrolls the page). A tab that becomes active, or that the arrow keys move to, is scrolled into view. There is no scrollbar. Vertical tabs do not scroll this way.
 
 ## Panels
 

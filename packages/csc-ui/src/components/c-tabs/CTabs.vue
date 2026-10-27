@@ -264,6 +264,12 @@ let resizeObserver: null | ResizeObserver = null;
 
 let startX = 0;
 
+let startY = 0;
+
+// The axis a touch on the row moves along, decided by its first move: a
+// horizontal drag scrolls the row, a vertical one is left to the page.
+let touchAxis: '' | 'x' | 'y' = '';
+
 let touchOffset = 0;
 
 type CTabButtonsEl = { value: number | string } & HTMLElement;
@@ -308,6 +314,9 @@ const vertical = computed(
 );
 
 const motionDisabled = () => prefersReducedMotion() || disableAnimation.value;
+
+/** The row's scroll transition: none while motion is off. */
+const rowSpeed = () => (motionDisabled() ? '0ms' : '200ms');
 
 const tabItemsEl = () =>
   host?.querySelector('c-tab-items') as CTabItemsEl | null;
@@ -513,12 +522,20 @@ const handleActiveTab = () => {
             moveToTab(selected);
             tabsRef.value?.style.setProperty(
               '--_c-tabs-transition-speed',
-              '200ms',
+              rowSpeed(),
             );
           });
         }
 
-        if (isActive && isDirty) tab.focus();
+        // After keyboard use the active tab takes focus, but only from the
+        // row: focus in a panel (typing in a field) stays where it is.
+        if (
+          isActive &&
+          isDirty &&
+          tabsList().some((t) => t.matches(':focus-within'))
+        ) {
+          tab.focus();
+        }
       }
 
       item.active = isActive;
@@ -596,9 +613,9 @@ const focusTab = (value: number | string) => {
   });
 };
 
+// A resize while the indicator moves is re-measured too: dropping it left a
+// row that shrank in that window without its overflow arrows.
 const handleResize = (width: number) => {
-  if (moveDebounce !== null) return;
-
   if (debounce !== null) clearTimeout(debounce);
   debounce = setTimeout(() => {
     const content = host?.shadowRoot?.querySelector('.c-tabs__scroll');
@@ -619,13 +636,27 @@ const handleResize = (width: number) => {
 const onTouchStart = (event: TouchEvent) => {
   handleOverflow();
 
+  touchAxis = '';
+
   if (!isOverflowing.value) return;
   touchOffset = scrollOffset.value * -1;
   startX = event.touches[0].clientX;
+  startY = event.touches[0].clientY;
 };
 
 const onTouchMove = (event: TouchEvent) => {
-  if (vertical.value) return;
+  if (vertical.value || !isOverflowing.value) return;
+
+  if (!touchAxis) {
+    const dx = Math.abs(event.touches[0].clientX - startX);
+
+    const dy = Math.abs(event.touches[0].clientY - startY);
+
+    if (dx < 4 && dy < 4) return;
+    touchAxis = dx > dy ? 'x' : 'y';
+  }
+
+  if (touchAxis === 'y') return;
   event.preventDefault();
   tabsRef.value?.style.setProperty('--_c-tabs-transition-speed', '0ms');
 
@@ -637,7 +668,7 @@ const onTouchMove = (event: TouchEvent) => {
 };
 
 const onTouchEnd = () => {
-  tabsRef.value?.style.setProperty('--_c-tabs-transition-speed', '200ms');
+  tabsRef.value?.style.setProperty('--_c-tabs-transition-speed', rowSpeed());
 };
 
 const onBackClick = () => {
@@ -750,9 +781,10 @@ onMounted(() => {
       if (tabButtonsEl()) return;
 
       const ev = e as KeyboardEvent;
-      isDirty = true;
 
+      // Keys on a tab only: typing in a panel is not tab-row keyboard use.
       if (!tabsList().includes(ev.target as CTabEl)) return;
+      isDirty = true;
 
       const isLeft = ev.key === 'ArrowLeft';
 

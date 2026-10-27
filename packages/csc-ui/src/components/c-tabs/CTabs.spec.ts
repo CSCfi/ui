@@ -4,6 +4,7 @@
  * consumer set on a tab or a panel used to be replaced by a generated one.
  */
 import { describe, expect, it } from 'vitest';
+import { userEvent } from 'vitest/browser';
 
 import { mount, settled, withMotion } from '../../test/harness';
 
@@ -122,5 +123,113 @@ describe('panels', () => {
       backdrop.width,
       backdrop.height,
     ]).toEqual([0, 0, window.innerWidth, window.innerHeight]);
+  });
+});
+
+describe('tab row', () => {
+  const MANY = Array.from({ length: 12 }, (_, i) => `settings-${i}`);
+
+  const wait = (ms: number) =>
+    new Promise((resolve) => setTimeout(resolve, ms));
+
+  const mountMany = (attrs: Record<string, boolean | string> = {}) =>
+    mount('c-tabs', {
+      attrs,
+      html: `${MANY.map((v) => tab(v)).join('')}<c-tab-items slot="items">${MANY.map(
+        (v) => panel(v),
+      ).join('')}</c-tab-items>`,
+      props: { value: MANY[0] },
+    });
+
+  /** A tab set settled after mount, then narrowed until its row overflows. */
+  const mountRow = async (attrs: Record<string, boolean | string> = {}) => {
+    const m = await mountMany(attrs);
+
+    await wait(400);
+    m.stage.style.cssText = 'display:block;width:320px';
+    // The row re-measures 200ms after a resize.
+    await wait(400);
+    expect(m.host.classList.contains('c-tabs--overflow')).toBe(true);
+
+    return m;
+  };
+
+  const touch = (
+    el: HTMLElement,
+    type: string,
+    clientX: number,
+    clientY: number,
+  ): boolean => {
+    const point = new Touch({ clientX, clientY, identifier: 1, target: el });
+
+    return el.dispatchEvent(
+      new TouchEvent(type, {
+        bubbles: true,
+        cancelable: true,
+        changedTouches: [point],
+        composed: true,
+        touches: type === 'touchend' ? [] : [point],
+      }),
+    );
+  };
+
+  it('re-measures a resize that lands while the indicator moves', async () => {
+    const m = await mountMany();
+
+    // Right after mount the indicator's first move is still pending.
+    m.stage.style.cssText = 'display:block;width:320px';
+    await wait(400);
+
+    expect(m.host.classList.contains('c-tabs--overflow')).toBe(true);
+  });
+
+  it('disable-animation keeps the row from animating its scroll', async () => {
+    const m = await mountRow({ 'disable-animation': true });
+
+    (m.host.querySelectorAll('c-tab')[11] as HTMLElement).click();
+    await settled();
+
+    expect(
+      getComputedStyle(m.part('tabs')).getPropertyValue(
+        '--_c-tabs-transition-speed',
+      ),
+    ).not.toBe('200ms');
+  });
+
+  it('a vertical swipe on the row is left to the page', async () => {
+    const m = await mountRow();
+
+    const row = m.part('tabs');
+
+    touch(row, 'touchstart', 100, 20);
+
+    expect(touch(row, 'touchmove', 104, 80), 'vertical').toBe(true);
+    touch(row, 'touchend', 104, 80);
+
+    touch(row, 'touchstart', 100, 20);
+
+    expect(touch(row, 'touchmove', 40, 24), 'horizontal').toBe(false);
+    touch(row, 'touchend', 40, 24);
+  });
+
+  it('keeps focus in a panel while the row re-measures', async () => {
+    const { host, stage } = await mount('c-tabs', {
+      html: `${tab('one') + tab('two')}<c-tab-items slot="items"><c-tab-item value="one"><input aria-label="Name"></c-tab-item>${panel(
+        'two',
+      )}</c-tab-items>`,
+      props: { value: 'one' },
+    });
+
+    stage.style.cssText = 'display:block;width:600px';
+    await new Promise((resolve) => setTimeout(resolve, 400));
+
+    const input = host.querySelector('input')!;
+
+    input.focus();
+    await userEvent.keyboard('a');
+    stage.style.width = '500px';
+    await new Promise((resolve) => setTimeout(resolve, 400));
+
+    expect(document.activeElement).toBe(input);
   });
 });
