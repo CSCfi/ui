@@ -105,8 +105,15 @@ const parentView = views[0];
 const examples = useExamples(group.map((c) => c.tagName));
 
 // The first paragraph is the component description, already rendered as the
-// intro under the H1 — the Usage section shows only what follows it.
-const usageSource = usageWithoutIntro(useUsageDoc(tag));
+// intro under the H1 — the Usage section shows only what follows it, then
+// each composed child's own usage doc.
+const usageSource =
+  [
+    usageWithoutIntro(useUsageDoc(tag)),
+    ...group.slice(1).map((child) => childUsageSection(child.tagName)),
+  ]
+    .filter(Boolean)
+    .join('\n\n') || null;
 
 // Highlight (Shiki) + render markdown at prerender; serialized into the static
 // payload so the client ships no highlighter. See utils/highlight.ts.
