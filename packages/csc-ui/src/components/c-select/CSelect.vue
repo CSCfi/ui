@@ -388,6 +388,7 @@ import {
   toggleAllValues,
 } from '../../shared/selectAll';
 import { useControlAttrs } from '../../shared/useControlAttrs';
+import { useIdReferences } from '../../shared/useIdReferences';
 import { emitModelChange, seedModelValue } from '../../shared/valueEvents';
 
 /** Events dispatched by `<c-select>`. */
@@ -1491,6 +1492,9 @@ onBeforeUnmount(() => {
     onDropdownStateChange,
   );
 });
+
+// The page's id references on the element reach the element carrying its role.
+useIdReferences(() => inputRef.value);
 </script>
 
 <!--

@@ -123,6 +123,7 @@ import {
 
 import { coerceBoolean } from '../../shared/coerceBoolean';
 import { prefersReducedMotion } from '../../shared/reducedMotion';
+import { useIdReferences } from '../../shared/useIdReferences';
 import { emitModelChange } from '../../shared/valueEvents';
 
 /** Events dispatched by `<c-tabs>`. */
@@ -845,6 +846,14 @@ onMounted(() => {
 onBeforeUnmount(() => {
   resizeObserver?.disconnect();
 });
+
+// The page's id references on the element reach the tablist: the row's own,
+// or c-tab-buttons' in buttons mode.
+useIdReferences(() =>
+  buttonsMode.value
+    ? tabButtonsEl()?.shadowRoot?.querySelector('[role="tablist"]')
+    : scrollRef.value,
+);
 </script>
 
 <!--

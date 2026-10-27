@@ -57,9 +57,9 @@ the button stays focusable and is announced as busy and unavailable
 The `root` part is a native `<button>`, so focus, keyboard activation and the
 button role come from the platform. Its name comes from `aria-label` on the
 `c-icon-button` element, which is forwarded to the inner button, as are the
-other ARIA attributes (`aria-expanded`, `aria-haspopup`, …) except those
-holding element ids (`aria-controls`, `aria-describedby`, …), whose ids cannot
-reach into the component. Without an `aria-label` the button is named only by
+other ARIA attributes (`aria-expanded`, `aria-haspopup`, …). Those holding
+element ids (`aria-controls`, `aria-describedby`, …) give the button the
+elements the ids name in your page. Without an `aria-label` the button is named only by
 the text in its content, which is usually nothing or the badge count; visually
 hidden slotted text also names it, and keeps naming it while `loading`.
 

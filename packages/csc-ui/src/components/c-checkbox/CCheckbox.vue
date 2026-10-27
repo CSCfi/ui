@@ -126,6 +126,7 @@ import SelectionIndicator from '../../shared/SelectionIndicator.vue';
 import { useControlAttrs } from '../../shared/useControlAttrs';
 import { useHasSlot } from '../../shared/useHasSlot';
 import { useHostStates } from '../../shared/useHostStates';
+import { useIdReferences } from '../../shared/useIdReferences';
 import { useRipple } from '../../shared/useRipple';
 import { emitModelChange } from '../../shared/valueEvents';
 
@@ -486,6 +487,9 @@ const onChange = (_event: Event) => {
   // host `value` mirror doesn't loop.
   emitModelChange(host, nextValue satisfies CCheckboxEvents['change']);
 };
+
+// The page's id references on the element reach the element carrying its role.
+useIdReferences('input');
 </script>
 
 <!--

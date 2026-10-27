@@ -12,6 +12,8 @@ import type { Mounted, MountOptions } from '../harness';
 
 import { settle } from '../harness';
 
+export { HOST_ARIA_OBJECT, NO_ARIA_OBJECT } from './aria-object';
+
 export { NO_ROOT_PART } from './root-part';
 
 /** Per-tag mount options that keep a bare mount warning-free. Each entry names the warning it prevents. */

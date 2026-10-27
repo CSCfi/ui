@@ -48,6 +48,7 @@ import { coerceBoolean } from '../../shared/coerceBoolean';
 import { useControlAttrs } from '../../shared/useControlAttrs';
 import { useHostEmit } from '../../shared/useHostEmit';
 import { useHostStates } from '../../shared/useHostStates';
+import { useIdReferences } from '../../shared/useIdReferences';
 import { useRipple } from '../../shared/useRipple';
 
 // The shadow <label> is this component's root part; consumer fallthrough
@@ -214,6 +215,9 @@ const onChange = () => {
   setState('checked', true);
   emit('radioselect', props.value, { bubbles: true, composed: true });
 };
+
+// The page's id references on the element reach the element carrying its role.
+useIdReferences(() => inputRef.value);
 </script>
 
 <!--

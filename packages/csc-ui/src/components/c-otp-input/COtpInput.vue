@@ -97,6 +97,7 @@ import {
 import FormLabel from '../../shared/FormLabel.vue';
 import { useHasSlot } from '../../shared/useHasSlot';
 import { useHostEmit } from '../../shared/useHostEmit';
+import { useIdReferences } from '../../shared/useIdReferences';
 import { emitModelInput, emitModelSettled } from '../../shared/valueEvents';
 
 /** Events dispatched by `<c-otp-input>`. */
@@ -463,6 +464,9 @@ onMounted(() => {
   // A native `autofocus` inside a shadow root is not honoured.
   if (props.autofocus) requestAnimationFrame(() => inputs()[0]?.focus());
 });
+
+// The page's id references on the element reach the element carrying its role.
+useIdReferences(() => rootRef.value);
 </script>
 
 <!--

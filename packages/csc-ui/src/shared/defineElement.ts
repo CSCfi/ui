@@ -1,6 +1,7 @@
 import { camelize, type Component, defineCustomElement } from 'vue';
 
 import tailwindStyles from '../tailwind.css?inline';
+import { ID_REFERENCES } from './useIdReferences';
 
 /**
  * Whether the platform supports constructable stylesheets
@@ -247,22 +248,13 @@ const normalizeNumberProperties = (
  * - an ARIA id reference (`aria-controls`, `aria-labelledby`, …) stays on the
  *   host too: an id resolves only in its own tree, so a copy in the shadow
  *   DOM points at nothing (c-tabs' `aria-controls` on a c-button landed on
- *   its inner `<button>`, naming no panel);
+ *   its inner `<button>`, naming no panel). A change re-renders the
+ *   component, whose `useIdReferences` hands the elements the ids name to
+ *   the element carrying its role;
  * - any other undeclared hyphenated attribute keeps its name
  *   (`$attrs['aria-label']`); removal leaves `undefined`;
  * - a single-word one (`role`, `rel`, `class`) goes Vue's way.
  */
-const ID_REFERENCES = new Set([
-  'aria-activedescendant',
-  'aria-controls',
-  'aria-describedby',
-  'aria-details',
-  'aria-errormessage',
-  'aria-flowto',
-  'aria-labelledby',
-  'aria-owns',
-]);
-
 const routeAttribute = (
   el: ConnectableElement,
   declared: Set<string>,
@@ -272,9 +264,9 @@ const routeAttribute = (
   const camelKey = camelize(key);
 
   if (declared.has(camelKey)) viaVue();
-  else if (key.startsWith('data-')) el._instance?.proxy?.$forceUpdate();
-  else if (ID_REFERENCES.has(key)) return;
-  else if (camelKey !== key) {
+  else if (key.startsWith('data-') || key in ID_REFERENCES) {
+    el._instance?.proxy?.$forceUpdate();
+  } else if (camelKey !== key) {
     el._setProp(key, el.getAttribute(key) ?? undefined, false, true);
   } else viaVue();
 };

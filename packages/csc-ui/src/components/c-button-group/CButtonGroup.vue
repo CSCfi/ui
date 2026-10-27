@@ -1,8 +1,10 @@
 <template>
   <div
+    ref="groupRef"
+    v-bind="controlAttrs"
     :aria-labelledby="label ? labelId : undefined"
     :class="ui.wrapper()"
-    :role="label ? 'group' : undefined"
+    :role="grouped() ? 'group' : undefined"
   >
     <form-label
       v-if="label"
@@ -108,6 +110,8 @@ import {
 
 import { coerceBoolean } from '../../shared/coerceBoolean';
 import FormLabel from '../../shared/FormLabel.vue';
+import { useControlAttrs } from '../../shared/useControlAttrs';
+import { useIdReferences } from '../../shared/useIdReferences';
 import { emitModelChange } from '../../shared/valueEvents';
 
 /** Events dispatched by `<c-button-group>`. */
@@ -217,6 +221,16 @@ const props = withDefaults(defineProps<CButtonGroupProps>(), {
 
 const host = useHost();
 
+const { controlAttrs } = useControlAttrs();
+
+// A group takes its role once something names it: the label, or the page's
+// `aria-label` or `aria-labelledby` on the element (read at render, and
+// defineElement re-renders on an id-reference change).
+const grouped = () =>
+  !!props.label ||
+  !!controlAttrs.value['aria-label'] ||
+  !!host?.hasAttribute('aria-labelledby');
+
 const autoId = useId();
 
 const labelId = `${autoId}-label`;
@@ -231,6 +245,8 @@ const ui = computed(() =>
     size: props.size in sizeVariants ? props.size : 'default',
   }),
 );
+
+const groupRef = useTemplateRef<HTMLElement>('groupRef');
 
 const rootRef = useTemplateRef<HTMLElement>('rootRef');
 
@@ -587,4 +603,7 @@ onBeforeUnmount(() => {
   contentObserver = null;
   cancelAnimationFrame(measureFrame);
 });
+
+// The page's id references on the element reach the element carrying its role.
+useIdReferences(() => groupRef.value);
 </script>

@@ -33,6 +33,8 @@ import { mdiFullscreen, mdiFullscreenExit } from '@mdi/js';
 import { tv } from 'tailwind-variants';
 import { computed, onBeforeUnmount, onMounted, ref, useHost } from 'vue';
 
+import { useIdReferences } from '../../shared/useIdReferences';
+
 /**
  * Styling lives in this `tailwind-variants` config. The inner
  * `<article>` (`root` part) is the card's visible box: it stacks the card
@@ -158,6 +160,9 @@ onBeforeUnmount(() => {
 });
 
 defineExpose({ enterFullscreen, exitFullscreen });
+
+// The page's id references on the element reach the element carrying its role.
+useIdReferences('article');
 </script>
 
 <!--

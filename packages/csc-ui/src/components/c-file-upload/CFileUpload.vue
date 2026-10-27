@@ -525,6 +525,7 @@ import FieldMessage from '../../shared/FieldMessage.vue';
 import FormLabel from '../../shared/FormLabel.vue';
 import { useHostEmit } from '../../shared/useHostEmit';
 import { useHostStates } from '../../shared/useHostStates';
+import { useIdReferences } from '../../shared/useIdReferences';
 import { useKeyboardModality } from '../../shared/useKeyboardModality';
 import { useStatusAnnouncer } from '../../shared/useStatusAnnouncer';
 import { emitModelChange } from '../../shared/valueEvents';
@@ -1474,6 +1475,9 @@ onMounted(() => {
 onBeforeUnmount(() => {
   for (const { controller } of tracked.values()) controller?.abort();
 });
+
+// The page's id references on the element reach the element carrying its role.
+useIdReferences('[role="group"]');
 </script>
 
 <!--

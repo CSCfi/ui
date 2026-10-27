@@ -54,6 +54,7 @@ import { coerceBoolean } from '../../shared/coerceBoolean';
 import FieldMessage from '../../shared/FieldMessage.vue';
 import FormLabel from '../../shared/FormLabel.vue';
 import { useHasSlot } from '../../shared/useHasSlot';
+import { useIdReferences } from '../../shared/useIdReferences';
 import { emitModelChange } from '../../shared/valueEvents';
 
 /** Events dispatched by `<c-radio-group>`. */
@@ -396,6 +397,9 @@ onBeforeUnmount(() => {
   host?.removeEventListener('radioselect', onRadioChange);
   host?.removeEventListener('keydown', onKeyDown);
 });
+
+// The page's id references on the element reach the element carrying its role.
+useIdReferences(() => rootRef.value);
 </script>
 
 <!--

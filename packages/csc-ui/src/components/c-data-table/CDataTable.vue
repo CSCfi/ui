@@ -604,6 +604,7 @@ import { useAppDefault } from '../../shared/appDefaults';
 import { coerceBoolean } from '../../shared/coerceBoolean';
 import { useHasSlot } from '../../shared/useHasSlot';
 import { useHostEmit } from '../../shared/useHostEmit';
+import { useIdReferences } from '../../shared/useIdReferences';
 
 // The root element is a plain div; keep consumer classes on the host instead
 // of letting them fall through and collide with the tv utilities on `root`.
@@ -1405,6 +1406,9 @@ watch([() => props.columns, () => props.data, autohideOn, selectionOn], () => {
   autohiddenKeys.value = [];
   void nextTick(() => recomputeOverflow());
 });
+
+// The page's id references on the element reach the element carrying its role.
+useIdReferences(() => tableRef.value);
 </script>
 
 <!--

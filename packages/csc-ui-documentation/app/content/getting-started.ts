@@ -250,6 +250,22 @@ const enabled = ref(false);
   {
     blocks: forAll([
       {
+        code: `<p id="plan-help">Billed monthly. Change your plan at any time.</p>
+<c-select label="Plan" aria-describedby="plan-help"></c-select>
+
+<c-text-field aria-label="Search projects"></c-text-field>`,
+        lang: 'html',
+      },
+    ]),
+    id: 'accessibility',
+    intro: {
+      all: `ARIA attributes on a component reach the control inside it: aria-label names a field's input, a button or a dialog. The attributes that point at elements by id work too (aria-labelledby, aria-describedby, aria-controls and the rest): the component looks the ids up where the element is written, your page or the shadow root around it, and hands those elements to its control. It looks them up when it renders, when the attribute changes and when the control takes focus, so an element your page renders later is found by then.`,
+    },
+    title: 'Accessibility',
+  },
+  {
+    blocks: forAll([
+      {
         code: `import { applyTheme } from '@cscfi/csc-ui';
 
 // Step-500 seed per family; ramps and dark mode derive from it.

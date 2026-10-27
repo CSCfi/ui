@@ -189,6 +189,7 @@ import { computed, useHost, useTemplateRef } from 'vue';
 
 import { coerceBoolean } from '../../shared/coerceBoolean';
 import { useHasSlot } from '../../shared/useHasSlot';
+import { useIdReferences } from '../../shared/useIdReferences';
 import { useRipple } from '../../shared/useRipple';
 
 /**
@@ -605,4 +606,7 @@ const onKeydown = (event: KeyboardEvent) => {
     rootRef.value?.click();
   }
 };
+
+// The page's id references on the element reach the element carrying its role.
+useIdReferences(() => rootRef.value);
 </script>

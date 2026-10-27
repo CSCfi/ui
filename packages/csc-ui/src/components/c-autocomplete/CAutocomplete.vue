@@ -611,6 +611,7 @@ import { type MatchSegment, splitMatches } from '../../shared/splitMatches';
 import { useAnchoredPanel } from '../../shared/useAnchoredPanel';
 import { useControlAttrs } from '../../shared/useControlAttrs';
 import { useHostEmit } from '../../shared/useHostEmit';
+import { useIdReferences } from '../../shared/useIdReferences';
 import { useNarrowViewport } from '../../shared/useNarrowViewport';
 import { useStatusAnnouncer } from '../../shared/useStatusAnnouncer';
 import { emitModelChange, seedModelValue } from '../../shared/valueEvents';
@@ -1773,6 +1774,9 @@ onMounted(() => {
 onBeforeUnmount(() => {
   childObserver?.disconnect();
 });
+
+// The page's id references on the element reach the element carrying its role.
+useIdReferences(() => fieldRef.value);
 </script>
 
 <!--

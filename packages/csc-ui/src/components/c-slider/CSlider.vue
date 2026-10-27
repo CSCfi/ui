@@ -70,6 +70,7 @@ import {
 } from 'vue';
 
 import FormLabel from '../../shared/FormLabel.vue';
+import { useIdReferences } from '../../shared/useIdReferences';
 import { emitModelInput, emitModelSettled } from '../../shared/valueEvents';
 
 // The host's `aria-label` names the range input (below); without this it
@@ -358,6 +359,9 @@ onMounted(() => {
     if (inputRef.value) inputRef.value.value = String(props.value);
   });
 });
+
+// The page's id references on the element reach the element carrying its role.
+useIdReferences(() => inputRef.value);
 </script>
 
 <!--

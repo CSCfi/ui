@@ -33,6 +33,7 @@ import { tv } from 'tailwind-variants';
 import { computed, onMounted, ref, useHost, watchEffect } from 'vue';
 
 import { useHostEmit } from '../../shared/useHostEmit';
+import { useIdReferences } from '../../shared/useIdReferences';
 
 /**
  * Styling lives in this `tailwind-variants` config: each visual
@@ -198,6 +199,9 @@ onMounted(() => {
   });
   observer.observe(host, { attributeFilter: ['class'], attributes: true });
 });
+
+// The page's id references on the element reach the element carrying its role.
+useIdReferences('a, button');
 </script>
 
 <!--

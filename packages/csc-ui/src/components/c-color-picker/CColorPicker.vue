@@ -603,6 +603,7 @@ import { useAnchoredPanel } from '../../shared/useAnchoredPanel';
 import { useControlAttrs } from '../../shared/useControlAttrs';
 import { useHostEmit } from '../../shared/useHostEmit';
 import { useHostStates } from '../../shared/useHostStates';
+import { useIdReferences } from '../../shared/useIdReferences';
 import { useKeyboardModality } from '../../shared/useKeyboardModality';
 import { useNarrowViewport } from '../../shared/useNarrowViewport';
 import { useTypedField } from '../../shared/useTypedField';
@@ -1555,6 +1556,12 @@ const onSwatchClear = (event: Event) => {
 };
 
 defineExpose({ badInput });
+
+// The page's id references on the element reach the element carrying its role.
+useIdReferences(
+  () =>
+    comboRef.value ?? host?.shadowRoot?.querySelector('input[part~="input"]'),
+);
 </script>
 
 <!--

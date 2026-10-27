@@ -365,6 +365,7 @@ import {
 } from '../../shared/inputMask';
 import { useControlAttrs } from '../../shared/useControlAttrs';
 import { useHostStates } from '../../shared/useHostStates';
+import { useIdReferences } from '../../shared/useIdReferences';
 import { emitModelInput, emitModelSettled } from '../../shared/valueEvents';
 
 /** Events dispatched by `<c-text-field>`. */
@@ -742,6 +743,9 @@ const onBlur = (event: Event) => {
 };
 
 defineExpose({ maskComplete, unmaskedValue });
+
+// The page's id references on the element reach the element carrying its role.
+useIdReferences(() => inputRef.value);
 </script>
 
 <!--

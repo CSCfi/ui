@@ -115,6 +115,7 @@ import {
   flipChain,
   useFallbackPosition,
 } from '../../shared/useFallbackPosition';
+import { useIdReferences } from '../../shared/useIdReferences';
 import { fitCrumbs } from './fit';
 
 /**
@@ -662,6 +663,9 @@ onBeforeUnmount(() => {
   detachDismiss = null;
   fallback.stop();
 });
+
+// The page's id references on the element reach the element carrying its role.
+useIdReferences('nav');
 </script>
 
 <!--

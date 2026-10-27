@@ -35,10 +35,9 @@ setting it to `true` again does nothing.
 
 ## Accessibility
 
-- **Always set `aria-label` on the `c-modal` element** — the dialog's title
-  lives in your slotted content, across a shadow boundary the platform's
-  `aria-labelledby` cannot reach, so the label is mirrored from the host.
-  Opening an unlabeled modal logs a console warning.
+- **Always name the dialog:** set `aria-label` on the `c-modal` element, or
+  `aria-labelledby` with the id of the title in your content. Opening an
+  unnamed modal logs a console warning.
 - Focus moves to the first `[autofocus]` element in your content if present,
   else the first focusable element, else the dialog itself. Put `autofocus`
   on the least destructive action of a confirmation dialog.

@@ -88,6 +88,7 @@ import FormLabel from '../../shared/FormLabel.vue';
 import { useControlAttrs } from '../../shared/useControlAttrs';
 import { useHasSlot } from '../../shared/useHasSlot';
 import { useHostStates } from '../../shared/useHostStates';
+import { useIdReferences } from '../../shared/useIdReferences';
 import { emitModelChange } from '../../shared/valueEvents';
 
 // ARIA attributes on the element name and describe the native control;
@@ -346,6 +347,9 @@ const toggle = () => {
   // host `value` mirror doesn't loop.
   emitModelChange(host, next satisfies CSwitchEvents['change']);
 };
+
+// The page's id references on the element reach the element carrying its role.
+useIdReferences('input');
 </script>
 
 <!--

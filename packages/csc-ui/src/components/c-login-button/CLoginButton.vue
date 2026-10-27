@@ -33,6 +33,8 @@
 import { tv } from 'tailwind-variants';
 import { computed } from 'vue';
 
+import { useIdReferences } from '../../shared/useIdReferences';
+
 /**
  * Styling lives entirely in this `tailwind-variants` config. The old
  * `--c-login-button-*` indirection vars are dropped and the card is authored
@@ -87,4 +89,7 @@ withDefaults(defineProps<CLoginButtonProps>(), {
   href: '',
   src: '',
 });
+
+// The page's id references on the element reach the element carrying its role.
+useIdReferences('[part~="root"]');
 </script>

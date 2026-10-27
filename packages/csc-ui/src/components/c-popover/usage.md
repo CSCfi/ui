@@ -22,7 +22,7 @@ Popovers nest: a control inside one popover's panel can open another. The open p
 
 ## Accessibility
 
-The panel is a non-modal `role="dialog"` and needs an accessible name: the `heading` prop provides one, or set `aria-label` on the `c-popover` element (`aria-labelledby` cannot reference slotted content across the shadow boundary). The component warns in the console when it opens unnamed. `aria-haspopup="dialog"` and `aria-expanded` are mirrored onto the slotted trigger.
+The panel is a non-modal `role="dialog"` and needs an accessible name: the `heading` prop provides one, or set `aria-label` on the `c-popover` element, or `aria-labelledby` with the id of a heading in your content. The component warns in the console when it opens unnamed. `aria-haspopup="dialog"` and `aria-expanded` are mirrored onto the slotted trigger.
 
 ## Layering
 

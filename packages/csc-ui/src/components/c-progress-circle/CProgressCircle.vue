@@ -52,6 +52,7 @@ import { tv } from 'tailwind-variants';
 import { computed, useTemplateRef } from 'vue';
 
 import { useHasSlot } from '../../shared/useHasSlot';
+import { useIdReferences } from '../../shared/useIdReferences';
 
 /**
  * Styling lives in this `tailwind-variants` config. Customization is via the
@@ -156,4 +157,7 @@ const barOffset = computed(
 const rootRef = useTemplateRef<HTMLElement>('rootRef');
 
 const hasSlotContent = useHasSlot(rootRef, '');
+
+// The page's id references on the element reach the element carrying its role.
+useIdReferences(() => rootRef.value);
 </script>

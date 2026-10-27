@@ -123,6 +123,7 @@ interface CIconButtonProps {
 import { tv } from 'tailwind-variants';
 import { computed, useTemplateRef } from 'vue';
 
+import { useIdReferences } from '../../shared/useIdReferences';
 import { useRipple } from '../../shared/useRipple';
 
 /**
@@ -397,6 +398,9 @@ const onClick = (event: MouseEvent) => {
 
   spawnRipple(event);
 };
+
+// The page's id references on the element reach the element carrying its role.
+useIdReferences('[part~="root"]');
 </script>
 
 <!--

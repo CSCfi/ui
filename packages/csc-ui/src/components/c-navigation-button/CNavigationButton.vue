@@ -41,10 +41,11 @@ interface CNavigationButtonProps {
  */
 import { mdiMenu } from '@mdi/js';
 import { tv } from 'tailwind-variants';
-import { computed } from 'vue';
+import { computed, useHost } from 'vue';
 
 import { useAppDefault } from '../../shared/appDefaults';
 import { navigationDrawer } from '../../shared/navigationDrawer';
+import { useIdReferences } from '../../shared/useIdReferences';
 
 /**
  * Styling lives entirely in this `tailwind-variants` config. The
@@ -85,5 +86,14 @@ const t = appDefault('texts', DEFAULT_TEXTS);
 
 const ui = computed(() => navigationButton());
 
+const host = useHost();
+
 const menuIcon = mdiMenu;
+
+// The page's id references on the element reach the element carrying its role.
+useIdReferences(() =>
+  host?.shadowRoot
+    ?.querySelector('c-icon-button')
+    ?.shadowRoot?.querySelector('button'),
+);
 </script>

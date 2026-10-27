@@ -57,6 +57,7 @@ import {
 } from 'vue';
 
 import { useHostEmit } from '../../shared/useHostEmit';
+import { useIdReferences } from '../../shared/useIdReferences';
 
 /** Events dispatched by `<c-side-navigation-item>`. */
 interface CSideNavigationItemEvents {
@@ -351,6 +352,9 @@ onMounted(() => {
     handleChildCollapsedChange(props.active);
   });
 });
+
+// The page's id references on the element reach the element carrying its role.
+useIdReferences(() => headerRef.value);
 </script>
 
 <!--

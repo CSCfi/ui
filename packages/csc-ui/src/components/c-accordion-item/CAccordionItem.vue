@@ -69,6 +69,7 @@ import {
 import { useHasSlot } from '../../shared/useHasSlot';
 import { useHostEmit } from '../../shared/useHostEmit';
 import { useHostStates } from '../../shared/useHostStates';
+import { useIdReferences } from '../../shared/useIdReferences';
 
 /** Events dispatched by `<c-accordion-item>`. */
 interface CAccordionItemEvents {
@@ -362,4 +363,7 @@ const onToggle = () => {
     { bubbles: true, composed: true },
   );
 };
+
+// The page's id references on the element reach the element carrying its role.
+useIdReferences('button');
 </script>

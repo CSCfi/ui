@@ -216,6 +216,7 @@ import { tv } from 'tailwind-variants';
 import { computed, ref, useAttrs, useHost, watch } from 'vue';
 
 import { useAppDefault } from '../../shared/appDefaults';
+import { useIdReferences } from '../../shared/useIdReferences';
 import { emitModelChange } from '../../shared/valueEvents';
 
 /** Events dispatched by `<c-pagination>`. */
@@ -491,6 +492,9 @@ const pageButtons = computed<Btn[]>(() => {
 
   return buttons;
 });
+
+// The page's id references on the element reach the element carrying its role.
+useIdReferences('nav');
 </script>
 
 <style>

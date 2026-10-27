@@ -6,7 +6,12 @@ import { describe, expect, it } from 'vitest';
 
 import { registeredTags } from '../../registry';
 import { BENIGN_BROWSER_NOTICES, consoleSpy, mount, settle } from '../harness';
-import { FIXTURES, NO_ROOT_PART } from './kinds';
+import {
+  FIXTURES,
+  HOST_ARIA_OBJECT,
+  NO_ARIA_OBJECT,
+  NO_ROOT_PART,
+} from './kinds';
 
 const HOST_ATTRIBUTES = ['role', 'tabindex', 'id'] as const;
 
@@ -34,6 +39,28 @@ const customProperties = (style: CSSStyleDeclaration): Map<string, string> =>
       .filter((name) => name.startsWith('--'))
       .map((name) => [name, style.getPropertyValue(name)]),
   );
+
+type Reflecting = {
+  ariaDescribedByElements?: null | readonly Element[];
+  ariaLabelledByElements?: null | readonly Element[];
+} & Element;
+
+/** What can carry an accessible object: a native control or landmark, or a role. */
+const ROLE_BEARING =
+  'a, article, button, dialog, input, main, nav, progress, table, textarea, [role]';
+
+const deepElements = (root: ShadowRoot): Element[] =>
+  [...root.querySelectorAll('*')].flatMap((el) => [
+    el,
+    ...(el.shadowRoot ? deepElements(el.shadowRoot) : []),
+  ]);
+
+it('lists only registered tags as exceptions to id-reference forwarding', () => {
+  const listed = [...HOST_ARIA_OBJECT, ...NO_ARIA_OBJECT];
+
+  expect(listed.filter((tag) => !registeredTags.includes(tag))).toEqual([]);
+  expect(new Set(listed).size).toBe(listed.length);
+});
 
 describe.each(registeredTags)('%s', (tag) => {
   it('upgrades into a shadow root', async () => {
@@ -136,6 +163,56 @@ describe.each(registeredTags)('%s', (tag) => {
       ]);
 
     expect(walk(host.shadowRoot!)).toEqual([]);
+  });
+
+  // An id the page wrote names nothing inside the shadow root, so the element
+  // that carries the tag's role gets the elements the host's ids name (ARIA
+  // element reflection, ADR-0078) — unless the host is that element, or the
+  // tag has nothing a page names by id (`aria-object.ts`).
+  it('hands its id references to the element that carries its role', async () => {
+    const fixture = FIXTURES[tag] ?? {};
+
+    const label = Object.assign(document.createElement('span'), {
+      id: 'probe-label',
+      textContent: 'Probe label',
+    });
+
+    const hint = Object.assign(document.createElement('span'), {
+      id: 'probe-hint',
+      textContent: 'Probe hint',
+    });
+
+    document.body.append(label, hint);
+
+    try {
+      const { host } = await mount(tag, {
+        ...fixture,
+        attrs: {
+          ...fixture.attrs,
+          'aria-describedby': 'probe-hint',
+          'aria-labelledby': 'probe-label',
+        },
+      });
+
+      await settle();
+
+      const reflecting = deepElements(host.shadowRoot!).filter((el) =>
+        (el as Reflecting).ariaLabelledByElements?.includes(label),
+      ) as Reflecting[];
+
+      if (HOST_ARIA_OBJECT.includes(tag) || NO_ARIA_OBJECT.includes(tag)) {
+        expect(reflecting).toEqual([]);
+
+        return;
+      }
+
+      expect(reflecting).toHaveLength(1);
+      expect(reflecting[0]!.matches(ROLE_BEARING)).toBe(true);
+      expect(reflecting[0]!.ariaDescribedByElements).toContain(hint);
+    } finally {
+      label.remove();
+      hint.remove();
+    }
   });
 
   it('passes the page typography through the host', async () => {

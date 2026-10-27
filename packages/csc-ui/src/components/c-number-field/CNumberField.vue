@@ -285,6 +285,7 @@ import { useAppDefault } from '../../shared/appDefaults';
 import { applyConform } from '../../shared/inputMask';
 import { useControlAttrs } from '../../shared/useControlAttrs';
 import { useHostStates } from '../../shared/useHostStates';
+import { useIdReferences } from '../../shared/useIdReferences';
 import { emitModelInput, emitModelSettled } from '../../shared/valueEvents';
 import {
   conformNumber,
@@ -747,6 +748,9 @@ onBeforeUnmount(() => {
 });
 
 defineExpose({ outOfRange });
+
+// The page's id references on the element reach the element carrying its role.
+useIdReferences(() => inputRef.value);
 </script>
 
 <!--

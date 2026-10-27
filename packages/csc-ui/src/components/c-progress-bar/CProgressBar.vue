@@ -42,6 +42,7 @@ import { tv } from 'tailwind-variants';
 import { computed, onMounted, useHost, watchEffect } from 'vue';
 
 import { useControlAttrs } from '../../shared/useControlAttrs';
+import { useIdReferences } from '../../shared/useIdReferences';
 
 // Multi-root-ish template still writes to the host below — keep fallthrough
 // attrs on the host element instead of tripping the "renders fragment" warning.
@@ -156,6 +157,9 @@ onMounted(() => {
     else host.setAttribute('title', `${safeValue.value} %`);
   });
 });
+
+// The page's id references on the element reach the element carrying its role.
+useIdReferences('[role="progressbar"]');
 </script>
 
 <!--

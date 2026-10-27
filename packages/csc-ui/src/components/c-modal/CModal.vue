@@ -47,6 +47,7 @@ import {
   openModal,
 } from '../../shared/modalStack';
 import { prefersReducedMotion } from '../../shared/reducedMotion';
+import { useIdReferences } from '../../shared/useIdReferences';
 import { emitModelChange } from '../../shared/valueEvents';
 
 /** Events dispatched by `<c-modal>`. */
@@ -256,13 +257,13 @@ const openDialog = () => {
   // layers, backdrop, inert, scroll lock and Escape routing.
   openModal(entry);
 
-  // Accessible name: mirrored from the host, since `aria-labelledby` cannot
-  // reference the slotted (light DOM) title across the shadow boundary.
+  // Accessible name: the host's `aria-label`, mirrored, or its
+  // `aria-labelledby`, which useIdReferences hands to the dialog.
   dialogLabel.value = host.getAttribute('aria-label');
 
-  if (!dialogLabel.value) {
+  if (!dialogLabel.value && !host.hasAttribute('aria-labelledby')) {
     console.warn(
-      '<c-modal> opened without an accessible name. Set aria-label on the c-modal element.',
+      '<c-modal> opened without an accessible name. Set aria-label or aria-labelledby on the c-modal element.',
     );
   }
 
@@ -390,6 +391,9 @@ onBeforeUnmount(() => {
 
   if (nudgeTimer !== null) clearTimeout(nudgeTimer);
 });
+
+// The page's id references on the element reach the element carrying its role.
+useIdReferences(() => dialogRef.value);
 </script>
 
 <!--

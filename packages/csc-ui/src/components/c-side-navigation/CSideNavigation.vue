@@ -67,6 +67,7 @@ import {
 import { navigationDrawer } from '../../shared/navigationDrawer';
 import { useHasSlot } from '../../shared/useHasSlot';
 import { useHostEmit } from '../../shared/useHostEmit';
+import { useIdReferences } from '../../shared/useIdReferences';
 
 /** Events dispatched by `<c-side-navigation>`. */
 interface CSideNavigationEvents {
@@ -345,6 +346,9 @@ onBeforeUnmount(() => {
   navigationDrawer.mobile = false;
   navigationDrawer.open = false;
 });
+
+// The page's id references on the element reach the element carrying its role.
+useIdReferences('nav');
 </script>
 
 <!--

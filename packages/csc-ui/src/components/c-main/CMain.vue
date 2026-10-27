@@ -19,6 +19,7 @@ import { tv } from 'tailwind-variants';
 import { computed, onBeforeUnmount, onMounted, ref, useTemplateRef } from 'vue';
 
 import { coerceBoolean } from '../../shared/coerceBoolean';
+import { useIdReferences } from '../../shared/useIdReferences';
 
 /**
  * Styling lives entirely in this `tailwind-variants` config. The host stays
@@ -161,6 +162,9 @@ const ui = computed(() =>
     staticToolbar: staticToolbar.value,
   }),
 );
+
+// The page's id references on the element reach the element carrying its role.
+useIdReferences('main');
 </script>
 
 <!--

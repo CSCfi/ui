@@ -1,5 +1,6 @@
 ---
 status: accepted
+amended-by: ADR-0078 (aria-labelledby on the host names the dialog through element reflection)
 ---
 
 # `c-modal` implements modality itself — no `showModal()`, no top layer

@@ -92,6 +92,7 @@ import {
 
 import { useHasSlot } from '../../shared/useHasSlot';
 import { useHostStates } from '../../shared/useHostStates';
+import { useIdReferences } from '../../shared/useIdReferences';
 
 /**
  * Styling lives in this `tailwind-variants` config; `::part()` is the
@@ -376,4 +377,7 @@ const ui = computed(() =>
     interactive: interactive.value,
   }),
 );
+
+// The page's id references on the element reach the element carrying its role.
+useIdReferences('a');
 </script>

@@ -1,5 +1,6 @@
 ---
 status: accepted
+amended-by: ADR-0078 (aria-labelledby on the host names the popover panel through element reflection; the tooltip direction stays ruled out)
 ---
 
 # Tooltip and popover: a strict interactivity boundary, and `aria-description` across the shadow gap

@@ -23,6 +23,8 @@
 import { tv } from 'tailwind-variants';
 import { computed, useAttrs } from 'vue';
 
+import { useIdReferences } from '../../shared/useIdReferences';
+
 /**
  * Styling lives entirely in this `tailwind-variants` config: the
  * old `--_c-link-*` indirection layer is dropped and authored directly against
@@ -101,6 +103,9 @@ const linkAttributes = () =>
       ([name]) => name.startsWith('aria-') || LINK_ATTRIBUTES.has(name),
     ),
   );
+
+// The page's id references on the element reach the element carrying its role.
+useIdReferences('[part~="root"]');
 </script>
 
 <style>

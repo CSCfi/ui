@@ -90,6 +90,8 @@ interface CLoginCardProps {
 import { tv } from 'tailwind-variants';
 import { computed, onBeforeUnmount, onMounted, ref, useTemplateRef } from 'vue';
 
+import { useIdReferences } from '../../shared/useIdReferences';
+
 /**
  * Styling lives entirely in this `tailwind-variants` config; the
  * stamped parts (`root`, `card`, `image`, `content`) are the public
@@ -215,6 +217,9 @@ onMounted(() => {
 });
 
 onBeforeUnmount(() => resizeObserver?.disconnect());
+
+// The page's id references on the element reach the element carrying its role.
+useIdReferences(() => rootRef.value);
 </script>
 
 <!--

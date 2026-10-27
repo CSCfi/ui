@@ -418,6 +418,7 @@ import { useAnchoredPanel } from '../../shared/useAnchoredPanel';
 import { useControlAttrs } from '../../shared/useControlAttrs';
 import { useHostEmit } from '../../shared/useHostEmit';
 import { useHostStates } from '../../shared/useHostStates';
+import { useIdReferences } from '../../shared/useIdReferences';
 import { useKeyboardModality } from '../../shared/useKeyboardModality';
 import { useNarrowViewport } from '../../shared/useNarrowViewport';
 import {
@@ -1258,6 +1259,9 @@ const onClockClick = (event: Event) => {
 };
 
 defineExpose({ badInput });
+
+// The page's id references on the element reach the element carrying its role.
+useIdReferences('input[part~="input"]');
 </script>
 
 <!--
