@@ -105,8 +105,11 @@ describe('semantics', () => {
     expect(nav.getAttribute('aria-label')).toBe('Breadcrumb');
     expect(m.part('list').localName).toBe('ol');
 
+    // Each crumb element is the list item, a child of the list in the flat
+    // tree; an <li> inside its shadow root would have no list around it.
     for (const crumb of crumbs(m)) {
-      expect(part(crumb, 'root')!.localName).toBe('li');
+      expect(crumb.getAttribute('role')).toBe('listitem');
+      expect(part(crumb, 'root')!.localName).not.toBe('li');
     }
   });
 

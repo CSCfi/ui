@@ -1,5 +1,7 @@
 <template>
-  <li ref="rootRef" :class="ui.root()" part="root">
+  <!-- The crumb element itself is the list item (below): the list's children
+       are the slotted crumb elements, so an <li> in here had no list. -->
+  <div ref="rootRef" :class="ui.root()" part="root">
     <svg
       v-if="!first && !folded"
       :class="ui.separator()"
@@ -39,7 +41,7 @@
         <slot />
       </span>
     </a>
-  </li>
+  </div>
 </template>
 
 <script lang="ts">
@@ -67,7 +69,7 @@ interface CBreadcrumbItemProps {
  * @slot default - The crumb's label
  * @slot icon - An icon shown before the label (e.g. a `c-icon`); give an icon-only crumb an `aria-label`
  *
- * @csspart root - The list item holding the separator and the crumb; in the fold panel, the row
+ * @csspart root - The box holding the separator and the crumb (the crumb element is the list item); in the fold panel, the row
  * @csspart separator - The chevron before every crumb but the first, hidden in the fold panel
  * @csspart content - The link (or, without `href` and on the current crumb, the text) holding the icon and label
  * @csspart label - The label text, truncated with an ellipsis when the breadcrumb runs out of room
@@ -323,6 +325,7 @@ const onLabelSlotChange = (): void => {
 };
 
 onMounted(() => {
+  host?.setAttribute('role', 'listitem');
   readPlace();
   readLabel();
 
