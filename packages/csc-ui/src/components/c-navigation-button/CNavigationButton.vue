@@ -1,5 +1,15 @@
 <template>
-  <c-icon-button :aria-label="t.label" :class="ui.root()" part="root" text>
+  <!-- Expanded or collapsed with the mobile drawer it toggles; nothing beside
+       a desktop navigation, which has no drawer. -->
+  <c-icon-button
+    :aria-expanded="
+      navigationDrawer.mobile ? String(navigationDrawer.open) : undefined
+    "
+    :aria-label="t.label"
+    :class="ui.root()"
+    part="root"
+    text
+  >
     <c-icon :path="menuIcon" />
   </c-icon-button>
 </template>
@@ -34,6 +44,7 @@ import { tv } from 'tailwind-variants';
 import { computed } from 'vue';
 
 import { useAppDefault } from '../../shared/appDefaults';
+import { navigationDrawer } from '../../shared/navigationDrawer';
 
 /**
  * Styling lives entirely in this `tailwind-variants` config. The

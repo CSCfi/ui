@@ -1,20 +1,24 @@
 <template>
   <div :class="ui.root()">
-    <div
+    <!-- A link with an `href`, else a button. -->
+    <component
+      :is="href ? 'a' : 'button'"
       :aria-current="active ? 'page' : undefined"
       :class="ui.item()"
-      :tabindex="collapsed ? -1 : 0"
+      :href="href || undefined"
+      :tabindex="collapsed ? -1 : undefined"
+      :target="href && target ? target : undefined"
+      :type="href ? undefined : 'button'"
       part="root"
-      role="menuitem"
     >
-      <div :class="ui.content()" part="content">
-        <div :class="ui.slot()">
+      <span :class="ui.content()" part="content">
+        <span :class="ui.slot()">
           <slot />
-        </div>
-      </div>
+        </span>
+      </span>
 
       <c-loader :hide="!loading" :size="32" style="pointer-events: none" />
-    </div>
+    </component>
   </div>
 </template>
 
@@ -68,7 +72,7 @@ const subNavigationItem = tv({
     // a translucent `on-nav-active` wash in dark (ADR-0052). Page roles
     // (`surface-raised`, the primary tint) read as a hole punched into the
     // drawer in dark mode.
-    item: 'relative mx-2 flex cursor-pointer items-center overflow-hidden rounded-csc-md bg-transparent px-0 pl-[34px] leading-[46px] font-normal text-on-nav-active transition-colors duration-200 ease-in outline-none select-none before:absolute before:top-0 before:left-0 before:h-full before:w-2 before:[transform:translateZ(0)_translateX(-8px)] before:bg-on-nav-active before:transition-transform before:duration-200 before:ease-in-out before:content-[""]',
+    item: 'relative mx-2 flex w-[calc(100%-1rem)] cursor-pointer items-center overflow-hidden rounded-csc-md bg-transparent px-0 pl-[34px] leading-[46px] font-normal text-on-nav-active transition-colors duration-200 ease-in outline-none select-none before:absolute before:top-0 before:left-0 before:h-full before:w-2 before:[transform:translateZ(0)_translateX(-8px)] before:bg-on-nav-active before:transition-transform before:duration-200 before:ease-in-out before:content-[""]',
     root: 'py-0.5',
     slot: 'overflow-hidden text-ellipsis whitespace-nowrap',
   },
@@ -164,16 +168,13 @@ const ui = computed(() =>
 
 const emit = useHostEmit<CSubNavigationItemEvents>();
 
+// The item is a native link or button: Enter (and Space on a button)
+// activates it with a click, and a link navigates by itself.
 const redirect = (event: Event) => {
-  if (event instanceof KeyboardEvent && event.key !== 'Enter') return;
+  // Its parent item must not take the click for its own.
   event.stopPropagation();
   // c-side-navigation hears it and closes its drawer.
   emit('select', { value: props.value }, { bubbles: true, composed: true });
-
-  if (props.href) {
-    if (props.target) window.open(props.href, props.target);
-    else window.location.href = props.href;
-  }
 };
 
 onMounted(() => {
@@ -183,7 +184,6 @@ onMounted(() => {
   // display:contents element is focusable by neither Tab nor .focus().
   // Listeners stay on the host; events bubble through it normally.
   host.addEventListener('click', redirect);
-  host.addEventListener('keydown', redirect);
   watchEffect(() => {
     host.classList.toggle('active', props.active);
   });

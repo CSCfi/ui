@@ -1,32 +1,35 @@
 <template>
   <div :class="ui.root()" part="root">
+    <!-- A link with an `href`, else a button; a parent is a disclosure button
+         for its sub-items (aria-expanded is set below). -->
     <component
-      :is="href ? 'a' : 'div'"
+      :is="href ? 'a' : 'button'"
       ref="headerRef"
+      :aria-controls="slotHasContent ? subNavId : undefined"
       :class="ui.header()"
       :href="href || undefined"
-      :tabindex="collapsed ? -1 : 0"
+      :tabindex="collapsed ? -1 : undefined"
       :target="href ? target : undefined"
+      :type="href ? undefined : 'button'"
       part="header"
-      role="menuitem"
     >
       <c-icon v-if="slotHasContent" :class="ui.chevron()" :path="chevronIcon" />
 
-      <div :class="ui.slot()">
+      <span :class="ui.slot()">
         <slot />
-      </div>
+      </span>
     </component>
 
-    <nav
+    <div
       v-if="slotHasContent"
-      :aria-expanded="!!active"
+      :id="subNavId"
       :aria-label
       :class="ui.subNav()"
       part="sub-nav"
-      role="menubar"
+      role="group"
     >
       <slot name="sub-item" />
-    </nav>
+    </div>
 
     <c-loader :hide="!loading" :size="32" style="pointer-events: none" />
   </div>
@@ -48,6 +51,7 @@ import {
   onMounted,
   ref,
   useHost,
+  useId,
   useTemplateRef,
   watchEffect,
 } from 'vue';
@@ -127,7 +131,7 @@ const sideNavigationItem = tv({
     // skipped by sequential focus, so focus must live on a rendered box. Its own
     // native outline is suppressed; the visible ring is drawn on `root`.
     header:
-      'grid min-h-[46px] items-center gap-2 px-3 py-2 text-current no-underline outline-none',
+      'grid min-h-[46px] w-full items-center gap-2 px-3 py-2 text-left text-current no-underline outline-none',
     // The outer box (the original `:host(.c-side-navigation-item) > div`) that
     // wraps the header + sub-nav and carries the bg/color/state. Its `color`
     // cascades into the rendered chevron c-icon (currentColor contract).
@@ -231,6 +235,9 @@ const isSubItem = ref(false);
 
 const ariaLabel = ref('');
 
+// The sub-items' group, which a parent's header controls.
+const subNavId = `${useId()}-sub-nav`;
+
 const ui = computed(() =>
   sideNavigationItem({
     active: props.active,
@@ -280,20 +287,15 @@ const adoptSubItems = () => {
 
 const emit = useHostEmit<CSideNavigationItemEvents>();
 
-const redirect = (event: Event | KeyboardEvent) => {
-  const key = event instanceof KeyboardEvent;
-
-  if (key && event.key !== 'Enter') return;
-
+// The header is a native link or button, so Enter (and Space on a button)
+// activates it with a click.
+const redirect = (event: Event) => {
   // A nested item's activation ends here: the parent item around it must not
   // take it for its own.
   if (isSubItem.value) {
     event.stopPropagation();
     event.stopImmediatePropagation?.();
   }
-
-  // Enter on a link activates it, and the click that fires emits.
-  if (key && props.href) return;
 
   // c-side-navigation hears it, and closes its drawer for a leaf item.
   emit('select', { value: props.value }, { bubbles: true, composed: true });
@@ -317,7 +319,6 @@ onMounted(() => {
   // role/tabindex/aria live on the rendered `header` element (see headerRef),
   // not the `display:contents` host which is skipped by sequential focus.
   host.addEventListener('click', redirect);
-  host.addEventListener('keydown', redirect);
   // A nested parent item (in a parent item's sub-item slot) shows and hides
   // its own sub-items on its `select`; c-side-navigation leaves a slotted
   // item's expansion alone (it makes a nested leaf the current page), and the

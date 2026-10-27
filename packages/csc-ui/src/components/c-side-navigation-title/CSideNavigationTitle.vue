@@ -1,6 +1,7 @@
 <template>
   <div :class="ui.root()" part="root">
-    <div :class="ui.label()" part="heading">
+    <!-- A heading, so screen-reader users can jump between sections. -->
+    <div :class="ui.label()" aria-level="2" part="heading" role="heading">
       <slot />
     </div>
 

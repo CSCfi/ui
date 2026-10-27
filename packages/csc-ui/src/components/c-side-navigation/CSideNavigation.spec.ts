@@ -371,3 +371,122 @@ describe('open (decisions #44)', () => {
     expect(events.records).toEqual([]);
   });
 });
+
+describe('APG disclosure navigation', () => {
+  const NAV =
+    '<c-side-navigation-title>My project</c-side-navigation-title>' +
+    '<c-side-navigation-item value="dashboard">Dashboard</c-side-navigation-item>' +
+    '<c-side-navigation-item href="#docs" value="docs">Docs</c-side-navigation-item>' +
+    '<c-side-navigation-item value="projects">Projects' +
+    '<c-sub-navigation-item value="active">Active</c-sub-navigation-item>' +
+    '<c-sub-navigation-item href="#archived" value="archived">Archived</c-sub-navigation-item>' +
+    '</c-side-navigation-item>';
+
+  const at = (m: { host: HTMLElement }, value: string): HTMLElement =>
+    m.host.querySelector(`[value="${value}"]`) as HTMLElement;
+
+  const partOf = (el: HTMLElement, name: string): HTMLElement =>
+    el.shadowRoot!.querySelector(`[part~="${name}"]`) as HTMLElement;
+
+  it('is a nav landmark of links and buttons, not a menubar', async () => {
+    const m = await mount('c-side-navigation', {
+      attrs: { 'aria-label': 'Project' },
+      html: NAV,
+    });
+
+    await settle();
+
+    expect(m.part('nav').hasAttribute('role')).toBe(false);
+    expect(m.part('nav').getAttribute('aria-label')).toBe('Project');
+
+    expect(partOf(at(m, 'dashboard'), 'header').localName).toBe('button');
+    expect(partOf(at(m, 'docs'), 'header').localName).toBe('a');
+    expect(partOf(at(m, 'active'), 'root').localName).toBe('button');
+    expect(partOf(at(m, 'archived'), 'root').getAttribute('href')).toBe(
+      '#archived',
+    );
+    expect(m.host.shadowRoot!.querySelector('[role^="menu"]')).toBeNull();
+
+    for (const value of ['dashboard', 'docs', 'projects', 'active']) {
+      expect(
+        at(m, value).shadowRoot!.querySelector('[role^="menu"]'),
+        value,
+      ).toBeNull();
+    }
+
+    // A parent is a disclosure button for its sub-items.
+    const parent = partOf(at(m, 'projects'), 'header');
+
+    expect(parent.getAttribute('aria-expanded')).toBe('false');
+
+    const controlled = at(m, 'projects').shadowRoot!.getElementById(
+      parent.getAttribute('aria-controls')!,
+    );
+
+    expect(controlled?.getAttribute('part')).toBe('sub-nav');
+  });
+
+  it('section titles are headings', async () => {
+    const m = await mount('c-side-navigation', { html: NAV });
+
+    const heading = partOf(
+      m.host.querySelector('c-side-navigation-title')!,
+      'heading',
+    );
+
+    expect(heading.getAttribute('role')).toBe('heading');
+    expect(heading.getAttribute('aria-level')).toBe('2');
+  });
+
+  it('the mobile drawer is a modal dialog the navigation button reports', async () => {
+    const button = await mount('c-navigation-button');
+
+    const inner = button.host
+      .shadowRoot!.querySelector('c-icon-button')!
+      .shadowRoot!.querySelector('button')!;
+
+    const nav = await mount<{ open?: boolean } & HTMLElement>(
+      'c-side-navigation',
+      { attrs: { mobile: true }, html: NAV },
+    );
+
+    await settle();
+    expect(inner.getAttribute('aria-expanded')).toBe('false');
+
+    inner.focus();
+    await userEvent.keyboard('{Enter}');
+    await settle();
+
+    const drawer = nav.part('root');
+
+    expect(nav.host.open).toBe(true);
+    expect(drawer.getAttribute('role')).toBe('dialog');
+    expect(drawer.getAttribute('aria-modal')).toBe('true');
+    expect(inner.getAttribute('aria-expanded')).toBe('true');
+    // Focus moved into the drawer, and the page behind it is inert.
+    expect(nav.host.matches(':focus-within')).toBe(true);
+    expect(button.stage.inert).toBe(true);
+
+    await userEvent.keyboard('{Escape}');
+    await settle();
+
+    expect(nav.host.open).toBe(false);
+    expect(drawer.hasAttribute('role')).toBe(false);
+    expect(button.stage.inert).toBe(false);
+    expect(inner.getAttribute('aria-expanded')).toBe('false');
+    expect(button.host.shadowRoot!.activeElement).not.toBeNull();
+  });
+
+  it('the navigation button reports nothing beside a desktop navigation', async () => {
+    const button = await mount('c-navigation-button');
+
+    await mount('c-side-navigation', { html: NAV });
+    await settle();
+
+    const inner = button.host
+      .shadowRoot!.querySelector('c-icon-button')!
+      .shadowRoot!.querySelector('button')!;
+
+    expect(inner.hasAttribute('aria-expanded')).toBe(false);
+  });
+});

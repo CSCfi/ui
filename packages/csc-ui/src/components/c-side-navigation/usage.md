@@ -50,9 +50,15 @@ Trailing content — a sign-out button, a help link — goes in the `bottom` slo
 
 Set `mobile` to render the drawer as a panel that slides in from the right over a backdrop. `open` opens and closes it, and a `c-navigation-button` anywhere on the page toggles it. Whenever the user opens or closes it — the navigation button, the close button, the backdrop, or activating an item, which closes it — the drawer fires `change:open` with the new state. Without `mobile` the drawer is always shown: a `c-navigation-button` and activating an item leave it as it is, and fire nothing.
 
+The open mobile drawer is a modal dialog named "Menu": focus moves to its close button, the page behind it is inert and stops scrolling, and Escape closes it, as the close button and the backdrop do. Closing returns focus to where it was, usually the navigation button.
+
 ## Standalone
 
 Outside `c-main` the drawer is an ordinary block that grows with its items. The `autoheight` host class sizes it to the viewport minus the toolbar height and lets its item list scroll, for a shell that pins the drawer itself.
+
+## Accessibility
+
+The navigation is a `<nav>` landmark; an `aria-label` on the element names it, which helps beside other navigation on the page. Items are what they do: an item or sub-item with `href` is a link, one without is a button, and a parent is a disclosure button that reports its sub-items as expanded or collapsed. Tab moves through the items; there is no arrow-key model. The current page carries `aria-current="page"`, and section titles are headings (level 2). The close button's name and the drawer's "Menu" are fixed English strings.
 
 ## Customization
 

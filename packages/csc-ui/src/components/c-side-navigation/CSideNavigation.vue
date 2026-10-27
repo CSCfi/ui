@@ -1,14 +1,22 @@
 <template>
-  <div :class="ui.content()" part="root">
+  <!-- The open mobile drawer is a modal dialog (focus moves in, Escape closes
+       it, the page behind is inert); on desktop the drawer is plain content. -->
+  <div
+    :aria-label="modal ? 'Menu' : undefined"
+    :aria-modal="modal ? 'true' : undefined"
+    :class="ui.content()"
+    :role="modal ? 'dialog' : undefined"
+    part="root"
+  >
     <div v-if="mobile" :class="ui.burger()">
-      <c-icon-button inverted text @click="closeMenu">
+      <c-icon-button ref="closeRef" inverted text @click="closeMenu">
         <span :class="ui.srOnly()">Close sidemenu</span>
 
         <c-icon :path="arrowRight" />
       </c-icon-button>
     </div>
 
-    <nav :class="ui.nav()" part="nav" role="menubar">
+    <nav :aria-label="navLabel" :class="ui.nav()" part="nav">
       <div :class="ui.wrapper()">
         <slot />
       </div>
@@ -31,7 +39,7 @@
  * @slot default - The navigation items: titles, items and their sub-items
  * @slot bottom - Trailing content below the items, such as a sign-out button; it stays at the drawer's bottom edge while the items scroll
  *
- * @csspart root - The outer drawer container: the item list above the bottom slot's region
+ * @csspart root - The outer drawer container: the item list above the bottom slot's region; the open mobile drawer is a modal `dialog`
  * @csspart nav - The scrollable `<nav>` element holding the navigation items
  *
  * @seeded from csc-ui — verify
@@ -42,15 +50,23 @@ import { mdiArrowRight } from '@mdi/js';
 import { tv } from 'tailwind-variants';
 import {
   computed,
+  nextTick,
   onBeforeUnmount,
   onMounted,
   ref,
+  useAttrs,
   useHost,
   useTemplateRef,
   watch,
   watchEffect,
 } from 'vue';
 
+import {
+  closeModal,
+  type ModalStackEntry,
+  openModal,
+} from '../../shared/modalStack';
+import { navigationDrawer } from '../../shared/navigationDrawer';
 import { useHasSlot } from '../../shared/useHasSlot';
 import { useHostEmit } from '../../shared/useHostEmit';
 
@@ -83,8 +99,8 @@ defineOptions({ inheritAttrs: false });
  * space left (`flex-1 min-h-0`) and scrolls a long menu on its own, containing
  * its overscroll so a wheel that reaches its end does not chain to the
  * document (Chromium latches the rest of the gesture to whichever scroller
- * took it). The **bottom slot's region** sits outside the `menubar` nav, so a
- * sign-out button is not a menu item, and is `sticky bottom-0`: inside c-main
+ * took it). The **bottom slot's region** sits outside the `<nav>` landmark, so a
+ * sign-out button is not a navigation item, and is `sticky bottom-0`: inside c-main
  * the drawer is sized to its pinned height but sits below the banner and
  * toolbar rows until the page has scrolled past them, and the sticky region
  * rides up to the viewport's bottom edge in the meantime (CONTEXT.md "Bottom
@@ -213,6 +229,51 @@ watch(
 
 const closeMenu = () => setOpen(false);
 
+// An aria-label on the element names the navigation landmark.
+const attrs = useAttrs();
+
+const navLabel = computed(() => attrs['aria-label'] as string | undefined);
+
+// The open mobile drawer is modal (ADR-0014's modal stack): the page behind it
+// is inert and stops scrolling, Escape closes it, and focus returns to where
+// it was — the navigation button that opened it.
+const modal = computed(() => !!props.mobile && openInternal.value);
+
+const closeRef = useTemplateRef<HTMLElement>('closeRef');
+
+let drawerEntry: ModalStackEntry | null = null;
+
+const syncModal = (on: boolean) => {
+  if (!host) return;
+
+  drawerEntry ??= {
+    host,
+    onEscape: closeMenu,
+    // The drawer paints its own backdrop and stays below the modal band.
+    setBackdropVisible: () => {},
+    setLayer: () => {},
+  };
+
+  if (!on) {
+    closeModal(drawerEntry);
+
+    return;
+  }
+
+  openModal(drawerEntry);
+  void nextTick(() =>
+    closeRef.value?.shadowRoot?.querySelector('button')?.focus(),
+  );
+};
+
+watch(modal, syncModal);
+
+// What every c-navigation-button reports as `aria-expanded`.
+watchEffect(() => {
+  navigationDrawer.mobile = !!props.mobile;
+  navigationDrawer.open = modal.value;
+});
+
 type ItemHost = { active: boolean } & HTMLElement;
 
 const ITEMS = 'c-side-navigation-item, c-sub-navigation-item';
@@ -279,10 +340,16 @@ onMounted(() => {
   watchEffect(() => {
     host.toggleAttribute('data-desktop', !props.mobile);
   });
+
+  if (modal.value) syncModal(true);
 });
 
 onBeforeUnmount(() => {
   document.body.removeEventListener('click', onDocClick);
+
+  if (drawerEntry) closeModal(drawerEntry);
+  navigationDrawer.mobile = false;
+  navigationDrawer.open = false;
 });
 </script>
 

@@ -19,7 +19,7 @@ The button fires no event of its own. To follow the drawer's state, listen to `c
 
 ## Accessibility
 
-The button is a native `<button>`, reached with Tab and pressed with Enter or Space. Its accessible name is "Menu", from `texts.label`; an `aria-label` on the element does not reach the inner button. Translate it per element:
+The button is a native `<button>`, reached with Tab and pressed with Enter or Space. Its accessible name is "Menu", from `texts.label`; an `aria-label` on the element does not reach the inner button. Beside a `mobile` `c-side-navigation` it reports the drawer as expanded or collapsed (`aria-expanded`). Translate it per element:
 
 ```vue
 <c-navigation-button :texts="{ label: 'Valikko' }" />

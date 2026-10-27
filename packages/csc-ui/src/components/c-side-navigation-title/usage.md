@@ -1,1 +1,1 @@
-A section title in a `c-side-navigation`: uppercase text over a divider line, placed before the items it groups. It is not a menu item and cannot be activated.
+A section title in a `c-side-navigation`: uppercase text over a divider line, placed before the items it groups. It is a heading (level 2), so screen-reader users can jump between sections, and cannot be activated.
