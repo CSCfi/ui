@@ -9,7 +9,7 @@ import { userEvent } from 'vitest/browser';
 
 import type { Mounted } from '../../test/harness';
 
-import { mount, recordEvents, settle } from '../../test/harness';
+import { chromiumOnly, mount, recordEvents, settle } from '../../test/harness';
 
 type OtpHost = { value: string } & HTMLElement;
 
@@ -141,13 +141,19 @@ describe('digits', () => {
     expect(m.host.value).toBe('1234');
   });
 
-  it('takes digits only, typed or pasted', async () => {
+  it('takes a typed digit only', async () => {
     const m = await mountOtp();
 
     await userEvent.type(digits(m)[0]!, ' ');
     await settle();
 
     expect(digits(m)[0]!.value).toBe('');
+  });
+
+  chromiumOnly(
+    'dispatches synthetic paste events, whose clipboardData Firefox hands to listeners empty',
+  )('takes a pasted code of digits only', async () => {
+    const m = await mountOtp();
 
     for (const text of ['1e34', '0x1F', '-123', '1.52']) {
       paste(digits(m)[0]!, text);
