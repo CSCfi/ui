@@ -1,6 +1,7 @@
 <template>
   <div
     ref="rootRef"
+    v-bind="rootAttrs"
     :class="[ui.root(), { 'c-checkbox--disabled': disabled }]"
     class="c-checkbox"
     part="root"
@@ -10,6 +11,7 @@
          the escape-hatch never match. -->
     <input
       :id="inputId"
+      v-bind="controlAttrs"
       :aria-checked="indeterminate ? 'mixed' : isChecked"
       :checked="isChecked"
       :class="ui.input()"
@@ -123,10 +125,17 @@ import {
 
 import FormLabel from '../../shared/FormLabel.vue';
 import SelectionIndicator from '../../shared/SelectionIndicator.vue';
+import { useControlAttrs } from '../../shared/useControlAttrs';
 import { useHasSlot } from '../../shared/useHasSlot';
 import { useHostStates } from '../../shared/useHostStates';
 import { useRipple } from '../../shared/useRipple';
 import { emitModelChange } from '../../shared/valueEvents';
+
+// ARIA attributes on the element name and describe the native control;
+// every other attribute stays on the root, as Vue's fallthrough put it.
+defineOptions({ inheritAttrs: false });
+
+const { controlAttrs, rootAttrs } = useControlAttrs();
 
 /** Events dispatched by `<c-checkbox>`. */
 interface CCheckboxEvents {

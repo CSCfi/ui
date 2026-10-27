@@ -19,6 +19,10 @@ no `value` is bound.
 
 - A choice that is collected and submitted with a form — use `c-checkbox`.
 
+## Accessibility
+
+The switch is a native input named by its label. Without a visible label, set `aria-label` on the element: it names the input, as the other ARIA attributes on the element describe it.
+
 ## Customization
 
 Restyle via CSS parts from your own stylesheet. The `slider` part is the

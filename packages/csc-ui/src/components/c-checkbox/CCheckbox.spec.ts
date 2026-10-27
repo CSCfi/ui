@@ -105,3 +105,20 @@ describe('3.x attribute names (R1)', () => {
     expect(m.shadow<HTMLInputElement>('input').name).toBe('terms');
   });
 });
+
+describe('c-checkbox name', () => {
+  it('an aria-label on the element names the checkbox', async () => {
+    const { host } = await mount('c-checkbox', {
+      attrs: { 'aria-label': 'Select Aurora' },
+    });
+
+    const input = host.shadowRoot!.querySelector('input')!;
+
+    expect(input.getAttribute('aria-label')).toBe('Select Aurora');
+    expect(
+      [...host.shadowRoot!.querySelectorAll('[aria-label]')].map(
+        (el) => el.localName,
+      ),
+    ).toEqual(['input']);
+  });
+});

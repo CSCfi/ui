@@ -16,7 +16,7 @@ The details line shows the raw `value` even when the fill clamps it, and a negat
 
 ## Accessibility
 
-The bar is a native `<progress>` element exposing `role="progressbar"` with `aria-valuenow` while determinate; in indeterminate mode no value is exposed. The host mirrors `aria-busy` (true while indeterminate) and a `title` tooltip with the current percentage.
+The bar is a native `<progress>` element exposing `role="progressbar"` with `aria-valuenow` while determinate; in indeterminate mode no value is exposed. The host mirrors `aria-busy` (true while indeterminate) and a `title` tooltip with the current percentage. The bar is named by `label`, or, where a visible label would be redundant (a table cell), by an `aria-label` on the element. Name every bar.
 
 ## Customization
 

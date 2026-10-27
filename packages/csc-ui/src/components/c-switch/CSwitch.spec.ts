@@ -97,3 +97,17 @@ describe('value and checked', () => {
     expect(m.host.checked).toBe(false);
   });
 });
+
+describe('c-switch name', () => {
+  it('an aria-label on the element names the switch', async () => {
+    const { host } = await mount('c-switch', {
+      attrs: { 'aria-label': 'Notifications' },
+    });
+
+    expect(
+      [...host.shadowRoot!.querySelectorAll('[aria-label]')].map(
+        (el) => `${el.localName}=${el.getAttribute('aria-label')}`,
+      ),
+    ).toEqual(['input=Notifications']);
+  });
+});

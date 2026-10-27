@@ -25,6 +25,10 @@ never unselected, like a native radio without siblings — but reports nothing.
 Grouping behavior (exclusivity, arrow-key navigation, value events) requires
 the parent `c-radio-group`.
 
+## Accessibility
+
+Each radio is a native input named by its label; an `aria-label` on the element names it instead where there is no visible one.
+
 ## Customization
 
 Restyle via CSS parts from your own stylesheet. The `indicator` part is the

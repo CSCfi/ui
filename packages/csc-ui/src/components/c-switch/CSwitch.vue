@@ -1,6 +1,7 @@
 <template>
   <label
     ref="rootRef"
+    v-bind="rootAttrs"
     :class="[
       ui.root(),
       {
@@ -14,6 +15,7 @@
     <div :class="ui.inputWrap()">
       <input
         :id="inputId"
+        v-bind="controlAttrs"
         :aria-checked="internalChecked"
         :aria-required="required || undefined"
         :checked="internalChecked || undefined"
@@ -80,9 +82,16 @@ import {
 } from 'vue';
 
 import FormLabel from '../../shared/FormLabel.vue';
+import { useControlAttrs } from '../../shared/useControlAttrs';
 import { useHasSlot } from '../../shared/useHasSlot';
 import { useHostStates } from '../../shared/useHostStates';
 import { emitModelChange } from '../../shared/valueEvents';
+
+// ARIA attributes on the element name and describe the native control;
+// every other attribute stays on the root, as Vue's fallthrough put it.
+defineOptions({ inheritAttrs: false });
+
+const { controlAttrs, rootAttrs } = useControlAttrs();
 
 /** Events dispatched by `<c-switch>`. */
 interface CSwitchEvents {

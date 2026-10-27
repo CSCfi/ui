@@ -26,6 +26,10 @@ entirely.
 - Choosing exactly one of several options — use `c-radio-group`.
 - Switching a setting that takes effect immediately — use `c-switch`.
 
+## Accessibility
+
+The checkbox is a native input named by its label. Without a visible label, set `aria-label` on the element: it names the input, as the other ARIA attributes on the element describe it.
+
 ## Customization
 
 Restyle via CSS parts from your own stylesheet. The `indicator` part is the

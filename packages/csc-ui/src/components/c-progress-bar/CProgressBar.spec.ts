@@ -16,3 +16,13 @@ it('names the progress element with its label', async () => {
     'Uploading files',
   );
 });
+
+it('an aria-label on the element names the progress bar without a label', async () => {
+  const { host } = await mount('c-progress-bar', {
+    attrs: { 'aria-label': 'Storage used', value: 40 },
+  });
+
+  expect(
+    host.shadowRoot!.querySelector('progress')!.getAttribute('aria-label'),
+  ).toBe('Storage used');
+});

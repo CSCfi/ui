@@ -10,7 +10,9 @@
       part="bar"
     >
       <progress
-        :aria-label="label || undefined"
+        :aria-label="
+          label || (controlAttrs['aria-label'] as string) || undefined
+        "
         :aria-valuenow="indeterminate ? undefined : String(safeValue)"
         :value="indeterminate ? undefined : safeValue"
         max="100"
@@ -39,9 +41,14 @@
 import { tv } from 'tailwind-variants';
 import { computed, onMounted, useHost, watchEffect } from 'vue';
 
+import { useControlAttrs } from '../../shared/useControlAttrs';
+
 // Multi-root-ish template still writes to the host below — keep fallthrough
 // attrs on the host element instead of tripping the "renders fragment" warning.
 defineOptions({ inheritAttrs: false });
+
+// ARIA attributes on the element reach the native control.
+const { controlAttrs } = useControlAttrs();
 
 /**
  * Styling lives in this `tailwind-variants` config: the `root`

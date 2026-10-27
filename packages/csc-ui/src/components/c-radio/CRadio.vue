@@ -2,6 +2,7 @@
   <label :class="ui.root()" part="root">
     <input
       ref="inputRef"
+      v-bind="controlAttrs"
       :class="ui.input()"
       :disabled="isDisabled"
       type="radio"
@@ -44,6 +45,7 @@ import { tv } from 'tailwind-variants';
 import { computed, useTemplateRef, watch } from 'vue';
 
 import { coerceBoolean } from '../../shared/coerceBoolean';
+import { useControlAttrs } from '../../shared/useControlAttrs';
 import { useHostEmit } from '../../shared/useHostEmit';
 import { useHostStates } from '../../shared/useHostStates';
 import { useRipple } from '../../shared/useRipple';
@@ -52,6 +54,9 @@ import { useRipple } from '../../shared/useRipple';
 // attrs (class/style) must stay on the host instead of leaking onto it and
 // colliding with the tv utilities.
 defineOptions({ inheritAttrs: false });
+
+// ARIA attributes on the element reach the native control.
+const { controlAttrs } = useControlAttrs();
 
 /** Events dispatched by `<c-radio>`. */
 interface CRadioEvents {
