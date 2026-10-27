@@ -132,6 +132,9 @@ reflection (`ariaControlsElements`), a 4.x follow-up.
 
 ## D. Docs, glossary and examples
 
+**FIXED 2026-10-27** (6dabac8c, 9f894d0b, 283bc8d2), except c-status/basic's contrast (the design token decision) and
+the remaining 181 `@seeded … verify` descriptions (a pass of its own).
+
 - CONTEXT.md:595, 714 — c-tag "only inside c-tags": it works standalone (c-tag canon, c-table/usage.md).
 - CONTEXT.md:669 — "utility columns always pinned left": the expander is pinned right.
 - CONTEXT.md:567 and c-tab-buttons/usage.md — the c-tabs row scrolls by touch and its arrows only, not wheel or

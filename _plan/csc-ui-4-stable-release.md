@@ -450,8 +450,17 @@ start migrating on the first alpha that carries D2–D4.
      without motion, and a re-measure pulled focus back to the active tab); c-side-navigation follows the
      disclosure navigation pattern with the mobile drawer a modal dialog on the shared modal stack (04cd5740;
      c-navigation-button reports `aria-expanded`). The axe baseline lost every `aria-required-children` entry
-     (9 canons). Section C is complete; left in the axe baseline: `color-contrast` (the design token decision),
-     data-table selection (`aria-prohibited-attr`, `label`), `list` / `listitem`, `aria-progressbar-name`.
+     (9 canons). Section C is complete.
+   - **Axe baseline — everything but contrast cleared (2026-10-27).** A host `aria-label` on c-checkbox,
+     c-switch, c-radio and c-progress-bar now reaches the native control (0885ed53, shared `useControlAttrs`);
+     the custom-cells canon names its progress bars and heads its actions column (283bc8d2); a breadcrumb crumb
+     element is the `listitem` itself (the `<li>` inside its shadow root had no list). The baseline holds only
+     `color-contrast` (78 canons), waiting on the design token decision.
+   - **Findings section D — done locally (2026-10-27)**: glossary (expander pins right, c-tag standalone, the
+     c-tabs row's scroll input), c-status / c-alert neutral-look descriptions, four seeded prop descriptions,
+     and the canon faults (sub-item `select`, c-steps `:value`, c-page wording, c-badge name and token, login
+     `alt`, accordion `null`, external-data request race and a stale React closure). Left: 181 `@seeded …
+     verify` prop descriptions.
 4. **RC** — switch pre tag `alpha` → `rc` (verify the changesets CLI sequence: `pre exit` + `pre enter rc` before a
    version run), publish `4.0.0-rc.1`. From here: fixes only, API guard fails any breaking diff.
    Gate (D8): MyCSC fully migrated on the latest RC, e2e green, no open csc-ui blocker.
