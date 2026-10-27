@@ -103,14 +103,16 @@ describe.each(registeredTags)('%s', (tag) => {
   // A host attribute that falls through to the shadow DOM keeps its name: a
   // camelized `ariaHaspopup` lands as a junk `ariahaspopup` attribute, and on
   // an `<svg>` root as a literal `ariaLabel`. A data attribute stays on the
-  // host: a copy inside would make `[data-test="…"]` match twice.
-  it('keeps data attributes on the host and forwards no mangled name', async () => {
+  // host: a copy inside would make `[data-test="…"]` match twice. So does an
+  // ARIA id reference: inside the shadow root its id points at nothing.
+  it('keeps data attributes and id references on the host and forwards no mangled name', async () => {
     const fixture = FIXTURES[tag] ?? {};
 
     const { host } = await mount(tag, {
       ...fixture,
       attrs: {
         ...fixture.attrs,
+        'aria-controls': 'probe-panel',
         'aria-roledescription': 'probe',
         'data-probe': 'probe',
       },
@@ -125,8 +127,11 @@ describe.each(registeredTags)('%s', (tag) => {
     const walk = (root: ShadowRoot): string[] =>
       [...root.querySelectorAll('*')].flatMap((element) => [
         ...[...element.attributes]
-          .map((attribute) => attribute.name)
-          .filter((name) => unwanted.has(name.toLowerCase())),
+          .filter(
+            ({ name, value }) =>
+              unwanted.has(name.toLowerCase()) || value === 'probe-panel',
+          )
+          .map(({ name }) => name),
         ...(element.shadowRoot ? walk(element.shadowRoot) : []),
       ]);
 

@@ -244,10 +244,25 @@ const normalizeNumberProperties = (
  *   shadow roots). A change still re-renders the component, as Vue's path
  *   did, for a render that reads one off the host (c-input's
  *   `data-hide-details`);
+ * - an ARIA id reference (`aria-controls`, `aria-labelledby`, …) stays on the
+ *   host too: an id resolves only in its own tree, so a copy in the shadow
+ *   DOM points at nothing (c-tabs' `aria-controls` on a c-button landed on
+ *   its inner `<button>`, naming no panel);
  * - any other undeclared hyphenated attribute keeps its name
  *   (`$attrs['aria-label']`); removal leaves `undefined`;
  * - a single-word one (`role`, `rel`, `class`) goes Vue's way.
  */
+const ID_REFERENCES = new Set([
+  'aria-activedescendant',
+  'aria-controls',
+  'aria-describedby',
+  'aria-details',
+  'aria-errormessage',
+  'aria-flowto',
+  'aria-labelledby',
+  'aria-owns',
+]);
+
 const routeAttribute = (
   el: ConnectableElement,
   declared: Set<string>,
@@ -258,6 +273,7 @@ const routeAttribute = (
 
   if (declared.has(camelKey)) viaVue();
   else if (key.startsWith('data-')) el._instance?.proxy?.$forceUpdate();
+  else if (ID_REFERENCES.has(key)) return;
   else if (camelKey !== key) {
     el._setProp(key, el.getAttribute(key) ?? undefined, false, true);
   } else viaVue();
