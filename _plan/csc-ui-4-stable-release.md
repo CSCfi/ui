@@ -386,6 +386,15 @@ start migrating on the first alpha that carries D2–D4.
      `autocorrect="off"` turned autocorrection on (a9745b7c fixes it), the data-table column example used
      `value` / `policy` for `header` / `expansion` and a non-generic `CDataTableColumn<User>`, and 3.x sorted
      every column unless told otherwise, where 4.x needs `sortable: true`.
+   - **Component descriptions — done locally (2026-10-27).** Every public tag has a usage.md (76 of 79; the three
+     without are internal): full docs for the 21 standalone tags that had none, one paragraph for the 19 composed
+     children (only a child's first paragraph shows under its API heading), rewrites of the one-line c-link and
+     c-loader docs, and a titles/items/sub-items section in c-side-navigation. The docs site now renders a child's
+     whole usage.md in its parent's Usage section (c-radio, c-menu-item and c-tab-buttons had prose that never
+     showed). Reading every tag against its source turned up ~70 faults, none fixed:
+     `_plan/csc-ui-4-usage-doc-findings.md`, with the systemic one first (host `aria-*` attributes reach the
+     shadow DOM camelized: `aria-label` on c-icon, `aria-haspopup` on the pickers' icon buttons, `rel` on c-link).
+     The migration guide's c-tag `block` / `fit` CSS was wrong (sized only the part) and is corrected.
 4. **RC** — switch pre tag `alpha` → `rc` (verify the changesets CLI sequence: `pre exit` + `pre enter rc` before a
    version run), publish `4.0.0-rc.1`. From here: fixes only, API guard fails any breaking diff.
    Gate (D8): MyCSC fully migrated on the latest RC, e2e green, no open csc-ui blocker.
