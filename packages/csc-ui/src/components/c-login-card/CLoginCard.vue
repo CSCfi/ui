@@ -182,9 +182,16 @@ const imageHeight = ref<string>('100%');
 
 const path = ref<string>(PATHS.desktop);
 
+/**
+ * `url()` with the URL as a CSS string: unquoted, a URL with parentheses,
+ * quotes or spaces (a data URI often has all three) dropped the declaration.
+ */
+const cssUrl = (url: string): string =>
+  `url("${url.replace(/["\\]/g, '\\$&').replace(/\n/g, '\\a ')}")`;
+
 const imageStyle = computed(() => ({
   '--_c-login-card-overlay-mode': props.overlay ? props.overlayBlendMode : '',
-  backgroundImage: `url(${props.src})`,
+  backgroundImage: cssUrl(props.src),
   backgroundPosition: props.backgroundPosition,
   height: imageHeight.value,
 }));
