@@ -614,6 +614,10 @@ const data = [{ id: 1, name: 'Ada' }];
 - c-menu: authored declaratively with slotted c-menu-item / c-menu-label
   instead of a programmatic items array, and the trigger moves from the
   default slot to slot="trigger"; leaf activation fires a select event.
+- c-side-navigation: activating an item or sub-item no longer sets its
+  active. 3.x highlighted the clicked item even when the navigation never
+  happened; mark the current page's item active from your router or the URL.
+  A parent still expands and collapses itself.
 - c-toasts: a message's title is now heading (an untyped { title } loses its
   heading silently). c-toast is internal: c-toasts renders one per addToast()
   message, so style a toast through c-toasts::part(toast-root) and its other

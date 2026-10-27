@@ -281,10 +281,12 @@ const isParent = (item: Element) =>
   !!item.querySelector(':scope > [slot="sub-item"]');
 
 // Reflect an item's `select`. A leaf — an item without sub-items, or a
-// sub-item — is the page the user went to: it becomes the one active leaf
-// (`aria-current="page"`), and the drawer closes. A top-level item also
-// collapses every parent (an "accordion"-style behaviour), and a top-level
-// parent toggles its sub-items; a nested parent toggles itself.
+// sub-item — asks for a page: the drawer closes, and the leaf's `active`
+// (`aria-current="page"`) stays the page's to set, from the page it shows —
+// a router can cancel the navigation, and a mark set here would then outlive
+// the page's own binding. A top-level item also collapses every parent (an
+// "accordion"-style behaviour), and a top-level parent toggles its sub-items;
+// a nested parent toggles itself.
 const handleItemChange = (event: Event) => {
   if (!host) return;
 
@@ -295,12 +297,6 @@ const handleItemChange = (event: Event) => {
   if (!parent) closeMenu();
 
   if (!target.matches(ITEMS)) return;
-
-  if (!parent) {
-    for (const leaf of host.querySelectorAll<ItemHost>(ITEMS)) {
-      if (!isParent(leaf)) leaf.active = leaf === target;
-    }
-  }
 
   if (target.localName !== 'c-side-navigation-item' || target.slot) return;
 

@@ -172,7 +172,6 @@ describe('c-side-navigation', () => {
         { value: 'dashboard' },
         { value: 'dashboard' },
       ]);
-      expect(item(m, 'dashboard').active).toBe(true);
     });
 
     it('a sub-item fires select with its value and leaves the parent items alone', async () => {
@@ -192,11 +191,13 @@ describe('c-side-navigation', () => {
       expect(item(m, 'projects').active).toBe(true);
     });
 
-    it('one leaf at a time is the current page', async () => {
+    it('the page marks the current page: activating a leaf moves no highlight', async () => {
       const m = await mount('c-side-navigation', {
         html: `${NAV}<c-side-navigation-item value="settings">Settings</c-side-navigation-item>`,
       });
 
+      // As a page's binding does, from the page it shows.
+      item(m, 'settings').active = true;
       await settle();
 
       const current = (): string[] =>
@@ -204,24 +205,26 @@ describe('c-side-navigation', () => {
           .filter((el) => el.active)
           .map((el) => el.getAttribute('value')!);
 
+      // A router can cancel the navigation a click asks for; the item the page
+      // marked stays the current page until the page says otherwise.
       await userEvent.click(box(item(m, 'dashboard'), 'header'));
-      await userEvent.click(box(item(m, 'settings'), 'header'));
       await settle();
 
       expect(current()).toEqual(['settings']);
       expect(
         box(item(m, 'dashboard'), 'header').hasAttribute('aria-current'),
       ).toBe(false);
+      expect(
+        box(item(m, 'settings'), 'header').getAttribute('aria-current'),
+      ).toBe('page');
 
+      // A parent still expands itself; its sub-item is a leaf like any other.
       await userEvent.click(box(item(m, 'projects'), 'header'));
       await settle();
       await userEvent.click(box(item(m, 'archived'), 'root'));
       await settle();
 
-      expect(current()).toEqual(['projects', 'archived']);
-      expect(
-        box(item(m, 'settings'), 'header').hasAttribute('aria-current'),
-      ).toBe(false);
+      expect(current()).toEqual(['projects', 'settings']);
     });
 
     it('an item with an href fires select once on Enter', async () => {
@@ -260,7 +263,7 @@ describe('c-side-navigation', () => {
       expect(location.hash).toBe('#side-nav-nested');
       expect(events.details()).toEqual([{ value: 'intro' }]);
       expect(item(m, 'guides').active).toBe(true);
-      expect(item(m, 'intro').active).toBe(true);
+      expect(item(m, 'intro').active).toBe(false);
       history.replaceState(null, '', location.pathname + location.search);
     });
 

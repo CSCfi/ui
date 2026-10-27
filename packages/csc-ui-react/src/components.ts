@@ -723,7 +723,7 @@ export const CSteps = createComponent({
   tagName: 'c-steps',
 });
 
-/** A second-level entry of a `c-side-navigation`, written inside the `c-side-navigation-item` it belongs to (no `slot` attribute needed) and shown while that parent is `active`. Activating it fires `select` with its `value`, makes it the current page (`active`, in place of the item that was) and closes the mobile drawer; to mark the current page from code, set `active` on the sub-item and on its parent, so the parent is expanded. */
+/** A second-level entry of a `c-side-navigation`, written inside the `c-side-navigation-item` it belongs to (no `slot` attribute needed) and shown while that parent is `active`. Activating it fires `select` with its `value` and closes the mobile drawer. It does not mark itself as the current page: set `active` on the sub-item of the page shown, and on its parent so the parent is expanded. */
 export const CSubNavigationItem = createComponent({
   displayName: 'CSubNavigationItem',
   elementClass: elementClass<CSubNavigationItemElement>(['active', 'href', 'loading', 'target', 'value']),

@@ -317,8 +317,7 @@ onMounted(() => {
   host.addEventListener('click', redirect);
   // A nested parent item (in a parent item's sub-item slot) shows and hides
   // its own sub-items on its `select`; c-side-navigation leaves a slotted
-  // item's expansion alone (it makes a nested leaf the current page), and the
-  // event goes on to the page.
+  // item's expansion alone, and the event goes on to the page.
   host.addEventListener('select', (e) => {
     // Re-assign via host so Vue's prop setter runs.
     if (isSubItem.value && slotHasContent.value && e.target === host)

@@ -32,11 +32,16 @@ navigation can route every item:
 
 ```vue
 <c-side-navigation @select="navigate($event.detail.value)">
-  <c-side-navigation-item value="/dashboard">Dashboard</c-side-navigation-item>
+  <c-side-navigation-item
+    value="/dashboard"
+    :active="route.path === '/dashboard'"
+  >
+    Dashboard
+  </c-side-navigation-item>
 </c-side-navigation>
 ```
 
-Activating an item without sub-items, or a sub-item, makes it the current page: it becomes `active`, and the item that was current stops being. Set `active` yourself for the page the menu first shows, and whenever the page changes some other way, such as a link elsewhere on the page.
+The navigation does not mark the current page itself: set `active` on the item, or sub-item, of the page shown, from your router or the URL. The highlight then follows the page, not the click, so a navigation your router cancels leaves it where it was.
 
 ## Inside c-main
 

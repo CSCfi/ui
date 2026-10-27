@@ -2168,7 +2168,7 @@ export interface CSubNavigationItemElementEventMap {
   select: CustomEvent<{ value: string | undefined }>;
 }
 
-/** A second-level entry of a `c-side-navigation`, written inside the `c-side-navigation-item` it belongs to (no `slot` attribute needed) and shown while that parent is `active`. Activating it fires `select` with its `value`, makes it the current page (`active`, in place of the item that was) and closes the mobile drawer; to mark the current page from code, set `active` on the sub-item and on its parent, so the parent is expanded. */
+/** A second-level entry of a `c-side-navigation`, written inside the `c-side-navigation-item` it belongs to (no `slot` attribute needed) and shown while that parent is `active`. Activating it fires `select` with its `value` and closes the mobile drawer. It does not mark itself as the current page: set `active` on the sub-item of the page shown, and on its parent so the parent is expanded. */
 export interface CSubNavigationItemElement extends Omit<HTMLElement, 'active' | 'collapsed' | 'href' | 'loading' | 'target' | 'value'> {
   /**
    * Mark the sub-item as the current page (`aria-current="page"`); set `active`
@@ -2250,7 +2250,7 @@ export interface CSwitchElement extends Omit<HTMLElement, 'checked' | 'disabled'
   label?: string;
   /**
    * Show a spinner in place of the handle, such as while the change is
-   * saved. It does not disable the switch
+   * saved. The switch ignores toggles meanwhile and is announced as busy
    */
   loading?: boolean;
   /** Set as required — shows the required marker on the label */
