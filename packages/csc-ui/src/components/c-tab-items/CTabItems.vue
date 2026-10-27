@@ -13,9 +13,10 @@
  * @seeded from csc-ui — verify
  */
 import { tv } from 'tailwind-variants';
-import { onBeforeUnmount, onMounted, useHost, watch } from 'vue';
+import { nextTick, onBeforeUnmount, onMounted, useHost, watch } from 'vue';
 
 import { coerceBoolean } from '../../shared/coerceBoolean';
+import { prefersReducedMotion } from '../../shared/reducedMotion';
 
 /**
  * Styling lives in this `tailwind-variants` config; customization
@@ -97,13 +98,19 @@ const isVertical = (): boolean => {
   );
 };
 
-let initialized = false;
+/** Length of the slide between two panels. */
+const SLIDE_MS = 300;
 
-const isAnimating = false;
+// Panels switch without the slide until the tab set has settled after mount.
+let ready = false;
 
-let debounce: null | ReturnType<typeof setTimeout> = null;
+let readyTimer: null | ReturnType<typeof setTimeout> = null;
 
-let resizeObserver: null | ResizeObserver = null;
+// The panel index (counting visible panels) shown last, -1 before the first.
+let shownBefore = -1;
+
+// Set while a slide plays; it puts the track back at rest when it ends.
+let slideTimer: null | ReturnType<typeof setTimeout> = null;
 
 // `:scope >` so a nested c-tabs (e.g. an example rendered inside an
 // outer page-level c-tabs) doesn't bleed its own panels into our query
@@ -114,18 +121,37 @@ const tabs = () =>
     host?.querySelectorAll(':scope > c-tab-item') ?? [],
   ) as HTMLElement[];
 
-// Mark the matching panel active and slide the flex track so it sits in
-// view. The horizontal offset is the active panel's offsetLeft negated.
-//
-// The position update happens *synchronously* with the active state
-// change — wrapping it in requestAnimationFrame causes a 1-frame gap
-// where the new panel is already display:block but the track is still
-// translated to the old panel's offset. The new panel ends up
-// container-width to the right and overflow:hidden clips it. With the
-// 300ms slide that gap is invisible; with disable-animation it shows up
-// as "content not showing" plus a page reflow as c-tab-items briefly
-// collapses to 0 height. Each panel has min-width:100% regardless of
-// active state, so offsetLeft is stable and safe to read sync.
+const setOffset = (before: number, vertical: boolean) => {
+  if (!host) return;
+
+  host.style.setProperty(
+    '--_c-tab-items-position-left',
+    vertical ? '0px' : `${-before * host.clientWidth}px`,
+  );
+  host.style.setProperty(
+    '--_c-tab-items-position-top',
+    vertical ? `${-before * host.clientHeight}px` : '0px',
+  );
+};
+
+// At rest the track has no `translate` and only the active panel takes space.
+// Any `translate`, even a zero one, makes the track the containing block of
+// `position: fixed` content: a c-modal in a panel (it does not use the top
+// layer, ADR-0014) was positioned and clipped inside the panel. The panels
+// line up as a carousel only while one slides in.
+const rest = () => {
+  slideTimer = null;
+  // No transition back from the slide's offset to no translate at all.
+  host?.style.setProperty('--_c-tab-items-animation-duration', '0ms');
+  host?.classList.add('c-tab-items--rest');
+};
+
+// Mark the matching panel active, and slide the track from the old panel to
+// it. The position update happens *synchronously* with the active state
+// change — wrapping it in requestAnimationFrame causes a 1-frame gap where the
+// new panel is already display:block but the track is still at the old
+// panel's offset (or, at rest, the old panel still takes the space): the new
+// panel ends up out of view and c-tab-items briefly collapses to 0 height.
 const setActiveTab = () => {
   if (!host) return;
 
@@ -164,15 +190,19 @@ const setActiveTab = () => {
     }
   });
 
-  if (activeIndex < 0) return;
+  if (activeIndex < 0) {
+    shownBefore = -1;
+    rest();
 
-  // Slide the track so the active panel sits at the start of the container.
-  // The two layouts are the same carousel on different axes: horizontally the
-  // panels are a row (each min-width:100%) and we move along X; vertically they
-  // are stacked (each is the full container height) and we move along Y. Either
-  // way the offset is N fully-sized panels' worth in that axis, so the incoming
-  // panel travels through the whole container from the opposite edge — the
-  // vertical slide mirrors the horizontal one.
+    return;
+  }
+
+  // The panels are a carousel: a row of panels each one container wide
+  // (stacked, each one container high, in the vertical layout) on a track
+  // that slides so the active one sits in view. The offset is N fully-sized
+  // panels' worth in the slide axis, so the incoming panel travels through the
+  // whole container from the opposite edge — the vertical slide mirrors the
+  // horizontal one.
   //
   // The offset is computed from the host's client size × the visual index, NOT
   // from offsetLeft/offsetTop: for a slotted element browsers don't resolve
@@ -186,52 +216,51 @@ const setActiveTab = () => {
     .slice(0, activeIndex)
     .filter((t) => !t.hasAttribute('disabled')).length;
 
-  if (vertical) {
-    host.style.setProperty('--_c-tab-items-position-left', '0px');
-    host.style.setProperty(
-      '--_c-tab-items-position-top',
-      `${-visibleBefore * host.clientHeight}px`,
-    );
-  } else {
-    host.style.setProperty('--_c-tab-items-position-top', '0px');
-    host.style.setProperty(
-      '--_c-tab-items-position-left',
-      `${-visibleBefore * host.clientWidth}px`,
-    );
+  const from = shownBefore;
+
+  // The same panel again (c-tabs pushes its value more than once): nothing
+  // moves, and a slide under way finishes on its own.
+  if (from === visibleBefore) return;
+
+  shownBefore = visibleBefore;
+
+  if (slideTimer !== null) clearTimeout(slideTimer);
+
+  if (!ready || from < 0 || isAnimationDisabled() || prefersReducedMotion()) {
+    rest();
+
+    return;
   }
 
-  if (!isAnimationDisabled() && !initialized) {
-    initialized = true;
-    setTimeout(() => {
-      host.style.setProperty('--_c-tab-items-animation-duration', '300ms');
-    }, 500);
-  }
-};
-
-const handleResize = () => {
-  if (isAnimating || !initialized) return;
-
-  if (debounce !== null) clearTimeout(debounce);
-  debounce = setTimeout(setActiveTab, 50);
+  // Line the panels up at the old panel's offset, commit that without a
+  // transition, then slide to the new one.
+  host.style.setProperty('--_c-tab-items-animation-duration', '0ms');
+  setOffset(from, vertical);
+  host.classList.remove('c-tab-items--rest');
+  void host.offsetWidth;
+  host.style.setProperty('--_c-tab-items-animation-duration', `${SLIDE_MS}ms`);
+  setOffset(visibleBefore, vertical);
+  slideTimer = setTimeout(rest, SLIDE_MS);
 };
 
 onMounted(() => {
-  if (isAnimationDisabled() && host) {
-    host.style.setProperty('--c-tab-items-animation-duration', '0ms');
-  }
-
   // contentchange bubbles up from child panels when they resize.
   host?.addEventListener('contentchange', (e) => e.stopPropagation());
 
-  if (host) {
-    resizeObserver = new ResizeObserver(handleResize);
-    resizeObserver.observe(host);
-  }
-
   setActiveTab();
+  // HTML-authored panels upgrade after this element, so their `value` is not
+  // readable yet and no panel matched; they are upgraded by the next tick.
+  void nextTick(setActiveTab);
+  readyTimer = setTimeout(() => {
+    ready = true;
+  }, 500);
 });
 
-onBeforeUnmount(() => resizeObserver?.disconnect());
+onBeforeUnmount(() => {
+  if (readyTimer !== null) clearTimeout(readyTimer);
+
+  if (slideTimer !== null) clearTimeout(slideTimer);
+});
 
 watch(() => props.value, setActiveTab);
 </script>
@@ -267,6 +296,16 @@ watch(() => props.value, setActiveTab);
   transition: translate var(--_c-tab-items-animation-duration)
     cubic-bezier(0.075, 0.82, 0.165, 1);
   translate: var(--_c-tab-items-position-left) var(--_c-tab-items-position-top);
+}
+
+/* At rest: no translate (see the script's rest()), and only the active panel
+   takes space, so it sits at the start of the track. */
+:host(.c-tab-items--rest) > [part='root'] {
+  translate: none;
+}
+
+:host(.c-tab-items--rest) ::slotted(c-tab-item:not([active]):not(.is-active)) {
+  display: none;
 }
 
 /* Vertical layout: stack the panels in a column (instead of the default

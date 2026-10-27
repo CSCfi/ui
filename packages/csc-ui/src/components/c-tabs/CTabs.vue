@@ -829,7 +829,6 @@ onBeforeUnmount(() => {
 
   display: block;
   width: 100%;
-  transform: translateX(0%);
   max-width: 100%;
 }
 

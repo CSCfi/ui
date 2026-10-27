@@ -5,7 +5,7 @@
  */
 import { describe, expect, it } from 'vitest';
 
-import { mount, settled } from '../../test/harness';
+import { mount, settled, withMotion } from '../../test/harness';
 
 const panel = (value: string, id = '') =>
   `<c-tab-item value="${value}"${id ? ` id="${id}"` : ''}>${value}</c-tab-item>`;
@@ -59,5 +59,68 @@ describe('tab and panel ids', () => {
 
     expect(ids.every(Boolean)).toBe(true);
     expect(new Set(ids).size).toBe(ids.length);
+  });
+});
+
+describe('panels', () => {
+  it('slides the new panel in, then rests with it in view', () =>
+    withMotion(async () => {
+      const { host } = await mount('c-tabs', {
+        html: `${tab('one') + tab('two') + tab('three')}<c-tab-items slot="items">${
+          panel('one') + panel('two') + panel('three')
+        }</c-tab-items>`,
+        props: { value: 'one' },
+      });
+
+      // Panels switch without the slide while the tab set settles after mount.
+      await new Promise((resolve) => setTimeout(resolve, 600));
+
+      const items = host.querySelector('c-tab-items')!;
+
+      const track = items.shadowRoot!.querySelector('[part~="root"]')!;
+
+      (host.querySelectorAll('c-tab')[2] as HTMLElement).click();
+      await new Promise(requestAnimationFrame);
+
+      expect(getComputedStyle(track).translate).not.toBe('none');
+
+      await new Promise((resolve) => setTimeout(resolve, 400));
+
+      const shown = host.querySelectorAll('c-tab-item')[2]!;
+
+      expect(getComputedStyle(track).translate).toBe('none');
+      expect(shown.getBoundingClientRect().left).toBe(
+        items.getBoundingClientRect().left,
+      );
+      expect(shown.getBoundingClientRect().width).toBeGreaterThan(0);
+    }));
+
+  it('a modal in a panel covers the viewport, not the panel', async () => {
+    const { host } = await mount('c-tabs', {
+      html:
+        `${tab('one') + tab('two')}<c-tab-items slot="items">${panel('one')}` +
+        '<c-tab-item value="two"><c-modal aria-label="Edit"><p>Modal body</p></c-modal></c-tab-item>' +
+        '</c-tab-items>',
+      props: { value: 'two' },
+    });
+    await settled();
+
+    const modal = host.querySelector('c-modal') as {
+      value?: boolean;
+    } & HTMLElement;
+
+    modal.value = true;
+    await settled();
+
+    const backdrop = modal
+      .shadowRoot!.querySelector('[part~="backdrop"]')!
+      .getBoundingClientRect();
+
+    expect([
+      backdrop.left,
+      backdrop.top,
+      backdrop.width,
+      backdrop.height,
+    ]).toEqual([0, 0, window.innerWidth, window.innerHeight]);
   });
 });
