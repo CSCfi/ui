@@ -414,7 +414,24 @@ start migrating on the first alpha that carries D2–D4.
      "unsupported" banner and `noindex`, and gives each of the 72 component routes an entry HTML so direct links
      load on any static host. Linked from the migration guide's "Before you start" and a new site footer; the
      prerender crawler, oxfmt and the viewport smoke skip it. The archive loads Highlight.js from a CDN, as the
-     3.x site did. Noticed: the 4.x docs toolbar still shows a "next" badge.
+     3.x site did. Noticed: the 4.x docs toolbar still shows a "next" badge (now `v4`, eebf36f3).
+   - **Findings triage, section B (behaviour bugs) — done locally (2026-10-27).** Per D13 the behaviour bugs and
+     a11y faults of `_plan/csc-ui-4-usage-doc-findings.md` are before-rc.1 work. Every B item is fixed, each with a
+     spec that failed first and a changeset (30bc5c6c..adee0bf6, 13 commits): c-steps, c-accordion,
+     c-side-navigation, c-tags/c-tag, c-slider, c-otp-input, c-login-card, c-page, c-card, c-tabs (two commits),
+     c-data-table, c-pagination. Every inferred fault reproduced. The serious one: a c-modal in a tab panel got a
+     104×16 px backdrop — c-tabs' identity `transform` and the panel track's resting `translate` made them its
+     containing block; the track now rests without a transform. Found on the way and fixed: a nested side-nav item
+     with `href` never navigated, c-tabs dropped a resize during the indicator's move, c-tab-items matched no
+     HTML panel at mount, and the analyzer listed `Alias | null` object props as attributes (c-data-table `sort`,
+     the pickers' `value` types; a major changeset for the guard). Left: c-tab-item's undeclared `[disabled]` hook,
+     which the slide still reads. Verified: Chromium suite 66 files / 1699 tests, node 435, lint + guards,
+     `format:check`, both builds, docs smoke with axe 509/509; the changed specs on Playwright Firefox (two
+     Chromium-only specs added: the `Touch` constructor and synthetic paste data are Chromium test tooling). The
+     smoke caught a regression of 7ef09509, fixed in d6253feb: ARIA id references copied into the shadow DOM
+     dangled. The login-card canons' baselined contrast now reports nothing because axe cannot measure text over
+     the image the URL fix restored; the same text stays baselined in c-login-card-content/basic. Next: section C
+     (a11y), then the axe baseline.
 4. **RC** — switch pre tag `alpha` → `rc` (verify the changesets CLI sequence: `pre exit` + `pre enter rc` before a
    version run), publish `4.0.0-rc.1`. From here: fixes only, API guard fails any breaking diff.
    Gate (D8): MyCSC fully migrated on the latest RC, e2e green, no open csc-ui blocker.
