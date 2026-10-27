@@ -22,7 +22,14 @@
  * @csspart container - The content wrapper around the default slot, carrying its 1280px width limit and padding
  */
 import { tv } from 'tailwind-variants';
-import { computed, onBeforeUnmount, onMounted, useTemplateRef } from 'vue';
+import {
+  computed,
+  nextTick,
+  onBeforeUnmount,
+  onMounted,
+  useTemplateRef,
+  watch,
+} from 'vue';
 
 // Multi-root template (fragment) — keep consumer fallthrough attrs
 // (class/style) on the host element instead of tripping the "renders
@@ -88,11 +95,28 @@ const onScroll = () => {
   scrollRef.value.style.width = `${scrolled}%`;
 };
 
+// The bar measures without waiting for a scroll: at mount (a restored scroll
+// position), when it is switched on, and when the viewport or the page's
+// content changes size, which changes the scrolled share.
+let resizeObserver: null | ResizeObserver = null;
+
 onMounted(() => {
   window.addEventListener('scroll', onScroll, { passive: true });
+  window.addEventListener('resize', onScroll, { passive: true });
+  resizeObserver = new ResizeObserver(onScroll);
+  resizeObserver.observe(document.body);
+  onScroll();
 });
+
+watch(
+  () => props.scrollIndicator,
+  () => nextTick(onScroll),
+);
+
 onBeforeUnmount(() => {
   window.removeEventListener('scroll', onScroll);
+  window.removeEventListener('resize', onScroll);
+  resizeObserver?.disconnect();
 });
 </script>
 

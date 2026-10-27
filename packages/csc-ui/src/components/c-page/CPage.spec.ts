@@ -64,6 +64,39 @@ describe('c-page', () => {
     expect(document.elementFromPoint(100, 1)?.localName).toBe('c-page');
   });
 
+  it('scroll-indicator measures without waiting for a scroll', async () => {
+    const tall = document.createElement('div');
+
+    tall.style.height = '3000px';
+    document.body.append(tall);
+    window.scrollTo(0, 600);
+
+    try {
+      const m = await mount('c-page', {
+        html: '<p>Short</p>',
+        props: { scrollIndicator: true },
+        stage: false,
+      });
+
+      await settle();
+
+      const at = parseFloat(m.part('scroll-indicator').style.width);
+
+      expect(at, 'a restored scroll position').toBeGreaterThan(0);
+
+      // The page grows: the same scroll position is a smaller share.
+      tall.style.height = '6000px';
+      await new Promise(requestAnimationFrame);
+      await settle();
+
+      expect(parseFloat(m.part('scroll-indicator').style.width)).toBeLessThan(
+        at,
+      );
+    } finally {
+      tall.remove();
+    }
+  });
+
   it('puts the footer at the bottom of a sized host', async () => {
     const m = await mount('c-page', {
       attrs: { style: 'height: 240px' },
