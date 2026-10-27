@@ -1,5 +1,12 @@
 <template>
-  <button :class="ui.root()" :disabled part="root" @click="onClick">
+  <button
+    :aria-busy="loading ? 'true' : undefined"
+    :aria-disabled="loading ? 'true' : undefined"
+    :class="ui.root()"
+    :disabled
+    part="root"
+    @click="onClick"
+  >
     <div ref="containerRef" :class="ui.inner()" part="content">
       <span
         v-if="loading"
@@ -7,13 +14,15 @@
         :style="{ width: `${spinnerSize}px`, height: `${spinnerSize}px` }"
       />
 
-      <template v-else>
+      <!-- While loading the content stays, hidden visually only: slotted
+           text that names the button must not go with it. -->
+      <span :class="loading ? 'sr-only' : 'contents'">
         <slot>
           <svg v-if="path" height="24" viewBox="0 0 24 24" width="24">
             <path :d="path" fill="currentColor" />
           </svg>
         </slot>
-      </template>
+      </span>
     </div>
 
     <span

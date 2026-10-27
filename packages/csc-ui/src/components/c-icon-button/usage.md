@@ -47,21 +47,21 @@ bubble included.
 ## Disabled and loading
 
 `disabled` disables the native button: it leaves the tab order and ignores
-the pointer. `loading` replaces the icon with a spinner and swallows clicks,
-but the button stays focusable and the wait is not exposed to assistive
-technology; announce it on the region it affects, with `aria-busy` or a
-live-region message.
+the pointer. `loading` replaces the icon with a spinner and swallows clicks;
+the button stays focusable and is announced as busy and unavailable
+(`aria-busy`, `aria-disabled`). Mark the region the wait affects too, with
+`aria-busy` or a live-region message.
 
 ## Accessibility
 
 The `root` part is a native `<button>`, so focus, keyboard activation and the
 button role come from the platform. Its name comes from `aria-label` on the
 `c-icon-button` element, which is forwarded to the inner button, as are the
-other ARIA attributes (`aria-expanded`, `aria-haspopup`, …). Without an
-`aria-label` the button is named only by the text in its content, which is
-usually nothing or the badge count. Prefer `aria-label` to visually hidden
-slotted text: while `loading`, the spinner replaces the slotted content, text
-included.
+other ARIA attributes (`aria-expanded`, `aria-haspopup`, …) except those
+holding element ids (`aria-controls`, `aria-describedby`, …), whose ids cannot
+reach into the component. Without an `aria-label` the button is named only by
+the text in its content, which is usually nothing or the badge count; visually
+hidden slotted text also names it, and keeps naming it while `loading`.
 
 To show the name to sighted users too, put the button in a `c-tooltip`'s
 `trigger` slot. The tooltip text is announced as a description, so the

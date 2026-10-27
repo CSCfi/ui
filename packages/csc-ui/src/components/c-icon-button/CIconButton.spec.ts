@@ -31,3 +31,24 @@ describe('c-icon-button', () => {
     expect(button.hasAttribute('aria-haspopup')).toBe(false);
   });
 });
+
+describe('c-icon-button loading', () => {
+  it('keeps its slotted name and tells assistive technology it is busy', async () => {
+    const { deep, host } = await mount('c-icon-button', {
+      attrs: { loading: true },
+      html: '<span class="sr-only">Save draft</span>',
+    });
+
+    const button = deep<HTMLButtonElement>('button');
+
+    expect(host.querySelector('span')!.assignedSlot).not.toBeNull();
+    expect(button.getAttribute('aria-busy')).toBe('true');
+    expect(button.getAttribute('aria-disabled')).toBe('true');
+
+    (host as { loading?: boolean } & HTMLElement).loading = false;
+    await settle();
+
+    expect(button.hasAttribute('aria-busy')).toBe(false);
+    expect(button.hasAttribute('aria-disabled')).toBe(false);
+  });
+});
