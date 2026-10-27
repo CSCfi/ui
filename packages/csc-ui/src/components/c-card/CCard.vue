@@ -74,6 +74,11 @@ const card = tv({
       'absolute top-[calc(var(--_c-card-gap)-8px)] right-[calc(var(--_c-card-padding-inline)-8px)] z-[1] flex size-10 cursor-pointer items-center justify-center rounded-full border-0 bg-transparent p-0 text-primary transition-colors duration-300 ease-standard hover:bg-primary-subtle-hover focus:outline-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary focus-visible:outline-solid',
     root: 'relative flex max-w-full flex-1 flex-col gap-[var(--_c-card-gap)] rounded-csc-xl border border-solid border-border bg-surface-raised py-[var(--_c-card-gap)] text-on-surface',
   },
+  variants: {
+    // The toggle reaches 32px past the inline padding; c-card-title keeps
+    // this much clear at its end (its actions sat under the toggle).
+    fullscreen: { true: { root: '[--_c-card-toggle-room:40px]' } },
+  },
 });
 
 interface CCardProps {
@@ -85,11 +90,11 @@ interface CCardProps {
   fullscreen?: boolean;
 }
 
-withDefaults(defineProps<CCardProps>(), {
+const props = withDefaults(defineProps<CCardProps>(), {
   fullscreen: false,
 });
 
-const ui = computed(() => card());
+const ui = computed(() => card({ fullscreen: props.fullscreen }));
 
 const isFullscreen = ref(false);
 
@@ -106,7 +111,7 @@ const onFullscreen = async (event: MouseEvent) => {
   event.preventDefault();
   event.stopPropagation();
   try {
-    if (document.fullscreenElement) {
+    if (document.fullscreenElement === host) {
       await document.exitFullscreen();
     } else if (host) {
       // requestFullscreen returns a Promise that rejects if the API call
@@ -139,7 +144,8 @@ const enterFullscreen = async () => {
  * @seeded from csc-ui — verify
  */
 const exitFullscreen = async () => {
-  if (!document.fullscreenElement) return;
+  // Only the card's own fullscreen: another element's is not the card's to end.
+  if (!host || document.fullscreenElement !== host) return;
   try {
     await document.exitFullscreen();
   } catch (err) {

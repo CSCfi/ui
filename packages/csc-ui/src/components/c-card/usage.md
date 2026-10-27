@@ -34,9 +34,9 @@ Content slotted straight into the card, outside a section, keeps the vertical sp
 
 ## Fullscreen
 
-`fullscreen` adds a round toggle button in the card's top-right corner. Pressing it shows the card in the browser's fullscreen mode; pressing it again, or Escape, returns the card to the page. In fullscreen the card fills the screen with square corners and scrolls its own content. The toggle sits over the end of the heading row, so keep a fullscreen card's heading short and its `actions` slot empty.
+`fullscreen` adds a round toggle button in the card's top-right corner. Pressing it shows the card in the browser's fullscreen mode; pressing it again, or Escape, returns the card to the page. In fullscreen the card fills the screen with square corners and scrolls its own content. The toggle sits at the end of the heading row, and a `c-card-title` keeps its text and `actions` clear of it.
 
-`enterFullscreen()` and `exitFullscreen()` do the same from code, with or without the toggle. A browser grants fullscreen only in response to a user action, so call `enterFullscreen()` from a click handler; a refused request logs a console warning and the card stays on the page.
+`enterFullscreen()` and `exitFullscreen()` do the same from code, with or without the toggle; `exitFullscreen()` ends only the card's own fullscreen, never another element's. A browser grants fullscreen only in response to a user action, so call `enterFullscreen()` from a click handler; a refused request logs a console warning and the card stays on the page.
 
 ## Accessibility
 

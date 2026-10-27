@@ -8,6 +8,7 @@
  * throughout because it declares its own ink; the surface did not declare any.
  */
 import { describe, expect, it } from 'vitest';
+import { userEvent } from 'vitest/browser';
 
 import { mount, roleInMode, setThemeMode, settled } from '../../test/harness';
 
@@ -54,5 +55,61 @@ describe('c-card ink', () => {
     await settled();
 
     expect(inkOf(m.host.querySelector('p'))).toBe(roleInMode('dark'));
+  });
+});
+
+describe('c-card fullscreen', () => {
+  it('keeps the title clear of the fullscreen toggle', async () => {
+    const m = await mount('c-card', {
+      attrs: { fullscreen: true },
+      html:
+        '<c-card-title>Project members<button slot="actions" style="display: block; width: 96px; height: 32px">Edit</button></c-card-title>' +
+        '<c-card-content><p>Manage who has access.</p></c-card-content>',
+    });
+
+    m.stage.style.cssText = 'display:block;padding:8px;width:480px';
+    await settled();
+
+    const toggle = m.part('fullscreen-toggle').getBoundingClientRect();
+
+    const actions = m.host
+      .querySelector('[slot="actions"]')!
+      .getBoundingClientRect();
+
+    const overlaps =
+      actions.right > toggle.left &&
+      actions.left < toggle.right &&
+      actions.bottom > toggle.top &&
+      actions.top < toggle.bottom;
+
+    expect(overlaps).toBe(false);
+  });
+
+  it('exitFullscreen() leaves another element fullscreen', async () => {
+    const m = await mount('c-card', {
+      attrs: { fullscreen: true },
+      html: CARD,
+    });
+
+    const other = document.createElement('button');
+
+    other.textContent = 'Fullscreen';
+    other.addEventListener('click', () => void other.requestFullscreen());
+    document.body.append(other);
+
+    try {
+      await userEvent.click(other);
+      await expect.poll(() => document.fullscreenElement).toBe(other);
+
+      await (
+        m.host as { exitFullscreen(): Promise<void> } & HTMLElement
+      ).exitFullscreen();
+      await settled();
+
+      expect(document.fullscreenElement).toBe(other);
+    } finally {
+      if (document.fullscreenElement) await document.exitFullscreen();
+      other.remove();
+    }
   });
 });
