@@ -202,20 +202,47 @@ const ui = computed(() =>
 // (a nested interactive control, and two stops per tag in a `multiple`
 // field's tag row, ADR-0044); it stamps `data-closeable` so the escape-hatch
 // can drop the host focus ring that would otherwise double the button's own.
+//
+// A plain tag is a toggle button: `active` is its pressed state, and Enter
+// and Space press it with a click, as on a native button (Enter on keydown,
+// Space on keyup).
+const isButton = () => !props.flat && !props.closeable;
+
+const onKeydown = (event: KeyboardEvent) => {
+  if (event.target !== host || !isButton()) return;
+
+  if (event.key === 'Enter') {
+    event.preventDefault();
+    host?.click();
+  } else if (event.key === ' ') {
+    // No page scroll; the press lands on keyup.
+    event.preventDefault();
+  }
+};
+
+const onKeyup = (event: KeyboardEvent) => {
+  if (event.target === host && isButton() && event.key === ' ') host?.click();
+};
+
 onMounted(() => {
   if (!host) return;
+  host.addEventListener('keydown', onKeydown);
+  host.addEventListener('keyup', onKeyup);
   watchEffect(() => {
     host.toggleAttribute('data-closeable', props.closeable && !props.flat);
 
     if (props.flat) {
       host.setAttribute('tabindex', '-1');
       host.removeAttribute('role');
+      host.removeAttribute('aria-pressed');
     } else if (props.closeable) {
       host.removeAttribute('tabindex');
       host.removeAttribute('role');
+      host.removeAttribute('aria-pressed');
     } else {
       host.setAttribute('tabindex', '0');
       host.setAttribute('role', 'button');
+      host.setAttribute('aria-pressed', String(!!props.active));
     }
   });
 });

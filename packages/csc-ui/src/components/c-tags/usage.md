@@ -57,10 +57,10 @@ in the group compact, and the group's size overrides a tag's own `size`.
 
 - With a `label`, the group is a `role="group"` named by it, and `required`
   adds the required marker. Without a label the row is a plain container.
-- A plain tag — neither `closeable` nor `flat` — is a Tab stop announced as a
-  button. It does not respond to Enter or Space by itself, and `active`
-  changes only its look; nothing tells assistive technology that a tag is
-  active.
+- A plain tag — neither `closeable` nor `flat` — is a toggle button: a Tab
+  stop that Enter and Space press, each firing `click` as a mouse click does,
+  and announced with `active` as its pressed state. Toggle `active` in your
+  `click` handler.
 - A closeable tag is not a Tab stop itself: its close button is. The button's
   accessible name is `close-label`, "Remove" by default, so give each tag a
   label naming what it removes, as in the example above.
