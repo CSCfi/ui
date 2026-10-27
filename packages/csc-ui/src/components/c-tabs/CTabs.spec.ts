@@ -6,7 +6,7 @@
 import { describe, expect, it } from 'vitest';
 import { userEvent } from 'vitest/browser';
 
-import { mount, settled, withMotion } from '../../test/harness';
+import { chromiumOnly, mount, settled, withMotion } from '../../test/harness';
 
 const panel = (value: string, id = '') =>
   `<c-tab-item value="${value}"${id ? ` id="${id}"` : ''}>${value}</c-tab-item>`;
@@ -196,7 +196,9 @@ describe('tab row', () => {
     ).not.toBe('200ms');
   });
 
-  it('a vertical swipe on the row is left to the page', async () => {
+  chromiumOnly(
+    'builds its touch events with the Touch constructor, which desktop Firefox lacks',
+  )('a vertical swipe on the row is left to the page', async () => {
     const m = await mountRow();
 
     const row = m.part('tabs');
