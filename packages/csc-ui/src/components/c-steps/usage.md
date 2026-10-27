@@ -12,7 +12,7 @@ Set `value` to the number of the current step, counting from 1 (`value="3"` read
 <c-button @click="step++">Next</c-button>
 ```
 
-Render the full list of steps up front: `c-steps` inserts the connecting lines between your `c-step` elements, in your own DOM, once, when it mounts.
+`c-steps` inserts the connecting lines between your `c-step` elements, in your own DOM (each line is a `<div class="divider">` after a step), and keeps them in step when you add or remove steps.
 
 ## When to use
 

@@ -80,18 +80,19 @@ const label = ref('');
 
 const stepCount = ref(0);
 
-let initialized = false;
-
-// Reflect current/complete onto each <c-step> and maintain `.divider`
-// elements between them in the light DOM (projected through the slot and
-// styled via ::slotted(.divider)). Faithful to the Stencil version which
-// imperatively inserts divider <div>s as siblings of the steps.
+// Reflect current/complete onto each <c-step> and keep a `.divider` element
+// after every step but the last, in the light DOM (projected through the slot
+// and styled via ::slotted(.divider)). Faithful to the Stencil version, which
+// inserts divider <div>s as siblings of the steps. Runs on mount, on every
+// `value` change and on every slotchange, so steps added or removed later get
+// (or lose) their line; a pass with nothing to change touches no node, so the
+// slotchange its own insertions cause ends there.
 const handleDividers = () => {
   if (!host) return;
 
   const steps = Array.from(host.querySelectorAll('c-step')) as HTMLElement[];
 
-  const dividers = host.querySelectorAll('.divider');
+  const kept = new Set<Element>();
   stepCount.value = steps.length;
 
   steps.forEach((item, index) => {
@@ -102,21 +103,24 @@ const handleDividers = () => {
     (item as unknown as { complete: boolean }).complete = complete;
 
     if (index + 1 < steps.length) {
-      const div = (
-        initialized ? dividers[index] : document.createElement('div')
-      ) as HTMLDivElement;
-      div.classList.toggle('complete', complete);
+      let divider = item.nextElementSibling;
 
-      if (!initialized) {
-        div.classList.add('divider');
-        item.after(div);
+      if (!divider?.classList.contains('divider')) {
+        divider = document.createElement('div');
+        divider.classList.add('divider');
+        item.after(divider);
       }
+
+      divider.classList.toggle('complete', complete);
+      kept.add(divider);
     }
 
     if (current) label.value = item.textContent || '';
   });
 
-  initialized = true;
+  for (const divider of host.querySelectorAll(':scope > .divider')) {
+    if (!kept.has(divider)) divider.remove();
+  }
 };
 
 const a11yMessage = computed(() => {
@@ -168,6 +172,12 @@ onMounted(() => {
   if (!host) return;
   host.setAttribute('tabindex', '0');
   handleDividers();
+
+  // Attributes on Vue's <slot> element are slot props, so the native outlet
+  // is wired imperatively (as in CTable).
+  host.shadowRoot
+    ?.querySelector('slot')
+    ?.addEventListener('slotchange', handleDividers);
 
   resizeObserver = new ResizeObserver(([entry]) => {
     const steps = Array.from(host.querySelectorAll('c-step')) as HTMLElement[];
