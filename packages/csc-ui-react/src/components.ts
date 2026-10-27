@@ -386,7 +386,7 @@ export const CList = createComponent({
   tagName: 'c-list',
 });
 
-/** One row of a `c-list`: its main content goes in the default slot, leading content such as an icon in the `pre` slot and trailing content in the `post` slot. The row is static unless it has an `href`, which makes it a real link; `ripple` adds a press effect and a Tab stop but no keyboard activation, so give navigation an `href`. */
+/** One row of a `c-list`: its main content goes in the default slot, leading content such as an icon in the `pre` slot and trailing content in the `post` slot. The row is static unless it has an `href`, which makes it a real link; `ripple` adds a press effect and a Tab stop that Enter and Space press, firing `click`; give navigation an `href`. */
 export const CListItem = createComponent({
   displayName: 'CListItem',
   elementClass: elementClass<CListItemElement>(['active', 'disabled', 'hoverable', 'href', 'ripple', 'target']),
@@ -410,7 +410,7 @@ export const CLoader = createComponent({
   tagName: 'c-loader',
 });
 
-/** One identity-provider choice inside `c-login-buttons`: a link card with the provider's logo (`src`, or markup in the `image` slot) above the provider's name. Give it an `href`, since without one Enter does not activate it, and leave `alt` empty when the name already identifies the provider. */
+/** One identity-provider choice inside `c-login-buttons`: a card with the provider's logo (`src`, or markup in the `image` slot) above the provider's name. With an `href` it is a link to the provider's sign-in; without one it is a button whose `click` you handle. Leave `alt` empty when the name already identifies the provider. */
 export const CLoginButton = createComponent({
   displayName: 'CLoginButton',
   elementClass: elementClass<CLoginButtonElement>(['alt', 'href', 'src']),

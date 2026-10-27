@@ -1028,7 +1028,7 @@ export interface CListElement extends Omit<HTMLElement, 'bordered' | 'disabled'>
   disabled?: boolean;
 }
 
-/** One row of a `c-list`: its main content goes in the default slot, leading content such as an icon in the `pre` slot and trailing content in the `post` slot. The row is static unless it has an `href`, which makes it a real link; `ripple` adds a press effect and a Tab stop but no keyboard activation, so give navigation an `href`. */
+/** One row of a `c-list`: its main content goes in the default slot, leading content such as an icon in the `pre` slot and trailing content in the `post` slot. The row is static unless it has an `href`, which makes it a real link; `ripple` adds a press effect and a Tab stop that Enter and Space press, firing `click`; give navigation an `href`. */
 export interface CListItemElement extends Omit<HTMLElement, 'active' | 'disabled' | 'disabledByParent' | 'hoverable' | 'href' | 'ripple' | 'target'> {
   /** Set the item active */
   active?: boolean;
@@ -1070,11 +1070,14 @@ export interface CLoaderElement extends Omit<HTMLElement, 'contentDelay' | 'hide
   width?: number;
 }
 
-/** One identity-provider choice inside `c-login-buttons`: a link card with the provider's logo (`src`, or markup in the `image` slot) above the provider's name. Give it an `href`, since without one Enter does not activate it, and leave `alt` empty when the name already identifies the provider. */
+/** One identity-provider choice inside `c-login-buttons`: a card with the provider's logo (`src`, or markup in the `image` slot) above the provider's name. With an `href` it is a link to the provider's sign-in; without one it is a button whose `click` you handle. Leave `alt` empty when the name already identifies the provider. */
 export interface CLoginButtonElement extends Omit<HTMLElement, 'alt' | 'href' | 'src'> {
   /** Alt description for logo */
   alt?: string;
-  /** Login provider link. Do not set if using a javascript click handler */
+  /**
+   * The provider's sign-in URL, which makes the card a link. Without it the
+   * card is a button: handle its `click`.
+   */
   href?: string;
   /** Login provider logo url */
   src?: string;
@@ -1207,8 +1210,8 @@ export interface CMessageElement extends Omit<HTMLElement, 'errorMessage' | 'hin
   /** Hint text for the input */
   hint?: string;
   /**
-   * Show the control as invalid: its `error-message`, when set, replaces the
-   * hint, and the control is marked `aria-invalid`.
+   * Show the `error-message`, when set, in place of the hint. Marking the
+   * control itself `aria-invalid` is up to the control.
    */
   invalid?: boolean;
 }
