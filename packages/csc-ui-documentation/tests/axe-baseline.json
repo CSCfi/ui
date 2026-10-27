@@ -49,8 +49,6 @@
   "c-login-button/basic": ["color-contrast"],
   "c-login-buttons/basic": ["color-contrast"],
   "c-login-card-content/basic": ["color-contrast"],
-  "c-login-card/basic": ["color-contrast"],
-  "c-login-card/colored": ["color-contrast"],
   "c-main/basic": ["color-contrast"],
   "c-main/static-toolbar": ["color-contrast"],
   "c-message/basic": ["color-contrast"],
