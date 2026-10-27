@@ -16,7 +16,7 @@
       >
         <span
           :class="ui.tooltip()"
-          :data-tooltip="`${formatNumber(+value)}${unit}`"
+          :data-tooltip="`${formatNumber(shown)}${unit}`"
         />
       </div>
 
@@ -26,8 +26,8 @@
         :aria-label="hostAriaLabel"
         :aria-valuemax="max"
         :aria-valuemin="min"
-        :aria-valuenow="value"
-        :aria-valuetext="`${value}${unit}`"
+        :aria-valuenow="shown"
+        :aria-valuetext="`${shown}${unit}`"
         :class="ui.input()"
         :disabled="disabled || undefined"
         :max
@@ -42,10 +42,10 @@
 
     <div :class="ui.ticks()" aria-hidden="true" part="ticks">
       <span
-        v-for="(pos, i) in tickPositions"
+        v-for="(tick, i) in tickValues"
         :key="i"
-        :class="ui.tick({ active: isActive(Math.round(+pos)) })"
-        :data-value="formatNumber(Math.round(+pos))"
+        :class="ui.tick({ active: isActive(i) })"
+        :data-value="formatNumber(tick)"
       />
     </div>
   </div>
@@ -272,27 +272,53 @@ const hostAriaLabel = computed(() => attrs['aria-label'] as string | undefined);
 
 const trackPosition = ref(0);
 
-const tickPositions = ref<string[]>([]);
+const tickValues = ref<number[]>([]);
 
-const formatNumber = (n: number, decimals = 0) =>
-  new Intl.NumberFormat('fi-FI', {
-    maximumFractionDigits: decimals,
-    minimumFractionDigits: decimals,
-  }).format(n);
+// The value as the range input shows it: clamped into `min`..`max`, so the
+// built-in 50 on a slider with `max="8"` starts at its end, not past it.
+const shown = computed(() =>
+  Math.min(Math.max(+props.value, +props.min), +props.max),
+);
+
+// As many fraction digits as `step` has (0.25 → 2).
+const stepDecimals = computed(
+  () => (String(+props.step).split('.')[1] ?? '').length,
+);
+
+// Numbers follow the page's `lang` (a comma for `fi`, a point for `en`), as
+// c-number-field's do; a malformed `lang` falls back to English.
+const formatNumber = (n: number) => {
+  const options = { maximumFractionDigits: stepDecimals.value };
+
+  const lang =
+    typeof document === 'undefined' ? '' : document.documentElement.lang;
+
+  try {
+    return new Intl.NumberFormat(lang || undefined, options).format(n);
+  } catch {
+    return new Intl.NumberFormat('en', options).format(n);
+  }
+};
 
 const calculateTickPositions = () => {
-  tickPositions.value = Array.from({ length: +props.segments + 1 }, (_, i) =>
-    String((i * +props.max) / +props.segments),
+  const min = +props.min;
+
+  const segments = +props.segments;
+
+  tickValues.value = Array.from(
+    { length: segments + 1 },
+    (_, i) => min + (i * (+props.max - min)) / segments,
   );
 };
 
 const calculateTrackPosition = () => {
   trackPosition.value =
-    ((+props.value - +props.min) / (+props.max - +props.min)) * 100;
+    ((shown.value - +props.min) / (+props.max - +props.min)) * 100;
 };
 
-const isActive = (value: number) =>
-  trackPosition.value >= (100 / +props.max) * value;
+// A mark the fill has reached; the tolerance absorbs float error at a mark.
+const isActive = (index: number) =>
+  trackPosition.value >= (index * 100) / +props.segments - 1e-9;
 
 const cssVars = computed(() => ({
   '--_c-slider-position': `${trackPosition.value}`,
@@ -319,7 +345,11 @@ const onInput = (e: Event) => {
 // A native `change` does not cross the shadow boundary; the host sends its own.
 const onChange = (e: Event) => emitModelSettled(host, valueOf(e));
 
-watch(() => props.segments, calculateTickPositions);
+watch(() => [props.segments, props.min, props.max], calculateTickPositions);
+watch(
+  () => [props.min, props.max],
+  () => calculateTrackPosition(),
+);
 watch(
   () => props.value,
   (v) => {

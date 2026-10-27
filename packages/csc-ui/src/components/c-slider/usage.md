@@ -31,9 +31,9 @@ or fetch on `change` rather than on every move:
 />
 ```
 
-Setting `value` moves the thumb and fires nothing. Always set a value: the
-built-in default is `50` whatever `min` and `max` are, so a slider with
-`max="8"` and no value starts outside its range.
+Setting `value` moves the thumb and fires nothing. Set one: the built-in
+default is `50` whatever `min` and `max` are, held within them, so a slider
+with `max="8"` and no value starts at 8.
 
 `name` is passed to the inner range input, but the component is not
 form-associated, so the value does not submit with a `<form>`.
@@ -41,14 +41,16 @@ form-associated, so the value does not submit with a `<form>`.
 ## Value bubble and unit
 
 While the slider is hovered, pressed or focused, a bubble above the thumb shows
-the value as a whole number followed by `unit`. The unit is appended as
-written, so include a space where one belongs (`unit=" GB"`). Set
-`disable-tooltip` to turn the bubble off.
+the value followed by `unit`, written with as many decimals as `step` has and
+the separators of the page's `lang` (`2,5` for `fi`, `2.5` for `en`). The unit
+is appended as written, so include a space where one belongs (`unit=" GB"`).
+Set `disable-tooltip` to turn the bubble off.
 
 ## Tick marks
 
 `ticks` draws marks along the track, dividing it into `segments` equal parts
-(ten by default), and `labels` writes a number under each mark. The marks are
+(ten by default) from `min` to `max`, and `labels` writes a number under each
+mark, formatted like the bubble's. The marks are
 independent of `step`: for a mark on every value, match `segments` to the
 range.
 

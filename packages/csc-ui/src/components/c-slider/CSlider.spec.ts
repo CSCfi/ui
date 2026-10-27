@@ -6,7 +6,13 @@
  */
 import { describe, expect, it } from 'vitest';
 
-import { mount, settle, settled, withMotion } from '../../test/harness';
+import {
+  mount,
+  roleInMode,
+  settle,
+  settled,
+  withMotion,
+} from '../../test/harness';
 
 describe('c-slider value bubble', () => {
   it('reveals instantly on focus and fades only on hide', () =>
@@ -84,6 +90,72 @@ describe('numbers (decisions D12)', () => {
     await settle();
 
     expect(details).toEqual([5]);
+  });
+
+  it('lays the marks and their numbers out from min to max', async () => {
+    const m = await mount('c-slider', {
+      attrs: {
+        label: 'Range',
+        labels: true,
+        max: 20,
+        min: 10,
+        segments: 5,
+        ticks: true,
+        value: 13,
+      },
+    });
+
+    const marks = m.shadowAll('[part~="ticks"] > span');
+
+    expect(marks.map((mark) => mark.dataset.value)).toEqual([
+      '10',
+      '12',
+      '14',
+      '16',
+      '18',
+      '20',
+    ]);
+
+    // The end marks are not drawn; the fill has passed 12 but not 14.
+    const passed = roleInMode('light', '--c-on-primary');
+
+    expect(
+      marks
+        .slice(1, -1)
+        .map((mark) => getComputedStyle(mark).backgroundColor === passed),
+    ).toEqual([true, false, false, false]);
+  });
+
+  it('keeps the built-in value inside a narrower range', async () => {
+    const m = await mount('c-slider', { attrs: { label: 'Cores', max: 8 } });
+
+    expect(m.shadow('[data-tooltip]').getAttribute('data-tooltip')).toBe('8');
+    expect(m.part('root').style.getPropertyValue('--_c-slider-position')).toBe(
+      '100',
+    );
+  });
+
+  it('writes the bubble in the page language, to the step', async () => {
+    const lang = document.documentElement.lang;
+
+    try {
+      for (const [pageLang, shown] of [
+        ['en', '2.5'],
+        ['fi', '2,5'],
+      ]) {
+        document.documentElement.lang = pageLang!;
+
+        const m = await mount('c-slider', {
+          attrs: { label: 'Memory', max: 4, step: 0.5, value: 2.5 },
+        });
+
+        expect(m.shadow('[data-tooltip]').getAttribute('data-tooltip')).toBe(
+          shown,
+        );
+      }
+    } finally {
+      document.documentElement.lang = lang;
+    }
   });
 
   it('shows no unit unless one is set', async () => {
