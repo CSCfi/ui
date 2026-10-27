@@ -568,7 +568,7 @@ A standalone **labelable value control**: a segmented set of plain `c-button` ch
 _Avoid_: Tab buttons (that is the `c-tabs` adapter, not a value control), toggle group (foreign vocabulary for this same component), segmented control as the component's *name* (fine as a description of its shape — the usage doc's "a button group is a segmented control" — never as a synonym in API names or headings), toolbar (a button group holds a value; a toolbar merely groups actions)
 
 **Tab buttons** (`c-tab-buttons`):
-The tab-strip adapter — a **composed child** of `c-tabs` that presents the tab list as a button group with the **sliding indicator**. Always a single row: an overflowing strip scrolls sideways behind the same edge arrows and drag as `c-tabs`, never wraps (the indicator's geometry assumes one row). Carries no form semantics (no label, no required, no **mandatory**) and cannot deselect: a tab strip inherently has an active tab. Standalone value-picking under this tag is Stencil-era usage; since 4.x that job belongs to **button group**.
+The tab-strip adapter — a **composed child** of `c-tabs` that presents the tab list as a button group with the **sliding indicator**. Always a single row: an overflowing strip scrolls sideways — by touch, mouse drag, the wheel or its edge arrows (the `c-tabs` row takes touch and its arrows only) — and never wraps (the indicator's geometry assumes one row). Carries no form semantics (no label, no required, no **mandatory**) and cannot deselect: a tab strip inherently has an active tab. Standalone value-picking under this tag is Stencil-era usage; since 4.x that job belongs to **button group**.
 _Avoid_: using it standalone as a value picker (that is `c-button-group`)
 
 **Sliding indicator** (`c-tab-buttons`):
@@ -596,7 +596,7 @@ The selection mode in which a value control holds *several* values at once — `
 _Avoid_: multi, multiselect / multi-select (as a prop or mode name — fine as an adjective in prose), checkbox mode (the row indicator is decorative, never a `c-checkbox`), selection mode (that is `c-data-table`'s separate `selection` prop, which keeps its value in `selected`)
 
 **Tag** (`c-tag`):
-The pill-shaped chip component naming one item in a set — authored by the consumer inside `c-tags`, or rendered by `c-select` / `c-autocomplete` inside their field for each selected option in **multiple** mode. A **closeable** tag carries a × that removes it and is the tag's only interactive control. Not to be confused with an element's *tag name* (see Flagged ambiguities).
+The pill-shaped chip component naming one item in a set — authored by the consumer, usually inside `c-tags` (it also stands alone, e.g. in a table cell), or rendered by `c-select` / `c-autocomplete` inside their field for each selected option in **multiple** mode. A **closeable** tag carries a × that removes it and is the tag's only interactive control. Not to be confused with an element's *tag name* (see Flagged ambiguities).
 _Avoid_: Chip (Material vocabulary), token, pill (its shape, not its name), badge (that is `c-badge` / the tag's own `badge` prop)
 
 **Overflow tag**:
@@ -670,7 +670,7 @@ A consumer-authored definition in `c-data-table`'s `columns` prop (a `CDataTable
 _Avoid_: Header (that is the rendered cell at the top of a column, not the definition), field
 
 **Pinned column**:
-A column stuck to the left or right edge of the scroll viewport during horizontal scroll (the TanStack sense). A pinned column is never autohidden. **This is not the old Stencil meaning** — old `pinned` meant "exempt from autohide", which is now the column's expansion policy `'never'`. The selection and expander utility columns are always pinned left.
+A column stuck to the left or right edge of the scroll viewport during horizontal scroll (the TanStack sense). A pinned column is never autohidden. **This is not the old Stencil meaning** — old `pinned` meant "exempt from autohide", which is now the column's expansion policy `'never'`. The selection utility column is always pinned left, the expander column right.
 _Avoid_: Frozen, fixed, sticky column (sticky is reserved for the header/footer rows), the old autohide-exemption sense
 
 **Expansion row**:
@@ -715,7 +715,7 @@ The hand-written markdown file colocated with a component (`usage.md` beside the
 _Avoid_: readme (GitHub-facing), description (a description is the one-liner on a single API member; the *component* description is this file's first paragraph, not a separate text)
 
 **Composed child**:
-A component the consumer authors only inside a specific parent's markup (`c-tag` inside `c-tags`, `c-card-title` inside `c-card`, `c-option-value` inside a `c-option`). Declared by the parent via a `@subcomponents` docblock tag, emitted into the **manifest**, and folded into the parent on the docs site — no top-level nav entry or standalone page of its own; its examples and API tables live under the parent, **grouped by component**. Distinct from an _internal-only element_ (e.g. `c-dropdown`), which the consumer never authors at all and which is documented nowhere.
+A component the consumer authors only inside a specific parent's markup (`c-card-title` inside `c-card`, `c-option-value` inside a `c-option`; `c-tag` is listed under `c-tags` but also stands alone). Declared by the parent via a `@subcomponents` docblock tag, emitted into the **manifest**, and folded into the parent on the docs site — no top-level nav entry or standalone page of its own; its examples and API tables live under the parent, **grouped by component**. Distinct from an _internal-only element_ (e.g. `c-dropdown`), which the consumer never authors at all and which is documented nowhere.
 _Avoid_: sub-component (imprecise — conflates composed children with internal-only elements), nested component
 
 **Standalone component**:

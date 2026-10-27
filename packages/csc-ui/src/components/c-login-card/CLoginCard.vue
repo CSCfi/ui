@@ -64,11 +64,7 @@ interface CLoginCardProps {
    */
   overlay?: boolean;
 
-  /**
-   * Add colored overlay to the background image
-   *
-   * @seeded from csc-ui — verify
-   */
+  /** How the `overlay` tint blends with the image: a CSS blend mode. */
   overlayBlendMode?: CLoginCardBlendMode;
 
   /**

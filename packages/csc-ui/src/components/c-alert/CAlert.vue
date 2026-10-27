@@ -32,8 +32,8 @@
 <script lang="ts">
 /**
  * Type of the alert: the four status types carry their status family's
- * colours and icon. Omitting it renders the neutral, brand-primary look, as
- * on `c-status`.
+ * colours and icon. Omitting it renders the neutral look, in the brand primary
+ * colour (unlike `c-status`, whose neutral pill is grey).
  */
 export type CAlertType = 'error' | 'info' | 'success' | 'warning';
 

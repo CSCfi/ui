@@ -1028,7 +1028,7 @@ export interface CLinkElement extends Omit<HTMLElement, 'href' | 'target' | 'und
 
 /** A vertical list of rows, each a `c-list-item` with its main content and optional leading and trailing content, for settings entries, related pages or a short set of records. */
 export interface CListElement extends Omit<HTMLElement, 'bordered' | 'disabled'> {
-  /** Show border arount the list items */
+  /** Show a border around the list items */
   bordered?: boolean;
   /** Disable the list */
   disabled?: boolean;
@@ -1101,7 +1101,7 @@ export interface CLoginCardElement extends Omit<HTMLElement, 'backgroundPosition
   mobileBreakpoint?: number;
   /** Add colored overlay to the background image */
   overlay?: boolean;
-  /** Add colored overlay to the background image */
+  /** How the `overlay` tint blends with the image: a CSS blend mode. */
   overlayBlendMode?: 'color-burn' | 'color-dodge' | 'color' | 'darken' | 'difference' | 'exclusion' | 'hard-light' | 'hue' | 'lighten' | 'luminosity' | 'multiply' | 'normal' | 'overlay' | 'saturation' | 'screen' | 'soft-light';
   /** Background image */
   src?: string;
@@ -1493,7 +1493,7 @@ export interface CPaginationElementEventMap {
 
 /** A page navigation bar for a list split into pages: previous and next buttons around a window of page buttons, with a page-size menu and the range of items shown. */
 export interface CPaginationElement extends Omit<HTMLElement, 'hideDetails' | 'hideRange' | 'simple' | 'size' | 'texts' | 'value'> {
-  /** Hide details (per page dropdown and the 'x - y of n pages' text) */
+  /** Hide the details row: the page-size menu and the "x - y of n items" text */
   hideDetails?: boolean;
   /** Hide range indicator */
   hideRange?: boolean;
@@ -1934,7 +1934,7 @@ export interface CSliderElement extends Omit<HTMLElement, 'disabled' | 'disableT
   segments?: number;
   /** Step between values. */
   step?: number;
-  /** Thow ticks */
+  /** Draw tick marks along the track, `segments` apart. */
   ticks?: boolean;
   /** Unit shown after the value in the tooltip and read with it, e.g. `%`. */
   unit?: string;

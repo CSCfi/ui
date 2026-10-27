@@ -7,7 +7,7 @@
 <script lang="ts">
 /**
  * Status type of the pill. Each value paints the matching semantic status
- * colours; omitting the attribute renders the neutral primary pill.
+ * colours; omitting the attribute renders the neutral grey pill.
  */
 export type CStatusType = 'error' | 'info' | 'success' | 'warning';
 

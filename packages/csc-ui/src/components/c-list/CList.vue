@@ -46,7 +46,7 @@ defineOptions({ inheritAttrs: false });
 
 interface CListProps {
   /**
-   * Show border arount the list items
+   * Show a border around the list items
    *
    * @seeded from csc-ui — verify
    */

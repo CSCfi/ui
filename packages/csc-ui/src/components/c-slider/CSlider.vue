@@ -215,11 +215,7 @@ interface CSliderProps {
   /** Step between values. */
   step?: number;
 
-  /**
-   * Thow ticks
-   *
-   * @seeded from csc-ui — verify
-   */
+  /** Draw tick marks along the track, `segments` apart. */
   ticks?: boolean;
 
   /**

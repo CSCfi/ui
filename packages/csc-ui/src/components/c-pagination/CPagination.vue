@@ -164,9 +164,7 @@ export interface CPaginationTexts {
 
 interface CPaginationProps {
   /**
-   * Hide details (per page dropdown and the 'x - y of n pages' text)
-   *
-   * @seeded from csc-ui — verify
+   * Hide the details row: the page-size menu and the "x - y of n items" text
    */
   hideDetails?: boolean;
 

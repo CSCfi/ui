@@ -14,8 +14,8 @@ A tab strip is always one row. When it is wider than its box it scrolls
 sideways — by touch, by a mouse drag, by the wheel, or with the edge arrows
 that appear while it overflows — and the tab `c-tabs` makes active is
 scrolled into view. The scrollbar is hidden; the half-visible tab at the
-edge and the arrows are the cue. This is the same rule as the underlined
-tab row of `c-tabs`.
+edge and the arrows are the cue. The underlined tab row of `c-tabs` follows
+the same one-row rule, but scrolls only by touch and with its arrows.
 
 ## Accessibility
 
