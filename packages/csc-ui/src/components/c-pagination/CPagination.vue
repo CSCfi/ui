@@ -12,9 +12,10 @@
              the `trigger` slot and options are c-menu-item children; the
              Stencil-era `items` prop no longer exists. -->
         <c-menu @select="onPageSizeSelect">
+          <!-- Named with the current size: the label alone hid it. -->
           <c-button
             slot="trigger"
-            :aria-label="t.pageSize"
+            :aria-label="`${t.pageSize} ${pageSize}`"
             :class="ui.itemsPerPageValue()"
             size="small"
             text
@@ -68,16 +69,16 @@
             </svg>
           </c-icon-button>
 
+          <!-- The name is the button's: an aria-label on a span is ignored. -->
           <c-icon-button
             v-else
             :aria-current="page === btn.number ? 'page' : undefined"
+            :aria-label="t.page(btn.number!, totalPages)"
             :size="buttonSize"
             :text="page !== btn.number"
             @click="setPage(btn.number!)"
           >
-            <span :aria-label="t.page(btn.number!, totalPages)">
-              {{ btn.number }}
-            </span>
+            {{ btn.number }}
           </c-icon-button>
         </li>
       </template>

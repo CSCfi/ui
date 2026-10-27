@@ -147,6 +147,28 @@ describe('c-pagination value (R3)', () => {
     expect(m.part('root').getAttribute('aria-label')).toBe('Result pages');
   });
 
+  it('names the page buttons and the page-size button with their values', async () => {
+    const m = await mount('c-pagination', {
+      props: { value: { itemCount: 100, page: 1, pageSize: 25 } },
+    });
+
+    const inner = (el: Element): HTMLButtonElement =>
+      el.shadowRoot!.querySelector('button')!;
+
+    const pageButton = m
+      .shadowAll('c-icon-button')
+      .find((b) => b.textContent?.trim() === '2')!;
+
+    expect(inner(pageButton).getAttribute('aria-label')).toBe('page 2 of 4');
+    expect(m.shadowAll('ul span[aria-label]')).toEqual([]);
+
+    const sizeButton = m.shadow('c-button[slot="trigger"]');
+
+    expect(inner(sizeButton).getAttribute('aria-label')).toBe(
+      'Items per page: 25',
+    );
+  });
+
   it('keeps its page-size menu’s select inside', async () => {
     const m = await mount<PaginationHost>('c-pagination', {
       props: { value: { itemCount: 100, pageSize: 25 } },

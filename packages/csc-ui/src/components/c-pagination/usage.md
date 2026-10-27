@@ -61,7 +61,7 @@ To translate every pagination at once, set `texts` app-wide with `applyDefaults(
 ## Accessibility
 
 - The bar is a `<nav>` landmark named by `texts.pagination`. With several on a page, give each its own name.
-- The current page's button carries `aria-current="page"`. Page buttons are named by `texts.page`, the arrows by `texts.previousPage` and `texts.nextPage`, and the arrows are disabled on the first and last page. The ellipses are hidden from assistive technology and out of the tab order.
+- The current page's button carries `aria-current="page"`. Page buttons are named by `texts.page`, the arrows by `texts.previousPage` and `texts.nextPage`, and the arrows are disabled on the first and last page. The page-size button is named by `texts.pageSize` followed by the current size ("Items per page: 25"). The ellipses are hidden from assistive technology and out of the tab order.
 - A page change is not announced. When the paged content updates elsewhere on the page, move focus to it, or announce the change, where the user needs to follow it.
 
 ## Customization
