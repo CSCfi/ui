@@ -471,7 +471,21 @@ start migrating on the first alpha that carries D2–D4.
      `on-surface-faint`; c-checkbox `indeterminate` stays until the consumer clears it (native clears on click);
      c-switch `loading` neither blocks toggling nor sets `aria-busy`.
 4. **RC** — switch pre tag `alpha` → `rc` (verify the changesets CLI sequence: `pre exit` + `pre enter rc` before a
-   version run), publish `4.0.0-rc.1`. From here: fixes only, API guard fails any breaking diff.
+   version run), publish `4.0.0-rc.1`.
+   - **CLI sequence verified (2026-10-27, dry run).** In a throwaway worktree, `development` merged onto `main`
+     (alpha.32, 128 consumed changesets), then `changeset pre exit` + `changeset pre enter rc` + `changeset version`:
+     it works, and keeps every changeset, but versions **`4.0.0-rc.33`**, not rc.1. Changesets takes the next
+     prerelease number from the current version's (`alpha.32` → 33) whatever the tag
+     (`assemble-release-plan` `getPreVersion`). Getting rc.1 needs a one-time hand edit of both package versions to
+     `4.0.0-rc.0` in the PR that enters rc, which CLAUDE.md forbids, so it's the user's call. The plain alpha
+     path gives `4.0.0-alpha.33`.
+   - **Contrast brief for design (2026-10-27):** `_plan/csc-ui-4-contrast-brief.md`, the last rc.1 gate in the axe
+     baseline (78 examples), measured by pair: light hint ink `tertiary-500` → `tertiary-600` (76 examples; then
+     disabled buttons move to `on-surface-disabled`), dark `error` → `error-300`, expanded accordion headings →
+     `on-primary-subtle`; the c-main reports are axe misreading the pinned layout.
+   - **Merge conflict ahead:** the `development` → `main` PR conflicts in `packages/csc-ui/package.json`: phase 3's
+     new `description` is the line after `version`, which `main`'s release commits bumped (development still has
+     alpha.18). Resolve with `main`'s version and `development`'s description. From here: fixes only, API guard fails any breaking diff.
    Gate (D8): MyCSC fully migrated on the latest RC, e2e green, no open csc-ui blocker.
 5. **4.0.0** — D7 curated changeset (delete changesets already released in an alpha, add the hand-written major),
    `changeset pre exit`, merge the version PR → publish via `release.yml`. Then D9: `v3` dist-tag on 3.0.19 (both
