@@ -259,7 +259,7 @@ const enabled = ref(false);
     ]),
     id: 'accessibility',
     intro: {
-      all: `ARIA attributes on a component reach the control inside it: aria-label names a field's input, a button or a dialog. The attributes that point at elements by id work too (aria-labelledby, aria-describedby, aria-controls and the rest): the component looks the ids up where the element is written, your page or the shadow root around it, and hands those elements to its control. It looks them up when it renders, when the attribute changes and when the control takes focus, so an element your page renders later is found by then.`,
+      all: `ARIA attributes on a component reach the control inside it: aria-label names a button, a dialog, or a field without a visible label (beside a label, the label names the field, so its name matches what is on screen). The attributes that point at elements by id work too (aria-labelledby, aria-describedby, aria-controls and the rest): the component looks the ids up where the element is written, your page or the shadow root around it, and hands those elements to its control. It looks them up when it renders, when the attribute changes and when the control takes focus, so an element your page renders later is found by then.`,
     },
     title: 'Accessibility',
   },

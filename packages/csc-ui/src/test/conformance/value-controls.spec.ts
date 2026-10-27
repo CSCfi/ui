@@ -174,10 +174,11 @@ describe.each(VALUE_TAGS)('%s', (tag) => {
   );
 
   // The field's input is in its shadow root, so the host's `aria-label` is
-  // the only name a field without a visible label can get; it names the
-  // input, even beside a `label`, as `aria-label` beats a native label.
+  // the only name a field without a visible label can get. Beside a `label`
+  // the visible text names the input (WCAG 2.5.3, label in name), and the
+  // `aria-label` names nothing.
   it.runIf(recipe.emptyAware)(
-    'a host aria-label names the input, and nothing else',
+    'a host aria-label names the input only without a visible label',
     async () => {
       const { label: _label, ...props } = recipe.mount.props ?? {};
 
@@ -198,9 +199,14 @@ describe.each(VALUE_TAGS)('%s', (tag) => {
           '[role="combobox"], input:not([type="hidden"]), textarea',
         );
 
-        expect(named(m.host.shadowRoot!), `with label ${label}`).toEqual([
-          control,
-        ]);
+        expect(named(m.host.shadowRoot!), `with label ${label}`).toEqual(
+          label ? [] : [control],
+        );
+
+        if (label) {
+          expect(control?.getAttribute('aria-label')).toContain(label);
+        }
+
         m.unmount();
       }
     },

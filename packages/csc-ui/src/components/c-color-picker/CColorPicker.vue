@@ -782,12 +782,12 @@ const host = useHost();
 
 const { controlAttrs } = useControlAttrs();
 
-// The host's `aria-label` names the input, beating the visible label as it
-// does on a native control; without one, `label` does.
+// The visible label names the input (WCAG 2.5.3, label in name); the host's
+// `aria-label` names a field without one, and is ignored beside it.
 const accessibleName = computed(
   () =>
-    (controlAttrs.value['aria-label'] as string | undefined) ||
     props.label ||
+    (controlAttrs.value['aria-label'] as string | undefined) ||
     undefined,
 );
 

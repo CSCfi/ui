@@ -52,7 +52,7 @@ export interface TypedFieldEnds {
 export type TypedFieldText = { end: string; start: string } | string;
 
 export interface UseTypedFieldOptions {
-  /** The inputs' accessible name: the host's `aria-label`, else the label. */
+  /** The inputs' accessible name: the label, else the host's `aria-label`. */
   accessibleName: () => string | undefined;
 
   codec: TypedFieldCodec;
