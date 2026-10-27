@@ -50,7 +50,8 @@ listed in `NO_ARIA_OBJECT` (layout and decoration tags), asserted in both direct
 A host `aria-label` on a field never named its input: c-text-field and c-number-field forwarded it to the
 c-input wrapper, and c-select, c-autocomplete, c-tree-select, c-color-picker, c-date-picker and c-time-picker
 dropped it (their input's name is `label` only, the pickers fall back to fixed English). The input's name
-becomes the host's `aria-label`, else `label`.
+is `label`, else the host's `aria-label` (user decision 2026-10-27, 2e2b4a4e: the visible label wins, WCAG 2.5.3;
+10836590 had let `aria-label` win).
 
 ## Docs
 
