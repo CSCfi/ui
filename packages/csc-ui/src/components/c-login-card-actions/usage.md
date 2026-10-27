@@ -1,0 +1,1 @@
+The row of actions at the bottom of a `c-login-card`: the sign-in button and any link beside it, such as a forgotten-password link. `justify` distributes them along the row (`start` by default, `space-between` to push the last one to the far end, `stretch` to grow them all) and `align` places them across it.

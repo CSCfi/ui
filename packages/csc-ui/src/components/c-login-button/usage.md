@@ -1,0 +1,1 @@
+One identity-provider choice inside `c-login-buttons`: a link card with the provider's logo (`src`, or markup in the `image` slot) above the provider's name. Give it an `href`, since without one Enter does not activate it, and leave `alt` empty when the name already identifies the provider.

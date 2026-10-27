@@ -1,0 +1,1 @@
+A second-level entry of a `c-side-navigation`, written inside the `c-side-navigation-item` it belongs to (no `slot` attribute needed) and shown while that parent is `active`. Activating it fires `select` with its `value` and closes the mobile drawer; to mark the current page, set `active` on the sub-item and on its parent, so the parent is expanded.

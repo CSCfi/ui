@@ -1,0 +1,1 @@
+One collapsible section of a `c-accordion`: a header button showing its `heading` (or the `heading` slot) and an optional icon, above the content in the default slot. Place it directly inside the accordion and give it a `value`: the accordion expands items by value and leaves an item without one collapsed.

@@ -144,6 +144,7 @@ const elementClass = <T extends HTMLElement>(properties: readonly string[]) => {
   return stand as unknown as { new (): T };
 };
 
+/** A stack of collapsible sections, each a `c-accordion-item` whose header button shows or hides the content beneath it. */
 export const CAccordion = createComponent({
   displayName: 'CAccordion',
   elementClass: elementClass<CAccordionElement>(['mandatory', 'multiple', 'outlined', 'value']),
@@ -156,6 +157,7 @@ export const CAccordion = createComponent({
   tagName: 'c-accordion',
 });
 
+/** One collapsible section of a `c-accordion`: a header button showing its `heading` (or the `heading` slot) and an optional icon, above the content in the default slot. Place it directly inside the accordion and give it a `value`: the accordion expands items by value and leaves an item without one collapsed. */
 export const CAccordionItem = createComponent({
   displayName: 'CAccordionItem',
   elementClass: elementClass<CAccordionItemElement>(['heading', 'value']),
@@ -188,6 +190,7 @@ export const CAutocomplete = createComponent({
   tagName: 'c-autocomplete',
 });
 
+/** A small pill that pins a short count or label to the top-right corner of the element it sits in, such as the number of unread messages on a button. */
 export const CBadge = createComponent({
   displayName: 'CBadge',
   elementClass: elementClass<CBadgeElement>([]),
@@ -232,6 +235,7 @@ export const CButtonGroup = createComponent({
   tagName: 'c-button-group',
 });
 
+/** A raised, bordered surface that groups one piece of content — its heading, body and actions — into a single box on the page. */
 export const CCard = createComponent({
   displayName: 'CCard',
   elementClass: elementClass<CCardElement>(['fullscreen']),
@@ -239,6 +243,7 @@ export const CCard = createComponent({
   tagName: 'c-card',
 });
 
+/** The row of actions at the bottom of a `c-card`, typically `c-button`s, which wraps onto further rows instead of overflowing the card. `justify` distributes the actions along the row (`start` by default, `stretch` to grow them all) and `align` places them across it. */
 export const CCardActions = createComponent({
   displayName: 'CCardActions',
   elementClass: elementClass<CCardActionsElement>(['align', 'justify']),
@@ -246,6 +251,7 @@ export const CCardActions = createComponent({
   tagName: 'c-card-actions',
 });
 
+/** The body section of a `c-card`: it pads its content in from the card's edges and stacks the children in a column with the card's section spacing. Place it after `c-card-title` and before `c-card-actions`. */
 export const CCardContent = createComponent({
   displayName: 'CCardContent',
   elementClass: elementClass<CCardContentElement>([]),
@@ -253,6 +259,7 @@ export const CCardContent = createComponent({
   tagName: 'c-card-content',
 });
 
+/** The heading section of a `c-card`, set in small uppercase type above a primary accent bar; place it first in the card. Controls in its `actions` slot sit at the right of the heading and move onto their own line under it when the two do not fit side by side. */
 export const CCardTitle = createComponent({
   displayName: 'CCardTitle',
   elementClass: elementClass<CCardTitleElement>([]),
@@ -287,6 +294,7 @@ export const CColorPicker = createComponent({
   tagName: 'c-color-picker',
 });
 
+/** The CSC logo without its tagline, drawn as an inline SVG in the colours of the current theme mode. */
 export const CCscLogo = createComponent({
   displayName: 'CCscLogo',
   elementClass: elementClass<CCscLogoElement>(['width']),
@@ -294,6 +302,7 @@ export const CCscLogo = createComponent({
   tagName: 'c-csc-logo',
 });
 
+/** A data-driven table that renders the rows of a `data` array through a set of `columns` definitions, with built-in sorting, pagination, row selection and expandable rows. Rows are your own plain objects; each column reads one of their properties and may render its header, cells and footer through render functions. */
 export const CDataTable = createComponent({
   displayName: 'CDataTable',
   elementClass: elementClass<CDataTableElement>(['autohide', 'columns', 'data', 'expanded', 'expandedContent', 'external', 'getRowId', 'itemCount', 'loading', 'page', 'pageSize', 'pageSizes', 'query', 'selected', 'selection', 'singleExpansion', 'sort', 'stickyFooter', 'stickyHeader', 'texts']),
@@ -323,6 +332,7 @@ export const CDatePicker = createComponent({
   tagName: 'c-date-picker',
 });
 
+/** A separator: a thin line dividing groups of content, horizontal by default or vertical with `vertical`. */
 export const CDivider = createComponent({
   displayName: 'CDivider',
   elementClass: elementClass<CDividerElement>(['vertical']),
@@ -344,6 +354,7 @@ export const CFileUpload = createComponent({
   tagName: 'c-file-upload',
 });
 
+/** An icon drawn from a single SVG path, sized in pixels and filled with the colour of the surrounding text unless given one of its own. */
 export const CIcon = createComponent({
   displayName: 'CIcon',
   elementClass: elementClass<CIconElement>(['color', 'path', 'size']),
@@ -351,6 +362,7 @@ export const CIcon = createComponent({
   tagName: 'c-icon',
 });
 
+/** An icon-only button: a round native button that shows a single icon and takes its accessible name from an `aria-label` on the element. */
 export const CIconButton = createComponent({
   displayName: 'CIconButton',
   elementClass: elementClass<CIconButtonElement>(['badge', 'danger', 'disabled', 'ghost', 'inverted', 'loading', 'outlined', 'path', 'size', 'text']),
@@ -358,7 +370,7 @@ export const CIconButton = createComponent({
   tagName: 'c-icon-button',
 });
 
-/** Basic hyperlink component */
+/** A text link to another page or resource: a native `<a>` in the link colour, with an optional underline. */
 export const CLink = createComponent({
   displayName: 'CLink',
   elementClass: elementClass<CLinkElement>(['href', 'target', 'underline']),
@@ -366,6 +378,7 @@ export const CLink = createComponent({
   tagName: 'c-link',
 });
 
+/** A vertical list of rows, each a `c-list-item` with its main content and optional leading and trailing content, for settings entries, related pages or a short set of records. */
 export const CList = createComponent({
   displayName: 'CList',
   elementClass: elementClass<CListElement>(['bordered', 'disabled']),
@@ -373,6 +386,7 @@ export const CList = createComponent({
   tagName: 'c-list',
 });
 
+/** One row of a `c-list`: its main content goes in the default slot, leading content such as an icon in the `pre` slot and trailing content in the `post` slot. The row is static unless it has an `href`, which makes it a real link; `ripple` adds a press effect and a Tab stop but no keyboard activation, so give navigation an `href`. */
 export const CListItem = createComponent({
   displayName: 'CListItem',
   elementClass: elementClass<CListItemElement>(['active', 'disabled', 'hoverable', 'href', 'ripple', 'target']),
@@ -380,6 +394,7 @@ export const CListItem = createComponent({
   tagName: 'c-list-item',
 });
 
+/** The main text of a `c-list-item`, in medium-weight type; place it in the item's default slot. It takes the active row's ink by itself when its item is `active`. */
 export const CListItemTitle = createComponent({
   displayName: 'CListItemTitle',
   elementClass: elementClass<CListItemTitleElement>([]),
@@ -387,7 +402,7 @@ export const CListItemTitle = createComponent({
   tagName: 'c-list-item-title',
 });
 
-/** A loader component that fills the nearest containing element that has css-property position set to 'relative' */
+/** A loading overlay that covers a container with a translucent scrim and a centred spinner, with an optional message below it, while that container's content loads. */
 export const CLoader = createComponent({
   displayName: 'CLoader',
   elementClass: elementClass<CLoaderElement>(['contentDelay', 'hide', 'size', 'width']),
@@ -395,6 +410,7 @@ export const CLoader = createComponent({
   tagName: 'c-loader',
 });
 
+/** One identity-provider choice inside `c-login-buttons`: a link card with the provider's logo (`src`, or markup in the `image` slot) above the provider's name. Give it an `href`, since without one Enter does not activate it, and leave `alt` empty when the name already identifies the provider. */
 export const CLoginButton = createComponent({
   displayName: 'CLoginButton',
   elementClass: elementClass<CLoginButtonElement>(['alt', 'href', 'src']),
@@ -402,6 +418,7 @@ export const CLoginButton = createComponent({
   tagName: 'c-login-button',
 });
 
+/** A grid of sign-in choices, one `c-login-button` per identity provider, each showing the provider's logo above its name. */
 export const CLoginButtons = createComponent({
   displayName: 'CLoginButtons',
   elementClass: elementClass<CLoginButtonsElement>([]),
@@ -409,6 +426,7 @@ export const CLoginButtons = createComponent({
   tagName: 'c-login-buttons',
 });
 
+/** The card of a sign-in page: a large surface holding the service's heading, the sign-in form or choices and their actions, with an optional background image showing below a curved edge. */
 export const CLoginCard = createComponent({
   displayName: 'CLoginCard',
   elementClass: elementClass<CLoginCardElement>(['backgroundPosition', 'mobileBreakpoint', 'overlay', 'overlayBlendMode', 'src']),
@@ -416,6 +434,7 @@ export const CLoginCard = createComponent({
   tagName: 'c-login-card',
 });
 
+/** The row of actions at the bottom of a `c-login-card`: the sign-in button and any link beside it, such as a forgotten-password link. `justify` distributes them along the row (`start` by default, `space-between` to push the last one to the far end, `stretch` to grow them all) and `align` places them across it. */
 export const CLoginCardActions = createComponent({
   displayName: 'CLoginCardActions',
   elementClass: elementClass<CLoginCardActionsElement>(['align', 'justify']),
@@ -423,6 +442,7 @@ export const CLoginCardActions = createComponent({
   tagName: 'c-login-card-actions',
 });
 
+/** The body of a `c-login-card`, which stacks the intro text and the sign-in fields in a column with a 24px gap. Place it between `c-login-card-title` and `c-login-card-actions`. */
 export const CLoginCardContent = createComponent({
   displayName: 'CLoginCardContent',
   elementClass: elementClass<CLoginCardContentElement>([]),
@@ -430,6 +450,7 @@ export const CLoginCardContent = createComponent({
   tagName: 'c-login-card-content',
 });
 
+/** The heading of a `c-login-card`, in large bold type in the primary colour; place it first in the card. The card shrinks it from 40px to 32px in its compact layout. */
 export const CLoginCardTitle = createComponent({
   displayName: 'CLoginCardTitle',
   elementClass: elementClass<CLoginCardTitleElement>([]),
@@ -473,6 +494,7 @@ export const CMenuLabel = createComponent({
   tagName: 'c-menu-label',
 });
 
+/** A single line of text under a form control: a neutral hint, or an error message that takes its place while the control is invalid. */
 export const CMessage = createComponent({
   displayName: 'CMessage',
   elementClass: elementClass<CMessageElement>(['errorMessage', 'hint', 'invalid']),
@@ -493,6 +515,7 @@ export const CModal = createComponent({
   tagName: 'c-modal',
 });
 
+/** The hamburger menu button that opens and closes the mobile drawer of a `c-side-navigation`. */
 export const CNavigationButton = createComponent({
   displayName: 'CNavigationButton',
   elementClass: elementClass<CNavigationButtonElement>(['texts']),
@@ -513,6 +536,7 @@ export const CNumberField = createComponent({
   tagName: 'c-number-field',
 });
 
+/** One option of a `c-select` or `c-autocomplete`: `value` is what the field reports when the option is picked, and the option's label is its `name`, else the text of a `c-option-value` inside it, else its whole text. `disabled` keeps it from being picked, and `selected` sets the field's initial value once, silently, while that value is empty — with a bound `v-model`, initialise the model instead. */
 export const COption = createComponent({
   displayName: 'COption',
   elementClass: elementClass<COptionElement>(['disabled', 'name', 'selected', 'value']),
@@ -528,6 +552,7 @@ export const COptionValue = createComponent({
   tagName: 'c-option-value',
 });
 
+/** A one-time-code field: a row of single-digit boxes, filled in order as the user types or pastes a code, under a group label and above a hint or error message. */
 export const COtpInput = createComponent({
   displayName: 'COtpInput',
   elementClass: elementClass<Omit<COtpInputElement, 'autofocus'> & HTMLElement>(['autofocus', 'errorMessage', 'hideDetails', 'hint', 'invalid', 'label', 'length', 'required', 'value']),
@@ -541,6 +566,7 @@ export const COtpInput = createComponent({
   tagName: 'c-otp-input',
 });
 
+/** The routed-content region of the dashboard layout: inside `c-main` it fills the area beside the side navigation and below the toolbar, pads the current view's content and keeps an optional footer at its bottom edge. */
 export const CPage = createComponent({
   displayName: 'CPage',
   elementClass: elementClass<CPageElement>(['scrollIndicator']),
@@ -548,6 +574,7 @@ export const CPage = createComponent({
   tagName: 'c-page',
 });
 
+/** A page navigation bar for a list split into pages: previous and next buttons around a window of page buttons, with a page-size menu and the range of items shown. */
 export const CPagination = createComponent({
   displayName: 'CPagination',
   elementClass: elementClass<CPaginationElement>(['hideDetails', 'hideRange', 'simple', 'size', 'texts', 'value']),
@@ -632,6 +659,7 @@ export const CSideNavigation = createComponent({
   tagName: 'c-side-navigation',
 });
 
+/** One entry of a `c-side-navigation`: its label text, after an optional leading `c-icon`, goes in the default slot, and activating it fires `select` with its `value`; with `href` it is also a real link, opened in `target`. Write `c-sub-navigation-item` children inside it to make it an expandable parent, whose `active` then means expanded rather than the current page. */
 export const CSideNavigationItem = createComponent({
   displayName: 'CSideNavigationItem',
   elementClass: elementClass<CSideNavigationItemElement>(['active', 'href', 'loading', 'target', 'value']),
@@ -642,6 +670,7 @@ export const CSideNavigationItem = createComponent({
   tagName: 'c-side-navigation-item',
 });
 
+/** A section title in a `c-side-navigation`: uppercase text over a divider line, placed before the items it groups. It is not a menu item and cannot be activated. */
 export const CSideNavigationTitle = createComponent({
   displayName: 'CSideNavigationTitle',
   elementClass: elementClass<CSideNavigationTitleElement>([]),
@@ -649,6 +678,7 @@ export const CSideNavigationTitle = createComponent({
   tagName: 'c-side-navigation-title',
 });
 
+/** A slider for picking a number from a range by dragging a thumb along a track, with a label, a value bubble and optional tick marks. */
 export const CSlider = createComponent({
   displayName: 'CSlider',
   elementClass: elementClass<CSliderElement>(['disableTooltip', 'disabled', 'label', 'labels', 'max', 'min', 'name', 'segments', 'step', 'ticks', 'unit', 'value']),
@@ -669,6 +699,7 @@ export const CSpinner = createComponent({
   tagName: 'c-spinner',
 });
 
+/** A status pill: a short word naming the state of a record, such as Active, Pending or Failed, tinted with the colours of its status type. */
 export const CStatus = createComponent({
   displayName: 'CStatus',
   elementClass: elementClass<CStatusElement>(['type']),
@@ -676,6 +707,7 @@ export const CStatus = createComponent({
   tagName: 'c-status',
 });
 
+/** One step of a `c-steps` indicator: its label goes in the default slot, under a dot that is ringed for the current step and becomes a check mark once the step is complete. A step has no props of its own — its state follows the parent's `value`. */
 export const CStep = createComponent({
   displayName: 'CStep',
   elementClass: elementClass<CStepElement>([]),
@@ -683,6 +715,7 @@ export const CStep = createComponent({
   tagName: 'c-step',
 });
 
+/** A step indicator for a multi-step flow: a row of `c-step` dots joined by lines, with the steps before the current one checked off and the current one ringed. */
 export const CSteps = createComponent({
   displayName: 'CSteps',
   elementClass: elementClass<CStepsElement>(['value']),
@@ -690,6 +723,7 @@ export const CSteps = createComponent({
   tagName: 'c-steps',
 });
 
+/** A second-level entry of a `c-side-navigation`, written inside the `c-side-navigation-item` it belongs to (no `slot` attribute needed) and shown while that parent is `active`. Activating it fires `select` with its `value` and closes the mobile drawer; to mark the current page, set `active` on the sub-item and on its parent, so the parent is expanded. */
 export const CSubNavigationItem = createComponent({
   displayName: 'CSubNavigationItem',
   elementClass: elementClass<CSubNavigationItemElement>(['active', 'href', 'loading', 'target', 'value']),
@@ -713,6 +747,7 @@ export const CSwitch = createComponent({
   tagName: 'c-switch',
 });
 
+/** One tab in the row of a `c-tabs`: its label goes in the default slot (a `c-badge` there sits on the tab's corner), and its `value` names the `c-tab-item` panel it shows. `c-tabs` decides which tab is active; `disabled` keeps a tab from being selected. */
 export const CTab = createComponent({
   displayName: 'CTab',
   elementClass: elementClass<CTabElement>(['disabled', 'value']),
@@ -728,6 +763,7 @@ export const CTabButtons = createComponent({
   tagName: 'c-tab-buttons',
 });
 
+/** One tab panel inside `c-tab-items`, shown while its `value` equals the `value` of `c-tabs` — give it the same `value` as its `c-tab`. Inactive panels stay in the DOM, hidden, so their content keeps its state across tab switches. */
 export const CTabItem = createComponent({
   displayName: 'CTabItem',
   elementClass: elementClass<CTabItemElement>(['value']),
@@ -735,6 +771,7 @@ export const CTabItem = createComponent({
   tagName: 'c-tab-item',
 });
 
+/** The panel container of a `c-tabs`: slot it in with `slot="items"` and put the `c-tab-item` panels inside it. It shows the panel whose `value` matches the tabs' value and slides between panels; it has no props of its own, as `c-tabs` drives it. */
 export const CTabItems = createComponent({
   displayName: 'CTabItems',
   elementClass: elementClass<CTabItemsElement>([]),
@@ -750,6 +787,7 @@ export const CTable = createComponent({
   tagName: 'c-table',
 });
 
+/** A tab set that switches between panels of related content: a row of `c-tab` headers above the `c-tab-item` panels, one panel shown at a time. */
 export const CTabs = createComponent({
   displayName: 'CTabs',
   elementClass: elementClass<CTabsElement>(['borderless', 'disableAnimation', 'justify', 'mobileBreakpoint', 'value', 'vertical']),
@@ -762,6 +800,7 @@ export const CTabs = createComponent({
   tagName: 'c-tabs',
 });
 
+/** A pill-shaped tag naming one item — a keyword, a category, an applied filter — authored inside `c-tags`, or on its own where a single tag is needed, such as a status in a table cell. With `closeable` it shows a close button that fires `close` and leaves removing the tag to you; name that button with `close-label`, for example "Remove Chemistry". */
 export const CTag = createComponent({
   displayName: 'CTag',
   elementClass: elementClass<CTagElement>(['active', 'badge', 'closeLabel', 'closeable', 'flat', 'size']),
@@ -772,6 +811,7 @@ export const CTag = createComponent({
   tagName: 'c-tag',
 });
 
+/** A group of `c-tag` elements laid out in a wrapping row, with an optional group label above them. */
 export const CTags = createComponent({
   displayName: 'CTags',
   elementClass: elementClass<CTagsElement>(['label', 'required', 'size']),

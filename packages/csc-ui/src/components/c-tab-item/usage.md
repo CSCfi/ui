@@ -1,0 +1,1 @@
+One tab panel inside `c-tab-items`, shown while its `value` equals the `value` of `c-tabs` — give it the same `value` as its `c-tab`. Inactive panels stay in the DOM, hidden, so their content keeps its state across tab switches.

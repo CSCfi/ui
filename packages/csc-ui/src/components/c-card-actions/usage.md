@@ -1,0 +1,1 @@
+The row of actions at the bottom of a `c-card`, typically `c-button`s, which wraps onto further rows instead of overflowing the card. `justify` distributes the actions along the row (`start` by default, `stretch` to grow them all) and `align` places them across it.

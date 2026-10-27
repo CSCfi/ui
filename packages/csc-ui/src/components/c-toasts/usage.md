@@ -12,7 +12,7 @@ container with the message once a toast has left.
 ## When not to use
 
 - Anything requiring a decision before continuing — use `c-modal`.
-- Persistent page-level status — use `c-alert` or `c-message`.
+- Persistent page-level status — use `c-alert`. A field's hint or error message belongs to the field (`c-message` under a control of your own).
 
 ## Closing
 

@@ -1,0 +1,1 @@
+One tab in the row of a `c-tabs`: its label goes in the default slot (a `c-badge` there sits on the tab's corner), and its `value` names the `c-tab-item` panel it shows. `c-tabs` decides which tab is active; `disabled` keeps a tab from being selected.

@@ -1,5 +1,29 @@
 The dashboard layout's left-hand menu: section titles, navigation items and their sub-items in a drawer that is pinned beside the page on desktop and slides in over it on mobile.
 
+## Titles, items and sub-items
+
+Author the menu as a flat list of `c-side-navigation-title` and `c-side-navigation-item` elements: a title heads the items that follow it, up to the next title.
+
+Write an item's sub-items as `c-sub-navigation-item` children inside it; the navigation slots them itself. An item with sub-items is an expandable parent with a chevron: activating it toggles its `active` state, which shows or hides the sub-items, and activating any top-level item collapses the other parents, so one stays open at a time. A parent only expands and collapses — activating it does not close the mobile drawer. The sub-items of a collapsed parent leave the Tab order.
+
+On a parent, `active` means expanded; on an item without sub-items and on a sub-item it marks the current page (`aria-current="page"`). To mark a page under a parent, set `active` on both:
+
+```html
+<c-side-navigation>
+  <c-side-navigation-title>My project</c-side-navigation-title>
+  <c-side-navigation-item value="dashboard">Dashboard</c-side-navigation-item>
+  <c-side-navigation-item value="projects" active>
+    Projects
+    <c-sub-navigation-item value="active" active>
+      Active projects
+    </c-sub-navigation-item>
+    <c-sub-navigation-item value="archived">
+      Archived projects
+    </c-sub-navigation-item>
+  </c-side-navigation-item>
+</c-side-navigation>
+```
+
 ## Selecting an item
 
 Activating an item — a click, or Enter — fires `select` with `{ value }`, the

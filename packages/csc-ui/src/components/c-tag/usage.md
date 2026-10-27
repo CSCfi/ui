@@ -1,0 +1,1 @@
+A pill-shaped tag naming one item — a keyword, a category, an applied filter — authored inside `c-tags`, or on its own where a single tag is needed, such as a status in a table cell. With `closeable` it shows a close button that fires `close` and leaves removing the tag to you; name that button with `close-label`, for example "Remove Chemistry".

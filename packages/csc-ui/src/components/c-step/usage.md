@@ -1,0 +1,1 @@
+One step of a `c-steps` indicator: its label goes in the default slot, under a dot that is ringed for the current step and becomes a check mark once the step is complete. A step has no props of its own — its state follows the parent's `value`.

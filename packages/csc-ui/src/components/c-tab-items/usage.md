@@ -1,0 +1,1 @@
+The panel container of a `c-tabs`: slot it in with `slot="items"` and put the `c-tab-item` panels inside it. It shows the panel whose `value` matches the tabs' value and slides between panels; it has no props of its own, as `c-tabs` drives it.

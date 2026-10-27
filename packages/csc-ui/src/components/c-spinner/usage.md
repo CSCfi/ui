@@ -14,7 +14,7 @@ The stroke defaults to the primary role, so a standalone spinner is brand-colour
 
 ## Accessibility
 
-The spinner is purely visual and exposes nothing to assistive technology. Announce the loading state on the region it describes — `aria-busy` on the updating container, or a live-region message — or use `c-loader`, whose slotted message provides visible and announced context.
+The spinner is purely visual and exposes nothing to assistive technology. Announce the loading state on the region it describes — `aria-busy` on the updating container, or a live-region message. `c-loader` does not do this for you either: its slotted message gives visible context but is not announced.
 
 ## Customization
 
