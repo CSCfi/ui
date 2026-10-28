@@ -495,7 +495,7 @@ start migrating on the first alpha that carries D2–D4.
      disabled buttons move to `on-surface-disabled`), dark `error` → `error-300`, expanded accordion headings →
      `on-primary-subtle`; the c-main reports are axe misreading the pinned layout.
    - **User decisions 2026-10-27 on the verification pass's reports:** c-switch `loading` matches the buttons
-     (done, 6fd1fbf6); c-checkbox `indeterminate` clears on a click or Space, before `change`, natively (done, ebbbc0c4);
+     (done, 6fd1fbf6); c-checkbox `indeterminate` clears on a click or Space, before `change`, natively (done, ebbbc0c4; a binding writes it only when its value changes, so a page whose options stay partly checked sets the property in its `change` handler — user chose docs over a `change:indeterminate` event, which a same-tick reset can't reach, 108425ce);
      c-icon-button disabled ink fixed (5eaa4c88).
    - **Side navigation: the page owns the current page (user decision 2026-10-27, 80f1a92b).** 75ab6d1d made a
      click mark the leaf `active` and clear the others; with a route binding, a cancelled navigation left the
