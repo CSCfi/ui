@@ -122,3 +122,66 @@ describe('c-checkbox name', () => {
     ).toEqual(['input']);
   });
 });
+
+type MixedHost = { indeterminate: boolean } & Host;
+
+describe('indeterminate', () => {
+  // A native checkbox drops its mixed state on a click and takes the toggled
+  // state, before its `change` fires.
+  it.each([
+    [
+      'a click',
+      (m: { part: (name: string) => Element }) =>
+        userEvent.click(m.part('label')),
+    ],
+    [
+      'Space',
+      async (m: { shadow: <E extends Element>(s: string) => E }) => {
+        m.shadow<HTMLInputElement>('input').focus();
+        await userEvent.keyboard(' ');
+      },
+    ],
+  ] as const)(
+    '%s clears it and toggles the state, as on a native checkbox',
+    async (_, act) => {
+      const m = await mount<MixedHost>('c-checkbox', {
+        props: { indeterminate: true, label: 'All projects' },
+      });
+
+      const input = m.shadow<HTMLInputElement>('input');
+
+      expect(input.getAttribute('aria-checked')).toBe('mixed');
+
+      let atChange: boolean | undefined;
+
+      m.host.addEventListener('change', () => {
+        atChange = m.host.indeterminate;
+      });
+
+      await act(m as never);
+      await settle();
+
+      expect(atChange, 'indeterminate when change fires').toBe(false);
+      expect(m.host.indeterminate).toBe(false);
+      expect(m.host.matches(':state(indeterminate)')).toBe(false);
+      expect(input.indeterminate).toBe(false);
+      expect(input.getAttribute('aria-checked')).toBe('true');
+      expect(m.host.value).toBe(true);
+    },
+  );
+
+  it('can be set again after a click', async () => {
+    const m = await mount<MixedHost>('c-checkbox', {
+      props: { indeterminate: true, label: 'All projects' },
+    });
+
+    await userEvent.click(m.part('label'));
+    await settle();
+
+    m.host.indeterminate = true;
+    await settle();
+
+    expect(m.host.matches(':state(indeterminate)')).toBe(true);
+    expect(m.shadow('input').getAttribute('aria-checked')).toBe('mixed');
+  });
+});

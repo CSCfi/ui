@@ -300,8 +300,8 @@ interface CCheckboxProps {
 
   /**
    * Show the mixed state, a bar in place of the check, for a parent checkbox
-   * whose options are partly checked. It wins over `checked` and stays until
-   * you clear it
+   * whose options are partly checked. It wins over `checked`; a click or Space
+   * clears it and toggles the state, as on a native checkbox
    */
   indeterminate?: boolean;
 
@@ -411,6 +411,7 @@ const messageVisible = computed(() => Boolean(props.hint || showError.value));
 // toggle emits.
 type CheckboxStateHost = {
   checked?: boolean;
+  indeterminate?: boolean;
   value?: CCheckboxProps['value'];
 } & HTMLElement;
 
@@ -487,6 +488,12 @@ const onChange = (_event: Event) => {
   if (props.disabled) return;
   spawnRipple();
   internalChecked.value = !internalChecked.value;
+
+  // The toggle ends the mixed state before the value events fire, as on a
+  // native checkbox; the page can set it again.
+  if (props.indeterminate && host) {
+    (host as CheckboxStateHost).indeterminate = false;
+  }
 
   const nextValue = internalChecked.value ? props.trueValue : props.falseValue;
   // A toggle is its own commit. The value watch above is visuals-only, so the

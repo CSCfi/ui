@@ -6,7 +6,9 @@ checkbox is on and `false-value` while it is off (`true` and `false` unless you
 map them onto custom values). `checked` is the same state as a boolean —
 setting it sets `value`, and a `checked` attribute sets the initial state when
 no `value` is bound. Set `indeterminate`
-for the mixed "some but not all" state of a parent checkbox.
+for the mixed "some but not all" state of a parent checkbox. As on a native
+checkbox, a click or Space clears it and toggles the state; set it again when
+the options are still partly checked.
 
 ```html
 <c-checkbox v-model="accepted" label="I accept the terms" />
