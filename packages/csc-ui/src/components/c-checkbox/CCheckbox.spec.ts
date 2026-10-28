@@ -184,4 +184,24 @@ describe('indeterminate', () => {
     expect(m.host.matches(':state(indeterminate)')).toBe(true);
     expect(m.shadow('input').getAttribute('aria-checked')).toBe('mixed');
   });
+
+  // A binding writes only a changed value, so a page whose options are still
+  // partly checked after the click sets the property back in its handler
+  // (usage.md).
+  it('can be set again from the change handler', async () => {
+    const m = await mount<MixedHost>('c-checkbox', {
+      props: { indeterminate: true, label: 'All projects' },
+    });
+
+    m.host.addEventListener('change', (event) => {
+      (event.currentTarget as MixedHost).indeterminate = true;
+    });
+
+    await userEvent.click(m.part('label'));
+    await settle();
+
+    expect(m.host.indeterminate).toBe(true);
+    expect(m.host.matches(':state(indeterminate)')).toBe(true);
+    expect(m.shadow('input').getAttribute('aria-checked')).toBe('mixed');
+  });
 });
