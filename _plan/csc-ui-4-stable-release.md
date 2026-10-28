@@ -544,12 +544,11 @@ start migrating on the first alpha that carries D2–D4.
   (also records D14 axe and D15 flavor smokes as part of the verification layer).
 - Amend ADR-0027/0028: RC phase, 3.x frozen with a `v3` dist-tag, curated 4.0.0 changelog (D7–D9).
 - `CONTEXT.md` (already updated: Public API, Value events, Commit, Internal event, Supported browsers,
-  Chromium-only spec, Kebab-case twin retired). Still to do: **Value events** gains "a Vue template cannot hear
-  `update:value` (ADR-0017); it binds `v-model`, `@input` + the host's `value`, or `@change`", and the example
-  dialogue's live-value answer says the same; generalise **Internal event** to cover internal tags,
-  props, slots and methods; `invalid` wherever validity is described; correct
-  the `mobile` grandfathered list (D13); **Example smoke** gains axe + React/TypeScript flavors; mark c-dropdown and
-  c-input as internal tags; CONTEXT.md's claim that `@cscfi/csc-ui-vue(2)` are deprecated becomes true at phase 5.
+  Chromium-only spec, Kebab-case twin retired). Done since (checked 2026-10-28): **Value events** says a Vue
+  template cannot hear `update:value`; **Internal** covers tags, props, events, slots and methods (c-dropdown,
+  c-input); validity is `invalid`; the `mobile` grandfathered list is corrected (names kept, D13); **Example
+  smoke** has axe and the React/TypeScript flavors. Left for phase 5: CONTEXT.md's claim that
+  `@cscfi/csc-ui-vue(2)` are deprecated on npm becomes true only then.
 - On leaving plan mode: copy this plan to `_plan/csc-ui-4-stable-release.md` and the three audit reports to
   `_plan/csc-ui-4-api-audit/` (they live in `~/.claude/plans/rustling-soaring-book-agent-*.md` today).
 
