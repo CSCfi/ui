@@ -482,7 +482,14 @@ start migrating on the first alpha that carries D2–D4.
      `main` after `development` is merged: `pnpm changeset pre exit`, `pnpm changeset pre enter rc`, set both
      `packages/csc-ui` and `packages/csc-ui-react` `version` to `4.0.0-rc.0` by hand (never published; the one
      documented exception to "never bump by hand"), merge; the release workflow's version run then gives
-     `4.0.0-rc.1`. Still to verify by dry run before doing it.
+     `4.0.0-rc.1`. **Dry run done 2026-10-28:** `development` (ce3e904b) merged onto `origin/main` in a throwaway
+     worktree (package.json conflict: keep main's version, development's description), then the three steps
+     and `changeset version`: both packages `4.0.0-rc.1`, pre.json keeps the 128 consumed changesets and adds
+     the 76 new ones. `changeset publish` in pre mode publishes under the `rc` dist-tag (`pnpm run release`
+     passes no tag). Two ordering rules: keep the rc-entry PR separate from the development→main merge PR,
+     because `check-api-breaks.mjs` reads `pre.json` from the PR head and fails any breaking diff once the tag
+     is `rc`; and leave the `alpha.33` "Version packages" PR that the merge opens unmerged, since the rc-entry
+     merge rewrites it to `rc.1`.
    - **Contrast brief for design (2026-10-27):** `_plan/csc-ui-4-contrast-brief.md`, the last rc.1 gate in the axe
      baseline (78 examples), measured by pair: light hint ink `tertiary-500` → `tertiary-600` (76 examples; then
      disabled buttons move to `on-surface-disabled`), dark `error` → `error-300`, expanded accordion headings →
