@@ -531,8 +531,8 @@ export interface CCheckboxElement extends Omit<HTMLElement, 'checked' | 'disable
   hint?: string;
   /**
    * Show the mixed state, a bar in place of the check, for a parent checkbox
-   * whose options are partly checked. It wins over `checked` and stays until
-   * you clear it
+   * whose options are partly checked. It wins over `checked`; a click or Space
+   * clears it and toggles the state, as on a native checkbox
    */
   indeterminate?: boolean;
   /**
