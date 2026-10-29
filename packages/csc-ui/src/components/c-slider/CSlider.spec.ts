@@ -5,6 +5,7 @@
  * a touch drag it lagged or never showed.
  */
 import { describe, expect, it } from 'vitest';
+import { userEvent } from 'vitest/browser';
 
 import {
   mount,
@@ -46,6 +47,44 @@ describe('c-slider value bubble', () => {
         '0.3s',
       );
     }));
+});
+
+describe('c-slider value bubble position', () => {
+  // A click on the track centres the thumb on the pointer in every engine,
+  // so clicking where the bubble points measures the engine's own thumb
+  // geometry. Firefox ignores the WebKit track pseudo-elements, so a bubble
+  // placed for Chromium's thumb drifted up to 10px off it towards the ends.
+  it('sits over the thumb: a click where the bubble points picks its value', async () => {
+    const m = await mount<{ value: number } & HTMLElement>('c-slider', {
+      props: { max: 100, min: 0, value: 50 },
+    });
+
+    m.stage.style.cssText = 'display:block;width:400px';
+
+    const input = m.shadow<HTMLInputElement>('input');
+
+    for (const value of [5, 95]) {
+      m.host.value = value;
+      await settle();
+
+      const bubble = m.shadow('.c-slider__tooltip').getBoundingClientRect();
+
+      const x = bubble.left + bubble.width / 2;
+
+      // Move the thumb away: a click on the thumb itself does not move it.
+      m.host.value = 50;
+      await settle();
+
+      const box = input.getBoundingClientRect();
+
+      await userEvent.click(input, {
+        position: { x: x - box.left, y: box.height / 2 },
+      });
+      await settle();
+
+      expect(Number(input.value), `the bubble at ${value}`).toBe(value);
+    }
+  });
 });
 
 describe('3.x attribute names (R1)', () => {

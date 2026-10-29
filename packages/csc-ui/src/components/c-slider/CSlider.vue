@@ -145,10 +145,15 @@ const slider = tv({
     // (not a Tailwind arbitrary value), because a CSS-var underscore can't
     // survive the JS-string→class round-trip a `[...]` utility needs. The
     // ::before/::after callout also lives in the escape-hatch.
+    //
+    // The input spans the root and its thumb takes the standard geometry, so
+    // in every engine the thumb's centre travels from half the 24px thumb in
+    // from one end to half in from the other. `tooltipWrapper`'s `mx-3` insets
+    // the bubble's track by the same 12px.
     tooltip:
       'c-slider__tooltip pointer-events-none absolute box-border inline-flex size-6 -translate-x-1/2 -translate-y-1 items-center justify-center rounded-full opacity-0 transition-[opacity,transform] duration-300 ease-[cubic-bezier(0.075,0.82,0.165,1)] group-focus-within:-translate-y-2 group-focus-within:opacity-100 group-focus-within:duration-0 group-hover:-translate-y-2 group-hover:opacity-100 group-hover:duration-0 group-active:-translate-y-2 group-active:opacity-100 group-active:duration-0',
-    tooltipWrapper: 'relative mx-0.5 h-0',
-    wrapper: 'relative px-2.5',
+    tooltipWrapper: 'relative mx-3 h-0',
+    wrapper: 'relative',
   },
   variants: {
     active: {
@@ -383,8 +388,10 @@ defineExpose({ focus });
 
   What lives here and why:
   - Native range pseudo-elements (`::-webkit-slider-thumb`,
-    `::-webkit-slider-runnable-track`, `::-webkit-slider-container`,
-    `::-moz-range-thumb`) — form-control internals Tailwind can't target.
+    `::-moz-range-thumb`) — form-control internals Tailwind can't target. No
+    engine-specific track geometry: the thumb's travel must be the same
+    everywhere, or the bubble drifts off it (Firefox ignores the WebKit track
+    pseudo-elements).
   - The track's `linear-gradient` progress fill, driven by the runtime-state
     var `--_c-slider-position` (set imperatively by the script; this is live
     value state, NOT the dropped theming-indirection layer).
@@ -409,16 +416,6 @@ defineExpose({ focus });
 .c-slider__input:active {
   --_c-slider-thumb-scale: 1.33;
   --_c-slider-thumb-shadow-size: 0;
-}
-
-.c-slider__input::-webkit-slider-runnable-track {
-  width: calc(100% - 20px);
-  margin: 0 -20px;
-}
-
-.c-slider__input::-webkit-slider-container {
-  display: flex;
-  padding: 0 10px;
 }
 
 .c-slider__input::-webkit-slider-thumb {
