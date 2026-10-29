@@ -11,17 +11,18 @@
  *   2. builds the Stencil package and the Vue wrapper the docs import, then
  *      generates the docs (a client-only Nuxt app) under the `/v3/` base;
  *   3. puts an "unsupported" banner, linking the current docs and the
- *      migration guide, at the top of every page, and keeps the archive out of
- *      search results;
+ *      migration guide, at the top of every page's content, and keeps the
+ *      archive out of search results;
  *   4. gives every component page its own entry HTML, so a direct link such
  *      as `/v3/components/c-button` loads on any static host without a
  *      fallback rule;
  *   5. replaces `public/v3/` with the result and removes the worktree.
  *
- * The output is committed: it never changes once built. Rerun only to change
- * the banner.
+ * The output is committed: it never changes once built. To change only the
+ * banner, `--banner-only` rewrites it in the committed archive without
+ * rebuilding.
  *
- * Usage: node scripts/build-v3-archive.mjs
+ * Usage: node scripts/build-v3-archive.mjs [--banner-only]
  */
 import { execFileSync } from 'node:child_process';
 import {
@@ -46,10 +47,6 @@ const resolve = (relative) => fileURLToPath(new URL(relative, import.meta.url));
 
 const target = resolve('../public/v3');
 
-const scratch = mkdtempSync(path.join(tmpdir(), 'csc-ui-v3-'));
-
-const worktree = path.join(scratch, 'repo');
-
 const run = (command, args, cwd, env = {}) =>
   execFileSync(command, args, {
     cwd,
@@ -57,7 +54,30 @@ const run = (command, args, cwd, env = {}) =>
     stdio: 'inherit',
   });
 
-const BANNER = `<div role="note" style="position:relative;z-index:2147483647;padding:10px 16px;background:#fff3c4;color:#1f1f1f;border-bottom:2px solid #b45309;font:15px/1.5 system-ui,sans-serif;text-align:center"><strong>csc-ui 3.x is unsupported since 4.0.0.</strong> This is an archived copy of the 3.0.19 documentation. <a href="/" style="color:inherit;text-decoration:underline">Current documentation</a> · <a href="/migration" style="color:inherit;text-decoration:underline">Migration guide</a></div>`;
+const BANNER_HTML = `<strong>csc-ui 3.x is unsupported since 4.0.0.</strong> This is an archived copy of the 3.0.19 documentation. <a href="/" style="color:inherit;text-decoration:underline">Current documentation</a> · <a href="/migration" style="color:inherit;text-decoration:underline">Migration guide</a>`;
+
+const BANNER_STYLE =
+  'margin:0 0 16px;padding:10px 16px;background:#fff3c4;color:#1f1f1f;border:1px solid #b45309;border-radius:4px;font:15px/1.5 system-ui,sans-serif;text-align:center';
+
+// The banner opens the page content: the app's `<c-page>` (the first one in
+// the document; examples render theirs inside it) slots its first child at
+// the top of its scrolling `.c-page__container`. Above the app, in `<body>`,
+// it made the document taller than the viewport, so the document scrolled as
+// well as c-page and the fixed toolbar and drawer slid off. The app renders
+// client-side, so a script places it once c-page exists and again if a
+// render removes it.
+const BANNER = `<script>(() => {
+  const banner = document.createElement('div');
+  banner.setAttribute('role', 'note');
+  banner.style.cssText = ${JSON.stringify(BANNER_STYLE)};
+  banner.innerHTML = ${JSON.stringify(BANNER_HTML)};
+  const place = () => {
+    const page = document.querySelector('c-page');
+    if (page && page.firstElementChild !== banner) page.prepend(banner);
+  };
+  new MutationObserver(place).observe(document.documentElement, { childList: true, subtree: true });
+  place();
+})();</script>`;
 
 /** Every HTML file under `dir`. */
 const htmlFiles = (dir) =>
@@ -69,10 +89,27 @@ const htmlFiles = (dir) =>
     return entry.endsWith('.html') ? [file] : [];
   });
 
+const ROBOTS = '<meta name="robots" content="noindex">';
+
+/** The banner is whatever sits between `<body>` and the app's mount point. */
 const archive = (html) =>
-  html
-    .replace('<head>', '<head><meta name="robots" content="noindex">')
-    .replace(/<body([^>]*)>/, `<body$1>${BANNER}`);
+  (html.includes(ROBOTS)
+    ? html
+    : html.replace('<head>', `<head>${ROBOTS}`)
+  ).replace(/(<body[^>]*>)[\s\S]*?(<div id="__nuxt">)/, `$1${BANNER}$2`);
+
+if (process.argv.includes('--banner-only')) {
+  for (const file of htmlFiles(target)) {
+    writeFileSync(file, archive(readFileSync(file, 'utf8')));
+  }
+
+  console.log(`3.x docs archive banner rewritten in ${target}`);
+  process.exit(0);
+}
+
+const scratch = mkdtempSync(path.join(tmpdir(), 'csc-ui-v3-'));
+
+const worktree = path.join(scratch, 'repo');
 
 try {
   run('git', ['worktree', 'add', '--detach', worktree, TAG], resolve('.'));

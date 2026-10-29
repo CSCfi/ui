@@ -56,5 +56,16 @@
 <link rel="prefetch" as="style" crossorigin href="/v3/_nuxt/error-500.dGVH929u.css">
 <link rel="prefetch" as="script" crossorigin href="/v3/_nuxt/C3QLFcx-.js">
 <script type="module" src="/v3/_nuxt/Ch6KfFdQ.js" crossorigin></script>
-<script id="unhead:payload" type="application/json">{"title":"Design System - CSC"}</script></head><body><div role="note" style="position:relative;z-index:2147483647;padding:10px 16px;background:#fff3c4;color:#1f1f1f;border-bottom:2px solid #b45309;font:15px/1.5 system-ui,sans-serif;text-align:center"><strong>csc-ui 3.x is unsupported since 4.0.0.</strong> This is an archived copy of the 3.0.19 documentation. <a href="/" style="color:inherit;text-decoration:underline">Current documentation</a> · <a href="/migration" style="color:inherit;text-decoration:underline">Migration guide</a></div><div id="__nuxt"></div><div id="teleports"></div><script type="application/json" data-nuxt-data="nuxt-app" data-ssr="false" id="__NUXT_DATA__">[{"prerenderedAt":1,"serverRendered":2},1793091190858,false]</script>
+<script id="unhead:payload" type="application/json">{"title":"Design System - CSC"}</script></head><body><script>(() => {
+  const banner = document.createElement('div');
+  banner.setAttribute('role', 'note');
+  banner.style.cssText = "margin:0 0 16px;padding:10px 16px;background:#fff3c4;color:#1f1f1f;border:1px solid #b45309;border-radius:4px;font:15px/1.5 system-ui,sans-serif;text-align:center";
+  banner.innerHTML = "<strong>csc-ui 3.x is unsupported since 4.0.0.</strong> This is an archived copy of the 3.0.19 documentation. <a href=\"/\" style=\"color:inherit;text-decoration:underline\">Current documentation</a> · <a href=\"/migration\" style=\"color:inherit;text-decoration:underline\">Migration guide</a>";
+  const place = () => {
+    const page = document.querySelector('c-page');
+    if (page && page.firstElementChild !== banner) page.prepend(banner);
+  };
+  new MutationObserver(place).observe(document.documentElement, { childList: true, subtree: true });
+  place();
+})();</script><div id="__nuxt"></div><div id="teleports"></div><script type="application/json" data-nuxt-data="nuxt-app" data-ssr="false" id="__NUXT_DATA__">[{"prerenderedAt":1,"serverRendered":2},1793091190858,false]</script>
 <script>window.__NUXT__={};window.__NUXT__.config={public:{},app:{baseURL:"/v3/",buildId:"a02decbb-288b-4f4f-bc07-735656d83256",buildAssetsDir:"/_nuxt/",cdnURL:""}}</script></body></html>
