@@ -336,17 +336,16 @@ const button = tv({
     // ---- disabled (overrides appearance bg/text/border) ------------------
     // Non-inverted disabled is the muted neutral surface; inverted disabled
     // dims the mode-invariant inverse foreground (it sits on a dark backdrop).
-    // Disabled TEXT uses the faint tier, not muted: `on-surface-muted` is the
-    // hint-text role and is pinned bright in dark mode by the WCAG AA contrast
-    // pass, so on a disabled control it reads as enabled. `on-surface-faint`
-    // equals it in light mode (both tertiary-500) and is properly dim in dark
-    // (disabled text is exempt from AA contrast).
+    // Disabled TEXT uses the disabled tier, not muted or faint: both are
+    // hint-text inks held to WCAG AA contrast, so on a disabled control they
+    // read as enabled. `on-surface-disabled` is the step the disabled options
+    // and days use (disabled text is exempt from AA contrast).
     // Each re-declares `hover:bg-*` matching its own bg so the appearance hover
     // (all `hover:bg-*`) is neutralised now that disabled no longer relies on
     // `pointer-events-none` for hover suppression (see the tv header comment).
     {
       class: {
-        root: 'bg-surface-muted text-on-surface-faint hover:bg-surface-muted',
+        root: 'bg-surface-muted text-on-surface-disabled hover:bg-surface-muted',
       },
       danger: false,
       disabled: true,
@@ -368,14 +367,14 @@ const button = tv({
     },
     {
       class: {
-        root: 'bg-surface-muted text-on-surface-faint hover:bg-surface-muted',
+        root: 'bg-surface-muted text-on-surface-disabled hover:bg-surface-muted',
       },
       danger: true,
       disabled: true,
     },
     {
       class: {
-        root: 'bg-surface-muted text-on-surface-faint hover:bg-surface-muted',
+        root: 'bg-surface-muted text-on-surface-disabled hover:bg-surface-muted',
       },
       disabled: true,
       ghost: true,
@@ -391,14 +390,14 @@ const button = tv({
     },
     {
       class: {
-        root: 'bg-transparent text-on-surface-faint hover:bg-transparent',
+        root: 'bg-transparent text-on-surface-disabled hover:bg-transparent',
       },
       disabled: true,
       text: true,
     },
     {
       class: {
-        root: 'bg-transparent text-on-surface-faint ring-2 ring-border ring-inset hover:bg-transparent',
+        root: 'bg-transparent text-on-surface-disabled ring-2 ring-border ring-inset hover:bg-transparent',
       },
       disabled: true,
       inverted: false,

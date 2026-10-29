@@ -101,6 +101,10 @@ interface CAccordionItemEvents {
 // siblings, because `:host()` cannot see them: Chromium matches neither
 // `:host(:is([expanded] + *))` nor `:host(:has(+ [expanded]))`.
 //
+// The heading is primary ink at rest; on the expanded wash it takes the ink
+// paired with that wash, `on-primary-subtle`, which keeps AA contrast in dark
+// mode where plain primary falls just short.
+//
 // The header is transparent at rest so the frame reads as one surface, with
 // c-button's ghost hover/active washes. The wash takes the root's corners and
 // squircle shape, but only the top ones on an expanded item, so it never
@@ -183,7 +187,7 @@ const accordionItem = tv({
     expanded: {
       true: {
         contentWrapper: 'grid-rows-[minmax(0,1fr)]',
-        header: 'rounded-b-none',
+        header: 'rounded-b-none text-on-primary-subtle',
         indicator: 'rotate-90',
         root: 'my-2 rounded-csc-lg border-t border-primary bg-primary/5 inset-shadow-[2px_0_0_0] inset-shadow-primary',
       },

@@ -28,7 +28,12 @@ import {
             box-shadow: inset 2px 0 0 0 var(--c-secondary);
           }
 
-          &::part(header),
+          /* The heading takes the ink paired with the wash, as the default
+             expanded heading does. */
+          &::part(header) {
+            color: var(--c-on-secondary-subtle);
+          }
+
           &::part(indicator) {
             color: var(--c-secondary);
           }

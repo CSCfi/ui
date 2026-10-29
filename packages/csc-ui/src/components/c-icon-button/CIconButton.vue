@@ -235,11 +235,11 @@ const iconButton = tv({
     // ---- disabled (overrides appearance bg/text/border) ------------------
     // Ordered LAST so these win over the appearance compounds above (tv merges
     // compoundVariants in source order; last-matching wins). One per appearance,
-    // mirroring c-button's disabled palette: the faint ink, not the muted one,
-    // which the contrast pass pins bright in dark mode, so a disabled button
-    // read as enabled there.
+    // mirroring c-button's disabled palette: the disabled ink, not the muted
+    // or faint hint inks, which AA contrast keeps dark enough to read as
+    // enabled.
     {
-      class: { root: 'bg-surface-muted text-on-surface-faint' },
+      class: { root: 'bg-surface-muted text-on-surface-disabled' },
       danger: false,
       disabled: true,
       ghost: false,
@@ -257,12 +257,12 @@ const iconButton = tv({
       text: false,
     },
     {
-      class: { root: 'bg-surface-muted text-on-surface-faint' },
+      class: { root: 'bg-surface-muted text-on-surface-disabled' },
       danger: true,
       disabled: true,
     },
     {
-      class: { root: 'bg-surface-muted text-on-surface-faint' },
+      class: { root: 'bg-surface-muted text-on-surface-disabled' },
       disabled: true,
       ghost: true,
       inverted: false,
@@ -274,13 +274,13 @@ const iconButton = tv({
       inverted: true,
     },
     {
-      class: { root: 'bg-transparent text-on-surface-faint' },
+      class: { root: 'bg-transparent text-on-surface-disabled' },
       disabled: true,
       text: true,
     },
     {
       class: {
-        root: 'bg-transparent text-on-surface-faint ring-2 ring-border ring-inset',
+        root: 'bg-transparent text-on-surface-disabled ring-2 ring-border ring-inset',
       },
       disabled: true,
       inverted: false,

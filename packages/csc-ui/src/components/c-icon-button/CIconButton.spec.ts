@@ -54,7 +54,7 @@ describe('c-icon-button loading', () => {
 });
 
 describe('c-icon-button disabled', () => {
-  it('dims its icon to the faint ink, as c-button does, in dark mode too', async () => {
+  it('dims its icon to the disabled ink, as c-button does, in dark mode too', async () => {
     setThemeMode('dark');
 
     for (const attrs of [
@@ -68,7 +68,7 @@ describe('c-icon-button disabled', () => {
       });
 
       expect(getComputedStyle(part('root')).color, JSON.stringify(attrs)).toBe(
-        roleInMode('dark', '--c-on-surface-faint'),
+        roleInMode('dark', '--c-on-surface-disabled'),
       );
     }
   });

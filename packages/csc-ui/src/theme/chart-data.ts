@@ -115,7 +115,7 @@ export const chartAnatomy: Readonly<Record<CThemeMode, CChartAnatomy>> = {
   light: {
     surface: 'oklch(1.0000 0.0000 0.0000)',
     grid: 'oklch(0.9088 0.0035 247.8616)',
-    axis: 'oklch(0.6202 0.0140 229.0608)',
+    axis: 'oklch(0.5166 0.0184 233.3230)',
   },
   dark: {
     surface: 'oklch(0.3028 0.0092 248.1305)',
@@ -129,7 +129,7 @@ export const chartAnatomyHex: Readonly<Record<CThemeMode, CChartAnatomy>> = {
   light: {
     surface: '#ffffff',
     grid: '#dfe1e3',
-    axis: '#7e888d',
+    axis: '#5e6a71',
   },
   dark: {
     surface: '#2b2f33',

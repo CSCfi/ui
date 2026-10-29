@@ -1,7 +1,13 @@
 import { describe, expect, it, vi } from 'vitest';
 import { userEvent } from 'vitest/browser';
 
-import { matchScreenshotInBothModes, mount, settled } from '../../test/harness';
+import {
+  matchScreenshotInBothModes,
+  mount,
+  roleInMode,
+  setThemeMode,
+  settled,
+} from '../../test/harness';
 
 describe('c-button', () => {
   it('upgrades with adopted styles and a painted root', async () => {
@@ -139,6 +145,35 @@ describe('c-button in a form', () => {
 
       expect(seen, JSON.stringify(attrs)).toEqual([]);
       form.remove();
+    }
+  });
+});
+
+describe('c-button disabled', () => {
+  // The hint inks (`on-surface-muted`, `on-surface-faint`) are held to AA
+  // contrast, dark enough that a disabled label inked with them reads as
+  // enabled; disabled text takes the disabled ink, exempt from AA.
+  it('inks its label with the disabled ink in both modes', async () => {
+    for (const mode of ['light', 'dark'] as const) {
+      setThemeMode(mode);
+
+      for (const attrs of [
+        {},
+        { danger: true },
+        { ghost: true },
+        { text: true },
+        { outlined: true },
+      ] as Record<string, boolean>[]) {
+        const { part } = await mount('c-button', {
+          attrs: { ...attrs, disabled: true },
+          html: 'Save',
+        });
+
+        expect(
+          getComputedStyle(part('root')).color,
+          `${mode} ${JSON.stringify(attrs)}`,
+        ).toBe(roleInMode(mode, '--c-on-surface-disabled'));
+      }
     }
   });
 });
