@@ -494,6 +494,17 @@ start migrating on the first alpha that carries D2–D4.
      baseline (78 examples), measured by pair: light hint ink `tertiary-500` → `tertiary-600` (76 examples; then
      disabled buttons move to `on-surface-disabled`), dark `error` → `error-300`, expanded accordion headings →
      `on-primary-subtle`; the c-main reports are axe misreading the pinned layout.
+     **Done 2026-10-29 (user: apply the brief's recommendations), f3d9a620 + 0823ba5b.** All three token
+     changes, disabled buttons on `on-surface-disabled` (specs for both buttons), dark `error-hover` → `error-200`
+     so the hover stays distinct, light `chart-axis` follows the muted ink, the accordion custom-style example
+     uses `on-secondary-subtle`. Baselines rewritten from scratch (84 PNGs changed pixels, reviewed; the c-select
+     fullscreen one had caught a hover fading out). The c-main misread is an axe-core 4.14 bug (its scroll-region
+     lookup stops at a shadow root, so slotted text and its shadow background land in different grids under the
+     docs' boxed scroller); the brief said to disable the rule, the user chose instead to unbox c-main for the
+     axe pass (`smoke.ts` `unboxMains`), which reports nothing as an app shows it. **The axe baseline is empty.**
+     Full browser suite 70/70 files, node 435, docs smoke 509/509. Still below AA in the token audit, shown by
+     no example (do not block rc.1): white on `accent` / `success` / `info` / `warning` fills, `on-accent-subtle`,
+     `on-nav` on the nav hover.
    - **User decisions 2026-10-27 on the verification pass's reports:** c-switch `loading` matches the buttons
      (done, 6fd1fbf6); c-checkbox `indeterminate` clears on a click or Space, before `change`, natively (done, ebbbc0c4; a binding writes it only when its value changes, so a page whose options stay partly checked sets the property in its `change` handler — user chose docs over a `change:indeterminate` event, which a same-tick reset can't reach, 108425ce);
      c-icon-button disabled ink fixed (5eaa4c88).

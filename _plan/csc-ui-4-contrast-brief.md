@@ -1,5 +1,11 @@
 # csc-ui 4 — contrast decisions for design (before rc.1)
 
+**Status 2026-10-29: done** (f3d9a620, 0823ba5b). The user chose the recommendation for each decision: 1 →
+`tertiary-600` with disabled buttons on `on-surface-disabled`, 2 → (a) dark `error` = `error-300` (and
+`error-hover` = `error-200`, so the hover stays distinct), 3 → (a) `on-primary-subtle`. The c-main reports were an
+axe-core 4.14 bug with the docs' boxed scroller; the smoke unboxes c-main for the axe pass instead of disabling the
+rule. The axe baseline is empty. The "below-AA pairs no example shows yet" section below still stands.
+
 D14 makes zero axe violations (WCAG 2.1 AA) a gate for rc.1. Everything else in the axe baseline is cleared; what is
 left is `color-contrast` on 78 of the 161 docs examples, and each failure traces to a token choice. Measured
 2026-10-27 by running the example smoke with the contrast baseline removed, then grouping failures by colour pair.
