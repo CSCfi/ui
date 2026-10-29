@@ -12,7 +12,8 @@ import type { Component } from 'vue';
  * may only shrink (a listed rule that passes fails the canon until it is
  * removed), and it must be empty once the changesets pre tag leaves `alpha`.
  * A rule wrong for a shadow-DOM pattern is disabled for every canon in
- * `smoke.ts`, with its reason — never per canon.
+ * `smoke.ts`, with its reason — never per canon. The axe pass also takes the
+ * docs' scroll box off every c-main, which axe-core misreads (`unboxMains`).
  */
 import { describe, expect, inject, it } from 'vitest';
 import { page, server } from 'vitest/browser';

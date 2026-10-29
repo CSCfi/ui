@@ -80,6 +80,33 @@ const AXE_OPTIONS: axe.RunOptions = {
 };
 
 /**
+ * Take the docs' 320px box off every c-main in `root` until the returned
+ * function puts it back. axe-core 4.14 files text slotted into a component
+ * and that component's own shadow background under different scroll regions
+ * when the scroller sits in an outer shadow root (its scroll-region lookup
+ * stops at a shadow root), so `color-contrast` measured the toolbar and
+ * drawer text against the canvas behind them. An app scrolls the document,
+ * which axe does not count as a scroll region, so unboxed is how an app
+ * shows c-main. `!important`: the page's `::part(root)` rule outranks an
+ * inline style inside the shadow tree.
+ */
+const unboxMains = (root: Element): (() => void) => {
+  const boxes = [...root.querySelectorAll('c-main')].flatMap((main) => {
+    const box = main.shadowRoot?.querySelector<HTMLElement>('[part="root"]');
+
+    return box ? [box] : [];
+  });
+
+  for (const box of boxes) {
+    box.style.setProperty('overflow', 'visible', 'important');
+  }
+
+  return () => {
+    for (const box of boxes) box.style.removeProperty('overflow');
+  };
+};
+
+/**
  * axe (WCAG 2.1 AA, D14) over `root` in the light and the dark theme: rule
  * id → one line per failing node, naming the mode and the node's path
  * through the shadow roots.
@@ -88,6 +115,8 @@ export const axeViolations = async (
   root: Element,
 ): Promise<Map<string, string[]>> => {
   const violations = new Map<string, string[]>();
+
+  const rebox = unboxMains(root);
 
   for (const mode of ['light', 'dark'] as const) {
     document.documentElement.setAttribute('data-theme', mode);
@@ -109,6 +138,7 @@ export const axeViolations = async (
   }
 
   document.documentElement.setAttribute('data-theme', 'light');
+  rebox();
 
   return violations;
 };
