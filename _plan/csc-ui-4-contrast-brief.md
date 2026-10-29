@@ -58,9 +58,10 @@ their washes).
   dark mode 3.42:1. It follows whichever option 3 picks (`on-secondary-subtle` there gives 5.48:1).
 - c-main examples: axe reports the side-navigation title (white) and the toolbar text against `primary-100`
   (`#c4dee4`), but they render on the drawer (dark teal) and the white toolbar (checked by screenshot). The
-  pinned drawer and toolbar confuse axe's background lookup. The toolbar text is the ink of decision 1 anyway;
-  re-check after it lands, and if axe still misreads, disable the rule with a stated reason (D14 allows that per
-  rule, not per example).
+  pinned drawer and toolbar confuse axe's background lookup. **Resolved 2026-10-29 (0823ba5b):** axe still
+  misread them after decision 1. The cause is an axe-core 4.14 bug with the docs' boxed scroller, so the smoke
+  unboxes c-main for the axe pass. The rule stays on: disabling `color-contrast` would leave every example's
+  contrast unchecked, including the pairs below.
 
 ## Context: below-AA pairs no example shows yet
 
