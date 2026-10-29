@@ -2,7 +2,7 @@
  * Behaviour spec for c-alert's close button (glossary Closeable): `closeable`
  * renders it, pressing it fires `close`, and the alert stays put — removing
  * it is the consumer's job. An unset `type` is the neutral look, as on
- * c-status.
+ * c-status, and only a status type shows an icon.
  */
 import { expect, it } from 'vitest';
 import { userEvent } from 'vitest/browser';
@@ -41,5 +41,27 @@ it('an unset or unknown type is the neutral look, announced politely', async () 
   for (const m of [neutral, unknown]) {
     expect(m.host.getAttribute('role')).toBe('status');
     expect(m.part('root').className).toContain('border-l-primary');
+  }
+});
+
+it('shows an icon for a status type and none for an unset or unknown type', async () => {
+  for (const type of ['error', 'info', 'success', 'warning']) {
+    const m = await mount('c-alert', { attrs: { type }, html: 'Note' });
+
+    expect(
+      m.part('icon').querySelector('path')!.getAttribute('d'),
+      type,
+    ).not.toBe('');
+  }
+
+  const neutral = await mount('c-alert', { html: 'Note' });
+
+  const unknown = await mount('c-alert', {
+    attrs: { type: 'default' },
+    html: 'Note',
+  });
+
+  for (const m of [neutral, unknown]) {
+    expect(m.host.shadowRoot!.querySelector('[part~="icon"]')).toBeNull();
   }
 });

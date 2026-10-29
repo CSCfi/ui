@@ -9,7 +9,7 @@ Give the alert a `heading` with the prop for plain text; the `heading` slot over
 
 ## Types
 
-The four status types (`error`, `info`, `success`, `warning`) carry their status family's colours and icon; omitting `type` renders the neutral, brand-primary look. Severity is signalled by the icon, the heading's ink and the accent edge, never by colouring the body text.
+The four status types (`error`, `info`, `success`, `warning`) carry their status family's colours and icon; omitting `type` renders the neutral, brand-primary look, without an icon. Severity is signalled by the icon, the heading's ink and the accent edge, never by colouring the body text.
 
 ## Closing
 

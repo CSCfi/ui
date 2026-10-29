@@ -121,7 +121,7 @@ export interface CAlertElement extends Omit<HTMLElement, 'closeable' | 'heading'
   /**
    * The status type, setting the colours, the icon and how urgently the
    * alert is announced (`warning` and `error` interrupt). Without it the
-   * alert has the neutral, brand-primary look.
+   * alert has the neutral, brand-primary look and no icon.
    */
   type?: 'error' | 'info' | 'success' | 'warning';
   addEventListener<K extends keyof CAlertElementEventMap>(

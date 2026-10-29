@@ -1,6 +1,6 @@
 <template>
   <div :class="ui.root()" part="root">
-    <svg :class="ui.icon()" part="icon" viewBox="0 0 24 24">
+    <svg v-if="icon" :class="ui.icon()" part="icon" viewBox="0 0 24 24">
       <path :d="icon" />
     </svg>
 
@@ -33,7 +33,7 @@
 /**
  * Type of the alert: the four status types carry their status family's
  * colours and icon. Omitting it renders the neutral look, in the brand primary
- * colour (unlike `c-status`, whose neutral pill is grey).
+ * colour (unlike `c-status`, whose neutral pill is grey) and without an icon.
  */
 export type CAlertType = 'error' | 'info' | 'success' | 'warning';
 
@@ -55,7 +55,7 @@ interface CAlertProps {
   /**
    * The status type, setting the colours, the icon and how urgently the
    * alert is announced (`warning` and `error` interrupt). Without it the
-   * alert has the neutral, brand-primary look.
+   * alert has the neutral, brand-primary look and no icon.
    */
   type?: CAlertType;
 }
@@ -67,7 +67,7 @@ interface CAlertProps {
  * @slot default - The message
  *
  * @csspart root - The tinted box carrying the type's wash, hairline border and accent edge
- * @csspart icon - The status icon
+ * @csspart icon - The status icon, rendered only when a `type` is set
  * @csspart content - The wrapper around the heading and message content
  * @csspart heading - The heading paragraph rendered from the `heading` prop
  * @csspart close - The close button rendered when `closeable` is set
@@ -91,7 +91,7 @@ import { useHostEmit } from '../../shared/useHostEmit';
  * 40% hairline border and a solid 4px accent edge on the left; the icon and
  * the heading wear the role's `on-*-subtle` ink while body copy stays
  * high-contrast `on-surface`, so severity is carried by icon + label + edge,
- * never body-text colour. `--_c-alert-ink` is a private per-type hook that
+ * never body-text colour. The neutral look has no icon. `--_c-alert-ink` is a private per-type hook that
  * colours the heading on both paths: the `heading` tv slot (the prop-rendered
  * fallback) and the escape-hatch `::slotted()` rule for light-DOM heading
  * content (a utility cannot reach slotted content).
@@ -136,7 +136,6 @@ const alert = tv({
       },
       neutral: {
         close: 'hover:bg-primary/10 hover:text-on-primary-subtle',
-        icon: 'text-on-primary-subtle',
         root: 'border-primary/40 border-l-primary bg-primary/10 [--_c-alert-ink:var(--c-on-primary-subtle)]',
       },
       success: {
@@ -163,10 +162,9 @@ const props = withDefaults(defineProps<CAlertProps>(), {
 // live-region role (`pnpm lint:a11y`).
 defineOptions({ inheritAttrs: false });
 
-const icons: Record<AlertLook, string> = {
+const icons: Record<CAlertType, string> = {
   error: mdiCloseCircle,
   info: mdiInformation,
-  neutral: mdiInformation,
   success: mdiCheckCircle,
   warning: mdiAlert,
 };
@@ -181,7 +179,10 @@ const isCloseable = computed(() => coerceBoolean(props.closeable));
 
 const ui = computed(() => alert({ type: normalizedType.value }));
 
-const icon = computed(() => icons[normalizedType.value]);
+// Only a status type has an icon; the neutral look has none.
+const icon = computed(() =>
+  normalizedType.value === 'neutral' ? undefined : icons[normalizedType.value],
+);
 
 const host = useHost();
 
