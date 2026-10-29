@@ -1,6 +1,6 @@
 {
   "name": "@cscfi/csc-ui",
-  "version": "4.0.0-alpha.18",
+  "version": "4.0.0-alpha.32",
   "description": "The CSC Design System's components as native custom elements: one set of c-* tags for plain HTML, Vue, React and Angular.",
   "type": "module",
   "main": "./dist/csc-ui.js",

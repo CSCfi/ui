@@ -1,5 +1,492 @@
 # @cscfi/csc-ui-react
 
+## 4.0.0-alpha.32
+
+### Minor Changes
+
+- [#309](https://github.com/CSCfi/ui/pull/309) [`fceba25`](https://github.com/CSCfi/ui/commit/fceba2537cc62554ab2333951a41ac6057ef0a8e) Thanks [@razorfever](https://github.com/razorfever)! - Add c-color-picker: a typeable colour field that reads any CSS colour, with a
+  keyboard-operable panel of a colour area, hue and alpha sliders, per-channel
+  inputs and swatches (ADR-0069, ADR-0070).
+
+  - `format` sets the notation the value is written in — `hex` (default), `rgb`
+    or `oklch` — whatever notation a colour is typed or picked in; the panel's
+    HEX | RGB | OKLCH switch only changes the channel inputs. `alpha` opts into
+    transparency.
+  - `swatches` offers predefined colours, named for assistive technology;
+    `swatches-only` limits the choice to them in a readonly, select-like field.
+  - A drag on the area or a slider updates `v-model` as it moves and fires
+    `change` once, on release.
+  - When the panel opens on a colour, it shows that original colour beside the
+    new one; a click on the original restores it.
+
+- [#309](https://github.com/CSCfi/ui/pull/309) [`bd3c227`](https://github.com/CSCfi/ui/commit/bd3c227546fc74e4fd6a7fe169fb9bc7c4c81bbe) Thanks [@razorfever](https://github.com/razorfever)! - Add c-file-upload: a field the user adds files to by dropping them on it or
+  choosing them from the file dialog, with each file's size and upload progress
+  in a list under the drop zone (ADR-0071).
+
+  - The value is a list of file entries — name, size, type, the browser `File`
+    and a status — bound with `v-model`. Files already on the server can be
+    listed as entries without a `File`.
+  - Set `upload` to a function that sends one file; the field calls it for each
+    added file, three at a time, shows its progress, and offers cancel and retry.
+    Without one, the field only holds the files. A `manual` field holds them
+    until `startUploads()` is called, for a form that uploads on its own button.
+  - `accept`, `max-size` and `max-files` limit what the field takes, and a file
+    already in the list is never added twice; a refused file is listed with its
+    reason until the list next changes, and reported by the `reject` event.
+  - `compact` shows the drop zone as a row at the shared control height, to line
+    up with the fields beside it.
+
+- [#309](https://github.com/CSCfi/ui/pull/309) [`2d7d2ef`](https://github.com/CSCfi/ui/commit/2d7d2ef410bcea0d4fda15c17bbfca449dd4045b) Thanks [@razorfever](https://github.com/razorfever)! - Components inherit the page's typography (ADR-0072). Every component used to
+  reset its font to the operating system's and its line height to 1.5, so text
+  slotted into `c-main`, cards and other components ignored the app's font, and
+  nested parts such as `c-select`'s option list could not be reached from the
+  page at all. Components now take the page's font family, line height and font
+  features, as native elements do, and no longer declare Tailwind theme
+  variables (`--font-sans`, `--spacing`, …) that made an app's own Tailwind
+  utilities read csc-ui's values inside components. The `--c-font-family` token
+  is removed: set your font on `body`, or `font-family` on a `c-*` element to
+  give one component another typeface. A page that sets no font now shows
+  components in the browser default.
+
+### Patch Changes
+
+- [#309](https://github.com/CSCfi/ui/pull/309) [`758789e`](https://github.com/CSCfi/ui/commit/758789e0e462f52c5b0d72664569574ee9e3335b) Thanks [@razorfever](https://github.com/razorfever)! - Typing into a closed `c-autocomplete` or `c-tree-select` field now opens the
+  panel with every typed character in its search input. Before, the first
+  character could be lost (typing `finland` searched for `inland`), and fast
+  typing could drop more. After such an open the highlight lands on the first
+  match, as it does when typing into the open panel.
+- Updated dependencies [[`fceba25`](https://github.com/CSCfi/ui/commit/fceba2537cc62554ab2333951a41ac6057ef0a8e), [`bd3c227`](https://github.com/CSCfi/ui/commit/bd3c227546fc74e4fd6a7fe169fb9bc7c4c81bbe), [`2d7d2ef`](https://github.com/CSCfi/ui/commit/2d7d2ef410bcea0d4fda15c17bbfca449dd4045b), [`758789e`](https://github.com/CSCfi/ui/commit/758789e0e462f52c5b0d72664569574ee9e3335b)]:
+  - @cscfi/csc-ui@4.0.0-alpha.32
+
+## 4.0.0-alpha.31
+
+### Patch Changes
+
+- [#307](https://github.com/CSCfi/ui/pull/307) [`2852e02`](https://github.com/CSCfi/ui/commit/2852e02a72cdd135333f1d57d6c2146d7726d191) Thanks [@razorfever](https://github.com/razorfever)! - c-date-picker and c-time-picker now ring the panel's focused day or row after
+  Alt+↓ and the arrow keys, also when the field was clicked first and in Firefox,
+  where no ring showed. A selected day rings in its own ink, inside the fill,
+  instead of a primary ring lost against it.
+
+- [#307](https://github.com/CSCfi/ui/pull/307) [`ea71a5e`](https://github.com/CSCfi/ui/commit/ea71a5e83bcee05c91433bf497e76ad9701ee48c) Thanks [@razorfever](https://github.com/razorfever)! - c-time-picker: a pick in an empty field on the hour now rests the filled-in
+  minute (00) at the top of its column, as it does at any other minute; the
+  column used to keep wherever it had been scrolled.
+- Updated dependencies [[`2852e02`](https://github.com/CSCfi/ui/commit/2852e02a72cdd135333f1d57d6c2146d7726d191), [`ea71a5e`](https://github.com/CSCfi/ui/commit/ea71a5e83bcee05c91433bf497e76ad9701ee48c)]:
+  - @cscfi/csc-ui@4.0.0-alpha.31
+
+## 4.0.0-alpha.30
+
+### Minor Changes
+
+- [#305](https://github.com/CSCfi/ui/pull/305) [`45179c7`](https://github.com/CSCfi/ui/commit/45179c754956d0ba15e592ea05c57cad38f9048f) Thanks [@razorfever](https://github.com/razorfever)! - Add `c-breadcrumb` and its crumbs, `c-breadcrumb-item`: a navigation aid naming
+  where the current page sits in a site's hierarchy (ADR-0067).
+
+  - A crumb with an `href` is a link (an optional `target` sets where it opens);
+    the last crumb is always the current page, plain text announced as the
+    current page. An icon goes in a crumb's `icon` slot; an icon-only crumb is
+    named by its `aria-label`.
+  - The breadcrumb is one line. When it runs out of room, the middle crumbs fold
+    behind a "…" button whose panel lists them as links (Tab or the arrow keys
+    move through them), and past that the current and first crumbs' labels
+    shorten with an ellipsis. A single-page app routes by intercepting a crumb's
+    click, folded crumbs included.
+  - Parts: `root`, `list`, `separator`, `fold-button`, `panel`, `panel-list` on
+    the breadcrumb; `root`, `separator`, `content`, `label` on a crumb, with the
+    `current` and `folded` custom states. Texts are overridable through `texts`.
+
+### Patch Changes
+
+- [#305](https://github.com/CSCfi/ui/pull/305) [`5672043`](https://github.com/CSCfi/ui/commit/567204394ddd1a20617c6abe2412431608a0c6c2) Thanks [@razorfever](https://github.com/razorfever)! - Keyboard focus now shows a ring where it never painted: c-time-picker's
+  columns, end switch and Now and Done buttons; c-date-picker's arrows, month
+  and year buttons and lists and Today and Done buttons; the close button of a
+  fullscreen panel (also in c-select, c-autocomplete and c-tree-select); and
+  c-link. The time picker's selected end tab rings in its own ink, inside the
+  fill.
+- Updated dependencies [[`45179c7`](https://github.com/CSCfi/ui/commit/45179c754956d0ba15e592ea05c57cad38f9048f), [`5672043`](https://github.com/CSCfi/ui/commit/567204394ddd1a20617c6abe2412431608a0c6c2)]:
+  - @cscfi/csc-ui@4.0.0-alpha.30
+
+## 4.0.0-alpha.29
+
+### Minor Changes
+
+- [#303](https://github.com/CSCfi/ui/pull/303) [`72aca2d`](https://github.com/CSCfi/ui/commit/72aca2d450a9ce6b93c6a1b6f4267ab49a48d2f2) Thanks [@razorfever](https://github.com/razorfever)! - c-date-picker, c-time-picker: on a narrow viewport the fullscreen panel now
+  ends in a Done button. Picks only select there, and nothing is emitted until
+  Done commits them and closes the panel; the close button and Escape discard
+  them. The Today and Now buttons select the same way. The anchored panel is
+  unchanged.
+
+- [#303](https://github.com/CSCfi/ui/pull/303) [`f5b416f`](https://github.com/CSCfi/ui/commit/f5b416f3ee40392d22d7d41bc4efa78c72c4b62a) Thanks [@razorfever](https://github.com/razorfever)! - c-number-field opens the numeric keyboard on phones, also in fields that take
+  negative numbers, and gains step buttons: up and down chevrons that move the
+  number by the new `step` prop (`1` by default) and repeat while held. The
+  arrow keys step too, and Page Up / Page Down move ten steps. Stepping snaps to
+  the step grid and stays within `min` and `max`. The buttons' accessible labels
+  can be translated with the new `texts` prop.
+
+- [#303](https://github.com/CSCfi/ui/pull/303) [`219a91e`](https://github.com/CSCfi/ui/commit/219a91e79d155b8f8b476720ee92ed6b8cd88517) Thanks [@razorfever](https://github.com/razorfever)! - Add `show-today` to c-date-picker and `show-now` to c-time-picker: an opt-in
+  button under the panel that picks today (the current month under
+  `type="month"`) or commits the current time.
+
+### Patch Changes
+
+- [#303](https://github.com/CSCfi/ui/pull/303) [`8561284`](https://github.com/CSCfi/ui/commit/856128481a567503104da5f137fe31310fe54c8c) Thanks [@razorfever](https://github.com/razorfever)! - c-date-picker, c-time-picker: the calendar and clock buttons are bigger in a
+  default-size field, a 24px icon on a 40px button, so they are easier to tap.
+  A small field keeps the 28px button.
+
+- [#303](https://github.com/CSCfi/ui/pull/303) [`79f8220`](https://github.com/CSCfi/ui/commit/79f82207e410b01c42b3c838d13e77ca24297297) Thanks [@razorfever](https://github.com/razorfever)! - c-time-picker: in the fullscreen panel, a column that fits (the hours in a
+  tall window, AM/PM, a coarse minute step) now rests its selected row in the
+  middle too, so the selections line up.
+
+- [#303](https://github.com/CSCfi/ui/pull/303) [`3a47459`](https://github.com/CSCfi/ui/commit/3a47459890edb2eec678b06207064477c1bd259f) Thanks [@razorfever](https://github.com/razorfever)! - c-time-picker: a 12-hour hour column now lists 1 to 11 and then 12, instead
+  of starting with 12.
+- Updated dependencies [[`72aca2d`](https://github.com/CSCfi/ui/commit/72aca2d450a9ce6b93c6a1b6f4267ab49a48d2f2), [`f5b416f`](https://github.com/CSCfi/ui/commit/f5b416f3ee40392d22d7d41bc4efa78c72c4b62a), [`8561284`](https://github.com/CSCfi/ui/commit/856128481a567503104da5f137fe31310fe54c8c), [`219a91e`](https://github.com/CSCfi/ui/commit/219a91e79d155b8f8b476720ee92ed6b8cd88517), [`79f8220`](https://github.com/CSCfi/ui/commit/79f82207e410b01c42b3c838d13e77ca24297297), [`3a47459`](https://github.com/CSCfi/ui/commit/3a47459890edb2eec678b06207064477c1bd259f)]:
+  - @cscfi/csc-ui@4.0.0-alpha.29
+
+## 4.0.0-alpha.28
+
+### Minor Changes
+
+- [#301](https://github.com/CSCfi/ui/pull/301) [`fcbc33f`](https://github.com/CSCfi/ui/commit/fcbc33f42f1deec17b69b65811898663075df5d9) Thanks [@razorfever](https://github.com/razorfever)! - Add `type="month"` to c-date-picker for picking a year and a month
+  (`'YYYY-MM'`), with ranges, `min`/`max` and a format derived from `format`.
+
+- [#301](https://github.com/CSCfi/ui/pull/301) [`cfb76c1`](https://github.com/CSCfi/ui/commit/cfb76c1a56c5c39f7c7cb70c0ce4934b3e4705ec) Thanks [@razorfever](https://github.com/razorfever)! - Add c-time-picker: a typeable time field with hour and minute columns, 12- and
+  24-hour formats, a minute step, min and max, and time ranges that may span
+  midnight. The value is an ISO `HH:mm` string whatever the displayed format.
+
+### Patch Changes
+
+- [#301](https://github.com/CSCfi/ui/pull/301) [`8424a7d`](https://github.com/CSCfi/ui/commit/8424a7d30a4f375818dc253386215a70aa95fcc8) Thanks [@razorfever](https://github.com/razorfever)! - Fix a click in c-date-picker's range end input moving the caret to the start
+  input.
+
+- [#301](https://github.com/CSCfi/ui/pull/301) [`9e5b02d`](https://github.com/CSCfi/ui/commit/9e5b02dfc54171b0f42c78cc128c08b695d0c02b) Thanks [@razorfever](https://github.com/razorfever)! - Fix disabled rows in c-time-picker and disabled days in c-date-picker looking
+  almost like enabled ones in light mode. They now use a new
+  `on-surface-disabled` token.
+
+- [#301](https://github.com/CSCfi/ui/pull/301) [`a9d54fb`](https://github.com/CSCfi/ui/commit/a9d54fb473ce2098305eed17f58b5953e87759e1) Thanks [@razorfever](https://github.com/razorfever)! - c-time-picker keeps the selected row at the top of its column (the middle on
+  narrow viewports) on open and after every pick, including the last rows of a
+  column.
+- Updated dependencies [[`fcbc33f`](https://github.com/CSCfi/ui/commit/fcbc33f42f1deec17b69b65811898663075df5d9), [`8424a7d`](https://github.com/CSCfi/ui/commit/8424a7d30a4f375818dc253386215a70aa95fcc8), [`9e5b02d`](https://github.com/CSCfi/ui/commit/9e5b02dfc54171b0f42c78cc128c08b695d0c02b), [`a9d54fb`](https://github.com/CSCfi/ui/commit/a9d54fb473ce2098305eed17f58b5953e87759e1), [`cfb76c1`](https://github.com/CSCfi/ui/commit/cfb76c1a56c5c39f7c7cb70c0ce4934b3e4705ec)]:
+  - @cscfi/csc-ui@4.0.0-alpha.28
+
+## 4.0.0-alpha.27
+
+### Minor Changes
+
+- [#299](https://github.com/CSCfi/ui/pull/299) [`de58feb`](https://github.com/CSCfi/ui/commit/de58feb102f4688eef2a1d4a4c7af7dc3737afc8) Thanks [@razorfever](https://github.com/razorfever)! - Add `c-date-picker`: a typeable date field with a calendar panel. It takes a
+  single date or, with `range`, a start and an end, and its value is an ISO
+  `YYYY-MM-DD` string. The display `format`, the first day of the week, week
+  numbers and the texts are configurable, and dates can be disabled with `min` /
+  `max`, a `disabled-dates` list or an `is-date-disabled` predicate. On a narrow
+  viewport the calendar opens as a fullscreen panel.
+
+- [#299](https://github.com/CSCfi/ui/pull/299) [`e07c07a`](https://github.com/CSCfi/ui/commit/e07c07a4c94aa538239a30a79c2f8ac5f5f8f3fe) Thanks [@razorfever](https://github.com/razorfever)! - Add `c-number-field`: a number input that shows thousands separators as the
+  user types (`1 234 567,89`) while its value stays a plain number. The
+  separators follow the page language unless set, `decimals` allows fraction
+  digits (with optional padding), and `min` / `max` report an out-of-range
+  number through the `out-of-range` custom state instead of changing it.
+
+- [#299](https://github.com/CSCfi/ui/pull/299) [`05366e1`](https://github.com/CSCfi/ui/commit/05366e1fac0c59bd78fde46e7e893ac40d66d7fe) Thanks [@razorfever](https://github.com/razorfever)! - Add input masks to `c-text-field`. A `mask` such as `+358 ## ### ####` makes
+  the typed text follow a pattern (`#` a digit, `A` a letter, `*` either), with
+  the separators filled in automatically, and a faint guide in the field shows
+  what is still to be typed (`+358 __ ___ ____`). A mask can end in optional
+  parts for formats of varying length, like `+358 #####[#######]` for 5–12
+  digits. The value is the text as shown; the read-only `unmaskedValue` holds
+  only the typed characters, and `maskComplete` and the `incomplete` custom
+  state tell whether the required part is filled.
+
+### Patch Changes
+
+- [#299](https://github.com/CSCfi/ui/pull/299) [`91a7cbe`](https://github.com/CSCfi/ui/commit/91a7cbe89eb322cb8c9131a9ef9c3749baf1334f) Thanks [@razorfever](https://github.com/razorfever)! - `c-date-picker` now shapes typed dates to its `format` as they are typed: the
+  separators appear on their own, and letters and other stray characters are
+  ignored.
+- Updated dependencies [[`de58feb`](https://github.com/CSCfi/ui/commit/de58feb102f4688eef2a1d4a4c7af7dc3737afc8), [`91a7cbe`](https://github.com/CSCfi/ui/commit/91a7cbe89eb322cb8c9131a9ef9c3749baf1334f), [`e07c07a`](https://github.com/CSCfi/ui/commit/e07c07a4c94aa538239a30a79c2f8ac5f5f8f3fe), [`05366e1`](https://github.com/CSCfi/ui/commit/05366e1fac0c59bd78fde46e7e893ac40d66d7fe)]:
+  - @cscfi/csc-ui@4.0.0-alpha.27
+
+## 4.0.0-alpha.26
+
+### Minor Changes
+
+- [#297](https://github.com/CSCfi/ui/pull/297) [`30dc497`](https://github.com/CSCfi/ui/commit/30dc49704d0732518a947015d678f5436c0a2915) Thanks [@villeerikssoncsc](https://github.com/villeerikssoncsc)! - Honour the OS reduced-motion preference in every component, and make the
+  accordion frame the default c-accordion look.
+
+  - With `prefers-reduced-motion: reduce`, every component transition is
+    instant. The dropdown, autocomplete and tree-select panels open in place,
+    the loader message no longer rises, ripples are skipped and the tab strip
+    arrows scroll instantly. Spinners, indeterminate progress and the toast
+    timer keep moving because the motion carries meaning.
+  - Collapsed c-accordion items now stack flush into one hairline frame with
+    rounded ends. An expanded item lifts out of it with a primary outline, a
+    faint primary wash, an inset accent bar and 8px of space around it. The
+    header is transparent, and the content sits in an inset card. Consumers who
+    wrote this look as a `::part()` override can remove it.
+  - `outlined` now outlines expanded items only, thickening their outline to
+    2px. It used to draw a ring inside every item, which reads as a double
+    border in the frame.
+  - Fix c-accordion ignoring its initial `value` when its items are authored in
+    HTML.
+
+### Patch Changes
+
+- Updated dependencies [[`30dc497`](https://github.com/CSCfi/ui/commit/30dc49704d0732518a947015d678f5436c0a2915)]:
+  - @cscfi/csc-ui@4.0.0-alpha.26
+
+## 4.0.0-alpha.25
+
+### Patch Changes
+
+- [#295](https://github.com/CSCfi/ui/pull/295) [`7feb3ac`](https://github.com/CSCfi/ui/commit/7feb3ac6aca3db7b55450233ab660434fe350ce9) Thanks [@razorfever](https://github.com/razorfever)! - Fix popovers, menus, tooltips and field lists running off the edge of the
+  screen in browsers without CSS anchor positioning (Firefox 140 ESR) when they
+  don't fit beside their trigger, for example a wide popover on a phone. They now
+  stay inside the viewport and pick the same placement as in other browsers.
+- Updated dependencies [[`7feb3ac`](https://github.com/CSCfi/ui/commit/7feb3ac6aca3db7b55450233ab660434fe350ce9)]:
+  - @cscfi/csc-ui@4.0.0-alpha.25
+
+## 4.0.0-alpha.24
+
+### Patch Changes
+
+- [#293](https://github.com/CSCfi/ui/pull/293) [`561a03c`](https://github.com/CSCfi/ui/commit/561a03c44acbe4b1b90ed20ff84affb15414206e) Thanks [@razorfever](https://github.com/razorfever)! - Fix the floating label disappearing in Firefox 140 ESR once a field is focused
+  or filled. The label lifted onto the field border in `c-text-field`,
+  `c-select`, `c-autocomplete` and `c-tree-select` (and any bare `c-input`)
+  painted nothing there; it now shows in every browser, with the same look and
+  the same ellipsis for a long label.
+
+- [#293](https://github.com/CSCfi/ui/pull/293) [`e3e2502`](https://github.com/CSCfi/ui/commit/e3e2502e8051aa789dc945e1b49113aa3bd5dcf0) Thanks [@razorfever](https://github.com/razorfever)! - Fix overlays opening in the wrong place in browsers without CSS anchor
+  positioning, such as Firefox 140 ESR. Menus and submenus, tooltips, popovers
+  and the `c-select`, `c-autocomplete` and `c-tree-select` panels now open against
+  their trigger there too, flip like they do elsewhere when there is no room, and
+  follow the trigger on scroll. `@oddbird/css-anchor-positioning` is no longer a
+  dependency; `@floating-ui/dom` takes its place and loads only in those browsers.
+
+- [#293](https://github.com/CSCfi/ui/pull/293) [`d3b0186`](https://github.com/CSCfi/ui/commit/d3b018615e1e02a7e4210862a860a244b54fba02) Thanks [@razorfever](https://github.com/razorfever)! - Fix sticky toolbars and side navigation vanishing in Firefox 140 ESR while a
+  `c-select` list, a `c-modal` or a fullscreen field panel is open on a scrolled
+  page. The shared page scroll lock shifted the body up by the scroll offset,
+  and Firefox left sticky content at its in-page position, far above the
+  viewport. The locked body now scrolls itself to the offset instead, so sticky
+  content stays pinned in every browser and nothing visibly moves.
+
+- [#293](https://github.com/CSCfi/ui/pull/293) [`d66a85b`](https://github.com/CSCfi/ui/commit/d66a85bf1e07def34496d9667a93a6d0b3a644a8) Thanks [@razorfever](https://github.com/razorfever)! - Fix the closed mobile `c-side-navigation` drawer showing as a strip at the
+  right edge of the screen on a page with `scrollbar-gutter: stable`. The drawer
+  was only slid off-screen, which left it in the reserved gutter; it is now also
+  hidden once closed, which takes its links out of the tab order too. The
+  slide-in and slide-out animations are unchanged.
+- Updated dependencies [[`561a03c`](https://github.com/CSCfi/ui/commit/561a03c44acbe4b1b90ed20ff84affb15414206e), [`e3e2502`](https://github.com/CSCfi/ui/commit/e3e2502e8051aa789dc945e1b49113aa3bd5dcf0), [`d3b0186`](https://github.com/CSCfi/ui/commit/d3b018615e1e02a7e4210862a860a244b54fba02), [`d66a85b`](https://github.com/CSCfi/ui/commit/d66a85bf1e07def34496d9667a93a6d0b3a644a8)]:
+  - @cscfi/csc-ui@4.0.0-alpha.24
+
+## 4.0.0-alpha.23
+
+### Patch Changes
+
+- [#291](https://github.com/CSCfi/ui/pull/291) [`5f28bbe`](https://github.com/CSCfi/ui/commit/5f28bbea7743f968a20522787ad775de55232d7d) Thanks [@razorfever](https://github.com/razorfever)! - `c-main`: a page that fits the viewport no longer scrolls. The desktop drawer,
+  sized to its pinned height, used to add the banner's and a `static` toolbar's
+  height to the dashboard layout, so a short page could scroll by that much and
+  hide the toolbar (also inside a bounded shell). The drawer now adds nothing to
+  the layout and still fills the viewport once pinned. Content that paints below
+  `c-main`'s bottom edge is clipped instead of extending the document, and the
+  dashboard grid is laid out inside `::part(root)` rather than on it.
+- Updated dependencies [[`5f28bbe`](https://github.com/CSCfi/ui/commit/5f28bbea7743f968a20522787ad775de55232d7d)]:
+  - @cscfi/csc-ui@4.0.0-alpha.23
+
+## 4.0.0-alpha.22
+
+### Patch Changes
+
+- [#289](https://github.com/CSCfi/ui/pull/289) [`7587a76`](https://github.com/CSCfi/ui/commit/7587a760f8453c0d57a1994812a2f07d3c5c2141) Thanks [@razorfever](https://github.com/razorfever)! - Fix a `c-badge` slotted into a `c-tab` being cut off. The badge is a corner
+  overlay that paints 8px outside its parent, and the tab clipped it three times
+  over — on the tab's inner content box, on the tab element itself, and again on
+  the tab strip's viewport. The tab now clips with a margin wide enough for the
+  badge, the redundant second clip on the tab element is gone, and the strip's
+  viewport allows the same overhang while still hiding the tabs that scroll past
+  it. Badges in tabs now behave like badges in `c-button` and `c-icon-button`.
+- Updated dependencies [[`7587a76`](https://github.com/CSCfi/ui/commit/7587a760f8453c0d57a1994812a2f07d3c5c2141)]:
+  - @cscfi/csc-ui@4.0.0-alpha.22
+
+## 4.0.0-alpha.21
+
+### Minor Changes
+
+- [#287](https://github.com/CSCfi/ui/pull/287) [`0116d82`](https://github.com/CSCfi/ui/commit/0116d82b1559d6625d25a043902f0b084ee6f6ba) Thanks [@villeerikssoncsc](https://github.com/villeerikssoncsc)! - One shared control height of 52px (ADR-0055). The `default` field box of
+  `c-input` — behind `c-text-field`, `c-select`, `c-autocomplete` and
+  `c-tree-select` — grows from 44px to 52px, held in the new `--spacing-control`
+  theme value together with the `default` `c-button` (52px, from 44px), the
+  `c-button-group` frame (52px, its buttons 44px inside) and `c-tab` (52px, as
+  before). `c-tree-select` no longer grows on selection: its two-line path and
+  label value fits the box. The button scale becomes 28 / 52 / 60: `large` rises
+  to the toolbar height so it stays a step above `default`; `small` buttons and
+  `small` fields are unchanged. Layouts aligned to the old 44px need to follow.
+
+### Patch Changes
+
+- [#287](https://github.com/CSCfi/ui/pull/287) [`7628ea6`](https://github.com/CSCfi/ui/commit/7628ea6da5e07543fdda4a271cb741b1949c2678) Thanks [@villeerikssoncsc](https://github.com/villeerikssoncsc)! - Fix two field regressions from the 52px control height (ADR-0055). The resting
+  floating label — the one sitting inside an empty, unfocused field — now centres
+  in the box again instead of hanging 2px high, across `c-text-field`, `c-select`,
+  `c-autocomplete` and `c-tree-select`. The `small` field box is 36px again: it
+  had been rendering at the 52px default height, which also left its label far off
+  centre. The lifted label and the value text are unchanged.
+
+- [#287](https://github.com/CSCfi/ui/pull/287) [`0116d82`](https://github.com/CSCfi/ui/commit/0116d82b1559d6625d25a043902f0b084ee6f6ba) Thanks [@villeerikssoncsc](https://github.com/villeerikssoncsc)! - `c-tab-buttons` scrolls sideways inside `c-tabs` again. The tab row that
+  `c-tabs` slots the strip into may outgrow its viewport (that is how the
+  underlined tab row scrolls), so an overflowing strip pushed the row wide
+  instead of scrolling: the frame was clipped at the edge, the last tab was cut
+  off, and neither the edge arrows nor touch panning appeared — as seen on a
+  phone with three tabs. In buttons mode the row now squeezes the strip to its
+  own width, so the strip scrolls by touch, drag, wheel and the edge arrows as
+  documented.
+
+  The strip's corners clip correctly too: the scrolled buttons and the sliding
+  indicator are now cut by the track's own frame, following its squircle at the
+  inner edge of the hairline, instead of a round radius that ran 1px past it.
+
+- [#287](https://github.com/CSCfi/ui/pull/287) [`0116d82`](https://github.com/CSCfi/ui/commit/0116d82b1559d6625d25a043902f0b084ee6f6ba) Thanks [@villeerikssoncsc](https://github.com/villeerikssoncsc)! - The dark-mode hover tint is subtle again. `primary-subtle-hover` mapped to
+  primary-600 in dark mode — brighter than the primary-700 fill of the selected
+  state — so a hovered tab, list row or table row outshone the selected one. It
+  now maps to primary-800, a step fainter than the fill, as in light mode where
+  primary-50 sits under the primary-100 fill.
+- Updated dependencies [[`0116d82`](https://github.com/CSCfi/ui/commit/0116d82b1559d6625d25a043902f0b084ee6f6ba), [`7628ea6`](https://github.com/CSCfi/ui/commit/7628ea6da5e07543fdda4a271cb741b1949c2678), [`0116d82`](https://github.com/CSCfi/ui/commit/0116d82b1559d6625d25a043902f0b084ee6f6ba), [`0116d82`](https://github.com/CSCfi/ui/commit/0116d82b1559d6625d25a043902f0b084ee6f6ba)]:
+  - @cscfi/csc-ui@4.0.0-alpha.21
+
+## 4.0.0-alpha.20
+
+### Minor Changes
+
+- [#285](https://github.com/CSCfi/ui/pull/285) [`cac5376`](https://github.com/CSCfi/ui/commit/cac5376a2939b187511fa598530365a72cfc71e4) Thanks [@villeerikssoncsc](https://github.com/villeerikssoncsc)! - Invert the theme mode for part of a page. An element carrying
+  `data-theme-invert` resolves the semantic tokens in the opposite mode to the one
+  it sits in — dark inside a light page, light inside a dark one — so a region
+  that must always stand apart from its surroundings needs no per-page variant.
+  Inverting scopes nest like pinned ones, so inverting twice is back in the
+  surrounding mode, and a `data-theme` on the same element wins over the
+  inversion. On `<html>` it means the opposite of the OS preference. The attribute
+  is presence-only, like `hidden`: `data-theme-invert="false"` still inverts, so
+  remove it to stop.
+
+  `data-theme` is unchanged and still takes only `light` and `dark`, so a
+  `data-theme` your own theming system already sets still cannot pull components
+  out of the surrounding mode.
+
+  Every mode block now publishes the mode it resolved as `--c-mode` (`light` or
+  `dark`). It is public: read it in JS, or style-query it from your own CSS with
+  `@container style(--c-mode: dark) { … }` instead of duplicating the `data-theme`
+  selectors.
+
+  `themeMode(element)` now reads that property instead of walking up for a
+  `data-theme` attribute, so it always gives the same answer as the CSS — and it
+  now works for an element **inside a shadow root**, where the old ancestor walk
+  stopped at the boundary and fell back to the OS preference.
+  `observeThemeMode()` follows `data-theme-invert` too.
+
+  A hand-written role override needs the new scope as well:
+  `:root, [data-theme], [data-theme-invert] { --c-surface: … }`. Seed overrides
+  via `applyTheme` are unaffected.
+
+### Patch Changes
+
+- [#285](https://github.com/CSCfi/ui/pull/285) [`e073115`](https://github.com/CSCfi/ui/commit/e0731154c81ad8e418c64211517a597ace3faa43) Thanks [@villeerikssoncsc](https://github.com/villeerikssoncsc)! - Every dropdown meets its field with the same gap: none. `c-select`'s listbox
+  sat flush under the field and `c-menu` opens at its `distance` (0 by default),
+  but `c-autocomplete` and `c-tree-select` left 8px — the anchored panel pulled
+  back only the field's message area, not the gap above it — and opened upward
+  `c-select` left 8px while the anchored panels left none. The anchored panel
+  now measures the field box itself, below and above (so an on-top label no
+  longer pushes a flipped panel up), and the upward listbox drops its padding.
+
+- [#285](https://github.com/CSCfi/ui/pull/285) [`e073115`](https://github.com/CSCfi/ui/commit/e0731154c81ad8e418c64211517a597ace3faa43) Thanks [@villeerikssoncsc](https://github.com/villeerikssoncsc)! - `c-menu` submenus open on tap on iOS. A click on a parent item toggled its
+  submenu, so whenever the submenu was open — or merely recorded as open — by
+  the time the tap's delayed `click` arrived, the tap closed it and nothing ever
+  showed. A click on a parent item now only ever opens its submenu and moves
+  into it; the record of open submenus follows the panel's real popover state,
+  hover-open is reserved for mouse and pen pointers, and on a narrow viewport,
+  where neither side of the row has room, the submenu drops below (or above)
+  its row instead of rendering off screen.
+
+- [#285](https://github.com/CSCfi/ui/pull/285) [`5059f47`](https://github.com/CSCfi/ui/commit/5059f47a7396e1d6ba7875efae14f876bf6d2a13) Thanks [@villeerikssoncsc](https://github.com/villeerikssoncsc)! - An option's label resolution honours an explicit empty `name`: a `<c-option>`
+  authored with `name=""` now has an empty label, and the field falls back to
+  its own last resort (the raw value), instead of the empty string being
+  treated as absent and the option's text content taking over. Only a `name`
+  that was never set (the property and attribute both missing) falls through to
+  `c-option-value` or the option's text, as before.
+
+- [#285](https://github.com/CSCfi/ui/pull/285) [`e073115`](https://github.com/CSCfi/ui/commit/e0731154c81ad8e418c64211517a597ace3faa43) Thanks [@villeerikssoncsc](https://github.com/villeerikssoncsc)! - Stop the fullscreen panels of `c-autocomplete`, `c-tree-select` and `c-select`
+  flickering on iOS when a short list is dragged. With the on-screen keyboard
+  up, iOS Safari pans the visual viewport on any single-finger drag the page
+  did not consume, and the panel content that follows the visual viewport to
+  stay above the keyboard jumped after every pan. While the shared page lock is
+  held, a single-touch drag with no scrollable list in its path is cancelled; a
+  drag inside an overflowing list still scrolls it.
+
+- [#285](https://github.com/CSCfi/ui/pull/285) [`5059f47`](https://github.com/CSCfi/ui/commit/5059f47a7396e1d6ba7875efae14f876bf6d2a13) Thanks [@villeerikssoncsc](https://github.com/villeerikssoncsc)! - Side navigation items sit 4px apart instead of 1px, so adjacent pills — and
+  the hover and active washes they paint — no longer read as one continuous
+  strip.
+
+- [#285](https://github.com/CSCfi/ui/pull/285) [`e073115`](https://github.com/CSCfi/ui/commit/e0731154c81ad8e418c64211517a597ace3faa43) Thanks [@villeerikssoncsc](https://github.com/villeerikssoncsc)! - `c-side-navigation`'s mobile drawer fits the visible viewport. It was sized
+  in `vh`, which on a phone is the viewport with the browser chrome collapsed,
+  so while the address bar was shown the drawer's tail — the last items and the
+  bottom slot — sat behind it. The drawer is now sized in `dvh` and follows the
+  browser chrome as it shows and hides.
+
+- [#285](https://github.com/CSCfi/ui/pull/285) [`5b384d6`](https://github.com/CSCfi/ui/commit/5b384d6e8aa7aeae261f75e40bb14f439b17cbae) Thanks [@villeerikssoncsc](https://github.com/villeerikssoncsc)! - Fix the ink of content projected onto a surface that pins its own theme mode
+  (ADR-0053). A mode scope re-points the semantic tokens but paints nothing, so a
+  `color` resolved outside it inherits in as a literal: `<c-card
+data-theme="light">` on a dark page flipped its background but left its slotted
+  body copy in dark-mode ink, near-invisible on the light surface.
+
+  Containers that paint a surface ladder rung and project consumer content now
+  declare the matching `on-` ink on that same box, so everything they project
+  re-resolves with the surface:
+
+  - `c-card` — `on-surface` on the `root` part (the `surface-raised` box). The
+    card sections and their slotted content inherit it, and
+    `c-card::part(root) { color }` stays the single lever for recolouring the
+    whole card.
+  - `c-login-card` — `on-surface` on the `root` part (the `surface` box).
+  - `c-menu` — `on-surface` on the `list` part (the `surface-overlay` panel), for
+    content slotted into a menu beside its `c-menu-item`s.
+
+  Under a pinned document mode nothing moves: the ink these boxes inherited was
+  already `on-surface`. The one intentional change is a `c-card` inside a
+  `c-modal`, whose body copy now renders the card's own `on-surface` instead of
+  the modal's `on-surface-muted` — matching a standalone card and the card title.
+
+- [#285](https://github.com/CSCfi/ui/pull/285) [`e073115`](https://github.com/CSCfi/ui/commit/e0731154c81ad8e418c64211517a597ace3faa43) Thanks [@villeerikssoncsc](https://github.com/villeerikssoncsc)! - `c-tree-select` centres the committed value in its field and never truncates
+  its code. The two-line value block sat 10px from the top and 6px from the
+  bottom, so both a path-and-label value and a single-line root value read as
+  bottom-heavy; the block is now centred with even padding. The code kept
+  ellipsising along with the label; it is the item's identity, so it now keeps
+  its full width and only the label beside it truncates.
+- Updated dependencies [[`e073115`](https://github.com/CSCfi/ui/commit/e0731154c81ad8e418c64211517a597ace3faa43), [`cac5376`](https://github.com/CSCfi/ui/commit/cac5376a2939b187511fa598530365a72cfc71e4), [`e073115`](https://github.com/CSCfi/ui/commit/e0731154c81ad8e418c64211517a597ace3faa43), [`5059f47`](https://github.com/CSCfi/ui/commit/5059f47a7396e1d6ba7875efae14f876bf6d2a13), [`e073115`](https://github.com/CSCfi/ui/commit/e0731154c81ad8e418c64211517a597ace3faa43), [`5059f47`](https://github.com/CSCfi/ui/commit/5059f47a7396e1d6ba7875efae14f876bf6d2a13), [`e073115`](https://github.com/CSCfi/ui/commit/e0731154c81ad8e418c64211517a597ace3faa43), [`5b384d6`](https://github.com/CSCfi/ui/commit/5b384d6e8aa7aeae261f75e40bb14f439b17cbae), [`e073115`](https://github.com/CSCfi/ui/commit/e0731154c81ad8e418c64211517a597ace3faa43)]:
+  - @cscfi/csc-ui@4.0.0-alpha.20
+
+## 4.0.0-alpha.19
+
+### Minor Changes
+
+- [#283](https://github.com/CSCfi/ui/pull/283) [`a2606bb`](https://github.com/CSCfi/ui/commit/a2606bb73a16629d89ed9f552ecb9a0204cd584a) Thanks [@razorfever](https://github.com/razorfever)! - Pin a theme mode to part of a page. `data-theme="light"` or `"dark"` now works
+  on any element, not just `<html>`: that element and everything inside it resolve
+  the semantic tokens in that mode, whatever the rest of the page is doing. Scopes
+  nest and the nearest one wins, the mode carries into shadow roots and into
+  top-layer panels, and a single component works too — `<c-button data-theme="dark">`.
+  A scope re-points colours and paints nothing, so give a container `bg-surface`
+  and `text-on-surface` to make it draw the mode it pins.
+
+  New `observeThemeMode(element, callback)` reports the mode in effect for an
+  element and follows it — a `data-theme` flip on any ancestor, or the OS
+  preference changing. `themeMode(element)` now resolves the nearest scope rather
+  than only the element you hand it, which is what a chart inside a pinned panel
+  needs.
+
+  The mode blocks now also set `color-scheme`, so UA chrome — scrollbars, textarea
+  resize grabbers, autofill, date pickers — follows the pinned mode instead of the
+  OS. This also fixes dark mode at the document root, where that chrome rendered
+  light.
+
+  Only `light` and `dark` pin a mode; any other value is now ignored rather than
+  treated as light. If you set `data-theme` on `<html>` to something else, it
+  previously rendered light and now follows the OS preference. A hand-written
+  `:root { --c-<role>: … }` override no longer applies inside a scope — write
+  `:root, [data-theme]` to cover both. Seed overrides via `applyTheme` are
+  unaffected.
+
+### Patch Changes
+
+- Updated dependencies [[`a2606bb`](https://github.com/CSCfi/ui/commit/a2606bb73a16629d89ed9f552ecb9a0204cd584a)]:
+  - @cscfi/csc-ui@4.0.0-alpha.19
+
 ## 4.0.0-alpha.18
 
 ### Patch Changes
