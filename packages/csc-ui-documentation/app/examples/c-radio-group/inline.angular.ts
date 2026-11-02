@@ -12,7 +12,7 @@ import { Component, CUSTOM_ELEMENTS_SCHEMA, signal } from '@angular/core';
         hide-details
         inline
         label="Email frequency"
-        (changeValue)="frequency.set($any($event).detail)"
+        (change)="frequency.set($any($event).detail)"
       >
         <c-radio value="daily">Daily</c-radio>
         <c-radio value="weekly">Weekly</c-radio>

@@ -8,7 +8,7 @@
  *     into its tag-name map (`CSwitchElement` etc.) — `createComponent`
  *     derives the React props from the element type.
  *   - Event typing anchors on the exported `C*ElementEventMap` interfaces
- *     (`EventName<CSwitchElementEventMap['changeValue']>`), so event `detail`
+ *     (`EventName<CSwitchElementEventMap['change']>`), so event `detail`
  *     types stay correct without re-declaring them here.
  *
  * The output is committed for reviewability; `pnpm run build` regenerates it
@@ -34,31 +34,30 @@ if (!existsSync(manifestPath)) {
 }
 
 /**
- * Elements the consumer never authors (instantiated internally by a parent).
- * Keep in sync with INTERNAL_ONLY in the docs' useManifest.ts.
- */
-const INTERNAL_ONLY = new Set(['c-dropdown']);
-
-/**
  * Props that shadow an HTMLElement member `@lit/react` cannot reconcile, per
  * tag. `HTMLElement.autocorrect` is a NON-optional `boolean`; c-text-field's
  * `autocorrect` is an optional `boolean` (unset = browser per-input-type
- * default), and `boolean | undefined` is not assignable to `boolean`, so the
+ * default) — and so is c-otp-input's `autofocus`, and `boolean | undefined` is not assignable to `boolean`, so the
  * element interface fails `@lit/react`'s `I extends HTMLElement` constraint.
  * The wrapper re-adds the lib member for these names so the constraint holds;
  * the React prop stays optional regardless. A new collision fails the tsc
  * step loudly — add the prop here when that happens.
  */
-const DOM_LIB_COLLISIONS = new Map([['c-text-field', ['autocorrect']]]);
+const DOM_LIB_COLLISIONS = new Map([
+  ['c-otp-input', ['autofocus']],
+  ['c-text-field', ['autocorrect']],
+]);
 
 const manifest = JSON.parse(readFileSync(manifestPath, 'utf8'));
 
+// Internal tags (ADR-0075) are only named in `csc.internalTags`, never
+// declared, so they get no wrapper.
 const components = manifest.modules
   .flatMap((mod) => mod.declarations ?? [])
-  .filter((decl) => decl.customElement && !INTERNAL_ONLY.has(decl.tagName))
+  .filter((decl) => decl.customElement)
   .sort((a, b) => a.tagName.localeCompare(b.tagName));
 
-/** `update:value` → `onUpdateValue`, `changeValue` → `onChangeValue`. */
+/** `update:value` → `onUpdateValue`, `change:query` → `onChangeQuery`. */
 const reactEventName = (name) =>
   `on${name
     .split(/[:-]/)
@@ -111,10 +110,16 @@ for (const component of components) {
     ? `\n  events: {\n${eventEntries}\n  },`
     : '';
 
+  // The public, settable properties: what a React prop must be set as.
+  const properties = (component.members ?? [])
+    .filter((member) => member.kind === 'field' && !member.readonly)
+    .map((member) => `'${member.name}'`)
+    .sort();
+
   blocks.push(
     `${jsdoc(component.description)}export const ${component.name} = createComponent({
   displayName: '${component.name}',
-  elementClass: elementClass<${elementType}>('${component.tagName}'),${eventsBlock}
+  elementClass: elementClass<${elementType}>([${properties.join(', ')}]),${eventsBlock}
   react: React,
   tagName: '${component.tagName}',
 });`,
@@ -141,15 +146,27 @@ if (typeof customElements !== 'undefined') {
 }
 
 /**
- * The upgraded element class, typed as its generated element interface.
- * \`createComponent\` probes \`elementClass.prototype\` to route React props to
- * DOM properties; on the server (no custom element registry) an empty class
- * makes every prop render as an attribute, which hydration then corrects.
+ * A stand-in element class, typed as the generated element interface.
+ * \`createComponent\` sets a React prop as a DOM property only when the
+ * class's prototype names it; anything else goes to React, which writes an
+ * attribute while the element is still unconnected. Vue defines a custom
+ * element's props on the instance when it connects, so the registered class's
+ * prototype names none of them, and objects, arrays and functions arrived as
+ * \`[object Object]\` attributes. The prototype lists the tag's properties
+ * instead. On the server (no custom element registry) it lists none, so every
+ * prop renders as an attribute, which hydration then corrects.
  */
-const elementClass = <T extends HTMLElement>(tag: string) =>
-  (typeof customElements !== 'undefined'
-    ? customElements.get(tag)
-    : class {}) as unknown as { new (): T };
+const elementClass = <T extends HTMLElement>(properties: readonly string[]) => {
+  const stand = class {};
+
+  if (typeof customElements !== 'undefined') {
+    for (const name of properties) {
+      Object.defineProperty(stand.prototype, name, { value: undefined });
+    }
+  }
+
+  return stand as unknown as { new (): T };
+};
 
 ${blocks.join('\n\n')}
 `;

@@ -47,7 +47,7 @@ consumer's validation:
 <c-date-picker
   v-model="date"
   :error-message="error"
-  :valid="!error"
+  :invalid="!!error"
   label="Start date"
   @change:text="
     error = $event.target.badInput ? 'Enter a date as dd.mm.yyyy' : ''

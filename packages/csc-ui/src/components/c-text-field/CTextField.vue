@@ -1,20 +1,32 @@
 <template>
   <c-input
+    v-bind="rootAttrs"
     :active="isActiveForInput"
     :data-hide-details="String(hideDetailsResolved)"
     :disabled
-    :error-message
     :filled="isFilledForInput"
-    :hint
     :input-id
+    :invalid
     :is-textarea="rows > 1"
     :label
     :label-on-top="labelOnTopResolved"
     :required
     :shadow="shadowResolved"
     :size="sizeResolved"
-    :valid
   >
+    <!-- The hint / error message, here in the field's own tree so the
+         input's aria-describedby can name it. -->
+    <field-message
+      :id="`${inputId}-message`"
+      slot="message"
+      :error-message
+      :hide-details="hideDetailsResolved"
+      :hint
+      :invalid
+      :label-on-top="labelOnTopResolved"
+      part="message"
+    />
+
     <!-- Pre slot: forwarded from the consumer's `pre` slot. We only
          render the wrapper when the consumer has actually provided pre
          content — otherwise c-input would see an always-assigned slot
@@ -31,12 +43,13 @@
       v-if="rows > 1"
       :id="inputId"
       ref="inputRef"
-      :aria-invalid="!valid"
-      :autocapitalize="automaticCapitalize || undefined"
+      v-bind="controlAttrs"
+      :aria-describedby="hideDetailsResolved ? undefined : `${inputId}-message`"
+      :aria-invalid="invalid"
+      :aria-label="accessibleName"
+      :autocapitalize="autocapitalize || undefined"
       :autocomplete="autocomplete || undefined"
-      :autocorrect="
-        autocorrect === undefined ? undefined : autocorrect ? 'on' : 'off'
-      "
+      :autocorrect="autocorrectAttr"
       :class="ui.textarea()"
       :disabled
       :name="name || undefined"
@@ -71,12 +84,15 @@
       <input
         :id="inputId"
         ref="inputRef"
-        :aria-invalid="!valid"
-        :autocapitalize="automaticCapitalize || undefined"
-        :autocomplete="autocomplete || undefined"
-        :autocorrect="
-          autocorrect === undefined ? undefined : autocorrect ? 'on' : 'off'
+        v-bind="controlAttrs"
+        :aria-describedby="
+          hideDetailsResolved ? undefined : `${inputId}-message`
         "
+        :aria-invalid="invalid"
+        :aria-label="accessibleName"
+        :autocapitalize="autocapitalize || undefined"
+        :autocomplete="autocomplete || undefined"
+        :autocorrect="autocorrectAttr"
         :class="ui.input()"
         :disabled
         :inputmode="maskInputMode"
@@ -149,194 +165,6 @@ export type CTextFieldAutocapitalize =
   | 'sentences'
   | 'words';
 
-export interface CTextFieldProps {
-  /**
-   * HTML input autocomplete
-   *
-   * @seeded from csc-ui — verify
-   * @freeform any HTML autocomplete token list
-   */
-  autocomplete?: string;
-
-  /**
-   * Enable native input autocorrection (Safari). Maps to the input's
-   * `autocorrect="on"`/`"off"` attribute; left unset (browser default per
-   * input type) when not specified. Mirrors the platform
-   * `HTMLElement.autocorrect` boolean.
-   */
-  autocorrect?: boolean;
-
-  /**
-   * HTML input autocapitalize
-   *
-   * @seeded from csc-ui — verify
-   */
-  automaticCapitalize?: CTextFieldAutocapitalize;
-
-  /**
-   * Disable the input
-   *
-   * @seeded from csc-ui — verify
-   */
-  disabled?: boolean;
-
-  /**
-   * Error message shown in place of the hint while the input is invalid
-   *
-   * @freeform
-   */
-  errorMessage?: string;
-
-  /**
-   * Hide the hint and error messages
-   *
-   * @seeded from csc-ui — verify
-   * @defaultable false
-   */
-  hideDetails?: boolean;
-
-  /**
-   * Hint text for the input
-   *
-   * @seeded from csc-ui — verify
-   * @freeform
-   */
-  hint?: string;
-
-  /**
-   * Id of the input
-   *
-   * @seeded from csc-ui — verify
-   * @freeform
-   */
-  hostId?: string;
-
-  /**
-   * Label of the input
-   *
-   * @seeded from csc-ui — verify
-   * @freeform
-   */
-  label?: string;
-
-  /**
-   * Label on top of the input
-   *
-   * @seeded from csc-ui — verify
-   * @defaultable false
-   */
-  labelOnTop?: boolean;
-
-  /**
-   * Input mask the typed text follows: `#` a digit, `A` a letter, `*` a letter or a digit, `\` escapes the next character, `[…]` wraps a trailing optional section, anything else is a literal. Applies to a single-line `text`, `tel` or `search` field
-   *
-   * @freeform a mask pattern, e.g. `+358 ## ### ####`
-   */
-  mask?: string;
-
-  /**
-   * Maximum value on a numeric input
-   *
-   * @seeded from csc-ui — verify
-   */
-  max?: null | number;
-
-  /**
-   * Minimum value on a numeric input
-   *
-   * @seeded from csc-ui — verify
-   */
-  min?: null | number;
-
-  /**
-   * Name of the input
-   *
-   * @seeded from csc-ui — verify
-   * @freeform
-   */
-  name?: string;
-
-  /**
-   * Placeholder of the input
-   *
-   * @seeded from csc-ui — verify
-   * @freeform
-   */
-  placeholder?: string;
-
-  /**
-   * Mark as readonly
-   *
-   * @seeded from csc-ui — verify
-   */
-  readonly?: boolean;
-
-  /**
-   * Set the input as required
-   *
-   * @seeded from csc-ui — verify
-   */
-  required?: boolean;
-
-  /**
-   * Rows on the input
-   *
-   * @seeded from csc-ui — verify
-   */
-  rows?: number;
-
-  /**
-   * Shadow variant of the input
-   *
-   * @seeded from csc-ui — verify
-   * @defaultable false
-   */
-  shadow?: boolean;
-
-  /**
-   * Field height: the 52px default (the shared control height) or the 36px `small` box (single-line fields)
-   *
-   * @defaultable 'default'
-   */
-  size?: CFieldSize;
-
-  /**
-   * Step size on a numeric input
-   *
-   * @seeded from csc-ui — verify
-   */
-  step?: null | number;
-
-  /**
-   * Trim whitespace from the return value
-   *
-   * @seeded from csc-ui — verify
-   */
-  trimWhitespace?: boolean;
-
-  /**
-   * Type of the input
-   *
-   * @seeded from csc-ui — verify
-   */
-  type?: CTextFieldType;
-
-  /**
-   * Set the validity of the input
-   *
-   * @seeded from csc-ui — verify
-   */
-  valid?: boolean;
-
-  /**
-   * Value of the input
-   *
-   * @seeded from csc-ui — verify
-   * @freeform
-   */
-  value?: string;
-}
-
 /**
  * Type of the input. `password` gets a reveal toggle, `date` a picker button,
  * `number` honours `min`/`max`/`step`; the rest map straight to the native
@@ -351,16 +179,182 @@ export type CTextFieldType =
   | 'tel'
   | 'text'
   | 'url';
+
+interface CTextFieldProps {
+  /**
+   * How on-screen keyboards capitalize typed text, as the native
+   * `autocapitalize` attribute; unset leaves the browser's default
+   */
+  autocapitalize?: CTextFieldAutocapitalize;
+
+  /**
+   * The browser's autofill hint, as the native `autocomplete` attribute
+   * (`email`, `new-password`, `off`…)
+   *
+   * @freeform any HTML autocomplete token list
+   */
+  autocomplete?: string;
+
+  /**
+   * Enable native input autocorrection (Safari). Maps to the input's
+   * `autocorrect="on"`/`"off"` attribute; left unset (browser default per
+   * input type) when not specified. The attribute takes the native values
+   * (`autocorrect="off"`), the property also the platform's
+   * `HTMLElement.autocorrect` boolean.
+   */
+  autocorrect?: 'off' | 'on' | boolean;
+
+  /**
+   * Focus the input when the field mounts, as the native `autofocus` does —
+   * which is not honoured inside a shadow root.
+   */
+  autofocus?: boolean;
+
+  /**
+   * Disable the input
+   */
+  disabled?: boolean;
+
+  /**
+   * Error message shown in place of the hint while the input is invalid
+   *
+   * @freeform
+   */
+  errorMessage?: string;
+
+  /**
+   * Hide the hint and error messages
+   *
+   * @defaultable false
+   */
+  hideDetails?: boolean;
+
+  /**
+   * Hint text for the input
+   *
+   * @freeform
+   */
+  hint?: string;
+
+  /**
+   * Show the control as invalid: its `error-message`, when set, replaces the
+   * hint, and the control is marked `aria-invalid`.
+   */
+  invalid?: boolean;
+
+  /**
+   * Label of the input
+   *
+   * @freeform
+   */
+  label?: string;
+
+  /**
+   * Label on top of the input
+   *
+   * @defaultable false
+   */
+  labelOnTop?: boolean;
+
+  /**
+   * Input mask the typed text follows: `#` a digit, `A` a letter, `*` a letter or a digit, `\` escapes the next character, `[…]` wraps a trailing optional section, anything else is a literal. Applies to a single-line `text`, `tel` or `search` field
+   *
+   * @freeform a mask pattern, e.g. `+358 ## ### ####`
+   */
+  mask?: string;
+
+  /**
+   * Largest value of a `type="number"` field, as the native `max` attribute
+   */
+  max?: null | number;
+
+  /**
+   * Smallest value of a `type="number"` field, as the native `min` attribute
+   */
+  min?: null | number;
+
+  /**
+   * `name` of the inner input. The component is not form-associated, so it
+   * does not submit with a `<form>`.
+   *
+   * @freeform
+   */
+  name?: string;
+
+  /**
+   * Placeholder of the input. Beside a floating `label` it shows only while
+   * the field is focused; under a `mask` it replaces the mask guide
+   *
+   * @freeform
+   */
+  placeholder?: string;
+
+  /**
+   * Make the input read-only: its text can be selected and copied but not
+   * edited
+   */
+  readonly?: boolean;
+
+  /**
+   * Set the input as required
+   */
+  required?: boolean;
+
+  /**
+   * Number of text lines the field shows; above `1` it becomes a multi-line
+   * textarea
+   */
+  rows?: number;
+
+  /**
+   * Draw the field as a raised, drop-shadowed box instead of an outlined one
+   *
+   * @defaultable false
+   */
+  shadow?: boolean;
+
+  /**
+   * Field height: the 52px default (the shared control height) or the 36px `small` box (single-line fields)
+   *
+   * @defaultable 'default'
+   */
+  size?: CFieldSize;
+
+  /**
+   * Step of a `type="number"` field, as the native `step` attribute
+   */
+  step?: null | number;
+
+  /**
+   * Trim leading and trailing whitespace from the emitted text, and from the
+   * shown text when the field is left
+   */
+  trimWhitespace?: boolean;
+
+  /**
+   * The native input type: `password` adds a toggle that reveals the text,
+   * `date` a button that opens the browser's date picker, and `number` honours
+   * `min`, `max` and `step`
+   */
+  type?: CTextFieldType;
+
+  /**
+   * The text in the field; under a `mask`, the text as shown, literals
+   * included
+   *
+   * @freeform
+   */
+  value?: string;
+}
 </script>
 
 <script setup lang="ts">
 /**
- * @slot pre - Content added before the input
- * @slot post - Content added after the input
+ * @slot pre - Content inside the field, before the input, such as an icon
+ * @slot post - Content inside the field, after the input and its password or date button
  * @csspart mask-guide - The faint rest of the input mask, shown behind the typed text
- * @cssstate incomplete - Present while a masked field holds text that leaves a mask token unfilled
- *
- * @seeded from csc-ui — verify
+ * @csspart message - The hint / error message area below the field (always reserved unless `hide-details`)
+ * @cssstate incomplete - Present while a masked field holds text that leaves a required mask token (one outside an optional section) unfilled
  */
 import { mdiCalendar, mdiEye, mdiEyeOff } from '@mdi/js';
 import { tv } from 'tailwind-variants';
@@ -378,7 +372,7 @@ import {
 import type { CFieldSize } from '../../types';
 
 import { useAppDefault } from '../../shared/appDefaults';
-import { emitModelValue } from '../../shared/emitModelValue';
+import FieldMessage from '../../shared/FieldMessage.vue';
 import {
   applyMask,
   compileMask,
@@ -386,34 +380,28 @@ import {
   isNumericMask,
   warnInvalidMask,
 } from '../../shared/inputMask';
-import { useHostEmit } from '../../shared/useHostEmit';
+import { useControlAttrs } from '../../shared/useControlAttrs';
 import { useHostStates } from '../../shared/useHostStates';
+import { useIdReferences } from '../../shared/useIdReferences';
+import { emitModelInput, emitModelSettled } from '../../shared/valueEvents';
 
 /** Events dispatched by `<c-text-field>`. */
 interface CTextFieldEvents {
   /**
-   * Standard bubbling DOM change event, re-dispatched from the host when the
-   * inner input/textarea fires its native change (which does not cross the
-   * shadow boundary). No detail; read the current text from the host's
-   * `value` property.
+   * Fired when typed text is committed — Enter, or leaving the field after
+   * editing it — carrying the text, trimmed when `trim-whitespace` is set.
    */
-  change: void;
-
-  /**
-   * Fired on every keystroke (and on native change), carrying the current
-   * text — trimmed when `trim-whitespace` is set.
-   */
-  changeValue: string;
+  change: string;
 
   /**
    * Native bubbling input event fired alongside every value change so a
-   * plain Vue `v-model` works without the `v-control` directive. No detail.
+   * plain Vue `v-model` stays in sync. No detail.
    */
   input: void;
 
   /**
-   * v-model contract event fired on every keystroke (and on native change),
-   * carrying the current text — trimmed when `trim-whitespace` is set.
+   * v-model contract event fired on every keystroke, carrying the current
+   * text — trimmed when `trim-whitespace` is set.
    */
   'update:value': string;
 }
@@ -471,15 +459,20 @@ const textField = tv({
   },
 });
 
+// ARIA attributes on the element name and describe the native control;
+// every other attribute stays on the root, as Vue's fallthrough put it.
+defineOptions({ inheritAttrs: false });
+
 const props = withDefaults(defineProps<CTextFieldProps>(), {
+  autocapitalize: undefined,
   autocomplete: '',
   autocorrect: undefined,
-  automaticCapitalize: undefined,
+  autofocus: false,
   disabled: false,
   errorMessage: '',
   hideDetails: undefined,
   hint: '',
-  hostId: '',
+  invalid: false,
   label: '',
   labelOnTop: undefined,
   mask: '',
@@ -495,7 +488,6 @@ const props = withDefaults(defineProps<CTextFieldProps>(), {
   step: null,
   trimWhitespace: false,
   type: 'text',
-  valid: true,
   value: '',
 });
 
@@ -503,7 +495,16 @@ const ui = computed(() => textField());
 
 const host = useHost();
 
-const emit = useHostEmit<CTextFieldEvents>();
+const { controlAttrs, rootAttrs } = useControlAttrs();
+
+// The visible label names the input (WCAG 2.5.3, label in name); the host's
+// `aria-label` names a field without one, and is ignored beside it.
+const accessibleName = computed(
+  () =>
+    props.label ||
+    (controlAttrs.value['aria-label'] as string | undefined) ||
+    undefined,
+);
 
 // Defaultable props resolve host attribute → own value → app default →
 // built-in (see src/shared/appDefaults.ts, which also explains why
@@ -524,18 +525,37 @@ const inputRef = useTemplateRef<HTMLInputElement | HTMLTextAreaElement>(
 
 const autoId = useId();
 
-const inputId = computed(() => props.hostId || autoId);
+const inputId = computed(() => autoId);
+
+// The native attribute's values: `off` (or `false`) turns it off, `on` or a
+// bare attribute (`''`) turns it on; unset leaves the browser's default.
+const autocorrectAttr = computed(() => {
+  const { autocorrect } = props;
+
+  if (autocorrect === undefined) return undefined;
+
+  return autocorrect === false || autocorrect === 'off' ? 'off' : 'on';
+});
 
 const isFocused = ref(false);
 
-const originalType = props.type;
+// The type as set; `currentType` is what the input shows, which the password
+// toggle flips. A new `type` resets it.
+const originalType = computed(() => props.type);
 
 const currentType = ref(props.type);
+
+watch(
+  () => props.type,
+  (type) => {
+    currentType.value = type;
+  },
+);
 
 // Date inputs render a permanent "mm/dd/yyyy" format hint inside the
 // field, so the floating label has to stay lifted from the start —
 // otherwise it overlaps the format hint. Treat date as always-filled.
-const isDateType = originalType === 'date';
+const isDateType = computed(() => originalType.value === 'date');
 
 // A field "has a value" when it holds anything but the empty string — `0`
 // (a numeric property binding on a `type="number"` field) counts. A plain
@@ -549,7 +569,7 @@ const hasValue = computed(
 // over an existing value is the separate `filled` flag.
 const isActiveForInput = computed(() => isFocused.value);
 
-const isFilledForInput = computed(() => hasValue.value || isDateType);
+const isFilledForInput = computed(() => hasValue.value || isDateType.value);
 
 // Detect consumer-provided slotted content. We need this at the
 // c-text-field level (rather than c-input via `useHasSlot`) because
@@ -561,7 +581,9 @@ const hasConsumerPre = ref(false);
 const hasConsumerPost = ref(false);
 
 const hasToggle = computed(
-  () => originalType === 'password' || (originalType === 'date' && !isFirefox),
+  () =>
+    originalType.value === 'password' ||
+    (originalType.value === 'date' && !isFirefox),
 );
 
 const refreshConsumerSlots = () => {
@@ -573,6 +595,8 @@ const refreshConsumerSlots = () => {
 let childObserver: MutationObserver | null = null;
 onMounted(() => {
   refreshConsumerSlots();
+
+  if (props.autofocus) requestAnimationFrame(() => inputRef.value?.focus());
 
   if (host && typeof MutationObserver !== 'undefined') {
     childObserver = new MutationObserver(refreshConsumerSlots);
@@ -624,7 +648,7 @@ const openPicker = () => {
 const MASKABLE_TYPES = new Set<CTextFieldType>(['search', 'tel', 'text']);
 
 const maskSlots = computed(() =>
-  props.mask && props.rows <= 1 && MASKABLE_TYPES.has(originalType)
+  props.mask && props.rows <= 1 && MASKABLE_TYPES.has(originalType.value)
     ? compileMask(props.mask)
     : null,
 );
@@ -661,7 +685,7 @@ const unmaskedValue = computed<string>(
 );
 
 const maskInputMode = computed(() =>
-  maskSlots.value && originalType === 'text' && isNumericMask(props.mask)
+  maskSlots.value && originalType.value === 'text' && isNumericMask(props.mask)
     ? 'numeric'
     : undefined,
 );
@@ -707,20 +731,19 @@ const onInput = (event: Event) => {
   conformInput(event);
 
   const next = props.trimWhitespace ? target.value.trim() : target.value;
-  // changeValue/update:value + native `input` (so a plain `v-model` works
-  // without `v-control`) + host `value` mirror. The inner input is bound via
-  // template `:value`, so mirroring the just-typed value is idempotent.
-  emitModelValue(host, next);
-  void event;
+  // A keystroke is a value change, not yet a commit. The inner input is bound
+  // via template `:value`, so mirroring the just-typed value is idempotent.
+  emitModelInput(host, next);
 };
 
+// The inner input's native `change` marks the commit (Enter, or leaving the
+// field after an edit); it does not cross the shadow boundary, so the host
+// sends its own.
 const onChange = (event: Event) => {
   const target = event.target as HTMLInputElement | HTMLTextAreaElement;
 
   const next = props.trimWhitespace ? target.value.trim() : target.value;
-  emitModelValue(host, next);
-  emit('change', undefined, { bubbles: true, composed: true });
-  void event;
+  emitModelSettled(host, next satisfies CTextFieldEvents['change']);
 };
 
 const onFocus = () => {
@@ -736,7 +759,20 @@ const onBlur = (event: Event) => {
   }
 };
 
-defineExpose({ maskComplete, unmaskedValue });
+/**
+ * Focus its input, as `focus()` does on a native control: the element renders
+ * no box of its own to take it.
+ *
+ * @param options - Passed on to that element's `focus()`
+ */
+const focus = (options?: FocusOptions): void => {
+  inputRef.value?.focus(options);
+};
+
+defineExpose({ focus, maskComplete, unmaskedValue });
+
+// The page's id references on the element reach the element carrying its role.
+useIdReferences(() => inputRef.value);
 </script>
 
 <!--

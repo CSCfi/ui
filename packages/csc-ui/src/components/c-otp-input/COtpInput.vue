@@ -26,14 +26,20 @@
       <slot />
     </form-label>
 
-    <div :class="ui.digits()" part="digits">
+    <div
+      :class="ui.digits()"
+      :style="{ '--_c-otp-input-count': length }"
+      part="digits"
+    >
       <input
         v-for="i in length"
         :id="`${resolvedId}--input-${i}`"
         :key="i"
         ref="inputsRef"
+        :aria-describedby="hideDetails ? undefined : messageId"
+        :aria-invalid="invalid ? 'true' : undefined"
         :aria-label="`Enter code - digit number - ${i} of ${length}`"
-        :autofocus="hasAutofocus && i === 1 ? true : undefined"
+        :aria-required="required ? 'true' : undefined"
         :class="ui.input()"
         :name="`${resolvedId}--digit-${i}`"
         autocapitalize="off"
@@ -48,6 +54,7 @@
         spellcheck="false"
         type="tel"
         @focus="onFocus(i - 1)"
+        @focusout="onFocusOut($event as FocusEvent)"
         @input="onInput($event as InputEvent)"
         @keydown="onKeyDown($event as KeyboardEvent)"
         @paste="i === 1 && onPaste($event as ClipboardEvent)"
@@ -55,11 +62,13 @@
     </div>
 
     <c-message
+      v-if="!hideDetails"
+      :id="messageId"
       :class="ui.message()"
       :error-message
       :hint
-      :input-id="elementId"
-      :valid
+      :invalid
+      part="message"
     />
   </div>
 </template>
@@ -72,6 +81,7 @@
  * @csspart label - The group label rendered above the digit inputs
  * @csspart digits - The inline-grid wrapper around the digit inputs
  * @csspart input - Each single-digit `<input>` box (one per digit)
+ * @csspart message - The hint or error message under the digits, which describes each digit
  */
 import { tv } from 'tailwind-variants';
 import {
@@ -87,28 +97,29 @@ import {
 import FormLabel from '../../shared/FormLabel.vue';
 import { useHasSlot } from '../../shared/useHasSlot';
 import { useHostEmit } from '../../shared/useHostEmit';
+import { useIdReferences } from '../../shared/useIdReferences';
+import { emitModelInput, emitModelSettled } from '../../shared/valueEvents';
 
 /** Events dispatched by `<c-otp-input>`. */
 interface COtpInputEvents {
   /**
-   * Fired on every digit change with the complete code once all digits are
-   * filled, or `null` while the code is still incomplete (legacy value-change
-   * event).
+   * Fired when the code is committed — Enter, or focus leaving the digits
+   * after a change — carrying the digits entered so far (`''` when none).
    */
-  changeValue: null | string;
+  change: string;
 
   /** Fired when the last digit is filled, carrying the complete code. */
-  completion: null | string;
+  completion: string;
 
   /**
-   * Native bubbling input event for plain `v-model`; carries no detail — the
-   * model value is mirrored onto the host's `value` property.
+   * Native bubbling input event fired alongside every value change so a
+   * plain `v-model` stays in sync. No detail.
    */
   input: void;
 
   /**
-   * Fired on every digit change with the currently entered digits (v-model
-   * contract).
+   * v-model contract event fired on every digit change, carrying the digits
+   * entered so far (`''` when none).
    */
   'update:value': string;
 }
@@ -121,17 +132,17 @@ defineOptions({ inheritAttrs: false });
 /**
  * Styling lives in this `tailwind-variants` config: the old
  * `--_c-otp-input-*` indirection vars are dropped in favour of token-mapped
- * utilities, and the `:host(.error)` border colour swap becomes the `valid`
+ * utilities, and the `:host(.error)` border colour swap becomes the `invalid`
  * variant. Consumer customization is via `::part()`.
  *
  * The digit `<input>`s live in *this* shadow root (not slotted), so the
  * box-shadow notch border is authored as an inset `ring`: `ring-1` inactive,
- * `ring-2` on focus. The `valid` variant recolours both states to error red.
+ * `ring-2` on focus. The `invalid` variant recolours both states to error red.
  */
 const otp = tv({
   defaultVariants: {
     hideDetails: false,
-    valid: true,
+    invalid: false,
   },
   slots: {
     // `display: inline-grid` with a column-per-digit auto track (the
@@ -151,8 +162,8 @@ const otp = tv({
     hideDetails: {
       true: { root: 'mb-0' },
     },
-    valid: {
-      false: {
+    invalid: {
+      true: {
         input: 'ring-error focus:ring-error',
       },
     },
@@ -161,12 +172,9 @@ const otp = tv({
 
 interface COtpInputProps {
   /**
-   * Id of the element
-   *
-   * @seeded from csc-ui — verify
-   * @freeform
+   * Focus the first digit when the field mounts.
    */
-  elementId?: string;
+  autofocus?: boolean;
 
   /**
    * Error message shown in place of the hint while the input is invalid
@@ -176,26 +184,22 @@ interface COtpInputProps {
   errorMessage?: string;
 
   /**
-   * Auto focus
-   *
-   * @seeded from csc-ui — verify
-   */
-  hasAutofocus?: boolean;
-
-  /**
    * Hide the hint and error messages
-   *
-   * @seeded from csc-ui — verify
    */
   hideDetails?: boolean;
 
   /**
    * Hint text for the input
    *
-   * @seeded from csc-ui — verify
    * @freeform
    */
   hint?: string;
+
+  /**
+   * Show the control as invalid: its `error-message`, when set, replaces the
+   * hint, and the control is marked `aria-invalid`.
+   */
+  invalid?: boolean;
 
   /**
    * Label of the input group, shown above the digit inputs
@@ -205,9 +209,7 @@ interface COtpInputProps {
   label?: string;
 
   /**
-   * Length of the OTP code
-   *
-   * @seeded from csc-ui — verify
+   * Number of digits in the code, one box each
    */
   length?: number;
 
@@ -217,31 +219,23 @@ interface COtpInputProps {
   required?: boolean;
 
   /**
-   * Set the validíty of the input
+   * The digits entered so far, joined into one string (`''` when none).
+   * Setting it fills the boxes from the first one
    *
-   * @seeded from csc-ui — verify
-   */
-  valid?: boolean;
-
-  /**
-   * Value of the input
-   *
-   * @seeded from csc-ui — verify
    * @freeform
    */
   value?: string;
 }
 
 const props = withDefaults(defineProps<COtpInputProps>(), {
-  elementId: '',
+  autofocus: false,
   errorMessage: '',
-  hasAutofocus: false,
   hideDetails: false,
   hint: '',
+  invalid: false,
   label: '',
   length: 6,
   required: false,
-  valid: true,
   value: '',
 });
 
@@ -251,7 +245,7 @@ const emit = useHostEmit<COtpInputEvents>();
 
 const autoId = useId();
 
-const resolvedId = computed(() => props.elementId || autoId);
+const resolvedId = computed(() => autoId);
 
 const rootRef = useTemplateRef<HTMLElement>('rootRef');
 
@@ -266,8 +260,10 @@ const labelVisible = computed(
 
 const labelId = computed(() => `${resolvedId.value}-label`);
 
+const messageId = computed(() => `${resolvedId.value}-message`);
+
 const ui = computed(() =>
-  otp({ hideDetails: props.hideDetails, valid: props.valid }),
+  otp({ hideDetails: props.hideDetails, invalid: props.invalid }),
 );
 
 const statusText = ref('');
@@ -296,7 +292,9 @@ const updateStatusText = () => {
       .join('');
 
     let text =
-      !props.valid && props.errorMessage ? `Error: ${props.errorMessage} ` : '';
+      props.invalid && props.errorMessage
+        ? `Error: ${props.errorMessage} `
+        : '';
     text += `Currently entered - ${
       !value.length ? 'nothing' : value.split('').join(' - ')
     }`;
@@ -305,31 +303,58 @@ const updateStatusText = () => {
   }, 1400);
 };
 
+/**
+ * The digits entered so far, `''` when none: the value everywhere. They run
+ * from the first box up to the first empty one, so a cleared middle box ends
+ * the value there instead of pulling the later digits into its place.
+ */
+const digits = (): string => {
+  const boxes = inputs().map((i) => i?.value ?? '');
+
+  const gap = boxes.indexOf('');
+
+  return (gap < 0 ? boxes : boxes.slice(0, gap)).join('');
+};
+
+// The value last reported or set, and the value at the last commit.
+let held = props.value ?? '';
+
+let committed = held;
+
+/** Report the digits as the value when they changed; `completion` once all are in. */
+const report = () => {
+  const value = digits();
+
+  if (value === held) return;
+
+  held = value;
+  // The value watch skips the host `value` mirror (it is `held`), so no loop.
+  emitModelInput(host, value satisfies COtpInputEvents['update:value']);
+
+  if (value.length === props.length) emit('completion', value);
+};
+
+// Digits settle a frame after the keystroke (focus moves, paste fills).
 const emitValue = () => {
   requestAnimationFrame(() => {
-    const value = inputs()
-      .map((i) => i?.value ?? '')
-      .join('');
-
-    const isFull = value.length === props.length;
-
-    const modelValue = isFull ? value : null;
-    emit('changeValue', modelValue);
-    emit('update:value', value);
-
-    if (isFull) emit('completion', value || null);
-
-    // Native v-model bridge (works without `v-control`): mirror the model value
-    // (null until complete, matching `changeValue`) onto the host's `value` and
-    // fire a native `input`. The value watch no-ops on null, so partial typing
-    // is not disturbed.
-    if (host) {
-      (host as { value?: unknown } & HTMLElement).value = modelValue;
-      emit('input', undefined, { bubbles: true });
-    }
-
+    report();
     updateStatusText();
   });
+};
+
+/** Commit the code: report it, then `change` when it changed since the last commit. */
+const commit = () => {
+  report();
+
+  if (held === committed) return;
+
+  committed = held;
+  emitModelSettled(host, held satisfies COtpInputEvents['change']);
+};
+
+// Focus leaving the digits commits, like leaving a text field.
+const onFocusOut = (event: FocusEvent) => {
+  if (!inputs().includes(event.relatedTarget as HTMLInputElement)) commit();
 };
 
 const handleValueChange = (value: null | string, forceEmpty = false) => {
@@ -357,6 +382,8 @@ const onKeyDown = (event: KeyboardEvent) => {
     if (previousElement && !target.value) previousElement.focus();
     emitValue();
   }
+
+  if (event.key === 'Enter') commit();
 };
 
 const onInput = (event: InputEvent) => {
@@ -366,7 +393,8 @@ const onInput = (event: InputEvent) => {
 
   const prev = target.previousElementSibling as HTMLInputElement | null;
 
-  if (isNaN(+target.value)) {
+  // One digit, or none (a deletion); anything else is dropped.
+  if (!/^\d?$/.test(target.value)) {
     event.preventDefault();
     target.value = '';
 
@@ -389,9 +417,11 @@ const onInput = (event: InputEvent) => {
 const onPaste = (event: ClipboardEvent) => {
   event.preventDefault();
 
-  const paste = event.clipboardData?.getData('text') ?? '';
+  // A code copied with spaces or a line break around it still counts; any
+  // other character makes the paste no code.
+  const paste = (event.clipboardData?.getData('text') ?? '').replace(/\s/g, '');
 
-  if (isNaN(+paste)) return;
+  if (!/^\d+$/.test(paste)) return;
   isPasting = true;
   paste.split('').forEach((char, index) => {
     if (index >= inputs().length) return;
@@ -410,36 +440,45 @@ const onPaste = (event: ClipboardEvent) => {
   });
 };
 
-// Expose a public reset() like Stencil's @Method().
-const reset = () => {
-  inputs().forEach((i) => {
-    if (i) i.value = '';
-  });
-  emitValue();
-};
-
 watch(() => props.errorMessage, updateStatusText);
+// A value set from outside fills the digits and is the baseline for the next
+// commit; the host `value` mirror's own write is `held` already. Never emits.
 watch(
   () => props.value,
   (v) => {
-    handleValueChange(v);
+    const next = v ?? '';
+
+    if (next === held) return;
+
+    held = next;
+    committed = next;
+    handleValueChange(next, true);
     updateStatusText();
   },
 );
 
 onMounted(() => {
   if (!host) return;
-  host.id = resolvedId.value;
-  host.classList.toggle('error', !props.valid);
-  host.style.setProperty('--_c-otp-input-count', String(props.length));
-  (host as unknown as { reset: () => void }).reset = reset;
   handleValueChange(props.value);
+
+  // A native `autofocus` inside a shadow root is not honoured.
+  if (props.autofocus) requestAnimationFrame(() => inputs()[0]?.focus());
 });
 
-watch(
-  () => props.valid,
-  (v) => host?.classList.toggle('error', !v),
-);
+// The page's id references on the element reach the element carrying its role.
+useIdReferences(() => rootRef.value);
+
+/**
+ * Focus its first digit box, as `focus()` does on a native control: the element renders
+ * no box of its own to take it.
+ *
+ * @param options - Passed on to that element's `focus()`
+ */
+const focus = (options?: FocusOptions): void => {
+  inputs()[0]?.focus(options);
+};
+
+defineExpose({ focus });
 </script>
 
 <!--

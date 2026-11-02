@@ -2,6 +2,7 @@
   <div :class="ui.container()" class="c-tabs__container" part="container">
     <c-icon-button
       v-if="isOverflowing && !vertical"
+      aria-label="Scroll tabs back"
       size="x-small"
       ghost
       @click="onBackClick"
@@ -9,22 +10,35 @@
       <c-icon :path="arrowLeft" />
     </c-icon-button>
 
-    <div
-      ref="tabsRef"
-      :class="ui.tabs()"
-      class="c-tabs__tabs"
-      part="tabs"
-      @touchend="onTouchEnd"
-      @touchmove="onTouchMove"
-      @touchstart="onTouchStart"
-    >
-      <div ref="scrollRef" :class="ui.scroll()" class="c-tabs__scroll">
-        <slot />
+    <div :class="ui.clip()">
+      <div
+        ref="tabsRef"
+        :class="ui.tabs()"
+        class="c-tabs__tabs"
+        part="tabs"
+        @touchend="onTouchEnd"
+        @touchmove="onTouchMove"
+        @touchstart="onTouchStart"
+      >
+        <!-- The tablist is the row of tabs alone (APG Tabs): the scroll arrows
+             and the panels sit outside it. In buttons mode c-tab-buttons is
+             the tablist itself, around its own buttons. -->
+        <div
+          ref="scrollRef"
+          :aria-label="buttonsMode ? undefined : tablistLabel"
+          :aria-orientation="!buttonsMode && vertical ? 'vertical' : undefined"
+          :class="ui.scroll()"
+          :role="buttonsMode ? undefined : 'tablist'"
+          class="c-tabs__scroll"
+        >
+          <slot />
+        </div>
       </div>
     </div>
 
     <c-icon-button
       v-if="isOverflowing && !vertical"
+      aria-label="Scroll tabs forward"
       size="x-small"
       ghost
       @click="onForwardClick"
@@ -45,47 +59,40 @@
  */
 export type CTabsJustify = 'center' | 'end' | 'start' | 'stretch';
 
-export interface CTabsProps {
+interface CTabsProps {
   /**
-   * Disable the bottom border
-   *
-   * @seeded from csc-ui — verify
+   * Remove the line along the tab row.
    */
   borderless?: boolean;
 
   /**
-   * Disable animation
-   *
-   * @seeded from csc-ui — verify
+   * Switch off the underline's glide and the panels' slide; both also stop
+   * under the reduced-motion preference.
    */
   disableAnimation?: boolean;
 
   /**
-   * Justification of the children
-   *
-   * @seeded from csc-ui — verify
+   * Placement of the tabs along the row: `stretch` grows them to fill it;
+   * `start`, `center` and `end` keep each tab at its own width. No effect on
+   * `vertical` tabs.
    */
   justify?: CTabsJustify;
 
   /**
-   * Mobile breakpoint in pixels
-   * - affects the content stacking with the vertical tabs
-   *
-   * @seeded from csc-ui — verify
+   * Width in pixels of the `c-tabs` element (not the viewport) below which
+   * `vertical` tabs move above the panels. No effect on horizontal tabs.
    */
   mobileBreakpoint?: number;
 
   /**
-   * Currently active tab
-   *
-   * @seeded from csc-ui — verify
+   * Value of the active tab: the `c-tab` and the `c-tab-item` with the same
+   * `value` are shown. With no match, no tab is active and no panel is shown.
    */
   value?: number | string;
 
   /**
-   * Vertical tabs
-   *
-   * @seeded from csc-ui — verify
+   * Stack the tabs in a column beside the panels, which slide vertically; below
+   * `mobile-breakpoint` the column moves above the panels.
    */
   vertical?: boolean;
 }
@@ -93,13 +100,11 @@ export interface CTabsProps {
 
 <script setup lang="ts">
 /**
- * @slot default - Default slot
- * @slot items - The c-tab-items container holding the tab content panels
- * @csspart container - The header row wrapping the tab list and the overflow scroll buttons
- * @csspart tabs - The clipping viewport the tab list scrolls inside, with a margin so a tab's focus ring and a slotted corner badge still paint
- * @csspart content - Wrapper around the slotted tab content panels
- *
- * @seeded from csc-ui — verify
+ * @slot default - The `c-tab` headers, or one `c-tab-buttons`
+ * @slot items - The `c-tab-items` holding the panels
+ * @csspart container - The tab row: the tabs plus the overflow arrows
+ * @csspart tabs - The viewport the tab list scrolls inside; it clips with room for a tab's focus ring and a slotted corner badge
+ * @csspart content - The wrapper around the panels
  *
  * @subcomponents c-tab, c-tab-items, c-tab-item, c-tab-buttons
  */
@@ -110,6 +115,7 @@ import {
   onBeforeUnmount,
   onMounted,
   ref,
+  useAttrs,
   useHost,
   useId,
   useTemplateRef,
@@ -118,23 +124,23 @@ import {
 } from 'vue';
 
 import { coerceBoolean } from '../../shared/coerceBoolean';
-import { emitModelValue } from '../../shared/emitModelValue';
 import { prefersReducedMotion } from '../../shared/reducedMotion';
+import { useIdReferences } from '../../shared/useIdReferences';
+import { emitModelChange } from '../../shared/valueEvents';
 
 /** Events dispatched by `<c-tabs>`. */
 interface CTabsEvents {
   /**
-   * Fired when the user activates a tab (click, or Enter/Space on a focused
-   * tab), carrying the newly selected tab value. Legacy value-change event.
+   * Fired when the user activates another tab (click, or Enter/Space on a
+   * focused tab), carrying the newly selected tab value.
    */
-  changeValue: number | string;
+  change: number | string;
 
   /** Native bubbling input event dispatched for plain `v-model` support; carries no detail. */
   input: void;
 
   /**
-   * Fired alongside `changeValue` with the newly selected tab value; fulfills
-   * the `v-model`/`v-control` contract.
+   * Fired alongside `change` with the same detail — the `v-model` contract.
    */
   'update:value': number | string;
 }
@@ -158,19 +164,15 @@ interface CTabsEvents {
  */
 const tabs = tv({
   slots: {
-    // base container layout; the overflow/vertical reshaping lives on the host
-    // selectors in the escape-hatch <style>.
-    container: 'grid items-center gap-1',
-    content: 'flex',
-    scroll: 'relative m-0 flex grow p-0',
-    // `tabs` is the viewport the translated `scroll` track hides behind, so it
-    // must keep clipping. `p-1 -m-1` insets the clip 4px at no layout cost —
-    // room for a tab's 2px focus outline at its 2px offset — and the 6px
-    // `overflow-clip-margin` adds the rest of the 8px a `c-badge` slotted into
-    // a tab overhangs by (`-right-1.5 -top-1.5` plus its 2px ring), with 2px of
-    // slack for antialiasing. `clip` rather than `hidden` because nothing here
-    // scrolls natively — the track is a transform on `scroll` — and only `clip`
-    // honours a clip margin.
+    // The clip around `tabs`, the viewport the translated `scroll` track
+    // hides behind. `-m-2.5 p-2.5` sets its edge 10px outside the row at no
+    // layout cost: room for a tab's 2px focus outline at its 2px offset, and
+    // for the 8px a `c-badge` slotted into a tab overhangs by (`-right-1.5
+    // -top-1.5` plus its 2px ring), with 2px of slack for antialiasing. A box
+    // of its own, because `tabs` itself is measured (below), and because an
+    // `overflow-clip-margin` would need no box but Safari has none. `clip`
+    // rather than `hidden` because nothing here scrolls natively — the track
+    // is a transform on `scroll`.
     //
     // `min-w-0` is what `hidden` used to give for free: an `overflow: hidden`
     // box is a scroll container, so its `min-width: auto` as a grid item
@@ -179,7 +181,17 @@ const tabs = tv({
     // this box then outgrows its grid cell instead of clipping, and in buttons
     // mode the strip's frame is no longer squeezed to the row (CTabButtons
     // spec: "the strip is squeezed to the tab row, not clipped by it").
-    tabs: 'relative -m-1 flex min-w-0 overflow-clip p-1 [overflow-clip-margin:6px]',
+    clip: '-m-2.5 flex min-w-0 overflow-clip p-2.5',
+    // base container layout; the overflow/vertical reshaping lives on the host
+    // selectors in the escape-hatch <style>.
+    container: 'grid items-center gap-1',
+    content: 'flex',
+    scroll: 'relative m-0 flex grow p-0',
+    // The strip: its `clientWidth` drives the overflow arrows and the scroll
+    // range, and `::after` draws the underline 4px up from its bottom edge,
+    // all tuned to this 4px `p-1 -m-1` frame. `min-w-0` lets it shrink inside
+    // the clip, which it no longer does itself.
+    tabs: 'relative -m-1 flex min-w-0 grow p-1',
   },
 });
 
@@ -223,15 +235,21 @@ const tabsRef = useTemplateRef<HTMLElement>('tabsRef');
 
 const scrollRef = useTemplateRef<HTMLElement>('scrollRef');
 
-// changeValue/update:value + native `input` (so a plain `v-model` works without
-// `v-control`) + host `value` mirror. Called only from interaction handlers;
-// the value/internalValue watches are visuals-only (+ push-down), so no loop.
-const dispatchValue = (value: CTabsEvents['changeValue']) =>
-  emitModelValue(host, value);
-
 const autoId = useId();
 
 const internalValue = ref<number | string>(props.value);
+
+// A user's tab pick, its own commit. Called only from interaction handlers;
+// the value/internalValue watches are visuals-only (+ push-down), so the host
+// `value` mirror doesn't loop. Activating the current tab changes nothing,
+// so it emits nothing — Enter reaches both the keydown handler below and the
+// tab's own.
+const select = (value: CTabsEvents['change']) => {
+  if (value === internalValue.value) return;
+
+  internalValue.value = value;
+  emitModelChange(host, value);
+};
 
 const isOverflowing = ref(false);
 
@@ -240,10 +258,6 @@ const isMobile = ref(false);
 const scrollOffset = ref(0);
 
 let initialized = false;
-
-let isDirty = false;
-
-let focusedTabValue: number | string = props.value;
 
 let previousWidth = 0;
 
@@ -257,6 +271,12 @@ let resizeObserver: null | ResizeObserver = null;
 
 let startX = 0;
 
+let startY = 0;
+
+// The axis a touch on the row moves along, decided by its first move: a
+// horizontal drag scrolls the row, a vertical one is left to the page.
+let touchAxis: '' | 'x' | 'y' = '';
+
 let touchOffset = 0;
 
 type CTabButtonsEl = { value: number | string } & HTMLElement;
@@ -264,8 +284,20 @@ type CTabButtonsEl = { value: number | string } & HTMLElement;
 type CTabEl = {
   active?: boolean;
   disabled?: boolean;
+  tabStop?: boolean;
   value: number | string;
 } & HTMLElement;
+
+// An aria-label on the element names the tablist.
+const attrs = useAttrs();
+
+const tablistLabel = computed(() => attrs['aria-label'] as string | undefined);
+
+// A tab's `disabled` reads back as the raw attribute string ('' when set).
+const isDisabled = (tab: CTabEl) => coerceBoolean(tab.disabled);
+
+// Buttons mode: a slotted c-tab-buttons is the tab strip, and the tablist.
+const buttonsMode = ref(false);
 
 type CTabItemsEl = {
   disableAnimation?: boolean;
@@ -301,6 +333,9 @@ const vertical = computed(
 );
 
 const motionDisabled = () => prefersReducedMotion() || disableAnimation.value;
+
+/** The row's scroll transition: none while motion is off. */
+const rowSpeed = () => (motionDisabled() ? '0ms' : '200ms');
 
 const tabItemsEl = () =>
   host?.querySelector('c-tab-items') as CTabItemsEl | null;
@@ -447,8 +482,40 @@ const moveIndicator = (oldTab: HTMLElement, newTab: HTMLElement) => {
   }, 200);
 };
 
+let generatedIds = 0;
+
+// The id that pairs a tab with its panel (`aria-controls` and
+// `aria-labelledby`). An id the consumer set stays; a generated one is
+// unique per element, so it survives tabs being added or reordered.
+const ensureId = (el: HTMLElement, prefix: string): string => {
+  if (!el.id) {
+    generatedIds += 1;
+    el.id = `${prefix}-${autoId}-${generatedIds}`;
+  }
+
+  return el.id;
+};
+
+// With no tab matching the value, the first enabled tab is the row's Tab
+// stop, so the row stays reachable (c-tab: `tabStop`).
+const updateTabStop = () => {
+  if (tabButtonsEl()) return;
+
+  const list = tabsList();
+
+  const entry = list.some(
+    (t) => t.value === internalValue.value && !isDisabled(t),
+  )
+    ? null
+    : list.find((t) => !isDisabled(t));
+
+  for (const t of list) t.tabStop = t === entry;
+};
+
 const handleActiveTab = () => {
   requestAnimationFrame(() => {
+    updateTabStop();
+
     const items = tabItemsEl();
 
     if (!items) return;
@@ -463,18 +530,21 @@ const handleActiveTab = () => {
 
     const tb = tabButtonsEl();
 
-    tabItems.forEach((item, index) => {
+    tabItems.forEach((item) => {
       const tab = tabsList().find((t) => t.value === item.value);
 
-      const tabItemId = `c-tab-item-${autoId}-${index + 1}`;
+      const tabItemId = ensureId(item, 'c-tab-item');
 
       const isActive = item.value === internalValue.value;
 
       if (tab) {
-        const tabId = `c-tab-${autoId}-${index + 1}`;
+        const tabId = ensureId(tab, 'c-tab');
         item.setAttribute('aria-labelledby', tabId);
-        tab.setAttribute('id', tabId);
-        tab.setAttribute('aria-controls', tabItemId);
+
+        // A c-tab is the tab itself; in buttons mode the tab is the c-button's
+        // inner button, which an id reference on its host never reaches, and
+        // a host carrying one is a stray child of the tablist.
+        if (!tb) tab.setAttribute('aria-controls', tabItemId);
 
         if (!tb) {
           tab.active = isActive;
@@ -493,15 +563,15 @@ const handleActiveTab = () => {
             moveToTab(selected);
             tabsRef.value?.style.setProperty(
               '--_c-tabs-transition-speed',
-              '200ms',
+              rowSpeed(),
             );
           });
         }
 
-        if (isActive && isDirty) tab.focus();
+        // No focus moves here: with manual activation focus stays where the
+        // keys put it (a re-measure used to pull it back to the active tab).
       }
 
-      item.setAttribute('id', tabItemId);
       item.active = isActive;
     });
   });
@@ -517,13 +587,11 @@ const getDimensions = (item: HTMLElement) => {
   return { containerWidth, containerX, width, x };
 };
 
+// Scroll the row so `tab` is in view. It moves no focus: a value set from
+// code scrolls the selected tab into view too, and focus waiting for the
+// scroll's transitionend never came without motion.
 const moveToTab = (tab: HTMLElement) => {
   if (!tab) return;
-
-  const onTransitionEnd = () => {
-    tab?.focus();
-    scrollRef.value?.removeEventListener('transitionend', onTransitionEnd);
-  };
 
   requestAnimationFrame(() => {
     const tabIndex = getTabIndex((tab.dataset.value as string) ?? '');
@@ -555,31 +623,30 @@ const moveToTab = (tab: HTMLElement) => {
       scrollOffset.value -= tabEnd - containerEnd + 4;
     }
   });
-  scrollRef.value?.addEventListener('transitionend', onTransitionEnd);
 };
 
+// Focus a tab at once, without the browser scrolling the clipped row; the row
+// then scrolls a tab out of view into it.
 const focusTab = (value: number | string) => {
   if (tabButtonsEl()) return;
-  requestAnimationFrame(() => {
-    const item = tabsList().find((t) => t.value === value) as HTMLElement;
 
-    if (!item) return;
+  const item = tabsList().find((t) => t.value === value) as HTMLElement;
 
-    const { containerWidth, containerX, width, x } = getDimensions(item);
+  if (!item) return;
+  item.focus({ preventScroll: true });
 
-    if (x >= containerX && x + width <= containerX + containerWidth) {
-      item.focus();
+  if (vertical.value) return;
 
-      return;
-    }
+  const { containerWidth, containerX, width, x } = getDimensions(item);
 
+  if (x < containerX || x + width > containerX + containerWidth) {
     moveToTab(item);
-  });
+  }
 };
 
+// A resize while the indicator moves is re-measured too: dropping it left a
+// row that shrank in that window without its overflow arrows.
 const handleResize = (width: number) => {
-  if (moveDebounce !== null) return;
-
   if (debounce !== null) clearTimeout(debounce);
   debounce = setTimeout(() => {
     const content = host?.shadowRoot?.querySelector('.c-tabs__scroll');
@@ -600,13 +667,27 @@ const handleResize = (width: number) => {
 const onTouchStart = (event: TouchEvent) => {
   handleOverflow();
 
+  touchAxis = '';
+
   if (!isOverflowing.value) return;
   touchOffset = scrollOffset.value * -1;
   startX = event.touches[0].clientX;
+  startY = event.touches[0].clientY;
 };
 
 const onTouchMove = (event: TouchEvent) => {
-  if (vertical.value) return;
+  if (vertical.value || !isOverflowing.value) return;
+
+  if (!touchAxis) {
+    const dx = Math.abs(event.touches[0].clientX - startX);
+
+    const dy = Math.abs(event.touches[0].clientY - startY);
+
+    if (dx < 4 && dy < 4) return;
+    touchAxis = dx > dy ? 'x' : 'y';
+  }
+
+  if (touchAxis === 'y') return;
   event.preventDefault();
   tabsRef.value?.style.setProperty('--_c-tabs-transition-speed', '0ms');
 
@@ -618,7 +699,7 @@ const onTouchMove = (event: TouchEvent) => {
 };
 
 const onTouchEnd = () => {
-  tabsRef.value?.style.setProperty('--_c-tabs-transition-speed', '200ms');
+  tabsRef.value?.style.setProperty('--_c-tabs-transition-speed', rowSpeed());
 };
 
 const onBackClick = () => {
@@ -657,6 +738,14 @@ watch(internalValue, () => {
 
 watch(justify, handleActiveTab);
 
+// In buttons mode c-tab-buttons is the tablist; it takes the tab set's name.
+watch([tablistLabel, buttonsMode], () => {
+  const tb = tabButtonsEl();
+
+  if (tb && tablistLabel.value)
+    tb.setAttribute('aria-label', tablistLabel.value);
+});
+
 // Host class list reflects the current variant/state set.
 watchEffect(() => {
   if (!host) return;
@@ -672,7 +761,7 @@ watchEffect(() => {
 
 onMounted(() => {
   if (!host) return;
-  host.setAttribute('role', 'tablist');
+  buttonsMode.value = !!tabButtonsEl();
 
   // Defer reaching into slotted/light-DOM children: c-tabs.onMounted
   // runs in a microtask after its own connectedCallback, which can fire
@@ -689,28 +778,28 @@ onMounted(() => {
     // The adapter needs no mode flag: c-tab-buttons is always the
     // tab-strip controller; only the host class for the indicator-suppressing
     // styles below is ours to set.
+    buttonsMode.value = !!tb;
+
     if (tb) host.classList.add('c-tabs--buttons');
   });
 
   updateItemsValue();
 
-  // Selection: a c-tab emits tabChange on click.
-  host.addEventListener('tabChange', (e) => {
+  // Selection: a c-tab emits tabchange on click.
+  host.addEventListener('tabchange', (e) => {
     const ev = e as CustomEvent<{ value: number | string }>;
     ev.stopPropagation();
-    internalValue.value = ev.detail.value;
-    dispatchValue(internalValue.value);
+    select(ev.detail.value);
   });
-  host.addEventListener('tabFocus', (e) => {
-    const ev = e as CustomEvent<number | string>;
-    ev.stopPropagation();
-    focusedTabValue = ev.detail;
-  });
+  // A tab's focus wiring event ends here (the keys read the focused tab
+  // off the event target).
+  host.addEventListener('tabfocus', (e) => e.stopPropagation());
 
-  // Keyboard: Enter/Space selects focused tab; arrows move focus. In buttons
-  // mode the adapter's wrapped c-button-group owns keyboard interaction
-  // (Space/Enter fire the native button click, arrows rove focus), so both
-  // handlers stand down to avoid double-dispatching changeValue.
+  // APG Tabs with manual activation: Enter and Space select the focused tab;
+  // the arrow keys (Up and Down in the vertical layout) move focus over the
+  // enabled tabs, stopping at the ends, and Home and End go to the first and
+  // the last. On keydown, as native controls act. In buttons mode the
+  // adapter's wrapped c-button-group owns the keys, so this stands down.
   host.addEventListener(
     'keydown',
     (e) => {
@@ -720,52 +809,35 @@ onMounted(() => {
 
       const target = ev.target as CTabEl;
 
-      if (!tabsList().includes(target) || target.disabled) return;
+      if (!tabsList().includes(target)) return;
 
       if (ev.key === 'Enter' || ev.code === 'Space') {
-        internalValue.value = target.value;
-        dispatchValue(internalValue.value);
-      }
-    },
-    true,
-  );
-  host.addEventListener(
-    'keyup',
-    (e) => {
-      if (tabButtonsEl()) return;
+        if (!isDisabled(target)) select(target.value);
 
-      const ev = e as KeyboardEvent;
-      isDirty = true;
-
-      if (!tabsList().includes(ev.target as CTabEl)) return;
-
-      const isLeft = ev.key === 'ArrowLeft';
-
-      const isRight = ev.key === 'ArrowRight';
-
-      if (!isLeft && !isRight) return;
-
-      const values = availableValues();
-
-      const idx = getTabIndex(focusedTabValue);
-
-      const first = values.at(0);
-
-      const last = values.at(-1);
-
-      const isBeginning = focusedTabValue === first;
-
-      const isEnd = focusedTabValue === last;
-
-      if (isLeft) {
-        if (isBeginning) return;
-        focusTab(isBeginning ? last! : values[idx - 1]);
+        return;
       }
 
-      if (isRight) {
-        if (isEnd) return;
-        focusTab(isEnd ? first! : values[idx + 1]);
+      const enabled = tabsList().filter((t) => !isDisabled(t));
+
+      const at = enabled.indexOf(target);
+
+      let next: CTabEl | undefined;
+
+      if (ev.key === (vertical.value ? 'ArrowUp' : 'ArrowLeft')) {
+        next = enabled[at - 1];
+      } else if (ev.key === (vertical.value ? 'ArrowDown' : 'ArrowRight')) {
+        next = enabled[at + 1];
+      } else if (ev.key === 'Home') {
+        next = enabled[0];
+      } else if (ev.key === 'End') {
+        next = enabled.at(-1);
+      } else {
+        return;
       }
+
+      ev.preventDefault();
+
+      if (next && next !== target) focusTab(next.value);
     },
     true,
   );
@@ -782,6 +854,14 @@ onMounted(() => {
 onBeforeUnmount(() => {
   resizeObserver?.disconnect();
 });
+
+// The page's id references on the element reach the tablist: the row's own,
+// or c-tab-buttons' in buttons mode.
+useIdReferences(() =>
+  buttonsMode.value
+    ? tabButtonsEl()?.shadowRoot?.querySelector('[role="tablist"]')
+    : scrollRef.value,
+);
 </script>
 
 <!--
@@ -814,7 +894,6 @@ onBeforeUnmount(() => {
 
   display: block;
   width: 100%;
-  transform: translateX(0%);
   max-width: 100%;
 }
 
@@ -939,7 +1018,7 @@ onBeforeUnmount(() => {
    must squeeze it instead of growing with it. As a flex item the row's
    automatic minimum is its content's min-content width — the one-row strip
    in full (the strip's inner `min-w-0` does not shrink what flows up) — so
-   the row outgrew the clipping `.c-tabs__tabs`, the frame was cut off at
+   the row outgrew `.c-tabs__tabs` and its clip, the frame was cut off at
    the edge and the inner scroller never overflowed: no arrows, no touch
    panning. The underlined c-tab row keeps its auto minimum: it scrolls by
    translating this very row past the viewport. */

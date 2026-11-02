@@ -2,7 +2,8 @@ Modals interrupt the page for a task that must be completed (or explicitly
 cancelled) before continuing — confirmations, short forms, destructive-action
 warnings. The slotted content is typically a `c-card`.
 
-Open state is controlled: bind `value` (v-model) and react to `changeValue`.
+Open state is controlled: bind `value` (v-model), or set it and listen for
+`change`, which carries `false` when the modal dismisses itself.
 Modals may be stacked — opening a second modal makes it the active one; the
 one beneath is dimmed and inert until it becomes topmost again.
 
@@ -19,19 +20,24 @@ one beneath is dimmed and inert until it becomes topmost again.
 
 ## Dismissal
 
-`dismissable` governs both light-dismiss gestures: clicking the backdrop and
-pressing Escape. A non-dismissable modal (the default) responds to either
-with a nudge animation instead of closing — it can only be closed by an
-explicit action inside it. Escape peels overlays innermost-first: with a
-menu or select open inside the modal, the first press closes that overlay,
-the next one reaches the modal.
+Escape closes every modal, as it closes a native dialog: it is the keyboard
+user's way out. Escape peels overlays innermost-first: with a menu or select
+open inside the modal, the first press closes that overlay, the next one
+reaches the modal.
+
+`dismissable` governs the backdrop: a dismissable modal also closes on a
+click outside its dialog, while a non-dismissable one (the default) responds
+to that click with a nudge animation instead of closing.
+
+Because Escape closes any modal, a page that sets `value` must also hear
+`change` (or bind `v-model`): otherwise its own state still says open, and
+setting it to `true` again does nothing.
 
 ## Accessibility
 
-- **Always set `aria-label` on the `c-modal` element** — the dialog's title
-  lives in your slotted content, across a shadow boundary the platform's
-  `aria-labelledby` cannot reach, so the label is mirrored from the host.
-  Opening an unlabeled modal logs a console warning.
+- **Always name the dialog:** set `aria-label` on the `c-modal` element, or
+  `aria-labelledby` with the id of the title in your content. Opening an
+  unnamed modal logs a console warning.
 - Focus moves to the first `[autofocus]` element in your content if present,
   else the first focusable element, else the dialog itself. Put `autofocus`
   on the least destructive action of a confirmation dialog.

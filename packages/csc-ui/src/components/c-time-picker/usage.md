@@ -53,7 +53,7 @@ validation:
 <c-time-picker
   v-model="time"
   :error-message="error"
-  :valid="!error"
+  :invalid="!!error"
   label="Start time"
   @change:text="error = $event.target.badInput ? 'Enter a time as hh.mm' : ''"
 />

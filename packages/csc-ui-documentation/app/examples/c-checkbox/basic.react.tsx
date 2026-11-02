@@ -10,7 +10,7 @@ export const Basic = () => {
       <CCheckbox
         checked={subscribed}
         hint="You can unsubscribe at any time"
-        onChangeValue={(event) => setSubscribed(event.detail as boolean)}
+        onChange={(event) => setSubscribed(event.detail as boolean)}
       >
         Subscribe to the newsletter
       </CCheckbox>

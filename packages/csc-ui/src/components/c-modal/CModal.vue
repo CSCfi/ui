@@ -39,7 +39,6 @@ import {
   watch,
 } from 'vue';
 
-import { emitModelValue } from '../../shared/emitModelValue';
 import {
   closeModal,
   focusInitialElement,
@@ -48,16 +47,18 @@ import {
   openModal,
 } from '../../shared/modalStack';
 import { prefersReducedMotion } from '../../shared/reducedMotion';
+import { useIdReferences } from '../../shared/useIdReferences';
+import { emitModelChange } from '../../shared/valueEvents';
 
 /** Events dispatched by `<c-modal>`. */
 interface CModalEvents {
   /**
-   * Fired when the modal dismisses itself — a backdrop click or the Escape
-   * key on a `dismissable` modal, or a platform-initiated close (e.g. a
-   * slotted `<form method="dialog">`). The detail is the new open state,
+   * Fired when the modal dismisses itself — the Escape key, a backdrop click
+   * on a `dismissable` modal, or a platform-initiated close (e.g. a slotted
+   * `<form method="dialog">`). The detail is the new open state,
    * always `false`.
    */
-  changeValue: boolean;
+  change: boolean;
 
   /**
    * Native bubbling input event dispatched alongside every value change so a
@@ -66,8 +67,7 @@ interface CModalEvents {
   input: void;
 
   /**
-   * Fired alongside `changeValue` with the same detail — the `v-model`
-   * contract.
+   * Fired alongside `change` with the same detail — the `v-model` contract.
    */
   'update:value': boolean;
 }
@@ -134,9 +134,9 @@ interface CModalProps {
   disableBackdropBlur?: boolean;
 
   /**
-   * Dismissed when touching/clicking outside the content or pressing Escape.
-   * A non-dismissable modal responds to either gesture with a nudge animation
-   * instead of closing.
+   * Dismissed when touching/clicking outside the content. A non-dismissable
+   * modal responds to that with a nudge animation instead of closing. Escape
+   * closes every modal.
    */
   dismissable?: boolean;
 
@@ -160,10 +160,10 @@ const props = withDefaults(defineProps<CModalProps>(), {
 
 const host = useHost();
 
-// changeValue/update:value + native `input` (plain v-model) + host `value`
-// mirror. The value watch is visuals-only (open/close), so no loop.
-const dispatchValue = (value: CModalEvents['changeValue']) =>
-  emitModelValue(host, value);
+// A dismissal is its own commit. The value watch is visuals-only (open/close),
+// so the host `value` mirror doesn't loop.
+const dispatchValue = (value: CModalEvents['change']) =>
+  emitModelChange(host, value);
 
 const dialogRef = useTemplateRef<HTMLDialogElement>('dialogRef');
 
@@ -189,8 +189,9 @@ let animationsDisabled = false;
 
 let nudgeTimer: null | ReturnType<typeof setTimeout> = null;
 
-// True while `finalizeClose` runs `dialog.close()`, so the native `close`
+// Set when `finalizeClose` runs `dialog.close()`, so the native `close`
 // listener can tell our own teardown apart from a platform-initiated close.
+// The platform fires `close` a task later, so the listener clears the flag.
 let internalClose = false;
 
 const nudge = () => {
@@ -207,13 +208,9 @@ const entry: ModalStackEntry = {
   get host() {
     return host as HTMLElement;
   },
+  // Escape closes every modal, as on a native dialog (WAI-ARIA dialog
+  // pattern); `dismissable` governs only the backdrop click (ADR-0014).
   onEscape: () => {
-    if (!props.dismissable) {
-      nudge();
-
-      return;
-    }
-
     closeDialog();
     dispatchValue(false);
   },
@@ -260,13 +257,13 @@ const openDialog = () => {
   // layers, backdrop, inert, scroll lock and Escape routing.
   openModal(entry);
 
-  // Accessible name: mirrored from the host, since `aria-labelledby` cannot
-  // reference the slotted (light DOM) title across the shadow boundary.
+  // Accessible name: the host's `aria-label`, mirrored, or its
+  // `aria-labelledby`, which useIdReferences hands to the dialog.
   dialogLabel.value = host.getAttribute('aria-label');
 
-  if (!dialogLabel.value) {
+  if (!dialogLabel.value && !host.hasAttribute('aria-labelledby')) {
     console.warn(
-      '<c-modal> opened without an accessible name. Set aria-label on the c-modal element.',
+      '<c-modal> opened without an accessible name. Set aria-label or aria-labelledby on the c-modal element.',
     );
   }
 
@@ -322,9 +319,11 @@ const closeDialog = () => {
 const finalizeClose = () => {
   dialogRef.value?.classList.remove('closing');
 
+  // Closing a dialog that is not open fires no `close` to clear the flag.
+  if (!dialogRef.value?.open) return;
+
   internalClose = true;
-  dialogRef.value?.close();
-  internalClose = false;
+  dialogRef.value.close();
 };
 
 /**
@@ -334,7 +333,11 @@ const finalizeClose = () => {
  * inert state and the consumer's `value` never desync.
  */
 const onNativeClose = () => {
-  if (internalClose) return;
+  if (internalClose) {
+    internalClose = false;
+
+    return;
+  }
 
   cancelInitialFocus();
   closeModal(entry);
@@ -388,6 +391,9 @@ onBeforeUnmount(() => {
 
   if (nudgeTimer !== null) clearTimeout(nudgeTimer);
 });
+
+// The page's id references on the element reach the element carrying its role.
+useIdReferences(() => dialogRef.value);
 </script>
 
 <!--

@@ -4,6 +4,7 @@
  */
 import { afterEach, describe, expect, it } from 'vitest';
 
+import { chromiumOnly } from '../test/harness';
 import { isPageLockedBy, lockPage, unlockPage } from './pageLock';
 
 interface Fixture {
@@ -256,43 +257,51 @@ describe('touch-pan guard', () => {
     return list;
   };
 
-  it('cancels a single-touch drag with nothing to scroll in its path, not one inside an overflowing list, and nothing once released', () => {
-    const host = document.createElement('div');
+  chromiumOnly(
+    'builds its touchmove with the Touch constructor, which desktop Firefox lacks',
+  )(
+    'cancels a single-touch drag with nothing to scroll in its path, not one inside an overflowing list, and nothing once released',
+    () => {
+      const host = document.createElement('div');
 
-    const still = document.createElement('p');
+      const still = document.createElement('p');
 
-    still.textContent = 'surface';
+      still.textContent = 'surface';
 
-    const shortList = scroller(false);
+      const shortList = scroller(false);
 
-    const longList = scroller(true);
+      const longList = scroller(true);
 
-    host.append(still, shortList, longList);
-    document.body.append(host);
+      host.append(still, shortList, longList);
+      document.body.append(host);
 
-    expect(touchMove(still).defaultPrevented, 'unlocked: untouched').toBe(
-      false,
-    );
+      expect(touchMove(still).defaultPrevented, 'unlocked: untouched').toBe(
+        false,
+      );
 
-    lock(host);
+      lock(host);
 
-    expect(touchMove(still).defaultPrevented, 'no scroller in path').toBe(true);
-    expect(
-      touchMove(shortList.firstElementChild!).defaultPrevented,
-      'a list with nothing to scroll',
-    ).toBe(true);
-    expect(
-      touchMove(longList.firstElementChild!).defaultPrevented,
-      'an overflowing list scrolls',
-    ).toBe(false);
-    expect(touchMove(still, 2).defaultPrevented, "pinch is the browser's").toBe(
-      false,
-    );
+      expect(touchMove(still).defaultPrevented, 'no scroller in path').toBe(
+        true,
+      );
+      expect(
+        touchMove(shortList.firstElementChild!).defaultPrevented,
+        'a list with nothing to scroll',
+      ).toBe(true);
+      expect(
+        touchMove(longList.firstElementChild!).defaultPrevented,
+        'an overflowing list scrolls',
+      ).toBe(false);
+      expect(
+        touchMove(still, 2).defaultPrevented,
+        "pinch is the browser's",
+      ).toBe(false);
 
-    unlockPage(host);
+      unlockPage(host);
 
-    expect(touchMove(still).defaultPrevented, 'released').toBe(false);
+      expect(touchMove(still).defaultPrevented, 'released').toBe(false);
 
-    host.remove();
-  });
+      host.remove();
+    },
+  );
 });

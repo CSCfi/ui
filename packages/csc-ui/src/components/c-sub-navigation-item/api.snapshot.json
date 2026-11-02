@@ -1,14 +1,16 @@
 {
   "attributes": {
     "active": "boolean = false",
-    "focusable": "boolean = false",
     "href": "string = ''",
     "loading": "boolean = false",
-    "target": "string = ''"
+    "target": "string = ''",
+    "value": "string"
   },
   "cssProperties": [],
   "defaultable": [],
-  "events": {},
+  "events": {
+    "select": "CustomEvent<{ value: string | undefined }>"
+  },
   "methods": {},
   "parts": [
     "content",
@@ -17,10 +19,10 @@
   "propertyOnly": [],
   "props": {
     "active": "boolean = false",
-    "focusable": "boolean = false",
     "href": "string = ''",
     "loading": "boolean = false",
-    "target": "string = ''"
+    "target": "string = ''",
+    "value": "string"
   },
   "slots": [
     "default"

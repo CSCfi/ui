@@ -17,21 +17,26 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 
-const expanded = ref<'billing' | 'members' | 'storage'>('billing');
+const expanded = ref<'billing' | 'members' | 'storage' | null>('billing');
 </script>
 
 <style>
 /* The default look is the accordion frame; this recolours the expanded
    item from primary to secondary through its parts. */
 c-accordion.custom-style {
-  c-accordion-item[expanded] {
+  c-accordion-item:state(expanded) {
     &::part(root) {
       border-color: var(--c-secondary);
       background-color: color-mix(in srgb, var(--c-secondary) 5%, transparent);
       box-shadow: inset 2px 0 0 0 var(--c-secondary);
     }
 
-    &::part(header),
+    /* The heading takes the ink paired with the wash, as the default
+       expanded heading does. */
+    &::part(header) {
+      color: var(--c-on-secondary-subtle);
+    }
+
     &::part(indicator) {
       color: var(--c-secondary);
     }

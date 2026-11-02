@@ -80,3 +80,24 @@ describe('c-card-title actions', () => {
     await matchScreenshotInBothModes(m.stage, 'wrapped-actions');
   });
 });
+
+describe('card title headings', () => {
+  it('is a level-2 heading unless heading-level says otherwise', async () => {
+    for (const [tag, partName] of [
+      ['c-card-title', 'heading'],
+      ['c-login-card-title', 'root'],
+    ] as const) {
+      const plain = await mount(tag, { html: 'Members' });
+
+      expect(plain.part(partName).getAttribute('role'), tag).toBe('heading');
+      expect(plain.part(partName).getAttribute('aria-level'), tag).toBe('2');
+
+      const nested = await mount(tag, {
+        attrs: { 'heading-level': 3 },
+        html: 'Members',
+      });
+
+      expect(nested.part(partName).getAttribute('aria-level'), tag).toBe('3');
+    }
+  });
+});

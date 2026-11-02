@@ -11,7 +11,7 @@ export const Basic = () => {
         clearable
         hint="Type to filter the options"
         label="Programming language"
-        onChangeValue={(event) => setLanguage(event.detail as null | string)}
+        onChange={(event) => setLanguage(event.detail as null | string)}
         placeholder="Start typing to search"
         value={language}
       >

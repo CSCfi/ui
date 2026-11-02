@@ -9,12 +9,12 @@ export const Basic = () => {
 
   const notify = (type: 'error' | 'success') => {
     toasts.current?.addToast({
+      heading: type === 'success' ? 'Saved' : 'Upload failed',
       message:
         type === 'success'
           ? 'Your changes have been saved.'
           : 'The file could not be uploaded.',
       progress: true,
-      title: type === 'success' ? 'Saved' : 'Upload failed',
       type,
     });
   };

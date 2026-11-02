@@ -3,10 +3,10 @@
     <a
       :class="ui.root()"
       v-bind="{
+        ...linkAttributes(),
         ...(!!href ? { href } : {}),
         ...(!!target ? { target } : {}),
       }"
-      :style="{ fontWeight: String(weight) }"
       part="root"
     >
       <slot />
@@ -16,14 +16,14 @@
 
 <script setup lang="ts">
 /**
- * @slot default - The visible content of the link
+ * @slot default - The link text
  *
  * @csspart root - The native `<a>` element carrying the link styling
- *
- * @seeded from csc-ui — verify
  */
 import { tv } from 'tailwind-variants';
-import { computed } from 'vue';
+import { computed, useAttrs } from 'vue';
+
+import { useIdReferences } from '../../shared/useIdReferences';
 
 /**
  * Styling lives entirely in this `tailwind-variants` config: the
@@ -41,7 +41,7 @@ const link = tv({
     underline: false,
   },
   slots: {
-    root: 'inline-flex cursor-pointer items-center justify-start gap-2 bg-transparent text-[length:inherit] text-link no-underline transition-colors duration-300 ease-in-out outline-none hover:bg-link-subtle focus-visible:rounded-[2px] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-link focus-visible:outline-solid',
+    root: 'inline-flex cursor-pointer items-center justify-start gap-2 bg-transparent text-[length:inherit] font-semibold text-link no-underline transition-colors duration-300 ease-in-out outline-none hover:bg-link-subtle focus-visible:rounded-[2px] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-link focus-visible:outline-solid',
   },
   variants: {
     underline: { true: { root: 'underline' } },
@@ -50,44 +50,62 @@ const link = tv({
 
 interface CLinkProps {
   /**
-   * Url of link
+   * URL the link leads to. Without it the link has no destination: it is
+   * neither focusable nor announced as a link.
    *
-   * @seeded from csc-ui — verify
    * @freeform any URL
    */
   href?: string;
 
   /**
-   * regular target attribute of a hyperlink
+   * Where the `href` opens, as on a native `<a>`: the same tab unless set —
+   * `_blank` for a new one.
    *
-   * @seeded from csc-ui — verify
    * @freeform any browsing-context name (e.g. _blank, _self)
    */
   target?: string;
 
   /**
-   * Display line under the link
-   *
-   * @seeded from csc-ui — verify
+   * Underline the text. Underline links inside running text, so colour is not
+   * the only thing telling them apart.
    */
   underline?: boolean;
-
-  /**
-   * Customisable font weight
-   *
-   * @seeded from csc-ui — verify
-   */
-  weight?: number | string;
 }
 
 const props = withDefaults(defineProps<CLinkProps>(), {
   href: '',
   target: '',
   underline: false,
-  weight: '600',
 });
 
 const ui = computed(() => link({ underline: props.underline }));
+
+// The host's ARIA and link attributes name and qualify the link, not the
+// wrapper around it; nothing else falls through.
+defineOptions({ inheritAttrs: false });
+
+const attrs = useAttrs();
+
+const LINK_ATTRIBUTES = new Set([
+  'download',
+  'hreflang',
+  'ping',
+  'referrerpolicy',
+  'rel',
+  'type',
+]);
+
+// Read on every render: `attrs` is not reactive, but a changed host
+// attribute re-renders the element.
+const linkAttributes = () =>
+  Object.fromEntries(
+    Object.entries(attrs).filter(
+      ([name]) => name.startsWith('aria-') || LINK_ATTRIBUTES.has(name),
+    ),
+  );
+
+// The page's id references on the element reach the element carrying its role.
+useIdReferences('[part~="root"]');
 </script>
 
 <style>

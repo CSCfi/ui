@@ -1,15 +1,15 @@
 {
   "attributes": {
     "active": "boolean = false",
-    "focusable": "boolean = true",
     "href": "string = ''",
     "loading": "boolean = false",
-    "target": "string = ''"
+    "target": "string = ''",
+    "value": "string"
   },
   "cssProperties": [],
   "defaultable": [],
   "events": {
-    "itemChange": "CustomEvent<Event>"
+    "select": "CustomEvent<{ value: string | undefined }>"
   },
   "methods": {},
   "parts": [
@@ -20,14 +20,13 @@
   "propertyOnly": [],
   "props": {
     "active": "boolean = false",
-    "focusable": "boolean = true",
     "href": "string = ''",
     "loading": "boolean = false",
-    "target": "string = ''"
+    "target": "string = ''",
+    "value": "string"
   },
   "slots": [
-    "default",
-    "sub-item"
+    "default"
   ],
   "states": [],
   "subcomponents": [],

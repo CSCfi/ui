@@ -13,7 +13,7 @@ export const SelectAll = () => {
         label="Countries"
         maxTags={3}
         multiple
-        onChangeValue={(event) => setCountries(event.detail as string[])}
+        onChange={(event) => setCountries(event.detail as string[])}
         selectAll
         value={countries}
       >

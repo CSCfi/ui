@@ -8,7 +8,7 @@ export const Basic = () => {
   return (
     <div className="example-grid">
       <CSwitch
-        onChangeValue={(event) => setEnabled(event.detail as boolean)}
+        onChange={(event) => setEnabled(event.detail as boolean)}
         value={enabled}
       >
         Notifications

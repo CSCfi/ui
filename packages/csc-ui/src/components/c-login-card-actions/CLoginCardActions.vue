@@ -1,8 +1,8 @@
 <template>
   <footer :class="ui.root()" part="root">
-    <menu :class="ui.actions()" part="actions">
+    <div :class="ui.actions()" part="actions">
       <slot />
-    </menu>
+    </div>
   </footer>
 </template>
 
@@ -24,18 +24,16 @@ export type CLoginCardActionsJustify =
   | 'start'
   | 'stretch';
 
-export interface CLoginCardActionsProps {
+interface CLoginCardActionsProps {
   /**
-   * Align the actions
-   *
-   * @seeded from csc-ui — verify
+   * Aligns the actions across the row: to its top (`start`), centre or
+   * bottom (`end`).
    */
   align?: CLoginCardActionsAlign;
 
   /**
-   * Justify the actions
-   *
-   * @seeded from csc-ui — verify
+   * Distributes the actions along the row; `stretch` grows every action to
+   * share it.
    */
   justify?: CLoginCardActionsJustify;
 }
@@ -43,19 +41,17 @@ export interface CLoginCardActionsProps {
 
 <script setup lang="ts">
 /**
- * @slot default - Login card actions
+ * @slot default - The actions: the sign-in button and any link beside it
  *
  * @csspart root - The outer footer element
- * @csspart actions - The flex menu row laying out the slotted actions
- *
- * @seeded from csc-ui — verify
+ * @csspart actions - The flex row laying out the slotted actions
  */
 import { tv } from 'tailwind-variants';
 import { computed } from 'vue';
 
 /**
  * Styling lives entirely in this `tailwind-variants` config; `root`
- * (the <footer>) and `actions` (the flex <menu> row) are the public parts.
+ * (the <footer>) and `actions` (the flex row) are the public parts.
  * The Stencil version delegated to <c-card-actions> with
  * `--_c-card-gap: 0`; the layout is inlined here so we don't nest a second
  * custom element (and its shadow boundary) just to zero a single var. The host

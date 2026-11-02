@@ -261,7 +261,7 @@ describe('opening', () => {
   it('paints the colour button with the value and an empty look without one', async () => {
     const m = await mountPicker({ value: '#1f6feb' });
 
-    const chip = m.part('color-chip');
+    const chip = m.part('value-color');
 
     expect(chip.style.getPropertyValue('--_c-color-picker-color')).toBe(
       '#1f6feb',

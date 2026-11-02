@@ -68,13 +68,13 @@ export function render() {
  * chart sits, or \`observeThemeMode()\` to follow it.
  */
 
-import type { ThemeMode } from './themeMode';
+import type { CThemeMode } from './themeMode';
 
 /** The twelve series slots in slot order (\`chart-1\` … \`chart-12\`). */
-export type ChartSlots = readonly [${slotTuple}];
+export type CChartSlots = readonly [${slotTuple}];
 
 /** The chart anatomy roles: plot background, gridlines/axes, tick labels. */
-export interface ChartAnatomy {
+export interface CChartAnatomy {
   readonly surface: string;
   readonly grid: string;
   readonly axis: string;
@@ -86,20 +86,20 @@ export interface ChartAnatomy {
  * string the \`--c-chart-*\` variable holds (ADR-0041). Each round-trips to
  * the \`#rrggbb\` in \`chartSlotsHex\`.
  */
-export const chartSlots: Readonly<Record<ThemeMode, ChartSlots>> = ${record(cssColor, slotsOf)};
+export const chartSlots: Readonly<Record<CThemeMode, CChartSlots>> = ${record(cssColor, slotsOf)};
 
 /**
  * Series slots per theme mode as \`#rrggbb\` — for chart libraries that do
  * their own colour maths in sRGB (ECharts, Chart.js) and cannot parse
  * \`oklch()\`. Same colours and order as \`chartSlots\`.
  */
-export const chartSlotsHex: Readonly<Record<ThemeMode, ChartSlots>> = ${record(hex, slotsOf)};
+export const chartSlotsHex: Readonly<Record<CThemeMode, CChartSlots>> = ${record(hex, slotsOf)};
 
 /** Chart anatomy roles per theme mode as \`oklch(L C H)\` strings. */
-export const chartAnatomy: Readonly<Record<ThemeMode, ChartAnatomy>> = ${record(cssColor, anatomyOf)};
+export const chartAnatomy: Readonly<Record<CThemeMode, CChartAnatomy>> = ${record(cssColor, anatomyOf)};
 
 /** Chart anatomy roles per theme mode as \`#rrggbb\`. */
-export const chartAnatomyHex: Readonly<Record<ThemeMode, ChartAnatomy>> = ${record(hex, anatomyOf)};
+export const chartAnatomyHex: Readonly<Record<CThemeMode, CChartAnatomy>> = ${record(hex, anatomyOf)};
 `;
 }
 

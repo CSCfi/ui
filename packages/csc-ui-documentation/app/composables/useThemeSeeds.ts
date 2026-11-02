@@ -1,8 +1,8 @@
 import {
   applyTheme,
+  type CFamily,
   DEFAULT_SEEDS,
   FAMILIES,
-  type Family,
   resetTheme,
 } from '@cscfi/csc-ui';
 
@@ -11,10 +11,10 @@ import {
 // playground) shows and edits the same state. Seeds are always #rrggbb — the
 // value a colour input takes — and never read back off the document: since
 // ADR-0041 the `--c-*` tokens are oklch() strings.
-const seeds = reactive<Record<Family, string>>({ ...DEFAULT_SEEDS });
+const seeds = reactive<Record<CFamily, string>>({ ...DEFAULT_SEEDS });
 
 export const useThemeSeeds = () => {
-  const setSeed = (family: Family, hex: string) => {
+  const setSeed = (family: CFamily, hex: string) => {
     seeds[family] = hex;
 
     // Merges with earlier calls — other families keep their overrides.

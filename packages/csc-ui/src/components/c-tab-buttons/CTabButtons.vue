@@ -23,7 +23,14 @@
         @pointerdown="strip.onPointerDown"
         @wheel="strip.onWheel"
       >
-        <div ref="contentRef" :class="ui.content()">
+        <!-- The tablist (APG Tabs): the buttons inside it are its tabs; the
+             scroll arrows sit outside it. -->
+        <div
+          ref="contentRef"
+          :aria-label="tablistLabel"
+          :class="ui.content()"
+          role="tablist"
+        >
           <div
             ref="indicatorRef"
             :class="ui.indicator()"
@@ -59,31 +66,29 @@
 </template>
 
 <script lang="ts">
-export interface CTabButtonsProps {
-  /** Disable the whole tab strip — every slotted c-button is disabled and the selection can no longer be changed. */
-  disabled?: boolean;
-
-  /**
-   * Size of the buttons
-   *
-   * @seeded from csc-ui — verify
-   */
-  size?: CTabButtonsSize;
-
-  /**
-   * Value of the active tab — pushed down by the parent c-tabs.
-   *
-   * @seeded from csc-ui — verify
-   */
-  value?: number | string;
-}
-
 /**
  * Size of the tab strip. `small` renders a more compact control; the size is
  * also propagated to every slotted `<c-button>`. Omitting the attribute
  * renders the default size.
  */
 export type CTabButtonsSize = 'default' | 'small';
+
+interface CTabButtonsProps {
+  /** Disable the whole tab strip — every slotted c-button is disabled and the selection can no longer be changed. */
+  disabled?: boolean;
+
+  /**
+   * Size of the buttons: `default`, or the more compact `small`.
+   */
+  size?: CTabButtonsSize;
+
+  /**
+   * Value of the active tab; the parent `<c-tabs>` sets it.
+   *
+   * @internal
+   */
+  value?: number | string;
+}
 </script>
 
 <script setup lang="ts">
@@ -100,6 +105,7 @@ import {
   computed,
   onBeforeUnmount,
   onMounted,
+  useAttrs,
   useHost,
   useTemplateRef,
 } from 'vue';
@@ -113,9 +119,11 @@ interface CTabButtonsEvents {
   /**
    * Fired when the user activates a tab button, carrying the newly selected
    * value. The parent `<c-tabs>` listens for it and pushes the accepted value
-   * back down; consumers should listen to `c-tabs` instead.
+   * back down; consumers listen to `c-tabs` instead.
+   *
+   * @internal
    */
-  tabChange: {
+  tabchange: {
     element: HTMLElement | null;
     value: number | string;
   };
@@ -255,8 +263,15 @@ const indicatorRef = useTemplateRef<HTMLElement>('indicatorRef');
 const strip = useScrollStrip(scrollerRef);
 
 type CTabButtonEl = {
+  asTab?: boolean;
   disabled?: boolean;
 } & HTMLElement;
+
+// An aria-label on the element (or on the c-tabs around it, which passes its
+// own down) names the tablist.
+const attrs = useAttrs();
+
+const tablistLabel = computed(() => attrs['aria-label'] as string | undefined);
 
 // Our own slot outlet (it lives in this shadow root, slot-forwarding the
 // consumer's buttons into the wrapped group). Its assigned elements are the
@@ -376,12 +391,16 @@ const suppressActiveFill = () => {
 };
 
 const setupButtons = () => {
+  // Each button is a tab of the tablist, not a toggle button.
+  buttons().forEach((button) => {
+    button.asTab = true;
+  });
   suppressActiveFill();
   observeButtons();
 };
 
 // Bridge the group's selection to the c-tabs contract: c-tabs listens for
-// `tabChange` bubbling from its light-DOM children and pushes the accepted
+// `tabchange` bubbling from its light-DOM children and pushes the accepted
 // value back via the `value` property, which flows down to the group through
 // the template binding. The group knows nothing about tabs.
 const onGroupChange = (e: Event) => {
@@ -392,7 +411,7 @@ const onGroupChange = (e: Event) => {
   e.stopPropagation();
 
   emit(
-    'tabChange',
+    'tabchange',
     { element: host, value },
     { bubbles: true, composed: true },
   );

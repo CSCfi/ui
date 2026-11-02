@@ -11,7 +11,7 @@ import { Component, CUSTOM_ELEMENTS_SCHEMA, signal } from '@angular/core';
         [disabled]="pending()"
         [loading]="pending()"
         [value]="enabled()"
-        (changeValue)="onToggle($any($event).detail)"
+        (change)="onToggle($any($event).detail)"
       >
         Sync to cloud
       </c-switch>

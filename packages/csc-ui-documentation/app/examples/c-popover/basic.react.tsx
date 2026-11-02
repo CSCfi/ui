@@ -18,14 +18,14 @@ export const Basic = () => {
 
         <div className="example-grid">
           <CSwitch
-            onChangeValue={(event) => setCompact(event.detail as boolean)}
+            onChange={(event) => setCompact(event.detail as boolean)}
             value={compact}
           >
             Compact rows
           </CSwitch>
 
           <CSwitch
-            onChangeValue={(event) => setShowIds(event.detail as boolean)}
+            onChange={(event) => setShowIds(event.detail as boolean)}
             value={showIds}
           >
             Show identifiers

@@ -10,7 +10,7 @@ export const Textarea = () => {
       <CTextField
         hint="A rows value above 1 renders a textarea"
         label="Description"
-        onChangeValue={(event) => setDescription(event.detail as string)}
+        onUpdateValue={(event) => setDescription(event.detail as string)}
         rows={4}
         value={description}
       />

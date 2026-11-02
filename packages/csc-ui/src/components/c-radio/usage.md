@@ -15,16 +15,19 @@ operable.
 
 ## Events
 
-Selecting a radio fires a `change` event carrying its `value`. The event
-bubbles (composed) so it can be heard on the radio, on the surrounding
-`c-radio-group`, or further up — with the radio as the event target.
+A radio fires no event of its own: listen on the `c-radio-group`, whose
+`change` carries the picked value.
 
 ## Standalone
 
 Outside a group a radio still renders and operates — it can be selected but
-never unselected, like a native radio without siblings. Grouping behavior
-(exclusivity, arrow-key navigation, form value) requires the parent
-`c-radio-group`.
+never unselected, like a native radio without siblings — but reports nothing.
+Grouping behavior (exclusivity, arrow-key navigation, value events) requires
+the parent `c-radio-group`.
+
+## Accessibility
+
+Each radio is a native input named by its label; an `aria-label` on the element names it instead where there is no visible one.
 
 ## Customization
 

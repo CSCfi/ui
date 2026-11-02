@@ -1,8 +1,9 @@
 <template>
   <div
+    v-bind="controlAttrs"
     :aria-labelledby="label ? labelId : undefined"
     :class="ui.root()"
-    :role="label ? 'group' : undefined"
+    :role="grouped() ? 'group' : undefined"
     part="root"
   >
     <form-label
@@ -21,7 +22,13 @@
 </template>
 
 <script lang="ts">
-export interface CTagsProps {
+/**
+ * Size propagated to every slotted `<c-tag>`. `small` renders compact tags;
+ * omitting the attribute leaves the tags at their default size.
+ */
+export type CTagsSize = 'default' | 'small';
+
+interface CTagsProps {
   /**
    * Label of the tag group, shown above the tags
    *
@@ -35,29 +42,20 @@ export interface CTagsProps {
   required?: boolean;
 
   /**
-   * Size of the tags
-   *
-   * @seeded from csc-ui — verify
+   * Size of every tag in the group: `small` renders them compact. Overrides
+   * each tag's own `size`
    */
   size?: CTagsSize;
 }
-
-/**
- * Size propagated to every slotted `<c-tag>`. `small` renders compact tags;
- * omitting the attribute leaves the tags at their default size.
- */
-export type CTagsSize = 'default' | 'small';
 </script>
 
 <script setup lang="ts">
 /**
- * @slot default - Default slot for the c-tag elements
+ * @slot default - The `c-tag` elements of the group
  *
  * @csspart root - The wrapper stacking the group label above the tags
  * @csspart label - The group label rendered above the tags
  * @csspart items - The wrapping row that lays out the slotted tags
- *
- * @seeded from csc-ui — verify
  *
  * @subcomponents c-tag
  */
@@ -65,6 +63,8 @@ import { tv } from 'tailwind-variants';
 import { onMounted, toRefs, useHost, useId, watch } from 'vue';
 
 import FormLabel from '../../shared/FormLabel.vue';
+import { useControlAttrs } from '../../shared/useControlAttrs';
+import { useIdReferences } from '../../shared/useIdReferences';
 
 // We write to the host (child <c-tag> props) below — keep fallthrough attrs
 // on the host element instead of the inner root div.
@@ -96,6 +96,16 @@ const ui = tags();
 
 const host = useHost();
 
+const { controlAttrs } = useControlAttrs();
+
+// A group takes its role once something names it: the label, or the page's
+// `aria-label` or `aria-labelledby` on the element (read at render, and
+// defineElement re-renders on an id-reference change).
+const grouped = () =>
+  !!props.label ||
+  !!controlAttrs.value['aria-label'] ||
+  !!host?.hasAttribute('aria-labelledby');
+
 const autoId = useId();
 
 const labelId = `${autoId}-label`;
@@ -103,8 +113,8 @@ const labelId = `${autoId}-label`;
 // The original Stencil c-tags reaches into its slotted children on mount
 // and propagates `size="small"` onto each <c-tag>. Mirror that here so a
 // consumer can just write `<c-tags size="small">` without setting size on
-// each tag. Re-run whenever `size` changes — covers cases where the prop
-// is set dynamically after mount.
+// each tag. Re-run whenever `size` changes and on every slotchange, so tags
+// added later (a v-for that grows) get the group's size too.
 const propagate = () => {
   if (!host) return;
 
@@ -118,8 +128,18 @@ const propagate = () => {
   });
 };
 
-onMounted(propagate);
+onMounted(() => {
+  propagate();
+  // Attributes on Vue's <slot> element are slot props, so the native outlet
+  // is wired imperatively (as in CTable).
+  host?.shadowRoot
+    ?.querySelector('slot')
+    ?.addEventListener('slotchange', propagate);
+});
 watch(size, propagate);
+
+// The page's id references on the element reach the element carrying its role.
+useIdReferences('[part~="root"]');
 </script>
 
 <!--

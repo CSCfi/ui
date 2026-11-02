@@ -106,6 +106,21 @@ const literalMembers = (node, sf, table, seen) => {
 /** Resolve a single type reference to its declaration's text (transitively for
  *  alias-of-alias), for the attribute-compatibility test. */
 const resolvedText = (node, sf, table, seen = new Set()) => {
+  // A union resolves member by member: `CDataTableSort | null` is an object
+  // shape or null, which no attribute carries.
+  if (ts.isUnionTypeNode(node)) {
+    const members = node.types.map((member) => ({
+      member,
+      text: resolvedText(member, sf, table, seen),
+    }));
+
+    if (members.every(({ text }) => text === null)) return null;
+
+    return members
+      .map(({ member, text }) => text ?? member.getText(sf))
+      .join(' | ');
+  }
+
   if (!ts.isTypeReferenceNode(node) || node.typeArguments) return null;
 
   const name = node.typeName.getText(sf);

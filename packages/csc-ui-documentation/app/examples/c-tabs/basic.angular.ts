@@ -7,7 +7,7 @@ import { Component, CUSTOM_ELEMENTS_SCHEMA, signal } from '@angular/core';
   standalone: true,
   template: `
     <div>
-      <c-tabs [value]="tab()" (changeValue)="tab.set($any($event).detail)">
+      <c-tabs [value]="tab()" (change)="tab.set($any($event).detail)">
         <c-tab value="summary">Summary</c-tab>
         <c-tab value="members">
           Members

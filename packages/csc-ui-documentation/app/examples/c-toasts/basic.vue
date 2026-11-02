@@ -17,10 +17,10 @@ type CToastsElement = {
 
 interface ToastMessage {
   duration?: number;
+  heading?: string;
   message: string;
   persistent?: boolean;
   progress?: boolean;
-  title?: string;
   type?: 'error' | 'info' | 'success' | 'warning';
 }
 
@@ -28,12 +28,12 @@ const toasts = useTemplateRef<CToastsElement>('toasts');
 
 const notify = (type: 'error' | 'success') => {
   toasts.value?.addToast({
+    heading: type === 'success' ? 'Saved' : 'Upload failed',
     message:
       type === 'success'
         ? 'Your changes have been saved.'
         : 'The file could not be uploaded.',
     progress: true,
-    title: type === 'success' ? 'Saved' : 'Upload failed',
     type,
   });
 };

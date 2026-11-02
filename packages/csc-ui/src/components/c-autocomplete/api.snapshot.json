@@ -6,7 +6,7 @@
     "external": "boolean = false",
     "hide-details": "boolean = false",
     "hint": "string = ''",
-    "host-id": "string = ''",
+    "invalid": "boolean = false",
     "items-per-page": "number = 6",
     "label": "string = ''",
     "label-on-top": "boolean = false",
@@ -20,7 +20,7 @@
     "select-all": "boolean = false",
     "shadow": "boolean = false",
     "size": "'default' | 'small' = 'default'",
-    "valid": "boolean = true"
+    "value": "number | string = null"
   },
   "cssProperties": [],
   "defaultable": [
@@ -32,14 +32,13 @@
     "texts"
   ],
   "events": {
-    "change": "CustomEvent<void>",
+    "change": "CustomEvent<CAutocompleteValue>",
     "change:query": "CustomEvent<string>",
-    "changeValue": "CustomEvent<CAutocompleteValue>",
     "input": "CustomEvent<void>",
     "update:value": "CustomEvent<CAutocompleteValue>"
   },
   "methods": {
-    "reset": "()"
+    "focus": "(options?: FocusOptions): void"
   },
   "parts": [
     "card",
@@ -48,10 +47,11 @@
     "heading-row",
     "indicator",
     "info",
-    "item",
     "list",
     "mark",
     "match",
+    "message",
+    "option",
     "panel",
     "search",
     "select-all",
@@ -62,8 +62,7 @@
   "propertyOnly": [
     "filter",
     "items",
-    "texts",
-    "value"
+    "texts"
   ],
   "props": {
     "clearable": "boolean = false",
@@ -73,7 +72,7 @@
     "filter": "CAutocompleteFilter",
     "hideDetails": "boolean = false",
     "hint": "string = ''",
-    "hostId": "string = ''",
+    "invalid": "boolean = false",
     "items": "CAutocompleteItem[] = () => []",
     "itemsPerPage": "number = 6",
     "label": "string = ''",
@@ -89,7 +88,6 @@
     "shadow": "boolean = false",
     "size": "'default' | 'small' = 'default'",
     "texts": "CAutocompleteTexts = {}",
-    "valid": "boolean = true",
     "value": "CAutocompleteValue = null"
   },
   "slots": [

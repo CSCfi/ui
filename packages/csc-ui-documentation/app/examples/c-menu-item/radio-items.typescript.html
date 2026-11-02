@@ -1,0 +1,25 @@
+<div class="example-row">
+  <c-menu id="theme-menu">
+    <c-button slot="trigger" text>
+      <c-icon id="theme-trigger-icon"></c-icon>
+      Theme:
+      <span id="theme-value">dark</span>
+      <c-icon class="chevron"></c-icon>
+    </c-button>
+
+    <c-menu-label>Theme</c-menu-label>
+
+    <c-menu-item type="radio" value="dark" checked>
+      <c-icon slot="icon"></c-icon>
+      Dark
+    </c-menu-item>
+    <c-menu-item type="radio" value="light">
+      <c-icon slot="icon"></c-icon>
+      Light
+    </c-menu-item>
+    <c-menu-item type="radio" value="system">
+      <c-icon slot="icon"></c-icon>
+      System
+    </c-menu-item>
+  </c-menu>
+</div>

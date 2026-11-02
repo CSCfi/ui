@@ -30,7 +30,7 @@ interface Declaration {
 }
 
 interface Manifest {
-  csc: { types: Named[] };
+  csc: { internalTags?: string[]; types: TypeDeclaration[] };
   modules: Array<{ declarations?: Declaration[] }>;
 }
 
@@ -50,6 +50,11 @@ interface Typed {
   type?: { text: string };
 }
 
+interface TypeDeclaration extends Named {
+  declaration: string;
+  kind: 'interface' | 'type-alias';
+}
+
 const srcDir = fileURLToPath(new URL('.', import.meta.url));
 
 const packageRoot = resolve(srcDir, '..');
@@ -64,6 +69,10 @@ execFileSync(process.execPath, ['scripts/analyzer/index.mjs'], {
 const manifest = JSON.parse(
   readFileSync(join(packageRoot, 'dist/custom-elements.json'), 'utf8'),
 ) as Manifest;
+
+// Internal tags are named, never described (ADR-0075): no snapshot, since
+// their API may change in any release.
+const internalTags = manifest.csc.internalTags ?? [];
 
 const declarations = manifest.modules
   .flatMap((m) => m.declarations ?? [])
@@ -80,6 +89,58 @@ const withDefault = (t: Typed): string =>
   t.default === undefined ? typeText(t) : `${typeText(t)} = ${t.default}`;
 
 const names = (list: Named[]): string[] => list.map((n) => n.name).sort();
+
+/** Split at `separator` outside brackets (the `>` of `=>` closes nothing). */
+const splitTopLevel = (text: string, separator: string): string[] => {
+  const parts = [''];
+
+  let depth = 0;
+
+  for (const [index, char] of [...text].entries()) {
+    if ('{([<'.includes(char)) depth++;
+
+    if ('})]'.includes(char) || (char === '>' && text[index - 1] !== '=')) {
+      depth--;
+    }
+
+    if (char === separator && depth === 0) parts.push('');
+    else parts[parts.length - 1] += char;
+  }
+
+  return parts.map((part) => part.replaceAll(/\s+/g, ' ').trim());
+};
+
+/**
+ * An exported type's shape without its prose (ADR-0074): an interface as
+ * `{ field: type }` (`?` marks an optional field), an alias as its text. The
+ * API guard diffs these, so a narrowed alias or a renamed `texts` key shows.
+ */
+const typeShape = ({
+  declaration,
+  kind,
+}: TypeDeclaration): Record<string, string> | string => {
+  const code = declaration
+    .replaceAll(/\/\*[\s\S]*?\*\//g, '')
+    .replaceAll(/^\s*\/\/.*$/gm, '');
+
+  if (kind === 'type-alias') {
+    return splitTopLevel(code.replace(/^export type \w+\s*=/, ''), ';')[0]
+      .replace(/^\| /, '')
+      .trim();
+  }
+
+  const body = code.slice(code.indexOf('{') + 1, code.lastIndexOf('}'));
+
+  return sortedObject(
+    splitTopLevel(body, ';')
+      .filter(Boolean)
+      .map((field): [string, string] => {
+        const [name, ...type] = splitTopLevel(field, ':');
+
+        return [name, type.join(':')];
+      }),
+  );
+};
 
 /** The reviewable shape of one tag's public API. Descriptions are prose, not API — excluded. */
 const condense = (d: { tagName: string } & Declaration) => {
@@ -141,7 +202,7 @@ it('describes every component directory and leaves no orphan snapshot', () => {
 
   const tags = new Set(declarations.map((d) => d.tagName));
 
-  expect([...tags].sort()).toEqual(directories.sort());
+  expect([...tags, ...internalTags].sort()).toEqual(directories.sort());
 
   // A snapshot whose tag no longer exists would silently outlive its component.
   const orphans = directories.filter(
@@ -188,7 +249,9 @@ it('agrees with the generated allow-lists and the conformance exceptions', () =>
       ]),
     ),
   );
-  expect(noRoot).toEqual([...NO_ROOT_PART].sort());
+  expect(noRoot).toEqual(
+    NO_ROOT_PART.filter((tag) => !internalTags.includes(tag)).sort(),
+  );
 });
 
 it('matches the entry snapshot of runtime exports and public types', async () => {
@@ -208,9 +271,33 @@ it('matches the entry snapshot of runtime exports and public types', async () =>
     }
   }
 
+  // Every exported type name (ADR-0074): the manifest describes the
+  // component and shared types below, but not the package-level ones
+  // (`CThemeMode`, `CAppDefaults`, …), and a renamed export breaks an import.
+  const typeExports = new Set<string>();
+
+  for (const m of source.matchAll(/^export type \{([^}]+)\} from/gm)) {
+    for (const entry of m[1].split(',')) {
+      const name = entry.trim();
+
+      if (name) typeExports.add(name.split(/\s+as\s+/).pop()!);
+    }
+  }
+
+  for (const m of source.matchAll(/^export type \* from '([^']+)'/gm))
+    typeExports.add(`* from ${m[1]}`);
+
+  // The internal-tag list is not public API, but a tag moving in or out of it
+  // changes what is — so the move shows up in this reviewed snapshot.
   const entry = {
+    internalTags: [...internalTags].sort(),
     runtimeExports: [...runtimeExports].sort(),
-    types: names(manifest.csc.types),
+    typeExports: [...typeExports].sort(),
+    types: Object.fromEntries(
+      [...manifest.csc.types]
+        .sort((a, b) => a.name.localeCompare(b.name))
+        .map((type) => [type.name, typeShape(type)]),
+    ),
   };
 
   await expect(`${JSON.stringify(entry, null, 2)}\n`).toMatchFileSnapshot(

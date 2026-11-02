@@ -1,7 +1,14 @@
 <template>
   <header ref="rootRef" :class="ui.root()" part="root">
     <div :class="ui.header()" part="header">
-      <p :class="ui.heading()" part="heading"><slot /></p>
+      <p
+        :aria-level="headingLevel"
+        :class="ui.heading()"
+        part="heading"
+        role="heading"
+      >
+        <slot />
+      </p>
 
       <div :class="ui.underline()" part="underline" />
     </div>
@@ -14,16 +21,14 @@
 
 <script setup lang="ts">
 /**
- * @slot default - Card title text
+ * @slot default - The title text
  * @slot actions - Action controls shown to the right of the title, or under it when the two do not fit side by side
  *
  * @csspart root - The outer header element carrying the title typography and padding
  * @csspart header - The wrapper around the heading and its underline
- * @csspart heading - The paragraph holding the slotted title text
+ * @csspart heading - The heading (`role="heading"`, at `heading-level`) holding the slotted title text
  * @csspart underline - The decorative accent bar under the heading
  * @csspart actions - The wrapper around the slotted action controls
- *
- * @seeded from csc-ui — verify
  */
 import { tv } from 'tailwind-variants';
 import { computed, useTemplateRef } from 'vue';
@@ -57,7 +62,9 @@ const cardTitle = tv({
     actions: 'flex flex-wrap items-center gap-2',
     header: '',
     heading: 'm-0',
-    root: 'block px-[var(--_c-card-padding-inline,28px)] text-[13.5px] font-bold tracking-[1.2px] text-balance text-on-surface uppercase',
+    // The end padding leaves room for a fullscreen card's toggle (c-card
+    // sets `--_c-card-toggle-room`).
+    root: 'block pr-[calc(var(--_c-card-padding-inline,28px)_+_var(--_c-card-toggle-room,0px))] pl-[var(--_c-card-padding-inline,28px)] text-[13.5px] font-bold tracking-[1.2px] text-balance text-on-surface uppercase',
     underline: 'mt-2 h-[3px] w-[42px] rounded-[2px] bg-primary',
   },
   variants: {
@@ -70,6 +77,19 @@ const cardTitle = tv({
 });
 
 const rootRef = useTemplateRef<HTMLElement>('rootRef');
+
+interface CCardTitleProps {
+  /**
+   * The title's heading level, 1 to 6: pick the one that fits the card's
+   * place in the page's outline (2 under the page's `h1`, 3 inside a section
+   * with an `h2`).
+   */
+  headingLevel?: 1 | 2 | 3 | 4 | 5 | 6;
+}
+
+withDefaults(defineProps<CCardTitleProps>(), {
+  headingLevel: 2,
+});
 
 const hasActions = useHasSlot(rootRef, 'actions');
 

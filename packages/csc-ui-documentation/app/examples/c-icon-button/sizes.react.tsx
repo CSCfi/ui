@@ -4,15 +4,15 @@ import { mdiMagnify } from '@mdi/js';
 
 export const Sizes = () => (
   <div className="example-row">
-    <CIconButton size="x-small">
+    <CIconButton aria-label="Search" size="x-small">
       <CIcon path={mdiMagnify} />
     </CIconButton>
 
-    <CIconButton size="small">
+    <CIconButton aria-label="Search" size="small">
       <CIcon path={mdiMagnify} />
     </CIconButton>
 
-    <CIconButton>
+    <CIconButton aria-label="Search">
       <CIcon path={mdiMagnify} />
     </CIconButton>
   </div>

@@ -2,6 +2,7 @@
   <label :class="ui.root()" part="root">
     <input
       ref="inputRef"
+      v-bind="controlAttrs"
       :class="ui.input()"
       :disabled="isDisabled"
       type="radio"
@@ -44,8 +45,10 @@ import { tv } from 'tailwind-variants';
 import { computed, useTemplateRef, watch } from 'vue';
 
 import { coerceBoolean } from '../../shared/coerceBoolean';
+import { useControlAttrs } from '../../shared/useControlAttrs';
 import { useHostEmit } from '../../shared/useHostEmit';
 import { useHostStates } from '../../shared/useHostStates';
+import { useIdReferences } from '../../shared/useIdReferences';
 import { useRipple } from '../../shared/useRipple';
 
 // The shadow <label> is this component's root part; consumer fallthrough
@@ -53,15 +56,20 @@ import { useRipple } from '../../shared/useRipple';
 // colliding with the tv utilities.
 defineOptions({ inheritAttrs: false });
 
+// ARIA attributes on the element reach the native control.
+const { controlAttrs } = useControlAttrs();
+
 /** Events dispatched by `<c-radio>`. */
 interface CRadioEvents {
   /**
    * Fired when the radio is selected by the user, carrying its `value`.
    * Bubbles composed so the parent `<c-radio-group>` — whose shadow root a
-   * light-DOM event never enters — catches it on its host; a consumer
-   * listening on the group hears it too, with the radio as `target`.
+   * light-DOM event never enters — catches it on its host and stops it there;
+   * the group's own `change` is the public event.
+   *
+   * @internal
    */
-  change: string;
+  radioselect: string;
 }
 
 /**
@@ -205,8 +213,11 @@ defineExpose({ _syncGroupState });
 const onChange = () => {
   spawnRipple();
   setState('checked', true);
-  emit('change', props.value, { bubbles: true, composed: true });
+  emit('radioselect', props.value, { bubbles: true, composed: true });
 };
+
+// The page's id references on the element reach the element carrying its role.
+useIdReferences(() => inputRef.value);
 </script>
 
 <!--

@@ -1,6 +1,13 @@
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
+import { userEvent } from 'vitest/browser';
 
-import { matchScreenshotInBothModes, mount, settled } from '../../test/harness';
+import {
+  matchScreenshotInBothModes,
+  mount,
+  roleInMode,
+  setThemeMode,
+  settled,
+} from '../../test/harness';
 
 describe('c-button', () => {
   it('upgrades with adopted styles and a painted root', async () => {
@@ -46,5 +53,127 @@ describe('c-button ripple', () => {
     expect(ripples.getPropertyValue('corner-shape')).toBe(
       root.getPropertyValue('corner-shape'),
     );
+  });
+});
+
+describe('c-button link (decisions #7)', () => {
+  const mountLink = async (attrs: Record<string, string> = {}) => {
+    const m = await mount('c-button', {
+      attrs: { href: '#somewhere', ...attrs },
+      html: 'Docs',
+    });
+
+    const anchor = m.part('root') as HTMLAnchorElement;
+
+    const clicks: string[] = [];
+
+    // Record the activation, and keep the test page where it is.
+    anchor.addEventListener('click', (event) => {
+      clicks.push(anchor.target);
+      event.preventDefault();
+    });
+
+    return { anchor, clicks };
+  };
+
+  it('opens in the same tab unless target is set, as a native link does', async () => {
+    const { anchor } = await mountLink();
+
+    expect(anchor.hasAttribute('target') ? anchor.target : '').toBe('');
+  });
+
+  it('Space clicks the link; nothing opens a window behind its back', async () => {
+    const open = vi.spyOn(window, 'open').mockReturnValue(null);
+
+    try {
+      const { anchor, clicks } = await mountLink();
+
+      anchor.focus();
+      await userEvent.keyboard(' ');
+
+      expect(clicks).toEqual(['']);
+      expect(open).not.toHaveBeenCalled();
+    } finally {
+      open.mockRestore();
+    }
+  });
+});
+
+describe('c-button in a form', () => {
+  const inForm = async (attrs: Record<string, boolean | string>) => {
+    const form = document.createElement('form');
+
+    const seen: string[] = [];
+
+    form.addEventListener('submit', (event) => {
+      event.preventDefault();
+      seen.push('submit');
+    });
+    form.addEventListener('reset', () => seen.push('reset'));
+    document.body.append(form);
+
+    const { host } = await mount('c-button', { attrs, html: 'Go' });
+
+    form.append(host.parentElement!);
+
+    return { button: host.shadowRoot!.querySelector('button')!, form, seen };
+  };
+
+  it('type="submit" submits and type="reset" resets the form around it', async () => {
+    const submit = await inForm({ type: 'submit' });
+
+    await userEvent.click(submit.button);
+
+    const reset = await inForm({ type: 'reset' });
+
+    await userEvent.click(reset.button);
+
+    expect([...submit.seen, ...reset.seen]).toEqual(['submit', 'reset']);
+    submit.form.remove();
+    reset.form.remove();
+  });
+
+  it('a plain, disabled or loading button submits nothing', async () => {
+    for (const attrs of [
+      {},
+      { disabled: true, type: 'submit' },
+      { loading: true, type: 'submit' },
+    ] as Record<string, boolean | string>[]) {
+      const { button, form, seen } = await inForm(attrs);
+
+      button.click();
+
+      expect(seen, JSON.stringify(attrs)).toEqual([]);
+      form.remove();
+    }
+  });
+});
+
+describe('c-button disabled', () => {
+  // The hint inks (`on-surface-muted`, `on-surface-faint`) are held to AA
+  // contrast, dark enough that a disabled label inked with them reads as
+  // enabled; disabled text takes the disabled ink, exempt from AA.
+  it('inks its label with the disabled ink in both modes', async () => {
+    for (const mode of ['light', 'dark'] as const) {
+      setThemeMode(mode);
+
+      for (const attrs of [
+        {},
+        { danger: true },
+        { ghost: true },
+        { text: true },
+        { outlined: true },
+      ] as Record<string, boolean>[]) {
+        const { part } = await mount('c-button', {
+          attrs: { ...attrs, disabled: true },
+          html: 'Save',
+        });
+
+        expect(
+          getComputedStyle(part('root')).color,
+          `${mode} ${JSON.stringify(attrs)}`,
+        ).toBe(roleInMode(mode, '--c-on-surface-disabled'));
+      }
+    }
   });
 });

@@ -6,7 +6,7 @@
     "error-message": "string = ''",
     "hide-details": "boolean = false",
     "hint": "string = ''",
-    "host-id": "string = ''",
+    "invalid": "boolean = false",
     "items-per-page": "number = 6",
     "label": "string = ''",
     "label-on-top": "boolean = false",
@@ -16,8 +16,7 @@
     "return-object": "boolean = false",
     "shadow": "boolean = false",
     "size": "'default' | 'small' = 'default'",
-    "valid": "boolean = true",
-    "value": "CTreeSelectValue = null"
+    "value": "number | string = null"
   },
   "cssProperties": [],
   "defaultable": [
@@ -34,7 +33,9 @@
     "input": "CustomEvent<void>",
     "update:value": "CustomEvent<CTreeSelectValue>"
   },
-  "methods": {},
+  "methods": {
+    "focus": "(options?: FocusOptions): void"
+  },
   "parts": [
     "breadcrumb",
     "card",
@@ -45,9 +46,10 @@
     "heading",
     "heading-row",
     "info",
-    "item",
     "list",
     "match",
+    "message",
+    "option",
     "panel",
     "path",
     "search",
@@ -67,7 +69,7 @@
     "filter": "CTreeSelectFilter",
     "hideDetails": "boolean = false",
     "hint": "string = ''",
-    "hostId": "string = ''",
+    "invalid": "boolean = false",
     "items": "CTreeSelectItem[] = () => []",
     "itemsPerPage": "number = 6",
     "label": "string = ''",
@@ -80,7 +82,6 @@
     "shadow": "boolean = false",
     "size": "'default' | 'small' = 'default'",
     "texts": "CTreeSelectTexts = {}",
-    "valid": "boolean = true",
     "value": "CTreeSelectValue = null"
   },
   "slots": [],

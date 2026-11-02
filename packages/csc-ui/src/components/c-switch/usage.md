@@ -1,8 +1,11 @@
 A toggle for a binary setting that takes effect immediately: a native
-switch control with a label, an optional hint, and validation messaging.
+switch control with a label.
 
-Bind the state with a plain `v-model` (or the `checked` prop); `true-value` /
-`false-value` map the on/off state onto custom values.
+Bind the state with a plain `v-model`: `value` is `true-value` while the
+switch is on and `false-value` while it is off (`true` and `false` unless you
+map them onto custom values). `checked` is the same state as a boolean —
+setting it sets `value`, and a `checked` attribute sets the initial state when
+no `value` is bound.
 
 ```html
 <c-switch v-model="notifications">Email notifications</c-switch>
@@ -15,6 +18,10 @@ Bind the state with a plain `v-model` (or the `checked` prop); `true-value` /
 ## When not to use
 
 - A choice that is collected and submitted with a form — use `c-checkbox`.
+
+## Accessibility
+
+The switch is a native input named by its label. Without a visible label, set `aria-label` on the element: it names the input, as the other ARIA attributes on the element describe it.
 
 ## Customization
 

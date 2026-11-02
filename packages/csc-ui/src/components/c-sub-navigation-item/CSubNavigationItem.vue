@@ -1,22 +1,24 @@
 <template>
   <div :class="ui.root()">
-    <div
+    <!-- A link with an `href`, else a button. -->
+    <component
+      :is="href ? 'a' : 'button'"
       :aria-current="active ? 'page' : undefined"
       :class="ui.item()"
-      :tabindex="focusable ? 0 : -1"
+      :href="href || undefined"
+      :tabindex="collapsed ? -1 : undefined"
+      :target="href && target ? target : undefined"
+      :type="href ? undefined : 'button'"
       part="root"
-      role="menuitem"
     >
-      <div :class="ui.content()" part="content">
-        <div :class="ui.slot()">
+      <span :class="ui.content()" part="content">
+        <span :class="ui.slot()">
           <slot />
-        </div>
+        </span>
+      </span>
 
-        <span v-if="active" :class="ui.srOnly()">, Current page</span>
-      </div>
-
-      <c-loader :size="32" :visible="loading" style="pointer-events: none" />
-    </div>
+      <c-loader :hide="!loading" :size="32" style="pointer-events: none" />
+    </component>
   </div>
 </template>
 
@@ -29,6 +31,9 @@
  */
 import { tv } from 'tailwind-variants';
 import { computed, onMounted, ref, useHost, watchEffect } from 'vue';
+
+import { useHostEmit } from '../../shared/useHostEmit';
+import { useIdReferences } from '../../shared/useIdReferences';
 
 /**
  * Styling lives in this `tailwind-variants` config: each visual
@@ -68,11 +73,9 @@ const subNavigationItem = tv({
     // a translucent `on-nav-active` wash in dark (ADR-0052). Page roles
     // (`surface-raised`, the primary tint) read as a hole punched into the
     // drawer in dark mode.
-    item: 'relative mx-2 flex cursor-pointer items-center overflow-hidden rounded-csc-md bg-transparent px-0 pl-[34px] leading-[46px] font-normal text-on-nav-active transition-colors duration-200 ease-in outline-none select-none before:absolute before:top-0 before:left-0 before:h-full before:w-2 before:[transform:translateZ(0)_translateX(-8px)] before:bg-on-nav-active before:transition-transform before:duration-200 before:ease-in-out before:content-[""]',
+    item: 'relative mx-2 flex w-[calc(100%-1rem)] cursor-pointer items-center overflow-hidden rounded-csc-md bg-transparent px-0 pl-[34px] leading-[46px] font-normal text-on-nav-active transition-colors duration-200 ease-in outline-none select-none before:absolute before:top-0 before:left-0 before:h-full before:w-2 before:[transform:translateZ(0)_translateX(-8px)] before:bg-on-nav-active before:transition-transform before:duration-200 before:ease-in-out before:content-[""]',
     root: 'py-0.5',
     slot: 'overflow-hidden text-ellipsis whitespace-nowrap',
-    srOnly:
-      'absolute -m-px h-px w-px overflow-hidden border-0 p-0 whitespace-nowrap [clip:rect(0_0_0_0)]',
   },
   variants: {
     active: {
@@ -91,51 +94,67 @@ const subNavigationItem = tv({
   },
 });
 
+/** Events dispatched by `<c-sub-navigation-item>`. */
+interface CSubNavigationItemEvents {
+  /**
+   * Fired when the item is activated (click or Enter), carrying its `value`;
+   * bubbles out of the navigation, as `c-side-navigation-item`'s does.
+   */
+  select: { value: string | undefined };
+}
+
 interface CSubNavigationItemProps {
   /**
-   * Active state
-   *
-   * @seeded from csc-ui — verify
+   * Mark the sub-item as the current page (`aria-current="page"`); set `active`
+   * on its parent item too, so the parent is expanded.
    */
   active?: boolean;
 
   /**
-   * Element is visible and focusable
+   * Whether the item sits under a collapsed `<c-side-navigation-item>`,
+   * which sets it so hidden items are not Tab-reachable.
    *
-   * @seeded from csc-ui — verify
+   * @internal
    */
-  focusable?: boolean;
+  collapsed?: boolean;
 
   /**
-   * Link url
+   * URL that makes the sub-item a real link; without it the sub-item is a
+   * button.
    *
-   * @seeded from csc-ui — verify
    * @freeform any URL
    */
   href?: string;
 
   /**
-   * Loading state
-   *
-   * @seeded from csc-ui — verify
+   * Cover the sub-item with a loading overlay: a translucent scrim and a
+   * spinner.
    */
   loading?: boolean;
 
   /**
-   * Link target
+   * Where the `href` opens, as on a native `<a>`: the same tab unless set —
+   * `_blank` for a new one.
    *
-   * @seeded from csc-ui — verify
    * @freeform any browsing-context name (e.g. _blank, _self)
    */
   target?: string;
+
+  /**
+   * Value reported in the `select` event when the item is activated
+   *
+   * @freeform
+   */
+  value?: string;
 }
 
 const props = withDefaults(defineProps<CSubNavigationItemProps>(), {
   active: false,
-  focusable: false,
+  collapsed: false,
   href: '',
   loading: false,
   target: '',
+  value: undefined,
 });
 
 const host = useHost();
@@ -146,22 +165,15 @@ const ui = computed(() =>
   subNavigationItem({ active: props.active, subLevel: subLevel.value }),
 );
 
+const emit = useHostEmit<CSubNavigationItemEvents>();
+
+// The item is a native link or button: Enter (and Space on a button)
+// activates it with a click, and a link navigates by itself.
 const redirect = (event: Event) => {
-  if (event instanceof KeyboardEvent && event.key !== 'Enter') return;
+  // Its parent item must not take the click for its own.
   event.stopPropagation();
-
-  // Closing the side menu is a side-effect of any sub-item navigation —
-  // matches the Stencil behaviour of dismissing the drawer on click.
-  const sidenav = document.querySelector('c-side-navigation') as
-    | ({ menuVisible: boolean } & HTMLElement)
-    | null;
-
-  if (sidenav) sidenav.menuVisible = false;
-
-  if (props.href) {
-    if (props.target) window.open(props.href, props.target);
-    else window.location.href = props.href;
-  }
+  // c-side-navigation hears it and closes its drawer.
+  emit('select', { value: props.value }, { bubbles: true, composed: true });
 };
 
 onMounted(() => {
@@ -171,7 +183,6 @@ onMounted(() => {
   // display:contents element is focusable by neither Tab nor .focus().
   // Listeners stay on the host; events bubble through it normally.
   host.addEventListener('click', redirect);
-  host.addEventListener('keydown', redirect);
   watchEffect(() => {
     host.classList.toggle('active', props.active);
   });
@@ -188,6 +199,9 @@ onMounted(() => {
   });
   observer.observe(host, { attributeFilter: ['class'], attributes: true });
 });
+
+// The page's id references on the element reach the element carrying its role.
+useIdReferences('a, button');
 </script>
 
 <!--

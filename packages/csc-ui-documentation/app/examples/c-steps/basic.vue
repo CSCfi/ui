@@ -1,6 +1,6 @@
 <template>
   <div>
-    <c-steps v-model="step">
+    <c-steps :value="step">
       <c-step>Choose resources</c-step>
 
       <c-step>Billing details</c-step>

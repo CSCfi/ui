@@ -38,8 +38,6 @@ const getRowId = (row: CDataTableRow) => row.id as string;
 const selected = ref<string[]>(['ds-2']);
 
 const onSelection = (event: Event) => {
-  selected.value = (
-    event as CustomEvent<{ ids: string[]; rows: CDataTableRow[] }>
-  ).detail.ids;
+  selected.value = (event as CustomEvent<string[]>).detail;
 };
 </script>

@@ -1,0 +1,1 @@
+import{r as c,g as t}from"./Ch6KfFdQ.js";const i=class{constructor(s){c(this,s),this.align="center",this.justify="start"}render(){return t("c-card-actions",{key:"713cf6b752191eceac929c41ed3e0dcf6037c599",align:this.align,justify:this.justify,style:{"--_c-card-gap":"0"}},t("slot",{key:"814a6fb37085bf9f93921ddd33fb1f31f3fd5882"}))}};export{i as c_login_card_actions};

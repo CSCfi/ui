@@ -1,6 +1,7 @@
 <template>
   <label
     ref="rootRef"
+    v-bind="rootAttrs"
     :class="[
       ui.root(),
       {
@@ -14,7 +15,10 @@
     <div :class="ui.inputWrap()">
       <input
         :id="inputId"
+        v-bind="controlAttrs"
+        :aria-busy="loading ? 'true' : undefined"
         :aria-checked="internalChecked"
+        :aria-disabled="loading ? 'true' : undefined"
         :aria-required="required || undefined"
         :checked="internalChecked || undefined"
         :class="ui.input()"
@@ -22,6 +26,7 @@
         role="switch"
         type="checkbox"
         @change="toggle"
+        @click="onClick"
       />
 
       <span
@@ -68,38 +73,46 @@
  * @cssstate checked - Present while the switch is on
  */
 import { tv } from 'tailwind-variants';
-import { computed, ref, useHost, useId, useTemplateRef, watch } from 'vue';
+import {
+  computed,
+  nextTick,
+  onMounted,
+  ref,
+  useHost,
+  useId,
+  useTemplateRef,
+  watch,
+} from 'vue';
 
-import { emitModelValue } from '../../shared/emitModelValue';
 import FormLabel from '../../shared/FormLabel.vue';
+import { useControlAttrs } from '../../shared/useControlAttrs';
 import { useHasSlot } from '../../shared/useHasSlot';
-import { useHostEmit } from '../../shared/useHostEmit';
 import { useHostStates } from '../../shared/useHostStates';
+import { useIdReferences } from '../../shared/useIdReferences';
+import { emitModelChange } from '../../shared/valueEvents';
+
+// ARIA attributes on the element name and describe the native control;
+// every other attribute stays on the root, as Vue's fallthrough put it.
+defineOptions({ inheritAttrs: false });
+
+const { controlAttrs, rootAttrs } = useControlAttrs();
 
 /** Events dispatched by `<c-switch>`. */
 interface CSwitchEvents {
   /**
-   * Standard bubbling DOM change event, re-dispatched from the host when the
-   * switch is toggled (the inner input's change does not cross the shadow
-   * boundary). No detail; read the new value from the host's `value` property.
-   */
-  change: void;
-
-  /**
-   * Fired when the switch is toggled, carrying the new value —
+   * Fired when the user toggles the switch, carrying the new value —
    * `trueValue` when on, `falseValue` when off.
    */
-  changeValue: boolean | number | string;
+  change: boolean | number | string;
 
   /**
    * Native bubbling input event fired on toggle so a plain Vue `v-model`
-   * works without the `v-control` directive. No detail.
+   * stays in sync. No detail.
    */
   input: void;
 
   /**
-   * v-model contract event fired on toggle, carrying the new value —
-   * `trueValue` when on, `falseValue` when off.
+   * Fired alongside `change` with the same detail — the `v-model` contract.
    */
   'update:value': boolean | number | string;
 }
@@ -168,9 +181,10 @@ const cSwitch = tv({
 
 interface CSwitchProps {
   /**
-   * If `true`, the checkbox is selected.
-   *
-   * @seeded from csc-ui — verify
+   * Whether the switch is on: the boolean view of `value`. Setting it sets
+   * `value` to `trueValue` or `falseValue`; reading it reports whether
+   * `value` equals `trueValue`. As an attribute it sets the initial state when
+   * no `value` is bound.
    */
   checked?: boolean;
 
@@ -180,19 +194,9 @@ interface CSwitchProps {
   disabled?: boolean;
 
   /**
-   * The value when the checkbox is unchecked
-   *
-   * @seeded from csc-ui — verify
+   * The value when the switch is off
    */
   falseValue?: boolean | number | string;
-
-  /**
-   * Id for the element
-   *
-   * @seeded from csc-ui — verify
-   * @freeform
-   */
-  hostId?: string;
 
   /**
    * Label of the switch, shown beside the toggle. Falls back to the default
@@ -203,50 +207,45 @@ interface CSwitchProps {
   label?: string;
 
   /**
-   * Loading state
-   *
-   * @seeded from csc-ui — verify
+   * Show a spinner in place of the handle, such as while the change is
+   * saved. The switch ignores toggles meanwhile and is announced as busy
    */
   loading?: boolean;
 
   /**
-   * Set as required
-   *
-   * @seeded from csc-ui — verify
+   * Set as required — shows the required marker on the label
    */
   required?: boolean;
 
   /**
-   * The value when the checkbox is checked
-   *
-   * @seeded from csc-ui — verify
+   * The value when the switch is on
    */
   trueValue?: boolean | number | string;
 
   /**
-   * The input value
-   * - Only used when the checkbox participates in a native `<form>`
-   *
-   * @seeded from csc-ui — verify
+   * The switch's state: `trueValue` while it is on, `falseValue` while it is
+   * off. A bound value wins over a `checked` attribute; any other value,
+   * `''` included, reads as off.
    */
-  value?: boolean | number | string;
+  // Not sorted: Vue reads `''` as `true` for a prop whose runtime types list
+  // Boolean before String, and `''` is what a plain Vue `v-model` writes for
+  // an empty model.
+  // oxlint-disable-next-line perfectionist/sort-union-types
+  value?: string | number | boolean;
 }
 
 const props = withDefaults(defineProps<CSwitchProps>(), {
   checked: false,
   disabled: false,
   falseValue: false,
-  hostId: '',
   label: '',
   loading: false,
   required: false,
   trueValue: true,
-  value: false,
+  value: undefined,
 });
 
 const host = useHost();
-
-const emit = useHostEmit<CSwitchEvents>();
 
 const rootRef = useTemplateRef<HTMLElement>('rootRef');
 
@@ -261,9 +260,22 @@ const ui = computed(() =>
 
 const autoId = useId();
 
-const inputId = computed(() => props.hostId || `c-switch-${autoId}`);
+const inputId = computed(() => `c-switch-${autoId}`);
 
-const internalChecked = ref(props.checked || props.value === props.trueValue);
+// One state, two views (decisions #34): `value` is the state, `checked` its
+// boolean view. A bound `value` wins; without one, `checked` seeds. Setting
+// either view updates the other on the host, without a value event — only a
+// toggle emits.
+type SwitchStateHost = {
+  checked?: boolean;
+  value?: CSwitchProps['value'];
+} & HTMLElement;
+
+const isOn = (v: unknown) => v === props.trueValue;
+
+const internalChecked = ref(
+  props.value === undefined ? props.checked : isOn(props.value),
+);
 
 // Republish the on/off state as a host custom state so consumers can write
 // per-state ::part() rules: c-switch:state(checked)::part(slider).
@@ -271,30 +283,85 @@ const setState = useHostStates();
 
 watch(internalChecked, (on) => setState('checked', on), { immediate: true });
 
+// The views are reconciled on the next tick, from the state the latest
+// change left: a host prop set inside a watcher re-renders the element while
+// it is still patching (the next prop write is then dropped), and a callback
+// holding the state from before a later write would undo it — React sets
+// `checked` only after the element has mounted.
+let syncQueued = false;
+
+const syncViews = () => {
+  if (syncQueued) return;
+  syncQueued = true;
+
+  void nextTick(() => {
+    syncQueued = false;
+
+    if (!host) return;
+
+    const state = host as SwitchStateHost;
+
+    const on = internalChecked.value;
+
+    // The raw property, not the prop: a `checked` attribute reads back `''`.
+    if (state.checked !== on) state.checked = on;
+
+    if (props.value === undefined || isOn(props.value) !== on) {
+      state.value = on ? props.trueValue : props.falseValue;
+    }
+  });
+};
+
+watch(
+  () => props.value,
+  (v) => {
+    internalChecked.value = isOn(v);
+    syncViews();
+  },
+);
+
 watch(
   () => props.checked,
   (c) => {
     internalChecked.value = c;
+    syncViews();
   },
 );
-watch(
-  () => props.value,
-  (v) => {
-    internalChecked.value = v === props.trueValue;
-  },
-);
+
+// Both views agree from the start: without a bound value the seeded state
+// reads back through `value`, and `checked` reports a bound one.
+onMounted(syncViews);
+
+// While loading the switch stays put, as a loading button swallows clicks:
+// cancelling the click keeps the native checkbox from flipping at all.
+const onClick = (event: MouseEvent) => {
+  if (props.loading) event.preventDefault();
+};
 
 const toggle = () => {
   if (props.disabled) return;
   internalChecked.value = !internalChecked.value;
 
   const next = internalChecked.value ? props.trueValue : props.falseValue;
-  // Emits changeValue/update:value + native `input` (for plain v-model) and
-  // mirrors `value` onto the host. The value watch above is visuals-only, so no
-  // loop. The native `change` is kept for @change listeners.
-  emitModelValue(host, next);
-  emit('change', undefined, { bubbles: true, composed: true });
+  // A toggle is its own commit. The value watch above is visuals-only, so the
+  // host `value` mirror doesn't loop.
+  emitModelChange(host, next satisfies CSwitchEvents['change']);
 };
+
+// The page's id references on the element reach the element carrying its role.
+useIdReferences('input');
+
+/**
+ * Focus its switch, as `focus()` does on a native control: the element renders
+ * no box of its own to take it.
+ *
+ * @param options - Passed on to that element's `focus()`
+ */
+const focus = (options?: FocusOptions): void => {
+  host?.shadowRoot?.querySelector('input')?.focus(options);
+};
+
+defineExpose({ focus });
 </script>
 
 <!--

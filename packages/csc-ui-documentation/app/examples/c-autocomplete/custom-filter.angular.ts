@@ -29,7 +29,7 @@ import {
         hint="Matches anywhere in the label"
         label="Country"
         placeholder="Type to filter"
-        (changeValue)="country.set($any($event).detail)"
+        (change)="country.set($any($event).detail)"
       ></c-autocomplete>
 
       <p>Value: {{ country() ?? 'null' }}</p>

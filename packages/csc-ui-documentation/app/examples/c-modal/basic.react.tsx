@@ -16,7 +16,7 @@ export const Basic = () => {
     <div className="example-row">
       <CButton onClick={() => setOpen(true)}>Open modal</CButton>
 
-      <CModal dismissable onChangeValue={() => setOpen(false)} value={open}>
+      <CModal dismissable onChange={() => setOpen(false)} value={open}>
         <CCard>
           <CCardTitle>Delete project</CCardTitle>
 

@@ -6,7 +6,7 @@
     "format": "string = 'HH.mm'",
     "hide-details": "boolean = false",
     "hint": "string = ''",
-    "host-id": "string = ''",
+    "invalid": "boolean = false",
     "label": "string = ''",
     "label-on-top": "boolean = false",
     "max": "string = ''",
@@ -19,8 +19,7 @@
     "shadow": "boolean = false",
     "show-now": "boolean = false",
     "size": "'default' | 'small' = 'default'",
-    "valid": "boolean = true",
-    "value": "CTimePickerValue = null"
+    "value": "string = null"
   },
   "cssProperties": [],
   "defaultable": [
@@ -38,7 +37,9 @@
     "input": "CustomEvent<void>",
     "update:value": "CustomEvent<CTimePickerValue>"
   },
-  "methods": {},
+  "methods": {
+    "focus": "(options?: FocusOptions): void"
+  },
   "parts": [
     "actions",
     "card",
@@ -46,11 +47,12 @@
     "column",
     "columns",
     "done",
+    "end",
     "end-switch",
-    "end-tab",
     "heading",
     "heading-row",
     "input",
+    "message",
     "now",
     "option",
     "panel",
@@ -66,7 +68,7 @@
     "format": "string = 'HH.mm'",
     "hideDetails": "boolean = false",
     "hint": "string = ''",
-    "hostId": "string = ''",
+    "invalid": "boolean = false",
     "label": "string = ''",
     "labelOnTop": "boolean = false",
     "max": "string = ''",
@@ -80,7 +82,6 @@
     "showNow": "boolean = false",
     "size": "'default' | 'small' = 'default'",
     "texts": "CTimePickerTexts = {}",
-    "valid": "boolean = true",
     "value": "CTimePickerValue = null"
   },
   "readonly": {

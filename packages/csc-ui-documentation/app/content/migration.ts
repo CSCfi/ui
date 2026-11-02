@@ -22,8 +22,11 @@ export interface MigrationSection {
   id: string;
   intro: Partial<Record<'all' | Flavor, string>>;
 
-  /** Optional trailing cross-page link (intros are plain text). */
-  link?: { label: string; to: string };
+  /**
+   * Optional trailing cross-page link (intros are plain text); `external`
+   * loads a page outside the app, such as the /v3/ archive.
+   */
+  link?: { external?: boolean; label: string; to: string };
   title: string;
 }
 
@@ -36,6 +39,9 @@ const forAll = (
   vue: blocks,
 });
 
+/** The value-event change every flavor's binding section opens with. */
+const VALUE_EVENTS = `changeValue and every other camelCase event are gone (ADR-0075). Every value control reports through the same three events, with a native input's timing: input (no detail) and update:value (the value) on every value change, and change (the value) on every commit — Enter or leaving the field for typed text, each pick or toggle, each arrow-key step, the release that ends a drag. Where a changeValue handler ran on every keystroke or slider move, listen for update:value to keep that timing, or for change to act once per commit. The change event stays on the element: it does not bubble, so listen on each control.`;
+
 export const MIGRATION_SECTIONS: MigrationSection[] = [
   {
     blocks: forAll([]),
@@ -43,9 +49,16 @@ export const MIGRATION_SECTIONS: MigrationSection[] = [
     intro: {
       all: `Version 4 is a complete rewrite of the library under the same package name: the tag names are stable — every <c-*> element keeps its name, so your existing markup mostly stays put. What changes is everything around the tags — how you register the library, how two-way binding and events work, how you customize and theme components.
 
+3.x is unsupported since 4.0.0: 3.0.19 is its last release, and it gets no fixes. An app that cannot upgrade yet stays on it by pinning the major version (@cscfi/csc-ui@3, and @cscfi/csc-ui-react@3 for React); its documentation stays available as an archive.
+
 This is an all-at-once upgrade. You cannot run 3.x and 4.x side by side: both register the same custom-element tags, and the second defineCustomElements() call throws a "already defined" error. Bump the whole dependency in one change rather than component by component.
 
 @cscfi/csc-ui 4.x is ESM-only, so a bundler (Vite, webpack, etc.) is assumed.`,
+    },
+    link: {
+      external: true,
+      label: '3.x documentation (archived, unsupported)',
+      to: '/v3/',
     },
     title: 'Before you start',
   },
@@ -222,12 +235,20 @@ createApp(App).mount('#app');`,
   label="Name"
   [value]="name()"
   (changeValue)="name.set($any($event).detail)"
+></c-text-field>`,
+          filename: 'Before — 3.x',
+          lang: 'html',
+        },
+        {
+          code: `<!-- input: every keystroke; read the element's value -->
+<c-text-field
+  label="Name"
+  [value]="name()"
+  (input)="name.set($any($event.target).value)"
 ></c-text-field>
 
-<c-switch
-  [value]="enabled()"
-  (changeValue)="enabled.set($any($event).detail)"
->
+<!-- change: each commit, with the value as $event.detail -->
+<c-switch [value]="enabled()" (change)="enabled.set($any($event).detail)">
   Notifications
 </c-switch>`,
           filename: 'After — 4.x',
@@ -235,6 +256,15 @@ createApp(App).mount('#app');`,
         },
       ],
       react: [
+        {
+          code: `<CTextField
+  label="Name"
+  value={name}
+  onChangeValue={(event) => setName(event.detail as string)}
+/>`,
+          filename: 'Before — 3.x',
+          lang: 'tsx',
+        },
         {
           code: `import { useState } from 'react';
 import { CTextField, CSwitch } from '@cscfi/csc-ui-react';
@@ -245,14 +275,16 @@ export const Form = () => {
 
   return (
     <>
+      {/* onUpdateValue: every keystroke */}
       <CTextField
         label="Name"
         value={name}
-        onChangeValue={(event) => setName(event.detail as string)}
+        onUpdateValue={(event) => setName(event.detail as string)}
       />
+      {/* onChange: each commit */}
       <CSwitch
         value={enabled}
-        onChangeValue={(event) => setEnabled(event.detail as boolean)}
+        onChange={(event) => setEnabled(event.detail as boolean)}
       >
         Notifications
       </CSwitch>
@@ -267,9 +299,23 @@ export const Form = () => {
         {
           code: `const field = document.querySelector('c-text-field')!;
 
-// changeValue still fires; a native input event fires too.
 field.addEventListener('changeValue', (event) => {
   console.log('value:', event.detail);
+});`,
+          filename: 'Before — 3.x',
+          lang: 'ts',
+        },
+        {
+          code: `const field = document.querySelector('c-text-field')!;
+
+// Every keystroke.
+field.addEventListener('update:value', (event) => {
+  console.log('value:', event.detail);
+});
+
+// Each commit: Enter, or leaving the field after an edit.
+field.addEventListener('change', (event) => {
+  console.log('committed:', event.detail);
 });`,
           filename: 'After — 4.x',
           lang: 'ts',
@@ -281,14 +327,7 @@ field.addEventListener('changeValue', (event) => {
   <!-- v-control bridged Stencil's changeValue to v-model -->
   <c-text-field v-model="name" v-control label="Name" />
   <c-switch v-model="enabled" v-control>Notifications</c-switch>
-</template>
-
-<script setup lang="ts">
-import { ref } from 'vue';
-
-const name = ref('');
-const enabled = ref(false);
-</script>`,
+</template>`,
           filename: 'Before — 3.x',
           lang: 'vue',
         },
@@ -297,6 +336,12 @@ const enabled = ref(false);
   <!-- plain v-model, no directive -->
   <c-text-field v-model="name" label="Name" />
   <c-switch v-model="enabled">Notifications</c-switch>
+
+  <!-- change: each commit, with the value as $event.detail -->
+  <c-select :value="country" @change="save($event.detail)" />
+
+  <!-- input: every change; read the element's value -->
+  <c-slider :value="volume" @input="preview($event.target.value)" />
 </template>
 
 <script setup lang="ts">
@@ -311,7 +356,7 @@ const enabled = ref(false);
         {
           code: `<template>
   <!-- NOT v-model:open — bind the prop and listen to change:open -->
-  <c-menu :open.prop="open" @change:open="open = $event.detail">
+  <c-menu :open="open" @change:open="open = $event.detail">
     <c-button slot="trigger">Menu</c-button>
     <c-menu-item>Profile</c-menu-item>
   </c-menu>
@@ -325,16 +370,52 @@ const open = ref(false);
           filename: 'Other two-way state — :prop + @change:prop',
           lang: 'vue',
         },
+        {
+          code: `// eslint.config.js (eslint-plugin-vue): a listener that can never fire
+// is an error, so none survives the upgrade unnoticed.
+const on = "VElement[rawName=/^c-/] > VStartTag > VAttribute[directive=true][key.name.name='on']";
+
+export default [
+  {
+    files: ['**/*.vue'],
+    rules: {
+      'vue/no-restricted-syntax': [
+        'error',
+        {
+          message:
+            'Vue never attaches an @update:* listener to a custom element. Use v-model, @input with the element’s value, or @change.',
+          selector: \`\${on}[key.argument.name=/^update:/]\`,
+        },
+        {
+          message:
+            'csc-ui 4 removed this event. Use @change (commits) or @input (every change); a side navigation item fires @select.',
+          selector: \`\${on}[key.argument.name=/^(change-?value|item-?change)$/i]\`,
+        },
+      ],
+    },
+  },
+];`,
+          filename: 'Catch the old listeners — ESLint',
+          lang: 'js',
+        },
       ],
     },
     id: 'binding-events',
     intro: {
-      angular: `The legacy changeValue event still fires, so existing (changeValue) handlers keep working. State-change events were renamed from update:<prop> to change:<prop> (e.g. (change:sort)).`,
-      react: `The legacy changeValue event still fires, so existing onChangeValue handlers keep working. Prefer the typed on* props from @cscfi/csc-ui-react going forward. State-change events were renamed from update:<prop> to change:<prop>.`,
-      typescript: `The legacy changeValue event still fires, so existing addEventListener('changeValue', …) handlers keep working; the elements also dispatch a native input event. State-change events were renamed from update:<prop> to change:<prop>.`,
-      vue: `The headline change for Vue. The v-control directive is gone — value components support plain v-model directly.
+      angular: `${VALUE_EVENTS}
 
-Use plain v-model (no argument): the elements ride the native input event, so v-model:value does not compile on a custom element and must not be used. For other two-way state, bind :prop and listen to the lowercase kebab-case @change:<prop> event (e.g. @change:open, @change:sort) — the old update:<prop> events were renamed because Vue silently drops update:*-prefixed listeners on custom elements.`,
+Follow typed text with (input), reading $any($event.target).value, and commits with (change), reading $any($event).detail. An Angular template cannot bind a colon-named event — (update:value), (change:sort) — so add a listener for those on the element itself, as the data table examples do.`,
+      react: `${VALUE_EVENTS}
+
+onChangeValue is gone: onUpdateValue carries the value on every change, onChange on every commit. State-change events were renamed from update:<prop> to change:<prop>, so onUpdateSort became onChangeSort.`,
+      typescript: `${VALUE_EVENTS}
+
+Listen for update:value to follow every change, or change for commits; both carry the value as detail. State-change events were renamed from update:<prop> to change:<prop>.`,
+      vue: `${VALUE_EVENTS}
+
+The headline change for Vue. The v-control directive is gone — value components support plain v-model directly.
+
+Use plain v-model (no argument): the elements ride the native input event, so v-model:value does not compile on a custom element and must not be used. A Vue template can never hear update:value — Vue skips every @update:* listener on an element — so a former @change-value handler becomes @change (commits, the value in $event.detail) or @input (every change, the value in $event.target.value). For other two-way state, bind :prop and listen to the lowercase @change:<prop> event (e.g. @change:open, @change:sort) — the old update:<prop> events were renamed for the same reason.`,
     },
     title: 'Two-way binding & events',
   },
@@ -361,7 +442,9 @@ Use plain v-model (no argument): the elements ride the native input event, so v-
     intro: {
       all: `Per-component CSS custom properties are gone. Variables like --c-button-background-color or --c-button-border-radius no longer exist; ::part() is now the sole customization API, and a component's curated part set is its customization contract.
 
-The --c-font-family token is gone too. Components, and the content you slot into them, inherit your page's typeface, line height and font features, as native elements do. Set your font on body; to give one component another typeface, set font-family on its c-* element.`,
+The --c-font-family token is gone too. Components, and the content you slot into them, inherit your page's typeface, line height and font features, as native elements do. Set your font on body; to give one component another typeface, set font-family on its c-* element.
+
+So are the Stencil-era colour tokens --c-text-dark, --c-text-light, --c-text-body, --c-text-system and --c-transparent: use the semantic roles, such as --c-on-surface and --c-on-surface-muted, which follow dark mode. c-icon's --c-icon-color hook is private now; recolour an icon through its own color prop or its ::part(root).`,
     },
     link: {
       label: 'How ::part() restyling works',
@@ -404,29 +487,38 @@ To re-brand, stop overriding individual --c-* ramp variables. Instead hand apply
   {
     blocks: forAll([
       {
-        code: `// Before: headers[] describe columns; data cells are wrapped objects.
-// After:  columns[] describe columns; data is plain domain objects and
-//         custom cells are render functions (h is re-exported by the package).
+        code: `// Before: headers[] describe the columns, and every data cell is wrapped.
+const headers = [
+  { key: 'name', value: 'Name' },
+  { key: 'id', value: 'ID', sortable: false },
+];
+const data = [{ id: { formattedValue: '#1', value: 1 }, name: { value: 'Ada' } }];
+
+// After: columns[] describe the columns, rows are plain objects, and a custom
+// cell is a render function (h is re-exported by the package).
 import { h, type CDataTableColumn } from '@cscfi/csc-ui';
 
-interface User { id: number; name: string; }
-
-const columns: CDataTableColumn<User>[] = [
-  { key: 'name', value: 'Name' },
-  { key: 'id', value: 'ID', cell: (ctx) => h('code', String(ctx.value)) },
+const columns: CDataTableColumn[] = [
+  { header: 'Name', key: 'name', sortable: true },
+  { cell: ({ value }) => h('code', \`#\${value}\`), header: 'ID', key: 'id' },
 ];
+const data = [{ id: 1, name: 'Ada' }];
 
-// The columns prop holds functions — bind it as a DOM property (:columns.prop
-// in Vue, [columns] in Angular), never as an attribute.`,
+// A column sorts only with sortable: true, where 3.x sorted every column
+// that did not say sortable: false. columns holds functions, so set it as a
+// property (:columns in Vue, [columns] in Angular), never as an attribute.`,
         filename: 'c-data-table — headers → columns',
         lang: 'ts',
       },
       {
-        code: `// Old two-boolean shape collapses into one tri-state axis:
-//   pinned: true  (exempt from autohide)  -> policy: 'never'
-//   hidden: true                          -> policy: 'always'
-//   (default)                             -> policy: 'auto'
-// "pinned" now means TanStack-style edge-sticky during horizontal scroll.`,
+        code: `// 3.x hid the columns that did not fit unless horizontal-scrolling was
+// set. 4.x scrolls sideways unless autohide is set, and each column's
+// expansion says where its cells go:
+//   pinned: true  (never hidden)         -> expansion: 'never'
+//   hidden: true  (always hidden)        -> expansion: 'always'
+//   (default)                            -> expansion: 'auto'
+// pinned now pins a column to an edge while the table scrolls sideways:
+// pinned: 'left' or 'right'.`,
         filename: 'c-data-table — pinned / hidden → expansion policy',
         lang: 'ts',
       },
@@ -453,16 +545,26 @@ const columns: CDataTableColumn<User>[] = [
       {
         code: `<!-- Before: every form control had validation (default 'Required field')
      shown while valid was false, plus inert validate / validate-on-blur. -->
-<c-text-field label="Email" validation="Email is required"></c-text-field>
+<c-text-field
+  label="Email"
+  :valid="!error"
+  validation="Email is required"
+></c-text-field>
 
-<!-- After: the prop is error-message (errorMessage in React / as a DOM
-     property) on c-text-field, c-select, c-autocomplete, c-checkbox,
-     c-radio-group, c-otp-input and c-message. There is NO default text:
-     an invalid control without an error-message keeps showing its hint,
-     styled as a hint. validate and validate-on-blur are removed — they
-     were never wired to anything; validation logic stays in your app. -->
-<c-text-field label="Email" error-message="Email is required"></c-text-field>`,
-        filename: 'Form controls — validation → error-message',
+<!-- After: valid is invalid (ADR-0076), so markup can set it: a bare
+     invalid attribute, or a binding such as :invalid="!!error". A leftover :valid is
+     ignored and the error never shows. The message is error-message
+     (errorMessage in React / as a DOM property) on every field, c-checkbox,
+     c-radio-group, c-otp-input and c-message. There is NO default text: an
+     invalid control without an error-message keeps showing its hint, styled
+     as a hint. validate and validate-on-blur are removed — they were never
+     wired to anything; validation logic stays in your app. -->
+<c-text-field
+  label="Email"
+  :invalid="!!error"
+  error-message="Email is required"
+></c-text-field>`,
+        filename: 'Form controls — valid → invalid, validation → error-message',
         lang: 'html',
       },
       {
@@ -505,10 +607,22 @@ const columns: CDataTableColumn<User>[] = [
   the c-option-value text, else the option's whole text, and the runs of a
   label equal to the query are marked as the match part
   (c-autocomplete::part(match)); the 3.x mark element had no part.
-- c-modal: no native top layer / ::backdrop. New vocabulary — the scrim token
-  and a dismissable prop (governs both backdrop-click and Escape).
+- c-modal: not in the browser's top layer and no ::backdrop; its backdrop is
+  its own element, coloured by the scrim token. Escape still closes every
+  modal and dismissable still governs the backdrop click, as in 3.x; z-index
+  is gone: open modals stack themselves, below toasts.
 - c-menu: authored declaratively with slotted c-menu-item / c-menu-label
-  instead of a programmatic items array; leaf activation fires a select event.
+  instead of a programmatic items array, and the trigger moves from the
+  default slot to slot="trigger"; leaf activation fires a select event.
+- c-side-navigation: activating an item or sub-item no longer sets its
+  active. 3.x highlighted the clicked item even when the navigation never
+  happened; mark the current page's item active from your router or the URL.
+  A parent still expands and collapses itself.
+- c-toasts: a message's title is now heading (an untyped { title } loses its
+  heading silently). c-toast is internal: c-toasts renders one per addToast()
+  message, so style a toast through c-toasts::part(toast-root) and its other
+  toast-* parts, and listen to close on c-toasts (detail: the message).
+  addToast() returns the message's id, for removeToast(id).
 - c-swiper / c-swiper-tab: removed, no replacement.
 - c-row: removed — use your own flex container (display: flex plus gap).
 - c-spacer: removed — use margin-inline-start: auto on the element you want

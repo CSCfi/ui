@@ -11,7 +11,7 @@ import { Component, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
         aria-label="Storage quota used"
         size="72"
         value="57"
-        width="12"
+        thickness="12"
       >
         57%
       </c-progress-circle>

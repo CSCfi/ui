@@ -38,9 +38,8 @@ solely through the group — radios carry no checked state of their own.
 Giving two radios the same `value` is a consumer error: every matching
 radio will show as checked.
 
-In Vue, bind with a plain `v-model`. The group also emits its radios'
-bubbling `change` events onward, with the selected `c-radio` as the
-event target.
+In Vue, bind with a plain `v-model`; elsewhere, listen for `change`, which
+carries the picked value.
 
 ## Label
 
@@ -51,8 +50,8 @@ label.
 
 ## Validation
 
-Validation is your job: set `valid` to `false` and supply an
-`error-message` explaining why. While invalid without an `error-message`,
+Validation is your job: set `invalid` and supply an `error-message`
+explaining why. While invalid without an `error-message`,
 the `hint` keeps rendering as a hint. The message area reserves its height
 (unless `hide-details`), so an error appearing at runtime doesn't shift the
 layout.

@@ -13,7 +13,7 @@ export const Multiple = () => {
         label="Countries"
         maxTags={3}
         multiple
-        onChangeValue={(event) => setCountries(event.detail as string[])}
+        onChange={(event) => setCountries(event.detail as string[])}
         value={countries}
       >
         <COption name="Finland" value="fi">

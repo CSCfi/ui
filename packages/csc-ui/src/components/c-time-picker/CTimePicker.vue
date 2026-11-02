@@ -4,6 +4,7 @@
     :anchor-style
     :clear-label="t.clearSelection"
     :clearable
+    :control-attrs
     :disabled
     :error-message
     :field="typed"
@@ -11,6 +12,7 @@
     :hint
     :input-id
     :inputmode="twelve ? 'text' : 'numeric'"
+    :invalid
     :label
     :label-on-top="labelOnTopResolved"
     :name
@@ -18,7 +20,6 @@
     :required
     :shadow="shadowResolved"
     :size="sizeResolved"
-    :valid
   >
     <template #trigger="{ buttonSize, iconSize }">
       <c-icon-button
@@ -78,7 +79,7 @@
           :class="ui.endTab()"
           :data-end="end"
           :tabindex="editing === end ? 0 : -1"
-          part="end-tab"
+          part="end"
           role="tab"
           type="button"
           @click="switchEnd(end)"
@@ -162,7 +163,73 @@
 <script lang="ts">
 import type { CFieldSize } from '../../types';
 
-export interface CTimePickerProps {
+/** A time range: ISO `HH:mm` ends, either of which may be `null` while only one is typed; an end before the start spans midnight. */
+export interface CTimePickerRange {
+  /** The end of the range; earlier than the start for an overnight range. */
+  end: null | string;
+
+  /** The start of the range. */
+  start: null | string;
+}
+
+/**
+ * The text committed from the field, as typed: a string, or both ends'
+ * texts under `range`.
+ */
+export type CTimePickerText = { end: string; start: string } | string;
+
+/**
+ * UI texts of `c-time-picker`, merged key by key over the AM/PM texts
+ * `Intl` gives for the page's `lang` and the English defaults.
+ */
+export interface CTimePickerTexts {
+  /** The period before noon in a 12-hour `format`. */
+  am?: string;
+
+  /** Accessible name of the dialog when the field has no label. */
+  chooseTime?: string;
+
+  /** Accessible label of the clear button. */
+  clearSelection?: string;
+
+  /** Accessible label of the close button in the fullscreen panel (narrow viewports). */
+  closePanel?: string;
+
+  /** Label of the Done button in the fullscreen panel (narrow viewports). */
+  done?: string;
+
+  /** Name of the end input and the end tab under `range`. */
+  end?: string;
+
+  /** Accessible name of the hour column. */
+  hours?: string;
+
+  /** Accessible name of the minute column. */
+  minutes?: string;
+
+  /** Label of the Now button (`show-now`). */
+  now?: string;
+
+  /** Accessible label of the clock button. */
+  openClock?: string;
+
+  /** Accessible name of the AM/PM column. */
+  period?: string;
+
+  /** The period from noon in a 12-hour `format`. */
+  pm?: string;
+
+  /** Name of the start input and the start tab under `range`. */
+  start?: string;
+}
+
+/**
+ * Value of `c-time-picker`: an ISO `HH:mm` string, a
+ * {@link CTimePickerRange} under `range`, or `null` when empty.
+ */
+export type CTimePickerValue = CTimePickerRange | null | string;
+
+interface CTimePickerProps {
   /**
    * Make the value clearable
    */
@@ -205,11 +272,10 @@ export interface CTimePickerProps {
   hint?: string;
 
   /**
-   * Id of the element
-   *
-   * @freeform
+   * Show the control as invalid: its `error-message`, when set, replaces the
+   * hint, and the control is marked `aria-invalid`.
    */
-  hostId?: string;
+  invalid?: boolean;
 
   /**
    * Element label
@@ -302,82 +368,11 @@ export interface CTimePickerProps {
   texts?: CTimePickerTexts;
 
   /**
-   * Set the validity of the field
-   */
-  valid?: boolean;
-
-  /**
    * The time as an ISO `HH:mm` string on a 24-hour clock, or `{ start, end }`
    * under `range`; `null` when empty
    */
   value?: CTimePickerValue;
 }
-
-/** A time range: ISO `HH:mm` ends, either of which may be `null` while only one is typed; an end before the start spans midnight. */
-export interface CTimePickerRange {
-  /** The end of the range; earlier than the start for an overnight range. */
-  end: null | string;
-
-  /** The start of the range. */
-  start: null | string;
-}
-
-/**
- * The text committed from the field, as typed: a string, or both ends'
- * texts under `range`.
- */
-export type CTimePickerText = { end: string; start: string } | string;
-
-/**
- * UI texts of `c-time-picker`, merged key by key over the AM/PM texts
- * `Intl` gives for the page's `lang` and the English defaults.
- */
-export interface CTimePickerTexts {
-  /** The period before noon in a 12-hour `format`. */
-  am?: string;
-
-  /** Accessible name of the dialog when the field has no label. */
-  chooseTime?: string;
-
-  /** Accessible label of the clear button. */
-  clearSelection?: string;
-
-  /** Accessible label of the close button in the fullscreen panel (narrow viewports). */
-  closePanel?: string;
-
-  /** Label of the Done button in the fullscreen panel (narrow viewports). */
-  done?: string;
-
-  /** Name of the end input and the end tab under `range`. */
-  end?: string;
-
-  /** Accessible name of the hour column. */
-  hours?: string;
-
-  /** Accessible name of the minute column. */
-  minutes?: string;
-
-  /** Label of the Now button (`show-now`). */
-  now?: string;
-
-  /** Accessible label of the clock button. */
-  openClock?: string;
-
-  /** Accessible name of the AM/PM column. */
-  period?: string;
-
-  /** The period from noon in a 12-hour `format`. */
-  pm?: string;
-
-  /** Name of the start input and the start tab under `range`. */
-  start?: string;
-}
-
-/**
- * Value of `c-time-picker`: an ISO `HH:mm` string, a
- * {@link CTimePickerRange} under `range`, or `null` when empty.
- */
-export type CTimePickerValue = CTimePickerRange | null | string;
 </script>
 
 <script setup lang="ts">
@@ -390,13 +385,14 @@ export type CTimePickerValue = CTimePickerRange | null | string;
  * @csspart heading - The field label naming the fullscreen panel
  * @csspart close - The close button of the fullscreen panel
  * @csspart end-switch - The Start | End switch above the columns under `range`
- * @csspart end-tab - One end's button in the end switch
+ * @csspart end - One end's button in the end switch
  * @csspart columns - The row of time columns
  * @csspart column - One time column: hours, minutes or AM/PM
  * @csspart option - One row of a time column
  * @csspart actions - The row under the columns holding the Now button (`show-now`) and, in the fullscreen panel, the Done button
  * @csspart now - The Now button: commits the current time
  * @csspart done - The Done button of the fullscreen panel (narrow viewports): commits what the panel holds and closes
+ * @csspart message - The hint / error message area below the field (always reserved unless `hide-details`)
  *
  * @cssstate bad-input - Present while committed text names no time that can be picked
  */
@@ -420,8 +416,10 @@ import { applyPeekCap } from '../../shared/peekCap';
 import { prefersReducedMotion } from '../../shared/reducedMotion';
 import TypedField from '../../shared/TypedField.vue';
 import { useAnchoredPanel } from '../../shared/useAnchoredPanel';
+import { useControlAttrs } from '../../shared/useControlAttrs';
 import { useHostEmit } from '../../shared/useHostEmit';
 import { useHostStates } from '../../shared/useHostStates';
+import { useIdReferences } from '../../shared/useIdReferences';
 import { useKeyboardModality } from '../../shared/useKeyboardModality';
 import { useNarrowViewport } from '../../shared/useNarrowViewport';
 import {
@@ -561,7 +559,7 @@ const props = withDefaults(defineProps<CTimePickerProps>(), {
   format: undefined,
   hideDetails: undefined,
   hint: '',
-  hostId: '',
+  invalid: false,
   label: '',
   labelOnTop: undefined,
   max: '',
@@ -575,11 +573,21 @@ const props = withDefaults(defineProps<CTimePickerProps>(), {
   showNow: undefined,
   size: undefined,
   texts: undefined,
-  valid: true,
   value: null,
 });
 
 const host = useHost();
+
+const { controlAttrs } = useControlAttrs();
+
+// The visible label names the input (WCAG 2.5.3, label in name); the host's
+// `aria-label` names a field without one, and is ignored beside it.
+const accessibleName = computed(
+  () =>
+    props.label ||
+    (controlAttrs.value['aria-label'] as string | undefined) ||
+    undefined,
+);
 
 // Script focus rings after a keyboard path, an Alt+↓ open included.
 const focusOptions = useKeyboardModality(host);
@@ -646,7 +654,7 @@ const panelRef = useTemplateRef<HTMLElement>('panelRef');
 
 const autoId = useId();
 
-const inputId = computed(() => props.hostId || autoId);
+const inputId = computed(() => autoId);
 
 // Same defineCustomElement Boolean-attribute quirk as `range` in
 // c-date-picker: resolve it from the stable host attribute first.
@@ -685,6 +693,7 @@ watch(
 // ---- the typed field -------------------------------------------------------
 
 const typed = useTypedField({
+  accessibleName: () => accessibleName.value,
   codec: {
     format: (time, p) => formatTime(time, p, periods.value),
     isUsable: (time) => inBounds(toMinutes(time), bounds.value),
@@ -1250,7 +1259,22 @@ const onClockClick = (event: Event) => {
   openPanel();
 };
 
-defineExpose({ badInput });
+/**
+ * Focus its input (the start input under `range`), as `focus()` does on a native control: the element renders
+ * no box of its own to take it.
+ *
+ * @param options - Passed on to that element's `focus()`
+ */
+const focus = (options?: FocusOptions): void => {
+  host?.shadowRoot
+    ?.querySelector<HTMLElement>('input[part~="input"]')
+    ?.focus(options);
+};
+
+defineExpose({ badInput, focus });
+
+// The page's id references on the element reach the element carrying its role.
+useIdReferences('input[part~="input"]');
 </script>
 
 <!--

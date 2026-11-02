@@ -11,7 +11,7 @@ import { Component, CUSTOM_ELEMENTS_SCHEMA, signal } from '@angular/core';
         [value]="country()"
         label="Country"
         size="small"
-        (changeValue)="country.set($any($event).detail)"
+        (change)="country.set($any($event).detail)"
       >
         <c-option name="Finland" value="fi">Finland</c-option>
         <c-option name="Sweden" value="se">Sweden</c-option>

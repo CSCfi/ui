@@ -12,24 +12,35 @@
       :active="isOpen"
       :data-hide-details="String(hideDetailsResolved)"
       :disabled
-      :error-message
       :filled="!!fieldText"
-      :hint
       :input-id
+      :invalid
       :label
       :label-on-top="labelOnTopResolved"
       :required
       :shadow="shadowResolved"
       :size="sizeResolved"
-      :valid
       @click="onFieldClick"
     >
+      <!-- The hint / error message, here in the field's own tree so the
+           input's aria-describedby can name it. -->
+      <field-message
+        :id="`${inputId}-message`"
+        slot="message"
+        :error-message
+        :hide-details="hideDetailsResolved"
+        :hint
+        :invalid
+        :label-on-top="labelOnTopResolved"
+        part="message"
+      />
+
       <span v-if="committedColor" slot="pre" :class="ui.pre()">
         <span
           :class="ui.chip({ small: sizeResolved === 'small' })"
           :style="chipStyle(committedColor)"
           aria-hidden="true"
-          part="color-chip"
+          part="value-color"
         />
       </span>
 
@@ -37,9 +48,13 @@
         <input
           :id="inputId"
           ref="comboRef"
+          v-bind="controlAttrs"
+          :aria-describedby="
+            hideDetailsResolved ? undefined : `${inputId}-message`
+          "
           :aria-expanded="isOpen"
-          :aria-invalid="!valid || undefined"
-          :aria-label="label || undefined"
+          :aria-invalid="invalid || undefined"
+          :aria-label="accessibleName"
           :class="ui.combo()"
           :disabled
           :name="name || undefined"
@@ -87,12 +102,14 @@
     :anchor-style
     :clear-label="t.clearSelection"
     :clearable
+    :control-attrs
     :disabled
     :error-message
     :field="typed"
     :hide-details="hideDetailsResolved"
     :hint
     :input-id
+    :invalid
     :label
     :label-on-top="labelOnTopResolved"
     :name
@@ -100,7 +117,6 @@
     :required
     :shadow="shadowResolved"
     :size="sizeResolved"
-    :valid
     inputmode="text"
   >
     <!-- The colour button (CONTEXT.md): painted with the current colour. -->
@@ -116,7 +132,7 @@
         <span
           :class="ui.chip({ empty: !committedColor })"
           :style="chipStyle(committedColor)"
-          part="color-chip"
+          part="value-color"
         />
       </c-icon-button>
     </template>
@@ -353,7 +369,75 @@ import type { CFieldSize } from '../../types';
 /** The notation a colour picker's value is written in (CONTEXT.md "Notation"). */
 export type CColorPickerFormat = 'hex' | 'oklch' | 'rgb';
 
-export interface CColorPickerProps {
+/** A predefined colour: a CSS colour, or one with a name for assistive technology and the swatch-only field. */
+export type CColorPickerSwatch = { name?: string; value: string } | string;
+
+/**
+ * UI texts of `c-color-picker`, merged key by key over the English defaults.
+ */
+export interface CColorPickerTexts {
+  /** Accessible name of the alpha slider and the A channel. */
+  alpha?: string;
+
+  /** Accessible name of the blue channel. */
+  blue?: string;
+
+  /** Accessible name of the colour area's vertical axis. */
+  brightness?: string;
+
+  /** Accessible name of the dialog when the field has no label. */
+  chooseColor?: string;
+
+  /** Accessible name of the chroma channel. */
+  chroma?: string;
+
+  /** Accessible label of the clear button. */
+  clearSelection?: string;
+
+  /** Accessible label of the close button in the fullscreen panel (narrow viewports). */
+  closePanel?: string;
+
+  /** Label of the Done button in the fullscreen panel (narrow viewports). */
+  done?: string;
+
+  /** Accessible name of the green channel. */
+  green?: string;
+
+  /** Accessible name of the hex channel. */
+  hex?: string;
+
+  /** Accessible name of the hue slider and the OKLCH hue channel. */
+  hue?: string;
+
+  /** Accessible name of the lightness channel. */
+  lightness?: string;
+
+  /** Accessible name of the notation switch. */
+  notation?: string;
+
+  /** Accessible label of the colour button. */
+  openPicker?: string;
+
+  /** Accessible name of the red channel. */
+  red?: string;
+
+  /** Accessible label of the original colour in the colour comparison: a click restores it. */
+  restoreOriginal?: string;
+
+  /** Accessible name of the colour area's horizontal axis. */
+  saturation?: string;
+
+  /** Accessible name of the swatch list. */
+  swatches?: string;
+
+  /** Accessible label of the swatch-only field's chevron button. */
+  toggleSwatches?: string;
+}
+
+/** Value of `c-color-picker`: a colour in its `format` notation, or `null` when empty. */
+export type CColorPickerValue = null | string;
+
+interface CColorPickerProps {
   /**
    * Let the colour carry transparency: an alpha slider and an A channel join
    * the panel. Without it typed alpha is dropped
@@ -402,11 +486,10 @@ export interface CColorPickerProps {
   hint?: string;
 
   /**
-   * Id of the element
-   *
-   * @freeform
+   * Show the control as invalid: its `error-message`, when set, replaces the
+   * hint, and the control is marked `aria-invalid`.
    */
-  hostId?: string;
+  invalid?: boolean;
 
   /**
    * Element label
@@ -477,91 +560,18 @@ export interface CColorPickerProps {
   texts?: CColorPickerTexts;
 
   /**
-   * Set the validity of the field
-   */
-  valid?: boolean;
-
-  /**
    * The colour in the `format` notation, or `null` when empty. Any CSS
    * colour is accepted and shown in the notation
    */
   value?: CColorPickerValue;
 }
-
-/** A predefined colour: a CSS colour, or one with a name for assistive technology and the swatch-only field. */
-export type CColorPickerSwatch = { name?: string; value: string } | string;
-
-/**
- * UI texts of `c-color-picker`, merged key by key over the English defaults.
- */
-export interface CColorPickerTexts {
-  /** Accessible name of the alpha slider and the A channel. */
-  alpha?: string;
-
-  /** Accessible name of the blue channel. */
-  blue?: string;
-
-  /** Accessible name of the colour area's vertical axis. */
-  brightness?: string;
-
-  /** Accessible name of the dialog when the field has no label. */
-  chooseColor?: string;
-
-  /** Accessible name of the chroma channel. */
-  chroma?: string;
-
-  /** Accessible label of the clear button. */
-  clearSelection?: string;
-
-  /** Accessible label of the close button in the fullscreen panel (narrow viewports). */
-  closePanel?: string;
-
-  /** Label of the Done button in the fullscreen panel (narrow viewports). */
-  done?: string;
-
-  /** Accessible name of the green channel. */
-  green?: string;
-
-  /** Accessible name of the hex channel. */
-  hex?: string;
-
-  /** Accessible name of the hue slider and the OKLCH hue channel. */
-  hue?: string;
-
-  /** Accessible name of the lightness channel. */
-  lightness?: string;
-
-  /** Accessible name of the notation switch. */
-  notation?: string;
-
-  /** Accessible label of the colour button. */
-  openPicker?: string;
-
-  /** Accessible name of the red channel. */
-  red?: string;
-
-  /** Accessible label of the original colour in the colour comparison: a click restores it. */
-  restoreOriginal?: string;
-
-  /** Accessible name of the colour area's horizontal axis. */
-  saturation?: string;
-
-  /** Accessible name of the swatch list. */
-  swatches?: string;
-
-  /** Accessible label of the swatch-only field's chevron button. */
-  toggleSwatches?: string;
-}
-
-/** Value of `c-color-picker`: a colour in its `format` notation, or `null` when empty. */
-export type CColorPickerValue = null | string;
 </script>
 
 <script setup lang="ts">
 /**
  * @csspart input - The text input; under `swatches-only` the readonly field
- * @csspart separator - Unused: the shared typed field's range separator
- * @csspart color-chip - The colour painted in the colour button, or before the swatch-only field's text
+ * @internalpart separator - The shared typed field's range separator; a colour has no range
+ * @csspart value-color - The value's colour, painted in the colour button or before the swatch-only field's text; pairs with `original-color` and `new-color`
  * @csspart panel - The top-layer popover container anchored below the field
  * @csspart card - The dialog surface inside the panel
  * @csspart heading-row - The top row of the fullscreen panel (narrow viewports): the field label as heading and the close button
@@ -582,6 +592,7 @@ export type CColorPickerValue = null | string;
  * @csspart swatch - One swatch
  * @csspart actions - The row under the panel body in the fullscreen panel (narrow viewports)
  * @csspart done - The Done button of the fullscreen panel (narrow viewports): commits what the panel holds and closes
+ * @csspart message - The hint / error message area below the field (always reserved unless `hide-details`)
  *
  * @cssstate bad-input - Present while committed text names no colour
  */
@@ -600,12 +611,15 @@ import {
 
 import { useAppDefault } from '../../shared/appDefaults';
 import { coerceBoolean } from '../../shared/coerceBoolean';
+import FieldMessage from '../../shared/FieldMessage.vue';
 import PanelHeadingRow from '../../shared/PanelHeadingRow.vue';
 import { applyPeekCap } from '../../shared/peekCap';
 import TypedField from '../../shared/TypedField.vue';
 import { useAnchoredPanel } from '../../shared/useAnchoredPanel';
+import { useControlAttrs } from '../../shared/useControlAttrs';
 import { useHostEmit } from '../../shared/useHostEmit';
 import { useHostStates } from '../../shared/useHostStates';
+import { useIdReferences } from '../../shared/useIdReferences';
 import { useKeyboardModality } from '../../shared/useKeyboardModality';
 import { useNarrowViewport } from '../../shared/useNarrowViewport';
 import { useTypedField } from '../../shared/useTypedField';
@@ -766,7 +780,7 @@ const props = withDefaults(defineProps<CColorPickerProps>(), {
   format: undefined,
   hideDetails: undefined,
   hint: '',
-  hostId: '',
+  invalid: false,
   label: '',
   labelOnTop: undefined,
   name: '',
@@ -777,11 +791,21 @@ const props = withDefaults(defineProps<CColorPickerProps>(), {
   swatches: () => [],
   swatchesOnly: false,
   texts: undefined,
-  valid: true,
   value: null,
 });
 
 const host = useHost();
+
+const { controlAttrs } = useControlAttrs();
+
+// The visible label names the input (WCAG 2.5.3, label in name); the host's
+// `aria-label` names a field without one, and is ignored beside it.
+const accessibleName = computed(
+  () =>
+    props.label ||
+    (controlAttrs.value['aria-label'] as string | undefined) ||
+    undefined,
+);
 
 // Script focus rings after a keyboard path, an Alt+↓ open included.
 const focusOptions = useKeyboardModality(host);
@@ -849,7 +873,7 @@ const swatchesRef = useTemplateRef<HTMLElement>('swatchesRef');
 
 const autoId = useId();
 
-const inputId = computed(() => props.hostId || autoId);
+const inputId = computed(() => autoId);
 
 // Same defineCustomElement Boolean-attribute quirk as `range` in
 // c-date-picker: resolve it from the stable host attribute first.
@@ -880,6 +904,7 @@ const readPattern = (text: string, p: string): null | string => {
 // ---- the typed field --------------------------------------------------------
 
 const typed = useTypedField({
+  accessibleName: () => accessibleName.value,
   codec: {
     format: (value, p) => readPattern(value, p) ?? value,
     // Every colour that parses is usable: outside sRGB it is mapped in.
@@ -1546,7 +1571,26 @@ const onSwatchClear = (event: Event) => {
   comboRef.value?.focus();
 };
 
-defineExpose({ badInput });
+/**
+ * Focus its input (the readonly combobox under `swatches-only`), as `focus()` does on a native control: the element renders
+ * no box of its own to take it.
+ *
+ * @param options - Passed on to that element's `focus()`
+ */
+const focus = (options?: FocusOptions): void => {
+  (
+    comboRef.value ??
+    host?.shadowRoot?.querySelector<HTMLElement>('input[part~="input"]')
+  )?.focus(options);
+};
+
+defineExpose({ badInput, focus });
+
+// The page's id references on the element reach the element carrying its role.
+useIdReferences(
+  () =>
+    comboRef.value ?? host?.shadowRoot?.querySelector('input[part~="input"]'),
+);
 </script>
 
 <!--

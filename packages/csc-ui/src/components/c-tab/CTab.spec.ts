@@ -3,11 +3,17 @@
  * its root is `absolute -right-1.5 -top-1.5` with a 2px ring, so it paints 8px
  * outside the tab box. The tab used to clip it three times over — on
  * `[part=root]`, on the host, and again on the tab strip's clipping viewport —
- * so only the inner sliver survived.
+ * so only the inner sliver survived. Safari has no `overflow-clip-margin`, so
+ * the clips that let it through must do so in every engine.
  */
 import { describe, expect, it } from 'vitest';
 
-import { matchScreenshotInBothModes, mount, settled } from '../../test/harness';
+import {
+  clipsCutting,
+  matchScreenshotInBothModes,
+  mount,
+  settled,
+} from '../../test/harness';
 
 const LABELS = [
   'Overview',
@@ -23,53 +29,6 @@ const TABS =
   '<c-tab value="members">Members<c-badge>2</c-badge></c-tab>' +
   '<c-tab value="settings">Settings</c-tab>';
 
-/**
- * Walk the flat tree upwards, hopping out of each shadow root, and collect
- * every ancestor that clips. `overflow-clip-margin` only applies to
- * `overflow: clip`, so any other non-`visible` value clips at 0 margin.
- *
- * Neither clipping element here carries a border, so the border box
- * `getBoundingClientRect()` returns is also the padding box the clip is
- * measured from.
- */
-const clippersAbove = (start: Element) => {
-  const clippers: { element: Element; margin: number }[] = [];
-
-  let node: Node | null = start;
-
-  while (node) {
-    if (node instanceof Element) {
-      const style = getComputedStyle(node);
-
-      if (style.overflow !== 'visible') {
-        clippers.push({
-          element: node,
-          margin:
-            style.overflow === 'clip'
-              ? parseFloat(style.overflowClipMargin) || 0
-              : 0,
-        });
-      }
-
-      node = node.assignedSlot ?? node.parentNode;
-
-      continue;
-    }
-
-    node = node instanceof ShadowRoot ? node.host : node.parentNode;
-  }
-
-  return clippers;
-};
-
-const describeClip = (element: Element) => {
-  const part = element.getAttribute('part');
-
-  return part
-    ? `${element.tagName.toLowerCase()} [part=${part}]`
-    : element.tagName.toLowerCase();
-};
-
 describe('c-tab badge overhang', () => {
   it('lets a slotted c-badge paint outside the tab and the strip', async () => {
     const { host } = await mount('c-tabs', { html: TABS });
@@ -84,20 +43,15 @@ describe('c-tab badge overhang', () => {
 
     expect(rect.width).toBeGreaterThan(0);
 
-    const cut = clippersAbove(badgeRoot)
-      .filter(({ element, margin }) => {
-        const clip = element.getBoundingClientRect();
+    // The ink reaches 2px past the box: the badge's ring.
+    const ink = new DOMRect(
+      rect.left - 2,
+      rect.top - 2,
+      rect.width + 4,
+      rect.height + 4,
+    );
 
-        return (
-          rect.top < clip.top - margin ||
-          rect.left < clip.left - margin ||
-          rect.right > clip.right + margin ||
-          rect.bottom > clip.bottom + margin
-        );
-      })
-      .map(({ element }) => describeClip(element));
-
-    expect(cut).toEqual([]);
+    expect(clipsCutting(badgeRoot, ink)).toEqual([]);
   });
 
   it('matches its visual baseline in both theme modes', async () => {
@@ -169,9 +123,9 @@ describe('c-tab strip', () => {
     ).toBe(true);
 
     expect(
-      m.shadowAll('c-icon-button').length,
-      'back and forward arrows rendered',
-    ).toBe(2);
+      m.shadowAll('c-icon-button').map((b) => b.getAttribute('aria-label')),
+      'back and forward arrows rendered, with names',
+    ).toEqual(['Scroll tabs back', 'Scroll tabs forward']);
   });
 });
 

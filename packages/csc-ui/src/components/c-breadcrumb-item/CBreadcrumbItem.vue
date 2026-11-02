@@ -1,5 +1,7 @@
 <template>
-  <li ref="rootRef" :class="ui.root()" part="root">
+  <!-- The crumb element itself is the list item (below): the list's children
+       are the slotted crumb elements, so an <li> in here had no list. -->
+  <div ref="rootRef" :class="ui.root()" part="root">
     <svg
       v-if="!first && !folded"
       :class="ui.separator()"
@@ -39,11 +41,11 @@
         <slot />
       </span>
     </a>
-  </li>
+  </div>
 </template>
 
 <script lang="ts">
-export interface CBreadcrumbItemProps {
+interface CBreadcrumbItemProps {
   /**
    * URL of the page the crumb leads to. Ignored on the current crumb (the
    * last one); a crumb without it names a level that has no page and renders
@@ -67,7 +69,7 @@ export interface CBreadcrumbItemProps {
  * @slot default - The crumb's label
  * @slot icon - An icon shown before the label (e.g. a `c-icon`); give an icon-only crumb an `aria-label`
  *
- * @csspart root - The list item holding the separator and the crumb; in the fold panel, the row
+ * @csspart root - The box holding the separator and the crumb (the crumb element is the list item); in the fold panel, the row
  * @csspart separator - The chevron before every crumb but the first, hidden in the fold panel
  * @csspart content - The link (or, without `href` and on the current crumb, the text) holding the icon and label
  * @csspart label - The label text, truncated with an ellipsis when the breadcrumb runs out of room
@@ -90,6 +92,7 @@ import {
 
 import { useHasSlot } from '../../shared/useHasSlot';
 import { useHostStates } from '../../shared/useHostStates';
+import { useIdReferences } from '../../shared/useIdReferences';
 
 /**
  * Styling lives in this `tailwind-variants` config; `::part()` is the
@@ -171,7 +174,7 @@ const props = withDefaults(defineProps<CBreadcrumbItemProps>(), {
 
 // Vue mirrors EVERY host attribute into `$attrs` — the `slot` the breadcrumb
 // assigns included — so nothing falls through; only `aria-label` (which
-// names an icon-only crumb) is forwarded, to the link. Vue camelizes the key.
+// names an icon-only crumb) is forwarded, to the link.
 defineOptions({ inheritAttrs: false });
 
 const attrs = useAttrs();
@@ -179,7 +182,7 @@ const attrs = useAttrs();
 // Read on every render: `attrs` is not reactive, but a changed host
 // attribute re-renders the element.
 const ariaLabel = (): string | undefined =>
-  (attrs.ariaLabel as string | undefined) || undefined;
+  (attrs['aria-label'] as string | undefined) || undefined;
 
 const host = useHost();
 
@@ -323,6 +326,7 @@ const onLabelSlotChange = (): void => {
 };
 
 onMounted(() => {
+  host?.setAttribute('role', 'listitem');
   readPlace();
   readLabel();
 
@@ -373,4 +377,7 @@ const ui = computed(() =>
     interactive: interactive.value,
   }),
 );
+
+// The page's id references on the element reach the element carrying its role.
+useIdReferences('a');
 </script>

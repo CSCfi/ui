@@ -10,18 +10,29 @@
       :active="isOpen"
       :data-hide-details="String(hideDetailsResolved)"
       :disabled
-      :error-message
       :filled="hasSelection"
-      :hint
       :input-id
+      :invalid
       :label
       :label-on-top="labelOnTopResolved"
       :required
       :shadow="shadowResolved"
       :size="sizeResolved"
-      :valid
       @click="onFieldClick"
     >
+      <!-- The hint / error message, here in the field's own tree so the
+           input's aria-describedby can name it. -->
+      <field-message
+        :id="`${inputId}-message`"
+        slot="message"
+        :error-message
+        :hide-details="hideDetailsResolved"
+        :hint
+        :invalid
+        :label-on-top="labelOnTopResolved"
+        part="message"
+      />
+
       <span v-if="hasConsumerPre" slot="pre" style="display: contents">
         <slot name="pre" />
       </span>
@@ -33,9 +44,13 @@
              the whole selection for assistive technology. -->
         <input
           ref="fieldRef"
+          v-bind="controlAttrs"
           :aria-controls="`${id}-listbox`"
+          :aria-describedby="
+            hideDetailsResolved ? undefined : `${inputId}-message`
+          "
           :aria-expanded="isOpen"
-          :aria-label="label || undefined"
+          :aria-label="accessibleName"
           :class="ui.input()"
           :disabled
           :name="name || undefined"
@@ -267,7 +282,7 @@
             i === activeIndex ? 'c-autocomplete__item--active' : '',
           ]"
           :data-active="i === activeIndex || undefined"
-          part="item"
+          part="option"
           role="option"
           tabindex="-1"
           @click="onSelect(opt)"
@@ -346,7 +361,70 @@ export interface CAutocompleteOption {
   value: number | string;
 }
 
-export interface CAutocompleteProps {
+/**
+ * UI texts of `c-autocomplete`, shallow-merged over the English defaults.
+ * Static labels are strings; count- or label-interpolated ones are
+ * functions.
+ */
+export interface CAutocompleteTexts {
+  /** Accessible label of the clear button. */
+  clearSelection?: string;
+
+  /** Accessible label of the close button in the fullscreen panel (narrow viewports). */
+  closePanel?: string;
+
+  /** Accessible label of the search input inside the panel. */
+  filterOptions?: string;
+
+  /** Text of the loading row shown while `loading` with nothing to list. */
+  loading?: string;
+
+  /**
+   * Text of the overflow tag when `max-tags` folds the selection; receives the
+   * number of hidden tags.
+   */
+  more?: (count: number) => string;
+
+  /** Text of the row shown when the query matches no options. */
+  noResults?: string;
+
+  /** Accessible label of a tag's remove button; receives the option label. */
+  remove?: (label: string) => string;
+
+  /** Placeholder of the search input when the `placeholder` prop is empty. */
+  searchPlaceholder?: string;
+
+  /**
+   * Label of the select-all row; receives the number of enabled options
+   * listed.
+   */
+  selectAll?: (count: number) => string;
+
+  /**
+   * Field text when `max-tags="0"` shows no tags; receives the selection
+   * count.
+   */
+  selected?: (count: number) => string;
+
+  /** Accessible label of the chevron button that opens and closes the panel. */
+  toggleOptions?: string;
+}
+
+/**
+ * Selection value of `c-autocomplete`: the committed option's value — or the
+ * whole `{ name, value }` item with `return-object` — and `null` when
+ * cleared. In `multiple` mode an array of them in the order they were
+ * picked, `[]` when empty.
+ */
+export type CAutocompleteValue =
+  | (number | string)[]
+  | CAutocompleteItem
+  | CAutocompleteItem[]
+  | null
+  | number
+  | string;
+
+interface CAutocompleteProps {
   /** Make the selected value clearable */
   clearable?: boolean;
 
@@ -385,11 +463,10 @@ export interface CAutocompleteProps {
   hint?: string;
 
   /**
-   * Id of the element
-   *
-   * @freeform
+   * Show the control as invalid: its `error-message`, when set, replaces the
+   * hint, and the control is marked `aria-invalid`.
    */
-  hostId?: string;
+  invalid?: boolean;
 
   /** Dropdown items (when not using <c-option> elements) */
   items?: CAutocompleteItem[];
@@ -485,78 +562,12 @@ export interface CAutocompleteProps {
    */
   texts?: CAutocompleteTexts;
 
-  /** Set the validity of the input */
-  valid?: boolean;
-
   /**
    * Selected value: the option's value, or the whole item with
    * `return-object`; an array of them in `multiple` mode
    */
   value?: CAutocompleteValue;
 }
-
-/**
- * UI texts of `c-autocomplete`, shallow-merged over the English defaults.
- * Static labels are strings; count- or label-interpolated ones are
- * functions.
- */
-export interface CAutocompleteTexts {
-  /** Accessible label of the clear button. */
-  clearSelection?: string;
-
-  /** Accessible label of the close button in the fullscreen panel (narrow viewports). */
-  closePanel?: string;
-
-  /** Accessible label of the search input inside the panel. */
-  filterOptions?: string;
-
-  /** Text of the loading row shown while `loading` with nothing to list. */
-  loading?: string;
-
-  /**
-   * Text of the overflow tag when `max-tags` folds the selection; receives the
-   * number of hidden tags.
-   */
-  more?: (count: number) => string;
-
-  /** Text of the row shown when the query matches no options. */
-  noResults?: string;
-
-  /** Accessible label of a tag's remove button; receives the option label. */
-  remove?: (label: string) => string;
-
-  /** Placeholder of the search input when the `placeholder` prop is empty. */
-  searchPlaceholder?: string;
-
-  /**
-   * Label of the select-all row; receives the number of enabled options
-   * listed.
-   */
-  selectAll?: (count: number) => string;
-
-  /**
-   * Field text when `max-tags="0"` shows no tags; receives the selection
-   * count.
-   */
-  selected?: (count: number) => string;
-
-  /** Accessible label of the chevron button that opens and closes the panel. */
-  toggleOptions?: string;
-}
-
-/**
- * Selection value of `c-autocomplete`: the committed option's value — or the
- * whole `{ name, value }` item with `return-object` — and `null` when
- * cleared. In `multiple` mode an array of them in the order they were
- * picked, `[]` when empty.
- */
-export type CAutocompleteValue =
-  | (number | string)[]
-  | CAutocompleteItem
-  | CAutocompleteItem[]
-  | null
-  | number
-  | string;
 </script>
 
 <script setup lang="ts">
@@ -572,7 +583,7 @@ export type CAutocompleteValue =
  * @csspart close - The close button of the fullscreen panel
  * @csspart search - The search-input row at the top of the panel
  * @csspart list - The scrollable options listbox
- * @csspart item - One option row in the list
+ * @csspart option - One option row in the list
  * @csspart select-all - The pinned select-all row at the top of the list (`multiple` mode with `select-all`); carries the same indicator / mark parts as an option row
  * @csspart indicator - The decorative checkbox box on an option row in `multiple` mode; border, fill and glyph draw with `currentColor`, so `color` recolours them together (the c-checkbox recipe)
  * @csspart mark - The check glyph inside a row indicator; draws with `currentColor`
@@ -581,6 +592,7 @@ export type CAutocompleteValue =
  * @csspart tags - The row of selected-value tags inside the field (`multiple` mode)
  * @csspart tag - One selected-value tag: the `c-tag` host, including the overflow tag
  * @csspart tag-root - The pill box inside each tag (the `c-tag` `root` part), for colours and borders
+ * @csspart message - The hint / error message area below the field (always reserved unless `hide-details`)
  *
  * @subcomponents c-option, c-option-value
  */
@@ -605,7 +617,7 @@ import {
 
 import { useAppDefault } from '../../shared/appDefaults';
 import { coerceBoolean } from '../../shared/coerceBoolean';
-import { emitModelValue } from '../../shared/emitModelValue';
+import FieldMessage from '../../shared/FieldMessage.vue';
 import { optionLabel, optionValueElement } from '../../shared/optionLabel';
 import PanelHeadingRow from '../../shared/PanelHeadingRow.vue';
 import { applyPeekCap } from '../../shared/peekCap';
@@ -613,18 +625,23 @@ import { selectAllState, toggleAllValues } from '../../shared/selectAll';
 import SelectionIndicator from '../../shared/SelectionIndicator.vue';
 import { type MatchSegment, splitMatches } from '../../shared/splitMatches';
 import { useAnchoredPanel } from '../../shared/useAnchoredPanel';
+import { useControlAttrs } from '../../shared/useControlAttrs';
 import { useHostEmit } from '../../shared/useHostEmit';
+import { useIdReferences } from '../../shared/useIdReferences';
 import { useNarrowViewport } from '../../shared/useNarrowViewport';
 import { useStatusAnnouncer } from '../../shared/useStatusAnnouncer';
+import { emitModelChange, seedModelValue } from '../../shared/valueEvents';
 
 /** Events dispatched by `<c-autocomplete>`. */
 interface CAutocompleteEvents {
   /**
-   * Native change event (no detail) dispatched whenever a selection is
-   * committed or cleared; bubbles through the shadow boundary for
-   * form-style listeners.
+   * Fired when the selected value changes (an option is committed or the
+   * selection is cleared), carrying the new value — the option's value, or
+   * the whole `{ name, value }` item when `return-object` is set; `null`
+   * when cleared. In `multiple` mode the whole array of picked values, in
+   * pick order (`[]` when cleared).
    */
-  change: void;
+  change: CAutocompleteValue;
 
   /**
    * Fired whenever the query changes — on every keystroke in the search
@@ -635,23 +652,13 @@ interface CAutocompleteEvents {
   'change:query': string;
 
   /**
-   * Fired when the selected value changes (an option is committed or the
-   * selection is cleared), carrying the new value — the option's value, or
-   * the whole `{ name, value }` item when `return-object` is set; `null`
-   * when cleared. In `multiple` mode the whole array of picked values, in
-   * pick order (`[]` when cleared).
-   */
-  changeValue: CAutocompleteValue;
-
-  /**
    * Native bubbling input event dispatched alongside every value change so a
    * plain `v-model` stays in sync. Carries no detail.
    */
   input: void;
 
   /**
-   * Fired alongside `changeValue` with the same detail — the `v-model`
-   * contract.
+   * Fired alongside `change` with the same detail — the `v-model` contract.
    */
   'update:value': CAutocompleteValue;
 }
@@ -779,7 +786,7 @@ const props = withDefaults(defineProps<CAutocompleteProps>(), {
   filter: undefined,
   hideDetails: undefined,
   hint: '',
-  hostId: '',
+  invalid: false,
   items: () => [],
   itemsPerPage: undefined,
   label: '',
@@ -795,11 +802,21 @@ const props = withDefaults(defineProps<CAutocompleteProps>(), {
   shadow: undefined,
   size: undefined,
   texts: undefined,
-  valid: true,
   value: null,
 });
 
 const host = useHost();
+
+const { controlAttrs } = useControlAttrs();
+
+// The visible label names the input (WCAG 2.5.3, label in name); the host's
+// `aria-label` names a field without one, and is ignored beside it.
+const accessibleName = computed(
+  () =>
+    props.label ||
+    (controlAttrs.value['aria-label'] as string | undefined) ||
+    undefined,
+);
 
 const emit = useHostEmit<CAutocompleteEvents>();
 
@@ -874,11 +891,11 @@ const hasConsumerPre = ref(false);
 
 const autoId = useId();
 
-const id = computed(() => props.hostId || autoId);
+const id = computed(() => autoId);
 
 const inputId = computed(
   () =>
-    `input_${(props.hostId || props.label || props.placeholder).replace(
+    `input_${(props.label || props.placeholder).replace(
       /[^a-zA-Z0-9-_]/g,
       '',
     )}`,
@@ -1230,13 +1247,24 @@ const syncOptionElements = (selected: Set<number | string>) => {
 
 // ---- value plumbing -----------------------------------------------------
 
+// `<c-option selected>` seeds an empty value once, silently (CONTEXT.md
+// "Value control": value events only on interaction). An interaction, a value
+// set from outside or one seed ends it, so a later change to the options never
+// re-seeds a value the user cleared.
+let seedable = true;
+
+// Every pick, toggle and clear: the value events, and no seed after it.
+const emitPick = (next: CAutocompleteValue) => {
+  seedable = false;
+  emitModelChange(host, next);
+};
+
 // The `multiple`-mode commit shared by a row toggle and the select-all row:
 // one emission of the whole array, panel and query untouched.
 const commitMultiple = (next: AutocompleteRawValue[]) => {
   const committed = next as CAutocompleteValue;
   value.value = committed;
-  emitModelValue(host, committed);
-  emit('change', undefined, { bubbles: true, composed: true });
+  emitPick(committed);
   syncOptionElements(new Set(next.map(valueOf)));
 };
 
@@ -1316,8 +1344,7 @@ const commit = (opt: NormalizedOption) => {
 
   value.value = next;
   committedLabel.value = { label: opt.label, value: opt.value };
-  emitModelValue(host, next);
-  emit('change', undefined, { bubbles: true, composed: true });
+  emitPick(next);
   syncOptionElements(new Set([opt.value]));
 };
 
@@ -1346,21 +1373,11 @@ const onReset = (event?: Event) => {
   committedLabel.value = null;
   committedLabels.value.clear();
   setQuery('');
-  emitModelValue(host, cleared);
-  emit('change', undefined, { bubbles: true, composed: true });
+  emitPick(cleared);
   syncOptionElements(new Set());
 
   fieldRef.value?.focus();
 };
-
-/**
- * Reset autocomplete state
- *
- * @seeded from csc-ui — verify
- */
-const reset = () => onReset();
-
-defineExpose({ reset });
 
 // ---- open / close -------------------------------------------------------
 
@@ -1712,32 +1729,39 @@ const refreshOptions = () => {
     value: number | string;
   } & HTMLElement;
 
-  // `multiple`: every `<c-option selected>` seeds the array (DOM order) —
-  // only while nothing is picked yet, so a later child mutation cannot
-  // re-seed a selection the user has cleared.
-  if (multipleOn.value) {
-    const picked = (options as OptionEl[]).filter((o) =>
-      coerceBoolean(o.selected ?? o.getAttribute('selected')),
-    );
+  if (!seedable) return;
 
-    if (picked.length && !selectedValues.value.length) {
-      value.value = picked.map((o) =>
-        props.returnObject ? { name: optionLabel(o), value: o.value } : o.value,
-      ) as CAutocompleteValue;
-    }
+  // A value set from outside wins, and ends seeding: `''` is what a plain
+  // Vue `v-model` writes for an empty model.
+  if (
+    multipleOn.value
+      ? selectedValues.value.length
+      : value.value != null && value.value !== ''
+  ) {
+    seedable = false;
 
     return;
   }
 
-  const selection = (options as OptionEl[]).find((o) =>
-    coerceBoolean(o.selected ?? o.getAttribute('selected')),
-  );
+  // `selected` may arrive as `""` (Boolean attribute) — coerce, never test
+  // by truthiness. `multiple`: every `<c-option selected>`, in DOM order. At
+  // mount the options have not upgraded yet, so read the attributes too.
+  const picked = (options as OptionEl[])
+    .filter((o) => coerceBoolean(o.selected ?? o.getAttribute('selected')))
+    .map((o) => {
+      const v = o.value ?? (o.getAttribute('value') as string);
 
-  if (selection && value.value == null) {
-    value.value = props.returnObject
-      ? { name: optionLabel(selection), value: selection.value }
-      : selection.value;
-  }
+      return props.returnObject ? { name: optionLabel(o), value: v } : v;
+    });
+
+  if (!picked.length) return;
+
+  seedable = false;
+
+  const seed = (multipleOn.value ? picked : picked[0]) as CAutocompleteValue;
+
+  value.value = seed;
+  seedModelValue(host, seed);
 };
 
 let childObserver: MutationObserver | null = null;
@@ -1766,6 +1790,21 @@ onMounted(() => {
 onBeforeUnmount(() => {
   childObserver?.disconnect();
 });
+
+// The page's id references on the element reach the element carrying its role.
+useIdReferences(() => fieldRef.value);
+
+/**
+ * Focus its combobox, as `focus()` does on a native control: the element renders
+ * no box of its own to take it.
+ *
+ * @param options - Passed on to that element's `focus()`
+ */
+const focus = (options?: FocusOptions): void => {
+  fieldRef.value?.focus(options);
+};
+
+defineExpose({ focus });
 </script>
 
 <!--

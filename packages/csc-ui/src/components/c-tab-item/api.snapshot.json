@@ -1,20 +1,16 @@
 {
   "attributes": {
-    "active": "boolean = false",
     "value": "number | string = 0"
   },
   "cssProperties": [],
   "defaultable": [],
-  "events": {
-    "contentChange": "CustomEvent<void>"
-  },
+  "events": {},
   "methods": {},
   "parts": [
     "root"
   ],
   "propertyOnly": [],
   "props": {
-    "active": "boolean = false",
     "value": "number | string = 0"
   },
   "slots": [

@@ -81,12 +81,6 @@ export interface CemTypeRef {
 
 const manifest = rawManifest as unknown as Cem;
 
-// Elements the consumer never authors (instantiated internally by a parent):
-// c-dropdown is c-select's listbox, c-input the field shell the form fields
-// compose. They get no nav entry and no page. (Keep in sync with
-// scripts/check-example-parity.mjs.)
-const INTERNAL_ONLY = new Set(['c-dropdown', 'c-input']);
-
 const components = manifest.modules
   .flatMap((module) => module.declarations)
   .filter((declaration): declaration is { tagName: string } & CemDeclaration =>
@@ -108,18 +102,16 @@ for (const component of components) {
   }
 }
 
-// Standalone components keep a nav entry and a page: everything that is neither
-// a composed child nor internal-only.
+// Standalone components keep a nav entry and a page: everything that is not a
+// composed child. Internal tags (ADR-0075) are not in the manifest at all.
 const navComponents = components.filter(
-  (component) =>
-    !parentByChild.has(component.tagName) &&
-    !INTERNAL_ONLY.has(component.tagName),
+  (component) => !parentByChild.has(component.tagName),
 );
 
 /**
  * The ordered list of components documented on a parent's page: the parent
- * first, then its composed children in declared order (internal-only or
- * unknown tags skipped). A standalone leaf resolves to just itself.
+ * first, then its composed children in declared order (unknown tags
+ * skipped). A standalone leaf resolves to just itself.
  */
 type ResolvedComponent = { tagName: string } & CemDeclaration;
 
@@ -129,7 +121,6 @@ const resolveGroup = (tag: string): ResolvedComponent[] => {
   if (!parent) return [];
 
   const children = (parent.csc?.subcomponents ?? [])
-    .filter((child) => !INTERNAL_ONLY.has(child))
     .map((child) => byTag.get(child))
     .filter((child): child is ResolvedComponent => Boolean(child));
 

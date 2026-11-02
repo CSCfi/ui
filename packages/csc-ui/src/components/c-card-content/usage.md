@@ -1,0 +1,1 @@
+The body section of a `c-card`: it pads its content in from the card's edges and stacks the children in a column with the card's section spacing. Place it after `c-card-title` and before `c-card-actions`.

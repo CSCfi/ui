@@ -547,20 +547,20 @@ export const TOKEN_GROUPS: TokenGroup[] = [
       },
       {
         dark: 'slate-300',
-        light: 'tertiary-500',
+        light: 'tertiary-600',
         purpose: 'Secondary text.',
         token: 'on-surface-muted',
       },
       {
         dark: 'slate-400',
-        light: 'tertiary-500',
+        light: 'tertiary-600',
         purpose: 'Hints, captions, and de-emphasized labels.',
         token: 'on-surface-faint',
       },
       {
         dark: 'slate-500',
         light: 'tertiary-300',
-        purpose: 'Text of disabled options and days.',
+        purpose: 'Text of disabled options, days and buttons.',
         token: 'on-surface-disabled',
       },
       {
@@ -593,12 +593,6 @@ export const TOKEN_GROUPS: TokenGroup[] = [
         light: 'tertiary-600',
         purpose: 'Emphasized borders, e.g. resting form-field outlines.',
         token: 'border-strong',
-      },
-      {
-        dark: 'accent-400',
-        light: 'primary-500',
-        purpose: 'Keyboard focus ring.',
-        token: 'ring',
       },
     ],
   },

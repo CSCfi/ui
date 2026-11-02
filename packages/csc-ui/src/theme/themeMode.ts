@@ -1,7 +1,7 @@
 // The light-or-dark theme mode, resolved the same way tokens.css resolves it.
 
 /** The light-or-dark state that selects which palette the semantic tokens resolve to. */
-export type ThemeMode = 'dark' | 'light';
+export type CThemeMode = 'dark' | 'light';
 
 /**
  * The selector tokens.css keys its pinned scopes on — only these two values pin
@@ -36,7 +36,7 @@ const MODE_SCOPE = "[data-theme='light'],[data-theme='dark']";
  */
 export function observeThemeMode(
   target: Element,
-  onChange: (mode: ThemeMode) => void,
+  onChange: (mode: CThemeMode) => void,
 ): () => void {
   let current = themeMode(target);
 
@@ -99,7 +99,7 @@ export function observeThemeMode(
  *
  * @param root the element to resolve for — defaults to `<html>`
  */
-export function themeMode(root?: Element | null): ThemeMode {
+export function themeMode(root?: Element | null): CThemeMode {
   const el =
     root ?? (typeof document !== 'undefined' ? document.documentElement : null);
 

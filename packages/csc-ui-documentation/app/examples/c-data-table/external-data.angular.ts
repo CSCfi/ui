@@ -53,10 +53,14 @@ export class ExternalDataExampleComponent implements AfterViewInit {
     { header: 'State', key: 'state' },
   ];
 
+  // A page-size change also moves to page 1, so two requests can overlap:
+  // only the latest one's rows are shown.
+  latest = 0;
+
   loading = signal(false);
+  // -----------------------------------------------------------------------
 
   page = signal<CDataTableRow[]>([]);
-  // -----------------------------------------------------------------------
 
   query = signal<{
     page: number;
@@ -96,8 +100,14 @@ export class ExternalDataExampleComponent implements AfterViewInit {
     });
 
   async load() {
+    const request = ++this.latest;
+
     this.loading.set(true);
-    this.page.set(await this.fetchPage(this.query()));
+
+    const rows = await this.fetchPage(this.query());
+
+    if (request !== this.latest) return;
+    this.page.set(rows);
     this.loading.set(false);
   }
 

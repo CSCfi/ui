@@ -1,7 +1,7 @@
 {
   "name": "@cscfi/csc-ui",
   "version": "4.0.0-alpha.32",
-  "description": "Vue 3-based replacement for @cscfi/csc-ui — same custom element tag names, Vue v-model contract.",
+  "description": "The CSC Design System's components as native custom elements: one set of c-* tags for plain HTML, Vue, React and Angular.",
   "type": "module",
   "main": "./dist/csc-ui.js",
   "module": "./dist/csc-ui.js",
@@ -20,6 +20,14 @@
     "./css/*": "./dist/styles/css/*",
     "./custom-elements.json": "./dist/custom-elements.json"
   },
+  "browserslist": [
+    "last 2 Chrome versions",
+    "last 2 Edge versions",
+    "last 2 Firefox versions",
+    "Firefox ESR",
+    "last 2 Safari versions",
+    "last 2 iOS versions"
+  ],
   "scripts": {
     "build": "pnpm run style-dictionary:build && pnpm run chart:generate && pnpm run docs:tag-map && vite build && pnpm run build:types && pnpm run docs:manifest:strict",
     "docs:manifest": "node scripts/analyzer/index.mjs",
@@ -30,6 +38,7 @@
     "build:watch": "pnpm run style-dictionary:build && pnpm run chart:generate && pnpm run build:types && vite build --watch",
     "dev": "pnpm run style-dictionary:build && pnpm run chart:generate && pnpm run build:types && vite build --watch",
     "lint:a11y": "node scripts/check-host-attr-fallthrough.mjs",
+    "lint:api": "node scripts/check-api-breaks.mjs",
     "lint:contrast": "node scripts/audit-contrast.mjs",
     "lint:ramp": "node scripts/check-ramp-parity.mjs",
     "lint:tokens": "node scripts/check-palette-utilities.mjs --strict",
@@ -38,12 +47,13 @@
     "chart:generate": "node scripts/generate-chart-data.mjs",
     "lint:chart": "node scripts/check-chart-parity.mjs",
     "lint:focus": "node scripts/check-focus-rings.mjs",
+    "lint:engines": "node scripts/check-engine-skips.mjs",
     "test": "pnpm run style-dictionary:build && vitest run",
     "test:watch": "vitest",
     "test:browser": "vitest run --project browser",
     "test:node": "vitest run --project node",
     "test:update": "pnpm run style-dictionary:build && vitest run --project browser --update",
-    "lint:guards": "pnpm run lint:tokens && pnpm run lint:a11y && pnpm run lint:ramp && pnpm run lint:chart && pnpm run lint:focus"
+    "lint:guards": "pnpm run lint:tokens && pnpm run lint:a11y && pnpm run lint:ramp && pnpm run lint:chart && pnpm run lint:focus && pnpm run lint:engines"
   },
   "dependencies": {
     "@floating-ui/dom": "^1.7.6",

@@ -11,6 +11,7 @@ import type { Mounted } from '../../test/harness';
 import {
   matchScreenshotInBothModes,
   mount,
+  recordEvents,
   roleInMode,
   settle,
   settled,
@@ -153,6 +154,57 @@ describe('c-accordion', () => {
     expect(rounded(style(extra), 'bottom')).toBe(true);
   });
 
+  it('expands an item added after mount when the value names it', async () => {
+    const m = await mountAccordion({ outlined: true, value: 'extra' });
+
+    const extra = document.createElement('c-accordion-item');
+
+    extra.setAttribute('heading', 'Extra');
+    extra.setAttribute('value', 'extra');
+    m.host.append(extra);
+    await settle();
+    await settled();
+
+    expect(extra.matches(':state(expanded)')).toBe(true);
+    expect(style(extra).boxShadow).toContain(
+      roleInMode('light', '--c-primary'),
+    );
+  });
+
+  it('keeps a single value as the first item of a multiple accordion', async () => {
+    const m = await mountAccordion({ multiple: true, value: 'billing' });
+
+    await toggle(items(m)[1]);
+
+    expect((m.host as { value?: unknown } & HTMLElement).value).toEqual([
+      'billing',
+      'members',
+    ]);
+    expect(items(m)[0].matches(':state(expanded)')).toBe(true);
+  });
+
+  // An item's toggle reaches its accordion through a bubbling wiring event,
+  // which used to bubble on to every accordion around it.
+  it('a nested accordion’s item toggles only the accordion it belongs to', async () => {
+    const m = await mountAccordion({ value: 'billing' });
+
+    const inner = document.createElement('c-accordion');
+
+    inner.innerHTML =
+      '<c-accordion-item heading="Inner" value="inner"><p>Inner content.</p></c-accordion-item>';
+    items(m)[0].querySelector('p')!.after(inner);
+    await settle();
+    await settled();
+
+    const events = recordEvents(m.host, ['update:value']);
+
+    await toggle(inner.querySelector('c-accordion-item')!);
+
+    expect((inner as { value?: unknown } & HTMLElement).value).toBe('inner');
+    expect((m.host as { value?: unknown } & HTMLElement).value).toBe('billing');
+    expect(events.names()).toEqual([]);
+  });
+
   it('squares the header wash off at the bottom of an expanded item', async () => {
     const m = await mountAccordion({ value: 'members' });
 
@@ -186,5 +238,26 @@ describe('c-accordion', () => {
     const m = await mountAccordion({ value: 'members' });
 
     await matchScreenshotInBothModes(m.stage, 'frame-expanded');
+  });
+});
+
+describe('c-accordion-item heading slot', () => {
+  it('slot="heading" replaces the heading text', async () => {
+    const m = await mount('c-accordion', {
+      html:
+        '<c-accordion-item heading="Plain" value="a">' +
+        '<strong slot="heading">Rich heading</strong>Body' +
+        '</c-accordion-item>',
+    });
+
+    const item = m.host.querySelector('c-accordion-item')!;
+
+    const slot = item.shadowRoot!.querySelector<HTMLSlotElement>(
+      'slot[name="heading"]',
+    )!;
+
+    expect(slot.assignedElements().map((el) => el.textContent)).toEqual([
+      'Rich heading',
+    ]);
   });
 });

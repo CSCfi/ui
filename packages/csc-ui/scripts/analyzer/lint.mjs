@@ -4,19 +4,25 @@
  * Hard errors (the template and the docblock must agree 1:1 — parts are the
  * customization API, so an undocumented or phantom name is an API
  * defect):
- *   - template slot without an `@slot` tag / `@slot` naming no template slot
+ *   - template slot without an `@slot` (or `@internalslot`) tag / either tag
+ *     naming no template slot, or one slot carrying both
  *   - part (own, stamped by an imported `src/shared/*.vue` SFC, or
- *     exportparts-exposed) without an `@csspart` tag / `@csspart` naming no
- *     part
+ *     exportparts-exposed) without an `@csspart` (or `@internalpart`) tag /
+ *     either tag naming no part
  *   - a `setState('<name>')` custom state without a `@cssstate` tag /
  *     `@cssstate` naming a state the script never sets
  *   - a raw `new CustomEvent(` / `new Event(` in the SFC — events must go
- *     through `useHostEmit` (or `emitModelValue`) so the event map stays the
- *     single source of truth
- *   - an `emitModelValue` caller whose event map is missing the
- *     `changeValue` / `update:value` / `input` triple that helper dispatches
- *   - an `@subcomponents` tag naming an unknown tag, or the component itself
- *     (the composed-children list must resolve to real components)
+ *     through `useHostEmit` (or a `valueEvents.ts` helper) so the event map
+ *     stays the single source of truth
+ *   - a `valueEvents.ts` helper caller whose event map is missing an event
+ *     that helper dispatches
+ *   - an event name that is not all-lowercase (ADR-0075)
+ *   - an `@subcomponents` tag naming an unknown tag, an internal tag, or the
+ *     component itself (the composed-children list must resolve to real,
+ *     documented components)
+ *   - a boolean prop whose built-in default is `true` (ADR-0076)
+ *   - a prop tagged both `@internal` and `@defaultable` (an app default is set
+ *     by consumers, so the prop is public by definition)
  *   - a prop typed bare `string` without an `@freeform` tag
  *     (set-of-accepted-values props must be named exported unions; genuinely
  *     open-ended props declare it explicitly), or an `@freeform` tag on a
@@ -40,25 +46,57 @@
  *     tag→usage direction is checked; the global `--c-*` theme tokens are NOT
  *     per-component API and are never required to be tagged)
  *   - dynamic slot-name / part bindings the analyzer cannot verify
- *   - missing `usage.md`
+ *   - missing `usage.md` (internal tags have no docs page and need none)
  *   - free text in the component docblock (the component description lives
  *     in usage.md's first paragraph; the docblock carries tags only)
  */
 
-export const lintComponent = (component, knownTags = new Set()) => {
+export const lintComponent = (
+  component,
+  knownTags = new Set(),
+  internalTags = new Set(),
+) => {
   const errors = [];
 
   const warnings = [];
 
-  const { docTags, source, subcomponents, tagName, template, usagePath } =
-    component;
+  const {
+    docTags,
+    internal,
+    source,
+    subcomponents,
+    tagName,
+    template,
+    usagePath,
+  } = component;
 
   const tagged = (tag) =>
     docTags.filter((t) => t.tag === tag).map((t) => t.name);
 
-  const taggedSlots = tagged('slot');
+  // `@internalslot` documents a slot the component assigns its own children
+  // to (c-breadcrumb's folded crumbs): checked like `@slot`, never published.
+  const internalSlots = tagged('internalslot');
 
-  const taggedParts = tagged('csspart');
+  const taggedSlots = [...tagged('slot'), ...internalSlots];
+
+  for (const slot of internalSlots) {
+    if (tagged('slot').includes(slot)) {
+      errors.push(`slot "${slot}" is tagged both @slot and @internalslot`);
+    }
+  }
+
+  // `@internalpart` documents a part a shared template stamps but this
+  // component never renders (c-color-picker has no range, so no range
+  // separator): checked like `@csspart`, never published.
+  const internalParts = tagged('internalpart');
+
+  for (const part of internalParts) {
+    if (tagged('csspart').includes(part)) {
+      errors.push(`part "${part}" is tagged both @csspart and @internalpart`);
+    }
+  }
+
+  const taggedParts = [...tagged('csspart'), ...internalParts];
 
   const taggedCssProps = tagged('cssprop');
 
@@ -124,32 +162,37 @@ export const lintComponent = (component, knownTags = new Set()) => {
 
   if (rawDispatches) {
     errors.push(
-      `${rawDispatches} raw new CustomEvent/Event dispatch(es) — use useHostEmit (event map) or emitModelValue`,
+      `${rawDispatches} raw new CustomEvent/Event dispatch(es) — use useHostEmit (event map) or the valueEvents helpers`,
     );
   }
 
-  if (scriptSource.includes('emitModelValue(')) {
-    const eventNames = component.events.map((e) => e.name);
-
-    for (const name of ['changeValue', 'update:value', 'input']) {
-      if (!eventNames.includes(name)) {
-        errors.push(
-          `emitModelValue is used but "${name}" is missing from the event map`,
-        );
-      }
+  // Every event name is all-lowercase (ADR-0017, ADR-0075): Vue hyphenates
+  // every v-on listener name, so a camelCase event never reaches a template.
+  for (const event of component.events) {
+    if (event.name !== event.name.toLowerCase()) {
+      errors.push(
+        `event "${event.name}" is not all-lowercase — Vue templates cannot listen for it`,
+      );
     }
   }
 
-  // New-style components use emitModelChange, which
-  // dispatches the all-lowercase `change` instead of the grandfathered
-  // `changeValue`.
-  if (scriptSource.includes('emitModelChange(')) {
-    const eventNames = component.events.map((e) => e.name);
+  // The value-event helpers (valueEvents.ts, ADR-0075) and the events each
+  // one dispatches.
+  const valueHelpers = {
+    emitModelChange: ['change', 'update:value', 'input'],
+    emitModelInput: ['update:value', 'input'],
+    emitModelSettled: ['change'],
+  };
 
-    for (const name of ['change', 'update:value', 'input']) {
+  const eventNames = component.events.map((e) => e.name);
+
+  for (const [helper, names] of Object.entries(valueHelpers)) {
+    if (!scriptSource.includes(`${helper}(`)) continue;
+
+    for (const name of names) {
       if (!eventNames.includes(name)) {
         errors.push(
-          `emitModelChange is used but "${name}" is missing from the event map`,
+          `${helper} is used but "${name}" is missing from the event map`,
         );
       }
     }
@@ -167,6 +210,20 @@ export const lintComponent = (component, knownTags = new Set()) => {
         `prop "${prop.name}" is tagged @freeform but is not a bare string`,
       );
     }
+
+    // ADR-0076: an absent HTML boolean attribute means false, so a boolean
+    // that defaults to `true` can never be turned off from markup.
+    if (prop.type === 'boolean' && String(prop.default).trim() === 'true') {
+      errors.push(
+        `prop "${prop.name}" is a boolean that defaults to true — name it for the non-default state (ADR-0076)`,
+      );
+    }
+
+    if (prop.internal && prop.defaultable) {
+      errors.push(
+        `prop "${prop.name}" is tagged both @internal and @defaultable — an app default makes it public`,
+      );
+    }
   }
 
   lintDefaultable(component, errors);
@@ -176,6 +233,8 @@ export const lintComponent = (component, knownTags = new Set()) => {
       errors.push(`@subcomponents lists the component itself ("${child}")`);
     } else if (!knownTags.has(child)) {
       errors.push(`@subcomponents "${child}" is not a known component`);
+    } else if (internalTags.has(child)) {
+      errors.push(`@subcomponents "${child}" is an internal tag`);
     }
   }
 
@@ -189,7 +248,7 @@ export const lintComponent = (component, knownTags = new Set()) => {
     warnings.push(`unverifiable ${dynamic}`);
   }
 
-  if (!usagePath) {
+  if (!usagePath && !internal) {
     warnings.push('no usage.md');
   }
 

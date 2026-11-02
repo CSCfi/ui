@@ -6,11 +6,9 @@
 
 <script setup lang="ts">
 /**
- * @slot default - Default slot
+ * @slot default - The panel's content
  *
- * @csspart root - The panel's padded content wrapper
- *
- * @seeded from csc-ui — verify
+ * @csspart root - The panel's padded content box
  */
 import { tv } from 'tailwind-variants';
 import { onBeforeUnmount, onMounted, useHost, useTemplateRef } from 'vue';
@@ -22,8 +20,10 @@ interface CTabItemEvents {
   /**
    * Fired whenever the panel's content is resized, so the parent
    * `<c-tab-items>` can re-measure and keep the slide position correct.
+   *
+   * @internal
    */
-  contentChange: void;
+  contentchange: void;
 }
 
 /**
@@ -51,16 +51,15 @@ defineOptions({ inheritAttrs: false });
 
 interface CTabItemProps {
   /**
-   * Active
+   * Whether this is the shown panel; the parent `<c-tabs>` sets it.
    *
-   * @seeded from csc-ui — verify
+   * @internal
    */
   active?: boolean;
 
   /**
-   * Tab value
-   *
-   * @seeded from csc-ui — verify
+   * Value of the panel, the same as its `c-tab`'s; the panel shows while the
+   * `value` of `c-tabs` equals it.
    */
   value?: number | string;
 }
@@ -85,7 +84,7 @@ onMounted(() => {
 
   if (innerRef.value) {
     resizeObserver = new ResizeObserver(() => {
-      emit('contentChange', undefined, { bubbles: true, composed: true });
+      emit('contentchange', undefined, { bubbles: true, composed: true });
     });
     resizeObserver.observe(innerRef.value);
   }

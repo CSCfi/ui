@@ -1,27 +1,27 @@
 {
   "attributes": {
-    "dismissible": "boolean = false",
+    "closeable": "boolean = false",
     "heading": "string",
-    "type": "'default' | 'error' | 'info' | 'success' | 'warning' = 'default'"
+    "type": "'error' | 'info' | 'success' | 'warning'"
   },
   "cssProperties": [],
   "defaultable": [],
   "events": {
-    "dismiss": "CustomEvent<void>"
+    "close": "CustomEvent<void>"
   },
   "methods": {},
   "parts": [
+    "close",
     "content",
-    "dismiss",
     "heading",
     "icon",
     "root"
   ],
   "propertyOnly": [],
   "props": {
-    "dismissible": "boolean = false",
+    "closeable": "boolean = false",
     "heading": "string",
-    "type": "'default' | 'error' | 'info' | 'success' | 'warning' = 'default'"
+    "type": "'error' | 'info' | 'success' | 'warning'"
   },
   "slots": [
     "default",

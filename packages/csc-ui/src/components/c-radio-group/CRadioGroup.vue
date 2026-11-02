@@ -1,6 +1,7 @@
 <template>
   <div
     ref="rootRef"
+    :aria-describedby="coerceBoolean(hideDetails) ? undefined : messageId"
     :aria-labelledby="labelVisible ? labelId : undefined"
     :aria-required="isRequired || undefined"
     :class="ui.root()"
@@ -22,7 +23,14 @@
       <slot />
     </div>
 
-    <field-message :error-message :hide-details :hint :valid part="message" />
+    <field-message
+      :id="messageId"
+      :error-message
+      :hide-details
+      :hint
+      :invalid
+      part="message"
+    />
   </div>
 </template>
 
@@ -51,27 +59,27 @@ import {
 } from 'vue';
 
 import { coerceBoolean } from '../../shared/coerceBoolean';
-import { emitModelValue } from '../../shared/emitModelValue';
 import FieldMessage from '../../shared/FieldMessage.vue';
 import FormLabel from '../../shared/FormLabel.vue';
 import { useHasSlot } from '../../shared/useHasSlot';
+import { useIdReferences } from '../../shared/useIdReferences';
+import { emitModelChange } from '../../shared/valueEvents';
 
 /** Events dispatched by `<c-radio-group>`. */
 interface CRadioGroupEvents {
   /**
-   * Fired when a radio is selected, carrying the selected radio's value.
+   * Fired when the user selects a radio, carrying the selected radio's value.
    */
-  changeValue: string;
+  change: string;
 
   /**
    * Native bubbling input event fired on selection so a plain Vue `v-model`
-   * works without the `v-control` directive. No detail.
+   * stays in sync. No detail.
    */
   input: void;
 
   /**
-   * v-model contract event fired on selection, carrying the selected radio's
-   * value.
+   * Fired alongside `change` with the same detail — the `v-model` contract.
    */
   'update:value': string;
 }
@@ -162,6 +170,12 @@ interface CRadioGroupProps {
   inline?: boolean;
 
   /**
+   * Show the control as invalid: its `error-message`, when set, replaces the
+   * hint, and the control is marked `aria-invalid`.
+   */
+  invalid?: boolean;
+
+  /**
    * Label of the radio group
    *
    * @freeform
@@ -172,11 +186,6 @@ interface CRadioGroupProps {
    * Set as required
    */
   required?: boolean;
-
-  /**
-   * Set the validity of the input
-   */
-  valid?: boolean;
 
   /**
    * Value of the radio group; matched against each radio's `value` by strict
@@ -191,9 +200,9 @@ const props = withDefaults(defineProps<CRadioGroupProps>(), {
   hideDetails: false,
   hint: '',
   inline: false,
+  invalid: false,
   label: '',
   required: false,
-  valid: true,
   value: null,
 });
 
@@ -206,7 +215,7 @@ const isRequired = computed(() => coerceBoolean(props.required));
 const ui = computed(() =>
   radioGroup({
     disabled: isGroupDisabled.value,
-    error: !coerceBoolean(props.valid),
+    error: coerceBoolean(props.invalid),
     inline: coerceBoolean(props.inline),
   }),
 );
@@ -225,6 +234,8 @@ const labelVisible = computed(() => Boolean(props.label) || hasLabelSlot.value);
 const autoId = useId();
 
 const labelId = `${autoId}-label`;
+
+const messageId = `${autoId}-message`;
 
 // Internal value mirror: `props.value` is only updated by the parent
 // asynchronously (after the native `input` round trip), so the sync pass
@@ -291,17 +302,20 @@ const syncRadios = () => {
 };
 
 // Commit a user-driven selection arriving as a slotted radio's composed
-// bubbling `change` (a light-DOM event never enters this shadow root, so the
-// listener sits on the host — c-accordion precedent). Emits the grandfathered
-// changeValue/update:value + native `input` triple and mirrors host `value`.
+// bubbling `radioselect` (a light-DOM event never enters this shadow root, so
+// the listener sits on the host — c-accordion precedent). A pick is its own
+// commit: `change`, `update:value` and `input`.
 const onRadioChange = (event: Event) => {
   const target = event.target as CRadioEl;
 
   if (!radios().includes(target)) return;
 
+  // The radio's wiring event ends here; the group's `change` is public.
+  event.stopPropagation();
+
   const next = String((event as CustomEvent<string>).detail ?? '');
   internalValue.value = next;
-  emitModelValue(host, next);
+  emitModelChange(host, next satisfies CRadioGroupEvents['change']);
   syncRadios();
 };
 
@@ -343,7 +357,7 @@ const onKeyDown = (event: KeyboardEvent) => {
   input?.click();
 };
 
-// Visuals-only: re-sync when the parent (or our own emitModelValue host
+// Visuals-only: re-sync when the parent (or our own emitModelChange host
 // `value` mirror) changes the value; never emit here (would loop with
 // v-model).
 watch(
@@ -362,7 +376,7 @@ watch(
 let observer: MutationObserver | null = null;
 onMounted(() => {
   if (!host) return;
-  host.addEventListener('change', onRadioChange);
+  host.addEventListener('radioselect', onRadioChange);
   host.addEventListener('keydown', onKeyDown);
 
   if (typeof MutationObserver !== 'undefined') {
@@ -390,9 +404,27 @@ onMounted(() => {
 });
 onBeforeUnmount(() => {
   observer?.disconnect();
-  host?.removeEventListener('change', onRadioChange);
+  host?.removeEventListener('radioselect', onRadioChange);
   host?.removeEventListener('keydown', onKeyDown);
 });
+
+// The page's id references on the element reach the element carrying its role.
+useIdReferences(() => rootRef.value);
+
+/**
+ * Focus its tab stop: the checked radio, else the first enabled one, as `focus()` does on a native control: the element renders
+ * no box of its own to take it.
+ *
+ * @param options - Passed on to that element's `focus()`
+ */
+const focus = (options?: FocusOptions): void => {
+  radios()
+    .map(inputOf)
+    .find((input) => input?.tabIndex === 0)
+    ?.focus(options);
+};
+
+defineExpose({ focus });
 </script>
 
 <!--

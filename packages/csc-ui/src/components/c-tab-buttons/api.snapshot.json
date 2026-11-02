@@ -1,14 +1,11 @@
 {
   "attributes": {
     "disabled": "boolean = false",
-    "size": "'default' | 'small' = 'default'",
-    "value": "number | string = 0"
+    "size": "'default' | 'small' = 'default'"
   },
   "cssProperties": [],
   "defaultable": [],
-  "events": {
-    "tabChange": "CustomEvent<{ element: HTMLElement | null; value: number | string; }>"
-  },
+  "events": {},
   "methods": {},
   "parts": [
     "indicator",
@@ -19,8 +16,7 @@
   "propertyOnly": [],
   "props": {
     "disabled": "boolean = false",
-    "size": "'default' | 'small' = 'default'",
-    "value": "number | string = 0"
+    "size": "'default' | 'small' = 'default'"
   },
   "slots": [
     "default"

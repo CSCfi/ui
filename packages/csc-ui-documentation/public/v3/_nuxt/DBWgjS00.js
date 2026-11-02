@@ -1,0 +1,1 @@
+import{s,l}from"./Ch6KfFdQ.js";import{u}from"./CAYfANcy.js";const r=()=>{const{componentData:e,pageTitles:o}=s(u());l(()=>{var t,a;o.value={title:((t=e.value)==null?void 0:t.name)||"",subtitle:((a=e.value)==null?void 0:a.tag)||""}})};export{r as u};

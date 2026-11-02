@@ -15,7 +15,7 @@ import { Component, CUSTOM_ELEMENTS_SCHEMA, signal } from '@angular/core';
         max-tags="3"
         multiple
         select-all
-        (changeValue)="countries.set($any($event).detail)"
+        (change)="countries.set($any($event).detail)"
       >
         <c-option name="Finland" value="fi">Finland</c-option>
         <c-option name="Sweden" value="se">Sweden</c-option>

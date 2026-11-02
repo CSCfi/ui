@@ -29,7 +29,7 @@
  */
 import { describe, expect, it } from 'vitest';
 
-import { migratedTags } from '../../index';
+import { registeredTags } from '../../registry';
 import { mount, settled } from '../harness';
 import { FIXTURES, KNOWN_INK_LEAKS } from './kinds';
 import { isOpaque, normalise } from './paint';
@@ -50,7 +50,7 @@ const ground = (slot: Element, host: Element): Element | null => {
   return isOpaque(getComputedStyle(host).backgroundColor) ? host : null;
 };
 
-describe.each(migratedTags)('%s', (tag) => {
+describe.each(registeredTags)('%s', (tag) => {
   it('paints its own ink on every opaque surface it projects into', async () => {
     const m = await mount(tag, FIXTURES[tag]);
 

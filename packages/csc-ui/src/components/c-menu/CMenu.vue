@@ -48,16 +48,55 @@ The wrapper carries `anchor-name`; the panel references it. -->
   </div>
 </template>
 
+<script lang="ts">
+/**
+ * Preferred placement of the menu panel relative to its trigger: the side, and
+ * `-start`/`-end` to align their edges on the cross axis.
+ */
+export type CMenuPosition =
+  | 'bottom-end'
+  | 'bottom-start'
+  | 'bottom'
+  | 'left-end'
+  | 'left-start'
+  | 'left'
+  | 'right-end'
+  | 'right-start'
+  | 'right'
+  | 'top-end'
+  | 'top-start'
+  | 'top';
+
+interface CMenuProps {
+  /** Distance from the trigger to the panel, in pixels. Defaults to `0`. */
+  distance?: number;
+
+  /** Whether the menu is open. Two-way: emits `change:open`. */
+  open?: boolean;
+
+  /** Preferred placement of the panel relative to the trigger. */
+  position?: CMenuPosition;
+
+  /**
+   * Designated trigger: an element elsewhere in the document that opens the
+   * menu — its document ID, or the element itself. The same trigger concept
+   * as the `trigger` slot, supplied by reference: the menu wires
+   * click-to-toggle, arrow-key opening, ARIA and focus return onto it and
+   * anchors the panel to it. When both routes are supplied, this prop wins
+   * over the slot.
+   */
+  trigger?: HTMLElement | string;
+}
+</script>
+
 <script setup lang="ts">
 /**
- * @slot default - Menu title / activator element (simple variant)
- * @slot trigger - The element that opens the menu (e.g. a c-button)
+ * @slot default - The menu's content: `c-menu-item`, `c-menu-label` and `c-divider` elements
+ * @slot trigger - The trigger: the element that opens the menu, e.g. a `c-button`
  *
  * @csspart trigger - The inline wrapper around the slotted trigger, serving as the panel's anchor
  * @csspart panel - The floating popover positioned against the trigger
  * @csspart list - The menu list surface inside the panel
- *
- * @seeded from csc-ui — verify
  *
  * @subcomponents c-menu-item, c-menu-label
  */
@@ -71,8 +110,6 @@ import {
   useTemplateRef,
   watch,
 } from 'vue';
-
-import type { CPlacement } from '../../types';
 
 import { coerceBoolean } from '../../shared/coerceBoolean';
 import { attachLightDismiss, type Detach } from '../../shared/lightDismiss';
@@ -99,7 +136,7 @@ interface CMenuEvents {
    * Fired when a leaf menu item is selected, carrying the item's `value`;
    * bubbles out of the menu so a single listener can handle the whole tree.
    */
-  select: { value: unknown };
+  select: { value: string | undefined };
 }
 
 /**
@@ -115,7 +152,7 @@ interface CMenuEvents {
  * host's flattened subtree, so delegated `click`/`keydown`/`pointerover`
  * listeners on the host see them all, and `composedPath().includes(host)`
  * cleanly separates inside from outside for light-dismiss. Submenus are opened
- * and closed by calling the `openSubmenu`/`closeSubmenu` methods that
+ * and closed by calling the `_openSubmenu`/`_closeSubmenu` methods that
  * `c-menu-item` exposes.
  *
  * Styling is in this `tailwind-variants` config; `::part()` is the
@@ -134,27 +171,6 @@ const menu = tv({
 });
 
 const ui = menu();
-
-interface CMenuProps {
-  /** Distance from the trigger to the panel, in pixels. Defaults to `0`. */
-  distance?: number | string;
-
-  /** Whether the menu is open. Two-way: emits `change:open`. */
-  open?: boolean;
-
-  /** Preferred placement of the panel relative to the trigger. */
-  position?: CPlacement;
-
-  /**
-   * Designated trigger: an element elsewhere in the document that opens the
-   * menu — its document ID, or the element itself. The same trigger concept
-   * as the `trigger` slot, supplied by reference: the menu wires
-   * click-to-toggle, arrow-key opening, ARIA and focus return onto it and
-   * anchors the panel to it. When both routes are supplied, this prop wins
-   * over the slot.
-   */
-  trigger?: HTMLElement | string;
-}
 
 const props = withDefaults(defineProps<CMenuProps>(), {
   distance: 0,
@@ -215,12 +231,12 @@ watch(distancePx, (px) => {
 // Tracks open submenu items (across nested levels) so we can coordinate
 // dismissal — the browser does not auto-chain manual popovers across the
 // separate shadow roots each c-menu-item owns. The record follows the item's
-// own `isSubmenuOpen()` (the panel's `:popover-open`), never the other way
+// own `_isSubmenuOpen()` (the panel's `:popover-open`), never the other way
 // round: an open that silently did not happen must not be remembered as one.
 const openSubmenus = new Set<HTMLElement>();
 
 const isSubmenuOpen = (item: HTMLElement): boolean =>
-  (item as { isSubmenuOpen?: () => boolean }).isSubmenuOpen?.() ?? false;
+  (item as { _isSubmenuOpen?: () => boolean })._isSubmenuOpen?.() ?? false;
 
 const submenuTimers = new Map<HTMLElement, { close?: number; open?: number }>();
 
@@ -518,7 +534,7 @@ const doOpenSubmenu = (item: HTMLElement, focusFirst: boolean) => {
     if (!activePath(item).includes(open)) scheduleCloseSubmenu(open);
   }
 
-  (item as { openSubmenu?: () => void }).openSubmenu?.();
+  (item as { _openSubmenu?: () => void })._openSubmenu?.();
 
   if (isSubmenuOpen(item)) openSubmenus.add(item);
   else openSubmenus.delete(item);
@@ -534,7 +550,7 @@ const doOpenSubmenu = (item: HTMLElement, focusFirst: boolean) => {
 
 const doCloseSubmenu = (item: HTMLElement) => {
   cancelTimers(item);
-  (item as { closeSubmenu?: () => void }).closeSubmenu?.();
+  (item as { _closeSubmenu?: () => void })._closeSubmenu?.();
   openSubmenus.delete(item);
 };
 
@@ -610,7 +626,7 @@ const toggle = () => (isOpen.value ? closeMenu(false) : openMenu('first'));
 
 const activateLeaf = (item: HTMLElement) => {
   const value =
-    (item as { value?: unknown }).value ??
+    (item as { value?: string }).value ??
     item.getAttribute('value') ??
     undefined;
 

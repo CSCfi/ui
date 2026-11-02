@@ -1,8 +1,39 @@
 <template>
-  <c-icon-button :class="ui.root()" part="root" text>
+  <!-- Expanded or collapsed with the mobile drawer it toggles; nothing beside
+       a desktop navigation, which has no drawer. -->
+  <c-icon-button
+    :aria-expanded="
+      navigationDrawer.mobile ? String(navigationDrawer.open) : undefined
+    "
+    :aria-label="t.label"
+    :class="ui.root()"
+    part="root"
+    text
+  >
     <c-icon :path="menuIcon" />
   </c-icon-button>
 </template>
+
+<script lang="ts">
+/**
+ * UI texts of `c-navigation-button`, shallow-merged over the English
+ * defaults.
+ */
+export interface CNavigationButtonTexts {
+  /** Accessible name of the button. */
+  label?: string;
+}
+
+interface CNavigationButtonProps {
+  /**
+   * UI text overrides (i18n), merged over the English defaults. Objects have
+   * no attribute form — bind as a DOM property
+   *
+   * @defaultable {}
+   */
+  texts?: CNavigationButtonTexts;
+}
+</script>
 
 <script setup lang="ts">
 /**
@@ -10,7 +41,11 @@
  */
 import { mdiMenu } from '@mdi/js';
 import { tv } from 'tailwind-variants';
-import { computed } from 'vue';
+import { computed, useHost } from 'vue';
+
+import { useAppDefault } from '../../shared/appDefaults';
+import { navigationDrawer } from '../../shared/navigationDrawer';
+import { useIdReferences } from '../../shared/useIdReferences';
 
 /**
  * Styling lives entirely in this `tailwind-variants` config. The
@@ -23,7 +58,7 @@ import { computed } from 'vue';
  */
 const navigationButton = tv({
   slots: {
-    root: 'mr-0 block cursor-pointer rounded-full text-[var(--c-text-system)] select-none',
+    root: 'mr-0 block cursor-pointer rounded-full text-on-surface-muted select-none',
   },
 });
 
@@ -35,7 +70,30 @@ const navigationButton = tv({
 // same way). Don't set tabindex here, and suppress the fallthrough entirely.
 defineOptions({ inheritAttrs: false });
 
+const props = withDefaults(defineProps<CNavigationButtonProps>(), {
+  texts: undefined,
+});
+
+// `texts` resolves own value → app default → built-in, key by key (see
+// src/shared/appDefaults.ts).
+const appDefault = useAppDefault('c-navigation-button', props);
+
+const DEFAULT_TEXTS: Required<CNavigationButtonTexts> = {
+  label: 'Menu',
+};
+
+const t = appDefault('texts', DEFAULT_TEXTS);
+
 const ui = computed(() => navigationButton());
 
+const host = useHost();
+
 const menuIcon = mdiMenu;
+
+// The page's id references on the element reach the element carrying its role.
+useIdReferences(() =>
+  host?.shadowRoot
+    ?.querySelector('c-icon-button')
+    ?.shadowRoot?.querySelector('button'),
+);
 </script>

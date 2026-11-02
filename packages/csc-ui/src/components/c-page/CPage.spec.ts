@@ -49,6 +49,54 @@ describe('c-page', () => {
     expect(m.part('scroll-indicator').style.width).toBe('100%');
   });
 
+  it('scroll-indicator paints above a pinned toolbar inside c-main', async () => {
+    await mount('c-main', {
+      html: `<c-toolbar>Toolbar</c-toolbar><c-page scroll-indicator>${TALL}</c-page>`,
+      stage: false,
+    });
+
+    const scroller = document.scrollingElement!;
+
+    window.scrollTo(0, (scroller.scrollHeight - scroller.clientHeight) / 2);
+    await settle();
+
+    // A point on both the toolbar and the indicator's bar.
+    expect(document.elementFromPoint(100, 1)?.localName).toBe('c-page');
+  });
+
+  it('scroll-indicator measures without waiting for a scroll', async () => {
+    const tall = document.createElement('div');
+
+    tall.style.height = '3000px';
+    document.body.append(tall);
+    window.scrollTo(0, 600);
+
+    try {
+      const m = await mount('c-page', {
+        html: '<p>Short</p>',
+        props: { scrollIndicator: true },
+        stage: false,
+      });
+
+      await settle();
+
+      const at = parseFloat(m.part('scroll-indicator').style.width);
+
+      expect(at, 'a restored scroll position').toBeGreaterThan(0);
+
+      // The page grows: the same scroll position is a smaller share.
+      tall.style.height = '6000px';
+      await new Promise(requestAnimationFrame);
+      await settle();
+
+      expect(parseFloat(m.part('scroll-indicator').style.width)).toBeLessThan(
+        at,
+      );
+    } finally {
+      tall.remove();
+    }
+  });
+
   it('puts the footer at the bottom of a sized host', async () => {
     const m = await mount('c-page', {
       attrs: { style: 'height: 240px' },

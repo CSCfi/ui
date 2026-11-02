@@ -1,14 +1,22 @@
 <template>
-  <div :class="ui.content()" part="root">
+  <!-- The open mobile drawer is a modal dialog (focus moves in, Escape closes
+       it, the page behind is inert); on desktop the drawer is plain content. -->
+  <div
+    :aria-label="modal ? 'Menu' : undefined"
+    :aria-modal="modal ? 'true' : undefined"
+    :class="ui.content()"
+    :role="modal ? 'dialog' : undefined"
+    part="root"
+  >
     <div v-if="mobile" :class="ui.burger()">
-      <c-icon-button inverted text @click="closeMenu">
+      <c-icon-button ref="closeRef" inverted text @click="closeMenu">
         <span :class="ui.srOnly()">Close sidemenu</span>
 
         <c-icon :path="arrowRight" />
       </c-icon-button>
     </div>
 
-    <nav ref="containerRef" :class="ui.nav()" part="nav" role="menubar">
+    <nav :aria-label="navLabel" :class="ui.nav()" part="nav">
       <div :class="ui.wrapper()">
         <slot />
       </div>
@@ -20,7 +28,7 @@
   </div>
 
   <div
-    v-if="menuVisibleInternal && mobile"
+    v-if="openInternal && mobile"
     class="c-overlay c-fade-in"
     @click="closeMenu"
   />
@@ -31,10 +39,8 @@
  * @slot default - The navigation items: titles, items and their sub-items
  * @slot bottom - Trailing content below the items, such as a sign-out button; it stays at the drawer's bottom edge while the items scroll
  *
- * @csspart root - The outer drawer container: the item list above the bottom slot's region
+ * @csspart root - The outer drawer container: the item list above the bottom slot's region; the open mobile drawer is a modal `dialog`
  * @csspart nav - The scrollable `<nav>` element holding the navigation items
- *
- * @seeded from csc-ui — verify
  *
  * @subcomponents c-side-navigation-item, c-side-navigation-title, c-sub-navigation-item
  */
@@ -42,29 +48,36 @@ import { mdiArrowRight } from '@mdi/js';
 import { tv } from 'tailwind-variants';
 import {
   computed,
+  nextTick,
   onBeforeUnmount,
   onMounted,
   ref,
+  useAttrs,
   useHost,
   useTemplateRef,
   watch,
   watchEffect,
 } from 'vue';
 
+import {
+  closeModal,
+  type ModalStackEntry,
+  openModal,
+} from '../../shared/modalStack';
+import { navigationDrawer } from '../../shared/navigationDrawer';
 import { useHasSlot } from '../../shared/useHasSlot';
 import { useHostEmit } from '../../shared/useHostEmit';
+import { useIdReferences } from '../../shared/useIdReferences';
 
 /** Events dispatched by `<c-side-navigation>`. */
 interface CSideNavigationEvents {
   /**
-   * Fired when the drawer is closed from within (the mobile close button or
-   * the backdrop overlay), carrying the new visibility (`false`).
-   * Named `change:menu-visible`, not `update:menuVisible`: Vue's runtime
-   * silently drops `onUpdate:*` listeners on custom elements
-   * (`isModelListener`), so a template `@update:menu-visible` would never be
-   * attached.
+   * Fired when the user opens or closes the drawer — a `c-navigation-button`,
+   * the close button, the backdrop, or activating an item — carrying the new
+   * `open`. Named `change:open`, not `update:open`: Vue's runtime silently
+   * drops `onUpdate:*` listeners on custom elements (`isModelListener`).
    */
-  'change:menu-visible': boolean;
+  'change:open': boolean;
 }
 
 // Multi-root template (fragment) + we write to the host below — keep
@@ -85,8 +98,8 @@ defineOptions({ inheritAttrs: false });
  * space left (`flex-1 min-h-0`) and scrolls a long menu on its own, containing
  * its overscroll so a wheel that reaches its end does not chain to the
  * document (Chromium latches the rest of the gesture to whichever scroller
- * took it). The **bottom slot's region** sits outside the `menubar` nav, so a
- * sign-out button is not a menu item, and is `sticky bottom-0`: inside c-main
+ * took it). The **bottom slot's region** sits outside the `<nav>` landmark, so a
+ * sign-out button is not a navigation item, and is `sticky bottom-0`: inside c-main
  * the drawer is sized to its pinned height but sits below the banner and
  * toolbar rows until the page has scrolled past them, and the sticky region
  * rides up to the viewport's bottom edge in the meantime (CONTEXT.md "Bottom
@@ -150,31 +163,22 @@ const sideNavigation = tv({
 
 interface CSideNavigationProps {
   /**
-   * Mobile version menu visibility
-   *
-   * @seeded from csc-ui — verify
-   */
-  menuVisible?: boolean;
-
-  /**
-   * Mobile version
-   *
-   * @seeded from csc-ui — verify
+   * Render the drawer as a panel that slides in from the right over a backdrop,
+   * opened and closed by `open` or a `c-navigation-button`; while open it is a
+   * modal dialog.
    */
   mobile?: boolean;
 
   /**
-   * Background styles
-   *
-   * @seeded from csc-ui — verify
+   * Whether the `mobile` drawer is open. A `c-navigation-button` anywhere on
+   * the page toggles it.
    */
-  styles?: null | Record<string, string>;
+  open?: boolean;
 }
 
 const props = withDefaults(defineProps<CSideNavigationProps>(), {
-  menuVisible: false,
   mobile: false,
-  styles: null,
+  open: false,
 });
 
 const arrowRight = mdiArrowRight;
@@ -183,120 +187,145 @@ const host = useHost();
 
 const emit = useHostEmit<CSideNavigationEvents>();
 
-const containerRef = useTemplateRef<HTMLElement>('containerRef');
-
 const bottomRef = useTemplateRef<HTMLElement>('bottomRef');
 
 // The bottom slot's region renders only while something is slotted, so a
 // drawer without a bottom slot keeps its box (no empty padded strip).
 const hasBottom = useHasSlot(bottomRef, 'bottom');
 
-const menuVisibleInternal = ref(props.menuVisible);
+const openInternal = ref(props.open);
 
 const ui = computed(() =>
   sideNavigation({
-    hidden: !menuVisibleInternal.value,
+    hidden: !openInternal.value,
     mobile: !!props.mobile,
   }),
 );
 
-// Keep the internal render state and the reflected custom-element `menuVisible`
-// property in lockstep. The nav button toggles visibility through internal
-// state, but nav items close the drawer by setting the `menuVisible` *property*
-// on the host (`document.querySelector('c-side-navigation').menuVisible = false`).
-// If the property lagged behind internal state, that write could be a no-op
-// (false -> false) and leave the drawer open — so mirror every change back to
-// the host property too. The watcher below then closes the loop without
-// recursing (both assignments are guarded by an equality check).
-const setMenuVisible = (value: boolean) => {
-  if (menuVisibleInternal.value !== value) {
-    menuVisibleInternal.value = value;
-  }
+// Called from user interaction only: the drawer's state, the host's `open`
+// property (so a later write of the same value is not a no-op) and
+// `change:open`. A value set from outside only re-syncs (the watch below).
+// Only the `mobile` drawer opens and closes: a desktop navigation is always
+// shown, so a c-navigation-button or an activated item leaves it alone.
+const setOpen = (value: boolean) => {
+  if (!props.mobile || openInternal.value === value) return;
 
-  const el = host as ({ menuVisible?: boolean } & HTMLElement) | null;
+  openInternal.value = value;
 
-  if (el && el.menuVisible !== value) {
-    el.menuVisible = value;
-  }
+  const el = host as ({ open?: boolean } & HTMLElement) | null;
+
+  if (el && el.open !== value) el.open = value;
+
+  emit('change:open', value);
 };
 
 watch(
-  () => props.menuVisible,
+  () => props.open,
   (v) => {
-    setMenuVisible(v);
+    openInternal.value = v;
   },
 );
 
-// Expose menuVisible setter so sub-navigation-item / side-navigation-item
-// can close the drawer via `document.querySelector('c-side-navigation').menuVisible = false`.
-// Vue's defineCustomElement already creates the property setter for the
-// prop; the watcher above keeps internal state in sync when consumers
-// pass the prop reactively.
-const closeMenu = () => {
-  setMenuVisible(false);
-  emit('change:menu-visible', false);
+const closeMenu = () => setOpen(false);
+
+// An aria-label on the element names the navigation landmark.
+const attrs = useAttrs();
+
+const navLabel = computed(() => attrs['aria-label'] as string | undefined);
+
+// The open mobile drawer is modal (ADR-0014's modal stack): the page behind it
+// is inert and stops scrolling, Escape closes it, and focus returns to where
+// it was — the navigation button that opened it.
+const modal = computed(() => !!props.mobile && openInternal.value);
+
+const closeRef = useTemplateRef<HTMLElement>('closeRef');
+
+let drawerEntry: ModalStackEntry | null = null;
+
+const syncModal = (on: boolean) => {
+  if (!host) return;
+
+  drawerEntry ??= {
+    host,
+    onEscape: closeMenu,
+    // The drawer paints its own backdrop and stays below the modal band.
+    setBackdropVisible: () => {},
+    setLayer: () => {},
+  };
+
+  if (!on) {
+    closeModal(drawerEntry);
+
+    return;
+  }
+
+  openModal(drawerEntry);
+  void nextTick(() =>
+    closeRef.value?.shadowRoot?.querySelector('button')?.focus(),
+  );
 };
 
-// Reflect c-side-navigation-item's itemChange: when a top-level item is
-// activated, deactivate any other parent (an "accordion"-style behaviour).
+watch(modal, syncModal);
+
+// What every c-navigation-button reports as `aria-expanded`.
+watchEffect(() => {
+  navigationDrawer.mobile = !!props.mobile;
+  navigationDrawer.open = modal.value;
+});
+
+type ItemHost = { active: boolean } & HTMLElement;
+
+const ITEMS = 'c-side-navigation-item, c-sub-navigation-item';
+
+/** Whether an item has sub-items: a parent shows and hides them, a leaf navigates. */
+const isParent = (item: Element) =>
+  !!item.querySelector(':scope > [slot="sub-item"]');
+
+// Reflect an item's `select`. A leaf — an item without sub-items, or a
+// sub-item — asks for a page: the drawer closes, and the leaf's `active`
+// (`aria-current="page"`) stays the page's to set, from the page it shows —
+// a router can cancel the navigation, and a mark set here would then outlive
+// the page's own binding. A top-level item also collapses every parent (an
+// "accordion"-style behaviour), and a top-level parent toggles its sub-items;
+// a nested parent toggles itself.
 const handleItemChange = (event: Event) => {
   if (!host) return;
 
-  const target = event.target as { active: boolean } & HTMLElement;
+  const target = event.target as ItemHost;
+
+  const parent = target.matches(ITEMS) && isParent(target);
+
+  if (!parent) closeMenu();
+
+  if (!target.matches(ITEMS)) return;
+
+  if (target.localName !== 'c-side-navigation-item' || target.slot) return;
 
   const wasActive = target.active;
 
-  const items = host.querySelectorAll('c-side-navigation-item');
-
-  items.forEach((item) => {
-    const el = item as { active: boolean } & HTMLElement;
-
-    if (el.querySelector('c-sub-navigation-item[slot="sub-item"]')) {
-      el.active = false;
-    }
-  });
-
-  if (target.querySelector('[slot="sub-item"]')) {
-    target.active = !wasActive;
-  } else {
-    target.active = true;
+  for (const item of host.querySelectorAll<ItemHost>(
+    'c-side-navigation-item',
+  )) {
+    if (isParent(item)) item.active = false;
   }
+
+  if (parent) target.active = !wasActive;
 };
 
-// Global click/keyup listener: c-navigation-button anywhere on the page
-// toggles the side navigation. Matches Stencil's componentDidLoad.
-const onDocEvent = (e: Event) => {
+// A c-navigation-button anywhere on the page toggles the drawer. Click only:
+// Enter and Space on its button fire a click, so a `keyup` listener too
+// toggled twice and left the drawer where it was.
+const onDocClick = (e: Event) => {
   const t = e.target as HTMLElement;
 
-  if (!t?.matches?.('c-navigation-button')) return;
-
-  if (e.type === 'click') {
-    setMenuVisible(!menuVisibleInternal.value);
-  } else if (e instanceof KeyboardEvent && e.key === 'Enter') {
-    setMenuVisible(!menuVisibleInternal.value);
-  }
-};
-
-// Move c-sub-navigation-item children into the "sub-item" slot —
-// consumers write them inline.
-const assignSubItemSlots = () => {
-  if (!host) return;
-  host.querySelectorAll('c-sub-navigation-item').forEach((item) => {
-    item.setAttribute('slot', 'sub-item');
-  });
+  if (t?.matches?.('c-navigation-button')) setOpen(!openInternal.value);
 };
 
 onMounted(() => {
   if (!host) return;
-  assignSubItemSlots();
-  host.addEventListener('itemChange', handleItemChange);
+  host.addEventListener('select', handleItemChange);
 
-  if (props.styles && containerRef.value) {
-    Object.assign(containerRef.value.style, props.styles);
-  }
-
-  document.body.addEventListener('click', onDocEvent);
-  document.body.addEventListener('keyup', onDocEvent);
+  document.body.addEventListener('click', onDocClick);
 
   // Desktop mode is reflected as a host ATTRIBUTE (`data-desktop`), not a host
   // class: Vue patches a consumer's `class` binding on the custom element
@@ -306,12 +335,20 @@ onMounted(() => {
   watchEffect(() => {
     host.toggleAttribute('data-desktop', !props.mobile);
   });
+
+  if (modal.value) syncModal(true);
 });
 
 onBeforeUnmount(() => {
-  document.body.removeEventListener('click', onDocEvent);
-  document.body.removeEventListener('keyup', onDocEvent);
+  document.body.removeEventListener('click', onDocClick);
+
+  if (drawerEntry) closeModal(drawerEntry);
+  navigationDrawer.mobile = false;
+  navigationDrawer.open = false;
 });
+
+// The page's id references on the element reach the element carrying its role.
+useIdReferences('nav');
 </script>
 
 <!--

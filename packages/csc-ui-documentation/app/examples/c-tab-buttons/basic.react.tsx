@@ -12,10 +12,7 @@ export const Basic = () => {
   const [tab, setTab] = useState('overview');
 
   return (
-    <CTabs
-      onChangeValue={(event) => setTab(event.detail as string)}
-      value={tab}
-    >
+    <CTabs onChange={(event) => setTab(event.detail as string)} value={tab}>
       <CTabButtons>
         <CButton value="overview">Overview</CButton>
         <CButton value="members">Members</CButton>

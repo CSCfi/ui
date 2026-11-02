@@ -47,9 +47,12 @@
  * shadow root of its own to adopt a per-type sheet into, so no `<style>` block
  * (FormLabel precedent). Semantic-token utilities only.
  *
- * Currently used by `c-radio-group`; `c-input`, `c-checkbox`, and `c-message`
- * carry older hand-rolled copies of this anatomy and are follow-up refit
- * candidates (ADR-0031).
+ * Used by the c-input fields (slotted into c-input's `message` slot, so the
+ * field's input and its message share a tree and the input's
+ * `aria-describedby` can name it), `c-radio-group` and `c-file-upload`;
+ * `c-checkbox` and `c-message` carry older hand-rolled copies of this anatomy
+ * (ADR-0031). A host that renders it gives it an `id` and points its control's
+ * `aria-describedby` at it: unlinked, a screen reader never reads it.
  */
 import { mdiCloseCircle } from '@mdi/js';
 import { tv } from 'tailwind-variants';
@@ -71,6 +74,11 @@ const fieldMessage = tv({
     error: {
       true: { root: 'text-error' },
     },
+    // Under an on-top label the message lines up with the label, not the
+    // field's inner padding.
+    labelOnTop: {
+      true: { root: 'px-0' },
+    },
   },
 });
 
@@ -83,32 +91,41 @@ interface FieldMessageProps {
   /** Suppress the whole message area (no reserved height either). */
   hideDetails?: boolean;
 
-  /** Neutral helper text shown while valid (or when no error message is supplied). */
+  /** Neutral helper text, shown unless the control is invalid with an error message. */
   hint?: string;
+
+  /** The host control is invalid: the error message, when set, replaces the hint. */
+  invalid?: boolean;
+
+  /** The field's label sits on top of it (c-input's `label-on-top`). */
+  labelOnTop?: boolean;
 
   /** Part name stamped on the message area (`message` unless the host reserves it). */
   part?: string;
-
-  /** Host control's validity; `false` switches to the error message when one is supplied. */
-  valid?: boolean;
 }
 
 const props = withDefaults(defineProps<FieldMessageProps>(), {
   errorMessage: '',
   hideDetails: false,
   hint: '',
+  invalid: false,
+  labelOnTop: false,
   part: 'message',
-  valid: true,
 });
 
 // Hosts pass their custom-element props straight through, where boolean
 // attribute presence can arrive as the raw string "" (falsy) and "false" as
 // a truthy string — coerce before any conditional logic.
 const showError = computed(
-  () => !coerceBoolean(props.valid) && Boolean(props.errorMessage),
+  () => coerceBoolean(props.invalid) && Boolean(props.errorMessage),
 );
 
-const ui = computed(() => fieldMessage({ error: showError.value }));
+const ui = computed(() =>
+  fieldMessage({
+    error: showError.value,
+    labelOnTop: coerceBoolean(props.labelOnTop),
+  }),
+);
 
 const messageVisible = computed(() => Boolean(props.hint || showError.value));
 

@@ -1,5 +1,7 @@
 import type { Flavor } from '~/composables/useFlavor';
 
+import corePackage from '../../../csc-ui/package.json';
+
 /**
  * Getting-started page content, one block set per flavor. Kept as
  * data so the page can prerender-highlight every flavor and swap client-side.
@@ -153,7 +155,7 @@ export default defineConfig({
       Clicked {{ count() }} times
     </c-button>
 
-    <c-switch [value]="enabled()" (changeValue)="enabled.set($any($event).detail)">
+    <c-switch [value]="enabled()" (change)="enabled.set($any($event).detail)">
       Notifications
     </c-switch>
   \`,
@@ -184,7 +186,7 @@ export const App = () => {
 
       <CSwitch
         value={enabled}
-        onChangeValue={(event) => setEnabled(event.detail as boolean)}
+        onChange={(event) => setEnabled(event.detail as boolean)}
       >
         Notifications
       </CSwitch>
@@ -203,7 +205,7 @@ button.addEventListener('click', () => console.log('clicked'));
 
 const toggle = document.createElement('c-switch');
 toggle.textContent = 'Notifications';
-toggle.addEventListener('changeValue', (event) => {
+toggle.addEventListener('change', (event) => {
   // event.detail is typed from the component's event map
   console.log('switch value:', event.detail);
 });
@@ -248,6 +250,30 @@ const enabled = ref(false);
   {
     blocks: forAll([
       {
+        code: `<p id="plan-help">Billed monthly. Change your plan at any time.</p>
+<c-select label="Plan" aria-describedby="plan-help"></c-select>
+
+<c-text-field aria-label="Search projects"></c-text-field>`,
+        lang: 'html',
+      },
+      {
+        code: `// After a failed submit, take the user to the first invalid field: its
+// hint and error message are read out as it takes focus.
+form.querySelector<HTMLElement>('[invalid]')?.focus();`,
+        lang: 'ts',
+      },
+    ]),
+    id: 'accessibility',
+    intro: {
+      all: `ARIA attributes on a component reach the control inside it: aria-label names a button, a dialog, or a field without a visible label (beside a label, the label names the field, so its name matches what is on screen). The attributes that point at elements by id work too (aria-labelledby, aria-describedby, aria-controls and the rest): the component looks the ids up where the element is written, your page or the shadow root around it, and hands those elements to its control. It looks them up when it renders, when the attribute changes and when the control takes focus, so an element your page renders later is found by then.
+
+A field's hint and error message are read out with it when it takes focus, but an error that appears is not announced: after a failed submit, move focus to the first invalid field with its focus() method (each form control focuses its input, its checked radio or its first box), or to an error summary at the top of the form.`,
+    },
+    title: 'Accessibility',
+  },
+  {
+    blocks: forAll([
+      {
         code: `import { applyTheme } from '@cscfi/csc-ui';
 
 // Step-500 seed per family; ramps and dark mode derive from it.
@@ -267,5 +293,25 @@ Components draw in your page's font and line height, so set them on body.`,
       to: '/customization',
     },
     title: 'Theming & dark mode',
+  },
+  {
+    blocks: forAll([
+      {
+        code: corePackage.browserslist.join('\n'),
+        filename: 'browserslist',
+        lang: 'text',
+      },
+    ]),
+    id: 'browsers',
+    intro: {
+      all: `The components support the current and previous versions of Chrome, Edge, Firefox and Safari, Safari on iOS included, plus Firefox ESR, the extended-support release that Red Hat Enterprise Linux ships (140 today). Every component's behaviour is tested on Chromium, Firefox and WebKit before a release, and a fault in a supported browser is a bug. Older browsers may work, but nothing is tested or promised for them.
+
+The package declares the same list as its browserslist query:`,
+    },
+    link: {
+      label: 'Report a browser bug',
+      to: 'https://github.com/CSCfi/ui/issues',
+    },
+    title: 'Supported browsers',
   },
 ];

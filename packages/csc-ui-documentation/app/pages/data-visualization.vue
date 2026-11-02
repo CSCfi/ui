@@ -533,7 +533,7 @@ const ANATOMY = [
   },
   {
     dark: 'slate-300',
-    light: 'tertiary-500',
+    light: 'tertiary-600',
     purpose: 'Axis tick labels and small chart captions.',
     token: 'chart-axis',
   },

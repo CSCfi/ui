@@ -61,24 +61,20 @@ const spinner = tv({
 
 interface CSpinnerProps {
   /**
-   * Color of the spinner
+   * Stroke colour, the primary role by default; `currentColor` follows the
+   * surrounding text colour.
    *
-   * @seeded from csc-ui — verify
    * @freeform any CSS color value
    */
   color?: string;
 
   /**
-   * Size of the spinner
-   *
-   * @seeded from csc-ui — verify
+   * Diameter in pixels.
    */
   size?: number;
 
   /**
-   * Width of the spinner
-   *
-   * @seeded from csc-ui — verify
+   * Stroke width in pixels.
    */
   width?: number;
 }

@@ -1,3 +1,4 @@
+import type { TestContext } from 'vitest';
 import type { Locator, ScreenshotMatcherOptions } from 'vitest/browser';
 
 /**
@@ -6,10 +7,10 @@ import type { Locator, ScreenshotMatcherOptions } from 'vitest/browser';
  * talks to the element the way a consumer's page does — properties,
  * attributes, light-DOM children, host events — never to Vue internals.
  */
-import { expect } from 'vitest';
+import { expect, it } from 'vitest';
 import { commands, page, server, userEvent } from 'vitest/browser';
 
-import type { ThemeMode } from '../theme/themeMode';
+import type { CThemeMode } from '../theme/themeMode';
 
 import { defineCustomElements } from '../index';
 
@@ -74,7 +75,7 @@ export interface MountOptions {
  * this rather than a literal `oklch()` string, which would re-assert the token
  * pipeline instead of the component's behaviour.
  */
-export function roleInMode(mode: ThemeMode, role = '--c-on-surface'): string {
+export function roleInMode(mode: CThemeMode, role = '--c-on-surface'): string {
   const probe = document.createElement('div');
 
   probe.setAttribute('data-theme', mode);
@@ -93,7 +94,7 @@ export function roleInMode(mode: ThemeMode, role = '--c-on-surface'): string {
  * bare `[data-theme]`, so any element opens a **mode scope** (ADR-0053) — set
  * the attribute on a wrapper instead to scope one to part of a spec.
  */
-export function setThemeMode(mode: ThemeMode): void {
+export function setThemeMode(mode: CThemeMode): void {
   document.documentElement.setAttribute('data-theme', mode);
 }
 
@@ -122,6 +123,89 @@ export interface EventRecord {
   /** `event.target.value` at dispatch time — proves the host was updated before it emitted. */
   targetValue: unknown;
   type: string;
+}
+
+/** An element's padding box, the edge its `overflow` clips at. */
+const paddingBox = (element: Element): DOMRect => {
+  const rect = element.getBoundingClientRect();
+
+  const style = getComputedStyle(element);
+
+  const top = parseFloat(style.borderTopWidth);
+
+  const right = parseFloat(style.borderRightWidth);
+
+  const bottom = parseFloat(style.borderBottomWidth);
+
+  const left = parseFloat(style.borderLeftWidth);
+
+  return new DOMRect(
+    rect.left + left,
+    rect.top + top,
+    rect.width - left - right,
+    rect.height - top - bottom,
+  );
+};
+
+/**
+ * The clips `ink` (a box painted by `start`, in viewport px) pokes out of,
+ * named `tag [part=…]`. Walks the flat tree up from `start` through slots and
+ * shadow roots. A clip is the padding box of an element whose `overflow` is
+ * not `visible`, in every engine: Safari has no `overflow-clip-margin`, so no
+ * component may rely on one. A clip between an absolutely positioned box and
+ * its containing block (its first positioned ancestor) does not cut it.
+ */
+export function clipsCutting(start: Element, ink: DOMRectReadOnly): string[] {
+  const cut: string[] = [];
+
+  let escaping = getComputedStyle(start).position === 'absolute';
+
+  let node: Node | null = start;
+
+  while (node) {
+    if (node instanceof ShadowRoot) {
+      node = node.host;
+
+      continue;
+    }
+
+    if (!(node instanceof Element)) {
+      node = node.parentNode;
+
+      continue;
+    }
+
+    const style = getComputedStyle(node);
+
+    const containingBlock =
+      node !== start && escaping && style.position !== 'static';
+
+    if (
+      node !== start &&
+      (!escaping || containingBlock) &&
+      style.display !== 'contents' &&
+      style.overflow !== 'visible'
+    ) {
+      const clip = paddingBox(node);
+
+      if (
+        ink.top < clip.top ||
+        ink.left < clip.left ||
+        ink.right > clip.right ||
+        ink.bottom > clip.bottom
+      ) {
+        const part = node.getAttribute('part');
+
+        cut.push(part ? `${node.localName} [part=${part}]` : node.localName);
+      }
+    }
+
+    if (containingBlock) escaping = false;
+
+    node = node.assignedSlot ?? node.parentNode;
+  }
+
+  return cut;
 }
 
 /** `document.activeElement` followed through open shadow roots. */
@@ -309,8 +393,35 @@ export const consoleSpy = (() => {
  * host renders the same glyphs (macOS ignores fontconfig), so elsewhere the
  * comparison is skipped and only the behaviour assertions around it run.
  * `test:update` therefore never writes a baseline from a non-Linux checkout.
+ * Firefox and WebKit run the behaviour assertions only (ADR-0077).
  */
-export const VISUAL_BASELINES = server.platform === 'linux';
+export const VISUAL_BASELINES =
+  server.platform === 'linux' && server.browser === 'chromium';
+
+/**
+ * A **Chromium-only spec** (ADR-0077): `chromiumOnly(reason)(name, fn)` is
+ * `it(name, fn)`, skipped on Firefox and WebKit with `reason` as the skip
+ * note. The reason is test tooling only Chromium has (CDP-driven input); a
+ * component fault on another engine is a bug to fix, never a reason. Never
+ * used in a conformance suite; `lint:engines` lists every use.
+ */
+export const chromiumOnly =
+  (reason: string) =>
+  (
+    name: string,
+    fn: (context: TestContext) => Promise<void> | void,
+    timeout?: number,
+  ): void => {
+    it(
+      name,
+      (context) => {
+        context.skip(server.browser !== 'chromium', `Chromium only: ${reason}`);
+
+        return fn(context);
+      },
+      timeout,
+    );
+  };
 
 let skipNoticed = false;
 
@@ -323,7 +434,7 @@ export async function matchScreenshotInBothModes(
     if (!skipNoticed) {
       skipNoticed = true;
       console.log(
-        `[csc-ui] visual baselines compare on linux only — skipped on ${server.platform}`,
+        `[csc-ui] visual baselines compare on linux Chromium only — skipped on ${server.platform} ${server.browser}`,
       );
     }
 

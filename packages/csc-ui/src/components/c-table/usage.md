@@ -4,7 +4,7 @@ Write regular, semantic table markup: `<thead>` with `<th>` headers, `<tbody>` r
 
 ## Responsive mode
 
-With `responsive`, the table collapses into stacked cards when it is narrower than `mobile-breakpoint` (pixels, default 600). Each cell then shows a label cloned from its column header so the card stays readable without the header row.
+With `responsive`, the table collapses into stacked cards when it is no wider than `mobile-breakpoint` (pixels, default 600). Each cell then shows a label cloned from its column header so the card stays readable without the header row.
 
 - Rows that should not receive labels (a full-width action row, a `colspan` summary) opt out with a `no-mobile-labels` attribute on the `<tr>`.
 - The labels are real `<span class="c-table__mobile-label">` elements prepended into your cells, so your framework will see them. Label creation is idempotent, but if a keyed re-render replaces the cell elements, call the element's `updateMobileLabels()` method afterwards to restore them.

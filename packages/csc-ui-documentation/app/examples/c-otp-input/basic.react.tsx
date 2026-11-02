@@ -3,17 +3,17 @@ import { COtpInput } from '@cscfi/csc-ui-react';
 import { useState } from 'react';
 
 export const Basic = () => {
-  const [code, setCode] = useState<null | string>(null);
+  const [code, setCode] = useState('');
 
   return (
     <div>
       <COtpInput
         hint="Enter the 6-digit code we sent you"
         label="OTP"
-        onChangeValue={(event) => setCode(event.detail as null | string)}
+        onUpdateValue={(event) => setCode(event.detail as string)}
       />
 
-      <p>Code: {code ?? 'incomplete'}</p>
+      <p>Code: {code}</p>
     </div>
   );
 };

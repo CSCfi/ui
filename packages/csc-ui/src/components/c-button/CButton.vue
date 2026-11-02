@@ -1,12 +1,13 @@
 <template>
   <component
     :is="href ? 'a' : 'button'"
-    :id="hostId || undefined"
     ref="rootRef"
-    :aria-pressed
+    :aria-pressed="asTab ? undefined : ariaPressed"
+    :aria-selected="asTab ? String(coerceBoolean(active)) : undefined"
     :class="ui.root()"
     :disabled="href ? undefined : disabled || undefined"
     :href="href || undefined"
+    :role="asTab ? 'tab' : undefined"
     :target="href ? target : undefined"
     :type="href ? undefined : buttonType"
     part="root"
@@ -50,128 +51,6 @@
 </template>
 
 <script lang="ts">
-export interface CButtonProps {
-  /**
-   * Pressed (toggle) state — renders the selected look and sets
-   * `aria-pressed`. Leave unset for regular action buttons: only a
-   * true/false value marks the button as a toggle. Driven by
-   * `c-button-group` on its slotted buttons.
-   */
-  active?: boolean;
-
-  /**
-   * Danger variant style
-   *
-   * @seeded from csc-ui — verify
-   */
-  danger?: boolean;
-
-  /**
-   * Disable the button
-   *
-   * @seeded from csc-ui — verify
-   */
-  disabled?: boolean;
-
-  /**
-   * Fit width to containing element
-   *
-   * @seeded from csc-ui — verify
-   */
-  fit?: boolean;
-
-  /**
-   * Light button background
-   *
-   * @seeded from csc-ui — verify
-   */
-  ghost?: boolean;
-
-  /**
-   * Id of the button
-   *
-   * @seeded from csc-ui — verify
-   * @freeform
-   */
-  hostId?: string;
-
-  /**
-   * Hyperlink url
-   *
-   * @seeded from csc-ui — verify
-   * @freeform any URL
-   */
-  href?: string;
-
-  /**
-   * Inverted button style for dark backgrounds
-   *
-   * @seeded from csc-ui — verify
-   */
-  inverted?: boolean;
-
-  /**
-   * Display loader on the button
-   *
-   * @seeded from csc-ui — verify
-   */
-  loading?: boolean;
-
-  /**
-   * Remove the default border radius
-   *
-   * @seeded from csc-ui — verify
-   */
-  noRadius?: boolean;
-
-  /** Suppress the click ripple (e.g. when a wrapper owns the press feedback). */
-  noRipple?: boolean;
-
-  /**
-   * Outlined button style
-   *
-   * @seeded from csc-ui — verify
-   */
-  outlined?: boolean;
-
-  /**
-   * Size of the button
-   *
-   * @seeded from csc-ui — verify
-   */
-  size?: CButtonSize;
-
-  /**
-   * Hyperlink target
-   *
-   * @seeded from csc-ui — verify
-   * @freeform any browsing-context name (e.g. _blank, _self)
-   */
-  target?: string;
-
-  /**
-   * Transparent button background
-   *
-   * @seeded from csc-ui — verify
-   */
-  text?: boolean;
-
-  /**
-   * Button type
-   *
-   * @seeded from csc-ui — verify
-   */
-  type?: CButtonType;
-
-  /**
-   * Value for the button
-   * - for use in the c-button-group
-   *
-   * @seeded from csc-ui — verify
-   */
-  value?: number | string;
-}
-
 /**
  * Size of the button.
  */
@@ -182,6 +61,117 @@ export type CButtonSize = 'default' | 'large' | 'small';
  * turns the component into a link.
  */
 export type CButtonType = 'button' | 'reset' | 'submit';
+
+interface CButtonProps {
+  /**
+   * Pressed (toggle) state — renders the selected look and sets
+   * `aria-pressed`. Leave unset for regular action buttons: only a
+   * true/false value marks the button as a toggle. Driven by
+   * `c-button-group` on its slotted buttons.
+   */
+  active?: boolean;
+
+  /**
+   * Be a tab of a tablist: `role="tab"`, with `active` as `aria-selected`
+   * instead of `aria-pressed`. c-tab-buttons sets it on its buttons.
+   *
+   * @internal
+   */
+  asTab?: boolean;
+
+  /**
+   * Danger appearance for a destructive action: the filled button in the error
+   * colour; no effect on `outlined`, `ghost` or `text`.
+   */
+  danger?: boolean;
+
+  /**
+   * Grey the button out and block clicks and keys, a link button (`href`)
+   * included.
+   */
+  disabled?: boolean;
+
+  /**
+   * Stretch the button to the full width of its container.
+   */
+  fit?: boolean;
+
+  /**
+   * Ghost appearance: primary text on a light primary tint, for lower emphasis.
+   */
+  ghost?: boolean;
+
+  /**
+   * URL to link to: the button renders as a real link (`<a>`) styled as a
+   * button.
+   *
+   * @freeform any URL
+   */
+  href?: string;
+
+  /**
+   * Inverted colours for a fixed dark or brand-coloured backdrop: the
+   * `inverse-*` family, the same in both theme modes. Combines with the other
+   * appearances.
+   */
+  inverted?: boolean;
+
+  /**
+   * Show a spinner in place of the label and ignore clicks and keys, e.g. while
+   * the action runs.
+   */
+  loading?: boolean;
+
+  /**
+   * Square corners instead of the rounded default.
+   */
+  noRadius?: boolean;
+
+  /**
+   * Suppress the click ripple; the parent `<c-button-group>` sets it on its
+   * buttons, whose press feedback it owns.
+   *
+   * @internal
+   */
+  noRipple?: boolean;
+
+  /**
+   * Outlined appearance: a primary outline and text with no fill, for lower
+   * emphasis.
+   */
+  outlined?: boolean;
+
+  /**
+   * Size of the button: `small`, `default` (the control height, level with a
+   * form field) or `large` (the toolbar height).
+   */
+  size?: CButtonSize;
+
+  /**
+   * Where the `href` opens, as on a native `<a>`: the same tab unless set —
+   * `_blank` for a new one.
+   *
+   * @freeform any browsing-context name (e.g. _blank, _self)
+   */
+  target?: string;
+
+  /**
+   * Text appearance: primary text with no fill or outline, the lightest look.
+   */
+  text?: boolean;
+
+  /**
+   * Native `type` of the button: `button` unless set, `submit` or `reset`.
+   * Ignored when `href` is set.
+   */
+  type?: CButtonType;
+
+  /**
+   * The button's value in a `c-button-group`; in `c-tab-buttons`, the `value`
+   * of the `c-tab-item` panel it shows.
+   */
+  value?: number | string;
+}
 </script>
 
 <script setup lang="ts">
@@ -195,10 +185,11 @@ export type CButtonType = 'button' | 'reset' | 'submit';
  * @csspart description - Wrapper of the `description` slot.
  */
 import { tv } from 'tailwind-variants';
-import { computed, useTemplateRef } from 'vue';
+import { computed, useHost, useTemplateRef } from 'vue';
 
 import { coerceBoolean } from '../../shared/coerceBoolean';
 import { useHasSlot } from '../../shared/useHasSlot';
+import { useIdReferences } from '../../shared/useIdReferences';
 import { useRipple } from '../../shared/useRipple';
 
 /**
@@ -345,17 +336,16 @@ const button = tv({
     // ---- disabled (overrides appearance bg/text/border) ------------------
     // Non-inverted disabled is the muted neutral surface; inverted disabled
     // dims the mode-invariant inverse foreground (it sits on a dark backdrop).
-    // Disabled TEXT uses the faint tier, not muted: `on-surface-muted` is the
-    // hint-text role and is pinned bright in dark mode by the WCAG AA contrast
-    // pass, so on a disabled control it reads as enabled. `on-surface-faint`
-    // equals it in light mode (both tertiary-500) and is properly dim in dark
-    // (disabled text is exempt from AA contrast).
+    // Disabled TEXT uses the disabled tier, not muted or faint: both are
+    // hint-text inks held to WCAG AA contrast, so on a disabled control they
+    // read as enabled. `on-surface-disabled` is the step the disabled options
+    // and days use (disabled text is exempt from AA contrast).
     // Each re-declares `hover:bg-*` matching its own bg so the appearance hover
     // (all `hover:bg-*`) is neutralised now that disabled no longer relies on
     // `pointer-events-none` for hover suppression (see the tv header comment).
     {
       class: {
-        root: 'bg-surface-muted text-on-surface-faint hover:bg-surface-muted',
+        root: 'bg-surface-muted text-on-surface-disabled hover:bg-surface-muted',
       },
       danger: false,
       disabled: true,
@@ -377,14 +367,14 @@ const button = tv({
     },
     {
       class: {
-        root: 'bg-surface-muted text-on-surface-faint hover:bg-surface-muted',
+        root: 'bg-surface-muted text-on-surface-disabled hover:bg-surface-muted',
       },
       danger: true,
       disabled: true,
     },
     {
       class: {
-        root: 'bg-surface-muted text-on-surface-faint hover:bg-surface-muted',
+        root: 'bg-surface-muted text-on-surface-disabled hover:bg-surface-muted',
       },
       disabled: true,
       ghost: true,
@@ -400,14 +390,14 @@ const button = tv({
     },
     {
       class: {
-        root: 'bg-transparent text-on-surface-faint hover:bg-transparent',
+        root: 'bg-transparent text-on-surface-disabled hover:bg-transparent',
       },
       disabled: true,
       text: true,
     },
     {
       class: {
-        root: 'bg-transparent text-on-surface-faint ring-2 ring-border ring-inset hover:bg-transparent',
+        root: 'bg-transparent text-on-surface-disabled ring-2 ring-border ring-inset hover:bg-transparent',
       },
       disabled: true,
       inverted: false,
@@ -484,11 +474,11 @@ const props = withDefaults(defineProps<CButtonProps>(), {
   // absent prop into `false`, which would stamp aria-pressed="false" on
   // every regular action button.
   active: undefined,
+  asTab: false,
   danger: false,
   disabled: false,
   fit: false,
   ghost: false,
-  hostId: '',
   href: '',
   inverted: false,
   loading: false,
@@ -496,7 +486,7 @@ const props = withDefaults(defineProps<CButtonProps>(), {
   noRipple: false,
   outlined: false,
   size: 'default',
-  target: '_blank',
+  target: '',
   text: false,
   type: 'button',
   value: undefined,
@@ -535,6 +525,8 @@ const buttonType = computed(() =>
 
 const rootRef = useTemplateRef<HTMLElement>('rootRef');
 
+const host = useHost();
+
 const hasIcon = useHasSlot(rootRef, 'icon');
 
 const hasDescription = useHasSlot(rootRef, 'description');
@@ -560,6 +552,24 @@ const { ripples, spawn: spawnRipple } = useRipple({
   container: () => rootRef.value,
 });
 
+// The nearest <form> around the element, across shadow roots: the native
+// button sits in this shadow root, where it has no form owner.
+const closestForm = (): HTMLFormElement | null => {
+  let el: Element | null = host;
+
+  while (el) {
+    const form = el.closest('form');
+
+    if (form) return form;
+
+    const root = el.getRootNode();
+
+    el = root instanceof ShadowRoot ? root.host : null;
+  }
+
+  return null;
+};
+
 const onClick = (event: MouseEvent) => {
   if (props.disabled || props.loading) {
     event.preventDefault();
@@ -569,6 +579,14 @@ const onClick = (event: MouseEvent) => {
   }
 
   if (!props.noRipple) spawnRipple(event);
+
+  // `type` acts on the form around the element, as on a native button (3.x
+  // did it through a hidden submit button): submit validates and submits it,
+  // reset resets it.
+  if (props.href) return;
+
+  if (buttonType.value === 'submit') closestForm()?.requestSubmit();
+  else if (buttonType.value === 'reset') closestForm()?.reset();
 };
 
 const onKeydown = (event: KeyboardEvent) => {
@@ -579,11 +597,15 @@ const onKeydown = (event: KeyboardEvent) => {
     return;
   }
 
-  if (event.code === 'Space' || event.code === 'Enter') {
-    if (props.href) {
-      window.open(props.href, props.target);
-      event.preventDefault();
-    }
+  // A link activates natively on Enter, honouring `target`. Space, which a
+  // button answers and a link does not, clicks it the same way —
+  // `window.open(href, '')` would open a new tab for the empty target.
+  if (props.href && event.code === 'Space') {
+    event.preventDefault();
+    rootRef.value?.click();
   }
 };
+
+// The page's id references on the element reach the element carrying its role.
+useIdReferences(() => rootRef.value);
 </script>

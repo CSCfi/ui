@@ -58,6 +58,14 @@ Each component's fallback chain now exists twice, once in CSS and once in TS,
 kept next to each other with a comment linking them. We chose that over
 generating one from the other: this path is temporary.
 
+_Amended 2026-11-02_: `c-menu-item` places its submenu through this path in
+every browser (`scripted: true`), and its chain lives in TS only. The submenu
+is anchored to a row inside the menu's own top-layer panel. Once the page
+scrolled with a submenu open, Safari 26's native positioning put it the scroll
+distance away from its row (40px above it in the conformance suite's scroll
+scenario), while Chromium and Firefox kept it on the row. The suite already
+showed the fallback lands where they do.
+
 ## Consequences
 
 - The conformance suite's anchored-overlay kind asserts that each panel lands on
@@ -71,4 +79,6 @@ generating one from the other: this path is temporary.
   check in Firefox ESR.
 - The lazy chunk shrinks from 171 KB to 34 KB.
 - Delete `useFallbackPosition`, the TS chains and the emulation once the oldest
-  Firefox ESR the library supports positions anchors natively.
+  Firefox ESR the library supports positions anchors natively, and Safari
+  positions an anchor inside another top-layer panel correctly (until then the
+  submenu stays scripted).

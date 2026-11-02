@@ -22,18 +22,18 @@
 
 <script setup lang="ts">
 /**
- * @slot default - Card components
+ * @slot default - The card's sections: `c-card-title`, `c-card-content` and `c-card-actions`, in that order
  *
  * @csspart root - The card's visible surface, carries the background and its ink, border, radius, shadow and section spacing
- * @csspart fullscreen-toggle - The circular fullscreen toggle button shown when the fullscreen prop is set
- *
- * @seeded from csc-ui — verify
+ * @csspart fullscreen-toggle - The round fullscreen toggle button, shown when `fullscreen` is set
  *
  * @subcomponents c-card-title, c-card-content, c-card-actions
  */
 import { mdiFullscreen, mdiFullscreenExit } from '@mdi/js';
 import { tv } from 'tailwind-variants';
 import { computed, onBeforeUnmount, onMounted, ref, useHost } from 'vue';
+
+import { useIdReferences } from '../../shared/useIdReferences';
 
 /**
  * Styling lives in this `tailwind-variants` config. The inner
@@ -74,22 +74,26 @@ const card = tv({
       'absolute top-[calc(var(--_c-card-gap)-8px)] right-[calc(var(--_c-card-padding-inline)-8px)] z-[1] flex size-10 cursor-pointer items-center justify-center rounded-full border-0 bg-transparent p-0 text-primary transition-colors duration-300 ease-standard hover:bg-primary-subtle-hover focus:outline-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary focus-visible:outline-solid',
     root: 'relative flex max-w-full flex-1 flex-col gap-[var(--_c-card-gap)] rounded-csc-xl border border-solid border-border bg-surface-raised py-[var(--_c-card-gap)] text-on-surface',
   },
+  variants: {
+    // The toggle reaches 32px past the inline padding; c-card-title keeps
+    // this much clear at its end (its actions sat under the toggle).
+    fullscreen: { true: { root: '[--_c-card-toggle-room:40px]' } },
+  },
 });
 
 interface CCardProps {
   /**
-   * Enable the fullscreen toggle button
-   *
-   * @seeded from csc-ui — verify
+   * Shows a toggle button in the card's top-right corner that puts the card
+   * in the browser's fullscreen mode and back.
    */
   fullscreen?: boolean;
 }
 
-withDefaults(defineProps<CCardProps>(), {
+const props = withDefaults(defineProps<CCardProps>(), {
   fullscreen: false,
 });
 
-const ui = computed(() => card());
+const ui = computed(() => card({ fullscreen: props.fullscreen }));
 
 const isFullscreen = ref(false);
 
@@ -106,7 +110,7 @@ const onFullscreen = async (event: MouseEvent) => {
   event.preventDefault();
   event.stopPropagation();
   try {
-    if (document.fullscreenElement) {
+    if (document.fullscreenElement === host) {
       await document.exitFullscreen();
     } else if (host) {
       // requestFullscreen returns a Promise that rejects if the API call
@@ -120,9 +124,9 @@ const onFullscreen = async (event: MouseEvent) => {
 };
 
 /**
- * Enter fullscreen from the outside
- *
- * @seeded from csc-ui — verify
+ * Shows the card in the browser's fullscreen mode; does nothing while any
+ * element is already fullscreen. Browsers grant it only in response to a
+ * user action, so call it from a click handler.
  */
 const enterFullscreen = async () => {
   if (!host || document.fullscreenElement) return;
@@ -134,12 +138,12 @@ const enterFullscreen = async () => {
 };
 
 /**
- * Exit fullscreen from the outside
- *
- * @seeded from csc-ui — verify
+ * Returns the card from fullscreen to the page. Ends only the card's own
+ * fullscreen, never another element's.
  */
 const exitFullscreen = async () => {
-  if (!document.fullscreenElement) return;
+  // Only the card's own fullscreen: another element's is not the card's to end.
+  if (!host || document.fullscreenElement !== host) return;
   try {
     await document.exitFullscreen();
   } catch (err) {
@@ -156,6 +160,9 @@ onBeforeUnmount(() => {
 });
 
 defineExpose({ enterFullscreen, exitFullscreen });
+
+// The page's id references on the element reach the element carrying its role.
+useIdReferences('article');
 </script>
 
 <!--

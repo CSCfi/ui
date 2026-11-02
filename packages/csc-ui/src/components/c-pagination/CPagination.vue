@@ -1,20 +1,26 @@
 <template>
-  <nav :class="ui.root()" aria-label="pagination" part="root" role="navigation">
+  <nav
+    :aria-label="t.pagination"
+    v-bind="navAttributes"
+    :class="ui.root()"
+    part="root"
+  >
     <div v-if="!hideDetails" :class="ui.details()" part="details">
       <div :class="ui.itemsPerPage()" part="items-per-page">
-        {{ itemsPerPageText }}
+        {{ t.pageSize }}
         <!-- The migrated c-menu is slot-based: the trigger goes in
              the `trigger` slot and options are c-menu-item children; the
              Stencil-era `items` prop no longer exists. -->
         <c-menu @select="onPageSizeSelect">
+          <!-- Named with the current size: the label alone hid it. -->
           <c-button
             slot="trigger"
-            :aria-label="itemsPerPageText"
+            :aria-label="`${t.pageSize} ${pageSize}`"
             :class="ui.itemsPerPageValue()"
             size="small"
             text
           >
-            {{ itemsPerPage }}
+            {{ pageSize }}
 
             <c-icon :path="mdiChevronDown" />
           </c-button>
@@ -35,13 +41,13 @@
     <ul v-if="value.itemCount" :class="ui.pages()" part="pages">
       <li>
         <c-icon-button
-          :aria-label="prevPageText"
-          :disabled="(value.currentPage ?? 1) <= 1"
+          :aria-label="t.previousPage"
+          :disabled="page <= 1"
           :size="buttonSize"
           text
           @click="decreasePage"
         >
-          <span class="sr-only">{{ prevPageText }}</span>
+          <span class="sr-only">{{ t.previousPage }}</span>
 
           <c-icon :path="chevronLeft" />
         </c-icon-button>
@@ -49,12 +55,12 @@
 
       <template v-if="!simple">
         <li v-for="(btn, i) in pageButtons" :key="i">
+          <!-- The ellipsis between page runs is decoration: hidden from
+               assistive technology and out of the tab order. -->
           <c-icon-button
             v-if="btn.type === 'separator'"
             :size="buttonSize"
-            aria-disabled="true"
-            role="separator"
-            tabindex="-1"
+            aria-hidden="true"
             disabled
             text
           >
@@ -63,29 +69,29 @@
             </svg>
           </c-icon-button>
 
+          <!-- The name is the button's: an aria-label on a span is ignored. -->
           <c-icon-button
             v-else
-            :aria-current="currentPage === btn.number ? 'page' : undefined"
+            :aria-current="page === btn.number ? 'page' : undefined"
+            :aria-label="t.page(btn.number!, totalPages)"
             :size="buttonSize"
-            :text="currentPage !== btn.number"
+            :text="page !== btn.number"
             @click="setPage(btn.number!)"
           >
-            <span :aria-label="`page ${btn.number} of ${totalPages}`">
-              {{ btn.number }}
-            </span>
+            {{ btn.number }}
           </c-icon-button>
         </li>
       </template>
 
       <li>
         <c-icon-button
-          :aria-label="nextPageText"
-          :disabled="(value.currentPage ?? 1) >= totalPages"
+          :aria-label="t.nextPage"
+          :disabled="page >= totalPages"
           :size="buttonSize"
           text
           @click="increasePage"
         >
-          <span class="sr-only">{{ nextPageText }}</span>
+          <span class="sr-only">{{ t.nextPage }}</span>
 
           <c-icon :path="chevronRight" />
         </c-icon-button>
@@ -95,60 +101,102 @@
 </template>
 
 <script lang="ts">
+/**
+ * The value of `c-pagination`. Set `itemCount`, and `page` and `pageSize`
+ * where the defaults do not fit; each change emits a new object with the
+ * picked `page` and `pageSize` and the `startFrom` / `endTo` range of the
+ * page's items.
+ */
 export interface CPaginationOptions {
-  currentPage?: number;
+  /** Index of the page's last item, from 0; set on the value it emits. */
   endTo?: number;
+
+  /** Number of items to page through. */
   itemCount: number;
-  itemsPerPage?: number;
+
+  /** The current page, from 1. Default 1. */
+  page?: number;
+
+  /** Items on a page. Default 25. */
+  pageSize?: number;
+
+  /** The page sizes the page-size menu offers. Default `[5, 25, 50, 100]`. */
   pageSizes?: number[];
+
+  /** Index of the page's first item, from 0; set on the value it emits. */
   startFrom?: number;
-  textOverrides?: Record<string, unknown>;
+
+  /** Most page buttons shown at once. Default 7. */
   totalVisible?: number;
-}
-
-export interface CPaginationProps {
-  /**
-   * Hide details (per page dropdown and the 'x - y of n pages' text)
-   *
-   * @seeded from csc-ui — verify
-   */
-  hideDetails?: boolean;
-
-  /**
-   * Hide range indicator
-   *
-   * @seeded from csc-ui — verify
-   */
-  hideRange?: boolean;
-
-  /**
-   * Hide page number buttons
-   *
-   * @seeded from csc-ui — verify
-   */
-  simple?: boolean;
-
-  /**
-   * Hide details (per page dropdown and the 'x - y of n pages' text)
-   *
-   * @seeded from csc-ui — verify
-   */
-  size?: CPaginationSize;
-
-  /**
-   * Object containing values that are needed for pagination.
-   *
-   * Note! startFrom and endTo are assigned automatically to the object based on other values
-   *
-   * @seeded from csc-ui — verify
-   */
-  value?: CPaginationOptions;
 }
 
 /**
  * Size of the pagination controls. `small` renders the compact page buttons.
  */
 export type CPaginationSize = 'default' | 'small';
+
+/**
+ * UI texts of `c-pagination`, shallow-merged over the English defaults.
+ * Static labels are strings; interpolated ones are functions.
+ */
+export interface CPaginationTexts {
+  /** Accessible name of the next-page button. */
+  nextPage?: string;
+
+  /** Accessible name of a page button; receives the page and the page count. */
+  page?: (page: number, pageCount: number) => string;
+
+  /** Label of the page-size menu. */
+  pageSize?: string;
+
+  /** Accessible name of the navigation landmark. */
+  pagination?: string;
+
+  /** Accessible name of the previous-page button. */
+  previousPage?: string;
+
+  /**
+   * The range of items shown; receives the first and the last item, from 1,
+   * and the item count.
+   */
+  range?: (start: number, end: number, count: number) => string;
+}
+
+interface CPaginationProps {
+  /**
+   * Hide the details row: the page-size menu and the "x - y of n items" text
+   */
+  hideDetails?: boolean;
+
+  /**
+   * Hide the range text ("11 - 20 of 96 items"), keeping the page-size menu.
+   */
+  hideRange?: boolean;
+
+  /**
+   * Drop the page buttons and move previous and next to the bar's end; the
+   * range text is then the only sign of position.
+   */
+  simple?: boolean;
+
+  /** Size of the controls: `small` renders the compact page buttons. */
+  size?: CPaginationSize;
+
+  /**
+   * UI text overrides (i18n), merged over the English defaults. Objects have
+   * no attribute form — bind as a DOM property
+   *
+   * @defaultable {}
+   */
+  texts?: CPaginationTexts;
+
+  /**
+   * The item count and the current page and page size; see
+   * `CPaginationOptions`. Bind it with `v-model`, or set it and listen to
+   * `change`.
+   */
+  value?: CPaginationOptions;
+}
 </script>
 
 <script setup lang="ts">
@@ -165,18 +213,20 @@ import {
   mdiDotsHorizontal,
 } from '@mdi/js';
 import { tv } from 'tailwind-variants';
-import { computed, onMounted, ref, useHost, watch, watchEffect } from 'vue';
+import { computed, ref, useAttrs, useHost, watch } from 'vue';
 
-import { emitModelValue } from '../../shared/emitModelValue';
+import { useAppDefault } from '../../shared/appDefaults';
+import { useIdReferences } from '../../shared/useIdReferences';
+import { emitModelChange } from '../../shared/valueEvents';
 
 /** Events dispatched by `<c-pagination>`. */
 interface CPaginationEvents {
   /**
-   * Fired when the user changes the page or the page size, carrying the
-   * pagination options object with the recomputed `currentPage`,
-   * `itemsPerPage`, `startFrom` and `endTo` fields.
+   * Fired when the user picks a page or a page size, carrying a new value
+   * with the picked `page` and `pageSize` and the page's `startFrom` and
+   * `endTo`.
    */
-  changeValue: CPaginationOptions;
+  change: CPaginationOptions;
 
   /**
    * Native bubbling input event dispatched alongside every value change so a
@@ -185,8 +235,7 @@ interface CPaginationEvents {
   input: void;
 
   /**
-   * Fired alongside `changeValue` with the same detail — the `v-model`
-   * contract.
+   * Fired alongside `change` with the same detail — the `v-model` contract.
    */
   'update:value': CPaginationOptions;
 }
@@ -204,9 +253,8 @@ interface CPaginationEvents {
  * longer themed via the removed `--c-icon-button-*` vars — the active page uses
  * the icon-button DEFAULT appearance (primary-600 bg / white text) and every
  * other control uses its `text` appearance (transparent / primary-600 text).
- * The c-menu vars are likewise gone; the menu styles itself. Body text uses the
- * design token directly (`text-[var(--c-text-system)]` — no `text-system`
- * utility exists in this theme).
+ * The c-menu vars are likewise gone; the menu styles itself. Its text is the
+ * `on-surface-muted` role, which themes in dark mode.
  *
  * The `:host(.c-pagination--simple|--small) ul` positional host rules map
  * directly to the `simple`/`size` props, so they become tv variants on `pages`.
@@ -230,9 +278,9 @@ const pagination = tv({
     // `justify-between` puts a lone item at the start, flush under the
     // items-per-page control.
     details:
-      'flex flex-auto flex-wrap items-center justify-between gap-x-6 gap-y-1 text-[var(--c-text-system)]',
+      'flex flex-auto flex-wrap items-center justify-between gap-x-6 gap-y-1 text-on-surface-muted',
     itemsPerPage:
-      'flex items-center gap-1 text-right text-sm whitespace-nowrap text-[var(--c-text-system)]',
+      'flex items-center gap-1 text-right text-sm whitespace-nowrap text-on-surface-muted',
     itemsPerPageValue: '',
     // 'cursor-pointer border-0 bg-transparent p-0 text-sm text-primary underline decoration-dotted underline-offset-4 [font-family:inherit]',
     pages: 'm-0 flex list-none items-center justify-center gap-1 p-0',
@@ -259,6 +307,7 @@ const props = withDefaults(defineProps<CPaginationProps>(), {
   hideRange: false,
   simple: false,
   size: 'default',
+  texts: undefined,
   value: () => ({ itemCount: 0 }),
 });
 
@@ -279,104 +328,114 @@ const dotsIcon = mdiDotsHorizontal;
 
 const host = useHost();
 
-// changeValue/update:value + native `input` (so a plain `v-model` works without
-// `v-control`). The value is the same object reference the consumer holds
-// (mutated in place with the computed range), so the helper's identity guard
-// skips re-writing `host.value` and there is no loop with the value watch.
-const dispatchValue = (value: CPaginationEvents['changeValue']) =>
-  emitModelValue(host, value);
+// The element's own attributes stay on it: its classes would also land on the
+// <nav> (as the 3.x `c-pagination--small` / `--simple` classes once did) and
+// match the nav's own utilities. A host `aria-label` still names the nav.
+defineOptions({ inheritAttrs: false });
 
-const currentPage = ref(1);
+const attrs = useAttrs();
 
-const itemsPerPage = ref(25);
+const navAttributes = computed(() =>
+  Object.fromEntries(
+    Object.entries(attrs).filter(([name]) => name.startsWith('aria-')),
+  ),
+);
+
+// Defaultable props resolve host attribute → own value → app default →
+// built-in (see src/shared/appDefaults.ts).
+const appDefault = useAppDefault('c-pagination', props);
+
+const DEFAULT_TEXTS: Required<CPaginationTexts> = {
+  nextPage: 'Next page',
+  page: (page, pageCount) => `page ${page} of ${pageCount}`,
+  pageSize: 'Items per page:',
+  pagination: 'Pagination',
+  previousPage: 'Previous page',
+  range: (start, end, count) => `${start} - ${end} of ${count} items`,
+};
+
+const t = appDefault('texts', DEFAULT_TEXTS);
+
+const page = ref(1);
+
+const pageSize = ref(25);
 
 const totalVisible = ref(7);
 
 const pageSizes = ref<number[]>([5, 25, 50, 100]);
 
-const itemsPerPageText = 'Items per page:';
+// The value is the consumer's: read it, never write into it. A value set
+// from outside re-syncs the controls and emits nothing (CONTEXT.md "Value
+// control").
+const sync = () => {
+  page.value = props.value?.page || 1;
+  pageSize.value = props.value?.pageSize || 25;
+  totalVisible.value = props.value?.totalVisible || 7;
+  pageSizes.value = props.value?.pageSizes || [5, 25, 50, 100];
+};
 
-const prevPageText = 'Previous page';
-
-const nextPageText = 'Next page';
+sync();
+watch(() => props.value, sync, { deep: true });
 
 const totalPages = computed(() =>
-  Math.ceil(props.value.itemCount / itemsPerPage.value),
+  Math.ceil((props.value?.itemCount ?? 0) / pageSize.value),
 );
 
 const buttonSize = computed(() =>
   props.size === 'small' ? 'x-small' : 'small',
 );
 
-/*
-  We intentionally mutate `props.value` in place here. The value is the same
-  object reference the consumer holds, and `emitModelValue`'s identity guard
-  depends on that identity to skip re-writing `host.value` (no update loop —
-  see the dispatchValue comment above). Cloning would break that contract.
-*/
-/* eslint-disable vue/no-mutating-props -- write-back-by-identity contract */
-
-// Recompute the visible window + write startFrom/endTo back onto the
-// value object, then notify the consumer — mirrors Stencil's _setRange.
-const setRange = () => {
-  if (!props.value) return;
-  currentPage.value = props.value.currentPage || 1;
-  itemsPerPage.value = props.value.itemsPerPage || 25;
-  totalVisible.value = props.value.totalVisible || 7;
-  pageSizes.value = props.value.pageSizes || [5, 25, 50, 100];
-  props.value.startFrom =
-    currentPage.value * itemsPerPage.value - itemsPerPage.value;
-  props.value.endTo = currentPage.value * itemsPerPage.value - 1;
-  dispatchValue(props.value);
-};
-
+// Each page or page-size pick is its own commit: a new value object, with
+// the page's item range.
 const commit = () => {
-  props.value.currentPage = currentPage.value;
-  props.value.itemsPerPage = itemsPerPage.value;
-  setRange();
-};
+  const next: CPaginationEvents['change'] = {
+    ...props.value,
+    // The last page ends at the last item, not a full page further.
+    endTo:
+      Math.min(page.value * pageSize.value, props.value?.itemCount ?? 0) - 1,
+    page: page.value,
+    pageSize: pageSize.value,
+    startFrom: (page.value - 1) * pageSize.value,
+  };
 
-/* eslint-enable vue/no-mutating-props */
+  emitModelChange(host, next);
+};
 
 const setPage = (n: number) => {
-  currentPage.value = n;
+  if (n === page.value) return;
+  page.value = n;
   commit();
 };
 
 const increasePage = () => {
-  if (currentPage.value < totalPages.value) {
-    currentPage.value += 1;
-    commit();
-  }
+  if (page.value < totalPages.value) setPage(page.value + 1);
 };
 
 const decreasePage = () => {
-  if (currentPage.value > 1) {
-    currentPage.value -= 1;
-    commit();
-  }
+  if (page.value > 1) setPage(page.value - 1);
 };
 
+// The page-size menu's `select` is this component's business: it ends here
+// instead of reaching the page as a stray `select` from the pagination.
 const onPageSizeSelect = (event: Event) => {
+  event.stopPropagation();
+
   const size = Number((event as CustomEvent<{ value: unknown }>).detail?.value);
 
-  if (!Number.isFinite(size) || size === itemsPerPage.value) return;
-  itemsPerPage.value = size;
-  currentPage.value = 1;
+  if (!Number.isFinite(size) || size === pageSize.value) return;
+  pageSize.value = size;
+  page.value = 1;
   commit();
 };
 
 const rangeText = computed(() => {
-  if (props.hideRange || !props.value.itemCount) return '';
+  const count = props.value?.itemCount ?? 0;
 
-  const end = Math.min(
-    currentPage.value * itemsPerPage.value,
-    props.value.itemCount,
-  );
+  if (props.hideRange || !count) return '';
 
-  const start = (props.value.startFrom ?? 0) + 1;
+  const end = Math.min(page.value * pageSize.value, count);
 
-  return `${start} - ${end} of ${props.value.itemCount} items`;
+  return t.value.range((page.value - 1) * pageSize.value + 1, end, count);
 });
 
 // Build the page-button window (with leading/trailing separators) the
@@ -400,10 +459,10 @@ const pageButtons = computed<Btn[]>(() => {
   const more = total > visible;
 
   if (more) {
-    if (currentPage.value < visible - 2) {
+    if (page.value < visible - 2) {
       buttonCount = visible - 1;
-    } else if (currentPage.value < total - visible + 4) {
-      buttonStart = Math.ceil(currentPage.value - visible / 2) + 1;
+    } else if (page.value < total - visible + 4) {
+      buttonStart = Math.ceil(page.value - visible / 2) + 1;
       buttonCount = visible - 3;
     } else {
       buttonStart = total - visible + 2;
@@ -423,8 +482,7 @@ const pageButtons = computed<Btn[]>(() => {
   const allVisible = total <= visible;
 
   if (
-    (currentPage.value < visible - 1 ||
-      currentPage.value < total - visible + 4) &&
+    (page.value < visible - 1 || page.value < total - visible + 4) &&
     !allVisible
   ) {
     buttons.push({ type: 'separator' });
@@ -435,23 +493,8 @@ const pageButtons = computed<Btn[]>(() => {
   return buttons;
 });
 
-watch(
-  () => props.value,
-  (v, old) => {
-    if (JSON.stringify(v) === JSON.stringify(old)) return;
-    requestAnimationFrame(setRange);
-  },
-);
-
-onMounted(() => {
-  setRange();
-  watchEffect(() => {
-    if (!host) return;
-    host.classList.add('c-pagination');
-    host.classList.toggle('c-pagination--small', props.size === 'small');
-    host.classList.toggle('c-pagination--simple', props.simple);
-  });
-});
+// The page's id references on the element reach the element carrying its role.
+useIdReferences('nav');
 </script>
 
 <style>

@@ -29,10 +29,10 @@ type CToastsElement = {
 
 interface ToastMessage {
   duration?: number;
+  heading?: string;
   message: string;
   persistent?: boolean;
   progress?: boolean;
-  title?: string;
   type?: 'error' | 'info' | 'success' | 'warning';
 }
 
@@ -44,9 +44,9 @@ const horizontal = ref('center');
 
 const notify = () => {
   toasts.value?.addToast({
+    heading: 'Notification',
     message: `Placed at ${vertical.value} ${horizontal.value}.`,
     progress: true,
-    title: 'Notification',
     type: 'info',
   });
 };

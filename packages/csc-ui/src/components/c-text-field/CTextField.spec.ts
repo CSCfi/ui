@@ -1,6 +1,8 @@
 /**
- * Behaviour spec for c-text-field's input mask (CONTEXT.md "Input mask",
- * "Complete"; ADR-0059).
+ * Behaviour spec for c-text-field's value events (CONTEXT.md "Value events",
+ * "Commit"; ADR-0075), its input mask (CONTEXT.md "Input mask", "Complete";
+ * ADR-0059) and `invalid`, which markup can set — `valid`, defaulting to true,
+ * could never be turned off from an attribute (ADR-0076).
  */
 import { describe, expect, it } from 'vitest';
 import { page, userEvent } from 'vitest/browser';
@@ -35,6 +37,146 @@ const guide = (m: Mounted): HTMLElement | null =>
 /** The faint part of the guide: what the mask still asks for. */
 const rest = (m: Mounted): string | undefined =>
   guide(m)?.lastElementChild?.textContent ?? undefined;
+
+describe('value events', () => {
+  const EVENTS = ['change', 'update:value'];
+
+  it('reports every keystroke and commits the text on Enter', async () => {
+    const m = await mountField();
+
+    const events = recordEvents(m.host, EVENTS);
+
+    await userEvent.type(input(m), 'abc');
+    await settle();
+
+    expect(events.of('update:value').map((r) => r.detail)).toEqual([
+      'a',
+      'ab',
+      'abc',
+    ]);
+    expect(events.of('change')).toHaveLength(0);
+
+    await userEvent.keyboard('{Enter}');
+    await settle();
+
+    expect(events.of('change').map((r) => r.detail)).toEqual(['abc']);
+    expect(events.of('change')[0].targetValue).toBe('abc');
+  });
+
+  it('commits on leaving the field, once per edit', async () => {
+    const m = await mountField();
+
+    const events = recordEvents(m.host, EVENTS);
+
+    await userEvent.type(input(m), 'ab');
+    input(m).blur();
+    await settle();
+
+    expect(events.of('change').map((r) => r.detail)).toEqual(['ab']);
+
+    input(m).focus();
+    input(m).blur();
+    await settle();
+
+    expect(events.of('change')).toHaveLength(1);
+  });
+
+  // The mask rewrites the input's text on every keystroke.
+  it('a masked field commits the masked text on leaving it', async () => {
+    const m = await mountField({ mask: '## ###' });
+
+    const events = recordEvents(m.host, EVENTS);
+
+    await userEvent.type(input(m), '12345');
+    input(m).blur();
+    await settle();
+
+    expect(events.of('change').map((r) => r.detail)).toEqual(['12 345']);
+  });
+});
+
+describe('invalid (ADR-0076)', () => {
+  it('a bare invalid attribute shows the error message and marks the input', async () => {
+    const m = await mount<FieldHost>('c-text-field', {
+      attrs: {
+        'error-message': 'Enter a phone number',
+        hint: 'With the country code',
+        invalid: true,
+        label: 'Phone',
+      },
+    });
+    await settle(400);
+
+    const message = m.shadow('[part="message"]');
+
+    expect(message.textContent).toContain('Enter a phone number');
+    expect(input(m).getAttribute('aria-invalid')).toBe('true');
+
+    m.host.removeAttribute('invalid');
+    await settle(400);
+
+    expect(message.textContent).toContain('With the country code');
+    expect(input(m).getAttribute('aria-invalid')).toBe('false');
+  });
+});
+
+describe('3.x attribute names (R1)', () => {
+  it('autofocus focuses the input, and autocapitalize reaches it', async () => {
+    const m = await mount<FieldHost>('c-text-field', {
+      attrs: { autocapitalize: 'words', autofocus: true, label: 'Name' },
+    });
+    await settle();
+
+    expect(m.host.shadowRoot!.activeElement).toBe(input(m));
+    expect(input(m).getAttribute('autocapitalize')).toBe('words');
+  });
+
+  it('autocorrect takes the native attribute values', async () => {
+    const cases: {
+      attrs?: Record<string, string>;
+      expected: null | string;
+      props?: Record<string, boolean>;
+    }[] = [
+      { attrs: { autocorrect: 'off' }, expected: 'off' },
+      { attrs: { autocorrect: 'on' }, expected: 'on' },
+      { attrs: { autocorrect: '' }, expected: 'on' },
+      { expected: 'off', props: { autocorrect: false } },
+      { expected: 'on', props: { autocorrect: true } },
+      { expected: null },
+    ];
+
+    for (const { attrs, expected, props } of cases) {
+      const m = await mount<FieldHost>('c-text-field', {
+        attrs: { label: 'Name', ...attrs },
+        props,
+      });
+
+      expect(input(m).getAttribute('autocorrect')).toBe(expected);
+      m.unmount();
+    }
+  });
+
+  it('keeps the id on the host, not on the input', async () => {
+    const m = await mount<FieldHost>('c-text-field', {
+      attrs: { id: 'phone', label: 'Phone' },
+    });
+
+    expect(m.host.id).toBe('phone');
+    expect(input(m).id).not.toBe('phone');
+  });
+});
+
+describe('accessible name', () => {
+  it('the label names the input', async () => {
+    await mount<FieldHost>('c-text-field', {
+      attrs: { label: 'Phone number' },
+    });
+
+    await expect
+      .element(page.getByRole('textbox', { name: 'Phone number' }))
+      .toBeInTheDocument();
+  });
+});
 
 describe('input mask', () => {
   it('conforms typing and emits the masked text', async () => {
@@ -93,7 +235,7 @@ describe('input mask', () => {
   it('conforms a programmatic value without emitting', async () => {
     const m = await mountField({ mask: '## ###', value: '12345' });
 
-    const events = recordEvents(m.host, ['update:value', 'changeValue']);
+    const events = recordEvents(m.host, ['update:value', 'change']);
 
     expect(input(m).value).toBe('12 345');
     expect(m.host.unmaskedValue).toBe('12345');
@@ -320,5 +462,19 @@ describe('visual', () => {
     await settle();
 
     await matchScreenshotInBothModes(typed.stage, 'mask-guide-typed');
+  });
+});
+
+describe('type', () => {
+  it('follows a type set after mount, password toggle included', async () => {
+    const m = await mount<{ type?: string } & HTMLElement>('c-text-field', {
+      attrs: { label: 'Secret' },
+    });
+
+    m.host.type = 'password';
+    await settle();
+
+    expect(input(m).type).toBe('password');
+    expect(m.shadow('button[aria-label="Show password"]')).not.toBeNull();
   });
 });

@@ -187,3 +187,35 @@ describe('c-tab-buttons', () => {
     await matchScreenshotInBothModes(m.stage, 'overflow');
   });
 });
+
+describe('c-tab-buttons as tabs', () => {
+  it('is the tablist, and its buttons are tabs with a selected state', async () => {
+    const m = await mount('c-tabs', {
+      attrs: { 'aria-label': 'Project views' },
+      html: `<c-tab-buttons>${BUTTONS}</c-tab-buttons>`,
+      props: { value: 'members' },
+    });
+    await settled();
+
+    const strip = m.host.querySelector('c-tab-buttons')!;
+
+    const tablist = strip.shadowRoot!.querySelector('[role="tablist"]')!;
+
+    expect(tablist).not.toBeNull();
+    expect(tablist.getAttribute('aria-label')).toBe('Project views');
+    expect(tablist.querySelector('c-icon-button')).toBeNull();
+    expect(m.shadowAll('[role="tablist"]')).toEqual([]);
+
+    const inner = [...strip.querySelectorAll('c-button')].map((b) =>
+      b.shadowRoot!.querySelector('button')!,
+    );
+
+    expect(inner.map((b) => b.getAttribute('role'))).toEqual(
+      LABELS.map(() => 'tab'),
+    );
+    expect(inner.map((b) => b.getAttribute('aria-selected'))).toEqual(
+      LABELS.map((label) => String(label === 'Members')),
+    );
+    expect(inner.some((b) => b.hasAttribute('aria-pressed'))).toBe(false);
+  });
+});

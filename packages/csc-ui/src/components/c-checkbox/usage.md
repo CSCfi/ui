@@ -1,16 +1,44 @@
 A form control for a single on/off choice: a native checkbox with a label,
 an optional hint, and validation messaging.
 
-Bind the state with a plain `v-model` (or the `checked` prop); `true-value` /
-`false-value` map the checked state onto custom values. Set `indeterminate`
-for the mixed "some but not all" state of a parent checkbox.
+Bind the state with a plain `v-model`: `value` is `true-value` while the
+checkbox is on and `false-value` while it is off (`true` and `false` unless you
+map them onto custom values). `checked` is the same state as a boolean —
+setting it sets `value`, and a `checked` attribute sets the initial state when
+no `value` is bound.
 
 ```html
 <c-checkbox v-model="accepted" label="I accept the terms" />
 ```
 
-Set `hint` for a persistent helper line below the control; while `valid` is
-`false`, `error-message` replaces it. `hide-details` removes the message area
+Set `indeterminate` for the mixed "some but not all" state of a parent
+checkbox. As on a native checkbox, a click or Space clears it and toggles the
+state. A binding writes `indeterminate` only when its value changes, so it
+doesn't bring the mixed state back after a click that leaves the options partly
+checked (some rows disabled, say). Set the element's property in your `change`
+handler:
+
+```vue
+<script setup>
+const onSelectAll = (event) => {
+  selectAll(event.detail);
+  // The binding writes again only when `partly` changes.
+  event.currentTarget.indeterminate = partly.value;
+};
+</script>
+
+<template>
+  <c-checkbox
+    :value="all"
+    :indeterminate="partly"
+    label="All projects"
+    @change="onSelectAll"
+  />
+</template>
+```
+
+Set `hint` for a persistent helper line below the control; while `invalid` is
+set, `error-message` replaces it. `hide-details` removes the message area
 entirely.
 
 ## When to use
@@ -22,6 +50,10 @@ entirely.
 
 - Choosing exactly one of several options — use `c-radio-group`.
 - Switching a setting that takes effect immediately — use `c-switch`.
+
+## Accessibility
+
+The checkbox is a native input named by its label. Without a visible label, set `aria-label` on the element: it names the input, as the other ARIA attributes on the element describe it.
 
 ## Customization
 

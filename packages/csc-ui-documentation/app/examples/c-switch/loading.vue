@@ -4,7 +4,7 @@
       :disabled="pending"
       :loading="pending"
       :value="enabled"
-      @change-value="onToggle"
+      @change="onToggle"
     >
       Sync to cloud
     </c-switch>

@@ -1,45 +1,48 @@
 <template>
   <div :class="ui.root()" part="root">
+    <!-- A link with an `href`, else a button; a parent is a disclosure button
+         for its sub-items (aria-expanded is set below). -->
     <component
-      :is="href ? 'a' : 'div'"
+      :is="href ? 'a' : 'button'"
       ref="headerRef"
+      :aria-controls="slotHasContent ? subNavId : undefined"
       :class="ui.header()"
       :href="href || undefined"
-      :tabindex="focusable ? 0 : -1"
+      :tabindex="collapsed ? -1 : undefined"
       :target="href ? target : undefined"
+      :type="href ? undefined : 'button'"
       part="header"
-      role="menuitem"
     >
       <c-icon v-if="slotHasContent" :class="ui.chevron()" :path="chevronIcon" />
 
-      <div :class="ui.slot()">
+      <span :class="ui.slot()">
         <slot />
-      </div>
+      </span>
     </component>
 
-    <nav
+    <div
       v-if="slotHasContent"
-      :aria-expanded="!!active"
+      :id="subNavId"
       :aria-label
       :class="ui.subNav()"
       part="sub-nav"
-      role="menubar"
+      role="group"
     >
       <slot name="sub-item" />
-    </nav>
+    </div>
 
-    <c-loader :size="32" :visible="loading" style="pointer-events: none" />
+    <c-loader :hide="!loading" :size="32" style="pointer-events: none" />
   </div>
 </template>
 
 <script setup lang="ts">
 /**
  * @slot default - The item's label content (text and an optional c-icon)
- * @slot sub-item - Nested c-side-navigation-item components; assigned automatically to nested items
+ * @internalslot sub-item - Assigned by the item to its nested items
  *
  * @csspart root - The outer box wrapping the header and sub-navigation, carrying the background and state styling
  * @csspart header - The clickable header row (an `<a>` when `href` is set) holding the chevron and label
- * @csspart sub-nav - The collapsible `<nav>` container for the sub-items
+ * @csspart sub-nav - The collapsible group holding the sub-items
  */
 import { mdiChevronRight } from '@mdi/js';
 import { tv } from 'tailwind-variants';
@@ -48,20 +51,22 @@ import {
   onMounted,
   ref,
   useHost,
+  useId,
   useTemplateRef,
   watchEffect,
 } from 'vue';
 
 import { useHostEmit } from '../../shared/useHostEmit';
+import { useIdReferences } from '../../shared/useIdReferences';
 
 /** Events dispatched by `<c-side-navigation-item>`. */
 interface CSideNavigationItemEvents {
   /**
-   * Fired when the item is activated (click or Enter), carrying the
-   * originating DOM event; bubbles so the parent `<c-side-navigation>` can
-   * coordinate which item is active.
+   * Fired when the item is activated (click or Enter), carrying its `value`;
+   * bubbles out of the navigation, as `c-menu`'s does, so one listener on
+   * `c-side-navigation` can handle every item.
    */
-  itemChange: Event;
+  select: { value: string | undefined };
 }
 
 /**
@@ -127,7 +132,7 @@ const sideNavigationItem = tv({
     // skipped by sequential focus, so focus must live on a rendered box. Its own
     // native outline is suppressed; the visible ring is drawn on `root`.
     header:
-      'grid min-h-[46px] items-center gap-2 px-3 py-2 text-current no-underline outline-none',
+      'grid min-h-[46px] w-full items-center gap-2 px-3 py-2 text-left text-current no-underline outline-none',
     // The outer box (the original `:host(.c-side-navigation-item) > div`) that
     // wraps the header + sub-nav and carries the bg/color/state. Its `color`
     // cascades into the rendered chevron c-icon (currentColor contract).
@@ -161,48 +166,59 @@ const sideNavigationItem = tv({
 
 interface CSideNavigationItemProps {
   /**
-   * Indicate active state
-   *
-   * @seeded from csc-ui — verify
+   * On an item without sub-items, mark the current page
+   * (`aria-current="page"`); on a parent, expand its sub-items.
    */
   active?: boolean;
 
-  /** Whether the item is in the keyboard tab order — a parent item sets this to false on its collapsed sub-items so hidden items aren't Tab-reachable */
-  focusable?: boolean;
+  /**
+   * Whether the item sits under a collapsed parent item, which sets it so
+   * hidden items are not Tab-reachable.
+   *
+   * @internal
+   */
+  collapsed?: boolean;
 
   /**
-   * Hyperlink url
+   * URL that makes the item a real link; without it the item is a button.
    *
-   * @seeded from csc-ui — verify
    * @freeform any URL
    */
   href?: string;
 
   /**
-   * Loading state
-   *
-   * @seeded from csc-ui — verify
+   * Cover the item with a loading overlay: a translucent scrim and a spinner.
    */
   loading?: boolean;
 
   /**
-   * Hyperlink target
+   * Where the `href` opens, as on a native `<a>`: the same tab unless set —
+   * `_blank` for a new one.
    *
-   * @seeded from csc-ui — verify
    * @freeform any browsing-context name (e.g. _blank, _self)
    */
   target?: string;
+
+  /**
+   * Value reported in the `select` event when the item is activated
+   *
+   * @freeform
+   */
+  value?: string;
 }
 
 const props = withDefaults(defineProps<CSideNavigationItemProps>(), {
   active: false,
-  focusable: true,
+  collapsed: false,
   href: '',
   loading: false,
   target: '',
+  value: undefined,
 });
 
 const chevronIcon = mdiChevronRight;
+
+const SUB_ITEMS = new Set(['c-side-navigation-item', 'c-sub-navigation-item']);
 
 const host = useHost();
 
@@ -216,6 +232,9 @@ const isSubItem = ref(false);
 
 const ariaLabel = ref('');
 
+// The sub-items' group, which a parent's header controls.
+const subNavId = `${useId()}-sub-nav`;
+
 const ui = computed(() =>
   sideNavigationItem({
     active: props.active,
@@ -223,16 +242,6 @@ const ui = computed(() =>
     subItem: isSubItem.value,
   }),
 );
-
-// Move nested c-side-navigation-item children into the "sub-item" named
-// slot. Mirrors Stencil's _assignSubItemSlots — consumers write nested
-// items without manually specifying the slot.
-const assignSubItemSlots = () => {
-  if (!host) return;
-  host.querySelectorAll('c-side-navigation-item').forEach((item) => {
-    item.setAttribute('slot', 'sub-item');
-  });
-};
 
 // Sub-items rendered inside another sub-navigation-item get a marker
 // class so the sub-item CSS variant kicks in (Stencil sets this in
@@ -244,45 +253,56 @@ const handleChildClasses = () => {
     .forEach((c) => c.classList.add('c-sub-navigation-item--sub-level'));
 };
 
-// Propagate focusability + aria-hidden to sub-navigation-item children
-// based on this item's expanded state — hidden subitems shouldn't be
-// in the tab order.
-const handleChildFocusableChange = (focusable: boolean) => {
+// Propagate this item's expanded state to its sub-items — hidden sub-items
+// leave the tab order and the accessibility tree.
+const handleChildCollapsedChange = (expanded: boolean) => {
   if (!slotHasContent.value || !host) return;
   host.querySelectorAll('[slot="sub-item"]').forEach((child: Element) => {
-    const c = child as { focusable?: boolean } & HTMLElement;
-    c.setAttribute('aria-hidden', String(!focusable));
-    c.focusable = focusable;
+    const c = child as { collapsed?: boolean } & HTMLElement;
+    c.setAttribute('aria-hidden', String(!expanded));
+    c.collapsed = !expanded;
   });
+};
+
+// Nested items — c-sub-navigation-item and c-side-navigation-item children,
+// which consumers write inline — go in the sub-item slot. Runs on mount and on
+// every slotchange in the shadow root, so sub-items added or removed later
+// find their place; a pass with nothing to move changes no slot.
+const adoptSubItems = () => {
+  if (!host) return;
+
+  for (const child of host.children) {
+    if (SUB_ITEMS.has(child.localName) && child.slot !== 'sub-item') {
+      child.slot = 'sub-item';
+    }
+  }
+
+  slotHasContent.value = !!host.querySelector(':scope > [slot="sub-item"]');
+  handleChildClasses();
+  handleChildCollapsedChange(props.active);
 };
 
 const emit = useHostEmit<CSideNavigationItemEvents>();
 
-const redirect = (event: Event | KeyboardEvent) => {
-  if (event instanceof KeyboardEvent && event.key !== 'Enter') return;
-
+// The header is a native link or button, so Enter (and Space on a button)
+// activates it with a click.
+const redirect = (event: Event) => {
+  // A nested item's activation ends here: the parent item around it must not
+  // take it for its own.
   if (isSubItem.value) {
     event.stopPropagation();
     event.stopImmediatePropagation?.();
-    event.preventDefault();
   }
 
-  emit('itemChange', event, { bubbles: true, composed: true });
-
-  if (!slotHasContent.value) {
-    const sidenav = document.querySelector('c-side-navigation') as
-      | ({ menuVisible: boolean } & HTMLElement)
-      | null;
-
-    if (sidenav) sidenav.menuVisible = false;
-  }
+  // c-side-navigation hears it, and closes its drawer for a leaf item.
+  emit('select', { value: props.value }, { bubbles: true, composed: true });
 };
 
 onMounted(() => {
   if (!host) return;
-  assignSubItemSlots();
-  slotHasContent.value = !!host.querySelector('[slot="sub-item"]');
-  isSubItem.value = !!host.getAttribute('slot');
+  isSubItem.value = host.parentElement?.localName === 'c-side-navigation-item';
+  adoptSubItems();
+  host.shadowRoot?.addEventListener('slotchange', adoptSubItems);
 
   // Pull aria-label from the first text node (Stencil mirrors this for
   // the nested <nav>).
@@ -296,21 +316,14 @@ onMounted(() => {
   // role/tabindex/aria live on the rendered `header` element (see headerRef),
   // not the `display:contents` host which is skipped by sequential focus.
   host.addEventListener('click', redirect);
-  host.addEventListener('keydown', redirect);
-  // A nested item bubbling its own itemChange shouldn't toggle the
-  // parent — instead toggle this item's active and swallow.
-  host.addEventListener('itemChange', (e) => {
-    if (isSubItem.value) {
-      e.stopPropagation();
-      e.stopImmediatePropagation?.();
-      e.preventDefault();
-      // Re-assign via host so Vue's prop setter runs.
+  // A nested parent item (in a parent item's sub-item slot) shows and hides
+  // its own sub-items on its `select`; c-side-navigation leaves a slotted
+  // item's expansion alone, and the event goes on to the page.
+  host.addEventListener('select', (e) => {
+    // Re-assign via host so Vue's prop setter runs.
+    if (isSubItem.value && slotHasContent.value && e.target === host)
       (host as { active?: boolean }).active = !props.active;
-    }
   });
-
-  handleChildClasses();
-  handleChildFocusableChange(props.active);
 
   watchEffect(() => {
     host.classList.toggle('c-side-navigation-item', true);
@@ -336,9 +349,12 @@ onMounted(() => {
       }
     }
 
-    handleChildFocusableChange(props.active);
+    handleChildCollapsedChange(props.active);
   });
 });
+
+// The page's id references on the element reach the element carrying its role.
+useIdReferences(() => headerRef.value);
 </script>
 
 <!--

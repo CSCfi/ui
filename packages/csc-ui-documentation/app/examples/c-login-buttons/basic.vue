@@ -1,17 +1,11 @@
 <template>
   <div>
     <c-login-buttons>
-      <c-login-button :src="logo(mdiSchool)" alt="Haka logo">
-        Haka login
-      </c-login-button>
+      <c-login-button :src="logo(mdiSchool)">Haka login</c-login-button>
 
-      <c-login-button :src="logo(mdiDomain)" alt="Virtu logo">
-        Virtu login
-      </c-login-button>
+      <c-login-button :src="logo(mdiDomain)">Virtu login</c-login-button>
 
-      <c-login-button :src="logo(mdiAccountCircle)" alt="CSC logo">
-        CSC login
-      </c-login-button>
+      <c-login-button :src="logo(mdiAccountCircle)">CSC login</c-login-button>
     </c-login-buttons>
   </div>
 </template>

@@ -11,9 +11,9 @@ const texts: CFileUploadTexts = {
   choose: (multiple) => (multiple ? 'valitse tiedostot' : 'valitse tiedosto'),
   chooseButton: (multiple) =>
     multiple ? 'Valitse tiedostot' : 'Valitse tiedosto',
+  close: (name) => `Sulje ${name}`,
   compactPrompt: (multiple) =>
     multiple ? 'tai pudota tiedostot tähän' : 'tai pudota tiedosto tähän',
-  dismiss: (name) => `Ohita ${name}`,
   dragPrompt: (multiple) =>
     multiple ? 'Raahaa tiedostot tähän tai' : 'Raahaa tiedosto tähän tai',
   dropActive: (multiple) =>
@@ -21,6 +21,7 @@ const texts: CFileUploadTexts = {
       ? 'Pudota tiedostot lisätäksesi ne'
       : 'Pudota tiedosto lisätäksesi sen',
   progress: (loaded, total, percent) => `${loaded} / ${total} · ${percent} %`,
+  queued: 'Jonossa',
   rejectedCount: (max) =>
     max === 1 ? 'Vain yksi tiedosto sallitaan' : `Enintään ${max} tiedostoa`,
   rejectedDuplicate: 'Lisätty jo',
@@ -32,7 +33,6 @@ const texts: CFileUploadTexts = {
   uploaded: 'Lähetetty',
   uploadFailed: 'Lähetys epäonnistui',
   uploading: 'Lähetetään',
-  waiting: 'Odottaa',
 };
 
 // Stands in for a real request: reports progress for two seconds, then

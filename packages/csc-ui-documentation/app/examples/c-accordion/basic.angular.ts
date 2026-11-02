@@ -8,7 +8,7 @@ import { Component, CUSTOM_ELEMENTS_SCHEMA, signal } from '@angular/core';
   template: `
     <c-accordion
       [value]="expanded()"
-      (changeValue)="expanded.set($any($event).detail)"
+      (change)="expanded.set($any($event).detail)"
     >
       <c-accordion-item heading="Project billing" value="billing">
         <p>Billing units are deducted monthly based on the resources in use.</p>
@@ -25,5 +25,5 @@ import { Component, CUSTOM_ELEMENTS_SCHEMA, signal } from '@angular/core';
   `,
 })
 export class BasicExampleComponent {
-  expanded = signal<'billing' | 'members' | 'storage'>('billing');
+  expanded = signal<'billing' | 'members' | 'storage' | null>('billing');
 }

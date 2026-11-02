@@ -4,9 +4,7 @@
 
 <script setup lang="ts">
 /**
- * @slot default - Default slot
- *
- * @seeded from csc-ui — verify
+ * @slot default - The `c-login-button` choices, one per identity provider
  *
  * @subcomponents c-login-button
  */

@@ -11,7 +11,7 @@ import { Component, CUSTOM_ELEMENTS_SCHEMA, signal } from '@angular/core';
         [value]="language()"
         label="Programming language"
         size="small"
-        (changeValue)="language.set($any($event).detail)"
+        (change)="language.set($any($event).detail)"
       >
         <c-option value="js">
           <c-option-value>JavaScript</c-option-value>

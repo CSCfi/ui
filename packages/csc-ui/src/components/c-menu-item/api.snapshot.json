@@ -1,39 +1,33 @@
 {
   "attributes": {
-    "active": "boolean",
-    "active-icon": "string = ''",
+    "checked": "boolean = false",
     "danger": "boolean = false",
     "disabled": "boolean = false",
-    "icon": "string = ''",
+    "type": "'command' | 'radio' = 'command'",
     "value": "string"
   },
   "cssProperties": [],
   "defaultable": [],
   "events": {},
-  "methods": {
-    "closeSubmenu": "()",
-    "isSubmenuOpen": "(): boolean",
-    "openSubmenu": "()"
-  },
+  "methods": {},
   "parts": [
     "check",
     "content",
-    "icon",
     "root",
-    "submenu",
+    "submenu-list",
     "submenu-panel"
   ],
   "propertyOnly": [],
   "props": {
-    "active": "boolean",
-    "activeIcon": "string = ''",
+    "checked": "boolean = false",
     "danger": "boolean = false",
     "disabled": "boolean = false",
-    "icon": "string = ''",
+    "type": "'command' | 'radio' = 'command'",
     "value": "string"
   },
   "slots": [
     "default",
+    "icon",
     "submenu"
   ],
   "states": [],

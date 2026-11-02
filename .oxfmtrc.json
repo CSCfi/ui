@@ -43,7 +43,8 @@
     "packages/csc-ui/src/theme/chart-data.ts",
     "packages/csc-ui/src/components/*/api*.snapshot.json",
     "packages/csc-ui/src/api*.snapshot.json",
-    "packages/csc-ui-react/src/components.ts"
+    "packages/csc-ui-react/src/components.ts",
+    "packages/csc-ui-documentation/public/v3/**"
   ],
   "overrides": [
     {

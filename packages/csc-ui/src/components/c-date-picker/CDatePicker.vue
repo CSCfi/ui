@@ -4,12 +4,14 @@
     :anchor-style
     :clear-label="t.clearSelection"
     :clearable
+    :control-attrs
     :disabled
     :error-message
     :field="typed"
     :hide-details="hideDetailsResolved"
     :hint
     :input-id
+    :invalid
     :label
     :label-on-top="labelOnTopResolved"
     :name
@@ -17,7 +19,6 @@
     :required
     :shadow="shadowResolved"
     :size="sizeResolved"
-    :valid
     inputmode="numeric"
   >
     <template #trigger="{ buttonSize, iconSize }">
@@ -415,186 +416,6 @@ import type { CFieldSize } from '../../types';
 /** One entry of `disabled-dates`: an ISO date, or an inclusive `{ start, end }` span of them. */
 export type CDatePickerDisabledDate = { end: string; start: string } | string;
 
-export interface CDatePickerProps {
-  /**
-   * Make the value clearable
-   */
-  clearable?: boolean;
-
-  /**
-   * Disable the field
-   */
-  disabled?: boolean;
-
-  /**
-   * Dates that cannot be picked: ISO dates and inclusive `{ start, end }`
-   * spans. Arrays have no attribute form — bind as a DOM property
-   */
-  disabledDates?: CDatePickerDisabledDate[];
-
-  /**
-   * Error message shown in place of the hint while the field is invalid
-   *
-   * @freeform
-   */
-  errorMessage?: string;
-
-  /**
-   * First day of the week in the calendar, numbered like `Date.getDay()`:
-   * 0 = Sunday, 1 = Monday … 6 = Saturday
-   *
-   * @defaultable 1
-   */
-  firstDayOfWeek?: CDatePickerWeekday;
-
-  /**
-   * How dates are shown and read from typing: a pattern of the tokens `d`,
-   * `dd`, `M`, `MM` and `yyyy` with any separators, e.g. `yyyy-MM-dd`
-   *
-   * @defaultable 'dd.MM.yyyy'
-   * @freeform
-   */
-  format?: string;
-
-  /**
-   * Hide the hint and error messages
-   *
-   * @defaultable false
-   */
-  hideDetails?: boolean;
-
-  /**
-   * Hint text for the field
-   *
-   * @freeform
-   */
-  hint?: string;
-
-  /**
-   * Id of the element
-   *
-   * @freeform
-   */
-  hostId?: string;
-
-  /**
-   * Predicate for dates that cannot be picked (weekends, say); receives an
-   * ISO date. Functions have no attribute form — bind as a DOM property
-   */
-  isDateDisabled?: (iso: string) => boolean;
-
-  /**
-   * Element label
-   *
-   * @freeform
-   */
-  label?: string;
-
-  /**
-   * Label on top of the field
-   *
-   * @defaultable false
-   */
-  labelOnTop?: boolean;
-
-  /**
-   * The latest date that can be picked or typed, as an ISO date; also bounds
-   * the calendar's navigation
-   *
-   * @freeform
-   */
-  max?: string;
-
-  /**
-   * The earliest date that can be picked or typed, as an ISO date; also
-   * bounds the calendar's navigation
-   *
-   * @freeform
-   */
-  min?: string;
-
-  /**
-   * Input field name
-   *
-   * @freeform
-   */
-  name?: string;
-
-  /**
-   * Placeholder of the input; the `format` pattern when empty
-   *
-   * @freeform
-   */
-  placeholder?: string;
-
-  /**
-   * Pick a range: the value becomes `{ start, end }` and the field holds two
-   * inputs
-   */
-  range?: boolean;
-
-  /**
-   * Set the field as required
-   */
-  required?: boolean;
-
-  /**
-   * Shadow variant
-   *
-   * @defaultable false
-   */
-  shadow?: boolean;
-
-  /**
-   * Show a Today button under the calendar that picks today ("This month"
-   * under `type="month"`)
-   *
-   * @defaultable false
-   */
-  showToday?: boolean;
-
-  /**
-   * Show ISO 8601 week numbers beside the calendar rows (meaningful with a
-   * Monday week start)
-   *
-   * @defaultable false
-   */
-  showWeekNumbers?: boolean;
-
-  /**
-   * Field height: the 52px default (the shared control height) or the 36px `small` box
-   *
-   * @defaultable 'default'
-   */
-  size?: CFieldSize;
-
-  /**
-   * UI text overrides (i18n), merged over the names `Intl` gives for the
-   * page's `lang` and the English defaults. Objects have no attribute form —
-   * bind as a DOM property
-   *
-   * @defaultable {}
-   */
-  texts?: CDatePickerTexts;
-
-  /**
-   * What the field picks: a calendar date, or a year and a month
-   * (`'YYYY-MM'`)
-   */
-  type?: CDatePickerType;
-
-  /**
-   * Set the validity of the field
-   */
-  valid?: boolean;
-
-  /**
-   * The date as an ISO `YYYY-MM-DD` string (an ISO `YYYY-MM` month under
-   * `type="month"`), or `{ start, end }` under `range`; `null` when empty
-   */
-  value?: CDatePickerValue;
-}
-
 /** A date range: ISO `YYYY-MM-DD` ends (`YYYY-MM` under `type="month"`), either of which may be `null` while only one is typed. */
 export interface CDatePickerRange {
   /** The last day of the range, inclusive. */
@@ -716,6 +537,180 @@ export type CDatePickerValue = CDatePickerRange | null | string;
 
 /** A day of the week numbered like `Date.getDay()`: 0 = Sunday … 6 = Saturday. */
 export type CDatePickerWeekday = 0 | 1 | 2 | 3 | 4 | 5 | 6;
+
+interface CDatePickerProps {
+  /**
+   * Make the value clearable
+   */
+  clearable?: boolean;
+
+  /**
+   * Disable the field
+   */
+  disabled?: boolean;
+
+  /**
+   * Dates that cannot be picked: ISO dates and inclusive `{ start, end }`
+   * spans. Arrays have no attribute form — bind as a DOM property
+   */
+  disabledDates?: CDatePickerDisabledDate[];
+
+  /**
+   * Error message shown in place of the hint while the field is invalid
+   *
+   * @freeform
+   */
+  errorMessage?: string;
+
+  /**
+   * First day of the week in the calendar, numbered like `Date.getDay()`:
+   * 0 = Sunday, 1 = Monday … 6 = Saturday
+   *
+   * @defaultable 1
+   */
+  firstDayOfWeek?: CDatePickerWeekday;
+
+  /**
+   * How dates are shown and read from typing: a pattern of the tokens `d`,
+   * `dd`, `M`, `MM` and `yyyy` with any separators, e.g. `yyyy-MM-dd`
+   *
+   * @defaultable 'dd.MM.yyyy'
+   * @freeform
+   */
+  format?: string;
+
+  /**
+   * Hide the hint and error messages
+   *
+   * @defaultable false
+   */
+  hideDetails?: boolean;
+
+  /**
+   * Hint text for the field
+   *
+   * @freeform
+   */
+  hint?: string;
+
+  /**
+   * Show the control as invalid: its `error-message`, when set, replaces the
+   * hint, and the control is marked `aria-invalid`.
+   */
+  invalid?: boolean;
+
+  /**
+   * Predicate for dates that cannot be picked (weekends, say); receives an
+   * ISO date. Functions have no attribute form — bind as a DOM property
+   */
+  isDateDisabled?: (iso: string) => boolean;
+
+  /**
+   * Element label
+   *
+   * @freeform
+   */
+  label?: string;
+
+  /**
+   * Label on top of the field
+   *
+   * @defaultable false
+   */
+  labelOnTop?: boolean;
+
+  /**
+   * The latest date that can be picked or typed, as an ISO date; also bounds
+   * the calendar's navigation
+   *
+   * @freeform
+   */
+  max?: string;
+
+  /**
+   * The earliest date that can be picked or typed, as an ISO date; also
+   * bounds the calendar's navigation
+   *
+   * @freeform
+   */
+  min?: string;
+
+  /**
+   * Input field name
+   *
+   * @freeform
+   */
+  name?: string;
+
+  /**
+   * Placeholder of the input; the `format` pattern when empty
+   *
+   * @freeform
+   */
+  placeholder?: string;
+
+  /**
+   * Pick a range: the value becomes `{ start, end }` and the field holds two
+   * inputs
+   */
+  range?: boolean;
+
+  /**
+   * Set the field as required
+   */
+  required?: boolean;
+
+  /**
+   * Shadow variant
+   *
+   * @defaultable false
+   */
+  shadow?: boolean;
+
+  /**
+   * Show a Today button under the calendar that picks today ("This month"
+   * under `type="month"`)
+   *
+   * @defaultable false
+   */
+  showToday?: boolean;
+
+  /**
+   * Show ISO 8601 week numbers beside the calendar rows (meaningful with a
+   * Monday week start)
+   *
+   * @defaultable false
+   */
+  showWeekNumbers?: boolean;
+
+  /**
+   * Field height: the 52px default (the shared control height) or the 36px `small` box
+   *
+   * @defaultable 'default'
+   */
+  size?: CFieldSize;
+
+  /**
+   * UI text overrides (i18n), merged over the names `Intl` gives for the
+   * page's `lang` and the English defaults. Objects have no attribute form —
+   * bind as a DOM property
+   *
+   * @defaultable {}
+   */
+  texts?: CDatePickerTexts;
+
+  /**
+   * What the field picks: a calendar date, or a year and a month
+   * (`'YYYY-MM'`)
+   */
+  type?: CDatePickerType;
+
+  /**
+   * The date as an ISO `YYYY-MM-DD` string (an ISO `YYYY-MM` month under
+   * `type="month"`), or `{ start, end }` under `range`; `null` when empty
+   */
+  value?: CDatePickerValue;
+}
 </script>
 
 <script setup lang="ts">
@@ -747,6 +742,7 @@ export type CDatePickerWeekday = 0 | 1 | 2 | 3 | 4 | 5 | 6;
  * @csspart actions - The row under the calendar body holding the Today button (`show-today`) and, in the fullscreen panel, the Done button
  * @csspart today - The Today button: picks today, or the current month under `type="month"`
  * @csspart done - The Done button of the fullscreen panel (narrow viewports): commits what the panel holds and closes
+ * @csspart message - The hint / error message area below the field (always reserved unless `hide-details`)
  *
  * @cssstate bad-input - Present while committed text names no date that can be picked
  */
@@ -774,8 +770,10 @@ import PanelHeadingRow from '../../shared/PanelHeadingRow.vue';
 import { applyPeekCap } from '../../shared/peekCap';
 import TypedField from '../../shared/TypedField.vue';
 import { useAnchoredPanel } from '../../shared/useAnchoredPanel';
+import { useControlAttrs } from '../../shared/useControlAttrs';
 import { useHostEmit } from '../../shared/useHostEmit';
 import { useHostStates } from '../../shared/useHostStates';
+import { useIdReferences } from '../../shared/useIdReferences';
 import { useKeyboardModality } from '../../shared/useKeyboardModality';
 import { useNarrowViewport } from '../../shared/useNarrowViewport';
 import { useStatusAnnouncer } from '../../shared/useStatusAnnouncer';
@@ -988,7 +986,7 @@ const props = withDefaults(defineProps<CDatePickerProps>(), {
   format: undefined,
   hideDetails: undefined,
   hint: '',
-  hostId: '',
+  invalid: false,
   isDateDisabled: undefined,
   label: '',
   labelOnTop: undefined,
@@ -1004,11 +1002,21 @@ const props = withDefaults(defineProps<CDatePickerProps>(), {
   size: undefined,
   texts: undefined,
   type: 'date',
-  valid: true,
   value: null,
 });
 
 const host = useHost();
+
+const { controlAttrs } = useControlAttrs();
+
+// The visible label names the input (WCAG 2.5.3, label in name); the host's
+// `aria-label` names a field without one, and is ignored beside it.
+const accessibleName = computed(
+  () =>
+    props.label ||
+    (controlAttrs.value['aria-label'] as string | undefined) ||
+    undefined,
+);
 
 // Script focus rings after a keyboard path, an Alt+↓ open included.
 const focusOptions = useKeyboardModality(host);
@@ -1142,7 +1150,7 @@ const panelRef = useTemplateRef<HTMLElement>('panelRef');
 
 const autoId = useId();
 
-const inputId = computed(() => props.hostId || autoId);
+const inputId = computed(() => autoId);
 
 // Same defineCustomElement Boolean-attribute quirk as `allow-branch` in
 // c-tree-select: resolve `range` from the stable host attribute first.
@@ -1215,6 +1223,7 @@ const clamp = (iso: string): string => {
 // ---- the typed field -------------------------------------------------------
 
 const typed = useTypedField({
+  accessibleName: () => accessibleName.value,
   codec: {
     format: (value, pattern) =>
       monthMode.value
@@ -2316,7 +2325,22 @@ const onCalendarClick = (event: Event) => {
   openPanel();
 };
 
-defineExpose({ badInput });
+/**
+ * Focus its input (the start input under `range`), as `focus()` does on a native control: the element renders
+ * no box of its own to take it.
+ *
+ * @param options - Passed on to that element's `focus()`
+ */
+const focus = (options?: FocusOptions): void => {
+  host?.shadowRoot
+    ?.querySelector<HTMLElement>('input[part~="input"]')
+    ?.focus(options);
+};
+
+defineExpose({ badInput, focus });
+
+// The page's id references on the element reach the element carrying its role.
+useIdReferences('input[part~="input"]');
 </script>
 
 <!--

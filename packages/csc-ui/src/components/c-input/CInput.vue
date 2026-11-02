@@ -66,47 +66,29 @@
         </div>
       </div>
 
-      <div v-if="!isHideDetails()" :class="ui.message()" part="message">
-        <transition mode="out-in" name="c-input-message">
-          <span
-            v-if="messageVisible"
-            :key="messageKey"
-            :class="ui.messageLine()"
-          >
-            <svg
-              v-if="showError"
-              :class="ui.messageIcon()"
-              aria-hidden="true"
-              viewBox="0 0 24 24"
-            >
-              <path :d="errorIconPath" />
-            </svg>
-
-            <span :class="ui.visuallyHidden()">
-              {{ showError ? 'Error: ' : 'Hint: ' }}
-            </span>
-
-            <span>{{ showError ? errorMessage : hint }}</span>
-          </span>
-        </transition>
-      </div>
+      <!-- The hint / error message: the wrapping field renders it, in its own
+           shadow root, so its input can point aria-describedby at it. Hidden
+           details leave the slot out, which c-dropdown also asks for while the
+           field sits in its open panel. -->
+      <slot v-if="!isHideDetails()" name="message" />
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
 /**
+ * @internal the field shell the form fields compose in their shadow roots; consumers never author it
+ *
  * @slot pre - Leading content (e.g. an icon) inside the field, before the input
  * @slot default - The native `<input>` / `<textarea>` element the field wraps
  * @slot post - Trailing content (e.g. an icon or button) inside the field, after the input
+ * @slot message - The field's hint / error message (`FieldMessage`), below the field
  *
  * @csspart root - The outer wrapper of the whole input control
  * @csspart label - The label element — the on-top label or the floating in-field label, depending on `labelOnTop`
  * @csspart pre - Wrapper around the `pre` slot content
  * @csspart post - Wrapper around the `post` slot content
- * @csspart message - The hint / error message area below the field
  */
-import { mdiCloseCircle } from '@mdi/js';
 import { tv } from 'tailwind-variants';
 import {
   computed,
@@ -184,7 +166,6 @@ const input = tv({
     disabled: false,
     error: false,
     labelOnTop: false,
-    messageError: false,
     shadow: false,
     size: 'default',
     textarea: false,
@@ -208,11 +189,15 @@ const input = tv({
     // (24px). A `leading-5` before `text-base` is silently dropped by
     // tailwind-merge (font-size utilities set line-height in v4), and a 20px
     // box under a 24px line box clips descenders. `overflow-clip` keeps the
-    // ellipsis, and `overflow-clip-margin` gives the glyphs 4px of headroom so
-    // tall-metric fonts (Noto Sans' content area is ~1.36em) can never lose
-    // descender ink. Both axes clip: Firefox 140 paints nothing of a label
-    // lifted by `translateY` when only `overflow-x` clips (the y axis left
-    // visible), so the lifted label vanished there.
+    // ellipsis, and `-m-1 p-1` moves the clip 4px out on every side without
+    // moving the text, so tall-metric fonts (Noto Sans' content area is
+    // ~1.36em) never lose descender ink and the last glyph keeps its
+    // antialiasing. The padding is the label's own: the max width adds it
+    // back, the lift's scale pivots on the text's corner (`origin-[4px_4px]`)
+    // and `measureLabel` takes it off. Not `overflow-clip-margin`: Safari has
+    // none. Both axes clip: Firefox 140 paints nothing of a label lifted by
+    // `translateY` when only `overflow-x` clips (the y axis left visible), so
+    // the lifted label vanished there.
     //
     // The resting `top` centres that 24px line box in the field by hand — it
     // is absolutely positioned, so nothing re-centres it when the box height
@@ -221,21 +206,11 @@ const input = tv({
     // 44px -> top-3, the 52px control height -> top-4. `controlHeight.spec.ts`
     // holds this at both sizes.
     labelFloating:
-      'c-input__label--floating pointer-events-none absolute top-4 right-auto left-0 max-w-[90%] origin-top-left overflow-clip text-base text-ellipsis whitespace-nowrap [overflow-clip-margin:4px] [transition:0.3s_var(--_c-ease-standard)_0.08s]',
+      'c-input__label--floating pointer-events-none absolute top-4 right-auto left-0 -m-1 max-w-[calc(90%+8px)] origin-[4px_4px] overflow-clip p-1 text-base text-ellipsis whitespace-nowrap [transition:0.3s_var(--_c-ease-standard)_0.08s]',
     labelTop:
       'c-input__label--top max-w-full overflow-hidden text-sm font-medium text-ellipsis whitespace-nowrap',
     legend:
       'c-input__legend float-none -ml-px w-0 p-0 text-left leading-[11px] [transition:width_0.3s_var(--_c-ease-standard)]',
-    // Outer message AREA: reserved whenever details aren't hidden (the `min-h-4`
-    // holds 16px even with no hint/error) so a hint-less field keeps the same
-    // height as one with a message and the layout doesn't shift when a message
-    // appears — matching the original c-message, which always reserved its
-    // min-height. The actual hint/error line (`messageLine`) fades in/out inside.
-    message:
-      'c-input__message min-h-4 px-3 text-xs leading-none text-on-surface-muted',
-    messageIcon: 'relative -top-0.5 size-4 shrink-0 fill-current',
-    // Inner hint/error line: lays out the (optional) error icon + text.
-    messageLine: 'flex items-start gap-1',
     post: 'c-input__post inline-flex items-center empty:hidden',
     pre: 'c-input__pre inline-flex items-center empty:hidden',
     required: 'text-error',
@@ -246,8 +221,6 @@ const input = tv({
     // winner so no `!important` is needed.
     root: 'c-input flex max-w-full flex-col items-stretch rounded text-left text-base text-on-surface-muted',
     slot: 'c-input__slot relative flex cursor-text items-stretch rounded-csc-md bg-transparent px-3 transition-all duration-300 ease-standard',
-    visuallyHidden:
-      'absolute m-[-1px] h-px w-px overflow-hidden border-0 p-0 whitespace-nowrap [clip:rect(0_0_0_0)]',
   },
   variants: {
     // Active state (driven by the `active` prop OR native focus, both folded
@@ -275,14 +248,7 @@ const input = tv({
       },
     },
     labelOnTop: {
-      true: { message: 'px-0', root: 'gap-1' },
-    },
-    // The message row recolours separately from the field: an invalid field
-    // with no `errorMessage` keeps showing its hint AS a hint (neutral).
-    messageError: {
-      true: {
-        message: 'text-error',
-      },
+      true: { root: 'gap-1' },
     },
     // Shadow style: the slot becomes a white, drop-shadowed box that draws a
     // primary outline on focus instead of the fieldset notch (the fieldset
@@ -304,36 +270,18 @@ interface CInputProps {
   active?: boolean;
 
   /**
-   * Disable the input
-   *
-   * @seeded from csc-ui — verify
+   * Dim the field and show the not-allowed cursor; the wrapping component
+   * disables its own input
    */
   disabled?: boolean;
-
-  /**
-   * Error message shown in place of the hint while the input is invalid
-   *
-   * @freeform
-   */
-  errorMessage?: string;
 
   /** Set by the wrapping form component when its input holds a value. */
   filled?: boolean;
 
   /**
-   * Hide the hint and error messages
-   *
-   * @seeded from csc-ui — verify
+   * Leave out the message slot (the field's hint / error message)
    */
   hideDetails?: boolean;
-
-  /**
-   * Hint text for the input
-   *
-   * @seeded from csc-ui — verify
-   * @freeform
-   */
-  hint?: string;
 
   /**
    * id of the inner input element (for the label's htmlFor).
@@ -342,67 +290,57 @@ interface CInputProps {
    */
   inputId?: string;
 
+  /**
+   * Show the control as invalid. Marking the input `aria-invalid`, and
+   * showing its error message, are the wrapping component's job.
+   */
+  invalid?: boolean;
+
   /** Renders textarea-specific spacing tweaks. */
   isTextarea?: boolean;
 
   /**
    * Label of the input
    *
-   * @seeded from csc-ui — verify
    * @freeform
    */
   label?: string;
 
   /**
    * Label on top of the input
-   *
-   * @seeded from csc-ui — verify
    */
   labelOnTop?: boolean;
 
   /**
-   * Set the input as required
-   *
-   * @seeded from csc-ui — verify
+   * Show the required asterisk after the label; the wrapping component marks
+   * its own input required
    */
   required?: boolean;
 
   /**
-   * Shadow variant of the input
-   *
-   * @seeded from csc-ui — verify
+   * Draw the field as a raised, drop-shadowed box with a focus outline
+   * instead of the outlined border and its label notch
    */
   shadow?: boolean;
 
   /** Field height: the 52px default (the shared control height) or the 36px `small` box */
   size?: CFieldSize;
-
-  /**
-   * Set the validíty of the input
-   *
-   * @seeded from csc-ui — verify
-   */
-  valid?: boolean;
 }
 
 const props = withDefaults(defineProps<CInputProps>(), {
   active: false,
   disabled: false,
-  errorMessage: '',
   filled: false,
   hideDetails: false,
-  hint: '',
   inputId: '',
+  invalid: false,
   isTextarea: false,
   label: '',
   labelOnTop: false,
   required: false,
   shadow: false,
   size: 'default',
-  valid: true,
 });
-
-const errorIconPath = mdiCloseCircle;
 
 const host = useHost();
 
@@ -411,9 +349,10 @@ const shadowRoot = useShadowRoot();
 // Resolve `hideDetails` at render time, robust to Vue's `defineCustomElement`
 // resetting the inner Boolean prop to false on re-render. Order:
 //   1. `data-hide-details` — the channel wrapper components (c-select, …)
-//      forward through. A plain `data-*` attr doesn't collide with the declared
-//      `hideDetails` prop, so Vue patches it reliably across the wrapper's
-//      re-renders (a direct `hide-details` binding gets mangled/removed).
+//      forward through, and c-dropdown overrides while its panel is open. A
+//      plain `data-*` attr doesn't collide with the declared `hideDetails`
+//      prop, so Vue patches it reliably across the wrapper's re-renders (a
+//      direct `hide-details` binding gets mangled/removed).
 //   2. the host `hide-details` attribute — direct attribute usage.
 //   3. the `hideDetails` prop — property usage.
 // Called as a function in the template so it re-reads every render rather than
@@ -441,8 +380,6 @@ const isFocused = ref(false);
 
 const isActiveResolved = computed(() => props.active || isFocused.value);
 
-const showError = computed(() => !props.valid && Boolean(props.errorMessage));
-
 // Attributes can deliver any string at runtime; unknown values fall back to
 // the default size.
 const sizeResolved = computed<CFieldSize>(() =>
@@ -453,9 +390,8 @@ const ui = computed(() =>
   input({
     active: isActiveResolved.value,
     disabled: props.disabled,
-    error: !props.valid,
+    error: props.invalid,
     labelOnTop: props.labelOnTop,
-    messageError: showError.value,
     shadow: props.shadow,
     size: sizeResolved.value,
     textarea: props.isTextarea,
@@ -483,7 +419,17 @@ const legendWidth = computed(() =>
 const measureLabel = () => {
   const el = labelInlineRef.value || labelTopRef.value;
 
-  if (el) labelWidth.value = el.scrollWidth * 0.75 + 6;
+  if (!el) return;
+
+  // The floating label's padding is room for its ink, not text.
+  const style = getComputedStyle(el);
+
+  const text =
+    el.scrollWidth -
+    parseFloat(style.paddingLeft) -
+    parseFloat(style.paddingRight);
+
+  labelWidth.value = text * 0.75 + 6;
 };
 
 // The legend/label transitions are enabled one frame AFTER mount. The mount
@@ -516,12 +462,6 @@ const measurePreSlot = () => {
 
   preSlotWidth.value = width ? width + gap : 0;
 };
-
-const messageKey = computed(() =>
-  showError.value ? `error:${props.errorMessage}` : `hint:${props.hint}`,
-);
-
-const messageVisible = computed(() => Boolean(props.hint || showError.value));
 
 let labelObserver: null | ResizeObserver = null;
 
@@ -701,20 +641,5 @@ watch(
  * compensation as above). */
 [data-size='small'] .c-input__label--floating[data-lifted] {
   transform: translateX(0) translateY(-16px) scale(0.75);
-}
-
-/* Same 200ms slide+fade transition the c-checkbox uses, so hint↔error
- * swaps animate consistently across form components. */
-.c-input-message-enter-active,
-.c-input-message-leave-active {
-  transition:
-    opacity 0.2s var(--_c-ease-standard),
-    transform 0.2s var(--_c-ease-standard);
-}
-
-.c-input-message-enter-from,
-.c-input-message-leave-to {
-  opacity: 0;
-  transform: translateY(-4px);
 }
 </style>

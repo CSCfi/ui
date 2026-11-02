@@ -40,7 +40,7 @@
     "lint": "pnpm run lint:oxlint && pnpm run lint:eslint && pnpm run lint:guards",
     "lint:oxlint": "oxlint --deny-warnings",
     "lint:eslint": "eslint --max-warnings 0 .",
-    "lint:guards": "pnpm --filter @cscfi/csc-ui run lint:guards && pnpm --filter @cscfi/csc-ui-documentation run lint:examples",
+    "lint:guards": "pnpm --filter @cscfi/csc-ui run lint:guards && pnpm --filter @cscfi/csc-ui-documentation run lint:examples && pnpm --filter @cscfi/csc-ui-documentation run lint:migration",
     "fix": "oxlint --fix; eslint --fix .; oxfmt"
   }
 }

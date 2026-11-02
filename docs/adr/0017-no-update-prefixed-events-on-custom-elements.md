@@ -4,7 +4,8 @@ Date: 2026-07-06
 
 ## Status
 
-Accepted
+Accepted. Amended by [ADR-0075](0075-events-are-lowercase-and-value-events-follow-native-timing.md):
+the grandfathered camelCase events are removed in 4.0.0.
 
 ## Context
 

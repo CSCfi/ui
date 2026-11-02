@@ -1,6 +1,7 @@
 <template>
   <div
     ref="rootRef"
+    v-bind="rootAttrs"
     :class="[ui.root(), { 'c-checkbox--disabled': disabled }]"
     class="c-checkbox"
     part="root"
@@ -10,18 +11,20 @@
          the escape-hatch never match. -->
     <input
       :id="inputId"
+      v-bind="controlAttrs"
       :aria-checked="indeterminate ? 'mixed' : isChecked"
+      :aria-describedby="hideDetails ? undefined : `${inputId}-message`"
       :checked="isChecked"
       :class="ui.input()"
       :disabled
       :indeterminate.prop
-      :name="hostName || undefined"
+      :name="name || undefined"
       :required
       type="checkbox"
       @change="onChange"
     />
 
-    <label :class="ui.label()" :for="inputId" part="label">
+    <label :class="ui.label()" :for="inputId">
       <span
         ref="rippleContainerRef"
         :class="ui.ripple()"
@@ -43,7 +46,7 @@
         <selection-indicator
           :checked="isChecked"
           :disabled
-          :error="!valid"
+          :error="invalid"
           :indeterminate
           class="c-checkbox__box absolute top-3 left-3"
           focus-halo
@@ -55,7 +58,7 @@
         :class="ui.labelContent()"
         :label
         :required
-        part="content"
+        part="label"
         tag="span"
       >
         <slot />
@@ -70,7 +73,12 @@
          200ms later the new message slides down + fades in. `:key` forces a
          re-mount whenever the message identity (hint vs error, or text
          content) changes. -->
-    <div v-if="!hideDetails" :class="ui.message()" part="message">
+    <div
+      v-if="!hideDetails"
+      :id="`${inputId}-message`"
+      :class="ui.message()"
+      part="message"
+    >
       <transition mode="out-in" name="c-checkbox-message">
         <span v-if="messageVisible" :key="messageKey" :class="ui.messageLine()">
           <svg
@@ -95,56 +103,61 @@
 
 <script setup lang="ts">
 /**
- * @slot default - Default slot for the label
+ * @slot default - The visible label of the checkbox (fallback when the `label` prop is not set)
  *
  * @csspart root - The outer wrapper containing the checkbox, label and message
- * @csspart label - The `<label>` element wrapping the indicator and the label content
+ * @csspart label - The label text or slotted label content beside the box
  * @csspart indicator - The checkbox box itself — the bordered square that fills when checked; border, fill and the keyboard focus ring (its `::before`) all draw with `currentColor`, so `color` recolours them together
  * @csspart mark - The SVG check / indeterminate glyph revealed inside the indicator; draws with `currentColor`, so `color` recolours it
- * @csspart content - Wrapper around the label text or slotted label content
  * @csspart message - The hint / error message area below the checkbox (always reserved unless `hide-details`)
  *
  * @cssstate checked - Present while the checkbox is checked
  * @cssstate indeterminate - Present while the checkbox is in the indeterminate state
- *
- * @seeded from csc-ui — verify
  */
 import { mdiCloseCircle } from '@mdi/js';
 import { tv } from 'tailwind-variants';
-import { computed, ref, useHost, useId, useTemplateRef, watch } from 'vue';
+import {
+  computed,
+  nextTick,
+  onMounted,
+  ref,
+  useHost,
+  useId,
+  useTemplateRef,
+  watch,
+} from 'vue';
 
-import { emitModelValue } from '../../shared/emitModelValue';
 import FormLabel from '../../shared/FormLabel.vue';
 import SelectionIndicator from '../../shared/SelectionIndicator.vue';
+import { useControlAttrs } from '../../shared/useControlAttrs';
 import { useHasSlot } from '../../shared/useHasSlot';
-import { useHostEmit } from '../../shared/useHostEmit';
 import { useHostStates } from '../../shared/useHostStates';
+import { useIdReferences } from '../../shared/useIdReferences';
 import { useRipple } from '../../shared/useRipple';
+import { emitModelChange } from '../../shared/valueEvents';
+
+// ARIA attributes on the element name and describe the native control;
+// every other attribute stays on the root, as Vue's fallthrough put it.
+defineOptions({ inheritAttrs: false });
+
+const { controlAttrs, rootAttrs } = useControlAttrs();
 
 /** Events dispatched by `<c-checkbox>`. */
 interface CCheckboxEvents {
   /**
-   * Standard bubbling DOM change event, re-dispatched from the host when the
-   * checkbox is toggled (the inner input's change does not cross the shadow
-   * boundary). No detail; read the new value from the host's `value` property.
-   */
-  change: void;
-
-  /**
-   * Fired when the checkbox is toggled, carrying the new value —
+   * Fired when the user toggles the checkbox, carrying the new value —
    * `trueValue` when checked, `falseValue` when unchecked.
    */
-  changeValue: boolean | number | string;
+  change: boolean | number | string;
 
   /**
    * Native bubbling input event fired on toggle so a plain Vue `v-model`
-   * works without the `v-control` directive. No detail.
+   * stays in sync. No detail.
    */
   input: void;
 
   /**
-   * v-model contract event fired on toggle, carrying the new value —
-   * `trueValue` when checked, `falseValue` when unchecked.
+   * Fired alongside `change` with the same detail — the `v-model` contract.
    */
   'update:value': boolean | number | string;
 }
@@ -249,16 +262,15 @@ const errorIconPath = mdiCloseCircle;
 
 interface CCheckboxProps {
   /**
-   * If `true`, the checkbox is selected.
-   *
-   * @seeded from csc-ui — verify
+   * Whether the checkbox is on: the boolean view of `value`. Setting it sets
+   * `value` to `trueValue` or `falseValue`; reading it reports whether
+   * `value` equals `trueValue`. As an attribute it sets the initial state when
+   * no `value` is bound.
    */
   checked?: boolean;
 
   /**
    * Disable the checkbox
-   *
-   * @seeded from csc-ui — verify
    */
   disabled?: boolean;
 
@@ -271,86 +283,70 @@ interface CCheckboxProps {
 
   /**
    * The value when the checkbox is unchecked
-   *
-   * @seeded from csc-ui — verify
    */
   falseValue?: boolean | number | string;
 
   /**
    * Hide the hint and error messages
-   *
-   * @seeded from csc-ui — verify
    */
   hideDetails?: boolean;
 
   /**
-   * Hint text for the input
+   * Hint text for the checkbox
    *
-   * @seeded from csc-ui — verify
    * @freeform
    */
   hint?: string;
 
   /**
-   * Id of the element
-   *
-   * @seeded from csc-ui — verify
-   * @freeform
-   */
-  hostId?: string;
-
-  /**
-   * Name of the input
-   * - Only used when the checkbox participates in a native `<form>`
-   *
-   * @seeded from csc-ui — verify
-   * @freeform
-   */
-  hostName?: string;
-
-  /**
-   * Indeterminate state
-   *
-   * @seeded from csc-ui — verify
+   * Show the mixed state, a bar in place of the check, for a parent checkbox
+   * whose options are partly checked. It wins over `checked`; a click or Space
+   * clears it and toggles the state, as on a native checkbox
    */
   indeterminate?: boolean;
 
   /**
-   * Element label
+   * Show the control as invalid: its `error-message`, when set, replaces the
+   * hint, and the control is marked `aria-invalid`.
+   */
+  invalid?: boolean;
+
+  /**
+   * Label of the checkbox, shown beside the box. Falls back to the default
+   * slot content when not set.
    *
-   * @seeded from csc-ui — verify
    * @freeform
    */
   label?: string;
 
   /**
-   * Set as required
+   * `name` of the inner checkbox input. The component is not
+   * form-associated, so it does not submit with a `<form>`.
    *
-   * @seeded from csc-ui — verify
+   * @freeform
+   */
+  name?: string;
+
+  /**
+   * Set as required — shows the required marker on the label
    */
   required?: boolean;
 
   /**
    * The value when the checkbox is checked
-   *
-   * @seeded from csc-ui — verify
    */
   trueValue?: boolean | number | string;
 
   /**
-   * Set the validity of the input
-   *
-   * @seeded from csc-ui — verify
+   * The checkbox's state: `trueValue` while it is on, `falseValue` while it is
+   * off. A bound value wins over a `checked` attribute; any other value,
+   * `''` included, reads as off.
    */
-  valid?: boolean;
-
-  /**
-   * The input value
-   * - Only used when the checkbox participates in a native `<form>`
-   *
-   * @seeded from csc-ui — verify
-   */
-  value?: boolean | number | string;
+  // Not sorted: Vue reads `''` as `true` for a prop whose runtime types list
+  // Boolean before String, and `''` is what a plain Vue `v-model` writes for
+  // an empty model.
+  // oxlint-disable-next-line perfectionist/sort-union-types
+  value?: string | number | boolean;
 }
 
 const props = withDefaults(defineProps<CCheckboxProps>(), {
@@ -360,35 +356,26 @@ const props = withDefaults(defineProps<CCheckboxProps>(), {
   falseValue: false,
   hideDetails: false,
   hint: '',
-  hostId: '',
-  hostName: '',
   indeterminate: false,
+  invalid: false,
   label: '',
+  name: '',
   required: false,
   trueValue: true,
-  valid: true,
-  value: false,
+  value: undefined,
 });
 
-const showError = computed(() => !props.valid && Boolean(props.errorMessage));
+const showError = computed(() => props.invalid && Boolean(props.errorMessage));
 
 const ui = computed(() =>
   checkbox({
     disabled: props.disabled,
-    error: !props.valid,
+    error: props.invalid,
     messageError: showError.value,
   }),
 );
 
-// Event emissions are dispatched directly on the host as CustomEvents
-// with `detail` set to the raw value. Vue's own `emit()` for
-// defineCustomElement wraps every emit's args into `detail: [...args]`
-// (always an array), which breaks consumers like the `v-control`
-// directive that do `el.value = event.detail`. Manual dispatch keeps
-// `detail` as the bare value, matching the Stencil component's behaviour.
 const host = useHost();
-
-const emit = useHostEmit<CCheckboxEvents>();
 
 const rootRef = useTemplateRef<HTMLElement>('rootRef');
 
@@ -408,7 +395,7 @@ const { ripples, spawn: spawnRipple } = useRipple({
 
 const autoId = useId();
 
-const inputId = computed(() => props.hostId || autoId);
+const inputId = computed(() => autoId);
 
 // The Transition's `:key` swaps the element when message identity
 // changes (hint↔error or text changes), triggering the slide animation.
@@ -418,7 +405,21 @@ const messageKey = computed(() =>
 
 const messageVisible = computed(() => Boolean(props.hint || showError.value));
 
-const internalChecked = ref(props.checked || props.value === props.trueValue);
+// One state, two views (decisions #34): `value` is the state, `checked` its
+// boolean view. A bound `value` wins; without one, `checked` seeds. Setting
+// either view updates the other on the host, without a value event — only a
+// toggle emits.
+type CheckboxStateHost = {
+  checked?: boolean;
+  indeterminate?: boolean;
+  value?: CCheckboxProps['value'];
+} & HTMLElement;
+
+const isOn = (v: unknown) => v === props.trueValue;
+
+const internalChecked = ref(
+  props.value === undefined ? props.checked : isOn(props.value),
+);
 
 const isChecked = computed(() => internalChecked.value);
 
@@ -434,10 +435,40 @@ watch(
   { immediate: true },
 );
 
+// The views are reconciled on the next tick, from the state the latest
+// change left: a host prop set inside a watcher re-renders the element while
+// it is still patching (the next prop write is then dropped), and a callback
+// holding the state from before a later write would undo it — React sets
+// `checked` only after the element has mounted.
+let syncQueued = false;
+
+const syncViews = () => {
+  if (syncQueued) return;
+  syncQueued = true;
+
+  void nextTick(() => {
+    syncQueued = false;
+
+    if (!host) return;
+
+    const state = host as CheckboxStateHost;
+
+    const on = internalChecked.value;
+
+    // The raw property, not the prop: a `checked` attribute reads back `''`.
+    if (state.checked !== on) state.checked = on;
+
+    if (props.value === undefined || isOn(props.value) !== on) {
+      state.value = on ? props.trueValue : props.falseValue;
+    }
+  });
+};
+
 watch(
   () => props.value,
   (v) => {
-    internalChecked.value = v === props.trueValue;
+    internalChecked.value = isOn(v);
+    syncViews();
   },
 );
 
@@ -445,24 +476,45 @@ watch(
   () => props.checked,
   (c) => {
     internalChecked.value = c;
+    syncViews();
   },
 );
+
+// Both views agree from the start: without a bound value the seeded state
+// reads back through `value`, and `checked` reports a bound one.
+onMounted(syncViews);
 
 const onChange = (_event: Event) => {
   if (props.disabled) return;
   spawnRipple();
   internalChecked.value = !internalChecked.value;
 
+  // The toggle ends the mixed state before the value events fire, as on a
+  // native checkbox; the page can set it again.
+  if (props.indeterminate && host) {
+    (host as CheckboxStateHost).indeterminate = false;
+  }
+
   const nextValue = internalChecked.value ? props.trueValue : props.falseValue;
-  // Emits changeValue/update:value + native `input` (so a plain `v-model` works
-  // without `v-control`) and mirrors `value` onto the host. The value watch
-  // above is visuals-only, so writing the property doesn't loop.
-  emitModelValue(host, nextValue);
-  // Standard DOM change for non-Vue consumers; re-dispatched from the
-  // host because the inner <input>'s native change event doesn't escape
-  // the shadow root (composed: false by default).
-  emit('change', undefined, { bubbles: true, composed: true });
+  // A toggle is its own commit. The value watch above is visuals-only, so the
+  // host `value` mirror doesn't loop.
+  emitModelChange(host, nextValue satisfies CCheckboxEvents['change']);
 };
+
+// The page's id references on the element reach the element carrying its role.
+useIdReferences('input');
+
+/**
+ * Focus its checkbox, as `focus()` does on a native control: the element renders
+ * no box of its own to take it.
+ *
+ * @param options - Passed on to that element's `focus()`
+ */
+const focus = (options?: FocusOptions): void => {
+  host?.shadowRoot?.querySelector('input')?.focus(options);
+};
+
+defineExpose({ focus });
 </script>
 
 <!--

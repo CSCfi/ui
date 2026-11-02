@@ -4,7 +4,8 @@ Date: 2026-07-09
 
 ## Status
 
-Accepted
+Superseded by [ADR-0075](0075-events-are-lowercase-and-value-events-follow-native-timing.md):
+4.0.0 removes the camelCase events, so no twins remain.
 
 Amends [ADR-0017](0017-no-update-prefixed-events-on-custom-elements.md)
 

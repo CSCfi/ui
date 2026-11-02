@@ -201,6 +201,10 @@ const analyzeComponent = (tagName) => {
     docTags,
     events: scriptApi.events,
     hasEventMap: scriptApi.hasEventMap,
+    // `@internal` in the docblock: a tag only another component instantiates
+    // (c-select's c-dropdown). Registered and tested like any tag, but named
+    // in the manifest's `csc.internalTags` instead of described (ADR-0075).
+    internal: docTags.some((t) => t.tag === 'internal'),
     methods: scriptApi.methods,
     modulePath: path.relative(packageRoot, sfcPath),
     ownedTypes,
@@ -259,8 +263,18 @@ const documented = { events: 0, props: 0, totalEvents: 0, totalProps: 0 };
 
 let seededCount = 0;
 
+// Under --only this holds at most the one tag, so the "@subcomponents names
+// an internal tag" check is complete only in a full run (the build's).
+const internalTags = new Set(
+  components.filter((c) => c.internal).map((c) => c.tagName),
+);
+
 for (const component of components) {
-  const { errors, warnings } = lintComponent(component, knownTags);
+  const { errors, warnings } = lintComponent(
+    component,
+    knownTags,
+    internalTags,
+  );
 
   errorCount += errors.length;
   warningCount += warnings.length;
@@ -369,7 +383,7 @@ if (!only) {
   }
 
   console.log(
-    `\ncustom-elements.json: ${components.length} components, ${sharedTypes.length} shared types, ${publicTypes.length - sharedTypes.length} component-owned types`,
+    `\ncustom-elements.json: ${components.length - internalTags.size} components (+ ${internalTags.size} internal), ${sharedTypes.length} shared types, ${publicTypes.length - sharedTypes.length} component-owned types`,
   );
 }
 

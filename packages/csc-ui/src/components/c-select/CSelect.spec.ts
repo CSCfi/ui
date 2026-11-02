@@ -21,7 +21,7 @@ import {
   settled,
 } from '../../test/harness';
 
-type SelectHost = { reset(): void; value: unknown } & HTMLElement;
+type SelectHost = { value: unknown } & HTMLElement;
 
 const option = (value: string, name: string, extra = ''): string =>
   `<c-option name="${name}" value="${value}"${extra}>${name}</c-option>`;
@@ -33,7 +33,7 @@ const COUNTRIES = [
   option('dk', 'Denmark'),
 ].join('');
 
-const VALUE_EVENTS = ['changeValue', 'change-value', 'update:value'] as const;
+const VALUE_EVENTS = ['change', 'update:value'] as const;
 
 const mountSelect = (props: Record<string, unknown> = {}, html = COUNTRIES) =>
   mount<SelectHost>('c-select', {
@@ -176,7 +176,7 @@ describe('single mode', () => {
     expect(escape(), 'Escape passes through while closed').toBe(true);
   });
 
-  it('the clear button and reset() empty the value and emit null once', async () => {
+  it('the clear button empties the value and emits null once', async () => {
     const m = await mountSelect({ clearable: true, value: 'se' });
 
     const events = recordEvents(m.host, VALUE_EVENTS);
@@ -188,32 +188,62 @@ describe('single mode', () => {
 
     expect(events.of('update:value').map((r) => r.detail)).toEqual([null]);
     expect(combobox(m).value).toBe('');
-
-    events.clear();
-    m.host.value = 'no';
-    await settle();
-    m.host.reset();
-    await settle();
-
-    expect(events.of('update:value').map((r) => r.detail)).toEqual([null]);
+    expect('reset' in m.host).toBe(false);
   });
+});
 
-  it.fails('does not emit when a slotted <c-option selected> seeds the value at mount (pinned deviation)', async () => {
+describe('<c-option selected>', () => {
+  const mountWithSelected = async (value?: unknown) => {
     defineAll();
 
-    const host = document.createElement('c-select');
+    const host = document.createElement('c-select') as SelectHost;
 
     host.innerHTML = [
       option('fi', 'Finland'),
       option('se', 'Sweden', ' selected'),
     ].join('');
 
-    const events = recordEvents(host, VALUE_EVENTS);
+    if (value !== undefined) host.value = value;
+
+    const events = recordEvents(host, [...VALUE_EVENTS, 'input']);
 
     document.body.append(host);
     await settle(60);
 
+    return { events, host };
+  };
+
+  it('seeds the value silently at mount', async () => {
+    const { events, host } = await mountWithSelected();
+
+    expect(host.value).toBe('se');
     expect(events.records).toEqual([]);
+
+    host.remove();
+  });
+
+  it('never overrides a value that is already set', async () => {
+    const { events, host } = await mountWithSelected('fi');
+
+    expect(host.value).toBe('fi');
+    expect(events.records).toEqual([]);
+
+    host.remove();
+  });
+
+  it('seeds once: a later change to the options does not re-seed a cleared value', async () => {
+    const { events, host } = await mountWithSelected();
+
+    host.value = null;
+    await settle();
+
+    host.insertAdjacentHTML('beforeend', option('no', 'Norway', ' selected'));
+    await settle(60);
+
+    expect(host.value).toBeNull();
+    expect(events.records).toEqual([]);
+
+    host.remove();
   });
 });
 
@@ -714,5 +744,18 @@ describe('page typography (CONTEXT.md, ADR-0072)', () => {
     expect(getComputedStyle(rows(m)[0]!).fontFamily).toBe(
       '"Page Probe", monospace',
     );
+  });
+});
+
+describe('value attribute', () => {
+  it('a value attribute in markup selects the option', async () => {
+    const m = await mount<SelectHost>('c-select', {
+      attrs: { label: 'Country', value: 'se' },
+      html: COUNTRIES,
+    });
+    await settle();
+
+    expect(m.host.value).toBe('se');
+    expect(combobox(m).value).toBe('Sweden');
   });
 });

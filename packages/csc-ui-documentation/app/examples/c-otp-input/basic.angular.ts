@@ -10,13 +10,13 @@ import { Component, CUSTOM_ELEMENTS_SCHEMA, signal } from '@angular/core';
       <c-otp-input
         label="OTP"
         hint="Enter the 6-digit code we sent you"
-        (changeValue)="code.set($any($event).detail)"
+        (input)="code.set($any($event.target).value)"
       ></c-otp-input>
 
-      <p>Code: {{ code() ?? 'incomplete' }}</p>
+      <p>Code: {{ code() }}</p>
     </div>
   `,
 })
 export class BasicExampleComponent {
-  code = signal<null | string>(null);
+  code = signal('');
 }

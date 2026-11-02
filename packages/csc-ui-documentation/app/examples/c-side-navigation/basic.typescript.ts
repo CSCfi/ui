@@ -22,14 +22,8 @@ const setCurrent = (value: string) => {
   archivedProjects!.active = value === 'archived';
 };
 
-dashboardItem!.addEventListener('itemChange', () => setCurrent('dashboard'));
+dashboardItem!.addEventListener('select', () => setCurrent('dashboard'));
 
-activeProjects!.addEventListener('click', () => setCurrent('active'));
-activeProjects!.addEventListener('keyup', (event) => {
-  if (event.key === 'Enter') setCurrent('active');
-});
+activeProjects!.addEventListener('select', () => setCurrent('active'));
 
-archivedProjects!.addEventListener('click', () => setCurrent('archived'));
-archivedProjects!.addEventListener('keyup', (event) => {
-  if (event.key === 'Enter') setCurrent('archived');
-});
+archivedProjects!.addEventListener('select', () => setCurrent('archived'));

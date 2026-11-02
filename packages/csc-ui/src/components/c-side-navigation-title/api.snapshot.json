@@ -6,7 +6,7 @@
   "methods": {},
   "parts": [
     "divider-root",
-    "label",
+    "heading",
     "root"
   ],
   "propertyOnly": [],

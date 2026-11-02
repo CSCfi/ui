@@ -8,23 +8,63 @@ import { createApp, h, ref, vModelText, withDirectives } from 'vue';
 
 import type { Mounted } from '../harness';
 
-import { VALUE_TAGS } from '../../tag-name-map';
-import { defineAll, mount, recordEvents, settle, wrap } from '../harness';
+import { INTERNAL_EVENTS, VALUE_TAGS } from '../../tag-name-map';
+import {
+  deepActiveElement,
+  defineAll,
+  mount,
+  recordEvents,
+  settle,
+  wrap,
+} from '../harness';
 import {
   KNOWN_DOUBLE_EMITTERS,
-  KNOWN_EMPTY_VALUE_CHECKED,
   KNOWN_PROGRAMMATIC_EMITTERS,
+  NOT_FORM_CONTROLS,
   VALUE_RECIPES,
 } from './kinds';
 
-const HOST_EVENTS = [
-  'changeValue',
-  'change-value',
-  'change',
-  'update:value',
-] as const;
+const HOST_EVENTS = ['change', 'update:value'] as const;
+
+type Described = {
+  ariaDescribedByElements?: null | readonly Element[];
+} & Element;
+
+type DescribedHost = {
+  errorMessage?: string;
+  hint?: string;
+  invalid?: boolean;
+} & HTMLElement;
 
 type ValueHost = { value?: unknown } & HTMLElement;
+
+/** What can carry an accessible object: a native control, or a role. */
+const ROLE_BEARING = 'button, input, textarea, [role]';
+
+const deepElements = (root: ShadowRoot): Element[] =>
+  [...root.querySelectorAll('*')].flatMap((el) => [
+    el,
+    ...(el.shadowRoot ? deepElements(el.shadowRoot) : []),
+  ]);
+
+/** Whether `el` is in `host`'s light or shadow tree, at any depth. */
+const inside = (host: Element, el: Element): boolean => {
+  for (let node: Node | null = el; node;) {
+    if (node === host) return true;
+
+    node =
+      node.parentNode instanceof ShadowRoot
+        ? node.parentNode.host
+        : node.parentNode;
+  }
+
+  return false;
+};
+
+/** An element's text, its shadow tree's included (c-message draws its own). */
+const textOf = (el: Element): string =>
+  (el.textContent ?? '') +
+  (el.shadowRoot ? deepElements(el.shadowRoot).map(textOf).join('') : '');
 
 /** A value control's own `input` (the native inner input's twin is `composed`). */
 const libraryInput = (r: { composed: boolean }): boolean => !r.composed;
@@ -70,8 +110,12 @@ describe.each(VALUE_TAGS)('%s', (tag) => {
 
     const inputs = recordEvents(document.body, ['input']);
 
+    const wiring = recordEvents(document, INTERNAL_EVENTS);
+
     await recipe.interact(m);
     await settle(60);
+
+    expect(wiring.names(), 'internal events reaching the page').toEqual([]);
 
     const updates = host.of('update:value');
 
@@ -92,29 +136,60 @@ describe.each(VALUE_TAGS)('%s', (tag) => {
       expect(detail).toEqual(recipe.expected);
     }
 
-    const libraryInputs = inputs.of('input', libraryInput);
+    // Only the control's own `input` reaches the page: a native one from its
+    // shadow tree stops at the shadow root.
+    const libraryInputs = inputs.of('input');
 
-    expect(libraryInputs).toHaveLength(expectedCount);
+    expect(libraryInputs, 'input events reaching the page').toHaveLength(
+      expectedCount,
+    );
+    expect(libraryInputs.every(libraryInput)).toBe(true);
     expect(libraryInputs[0].bubbles).toBe(true);
 
-    const settledAt =
-      recipe.valueSettledAt === 'input' ? libraryInputs[0] : updates[0];
+    expect(updates[0].targetValue, 'host.value at dispatch').toEqual(detail);
+    expect(libraryInputs[0].targetValue, 'host.value at input').toEqual(detail);
 
-    expect(settledAt.targetValue, 'host.value at dispatch').toEqual(detail);
+    // Typed text commits later: the interaction alone fires no `change`.
+    if (recipe.commit) {
+      expect(host.of('change'), 'change before the commit').toHaveLength(0);
 
-    if (recipe.family === 'change') {
-      const changes = host.of('change');
+      await recipe.commit(m);
+      await settle(60);
 
-      expect(changes).toHaveLength(expectedCount);
-      expect(changes[0].detail).toEqual(detail);
-      expect(host.of('changeValue')).toHaveLength(0);
-    } else {
-      expect(host.of('changeValue')).toHaveLength(expectedCount);
-      expect(host.of('change-value')).toHaveLength(expectedCount);
-      expect(host.of('changeValue')[0].detail).toEqual(detail);
-      expect(host.of('change-value')[0].detail).toEqual(detail);
+      expect(inputs.of('input'), 'input after the commit').toHaveLength(
+        expectedCount,
+      );
     }
+
+    const changes = host.of('change');
+
+    expect(changes, 'change dispatches').toHaveLength(expectedCount);
+    expect(changes[0].detail).toEqual(detail);
+    expect(changes[0].bubbles, 'change bubbles').toBe(false);
+    expect(
+      host.of('update:value'),
+      'update:value after the commit',
+    ).toHaveLength(expectedCount);
   });
+
+  it.runIf(recipe.commit)(
+    'a commit with nothing changed since the last one fires no change',
+    async () => {
+      const m = await mount<ValueHost>(tag, recipe.mount);
+
+      await recipe.interact(m);
+      await recipe.commit!(m);
+      await settle(60);
+
+      const host = recordEvents(m.host, HOST_EVENTS);
+
+      m.shadow('input').focus();
+      await recipe.commit!(m);
+      await settle(60);
+
+      expect(host.names()).toEqual([]);
+    },
+  );
 
   it.runIf(recipe.emptyAware)(
     'treats an empty string and null as no value',
@@ -144,20 +219,131 @@ describe.each(VALUE_TAGS)('%s', (tag) => {
     },
   );
 
-  it.runIf(KNOWN_EMPTY_VALUE_CHECKED.includes(tag))(
-    'an empty-string value mounts the control checked (known deviation)',
+  // The field's input is in its shadow root, so the host's `aria-label` is
+  // the only name a field without a visible label can get. Beside a `label`
+  // the visible text names the input (WCAG 2.5.3, label in name), and the
+  // `aria-label` names nothing.
+  it.runIf(recipe.emptyAware)(
+    'a host aria-label names the input only without a visible label',
     async () => {
+      const { label: _label, ...props } = recipe.mount.props ?? {};
+
+      for (const label of [undefined, 'Visible label']) {
+        const m = await mount(tag, {
+          ...recipe.mount,
+          attrs: { ...recipe.mount.attrs, 'aria-label': 'Probe name' },
+          props: label ? { ...props, label } : props,
+        });
+
+        const named = (root: ShadowRoot): Element[] =>
+          [...root.querySelectorAll('*')].flatMap((el) => [
+            ...(el.getAttribute('aria-label') === 'Probe name' ? [el] : []),
+            ...(el.shadowRoot ? named(el.shadowRoot) : []),
+          ]);
+
+        const control = m.host.shadowRoot!.querySelector(
+          '[role="combobox"], input:not([type="hidden"]), textarea',
+        );
+
+        expect(named(m.host.shadowRoot!), `with label ${label}`).toEqual(
+          label ? [] : [control],
+        );
+
+        if (label) {
+          expect(control?.getAttribute('aria-label')).toContain(label);
+        }
+
+        m.unmount();
+      }
+    },
+  );
+
+  // An app moves focus to a form control (the first invalid one after a
+  // failed submit) with the element's focus(). The host renders no box of
+  // its own, so the control inside must take it.
+  it.skipIf(NOT_FORM_CONTROLS.includes(tag))(
+    'focus() focuses its control, also once the element is re-added',
+    async () => {
+      const m = await mount(tag, recipe.mount);
+
+      const parent = m.host.parentNode!;
+
+      // Once mounted, and again after the element leaves the page and comes
+      // back with a new component instance (KeepAlive, a moved list item).
+      for (const pass of ['mounted', 're-added']) {
+        await settle();
+        (deepActiveElement() as HTMLElement | null)?.blur();
+
+        m.host.focus();
+        await settle();
+
+        const active = deepActiveElement();
+
+        expect(
+          active?.matches(ROLE_BEARING),
+          `${pass}: ${active?.localName}`,
+        ).toBe(true);
+        expect(inside(m.host, active!), pass).toBe(true);
+
+        m.host.remove();
+        await settle(100);
+        parent.append(m.host);
+      }
+    },
+  );
+
+  // A screen reader reads a hint or an error message with the control only
+  // when the control is described by it (aria-describedby): text beside the
+  // control, unlinked, is never announced on focus.
+  it('describes its control with the hint, and with the error message while invalid', async ({
+    skip,
+  }) => {
+    const m = await mount<DescribedHost>(tag, recipe.mount);
+
+    // Value controls without hint text (c-switch, c-slider, …) have nothing
+    // to link.
+    if (!Object.getOwnPropertyDescriptor(m.host, 'hint')?.get) skip();
+
+    const described = (text: string): Element[] =>
+      deepElements(m.host.shadowRoot!).filter(
+        (el) =>
+          el.matches(ROLE_BEARING) &&
+          [...((el as Described).ariaDescribedByElements ?? [])].some((d) =>
+            textOf(d).includes(text),
+          ),
+      );
+
+    m.host.hint = 'Probe hint';
+    await settle(300);
+
+    expect(described('Probe hint')).not.toEqual([]);
+
+    m.host.errorMessage = 'Probe error';
+    m.host.invalid = true;
+    await settle(300);
+
+    expect(described('Probe error')).not.toEqual([]);
+  });
+
+  // Vue reads `''` as `true` for a prop whose runtime types list Boolean
+  // before String, and `''` is what a plain `v-model` writes for an empty
+  // model (CONTEXT.md "Value control": '' reads as empty).
+  it.runIf(typeof recipe.expected === 'boolean')(
+    'reads an empty-string value as unchecked',
+    async ({ skip }) => {
       const m = await mount<ValueHost>(tag, recipe.mount);
 
-      expect(m.host.matches(':state(checked)')).toBe(false);
+      // Only the controls with a `checked` view (c-modal's value is a boolean
+      // too, but it is open or closed).
+      if (!('checked' in m.host)) skip();
+
+      m.host.value = true;
+      await settle();
+      expect(m.host.matches(':state(checked)')).toBe(true);
 
       m.host.value = '';
       await settle();
-
-      expect(
-        m.host.matches(':state(checked)'),
-        'deviation fixed — remove the tag from KNOWN_EMPTY_VALUE_CHECKED',
-      ).toBe(true);
+      expect(m.host.matches(':state(checked)')).toBe(false);
     },
   );
 

@@ -1,8 +1,10 @@
 <template>
   <div
+    ref="groupRef"
+    v-bind="controlAttrs"
     :aria-labelledby="label ? labelId : undefined"
     :class="ui.wrapper()"
-    :role="label ? 'group' : undefined"
+    :role="grouped() ? 'group' : undefined"
   >
     <form-label
       v-if="label"
@@ -30,7 +32,20 @@
 </template>
 
 <script lang="ts">
-export interface CButtonGroupProps {
+/**
+ * Size of the button group. `small` renders a more compact control; the size
+ * is also propagated to every slotted `<c-button>`. Omitting the attribute
+ * renders the default size.
+ */
+export type CButtonGroupSize = 'default' | 'small';
+
+/**
+ * Selection value of the group: a single button value (or index) — `null`
+ * when nothing is selected — or, in `multiple` mode, an array of them.
+ */
+export type CButtonGroupValue = (number | string)[] | null | number | string;
+
+interface CButtonGroupProps {
   /** Disable the whole group — every slotted c-button is disabled and the selection can no longer be changed. */
   disabled?: boolean;
 
@@ -73,19 +88,6 @@ export interface CButtonGroupProps {
    */
   value?: CButtonGroupValue;
 }
-
-/**
- * Size of the button group. `small` renders a more compact control; the size
- * is also propagated to every slotted `<c-button>`. Omitting the attribute
- * renders the default size.
- */
-export type CButtonGroupSize = 'default' | 'small';
-
-/**
- * Selection value of the group: a single button value (or index) — `null`
- * when nothing is selected — or, in `multiple` mode, an array of them.
- */
-export type CButtonGroupValue = (number | string)[] | null | number | string;
 </script>
 
 <script setup lang="ts">
@@ -107,8 +109,10 @@ import {
 } from 'vue';
 
 import { coerceBoolean } from '../../shared/coerceBoolean';
-import { emitModelChange } from '../../shared/emitModelValue';
 import FormLabel from '../../shared/FormLabel.vue';
+import { useControlAttrs } from '../../shared/useControlAttrs';
+import { useIdReferences } from '../../shared/useIdReferences';
+import { emitModelChange } from '../../shared/valueEvents';
 
 /** Events dispatched by `<c-button-group>`. */
 interface CButtonGroupEvents {
@@ -217,6 +221,16 @@ const props = withDefaults(defineProps<CButtonGroupProps>(), {
 
 const host = useHost();
 
+const { controlAttrs } = useControlAttrs();
+
+// A group takes its role once something names it: the label, or the page's
+// `aria-label` or `aria-labelledby` on the element (read at render, and
+// defineElement re-renders on an id-reference change).
+const grouped = () =>
+  !!props.label ||
+  !!controlAttrs.value['aria-label'] ||
+  !!host?.hasAttribute('aria-labelledby');
+
 const autoId = useId();
 
 const labelId = `${autoId}-label`;
@@ -231,6 +245,8 @@ const ui = computed(() =>
     size: props.size in sizeVariants ? props.size : 'default',
   }),
 );
+
+const groupRef = useTemplateRef<HTMLElement>('groupRef');
 
 const rootRef = useTemplateRef<HTMLElement>('rootRef');
 
@@ -436,10 +452,10 @@ const setupButtons = () => {
 
 // Commit a user-driven selection: update the internal mirror and visuals
 // immediately, then hand off to emitModelChange (host `value` mirror +
-// `change`/`update:value`/native `input`, the new-style triple — this
-// component has no grandfathered `changeValue`). Emission lives here — on
-// interaction only — never in the `props.value` watch, so parent/programmatic
-// value changes don't echo back as events (which would loop with v-model).
+// `update:value`/native `input`/`change` — a pick is its own commit).
+// Emission lives here — on interaction only — never in the `props.value`
+// watch, so parent/programmatic value changes don't echo back as events
+// (which would loop with v-model).
 const commitValue = (resolved: CButtonGroupEvents['change']) => {
   internalValue.value = resolved;
   applyActive(resolved);
@@ -587,4 +603,22 @@ onBeforeUnmount(() => {
   contentObserver = null;
   cancelAnimationFrame(measureFrame);
 });
+
+// The page's id references on the element reach the element carrying its role.
+useIdReferences(() => groupRef.value);
+
+/**
+ * Focus its tab stop: the selected button, else the first enabled one, as `focus()` does on a native control: the element renders
+ * no box of its own to take it.
+ *
+ * @param options - Passed on to that element's `focus()`
+ */
+const focus = (options?: FocusOptions): void => {
+  buttons()
+    .map(nativeControlOf)
+    .find((control) => control?.tabIndex === 0)
+    ?.focus(options);
+};
+
+defineExpose({ focus });
 </script>

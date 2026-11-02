@@ -65,6 +65,7 @@ group that wraps on a laptop wants `c-select`.
 ## Accessibility
 
 Setting `label` names the group for assistive technology (`role="group"` +
-`aria-labelledby`) as well as visually. Each button carries `aria-pressed`
+`aria-labelledby`) as well as visually; without one, `aria-label` or
+`aria-labelledby` on the element names the group. Each button carries `aria-pressed`
 for its active state. Buttons are reachable with the arrow keys once the
 group has focus.

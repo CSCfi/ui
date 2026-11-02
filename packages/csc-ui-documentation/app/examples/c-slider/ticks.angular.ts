@@ -16,8 +16,7 @@ import { Component, CUSTOM_ELEMENTS_SCHEMA, signal } from '@angular/core';
         segments="8"
         step="1"
         ticks
-        unit=""
-        (changeValue)="cores.set($any($event).detail)"
+        (input)="cores.set($any($event.target).value)"
       ></c-slider>
     </div>
   `,

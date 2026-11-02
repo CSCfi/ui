@@ -28,8 +28,9 @@ export class CustomCellsExampleComponent {
       key: 'status',
     },
     {
-      cell: ({ value }) =>
+      cell: ({ row, value }) =>
         h('c-progress-bar', {
+          'aria-label': `Usage of ${String(row.name)}`,
           style: 'width: 160px',
           value: Math.round((value as number) * 100),
         }),
@@ -50,7 +51,7 @@ export class CustomCellsExampleComponent {
           },
           'Open',
         ),
-      header: '',
+      header: 'Actions',
       key: 'actions',
     },
   ];

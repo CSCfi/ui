@@ -1,0 +1,2 @@
+# The 3.x docs archive is generated (scripts/build-v3-archive.mjs).
+packages/csc-ui-documentation/public/v3/** -diff linguist-generated

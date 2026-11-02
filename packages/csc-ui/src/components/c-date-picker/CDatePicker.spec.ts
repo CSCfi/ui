@@ -107,6 +107,26 @@ describe('typing', () => {
     expect(events.of('change')).toHaveLength(1);
   });
 
+  // A native `input` is composed: each keystroke's used to reach the page,
+  // though the value changes only on commit.
+  it('sends one input, on the commit, and none while typing', async () => {
+    const m = await mountPicker();
+
+    const page = recordEvents(document.body, ['input']);
+
+    const [input] = inputs(m);
+
+    await type(input, '1.9.2031');
+
+    expect(page.records).toHaveLength(0);
+
+    await userEvent.keyboard('{Enter}');
+    await settle();
+
+    expect(page.records).toHaveLength(1);
+    expect(page.records[0].composed).toBe(false);
+  });
+
   it('inserts the format separators while typing (ADR-0059)', async () => {
     const m = await mountPicker({ format: 'd.M.yyyy' });
 
@@ -242,6 +262,12 @@ describe('typing', () => {
 });
 
 describe('opening', () => {
+  it('tells assistive technology the calendar button opens a dialog', async () => {
+    const m = await mountPicker({ value: '2031-09-15' });
+
+    expect(calendarButton(m).getAttribute('aria-haspopup')).toBe('dialog');
+  });
+
   it('opens from the calendar button and from Alt+ArrowDown, never from a click in the text', async () => {
     const m = await mountPicker({ value: '2031-09-15' });
 
@@ -659,7 +685,12 @@ describe('range', () => {
     await userEvent.keyboard('{Enter}');
     await settle();
 
-    expect(events.last()?.type).toBe('update:value');
+    // A commit ends with its `change`, after `update:value` (native order).
+    expect(events.last()?.type).toBe('change');
+    expect(events.last()?.detail).toEqual({
+      end: '2031-09-20',
+      start: '2031-09-01',
+    });
     expect(m.host.value).toEqual({ end: '2031-09-20', start: '2031-09-01' });
     expect([start.value, end.value]).toEqual(['01.09.2031', '20.09.2031']);
   });
@@ -990,6 +1021,9 @@ describe('focus ring', () => {
 
 describe('motion', () => {
   // The browser context emulates reduced motion; these specs opt back in.
+  // Every animation is held at its start: the specs inspect a slide a frame
+  // or two after it begins, and on a loaded runner (WebKit in CI) two frames
+  // outlasted the 250ms slide. `finishAnimations` ends them.
   const allowMotion = () => {
     const real = window.matchMedia.bind(window);
 
@@ -998,6 +1032,19 @@ describe('motion', () => {
         ? ({ ...real(query), matches: false } as MediaQueryList)
         : real(query),
     );
+
+    const animate = Element.prototype.animate;
+
+    vi.spyOn(Element.prototype, 'animate').mockImplementation(function (
+      this: Element,
+      ...args: Parameters<Element['animate']>
+    ) {
+      const animation = animate.apply(this, args);
+
+      animation.pause();
+
+      return animation;
+    });
   };
 
   afterEach(() => vi.restoreAllMocks());

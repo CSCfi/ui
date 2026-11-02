@@ -3,22 +3,22 @@
     "checked": "boolean = false",
     "disabled": "boolean = false",
     "false-value": "boolean | number | string = false",
-    "host-id": "string = ''",
     "label": "string = ''",
     "loading": "boolean = false",
     "required": "boolean = false",
     "true-value": "boolean | number | string = true",
-    "value": "boolean | number | string = false"
+    "value": "string | number | boolean"
   },
   "cssProperties": [],
   "defaultable": [],
   "events": {
-    "change": "CustomEvent<void>",
-    "changeValue": "CustomEvent<boolean | number | string>",
+    "change": "CustomEvent<boolean | number | string>",
     "input": "CustomEvent<void>",
     "update:value": "CustomEvent<boolean | number | string>"
   },
-  "methods": {},
+  "methods": {
+    "focus": "(options?: FocusOptions): void"
+  },
   "parts": [
     "label",
     "root",
@@ -29,12 +29,11 @@
     "checked": "boolean = false",
     "disabled": "boolean = false",
     "falseValue": "boolean | number | string = false",
-    "hostId": "string = ''",
     "label": "string = ''",
     "loading": "boolean = false",
     "required": "boolean = false",
     "trueValue": "boolean | number | string = true",
-    "value": "boolean | number | string = false"
+    "value": "string | number | boolean"
   },
   "slots": [
     "default"

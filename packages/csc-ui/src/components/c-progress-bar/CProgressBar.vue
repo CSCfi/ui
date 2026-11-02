@@ -10,6 +10,9 @@
       part="bar"
     >
       <progress
+        :aria-label="
+          label || (controlAttrs['aria-label'] as string) || undefined
+        "
         :aria-valuenow="indeterminate ? undefined : String(safeValue)"
         :value="indeterminate ? undefined : safeValue"
         max="100"
@@ -38,9 +41,15 @@
 import { tv } from 'tailwind-variants';
 import { computed, onMounted, useHost, watchEffect } from 'vue';
 
+import { useControlAttrs } from '../../shared/useControlAttrs';
+import { useIdReferences } from '../../shared/useIdReferences';
+
 // Multi-root-ish template still writes to the host below — keep fallthrough
 // attrs on the host element instead of tripping the "renders fragment" warning.
 defineOptions({ inheritAttrs: false });
+
+// ARIA attributes on the element reach the native control.
+const { controlAttrs } = useControlAttrs();
 
 /**
  * Styling lives in this `tailwind-variants` config: the `root`
@@ -87,38 +96,34 @@ const ui = computed(() => progress());
 
 interface CProgressBarProps {
   /**
-   * Hide the percentage display
-   *
-   * @seeded from csc-ui — verify
+   * Hides the details line (the percentage and `label`); `label` still
+   * names the bar.
    */
   hideDetails?: boolean;
 
   /**
-   * Indeterminate state of the progress bar
-   *
-   * @seeded from csc-ui — verify
+   * Replaces the fill with a looping sweep for work of unknown duration,
+   * hiding the details line and exposing no value.
    */
   indeterminate?: boolean;
 
   /**
-   * Optional details message next to percentage display
+   * What is progressing: shown after the percentage, and the progress bar's
+   * accessible name.
    *
-   * @seeded from csc-ui — verify
    * @freeform
    */
   label?: string;
 
   /**
-   * Place details next to progress bar
-   *
-   * @seeded from csc-ui — verify
+   * Places the details line beside the bar instead of below it.
    */
   singleLine?: boolean;
 
   /**
-   * Progress bar value in percentage (0 to 100)
-   *
-   * @seeded from csc-ui — verify
+   * Completion percentage, 0 to 100. The fill clamps a value outside that
+   * range; the details line shows it as given, a negative one in the error
+   * colour.
    */
   value?: number;
 }
@@ -146,9 +151,15 @@ onMounted(() => {
     // Busy only while indeterminate: a determinate bar announces its value
     // updates, which aria-busy="true" would tell AT to defer.
     host.setAttribute('aria-busy', props.indeterminate.toString());
-    host.setAttribute('title', `${safeValue.value} %`);
+
+    // The percentage tooltip, but none while there is no value to show.
+    if (props.indeterminate) host.removeAttribute('title');
+    else host.setAttribute('title', `${safeValue.value} %`);
   });
 });
+
+// The page's id references on the element reach the element carrying its role.
+useIdReferences('[role="progressbar"]');
 </script>
 
 <!--

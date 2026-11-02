@@ -5,19 +5,21 @@
     "hide-details": "boolean = false",
     "hint": "string = ''",
     "inline": "boolean = false",
+    "invalid": "boolean = false",
     "label": "string = ''",
     "required": "boolean = false",
-    "valid": "boolean = true",
     "value": "null | string = null"
   },
   "cssProperties": [],
   "defaultable": [],
   "events": {
-    "changeValue": "CustomEvent<string>",
+    "change": "CustomEvent<string>",
     "input": "CustomEvent<void>",
     "update:value": "CustomEvent<string>"
   },
-  "methods": {},
+  "methods": {
+    "focus": "(options?: FocusOptions): void"
+  },
   "parts": [
     "items",
     "label",
@@ -31,9 +33,9 @@
     "hideDetails": "boolean = false",
     "hint": "string = ''",
     "inline": "boolean = false",
+    "invalid": "boolean = false",
     "label": "string = ''",
     "required": "boolean = false",
-    "valid": "boolean = true",
     "value": "null | string = null"
   },
   "slots": [

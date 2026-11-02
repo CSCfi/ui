@@ -3,6 +3,6 @@ slider.value = 40;
 
 const status = document.querySelector('p')!;
 
-slider.addEventListener('changeValue', (event) => {
+slider.addEventListener('update:value', (event) => {
   status.textContent = `Value: ${event.detail} %`;
 });

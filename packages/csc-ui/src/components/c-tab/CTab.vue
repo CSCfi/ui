@@ -15,11 +15,9 @@
 
 <script setup lang="ts">
 /**
- * @slot default - Default slot
+ * @slot default - The tab's label; a `c-badge` here sits on the tab's corner
  *
- * @csspart root - The tab's inner content box centering the slotted label
- *
- * @seeded from csc-ui — verify
+ * @csspart root - The box centring the tab's label
  */
 import { tv } from 'tailwind-variants';
 import { onMounted, useHost, useTemplateRef, watchEffect } from 'vue';
@@ -33,8 +31,10 @@ interface CTabEvents {
    * Fired when the tab is activated (click, or Space/Enter), carrying the tab
    * element and its value; the parent `<c-tabs>` listens for it to switch the
    * active tab.
+   *
+   * @internal
    */
-  tabChange: {
+  tabchange: {
     element: HTMLElement | null;
     value: number | string | undefined;
   };
@@ -42,19 +42,23 @@ interface CTabEvents {
   /**
    * Fired when the tab receives focus, so the parent `<c-tabs>` can drive
    * arrow-key navigation.
+   *
+   * @internal
    */
-  tabFocus: number | string | undefined;
+  tabfocus: number | string | undefined;
 }
 
 /**
  * Styling lives in this `tailwind-variants` config; customization
  * is via `::part()`. The inner `root` content box, the ripple
- * container and the ripple dots are utilities here. `root` clips with an 8px
- * `overflow-clip-margin` rather than at its own edge: a `c-badge` slotted into
- * the tab is a corner overlay (`absolute -right-1.5 -top-1.5` plus a 2px ring,
- * so 8px of ink outside the tab box), and a hard clip swallowed it. The margin
- * lets that badge through while a too-long `whitespace-nowrap` label — vertical
- * tabs pin every tab to `min/max-width: 100%` — is still cut off.
+ * container and the ripple dots are utilities here. `root` clips at its own
+ * edge, so a too-long `whitespace-nowrap` label — vertical tabs pin every tab
+ * to `min/max-width: 100%` — is cut off. A `c-badge` slotted into the tab is a
+ * corner overlay (`absolute -right-1.5 -top-1.5` plus a 2px ring, so 8px of
+ * ink outside the tab box) and must not be: `root` is not positioned, so the
+ * badge's containing block is the host, the same box, and a clip never cuts a
+ * positioned box whose containing block lies outside the clipper. An
+ * `overflow-clip-margin` did this before, but Safari has none.
  *
  * The host itself MUST be the styled/positioned tab box (it is the real
  * `role="tab"` element c-tabs queries and measures, with imperatively-toggled
@@ -67,7 +71,7 @@ const tab = tv({
     ripple:
       'pointer-events-none absolute rounded-full bg-current transition-[transform,opacity] duration-[600ms] ease-out',
     ripples: 'pointer-events-none absolute inset-0 overflow-hidden',
-    root: 'relative flex h-full w-full max-w-full items-center justify-center overflow-clip px-3 text-ellipsis whitespace-nowrap [overflow-clip-margin:8px]',
+    root: 'flex h-full w-full max-w-full items-center justify-center overflow-clip px-3 text-ellipsis whitespace-nowrap',
   },
 });
 
@@ -84,46 +88,29 @@ defineOptions({ inheritAttrs: false });
 
 interface CTabProps {
   /**
-   * Mark tab as active
+   * Whether this is the selected tab; the parent `<c-tabs>` sets it.
    *
-   * @seeded from csc-ui — verify
+   * @internal
    */
   active?: boolean;
 
   /**
-   * Mark tab as disabled
-   *
-   * @seeded from csc-ui — verify
+   * Grey the tab out and keep it from being selected by pointer or keyboard;
+   * the arrow keys skip it.
    */
   disabled?: boolean;
 
   /**
-   * Id of the tab
+   * Whether the tab is the row's Tab stop though not active: no tab matches
+   * the value; the parent `<c-tabs>` sets it.
    *
-   * @seeded from csc-ui — verify
-   * @freeform
+   * @internal
    */
-  hostId?: string;
+  tabStop?: boolean;
 
   /**
-   * Position in the set
-   *
-   * @seeded from csc-ui — verify
-   */
-  position?: number;
-
-  /**
-   * Size of the set
-   *
-   * @seeded from csc-ui — verify
-   */
-  setsize?: number;
-
-  /**
-   * Value for the tab
-   * - for use in c-tabs
-   *
-   * @seeded from csc-ui — verify
+   * Value of the tab, matching the `value` of the `c-tab-item` panel it shows;
+   * `c-tabs` holds it as its `value` while this tab is active.
    */
   value?: number | string;
 }
@@ -131,9 +118,7 @@ interface CTabProps {
 const props = withDefaults(defineProps<CTabProps>(), {
   active: false,
   disabled: false,
-  hostId: '',
-  position: undefined,
-  setsize: undefined,
+  tabStop: false,
   value: undefined,
 });
 
@@ -146,7 +131,7 @@ const emit = useHostEmit<CTabEvents>();
 const bubbling = { bubbles: true, composed: true };
 
 // Reflect tab state + a11y onto the host (the real tab element c-tabs
-// queries and wires aria-controls/posinset onto).
+// queries and wires id and aria-controls onto).
 onMounted(() => {
   if (!host) return;
   host.setAttribute('role', 'tab');
@@ -154,25 +139,20 @@ onMounted(() => {
     host.classList.toggle('c-tab', true);
     host.classList.toggle('c-tab--active', props.active);
     host.classList.toggle('c-tab--disabled', props.disabled);
+    // A disabled tab is announced as one (the arrow keys skip it).
     host.setAttribute('aria-disabled', String(props.disabled));
-    host.setAttribute('aria-hidden', String(props.disabled));
     host.setAttribute('aria-selected', String(props.active));
-
-    if (props.setsize != null)
-      host.setAttribute('aria-setsize', String(props.setsize));
-
-    if (props.position != null)
-      host.setAttribute('aria-posinset', String(props.position));
-
-    if (props.hostId) host.setAttribute('id', props.hostId);
 
     if (props.value != null)
       host.setAttribute('data-value', String(props.value));
-    host.setAttribute('tabindex', props.active && !props.disabled ? '0' : '-1');
+    host.setAttribute(
+      'tabindex',
+      (props.active || props.tabStop) && !props.disabled ? '0' : '-1',
+    );
   });
 
   host.addEventListener('click', (e) => onClick(e as MouseEvent));
-  host.addEventListener('focus', () => emit('tabFocus', props.value, bubbling));
+  host.addEventListener('focus', () => emit('tabfocus', props.value, bubbling));
   host.addEventListener('keydown', (e) => {
     const ke = e as KeyboardEvent;
 
@@ -190,7 +170,7 @@ const { ripples, spawn: spawnRipple } = useRipple({ container: () => host });
 const onClick = (event: MouseEvent, center = false) => {
   if (props.disabled) return;
   spawnRipple(event, { center });
-  emit('tabChange', { element: host, value: props.value }, bubbling);
+  emit('tabchange', { element: host, value: props.value }, bubbling);
 };
 </script>
 
@@ -205,13 +185,15 @@ const onClick = (event: MouseEvent, center = false) => {
   The host deliberately does NOT clip. Its old `overflow: hidden` was a second
   copy of the `[part=root]` clip that bought nothing — `root` is `h-full w-full`
   so nothing reaches past the host through it, and the ripple is clipped by its
-  own `.ripples` container — while it re-cut the slotted `c-badge` that root's
-  `overflow-clip-margin` had just let through. Same split as c-button, whose
-  root is unclipped and whose ripple container does the clipping.
+  own `.ripples` container — while it cut the slotted `c-badge` that escapes
+  root's clip. Same split as c-button, whose root is unclipped and whose ripple
+  container does the clipping. The host is positioned from the start: it is
+  the containing block of the badge and the ripples.
 -->
 <style>
 :host {
   display: block;
+  position: relative;
   user-select: none;
   min-width: min-content;
   flex-grow: 1;
@@ -243,7 +225,6 @@ slot {
   font-weight: 600;
   height: var(--_c-control-height);
   justify-content: center;
-  position: relative;
 }
 
 :host(.c-tab:hover) {

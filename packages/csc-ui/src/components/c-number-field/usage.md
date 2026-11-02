@@ -5,7 +5,7 @@ A field for a number — an integer, or one with decimals — shown with thousan
 The value is a number, or `null` while the field holds no digit. What the
 field shows is grouped text — `1 234 567,89` — but the value is always the
 plain number (`1234567.89`), so it needs no parsing. Bind it with `v-model`,
-or listen for `change`:
+or listen for `update:value`:
 
 ```vue
 <c-number-field v-model="amount" label="Amount" />
@@ -13,7 +13,9 @@ or listen for `change`:
 
 The value follows the text on every keystroke: typing `1234,` gives `1234`,
 a lone `-` gives `null`. Only typing and stepping emit; setting `value` shows
-the number without emitting it.
+the number without emitting it. `change` fires when the number is committed:
+Enter or leaving the field after typing, each arrow-key or step-button step,
+and the release that ends a held step button.
 
 Unlike `c-text-field type="number"`, the native number input, the field shows
 separators and never changes the number on a scroll.
@@ -65,7 +67,7 @@ read-only `outOfRange` property. The field shows no error of its own:
 <c-number-field
   v-model="count"
   :error-message="error"
-  :valid="!error"
+  :invalid="!!error"
   label="Participants"
   max="50"
   min="1"
@@ -99,7 +101,7 @@ in line.
 
 The buttons stay out of the tab order and never take focus, so tapping one
 on a phone does not open the keyboard. To translate their accessible labels,
-set `texts`: `{ increase: 'Lisää', decrease: 'Vähennä' }`, or app-wide with
+set `texts`: `{ stepUp: 'Lisää', stepDown: 'Vähennä' }`, or app-wide with
 `applyDefaults`.
 
 ## Keyboard

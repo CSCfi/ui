@@ -2,8 +2,9 @@
   <component
     :is="href ? 'a' : 'div'"
     ref="contentRef"
+    :aria-current="href && active ? 'page' : undefined"
     :class="ui.root()"
-    :href="href || undefined"
+    :href="(!disabled && href) || undefined"
     :target="href ? target : undefined"
     part="root"
   >
@@ -90,52 +91,47 @@ defineOptions({ inheritAttrs: false });
 
 interface CListItemProps {
   /**
-   * Set the item active
-   *
-   * @seeded from csc-ui — verify
+   * Mark the item as the current one: a primary tint and ring, announced as
+   * current (`aria-current`).
    */
   active?: boolean;
 
   /**
-   * Disable the item
-   *
-   * @seeded from csc-ui — verify
+   * Grey the item out, ignore the pointer and take it out of the Tab order; a
+   * link item stops being a link.
    */
   disabled?: boolean;
 
   /**
-   * Disabled by the parent list
+   * Disabled by the parent `<c-list>`, which sets it from its own `disabled`.
    *
-   * @seeded from csc-ui — verify
+   * @internal
    */
   disabledByParent?: boolean;
 
   /**
-   * Display background color on hover
-   *
-   * @seeded from csc-ui — verify
+   * Add the hover tint alone, without a link or a ripple.
    */
   hoverable?: boolean;
 
   /**
-   * Hyperlink url
+   * URL that turns the item's content box into a real link, with a hover tint
+   * on the row.
    *
-   * @seeded from csc-ui — verify
    * @freeform any URL
    */
   href?: string;
 
   /**
-   * Add ripple effect to the item
-   *
-   * @seeded from csc-ui — verify
+   * Add a pointer cursor, the hover tint and a ripple on press; an item without
+   * `href` also becomes a Tab stop that Enter and Space press, firing `click`.
    */
   ripple?: boolean;
 
   /**
-   * Hyperlink target
+   * Where the `href` opens, as on a native `<a>`: the same tab unless set —
+   * `_blank` for a new one.
    *
-   * @seeded from csc-ui — verify
    * @freeform any browsing-context name (e.g. _blank, _self)
    */
   target?: string;
@@ -148,7 +144,7 @@ const props = withDefaults(defineProps<CListItemProps>(), {
   hoverable: false,
   href: '',
   ripple: false,
-  target: '_blank',
+  target: '',
 });
 
 const ui = computed(() => listItem({ active: props.active }));
@@ -172,7 +168,12 @@ onMounted(() => {
   if (!host) return;
   host.setAttribute('role', 'listitem');
   watchEffect(() => {
-    host.setAttribute('aria-disabled', String(!!props.disabled));
+    // `active` is the current item: a link's is `aria-current="page"` (on
+    // the link, above), any other item's `"true"` here. A list item takes no
+    // `aria-disabled`; a disabled item leaves the Tab order instead (a
+    // disabled link item loses its `href`, above).
+    if (props.active && !props.href) host.setAttribute('aria-current', 'true');
+    else host.removeAttribute('aria-current');
     host.classList.toggle('c-list-item--hoverable', isHoverable.value);
     host.classList.toggle('c-list-item--ripple', props.ripple);
     host.classList.toggle('c-list-item--active', props.active);
@@ -206,7 +207,10 @@ const { ripples, spawn: spawnRipple } = useRipple({
   container: () => contentRef.value,
 });
 
-const onClick = (event: MouseEvent, center = false) => {
+// Set while Enter or Space presses the item, so its ripple starts centred.
+let keyPress = false;
+
+const onClick = (event: MouseEvent) => {
   if (props.disabled) {
     event.preventDefault();
 
@@ -214,13 +218,34 @@ const onClick = (event: MouseEvent, center = false) => {
   }
 
   if (!props.ripple) return;
-  spawnRipple(event, { center });
+  spawnRipple(event, { center: keyPress });
+};
+
+// A ripple item (no link) is a Tab stop: Enter and Space press it with a
+// click, as on a native button (Enter on keydown, Space on keyup).
+const pressable = (event: KeyboardEvent) =>
+  event.target === host && props.ripple && !props.href && !props.disabled;
+
+const press = () => {
+  keyPress = true;
+  host?.click();
+  keyPress = false;
+};
+
+const onKeydown = (event: KeyboardEvent) => {
+  if (!pressable(event)) return;
+
+  if (event.key === 'Enter') {
+    event.preventDefault();
+    press();
+  } else if (event.key === ' ') {
+    // No page scroll; the press lands on keyup.
+    event.preventDefault();
+  }
 };
 
 const onKeyup = (event: KeyboardEvent) => {
-  if (event.key === ' ' || event.key === 'Enter') {
-    onClick(event as unknown as MouseEvent, true);
-  }
+  if (pressable(event) && event.key === ' ') press();
 };
 
 // Listen on the host so clicks anywhere on the item trigger the ripple,
@@ -228,6 +253,7 @@ const onKeyup = (event: KeyboardEvent) => {
 onMounted(() => {
   if (!host) return;
   host.addEventListener('click', onClick as EventListener);
+  host.addEventListener('keydown', onKeydown as EventListener);
   host.addEventListener('keyup', onKeyup as EventListener);
 });
 </script>
@@ -266,7 +292,8 @@ slot:not([name]) {
   flex: 1;
 }
 
-:host(:focus-visible) {
+:host(:focus-visible),
+[part='root']:focus-visible {
   outline: 2px var(--c-primary) solid;
   outline-offset: 2px;
 }
@@ -302,9 +329,9 @@ slot:not([name]) {
 
 /* Grey a disabled item's slotted icon. c-icon applies its `color` prop as the
  * path's own inline fill, which inherited `color` cannot override, so use
- * c-icon's `--c-icon-color` override hook (it inherits across the shadow
+ * c-icon's private `--_c-icon-color` override hook (it inherits across the shadow
  * boundary and wins over the prop fallback). */
 :host([disabled]) ::slotted(c-icon) {
-  --c-icon-color: var(--c-on-surface-muted) !important;
+  --_c-icon-color: var(--c-on-surface-muted) !important;
 }
 </style>

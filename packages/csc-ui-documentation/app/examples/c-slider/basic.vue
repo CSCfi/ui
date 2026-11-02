@@ -1,6 +1,6 @@
 <template>
   <div>
-    <c-slider v-model="volume" label="Volume" />
+    <c-slider v-model="volume" label="Volume" unit="%" />
 
     <p>Value: {{ volume }} %</p>
   </div>

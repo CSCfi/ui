@@ -6,7 +6,9 @@
   "cssProperties": [],
   "defaultable": [],
   "events": {},
-  "methods": {},
+  "methods": {
+    "updateMobileLabels": "()"
+  },
   "parts": [],
   "propertyOnly": [],
   "props": {

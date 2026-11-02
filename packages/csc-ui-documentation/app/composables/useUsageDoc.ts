@@ -40,3 +40,29 @@ export const usageWithoutIntro = (markdown: null | string): null | string => {
 
   return rest || null;
 };
+
+/**
+ * A composed child's usage doc as a section of its parent's Usage: the child
+ * has no page, and its API reference shows only the first paragraph. Null
+ * when that paragraph is all there is. The whole doc goes in, intro too,
+ * under a heading naming the tag, its own sections one level down.
+ */
+export const childUsageSection = (tag: string): null | string => {
+  const markdown = useUsageDoc(tag);
+
+  if (!usageWithoutIntro(markdown)) return null;
+
+  let fenced = false;
+
+  const body = markdown!
+    .trim()
+    .split('\n')
+    .map((line) => {
+      if (line.trimStart().startsWith('```')) fenced = !fenced;
+
+      return !fenced && /^#{2,5} /.test(line) ? `#${line}` : line;
+    })
+    .join('\n');
+
+  return `## \`<${tag}>\`\n\n${body}`;
+};

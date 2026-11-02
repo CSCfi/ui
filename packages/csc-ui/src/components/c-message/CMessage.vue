@@ -65,37 +65,26 @@ interface CMessageProps {
   errorMessage?: string;
 
   /**
-   * Hint text for the input
+   * Hint text, shown unless the error message replaces it
    *
-   * @seeded from csc-ui — verify
    * @freeform
    */
   hint?: string;
 
   /**
-   * Id of the related input element
-   *
-   * @seeded from csc-ui — verify
-   * @freeform
+   * Show the `error-message`, when set, in place of the hint. Marking the
+   * control itself `aria-invalid` is up to the control.
    */
-  inputId?: string;
-
-  /**
-   * Parent validíty
-   *
-   * @seeded from csc-ui — verify
-   */
-  valid?: boolean;
+  invalid?: boolean;
 }
 
 const props = withDefaults(defineProps<CMessageProps>(), {
   errorMessage: '',
   hint: '',
-  inputId: '',
-  valid: true,
+  invalid: false,
 });
 
-const showError = computed(() => !props.valid && Boolean(props.errorMessage));
+const showError = computed(() => props.invalid && Boolean(props.errorMessage));
 
 const ui = computed(() => message({ error: showError.value }));
 

@@ -1,19 +1,31 @@
 <template>
   <c-input
+    v-bind="rootAttrs"
     :active="isFocused"
     :data-hide-details="String(hideDetailsResolved)"
     :disabled
-    :error-message
     :filled="text !== ''"
-    :hint
     :input-id
+    :invalid
     :label
     :label-on-top="labelOnTopResolved"
     :required
     :shadow="shadowResolved"
     :size="sizeResolved"
-    :valid
   >
+    <!-- The hint / error message, here in the field's own tree so the
+         input's aria-describedby can name it. -->
+    <field-message
+      :id="`${inputId}-message`"
+      slot="message"
+      :error-message
+      :hide-details="hideDetailsResolved"
+      :hint
+      :invalid
+      :label-on-top="labelOnTopResolved"
+      part="message"
+    />
+
     <!-- Consumer pre/post content (a currency, a unit), forwarded only when
          present so c-input draws no empty gap — as in c-text-field. -->
     <span v-if="hasConsumerPre" slot="pre" class="contents">
@@ -25,7 +37,10 @@
     <input
       :id="inputId"
       ref="inputRef"
-      :aria-invalid="!valid || outOfRange || undefined"
+      v-bind="controlAttrs"
+      :aria-describedby="hideDetailsResolved ? undefined : `${inputId}-message`"
+      :aria-invalid="invalid || outOfRange || undefined"
+      :aria-label="accessibleName"
       :aria-valuemax="maxNumber ?? undefined"
       :aria-valuemin="minNumber ?? undefined"
       :aria-valuenow="current ?? undefined"
@@ -56,7 +71,7 @@
 
       <span :class="ui.steps()" @mousedown.prevent>
         <button
-          :aria-label="t.increase"
+          :aria-label="t.stepUp"
           :class="ui.stepButton()"
           :disabled="!canUp"
           part="step-up"
@@ -75,7 +90,7 @@
         </button>
 
         <button
-          :aria-label="t.decrease"
+          :aria-label="t.stepDown"
           :class="ui.stepButton()"
           :disabled="!canDown"
           part="step-down"
@@ -98,7 +113,16 @@
 </template>
 
 <script lang="ts">
-export interface CNumberFieldProps {
+/** UI texts of `c-number-field`, merged key by key over the English defaults. */
+export interface CNumberFieldTexts {
+  /** Accessible label of the step-down button. */
+  stepDown?: string;
+
+  /** Accessible label of the step-up button. */
+  stepUp?: string;
+}
+
+interface CNumberFieldProps {
   /**
    * The most fraction digits the field takes; `0` makes it an integer field
    *
@@ -156,11 +180,10 @@ export interface CNumberFieldProps {
   hint?: string;
 
   /**
-   * Id of the input
-   *
-   * @freeform
+   * Show the control as invalid: its `error-message`, when set, replaces the
+   * hint, and the control is marked `aria-invalid`.
    */
-  hostId?: string;
+  invalid?: boolean;
 
   /**
    * Label of the field
@@ -239,23 +262,9 @@ export interface CNumberFieldProps {
   texts?: CNumberFieldTexts;
 
   /**
-   * Set the validity of the field
-   */
-  valid?: boolean;
-
-  /**
    * The number, or `null` when the field is empty. A string is read as the number it spells, and `''` as empty — what an attribute, or a plain `v-model` holding `null`, writes; the field always emits a number or `null`
    */
   value?: null | number | string;
-}
-
-/** UI texts of `c-number-field`, merged key by key over the English defaults. */
-export interface CNumberFieldTexts {
-  /** Accessible label of the step-down button. */
-  decrease?: string;
-
-  /** Accessible label of the step-up button. */
-  increase?: string;
 }
 </script>
 
@@ -266,6 +275,7 @@ export interface CNumberFieldTexts {
  * @csspart input - The text input
  * @csspart step-up - The button that steps the number up
  * @csspart step-down - The button that steps the number down
+ * @csspart message - The hint / error message area below the field (always reserved unless `hide-details`)
  * @cssstate out-of-range - Present while the number is below `min` or above `max`
  */
 import { mdiChevronDown, mdiChevronUp } from '@mdi/js';
@@ -285,9 +295,12 @@ import type { CFieldSize } from '../../types';
 import type { CNumberFieldFormat } from './numbers';
 
 import { useAppDefault } from '../../shared/appDefaults';
-import { emitModelChange } from '../../shared/emitModelValue';
+import FieldMessage from '../../shared/FieldMessage.vue';
 import { applyConform } from '../../shared/inputMask';
+import { useControlAttrs } from '../../shared/useControlAttrs';
 import { useHostStates } from '../../shared/useHostStates';
+import { useIdReferences } from '../../shared/useIdReferences';
+import { emitModelInput, emitModelSettled } from '../../shared/valueEvents';
 import {
   conformNumber,
   formatNumber,
@@ -296,15 +309,13 @@ import {
   stepNumber,
 } from './numbers';
 
-/**
- * Events dispatched by `<c-number-field>` — all three at once, through
- * `emitModelChange`.
- */
+/** Events dispatched by `<c-number-field>`. */
 interface CNumberFieldEvents {
   /**
-   * Fired whenever typing or a step changes the number, carrying it — `null`
-   * once the field holds no digit. Not fired when only the text changes (a group
-   * separator, a trailing decimal separator) or when `value` is set.
+   * Fired when the number is committed, carrying it — `null` once the field
+   * holds no digit: Enter or leaving the field after typing, each arrow-key
+   * or step-button step, and the release that ends a held step button. Not
+   * fired when nothing changed since the last commit.
    */
   change: null | number;
 
@@ -315,7 +326,9 @@ interface CNumberFieldEvents {
   input: void;
 
   /**
-   * v-model contract event, fired with `change`.
+   * v-model contract event fired whenever typing or a step changes the
+   * number. Not fired when only the text changes (a group separator, a
+   * trailing decimal separator) or when `value` is set.
    */
   'update:value': null | number;
 }
@@ -344,6 +357,10 @@ const numberField = tv({
   },
 });
 
+// ARIA attributes on the element name and describe the native control;
+// every other attribute stays on the root, as Vue's fallthrough put it.
+defineOptions({ inheritAttrs: false });
+
 const props = withDefaults(defineProps<CNumberFieldProps>(), {
   decimals: undefined,
   decimalSeparator: undefined,
@@ -353,7 +370,7 @@ const props = withDefaults(defineProps<CNumberFieldProps>(), {
   groupSeparator: undefined,
   hideDetails: undefined,
   hint: '',
-  hostId: '',
+  invalid: false,
   label: '',
   labelOnTop: undefined,
   max: null,
@@ -366,13 +383,23 @@ const props = withDefaults(defineProps<CNumberFieldProps>(), {
   size: undefined,
   step: undefined,
   texts: undefined,
-  valid: true,
   value: null,
 });
 
 const ui = computed(() => numberField({ size: sizeResolved.value }));
 
 const host = useHost();
+
+const { controlAttrs, rootAttrs } = useControlAttrs();
+
+// The visible label names the input (WCAG 2.5.3, label in name); the host's
+// `aria-label` names a field without one, and is ignored beside it.
+const accessibleName = computed(
+  () =>
+    props.label ||
+    (controlAttrs.value['aria-label'] as string | undefined) ||
+    undefined,
+);
 
 const appDefault = useAppDefault('c-number-field', props);
 
@@ -397,8 +424,8 @@ const stepResolved = appDefault('step', 1);
 const ownTexts = appDefault('texts', {} as Required<CNumberFieldTexts>);
 
 const DEFAULT_TEXTS: Required<CNumberFieldTexts> = {
-  decrease: 'Decrease',
-  increase: 'Increase',
+  stepDown: 'Decrease',
+  stepUp: 'Increase',
 };
 
 const t = computed<Required<CNumberFieldTexts>>(() => ({
@@ -414,7 +441,7 @@ const inputRef = useTemplateRef<HTMLInputElement>('inputRef');
 
 const autoId = useId();
 
-const inputId = computed(() => props.hostId || autoId);
+const inputId = computed(() => autoId);
 
 const isFocused = ref(false);
 
@@ -462,6 +489,17 @@ const text = ref(formatNumber(current.value, format.value));
 const same = (a: null | number, b: null | number) =>
   a === b || (a !== null && b !== null && Object.is(a + 0, b + 0));
 
+/** The number at the last commit, or as last set: a commit reports a change since then. */
+let committed = current.value;
+
+/** Report the number held as committed, when it changed since the last commit. */
+const commit = () => {
+  if (same(current.value, committed)) return;
+
+  committed = current.value;
+  emitModelSettled(host, current.value satisfies CNumberFieldEvents['change']);
+};
+
 /** Whether the number is below `min` or above `max` (CONTEXT.md "Out of range") */
 const outOfRange = computed<boolean>(() => {
   const n = current.value;
@@ -478,12 +516,15 @@ const outOfRange = computed<boolean>(() => {
 watch(outOfRange, (on) => setState('out-of-range', on), { immediate: true });
 
 // A set `value` re-formats the text — unless the text already reads as that
-// number, which is also what the `emitModelChange` mirror writes back while
-// the user types ("12," stays "12,"). Never emits.
+// number, which is also what the `emitModelInput` mirror writes back while
+// the user types ("12," stays "12,"). Never emits. A number from outside is
+// the new baseline for the next commit; the mirror's own number is not.
 watch(
   () => props.value,
   (v) => {
     const next = toNumber(v);
+
+    if (!same(next, current.value)) committed = next;
 
     if (same(next, readNumber(text.value, format.value))) {
       current.value = next;
@@ -537,7 +578,7 @@ const onInput = (event: Event) => {
   if (same(result.value, current.value)) return;
 
   current.value = result.value;
-  emitModelChange(host, result.value satisfies CNumberFieldEvents['change']);
+  emitModelInput(host, result.value);
 };
 
 const onFocus = () => {
@@ -545,9 +586,10 @@ const onFocus = () => {
   pageLang.value = document.documentElement.lang;
 };
 
-// Leaving the field tidies the text ("12," → "12", padding under
-// `fixed-decimals`); the number does not change, so nothing is emitted.
+// Leaving the field commits what was typed, then tidies the text ("12," →
+// "12", padding under `fixed-decimals`), which leaves the number as it is.
 const onBlur = () => {
+  commit();
   isFocused.value = false;
   text.value = formatNumber(
     current.value,
@@ -574,7 +616,10 @@ const stepped = (direction: -1 | 1, count = 1): null | number => {
   return next === null || same(next, current.value) ? null : next;
 };
 
-/** Take a step; `false` when there is none to take (at a bound). */
+/**
+ * Take a step, reported as a change not yet committed; `false` when there is
+ * none to take (at a bound).
+ */
 const stepBy = (direction: -1 | 1, count = 1): boolean => {
   const next = stepped(direction, count);
 
@@ -586,7 +631,7 @@ const stepBy = (direction: -1 | 1, count = 1): boolean => {
     format.value,
     fixedDecimalsResolved.value && !isFocused.value,
   );
-  emitModelChange(host, next satisfies CNumberFieldEvents['change']);
+  emitModelInput(host, next);
 
   return true;
 };
@@ -603,6 +648,12 @@ const STEP_KEYS: Record<string, [-1 | 1, number]> = {
 };
 
 const onKeydown = (event: KeyboardEvent) => {
+  if (event.key === 'Enter' && !event.isComposing) {
+    commit();
+
+    return;
+  }
+
   const key = STEP_KEYS[event.key];
 
   if (
@@ -618,7 +669,9 @@ const onKeydown = (event: KeyboardEvent) => {
     return;
 
   event.preventDefault();
-  stepBy(...key);
+
+  // A key step commits at once, as a native range input's does.
+  if (stepBy(...key)) commit();
 };
 
 // Holding a step button repeats: one step on the press, then after a pause
@@ -638,11 +691,15 @@ const stopRepeat = () => {
   repeatTimer = undefined;
 };
 
-// The click, if any, follows the release in the same task.
+// The click, if any, follows the release in the same task. The release ends
+// the press, and commits its steps like the end of a drag.
 const releaseStep = () => {
   stopRepeat();
 
-  if (pressed) setTimeout(() => (pressed = false));
+  if (!pressed) return;
+
+  commit();
+  setTimeout(() => (pressed = false));
 };
 
 const onStepPress = (event: PointerEvent, direction: -1 | 1) => {
@@ -672,7 +729,7 @@ const onStepClick = (direction: -1 | 1) => {
     return;
   }
 
-  stepBy(direction);
+  if (stepBy(direction)) commit();
 };
 
 // Pre slot detection, as in c-text-field: c-input would otherwise see our
@@ -704,7 +761,20 @@ onBeforeUnmount(() => {
   clearTimeout(repeatTimer);
 });
 
-defineExpose({ outOfRange });
+/**
+ * Focus its input, as `focus()` does on a native control: the element renders
+ * no box of its own to take it.
+ *
+ * @param options - Passed on to that element's `focus()`
+ */
+const focus = (options?: FocusOptions): void => {
+  inputRef.value?.focus(options);
+};
+
+defineExpose({ focus, outOfRange });
+
+// The page's id references on the element reach the element carrying its role.
+useIdReferences(() => inputRef.value);
 </script>
 
 <!--

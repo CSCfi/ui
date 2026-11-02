@@ -14,7 +14,7 @@
         <slot name="icon" />
       </div>
 
-      <slot name="header">
+      <slot name="heading">
         <div :class="ui.title()">{{ heading }}</div>
       </slot>
 
@@ -42,16 +42,16 @@
 
 <script setup lang="ts">
 /**
- * @slot header - Custom header slot
+ * @slot heading - Rich heading content, replacing the `heading` prop; no interactive content
  * @slot icon - Icon shown in the header before the heading
- * @slot default - Default slot
+ * @slot default - The content shown while the item is expanded
  *
- * @csspart root - The outer wrapper of the item: its share of the accordion frame, the lifted outline and wash when expanded, and a 2px outline on expanded items when outlined
+ * @csspart root - The item's box: its share of the accordion frame, the lifted outline and wash while expanded, and the ring the accordion's `outlined` adds
  * @csspart header - The toggle button row containing the icon, heading and indicator
  * @csspart indicator - The rotating chevron at the end of the header
  * @csspart content - The padded card around the slotted content inside the collapsing region
  *
- * @seeded from csc-ui — verify
+ * @cssstate expanded - Present while the item is expanded
  */
 import { mdiChevronRight } from '@mdi/js';
 import { tv } from 'tailwind-variants';
@@ -63,19 +63,24 @@ import {
   useHost,
   useId,
   useTemplateRef,
+  watch,
 } from 'vue';
 
 import { useHasSlot } from '../../shared/useHasSlot';
 import { useHostEmit } from '../../shared/useHostEmit';
+import { useHostStates } from '../../shared/useHostStates';
+import { useIdReferences } from '../../shared/useIdReferences';
 
 /** Events dispatched by `<c-accordion-item>`. */
 interface CAccordionItemEvents {
   /**
    * Fired when the header is toggled, carrying the requested expansion state
    * and the item's `value`; bubbles so the parent `<c-accordion>` can update
-   * its model.
+   * its model, and stops there.
+   *
+   * @internal
    */
-  'item-change': { expanded: boolean; value: number | string | undefined };
+  itemchange: { expanded: boolean; value: number | string | undefined };
 }
 
 // Styling lives in `tailwind-variants`: no `<style>` block and the
@@ -95,6 +100,10 @@ interface CAccordionItemEvents {
 // `afterExpanded`, `beforeExpanded`) is derived below from its light-DOM
 // siblings, because `:host()` cannot see them: Chromium matches neither
 // `:host(:is([expanded] + *))` nor `:host(:has(+ [expanded]))`.
+//
+// The heading is primary ink at rest; on the expanded wash it takes the ink
+// paired with that wash, `on-primary-subtle`, which keeps AA contrast in dark
+// mode where plain primary falls just short.
 //
 // The header is transparent at rest so the frame reads as one surface, with
 // c-button's ghost hover/active washes. The wash takes the root's corners and
@@ -178,7 +187,7 @@ const accordionItem = tv({
     expanded: {
       true: {
         contentWrapper: 'grid-rows-[minmax(0,1fr)]',
-        header: 'rounded-b-none',
+        header: 'rounded-b-none text-on-primary-subtle',
         indicator: 'rotate-90',
         root: 'my-2 rounded-csc-lg border-t border-primary bg-primary/5 inset-shadow-[2px_0_0_0] inset-shadow-primary',
       },
@@ -200,38 +209,39 @@ const accordionItem = tv({
 
 interface CAccordionItemProps {
   /**
-   * Marks the item as collapsable
+   * Whether the expanded item may collapse; the parent `<c-accordion>` sets
+   * it from its `mandatory`.
    *
-   * @seeded from csc-ui — verify
+   * @internal
    */
   collapsable?: boolean;
 
   /**
-   * Expansion status of the item
+   * Whether the item is expanded; the parent `<c-accordion>` sets it from its
+   * `value`. Style an expanded item through `:state(expanded)`.
    *
-   * @seeded from csc-ui — verify
+   * @internal
    */
   expanded?: boolean;
 
   /**
-   * Heading of the accordion item
+   * The header's text. The `heading` slot replaces it for rich content.
    *
-   * @seeded from csc-ui — verify
    * @freeform
    */
   heading?: string;
 
   /**
-   * Show an outline around the expanded item
+   * Outline the item while it is expanded; the parent `<c-accordion>` sets
+   * it from its own `outlined`.
    *
-   * @seeded from csc-ui — verify
+   * @internal
    */
   outlined?: boolean;
 
   /**
-   * Value of the accordion item
-   *
-   * @seeded from csc-ui — verify
+   * Identifies the item in the parent `<c-accordion>`'s `value`. Required:
+   * the accordion leaves an item without one collapsed.
    */
   value?: number | string;
 }
@@ -253,6 +263,14 @@ const chevronPath = mdiChevronRight;
 const host = useHost();
 
 const TAG = 'c-accordion-item';
+
+const setState = useHostStates();
+
+watch(
+  () => props.expanded,
+  (on) => setState('expanded', on),
+  { immediate: true },
+);
 
 // Where this item sits in the accordion frame. Read from the light DOM: the
 // run's ends are the first and last item among the parent's children, and an
@@ -344,9 +362,12 @@ const emit = useHostEmit<CAccordionItemEvents>();
 const onToggle = () => {
   if (!props.collapsable && props.expanded) return;
   emit(
-    'item-change',
+    'itemchange',
     { expanded: !props.expanded, value: props.value },
     { bubbles: true, composed: true },
   );
 };
+
+// The page's id references on the element reach the element carrying its role.
+useIdReferences('button');
 </script>

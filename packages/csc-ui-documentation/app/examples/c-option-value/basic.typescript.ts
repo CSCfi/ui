@@ -6,7 +6,7 @@ const output = document.querySelector('#value')!;
 
 autocomplete.value = language;
 
-autocomplete.addEventListener('changeValue', (event) => {
+autocomplete.addEventListener('change', (event) => {
   language = event.detail as null | string;
   output.textContent = language ?? 'null';
 });

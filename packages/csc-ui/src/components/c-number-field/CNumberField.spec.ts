@@ -3,7 +3,7 @@
  * separator", "Out of range", "Step", "Step buttons"; ADR-0060, ADR-0064).
  */
 import { afterEach, describe, expect, it } from 'vitest';
-import { userEvent } from 'vitest/browser';
+import { page, userEvent } from 'vitest/browser';
 
 import type { Mounted } from '../../test/harness';
 
@@ -37,7 +37,7 @@ afterEach(() => {
 });
 
 describe('typing', () => {
-  it('groups as it goes and emits the number live', async () => {
+  it('groups as it goes, reports the number live and commits it on Enter', async () => {
     document.documentElement.lang = 'fi';
 
     const m = await mountField({ decimals: 2 });
@@ -50,13 +50,19 @@ describe('typing', () => {
     expect(shown(m)).toBe('1 234 567,8');
     expect(m.host.value).toBe(1234567.8);
 
-    const changes = events.of('change');
+    const updates = events.of('update:value');
 
-    expect(changes.at(-1)?.detail).toBe(1234567.8);
+    expect(updates.at(-1)?.detail).toBe(1234567.8);
     // The host value is current whenever an event fires.
-    expect(changes.every((r) => r.targetValue === r.detail)).toBe(true);
-    // Typing "," changed only the text: one change per digit, eight digits.
-    expect(changes).toHaveLength(8);
+    expect(updates.every((r) => r.targetValue === r.detail)).toBe(true);
+    // Typing "," changed only the text: one update per digit, eight digits.
+    expect(updates).toHaveLength(8);
+    expect(events.of('change')).toHaveLength(0);
+
+    await userEvent.keyboard('{Enter}');
+    await settle();
+
+    expect(events.of('change').map((r) => r.detail)).toEqual([1234567.8]);
   });
 
   it('follows the page language, and the separator props win', async () => {
@@ -124,7 +130,7 @@ describe('programmatic value and blur', () => {
     expect(events.records).toHaveLength(0);
   });
 
-  it('tidies the text on blur without emitting', async () => {
+  it('commits the typed number on blur and tidies the text', async () => {
     const m = await mountField({ decimals: 2 });
 
     const events = recordEvents(m.host, EVENTS);
@@ -134,7 +140,15 @@ describe('programmatic value and blur', () => {
     await settle();
 
     expect(shown(m)).toBe('12');
-    expect(events.of('change')).toHaveLength(2);
+    expect(events.of('update:value')).toHaveLength(2);
+    expect(events.of('change').map((r) => r.detail)).toEqual([12]);
+
+    // Nothing changed since that commit: leaving again commits nothing.
+    input(m).focus();
+    input(m).blur();
+    await settle();
+
+    expect(events.of('change')).toHaveLength(1);
 
     const fixed = await mountField({
       decimals: 2,
@@ -332,7 +346,11 @@ describe('stepping', () => {
     await settle();
 
     expect(m.host.value).toBe(4);
-    expect(events.of('change').map((r) => r.detail)).toEqual([1, 2, 3, 4]);
+    expect(events.of('update:value').map((r) => r.detail)).toEqual([
+      1, 2, 3, 4,
+    ]);
+    // The release commits the steps once, like the end of a drag.
+    expect(events.of('change').map((r) => r.detail)).toEqual([4]);
   });
 
   it('a release stops the repeat', async () => {
@@ -373,7 +391,7 @@ describe('stepping', () => {
     expect(up(m).getAttribute('aria-label')).toBe('Increase');
     expect(down(m).getAttribute('aria-label')).toBe('Decrease');
 
-    const own = await mountField({ texts: { increase: 'Lisää' } });
+    const own = await mountField({ texts: { stepUp: 'Lisää' } });
 
     expect(up(own).getAttribute('aria-label')).toBe('Lisää');
     expect(down(own).getAttribute('aria-label')).toBe('Decrease');
@@ -396,8 +414,8 @@ describe('visual', () => {
 
     const over = await mountField({
       errorMessage: 'Enter 1 to 100',
+      invalid: true,
       max: 100,
-      valid: false,
       value: 150,
     });
 
@@ -406,5 +424,15 @@ describe('visual', () => {
     const small = await mountField({ max: 10, size: 'small', value: 10 });
 
     await matchScreenshotInBothModes(small.stage, 'small');
+  });
+});
+
+describe('accessible name', () => {
+  it('the label names the spinbutton', async () => {
+    await mount('c-number-field', { attrs: { label: 'Cores' } });
+
+    await expect
+      .element(page.getByRole('spinbutton', { name: 'Cores' }))
+      .toBeInTheDocument();
   });
 });

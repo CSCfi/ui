@@ -6,7 +6,7 @@ export const Basic = () => {
     <div className="example-row">
       <CMessage hint="Use your organization email address" />
 
-      <CMessage errorMessage="Email is required" valid={false} />
+      <CMessage errorMessage="Email is required" invalid />
     </div>
   );
 };

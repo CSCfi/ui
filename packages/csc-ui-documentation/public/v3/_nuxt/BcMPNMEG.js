@@ -1,0 +1,1 @@
+import{u as e}from"./DBWgjS00.js";import{m as t}from"./Ch6KfFdQ.js";import"./CAYfANcy.js";const i=t({inheritAttrs:!1,__name:"Index",setup(a){return e(),(r,n)=>"Example not available"}});export{i as default};

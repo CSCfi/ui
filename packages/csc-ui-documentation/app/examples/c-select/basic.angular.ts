@@ -13,7 +13,7 @@ import { Component, CUSTOM_ELEMENTS_SCHEMA, signal } from '@angular/core';
         hint="The list opens on click or with the arrow keys"
         label="Country"
         placeholder="Choose a country"
-        (changeValue)="country.set($any($event).detail)"
+        (change)="country.set($any($event).detail)"
       >
         <c-option name="Finland" value="fi">Finland</c-option>
         <c-option name="Sweden" value="se">Sweden</c-option>

@@ -11,14 +11,21 @@
  * `c-color-picker` share one commit model. The anatomy lives in `TypedField.vue`, which binds
  * the element refs returned here.
  */
-import { computed, type Ref, ref, shallowRef, watch } from 'vue';
+import {
+  computed,
+  onBeforeUnmount,
+  type Ref,
+  ref,
+  shallowRef,
+  watch,
+} from 'vue';
 
+import { applyMask, type MaskSlot } from './inputMask';
 import {
   emitModelChange,
   emitModelInput,
   emitModelSettled,
-} from './emitModelValue';
-import { applyMask, type MaskSlot } from './inputMask';
+} from './valueEvents';
 
 export interface TypedFieldCodec {
   /** The committed value shown as text under `pattern`. */
@@ -45,6 +52,9 @@ export interface TypedFieldEnds {
 export type TypedFieldText = { end: string; start: string } | string;
 
 export interface UseTypedFieldOptions {
+  /** The inputs' accessible name: the label, else the host's `aria-label`. */
+  accessibleName: () => string | undefined;
+
   codec: TypedFieldCodec;
 
   /** The custom element host: the model events dispatch from it. */
@@ -253,7 +263,7 @@ export const useTypedField = (options: UseTypedFieldOptions) => {
     end === 'end' ? endInput.value : startInput.value;
 
   const inputLabel = (end: TypedFieldEnd) => {
-    const label = options.label();
+    const label = options.accessibleName();
 
     if (!range.value) return label || undefined;
 
@@ -280,9 +290,45 @@ export const useTypedField = (options: UseTypedFieldOptions) => {
   const fieldSizing =
     typeof CSS !== 'undefined' && CSS.supports('field-sizing', 'content');
 
+  // Without `field-sizing` (Firefox), the range start's text is measured in
+  // the input's own font. A `ch` count overshoots proportional text — the dots
+  // of "1.9.2031" are narrower than the zeros `ch` counts — and pushed the
+  // separator off centre. Measured again once page fonts finish loading.
+  const fontLoads = ref(0);
+
+  let measure: CanvasRenderingContext2D | null = null;
+
+  if (!fieldSizing && typeof document !== 'undefined' && document.fonts) {
+    const loaded = () => fontLoads.value++;
+
+    document.fonts.addEventListener('loadingdone', loaded);
+    onBeforeUnmount(() =>
+      document.fonts.removeEventListener('loadingdone', loaded),
+    );
+  }
+
+  const textWidth = (text: string): string | undefined => {
+    void fontLoads.value;
+
+    const input = startInput.value;
+
+    measure ??= input
+      ? document.createElement('canvas').getContext('2d')
+      : null;
+
+    if (!input || !measure) return undefined;
+
+    const style = getComputedStyle(input);
+
+    measure.font = style.font;
+    measure.letterSpacing = style.letterSpacing;
+
+    return `${Math.ceil(measure.measureText(text).width)}px`;
+  };
+
   // A width for the range start where `field-sizing` cannot give one: while it
   // shows no text at all (the floating label hides the placeholder), and in a
-  // browser without `field-sizing` (Firefox 140 ESR).
+  // browser without `field-sizing`.
   const startWidth = computed(() => {
     if (!range.value) return undefined;
 
@@ -290,7 +336,9 @@ export const useTypedField = (options: UseTypedFieldOptions) => {
 
     if (text && fieldSizing) return undefined;
 
-    return { width: `${(text || pattern.value).length}ch` };
+    const measured = text ? textWidth(text) : undefined;
+
+    return { width: measured ?? `${(text || pattern.value).length}ch` };
   });
 
   const onFocusOut = (event: FocusEvent) => {

@@ -2,6 +2,6 @@
   <div class="example-row">
     <c-message hint="Use your organization email address" />
 
-    <c-message :valid="false" error-message="Email is required" />
+    <c-message error-message="Email is required" invalid />
   </div>
 </template>

@@ -15,16 +15,21 @@
 
 <script setup lang="ts">
 /**
- * @slot default - Default slot
- * @slot footer - Footer slot
+ * @slot default - The current view's content
+ * @slot footer - Content below the container; inside `c-main` it sits at the bottom edge of a short page
  *
  * @csspart scroll-indicator - The fixed progress bar at the top of the viewport tracking how far the document is scrolled
- * @csspart container - The max-width content wrapper around the default slot
- *
- * @seeded from csc-ui — verify
+ * @csspart container - The content wrapper around the default slot, carrying its 1280px width limit and padding
  */
 import { tv } from 'tailwind-variants';
-import { computed, onBeforeUnmount, onMounted, useTemplateRef } from 'vue';
+import {
+  computed,
+  nextTick,
+  onBeforeUnmount,
+  onMounted,
+  useTemplateRef,
+  watch,
+} from 'vue';
 
 // Multi-root template (fragment) — keep consumer fallthrough attrs
 // (class/style) on the host element instead of tripping the "renders
@@ -50,16 +55,17 @@ defineOptions({ inheritAttrs: false });
 const page = tv({
   slots: {
     container: 'relative h-full w-full max-w-[1280px] p-3 sm:p-4 md:p-6',
-    // Fixed 4px progress bar pinned to the top of the viewport.
-    scrollIndicator: 'fixed top-0 left-0 z-[9] h-1 w-0 bg-primary',
+    // Fixed 4px progress bar pinned to the top of the viewport, above
+    // c-toolbar's `z-10`: inside c-main the pinned toolbar shares the viewport's
+    // top edge with the bar, and hid it.
+    scrollIndicator: 'fixed top-0 left-0 z-[11] h-1 w-0 bg-primary',
   },
 });
 
 interface CPageProps {
   /**
-   * Display scroll indicator
-   *
-   * @seeded from csc-ui — verify
+   * Shows a 4px primary bar along the top edge of the viewport whose length
+   * tracks how far the document has been scrolled.
    */
   scrollIndicator?: boolean;
 }
@@ -89,11 +95,28 @@ const onScroll = () => {
   scrollRef.value.style.width = `${scrolled}%`;
 };
 
+// The bar measures without waiting for a scroll: at mount (a restored scroll
+// position), when it is switched on, and when the viewport or the page's
+// content changes size, which changes the scrolled share.
+let resizeObserver: null | ResizeObserver = null;
+
 onMounted(() => {
   window.addEventListener('scroll', onScroll, { passive: true });
+  window.addEventListener('resize', onScroll, { passive: true });
+  resizeObserver = new ResizeObserver(onScroll);
+  resizeObserver.observe(document.body);
+  onScroll();
 });
+
+watch(
+  () => props.scrollIndicator,
+  () => nextTick(onScroll),
+);
+
 onBeforeUnmount(() => {
   window.removeEventListener('scroll', onScroll);
+  window.removeEventListener('resize', onScroll);
+  resizeObserver?.disconnect();
 });
 </script>
 

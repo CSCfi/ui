@@ -81,7 +81,7 @@ const combobox = (m: Mounted): HTMLInputElement =>
 const search = (m: Mounted): HTMLInputElement =>
   m.shadow('[part~="search"] input');
 
-const rows = (m: Mounted): HTMLElement[] => m.shadowAll('li[part~="item"]');
+const rows = (m: Mounted): HTMLElement[] => m.shadowAll('li[part~="option"]');
 
 const crumbs = (m: Mounted): HTMLElement[] =>
   m.shadowAll('button[part~="crumb"]');

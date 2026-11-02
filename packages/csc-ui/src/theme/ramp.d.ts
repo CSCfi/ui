@@ -3,7 +3,7 @@
 // loader) while consumers and the runtime API need types.
 
 /** One of the chromatic brand/status families a consumer may re-seed. */
-export type Family =
+export type CFamily =
   | 'accent'
   | 'error'
   | 'info'
@@ -14,10 +14,10 @@ export type Family =
   | 'warning';
 
 /** Built-in brand seed (step-500) per family. */
-export declare const DEFAULT_SEEDS: Record<Family, string>;
+export declare const DEFAULT_SEEDS: Record<CFamily, string>;
 
 /** The chromatic families, in canonical order. */
-export declare const FAMILIES: readonly Family[];
+export declare const FAMILIES: readonly CFamily[];
 
 /** Ramp steps, in ascending order (`[50, 100, …, 950]`). */
 export declare const STEPS: readonly number[];
@@ -30,7 +30,7 @@ export declare function cssColor(value: string): string;
 
 /** The `--c-<family>-*` custom-property map (steps + `-rgb`) for one seed. */
 export declare function familyVars(
-  family: Family,
+  family: CFamily,
   seedHex: string,
 ): Record<string, string>;
 

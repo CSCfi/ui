@@ -45,11 +45,27 @@
 </template>
 
 <script lang="ts">
-import type { CPlacement } from '../../types';
+/**
+ * Preferred placement of the panel relative to its trigger: the side, and
+ * `-start`/`-end` to align their edges on the cross axis.
+ */
+export type CPopoverPosition =
+  | 'bottom-end'
+  | 'bottom-start'
+  | 'bottom'
+  | 'left-end'
+  | 'left-start'
+  | 'left'
+  | 'right-end'
+  | 'right-start'
+  | 'right'
+  | 'top-end'
+  | 'top-start'
+  | 'top';
 
-export interface CPopoverProps {
+interface CPopoverProps {
   /** Distance from the trigger to the panel, in pixels. Defaults to `0`. */
-  distance?: number | string;
+  distance?: number;
 
   /**
    * Heading rendered at the top of the panel, doubling as its accessible
@@ -64,7 +80,7 @@ export interface CPopoverProps {
   open?: boolean;
 
   /** Preferred placement of the panel relative to the trigger. */
-  position?: CPlacement;
+  position?: CPopoverPosition;
 
   /**
    * Designated trigger: an element elsewhere in the document that opens the
@@ -112,6 +128,7 @@ import {
   useFallbackPosition,
 } from '../../shared/useFallbackPosition';
 import { useHostEmit } from '../../shared/useHostEmit';
+import { useIdReferences } from '../../shared/useIdReferences';
 
 /** Events dispatched by `<c-popover>`. */
 interface CPopoverEvents {
@@ -331,9 +348,9 @@ const onToggle = (event: Event) => {
   if (nowOpen) {
     panelLabel.value = props.heading || host?.getAttribute('aria-label') || '';
 
-    if (!panelLabel.value) {
+    if (!panelLabel.value && !host?.hasAttribute('aria-labelledby')) {
       console.warn(
-        '<c-popover> opened without an accessible name. Set the heading prop or aria-label on the c-popover element.',
+        '<c-popover> opened without an accessible name. Set the heading prop, or aria-label or aria-labelledby on the c-popover element.',
       );
     }
 
@@ -404,6 +421,9 @@ onBeforeUnmount(() => {
   host?.removeEventListener('click', onClick);
   leaveChain(chainEntry);
 });
+
+// The page's id references on the element reach the element carrying its role.
+useIdReferences(() => panelRef.value);
 </script>
 
 <!--

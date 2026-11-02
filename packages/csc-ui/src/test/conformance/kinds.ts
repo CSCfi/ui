@@ -1,6 +1,6 @@
 /**
  * Fixtures and recipes for the conformance suites (CONTEXT.md "Conformance
- * suite", ADR-0049). Tags are enrolled from generated data — `migratedTags`,
+ * suite", ADR-0049). Tags are enrolled from generated data — `registeredTags`,
  * `VALUE_TAGS`, a runtime `[popover]` probe — never from these tables; the
  * tables only say how to make a tag interactive, and each suite fails when a
  * tag has no entry.
@@ -11,6 +11,8 @@ import { userEvent } from 'vitest/browser';
 import type { Mounted, MountOptions } from '../harness';
 
 import { settle } from '../harness';
+
+export { HOST_ARIA_OBJECT, NO_ARIA_OBJECT } from './aria-object';
 
 export { NO_ROOT_PART } from './root-part';
 
@@ -34,28 +36,29 @@ export const FIXTURES: Record<string, MountOptions> = {
 };
 
 /**
+ * Value controls that are not form controls: an app never moves focus to
+ * them as to a field, so they keep the element's own `focus()`. Every other
+ * value control's `focus()` focuses its control.
+ */
+export const NOT_FORM_CONTROLS: readonly string[] = [
+  'c-accordion',
+  'c-modal',
+  'c-pagination',
+  'c-tabs',
+];
+
+/**
  * Value controls that dispatch value events on mount or on a programmatic
  * `value` change, breaking the "emit only on interaction" contract. The suite
  * asserts the inverse for these so fixing one forces the list to shrink.
  */
-export const KNOWN_PROGRAMMATIC_EMITTERS: readonly string[] = [
-  // CModal.vue: `dialog.close()` fires its `close` event in a later task, after
-  // the `internalClose` flag is reset, so `onNativeClose` re-dispatches the
-  // value events for every close — including a programmatic `value = false`.
-  'c-modal',
-  // CPagination.vue: `onMounted → setRange()` and a `value` watch both emit.
-  'c-pagination',
-];
+export const KNOWN_PROGRAMMATIC_EMITTERS: readonly string[] = [];
 
 /**
  * Value controls that dispatch the value events TWICE for one interaction.
  * Same inverse-assertion rule: fixing the component must shrink the list.
  */
-export const KNOWN_DOUBLE_EMITTERS: readonly string[] = [
-  // CModal.vue: the interaction handler dispatches, then the native `close`
-  // event (see KNOWN_PROGRAMMATIC_EMITTERS) dispatches again.
-  'c-modal',
-];
+export const KNOWN_DOUBLE_EMITTERS: readonly string[] = [];
 
 /**
  * Anchored overlays that drop keyboard focus to `<body>` when they close from
@@ -66,19 +69,6 @@ export const KNOWN_DOUBLE_EMITTERS: readonly string[] = [
 export const KNOWN_FOCUS_LOSS_ON_CLOSE: readonly string[] = [
   // CMenu.vue: `getTriggerEl()?.focus?.()` after Escape.
   'c-menu',
-];
-
-/**
- * Value controls whose `value` prop is typed `boolean | number | string`: Vue
- * casts an empty string to `true` for such a prop, so the `''` a plain Vue
- * `v-model` writes for a `null` model reads as `trueValue` and the control
- * mounts CHECKED. Real consumer-facing deviation (see CONTEXT.md "Value
- * control": '' must read as empty). The suite asserts the inverse so fixing
- * one forces the list to shrink.
- */
-export const KNOWN_EMPTY_VALUE_CHECKED: readonly string[] = [
-  'c-checkbox',
-  'c-switch',
 ];
 
 /**
@@ -107,18 +97,18 @@ const OPTIONS = [
 ].join('');
 
 export interface ValueRecipe {
+  /**
+   * The commit that follows an interaction which only changes the value
+   * (typed text): it fires the one `change`. Without it the interaction is
+   * its own commit (a pick, a toggle, an arrow-key step).
+   */
+  commit?(m: Mounted): Promise<void>;
+
   /** The value control is built on c-input and must treat '' / null as empty. */
   emptyAware?: boolean;
 
   /** The `update:value` detail that interaction yields (a predicate for object values). */
   expected: ((detail: unknown) => boolean) | unknown;
-
-  /**
-   * `changeValue`: the grandfathered set (changeValue + change-value twin);
-   * `change`: the all-lowercase set (`emitModelChange`);
-   * `otp`: c-otp-input's hand-rolled bridge (changeValue is null until complete).
-   */
-  family: 'change' | 'changeValue' | 'otp';
 
   /** The one user interaction that changes the value. */
   interact(m: Mounted): Promise<void>;
@@ -129,9 +119,6 @@ export interface ValueRecipe {
 
   /** A value to assign programmatically in the no-emission test. */
   programmatic: unknown;
-
-  /** The event at which `host.value` is guaranteed updated (c-otp-input writes it after `update:value`). */
-  valueSettledAt?: 'input' | 'update:value';
 }
 
 // The field panels open on a click anywhere in the c-input box. c-tree-select
@@ -181,6 +168,12 @@ const openClock = async (m: Mounted): Promise<void> => {
   await settle();
 };
 
+// Leaving a typed field commits what was typed.
+const leaveField = async (m: Mounted): Promise<void> => {
+  m.shadow('input').blur();
+  await settle();
+};
+
 const openCalendar = async (m: Mounted): Promise<void> => {
   await userEvent.click(
     m.deep('c-icon-button[aria-label="Open calendar"]', 'button'),
@@ -191,7 +184,6 @@ const openCalendar = async (m: Mounted): Promise<void> => {
 export const VALUE_RECIPES: Record<string, ValueRecipe> = {
   'c-accordion': {
     expected: 'a',
-    family: 'changeValue',
     interact: async (m) => {
       await userEvent.click(
         inner(
@@ -210,17 +202,15 @@ export const VALUE_RECIPES: Record<string, ValueRecipe> = {
   'c-autocomplete': {
     emptyAware: true,
     expected: 'fi',
-    family: 'changeValue',
     interact: async (m) => {
       await openField(m);
-      await userEvent.click(m.shadow('li[part~="item"]'));
+      await userEvent.click(m.shadow('li[part~="option"]'));
     },
     mount: { html: OPTIONS, props: { label: 'Country' } },
     programmatic: 'se',
   },
   'c-button-group': {
     expected: 'b',
-    family: 'change',
     interact: async (m) => {
       await userEvent.click(
         inner(m.host.querySelectorAll('c-button')[1], 'button'),
@@ -234,7 +224,6 @@ export const VALUE_RECIPES: Record<string, ValueRecipe> = {
   },
   'c-checkbox': {
     expected: true,
-    family: 'changeValue',
     interact: async (m) => {
       await userEvent.click(m.part('label'));
     },
@@ -245,7 +234,6 @@ export const VALUE_RECIPES: Record<string, ValueRecipe> = {
   'c-color-picker': {
     emptyAware: true,
     expected: '#e5534b',
-    family: 'change',
     interact: async (m) => {
       await openColorPanel(m);
       await userEvent.click(m.shadowAll('[part~="swatch"]')[1]);
@@ -256,7 +244,6 @@ export const VALUE_RECIPES: Record<string, ValueRecipe> = {
   'c-date-picker': {
     emptyAware: true,
     expected: '2031-09-15',
-    family: 'change',
     interact: async (m) => {
       await openCalendar(m);
       await userEvent.click(m.shadow('td[data-date="2031-09-15"]'));
@@ -269,7 +256,6 @@ export const VALUE_RECIPES: Record<string, ValueRecipe> = {
       Array.isArray(detail) &&
       detail.length === 1 &&
       (detail[0] as { name?: string; status?: string }).name === 'a.txt',
-    family: 'change',
     interact: async (m) => {
       await userEvent.upload(
         m.shadow('input[type="file"]'),
@@ -281,7 +267,6 @@ export const VALUE_RECIPES: Record<string, ValueRecipe> = {
   },
   'c-modal': {
     expected: false,
-    family: 'changeValue',
     interact: async () => {
       await userEvent.keyboard('{Escape}');
     },
@@ -294,9 +279,9 @@ export const VALUE_RECIPES: Record<string, ValueRecipe> = {
     programmatic: false,
   },
   'c-number-field': {
+    commit: leaveField,
     emptyAware: true,
     expected: 5,
-    family: 'change',
     interact: async (m) => {
       await userEvent.type(m.shadow('input'), '5');
     },
@@ -304,33 +289,29 @@ export const VALUE_RECIPES: Record<string, ValueRecipe> = {
     programmatic: 7,
   },
   'c-otp-input': {
+    commit: leaveField,
     expected: '1',
-    family: 'otp',
     interact: async (m) => {
       await userEvent.type(m.shadow('input[part~="input"]'), '1');
     },
     mount: { props: { length: 1 } },
     programmatic: '2',
-    valueSettledAt: 'input',
   },
   'c-pagination': {
-    expected: (detail: unknown) =>
-      (detail as { currentPage?: number }).currentPage === 2,
-    family: 'changeValue',
+    expected: (detail: unknown) => (detail as { page?: number }).page === 2,
     interact: async (m) => {
       await userEvent.click(
         m.deep('c-icon-button[aria-label="Next page"]', 'button'),
       );
     },
-    model: { currentPage: 1, itemCount: 100, itemsPerPage: 25 },
+    model: { itemCount: 100, page: 1, pageSize: 25 },
     mount: {
-      props: { value: { currentPage: 1, itemCount: 100, itemsPerPage: 25 } },
+      props: { value: { itemCount: 100, page: 1, pageSize: 25 } },
     },
-    programmatic: { currentPage: 3, itemCount: 100, itemsPerPage: 25 },
+    programmatic: { itemCount: 100, page: 3, pageSize: 25 },
   },
   'c-radio-group': {
     expected: 'b',
-    family: 'changeValue',
     interact: async (m) => {
       await userEvent.click(m.host.querySelectorAll('c-radio')[1]);
     },
@@ -343,7 +324,6 @@ export const VALUE_RECIPES: Record<string, ValueRecipe> = {
   'c-select': {
     emptyAware: true,
     expected: 'fi',
-    family: 'changeValue',
     interact: async (m) => {
       await openField(m);
       await userEvent.click(
@@ -355,7 +335,6 @@ export const VALUE_RECIPES: Record<string, ValueRecipe> = {
   },
   'c-slider': {
     expected: 6,
-    family: 'changeValue',
     interact: async (m) => {
       m.shadow('input[type="range"]').focus();
       await userEvent.keyboard('{ArrowRight}');
@@ -366,7 +345,6 @@ export const VALUE_RECIPES: Record<string, ValueRecipe> = {
   },
   'c-switch': {
     expected: true,
-    family: 'changeValue',
     interact: async (m) => {
       await userEvent.click(m.part('root'));
     },
@@ -376,7 +354,6 @@ export const VALUE_RECIPES: Record<string, ValueRecipe> = {
   },
   'c-tabs': {
     expected: 'two',
-    family: 'changeValue',
     interact: async (m) => {
       await userEvent.click(m.host.querySelectorAll('c-tab')[1]);
     },
@@ -388,9 +365,9 @@ export const VALUE_RECIPES: Record<string, ValueRecipe> = {
     programmatic: 'one',
   },
   'c-text-field': {
+    commit: leaveField,
     emptyAware: true,
     expected: 'a',
-    family: 'changeValue',
     interact: async (m) => {
       await userEvent.type(m.shadow('input'), 'a');
     },
@@ -401,7 +378,6 @@ export const VALUE_RECIPES: Record<string, ValueRecipe> = {
     emptyAware: true,
     // An empty value: the hour pick fills in minute 00 (ADR-0062).
     expected: '09:00',
-    family: 'change',
     interact: async (m) => {
       await openClock(m);
       await userEvent.click(m.shadow('li[data-key="h9"]'));
@@ -412,10 +388,9 @@ export const VALUE_RECIPES: Record<string, ValueRecipe> = {
   'c-tree-select': {
     emptyAware: true,
     expected: 'a',
-    family: 'change',
     interact: async (m) => {
       await openField(m);
-      await userEvent.click(m.shadow('li[part~="item"]'));
+      await userEvent.click(m.shadow('li[part~="option"]'));
     },
     mount: {
       props: {
@@ -449,6 +424,13 @@ export interface OverlayRecipe {
 
   /** The `[popover]` panel element. */
   panel(m: Mounted): HTMLElement;
+
+  /**
+   * Placed by script in every browser, never natively (ADR-0056, amended
+   * 2026-11-02): the panel has no native placement to match, so without the
+   * feature it must land exactly where it does with it.
+   */
+  scripted?: boolean;
 }
 
 const TRIGGER = '<c-button slot="trigger">Open</c-button>';
@@ -540,6 +522,7 @@ export const OVERLAY_RECIPES: Record<string, OverlayRecipe> = {
     },
     panel: (m) =>
       inner(m.host.querySelector('c-menu-item'), '[part~="submenu-panel"]'),
+    scripted: true,
   },
   'c-popover': {
     focusHome: (m) => m.host.querySelector('c-button'),

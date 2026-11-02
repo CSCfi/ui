@@ -8,17 +8,28 @@
       :active="focused || open"
       :data-hide-details="String(hideDetails)"
       :disabled
-      :error-message
       :filled="hasText"
-      :hint
       :input-id
+      :invalid
       :label
       :label-on-top
       :required
       :shadow
       :size
-      :valid
     >
+      <!-- The hint / error message, here in the field's own tree so the
+           input's aria-describedby can name it. -->
+      <field-message
+        :id="`${inputId}-message`"
+        slot="message"
+        :error-message
+        :hide-details
+        :hint
+        :invalid
+        :label-on-top
+        part="message"
+      />
+
       <!-- The editable field (ADR-0058): typing never opens the panel. Under
            `range` a second input holds the end, both in one field box. -->
       <div
@@ -30,7 +41,9 @@
         <input
           :id="inputId"
           :ref="bindStart"
-          :aria-invalid="!valid || badStart || undefined"
+          v-bind="controlAttrs"
+          :aria-describedby="hideDetails ? undefined : `${inputId}-message`"
+          :aria-invalid="invalid || badStart || undefined"
           :aria-label="inputLabel('start')"
           :class="ui.input({ start: range })"
           :disabled
@@ -59,7 +72,9 @@
 
           <input
             :ref="bindEnd"
-            :aria-invalid="!valid || badEnd || undefined"
+            v-bind="controlAttrs"
+            :aria-describedby="hideDetails ? undefined : `${inputId}-message`"
+            :aria-invalid="invalid || badEnd || undefined"
             :aria-label="inputLabel('end')"
             :class="ui.input()"
             :disabled
@@ -115,6 +130,7 @@ import { type ComponentPublicInstance, computed } from 'vue';
 
 import type { CFieldSize } from '../types';
 
+import FieldMessage from './FieldMessage.vue';
 import { type TypedField } from './useTypedField';
 
 const typedField = tv({
@@ -148,6 +164,9 @@ const props = defineProps<{
 
   /** Accessible label of the clear button. */
   clearLabel: string;
+
+  /** The host's ARIA attributes, for the inputs (`useControlAttrs`). */
+  controlAttrs: Record<string, unknown>;
   disabled: boolean;
   errorMessage: string;
 
@@ -159,6 +178,7 @@ const props = defineProps<{
 
   /** The virtual keyboard the inputs ask for. */
   inputmode: 'numeric' | 'text';
+  invalid: boolean;
   label: string;
   labelOnTop: boolean;
   name: string;
@@ -168,7 +188,6 @@ const props = defineProps<{
   required: boolean;
   shadow: boolean;
   size: CFieldSize;
-  valid: boolean;
 }>();
 
 // Top-level bindings, so the template unwraps them.

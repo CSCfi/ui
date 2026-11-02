@@ -78,3 +78,137 @@ describe('c-data-table autohide', () => {
     for (const col of COLUMNS) expect(keys).toContain(col.key);
   });
 });
+
+describe('c-data-table selection and query (decisions #19, #20)', () => {
+  type TableHost = {
+    query?: string;
+    selectedRows: Record<string, unknown>[];
+  } & HTMLElement;
+
+  const mountTable = (props: Record<string, unknown> = {}) =>
+    mount<TableHost>('c-data-table', {
+      props: {
+        columns: COLUMNS,
+        data: DATA,
+        getRowId: (row: { name: string }) => row.name,
+        ...props,
+      },
+    });
+
+  it('change:selected carries the selected ids; selectedRows the rows', async () => {
+    const m = await mountTable({ selection: 'multiple' });
+    await settled();
+
+    const ids: unknown[] = [];
+    m.host.addEventListener('change:selected', (e) =>
+      ids.push((e as CustomEvent).detail),
+    );
+
+    const checkbox = m.shadowAll('tr[part~="row"] c-checkbox')[1];
+
+    checkbox.shadowRoot!.querySelector('input')!.click();
+    await settled();
+
+    expect(ids).toEqual([['Borealis']]);
+    expect(m.host.selectedRows.map((row) => row.name)).toEqual(['Borealis']);
+  });
+
+  it('query filters the rows across every column', async () => {
+    const m = await mountTable({ query: 'mahti' });
+    await settled();
+
+    expect(m.shadowAll('tr[part~="row"]')).toHaveLength(1);
+  });
+});
+
+describe('c-data-table sorting', () => {
+  it('announces a sort only on a column that sorts', async () => {
+    const m = await mount('c-data-table', {
+      props: {
+        columns: [
+          { header: 'Project', key: 'name' },
+          { header: 'Owner', key: 'owner', sortable: true },
+        ],
+        data: DATA,
+        sort: { column: 'name', direction: 'desc' },
+      },
+    });
+    await settled();
+
+    // The rows keep their order: a column that does not sort is never sorted.
+    expect(m.shadow('th[data-col="name"]').hasAttribute('aria-sort')).toBe(
+      false,
+    );
+
+    (m.host as { sort?: unknown } & HTMLElement).sort = {
+      column: 'owner',
+      direction: 'asc',
+    };
+    await settled();
+
+    expect(m.shadow('th[data-col="owner"]').getAttribute('aria-sort')).toBe(
+      'ascending',
+    );
+  });
+});
+
+describe('c-data-table for assistive technology', () => {
+  const mountTable = (props: Record<string, unknown> = {}) =>
+    mount('c-data-table', {
+      props: {
+        columns: COLUMNS,
+        data: DATA,
+        expandedContent: () => 'More',
+        getRowId: (row: { name: string }) => row.name,
+        selection: 'multiple',
+        ...props,
+      },
+    });
+
+  it('announces the selection banner from a status region that is always there', async () => {
+    // A full page with more rows beyond it shows the banner.
+    const m = await mountTable({ pageSize: 1 });
+    await settled();
+
+    const status = m.shadow('[role="status"]');
+
+    expect(status.textContent?.trim()).toBe('');
+
+    m.shadowAll('thead c-checkbox')[0]!
+      .shadowRoot!.querySelector('input')!
+      .click();
+    await settled();
+
+    const message = m.part('banner').querySelector('span')!.textContent!.trim();
+
+    expect(m.shadow('[role="status"]')).toBe(status);
+    expect(message).not.toBe('');
+    expect(status.textContent?.trim()).toBe(message);
+  });
+
+  it('is busy while loading', async () => {
+    const m = await mountTable({ loading: true });
+    await settled();
+
+    expect(m.part('table').getAttribute('aria-busy')).toBe('true');
+
+    (m.host as { loading?: boolean } & HTMLElement).loading = false;
+    await settled();
+
+    expect(m.part('table').hasAttribute('aria-busy')).toBe(false);
+  });
+
+  it('names each row’s checkbox and expander after the row', async () => {
+    const m = await mountTable();
+    await settled();
+
+    const [first] = m.shadowAll('tbody tr[part~="row"]');
+
+    expect(first!.querySelector('c-checkbox')!.getAttribute('aria-label')).toBe(
+      'Select Aurora',
+    );
+    expect(
+      first!.querySelector('c-icon-button')!.getAttribute('aria-label'),
+    ).toBe('Details of Aurora');
+  });
+});

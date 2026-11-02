@@ -193,7 +193,6 @@ add(
   UI,
   'border-strong / surface (control outline)',
 );
-add('ring', 'surface', UI, 'ring / surface (focus)');
 add('primary', 'surface', UI, 'primary / surface (icon/fill)');
 // the unselected button-group / tab-buttons label is `primary` text sitting on
 // the opaque `surface-sunken` track fill (ADR-0042) — real text, AA applies

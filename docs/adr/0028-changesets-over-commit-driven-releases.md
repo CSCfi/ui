@@ -57,3 +57,17 @@ Versioning and publishing are driven by **changesets**:
   exactly 4.0.0.
 - npmjs.com must be configured once per package to trust this repository's
   publish workflow (requires package owner rights).
+
+## Amendment (2026-10-23): the road out of pre mode
+
+- The alphas end in a **release candidate**: once the breaking work of
+  ADR-0074–0077 has landed, the pre tag switches from `alpha` to `rc`. From
+  `4.0.0-rc.1` the API guard (ADR-0074) fails any breaking change, and 4.0.0
+  ships when MyCSC runs on the latest RC with no open csc-ui blocker.
+- **The 4.0.0 changelog entry is curated.** Before `changeset pre exit`, the
+  changesets already released in an alpha are deleted (their text stays under
+  each alpha in `CHANGELOG.md`) and one hand-written major changeset describes
+  the release for 3.x upgraders, linking the migration guide.
+- **3.x is frozen at 3.0.19**, which keeps a `v3` dist-tag; no 3.x version is
+  deprecated on npm. After 4.0.0 the `alpha` and `rc` dist-tags are removed,
+  and `@cscfi/csc-ui-vue` / `@cscfi/csc-ui-vue2` are deprecated.

@@ -40,6 +40,7 @@
     <button
       v-if="!compactResolved"
       ref="zoneRef"
+      :aria-describedby="hideDetailsResolved ? undefined : messageId"
       :class="ui.zone()"
       :disabled="isDisabled"
       part="drop-zone"
@@ -67,6 +68,7 @@
     <div v-else :class="ui.zone()" part="drop-zone" @click="openDialog">
       <button
         ref="zoneRef"
+        :aria-describedby="hideDetailsResolved ? undefined : messageId"
         :class="ui.choose()"
         :disabled="isDisabled"
         type="button"
@@ -84,10 +86,11 @@
     </div>
 
     <field-message
+      :id="messageId"
       :error-message
       :hide-details="hideDetailsResolved"
       :hint
-      :valid
+      :invalid
       part="message"
     />
 
@@ -199,10 +202,10 @@
 
         <span :class="ui.actions()">
           <button
-            :aria-label="t.dismiss(row.name)"
+            :aria-label="t.close(row.name)"
             :class="ui.action()"
             type="button"
-            @click="dismissRejected(row.key)"
+            @click="closeRejected(row.key)"
           >
             <svg
               :class="ui.actionIcon()"
@@ -268,7 +271,104 @@ export type CFileUploadFunction = (
   context: CFileUploadContext,
 ) => Promise<unknown>;
 
-export interface CFileUploadProps {
+/** One rejected file, as the `reject` event reports it. */
+export interface CFileUploadRejection {
+  /** The refused file. */
+  file: File;
+
+  /** Why it was refused. */
+  reason: CFileUploadRejectReason;
+}
+
+/** Why a file was rejected. */
+export type CFileUploadRejectReason =
+  | 'count'
+  | 'duplicate'
+  | 'folder'
+  | 'size'
+  | 'type';
+
+/** Where a file entry stands (CONTEXT.md "Upload status"). */
+export type CFileUploadStatus =
+  | 'done'
+  | 'error'
+  | 'local'
+  | 'queued'
+  | 'uploading';
+
+/** UI texts of `c-file-upload`, merged key by key over the English defaults. */
+export interface CFileUploadTexts {
+  /** Announced after an add, with the number of files added. */
+  announceAdded?: (count: number) => string;
+
+  /** Announced when an upload fails, with the file name and the row's error text. */
+  announceFailed?: (name: string, error: string) => string;
+
+  /** Announced for a rejected file, with its name and the reason text. */
+  announceRejected?: (name: string, reason: string) => string;
+
+  /** Announced when an upload is done, with the file name. */
+  announceUploaded?: (name: string) => string;
+
+  /** Accessible label of a queued or uploading row's cancel button. */
+  cancel?: (name: string) => string;
+
+  /** The link-styled end of the large drop zone's prompt. */
+  choose?: (multiple: boolean) => string;
+
+  /** The compact row's button, and the large drop zone's prompt on a touch screen. */
+  chooseButton?: (multiple: boolean) => string;
+
+  /** Accessible label of a rejected row's close button. */
+  close?: (name: string) => string;
+
+  /** The compact row's prompt beside its button. */
+  compactPrompt?: (multiple: boolean) => string;
+
+  /** The large drop zone's prompt before the choose link. */
+  dragPrompt?: (multiple: boolean) => string;
+
+  /** The drop zone's prompt while files are dragged over the field. */
+  dropActive?: (multiple: boolean) => string;
+
+  /** An uploading row's status: bytes sent, file size (both formatted) and the whole percentage. */
+  progress?: (loaded: string, total: string, percent: number) => string;
+
+  /** A queued row's status. */
+  queued?: string;
+
+  /** Rejection reason: a file beyond the count the field holds. */
+  rejectedCount?: (max: number) => string;
+
+  /** Rejection reason: a file the field already holds. */
+  rejectedDuplicate?: string;
+
+  /** Rejection reason: a dropped folder. */
+  rejectedFolder?: string;
+
+  /** Rejection reason: a file over `max-size`, with the formatted limit. */
+  rejectedSize?: (max: string) => string;
+
+  /** Rejection reason: a type outside `accept`. */
+  rejectedType?: string;
+
+  /** Accessible label of a row's remove button. */
+  remove?: (name: string) => string;
+
+  /** Accessible label of a failed row's retry button. */
+  retry?: (name: string) => string;
+
+  /** Accessible name of a done row's check mark. */
+  uploaded?: string;
+
+  /** A failed row's status when the upload function gave no message. */
+  uploadFailed?: string;
+
+  /** An uploading row's status before the first progress report. */
+  uploading?: string;
+}
+
+interface CFileUploadProps {
   /**
    * The file types the field takes, in the native `accept` syntax: extensions (`.pdf`) and media types (`image/*`, `application/json`), comma separated. It filters the file dialog and is checked again on a drop
    *
@@ -308,6 +408,12 @@ export interface CFileUploadProps {
    * @freeform
    */
   hint?: string;
+
+  /**
+   * Show the control as invalid: its `error-message`, when set, replaces the
+   * hint, and the control is marked `aria-invalid`.
+   */
+  invalid?: boolean;
 
   /**
    * Label of the field
@@ -361,111 +467,11 @@ export interface CFileUploadProps {
   upload?: CFileUploadFunction;
 
   /**
-   * Set the validity of the field
-   */
-  valid?: boolean;
-
-  /**
    * The file entries — always a list. A picked file's entry carries the browser `File`; a server file's entry is `{ id, name, size, status: 'done' }`. `''` reads as empty — what a plain `v-model` holding `null` writes. An array — bind as a DOM property
+   *
+   * @propertyonly
    */
   value?: CFileUploadEntry[] | null | string;
-}
-
-/** One rejected file, as the `reject` event reports it. */
-export interface CFileUploadRejection {
-  /** The refused file. */
-  file: File;
-
-  /** Why it was refused. */
-  reason: CFileUploadRejectReason;
-}
-
-/** Why a file was rejected. */
-export type CFileUploadRejectReason =
-  | 'count'
-  | 'duplicate'
-  | 'folder'
-  | 'size'
-  | 'type';
-
-/** Where a file entry stands (CONTEXT.md "Upload status"). */
-export type CFileUploadStatus =
-  | 'done'
-  | 'error'
-  | 'local'
-  | 'queued'
-  | 'uploading';
-
-/** UI texts of `c-file-upload`, merged key by key over the English defaults. */
-export interface CFileUploadTexts {
-  /** Announced after an add, with the number of files added. */
-  announceAdded?: (count: number) => string;
-
-  /** Announced when an upload fails, with the file name and the row's error text. */
-  announceFailed?: (name: string, error: string) => string;
-
-  /** Announced for a rejected file, with its name and the reason text. */
-  announceRejected?: (name: string, reason: string) => string;
-
-  /** Announced when an upload is done, with the file name. */
-  announceUploaded?: (name: string) => string;
-
-  /** Accessible label of a queued or uploading row's cancel button. */
-  cancel?: (name: string) => string;
-
-  /** The link-styled end of the large drop zone's prompt. */
-  choose?: (multiple: boolean) => string;
-
-  /** The compact row's button, and the large drop zone's prompt on a touch screen. */
-  chooseButton?: (multiple: boolean) => string;
-
-  /** The compact row's prompt beside its button. */
-  compactPrompt?: (multiple: boolean) => string;
-
-  /** Accessible label of a rejected row's dismiss button. */
-  dismiss?: (name: string) => string;
-
-  /** The large drop zone's prompt before the choose link. */
-  dragPrompt?: (multiple: boolean) => string;
-
-  /** The drop zone's prompt while files are dragged over the field. */
-  dropActive?: (multiple: boolean) => string;
-
-  /** An uploading row's status: bytes sent, file size (both formatted) and the whole percentage. */
-  progress?: (loaded: string, total: string, percent: number) => string;
-
-  /** Rejection reason: a file beyond the count the field holds. */
-  rejectedCount?: (max: number) => string;
-
-  /** Rejection reason: a file the field already holds. */
-  rejectedDuplicate?: string;
-
-  /** Rejection reason: a dropped folder. */
-  rejectedFolder?: string;
-
-  /** Rejection reason: a file over `max-size`, with the formatted limit. */
-  rejectedSize?: (max: string) => string;
-
-  /** Rejection reason: a type outside `accept`. */
-  rejectedType?: string;
-
-  /** Accessible label of a row's remove button. */
-  remove?: (name: string) => string;
-
-  /** Accessible label of a failed row's retry button. */
-  retry?: (name: string) => string;
-
-  /** Accessible name of a done row's check mark. */
-  uploaded?: string;
-
-  /** A failed row's status when the upload function gave no message. */
-  uploadFailed?: string;
-
-  /** An uploading row's status before the first progress report. */
-  uploading?: string;
-
-  /** A queued row's status. */
-  waiting?: string;
 }
 </script>
 
@@ -518,13 +524,14 @@ import type { Candidate, FileCategory } from './files';
 
 import { useAppDefault } from '../../shared/appDefaults';
 import { coerceBoolean } from '../../shared/coerceBoolean';
-import { emitModelChange } from '../../shared/emitModelValue';
 import FieldMessage from '../../shared/FieldMessage.vue';
 import FormLabel from '../../shared/FormLabel.vue';
 import { useHostEmit } from '../../shared/useHostEmit';
 import { useHostStates } from '../../shared/useHostStates';
+import { useIdReferences } from '../../shared/useIdReferences';
 import { useKeyboardModality } from '../../shared/useKeyboardModality';
 import { useStatusAnnouncer } from '../../shared/useStatusAnnouncer';
+import { emitModelChange } from '../../shared/valueEvents';
 import {
   createEntryId,
   fileCategory,
@@ -659,6 +666,7 @@ const props = withDefaults(defineProps<CFileUploadProps>(), {
   errorMessage: '',
   hideDetails: undefined,
   hint: '',
+  invalid: false,
   label: '',
   manual: false,
   maxFiles: null,
@@ -668,7 +676,6 @@ const props = withDefaults(defineProps<CFileUploadProps>(), {
   size: undefined,
   texts: undefined,
   upload: undefined,
-  valid: true,
   value: null,
 });
 
@@ -701,14 +708,15 @@ const DEFAULT_TEXTS: Required<CFileUploadTexts> = {
   cancel: (name) => `Cancel upload of ${name}`,
   choose: (multiple) => (multiple ? 'choose files' : 'choose a file'),
   chooseButton: (multiple) => (multiple ? 'Choose files' : 'Choose a file'),
+  close: (name) => `Close ${name}`,
   compactPrompt: (multiple) =>
     multiple ? 'or drop files here' : 'or drop a file here',
-  dismiss: (name) => `Dismiss ${name}`,
   dragPrompt: (multiple) =>
     multiple ? 'Drag files here or' : 'Drag a file here or',
   dropActive: (multiple) =>
     multiple ? 'Drop files to add them' : 'Drop the file to add it',
   progress: (loaded, total, percent) => `${loaded} of ${total} · ${percent}%`,
+  queued: 'Waiting',
   rejectedCount: (max) =>
     max === 1 ? 'Only one file allowed' : `Only ${max} files allowed`,
   rejectedDuplicate: 'Already added',
@@ -720,7 +728,6 @@ const DEFAULT_TEXTS: Required<CFileUploadTexts> = {
   uploaded: 'Uploaded',
   uploadFailed: 'Upload failed',
   uploading: 'Uploading',
-  waiting: 'Waiting',
 };
 
 const t = computed<Required<CFileUploadTexts>>(() => ({
@@ -743,7 +750,7 @@ const ui = computed(() =>
     compact: compactResolved.value,
     disabled: isDisabled.value,
     dragOver: dragOver.value && !isDisabled.value,
-    error: !coerceBoolean(props.valid),
+    error: coerceBoolean(props.invalid),
     size: sizeResolved.value,
   }),
 );
@@ -751,6 +758,8 @@ const ui = computed(() =>
 const autoId = useId();
 
 const labelId = `${autoId}-label`;
+
+const messageId = `${autoId}-message`;
 
 const inputRef = useTemplateRef<HTMLInputElement>('inputRef');
 
@@ -876,7 +885,7 @@ interface RejectedRow {
 /**
  * The latest add's rejected files. They describe that add only, so the next
  * change to the list — an add, a removal, a value set from outside — clears
- * them, as does their own dismiss.
+ * them, as does their own close button.
  */
 const rejectedRows = shallowRef<RejectedRow[]>([]);
 
@@ -1067,7 +1076,17 @@ const startUploads = (): void => {
   emitValue();
 };
 
-defineExpose({ startUploads });
+/**
+ * Focus its drop zone's button, as `focus()` does on a native control: the element renders
+ * no box of its own to take it.
+ *
+ * @param options - Passed on to that element's `focus()`
+ */
+const focus = (options?: FocusOptions): void => {
+  zoneRef.value?.focus(options);
+};
+
+defineExpose({ focus, startUploads });
 
 // A value set from outside: tracked ids it leaves out are aborted silently;
 // for the rest the component's own state wins, so a stale snapshot never
@@ -1359,7 +1378,7 @@ const retryEntry = (entry: CFileUploadEntry): void => {
   emitValue();
 };
 
-const dismissRejected = (key: string): void => {
+const closeRejected = (key: string): void => {
   const index =
     base.value.length + rejectedRows.value.findIndex((row) => row.key === key);
 
@@ -1384,7 +1403,7 @@ const entryRows = computed<EntryRow[]>(() => {
 
     let line = size;
 
-    if (status === 'queued') line = `${size} · ${text.waiting}`;
+    if (status === 'queued') line = `${size} · ${text.queued}`;
     else if (status === 'uploading') {
       line =
         progress === null || progress === undefined
@@ -1471,6 +1490,9 @@ onMounted(() => {
 onBeforeUnmount(() => {
   for (const { controller } of tracked.values()) controller?.abort();
 });
+
+// The page's id references on the element reach the element carrying its role.
+useIdReferences('[role="group"]');
 </script>
 
 <!--

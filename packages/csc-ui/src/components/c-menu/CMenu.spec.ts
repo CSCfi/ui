@@ -243,16 +243,31 @@ describe('c-menu submenu on touch', () => {
     expect(panel.matches(':popover-open')).toBe(true);
   });
 
-  it('the submenu panel can flip to the other side when the right has no room', async () => {
+  it('the submenu flips to the left of its row when the right has no room', async () => {
     const m = await mountMenu(SUBMENU);
 
+    m.stage.style.cssText += ';position:fixed;top:0;right:0';
     await open(m);
 
-    const panel = submenuPanel(m.host.querySelector('c-menu-item')!);
+    const parent = m.host.querySelector('c-menu-item')!;
 
-    expect(
-      getComputedStyle(panel).getPropertyValue('position-try-fallbacks'),
-    ).toContain('flip-inline');
+    parent.click();
+    await settle();
+    await settle();
+
+    const panel = submenuPanel(parent);
+
+    expect(panel.matches(':popover-open')).toBe(true);
+
+    for (const a of document.getAnimations()) a.finish();
+
+    const sub = rect(panel.querySelector('[part~="submenu-list"]')!);
+
+    const row = rect(parent.shadowRoot!.querySelector('[part~="root"]')!);
+
+    expect(sub.width).toBeGreaterThan(0);
+    expect(sub.right, 'left of its row').toBeLessThanOrEqual(row.left);
+    expect(sub.left, 'inside the viewport').toBeGreaterThanOrEqual(0);
   });
 
   // A phone: the menu spans most of the viewport, so neither side of the
@@ -276,7 +291,7 @@ describe('c-menu submenu on touch', () => {
 
       expect(panel.matches(':popover-open')).toBe(true);
 
-      const sub = rect(panel.querySelector('[part~="submenu"]')!);
+      const sub = rect(panel.querySelector('[part~="submenu-list"]')!);
 
       const row = rect(parent);
 

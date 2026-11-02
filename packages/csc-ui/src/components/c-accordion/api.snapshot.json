@@ -2,28 +2,26 @@
   "attributes": {
     "mandatory": "boolean = false",
     "multiple": "boolean = false",
-    "outlined": "boolean = false"
+    "outlined": "boolean = false",
+    "value": "number | string = null"
   },
   "cssProperties": [],
   "defaultable": [],
   "events": {
-    "change": "CustomEvent<AccordionValue>",
-    "changeValue": "CustomEvent<AccordionValue>",
+    "change": "CustomEvent<CAccordionValue>",
     "input": "CustomEvent<void>",
-    "update:value": "CustomEvent<AccordionValue>"
+    "update:value": "CustomEvent<CAccordionValue>"
   },
   "methods": {},
   "parts": [
     "root"
   ],
-  "propertyOnly": [
-    "value"
-  ],
+  "propertyOnly": [],
   "props": {
     "mandatory": "boolean = false",
     "multiple": "boolean = false",
     "outlined": "boolean = false",
-    "value": "AccordionValue = null"
+    "value": "CAccordionValue = null"
   },
   "slots": [
     "default"

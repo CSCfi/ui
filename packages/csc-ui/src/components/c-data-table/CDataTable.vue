@@ -1,6 +1,10 @@
 <template>
   <div ref="rootRef" :class="ui.root()" part="root">
-    <div v-if="banner" :class="ui.banner()" aria-live="polite" part="banner">
+    <!-- The banner's message is announced from a status region that is always
+         in the DOM: one created with its first message is not announced. -->
+    <div class="sr-only" role="status">{{ banner?.message ?? '' }}</div>
+
+    <div v-if="banner" :class="ui.banner()" part="banner">
       <span>{{ banner.message }}</span>
 
       <c-button size="small" text @click="banner.action">
@@ -9,7 +13,12 @@
     </div>
 
     <div ref="viewportRef" :class="ui.viewport()" part="viewport">
-      <table ref="tableRef" class="c-data-table" part="table">
+      <table
+        ref="tableRef"
+        :aria-busy="coerceBoolean(loading) ? 'true' : undefined"
+        class="c-data-table"
+        part="table"
+      >
         <!-- v-show, not v-if: the slot element must stay in the DOM for its
              slotchange tracking to work, and an empty caption would otherwise
              reserve its padding. -->
@@ -33,7 +42,7 @@
                   :indeterminate="somePageSelected && !allPageSelected"
                   :value="allPageSelected"
                   hide-details
-                  @changeValue="onSelectPage"
+                  @change="onSelectPage"
                 />
               </div>
             </th>
@@ -124,10 +133,10 @@
               >
                 <div class="cell selection">
                   <c-checkbox
-                    :aria-label="t.selectRow"
+                    :aria-label="rowText(t.selectRow, row)"
                     :value="isSelected(row.id)"
                     hide-details
-                    @changeValue="onRowCheck(row, $event)"
+                    @change="onRowCheck(row, $event)"
                     @click.stop
                   />
                 </div>
@@ -138,7 +147,7 @@
                 :key="col.key"
                 :class="{
                   pinned: col.pinned,
-                  sorted: sortState?.column === col.key,
+                  sorted: col.sortable && sortState?.column === col.key,
                 }"
                 :style="pinStyle(col.key)"
                 part="cell"
@@ -161,7 +170,7 @@
                 <div class="cell">
                   <c-icon-button
                     :aria-expanded="isExpanded(row.id)"
-                    :aria-label="t.expandRow"
+                    :aria-label="rowText(t.expandRow, row)"
                     size="small"
                     text
                     @click.stop="toggleExpanded(row.id)"
@@ -255,8 +264,9 @@
 
     <div v-if="paginationOn" :class="ui.pagination()" part="pagination">
       <c-pagination
+        :texts="paginationTexts"
         :value="paginationValue"
-        @changeValue="onPaginationChange"
+        @change="onPaginationChange"
       />
     </div>
   </div>
@@ -377,95 +387,6 @@ export interface CDataTableFooterContext {
   rows: CDataTableRow[];
 }
 
-export interface CDataTableProps {
-  /**
-   * Move overflowing `expansion: 'auto'` columns into the expansion row
-   * (rightmost first) instead of scrolling horizontally.
-   */
-  autohide?: boolean;
-
-  /** Column definitions. Pass as a DOM property (contains functions). */
-  columns?: CDataTableColumn[];
-
-  /** Rows — plain domain objects. Pass as a DOM property. */
-  data?: CDataTableRow[];
-
-  /** Ids of the expanded rows (optionally controlled). */
-  expanded?: string[];
-
-  /**
-   * Custom expansion-row content, appended after the auto-rendered cells of
-   * columns currently in the expansion row.
-   */
-  expandedContent?: (
-    context: CDataTableExpandedContext,
-  ) => CDataTableCellContent;
-
-  /**
-   * The server owns sorting, pagination and filtering: the table renders
-   * `data` verbatim and only emits the state-change events. Requires
-   * `itemCount` for the pager; disables the select-all banner and `filter`.
-   */
-  external?: boolean;
-
-  /**
-   * Filter rows client-side against this string (all columns). Ignored when
-   * `external` is set.
-   *
-   * @freeform
-   */
-  filter?: string;
-
-  /**
-   * Return a stable id for a row. Falls back to the row's index — supply
-   * this whenever selection/expansion is used with `external` data.
-   */
-  getRowId?: (row: CDataTableRow) => string;
-
-  /** Total number of rows in the dataset. Only used (and needed) with `external`. */
-  itemCount?: number;
-
-  /** Show the loading indicator. */
-  loading?: boolean;
-
-  /** Current page, 1-based (optionally controlled). */
-  page?: number;
-
-  /**
-   * Rows per page. Pagination is active only when set — without it every row
-   * renders and no pager is shown.
-   */
-  pageSize?: number;
-
-  /** Options for the pager's page-size menu. */
-  pageSizes?: number[];
-
-  /** Ids of the selected rows (optionally controlled). */
-  selected?: string[];
-
-  /** Row selection mode. Unset means rows are not selectable. */
-  selection?: CDataTableSelectionMode;
-
-  /** Allow only one row to be expanded at a time. */
-  singleExpansion?: boolean;
-
-  /** The sorting state (optionally controlled). `null` renders unsorted. */
-  sort?: CDataTableSort | null;
-
-  /** Keep the footer row visible while the table scrolls vertically. */
-  stickyFooter?: boolean;
-
-  /** Keep the header row visible while the table scrolls vertically. */
-  stickyHeader?: boolean;
-
-  /**
-   * UI text overrides (i18n), merged over the English defaults.
-   *
-   * @defaultable {}
-   */
-  texts?: CDataTableTexts;
-}
-
 /** A single data row — the consumer's own plain domain object. */
 export type CDataTableRow = Record<string, unknown>;
 
@@ -495,26 +416,139 @@ export interface CDataTableTexts {
   /** Label of the banner action clearing the whole selection. */
   clearSelection?: string;
 
-  /** Accessible label of a row's expansion toggle. */
-  expandRow?: string;
+  /**
+   * Accessible label of a row's expansion toggle: a function of the row's
+   * value in the first visible column, or one string for every row.
+   */
+  expandRow?: ((row: string) => string) | string;
 
   /** Text shown when the table is empty while `loading`. */
   loading?: string;
 
+  /** The pagination's next-page button; see `CPaginationTexts`. */
+  nextPage?: string;
+
   /** Text shown when there are no rows (unless the `empty` slot is used). */
   noData?: string;
+
+  /** The pagination's page buttons; see `CPaginationTexts`. */
+  page?: (page: number, pageCount: number) => string;
 
   /** Banner text when the visible page is fully selected. */
   pageSelected?: (count: number) => string;
 
+  /** The pagination's page-size menu label; see `CPaginationTexts`. */
+  pageSize?: string;
+
+  /** The pagination's landmark name; see `CPaginationTexts`. */
+  pagination?: string;
+
+  /** The pagination's previous-page button; see `CPaginationTexts`. */
+  previousPage?: string;
+
+  /** The pagination's range of items shown; see `CPaginationTexts`. */
+  range?: (start: number, end: number, count: number) => string;
+
   /** Label of the banner action selecting all (filtered) rows. */
-  selectAllItems?: (count: number) => string;
+  selectAllRows?: (count: number) => string;
 
   /** Accessible label of the header select-all checkbox. */
   selectPage?: string;
 
-  /** Accessible label of a row's selection checkbox. */
-  selectRow?: string;
+  /**
+   * Accessible label of a row's selection checkbox: a function of the row's
+   * value in the first visible column, or one string for every row.
+   */
+  selectRow?: ((row: string) => string) | string;
+}
+
+interface CDataTableProps {
+  /**
+   * Move overflowing `expansion: 'auto'` columns into the expansion row
+   * (rightmost first) instead of scrolling horizontally.
+   */
+  autohide?: boolean;
+
+  /** Column definitions. Pass as a DOM property (contains functions). */
+  columns?: CDataTableColumn[];
+
+  /** Rows — plain domain objects. Pass as a DOM property. */
+  data?: CDataTableRow[];
+
+  /** Ids of the expanded rows (optionally controlled). */
+  expanded?: string[];
+
+  /**
+   * Custom expansion-row content, appended after the auto-rendered cells of
+   * columns currently in the expansion row.
+   */
+  expandedContent?: (
+    context: CDataTableExpandedContext,
+  ) => CDataTableCellContent;
+
+  /**
+   * The server owns sorting, pagination and filtering: the table renders
+   * `data` verbatim and only emits the state-change events. Requires
+   * `itemCount` for the pager; disables the select-all banner and `query`.
+   */
+  external?: boolean;
+
+  /**
+   * Return a stable id for a row. Falls back to the row's index — supply
+   * this whenever selection/expansion is used with `external` data.
+   */
+  getRowId?: (row: CDataTableRow) => string;
+
+  /** Total number of rows in the dataset. Only used (and needed) with `external`. */
+  itemCount?: number;
+
+  /** Show the loading indicator. */
+  loading?: boolean;
+
+  /** Current page, 1-based (optionally controlled). */
+  page?: number;
+
+  /**
+   * Rows per page. Pagination is active only when set — without it every row
+   * renders and no pager is shown.
+   */
+  pageSize?: number;
+
+  /** Options for the pager's page-size menu. */
+  pageSizes?: number[];
+
+  /**
+   * The query rows are filtered by client-side, matched against every column.
+   * Ignored when `external` is set.
+   *
+   * @freeform
+   */
+  query?: string;
+
+  /** Ids of the selected rows (optionally controlled). */
+  selected?: string[];
+
+  /** Row selection mode. Unset means rows are not selectable. */
+  selection?: CDataTableSelectionMode;
+
+  /** Allow only one row to be expanded at a time. */
+  singleExpansion?: boolean;
+
+  /** The sorting state (optionally controlled). `null` renders unsorted. */
+  sort?: CDataTableSort | null;
+
+  /** Keep the footer row visible while the table scrolls vertically. */
+  stickyFooter?: boolean;
+
+  /** Keep the header row visible while the table scrolls vertically. */
+  stickyHeader?: boolean;
+
+  /**
+   * UI text overrides (i18n), merged over the English defaults.
+   *
+   * @defaultable {}
+   */
+  texts?: CDataTableTexts;
 }
 </script>
 
@@ -561,12 +595,16 @@ import {
   watch,
 } from 'vue';
 
-import type { CPaginationOptions } from '../c-pagination/CPagination.vue';
+import type {
+  CPaginationOptions,
+  CPaginationTexts,
+} from '../c-pagination/CPagination.vue';
 
 import { useAppDefault } from '../../shared/appDefaults';
 import { coerceBoolean } from '../../shared/coerceBoolean';
 import { useHasSlot } from '../../shared/useHasSlot';
 import { useHostEmit } from '../../shared/useHostEmit';
+import { useIdReferences } from '../../shared/useIdReferences';
 
 // The root element is a plain div; keep consumer classes on the host instead
 // of letting them fall through and collide with the tv utilities on `root`.
@@ -579,13 +617,13 @@ const props = withDefaults(defineProps<CDataTableProps>(), {
   expanded: undefined,
   expandedContent: undefined,
   external: false,
-  filter: '',
   getRowId: undefined,
   itemCount: undefined,
   loading: false,
   page: undefined,
   pageSize: undefined,
   pageSizes: () => [5, 25, 50, 100],
+  query: '',
   selected: undefined,
   selection: undefined,
   singleExpansion: false,
@@ -609,7 +647,12 @@ interface CDataTableEvents {
   /** Fired when the expanded rows change, carrying the expanded row ids. */
   'change:expanded': string[];
 
-  /** Fired when the user changes the page, carrying the new 1-based page. */
+  /**
+   * Fired when the page changes, carrying the new 1-based page: the user
+   * picks a page or a page size, or the table moves back to page 1 when
+   * `query` changes, or to the last page when the rows shrink beneath the
+   * current one.
+   */
   'change:page': number;
 
   /**
@@ -619,13 +662,13 @@ interface CDataTableEvents {
   'change:page-size': number;
 
   /**
-   * Fired when the selection changes, carrying the selected row ids and the
-   * row objects resolvable from the current `data`.
+   * Fired when the user changes the selection, carrying the selected row ids
+   * — the new `selected`. The rows themselves are `selectedRows`.
    */
-  'change:selected': { ids: string[]; rows: CDataTableRow[] };
+  'change:selected': string[];
 
   /** Fired when the user sorts a column, carrying the new sorting state. */
-  'change:sort': CDataTableSort | null;
+  'change:sort': CDataTableSort;
 }
 
 const emit = useHostEmit<CDataTableEvents>();
@@ -659,23 +702,41 @@ const ui = tv({
   },
 })();
 
-const DEFAULT_TEXTS: Required<CDataTableTexts> = {
+// The pagination's keys default in c-pagination itself (and its own app
+// default): the table only forwards what is set.
+const PAGINATION_TEXT_KEYS = [
+  'nextPage',
+  'page',
+  'pageSize',
+  'pagination',
+  'previousPage',
+  'range',
+] as const satisfies readonly (keyof CPaginationTexts)[];
+
+type CDataTableOwnTexts = Omit<
+  CDataTableTexts,
+  (typeof PAGINATION_TEXT_KEYS)[number]
+>;
+
+const DEFAULT_TEXTS: Required<CDataTableOwnTexts> = {
   allSelected: (count) => `All ${count} rows are selected`,
   clearSelection: 'Clear selection',
-  expandRow: 'Toggle row expansion',
+  expandRow: (row) => `Details of ${row}`,
   loading: 'Loading data',
   noData: 'No data',
   pageSelected: (count) => `All ${count} rows on this page are selected`,
-  selectAllItems: (count) => `Select all ${count} rows`,
+  selectAllRows: (count) => `Select all ${count} rows`,
   selectPage: 'Select all rows on this page',
-  selectRow: 'Select row',
+  selectRow: (row) => `Select ${row}`,
 };
 
 // `texts` resolves own value → app default → built-in, key by key (see
 // src/shared/appDefaults.ts).
 const appDefault = useAppDefault('c-data-table', props);
 
-const t = appDefault('texts', DEFAULT_TEXTS);
+// The pagination's keys have no built-in here (see PAGINATION_TEXT_KEYS), so
+// they resolve to `undefined` unless set; `paginationTexts` drops those.
+const t = appDefault('texts', DEFAULT_TEXTS as Required<CDataTableTexts>);
 
 const externalOn = computed(() => coerceBoolean(props.external));
 
@@ -860,7 +921,7 @@ const table = useVueTable<CDataTableRow>({
   },
   state: {
     get globalFilter() {
-      return externalOn.value ? '' : props.filter;
+      return externalOn.value ? '' : props.query;
     },
     get pagination() {
       return paginationState.value;
@@ -885,6 +946,19 @@ const displayValue = (row: Row<CDataTableRow>, col: CDataTableColumn) => {
   const value = row.getValue(col.key);
 
   return value == null ? '' : String(value);
+};
+
+// A row control's name carries the row: its value in the first visible
+// column ("Select Aurora", not one "Select row" per row).
+const rowText = (
+  text: ((row: string) => string) | string,
+  row: Row<CDataTableRow>,
+) => {
+  if (typeof text === 'string') return text;
+
+  const [first] = visibleColumns.value;
+
+  return text(first ? displayValue(row, first) : String(row.index + 1));
 };
 
 const cellContext = (
@@ -931,8 +1005,10 @@ const toggleSort = (col: CDataTableColumn) => {
   emit('change:sort', next);
 };
 
+// A column that does not sort is never sorted (TanStack skips a sort on it),
+// whatever `sort` names.
 const ariaSort = (col: CDataTableColumn) => {
-  if (sortState.value?.column !== col.key) return undefined;
+  if (!col.sortable || sortState.value?.column !== col.key) return undefined;
 
   return sortState.value.direction === 'asc' ? 'ascending' : 'descending';
 };
@@ -945,18 +1021,24 @@ const isSelected = (id: string) => selectedSet.value.has(id);
 
 const commitSelection = (ids: string[]) => {
   selectedIds.value = ids;
+  emit('change:selected', [...ids]);
+};
 
+/**
+ * The selected rows that the current `data` holds, in selection order:
+ * the row objects behind `selected`.
+ */
+const selectedRows = computed<CDataTableRow[]>(() => {
   const byId = table.getCoreRowModel().rowsById;
 
-  emit('change:selected', {
-    ids: [...ids],
-    rows: ids.flatMap((id) => {
-      const row = byId[id];
+  return selectedIds.value.flatMap((id) => {
+    const row = byId[id];
 
-      return row ? [row.original] : [];
-    }),
+    return row ? [row.original] : [];
   });
-};
+});
+
+defineExpose({ selectedRows });
 
 const onRowCheck = (row: Row<CDataTableRow>, event: Event) => {
   const checked = coerceBoolean((event as CustomEvent).detail);
@@ -1027,7 +1109,7 @@ const banner = computed(() => {
   return {
     action: () =>
       commitSelection(table.getFilteredRowModel().rows.map((row) => row.id)),
-    actionLabel: t.value.selectAllItems(totalCount.value),
+    actionLabel: t.value.selectAllRows(totalCount.value),
     message: t.value.pageSelected(renderRows.value.length),
   };
 });
@@ -1084,17 +1166,22 @@ const onRowClick = (row: Row<CDataTableRow>, event: MouseEvent) => {
 
 /* ------------------------------------------------------------- pagination */
 
-// startFrom/endTo are pre-filled: c-pagination normally writes them into the
-// value object in place, but that mutation isn't observable on a per-change
-// computed object, so its range text would read stale/absent values.
 const paginationValue = computed<CPaginationOptions>(() => ({
-  currentPage: page.value,
-  endTo: page.value * (pageSize.value ?? 0) - 1,
   itemCount: totalCount.value,
-  itemsPerPage: pageSize.value,
+  page: page.value,
+  pageSize: pageSize.value,
   pageSizes: props.pageSizes,
-  startFrom: (page.value - 1) * (pageSize.value ?? 0),
 }));
+
+const paginationTexts = computed<CPaginationTexts>(() =>
+  Object.fromEntries(
+    PAGINATION_TEXT_KEYS.flatMap((key) => {
+      const text = t.value[key] as CPaginationTexts[typeof key];
+
+      return text === undefined ? [] : [[key, text]];
+    }),
+  ),
+);
 
 const setPage = (next: number) => {
   if (next === page.value) return;
@@ -1107,7 +1194,7 @@ const onPaginationChange = (event: Event) => {
 
   if (!detail) return;
 
-  const nextSize = detail.itemsPerPage ?? pageSize.value;
+  const nextSize = detail.pageSize ?? pageSize.value;
 
   if (nextSize != null && nextSize !== pageSize.value) {
     pageSize.value = nextSize;
@@ -1119,12 +1206,12 @@ const onPaginationChange = (event: Event) => {
     return;
   }
 
-  setPage(detail.currentPage ?? 1);
+  setPage(detail.page ?? 1);
 };
 
 // Filtering changes the page count under the pager; restart from page 1.
 watch(
-  () => props.filter,
+  () => props.query,
   () => {
     if (!externalOn.value) setPage(1);
   },
@@ -1319,6 +1406,9 @@ watch([() => props.columns, () => props.data, autohideOn, selectionOn], () => {
   autohiddenKeys.value = [];
   void nextTick(() => recomputeOverflow());
 });
+
+// The page's id references on the element reach the element carrying its role.
+useIdReferences(() => tableRef.value);
 </script>
 
 <!--

@@ -11,31 +11,31 @@ import {
 
 export const Basic = () => (
   <div className="example-row">
-    <CIconButton>
+    <CIconButton aria-label="Add">
       <CIcon path={mdiPlus} />
     </CIconButton>
 
-    <CIconButton outlined>
+    <CIconButton aria-label="Edit" outlined>
       <CIcon path={mdiPencil} />
     </CIconButton>
 
-    <CIconButton ghost>
+    <CIconButton aria-label="Like" ghost>
       <CIcon path={mdiHeart} />
     </CIconButton>
 
-    <CIconButton text>
+    <CIconButton aria-label="More actions" text>
       <CIcon path={mdiDotsVertical} />
     </CIconButton>
 
-    <CIconButton danger>
+    <CIconButton aria-label="Delete" danger>
       <CIcon path={mdiDelete} />
     </CIconButton>
 
-    <CIconButton badge="3">
+    <CIconButton aria-label="3 notifications" badge="3">
       <CIcon path={mdiBellOutline} />
     </CIconButton>
 
-    <CIconButton disabled>
+    <CIconButton aria-label="Add" disabled>
       <CIcon path={mdiPlus} />
     </CIconButton>
   </div>

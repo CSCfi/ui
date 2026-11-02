@@ -13,7 +13,7 @@
     :parent="host"
     :select-all-row
     :selected="dropdownSelected"
-    exportparts="menu, list, item, select-all, indicator, mark, heading-row, heading, close"
+    exportparts="panel, card, list, option, select-all, indicator, mark, heading-row, heading, close"
     type="select"
   >
     <c-input
@@ -21,18 +21,29 @@
       :active="dropdownVisible"
       :data-hide-details="String(hideDetailsResolved)"
       :disabled
-      :error-message
       :filled="hasSelection"
-      :hint
       :input-id
+      :invalid
       :label
       :label-on-top="labelOnTopResolved"
       :required
       :shadow="shadowResolved"
       :size="sizeResolved"
-      :valid
       @click="onInputClick"
     >
+      <!-- The hint / error message, here in the field's own tree so the
+           input's aria-describedby can name it. -->
+      <field-message
+        :id="`${inputId}-message`"
+        slot="message"
+        :error-message
+        :hide-details="hideDetailsResolved"
+        :hint
+        :invalid
+        :label-on-top="labelOnTopResolved"
+        part="message"
+      />
+
       <span v-if="hasConsumerPre" slot="pre" style="display: contents">
         <slot name="pre" />
       </span>
@@ -45,8 +56,12 @@
                carries the whole selection for assistive technology. -->
           <input
             ref="inputRef"
+            v-bind="controlAttrs"
+            :aria-describedby="
+              hideDetailsResolved ? undefined : `${inputId}-message`
+            "
             :aria-expanded="dropdownVisible"
-            :aria-label="label || undefined"
+            :aria-label="accessibleName"
             :aria-owns="inputId + '-items'"
             :class="ui.input()"
             :disabled
@@ -155,7 +170,57 @@
 <script lang="ts">
 import type { CFieldSize, CSelectItem } from '../../types';
 
-export interface CSelectProps {
+/**
+ * UI texts of `c-select`, shallow-merged over the English defaults. Static
+ * labels are strings; count- or label-interpolated ones are functions.
+ */
+export interface CSelectTexts {
+  /** Accessible label of the clear button. */
+  clearSelection?: string;
+
+  /** Accessible label of the close button in the fullscreen panel (narrow viewports). */
+  closePanel?: string;
+
+  /**
+   * Text of the overflow tag when `max-tags` folds the selection; receives the
+   * number of hidden tags.
+   */
+  more?: (count: number) => string;
+
+  /** Accessible label of a tag's remove button; receives the option label. */
+  remove?: (label: string) => string;
+
+  /**
+   * Label of the select-all row; receives the number of enabled options
+   * listed.
+   */
+  selectAll?: (count: number) => string;
+
+  /**
+   * Field text when `max-tags="0"` shows no tags; receives the selection
+   * count.
+   */
+  selected?: (count: number) => string;
+
+  /** Accessible label of the chevron button that opens and closes the list. */
+  toggleOptions?: string;
+}
+
+/**
+ * Selection value of `c-select`: the picked option's value — or the whole
+ * `{ name, value }` item with `return-object` — and `null` when nothing is
+ * selected. In `multiple` mode an array of them in the order they were
+ * picked, `[]` when empty.
+ */
+export type CSelectValue =
+  | (number | string)[]
+  | CSelectItem
+  | CSelectItem[]
+  | null
+  | number
+  | string;
+
+interface CSelectProps {
   /** Make the selected value clearable */
   clearable?: boolean;
 
@@ -184,11 +249,10 @@ export interface CSelectProps {
   hint?: string;
 
   /**
-   * Id of the element
-   *
-   * @freeform
+   * Show the control as invalid: its `error-message`, when set, replaces the
+   * hint, and the control is marked `aria-invalid`.
    */
-  hostId?: string;
+  invalid?: boolean;
 
   /** Dropdown items (when not using <c-option> elements) */
   items?: CSelectItem[];
@@ -286,89 +350,36 @@ export interface CSelectProps {
    */
   texts?: CSelectTexts;
 
-  /** Set the validity of the input */
-  valid?: boolean;
-
   /**
    * Selected value: the option's value, or the whole item with
    * `return-object`; an array of them in `multiple` mode
    */
   value?: CSelectValue;
 }
-
-/**
- * UI texts of `c-select`, shallow-merged over the English defaults. Static
- * labels are strings; count- or label-interpolated ones are functions.
- */
-export interface CSelectTexts {
-  /** Accessible label of the clear button. */
-  clearSelection?: string;
-
-  /** Accessible label of the close button in the fullscreen panel (narrow viewports). */
-  closePanel?: string;
-
-  /**
-   * Text of the overflow tag when `max-tags` folds the selection; receives the
-   * number of hidden tags.
-   */
-  more?: (count: number) => string;
-
-  /** Accessible label of a tag's remove button; receives the option label. */
-  remove?: (label: string) => string;
-
-  /**
-   * Label of the select-all row; receives the number of enabled options
-   * listed.
-   */
-  selectAll?: (count: number) => string;
-
-  /**
-   * Field text when `max-tags="0"` shows no tags; receives the selection
-   * count.
-   */
-  selected?: (count: number) => string;
-
-  /** Accessible label of the chevron button that opens and closes the list. */
-  toggleOptions?: string;
-}
-
-/**
- * Selection value of `c-select`: the picked option's value — or the whole
- * `{ name, value }` item with `return-object` — and `null` when nothing is
- * selected. In `multiple` mode an array of them in the order they were
- * picked, `[]` when empty.
- */
-export type CSelectValue =
-  | (number | string)[]
-  | CSelectItem
-  | CSelectItem[]
-  | null
-  | number
-  | string;
 </script>
 
 <script setup lang="ts">
 /**
- * @slot default - Use c-option elements only
- * @slot pre - Leading content forwarded to the inner c-input, rendered before the select's value
- * @slot post - Trailing content forwarded to the inner c-input, rendered after the select's controls
- *
- * @seeded from csc-ui — verify
+ * @slot default - The `c-option` elements the list is built from, as an alternative to `items` (never rendered in place)
+ * @slot pre - Content inside the field, before the value, such as an icon
+ * @slot post - Content inside the field, after its own controls (the chevron, clear button or loading spinner)
  *
  * @subcomponents c-option, c-option-value
  *
- * @csspart menu - The dropdown surface (the positioned dialog) holding the field and the list
+ * @csspart panel - The positioned dialog holding the field and the list, as on the other value fields
+ * @csspart card - The same dialog as the painted surface: background, radius and shadow, as on the other value fields
  * @csspart heading-row - The top row of the fullscreen panel (narrow viewports): the field label as heading and the close button
  * @csspart heading - The field label naming the fullscreen panel
  * @csspart close - The close button of the fullscreen panel
  * @csspart list - The scrolling listbox of options
- * @csspart item - One option row in the list. Any `part` attribute set on content inside a slotted `<c-option>` is exported too, so `c-select::part(<name>)` reaches the consumer's own option markup
+ * @csspart option - One option row in the list. Any `part` attribute set on content inside a slotted `<c-option>` is exported too, so `c-select::part(<name>)` reaches the consumer's own option markup
  * @csspart select-all - The pinned select-all row at the top of the list (`multiple` mode with `select-all`); carries the same indicator / mark parts as an option row
  * @csspart indicator - The decorative checkbox box on an option row in `multiple` mode; border, fill and glyph draw with `currentColor`, so `color` recolours them together (the c-checkbox recipe)
  * @csspart mark - The check glyph inside a row indicator; draws with `currentColor`
  * @csspart tags - The row of selected-value tags inside the field (`multiple` mode)
  * @csspart tag - One selected-value tag: the `c-tag` host, including the overflow tag
  * @csspart tag-root - The pill box inside each tag (the `c-tag` `root` part), for colours and borders
+ * @csspart message - The hint / error message area below the field (always reserved unless `hide-details`)
  */
 import { mdiChevronDown, mdiClose } from '@mdi/js';
 import { tv } from 'tailwind-variants';
@@ -385,13 +396,16 @@ import {
 
 import { useAppDefault } from '../../shared/appDefaults';
 import { coerceBoolean } from '../../shared/coerceBoolean';
-import { emitModelValue } from '../../shared/emitModelValue';
+import FieldMessage from '../../shared/FieldMessage.vue';
 import { optionLabel } from '../../shared/optionLabel';
 import {
   SELECT_ALL_INDEX,
   selectAllState,
   toggleAllValues,
 } from '../../shared/selectAll';
+import { useControlAttrs } from '../../shared/useControlAttrs';
+import { useIdReferences } from '../../shared/useIdReferences';
+import { emitModelChange, seedModelValue } from '../../shared/valueEvents';
 
 /** Events dispatched by `<c-select>`. */
 interface CSelectEvents {
@@ -402,7 +416,7 @@ interface CSelectEvents {
    * In `multiple` mode the whole array of picked values, in pick order
    * (`[]` when cleared).
    */
-  changeValue: CSelectValue;
+  change: CSelectValue;
 
   /**
    * Native bubbling input event dispatched alongside every value change so a
@@ -411,8 +425,7 @@ interface CSelectEvents {
   input: void;
 
   /**
-   * Fired alongside `changeValue` with the same detail — the `v-model`
-   * contract.
+   * Fired alongside `change` with the same detail — the `v-model` contract.
    */
   'update:value': CSelectValue;
 }
@@ -425,7 +438,7 @@ interface CSelectEvents {
  * `.c-input-menu__chevron--active` / `.c-input-menu__selection--show` classes.
  * The per-component `--c-select-*` override-variable layer is dropped in favour
  * of the global design tokens (`text-primary-600` for the active colour,
- * `text-[var(--c-text-body)]` for text, `text-tertiary-500` for placeholder);
+ * the semantic text roles for text and placeholder);
  * consumer customization is via `::part()`, there is no `override`
  * prop.
  *
@@ -501,7 +514,7 @@ const props = withDefaults(defineProps<CSelectProps>(), {
   errorMessage: '',
   hideDetails: undefined,
   hint: '',
-  hostId: '',
+  invalid: false,
   items: () => [],
   itemsPerPage: undefined,
   label: '',
@@ -518,11 +531,21 @@ const props = withDefaults(defineProps<CSelectProps>(), {
   shadow: undefined,
   size: undefined,
   texts: undefined,
-  valid: true,
   value: null,
 });
 
 const host = useHost();
+
+const { controlAttrs } = useControlAttrs();
+
+// The visible label names the input (WCAG 2.5.3, label in name); the host's
+// `aria-label` names a field without one, and is ignored beside it.
+const accessibleName = computed(
+  () =>
+    props.label ||
+    (controlAttrs.value['aria-label'] as string | undefined) ||
+    undefined,
+);
 
 // Defaultable props resolve host attribute → own value → app default →
 // built-in (see src/shared/appDefaults.ts).
@@ -660,11 +683,11 @@ let statusDebounce: null | number = null;
 
 const autoId = useId();
 
-const id = computed(() => props.hostId || autoId);
+const id = computed(() => autoId);
 
 const inputId = computed(
   () =>
-    `input_${(props.hostId || props.label || props.placeholder).replace(
+    `input_${(props.label || props.placeholder).replace(
       /[^a-zA-Z0-9-_]/g,
       '',
     )}`,
@@ -801,13 +824,18 @@ const inputValue = computed(() => {
 
 // ---- value plumbing -----------------------------------------------------
 
+// `<c-option selected>` seeds an empty value once, silently (CONTEXT.md
+// "Value control": value events only on interaction). An interaction, a value
+// set from outside or one seed ends it, so a later change to the options never
+// re-seeds a value the user cleared.
+let seedable = true;
+
 const emitValue = (next: CSelectEvents['update:value']) => {
+  seedable = false;
   value.value = next;
-  // changeValue/update:value (non-bubbling) + native `input` (so a plain
-  // `v-model` works without `v-control`) + host `value` mirror. The value watch
-  // runs onValueChanged/selectOption (visuals-only), so writing the property
-  // doesn't loop.
-  emitModelValue(host, next);
+  // A pick is its own commit. The value watch runs onValueChanged/selectOption
+  // (visuals-only), so the host `value` mirror doesn't loop.
+  emitModelChange(host, next);
 };
 
 const getSelectionIndex = (search: string) =>
@@ -1322,33 +1350,20 @@ const handleKeyDown = (event: KeyboardEvent) => {
   }
 };
 
-// ---- public method ------------------------------------------------------
-
-/**
- * Reset select state
- *
- * @seeded from csc-ui — verify
- */
-const reset = () => {
-  emitValue(multipleOn.value ? [] : null);
-  dropdownRef.value?.updateList(true);
-};
-
-defineExpose({ reset });
-
 // ---- slotted <c-option> discovery ---------------------------------------
 
 // Parts exported through the inner c-dropdown. The dropdown renders CLONES of
 // the consumer's <c-option> markup inside its own shadow root, so the
 // consumer's page styles can't reach that content; forwarding every `part`
 // name found inside the options lets `c-select::part(<name>)` style it.
-// The static `exportparts="menu, list, item"` in the template is the
+// The static `exportparts="panel, card, list, option, …"` in the template is the
 // verifiable contract; the consumer names are appended imperatively (Vue never
 // re-patches a static attribute, so the extension survives re-renders).
 const STATIC_EXPORTED_PARTS = [
-  'menu',
+  'panel',
+  'card',
   'list',
-  'item',
+  'option',
   'select-all',
   'indicator',
   'mark',
@@ -1396,40 +1411,39 @@ const refreshOptions = () => {
     value: number | string;
   } & HTMLElement;
 
-  // `multiple`: every `<c-option selected>` seeds the array (DOM order) —
-  // only while nothing is picked yet, so a later child mutation cannot
-  // re-seed a selection the user has cleared.
-  if (multipleOn.value) {
-    const picked = (options as OptionEl[]).filter((o) =>
-      coerceBoolean(o.selected ?? o.getAttribute('selected')),
-    );
+  if (!seedable) return;
 
-    if (picked.length && !selectedValues.value.length) {
-      emitValue(
-        picked.map((o) =>
-          props.returnObject
-            ? { name: optionLabel(o), value: o.value }
-            : o.value,
-        ) as CSelectValue,
-      );
-    }
+  // A value set from outside wins, and ends seeding: `''` is what a plain
+  // Vue `v-model` writes for an empty model.
+  if (
+    multipleOn.value
+      ? selectedValues.value.length
+      : value.value != null && value.value !== ''
+  ) {
+    seedable = false;
 
     return;
   }
 
   // `selected` may arrive as `""` (Boolean attribute) — coerce, never test
-  // by truthiness.
-  const selection = (options as OptionEl[]).find((o) =>
-    coerceBoolean(o.selected ?? o.getAttribute('selected')),
-  );
+  // by truthiness. `multiple`: every `<c-option selected>`, in DOM order. At
+  // mount the options have not upgraded yet, so read the attributes too.
+  const picked = (options as OptionEl[])
+    .filter((o) => coerceBoolean(o.selected ?? o.getAttribute('selected')))
+    .map((o) => {
+      const v = o.value ?? (o.getAttribute('value') as string);
 
-  if (selection) {
-    emitValue(
-      props.returnObject
-        ? { name: optionLabel(selection), value: selection.value }
-        : selection.value,
-    );
-  }
+      return props.returnObject ? { name: optionLabel(o), value: v } : v;
+    });
+
+  if (!picked.length) return;
+
+  seedable = false;
+
+  const seed = (multipleOn.value ? picked : picked[0]) as CSelectValue;
+
+  value.value = seed;
+  seedModelValue(host, seed);
 };
 
 let childObserver: MutationObserver | null = null;
@@ -1439,10 +1453,10 @@ onMounted(() => {
   // property bind didn't land before the child mounted.
   if (dropdownRef.value && host) {
     (dropdownRef.value as { parent?: HTMLElement } & HTMLElement).parent = host;
-    dropdownRef.value.addEventListener('selectOption', onSelectOption);
+    dropdownRef.value.addEventListener('selectoption', onSelectOption);
     dropdownRef.value.addEventListener('selectall', onSelectAll);
     dropdownRef.value.addEventListener(
-      'dropdownStateChange',
+      'dropdownstatechange',
       onDropdownStateChange,
     );
   }
@@ -1487,13 +1501,28 @@ onBeforeUnmount(() => {
   host?.removeEventListener('keydown', handleKeyDown);
 
   if (statusDebounce !== null) clearTimeout(statusDebounce);
-  dropdownRef.value?.removeEventListener('selectOption', onSelectOption);
+  dropdownRef.value?.removeEventListener('selectoption', onSelectOption);
   dropdownRef.value?.removeEventListener('selectall', onSelectAll);
   dropdownRef.value?.removeEventListener(
-    'dropdownStateChange',
+    'dropdownstatechange',
     onDropdownStateChange,
   );
 });
+
+// The page's id references on the element reach the element carrying its role.
+useIdReferences(() => inputRef.value);
+
+/**
+ * Focus its combobox, as `focus()` does on a native control: the element renders
+ * no box of its own to take it.
+ *
+ * @param options - Passed on to that element's `focus()`
+ */
+const focus = (options?: FocusOptions): void => {
+  inputRef.value?.focus(options);
+};
+
+defineExpose({ focus });
 </script>
 
 <!--

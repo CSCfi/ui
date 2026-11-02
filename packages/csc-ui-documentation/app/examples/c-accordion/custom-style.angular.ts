@@ -17,7 +17,7 @@ import {
       /* The default look is the accordion frame; this recolours the expanded
          item from primary to secondary through its parts. */
       c-accordion.custom-style {
-        c-accordion-item[expanded] {
+        c-accordion-item:state(expanded) {
           &::part(root) {
             border-color: var(--c-secondary);
             background-color: color-mix(
@@ -28,7 +28,12 @@ import {
             box-shadow: inset 2px 0 0 0 var(--c-secondary);
           }
 
-          &::part(header),
+          /* The heading takes the ink paired with the wash, as the default
+             expanded heading does. */
+          &::part(header) {
+            color: var(--c-on-secondary-subtle);
+          }
+
           &::part(indicator) {
             color: var(--c-secondary);
           }
@@ -62,7 +67,7 @@ import {
     <c-accordion
       class="custom-style"
       [value]="expanded()"
-      (changeValue)="expanded.set($any($event).detail)"
+      (change)="expanded.set($any($event).detail)"
     >
       <c-accordion-item heading="Project billing" value="billing">
         <p>Billing units are deducted monthly based on the resources in use.</p>
@@ -79,5 +84,5 @@ import {
   `,
 })
 export class CustomStyleExampleComponent {
-  expanded = signal<'billing' | 'members' | 'storage'>('billing');
+  expanded = signal<'billing' | 'members' | 'storage' | null>('billing');
 }

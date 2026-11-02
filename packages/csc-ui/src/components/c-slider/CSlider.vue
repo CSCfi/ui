@@ -3,8 +3,8 @@
     <form-label
       v-if="label"
       :class="ui.label()"
-      :html-for="hostId || generatedId"
-      :label="labelText"
+      :html-for="generatedId"
+      :label
       part="label"
     />
 
@@ -16,35 +16,36 @@
       >
         <span
           :class="ui.tooltip()"
-          :data-tooltip="`${formatNumber(+value)}${unit}`"
+          :data-tooltip="`${formatNumber(shown)}${unit}`"
         />
       </div>
 
       <input
-        :id="hostId || generatedId"
+        :id="generatedId"
         ref="inputRef"
-        :aria-label="ariaLabelInternal || label"
+        :aria-label="hostAriaLabel"
         :aria-valuemax="max"
         :aria-valuemin="min"
-        :aria-valuenow="value"
-        :aria-valuetext="`${value}${unit}`"
+        :aria-valuenow="shown"
+        :aria-valuetext="`${shown}${unit}`"
         :class="ui.input()"
         :disabled="disabled || undefined"
         :max
         :min
-        :name="hostName || undefined"
+        :name="name || undefined"
         :step
         type="range"
+        @change="onChange"
         @input="onInput"
       />
     </div>
 
     <div :class="ui.ticks()" aria-hidden="true" part="ticks">
       <span
-        v-for="(pos, i) in tickPositions"
+        v-for="(tick, i) in tickValues"
         :key="i"
-        :class="ui.tick({ active: isActive(Math.round(+pos)) })"
-        :data-value="formatNumber(Math.round(+pos))"
+        :class="ui.tick({ active: isActive(i) })"
+        :data-value="formatNumber(tick)"
       />
     </div>
   </div>
@@ -61,35 +62,40 @@ import {
   computed,
   onMounted,
   ref,
+  useAttrs,
   useHost,
   useId,
   useTemplateRef,
   watch,
 } from 'vue';
 
-import { emitModelValue } from '../../shared/emitModelValue';
 import FormLabel from '../../shared/FormLabel.vue';
+import { useIdReferences } from '../../shared/useIdReferences';
+import { emitModelInput, emitModelSettled } from '../../shared/valueEvents';
+
+// The host's `aria-label` names the range input (below); without this it
+// would also fall through onto the shadow `[part=root]` box.
+defineOptions({ inheritAttrs: false });
 
 /** Events dispatched by `<c-slider>`. */
 interface CSliderEvents {
   /**
-   * Fired on every thumb movement, carrying the new slider value — a number
-   * when the current `value` prop is a number, otherwise a string.
+   * Fired when a move is committed — the release that ends a drag, or each
+   * arrow-key step — carrying the value.
    */
-  changeValue: number | string;
+  change: number;
 
   /**
    * Native bubbling input event fired on every thumb movement so a plain Vue
-   * `v-model` works without the `v-control` directive. No detail.
+   * `v-model` stays in sync. No detail.
    */
   input: void;
 
   /**
    * v-model contract event fired on every thumb movement, carrying the new
-   * slider value — a number when the current `value` prop is a number,
-   * otherwise a string.
+   * value.
    */
-  'update:value': number | string;
+  'update:value': number;
 }
 
 /**
@@ -139,10 +145,15 @@ const slider = tv({
     // (not a Tailwind arbitrary value), because a CSS-var underscore can't
     // survive the JS-string→class round-trip a `[...]` utility needs. The
     // ::before/::after callout also lives in the escape-hatch.
+    //
+    // The input spans the root and its thumb takes the standard geometry, so
+    // in every engine the thumb's centre travels from half the 24px thumb in
+    // from one end to half in from the other. `tooltipWrapper`'s `mx-3` insets
+    // the bubble's track by the same 12px.
     tooltip:
       'c-slider__tooltip pointer-events-none absolute box-border inline-flex size-6 -translate-x-1/2 -translate-y-1 items-center justify-center rounded-full opacity-0 transition-[opacity,transform] duration-300 ease-[cubic-bezier(0.075,0.82,0.165,1)] group-focus-within:-translate-y-2 group-focus-within:opacity-100 group-focus-within:duration-0 group-hover:-translate-y-2 group-hover:opacity-100 group-hover:duration-0 group-active:-translate-y-2 group-active:opacity-100 group-active:duration-0',
-    tooltipWrapper: 'relative mx-0.5 h-0',
-    wrapper: 'relative px-2.5',
+    tooltipWrapper: 'relative mx-3 h-0',
+    wrapper: 'relative',
   },
   variants: {
     active: {
@@ -162,124 +173,76 @@ const slider = tv({
 
 interface CSliderProps {
   /**
-   * Aria label
-   *
-   * @seeded from csc-ui — verify
-   * @freeform
-   */
-  ariaLabelInternal?: string;
-
-  /**
    * Disable the slider
-   *
-   * @seeded from csc-ui — verify
    */
   disabled?: boolean;
 
   /**
-   * Disable tooltip
-   *
-   * @seeded from csc-ui — verify
+   * Turn off the value bubble shown above the thumb while the slider is
+   * hovered, pressed or focused
    */
   disableTooltip?: boolean;
 
   /**
-   * Id of the element
-   *
-   * @seeded from csc-ui — verify
-   * @freeform
-   */
-  hostId?: string;
-
-  /**
-   * Id of the element
-   *
-   * @seeded from csc-ui — verify
-   * @freeform
-   */
-  hostName?: string;
-
-  /**
    * Label of the slider
    *
-   * @seeded from csc-ui — verify
    * @freeform
    */
   label?: string;
 
   /**
-   * Show tick labels
-   *
-   * @seeded from csc-ui — verify
+   * Write a number under the track at each tick mark position, `segments`
+   * apart, formatted like the value bubble's; shown with or without `ticks`
    */
   labels?: boolean;
 
-  /**
-   * Max value
-   *
-   * @seeded from csc-ui — verify
-   */
-  max?: number | string;
+  /** The largest value. */
+  max?: number;
+
+  /** The smallest value. */
+  min?: number;
 
   /**
-   * Min value
+   * `name` of the inner range input. The component is not
+   * form-associated, so it does not submit with a `<form>`.
    *
-   * @seeded from csc-ui — verify
+   * @freeform
    */
-  min?: number | string;
+  name?: string;
 
-  /**
-   * Segment count
-   *
-   * @seeded from csc-ui — verify
-   */
-  segments?: number | string;
+  /** Number of segments the tick marks divide the track into. */
+  segments?: number;
 
-  /**
-   * Step
-   *
-   * @seeded from csc-ui — verify
-   */
-  step?: number | string;
+  /** Step between values. */
+  step?: number;
 
-  /**
-   * Thow ticks
-   *
-   * @seeded from csc-ui — verify
-   */
+  /** Draw tick marks along the track, `segments` apart. */
   ticks?: boolean;
 
   /**
-   * Unit
+   * Unit shown after the value in the tooltip and read with it, e.g. `%`.
    *
-   * @seeded from csc-ui — verify
    * @freeform
    */
   unit?: string;
 
-  /**
-   * Value
-   *
-   * @seeded from csc-ui — verify
-   */
-  value?: number | string;
+  /** The value, a number between `min` and `max`. */
+  value?: number;
 }
 
 const props = withDefaults(defineProps<CSliderProps>(), {
-  ariaLabelInternal: '',
   disabled: false,
   disableTooltip: false,
-  hostId: '',
-  hostName: '',
   label: '',
   labels: false,
-  max: '100',
-  min: '0',
-  segments: '10',
-  step: '1',
+  max: 100,
+  min: 0,
+  name: '',
+  segments: 10,
+  step: 1,
   ticks: false,
-  unit: '%',
-  value: '50',
+  unit: '',
+  value: 50,
 });
 
 const ui = computed(() =>
@@ -298,55 +261,92 @@ const autoId = useId();
 
 const generatedId = computed(() => `c-slider__${autoId}`);
 
-// Preserves the seeded template's rendering of both texts in the visible label.
-const labelText = computed(() =>
-  `${props.label} ${props.ariaLabelInternal}`.trim(),
-);
+// A host `aria-label` (the 3.x attribute) names the range input; a visible
+// `label` names it through `<label for>` instead.
+const attrs = useAttrs();
+
+const hostAriaLabel = computed(() => attrs['aria-label'] as string | undefined);
 
 const trackPosition = ref(0);
 
-const tickPositions = ref<string[]>([]);
+const tickValues = ref<number[]>([]);
 
-const formatNumber = (n: number, decimals = 0) =>
-  new Intl.NumberFormat('fi-FI', {
-    maximumFractionDigits: decimals,
-    minimumFractionDigits: decimals,
-  }).format(n);
+// The value as the range input shows it: clamped into `min`..`max`, so the
+// built-in 50 on a slider with `max="8"` starts at its end, not past it.
+const shown = computed(() =>
+  Math.min(Math.max(+props.value, +props.min), +props.max),
+);
+
+// As many fraction digits as `step` has (0.25 → 2).
+const stepDecimals = computed(
+  () => (String(+props.step).split('.')[1] ?? '').length,
+);
+
+// Numbers follow the page's `lang` (a comma for `fi`, a point for `en`), as
+// c-number-field's do; a malformed `lang` falls back to English.
+const formatNumber = (n: number) => {
+  const options = { maximumFractionDigits: stepDecimals.value };
+
+  const lang =
+    typeof document === 'undefined' ? '' : document.documentElement.lang;
+
+  try {
+    return new Intl.NumberFormat(lang || undefined, options).format(n);
+  } catch {
+    return new Intl.NumberFormat('en', options).format(n);
+  }
+};
 
 const calculateTickPositions = () => {
-  tickPositions.value = Array.from({ length: +props.segments + 1 }, (_, i) =>
-    String((i * +props.max) / +props.segments),
+  const min = +props.min;
+
+  const segments = +props.segments;
+
+  tickValues.value = Array.from(
+    { length: segments + 1 },
+    (_, i) => min + (i * (+props.max - min)) / segments,
   );
 };
 
 const calculateTrackPosition = () => {
   trackPosition.value =
-    ((+props.value - +props.min) / (+props.max - +props.min)) * 100;
+    ((shown.value - +props.min) / (+props.max - +props.min)) * 100;
 };
 
-const isActive = (value: number) =>
-  trackPosition.value >= (100 / +props.max) * value;
+// A mark the fill has reached; the tolerance absorbs float error at a mark.
+const isActive = (index: number) =>
+  trackPosition.value >= (index * 100) / +props.segments - 1e-9;
 
 const cssVars = computed(() => ({
   '--_c-slider-position': `${trackPosition.value}`,
 }));
 
+// Typed against the event map so the emitted detail is compile-checked.
+const valueOf = (e: Event): CSliderEvents['change'] => {
+  return Number((e.target as HTMLInputElement).value);
+};
+
+// The inner range input's own timing: `input` on every move, `change` on the
+// release that ends a drag and on each arrow-key step.
 const onInput = (e: Event) => {
   const v = (e.target as HTMLInputElement).value;
 
-  // Typed against the event map so the emitted detail is compile-checked.
-  const next: CSliderEvents['changeValue'] =
-    typeof props.value === 'number' ? +v : v;
-  // changeValue/update:value + native `input` (plain v-model) + host `value`
-  // mirror. The value watch is visuals-only, so no loop.
-  emitModelValue(host, next);
+  // The value watch is visuals-only, so the host `value` mirror doesn't loop.
+  emitModelInput(host, valueOf(e));
   // Don't wait for the consumer to push value back — update the track
   // fill immediately so the gradient and tooltip stay in sync with the
   // thumb during drag.
   trackPosition.value = ((+v - +props.min) / (+props.max - +props.min)) * 100;
 };
 
-watch(() => props.segments, calculateTickPositions);
+// A native `change` does not cross the shadow boundary; the host sends its own.
+const onChange = (e: Event) => emitModelSettled(host, valueOf(e));
+
+watch(() => [props.segments, props.min, props.max], calculateTickPositions);
+watch(
+  () => [props.min, props.max],
+  () => calculateTrackPosition(),
+);
 watch(
   () => props.value,
   (v) => {
@@ -364,6 +364,21 @@ onMounted(() => {
     if (inputRef.value) inputRef.value.value = String(props.value);
   });
 });
+
+// The page's id references on the element reach the element carrying its role.
+useIdReferences(() => inputRef.value);
+
+/**
+ * Focus its slider, as `focus()` does on a native control: the element renders
+ * no box of its own to take it.
+ *
+ * @param options - Passed on to that element's `focus()`
+ */
+const focus = (options?: FocusOptions): void => {
+  inputRef.value?.focus(options);
+};
+
+defineExpose({ focus });
 </script>
 
 <!--
@@ -373,8 +388,10 @@ onMounted(() => {
 
   What lives here and why:
   - Native range pseudo-elements (`::-webkit-slider-thumb`,
-    `::-webkit-slider-runnable-track`, `::-webkit-slider-container`,
-    `::-moz-range-thumb`) — form-control internals Tailwind can't target.
+    `::-moz-range-thumb`) — form-control internals Tailwind can't target. No
+    engine-specific track geometry: the thumb's travel must be the same
+    everywhere, or the bubble drifts off it (Firefox ignores the WebKit track
+    pseudo-elements).
   - The track's `linear-gradient` progress fill, driven by the runtime-state
     var `--_c-slider-position` (set imperatively by the script; this is live
     value state, NOT the dropped theming-indirection layer).
@@ -399,16 +416,6 @@ onMounted(() => {
 .c-slider__input:active {
   --_c-slider-thumb-scale: 1.33;
   --_c-slider-thumb-shadow-size: 0;
-}
-
-.c-slider__input::-webkit-slider-runnable-track {
-  width: calc(100% - 20px);
-  margin: 0 -20px;
-}
-
-.c-slider__input::-webkit-slider-container {
-  display: flex;
-  padding: 0 10px;
 }
 
 .c-slider__input::-webkit-slider-thumb {

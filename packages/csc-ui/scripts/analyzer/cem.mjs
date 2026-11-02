@@ -11,7 +11,14 @@
  *                        `csc.defaultable` (the prop accepts an app-wide
  *                        default via `applyDefaults()`)
  *   - manifest-level:    `csc.types` (shared public types from src/types.ts,
- *                        which CEM has no first-class kind for)
+ *                        which CEM has no first-class kind for),
+ *                        `csc.internalTags` (registered tags only another
+ *                        component instantiates — named, never described)
+ *
+ * Anything marked internal (ADR-0075) is left out: an `@internal` component
+ * gets no declaration, an `@internal` prop or event no entry, and an
+ * `@internalslot` no slot, an `@internalpart` no part. The manifest is the
+ * public API (ADR-0074).
  */
 
 const kebab = (name) =>
@@ -24,6 +31,53 @@ const kebab = (name) =>
  * function-typed alias is not mistaken for an attribute.
  */
 const isAttributeCompatible = (type) => !/=>|\{|\[\]|Record<|Array</.test(type);
+
+/** A type's members at its top-level `|`, outside brackets of any kind. */
+const unionMembers = (type) => {
+  const members = [];
+
+  let depth = 0;
+
+  let current = '';
+
+  for (const char of type) {
+    if ('([{<'.includes(char)) depth += 1;
+    else if (')]}>'.includes(char)) depth -= 1;
+
+    if (char === '|' && depth === 0) {
+      members.push(current.trim());
+      current = '';
+    } else {
+      current += char;
+    }
+  }
+
+  return [...members, current.trim()].filter(Boolean);
+};
+
+const ATTRIBUTE_MEMBER =
+  /^(?:string|number|boolean|true|false|-?\d+(?:\.\d+)?|'[^']*'|"[^"]*")$/;
+
+/**
+ * The type an attribute can carry for a prop: the whole type when it
+ * round-trips through an attribute, else its string, number and boolean
+ * members — `c-select`'s `value` takes an option's value as `value="fi"`,
+ * though the property also takes `{ name, value }` items and arrays (3.x
+ * documented the attribute, and Vue applies it). `null` when nothing does.
+ */
+const attributeType = (prop) => {
+  if (prop.propertyOnly) return null;
+
+  const resolved = prop.typeResolved ?? prop.type;
+
+  if (isAttributeCompatible(resolved)) return prop.typeExpanded ?? prop.type;
+
+  const members = unionMembers(resolved).filter((m) =>
+    ATTRIBUTE_MEMBER.test(m),
+  );
+
+  return members.length ? members.join(' | ') : null;
+};
 
 /**
  * The manifest's standard `type.text` carries the expanded literal union so
@@ -61,7 +115,7 @@ const attribute = (prop) => ({
   fieldName: prop.name,
   name: kebab(prop.name),
   ...(prop.description ? { description: prop.description } : {}),
-  ...typeEntry(prop),
+  type: { text: attributeType(prop) },
   ...(prop.default !== undefined ? { default: prop.default } : {}),
   ...typeCsc(prop),
 });
@@ -83,10 +137,25 @@ const declarationCsc = (c) => {
   return Object.keys(csc).length ? { csc } : {};
 };
 
+const manifestCsc = (components, sharedTypes) => {
+  const internalTags = components
+    .filter((c) => c.internal)
+    .map((c) => c.tagName);
+
+  const csc = {
+    ...(sharedTypes.length ? { types: sharedTypes } : {}),
+    ...(internalTags.length ? { internalTags } : {}),
+  };
+
+  return Object.keys(csc).length ? { csc } : {};
+};
+
+const isPublic = (entry) => !entry.internal;
+
 export const buildManifest = (components, sharedTypes) => ({
   schemaVersion: '1.0.0',
-  ...(sharedTypes.length ? { csc: { types: sharedTypes } } : {}),
-  modules: components.map((c) => ({
+  ...manifestCsc(components, sharedTypes),
+  modules: components.filter(isPublic).map((c) => ({
     declarations: [
       {
         customElement: true,
@@ -96,7 +165,8 @@ export const buildManifest = (components, sharedTypes) => ({
         ...(c.description ? { description: c.description } : {}),
         ...declarationCsc(c),
         attributes: c.props
-          .filter((p) => isAttributeCompatible(p.typeResolved ?? p.type))
+          .filter(isPublic)
+          .filter((p) => attributeType(p) !== null)
           .map(attribute),
         cssParts: docTagEntries(c.docTags, 'csspart'),
         cssProperties: docTagEntries(c.docTags, 'cssprop').map((entry) => ({
@@ -106,27 +176,13 @@ export const buildManifest = (components, sharedTypes) => ({
         // Host custom states (`:state()` selectors, ADR-0035). `cssStates` is
         // the CEM 2.x field name; harmless extra data under schema 1.0.0.
         cssStates: docTagEntries(c.docTags, 'cssstate'),
-        events: c.events.map((e) => {
-          // camelCase events dispatch a kebab-case twin at runtime
-          // (useHostEmit) so Vue templates can bind them;
-          // surface the twin in the docs.
-          const twin = e.name.replace(/\B([A-Z])/g, '-$1').toLowerCase();
-
-          const note =
-            twin === e.name
-              ? ''
-              : `Also dispatched as \`${twin}\` — bind that name in Vue templates.`;
-
-          const description = [e.description, note].filter(Boolean).join(' ');
-
-          return {
-            name: e.name,
-            type: { text: `CustomEvent<${e.detailType || 'unknown'}>` },
-            ...(description ? { description } : {}),
-          };
-        }),
+        events: c.events.filter(isPublic).map((e) => ({
+          name: e.name,
+          type: { text: `CustomEvent<${e.detailType || 'unknown'}>` },
+          ...(e.description ? { description: e.description } : {}),
+        })),
         members: [
-          ...c.props.map(field),
+          ...c.props.filter(isPublic).map(field),
           ...c.readonlyProperties.map((r) => ({
             kind: 'field',
             name: r.name,

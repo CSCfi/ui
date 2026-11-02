@@ -19,8 +19,9 @@ const columns: CDataTableColumn[] = [
     key: 'status',
   },
   {
-    cell: ({ value }) =>
+    cell: ({ row, value }) =>
       h('c-progress-bar', {
+        'aria-label': `Usage of ${String(row.name)}`,
         style: 'width: 160px',
         value: Math.round((value as number) * 100),
       }),
@@ -41,7 +42,7 @@ const columns: CDataTableColumn[] = [
         },
         'Open',
       ),
-    header: '',
+    header: 'Actions',
     key: 'actions',
   },
 ];

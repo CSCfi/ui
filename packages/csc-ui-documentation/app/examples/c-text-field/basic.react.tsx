@@ -10,7 +10,7 @@ export const Basic = () => {
       <CTextField
         hint="Shown on your public profile"
         label="Display name"
-        onChangeValue={(event) => setName(event.detail as string)}
+        onUpdateValue={(event) => setName(event.detail as string)}
         value={name}
       />
 

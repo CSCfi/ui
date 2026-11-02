@@ -16,7 +16,10 @@ import { Component, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
   template: `
     <c-page class="demo-page">
       <h2>Reports</h2>
-      <p>The default slot is wrapped in a centered max-width container.</p>
+      <p>
+        The default slot is wrapped in a max-width container at the start of the
+        page.
+      </p>
 
       <div slot="footer">Footer content</div>
     </c-page>

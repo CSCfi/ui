@@ -141,7 +141,6 @@
   --color-slate-950: var(--c-slate-950);
   --color-white: var(--c-white);
   --color-black: var(--c-black);
-  --color-transparent: var(--c-transparent);
 }
 
 /*
@@ -216,6 +215,15 @@
   --_c-ease-standard: cubic-bezier(0.25, 0.8, 0.5, 1);
   --_c-toolbar-height: 60px;
   --_c-control-height: 52px;
+}
+
+/*
+ * `hidden` hides a component as it hides any element. The `display` above
+ * (and a component's own `:host` box) is author CSS, which beats the UA's
+ * `[hidden] { display: none }`, so without this `hidden` did nothing.
+ */
+:host([hidden]) {
+  display: none !important;
 }
 
 :where(

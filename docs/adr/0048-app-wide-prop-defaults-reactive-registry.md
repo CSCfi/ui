@@ -4,7 +4,7 @@ status: accepted
 
 # App-wide prop defaults through a reactive registry
 
-Consumers set a **defaultable prop** once for every instance of a tag — `labelOnTop` on every `c-text-field`, one `texts` translation for every `c-select` — with `applyDefaults(defaults)` / `resetDefaults(tags?)`, exported next to `applyTheme` from both packages. Only props tagged `@defaultable <built-in>` in their SFC take part; the analyzer derives the typed `AppDefaults` map and the `DEFAULTABLE_PROPS` allow-list from those tags. A participating prop declares `undefined` in `withDefaults` and resolves through one shared helper (`src/shared/appDefaults.ts`): **host attribute → own property → app default → built-in default**. The registry is a module-level `reactive()` object, so changing a default re-renders mounted elements.
+Consumers set a **defaultable prop** once for every instance of a tag — `labelOnTop` on every `c-text-field`, one `texts` translation for every `c-select` — with `applyDefaults(defaults)` / `resetDefaults(tags?)`, exported next to `applyTheme` from both packages. Only props tagged `@defaultable <built-in>` in their SFC take part; the analyzer derives the typed `CAppDefaults` map and the `DEFAULTABLE_PROPS` allow-list from those tags. A participating prop declares `undefined` in `withDefaults` and resolves through one shared helper (`src/shared/appDefaults.ts`): **host attribute → own property → app default → built-in default**. The registry is a module-level `reactive()` object, so changing a default re-renders mounted elements.
 
 ## Context
 

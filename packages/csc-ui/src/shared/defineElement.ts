@@ -1,6 +1,14 @@
-import { type Component, defineCustomElement } from 'vue';
+import {
+  camelize,
+  type Component,
+  defineCustomElement,
+  type SetupContext,
+  unref,
+  useHost,
+} from 'vue';
 
 import tailwindStyles from '../tailwind.css?inline';
+import { ID_REFERENCES } from './useIdReferences';
 
 /**
  * Whether the platform supports constructable stylesheets
@@ -100,6 +108,14 @@ const getSfcSheet = (
 };
 
 interface ConnectableElement extends HTMLElement {
+  _instance?: { proxy?: { $forceUpdate(): void } | null } | null;
+  _setAttr(key: string): void;
+  _setProp(
+    key: string,
+    value: unknown,
+    shouldReflect?: boolean,
+    shouldUpdate?: boolean,
+  ): void;
   connectedCallback?(): void;
 }
 
@@ -219,6 +235,124 @@ const normalizeNumberProperties = (
 };
 
 /**
+ * Hand a host attribute to the component the way its kind needs.
+ *
+ * Vue's custom element hands EVERY host attribute to the component camelized
+ * (`aria-haspopup` → `ariaHaspopup`). For a declared prop that is the prop's
+ * key, and Vue's own path (`viaVue`) handles it. An undeclared attribute falls
+ * through to the rendered element under that key instead, and came out right
+ * only where the key is also a reflected DOM property (`ariaLabel`):
+ * `ariaHaspopup` is not `ariaHasPopup`, so it landed as a junk `ariahaspopup`
+ * attribute, and an `<svg>`, which takes every key as an attribute, got a
+ * literal `ariaLabel`. So:
+ *
+ * - a `data-*` attribute is the author's data on the element they wrote, and
+ *   is not handed over: a copy in the shadow DOM would make a selector such
+ *   as `[data-test="save"]` match twice (Playwright's CSS engine pierces
+ *   shadow roots). A change still re-renders the component, as Vue's path
+ *   did, for a render that reads one off the host (c-input's
+ *   `data-hide-details`);
+ * - an ARIA id reference (`aria-controls`, `aria-labelledby`, …) stays on the
+ *   host too: an id resolves only in its own tree, so a copy in the shadow
+ *   DOM points at nothing (c-tabs' `aria-controls` on a c-button landed on
+ *   its inner `<button>`, naming no panel). A change re-renders the
+ *   component, whose `useIdReferences` hands the elements the ids name to
+ *   the element carrying its role;
+ * - any other undeclared hyphenated attribute keeps its name
+ *   (`$attrs['aria-label']`); removal leaves `undefined`;
+ * - a single-word one (`role`, `rel`, `class`) goes Vue's way.
+ */
+const routeAttribute = (
+  el: ConnectableElement,
+  declared: Set<string>,
+  key: string,
+  viaVue: () => void,
+): void => {
+  const camelKey = camelize(key);
+
+  if (declared.has(camelKey)) viaVue();
+  else if (key.startsWith('data-') || key in ID_REFERENCES) {
+    el._instance?.proxy?.$forceUpdate();
+  } else if (camelKey !== key) {
+    el._setProp(key, el.getAttribute(key) ?? undefined, false, true);
+  } else viaVue();
+};
+
+/**
+ * A native `input` is `composed`: typed into a field in a shadow root, it
+ * would reach the page beside the `input` the component sends once its value
+ * has changed (`valueEvents.ts`) — twice per keystroke on a text field, and on
+ * every keystroke of a picker whose value changes only on commit. Each
+ * component reports its own value events (ADR-0075), so a native `input` that
+ * started in its shadow tree stops at its shadow root; listeners inside the
+ * tree still hear it. A page's own input slotted into a component is not in
+ * the shadow tree and goes on to the page.
+ */
+const containedRoots = new WeakSet<ShadowRoot>();
+
+const containNativeInput = (root: null | ShadowRoot): void => {
+  if (!root || containedRoots.has(root)) return;
+
+  containedRoots.add(root);
+  root.addEventListener('input', (event) => {
+    if (root.contains(event.composedPath()[0] as Node)) event.stopPropagation();
+  });
+};
+
+/**
+ * What each element's mounted instance exposes (`defineExpose`), read by the
+ * element's own accessors for those members.
+ */
+const exposedNow = new WeakMap<HTMLElement, Record<string, unknown>>();
+
+type Setup = (props: object, context: SetupContext) => unknown;
+
+/**
+ * The members a component exposes belong on its element. Vue puts them there
+ * once, at the first mount, as fixed getters bound to that instance: when the
+ * element leaves the page and comes back (KeepAlive, a moved list item), Vue
+ * mounts a new instance, warns that each member already exists, and the
+ * element goes on calling into the unmounted one — `focus()` focuses nothing,
+ * `unmaskedValue` is stuck. So `expose` is taken over here: the element gets
+ * one accessor per member, which reads the instance mounted now, and Vue
+ * itself is told nothing is exposed.
+ */
+const withLiveExposed = (component: Component): Component => {
+  const setup = (component as { setup?: Setup }).setup;
+
+  if (!setup) return component;
+
+  return {
+    ...component,
+    setup(props: object, context: SetupContext) {
+      const host = useHost();
+
+      const expose = (exposed?: Record<string, unknown>) => {
+        if (host && exposed) {
+          exposedNow.set(host, exposed);
+
+          for (const key of Object.keys(exposed)) {
+            if (Object.hasOwn(host, key)) continue;
+
+            Object.defineProperty(host, key, {
+              configurable: true,
+              get: () => unref(exposedNow.get(host)?.[key]),
+            });
+          }
+        }
+
+        context.expose();
+      };
+
+      return setup(
+        props,
+        Object.create(context, { expose: { value: expose } }),
+      );
+    },
+  } as Component;
+};
+
+/**
  * Register a Vue SFC as a custom element under `tag`, with the shared Tailwind
  * utility stylesheet applied to its shadow root alongside the SFC's own styles.
  *
@@ -244,11 +378,17 @@ export function defineElement(tag: string, component: Component): void {
   // Vue's `defineCustomElement` overloads don't accept the broad `Component`
   // union directly (it includes constructor forms that fail the options
   // overload); cast to the form it expects. Runtime behaviour is unchanged.
-  const vueComponent = component as Parameters<typeof defineCustomElement>[0];
+  const vueComponent = withLiveExposed(component) as Parameters<
+    typeof defineCustomElement
+  >[0];
 
   const booleanKeys = booleanPropKeys(component);
 
   const numberKeys = numberPropKeys(component);
+
+  const declaredKeys = new Set(
+    Object.keys((component as { props?: object }).props ?? {}),
+  );
 
   if (!supportsAdopted) {
     // Fallback: let Vue inject the styles per instance, as before. The merge is
@@ -259,10 +399,15 @@ export function defineElement(tag: string, component: Component): void {
     });
 
     class Element extends (Base as unknown as { new (): ConnectableElement }) {
+      _setAttr(key: string) {
+        routeAttribute(this, declaredKeys, key, () => super._setAttr(key));
+      }
+
       connectedCallback() {
         normalizeBooleanAttributes(this, booleanKeys);
         normalizeNumberProperties(this, numberKeys);
         super.connectedCallback?.();
+        containNativeInput(this.shadowRoot);
       }
     }
 
@@ -278,6 +423,10 @@ export function defineElement(tag: string, component: Component): void {
   const typeSheet = getSfcSheet(tag, sfcStyles);
 
   class Element extends (Base as unknown as { new (): ConnectableElement }) {
+    _setAttr(key: string) {
+      routeAttribute(this, declaredKeys, key, () => super._setAttr(key));
+    }
+
     connectedCallback() {
       // Coerce SSR'd "true"/"false" boolean attributes and string values in
       // pre-upgrade Number properties before Vue resolves props (the
@@ -297,6 +446,7 @@ export function defineElement(tag: string, component: Component): void {
       this.adoptSheets();
       super.connectedCallback?.();
       this.adoptSheets();
+      containNativeInput(this.shadowRoot);
     }
 
     private adoptSheets() {

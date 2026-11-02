@@ -15,25 +15,27 @@
 </template>
 
 <script lang="ts">
-export interface CTagProps {
+/**
+ * Size of the tag. `small` renders a more compact pill; omitting the
+ * attribute renders the default size.
+ */
+export type CTagSize = 'default' | 'small';
+
+interface CTagProps {
   /**
-   * Mark tag as active
-   *
-   * @seeded from csc-ui — verify
+   * Paint the filled, selected look, announced as the pressed state of a
+   * plain tag. The tag never sets it itself: toggle it on `click`
    */
   active?: boolean;
 
   /**
-   * Display an optional badge at the start of the tag
-   *
-   * @seeded from csc-ui — verify
+   * A number or short text shown in a small pill at the start of the tag
    */
   badge?: null | number | string;
 
   /**
-   * Mark tag as closeable
-   *
-   * @seeded from csc-ui — verify
+   * Add a close button that fires `close`; removing the tag stays your job.
+   * The button, not the tag, is then the Tab stop
    */
   closeable?: boolean;
 
@@ -45,33 +47,23 @@ export interface CTagProps {
   closeLabel?: string;
 
   /**
-   * Remove the hover effect
-   *
-   * @seeded from csc-ui — verify
+   * Make the tag a plain label: no hover effect, not a button, and out of
+   * the Tab order
    */
   flat?: boolean;
 
   /**
-   * Size of the tag
-   *
-   * @seeded from csc-ui — verify
+   * Size of the tag: `small` renders a compact pill. Inside `c-tags`, the
+   * group's `size` overrides it
    */
   size?: CTagSize;
 }
-
-/**
- * Size of the tag. `small` renders a more compact pill; omitting the
- * attribute renders the default size.
- */
-export type CTagSize = 'default' | 'small';
 </script>
 
 <script setup lang="ts">
 /**
- * @slot default - Default slot
+ * @slot default - The tag's text
  * @csspart root - The tag's visible pill-shaped box
- *
- * @seeded from csc-ui — verify
  */
 import { mdiClose } from '@mdi/js';
 import { tv } from 'tailwind-variants';
@@ -202,20 +194,47 @@ const ui = computed(() =>
 // (a nested interactive control, and two stops per tag in a `multiple`
 // field's tag row, ADR-0044); it stamps `data-closeable` so the escape-hatch
 // can drop the host focus ring that would otherwise double the button's own.
+//
+// A plain tag is a toggle button: `active` is its pressed state, and Enter
+// and Space press it with a click, as on a native button (Enter on keydown,
+// Space on keyup).
+const isButton = () => !props.flat && !props.closeable;
+
+const onKeydown = (event: KeyboardEvent) => {
+  if (event.target !== host || !isButton()) return;
+
+  if (event.key === 'Enter') {
+    event.preventDefault();
+    host?.click();
+  } else if (event.key === ' ') {
+    // No page scroll; the press lands on keyup.
+    event.preventDefault();
+  }
+};
+
+const onKeyup = (event: KeyboardEvent) => {
+  if (event.target === host && isButton() && event.key === ' ') host?.click();
+};
+
 onMounted(() => {
   if (!host) return;
+  host.addEventListener('keydown', onKeydown);
+  host.addEventListener('keyup', onKeyup);
   watchEffect(() => {
     host.toggleAttribute('data-closeable', props.closeable && !props.flat);
 
     if (props.flat) {
       host.setAttribute('tabindex', '-1');
       host.removeAttribute('role');
+      host.removeAttribute('aria-pressed');
     } else if (props.closeable) {
       host.removeAttribute('tabindex');
       host.removeAttribute('role');
+      host.removeAttribute('aria-pressed');
     } else {
       host.setAttribute('tabindex', '0');
       host.setAttribute('role', 'button');
+      host.setAttribute('aria-pressed', String(!!props.active));
     }
   });
 });
@@ -271,6 +290,13 @@ const onClose = () => {
  * ring, so drop the host's. */
 :host([data-closeable]:focus-visible) {
   outline: none;
+}
+
+/* A flat tag's root ignores the pointer (`pointer-events-none`), and its
+ * close button would inherit that: give it back, so a flat closeable tag can
+ * still be removed with the mouse. */
+c-icon-button {
+  pointer-events: auto;
 }
 
 /* The close button was a fixed 20px (16px on small tags) via the old

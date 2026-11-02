@@ -15,26 +15,6 @@
 export type CFieldSize = 'default' | 'small';
 
 /**
- * Preferred placement of a floating panel relative to its anchor, shared by
- * the anchor-positioned overlay components (`c-menu`, `c-tooltip`,
- * `c-popover`). The side names the panel's position; `-start`/`-end` align
- * the panel's edge with the anchor's on the cross axis.
- */
-export type CPlacement =
-  | 'bottom-end'
-  | 'bottom-start'
-  | 'bottom'
-  | 'left-end'
-  | 'left-start'
-  | 'left'
-  | 'right-end'
-  | 'right-start'
-  | 'right'
-  | 'top-end'
-  | 'top-start'
-  | 'top';
-
-/**
  * A selectable item for the value-selection components (`c-select`,
  * `c-autocomplete`) when options are supplied via the `items` prop instead of
  * slotted `<c-option>` elements.
@@ -52,7 +32,7 @@ export interface CSelectItem {
 
 /**
  * A toast notification: the argument to `c-toasts`' `addToast` method,
- * rendered by the composed `c-toast` child.
+ * rendered by the internal `c-toast`, and the detail of `c-toasts`' `close` event.
  */
 export interface CToastMessage {
   /** Label of the toast's close button. */
@@ -64,7 +44,13 @@ export interface CToastMessage {
   /** How long the toast stays visible, in milliseconds. Defaults to 6000. */
   duration?: number;
 
-  /** Identifier used to remove the toast via `removeToast`. */
+  /** Optional heading rendered above the message. */
+  heading?: string;
+
+  /**
+   * Identifier for `removeToast`. `addToast` generates one when it is
+   * omitted, and returns it either way.
+   */
   id?: string;
 
   /** Show an indeterminate progress bar instead of the countdown. */
@@ -78,9 +64,6 @@ export interface CToastMessage {
 
   /** Show a progress bar counting down the toast's remaining duration. */
   progress?: boolean;
-
-  /** Optional title rendered above the message. */
-  title?: string;
 
   /** Status type of the toast. Defaults to `info`. */
   type?: CToastType;

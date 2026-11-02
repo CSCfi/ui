@@ -1,5 +1,12 @@
 <template>
-  <button :class="ui.root()" :disabled part="root" @click="onClick">
+  <button
+    :aria-busy="loading ? 'true' : undefined"
+    :aria-disabled="loading ? 'true' : undefined"
+    :class="ui.root()"
+    :disabled
+    part="root"
+    @click="onClick"
+  >
     <div ref="containerRef" :class="ui.inner()" part="content">
       <span
         v-if="loading"
@@ -7,13 +14,15 @@
         :style="{ width: `${spinnerSize}px`, height: `${spinnerSize}px` }"
       />
 
-      <template v-else>
+      <!-- While loading the content stays, hidden visually only: slotted
+           text that names the button must not go with it. -->
+      <span :class="loading ? 'sr-only' : 'contents'">
         <slot>
           <svg v-if="path" height="24" viewBox="0 0 24 24" width="24">
             <path :d="path" fill="currentColor" />
           </svg>
         </slot>
-      </template>
+      </span>
     </div>
 
     <span
@@ -36,99 +45,85 @@
 </template>
 
 <script lang="ts">
-export interface CIconButtonProps {
-  /**
-   * Show a badge on top of the icon
-   *
-   * @seeded from csc-ui — verify
-   */
-  badge?: null | number | string;
-
-  /**
-   * Danger variant of the button
-   *
-   * @seeded from csc-ui — verify
-   */
-  danger?: boolean;
-
-  /**
-   * Disable the button
-   *
-   * @seeded from csc-ui — verify
-   */
-  disabled?: boolean;
-
-  /**
-   * Ghost variant of the button
-   *
-   * @seeded from csc-ui — verify
-   */
-  ghost?: boolean;
-
-  /**
-   * Inverted color for dark backgrounds
-   *
-   * @seeded from csc-ui — verify
-   */
-  inverted?: boolean;
-
-  /**
-   * Loading variant of the button
-   *
-   * @seeded from csc-ui — verify
-   */
-  loading?: boolean;
-
-  /**
-   * Outlined variant of the button
-   *
-   * @seeded from csc-ui — verify
-   */
-  outlined?: boolean;
-
-  /**
-   * Path for the svg icon
-   *
-   * @seeded from csc-ui — verify
-   * @freeform SVG path data
-   */
-  path?: string;
-
-  /**
-   * Size of the button
-   *
-   * @seeded from csc-ui — verify
-   */
-  size?: CIconButtonSize;
-
-  /**
-   * Text variant of the button
-   *
-   * @seeded from csc-ui — verify
-   */
-  text?: boolean;
-}
-
 /**
  * Size of the icon button. `small` and `x-small` render progressively more
  * compact buttons; omitting the attribute renders the default size.
  */
 export type CIconButtonSize = 'default' | 'small' | 'x-small';
+
+interface CIconButtonProps {
+  /**
+   * Count shown in a bubble at the button's top-right corner; hidden while
+   * `null` or empty, so `0` still shows.
+   */
+  badge?: null | number | string;
+
+  /**
+   * Danger appearance for a destructive action: the filled button in the error
+   * colour; no effect on `outlined`, `ghost` or `text`.
+   */
+  danger?: boolean;
+
+  /**
+   * Disable the button: it leaves the Tab order and ignores the pointer.
+   */
+  disabled?: boolean;
+
+  /**
+   * Ghost appearance: a light primary tint, for lower emphasis.
+   */
+  ghost?: boolean;
+
+  /**
+   * Inverted colours for a fixed dark or brand-coloured backdrop: the
+   * `inverse-*` family, the same in both theme modes. Combines with the other
+   * appearances.
+   */
+  inverted?: boolean;
+
+  /**
+   * Show a spinner in place of the icon and ignore clicks; the button stays
+   * focusable and is announced as busy and unavailable.
+   */
+  loading?: boolean;
+
+  /**
+   * Outlined appearance: a primary outline with no fill, for lower emphasis.
+   */
+  outlined?: boolean;
+
+  /**
+   * Icon path of an icon the button draws itself, always 24px; a slotted icon
+   * wins over it.
+   *
+   * @freeform SVG path data
+   */
+  path?: string;
+
+  /**
+   * Size of the button: `default` (40px), `small` (32px) or `x-small` (28px).
+   */
+  size?: CIconButtonSize;
+
+  /**
+   * Text appearance: no fill or outline, the lightest look.
+   */
+  text?: boolean;
+}
 </script>
 
 <script setup lang="ts">
 /**
- * @slot default - Default slot for the icon
+ * @slot default - The icon: a `c-icon` or an `<svg>`; it wins over `path`
  *
  * @csspart root - The native `<button>` element carrying the visual styling
  * @csspart content - Inner wrapper around the slotted icon or loading spinner
- * @csspart badge - The badge bubble shown in the button's corner
- *
- * @seeded from csc-ui — verify
+ * @csspart badge - The count bubble at the button's top-right corner, shown by `badge`
  */
 import { tv } from 'tailwind-variants';
 import { computed, useTemplateRef } from 'vue';
 
+import { useIdReferences } from '../../shared/useIdReferences';
 import { useRipple } from '../../shared/useRipple';
 
 /**
@@ -240,9 +235,11 @@ const iconButton = tv({
     // ---- disabled (overrides appearance bg/text/border) ------------------
     // Ordered LAST so these win over the appearance compounds above (tv merges
     // compoundVariants in source order; last-matching wins). One per appearance,
-    // mirroring c-button's disabled palette.
+    // mirroring c-button's disabled palette: the disabled ink, not the muted
+    // or faint hint inks, which AA contrast keeps dark enough to read as
+    // enabled.
     {
-      class: { root: 'bg-surface-muted text-on-surface-muted' },
+      class: { root: 'bg-surface-muted text-on-surface-disabled' },
       danger: false,
       disabled: true,
       ghost: false,
@@ -260,12 +257,12 @@ const iconButton = tv({
       text: false,
     },
     {
-      class: { root: 'bg-surface-muted text-on-surface-muted' },
+      class: { root: 'bg-surface-muted text-on-surface-disabled' },
       danger: true,
       disabled: true,
     },
     {
-      class: { root: 'bg-surface-muted text-on-surface-muted' },
+      class: { root: 'bg-surface-muted text-on-surface-disabled' },
       disabled: true,
       ghost: true,
       inverted: false,
@@ -277,13 +274,13 @@ const iconButton = tv({
       inverted: true,
     },
     {
-      class: { root: 'bg-transparent text-on-surface-muted' },
+      class: { root: 'bg-transparent text-on-surface-disabled' },
       disabled: true,
       text: true,
     },
     {
       class: {
-        root: 'bg-transparent text-on-surface-muted ring-2 ring-border ring-inset',
+        root: 'bg-transparent text-on-surface-disabled ring-2 ring-border ring-inset',
       },
       disabled: true,
       inverted: false,
@@ -401,6 +398,9 @@ const onClick = (event: MouseEvent) => {
 
   spawnRipple(event);
 };
+
+// The page's id references on the element reach the element carrying its role.
+useIdReferences('[part~="root"]');
 </script>
 
 <!--

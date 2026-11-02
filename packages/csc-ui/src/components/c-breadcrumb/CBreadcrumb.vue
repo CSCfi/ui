@@ -1,71 +1,63 @@
 <template>
   <nav :aria-label="t.breadcrumb" :class="ui.root()" part="root">
-    <ol ref="listRef" :class="ui.list()" part="list">
-      <!-- The first crumb sits in its own slot so the fold button follows it
-           in DOM and Tab order, not just on screen. -->
-      <slot name="first" />
+    <div :class="ui.clip()">
+      <ol ref="listRef" :class="ui.list()" part="list">
+        <!-- The first crumb sits in its own slot so the fold button follows it
+             in DOM and Tab order, not just on screen. -->
+        <slot name="first" />
 
-      <!-- Out of the row (and out of reach) while nothing is folded, yet
-           still laid out, so its width is known before the first fold. -->
-      <li ref="foldRef" :class="ui.fold()">
-        <svg
-          :class="ui.separator()"
-          aria-hidden="true"
-          part="separator"
-          viewBox="0 0 24 24"
-        >
-          <path :d="mdiChevronRight" />
-        </svg>
-
-        <button
-          ref="foldButtonRef"
-          :aria-controls="PANEL_ID"
-          :aria-expanded="isOpen ? 'true' : 'false'"
-          :aria-label="t.fold(foldedCount)"
-          :class="ui.foldButton()"
-          part="fold-button"
-          style="anchor-name: --c-breadcrumb-fold"
-          type="button"
-          @click="toggle"
-        >
-          <svg :class="ui.foldIcon()" aria-hidden="true" viewBox="0 0 24 24">
-            <path :d="mdiDotsHorizontal" />
+        <!-- Out of the row (and out of reach) while nothing is folded, yet
+             still laid out, so its width is known before the first fold. -->
+        <li ref="foldRef" :class="ui.fold()">
+          <svg
+            :class="ui.separator()"
+            aria-hidden="true"
+            part="separator"
+            viewBox="0 0 24 24"
+          >
+            <path :d="mdiChevronRight" />
           </svg>
-        </button>
 
-        <!-- Manual popover in the top layer, after the button in the DOM so
-             Tab walks from the button into the folded crumbs. -->
-        <div
-          :id="PANEL_ID"
-          ref="panelRef"
-          :class="ui.panel()"
-          :style="panelStyle"
-          part="panel"
-          popover="manual"
-          @toggle="onToggle"
-        >
-          <ul ref="panelListRef" :class="ui.panelList()" part="panel-list">
-            <slot name="folded" />
-          </ul>
-        </div>
-      </li>
+          <button
+            ref="foldButtonRef"
+            :aria-controls="PANEL_ID"
+            :aria-expanded="isOpen ? 'true' : 'false'"
+            :aria-label="t.fold(foldedCount)"
+            :class="ui.foldButton()"
+            part="fold-button"
+            style="anchor-name: --c-breadcrumb-fold"
+            type="button"
+            @click="toggle"
+          >
+            <svg :class="ui.foldIcon()" aria-hidden="true" viewBox="0 0 24 24">
+              <path :d="mdiDotsHorizontal" />
+            </svg>
+          </button>
 
-      <slot />
-    </ol>
+          <!-- Manual popover in the top layer, after the button in the DOM so
+               Tab walks from the button into the folded crumbs. -->
+          <div
+            :id="PANEL_ID"
+            ref="panelRef"
+            :class="ui.panel()"
+            :style="panelStyle"
+            part="panel"
+            popover="manual"
+            @toggle="onToggle"
+          >
+            <ul ref="panelListRef" :class="ui.panelList()" part="panel-list">
+              <slot name="folded" />
+            </ul>
+          </div>
+        </li>
+
+        <slot />
+      </ol>
+    </div>
   </nav>
 </template>
 
 <script lang="ts">
-export interface CBreadcrumbProps {
-  /**
-   * UI text overrides (i18n), merged over the English defaults. Objects have
-   * no attribute form — set it as a property
-   *
-   * @defaultable {}
-   */
-  texts?: CBreadcrumbTexts;
-}
-
 /**
  * UI texts of `c-breadcrumb`, shallow-merged over the English defaults.
  * Static labels are strings; interpolated ones are functions.
@@ -77,13 +69,23 @@ export interface CBreadcrumbTexts {
   /** Accessible name of the fold button; receives the number of folded crumbs. */
   fold?: (count: number) => string;
 }
+
+interface CBreadcrumbProps {
+  /**
+   * UI text overrides (i18n), merged over the English defaults. Objects have
+   * no attribute form — set it as a property
+   *
+   * @defaultable {}
+   */
+  texts?: CBreadcrumbTexts;
+}
 </script>
 
 <script setup lang="ts">
 /**
  * @slot default - The crumbs (`c-breadcrumb-item`), from the top of the hierarchy down to the current page
- * @slot first - Assigned by the breadcrumb to its first crumb; never set `slot` on a crumb
- * @slot folded - Assigned by the breadcrumb to the crumbs it folds into the fold panel; never set `slot` on a crumb
+ * @internalslot first - Assigned by the breadcrumb to its first crumb
+ * @internalslot folded - Assigned by the breadcrumb to the crumbs it folds into the fold panel
  *
  * @csspart root - The `<nav>` landmark; it takes the full width it is given and folds the crumbs to fit it
  * @csspart list - The one-line list of crumbs
@@ -115,6 +117,7 @@ import {
   flipChain,
   useFallbackPosition,
 } from '../../shared/useFallbackPosition';
+import { useIdReferences } from '../../shared/useIdReferences';
 import { fitCrumbs } from './fit';
 
 /**
@@ -126,6 +129,12 @@ import { fitCrumbs } from './fit';
  */
 const breadcrumb = tv({
   slots: {
+    // The clip around the row keeps a run of crumbs from scrolling the page.
+    // `-m-1 p-1` sets its edge 4px outside the row at no layout cost, room for
+    // the crumbs' focus rings. A box of its own, so the row's box (the `list`
+    // part, whose width the fit reads) stays as it was; an
+    // `overflow-clip-margin` would need no box, but Safari has none.
+    clip: '-m-1 overflow-clip p-1',
     // Shown only while a crumb is folded — `data-folding` is set with the
     // fold itself, so the button is focusable the moment it is needed.
     fold: 'invisible absolute flex shrink-0 items-center data-folding:visible data-folding:static',
@@ -134,10 +143,8 @@ const breadcrumb = tv({
     // Icons, not the `…` glyph: a glyph sits on the font's baseline, an SVG
     // centres with the crumbs' icons and chevrons whatever the font.
     foldIcon: 'size-5 shrink-0 fill-current',
-    // One line that never wraps: what does not fit folds or truncates. The
-    // clip keeps a row of floors from scrolling the page; its margin keeps
-    // the crumbs' focus rings.
-    list: 'relative m-0 flex min-w-0 list-none flex-nowrap items-center overflow-clip p-0 [overflow-clip-margin:4px]',
+    // One line that never wraps: what does not fit folds or truncates.
+    list: 'relative m-0 flex min-w-0 list-none flex-nowrap items-center p-0',
     panel:
       'fixed [inset:auto] m-0 overflow-visible border-0 bg-transparent p-0',
     panelList:
@@ -662,6 +669,9 @@ onBeforeUnmount(() => {
   detachDismiss = null;
   fallback.stop();
 });
+
+// The page's id references on the element reach the element carrying its role.
+useIdReferences('nav');
 </script>
 
 <!--

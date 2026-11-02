@@ -1,8 +1,5 @@
 {
-  "attributes": {
-    "disable-animation": "boolean = false",
-    "value": "number | string = 0"
-  },
+  "attributes": {},
   "cssProperties": [],
   "defaultable": [],
   "events": {},
@@ -11,10 +8,7 @@
     "root"
   ],
   "propertyOnly": [],
-  "props": {
-    "disableAnimation": "boolean = false",
-    "value": "number | string = 0"
-  },
+  "props": {},
   "slots": [
     "default"
   ],

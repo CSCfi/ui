@@ -36,9 +36,10 @@ const listItemTitle = tv({
 
 interface CListItemTitleProps {
   /**
-   * Set the title active
+   * Whether the item holding the title is active; the parent
+   * `<c-list-item>` sets it from its own `active`.
    *
-   * @seeded from csc-ui — verify
+   * @internal
    */
   active?: boolean;
 }

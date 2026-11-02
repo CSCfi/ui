@@ -8,7 +8,7 @@ autocomplete.texts = {
   selectAll: (count: number) => `Select all ${count} matches`,
 };
 
-autocomplete.addEventListener('changeValue', (event) => {
+autocomplete.addEventListener('change', (event) => {
   const languages = event.detail as string[];
 
   status.textContent = `Value: ${languages.length ? languages.join(', ') : '[]'}`;

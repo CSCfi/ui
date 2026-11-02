@@ -17,14 +17,14 @@ import { mdiTuneVariant } from '@mdi/js';
         <div class="example-grid">
           <c-switch
             [value]="compact()"
-            (changeValue)="compact.set($any($event).detail)"
+            (change)="compact.set($any($event).detail)"
           >
             Compact rows
           </c-switch>
 
           <c-switch
             [value]="showIds()"
-            (changeValue)="showIds.set($any($event).detail)"
+            (change)="showIds.set($any($event).detail)"
           >
             Show identifiers
           </c-switch>

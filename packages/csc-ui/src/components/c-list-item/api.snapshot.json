@@ -2,11 +2,10 @@
   "attributes": {
     "active": "boolean = false",
     "disabled": "boolean = false",
-    "disabled-by-parent": "boolean = false",
     "hoverable": "boolean = false",
     "href": "string = ''",
     "ripple": "boolean = false",
-    "target": "string = '_blank'"
+    "target": "string = ''"
   },
   "cssProperties": [],
   "defaultable": [],
@@ -19,11 +18,10 @@
   "props": {
     "active": "boolean = false",
     "disabled": "boolean = false",
-    "disabledByParent": "boolean = false",
     "hoverable": "boolean = false",
     "href": "string = ''",
     "ripple": "boolean = false",
-    "target": "string = '_blank'"
+    "target": "string = ''"
   },
   "slots": [
     "default",

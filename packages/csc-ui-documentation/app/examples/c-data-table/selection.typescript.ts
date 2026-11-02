@@ -23,7 +23,7 @@ table.selected = ['ds-2'];
 const status = document.querySelector('p')!;
 
 table.addEventListener('change:selected', (event) => {
-  const { ids } = event.detail;
+  const ids = event.detail;
 
   status.textContent = `Selected ids: ${ids.length ? ids.join(', ') : '—'}`;
 });

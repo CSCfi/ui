@@ -10,18 +10,29 @@
       :active="isOpen"
       :data-hide-details="String(hideDetailsResolved)"
       :disabled
-      :error-message
       :filled="hasSelection"
-      :hint
       :input-id
+      :invalid
       :label
       :label-on-top="labelOnTopResolved"
       :required
       :shadow="shadowResolved"
       :size="sizeResolved"
-      :valid
       @click="onFieldClick"
     >
+      <!-- The hint / error message, here in the field's own tree so the
+           input's aria-describedby can name it. -->
+      <field-message
+        :id="`${inputId}-message`"
+        slot="message"
+        :error-message
+        :hide-details="hideDetailsResolved"
+        :hint
+        :invalid
+        :label-on-top="labelOnTopResolved"
+        part="message"
+      />
+
       <div :class="ui.content()" class="c-input__content">
         <!-- The readonly combobox is visually hidden (clip, never
              display:none — it must keep taking focus) behind the two-line
@@ -29,9 +40,13 @@
              for assistive technology and the form. -->
         <input
           ref="fieldRef"
+          v-bind="controlAttrs"
           :aria-controls="`${id}-listbox`"
+          :aria-describedby="
+            hideDetailsResolved ? undefined : `${inputId}-message`
+          "
           :aria-expanded="isOpen"
-          :aria-label="label || undefined"
+          :aria-label="accessibleName"
           :class="ui.input()"
           :disabled
           :name="name || undefined"
@@ -240,7 +255,7 @@
           @pointermove="activeIndex = SELECT_BRANCH_ROW"
         >
           <span :class="ui.itemLabel()">
-            {{ t.select(currentBranch?.name ?? '') }}
+            {{ t.selectBranch(currentBranch?.name ?? '') }}
           </span>
 
           <svg
@@ -272,7 +287,7 @@
           :class="treeSelect({ disabled: row.disabled }).item()"
           :data-active="i === activeIndex || undefined"
           :title="searchMode ? row.pathText || undefined : undefined"
-          part="item"
+          part="option"
           role="option"
           tabindex="-1"
           @click="activateRow(row)"
@@ -382,7 +397,105 @@ export interface CTreeSelectItem {
   value: number | string;
 }
 
-export interface CTreeSelectProps {
+/**
+ * The committed item as emitted with `return-object`: a fresh object — never
+ * the `items` entry itself — with its ancestors root-first and without
+ * `children`.
+ */
+export interface CTreeSelectSelection {
+  /** The committed item's code, when it has one. */
+  code?: string;
+
+  /** The committed item's label. */
+  name: string;
+
+  /** The committed item's ancestors, root-first. */
+  path: Array<{ code?: string; name: string; value: number | string }>;
+
+  /** The committed item's value. */
+  value: number | string;
+}
+
+/**
+ * UI texts of `c-tree-select`, shallow-merged over the English defaults.
+ * Static labels are strings; interpolated ones are functions.
+ */
+export interface CTreeSelectTexts {
+  /** Accessible label of the breadcrumb navigation in the panel. */
+  breadcrumb?: string;
+
+  /**
+   * Label of the "Browse instead" control shown in the header while a query
+   * is typed.
+   */
+  browse?: string;
+
+  /** Meta text on a branch row; receives its number of children. */
+  children?: (count: number) => string;
+
+  /**
+   * Header text in browse mode; receives the label of the level being
+   * listed.
+   */
+  choose?: (levelLabel: string) => string;
+
+  /** Accessible label of the clear button. */
+  clearSelection?: string;
+
+  /** Accessible label of the close button in the fullscreen panel (narrow viewports). */
+  closePanel?: string;
+
+  /** Accessible label of the search input inside the panel. */
+  filterOptions?: string;
+
+  /**
+   * Header text of a level whose rows are all leaves in an unevenly deep
+   * tree (an evenly deep tree shows the step counter instead).
+   */
+  final?: string;
+
+  /**
+   * Default label of level `n` (1 = the top level) when `level-labels` gives
+   * none.
+   */
+  level?: (n: number) => string;
+
+  /**
+   * Header level counter shown while the tree is evenly deep (every leaf at
+   * one level); receives the level and the number of levels.
+   */
+  levelCounter?: (n: number, total: number) => string;
+
+  /** Header text in search mode; receives the number of matches. */
+  matches?: (count: number) => string;
+
+  /** Text of the row shown when nothing is listed. */
+  noResults?: string;
+
+  /** Label of the root crumb. */
+  root?: string;
+
+  /** Placeholder of the search input when the `placeholder` prop is empty. */
+  searchPlaceholder?: string;
+
+  /**
+   * Label of the pinned select-branch row; receives the current branch's
+   * name.
+   */
+  selectBranch?: (name: string) => string;
+
+  /** Accessible label of the chevron button that opens and closes the panel. */
+  toggleOptions?: string;
+}
+
+/**
+ * Selection value of `c-tree-select`: the committed item's value — or a
+ * {@link CTreeSelectSelection} with `return-object` — and `null` when
+ * cleared.
+ */
+export type CTreeSelectValue = CTreeSelectSelection | null | number | string;
+
+interface CTreeSelectProps {
   /**
    * Let a branch be committed as the value: a pinned select-branch row heads
    * every level below the root, and matching branches are listed as search
@@ -428,11 +541,10 @@ export interface CTreeSelectProps {
   hint?: string;
 
   /**
-   * Id of the element
-   *
-   * @freeform
+   * Show the control as invalid: its `error-message`, when set, replaces the
+   * hint, and the control is marked `aria-invalid`.
    */
-  hostId?: string;
+  invalid?: boolean;
 
   /**
    * The tree to pick from. Arrays have no attribute form — bind as a DOM
@@ -516,114 +628,11 @@ export interface CTreeSelectProps {
   texts?: CTreeSelectTexts;
 
   /**
-   * Set the validity of the field
-   */
-  valid?: boolean;
-
-  /**
    * Selected value: the committed item's value, or the `CTreeSelectSelection`
    * with `return-object`; `null` when nothing is selected
    */
   value?: CTreeSelectValue;
 }
-
-/**
- * The committed item as emitted with `return-object`: a fresh object — never
- * the `items` entry itself — with its ancestors root-first and without
- * `children`.
- */
-export interface CTreeSelectSelection {
-  /** The committed item's code, when it has one. */
-  code?: string;
-
-  /** The committed item's label. */
-  name: string;
-
-  /** The committed item's ancestors, root-first. */
-  path: Array<{ code?: string; name: string; value: number | string }>;
-
-  /** The committed item's value. */
-  value: number | string;
-}
-
-/**
- * UI texts of `c-tree-select`, shallow-merged over the English defaults.
- * Static labels are strings; interpolated ones are functions.
- */
-export interface CTreeSelectTexts {
-  /** Accessible label of the breadcrumb navigation in the panel. */
-  breadcrumb?: string;
-
-  /**
-   * Label of the "Browse instead" control shown in the header while a query
-   * is typed.
-   */
-  browse?: string;
-
-  /** Meta text on a branch row; receives its number of children. */
-  children?: (count: number) => string;
-
-  /**
-   * Header text in browse mode; receives the label of the level being
-   * listed.
-   */
-  choose?: (levelLabel: string) => string;
-
-  /** Accessible label of the clear button. */
-  clearSelection?: string;
-
-  /** Accessible label of the close button in the fullscreen panel (narrow viewports). */
-  closePanel?: string;
-
-  /** Accessible label of the search input inside the panel. */
-  filterOptions?: string;
-
-  /**
-   * Header text of a level whose rows are all leaves in an unevenly deep
-   * tree (an evenly deep tree shows the step counter instead).
-   */
-  final?: string;
-
-  /**
-   * Default label of level `n` (1 = the top level) when `level-labels` gives
-   * none.
-   */
-  level?: (n: number) => string;
-
-  /** Header text in search mode; receives the number of matches. */
-  matches?: (count: number) => string;
-
-  /** Text of the row shown when nothing is listed. */
-  noResults?: string;
-
-  /** Label of the root crumb. */
-  root?: string;
-
-  /** Placeholder of the search input when the `placeholder` prop is empty. */
-  searchPlaceholder?: string;
-
-  /**
-   * Label of the pinned select-branch row; receives the current branch's
-   * name.
-   */
-  select?: (name: string) => string;
-
-  /**
-   * Header step counter shown while the tree is evenly deep (every leaf at
-   * one level); receives the step and the total number of levels.
-   */
-  step?: (n: number, total: number) => string;
-
-  /** Accessible label of the chevron button that opens and closes the panel. */
-  toggleOptions?: string;
-}
-
-/**
- * Selection value of `c-tree-select`: the committed item's value — or a
- * {@link CTreeSelectSelection} with `return-object` — and `null` when
- * cleared.
- */
-export type CTreeSelectValue = CTreeSelectSelection | null | number | string;
 </script>
 
 <script setup lang="ts">
@@ -638,12 +647,13 @@ export type CTreeSelectValue = CTreeSelectSelection | null | number | string;
  * @csspart crumb - One crumb in the breadcrumb: the root crumb, an ancestor, or the collapsed "…" crumb
  * @csspart header - The header line under the breadcrumb: the level to choose and its step counter, or the match count and the "Browse instead" control
  * @csspart list - The scrollable listbox: the level list while browsing, the results while searching
- * @csspart item - One item row in the list
+ * @csspart option - One row in the list
  * @csspart select-branch - The pinned select-branch row at the top of a level list inside a branch (`allow-branch`)
  * @csspart code - An item's code column, in a row and in the closed field
  * @csspart path - The ancestor path line under a search result's label
  * @csspart match - A run of an item's code, label or path equal to the query, in a row; underlined in the primary colour, text inherits the row
  * @csspart info - The no-results row shown when nothing is listed
+ * @csspart message - The hint / error message area below the field (always reserved unless `hide-details`)
  */
 import {
   mdiAlert,
@@ -658,14 +668,17 @@ import { computed, ref, useHost, useId, useTemplateRef, watch } from 'vue';
 
 import { useAppDefault } from '../../shared/appDefaults';
 import { coerceBoolean } from '../../shared/coerceBoolean';
-import { emitModelChange } from '../../shared/emitModelValue';
+import FieldMessage from '../../shared/FieldMessage.vue';
 import PanelHeadingRow from '../../shared/PanelHeadingRow.vue';
 import { applyPeekCap } from '../../shared/peekCap';
 import { type MatchSegment, splitMatches } from '../../shared/splitMatches';
 import { useAnchoredPanel } from '../../shared/useAnchoredPanel';
+import { useControlAttrs } from '../../shared/useControlAttrs';
 import { useHostEmit } from '../../shared/useHostEmit';
+import { useIdReferences } from '../../shared/useIdReferences';
 import { useNarrowViewport } from '../../shared/useNarrowViewport';
 import { useStatusAnnouncer } from '../../shared/useStatusAnnouncer';
+import { emitModelChange } from '../../shared/valueEvents';
 
 /** Events dispatched by `<c-tree-select>`. */
 interface CTreeSelectEvents {
@@ -814,7 +827,7 @@ const props = withDefaults(defineProps<CTreeSelectProps>(), {
   filter: undefined,
   hideDetails: undefined,
   hint: '',
-  hostId: '',
+  invalid: false,
   items: () => [],
   itemsPerPage: undefined,
   label: '',
@@ -827,11 +840,21 @@ const props = withDefaults(defineProps<CTreeSelectProps>(), {
   shadow: undefined,
   size: undefined,
   texts: undefined,
-  valid: true,
   value: null,
 });
 
 const host = useHost();
+
+const { controlAttrs } = useControlAttrs();
+
+// The visible label names the input (WCAG 2.5.3, label in name); the host's
+// `aria-label` names a field without one, and is ignored beside it.
+const accessibleName = computed(
+  () =>
+    props.label ||
+    (controlAttrs.value['aria-label'] as string | undefined) ||
+    undefined,
+);
 
 const emit = useHostEmit<CTreeSelectEvents>();
 
@@ -849,12 +872,12 @@ const DEFAULT_TEXTS: Required<CTreeSelectTexts> = {
   filterOptions: 'Filter options',
   final: 'Final level',
   level: (n) => `Level ${n}`,
+  levelCounter: (n, total) => `Step ${n} of ${total}`,
   matches: (count) => `${count} ${count === 1 ? 'match' : 'matches'}`,
   noResults: 'No matching data',
   root: 'All',
   searchPlaceholder: 'Search...',
-  select: (name) => `Select ${name}`,
-  step: (n, total) => `Step ${n} of ${total}`,
+  selectBranch: (name) => `Select ${name}`,
   toggleOptions: 'Toggle options',
 };
 
@@ -910,11 +933,11 @@ const SELECT_BRANCH_ROW = -2;
 
 const autoId = useId();
 
-const id = computed(() => props.hostId || autoId);
+const id = computed(() => autoId);
 
 const inputId = computed(
   () =>
-    `input_${(props.hostId || props.label || props.placeholder).replace(
+    `input_${(props.label || props.placeholder).replace(
       /[^a-zA-Z0-9-_]/g,
       '',
     )}`,
@@ -1084,7 +1107,7 @@ const levelLabel = (n: number) =>
 const stepText = computed(() => {
   const total = index.value.rootLeafDepth;
 
-  if (total !== null) return t.value.step(level.value + 1, total);
+  if (total !== null) return t.value.levelCounter(level.value + 1, total);
 
   return levelItems.value.length &&
     levelItems.value.every((item) => !isBranchItem(item))
@@ -1757,6 +1780,21 @@ watch(activeIndex, (now, before) => {
     updateStatusText();
   }
 });
+
+// The page's id references on the element reach the element carrying its role.
+useIdReferences(() => fieldRef.value);
+
+/**
+ * Focus its combobox, as `focus()` does on a native control: the element renders
+ * no box of its own to take it.
+ *
+ * @param options - Passed on to that element's `focus()`
+ */
+const focus = (options?: FocusOptions): void => {
+  fieldRef.value?.focus(options);
+};
+
+defineExpose({ focus });
 </script>
 
 <!--

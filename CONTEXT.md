@@ -30,11 +30,11 @@ A **command menu** — a transient panel of actions/navigation choices revealed 
 _Avoid_: Dropdown (that is a distinct value-selection component), popup, context menu, listbox
 
 **Dropdown** (`c-dropdown`):
-The **value-selection** surface behind `c-select`: a `role="listbox"` of options that has a current value — or, in **multiple** mode, an array of them — and emits the value events — the grandfathered `changeValue` with its `change-value` **kebab-case twin**, plus `update:value` (ADR-0017/0021). A menu, by contrast, is a list of `role="menuitem"` commands. Keep the two distinct — "the dropdown's select event" is a category error; menus emit `select`, dropdowns emit the value events. (`c-autocomplete` and `c-tree-select` are also value-selection but do **not** sit on `c-dropdown` — they render their own popover panels; see **Autocomplete** and **Tree select**.)
+The **internal** **value-selection** surface behind `c-select`: a `role="listbox"` of options that has a current value — or, in **multiple** mode, an array of them — and emits the **value events**. A menu, by contrast, is a list of `role="menuitem"` commands. Keep the two distinct — "the dropdown's select event" is a category error; menus emit `select`, dropdowns emit the value events. (`c-autocomplete` and `c-tree-select` are also value-selection but do **not** sit on `c-dropdown` — they render their own popover panels; see **Autocomplete** and **Tree select**.)
 _Avoid_: Menu (a menu is the command-list component; a dropdown is the value picker)
 
 **Autocomplete** (`c-autocomplete`):
-A **filterable value-selection** component: like `c-select` it holds a persistent selected value (an array of them in **multiple** mode) and emits the value events (`changeValue` + twin, `update:value`, and a bare `change`) over `role="listbox"`/`role="option"` rows, but its options can be narrowed with a text **query** — filtered by the component itself, or by the consumer in **external** mode. Its distinguishing trait is a dedicated **search input** living *inside* the open panel (above the options), separate from the readonly value field. It is built on the popover + CSS-anchor pattern (the same visuals as `c-menu`'s panel), **not** on `c-dropdown`, and reuses only those popover visuals — never `c-menu-item` or the menu role/event contract.
+A **filterable value-selection** component: like `c-select` it holds a persistent selected value (an array of them in **multiple** mode) and emits the **value events** over `role="listbox"`/`role="option"` rows, but its options can be narrowed with a text **query** — filtered by the component itself, or by the consumer in **external** mode. Its distinguishing trait is a dedicated **search input** living *inside* the open panel (above the options), separate from the readonly value field. It is built on the popover + CSS-anchor pattern (the same visuals as `c-menu`'s panel), **not** on `c-dropdown`, and reuses only those popover visuals — never `c-menu-item` or the menu role/event contract.
 _Avoid_: Combobox (reserve for the ARIA role, not the component name), typeahead, suggest, filter menu
 
 **Search input**:
@@ -50,7 +50,7 @@ The composed child a consumer wraps around the label text inside a `c-option`, s
 _Avoid_: Option value (it is the label, not the `value`; the tag name is historical), wrapper, title
 
 **Query**:
-The transient text currently typed into the **search input** — the narrowing criterion, distinct from the committed selected value. It resets to empty whenever the panel opens, and every change (the open-reset included) is announced via the `change:query` event; in **external** mode that event is the consumer's signal to refresh the options.
+The text narrowing a list — typed into the **search input** of `c-autocomplete` or `c-tree-select`, or set as `c-data-table`'s `query` — the narrowing criterion, distinct from the committed selected value. In the fields it resets to empty whenever the panel opens, and every change (the open-reset included) is announced via the `change:query` event; in **external** mode that event is the consumer's signal to refresh the options.
 _Avoid_: Search term, filter string (one word for this concept — _query_), value (the query is never the selected value)
 
 **Match marking**:
@@ -98,7 +98,7 @@ _Avoid_: Trigger (that is the consumer-supplied element opening an overlay), ove
 ### Tree select
 
 **Tree select** (`c-tree-select`):
-A single-value **value-selection** field for nested **items** of arbitrary depth, presented as a **stepped listbox**: its panel shows one **level** at a time with a **panel breadcrumb** for climbing back, and a whole-tree **search** while a **query** is typed (ADR-0047). Shares the **autocomplete**'s arrangement (readonly **value field**, in-panel **search input**) and emits the 4.x value events (`change` carrying the value, `update:value`, `input` — no grandfathered `changeValue`). Takes its data from the `items` property only.
+A single-value **value-selection** field for nested **items** of arbitrary depth, presented as a **stepped listbox**: its panel shows one **level** at a time with a **panel breadcrumb** for climbing back, and a whole-tree **search** while a **query** is typed (ADR-0047). Shares the **autocomplete**'s arrangement (readonly **value field**, in-panel **search input**) and emits the **value events**. Takes its data from the `items` property only.
 _Avoid_: Tree view (a different pattern — expand/collapse in place, `role="tree"`), tree picker, cascader, nested select, hierarchical dropdown
 
 **Stepped listbox**:
@@ -108,6 +108,10 @@ _Avoid_: Stepper (a form-wizard pattern), drill-down, miller / cascading columns
 **Branch** / **Leaf** (tree select):
 The two kinds of **item** in a tree: a branch has children and descends when activated in **browse** mode; a leaf has none and commits when activated. A branch can be committed only under `allow-branch`, via the **select-branch row**. "Leaf" means no `children` array or an empty one.
 _Avoid_: Node (the DOM sense everywhere else in this codebase), folder, parent/child as kinds (those are relations), category
+
+**Heading level** (card titles):
+The outline level, 1 to 6, at which a card's title is a heading (`heading-level`, 2 by default). The page chooses it, so cards nest in its heading outline.
+_Avoid_: Level alone (the **Level** of a tree select is its depth)
 
 **Level** (tree select):
 The depth of an **item** in the tree, counted from 1 at the top. The **level list** is the panel's list of one level's items in **browse** mode. A consumer may name levels (`level-labels` — "Primary field", "Secondary field"); the names appear in the panel header.
@@ -132,7 +136,7 @@ _Avoid_: Select affordance, "select this level" button, row action
 ### Date picker
 
 **Date picker** (`c-date-picker`):
-A **value control** for a calendar date — or, under `range`, a start and an end — whose **value field** is typeable — typing follows an **input mask** derived from its `format` — while the calendar panel is an aid, opened by its calendar button or Alt+↓ and never by typing (ADR-0058, ADR-0059). The value is an ISO `YYYY-MM-DD` string, whatever the displayed `format` (ADR-0057); under `type="month"` it is an ISO `YYYY-MM` month and the panel holds no **day grid** (ADR-0063). Emits the 4.x value events (`change`, `update:value`, `input`). Distinct from `c-text-field type="date"`, the native browser input.
+A **value control** for a calendar date — or, under `range`, a start and an end — whose **value field** is typeable — typing follows an **input mask** derived from its `format` — while the calendar panel is an aid, opened by its calendar button or Alt+↓ and never by typing (ADR-0058, ADR-0059). The value is an ISO `YYYY-MM-DD` string, whatever the displayed `format` (ADR-0057); under `type="month"` it is an ISO `YYYY-MM` month and the panel holds no **day grid** (ADR-0063). Emits the **value events**. Distinct from `c-text-field type="date"`, the native browser input.
 _Avoid_: Datepicker, calendar (the grid inside it), date field, date input (the native one)
 
 **Day grid**:
@@ -266,7 +270,7 @@ The **file upload**'s dashed target, which is also the button that opens the fil
 _Avoid_: Dropzone, drop area, drag area
 
 **Rejected file**:
-A file a **file upload** refuses — it breaks `accept`, `max-size` or `max-files`, is a folder, or is a file the upload already holds. Shown as a dismissible row with its reason until the list next changes, announced, and reported by the `reject` event; never a **file entry**.
+A file a **file upload** refuses — it breaks `accept`, `max-size` or `max-files`, is a folder, or is a file the upload already holds. Shown as a closeable row with its reason until the list next changes, announced, and reported by the `reject` event; never a **file entry**.
 _Avoid_: Invalid file (validity is the consumer's judgement), error entry (an entry whose upload failed)
 
 ### Layout
@@ -317,9 +321,17 @@ _Avoid_: Hint, title (the native attribute), popup
 The click-opened, **non-modal** interactive surface component anchored to its **trigger** — light-dismissed, never trapping focus (ADR-0033); blocking flows go to `c-modal`, plain hints to `c-tooltip`. Distinct from the lowercase *native popover*, which is the browser mechanism: any element put in the **top layer** via the Popover API (menu panels, autocomplete panels, and tooltips are all native popovers; only `c-popover` is the Popover *component*).
 _Avoid_: Flyout, popup, overlay (as a name for this component)
 
+**Toast** (`c-toast`, an **internal** tag):
+A passive, transient notification — an operation result, background progress — that the `c-toasts` container creates from a message and shows against one edge of the viewport, painting the **inverted surface** (ADR-0032). It closes itself when its timer runs out unless it is *persistent*, and the timer waits while a pointer hovers or presses it. The user closes it with its close button or a **swipe dismiss**; a *custom* toast (slotted content) and an *indeterminate* one (ongoing work) have no close button. When a toast arrives or leaves, the toasts around it glide into their new places (ADR-0073).
+_Avoid_: Notification (the general idea), snackbar (Material's name), alert (that is `c-alert`, the in-page message)
+
 **Light dismiss**:
 Closing a transient surface — a **transient list panel**, `c-popover`, a **fullscreen panel** never — because the user pressed *and released* the pointer outside it, mirroring the native Popover API's rule. A press alone is not a dismissal: a scroll or drag that starts outside the surface leaves it open. Escape is a separate close path, not light dismiss. Modals have their own **dismissable** contract (backdrop click and Escape together) and are not light-dismissed.
 _Avoid_: Click-outside / outside click (the trigger is the press-release pair, and it works for touch), auto-close, blur-close
+
+**Swipe dismiss**:
+Closing a **toast** by dragging it sideways, with any pointer, and letting go past a third of its width or with a quick flick; anything less springs it back (ADR-0073). It is a second path to the close button, never the only one, so only a toast with a close button takes it. A vertical drag stays with the page.
+_Avoid_: Dismissable (the modal property), drag to dismiss, flick, light dismiss (a press and release outside a surface)
 
 **Popover chain**:
 The ordered set of currently open `c-popover`s, each logically nested in the one before it — a popover joins the chain when its **trigger** sits inside an open popover's panel, and replaces the chain otherwise, so siblings never coexist. Escape peels the innermost popover, one per press; light dismiss closes every popover that does not logically contain the pointer event; closing a popover closes its descendants. Containment is logical (the trigger relationship), not DOM ancestry — a popover whose host lives elsewhere still chains under the popover holding its trigger. Distinct from the **modal stack**: chain members below the innermost stay interactive, nothing goes inert.
@@ -348,8 +360,8 @@ The one resting height every operable row-level control shares so they line up i
 _Avoid_: Field height (only one of the four users), input height, row height (a table's)
 
 **Narrow viewport**:
-The state of the *window* being narrower than the library's single shared threshold — the one condition under which a value-selection field opens a **fullscreen panel**. Measured on the viewport, never on a component's own box: the container-measured `mobile` / `mobileBreakpoint` switches of `c-table`, `c-steps`, `c-login-card` and `c-side-navigation` are compact *component* layouts, a different concept, and keep their grandfathered names.
-_Avoid_: Mobile (names the device, not the state; grandfathered only as those prop names), phone, small screen, breakpoint (the threshold is one value, not a scale of them)
+The state of the *window* being narrower than the library's single shared threshold — the one condition under which a value-selection field opens a **fullscreen panel**. Measured on the viewport, never on a component's own box: the `mobile-breakpoint` widths of `c-table`, `c-tabs` and `c-login-card`, `c-side-navigation`'s consumer-set `mobile` switch and `c-table`'s `updateMobileLabels()` concern compact *component* layouts, a different concept, and keep their grandfathered names.
+_Avoid_: Mobile (names the device, not the state; grandfathered only as those prop and method names), phone, small screen, breakpoint (the threshold is one value, not a scale of them)
 
 **Stacking band**:
 A library-owned paint-order range that overlay surfaces are assigned to: page content sits below the **modal stack**'s band, toasts sit in a band above it, and the **top layer** sits above everything. Bands are internal — consumers do not interleave with them. Distinct from the **surface ladder**, which is the *colour* elevation model: a modal paints `surface-overlay` regardless of which band it occupies.
@@ -368,8 +380,12 @@ The single dimming overlay rendered directly beneath the **active modal**, paint
 _Avoid_: Scrim (that is the colour token), dimmer, overlay, `::backdrop` (the retired native pseudo-element)
 
 **Dismissable**:
-A modal property governing *both* light-dismiss gestures — backdrop click **and** Escape. A non-dismissable modal responds to either with a nudge animation instead of closing; it can only be closed by an explicit action inside it.
+A modal property governing the backdrop click: a dismissable modal closes on a click outside its dialog, a non-dismissable one responds with a nudge animation instead. Escape is not part of it — Escape closes every modal, as it closes a native dialog. A **toast** is not dismissable in this sense: it closes by its button or a **swipe dismiss**.
 _Avoid_: persistent (the inverse framing; canonical axis is _dismissable_), closable
+
+**Closeable**:
+Showing a close button of its own that removes or hides the surface: a `c-tag` and a `c-alert` fire `close` when it is pressed, and `c-toasts` fires it for a toast; a **rejected file** row just leaves the list. A different concept from **dismissable** — a modal's light-dismiss gestures — so a non-dismissable modal can still hold a close button.
+_Avoid_: Dismissible (the alert's former prop), removable, closable (one spelling: _closeable_)
 
 ### Progress & loading
 
@@ -392,7 +408,7 @@ A named, publicly overridable region of a migrated component's shadow DOM (e.g. 
 _Avoid_: Slot (a slot is a content-projection hole, a part is a stylable element), element, node, section
 
 **Custom state**:
-A host-exposed `ElementInternals` state (`checked`, `indeterminate`, `disabled`, the date picker's `bad-input`, a masked text field's `incomplete`, a number field's `out-of-range`, a file upload's `drag-over`) a consumer selects with `:state(...)` to write per-state `::part()` rules (ADR-0035). The selector-side counterpart of **parts**: parts name *where* a rule applies, custom states name *when*. Curated public API like the part set, documented per component with `@cssstate` and listed in the **manifest**. Only otherwise-invisible internal state is exposed — consumer-set props (`valid`, a standalone `disabled`… ) are not mirrored.
+A host-exposed `ElementInternals` state (`checked`, `indeterminate`, `disabled`, an accordion item's `expanded`, the date picker's `bad-input`, a masked text field's `incomplete`, a number field's `out-of-range`, a file upload's `drag-over`) a consumer selects with `:state(...)` to write per-state `::part()` rules (ADR-0035). The selector-side counterpart of **parts**: parts name *where* a rule applies, custom states name *when*. Curated public API like the part set, documented per component with `@cssstate` and listed in the **manifest**. Only otherwise-invisible internal state is exposed — consumer-set props (`invalid`, a standalone `disabled`… ) are not mirrored.
 _Avoid_: Attribute (nothing is stamped on the host), state class (no class exists), reflected prop
 
 **Indicator** (selection controls):
@@ -516,7 +532,7 @@ The value a **defaultable prop** falls back to when neither an explicit instance
 _Avoid_: Factory default, fallback (too generic), hard-coded default, `withDefaults` value (for a defaultable prop that value is `undefined`)
 
 **Defaultable prop**:
-A preference prop on the allow-list that accepts an **app default**: it carries the `@defaultable` tag in its SFC, appears in the generated `AppDefaults` type and `DEFAULTABLE_PROPS` list, and is badged "app default" in the props table. Preferences qualify (`labelOnTop`, `hideDetails`, `shadow`, `size`, `itemsPerPage`, `texts`); per-instance data (`value`, `label`, `items`) does not. Every defaultable prop resolves through `useAppDefault`: host attribute → own property → app default → built-in.
+A preference prop on the allow-list that accepts an **app default**: it carries the `@defaultable` tag in its SFC, appears in the generated `CAppDefaults` type and `DEFAULTABLE_PROPS` list, and is badged "app default" in the props table. Preferences qualify (`labelOnTop`, `hideDetails`, `shadow`, `size`, `itemsPerPage`, `texts`); per-instance data (`value`, `label`, `items`) does not. Every defaultable prop resolves through `useAppDefault`: host attribute → own property → app default → built-in.
 _Avoid_: Configurable prop, overridable prop (every prop is overridable per instance), global prop
 
 ### Data visualization
@@ -552,7 +568,7 @@ A standalone **labelable value control**: a segmented set of plain `c-button` ch
 _Avoid_: Tab buttons (that is the `c-tabs` adapter, not a value control), toggle group (foreign vocabulary for this same component), segmented control as the component's *name* (fine as a description of its shape — the usage doc's "a button group is a segmented control" — never as a synonym in API names or headings), toolbar (a button group holds a value; a toolbar merely groups actions)
 
 **Tab buttons** (`c-tab-buttons`):
-The tab-strip adapter — a **composed child** of `c-tabs` that presents the tab list as a button group with the **sliding indicator**. Always a single row: an overflowing strip scrolls sideways behind the same edge arrows and drag as `c-tabs`, never wraps (the indicator's geometry assumes one row). Carries no form semantics (no label, no required, no **mandatory**) and cannot deselect: a tab strip inherently has an active tab. Standalone value-picking under this tag is Stencil-era usage; since 4.x that job belongs to **button group**.
+The tab-strip adapter — a **composed child** of `c-tabs` that presents the tab list as a button group with the **sliding indicator**. Always a single row: an overflowing strip scrolls sideways — by touch, mouse drag, the wheel or its edge arrows (the `c-tabs` row takes touch and its arrows only) — and never wraps (the indicator's geometry assumes one row). Carries no form semantics (no label, no required, no **mandatory**) and cannot deselect: a tab strip inherently has an active tab. Standalone value-picking under this tag is Stencil-era usage; since 4.x that job belongs to **button group**.
 _Avoid_: using it standalone as a value picker (that is `c-button-group`)
 
 **Sliding indicator** (`c-tab-buttons`):
@@ -580,7 +596,7 @@ The selection mode in which a value control holds *several* values at once — `
 _Avoid_: multi, multiselect / multi-select (as a prop or mode name — fine as an adjective in prose), checkbox mode (the row indicator is decorative, never a `c-checkbox`), selection mode (that is `c-data-table`'s separate `selection` prop, which keeps its value in `selected`)
 
 **Tag** (`c-tag`):
-The pill-shaped chip component naming one item in a set — authored by the consumer inside `c-tags`, or rendered by `c-select` / `c-autocomplete` inside their field for each selected option in **multiple** mode. A **closeable** tag carries a × that removes it and is the tag's only interactive control. Not to be confused with an element's *tag name* (see Flagged ambiguities).
+The pill-shaped chip component naming one item in a set — authored by the consumer, usually inside `c-tags` (it also stands alone, e.g. in a table cell), or rendered by `c-select` / `c-autocomplete` inside their field for each selected option in **multiple** mode. A **closeable** tag carries a × that removes it and is the tag's only interactive control. Not to be confused with an element's *tag name* (see Flagged ambiguities).
 _Avoid_: Chip (Material vocabulary), token, pill (its shape, not its name), badge (that is `c-badge` / the tag's own `badge` prop)
 
 **Overflow tag**:
@@ -600,7 +616,7 @@ Consumer-supplied text explaining why a control is invalid, shown in place of th
 _Avoid_: Validation (the Stencil-era prop name; validation is the consumer's activity, not this text), validation message
 
 **Number field** (`c-number-field`):
-A **value control** for a number — an integer, or one with up to `decimals` fraction digits — whose value is a JS `number` (`null` when it holds no digit) while it shows grouped text (`1 234 567,89`), regrouped on every keystroke (ADR-0060). Emits the 4.x value events on every keystroke and every **step** that changes the number. Distinct from `c-text-field type="number"`, the native number input, and from an **input mask**, which shapes text into fixed slots.
+A **value control** for a number — an integer, or one with up to `decimals` fraction digits — whose value is a JS `number` (`null` when it holds no digit) while it shows grouped text (`1 234 567,89`), regrouped on every keystroke (ADR-0060). Emits `update:value` and `input` on every keystroke and every **step** that changes the number; `change` on **commit** (a step is one). Distinct from `c-text-field type="number"`, the native number input, and from an **input mask**, which shapes text into fixed slots.
 _Avoid_: Numeric input, number input (the native one), amount field
 
 **Step** (number field):
@@ -654,7 +670,7 @@ A consumer-authored definition in `c-data-table`'s `columns` prop (a `CDataTable
 _Avoid_: Header (that is the rendered cell at the top of a column, not the definition), field
 
 **Pinned column**:
-A column stuck to the left or right edge of the scroll viewport during horizontal scroll (the TanStack sense). A pinned column is never autohidden. **This is not the old Stencil meaning** — old `pinned` meant "exempt from autohide", which is now the column's expansion policy `'never'`. The selection and expander utility columns are always pinned left.
+A column stuck to the left or right edge of the scroll viewport during horizontal scroll (the TanStack sense). A pinned column is never autohidden. **This is not the old Stencil meaning** — old `pinned` meant "exempt from autohide", which is now the column's expansion policy `'never'`. The selection utility column is always pinned left, the expander column right.
 _Avoid_: Frozen, fixed, sticky column (sticky is reserved for the header/footer rows), the old autohide-exemption sense
 
 **Expansion row**:
@@ -679,9 +695,12 @@ _Avoid_: docs.json / components.json (the Stencil-era artifacts), schema, metada
 The JSDoc-annotated TypeScript interface each component declares listing every event it dispatches on its host (name → `detail` type). The single source of truth for runtime emission (via the typed emit helper), consumer typings, and the **manifest**'s event section. An event not in the map cannot be dispatched.
 _Avoid_: emits (Vue `defineEmits` is not used in this library), event list
 
-**Kebab-case twin**:
-The hyphenated duplicate (`item-change`, `change-value`) automatically dispatched alongside every grandfathered camelCase Stencil-era event (ADR-0021), because Vue hyphenates `v-on` listener names and can never hear a camelCase `CustomEvent`. The camelCase name stays canonical (event map, manifest, non-Vue consumers); Vue templates bind the twin. Only the grandfathered set has twins — new event names are all-lowercase per ADR-0017 and get none.
-_Avoid_: alias event, duplicate event, Vue event (the twin is a name variant, not a separate event)
+**Kebab-case twin** (retired):
+The hyphenated duplicate (`item-change`, `change-value`) the alphas dispatched alongside each grandfathered camelCase Stencil-era event (ADR-0021), because Vue can never hear a camelCase `CustomEvent`. Retired in 4.0.0 with the camelCase events themselves: every event name is all-lowercase (ADR-0017), so none needs a twin. Historical only.
+
+**Internal** (API):
+A tag, prop, event, slot or method marked internal in its source because it exists only to wire one component to another: `c-dropdown` and `c-input` behind the fields, a prop only `c-tabs` sets on its tabs, a slot a component assigns its own children to. It stays out of the **manifest**, the **wrapper package** and the **public API**, and may change in any release. An **internal event** is the event case — a **composed child** telling its parent it was activated, an option telling `c-select` it was picked; it is an ordinary DOM event that stops at the parent, and no release promises anything about it. Anything a consumer is meant to use is never internal.
+_Avoid_: private (it is reachable — only the promise differs), protocol event, hidden
 
 **Component-owned type**:
 A public TypeScript type that belongs to exactly one component (its prop unions, option shapes, filter predicates). Declared in that component and exported from the package entry for consumers, named `C<Component><Concept>` (`CButtonSize`, `CAlertType`). Two components' types looking alike does **not** make the type shared — coincidentally equal value sets stay component-owned so they can diverge (see **Shared type**).
@@ -696,7 +715,7 @@ The hand-written markdown file colocated with a component (`usage.md` beside the
 _Avoid_: readme (GitHub-facing), description (a description is the one-liner on a single API member; the *component* description is this file's first paragraph, not a separate text)
 
 **Composed child**:
-A component the consumer authors only inside a specific parent's markup (`c-tag` inside `c-tags`, `c-card-title` inside `c-card`, `c-option-value` inside a `c-option`). Declared by the parent via a `@subcomponents` docblock tag, emitted into the **manifest**, and folded into the parent on the docs site — no top-level nav entry or standalone page of its own; its examples and API tables live under the parent, **grouped by component**. Distinct from an _internal-only element_ (e.g. `c-dropdown`), which the consumer never authors at all and which is documented nowhere.
+A component the consumer authors only inside a specific parent's markup (`c-card-title` inside `c-card`, `c-option-value` inside a `c-option`; `c-tag` is listed under `c-tags` but also stands alone). Declared by the parent via a `@subcomponents` docblock tag, emitted into the **manifest**, and folded into the parent on the docs site — no top-level nav entry or standalone page of its own; its examples and API tables live under the parent, **grouped by component**. Distinct from an _internal-only element_ (e.g. `c-dropdown`), which the consumer never authors at all and which is documented nowhere.
 _Avoid_: sub-component (imprecise — conflates composed children with internal-only elements), nested component
 
 **Standalone component**:
@@ -717,20 +736,40 @@ _Avoid_: Override (the variant adds a tab; it replaces nothing), translation, po
 A browser test colocated with one component (`C<Name>.spec.ts` beside the SFC) asserting that component's interaction contract — keyboard, focus, value events, ARIA, upgrade timing — against the registered custom element, never a mounted SFC (ADR-0049).
 _Avoid_: unit test, e2e test, component test (ambiguous between the two)
 
+**Supported browsers**:
+The browsers a release promises to work in: the current and previous Chrome/Edge, Firefox and Safari (iOS included), plus the Firefox ESR that RHEL ships. Every **behaviour spec** runs on all three engines; a **visual baseline** is compared on Chromium only. A failure on a supported engine is a bug, never a known issue.
+_Avoid_: Browser matrix (unqualified), target browsers (the build target is a different setting)
+
+**Chromium-only spec**:
+A **behaviour spec** marked to skip Firefox and WebKit because its *test tooling* exists only in Chromium (CDP-driven touch input, for one), with the reason stated where it is marked. Never a way to skip a component bug on another engine, and never applied to a **conformance suite**.
+_Avoid_: Skipped spec, flaky spec, known failure
+
 **Conformance suite**:
 A parametrised browser test that runs the shared contract of one component *kind* over every tag of that kind, enrolling tags automatically from generated data rather than a hand-kept list. Kinds: all components, **value controls**, anchored overlay components, **mode scope**, **paired ink**.
 _Avoid_: contract test, shared spec, generic test
 
 **Value control**:
-A component that holds a persistent `value` and reports changes through the value events (`update:value` with its `changeValue`/`change` siblings and a bubbling `input`) — the population a plain Vue `v-model` binds to. Emission happens only on user interaction, never when `value` is set programmatically. The **colour picker** reports a pointer drag on its **colour area** or sliders through `update:value` and `input` on each move and fires `change` once, on release; `c-slider` still fires all of them on each move. The **file upload** also emits once when an upload settles, done or failed, and when `startUploads()` starts files (ADR-0071). Includes the **value-selection** fields, the **date picker**, the **time picker**, the **colour picker**, the **file upload**, the selection controls, `c-text-field`, `c-slider`, `c-tabs`, `c-button-group`, `c-accordion`, `c-modal`, `c-pagination`, `c-otp-input`.
+A component that holds a persistent `value` and reports changes through the **value events** — the population a plain Vue `v-model` binds to. Emission happens only on user interaction, never when `value` is set programmatically. A pointer drag (the **colour picker**'s **colour area** and sliders, `c-slider`) fires `update:value` and `input` on each move and `change` once, on release. The **file upload** also emits once when an upload settles, done or failed, and when `startUploads()` starts files (ADR-0071). Includes the **value-selection** fields, the **date picker**, the **time picker**, the **colour picker**, the **file upload**, the selection controls, `c-text-field`, `c-slider`, `c-tabs`, `c-button-group`, `c-accordion`, `c-modal`, `c-pagination`, `c-otp-input`.
 _Avoid_: value component, form control (a `c-button` is a control but holds no value), input
 
+**Value events**:
+The one event vocabulary every **value control** reports through, with native `<input>` timing: `input` (no `detail`) and `update:value` (the value as `detail`) on every value change, and `change` (the value as `detail`) on every **commit**. There is no other value event — the Stencil-era `changeValue` is gone in 4.0.0. A Vue template can never hear `update:value` (Vue skips `onUpdate:` listeners on elements, ADR-0017): it binds `v-model`, `@input` reading the host's `value`, or `@change` (ADR-0075).
+_Avoid_: changeValue (removed), change event (unqualified, when the native one is meant), model event
+
+**Commit**:
+The moment a **value control**'s change counts as the user's decision and fires `change`: Enter or leaving the field for typed text, each pick in a list or panel, each arrow-key step, the release that ends a drag. A commit with nothing changed since the last one fires nothing. Every commit is also a value change, so `update:value` and `input` fire with it; keystrokes and drag moves are value changes but not commits.
+_Avoid_: Confirm, submit (a form's act), apply
+
 **Example smoke**:
-The browser run that mounts every canon example from the docs site once and asserts a clean upgrade — no console error or warning, every `c-*` descendant defined. It asserts nothing about behaviour; the canons are fixtures, not specs.
+The browser run that mounts every canon example from the docs site once — the Vue, React and plain-TypeScript flavors — and asserts a clean upgrade (no console error or warning, every `c-*` descendant defined) and no axe accessibility violation in either **theme mode** (ADR-0077). It asserts nothing about behaviour; the canons are fixtures, not specs.
 _Avoid_: docs test, example test, smoke test (unqualified)
 
+**Public API**:
+What a release's version number makes promises about: everything the **manifest** publishes per tag (tag name, attributes and properties with their types and **built-in defaults**, **value events** and other events, slots, **parts**, CSS states, methods), the `texts` keys, the exported TypeScript types, the `css/*` files and the **semantic token** names. Removing, renaming or narrowing any of it, or changing a built-in default, is a breaking change. Shadow DOM structure, internal classes, anything **internal**, pixel appearance and the default `texts` strings are not public API.
+_Avoid_: Contract (unqualified), surface, interface
+
 **API snapshot**:
-The committed, condensed rendering of the **manifest** (per tag: props, events, methods, slots, parts, states) that a node spec diffs the freshly generated manifest against, so an unintended public-API change fails a test instead of silently changing `custom-elements.json`. The strict analyzer checks the manifest is *consistent*; the API snapshot checks it is *unchanged*.
+The committed, condensed rendering of the **manifest** (per tag: props, events, methods, slots, parts, states; for the package: runtime exports and the shape of every exported type) that a node spec diffs the freshly generated manifest against, so an unintended public-API change fails a test instead of silently changing `custom-elements.json`. The strict analyzer checks the manifest is *consistent*; the API snapshot checks it is *unchanged*.
 _Avoid_: golden file, manifest snapshot, API baseline
 
 **Guard**:
@@ -740,7 +779,7 @@ _Avoid_: custom lint rule (a guard is not an oxlint or ESLint rule), check (unqu
 ### Flagged ambiguities
 
 - **"Vue version"** is ambiguous: it can mean (a) the retired `@cscfi/csc-ui-vue` directive package, (b) the fact that 4.x components are implemented in Vue, or (c) the Vue.js framework version. Prefer **"`v-control` directive"** for (a), plain **"component"** for (b) — since 4.x there is no other kind — and **"Vue 3"/"Vue 2"** explicitly for (c).
-- **"Ring"** is overloaded: (a) the `ring` **semantic token** (the focus colour role — currently used by no component), (b) the radio indicator's shape, (c) Tailwind `ring-*` box-shadow utilities, (d) the keyboard **focus ring**. Say **"`ring` token"**, **"radio indicator"**, **"`ring-*` utility"** and **"focus ring"** respectively.
+- **"Ring"** is overloaded: (a) the radio indicator's shape, (b) Tailwind `ring-*` box-shadow utilities, (c) the keyboard **focus ring**. Say **"radio indicator"**, **"`ring-*` utility"** and **"focus ring"** respectively. (A `ring` semantic token existed until 4.0.0; nothing painted it, and it was removed.)
 - **"Tag"** is overloaded: (a) a component's *tag name* (`<c-button>` — the canonical identifier, see **Component**), (b) the **Tag** component `c-tag`, including the tags a **multiple** field renders for its selections (the `tag` part), (c) a docblock tag (`@csspart`). Say **"tag name"** for (a), plain **"tag"** only for (b) — the `max-tags` prop counts these — and **"docblock tag"** for (c).
 - **"Themeable"** (docs copy: "themable") means *re-seedable* — one of the eight **families** a consumer may re-brand (ADR-0011). Restyling one component's colours from consumer CSS is **"recolour via `::part()`"**, never "theming".
 - **"Path"** is overloaded: (a) an SVG path datum (`c-icon`'s `path` prop), (b) a tree-select item's ancestor chain (see **Path**), (c) a URL or file path. Say **"icon path"** for (a), plain **"path"** only in the tree-select sense, and **"URL"** / **"file path"** for (c).
@@ -756,8 +795,8 @@ _Avoid_: custom lint rule (a guard is not an oxlint or ESLint rule), check (unqu
 
 > **Dev:** Should I add a `changeValue` listener for the new dropdown?
 >
-> **Lead:** You can — `changeValue` is still the canonical value event. It's a grandfathered Stencil-era name (ADR-0017), so it dispatches its `change-value` kebab-case twin and `update:value` alongside; a Vue template binds the twin, or just uses `v-model`.
+> **Lead:** No — `changeValue` is gone in 4.0.0. Listen to `change` for the user's **commit** or `update:value` for every change; both carry the value. In a Vue template, use `v-model`, or `@input` and read the element's `value` — never `@update:value`, which Vue silently drops.
 >
 > **Dev:** So what actually broke for a 3.x app on upgrade?
 >
-> **Lead:** The value events survived; the autocomplete's query API didn't — `changeQuery` is gone, and its replacement `change:query` follows the new all-lowercase convention, so it gets no twin. There's no compatibility shim; the upgrade is all-at-once.
+> **Lead:** Every camelCase event: `changeValue` becomes `change` or `update:value`, the side navigation's `itemChange` becomes `select`, and the autocomplete's `changeQuery` became `change:query`. There's no compatibility shim; the upgrade is all-at-once.

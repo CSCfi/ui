@@ -1,5 +1,7 @@
 <template>
-  <span class="sr-only">{{ a11yMessage }}</span>
+  <!-- The summary stands in for the hidden dots; a polite status region, so a
+       step change is announced. -->
+  <span class="sr-only" role="status">{{ a11yMessage }}</span>
 
   <div ref="stepsRef" :class="ui.root()" aria-hidden="true" part="root">
     <slot />
@@ -12,12 +14,10 @@
 
 <script setup lang="ts">
 /**
- * @slot default - Default slot
+ * @slot default - The `c-step` elements, one per step of the flow
  *
- * @csspart root - The flex row laying out the projected c-step children and their dividers
- * @csspart label - The current step's label shown below the row in the collapsed (mobile) layout
- *
- * @seeded from csc-ui — verify
+ * @csspart root - The row of steps and the lines joining them
+ * @csspart label - The current step's label, shown below the row in the narrow layout
  *
  * @subcomponents c-step
  */
@@ -47,7 +47,7 @@ defineOptions({ inheritAttrs: false });
  * imperatively-inserted `.divider` siblings are styled via `::slotted(.divider)`
  * in the escape-hatch <style> below (they read CSS custom properties scoped to
  * `.c-steps`, including the JS-toggled `.mobile` variant). The host itself
- * stays a real box (focus target + grid) in the escape hatch.
+ * stays a real box (a grid) in the escape hatch.
  */
 const steps = tv({
   slots: {
@@ -60,12 +60,8 @@ const steps = tv({
 });
 
 interface CStepsProps {
-  /**
-   * Value of the accordion (current step number)
-   *
-   * @seeded from csc-ui — verify
-   */
-  value?: number | string;
+  /** Number of the current step, counting from 1. */
+  value?: number;
 }
 
 const props = withDefaults(defineProps<CStepsProps>(), {
@@ -84,18 +80,19 @@ const label = ref('');
 
 const stepCount = ref(0);
 
-let initialized = false;
-
-// Reflect current/complete onto each <c-step> and maintain `.divider`
-// elements between them in the light DOM (projected through the slot and
-// styled via ::slotted(.divider)). Faithful to the Stencil version which
-// imperatively inserts divider <div>s as siblings of the steps.
+// Reflect current/complete onto each <c-step> and keep a `.divider` element
+// after every step but the last, in the light DOM (projected through the slot
+// and styled via ::slotted(.divider)). Faithful to the Stencil version, which
+// inserts divider <div>s as siblings of the steps. Runs on mount, on every
+// `value` change and on every slotchange, so steps added or removed later get
+// (or lose) their line; a pass with nothing to change touches no node, so the
+// slotchange its own insertions cause ends there.
 const handleDividers = () => {
   if (!host) return;
 
   const steps = Array.from(host.querySelectorAll('c-step')) as HTMLElement[];
 
-  const dividers = host.querySelectorAll('.divider');
+  const kept = new Set<Element>();
   stepCount.value = steps.length;
 
   steps.forEach((item, index) => {
@@ -106,21 +103,24 @@ const handleDividers = () => {
     (item as unknown as { complete: boolean }).complete = complete;
 
     if (index + 1 < steps.length) {
-      const div = (
-        initialized ? dividers[index] : document.createElement('div')
-      ) as HTMLDivElement;
-      div.classList.toggle('complete', complete);
+      let divider = item.nextElementSibling;
 
-      if (!initialized) {
-        div.classList.add('divider');
-        item.after(div);
+      if (!divider?.classList.contains('divider')) {
+        divider = document.createElement('div');
+        divider.classList.add('divider');
+        item.after(divider);
       }
+
+      divider.classList.toggle('complete', complete);
+      kept.add(divider);
     }
 
-    if (current) label.value = item.textContent || '';
+    if (current) label.value = item.textContent?.trim() ?? '';
   });
 
-  initialized = true;
+  for (const divider of host.querySelectorAll(':scope > .divider')) {
+    if (!kept.has(divider)) divider.remove();
+  }
 };
 
 const a11yMessage = computed(() => {
@@ -130,9 +130,15 @@ const a11yMessage = computed(() => {
 
   if (!total) return '';
 
-  const completed = current - 1;
+  // Held within the steps: a value of 0 or past the last step still reads as
+  // a step of the flow, and no step is "-1 completed".
+  const step = Math.min(Math.max(current, 1), total);
 
-  return `Steps, step ${Math.min(current, total)} of ${total}. ${label.value}. ${completed} step${completed !== 1 ? 's' : ''} marked as completed.`;
+  const completed = Math.min(Math.max(current - 1, 0), total);
+
+  const name = label.value ? ` ${label.value}.` : '';
+
+  return `Steps, step ${step} of ${total}.${name} ${completed} step${completed !== 1 ? 's' : ''} marked as completed.`;
 });
 
 let resizeObserver: null | ResizeObserver = null;
@@ -170,8 +176,13 @@ let cachedRequiredWidth = 0;
 
 onMounted(() => {
   if (!host) return;
-  host.setAttribute('tabindex', '0');
   handleDividers();
+
+  // Attributes on Vue's <slot> element are slot props, so the native outlet
+  // is wired imperatively (as in CTable).
+  host.shadowRoot
+    ?.querySelector('slot')
+    ?.addEventListener('slotchange', handleDividers);
 
   resizeObserver = new ResizeObserver(([entry]) => {
     const steps = Array.from(host.querySelectorAll('c-step')) as HTMLElement[];
@@ -196,10 +207,10 @@ watch(() => props.value, handleDividers);
 
 <!--
   Escape-hatch CSS: constructs Tailwind utilities cannot express.
-  - :host box + :host(:focus-visible) outline — the host is the focusable
-    element (tabindex=0) and must be a real, sized box. This deliberately
-    overrides the global `:host{display:contents}`; the per-type sheet is
-    adopted after the shared sheet, so it wins.
+  - :host box — the host must be a real, sized box (the resize observer
+    measures it). This deliberately overrides the global
+    `:host{display:contents}`; the per-type sheet is adopted after the shared
+    sheet, so it wins.
   - .c-steps slot — the default `<slot>` element itself must be flex so the
     projected steps + `.divider` siblings lay out in a row.
   - ::slotted(.divider[.complete]) — styling the imperatively-inserted, light-DOM
@@ -213,15 +224,6 @@ watch(() => props.value, handleDividers);
   display: grid;
   gap: 8px;
   border-radius: 6px;
-}
-
-:host(:focus) {
-  outline: none;
-}
-
-:host(:focus-visible) {
-  outline: 2px var(--c-primary) solid;
-  outline-offset: 2px;
 }
 
 .c-steps {

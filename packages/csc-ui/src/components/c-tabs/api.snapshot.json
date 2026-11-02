@@ -10,7 +10,7 @@
   "cssProperties": [],
   "defaultable": [],
   "events": {
-    "changeValue": "CustomEvent<number | string>",
+    "change": "CustomEvent<number | string>",
     "input": "CustomEvent<void>",
     "update:value": "CustomEvent<number | string>"
   },

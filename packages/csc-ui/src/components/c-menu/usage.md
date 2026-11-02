@@ -9,7 +9,7 @@ To bring the native scrollbar back:
 
 ```css
 c-menu::part(list),
-c-menu-item::part(submenu) {
+c-menu-item::part(submenu-list) {
   scrollbar-width: auto;
 }
 ```

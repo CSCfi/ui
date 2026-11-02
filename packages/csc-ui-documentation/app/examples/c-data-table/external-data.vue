@@ -77,9 +77,19 @@ const page = ref<CDataTableRow[]>([]);
 
 const loading = ref(false);
 
+// A page-size change also moves to page 1, so two requests can overlap: only
+// the latest one's rows are shown.
+let latest = 0;
+
 const load = async () => {
+  const request = ++latest;
+
   loading.value = true;
-  page.value = await fetchPage(query.value);
+
+  const rows = await fetchPage({ ...query.value });
+
+  if (request !== latest) return;
+  page.value = rows;
   loading.value = false;
 };
 

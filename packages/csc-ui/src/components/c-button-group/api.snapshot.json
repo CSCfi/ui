@@ -5,7 +5,8 @@
     "mandatory": "boolean = false",
     "multiple": "boolean = false",
     "required": "boolean = false",
-    "size": "'default' | 'small' = 'default'"
+    "size": "'default' | 'small' = 'default'",
+    "value": "number | string = null"
   },
   "cssProperties": [],
   "defaultable": [],
@@ -14,14 +15,14 @@
     "input": "CustomEvent<void>",
     "update:value": "CustomEvent<CButtonGroupValue>"
   },
-  "methods": {},
+  "methods": {
+    "focus": "(options?: FocusOptions): void"
+  },
   "parts": [
     "label",
     "root"
   ],
-  "propertyOnly": [
-    "value"
-  ],
+  "propertyOnly": [],
   "props": {
     "disabled": "boolean = false",
     "label": "string = ''",

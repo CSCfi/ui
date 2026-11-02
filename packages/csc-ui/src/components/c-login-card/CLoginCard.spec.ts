@@ -42,3 +42,18 @@ describe('c-login-card ink', () => {
     expect(inkOf(m.host.querySelector('p'))).toBe(roleInMode('dark'));
   });
 });
+
+describe('c-login-card image', () => {
+  it('shows an image whose URL has parentheses, quotes or spaces', async () => {
+    for (const src of [
+      '/images/sign in (2).png',
+      'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg"><rect fill="url(%23g)"/></svg>',
+    ]) {
+      const m = await mount('c-login-card', { attrs: { src }, html: CARD });
+
+      expect(getComputedStyle(m.part('image')).backgroundImage, src).not.toBe(
+        'none',
+      );
+    }
+  });
+});

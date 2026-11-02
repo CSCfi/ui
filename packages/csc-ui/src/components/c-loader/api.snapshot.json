@@ -1,26 +1,23 @@
 {
   "attributes": {
-    "contentdelay": "number = 0",
+    "content-delay": "number = 0",
+    "hide": "boolean = false",
     "size": "number = 48",
-    "visible": "boolean = true",
     "width": "number = 4"
   },
   "cssProperties": [],
   "defaultable": [],
   "events": {},
-  "methods": {
-    "hide": "()",
-    "show": "()"
-  },
+  "methods": {},
   "parts": [
     "content",
     "root"
   ],
   "propertyOnly": [],
   "props": {
-    "contentdelay": "number = 0",
+    "contentDelay": "number = 0",
+    "hide": "boolean = false",
     "size": "number = 48",
-    "visible": "boolean = true",
     "width": "number = 4"
   },
   "slots": [

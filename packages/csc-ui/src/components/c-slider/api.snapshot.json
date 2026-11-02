@@ -1,28 +1,28 @@
 {
   "attributes": {
-    "aria-label-internal": "string = ''",
     "disable-tooltip": "boolean = false",
     "disabled": "boolean = false",
-    "host-id": "string = ''",
-    "host-name": "string = ''",
     "label": "string = ''",
     "labels": "boolean = false",
-    "max": "number | string = '100'",
-    "min": "number | string = '0'",
-    "segments": "number | string = '10'",
-    "step": "number | string = '1'",
+    "max": "number = 100",
+    "min": "number = 0",
+    "name": "string = ''",
+    "segments": "number = 10",
+    "step": "number = 1",
     "ticks": "boolean = false",
-    "unit": "string = '%'",
-    "value": "number | string = '50'"
+    "unit": "string = ''",
+    "value": "number = 50"
   },
   "cssProperties": [],
   "defaultable": [],
   "events": {
-    "changeValue": "CustomEvent<number | string>",
+    "change": "CustomEvent<number>",
     "input": "CustomEvent<void>",
-    "update:value": "CustomEvent<number | string>"
+    "update:value": "CustomEvent<number>"
   },
-  "methods": {},
+  "methods": {
+    "focus": "(options?: FocusOptions): void"
+  },
   "parts": [
     "label",
     "root",
@@ -30,20 +30,18 @@
   ],
   "propertyOnly": [],
   "props": {
-    "ariaLabelInternal": "string = ''",
     "disabled": "boolean = false",
     "disableTooltip": "boolean = false",
-    "hostId": "string = ''",
-    "hostName": "string = ''",
     "label": "string = ''",
     "labels": "boolean = false",
-    "max": "number | string = '100'",
-    "min": "number | string = '0'",
-    "segments": "number | string = '10'",
-    "step": "number | string = '1'",
+    "max": "number = 100",
+    "min": "number = 0",
+    "name": "string = ''",
+    "segments": "number = 10",
+    "step": "number = 1",
     "ticks": "boolean = false",
-    "unit": "string = '%'",
-    "value": "number | string = '50'"
+    "unit": "string = ''",
+    "value": "number = 50"
   },
   "slots": [],
   "states": [],

@@ -10,7 +10,6 @@ import {
   type CAccordionElement,
   type CAccordionElementEventMap,
   type CAccordionItemElement,
-  type CAccordionItemElementEventMap,
   type CAlertElement,
   type CAlertElementEventMap,
   type CAutocompleteElement,
@@ -39,7 +38,6 @@ import {
   type CFileUploadElementEventMap,
   type CIconElement,
   type CIconButtonElement,
-  type CInputElement,
   type CLinkElement,
   type CListElement,
   type CListItemElement,
@@ -74,7 +72,6 @@ import {
   type CProgressBarElement,
   type CProgressCircleElement,
   type CRadioElement,
-  type CRadioElementEventMap,
   type CRadioGroupElement,
   type CRadioGroupElementEventMap,
   type CSelectElement,
@@ -91,14 +88,12 @@ import {
   type CStepElement,
   type CStepsElement,
   type CSubNavigationItemElement,
+  type CSubNavigationItemElementEventMap,
   type CSwitchElement,
   type CSwitchElementEventMap,
   type CTabElement,
-  type CTabElementEventMap,
   type CTabButtonsElement,
-  type CTabButtonsElementEventMap,
   type CTabItemElement,
-  type CTabItemElementEventMap,
   type CTabItemsElement,
   type CTableElement,
   type CTabsElement,
@@ -110,9 +105,8 @@ import {
   type CTextFieldElementEventMap,
   type CTimePickerElement,
   type CTimePickerElementEventMap,
-  type CToastElement,
-  type CToastElementEventMap,
   type CToastsElement,
+  type CToastsElementEventMap,
   type CToolbarElement,
   type CTooltipElement,
   type CTooltipElementEventMap,
@@ -128,22 +122,34 @@ if (typeof customElements !== 'undefined') {
 }
 
 /**
- * The upgraded element class, typed as its generated element interface.
- * `createComponent` probes `elementClass.prototype` to route React props to
- * DOM properties; on the server (no custom element registry) an empty class
- * makes every prop render as an attribute, which hydration then corrects.
+ * A stand-in element class, typed as the generated element interface.
+ * `createComponent` sets a React prop as a DOM property only when the
+ * class's prototype names it; anything else goes to React, which writes an
+ * attribute while the element is still unconnected. Vue defines a custom
+ * element's props on the instance when it connects, so the registered class's
+ * prototype names none of them, and objects, arrays and functions arrived as
+ * `[object Object]` attributes. The prototype lists the tag's properties
+ * instead. On the server (no custom element registry) it lists none, so every
+ * prop renders as an attribute, which hydration then corrects.
  */
-const elementClass = <T extends HTMLElement>(tag: string) =>
-  (typeof customElements !== 'undefined'
-    ? customElements.get(tag)
-    : class {}) as unknown as { new (): T };
+const elementClass = <T extends HTMLElement>(properties: readonly string[]) => {
+  const stand = class {};
 
+  if (typeof customElements !== 'undefined') {
+    for (const name of properties) {
+      Object.defineProperty(stand.prototype, name, { value: undefined });
+    }
+  }
+
+  return stand as unknown as { new (): T };
+};
+
+/** A stack of collapsible sections, each a `c-accordion-item` whose header button shows or hides the content beneath it. */
 export const CAccordion = createComponent({
   displayName: 'CAccordion',
-  elementClass: elementClass<CAccordionElement>('c-accordion'),
+  elementClass: elementClass<CAccordionElement>(['mandatory', 'multiple', 'outlined', 'value']),
   events: {
     onChange: 'change' as EventName<CAccordionElementEventMap['change']>,
-    onChangeValue: 'changeValue' as EventName<CAccordionElementEventMap['changeValue']>,
     onInput: 'input' as EventName<CAccordionElementEventMap['input']>,
     onUpdateValue: 'update:value' as EventName<CAccordionElementEventMap['update:value']>,
   },
@@ -151,12 +157,10 @@ export const CAccordion = createComponent({
   tagName: 'c-accordion',
 });
 
+/** One collapsible section of a `c-accordion`: a header button showing its `heading` (or the `heading` slot) and an optional icon, above the content in the default slot. Place it directly inside the accordion and give it a `value`: the accordion expands items by value and leaves an item without one collapsed. */
 export const CAccordionItem = createComponent({
   displayName: 'CAccordionItem',
-  elementClass: elementClass<CAccordionItemElement>('c-accordion-item'),
-  events: {
-    onItemChange: 'item-change' as EventName<CAccordionItemElementEventMap['item-change']>,
-  },
+  elementClass: elementClass<CAccordionItemElement>(['heading', 'value']),
   react: React,
   tagName: 'c-accordion-item',
 });
@@ -164,9 +168,9 @@ export const CAccordionItem = createComponent({
 /** A persistent, in-flow status message: a tinted box whose type carries a status family's colours through the icon, heading and accent edge, while the body copy stays neutral. */
 export const CAlert = createComponent({
   displayName: 'CAlert',
-  elementClass: elementClass<CAlertElement>('c-alert'),
+  elementClass: elementClass<CAlertElement>(['closeable', 'heading', 'type']),
   events: {
-    onDismiss: 'dismiss' as EventName<CAlertElementEventMap['dismiss']>,
+    onClose: 'close' as EventName<CAlertElementEventMap['close']>,
   },
   react: React,
   tagName: 'c-alert',
@@ -175,11 +179,10 @@ export const CAlert = createComponent({
 /** A filterable value-selection component: a readonly value field that opens a popover panel with a search input above the matching options. */
 export const CAutocomplete = createComponent({
   displayName: 'CAutocomplete',
-  elementClass: elementClass<CAutocompleteElement>('c-autocomplete'),
+  elementClass: elementClass<CAutocompleteElement>(['clearable', 'disabled', 'errorMessage', 'external', 'filter', 'hideDetails', 'hint', 'invalid', 'items', 'itemsPerPage', 'label', 'labelOnTop', 'loading', 'maxTags', 'multiple', 'name', 'placeholder', 'required', 'returnObject', 'selectAll', 'shadow', 'size', 'texts', 'value']),
   events: {
     onChange: 'change' as EventName<CAutocompleteElementEventMap['change']>,
     onChangeQuery: 'change:query' as EventName<CAutocompleteElementEventMap['change:query']>,
-    onChangeValue: 'changeValue' as EventName<CAutocompleteElementEventMap['changeValue']>,
     onInput: 'input' as EventName<CAutocompleteElementEventMap['input']>,
     onUpdateValue: 'update:value' as EventName<CAutocompleteElementEventMap['update:value']>,
   },
@@ -187,9 +190,10 @@ export const CAutocomplete = createComponent({
   tagName: 'c-autocomplete',
 });
 
+/** A small pill that pins a short count or label to the top-right corner of the element it sits in, such as the number of unread messages on a button. */
 export const CBadge = createComponent({
   displayName: 'CBadge',
-  elementClass: elementClass<CBadgeElement>('c-badge'),
+  elementClass: elementClass<CBadgeElement>([]),
   react: React,
   tagName: 'c-badge',
 });
@@ -197,7 +201,7 @@ export const CBadge = createComponent({
 /** A navigation aid naming where the current page sits in a site's hierarchy: one line of crumbs from the top of the hierarchy down to the current page, the middle ones folding behind a "…" button when the line runs out of room. */
 export const CBreadcrumb = createComponent({
   displayName: 'CBreadcrumb',
-  elementClass: elementClass<CBreadcrumbElement>('c-breadcrumb'),
+  elementClass: elementClass<CBreadcrumbElement>(['texts']),
   react: React,
   tagName: 'c-breadcrumb',
 });
@@ -205,7 +209,7 @@ export const CBreadcrumb = createComponent({
 /** One crumb in a `c-breadcrumb`: a link to a level of the hierarchy, or, as the last crumb, the current page. */
 export const CBreadcrumbItem = createComponent({
   displayName: 'CBreadcrumbItem',
-  elementClass: elementClass<CBreadcrumbItemElement>('c-breadcrumb-item'),
+  elementClass: elementClass<CBreadcrumbItemElement>(['href', 'target']),
   react: React,
   tagName: 'c-breadcrumb-item',
 });
@@ -213,7 +217,7 @@ export const CBreadcrumbItem = createComponent({
 /** Buttons trigger actions — submitting a form, opening a modal, confirming a choice. Use one primary (default appearance) button per view; secondary actions use the `outlined`, `ghost` or `text` appearances. */
 export const CButton = createComponent({
   displayName: 'CButton',
-  elementClass: elementClass<CButtonElement>('c-button'),
+  elementClass: elementClass<CButtonElement>(['active', 'danger', 'disabled', 'fit', 'ghost', 'href', 'inverted', 'loading', 'noRadius', 'outlined', 'size', 'target', 'text', 'type', 'value']),
   react: React,
   tagName: 'c-button',
 });
@@ -221,7 +225,7 @@ export const CButton = createComponent({
 /** A button group is a segmented control: a compact group of choices rendered as plain `c-button` children, where activating a button takes effect immediately (switching a view, picking a billing period). Selection is exclusive by default; set `multiple` to let several buttons be active at once. Give the group a `label` when it acts as a form field so the choice it represents is named for every user. */
 export const CButtonGroup = createComponent({
   displayName: 'CButtonGroup',
-  elementClass: elementClass<CButtonGroupElement>('c-button-group'),
+  elementClass: elementClass<CButtonGroupElement>(['disabled', 'label', 'mandatory', 'multiple', 'required', 'size', 'value']),
   events: {
     onChange: 'change' as EventName<CButtonGroupElementEventMap['change']>,
     onInput: 'input' as EventName<CButtonGroupElementEventMap['input']>,
@@ -231,30 +235,34 @@ export const CButtonGroup = createComponent({
   tagName: 'c-button-group',
 });
 
+/** A raised, bordered surface that groups one piece of content — its heading, body and actions — into a single box on the page. */
 export const CCard = createComponent({
   displayName: 'CCard',
-  elementClass: elementClass<CCardElement>('c-card'),
+  elementClass: elementClass<CCardElement>(['fullscreen']),
   react: React,
   tagName: 'c-card',
 });
 
+/** The row of actions at the bottom of a `c-card`, typically `c-button`s, which wraps onto further rows instead of overflowing the card. `justify` distributes the actions along the row (`start` by default, `stretch` to grow them all) and `align` places them across it. */
 export const CCardActions = createComponent({
   displayName: 'CCardActions',
-  elementClass: elementClass<CCardActionsElement>('c-card-actions'),
+  elementClass: elementClass<CCardActionsElement>(['align', 'justify']),
   react: React,
   tagName: 'c-card-actions',
 });
 
+/** The body section of a `c-card`: it pads its content in from the card's edges and stacks the children in a column with the card's section spacing. Place it after `c-card-title` and before `c-card-actions`. */
 export const CCardContent = createComponent({
   displayName: 'CCardContent',
-  elementClass: elementClass<CCardContentElement>('c-card-content'),
+  elementClass: elementClass<CCardContentElement>([]),
   react: React,
   tagName: 'c-card-content',
 });
 
+/** The heading section of a `c-card`, set in small uppercase type above a primary accent bar; place it first in the card. Controls in its `actions` slot sit at the right of the heading and move onto their own line under it when the two do not fit side by side. */
 export const CCardTitle = createComponent({
   displayName: 'CCardTitle',
-  elementClass: elementClass<CCardTitleElement>('c-card-title'),
+  elementClass: elementClass<CCardTitleElement>(['headingLevel']),
   react: React,
   tagName: 'c-card-title',
 });
@@ -262,10 +270,9 @@ export const CCardTitle = createComponent({
 /** A form control for a single on/off choice: a native checkbox with a label, an optional hint, and validation messaging. */
 export const CCheckbox = createComponent({
   displayName: 'CCheckbox',
-  elementClass: elementClass<CCheckboxElement>('c-checkbox'),
+  elementClass: elementClass<CCheckboxElement>(['checked', 'disabled', 'errorMessage', 'falseValue', 'hideDetails', 'hint', 'indeterminate', 'invalid', 'label', 'name', 'required', 'trueValue', 'value']),
   events: {
     onChange: 'change' as EventName<CCheckboxElementEventMap['change']>,
-    onChangeValue: 'changeValue' as EventName<CCheckboxElementEventMap['changeValue']>,
     onInput: 'input' as EventName<CCheckboxElementEventMap['input']>,
     onUpdateValue: 'update:value' as EventName<CCheckboxElementEventMap['update:value']>,
   },
@@ -276,7 +283,7 @@ export const CCheckbox = createComponent({
 /** A colour field that takes any typed CSS colour, or opens a panel for picking one: a colour area, hue and alpha sliders, per-channel inputs and swatches — or swatches alone under `swatches-only`. */
 export const CColorPicker = createComponent({
   displayName: 'CColorPicker',
-  elementClass: elementClass<CColorPickerElement>('c-color-picker'),
+  elementClass: elementClass<CColorPickerElement>(['alpha', 'clearable', 'disabled', 'errorMessage', 'format', 'hideDetails', 'hint', 'invalid', 'label', 'labelOnTop', 'name', 'placeholder', 'required', 'shadow', 'size', 'swatches', 'swatchesOnly', 'texts', 'value']),
   events: {
     onChange: 'change' as EventName<CColorPickerElementEventMap['change']>,
     onChangeText: 'change:text' as EventName<CColorPickerElementEventMap['change:text']>,
@@ -287,16 +294,18 @@ export const CColorPicker = createComponent({
   tagName: 'c-color-picker',
 });
 
+/** The CSC logo without its tagline, drawn as an inline SVG in the colours of the current theme mode. */
 export const CCscLogo = createComponent({
   displayName: 'CCscLogo',
-  elementClass: elementClass<CCscLogoElement>('c-csc-logo'),
+  elementClass: elementClass<CCscLogoElement>(['width']),
   react: React,
   tagName: 'c-csc-logo',
 });
 
+/** A data-driven table that renders the rows of a `data` array through a set of `columns` definitions, with built-in sorting, pagination, row selection and expandable rows. Rows are your own plain objects; each column reads one of their properties and may render its header, cells and footer through render functions. */
 export const CDataTable = createComponent({
   displayName: 'CDataTable',
-  elementClass: elementClass<CDataTableElement>('c-data-table'),
+  elementClass: elementClass<CDataTableElement>(['autohide', 'columns', 'data', 'expanded', 'expandedContent', 'external', 'getRowId', 'itemCount', 'loading', 'page', 'pageSize', 'pageSizes', 'query', 'selected', 'selection', 'singleExpansion', 'sort', 'stickyFooter', 'stickyHeader', 'texts']),
   events: {
     onChangeExpanded: 'change:expanded' as EventName<CDataTableElementEventMap['change:expanded']>,
     onChangePage: 'change:page' as EventName<CDataTableElementEventMap['change:page']>,
@@ -311,7 +320,7 @@ export const CDataTable = createComponent({
 /** A date field that takes a typed date, or opens a calendar panel for picking one, or a start and end date under `range`. */
 export const CDatePicker = createComponent({
   displayName: 'CDatePicker',
-  elementClass: elementClass<CDatePickerElement>('c-date-picker'),
+  elementClass: elementClass<CDatePickerElement>(['clearable', 'disabled', 'disabledDates', 'errorMessage', 'firstDayOfWeek', 'format', 'hideDetails', 'hint', 'invalid', 'isDateDisabled', 'label', 'labelOnTop', 'max', 'min', 'name', 'placeholder', 'range', 'required', 'shadow', 'showToday', 'showWeekNumbers', 'size', 'texts', 'type', 'value']),
   events: {
     onChange: 'change' as EventName<CDatePickerElementEventMap['change']>,
     onChangeMonth: 'change:month' as EventName<CDatePickerElementEventMap['change:month']>,
@@ -323,9 +332,10 @@ export const CDatePicker = createComponent({
   tagName: 'c-date-picker',
 });
 
+/** A separator: a thin line dividing groups of content, horizontal by default or vertical with `vertical`. */
 export const CDivider = createComponent({
   displayName: 'CDivider',
-  elementClass: elementClass<CDividerElement>('c-divider'),
+  elementClass: elementClass<CDividerElement>(['vertical']),
   react: React,
   tagName: 'c-divider',
 });
@@ -333,7 +343,7 @@ export const CDivider = createComponent({
 /** A field the user adds files to by dropping them on it or choosing them from a file dialog — and, given an upload function, the place each file's upload shows its progress. */
 export const CFileUpload = createComponent({
   displayName: 'CFileUpload',
-  elementClass: elementClass<CFileUploadElement>('c-file-upload'),
+  elementClass: elementClass<CFileUploadElement>(['accept', 'compact', 'disabled', 'errorMessage', 'hideDetails', 'hint', 'invalid', 'label', 'manual', 'maxFiles', 'maxSize', 'multiple', 'required', 'size', 'texts', 'upload', 'value']),
   events: {
     onChange: 'change' as EventName<CFileUploadElementEventMap['change']>,
     onInput: 'input' as EventName<CFileUploadElementEventMap['input']>,
@@ -344,102 +354,106 @@ export const CFileUpload = createComponent({
   tagName: 'c-file-upload',
 });
 
+/** An icon drawn from a single SVG path, sized in pixels and filled with the colour of the surrounding text unless given one of its own. */
 export const CIcon = createComponent({
   displayName: 'CIcon',
-  elementClass: elementClass<CIconElement>('c-icon'),
+  elementClass: elementClass<CIconElement>(['color', 'path', 'size']),
   react: React,
   tagName: 'c-icon',
 });
 
+/** An icon-only button: a round native button that shows a single icon and takes its accessible name from an `aria-label` on the element. */
 export const CIconButton = createComponent({
   displayName: 'CIconButton',
-  elementClass: elementClass<CIconButtonElement>('c-icon-button'),
+  elementClass: elementClass<CIconButtonElement>(['badge', 'danger', 'disabled', 'ghost', 'inverted', 'loading', 'outlined', 'path', 'size', 'text']),
   react: React,
   tagName: 'c-icon-button',
 });
 
-export const CInput = createComponent({
-  displayName: 'CInput',
-  elementClass: elementClass<CInputElement>('c-input'),
-  react: React,
-  tagName: 'c-input',
-});
-
-/** Basic hyperlink component */
+/** A text link to another page or resource: a native `<a>` in the link colour, with an optional underline. */
 export const CLink = createComponent({
   displayName: 'CLink',
-  elementClass: elementClass<CLinkElement>('c-link'),
+  elementClass: elementClass<CLinkElement>(['href', 'target', 'underline']),
   react: React,
   tagName: 'c-link',
 });
 
+/** A vertical list of rows, each a `c-list-item` with its main content and optional leading and trailing content, for settings entries, related pages or a short set of records. */
 export const CList = createComponent({
   displayName: 'CList',
-  elementClass: elementClass<CListElement>('c-list'),
+  elementClass: elementClass<CListElement>(['bordered', 'disabled']),
   react: React,
   tagName: 'c-list',
 });
 
+/** One row of a `c-list`: its main content goes in the default slot, leading content such as an icon in the `pre` slot and trailing content in the `post` slot. The row is static unless it has an `href`, which makes it a real link; `ripple` adds a press effect and a Tab stop that Enter and Space press, firing `click`; give navigation an `href`. */
 export const CListItem = createComponent({
   displayName: 'CListItem',
-  elementClass: elementClass<CListItemElement>('c-list-item'),
+  elementClass: elementClass<CListItemElement>(['active', 'disabled', 'hoverable', 'href', 'ripple', 'target']),
   react: React,
   tagName: 'c-list-item',
 });
 
+/** The main text of a `c-list-item`, in medium-weight type; place it in the item's default slot. It takes the active row's ink by itself when its item is `active`. */
 export const CListItemTitle = createComponent({
   displayName: 'CListItemTitle',
-  elementClass: elementClass<CListItemTitleElement>('c-list-item-title'),
+  elementClass: elementClass<CListItemTitleElement>([]),
   react: React,
   tagName: 'c-list-item-title',
 });
 
-/** A loader component that fills the nearest containing element that has css-property position set to 'relative' */
+/** A loading overlay that covers a container with a translucent scrim and a centred spinner, with an optional message below it, while that container's content loads. */
 export const CLoader = createComponent({
   displayName: 'CLoader',
-  elementClass: elementClass<CLoaderElement>('c-loader'),
+  elementClass: elementClass<CLoaderElement>(['contentDelay', 'hide', 'size', 'width']),
   react: React,
   tagName: 'c-loader',
 });
 
+/** One identity-provider choice inside `c-login-buttons`: a card with the provider's logo (`src`, or markup in the `image` slot) above the provider's name. With an `href` it is a link to the provider's sign-in; without one it is a button whose `click` you handle. Leave `alt` empty when the name already identifies the provider. */
 export const CLoginButton = createComponent({
   displayName: 'CLoginButton',
-  elementClass: elementClass<CLoginButtonElement>('c-login-button'),
+  elementClass: elementClass<CLoginButtonElement>(['alt', 'href', 'src']),
   react: React,
   tagName: 'c-login-button',
 });
 
+/** A grid of sign-in choices, one `c-login-button` per identity provider, each showing the provider's logo above its name. */
 export const CLoginButtons = createComponent({
   displayName: 'CLoginButtons',
-  elementClass: elementClass<CLoginButtonsElement>('c-login-buttons'),
+  elementClass: elementClass<CLoginButtonsElement>([]),
   react: React,
   tagName: 'c-login-buttons',
 });
 
+/** The card of a sign-in page: a large surface holding the service's heading, the sign-in form or choices and their actions, with an optional background image showing below a curved edge. */
 export const CLoginCard = createComponent({
   displayName: 'CLoginCard',
-  elementClass: elementClass<CLoginCardElement>('c-login-card'),
+  elementClass: elementClass<CLoginCardElement>(['backgroundPosition', 'mobileBreakpoint', 'overlay', 'overlayBlendMode', 'src']),
   react: React,
   tagName: 'c-login-card',
 });
 
+/** The row of actions at the bottom of a `c-login-card`: the sign-in button and any link beside it, such as a forgotten-password link. `justify` distributes them along the row (`start` by default, `space-between` to push the last one to the far end, `stretch` to grow them all) and `align` places them across it. */
 export const CLoginCardActions = createComponent({
   displayName: 'CLoginCardActions',
-  elementClass: elementClass<CLoginCardActionsElement>('c-login-card-actions'),
+  elementClass: elementClass<CLoginCardActionsElement>(['align', 'justify']),
   react: React,
   tagName: 'c-login-card-actions',
 });
 
+/** The body of a `c-login-card`, which stacks the intro text and the sign-in fields in a column with a 24px gap. Place it between `c-login-card-title` and `c-login-card-actions`. */
 export const CLoginCardContent = createComponent({
   displayName: 'CLoginCardContent',
-  elementClass: elementClass<CLoginCardContentElement>('c-login-card-content'),
+  elementClass: elementClass<CLoginCardContentElement>([]),
   react: React,
   tagName: 'c-login-card-content',
 });
 
+/** The heading of a `c-login-card`, in large bold type in the primary colour; place it first in the card. The card shrinks it from 40px to 32px in its compact layout. */
 export const CLoginCardTitle = createComponent({
   displayName: 'CLoginCardTitle',
-  elementClass: elementClass<CLoginCardTitleElement>('c-login-card-title'),
+  elementClass: elementClass<CLoginCardTitleElement>(['headingLevel']),
   react: React,
   tagName: 'c-login-card-title',
 });
@@ -447,7 +461,7 @@ export const CLoginCardTitle = createComponent({
 /** The page shell of an application: it paints the page canvas and lays out the toolbar, the side navigation and the page in the dashboard layout. It is at least a viewport tall and grows with its content, so the document — not a component — is what scrolls. */
 export const CMain = createComponent({
   displayName: 'CMain',
-  elementClass: elementClass<CMainElement>('c-main'),
+  elementClass: elementClass<CMainElement>(['disableLayout']),
   react: React,
   tagName: 'c-main',
 });
@@ -455,7 +469,7 @@ export const CMain = createComponent({
 /** A command menu: a transient panel of actions or navigation choices opened from a trigger (the WAI-ARIA menu-button pattern), authored declaratively with slotted `c-menu-item`, `c-menu-label` and `c-divider` elements. Activating an item fires a one-off `select` event and closes the menu; the menu holds no selected value — that is `c-select`'s job. */
 export const CMenu = createComponent({
   displayName: 'CMenu',
-  elementClass: elementClass<CMenuElement>('c-menu'),
+  elementClass: elementClass<CMenuElement>(['distance', 'open', 'position', 'trigger']),
   events: {
     onChangeOpen: 'change:open' as EventName<CMenuElementEventMap['change:open']>,
     onSelect: 'select' as EventName<CMenuElementEventMap['select']>,
@@ -467,7 +481,7 @@ export const CMenu = createComponent({
 /** A single command in a `c-menu`. */
 export const CMenuItem = createComponent({
   displayName: 'CMenuItem',
-  elementClass: elementClass<CMenuItemElement>('c-menu-item'),
+  elementClass: elementClass<CMenuItemElement>(['checked', 'danger', 'disabled', 'type', 'value']),
   react: React,
   tagName: 'c-menu-item',
 });
@@ -475,14 +489,15 @@ export const CMenuItem = createComponent({
 /** Section label for a group of `c-menu-item`s. */
 export const CMenuLabel = createComponent({
   displayName: 'CMenuLabel',
-  elementClass: elementClass<CMenuLabelElement>('c-menu-label'),
+  elementClass: elementClass<CMenuLabelElement>([]),
   react: React,
   tagName: 'c-menu-label',
 });
 
+/** A single line of text under a form control: a neutral hint, or an error message that takes its place while the control is invalid. */
 export const CMessage = createComponent({
   displayName: 'CMessage',
-  elementClass: elementClass<CMessageElement>('c-message'),
+  elementClass: elementClass<CMessageElement>(['errorMessage', 'hint', 'invalid']),
   react: React,
   tagName: 'c-message',
 });
@@ -490,9 +505,9 @@ export const CMessage = createComponent({
 /** Modals interrupt the page for a task that must be completed (or explicitly cancelled) before continuing — confirmations, short forms, destructive-action warnings. The slotted content is typically a `c-card`. */
 export const CModal = createComponent({
   displayName: 'CModal',
-  elementClass: elementClass<CModalElement>('c-modal'),
+  elementClass: elementClass<CModalElement>(['disableBackdropBlur', 'dismissable', 'value', 'width']),
   events: {
-    onChangeValue: 'changeValue' as EventName<CModalElementEventMap['changeValue']>,
+    onChange: 'change' as EventName<CModalElementEventMap['change']>,
     onInput: 'input' as EventName<CModalElementEventMap['input']>,
     onUpdateValue: 'update:value' as EventName<CModalElementEventMap['update:value']>,
   },
@@ -500,9 +515,10 @@ export const CModal = createComponent({
   tagName: 'c-modal',
 });
 
+/** The hamburger menu button that opens and closes the mobile drawer of a `c-side-navigation`. */
 export const CNavigationButton = createComponent({
   displayName: 'CNavigationButton',
-  elementClass: elementClass<CNavigationButtonElement>('c-navigation-button'),
+  elementClass: elementClass<CNavigationButtonElement>(['texts']),
   react: React,
   tagName: 'c-navigation-button',
 });
@@ -510,7 +526,7 @@ export const CNavigationButton = createComponent({
 /** A field for a number — an integer, or one with decimals — shown with thousands separators as it is typed. */
 export const CNumberField = createComponent({
   displayName: 'CNumberField',
-  elementClass: elementClass<CNumberFieldElement>('c-number-field'),
+  elementClass: elementClass<CNumberFieldElement>(['decimalSeparator', 'decimals', 'disabled', 'errorMessage', 'fixedDecimals', 'groupSeparator', 'hideDetails', 'hint', 'invalid', 'label', 'labelOnTop', 'max', 'min', 'name', 'placeholder', 'readonly', 'required', 'shadow', 'size', 'step', 'texts', 'value']),
   events: {
     onChange: 'change' as EventName<CNumberFieldElementEventMap['change']>,
     onInput: 'input' as EventName<CNumberFieldElementEventMap['input']>,
@@ -520,9 +536,10 @@ export const CNumberField = createComponent({
   tagName: 'c-number-field',
 });
 
+/** One option of a `c-select` or `c-autocomplete`: `value` is what the field reports when the option is picked, and the option's label is its `name`, else the text of a `c-option-value` inside it, else its whole text. `disabled` keeps it from being picked, and `selected` sets the field's initial value once, silently, while that value is empty — with a bound `v-model`, initialise the model instead. */
 export const COption = createComponent({
   displayName: 'COption',
-  elementClass: elementClass<COptionElement>('c-option'),
+  elementClass: elementClass<COptionElement>(['disabled', 'name', 'selected', 'value']),
   react: React,
   tagName: 'c-option',
 });
@@ -530,16 +547,17 @@ export const COption = createComponent({
 /** The label region of a `c-option`: wraps the text that c-select and c-autocomplete use as the option's label — in the closed field, its tag and the autocomplete filter — so the option can carry a description or an icon beside its label, and the region in which c-autocomplete marks the runs equal to the query (`::part(match)`). */
 export const COptionValue = createComponent({
   displayName: 'COptionValue',
-  elementClass: elementClass<COptionValueElement>('c-option-value'),
+  elementClass: elementClass<COptionValueElement>([]),
   react: React,
   tagName: 'c-option-value',
 });
 
+/** A one-time-code field: a row of single-digit boxes, filled in order as the user types or pastes a code, under a group label and above a hint or error message. */
 export const COtpInput = createComponent({
   displayName: 'COtpInput',
-  elementClass: elementClass<COtpInputElement>('c-otp-input'),
+  elementClass: elementClass<Omit<COtpInputElement, 'autofocus'> & HTMLElement>(['autofocus', 'errorMessage', 'hideDetails', 'hint', 'invalid', 'label', 'length', 'required', 'value']),
   events: {
-    onChangeValue: 'changeValue' as EventName<COtpInputElementEventMap['changeValue']>,
+    onChange: 'change' as EventName<COtpInputElementEventMap['change']>,
     onCompletion: 'completion' as EventName<COtpInputElementEventMap['completion']>,
     onInput: 'input' as EventName<COtpInputElementEventMap['input']>,
     onUpdateValue: 'update:value' as EventName<COtpInputElementEventMap['update:value']>,
@@ -548,18 +566,20 @@ export const COtpInput = createComponent({
   tagName: 'c-otp-input',
 });
 
+/** The routed-content region of the dashboard layout: inside `c-main` it fills the area beside the side navigation and below the toolbar, pads the current view's content and keeps an optional footer at its bottom edge. */
 export const CPage = createComponent({
   displayName: 'CPage',
-  elementClass: elementClass<CPageElement>('c-page'),
+  elementClass: elementClass<CPageElement>(['scrollIndicator']),
   react: React,
   tagName: 'c-page',
 });
 
+/** A page navigation bar for a list split into pages: previous and next buttons around a window of page buttons, with a page-size menu and the range of items shown. */
 export const CPagination = createComponent({
   displayName: 'CPagination',
-  elementClass: elementClass<CPaginationElement>('c-pagination'),
+  elementClass: elementClass<CPaginationElement>(['hideDetails', 'hideRange', 'simple', 'size', 'texts', 'value']),
   events: {
-    onChangeValue: 'changeValue' as EventName<CPaginationElementEventMap['changeValue']>,
+    onChange: 'change' as EventName<CPaginationElementEventMap['change']>,
     onInput: 'input' as EventName<CPaginationElementEventMap['input']>,
     onUpdateValue: 'update:value' as EventName<CPaginationElementEventMap['update:value']>,
   },
@@ -570,7 +590,7 @@ export const CPagination = createComponent({
 /** A click-opened, non-modal surface anchored to its trigger, floating in the top layer; its content may be interactive. */
 export const CPopover = createComponent({
   displayName: 'CPopover',
-  elementClass: elementClass<CPopoverElement>('c-popover'),
+  elementClass: elementClass<CPopoverElement>(['distance', 'heading', 'open', 'position', 'trigger']),
   events: {
     onChangeOpen: 'change:open' as EventName<CPopoverElementEventMap['change:open']>,
   },
@@ -581,7 +601,7 @@ export const CPopover = createComponent({
 /** A horizontal progress bar that fills a track to a known completion percentage, with an optional details line showing the value and a label. */
 export const CProgressBar = createComponent({
   displayName: 'CProgressBar',
-  elementClass: elementClass<CProgressBarElement>('c-progress-bar'),
+  elementClass: elementClass<CProgressBarElement>(['hideDetails', 'indeterminate', 'label', 'singleLine', 'value']),
   react: React,
   tagName: 'c-progress-bar',
 });
@@ -589,7 +609,7 @@ export const CProgressBar = createComponent({
 /** A circular progress indicator that draws a known completion percentage as an arc around a track — the circular counterpart of `c-progress-bar`. */
 export const CProgressCircle = createComponent({
   displayName: 'CProgressCircle',
-  elementClass: elementClass<CProgressCircleElement>('c-progress-circle'),
+  elementClass: elementClass<CProgressCircleElement>(['size', 'thickness', 'value']),
   react: React,
   tagName: 'c-progress-circle',
 });
@@ -597,10 +617,7 @@ export const CProgressCircle = createComponent({
 /** A single radio option inside a `c-radio-group`: a native radio input whose default slot is its clickable, announced label. */
 export const CRadio = createComponent({
   displayName: 'CRadio',
-  elementClass: elementClass<CRadioElement>('c-radio'),
-  events: {
-    onChange: 'change' as EventName<CRadioElementEventMap['change']>,
-  },
+  elementClass: elementClass<CRadioElement>(['disabled', 'value']),
   react: React,
   tagName: 'c-radio',
 });
@@ -608,9 +625,9 @@ export const CRadio = createComponent({
 /** A radio group is a set of mutually exclusive choices where exactly one can be selected, authored as slotted `c-radio` children. Give the group a `label` so the choice it represents is named for every user, and a `hint` describing how to answer. */
 export const CRadioGroup = createComponent({
   displayName: 'CRadioGroup',
-  elementClass: elementClass<CRadioGroupElement>('c-radio-group'),
+  elementClass: elementClass<CRadioGroupElement>(['disabled', 'errorMessage', 'hideDetails', 'hint', 'inline', 'invalid', 'label', 'required', 'value']),
   events: {
-    onChangeValue: 'changeValue' as EventName<CRadioGroupElementEventMap['changeValue']>,
+    onChange: 'change' as EventName<CRadioGroupElementEventMap['change']>,
     onInput: 'input' as EventName<CRadioGroupElementEventMap['input']>,
     onUpdateValue: 'update:value' as EventName<CRadioGroupElementEventMap['update:value']>,
   },
@@ -621,9 +638,9 @@ export const CRadioGroup = createComponent({
 /** A value-selection field: a readonly field that opens a listbox of options — slotted `c-option` elements or an `items` array — and holds the picked value, emitting the value events that back `v-model`. */
 export const CSelect = createComponent({
   displayName: 'CSelect',
-  elementClass: elementClass<CSelectElement>('c-select'),
+  elementClass: elementClass<CSelectElement>(['clearable', 'disabled', 'errorMessage', 'hideDetails', 'hint', 'invalid', 'items', 'itemsPerPage', 'label', 'labelOnTop', 'loading', 'maxTags', 'multiple', 'name', 'optionAsSelection', 'placeholder', 'required', 'returnObject', 'selectAll', 'shadow', 'size', 'texts', 'value']),
   events: {
-    onChangeValue: 'changeValue' as EventName<CSelectElementEventMap['changeValue']>,
+    onChange: 'change' as EventName<CSelectElementEventMap['change']>,
     onInput: 'input' as EventName<CSelectElementEventMap['input']>,
     onUpdateValue: 'update:value' as EventName<CSelectElementEventMap['update:value']>,
   },
@@ -634,36 +651,39 @@ export const CSelect = createComponent({
 /** The dashboard layout's left-hand menu: section titles, navigation items and their sub-items in a drawer that is pinned beside the page on desktop and slides in over it on mobile. */
 export const CSideNavigation = createComponent({
   displayName: 'CSideNavigation',
-  elementClass: elementClass<CSideNavigationElement>('c-side-navigation'),
+  elementClass: elementClass<CSideNavigationElement>(['mobile', 'open']),
   events: {
-    onChangeMenuVisible: 'change:menu-visible' as EventName<CSideNavigationElementEventMap['change:menu-visible']>,
+    onChangeOpen: 'change:open' as EventName<CSideNavigationElementEventMap['change:open']>,
   },
   react: React,
   tagName: 'c-side-navigation',
 });
 
+/** One entry of a `c-side-navigation`: its label text, after an optional leading `c-icon`, goes in the default slot, and activating it fires `select` with its `value`; with `href` it is a real link, opened in `target`, and without one a button. Write `c-sub-navigation-item` children inside it to make it an expandable parent, whose `active` then means expanded rather than the current page. */
 export const CSideNavigationItem = createComponent({
   displayName: 'CSideNavigationItem',
-  elementClass: elementClass<CSideNavigationItemElement>('c-side-navigation-item'),
+  elementClass: elementClass<CSideNavigationItemElement>(['active', 'href', 'loading', 'target', 'value']),
   events: {
-    onItemChange: 'itemChange' as EventName<CSideNavigationItemElementEventMap['itemChange']>,
+    onSelect: 'select' as EventName<CSideNavigationItemElementEventMap['select']>,
   },
   react: React,
   tagName: 'c-side-navigation-item',
 });
 
+/** A section title in a `c-side-navigation`: uppercase text over a divider line, placed before the items it groups. It is a heading (level 2), so screen-reader users can jump between sections, and cannot be activated. */
 export const CSideNavigationTitle = createComponent({
   displayName: 'CSideNavigationTitle',
-  elementClass: elementClass<CSideNavigationTitleElement>('c-side-navigation-title'),
+  elementClass: elementClass<CSideNavigationTitleElement>([]),
   react: React,
   tagName: 'c-side-navigation-title',
 });
 
+/** A slider for picking a number from a range by dragging a thumb along a track, with a label, a value bubble and optional tick marks. */
 export const CSlider = createComponent({
   displayName: 'CSlider',
-  elementClass: elementClass<CSliderElement>('c-slider'),
+  elementClass: elementClass<CSliderElement>(['disableTooltip', 'disabled', 'label', 'labels', 'max', 'min', 'name', 'segments', 'step', 'ticks', 'unit', 'value']),
   events: {
-    onChangeValue: 'changeValue' as EventName<CSliderElementEventMap['changeValue']>,
+    onChange: 'change' as EventName<CSliderElementEventMap['change']>,
     onInput: 'input' as EventName<CSliderElementEventMap['input']>,
     onUpdateValue: 'update:value' as EventName<CSliderElementEventMap['update:value']>,
   },
@@ -674,46 +694,52 @@ export const CSlider = createComponent({
 /** A circular indeterminate activity indicator — pure motion with no value, for waits of unknown duration. */
 export const CSpinner = createComponent({
   displayName: 'CSpinner',
-  elementClass: elementClass<CSpinnerElement>('c-spinner'),
+  elementClass: elementClass<CSpinnerElement>(['color', 'size', 'width']),
   react: React,
   tagName: 'c-spinner',
 });
 
+/** A status pill: a short word naming the state of a record, such as Active, Pending or Failed, tinted with the colours of its status type. */
 export const CStatus = createComponent({
   displayName: 'CStatus',
-  elementClass: elementClass<CStatusElement>('c-status'),
+  elementClass: elementClass<CStatusElement>(['type']),
   react: React,
   tagName: 'c-status',
 });
 
+/** One step of a `c-steps` indicator: its label goes in the default slot, under a dot that is ringed for the current step and becomes a check mark once the step is complete. A step has no props of its own — its state follows the parent's `value`. */
 export const CStep = createComponent({
   displayName: 'CStep',
-  elementClass: elementClass<CStepElement>('c-step'),
+  elementClass: elementClass<CStepElement>([]),
   react: React,
   tagName: 'c-step',
 });
 
+/** A step indicator for a multi-step flow: a row of `c-step` dots joined by lines, with the steps before the current one checked off and the current one ringed. */
 export const CSteps = createComponent({
   displayName: 'CSteps',
-  elementClass: elementClass<CStepsElement>('c-steps'),
+  elementClass: elementClass<CStepsElement>(['value']),
   react: React,
   tagName: 'c-steps',
 });
 
+/** A second-level entry of a `c-side-navigation`, written inside the `c-side-navigation-item` it belongs to (no `slot` attribute needed) and shown while that parent is `active`. Activating it fires `select` with its `value` and closes the mobile drawer. It does not mark itself as the current page: set `active` on the sub-item of the page shown, and on its parent so the parent is expanded. */
 export const CSubNavigationItem = createComponent({
   displayName: 'CSubNavigationItem',
-  elementClass: elementClass<CSubNavigationItemElement>('c-sub-navigation-item'),
+  elementClass: elementClass<CSubNavigationItemElement>(['active', 'href', 'loading', 'target', 'value']),
+  events: {
+    onSelect: 'select' as EventName<CSubNavigationItemElementEventMap['select']>,
+  },
   react: React,
   tagName: 'c-sub-navigation-item',
 });
 
-/** A toggle for a binary setting that takes effect immediately: a native switch control with a label, an optional hint, and validation messaging. */
+/** A toggle for a binary setting that takes effect immediately: a native switch control with a label. */
 export const CSwitch = createComponent({
   displayName: 'CSwitch',
-  elementClass: elementClass<CSwitchElement>('c-switch'),
+  elementClass: elementClass<CSwitchElement>(['checked', 'disabled', 'falseValue', 'label', 'loading', 'required', 'trueValue', 'value']),
   events: {
     onChange: 'change' as EventName<CSwitchElementEventMap['change']>,
-    onChangeValue: 'changeValue' as EventName<CSwitchElementEventMap['changeValue']>,
     onInput: 'input' as EventName<CSwitchElementEventMap['input']>,
     onUpdateValue: 'update:value' as EventName<CSwitchElementEventMap['update:value']>,
   },
@@ -721,13 +747,10 @@ export const CSwitch = createComponent({
   tagName: 'c-switch',
 });
 
+/** One tab in the row of a `c-tabs`: its label goes in the default slot (a `c-badge` there sits on the tab's corner), and its `value` names the `c-tab-item` panel it shows. `c-tabs` decides which tab is active; `disabled` keeps a tab from being selected. */
 export const CTab = createComponent({
   displayName: 'CTab',
-  elementClass: elementClass<CTabElement>('c-tab'),
-  events: {
-    onTabChange: 'tabChange' as EventName<CTabElementEventMap['tabChange']>,
-    onTabFocus: 'tabFocus' as EventName<CTabElementEventMap['tabFocus']>,
-  },
+  elementClass: elementClass<CTabElement>(['disabled', 'value']),
   react: React,
   tagName: 'c-tab',
 });
@@ -735,27 +758,23 @@ export const CTab = createComponent({
 /** Tab buttons present a `c-tabs` tab list as a segmented control instead of the underlined tab row. Author it only inside `<c-tabs>`, with plain `<c-button>` children whose `value`s match the `c-tab-item` panels; `c-tabs` owns the active value and pushes it down. */
 export const CTabButtons = createComponent({
   displayName: 'CTabButtons',
-  elementClass: elementClass<CTabButtonsElement>('c-tab-buttons'),
-  events: {
-    onTabChange: 'tabChange' as EventName<CTabButtonsElementEventMap['tabChange']>,
-  },
+  elementClass: elementClass<CTabButtonsElement>(['disabled', 'size']),
   react: React,
   tagName: 'c-tab-buttons',
 });
 
+/** One tab panel inside `c-tab-items`, shown while its `value` equals the `value` of `c-tabs` — give it the same `value` as its `c-tab`. Inactive panels stay in the DOM, hidden, so their content keeps its state across tab switches. */
 export const CTabItem = createComponent({
   displayName: 'CTabItem',
-  elementClass: elementClass<CTabItemElement>('c-tab-item'),
-  events: {
-    onContentChange: 'contentChange' as EventName<CTabItemElementEventMap['contentChange']>,
-  },
+  elementClass: elementClass<CTabItemElement>(['value']),
   react: React,
   tagName: 'c-tab-item',
 });
 
+/** The panel container of a `c-tabs`: slot it in with `slot="items"` and put the `c-tab-item` panels inside it. It shows the panel whose `value` matches the tabs' value and slides between panels; it has no props of its own, as `c-tabs` drives it. */
 export const CTabItems = createComponent({
   displayName: 'CTabItems',
-  elementClass: elementClass<CTabItemsElement>('c-tab-items'),
+  elementClass: elementClass<CTabItemsElement>([]),
   react: React,
   tagName: 'c-tab-items',
 });
@@ -763,16 +782,17 @@ export const CTabItems = createComponent({
 /** A styled wrapper for a table you author yourself: slot in a plain `<table>` and c-table gives it the CSC look plus an optional responsive card layout on narrow screens. The table stays in your own DOM — your stylesheets, your framework's rendering, and `::part()` selectors on components nested in cells (a `c-tag` status chip, a `c-pagination` footer) all keep working. */
 export const CTable = createComponent({
   displayName: 'CTable',
-  elementClass: elementClass<CTableElement>('c-table'),
+  elementClass: elementClass<CTableElement>(['mobileBreakpoint', 'responsive']),
   react: React,
   tagName: 'c-table',
 });
 
+/** A tab set that switches between panels of related content: a row of `c-tab` headers above the `c-tab-item` panels, one panel shown at a time. */
 export const CTabs = createComponent({
   displayName: 'CTabs',
-  elementClass: elementClass<CTabsElement>('c-tabs'),
+  elementClass: elementClass<CTabsElement>(['borderless', 'disableAnimation', 'justify', 'mobileBreakpoint', 'value', 'vertical']),
   events: {
-    onChangeValue: 'changeValue' as EventName<CTabsElementEventMap['changeValue']>,
+    onChange: 'change' as EventName<CTabsElementEventMap['change']>,
     onInput: 'input' as EventName<CTabsElementEventMap['input']>,
     onUpdateValue: 'update:value' as EventName<CTabsElementEventMap['update:value']>,
   },
@@ -780,9 +800,10 @@ export const CTabs = createComponent({
   tagName: 'c-tabs',
 });
 
+/** A pill-shaped tag naming one item — a keyword, a category, an applied filter — authored inside `c-tags`, or on its own where a single tag is needed, such as a status in a table cell. With `closeable` it shows a close button that fires `close` and leaves removing the tag to you; name that button with `close-label`, for example "Remove Chemistry". */
 export const CTag = createComponent({
   displayName: 'CTag',
-  elementClass: elementClass<CTagElement>('c-tag'),
+  elementClass: elementClass<CTagElement>(['active', 'badge', 'closeLabel', 'closeable', 'flat', 'size']),
   events: {
     onClose: 'close' as EventName<CTagElementEventMap['close']>,
   },
@@ -790,9 +811,10 @@ export const CTag = createComponent({
   tagName: 'c-tag',
 });
 
+/** A group of `c-tag` elements laid out in a wrapping row, with an optional group label above them. */
 export const CTags = createComponent({
   displayName: 'CTags',
-  elementClass: elementClass<CTagsElement>('c-tags'),
+  elementClass: elementClass<CTagsElement>(['label', 'required', 'size']),
   react: React,
   tagName: 'c-tags',
 });
@@ -800,10 +822,9 @@ export const CTags = createComponent({
 /** A text field for a single line of text, or several lines under `rows`, with a label, a hint and an error message. */
 export const CTextField = createComponent({
   displayName: 'CTextField',
-  elementClass: elementClass<Omit<CTextFieldElement, 'autocorrect'> & HTMLElement>('c-text-field'),
+  elementClass: elementClass<Omit<CTextFieldElement, 'autocorrect'> & HTMLElement>(['autocapitalize', 'autocomplete', 'autocorrect', 'autofocus', 'disabled', 'errorMessage', 'hideDetails', 'hint', 'invalid', 'label', 'labelOnTop', 'mask', 'max', 'min', 'name', 'placeholder', 'readonly', 'required', 'rows', 'shadow', 'size', 'step', 'trimWhitespace', 'type', 'value']),
   events: {
     onChange: 'change' as EventName<CTextFieldElementEventMap['change']>,
-    onChangeValue: 'changeValue' as EventName<CTextFieldElementEventMap['changeValue']>,
     onInput: 'input' as EventName<CTextFieldElementEventMap['input']>,
     onUpdateValue: 'update:value' as EventName<CTextFieldElementEventMap['update:value']>,
   },
@@ -814,7 +835,7 @@ export const CTextField = createComponent({
 /** A time field that takes a typed time, or opens hour and minute columns for picking one, or a start and end time under `range`. */
 export const CTimePicker = createComponent({
   displayName: 'CTimePicker',
-  elementClass: elementClass<CTimePickerElement>('c-time-picker'),
+  elementClass: elementClass<CTimePickerElement>(['clearable', 'disabled', 'errorMessage', 'format', 'hideDetails', 'hint', 'invalid', 'label', 'labelOnTop', 'max', 'min', 'minuteStep', 'name', 'placeholder', 'range', 'required', 'shadow', 'showNow', 'size', 'texts', 'value']),
   events: {
     onChange: 'change' as EventName<CTimePickerElementEventMap['change']>,
     onChangeText: 'change:text' as EventName<CTimePickerElementEventMap['change:text']>,
@@ -825,21 +846,13 @@ export const CTimePicker = createComponent({
   tagName: 'c-time-picker',
 });
 
-/** A single toast notification, rendered and managed by c-toasts */
-export const CToast = createComponent({
-  displayName: 'CToast',
-  elementClass: elementClass<CToastElement>('c-toast'),
-  events: {
-    onClose: 'close' as EventName<CToastElementEventMap['close']>,
-  },
-  react: React,
-  tagName: 'c-toast',
-});
-
-/** Toasts are passive, transient notifications — operation results, background progress — stacked and managed by a single `c-toasts` container via its `addToast` / `removeToast` methods. */
+/** Toasts are passive, transient notifications — operation results, background progress — stacked and managed by a single `c-toasts` container via its `addToast` / `removeToast` methods. `addToast` returns the message's `id` (its own, or a generated one), which `removeToast` takes; `close` fires on the container with the message once a toast has left. */
 export const CToasts = createComponent({
   displayName: 'CToasts',
-  elementClass: elementClass<CToastsElement>('c-toasts'),
+  elementClass: elementClass<CToastsElement>(['absolute', 'horizontal', 'vertical']),
+  events: {
+    onClose: 'close' as EventName<CToastsElementEventMap['close']>,
+  },
   react: React,
   tagName: 'c-toasts',
 });
@@ -847,7 +860,7 @@ export const CToasts = createComponent({
 /** The app-wide bar at the top of the dashboard layout: the logo, the service name and global actions such as the user menu or log out. It is pinned to the top of the viewport by default and stays there while the page scrolls; `static` keeps it in the page flow so it scrolls away with the content. */
 export const CToolbar = createComponent({
   displayName: 'CToolbar',
-  elementClass: elementClass<CToolbarElement>('c-toolbar'),
+  elementClass: elementClass<CToolbarElement>(['static']),
   react: React,
   tagName: 'c-toolbar',
 });
@@ -855,7 +868,7 @@ export const CToolbar = createComponent({
 /** A non-interactive text hint shown when its trigger is hovered or keyboard-focused, floating in the top layer on the inverted surface tier. */
 export const CTooltip = createComponent({
   displayName: 'CTooltip',
-  elementClass: elementClass<CTooltipElement>('c-tooltip'),
+  elementClass: elementClass<CTooltipElement>(['delay', 'distance', 'open', 'position', 'text', 'trigger']),
   events: {
     onChangeOpen: 'change:open' as EventName<CTooltipElementEventMap['change:open']>,
   },
@@ -866,7 +879,7 @@ export const CTooltip = createComponent({
 /** A hierarchical value-selection component: a readonly value field that opens a panel for browsing a tree one level at a time, or searching it as a whole, to commit one item. */
 export const CTreeSelect = createComponent({
   displayName: 'CTreeSelect',
-  elementClass: elementClass<CTreeSelectElement>('c-tree-select'),
+  elementClass: elementClass<CTreeSelectElement>(['allowBranch', 'clearable', 'disabled', 'errorMessage', 'filter', 'hideDetails', 'hint', 'invalid', 'items', 'itemsPerPage', 'label', 'labelOnTop', 'levelLabels', 'name', 'placeholder', 'required', 'returnObject', 'shadow', 'size', 'texts', 'value']),
   events: {
     onChange: 'change' as EventName<CTreeSelectElementEventMap['change']>,
     onChangeQuery: 'change:query' as EventName<CTreeSelectElementEventMap['change:query']>,

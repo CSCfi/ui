@@ -12,7 +12,7 @@
   <dialog
     ref="dialogRef"
     :class="[ui.dialog(), fullscreenOpen ? 'fullscreen' : '']"
-    part="menu"
+    part="panel card"
     tabindex="-1"
     @cancel="close"
   >
@@ -91,7 +91,7 @@
               isDisabled(opt) ? 'disabled' : '',
             ]"
             :data-name="nameOf(opt)"
-            part="item"
+            part="option"
             role="option"
             tabindex="-1"
             @click="onSelect(opt, $event)"
@@ -131,7 +131,7 @@
             ]"
             :data-name="item.name"
             :title="item.name"
-            part="item"
+            part="option"
             role="option"
             tabindex="-1"
             @click="onSelect(item, $event)"
@@ -167,14 +167,17 @@
 
 <script setup lang="ts">
 /**
+ * @internal c-select instantiates it in its shadow root; consumers never author it
+ *
  * @slot default - The anchor c-input of the parent select / autocomplete, rendered inline while the menu is closed
  *
- * @csspart menu - The positioned dialog surface holding the field and the list
+ * @csspart panel - The positioned dialog holding the field and the list
+ * @csspart card - The same dialog as the painted surface: background, radius and shadow
  * @csspart heading-row - The top row of the fullscreen panel (narrow viewports): the field label as heading and the close button
  * @csspart heading - The field label naming the fullscreen panel
  * @csspart close - The close button of the fullscreen panel
  * @csspart list - The scrolling listbox
- * @csspart item - One option row
+ * @csspart option - One option row
  * @csspart select-all - The pinned select-all row at the top of the list in `multiple` mode; carries the same indicator / mark parts as an option row
  * @csspart indicator - The decorative checkbox box on an option row in `multiple` mode; border, fill and glyph draw with `currentColor`, so `color` recolours them together
  * @csspart mark - The check glyph inside a row indicator; draws with `currentColor`
@@ -216,7 +219,7 @@ interface CDropdownEvents {
    * Fired when the dropdown menu opens or closes; the detail is the new open
    * state.
    */
-  dropdownStateChange: boolean;
+  dropdownstatechange: boolean;
 
   /**
    * Fired when the select-all row is activated; the parent (c-select) toggles
@@ -228,7 +231,7 @@ interface CDropdownEvents {
    * Fired when the user selects an option row, carrying the option's name
    * and value for the parent (c-select) to commit.
    */
-  selectOption: { name: string; value: number | string };
+  selectoption: { name: string; value: number | string };
 }
 
 /**
@@ -502,10 +505,9 @@ const itemsArray = computed<DropdownItem[]>(() => {
 
 // ---- events -------------------------------------------------------------
 
+// The parent select listens on this element in its own shadow root, so the
+// events neither bubble nor leave it (they are internal wiring, ADR-0075).
 const emit = useHostEmit<CDropdownEvents>();
-
-// Both dropdown events cross the shadow boundary to the parent select.
-const bubbling = { bubbles: true, composed: true };
 
 // A <c-option disabled> in option mode delivers its Boolean attribute as `""`
 // (the defineCustomElement quirk coerceBoolean exists for), so never test
@@ -526,7 +528,7 @@ const onSelect = (item: DropdownItem, event: Event) => {
     return;
   }
 
-  emit('selectOption', { name: nameOf(item), value: item.value }, bubbling);
+  emit('selectoption', { name: nameOf(item), value: item.value });
 };
 
 // The select-all row: the parent owns the selection and toggles every listed
@@ -534,7 +536,7 @@ const onSelect = (item: DropdownItem, event: Event) => {
 // watcher does not re-announce — do it here (the debounce lets the parent's
 // new counts land first).
 const onSelectAll = () => {
-  emit('selectall', undefined, bubbling);
+  emit('selectall');
   updateStatusText();
 };
 
@@ -776,9 +778,8 @@ const updateStatusText = () => {
 // ---- exposed imperative API (called by c-select) ------------------------
 
 /**
- * Open dropdown
- *
- * @seeded from csc-ui — verify
+ * Open the list panel against the field, or fullscreen on a narrow
+ * viewport; does nothing while it is open
  */
 const open = () => {
   const dialog = dialogRef.value;
@@ -793,9 +794,7 @@ const open = () => {
 };
 
 /**
- * Close dropdown
- *
- * @seeded from csc-ui — verify
+ * Close the list panel and put the field back in its place
  */
 const close = () => {
   const dialog = dialogRef.value;
@@ -857,9 +856,8 @@ const focusItem = (index: number) => {
 };
 
 /**
- * Select item
- *
- * @seeded from csc-ui — verify
+ * Pick the option row at `index`, as a click on it would. Returns `true`
+ * when there is no row there or it is disabled, `false` once it is picked
  */
 const selectItem = (index: number) => {
   const item = rowAt(index);
@@ -873,9 +871,8 @@ const selectItem = (index: number) => {
 };
 
 /**
- * Update list items
- *
- * @seeded from csc-ui — verify
+ * Re-read the options' live state and re-render the list on the next frame;
+ * `reset` also re-reads it at once
  */
 const updateList = (reset = false) => {
   if (reset) {
@@ -929,7 +926,7 @@ watch(isOpen, (value) => {
     if (host) unlockPage(host);
   }
 
-  emit('dropdownStateChange', value, bubbling);
+  emit('dropdownstatechange', value);
 });
 
 // The layouts are not interchangeable mid-open (ADR-0050): the anchored menu

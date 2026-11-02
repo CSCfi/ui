@@ -152,7 +152,7 @@ A refused file never joins the value. It shows as a rejected row with the
 reason, and the `reject` event lists every refused file with its reason:
 `type`, `size`, `duplicate`, `count` or `folder`. The rows describe the
 latest add, so the next change to the list — another add, a removal, or a
-value set from outside — clears them, and the user can dismiss each one.
+value set from outside — clears them, and the user can close each one.
 
 ## Compact
 

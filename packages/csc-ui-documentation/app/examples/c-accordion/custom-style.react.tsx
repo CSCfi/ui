@@ -6,14 +6,19 @@ const styles = `
 /* The default look is the accordion frame; this recolours the expanded
    item from primary to secondary through its parts. */
 c-accordion.custom-style {
-  c-accordion-item[expanded] {
+  c-accordion-item:state(expanded) {
     &::part(root) {
       border-color: var(--c-secondary);
       background-color: color-mix(in srgb, var(--c-secondary) 5%, transparent);
       box-shadow: inset 2px 0 0 0 var(--c-secondary);
     }
 
-    &::part(header),
+    /* The heading takes the ink paired with the wash, as the default
+       expanded heading does. */
+    &::part(header) {
+      color: var(--c-on-secondary-subtle);
+    }
+
     &::part(indicator) {
       color: var(--c-secondary);
     }
@@ -36,9 +41,9 @@ c-accordion.custom-style {
 `;
 
 export const CustomStyle = () => {
-  const [expanded, setExpanded] = useState<'billing' | 'members' | 'storage'>(
-    'billing',
-  );
+  const [expanded, setExpanded] = useState<
+    'billing' | 'members' | 'storage' | null
+  >('billing');
 
   return (
     <>
@@ -46,8 +51,8 @@ export const CustomStyle = () => {
 
       <CAccordion
         className="custom-style"
-        onChangeValue={(event) =>
-          setExpanded(event.detail as 'billing' | 'members' | 'storage')
+        onChange={(event) =>
+          setExpanded(event.detail as 'billing' | 'members' | 'storage' | null)
         }
         value={expanded}
       >

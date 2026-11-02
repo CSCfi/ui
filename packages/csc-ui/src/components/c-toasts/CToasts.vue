@@ -5,6 +5,7 @@
       :key="msg.id"
       ref="toastRefs"
       :message="msg"
+      exportparts="root:toast-root, custom:toast-custom, content:toast-content, item:toast-item, badge:toast-badge, close:toast-close, progress:toast-progress"
       @close="onChildClose"
     >
       <slot v-if="msg.custom" />
@@ -18,45 +19,48 @@
  */
 export type CToastsHorizontal = 'center' | 'left' | 'right';
 
-export interface CToastsProps {
-  /**
-   * Use absolute positioning
-   *
-   * @seeded from csc-ui — verify
-   */
-  absolute?: boolean;
-
-  /**
-   * Horizontal position
-   *
-   * @seeded from csc-ui — verify
-   */
-  horizontal?: CToastsHorizontal;
-
-  /**
-   * Vertical position
-   *
-   * @seeded from csc-ui — verify
-   */
-  vertical?: CToastsVertical;
-}
-
 /**
  * Vertical placement of the toast stack.
  */
 export type CToastsVertical = 'bottom' | 'top';
+
+interface CToastsProps {
+  /**
+   * Places the stack in its nearest positioned ancestor instead of the
+   * viewport, for in-container notifications. Such a stack is not
+   * guaranteed to paint above an open modal.
+   */
+  absolute?: boolean;
+
+  /**
+   * Where the stack sits across the viewport, or across its container
+   * under `absolute`.
+   */
+  horizontal?: CToastsHorizontal;
+
+  /**
+   * The edge the stack is anchored to; toasts slide in from it.
+   */
+  vertical?: CToastsVertical;
+}
 </script>
 
 <script setup lang="ts">
 /**
- * @slot default - Content of a custom toast message, projected into the single `custom`-flagged c-toast
- * @csspart root - The grid container the toast items stack in
- *
- * @subcomponents c-toast
+ * @slot default - Content of a custom toast message, projected into the single `custom`-flagged toast
+ * @csspart root - The grid container the toasts stack in
+ * @csspart toast-root - A toast's outer box: the inverted-surface pill carrying the shadow
+ * @csspart toast-custom - Wrapper shown for a custom message in place of the standard row
+ * @csspart toast-content - A toast's message body holding the heading and text, or the slotted custom content
+ * @csspart toast-item - Row layout of a standard toast: status badge, message body and close button
+ * @csspart toast-badge - The circular tinted badge holding a toast's status icon
+ * @csspart toast-close - A toast's close button (icon-only, or labelled when the message sets `closeText`)
+ * @csspart toast-progress - The track of a toast's auto-close progress bar
  */
 import { tv } from 'tailwind-variants';
 import {
   computed,
+  nextTick,
   onMounted,
   ref,
   useHost,
@@ -67,6 +71,18 @@ import {
 import type { CToastMessage } from '../../types';
 
 import { TOAST_BAND } from '../../shared/modalStack';
+import { prefersReducedMotion } from '../../shared/reducedMotion';
+import { useHostEmit } from '../../shared/useHostEmit';
+
+/** Events dispatched by `<c-toasts>`. */
+interface CToastsEvents {
+  /**
+   * Fired once a toast has left (closed by its close button, a swipe, the
+   * timer or `removeToast`), carrying its message with the `id` it was
+   * shown under.
+   */
+  close: CToastMessage;
+}
 
 // Placement state (`absolute`/`top`/`bottom`/`left`/`right`/`center`) is toggled
 // imperatively as classes on the HOST so the `:host(.absolute)` etc. rules below
@@ -88,7 +104,7 @@ defineOptions({ inheritAttrs: false });
  */
 const toasts = tv({
   slots: {
-    root: 'grid grid-cols-[1fr] gap-3 p-3',
+    root: 'relative grid grid-cols-[1fr] gap-3 p-3',
   },
 });
 
@@ -108,23 +124,101 @@ const ui = computed(() => toasts());
 
 let nextId = 0;
 
-const defaultOptions = () => ({
+// The stack glide (ADR-0073): when a toast arrives or leaves, the toasts that
+// change place move there from where they were.
+const GLIDE_ID = 'c-toasts-glide';
+
+const GLIDE_MS = 250;
+
+// The toasts still in the stack's flow, in order; a leaving one is pinned out
+// of it.
+const toastsInFlow = (): HTMLElement[] =>
+  Array.from(
+    containerRef.value?.querySelectorAll<HTMLElement>('c-toast') ?? [],
+  ).filter((el) => !el.classList.contains('leaving'));
+
+const snapshot = (except?: HTMLElement): Map<HTMLElement, number> =>
+  new Map(
+    toastsInFlow()
+      .filter((el) => el !== except)
+      .map((el) => [el, el.getBoundingClientRect().top]),
+  );
+
+// Call after the layout change. A glide still running is cancelled before the
+// new places are measured, so a toast caught mid-glide carries on from where
+// it is instead of jumping by the old offset.
+const glide = (before: Map<HTMLElement, number>) => {
+  for (const el of before.keys()) {
+    for (const animation of el.getAnimations()) {
+      if (animation.id === GLIDE_ID) animation.cancel();
+    }
+  }
+
+  if (prefersReducedMotion()) return;
+
+  for (const [el, top] of before) {
+    if (!el.isConnected) continue;
+
+    const dy = top - el.getBoundingClientRect().top;
+
+    if (Math.abs(dy) < 0.5) continue;
+
+    // The independent `translate` property, so the glide never fights a
+    // toast's own enter, exit or swipe `transform`.
+    el.animate([{ translate: `0 ${dy}px` }, { translate: '0 0' }], {
+      duration: GLIDE_MS,
+      easing: 'ease-out',
+      id: GLIDE_ID,
+    });
+  }
+};
+
+// A toast starting its exit: pin it where it is, above its neighbours, while
+// they glide into its place. The pin holds the edge the stack is anchored to:
+// a bottom stack shrinks from the top, which would carry a top-pinned toast
+// down with it.
+const _toastLeaving = (toast: HTMLElement) => {
+  const root = containerRef.value;
+
+  if (!root || toast.parentElement !== root) return;
+
+  const before = snapshot(toast);
+
+  const width = getComputedStyle(toast).width;
+
+  const left = toast.offsetLeft;
+
+  const top = toast.offsetTop;
+
+  const bottom = root.clientHeight - toast.offsetTop - toast.offsetHeight;
+
+  toast.style.position = 'absolute';
+  toast.style.left = `${left}px`;
+  toast.style.width = width;
+  toast.style.zIndex = '1';
+
+  if (vertical.value === 'top') toast.style.top = `${top}px`;
+  else toast.style.bottom = `${bottom}px`;
+
+  glide(before);
+};
+
+const DEFAULT_OPTIONS = {
   duration: 6000,
-  id: `c-toast-item-${++nextId}`,
   indeterminate: false,
   persistent: false,
   progress: false,
   type: 'info' as const,
-});
+};
 
 // Public method: append a new toast. Custom toasts are limited to 1 at
 // a time because slot reflection can only project to one place.
 /**
- * Add a new message
- *
- * @seeded from csc-ui — verify
+ * Show a message as a toast and return its `id` — the message's own, or a
+ * generated one — for `removeToast`. A second `custom` message while one is
+ * shown is refused, and returns `undefined`.
  */
-const addToast = (message: CToastMessage) => {
+const addToast = (message: CToastMessage): string | undefined => {
   const hasCustom = messages.value.some((m) => m.custom);
 
   if (message.custom && hasCustom) {
@@ -132,32 +226,42 @@ const addToast = (message: CToastMessage) => {
       'Custom toast messages are restricted to 1 visible message due to slot reflection limitations.',
     );
 
-    return;
+    return undefined;
   }
 
-  requestAnimationFrame(() => {
-    const defaults = defaultOptions();
+  nextId += 1;
+
+  const id = message.id ?? `c-toast-item-${nextId}`;
+
+  requestAnimationFrame(async () => {
+    const before = snapshot();
+
     messages.value = [
       ...messages.value,
       {
-        ...defaults,
+        ...DEFAULT_OPTIONS,
         ...message,
         duration:
           Number(message?.duration) > 0
             ? Number(message.duration)
-            : defaults.duration,
+            : DEFAULT_OPTIONS.duration,
+        id,
       },
     ];
+
+    // After the whole flush, still before this frame paints.
+    await nextTick();
+    glide(before);
   });
+
+  return id;
 };
 
 // Public method: imperatively close a toast by id. Reaches into the
 // rendered c-toast's exposed `closeToast` method (set via defineExpose
 // in CToast.vue).
 /**
- * Remove a message by id (id should be specified in the addToast params)
- *
- * @seeded from csc-ui — verify
+ * Close the toast with this `id`, the one `addToast` returned.
  */
 const removeToast = (id: string) => {
   const toast = containerRef.value?.querySelector(`#c-toast--${id}`) as
@@ -166,10 +270,14 @@ const removeToast = (id: string) => {
   toast?.closeToast?.();
 };
 
+const emit = useHostEmit<CToastsEvents>();
+
 const onChildClose = (event: CustomEvent<CToastMessage>) => {
   const id = event.detail?.id;
 
   if (!id) return;
+
+  emit('close', event.detail);
 
   const toast = containerRef.value?.querySelector(`#c-toast--${id}`);
   toast?.remove();
@@ -181,7 +289,7 @@ const onChildClose = (event: CustomEvent<CToastMessage>) => {
   }
 };
 
-defineExpose({ addToast, removeToast });
+defineExpose({ _toastLeaving, addToast, removeToast });
 
 // Attributes can deliver any string at runtime; unknown placements fall back
 // to the default center/bottom — otherwise an invalid `vertical`

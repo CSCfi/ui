@@ -1,13 +1,14 @@
 {
   "attributes": {
+    "autocapitalize": "'characters' | 'none' | 'off' | 'on' | 'sentences' | 'words'",
     "autocomplete": "string = ''",
-    "autocorrect": "boolean",
-    "automatic-capitalize": "'characters' | 'none' | 'off' | 'on' | 'sentences' | 'words'",
+    "autocorrect": "'off' | 'on' | boolean",
+    "autofocus": "boolean = false",
     "disabled": "boolean = false",
     "error-message": "string = ''",
     "hide-details": "boolean = false",
     "hint": "string = ''",
-    "host-id": "string = ''",
+    "invalid": "boolean = false",
     "label": "string = ''",
     "label-on-top": "boolean = false",
     "mask": "string = ''",
@@ -23,7 +24,6 @@
     "step": "null | number = null",
     "trim-whitespace": "boolean = false",
     "type": "'date' | 'email' | 'number' | 'password' | 'search' | 'tel' | 'text' | 'url' = 'text'",
-    "valid": "boolean = true",
     "value": "string = ''"
   },
   "cssProperties": [],
@@ -34,25 +34,28 @@
     "size"
   ],
   "events": {
-    "change": "CustomEvent<void>",
-    "changeValue": "CustomEvent<string>",
+    "change": "CustomEvent<string>",
     "input": "CustomEvent<void>",
     "update:value": "CustomEvent<string>"
   },
-  "methods": {},
+  "methods": {
+    "focus": "(options?: FocusOptions): void"
+  },
   "parts": [
-    "mask-guide"
+    "mask-guide",
+    "message"
   ],
   "propertyOnly": [],
   "props": {
+    "autocapitalize": "'characters' | 'none' | 'off' | 'on' | 'sentences' | 'words'",
     "autocomplete": "string = ''",
-    "autocorrect": "boolean",
-    "automaticCapitalize": "'characters' | 'none' | 'off' | 'on' | 'sentences' | 'words'",
+    "autocorrect": "'off' | 'on' | boolean",
+    "autofocus": "boolean = false",
     "disabled": "boolean = false",
     "errorMessage": "string = ''",
     "hideDetails": "boolean = false",
     "hint": "string = ''",
-    "hostId": "string = ''",
+    "invalid": "boolean = false",
     "label": "string = ''",
     "labelOnTop": "boolean = false",
     "mask": "string = ''",
@@ -68,7 +71,6 @@
     "step": "null | number = null",
     "trimWhitespace": "boolean = false",
     "type": "'date' | 'email' | 'number' | 'password' | 'search' | 'tel' | 'text' | 'url' = 'text'",
-    "valid": "boolean = true",
     "value": "string = ''"
   },
   "readonly": {
