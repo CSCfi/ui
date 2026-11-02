@@ -10,27 +10,29 @@
       <c-icon :path="arrowLeft" />
     </c-icon-button>
 
-    <div
-      ref="tabsRef"
-      :class="ui.tabs()"
-      class="c-tabs__tabs"
-      part="tabs"
-      @touchend="onTouchEnd"
-      @touchmove="onTouchMove"
-      @touchstart="onTouchStart"
-    >
-      <!-- The tablist is the row of tabs alone (APG Tabs): the scroll arrows
-           and the panels sit outside it. In buttons mode c-tab-buttons is
-           the tablist itself, around its own buttons. -->
+    <div :class="ui.clip()">
       <div
-        ref="scrollRef"
-        :aria-label="buttonsMode ? undefined : tablistLabel"
-        :aria-orientation="!buttonsMode && vertical ? 'vertical' : undefined"
-        :class="ui.scroll()"
-        :role="buttonsMode ? undefined : 'tablist'"
-        class="c-tabs__scroll"
+        ref="tabsRef"
+        :class="ui.tabs()"
+        class="c-tabs__tabs"
+        part="tabs"
+        @touchend="onTouchEnd"
+        @touchmove="onTouchMove"
+        @touchstart="onTouchStart"
       >
-        <slot />
+        <!-- The tablist is the row of tabs alone (APG Tabs): the scroll arrows
+             and the panels sit outside it. In buttons mode c-tab-buttons is
+             the tablist itself, around its own buttons. -->
+        <div
+          ref="scrollRef"
+          :aria-label="buttonsMode ? undefined : tablistLabel"
+          :aria-orientation="!buttonsMode && vertical ? 'vertical' : undefined"
+          :class="ui.scroll()"
+          :role="buttonsMode ? undefined : 'tablist'"
+          class="c-tabs__scroll"
+        >
+          <slot />
+        </div>
       </div>
     </div>
 
@@ -101,7 +103,7 @@ interface CTabsProps {
  * @slot default - The `c-tab` headers, or one `c-tab-buttons`
  * @slot items - The `c-tab-items` holding the panels
  * @csspart container - The tab row: the tabs plus the overflow arrows
- * @csspart tabs - The clipping viewport the tab list scrolls inside, with a margin so a tab's focus ring and a slotted corner badge still paint
+ * @csspart tabs - The viewport the tab list scrolls inside; it clips with room for a tab's focus ring and a slotted corner badge
  * @csspart content - The wrapper around the panels
  *
  * @subcomponents c-tab, c-tab-items, c-tab-item, c-tab-buttons
@@ -162,19 +164,15 @@ interface CTabsEvents {
  */
 const tabs = tv({
   slots: {
-    // base container layout; the overflow/vertical reshaping lives on the host
-    // selectors in the escape-hatch <style>.
-    container: 'grid items-center gap-1',
-    content: 'flex',
-    scroll: 'relative m-0 flex grow p-0',
-    // `tabs` is the viewport the translated `scroll` track hides behind, so it
-    // must keep clipping. `p-1 -m-1` insets the clip 4px at no layout cost —
-    // room for a tab's 2px focus outline at its 2px offset — and the 6px
-    // `overflow-clip-margin` adds the rest of the 8px a `c-badge` slotted into
-    // a tab overhangs by (`-right-1.5 -top-1.5` plus its 2px ring), with 2px of
-    // slack for antialiasing. `clip` rather than `hidden` because nothing here
-    // scrolls natively — the track is a transform on `scroll` — and only `clip`
-    // honours a clip margin.
+    // The clip around `tabs`, the viewport the translated `scroll` track
+    // hides behind. `-m-2.5 p-2.5` sets its edge 10px outside the row at no
+    // layout cost: room for a tab's 2px focus outline at its 2px offset, and
+    // for the 8px a `c-badge` slotted into a tab overhangs by (`-right-1.5
+    // -top-1.5` plus its 2px ring), with 2px of slack for antialiasing. A box
+    // of its own, because `tabs` itself is measured (below), and because an
+    // `overflow-clip-margin` would need no box but Safari has none. `clip`
+    // rather than `hidden` because nothing here scrolls natively — the track
+    // is a transform on `scroll`.
     //
     // `min-w-0` is what `hidden` used to give for free: an `overflow: hidden`
     // box is a scroll container, so its `min-width: auto` as a grid item
@@ -183,7 +181,17 @@ const tabs = tv({
     // this box then outgrows its grid cell instead of clipping, and in buttons
     // mode the strip's frame is no longer squeezed to the row (CTabButtons
     // spec: "the strip is squeezed to the tab row, not clipped by it").
-    tabs: 'relative -m-1 flex min-w-0 overflow-clip p-1 [overflow-clip-margin:6px]',
+    clip: '-m-2.5 flex min-w-0 overflow-clip p-2.5',
+    // base container layout; the overflow/vertical reshaping lives on the host
+    // selectors in the escape-hatch <style>.
+    container: 'grid items-center gap-1',
+    content: 'flex',
+    scroll: 'relative m-0 flex grow p-0',
+    // The strip: its `clientWidth` drives the overflow arrows and the scroll
+    // range, and `::after` draws the underline 4px up from its bottom edge,
+    // all tuned to this 4px `p-1 -m-1` frame. `min-w-0` lets it shrink inside
+    // the clip, which it no longer does itself.
+    tabs: 'relative -m-1 flex min-w-0 grow p-1',
   },
 });
 
@@ -1010,7 +1018,7 @@ useIdReferences(() =>
    must squeeze it instead of growing with it. As a flex item the row's
    automatic minimum is its content's min-content width — the one-row strip
    in full (the strip's inner `min-w-0` does not shrink what flows up) — so
-   the row outgrew the clipping `.c-tabs__tabs`, the frame was cut off at
+   the row outgrew `.c-tabs__tabs` and its clip, the frame was cut off at
    the edge and the inner scroller never overflowed: no arrows, no touch
    panning. The underlined c-tab row keeps its auto minimum: it scrolls by
    translating this very row past the viewport. */

@@ -125,6 +125,89 @@ export interface EventRecord {
   type: string;
 }
 
+/** An element's padding box, the edge its `overflow` clips at. */
+const paddingBox = (element: Element): DOMRect => {
+  const rect = element.getBoundingClientRect();
+
+  const style = getComputedStyle(element);
+
+  const top = parseFloat(style.borderTopWidth);
+
+  const right = parseFloat(style.borderRightWidth);
+
+  const bottom = parseFloat(style.borderBottomWidth);
+
+  const left = parseFloat(style.borderLeftWidth);
+
+  return new DOMRect(
+    rect.left + left,
+    rect.top + top,
+    rect.width - left - right,
+    rect.height - top - bottom,
+  );
+};
+
+/**
+ * The clips `ink` (a box painted by `start`, in viewport px) pokes out of,
+ * named `tag [part=…]`. Walks the flat tree up from `start` through slots and
+ * shadow roots. A clip is the padding box of an element whose `overflow` is
+ * not `visible`, in every engine: Safari has no `overflow-clip-margin`, so no
+ * component may rely on one. A clip between an absolutely positioned box and
+ * its containing block (its first positioned ancestor) does not cut it.
+ */
+export function clipsCutting(start: Element, ink: DOMRectReadOnly): string[] {
+  const cut: string[] = [];
+
+  let escaping = getComputedStyle(start).position === 'absolute';
+
+  let node: Node | null = start;
+
+  while (node) {
+    if (node instanceof ShadowRoot) {
+      node = node.host;
+
+      continue;
+    }
+
+    if (!(node instanceof Element)) {
+      node = node.parentNode;
+
+      continue;
+    }
+
+    const style = getComputedStyle(node);
+
+    const containingBlock =
+      node !== start && escaping && style.position !== 'static';
+
+    if (
+      node !== start &&
+      (!escaping || containingBlock) &&
+      style.display !== 'contents' &&
+      style.overflow !== 'visible'
+    ) {
+      const clip = paddingBox(node);
+
+      if (
+        ink.top < clip.top ||
+        ink.left < clip.left ||
+        ink.right > clip.right ||
+        ink.bottom > clip.bottom
+      ) {
+        const part = node.getAttribute('part');
+
+        cut.push(part ? `${node.localName} [part=${part}]` : node.localName);
+      }
+    }
+
+    if (containingBlock) escaping = false;
+
+    node = node.assignedSlot ?? node.parentNode;
+  }
+
+  return cut;
+}
+
 /** `document.activeElement` followed through open shadow roots. */
 export function deepActiveElement(): Element | null {
   let active: Element | null = document.activeElement;

@@ -51,12 +51,14 @@ interface CTabEvents {
 /**
  * Styling lives in this `tailwind-variants` config; customization
  * is via `::part()`. The inner `root` content box, the ripple
- * container and the ripple dots are utilities here. `root` clips with an 8px
- * `overflow-clip-margin` rather than at its own edge: a `c-badge` slotted into
- * the tab is a corner overlay (`absolute -right-1.5 -top-1.5` plus a 2px ring,
- * so 8px of ink outside the tab box), and a hard clip swallowed it. The margin
- * lets that badge through while a too-long `whitespace-nowrap` label — vertical
- * tabs pin every tab to `min/max-width: 100%` — is still cut off.
+ * container and the ripple dots are utilities here. `root` clips at its own
+ * edge, so a too-long `whitespace-nowrap` label — vertical tabs pin every tab
+ * to `min/max-width: 100%` — is cut off. A `c-badge` slotted into the tab is a
+ * corner overlay (`absolute -right-1.5 -top-1.5` plus a 2px ring, so 8px of
+ * ink outside the tab box) and must not be: `root` is not positioned, so the
+ * badge's containing block is the host, the same box, and a clip never cuts a
+ * positioned box whose containing block lies outside the clipper. An
+ * `overflow-clip-margin` did this before, but Safari has none.
  *
  * The host itself MUST be the styled/positioned tab box (it is the real
  * `role="tab"` element c-tabs queries and measures, with imperatively-toggled
@@ -69,7 +71,7 @@ const tab = tv({
     ripple:
       'pointer-events-none absolute rounded-full bg-current transition-[transform,opacity] duration-[600ms] ease-out',
     ripples: 'pointer-events-none absolute inset-0 overflow-hidden',
-    root: 'relative flex h-full w-full max-w-full items-center justify-center overflow-clip px-3 text-ellipsis whitespace-nowrap [overflow-clip-margin:8px]',
+    root: 'flex h-full w-full max-w-full items-center justify-center overflow-clip px-3 text-ellipsis whitespace-nowrap',
   },
 });
 
@@ -183,13 +185,15 @@ const onClick = (event: MouseEvent, center = false) => {
   The host deliberately does NOT clip. Its old `overflow: hidden` was a second
   copy of the `[part=root]` clip that bought nothing — `root` is `h-full w-full`
   so nothing reaches past the host through it, and the ripple is clipped by its
-  own `.ripples` container — while it re-cut the slotted `c-badge` that root's
-  `overflow-clip-margin` had just let through. Same split as c-button, whose
-  root is unclipped and whose ripple container does the clipping.
+  own `.ripples` container — while it cut the slotted `c-badge` that escapes
+  root's clip. Same split as c-button, whose root is unclipped and whose ripple
+  container does the clipping. The host is positioned from the start: it is
+  the containing block of the badge and the ripples.
 -->
 <style>
 :host {
   display: block;
+  position: relative;
   user-select: none;
   min-width: min-content;
   flex-grow: 1;
@@ -221,7 +225,6 @@ slot {
   font-weight: 600;
   height: var(--_c-control-height);
   justify-content: center;
-  position: relative;
 }
 
 :host(.c-tab:hover) {

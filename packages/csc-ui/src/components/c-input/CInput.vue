@@ -189,11 +189,15 @@ const input = tv({
     // (24px). A `leading-5` before `text-base` is silently dropped by
     // tailwind-merge (font-size utilities set line-height in v4), and a 20px
     // box under a 24px line box clips descenders. `overflow-clip` keeps the
-    // ellipsis, and `overflow-clip-margin` gives the glyphs 4px of headroom so
-    // tall-metric fonts (Noto Sans' content area is ~1.36em) can never lose
-    // descender ink. Both axes clip: Firefox 140 paints nothing of a label
-    // lifted by `translateY` when only `overflow-x` clips (the y axis left
-    // visible), so the lifted label vanished there.
+    // ellipsis, and `-m-1 p-1` moves the clip 4px out on every side without
+    // moving the text, so tall-metric fonts (Noto Sans' content area is
+    // ~1.36em) never lose descender ink and the last glyph keeps its
+    // antialiasing. The padding is the label's own: the max width adds it
+    // back, the lift's scale pivots on the text's corner (`origin-[4px_4px]`)
+    // and `measureLabel` takes it off. Not `overflow-clip-margin`: Safari has
+    // none. Both axes clip: Firefox 140 paints nothing of a label lifted by
+    // `translateY` when only `overflow-x` clips (the y axis left visible), so
+    // the lifted label vanished there.
     //
     // The resting `top` centres that 24px line box in the field by hand — it
     // is absolutely positioned, so nothing re-centres it when the box height
@@ -202,7 +206,7 @@ const input = tv({
     // 44px -> top-3, the 52px control height -> top-4. `controlHeight.spec.ts`
     // holds this at both sizes.
     labelFloating:
-      'c-input__label--floating pointer-events-none absolute top-4 right-auto left-0 max-w-[90%] origin-top-left overflow-clip text-base text-ellipsis whitespace-nowrap [overflow-clip-margin:4px] [transition:0.3s_var(--_c-ease-standard)_0.08s]',
+      'c-input__label--floating pointer-events-none absolute top-4 right-auto left-0 -m-1 max-w-[calc(90%+8px)] origin-[4px_4px] overflow-clip p-1 text-base text-ellipsis whitespace-nowrap [transition:0.3s_var(--_c-ease-standard)_0.08s]',
     labelTop:
       'c-input__label--top max-w-full overflow-hidden text-sm font-medium text-ellipsis whitespace-nowrap',
     legend:
@@ -415,7 +419,17 @@ const legendWidth = computed(() =>
 const measureLabel = () => {
   const el = labelInlineRef.value || labelTopRef.value;
 
-  if (el) labelWidth.value = el.scrollWidth * 0.75 + 6;
+  if (!el) return;
+
+  // The floating label's padding is room for its ink, not text.
+  const style = getComputedStyle(el);
+
+  const text =
+    el.scrollWidth -
+    parseFloat(style.paddingLeft) -
+    parseFloat(style.paddingRight);
+
+  labelWidth.value = text * 0.75 + 6;
 };
 
 // The legend/label transitions are enabled one frame AFTER mount. The mount

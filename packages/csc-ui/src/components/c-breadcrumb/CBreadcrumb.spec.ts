@@ -12,6 +12,7 @@ import type { Mounted } from '../../test/harness';
 
 import { applyDefaults, resetDefaults } from '../../shared/appDefaults';
 import {
+  clipsCutting,
   deepActiveElement,
   matchScreenshotInBothModes,
   mount,
@@ -251,6 +252,46 @@ describe('semantics', () => {
     } finally {
       document.fonts.delete(skewed);
     }
+  });
+});
+
+describe('focus rings', () => {
+  /** The box a focused element's outline paints, past its border box. */
+  const ring = (el: Element): DOMRect => {
+    const style = getComputedStyle(el);
+
+    const reach =
+      parseFloat(style.outlineWidth) + parseFloat(style.outlineOffset);
+
+    expect(reach, 'a focus ring that reaches past the box').toBeGreaterThan(0);
+
+    const rect = el.getBoundingClientRect();
+
+    return new DOMRect(
+      rect.left - reach,
+      rect.top - reach,
+      rect.width + 2 * reach,
+      rect.height + 2 * reach,
+    );
+  };
+
+  // The row clips, so a run of crumbs never scrolls the page; the clip must
+  // still leave room for the rings, in Safari too (no `overflow-clip-margin`).
+  it('paints the first crumb and the fold button rings whole', async () => {
+    const m = await mountBreadcrumb(420);
+
+    const [first] = crumbs(m);
+
+    await userEvent.tab();
+    expect(deepActiveElement()).toBe(link(first));
+    expect(clipsCutting(link(first), ring(link(first)))).toEqual([]);
+
+    await userEvent.tab();
+
+    const button = m.part('fold-button');
+
+    expect(deepActiveElement()).toBe(button);
+    expect(clipsCutting(button, ring(button))).toEqual([]);
   });
 });
 
