@@ -540,10 +540,13 @@ start migrating on the first alpha that carries D2–D4.
      The React example smoke rendered nothing for every canon that calls a hook: CI's cold optimizer cache met
      `react/jsx-dev-runtime` mid-run, re-bundled React and reloaded (acb9aced). WebKit has no
      `overflow-clip-margin` (WebKit bug 236153), which c-tab, c-tabs, c-input and c-breadcrumb relied on; each
-     clip now makes its room in every engine, Chromium pixel-identical (6726e8f7). On WebKit the fallback left an
-     open submenu behind after a page scroll; a panel anchored inside another popover now tracks its anchor every
-     frame (66d41fc0). WebKit cannot run in the devcontainer (no Debian mirror reachable for its libraries), so
-     those two are confirmed by CI only.
+     clip now makes its room in every engine, Chromium pixel-identical (6726e8f7). A first submenu fix (66d41fc0,
+     per-frame tracking) rested on a wrong reading and was reverted (15b4d33a): the second run failed the same
+     way. The fallback was right; Safari 26's native anchor positioning puts an open submenu the scroll distance
+     off its row. User decision: submenus are positioned by script in every browser (74e64bf3, ADR-0056
+     amended). The second run also failed three motion specs that sample a running animation a frame or two in;
+     they now pin the animations (a43bfe9e). WebKit cannot run in the devcontainer (no Debian mirror reachable
+     for its libraries), so the WebKit fixes are confirmed by CI only.
    Gate (D8): MyCSC fully migrated on the latest RC, e2e green, no open csc-ui blocker.
 5. **4.0.0** — D7 curated changeset (delete changesets already released in an alpha, add the hand-written major),
    `changeset pre exit`, merge the version PR → publish via `release.yml`. Then D9: `v3` dist-tag on 3.0.19 (both
