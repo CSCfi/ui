@@ -95,24 +95,6 @@ export const flipChain = (placement: PanelPlacement): PanelPlacement[] => [
   flipInline(flipBlock(placement)),
 ];
 
-/** Whether `element` sits inside a popover, across slots and shadow roots. */
-const insidePopover = (element: Element): boolean => {
-  let node: Node | null = element.assignedSlot ?? element.parentNode;
-
-  while (node) {
-    if (node instanceof ShadowRoot) {
-      node = node.host;
-    } else if (node instanceof Element) {
-      if (node.hasAttribute('popover')) return true;
-      node = node.assignedSlot ?? node.parentNode;
-    } else {
-      node = node.parentNode;
-    }
-  }
-
-  return false;
-};
-
 export interface FallbackPosition {
   /** Start positioning — call once the panel is open. */
   start(): void;
@@ -256,15 +238,7 @@ export const useFallbackPosition = (
             });
           };
 
-          // A panel anchored inside another popover (a submenu) moves with
-          // that popover, and no event reaches it when the popover is placed:
-          // a page scroll updates both, and on WebKit this one measured its
-          // anchor before the outer panel had moved, then stayed there.
-          // Comparing the anchor's box every frame follows the outer panel
-          // whatever the order.
-          cleanup = autoUpdate(reference, floating, update, {
-            animationFrame: insidePopover(reference),
-          });
+          cleanup = autoUpdate(reference, floating, update);
         },
       )
       .catch(() => {
