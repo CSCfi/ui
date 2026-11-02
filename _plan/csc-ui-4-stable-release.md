@@ -547,6 +547,14 @@ start migrating on the first alpha that carries D2–D4.
      amended). The second run also failed three motion specs that sample a running animation a frame or two in;
      they now pin the animations (a43bfe9e). WebKit cannot run in the devcontainer (no Debian mirror reachable
      for its libraries), so the WebKit fixes are confirmed by CI only.
+   - **4.0.0-rc.1 published (2026-11-02).** PR #311 merged (224d9306); the rc entry (265b3297: pre exit + enter
+     rc, both versions hand-set to `4.0.0-rc.0`, an empty changeset) went in as PR #313; the version PR #312
+     (opened as alpha.33) was rewritten to rc.1, 80 entries (21 major, 8 minor, 51 patch) plus 2 empty, and
+     merged (ac32d5b7). npm dist-tags on both packages: `latest` 3.0.19, `alpha` 4.0.0-alpha.32, `rc`
+     4.0.0-rc.1, with provenance; GitHub releases `@cscfi/csc-ui@4.0.0-rc.1` and `@cscfi/csc-ui-react@4.0.0-rc.1`
+     marked pre-release. Main's CI after #313 flaked one WebKit spec, the reduced-motion crossfade, which a43bfe9e's
+     hold had missed (it never calls `allowMotion`); now held too (0d92a2a5). From here: fixes only, each PR to
+     `main` with its own changeset, the API guard failing any breaking diff.
    Gate (D8): MyCSC fully migrated on the latest RC, e2e green, no open csc-ui blocker.
 5. **4.0.0** — D7 curated changeset (delete changesets already released in an alpha, add the hand-written major),
    `changeset pre exit`, merge the version PR → publish via `release.yml`. Then D9: `v3` dist-tag on 3.0.19 (both
