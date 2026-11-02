@@ -398,9 +398,38 @@ const handleOverflow = () => {
   isOverflowing.value = container.clientWidth + 1 < content.scrollWidth;
 };
 
+// Where a tab sits in the strip, whose pseudo-element is the indicator.
+// Measured from the boxes, NOT from offsetLeft/offsetTop: a slotted tab's
+// offsetParent lies outside this shadow tree (Chrome skips the strip for the
+// page, or whatever positioned ancestor the page has), so its offsets moved
+// with the tab set's place on the page. The row's scroll translate moves both
+// boxes alike, and the scroll arrows sit outside the strip.
+const placeInStrip = (tab: HTMLElement, strip: HTMLElement) => {
+  const t = tab.getBoundingClientRect();
+
+  const s = strip.getBoundingClientRect();
+
+  return { left: t.left - s.left, top: t.top - s.top };
+};
+
+// The tab a pending move starts from: the first one asked for while the
+// indicator waits, since it has not moved since.
+let moveFrom: HTMLElement | null = null;
+
+// A move asked for while another waits replaces it. Dropping it instead left
+// the indicator under the previous tab, as a click right after the
+// re-measure of a mount or resize did.
 const moveIndicator = (oldTab: HTMLElement, newTab: HTMLElement) => {
-  if (moveDebounce !== null) return;
+  moveFrom ??= oldTab;
+
+  if (moveDebounce !== null) clearTimeout(moveDebounce);
   moveDebounce = setTimeout(() => {
+    moveDebounce = null;
+
+    const fromTab = moveFrom ?? oldTab;
+
+    moveFrom = null;
+
     requestAnimationFrame(() => {
       const content = host?.shadowRoot?.querySelector(
         '.c-tabs__scroll',
@@ -412,37 +441,57 @@ const moveIndicator = (oldTab: HTMLElement, newTab: HTMLElement) => {
 
       if (!content || !container) return;
 
-      if (initialized && !motionDisabled()) {
+      // Where the indicator comes to rest, under the new tab.
+      const land = () => {
+        const at = placeInStrip(newTab, content);
+
+        setIndicatorVar('--_c-tabs-indicator-left', `${at.left}px`);
+        setIndicatorVar('--_c-tabs-indicator-top', `${at.top}px`);
+        setIndicatorVar(
+          '--_c-tabs-indicator-width',
+          String(
+            vertical.value
+              ? newTab.offsetHeight / content.offsetHeight
+              : newTab.offsetWidth / content.offsetWidth,
+          ),
+        );
+
+        if (!initialized) host?.classList.add('c-tabs--initialized');
+        initialized = true;
+      };
+
+      // Without motion it lands at once: the row's speed is then 0ms under
+      // disable-animation, and a zero-length transition fires no
+      // transitionend to land on.
+      if (motionDisabled()) {
+        land();
+
+        return;
+      }
+
+      if (initialized) {
         container.style.setProperty('--_c-tabs-transition-speed', '200ms');
       }
 
-      const buttonOffset = isOverflowing.value ? 32 : 0;
+      const newTabPosition = fromTab.compareDocumentPosition(newTab);
 
-      const newTabWidth = newTab.offsetWidth / content.offsetWidth;
+      const from = placeInStrip(fromTab, content);
 
-      const newTabHeight = newTab.offsetHeight / content.offsetHeight;
-
-      const newTabPosition = oldTab.compareDocumentPosition(newTab);
+      const to = placeInStrip(newTab, content);
 
       let transitionWidth = 0;
 
       // DOCUMENT_POSITION_FOLLOWING (4) = new tab is after the old one.
       if (newTabPosition === 4) {
         transitionWidth = vertical.value
-          ? newTab.offsetTop + newTab.offsetHeight - oldTab.offsetTop
-          : newTab.offsetLeft + newTab.offsetWidth - oldTab.offsetLeft;
+          ? to.top + newTab.offsetHeight - from.top
+          : to.left + newTab.offsetWidth - from.left;
       } else {
         transitionWidth = vertical.value
-          ? oldTab.offsetTop + oldTab.offsetHeight - newTab.offsetTop
-          : oldTab.offsetLeft + oldTab.offsetWidth - newTab.offsetLeft;
-        setIndicatorVar(
-          '--_c-tabs-indicator-left',
-          `${newTab.offsetLeft - buttonOffset}px`,
-        );
-        setIndicatorVar(
-          '--_c-tabs-indicator-top',
-          `${newTab.offsetTop - buttonOffset}px`,
-        );
+          ? from.top + fromTab.offsetHeight - to.top
+          : from.left + fromTab.offsetWidth - to.left;
+        setIndicatorVar('--_c-tabs-indicator-left', `${to.left}px`);
+        setIndicatorVar('--_c-tabs-indicator-top', `${to.top}px`);
       }
 
       setIndicatorVar(
@@ -456,29 +505,12 @@ const moveIndicator = (oldTab: HTMLElement, newTab: HTMLElement) => {
 
       const onTransitionEnd = (event: TransitionEvent) => {
         if (event.propertyName !== 'scale') return;
-        setIndicatorVar(
-          '--_c-tabs-indicator-left',
-          `${newTab.offsetLeft - buttonOffset}px`,
-        );
-        setIndicatorVar(
-          '--_c-tabs-indicator-top',
-          `${newTab.offsetTop - buttonOffset}px`,
-        );
-        setIndicatorVar(
-          '--_c-tabs-indicator-width',
-          String(vertical.value ? newTabHeight : newTabWidth),
-        );
+        land();
         content.removeEventListener('transitionend', onTransitionEnd);
-
-        if (!initialized) host?.classList.add('c-tabs--initialized');
-        initialized = true;
       };
 
       content.addEventListener('transitionend', onTransitionEnd);
     });
-
-    if (moveDebounce !== null) clearTimeout(moveDebounce);
-    moveDebounce = null;
   }, 200);
 };
 
