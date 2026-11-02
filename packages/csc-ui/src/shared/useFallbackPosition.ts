@@ -18,7 +18,8 @@
  * which Vue's next `:style` patch would wipe.
  *
  * On a browser with native support every method is a no-op and `style` stays
- * empty, so the native path is untouched. Floating UI is imported lazily, and
+ * empty, so the native path is untouched — unless the panel is `scripted`,
+ * placed this way in every browser. Floating UI is imported lazily, and
  * preloaded at setup where it will be needed so the first open does not wait
  * on it.
  *
@@ -121,6 +122,14 @@ export interface UseFallbackPositionOptions {
 
   /** The element the panel sits against. */
   reference: () => Element | null | undefined;
+
+  /**
+   * Place the panel with Floating UI in every browser, even where anchors are
+   * positioned natively: a submenu, anchored inside the menu's own top-layer
+   * panel, is left behind by Safari's native positioning once the page
+   * scrolls.
+   */
+  scripted?: boolean;
 }
 
 export const useFallbackPosition = (
@@ -128,7 +137,7 @@ export const useFallbackPosition = (
 ): FallbackPosition => {
   const style = ref('');
 
-  const native = supportsAnchorPositioning();
+  const native = !options.scripted && supportsAnchorPositioning();
 
   if (!native) void loadFloatingUi().catch(() => {});
 

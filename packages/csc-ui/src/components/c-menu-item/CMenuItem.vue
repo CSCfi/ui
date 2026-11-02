@@ -27,8 +27,8 @@
     </svg>
   </div>
 
-  <!-- Submenu surface: its own manual popover in the top layer, anchored to
-       this item's root via CSS anchor positioning. Opened/closed
+  <!-- Submenu surface: its own manual popover in the top layer, placed
+       against this item's root by script. Opened/closed
        on command from the controlling c-menu. Rendered only once a submenu
        has been detected so the empty case carries no popover. -->
   <div
@@ -170,14 +170,9 @@ const item = tv({
     // the viewport (the below/above fallbacks); it never grows past it.
     submenu:
       'm-0 max-h-[80vh] w-max max-w-[calc(100vw-8px)] min-w-45 scrollbar-hidden list-none overflow-y-auto rounded-csc-sm bg-surface-overlay p-1 shadow-[2px_4px_10px_#00000029] outline-none',
-    // The panel anchors to the item ROW, which sits inside the parent
-    // surface's 4px padding — the constant 4px only reaches the parent
-    // panel's edge (surfaces touch). The visible gap on top of that is the
-    // owning menu's `distance` prop, inherited as `--_c-menu-distance` so
-    // trigger→panel and panel→submenu gaps stay identical; the menu's
-    // scheduled close delay makes it safe to cross with the pointer.
+    // Placed by `useFallbackPosition`, which writes its position and margin.
     submenuPanel:
-      'fixed [inset:auto] [margin-inline:calc(4px_+_var(--_c-menu-distance,0px))] my-0 overflow-visible border-0 bg-transparent p-0',
+      'fixed [inset:auto] m-0 overflow-visible border-0 bg-transparent p-0',
   },
   variants: {
     // Destructive action — matches c-button's danger token (error-600). The
@@ -233,11 +228,14 @@ const ui = computed(() =>
   item({ danger: isDanger.value, disabled: isDisabled.value }),
 );
 
-// Without native anchor positioning (Firefox 140 ESR) Floating UI places the
-// submenu (ADR-0056): the chain mirrors the `position-try-fallbacks` rule
-// below — flip-inline, flip-block, both, then below/above the row — and the
-// gap is the rule's margins: the surfaces-touch constant plus the menu
-// distance beside the row, the menu distance alone below or above it.
+// Floating UI places the submenu in every browser (ADR-0056, amended
+// 2026-11-02): it sits inside the menu's own top-layer panel, and Safari's
+// native anchor positioning left it behind by the scroll distance once the
+// page scrolled. It is pinned to the right of its row; when there is no room
+// there it flips to the left, then the other way on the block axis — and on
+// a phone, where a menu spans most of the viewport and neither side has
+// room, it drops below (or above) its row instead, from the row's own edge,
+// so it is always on screen.
 const SUBMENU_FALLBACKS: Placement[] = [
   'left-start',
   'right-end',
@@ -257,6 +255,12 @@ const menuDistance = (): number =>
       ) || 0
     : 0;
 
+// The row sits inside the parent surface's 4px padding, so beside it the
+// constant 4px only reaches the parent panel's edge (surfaces touch). The
+// visible gap on top of that is the owning menu's `distance` prop, inherited
+// as `--_c-menu-distance` so trigger→panel and panel→submenu gaps stay
+// identical; the menu's scheduled close delay makes it safe to cross with the
+// pointer. Below or above the row the gap is the distance alone.
 const fallback = useFallbackPosition({
   fallbacks: () => SUBMENU_FALLBACKS,
   floating: submenuRef,
@@ -264,14 +268,10 @@ const fallback = useFallbackPosition({
     side === 'left' || side === 'right' ? 4 + menuDistance() : menuDistance(),
   placement: () => 'right-start',
   reference: () => rootRef.value,
+  scripted: true,
 });
 
-// Anchor the submenu to this item's row. The name is tree-scoped to this
-// component's shadow root, so a constant is collision-free across instances.
-const submenuStyle = computed(
-  () =>
-    `position-anchor:--c-menu-item-anchor;position-area:right span-bottom;inset:auto;${fallback.style.value}`,
-);
+const submenuStyle = fallback.style;
 
 // Whether a populated `submenu` slot exists. Detected by querying this host's
 // own light-DOM children for `slot="submenu"` (not via the shadow `<slot>`),
@@ -388,13 +388,6 @@ watch(hasSubmenu, (has) => {
   }
 });
 
-const rootEl = computed(() => rootRef.value);
-
-watch(rootEl, (el) => {
-  // The anchor name lives on the rendered root box.
-  if (el) el.style.setProperty('anchor-name', '--c-menu-item-anchor');
-});
-
 onMounted(() => {
   if (!host) return;
 
@@ -405,8 +398,6 @@ onMounted(() => {
   if (isDisabled.value) host.setAttribute('aria-disabled', 'true');
 
   if (isDanger.value) host.setAttribute('data-danger', '');
-
-  rootRef.value?.style.setProperty('anchor-name', '--c-menu-item-anchor');
 
   refreshSubmenu();
 
@@ -438,48 +429,6 @@ onBeforeUnmount(() => {
 <style>
 :host {
   display: block;
-}
-
-/* The submenu is pinned to the right of its row (`submenuStyle`); when
-   there is no room there it flips to the left, then the other way on the
-   block axis — and on a phone, where a menu spans most of the viewport and
-   neither side has room, it drops below (or above) its row instead, from
-   the row's own edge, so it is always on screen. The sideways margin is the
-   surfaces-touch constant, meaningless below the row, so it is swapped for
-   the block axis there. */
-@position-try --c-submenu-below {
-  position-area: bottom span-right;
-  margin-inline: 0;
-  margin-block: var(--_c-menu-distance, 0px);
-}
-
-@position-try --c-submenu-below-left {
-  position-area: bottom span-left;
-  margin-inline: 0;
-  margin-block: var(--_c-menu-distance, 0px);
-}
-
-@position-try --c-submenu-above {
-  position-area: top span-right;
-  margin-inline: 0;
-  margin-block: var(--_c-menu-distance, 0px);
-}
-
-@position-try --c-submenu-above-left {
-  position-area: top span-left;
-  margin-inline: 0;
-  margin-block: var(--_c-menu-distance, 0px);
-}
-
-[part='submenu-panel'] {
-  position-try-fallbacks:
-    flip-inline,
-    flip-block,
-    flip-inline flip-block,
-    --c-submenu-below,
-    --c-submenu-below-left,
-    --c-submenu-above,
-    --c-submenu-above-left;
 }
 
 :host(:focus) {

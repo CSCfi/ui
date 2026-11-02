@@ -395,7 +395,8 @@ describe.each(Object.keys(OVERLAY_RECIPES))(
           );
 
           expect(rounded(fallback.rect)).toBe(
-            NO_PLACEMENT_FITS.has(scenario) &&
+            !recipe.scripted &&
+              NO_PLACEMENT_FITS.has(scenario) &&
               nativeShifted !== rounded(native.rect)
               ? shiftedIntoViewport(fallback.rect, native.margins)
               : rounded(native.rect),

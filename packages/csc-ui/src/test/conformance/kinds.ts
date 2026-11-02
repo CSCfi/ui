@@ -424,6 +424,13 @@ export interface OverlayRecipe {
 
   /** The `[popover]` panel element. */
   panel(m: Mounted): HTMLElement;
+
+  /**
+   * Placed by script in every browser, never natively (ADR-0056, amended
+   * 2026-11-02): the panel has no native placement to match, so without the
+   * feature it must land exactly where it does with it.
+   */
+  scripted?: boolean;
 }
 
 const TRIGGER = '<c-button slot="trigger">Open</c-button>';
@@ -515,6 +522,7 @@ export const OVERLAY_RECIPES: Record<string, OverlayRecipe> = {
     },
     panel: (m) =>
       inner(m.host.querySelector('c-menu-item'), '[part~="submenu-panel"]'),
+    scripted: true,
   },
   'c-popover': {
     focusHome: (m) => m.host.querySelector('c-button'),
