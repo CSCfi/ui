@@ -1,5 +1,651 @@
 # @cscfi/csc-ui
 
+## 4.0.0-rc.1
+
+### Major Changes
+
+- [#311](https://github.com/CSCfi/ui/pull/311) [`9e9ffb8`](https://github.com/CSCfi/ui/commit/9e9ffb8a20d22d66bad4a411830bf1982d570e4f) Thanks [@razorfever](https://github.com/razorfever)! - Fixes and clean-ups that change the API:
+
+  - `target` defaults to `''` on `c-button` and `c-list-item`, as on a native
+    `<a>`: an `href` opens in the same tab. Add `target="_blank"` where you
+    relied on a new tab. Space on a `c-button` link now clicks it like Enter,
+    instead of opening a new window.
+  - `c-slider`'s `value`, `min`, `max`, `step` and `segments` are numbers, and
+    its events carry numbers; `unit` defaults to no unit (add `unit="%"`).
+  - `hidden` now hides any `c-*` element, as it hides any element.
+  - `c-table`'s `updateMobileLabels()` is documented and typed.
+  - `c-progress-bar`'s `label` names the progress bar for assistive technology.
+  - `c-navigation-button` has an accessible name, "Menu" by default, set with
+    `texts.label` (also as an app default).
+  - `c-tabs`' overflow arrows are named, and `c-sub-navigation-item` no longer
+    reads ", Current page" after the current item (`aria-current` says it).
+  - `c-color-picker` no longer lists the unused `separator` part.
+
+- [#311](https://github.com/CSCfi/ui/pull/311) [`9994f37`](https://github.com/CSCfi/ui/commit/9994f373702c3e0a011bf2fa3f479e181267e499) Thanks [@razorfever](https://github.com/razorfever)! - `c-data-table`:
+
+  - `change:selected` carries the selected ids, `string[]` — the new
+    `selected`, as a value event carries its value. The selected row objects
+    are the new read-only `selectedRows` property.
+  - `filter` (the client-side search string) is renamed `query`, so it no longer
+    shares its name with `c-autocomplete`'s and `c-tree-select`'s `filter`
+    predicate.
+
+- [#311](https://github.com/CSCfi/ui/pull/311) [`aefa9de`](https://github.com/CSCfi/ui/commit/aefa9de53bec67f1047cb27f453d4f4b2cb8046e) Thanks [@razorfever](https://github.com/razorfever)! - `c-data-table` announces a sort (`aria-sort`, and the sorted column's tint)
+  only on a `sortable` column: a `sort` naming another column sorts nothing, but
+  was announced as sorted. `change:sort` is typed `CDataTableSort`, as it never
+  carries `null`.
+
+  The manifest, and the editor data built from it, no longer list a `sort`
+  attribute on `c-data-table` (it takes an object; set the `sort` property), and
+  list the `value` attributes of `c-date-picker`, `c-time-picker` and
+  `c-tree-select` as the string (or number) they take.
+
+- [#311](https://github.com/CSCfi/ui/pull/311) [`4fc6389`](https://github.com/CSCfi/ui/commit/4fc6389516c8be7614ace3fe9d47d1e4658526d2) Thanks [@razorfever](https://github.com/razorfever)! - Names that now follow the library's glossary:
+
+  - `c-alert`: `dismissible` → `closeable`, the `dismiss` event → `close`
+    (`onClose` in React) and the `dismiss` part → `close`, as on every other
+    closeable component. `type` drops `'default'`: leave it unset for the
+    neutral look, as on `c-status`. `CAlertIconType` is no longer exported.
+  - `c-accordion-item`: the `header` slot → `heading`, like the `heading` prop.
+    A leftover `slot="header"` renders nothing.
+  - `c-loader`: `contentdelay` (seconds) → `content-delay` (milliseconds):
+    `contentdelay="1"` becomes `content-delay="1000"`.
+  - `c-data-table`: the `selectAllItems` text → `selectAllRows`.
+
+- [#311](https://github.com/CSCfi/ui/pull/311) [`67a3e09`](https://github.com/CSCfi/ui/commit/67a3e0960a958aef32a343496ad3d589ecdbf295) Thanks [@razorfever](https://github.com/razorfever)! - `c-input` and `c-dropdown` are no longer public API (ADR-0075). They are the
+  pieces the form fields and `c-select` build themselves from, and consumers never
+  author them. They still register, but they are left out of
+  `custom-elements.json`, the IDE data and the element types (`CInputElement`,
+  `CDropdownElement`), and `@cscfi/csc-ui-react` no longer exports `CInput`. The
+  manifest names them in `csc.internalTags`.
+
+- [#311](https://github.com/CSCfi/ui/pull/311) [`ba39ece`](https://github.com/CSCfi/ui/commit/ba39ece821d0ca411780b125109aa7e8ac90952a) Thanks [@razorfever](https://github.com/razorfever)! - The events composed children send only to their parent are no longer public
+  API (ADR-0075): `c-tab`'s `tabChange` and `tabFocus`, `c-tab-buttons`'
+  `tabChange`, `c-tab-item`'s `contentChange`, `c-accordion-item`'s
+  `item-change` and `c-radio`'s `change`. They have lowercase internal names now,
+  stop at the parent, and are left out of `custom-elements.json`, the element
+  types and the React wrapper (`onTabChange`, `onTabFocus`, `onContentChange`,
+  `CAccordionItem`'s `onItemChange`, `CRadio`'s `onChange`). Listen on the
+  parent: `c-tabs`, `c-accordion` and `c-radio-group` report the value.
+  `c-select` no longer lets its inner list's `selectOption` and
+  `dropdownStateChange` reach the page.
+
+  Fixed: toggling an item of an accordion nested inside another accordion's item
+  no longer changes the outer accordion's value too.
+
+- [#311](https://github.com/CSCfi/ui/pull/311) [`980729e`](https://github.com/CSCfi/ui/commit/980729ecc991f3363fc310c5e489a82185726a74) Thanks [@razorfever](https://github.com/razorfever)! - Props, slots and methods that only a parent component sets or calls are now
+  internal (ADR-0075): they leave the manifest, the IDE data, the element types
+  and the React wrapper, and no release promises anything about them.
+
+  - `c-tab` `active`, `c-tab-item` `active`, `c-tab-items` `value` and
+    `disable-animation`, and `c-tab-buttons` `value`: `c-tabs` sets them from its
+    own `value` and `disable-animation`. `c-tab` loses `host-id`, `position` and
+    `setsize`; a plain `id` on a tab or a panel now stays, where `c-tabs` used to
+    replace it.
+  - `c-accordion-item` `expanded`, `collapsable` and `outlined`: `c-accordion`
+    sets them. Style an expanded item with `c-accordion-item:state(expanded)`.
+  - `c-step` `current` and `complete` (`c-steps` sets them from its `value`),
+    `c-list-item` `disabled-by-parent`, `c-list-item-title` `active`, `c-button`
+    `no-ripple`, and `focusable` on `c-side-navigation-item` and
+    `c-sub-navigation-item`.
+  - The slots a component assigns its own children to: `c-breadcrumb` `first`
+    and `folded`, `c-side-navigation-item` `sub-item`.
+  - `c-menu-item`'s `openSubmenu()`, `closeSubmenu()` and `isSubmenuOpen()`.
+
+  The package entry no longer exports the `C*Props` types (use the `C*Element`
+  types), `migratedTags` or `tailwindVariantTags`.
+
+- [#311](https://github.com/CSCfi/ui/pull/311) [`7b75a71`](https://github.com/CSCfi/ui/commit/7b75a71c915da1e83dcdf6591c18e56498862fcd) Thanks [@razorfever](https://github.com/razorfever)! - `c-menu-item` says what it is instead of reading a three-state `active`:
+  `type="radio"` makes it one choice of several, `checked` marks the current
+  one (a check mark and `aria-checked`), and the default `type="command"` is a
+  plain item that never shows a check. The `icon` prop (an SVG path) becomes
+  an `icon` slot, so put a `<c-icon slot="icon">` there; `active-icon` is
+  removed. `c-menu`'s `select` detail is typed `{ value: string | undefined }`.
+
+- [#311](https://github.com/CSCfi/ui/pull/311) [`24fe47a`](https://github.com/CSCfi/ui/commit/24fe47a4006826c8c843e9f24fba844e0c6d03f8) Thanks [@razorfever](https://github.com/razorfever)! - Escape closes every `c-modal` again, as in 3.x and as on a native dialog.
+  `dismissable` now governs only the backdrop click: a non-dismissable modal
+  still nudges when the backdrop is clicked, but no longer when Escape is
+  pressed. Any modal can therefore close itself: a page that sets `value`
+  one way (`:value="open"`) must also listen for `change` or use `v-model`,
+  or its state stays open and setting it to `true` again does nothing.
+
+- [#311](https://github.com/CSCfi/ui/pull/311) [`948d91c`](https://github.com/CSCfi/ui/commit/948d91c7949ff24ec01c56d7ab198adb785a8c00) Thanks [@razorfever](https://github.com/razorfever)! - No boolean prop defaults to `true` any more (ADR-0076), so markup can set
+  every one of them: an absent attribute means `false`.
+
+  - `valid` is renamed `invalid`, with the opposite meaning, on every field,
+    `c-checkbox`, `c-radio-group`, `c-otp-input`, `c-message` and
+    `c-file-upload`: `:valid="!error"` becomes `:invalid="!!error"`, and a bare
+    `invalid` attribute now shows the error, where `valid="false"` showed none.
+    A leftover `valid` is ignored.
+  - `c-loader`'s `visible` is renamed `hide` (its 3.x name), with the opposite
+    meaning; its `show()` and `hide()` methods are removed — set `hide`.
+
+- [#311](https://github.com/CSCfi/ui/pull/311) [`cdcc47f`](https://github.com/CSCfi/ui/commit/cdcc47fbdba9cbc918a632a3cd8f90939b11e1a4) Thanks [@razorfever](https://github.com/razorfever)! - `c-pagination`'s value is `{ itemCount, page, pageSize, … }`, matching
+  `c-data-table`: `currentPage` is `page` and `itemsPerPage` is `pageSize`. The
+  pagination no longer writes into your object; each pick emits a new value with
+  `startFrom` and `endTo`, and nothing is emitted at mount or when you set
+  `value`.
+
+  `textOverrides` is replaced by a `texts` prop (`CPaginationTexts`), which works
+  as an app default too: `pageSize`, `previousPage`, `nextPage`,
+  `range(start, end, count)`, `page(page, pageCount)` and `pagination`, the
+  landmark's name. `c-data-table`'s `texts` takes the same keys for its
+  pagination.
+
+  The page-size menu's `select` no longer reaches the page.
+
+  The ellipsis between runs of page buttons is hidden from assistive
+  technology: it was a focusable separator.
+
+- [#311](https://github.com/CSCfi/ui/pull/311) [`b20fe9d`](https://github.com/CSCfi/ui/commit/b20fe9d4a95686fa12e0ddc2126e2aa49709760f) Thanks [@razorfever](https://github.com/razorfever)! - Parts renamed to the library's vocabulary, so a `::part()` rule reads the
+  same across components:
+
+  - A list row is `option` on `c-select`, `c-autocomplete` and
+    `c-tree-select` (was `item`), as on the pickers.
+  - `c-select`'s panel is `panel` and `card` (was `menu`), as on the other
+    value fields: a `::part(card)` rule now styles every field's panel.
+  - `c-checkbox`: the label text is `label`, as on `c-switch` (was
+    `content`); the row around box and text has no part.
+  - `c-color-picker`: `color-chip` → `value-color`.
+  - `c-login-button`: `title` → `label`.
+  - `c-menu-item`: `submenu` → `submenu-list`, beside `submenu-panel`.
+  - `c-side-navigation-title`: `label` → `heading`.
+  - `c-time-picker`: `end-tab` → `end`.
+
+- [#311](https://github.com/CSCfi/ui/pull/311) [`4aee2cd`](https://github.com/CSCfi/ui/commit/4aee2cd7a9d4ac11cd1fc18cf51f1b9002c17c79) Thanks [@razorfever](https://github.com/razorfever)! - The attribute names 3.x markup used work again (they had been replaced
+  during the alphas, so 3.x markup stopped reaching the component silently):
+
+  - `autofocus` on `c-text-field` and `c-otp-input` (was `has-autofocus` on
+    `c-otp-input`; `c-text-field` had none).
+  - `autocapitalize` on `c-text-field` (was `automatic-capitalize`).
+  - `name` on `c-checkbox` and `c-slider` (was `host-name`).
+  - `aria-label` on `c-slider` names its range input (`aria-label-internal` is
+    removed, and no longer shows up in the visible label).
+
+  `host-id` (on every field, `c-button`, `c-checkbox`, `c-switch` and
+  `c-slider`) and `element-id` (`c-otp-input`) are removed: an id inside a
+  component's shadow root cannot be reached from your page's `for` or `aria-*`.
+  An `id` stays on the element itself, as on any element; `c-otp-input` no
+  longer overwrites it. `c-message`'s unused `input-id` and `c-otp-input`'s
+  undocumented `reset()` are removed.
+
+- [#311](https://github.com/CSCfi/ui/pull/311) [`1aa4ac9`](https://github.com/CSCfi/ui/commit/1aa4ac94acbf766d7623919cb700127365a817e9) Thanks [@razorfever](https://github.com/razorfever)! - `c-side-navigation`'s `menu-visible` is renamed `open`, and
+  `change:menu-visible` is `change:open` (`onChangeOpen` in React). It now fires
+  whenever the user opens or closes the drawer: a `c-navigation-button`, the
+  close button, the backdrop, or activating an item, which closes the drawer.
+  Enter on a `c-navigation-button` opens the drawer again; it used to toggle it
+  twice.
+
+  Inline-style props are removed (ADR-0006): `c-side-navigation`'s `styles` and
+  `c-link`'s `weight`. Restyle through `::part()`, e.g.
+  `c-link::part(root) { font-weight: 400; }`.
+
+- [#311](https://github.com/CSCfi/ui/pull/311) [`ab62239`](https://github.com/CSCfi/ui/commit/ab622392c5424ba978cbd242171bd01627f297ed) Thanks [@razorfever](https://github.com/razorfever)! - `c-side-navigation-item` fires `select` instead of `itemChange` when it is
+  activated (ADR-0075), as `c-menu` does: the detail is `{ value }`, from the
+  item's new `value` prop, instead of the originating DOM event. In React,
+  `onItemChange` becomes `onSelect`.
+
+  `c-sub-navigation-item` gains the same `value` prop and `select` event, so a
+  sub-item no longer needs `click` and `keyup` listeners. Both events bubble, so
+  one `select` listener on `c-side-navigation` can route every item. An item
+  nested in another item's sub-items no longer stops its event from reaching the
+  page.
+
+- [#311](https://github.com/CSCfi/ui/pull/311) [`e3b90a9`](https://github.com/CSCfi/ui/commit/e3b90a99c3694db48e4d4a25ca203ac2cc79f19f) Thanks [@razorfever](https://github.com/razorfever)! - `texts` keys renamed after what they name:
+
+  - `c-number-field`: `increase` / `decrease` → `stepUp` / `stepDown`, as its
+    `step-up` / `step-down` parts.
+  - `c-tree-select`: `select` → `selectBranch` (the select-branch row) and
+    `step` → `levelCounter`.
+  - `c-file-upload`: `waiting` → `queued` (the row's status) and `dismiss` →
+    `close` (a rejected row's close button), whose default now reads
+    "Close …".
+
+- [#311](https://github.com/CSCfi/ui/pull/311) [`ffe2644`](https://github.com/CSCfi/ui/commit/ffe2644d8307b9043dc30d2496ba10a6f5dcf551) Thanks [@razorfever](https://github.com/razorfever)! - `c-toast` is internal: `c-toasts` renders one for each `addToast()` message,
+  so it has no docs page, element type or React component of its own any more
+  (ADR-0075). What it offered moves to `c-toasts`:
+
+  - A toast's parts are forwarded as `toast-root`, `toast-item`, `toast-badge`,
+    `toast-content`, `toast-close`, `toast-custom` and `toast-progress`, so
+    `c-toasts::part(toast-root)` styles every toast. The close button's part is
+    `close` (it was `dismiss`).
+  - `c-toasts` fires `close` once a toast has left, carrying its message.
+  - `addToast()` returns the message's `id`, the one `removeToast()` takes,
+    and generates one when the message has none.
+
+  A message's `title` is renamed `heading` (`CToastMessage.heading`). A plain
+  JavaScript message that still sets `title` shows no heading.
+
+- [#311](https://github.com/CSCfi/ui/pull/311) [`ce1432d`](https://github.com/CSCfi/ui/commit/ce1432d78528336c041103b3915422a548a38df9) Thanks [@razorfever](https://github.com/razorfever)! - Tokens that nothing should depend on are removed:
+
+  - the `ring` semantic role (`--c-ring` and the `ring-*` colour utility); no
+    component painted it;
+  - the Stencil-era `--c-text-dark`, `--c-text-light`, `--c-text-body`,
+    `--c-text-system` and `--c-transparent`. Use the semantic roles, such as
+    `--c-on-surface` and `--c-on-surface-muted`, which follow dark mode.
+    `c-pagination` and `c-navigation-button`, which still used
+    `--c-text-system`, now use `on-surface-muted`, so their text reads in dark
+    mode too.
+
+  `c-icon`'s `--c-icon-color` hook is private (`--_c-icon-color`), as every
+  per-component custom property is (ADR-0006): recolour an icon with its `color`
+  or through `::part(root)`.
+
+- [#311](https://github.com/CSCfi/ui/pull/311) [`4898c0d`](https://github.com/CSCfi/ui/commit/4898c0db37dcf4848ff906c95897fde81b90db4a) Thanks [@razorfever](https://github.com/razorfever)! - Type changes:
+
+  - `CPlacement` is split into `CMenuPosition`, `CPopoverPosition` and
+    `CTooltipPosition`, each owned by its component; the unions are the same.
+  - The package-level types take the `C` prefix every other exported type has:
+    `CFamily`, `CThemeSeeds`, `CThemeMode`, `CAppDefaults`, `CDefaultableTag`,
+    `CChartAnatomy` and `CChartSlots`.
+  - `c-accordion`'s value type is exported as `CAccordionValue`.
+  - Numbers that took `number | string` are `number`: `distance` on `c-menu`,
+    `c-popover` and `c-tooltip`, `c-tooltip`'s `delay` and `c-steps`' `value`.
+    Attributes still work (`value="3"` reads as `3`).
+  - `c-progress-circle`'s `width` is renamed `thickness`.
+
+- [#311](https://github.com/CSCfi/ui/pull/311) [`8bab4d4`](https://github.com/CSCfi/ui/commit/8bab4d4d1d2358cb8a91e0e3821694800ccd8f55) Thanks [@razorfever](https://github.com/razorfever)! - Every value control reports through one set of events with native `<input>`
+  timing (ADR-0075). `changeValue` and its `change-value` twin are gone from
+  `c-accordion`, `c-autocomplete`, `c-checkbox`, `c-modal`, `c-otp-input`,
+  `c-pagination`, `c-radio-group`, `c-select`, `c-slider`, `c-switch`, `c-tabs`
+  and `c-text-field`, and with them the React wrapper's `onChangeValue`.
+
+  - `input` (no detail) and `update:value` (the value) fire on every value
+    change, `change` (the value) on every commit: Enter or leaving the field for
+    typed text, each pick or toggle, each arrow-key step, the release that ends a
+    drag. A commit with nothing changed since the last one fires nothing.
+  - `change` now carries the value on `c-text-field`, `c-checkbox`, `c-switch`
+    and `c-autocomplete`, and no longer bubbles out of the component.
+  - `c-number-field`'s `change` fires on commit instead of on every keystroke,
+    and `c-slider`'s once on release instead of on every move. Listen for
+    `update:value` (or `onUpdateValue` in React) to follow every change.
+  - `c-otp-input`'s value is the digits entered so far everywhere — the `value`
+    property, `update:value` and `change` — and `''` when empty; the `value`
+    property used to read `null` until the code was complete. A set `value` of
+    `''` now clears the digits, and `completion` is typed `string`.
+
+  Vue templates bind `v-model`, `@input` reading the element's `value`, or
+  `@change`; they cannot hear `update:value`.
+
+  Fixed: `c-modal` sent its value events twice for every dismissal, and also for
+  a `value` set to `false` by the page. `c-tabs` sent them twice for Enter on a
+  tab, and now sends nothing when the current tab is activated again.
+
+- [#311](https://github.com/CSCfi/ui/pull/311) [`d9d7177`](https://github.com/CSCfi/ui/commit/d9d717737cc041903ce31a272d9f74e212ed6ce2) Thanks [@razorfever](https://github.com/razorfever)! - Value controls announce only what the user does (ADR-0075):
+
+  - `<c-option selected>` sets the initial value of `c-select` and
+    `c-autocomplete` once, only while the value is empty, and without a value
+    event. `c-select` used to emit on every change to its options and override
+    a bound value. With a bound value, initialise the model instead.
+  - `reset()` is removed from `c-select` and `c-autocomplete`: it announced a
+    value set from code. Set `value` to `null` (`[]` with `multiple`).
+  - `c-checkbox` and `c-switch` hold one state: `value` is it, and `checked` is
+    its boolean view. Setting `checked` sets `value` to `true-value` or
+    `false-value`, setting `value` updates `checked`, and a bound `value` wins
+    over a `checked` attribute. `value` has no built-in default any more.
+  - The `''` a plain Vue `v-model` writes for an empty model no longer checks a
+    `c-checkbox` or `c-switch`.
+
+### Minor Changes
+
+- [#311](https://github.com/CSCfi/ui/pull/311) [`3cd86e3`](https://github.com/CSCfi/ui/commit/3cd86e37d513eab05c28a334308634c9c64c172f) Thanks [@razorfever](https://github.com/razorfever)! - `aria-labelledby`, `aria-describedby`, `aria-controls` and the other ARIA
+  attributes that point at elements by id now work on the components. They did
+  nothing before: each component now hands the elements the ids name to its
+  control (a field's input, a button, a dialog, a tablist, a landmark). `c-modal`
+  and `c-popover` can be named by `aria-labelledby` pointing at a title in their
+  content. Without a `label`, `c-button-group` and `c-tags` become a named group
+  when `aria-label` or `aria-labelledby` is set.
+
+- [#311](https://github.com/CSCfi/ui/pull/311) [`17d17a7`](https://github.com/CSCfi/ui/commit/17d17a7bf1925174f5d4acd4b4dfd45639784e2f) Thanks [@razorfever](https://github.com/razorfever)! - `c-card-title` and `c-login-card-title` are headings, so cards appear in the
+  page's heading outline; they were plain text to assistive technology. The new
+  `heading-level` (1 to 6, default 2) sets the level that fits where the cards
+  sit, such as 3 inside a section headed by an `h2`. Their look is unchanged.
+
+- [#311](https://github.com/CSCfi/ui/pull/311) [`0dcdad8`](https://github.com/CSCfi/ui/commit/0dcdad80e16e642c91b421d39dfd4ec116da12cb) Thanks [@razorfever](https://github.com/razorfever)! - `c-data-table` accessibility fixes:
+
+  - A row's checkbox and expander are named after the row ("Select Aurora",
+    "Details of Aurora", from its value in the first visible column) instead of
+    one "Select row" and "Toggle row expansion" for every row. `texts.selectRow`
+    and `texts.expandRow` also take a function of that value; a string still
+    names every row alike.
+  - The select-all banner's message is announced, the first one included.
+  - The table is `aria-busy` while `loading`.
+
+- [#311](https://github.com/CSCfi/ui/pull/311) [`20d0836`](https://github.com/CSCfi/ui/commit/20d0836bc6e0c72c8d9c9c48fded9696d9af55eb) Thanks [@razorfever](https://github.com/razorfever)! - `focus()` on a form control now focuses it. The element renders no box of
+  its own, so calling `focus()` on a field, `c-checkbox`, `c-switch`,
+  `c-slider`, `c-radio-group`, `c-button-group`, `c-otp-input` or
+  `c-file-upload` did nothing; each now focuses its input or combobox, its
+  checked radio or selected button, its first digit box or its drop zone. After
+  a failed submit, an app can move focus to the first invalid field, and a
+  screen reader reads its error message.
+
+- [#311](https://github.com/CSCfi/ui/pull/311) [`161b9eb`](https://github.com/CSCfi/ui/commit/161b9eb2d24b1b99ce4f25dc55ee8d67711bee63) Thanks [@razorfever](https://github.com/razorfever)! - `c-otp-input` tells assistive technology about its state: `required` marks
+  every digit box `aria-required` and `invalid` every box `aria-invalid`, and
+  each box is described by the hint or error message. The message is styleable
+  as `::part(message)`.
+
+- [#311](https://github.com/CSCfi/ui/pull/311) [`35e64b0`](https://github.com/CSCfi/ui/commit/35e64b00118507f7ae6c7e1b9d0cf0e517d10f1c) Thanks [@razorfever](https://github.com/razorfever)! - The React `CCardTitle` and `CLoginCardTitle` take `headingLevel`.
+
+- [#311](https://github.com/CSCfi/ui/pull/311) [`527b77a`](https://github.com/CSCfi/ui/commit/527b77a28071bffa6769acc5d8641a3966d69b3d) Thanks [@razorfever](https://github.com/razorfever)! - Toasts can be swiped away (ADR-0073). Drag a toast left or right with a mouse,
+  finger or pen and let go past a third of its width, or flick it, to dismiss it
+  as its dismiss button does; a shorter drag springs back, and a vertical drag
+  still scrolls the page. Only toasts with a dismiss button can be swiped, so
+  custom and indeterminate toasts are unchanged. Pressing a toast now pauses its
+  timer the way hovering does, so touch users can hold a toast up while they read
+  it. When a toast arrives or leaves, the others in `c-toasts` glide to their new
+  places instead of jumping. Under reduced motion the toast still follows the
+  pointer, but a dismissed toast fades where it was let go and the stack moves in
+  one step.
+
+- [#311](https://github.com/CSCfi/ui/pull/311) [`ee79afb`](https://github.com/CSCfi/ui/commit/ee79afbfec25bcfd5afc6e9e1039de7b546a7a3f) Thanks [@razorfever](https://github.com/razorfever)! - The manifest, the IDE data and the element docs list a `value` attribute on
+  `c-select`, `c-autocomplete`, `c-accordion` and `c-button-group`, typed with
+  its string and number form (`value="fi"`). The attribute always worked, as it
+  did in 3.x, but went undocumented because the property also takes objects and
+  arrays.
+
+### Patch Changes
+
+- [#311](https://github.com/CSCfi/ui/pull/311) [`9026190`](https://github.com/CSCfi/ui/commit/902619062d39587e77d7369e588594d201d772ba) Thanks [@razorfever](https://github.com/razorfever)! - `c-accordion` sets up items added after it mounts: an item the `value` names
+  opens, and `outlined` reaches it. In a `multiple` accordion a single `value`
+  counts as the first expanded item instead of being dropped at the first toggle.
+
+- [#311](https://github.com/CSCfi/ui/pull/311) [`c0421b9`](https://github.com/CSCfi/ui/commit/c0421b9ba4dbd13c1f35b93f5ad0d1b4027825da) Thanks [@razorfever](https://github.com/razorfever)! - A `c-alert` without a `type` no longer shows an icon. Only the four status
+  types (`error`, `info`, `success`, `warning`) have one; the neutral alert keeps
+  its brand-primary colours and accent edge.
+
+- [#311](https://github.com/CSCfi/ui/pull/311) [`63b6bae`](https://github.com/CSCfi/ui/commit/63b6bae50f37af0a930a67282d1c264e7188cc52) Thanks [@razorfever](https://github.com/razorfever)! - Each `c-breadcrumb-item` is a list item of its breadcrumb's list (and of the
+  fold panel's list), so assistive technology hears the crumbs as a list with
+  their count; the list item used to sit inside the crumb, out of the list's
+  reach.
+
+- [#311](https://github.com/CSCfi/ui/pull/311) [`195b86b`](https://github.com/CSCfi/ui/commit/195b86ba9e18d7586515258e29034ced61c56781) Thanks [@razorfever](https://github.com/razorfever)! - `<c-button type="submit">` submits the form around it again, and
+  `type="reset"` resets it, as they did in 3.x; in 4.x alphas neither did
+  anything, since the native button inside the component belongs to no form.
+
+- [#311](https://github.com/CSCfi/ui/pull/311) [`0f68a7f`](https://github.com/CSCfi/ui/commit/0f68a7ff23e31fbab9aa49aad90a2090859220db) Thanks [@razorfever](https://github.com/razorfever)! - `c-card` fixes for `fullscreen` cards:
+
+  - `c-card-title` keeps its text and `actions` clear of the fullscreen toggle,
+    which used to cover the last 32px of the actions.
+  - `exitFullscreen()` and the toggle end only the card's own fullscreen; they
+    used to end whatever element was fullscreen.
+
+- [#311](https://github.com/CSCfi/ui/pull/311) [`fcca2f7`](https://github.com/CSCfi/ui/commit/fcca2f7a34169c20e03b631a7fe7c964101529da) Thanks [@razorfever](https://github.com/razorfever)! - `c-card-content` and `c-login-card-content` no longer nest a second
+  `<article>` inside the card's, and the `c-card-actions` and
+  `c-login-card-actions` rows are no longer announced as lists of actions they
+  did not contain as list items.
+
+- [#311](https://github.com/CSCfi/ui/pull/311) [`ebbbc0c`](https://github.com/CSCfi/ui/commit/ebbbc0c4e1fb515a2abc1397e6b3ca2f131401c2) Thanks [@razorfever](https://github.com/razorfever)! - A click or Space on an indeterminate `c-checkbox` now clears `indeterminate`
+  and toggles the checkbox, as on a native checkbox. Before, the bar stayed and
+  screen readers kept announcing "mixed" until the page cleared the property,
+  even though the checkbox had changed. `indeterminate` reads `false` by the
+  time `change` fires. A binding writes it only when its value changes, so when a
+  click leaves the options partly checked, set the element's `indeterminate` in
+  your `change` handler.
+
+- [#311](https://github.com/CSCfi/ui/pull/311) [`0885ed5`](https://github.com/CSCfi/ui/commit/0885ed53e2186716930294f203472d5b3cbc9560) Thanks [@razorfever](https://github.com/razorfever)! - An `aria-label` (and any other ARIA attribute) on `c-checkbox`, `c-switch`,
+  `c-radio` or `c-progress-bar` reaches the native control inside: it used to
+  land on a wrapper or be dropped, leaving the control unnamed. Every other
+  attribute stays where it was.
+
+- [#311](https://github.com/CSCfi/ui/pull/311) [`cb16cd4`](https://github.com/CSCfi/ui/commit/cb16cd4a93425e2f025da3f9e519d1b243755b7e) Thanks [@razorfever](https://github.com/razorfever)! - `c-csc-logo` is an image named "CSC"; it was named by its file title,
+  "CSC_logo_no_tagline". An `aria-label` on the element names it instead.
+
+- [#311](https://github.com/CSCfi/ui/pull/311) [`3a54c7e`](https://github.com/CSCfi/ui/commit/3a54c7e3e8bdc30797782e9d12ac4fddda3211be) Thanks [@razorfever](https://github.com/razorfever)! - A component's methods and read-only properties (`startUploads()`,
+  `unmaskedValue`, `badInput`, …) keep working after its element leaves the page
+  and comes back, as under Vue's `<KeepAlive>` or in a reordered list. They
+  went on reaching the first, unmounted instance (a stale value, a method that
+  did nothing), and Vue logged an "already exists" warning for each.
+
+- [#311](https://github.com/CSCfi/ui/pull/311) [`1083659`](https://github.com/CSCfi/ui/commit/108365905e90cfc83d55bbdaca3ff7c858f8d806) Thanks [@razorfever](https://github.com/razorfever)! - An `aria-label` on a field without a visible `label` names its input.
+  `c-text-field`, `c-number-field`, `c-select`, `c-autocomplete`,
+  `c-tree-select` and `c-color-picker` without one (a search field, say) had an
+  unnamed input, and the date and time pickers read "Choose date" / "Choose
+  time". The element's other ARIA attributes (such as `aria-description`) reach
+  the input too.
+
+- [#311](https://github.com/CSCfi/ui/pull/311) [`23e6be6`](https://github.com/CSCfi/ui/commit/23e6be6d33c9a783a69fd6e6519ad2d0341b1858) Thanks [@razorfever](https://github.com/razorfever)! - `c-text-field` and `c-number-field` name their input from `label`, as the
+  other fields do. The visible label's `for` cannot reach an input in another
+  shadow root, so assistive technology announced these fields without a name.
+
+- [#311](https://github.com/CSCfi/ui/pull/311) [`2e2b4a4`](https://github.com/CSCfi/ui/commit/2e2b4a4e83bf0e7f9ff5d97088dedcb8e7845a16) Thanks [@razorfever](https://github.com/razorfever)! - A field with a visible `label` is named by it even when the element also has
+  an `aria-label`, so its accessible name always matches the text on screen (a
+  voice-control user can say the label). The `aria-label` names only a field
+  without a `label`.
+
+- [#311](https://github.com/CSCfi/ui/pull/311) [`b3cdd75`](https://github.com/CSCfi/ui/commit/b3cdd75103919f2651dea38b65825338b4e740b0) Thanks [@razorfever](https://github.com/razorfever)! - Screen readers read a control's hint and error message with it. The form
+  fields, `c-checkbox`, `c-radio-group` and `c-file-upload` showed the text
+  below the control but never linked it, so it was announced only to someone
+  reading the page line by line; the control is now described by it
+  (`aria-describedby`). The fields also gain a `message` part for that text,
+  which `::part(message)` styles.
+
+- [#311](https://github.com/CSCfi/ui/pull/311) [`7ef0950`](https://github.com/CSCfi/ui/commit/7ef09509787f302a5786ff49fcfb2c9f7b2cc7b5) Thanks [@razorfever](https://github.com/razorfever)! - ARIA attributes set on a component now reach its inner element under their
+  own names. Before, an attribute whose DOM property is not spelled like its
+  name arrived mangled: `aria-haspopup` on `c-icon-button` (and on the date,
+  time and colour pickers' buttons) became a meaningless `ariahaspopup`, and
+  `aria-label` on `c-icon` never named the icon. A `c-icon` with an
+  `aria-label` is now an image with that name, and `c-link` forwards ARIA
+  attributes and `rel`, `download`, `hreflang`, `ping`, `referrerpolicy` and
+  `type` to its link.
+
+- [#311](https://github.com/CSCfi/ui/pull/311) [`d6253fe`](https://github.com/CSCfi/ui/commit/d6253febb5dea5f64a865d952559bb8fc9059523) Thanks [@razorfever](https://github.com/razorfever)! - ARIA attributes that hold element ids (`aria-controls`, `aria-labelledby`,
+  `aria-describedby`, `aria-owns`, `aria-activedescendant`, `aria-details`,
+  `aria-errormessage`, `aria-flowto`) stay on the component you set them on.
+  Copied onto the element inside it, they pointed at nothing, since an id inside
+  a component cannot reach your page's elements.
+
+- [#311](https://github.com/CSCfi/ui/pull/311) [`b73ba04`](https://github.com/CSCfi/ui/commit/b73ba048f38129b171a0f8bb83afd6ac2bdaeb0d) Thanks [@razorfever](https://github.com/razorfever)! - `data-*` attributes set on a component stay on the component: they are no
+  longer copied onto the element inside it, so a selector such as
+  `[data-test="save"]` (in Playwright, which looks inside shadow roots too)
+  matches the component alone.
+
+- [#311](https://github.com/CSCfi/ui/pull/311) [`5eaa4c8`](https://github.com/CSCfi/ui/commit/5eaa4c880ef431be047ab1b8389f7895b152ab22) Thanks [@razorfever](https://github.com/razorfever)! - A disabled `c-icon-button` dims its icon in dark mode as a disabled `c-button`
+  does; it used the bright hint-text colour, so it looked enabled there.
+
+- [#311](https://github.com/CSCfi/ui/pull/311) [`09a6aa2`](https://github.com/CSCfi/ui/commit/09a6aa28f7fc944a818d5a1ed79e0f295fed5581) Thanks [@razorfever](https://github.com/razorfever)! - A `loading` `c-icon-button` is announced as busy and unavailable
+  (`aria-busy`, `aria-disabled`), and keeps its slotted content in place, hidden
+  visually: visually hidden text that names the button no longer disappears
+  while it loads.
+
+- [#311](https://github.com/CSCfi/ui/pull/311) [`529ea29`](https://github.com/CSCfi/ui/commit/529ea29065a1562cf5fee80e071ee5576676872e) Thanks [@razorfever](https://github.com/razorfever)! - `c-list-item` accessibility fixes:
+
+  - Enter and Space press a `ripple` item, firing `click` as a mouse click does;
+    they used to play the ripple only.
+  - A link item (`href`) shows the focus ring on its link.
+  - `active` is announced as the current item (`aria-current`).
+  - A `disabled` link item stops being a link, so Tab no longer reaches it; the
+    item no longer carries `aria-disabled`.
+
+- [#311](https://github.com/CSCfi/ui/pull/311) [`1badac5`](https://github.com/CSCfi/ui/commit/1badac566811e626859992e6ad0316f2ef3a5dc6) Thanks [@razorfever](https://github.com/razorfever)! - `c-login-button` without an `href` is a native button, which Enter and Space
+  press; it used to be a focusable link with no `href` that Enter did not
+  activate. With an `href` it is a link, as before.
+
+- [#311](https://github.com/CSCfi/ui/pull/311) [`a4a4ba4`](https://github.com/CSCfi/ui/commit/a4a4ba4364f86c562ebba2640decd692f0af8fe2) Thanks [@razorfever](https://github.com/razorfever)! - `c-login-card` shows an image whose `src` contains parentheses, quotes or
+  spaces, as a data URI often does; such an image used to be dropped.
+
+- [#311](https://github.com/CSCfi/ui/pull/311) [`acb5fd3`](https://github.com/CSCfi/ui/commit/acb5fd3e7fcebe542868de0075bc8a99cda8a7bc) Thanks [@razorfever](https://github.com/razorfever)! - `input` now fires once per value change. A native `input` from inside a
+  component no longer reaches the page beside the component's own: a text or
+  number field sent two per keystroke, and the date, time and colour pickers
+  sent one per keystroke although their value changes only when the typed text
+  is committed. Inputs of your own slotted into a component reach the page as
+  before.
+
+- [#311](https://github.com/CSCfi/ui/pull/311) [`d839916`](https://github.com/CSCfi/ui/commit/d8399164c24096d923057d35029a0c7c83c9219a) Thanks [@razorfever](https://github.com/razorfever)! - `c-otp-input` fixes:
+
+  - `hide-details` hides the hint and the error message.
+  - Clearing a box in the middle ends the value there; the digits after it no
+    longer move up into its place in the value.
+  - Only digits are taken: a typed space, and a pasted `1e5`, `0x1F`, `-12` or
+    `1.5`, are no longer accepted. Spaces and line breaks around a pasted code
+    are skipped.
+  - Changing `length` after the field mounts lays out the new number of boxes.
+  - The field no longer adds or removes an `error` class on the element, which
+    removed a class of that name you had set yourself.
+
+- [#311](https://github.com/CSCfi/ui/pull/311) [`19e3eda`](https://github.com/CSCfi/ui/commit/19e3eda99944274dedaac806619b99cabce3891e) Thanks [@razorfever](https://github.com/razorfever)! - `c-page`'s `scroll-indicator` shows above a pinned `c-toolbar` inside
+  `c-main`; the toolbar used to cover it.
+
+- [#311](https://github.com/CSCfi/ui/pull/311) [`626f3f5`](https://github.com/CSCfi/ui/commit/626f3f5dc0a01168dd10ff8c5365132862c21b8c) Thanks [@razorfever](https://github.com/razorfever)! - `c-page`'s scroll indicator measures without waiting for a scroll: at a
+  restored scroll position, when it is switched on, and when the viewport or the
+  page's content changes size.
+
+- [#311](https://github.com/CSCfi/ui/pull/311) [`4e1f86f`](https://github.com/CSCfi/ui/commit/4e1f86f945ebfa914801281af94419da929055e3) Thanks [@razorfever](https://github.com/razorfever)! - `c-pagination`'s page buttons are named by `texts.page` ("page 2 of 4"); the
+  name sat on an inner element that assistive technology ignores, so they were
+  read as bare numbers. The page-size button's name includes the current size
+  ("Items per page: 25").
+
+- [#311](https://github.com/CSCfi/ui/pull/311) [`2697ce6`](https://github.com/CSCfi/ui/commit/2697ce6f3f841f1c43da4b0c9d302d102a649b13) Thanks [@razorfever](https://github.com/razorfever)! - `c-pagination` ends the last page's `endTo` at the last item instead of a full
+  page further, and no longer puts the element's classes (or the 3.x
+  `c-pagination`, `c-pagination--small` and `c-pagination--simple` classes it
+  added itself) on its inner `<nav>`. An `aria-label` on the element still names
+  the navigation.
+
+- [#311](https://github.com/CSCfi/ui/pull/311) [`e867133`](https://github.com/CSCfi/ui/commit/e8671334330638728ad08073bd2231be883954db) Thanks [@razorfever](https://github.com/razorfever)! - An `indeterminate` `c-progress-bar` shows no percentage tooltip; it showed
+  "0 %".
+
+- [#311](https://github.com/CSCfi/ui/pull/311) [`7096dee`](https://github.com/CSCfi/ui/commit/7096dee851173d33319e03c1a636524230c9cff6) Thanks [@razorfever](https://github.com/razorfever)! - In Firefox, the dash between the start and end of a `range` `c-date-picker` or
+  `c-time-picker` now sits evenly between the two values. The start was as wide
+  as its character count, which left a wider gap before the dash than after it.
+
+- [#311](https://github.com/CSCfi/ui/pull/311) [`80ca8a3`](https://github.com/CSCfi/ui/commit/80ca8a3e9df0b90ec16aca572c2444941cf1b4e7) Thanks [@razorfever](https://github.com/razorfever)! - `@cscfi/csc-ui-react` components now set object, array and function props on
+  the element as properties. Before, `columns`, `data`, `items`, `texts`, render
+  functions and the like reached the element as `[object Object]` attributes,
+  so a `CDataTable`, `CSelect` with `items` or any `texts` override did not
+  work in React.
+
+- [#311](https://github.com/CSCfi/ui/pull/311) [`6726e8f`](https://github.com/CSCfi/ui/commit/6726e8f7a584f1126803426b8436814487557c29) Thanks [@razorfever](https://github.com/razorfever)! - In Safari, a `c-badge` on a `c-tab` is no longer cut off, the floating label
+  of `c-text-field`, `c-select` and the other fields keeps room for tall glyphs,
+  and `c-breadcrumb` no longer cuts the focus rings of its crumbs. They relied
+  on CSS `overflow-clip-margin`, which Safari does not support.
+
+- [#311](https://github.com/CSCfi/ui/pull/311) [`04cd574`](https://github.com/CSCfi/ui/commit/04cd5740565e7ba4b204a949f6611e82d9c79d12) Thanks [@razorfever](https://github.com/razorfever)! - `c-side-navigation` follows the WAI-ARIA disclosure navigation pattern:
+
+  - It is a `<nav>` landmark (named by an `aria-label` on the element) instead of
+    a `menubar` with no arrow-key support. Items and sub-items are links when
+    they have an `href` and buttons when not; a parent is a disclosure button
+    that controls its sub-items. A sub-item with an `href` is a real link (it
+    used to navigate by script).
+  - `c-side-navigation-title` is a heading (level 2).
+  - The open mobile drawer is a modal dialog: focus moves into it, the page
+    behind it is inert and stops scrolling, Escape closes it, and closing
+    returns focus to the navigation button.
+  - `c-navigation-button` reports the mobile drawer as expanded or collapsed.
+
+- [#311](https://github.com/CSCfi/ui/pull/311) [`75ab6d1`](https://github.com/CSCfi/ui/commit/75ab6d1d1535a6af4910a51eb915a1cba5d0aff0) Thanks [@razorfever](https://github.com/razorfever)! - `c-side-navigation` fixes:
+
+  - Sub-items added after the navigation mounts go under their item, which
+    becomes an expandable parent.
+  - A `c-navigation-button` no longer toggles a desktop (non-`mobile`)
+    navigation or fires `change:open` from it.
+  - Enter on an item with an `href` fires `select` once, not twice, and a nested
+    item with an `href` follows its link.
+
+- [#311](https://github.com/CSCfi/ui/pull/311) [`80f1a92`](https://github.com/CSCfi/ui/commit/80f1a92b6e9d786c8630e1e12ecf6aeb2684dbcd) Thanks [@razorfever](https://github.com/razorfever)! - `c-side-navigation`: activating an item or sub-item no longer sets its
+  `active`. Mark the current page's item `active` from your router or the URL:
+  a navigation the router cancels no longer leaves the clicked item highlighted.
+  A parent still expands and collapses itself.
+
+- [#311](https://github.com/CSCfi/ui/pull/311) [`8feb2a4`](https://github.com/CSCfi/ui/commit/8feb2a4713a27812577672769612f6febe03baeb) Thanks [@razorfever](https://github.com/razorfever)! - `c-slider`'s value bubble now stays centred over the handle in Firefox. As the
+  slider moved, the bubble drifted up to 10px off the handle towards either end,
+  and the handle sat 12px inside the track's end tick marks. The slider's handle
+  now runs the same track in every browser.
+
+- [#311](https://github.com/CSCfi/ui/pull/311) [`31248b7`](https://github.com/CSCfi/ui/commit/31248b74dc26f0ee6af29193179f14f7981f04a2) Thanks [@razorfever](https://github.com/razorfever)! - `c-slider` fixes:
+
+  - The tick marks, their numbers and the filled marks start at `min`; they
+    used to assume a range starting at 0.
+  - A value outside `min`..`max`, such as the built-in 50 on a slider with
+    `max="8"`, is shown at the end of the range instead of past it.
+  - The value bubble and the mark numbers follow the page's `lang` (they were
+    always Finnish) and show as many decimals as `step` has (they were always
+    rounded to whole numbers).
+
+- [#311](https://github.com/CSCfi/ui/pull/311) [`30bc5c6`](https://github.com/CSCfi/ui/commit/30bc5c6c04b946a3549bc2e2893ed455e1cd5112) Thanks [@razorfever](https://github.com/razorfever)! - `c-steps` keeps its connecting lines in step with its `c-step` elements: a step
+  added after the indicator mounts gets its line, a removed step takes its line
+  with it, and setting `value` after adding a step no longer throws.
+
+- [#311](https://github.com/CSCfi/ui/pull/311) [`8a11364`](https://github.com/CSCfi/ui/commit/8a113649243165b781ed266e5a3bd74b0dcb4031) Thanks [@razorfever](https://github.com/razorfever)! - `c-steps` is no longer a Tab stop (it has nothing to operate), and its
+  screen-reader summary is a polite status region, so a step change is
+  announced.
+
+- [#311](https://github.com/CSCfi/ui/pull/311) [`a524b0b`](https://github.com/CSCfi/ui/commit/a524b0bcbf7ef9dda58c598f09a859ccf1643924) Thanks [@razorfever](https://github.com/razorfever)! - `c-steps`' screen-reader summary stays within the steps: a `value` of 0 no
+  longer reads "step 0" and "-1 steps marked as completed", an empty step label
+  leaves no stray full stop, and the label's surrounding whitespace is dropped.
+
+- [#311](https://github.com/CSCfi/ui/pull/311) [`74e64bf`](https://github.com/CSCfi/ui/commit/74e64bf394eb3570f2a296b504aa1e103971a290) Thanks [@razorfever](https://github.com/razorfever)! - In Safari, an open `c-menu-item` submenu no longer drifts away from its row
+  when the page scrolls. Submenus are now positioned by script in every browser,
+  as they already were where CSS anchor positioning is missing.
+
+- [#311](https://github.com/CSCfi/ui/pull/311) [`046975a`](https://github.com/CSCfi/ui/commit/046975abcf8064b235da5824703b474b97d4951c) Thanks [@razorfever](https://github.com/razorfever)! - Both packages declare their supported browsers as a `browserslist` query:
+  the current and previous Chrome, Edge, Firefox and Safari (iOS included),
+  plus Firefox ESR. Getting started states the same list.
+
+- [#311](https://github.com/CSCfi/ui/pull/311) [`6fd1fbf`](https://github.com/CSCfi/ui/commit/6fd1fbf65ecd7005280ad3142a3874f1f7d84e78) Thanks [@razorfever](https://github.com/razorfever)! - A `loading` `c-switch` ignores toggles and is announced as busy and
+  unavailable (`aria-busy`, `aria-disabled`), as a loading `c-button` is; it used
+  to keep toggling under its spinner.
+
+- [#311](https://github.com/CSCfi/ui/pull/311) [`aca759f`](https://github.com/CSCfi/ui/commit/aca759f98906284da86135250f2f0245cc8baa95) Thanks [@razorfever](https://github.com/razorfever)! - `c-tabs` follows the WAI-ARIA tabs pattern:
+
+  - The row of tabs is the `tablist`; the scroll arrows and the panels are no
+    longer inside it. An `aria-label` on `c-tabs` names it, and the vertical
+    layout marks it `aria-orientation="vertical"`.
+  - With `c-tab-buttons`, its buttons are the tabs (`aria-selected`), not toggle
+    buttons.
+  - The arrow keys act on key press and skip disabled tabs, Up and Down work in
+    the vertical layout, and Home and End go to the first and last tab. Moving
+    focus still selects nothing until Enter or Space.
+  - A disabled tab is announced as disabled instead of being hidden.
+  - With no tab matching `value`, the first enabled tab is the Tab stop.
+  - Moving focus to a tab out of view no longer waits for the row's scroll
+    animation (it never moved under reduced motion), and the tab set no longer
+    pulls focus back to the active tab when it re-measures.
+
+- [#311](https://github.com/CSCfi/ui/pull/311) [`9f39856`](https://github.com/CSCfi/ui/commit/9f398565b81bdb9f17c796d807f307345277f379) Thanks [@razorfever](https://github.com/razorfever)! - A `c-modal`, or any other `position: fixed` content, inside a `c-tab-item`
+  covers the viewport again: the tab set used to position and clip it inside the
+  panel. The panels now slide only while switching and sit without a transform
+  otherwise.
+
+- [#311](https://github.com/CSCfi/ui/pull/311) [`58280e0`](https://github.com/CSCfi/ui/commit/58280e051477e0511f4e281cdc7be1fe5619ce09) Thanks [@razorfever](https://github.com/razorfever)! - `c-tabs` tab-row fixes:
+
+  - A vertical swipe that starts on an overflowing tab row scrolls the page; the
+    row used to cancel every touch move.
+  - `disable-animation` also stops the row's own scroll from animating.
+  - Focus in a panel, such as a field you are typing in, stays there when the tab
+    set re-measures; it used to jump to the active tab after any key press inside
+    the tab set.
+  - A resize that lands while the active-tab underline moves is no longer
+    dropped, so a row that becomes too narrow then gets its overflow arrows.
+
+- [#311](https://github.com/CSCfi/ui/pull/311) [`0d93fad`](https://github.com/CSCfi/ui/commit/0d93fadd1bf1db9ba1f0a5aba7d89c412c52995e) Thanks [@razorfever](https://github.com/razorfever)! - A plain `c-tag` (neither `closeable` nor `flat`) works as a toggle button from
+  the keyboard: Enter and Space fire `click` as a mouse click does, and `active`
+  is announced as its pressed state (`aria-pressed`).
+
+- [#311](https://github.com/CSCfi/ui/pull/311) [`cdc4b12`](https://github.com/CSCfi/ui/commit/cdc4b12a7d3d2beab87d306d01fcb2cce2fdb6d7) Thanks [@razorfever](https://github.com/razorfever)! - `c-tags` gives tags added after it mounts the group's `size`, and the close
+  button of a `flat closeable` `c-tag` responds to the mouse again.
+
+- [#311](https://github.com/CSCfi/ui/pull/311) [`f3d9a62`](https://github.com/CSCfi/ui/commit/f3d9a620d0a4bec858d2264fbd99907fbb30a7ea) Thanks [@razorfever](https://github.com/razorfever)! - Text now meets WCAG AA contrast (4.5:1) in both theme modes:
+
+  - Light mode: hints, placeholders, resting field labels and other secondary
+    text (`on-surface-muted`, `on-surface-faint`) darken from `tertiary-500` to
+    `tertiary-600`. Chart axis labels (`chart-axis`) follow.
+  - Dark mode: `error` moves to `error-300`, so error messages read on raised
+    surfaces. A danger button's hover (`error-hover`) moves to `error-200` to
+    stay distinct.
+  - An expanded `c-accordion-item` heading uses `on-primary-subtle`, the ink
+    paired with its tinted background.
+  - Disabled `c-button` and `c-icon-button` text uses `on-surface-disabled`, as
+    disabled options and days already do. It would otherwise have darkened with
+    the hint text and read as enabled.
+
+- [#311](https://github.com/CSCfi/ui/pull/311) [`a9745b7`](https://github.com/CSCfi/ui/commit/a9745b7ce77927efa65af8da548626a92c1ee980) Thanks [@razorfever](https://github.com/razorfever)! - `autocorrect="off"` on `c-text-field` turns autocorrection off, as on a native
+  input and as in 3.x. It used to turn it on, because the prop took only a
+  boolean. The attribute now takes `on` and `off`, and the property also takes
+  `true` and `false`.
+
+- [#311](https://github.com/CSCfi/ui/pull/311) [`7641396`](https://github.com/CSCfi/ui/commit/76413966a6814e33c3f302d0585cda6992871143) Thanks [@razorfever](https://github.com/razorfever)! - `c-text-field` follows a `type` changed after it mounts: the input takes the
+  new type, and a `password` or `date` field gets its toggle button. The type was
+  read once, when the field mounted.
+
 ## 4.0.0-alpha.32
 
 ### Minor Changes
