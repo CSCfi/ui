@@ -106,6 +106,11 @@ describe('stack glide', () => {
 
       const c = toast(stack, 'c');
 
+      // The arrivals' own glides end first, so `before` is where `a` rests.
+      for (const id of ['a', 'b', 'c'])
+        for (const animation of toast(stack, id).getAnimations())
+          animation.finish();
+
       const before = top(a);
 
       stack.host.removeToast('b');
@@ -113,6 +118,12 @@ describe('stack glide', () => {
       // Bottom stack: the toast above the gap comes down, the one below stays.
       expect(glides(a)).toHaveLength(1);
       expect(glides(c)).toEqual([]);
+
+      // Read the glide at its start, wherever the runner's clock has got to:
+      // it starts from where the toast was.
+      glides(a)[0].pause();
+      glides(a)[0].currentTime = 0;
+
       expect(top(a)).toBeCloseTo(before, 0);
     });
   });

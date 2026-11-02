@@ -1021,6 +1021,9 @@ describe('focus ring', () => {
 
 describe('motion', () => {
   // The browser context emulates reduced motion; these specs opt back in.
+  // Every animation is held at its start: the specs inspect a slide a frame
+  // or two after it begins, and on a loaded runner (WebKit in CI) two frames
+  // outlasted the 250ms slide. `finishAnimations` ends them.
   const allowMotion = () => {
     const real = window.matchMedia.bind(window);
 
@@ -1029,6 +1032,19 @@ describe('motion', () => {
         ? ({ ...real(query), matches: false } as MediaQueryList)
         : real(query),
     );
+
+    const animate = Element.prototype.animate;
+
+    vi.spyOn(Element.prototype, 'animate').mockImplementation(function (
+      this: Element,
+      ...args: Parameters<Element['animate']>
+    ) {
+      const animation = animate.apply(this, args);
+
+      animation.pause();
+
+      return animation;
+    });
   };
 
   afterEach(() => vi.restoreAllMocks());
