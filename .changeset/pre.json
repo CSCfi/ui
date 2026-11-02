@@ -1,10 +1,10 @@
 {
   "mode": "pre",
-  "tag": "alpha",
+  "tag": "rc",
   "initialVersions": {
-    "@cscfi/csc-ui": "3.0.20",
+    "@cscfi/csc-ui": "4.0.0-alpha.32",
     "@cscfi/csc-ui-documentation": "0.0.1",
-    "@cscfi/csc-ui-react": "3.0.20"
+    "@cscfi/csc-ui-react": "4.0.0-alpha.32"
   },
   "changesets": [
     "accordion-header-slot-color",
