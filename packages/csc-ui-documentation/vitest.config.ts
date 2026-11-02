@@ -40,6 +40,9 @@ export default defineConfig({
     },
   },
   // Discovered mid-run, these would reload the page under a running spec.
+  // The canons load lazily, so a cold cache (CI) met the JSX runtime only
+  // once the React flavor ran: the re-bundle handed later canons a second
+  // React, and every canon that calls a hook rendered nothing.
   optimizeDeps: {
     include: [
       '@cscfi/csc-ui-react > @lit/react',
@@ -47,6 +50,7 @@ export default defineConfig({
       'react',
       'react-dom',
       'react-dom/client',
+      'react/jsx-dev-runtime',
     ],
   },
   plugins: [
