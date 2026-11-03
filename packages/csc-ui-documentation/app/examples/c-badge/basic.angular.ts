@@ -16,6 +16,7 @@ import { mdiBellOutline, mdiEmailOutline } from '@mdi/js';
     `
       c-badge.success-badge::part(root) {
         background-color: var(--c-success);
+        color: var(--c-on-success);
       }
     `,
   ],
