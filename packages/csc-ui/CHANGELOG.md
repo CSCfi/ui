@@ -1,5 +1,14 @@
 # @cscfi/csc-ui
 
+## 4.0.0-rc.2
+
+### Patch Changes
+
+- [#314](https://github.com/CSCfi/ui/pull/314) [`5fd35a8`](https://github.com/CSCfi/ui/commit/5fd35a8d58b1f844858a93d43842f73b566ed04b) Thanks [@razorfever](https://github.com/razorfever)! - The `c-tabs` underline sits under the selected tab again. In 4.0.0-rc.1 it
+  was shifted by the tab set's distance from the edge of the page. It also no
+  longer stays under the previous tab when a tab is picked just after the tab
+  set appears or resizes, or on an overflowing row with `disable-animation`.
+
 ## 4.0.0-rc.1
 
 ### Major Changes
