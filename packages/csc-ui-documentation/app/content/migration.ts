@@ -614,10 +614,10 @@ const data = [{ id: 1, name: 'Ada' }];
 - c-menu: authored declaratively with slotted c-menu-item / c-menu-label
   instead of a programmatic items array, and the trigger moves from the
   default slot to slot="trigger"; leaf activation fires a select event.
-- c-side-navigation: activating an item or sub-item no longer sets its
-  active. 3.x highlighted the clicked item even when the navigation never
-  happened; mark the current page's item active from your router or the URL.
-  A parent still expands and collapses itself.
+- c-side-navigation: activating an item or sub-item no longer marks it as
+  the current page. 3.x highlighted the clicked item even when the
+  navigation never happened; set current on the current page's item from
+  your router or the URL. A parent still expands and collapses itself.
 - c-toasts: a message's title is now heading (an untyped { title } loses its
   heading silently). c-toast is internal: c-toasts renders one per addToast()
   message, so style a toast through c-toasts::part(toast-root) and its other
@@ -637,6 +637,32 @@ const data = [{ id: 1, name: 'Ada' }];
       all: `Most components keep their old props and events. The ones below changed enough to need attention when you upgrade.`,
     },
     title: 'Component-specific changes',
+  },
+  {
+    blocks: forAll([
+      {
+        code: `- c-button, c-icon-button: outlined, ghost, text → appearance="outlined",
+  "ghost" or "text" (filled is the default)
+- c-text-field, c-number-field, c-select, c-autocomplete, c-tree-select,
+  c-date-picker, c-time-picker, c-color-picker, c-file-upload, c-checkbox,
+  c-radio-group, c-otp-input: hide-details → hide-message (also as an
+  applyDefaults() key). c-pagination and c-progress-bar keep hide-details.
+- c-spinner, c-loader: width → thickness
+- c-toasts: vertical + horizontal → position (bottom, bottom-start,
+  bottom-end, top, top-start, top-end); absolute → contained
+- c-side-navigation-item: active → current on an item without sub-items,
+  expanded on a parent. c-sub-navigation-item: active → current.
+- c-card: fullscreen → show-fullscreen
+- c-slider: labels → tick-labels`,
+        filename: 'Old name → new name',
+        lang: 'md',
+      },
+    ]),
+    id: 'renamed',
+    intro: {
+      all: `A few 3.x attributes have new names in 4.0, but the old names keep working until 5.0, so you can switch at your own pace. Your editor and TypeScript mark an old name as deprecated, and the API tables list it last. When an element carries both names, the new one wins.`,
+    },
+    title: 'Renamed attributes that still work',
   },
   {
     blocks: forAll([
