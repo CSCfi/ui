@@ -28,6 +28,7 @@
         :size="buttonSize"
         appearance="text"
         aria-haspopup="dialog"
+        variant="primary"
         @click="onClockClick"
       >
         <c-icon :path="mdiClockOutline" :size="iconSize" />

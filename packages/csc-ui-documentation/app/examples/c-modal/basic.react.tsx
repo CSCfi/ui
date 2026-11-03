@@ -28,7 +28,7 @@ export const Basic = () => {
             <CButton onClick={() => setOpen(false)} text>
               Cancel
             </CButton>
-            <CButton danger onClick={() => setOpen(false)}>
+            <CButton onClick={() => setOpen(false)} variant="danger">
               Delete
             </CButton>
           </CCardActions>

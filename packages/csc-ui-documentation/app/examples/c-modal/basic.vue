@@ -13,7 +13,7 @@
         <c-card-actions justify="end">
           <c-button appearance="text" @click="open = false">Cancel</c-button>
 
-          <c-button danger @click="open = false">Delete</c-button>
+          <c-button variant="danger" @click="open = false">Delete</c-button>
         </c-card-actions>
       </c-card>
     </c-modal>

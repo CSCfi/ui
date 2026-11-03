@@ -166,6 +166,13 @@ const fromAttribute = (attr: string, builtIn: unknown): unknown => {
  * still beats an app-wide `hideDetails: true`.
  *
  *   const hideMessageResolved = appDefault('hideMessage', false, 'hideDetails');
+ *
+ * A replaced prop of another shape names a mapper fourth: it receives that
+ * prop's own instance value (an attribute string or a property) and returns
+ * the new prop's value, or undefined to fall through. Such a prop is not
+ * defaultable, so only the instance layer reads it.
+ *
+ *   const variantResolved = appDefault('variant', 'primary', 'danger', dangerAsVariant);
  */
 export const useAppDefault = <T extends CDefaultableTag>(
   tag: T,
@@ -178,7 +185,8 @@ export const useAppDefault = <T extends CDefaultableTag>(
   return <K extends keyof Bucket<T> & string>(
     key: K,
     builtIn: Resolved<T, K>,
-    replaces?: keyof Bucket<T> & string,
+    replaces?: string,
+    map?: (value: unknown) => Resolved<T, K> | undefined,
   ): ComputedRef<Resolved<T, K>> =>
     computed(() => {
       // Read the props FIRST, unconditionally: they are the reactive
@@ -197,13 +205,22 @@ export const useAppDefault = <T extends CDefaultableTag>(
         } as Resolved<T, K>;
       }
 
-      // The instance's own setting under one name, or undefined when unset.
-      const instance = (name: string, set: unknown): unknown => {
+      // The instance's own setting under one name, or undefined when unset;
+      // `convert` reads a replaced prop of another shape.
+      const instance = (
+        name: string,
+        set: unknown,
+        convert?: (value: unknown) => unknown,
+      ): unknown => {
         const attr = host?.getAttribute(hyphenate(name)) ?? null;
 
-        if (attr !== null) return fromAttribute(attr, builtIn);
+        if (attr !== null) {
+          return convert ? convert(attr) : fromAttribute(attr, builtIn);
+        }
 
         if (set != null) {
+          if (convert) return convert(set);
+
           return typeof builtIn === 'boolean' ? coerceBoolean(set) : set;
         }
 
@@ -211,7 +228,7 @@ export const useAppDefault = <T extends CDefaultableTag>(
       };
 
       return (instance(key, value) ??
-        (replaces ? instance(replaces, replacedValue) : undefined) ??
+        (replaces ? instance(replaces, replacedValue, map) : undefined) ??
         app ??
         (replaces ? buckets[tag]?.[replaces] : undefined) ??
         builtIn) as Resolved<T, K>;

@@ -152,12 +152,24 @@ add('on-nav-active', 'nav-active', TEXT, 'on-nav-active / nav-active');
 add('on-nav-active', 'nav-sub-active', TEXT, 'on-nav-active / nav-sub-active');
 // inverse family (mode-invariant; values identical both modes)
 add('inverse-on', 'inverse-primary', TEXT, 'inverse-on / inverse-primary');
-add(
-  'inverse-primary',
-  'inverse-surface',
-  TEXT,
-  'inverse-primary / inverse-surface',
-);
+
+// The inverted filled button's label in each variant's colour (ADR-0079).
+for (const r of [
+  'primary',
+  'secondary',
+  'success',
+  'info',
+  'warning',
+  'error',
+]) {
+  add(
+    `inverse-${r}`,
+    'inverse-surface',
+    TEXT,
+    `inverse-${r} / inverse-surface`,
+  );
+}
+
 // inverted-surface tier (ADR-0032; mode-aware contrast flip). Neutral inks are
 // text (4.5); the status badge pairs are icon glyphs and badge-vs-ground
 // adjacency, so non-text UI (3.0) applies.
@@ -194,13 +206,14 @@ add(
   'border-strong / surface (control outline)',
 );
 add('primary', 'surface', UI, 'primary / surface (icon/fill)');
-// the unselected button-group / tab-buttons label is `primary` text sitting on
-// the opaque `surface-sunken` track fill (ADR-0042) — real text, AA applies
+// the unselected button-group / tab-buttons label is a text button's ink,
+// `on-primary-subtle` (ADR-0079), sitting on the opaque `surface-sunken` track
+// fill (ADR-0042) — real text, AA applies
 add(
-  'primary',
+  'on-primary-subtle',
   'surface-sunken',
   TEXT,
-  'primary / surface-sunken (button-group label on track)',
+  'on-primary-subtle / surface-sunken (button-group label on track)',
 );
 
 // hairline divider on every surface-ladder rung (composited, ADR-0036),

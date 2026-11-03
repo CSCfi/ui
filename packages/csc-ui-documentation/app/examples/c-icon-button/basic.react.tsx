@@ -27,7 +27,7 @@ export const Basic = () => (
       <CIcon path={mdiDotsVertical} />
     </CIconButton>
 
-    <CIconButton aria-label="Delete" danger>
+    <CIconButton aria-label="Delete" variant="danger">
       <CIcon path={mdiDelete} />
     </CIconButton>
 

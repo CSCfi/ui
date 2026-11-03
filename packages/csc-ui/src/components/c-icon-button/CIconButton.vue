@@ -58,6 +58,19 @@ export type CIconButtonAppearance = 'filled' | 'ghost' | 'outlined' | 'text';
  */
 export type CIconButtonSize = 'default' | 'small' | 'x-small';
 
+/**
+ * The colour an icon button takes — `c-button`'s variants: `primary` (unless
+ * set) and `secondary`, the brand families, or a status colour — `success`,
+ * `info`, `warning` and `danger`, a destructive action in the error colour.
+ */
+export type CIconButtonVariant =
+  | 'danger'
+  | 'info'
+  | 'primary'
+  | 'secondary'
+  | 'success'
+  | 'warning';
+
 interface CIconButtonProps {
   /**
    * The button's look: `filled` (unless set) for the main action; `outlined`
@@ -73,8 +86,9 @@ interface CIconButtonProps {
   badge?: null | number | string;
 
   /**
-   * Danger look for a destructive action: the filled button in the error
-   * colour; no effect on the `outlined`, `ghost` or `text` appearance.
+   * Danger look for a destructive action: the error colour.
+   *
+   * @deprecated Use `variant="danger"`.
    */
   danger?: boolean;
 
@@ -129,6 +143,15 @@ interface CIconButtonProps {
    * @deprecated Use `appearance="text"`.
    */
   text?: boolean;
+
+  /**
+   * The button's colour, in every appearance: `primary` unless set (or
+   * changed app-wide), `secondary`, `success`, `info`, `warning`, or `danger`
+   * for a destructive action.
+   *
+   * @defaultable 'primary'
+   */
+  variant?: CIconButtonVariant;
 }
 </script>
 
@@ -143,7 +166,9 @@ interface CIconButtonProps {
 import { tv } from 'tailwind-variants';
 import { computed, useTemplateRef } from 'vue';
 
+import { useAppDefault } from '../../shared/appDefaults';
 import { resolveAppearance } from '../../shared/buttonAppearance';
+import { dangerAsVariant } from '../../shared/buttonVariant';
 import { useIdReferences } from '../../shared/useIdReferences';
 import { useRipple } from '../../shared/useRipple';
 
@@ -178,14 +203,40 @@ const sizeVariants = {
   'x-small': { root: 'size-7' },
 } satisfies Record<CIconButtonSize, object>;
 
+// The variant's colours as private custom properties on `root`, which the
+// appearance compounds below paint with — c-button's scheme (ADR-0079):
+// `fill`, `fill-hover` and `on-fill` paint the filled look and tint the
+// lighter ones; `ink` is the icon and outline of the lighter appearances
+// (the role's subtle ink); `inverse` is the icon of the inverted filled look. Hoisted so
+// the runtime guard below can test membership.
+const variantVariants = {
+  danger: {
+    root: '[--_c-icon-button-fill-hover:var(--c-error-hover)] [--_c-icon-button-fill:var(--c-error)] [--_c-icon-button-ink:var(--c-on-error-subtle)] [--_c-icon-button-inverse:var(--c-inverse-error)] [--_c-icon-button-on-fill:var(--c-on-error)]',
+  },
+  info: {
+    root: '[--_c-icon-button-fill-hover:var(--c-info-hover)] [--_c-icon-button-fill:var(--c-info)] [--_c-icon-button-ink:var(--c-on-info-subtle)] [--_c-icon-button-inverse:var(--c-inverse-info)] [--_c-icon-button-on-fill:var(--c-on-info)]',
+  },
+  primary: {
+    root: '[--_c-icon-button-fill-hover:var(--c-primary-hover)] [--_c-icon-button-fill:var(--c-primary)] [--_c-icon-button-ink:var(--c-on-primary-subtle)] [--_c-icon-button-inverse:var(--c-inverse-primary)] [--_c-icon-button-on-fill:var(--c-on-primary)]',
+  },
+  secondary: {
+    root: '[--_c-icon-button-fill-hover:var(--c-secondary-hover)] [--_c-icon-button-fill:var(--c-secondary)] [--_c-icon-button-ink:var(--c-on-secondary-subtle)] [--_c-icon-button-inverse:var(--c-inverse-secondary)] [--_c-icon-button-on-fill:var(--c-on-secondary)]',
+  },
+  success: {
+    root: '[--_c-icon-button-fill-hover:var(--c-success-hover)] [--_c-icon-button-fill:var(--c-success)] [--_c-icon-button-ink:var(--c-on-success-subtle)] [--_c-icon-button-inverse:var(--c-inverse-success)] [--_c-icon-button-on-fill:var(--c-on-success)]',
+  },
+  warning: {
+    root: '[--_c-icon-button-fill-hover:var(--c-warning-hover)] [--_c-icon-button-fill:var(--c-warning)] [--_c-icon-button-ink:var(--c-on-warning-subtle)] [--_c-icon-button-inverse:var(--c-inverse-warning)] [--_c-icon-button-on-fill:var(--c-on-warning)]',
+  },
+} satisfies Record<CIconButtonVariant, object>;
+
 const iconButton = tv({
   compoundVariants: [
     // ---- default (filled) --------------------------------------------------
     {
       class: {
-        root: 'bg-primary text-on-primary hover:bg-primary-hover focus-visible:outline-primary',
+        root: 'bg-(--_c-icon-button-fill) text-(--_c-icon-button-on-fill) hover:bg-(--_c-icon-button-fill-hover) focus-visible:outline-(--_c-icon-button-fill)',
       },
-      danger: false,
       ghost: false,
       inverted: false,
       outlined: false,
@@ -193,25 +244,17 @@ const iconButton = tv({
     },
     {
       class: {
-        root: 'bg-inverse-surface text-inverse-primary hover:bg-inverse-primary/15 focus-visible:outline-inverse-on',
+        root: 'bg-inverse-surface text-(--_c-icon-button-inverse) hover:bg-(--_c-icon-button-inverse)/15 focus-visible:outline-inverse-on',
       },
-      danger: false,
       ghost: false,
       inverted: true,
       outlined: false,
       text: false,
     },
-    // ---- danger ----------------------------------------------------------
-    {
-      class: {
-        root: 'bg-error text-on-error hover:bg-error-hover focus-visible:outline-error',
-      },
-      danger: true,
-    },
     // ---- ghost -----------------------------------------------------------
     {
       class: {
-        root: 'bg-primary/8 text-primary hover:bg-primary/15 focus-visible:outline-primary active:bg-primary/22',
+        root: 'bg-(--_c-icon-button-fill)/8 text-(--_c-icon-button-ink) hover:bg-(--_c-icon-button-fill)/15 focus-visible:outline-(--_c-icon-button-ink) active:bg-(--_c-icon-button-fill)/22',
       },
       ghost: true,
       inverted: false,
@@ -226,7 +269,7 @@ const iconButton = tv({
     // ---- text ------------------------------------------------------------
     {
       class: {
-        root: 'bg-transparent text-primary hover:bg-primary/15 focus-visible:outline-primary',
+        root: 'bg-transparent text-(--_c-icon-button-ink) hover:bg-(--_c-icon-button-fill)/15 focus-visible:outline-(--_c-icon-button-ink)',
       },
       inverted: false,
       text: true,
@@ -241,7 +284,7 @@ const iconButton = tv({
     // ---- outlined --------------------------------------------------------
     {
       class: {
-        root: 'bg-transparent text-primary ring-2 ring-primary ring-inset hover:bg-primary/15 focus-visible:outline-primary',
+        root: 'bg-transparent text-(--_c-icon-button-ink) ring-2 ring-(--_c-icon-button-ink) ring-inset hover:bg-(--_c-icon-button-fill)/15 focus-visible:outline-(--_c-icon-button-ink)',
       },
       inverted: false,
       outlined: true,
@@ -256,12 +299,11 @@ const iconButton = tv({
     // ---- disabled (overrides appearance bg/text/border) ------------------
     // Ordered LAST so these win over the appearance compounds above (tv merges
     // compoundVariants in source order; last-matching wins). One per appearance,
-    // mirroring c-button's disabled palette: the disabled ink, not the muted
-    // or faint hint inks, which AA contrast keeps dark enough to read as
-    // enabled.
+    // mirroring c-button's disabled palette, one neutral look for every
+    // variant: the disabled ink, not the muted or faint hint inks, which AA
+    // contrast keeps dark enough to read as enabled.
     {
       class: { root: 'bg-surface-muted text-on-surface-disabled' },
-      danger: false,
       disabled: true,
       ghost: false,
       inverted: false,
@@ -270,17 +312,11 @@ const iconButton = tv({
     },
     {
       class: { root: 'bg-inverse-on/10 text-inverse-on/40' },
-      danger: false,
       disabled: true,
       ghost: false,
       inverted: true,
       outlined: false,
       text: false,
-    },
-    {
-      class: { root: 'bg-surface-muted text-on-surface-disabled' },
-      danger: true,
-      disabled: true,
     },
     {
       class: { root: 'bg-surface-muted text-on-surface-disabled' },
@@ -317,13 +353,13 @@ const iconButton = tv({
     },
   ],
   defaultVariants: {
-    danger: false,
     disabled: false,
     ghost: false,
     inverted: false,
     outlined: false,
     size: 'default',
     text: false,
+    variant: 'primary',
   },
   slots: {
     badge:
@@ -341,7 +377,6 @@ const iconButton = tv({
       'inline-block animate-spin rounded-full border-2 border-solid border-current border-r-transparent',
   },
   variants: {
-    danger: { true: '' },
     // Only non-colour utilities here; the disabled COLOURS live in
     // compoundVariants ordered last, so they override the appearance compounds
     // (which are merged after plain variants and would otherwise win). Mirrors
@@ -363,6 +398,7 @@ const iconButton = tv({
     outlined: { true: '' },
     size: sizeVariants,
     text: { true: '' },
+    variant: variantVariants,
   },
 });
 
@@ -379,15 +415,28 @@ const props = withDefaults(defineProps<CIconButtonProps>(), {
   path: '',
   size: 'default',
   text: false,
+  // Unset, so an app default or the deprecated `danger` can choose.
+  variant: undefined,
 });
 
 const appearance = computed(() => resolveAppearance(props));
 
+// Defaultable props resolve host attribute → own property → app default →
+// built-in (see src/shared/appDefaults.ts). The variant reads the element's
+// own `variant`, then its deprecated `danger`, before the app default.
+const appDefault = useAppDefault('c-icon-button', props);
+
+const variantResolved = appDefault(
+  'variant',
+  'primary',
+  'danger',
+  dangerAsVariant,
+);
+
 // Attributes can deliver any string at runtime; unknown values fall back to
-// the default size.
+// the defaults.
 const ui = computed(() =>
   iconButton({
-    danger: props.danger,
     disabled: props.disabled,
     ghost: appearance.value === 'ghost',
     inverted: props.inverted,
@@ -395,6 +444,10 @@ const ui = computed(() =>
     outlined: appearance.value === 'outlined',
     size: props.size in sizeVariants ? props.size : 'default',
     text: appearance.value === 'text',
+    variant:
+      variantResolved.value in variantVariants
+        ? variantResolved.value
+        : 'primary',
   }),
 );
 

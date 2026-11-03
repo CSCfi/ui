@@ -7,7 +7,6 @@ export const Appearances = () => (
     <CButton appearance="outlined">Outlined</CButton>
     <CButton appearance="ghost">Ghost</CButton>
     <CButton appearance="text">Text</CButton>
-    <CButton danger>Danger</CButton>
     <CButton disabled>Disabled</CButton>
   </div>
 );

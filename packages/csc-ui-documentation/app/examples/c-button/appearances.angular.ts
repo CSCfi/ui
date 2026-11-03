@@ -11,7 +11,6 @@ import { Component, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
       <c-button appearance="outlined">Outlined</c-button>
       <c-button appearance="ghost">Ghost</c-button>
       <c-button appearance="text">Text</c-button>
-      <c-button danger>Danger</c-button>
       <c-button disabled>Disabled</c-button>
     </div>
   `,

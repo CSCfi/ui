@@ -7,6 +7,7 @@
       :aria-label="closeLabel"
       appearance="text"
       size="x-small"
+      variant="primary"
       @click="onClose"
     >
       <c-icon :path="mdiClose" :size="16" />

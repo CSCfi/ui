@@ -10,9 +10,12 @@ import { userEvent } from 'vitest/browser';
 
 import type { Mounted } from '../../test/harness';
 
+import { applyDefaults } from '../../shared/appDefaults';
+import { rasterise } from '../../test/conformance/paint';
 import {
   matchScreenshotInBothModes,
   mount,
+  roleInMode,
   settle,
   settled,
   wrap,
@@ -217,5 +220,33 @@ describe('c-tab-buttons as tabs', () => {
       LABELS.map((label) => String(label === 'Members')),
     );
     expect(inner.some((b) => b.hasAttribute('aria-pressed'))).toBe(false);
+  });
+});
+
+describe('c-tab-buttons variant', () => {
+  // The sliding pill has one colour, so the strip pins its buttons to
+  // primary, whatever a button or an app default says (ADR-0079).
+  it('pins its buttons to primary, even under an app default', async () => {
+    applyDefaults({ 'c-button': { variant: 'danger' } });
+
+    const m = await mount('c-tab-buttons', {
+      html: '<c-button value="a" variant="success">A</c-button><c-button value="b">B</c-button>',
+      props: { value: 'a' },
+    });
+
+    await settled();
+
+    const buttons = [...m.host.querySelectorAll('c-button')];
+
+    expect(buttons.map((b) => (b as { variant?: string }).variant)).toEqual([
+      'primary',
+      'primary',
+    ]);
+    expect(
+      rasterise(
+        getComputedStyle(buttons[1]!.shadowRoot!.querySelector('button')!)
+          .color,
+      ),
+    ).toEqual(rasterise(roleInMode('light', '--c-on-primary-subtle')));
   });
 });

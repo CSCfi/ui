@@ -7,7 +7,12 @@
     <div v-if="banner" :class="ui.banner()" part="banner">
       <span>{{ banner.message }}</span>
 
-      <c-button appearance="text" size="small" @click="banner.action">
+      <c-button
+        appearance="text"
+        size="small"
+        variant="primary"
+        @click="banner.action"
+      >
         {{ banner.actionLabel }}
       </c-button>
     </div>
@@ -173,6 +178,7 @@
                     :aria-label="rowText(t.expandRow, row)"
                     appearance="text"
                     size="small"
+                    variant="primary"
                     @click.stop="toggleExpanded(row.id)"
                   >
                     <c-icon

@@ -68,6 +68,19 @@ export type CButtonSize = 'default' | 'large' | 'small';
  */
 export type CButtonType = 'button' | 'reset' | 'submit';
 
+/**
+ * The colour a button takes: `primary` (unless set) and `secondary`, the
+ * brand families, or a status colour — `success`, `info`, `warning` and
+ * `danger`, a destructive action in the error colour.
+ */
+export type CButtonVariant =
+  | 'danger'
+  | 'info'
+  | 'primary'
+  | 'secondary'
+  | 'success'
+  | 'warning';
+
 interface CButtonProps {
   /**
    * Pressed (toggle) state — renders the selected look and sets
@@ -93,8 +106,9 @@ interface CButtonProps {
   asTab?: boolean;
 
   /**
-   * Danger look for a destructive action: the filled button in the error
-   * colour; no effect on the `outlined`, `ghost` or `text` appearance.
+   * Danger look for a destructive action: the error colour.
+   *
+   * @deprecated Use `variant="danger"`.
    */
   danger?: boolean;
 
@@ -190,6 +204,15 @@ interface CButtonProps {
    * of the `c-tab-item` panel it shows.
    */
   value?: number | string;
+
+  /**
+   * The button's colour, in every appearance: `primary` unless set (or
+   * changed app-wide), `secondary`, `success`, `info`, `warning`, or `danger`
+   * for a destructive action.
+   *
+   * @defaultable 'primary'
+   */
+  variant?: CButtonVariant;
 }
 </script>
 
@@ -206,7 +229,9 @@ interface CButtonProps {
 import { tv } from 'tailwind-variants';
 import { computed, useHost, useTemplateRef } from 'vue';
 
+import { useAppDefault } from '../../shared/appDefaults';
 import { resolveAppearance } from '../../shared/buttonAppearance';
+import { dangerAsVariant } from '../../shared/buttonVariant';
 import { coerceBoolean } from '../../shared/coerceBoolean';
 import { useHasSlot } from '../../shared/useHasSlot';
 import { useIdReferences } from '../../shared/useIdReferences';
@@ -257,14 +282,43 @@ const sizeVariants = {
   },
 } satisfies Record<CButtonSize, object>;
 
+// The variant's colours as private custom properties on `root`, which the
+// appearance compounds below paint with — one set of compounds for every
+// colour (ADR-0079). `fill`, `fill-hover` and `on-fill` paint the filled and
+// pressed looks (the fill also rings the filled look's focus) and tint the
+// lighter ones; `ink` is the label, outline and focus ring of the lighter
+// appearances: the role's subtle ink, as c-alert's, since the role itself
+// drops under AA on its own tint (dark primary read 3.8:1 on the hover tint).
+// `inverse` is the label of the inverted filled look. Hoisted, like the
+// sizes, so the runtime guard below can test membership.
+const variantVariants = {
+  danger: {
+    root: '[--_c-button-fill-hover:var(--c-error-hover)] [--_c-button-fill:var(--c-error)] [--_c-button-ink:var(--c-on-error-subtle)] [--_c-button-inverse:var(--c-inverse-error)] [--_c-button-on-fill:var(--c-on-error)]',
+  },
+  info: {
+    root: '[--_c-button-fill-hover:var(--c-info-hover)] [--_c-button-fill:var(--c-info)] [--_c-button-ink:var(--c-on-info-subtle)] [--_c-button-inverse:var(--c-inverse-info)] [--_c-button-on-fill:var(--c-on-info)]',
+  },
+  primary: {
+    root: '[--_c-button-fill-hover:var(--c-primary-hover)] [--_c-button-fill:var(--c-primary)] [--_c-button-ink:var(--c-on-primary-subtle)] [--_c-button-inverse:var(--c-inverse-primary)] [--_c-button-on-fill:var(--c-on-primary)]',
+  },
+  secondary: {
+    root: '[--_c-button-fill-hover:var(--c-secondary-hover)] [--_c-button-fill:var(--c-secondary)] [--_c-button-ink:var(--c-on-secondary-subtle)] [--_c-button-inverse:var(--c-inverse-secondary)] [--_c-button-on-fill:var(--c-on-secondary)]',
+  },
+  success: {
+    root: '[--_c-button-fill-hover:var(--c-success-hover)] [--_c-button-fill:var(--c-success)] [--_c-button-ink:var(--c-on-success-subtle)] [--_c-button-inverse:var(--c-inverse-success)] [--_c-button-on-fill:var(--c-on-success)]',
+  },
+  warning: {
+    root: '[--_c-button-fill-hover:var(--c-warning-hover)] [--_c-button-fill:var(--c-warning)] [--_c-button-ink:var(--c-on-warning-subtle)] [--_c-button-inverse:var(--c-inverse-warning)] [--_c-button-on-fill:var(--c-on-warning)]',
+  },
+} satisfies Record<CButtonVariant, object>;
+
 const button = tv({
   compoundVariants: [
     // ---- default (filled) --------------------------------------------------
     {
       class: {
-        root: 'bg-primary text-on-primary hover:bg-primary-hover focus-visible:outline-primary',
+        root: 'bg-(--_c-button-fill) text-(--_c-button-on-fill) hover:bg-(--_c-button-fill-hover) focus-visible:outline-(--_c-button-fill)',
       },
-      danger: false,
       ghost: false,
       inverted: false,
       outlined: false,
@@ -272,33 +326,17 @@ const button = tv({
     },
     {
       class: {
-        root: 'bg-inverse-surface text-inverse-primary hover:bg-inverse-primary/15 focus-visible:outline-inverse-on',
+        root: 'bg-inverse-surface text-(--_c-button-inverse) hover:bg-(--_c-button-inverse)/15 focus-visible:outline-inverse-on',
       },
-      danger: false,
       ghost: false,
       inverted: true,
       outlined: false,
       text: false,
-    },
-    // ---- danger ----------------------------------------------------------
-    {
-      class: {
-        root: 'bg-error text-on-error hover:bg-error-hover focus-visible:outline-error',
-      },
-      danger: true,
-      inverted: false,
-    },
-    {
-      class: {
-        root: 'bg-inverse-surface text-inverse-error hover:bg-inverse-error/10 focus-visible:outline-inverse-on',
-      },
-      danger: true,
-      inverted: true,
     },
     // ---- ghost -----------------------------------------------------------
     {
       class: {
-        root: 'bg-primary/8 text-primary hover:bg-primary/15 focus-visible:outline-primary active:bg-primary/22',
+        root: 'bg-(--_c-button-fill)/8 text-(--_c-button-ink) hover:bg-(--_c-button-fill)/15 focus-visible:outline-(--_c-button-ink) active:bg-(--_c-button-fill)/22',
       },
       ghost: true,
       inverted: false,
@@ -313,7 +351,7 @@ const button = tv({
     // ---- text ------------------------------------------------------------
     {
       class: {
-        root: 'bg-transparent text-primary hover:bg-primary/15 focus-visible:outline-primary',
+        root: 'bg-transparent text-(--_c-button-ink) hover:bg-(--_c-button-fill)/15 focus-visible:outline-(--_c-button-ink)',
       },
       inverted: false,
       text: true,
@@ -328,7 +366,7 @@ const button = tv({
     // ---- outlined --------------------------------------------------------
     {
       class: {
-        root: 'bg-transparent text-primary ring-2 ring-primary ring-inset hover:bg-primary/15 focus-visible:outline-primary',
+        root: 'bg-transparent text-(--_c-button-ink) ring-2 ring-(--_c-button-ink) ring-inset hover:bg-(--_c-button-fill)/15 focus-visible:outline-(--_c-button-ink)',
       },
       inverted: false,
       outlined: true,
@@ -341,21 +379,22 @@ const button = tv({
       outlined: true,
     },
     // ---- active (pressed) --------------------------------------------------
-    // The selected/toggle look: a primary fill regardless of appearance flag.
-    // Authored through internal vars (with semantic-token fallbacks) so
-    // c-button-group can retarget the fill per selection mode — e.g. make it
-    // transparent while its sliding indicator paints the fill instead. Ordered
-    // after the appearance compounds (active wins) and before the disabled
-    // ones (disabled wins).
+    // The selected/toggle look: the variant's fill regardless of appearance
+    // flag. Authored through internal vars (falling back to the variant's
+    // colours) so c-tab-buttons can retarget the fill — make it transparent
+    // while its sliding indicator paints the fill instead. Ordered after the
+    // appearance compounds (active wins) and before the disabled ones
+    // (disabled wins).
     {
       active: true,
       class: {
-        root: 'bg-[color:var(--_c-button-active-bg,var(--c-primary))] text-[color:var(--_c-button-active-fg,var(--c-on-primary))] hover:bg-[color:var(--_c-button-active-hover-bg,var(--c-primary-hover))]',
+        root: 'bg-[color:var(--_c-button-active-bg,var(--_c-button-fill))] text-[color:var(--_c-button-active-fg,var(--_c-button-on-fill))] hover:bg-[color:var(--_c-button-active-hover-bg,var(--_c-button-fill-hover))]',
       },
     },
     // ---- disabled (overrides appearance bg/text/border) ------------------
-    // Non-inverted disabled is the muted neutral surface; inverted disabled
-    // dims the mode-invariant inverse foreground (it sits on a dark backdrop).
+    // One neutral look for every variant. Non-inverted disabled is the muted
+    // neutral surface; inverted disabled dims the mode-invariant inverse
+    // foreground (it sits on a dark backdrop).
     // Disabled TEXT uses the disabled tier, not muted or faint: both are
     // hint-text inks held to WCAG AA contrast, so on a disabled control they
     // read as enabled. `on-surface-disabled` is the step the disabled options
@@ -367,7 +406,6 @@ const button = tv({
       class: {
         root: 'bg-surface-muted text-on-surface-disabled hover:bg-surface-muted',
       },
-      danger: false,
       disabled: true,
       ghost: false,
       inverted: false,
@@ -378,19 +416,11 @@ const button = tv({
       class: {
         root: 'bg-inverse-on/10 text-inverse-on/40 hover:bg-inverse-on/10',
       },
-      danger: false,
       disabled: true,
       ghost: false,
       inverted: true,
       outlined: false,
       text: false,
-    },
-    {
-      class: {
-        root: 'bg-surface-muted text-on-surface-disabled hover:bg-surface-muted',
-      },
-      danger: true,
-      disabled: true,
     },
     {
       class: {
@@ -434,7 +464,6 @@ const button = tv({
   ],
   defaultVariants: {
     active: false,
-    danger: false,
     disabled: false,
     fit: false,
     ghost: false,
@@ -444,6 +473,7 @@ const button = tv({
     outlined: false,
     size: 'default',
     text: false,
+    variant: 'primary',
   },
   slots: {
     content: 'grid w-full items-stretch font-bold select-none',
@@ -470,7 +500,6 @@ const button = tv({
   },
   variants: {
     active: { true: '' },
-    danger: { true: '' },
     disabled: { true: { root: 'cursor-not-allowed' } },
     fit: { true: { root: 'w-full' } },
     // Appearance flags, one per non-filled appearance (resolved from the
@@ -485,6 +514,7 @@ const button = tv({
     outlined: { true: '' },
     size: sizeVariants,
     text: { true: '' },
+    variant: variantVariants,
   },
 });
 
@@ -513,16 +543,29 @@ const props = withDefaults(defineProps<CButtonProps>(), {
   text: false,
   type: 'button',
   value: undefined,
+  // Unset, so an app default or the deprecated `danger` can choose.
+  variant: undefined,
 });
 
 const appearance = computed(() => resolveAppearance(props));
+
+// Defaultable props resolve host attribute → own property → app default →
+// built-in (see src/shared/appDefaults.ts). The variant reads the element's
+// own `variant`, then its deprecated `danger`, before the app default.
+const appDefault = useAppDefault('c-button', props);
+
+const variantResolved = appDefault(
+  'variant',
+  'primary',
+  'danger',
+  dangerAsVariant,
+);
 
 // Attributes can deliver any string at runtime; unknown values fall back to
 // the defaults.
 const ui = computed(() =>
   button({
     active: props.active === undefined ? false : coerceBoolean(props.active),
-    danger: props.danger,
     disabled: props.disabled,
     fit: props.fit,
     ghost: appearance.value === 'ghost',
@@ -532,6 +575,10 @@ const ui = computed(() =>
     outlined: appearance.value === 'outlined',
     size: props.size in sizeVariants ? props.size : 'default',
     text: appearance.value === 'text',
+    variant:
+      variantResolved.value in variantVariants
+        ? variantResolved.value
+        : 'primary',
   }),
 );
 

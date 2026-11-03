@@ -21,7 +21,9 @@ import { Component, CUSTOM_ELEMENTS_SCHEMA, signal } from '@angular/core';
             <c-button appearance="text" (click)="open.set(false)">
               Cancel
             </c-button>
-            <c-button danger (click)="open.set(false)">Delete</c-button>
+            <c-button variant="danger" (click)="open.set(false)">
+              Delete
+            </c-button>
           </c-card-actions>
         </c-card>
       </c-modal>

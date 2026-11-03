@@ -312,8 +312,8 @@ export interface CBreadcrumbItemElement extends Omit<HTMLElement, 'href' | 'targ
   target?: string;
 }
 
-/** Buttons trigger actions — submitting a form, opening a modal, confirming a choice. Use one primary (filled, the default `appearance`) button per view; secondary actions use `appearance="outlined"`, `"ghost"` or `"text"`. */
-export interface CButtonElement extends Omit<HTMLElement, 'active' | 'appearance' | 'asTab' | 'danger' | 'disabled' | 'fit' | 'ghost' | 'href' | 'inverted' | 'loading' | 'noRadius' | 'noRipple' | 'outlined' | 'size' | 'target' | 'text' | 'type' | 'value'> {
+/** Buttons trigger actions — submitting a form, opening a modal, confirming a choice. Use one filled button (the default `appearance`) per view for its main action; other actions use `appearance="outlined"`, `"ghost"` or `"text"`. */
+export interface CButtonElement extends Omit<HTMLElement, 'active' | 'appearance' | 'asTab' | 'danger' | 'disabled' | 'fit' | 'ghost' | 'href' | 'inverted' | 'loading' | 'noRadius' | 'noRipple' | 'outlined' | 'size' | 'target' | 'text' | 'type' | 'value' | 'variant'> {
   /**
    * Pressed (toggle) state — renders the selected look and sets
    * `aria-pressed`. Leave unset for regular action buttons: only a
@@ -328,8 +328,9 @@ export interface CButtonElement extends Omit<HTMLElement, 'active' | 'appearance
    */
   appearance?: 'filled' | 'ghost' | 'outlined' | 'text';
   /**
-   * Danger look for a destructive action: the filled button in the error
-   * colour; no effect on the `outlined`, `ghost` or `text` appearance.
+   * Danger look for a destructive action: the error colour.
+   *
+   * @deprecated Use `variant="danger"`.
    */
   danger?: boolean;
   /**
@@ -396,6 +397,12 @@ export interface CButtonElement extends Omit<HTMLElement, 'active' | 'appearance
    * of the `c-tab-item` panel it shows.
    */
   value?: number | string;
+  /**
+   * The button's colour, in every appearance: `primary` unless set (or
+   * changed app-wide), `secondary`, `success`, `info`, `warning`, or `danger`
+   * for a destructive action.
+   */
+  variant?: 'danger' | 'info' | 'primary' | 'secondary' | 'success' | 'warning';
 }
 
 /** Events dispatched by `<c-button-group>`. */
@@ -1150,7 +1157,7 @@ export interface CIconElement extends Omit<HTMLElement, 'color' | 'path' | 'size
 }
 
 /** An icon-only button: a round native button that shows a single icon and takes its accessible name from an `aria-label` on the element. */
-export interface CIconButtonElement extends Omit<HTMLElement, 'appearance' | 'badge' | 'danger' | 'disabled' | 'ghost' | 'inverted' | 'loading' | 'outlined' | 'path' | 'size' | 'text'> {
+export interface CIconButtonElement extends Omit<HTMLElement, 'appearance' | 'badge' | 'danger' | 'disabled' | 'ghost' | 'inverted' | 'loading' | 'outlined' | 'path' | 'size' | 'text' | 'variant'> {
   /**
    * The button's look: `filled` (unless set) for the main action; `outlined`
    * (a primary outline, no fill), `ghost` (a light primary tint) or `text`
@@ -1163,8 +1170,9 @@ export interface CIconButtonElement extends Omit<HTMLElement, 'appearance' | 'ba
    */
   badge?: null | number | string;
   /**
-   * Danger look for a destructive action: the filled button in the error
-   * colour; no effect on the `outlined`, `ghost` or `text` appearance.
+   * Danger look for a destructive action: the error colour.
+   *
+   * @deprecated Use `variant="danger"`.
    */
   danger?: boolean;
   /** Disable the button: it leaves the Tab order and ignores the pointer. */
@@ -1205,6 +1213,12 @@ export interface CIconButtonElement extends Omit<HTMLElement, 'appearance' | 'ba
    * @deprecated Use `appearance="text"`.
    */
   text?: boolean;
+  /**
+   * The button's colour, in every appearance: `primary` unless set (or
+   * changed app-wide), `secondary`, `success`, `info`, `warning`, or `danger`
+   * for a destructive action.
+   */
+  variant?: 'danger' | 'info' | 'primary' | 'secondary' | 'success' | 'warning';
 }
 
 /** A text link to another page or resource: a native `<a>` in the link colour, with an optional underline. */
@@ -3257,10 +3271,12 @@ export interface CTreeSelectElement extends Omit<HTMLElement, 'allowBranch' | 'c
 export interface CAppDefaults {
   'c-autocomplete'?: Partial<Pick<CAutocompleteElement, 'hideDetails' | 'hideMessage' | 'itemsPerPage' | 'labelOnTop' | 'shadow' | 'size' | 'texts'>>;
   'c-breadcrumb'?: Partial<Pick<CBreadcrumbElement, 'texts'>>;
+  'c-button'?: Partial<Pick<CButtonElement, 'variant'>>;
   'c-color-picker'?: Partial<Pick<CColorPickerElement, 'alpha' | 'format' | 'hideDetails' | 'hideMessage' | 'labelOnTop' | 'shadow' | 'size' | 'texts'>>;
   'c-data-table'?: Partial<Pick<CDataTableElement, 'texts'>>;
   'c-date-picker'?: Partial<Pick<CDatePickerElement, 'firstDayOfWeek' | 'format' | 'hideDetails' | 'hideMessage' | 'labelOnTop' | 'shadow' | 'showToday' | 'showWeekNumbers' | 'size' | 'texts'>>;
   'c-file-upload'?: Partial<Pick<CFileUploadElement, 'compact' | 'hideDetails' | 'hideMessage' | 'size' | 'texts'>>;
+  'c-icon-button'?: Partial<Pick<CIconButtonElement, 'variant'>>;
   'c-navigation-button'?: Partial<Pick<CNavigationButtonElement, 'texts'>>;
   'c-number-field'?: Partial<Pick<CNumberFieldElement, 'decimalSeparator' | 'decimals' | 'fixedDecimals' | 'groupSeparator' | 'hideDetails' | 'hideMessage' | 'labelOnTop' | 'shadow' | 'size' | 'step' | 'texts'>>;
   'c-pagination'?: Partial<Pick<CPaginationElement, 'texts'>>;
@@ -3274,10 +3290,12 @@ export interface CAppDefaults {
 export const DEFAULTABLE_PROPS = {
   'c-autocomplete': ['hideDetails', 'hideMessage', 'itemsPerPage', 'labelOnTop', 'shadow', 'size', 'texts'],
   'c-breadcrumb': ['texts'],
+  'c-button': ['variant'],
   'c-color-picker': ['alpha', 'format', 'hideDetails', 'hideMessage', 'labelOnTop', 'shadow', 'size', 'texts'],
   'c-data-table': ['texts'],
   'c-date-picker': ['firstDayOfWeek', 'format', 'hideDetails', 'hideMessage', 'labelOnTop', 'shadow', 'showToday', 'showWeekNumbers', 'size', 'texts'],
   'c-file-upload': ['compact', 'hideDetails', 'hideMessage', 'size', 'texts'],
+  'c-icon-button': ['variant'],
   'c-navigation-button': ['texts'],
   'c-number-field': ['decimalSeparator', 'decimals', 'fixedDecimals', 'groupSeparator', 'hideDetails', 'hideMessage', 'labelOnTop', 'shadow', 'size', 'step', 'texts'],
   'c-pagination': ['texts'],

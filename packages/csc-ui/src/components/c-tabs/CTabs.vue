@@ -5,6 +5,7 @@
       appearance="ghost"
       aria-label="Scroll tabs back"
       size="x-small"
+      variant="primary"
       @click="onBackClick"
     >
       <c-icon :path="arrowLeft" />
@@ -41,6 +42,7 @@
       appearance="ghost"
       aria-label="Scroll tabs forward"
       size="x-small"
+      variant="primary"
       @click="onForwardClick"
     >
       <c-icon :path="arrowRight" />

@@ -98,6 +98,7 @@
           :disabled
           appearance="text"
           size="x-small"
+          variant="primary"
           @click="onClear"
         >
           <c-icon :path="mdiClose" :size="20" />
