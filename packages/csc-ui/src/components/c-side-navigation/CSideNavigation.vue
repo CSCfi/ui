@@ -9,7 +9,12 @@
     part="root"
   >
     <div v-if="mobile" :class="ui.burger()">
-      <c-icon-button ref="closeRef" inverted text @click="closeMenu">
+      <c-icon-button
+        ref="closeRef"
+        appearance="text"
+        inverted
+        @click="closeMenu"
+      >
         <span :class="ui.srOnly()">Close sidemenu</span>
 
         <c-icon :path="arrowRight" />

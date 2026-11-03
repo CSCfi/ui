@@ -27,8 +27,8 @@
         :aria-label="t.openCalendar"
         :disabled
         :size="buttonSize"
+        appearance="text"
         aria-haspopup="dialog"
-        text
         @click="onCalendarClick"
       >
         <c-icon :path="mdiCalendar" :size="iconSize" />

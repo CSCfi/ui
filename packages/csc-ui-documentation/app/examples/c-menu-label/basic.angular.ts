@@ -9,7 +9,7 @@ import { mdiChevronDown } from '@mdi/js';
   template: `
     <div class="example-row">
       <c-menu (select)="selected.set($any($event).detail.value)">
-        <c-button slot="trigger" outlined>
+        <c-button slot="trigger" appearance="outlined">
           Settings
           <c-icon [path]="mdiChevronDown" />
         </c-button>

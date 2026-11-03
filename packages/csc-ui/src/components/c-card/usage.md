@@ -11,7 +11,7 @@ Build the card from its sections, in this order: `c-card-title` for the heading,
   </c-card-content>
 
   <c-card-actions justify="end">
-    <c-button text>Cancel</c-button>
+    <c-button appearance="text">Cancel</c-button>
     <c-button>Save</c-button>
   </c-card-actions>
 </c-card>

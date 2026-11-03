@@ -11,7 +11,7 @@
         </c-card-content>
 
         <c-card-actions justify="end">
-          <c-button text @click="open = false">Cancel</c-button>
+          <c-button appearance="text" @click="open = false">Cancel</c-button>
 
           <c-button danger @click="open = false">Delete</c-button>
         </c-card-actions>

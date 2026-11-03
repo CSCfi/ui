@@ -13,8 +13,8 @@ import { matchScreenshotInBothModes, mount, settled } from '../../test/harness';
 const TITLE = 'Notifications and account activity';
 
 const ACTIONS =
-  '<c-button slot="actions" ghost size="small">Mark all read</c-button>' +
-  '<c-button slot="actions" ghost size="small">Settings</c-button>';
+  '<c-button slot="actions" appearance="ghost" size="small">Mark all read</c-button>' +
+  '<c-button slot="actions" appearance="ghost" size="small">Settings</c-button>';
 
 const mountTitle = async (width: number): Promise<Mounted> => {
   const m = await mount('c-card-title', { html: TITLE + ACTIONS });

@@ -16,7 +16,7 @@ import { Component, CUSTOM_ELEMENTS_SCHEMA, signal } from '@angular/core';
 
       <div class="example-row">
         <c-button
-          outlined
+          appearance="outlined"
           [disabled]="step() === 1"
           (click)="step.set(step() - 1)"
         >

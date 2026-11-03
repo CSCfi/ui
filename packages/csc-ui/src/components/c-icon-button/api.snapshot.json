@@ -1,5 +1,6 @@
 {
   "attributes": {
+    "appearance": "'filled' | 'ghost' | 'outlined' | 'text'",
     "badge": "null | number | string = null",
     "danger": "boolean = false",
     "disabled": "boolean = false",
@@ -13,6 +14,11 @@
   },
   "cssProperties": [],
   "defaultable": [],
+  "deprecated": [
+    "ghost",
+    "outlined",
+    "text"
+  ],
   "events": {},
   "methods": {},
   "parts": [
@@ -22,6 +28,7 @@
   ],
   "propertyOnly": [],
   "props": {
+    "appearance": "'filled' | 'ghost' | 'outlined' | 'text'",
     "badge": "null | number | string = null",
     "danger": "boolean = false",
     "disabled": "boolean = false",

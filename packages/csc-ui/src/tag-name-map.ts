@@ -303,8 +303,8 @@ export interface CBreadcrumbItemElement extends Omit<HTMLElement, 'href' | 'targ
   target?: string;
 }
 
-/** Buttons trigger actions — submitting a form, opening a modal, confirming a choice. Use one primary (default appearance) button per view; secondary actions use the `outlined`, `ghost` or `text` appearances. */
-export interface CButtonElement extends Omit<HTMLElement, 'active' | 'asTab' | 'danger' | 'disabled' | 'fit' | 'ghost' | 'href' | 'inverted' | 'loading' | 'noRadius' | 'noRipple' | 'outlined' | 'size' | 'target' | 'text' | 'type' | 'value'> {
+/** Buttons trigger actions — submitting a form, opening a modal, confirming a choice. Use one primary (filled, the default `appearance`) button per view; secondary actions use `appearance="outlined"`, `"ghost"` or `"text"`. */
+export interface CButtonElement extends Omit<HTMLElement, 'active' | 'appearance' | 'asTab' | 'danger' | 'disabled' | 'fit' | 'ghost' | 'href' | 'inverted' | 'loading' | 'noRadius' | 'noRipple' | 'outlined' | 'size' | 'target' | 'text' | 'type' | 'value'> {
   /**
    * Pressed (toggle) state — renders the selected look and sets
    * `aria-pressed`. Leave unset for regular action buttons: only a
@@ -313,8 +313,14 @@ export interface CButtonElement extends Omit<HTMLElement, 'active' | 'asTab' | '
    */
   active?: boolean;
   /**
-   * Danger appearance for a destructive action: the filled button in the error
-   * colour; no effect on `outlined`, `ghost` or `text`.
+   * The button's look: `filled` (unless set) for the main action of a view;
+   * `outlined` (a primary outline, no fill), `ghost` (a light primary tint)
+   * or `text` (no fill or outline) for lower emphasis.
+   */
+  appearance?: 'filled' | 'ghost' | 'outlined' | 'text';
+  /**
+   * Danger look for a destructive action: the filled button in the error
+   * colour; no effect on the `outlined`, `ghost` or `text` appearance.
    */
   danger?: boolean;
   /**
@@ -324,7 +330,11 @@ export interface CButtonElement extends Omit<HTMLElement, 'active' | 'asTab' | '
   disabled?: boolean;
   /** Stretch the button to the full width of its container. */
   fit?: boolean;
-  /** Ghost appearance: primary text on a light primary tint, for lower emphasis. */
+  /**
+   * Ghost appearance: primary text on a light primary tint, for lower emphasis.
+   *
+   * @deprecated Use `appearance="ghost"`.
+   */
   ghost?: boolean;
   /**
    * URL to link to: the button renders as a real link (`<a>`) styled as a
@@ -333,8 +343,8 @@ export interface CButtonElement extends Omit<HTMLElement, 'active' | 'asTab' | '
   href?: string;
   /**
    * Inverted colours for a fixed dark or brand-coloured backdrop: the
-   * `inverse-*` family, the same in both theme modes. Combines with the other
-   * appearances.
+   * `inverse-*` family, the same in both theme modes. Combines with every
+   * appearance.
    */
   inverted?: boolean;
   /**
@@ -347,6 +357,8 @@ export interface CButtonElement extends Omit<HTMLElement, 'active' | 'asTab' | '
   /**
    * Outlined appearance: a primary outline and text with no fill, for lower
    * emphasis.
+   *
+   * @deprecated Use `appearance="outlined"`.
    */
   outlined?: boolean;
   /**
@@ -359,7 +371,11 @@ export interface CButtonElement extends Omit<HTMLElement, 'active' | 'asTab' | '
    * `_blank` for a new one.
    */
   target?: string;
-  /** Text appearance: primary text with no fill or outline, the lightest look. */
+  /**
+   * Text appearance: primary text with no fill or outline, the lightest look.
+   *
+   * @deprecated Use `appearance="text"`.
+   */
   text?: boolean;
   /**
    * Native `type` of the button: `button` unless set, `submit` or `reset`.
@@ -1082,25 +1098,35 @@ export interface CIconElement extends Omit<HTMLElement, 'color' | 'path' | 'size
 }
 
 /** An icon-only button: a round native button that shows a single icon and takes its accessible name from an `aria-label` on the element. */
-export interface CIconButtonElement extends Omit<HTMLElement, 'badge' | 'danger' | 'disabled' | 'ghost' | 'inverted' | 'loading' | 'outlined' | 'path' | 'size' | 'text'> {
+export interface CIconButtonElement extends Omit<HTMLElement, 'appearance' | 'badge' | 'danger' | 'disabled' | 'ghost' | 'inverted' | 'loading' | 'outlined' | 'path' | 'size' | 'text'> {
+  /**
+   * The button's look: `filled` (unless set) for the main action; `outlined`
+   * (a primary outline, no fill), `ghost` (a light primary tint) or `text`
+   * (no fill or outline) for lower emphasis.
+   */
+  appearance?: 'filled' | 'ghost' | 'outlined' | 'text';
   /**
    * Count shown in a bubble at the button's top-right corner; hidden while
    * `null` or empty, so `0` still shows.
    */
   badge?: null | number | string;
   /**
-   * Danger appearance for a destructive action: the filled button in the error
-   * colour; no effect on `outlined`, `ghost` or `text`.
+   * Danger look for a destructive action: the filled button in the error
+   * colour; no effect on the `outlined`, `ghost` or `text` appearance.
    */
   danger?: boolean;
   /** Disable the button: it leaves the Tab order and ignores the pointer. */
   disabled?: boolean;
-  /** Ghost appearance: a light primary tint, for lower emphasis. */
+  /**
+   * Ghost appearance: a light primary tint, for lower emphasis.
+   *
+   * @deprecated Use `appearance="ghost"`.
+   */
   ghost?: boolean;
   /**
    * Inverted colours for a fixed dark or brand-coloured backdrop: the
-   * `inverse-*` family, the same in both theme modes. Combines with the other
-   * appearances.
+   * `inverse-*` family, the same in both theme modes. Combines with every
+   * appearance.
    */
   inverted?: boolean;
   /**
@@ -1108,7 +1134,11 @@ export interface CIconButtonElement extends Omit<HTMLElement, 'badge' | 'danger'
    * focusable and is announced as busy and unavailable.
    */
   loading?: boolean;
-  /** Outlined appearance: a primary outline with no fill, for lower emphasis. */
+  /**
+   * Outlined appearance: a primary outline with no fill, for lower emphasis.
+   *
+   * @deprecated Use `appearance="outlined"`.
+   */
   outlined?: boolean;
   /**
    * Icon path of an icon the button draws itself, always 24px; a slotted icon
@@ -1117,7 +1147,11 @@ export interface CIconButtonElement extends Omit<HTMLElement, 'badge' | 'danger'
   path?: string;
   /** Size of the button: `default` (40px), `small` (32px) or `x-small` (28px). */
   size?: 'default' | 'small' | 'x-small';
-  /** Text appearance: no fill or outline, the lightest look. */
+  /**
+   * Text appearance: no fill or outline, the lightest look.
+   *
+   * @deprecated Use `appearance="text"`.
+   */
   text?: boolean;
 }
 

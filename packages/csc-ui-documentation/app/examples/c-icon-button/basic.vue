@@ -4,15 +4,15 @@
       <c-icon :path="mdiPlus" />
     </c-icon-button>
 
-    <c-icon-button aria-label="Edit" outlined>
+    <c-icon-button appearance="outlined" aria-label="Edit">
       <c-icon :path="mdiPencil" />
     </c-icon-button>
 
-    <c-icon-button aria-label="Like" ghost>
+    <c-icon-button appearance="ghost" aria-label="Like">
       <c-icon :path="mdiHeart" />
     </c-icon-button>
 
-    <c-icon-button aria-label="More actions" text>
+    <c-icon-button appearance="text" aria-label="More actions">
       <c-icon :path="mdiDotsVertical" />
     </c-icon-button>
 

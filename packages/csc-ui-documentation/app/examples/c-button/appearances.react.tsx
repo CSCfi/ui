@@ -1,12 +1,12 @@
 // @ts-nocheck — documentation code sample; shown as text, never compiled here
 import { CButton } from '@cscfi/csc-ui-react';
 
-export const Variants = () => (
+export const Appearances = () => (
   <div className="example-row">
     <CButton>Default</CButton>
-    <CButton outlined>Outlined</CButton>
-    <CButton ghost>Ghost</CButton>
-    <CButton text>Text</CButton>
+    <CButton appearance="outlined">Outlined</CButton>
+    <CButton appearance="ghost">Ghost</CButton>
+    <CButton appearance="text">Text</CButton>
     <CButton danger>Danger</CButton>
     <CButton disabled>Disabled</CButton>
   </div>

@@ -26,8 +26,8 @@
         :aria-label="t.openClock"
         :disabled
         :size="buttonSize"
+        appearance="text"
         aria-haspopup="dialog"
-        text
         @click="onClockClick"
       >
         <c-icon :path="mdiClockOutline" :size="iconSize" />

@@ -10,7 +10,7 @@ import { matchScreenshotInBothModes, mount, settle } from '../../test/harness';
 type ToolbarHost = { static: boolean } & HTMLElement;
 
 const CONTENT =
-  '<span>My Service</span><c-button style="margin-inline-start: auto" text>Log out</c-button>';
+  '<span>My Service</span><c-button style="margin-inline-start: auto" appearance="text">Log out</c-button>';
 
 const mountToolbar = (attrs: Record<string, boolean | string> = {}) =>
   mount<ToolbarHost>('c-toolbar', { attrs, html: CONTENT, stage: false });

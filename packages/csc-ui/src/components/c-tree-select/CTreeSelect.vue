@@ -90,8 +90,8 @@
           v-if="hasSelection && clearable"
           :aria-label="t.clearSelection"
           :disabled
+          appearance="text"
           size="x-small"
-          text
           @click="onReset"
           @keydown="onButtonKeyDown('reset', $event)"
         >
@@ -102,8 +102,8 @@
           <c-icon-button
             :aria-label="t.toggleOptions"
             :disabled
+            appearance="text"
             size="x-small"
-            text
             @click="onChevronClick"
             @keydown="onButtonKeyDown('chevron', $event)"
           >

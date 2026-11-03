@@ -19,15 +19,15 @@ import {
         <c-icon [path]="mdiPlus"></c-icon>
       </c-icon-button>
 
-      <c-icon-button aria-label="Edit" outlined>
+      <c-icon-button aria-label="Edit" appearance="outlined">
         <c-icon [path]="mdiPencil"></c-icon>
       </c-icon-button>
 
-      <c-icon-button aria-label="Like" ghost>
+      <c-icon-button aria-label="Like" appearance="ghost">
         <c-icon [path]="mdiHeart"></c-icon>
       </c-icon-button>
 
-      <c-icon-button aria-label="More actions" text>
+      <c-icon-button aria-label="More actions" appearance="text">
         <c-icon [path]="mdiDotsVertical"></c-icon>
       </c-icon-button>
 

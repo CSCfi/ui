@@ -15,7 +15,7 @@ import {
   template: `
     <div class="example-row">
       <c-menu (select)="onTheme($event)">
-        <c-button slot="trigger" text>
+        <c-button slot="trigger" appearance="text">
           <c-icon [path]="mdiThemeLightDark"></c-icon>
           Theme: {{ theme }}
           <c-icon [path]="mdiChevronDown"></c-icon>

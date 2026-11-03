@@ -33,6 +33,7 @@
     "CAutocompleteTexts",
     "CAutocompleteValue",
     "CBreadcrumbTexts",
+    "CButtonAppearance",
     "CButtonGroupSize",
     "CButtonGroupValue",
     "CButtonSize",
@@ -75,6 +76,7 @@
     "CFileUploadRejection",
     "CFileUploadStatus",
     "CFileUploadTexts",
+    "CIconButtonAppearance",
     "CIconButtonSize",
     "CLoginCardActionsAlign",
     "CLoginCardActionsJustify",
@@ -144,6 +146,7 @@
       "breadcrumb?": "string",
       "fold?": "(count: number) => string"
     },
+    "CButtonAppearance": "'filled' | 'ghost' | 'outlined' | 'text'",
     "CButtonGroupSize": "'default' | 'small'",
     "CButtonGroupValue": "(number | string)[] | null | number | string",
     "CButtonSize": "'default' | 'large' | 'small'",
@@ -318,6 +321,7 @@
       "uploadFailed?": "string",
       "uploading?": "string"
     },
+    "CIconButtonAppearance": "'filled' | 'ghost' | 'outlined' | 'text'",
     "CIconButtonSize": "'default' | 'small' | 'x-small'",
     "CLoginCardActionsAlign": "'center' | 'end' | 'start'",
     "CLoginCardActionsJustify": "'center' | 'end' | 'space-around' | 'space-between' | 'start' | 'stretch'",

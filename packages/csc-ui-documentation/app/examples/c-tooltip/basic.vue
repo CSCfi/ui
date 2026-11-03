@@ -1,13 +1,13 @@
 <template>
   <div class="example-row">
     <c-tooltip text="Download the report as PDF">
-      <c-icon-button slot="trigger" aria-label="Download" ghost>
+      <c-icon-button slot="trigger" appearance="ghost" aria-label="Download">
         <c-icon :path="mdiDownload" />
       </c-icon-button>
     </c-tooltip>
 
     <c-tooltip position="bottom" text="Remove the report permanently">
-      <c-icon-button slot="trigger" aria-label="Remove" ghost>
+      <c-icon-button slot="trigger" appearance="ghost" aria-label="Remove">
         <c-icon :path="mdiTrashCanOutline" />
       </c-icon-button>
     </c-tooltip>

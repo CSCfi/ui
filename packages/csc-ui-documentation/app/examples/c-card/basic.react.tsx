@@ -17,7 +17,7 @@ export const Basic = () => (
       </CCardContent>
 
       <CCardActions justify="end">
-        <CButton text>Cancel</CButton>
+        <CButton appearance="text">Cancel</CButton>
         <CButton>Save</CButton>
       </CCardActions>
     </CCard>

@@ -5,13 +5,13 @@ import { mdiDownload, mdiTrashCanOutline } from '@mdi/js';
 export const Basic = () => (
   <div className="example-row">
     <CTooltip text="Download the report as PDF">
-      <CIconButton aria-label="Download" ghost slot="trigger">
+      <CIconButton appearance="ghost" aria-label="Download" slot="trigger">
         <CIcon path={mdiDownload} />
       </CIconButton>
     </CTooltip>
 
     <CTooltip position="bottom" text="Remove the report permanently">
-      <CIconButton aria-label="Remove" ghost slot="trigger">
+      <CIconButton appearance="ghost" aria-label="Remove" slot="trigger">
         <CIcon path={mdiTrashCanOutline} />
       </CIconButton>
     </CTooltip>

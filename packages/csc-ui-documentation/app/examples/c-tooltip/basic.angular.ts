@@ -9,13 +9,13 @@ import { mdiDownload, mdiTrashCanOutline } from '@mdi/js';
   template: `
     <div class="example-row">
       <c-tooltip text="Download the report as PDF">
-        <c-icon-button slot="trigger" aria-label="Download" ghost>
+        <c-icon-button slot="trigger" aria-label="Download" appearance="ghost">
           <c-icon [path]="mdiDownload" />
         </c-icon-button>
       </c-tooltip>
 
       <c-tooltip text="Remove the report permanently" position="bottom">
-        <c-icon-button slot="trigger" aria-label="Remove" ghost>
+        <c-icon-button slot="trigger" aria-label="Remove" appearance="ghost">
           <c-icon [path]="mdiTrashCanOutline" />
         </c-icon-button>
       </c-tooltip>

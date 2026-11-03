@@ -75,8 +75,8 @@
           v-if="clearable && committedColor"
           :aria-label="t.clearSelection"
           :disabled
+          appearance="text"
           size="x-small"
-          text
           @click="onSwatchClear"
         >
           <c-icon :path="mdiClose" :size="20" />
@@ -86,8 +86,8 @@
           v-else
           :aria-label="t.toggleSwatches"
           :disabled
+          appearance="text"
           size="x-small"
-          text
           @click="onChevronClick"
         >
           <c-icon :path="mdiChevronDown" :size="24" />
@@ -125,8 +125,8 @@
         :aria-label="t.openPicker"
         :disabled
         :size="buttonSize"
+        appearance="text"
         aria-haspopup="dialog"
-        text
         @click="onColorButtonClick"
       >
         <span

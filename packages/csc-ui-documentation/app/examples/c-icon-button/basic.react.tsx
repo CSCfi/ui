@@ -15,15 +15,15 @@ export const Basic = () => (
       <CIcon path={mdiPlus} />
     </CIconButton>
 
-    <CIconButton aria-label="Edit" outlined>
+    <CIconButton appearance="outlined" aria-label="Edit">
       <CIcon path={mdiPencil} />
     </CIconButton>
 
-    <CIconButton aria-label="Like" ghost>
+    <CIconButton appearance="ghost" aria-label="Like">
       <CIcon path={mdiHeart} />
     </CIconButton>
 
-    <CIconButton aria-label="More actions" text>
+    <CIconButton appearance="text" aria-label="More actions">
       <CIcon path={mdiDotsVertical} />
     </CIconButton>
 

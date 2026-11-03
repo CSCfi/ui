@@ -6,7 +6,7 @@
       <c-badge>3</c-badge>
     </span>
 
-    <c-icon-button aria-label="Messages, 1 unread" outlined>
+    <c-icon-button appearance="outlined" aria-label="Messages, 1 unread">
       <c-icon :path="mdiEmailOutline" />
 
       <c-badge class="success-badge">1</c-badge>

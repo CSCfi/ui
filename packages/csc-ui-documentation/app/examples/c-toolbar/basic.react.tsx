@@ -7,7 +7,7 @@ export const Basic = () => (
     <CToolbar static>
       <CCscLogo />
       <span>My Service</span>
-      <CButton style={{ marginInlineStart: 'auto' }} text>
+      <CButton appearance="text" style={{ marginInlineStart: 'auto' }}>
         Log out
       </CButton>
     </CToolbar>

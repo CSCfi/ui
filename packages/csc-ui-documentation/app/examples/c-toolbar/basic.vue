@@ -8,7 +8,9 @@
 
       <span>My Service</span>
 
-      <c-button style="margin-inline-start: auto" text>Log out</c-button>
+      <c-button appearance="text" style="margin-inline-start: auto">
+        Log out
+      </c-button>
     </c-toolbar>
   </div>
 </template>

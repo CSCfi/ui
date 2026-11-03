@@ -4,7 +4,13 @@
  */
 import { describe, expect, it } from 'vitest';
 
-import { mount, roleInMode, setThemeMode, settle } from '../../test/harness';
+import {
+  mount,
+  roleInMode,
+  setThemeMode,
+  settle,
+  settled,
+} from '../../test/harness';
 
 describe('c-icon-button', () => {
   it('forwards host ARIA attributes to the button under their own names', async () => {
@@ -53,16 +59,52 @@ describe('c-icon-button loading', () => {
   });
 });
 
+describe('c-icon-button appearance', () => {
+  const paint = async (attrs: Record<string, boolean | string>) => {
+    const { part } = await mount('c-icon-button', { attrs });
+
+    await settled();
+
+    const { backgroundColor, boxShadow, color } = getComputedStyle(
+      part('root'),
+    );
+
+    return { backgroundColor, boxShadow, color };
+  };
+
+  it('paints each appearance as its deprecated boolean does', async () => {
+    const filled = await paint({});
+
+    expect(await paint({ appearance: 'filled' })).toEqual(filled);
+
+    for (const appearance of ['ghost', 'outlined', 'text']) {
+      const look = await paint({ appearance });
+
+      expect(look, appearance).not.toEqual(filled);
+      expect(look, appearance).toEqual(await paint({ [appearance]: true }));
+    }
+  });
+
+  it('wins over the deprecated booleans when set', async () => {
+    expect(await paint({ appearance: 'filled', text: true })).toEqual(
+      await paint({}),
+    );
+    expect(await paint({ appearance: 'ghost', outlined: true })).toEqual(
+      await paint({ appearance: 'ghost' }),
+    );
+  });
+});
+
 describe('c-icon-button disabled', () => {
   it('dims its icon to the disabled ink, as c-button does, in dark mode too', async () => {
     setThemeMode('dark');
 
     for (const attrs of [
       {},
-      { ghost: true },
-      { text: true },
-      { outlined: true },
-    ] as Record<string, boolean>[]) {
+      { appearance: 'ghost' },
+      { appearance: 'text' },
+      { appearance: 'outlined' },
+    ] as Record<string, boolean | string>[]) {
       const { part } = await mount('c-icon-button', {
         attrs: { ...attrs, disabled: true },
       });

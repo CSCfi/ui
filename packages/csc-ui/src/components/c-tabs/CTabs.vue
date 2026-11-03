@@ -2,9 +2,9 @@
   <div :class="ui.container()" class="c-tabs__container" part="container">
     <c-icon-button
       v-if="isOverflowing && !vertical"
+      appearance="ghost"
       aria-label="Scroll tabs back"
       size="x-small"
-      ghost
       @click="onBackClick"
     >
       <c-icon :path="arrowLeft" />
@@ -38,9 +38,9 @@
 
     <c-icon-button
       v-if="isOverflowing && !vertical"
+      appearance="ghost"
       aria-label="Scroll tabs forward"
       size="x-small"
-      ghost
       @click="onForwardClick"
     >
       <c-icon :path="arrowRight" />

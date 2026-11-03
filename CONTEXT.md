@@ -579,6 +579,10 @@ _Avoid_: Pill (informal), active fill (that is a button's own selected look, not
 The recessed ground a control's choices sit on — the framed well the buttons of a **button group** or **tab buttons** sit in, stamped as that component's `root` part. It paints an opaque fill, so the labels on it keep one ground wherever the control is placed, and a **load-bearing hairline**, so its boundary reads on every **surface ladder** rung. In a tab strip the **sliding indicator** glides inside it.
 _Avoid_: Well, rail, background, box ("segmented-control box" describes its shape; the track is the concept)
 
+**Appearance** (`c-button`, `c-icon-button`):
+How strongly a button reads, set by `appearance`: `filled` (the default) for the main action of a view, then `outlined`, `ghost` and `text`, each lighter than the last. `danger` and `inverted` are separate axes that combine with it. Until 5.0 the 3.x `outlined` / `ghost` / `text` booleans still choose one while `appearance` is unset (**deprecated**).
+_Avoid_: Variant (reserved for a colour-intent axis; also the docs' **example variant** and the tailwind-variants mechanism), type, kind, style
+
 **Active** (`c-button`):
 The public pressed state of a button — the selected look plus `aria-pressed`. Set by consumers for standalone toggle buttons, or driven by `c-button-group` on its children.
 _Avoid_: Selected, pressed (canonical prop name is `active`; _pressed_ is only the ARIA mechanism)
@@ -767,6 +771,10 @@ _Avoid_: docs test, example test, smoke test (unqualified)
 **Public API**:
 What a release's version number makes promises about: everything the **manifest** publishes per tag (tag name, attributes and properties with their types and **built-in defaults**, **value events** and other events, slots, **parts**, CSS states, methods), the `texts` keys, the exported TypeScript types, the `css/*` files and the **semantic token** names. Removing, renaming or narrowing any of it, or changing a built-in default, is a breaking change. Shadow DOM structure, internal classes, anything **internal**, pixel appearance and the default `texts` strings are not public API.
 _Avoid_: Contract (unqualified), surface, interface
+
+**Deprecated** (API):
+A **public API** name kept working until the next major version after a new name replaced it: marked `@deprecated` with a message naming the replacement, which the **manifest**, the IDE data, the TypeScript element types (and so the React wrappers) and the docs' API table carry. The new name has no built-in default and wins when set, so both can stay on an element during a migration. There is no runtime warning.
+_Avoid_: Legacy, obsolete, alias (an alias is permanent; a deprecated name goes in the next major)
 
 **API snapshot**:
 The committed, condensed rendering of the **manifest** (per tag: props, events, methods, slots, parts, states; for the package: runtime exports and the shape of every exported type) that a node spec diffs the freshly generated manifest against, so an unintended public-API change fails a test instead of silently changing `custom-elements.json`. The strict analyzer checks the manifest is *consistent*; the API snapshot checks it is *unchanged*.

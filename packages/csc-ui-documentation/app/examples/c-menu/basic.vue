@@ -1,7 +1,7 @@
 <template>
   <div class="example-row">
     <c-menu @select="onSelect">
-      <c-button slot="trigger" outlined>
+      <c-button slot="trigger" appearance="outlined">
         Device
         <c-icon :path="mdiChevronDown" />
       </c-button>

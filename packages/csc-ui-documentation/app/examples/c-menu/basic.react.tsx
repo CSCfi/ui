@@ -16,7 +16,7 @@ export const Basic = () => {
   return (
     <div className="example-row">
       <CMenu onSelect={(event) => setSelected(event.detail.value as string)}>
-        <CButton outlined slot="trigger">
+        <CButton appearance="outlined" slot="trigger">
           Device
           <CIcon path={mdiChevronDown} />
         </CButton>

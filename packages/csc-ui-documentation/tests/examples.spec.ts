@@ -41,7 +41,7 @@ const baseline: Record<string, string[]> = AXE_BASELINE;
 const SCREENSHOT = new Set([
   'c-alert/types',
   'c-badge/basic',
-  'c-button/variants',
+  'c-button/appearances',
   'c-card/basic',
   'c-checkbox/basic',
   'c-data-table/basic',
