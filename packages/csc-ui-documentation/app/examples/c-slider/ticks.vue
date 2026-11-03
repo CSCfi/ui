@@ -7,7 +7,7 @@
       min="0"
       segments="8"
       step="1"
-      labels
+      tick-labels
       ticks
     />
   </div>

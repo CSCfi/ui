@@ -49,13 +49,20 @@ Set `disable-tooltip` to turn the bubble off.
 ## Tick marks
 
 `ticks` draws marks along the track, dividing it into `segments` equal parts
-(ten by default) from `min` to `max`, and `labels` writes a number under each
-mark, formatted like the bubble's. The marks are
+(ten by default) from `min` to `max`, and `tick-labels` writes a number under
+each mark, formatted like the bubble's (the 3.x `labels` still does until 5.0). The marks are
 independent of `step`: for a mark on every value, match `segments` to the
 range.
 
 ```html
-<c-slider label="Cores" max="8" segments="8" value="2" labels ticks></c-slider>
+<c-slider
+  label="Cores"
+  max="8"
+  segments="8"
+  value="2"
+  tick-labels
+  ticks
+></c-slider>
 ```
 
 ## Accessibility

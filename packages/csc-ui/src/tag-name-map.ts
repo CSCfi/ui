@@ -2263,7 +2263,7 @@ export interface CSliderElementEventMap {
 }
 
 /** A slider for picking a number from a range by dragging a thumb along a track, with a label, a value bubble and optional tick marks. */
-export interface CSliderElement extends Omit<HTMLElement, 'disabled' | 'disableTooltip' | 'label' | 'labels' | 'max' | 'min' | 'name' | 'segments' | 'step' | 'ticks' | 'unit' | 'value'> {
+export interface CSliderElement extends Omit<HTMLElement, 'disabled' | 'disableTooltip' | 'label' | 'labels' | 'max' | 'min' | 'name' | 'segments' | 'step' | 'tickLabels' | 'ticks' | 'unit' | 'value'> {
   /** Disable the slider */
   disabled?: boolean;
   /**
@@ -2276,6 +2276,8 @@ export interface CSliderElement extends Omit<HTMLElement, 'disabled' | 'disableT
   /**
    * Write a number under the track at each tick mark position, `segments`
    * apart, formatted like the value bubble's; shown with or without `ticks`
+   *
+   * @deprecated Use `tick-labels`.
    */
   labels?: boolean;
   /** The largest value. */
@@ -2291,6 +2293,11 @@ export interface CSliderElement extends Omit<HTMLElement, 'disabled' | 'disableT
   segments?: number;
   /** Step between values. */
   step?: number;
+  /**
+   * Write a number under the track at each tick mark position, `segments`
+   * apart, formatted like the value bubble's; shown with or without `ticks`
+   */
+  tickLabels?: boolean;
   /** Draw tick marks along the track, `segments` apart. */
   ticks?: boolean;
   /** Unit shown after the value in the tooltip and read with it, e.g. `%`. */

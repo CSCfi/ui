@@ -69,6 +69,7 @@ import {
   watch,
 } from 'vue';
 
+import { coerceBoolean } from '../../shared/coerceBoolean';
 import FormLabel from '../../shared/FormLabel.vue';
 import { useIdReferences } from '../../shared/useIdReferences';
 import { emitModelInput, emitModelSettled } from '../../shared/valueEvents';
@@ -193,6 +194,8 @@ interface CSliderProps {
   /**
    * Write a number under the track at each tick mark position, `segments`
    * apart, formatted like the value bubble's; shown with or without `ticks`
+   *
+   * @deprecated Use `tick-labels`.
    */
   labels?: boolean;
 
@@ -215,6 +218,12 @@ interface CSliderProps {
 
   /** Step between values. */
   step?: number;
+
+  /**
+   * Write a number under the track at each tick mark position, `segments`
+   * apart, formatted like the value bubble's; shown with or without `ticks`
+   */
+  tickLabels?: boolean;
 
   /** Draw tick marks along the track, `segments` apart. */
   ticks?: boolean;
@@ -240,6 +249,8 @@ const props = withDefaults(defineProps<CSliderProps>(), {
   name: '',
   segments: 10,
   step: 1,
+  // Unset, so the deprecated `labels` still writes them until 5.0.
+  tickLabels: undefined,
   ticks: false,
   unit: '',
   value: 50,
@@ -248,7 +259,7 @@ const props = withDefaults(defineProps<CSliderProps>(), {
 const ui = computed(() =>
   slider({
     disabled: props.disabled,
-    labels: props.labels,
+    labels: coerceBoolean(props.tickLabels ?? props.labels),
     ticks: props.ticks,
   }),
 );
