@@ -1,4 +1,4 @@
-import type { CToastsElement } from '@cscfi/csc-ui';
+import type { CToastsElement, CToastsPosition } from '@cscfi/csc-ui';
 
 import { CButton, COption, CSelect, CToasts } from '@cscfi/csc-ui-react';
 // @ts-nocheck — documentation code sample; shown as text, never compiled here
@@ -7,14 +7,12 @@ import { useRef, useState } from 'react';
 export const Placement = () => {
   const toasts = useRef<CToastsElement>(null);
 
-  const [vertical, setVertical] = useState('bottom');
-
-  const [horizontal, setHorizontal] = useState('center');
+  const [position, setPosition] = useState<CToastsPosition>('bottom');
 
   const notify = () => {
     toasts.current?.addToast({
       heading: 'Notification',
-      message: `Placed at ${vertical} ${horizontal}.`,
+      message: `Placed at ${position}.`,
       progress: true,
       type: 'info',
     });
@@ -23,37 +21,33 @@ export const Placement = () => {
   return (
     <div className="example-row">
       <CSelect
-        label="Vertical"
-        onChange={(event) => setVertical(event.detail as string)}
-        value={vertical}
+        label="Position"
+        onChange={(event) => setPosition(event.detail as CToastsPosition)}
+        value={position}
       >
-        <COption name="Bottom" value="bottom">
-          Bottom
+        <COption name="Top start" value="top-start">
+          Top start
         </COption>
         <COption name="Top" value="top">
           Top
         </COption>
-      </CSelect>
-
-      <CSelect
-        label="Horizontal"
-        onChange={(event) => setHorizontal(event.detail as string)}
-        value={horizontal}
-      >
-        <COption name="Left" value="left">
-          Left
+        <COption name="Top end" value="top-end">
+          Top end
         </COption>
-        <COption name="Center" value="center">
-          Center
+        <COption name="Bottom start" value="bottom-start">
+          Bottom start
         </COption>
-        <COption name="Right" value="right">
-          Right
+        <COption name="Bottom" value="bottom">
+          Bottom
+        </COption>
+        <COption name="Bottom end" value="bottom-end">
+          Bottom end
         </COption>
       </CSelect>
 
       <CButton onClick={notify}>Show toast</CButton>
 
-      <CToasts horizontal={horizontal} ref={toasts} vertical={vertical} />
+      <CToasts position={position} ref={toasts} />
     </div>
   );
 };

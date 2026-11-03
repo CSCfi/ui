@@ -2948,19 +2948,40 @@ export interface CToastsElementEventMap {
 }
 
 /** Toasts are passive, transient notifications — operation results, background progress — stacked and managed by a single `c-toasts` container via its `addToast` / `removeToast` methods. `addToast` returns the message's `id` (its own, or a generated one), which `removeToast` takes; `close` fires on the container with the message once a toast has left. */
-export interface CToastsElement extends Omit<HTMLElement, 'absolute' | 'horizontal' | 'vertical'> {
+export interface CToastsElement extends Omit<HTMLElement, 'absolute' | 'contained' | 'horizontal' | 'position' | 'vertical'> {
   /**
    * Places the stack in its nearest positioned ancestor instead of the
    * viewport, for in-container notifications. Such a stack is not
    * guaranteed to paint above an open modal.
+   *
+   * @deprecated Use `contained`.
    */
   absolute?: boolean;
   /**
+   * Keep the stack inside its nearest positioned ancestor instead of the
+   * viewport, for in-container notifications. Such a stack is not
+   * guaranteed to paint above an open modal.
+   */
+  contained?: boolean;
+  /**
    * Where the stack sits across the viewport, or across its container
    * under `absolute`.
+   *
+   * @deprecated Use `position`.
    */
   horizontal?: 'center' | 'left' | 'right';
-  /** The edge the stack is anchored to; toasts slide in from it. */
+  /**
+   * Where the stack sits in the viewport, or in its container when
+   * `contained`: `bottom` (unless set), `bottom-start`, `bottom-end`,
+   * `top`, `top-start` or `top-end`. Toasts slide in from the top or bottom
+   * edge.
+   */
+  position?: 'bottom-end' | 'bottom-start' | 'bottom' | 'top-end' | 'top-start' | 'top';
+  /**
+   * The edge the stack is anchored to; toasts slide in from it.
+   *
+   * @deprecated Use `position`.
+   */
   vertical?: 'bottom' | 'top';
   /**
    * Show a message as a toast and return its `id` — the message's own, or a

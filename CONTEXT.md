@@ -325,6 +325,10 @@ _Avoid_: Flyout, popup, overlay (as a name for this component)
 A passive, transient notification — an operation result, background progress — that the `c-toasts` container creates from a message and shows against one edge of the viewport, painting the **inverted surface** (ADR-0032). It closes itself when its timer runs out unless it is *persistent*, and the timer waits while a pointer hovers or presses it. The user closes it with its close button or a **swipe dismiss**; a *custom* toast (slotted content) and an *indeterminate* one (ongoing work) have no close button. When a toast arrives or leaves, the toasts around it glide into their new places (ADR-0073).
 _Avoid_: Notification (the general idea), snackbar (Material's name), alert (that is `c-alert`, the in-page message)
 
+**Contained** (`c-toasts`):
+The toast stack's in-container state (`contained`): it sits in its nearest positioned ancestor instead of the viewport, and so loses the guarantee to paint above an open modal. `position` places the stack either way. Named for the behaviour, not the CSS keyword, as **static** is; until 5.0 the 3.x `absolute` still sets it (**deprecated**).
+_Avoid_: Absolute (the 3.x prop and the CSS keyword), inline, embedded
+
 **Light dismiss**:
 Closing a transient surface — a **transient list panel**, `c-popover`, a **fullscreen panel** never — because the user pressed *and released* the pointer outside it, mirroring the native Popover API's rule. A press alone is not a dismissal: a scroll or drag that starts outside the surface leaves it open. Escape is a separate close path, not light dismiss. Modals have their own **dismissable** contract (backdrop click and Escape together) and are not light-dismissed.
 _Avoid_: Click-outside / outside click (the trigger is the press-release pair, and it works for touch), auto-close, blur-close

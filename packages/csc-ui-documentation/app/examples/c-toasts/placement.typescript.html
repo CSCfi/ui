@@ -1,17 +1,17 @@
-<c-select label="Vertical" value="bottom">
-  <c-option name="Bottom" value="bottom">Bottom</c-option>
+<c-select label="Position" value="bottom">
+  <c-option name="Top start" value="top-start">Top start</c-option>
 
   <c-option name="Top" value="top">Top</c-option>
-</c-select>
 
-<c-select label="Horizontal" value="center">
-  <c-option name="Left" value="left">Left</c-option>
+  <c-option name="Top end" value="top-end">Top end</c-option>
 
-  <c-option name="Center" value="center">Center</c-option>
+  <c-option name="Bottom start" value="bottom-start">Bottom start</c-option>
 
-  <c-option name="Right" value="right">Right</c-option>
+  <c-option name="Bottom" value="bottom">Bottom</c-option>
+
+  <c-option name="Bottom end" value="bottom-end">Bottom end</c-option>
 </c-select>
 
 <c-button>Show toast</c-button>
 
-<c-toasts horizontal="center" vertical="bottom"></c-toasts>
+<c-toasts position="bottom"></c-toasts>

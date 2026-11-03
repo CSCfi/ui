@@ -131,6 +131,7 @@ export type {
 
 export type {
   CToastsHorizontal,
+  CToastsPosition,
   CToastsVertical,
 } from './components/c-toasts/CToasts.vue';
 

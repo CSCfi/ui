@@ -32,9 +32,13 @@ Place the default (fixed-position) `c-toasts` as a direct child of `body` or
 and stay fully interactive — close buttons and hover-to-pause keep working
 while a modal blocks the rest of the page.
 
-The `absolute` variant positions the stack inside a container for
-in-container notifications. It lives inside your page's stacking contexts,
-so it does **not** carry the above-modal guarantee.
+`position` places the stack: `bottom` (the default), `bottom-start`,
+`bottom-end`, `top`, `top-start` or `top-end`, start being the left edge and
+end the right. `contained` keeps the stack inside its nearest positioned
+ancestor instead of the viewport, for in-container notifications. A contained
+stack lives inside your page's stacking contexts, so it does **not** carry the
+above-modal guarantee. The 3.x `vertical`, `horizontal` and `absolute` still
+work until 5.0; `position` and `contained` win when set.
 
 ## Accessibility
 

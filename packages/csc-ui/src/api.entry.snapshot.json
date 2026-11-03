@@ -108,6 +108,7 @@
     "CToastMessage",
     "CToastType",
     "CToastsHorizontal",
+    "CToastsPosition",
     "CToastsVertical",
     "CTooltipPosition",
     "CTreeSelectFilter",
@@ -410,6 +411,7 @@
       "type?": "CToastType"
     },
     "CToastsHorizontal": "'center' | 'left' | 'right'",
+    "CToastsPosition": "'bottom-end' | 'bottom-start' | 'bottom' | 'top-end' | 'top-start' | 'top'",
     "CToastsVertical": "'bottom' | 'top'",
     "CToastType": "'error' | 'info' | 'success' | 'warning'",
     "CTooltipPosition": "'bottom-end' | 'bottom-start' | 'bottom' | 'left-end' | 'left-start' | 'left' | 'right-end' | 'right-start' | 'right' | 'top-end' | 'top-start' | 'top'",
